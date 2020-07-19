@@ -8,12 +8,12 @@
         <p>
           <%= t "messages._components.sign_up_modal.body" %>
         </p>
-        <%= link_to new_user_registration_path, class: "btn btn-primary mr-2" do %>
+        <%= link_to sign_up_path, class: "btn btn-primary mr-2" do %>
           <i class="fas fa-rocket mr-1"></i>
           <%= t "noun.sign_up" %>
         <% end %>
 
-        <%= link_to new_user_session_path, class: "btn btn-outline-secondary" do %>
+        <%= link_to sign_in_path, class: "btn btn-outline-secondary" do %>
           <%= t "noun.sign_in" %>
         <% end %>
       </div>

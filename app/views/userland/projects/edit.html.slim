@@ -1,7 +1,6 @@
 - title = t "head.title.userland.projects.edit"
 - set_meta_tags(title: title, og: { title: title }, reverse: true, prefix: false)
 
-= render "partial_layouts/default" do
-  .container.py-3
-    .c-card.p-3
-      = render "userland/projects/form", project: @project
+.container.py-3
+  .c-card.p-3
+    = render "userland/projects/form", project: @project

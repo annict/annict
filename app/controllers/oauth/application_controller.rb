@@ -12,10 +12,10 @@ module Oauth
     include FlashMessage
     include ViewSelector
     include RavenContext
-    include PageCategoryMethods
+    include PageCategorizable
     include V4::UserDataFetchable
 
-    helper_method :gon, :locale_ja?, :locale_en?, :local_url
+    helper_method :gon, :locale_ja?, :locale_en?, :local_url, :page_category
 
     layout "application"
 
@@ -23,7 +23,6 @@ module Oauth
     before_action :redirect_if_unexpected_subdomain
     before_action :set_search_params
     before_action :store_data_into_gon
-    before_action :store_page_category
 
     private
 

@@ -1,4 +1,4 @@
-.pl-default {
+.l-default {
   $root: &;
 
   &__main {
@@ -18,7 +18,7 @@
 }
 
 @include media-breakpoint-up(lg) {
-  .pl-default {
+  .l-default {
     &__main {
       margin-left: 240px;
     }

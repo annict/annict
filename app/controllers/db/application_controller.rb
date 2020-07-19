@@ -4,10 +4,10 @@ module Db
   class ApplicationController < ActionController::Base
     include Pundit
 
+    include PageCategorizable
     include V4::RavenContext
     include V4::Loggable
     include V4::Localizable
-    include V4::PageCategorizable
 
     layout "db"
 

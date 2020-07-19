@@ -1,13 +1,12 @@
 - title = t "head.title.notifications.index"
 - set_meta_tags(title: title, reverse: true, prefix: false)
 
-= render "partial_layouts/default" do
-  .mb-4
-    .c-card.container
-      - if @notifications.present?
-        - @notifications.each do |notification|
-          = render "notification", notification: notification
-      - else
-        = render "application/components/empty", text: t("messages.notifications.no_notifications")
-    .text-center.mt-3
-      = paginate @notifications
+.mb-4
+  .c-card.container
+    - if @notifications.present?
+      - @notifications.each do |notification|
+        = render "notification", notification: notification
+    - else
+      = render "application/components/empty", text: t("messages.notifications.no_notifications")
+  .text-center.mt-3
+    = paginate @notifications

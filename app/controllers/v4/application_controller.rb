@@ -2,14 +2,14 @@
 
 module V4
   class ApplicationController < ActionController::Base
+    include PageCategorizable
     include V4::RavenContext
     include V4::Loggable
     include V4::Localizable
-    include V4::PageCategorizable
     include V4::GraphqlRunnable
     include V4::UserDataFetchable
 
-    layout "v4"
+    layout "default"
 
     helper_method :client_uuid, :local_url_with_path, :locale_en?, :locale_ja?, :local_url, :page_category
 

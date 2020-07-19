@@ -3,6 +3,8 @@
 module V4
   class UsersController < V4::ApplicationController
     def show
+      set_page_category Rails.configuration.page_categories.profile_detail
+
       user = User.only_kept.find_by!(username: params[:username])
 
       @user_entity = Rails.cache.fetch(profile_user_cache_key(user), expires_in: 3.hours) do

@@ -63,6 +63,8 @@ module Annict
 
     config.active_record.schema_format = :sql
 
+    config.page_categories = config_for(:page_categories)
+
     config.middleware.insert_before(Rack::Runtime, Rack::Rewrite) do
       # Redirect: annict.herokuapp.com -> annict.com
       r301 /.*/, "https://#{ENV.fetch('ANNICT_HOST')}$&", if: proc { |rack_env|
@@ -81,6 +83,7 @@ module Annict
       r301 %r{\A/users/([A-Za-z0-9_]+)/(following|followers|wanna_watch|watching|watched|on_hold|stop_watching)\z}, "/@$1/$2"
       r301 %r{\A/@([A-Za-z0-9_]+)/reviews\z}, "/@$1/records"
       r301 %r{\A/episodes/[0-9]+/items}, "/"
+      r301 %r{\A/menu}, "/"
       r301 %r{\A/works/[0-9]+/items}, "/"
 
       maintenance_file = File.join(Rails.root, "public", "maintenance.html")

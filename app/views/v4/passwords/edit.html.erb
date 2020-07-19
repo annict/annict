@@ -1,0 +1,39 @@
+<% title = t "head.title.passwords.edit" %>
+<% description = meta_description %>
+<% set_meta_tags(title: title, description: description, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false) %>
+
+<div class="container">
+  <div class="justify-content-center row">
+    <div class="col-12 col-lg-6 py-5">
+      <div class="mb-5 text-center">
+        <%= link_to root_path do %>
+          <%= image_tag asset_bundle_path("images/logos/color-mizuho.png"), size: "50x61", alt: "Annict" %>
+        <% end %>
+      </div>
+
+      <div class="c-sign-up-form px-3 mb-3">
+        <h1 class="my-5 text-center">
+          <%= t "messages.passwords.new.forgot_your_password" %>
+        </h1>
+
+        <%= form_with model: resource, url: password_path, html: { class: "mb-3", method: :patch }, local: true do |f| %>
+          <%= render "application/components/error_panel", resource: resource %>
+
+          <%= f.hidden_field :reset_password_token %>
+
+          <div class="form-group">
+            <%= f.label :password %>
+            <%= f.password_field :password, class: "form-control", autofocus: true, required: true, autocomplete: "off" %>
+          </div>
+
+          <div class="text-center">
+            <%= f.button class: "btn btn-primary" do %>
+              <%= icon "paper-plane" %>
+              <%= t "verb.submit" %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,94 @@
+<% title = t "head.title.sessions.new" %>
+<% description = meta_description t("head.meta.description.sessions.new") %>
+<% set_meta_tags(title: title, description: description, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false) %>
+
+<div class="container">
+  <div class="justify-content-center row">
+    <div class="col-12 col-lg-6 py-5">
+      <div class="mb-5 text-center">
+        <%= link_to root_path do %>
+          <%= image_tag asset_bundle_path("images/logos/color-mizuho.png"), size: "50x61", alt: "Annict" %>
+        <% end %>
+      </div>
+
+      <div class="c-sign-up-form px-3 mb-3">
+        <h1 class="my-5 text-center">
+          <%= t "messages._common.welcome_back" %>
+        </h1>
+
+        <div class="mb-3 text-center">
+          <%= link_to user_twitter_omniauth_authorize_path, class: "btn d-inline-flex justify-content-between u-btn-twitter" do %>
+              <span class="col-1 px-0">
+                <%= icon "twitter", "fab" %>
+              </span>
+
+            <span class="col">
+                <%= t "messages.registrations.new.start_with_twitter" %>
+              </span>
+
+            <span class="col-1 px-0"></span>
+          <% end %>
+        </div>
+
+        <div class="mb-5 text-center">
+          <%= link_to user_facebook_omniauth_authorize_path, class: "btn d-inline-flex justify-content-between u-btn-facebook" do %>
+              <span class="col-1 px-0">
+                <%= icon "facebook", "fab" %>
+              </span>
+
+            <span class="col">
+                <%= t "messages.registrations.new.start_with_facebook" %>
+              </span>
+
+            <span class="col-1 px-0"></span>
+          <% end %>
+        </div>
+
+        <div class="mt-4 mb-3 text-muted text-center">
+          <%= t "noun.or" %>
+        </div>
+
+        <%= form_with model: resource, url: user_session_path, html: { class: "mb-3" }, local: true do |f| %>
+          <div class="form-group">
+            <%= f.label :email_username %>
+            <%= f.text_field :email_username, class: "form-control", autofocus: true, required: true, tabindex: 1 %>
+          </div>
+
+          <div class="form-group">
+            <div class="row">
+              <div class="col">
+                <%= f.label :password %>
+              </div>
+
+              <div class="col text-right">
+                <%= link_to t("messages.sessions.new.forgot_password"), new_password_path %>
+              </div>
+            </div>
+
+            <%= f.password_field :password, autocomplete: "off", class: "form-control", required: true, tabindex: 2 %>
+          </div>
+
+          <div class="form-check">
+            <%= f.label :remember_me, class: "form-check-label" do %>
+              <%= f.check_box :remember_me, class: "form-check-input", tabindex: 3 %>
+              <%= t "messages.sessions.new.remember_me" %>
+            <% end %>
+          </div>
+
+          <div class="text-center">
+            <%= f.button class: "btn btn-primary", tabindex: 4 do %>
+              <%= icon "sign-in-alt" %>
+              <%= t "noun.sign_in" %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="text-center">
+        <small>
+          <%= t "messages.sessions.new.sign_up_link_html", link: link_to(t("noun.sign_up"), sign_up_path) %>
+        </small>
+      </div>
+    </div>
+  </div>
+</div>

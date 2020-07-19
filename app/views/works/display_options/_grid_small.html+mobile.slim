@@ -10,5 +10,5 @@
               .c-hover-image__over.p-1.u-lh-3.w-100
                 .c-grid-work__work-title.u-very-small.font-weight-bold
                   = work.local_title
-        - if page_category.in?(%w(works_season works_popular works_newest))
+        - if page_category.in?(%w(work-list-season work-list-popular work-list-newest))
           = render StatusSelectorComponent.new(work_id: work.id, small: true, page_category: page_category)
