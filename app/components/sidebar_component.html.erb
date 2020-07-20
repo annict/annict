@@ -41,7 +41,7 @@
     <ul class="list-unstyled px-3">
       <li>
         <%= link_to root_path, class: "d-flex justify-content-between py-2" do %>
-          <div class="c-sidebar__icon text-muted">
+          <div class="c-sidebar__icon mr-1 text-center text-muted">
             <i class="fal fa-home"></i>
           </div>
 
@@ -54,7 +54,7 @@
       <% if user %>
         <li>
           <%= link_to profile_detail_path(user.username), class: "d-flex justify-content-between py-2" do %>
-            <div class="c-sidebar__icon text-muted">
+            <div class="c-sidebar__icon mr-1 text-center text-muted">
               <i class="fal fa-user"></i>
             </div>
 
@@ -66,7 +66,7 @@
 
         <li>
           <%= link_to notifications_path, class: "d-flex justify-content-between py-2" do %>
-            <div class="c-sidebar__icon text-muted">
+            <div class="c-sidebar__icon mr-1 text-center text-muted">
               <i class="fal fa-bell"></i>
             </div>
 
@@ -86,7 +86,7 @@
 
         <li>
           <%= link_to track_path, class: "d-flex justify-content-between py-2" do %>
-            <div class="c-sidebar__icon text-muted">
+            <div class="c-sidebar__icon mr-1 text-center text-muted">
               <i class="fal fa-tasks"></i>
             </div>
 
@@ -98,7 +98,7 @@
 
         <li>
           <%= link_to programs_path, class: "d-flex justify-content-between py-2" do %>
-            <div class="c-sidebar__icon text-muted">
+            <div class="c-sidebar__icon mr-1 text-center text-muted">
               <i class="fal fa-calendar"></i>
             </div>
 
@@ -125,7 +125,7 @@
         ].each do |status_kind, icon_name, link_text| %>
           <li>
             <%= link_to library_path(username: user.username, status_kind: status_kind), class: "d-flex justify-content-between py-2" do %>
-              <div class="c-sidebar__icon text-muted">
+              <div class="c-sidebar__icon mr-1 text-center text-muted">
                 <i class="fal fa-<%= icon_name %>"></i>
               </div>
 
@@ -152,7 +152,7 @@
       ].each do |page_type, icon_name, link_text| %>
         <li>
           <%= link_to "/works/#{page_type}", class: "d-flex justify-content-between py-2" do %>
-            <div class="c-sidebar__icon text-muted">
+            <div class="c-sidebar__icon mr-1 text-center text-muted">
               <i class="fal fa-<%= icon_name %>"></i>
             </div>
 
@@ -179,7 +179,7 @@
         <% if user || !sign_in_required %>
           <li>
             <%= link_to link_path, class: "d-flex justify-content-between py-2" do %>
-              <div class="c-sidebar__icon text-muted">
+              <div class="c-sidebar__icon mr-1 text-center text-muted">
                 <i class="fal fa-<%= icon_name %>"></i>
               </div>
 
@@ -205,7 +205,7 @@
       ].each do |link_path, icon_name, link_text| %>
         <li>
           <%= link_to link_path, class: "d-flex justify-content-between py-2" do %>
-            <div class="c-sidebar__icon text-muted">
+            <div class="c-sidebar__icon mr-1 text-center text-muted">
               <i class="fal fa-<%= icon_name %>"></i>
             </div>
 
@@ -218,7 +218,7 @@
 
       <li>
         <%= link_to "https://developers.annict.jp", class: "d-flex justify-content-between py-2", rel: "noopener", target: "_blank" do %>
-          <div class="c-sidebar__icon text-muted">
+          <div class="c-sidebar__icon mr-1 text-center text-muted">
             <i class="fal fa-code"></i>
           </div>
 
@@ -242,7 +242,7 @@
               method: :delete
             }
           ) do %>
-            <div class="c-sidebar__icon text-muted">
+            <div class="c-sidebar__icon mr-1 text-center text-muted">
               <i class="fal fa-sign-out"></i>
             </div>
 
@@ -252,7 +252,7 @@
           <% end %>
         <% else %>
           <%= link_to sign_in_path, class: "d-flex justify-content-between py-2" do %>
-            <div class="c-sidebar__icon text-muted">
+            <div class="c-sidebar__icon mr-1 text-center text-muted">
               <i class="fal fa-sign-in"></i>
             </div>
 
