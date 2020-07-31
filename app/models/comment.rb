@@ -24,7 +24,7 @@
 #
 #  comments_checkin_id_fk  (episode_record_id => episode_records.id) ON DELETE => cascade
 #  comments_user_id_fk     (user_id => users.id) ON DELETE => cascade
-#  fk_rails_...            (work_id => works.id)
+#  fk_rails_...            (work_id => animes.id)
 #
 
 class Comment < ApplicationRecord

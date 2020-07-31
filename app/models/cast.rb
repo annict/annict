@@ -31,7 +31,7 @@
 #
 #  fk_rails_...  (character_id => characters.id)
 #  fk_rails_...  (person_id => people.id)
-#  fk_rails_...  (work_id => works.id)
+#  fk_rails_...  (work_id => animes.id)
 #
 
 class Cast < ApplicationRecord

@@ -33,8 +33,8 @@
 #  fk_rails_...           (episode_record_id => episode_records.id)
 #  fk_rails_...           (multiple_episode_record_id => multiple_episode_records.id)
 #  fk_rails_...           (status_id => statuses.id)
-#  fk_rails_...           (work_id => works.id)
-#  fk_rails_...           (work_record_id => work_records.id)
+#  fk_rails_...           (work_id => animes.id)
+#  fk_rails_...           (work_record_id => anime_records.id)
 #
 
 class Activity < ApplicationRecord

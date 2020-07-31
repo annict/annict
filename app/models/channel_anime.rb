@@ -2,7 +2,7 @@
 
 # == Schema Information
 #
-# Table name: channel_works
+# Table name: channel_animes
 #
 #  id         :bigint           not null, primary key
 #  created_at :datetime
@@ -22,10 +22,10 @@
 #
 #  channel_works_channel_id_fk  (channel_id => channels.id) ON DELETE => cascade
 #  channel_works_user_id_fk     (user_id => users.id) ON DELETE => cascade
-#  channel_works_work_id_fk     (work_id => works.id) ON DELETE => cascade
+#  channel_works_work_id_fk     (work_id => animes.id) ON DELETE => cascade
 #
 
-class ChannelWork < ApplicationRecord
+class ChannelAnime < ApplicationRecord
   belongs_to :channel
   belongs_to :user
   belongs_to :work

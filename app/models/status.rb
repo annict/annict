@@ -23,7 +23,7 @@
 #
 #  fk_rails_...         (oauth_application_id => oauth_applications.id)
 #  statuses_user_id_fk  (user_id => users.id) ON DELETE => cascade
-#  statuses_work_id_fk  (work_id => works.id) ON DELETE => cascade
+#  statuses_work_id_fk  (work_id => animes.id) ON DELETE => cascade
 #
 
 class Status < ApplicationRecord

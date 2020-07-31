@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 # == Schema Information
 #
-# Table name: work_tags
+# Table name: anime_tags
 #
 #  id                  :bigint           not null, primary key
 #  aasm_state          :string           default("published"), not null
@@ -14,13 +14,13 @@
 #
 # Indexes
 #
-#  index_work_tags_on_deleted_at           (deleted_at)
-#  index_work_tags_on_locale               (locale)
-#  index_work_tags_on_name                 (name) UNIQUE
-#  index_work_tags_on_work_taggings_count  (work_taggings_count)
+#  index_anime_tags_on_deleted_at           (deleted_at)
+#  index_anime_tags_on_locale               (locale)
+#  index_anime_tags_on_name                 (name) UNIQUE
+#  index_anime_tags_on_work_taggings_count  (work_taggings_count)
 #
 
-class WorkTag < ApplicationRecord
+class AnimeTag < ApplicationRecord
   include SoftDeletable
 
   has_many :work_taggables, dependent: :destroy

@@ -71,7 +71,9 @@ CREATE TABLE public.activities (
     episode_record_id bigint,
     multiple_episode_record_id bigint,
     work_record_id bigint,
-    activity_group_id bigint NOT NULL
+    activity_group_id bigint NOT NULL,
+    migrated_at timestamp without time zone,
+    mer_processed_at timestamp without time zone
 );
 
 
@@ -107,6 +109,297 @@ CREATE SEQUENCE public.activity_groups_id_seq
 --
 
 ALTER SEQUENCE public.activity_groups_id_seq OWNED BY public.activity_groups.id;
+
+
+--
+-- Name: anime_comments; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.anime_comments (
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    work_id bigint NOT NULL,
+    body character varying NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    locale character varying DEFAULT 'other'::character varying NOT NULL
+);
+
+
+--
+-- Name: anime_comments_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.anime_comments_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: anime_comments_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.anime_comments_id_seq OWNED BY public.anime_comments.id;
+
+
+--
+-- Name: anime_images; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.anime_images (
+    id bigint NOT NULL,
+    work_id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    attachment_file_name character varying,
+    attachment_file_size integer,
+    attachment_content_type character varying,
+    attachment_updated_at timestamp without time zone,
+    copyright character varying DEFAULT ''::character varying NOT NULL,
+    asin character varying DEFAULT ''::character varying NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    color_rgb character varying DEFAULT '255,255,255'::character varying NOT NULL,
+    image_data text NOT NULL
+);
+
+
+--
+-- Name: anime_images_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.anime_images_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: anime_images_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.anime_images_id_seq OWNED BY public.anime_images.id;
+
+
+--
+-- Name: anime_records; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.anime_records (
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    work_id bigint NOT NULL,
+    title character varying DEFAULT ''::character varying,
+    body text NOT NULL,
+    rating_animation_state character varying,
+    rating_music_state character varying,
+    rating_story_state character varying,
+    rating_character_state character varying,
+    rating_overall_state character varying,
+    likes_count integer DEFAULT 0 NOT NULL,
+    impressions_count integer DEFAULT 0 NOT NULL,
+    aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
+    modified_at timestamp without time zone,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    oauth_application_id bigint,
+    locale character varying DEFAULT 'other'::character varying NOT NULL,
+    record_id bigint NOT NULL,
+    deleted_at timestamp without time zone
+);
+
+
+--
+-- Name: anime_records_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.anime_records_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: anime_records_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.anime_records_id_seq OWNED BY public.anime_records.id;
+
+
+--
+-- Name: anime_taggables; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.anime_taggables (
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    work_tag_id bigint NOT NULL,
+    description character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    locale character varying DEFAULT 'other'::character varying NOT NULL
+);
+
+
+--
+-- Name: anime_taggables_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.anime_taggables_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: anime_taggables_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.anime_taggables_id_seq OWNED BY public.anime_taggables.id;
+
+
+--
+-- Name: anime_taggings; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.anime_taggings (
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    work_id bigint NOT NULL,
+    work_tag_id bigint NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: anime_taggings_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.anime_taggings_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: anime_taggings_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.anime_taggings_id_seq OWNED BY public.anime_taggings.id;
+
+
+--
+-- Name: anime_tags; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.anime_tags (
+    id bigint NOT NULL,
+    name character varying NOT NULL,
+    aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
+    work_taggings_count integer DEFAULT 0 NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    locale character varying DEFAULT 'other'::character varying NOT NULL,
+    deleted_at timestamp without time zone
+);
+
+
+--
+-- Name: anime_tags_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.anime_tags_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: anime_tags_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.anime_tags_id_seq OWNED BY public.anime_tags.id;
+
+
+--
+-- Name: animes_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.animes_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: animes; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.animes (
+    id bigint DEFAULT nextval('public.animes_id_seq'::regclass) NOT NULL,
+    season_id bigint,
+    sc_tid integer,
+    title character varying(510) NOT NULL,
+    media integer NOT NULL,
+    official_site_url character varying(510) DEFAULT ''::character varying NOT NULL,
+    wikipedia_url character varying(510) DEFAULT ''::character varying NOT NULL,
+    episodes_count integer DEFAULT 0 NOT NULL,
+    watchers_count integer DEFAULT 0 NOT NULL,
+    released_at date,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone,
+    twitter_username character varying(510) DEFAULT NULL::character varying,
+    twitter_hashtag character varying(510) DEFAULT NULL::character varying,
+    released_at_about character varying,
+    aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
+    number_format_id bigint,
+    title_kana character varying DEFAULT ''::character varying NOT NULL,
+    title_ro character varying DEFAULT ''::character varying NOT NULL,
+    title_en character varying DEFAULT ''::character varying NOT NULL,
+    official_site_url_en character varying DEFAULT ''::character varying NOT NULL,
+    wikipedia_url_en character varying DEFAULT ''::character varying NOT NULL,
+    synopsis text DEFAULT ''::text NOT NULL,
+    synopsis_en text DEFAULT ''::text NOT NULL,
+    synopsis_source character varying DEFAULT ''::character varying NOT NULL,
+    synopsis_source_en character varying DEFAULT ''::character varying NOT NULL,
+    mal_anime_id integer,
+    facebook_og_image_url character varying DEFAULT ''::character varying NOT NULL,
+    twitter_image_url character varying DEFAULT ''::character varying NOT NULL,
+    recommended_image_url character varying DEFAULT ''::character varying NOT NULL,
+    season_year integer,
+    season_name integer,
+    key_pv_id bigint,
+    manual_episodes_count integer,
+    no_episodes boolean DEFAULT false NOT NULL,
+    work_records_count integer DEFAULT 0 NOT NULL,
+    started_on date,
+    ended_on date,
+    score double precision,
+    ratings_count integer DEFAULT 0 NOT NULL,
+    satisfaction_rate double precision,
+    records_count integer DEFAULT 0 NOT NULL,
+    work_records_with_body_count integer DEFAULT 0 NOT NULL,
+    start_episode_raw_number double precision DEFAULT 1.0 NOT NULL,
+    deleted_at timestamp without time zone,
+    title_alter character varying DEFAULT ''::character varying NOT NULL,
+    title_alter_en character varying DEFAULT ''::character varying NOT NULL,
+    unpublished_at timestamp without time zone
+);
 
 
 --
@@ -161,6 +454,32 @@ ALTER SEQUENCE public.casts_id_seq OWNED BY public.casts.id;
 
 
 --
+-- Name: channel_animes_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.channel_animes_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: channel_animes; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.channel_animes (
+    id bigint DEFAULT nextval('public.channel_animes_id_seq'::regclass) NOT NULL,
+    user_id bigint NOT NULL,
+    work_id bigint NOT NULL,
+    channel_id bigint NOT NULL,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone
+);
+
+
+--
 -- Name: channel_groups_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -185,32 +504,6 @@ CREATE TABLE public.channel_groups (
     updated_at timestamp with time zone,
     deleted_at timestamp without time zone,
     unpublished_at timestamp without time zone
-);
-
-
---
--- Name: channel_works_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.channel_works_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: channel_works; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.channel_works (
-    id bigint DEFAULT nextval('public.channel_works_id_seq'::regclass) NOT NULL,
-    user_id bigint NOT NULL,
-    work_id bigint NOT NULL,
-    channel_id bigint NOT NULL,
-    created_at timestamp with time zone,
-    updated_at timestamp with time zone
 );
 
 
@@ -1877,6 +2170,43 @@ CREATE TABLE public.series (
 
 
 --
+-- Name: series_animes; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.series_animes (
+    id bigint NOT NULL,
+    series_id bigint NOT NULL,
+    work_id bigint NOT NULL,
+    summary character varying DEFAULT ''::character varying NOT NULL,
+    summary_en character varying DEFAULT ''::character varying NOT NULL,
+    aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    deleted_at timestamp without time zone,
+    unpublished_at timestamp without time zone
+);
+
+
+--
+-- Name: series_animes_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.series_animes_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: series_animes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.series_animes_id_seq OWNED BY public.series_animes.id;
+
+
+--
 -- Name: series_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -1893,43 +2223,6 @@ CREATE SEQUENCE public.series_id_seq
 --
 
 ALTER SEQUENCE public.series_id_seq OWNED BY public.series.id;
-
-
---
--- Name: series_works; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.series_works (
-    id bigint NOT NULL,
-    series_id bigint NOT NULL,
-    work_id bigint NOT NULL,
-    summary character varying DEFAULT ''::character varying NOT NULL,
-    summary_en character varying DEFAULT ''::character varying NOT NULL,
-    aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    deleted_at timestamp without time zone,
-    unpublished_at timestamp without time zone
-);
-
-
---
--- Name: series_works_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.series_works_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: series_works_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.series_works_id_seq OWNED BY public.series_works.id;
 
 
 --
@@ -2547,301 +2840,52 @@ ALTER SEQUENCE public.vod_titles_id_seq OWNED BY public.vod_titles.id;
 
 
 --
--- Name: work_comments; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.work_comments (
-    id bigint NOT NULL,
-    user_id bigint NOT NULL,
-    work_id bigint NOT NULL,
-    body character varying NOT NULL,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    locale character varying DEFAULT 'other'::character varying NOT NULL
-);
-
-
---
--- Name: work_comments_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.work_comments_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: work_comments_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.work_comments_id_seq OWNED BY public.work_comments.id;
-
-
---
--- Name: work_images; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.work_images (
-    id bigint NOT NULL,
-    work_id bigint NOT NULL,
-    user_id bigint NOT NULL,
-    attachment_file_name character varying,
-    attachment_file_size integer,
-    attachment_content_type character varying,
-    attachment_updated_at timestamp without time zone,
-    copyright character varying DEFAULT ''::character varying NOT NULL,
-    asin character varying DEFAULT ''::character varying NOT NULL,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    color_rgb character varying DEFAULT '255,255,255'::character varying NOT NULL,
-    image_data text NOT NULL
-);
-
-
---
--- Name: work_images_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.work_images_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: work_images_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.work_images_id_seq OWNED BY public.work_images.id;
-
-
---
--- Name: work_records; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.work_records (
-    id bigint NOT NULL,
-    user_id bigint NOT NULL,
-    work_id bigint NOT NULL,
-    title character varying DEFAULT ''::character varying,
-    body text NOT NULL,
-    rating_animation_state character varying,
-    rating_music_state character varying,
-    rating_story_state character varying,
-    rating_character_state character varying,
-    rating_overall_state character varying,
-    likes_count integer DEFAULT 0 NOT NULL,
-    impressions_count integer DEFAULT 0 NOT NULL,
-    aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
-    modified_at timestamp without time zone,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    oauth_application_id bigint,
-    locale character varying DEFAULT 'other'::character varying NOT NULL,
-    record_id bigint NOT NULL,
-    deleted_at timestamp without time zone
-);
-
-
---
--- Name: work_records_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.work_records_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: work_records_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.work_records_id_seq OWNED BY public.work_records.id;
-
-
---
--- Name: work_taggables; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.work_taggables (
-    id bigint NOT NULL,
-    user_id bigint NOT NULL,
-    work_tag_id bigint NOT NULL,
-    description character varying,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    locale character varying DEFAULT 'other'::character varying NOT NULL
-);
-
-
---
--- Name: work_taggables_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.work_taggables_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: work_taggables_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.work_taggables_id_seq OWNED BY public.work_taggables.id;
-
-
---
--- Name: work_taggings; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.work_taggings (
-    id bigint NOT NULL,
-    user_id bigint NOT NULL,
-    work_id bigint NOT NULL,
-    work_tag_id bigint NOT NULL,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
-);
-
-
---
--- Name: work_taggings_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.work_taggings_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: work_taggings_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.work_taggings_id_seq OWNED BY public.work_taggings.id;
-
-
---
--- Name: work_tags; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.work_tags (
-    id bigint NOT NULL,
-    name character varying NOT NULL,
-    aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
-    work_taggings_count integer DEFAULT 0 NOT NULL,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    locale character varying DEFAULT 'other'::character varying NOT NULL,
-    deleted_at timestamp without time zone
-);
-
-
---
--- Name: work_tags_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.work_tags_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: work_tags_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.work_tags_id_seq OWNED BY public.work_tags.id;
-
-
---
--- Name: works_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.works_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: works; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.works (
-    id bigint DEFAULT nextval('public.works_id_seq'::regclass) NOT NULL,
-    season_id bigint,
-    sc_tid integer,
-    title character varying(510) NOT NULL,
-    media integer NOT NULL,
-    official_site_url character varying(510) DEFAULT ''::character varying NOT NULL,
-    wikipedia_url character varying(510) DEFAULT ''::character varying NOT NULL,
-    episodes_count integer DEFAULT 0 NOT NULL,
-    watchers_count integer DEFAULT 0 NOT NULL,
-    released_at date,
-    created_at timestamp with time zone,
-    updated_at timestamp with time zone,
-    twitter_username character varying(510) DEFAULT NULL::character varying,
-    twitter_hashtag character varying(510) DEFAULT NULL::character varying,
-    released_at_about character varying,
-    aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
-    number_format_id bigint,
-    title_kana character varying DEFAULT ''::character varying NOT NULL,
-    title_ro character varying DEFAULT ''::character varying NOT NULL,
-    title_en character varying DEFAULT ''::character varying NOT NULL,
-    official_site_url_en character varying DEFAULT ''::character varying NOT NULL,
-    wikipedia_url_en character varying DEFAULT ''::character varying NOT NULL,
-    synopsis text DEFAULT ''::text NOT NULL,
-    synopsis_en text DEFAULT ''::text NOT NULL,
-    synopsis_source character varying DEFAULT ''::character varying NOT NULL,
-    synopsis_source_en character varying DEFAULT ''::character varying NOT NULL,
-    mal_anime_id integer,
-    facebook_og_image_url character varying DEFAULT ''::character varying NOT NULL,
-    twitter_image_url character varying DEFAULT ''::character varying NOT NULL,
-    recommended_image_url character varying DEFAULT ''::character varying NOT NULL,
-    season_year integer,
-    season_name integer,
-    key_pv_id bigint,
-    manual_episodes_count integer,
-    no_episodes boolean DEFAULT false NOT NULL,
-    work_records_count integer DEFAULT 0 NOT NULL,
-    started_on date,
-    ended_on date,
-    score double precision,
-    ratings_count integer DEFAULT 0 NOT NULL,
-    satisfaction_rate double precision,
-    records_count integer DEFAULT 0 NOT NULL,
-    work_records_with_body_count integer DEFAULT 0 NOT NULL,
-    start_episode_raw_number double precision DEFAULT 1.0 NOT NULL,
-    deleted_at timestamp without time zone,
-    title_alter character varying DEFAULT ''::character varying NOT NULL,
-    title_alter_en character varying DEFAULT ''::character varying NOT NULL,
-    unpublished_at timestamp without time zone
-);
-
-
---
 -- Name: activity_groups id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.activity_groups ALTER COLUMN id SET DEFAULT nextval('public.activity_groups_id_seq'::regclass);
+
+
+--
+-- Name: anime_comments id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.anime_comments ALTER COLUMN id SET DEFAULT nextval('public.anime_comments_id_seq'::regclass);
+
+
+--
+-- Name: anime_images id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.anime_images ALTER COLUMN id SET DEFAULT nextval('public.anime_images_id_seq'::regclass);
+
+
+--
+-- Name: anime_records id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.anime_records ALTER COLUMN id SET DEFAULT nextval('public.anime_records_id_seq'::regclass);
+
+
+--
+-- Name: anime_taggables id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.anime_taggables ALTER COLUMN id SET DEFAULT nextval('public.anime_taggables_id_seq'::regclass);
+
+
+--
+-- Name: anime_taggings id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.anime_taggings ALTER COLUMN id SET DEFAULT nextval('public.anime_taggings_id_seq'::regclass);
+
+
+--
+-- Name: anime_tags id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.anime_tags ALTER COLUMN id SET DEFAULT nextval('public.anime_tags_id_seq'::regclass);
 
 
 --
@@ -3097,10 +3141,10 @@ ALTER TABLE ONLY public.series ALTER COLUMN id SET DEFAULT nextval('public.serie
 
 
 --
--- Name: series_works id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: series_animes id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.series_works ALTER COLUMN id SET DEFAULT nextval('public.series_works_id_seq'::regclass);
+ALTER TABLE ONLY public.series_animes ALTER COLUMN id SET DEFAULT nextval('public.series_animes_id_seq'::regclass);
 
 
 --
@@ -3174,48 +3218,6 @@ ALTER TABLE ONLY public.vod_titles ALTER COLUMN id SET DEFAULT nextval('public.v
 
 
 --
--- Name: work_comments id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.work_comments ALTER COLUMN id SET DEFAULT nextval('public.work_comments_id_seq'::regclass);
-
-
---
--- Name: work_images id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.work_images ALTER COLUMN id SET DEFAULT nextval('public.work_images_id_seq'::regclass);
-
-
---
--- Name: work_records id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.work_records ALTER COLUMN id SET DEFAULT nextval('public.work_records_id_seq'::regclass);
-
-
---
--- Name: work_taggables id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.work_taggables ALTER COLUMN id SET DEFAULT nextval('public.work_taggables_id_seq'::regclass);
-
-
---
--- Name: work_taggings id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.work_taggings ALTER COLUMN id SET DEFAULT nextval('public.work_taggings_id_seq'::regclass);
-
-
---
--- Name: work_tags id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.work_tags ALTER COLUMN id SET DEFAULT nextval('public.work_tags_id_seq'::regclass);
-
-
---
 -- Name: activities activities_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3229,6 +3231,62 @@ ALTER TABLE ONLY public.activities
 
 ALTER TABLE ONLY public.activity_groups
     ADD CONSTRAINT activity_groups_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: anime_comments anime_comments_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.anime_comments
+    ADD CONSTRAINT anime_comments_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: anime_images anime_images_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.anime_images
+    ADD CONSTRAINT anime_images_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: anime_records anime_records_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.anime_records
+    ADD CONSTRAINT anime_records_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: anime_taggables anime_taggables_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.anime_taggables
+    ADD CONSTRAINT anime_taggables_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: anime_taggings anime_taggings_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.anime_taggings
+    ADD CONSTRAINT anime_taggings_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: anime_tags anime_tags_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.anime_tags
+    ADD CONSTRAINT anime_tags_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: animes animes_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.animes
+    ADD CONSTRAINT animes_pkey PRIMARY KEY (id);
 
 
 --
@@ -3248,6 +3306,14 @@ ALTER TABLE ONLY public.casts
 
 
 --
+-- Name: channel_animes channel_animes_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.channel_animes
+    ADD CONSTRAINT channel_animes_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: channel_groups channel_groups_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3264,18 +3330,10 @@ ALTER TABLE ONLY public.channel_groups
 
 
 --
--- Name: channel_works channel_works_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: channel_animes channel_works_user_id_work_id_channel_id_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.channel_works
-    ADD CONSTRAINT channel_works_pkey PRIMARY KEY (id);
-
-
---
--- Name: channel_works channel_works_user_id_work_id_channel_id_key; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.channel_works
+ALTER TABLE ONLY public.channel_animes
     ADD CONSTRAINT channel_works_user_id_work_id_channel_id_key UNIQUE (user_id, work_id, channel_id);
 
 
@@ -3712,19 +3770,19 @@ ALTER TABLE ONLY public.seasons
 
 
 --
+-- Name: series_animes series_animes_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.series_animes
+    ADD CONSTRAINT series_animes_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: series series_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.series
     ADD CONSTRAINT series_pkey PRIMARY KEY (id);
-
-
---
--- Name: series_works series_works_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.series_works
-    ADD CONSTRAINT series_works_pkey PRIMARY KEY (id);
 
 
 --
@@ -3888,62 +3946,6 @@ ALTER TABLE ONLY public.vod_titles
 
 
 --
--- Name: work_comments work_comments_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.work_comments
-    ADD CONSTRAINT work_comments_pkey PRIMARY KEY (id);
-
-
---
--- Name: work_images work_images_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.work_images
-    ADD CONSTRAINT work_images_pkey PRIMARY KEY (id);
-
-
---
--- Name: work_records work_records_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.work_records
-    ADD CONSTRAINT work_records_pkey PRIMARY KEY (id);
-
-
---
--- Name: work_taggables work_taggables_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.work_taggables
-    ADD CONSTRAINT work_taggables_pkey PRIMARY KEY (id);
-
-
---
--- Name: work_taggings work_taggings_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.work_taggings
-    ADD CONSTRAINT work_taggings_pkey PRIMARY KEY (id);
-
-
---
--- Name: work_tags work_tags_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.work_tags
-    ADD CONSTRAINT work_tags_pkey PRIMARY KEY (id);
-
-
---
--- Name: works works_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.works
-    ADD CONSTRAINT works_pkey PRIMARY KEY (id);
-
-
---
 -- Name: activities_user_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3954,21 +3956,21 @@ CREATE INDEX activities_user_id_idx ON public.activities USING btree (user_id);
 -- Name: channel_works_channel_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX channel_works_channel_id_idx ON public.channel_works USING btree (channel_id);
+CREATE INDEX channel_works_channel_id_idx ON public.channel_animes USING btree (channel_id);
 
 
 --
 -- Name: channel_works_user_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX channel_works_user_id_idx ON public.channel_works USING btree (user_id);
+CREATE INDEX channel_works_user_id_idx ON public.channel_animes USING btree (user_id);
 
 
 --
 -- Name: channel_works_work_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX channel_works_work_id_idx ON public.channel_works USING btree (work_id);
+CREATE INDEX channel_works_work_id_idx ON public.channel_animes USING btree (work_id);
 
 
 --
@@ -4109,6 +4111,251 @@ CREATE INDEX index_activity_groups_on_created_at ON public.activity_groups USING
 --
 
 CREATE INDEX index_activity_groups_on_user_id ON public.activity_groups USING btree (user_id);
+
+
+--
+-- Name: index_anime_comments_on_locale; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_anime_comments_on_locale ON public.anime_comments USING btree (locale);
+
+
+--
+-- Name: index_anime_comments_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_anime_comments_on_user_id ON public.anime_comments USING btree (user_id);
+
+
+--
+-- Name: index_anime_comments_on_user_id_and_work_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_anime_comments_on_user_id_and_work_id ON public.anime_comments USING btree (user_id, work_id);
+
+
+--
+-- Name: index_anime_comments_on_work_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_anime_comments_on_work_id ON public.anime_comments USING btree (work_id);
+
+
+--
+-- Name: index_anime_images_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_anime_images_on_user_id ON public.anime_images USING btree (user_id);
+
+
+--
+-- Name: index_anime_images_on_work_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_anime_images_on_work_id ON public.anime_images USING btree (work_id);
+
+
+--
+-- Name: index_anime_records_on_deleted_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_anime_records_on_deleted_at ON public.anime_records USING btree (deleted_at);
+
+
+--
+-- Name: index_anime_records_on_locale; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_anime_records_on_locale ON public.anime_records USING btree (locale);
+
+
+--
+-- Name: index_anime_records_on_oauth_application_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_anime_records_on_oauth_application_id ON public.anime_records USING btree (oauth_application_id);
+
+
+--
+-- Name: index_anime_records_on_record_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_anime_records_on_record_id ON public.anime_records USING btree (record_id);
+
+
+--
+-- Name: index_anime_records_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_anime_records_on_user_id ON public.anime_records USING btree (user_id);
+
+
+--
+-- Name: index_anime_records_on_work_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_anime_records_on_work_id ON public.anime_records USING btree (work_id);
+
+
+--
+-- Name: index_anime_taggables_on_locale; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_anime_taggables_on_locale ON public.anime_taggables USING btree (locale);
+
+
+--
+-- Name: index_anime_taggables_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_anime_taggables_on_user_id ON public.anime_taggables USING btree (user_id);
+
+
+--
+-- Name: index_anime_taggables_on_user_id_and_work_tag_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_anime_taggables_on_user_id_and_work_tag_id ON public.anime_taggables USING btree (user_id, work_tag_id);
+
+
+--
+-- Name: index_anime_taggables_on_work_tag_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_anime_taggables_on_work_tag_id ON public.anime_taggables USING btree (work_tag_id);
+
+
+--
+-- Name: index_anime_taggings_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_anime_taggings_on_user_id ON public.anime_taggings USING btree (user_id);
+
+
+--
+-- Name: index_anime_taggings_on_user_id_and_work_id_and_work_tag_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_anime_taggings_on_user_id_and_work_id_and_work_tag_id ON public.anime_taggings USING btree (user_id, work_id, work_tag_id);
+
+
+--
+-- Name: index_anime_taggings_on_work_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_anime_taggings_on_work_id ON public.anime_taggings USING btree (work_id);
+
+
+--
+-- Name: index_anime_taggings_on_work_tag_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_anime_taggings_on_work_tag_id ON public.anime_taggings USING btree (work_tag_id);
+
+
+--
+-- Name: index_anime_tags_on_deleted_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_anime_tags_on_deleted_at ON public.anime_tags USING btree (deleted_at);
+
+
+--
+-- Name: index_anime_tags_on_locale; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_anime_tags_on_locale ON public.anime_tags USING btree (locale);
+
+
+--
+-- Name: index_anime_tags_on_name; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_anime_tags_on_name ON public.anime_tags USING btree (name);
+
+
+--
+-- Name: index_anime_tags_on_work_taggings_count; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_anime_tags_on_work_taggings_count ON public.anime_tags USING btree (work_taggings_count);
+
+
+--
+-- Name: index_animes_on_aasm_state; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_animes_on_aasm_state ON public.animes USING btree (aasm_state);
+
+
+--
+-- Name: index_animes_on_deleted_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_animes_on_deleted_at ON public.animes USING btree (deleted_at);
+
+
+--
+-- Name: index_animes_on_key_pv_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_animes_on_key_pv_id ON public.animes USING btree (key_pv_id);
+
+
+--
+-- Name: index_animes_on_number_format_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_animes_on_number_format_id ON public.animes USING btree (number_format_id);
+
+
+--
+-- Name: index_animes_on_ratings_count; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_animes_on_ratings_count ON public.animes USING btree (ratings_count);
+
+
+--
+-- Name: index_animes_on_satisfaction_rate; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_animes_on_satisfaction_rate ON public.animes USING btree (satisfaction_rate);
+
+
+--
+-- Name: index_animes_on_satisfaction_rate_and_ratings_count; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_animes_on_satisfaction_rate_and_ratings_count ON public.animes USING btree (satisfaction_rate, ratings_count);
+
+
+--
+-- Name: index_animes_on_score; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_animes_on_score ON public.animes USING btree (score);
+
+
+--
+-- Name: index_animes_on_season_year; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_animes_on_season_year ON public.animes USING btree (season_year);
+
+
+--
+-- Name: index_animes_on_season_year_and_season_name; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_animes_on_season_year_and_season_name ON public.animes USING btree (season_year, season_name);
+
+
+--
+-- Name: index_animes_on_unpublished_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_animes_on_unpublished_at ON public.animes USING btree (unpublished_at);
 
 
 --
@@ -5043,6 +5290,41 @@ CREATE UNIQUE INDEX index_seasons_on_year_and_name ON public.seasons USING btree
 
 
 --
+-- Name: index_series_animes_on_deleted_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_series_animes_on_deleted_at ON public.series_animes USING btree (deleted_at);
+
+
+--
+-- Name: index_series_animes_on_series_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_series_animes_on_series_id ON public.series_animes USING btree (series_id);
+
+
+--
+-- Name: index_series_animes_on_series_id_and_work_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_series_animes_on_series_id_and_work_id ON public.series_animes USING btree (series_id, work_id);
+
+
+--
+-- Name: index_series_animes_on_unpublished_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_series_animes_on_unpublished_at ON public.series_animes USING btree (unpublished_at);
+
+
+--
+-- Name: index_series_animes_on_work_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_series_animes_on_work_id ON public.series_animes USING btree (work_id);
+
+
+--
 -- Name: index_series_on_deleted_at; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -5061,41 +5343,6 @@ CREATE UNIQUE INDEX index_series_on_name ON public.series USING btree (name);
 --
 
 CREATE INDEX index_series_on_unpublished_at ON public.series USING btree (unpublished_at);
-
-
---
--- Name: index_series_works_on_deleted_at; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_series_works_on_deleted_at ON public.series_works USING btree (deleted_at);
-
-
---
--- Name: index_series_works_on_series_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_series_works_on_series_id ON public.series_works USING btree (series_id);
-
-
---
--- Name: index_series_works_on_series_id_and_work_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_series_works_on_series_id_and_work_id ON public.series_works USING btree (series_id, work_id);
-
-
---
--- Name: index_series_works_on_unpublished_at; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_series_works_on_unpublished_at ON public.series_works USING btree (unpublished_at);
-
-
---
--- Name: index_series_works_on_work_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_series_works_on_work_id ON public.series_works USING btree (work_id);
 
 
 --
@@ -5365,251 +5612,6 @@ CREATE INDEX index_vod_titles_on_work_id ON public.vod_titles USING btree (work_
 
 
 --
--- Name: index_work_comments_on_locale; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_work_comments_on_locale ON public.work_comments USING btree (locale);
-
-
---
--- Name: index_work_comments_on_user_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_work_comments_on_user_id ON public.work_comments USING btree (user_id);
-
-
---
--- Name: index_work_comments_on_user_id_and_work_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_work_comments_on_user_id_and_work_id ON public.work_comments USING btree (user_id, work_id);
-
-
---
--- Name: index_work_comments_on_work_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_work_comments_on_work_id ON public.work_comments USING btree (work_id);
-
-
---
--- Name: index_work_images_on_user_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_work_images_on_user_id ON public.work_images USING btree (user_id);
-
-
---
--- Name: index_work_images_on_work_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_work_images_on_work_id ON public.work_images USING btree (work_id);
-
-
---
--- Name: index_work_records_on_deleted_at; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_work_records_on_deleted_at ON public.work_records USING btree (deleted_at);
-
-
---
--- Name: index_work_records_on_locale; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_work_records_on_locale ON public.work_records USING btree (locale);
-
-
---
--- Name: index_work_records_on_oauth_application_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_work_records_on_oauth_application_id ON public.work_records USING btree (oauth_application_id);
-
-
---
--- Name: index_work_records_on_record_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_work_records_on_record_id ON public.work_records USING btree (record_id);
-
-
---
--- Name: index_work_records_on_user_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_work_records_on_user_id ON public.work_records USING btree (user_id);
-
-
---
--- Name: index_work_records_on_work_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_work_records_on_work_id ON public.work_records USING btree (work_id);
-
-
---
--- Name: index_work_taggables_on_locale; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_work_taggables_on_locale ON public.work_taggables USING btree (locale);
-
-
---
--- Name: index_work_taggables_on_user_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_work_taggables_on_user_id ON public.work_taggables USING btree (user_id);
-
-
---
--- Name: index_work_taggables_on_user_id_and_work_tag_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_work_taggables_on_user_id_and_work_tag_id ON public.work_taggables USING btree (user_id, work_tag_id);
-
-
---
--- Name: index_work_taggables_on_work_tag_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_work_taggables_on_work_tag_id ON public.work_taggables USING btree (work_tag_id);
-
-
---
--- Name: index_work_taggings_on_user_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_work_taggings_on_user_id ON public.work_taggings USING btree (user_id);
-
-
---
--- Name: index_work_taggings_on_user_id_and_work_id_and_work_tag_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_work_taggings_on_user_id_and_work_id_and_work_tag_id ON public.work_taggings USING btree (user_id, work_id, work_tag_id);
-
-
---
--- Name: index_work_taggings_on_work_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_work_taggings_on_work_id ON public.work_taggings USING btree (work_id);
-
-
---
--- Name: index_work_taggings_on_work_tag_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_work_taggings_on_work_tag_id ON public.work_taggings USING btree (work_tag_id);
-
-
---
--- Name: index_work_tags_on_deleted_at; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_work_tags_on_deleted_at ON public.work_tags USING btree (deleted_at);
-
-
---
--- Name: index_work_tags_on_locale; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_work_tags_on_locale ON public.work_tags USING btree (locale);
-
-
---
--- Name: index_work_tags_on_name; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_work_tags_on_name ON public.work_tags USING btree (name);
-
-
---
--- Name: index_work_tags_on_work_taggings_count; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_work_tags_on_work_taggings_count ON public.work_tags USING btree (work_taggings_count);
-
-
---
--- Name: index_works_on_aasm_state; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_works_on_aasm_state ON public.works USING btree (aasm_state);
-
-
---
--- Name: index_works_on_deleted_at; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_works_on_deleted_at ON public.works USING btree (deleted_at);
-
-
---
--- Name: index_works_on_key_pv_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_works_on_key_pv_id ON public.works USING btree (key_pv_id);
-
-
---
--- Name: index_works_on_number_format_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_works_on_number_format_id ON public.works USING btree (number_format_id);
-
-
---
--- Name: index_works_on_ratings_count; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_works_on_ratings_count ON public.works USING btree (ratings_count);
-
-
---
--- Name: index_works_on_satisfaction_rate; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_works_on_satisfaction_rate ON public.works USING btree (satisfaction_rate);
-
-
---
--- Name: index_works_on_satisfaction_rate_and_ratings_count; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_works_on_satisfaction_rate_and_ratings_count ON public.works USING btree (satisfaction_rate, ratings_count);
-
-
---
--- Name: index_works_on_score; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_works_on_score ON public.works USING btree (score);
-
-
---
--- Name: index_works_on_season_year; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_works_on_season_year ON public.works USING btree (season_year);
-
-
---
--- Name: index_works_on_season_year_and_season_name; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_works_on_season_year_and_season_name ON public.works USING btree (season_year, season_name);
-
-
---
--- Name: index_works_on_unpublished_at; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_works_on_unpublished_at ON public.works USING btree (unpublished_at);
-
-
---
 -- Name: likes_user_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -5697,7 +5699,7 @@ CREATE INDEX statuses_work_id_idx ON public.statuses USING btree (work_id);
 -- Name: works_season_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX works_season_id_idx ON public.works USING btree (season_id);
+CREATE INDEX works_season_id_idx ON public.animes USING btree (season_id);
 
 
 --
@@ -5709,27 +5711,27 @@ ALTER TABLE ONLY public.activities
 
 
 --
--- Name: channel_works channel_works_channel_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: channel_animes channel_works_channel_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.channel_works
+ALTER TABLE ONLY public.channel_animes
     ADD CONSTRAINT channel_works_channel_id_fk FOREIGN KEY (channel_id) REFERENCES public.channels(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
 
 
 --
--- Name: channel_works channel_works_user_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: channel_animes channel_works_user_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.channel_works
+ALTER TABLE ONLY public.channel_animes
     ADD CONSTRAINT channel_works_user_id_fk FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
 
 
 --
--- Name: channel_works channel_works_work_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: channel_animes channel_works_work_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.channel_works
-    ADD CONSTRAINT channel_works_work_id_fk FOREIGN KEY (work_id) REFERENCES public.works(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE ONLY public.channel_animes
+    ADD CONSTRAINT channel_works_work_id_fk FOREIGN KEY (work_id) REFERENCES public.animes(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
 
 
 --
@@ -5761,7 +5763,7 @@ ALTER TABLE ONLY public.episode_records
 --
 
 ALTER TABLE ONLY public.episode_records
-    ADD CONSTRAINT checkins_work_id_fk FOREIGN KEY (work_id) REFERENCES public.works(id);
+    ADD CONSTRAINT checkins_work_id_fk FOREIGN KEY (work_id) REFERENCES public.animes(id);
 
 
 --
@@ -5785,7 +5787,7 @@ ALTER TABLE ONLY public.comments
 --
 
 ALTER TABLE ONLY public.episodes
-    ADD CONSTRAINT episodes_work_id_fk FOREIGN KEY (work_id) REFERENCES public.works(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+    ADD CONSTRAINT episodes_work_id_fk FOREIGN KEY (work_id) REFERENCES public.animes(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
 
 
 --
@@ -5805,11 +5807,11 @@ ALTER TABLE ONLY public.finished_tips
 
 
 --
--- Name: work_comments fk_rails_00410fd248; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: anime_comments fk_rails_00410fd248; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.work_comments
-    ADD CONSTRAINT fk_rails_00410fd248 FOREIGN KEY (work_id) REFERENCES public.works(id);
+ALTER TABLE ONLY public.anime_comments
+    ADD CONSTRAINT fk_rails_00410fd248 FOREIGN KEY (work_id) REFERENCES public.animes(id);
 
 
 --
@@ -5825,22 +5827,22 @@ ALTER TABLE ONLY public.character_images
 --
 
 ALTER TABLE ONLY public.comments
-    ADD CONSTRAINT fk_rails_09d346abb6 FOREIGN KEY (work_id) REFERENCES public.works(id);
+    ADD CONSTRAINT fk_rails_09d346abb6 FOREIGN KEY (work_id) REFERENCES public.animes(id);
 
 
 --
--- Name: series_works fk_rails_0b7ef06239; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: series_animes fk_rails_0b7ef06239; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.series_works
-    ADD CONSTRAINT fk_rails_0b7ef06239 FOREIGN KEY (work_id) REFERENCES public.works(id);
+ALTER TABLE ONLY public.series_animes
+    ADD CONSTRAINT fk_rails_0b7ef06239 FOREIGN KEY (work_id) REFERENCES public.animes(id);
 
 
 --
--- Name: work_taggings fk_rails_0bc79546ba; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: anime_taggings fk_rails_0bc79546ba; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.work_taggings
+ALTER TABLE ONLY public.anime_taggings
     ADD CONSTRAINT fk_rails_0bc79546ba FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
@@ -5857,7 +5859,7 @@ ALTER TABLE ONLY public.db_comments
 --
 
 ALTER TABLE ONLY public.activities
-    ADD CONSTRAINT fk_rails_24160df6bb FOREIGN KEY (work_id) REFERENCES public.works(id);
+    ADD CONSTRAINT fk_rails_24160df6bb FOREIGN KEY (work_id) REFERENCES public.animes(id);
 
 
 --
@@ -5865,7 +5867,7 @@ ALTER TABLE ONLY public.activities
 --
 
 ALTER TABLE ONLY public.records
-    ADD CONSTRAINT fk_rails_27f794c2d6 FOREIGN KEY (work_id) REFERENCES public.works(id);
+    ADD CONSTRAINT fk_rails_27f794c2d6 FOREIGN KEY (work_id) REFERENCES public.animes(id);
 
 
 --
@@ -5881,7 +5883,7 @@ ALTER TABLE ONLY public.vod_titles
 --
 
 ALTER TABLE ONLY public.collection_items
-    ADD CONSTRAINT fk_rails_31b8b5e78c FOREIGN KEY (work_id) REFERENCES public.works(id);
+    ADD CONSTRAINT fk_rails_31b8b5e78c FOREIGN KEY (work_id) REFERENCES public.animes(id);
 
 
 --
@@ -5893,11 +5895,11 @@ ALTER TABLE ONLY public.oauth_access_grants
 
 
 --
--- Name: work_taggings fk_rails_3431822583; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: anime_taggings fk_rails_3431822583; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.work_taggings
-    ADD CONSTRAINT fk_rails_3431822583 FOREIGN KEY (work_tag_id) REFERENCES public.work_tags(id);
+ALTER TABLE ONLY public.anime_taggings
+    ADD CONSTRAINT fk_rails_3431822583 FOREIGN KEY (work_tag_id) REFERENCES public.anime_tags(id);
 
 
 --
@@ -5913,14 +5915,14 @@ ALTER TABLE ONLY public.userland_project_members
 --
 
 ALTER TABLE ONLY public.staffs
-    ADD CONSTRAINT fk_rails_39944239d2 FOREIGN KEY (work_id) REFERENCES public.works(id);
+    ADD CONSTRAINT fk_rails_39944239d2 FOREIGN KEY (work_id) REFERENCES public.animes(id);
 
 
 --
--- Name: work_images fk_rails_3bad625b28; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: anime_images fk_rails_3bad625b28; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.work_images
+ALTER TABLE ONLY public.anime_images
     ADD CONSTRAINT fk_rails_3bad625b28 FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
@@ -5933,18 +5935,18 @@ ALTER TABLE ONLY public.person_favorites
 
 
 --
--- Name: work_taggables fk_rails_3fbf41384e; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: anime_taggables fk_rails_3fbf41384e; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.work_taggables
-    ADD CONSTRAINT fk_rails_3fbf41384e FOREIGN KEY (work_tag_id) REFERENCES public.work_tags(id);
+ALTER TABLE ONLY public.anime_taggables
+    ADD CONSTRAINT fk_rails_3fbf41384e FOREIGN KEY (work_tag_id) REFERENCES public.anime_tags(id);
 
 
 --
--- Name: works fk_rails_41b1e89600; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: animes fk_rails_41b1e89600; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.works
+ALTER TABLE ONLY public.animes
     ADD CONSTRAINT fk_rails_41b1e89600 FOREIGN KEY (number_format_id) REFERENCES public.number_formats(id);
 
 
@@ -6017,7 +6019,7 @@ ALTER TABLE ONLY public.activities
 --
 
 ALTER TABLE ONLY public.programs
-    ADD CONSTRAINT fk_rails_513ea7b8c6 FOREIGN KEY (work_id) REFERENCES public.works(id);
+    ADD CONSTRAINT fk_rails_513ea7b8c6 FOREIGN KEY (work_id) REFERENCES public.animes(id);
 
 
 --
@@ -6033,7 +6035,7 @@ ALTER TABLE ONLY public.reactions
 --
 
 ALTER TABLE ONLY public.trailers
-    ADD CONSTRAINT fk_rails_5751118f69 FOREIGN KEY (work_id) REFERENCES public.works(id);
+    ADD CONSTRAINT fk_rails_5751118f69 FOREIGN KEY (work_id) REFERENCES public.animes(id);
 
 
 --
@@ -6061,11 +6063,11 @@ ALTER TABLE ONLY public.email_notifications
 
 
 --
--- Name: work_taggings fk_rails_61b358478b; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: anime_taggings fk_rails_61b358478b; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.work_taggings
-    ADD CONSTRAINT fk_rails_61b358478b FOREIGN KEY (work_id) REFERENCES public.works(id);
+ALTER TABLE ONLY public.anime_taggings
+    ADD CONSTRAINT fk_rails_61b358478b FOREIGN KEY (work_id) REFERENCES public.animes(id);
 
 
 --
@@ -6117,10 +6119,10 @@ ALTER TABLE ONLY public.episodes
 
 
 --
--- Name: work_records fk_rails_74a66bd6c5; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: anime_records fk_rails_74a66bd6c5; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.work_records
+ALTER TABLE ONLY public.anime_records
     ADD CONSTRAINT fk_rails_74a66bd6c5 FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
@@ -6177,7 +6179,7 @@ ALTER TABLE ONLY public.records
 --
 
 ALTER TABLE ONLY public.library_entries
-    ADD CONSTRAINT fk_rails_963acfc4d0 FOREIGN KEY (work_id) REFERENCES public.works(id);
+    ADD CONSTRAINT fk_rails_963acfc4d0 FOREIGN KEY (work_id) REFERENCES public.animes(id);
 
 
 --
@@ -6185,7 +6187,7 @@ ALTER TABLE ONLY public.library_entries
 --
 
 ALTER TABLE ONLY public.casts
-    ADD CONSTRAINT fk_rails_9762f07eaf FOREIGN KEY (work_id) REFERENCES public.works(id);
+    ADD CONSTRAINT fk_rails_9762f07eaf FOREIGN KEY (work_id) REFERENCES public.animes(id);
 
 
 --
@@ -6213,10 +6215,10 @@ ALTER TABLE ONLY public.collections
 
 
 --
--- Name: work_taggables fk_rails_9b7494f869; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: anime_taggables fk_rails_9b7494f869; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.work_taggables
+ALTER TABLE ONLY public.anime_taggables
     ADD CONSTRAINT fk_rails_9b7494f869 FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
@@ -6289,14 +6291,14 @@ ALTER TABLE ONLY public.collection_items
 --
 
 ALTER TABLE ONLY public.activities
-    ADD CONSTRAINT fk_rails_b2055953e1 FOREIGN KEY (work_record_id) REFERENCES public.work_records(id);
+    ADD CONSTRAINT fk_rails_b2055953e1 FOREIGN KEY (work_record_id) REFERENCES public.anime_records(id);
 
 
 --
--- Name: work_records fk_rails_b2885fe9d3; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: anime_records fk_rails_b2885fe9d3; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.work_records
+ALTER TABLE ONLY public.anime_records
     ADD CONSTRAINT fk_rails_b2885fe9d3 FOREIGN KEY (record_id) REFERENCES public.records(id);
 
 
@@ -6313,7 +6315,7 @@ ALTER TABLE ONLY public.oauth_access_grants
 --
 
 ALTER TABLE ONLY public.episode_records
-    ADD CONSTRAINT fk_rails_b62b8cb1a9 FOREIGN KEY (review_id) REFERENCES public.work_records(id);
+    ADD CONSTRAINT fk_rails_b62b8cb1a9 FOREIGN KEY (review_id) REFERENCES public.anime_records(id);
 
 
 --
@@ -6333,10 +6335,10 @@ ALTER TABLE ONLY public.reactions
 
 
 --
--- Name: work_comments fk_rails_b80e927375; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: anime_comments fk_rails_b80e927375; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.work_comments
+ALTER TABLE ONLY public.anime_comments
     ADD CONSTRAINT fk_rails_b80e927375 FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
@@ -6349,18 +6351,18 @@ ALTER TABLE ONLY public.episode_records
 
 
 --
--- Name: work_images fk_rails_bd1806cf80; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: anime_images fk_rails_bd1806cf80; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.work_images
-    ADD CONSTRAINT fk_rails_bd1806cf80 FOREIGN KEY (work_id) REFERENCES public.works(id);
+ALTER TABLE ONLY public.anime_images
+    ADD CONSTRAINT fk_rails_bd1806cf80 FOREIGN KEY (work_id) REFERENCES public.animes(id);
 
 
 --
--- Name: works fk_rails_bdb9fb31c3; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: animes fk_rails_bdb9fb31c3; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.works
+ALTER TABLE ONLY public.animes
     ADD CONSTRAINT fk_rails_bdb9fb31c3 FOREIGN KEY (key_pv_id) REFERENCES public.trailers(id);
 
 
@@ -6397,10 +6399,10 @@ ALTER TABLE ONLY public.forum_comments
 
 
 --
--- Name: work_records fk_rails_d475d93649; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: anime_records fk_rails_d475d93649; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.work_records
+ALTER TABLE ONLY public.anime_records
     ADD CONSTRAINT fk_rails_d475d93649 FOREIGN KEY (oauth_application_id) REFERENCES public.oauth_applications(id);
 
 
@@ -6417,15 +6419,15 @@ ALTER TABLE ONLY public.organization_favorites
 --
 
 ALTER TABLE ONLY public.multiple_episode_records
-    ADD CONSTRAINT fk_rails_da1ee2634a FOREIGN KEY (work_id) REFERENCES public.works(id);
+    ADD CONSTRAINT fk_rails_da1ee2634a FOREIGN KEY (work_id) REFERENCES public.animes(id);
 
 
 --
--- Name: work_records fk_rails_dadac170c9; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: anime_records fk_rails_dadac170c9; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.work_records
-    ADD CONSTRAINT fk_rails_dadac170c9 FOREIGN KEY (work_id) REFERENCES public.works(id);
+ALTER TABLE ONLY public.anime_records
+    ADD CONSTRAINT fk_rails_dadac170c9 FOREIGN KEY (work_id) REFERENCES public.animes(id);
 
 
 --
@@ -6441,7 +6443,7 @@ ALTER TABLE ONLY public.forum_comments
 --
 
 ALTER TABLE ONLY public.vod_titles
-    ADD CONSTRAINT fk_rails_e5ef5f40f9 FOREIGN KEY (work_id) REFERENCES public.works(id);
+    ADD CONSTRAINT fk_rails_e5ef5f40f9 FOREIGN KEY (work_id) REFERENCES public.animes(id);
 
 
 --
@@ -6461,10 +6463,10 @@ ALTER TABLE ONLY public.oauth_access_tokens
 
 
 --
--- Name: series_works fk_rails_f4eb19863e; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: series_animes fk_rails_f4eb19863e; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.series_works
+ALTER TABLE ONLY public.series_animes
     ADD CONSTRAINT fk_rails_f4eb19863e FOREIGN KEY (series_id) REFERENCES public.series(id);
 
 
@@ -6577,7 +6579,7 @@ ALTER TABLE ONLY public.slots
 --
 
 ALTER TABLE ONLY public.slots
-    ADD CONSTRAINT programs_work_id_fk FOREIGN KEY (work_id) REFERENCES public.works(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+    ADD CONSTRAINT programs_work_id_fk FOREIGN KEY (work_id) REFERENCES public.animes(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
 
 
 --
@@ -6617,7 +6619,7 @@ ALTER TABLE ONLY public.statuses
 --
 
 ALTER TABLE ONLY public.statuses
-    ADD CONSTRAINT statuses_work_id_fk FOREIGN KEY (work_id) REFERENCES public.works(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+    ADD CONSTRAINT statuses_work_id_fk FOREIGN KEY (work_id) REFERENCES public.animes(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
 
 
 --
@@ -6625,14 +6627,14 @@ ALTER TABLE ONLY public.statuses
 --
 
 ALTER TABLE ONLY public.syobocal_alerts
-    ADD CONSTRAINT syobocal_alerts_work_id_fk FOREIGN KEY (work_id) REFERENCES public.works(id) ON DELETE CASCADE;
+    ADD CONSTRAINT syobocal_alerts_work_id_fk FOREIGN KEY (work_id) REFERENCES public.animes(id) ON DELETE CASCADE;
 
 
 --
--- Name: works works_season_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: animes works_season_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.works
+ALTER TABLE ONLY public.animes
     ADD CONSTRAINT works_season_id_fk FOREIGN KEY (season_id) REFERENCES public.seasons(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
 
 
@@ -6913,6 +6915,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20200513125709'),
 ('20200515062450'),
 ('20200525110837'),
-('20200525201620');
+('20200525201620'),
+('20200800000001');
 
 

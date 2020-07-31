@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 # == Schema Information
 #
-# Table name: work_images
+# Table name: anime_images
 #
 #  id                      :bigint           not null, primary key
 #  asin                    :string           default(""), not null
@@ -19,16 +19,16 @@
 #
 # Indexes
 #
-#  index_work_images_on_user_id  (user_id)
-#  index_work_images_on_work_id  (work_id)
+#  index_anime_images_on_user_id  (user_id)
+#  index_anime_images_on_work_id  (work_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (user_id => users.id)
-#  fk_rails_...  (work_id => works.id)
+#  fk_rails_...  (work_id => animes.id)
 #
 
-class WorkImage < ApplicationRecord
+class AnimeImage < ApplicationRecord
   include WorkImageUploader::Attachment.new(:image)
   include ImageUploadable
 

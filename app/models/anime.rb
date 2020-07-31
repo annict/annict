@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 # == Schema Information
 #
-# Table name: works
+# Table name: animes
 #
 #  id                           :bigint           not null, primary key
 #  aasm_state                   :string           default("published"), not null
@@ -54,18 +54,18 @@
 #
 # Indexes
 #
-#  index_works_on_aasm_state                           (aasm_state)
-#  index_works_on_deleted_at                           (deleted_at)
-#  index_works_on_key_pv_id                            (key_pv_id)
-#  index_works_on_number_format_id                     (number_format_id)
-#  index_works_on_ratings_count                        (ratings_count)
-#  index_works_on_satisfaction_rate                    (satisfaction_rate)
-#  index_works_on_satisfaction_rate_and_ratings_count  (satisfaction_rate,ratings_count)
-#  index_works_on_score                                (score)
-#  index_works_on_season_year                          (season_year)
-#  index_works_on_season_year_and_season_name          (season_year,season_name)
-#  index_works_on_unpublished_at                       (unpublished_at)
-#  works_season_id_idx                                 (season_id)
+#  index_animes_on_aasm_state                           (aasm_state)
+#  index_animes_on_deleted_at                           (deleted_at)
+#  index_animes_on_key_pv_id                            (key_pv_id)
+#  index_animes_on_number_format_id                     (number_format_id)
+#  index_animes_on_ratings_count                        (ratings_count)
+#  index_animes_on_satisfaction_rate                    (satisfaction_rate)
+#  index_animes_on_satisfaction_rate_and_ratings_count  (satisfaction_rate,ratings_count)
+#  index_animes_on_score                                (score)
+#  index_animes_on_season_year                          (season_year)
+#  index_animes_on_season_year_and_season_name          (season_year,season_name)
+#  index_animes_on_unpublished_at                       (unpublished_at)
+#  works_season_id_idx                                  (season_id)
 #
 # Foreign Keys
 #
@@ -74,7 +74,7 @@
 #  works_season_id_fk  (season_id => seasons.id) ON DELETE => cascade
 #
 
-class Work < ApplicationRecord
+class Anime < ApplicationRecord
   extend Enumerize
 
   include DbActivityMethods

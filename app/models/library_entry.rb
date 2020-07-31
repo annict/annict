@@ -27,7 +27,7 @@
 #  fk_rails_...  (next_episode_id => episodes.id)
 #  fk_rails_...  (status_id => statuses.id)
 #  fk_rails_...  (user_id => users.id)
-#  fk_rails_...  (work_id => works.id)
+#  fk_rails_...  (work_id => animes.id)
 #
 
 class LibraryEntry < ApplicationRecord

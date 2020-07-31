@@ -42,11 +42,11 @@
 #
 #  checkins_episode_id_fk  (episode_id => episodes.id) ON DELETE => cascade
 #  checkins_user_id_fk     (user_id => users.id) ON DELETE => cascade
-#  checkins_work_id_fk     (work_id => works.id)
+#  checkins_work_id_fk     (work_id => animes.id)
 #  fk_rails_...            (multiple_episode_record_id => multiple_episode_records.id)
 #  fk_rails_...            (oauth_application_id => oauth_applications.id)
 #  fk_rails_...            (record_id => records.id)
-#  fk_rails_...            (review_id => work_records.id)
+#  fk_rails_...            (review_id => anime_records.id)
 #
 
 class EpisodeRecord < ApplicationRecord

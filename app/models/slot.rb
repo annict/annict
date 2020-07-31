@@ -38,7 +38,7 @@
 #  fk_rails_...            (program_id => programs.id)
 #  programs_channel_id_fk  (channel_id => channels.id) ON DELETE => cascade
 #  programs_episode_id_fk  (episode_id => episodes.id) ON DELETE => cascade
-#  programs_work_id_fk     (work_id => works.id) ON DELETE => cascade
+#  programs_work_id_fk     (work_id => animes.id) ON DELETE => cascade
 #
 
 class Slot < ApplicationRecord

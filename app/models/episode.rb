@@ -41,7 +41,7 @@
 #
 # Foreign Keys
 #
-#  episodes_work_id_fk  (work_id => works.id) ON DELETE => cascade
+#  episodes_work_id_fk  (work_id => animes.id) ON DELETE => cascade
 #  fk_rails_...         (prev_episode_id => episodes.id)
 #
 

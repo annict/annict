@@ -30,7 +30,7 @@
 #
 # Foreign Keys
 #
-#  fk_rails_...  (work_id => works.id)
+#  fk_rails_...  (work_id => animes.id)
 #
 
 class Staff < ApplicationRecord
