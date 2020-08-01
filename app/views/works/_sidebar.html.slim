@@ -1,12 +1,12 @@
 .mb-2
-  = link_to work_path(work) do
-    = ann_image_tag work.work_image, :image, size: "280x", ratio: "3:4", class: "img-fluid img-thumbnail rounded"
-  - if work.work_image.present?
+  = link_to anime_detail_path(work) do
+    = ann_image_tag work.anime_image, :image, size: "280x", ratio: "3:4", class: "img-fluid img-thumbnail rounded"
+  - if work.anime_image.present?
     .u-very-small
-      = work.work_image.asin_or_copyright_text
+      = work.anime_image.asin_or_copyright_text
 
 h1.h2.font-weight-bold.mb-3
-  = link_to work.local_title, work_path(work), class: "u-text-body"
+  = link_to work.local_title, anime_detail_path(work), class: "u-text-body"
 
 .row.mb-3
   .col.text-center
@@ -88,8 +88,8 @@ dl
 h2.h4.font-weight-bold.mt-4.mb-3
   = t "noun.share"
 
-= render ShareToTwitterButtonComponent.new(text: work.local_title, url: "#{local_url}#{work_path(work)}", hashtags: "#{work.twitter_hashtag.presence || ''}", class_name: "mr-2")
-= render ShareToFacebookButtonComponent.new(url: "#{local_url}#{work_path(work)}")
+= render ShareToTwitterButtonComponent.new(text: work.local_title, url: "#{local_url}#{anime_detail_path(work)}", hashtags: "#{work.twitter_hashtag.presence || ''}", class_name: "mr-2")
+= render ShareToFacebookButtonComponent.new(url: "#{local_url}#{anime_detail_path(work)}")
 
 - if user_signed_in? && current_user.committer?
   .mt-4

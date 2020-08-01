@@ -167,6 +167,6 @@ scope module: :v4 do
     match "/@:username",         via: :get,   as: :profile_detail, to: "users#show",    username: USERNAME_FORMAT
     match "/@:username/records", via: :get,   as: :record_list,    to: "records#index", username: USERNAME_FORMAT
     match "/timeline_mode",      via: :patch, as: :timeline_mode,  to: "timeline_mode#update"
-    match "/works/:id",          via: :get,   as: :work,           to: "works#show"
+    match "/anime/:id",          via: :get,   as: :anime_detail,          to: "anime#show"
   end
 end

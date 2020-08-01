@@ -14,7 +14,7 @@ class UserWorkRecordsQuery
     @work_records = join_likes if @user
     @work_records = join_library_entries if @user
 
-    selects = ["work_records.*"]
+    selects = ["anime_records.*"]
     selects << "likes.id AS user_like_id" if @user
     selects << "library_entries.id AS user_library_entry_id" if @user
     @work_records.select(selects.join(", "))
@@ -39,7 +39,7 @@ class UserWorkRecordsQuery
       "
         LEFT OUTER JOIN library_entries
           INNER JOIN statuses ON statuses.id = library_entries.status_id ON
-            work_records.anime_id = library_entries.anime_id AND
+            anime_records.anime_id = library_entries.anime_id AND
             statuses.kind IN (1, 2, 5) AND
             library_entries.user_id = %s
       ", @user.id

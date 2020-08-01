@@ -85,6 +85,7 @@ module Annict
       r301 %r{\A/episodes/[0-9]+/items}, "/"
       r301 %r{\A/menu}, "/"
       r301 %r{\A/works/[0-9]+/items}, "/"
+      r301 %r{\A/works/([0-9]+)\z}, "/anime/$1"
 
       maintenance_file = File.join(Rails.root, "public", "maintenance.html")
       send_file /(.*)$(?<!maintenance|favicons)/, maintenance_file, if: proc { |rack_env|

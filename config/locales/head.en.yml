@@ -3,6 +3,8 @@ en:
     meta:
       description:
         _common: Annict is the platform for anime addicts. Track your watching anime, follow friends, read their reviews, and much more!
+        anime:
+          show: Looking for information on %{title}? Find out more with Annict!
         character_fans:
           index: Check out fans of %{character_name}!
         characters:
@@ -44,7 +46,6 @@ en:
         works:
           popular: Looking for popular anime? Find out more with Annict!
           season: Looking for information on %{name} anime? Find out more with Annict!
-          show: Looking for information on %{title}? Find out more with Annict!
         work_records:
           index: Looking for records of %{work_title}? Find out more with Annict!
           show: Check out %{profile_name} (%{username})'s records!
@@ -53,6 +54,8 @@ en:
     title:
       accounts:
         show: Account
+      anime:
+        show: "%{title} (Anime)"
       channel_works:
         index: Channel Anime
       channels:
@@ -251,4 +254,3 @@ en:
         newest: Just Added Anime
         popular: Popular Anime
         season: "%{name} Anime"
-        show: "%{title} (Anime)"

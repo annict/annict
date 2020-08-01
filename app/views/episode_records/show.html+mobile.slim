@@ -1,21 +1,21 @@
 - title = t "head.title.episode_records.show", profile_name: @user.profile.name, username: @user.username, work_title: @work.local_title, episode_title_with_number: @episode.title_with_number
 - description = meta_description(t("head.meta.description.records.show", profile_name: @user.profile.name, username: @user.username, work_title: @work.local_title, episode_title_with_number: @episode.title_with_number))
 - keywords = meta_keywords(@work.local_title)
-- image_url = ann_image_url(@work.work_image, :image, size: "640x", ratio: "3:4")
+- image_url = ann_image_url(@work.anime_image, :image, size: "640x", ratio: "3:4")
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false)
 
 .c-card.py-3.mb-3
   .p-records-show__work-info.px-3
     .row
       .col-3.pr-0
-        = link_to work_path(@work) do
-          = image_tag ann_image_url(@work.work_image, :image, size: "280x", ratio: "3:4"), class: "img-fluid img-thumbnail rounded"
-        - if @work.work_image.present?
+        = link_to anime_detail_path(@work) do
+          = image_tag ann_image_url(@work.anime_image, :image, size: "280x", ratio: "3:4"), class: "img-fluid img-thumbnail rounded"
+        - if @work.anime_image.present?
           .u-very-small.mt-1
-            = @work.work_image.asin_or_copyright_text
+            = @work.anime_image.asin_or_copyright_text
       .col-9
         h1.h2
-          = link_to work_path(@work), class: "u-text-body" do
+          = link_to anime_detail_path(@work), class: "u-text-body" do
             = @work.local_title
         = link_to work_episode_path(@work, @episode), class: "u-text-body mb-2 d-inline-block" do
           = @episode.title_with_number

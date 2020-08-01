@@ -13,7 +13,7 @@ class WorkRecordsController < ApplicationController
 
     return unless user_signed_in?
 
-    @work_record = @work.work_records.new
+    @work_record = @work.anime_records.new
     @work_record.setup_shared_sns(current_user)
   end
 
@@ -27,7 +27,7 @@ class WorkRecordsController < ApplicationController
     if err
       load_work_records
 
-      @work_record = @work.work_records.new(work_record_params)
+      @work_record = @work.anime_records.new(work_record_params)
       @work_record.errors.add(:mutation_error, err.message)
       @work_record.setup_shared_sns(current_user)
 
@@ -44,7 +44,7 @@ class WorkRecordsController < ApplicationController
 
     @record = current_user.records.find(params[:id])
     @work_record = current_user.
-      work_records.
+      anime_records.
       only_kept.
       where(anime_id: params[:work_id]).
       find(@record.work_record&.id)
@@ -55,7 +55,7 @@ class WorkRecordsController < ApplicationController
   def update
     @record = current_user.records.find(params[:id])
     @work_record = current_user.
-      work_records.
+      anime_records.
       only_kept.
       where(anime_id: params[:work_id]).
       find(@record.work_record&.id)
@@ -90,7 +90,7 @@ class WorkRecordsController < ApplicationController
 
   def load_work_records
     @work_records = UserWorkRecordsQuery.new.call(
-      work_records: @work.work_records,
+      work_records: @work.anime_records,
       user: current_user
     )
     @work_records = @work_records.with_body
@@ -98,7 +98,7 @@ class WorkRecordsController < ApplicationController
 
     if user_signed_in?
       @my_work_records = UserWorkRecordsQuery.new.call(
-        work_records: current_user.work_records.where(work: @work),
+        work_records: current_user.anime_records.where(work: @work),
         user: current_user
       ).order(created_at: :desc)
       @work_records = @work_records.

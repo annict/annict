@@ -6,16 +6,16 @@
     .container
       .row.mb-3
         .col-4.pr-0
-          = link_to work_path(work), class: "d-inline-block" do
-            = render WorkImageComponent.new(image_url_1x: ann_image_url(work.work_image, :image, size: "250x"), image_url_2x: ann_image_url(work.work_image, :image, size: "500x"))
-          - if work.work_image.present?
+          = link_to anime_detail_path(work), class: "d-inline-block" do
+            = render WorkImageComponent.new(image_url_1x: ann_image_url(work.anime_image, :image, size: "250x"), image_url_2x: ann_image_url(work.anime_image, :image, size: "500x"))
+          - if work.anime_image.present?
             .u-very-small.text-right
-              = work.work_image.asin_or_copyright_text
+              = work.anime_image.asin_or_copyright_text
         .col-8
           .mb-1.u-lh-0
             = work.media_label
           h3.font-weight-bold.mb-1
-            = link_to work.local_title, work_path(work), class: "u-text-body"
+            = link_to work.local_title, anime_detail_path(work), class: "u-text-body"
           .mb-2
             span.font-weight-bold.mr-1 = work.watchers_count
             span.text-muted.small Watchers

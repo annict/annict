@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module V4
-  class WorksController < V4::ApplicationController
+  class AnimeController < V4::ApplicationController
     def show
       set_page_category Rails.configuration.page_categories.work_detail
 

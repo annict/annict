@@ -166,7 +166,7 @@ module Canary
 
         def work_records(order_by: nil, has_body: nil)
           SearchWorkRecordsQuery.new(
-            object.work_records,
+            object.anime_records,
             context: context,
             order_by: order_by,
             has_body: has_body
@@ -226,7 +226,7 @@ module Canary
         end
 
         def copyright
-          object.work_image&.copyright
+          object.anime_image&.copyright
         end
 
         def is_no_episodes

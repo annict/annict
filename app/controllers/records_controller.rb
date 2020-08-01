@@ -32,7 +32,7 @@ class RecordsController < ApplicationController
       @work = @work_record.work
       @is_spoiler = user_signed_in? && current_user.hide_work_record_body?(@work)
       @work_records = UserWorkRecordsQuery.new.call(
-        work_records: @user.work_records.where.not(id: @work_record.id),
+        work_records: @user.anime_records.where.not(id: @work_record.id),
         user: current_user
       )
       render "work_records/show"

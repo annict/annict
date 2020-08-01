@@ -4,7 +4,7 @@ module AnimeDecorator
   include RootResourceDecoratorCommon
 
   def title_link
-    link_to local_title, work_path(self)
+    link_to local_title, anime_detail_path(self)
   end
 
   def twitter_username_link

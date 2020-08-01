@@ -10,7 +10,7 @@ class OrganizationsController < ApplicationController
       only_kept.
       joins(:work).
       where(works: { deleted_at: nil }).
-      includes(work: :work_image).
+      includes(work: :anime_image).
       group_by { |s| s.work.season_year.presence || 0 }
     @staff_years = @staffs_with_year.keys.sort.reverse
 

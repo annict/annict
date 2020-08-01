@@ -17,13 +17,13 @@ module Canary
         field :name_en, String,
           null: false
 
-        field :works, Canary::Connections::SeriesAnimeConnection, null: true, connection: true do
+        field :anime_list, Canary::Connections::SeriesAnimeConnection, null: true, connection: true do
           argument :order_by, Canary::Types::InputObjects::SeriesAnimeOrder, required: false
         end
 
-        def works(order_by: nil)
+        def anime_list(order_by: nil)
           SearchSeriesWorksQuery.new(
-            object.series_works,
+            object.series_anime_list,
             order_by: order_by
           ).call
         end

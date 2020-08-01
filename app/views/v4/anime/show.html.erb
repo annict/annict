@@ -1,5 +1,5 @@
-<% title = t "head.title.works.show", title: @work_entity.local_title %>
-<% description = meta_description(t("head.meta.description.works.show", title: @work_entity.local_title)) %>
+<% title = t "head.title.anime.show", title: @work_entity.local_title %>
+<% description = meta_description(t("head.meta.description.anime.show", title: @work_entity.local_title)) %>
 <% image_url = @work_entity.image_url_1x %>
 <% set_meta_tags(title: title, description: description, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false) %>
 
@@ -9,7 +9,7 @@
       <div class="row mb-3 mb-sm-0">
         <div class="col-4 col-sm-12">
           <div class="mb-2 text-sm-left">
-            <%= link_to work_path(@work_entity.database_id) do %>
+            <%= link_to anime_detail_path(@work_entity.database_id) do %>
               <%= render WorkImageComponent.new(image_url_1x: @work_entity.image_url_1x, image_url_2x: @work_entity.image_url_2x, alt: @work_entity.local_title) %>
             <% end %>
             <div class="u-very-small text-muted">
@@ -20,7 +20,7 @@
         </div>
         <div class="col-8 col-sm-12 pl-0 pl-sm-3">
           <h1 class="h2 font-weight-bold mb-3 text-sm-left">
-            <%= link_to work_path(@work_entity.database_id), class: "u-text-body" do %>
+            <%= link_to anime_detail_path(@work_entity.database_id), class: "u-text-body" do %>
               <%= @work_entity.local_title %>
             <% end %>
           </h1>
@@ -642,7 +642,7 @@
                 <% series.series_works.each do |series_work| %>
                   <div class="col-4 col-sm-2 p-0 pr-3 mb-3">
                     <div class="c-card">
-                      <%= link_to work_path(series_work.database_id) do %>
+                      <%= link_to anime_detail_path(series_work.database_id) do %>
                         <div class="c-hover-image">
                           <div class="c-hover-image__image">
                             <%= render WorkImageComponent.new(image_url_1x: series_work.image_url_1x, image_url_2x: series_work.image_url_2x) %>
@@ -652,7 +652,7 @@
                       <% end %>
                       <div class="p-1">
                         <div class="u-very-small">
-                          <%= link_to series_work.local_title, work_path(series_work.database_id) %>
+                          <%= link_to series_work.local_title, anime_detail_path(series_work.database_id) %>
                         </div>
                         <% if series_work.local_summary.present? %>
                           <div class="u-very-small">

@@ -99,14 +99,14 @@ class Anime < ApplicationRecord
     optional: true
   has_many :casts, dependent: :destroy
   has_many :programs, dependent: :destroy
-  has_many :series_works, dependent: :destroy
+  has_many :series_anime_list, class_name: "SeriesAnime", dependent: :destroy
   has_many :staffs, dependent: :destroy
-  has_many :work_taggings
+  has_many :anime_taggings
   has_many :activities,
     foreign_key: :recipient_id,
     foreign_type: :recipient
   has_many :cast_people, through: :casts, source: :person
-  has_many :channel_works
+  has_many :channel_anime_list, class_name: "ChannelAnime"
   has_many :characters, through: :casts
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
@@ -120,13 +120,13 @@ class Anime < ApplicationRecord
   has_many :slots, dependent: :destroy
   has_many :trailers, dependent: :destroy
   has_many :records
-  has_many :series_list, through: :series_works, source: :series
+  has_many :series_list, through: :series_anime_list, source: :series
   has_many :statuses
   has_many :staff_people, through: :staffs, source: :resource, source_type: "Person"
   has_many :channels, through: :programs
-  has_many :work_records
-  has_many :work_tags, through: :work_taggings
-  has_one :work_image, dependent: :destroy
+  has_many :anime_records
+  has_many :anime_tags, through: :anime_taggings
+  has_one :anime_image, dependent: :destroy
 
   validates :sc_tid,
     numericality: { only_integer: true },
@@ -214,8 +214,8 @@ class Anime < ApplicationRecord
 
   # 作品画像が設定されていない作品
   scope :with_no_image, -> {
-    joins("LEFT OUTER JOIN work_images ON work_images.anime_id = works.id").
-      where("work_images.id IS NULL")
+    joins("LEFT OUTER JOIN anime_images ON anime_images.anime_id = works.id").
+      where("anime_images.id IS NULL")
   }
 
   scope :order_by_season, ->(type = :asc) {
@@ -489,11 +489,11 @@ class Anime < ApplicationRecord
   end
 
   def image_color_rgb
-    work_image&.color_rgb.presence || "255,255,255"
+    anime_image&.color_rgb.presence || "255,255,255"
   end
 
   def image_text_color_rgb
-    work_image&.text_color_rgb.presence || "0,0,0"
+    anime_image&.text_color_rgb.presence || "0,0,0"
   end
 
   def related_works

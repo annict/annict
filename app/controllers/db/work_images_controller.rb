@@ -6,12 +6,12 @@ module Db
 
     def show
       @work = Anime.without_deleted.find(params[:work_id])
-      @image = @work.work_image.presence || @work.build_work_image
+      @image = @work.anime_image.presence || @work.build_anime_image
     end
 
     def create
       @work = Anime.without_deleted.find(params[:work_id])
-      @image = @work.build_work_image(work_image_params)
+      @image = @work.build_anime_image(work_image_params)
       authorize @image
       @image.user = current_user
 

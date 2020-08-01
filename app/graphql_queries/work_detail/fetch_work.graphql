@@ -118,7 +118,7 @@ query($databaseId: Int!) {
         nodes {
           name
           nameEn
-          works(orderBy: { field: SEASON, direction: ASC }) {
+          animeList(orderBy: { field: SEASON, direction: ASC }) {
             edges {
               summary
               summaryEn

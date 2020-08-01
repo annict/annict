@@ -30,5 +30,5 @@ class Series < ApplicationRecord
 
   DIFF_FIELDS = %i(name name_en).freeze
 
-  has_many :series_works, dependent: :destroy
+  has_many :series_anime_list, class_name: "SeriesAnime", dependent: :destroy
 end

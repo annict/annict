@@ -15,7 +15,7 @@ class WorksController < ApplicationController
 
     @works = Anime.
       only_kept.
-      preload(:work_image).
+      preload(:anime_image).
       order(watchers_count: :desc, id: :desc).
       page(params[:page]).
       per(display_works_count)
@@ -28,7 +28,7 @@ class WorksController < ApplicationController
 
     @works = Anime.
       only_kept.
-      preload(:work_image).
+      preload(:anime_image).
       order(id: :desc).
       page(params[:page]).
       per(display_works_count)
@@ -42,7 +42,7 @@ class WorksController < ApplicationController
     @works = Anime.
       only_kept.
       by_season(params[:slug]).
-      preload(:work_image).
+      preload(:anime_image).
       order(watchers_count: :desc, id: :desc).
       page(params[:page]).
       per(display_works_count)

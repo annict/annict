@@ -3,7 +3,7 @@
     - works.each do |work|
       .col-6
         = link_to work_path(work), class: "d-inline-block mb-1" do
-          = ann_image_tag(work.work_image, :image, size: "250x", ratio: "3:4", alt: work.local_title, class: "rounded img-fluid")
+          = ann_image_tag(work.anime_image, :image, size: "250x", ratio: "3:4", alt: work.local_title, class: "rounded img-fluid")
         .mb-1
           span.mr-1
             = work.watchers_count

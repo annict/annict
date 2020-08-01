@@ -12,7 +12,7 @@ class PeopleController < ApplicationController
         only_kept.
         joins(:work).
         where(works: { deleted_at: nil }).
-        includes(:character, work: :work_image).
+        includes(:character, work: :anime_image).
         group_by { |cast| cast.work.season_year.presence || 0 }
       @cast_years = @casts_with_year.keys.sort.reverse
     end
@@ -23,7 +23,7 @@ class PeopleController < ApplicationController
         only_kept.
         joins(:work).
         where(works: { deleted_at: nil }).
-        includes(work: :work_image).
+        includes(work: :anime_image).
         group_by { |staff| staff.work.season_year.presence || 0 }
       @staff_years = @staffs_with_year.keys.sort.reverse
     end

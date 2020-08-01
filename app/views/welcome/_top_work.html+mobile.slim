@@ -1,11 +1,11 @@
 .text-center
-  = link_to work_path(top_work) do
-    = image_tag(ann_image_url(top_work.work_image, :image, size: "300x", ratio: "3:4"), alt: top_work.local_title, class: "rounded img-thumbnail")
+  = link_to anime_detail_path(top_work) do
+    = image_tag(ann_image_url(top_work.anime_image, :image, size: "300x", ratio: "3:4"), alt: top_work.local_title, class: "rounded img-thumbnail")
 .mt-2.mb-1
   span.font-weight-bold.mr-1 = top_work.watchers_count
   span.text-muted.small Watchers
 h3.h2.font-weight-bold.mb-2
-  = link_to top_work.local_title, work_path(top_work), class: "u-text-body"
+  = link_to top_work.local_title, anime_detail_path(top_work), class: "u-text-body"
 .text-center.mb-3
   = render StatusSelectorComponent.new(work_id: top_work.id, page_category: page_category)
 - casts = top_work.casts.order(:sort_number).limit(10)

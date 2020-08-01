@@ -3,6 +3,8 @@ ja:
     meta:
       description:
         _common: Annict (アニクト)は、見たアニメを記録したり、見た感想を友達にシェアすることができるWebサービスです。「今どの作品を何話まで見ているんだっけ？」を解消します。
+        anime:
+          show: アニメ「%{title}」の感想や情報をチェック！
         character_fans:
           index: "%{character_name}のファンをチェック！"
         characters:
@@ -44,7 +46,6 @@ ja:
         works:
           popular: 人気アニメをチェック！
           season: "%{name}アニメをチェック！"
-          show: アニメ「%{title}」の感想や情報をチェック！
         work_records:
           index: "アニメ「%{work_title}」の感想をチェック！"
           show: "%{profile_name} (%{username})さんのアニメ「%{work_title}」への記録をチェック！"
@@ -53,6 +54,8 @@ ja:
     title:
       accounts:
         show: アカウント
+      anime:
+        show: "アニメ「%{title}」"
       channel_works:
         index: 作品ごとのチャンネル
       channels:
@@ -251,4 +254,3 @@ ja:
         newest: 新規登録アニメ
         popular: 人気アニメ
         season: "%{name}のアニメ"
-        show: "アニメ「%{title}」"
