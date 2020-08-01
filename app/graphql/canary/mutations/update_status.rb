@@ -6,13 +6,13 @@ module Canary
       argument :work_id, ID, required: true
       argument :kind, Canary::Types::Enums::StatusKind, required: true
 
-      field :work, Canary::Types::Objects::WorkType, null: true
+      field :work, Canary::Types::Objects::AnimeType, null: true
 
       def resolve(work_id:, kind:)
         raise Annict::Errors::InvalidAPITokenScopeError unless context[:writable]
 
         viewer = context[:viewer]
-        work = Work.only_kept.find_by_graphql_id(work_id)
+        work = Anime.only_kept.find_by_graphql_id(work_id)
 
         library_entry = viewer.library_entries.find_by(work: work)
 

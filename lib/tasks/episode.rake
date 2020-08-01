@@ -9,7 +9,7 @@ namespace :episode do
   task update_score: :environment do
     RATING_MAX = 2
 
-    works = Work.only_kept
+    works = Anime.only_kept
 
     works.find_each do |work|
       episodes = work.episodes.only_kept.recorded
@@ -42,7 +42,7 @@ namespace :episode do
           "ratings_avg: #{ratings_avg}",
           "satisfaction_rate: #{satisfaction_rate}"
         ]
-        puts "Work: #{work.id}, Episode: #{episode.id} => #{outputs.join(', ')}"
+        puts "Anime: #{work.id}, Episode: #{episode.id} => #{outputs.join(', ')}"
 
         episode.update_columns(satisfaction_rate: satisfaction_rate, ratings_count: ratings_count)
       end

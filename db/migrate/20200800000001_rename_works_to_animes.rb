@@ -11,5 +11,30 @@ class RenameWorksToAnimes < ActiveRecord::Migration[6.0]
     rename_table :work_taggables, :anime_taggables
     rename_table :work_taggings, :anime_taggings
     rename_table :work_tags, :anime_tags
+
+    %i(
+      anime_comments
+      anime_images
+      anime_records
+      anime_taggings
+      casts
+      channel_animes
+      collection_items
+      comments
+      episodes
+      episode_records
+      library_entries
+      multiple_episode_records
+      programs
+      records
+      series_animes
+      slots
+      staffs
+      statuses
+      trailers
+      vod_titles
+    ).each do |table_name|
+      rename_column table_name, :work_id, :anime_id
+    end
   end
 end

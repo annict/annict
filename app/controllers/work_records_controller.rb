@@ -8,7 +8,7 @@ class WorkRecordsController < ApplicationController
   def index
     set_page_category Rails.configuration.page_categories.record_list
 
-    @work = Work.only_kept.find(params[:work_id])
+    @work = Anime.only_kept.find(params[:work_id])
     load_work_records
 
     return unless user_signed_in?
@@ -18,7 +18,7 @@ class WorkRecordsController < ApplicationController
   end
 
   def create
-    @work = Work.only_kept.find(params[:work_id])
+    @work = Anime.only_kept.find(params[:work_id])
 
     _, err = CreateWorkRecordRepository.new(
       graphql_client: graphql_client(viewer: current_user)

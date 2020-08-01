@@ -47,7 +47,7 @@ export default class extends Controller {
       Organization: '/api/internal/organizations',
       Person: '/api/internal/people',
       Series: '/api/internal/series_list',
-      Work: '/api/internal/works',
+      Anime: '/api/internal/works',
     };
 
     return paths[modelName];

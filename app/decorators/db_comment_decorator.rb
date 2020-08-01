@@ -5,7 +5,7 @@ module DbCommentDecorator
     case model.class.name
     when "DbComment"
       case resource_type
-      when "Work"
+      when "Anime"
         "/works/#{resource.id}/activities##{anchor}"
       end
     end

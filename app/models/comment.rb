@@ -9,22 +9,22 @@
 #  locale            :string           default("other"), not null
 #  created_at        :datetime
 #  updated_at        :datetime
+#  anime_id          :bigint
 #  episode_record_id :bigint           not null
 #  user_id           :bigint           not null
-#  work_id           :bigint
 #
 # Indexes
 #
-#  comments_checkin_id_idx    (episode_record_id)
-#  comments_user_id_idx       (user_id)
-#  index_comments_on_locale   (locale)
-#  index_comments_on_work_id  (work_id)
+#  comments_checkin_id_idx     (episode_record_id)
+#  comments_user_id_idx        (user_id)
+#  index_comments_on_anime_id  (anime_id)
+#  index_comments_on_locale    (locale)
 #
 # Foreign Keys
 #
 #  comments_checkin_id_fk  (episode_record_id => episode_records.id) ON DELETE => cascade
 #  comments_user_id_fk     (user_id => users.id) ON DELETE => cascade
-#  fk_rails_...            (work_id => animes.id)
+#  fk_rails_...            (anime_id => animes.id)
 #
 
 class Comment < ApplicationRecord

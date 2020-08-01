@@ -48,10 +48,10 @@ en:
       no_record_body_list: No Comments
       no_records: No Records
       no_resources: No Resources
-      no_series_works: No Series Works
+      no_series_works: No Series Anime
       no_series: No Series
       no_staffs: No Staffs
-      no_works: No Works
+      no_works: No Anime
     _validators:
       and_other_are_required: and %{column_name} are required
       is_required_true_or_false: is required `true` or `false`
@@ -233,7 +233,7 @@ en:
       see_records: See records
       tracked: Your record has been tracked.
     user_work_tags:
-      anime_list_tagged: "Anime list tagged '%{tag_name}'"
+      anime_list_tagged: "Anime tagged '%{tag_name}'"
     userland:
       description_html: "Userland is the place to discover 3rd party applications which uses Annict API."
       description_mobile_html: "Userland is the place to discover 3rd party applications which uses Annict API."
@@ -252,8 +252,8 @@ en:
         write_your_comment: Write Your Comment! (optional)
     work_images:
       attach_image: Attach Image
-      deleted: Work image has been deleted.
-      saved: Work image has been saved.
+      deleted: Anime image has been deleted.
+      saved: Anime image has been saved.
     works:
       view_all_n_characters: View All %{n} Characters
       view_all_n_episodes: View All %{n} Episodes

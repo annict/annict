@@ -3,8 +3,8 @@
 module Canary
   module Types
     module InputObjects
-      class WorkOrder < Canary::Types::InputObjects::Base
-        argument :field, Canary::Types::Enums::WorkOrderField, required: true
+      class SeriesAnimeOrder < Canary::Types::InputObjects::Base
+        argument :field, Canary::Types::Enums::SeriesAnimeOrderField, required: true
         argument :direction, Canary::Types::Enums::OrderDirection, required: true
       end
     end

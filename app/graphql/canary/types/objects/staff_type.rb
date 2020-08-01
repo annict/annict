@@ -34,7 +34,7 @@ module Canary
         field :sort_number, Integer,
           null: false
 
-        field :work, Canary::Types::Objects::WorkType,
+        field :work, Canary::Types::Objects::AnimeType,
           null: false
 
         field :resource, Canary::Types::Unions::StaffResourceItem,

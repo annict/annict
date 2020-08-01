@@ -14,7 +14,7 @@ describe "POST /db/works", type: :request do
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("ログインしてください")
 
-      expect(Work.all.size).to eq(0)
+      expect(Anime.all.size).to eq(0)
     end
   end
 
@@ -36,7 +36,7 @@ describe "POST /db/works", type: :request do
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("アクセスできません")
 
-      expect(Work.all.size).to eq(0)
+      expect(Anime.all.size).to eq(0)
     end
   end
 
@@ -79,15 +79,15 @@ describe "POST /db/works", type: :request do
     end
 
     it "user can create work" do
-      expect(Work.all.size).to eq(0)
+      expect(Anime.all.size).to eq(0)
 
       post "/db/works", params: { work: work_params }
 
       expect(response.status).to eq(302)
       expect(flash[:notice]).to eq("登録しました")
 
-      expect(Work.all.size).to eq(1)
-      work = Work.first
+      expect(Anime.all.size).to eq(1)
+      work = Anime.first
 
       expect(work.title).to eq("作品タイトル")
       expect(work.title_kana).to eq("タイトル (かな)")

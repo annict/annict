@@ -6,15 +6,15 @@ module Api
       before_action :authenticate_user!
 
       def show
-        work = Work.find(params[:work_id])
+        work = Anime.find(params[:work_id])
         @tags = current_user.tags_by_work(work)
         @all_tags = current_user.work_tags.only_kept
-        @popular_tags = WorkTag.only_kept.popular_tags(work).limit(10)
+        @popular_tags = AnimeTag.only_kept.popular_tags(work).limit(10)
         @comment = current_user.comment_by_work(work)
       end
 
       def update
-        work = Work.find(params[:work_id])
+        work = Anime.find(params[:work_id])
 
         ActiveRecord::Base.transaction do
           current_user.update_work_tags!(work, params[:tags].presence || [])

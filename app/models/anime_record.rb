@@ -19,26 +19,26 @@
 #  title                  :string           default("")
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
+#  anime_id               :bigint           not null
 #  oauth_application_id   :bigint
 #  record_id              :bigint           not null
 #  user_id                :bigint           not null
-#  work_id                :bigint           not null
 #
 # Indexes
 #
+#  index_anime_records_on_anime_id              (anime_id)
 #  index_anime_records_on_deleted_at            (deleted_at)
 #  index_anime_records_on_locale                (locale)
 #  index_anime_records_on_oauth_application_id  (oauth_application_id)
 #  index_anime_records_on_record_id             (record_id) UNIQUE
 #  index_anime_records_on_user_id               (user_id)
-#  index_anime_records_on_work_id               (work_id)
 #
 # Foreign Keys
 #
+#  fk_rails_...  (anime_id => animes.id)
 #  fk_rails_...  (oauth_application_id => oauth_applications.id)
 #  fk_rails_...  (record_id => records.id)
 #  fk_rails_...  (user_id => users.id)
-#  fk_rails_...  (work_id => animes.id)
 #
 
 class AnimeRecord < ApplicationRecord

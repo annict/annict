@@ -9,7 +9,7 @@ namespace :internal_statistic do
     [
       { key_name: "episode_records", model: Record },
       { key_name: "statuses", model: Status },
-      { key_name: "work_records", model: WorkRecord }
+      { key_name: "work_records", model: AnimeRecord }
     ].each do |h|
       InternalStatistic.where(key: "users_count_created_#{h[:key_name]}_in_all", date: today).first_or_create! do |is|
         is.value = h[:model].select("user_id").group(:user_id).length

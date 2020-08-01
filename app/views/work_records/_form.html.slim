@@ -11,7 +11,7 @@
       c-input-words-count :max-words-count="1048596" :init-words-count="#{f.object.body&.length.presence || 0}" input-name="work_record[body]"
 
   .form-row
-    - WorkRecord::STATES.each do |state|
+    - AnimeRecord::STATES.each do |state|
       .form-group.col-md-6
         = f.label state
         c-record-rating :init-record=="{ ratingState: '#{work_record.send(state)}' }" input-name="work_record[#{state}]"

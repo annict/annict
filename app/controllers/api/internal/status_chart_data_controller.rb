@@ -4,7 +4,7 @@ module Api
   module Internal
     class StatusChartDataController < Api::Internal::ApplicationController
       def show
-        @work = Work.only_kept.find(params[:work_id])
+        @work = Anime.only_kept.find(params[:work_id])
         render json: @work.status_chart_dataset
       end
     end

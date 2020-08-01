@@ -3,7 +3,7 @@
 module Canary
   module Types
     module Objects
-      class WorkType < Canary::Types::Objects::Base
+      class AnimeType < Canary::Types::Objects::Base
         description "作品情報"
 
         implements GraphQL::Relay::Node.interface
@@ -77,7 +77,7 @@ module Canary
         field :mal_anime_id, String,
           null: true
 
-        field :image, Canary::Types::Objects::WorkImageType,
+        field :image, Canary::Types::Objects::AnimeImageType,
           null: false
 
         field :copyright, String,
@@ -133,8 +133,8 @@ module Canary
           argument :order_by, Canary::Types::InputObjects::EpisodeOrder, required: false
         end
 
-        field :work_records, Canary::Types::Objects::WorkRecordType.connection_type, null: true do
-          argument :order_by, Canary::Types::InputObjects::WorkRecordOrder, required: false
+        field :work_records, Canary::Types::Objects::AnimeRecordType.connection_type, null: true do
+          argument :order_by, Canary::Types::InputObjects::AnimeRecordOrder, required: false
           argument :has_body, Boolean, required: false
         end
 
@@ -220,8 +220,8 @@ module Canary
         end
 
         def image
-          Canary::RecordLoader.for(WorkImage, column: :work_id).load(object.id).then do |work_image|
-            work_image || WorkImage.new
+          Canary::RecordLoader.for(AnimeImage, column: :work_id).load(object.id).then do |work_image|
+            work_image || AnimeImage.new
           end
         end
 

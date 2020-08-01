@@ -31,7 +31,7 @@ module Api
         validates :share_facebook,
           allow_blank: true,
           filter_boolean_params: true
-        WorkRecord::STATES.each do |state|
+        AnimeRecord::STATES.each do |state|
           validates state,
             presence: true,
             format: {

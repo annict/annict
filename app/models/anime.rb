@@ -155,7 +155,7 @@ class Anime < ApplicationRecord
     end
     season_year, season_name = season_pairs.shift
 
-    t = Work.arel_table
+    t = Anime.arel_table
     works = where(t[:season_year].eq(season_year)).
       where(t[:season_name].eq(season_name))
     season_pairs.inject(works) do |query, season_pair|
@@ -169,7 +169,7 @@ class Anime < ApplicationRecord
 
   scope :slot_registered, -> {
     work_ids = joins(:slots).
-      merge(Slot.only_kept.where(work_id: all.pluck(:id))).
+      merge(Slot.only_kept.where(anime_id: all.pluck(:id))).
       pluck(:id).
       uniq
     where(id: work_ids)
@@ -178,9 +178,9 @@ class Anime < ApplicationRecord
   scope :tracked_by, -> (user) {
     joins(
       "INNER JOIN (
-        SELECT DISTINCT work_id, MAX(id) AS record_id FROM records
-          WHERE records.user_id = #{user.id} GROUP BY work_id
-      ) AS c2 ON works.id = c2.work_id"
+        SELECT DISTINCT anime_id, MAX(id) AS record_id FROM records
+          WHERE records.user_id = #{user.id} GROUP BY anime_id
+      ) AS c2 ON works.id = c2.anime_id"
     )
   }
 
@@ -193,7 +193,7 @@ class Anime < ApplicationRecord
       NOT EXISTS (
         SELECT * FROM episodes WHERE
           1 = 1
-          AND episodes.work_id = works.id
+          AND episodes.anime_id = works.id
           AND episodes.deleted_at IS NULL
           AND episodes.unpublished_at IS NULL
       )
@@ -214,7 +214,7 @@ class Anime < ApplicationRecord
 
   # 作品画像が設定されていない作品
   scope :with_no_image, -> {
-    joins("LEFT OUTER JOIN work_images ON work_images.work_id = works.id").
+    joins("LEFT OUTER JOIN work_images ON work_images.anime_id = works.id").
       where("work_images.id IS NULL")
   }
 
@@ -233,20 +233,20 @@ class Anime < ApplicationRecord
 
   def self.statuses(work_ids, user)
     work_ids = work_ids.uniq
-    library_entries = LibraryEntry.where(user: user, work_id: work_ids).eager_load(:status)
+    library_entries = LibraryEntry.where(user: user, anime_id: work_ids).eager_load(:status)
 
     work_ids.map do |work_id|
       {
         work_id: work_id,
-        kind: library_entries.select { |ls| ls.work_id == work_id }.first&.status&.kind.presence || "no_select"
+        kind: library_entries.select { |ls| ls.anime_id == work_id }.first&.status&.kind.presence || "no_select"
       }
     end
   end
 
   def self.work_tags_data(works, user)
     work_ids = works.pluck(:id)
-    work_taggings = WorkTagging.where(user: user, work_id: work_ids)
-    work_tags = WorkTag.where(id: work_taggings.pluck(:work_tag_id))
+    work_taggings = AnimeTagging.where(user: user, work_id: work_ids)
+    work_tags = AnimeTag.where(id: work_taggings.pluck(:work_tag_id))
 
     work_ids.map do |work_id|
       work_tag_ids = work_taggings.
@@ -262,7 +262,7 @@ class Anime < ApplicationRecord
 
   def self.work_comment_data(works, user)
     work_ids = works.pluck(:id)
-    work_comments = WorkComment.where(user: user, work_id: work_ids)
+    work_comments = AnimeComment.where(user: user, work_id: work_ids)
 
     work_ids.map do |work_id|
       {
@@ -357,7 +357,7 @@ class Anime < ApplicationRecord
   end
 
   def to_entity
-    @to_entity ||= WorkEntity.from_model(self)
+    @to_entity ||= AnimeEntity.from_model(self)
   end
 
   def people
@@ -497,9 +497,9 @@ class Anime < ApplicationRecord
   end
 
   def related_works
-    series_work_ids = SeriesWork.where(series_id: series_list.pluck(:id)).pluck(:id)
-    series_works = SeriesWork.where(id: series_work_ids)
-    Work.where(id: series_works.pluck(:work_id) - [id])
+    series_work_ids = SeriesAnime.where(series_id: series_list.pluck(:id)).pluck(:id)
+    series_works = SeriesAnime.where(id: series_work_ids)
+    Anime.where(id: series_works.pluck(:work_id) - [id])
   end
 
   def local_title

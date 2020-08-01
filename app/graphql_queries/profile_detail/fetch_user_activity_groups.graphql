@@ -81,7 +81,7 @@ query($username: String!, $first: Int, $last: Int, $before: String, $after: Stri
                 }
               }
 
-              ... on WorkRecord {
+              ... on AnimeRecord {
                 databaseId
                 ratingOverallState
                 body

@@ -9,21 +9,21 @@
 #  likes_count          :integer          default(0), not null
 #  created_at           :datetime
 #  updated_at           :datetime
+#  anime_id             :bigint           not null
 #  oauth_application_id :bigint
 #  user_id              :bigint           not null
-#  work_id              :bigint           not null
 #
 # Indexes
 #
 #  index_statuses_on_oauth_application_id  (oauth_application_id)
 #  statuses_user_id_idx                    (user_id)
-#  statuses_work_id_idx                    (work_id)
+#  statuses_work_id_idx                    (anime_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...         (oauth_application_id => oauth_applications.id)
 #  statuses_user_id_fk  (user_id => users.id) ON DELETE => cascade
-#  statuses_work_id_fk  (work_id => animes.id) ON DELETE => cascade
+#  statuses_work_id_fk  (anime_id => animes.id) ON DELETE => cascade
 #
 
 class Status < ApplicationRecord
@@ -62,7 +62,7 @@ class Status < ApplicationRecord
     as: :recipient
 
   scope :positive, -> { with_kind(*POSITIVE_KINDS) }
-  scope :with_not_deleted_work, -> { joins(:work).merge(Work.only_kept) }
+  scope :with_not_deleted_work, -> { joins(:work).merge(Anime.only_kept) }
 
   def self.kind_v2_to_v3(kind_v2)
     return if kind_v2.blank?

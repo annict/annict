@@ -5,7 +5,7 @@ module Db
     before_action :authenticate_user!, only: %i(new create edit update destroy)
 
     def index
-      @work = Work.without_deleted.find(params[:work_id])
+      @work = Anime.without_deleted.find(params[:work_id])
       @staffs = @work.
         staffs.
         without_deleted.
@@ -14,13 +14,13 @@ module Db
     end
 
     def new
-      @work = Work.without_deleted.find(params[:work_id])
+      @work = Anime.without_deleted.find(params[:work_id])
       @form = Db::StaffRowsForm.new
       authorize @form
     end
 
     def create
-      @work = Work.without_deleted.find(params[:work_id])
+      @work = Anime.without_deleted.find(params[:work_id])
       @form = Db::StaffRowsForm.new(staff_rows_form_params)
       @form.user = current_user
       @form.work = @work

@@ -31,7 +31,7 @@ module Canary
           null: false,
           description: "ソート番号"
 
-        field :work, Canary::Types::Objects::WorkType,
+        field :work, Canary::Types::Objects::AnimeType,
           null: false
 
         field :character, Canary::Types::Objects::CharacterType,

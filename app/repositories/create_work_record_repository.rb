@@ -3,7 +3,7 @@
 class CreateWorkRecordRepository < ApplicationRepository
   def create(work:, params:)
     result = execute(variables: {
-      workId: Canary::AnnictSchema.id_from_object(work, Work),
+      workId: Canary::AnnictSchema.id_from_object(work, Anime),
       body: params[:body],
       ratingOverallState: params[:rating_overall_state]&.upcase.presence || nil,
       ratingAnimationState: params[:rating_animation_state]&.upcase.presence || nil,
@@ -17,7 +17,7 @@ class CreateWorkRecordRepository < ApplicationRepository
       return [nil, MutationError.new(message: result.to_h["errors"][0]["message"])]
     end
 
-    work_record_node = result.dig("data", "createWorkRecord", "workRecord")
+    work_record_node = result.dig("data", "createAnimeRecord", "animeRecord")
 
     [WorkRecordEntity.from_node(work_record_node), nil]
   end

@@ -2,10 +2,10 @@
 
 module Canary
   module Mutations
-    class DeleteWorkRecord < Canary::Mutations::Base
+    class DeleteAnimeRecord < Canary::Mutations::Base
       argument :work_record_id, ID, required: true
 
-      field :work, Canary::Types::Objects::WorkType, null: true
+      field :work, Canary::Types::Objects::AnimeType, null: true
 
       def resolve(work_record_id:)
         raise Annict::Errors::InvalidAPITokenScopeError unless context[:writable]

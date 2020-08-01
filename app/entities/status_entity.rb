@@ -5,7 +5,7 @@ class StatusEntity < ApplicationEntity
   attribute? :kind, Types::StatusKinds
   attribute? :likes_count, Types::Integer
   attribute? :user, UserEntity
-  attribute? :work, WorkEntity
+  attribute? :work, AnimeEntity
 
   def self.from_node(status_node, user_node: nil)
     attrs = {}
@@ -23,7 +23,7 @@ class StatusEntity < ApplicationEntity
     end
 
     if work_node = status_node["work"]
-      attrs[:work] = WorkEntity.from_node(work_node)
+      attrs[:work] = AnimeEntity.from_node(work_node)
     end
 
     if user_node = status_node["user"] || user_node

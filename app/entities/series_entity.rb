@@ -5,7 +5,7 @@ class SeriesEntity < ApplicationEntity
 
   attribute? :name, Types::String
   attribute? :name_en, Types::String.optional
-  attribute? :series_works, Types::Array.of(SeriesWorkEntity)
+  attribute? :series_works, Types::Array.of(SeriesAnimeEntity)
 
   def self.from_nodes(series_nodes)
     series_nodes.map do |series_node|
@@ -25,7 +25,7 @@ class SeriesEntity < ApplicationEntity
     end
 
     series_work_edges = series_node.dig("works", "edges")
-    attrs[:series_works] = SeriesWorkEntity.from_edges(series_work_edges || [])
+    attrs[:series_works] = SeriesAnimeEntity.from_edges(series_work_edges || [])
 
     new attrs
   end

@@ -60,7 +60,7 @@
     .text-right
       = render ShareToTwitterButtonComponent.new(text: "#{t("head.title.work_records.show", profile_name: work_record.user.profile.name, username: work_record.user.username, work_title: work_record.work.local_title)}", url: "#{local_url}#{record_path(work_record.user.username, work_record.record)}", hashtags: "#{work_record.work.twitter_hashtag.presence || ''}", class_name: "mr-2")
       = render ShareToFacebookButtonComponent.new(url: "#{local_url}#{record_path(work_record.user.username, work_record.record)}")
-      = render LikeButtonComponent.new(resource_name: "WorkRecord", resource_id: work_record.id, likes_count: work_record.likes_count, page_category: page_category, class_name: "ml-2")
+      = render LikeButtonComponent.new(resource_name: "AnimeRecord", resource_id: work_record.id, likes_count: work_record.likes_count, page_category: page_category, class_name: "ml-2")
 
 - if policy(work_record).update?
   .text-right.mt-2

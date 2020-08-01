@@ -16,7 +16,7 @@ describe "POST /db/series/:series_id/series_works", type: :request do
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("ログインしてください")
 
-      expect(SeriesWork.all.size).to eq(0)
+      expect(SeriesAnime.all.size).to eq(0)
     end
   end
 
@@ -40,7 +40,7 @@ describe "POST /db/series/:series_id/series_works", type: :request do
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("アクセスできません")
 
-      expect(SeriesWork.all.size).to eq(0)
+      expect(SeriesAnime.all.size).to eq(0)
     end
   end
 
@@ -59,15 +59,15 @@ describe "POST /db/series/:series_id/series_works", type: :request do
     end
 
     it "user can create series" do
-      expect(SeriesWork.all.size).to eq(0)
+      expect(SeriesAnime.all.size).to eq(0)
 
       post "/db/series/#{series.id}/series_works", params: { db_series_work_rows_form: form_params }
 
       expect(response.status).to eq(302)
       expect(flash[:notice]).to eq("登録しました")
 
-      expect(SeriesWork.all.size).to eq(1)
-      series_work = SeriesWork.first
+      expect(SeriesAnime.all.size).to eq(1)
+      series_work = SeriesAnime.first
       expect(series_work.work).to eq(work)
       expect(series_work.summary).to eq("Season 1")
     end

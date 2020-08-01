@@ -44,7 +44,7 @@ class EmailNotificationMailer < ActionMailer::Base
   def favorite_works_added(user_id, work_ids)
     @user = User.only_kept.find(user_id)
     @unsubscription_key = @user.email_notification.unsubscription_key
-    @works = Work.only_kept.where(id: work_ids)
+    @works = Anime.only_kept.where(id: work_ids)
 
     I18n.with_locale(@user.locale) do
       subject = default_i18n_subject(n: @works.size)
@@ -55,7 +55,7 @@ class EmailNotificationMailer < ActionMailer::Base
   def related_works_added(user_id, work_ids)
     @user = User.only_kept.find(user_id)
     @unsubscription_key = @user.email_notification.unsubscription_key
-    @works = Work.only_kept.where(id: work_ids)
+    @works = Anime.only_kept.where(id: work_ids)
 
     I18n.with_locale(@user.locale) do
       subject = default_i18n_subject(n: @works.size)

@@ -24,7 +24,7 @@ class RecordsController < ApplicationController
       render "episode_records/show"
     else
       @work_record = UserWorkRecordsQuery.new.call(
-        work_records: WorkRecord.where(id: @record.work_record),
+        work_records: AnimeRecord.where(id: @record.work_record),
         user: current_user
       ).first
       raise ActiveRecord::RecordNotFound unless @work_record

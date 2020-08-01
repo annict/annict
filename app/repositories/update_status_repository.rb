@@ -3,7 +3,7 @@
 class UpdateStatusRepository < ApplicationRepository
   def create(work:, kind:)
     result = execute(variables: {
-      workId: Canary::AnnictSchema.id_from_object(work, Work),
+      workId: Canary::AnnictSchema.id_from_object(work, Anime),
       kind: Status.kind_v2_to_v3(kind)&.upcase&.to_s
     })
 
@@ -13,6 +13,6 @@ class UpdateStatusRepository < ApplicationRepository
 
     work_node = result.dig("data", "updateStatus", "work")
 
-    [WorkEntity.from_node(work_node), nil]
+    [AnimeEntity.from_node(work_node), nil]
   end
 end

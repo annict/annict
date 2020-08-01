@@ -11,21 +11,21 @@
 #  unpublished_at :datetime
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
+#  anime_id       :bigint           not null
 #  series_id      :bigint           not null
-#  work_id        :bigint           not null
 #
 # Indexes
 #
-#  index_series_animes_on_deleted_at             (deleted_at)
-#  index_series_animes_on_series_id              (series_id)
-#  index_series_animes_on_series_id_and_work_id  (series_id,work_id) UNIQUE
-#  index_series_animes_on_unpublished_at         (unpublished_at)
-#  index_series_animes_on_work_id                (work_id)
+#  index_series_animes_on_anime_id                (anime_id)
+#  index_series_animes_on_deleted_at              (deleted_at)
+#  index_series_animes_on_series_id               (series_id)
+#  index_series_animes_on_series_id_and_anime_id  (series_id,anime_id) UNIQUE
+#  index_series_animes_on_unpublished_at          (unpublished_at)
 #
 # Foreign Keys
 #
+#  fk_rails_...  (anime_id => animes.id)
 #  fk_rails_...  (series_id => series.id)
-#  fk_rails_...  (work_id => animes.id)
 #
 
 class SeriesAnime < ApplicationRecord

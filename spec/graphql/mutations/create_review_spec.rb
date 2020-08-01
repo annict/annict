@@ -46,7 +46,7 @@ describe "GraphQL API Mutation" do
     end
 
     it "create resource" do
-      review = WorkRecord.last
+      review = AnimeRecord.last
       expect(result.dig("data", "createReview", "review", "annictId")).to eq(review.id)
       expect(result.dig("data", "createReview", "review", "body")).to eq(review.body)
       expect(result.dig("data", "createReview", "review", "ratingAnimationState")).to eq("GOOD")

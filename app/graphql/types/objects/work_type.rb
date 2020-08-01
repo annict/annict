@@ -96,7 +96,7 @@ module Types
       end
 
       def image
-        RecordLoader.for(WorkImage).load(object.work_image&.id)
+        RecordLoader.for(AnimeImage).load(object.work_image&.id)
       end
 
       def reviews_count

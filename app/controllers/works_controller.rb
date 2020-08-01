@@ -13,7 +13,7 @@ class WorksController < ApplicationController
   def popular
     set_page_category Rails.configuration.page_categories.work_list_popular
 
-    @works = Work.
+    @works = Anime.
       only_kept.
       preload(:work_image).
       order(watchers_count: :desc, id: :desc).
@@ -26,7 +26,7 @@ class WorksController < ApplicationController
   def newest
     set_page_category Rails.configuration.page_categories.work_list_newest
 
-    @works = Work.
+    @works = Anime.
       only_kept.
       preload(:work_image).
       order(id: :desc).
@@ -39,7 +39,7 @@ class WorksController < ApplicationController
   def season
     set_page_category Rails.configuration.page_categories.work_list_season
 
-    @works = Work.
+    @works = Anime.
       only_kept.
       by_season(params[:slug]).
       preload(:work_image).
@@ -74,10 +74,10 @@ class WorksController < ApplicationController
 
   def render_list
     if @display_option == "list_detailed"
-      @trailers_data = Work.trailers_data(@works)
-      @casts_data = Work.casts_data(@works)
-      @staffs_data = Work.staffs_data(@works, major: true)
-      @programs_data = Work.programs_data(@works, only_vod: true)
+      @trailers_data = Anime.trailers_data(@works)
+      @casts_data = Anime.casts_data(@works)
+      @staffs_data = Anime.staffs_data(@works, major: true)
+      @programs_data = Anime.programs_data(@works, only_vod: true)
       @channels = Channel.only_kept.with_vod
     end
 

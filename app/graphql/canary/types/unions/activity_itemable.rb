@@ -8,7 +8,7 @@ module Canary
 
         possible_types Canary::Types::Objects::StatusType,
           Canary::Types::Objects::EpisodeRecordType,
-          Canary::Types::Objects::WorkRecordType
+          Canary::Types::Objects::AnimeRecordType
       end
     end
   end

@@ -7,7 +7,7 @@ module Mutations
     argument :work_id, ID, required: true
     argument :title, String, required: false
     argument :body, String, required: true
-    WorkRecord::STATES.each do |state|
+    AnimeRecord::STATES.each do |state|
       argument state.to_s.camelcase(:lower).to_sym, Types::Enums::RatingState, required: false
     end
     argument :share_twitter, Boolean, required: false
@@ -31,7 +31,7 @@ module Mutations
 
 
       viewer = context[:viewer]
-      work = Work.only_kept.find_by_graphql_id(work_id)
+      work = Anime.only_kept.find_by_graphql_id(work_id)
 
       body = title.present? ? "#{title}\n\n#{body}" : body
       work_record_params = {

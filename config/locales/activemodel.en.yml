@@ -59,7 +59,7 @@ en:
       db/program_rows_form:
         rows: Programs
       db/series_work_rows_form:
-        rows: Series Works
+        rows: Series anime
       db/slot_rows_form:
         rows: Slots
       db/staff_rows_form:

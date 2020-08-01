@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class WorkRecordEntity < ApplicationEntity
+class AnimeRecordEntity < ApplicationEntity
   attribute? :database_id, Types::Integer
   attribute? :rating_animation_state, Types::RecordRatingStateKinds.optional
   attribute? :rating_music_state, Types::RecordRatingStateKinds.optional
@@ -14,7 +14,7 @@ class WorkRecordEntity < ApplicationEntity
   attribute? :created_at, Types::Params::Time
   attribute? :user, UserEntity
   attribute? :record, RecordEntity
-  attribute? :work, WorkEntity
+  attribute? :work, AnimeEntity
 
   def self.from_nodes(work_record_nodes)
     work_record_nodes.map do |work_record_node|
@@ -52,7 +52,7 @@ class WorkRecordEntity < ApplicationEntity
     end
 
     if work_node = work_record_node["work"]
-      attrs[:work] = WorkEntity.from_node(work_node)
+      attrs[:work] = AnimeEntity.from_node(work_node)
     end
 
     if user_node = work_record_node["user"] || user_node

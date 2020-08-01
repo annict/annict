@@ -19,8 +19,8 @@ class LibrariesController < ApplicationController
     @seasons = Kaminari.paginate_array(@seasons).page(params[:page]).per(paginate_per)
 
     if @display_option == "grid_detailed"
-      @work_tags_data = Work.work_tags_data(@works, @user)
-      @work_comment_data = Work.work_comment_data(@works, @user)
+      @work_tags_data = Anime.work_tags_data(@works, @user)
+      @work_comment_data = Anime.work_comment_data(@works, @user)
     end
 
     return unless user_signed_in?

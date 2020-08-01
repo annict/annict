@@ -309,13 +309,13 @@ namespace :counter_cache do
   end
 
   task refresh_on_work_records: :environment do
-    WorkRecord.only_kept.find_each do |work_record|
+    AnimeRecord.only_kept.find_each do |work_record|
       likes_count = work_record.likes.count
 
       next if work_record.likes_count == likes_count
 
       puts [
-        "WorkRecord: #{work_record.id}",
+        "AnimeRecord: #{work_record.id}",
         "likes_count: #{work_record.likes_count} -> #{likes_count}"
       ].join(", ")
 
@@ -327,13 +327,13 @@ namespace :counter_cache do
   end
 
   task refresh_on_work_tags: :environment do
-    WorkTag.only_kept.find_each do |work_tag|
+    AnimeTag.only_kept.find_each do |work_tag|
       work_taggings_count = work_tag.work_taggings.count
 
       next if work_tag.work_taggings_count == work_taggings_count
 
       puts [
-        "WorkTag: #{work_tag.id}",
+        "AnimeTag: #{work_tag.id}",
         "work_taggings_count: #{work_tag.work_taggings_count} -> #{work_taggings_count}"
       ].join(", ")
 
@@ -345,7 +345,7 @@ namespace :counter_cache do
   end
 
   task refresh_on_works: :environment do
-    Work.only_kept.find_each do |work|
+    Anime.only_kept.find_each do |work|
       kinds = %w(wanna_watch watching watched).freeze
 
       episodes_count = work.episodes.only_kept.count
@@ -361,7 +361,7 @@ namespace :counter_cache do
         work.work_records_with_body_count == work_records_with_body_count
 
       puts [
-        "Work: #{work.id}",
+        "Anime: #{work.id}",
         "episodes_count: #{work.episodes_count} -> #{episodes_count}",
         "records_count: #{work.records_count} -> #{records_count}",
         "watchers_count: #{work.watchers_count} -> #{watchers_count}",

@@ -5,7 +5,7 @@ module Db
     before_action :authenticate_user!, only: %i(new create edit update destroy)
 
     def index
-      @work = Work.without_deleted.find(params[:work_id])
+      @work = Anime.without_deleted.find(params[:work_id])
       @episodes = @work.episodes.without_deleted.
         includes(:prev_episode).
         order(sort_number: :desc).
@@ -14,13 +14,13 @@ module Db
     end
 
     def new
-      @work = Work.without_deleted.find(params[:work_id])
+      @work = Anime.without_deleted.find(params[:work_id])
       @form = Db::EpisodeRowsForm.new
       authorize @form
     end
 
     def create
-      @work = Work.without_deleted.find(params[:work_id])
+      @work = Anime.without_deleted.find(params[:work_id])
       @form = Db::EpisodeRowsForm.new(episode_rows_form_params)
       @form.user = current_user
       @form.work = @work

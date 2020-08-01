@@ -111,11 +111,11 @@ en:
       state:
         published: Published
         hidden: Hidden
-      created: Work created
+      created: Anime created
       go_to_work: Go to Work
-      new_work: New work
-      no_images: No work images
+      new_work: New anime
+      no_images: No anime images
       started_on_eg: e.g. 2017-09-01
       twitter_hashtag_placeholder: e.g. なのん
       twitter_username_placeholder: e.g. nonnontv
-      updated: Work updated
+      updated: Anime updated

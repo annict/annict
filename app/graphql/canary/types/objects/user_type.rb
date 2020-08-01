@@ -67,12 +67,12 @@ module Canary
           argument :has_body, Boolean, required: false
         end
 
-        field :works, Canary::Types::Objects::WorkType.connection_type, null: true do
+        field :works, Canary::Types::Objects::AnimeType.connection_type, null: true do
           argument :database_ids, [Integer], required: false
           argument :seasons, [String], required: false
           argument :titles, [String], required: false
           argument :status_kind, Canary::Types::Enums::StatusKind, required: false
-          argument :order_by, Canary::Types::InputObjects::WorkOrder, required: false
+          argument :order_by, Canary::Types::InputObjects::AnimeOrder, required: false
         end
 
         field :slots, Canary::Types::Objects::SlotType.connection_type, null: true do

@@ -8,7 +8,7 @@ class ActivityGroupEntity < ApplicationEntity
   attribute? :activities_count, Types::Integer
   attribute? :created_at, Types::Params::Time
   attribute? :user, UserEntity
-  attribute? :itemables, Types::Array.of(EpisodeRecordEntity | StatusEntity | WorkRecordEntity)
+  attribute? :itemables, Types::Array.of(EpisodeRecordEntity | StatusEntity | AnimeRecordEntity)
   attribute? :activities_page_info, PageInfoEntity
 
   def self.from_nodes(activity_group_nodes)

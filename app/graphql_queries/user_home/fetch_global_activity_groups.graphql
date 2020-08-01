@@ -80,7 +80,7 @@ query($first: Int, $last: Int, $before: String, $after: String) {
               }
             }
 
-            ... on WorkRecord {
+            ... on AnimeRecord {
               databaseId
               ratingOverallState
               body

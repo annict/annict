@@ -8,7 +8,7 @@ mutation (
   $ratingCharacterState: RatingState,
   $shareToTwitter: Boolean
 ) {
-  createWorkRecord(
+  createAnimeRecord(
     input: {
       workId: $workId,
       body: $body,

@@ -5,7 +5,7 @@ module Mutations
     argument :review_id, ID, required: true
     argument :title, String, required: false
     argument :body, String, required: true
-    WorkRecord::STATES.each do |state|
+    AnimeRecord::STATES.each do |state|
       argument state.to_s.camelcase(:lower).to_sym, Types::Enums::RatingState, required: true
     end
     argument :share_twitter, Boolean, required: false
@@ -32,7 +32,7 @@ module Mutations
 
       work_record.title = title
       work_record.body = body
-      WorkRecord::STATES.each do |state|
+      AnimeRecord::STATES.each do |state|
         work_record.send("#{state}=".to_sym, send(state.to_s.camelcase(:lower).to_sym)&.downcase)
       end
       work_record.modified_at = Time.now

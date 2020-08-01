@@ -10,7 +10,7 @@ module Canary
 
         field :database_id, Integer, null: false
         field :user, Canary::Types::Objects::UserType, null: false
-        field :work, Canary::Types::Objects::WorkType, null: false
+        field :work, Canary::Types::Objects::AnimeType, null: false
         field :kind, Canary::Types::Enums::StatusKind, null: false
         field :likes_count, Integer, null: false
         field :created_at, Canary::Types::Scalars::DateTime, null: false
@@ -20,7 +20,7 @@ module Canary
         end
 
         def work
-          RecordLoader.for(Work).load(object.work_id)
+          RecordLoader.for(Anime).load(object.work_id)
         end
 
         def kind

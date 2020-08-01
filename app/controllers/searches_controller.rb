@@ -12,7 +12,7 @@ class SearchesController < ApplicationController
         @search.organizations.order(id: :desc)
       ]
     else
-      [Work.none, Character.none, Person.none, Organization.none]
+      [Anime.none, Character.none, Person.none, Organization.none]
     end
     @view = select_view(params[:resource].presence || "work")
   end

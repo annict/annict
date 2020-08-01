@@ -188,7 +188,7 @@ class User < ApplicationRecord
   end
 
   def works_on(*status_kinds)
-    Work.joins(:library_entries).merge(library_entries.with_status(*status_kinds))
+    Anime.joins(:library_entries).merge(library_entries.with_status(*status_kinds))
   end
 
   def social_friends
@@ -347,7 +347,7 @@ class User < ApplicationRecord
     work_tag = nil
 
     ActiveRecord::Base.transaction do
-      work_tag = WorkTag.where(name: tag_name).first_or_create!
+      work_tag = AnimeTag.where(name: tag_name).first_or_create!
       work_taggables.where(work_tag: work_tag).first_or_create!
       work_taggings.where(work: work, work_tag: work_tag).first_or_create!
     end
@@ -361,7 +361,7 @@ class User < ApplicationRecord
     added_tag_names = tag_names - tags.pluck(:name)
 
     ActiveRecord::Base.transaction do
-      work_tags = WorkTag.where(name: removed_tag_names)
+      work_tags = AnimeTag.where(name: removed_tag_names)
       work_taggings.where(work: work, work_tag: work_tags).destroy_all
 
       work_tags.each do |work_tag|

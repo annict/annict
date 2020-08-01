@@ -7,7 +7,7 @@ module Annict
         vod_title_ids = []
 
         attrs.each do |attr|
-          work = Work.only_kept.find_by(title: attr[:name])
+          work = Anime.only_kept.find_by(title: attr[:name])
 
           print "name: #{attr[:name]} -> "
 

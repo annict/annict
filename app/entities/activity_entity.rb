@@ -3,7 +3,7 @@
 class ActivityEntity < ApplicationEntity
   attribute? :database_id, Types::Integer
   attribute? :itemable_type, Types::ActivityResourceKinds
-  attribute? :itemable, EpisodeRecordEntity | StatusEntity | WorkRecordEntity
+  attribute? :itemable, EpisodeRecordEntity | StatusEntity | AnimeRecordEntity
 
   def self.from_nodes(activity_nodes, user_node: nil)
     activity_nodes.map do |activity_node|
@@ -29,7 +29,7 @@ class ActivityEntity < ApplicationEntity
       when "STATUS"
         StatusEntity.from_node(itemable_node, user_node: user_node)
       when "WORK_RECORD"
-        WorkRecordEntity.from_node(itemable_node, user_node: user_node)
+        AnimeRecordEntity.from_node(itemable_node, user_node: user_node)
       end
     end
 

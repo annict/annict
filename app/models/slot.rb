@@ -15,10 +15,10 @@
 #  unpublished_at :datetime
 #  created_at     :datetime
 #  updated_at     :datetime
+#  anime_id       :bigint           not null
 #  channel_id     :bigint           not null
 #  episode_id     :bigint
 #  program_id     :bigint
-#  work_id        :bigint           not null
 #
 # Indexes
 #
@@ -31,14 +31,14 @@
 #  index_slots_on_unpublished_at             (unpublished_at)
 #  programs_channel_id_idx                   (channel_id)
 #  programs_episode_id_idx                   (episode_id)
-#  programs_work_id_idx                      (work_id)
+#  programs_work_id_idx                      (anime_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...            (program_id => programs.id)
 #  programs_channel_id_fk  (channel_id => channels.id) ON DELETE => cascade
 #  programs_episode_id_fk  (episode_id => episodes.id) ON DELETE => cascade
-#  programs_work_id_fk     (work_id => animes.id) ON DELETE => cascade
+#  programs_work_id_fk     (anime_id => animes.id) ON DELETE => cascade
 #
 
 class Slot < ApplicationRecord
@@ -60,7 +60,7 @@ class Slot < ApplicationRecord
   validates :started_at, presence: true
 
   scope :episode_published, -> { joins(:episode).merge(Episode.only_kept) }
-  scope :with_not_deleted_work, -> { joins(:work).merge(Work.only_kept) }
+  scope :with_not_deleted_work, -> { joins(:work).merge(Anime.only_kept) }
   scope :with_works, ->(works) { joins(:work).merge(works) }
 
   before_validation :calc_for_timezone

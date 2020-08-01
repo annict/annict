@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class WorkPolicy < ApplicationPolicy
+class SeriesAnimePolicy < ApplicationPolicy
   def create?
     user.present? && user.committer?
   end

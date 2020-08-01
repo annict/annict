@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 namespace :work do
-  # 指定したWorkを削除する
+  # 指定した Anime を削除する
   # コマンド実行例: rake work:hide_overlapped_work[4458,4485]
   task :hide_overlapped_work, %i(target_work_id original_work_id) => :environment do |_, args|
-    # 削除対象のWork
-    target_work = Work.find(args[:target_work_id])
-    # オリジナルのWork
-    original_work = Work.find(args[:original_work_id])
+    # 削除対象の Anime
+    target_work = Anime.find(args[:target_work_id])
+    # オリジナルの Anime
+    original_work = Anime.find(args[:original_work_id])
 
     ActiveRecord::Base.transaction do
       [
@@ -16,7 +16,7 @@ namespace :work do
         update_or_delete_pol_resource(hash[:resource_class], hash[:column], target_work, original_work)
       end
 
-      [ChannelWork, Record, Comment, Status, LibraryEntry].each do |resource_class|
+      [ChannelAnime, Record, Comment, Status, LibraryEntry].each do |resource_class|
         update_or_delete_resource(resource_class, target_work, original_work)
       end
 
@@ -51,7 +51,7 @@ namespace :work do
   task update_score: :environment do
     RATE_MAX = 100
 
-    Work.only_kept.find_each do |w|
+    Anime.only_kept.find_each do |w|
       episodes = w.episodes.only_kept.where.not(satisfaction_rate: nil)
       ratings_count = episodes.pluck(:ratings_count).inject(&:+)
       rates = episodes.pluck(:satisfaction_rate)
@@ -72,7 +72,7 @@ namespace :work do
         "rates_avg: #{rates_avg}",
         "satisfaction_rate: #{satisfaction_rate}"
       ]
-      puts "Work: #{w.id} => #{outputs.join(', ')}"
+      puts "Anime: #{w.id} => #{outputs.join(', ')}"
 
       w.update_columns(satisfaction_rate: satisfaction_rate, ratings_count: ratings_count)
     end

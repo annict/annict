@@ -46,12 +46,12 @@ module Canary
         Canary::Types::Objects::StatusType
       when User
         Canary::Types::Objects::UserType
-      when Work
-        Canary::Types::Objects::WorkType
-      when WorkImage
-        Canary::Types::Objects::WorkImageType
-      when WorkRecord
-        Canary::Types::Objects::WorkRecordType
+      when Anime
+        Canary::Types::Objects::AnimeType
+      when AnimeImage
+        Canary::Types::Objects::AnimeImageType
+      when AnimeRecord
+        Canary::Types::Objects::AnimeRecordType
       else
         raise "Unexpected object: #{obj}"
       end

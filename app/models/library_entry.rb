@@ -8,26 +8,26 @@
 #  watched_episode_ids :bigint           default([]), not null, is an Array
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
+#  anime_id            :bigint           not null
 #  next_episode_id     :bigint
 #  status_id           :bigint
 #  user_id             :bigint           not null
-#  work_id             :bigint           not null
 #
 # Indexes
 #
+#  index_library_entries_on_anime_id              (anime_id)
 #  index_library_entries_on_next_episode_id       (next_episode_id)
 #  index_library_entries_on_status_id             (status_id)
 #  index_library_entries_on_user_id               (user_id)
+#  index_library_entries_on_user_id_and_anime_id  (user_id,anime_id) UNIQUE
 #  index_library_entries_on_user_id_and_position  (user_id,position)
-#  index_library_entries_on_user_id_and_work_id   (user_id,work_id) UNIQUE
-#  index_library_entries_on_work_id               (work_id)
 #
 # Foreign Keys
 #
+#  fk_rails_...  (anime_id => animes.id)
 #  fk_rails_...  (next_episode_id => episodes.id)
 #  fk_rails_...  (status_id => statuses.id)
 #  fk_rails_...  (user_id => users.id)
-#  fk_rails_...  (work_id => animes.id)
 #
 
 class LibraryEntry < ApplicationRecord
@@ -49,7 +49,7 @@ class LibraryEntry < ApplicationRecord
   scope :watching, -> { with_status(:watching) }
   scope :has_next_episode, -> { where.not(next_episode_id: nil) }
   scope :with_status, ->(*status_kinds) { joins(:status).where(statuses: { kind: status_kinds }) }
-  scope :with_not_deleted_work, -> { joins(:work).merge(Work.only_kept) }
+  scope :with_not_deleted_work, -> { joins(:work).merge(Anime.only_kept) }
 
   def self.count_on(status_kind)
     with_not_deleted_work.with_status(status_kind).count

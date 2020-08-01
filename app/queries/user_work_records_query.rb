@@ -26,7 +26,7 @@ class UserWorkRecordsQuery
     sql = [
       "
         LEFT OUTER JOIN likes ON
-          likes.recipient_type = 'WorkRecord' AND
+          likes.recipient_type = 'AnimeRecord' AND
           work_records.id = likes.recipient_id AND
           likes.user_id = %s
       ", @user.id

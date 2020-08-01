@@ -12,23 +12,23 @@
 #  title           :string           not null
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
+#  anime_id        :bigint           not null
 #  collection_id   :bigint           not null
 #  user_id         :bigint           not null
-#  work_id         :bigint           not null
 #
 # Indexes
 #
-#  index_collection_items_on_collection_id              (collection_id)
-#  index_collection_items_on_collection_id_and_work_id  (collection_id,work_id) UNIQUE
-#  index_collection_items_on_deleted_at                 (deleted_at)
-#  index_collection_items_on_user_id                    (user_id)
-#  index_collection_items_on_work_id                    (work_id)
+#  index_collection_items_on_anime_id                    (anime_id)
+#  index_collection_items_on_collection_id               (collection_id)
+#  index_collection_items_on_collection_id_and_anime_id  (collection_id,anime_id) UNIQUE
+#  index_collection_items_on_deleted_at                  (deleted_at)
+#  index_collection_items_on_user_id                     (user_id)
 #
 # Foreign Keys
 #
+#  fk_rails_...  (anime_id => animes.id)
 #  fk_rails_...  (collection_id => collections.id)
 #  fk_rails_...  (user_id => users.id)
-#  fk_rails_...  (work_id => animes.id)
 #
 
 class CollectionItem < ApplicationRecord

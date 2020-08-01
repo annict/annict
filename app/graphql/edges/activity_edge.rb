@@ -31,8 +31,8 @@ module Edges
         RecordLoader.for(Status).load(activity.trackable_id)
       when "EpisodeRecord"
         RecordLoader.for(EpisodeRecord).load(activity.trackable_id)
-      when "WorkRecord"
-        RecordLoader.for(WorkRecord).load(activity.trackable_id)
+      when "AnimeRecord"
+        RecordLoader.for(AnimeRecord).load(activity.trackable_id)
       when "MultipleEpisodeRecord"
         RecordLoader.for(MultipleEpisodeRecord).load(activity.trackable_id)
       end

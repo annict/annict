@@ -13,7 +13,7 @@ module Canary
         field :modified_at, Canary::Types::Scalars::DateTime, null: true
         field :created_at, Canary::Types::Scalars::DateTime, null: false
         field :user, Canary::Types::Objects::UserType, null: false
-        field :work, Canary::Types::Objects::WorkType, null: false
+        field :work, Canary::Types::Objects::AnimeType, null: false
         field :itemable, Canary::Types::Unions::RecordItemable, null: false
 
         def itemable_type
@@ -42,7 +42,7 @@ module Canary
         end
 
         def work
-          Canary::RecordLoader.for(Work).load(object.work_id)
+          Canary::RecordLoader.for(Anime).load(object.work_id)
         end
 
         def itemable

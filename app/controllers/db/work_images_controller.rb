@@ -5,12 +5,12 @@ module Db
     before_action :authenticate_user!
 
     def show
-      @work = Work.without_deleted.find(params[:work_id])
+      @work = Anime.without_deleted.find(params[:work_id])
       @image = @work.work_image.presence || @work.build_work_image
     end
 
     def create
-      @work = Work.without_deleted.find(params[:work_id])
+      @work = Anime.without_deleted.find(params[:work_id])
       @image = @work.build_work_image(work_image_params)
       authorize @image
       @image.user = current_user
@@ -23,8 +23,8 @@ module Db
     end
 
     def update
-      @work = Work.without_deleted.find(params[:work_id])
-      @image = WorkImage.find_by!(work_id: @work.id)
+      @work = Anime.without_deleted.find(params[:work_id])
+      @image = AnimeImage.find_by!(work_id: @work.id)
       authorize @image
 
       @image.attributes = work_image_params

@@ -18,17 +18,17 @@
 #  url                    :string           not null
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
-#  work_id                :bigint           not null
+#  anime_id               :bigint           not null
 #
 # Indexes
 #
+#  index_trailers_on_anime_id        (anime_id)
 #  index_trailers_on_deleted_at      (deleted_at)
 #  index_trailers_on_unpublished_at  (unpublished_at)
-#  index_trailers_on_work_id         (work_id)
 #
 # Foreign Keys
 #
-#  fk_rails_...  (work_id => animes.id)
+#  fk_rails_...  (anime_id => animes.id)
 #
 
 class Trailer < ApplicationRecord

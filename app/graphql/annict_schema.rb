@@ -36,11 +36,11 @@ class AnnictSchema < GraphQL::Schema
       Types::Objects::StatusType
     when User
       Types::Objects::UserType
-    when Work
+    when Anime
       Types::Objects::WorkType
-    when WorkImage
+    when AnimeImage
       Types::Objects::WorkImageType
-    when WorkRecord
+    when AnimeRecord
       Types::Objects::ReviewType
     else
       raise "Unexpected object: #{obj}"

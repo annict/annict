@@ -2,7 +2,7 @@
 
 class SearchSeriesWorksQuery
   def initialize(
-    collection = SeriesWork.all,
+    collection = AnimeWork.all,
     order_by: nil
   )
     @collection = collection.only_kept

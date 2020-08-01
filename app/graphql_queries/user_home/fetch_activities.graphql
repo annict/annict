@@ -59,7 +59,7 @@ query($activityGroupId: ID!, $cursor: String) {
               }
             }
 
-            ... on WorkRecord {
+            ... on AnimeRecord {
               databaseId
               ratingOverallState
               body

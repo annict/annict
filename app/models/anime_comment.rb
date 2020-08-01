@@ -8,20 +8,20 @@
 #  locale     :string           default("other"), not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
+#  anime_id   :bigint           not null
 #  user_id    :bigint           not null
-#  work_id    :bigint           not null
 #
 # Indexes
 #
-#  index_anime_comments_on_locale               (locale)
-#  index_anime_comments_on_user_id              (user_id)
-#  index_anime_comments_on_user_id_and_work_id  (user_id,work_id) UNIQUE
-#  index_anime_comments_on_work_id              (work_id)
+#  index_anime_comments_on_anime_id              (anime_id)
+#  index_anime_comments_on_locale                (locale)
+#  index_anime_comments_on_user_id               (user_id)
+#  index_anime_comments_on_user_id_and_anime_id  (user_id,anime_id) UNIQUE
 #
 # Foreign Keys
 #
+#  fk_rails_...  (anime_id => animes.id)
 #  fk_rails_...  (user_id => users.id)
-#  fk_rails_...  (work_id => animes.id)
 #
 
 class AnimeComment < ApplicationRecord

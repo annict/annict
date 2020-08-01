@@ -9,7 +9,7 @@ describe "POST /v1/me/reviews" do
 
     it "creates work record" do
       expect(Record.count).to eq 0
-      expect(WorkRecord.count).to eq 0
+      expect(AnimeRecord.count).to eq 0
       expect(ActivityGroup.count).to eq 0
       expect(Activity.count).to eq 0
 
@@ -25,7 +25,7 @@ describe "POST /v1/me/reviews" do
       expect(response.status).to eq(200)
 
       expect(Record.count).to eq 1
-      expect(WorkRecord.count).to eq 1
+      expect(AnimeRecord.count).to eq 1
       expect(ActivityGroup.count).to eq 1
       expect(Activity.count).to eq 1
 
@@ -42,7 +42,7 @@ describe "POST /v1/me/reviews" do
       expect(work_record.record_id).to eq record.id
       expect(work_record.work_id).to eq work.id
 
-      expect(activity_group.itemable_type).to eq "WorkRecord"
+      expect(activity_group.itemable_type).to eq "AnimeRecord"
       expect(activity_group.single).to eq true
 
       expect(activity.activity_group_id).to eq activity_group.id

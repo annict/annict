@@ -52,7 +52,7 @@ namespace :seed do
       ANNICT_NEXT_SEASON
     ).each do |const|
       year, name = ENV.fetch(const).split("-")
-      works += Work.
+      works += Anime.
         where.not(id: ignored_work_ids).
         where(season_year: year, season_name: name).
         order(watchers_count: :desc).
@@ -60,7 +60,7 @@ namespace :seed do
         limit(10).
         to_a
     end
-    works += Work.
+    works += Anime.
       where.not(id: ignored_work_ids).
       order(watchers_count: :desc).
       select(work_attrs).
@@ -71,7 +71,7 @@ namespace :seed do
       csv << work_attrs
 
       works.each do |record|
-        puts "Inserting Work: #{record.id}"
+        puts "Inserting Anime: #{record.id}"
         csv << work_attrs.map do |attr|
           case attr
           when "title_kana" then "-"

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class SearchWorkRecordsQuery
-  def initialize(collection = WorkRecord.only_kept, context: {}, order_by: nil, has_body: nil, filter_by_locale: false)
+  def initialize(collection = AnimeRecord.only_kept, context: {}, order_by: nil, has_body: nil, filter_by_locale: false)
     @collection = collection
     @context = context
     @args = {

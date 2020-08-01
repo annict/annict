@@ -7,7 +7,7 @@ module WorkDetail
       data = result.to_h.dig("data", "works")
       work_node = data["nodes"].first
 
-      WorkEntity.from_node(work_node)
+      AnimeEntity.from_node(work_node)
     end
   end
 end

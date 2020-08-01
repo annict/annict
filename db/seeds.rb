@@ -6,7 +6,7 @@
   NumberFormat,
   Prefecture,
   Tip,
-  Work,
+  Anime,
   Episode
 ].each do |model_class|
   file_path = "#{Dir.pwd}/db/data/csv/#{model_class.table_name}.csv"

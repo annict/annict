@@ -7,18 +7,18 @@
 #  likes_count :integer          default(0), not null
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
+#  anime_id    :bigint           not null
 #  user_id     :bigint           not null
-#  work_id     :bigint           not null
 #
 # Indexes
 #
-#  index_multiple_episode_records_on_user_id  (user_id)
-#  index_multiple_episode_records_on_work_id  (work_id)
+#  index_multiple_episode_records_on_anime_id  (anime_id)
+#  index_multiple_episode_records_on_user_id   (user_id)
 #
 # Foreign Keys
 #
+#  fk_rails_...  (anime_id => animes.id)
 #  fk_rails_...  (user_id => users.id)
-#  fk_rails_...  (work_id => animes.id)
 #
 
 class MultipleEpisodeRecord < ApplicationRecord

@@ -118,7 +118,7 @@ ALTER SEQUENCE public.activity_groups_id_seq OWNED BY public.activity_groups.id;
 CREATE TABLE public.anime_comments (
     id bigint NOT NULL,
     user_id bigint NOT NULL,
-    work_id bigint NOT NULL,
+    anime_id bigint NOT NULL,
     body character varying NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
@@ -151,7 +151,7 @@ ALTER SEQUENCE public.anime_comments_id_seq OWNED BY public.anime_comments.id;
 
 CREATE TABLE public.anime_images (
     id bigint NOT NULL,
-    work_id bigint NOT NULL,
+    anime_id bigint NOT NULL,
     user_id bigint NOT NULL,
     attachment_file_name character varying,
     attachment_file_size integer,
@@ -192,7 +192,7 @@ ALTER SEQUENCE public.anime_images_id_seq OWNED BY public.anime_images.id;
 CREATE TABLE public.anime_records (
     id bigint NOT NULL,
     user_id bigint NOT NULL,
-    work_id bigint NOT NULL,
+    anime_id bigint NOT NULL,
     title character varying DEFAULT ''::character varying,
     body text NOT NULL,
     rating_animation_state character varying,
@@ -273,7 +273,7 @@ ALTER SEQUENCE public.anime_taggables_id_seq OWNED BY public.anime_taggables.id;
 CREATE TABLE public.anime_taggings (
     id bigint NOT NULL,
     user_id bigint NOT NULL,
-    work_id bigint NOT NULL,
+    anime_id bigint NOT NULL,
     work_tag_id bigint NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
@@ -421,7 +421,7 @@ CREATE TABLE public.ar_internal_metadata (
 CREATE TABLE public.casts (
     id bigint NOT NULL,
     person_id bigint NOT NULL,
-    work_id bigint NOT NULL,
+    anime_id bigint NOT NULL,
     name character varying NOT NULL,
     aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
     sort_number integer DEFAULT 0 NOT NULL,
@@ -472,7 +472,7 @@ CREATE SEQUENCE public.channel_animes_id_seq
 CREATE TABLE public.channel_animes (
     id bigint DEFAULT nextval('public.channel_animes_id_seq'::regclass) NOT NULL,
     user_id bigint NOT NULL,
-    work_id bigint NOT NULL,
+    anime_id bigint NOT NULL,
     channel_id bigint NOT NULL,
     created_at timestamp with time zone,
     updated_at timestamp with time zone
@@ -675,7 +675,7 @@ CREATE TABLE public.collection_items (
     id bigint NOT NULL,
     user_id bigint NOT NULL,
     collection_id bigint NOT NULL,
-    work_id bigint NOT NULL,
+    anime_id bigint NOT NULL,
     title character varying NOT NULL,
     comment text,
     aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
@@ -767,7 +767,7 @@ CREATE TABLE public.comments (
     likes_count integer DEFAULT 0 NOT NULL,
     created_at timestamp with time zone,
     updated_at timestamp with time zone,
-    work_id bigint,
+    anime_id bigint,
     locale character varying DEFAULT 'other'::character varying NOT NULL
 );
 
@@ -967,7 +967,7 @@ CREATE TABLE public.episode_records (
     updated_at timestamp with time zone,
     shared_twitter boolean DEFAULT false NOT NULL,
     shared_facebook boolean DEFAULT false NOT NULL,
-    work_id bigint NOT NULL,
+    anime_id bigint NOT NULL,
     rating double precision,
     multiple_episode_record_id bigint,
     oauth_application_id bigint,
@@ -998,7 +998,7 @@ CREATE SEQUENCE public.episodes_id_seq
 
 CREATE TABLE public.episodes (
     id bigint DEFAULT nextval('public.episodes_id_seq'::regclass) NOT NULL,
-    work_id bigint NOT NULL,
+    anime_id bigint NOT NULL,
     number character varying(510) DEFAULT NULL::character varying,
     sort_number integer DEFAULT 0 NOT NULL,
     sc_count integer,
@@ -1421,7 +1421,7 @@ ALTER SEQUENCE public.internal_statistics_id_seq OWNED BY public.internal_statis
 CREATE TABLE public.library_entries (
     id bigint NOT NULL,
     user_id bigint NOT NULL,
-    work_id bigint NOT NULL,
+    anime_id bigint NOT NULL,
     next_episode_id bigint,
     kind integer,
     watched_episode_ids bigint[] DEFAULT '{}'::integer[] NOT NULL,
@@ -1484,7 +1484,7 @@ CREATE TABLE public.likes (
 CREATE TABLE public.multiple_episode_records (
     id bigint NOT NULL,
     user_id bigint NOT NULL,
-    work_id bigint NOT NULL,
+    anime_id bigint NOT NULL,
     likes_count integer DEFAULT 0 NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
@@ -1957,7 +1957,7 @@ CREATE TABLE public.profiles (
 CREATE TABLE public.programs (
     id bigint NOT NULL,
     channel_id bigint NOT NULL,
-    work_id bigint NOT NULL,
+    anime_id bigint NOT NULL,
     url character varying,
     started_at timestamp without time zone,
     aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
@@ -2086,7 +2086,7 @@ CREATE TABLE public.receptions (
 CREATE TABLE public.records (
     id bigint NOT NULL,
     user_id bigint NOT NULL,
-    work_id bigint NOT NULL,
+    anime_id bigint NOT NULL,
     aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
     impressions_count integer DEFAULT 0 NOT NULL,
     created_at timestamp without time zone NOT NULL,
@@ -2176,7 +2176,7 @@ CREATE TABLE public.series (
 CREATE TABLE public.series_animes (
     id bigint NOT NULL,
     series_id bigint NOT NULL,
-    work_id bigint NOT NULL,
+    anime_id bigint NOT NULL,
     summary character varying DEFAULT ''::character varying NOT NULL,
     summary_en character varying DEFAULT ''::character varying NOT NULL,
     aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
@@ -2335,7 +2335,7 @@ CREATE TABLE public.slots (
     id bigint DEFAULT nextval('public.slots_id_seq'::regclass) NOT NULL,
     channel_id bigint NOT NULL,
     episode_id bigint,
-    work_id bigint NOT NULL,
+    anime_id bigint NOT NULL,
     started_at timestamp with time zone NOT NULL,
     sc_last_update timestamp with time zone,
     created_at timestamp with time zone,
@@ -2369,7 +2369,7 @@ CREATE SEQUENCE public.staffs_id_seq
 
 CREATE TABLE public.staffs (
     id bigint DEFAULT nextval('public.staffs_id_seq'::regclass) NOT NULL,
-    work_id bigint NOT NULL,
+    anime_id bigint NOT NULL,
     name character varying NOT NULL,
     role character varying NOT NULL,
     role_other character varying,
@@ -2424,7 +2424,7 @@ CREATE SEQUENCE public.statuses_id_seq
 CREATE TABLE public.statuses (
     id bigint DEFAULT nextval('public.statuses_id_seq'::regclass) NOT NULL,
     user_id bigint NOT NULL,
-    work_id bigint NOT NULL,
+    anime_id bigint NOT NULL,
     kind integer NOT NULL,
     likes_count integer DEFAULT 0 NOT NULL,
     created_at timestamp with time zone,
@@ -2509,7 +2509,7 @@ ALTER SEQUENCE public.tips_id_seq OWNED BY public.tips.id;
 
 CREATE TABLE public.trailers (
     id bigint NOT NULL,
-    work_id bigint NOT NULL,
+    anime_id bigint NOT NULL,
     url character varying NOT NULL,
     title character varying NOT NULL,
     thumbnail_file_name character varying,
@@ -2808,7 +2808,7 @@ CREATE TABLE public.versions (
 CREATE TABLE public.vod_titles (
     id bigint NOT NULL,
     channel_id bigint NOT NULL,
-    work_id bigint,
+    anime_id bigint,
     code character varying NOT NULL,
     name character varying NOT NULL,
     aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
@@ -3334,7 +3334,7 @@ ALTER TABLE ONLY public.channel_groups
 --
 
 ALTER TABLE ONLY public.channel_animes
-    ADD CONSTRAINT channel_works_user_id_work_id_channel_id_key UNIQUE (user_id, work_id, channel_id);
+    ADD CONSTRAINT channel_works_user_id_work_id_channel_id_key UNIQUE (user_id, anime_id, channel_id);
 
 
 --
@@ -3470,7 +3470,7 @@ ALTER TABLE ONLY public.episodes
 --
 
 ALTER TABLE ONLY public.episodes
-    ADD CONSTRAINT episodes_work_id_sc_count_key UNIQUE (work_id, sc_count);
+    ADD CONSTRAINT episodes_work_id_sc_count_key UNIQUE (anime_id, sc_count);
 
 
 --
@@ -3970,7 +3970,7 @@ CREATE INDEX channel_works_user_id_idx ON public.channel_animes USING btree (use
 -- Name: channel_works_work_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX channel_works_work_id_idx ON public.channel_animes USING btree (work_id);
+CREATE INDEX channel_works_work_id_idx ON public.channel_animes USING btree (anime_id);
 
 
 --
@@ -4012,7 +4012,7 @@ CREATE INDEX delayed_jobs_priority ON public.delayed_jobs USING btree (priority,
 -- Name: episodes_work_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX episodes_work_id_idx ON public.episodes USING btree (work_id);
+CREATE INDEX episodes_work_id_idx ON public.episodes USING btree (anime_id);
 
 
 --
@@ -4114,6 +4114,13 @@ CREATE INDEX index_activity_groups_on_user_id ON public.activity_groups USING bt
 
 
 --
+-- Name: index_anime_comments_on_anime_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_anime_comments_on_anime_id ON public.anime_comments USING btree (anime_id);
+
+
+--
 -- Name: index_anime_comments_on_locale; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4128,17 +4135,17 @@ CREATE INDEX index_anime_comments_on_user_id ON public.anime_comments USING btre
 
 
 --
--- Name: index_anime_comments_on_user_id_and_work_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_anime_comments_on_user_id_and_anime_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX index_anime_comments_on_user_id_and_work_id ON public.anime_comments USING btree (user_id, work_id);
+CREATE UNIQUE INDEX index_anime_comments_on_user_id_and_anime_id ON public.anime_comments USING btree (user_id, anime_id);
 
 
 --
--- Name: index_anime_comments_on_work_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_anime_images_on_anime_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_anime_comments_on_work_id ON public.anime_comments USING btree (work_id);
+CREATE INDEX index_anime_images_on_anime_id ON public.anime_images USING btree (anime_id);
 
 
 --
@@ -4149,10 +4156,10 @@ CREATE INDEX index_anime_images_on_user_id ON public.anime_images USING btree (u
 
 
 --
--- Name: index_anime_images_on_work_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_anime_records_on_anime_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_anime_images_on_work_id ON public.anime_images USING btree (work_id);
+CREATE INDEX index_anime_records_on_anime_id ON public.anime_records USING btree (anime_id);
 
 
 --
@@ -4191,13 +4198,6 @@ CREATE INDEX index_anime_records_on_user_id ON public.anime_records USING btree 
 
 
 --
--- Name: index_anime_records_on_work_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_anime_records_on_work_id ON public.anime_records USING btree (work_id);
-
-
---
 -- Name: index_anime_taggables_on_locale; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4226,6 +4226,13 @@ CREATE INDEX index_anime_taggables_on_work_tag_id ON public.anime_taggables USIN
 
 
 --
+-- Name: index_anime_taggings_on_anime_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_anime_taggings_on_anime_id ON public.anime_taggings USING btree (anime_id);
+
+
+--
 -- Name: index_anime_taggings_on_user_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4233,17 +4240,10 @@ CREATE INDEX index_anime_taggings_on_user_id ON public.anime_taggings USING btre
 
 
 --
--- Name: index_anime_taggings_on_user_id_and_work_id_and_work_tag_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_anime_taggings_on_user_id_and_anime_id_and_work_tag_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX index_anime_taggings_on_user_id_and_work_id_and_work_tag_id ON public.anime_taggings USING btree (user_id, work_id, work_tag_id);
-
-
---
--- Name: index_anime_taggings_on_work_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_anime_taggings_on_work_id ON public.anime_taggings USING btree (work_id);
+CREATE UNIQUE INDEX index_anime_taggings_on_user_id_and_anime_id_and_work_tag_id ON public.anime_taggings USING btree (user_id, anime_id, work_tag_id);
 
 
 --
@@ -4366,6 +4366,13 @@ CREATE INDEX index_casts_on_aasm_state ON public.casts USING btree (aasm_state);
 
 
 --
+-- Name: index_casts_on_anime_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_casts_on_anime_id ON public.casts USING btree (anime_id);
+
+
+--
 -- Name: index_casts_on_character_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4398,13 +4405,6 @@ CREATE INDEX index_casts_on_sort_number ON public.casts USING btree (sort_number
 --
 
 CREATE INDEX index_casts_on_unpublished_at ON public.casts USING btree (unpublished_at);
-
-
---
--- Name: index_casts_on_work_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_casts_on_work_id ON public.casts USING btree (work_id);
 
 
 --
@@ -4513,6 +4513,13 @@ CREATE INDEX index_characters_on_unpublished_at ON public.characters USING btree
 
 
 --
+-- Name: index_collection_items_on_anime_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_collection_items_on_anime_id ON public.collection_items USING btree (anime_id);
+
+
+--
 -- Name: index_collection_items_on_collection_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4520,10 +4527,10 @@ CREATE INDEX index_collection_items_on_collection_id ON public.collection_items 
 
 
 --
--- Name: index_collection_items_on_collection_id_and_work_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_collection_items_on_collection_id_and_anime_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX index_collection_items_on_collection_id_and_work_id ON public.collection_items USING btree (collection_id, work_id);
+CREATE UNIQUE INDEX index_collection_items_on_collection_id_and_anime_id ON public.collection_items USING btree (collection_id, anime_id);
 
 
 --
@@ -4541,13 +4548,6 @@ CREATE INDEX index_collection_items_on_user_id ON public.collection_items USING 
 
 
 --
--- Name: index_collection_items_on_work_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_collection_items_on_work_id ON public.collection_items USING btree (work_id);
-
-
---
 -- Name: index_collections_on_deleted_at; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4562,17 +4562,17 @@ CREATE INDEX index_collections_on_user_id ON public.collections USING btree (use
 
 
 --
+-- Name: index_comments_on_anime_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_comments_on_anime_id ON public.comments USING btree (anime_id);
+
+
+--
 -- Name: index_comments_on_locale; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_comments_on_locale ON public.comments USING btree (locale);
-
-
---
--- Name: index_comments_on_work_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_comments_on_work_id ON public.comments USING btree (work_id);
 
 
 --
@@ -4632,6 +4632,13 @@ CREATE UNIQUE INDEX index_email_notifications_on_user_id ON public.email_notific
 
 
 --
+-- Name: index_episode_records_on_anime_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_episode_records_on_anime_id ON public.episode_records USING btree (anime_id);
+
+
+--
 -- Name: index_episode_records_on_episode_id_and_deleted_at; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4678,13 +4685,6 @@ CREATE UNIQUE INDEX index_episode_records_on_record_id ON public.episode_records
 --
 
 CREATE INDEX index_episode_records_on_review_id ON public.episode_records USING btree (review_id);
-
-
---
--- Name: index_episode_records_on_work_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_episode_records_on_work_id ON public.episode_records USING btree (work_id);
 
 
 --
@@ -4898,6 +4898,13 @@ CREATE UNIQUE INDEX index_internal_statistics_on_key_and_date ON public.internal
 
 
 --
+-- Name: index_library_entries_on_anime_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_library_entries_on_anime_id ON public.library_entries USING btree (anime_id);
+
+
+--
 -- Name: index_library_entries_on_next_episode_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4919,6 +4926,13 @@ CREATE INDEX index_library_entries_on_user_id ON public.library_entries USING bt
 
 
 --
+-- Name: index_library_entries_on_user_id_and_anime_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_library_entries_on_user_id_and_anime_id ON public.library_entries USING btree (user_id, anime_id);
+
+
+--
 -- Name: index_library_entries_on_user_id_and_position; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4926,17 +4940,10 @@ CREATE INDEX index_library_entries_on_user_id_and_position ON public.library_ent
 
 
 --
--- Name: index_library_entries_on_user_id_and_work_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_multiple_episode_records_on_anime_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX index_library_entries_on_user_id_and_work_id ON public.library_entries USING btree (user_id, work_id);
-
-
---
--- Name: index_library_entries_on_work_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_library_entries_on_work_id ON public.library_entries USING btree (work_id);
+CREATE INDEX index_multiple_episode_records_on_anime_id ON public.multiple_episode_records USING btree (anime_id);
 
 
 --
@@ -4944,13 +4951,6 @@ CREATE INDEX index_library_entries_on_work_id ON public.library_entries USING bt
 --
 
 CREATE INDEX index_multiple_episode_records_on_user_id ON public.multiple_episode_records USING btree (user_id);
-
-
---
--- Name: index_multiple_episode_records_on_work_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_multiple_episode_records_on_work_id ON public.multiple_episode_records USING btree (work_id);
 
 
 --
@@ -5192,6 +5192,13 @@ CREATE UNIQUE INDEX index_prefectures_on_name ON public.prefectures USING btree 
 
 
 --
+-- Name: index_programs_on_anime_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_programs_on_anime_id ON public.programs USING btree (anime_id);
+
+
+--
 -- Name: index_programs_on_channel_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -5220,13 +5227,6 @@ CREATE INDEX index_programs_on_vod_title_code ON public.programs USING btree (vo
 
 
 --
--- Name: index_programs_on_work_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_programs_on_work_id ON public.programs USING btree (work_id);
-
-
---
 -- Name: index_reactions_on_collection_item_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -5248,6 +5248,13 @@ CREATE INDEX index_reactions_on_user_id ON public.reactions USING btree (user_id
 
 
 --
+-- Name: index_records_on_anime_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_records_on_anime_id ON public.records USING btree (anime_id);
+
+
+--
 -- Name: index_records_on_deleted_at; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -5259,13 +5266,6 @@ CREATE INDEX index_records_on_deleted_at ON public.records USING btree (deleted_
 --
 
 CREATE INDEX index_records_on_user_id ON public.records USING btree (user_id);
-
-
---
--- Name: index_records_on_work_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_records_on_work_id ON public.records USING btree (work_id);
 
 
 --
@@ -5290,6 +5290,13 @@ CREATE UNIQUE INDEX index_seasons_on_year_and_name ON public.seasons USING btree
 
 
 --
+-- Name: index_series_animes_on_anime_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_series_animes_on_anime_id ON public.series_animes USING btree (anime_id);
+
+
+--
 -- Name: index_series_animes_on_deleted_at; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -5304,10 +5311,10 @@ CREATE INDEX index_series_animes_on_series_id ON public.series_animes USING btre
 
 
 --
--- Name: index_series_animes_on_series_id_and_work_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_series_animes_on_series_id_and_anime_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX index_series_animes_on_series_id_and_work_id ON public.series_animes USING btree (series_id, work_id);
+CREATE UNIQUE INDEX index_series_animes_on_series_id_and_anime_id ON public.series_animes USING btree (series_id, anime_id);
 
 
 --
@@ -5315,13 +5322,6 @@ CREATE UNIQUE INDEX index_series_animes_on_series_id_and_work_id ON public.serie
 --
 
 CREATE INDEX index_series_animes_on_unpublished_at ON public.series_animes USING btree (unpublished_at);
-
-
---
--- Name: index_series_animes_on_work_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_series_animes_on_work_id ON public.series_animes USING btree (work_id);
 
 
 --
@@ -5423,6 +5423,13 @@ CREATE INDEX index_staffs_on_aasm_state ON public.staffs USING btree (aasm_state
 
 
 --
+-- Name: index_staffs_on_anime_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_staffs_on_anime_id ON public.staffs USING btree (anime_id);
+
+
+--
 -- Name: index_staffs_on_deleted_at; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -5448,13 +5455,6 @@ CREATE INDEX index_staffs_on_sort_number ON public.staffs USING btree (sort_numb
 --
 
 CREATE INDEX index_staffs_on_unpublished_at ON public.staffs USING btree (unpublished_at);
-
-
---
--- Name: index_staffs_on_work_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_staffs_on_work_id ON public.staffs USING btree (work_id);
 
 
 --
@@ -5493,6 +5493,13 @@ CREATE UNIQUE INDEX index_tips_on_slug_and_locale ON public.tips USING btree (sl
 
 
 --
+-- Name: index_trailers_on_anime_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_trailers_on_anime_id ON public.trailers USING btree (anime_id);
+
+
+--
 -- Name: index_trailers_on_deleted_at; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -5504,13 +5511,6 @@ CREATE INDEX index_trailers_on_deleted_at ON public.trailers USING btree (delete
 --
 
 CREATE INDEX index_trailers_on_unpublished_at ON public.trailers USING btree (unpublished_at);
-
-
---
--- Name: index_trailers_on_work_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_trailers_on_work_id ON public.trailers USING btree (work_id);
 
 
 --
@@ -5577,6 +5577,13 @@ CREATE INDEX index_users_on_gumroad_subscriber_id ON public.users USING btree (g
 
 
 --
+-- Name: index_vod_titles_on_anime_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_vod_titles_on_anime_id ON public.vod_titles USING btree (anime_id);
+
+
+--
 -- Name: index_vod_titles_on_channel_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -5602,13 +5609,6 @@ CREATE INDEX index_vod_titles_on_mail_sent_at ON public.vod_titles USING btree (
 --
 
 CREATE INDEX index_vod_titles_on_unpublished_at ON public.vod_titles USING btree (unpublished_at);
-
-
---
--- Name: index_vod_titles_on_work_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_vod_titles_on_work_id ON public.vod_titles USING btree (work_id);
 
 
 --
@@ -5657,7 +5657,7 @@ CREATE INDEX programs_episode_id_idx ON public.slots USING btree (episode_id);
 -- Name: programs_work_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX programs_work_id_idx ON public.slots USING btree (work_id);
+CREATE INDEX programs_work_id_idx ON public.slots USING btree (anime_id);
 
 
 --
@@ -5692,7 +5692,7 @@ CREATE INDEX statuses_user_id_idx ON public.statuses USING btree (user_id);
 -- Name: statuses_work_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX statuses_work_id_idx ON public.statuses USING btree (work_id);
+CREATE INDEX statuses_work_id_idx ON public.statuses USING btree (anime_id);
 
 
 --
@@ -5731,7 +5731,7 @@ ALTER TABLE ONLY public.channel_animes
 --
 
 ALTER TABLE ONLY public.channel_animes
-    ADD CONSTRAINT channel_works_work_id_fk FOREIGN KEY (work_id) REFERENCES public.animes(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+    ADD CONSTRAINT channel_works_work_id_fk FOREIGN KEY (anime_id) REFERENCES public.animes(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
 
 
 --
@@ -5763,7 +5763,7 @@ ALTER TABLE ONLY public.episode_records
 --
 
 ALTER TABLE ONLY public.episode_records
-    ADD CONSTRAINT checkins_work_id_fk FOREIGN KEY (work_id) REFERENCES public.animes(id);
+    ADD CONSTRAINT checkins_work_id_fk FOREIGN KEY (anime_id) REFERENCES public.animes(id);
 
 
 --
@@ -5787,7 +5787,7 @@ ALTER TABLE ONLY public.comments
 --
 
 ALTER TABLE ONLY public.episodes
-    ADD CONSTRAINT episodes_work_id_fk FOREIGN KEY (work_id) REFERENCES public.animes(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+    ADD CONSTRAINT episodes_work_id_fk FOREIGN KEY (anime_id) REFERENCES public.animes(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
 
 
 --
@@ -5811,7 +5811,7 @@ ALTER TABLE ONLY public.finished_tips
 --
 
 ALTER TABLE ONLY public.anime_comments
-    ADD CONSTRAINT fk_rails_00410fd248 FOREIGN KEY (work_id) REFERENCES public.animes(id);
+    ADD CONSTRAINT fk_rails_00410fd248 FOREIGN KEY (anime_id) REFERENCES public.animes(id);
 
 
 --
@@ -5827,7 +5827,7 @@ ALTER TABLE ONLY public.character_images
 --
 
 ALTER TABLE ONLY public.comments
-    ADD CONSTRAINT fk_rails_09d346abb6 FOREIGN KEY (work_id) REFERENCES public.animes(id);
+    ADD CONSTRAINT fk_rails_09d346abb6 FOREIGN KEY (anime_id) REFERENCES public.animes(id);
 
 
 --
@@ -5835,7 +5835,7 @@ ALTER TABLE ONLY public.comments
 --
 
 ALTER TABLE ONLY public.series_animes
-    ADD CONSTRAINT fk_rails_0b7ef06239 FOREIGN KEY (work_id) REFERENCES public.animes(id);
+    ADD CONSTRAINT fk_rails_0b7ef06239 FOREIGN KEY (anime_id) REFERENCES public.animes(id);
 
 
 --
@@ -5867,7 +5867,7 @@ ALTER TABLE ONLY public.activities
 --
 
 ALTER TABLE ONLY public.records
-    ADD CONSTRAINT fk_rails_27f794c2d6 FOREIGN KEY (work_id) REFERENCES public.animes(id);
+    ADD CONSTRAINT fk_rails_27f794c2d6 FOREIGN KEY (anime_id) REFERENCES public.animes(id);
 
 
 --
@@ -5883,7 +5883,7 @@ ALTER TABLE ONLY public.vod_titles
 --
 
 ALTER TABLE ONLY public.collection_items
-    ADD CONSTRAINT fk_rails_31b8b5e78c FOREIGN KEY (work_id) REFERENCES public.animes(id);
+    ADD CONSTRAINT fk_rails_31b8b5e78c FOREIGN KEY (anime_id) REFERENCES public.animes(id);
 
 
 --
@@ -5915,7 +5915,7 @@ ALTER TABLE ONLY public.userland_project_members
 --
 
 ALTER TABLE ONLY public.staffs
-    ADD CONSTRAINT fk_rails_39944239d2 FOREIGN KEY (work_id) REFERENCES public.animes(id);
+    ADD CONSTRAINT fk_rails_39944239d2 FOREIGN KEY (anime_id) REFERENCES public.animes(id);
 
 
 --
@@ -6019,7 +6019,7 @@ ALTER TABLE ONLY public.activities
 --
 
 ALTER TABLE ONLY public.programs
-    ADD CONSTRAINT fk_rails_513ea7b8c6 FOREIGN KEY (work_id) REFERENCES public.animes(id);
+    ADD CONSTRAINT fk_rails_513ea7b8c6 FOREIGN KEY (anime_id) REFERENCES public.animes(id);
 
 
 --
@@ -6035,7 +6035,7 @@ ALTER TABLE ONLY public.reactions
 --
 
 ALTER TABLE ONLY public.trailers
-    ADD CONSTRAINT fk_rails_5751118f69 FOREIGN KEY (work_id) REFERENCES public.animes(id);
+    ADD CONSTRAINT fk_rails_5751118f69 FOREIGN KEY (anime_id) REFERENCES public.animes(id);
 
 
 --
@@ -6067,7 +6067,7 @@ ALTER TABLE ONLY public.email_notifications
 --
 
 ALTER TABLE ONLY public.anime_taggings
-    ADD CONSTRAINT fk_rails_61b358478b FOREIGN KEY (work_id) REFERENCES public.animes(id);
+    ADD CONSTRAINT fk_rails_61b358478b FOREIGN KEY (anime_id) REFERENCES public.animes(id);
 
 
 --
@@ -6179,7 +6179,7 @@ ALTER TABLE ONLY public.records
 --
 
 ALTER TABLE ONLY public.library_entries
-    ADD CONSTRAINT fk_rails_963acfc4d0 FOREIGN KEY (work_id) REFERENCES public.animes(id);
+    ADD CONSTRAINT fk_rails_963acfc4d0 FOREIGN KEY (anime_id) REFERENCES public.animes(id);
 
 
 --
@@ -6187,7 +6187,7 @@ ALTER TABLE ONLY public.library_entries
 --
 
 ALTER TABLE ONLY public.casts
-    ADD CONSTRAINT fk_rails_9762f07eaf FOREIGN KEY (work_id) REFERENCES public.animes(id);
+    ADD CONSTRAINT fk_rails_9762f07eaf FOREIGN KEY (anime_id) REFERENCES public.animes(id);
 
 
 --
@@ -6355,7 +6355,7 @@ ALTER TABLE ONLY public.episode_records
 --
 
 ALTER TABLE ONLY public.anime_images
-    ADD CONSTRAINT fk_rails_bd1806cf80 FOREIGN KEY (work_id) REFERENCES public.animes(id);
+    ADD CONSTRAINT fk_rails_bd1806cf80 FOREIGN KEY (anime_id) REFERENCES public.animes(id);
 
 
 --
@@ -6419,7 +6419,7 @@ ALTER TABLE ONLY public.organization_favorites
 --
 
 ALTER TABLE ONLY public.multiple_episode_records
-    ADD CONSTRAINT fk_rails_da1ee2634a FOREIGN KEY (work_id) REFERENCES public.animes(id);
+    ADD CONSTRAINT fk_rails_da1ee2634a FOREIGN KEY (anime_id) REFERENCES public.animes(id);
 
 
 --
@@ -6427,7 +6427,7 @@ ALTER TABLE ONLY public.multiple_episode_records
 --
 
 ALTER TABLE ONLY public.anime_records
-    ADD CONSTRAINT fk_rails_dadac170c9 FOREIGN KEY (work_id) REFERENCES public.animes(id);
+    ADD CONSTRAINT fk_rails_dadac170c9 FOREIGN KEY (anime_id) REFERENCES public.animes(id);
 
 
 --
@@ -6443,7 +6443,7 @@ ALTER TABLE ONLY public.forum_comments
 --
 
 ALTER TABLE ONLY public.vod_titles
-    ADD CONSTRAINT fk_rails_e5ef5f40f9 FOREIGN KEY (work_id) REFERENCES public.animes(id);
+    ADD CONSTRAINT fk_rails_e5ef5f40f9 FOREIGN KEY (anime_id) REFERENCES public.animes(id);
 
 
 --
@@ -6579,7 +6579,7 @@ ALTER TABLE ONLY public.slots
 --
 
 ALTER TABLE ONLY public.slots
-    ADD CONSTRAINT programs_work_id_fk FOREIGN KEY (work_id) REFERENCES public.animes(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+    ADD CONSTRAINT programs_work_id_fk FOREIGN KEY (anime_id) REFERENCES public.animes(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
 
 
 --
@@ -6619,7 +6619,7 @@ ALTER TABLE ONLY public.statuses
 --
 
 ALTER TABLE ONLY public.statuses
-    ADD CONSTRAINT statuses_work_id_fk FOREIGN KEY (work_id) REFERENCES public.animes(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+    ADD CONSTRAINT statuses_work_id_fk FOREIGN KEY (anime_id) REFERENCES public.animes(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
 
 
 --

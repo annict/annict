@@ -16,21 +16,21 @@
 #  unpublished_at :datetime
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
+#  anime_id       :bigint           not null
 #  resource_id    :bigint           not null
-#  work_id        :bigint           not null
 #
 # Indexes
 #
 #  index_staffs_on_aasm_state                     (aasm_state)
+#  index_staffs_on_anime_id                       (anime_id)
 #  index_staffs_on_deleted_at                     (deleted_at)
 #  index_staffs_on_resource_id_and_resource_type  (resource_id,resource_type)
 #  index_staffs_on_sort_number                    (sort_number)
 #  index_staffs_on_unpublished_at                 (unpublished_at)
-#  index_staffs_on_work_id                        (work_id)
 #
 # Foreign Keys
 #
-#  fk_rails_...  (work_id => animes.id)
+#  fk_rails_...  (anime_id => animes.id)
 #
 
 class Staff < ApplicationRecord

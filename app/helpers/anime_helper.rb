@@ -29,7 +29,7 @@
 #  works_season_id_idx              (season_id)
 #
 
-module WorksHelper
+module AnimeHelper
   def shirobako_color(round)
     return "shirobako-#{round}" if round >= 1 && round <= 6
     ''

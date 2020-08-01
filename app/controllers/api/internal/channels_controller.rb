@@ -6,7 +6,7 @@ module Api
       before_action :authenticate_user!
 
       def select
-        @work = Work.only_kept.find(params[:work_id])
+        @work = Anime.only_kept.find(params[:work_id])
         channel_work = current_user.channel_works.where(work: @work).first_or_initialize
 
         if params[:channel_id] == "no_select"

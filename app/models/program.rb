@@ -15,21 +15,21 @@
 #  vod_title_name                     :string           default(""), not null
 #  created_at                         :datetime         not null
 #  updated_at                         :datetime         not null
+#  anime_id                           :bigint           not null
 #  channel_id                         :bigint           not null
-#  work_id                            :bigint           not null
 #
 # Indexes
 #
+#  index_programs_on_anime_id        (anime_id)
 #  index_programs_on_channel_id      (channel_id)
 #  index_programs_on_deleted_at      (deleted_at)
 #  index_programs_on_unpublished_at  (unpublished_at)
 #  index_programs_on_vod_title_code  (vod_title_code)
-#  index_programs_on_work_id         (work_id)
 #
 # Foreign Keys
 #
+#  fk_rails_...  (anime_id => animes.id)
 #  fk_rails_...  (channel_id => channels.id)
-#  fk_rails_...  (work_id => animes.id)
 #
 
 class Program < ApplicationRecord

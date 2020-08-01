@@ -28,8 +28,8 @@ module Canary
             RecordLoader.for(EpisodeRecord).load(object.itemable_id)
           when "Status"
             RecordLoader.for(Status).load(object.itemable_id)
-          when "WorkRecord"
-            RecordLoader.for(WorkRecord).load(object.itemable_id)
+          when "AnimeRecord"
+            RecordLoader.for(AnimeRecord).load(object.itemable_id)
           end
         end
       end

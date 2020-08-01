@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class WorkEntity < ApplicationEntity
+class AnimeEntity < ApplicationEntity
   local_attributes :title, :title_alter, :synopsis, :synopsis_source
 
   attribute? :database_id, Types::Integer
@@ -42,7 +42,7 @@ class WorkEntity < ApplicationEntity
   attribute? :staffs, Types::Array.of(StaffEntity)
   attribute? :episodes, Types::Array.of(EpisodeEntity)
   attribute? :programs, Types::Array.of(ProgramEntity)
-  attribute? :work_records, Types::Array.of(WorkRecordEntity)
+  attribute? :work_records, Types::Array.of(AnimeRecordEntity)
   attribute? :series_list, Types::Array.of(SeriesEntity)
 
   def self.from_model(work)
@@ -200,7 +200,7 @@ class WorkEntity < ApplicationEntity
     attrs[:programs] = ProgramEntity.from_nodes(program_nodes || [])
 
     work_record_nodes = work_node.dig("workRecords", "nodes")
-    attrs[:work_records] = WorkRecordEntity.from_nodes(work_record_nodes || [])
+    attrs[:work_records] = AnimeRecordEntity.from_nodes(work_record_nodes || [])
 
     series_nodes = work_node.dig("seriesList", "nodes")
     attrs[:series_list] = SeriesEntity.from_nodes(series_nodes || [])

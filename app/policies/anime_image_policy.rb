@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class WorkImagePolicy < ApplicationPolicy
+class AnimeImagePolicy < ApplicationPolicy
   def create?
     user.present? && user.committer?
   end

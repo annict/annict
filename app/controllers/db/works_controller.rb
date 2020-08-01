@@ -11,7 +11,7 @@ module Db
       @is_no_slots = search_params[:no_slots] == "1"
       @season_slugs = search_params[:season_slugs]
 
-      @works = Work.without_deleted.preload(:work_image)
+      @works = Anime.without_deleted.preload(:work_image)
       @works = @works.with_no_episodes if @is_no_episodes
       @works = @works.with_no_image if @is_no_image
       @works = @works.with_no_season if @is_no_release_season
@@ -21,12 +21,12 @@ module Db
     end
 
     def new
-      @work = Work.new
+      @work = Anime.new
       authorize @work
     end
 
     def create
-      @work = Work.new(work_params)
+      @work = Anime.new(work_params)
       @work.user = current_user
       authorize @work
 
@@ -38,12 +38,12 @@ module Db
     end
 
     def edit
-      @work = Work.without_deleted.find(params[:id])
+      @work = Anime.without_deleted.find(params[:id])
       authorize @work
     end
 
     def update
-      @work = Work.without_deleted.find(params[:id])
+      @work = Anime.without_deleted.find(params[:id])
       authorize @work
 
       @work.attributes = work_params
@@ -57,7 +57,7 @@ module Db
     end
 
     def destroy
-      @work = Work.without_deleted.find(params[:id])
+      @work = Anime.without_deleted.find(params[:id])
       authorize @work
 
       @work.destroy_in_batches

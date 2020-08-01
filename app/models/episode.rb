@@ -23,13 +23,13 @@
 #  unpublished_at              :datetime
 #  created_at                  :datetime
 #  updated_at                  :datetime
+#  anime_id                    :bigint           not null
 #  prev_episode_id             :bigint
-#  work_id                     :bigint           not null
 #
 # Indexes
 #
-#  episodes_work_id_idx                                   (work_id)
-#  episodes_work_id_sc_count_key                          (work_id,sc_count) UNIQUE
+#  episodes_work_id_idx                                   (anime_id)
+#  episodes_work_id_sc_count_key                          (anime_id,sc_count) UNIQUE
 #  index_episodes_on_aasm_state                           (aasm_state)
 #  index_episodes_on_deleted_at                           (deleted_at)
 #  index_episodes_on_prev_episode_id                      (prev_episode_id)
@@ -41,7 +41,7 @@
 #
 # Foreign Keys
 #
-#  episodes_work_id_fk  (work_id => animes.id) ON DELETE => cascade
+#  episodes_work_id_fk  (anime_id => animes.id) ON DELETE => cascade
 #  fk_rails_...         (prev_episode_id => episodes.id)
 #
 

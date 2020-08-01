@@ -8,7 +8,7 @@ module Api
       def select
         return head(:unauthorized) unless user_signed_in?
 
-        @work = Work.only_kept.find(params[:work_id])
+        @work = Anime.only_kept.find(params[:work_id])
 
         UpdateStatusRepository.new(
           graphql_client: graphql_client(viewer: current_user)

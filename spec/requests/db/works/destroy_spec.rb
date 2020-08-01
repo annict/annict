@@ -5,7 +5,7 @@ describe "DELETE /db/works/:id", type: :request do
     let!(:work) { create(:work, :not_deleted) }
 
     it "user can not access this page" do
-      expect(Work.count).to eq(1)
+      expect(Anime.count).to eq(1)
 
       delete "/db/works/#{work.id}"
       work.reload
@@ -13,7 +13,7 @@ describe "DELETE /db/works/:id", type: :request do
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("ログインしてください")
 
-      expect(Work.count).to eq(1)
+      expect(Anime.count).to eq(1)
     end
   end
 
@@ -26,7 +26,7 @@ describe "DELETE /db/works/:id", type: :request do
     end
 
     it "user can not access" do
-      expect(Work.count).to eq(1)
+      expect(Anime.count).to eq(1)
 
       delete "/db/works/#{work.id}"
       work.reload
@@ -34,7 +34,7 @@ describe "DELETE /db/works/:id", type: :request do
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("アクセスできません")
 
-      expect(Work.count).to eq(1)
+      expect(Anime.count).to eq(1)
     end
   end
 
@@ -47,7 +47,7 @@ describe "DELETE /db/works/:id", type: :request do
     end
 
     it "user can not access" do
-      expect(Work.count).to eq(1)
+      expect(Anime.count).to eq(1)
 
       delete "/db/works/#{work.id}"
       work.reload
@@ -55,7 +55,7 @@ describe "DELETE /db/works/:id", type: :request do
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("アクセスできません")
 
-      expect(Work.count).to eq(1)
+      expect(Anime.count).to eq(1)
     end
   end
 
@@ -68,14 +68,14 @@ describe "DELETE /db/works/:id", type: :request do
     end
 
     it "user can delete work softly" do
-      expect(Work.count).to eq(1)
+      expect(Anime.count).to eq(1)
 
       delete "/db/works/#{work.id}"
 
       expect(response.status).to eq(302)
       expect(flash[:notice]).to eq("削除しました")
 
-      expect(Work.count).to eq(0)
+      expect(Anime.count).to eq(0)
     end
   end
 end

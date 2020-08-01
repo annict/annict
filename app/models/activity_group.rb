@@ -29,7 +29,7 @@ class ActivityGroup < ApplicationRecord
   ITEMABLE_TYPES = %w(
     Status
     EpisodeRecord
-    WorkRecord
+    AnimeRecord
   ).freeze
 
   enumerize :itemable_type, in: ITEMABLE_TYPES, scope: true
