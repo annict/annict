@@ -41,14 +41,14 @@ class DbActivity < ApplicationRecord
 
   def root_resource_action?
     [
+      "anime.create",
+      "anime.update",
       "characters.create",
       "characters.update",
       "organizations.create",
       "organizations.update",
       "people.create",
-      "people.update",
-      "works.create",
-      "works.update"
+      "people.update"
     ].include?(action)
   end
 
