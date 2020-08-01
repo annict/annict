@@ -72,7 +72,7 @@ module Db
     end
 
     def series_work_params
-      params.require(:series_work).permit(:work_id, :summary, :summary_en)
+      params.require(:series_work).permit(:anime_id, :summary, :summary_en)
     end
   end
 end

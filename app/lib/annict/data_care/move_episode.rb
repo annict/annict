@@ -26,15 +26,15 @@ module Annict
       end
 
       def move_records!
-        episode.records.update_all(work_id: @work_id)
+        episode.records.update_all(anime_id: @work_id)
       end
 
       def move_acticities!
-        episode.activities.update_all(work_id: @work_id)
+        episode.activities.update_all(anime_id: @work_id)
       end
 
       def move_slots!
-        episode.slots.update_all(work_id: @work_id)
+        episode.slots.update_all(anime_id: @work_id)
       end
 
       def move_episode!

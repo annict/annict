@@ -34,14 +34,14 @@ describe CreateEpisodeRecordRepository, type: :repository do
       activity_group = user.activity_groups.first
       activity = user.activities.first
 
-      expect(record.work_id).to eq work.id
+      expect(record.anime_id).to eq work.id
 
       expect(episode_record.body).to eq params[:body]
       expect(episode_record.locale).to eq "ja"
       expect(episode_record.rating_state).to eq params[:rating_state]
       expect(episode_record.episode_id).to eq episode.id
       expect(episode_record.record_id).to eq record.id
-      expect(episode_record.work_id).to eq work.id
+      expect(episode_record.anime_id).to eq work.id
 
       expect(activity_group.itemable_type).to eq "EpisodeRecord"
       expect(activity_group.single).to eq true
@@ -85,14 +85,14 @@ describe CreateEpisodeRecordRepository, type: :repository do
       activity_group = user.activity_groups.last
       activity = user.activities.last
 
-      expect(record.work_id).to eq work.id
+      expect(record.anime_id).to eq work.id
 
       expect(episode_record.body).to eq params[:body]
       expect(episode_record.locale).to eq "ja"
       expect(episode_record.rating_state).to eq params[:rating_state]
       expect(episode_record.episode_id).to eq episode.id
       expect(episode_record.record_id).to eq record.id
-      expect(episode_record.work_id).to eq work.id
+      expect(episode_record.anime_id).to eq work.id
 
       expect(activity_group.itemable_type).to eq "EpisodeRecord"
       expect(activity_group.single).to eq true
@@ -141,7 +141,7 @@ describe CreateEpisodeRecordRepository, type: :repository do
       expect(episode_record.rating_state).to eq params[:rating_state]
       expect(episode_record.episode_id).to eq episode.id
       expect(episode_record.record_id).to eq record.id
-      expect(episode_record.work_id).to eq work.id
+      expect(episode_record.anime_id).to eq work.id
 
       expect(activity_group.itemable_type).to eq "EpisodeRecord"
       expect(activity_group.single).to eq false

@@ -205,7 +205,7 @@ class Anime < ApplicationRecord
       NOT EXISTS (
         SELECT * FROM slots WHERE
           1 = 1
-          AND slots.work_id = works.id
+          AND slots.anime_id = works.id
           AND slots.deleted_at IS NULL
           AND slots.unpublished_at IS NULL
       )
@@ -245,12 +245,12 @@ class Anime < ApplicationRecord
 
   def self.work_tags_data(works, user)
     work_ids = works.pluck(:id)
-    work_taggings = AnimeTagging.where(user: user, work_id: work_ids)
+    work_taggings = AnimeTagging.where(user: user, anime_id: work_ids)
     work_tags = AnimeTag.where(id: work_taggings.pluck(:work_tag_id))
 
     work_ids.map do |work_id|
       work_tag_ids = work_taggings.
-        select { |wt| wt.work_id == work_id }.
+        select { |wt| wt.anime_id == work_id }.
         map(&:work_tag_id)
 
       {
@@ -262,7 +262,7 @@ class Anime < ApplicationRecord
 
   def self.work_comment_data(works, user)
     work_ids = works.pluck(:id)
-    work_comments = AnimeComment.where(user: user, work_id: work_ids)
+    work_comments = AnimeComment.where(user: user, anime_id: work_ids)
 
     work_ids.map do |work_id|
       {
@@ -282,11 +282,11 @@ class Anime < ApplicationRecord
       with_status(*status_kinds)
 
     work_ids.map do |work_id|
-      library_entries_ = library_entries.select { |ls| ls.work_id == work_id }
+      library_entries_ = library_entries.select { |ls| ls.anime_id == work_id }
       users_ = users.select { |u| u.id.in?(library_entries_.map(&:user_id)) }
       users_data = users_.map do |u|
         library_entry = library_entries_.select do |ls|
-          ls.user_id == u.id && ls.work_id == work_id
+          ls.user_id == u.id && ls.anime_id == work_id
         end.first
 
         {
@@ -304,7 +304,7 @@ class Anime < ApplicationRecord
 
   def self.trailers_data(works)
     work_ids = works.pluck(:id)
-    trailers = Trailer.only_kept.where(work_id: work_ids)
+    trailers = Trailer.only_kept.where(anime_id: work_ids)
 
     work_ids.map do |work_id|
       {
@@ -316,7 +316,7 @@ class Anime < ApplicationRecord
 
   def self.casts_data(works)
     work_ids = works.pluck(:id)
-    casts = Cast.only_kept.where(work_id: work_ids).includes(:person, :character)
+    casts = Cast.only_kept.where(anime_id: work_ids).includes(:person, :character)
 
     work_ids.map do |work_id|
       {
@@ -328,20 +328,20 @@ class Anime < ApplicationRecord
 
   def self.staffs_data(works, major: false)
     work_ids = works.pluck(:id)
-    staffs = Staff.only_kept.where(work_id: work_ids).includes(:resource)
+    staffs = Staff.only_kept.where(anime_id: work_ids).includes(:resource)
     staffs = staffs.major if major
 
     work_ids.map do |work_id|
       {
         work_id: work_id,
-        staffs: staffs.select { |s| s.work_id == work_id }
+        staffs: staffs.select { |s| s.anime_id == work_id }
       }
     end
   end
 
   def self.programs_data(works, only_vod: false)
     work_ids = works.pluck(:id)
-    programs = Program.only_kept.where(work_id: work_ids).includes(:channel)
+    programs = Program.only_kept.where(anime_id: work_ids).includes(:channel)
     if only_vod
       programs = programs.
         joins(:channel).
@@ -351,7 +351,7 @@ class Anime < ApplicationRecord
     work_ids.map do |work_id|
       {
         work_id: work_id,
-        programs: programs.select { |pd| pd.work_id == work_id }
+        programs: programs.select { |pd| pd.anime_id == work_id }
       }
     end
   end

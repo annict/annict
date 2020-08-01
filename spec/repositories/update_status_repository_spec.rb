@@ -28,7 +28,7 @@ describe UpdateStatusRepository, type: :repository do
       library_entry = user.library_entries.first
 
       expect(status.kind).to eq "watching"
-      expect(status.work_id).to eq work.id
+      expect(status.anime_id).to eq work.id
 
       expect(activity_group.itemable_type).to eq "Status"
       expect(activity_group.single).to eq false
@@ -37,7 +37,7 @@ describe UpdateStatusRepository, type: :repository do
       expect(activity.activity_group_id).to eq activity_group.id
 
       expect(library_entry.status_id).to eq status.id
-      expect(library_entry.work_id).to eq work.id
+      expect(library_entry.anime_id).to eq work.id
     end
   end
 
@@ -73,7 +73,7 @@ describe UpdateStatusRepository, type: :repository do
       library_entry = user.library_entries.first
 
       expect(status.kind).to eq "watching"
-      expect(status.work_id).to eq work.id
+      expect(status.anime_id).to eq work.id
 
       expect(activity_group.itemable_type).to eq "Status"
       expect(activity_group.single).to eq false
@@ -84,7 +84,7 @@ describe UpdateStatusRepository, type: :repository do
       expect(activity_2.activity_group_id).to eq activity_group.id
 
       expect(library_entry.status_id).to eq status.id
-      expect(library_entry.work_id).to eq work.id
+      expect(library_entry.anime_id).to eq work.id
     end
   end
 
@@ -115,7 +115,7 @@ describe UpdateStatusRepository, type: :repository do
       library_entry = user.library_entries.first
 
       expect(library_entry.status).to be_nil
-      expect(library_entry.work_id).to eq work.id
+      expect(library_entry.anime_id).to eq work.id
     end
   end
 end

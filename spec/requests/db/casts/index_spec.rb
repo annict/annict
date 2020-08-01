@@ -5,7 +5,7 @@ describe "GET /db/works/:work_id/casts", type: :request do
     let!(:cast) { create(:cast) }
 
     it "responses cast list" do
-      get "/db/works/#{cast.work_id}/casts"
+      get "/db/works/#{cast.anime_id}/casts"
 
       expect(response.status).to eq(200)
       expect(response.body).to include(cast.character.name)
@@ -21,7 +21,7 @@ describe "GET /db/works/:work_id/casts", type: :request do
     end
 
     it "responses work list" do
-      get "/db/works/#{cast.work_id}/casts"
+      get "/db/works/#{cast.anime_id}/casts"
 
       expect(response.status).to eq(200)
       expect(response.body).to include(cast.character.name)

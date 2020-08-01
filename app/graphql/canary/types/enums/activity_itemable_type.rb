@@ -8,7 +8,7 @@ module Canary
 
         value "EPISODE_RECORD", ""
         value "STATUS", ""
-        value "WORK_RECORD", ""
+        value "ANIME_RECORD", ""
       end
     end
   end

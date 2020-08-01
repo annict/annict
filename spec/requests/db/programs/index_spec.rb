@@ -5,7 +5,7 @@ describe "GET /db/works/:work_id/programs", type: :request do
     let!(:program) { create(:program) }
 
     it "responses program list" do
-      get "/db/works/#{program.work_id}/programs"
+      get "/db/works/#{program.anime_id}/programs"
 
       expect(response.status).to eq(200)
       expect(response.body).to include(program.channel.name)
@@ -21,7 +21,7 @@ describe "GET /db/works/:work_id/programs", type: :request do
     end
 
     it "responses work list" do
-      get "/db/works/#{program.work_id}/programs"
+      get "/db/works/#{program.anime_id}/programs"
 
       expect(response.status).to eq(200)
       expect(response.body).to include(program.channel.name)

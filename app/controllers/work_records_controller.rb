@@ -46,7 +46,7 @@ class WorkRecordsController < ApplicationController
     @work_record = current_user.
       work_records.
       only_kept.
-      where(work_id: params[:work_id]).
+      where(anime_id: params[:work_id]).
       find(@record.work_record&.id)
     @work = @work_record.work
     authorize @work_record, :edit?
@@ -57,7 +57,7 @@ class WorkRecordsController < ApplicationController
     @work_record = current_user.
       work_records.
       only_kept.
-      where(work_id: params[:work_id]).
+      where(anime_id: params[:work_id]).
       find(@record.work_record&.id)
     @work = @work_record.work
     authorize @work_record, :update?

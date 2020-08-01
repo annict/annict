@@ -6,7 +6,7 @@ describe "PATCH /db/series_works/:id", type: :request do
     let!(:old_series_work) { series_work.attributes }
     let!(:series_work_params) do
       {
-        work_id: series_work.work_id,
+        work_id: series_work.anime_id,
         summary: "2期",
         summary_en: "Season 2"
       }
@@ -29,7 +29,7 @@ describe "PATCH /db/series_works/:id", type: :request do
     let!(:old_series_work) { series_work.attributes }
     let!(:series_work_params) do
       {
-        work_id: series_work.work_id,
+        work_id: series_work.anime_id,
         summary: "2期",
         summary_en: "Season 2"
       }
@@ -56,7 +56,7 @@ describe "PATCH /db/series_works/:id", type: :request do
     let!(:old_series_work) { series_work.attributes }
     let!(:series_work_params) do
       {
-        work_id: series_work.work_id,
+        work_id: series_work.anime_id,
         summary: "2期",
         summary_en: "Season 2"
       }

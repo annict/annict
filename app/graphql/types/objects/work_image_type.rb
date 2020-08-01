@@ -21,7 +21,7 @@ module Types
       end
 
       def work
-        RecordLoader.for(Work).load(object.work_id)
+        RecordLoader.for(Work).load(object.anime_id)
       end
 
       def internal_url(size:)

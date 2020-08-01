@@ -20,7 +20,7 @@ class UserWorksQuery
   end
 
   def unknown
-    Anime.where.not(id: @user.library_entries.pluck(:work_id))
+    Anime.where.not(id: @user.library_entries.pluck(:anime_id))
   end
 
   def on(status_kind)

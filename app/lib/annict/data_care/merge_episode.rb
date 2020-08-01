@@ -35,13 +35,13 @@ module Annict
 
       def merge_records!
         episode.episode_records.find_each do |er|
-          er.update(episode_id: base_episode.id, work_id: base_episode.work_id)
-          er.record.update(work_id: base_episode.work_id)
+          er.update(episode_id: base_episode.id, anime_id: base_episode.anime_id)
+          er.record.update(anime_id: base_episode.anime_id)
           er.activities.update_all(
             trackable_id: er.id,
             recipient_id: base_episode_id,
             episode_id: base_episode.id,
-            work_id: base_episode.work_id
+            anime_id: base_episode.anime_id
           )
           er.likes.update_all(recipient_id: er.id)
           er.comments.update_all(episode_record_id: er.id)
@@ -53,7 +53,7 @@ module Annict
         episode.activities.update_all(
           recipient_id: base_episode_id,
           episode_id: base_episode.id,
-          work_id: base_episode.work_id
+          anime_id: base_episode.anime_id
         )
       end
 

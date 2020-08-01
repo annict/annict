@@ -405,7 +405,7 @@ class User < ApplicationRecord
   end
 
   def slot_data(library_entries)
-    channel_works = self.channel_works.where(work_id: library_entries.pluck(:work_id))
+    channel_works = self.channel_works.where(anime_id: library_entries.pluck(:work_id))
     channel_ids = channel_works.pluck(:channel_id)
     episode_ids = library_entries.pluck(:next_episode_id)
     slots = Slot.
@@ -415,7 +415,7 @@ class User < ApplicationRecord
 
     channel_works.map do |cw|
       slot = slots.
-        select { |p| p.work_id == cw.work_id && p.channel_id == cw.channel_id }.
+        select { |p| p.anime_id == cw.anime_id && p.channel_id == cw.channel_id }.
         sort_by(&:started_at).
         reverse.
         first

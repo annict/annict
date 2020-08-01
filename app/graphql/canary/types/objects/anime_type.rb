@@ -220,7 +220,7 @@ module Canary
         end
 
         def image
-          Canary::RecordLoader.for(AnimeImage, column: :work_id).load(object.id).then do |work_image|
+          Canary::RecordLoader.for(AnimeImage, column: :anime_id).load(object.id).then do |work_image|
             work_image || AnimeImage.new
           end
         end
@@ -236,7 +236,7 @@ module Canary
         def viewer_finished_to_watch
           return false unless context[:viewer]
 
-          context[:viewer].library_entries.finished_to_watch.where(work_id: object.id).exists?
+          context[:viewer].library_entries.finished_to_watch.where(anime_id: object.id).exists?
         end
 
         def viewer_status_kind

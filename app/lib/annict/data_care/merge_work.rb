@@ -31,7 +31,7 @@ module Annict
 
       def merge_statuses!
         work.statuses.find_each do |s|
-          status = s.user.statuses.where(work_id: base_work_id).first
+          status = s.user.statuses.where(anime_id: base_work_id).first
           next if status.present?
           attrs = s.attributes.except("id")
           status = base_work.statuses.create(attrs)
@@ -42,7 +42,7 @@ module Annict
 
       def merge_library_entries!
         work.library_entries.find_each do |ls|
-          lstatus = ls.user.library_entries.where(work_id: base_work_id).first
+          lstatus = ls.user.library_entries.where(anime_id: base_work_id).first
           next if lstatus.present?
           attrs = ls.attributes.except("id")
           base_work.library_entries.create(attrs)

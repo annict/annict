@@ -34,7 +34,7 @@ class UserEpisodesQuery
   def user_episodes
     return episodes.none if library_entries.blank?
 
-    episodes.where(work_id: library_entries.pluck(:work_id))
+    episodes.where(anime_id: library_entries.pluck(:work_id))
   end
 
   def library_entries

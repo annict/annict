@@ -68,7 +68,7 @@ class Staff < ApplicationRecord
   has_many :db_comments, as: :resource, dependent: :destroy
 
   validates :resource, presence: true
-  validates :work_id, presence: true
+  validates :anime_id, presence: true
   validates :name, presence: true
   validates :role, presence: true
 

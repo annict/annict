@@ -11,10 +11,10 @@ module Api
         library_entries = current_user.
           library_entries.
           joins(:status).
-          select("library_entries.work_id, statuses.kind as status_kind").
+          select("library_entries.anime_id, statuses.kind as status_kind").
           map do |library_entry|
             {
-              work_id: library_entry.work_id,
+              anime_id: library_entry.anime_id,
               status_kind:  Status.kind.find_value(library_entry.status_kind)
             }
           end
@@ -23,7 +23,7 @@ module Api
       end
 
       def show
-        @library_entry = current_user.library_entries.find_by(work_id: params[:work_id])
+        @library_entry = current_user.library_entries.find_by(anime_id: params[:work_id])
         @user = current_user
       end
 

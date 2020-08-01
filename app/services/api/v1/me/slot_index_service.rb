@@ -41,7 +41,7 @@ module Api
 
         def filter_work_ids
           return @collection if @params.filter_work_ids.blank?
-          @collection.where(work_id: @params.filter_work_ids)
+          @collection.where(anime_id: @params.filter_work_ids)
         end
 
         def filter_started_at_gt

@@ -23,8 +23,8 @@ module Db
     end
 
     def update
-      @work = Anime.without_deleted.find(params[:work_id])
-      @image = AnimeImage.find_by!(work_id: @work.id)
+      @work = Anime.without_deleted.find(params[:anime_id])
+      @image = AnimeImage.find_by!(anime_id: @work.id)
       authorize @image
 
       @image.attributes = work_image_params

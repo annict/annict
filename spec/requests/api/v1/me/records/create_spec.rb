@@ -41,9 +41,9 @@ describe "POST /v1/me/records" do
       expect(episode_record.rating_state).to eq data[:rating_state]
       expect(episode_record.episode_id).to eq episode.id
       expect(episode_record.record_id).to eq record.id
-      expect(episode_record.work_id).to eq work.id
+      expect(episode_record.anime_id).to eq work.id
 
-      expect(record.work_id).to eq work.id
+      expect(record.anime_id).to eq work.id
 
       expect(activity_group.itemable_type).to eq "EpisodeRecord"
       expect(activity_group.single).to eq true

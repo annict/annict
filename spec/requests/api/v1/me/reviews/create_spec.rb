@@ -34,13 +34,13 @@ describe "POST /v1/me/reviews" do
       activity_group = user.activity_groups.first
       activity = user.activities.first
 
-      expect(record.work_id).to eq work.id
+      expect(record.anime_id).to eq work.id
 
       expect(work_record.body).to eq "#{data[:title]}\n\n#{data[:body]}"
       expect(work_record.locale).to eq "ja"
       expect(work_record.rating_overall_state).to eq data[:rating_overall_state]
       expect(work_record.record_id).to eq record.id
-      expect(work_record.work_id).to eq work.id
+      expect(work_record.anime_id).to eq work.id
 
       expect(activity_group.itemable_type).to eq "AnimeRecord"
       expect(activity_group.single).to eq true

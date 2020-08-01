@@ -17,7 +17,7 @@ module Api
 
       def filter_work_id
         return @collection if @params.filter_work_id.blank?
-        @collection.where(work_id: @params.filter_work_id)
+        @collection.where(anime_id: @params.filter_work_id)
       end
 
       def filter_episode_id

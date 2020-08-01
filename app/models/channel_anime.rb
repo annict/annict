@@ -31,7 +31,7 @@ class ChannelAnime < ApplicationRecord
   belongs_to :work
 
   def self.current_channel(work)
-    channel_work = find_by(work_id: work.id)
+    channel_work = find_by(anime_id: work.id)
     channel_work.channel if channel_work.present?
   end
 end

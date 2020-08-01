@@ -7,7 +7,7 @@ class DestroyChannelWorksJob < ApplicationJob
     return if user.blank? || channel.blank?
 
     user.works.wanna_watch_and_watching.each do |work|
-      channel_work = user.channel_works.find_by(work_id: work.id, channel_id: channel.id)
+      channel_work = user.channel_works.find_by(anime_id: work.id, channel_id: channel.id)
       channel_work.destroy if channel_work.present?
     end
   end

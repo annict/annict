@@ -39,7 +39,7 @@ class UserWorkRecordsQuery
       "
         LEFT OUTER JOIN library_entries
           INNER JOIN statuses ON statuses.id = library_entries.status_id ON
-            work_records.work_id = library_entries.work_id AND
+            work_records.anime_id = library_entries.anime_id AND
             statuses.kind IN (1, 2, 5) AND
             library_entries.user_id = %s
       ", @user.id

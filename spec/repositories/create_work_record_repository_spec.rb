@@ -35,7 +35,7 @@ describe CreateWorkRecordRepository, type: :repository do
       activity_group = user.activity_groups.first
       activity = user.activities.first
 
-      expect(record.work_id).to eq work.id
+      expect(record.anime_id).to eq work.id
 
       expect(work_record.body).to eq params[:body]
       expect(work_record.locale).to eq "ja"
@@ -45,7 +45,7 @@ describe CreateWorkRecordRepository, type: :repository do
       expect(work_record.rating_music_state).to eq params[:rating_music_state]
       expect(work_record.rating_story_state).to eq params[:rating_story_state]
       expect(work_record.record_id).to eq record.id
-      expect(work_record.work_id).to eq work.id
+      expect(work_record.anime_id).to eq work.id
 
       expect(activity_group.itemable_type).to eq "AnimeRecord"
       expect(activity_group.single).to eq true
@@ -90,7 +90,7 @@ describe CreateWorkRecordRepository, type: :repository do
       activity_group = user.activity_groups.last
       activity = user.activities.last
 
-      expect(record.work_id).to eq work.id
+      expect(record.anime_id).to eq work.id
 
       expect(work_record.body).to eq params[:body]
       expect(work_record.locale).to eq "ja"
@@ -100,7 +100,7 @@ describe CreateWorkRecordRepository, type: :repository do
       expect(work_record.rating_music_state).to eq params[:rating_music_state]
       expect(work_record.rating_story_state).to eq params[:rating_story_state]
       expect(work_record.record_id).to eq record.id
-      expect(work_record.work_id).to eq work.id
+      expect(work_record.anime_id).to eq work.id
 
       expect(activity_group.itemable_type).to eq "AnimeRecord"
       expect(activity_group.single).to eq true
@@ -145,7 +145,7 @@ describe CreateWorkRecordRepository, type: :repository do
       activity_group = user.activity_groups.first
       activity = user.activities.last
 
-      expect(record.work_id).to eq work.id
+      expect(record.anime_id).to eq work.id
 
       expect(work_record.body).to eq params[:body]
       expect(work_record.locale).to eq "other"
@@ -155,7 +155,7 @@ describe CreateWorkRecordRepository, type: :repository do
       expect(work_record.rating_music_state).to eq params[:rating_music_state]
       expect(work_record.rating_story_state).to eq params[:rating_story_state]
       expect(work_record.record_id).to eq record.id
-      expect(work_record.work_id).to eq work.id
+      expect(work_record.anime_id).to eq work.id
 
       expect(activity_group.itemable_type).to eq "AnimeRecord"
       expect(activity_group.single).to eq false

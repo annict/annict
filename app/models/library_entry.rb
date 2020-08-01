@@ -60,14 +60,14 @@ class LibraryEntry < ApplicationRecord
     next_episode_data = library_entries.fetch_next_episode_data
 
     library_entries.find_each do |ls|
-      next_episode = next_episode_data.detect { |ne| ne[:work_id] == ls.work_id }
+      next_episode = next_episode_data.detect { |ne| ne[:anime_id] == ls.anime_id }
       next if ls.next_episode_id == next_episode[:next_episode_id]
       ls.update_column(:next_episode_id, next_episode[:next_episode_id])
     end
   end
 
   def self.fetch_next_episode_data
-    work_ids = pluck(:work_id)
+    work_ids = pluck(:anime_id)
 
     return [] if work_ids.empty?
 

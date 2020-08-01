@@ -18,7 +18,7 @@ module Types
       end
 
       def work
-        RecordLoader.for(Anime).load(object.work_id)
+        RecordLoader.for(Anime).load(object.anime_id)
       end
 
       def records

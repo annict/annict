@@ -4,7 +4,7 @@ class ChannelWorkService
   end
 
   def channel_work(work)
-    @user.channel_works.find_by(work_id: work.id)
+    @user.channel_works.find_by(anime_id: work.id)
   end
 
   # チャンネルと紐付いていない作品と最速放送チャンネルとを紐付ける
@@ -12,7 +12,7 @@ class ChannelWorkService
     if channel_work(work).blank?
       channel = @user.channels.fastest(work)
 
-      @user.channel_works.create(work: work, channel: channel) if channel.present?
+      @user.channel_works.create(anime: work, channel: channel) if channel.present?
     end
   end
 
