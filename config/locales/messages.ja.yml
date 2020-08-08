@@ -35,7 +35,7 @@ ja:
         added_to_favorites: 登録済み
         hint: "お気に入りに登録すると、この%{resource_type}が関係する新作アニメがAnnictに登録されたとき通知します (通知をオフにすることもできます)"
       sign_up_modal:
-        body: ユーザ登録するとこの機能が使えます。
+        body: アカウント作成するとこの機能が使えます。
     _empty:
       no_activities: アクティビティはありません
       no_characters: キャラクターはいません
