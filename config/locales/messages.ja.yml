@@ -206,7 +206,6 @@ ja:
       description: 退会すると、アカウント情報や見たアニメの記録、ステータス変更等のデータが全て削除されます。
     sessions:
       new:
-        forgot_password: パスワード忘れた？
         remember_me: 保存する
         sign_in_with_facebook: Facebookでログイン
         sign_in_with_twitter: Twitterでログイン

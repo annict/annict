@@ -207,7 +207,6 @@ en:
       description: Clicking "Delete Account" will delete all your data.
     sessions:
       new:
-        forgot_password: Forgot password?
         remember_me: Remember me
         sign_in_with_facebook: Sign in with Facebook
         sign_in_with_twitter: Sign in with Twitter
