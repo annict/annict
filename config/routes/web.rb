@@ -147,15 +147,20 @@ root "welcome#show",
   # Set :as option to avoid two routes with the same name
   as: nil
 
+constraints format: "html" do
+  devise_scope :user do
+    match "/sign_out", via: :delete, as: :sign_out, to: "devise/sessions#destroy"
+  end
+end
+
 scope module: :v4 do
   constraints format: "html" do
     devise_scope :user do
-      match "/oauth_users",     via: :post,   as: :oauth_users,    to: "oauth_users#create"
-      match "/oauth_users/new", via: :get,    as: :new_oauth_user, to: "oauth_users#new"
-      match "/sign_in",         via: :get,    as: :sign_in,        to: "sessions#new"
-      match "/sign_in",         via: :post,                        to: "sessions#create"
-      match "/sign_out",        via: :delete, as: :sign_out,       to: "sessions#destroy"
-      match "/sign_up",         via: :get,    as: :sign_up,        to: "registrations#new"
+      match "/oauth_users",     via: :post, as: :oauth_users,    to: "oauth_users#create"
+      match "/oauth_users/new", via: :get,  as: :new_oauth_user, to: "oauth_users#new"
+      match "/sign_in",         via: :get,  as: :sign_in,        to: "sessions#new"
+      match "/sign_in",         via: :post,                      to: "sessions#create"
+      match "/sign_up",         via: :get,  as: :sign_up,        to: "registrations#new"
     end
 
     match "/@:username",         via: :get,   as: :profile_detail, to: "users#show",    username: USERNAME_FORMAT
