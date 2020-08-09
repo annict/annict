@@ -1,0 +1,7 @@
+ja:
+  dry_validation:
+    errors:
+      email_format: が不正です
+      rules:
+        email:
+          filled?: を入力してください

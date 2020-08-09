@@ -191,6 +191,7 @@ ja:
       view_record_body: "感想を見る"
     registrations:
       new:
+        description_html: 入力したメールアドレス宛てに<br>アカウント作成用のリンクをお送りします。
         password_hint: 8文字以上入力してください。
         sign_in_link_html: 登録済みですか？ %{link}
         start_with_facebook: Facebookで始める

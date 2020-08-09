@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 module V4
-  class RegistrationsController < Devise::RegistrationsController
+  class RegistrationsController < V4::ApplicationController
     layout "simple"
 
     def new
-      @new_user = User.new_with_session({}, session)
+      @user = User.new
     end
 
     def create

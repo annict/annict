@@ -156,11 +156,14 @@ end
 scope module: :v4 do
   constraints format: "html" do
     devise_scope :user do
-      match "/oauth_users",     via: :post, as: :oauth_users,    to: "oauth_users#create"
-      match "/oauth_users/new", via: :get,  as: :new_oauth_user, to: "oauth_users#new"
-      match "/sign_in",         via: :get,  as: :sign_in,        to: "sessions#new"
-      match "/sign_in",         via: :post,                      to: "sessions#create"
-      match "/sign_up",         via: :get,  as: :sign_up,        to: "registrations#new"
+      match "/oauth_users",       via: :post, as: :oauth_users,      to: "oauth_users#create"
+      match "/oauth_users/new",   via: :get,  as: :new_oauth_user,   to: "oauth_users#new"
+      match "/sign_in",           via: :get,  as: :sign_in,          to: "sessions#new"
+      match "/sign_in",           via: :post,                        to: "sessions#create"
+      match "/sign_up",           via: :get,  as: :sign_up,          to: "sign_up#new"
+      match "/sign_up",           via: :post,                        to: "sign_up#create"
+      match "/registrations/new", via: :get,  as: :new_registration, to: "registrations#new"
+      match "/registrations",     via: :post, as: :registrations,    to: "registrations#create"
     end
 
     match "/@:username",         via: :get,   as: :profile_detail, to: "users#show",    username: USERNAME_FORMAT

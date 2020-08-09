@@ -1,0 +1,4 @@
+en:
+  dry_validation:
+    errors:
+      email_format: is not a valid email format

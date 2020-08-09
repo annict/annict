@@ -1,0 +1,5 @@
+en:
+  form:
+    attributes:
+      sign_up_form:
+        email: Email

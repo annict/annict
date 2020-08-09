@@ -31,10 +31,10 @@ en:
           index: Check out fans of %{person_name}!
         records:
           index: Check out %{profile_name} (%{username})'s records!
-        registrations:
-          new: Start using Annict!
         sessions:
           new: Welcome back!
+        sign_up:
+          new: Start using Annict!
         staffs:
           index: Looking for staff information on %{title}? Find out more with Annict!
         users:
@@ -209,8 +209,6 @@ en:
         index: Connections
       records:
         index: "%{profile_name} (%{username})'s Records"
-      registrations:
-        new: Sign Up
       searches:
         show: "%{q}Anime Search"
       sessions:
@@ -224,6 +222,8 @@ en:
         tokens:
           edit: Edit token
           new: Generate new token
+      sign_up:
+        new: Sign Up
       staffs:
         index: Staff of %{title} (Anime)
       supporters:

@@ -31,10 +31,10 @@ ja:
           index: "%{person_name}のファンをチェック！"
         records:
           index: "%{profile_name} (%{username})さんの記録をチェック！"
-        registrations:
-          new: Annictを始めよう！
         sessions:
           new: おかえりなさい！
+        sign_up:
+          new: Annictのアカウントを作成して視聴記録を残そう！
         staffs:
           index: "アニメ「%{title}」のスタッフ情報をチェック！"
         users:
@@ -209,8 +209,6 @@ ja:
         index: サービス連携
       records:
         index: "%{profile_name} (%{username})さんの記録一覧"
-      registrations:
-        new: ユーザ登録
       searches:
         show: "%{q}検索"
       sessions:
@@ -224,6 +222,8 @@ ja:
         tokens:
           edit: 個人用アクセストークン編集
           new: 個人用アクセストークン作成
+      sign_up:
+        new: アカウント作成
       staffs:
         index: アニメ「%{title}」のスタッフ一覧
       supporters:
