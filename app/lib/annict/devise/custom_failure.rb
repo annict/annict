@@ -3,6 +3,6 @@
 
 class Annict::Devise::CustomFailure < Devise::FailureApp
   def redirect_url
-    root_url
+    sign_in_url
   end
 end
