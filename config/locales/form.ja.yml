@@ -3,3 +3,7 @@ ja:
     attributes:
       sign_up_form:
         email: メールアドレス
+      registration_form:
+        email: メールアドレス
+        terms_and_privacy_policy_agreement: 利用規約とプライバシーポリシー
+        username: ユーザ名

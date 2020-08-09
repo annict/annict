@@ -17,7 +17,7 @@
         </h1>
 
         <p class="mb-5 text-center">
-          <%= t "messages.registrations.new.description_html" %>
+          <%= t "messages.sign_up.new.description_html" %>
         </p>
 
         <%= form_with model: @form, url: sign_up_path, html: { class: "mb-3" }, local: true do |f| %>
@@ -25,8 +25,7 @@
 
           <div class="form-group">
             <%= f.label :email %>
-            <%# f.text_field :email, autofocus: true, class: "form-control", placeholder: "hello@annict.com", required: true, tabindex: 1, type: "email" %>
-            <%= f.text_field :email, autofocus: true, class: "form-control", placeholder: "hello@annict.com", tabindex: 1 %>
+            <%= f.email_field :email, autofocus: true, class: "form-control", placeholder: "hello@annict.com", required: true, tabindex: 1 %>
           </div>
 
           <div class="text-center">

@@ -62,10 +62,6 @@
 #
 
 class User < ApplicationRecord
-  # registrations#createが実行されたあとメールアドレスの確認を挟まず
-  # ログインできるようにするため、Confirmableモジュールを直接includeする
-  include Devise::Models::Confirmable
-
   include UserCheckable
   include UserFavoritable
   include UserFollowable
@@ -75,7 +71,9 @@ class User < ApplicationRecord
 
   extend Enumerize
 
-  attr_accessor :email_username, :current_password, :terms_and_privacy_policy_agreement
+  USERNAME_FORMAT = %r{\A[A-Za-z0-9_]+\z}.freeze
+
+  attr_accessor :email_username, :current_password
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable
@@ -163,9 +161,8 @@ class User < ApplicationRecord
   validates :username,
     presence: true,
     length: { maximum: 20 },
-    format: { with: /\A[A-Za-z0-9_]+\z/ },
+    format: { with: USERNAME_FORMAT },
     uniqueness: { case_sensitive: false }
-  validates :terms_and_privacy_policy_agreement, acceptance: true
 
   # Override the Devise's `find_for_database_authentication`
   # https://github.com/plataformatec/devise/wiki/How-To:-Allow-users-to-sign-in-using-their-username-or-email-address

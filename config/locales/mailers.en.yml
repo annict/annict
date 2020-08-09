@@ -2,3 +2,6 @@ en:
   forum_mailer:
     comment_notification:
       subject: "[Annict Forum] %{name} (@%{username}) has commented on the post %{post_title}"
+  session_interaction_mailer:
+    sign_up_interaction:
+      subject: Finish creating your account on Annict

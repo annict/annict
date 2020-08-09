@@ -13,7 +13,9 @@ module V4
 
       return render(:new) unless @form.valid?
 
-      flash[:notice] = t("messages.registrations.create.confirmation_mail_has_sent")
+      SessionInteraction.start_sign_up!(email: @form.email, locale: I18n.locale)
+
+      flash[:notice] = t("messages.sign_up.create.mail_has_sent")
       redirect_to root_path
     end
 

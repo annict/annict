@@ -71,7 +71,9 @@ CREATE TABLE public.activities (
     episode_record_id bigint,
     multiple_episode_record_id bigint,
     work_record_id bigint,
-    activity_group_id bigint NOT NULL
+    activity_group_id bigint NOT NULL,
+    migrated_at timestamp without time zone,
+    mer_processed_at timestamp without time zone
 );
 
 
@@ -1933,6 +1935,40 @@ ALTER SEQUENCE public.series_works_id_seq OWNED BY public.series_works.id;
 
 
 --
+-- Name: session_interactions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.session_interactions (
+    id bigint NOT NULL,
+    email public.citext NOT NULL,
+    kind character varying NOT NULL,
+    token character varying NOT NULL,
+    expires_at timestamp without time zone NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: session_interactions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.session_interactions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: session_interactions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.session_interactions_id_seq OWNED BY public.session_interactions.id;
+
+
+--
 -- Name: sessions; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -3104,6 +3140,13 @@ ALTER TABLE ONLY public.series_works ALTER COLUMN id SET DEFAULT nextval('public
 
 
 --
+-- Name: session_interactions id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.session_interactions ALTER COLUMN id SET DEFAULT nextval('public.session_interactions_id_seq'::regclass);
+
+
+--
 -- Name: sessions id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -3725,6 +3768,14 @@ ALTER TABLE ONLY public.series
 
 ALTER TABLE ONLY public.series_works
     ADD CONSTRAINT series_works_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: session_interactions session_interactions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.session_interactions
+    ADD CONSTRAINT session_interactions_pkey PRIMARY KEY (id);
 
 
 --
@@ -5096,6 +5147,20 @@ CREATE INDEX index_series_works_on_unpublished_at ON public.series_works USING b
 --
 
 CREATE INDEX index_series_works_on_work_id ON public.series_works USING btree (work_id);
+
+
+--
+-- Name: index_session_interactions_on_email; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_session_interactions_on_email ON public.session_interactions USING btree (email);
+
+
+--
+-- Name: index_session_interactions_on_token; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_session_interactions_on_token ON public.session_interactions USING btree (token);
 
 
 --
@@ -6913,6 +6978,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20200513125709'),
 ('20200515062450'),
 ('20200525110837'),
-('20200525201620');
+('20200525201620'),
+('20200808233237');
 
 

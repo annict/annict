@@ -24,4 +24,24 @@ class ApplicationContract < Dry::Validation::Contract
       key.failure(:email_format)
     end
   end
+
+  register_macro(:email_exists) do
+    if User.find_by(email: value)
+      key.failure(:email_exists)
+    end
+  end
+
+  register_macro(:username_format) do
+    unless User::USERNAME_FORMAT.match?(value)
+      key.failure(:username_format)
+    end
+
+    if value.length > 20
+      key.failure(:username_length)
+    end
+
+    if User.find_by(username: value)
+      key.failure(:username_exists)
+    end
+  end
 end
