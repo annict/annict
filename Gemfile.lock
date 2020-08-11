@@ -139,7 +139,7 @@ GEM
     color (1.8)
     commonmarker (0.21.0)
       ruby-enum (~> 0.5)
-    concurrent-ruby (1.1.6)
+    concurrent-ruby (1.1.7)
     content_disposition (1.0.0)
     counter_culture (2.3.0)
       activerecord (>= 4.2)
@@ -284,7 +284,7 @@ GEM
     httparty (0.18.0)
       mime-types (~> 3.0)
       multi_xml (>= 0.5.2)
-    i18n (1.8.3)
+    i18n (1.8.5)
       concurrent-ruby (~> 1.0)
     i18n-tasks (0.9.31)
       activesupport (>= 4.0.2)
@@ -611,7 +611,7 @@ GEM
     validate_url (1.0.8)
       activemodel (>= 3.0.0)
       public_suffix
-    view_component (2.5.1)
+    view_component (2.18.1)
       activesupport (>= 5.0.0, < 7.0)
     virtus (1.0.5)
       axiom-types (~> 0.1)
@@ -631,7 +631,7 @@ GEM
     xpath (3.2.0)
       nokogiri (~> 1.8)
     yard (0.9.25)
-    zeitwerk (2.3.0)
+    zeitwerk (2.4.0)
 
 PLATFORMS
   ruby
