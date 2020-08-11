@@ -39,6 +39,16 @@ class SessionInteraction < ApplicationRecord
     end
   end
 
+  def self.start_sign_in!(email:, locale:)
+    user = User.only_kept.find_by(email: email)
+    return unless user
+
+    ActiveRecord::Base.transaction do
+      session_interaction = start!(:sign_in, email)
+      SessionInteractionMailer.sign_in_interaction(session_interaction, locale).deliver_later
+    end
+  end
+
   private_class_method def self.start!(kind, email)
     session_interaction = SessionInteraction.where(email: email).first_or_initialize
     session_interaction.attributes = {

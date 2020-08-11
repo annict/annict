@@ -1,5 +1,5 @@
-<% title = t "head.title.sessions.new" %>
-<% description = meta_description t("head.meta.description.sessions.new") %>
+<% title = t "head.title.legacy_sign_in.new" %>
+<% description = meta_description t("head.meta.description.sign_in.new") %>
 <% set_meta_tags(title: title, description: description, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false) %>
 
 <div class="container">
@@ -45,7 +45,7 @@
 
       <div class="text-center">
         <small>
-          <%= t "messages.sessions.new.sign_up_link_html", link: link_to(t("noun.sign_up"), sign_up_path) %>
+          <%= t "messages.sign_in.new.sign_up_link_html", link: link_to(t("noun.sign_up"), sign_up_path) %>
         </small>
       </div>
     </div>

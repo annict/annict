@@ -1,6 +1,8 @@
 ja:
   form:
     attributes:
+      sign_in_form:
+        email: メールアドレス
       sign_up_form:
         email: メールアドレス
       registration_form:

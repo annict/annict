@@ -1,6 +1,8 @@
 en:
   form:
     attributes:
+      sign_in_form:
+        email: Email
       sign_up_form:
         email: Email
       registration_form:

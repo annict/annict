@@ -1405,7 +1405,8 @@ CREATE TABLE public.oauth_applications (
     owner_id bigint,
     owner_type character varying,
     confidential boolean DEFAULT true NOT NULL,
-    deleted_at timestamp without time zone
+    deleted_at timestamp without time zone,
+    hide_social_login boolean DEFAULT false NOT NULL
 );
 
 
@@ -6979,6 +6980,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20200515062450'),
 ('20200525110837'),
 ('20200525201620'),
-('20200808233237');
+('20200808233237'),
+('20200809161251');
 
 

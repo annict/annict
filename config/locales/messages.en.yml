@@ -211,7 +211,6 @@ en:
         remember_me: Remember me
         sign_in_with_facebook: Sign in with Facebook
         sign_in_with_twitter: Sign in with Twitter
-        sign_up_link_html: Don't have an account? %{link}
     settings:
       apps:
         disconnected: Application has been disconnected
@@ -226,6 +225,16 @@ en:
         make_sure_to_copy: Make sure to copy your new personal access token now. You won’t be able to see it again.
         new: Generate new token
         no_tokens: No tokens
+    sign_in:
+      create:
+        mail_has_sent: An email has been sent to sign in.
+      new:
+        description_html: We'll send a link for sign in to the email you input.
+        sign_up_link_html: Don't have an account? %{link}
+    sign_in_callback:
+      show:
+        expired: Sign in link has expired. Please try again later.
+        signed_in: Welcome back!
     sign_up:
       create:
         mail_has_sent: An email has been sent to create your account.

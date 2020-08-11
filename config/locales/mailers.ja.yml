@@ -3,5 +3,7 @@ ja:
     comment_notification:
       subject: "[Annict Forum] %{name} (@%{username}) さんが「%{post_title}」にコメントしました"
   session_interaction_mailer:
+    sign_in_interaction:
+      subject: Annictにログイン
     sign_up_interaction:
       subject: Annictのアカウント作成用リンク

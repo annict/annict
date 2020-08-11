@@ -3,5 +3,7 @@ en:
     comment_notification:
       subject: "[Annict Forum] %{name} (@%{username}) has commented on the post %{post_title}"
   session_interaction_mailer:
+    sign_in_interaction:
+      subject: Sign in to Annict
     sign_up_interaction:
       subject: Finish creating your account on Annict

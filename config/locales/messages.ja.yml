@@ -210,7 +210,6 @@ ja:
         remember_me: 保存する
         sign_in_with_facebook: Facebookでログイン
         sign_in_with_twitter: Twitterでログイン
-        sign_up_link_html: アカウント持ってない？ %{link}
     settings:
       apps:
         disconnected: 接続解除しました
@@ -225,9 +224,19 @@ ja:
         make_sure_to_copy: 作成した個人用トークンをコピーしてください。この文字列は再表示できません。
         new: 新規作成
         no_tokens: 作成されていません
+    sign_in:
+      create:
+        mail_has_sent: ログインのためのメールを送信しました
+      new:
+        description_html: 入力したメールアドレス宛てに<br>ログイン用のリンクをお送りします。
+        sign_up_link_html: アカウント持ってない？ %{link}
+    sign_in_callback:
+      show:
+        expired: ログイン用リンクの有効期限が切れました。再度やり直してください。
+        signed_in: ログインしました
     sign_up:
       create:
-        mail_has_sent: アカウント作成のためのメールを送信しました。
+        mail_has_sent: アカウント作成のためのメールを送信しました
       new:
         description_html: 入力したメールアドレス宛てに<br>アカウント作成用のリンクをお送りします。
     tracks:
