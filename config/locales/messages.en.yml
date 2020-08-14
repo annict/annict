@@ -60,6 +60,8 @@ en:
       email_sent_for_confirmation: An email has been sent to confirm your email address.
       saved: Account has been saved.
       updated: Account has been updated.
+    callbacks:
+      sign_in_failed: Sign in failed.
     channel_works:
       no_works: No works
     channels:

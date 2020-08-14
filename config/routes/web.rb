@@ -156,8 +156,6 @@ end
 scope module: :v4 do
   constraints format: "html" do
     devise_scope :user do
-      match "/oauth_users",       via: :post, as: :oauth_users,      to: "oauth_users#create"
-      match "/oauth_users/new",   via: :get,  as: :new_oauth_user,   to: "oauth_users#new"
       match "/sign_in",           via: :get,  as: :sign_in,          to: "sign_in#new"
       match "/sign_in",           via: :get,  as: :new_user_session, to: "sign_in#new" # for Devise
       match "/sign_in",           via: :post,                        to: "sign_in#create"

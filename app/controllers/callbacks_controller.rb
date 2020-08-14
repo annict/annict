@@ -16,10 +16,10 @@ class CallbacksController < Devise::OmniauthCallbacksController
     omni_params = request.env["omniauth.params"]
     provider = Provider.find_by(name: auth[:provider], uid: auth[:uid])
 
-    if provider.present?
+    if provider
       user = provider.user
 
-      if !user.confirmed? && user.registered_after_email_confirmation_required?
+      if !user.confirmed_at? && user.registered_after_email_confirmation_required?
         return redirect_to root_path, alert: t("devise.failure.user.unconfirmed")
       end
 
@@ -35,11 +35,11 @@ class CallbacksController < Devise::OmniauthCallbacksController
       current_user.providers.create(provider_attributes(auth))
       redirect_path = omni_params["back"].presence || root_path
       bypass_sign_in(current_user)
-      redirect_to redirect_path, notice: t("messages._common.connected")
-    else
-      session["devise.oauth_data"] = auth
-      redirect_to new_oauth_user_path
+
+      return redirect_to redirect_path, notice: t("messages._common.connected")
     end
+
+    redirect_to root_path, alert: t("messages.callbacks.sign_in_failed")
   end
 
   def provider_attributes(auth)

@@ -20,4 +20,5 @@ ja:
         updated: パスワードを更新しました
     sessions:
       user:
+        signed_in: ログインしました
         signed_out: ログアウトしました

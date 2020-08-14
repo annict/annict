@@ -60,6 +60,8 @@ ja:
       email_sent_for_confirmation: メールアドレス確認用メールを送信しました
       saved: アカウント登録されました
       updated: 更新しました
+    callbacks:
+      sign_in_failed: ログインに失敗しました。ソーシャルアカウントと紐づくユーザが見つかりません
     channel_works:
       no_works: 作品はありません
     channels:
