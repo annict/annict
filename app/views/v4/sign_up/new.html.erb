@@ -11,7 +11,7 @@
         <% end %>
       </div>
 
-      <div class="c-sign-up-form px-3 mb-3">
+      <div class="c-sign-up-form px-3 mb-5">
         <h1 class="my-5 text-center">
           <%= t "messages._common.join_annict" %>
         </h1>
@@ -20,7 +20,7 @@
           <%= t "messages.sign_up.new.description_html" %>
         </p>
 
-        <%= form_with model: @form, url: sign_up_path, html: { class: "mb-3" }, local: true do |f| %>
+        <%= form_with model: @form, url: sign_up_path, local: true do |f| %>
           <%= render ErrorPanelComponent.new(form: @form) %>
 
           <div class="form-group">
