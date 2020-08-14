@@ -49,9 +49,9 @@ module V4
       ActiveRecord::Base.transaction do
         user.save!
         @session_interaction.destroy
-      end
 
-      sign_in user
+        sign_in user
+      end
 
       flash[:notice] = t("messages.registrations.create.welcome")
       redirect_to root_path
