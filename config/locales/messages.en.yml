@@ -233,7 +233,7 @@ en:
         sign_up_link_html: Don't have an account? %{link}
     sign_in_callback:
       show:
-        expired: Sign in link has expired. Please try again later.
+        expired_html: Sign in link has expired. Please try again later.
         signed_in: Welcome back!
     sign_up:
       create:

@@ -232,7 +232,7 @@ ja:
         sign_up_link_html: アカウント持ってない？ %{link}
     sign_in_callback:
       show:
-        expired: ログイン用リンクの有効期限が切れました。再度やり直してください。
+        expired_html: ログイン用リンクの有効期限が切れました。<br>再度やり直してください。
         signed_in: ログインしました
     sign_up:
       create:

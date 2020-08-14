@@ -14,7 +14,7 @@ module V4
       session_interaction = SessionInteraction.find_by(kind: :sign_in, token: token)
 
       if !session_interaction || session_interaction.expired?
-        @message = t("messages.sign_in_callback.show.expired")
+        @message = t("messages.sign_in_callback.show.expired_html").html_safe
         return
       end
 
