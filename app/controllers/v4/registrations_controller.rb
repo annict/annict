@@ -5,6 +5,8 @@ module V4
     layout "simple"
 
     def new
+      redirect_if_signed_in
+
       token = params[:token]
 
       unless token
@@ -26,6 +28,8 @@ module V4
     end
 
     def create
+      redirect_if_signed_in
+
       token = registration_form_attributes[:token]
       @session_interaction = SessionInteraction.find_by(kind: :sign_up, token: token)
 

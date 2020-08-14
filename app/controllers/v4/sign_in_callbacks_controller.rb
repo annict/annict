@@ -5,6 +5,8 @@ module V4
     layout "simple"
 
     def show
+      redirect_if_signed_in
+
       token = params[:token]
 
       unless token

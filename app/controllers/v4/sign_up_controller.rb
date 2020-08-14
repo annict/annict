@@ -5,10 +5,14 @@ module V4
     layout "simple"
 
     def new
+      redirect_if_signed_in
+
       @form = SignUpForm.new
     end
 
     def create
+      redirect_if_signed_in
+
       @form = SignUpForm.new(sign_up_form_params)
 
       return render(:new) unless @form.valid?

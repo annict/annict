@@ -5,6 +5,8 @@ module V4
     layout "simple"
 
     def new
+      redirect_if_signed_in
+
       if params[:back]
         store_location_for(:user, params[:back])
       end
@@ -18,6 +20,8 @@ module V4
     end
 
     def create
+      redirect_if_signed_in
+
       @form = SignInForm.new(sign_in_form_params)
 
       return render(:new) unless @form.valid?

@@ -19,6 +19,12 @@ module V4
 
     private
 
+    def redirect_if_signed_in
+      if user_signed_in?
+        return redirect_to root_path
+      end
+    end
+
     def set_search_params
       @search = SearchService.new(params[:q])
     end
