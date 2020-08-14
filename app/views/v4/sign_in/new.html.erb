@@ -36,47 +36,47 @@
           </div>
         <% end %>
 
-        <% if !@oauth_app || !@oauth_app.hide_social_login? %>
-          <div class="mb-5 text-muted text-center">
-            <%= t "noun.or" %>
-          </div>
+        <div class="mb-5 text-muted text-center">
+          <%= t "noun.or" %>
+        </div>
 
+        <% if !@oauth_app || !@oauth_app.hide_social_login? %>
           <div class="mb-3 text-center">
             <%= link_to user_twitter_omniauth_authorize_path, class: "btn d-inline-flex justify-content-between u-btn-twitter" do %>
-              <span class="col-1 px-0">
-                <%= icon "twitter", "fab" %>
-              </span>
+                <span class="col-1 px-0">
+                  <%= icon "twitter", "fab" %>
+                </span>
 
               <span class="col">
-                <%= t "messages.registrations.new.start_with_twitter" %>
-              </span>
+                  <%= t "messages.registrations.new.start_with_twitter" %>
+                </span>
             <% end %>
           </div>
 
           <div class="mb-3 text-center">
             <%= link_to user_facebook_omniauth_authorize_path, class: "btn d-inline-flex justify-content-between u-btn-facebook" do %>
-              <span class="col-1 px-0">
-                <%= icon "facebook", "fab" %>
-              </span>
+                <span class="col-1 px-0">
+                  <%= icon "facebook", "fab" %>
+                </span>
 
               <span class="col">
-                <%= t "messages.registrations.new.start_with_facebook" %>
-              </span>
+                  <%= t "messages.registrations.new.start_with_facebook" %>
+                </span>
             <% end %>
           </div>
+        <% end %>
 
-          <div class="mb-5 text-center">
-            <%= link_to legacy_sign_in_path, class: "btn btn-light d-inline-flex justify-content-between" do %>
+        <div class="mb-5 text-center">
+          <%= link_to legacy_sign_in_path, class: "btn btn-light d-inline-flex justify-content-between" do %>
               <span class="col-1 px-0">
                 <%= icon "key", "fas" %>
               </span>
 
-              <span class="col">
+            <span class="col">
                 <%= t "head.title.legacy_sign_in.new" %>
               </span>
-            <% end %>
-          </div>
-        <% end %>
+          <% end %>
+        </div>
       </div>
 
       <div class="small text-center">
