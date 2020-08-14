@@ -25,8 +25,7 @@
 
           <div class="form-group">
             <%= f.label :email %>
-            <%# f.email_field :email, autofocus: true, class: "form-control", placeholder: "hello@annict.com", required: true, tabindex: 1 %>
-            <%= f.text_field :email, autofocus: true, class: "form-control", placeholder: "hello@annict.com", tabindex: 1 %>
+            <%= f.email_field :email, autofocus: true, class: "form-control", placeholder: "hello@annict.com", required: true, tabindex: 1 %>
           </div>
 
           <div class="text-center">
@@ -51,12 +50,10 @@
               <span class="col">
                 <%= t "messages.registrations.new.start_with_twitter" %>
               </span>
-
-              <span class="col-1 px-0"></span>
             <% end %>
           </div>
 
-          <div class="mb-5 text-center">
+          <div class="mb-3 text-center">
             <%= link_to user_facebook_omniauth_authorize_path, class: "btn d-inline-flex justify-content-between u-btn-facebook" do %>
               <span class="col-1 px-0">
                 <%= icon "facebook", "fab" %>
@@ -65,23 +62,25 @@
               <span class="col">
                 <%= t "messages.registrations.new.start_with_facebook" %>
               </span>
+            <% end %>
+          </div>
 
-              <span class="col-1 px-0"></span>
+          <div class="mb-5 text-center">
+            <%= link_to legacy_sign_in_path, class: "btn btn-light d-inline-flex justify-content-between" do %>
+              <span class="col-1 px-0">
+                <%= icon "key", "fas" %>
+              </span>
+
+              <span class="col">
+                <%= t "head.title.legacy_sign_in.new" %>
+              </span>
             <% end %>
           </div>
         <% end %>
       </div>
 
-      <div class="text-center">
-        <div class="mb-3">
-          <%= link_to(t("head.title.legacy_sign_in.new"), legacy_sign_in_path) %>
-        </div>
-
-        <div>
-          <small>
-            <%= t "messages.sign_in.new.sign_up_link_html", link: link_to(t("noun.sign_up"), sign_up_path) %>
-          </small>
-        </div>
+      <div class="small text-center">
+        <%= t "messages.sign_in.new.sign_up_link_html", link: link_to(t("noun.sign_up"), sign_up_path) %>
       </div>
     </div>
   </div>
