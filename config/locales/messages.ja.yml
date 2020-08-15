@@ -195,7 +195,7 @@ ja:
       new:
         expired_html: アカウント作成用リンクの有効期限が切れました。<br>再度<a href="/sign_up">アカウント作成ページ</a>でメールアドレスを入力してください。
         password_hint: 8文字以上入力してください。
-        sign_in_link_html: 登録済みですか？ %{link}
+        sign_in_link_html: 作成済みですか？ %{link}
         start_with_facebook: Facebookでログイン
         start_with_twitter: Twitterでログイン
         username_hint: 半角英数字とアンダースコア (_) が利用できます。
