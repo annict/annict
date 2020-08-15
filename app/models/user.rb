@@ -493,6 +493,10 @@ class User < ApplicationRecord
     touch :confirmed_at
   end
 
+  def confirmed
+    !!confirmed_at
+  end
+
   private
 
   def get_large_avatar_image(provider, image_url)

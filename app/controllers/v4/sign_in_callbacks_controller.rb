@@ -23,7 +23,7 @@ module V4
       user = User.only_kept.find_by!(email: confirmation.email)
 
       ActiveRecord::Base.transaction do
-        unless user.confirmed_at?
+        unless user.confirmed?
           user.confirm
         end
 

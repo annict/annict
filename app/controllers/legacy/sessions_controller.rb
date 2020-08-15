@@ -11,7 +11,7 @@ module Legacy
 
     def create
       super do |user|
-        if !user.confirmed_at? && user.registered_after_email_confirmation_required?
+        if !user.confirmed? && user.registered_after_email_confirmation_required?
           sign_out
           return redirect_to root_path, alert: t("devise.failure.user.unconfirmed")
         end

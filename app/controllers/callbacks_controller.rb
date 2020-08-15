@@ -19,7 +19,7 @@ class CallbacksController < Devise::OmniauthCallbacksController
     if provider
       user = provider.user
 
-      if !user.confirmed_at? && user.registered_after_email_confirmation_required?
+      if !user.confirmed? && user.registered_after_email_confirmation_required?
         return redirect_to root_path, alert: t("devise.failure.user.unconfirmed")
       end
 
