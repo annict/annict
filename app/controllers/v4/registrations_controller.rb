@@ -1,31 +1,70 @@
 # frozen_string_literal: true
 
 module V4
-  class RegistrationsController < Devise::RegistrationsController
+  class RegistrationsController < V4::ApplicationController
     layout "simple"
 
     def new
-      @new_user = User.new_with_session({}, session)
+      redirect_if_signed_in
+
+      token = params[:token]
+
+      unless token
+        return redirect_to root_path
+      end
+
+      confirmation = EmailConfirmation.find_by(event: :sign_up, token: token)
+
+      if !confirmation || confirmation.expired?
+        @expired = true
+        return
+      end
+
+      confirmation.touch(:expires_at)
+
+      @form = RegistrationForm.new
+      @form.email = confirmation.email
+      @form.token = confirmation.token
     end
 
     def create
-      @new_user = User.new(user_params).build_relations
-      @new_user.time_zone = cookies["ann_time_zone"].presence || "Asia/Tokyo"
-      @new_user.locale = locale
+      redirect_if_signed_in
 
-      return render(:new) unless @new_user.valid?
+      token = registration_form_attributes[:token]
+      @confirmation = EmailConfirmation.find_by(event: :sign_up, token: token)
 
-      @new_user.setting.privacy_policy_agreed = true
-      @new_user.save!
+      unless @confirmation
+        return redirect_to root_path
+      end
 
-      flash[:notice] = t("messages.registrations.create.confirmation_mail_has_sent")
-      redirect_to root_path
+      @form = RegistrationForm.new(registration_form_attributes.merge(email: @confirmation.email))
+
+      return render(:new) unless @form.valid?
+
+      user = User.new(
+        username: @form.username,
+        email: @form.email
+      ).build_relations
+      user.time_zone = cookies["ann_time_zone"].presence || "Asia/Tokyo"
+      user.locale = locale
+      user.confirmed_at = Time.zone.now
+      user.setting.privacy_policy_agreed = true
+
+      ActiveRecord::Base.transaction do
+        user.save!
+        @confirmation.destroy
+
+        sign_in user
+      end
+
+      flash[:notice] = t("messages.registrations.create.welcome")
+      redirect_to(@confirmation.back.presence || root_path)
     end
 
     private
 
-    def user_params
-      params.require(:user).permit(:username, :email, :password, :terms_and_privacy_policy_agreement)
+    def registration_form_attributes
+      @registration_form_attributes ||= params.to_unsafe_h["registration_form"]
     end
   end
 end

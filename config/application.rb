@@ -115,5 +115,9 @@ module Annict
     end
 
     ActiveRecord::SessionStore::Session.serializer = :null
+
+    config.to_prepare do
+      Doorkeeper::AuthorizationsController.layout("simple")
+    end
   end
 end

@@ -62,10 +62,6 @@
 #
 
 class User < ApplicationRecord
-  # registrations#createが実行されたあとメールアドレスの確認を挟まず
-  # ログインできるようにするため、Confirmableモジュールを直接includeする
-  include Devise::Models::Confirmable
-
   include UserCheckable
   include UserFavoritable
   include UserFollowable
@@ -75,7 +71,9 @@ class User < ApplicationRecord
 
   extend Enumerize
 
-  attr_accessor :email_username, :current_password, :terms_and_privacy_policy_agreement
+  USERNAME_FORMAT = %r{\A[A-Za-z0-9_]+\z}.freeze
+
+  attr_accessor :email_username, :current_password
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable
@@ -95,6 +93,7 @@ class User < ApplicationRecord
   has_many :character_favorites, dependent: :destroy
   has_many :collections, dependent: :destroy
   has_many :collection_items, dependent: :destroy
+  has_many :email_confirmations, dependent: :destroy
   has_many :organization_favorites, dependent: :destroy
   has_many :person_favorites, dependent: :destroy
   has_many :favorite_characters, through: :character_favorites, source: :character
@@ -163,9 +162,8 @@ class User < ApplicationRecord
   validates :username,
     presence: true,
     length: { maximum: 20 },
-    format: { with: /\A[A-Za-z0-9_]+\z/ },
+    format: { with: USERNAME_FORMAT },
     uniqueness: { case_sensitive: false }
-  validates :terms_and_privacy_policy_agreement, acceptance: true
 
   # Override the Devise's `find_for_database_authentication`
   # https://github.com/plataformatec/devise/wiki/How-To:-Allow-users-to-sign-in-using-their-username-or-email-address
@@ -485,6 +483,18 @@ class User < ApplicationRecord
     resources = model.joins(:user).merge(target_users)
 
     resources.order(order.field => order.direction)
+  end
+
+  def confirm_to_update_email!(new_email:)
+    email_confirmations.new(email: new_email).confirm_to_update_email!
+  end
+
+  def confirm
+    touch :confirmed_at
+  end
+
+  def confirmed?
+    !!confirmed_at
   end
 
   private

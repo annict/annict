@@ -31,10 +31,10 @@ en:
           index: Check out fans of %{person_name}!
         records:
           index: Check out %{profile_name} (%{username})'s records!
-        registrations:
-          new: Start using Annict!
-        sessions:
+        sign_in:
           new: Welcome back!
+        sign_up:
+          new: Start using Annict!
         staffs:
           index: Looking for staff information on %{title}? Find out more with Annict!
         users:
@@ -167,6 +167,8 @@ en:
       home:
         index: Annict
         index_guest: The platform for anime addicts.
+      legacy_sign_in:
+        new: Sign In with Password
       libraries:
         show: "%{profile_name} (%{username})'s \"%{action}\" anime"
       mutes:
@@ -209,12 +211,8 @@ en:
         index: Connections
       records:
         index: "%{profile_name} (%{username})'s Records"
-      registrations:
-        new: Sign Up
       searches:
         show: "%{q}Anime Search"
-      sessions:
-        new: Sign In
       settings:
         apps:
           index: Applications
@@ -224,6 +222,10 @@ en:
         tokens:
           edit: Edit token
           new: Generate new token
+      sign_in:
+        new: Sign In
+      sign_up:
+        new: Sign Up
       staffs:
         index: Staff of %{title} (Anime)
       supporters:

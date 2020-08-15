@@ -147,26 +147,39 @@ root "welcome#show",
   # Set :as option to avoid two routes with the same name
   as: nil
 
+constraints format: "html" do
+  devise_scope :user do
+    match "/sign_out", via: :delete, as: :sign_out, to: "devise/sessions#destroy"
+  end
+end
+
 scope module: :v4 do
   constraints format: "html" do
     devise_scope :user do
-      match "/oauth_users",     via: :post,   as: :oauth_users,       to: "oauth_users#create"
-      match "/oauth_users/new", via: :get,    as: :new_oauth_user,    to: "oauth_users#new"
-      match "/password",        via: :patch,  as: :password,          to: "passwords#update"
-      match "/password",        via: :post,                           to: "passwords#create"
-      match "/password/edit",   via: :get,    as: :edit_password,     to: "passwords#edit"
-      match "/password/new",    via: :get,    as: :new_password,      to: "passwords#new"
-      match "/sign_in",         via: :get,    as: :new_user_session,  to: "sessions#new"
-      match "/sign_in",         via: :get,    as: :sign_in,           to: "sessions#new"
-      match "/sign_in",         via: :post,   as: :user_session,      to: "sessions#create"
-      match "/sign_out",        via: :delete, as: :sign_out,          to: "sessions#destroy"
-      match "/sign_up",         via: :get,    as: :sign_up,           to: "registrations#new"
-      match "/sign_up",         via: :post,   as: :user_registration, to: "registrations#create"
+      match "/registrations",       via: :post,  as: :registrations,       to: "registrations#create"
+      match "/registrations/new",   via: :get,   as: :new_registration,    to: "registrations#new"
+      match "/sign_in",             via: :get,   as: :new_user_session,    to: "sign_in#new" # for Devise
+      match "/sign_in",             via: :get,   as: :sign_in,             to: "sign_in#new"
+      match "/sign_in",             via: :post,                            to: "sign_in#create"
+      match "/sign_in/callback",    via: :get,   as: :sign_in_callback,    to: "sign_in_callbacks#show"
+      match "/sign_up",             via: :get,   as: :sign_up,             to: "sign_up#new"
+      match "/sign_up",             via: :post,                            to: "sign_up#create"
+      match "/user_email",          via: :patch, as: :user_email,          to: "user_emails#update"
+      match "/user_email/callback", via: :get,   as: :user_email_callback, to: "user_email_callbacks#show"
     end
 
     match "/@:username",         via: :get,   as: :profile_detail, to: "users#show",    username: USERNAME_FORMAT
     match "/@:username/records", via: :get,   as: :record_list,    to: "records#index", username: USERNAME_FORMAT
     match "/timeline_mode",      via: :patch, as: :timeline_mode,  to: "timeline_mode#update"
     match "/works/:id",          via: :get,   as: :work,           to: "works#show"
+  end
+end
+
+scope module: :legacy do
+  constraints format: "html" do
+    devise_scope :user do
+      match "/legacy/sign_in", via: :get,  as: :legacy_sign_in,   to: "sessions#new"
+      match "/legacy/sign_in", via: :post, as: :user_session,     to: "sessions#create"
+    end
   end
 end

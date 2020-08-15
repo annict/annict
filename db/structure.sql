@@ -605,6 +605,42 @@ ALTER SEQUENCE public.delayed_jobs_id_seq OWNED BY public.delayed_jobs.id;
 
 
 --
+-- Name: email_confirmations; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.email_confirmations (
+    id bigint NOT NULL,
+    user_id bigint,
+    email public.citext NOT NULL,
+    event character varying NOT NULL,
+    token character varying NOT NULL,
+    back character varying,
+    expires_at timestamp without time zone NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: email_confirmations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.email_confirmations_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: email_confirmations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.email_confirmations_id_seq OWNED BY public.email_confirmations.id;
+
+
+--
 -- Name: email_notifications; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1403,7 +1439,8 @@ CREATE TABLE public.oauth_applications (
     owner_id bigint,
     owner_type character varying,
     confidential boolean DEFAULT true NOT NULL,
-    deleted_at timestamp without time zone
+    deleted_at timestamp without time zone,
+    hide_social_login boolean DEFAULT false NOT NULL
 );
 
 
@@ -2908,6 +2945,13 @@ ALTER TABLE ONLY public.delayed_jobs ALTER COLUMN id SET DEFAULT nextval('public
 
 
 --
+-- Name: email_confirmations id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.email_confirmations ALTER COLUMN id SET DEFAULT nextval('public.email_confirmations_id_seq'::regclass);
+
+
+--
 -- Name: email_notifications id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -3381,6 +3425,14 @@ ALTER TABLE ONLY public.db_comments
 
 ALTER TABLE ONLY public.delayed_jobs
     ADD CONSTRAINT delayed_jobs_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: email_confirmations email_confirmations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.email_confirmations
+    ADD CONSTRAINT email_confirmations_pkey PRIMARY KEY (id);
 
 
 --
@@ -4368,6 +4420,20 @@ CREATE INDEX index_db_comments_on_resource_id_and_resource_type ON public.db_com
 --
 
 CREATE INDEX index_db_comments_on_user_id ON public.db_comments USING btree (user_id);
+
+
+--
+-- Name: index_email_confirmations_on_token; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_email_confirmations_on_token ON public.email_confirmations USING btree (token);
+
+
+--
+-- Name: index_email_confirmations_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_email_confirmations_on_user_id ON public.email_confirmations USING btree (user_id);
 
 
 --
@@ -5949,6 +6015,14 @@ ALTER TABLE ONLY public.works
 
 
 --
+-- Name: email_confirmations fk_rails_422b33d86c; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.email_confirmations
+    ADD CONSTRAINT fk_rails_422b33d86c FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
 -- Name: multiple_episode_records fk_rails_43033bfda3; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -6913,6 +6987,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20200513125709'),
 ('20200515062450'),
 ('20200525110837'),
-('20200525201620');
+('20200525201620'),
+('20200808233237'),
+('20200809161251');
 
 

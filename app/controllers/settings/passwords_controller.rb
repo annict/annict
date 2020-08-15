@@ -8,10 +8,10 @@ module Settings
       @user = User.find(current_user.id)
 
       @user.current_password = user_params[:current_password]
-      return render("/accounts/show") unless @user.valid?(:password_check)
+      return render_account_page unless @user.valid?(:password_check)
 
       @user.attributes = user_params.except(:current_password)
-      return render("/accounts/show") unless @user.valid?(:password_update)
+      return render_account_page unless @user.valid?(:password_update)
 
       @user.save(validate: false)
       bypass_sign_in(@user)
@@ -20,6 +20,12 @@ module Settings
     end
 
     private
+
+    def render_account_page
+      @user_email_form = UserEmailForm.new(email: current_user.email)
+
+      render "/accounts/show"
+    end
 
     def user_params
       params.require(:user).permit(:current_password, :password, :password_confirmation)

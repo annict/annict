@@ -4,6 +4,7 @@ ja:
       already_authenticated: 'すでに認証されています'
       user:
         invalid: ログインできません
+        not_found_in_database: ユーザが見つかりません
         unauthenticated: ログインしてください
         unconfirmed: メールアドレスの確認が完了していないため、ログインできませんでした
     mailer:
@@ -20,5 +21,6 @@ ja:
         updated: パスワードを更新しました
     sessions:
       user:
+        already_signed_out: すでにログアウトしています
         signed_in: ログインしました
         signed_out: ログアウトしました

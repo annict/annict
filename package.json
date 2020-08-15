@@ -54,7 +54,7 @@
     "css-loader": "latest",
     "eslint": "latest",
     "eslint-plugin-import": "latest",
-    "expose-loader": "latest",
+    "expose-loader": "^1.0.0",
     "file-loader": "latest",
     "fork-ts-checker-webpack-plugin": "latest",
     "mini-css-extract-plugin": "latest",

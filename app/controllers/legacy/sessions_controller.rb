@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module V4
+module Legacy
   class SessionsController < Devise::SessionsController
     layout "simple"
 

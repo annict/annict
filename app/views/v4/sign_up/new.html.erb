@@ -1,5 +1,5 @@
-<% title = t "head.title.passwords.new" %>
-<% description = meta_description %>
+<% title = t "head.title.sign_up.new" %>
+<% description = meta_description t("head.meta.description.sign_up.new") %>
 <% set_meta_tags(title: title, description: description, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false) %>
 
 <div class="container">
@@ -11,23 +11,27 @@
         <% end %>
       </div>
 
-      <div class="c-sign-up-form px-3 mb-3">
+      <div class="c-sign-up-form px-3 mb-5">
         <h1 class="my-5 text-center">
-          <%= t "messages.passwords.new.forgot_your_password" %>
+          <%= t "messages._common.join_annict" %>
         </h1>
 
-        <%= form_with model: resource, url: password_path, html: { class: "mb-3" }, local: true do |f| %>
-          <%= render "application/components/error_panel", resource: resource %>
+        <p class="mb-5 text-center">
+          <%= t "messages.sign_up.new.description_html" %>
+        </p>
+
+        <%= form_with model: @form, url: sign_up_path, local: true do |f| %>
+          <%= render ErrorPanelComponent.new(form: @form) %>
 
           <div class="form-group">
             <%= f.label :email %>
-            <%= f.email_field :email, class: "form-control", autofocus: true, required: true %>
+            <%= f.email_field :email, autofocus: true, class: "form-control", placeholder: "hello@annict.com", required: true, tabindex: 1 %>
           </div>
 
           <div class="text-center">
-            <%= f.button class: "btn btn-primary" do %>
-              <%= icon "paper-plane" %>
-              <%= t "verb.submit" %>
+            <%= f.button class: "btn btn-primary", tabindex: 2 do %>
+              <%= icon "rocket" %>
+              <%= t "verb.send" %>
             <% end %>
           </div>
         <% end %>
