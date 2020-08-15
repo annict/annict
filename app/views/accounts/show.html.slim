@@ -46,24 +46,25 @@ h2.h4.text-center.my-4.font-weight-bold
     .form-submit.text-center
       = f.submit class: "btn btn-primary"
 
-h2.h4.text-center.my-4.font-weight-bold
-  = t "noun.password"
-.c-card.u-mw-600.mx-auto.p-3.mt-3.mb-4
-  = form_for @user, url: settings_password_path, method: :patch do |f|
-    - if params[:controller] == "settings/passwords"
-      = render "application/components/error_panel", resource: @user
+- if current_user.encrypted_password.present?
+  h2.h4.text-center.my-4.font-weight-bold
+    = t "noun.password"
+  .c-card.u-mw-600.mx-auto.p-3.mt-3.mb-4
+    = form_for @user, url: settings_password_path, method: :patch do |f|
+      - if params[:controller] == "settings/passwords"
+        = render "application/components/error_panel", resource: @user
 
-    .form-group
-      = f.label :current_password
-      = f.password_field :current_password, class: "form-control"
-    .form-group
-      = f.label :password
-      = f.password_field :password, class: "form-control"
-    .form-group
-      = f.label :password_confirmation
-      = f.password_field :password_confirmation, class: "form-control"
-    .form-submit.text-center
-      = f.submit class: "btn btn-primary"
+      .form-group
+        = f.label :current_password
+        = f.password_field :current_password, class: "form-control"
+      .form-group
+        = f.label :password
+        = f.password_field :password, class: "form-control"
+      .form-group
+        = f.label :password_confirmation
+        = f.password_field :password_confirmation, class: "form-control"
+      .form-submit.text-center
+        = f.submit class: "btn btn-primary"
 
 h2.h4.text-center.my-4.font-weight-bold
   = t "noun.account_deletion"
