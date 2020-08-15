@@ -489,6 +489,10 @@ class User < ApplicationRecord
     email_confirmations.new(email: new_email).confirm_to_update_email!
   end
 
+  def confirm
+    touch :confirmed_at
+  end
+
   private
 
   def get_large_avatar_image(provider, image_url)

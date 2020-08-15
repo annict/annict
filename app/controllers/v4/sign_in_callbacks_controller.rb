@@ -24,7 +24,7 @@ module V4
 
       ActiveRecord::Base.transaction do
         unless user.confirmed_at?
-          user.touch(:confirmed_at)
+          user.confirm
         end
 
         confirmation.destroy
