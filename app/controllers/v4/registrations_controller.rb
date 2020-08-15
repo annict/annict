@@ -37,7 +37,7 @@ module V4
         return redirect_to root_path
       end
 
-      @form = RegistrationForm.new(registration_form_params)
+      @form = RegistrationForm.new(registration_form_attributes.merge(email: @confirmation.email))
 
       return render(:new) unless @form.valid?
 
@@ -64,11 +64,7 @@ module V4
     private
 
     def registration_form_attributes
-      @registration_form_attributes ||= params.to_unsafe_h["registration_form"].except(:email)
-    end
-
-    def registration_form_params
-      RegistrationContract.new.call(registration_form_attributes.merge(email: @confirmation.email))
+      @registration_form_attributes ||= params.to_unsafe_h["registration_form"]
     end
   end
 end

@@ -22,7 +22,7 @@ module V4
     def create
       redirect_if_signed_in
 
-      @form = SignInForm.new(sign_in_form_params)
+      @form = SignInForm.new(sign_in_form_attributes)
 
       return render(:new) unless @form.valid?
 
@@ -34,10 +34,8 @@ module V4
 
     private
 
-    def sign_in_form_params
-      attributes = params.to_unsafe_h["sign_in_form"].merge(back: stored_location_for(:user))
-
-      SignInContract.new.call(attributes)
+    def sign_in_form_attributes
+      params.to_unsafe_h["sign_in_form"].merge(back: stored_location_for(:user))
     end
   end
 end

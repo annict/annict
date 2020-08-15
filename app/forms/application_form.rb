@@ -14,20 +14,20 @@ class ApplicationForm
     :form
   end
 
-  # @param [Hash, Dry::Validation::Result, nil] safe_params
-  def initialize(safe_params = nil)
-    @safe_params = safe_params
-
-    if safe_params
-      assign_attributes(safe_params.to_h)
+  # @param [Hash, nil] attributes
+  def initialize(attributes = nil)
+    if attributes
+      @attributes = attributes
+      assign_attributes(@attributes)
     end
   end
 
   def valid?
-    return true unless safe_params
-    return true if safe_params.is_a?(Hash)
+    return true unless attributes
 
-    !safe_params.failure?
+    @safe_params = contract.new.call(attributes)
+
+    !@safe_params.failure?
   end
 
   def error_messages
@@ -48,5 +48,12 @@ class ApplicationForm
 
   private
 
-  attr_reader :safe_params
+  attr_reader :attributes, :safe_params
+
+  def contract
+    form_class_name = self.class.name
+    contract_class_name = form_class_name.sub(%r{Form\z}, "Contract")
+
+    ApplicationContract.const_get(contract_class_name)
+  end
 end

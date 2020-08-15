@@ -8,7 +8,7 @@ class RegistrationContract < ApplicationContract
     required(:terms_and_privacy_policy_agreement).filled(:bool)
   end
 
-  rule(:email).validate(:email_exists)
+  rule(:email).validate(:email_format, :email_exists)
   rule(:username).validate(:username_format)
   rule(:terms_and_privacy_policy_agreement) do
     unless value

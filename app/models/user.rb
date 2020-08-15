@@ -493,7 +493,7 @@ class User < ApplicationRecord
     touch :confirmed_at
   end
 
-  def confirmed
+  def confirmed?
     !!confirmed_at
   end
 

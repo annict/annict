@@ -1,4 +1,4 @@
-<% unless form.valid? %>
+<% if form.error_messages.present? %>
   <div class="alert alert-danger c-error-panel">
     <h4 class="alert-heading">
       <%= t "noun.error" %>

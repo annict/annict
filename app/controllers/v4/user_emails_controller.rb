@@ -5,7 +5,7 @@ module V4
     before_action :authenticate_user!
 
     def update
-      @user_email_form = UserEmailForm.new(user_email_form_params)
+      @user_email_form = UserEmailForm.new(user_email_form_attributes)
 
       unless @user_email_form.valid?
         @user = current_user
@@ -19,8 +19,8 @@ module V4
 
     private
 
-    def user_email_form_params
-      UserEmailContract.new.call(params.to_unsafe_h["user_email_form"])
+    def user_email_form_attributes
+      params.to_unsafe_h["user_email_form"]
     end
   end
 end

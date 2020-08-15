@@ -13,7 +13,7 @@ module V4
     def create
       redirect_if_signed_in
 
-      @form = SignUpForm.new(sign_up_form_params)
+      @form = SignUpForm.new(sign_up_form_attributes)
 
       return render(:new) unless @form.valid?
 
@@ -25,10 +25,8 @@ module V4
 
     private
 
-    def sign_up_form_params
-      attributes = params.to_unsafe_h["sign_up_form"].merge(back: stored_location_for(:user))
-
-      SignUpContract.new.call(attributes)
+    def sign_up_form_attributes
+      params.to_unsafe_h["sign_up_form"].merge(back: stored_location_for(:user))
     end
   end
 end
