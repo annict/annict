@@ -17,9 +17,6 @@
         = f.label :username
         = f.text_field :username, class: "form-control"
       .form-group
-        = f.label :email
-        = f.text_field :email, class: "form-control"
-      .form-group
         = f.label :locale
         - options = options_for_select([[t("noun.japanese"), "ja"], [t("noun.english"), "en"]], current_user.locale)
         = f.select :locale, options, {}, { class: "form-control" }
@@ -36,6 +33,20 @@
             = cb.label(class: "form-check-label") do
               = cb.check_box(class: "form-check-input")
               = cb.object.first
+      .form-submit.text-center
+        = f.submit class: "btn btn-primary"
+
+  h2.h4.font-weight-bold.mb-3
+    = t "noun.email"
+
+  .mb-5
+    = form_for @user_email_form, url: user_email_path do |f|
+      = render ErrorPanelComponent.new(form: @user_email_form)
+
+      .form-group
+        = f.label :email
+        = f.email_field :email, class: "form-control", required: true
+
       .form-submit.text-center
         = f.submit class: "btn btn-primary"
 

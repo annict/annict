@@ -4,6 +4,8 @@ en:
       subject: Sign in to Annict
     sign_up_confirmation:
       subject: Finish creating your account on Annict
+    update_email_confirmation:
+      subject: Finish updating your email on Annict
   forum_mailer:
     comment_notification:
       subject: "[Annict Forum] %{name} (@%{username}) has commented on the post %{post_title}"

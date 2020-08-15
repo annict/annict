@@ -14,7 +14,7 @@ class ApplicationForm
     :form
   end
 
-  # @param [Dry::Validation::Result, nil] safe_params
+  # @param [Hash, Dry::Validation::Result, nil] safe_params
   def initialize(safe_params = nil)
     @safe_params = safe_params
 
@@ -25,6 +25,7 @@ class ApplicationForm
 
   def valid?
     return true unless safe_params
+    return true if safe_params.is_a?(Hash)
 
     !safe_params.failure?
   end

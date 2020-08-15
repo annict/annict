@@ -612,6 +612,7 @@ ALTER SEQUENCE public.delayed_jobs_id_seq OWNED BY public.delayed_jobs.id;
 
 CREATE TABLE public.email_confirmations (
     id bigint NOT NULL,
+    user_id bigint,
     email public.citext NOT NULL,
     event character varying NOT NULL,
     token character varying NOT NULL,
@@ -4431,6 +4432,13 @@ CREATE UNIQUE INDEX index_email_confirmations_on_token ON public.email_confirmat
 
 
 --
+-- Name: index_email_confirmations_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_email_confirmations_on_user_id ON public.email_confirmations USING btree (user_id);
+
+
+--
 -- Name: index_email_notifications_on_unsubscription_key; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -6006,6 +6014,14 @@ ALTER TABLE ONLY public.work_taggables
 
 ALTER TABLE ONLY public.works
     ADD CONSTRAINT fk_rails_41b1e89600 FOREIGN KEY (number_format_id) REFERENCES public.number_formats(id);
+
+
+--
+-- Name: email_confirmations fk_rails_422b33d86c; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.email_confirmations
+    ADD CONSTRAINT fk_rails_422b33d86c FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
 --

@@ -93,6 +93,7 @@ class User < ApplicationRecord
   has_many :character_favorites, dependent: :destroy
   has_many :collections, dependent: :destroy
   has_many :collection_items, dependent: :destroy
+  has_many :email_confirmations, dependent: :destroy
   has_many :organization_favorites, dependent: :destroy
   has_many :person_favorites, dependent: :destroy
   has_many :favorite_characters, through: :character_favorites, source: :character
@@ -482,6 +483,10 @@ class User < ApplicationRecord
     resources = model.joins(:user).merge(target_users)
 
     resources.order(order.field => order.direction)
+  end
+
+  def confirm_to_update_email!(new_email:)
+    email_confirmations.new(email: new_email).confirm_to_update_email!
   end
 
   private

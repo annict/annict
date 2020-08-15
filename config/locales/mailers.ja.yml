@@ -4,6 +4,8 @@ ja:
       subject: Annictにログイン
     sign_up_confirmation:
       subject: Annictのアカウント作成用リンク
+    update_email_confirmation:
+      subject: Annictアカウントのメールアドレス更新
   forum_mailer:
     comment_notification:
       subject: "[Annict Forum] %{name} (@%{username}) さんが「%{post_title}」にコメントしました"

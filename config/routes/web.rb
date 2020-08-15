@@ -156,14 +156,16 @@ end
 scope module: :v4 do
   constraints format: "html" do
     devise_scope :user do
-      match "/sign_in",           via: :get,  as: :sign_in,          to: "sign_in#new"
-      match "/sign_in",           via: :get,  as: :new_user_session, to: "sign_in#new" # for Devise
-      match "/sign_in",           via: :post,                        to: "sign_in#create"
-      match "/sign_in/callback",  via: :get,  as: :sign_in_callback, to: "sign_in_callbacks#show"
-      match "/sign_up",           via: :get,  as: :sign_up,          to: "sign_up#new"
-      match "/sign_up",           via: :post,                        to: "sign_up#create"
-      match "/registrations/new", via: :get,  as: :new_registration, to: "registrations#new"
-      match "/registrations",     via: :post, as: :registrations,    to: "registrations#create"
+      match "/registrations",       via: :post,  as: :registrations,       to: "registrations#create"
+      match "/registrations/new",   via: :get,   as: :new_registration,    to: "registrations#new"
+      match "/sign_in",             via: :get,   as: :new_user_session,    to: "sign_in#new" # for Devise
+      match "/sign_in",             via: :get,   as: :sign_in,             to: "sign_in#new"
+      match "/sign_in",             via: :post,                            to: "sign_in#create"
+      match "/sign_in/callback",    via: :get,   as: :sign_in_callback,    to: "sign_in_callbacks#show"
+      match "/sign_up",             via: :get,   as: :sign_up,             to: "sign_up#new"
+      match "/sign_up",             via: :post,                            to: "sign_up#create"
+      match "/user_email",          via: :patch, as: :user_email,          to: "user_emails#update"
+      match "/user_email/callback", via: :get,   as: :user_email_callback, to: "user_email_callbacks#show"
     end
 
     match "/@:username",         via: :get,   as: :profile_detail, to: "users#show",    username: USERNAME_FORMAT

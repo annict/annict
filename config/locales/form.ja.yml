@@ -1,13 +1,15 @@
 ja:
   form:
     attributes:
+      registration_form:
+        email: メールアドレス
+        terms_and_privacy_policy_agreement: 利用規約とプライバシーポリシー
+        username: ユーザ名
       sign_in_form:
         back: 戻り先
         email: メールアドレス
       sign_up_form:
         back: 戻り先
         email: メールアドレス
-      registration_form:
+      user_email_form:
         email: メールアドレス
-        terms_and_privacy_policy_agreement: 利用規約とプライバシーポリシー
-        username: ユーザ名

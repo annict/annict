@@ -257,6 +257,10 @@ en:
         about_available: Please check this when the project is published and users can use it.
         markdown_support: You can write in Markdown.
       welcome: Welcome to Userland!
+    user_email_callbacks:
+      show:
+        expired: Email confirmation link has expired. Please try again.
+        updated: Email has been updated.
     users:
       _validators:
         exists_active_oauth_applications: which you created are active.

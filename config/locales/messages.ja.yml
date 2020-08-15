@@ -256,6 +256,10 @@ ja:
         about_available: このプロジェクトが公開されていて、他の人が利用できるときチェックしてください。
         markdown_support: Markdownで書くことができます。
       welcome: Userlandにようこそ！
+    user_email_callbacks:
+      show:
+        expired: メールアドレス確認リンクの有効期限が切れました。再度やり直してください
+        updated: メールアドレスを更新しました
     users:
       _validators:
         exists_active_oauth_applications: が存在するため、退会できません
