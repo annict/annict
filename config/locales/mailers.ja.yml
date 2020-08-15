@@ -1,9 +1,9 @@
 ja:
+  email_confirmation_mailer:
+    sign_in_confirmation:
+      subject: Annictにログイン
+    sign_up_confirmation:
+      subject: Annictのアカウント作成用リンク
   forum_mailer:
     comment_notification:
       subject: "[Annict Forum] %{name} (@%{username}) さんが「%{post_title}」にコメントしました"
-  session_interaction_mailer:
-    sign_in_interaction:
-      subject: Annictにログイン
-    sign_up_interaction:
-      subject: Annictのアカウント作成用リンク

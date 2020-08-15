@@ -13,27 +13,27 @@ module V4
         return redirect_to root_path
       end
 
-      @session_interaction = SessionInteraction.find_by(kind: :sign_up, token: token)
+      confirmation = EmailConfirmation.find_by(event: :sign_up, token: token)
 
-      if !@session_interaction || @session_interaction.expired?
+      if !confirmation || confirmation.expired?
         @expired = true
         return
       end
 
-      @session_interaction.touch(:expires_at)
+      confirmation.touch(:expires_at)
 
       @form = RegistrationForm.new
-      @form.email = @session_interaction.email
-      @form.token = @session_interaction.token
+      @form.email = confirmation.email
+      @form.token = confirmation.token
     end
 
     def create
       redirect_if_signed_in
 
       token = registration_form_attributes[:token]
-      @session_interaction = SessionInteraction.find_by(kind: :sign_up, token: token)
+      @confirmation = EmailConfirmation.find_by(event: :sign_up, token: token)
 
-      unless @session_interaction
+      unless @confirmation
         return redirect_to root_path
       end
 
@@ -52,13 +52,13 @@ module V4
 
       ActiveRecord::Base.transaction do
         user.save!
-        @session_interaction.destroy
+        @confirmation.destroy
 
         sign_in user
       end
 
       flash[:notice] = t("messages.registrations.create.welcome")
-      redirect_to(@session_interaction.back.presence || root_path)
+      redirect_to(@confirmation.back.presence || root_path)
     end
 
     private
@@ -68,7 +68,7 @@ module V4
     end
 
     def registration_form_params
-      RegistrationContract.new.call(registration_form_attributes.merge(email: @session_interaction.email))
+      RegistrationContract.new.call(registration_form_attributes.merge(email: @confirmation.email))
     end
   end
 end

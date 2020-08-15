@@ -26,7 +26,7 @@ module V4
 
       return render(:new) unless @form.valid?
 
-      SessionInteraction.start_sign_in!(form: @form, locale: I18n.locale)
+      EmailConfirmation.new(email: @form.email, back: @form.back).confirm_to_sign_in!
 
       flash[:notice] = t("messages.sign_in.create.mail_has_sent")
       redirect_to root_path

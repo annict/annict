@@ -13,27 +13,27 @@ module V4
         return redirect_to root_path
       end
 
-      session_interaction = SessionInteraction.find_by(kind: :sign_in, token: token)
+      confirmation = EmailConfirmation.find_by(event: :sign_in, token: token)
 
-      if !session_interaction || session_interaction.expired?
+      if !confirmation || confirmation.expired?
         @message = t("messages.sign_in_callback.show.expired_html").html_safe
         return
       end
 
-      user = User.only_kept.find_by!(email: session_interaction.email)
+      user = User.only_kept.find_by!(email: confirmation.email)
 
       ActiveRecord::Base.transaction do
         unless user.confirmed_at?
           user.touch(:confirmed_at)
         end
 
-        session_interaction.destroy
+        confirmation.destroy
 
         sign_in user
       end
 
       flash[:notice] = t("messages.sign_in_callback.show.signed_in")
-      redirect_to(session_interaction.back.presence || root_path)
+      redirect_to(confirmation.back.presence || root_path)
     end
   end
 end
