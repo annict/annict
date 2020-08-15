@@ -37,7 +37,7 @@
             </div>
 
             <div class="form-group form-check">
-              <%= f.check_box :terms_and_privacy_policy_agreement, class: "form-check-input" %>
+              <%= f.check_box :terms_and_privacy_policy_agreement, class: "form-check-input", tabindex: 2 %>
               <%= f.label :terms_and_privacy_policy_agreement, class: "form-check-label" do %>
                 <%= t "activerecord.attributes.user.terms_and_privacy_policy_agreement_html" %>
               <% end %>
@@ -46,7 +46,7 @@
             <%= f.hidden_field :token %>
 
             <div class="text-center">
-              <%= f.button class: "btn btn-primary" do %>
+              <%= f.button class: "btn btn-primary", tabindex: 3 do %>
                 <%= icon "rocket" %>
                 <%= t "noun.sign_up" %>
               <% end %>
