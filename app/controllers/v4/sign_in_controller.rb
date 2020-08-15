@@ -26,7 +26,7 @@ module V4
 
       return render(:new) unless @form.valid?
 
-      SessionInteraction.start_sign_in!(email: @form.email, locale: I18n.locale)
+      SessionInteraction.start_sign_in!(form: @form, locale: I18n.locale)
 
       flash[:notice] = t("messages.sign_in.create.mail_has_sent")
       redirect_to root_path
@@ -35,7 +35,9 @@ module V4
     private
 
     def sign_in_form_params
-      SignInContract.new.call(params.to_unsafe_h["sign_in_form"])
+      attributes = params.to_unsafe_h["sign_in_form"].merge(back: stored_location_for(:user))
+
+      SignInContract.new.call(attributes)
     end
   end
 end

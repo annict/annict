@@ -8,6 +8,7 @@ class CreateSessionInteractions < ActiveRecord::Migration[6.0]
       t.citext :email, null: false
       t.string :kind, null: false
       t.string :token, null: false
+      t.string :back
       t.datetime :expires_at, null: false
       t.timestamps
     end

@@ -2,8 +2,10 @@ en:
   form:
     attributes:
       sign_in_form:
+        back: Back
         email: Email
       sign_up_form:
+        back: Back
         email: Email
       registration_form:
         email: Email

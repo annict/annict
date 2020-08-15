@@ -2,8 +2,10 @@ ja:
   form:
     attributes:
       sign_in_form:
+        back: 戻り先
         email: メールアドレス
       sign_up_form:
+        back: 戻り先
         email: メールアドレス
       registration_form:
         email: メールアドレス

@@ -2,6 +2,7 @@ ja:
   dry_validation:
     errors:
       acceptance: に同意してください
+      back_format: が不正です
       email_format: が不正です
       email_exists: はすでに存在します
       filled?: を入力してください

@@ -1944,6 +1944,7 @@ CREATE TABLE public.session_interactions (
     email public.citext NOT NULL,
     kind character varying NOT NULL,
     token character varying NOT NULL,
+    back character varying,
     expires_at timestamp without time zone NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL

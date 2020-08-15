@@ -5,6 +5,7 @@
 # Table name: session_interactions
 #
 #  id         :bigint           not null, primary key
+#  back       :string
 #  email      :citext           not null
 #  expires_at :datetime         not null
 #  kind       :string           not null
@@ -29,31 +30,32 @@ class SessionInteraction < ApplicationRecord
   validates :token, presence: true
   validates :expires_at, presence: true
 
-  def self.start_sign_up!(email:, locale:)
-    user = User.only_kept.find_by(email: email)
+  def self.start_sign_up!(form:, locale:)
+    user = User.only_kept.find_by(email: form.email)
     return if user
 
     ActiveRecord::Base.transaction do
-      session_interaction = start!(:sign_up, email)
+      session_interaction = start!(:sign_up, form)
       SessionInteractionMailer.sign_up_interaction(session_interaction, locale).deliver_later
     end
   end
 
-  def self.start_sign_in!(email:, locale:)
-    user = User.only_kept.find_by(email: email)
+  def self.start_sign_in!(form:, locale:)
+    user = User.only_kept.find_by(email: form.email)
     return unless user
 
     ActiveRecord::Base.transaction do
-      session_interaction = start!(:sign_in, email)
+      session_interaction = start!(:sign_in, form)
       SessionInteractionMailer.sign_in_interaction(session_interaction, locale).deliver_later
     end
   end
 
-  private_class_method def self.start!(kind, email)
-    session_interaction = SessionInteraction.where(email: email).first_or_initialize
+  private_class_method def self.start!(kind, form)
+    session_interaction = SessionInteraction.where(email: form.email).first_or_initialize
     session_interaction.attributes = {
       kind: kind,
       token: SecureRandom.uuid,
+      back: form.back,
       expires_at: Time.zone.now + 2.hours
     }
 

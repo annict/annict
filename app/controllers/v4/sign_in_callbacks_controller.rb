@@ -33,7 +33,7 @@ module V4
       end
 
       flash[:notice] = t("messages.sign_in_callback.show.signed_in")
-      redirect_to root_path
+      redirect_to(session_interaction.back.presence || root_path)
     end
   end
 end

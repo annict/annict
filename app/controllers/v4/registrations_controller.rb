@@ -58,7 +58,7 @@ module V4
       end
 
       flash[:notice] = t("messages.registrations.create.welcome")
-      redirect_to root_path
+      redirect_to(@session_interaction.back.presence || root_path)
     end
 
     private

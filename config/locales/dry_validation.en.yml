@@ -2,6 +2,7 @@ en:
   dry_validation:
     errors:
       acceptance: needs acceptance
+      back_format: is invalid
       email_format: is not a valid email format
       email_exists: has already existed
       username_exists: has already existed
