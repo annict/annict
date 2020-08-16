@@ -4,9 +4,9 @@ module V4
   class RegistrationsController < V4::ApplicationController
     layout "simple"
 
-    def new
-      redirect_if_signed_in
+    before_action :redirect_if_signed_in
 
+    def new
       token = params[:token]
 
       unless token
@@ -28,8 +28,6 @@ module V4
     end
 
     def create
-      redirect_if_signed_in
-
       token = registration_form_attributes[:token]
       @confirmation = EmailConfirmation.find_by(event: :sign_up, token: token)
 

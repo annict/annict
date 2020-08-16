@@ -4,9 +4,9 @@ module V4
   class SignInController < V4::ApplicationController
     layout "simple"
 
-    def new
-      redirect_if_signed_in
+    before_action :redirect_if_signed_in
 
+    def new
       if params[:back]
         store_location_for(:user, params[:back])
       end
@@ -20,8 +20,6 @@ module V4
     end
 
     def create
-      redirect_if_signed_in
-
       @form = SignInForm.new(sign_in_form_attributes)
 
       return render(:new) unless @form.valid?

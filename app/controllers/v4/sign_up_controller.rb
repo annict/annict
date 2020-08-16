@@ -4,15 +4,13 @@ module V4
   class SignUpController < V4::ApplicationController
     layout "simple"
 
-    def new
-      redirect_if_signed_in
+    before_action :redirect_if_signed_in
 
+    def new
       @form = SignUpForm.new
     end
 
     def create
-      redirect_if_signed_in
-
       @form = SignUpForm.new(sign_up_form_attributes)
 
       return render(:new) unless @form.valid?

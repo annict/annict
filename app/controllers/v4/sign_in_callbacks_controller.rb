@@ -4,9 +4,9 @@ module V4
   class SignInCallbacksController < V4::ApplicationController
     layout "simple"
 
-    def show
-      redirect_if_signed_in
+    before_action :redirect_if_signed_in
 
+    def show
       token = params[:token]
 
       unless token
