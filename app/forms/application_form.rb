@@ -16,8 +16,9 @@ class ApplicationForm
 
   # @param [Hash, nil] attributes
   def initialize(attributes = nil)
-    if attributes
-      @attributes = attributes
+    @attributes = attributes
+
+    if @attributes
       assign_attributes(@attributes)
     end
   end
@@ -25,16 +26,17 @@ class ApplicationForm
   def valid?
     return true unless attributes
 
-    @safe_params = contract.new.call(attributes)
+    @validation_result = contract.new.call(attributes)
+    assign_attributes(@validation_result.to_h)
 
-    !@safe_params.failure?
+    !@validation_result.failure?
   end
 
   def error_messages
-    return [] unless safe_params
+    return [] unless validation_result
 
     separator = I18n.locale == :ja ? "" : " "
-    safe_params.errors.to_h.map do |attr_name, predicates|
+    validation_result.errors.to_h.map do |attr_name, predicates|
       [
         self.class.human_attribute_name(attr_name),
         predicates.first
@@ -48,7 +50,7 @@ class ApplicationForm
 
   private
 
-  attr_reader :attributes, :safe_params
+  attr_reader :attributes, :validation_result
 
   def contract
     form_class_name = self.class.name
