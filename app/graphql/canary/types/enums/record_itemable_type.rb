@@ -6,8 +6,8 @@ module Canary
       class RecordItemableType < Types::Enums::Base
         graphql_name "RecordItemableType"
 
+        value "ANIME_RECORD", ""
         value "EPISODE_RECORD", ""
-        value "WORK_RECORD", ""
       end
     end
   end

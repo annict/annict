@@ -3,14 +3,14 @@
 module Canary
   module Types
     module Objects
-      class WorkRecordType < Canary::Types::Objects::Base
+      class AnimeRecordType < Canary::Types::Objects::Base
         implements GraphQL::Relay::Node.interface
 
         global_id_field :id
 
         field :database_id, Integer, null: false
         field :user, Canary::Types::Objects::UserType, null: false
-        field :work, Canary::Types::Objects::WorkType, null: false
+        field :anime, Canary::Types::Objects::AnimeType, null: false
         field :record, Canary::Types::Objects::RecordType, null: false
         field :title, String, null: true
         field :body, String, null: false
@@ -30,7 +30,7 @@ module Canary
           Canary::RecordLoader.for(User).load(object.user_id)
         end
 
-        def work
+        def anime
           Canary::RecordLoader.for(Work).load(object.work_id)
         end
 

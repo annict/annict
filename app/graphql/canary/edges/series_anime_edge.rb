@@ -2,9 +2,9 @@
 
 module Canary
   module Edges
-    class SeriesWorkEdge < GraphQL::Types::Relay::BaseEdge
-      node_type Canary::Types::Objects::WorkType
-      graphql_name "SeriesWorkEdge"
+    class SeriesAnimeEdge < GraphQL::Types::Relay::BaseEdge
+      node_type Canary::Types::Objects::AnimeType
+      graphql_name "SeriesAnimeEdge"
 
       field :summary, String,
         null: false
@@ -12,7 +12,7 @@ module Canary
       field :summary_en, String,
         null: false
 
-      field :node, Types::Objects::WorkType,
+      field :node, Types::Objects::AnimeType,
         null: false
 
       def summary

@@ -3,13 +3,13 @@
 module Canary
   module Types
     module Objects
-      class WorkImageType < Canary::Types::Objects::Base
+      class AnimeImageType < Canary::Types::Objects::Base
         implements GraphQL::Relay::Node.interface
 
         global_id_field :id
 
         field :database_id, Integer, null: true
-        field :work, Canary::Types::Objects::WorkType, null: true
+        field :anime, Canary::Types::Objects::AnimeType, null: true
         field :facebook_og_image_url, String, null: true
         field :twitter_avatar_url, String, null: true
         field :twitter_mini_avatar_url, String, null: true
@@ -23,7 +23,7 @@ module Canary
           argument :size, String, required: true
         end
 
-        def work
+        def anime
           RecordLoader.for(Work).load(object.work_id)
         end
 

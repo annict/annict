@@ -3,7 +3,7 @@
 module Canary
   module Types
     module Enums
-      class SeriesWorkOrderField < Canary::Types::Enums::Base
+      class SeriesAnimeOrderField < Canary::Types::Enums::Base
         value "SEASON", "シーズン"
       end
     end

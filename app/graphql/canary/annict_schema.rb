@@ -47,11 +47,11 @@ module Canary
       when User
         Canary::Types::Objects::UserType
       when Work
-        Canary::Types::Objects::WorkType
+        Canary::Types::Objects::AnimeType
       when WorkImage
-        Canary::Types::Objects::WorkImageType
+        Canary::Types::Objects::AnimeImageType
       when WorkRecord
-        Canary::Types::Objects::WorkRecordType
+        Canary::Types::Objects::AnimeRecordType
       else
         raise "Unexpected object: #{obj}"
       end

@@ -13,12 +13,12 @@ module Canary
         field :modified_at, Canary::Types::Scalars::DateTime, null: true
         field :created_at, Canary::Types::Scalars::DateTime, null: false
         field :user, Canary::Types::Objects::UserType, null: false
-        field :work, Canary::Types::Objects::WorkType, null: false
+        field :anime, Canary::Types::Objects::AnimeType, null: false
         field :itemable, Canary::Types::Unions::RecordItemable, null: false
 
         def itemable_type
           Canary::AssociationLoader.for(Record, %i(episode_record)).load(object).then do |episode_record|
-            episode_record.first ? "EPISODE_RECORD" : "WORK_RECORD"
+            episode_record.first ? "EPISODE_RECORD" : "ANIME_RECORD"
           end
         end
 
@@ -29,7 +29,7 @@ module Canary
               Canary::AssociationLoader.for(Record, %i(episode_record)).load(object).then do |episode_record|
                 episode_record.first.modify_body ? episode_record.first.updated_at : nil
               end
-            when "WORK_RECORD"
+            when "ANIME_RECORD"
               Canary::AssociationLoader.for(Record, %i(work_record)).load(object).then do |work_record|
                 work_record.first.modified_at
               end
@@ -41,7 +41,7 @@ module Canary
           Canary::RecordLoader.for(User).load(object.user_id)
         end
 
-        def work
+        def anime
           Canary::RecordLoader.for(Work).load(object.work_id)
         end
 
@@ -50,7 +50,7 @@ module Canary
             case i_type
             when "EPISODE_RECORD"
               Canary::AssociationLoader.for(Record, %i(episode_record)).load(object).then(&:first)
-            when "WORK_RECORD"
+            when "ANIME_RECORD"
               Canary::AssociationLoader.for(Record, %i(work_record)).load(object).then(&:first)
             end
           end

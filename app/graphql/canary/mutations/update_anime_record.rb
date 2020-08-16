@@ -2,8 +2,8 @@
 
 module Canary
   module Mutations
-    class UpdateWorkRecord < Canary::Mutations::Base
-      argument :work_record_id, ID, required: true
+    class UpdateAnimeRecord < Canary::Mutations::Base
+      argument :anime_record_id, ID, required: true
       argument :body, String,
         required: false,
         description: "作品への感想"
@@ -19,10 +19,10 @@ module Canary
         required: false,
         description: "作品への記録をFacebookでシェアするかどうか"
 
-      field :work_record, Canary::Types::Objects::WorkRecordType, null: true
+      field :anime_record, Canary::Types::Objects::AnimeRecordType, null: true
 
       def resolve(
-        work_record_id:,
+        anime_record_id:,
         body: nil,
         rating_overall_state: nil,
         rating_animation_state: nil,
@@ -35,7 +35,7 @@ module Canary
         raise Annict::Errors::InvalidAPITokenScopeError unless context[:writable]
 
         viewer = context[:viewer]
-        work_record = viewer.work_records.only_kept.find_by_graphql_id(work_record_id)
+        work_record = viewer.work_records.only_kept.find_by_graphql_id(anime_record_id)
 
         work_record.body = body
         WorkRecord::STATES.each do |state|
@@ -58,7 +58,7 @@ module Canary
         end
 
         {
-          work_record: work_record
+          anime_record: work_record
         }
       end
     end

@@ -10,7 +10,7 @@ module Canary
 
         field :database_id, Integer, null: false
         field :user, Canary::Types::Objects::UserType, null: false
-        field :work, Canary::Types::Objects::WorkType, null: false
+        field :anime, Canary::Types::Objects::AnimeType, null: false
         field :records, Canary::Types::Objects::EpisodeRecordType.connection_type, null: true
         field :created_at, Canary::Types::Scalars::DateTime, null: false
 
@@ -18,7 +18,7 @@ module Canary
           RecordLoader.for(User).load(object.user_id)
         end
 
-        def work
+        def anime
           RecordLoader.for(Work).load(object.work_id)
         end
 

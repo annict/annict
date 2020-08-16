@@ -6,7 +6,7 @@ module Canary
       class RecordItemable < Canary::Types::Unions::Base
         graphql_name "RecordItemable"
 
-        possible_types Canary::Types::Objects::EpisodeRecordType, Canary::Types::Objects::WorkRecordType
+        possible_types Canary::Types::Objects::EpisodeRecordType, Canary::Types::Objects::AnimeRecordType
       end
     end
   end

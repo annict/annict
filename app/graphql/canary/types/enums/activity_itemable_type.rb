@@ -6,9 +6,9 @@ module Canary
       class ActivityItemableType < Types::Enums::Base
         graphql_name "ActivityItemableType"
 
+        value "ANIME_RECORD", ""
         value "EPISODE_RECORD", ""
         value "STATUS", ""
-        value "WORK_RECORD", ""
       end
     end
   end
