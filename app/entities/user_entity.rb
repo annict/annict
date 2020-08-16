@@ -12,11 +12,11 @@ class UserEntity < ApplicationEntity
   attribute? :records_count, Types::Integer
   attribute? :following_count, Types::Integer
   attribute? :followers_count, Types::Integer
-  attribute? :plan_to_watch_works_count, Types::Integer
-  attribute? :watching_works_count, Types::Integer
-  attribute? :completed_works_count, Types::Integer
-  attribute? :on_hold_works_count, Types::Integer
-  attribute? :dropped_works_count, Types::Integer
+  attribute? :plan_to_watch_anime_count, Types::Integer
+  attribute? :watching_anime_count, Types::Integer
+  attribute? :completed_anime_count, Types::Integer
+  attribute? :on_hold_anime_count, Types::Integer
+  attribute? :dropped_anime_count, Types::Integer
   attribute? :character_favorites_count, Types::Integer
   attribute? :person_favorites_count, Types::Integer
   attribute? :organization_favorites_count, Types::Integer
@@ -65,8 +65,8 @@ class UserEntity < ApplicationEntity
       attrs[:records_count] = records_count
     end
 
-    if watching_works_count = user_node["watchingWorksCount"]
-      attrs[:watching_works_count] = watching_works_count
+    if watching_anime_count = user_node["watchingAnimeCount"]
+      attrs[:watching_anime_count] = watching_anime_count
     end
 
     if following_count = user_node["followingCount"]

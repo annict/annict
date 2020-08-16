@@ -8,7 +8,7 @@ class ActivityGroupEntity < ApplicationEntity
   attribute? :activities_count, Types::Integer
   attribute? :created_at, Types::Params::Time
   attribute? :user, UserEntity
-  attribute? :itemables, Types::Array.of(EpisodeRecordEntity | StatusEntity | WorkRecordEntity)
+  attribute? :itemables, Types::Array.of(EpisodeRecordEntity | StatusEntity | AnimeRecordEntity)
   attribute? :activities_page_info, PageInfoEntity
 
   def self.from_nodes(activity_group_nodes)
@@ -62,7 +62,7 @@ class ActivityGroupEntity < ApplicationEntity
     itemable_type == "episode_record"
   end
 
-  def work_record?
-    itemable_type == "work_record"
+  def anime_record?
+    itemable_type == "anime_record"
   end
 end

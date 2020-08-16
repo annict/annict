@@ -1,14 +1,14 @@
 mutation (
-  $workId: ID!,
+  $animeId: ID!,
   $kind: StatusKind!
 ) {
   updateStatus(
     input: {
-      workId: $workId,
+      animeId: $animeId,
       kind: $kind
     }
   ) {
-    work {
+    anime {
       databaseId
     }
   }

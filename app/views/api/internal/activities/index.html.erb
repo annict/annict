@@ -11,7 +11,7 @@
   <% @activity_group_entity.itemables.each do |episode_record_entity| %>
     <div class="mb-3">
       <%= render EpisodeRecordCardComponent.new(
-          work_entity: episode_record_entity.work,
+          work_entity: episode_record_entity.anime,
           episode_entity: episode_record_entity.episode,
           episode_record_entity: episode_record_entity
       ) %>
@@ -24,11 +24,11 @@
     </div>
   <% end %>
 
-<% elsif @activity_group_entity.work_record? %>
+<% elsif @activity_group_entity.anime_record? %>
   <% @activity_group_entity.itemables.each do |work_record_entity| %>
     <div class="mb-3">
       <%= render WorkRecordCardComponent.new(
-          work_entity: work_record_entity.work,
+          work_entity: work_record_entity.anime,
           work_record_entity: work_record_entity
       ) %>
 

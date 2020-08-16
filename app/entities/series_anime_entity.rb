@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class SeriesWorkEntity < ApplicationEntity
+class SeriesAnimeEntity < ApplicationEntity
   local_attributes :summary, :title
 
   attribute? :database_id, Types::Integer

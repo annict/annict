@@ -20,9 +20,9 @@ class WorkRecordsController < ApplicationController
   def create
     @work = Work.only_kept.find(params[:work_id])
 
-    _, err = CreateWorkRecordRepository.new(
+    _, err = CreateAnimeRecordRepository.new(
       graphql_client: graphql_client(viewer: current_user)
-    ).create(work: @work, params: work_record_params)
+    ).create(anime: @work, params: work_record_params)
 
     if err
       load_work_records

@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 class UpdateStatusRepository < ApplicationRepository
-  def create(work:, kind:)
+  def create(anime:, kind:)
     result = execute(variables: {
-      workId: Canary::AnnictSchema.id_from_object(work, Work),
+      animeId: Canary::AnnictSchema.id_from_object(anime, Work),
       kind: Status.kind_v2_to_v3(kind)&.upcase&.to_s
     })
 
@@ -11,8 +11,8 @@ class UpdateStatusRepository < ApplicationRepository
       return [nil, MutationError.new(message: result.to_h["errors"][0]["message"])]
     end
 
-    work_node = result.dig("data", "updateStatus", "work")
+    anime_node = result.dig("data", "updateStatus", "anime")
 
-    [WorkEntity.from_node(work_node), nil]
+    [AnimeEntity.from_node(anime_node), nil]
   end
 end

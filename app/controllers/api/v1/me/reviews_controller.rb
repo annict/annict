@@ -22,9 +22,9 @@ module Api
             share_to_twitter: @params.share_twitter
           }
 
-          work_record_entity, err = CreateWorkRecordRepository.new(
+          work_record_entity, err = CreateAnimeRecordRepository.new(
             graphql_client: graphql_client(viewer: current_user)
-          ).create(work: work, params: work_record_params)
+          ).create(anime: work, params: work_record_params)
 
           if err
             return render_validation_error(err.message)

@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-class CreateWorkRecordRepository < ApplicationRepository
-  def create(work:, params:)
+class CreateAnimeRecordRepository < ApplicationRepository
+  def create(anime:, params:)
     result = execute(variables: {
-      workId: Canary::AnnictSchema.id_from_object(work, Work),
+      animeId: Canary::AnnictSchema.id_from_object(anime, Work),
       body: params[:body],
       ratingOverallState: params[:rating_overall_state]&.upcase.presence || nil,
       ratingAnimationState: params[:rating_animation_state]&.upcase.presence || nil,
@@ -17,8 +17,8 @@ class CreateWorkRecordRepository < ApplicationRepository
       return [nil, MutationError.new(message: result.to_h["errors"][0]["message"])]
     end
 
-    work_record_node = result.dig("data", "createWorkRecord", "workRecord")
+    anime_record_node = result.dig("data", "createAnimeRecord", "animeRecord")
 
-    [WorkRecordEntity.from_node(work_record_node), nil]
+    [AnimeRecordEntity.from_node(anime_record_node), nil]
   end
 end

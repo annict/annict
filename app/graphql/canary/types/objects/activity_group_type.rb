@@ -17,7 +17,14 @@ module Canary
         field :activities, Canary::Types::Objects::ActivityType.connection_type, null: false
 
         def itemable_type
-          object.itemable_type.underscore.upcase
+          value = object.itemable_type.underscore.upcase
+
+          case value
+          when "WORK_RECORD"
+            "ANIME_RECORD"
+          else
+            value
+          end
         end
 
         def user

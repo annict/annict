@@ -21,7 +21,7 @@ query($username: String!, $month: String, $first: Int, $last: Int, $before: Stri
         modifiedAt
         createdAt
 
-        work {
+        anime {
           databaseId
           title
           titleEn
@@ -47,7 +47,7 @@ query($username: String!, $month: String, $first: Int, $last: Int, $before: Stri
             }
           }
 
-          ... on WorkRecord {
+          ... on AnimeRecord {
             databaseId
             ratingAnimationState
             ratingMusicState

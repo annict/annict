@@ -5,13 +5,13 @@ class VodChannelEntity < ApplicationEntity
   attribute? :name, Types::String
   attribute? :programs, Types::Array.of(ProgramEntity)
 
-  def self.from_nodes(channel_nodes, work_entity:)
+  def self.from_nodes(channel_nodes, anime_entity:)
     channel_nodes.map do |channel_node|
-      from_node(channel_node, work_entity: work_entity)
+      from_node(channel_node, anime_entity: anime_entity)
     end
   end
 
-  def self.from_node(channel_node, work_entity:)
+  def self.from_node(channel_node, anime_entity:)
     attrs = {}
 
     if database_id = channel_node["databaseId"]
@@ -22,7 +22,7 @@ class VodChannelEntity < ApplicationEntity
       attrs[:name] = name
     end
 
-    attrs[:programs] = work_entity.programs.select do |program_entity|
+    attrs[:programs] = anime_entity.programs.select do |program_entity|
       program_entity.channel.database_id == channel_node["databaseId"]
     end
 

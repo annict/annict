@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe CreateWorkRecordRepository, type: :repository do
+describe CreateAnimeRecordRepository, type: :repository do
   include V4::GraphqlRunnable
 
   describe do
@@ -22,7 +22,7 @@ describe CreateWorkRecordRepository, type: :repository do
         rating_music_state: "great",
         rating_story_state: "great"
       }
-      CreateWorkRecordRepository.new(graphql_client: graphql_client(viewer: user)).create(work: work, params: params)
+      CreateAnimeRecordRepository.new(graphql_client: graphql_client(viewer: user)).create(anime: work, params: params)
 
       expect(Record.count).to eq 1
       expect(WorkRecord.count).to eq 1
@@ -77,7 +77,7 @@ describe CreateWorkRecordRepository, type: :repository do
         rating_music_state: "great",
         rating_story_state: "great"
       }
-      CreateWorkRecordRepository.new(graphql_client: graphql_client(viewer: user)).create(work: work, params: params)
+      CreateAnimeRecordRepository.new(graphql_client: graphql_client(viewer: user)).create(anime: work, params: params)
 
       expect(Record.count).to eq 2
       expect(WorkRecord.count).to eq 2
@@ -132,7 +132,7 @@ describe CreateWorkRecordRepository, type: :repository do
         rating_music_state: "great",
         rating_story_state: "great"
       }
-      CreateWorkRecordRepository.new(graphql_client: graphql_client(viewer: user)).create(work: work, params: params)
+      CreateAnimeRecordRepository.new(graphql_client: graphql_client(viewer: user)).create(anime: work, params: params)
 
       expect(Record.count).to eq 2
       expect(WorkRecord.count).to eq 2

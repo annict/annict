@@ -1,5 +1,5 @@
 mutation (
-  $workId: ID!,
+  $animeId: ID!,
   $body: String,
   $ratingOverallState: RatingState,
   $ratingAnimationState: RatingState,
@@ -8,9 +8,9 @@ mutation (
   $ratingCharacterState: RatingState,
   $shareToTwitter: Boolean
 ) {
-  createWorkRecord(
+  createAnimeRecord(
     input: {
-      workId: $workId,
+      animeId: $animeId,
       body: $body,
       ratingOverallState: $ratingOverallState,
       ratingAnimationState: $ratingAnimationState,
@@ -20,7 +20,7 @@ mutation (
       shareToTwitter: $shareToTwitter
     }
   ) {
-    workRecord {
+    animeRecord {
       databaseId
     }
   }

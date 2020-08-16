@@ -22,7 +22,7 @@ module Mutations
 
       UpdateStatusRepository.new(
         graphql_client: graphql_client(viewer: context[:viewer])
-      ).create(work: work, kind: state)
+      ).create(anime: work, kind: state)
 
       {
         work: work

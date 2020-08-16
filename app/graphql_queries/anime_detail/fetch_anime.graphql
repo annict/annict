@@ -1,5 +1,5 @@
 query($databaseId: Int!) {
-  works(databaseIds: [$databaseId]) {
+  animeList(databaseIds: [$databaseId]) {
     nodes {
       databaseId
       title
@@ -16,7 +16,7 @@ query($databaseId: Int!) {
       watchersCount
       satisfactionRate
       ratingsCount
-      workRecordsWithBodyCount
+      animeRecordsWithBodyCount
       officialSiteUrl
       officialSiteUrlEn
       wikipediaUrl
@@ -91,7 +91,7 @@ query($databaseId: Int!) {
           }
         }
       }
-      workRecords(hasBody: true, orderBy: { field: CREATED_AT, direction: DESC }, first: 11) { # Get 11 work records to display more records link
+      animeRecords(hasBody: true, orderBy: { field: CREATED_AT, direction: DESC }, first: 11) { # Get 11 anime records to display more records link
         nodes {
           databaseId
           ratingAnimationState
@@ -118,7 +118,7 @@ query($databaseId: Int!) {
         nodes {
           name
           nameEn
-          works(orderBy: { field: SEASON, direction: ASC }) {
+          animeList(orderBy: { field: SEASON, direction: ASC }) {
             edges {
               summary
               summaryEn

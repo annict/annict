@@ -12,7 +12,7 @@ module Api
 
         UpdateStatusRepository.new(
           graphql_client: graphql_client(viewer: current_user)
-        ).create(work: @work, kind: params[:status_kind])
+        ).create(anime: @work, kind: params[:status_kind])
 
         head 200
       end

@@ -443,9 +443,9 @@
           </div>
         </div>
 
-        <% if @work_entity.work_records.present? %>
+        <% if @work_entity.anime_records.present? %>
           <div>
-            <% @work_entity.work_records.first(10).each do |work_record| %>
+            <% @work_entity.anime_records.first(10).each do |work_record| %>
               <div class="py-3 u-underline">
                 <div class="mb-3 row">
                   <div class="col-auto pl-3 pr-0">
@@ -589,11 +589,11 @@
             <% end %>
           </div>
 
-          <% if @work_entity.work_records.length > 10 %>
+          <% if @work_entity.anime_records.length > 10 %>
             <div class="container mb-3">
               <%= link_to work_records_path(@work_entity.database_id), class: "btn btn-secondary w-100" do %>
                 <i class="fas fa-angle-right"></i>
-                <%= t "messages.works.view_all_n_record_body_list", n: @work_entity.work_records_with_body_count %>
+                <%= t "messages.works.view_all_n_record_body_list", n: @work_entity.anime_records_with_body_count %>
               <% end %>
             </div>
           <% end %>
@@ -639,7 +639,7 @@
             </h3>
             <div class="px-3">
               <div class="row">
-                <% series.series_works.each do |series_work| %>
+                <% series.series_anime_list.each do |series_work| %>
                   <div class="col-4 col-sm-2 p-0 pr-3 mb-3">
                     <div class="c-card">
                       <%= link_to work_path(series_work.database_id) do %>
