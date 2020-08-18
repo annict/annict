@@ -103,7 +103,7 @@ GEM
     backport (1.1.2)
     bcrypt (3.1.13)
     benchmark (0.1.0)
-    benchmark-ips (2.7.2)
+    benchmark-ips (2.8.2)
     better_errors (2.7.1)
       coderay (>= 1.0.0)
       erubi (>= 1.0.0)
