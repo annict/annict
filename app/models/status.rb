@@ -7,6 +7,7 @@
 #  id                   :bigint           not null, primary key
 #  kind                 :integer          not null
 #  likes_count          :integer          default(0), not null
+#  new_kind             :string
 #  created_at           :datetime
 #  updated_at           :datetime
 #  oauth_application_id :bigint
@@ -49,6 +50,8 @@ class Status < ApplicationRecord
     on_hold: 5,
     stop_watching: 4
   }
+
+  enumerize :new_kind, in: %i(want_to_watch watching completed rewatching on_hold dropped), scope: true
 
   belongs_to :activity, counter_cache: :resources_count, optional: true
   belongs_to :oauth_application, class_name: "Doorkeeper::Application", optional: true

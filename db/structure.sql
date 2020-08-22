@@ -51,6 +51,8 @@ CREATE SEQUENCE public.activities_id_seq
 
 SET default_tablespace = '';
 
+SET default_table_access_method = heap;
+
 --
 -- Name: activities; Type: TABLE; Schema: public; Owner: -
 --
@@ -71,7 +73,9 @@ CREATE TABLE public.activities (
     episode_record_id bigint,
     multiple_episode_record_id bigint,
     work_record_id bigint,
-    activity_group_id bigint NOT NULL
+    activity_group_id bigint NOT NULL,
+    migrated_at timestamp without time zone,
+    mer_processed_at timestamp without time zone
 );
 
 
@@ -2173,7 +2177,8 @@ CREATE TABLE public.statuses (
     likes_count integer DEFAULT 0 NOT NULL,
     created_at timestamp with time zone,
     updated_at timestamp with time zone,
-    oauth_application_id bigint
+    oauth_application_id bigint,
+    new_kind character varying
 );
 
 
@@ -6989,6 +6994,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20200525110837'),
 ('20200525201620'),
 ('20200808233237'),
-('20200809161251');
+('20200809161251'),
+('20200822000000');
 
 
