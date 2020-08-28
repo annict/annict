@@ -12,11 +12,13 @@ services:
     ports:
       - 8080:8080
   postgresql:
-    image: postgres:11.5-alpine
+    image: postgres:12.4-alpine
     ports:
       - 5432:5432
     volumes:
-      - ../_postgresql/annict/data:/var/lib/postgresql/data
+      - ../_postgresql/v12/annict:/var/lib/postgresql/data
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
   redis:
     image: redis:5.0.5-alpine
     ports:
