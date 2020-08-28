@@ -14,14 +14,14 @@ development:
   host: <%= ENV.fetch("POSTGRES_HOST", "0.0.0.0") %>
   username: postgres
   password:
-  database: annict_development
+  database: <%= ENV.fetch("POSTGRES_DATABASE", "annict_development") %>
 
 test:
   <<: *default
   host: <%= ENV.fetch("POSTGRES_HOST", "0.0.0.0") %>
   username: postgres
   password:
-  database: annict_test
+  database: <%= ENV.fetch("POSTGRES_DATABASE", "annict_test") %>
 
 production:
   <<: *default
