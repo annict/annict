@@ -549,7 +549,7 @@ GEM
     selenium-webdriver (3.142.7)
       childprocess (>= 0.5, < 4.0)
       rubyzip (>= 1.2.2)
-    sentry-raven (3.0.0)
+    sentry-raven (3.0.4)
       faraday (>= 1.0)
     shrine (3.2.1)
       content_disposition (~> 1.0)
