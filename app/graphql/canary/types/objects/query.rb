@@ -14,11 +14,11 @@ module Canary
           argument :username, String, required: true
         end
 
-        field :works, Canary::Types::Objects::WorkType.connection_type, null: true do
+        field :anime_list, Canary::Types::Objects::AnimeType.connection_type, null: true do
           argument :database_ids, [Integer], required: false
           argument :seasons, [String], required: false
           argument :titles, [String], required: false
-          argument :order_by, Canary::Types::InputObjects::WorkOrder, required: false
+          argument :order_by, Canary::Types::InputObjects::AnimeOrder, required: false
         end
 
         field :episodes, Canary::Types::Objects::EpisodeType.connection_type, null: true do
@@ -60,7 +60,7 @@ module Canary
           User.only_kept.find_by(username: username)
         end
 
-        def works(database_ids: nil, seasons: nil, titles: nil, order_by: nil)
+        def anime_list(database_ids: nil, seasons: nil, titles: nil, order_by: nil)
           SearchWorksQuery.new(
             annict_ids: database_ids,
             seasons: seasons,

@@ -19,15 +19,15 @@
               <% if record_entity.itemable_type == "episode_record" %>
                 <%= render EpisodeRecordContentComponent.new(
                     user_entity: @user_entity,
-                    work_entity: record_entity.work,
+                    work_entity: record_entity.anime,
                     episode_entity: record_entity.itemable.episode,
                     record_entity: record_entity,
                     episode_record_entity: record_entity.itemable
                 ) %>
-              <% elsif record_entity.itemable_type == "work_record" %>
+              <% elsif record_entity.itemable_type == "anime_record" %>
                 <%= render WorkRecordContentComponent.new(
                     user_entity: @user_entity,
-                    work_entity: record_entity.work,
+                    work_entity: record_entity.anime,
                     record_entity: record_entity,
                     work_record_entity: record_entity.itemable
                 ) %>

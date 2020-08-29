@@ -21,7 +21,7 @@ module Canary
           description: "満足度"
         field :episode_records_count, Integer, null: false
         field :episode_record_bodies_count, Integer, null: false
-        field :work, Canary::Types::Objects::WorkType, null: false
+        field :anime, Canary::Types::Objects::AnimeType, null: false
         field :prev_episode, Canary::Types::Objects::EpisodeType, null: true
         field :next_episode, Canary::Types::Objects::EpisodeType, null: true
         field :viewer_did_track, Boolean, null: false
@@ -44,7 +44,7 @@ module Canary
           object.episode_record_bodies_count
         end
 
-        def work
+        def anime
           RecordLoader.for(Work).load(object.work_id)
         end
 

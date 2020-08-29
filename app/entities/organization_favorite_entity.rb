@@ -2,7 +2,7 @@
 
 class OrganizationFavoriteEntity < ApplicationEntity
   attribute? :organization, OrganizationEntity
-  attribute? :watched_works_count, Types::Integer
+  attribute? :watched_anime_count, Types::Integer
 
   def self.from_node(organization_favorite_node)
     attrs = {}
@@ -11,8 +11,8 @@ class OrganizationFavoriteEntity < ApplicationEntity
       attrs[:organization] = OrganizationEntity.from_node(organization_node)
     end
 
-    if watched_works_count = organization_favorite_node["watchedWorksCount"]
-      attrs[:watched_works_count] = watched_works_count
+    if watched_anime_count = organization_favorite_node["watchedAnimeCount"]
+      attrs[:watched_anime_count] = watched_anime_count
     end
 
     new attrs

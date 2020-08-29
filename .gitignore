@@ -1,7 +1,7 @@
 .DS_Store
 
 /.bundle
-/.env.development.local
+/.env.*.local
 /.envrc
 /.idea
 /.sass-cache

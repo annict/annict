@@ -15,7 +15,7 @@ describe UpdateStatusRepository, type: :repository do
 
       UpdateStatusRepository.new(
         graphql_client: graphql_client(viewer: user)
-      ).create(work: work, kind: :watching)
+      ).create(anime: work, kind: :watching)
 
       expect(Status.count).to eq 1
       expect(ActivityGroup.count).to eq 1
@@ -59,7 +59,7 @@ describe UpdateStatusRepository, type: :repository do
 
       UpdateStatusRepository.new(
         graphql_client: graphql_client(viewer: user)
-      ).create(work: work, kind: :watching)
+      ).create(anime: work, kind: :watching)
 
       expect(Status.count).to eq 2
       expect(ActivityGroup.count).to eq 1
@@ -105,7 +105,7 @@ describe UpdateStatusRepository, type: :repository do
 
       UpdateStatusRepository.new(
         graphql_client: graphql_client(viewer: user)
-      ).create(work: work, kind: :no_select)
+      ).create(anime: work, kind: :no_select)
 
       expect(Status.count).to eq 1
       expect(ActivityGroup.count).to eq 1

@@ -19,7 +19,7 @@ query($activityGroupId: ID!, $cursor: String) {
               kind
               likesCount
 
-              work {
+              anime {
                 databaseId
                 title
                 titleEn
@@ -41,7 +41,7 @@ query($activityGroupId: ID!, $cursor: String) {
                 databaseId
               }
 
-              work {
+              anime {
                 databaseId
                 title
                 titleEn
@@ -59,13 +59,13 @@ query($activityGroupId: ID!, $cursor: String) {
               }
             }
 
-            ... on WorkRecord {
+            ... on AnimeRecord {
               databaseId
               ratingOverallState
               body
               likesCount
 
-              work {
+              anime {
                 databaseId
                 title
                 titleEn

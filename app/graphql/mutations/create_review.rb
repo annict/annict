@@ -44,9 +44,9 @@ module Mutations
         share_to_twitter: share_twitter&.to_s
       }
 
-      work_record_entity, err = CreateWorkRecordRepository.
+      work_record_entity, err = CreateAnimeRecordRepository.
         new(graphql_client: graphql_client(viewer: viewer)).
-        create(work: work, params: work_record_params)
+        create(anime: work, params: work_record_params)
 
       if err
         raise GraphQL::ExecutionError, err.message

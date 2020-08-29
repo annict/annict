@@ -9,7 +9,7 @@ query($username: String!) {
     backgroundImageUrl
     displaySupporterBadge
     recordsCount
-    watchingWorksCount
+    watchingAnimeCount
     followingCount
     followersCount
     characterFavoritesCount
@@ -36,7 +36,7 @@ query($username: String!) {
           name
           nameEn
         }
-        watchedWorksCount
+        watchedAnimeCount
       }
     }
     staffFavorites(orderBy: { field: CREATED_AT, direction: DESC }, first: 7) {
@@ -46,7 +46,7 @@ query($username: String!) {
           name
           nameEn
         }
-        watchedWorksCount
+        watchedAnimeCount
       }
     }
     organizationFavorites(orderBy: { field: CREATED_AT, direction: DESC }, first: 7) {
@@ -56,7 +56,7 @@ query($username: String!) {
           name
           nameEn
         }
-        watchedWorksCount
+        watchedAnimeCount
       }
     }
   }

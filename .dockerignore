@@ -1,7 +1,7 @@
 .DS_Store
 
 /.dockerignore
-/.env.development.local
+/.env.*.local
 /.git
 /.idea
 /.sass-cache

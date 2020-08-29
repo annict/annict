@@ -11,7 +11,7 @@ module Canary
         field :database_id, Integer, null: false
         field :channel, Canary::Types::Objects::ChannelType, null: false
         field :episode, Canary::Types::Objects::EpisodeType, null: false
-        field :work, Canary::Types::Objects::WorkType, null: false
+        field :anime, Canary::Types::Objects::AnimeType, null: false
         field :started_at, Canary::Types::Scalars::DateTime, null: false
         field :sc_pid, Integer, null: true
         field :rebroadcast, Boolean, null: false
@@ -24,7 +24,7 @@ module Canary
           RecordLoader.for(Episode).load(object.episode_id)
         end
 
-        def work
+        def anime
           RecordLoader.for(Work).load(object.work_id)
         end
       end

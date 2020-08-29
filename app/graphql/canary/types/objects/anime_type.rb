@@ -3,7 +3,7 @@
 module Canary
   module Types
     module Objects
-      class WorkType < Canary::Types::Objects::Base
+      class AnimeType < Canary::Types::Objects::Base
         description "作品情報"
 
         implements GraphQL::Relay::Node.interface
@@ -77,7 +77,7 @@ module Canary
         field :mal_anime_id, String,
           null: true
 
-        field :image, Canary::Types::Objects::WorkImageType,
+        field :image, Canary::Types::Objects::AnimeImageType,
           null: false
 
         field :copyright, String,
@@ -96,10 +96,10 @@ module Canary
         field :watchers_count, Integer,
           null: false
 
-        field :work_records_count, Integer,
+        field :anime_records_count, Integer,
           null: false
 
-        field :work_records_with_body_count, Integer,
+        field :anime_records_with_body_count, Integer,
           null: false
 
         field :is_no_episodes, Boolean,
@@ -133,8 +133,8 @@ module Canary
           argument :order_by, Canary::Types::InputObjects::EpisodeOrder, required: false
         end
 
-        field :work_records, Canary::Types::Objects::WorkRecordType.connection_type, null: true do
-          argument :order_by, Canary::Types::InputObjects::WorkRecordOrder, required: false
+        field :anime_records, Canary::Types::Objects::AnimeRecordType.connection_type, null: true do
+          argument :order_by, Canary::Types::InputObjects::AnimeRecordOrder, required: false
           argument :has_body, Boolean, required: false
         end
 
@@ -164,7 +164,7 @@ module Canary
           SearchEpisodesQuery.new(object.episodes, order_by: order_by).call
         end
 
-        def work_records(order_by: nil, has_body: nil)
+        def anime_records(order_by: nil, has_body: nil)
           SearchWorkRecordsQuery.new(
             object.work_records,
             context: context,
@@ -223,6 +223,14 @@ module Canary
           Canary::RecordLoader.for(WorkImage, column: :work_id).load(object.id).then do |work_image|
             work_image || WorkImage.new
           end
+        end
+
+        def anime_records_count
+          object.work_records_count
+        end
+
+        def anime_records_with_body_count
+          object.work_records_with_body_count
         end
 
         def copyright

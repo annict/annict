@@ -25,7 +25,7 @@
   <% if activity_group_entity.single %>
     <%= render EpisodeRecordContentComponent.new(
         user_entity: user_entity,
-        work_entity: episode_record_entities.first.work,
+        work_entity: episode_record_entities.first.anime,
         episode_entity: episode_record_entities.first.episode,
         record_entity: episode_record_entities.first.record,
         episode_record_entity: episode_record_entities.first
@@ -35,7 +35,7 @@
       <% episode_record_entities.each do |episode_record_entity| %>
         <div class="mb-3">
           <%= render EpisodeRecordCardComponent.new(
-              work_entity: episode_record_entity.work,
+              work_entity: episode_record_entity.anime,
               episode_entity: episode_record_entity.episode,
               episode_record_entity: episode_record_entity
           ) %>

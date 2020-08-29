@@ -41,7 +41,7 @@ query($username: String!, $first: Int, $last: Int, $before: String, $after: Stri
                 kind
                 likesCount
 
-                work {
+                anime {
                   databaseId
                   title
                   titleEn
@@ -63,7 +63,7 @@ query($username: String!, $first: Int, $last: Int, $before: String, $after: Stri
                   databaseId
                 }
 
-                work {
+                anime {
                   databaseId
                   title
                   titleEn
@@ -81,13 +81,13 @@ query($username: String!, $first: Int, $last: Int, $before: String, $after: Stri
                 }
               }
 
-              ... on WorkRecord {
+              ... on AnimeRecord {
                 databaseId
                 ratingOverallState
                 body
                 likesCount
 
-                work {
+                anime {
                   databaseId
                   title
                   titleEn

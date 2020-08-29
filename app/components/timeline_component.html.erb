@@ -13,7 +13,7 @@
         <% elsif activity_group_entity.episode_record? %>
           <%= render EpisodeRecordActivityComponent.new(activity_group_entity: activity_group_entity, page_category: page_category) %>
 
-        <% elsif activity_group_entity.work_record? %>
+        <% elsif activity_group_entity.anime_record? %>
           <%= render WorkRecordActivityComponent.new(activity_group_entity: activity_group_entity, page_category: page_category) %>
         <% end %>
       </div>

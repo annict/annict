@@ -6,8 +6,8 @@ class RecordEntity < ApplicationEntity
   attribute? :itemable_type, Types::RecordResourceKinds
   attribute? :modified_at, Types::Params::Time.optional
   attribute? :created_at, Types::Params::Time
-  attribute? :work, WorkEntity
-  attribute? :itemable, EpisodeRecordEntity | WorkRecordEntity
+  attribute? :anime, AnimeEntity
+  attribute? :itemable, EpisodeRecordEntity | AnimeRecordEntity
 
   def self.from_nodes(record_nodes)
     record_nodes.map do |record_node|
@@ -34,8 +34,8 @@ class RecordEntity < ApplicationEntity
       attrs[:created_at] = created_at
     end
 
-    if work_node = record_node["work"]
-      attrs[:work] = WorkEntity.from_node(work_node)
+    if anime_node = record_node["anime"]
+      attrs[:anime] = AnimeEntity.from_node(anime_node)
     end
 
     itemable_node = record_node["itemable"]
@@ -43,8 +43,8 @@ class RecordEntity < ApplicationEntity
       attrs[:itemable] = case itemable_type
       when "EPISODE_RECORD"
         EpisodeRecordEntity.from_node(itemable_node)
-      when "WORK_RECORD"
-        WorkRecordEntity.from_node(itemable_node)
+      when "ANIME_RECORD"
+        AnimeRecordEntity.from_node(itemable_node)
       end
     end
 

@@ -9,7 +9,7 @@ class EpisodeRecordEntity < ApplicationEntity
   attribute? :comments_count, Types::Integer
   attribute? :user, UserEntity
   attribute? :record, RecordEntity
-  attribute? :work, WorkEntity
+  attribute? :anime, AnimeEntity
   attribute? :episode, EpisodeEntity
 
   def self.from_node(episode_record_node, user_node: nil)
@@ -35,8 +35,8 @@ class EpisodeRecordEntity < ApplicationEntity
       attrs[:comments_count] = comments_count
     end
 
-    if work_node = episode_record_node["work"]
-      attrs[:work] = WorkEntity.from_node(work_node)
+    if anime_node = episode_record_node["anime"]
+      attrs[:anime] = AnimeEntity.from_node(anime_node)
     end
 
     if episode_node = episode_record_node["episode"]

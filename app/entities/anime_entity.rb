@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class WorkEntity < ApplicationEntity
+class AnimeEntity < ApplicationEntity
   local_attributes :title, :title_alter, :synopsis, :synopsis_source
 
   attribute? :database_id, Types::Integer
@@ -9,7 +9,7 @@ class WorkEntity < ApplicationEntity
   attribute? :title_kana, Types::String.optional
   attribute? :title_alter, Types::String.optional
   attribute? :title_alter_en, Types::String.optional
-  attribute? :media, Types::WorkMediaKinds
+  attribute? :media, Types::AnimeMediaKinds
   attribute? :season_year, Types::Integer.optional
   attribute? :season_type, Types::SeasonKinds.optional
   attribute? :season_slug, Types::String.optional
@@ -18,7 +18,7 @@ class WorkEntity < ApplicationEntity
   attribute? :watchers_count, Types::Integer
   attribute? :satisfaction_rate, Types::Float.optional
   attribute? :ratings_count, Types::Integer
-  attribute? :work_records_with_body_count, Types::Integer
+  attribute? :anime_records_with_body_count, Types::Integer
   attribute? :official_site_url, Types::String.optional
   attribute? :official_site_url_en, Types::String.optional
   attribute? :wikipedia_url, Types::String.optional
@@ -42,7 +42,7 @@ class WorkEntity < ApplicationEntity
   attribute? :staffs, Types::Array.of(StaffEntity)
   attribute? :episodes, Types::Array.of(EpisodeEntity)
   attribute? :programs, Types::Array.of(ProgramEntity)
-  attribute? :work_records, Types::Array.of(WorkRecordEntity)
+  attribute? :anime_records, Types::Array.of(AnimeRecordEntity)
   attribute? :series_list, Types::Array.of(SeriesEntity)
 
   def self.from_model(work)
@@ -116,8 +116,8 @@ class WorkEntity < ApplicationEntity
       attrs[:ratings_count] = ratings_count
     end
 
-    if work_records_with_body_count = work_node["workRecordsWithBodyCount"]
-      attrs[:work_records_with_body_count] = work_records_with_body_count
+    if anime_records_with_body_count = work_node["animeRecordsWithBodyCount"]
+      attrs[:anime_records_with_body_count] = anime_records_with_body_count
     end
 
     if official_site_url = work_node["officialSiteUrl"]
@@ -199,8 +199,8 @@ class WorkEntity < ApplicationEntity
     program_nodes = work_node.dig("programs", "nodes")
     attrs[:programs] = ProgramEntity.from_nodes(program_nodes || [])
 
-    work_record_nodes = work_node.dig("workRecords", "nodes")
-    attrs[:work_records] = WorkRecordEntity.from_nodes(work_record_nodes || [])
+    anime_record_nodes = work_node.dig("animeRecords", "nodes")
+    attrs[:anime_records] = AnimeRecordEntity.from_nodes(anime_record_nodes || [])
 
     series_nodes = work_node.dig("seriesList", "nodes")
     attrs[:series_list] = SeriesEntity.from_nodes(series_nodes || [])

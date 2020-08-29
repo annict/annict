@@ -47,7 +47,7 @@
       <div class="mb-3 row">
         <% [
           [record_list_path(@user_entity.username), @user_entity.records_count, "Records"],
-          [library_path(@user_entity.username, :watching), @user_entity.watching_works_count, "Watching"],
+          [library_path(@user_entity.username, :watching), @user_entity.watching_anime_count, "Watching"],
           [following_user_path(@user_entity.username), @user_entity.following_count, "Following"],
           [followers_user_path(@user_entity.username), @user_entity.followers_count, "Followers"],
           [favorite_characters_path(@user_entity.username), @user_entity.character_favorites_count, "Characters"],
@@ -125,7 +125,7 @@
                   <% resource = rf.send(resource_name) %>
                   <%= link_to resource.local_name, send("#{resource_name}_path", resource.database_id) %>
                   <div class="text-muted u-very-small">
-                    <%= t("noun.n_works_watched", count: rf.watched_works_count) %>
+                    <%= t("noun.n_works_watched", count: rf.watched_anime_count) %>
                   </div>
                 </div>
               <% end %>
