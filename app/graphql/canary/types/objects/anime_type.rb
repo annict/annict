@@ -138,7 +138,7 @@ module Canary
           argument :has_body, Boolean, required: false
         end
 
-        field :programs, Canary::Types::Objects::ProgramType.connection_type, null: true do
+        field :programs, Canary::Types::Objects::ProgramType.connection_type, null: true, resolver: Canary::Resolvers::Programs do
           argument :order_by, Canary::Types::InputObjects::ProgramOrder, required: false
         end
 
@@ -170,13 +170,6 @@ module Canary
             context: context,
             order_by: order_by,
             has_body: has_body
-          ).call
-        end
-
-        def programs(order_by: nil)
-          ProgramsQuery.new(
-            object.programs.only_kept,
-            order: Canary::OrderProperty.build(order_by)
           ).call
         end
 
