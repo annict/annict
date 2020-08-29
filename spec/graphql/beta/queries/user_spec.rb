@@ -14,7 +14,7 @@ describe "GraphQL API Query" do
           }
         QUERY
 
-        res = AnnictSchema.execute(query_string)
+        res = Beta::AnnictSchema.execute(query_string)
         pp(res) if res["errors"]
         res
       end
@@ -49,7 +49,7 @@ describe "GraphQL API Query" do
             }
           QUERY
 
-          res = AnnictSchema.execute(query_string)
+          res = Beta::AnnictSchema.execute(query_string)
           pp(res) if res["errors"]
           res
         end
@@ -111,7 +111,7 @@ describe "GraphQL API Query" do
             }
           QUERY
 
-          res = AnnictSchema.execute(query_string)
+          res = Beta::AnnictSchema.execute(query_string)
           pp(res) if res["errors"]
           res
         end
@@ -144,7 +144,7 @@ describe "GraphQL API Query" do
           }
         QUERY
 
-        res = AnnictSchema.execute(query_string)
+        res = Beta::AnnictSchema.execute(query_string)
         pp(res) if res["errors"]
         res
       end

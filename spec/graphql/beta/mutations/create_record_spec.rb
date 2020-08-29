@@ -28,7 +28,7 @@ describe "GraphQL API Mutation" do
         }
       GRAPHQL
 
-      res = AnnictSchema.execute(query_string, context: context)
+      res = Beta::AnnictSchema.execute(query_string, context: context)
       pp(res) if res["errors"]
       res
     end

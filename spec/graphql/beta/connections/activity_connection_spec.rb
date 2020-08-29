@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Connections::ActivityConnection do
+describe Beta::Connections::ActivityConnection do
   let(:user) { create(:user) }
   let(:id) { GraphQL::Schema::UniqueWithinType.encode(user.class.name, user.id) }
   let!(:activity) { create(:create_episode_record_activity, user: user) }
@@ -30,7 +30,7 @@ describe Connections::ActivityConnection do
       }
     GRAPHQL
 
-    res = AnnictSchema.execute(query_string)
+    res = Beta::AnnictSchema.execute(query_string)
     pp(res) if res["errors"]
     res
   end

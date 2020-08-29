@@ -19,7 +19,7 @@ describe "GraphQL API Query" do
         }
       GRAPHQL
 
-      res = AnnictSchema.execute(query_string)
+      res = Beta::AnnictSchema.execute(query_string)
       pp(res) if res["errors"]
       res
     end
