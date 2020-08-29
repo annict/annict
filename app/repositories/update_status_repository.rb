@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class UpdateStatusRepository < ApplicationRepository
-  def create(anime:, kind:)
-    result = execute(variables: {
+  def execute(anime:, kind:)
+    result = mutate(variables: {
       animeId: Canary::AnnictSchema.id_from_object(anime, Work),
       kind: Status.kind_v2_to_v3(kind)&.upcase&.to_s
     })

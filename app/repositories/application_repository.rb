@@ -17,17 +17,27 @@ class ApplicationRepository
 
   attr_reader :graphql_client
 
-  def query_path
-    file_name = "#{self.class.name.underscore.delete_suffix('_repository')}.graphql"
-
-    Rails.root.join("app", "graphql_queries", file_name)
+  def file_name
+    @file_name ||= "#{self.class.name.split('::').map { |str| str.camelize(:lower) }.join('/').delete_suffix('Repository')}.graphql"
   end
 
-  def query
-    @query ||= File.read(query_path)
+  def query_definition
+    @query_definition ||= File.read(Rails.root.join("app", "lib", "annict", "graphql", "queries", file_name))
   end
 
-  def execute(variables: {})
-    graphql_client.execute(query, variables: variables)
+  def mutation_definition
+    @mutation_definition ||= File.read(Rails.root.join("app", "lib", "annict", "graphql", "mutations", file_name))
+  end
+
+  def camelized_variables(variables)
+    variables.deep_transform_keys { |key| key.to_s.camelize(:lower) }
+  end
+
+  def query(variables: {})
+    graphql_client.execute(query_definition, variables: camelized_variables(variables))
+  end
+
+  def mutate(variables: {})
+    graphql_client.execute(mutation_definition, variables: camelized_variables(variables))
   end
 end

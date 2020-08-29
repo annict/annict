@@ -19,7 +19,7 @@ module Api
         viewer: current_user,
         ga_client: ga_client
       }
-      result = AnnictSchema.execute(query, variables: variables, context: context)
+      result = Beta::AnnictSchema.execute(query, variables: variables, context: context)
       annict_logger.log(
         :info,
         :GRAPHQL_API_REQUEST,

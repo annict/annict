@@ -4,8 +4,9 @@ module Canary
   module Types
     module Objects
       class Query < Canary::Types::Objects::Base
-        field :node, field: GraphQL::Relay::Node.field
-        field :nodes, field: GraphQL::Relay::Node.plural_field
+        add_field GraphQL::Types::Relay::NodeField
+        add_field GraphQL::Types::Relay::NodesField
+
         field :viewer, Canary::Types::Objects::UserType,
           null: true,
           description: "認証されているユーザ"
@@ -14,7 +15,7 @@ module Canary
           argument :username, String, required: true
         end
 
-        field :anime_list, Canary::Types::Objects::AnimeType.connection_type, null: true do
+        field :anime_list, Canary::Types::Objects::AnimeType.connection_type, null: true, resolver: Canary::Resolvers::AnimeList do
           argument :database_ids, [Integer], required: false
           argument :seasons, [String], required: false
           argument :titles, [String], required: false
@@ -60,15 +61,6 @@ module Canary
           User.only_kept.find_by(username: username)
         end
 
-        def anime_list(database_ids: nil, seasons: nil, titles: nil, order_by: nil)
-          SearchWorksQuery.new(
-            annict_ids: database_ids,
-            seasons: seasons,
-            titles: titles,
-            order_by: order_by
-          ).call
-        end
-
         def episodes(database_ids: nil, order_by: nil)
           SearchEpisodesQuery.new(
             annict_ids: database_ids,
@@ -108,7 +100,7 @@ module Canary
         end
 
         def activity_groups(order_by: nil)
-          order = build_order(order_by)
+          order = Canary::OrderProperty.build(order_by)
           ActivityGroup.joins(:user).merge(User.only_kept).order(order.field => order.direction)
         end
       end

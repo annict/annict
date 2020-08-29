@@ -13,7 +13,7 @@ module Api
 
           episode_record, err = CreateEpisodeRecordRepository.new(
             graphql_client: graphql_client(viewer: current_user)
-          ).create(
+          ).execute(
             episode: episode,
             params: {
               rating: @params.rating,

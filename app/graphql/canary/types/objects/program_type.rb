@@ -32,7 +32,7 @@ module Canary
         def slots(order_by: nil)
           SlotsQuery.new(
             object.slots.only_kept,
-            order: build_order(order_by)
+            order: Canary::OrderProperty.build(order_by)
           ).call
         end
       end

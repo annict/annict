@@ -75,7 +75,7 @@ module Canary
           argument :order_by, Canary::Types::InputObjects::AnimeOrder, required: false
         end
 
-        field :slots, Canary::Types::Objects::SlotType.connection_type, null: true do
+        field :slots, Canary::Types::Objects::SlotType.connection_type, null: true, resolver: Canary::Resolvers::Slots do
           argument :unwatched, Boolean, required: false
           argument :order_by, Canary::Types::InputObjects::SlotOrder, required: false
         end
@@ -185,21 +185,21 @@ module Canary
         end
 
         def activity_groups(order_by: nil)
-          order = build_order(order_by)
+          order = Canary::OrderProperty.build(order_by)
           object.activity_groups.order(order.field => order.direction)
         end
 
         def activities(order_by: nil)
-          order = build_order(order_by)
+          order = Canary::OrderProperty.build(order_by)
           object.activities.order(order.field => order.direction)
         end
 
         def following_activity_groups(order_by: nil)
-          object.following_resources(model: ActivityGroup, viewer: context[:viewer], order: build_order(order_by))
+          object.following_resources(model: ActivityGroup, viewer: context[:viewer], order: Canary::OrderProperty.build(order_by))
         end
 
         def following_activities(order_by: nil)
-          object.following_resources(model: Activity, viewer: context[:viewer], order: build_order(order_by))
+          object.following_resources(model: Activity, viewer: context[:viewer], order: Canary::OrderProperty.build(order_by))
         end
 
         def records(month: nil, order_by: nil)
@@ -215,7 +215,7 @@ module Canary
             collection = collection.between_times(start_time, end_time)
           end
 
-          order = build_order(order_by)
+          order = Canary::OrderProperty.build(order_by)
           collection.order(order.field => order.direction)
         end
 
@@ -239,32 +239,23 @@ module Canary
           ).call
         end
 
-        def slots(watched: nil, order_by: nil)
-          UserSlotsQuery.new(
-            object,
-            Slot.only_kept.with_works(object.works_on(:wanna_watch, :watching).only_kept),
-            watched: watched,
-            order: build_order(order_by)
-          ).call
-        end
-
         def character_favorites(order_by: nil)
-          order = build_order(order_by)
+          order = Canary::OrderProperty.build(order_by)
           object.character_favorites.order(order.field => order.direction)
         end
 
         def cast_favorites(order_by: nil)
-          order = build_order(order_by)
+          order = Canary::OrderProperty.build(order_by)
           object.person_favorites.with_cast.order(order.field => order.direction)
         end
 
         def staff_favorites(order_by: nil)
-          order = build_order(order_by)
+          order = Canary::OrderProperty.build(order_by)
           object.person_favorites.with_staff.order(order.field => order.direction)
         end
 
         def organization_favorites(order_by: nil)
-          order = build_order(order_by)
+          order = Canary::OrderProperty.build(order_by)
           object.organization_favorites.order(order.field => order.direction)
         end
       end

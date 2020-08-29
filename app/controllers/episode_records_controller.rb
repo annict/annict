@@ -11,7 +11,7 @@ class EpisodeRecordsController < ApplicationController
 
     episode_record, err = CreateEpisodeRecordRepository.new(
       graphql_client: graphql_client(viewer: current_user)
-    ).create(episode: @episode, params: episode_record_params)
+    ).execute(episode: @episode, params: episode_record_params)
 
     if err
       params[:locale_en] = locale_en?
