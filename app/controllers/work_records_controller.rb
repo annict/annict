@@ -22,7 +22,7 @@ class WorkRecordsController < ApplicationController
 
     _, err = CreateAnimeRecordRepository.new(
       graphql_client: graphql_client(viewer: current_user)
-    ).create(anime: @work, params: work_record_params)
+    ).execute(anime: @work, params: work_record_params)
 
     if err
       load_work_records

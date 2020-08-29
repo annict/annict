@@ -20,7 +20,7 @@ module Mutations
 
       episode_record_entity, err = CreateEpisodeRecordRepository.new(
         graphql_client: graphql_client(viewer: viewer)
-      ).create(
+      ).execute(
         episode: episode,
         params: {
           rating_state: rating_state,

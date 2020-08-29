@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 module UserHome
-  class FetchGlobalActivityGroupsRepository < ApplicationRepository
-    def fetch(pagination:)
-      result = execute(variables: {
+  class GlobalActivityGroupsRepository < ApplicationRepository
+    def execute(pagination:)
+      result = query(variables: {
         first: pagination.first,
         last: pagination.last,
         before: pagination.before,

@@ -24,7 +24,7 @@ module Api
 
           work_record_entity, err = CreateAnimeRecordRepository.new(
             graphql_client: graphql_client(viewer: current_user)
-          ).create(anime: work, params: work_record_params)
+          ).execute(anime: work, params: work_record_params)
 
           if err
             return render_validation_error(err.message)

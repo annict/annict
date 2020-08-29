@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 module ProfileDetail
-  class FetchUserActivityGroupsRepository < ApplicationRepository
-    def fetch(username:, pagination:)
-      result = execute(variables: {
+  class UserActivityGroupsRepository < ApplicationRepository
+    def execute(username:, pagination:)
+      result = query(variables: {
         username: username,
         first: pagination.first,
         last: pagination.last,

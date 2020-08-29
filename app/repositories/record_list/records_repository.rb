@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 module RecordList
-  class FetchRecordsRepository < ApplicationRepository
-    def fetch(username:, pagination:, month: nil)
-      result = execute(
+  class RecordsRepository < ApplicationRepository
+    def execute(username:, pagination:, month: nil)
+      result = query(
         variables: {
           username: username,
           month: month,

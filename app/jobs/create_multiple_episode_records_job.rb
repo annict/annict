@@ -13,7 +13,7 @@ class CreateMultipleEpisodeRecordsJob < ApplicationJob
 
     ActiveRecord::Base.transaction do
       episodes.each do |episode|
-        CreateEpisodeRecordRepository.new(graphql_client: graphql_client(viewer: user)).create(episode: episode,params: {})
+        CreateEpisodeRecordRepository.new(graphql_client: graphql_client(viewer: user)).execute(episode: episode,params: {})
       end
     end
   end

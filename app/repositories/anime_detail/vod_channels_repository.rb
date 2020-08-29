@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 module AnimeDetail
-  class FetchVodChannelsRepository < ApplicationRepository
-    def fetch(anime_entity:)
-      result = execute
+  class VodChannelsRepository < ApplicationRepository
+    def execute(anime_entity:)
+      result = query
       channel_nodes = result.to_h.dig("data", "channels", "nodes")
 
       VodChannelEntity.from_nodes(channel_nodes, anime_entity: anime_entity)

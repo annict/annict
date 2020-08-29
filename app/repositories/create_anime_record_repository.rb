@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class CreateAnimeRecordRepository < ApplicationRepository
-  def create(anime:, params:)
-    result = execute(variables: {
+  def execute(anime:, params:)
+    result = mutate(variables: {
       animeId: Canary::AnnictSchema.id_from_object(anime, Work),
       body: params[:body],
       ratingOverallState: params[:rating_overall_state]&.upcase.presence || nil,

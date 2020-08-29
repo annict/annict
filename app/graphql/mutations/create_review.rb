@@ -46,7 +46,7 @@ module Mutations
 
       work_record_entity, err = CreateAnimeRecordRepository.
         new(graphql_client: graphql_client(viewer: viewer)).
-        create(anime: work, params: work_record_params)
+        execute(anime: work, params: work_record_params)
 
       if err
         raise GraphQL::ExecutionError, err.message

@@ -7,8 +7,8 @@ module Annict
         @viewer = viewer
       end
 
-      def execute(query, variables: {})
-        Canary::AnnictSchema.execute(query, variables: variables, context: context)
+      def execute(definition, variables: {})
+        Canary::AnnictSchema.execute(definition, variables: variables, context: context)
       end
 
       private

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class CreateEpisodeRecordRepository < ApplicationRepository
-  def create(episode:, params:)
-    result = execute(variables: {
+  def execute(episode:, params:)
+    result = mutate(variables: {
       episodeId: Canary::AnnictSchema.id_from_object(episode, Episode),
       body: params[:body],
       rating: params[:rating]&.to_f,

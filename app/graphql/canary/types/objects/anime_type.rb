@@ -176,14 +176,14 @@ module Canary
         def programs(order_by: nil)
           ProgramsQuery.new(
             object.programs.only_kept,
-            order: build_order(order_by)
+            order: Canary::OrderProperty.build(order_by)
           ).call
         end
 
         def slots(order_by: nil)
           SlotsQuery.new(
             object.slots.only_kept,
-            order: build_order(order_by)
+            order: Canary::OrderProperty.build(order_by)
           ).call
         end
 

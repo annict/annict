@@ -21,7 +21,7 @@ describe CreateEpisodeRecordRepository, type: :repository do
       }
       CreateEpisodeRecordRepository.new(
         graphql_client: graphql_client(viewer: user)
-      ).create(episode: episode, params: params)
+      ).execute(episode: episode, params: params)
 
       expect(Record.count).to eq 1
       expect(EpisodeRecord.count).to eq 1
@@ -72,7 +72,7 @@ describe CreateEpisodeRecordRepository, type: :repository do
       }
       CreateEpisodeRecordRepository.new(
         graphql_client: graphql_client(viewer: user)
-      ).create(episode: episode, params: params)
+      ).execute(episode: episode, params: params)
 
       expect(Record.count).to eq 2
       expect(EpisodeRecord.count).to eq 2
@@ -123,7 +123,7 @@ describe CreateEpisodeRecordRepository, type: :repository do
       }
       CreateEpisodeRecordRepository.new(
         graphql_client: graphql_client(viewer: user)
-      ).create(episode: episode, params: params)
+      ).execute(episode: episode, params: params)
 
       expect(Record.count).to eq 2
       expect(EpisodeRecord.count).to eq 2
