@@ -1,6 +1,25 @@
 # frozen_string_literal: true
 
 class UserSlotsQuery
+  class OrderProperty
+    def initialize(field_ = nil, direction_ = nil)
+      @field_ = field_
+      @direction_ = direction_
+    end
+
+    def field
+      field_&.to_s&.downcase&.to_sym.presence || :created_at
+    end
+
+    def direction
+      direction_&.to_s&.downcase&.to_sym.presence || :asc
+    end
+
+    private
+
+    attr_reader :field_, :direction_
+  end
+
   # @param user [User]
   # @param slots [Slot::ActiveRecord_Relation]
   # @param watched [Boolean, nil]

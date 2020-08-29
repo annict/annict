@@ -52,7 +52,7 @@ module Beta
           argument :order_by, Beta::Types::InputObjects::WorkOrder, required: false
         end
 
-        field :programs, Beta::Types::Objects::ProgramType.connection_type, null: true do
+        field :programs, Beta::Types::Objects::ProgramType.connection_type, null: true, resolver: Beta::Resolvers::Programs do
           argument :unwatched, Boolean, required: false
           argument :order_by, Beta::Types::InputObjects::ProgramOrder, required: false
         end
@@ -163,15 +163,6 @@ module Beta
             titles: titles,
             state: state,
             order_by: order_by
-          ).call
-        end
-
-        def programs(unwatched: nil, order_by: nil)
-          UserSlotsQuery.new(
-            object,
-            Slot.only_kept.with_works(object.works_on(:wanna_watch, :watching).only_kept),
-            watched: unwatched.nil? ? nil : !unwatched,
-            order: build_order(order_by)
           ).call
         end
       end

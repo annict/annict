@@ -23,7 +23,7 @@ describe SlotsQuery, type: :query do
     it "returns slots which are sorted by specified field" do
       slots = SlotsQuery.new(
         Slot.all,
-        order: OrderProperty.new(:started_at, :asc)
+        order: SlotsQuery::OrderProperty.new(:started_at, :asc)
       ).call
 
       expect(slots.pluck(:id)).to match([slot_3.id, slot_2.id, slot_1.id])

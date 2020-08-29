@@ -75,7 +75,7 @@ module Canary
           argument :order_by, Canary::Types::InputObjects::AnimeOrder, required: false
         end
 
-        field :slots, Canary::Types::Objects::SlotType.connection_type, null: true do
+        field :slots, Canary::Types::Objects::SlotType.connection_type, null: true, resolver: Canary::Resolvers::Slots do
           argument :unwatched, Boolean, required: false
           argument :order_by, Canary::Types::InputObjects::SlotOrder, required: false
         end
@@ -236,15 +236,6 @@ module Canary
             titles: titles,
             state: status_kind,
             order_by: order_by
-          ).call
-        end
-
-        def slots(watched: nil, order_by: nil)
-          UserSlotsQuery.new(
-            object,
-            Slot.only_kept.with_works(object.works_on(:wanna_watch, :watching).only_kept),
-            watched: watched,
-            order: Canary::OrderProperty.build(order_by)
           ).call
         end
 

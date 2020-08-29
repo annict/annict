@@ -2,6 +2,12 @@
 
 module Beta
   class OrderProperty
+    def self.build(order_by)
+      return new unless order_by
+
+      new(order_by[:field], order_by[:direction])
+    end
+
     def initialize(field_ = nil, direction_ = nil)
       @field_ = field_
       @direction_ = direction_
