@@ -27,9 +27,9 @@ module Canary
         field :viewer_did_track, Boolean, null: false
         field :viewer_records_count, Integer, null: false
 
-        field :episode_records, Canary::Types::Objects::EpisodeRecordType.connection_type, null: true do
-          argument :order_by, Canary::Types::InputObjects::EpisodeRecordOrder, required: false
+        field :records, Canary::Types::Objects::RecordType.connection_type, null: false, resolver: Canary::Resolvers::Records do
           argument :has_body, Boolean, required: false
+          argument :order_by, Canary::Types::InputObjects::RecordOrder, required: false
         end
 
         def number
@@ -62,14 +62,6 @@ module Canary
 
         def viewer_records_count
           context[:viewer].episode_records_count_in(object)
-        end
-
-        def episode_records(order_by: nil, has_body: nil)
-          SearchEpisodeRecordsQuery.new(
-            object.episode_records,
-            order_by: order_by,
-            has_body: has_body
-          ).call
         end
       end
     end

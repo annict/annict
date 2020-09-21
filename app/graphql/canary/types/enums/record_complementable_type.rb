@@ -3,8 +3,8 @@
 module Canary
   module Types
     module Enums
-      class RecordItemableType < Types::Enums::Base
-        graphql_name "RecordItemableType"
+      class RecordComplementableType < Types::Enums::Base
+        graphql_name "RecordComplementableType"
 
         value "ANIME_RECORD", ""
         value "EPISODE_RECORD", ""

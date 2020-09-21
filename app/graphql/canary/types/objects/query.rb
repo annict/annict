@@ -22,9 +22,8 @@ module Canary
           argument :order_by, Canary::Types::InputObjects::AnimeOrder, required: false
         end
 
-        field :episodes, Canary::Types::Objects::EpisodeType.connection_type, null: true do
-          argument :database_ids, [Integer], required: false
-          argument :order_by, Canary::Types::InputObjects::EpisodeOrder, required: false
+        field :episode, Canary::Types::Objects::EpisodeType, null: true do
+          argument :database_id, Integer, required: true
         end
 
         field :people, Canary::Types::Objects::PersonType.connection_type, null: true do
@@ -61,11 +60,8 @@ module Canary
           User.only_kept.find_by(username: username)
         end
 
-        def episodes(database_ids: nil, order_by: nil)
-          SearchEpisodesQuery.new(
-            annict_ids: database_ids,
-            order_by: order_by
-          ).call
+        def episode(database_id:)
+          Episode.only_kept.find_by(id: database_id)
         end
 
         def people(database_ids: nil, names: nil, order_by: nil)

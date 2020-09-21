@@ -3,8 +3,8 @@
 module Canary
   module Types
     module Unions
-      class RecordItemable < Canary::Types::Unions::Base
-        graphql_name "RecordItemable"
+      class RecordComplementable < Canary::Types::Unions::Base
+        graphql_name "RecordComplementable"
 
         possible_types Canary::Types::Objects::EpisodeRecordType, Canary::Types::Objects::AnimeRecordType
       end

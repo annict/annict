@@ -11,7 +11,7 @@ module Canary
       argument :rating, Float,
         required: false,
         description: "[非推奨] 旧レーティング。今後は `rating_state` を使用してください。"
-      argument :rating_state, Canary::Types::Enums::RatingState,
+      argument :rating_state, Canary::Types::Enums::Rating,
         required: false,
         description: "エピソードへの評価"
       argument :share_to_twitter, Boolean,
