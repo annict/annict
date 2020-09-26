@@ -1762,9 +1762,9 @@ braces@~3.0.2:
     fill-range "^7.0.1"
 
 britecharts@^2.16.1:
-  version "2.16.1"
-  resolved "https://registry.yarnpkg.com/britecharts/-/britecharts-2.16.1.tgz#81df7c56ab587232127ca6ae4cee116ae446a568"
-  integrity sha512-EijqLa0QAy+MmSY8Uqd7jFrOiAMg4/lscIiv7uOxtin8o7HZ+oYhrQs3MS0pbegLgYZQ8R0H6F6D9MDr01JFzA==
+  version "2.17.0"
+  resolved "https://registry.yarnpkg.com/britecharts/-/britecharts-2.17.0.tgz#e04b966bef055a13dc8ca783b6e4f5d3eee73f28"
+  integrity sha512-YJzCY9QDTMMQx5VcPj0zpZjD8Vdr1mvCAt9qzPCyH137TBoZoByjuo3ITJFogPiLgVYLRvuyIo+cEyI3CkDBeA==
   dependencies:
     base-64 "^0.1.0"
     d3 "^5.16.0"
