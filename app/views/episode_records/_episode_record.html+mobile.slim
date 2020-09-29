@@ -2,11 +2,11 @@ c-record inline-template="" :user-id="#{episode_record.user.id}"
   .c-record
     .row.mb-2
       .c-record__avatar.col.pr-0
-        = link_to profile_detail_path(episode_record.user.username) do
+        = link_to profile_path(episode_record.user.username) do
           = ann_image_tag episode_record.user.profile, :image, size: "30x30", class: "rounded-circle"
       .col.pl-2
         .text-left
-          = link_to episode_record.user.profile.name, profile_detail_path(episode_record.user.username)
+          = link_to episode_record.user.profile.name, profile_path(episode_record.user.username)
           - if episode_record.user.supporter? && !episode_record.user.setting.hide_supporter_badge?
             span.badge.u-badge-supporter.ml-1
               = t "noun.supporter"

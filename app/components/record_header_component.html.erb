@@ -1,6 +1,6 @@
 <div class="c-record-header row">
   <div class="col-auto pl-3 pr-0">
-    <%= link_to profile_detail_path(user_entity.username) do %>
+    <%= link_to profile_path(user_entity.username) do %>
       <%= render ProfileImageComponent.new(
           image_url_1x: user_entity.avatar_url,
           alt: "@#{user_entity.username}"
@@ -10,7 +10,7 @@
 
   <div class="col">
     <div>
-      <%= link_to profile_detail_path(user_entity.username) do %>
+      <%= link_to profile_path(user_entity.username) do %>
         <%= user_entity.name %>
       <% end %>
       <% if user_entity.display_supporter_badge %>

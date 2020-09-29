@@ -1,7 +1,7 @@
 <div class="c-timeline__episode-record-activity">
   <div class="row mb-3">
     <div class="col-auto pr-0">
-      <%= link_to profile_detail_path(user_entity.username) do %>
+      <%= link_to profile_path(user_entity.username) do %>
         <%= render ProfileImageComponent.new(
             image_url_1x: user_entity.avatar_url,
             alt: "@#{user_entity.username}"
@@ -11,7 +11,7 @@
 
     <div class="col">
       <span class="c-timeline__user-name">
-        <%= link_to user_entity.name, profile_detail_path(user_entity.username), class: "text-body font-weight-bold u-link" %>
+        <%= link_to user_entity.name, profile_path(user_entity.username), class: "text-body font-weight-bold u-link" %>
       </span>
 
       <small class="mr-1">

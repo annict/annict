@@ -168,7 +168,7 @@ scope module: :v4 do
       match "/user_email/callback", via: :get,   as: :user_email_callback, to: "user_email_callbacks#show"
     end
 
-    match "/@:username",                  via: :get,   as: :profile_detail,          to: "users#show",    username: USERNAME_FORMAT
+    match "/@:username",                  via: :get,   as: :profile,                 to: "users#show",    username: USERNAME_FORMAT
     match "/@:username/records",          via: :get,   as: :record_list,             to: "records#index", username: USERNAME_FORMAT
     match "/episode_records",             via: :patch, as: :episode_record_mutation, to: "episode_records#update"
     match "/episode_records",             via: :post,                                to: "episode_records#create"

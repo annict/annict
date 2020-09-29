@@ -10,7 +10,7 @@ module V4
       anime = Work.only_kept.find(params[:work_id])
       episode = anime.episodes.only_kept.find(params[:id])
 
-      @episode_entity = Rails.cache.fetch(episode_detail_episode_cache_key(episode), expires_in: 3.hours) do
+      @episode_entity = Rails.cache.fetch(episode_cache_key(episode), expires_in: 3.hours) do
         EpisodePage::EpisodeRepository.new(graphql_client: graphql_client).execute(episode_id: episode.id)
       end
 
@@ -21,9 +21,9 @@ module V4
 
     private
 
-    def episode_detail_episode_cache_key(episode)
+    def episode_cache_key(episode)
       [
-        "episode-detail",
+        "episode-page",
         "episode",
         episode.id,
         episode.updated_at.rfc3339,

@@ -1,7 +1,7 @@
 <div class="c-timeline__status-activity">
   <div class="row mb-3">
     <div class="col-auto pr-0">
-      <%= link_to profile_detail_path(activity_group_entity.user.username) do %>
+      <%= link_to profile_path(activity_group_entity.user.username) do %>
         <%= render ProfileImageComponent.new(
             image_url_1x: activity_group_entity.user.avatar_url,
             alt: "@#{activity_group_entity.user.username}"
@@ -11,7 +11,7 @@
 
     <div class="col">
       <span class="c-timeline__user-name">
-        <%= link_to activity_group_entity.user.name, profile_detail_path(activity_group_entity.user.username), class: "text-body font-weight-bold u-link" %>
+        <%= link_to activity_group_entity.user.name, profile_path(activity_group_entity.user.username), class: "text-body font-weight-bold u-link" %>
       </span>
 
       <small class="mr-1">
