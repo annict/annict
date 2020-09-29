@@ -1,18 +1,52 @@
-- title = t "head.title.episodes.show", work_title: @work.local_title, episode_title_with_number: @episode.title_with_number
-- description = meta_description(t("head.meta.description.episodes.show", work_title: @work.local_title, episode_title_with_number: @episode.title_with_number))
-- keywords = meta_keywords(@work.local_title)
-- image_url = ann_image_url(@work.work_image, :image, size: "640x", ratio: "3:4")
-- set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false)
+<% title = t "head.title.episodes.show", work_title: @episode_entity.anime.local_title, episode_title_with_number: @episode_entity.title_with_number %>
+<% description = meta_description(t("head.meta.description.episodes.show", work_title: @episode_entity.anime.local_title, episode_title_with_number: @episode_entity.title_with_number)) %>
+<% image_url = @episode_entity.anime.image_url_1x %>
+<% set_meta_tags(title: title, description: description, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false) %>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-3 pr-md-0 py-3">
+      <%= render Sidebars::AnimeSidebarComponent.new(anime_entity: @episode_entity.anime, vod_channel_entities: @existing_vod_channel_entities) %>
+    </div>
+
+    <div class="col-md-9">
+      <div class="mb-3">
+        <%= render WorkSubNavComponent.new(work_entity: @episode_entity.anime, page_category: page_category) %>
+      </div>
+
+      <div class="align-items-center mb-1 row">
+        <div class="col">
+          <h2 class="mb-0">
+            <%= link_to @episode_entity.title_with_number, episode_path(@episode_entity.anime.database_id, @episode_entity.database_id), class: "u-text-body" %>
+          </h2>
+        </div>
+        <div class="col-auto pl-0">
+          <%= render ButtonGroups::EpisodeTransitionButtonGroupComponent.new(episode_entity: @episode_entity) %>
+        </div>
+      </div>
+
+      <ul class="list-inline mb-3">
+        <li class="list-inline-item">
+          <%= @episode_entity.episode_records_count %>
+          <span class="small text-muted">
+            <%= t "noun.records_count" %>
+          </span>
+        </li>
+        <li class="list-inline-item">
+          <%= @episode_entity.commented_episode_records_count %>
+          <span class="small text-muted">
+            <%= t "noun.comments_count" %>
+          </span>
+        </li>
+      </ul>
+
+      <%= render Forms::EpisodeRecordFormComponent.new(form: @form) %>
+    </div>
+  </div>
+</div>
 
 .container.py-3.mb-3
   .row
-    .col-3.pr-0
-      = render "works/sidebar", work: @work
-    .col-9
-      = render "works/subnav", work: @work
-
-      .c-card.container.py-3.my-3
-        = render "episodes/nav", work: @work, episode: @episode
       .row
         .col-9.pr-0
           .c-card.py-3

@@ -10,7 +10,7 @@ const REQUEST_LIST: any = {
   'activity-list': [libraryEntriesRequest, likesRequest],
   'character-fan-list': [followingRequest],
   'edit-record': [libraryEntriesRequest],
-  'episode-detail': [libraryEntriesRequest, likesRequest, trackedResourcesRequest, userRequest],
+  'episode': [libraryEntriesRequest, likesRequest, trackedResourcesRequest, userRequest],
   'episode-list': [libraryEntriesRequest],
   'favorite-character-list': [followingRequest],
   'favorite-organization-list': [followingRequest],

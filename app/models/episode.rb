@@ -63,6 +63,7 @@ class Episode < ApplicationRecord
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
   has_many :episode_records
+  has_many :records, through: :episode_records
   has_many :library_entries, foreign_key: :next_episode_id, dependent: :nullify
   has_many :slots, dependent: :nullify
 
@@ -135,6 +136,10 @@ class Episode < ApplicationRecord
     return "##{raw_number}" if raw_number
 
     number
+  end
+
+  def last_record_watched_at
+    episode_records.select(:created_at).last.created_at
   end
 
   private

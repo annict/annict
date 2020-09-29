@@ -1,0 +1,14 @@
+<%= form_with model: @form, url: episode_record_mutation_path, method: form_method, local: true do |f| %>
+  <%= render ErrorPanelComponent.new(form: @form) %>
+
+  <%= f.hidden_field :episode_id %>
+  <%= f.hidden_field :record_id %>
+
+  <div class="mb-2">
+    <%= render ButtonGroups::RecordRatingButtonGroupComponent.new(form: f, input_name: "episode_record_form[rating_state]") %>
+  </div>
+
+  <div class="form-group">
+    <%= render Forms::RecordTextareaComponent.new(form: f, optional_textarea_classname: "form-control", textarea_name: "episode_record_form[comment]") %>
+  </div>
+<% end %>

@@ -40,8 +40,9 @@ ja:
     channels: チャンネル
     character: キャラクター
     characters: キャラクター
+    characters2: 文字
     comment: コメント
-    comments_count: コメント数
+    comments_count: 感想数
     comments_count_shorten: コメント
     contents: コンテンツ
     column: 項目
@@ -91,6 +92,7 @@ ja:
     my_anime_list: MyAnimeList
     my_records: 自分の記録
     n_works_watched: "%{count}作品見た"
+    next: 次へ
     next_episode: 次のエピソード
     next_page: 次のページ
     next_season: 来期のアニメ
@@ -113,6 +115,7 @@ ja:
     popular_airing_anime: 人気の放送中アニメ
     popular_anime: 人気アニメ
     popular_tags: 人気のタグ
+    prev: 前へ
     prev_page: 前のページ
     prev_season: 前期のアニメ
     previous_season: 前期のアニメ

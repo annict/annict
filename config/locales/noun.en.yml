@@ -40,6 +40,7 @@ en:
     channels: Channels
     character: Character
     characters: Characters
+    characters2: Characters
     comment: コメント
     comments_count: Comments
     comments_count_shorten: Comments
@@ -91,6 +92,7 @@ en:
     my_anime_list: MyAnimeList
     my_records: My Records
     n_works_watched: "%{count} Works Watched"
+    next: Next
     next_episode: Next Episode
     next_page: Next Page
     next_season: Next Season
@@ -113,6 +115,7 @@ en:
     popular_airing_anime: Popular Airing Anime
     popular_anime: Popular Anime
     popular_tags: Popular Tags
+    prev: Prev
     prev_page: Prev Page
     prev_season: Previous Season
     previous_season: Previous Season

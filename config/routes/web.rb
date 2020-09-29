@@ -70,7 +70,7 @@ resources :checkins, only: [] do
 end
 
 resources :episodes, only: [] do
-  resources :records, only: %i(create edit update), controller: :episode_records do
+  resources :records, only: %i(edit), controller: :episode_records do
     post :switch, on: :collection
   end
 end
@@ -115,7 +115,7 @@ end
 resources :works, only: %i(index) do
   resources :records, only: %i(index create edit update), controller: :work_records
 
-  resources :episodes, only: %i(index show) do
+  resources :episodes, only: %i(index) do
     resources :checkins, only: %i(show)
   end
 
@@ -168,10 +168,13 @@ scope module: :v4 do
       match "/user_email/callback", via: :get,   as: :user_email_callback, to: "user_email_callbacks#show"
     end
 
-    match "/@:username",         via: :get,   as: :profile_detail, to: "users#show",    username: USERNAME_FORMAT
-    match "/@:username/records", via: :get,   as: :record_list,    to: "records#index", username: USERNAME_FORMAT
-    match "/timeline_mode",      via: :patch, as: :timeline_mode,  to: "timeline_mode#update"
-    match "/works/:id",          via: :get,   as: :work,           to: "works#show"
+    match "/@:username",                  via: :get,   as: :profile_detail,          to: "users#show",    username: USERNAME_FORMAT
+    match "/@:username/records",          via: :get,   as: :record_list,             to: "records#index", username: USERNAME_FORMAT
+    match "/episode_records",             via: :patch, as: :episode_record_mutation, to: "episode_records#update"
+    match "/episode_records",             via: :post,                                to: "episode_records#create"
+    match "/timeline_mode",               via: :patch, as: :timeline_mode,           to: "timeline_mode#update"
+    match "/works/:id",                   via: :get,   as: :work,                    to: "works#show"
+    match "/works/:work_id/episodes/:id", via: :get,   as: :episode,                 to: "episodes#show"
   end
 end
 

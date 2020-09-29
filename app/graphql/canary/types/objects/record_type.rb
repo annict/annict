@@ -10,8 +10,8 @@ module Canary
 
         field :database_id, Integer, null: false
         field :complementable_type, Canary::Types::Enums::RecordComplementableType, null: false
-        field :body, String, null: true
-        field :body_html, String, null: true
+        field :comment, String, null: true
+        field :comment_html, String, null: true
         field :likes_count, Integer, null: false
         field :modified_at, Canary::Types::Scalars::DateTime, null: true
         field :created_at, Canary::Types::Scalars::DateTime, null: false
@@ -25,7 +25,7 @@ module Canary
           end
         end
 
-        def body
+        def comment
           complementable_type.then do |type|
             case type
             when "EPISODE_RECORD"
@@ -40,7 +40,7 @@ module Canary
           end
         end
 
-        def body_html
+        def comment_html
           complementable_type.then do |type|
             case type
             when "EPISODE_RECORD"

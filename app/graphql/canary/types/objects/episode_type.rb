@@ -11,8 +11,9 @@ module Canary
         global_id_field :id
 
         field :database_id, Integer, null: false
-        field :number, Float, null: true
-        field :number_text, String, null: true
+        field :raw_number, Float, null: true
+        field :number, String, null: true
+        field :number_en, String, null: true
         field :sort_number, Integer, null: false
         field :title, String, null: true
         field :title_en, String, null: true
@@ -20,7 +21,7 @@ module Canary
           null: true,
           description: "満足度"
         field :episode_records_count, Integer, null: false
-        field :episode_record_bodies_count, Integer, null: false
+        field :commented_episode_records_count, Integer, null: false, method: :episode_record_bodies_count
         field :anime, Canary::Types::Objects::AnimeType, null: false
         field :prev_episode, Canary::Types::Objects::EpisodeType, null: true
         field :next_episode, Canary::Types::Objects::EpisodeType, null: true
@@ -30,18 +31,6 @@ module Canary
         field :records, Canary::Types::Objects::RecordType.connection_type, null: false, resolver: Canary::Resolvers::Records do
           argument :has_body, Boolean, required: false
           argument :order_by, Canary::Types::InputObjects::RecordOrder, required: false
-        end
-
-        def number
-          object.raw_number
-        end
-
-        def number_text
-          object.number
-        end
-
-        def episode_record_bodies_count
-          object.episode_record_bodies_count
         end
 
         def anime
