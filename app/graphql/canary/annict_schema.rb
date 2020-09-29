@@ -32,8 +32,6 @@ module Canary
         Canary::Types::Objects::EpisodeRecordType
       when Episode
         Canary::Types::Objects::EpisodeType
-      when MultipleEpisodeRecord
-        Canary::Types::Objects::MultipleEpisodeRecordType
       when Organization
         Canary::Types::Objects::OrganizationType
       when Person
