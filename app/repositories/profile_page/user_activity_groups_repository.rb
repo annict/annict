@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module ProfileDetail
+module ProfilePage
   class UserActivityGroupsRepository < ApplicationRepository
     def execute(username:, pagination:)
       result = query(variables: {

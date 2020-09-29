@@ -10,7 +10,7 @@ module V4
       work = Work.only_kept.find(params[:id])
 
       @work_entity = Rails.cache.fetch(work_detail_work_cache_key(work), expires_in: 3.hours) do
-        AnimeDetail::AnimeRepository.new(graphql_client: graphql_client).execute(anime_id: work.id)
+        AnimePage::AnimeRepository.new(graphql_client: graphql_client).execute(anime_id: work.id)
       end
 
       load_vod_channel_entities(work: work, work_entity: @work_entity)

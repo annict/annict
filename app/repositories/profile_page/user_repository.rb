@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module RecordList
+module ProfilePage
   class UserRepository < ApplicationRepository
     def execute(username:)
       result = query(variables: { username: username })

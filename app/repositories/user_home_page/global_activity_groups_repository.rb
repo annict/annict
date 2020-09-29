@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module UserHome
+module UserHomePage
   class GlobalActivityGroupsRepository < ApplicationRepository
     def execute(pagination:)
       result = query(variables: {

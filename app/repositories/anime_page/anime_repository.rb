@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module AnimeDetail
+module AnimePage
   class AnimeRepository < ApplicationRepository
     def execute(anime_id:)
       result = query(variables: { databaseId: anime_id.to_i })

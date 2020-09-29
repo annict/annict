@@ -20,14 +20,14 @@ class HomeController < ApplicationController
     end
 
     @activity_group_entities, @page_info_entity = if current_user.timeline_mode.following?
-      UserHome::FollowingActivityGroupsRepository.new(
+      UserHomePage::FollowingActivityGroupsRepository.new(
         graphql_client: graphql_client(viewer: current_user)
       ).execute(
         username: current_user.username,
         pagination: Annict::Pagination.new(before: params[:before], after: params[:after], per: 30)
       )
     else
-      UserHome::GlobalActivityGroupsRepository.new(
+      UserHomePage::GlobalActivityGroupsRepository.new(
         graphql_client: graphql_client
       ).execute(pagination: Annict::Pagination.new(before: params[:before], after: params[:after], per: 30))
     end

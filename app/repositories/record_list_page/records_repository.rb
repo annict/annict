@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module RecordList
+module RecordListPage
   class RecordsRepository < ApplicationRepository
     def execute(username:, pagination:, month: nil)
       result = query(

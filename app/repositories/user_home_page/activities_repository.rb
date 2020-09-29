@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module UserHome
+module UserHomePage
   class ActivitiesRepository < ApplicationRepository
     def execute(activity_group_id:, cursor:)
       result = query(variables: { activityGroupId: activity_group_id, cursor: cursor.presence || "" })

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module AnimeDetail
+module AnimePage
   class VodChannelsRepository < ApplicationRepository
     def execute(anime_entity:)
       result = query
