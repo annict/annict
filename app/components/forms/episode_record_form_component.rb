@@ -2,16 +2,15 @@
 
 module Forms
   class EpisodeRecordFormComponent < ApplicationComponent
-    def initialize(form:)
+    def initialize(form:, user:)
       @form = form
+      @user = user
     end
 
     private
 
-    attr_reader :form
-
     def form_method
-      form.record_id ? :patch : :post
+      @form.record_id ? :patch : :post
     end
   end
 end

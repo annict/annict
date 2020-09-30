@@ -40,7 +40,7 @@
         </li>
       </ul>
 
-      <%= render Forms::EpisodeRecordFormComponent.new(form: @form) %>
+      <%= render Forms::EpisodeRecordFormComponent.new(form: @form, user: current_user) %>
     </div>
   </div>
 </div>

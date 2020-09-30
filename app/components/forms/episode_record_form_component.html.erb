@@ -11,4 +11,13 @@
   <div class="form-group">
     <%= render Forms::RecordTextareaComponent.new(form: f, optional_textarea_classname: "form-control", textarea_name: "episode_record_form[comment]") %>
   </div>
+
+  <% if @user&.authorized_to?(:twitter, shareable: true) %>
+    <div class="form-check">
+      <label class="form-check-label">
+        <%= f.check_box :share_to_twitter, class: "form-check-input", checked: current_user.share_record_to_twitter? %>
+        <%= t "messages._common.share_to_twitter" %>
+      </label>
+    </div>
+  <% end %>
 <% end %>
