@@ -27,13 +27,17 @@
 
       <ul class="list-inline mb-3">
         <li class="list-inline-item">
-          <%= @episode_entity.episode_records_count %>
+          <span class="font-weight-bold h4">
+            <%= @episode_entity.episode_records_count %>
+          </span>
           <span class="small text-muted">
             <%= t "noun.records_count" %>
           </span>
         </li>
         <li class="list-inline-item">
-          <%= @episode_entity.commented_episode_records_count %>
+          <span class="font-weight-bold h4">
+            <%= @episode_entity.commented_episode_records_count %>
+          </span>
           <span class="small text-muted">
             <%= t "noun.comments_count" %>
           </span>
