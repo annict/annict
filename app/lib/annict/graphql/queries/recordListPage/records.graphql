@@ -17,45 +17,55 @@ query($username: String!, $month: String, $first: Int, $last: Int, $before: Stri
 
       nodes {
         databaseId
-        itemableType
+        complementableType
+        commentHtml
+        likesCount
         modifiedAt
         createdAt
 
-        anime {
-          databaseId
-          title
-          titleEn
-          image {
-            internalUrl1x: internalUrl(size: "60x")
-            internalUrl2x: internalUrl(size: "120x")
+        trackable {
+          ... on Anime {
+            databaseId
+            title
+            titleEn
+            image {
+              internalUrl1x: internalUrl(size: "60x")
+              internalUrl2x: internalUrl(size: "120x")
+            }
+          }
+
+          ... on Episode {
+            anime {
+              databaseId
+              title
+              titleEn
+              image {
+                internalUrl1x: internalUrl(size: "60x")
+                internalUrl2x: internalUrl(size: "120x")
+              }
+            }
           }
         }
 
-        itemable {
+        complementable {
           ... on EpisodeRecord {
-            databaseId
-            ratingState
-            body
-            likesCount
+            rating
             commentsCount
 
             episode {
               databaseId
-              numberText
+              number
               title
               titleEn
             }
           }
 
           ... on AnimeRecord {
-            databaseId
-            ratingAnimationState
-            ratingMusicState
-            ratingStoryState
-            ratingCharacterState
-            ratingOverallState
-            body
-            likesCount
+            ratingAnimation
+            ratingMusic
+            ratingStory
+            ratingCharacter
+            ratingOverall
           }
         }
       }

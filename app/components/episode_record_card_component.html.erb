@@ -15,9 +15,9 @@
         <div class="mb-1">
           <%= link_to work_entity.local_title, work_path(work_entity.database_id), class: "d-block" %>
 
-          <%= link_to work_episode_path(work_entity.database_id, episode_entity.database_id), class: "d-block small" do %>
+          <%= link_to episode_path(work_entity.database_id, episode_entity.database_id), class: "d-block small" do %>
             <span class="pr-1">
-              <%= episode_entity.number_text %>
+              <%= episode_entity.number %>
             </span>
 
             <%= episode_entity.local_title %>

@@ -2,7 +2,7 @@
   <%= render LikeButtonComponent.new(
       resource_name: "EpisodeRecord",
       resource_id: episode_record_entity.database_id,
-      likes_count: episode_record_entity.likes_count,
+      likes_count: record_entity.likes_count,
       page_category: "user-home",
       class_name: "mr-3"
   ) %>

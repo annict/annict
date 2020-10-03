@@ -16,20 +16,20 @@
                 <%= render RecordHeaderComponent.new(user_entity: @user_entity, record_entity: record_entity) %>
               </div>
 
-              <% if record_entity.itemable_type == "episode_record" %>
+              <% if record_entity.complementable_type == "episode_record" %>
                 <%= render EpisodeRecordContentComponent.new(
-                    user_entity: @user_entity,
-                    work_entity: record_entity.anime,
-                    episode_entity: record_entity.itemable.episode,
-                    record_entity: record_entity,
-                    episode_record_entity: record_entity.itemable
+                  user_entity: @user_entity,
+                  work_entity: record_entity.trackable.anime,
+                  episode_entity: record_entity.complementable.episode,
+                  record_entity: record_entity,
+                  episode_record_entity: record_entity.complementable
                 ) %>
-              <% elsif record_entity.itemable_type == "anime_record" %>
+              <% elsif record_entity.complementable_type == "anime_record" %>
                 <%= render WorkRecordContentComponent.new(
-                    user_entity: @user_entity,
-                    work_entity: record_entity.anime,
-                    record_entity: record_entity,
-                    work_record_entity: record_entity.itemable
+                  user_entity: @user_entity,
+                  work_entity: record_entity.trackable,
+                  record_entity: record_entity,
+                  work_record_entity: record_entity.complementable
                 ) %>
               <% end %>
             </div>

@@ -31,7 +31,7 @@ class PageCategory
   ).freeze
 
   NAMES.each do |name|
-    const_set(name.upcase, name)
+    const_set(name.upcase, name.to_s.dasherize)
   end
 
   def self.all

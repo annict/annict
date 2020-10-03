@@ -3,7 +3,7 @@
 module V4
   class RecordsController < V4::ApplicationController
     def index
-      set_page_category Rails.configuration.page_categories.record_list
+      set_page_category PageCategory::RECORD_LIST
 
       user = User.only_kept.find_by!(username: params[:username])
 
@@ -26,7 +26,7 @@ module V4
 
     def user_cache_key(user)
       [
-        "record-list",
+        PageCategory::RECORD_LIST,
         "user",
         user.id,
         user.updated_at.rfc3339

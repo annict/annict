@@ -2,7 +2,7 @@
 
 class EpisodeRecordEntity < ApplicationEntity
   attribute? :database_id, Types::Integer
-  attribute? :rating_state, Types::RecordRatingStateKinds.optional
+  attribute? :rating, Types::RecordRatingStateKinds.optional
   attribute? :comments_count, Types::Integer
   attribute? :user, UserEntity
   attribute? :record, RecordEntity
@@ -16,8 +16,8 @@ class EpisodeRecordEntity < ApplicationEntity
       attrs[:database_id] = database_id
     end
 
-    if rating_state = episode_record_node["ratingState"]
-      attrs[:rating_state] = rating_state.downcase
+    if rating = episode_record_node["rating"]
+      attrs[:rating] = rating.downcase
     end
 
     if comments_count = episode_record_node["commentsCount"]

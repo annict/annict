@@ -57,7 +57,7 @@ module Canary
           argument :order_by, Canary::Types::InputObjects::ActivityOrder, required: false
         end
 
-        field :records, Canary::Types::Objects::RecordType.connection_type, null: true do
+        field :records, Canary::Types::Objects::RecordType.connection_type, null: true, resolver: Canary::Resolvers::Records do
           argument :month, String, required: false
           argument :order_by, Canary::Types::InputObjects::RecordOrder, required: false
         end
@@ -200,23 +200,6 @@ module Canary
 
         def following_activities(order_by: nil)
           object.following_resources(model: Activity, viewer: context[:viewer], order: Canary::OrderProperty.build(order_by))
-        end
-
-        def records(month: nil, order_by: nil)
-          collection = object.records.only_kept
-
-          if month
-            if !%r{[0-9]{4}-[0-9]{2}}.match?(month)
-              raise GraphQL::ExecutionError, "The `month` argument should be like `2020-03`"
-            end
-
-            start_time = Time.zone.parse("#{month}-01").in_time_zone(object.time_zone).beginning_of_month
-            end_time = start_time.end_of_month
-            collection = collection.between_times(start_time, end_time)
-          end
-
-          order = Canary::OrderProperty.build(order_by)
-          collection.order(order.field => order.direction)
         end
 
         def episode_records(order_by: nil, has_body: nil)
