@@ -21,7 +21,7 @@ c-record inline-template="" :user-id="#{episode_record.user.id}"
         = render RatingLabelComponent.new(kind: episode_record.rating_to_rating_state)
       - elsif episode_record.rating_state.present?
         = render RatingLabelComponent.new(kind: episode_record.rating_state)
-      = render BodyComponent.new(height: 300, markdown: false) do
+      = render BodyComponent.new(height: 300) do
         = episode_record.body
     .text-right
       = render LikeButtonComponent.new(resource_name: "EpisodeRecord", resource_id: episode_record.id, likes_count: episode_record.likes_count, page_category: page_category)

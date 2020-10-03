@@ -51,7 +51,7 @@
               td
                 = render RatingLabelComponent.new(kind: work_record.rating_overall_state)
 
-    = render BodyComponent.new(height: 300, markdown: false, class_name: "mb-3") do
+    = render BodyComponent.new(height: 300, class_name: "mb-3") do
       = work_record.body
 
 

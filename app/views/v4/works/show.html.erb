@@ -44,7 +44,7 @@
             <%= t "activerecord.attributes.work.synopsis" %>
           </h2>
 
-          <%= render BodyComponent.new(markdown: false) do %>
+          <%= render BodyComponent.new do %>
             <%= @work_entity.local_synopsis.html_safe %>
           <% end %>
 
@@ -283,7 +283,7 @@
                         <% end %>
                       </div>
                       <div class="col-12 col-xl-8 order-2 order-xl-1">
-                        <%= render BodyComponent.new(height: 300, markdown: false, class_name: "mb-3") do %>
+                        <%= render BodyComponent.new(height: 300, class_name: "mb-3") do %>
                           <%= work_record.body %>
                         <% end %>
                       </div>

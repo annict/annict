@@ -54,7 +54,7 @@
                   td
                     = render RatingLabelComponent.new(kind: work_record.rating_overall_state)
         .mb-3
-          = render BodyComponent.new(height: 300, markdown: false) do
+          = render BodyComponent.new(height: 300) do
             = work_record.body
 
     .row.align-items-center

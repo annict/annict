@@ -53,7 +53,7 @@ h2.h4.text-center.mb-3.font-weight-bold
                 .col
                   .small.text-right
                     = local_time_ago_in_words(comment.created_at)
-              = render BodyComponent.new(height: 300, markdown: false) do
+              = render BodyComponent.new(height: 300) do
                 = comment.body
           - if policy(comment).update?
             .small.text-right.mb-2
