@@ -10,11 +10,18 @@
 
   <div class="col">
     <div>
-      <%= link_to profile_path(@user_entity.username) do %>
-        <%= @user_entity.name %>
+      <%= link_to profile_path(@user_entity.username), class: "font-weight-bold mr-1 text-body" do %>
+        <span class="mr-1">
+          <%= @user_entity.name %>
+        </span>
+
+        <small class="text-muted">
+          @<%= @user_entity.username %>
+        </small>
       <% end %>
+
       <% if @user_entity.display_supporter_badge %>
-        <span class="badge u-badge-supporter ml-1">
+        <span class="badge u-badge-supporter">
           <%= t "noun.supporter" %>
         </span>
       <% end %>
