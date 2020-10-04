@@ -20,4 +20,15 @@
       </label>
     </div>
   <% end %>
+
+  <div class="text-center">
+    <%= f.button class: "btn btn-primary" do %>
+      <i class="far fa-edit mr-1"></i>
+      <% if f.object.persisted? %>
+        <%= t "verb.update" %>
+      <% else %>
+        <%= t "verb.track" %>
+      <% end %>
+    <% end %>
+  </div>
 <% end %>
