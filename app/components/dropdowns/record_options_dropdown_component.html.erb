@@ -1,0 +1,28 @@
+<div class="c-record-options-dropdown d-inline-block dropdown">
+  <div class="dropdown-toggle" data-toggle="dropdown">
+    <i class="far fa-ellipsis-h"></i>
+  </div>
+
+  <div class="dropdown-menu dropdown-menu-right">
+    <% if policy(@viewer, @user_entity).mute? %>
+      <%= link_to "#", class: "dropdown-item" do %>
+        <div
+          data-controller="mute-user"
+          data-mute-user-user-id="<%= @user_entity.database_id %>"
+        >
+          <%= t "verb.mute" %>
+        </div>
+      <% end %>
+    <% end %>
+
+    <% if policy(@viewer, @record_entity).update? %>
+      <%= link_to edit_record_path(@user_entity.username, @record_entity.database_id), class: "dropdown-item" do %>
+        <%= t "noun.edit" %>
+      <% end %>
+
+      <%= link_to record_path(@user_entity.username, @record_entity.database_id), class: "dropdown-item", data: { confirm: t("messages._common.are_you_sure") }, method: :delete do %>
+        <%= t "noun.delete" %>
+      <% end %>
+    <% end %>
+  </div>
+</div>

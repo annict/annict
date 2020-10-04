@@ -3,7 +3,7 @@
 class ApplicationComponent < ViewComponent::Base
   private
 
-  def policy(user_entity, resource_entity)
-    @policy ||= Pundit::PolicyFinder.new(resource_entity).policy.new(user_entity, resource_entity)
+  def policy(viewer, resource_entity)
+    Pundit::PolicyFinder.new(resource_entity).policy.new(viewer, resource_entity)
   end
 end
