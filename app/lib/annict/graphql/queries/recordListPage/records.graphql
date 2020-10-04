@@ -50,6 +50,7 @@ query($username: String!, $month: String, $first: Int, $last: Int, $before: Stri
         complementable {
           ... on EpisodeRecord {
             rating
+            advancedRating
             commentsCount
 
             episode {

@@ -59,6 +59,7 @@ module Canary
 
         field :records, Canary::Types::Objects::RecordType.connection_type, null: true, resolver: Canary::Resolvers::Records do
           argument :month, String, required: false
+          argument :episode_id, ID, required: false
           argument :order_by, Canary::Types::InputObjects::RecordOrder, required: false
         end
 

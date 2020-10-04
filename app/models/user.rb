@@ -497,6 +497,10 @@ class User < ApplicationRecord
     !!confirmed_at
   end
 
+  def last_record_watched_at
+    records.select(:created_at).last.created_at
+  end
+
   private
 
   def get_large_avatar_image(provider, image_url)

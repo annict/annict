@@ -6,7 +6,7 @@
 <div class="container-fluid py-3">
   <div class="row">
     <div class="col-md-3 pr-md-0">
-      <%= render Sidebar::AnimeSidebarComponent.new(anime_entity: @work_entity, vod_channel_entities: @existing_vod_channel_entities) %>
+      <%= render Sidebar::AnimeSidebarComponent.new(anime_entity: @work_entity, vod_channel_entities: @existing_vod_channel_entities, viewer: current_user) %>
     </div>
 
     <div class="col-md-9">

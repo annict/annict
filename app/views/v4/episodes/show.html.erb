@@ -6,7 +6,7 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-md-3 pr-md-0 py-3">
-      <%= render Sidebars::AnimeSidebarComponent.new(anime_entity: @episode_entity.anime, vod_channel_entities: @existing_vod_channel_entities) %>
+      <%= render Sidebars::AnimeSidebarComponent.new(anime_entity: @episode_entity.anime, vod_channel_entities: @existing_vod_channel_entities, viewer: current_user) %>
     </div>
 
     <div class="col-md-9">
@@ -44,95 +44,40 @@
         </li>
       </ul>
 
-      <%= render Forms::EpisodeRecordFormComponent.new(form: @form, user: current_user) %>
+      <div class="mb-3">
+        <%= render Forms::EpisodeRecordFormComponent.new(form: @form, user: current_user) %>
+      </div>
+
+      <div class="mb-3 pt-3">
+        <h3 class="font-weight-bold">
+          <%= t "noun.my_records" %>
+        </h3>
+
+        <% if @my_record_entities.present? %>
+          <% @my_record_entities.each do |record_entity| %>
+            <div class="py-3 u-underline">
+              <div class="mb-3">
+                <%= render RecordHeaderComponent.new(user_entity: record_entity.user, record_entity: record_entity) %>
+              </div>
+
+              <%= render EpisodeRecordContentComponent.new(
+                  user_entity: record_entity.user,
+                  work_entity: record_entity.trackable.anime,
+                  episode_entity: record_entity.trackable,
+                  record_entity: record_entity,
+                  episode_record_entity: record_entity.complementable,
+                  show_card: false
+              ) %>
+            </div>
+          <% end %>
+        <% else %>
+          <%= render EmptyComponent.new(text: t("messages._empty.no_records")) %>
+        <% end %>
+      </div>
+
+      <h3 class="font-weight-bold mb-3">
+        <%= t "noun.following_records" %>
+      </h3>
     </div>
   </div>
 </div>
-
-.container.py-3.mb-3
-  .row
-      .row
-        .col-9.pr-0
-          .c-card.py-3
-            - if user_signed_in?
-              .container
-                = render "episode_records/form", episode_record: @episode_record
-                hr
-            .container
-              - if user_signed_in?
-                .text-center.mb-3
-                  .btn-group.btn-group-sm
-                    = active_link_to switch_episode_records_path(@episode, to: :all_comments), class: "btn", class_active: "btn-primary", class_inactive: "btn-secondary", active: (user_signed_in? ? current_user.setting.display_option_record_list.all_comments? : false ), data: { method: :post } do
-                      = t "noun.all_comments"
-                      span.ml-1 = "(#{@all_comment_episode_records.total_count})"
-                    = active_link_to switch_episode_records_path(@episode, to: :friend_comments), class: "btn", class_active: "btn-primary", class_inactive: "btn-secondary", active: (user_signed_in? ? current_user.setting.display_option_record_list.friend_comments? : false ), data: { method: :post } do
-                      = t "noun.friend_comments"
-                      span.ml-1 = "(#{@friend_comment_episode_records.total_count})"
-                    = active_link_to switch_episode_records_path(@episode, to: :my_episode_records), class: "btn", class_active: "btn-primary", class_inactive: "btn-secondary", active: (user_signed_in? ? current_user.setting.display_option_record_list.my_episode_records? : false ), data: { method: :post } do
-                      = t "noun.my_records"
-                      span.ml-1 = "(#{@my_episode_records.total_count})"
-              - if @selected_comment_episode_records.present?
-                - if user_signed_in?
-                  .text-right.mb-3
-                    c-record-sorter current-url="#{request.url}"
-                .c-record-list
-                  - @selected_comment_episode_records.each do |episode_record|
-                    = render "episode_records/episode_record", episode_record: episode_record, is_spoiler: @is_spoiler
-                - if @selected_comment_episode_records.total_pages > 1
-                  .mt-4.text-center
-                    = paginate @selected_comment_episode_records
-              - else
-                = render "application/components/empty", text: t("messages.episodes.no_comments")
-
-        .col-3.pl-0
-          .mb-4
-            .small.font-weight-bold.mb-2.text-center
-              = t "noun.stats"
-            .row.align-items-center
-              .col.text-right
-                .small.text-muted
-                  = t "noun.satisfaction_rate_shorten"
-              .col.pl-0
-                .h3
-                  = @episode.satisfaction_rate.presence || "-"
-                  span.small.ml-1
-                    | %
-            .row.align-items-center
-              .col.text-right
-                .small.text-muted
-                  - if locale_ja?
-                    = t "noun.records_count"
-                  - else
-                    = t "noun.records"
-              .col.pl-0
-                .h3
-                  = @all_episode_records.size
-            .row.align-items-center
-              .col.text-right
-                .small.text-muted
-                  = t "noun.ratings_count"
-              .col.pl-0
-                .h3
-                  = @episode.ratings_count
-            .row.align-items-center
-              .col.text-right
-                .small.text-muted
-                  = t "noun.comments_count"
-              .col.pl-0
-                .h3
-                  = @all_episode_records.with_body.size
-          .mb-3.text-center
-            .small.font-weight-bold
-              = t "noun.rating"
-            c-episode-rating-state-chart init-dataset="#{@episode.rating_state_chart_dataset}"
-          .text-center
-            .small.font-weight-bold
-              - if locale_ja?
-                = t "noun.records_count"
-              - else
-                = t "noun.records"
-            c-episode-records-chart init-dataset="#{@episode.records_chart_dataset}"
-
-- content_for :js_templates do
-  = render "application/js_templates/mute_user_button"
-  = render "application/js_templates/record_sorter"

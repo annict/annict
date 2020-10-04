@@ -1,0 +1,50 @@
+query($episodeId: ID!) {
+  viewer {
+    records(episodeId: $episodeId, orderBy: { field: CREATED_AT, direction: DESC }) {
+      nodes {
+        databaseId
+        complementableType
+        commentHtml
+        likesCount
+        modifiedAt
+        createdAt
+
+        user {
+          databaseId
+          username
+          name
+          avatarUrl(size: size200)
+          backgroundImageUrl
+          displaySupporterBadge
+        }
+
+        trackable {
+          ... on Episode {
+            databaseId
+            number
+            title
+            titleEn
+
+            anime {
+              databaseId
+              title
+              titleEn
+              image {
+                internalUrl1x: internalUrl(size: "60x")
+                internalUrl2x: internalUrl(size: "120x")
+              }
+            }
+          }
+        }
+
+        complementable {
+          ... on EpisodeRecord {
+            rating
+            advancedRating
+            commentsCount
+          }
+        }
+      }
+    }
+  }
+}

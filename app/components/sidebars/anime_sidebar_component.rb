@@ -2,13 +2,10 @@
 
 module Sidebars
   class AnimeSidebarComponent < ApplicationComponent
-    def initialize(anime_entity:, vod_channel_entities:)
+    def initialize(anime_entity:, vod_channel_entities:, viewer: nil)
       @anime_entity = anime_entity
       @vod_channel_entities = vod_channel_entities
+      @viewer = viewer
     end
-
-    private
-
-    attr_reader :anime_entity, :vod_channel_entities
   end
 end
