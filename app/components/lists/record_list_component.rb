@@ -1,0 +1,11 @@
+# frozen_string_literal: true
+
+module Lists
+  class RecordListComponent < ApplicationComponent
+    def initialize(viewer:, record_entities:, show_card: true)
+      @viewer = viewer
+      @record_entities = record_entities
+      @show_card = show_card
+    end
+  end
+end

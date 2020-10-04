@@ -9,34 +9,7 @@
   <div class="row">
     <div class="col-12 col-lg-9">
       <div class="mb-3">
-        <% if @record_entities.present? %>
-          <% @record_entities.each do |record_entity| %>
-            <div class="py-3 u-underline">
-              <div class="mb-3">
-                <%= render RecordHeaderComponent.new(user_entity: @user_entity, record_entity: record_entity) %>
-              </div>
-
-              <% if record_entity.complementable_type == "episode_record" %>
-                <%= render EpisodeRecordContentComponent.new(
-                  user_entity: @user_entity,
-                  work_entity: record_entity.trackable.anime,
-                  episode_entity: record_entity.complementable.episode,
-                  record_entity: record_entity,
-                  episode_record_entity: record_entity.complementable
-                ) %>
-              <% elsif record_entity.complementable_type == "anime_record" %>
-                <%= render WorkRecordContentComponent.new(
-                  user_entity: @user_entity,
-                  work_entity: record_entity.trackable,
-                  record_entity: record_entity,
-                  work_record_entity: record_entity.complementable
-                ) %>
-              <% end %>
-            </div>
-          <% end %>
-        <% else %>
-          <%= render EmptyComponent.new(text: t("messages._empty.no_records")) %>
-        <% end %>
+        <%= render Lists::RecordListComponent.new(viewer: current_user, record_entities: @record_entities) %>
       </div>
 
       <%= render PaginationComponent.new(page_info_entity: @page_info_entity, resources_path: current_path_with_query) %>
