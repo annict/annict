@@ -12,23 +12,31 @@
     <%= render Forms::RecordTextareaComponent.new(form: f, optional_textarea_classname: "form-control", textarea_name: "episode_record_form[comment]") %>
   </div>
 
-  <% if @user&.authorized_to?(:twitter, shareable: true) %>
-    <div class="form-check">
-      <label class="form-check-label">
-        <%= f.check_box :share_to_twitter, class: "form-check-input", checked: @user.share_record_to_twitter? %>
-        <%= t "messages._common.share_to_twitter" %>
-      </label>
-    </div>
-  <% end %>
-
-  <div class="text-center">
-    <%= f.button class: "btn btn-primary" do %>
-      <i class="far fa-edit mr-1"></i>
-      <% if f.object.persisted? %>
-        <%= t "verb.update" %>
-      <% else %>
-        <%= t "verb.track" %>
+  <div class="row">
+    <div class="col">
+      <% if @viewer&.authorized_to?(:twitter, shareable: true) %>
+        <div class="form-check">
+          <label class="form-check-label">
+            <%= f.check_box :share_to_twitter, class: "form-check-input", checked: @viewer.share_record_to_twitter? %>
+            <%= t "messages._common.share_to_twitter" %>
+          </label>
+        </div>
       <% end %>
-    <% end %>
+    </div>
+
+    <div class="col">
+      <div class="text-center">
+        <%= f.button class: "btn btn-primary" do %>
+          <i class="far fa-edit mr-1"></i>
+          <% if f.object.persisted? %>
+            <%= t "verb.update" %>
+          <% else %>
+            <%= t "verb.track" %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="col"></div>
   </div>
 <% end %>

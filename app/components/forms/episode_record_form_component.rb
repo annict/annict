@@ -2,9 +2,9 @@
 
 module Forms
   class EpisodeRecordFormComponent < ApplicationComponent
-    def initialize(form:, user:)
+    def initialize(form:, viewer:)
       @form = form
-      @user = user
+      @viewer = viewer
     end
 
     private
