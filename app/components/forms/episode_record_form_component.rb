@@ -10,7 +10,7 @@ module Forms
     private
 
     def form_method
-      @form.record_id ? :patch : :post
+      @form.persisted? ? :patch : :post
     end
   end
 end
