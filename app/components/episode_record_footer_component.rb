@@ -6,8 +6,4 @@ class EpisodeRecordFooterComponent < ApplicationComponent
     @record_entity = record_entity
     @episode_record_entity = episode_record_entity
   end
-
-  private
-
-  attr_reader :episode_record_entity, :record_entity, :user_entity
 end

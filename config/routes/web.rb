@@ -70,7 +70,7 @@ resources :checkins, only: [] do
 end
 
 resources :episodes, only: [] do
-  resources :records, only: %i(edit), controller: :episode_records do
+  resources :records, only: [], controller: :episode_records do
     post :switch, on: :collection
   end
 end
@@ -170,6 +170,7 @@ scope module: :v4 do
 
     match "/@:username",                  via: :get,   as: :profile,                 to: "users#show",    username: USERNAME_FORMAT
     match "/@:username/records",          via: :get,   as: :record_list,             to: "records#index", username: USERNAME_FORMAT
+    match "/@:username/records/:id/edit", via: :get,   as: :edit_record,             to: "records#edit",  username: USERNAME_FORMAT
     match "/episode_records",             via: :patch, as: :episode_record_mutation, to: "episode_records#update"
     match "/episode_records",             via: :post,                                to: "episode_records#create"
     match "/timeline_mode",               via: :patch, as: :timeline_mode,           to: "timeline_mode#update"

@@ -1,14 +1,34 @@
 <div class="c-episode-record-footer">
-  <%= render LikeButtonComponent.new(
-      resource_name: "EpisodeRecord",
-      resource_id: episode_record_entity.database_id,
-      likes_count: record_entity.likes_count,
-      page_category: "user-home",
-      class_name: "mr-3"
-  ) %>
+  <div class="row">
+    <div class="col-6">
+      <%= render LikeButtonComponent.new(
+        resource_name: "EpisodeRecord",
+        resource_id: @episode_record_entity.database_id,
+        likes_count: @record_entity.likes_count,
+        page_category: "user-home",
+        class_name: "mr-2"
+      ) %>
 
-  <%= link_to record_path(user_entity.username, record_entity.database_id) do %>
-    <i class="far fa-comment"></i>
-    <%= episode_record_entity.comments_count %>
-  <% end %>
+      <%= link_to record_path(@user_entity.username, @record_entity.database_id) do %>
+        <i class="far fa-comment"></i>
+        <%= @episode_record_entity.comments_count %>
+      <% end %>
+    </div>
+
+    <div class="col-6">
+      <% if policy(@user_entity, @record_entity).update? %>
+        <div class="mb-2 small text-right">
+          <%= link_to edit_record_path(@user_entity.username, @record_entity.database_id), class: "mr-2" do %>
+            <i class="far fa-edit mr-1"></i>
+            <%= t "noun.edit" %>
+          <% end %>
+
+          <%= link_to record_path(@user_entity.username, @record_entity.database_id), method: :delete, data: { confirm: t("messages._common.are_you_sure") } do %>
+            <i class="far fa-trash-alt mr-1"></i>
+            <%= t "noun.delete" %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
 </div>
