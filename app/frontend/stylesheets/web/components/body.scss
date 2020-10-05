@@ -13,6 +13,10 @@
     dl, h1, h2, h3, h4, h5, h6, ol, p, ul {
       margin-bottom: 1.5rem;
     }
+
+    p:last-child {
+      margin-bottom: 1rem;
+    }
   }
 
   &__read-more-background {
