@@ -30,6 +30,7 @@ module Canary
 
         field :records, Canary::Types::Objects::RecordType.connection_type, null: false, resolver: Canary::Resolvers::Records do
           argument :has_body, Boolean, required: false
+          argument :by_following, Boolean, required: false
           argument :order_by, Canary::Types::InputObjects::RecordOrder, required: false
         end
 

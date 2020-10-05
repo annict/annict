@@ -3,7 +3,7 @@
 module Canary
   module Resolvers
     class Records < Canary::Resolvers::Base
-      def resolve(has_body: nil, month: nil, episode_id: nil, order_by: nil)
+      def resolve(has_body: nil, month: nil, episode_id: nil, by_following: nil, order_by: nil)
         order = Canary::OrderProperty.build(order_by)
 
         @records = object.records.only_kept
@@ -30,6 +30,10 @@ module Canary
           end
 
           @records = @records.joins(:episode_record).where(episode_records: { episode_id: episode.id })
+        end
+
+        if by_following
+          @records = @records.joins(:user).merge(context[:viewer].followings)
         end
 
         @records = case order.field

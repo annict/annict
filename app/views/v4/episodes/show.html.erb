@@ -56,9 +56,13 @@
         <%= render Lists::RecordListComponent.new(viewer: current_user, record_entities: @my_record_entities, show_card: false) %>
       </div>
 
-      <h3 class="font-weight-bold mb-3">
-        <%= t "noun.following_records" %>
-      </h3>
+      <div class="mb-3">
+        <h3 class="font-weight-bold mb-3">
+          <%= t "noun.following_records" %>
+        </h3>
+
+        <%= render Lists::RecordListComponent.new(viewer: current_user, record_entities: @following_record_entities, show_card: false) %>
+      </div>
     </div>
   </div>
 </div>

@@ -19,8 +19,12 @@ module V4
       @form = EpisodeRecordForm.new(episode_id: @episode_entity.id)
 
       if user_signed_in?
-        @my_record_entities = Rails.cache.fetch(my_records_cache_key(current_user), expires_in: 1.day) do
+        @my_record_entities = Rails.cache.fetch(my_records_cache_key(current_user, episode), expires_in: 1.day) do
           EpisodePage::MyRecordsRepository.new(graphql_client: graphql_client(viewer: current_user)).execute(episode_id: @episode_entity.id)
+        end
+
+        @following_record_entities = Rails.cache.fetch(following_records_cache_key(current_user, episode), expires_in: 3.hours) do
+          EpisodePage::FollowingRecordsRepository.new(graphql_client: graphql_client(viewer: current_user)).execute(episode_id: @episode_entity.id)
         end
       end
     end
@@ -29,7 +33,7 @@ module V4
 
     def episode_cache_key(episode)
       [
-        "episode-page",
+        PageCategory::EPISODE,
         "episode",
         episode.id,
         episode.updated_at.rfc3339,
@@ -37,12 +41,22 @@ module V4
       ].freeze
     end
 
-    def my_records_cache_key(user)
+    def my_records_cache_key(user, episode)
       [
-        "episode-page",
+        PageCategory::EPISODE,
         "my-records",
+        episode.id,
         user.id,
         user.last_record_watched_at.rfc3339
+      ].freeze
+    end
+
+    def following_records_cache_key(user, episode)
+      [
+        PageCategory::EPISODE,
+        "following-records",
+        episode.id,
+        user.id
       ].freeze
     end
   end
