@@ -384,8 +384,7 @@ class User < ApplicationRecord
   end
 
   def supporter?
-    gumroad_subscriber.present? &&
-      (gumroad_subscriber.gumroad_ended_at.nil? || gumroad_subscriber.gumroad_ended_at > Time.zone.now)
+    gumroad_subscriber && gumroad_subscriber.active?
   end
 
   def weeks

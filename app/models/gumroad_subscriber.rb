@@ -28,4 +28,8 @@
 class GumroadSubscriber < ApplicationRecord
   validates :gumroad_id, presence: true
   validates :gumroad_product_id, presence: true
+
+  def active?
+    gumroad_ended_at.nil? || gumroad_ended_at > Time.zone.now
+  end
 end

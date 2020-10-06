@@ -132,8 +132,12 @@ module Canary
         end
 
         def display_supporter_badge
+          return false unless object.gumroad_subscriber_id
+
           Canary::RecordLoader.for(Setting, column: :user_id).load(object.id).then do |setting|
-            context[:viewer] == object ? !setting.hide_supporter_badge? : object.supporter? && !setting.hide_supporter_badge?
+            Canary::RecordLoader.for(GumroadSubscriber).load(object.gumroad_subscriber_id).then do |gumroad_subscriber|
+              context[:viewer] == object ? !setting.hide_supporter_badge? : gumroad_subscriber&.active? && !setting.hide_supporter_badge?
+            end
           end
         end
 

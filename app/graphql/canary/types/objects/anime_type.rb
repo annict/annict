@@ -227,7 +227,9 @@ module Canary
         end
 
         def copyright
-          object.work_image&.copyright
+          image.then do |work_image|
+            work_image&.copyright
+          end
         end
 
         def is_no_episodes
