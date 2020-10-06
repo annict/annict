@@ -63,7 +63,7 @@ query($databaseId: Int!) {
       }
     }
 
-    records(hasBody: true, orderBy: { field: CREATED_AT, direction: DESC }, first: 50) {
+    records(hasBody: true, orderBy: { field: RATING, direction: DESC }, first: 50) {
       nodes {
         databaseId
         complementableType
