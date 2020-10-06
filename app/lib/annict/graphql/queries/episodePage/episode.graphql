@@ -63,23 +63,38 @@ query($databaseId: Int!) {
       }
     }
 
-    records(hasBody: true, orderBy: { field: CREATED_AT, direction: DESC }, first: 21) { # Get 21 records to display more records link
+    records(hasBody: true, orderBy: { field: CREATED_AT, direction: DESC }, first: 50) {
       nodes {
         databaseId
+        complementableType
         commentHtml
         likesCount
         modifiedAt
         createdAt
+
         user {
+          databaseId
           username
           name
-          avatarUrl(size: size50)
+          avatarUrl(size: size200)
           displaySupporterBadge
         }
+
+        trackable {
+          ... on Episode {
+            databaseId
+
+            anime {
+              databaseId
+            }
+          }
+        }
+
         complementable {
           ... on EpisodeRecord {
             rating
             advancedRating
+            commentsCount
           }
         }
       }
