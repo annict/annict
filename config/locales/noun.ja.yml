@@ -103,7 +103,7 @@ ja:
     organization: 団体
     organizations: 団体
     other_record_body_list_by: "%{profile_name}が書いた感想"
-    other_record_body_list: みんなの感想
+    other_comments: みんなの感想
     other_users: その他利用者さん
     overall: 全体
     password: パスワード

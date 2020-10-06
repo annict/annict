@@ -103,7 +103,7 @@ en:
     organization: Organization
     organizations: Organizations
     other_record_body_list_by: "Comments by %{profile_name}"
-    other_record_body_list: "All Comments"
+    other_comments: "All Comments"
     other_users: Other Users
     overall: Overall
     password: Password
