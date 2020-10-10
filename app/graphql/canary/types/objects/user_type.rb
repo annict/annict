@@ -63,11 +63,6 @@ module Canary
           argument :order_by, Canary::Types::InputObjects::RecordOrder, required: false
         end
 
-        field :episode_records, Canary::Types::Objects::EpisodeRecordType.connection_type, null: true do
-          argument :order_by, Canary::Types::InputObjects::EpisodeRecordOrder, required: false
-          argument :has_body, Boolean, required: false
-        end
-
         field :anime_list, Canary::Types::Objects::AnimeType.connection_type, null: true do
           argument :database_ids, [Integer], required: false
           argument :seasons, [String], required: false
