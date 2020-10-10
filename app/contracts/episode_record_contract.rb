@@ -2,6 +2,8 @@
 
 class EpisodeRecordContract < ApplicationContract
   params do
-    required(:comment).filled(:stripped_string)
+    required(:rating).maybe(EpisodeRecordEntity::Types::RecordRating)
+    required(:comment).maybe(:stripped_string)
+    required(:share_to_twitter).filled(:coercible_boolean)
   end
 end

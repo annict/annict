@@ -5,10 +5,6 @@ export default class extends Controller {
 
   inputTarget!: HTMLElement;
 
-  initialize() {
-    this.resetState();
-  }
-
   changeState(event: Event) {
     const { state } = event.currentTarget.dataset;
 
@@ -20,7 +16,7 @@ export default class extends Controller {
       event.currentTarget.classList.remove('u-btn-outline-input-border');
       event.currentTarget.classList.add(`u-btn-${state}`);
 
-      this.inputTarget.value = state;
+      this.inputTarget.value = state.toUpperCase();
     }
   }
 

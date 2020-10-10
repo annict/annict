@@ -1,11 +1,14 @@
-<%= form_with model: @form, url: episode_record_mutation_path, method: form_method, local: true do |f| %>
+<%= form_with model: @form, url: episode_record_list_path(params[:work_id], params[:id]), method: form_method, local: true do |f| %>
   <%= render ErrorPanelComponent.new(form: @form) %>
 
-  <%= f.hidden_field :episode_id %>
-  <%= f.hidden_field :record_id %>
+  <% if @form.persisted? %>
+    <%= f.hidden_field :record_id %>
+  <% else %>
+    <%= f.hidden_field :episode_id %>
+  <% end %>
 
   <div class="mb-2">
-    <%= render ButtonGroups::RecordRatingButtonGroupComponent.new(form: f, input_name: "episode_record_form[rating_state]") %>
+    <%= render ButtonGroups::RecordRatingButtonGroupComponent.new(form: f, input_name: "episode_record_form[rating]") %>
   </div>
 
   <div class="form-group">

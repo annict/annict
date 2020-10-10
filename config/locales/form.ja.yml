@@ -1,6 +1,9 @@
 ja:
   form:
     attributes:
+      episode_record_form:
+        comment: 感想
+        rating: 評価
       registration_form:
         email: メールアドレス
         terms_and_privacy_policy_agreement: 利用規約とプライバシーポリシー

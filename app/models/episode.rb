@@ -139,7 +139,7 @@ class Episode < ApplicationRecord
   end
 
   def last_record_watched_at
-    episode_records.select(:created_at).last.created_at
+    episode_records.select(:created_at).last&.created_at
   end
 
   private

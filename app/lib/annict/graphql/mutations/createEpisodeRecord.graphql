@@ -1,20 +1,18 @@
 mutation (
   $episodeId: ID!,
-  $body: String,
-  $rating: Float,
-  $ratingState: RatingState,
+  $comment: String,
+  $rating: Rating,
   $shareToTwitter: Boolean
 ) {
   createEpisodeRecord(
     input: {
       episodeId: $episodeId,
-      body: $body,
+      comment: $comment,
       rating: $rating,
-      ratingState: $ratingState,
       shareToTwitter: $shareToTwitter
     }
   ) {
-    episodeRecord {
+    record {
       databaseId
     }
   }

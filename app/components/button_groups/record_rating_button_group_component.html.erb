@@ -3,22 +3,21 @@
   data-controller="record-rating"
 >
   <div class="btn-group btn-group-sm">
-    <% EpisodeRecord.rating_state.values.each do |state| %>
+    <% EpisodeRecord.rating_state.values.each do |rating| %>
       <div
-        class="btn"
-        data-class="record.ratingState === state ? u-btn-#{state} : u-btn-outline-input-border"
+        class="<%= button_class_name(rating) %>"
         data-action="click->record-rating#changeState"
-        data-state="<%= state %>"
+        data-state="<%= rating %>"
       >
-        <%= helpers.rating_state_icon state, class: "mr-1" %>
-        <%= state.text %>
+        <%= helpers.rating_state_icon rating, class: "mr-1" %>
+        <%= rating.text %>
       </div>
     <% end %>
   </div>
 
-  <input
-    data-target="record-rating.input"
-    name="<%= @input_name %>"
-    type="hidden"
-  >
+  <%= hidden_field_tag(
+    @input_name,
+    @form.object.rating,
+    "data-target": "record-rating.input"
+  ) %>
 </div>

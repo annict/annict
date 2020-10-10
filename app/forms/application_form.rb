@@ -9,6 +9,8 @@ class ApplicationForm
   extend ActiveModel::Naming
   extend ActiveModel::Translation
 
+  attr_writer :error_messages
+
   # @overload
   def self.i18n_scope
     :form
@@ -33,14 +35,16 @@ class ApplicationForm
   end
 
   def error_messages
-    return [] unless validation_result
+    @error_messages ||= begin
+      return [] unless validation_result
 
-    separator = I18n.locale == :ja ? "" : " "
-    validation_result.errors.to_h.map do |attr_name, predicates|
-      [
-        self.class.human_attribute_name(attr_name),
-        predicates.first
-      ].join(separator)
+      separator = I18n.locale == :ja ? "" : " "
+      validation_result.errors.to_h.map do |attr_name, predicates|
+        [
+          self.class.human_attribute_name(attr_name),
+          predicates.first
+        ].join(separator)
+      end
     end
   end
 

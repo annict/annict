@@ -168,14 +168,14 @@ scope module: :v4 do
       match "/user_email/callback", via: :get,   as: :user_email_callback, to: "user_email_callbacks#show"
     end
 
-    match "/@:username",                  via: :get,   as: :profile,                 to: "users#show",    username: USERNAME_FORMAT
-    match "/@:username/records",          via: :get,   as: :record_list,             to: "records#index", username: USERNAME_FORMAT
-    match "/@:username/records/:id/edit", via: :get,   as: :edit_record,             to: "records#edit",  username: USERNAME_FORMAT
-    match "/episode_records",             via: :patch, as: :episode_record_mutation, to: "episode_records#update"
-    match "/episode_records",             via: :post,                                to: "episode_records#create"
-    match "/timeline_mode",               via: :patch, as: :timeline_mode,           to: "timeline_mode#update"
-    match "/works/:id",                   via: :get,   as: :work,                    to: "works#show"
-    match "/works/:work_id/episodes/:id", via: :get,   as: :episode,                 to: "episodes#show"
+    match "/@:username",                          via: :get,   as: :profile,                 to: "users#show",    username: USERNAME_FORMAT
+    match "/@:username/records",                  via: :get,   as: :record_list,             to: "records#index", username: USERNAME_FORMAT
+    match "/@:username/records/:id/edit",         via: :get,   as: :edit_record,             to: "records#edit",  username: USERNAME_FORMAT
+    match "/episode_records",                     via: :patch, as: :episode_record_mutation, to: "episode_records#update"
+    match "/timeline_mode",                       via: :patch, as: :timeline_mode,           to: "timeline_mode#update"
+    match "/works/:id",                           via: :get,   as: :work,                    to: "works#show"
+    match "/works/:work_id/episodes/:id",         via: :get,   as: :episode,                 to: "episodes#show"
+    match "/works/:work_id/episodes/:id/records", via: :post,  as: :episode_record_list,     to: "episode_records#create"
   end
 end
 

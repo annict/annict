@@ -1,21 +1,20 @@
 # frozen_string_literal: true
 
 class CreateEpisodeRecordRepository < ApplicationRepository
-  def execute(episode:, params:)
+  def execute(form:)
     result = mutate(variables: {
-      episodeId: Canary::AnnictSchema.id_from_object(episode, Episode),
-      body: params[:body],
-      rating: params[:rating]&.to_f,
-      ratingState: params[:rating_state]&.upcase.presence || nil,
-      shareToTwitter: params[:share_to_twitter].in?(%w(true 1))
+      episodeId: form.episode_id,
+      comment: form.comment,
+      rating: form.rating,
+      shareToTwitter: form.share_to_twitter
     })
 
     if result.to_h["errors"]
       return [nil, MutationError.new(message: result.to_h["errors"][0]["message"])]
     end
 
-    episode_record_node = result.dig("data", "createEpisodeRecord", "episodeRecord")
+    record_node = result.dig("data", "createEpisodeRecord", "record")
 
-    [EpisodeRecordEntity.from_node(episode_record_node), nil]
+    [RecordEntity.from_node(record_node), nil]
   end
 end

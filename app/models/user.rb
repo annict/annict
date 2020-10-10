@@ -497,7 +497,7 @@ class User < ApplicationRecord
   end
 
   def last_record_watched_at
-    records.select(:created_at).last.created_at
+    records.select(:created_at).last&.created_at
   end
 
   private

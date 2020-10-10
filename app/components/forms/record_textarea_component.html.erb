@@ -1,14 +1,14 @@
-<textarea
-  class="<%= textarea_classname %>"
-  data-action="keyup->record-textarea#updateCharactersCount"
-  data-controller="record-textarea"
-  data-record-textarea-characters-counter-id="<%= @form.object.episode_id %>"
-  name="<%= @textarea_name %>"
-  placeholder="<%= t("messages.episode_records.new.write_your_comment") %>"
-  rows="5"
->
-      <%= @form.object.comment %>
-    </textarea>
+<%= text_area_tag(
+  @textarea_name,
+  @form.object.comment,
+  class: textarea_classname,
+  "data-action": "keyup->record-textarea#updateCharactersCount",
+  "data-controller": "record-textarea",
+  "data-record-textarea-characters-counter-id": @form.object.episode_id,
+  placeholder: t("messages.episode_records.new.write_your_comment"),
+  rows: "5"
+) %>
+
 <div
   class="small text-muted text-right"
   data-controller="characters-counter"
