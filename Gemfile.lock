@@ -552,7 +552,7 @@ GEM
       rubyzip (>= 1.2.2)
     sentry-raven (3.1.1)
       faraday (>= 1.0)
-    shrine (3.2.2)
+    shrine (3.3.0)
       content_disposition (~> 1.0)
       down (~> 5.1)
     simple_oauth (0.3.1)
