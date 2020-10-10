@@ -1,6 +1,6 @@
 query($episodeId: ID!) {
   viewer {
-    records(episodeId: $episodeId, orderBy: { field: RATING, direction: DESC }, first: 50) {
+    records(episodeId: $episodeId, orderBy: { field: CREATED_AT, direction: DESC }, first: 50) {
       nodes {
         databaseId
         complementableType

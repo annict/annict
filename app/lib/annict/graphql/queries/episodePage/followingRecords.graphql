@@ -1,7 +1,7 @@
 query($episodeId: ID!) {
   node(id: $episodeId) {
     ... on Episode {
-      records(byFollowing: true, orderBy: { field: RATING, direction: DESC }, first: 50) {
+      records(byFollowing: true, orderBy: { field: CREATED_AT, direction: DESC }, first: 50) {
         nodes {
           databaseId
           complementableType
