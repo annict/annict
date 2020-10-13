@@ -1752,9 +1752,9 @@ braces@~3.0.2:
     fill-range "^7.0.1"
 
 britecharts@^2.16.1:
-  version "2.17.0"
-  resolved "https://registry.yarnpkg.com/britecharts/-/britecharts-2.17.0.tgz#e04b966bef055a13dc8ca783b6e4f5d3eee73f28"
-  integrity sha512-YJzCY9QDTMMQx5VcPj0zpZjD8Vdr1mvCAt9qzPCyH137TBoZoByjuo3ITJFogPiLgVYLRvuyIo+cEyI3CkDBeA==
+  version "2.17.1"
+  resolved "https://registry.yarnpkg.com/britecharts/-/britecharts-2.17.1.tgz#d8f6a200d8416c51f9dcdf5a5064a4d592058bd1"
+  integrity sha512-ZLCFq/y++lNvKyxG7Xqy81aEbnNGlHT59a4Sdz4tUebeYcGRszdu97oEep2fmx7Xag9sj/8FhYptIgzL9nihIw==
   dependencies:
     base-64 "^0.1.0"
     d3 "^5.16.0"
@@ -8230,7 +8230,7 @@ schema-utils@^1.0.0:
     ajv-errors "^1.0.0"
     ajv-keywords "^3.1.0"
 
-schema-utils@^2.6.5, schema-utils@^2.6.6, schema-utils@^2.7.1:
+schema-utils@^2.6.5, schema-utils@^2.7.1:
   version "2.7.1"
   resolved "https://registry.yarnpkg.com/schema-utils/-/schema-utils-2.7.1.tgz#1ca4f32d1b24c590c203b8e7a50bf0ea4cd394d7"
   integrity sha512-SHiNtMOUGWBQJwzISiVYKu82GiV4QYGePp3odlY1tuKO7gPtphAT5R/py0fA6xtbgLL/RvtJZnU9b8s0F1q0Xg==
