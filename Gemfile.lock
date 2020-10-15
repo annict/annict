@@ -564,7 +564,7 @@ GEM
     slim (4.1.0)
       temple (>= 0.7.6, < 0.9)
       tilt (>= 2.0.6, < 2.1)
-    solargraph (0.39.15)
+    solargraph (0.39.17)
       backport (~> 1.1)
       benchmark
       bundler (>= 1.17.2)
