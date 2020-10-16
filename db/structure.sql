@@ -51,6 +51,8 @@ CREATE SEQUENCE public.activities_id_seq
 
 SET default_tablespace = '';
 
+SET default_table_access_method = heap;
+
 --
 -- Name: activities; Type: TABLE; Schema: public; Owner: -
 --
@@ -71,7 +73,9 @@ CREATE TABLE public.activities (
     episode_record_id bigint,
     multiple_episode_record_id bigint,
     work_record_id bigint,
-    activity_group_id bigint NOT NULL
+    activity_group_id bigint NOT NULL,
+    migrated_at timestamp without time zone,
+    mer_processed_at timestamp without time zone
 );
 
 
@@ -2349,6 +2353,39 @@ ALTER SEQUENCE public.twitter_watching_lists_id_seq OWNED BY public.twitter_watc
 
 
 --
+-- Name: user_programs; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.user_programs (
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    work_id bigint NOT NULL,
+    program_id bigint NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: user_programs_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.user_programs_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: user_programs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.user_programs_id_seq OWNED BY public.user_programs.id;
+
+
+--
 -- Name: userland_categories; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -3190,6 +3227,13 @@ ALTER TABLE ONLY public.twitter_watching_lists ALTER COLUMN id SET DEFAULT nextv
 
 
 --
+-- Name: user_programs id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_programs ALTER COLUMN id SET DEFAULT nextval('public.user_programs_id_seq'::regclass);
+
+
+--
 -- Name: userland_categories id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -3865,6 +3909,14 @@ ALTER TABLE ONLY public.twitter_bots
 
 ALTER TABLE ONLY public.twitter_watching_lists
     ADD CONSTRAINT twitter_watching_lists_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: user_programs user_programs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_programs
+    ADD CONSTRAINT user_programs_pkey PRIMARY KEY (id);
 
 
 --
@@ -5333,6 +5385,41 @@ CREATE INDEX index_trailers_on_work_id ON public.trailers USING btree (work_id);
 
 
 --
+-- Name: index_user_programs_on_program_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_user_programs_on_program_id ON public.user_programs USING btree (program_id);
+
+
+--
+-- Name: index_user_programs_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_user_programs_on_user_id ON public.user_programs USING btree (user_id);
+
+
+--
+-- Name: index_user_programs_on_user_id_and_program_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_user_programs_on_user_id_and_program_id ON public.user_programs USING btree (user_id, program_id);
+
+
+--
+-- Name: index_user_programs_on_user_id_and_work_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_user_programs_on_user_id_and_work_id ON public.user_programs USING btree (user_id, work_id);
+
+
+--
+-- Name: index_user_programs_on_work_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_user_programs_on_work_id ON public.user_programs USING btree (work_id);
+
+
+--
 -- Name: index_userland_pm_on_uid_and_userland_pid; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -6207,6 +6294,14 @@ ALTER TABLE ONLY public.characters
 
 
 --
+-- Name: user_programs fk_rails_798672c1a6; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_programs
+    ADD CONSTRAINT fk_rails_798672c1a6 FOREIGN KEY (work_id) REFERENCES public.works(id);
+
+
+--
 -- Name: users fk_rails_878aeec0fd; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -6463,6 +6558,14 @@ ALTER TABLE ONLY public.character_images
 
 
 --
+-- Name: user_programs fk_rails_cd5a855ae2; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_programs
+    ADD CONSTRAINT fk_rails_cd5a855ae2 FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
 -- Name: forum_comments fk_rails_ce6ed0c47a; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -6508,6 +6611,14 @@ ALTER TABLE ONLY public.work_records
 
 ALTER TABLE ONLY public.forum_comments
     ADD CONSTRAINT fk_rails_e0e6d14a1e FOREIGN KEY (forum_post_id) REFERENCES public.forum_posts(id);
+
+
+--
+-- Name: user_programs fk_rails_e44a2bc3c3; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_programs
+    ADD CONSTRAINT fk_rails_e44a2bc3c3 FOREIGN KEY (program_id) REFERENCES public.programs(id);
 
 
 --
@@ -6989,6 +7100,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20200525110837'),
 ('20200525201620'),
 ('20200808233237'),
-('20200809161251');
+('20200809161251'),
+('20201015141021');
 
 
