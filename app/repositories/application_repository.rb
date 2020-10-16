@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class ApplicationRepository
+  class ExecutionFailedError < StandardError; end
+
   module Types
     include Dry.Types()
   end
@@ -34,10 +36,20 @@ class ApplicationRepository
   end
 
   def query(variables: {})
-    graphql_client.execute(query_definition, variables: camelized_variables(variables))
+    result = graphql_client.execute(query_definition, variables: camelized_variables(variables))
+    validate! result
+    result
   end
 
   def mutate(variables: {})
-    graphql_client.execute(mutation_definition, variables: camelized_variables(variables))
+    result = graphql_client.execute(mutation_definition, variables: camelized_variables(variables))
+    validate! result
+    result
+  end
+
+  def validate!(result)
+    if result["errors"]
+      raise ExecutionFailedError.new(result.dig("errors", 0, "message"))
+    end
   end
 end
