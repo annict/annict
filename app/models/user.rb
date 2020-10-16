@@ -138,6 +138,7 @@ class User < ApplicationRecord
   has_many :work_tags, through: :work_taggables
   has_many :work_comments, dependent: :destroy
   has_many :work_records, dependent: :destroy
+  has_many :user_programs, dependent: :destroy
   has_many :userland_project_members, dependent: :destroy
   has_many :userland_projects, through: :userland_project_members
   has_one :email_notification, dependent: :destroy

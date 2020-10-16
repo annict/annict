@@ -72,7 +72,8 @@ module Canary
         end
 
         field :slots, Canary::Types::Objects::SlotType.connection_type, null: true, resolver: Canary::Resolvers::Slots do
-          argument :unwatched, Boolean, required: false
+          argument :until_next_night, Boolean, required: false
+          argument :viewer_unwatched_only, Boolean, required: false
           argument :order_by, Canary::Types::InputObjects::SlotOrder, required: false
         end
 
