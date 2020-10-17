@@ -22,18 +22,18 @@
 
             <div class="col">
               <div>
-                <% now = Time.zone.now.in_time_zone(current_user.time_zone) %>
-                <% if (now.beginning_of_day - 2.days + 5.hours) < slot_entity.started_at && slot_entity.started_at < (now.end_of_day - 2.days + 5.hours) %>
+                <% tv_time = Annict::TvTime.new(time_zone: current_user.time_zone) %>
+                <% if (tv_time.beginning_of_today - 1.day + 5.hours) < slot_entity.started_at && slot_entity.started_at < (tv_time.beginning_of_today.end_of_day - 1.day + 5.hours) %>
                   <small class="badge badge-success">
-                    昨日
+                    <%= t "noun.yesterday" %>
                   </small>
-                <% elsif (now.beginning_of_day - 1.days + 5.hours) < slot_entity.started_at && slot_entity.started_at < (now.end_of_day - 1.days + 5.hours) %>
+                <% elsif (tv_time.beginning_of_today + 5.hours) < slot_entity.started_at && slot_entity.started_at < (tv_time.beginning_of_today.end_of_day + 5.hours) %>
                   <small class="badge badge-danger">
-                    今日
+                    <%= t "noun.today" %>
                   </small>
-                <% elsif (now.beginning_of_day + 5.hours) < slot_entity.started_at && slot_entity.started_at < (now.end_of_day + 5.hours) %>
+                <% elsif (tv_time.beginning_of_today + 1.day + 5.hours) < slot_entity.started_at && slot_entity.started_at < (tv_time.beginning_of_today.end_of_day + 1.day + 5.hours) %>
                   <small class="badge badge-info">
-                    明日
+                    <%= t "noun.tomorrow" %>
                   </small>
                 <% end %>
 

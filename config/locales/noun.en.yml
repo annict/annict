@@ -177,6 +177,8 @@ en:
     terms_of_use: Terms of Use
     timeline: Timeline
     title: Title
+    today: Today
+    tomorrow: Tomorrow
     tonight: Tonight
     tweet: Tweet
     unbroadcast: Unbroadcast
@@ -198,4 +200,5 @@ en:
     work_image: Work image
     work: Work
     works: Works
+    yesterday: Yesterday
     your_statistics: Statistics

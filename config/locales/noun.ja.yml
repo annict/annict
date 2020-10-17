@@ -177,6 +177,8 @@ ja:
     terms_of_use: 利用規約
     timeline: タイムライン
     title: タイトル
+    today: 今日
+    tomorrow: 明日
     tonight: 今夜
     tweet: ツイート
     unbroadcast: 未放送
@@ -198,4 +200,5 @@ ja:
     work_image: 作品画像
     work: 作品
     works: 作品
+    yesterday: 昨日
     your_statistics: 視聴状況
