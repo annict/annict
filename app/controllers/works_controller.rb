@@ -37,7 +37,7 @@ class WorksController < ApplicationController
   end
 
   def season
-    set_page_category Rails.configuration.page_categories.work_list_season
+    set_page_category PageCategory::WORK_LIST_SEASON
 
     @works = Work.
       only_kept.
