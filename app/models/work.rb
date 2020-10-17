@@ -235,9 +235,7 @@ class Work < ApplicationRecord
     season = Season.find_by_slug(ENV.fetch("ANNICT_CURRENT_SEASON"))
 
     where("season_year <= ? AND season_name <= ?", season.year, season.name_value).
-      or(where("season_year < ?", season.year)).
-      or(where(season_year: season.year, season_name: nil)).
-      or(where(season_year: nil))
+      or(where("season_year < ?", season.year))
   }
 
   def self.statuses(work_ids, user)
