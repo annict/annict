@@ -231,6 +231,15 @@ class Work < ApplicationRecord
       or(where(season_year: nil))
   }
 
+  scope :lt_current_season, -> {
+    season = Season.find_by_slug(ENV.fetch("ANNICT_CURRENT_SEASON"))
+
+    where("season_year <= ? AND season_name <= ?", season.year, season.name_value).
+      or(where("season_year < ?", season.year)).
+      or(where(season_year: season.year, season_name: nil)).
+      or(where(season_year: nil))
+  }
+
   def self.statuses(work_ids, user)
     work_ids = work_ids.uniq
     library_entries = LibraryEntry.where(user: user, work_id: work_ids).eager_load(:status)

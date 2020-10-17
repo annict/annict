@@ -73,6 +73,7 @@ module Canary
 
         field :library_entries, Canary::Types::Objects::LibraryEntryType.connection_type, null: true, resolver: Canary::Resolvers::LibraryEntries do
           argument :status_kinds, [Canary::Types::Enums::StatusKind], required: false
+          argument :until_current_season, Boolean, required: false
           argument :order_by, Canary::Types::InputObjects::LibraryEntryOrder, required: false
         end
 
