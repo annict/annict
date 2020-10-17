@@ -11,7 +11,7 @@ module Canary
         field :tracked_episodes_count, Int, null: false
         field :user, Canary::Types::Objects::UserType, null: false
         field :anime, Canary::Types::Objects::AnimeType, null: false
-        field :status, Canary::Types::Objects::StatusType, null: false
+        field :status, Canary::Types::Objects::StatusType, null: true
 
         def tracked_episodes_count
           object.watched_episode_ids.size
