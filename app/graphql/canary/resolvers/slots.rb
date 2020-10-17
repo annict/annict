@@ -8,7 +8,7 @@ module Canary
         order = Canary::OrderProperty.build(order_by)
 
         library_entries = user.library_entries.wanna_watch_and_watching
-        slots = Slot.where(program_id: library_entries.pluck(:program_id))
+        slots = Slot.where(program: library_entries.select(:program_id))
 
         if until_next_night
           tv_time = Annict::TvTime.new(time_zone: user.time_zone)
