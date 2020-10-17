@@ -60,6 +60,17 @@
                 <% end %>
               </div>
             </div>
+
+            <div class="align-self-center col-auto">
+              <button
+                class="btn btn-outline-primary"
+                data-controller="episode-record-button"
+                data-episode-record-button-episode-id="<%= slot_entity.episode.id %>"
+                data-action="click->episode-record-button#track"
+              >
+                <i class="fal fa-check"></i>
+              </button>
+            </div>
           </div>
         </div>
       <% end %>

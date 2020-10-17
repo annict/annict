@@ -6,6 +6,7 @@ query {
         rebroadcast
 
         episode {
+          id
           databaseId
           number
           title

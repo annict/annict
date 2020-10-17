@@ -8,30 +8,17 @@ module Api
       before_action :authenticate_user!, only: %i(create)
 
       def create
-        episode = Episode.only_kept.find(params[:episode_id])
+        form = EpisodeRecordForm.new(episode_id: params[:episode_id], share_to_twitter: current_user.share_record_to_twitter?)
 
         episode_record, err = CreateEpisodeRecordRepository.new(
           graphql_client: graphql_client(viewer: current_user)
-        ).execute(
-          episode: episode,
-          params: {
-            rating_state: episode_record_params[:rating_state],
-            body: episode_record_params[:body],
-            share_to_twitter: episode_record_params[:shared_twitter]
-          }
-        )
+        ).execute(form: form)
 
         if err
           return render(status: 400, json: { message: err.message })
         end
 
         head 201
-      end
-
-      private
-
-      def episode_record_params
-        params.require(:episode_record).permit(:body, :shared_twitter, :rating_state)
       end
     end
   end
