@@ -47,9 +47,11 @@
               </div>
 
               <div>
-                <%= link_to slot_entity.anime.local_title, work_path(slot_entity.anime.database_id), class: "u-text-body" %>
+                <div class="font-weight-bold">
+                  <%= link_to slot_entity.anime.local_title, work_path(slot_entity.anime.database_id), class: "u-text-body" %>
+                </div>
 
-                <%= link_to episode_path(slot_entity.anime.database_id, slot_entity.episode.database_id), class: "d-block small u-text-body" do %>
+                <%= link_to episode_path(slot_entity.anime.database_id, slot_entity.episode.database_id), class: "u-text-body" do %>
                   <span class="pr-1">
                     <%= slot_entity.episode.number %>
                   </span>
