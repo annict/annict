@@ -92,6 +92,24 @@
               >
                 <i class="fal fa-check"></i>
               </button>
+
+              <div
+                class="btn btn-outline-secondary"
+                data-controller="episode-record-with-comment-button"
+                data-episode-record-with-comment-button-episode-id="<%= slot_entity.episode.id %>"
+                data-action="click->episode-record-with-comment-button#expand"
+              >
+                <i class="fal fa-comment-check"></i>
+              </div>
+
+              <div
+                class="btn btn-outline-secondary"
+                data-controller="skip-episode-record-button"
+                data-skip-episode-record-button-episode-id="<%= slot_entity.episode.id %>"
+                data-action="click->skip-episode-record-button#skip"
+              >
+                <i class="fal fa-eye-slash"></i>
+              </div>
             </div>
           </div>
         </div>
