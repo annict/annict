@@ -15,7 +15,6 @@ end
 
 resource :confirmation, only: [:show]
 resource :search, only: [:show]
-resource :track, only: :show
 resource :work_display_option, only: %i(show)
 resources :comments, only: %i(edit update destroy)
 resources :faqs, only: %i(index)
@@ -164,6 +163,7 @@ scope module: :v4 do
       match "/sign_in/callback",    via: :get,   as: :sign_in_callback,    to: "sign_in_callbacks#show"
       match "/sign_up",             via: :get,   as: :sign_up,             to: "sign_up#new"
       match "/sign_up",             via: :post,                            to: "sign_up#create"
+      match "/track",               via: :get,   as: :track,               to: "tracks#show"
       match "/user_email",          via: :patch, as: :user_email,          to: "user_emails#update"
       match "/user_email/callback", via: :get,   as: :user_email_callback, to: "user_email_callbacks#show"
     end

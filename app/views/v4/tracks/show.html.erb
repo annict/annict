@@ -1,0 +1,66 @@
+<% title = t "head.title.tracks.show" %>
+<% set_meta_tags(title: title, reverse: true, prefix: false) %>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-3">
+    </div>
+
+    <div class="col-md-9">
+      <% @slot_entities.each do |slot_entity| %>
+        <div class="c-slot-episode py-3 u-underline">
+          <div class="row">
+            <div class="col-auto pr-0">
+              <%= link_to work_path(slot_entity.anime.database_id) do %>
+                <%= render WorkImageComponent.new(
+                    image_url_1x: slot_entity.anime.image_url_1x,
+                    image_url_2x: slot_entity.anime.image_url_2x,
+                    alt: slot_entity.anime.local_title
+                ) %>
+              <% end %>
+            </div>
+
+            <div class="col">
+              <div>
+                <% now = Time.zone.now.in_time_zone(current_user.time_zone) %>
+                <% if (now.beginning_of_day - 2.days + 5.hours) < slot_entity.started_at && slot_entity.started_at < (now.end_of_day - 2.days + 5.hours) %>
+                  <small class="badge badge-success">
+                    昨日
+                  </small>
+                <% elsif (now.beginning_of_day - 1.days + 5.hours) < slot_entity.started_at && slot_entity.started_at < (now.end_of_day - 1.days + 5.hours) %>
+                  <small class="badge badge-danger">
+                    今日
+                  </small>
+                <% elsif (now.beginning_of_day + 5.hours) < slot_entity.started_at && slot_entity.started_at < (now.end_of_day + 5.hours) %>
+                  <small class="badge badge-info">
+                    明日
+                  </small>
+                <% end %>
+
+                <small class="badge badge-light small">
+                  <%= slot_entity.channel.name %>
+                </small>
+              </div>
+
+              <div class="small">
+                <%= display_time(slot_entity.started_at) %>
+              </div>
+
+              <div>
+                <%= link_to slot_entity.anime.local_title, work_path(slot_entity.anime.database_id), class: "u-text-body" %>
+
+                <%= link_to episode_path(slot_entity.anime.database_id, slot_entity.episode.database_id), class: "d-block small u-text-body" do %>
+                  <span class="pr-1">
+                    <%= slot_entity.episode.number %>
+                  </span>
+
+                  <%= slot_entity.episode.local_title %>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

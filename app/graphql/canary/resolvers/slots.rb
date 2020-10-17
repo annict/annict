@@ -12,7 +12,7 @@ module Canary
         slots = Slot.where(program_id: user_programs.pluck(:program_id))
 
         if until_next_night
-          next_night = (Time.zone.now.in_time_zone(user.time_zone).tomorrow.end_of_day + 5.hours).utc
+          next_night = (Time.zone.now.in_time_zone(user.time_zone).end_of_day + 5.hours).utc
           slots = slots.before(next_night, field: :started_at)
         end
 

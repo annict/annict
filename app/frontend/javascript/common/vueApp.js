@@ -4,7 +4,6 @@ import autosizeTextarea from './components/autosizeTextarea';
 import channelReceiveButton from './components/channelReceiveButton';
 import channelSelector from './components/channelSelector';
 import episodeList from './components/episodeList';
-import episodeProgress from './components/episodeProgress';
 import episodeRatingStateChart from './components/episodeRatingStateChart';
 import episodeRecordsChart from './components/episodeRecordsChart';
 import favoriteButton from './components/favoriteButton';
@@ -35,7 +34,6 @@ export default {
     Vue.component('c-channel-receive-button', channelReceiveButton);
     Vue.component('c-channel-selector', channelSelector);
     Vue.component('c-episode-list', episodeList);
-    Vue.component('c-episode-progress', episodeProgress);
     Vue.component('c-episode-rating-state-chart', episodeRatingStateChart);
     Vue.component('c-episode-records-chart', episodeRecordsChart);
     Vue.component('c-favorite-button', favoriteButton);
@@ -50,7 +48,6 @@ export default {
     Vue.component('c-record-textarea', recordTextarea);
     Vue.component('c-record-word-count', recordWordCount);
     Vue.component('c-slot-list', slotList);
-    Vue.component('c-untracked-episode-list', untrackedEpisodeList);
     Vue.component('c-user-actions-dropdown', userActionsDropdown);
     Vue.component('c-user-heatmap', userHeatmap);
     Vue.component('c-work-comment', workComment);
