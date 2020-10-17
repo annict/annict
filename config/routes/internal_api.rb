@@ -6,7 +6,6 @@ namespace :api do
 
     resource :impression, only: %i(show update)
     resource :privacy_policy_agreement, only: %i(create)
-    resource :slots_sort_type, only: [:update]
     resource :records_sort_type, only: %i(update)
     resource :search, only: [:show]
     resources :characters, only: [:index]

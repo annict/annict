@@ -132,8 +132,6 @@ ja:
     ics:
       you_can_see: Google Calendarに以下のURLを登録すると、「見てる」「見たい」にしている作品の放送情報などがカレンダーに表示されます。
     components:
-      load_more_button:
-        more: もっと見る
       mute_user_button:
         the_user_has_been_muted: ミュートしました
       slot_list:

@@ -17,8 +17,6 @@ import recordRating from './components/recordRating';
 import recordSorter from './components/recordSorter';
 import recordTextarea from './components/recordTextarea';
 import recordWordCount from './components/recordWordCount';
-import slotList from './components/slotList';
-import untrackedEpisodeList from './components/untrackedEpisodeList';
 import userActionsDropdown from './components/userActionsDropdown';
 import userHeatmap from './components/userHeatmap';
 import workComment from './components/workComment';
@@ -47,7 +45,6 @@ export default {
     Vue.component('c-record-sorter', recordSorter);
     Vue.component('c-record-textarea', recordTextarea);
     Vue.component('c-record-word-count', recordWordCount);
-    Vue.component('c-slot-list', slotList);
     Vue.component('c-user-actions-dropdown', userActionsDropdown);
     Vue.component('c-user-heatmap', userHeatmap);
     Vue.component('c-work-comment', workComment);

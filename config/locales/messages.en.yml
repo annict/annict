@@ -132,8 +132,6 @@ en:
     ics:
       you_can_see: You can see slots of works which you set "Watching", "Plan to Watch" when you add the following URL to Google Calendar.
     components:
-      load_more_button:
-        more: View more
       mute_user_button:
         the_user_has_been_muted: The user has been muted.
       slot_list:

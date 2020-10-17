@@ -21,7 +21,6 @@ resources :faqs, only: %i(index)
 resources :friends, only: [:index]
 resources :mute_users, only: [:destroy]
 resources :notifications, only: [:index]
-resources :programs, only: %i(index), controller: :slots
 resources :review_comments, only: %i(edit update destroy)
 resources :supporters, only: %i(index)
 
