@@ -1,0 +1,16 @@
+query {
+  viewer {
+    libraryEntries(statusKinds: [PLAN_TO_WATCH, WATCHING], orderBy: { field: LAST_CHECKED_AT, direction: DESC }, first: 50) {
+      nodes {
+        trackedEpisodesCount
+
+        anime {
+          databaseId
+          title
+          titleEn
+          episodesCount
+        }
+      }
+    }
+  }
+}

@@ -91,7 +91,8 @@ module Canary
           description: "評価数"
 
         field :episodes_count, Integer,
-          null: false
+          null: true,
+          method: :manual_episodes_count
 
         field :watchers_count, Integer,
           null: false

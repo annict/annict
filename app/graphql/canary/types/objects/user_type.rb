@@ -71,6 +71,11 @@ module Canary
           argument :order_by, Canary::Types::InputObjects::AnimeOrder, required: false
         end
 
+        field :library_entries, Canary::Types::Objects::LibraryEntryType.connection_type, null: true, resolver: Canary::Resolvers::LibraryEntries do
+          argument :status_kinds, [Canary::Types::Enums::StatusKind], required: false
+          argument :order_by, Canary::Types::InputObjects::LibraryEntryOrder, required: false
+        end
+
         field :slots, Canary::Types::Objects::SlotType.connection_type, null: true, resolver: Canary::Resolvers::Slots do
           argument :until_next_night, Boolean, required: false
           argument :viewer_unwatched_only, Boolean, required: false
