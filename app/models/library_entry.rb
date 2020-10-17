@@ -9,22 +9,26 @@
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
 #  next_episode_id     :bigint
+#  program_id          :bigint
 #  status_id           :bigint
 #  user_id             :bigint           not null
 #  work_id             :bigint           not null
 #
 # Indexes
 #
-#  index_library_entries_on_next_episode_id       (next_episode_id)
-#  index_library_entries_on_status_id             (status_id)
-#  index_library_entries_on_user_id               (user_id)
-#  index_library_entries_on_user_id_and_position  (user_id,position)
-#  index_library_entries_on_user_id_and_work_id   (user_id,work_id) UNIQUE
-#  index_library_entries_on_work_id               (work_id)
+#  index_library_entries_on_next_episode_id         (next_episode_id)
+#  index_library_entries_on_program_id              (program_id)
+#  index_library_entries_on_status_id               (status_id)
+#  index_library_entries_on_user_id                 (user_id)
+#  index_library_entries_on_user_id_and_position    (user_id,position)
+#  index_library_entries_on_user_id_and_program_id  (user_id,program_id) UNIQUE
+#  index_library_entries_on_user_id_and_work_id     (user_id,work_id) UNIQUE
+#  index_library_entries_on_work_id                 (work_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (next_episode_id => episodes.id)
+#  fk_rails_...  (program_id => programs.id)
 #  fk_rails_...  (status_id => statuses.id)
 #  fk_rails_...  (user_id => users.id)
 #  fk_rails_...  (work_id => works.id)
@@ -36,6 +40,7 @@ class LibraryEntry < ApplicationRecord
   self.ignored_columns = %w(kind)
 
   belongs_to :next_episode, class_name: "Episode", optional: true
+  belongs_to :program, optional: true
   belongs_to :status, optional: true
   belongs_to :user
   belongs_to :work

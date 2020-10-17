@@ -12,7 +12,8 @@ users.find_each do |user|
 
       next unless program
 
-      user.user_programs.where(work_id: cw.work_id).first_or_create!(program_id: program.id, created_at: cw.created_at, updated_at: cw.updated_at)
+      library_entry = user.library_entries.where(work_id: cw.work_id).first_or_create!
+      library_entry.update!(program_id: program.id)
     end
   end
 end

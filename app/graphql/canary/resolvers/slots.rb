@@ -7,9 +7,8 @@ module Canary
         user = object
         order = Canary::OrderProperty.build(order_by)
 
-        works = user.works_on(:wanna_watch, :watching).only_kept
-        user_programs = user.user_programs.where(work: works)
-        slots = Slot.where(program_id: user_programs.pluck(:program_id))
+        library_entries = user.library_entries.wanna_watch_and_watching
+        slots = Slot.where(program_id: library_entries.pluck(:program_id))
 
         if until_next_night
           tv_time = Annict::TvTime.new(time_zone: user.time_zone)
@@ -18,7 +17,7 @@ module Canary
         end
 
         if viewer_unwatched_only
-          watched_episode_ids = user.library_entries.pluck(:watched_episode_ids).flatten
+          watched_episode_ids = library_entries.pluck(:watched_episode_ids).flatten
           slots = slots.where.not(episode_id: watched_episode_ids)
         end
 
