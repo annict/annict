@@ -230,6 +230,8 @@ ja:
         index: アニメ「%{title}」のスタッフ一覧
       supporters:
         index: Annict Supporters
+      track_anime:
+        show: "%{title} | 記録する"
       tracks:
         show: 記録する
       user_work_tags:

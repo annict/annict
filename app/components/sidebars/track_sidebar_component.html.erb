@@ -1,0 +1,35 @@
+<div class="c-track-sidebar">
+  <div class="flex-column nav nav-pills">
+    <%= active_link_to track_path,
+        class: "align-items-center d-flex justify-content-between nav-link w-100",
+        class_inactive: "u-text-body",
+        class_active: "active text-white",
+        active: params[:controller] == "v4/tracks" && params[:action] == "show" do %>
+      <%= t "noun.slots" %>
+    <% end %>
+  </div>
+
+  <hr>
+
+  <h2 class="font-weight-bold small">
+    <%= t "noun.watching_and_plan_to_watch" %>
+  </h2>
+
+  <div class="flex-column nav nav-pills">
+    <% @library_entry_entities.each do |le_entity| %>
+      <%= active_link_to track_anime_path(le_entity.anime.database_id),
+          class: "align-items-center d-flex justify-content-between nav-link w-100",
+          class_inactive: "u-text-body",
+          class_active: "active text-white",
+          active: params[:controller] == "v4/track_anime" && params[:action] == "show" && params[:id] == le_entity.anime.database_id.to_s do %>
+        <span class="small text-truncate">
+          <%= le_entity.anime.local_title %>
+        </span>
+
+        <span class="badge badge-pill badge-light">
+          <%= le_entity.tracked_episodes_count %> / <%= le_entity.anime.episodes_count.presence || "?" %>
+        </span>
+      <% end %>
+    <% end %>
+  </div>
+</div>

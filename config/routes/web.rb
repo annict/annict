@@ -163,6 +163,7 @@ scope module: :v4 do
       match "/sign_up",             via: :get,   as: :sign_up,             to: "sign_up#new"
       match "/sign_up",             via: :post,                            to: "sign_up#create"
       match "/track",               via: :get,   as: :track,               to: "tracks#show"
+      match "/track/anime/:id",     via: :get,   as: :track_anime,         to: "track_anime#show"
       match "/user_email",          via: :patch, as: :user_email,          to: "user_emails#update"
       match "/user_email/callback", via: :get,   as: :user_email_callback, to: "user_email_callbacks#show"
     end

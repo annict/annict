@@ -1,0 +1,21 @@
+query($databaseId: Int!) {
+  anime(databaseId: $databaseId) {
+    databaseId
+    title
+    titleEn
+
+    image {
+      internalUrl1x: internalUrl(size: "60x")
+      internalUrl2x: internalUrl(size: "120x")
+    }
+
+    episodes(orderBy: { field: SORT_NUMBER, direction: ASC }, first: 5000) {
+      nodes {
+        databaseId
+        number
+        title
+        titleEn
+      }
+    }
+  }
+}

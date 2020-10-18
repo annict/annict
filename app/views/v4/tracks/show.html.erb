@@ -4,28 +4,7 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-md-3 py-3">
-      <h2 class="font-weight-bold small">
-        <%= t "noun.watching_and_plan_to_watch" %>
-      </h2>
-
-      <div class="flex-column nav nav-pills">
-        <% @library_entry_entities.each do |le_entity| %>
-          <%= active_link_to work_path(le_entity.anime.database_id),
-              class: "nav-link pl-0 u-text-body w-100",
-              class_active: "active",
-              active: params[:controller] == "" && params[:action] == "" do %>
-            <div class="row">
-              <div class="col small text-truncate">
-                <%= le_entity.anime.local_title %>
-              </div>
-
-              <div class="badge badge-pill badge-light col-auto">
-                <%= le_entity.tracked_episodes_count %> / <%= le_entity.anime.episodes_count.presence || "?" %>
-              </div>
-            </div>
-          <% end %>
-        <% end %>
-      </div>
+      <%= render Sidebars::TrackSidebarComponent.new(library_entry_entities: @library_entry_entities) %>
     </div>
 
     <div class="col-md-9">

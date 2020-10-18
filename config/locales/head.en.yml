@@ -230,6 +230,8 @@ en:
         index: Staff of %{title} (Anime)
       supporters:
         index: Annict Supporters
+      track_anime:
+        show: "%{title} | Track"
       tracks:
         show: Track
       user_work_tags:

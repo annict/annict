@@ -22,6 +22,10 @@ module Canary
           argument :order_by, Canary::Types::InputObjects::AnimeOrder, required: false
         end
 
+        field :anime, Canary::Types::Objects::AnimeType, null: true do
+          argument :database_id, Integer, required: true
+        end
+
         field :episode, Canary::Types::Objects::EpisodeType, null: true do
           argument :database_id, Integer, required: true
         end
@@ -58,6 +62,10 @@ module Canary
 
         def user(username:)
           User.only_kept.find_by(username: username)
+        end
+
+        def anime(database_id:)
+          Work.only_kept.find_by(id: database_id)
         end
 
         def episode(database_id:)
