@@ -40,6 +40,8 @@ module Canary
         Canary::Types::Objects::SlotType
       when Program
         Canary::Types::Objects::ProgramType
+      when Record
+        Canary::Types::Objects::RecordType
       when Status
         Canary::Types::Objects::StatusType
       when User

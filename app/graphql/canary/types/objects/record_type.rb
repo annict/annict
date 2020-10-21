@@ -5,6 +5,7 @@ module Canary
     module Objects
       class RecordType < Canary::Types::Objects::Base
         implements GraphQL::Relay::Node.interface
+        implements Canary::Types::Interfaces::Reactable
 
         global_id_field :id
 
@@ -97,6 +98,10 @@ module Canary
               Canary::AssociationLoader.for(Record, %i(work_record)).load(object).then(&:first)
             end
           end
+        end
+
+        def reactions
+          complementable.then(&:likes)
         end
       end
     end
