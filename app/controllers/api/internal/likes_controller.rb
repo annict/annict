@@ -33,8 +33,14 @@ module Api
       end
 
       def unlike
+        return head(:unauthorized) unless user_signed_in?
+
         recipient = params[:recipient_type].constantize.find(params[:recipient_id])
-        current_user.unlike(recipient)
+
+        RemoveReactionRepository.new(
+          graphql_client: graphql_client(viewer: current_user)
+        ).execute(reactable: recipient, content: "HEART")
+
         head 200
       end
     end
