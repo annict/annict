@@ -11,7 +11,7 @@ import { definitionsFromContext } from 'stimulus/webpack-helpers';
 import Turbolinks from 'turbolinks';
 
 import { getTimeZone } from './utils/time-zone';
-import vueApp from "./common/vueApp";
+import vueApp from './common/vueApp';
 
 document.addEventListener('turbolinks:load', (_event) => {
   const annConfig = (window as any).AnnConfig;

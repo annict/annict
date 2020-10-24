@@ -1,16 +1,16 @@
 import { Controller } from 'stimulus';
 
 export default class extends Controller {
-  backgroundElm!: Element | null
-  contentElm!: Element | null
+  backgroundElm!: Element | null;
+  contentElm!: Element | null;
 
   initialize() {
     this.backgroundElm = this.element.querySelector('.c-sidebar__background');
     this.contentElm = this.element.querySelector('.c-sidebar__content');
 
     document.addEventListener('sidebar:show', (event: any) => {
-      this.show()
-    })
+      this.show();
+    });
   }
 
   show() {

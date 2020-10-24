@@ -10,7 +10,7 @@ export default {
   },
 
   mounted() {
-    return eventHub.$on('muteUser:mute', userId => {
+    return eventHub.$on('muteUser:mute', (userId) => {
       if (this.userId === userId) {
         return $(this.$el).fadeOut();
       }

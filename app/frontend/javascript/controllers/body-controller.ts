@@ -6,11 +6,12 @@ export default class extends Controller {
   contentTarget!: HTMLElement;
   readMoreBackgroundTarget!: HTMLElement;
   readMoreButtonTarget!: HTMLElement;
-  height!: number
+  height!: number;
+  data!: any;
 
   initialize() {
     if (!this.data.get('height')) {
-      return
+      return;
     }
 
     this.height = Number(this.data.get('height'));

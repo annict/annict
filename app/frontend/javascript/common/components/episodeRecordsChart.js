@@ -38,12 +38,7 @@ export default {
     };
 
     if (containerWidth) {
-      lineChart
-        .height(200)
-        .margin(lineMargin)
-        .grid('horizontal')
-        .width(containerWidth)
-        .topicLabel(100);
+      lineChart.height(200).margin(lineMargin).grid('horizontal').width(containerWidth).topicLabel(100);
 
       return container.datum(dataset).call(lineChart);
     }

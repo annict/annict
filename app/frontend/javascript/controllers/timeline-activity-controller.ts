@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Controller } from 'stimulus';
 
 import { EventDispatcher } from '../utils/event-dispatcher';
-import lazyLoad from "../utils/lazy-load";
+import lazyLoad from '../utils/lazy-load';
 
 export default class extends Controller {
   static targets = ['nextButton'];

@@ -8,8 +8,8 @@ export default class extends Controller {
 
   initialize() {
     this.episodeId = this.data.get('episodeId');
-    this.isLoading = false
-    this.isTracked = false
+    this.isLoading = false;
+    this.isTracked = false;
   }
 
   track() {
@@ -18,18 +18,18 @@ export default class extends Controller {
     }
 
     this.isLoading = true;
-    this.showSpinner()
-    this.element.setAttribute('disabled', '')
+    this.showSpinner();
+    this.element.setAttribute('disabled', '');
 
     axios
       .post(`/api/internal/episode_records`, {
-        episode_id: this.episodeId
+        episode_id: this.episodeId,
       })
       .then(() => {
         this.isLoading = false;
-        this.hideSpinner()
-        this.makeBtnComplete()
-        this.isTracked = true
+        this.hideSpinner();
+        this.makeBtnComplete();
+        this.isTracked = true;
       });
   }
 

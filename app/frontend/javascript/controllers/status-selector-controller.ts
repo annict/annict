@@ -11,7 +11,7 @@ export default class extends Controller {
   libraryEntries!: { work_id: number; status_kind: string }[];
   prevStatusKind!: string;
   workId!: number;
-  pageCategory!: string
+  pageCategory!: string;
 
   initialize() {
     this.workId = Number(this.data.get('workId'));

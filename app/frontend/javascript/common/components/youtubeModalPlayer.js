@@ -35,7 +35,7 @@ export default {
     },
   },
 
-  data: function() {
+  data: function () {
     return {
       modalId: `youtube-modal-${this.videoId}`,
       playerId: `youtube-player-${this.videoId}`,

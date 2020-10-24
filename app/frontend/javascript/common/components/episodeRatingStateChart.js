@@ -14,7 +14,7 @@ export default {
 
   data() {
     return {
-      dataset: sortBy(JSON.parse(this.initDataset), data => data.name_key),
+      dataset: sortBy(JSON.parse(this.initDataset), (data) => data.name_key),
     };
   },
 

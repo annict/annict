@@ -2,7 +2,7 @@ import $ from 'jquery';
 import Vue from 'vue';
 
 import eventHub from '../../common/eventHub';
-import {EventDispatcher} from "../../utils/event-dispatcher";
+import { EventDispatcher } from '../../utils/event-dispatcher';
 
 export default {
   template: '#t-mute-user-button',
