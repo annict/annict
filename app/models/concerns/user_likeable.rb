@@ -15,6 +15,7 @@ module UserLikeable
     def unlike(recipient)
       like = likes.where(recipient: recipient).first
       like.destroy if like.present?
+      like
     end
   end
 end

@@ -15,7 +15,7 @@ module Canary
         field :deleteAnimeRecord, mutation: Canary::Mutations::DeleteAnimeRecord
 
         field :addReaction, mutation: Canary::Mutations::AddReaction
-        field :unlikeAnimeRecord, mutation: Canary::Mutations::UnlikeAnimeRecord
+        field :removeReaction, mutation: Canary::Mutations::RemoveReaction
       end
     end
   end
