@@ -17,9 +17,7 @@ Rails.application.configure do
   # Show full error reports.
   config.consider_all_requests_local = true
 
-  asset_ip_address = Socket.ip_address_list.detect{ |addr| addr.ipv4_private? }.ip_address
-  asset_port = ENV.fetch("WEBPACK_DEV_SERVER_PORT")
-  config.action_controller.asset_host = "http://#{asset_ip_address}:#{asset_port}"
+  config.action_controller.asset_host = ENV.fetch("ANNICT_ASSET_URL")
   config.action_controller.perform_caching = is_cache_enabled
 
   if is_cache_enabled

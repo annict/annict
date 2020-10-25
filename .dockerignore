@@ -1,5 +1,6 @@
 .DS_Store
 
+/.devcontainer
 /.dockerignore
 /.env.*.local
 /.git
@@ -9,4 +10,5 @@
 /log
 /node_modules
 /tmp
+/volumes
 /yarn-error.log
