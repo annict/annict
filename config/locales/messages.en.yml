@@ -62,8 +62,6 @@ en:
       updated: Account has been updated.
     callbacks:
       sign_in_failed: Sign in failed.
-    channel_works:
-      no_works: No works
     channels:
       supported_vod: Video Service
     character_fans:

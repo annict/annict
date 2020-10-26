@@ -106,7 +106,6 @@ class Work < ApplicationRecord
     foreign_key: :recipient_id,
     foreign_type: :recipient
   has_many :cast_people, through: :casts, source: :person
-  has_many :channel_works
   has_many :characters, through: :casts
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy

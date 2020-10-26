@@ -52,10 +52,6 @@ namespace :api do
       resource :status_chart_data, only: %i(show)
       resource :watchers_chart_data, only: %i(show)
 
-      resources :channels, only: [] do
-        post :select, on: :collection
-      end
-
       resources :statuses, only: [] do
         post :select, on: :collection
       end

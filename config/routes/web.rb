@@ -52,9 +52,6 @@ resources :characters, only: %i(show) do
   resources :fans, only: %i(index), controller: "character_fans"
 end
 
-resource :channel, only: [] do
-  resources :works, only: [:index], controller: "channel_works"
-end
 resources :channels, only: [:index]
 
 resources :checkins, only: [] do

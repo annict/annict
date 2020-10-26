@@ -62,8 +62,6 @@ ja:
       updated: 更新しました
     callbacks:
       sign_in_failed: ログインに失敗しました。ソーシャルアカウントと紐づくユーザが見つかりません
-    channel_works:
-      no_works: 作品はありません
     channels:
       supported_vod: (Annictがサポートしている) 動画サービス
     character_fans:

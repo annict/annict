@@ -53,8 +53,6 @@ ja:
     title:
       accounts:
         show: アカウント
-      channel_works:
-        index: 作品ごとのチャンネル
       channels:
         index: チャンネル一覧
       character_fans:

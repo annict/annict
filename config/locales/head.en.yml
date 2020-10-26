@@ -53,8 +53,6 @@ en:
     title:
       accounts:
         show: Account
-      channel_works:
-        index: Channel Works
       channels:
         index: Channel List
       character_fans:

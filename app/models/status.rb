@@ -127,15 +127,6 @@ class Status < ApplicationRecord
     false
   end
 
-  def update_channel_work
-    case kind
-    when "wanna_watch", "watching"
-      ChannelWorkService.new(user).create(work)
-    else
-      ChannelWorkService.new(user).delete(work)
-    end
-  end
-
   def save_library_entry
     library_entry = user.library_entries.find_or_initialize_by(work: work)
     library_entry.status = self

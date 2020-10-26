@@ -89,7 +89,6 @@ class User < ApplicationRecord
   belongs_to :gumroad_subscriber, optional: true
   has_many :activity_groups, dependent: :destroy
   has_many :activities, dependent: :destroy
-  has_many :channel_works, dependent: :destroy
   has_many :character_favorites, dependent: :destroy
   has_many :collections, dependent: :destroy
   has_many :collection_items, dependent: :destroy

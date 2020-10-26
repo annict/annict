@@ -2,7 +2,6 @@ import Vue from 'vue';
 
 import autosizeTextarea from './components/autosizeTextarea';
 import channelReceiveButton from './components/channelReceiveButton';
-import channelSelector from './components/channelSelector';
 import episodeList from './components/episodeList';
 import episodeRatingStateChart from './components/episodeRatingStateChart';
 import episodeRecordsChart from './components/episodeRecordsChart';
@@ -30,7 +29,6 @@ export default {
   start() {
     Vue.component('c-autosize-textarea', autosizeTextarea);
     Vue.component('c-channel-receive-button', channelReceiveButton);
-    Vue.component('c-channel-selector', channelSelector);
     Vue.component('c-episode-list', episodeList);
     Vue.component('c-episode-rating-state-chart', episodeRatingStateChart);
     Vue.component('c-episode-records-chart', episodeRecordsChart);

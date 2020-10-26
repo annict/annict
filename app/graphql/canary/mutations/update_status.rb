@@ -33,7 +33,6 @@ module Canary
         ActiveRecord::Base.transaction do
           status.save!
           status.save_library_entry
-          status.update_channel_work
 
           activity_group = viewer.create_or_last_activity_group!(status)
           viewer.activities.create!(itemable: status, activity_group: activity_group)
