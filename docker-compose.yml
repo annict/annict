@@ -13,6 +13,8 @@ services:
     env_file:
       - .env.development
       - .env.development.local
+    environment:
+      LANG: C.UTF-8
     ports:
       - 3000:3000
     stdin_open: true # for Pry
