@@ -46,6 +46,7 @@
     "@babel/plugin-transform-runtime": "^7.11.0",
     "@babel/plugin-transform-typescript": "^7.11.0",
     "@babel/preset-typescript": "^7.10.4",
+    "@types/autosize": "^3.0.7",
     "@types/jquery": "^3.5.1",
     "@types/js-cookie": "latest",
     "@types/lodash": "^4.14.160",
