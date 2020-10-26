@@ -46,6 +46,18 @@ class Season
     new(year, name)
   end
 
+  def self.current
+    find_by_slug(ENV.fetch("ANNICT_CURRENT_SEASON"))
+  end
+
+  def self.next
+    find_by_slug(ENV.fetch("ANNICT_NEXT_SEASON"))
+  end
+
+  def self.prev
+    find_by_slug(ENV.fetch("ANNICT_PREVIOUS_SEASON"))
+  end
+
   def self.no_season
     new(nil, nil)
   end
@@ -124,6 +136,17 @@ class Season
     when "autumn" then "#ff7043"
     else
       "#66bb6a"
+    end
+  end
+
+  def icon_name
+    case @name
+    when "winter" then "snowman"
+    when "spring" then "flower"
+    when "summer" then "island-tropical"
+    when "autumn" then "pumpkin"
+    else
+      raise
     end
   end
 end
