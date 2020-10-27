@@ -81,7 +81,7 @@ GEM
     ast (2.4.1)
     awesome_print (1.8.0)
     aws-eventstream (1.1.0)
-    aws-partitions (1.381.0)
+    aws-partitions (1.386.0)
     aws-sdk-core (3.109.0)
       aws-eventstream (~> 1, >= 1.0.2)
       aws-partitions (~> 1, >= 1.239.0)
