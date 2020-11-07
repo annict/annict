@@ -60,9 +60,9 @@ gem "rack-attack"
 gem "rack-cors", require: "rack/cors"
 gem "rack-mini-profiler"
 gem "rack-rewrite"
+gem "rails_autolink"
 gem "rails-html-sanitizer"
 gem "rails-i18n"
-gem "rails_autolink"
 gem "ransack"
 gem "redis"
 gem "sentry-raven"
@@ -79,9 +79,9 @@ group :development, :test do
   gem "awesome_print"
   gem "dotenv-rails"
   gem "pry-rails"
+  gem "rspec_junit_formatter" # Using on CircleCI
   gem "rspec-mocks"
   gem "rspec-rails"
-  gem "rspec_junit_formatter" # Using on CircleCI
 end
 
 group :development do
@@ -100,8 +100,8 @@ group :development do
   gem "ruby_identicon"
   gem "scss_lint", require: false
   gem "solargraph"
-  gem "spring-commands-rspec", require: false
   gem "spring"
+  gem "spring-commands-rspec", require: false
   gem "squasher"
   gem "stackprof"
   gem "traceroute"
