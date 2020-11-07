@@ -3,7 +3,7 @@
 class ApplicationForm
   include ActiveModel::Model
 
-  attr_writer :error_messages
+  attr_reader :attributes
 
   # @overload
   def self.i18n_scope
