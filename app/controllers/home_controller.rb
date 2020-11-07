@@ -6,7 +6,7 @@ class HomeController < ApplicationController
   before_action :authenticate_user!
 
   def show
-    set_page_category Rails.configuration.page_categories.user_home
+    set_page_category PageCategory::USER_HOME
 
     @forum_posts = Rails.cache.fetch("user-home-forum-posts", expires_in: 1.hour) do
       posts = ForumPost.
