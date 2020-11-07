@@ -18,6 +18,12 @@ en:
         email: Email
     errors:
       models:
+        registration_form:
+          attributes:
+            email:
+              email_uniqueness: has already existed
+            username:
+              username_uniqueness: has already existed
         sign_up_form:
           attributes:
             back:

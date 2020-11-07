@@ -18,6 +18,12 @@ ja:
         email: メールアドレス
     errors:
       models:
+        registration_form:
+          attributes:
+            email:
+              email_uniqueness: はすでに存在します
+            username:
+              username_uniqueness: はすでに存在します
         sign_up_form:
           attributes:
             back:

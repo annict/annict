@@ -1,10 +1,5 @@
 en:
   dry_validation:
     errors:
-      acceptance: needs acceptance
-      email_exists: has already existed
       included_in?:
         failure: is invalid
-      username_exists: has already existed
-      username_format: is not a valid username format
-      username_length: must be less than 20
