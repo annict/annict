@@ -20,9 +20,11 @@ module V4
     end
 
     def create
-      @form = SignInForm.new(sign_in_form_attributes)
+      @form = SignInForm.new(sign_in_form_params)
 
-      return render(:new) unless @form.valid?
+      if @form.invalid?
+        return render(:new)
+      end
 
       EmailConfirmation.new(email: @form.email, back: @form.back).confirm_to_sign_in!
 
@@ -32,8 +34,8 @@ module V4
 
     private
 
-    def sign_in_form_attributes
-      params.to_unsafe_h["sign_in_form"].merge(back: stored_location_for(:user))
+    def sign_in_form_params
+      params.require(:sign_in_form).permit(:email).merge(back: stored_location_for(:user))
     end
   end
 end
