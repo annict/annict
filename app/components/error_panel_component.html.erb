@@ -1,10 +1,10 @@
-<% if form.error_messages.present? %>
+<% if @form.errors.any? %>
   <div class="alert alert-danger c-error-panel">
     <h4 class="alert-heading">
       <%= t "noun.error" %>
     </h4>
     <ul>
-      <% form.error_messages.each do |message| %>
+      <% @form.errors.full_messages.each do |message| %>
         <li>
           <%= message %>
         </li>
