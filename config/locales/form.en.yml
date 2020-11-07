@@ -24,7 +24,3 @@ en:
               email_uniqueness: has already existed
             username:
               username_uniqueness: has already existed
-        sign_up_form:
-          attributes:
-            back:
-              invalid_back_format: is invalid

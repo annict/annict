@@ -24,7 +24,3 @@ ja:
               email_uniqueness: はすでに存在します
             username:
               username_uniqueness: はすでに存在します
-        sign_up_form:
-          attributes:
-            back:
-              invalid_back_format: は不正な値です
