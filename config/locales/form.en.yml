@@ -16,3 +16,9 @@ en:
         email: Email
       user_email_form:
         email: Email
+    errors:
+      models:
+        sign_up_form:
+          attributes:
+            back:
+              invalid_back_format: is invalid

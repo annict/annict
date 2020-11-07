@@ -16,3 +16,9 @@ ja:
         email: メールアドレス
       user_email_form:
         email: メールアドレス
+    errors:
+      models:
+        sign_up_form:
+          attributes:
+            back:
+              invalid_back_format: は不正な値です

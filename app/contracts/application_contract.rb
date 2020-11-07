@@ -19,20 +19,6 @@ class ApplicationContract < Dry::Validation::Contract
     config/locales/dry_validation.ja.yml
   )
 
-  register_macro(:back_format) do
-    if value && !%r{\A/}.match?(value) # back must be relative path
-      key.failure(:back_format)
-    end
-  end
-
-  register_macro(:email_format) do
-    # https://github.com/K-and-R/email_validator/blob/756f4226d254713333f83f534b88d174a106eb37/lib/email_validator.rb#L13
-    # https://medium.com/hackernoon/the-100-correct-way-to-validate-email-addresses-7c4818f24643
-    unless %r{[^\s]@[^\s]}.match?(value)
-      key.failure(:email_format)
-    end
-  end
-
   register_macro(:email_exists) do
     if User.find_by(email: value)
       key.failure(:email_exists)

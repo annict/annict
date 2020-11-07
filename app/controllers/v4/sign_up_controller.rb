@@ -11,9 +11,11 @@ module V4
     end
 
     def create
-      @form = SignUpForm.new(sign_up_form_attributes)
+      @form = SignUpForm.new(sign_up_form_params)
 
-      return render(:new) unless @form.valid?
+      if @form.invalid?
+        return render(:new)
+      end
 
       EmailConfirmation.new(email: @form.email, back: @form.back).confirm_to_sign_up!
 
@@ -23,8 +25,10 @@ module V4
 
     private
 
-    def sign_up_form_attributes
-      params.to_unsafe_h["sign_up_form"].merge(back: stored_location_for(:user))
+    def sign_up_form_params
+      permitted = params.require(:sign_up_form).permit(:email)
+      permitted[:back] = stored_location_for(:user)
+      permitted
     end
   end
 end
