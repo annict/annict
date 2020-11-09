@@ -1,7 +1,0 @@
-ja:
-  dry_validation:
-    errors:
-      filled?: を入力してください
-      included_in?:
-        failure: が不正です
-      key?: を入力してください
