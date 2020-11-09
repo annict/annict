@@ -10,9 +10,9 @@ module V4
     def create
       set_page_category PageCategory::EPISODE
 
-      @form = EpisodeRecordForm.new(episode_record_form_attributes)
+      @form = EpisodeRecordForm.new(episode_record_form_params)
 
-      unless @form.valid?
+      if @form.invalid?
         load_episode_and_records(work_id: params[:work_id], episode_id: params[:id], form: @form)
 
         return render "/v4/episodes/show"
@@ -35,8 +35,8 @@ module V4
 
     private
 
-    def episode_record_form_attributes
-      @episode_record_form_attributes ||= params.to_unsafe_h["episode_record_form"]
+    def episode_record_form_params
+      params.required(:episode_record_form).permit(:comment, :episode_id, :rating, :share_to_twitter)
     end
   end
 end
