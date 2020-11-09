@@ -76,4 +76,12 @@ class RecordEntity < ApplicationEntity
 
     new attrs
   end
+
+  def episode_record?
+    complementable_type == "episode_record"
+  end
+
+  def anime_record?
+    complementable_type == "anime_record"
+  end
 end

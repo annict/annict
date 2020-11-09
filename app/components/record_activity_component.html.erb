@@ -1,0 +1,92 @@
+<div class="c-timeline__record-activity">
+  <div class="row mb-3">
+    <div class="col-auto pr-0">
+      <%= link_to profile_path(user_entity.username) do %>
+        <%= render ProfileImageComponent.new(
+          image_url_1x: user_entity.avatar_url,
+          alt: "@#{user_entity.username}"
+        ) %>
+      <% end %>
+    </div>
+
+    <div class="col">
+      <span class="c-timeline__user-name">
+        <%= link_to user_entity.name, profile_path(user_entity.username), class: "text-body font-weight-bold u-link" %>
+      </span>
+
+      <small class="mr-1">
+        <%= t "messages._components.activities.episode_record.created" %>
+      </small>
+
+      <%= render RelativeTimeComponent.new(time: @activity_group_entity.created_at.iso8601, class_name: "small text-muted") %>
+    </div>
+  </div>
+
+  <% if @activity_group_entity.single %>
+    <% record_entity = record_entities.first %>
+    <% if record_entity.episode_record? %>
+      <%= render EpisodeRecordContentComponent.new(
+        viewer: @viewer,
+        user_entity: user_entity,
+        work_entity: record_entity.trackable.anime,
+        episode_entity: record_entity.trackable,
+        record_entity: record_entity,
+        episode_record_entity: record_entity.complementable
+      ) %>
+    <% else %>
+      <%= render WorkRecordContentComponent.new(
+        user_entity: user_entity,
+        work_entity: record_entity.trackable,
+        record_entity: record_entity,
+        work_record_entity: record_entity.complementable
+      ) %>
+    <% end %>
+  <% else %>
+    <div class="c-timeline__activity-cards">
+      <% record_entities.each do |record_entity| %>
+        <div class="mb-3">
+          <% if record_entity.episode_record? %>
+            <%= render EpisodeRecordCardComponent.new(
+              work_entity: record_entity.trackable.anime,
+              episode_entity: record_entity.trackable,
+              episode_record_entity: record_entity.complementable
+            ) %>
+
+            <%= render EpisodeRecordFooterComponent.new(
+              viewer: @viewer,
+              user_entity: user_entity,
+              record_entity: record_entity,
+              episode_record_entity: record_entity.complementable
+            ) %>
+          <% else %>
+            <%= render WorkRecordCardComponent.new(
+              work_entity: record_entity.trackable,
+              work_record_entity: record_entity.complementable
+            ) %>
+
+            <%= render WorkRecordFooterComponent.new(
+              user_entity: user_entity,
+              record_entity: record_entity,
+              work_record_entity: record_entity.complementable
+            ) %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% if @activity_group_entity.activities_count > 2 %>
+    <div
+      class="text-center"
+      data-action="click->timeline-activity#next"
+      data-target="timeline-activity.nextButton"
+    >
+      <div class="text-center">
+        <div class="c-activity-more-button btn btn-outline-secondary btn-small py-1">
+          <i class="fal fa-chevron-double-down"></i>
+          <%= t "messages._components.activities.episode_record.more", n: @activity_group_entity.activities_count - 2 %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

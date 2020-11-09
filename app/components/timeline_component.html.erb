@@ -1,6 +1,6 @@
 <div class="c-timeline">
   <div class="c-timeline__activities mb-3">
-    <% activity_group_entities.each do |activity_group_entity| %>
+    <% @activity_group_entities.each do |activity_group_entity| %>
       <div
         class="c-timeline__activity py-3 u-underline"
         data-controller="timeline-activity"
@@ -8,13 +8,10 @@
         data-timeline-activity-cursor="<%= activity_group_entity.activities_page_info.end_cursor %>"
       >
         <% if activity_group_entity.status? %>
-          <%= render StatusActivityComponent.new(activity_group_entity: activity_group_entity, page_category: page_category) %>
+          <%= render StatusActivityComponent.new(activity_group_entity: activity_group_entity, page_category: @page_category) %>
 
-        <% elsif activity_group_entity.episode_record? %>
-          <%= render EpisodeRecordActivityComponent.new(activity_group_entity: activity_group_entity, page_category: page_category) %>
-
-        <% elsif activity_group_entity.anime_record? %>
-          <%= render WorkRecordActivityComponent.new(activity_group_entity: activity_group_entity, page_category: page_category) %>
+        <% elsif activity_group_entity.record? %>
+          <%= render RecordActivityComponent.new(viewer: @viewer, activity_group_entity: activity_group_entity, page_category: @page_category) %>
         <% end %>
       </div>
     <% end %>

@@ -3,7 +3,7 @@
 class ActivityEntity < ApplicationEntity
   attribute? :database_id, Types::Integer
   attribute? :itemable_type, Types::ActivityResourceKinds
-  attribute? :itemable, EpisodeRecordEntity | StatusEntity | AnimeRecordEntity
+  attribute? :itemable, RecordEntity | StatusEntity
 
   def self.from_nodes(activity_nodes, user_node: nil)
     activity_nodes.map do |activity_node|
@@ -24,12 +24,10 @@ class ActivityEntity < ApplicationEntity
 
     if itemable_node = activity_node["itemable"]
       attrs[:itemable] = case itemable_type
-      when "EPISODE_RECORD"
-        EpisodeRecordEntity.from_node(itemable_node, user_node: user_node)
+      when "RECORD"
+        RecordEntity.from_node(itemable_node)
       when "STATUS"
-        StatusEntity.from_node(itemable_node, user_node: user_node)
-      when "ANIME_RECORD"
-        AnimeRecordEntity.from_node(itemable_node, user_node: user_node)
+        StatusEntity.from_node(itemable_node)
       end
     end
 

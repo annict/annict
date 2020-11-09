@@ -33,7 +33,7 @@
 
       <% if @activity_group_entities.present? %>
         <%= render TimelineComponent.new(
-          username: current_user.username,
+          viewer: current_user,
           page_category: "user-home",
           activity_group_entities: @activity_group_entities,
           page_info_entity: @page_info_entity

@@ -6,7 +6,7 @@ class ApplicationEntity < Dry::Struct
   module Types
     include Dry.Types(default: :strict)
 
-    ActivityResourceKinds = Types::String.enum("episode_record", "status", "anime_record")
+    ActivityResourceKinds = Types::String.enum("record", "status")
     RecordComplementableTypes = Types::String.enum("episode_record", "anime_record")
     AnimeMediaKinds = Types::String.enum("tv", "ova", "movie", "web", "other")
     SeasonKinds = Types::String.enum("winter", "spring", "summer", "autumn")

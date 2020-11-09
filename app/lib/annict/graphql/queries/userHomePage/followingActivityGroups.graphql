@@ -52,48 +52,60 @@ query($username: String!, $first: Int, $last: Int, $before: String, $after: Stri
                 }
               }
 
-              ... on EpisodeRecord {
+              ... on Record {
                 databaseId
-                ratingState
-                body
+                complementableType
+                commentHtml
                 likesCount
-                commentsCount
+                modifiedAt
+                createdAt
 
-                record {
+                user {
                   databaseId
+                  username
+                  name
+                  avatarUrl(size: size200)
+                  displaySupporterBadge
                 }
 
-                anime {
-                  databaseId
-                  title
-                  titleEn
-                  image {
-                    internalUrl1x: internalUrl(size: "100x")
-                    internalUrl2x: internalUrl(size: "200x")
+                trackable {
+                  ... on Episode {
+                    databaseId
+                    number
+                    numberEn
+                    title
+                    titleEn
+                    anime {
+                      databaseId
+                      title
+                      titleEn
+                      image {
+                        internalUrl1x: internalUrl(size: "100x")
+                        internalUrl2x: internalUrl(size: "200x")
+                      }
+                    }
+                  }
+
+                  ... on Anime {
+                    databaseId
+                    title
+                    titleEn
+                    image {
+                      internalUrl1x: internalUrl(size: "100x")
+                      internalUrl2x: internalUrl(size: "200x")
+                    }
                   }
                 }
 
-                episode {
-                  databaseId
-                  numberText
-                  title
-                  titleEn
-                }
-              }
+                complementable {
+                  ... on EpisodeRecord {
+                    rating
+                    advancedRating
+                    commentsCount
+                  }
 
-              ... on AnimeRecord {
-                databaseId
-                ratingOverallState
-                body
-                likesCount
-
-                anime {
-                  databaseId
-                  title
-                  titleEn
-                  image {
-                    internalUrl1x: internalUrl(size: "100x")
-                    internalUrl2x: internalUrl(size: "200x")
+                  ... on AnimeRecord {
+                    ratingOverall
                   }
                 }
               }

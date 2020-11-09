@@ -20,8 +20,8 @@ module Canary
           value = object.itemable_type.underscore.upcase
 
           case value
-          when "WORK_RECORD"
-            "ANIME_RECORD"
+          when "EPISODE_RECORD", "WORK_RECORD"
+            "RECORD"
           else
             value
           end
