@@ -5,7 +5,7 @@ module V4
     include AnimeSidebarDisplayable
 
     def show
-      set_page_category Rails.configuration.page_categories.work_detail
+      set_page_category PageCategory::WORK
 
       work = Work.only_kept.find(params[:id])
 
