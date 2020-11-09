@@ -24,3 +24,7 @@ ja:
               email_uniqueness: はすでに存在します
             username:
               username_uniqueness: はすでに存在します
+        user_email_form:
+          attributes:
+            email:
+              email_uniqueness: はすでに存在します

@@ -24,3 +24,7 @@ en:
               email_uniqueness: has already existed
             username:
               username_uniqueness: has already existed
+        user_email_form:
+          attributes:
+            email:
+              email_uniqueness: has already existed

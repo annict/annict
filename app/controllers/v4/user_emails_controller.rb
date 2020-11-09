@@ -5,9 +5,9 @@ module V4
     before_action :authenticate_user!
 
     def update
-      @user_email_form = UserEmailForm.new(user_email_form_attributes)
+      @user_email_form = UserEmailForm.new(user_email_form_params)
 
-      unless @user_email_form.valid?
+      if @user_email_form.invalid?
         @user = current_user
         return render("/accounts/show")
       end
@@ -19,8 +19,8 @@ module V4
 
     private
 
-    def user_email_form_attributes
-      params.to_unsafe_h["user_email_form"]
+    def user_email_form_params
+      params.require(:user_email_form).permit(:email)
     end
   end
 end
