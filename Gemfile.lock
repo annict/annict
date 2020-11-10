@@ -320,8 +320,7 @@ GEM
     imgix-rails (4.1.0)
       imgix (>= 3.0)
     jaro_winkler (1.5.4)
-    jb (0.7.1)
-      multi_json
+    jb (0.8.0)
     jmespath (1.4.0)
     json (2.3.1)
     jwt (2.2.2)
