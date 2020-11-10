@@ -54,7 +54,6 @@ query($username: String!, $first: Int, $last: Int, $before: String, $after: Stri
 
               ... on Record {
                 databaseId
-                complementableType
                 commentHtml
                 likesCount
                 modifiedAt
@@ -69,6 +68,8 @@ query($username: String!, $first: Int, $last: Int, $before: String, $after: Stri
                 }
 
                 trackable {
+                  __typename
+
                   ... on Episode {
                     databaseId
                     number
@@ -97,7 +98,9 @@ query($username: String!, $first: Int, $last: Int, $before: String, $after: Stri
                   }
                 }
 
-                complementable {
+                recordable {
+                  __typename
+
                   ... on EpisodeRecord {
                     rating
                     advancedRating

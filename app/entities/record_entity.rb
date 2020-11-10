@@ -3,7 +3,6 @@
 class RecordEntity < ApplicationEntity
   attribute? :id, Types::String
   attribute? :database_id, Types::Integer
-  attribute? :complementable_type, Types::RecordComplementableTypes
   attribute? :comment, Types::String.optional
   attribute? :comment_html, Types::String.optional
   attribute? :likes_count, Types::Integer
@@ -11,7 +10,7 @@ class RecordEntity < ApplicationEntity
   attribute? :created_at, Types::Params::Time
   attribute? :user, UserEntity
   attribute? :trackable, AnimeEntity | EpisodeEntity
-  attribute? :complementable, AnimeRecordEntity | EpisodeRecordEntity
+  attribute? :recordable, AnimeRecordEntity | EpisodeRecordEntity
 
   def self.from_nodes(nodes)
     nodes.map do |node|
@@ -24,10 +23,6 @@ class RecordEntity < ApplicationEntity
 
     if database_id = node["databaseId"]
       attrs[:database_id] = database_id
-    end
-
-    if complementable_type = node["complementableType"]
-      attrs[:complementable_type] = complementable_type.downcase
     end
 
     if comment = node["comment"]
@@ -54,23 +49,21 @@ class RecordEntity < ApplicationEntity
       attrs[:user] = UserEntity.from_node(user_node)
     end
 
-    trackable_node = node["trackable"]
-    if complementable_type && trackable_node
-      attrs[:trackable] = case complementable_type
-      when "ANIME_RECORD"
+    if trackable_node = node["trackable"]
+      attrs[:trackable] = case trackable_node["__typename"]
+      when "Anime"
         AnimeEntity.from_node(trackable_node)
-      when "EPISODE_RECORD"
+      when "Episode"
         EpisodeEntity.from_node(trackable_node)
       end
     end
 
-    complementable_node = node["complementable"]
-    if complementable_type && complementable_node
-      attrs[:complementable] = case complementable_type
-      when "ANIME_RECORD"
-        AnimeRecordEntity.from_node(complementable_node)
-      when "EPISODE_RECORD"
-        EpisodeRecordEntity.from_node(complementable_node)
+    if recordable_node = node["recordable"]
+      attrs[:recordable] = case recordable_node["__typename"]
+      when "AnimeRecord"
+        AnimeRecordEntity.from_node(recordable_node)
+      when "EpisodeRecord"
+        EpisodeRecordEntity.from_node(recordable_node)
       end
     end
 
@@ -78,10 +71,10 @@ class RecordEntity < ApplicationEntity
   end
 
   def episode_record?
-    complementable_type == "episode_record"
+    recordable.is_a?(EpisodeRecordEntity)
   end
 
   def anime_record?
-    complementable_type == "anime_record"
+    recordable.is_a?(AnimeRecordEntity)
   end
 end

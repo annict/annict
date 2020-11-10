@@ -31,14 +31,14 @@
         work_entity: record_entity.trackable.anime,
         episode_entity: record_entity.trackable,
         record_entity: record_entity,
-        episode_record_entity: record_entity.complementable
+        episode_record_entity: record_entity.recordable
       ) %>
     <% else %>
       <%= render WorkRecordContentComponent.new(
         user_entity: user_entity,
         work_entity: record_entity.trackable,
         record_entity: record_entity,
-        work_record_entity: record_entity.complementable
+        work_record_entity: record_entity.recordable
       ) %>
     <% end %>
   <% else %>
@@ -49,25 +49,25 @@
             <%= render EpisodeRecordCardComponent.new(
               work_entity: record_entity.trackable.anime,
               episode_entity: record_entity.trackable,
-              episode_record_entity: record_entity.complementable
+              episode_record_entity: record_entity.recordable
             ) %>
 
             <%= render EpisodeRecordFooterComponent.new(
               viewer: @viewer,
               user_entity: user_entity,
               record_entity: record_entity,
-              episode_record_entity: record_entity.complementable
+              episode_record_entity: record_entity.recordable
             ) %>
           <% else %>
             <%= render WorkRecordCardComponent.new(
               work_entity: record_entity.trackable,
-              work_record_entity: record_entity.complementable
+              work_record_entity: record_entity.recordable
             ) %>
 
             <%= render WorkRecordFooterComponent.new(
               user_entity: user_entity,
               record_entity: record_entity,
-              work_record_entity: record_entity.complementable
+              work_record_entity: record_entity.recordable
             ) %>
           <% end %>
         </div>

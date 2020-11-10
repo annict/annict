@@ -3,7 +3,6 @@ query($episodeId: ID!) {
     records(episodeId: $episodeId, orderBy: { field: CREATED_AT, direction: DESC }, first: 50) {
       nodes {
         databaseId
-        complementableType
         commentHtml
         likesCount
         modifiedAt
@@ -18,6 +17,8 @@ query($episodeId: ID!) {
         }
 
         trackable {
+          __typename
+
           ... on Episode {
             databaseId
 
@@ -27,7 +28,9 @@ query($episodeId: ID!) {
           }
         }
 
-        complementable {
+        recordable {
+          __typename
+
           ... on EpisodeRecord {
             rating
             advancedRating

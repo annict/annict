@@ -17,13 +17,14 @@ query($username: String!, $month: String, $first: Int, $last: Int, $before: Stri
 
       nodes {
         databaseId
-        complementableType
         commentHtml
         likesCount
         modifiedAt
         createdAt
 
         trackable {
+          __typename
+
           ... on Anime {
             databaseId
             title
@@ -47,7 +48,9 @@ query($username: String!, $month: String, $first: Int, $last: Int, $before: Stri
           }
         }
 
-        complementable {
+        recordable {
+          __typename
+
           ... on EpisodeRecord {
             rating
             advancedRating
