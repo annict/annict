@@ -170,7 +170,7 @@ scope module: :v4 do
     match "/@:username/records/:record_id/edit",          via: :get,   as: :edit_record,             to: "records#edit",  username: USERNAME_FORMAT
     match "/episode_records",                             via: :patch, as: :episode_record_mutation, to: "episode_records#update"
     match "/timeline_mode",                               via: :patch, as: :timeline_mode,           to: "timeline_mode#update"
-    match "/works/:anime_id",                             via: :get,   as: :work,                    to: "works#show"
+    match "/works/:anime_id",                             via: :get,   as: :anime,                   to: "works#show"
     match "/works/:anime_id/records",                     via: :get,   as: :anime_record_list,       to: "anime_records#index"
     match "/works/:anime_id/records",                     via: :post,                                to: "anime_records#create"
     match "/works/:work_id/episodes/:episode_id",         via: :get,   as: :episode,                 to: "episodes#show"
