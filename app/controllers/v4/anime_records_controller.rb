@@ -12,11 +12,6 @@ module V4
       @anime = Work.only_kept.find(params[:anime_id])
       load_anime_and_anime_records
       @form = AnimeRecordForm.new(anime_id: @anime_entity.id)
-
-      return unless user_signed_in?
-
-      # @work_record = @work.work_records.new
-      # @work_record.setup_shared_sns(current_user)
     end
 
     def create
