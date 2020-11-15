@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 class AnimeRecordEntity < ApplicationEntity
-  attribute? :rating_animation, Types::RecordRatingStateKinds.optional
-  attribute? :rating_music, Types::RecordRatingStateKinds.optional
-  attribute? :rating_story, Types::RecordRatingStateKinds.optional
-  attribute? :rating_character, Types::RecordRatingStateKinds.optional
-  attribute? :rating_overall, Types::RecordRatingStateKinds.optional
+  attribute? :rating_animation, Types::RecordRatingState.optional
+  attribute? :rating_music, Types::RecordRatingState.optional
+  attribute? :rating_story, Types::RecordRatingState.optional
+  attribute? :rating_character, Types::RecordRatingState.optional
+  attribute? :rating_overall, Types::RecordRatingState.optional
 
   def self.from_nodes(work_record_nodes)
     work_record_nodes.map do |work_record_node|

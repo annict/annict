@@ -8,10 +8,10 @@
   <% end %>
 
   <div class="form-row">
-    <% WorkRecord::RATING_KINDS.each do |rating_kind| %>
+    <% WorkRecord::RATING_FIELDS.each do |rating_field| %>
       <div class="col-md-6 form-group">
-        <%= f.label rating_kind %>
-        <%= render ButtonGroups::RecordRatingButtonGroupComponent.new(form: f, rating_kind: rating_kind) %>
+        <%= f.label rating_field %>
+        <%= render ButtonGroups::RecordRatingButtonGroupComponent.new(form: f, rating_field: rating_field) %>
       </div>
     <% end %>
   </div>

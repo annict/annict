@@ -4,7 +4,7 @@ class EpisodeRecordForm < ApplicationForm
   attr_accessor :episode_id, :rating, :record_id
   attr_reader :comment, :share_to_twitter
 
-  validates :rating, inclusion: { in: ApplicationEntity::Types::RecordRating.values }
+  validates :rating, inclusion: { in: ApplicationEntity::Types::RecordRatingState.values }
 
   def comment=(comment)
     @comment = comment&.strip

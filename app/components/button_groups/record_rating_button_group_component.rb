@@ -2,17 +2,17 @@
 
 module ButtonGroups
   class RecordRatingButtonGroupComponent < ApplicationComponent
-    def initialize(form:, rating_kind:)
+    def initialize(form:, rating_field:)
       @form = form
-      @rating_kind = rating_kind
+      @rating_field = rating_field
     end
 
     def input_name
-      "#{@form.object.class.name.underscore}[#{@rating_kind}]"
+      "#{@form.object.class.name.underscore}[#{@rating_field}]"
     end
 
     def rating
-      @rating ||= @form.object.send(@rating_kind)&.downcase
+      @rating ||= @form.object.send(@rating_field)&.downcase.presence
     end
 
     def button_class_name(rating_state)

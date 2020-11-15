@@ -2,7 +2,7 @@
 
 class EpisodeRecordEntity < ApplicationEntity
   attribute? :database_id, Types::Integer
-  attribute? :rating, Types::RecordRatingStateKinds.optional
+  attribute? :rating, Types::RecordRatingState.optional
   attribute? :advanced_rating, Types::Float.optional
   attribute? :comments_count, Types::Integer
   attribute? :user, UserEntity

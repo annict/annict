@@ -56,7 +56,7 @@ class WorkRecord < ApplicationRecord
     rating_character_state
   ).freeze
 
-  RATING_KINDS = %i(
+  RATING_FIELDS = %i(
     rating_overall
     rating_animation
     rating_music

@@ -8,32 +8,32 @@ module V4
 
     def index
       set_page_category PageCategory::ANIME_RECORD_LIST
-
       @anime = Work.only_kept.find(params[:anime_id])
-      load_anime_and_anime_records
+      load_on_anime_record_list
       @form = AnimeRecordForm.new(anime_id: @anime_entity.id)
     end
 
     def create
-      @work = Work.only_kept.find(params[:anime_id])
+      @anime = Work.only_kept.find(params[:anime_id])
+      @form = AnimeRecordForm.new(anime_record_form_params)
 
-      _, err = CreateAnimeRecordRepository.new(
-        graphql_client: graphql_client(viewer: current_user)
-      ).execute(anime: @work, params: work_record_params)
+      if @form.invalid?
+        set_page_category PageCategory::ANIME_RECORD_LIST
+        load_on_anime_record_list
+        return render :index
+      end
+
+      _, err = CreateAnimeRecordRepository.new(graphql_client: graphql_client(viewer: current_user)).execute(form: @form)
 
       if err
-        load_work_records
-
-        @work_record = @work.work_records.new(work_record_params)
-        @work_record.errors.add(:mutation_error, err.message)
-        @work_record.setup_shared_sns(current_user)
-
-        return render "work_records/index"
+        @form.error_messages = [err.message]
+        load_on_anime_record_list
+        return render :index
       end
 
       flash[:notice] = t("messages._common.post")
 
-      redirect_to work_records_path(@work)
+      redirect_to anime_record_list_path(anime_id: @anime.id)
     end
 
     def edit
@@ -78,13 +78,13 @@ module V4
 
     private
 
-    def anime_record_params
+    def anime_record_form_params
       params.require(:anime_record_form).permit(
-        :comment, :rating_animation, :rating_music, :rating_story, :rating_character, :rating_overall, :share_to_twitter
+        :anime_id, :comment, :rating_animation, :rating_music, :rating_story, :rating_character, :rating_overall, :share_to_twitter
       )
     end
 
-    def load_anime_and_anime_records
+    def load_on_anime_record_list
       @anime_entity = AnimeRecordListPage::AnimeRepository.new(graphql_client: graphql_client).execute(database_id: @anime.id)
       load_vod_channel_entities(anime: @anime, anime_entity: @anime_entity)
       @other_record_entities = @anime_entity.records
