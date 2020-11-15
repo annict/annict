@@ -3,6 +3,7 @@
 class AnimeEntity < ApplicationEntity
   local_attributes :title, :title_alter, :synopsis, :synopsis_source
 
+  attribute? :id, Types::String
   attribute? :database_id, Types::Integer
   attribute? :title, Types::String
   attribute? :title_en, Types::String.optional
@@ -42,7 +43,7 @@ class AnimeEntity < ApplicationEntity
   attribute? :staffs, Types::Array.of(StaffEntity)
   attribute? :episodes, Types::Array.of(EpisodeEntity)
   attribute? :programs, Types::Array.of(ProgramEntity)
-  attribute? :anime_records, Types::Array.of(AnimeRecordEntity)
+  attribute? :records, Types::Array.of(RecordEntity)
   attribute? :series_list, Types::Array.of(SeriesEntity)
 
   def self.from_model(work)
@@ -53,156 +54,160 @@ class AnimeEntity < ApplicationEntity
     )
   end
 
-  def self.from_node(work_node)
+  def self.from_node(node)
     attrs = {}
 
-    if database_id = work_node["databaseId"]
+    if id = node["id"]
+      attrs[:id] = id
+    end
+
+    if database_id = node["databaseId"]
       attrs[:database_id] = database_id
     end
 
-    if title = work_node["title"]
+    if title = node["title"]
       attrs[:title] = title
     end
 
-    if title_en = work_node["titleEn"]
+    if title_en = node["titleEn"]
       attrs[:title_en] = title_en
     end
 
-    if title_kana = work_node["titleKana"]
+    if title_kana = node["titleKana"]
       attrs[:title_kana] = title_kana
     end
 
-    if title_alter = work_node["titleAlter"]
+    if title_alter = node["titleAlter"]
       attrs[:title_alter] = title_alter
     end
 
-    if title_alter_en = work_node["titleAlterEn"]
+    if title_alter_en = node["titleAlterEn"]
       attrs[:title_alter_en] = title_alter_en
     end
 
-    if media = work_node["media"]
+    if media = node["media"]
       attrs[:media] = media.downcase
     end
 
-    if season_year = work_node["seasonYear"]
+    if season_year = node["seasonYear"]
       attrs[:season_year] = season_year
     end
 
-    if season_type = work_node["seasonType"]
+    if season_type = node["seasonType"]
       attrs[:season_type] = season_type.downcase
     end
 
-    if season_slug = work_node["seasonSlug"]
+    if season_slug = node["seasonSlug"]
       attrs[:season_slug] = season_slug
     end
 
-    if started_on = work_node["startedOn"]
+    if started_on = node["startedOn"]
       attrs[:started_on] = started_on
     end
 
-    if episodes_count = work_node["episodesCount"]
+    if episodes_count = node["episodesCount"]
       attrs[:episodes_count] = episodes_count
     end
 
-    if watchers_count = work_node["watchersCount"]
+    if watchers_count = node["watchersCount"]
       attrs[:watchers_count] = watchers_count
     end
 
-    if satisfaction_rate = work_node["satisfactionRate"]
+    if satisfaction_rate = node["satisfactionRate"]
       attrs[:satisfaction_rate] = satisfaction_rate
     end
 
-    if ratings_count = work_node["ratingsCount"]
+    if ratings_count = node["ratingsCount"]
       attrs[:ratings_count] = ratings_count
     end
 
-    if anime_records_with_body_count = work_node["animeRecordsWithBodyCount"]
+    if anime_records_with_body_count = node["animeRecordsWithBodyCount"]
       attrs[:anime_records_with_body_count] = anime_records_with_body_count
     end
 
-    if official_site_url = work_node["officialSiteUrl"]
+    if official_site_url = node["officialSiteUrl"]
       attrs[:official_site_url] = official_site_url
     end
 
-    if official_site_url_en = work_node["officialSiteUrlEn"]
+    if official_site_url_en = node["officialSiteUrlEn"]
       attrs[:official_site_url_en] = official_site_url_en
     end
 
-    if wikipedia_url = work_node["wikipediaUrl"]
+    if wikipedia_url = node["wikipediaUrl"]
       attrs[:wikipedia_url] = wikipedia_url
     end
 
-    if wikipedia_url_en = work_node["wikipediaUrlEn"]
+    if wikipedia_url_en = node["wikipediaUrlEn"]
       attrs[:wikipedia_url_en] = wikipedia_url_en
     end
 
-    if twitter_username = work_node["twitterUsername"]
+    if twitter_username = node["twitterUsername"]
       attrs[:twitter_username] = twitter_username
     end
 
-    if twitter_hashtag = work_node["twitterHashtag"]
+    if twitter_hashtag = node["twitterHashtag"]
       attrs[:twitter_hashtag] = twitter_hashtag
     end
 
-    if syobocal_tid = work_node["syobocalTid"]
+    if syobocal_tid = node["syobocalTid"]
       attrs[:syobocal_tid] = syobocal_tid
     end
 
-    if mal_anime_id = work_node["malAnimeId"]
+    if mal_anime_id = node["malAnimeId"]
       attrs[:mal_anime_id] = mal_anime_id
     end
 
-    if is_no_episodes = work_node["isNoEpisodes"]
+    if is_no_episodes = node["isNoEpisodes"]
       attrs[:is_no_episodes] = is_no_episodes
     end
 
-    if synopsis = work_node["synopsis"]
+    if synopsis = node["synopsis"]
       attrs[:synopsis] = synopsis
     end
 
-    if synopsis_en = work_node["synopsisEn"]
+    if synopsis_en = node["synopsisEn"]
       attrs[:synopsis_en] = synopsis_en
     end
 
-    if synopsis_source = work_node["synopsisSource"]
+    if synopsis_source = node["synopsisSource"]
       attrs[:synopsis_source] = synopsis_source
     end
 
-    if synopsis_source_en = work_node["synopsisSourceEn"]
+    if synopsis_source_en = node["synopsisSourceEn"]
       attrs[:synopsis_source_en] = synopsis_source_en
     end
 
-    if copyright = work_node["copyright"]
+    if copyright = node["copyright"]
       attrs[:copyright] = copyright
     end
 
-    if image_url_1x = work_node.dig("image", "internalUrl1x")
+    if image_url_1x = node.dig("image", "internalUrl1x")
       attrs[:image_url_1x] = image_url_1x
     end
 
-    if image_url_2x = work_node.dig("image", "internalUrl2x")
+    if image_url_2x = node.dig("image", "internalUrl2x")
       attrs[:image_url_2x] = image_url_2x
     end
 
-    trailer_nodes = work_node.dig("trailers", "nodes")
+    trailer_nodes = node.dig("trailers", "nodes")
     attrs[:trailers] = TrailerEntity.from_nodes(trailer_nodes || [])
 
-    cast_nodes = work_node.dig("casts", "nodes")
+    cast_nodes = node.dig("casts", "nodes")
     attrs[:casts] = CastEntity.from_nodes(cast_nodes || [])
 
-    staff_nodes = work_node.dig("staffs", "nodes")
+    staff_nodes = node.dig("staffs", "nodes")
     attrs[:staffs] = StaffEntity.from_nodes(staff_nodes || [])
 
-    episode_nodes = work_node.dig("episodes", "nodes")
+    episode_nodes = node.dig("episodes", "nodes")
     attrs[:episodes] = EpisodeEntity.from_nodes(episode_nodes || [])
 
-    program_nodes = work_node.dig("programs", "nodes")
+    program_nodes = node.dig("programs", "nodes")
     attrs[:programs] = ProgramEntity.from_nodes(program_nodes || [])
 
-    anime_record_nodes = work_node.dig("animeRecords", "nodes")
-    attrs[:anime_records] = AnimeRecordEntity.from_nodes(anime_record_nodes || [])
+    record_nodes = node.dig("records", "nodes")
+    attrs[:records] = RecordEntity.from_nodes(record_nodes || [])
 
-    series_nodes = work_node.dig("seriesList", "nodes")
+    series_nodes = node.dig("seriesList", "nodes")
     attrs[:series_list] = SeriesEntity.from_nodes(series_nodes || [])
 
     new attrs

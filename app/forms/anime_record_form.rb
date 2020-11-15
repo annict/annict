@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
-class EpisodeRecordForm < ApplicationForm
-  attr_accessor :episode_id, :rating, :record_id
+class AnimeRecordForm < ApplicationForm
+  attr_accessor :anime_id, :rating_overall, :rating_animation, :rating_music, :rating_story, :rating_character, :record_id
   attr_reader :comment, :share_to_twitter
 
-  validates :rating, inclusion: { in: ApplicationEntity::Types::RecordRating.values }
+  WorkRecord::RATING_KINDS.each do |rating_kind|
+    validates rating_kind, inclusion: { in: ApplicationEntity::Types::RecordRating.values }
+  end
 
   def comment=(comment)
     @comment = comment&.strip

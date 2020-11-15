@@ -1,6 +1,12 @@
 ja:
   form:
     attributes:
+      anime_record_form:
+        rating_animation: 映像
+        rating_music: 音楽
+        rating_story: ストーリー
+        rating_character: キャラクター
+        rating_overall: 全体
       episode_record_form:
         comment: 感想
         rating: 評価

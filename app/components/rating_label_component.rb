@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class RatingLabelComponent < ApplicationComponent
-  def initialize(rating:, advanced_rating:, class_name: "")
+  def initialize(rating:, advanced_rating: nil, class_name: "")
     @rating = rating.downcase.to_sym
     @advanced_rating = advanced_rating
     @class_name = class_name

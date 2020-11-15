@@ -4,7 +4,7 @@
   class: textarea_classname,
   "data-action": "keyup->record-textarea#updateCharactersCount",
   "data-controller": "record-textarea",
-  "data-record-textarea-characters-counter-id": @form.object.episode_id,
+  "data-record-textarea-characters-counter-id": @form.object.unique_id,
   placeholder: t("messages.episode_records.new.write_your_comment"),
   rows: "5"
 ) %>
@@ -12,7 +12,7 @@
 <div
   class="small text-muted text-right"
   data-controller="characters-counter"
-  data-characters-counter-characters-counter-id="<%= @form.object.episode_id %>"
+  data-characters-counter-characters-counter-id="<%= @form.object.unique_id %>"
 >
   <span data-target="characters-counter.value"></span>
   <%= t("noun.characters2") %>

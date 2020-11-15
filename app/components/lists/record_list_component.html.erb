@@ -16,11 +16,12 @@
           show_card: @show_card
         ) %>
       <% elsif record_entity.anime_record? %>
-        <%= render WorkRecordContentComponent.new(
+        <%= render AnimeRecordContentComponent.new(
           user_entity: record_entity.user,
-          work_entity: record_entity.trackable,
+          anime_entity: record_entity.trackable,
           record_entity: record_entity,
-          work_record_entity: record_entity.recordable
+          anime_record_entity: record_entity.recordable,
+          show_card: @show_card
         ) %>
       <% end %>
     </div>

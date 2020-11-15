@@ -2,6 +2,7 @@
 
 class PageCategory
   NAMES = %i(
+    anime_record_list
     character_fan_list
     episode
     episode_list
@@ -28,7 +29,6 @@ class PageCategory
     work_list_newest
     work_list_popular
     work_list_season
-    work_record_list
   ).freeze
 
   NAMES.each do |name|

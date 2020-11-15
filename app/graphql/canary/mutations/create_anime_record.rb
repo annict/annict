@@ -5,7 +5,7 @@ module Canary
     class CreateAnimeRecord < Canary::Mutations::Base
       argument :anime_id, ID,
         required: true
-      argument :body, String,
+      argument :comment, String,
         required: false,
         description: "作品への感想"
       WorkRecord::STATES.each do |state|

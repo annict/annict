@@ -24,7 +24,7 @@ module V4
           EpisodePage::FollowingRecordsRepository.new(graphql_client: graphql_client(viewer: current_user)).execute(episode_id: @episode_entity.id)
         end
 
-        @other_record_entities = filter_records(current_user, @other_record_entities, @my_record_entities + @following_record_entities)
+        @other_record_entities = current_user.filter_records(@other_record_entities, @my_record_entities + @following_record_entities)
       end
     end
 
@@ -57,18 +57,6 @@ module V4
         episode.id,
         user.id
       ].freeze
-    end
-
-    def filter_records(viewer, base_record_entities, record_entities)
-      muted_user_ids = viewer.mute_users.pluck(:muted_user_id)
-      record_ids = record_entities.pluck(:database_id)
-
-      base_record_entities.filter do |record_entity|
-        user_id = record_entity.user.database_id
-        record_id = record_entity.database_id
-
-        !user_id.in?(muted_user_ids) && !record_id.in?(record_ids)
-      end
     end
   end
 end

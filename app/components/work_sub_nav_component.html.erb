@@ -6,14 +6,14 @@
   <% end %>
 
   <% unless work_entity.is_no_episodes %>
-    <%= link_to work_episodes_path(work_entity.database_id), class: "c-subnav__link #{'c-subnav__link--active' if page_category.in?(%w(episode episode_list))}" do %>
+    <%= link_to work_episodes_path(work_entity.database_id), class: "c-subnav__link #{'c-subnav__link--active' if page_category.in?(%w(episode episode-list))}" do %>
       <div class="c-subnav__item">
         <%= t "noun.episodes" %>
       </div>
     <% end %>
   <% end %>
 
-  <%= link_to work_records_path(work_entity.database_id), class: "c-subnav__link #{'c-subnav__link--active' if page_category.in?(%w(work_record_list))}" do %>
+  <%= link_to anime_record_list_path(anime_id: work_entity.database_id), class: "c-subnav__link #{'c-subnav__link--active' if page_category.in?(%w(anime-record-list))}" do %>
     <div class="c-subnav__item">
       <%= t "noun.records" %>
     </div>

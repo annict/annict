@@ -8,6 +8,7 @@ import { EventDispatcher } from './event-dispatcher';
 
 const REQUEST_LIST: any = {
   'activity-list': [libraryEntriesRequest, likesRequest],
+  'anime-record-list': [libraryEntriesRequest, likesRequest, trackedResourcesRequest, userRequest],
   'character-fan-list': [followingRequest],
   'edit-record': [libraryEntriesRequest],
   'episode-list': [libraryEntriesRequest],
@@ -25,7 +26,6 @@ const REQUEST_LIST: any = {
   'work-list-newest': [libraryEntriesRequest, workFriendsRequest],
   'work-list-popular': [libraryEntriesRequest, workFriendsRequest],
   'work-list-season': [libraryEntriesRequest, workFriendsRequest],
-  'work-record-list': [libraryEntriesRequest, likesRequest, trackedResourcesRequest, userRequest],
   episode: [libraryEntriesRequest, likesRequest, trackedResourcesRequest, userRequest],
   library: [followingRequest, libraryEntriesRequest],
   profile: [followingRequest, libraryEntriesRequest, likesRequest, trackedResourcesRequest, userRequest],

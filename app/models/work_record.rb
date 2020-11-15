@@ -56,6 +56,14 @@ class WorkRecord < ApplicationRecord
     rating_character_state
   ).freeze
 
+  RATING_KINDS = %i(
+    rating_overall
+    rating_animation
+    rating_music
+    rating_story
+    rating_character
+  ).freeze
+
   STATES.each do |state|
     enumerize state, in: Record::RATING_STATES
   end

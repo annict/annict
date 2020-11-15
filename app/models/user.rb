@@ -499,6 +499,18 @@ class User < ApplicationRecord
     records.select(:created_at).last&.created_at
   end
 
+  def filter_records(base_record_entities, record_entities)
+    muted_user_ids = mute_users.pluck(:muted_user_id)
+    record_ids = record_entities.pluck(:database_id)
+
+    base_record_entities.filter do |record_entity|
+      user_id = record_entity.user.database_id
+      record_id = record_entity.database_id
+
+      !user_id.in?(muted_user_ids) && !record_id.in?(record_ids)
+    end
+  end
+
   private
 
   def get_large_avatar_image(provider, image_url)

@@ -134,9 +134,11 @@ module Canary
           argument :order_by, Canary::Types::InputObjects::EpisodeOrder, required: false
         end
 
-        field :anime_records, Canary::Types::Objects::AnimeRecordType.connection_type, null: true do
-          argument :order_by, Canary::Types::InputObjects::AnimeRecordOrder, required: false
+        field :records, Canary::Types::Objects::RecordType.connection_type, null: false, resolver: Canary::Resolvers::RecordsOnAnime do
           argument :has_body, Boolean, required: false
+          argument :by_viewer, Boolean, required: false
+          argument :by_following, Boolean, required: false
+          argument :order_by, Canary::Types::InputObjects::RecordOrder, required: false
         end
 
         field :programs, Canary::Types::Objects::ProgramType.connection_type, null: true, resolver: Canary::Resolvers::Programs do
@@ -163,15 +165,6 @@ module Canary
 
         def episodes(order_by: nil)
           SearchEpisodesQuery.new(object.episodes, order_by: order_by).call
-        end
-
-        def anime_records(order_by: nil, has_body: nil)
-          SearchWorkRecordsQuery.new(
-            object.work_records,
-            context: context,
-            order_by: order_by,
-            has_body: has_body
-          ).call
         end
 
         def slots(order_by: nil)

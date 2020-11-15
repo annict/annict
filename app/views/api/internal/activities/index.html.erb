@@ -27,16 +27,12 @@
 <% elsif @activity_group_entity.anime_record? %>
   <% @activity_group_entity.itemables.each do |work_record_entity| %>
     <div class="mb-3">
-      <%= render WorkRecordCardComponent.new(
-          work_entity: work_record_entity.anime,
-          work_record_entity: work_record_entity
+      <%= render AnimeRecordCardComponent.new(
+          anime_entity: work_record_entity.anime,
+          anime_record_entity: work_record_entity
       ) %>
 
-      <%= render WorkRecordFooterComponent.new(
-          user_entity: @activity_group_entity.user,
-          record_entity: work_record_entity.record,
-          work_record_entity: work_record_entity
-      ) %>
+      <%= render AnimeRecordFooterComponent.new(record_entity: work_record_entity.record) %>
     </div>
   <% end %>
 <% end %>
