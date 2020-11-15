@@ -100,27 +100,5 @@ module V4
         @other_record_entities = current_user.filter_records(@other_record_entities, @my_record_entities + @following_record_entities)
       end
     end
-
-    def load_work_records
-      @work_records = UserWorkRecordsQuery.new.call(
-        work_records: @work.work_records,
-        user: current_user
-      )
-      @work_records = @work_records.with_body
-      @work_records = localable_resources(@work_records)
-
-      if user_signed_in?
-        @my_work_records = UserWorkRecordsQuery.new.call(
-          work_records: current_user.work_records.where(work: @work),
-          user: current_user
-        ).order(created_at: :desc)
-        @work_records = @work_records.
-          where.not(user: current_user).
-          where.not(user_id: current_user.mute_users.pluck(:muted_user_id))
-      end
-
-      @work_records = @work_records.order(created_at: :desc).page(params[:page])
-      @is_spoiler = user_signed_in? && @work_records.present? && current_user.hide_work_record_body?(@work_records.first.work)
-    end
   end
 end
