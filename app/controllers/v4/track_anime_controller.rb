@@ -10,7 +10,10 @@ module V4
       anime = Work.only_kept.find(params[:anime_id])
 
       @library_entry_entities = TrackPage::LibraryEntriesRepository.new(graphql_client: graphql_client(viewer: current_user)).execute
-      @anime_entity = TrackAnimePage::AnimeRepository.new(graphql_client: graphql_client).execute(anime_id: anime.id)
+      @anime_entity, @page_info_entity = TrackAnimePage::AnimeRepository.new(graphql_client: graphql_client).execute(
+        anime_id: anime.id,
+        pagination: Annict::Pagination.new(before: params[:before], after: params[:after], per: 500)
+      )
     end
   end
 end

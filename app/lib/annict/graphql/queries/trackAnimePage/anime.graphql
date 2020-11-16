@@ -1,4 +1,4 @@
-query($databaseId: Int!) {
+query($databaseId: Int!, $first: Int, $last: Int, $before: String, $after: String) {
   anime(databaseId: $databaseId) {
     databaseId
     title
@@ -9,10 +9,24 @@ query($databaseId: Int!) {
       internalUrl2x: internalUrl(size: "120x")
     }
 
-    episodes(orderBy: { field: SORT_NUMBER, direction: ASC }, first: 5000) {
+    episodes(
+      orderBy: { field: SORT_NUMBER, direction: DESC },
+      first: $first,
+      last: $last,
+      before: $before,
+      after: $after
+    ) {
+      pageInfo {
+        startCursor
+        endCursor
+        hasNextPage
+        hasPreviousPage
+      }
+
       nodes {
         databaseId
         number
+        numberEn
         title
         titleEn
       }

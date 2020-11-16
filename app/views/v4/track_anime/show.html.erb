@@ -9,6 +9,25 @@
 
     <div class="col-md-9">
       <%= @anime_entity.local_title %>
+
+      <% if @anime_entity.episodes && @anime_entity.episodes.length > 0 %>
+        <div class="row mb-3">
+          <% @anime_entity.episodes.each do |episode_entity| %>
+            <div>
+              <%= link_to episode_path(anime_id: @anime_entity.database_id, episode_id: episode_entity.database_id) do %>
+                <%= episode_entity.local_number %>
+                <div class="small u-text-body">
+                  <%= episode_entity.local_title %>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+
+        <%= render PaginationComponent.new(page_info_entity: @page_info_entity, resources_path: current_path_with_query) %>
+      <% else %>
+        <%= render EmptyComponent.new(text: t("messages._empty.no_episodes")) %>
+      <% end %>
     </div>
   </div>
 </div>
