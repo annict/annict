@@ -12,7 +12,7 @@
         <div class="c-slot-episode py-3 u-underline">
           <div class="row">
             <div class="col-auto pr-0">
-              <%= link_to work_path(slot_entity.anime.database_id) do %>
+              <%= link_to anime_path(anime_id: slot_entity.anime.database_id) do %>
                 <%= render WorkImageComponent.new(
                     image_url_1x: slot_entity.anime.image_url_1x,
                     image_url_2x: slot_entity.anime.image_url_2x,
@@ -49,10 +49,10 @@
 
               <div>
                 <div class="font-weight-bold">
-                  <%= link_to slot_entity.anime.local_title, work_path(slot_entity.anime.database_id), class: "u-text-body" %>
+                  <%= link_to slot_entity.anime.local_title, anime_path(anime_id: slot_entity.anime.database_id), class: "u-text-body" %>
                 </div>
 
-                <%= link_to episode_path(slot_entity.anime.database_id, slot_entity.episode.database_id), class: "u-text-body" do %>
+                <%= link_to episode_path(anime_id: slot_entity.anime.database_id, episode_id: slot_entity.episode.database_id), class: "u-text-body" do %>
                   <span class="pr-1">
                     <%= slot_entity.episode.number %>
                   </span>
