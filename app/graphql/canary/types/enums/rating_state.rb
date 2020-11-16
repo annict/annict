@@ -3,7 +3,7 @@
 module Canary
   module Types
     module Enums
-      class Rating < Canary::Types::Enums::Base
+      class RatingState < Canary::Types::Enums::Base
         value "GREAT", value: "great", description: "とても良い"
         value "GOOD", value: "good", description: "良い"
         value "AVERAGE", value: "average", description: "普通"

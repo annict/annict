@@ -9,7 +9,7 @@ module Canary
         required: false,
         description: "作品への感想"
       WorkRecord::RATING_FIELDS.each do |rating_field|
-        argument rating_field.to_s.camelcase(:lower).to_sym, Canary::Types::Enums::Rating,
+        argument rating_field.to_s.camelcase(:lower).to_sym, Canary::Types::Enums::RatingState,
           required: false,
           description: "作品への評価"
       end

@@ -4,7 +4,7 @@ module Canary
   module Types
     module Objects
       class EpisodeRecordType < Canary::Types::Objects::Base
-        field :rating, Canary::Types::Enums::Rating, null: true
+        field :rating, Canary::Types::Enums::RatingState, null: true
         field :advanced_rating, Float, null: true, method: :rating
         field :comments_count, Int, null: false
         field :episode, Canary::Types::Objects::EpisodeType, null: false

@@ -8,7 +8,7 @@ module Canary
         required: false,
         description: "作品への感想"
       WorkRecord::STATES.each do |state|
-        argument state.to_s.camelcase(:lower).to_sym, Canary::Types::Enums::Rating,
+        argument state.to_s.camelcase(:lower).to_sym, Canary::Types::Enums::RatingState,
           required: true,
           description: "作品への評価"
       end
