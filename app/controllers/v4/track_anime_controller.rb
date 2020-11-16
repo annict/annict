@@ -7,7 +7,7 @@ module V4
     def show
       set_page_category PageCategory::TRACK_ANIME
 
-      anime = Work.only_kept.find(params[:id])
+      anime = Work.only_kept.find(params[:anime_id])
 
       @library_entry_entities = TrackPage::LibraryEntriesRepository.new(graphql_client: graphql_client(viewer: current_user)).execute
       @anime_entity = TrackAnimePage::AnimeRepository.new(graphql_client: graphql_client).execute(anime_id: anime.id)
