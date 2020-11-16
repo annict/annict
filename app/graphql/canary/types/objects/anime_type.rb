@@ -130,7 +130,7 @@ module Canary
         field :synopsis_source_en, String,
           null: false
 
-        field :episodes, Canary::Types::Objects::EpisodeType.connection_type, null: true do
+        field :episodes, Canary::Types::Objects::EpisodeType.connection_type, null: true, max_page_size: 500 do
           argument :order_by, Canary::Types::InputObjects::EpisodeOrder, required: false
         end
 

@@ -110,7 +110,7 @@ end
 resources :works, only: %i(index) do
   resources :records, only: %i(edit update), controller: :work_records
 
-  resources :episodes, only: %i(index) do
+  resources :episodes, only: [] do
     resources :checkins, only: %i(show)
   end
 
@@ -165,16 +165,17 @@ scope module: :v4 do
       match "/user_email/callback",   via: :get,   as: :user_email_callback, to: "user_email_callbacks#show"
     end
 
-    match "/@:username",                                  via: :get,   as: :profile,                 to: "users#show",    username: USERNAME_FORMAT
-    match "/@:username/records",                          via: :get,   as: :record_list,             to: "records#index", username: USERNAME_FORMAT
-    match "/@:username/records/:record_id/edit",          via: :get,   as: :edit_record,             to: "records#edit",  username: USERNAME_FORMAT
-    match "/episode_records",                             via: :patch, as: :episode_record_mutation, to: "episode_records#update"
-    match "/timeline_mode",                               via: :patch, as: :timeline_mode,           to: "timeline_mode#update"
-    match "/works/:anime_id",                             via: :get,   as: :anime,                   to: "works#show"
-    match "/works/:anime_id/records",                     via: :get,   as: :anime_record_list,       to: "anime_records#index"
-    match "/works/:anime_id/records",                     via: :post,                                to: "anime_records#create"
-    match "/works/:work_id/episodes/:episode_id",         via: :get,   as: :episode,                 to: "episodes#show"
-    match "/works/:work_id/episodes/:episode_id/records", via: :post,  as: :episode_record_list,     to: "episode_records#create"
+    match "/@:username",                                   via: :get,   as: :profile,                 to: "users#show",    username: USERNAME_FORMAT
+    match "/@:username/records",                           via: :get,   as: :record_list,             to: "records#index", username: USERNAME_FORMAT
+    match "/@:username/records/:record_id/edit",           via: :get,   as: :edit_record,             to: "records#edit",  username: USERNAME_FORMAT
+    match "/episode_records",                              via: :patch, as: :episode_record_mutation, to: "episode_records#update"
+    match "/timeline_mode",                                via: :patch, as: :timeline_mode,           to: "timeline_mode#update"
+    match "/works/:anime_id",                              via: :get,   as: :anime,                   to: "works#show"
+    match "/works/:anime_id/episodes",                     via: :get,   as: :episode_list,            to: "episodes#index"
+    match "/works/:anime_id/records",                      via: :get,   as: :anime_record_list,       to: "anime_records#index"
+    match "/works/:anime_id/records",                      via: :post,                                to: "anime_records#create"
+    match "/works/:anime_id/episodes/:episode_id",         via: :get,   as: :episode,                 to: "episodes#show"
+    match "/works/:anime_id/episodes/:episode_id/records", via: :post,  as: :episode_record_list,     to: "episode_records#create"
   end
 end
 
