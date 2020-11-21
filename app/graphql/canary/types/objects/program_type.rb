@@ -16,6 +16,7 @@ module Canary
         field :vod_title_name, String, null: false
         field :vod_title_url, String, null: false
         field :rebroadcast, Boolean, null: false
+        field :viewer_did_check, Boolean, null: false
 
         field :slots, Canary::Types::Objects::SlotType.connection_type, null: true do
           argument :order_by, Canary::Types::InputObjects::SlotOrder, required: false
@@ -34,6 +35,12 @@ module Canary
             object.slots.only_kept,
             order: Canary::OrderProperty.build(order_by)
           ).call
+        end
+
+        def viewer_did_check
+          RecordLoader.for(LibraryEntry, column: :program_id, where: { user_id: context[:viewer].id }).load(object.id).then do |le|
+            !le.nil?
+          end
         end
       end
     end

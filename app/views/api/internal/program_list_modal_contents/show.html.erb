@@ -22,6 +22,7 @@
             name="program"
             type="radio"
             value="<%= program_entity.id %>"
+            <%= program_entity.viewer_did_check ? 'checked' : '' %>
           >
           <label class="form-check-label" for="<%= program_entity.id %>">
             <div>

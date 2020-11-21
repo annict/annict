@@ -4,6 +4,7 @@ query($animeId: ID!) {
       programs(onlyViewerCheckedChannels: true) {
         nodes {
           id
+          viewerDidCheck
           startedAt
 
           channel {

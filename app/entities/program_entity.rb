@@ -4,6 +4,7 @@ class ProgramEntity < ApplicationEntity
   attribute? :id, Types::String
   attribute? :vod_title_name, Types::String.optional
   attribute? :vod_title_url, Types::String.optional
+  attribute? :viewer_did_check, Types::Bool
   attribute? :started_at, Types::Params::Time
   attribute? :channel, ChannelEntity
 
@@ -26,6 +27,10 @@ class ProgramEntity < ApplicationEntity
 
     if vod_title_url = node["vodTitleUrl"]
       attrs[:vod_title_url] = vod_title_url
+    end
+
+    if viewer_did_check = node["viewerDidCheck"]
+      attrs[:viewer_did_check] = viewer_did_check
     end
 
     if started_at = node["startedAt"]
