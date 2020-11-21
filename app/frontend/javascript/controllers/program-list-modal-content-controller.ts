@@ -9,13 +9,15 @@ export default class extends Controller {
 
   programIdTargets!: [HTMLInputElement];
 
-  check() {
+  check(event: any) {
     const checkedProgramId = this.programIdTargets.find(target => target.checked)?.value
 
     if (!checkedProgramId) {
       new EventDispatcher('program-list-modal:close').dispatch();
       return
     }
+
+    event.target.classList.add('c-spinner');
 
     axios
       .post('/api/internal/program_checks', {
