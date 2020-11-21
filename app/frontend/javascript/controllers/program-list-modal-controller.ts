@@ -25,5 +25,9 @@ export default class extends Controller {
     document.addEventListener('program-list-modal:close', () => {
       $(this.element).modal('hide')
     });
+
+    $(this.element).on('hidden.bs.modal', () => {
+      $('.modal-backdrop').remove();
+    });
   }
 }
