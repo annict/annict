@@ -18,6 +18,7 @@ module Canary
         field :removeReaction, mutation: Canary::Mutations::RemoveReaction
 
         field :checkProgram, mutation: Canary::Mutations::CheckProgram
+        field :uncheckProgram, mutation: Canary::Mutations::UncheckProgram
       end
     end
   end

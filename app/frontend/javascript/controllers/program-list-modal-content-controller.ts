@@ -25,4 +25,25 @@ export default class extends Controller {
         new EventDispatcher('program-list-modal:close').dispatch();
       });
   }
+
+  uncheck(event: any) {
+    const animeId = this.data.get('animeId')
+
+    if (!animeId) {
+      new EventDispatcher('program-list-modal:close').dispatch();
+      return
+    }
+
+    event.target.classList.add('c-spinner');
+
+    axios
+      .delete('/api/internal/program_checks', {
+        params: {
+          anime_id: animeId
+        },
+      })
+      .then((res) => {
+        new EventDispatcher('program-list-modal:close').dispatch();
+      });
+  }
 }

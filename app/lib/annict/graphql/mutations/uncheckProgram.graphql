@@ -1,0 +1,11 @@
+mutation($animeId: ID!) {
+  uncheckProgram(input:{ animeId: $animeId }) {
+    libraryEntry {
+      program {
+        channel {
+          name
+        }
+      }
+    }
+  }
+}

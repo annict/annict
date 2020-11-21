@@ -39,6 +39,7 @@ en:
       program_list_modal_content:
         description: If you check a program, you'll see episodes on the slots page.
         title: Program List
+        uncheck: Uncheck
       sign_up_modal:
         body: You can use this feature after sign up.
     _empty:

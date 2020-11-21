@@ -16,6 +16,18 @@ module Api
 
         head 201
       end
+
+      def destroy
+        _, err = UncheckProgramRepository.new(
+          graphql_client: graphql_client(viewer: current_user)
+        ).execute(anime_id: params[:anime_id])
+
+        if err
+          return render(status: 400, json: { message: err.message })
+        end
+
+        head 204
+      end
     end
   end
 end

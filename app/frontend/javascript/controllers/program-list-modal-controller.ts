@@ -14,10 +14,10 @@ export default class extends Controller {
           },
         })
         .then((res) => {
-          const modalBodyElm = this.element.querySelector('.modal-body');
+          const modalDialogElm = this.element.querySelector('.modal-dialog');
 
-          if (modalBodyElm) {
-            modalBodyElm.innerHTML = res.data;
+          if (modalDialogElm) {
+            modalDialogElm.innerHTML = res.data;
           }
         });
     });
