@@ -142,6 +142,7 @@ module Canary
         end
 
         field :programs, Canary::Types::Objects::ProgramType.connection_type, null: true, resolver: Canary::Resolvers::Programs do
+          argument :only_viewer_checked_channels, Boolean, required: false
           argument :order_by, Canary::Types::InputObjects::ProgramOrder, required: false
         end
 

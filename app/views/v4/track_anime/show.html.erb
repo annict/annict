@@ -10,6 +10,8 @@
     <div class="col-md-9">
       <%= @anime_entity.local_title %>
 
+      <%= render ButtonGroups::AnimeButtonGroupComponent.new(anime_id: @anime_entity.id) %>
+
       <% if @anime_entity.episodes && @anime_entity.episodes.length > 0 %>
         <div class="row mb-3">
           <% @anime_entity.episodes.each do |episode_entity| %>

@@ -67,6 +67,7 @@ scope module: :api do
       match "/api/internal/following",         via: :get,  as: :internal_api_following_list,        to: "following#index"
       match "/api/internal/library_entries",   via: :get,  as: :internal_api_library_entry_list,    to: "library_entries#index"
       match "/api/internal/likes",             via: :get,  as: :internal_api_like_list,             to: "likes#index"
+      match "/api/internal/program_checks",    via: :post, as: :internal_api_program_check_list,    to: "program_checks#create"
       match "/api/internal/tracked_resources", via: :get,  as: :internal_api_tracked_resource_list, to: "tracked_resources#index"
       match "/api/internal/user",              via: :get,  as: :internal_api_user_detail,           to: "users#show"
       match "/api/internal/work_friends",      via: :get,  as: :internal_api_work_friend_list,      to: "work_friends#index"
@@ -76,6 +77,7 @@ scope module: :api do
     constraints format: "html" do
       # rubocop:disable Layout/ExtraSpacing, Layout/LineLength
       match "/api/internal/activities", via: :get, as: :internal_api_activity_list, to: "activities#index"
+      match "/api/internal/program_list_modal_content",   via: :get, as: :internal_api_program_list_modal_content, to: "program_list_modal_contents#show"
       # rubocop:enable Layout/ExtraSpacing, Layout/LineLength
     end
   end

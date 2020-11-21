@@ -1,0 +1,11 @@
+mutation($programId: ID!) {
+  checkProgram(input:{ programId: $programId }) {
+    libraryEntry {
+      program {
+        channel {
+          name
+        }
+      }
+    }
+  }
+}

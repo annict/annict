@@ -111,7 +111,7 @@ class User < ApplicationRecord
   has_many :notifications, dependent: :destroy
   has_many :providers, dependent: :destroy
   has_many :receptions, dependent: :destroy
-  has_many :channels, through:   :receptions
+  has_many :channels, through: :receptions
   has_many :statuses, dependent: :destroy
   has_many :multiple_episode_records, dependent: :destroy
   has_many :mute_users, dependent: :destroy

@@ -12,6 +12,7 @@ module Canary
         field :user, Canary::Types::Objects::UserType, null: false
         field :anime, Canary::Types::Objects::AnimeType, null: false
         field :status, Canary::Types::Objects::StatusType, null: true
+        field :program, Canary::Types::Objects::ProgramType, null: true
 
         def tracked_episodes_count
           object.watched_episode_ids.size
@@ -27,6 +28,10 @@ module Canary
 
         def status
           RecordLoader.for(Status).load(object.status_id)
+        end
+
+        def program
+          RecordLoader.for(Program).load(object.program_id)
         end
       end
     end
