@@ -14,8 +14,7 @@ module Canary
         program = Canary::AnnictSchema.object_from_id(program_id)
 
         library_entry = viewer.library_entries.where(work_id: program.work_id).first_or_create!
-        library_entry.program_id = program.id
-        library_entry.save!
+        library_entry.update!(program_id: program.id)
 
         {
           library_entry: library_entry
