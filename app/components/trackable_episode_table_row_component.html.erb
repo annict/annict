@@ -1,0 +1,45 @@
+<tr>
+  <td class="align-middle">
+    <%= content %>
+  </td>
+  <td class="align-middle text-right">
+    <button
+      class="btn btn-outline-primary"
+      data-controller="episode-record-button"
+      data-episode-record-button-episode-id="<%= @episode_entity.id %>"
+      data-action="click->episode-record-button#track"
+    >
+      <i class="fal fa-check"></i>
+    </button>
+
+    <div
+      class="btn btn-outline-secondary"
+      data-controller="episode-record-with-comment-button"
+      data-episode-record-with-comment-button-episode-id="<%= @episode_entity.id %>"
+      data-action="click->episode-record-with-comment-button#expand"
+    >
+      <i class="fal fa-comment-check"></i>
+    </div>
+
+    <div
+      class="btn btn-outline-secondary"
+      data-controller="skip-episode-record-button"
+      data-skip-episode-record-button-episode-id="<%= @episode_entity.id %>"
+      data-action="click->skip-episode-record-button#skip"
+    >
+      <i class="fal fa-eye-slash"></i>
+    </div>
+
+    <div
+      class="btn btn-outline-secondary"
+      data-controller="skip-episode-record-button"
+      data-skip-episode-record-button-episode-id="<%= @episode_entity.id %>"
+      data-action="click->skip-episode-record-button#skip"
+    >
+      <span class="fa-layers">
+        <i class="fal fa-check"></i>
+        <i class="fal fa-arrow-down" data-fa-transform="down-8 right-8 shrink-5"></i>
+      </span>
+    </div>
+  </td>
+</tr>

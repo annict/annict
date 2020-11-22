@@ -8,91 +8,66 @@
     </div>
 
     <div class="col-md-9">
-      <% @slot_entities.each do |slot_entity| %>
-        <div class="c-slot-episode py-3 u-underline">
-          <div class="row">
-            <div class="col-auto pr-0">
-              <%= link_to anime_path(anime_id: slot_entity.anime.database_id) do %>
-                <%= render WorkImageComponent.new(
-                    image_url_1x: slot_entity.anime.image_url_1x,
-                    image_url_2x: slot_entity.anime.image_url_2x,
-                    alt: slot_entity.anime.local_title
-                ) %>
-              <% end %>
-            </div>
-
-            <div class="col">
-              <div>
-                <% tv_time = Annict::TvTime.new(time_zone: current_user.time_zone) %>
-                <% if (tv_time.beginning_of_today - 1.day + 5.hours) < slot_entity.started_at && slot_entity.started_at < (tv_time.beginning_of_today.end_of_day - 1.day + 5.hours) %>
-                  <small class="badge badge-success">
-                    <%= t "noun.yesterday" %>
-                  </small>
-                <% elsif (tv_time.beginning_of_today + 5.hours) < slot_entity.started_at && slot_entity.started_at < (tv_time.beginning_of_today.end_of_day + 5.hours) %>
-                  <small class="badge badge-danger">
-                    <%= t "noun.today" %>
-                  </small>
-                <% elsif (tv_time.beginning_of_today + 1.day + 5.hours) < slot_entity.started_at && slot_entity.started_at < (tv_time.beginning_of_today.end_of_day + 1.day + 5.hours) %>
-                  <small class="badge badge-info">
-                    <%= t "noun.tomorrow" %>
-                  </small>
-                <% end %>
-
-                <small class="badge badge-light small">
-                  <%= slot_entity.channel.name %>
-                </small>
-              </div>
-
-              <div class="small">
-                <%= display_time(slot_entity.started_at) %>
-              </div>
-
-              <div>
-                <div class="font-weight-bold">
-                  <%= link_to slot_entity.anime.local_title, anime_path(anime_id: slot_entity.anime.database_id), class: "u-text-body" %>
+      <table class="table table-hover">
+        <tbody>
+          <% @slot_entities.each do |slot_entity| %>
+            <%= render TrackableEpisodeTableRowComponent.new(episode_entity: slot_entity.episode) do %>
+              <div class="c-slot-episode row">
+                <div class="col-auto pr-0">
+                  <%= link_to anime_path(anime_id: slot_entity.anime.database_id) do %>
+                    <%= render WorkImageComponent.new(
+                        image_url_1x: slot_entity.anime.image_url_1x,
+                        image_url_2x: slot_entity.anime.image_url_2x,
+                        alt: slot_entity.anime.local_title
+                    ) %>
+                  <% end %>
                 </div>
 
-                <%= link_to episode_path(anime_id: slot_entity.anime.database_id, episode_id: slot_entity.episode.database_id), class: "u-text-body" do %>
-                  <span class="pr-1">
-                    <%= slot_entity.episode.number %>
-                  </span>
+                <div class="col">
+                  <div>
+                    <% tv_time = Annict::TvTime.new(time_zone: current_user.time_zone) %>
+                    <% if (tv_time.beginning_of_today - 1.day + 5.hours) < slot_entity.started_at && slot_entity.started_at < (tv_time.beginning_of_today.end_of_day - 1.day + 5.hours) %>
+                      <small class="badge badge-success">
+                        <%= t "noun.yesterday" %>
+                      </small>
+                    <% elsif (tv_time.beginning_of_today + 5.hours) < slot_entity.started_at && slot_entity.started_at < (tv_time.beginning_of_today.end_of_day + 5.hours) %>
+                      <small class="badge badge-danger">
+                        <%= t "noun.today" %>
+                      </small>
+                    <% elsif (tv_time.beginning_of_today + 1.day + 5.hours) < slot_entity.started_at && slot_entity.started_at < (tv_time.beginning_of_today.end_of_day + 1.day + 5.hours) %>
+                      <small class="badge badge-info">
+                        <%= t "noun.tomorrow" %>
+                      </small>
+                    <% end %>
 
-                  <%= slot_entity.episode.local_title %>
-                <% end %>
+                    <small class="badge badge-light small">
+                      <%= slot_entity.channel.name %>
+                    </small>
+                  </div>
+
+                  <div class="small">
+                    <%= display_time(slot_entity.started_at) %>
+                  </div>
+
+                  <div>
+                    <div class="font-weight-bold">
+                      <%= link_to slot_entity.anime.local_title, anime_path(anime_id: slot_entity.anime.database_id), class: "u-text-body" %>
+                    </div>
+
+                    <%= link_to episode_path(anime_id: slot_entity.anime.database_id, episode_id: slot_entity.episode.database_id), class: "u-text-body" do %>
+                      <span class="pr-1">
+                        <%= slot_entity.episode.number %>
+                      </span>
+
+                      <%= slot_entity.episode.local_title %>
+                    <% end %>
+                  </div>
+                </div>
               </div>
-            </div>
-
-            <div class="align-self-center col-auto">
-              <button
-                class="btn btn-outline-primary"
-                data-controller="episode-record-button"
-                data-episode-record-button-episode-id="<%= slot_entity.episode.id %>"
-                data-action="click->episode-record-button#track"
-              >
-                <i class="fal fa-check"></i>
-              </button>
-
-              <div
-                class="btn btn-outline-secondary"
-                data-controller="episode-record-with-comment-button"
-                data-episode-record-with-comment-button-episode-id="<%= slot_entity.episode.id %>"
-                data-action="click->episode-record-with-comment-button#expand"
-              >
-                <i class="fal fa-comment-check"></i>
-              </div>
-
-              <div
-                class="btn btn-outline-secondary"
-                data-controller="skip-episode-record-button"
-                data-skip-episode-record-button-episode-id="<%= slot_entity.episode.id %>"
-                data-action="click->skip-episode-record-button#skip"
-              >
-                <i class="fal fa-eye-slash"></i>
-              </div>
-            </div>
-          </div>
-        </div>
-      <% end %>
+            <% end %>
+          <% end %>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>

@@ -14,6 +14,8 @@ module V4
         anime_id: anime.id,
         pagination: Annict::Pagination.new(before: params[:before], after: params[:after], per: 500)
       )
+
+      @form = AnimeRecordForm.new(anime_id: @anime_entity.id)
     end
   end
 end

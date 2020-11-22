@@ -6,8 +6,8 @@ query($databaseId: Int!, $first: Int, $last: Int, $before: String, $after: Strin
     titleEn
 
     image {
-      internalUrl1x: internalUrl(size: "60x")
-      internalUrl2x: internalUrl(size: "120x")
+      internalUrl1x: internalUrl(size: "150x")
+      internalUrl2x: internalUrl(size: "300x")
     }
 
     episodes(

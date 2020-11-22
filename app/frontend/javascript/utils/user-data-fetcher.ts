@@ -21,6 +21,7 @@ const REQUEST_LIST: any = {
   'organization-fan-list': [followingRequest],
   'person-fan-list': [followingRequest],
   'record-list': [followingRequest, libraryEntriesRequest, likesRequest, trackedResourcesRequest, userRequest],
+  'track-anime': [libraryEntriesRequest],
   'user-home': [libraryEntriesRequest, likesRequest, trackedResourcesRequest, userRequest],
   'user-work-tag': [libraryEntriesRequest],
   'work-list-newest': [libraryEntriesRequest, workFriendsRequest],
