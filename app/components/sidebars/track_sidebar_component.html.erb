@@ -21,7 +21,7 @@
           class: "align-items-center d-flex justify-content-between nav-link w-100",
           class_inactive: "u-text-body",
           class_active: "active text-white",
-          active: params[:controller] == "v4/track_anime" && params[:action] == "show" && params[:id] == le_entity.anime.database_id.to_s do %>
+          active: params[:controller] == "v4/track_anime" && params[:action] == "show" && params[:anime_id] == le_entity.anime.database_id.to_s do %>
         <span class="small text-truncate">
           <%= le_entity.anime.local_title %>
         </span>
