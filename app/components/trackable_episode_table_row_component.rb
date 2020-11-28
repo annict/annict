@@ -9,7 +9,7 @@ class TrackableEpisodeTableRowComponent < ApplicationComponent
     classes = []
 
     if @episode_entity.viewer_did_track_in_current_status
-      classes << "table-secondary"
+      classes << "c-trackable-episode-table-row--tracked"
     end
 
     classes.join(" ")

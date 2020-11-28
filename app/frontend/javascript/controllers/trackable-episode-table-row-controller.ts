@@ -16,6 +16,6 @@ export default class extends Controller {
       return
     }
 
-    this.element.classList.add('table-secondary');
+    this.element.classList.add('c-trackable-episode-table-row--tracked');
   }
 }

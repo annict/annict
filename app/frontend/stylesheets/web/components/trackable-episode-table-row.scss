@@ -1,0 +1,13 @@
+.c-trackable-episode-table-row {
+  a {
+    font-weight: $font-weight-bold;
+  }
+
+  &--tracked {
+    background-color: rgba(242, 245, 245, 0.8);
+
+    a {
+      font-weight: $font-weight-normal;
+    }
+  }
+}
