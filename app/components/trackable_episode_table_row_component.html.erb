@@ -18,15 +18,6 @@
 
     <button
       class="btn btn-outline-secondary"
-      data-controller="episode-record-with-comment-button"
-      data-episode-record-with-comment-button-episode-id="<%= @episode_entity.id %>"
-      data-action="click->episode-record-with-comment-button#expand"
-    >
-      <i class="fal fa-comment-check"></i>
-    </button>
-
-    <button
-      class="btn btn-outline-secondary"
       data-controller="skip-episode-record-button"
       data-skip-episode-record-button-episode-id="<%= @episode_entity.id %>"
       data-action="click->skip-episode-record-button#skip"
