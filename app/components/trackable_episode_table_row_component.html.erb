@@ -16,25 +16,16 @@
       <i class="fal fa-check"></i>
     </button>
 
-    <div
+    <button
       class="btn btn-outline-secondary"
       data-controller="episode-record-with-comment-button"
       data-episode-record-with-comment-button-episode-id="<%= @episode_entity.id %>"
       data-action="click->episode-record-with-comment-button#expand"
     >
       <i class="fal fa-comment-check"></i>
-    </div>
+    </button>
 
-    <div
-      class="btn btn-outline-secondary"
-      data-controller="skip-episode-record-button"
-      data-skip-episode-record-button-episode-id="<%= @episode_entity.id %>"
-      data-action="click->skip-episode-record-button#skip"
-    >
-      <i class="fal fa-eye-slash"></i>
-    </div>
-
-    <div
+    <button
       class="btn btn-outline-secondary"
       data-controller="skip-episode-record-button"
       data-skip-episode-record-button-episode-id="<%= @episode_entity.id %>"
@@ -44,6 +35,15 @@
         <i class="fal fa-check"></i>
         <i class="fal fa-arrow-down" data-fa-transform="down-8 right-8 shrink-5"></i>
       </span>
-    </div>
+    </button>
+
+    <button
+      class="btn btn-outline-secondary"
+      data-controller="skip-episode-record-button"
+      data-skip-episode-record-button-episode-id="<%= @episode_entity.id %>"
+      data-action="click->skip-episode-record-button#skip"
+    >
+      <i class="fal fa-eye-slash"></i>
+    </button>
   </td>
 </tr>
