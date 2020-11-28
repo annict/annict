@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { Controller } from 'stimulus';
 
+import { EventDispatcher } from '../utils/event-dispatcher';
+
 export default class extends Controller {
   episodeId!: string;
   isLoading!: boolean;
@@ -25,6 +27,7 @@ export default class extends Controller {
       .then(() => {
         this.isLoading = false;
         this.hideSpinner();
+        new EventDispatcher('trackable-episode-table-row:inactive', { episodeId: this.episodeId }).dispatch();
       });
   }
 

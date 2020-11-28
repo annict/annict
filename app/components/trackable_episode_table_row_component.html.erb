@@ -1,10 +1,14 @@
-<tr>
+<tr
+  data-controller="trackable-episode-table-row"
+  data-trackable-episode-table-row-episode-id="<%= @episode_entity.id %>"
+  class="<%= class_name %>"
+>
   <td class="align-middle">
     <%= content %>
   </td>
   <td class="align-middle text-right">
     <button
-      class="btn btn-outline-primary"
+      class="btn btn-outline-secondary"
       data-controller="episode-record-button"
       data-episode-record-button-episode-id="<%= @episode_entity.id %>"
       data-action="click->episode-record-button#track"
