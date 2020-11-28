@@ -10,6 +10,7 @@ class EpisodeEntity < ApplicationEntity
   attribute? :number_en, Types::String.optional
   attribute? :title, Types::String.optional
   attribute? :title_en, Types::String.optional
+  attribute? :viewer_did_track_in_current_status, Types::Bool
   attribute? :episode_records_count, Types::Integer
   attribute? :commented_episode_records_count, Types::Integer
   attribute? :prev_episode, EpisodeEntity
@@ -52,6 +53,10 @@ class EpisodeEntity < ApplicationEntity
 
     if title_en = node["titleEn"]
       attrs[:title_en] = title_en
+    end
+
+    if viewer_did_track_in_current_status = node["viewerDidTrackInCurrentStatus"]
+      attrs[:viewer_did_track_in_current_status] = viewer_did_track_in_current_status
     end
 
     if episode_records_count = node["episodeRecordsCount"]
