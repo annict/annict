@@ -25,6 +25,7 @@ query($databaseId: Int!, $first: Int, $last: Int, $before: String, $after: Strin
       }
 
       nodes {
+        id
         databaseId
         number
         numberEn

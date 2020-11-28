@@ -2,24 +2,21 @@ import axios from 'axios';
 import { Controller } from 'stimulus';
 
 export default class extends Controller {
-  episodeId!: string | null;
-  isTracked!: boolean;
+  episodeId!: string;
   isLoading!: boolean;
 
   initialize() {
-    this.episodeId = this.data.get('episodeId');
+    this.episodeId = this.data.get('episodeId') ?? '';
     this.isLoading = false;
-    this.isTracked = false;
   }
 
   track() {
-    if (this.isLoading && this.isTracked) {
+    if (this.isLoading) {
       return;
     }
 
     this.isLoading = true;
     this.showSpinner();
-    this.element.setAttribute('disabled', '');
 
     axios
       .post(`/api/internal/episode_records`, {
@@ -28,21 +25,16 @@ export default class extends Controller {
       .then(() => {
         this.isLoading = false;
         this.hideSpinner();
-        this.makeBtnComplete();
-        this.isTracked = true;
       });
   }
 
   showSpinner() {
+    this.element.setAttribute('disabled', '');
     this.element.classList.add('c-spinner');
   }
 
   hideSpinner() {
+    this.element.removeAttribute('disabled');
     this.element.classList.remove('c-spinner');
-  }
-
-  makeBtnComplete() {
-    this.element.classList.remove('btn-outline-primary');
-    this.element.classList.add('btn-primary');
   }
 }

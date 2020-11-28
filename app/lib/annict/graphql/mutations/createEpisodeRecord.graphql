@@ -1,7 +1,7 @@
 mutation (
   $episodeId: ID!,
   $comment: String,
-  $rating: Rating,
+  $rating: RatingState,
   $shareToTwitter: Boolean
 ) {
   createEpisodeRecord(
