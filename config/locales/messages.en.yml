@@ -187,6 +187,8 @@ en:
     providers:
       removed: Removed.
       you_can_not_disconnect: You can not disconnect.
+    recaptcha:
+      not_verified: reCAPTCHA verification failed. Please try again later.
     records:
       show:
         record_by_name: "%{name}'s Record"
