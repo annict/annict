@@ -1096,8 +1096,8 @@ CREATE TABLE public.gumroad_subscribers (
     gumroad_id character varying NOT NULL,
     gumroad_product_id character varying NOT NULL,
     gumroad_product_name character varying NOT NULL,
-    gumroad_user_id character varying NOT NULL,
-    gumroad_user_email character varying NOT NULL,
+    gumroad_user_id character varying,
+    gumroad_user_email character varying,
     gumroad_purchase_ids character varying[] NOT NULL,
     gumroad_created_at timestamp without time zone NOT NULL,
     gumroad_cancelled_at timestamp without time zone,
@@ -7017,6 +7017,6 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20200525201620'),
 ('20200808233237'),
 ('20200809161251'),
-('20201015141021');
-
+('20201015141021'),
+('20201017210101');
 

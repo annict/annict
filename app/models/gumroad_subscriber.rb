@@ -10,13 +10,13 @@
 #  gumroad_ended_at                       :datetime
 #  gumroad_product_name                   :string           not null
 #  gumroad_purchase_ids                   :string           not null, is an Array
-#  gumroad_user_email                     :string           not null
+#  gumroad_user_email                     :string
 #  gumroad_user_requested_cancellation_at :datetime
 #  created_at                             :datetime         not null
 #  updated_at                             :datetime         not null
 #  gumroad_id                             :string           not null
 #  gumroad_product_id                     :string           not null
-#  gumroad_user_id                        :string           not null
+#  gumroad_user_id                        :string
 #
 # Indexes
 #

@@ -189,6 +189,8 @@ ja:
     providers:
       removed: 接続解除しました
       you_can_not_disconnect: 接続解除できません
+    recaptcha:
+      not_verified: reCAPTCHAの認証に失敗しました。時間を置いて再度お試しください
     records:
       show:
         record_by_name: "%{name}の記録"

@@ -8,12 +8,19 @@ module V4
 
     def new
       @form = SignUpForm.new
+      @recaptcha = Recaptcha.new(action: "sign_up")
     end
 
     def create
       @form = SignUpForm.new(sign_up_form_params)
+      @recaptcha = Recaptcha.new(action: "sign_up")
 
       if @form.invalid?
+        return render(:new)
+      end
+
+      unless @recaptcha.verify?(params[:recaptcha_token])
+        flash.now[:alert] = t("messages.recaptcha.not_verified")
         return render(:new)
       end
 
