@@ -1,4 +1,4 @@
-version: "3.7"
+version: '3.7'
 
 services:
   webpack:
@@ -7,7 +7,7 @@ services:
       dockerfile: ./app/frontend/Dockerfile.local
     command: /bin/ash -c 'yarn webpack:start'
     volumes:
-      - .:/annict
+      - .:/workspace
       - node_modules_vol:/annict/node_modules
     ports:
       - 8080:8080
@@ -16,7 +16,7 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - ../_postgresql/v12/annict:/var/lib/postgresql/data
+      - ./volumes/postgresql:/var/lib/postgresql/data
     environment:
       POSTGRES_HOST_AUTH_METHOD: trust
   redis:

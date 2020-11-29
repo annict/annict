@@ -23,6 +23,10 @@
         <%= form_with model: @form, url: sign_in_path, html: { class: "mb-5" }, local: true do |f| %>
           <%= render ErrorPanelComponent.new(form: @form) %>
 
+          <% if @recaptcha.enabled? %>
+            <%= render RecaptchaInputComponent.new(recaptcha: @recaptcha) %>
+          <% end %>
+
           <div class="form-group">
             <%= f.label :email %>
             <%= f.email_field :email, autofocus: true, class: "form-control", placeholder: "hello@annict.com", required: true, tabindex: 1 %>
