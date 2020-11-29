@@ -17,12 +17,21 @@ module V4
       end
 
       @form = SignInForm.new
+      @recaptcha = Recaptcha.new(action: "sign_in")
     end
 
     def create
       @form = SignInForm.new(sign_in_form_attributes)
+      @recaptcha = Recaptcha.new(action: "sign_in")
 
-      return render(:new) unless @form.valid?
+      unless @form.valid?
+        return render(:new)
+      end
+
+      unless @recaptcha.verify?(params[:recaptcha_token])
+        flash.now[:alert] = t("messages.recaptcha.not_verified")
+        return render(:new)
+      end
 
       EmailConfirmation.new(email: @form.email, back: @form.back).confirm_to_sign_in!
 

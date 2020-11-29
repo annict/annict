@@ -10,7 +10,7 @@ module V4
     private
 
     def set_locale(&action)
-      return if request.path.in?(SKIP_TO_SET_LOCALE_PATHS)
+      return yield if request.path.in?(SKIP_TO_SET_LOCALE_PATHS)
 
       case [request.subdomain, request.domain].select(&:present?).join(".")
       when ENV.fetch("ANNICT_DOMAIN")

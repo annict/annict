@@ -1,6 +1,7 @@
 .DS_Store
 
 /.bundle
+/.devcontainer
 /.env.*.local
 /.envrc
 /.idea
@@ -17,4 +18,5 @@
 /tags
 /tmp/*
 /vendor/bundle
+/volumes
 /yarn-error.log
