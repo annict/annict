@@ -1,0 +1,13 @@
+mutation (
+  $episodeIds: [ID!]!
+) {
+  bulkCreateEpisodeRecords(
+    input: {
+      episodeIds: $episodeIds
+    }
+  ) {
+    bulkOperation {
+      jobId
+    }
+  }
+}

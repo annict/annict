@@ -10,6 +10,8 @@ module Canary
         field :updateEpisodeRecord, mutation: Canary::Mutations::UpdateEpisodeRecord
         field :deleteEpisodeRecord, mutation: Canary::Mutations::DeleteEpisodeRecord
 
+        field :bulkCreateEpisodeRecords, mutation: Canary::Mutations::BulkCreateEpisodeRecords
+
         field :createAnimeRecord, mutation: Canary::Mutations::CreateAnimeRecord
         field :updateAnimeRecord, mutation: Canary::Mutations::UpdateAnimeRecord
         field :deleteAnimeRecord, mutation: Canary::Mutations::DeleteAnimeRecord

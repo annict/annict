@@ -1,7 +1,9 @@
 <tr
-  class="c-trackable-episode-table-row <%= class_name %>"
+  class="c-trackable-episode-table-row"
   data-controller="trackable-episode-table-row"
+  data-target="bulk-track-episodes.episodeRow"
   data-trackable-episode-table-row-episode-id="<%= @episode_entity.id %>"
+  data-trackable-episode-table-row-tracked="<%= @episode_entity.viewer_did_track_in_current_status %>"
 >
   <td class="align-middle">
     <%= content %>
@@ -17,14 +19,14 @@
     </button>
 
     <button
-      class="btn btn-outline-secondary"
-      data-controller="skip-episode-record-button"
-      data-skip-episode-record-button-episode-id="<%= @episode_entity.id %>"
-      data-action="click->skip-episode-record-button#skip"
+      class="btn btn-outline-secondary c-bulk-track-episode-button"
+      data-action="click->bulk-track-episodes#trackEpisodes"
+      data-episode-id="<%= @episode_entity.id %>"
+      <%= @episode_entity.viewer_did_track_in_current_status ? 'disabled' : '' %>
     >
       <span class="fa-layers">
         <i class="fal fa-check"></i>
-        <i class="fal fa-arrow-down" data-fa-transform="down-8 right-8 shrink-5"></i>
+        <i class="fal fa-arrow-to-bottom" data-fa-transform="down-8 right-8 shrink-3"></i>
       </span>
     </button>
 

@@ -56,6 +56,10 @@ module Canary
           argument :order_by, Canary::Types::InputObjects::ActivityOrder, required: false
         end
 
+        field :bulk_operation, Canary::Types::Objects::BulkOperationType, null: true do
+          argument :job_id, String, required: true
+        end
+
         def viewer
           context[:viewer]
         end
@@ -106,6 +110,11 @@ module Canary
         def activity_groups(order_by: nil)
           order = Canary::OrderProperty.build(order_by)
           ActivityGroup.joins(:user).merge(User.only_kept).order(order.field => order.direction)
+        end
+
+        def bulk_operation(job_id:)
+          job = Delayed::Job.find_by(id: job_id)
+          job ? OpenStruct.new(job_id: job.id) : nil
         end
       end
     end

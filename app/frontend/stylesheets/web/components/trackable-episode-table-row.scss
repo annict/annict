@@ -3,7 +3,7 @@
     font-weight: $font-weight-bold;
   }
 
-  &--tracked {
+  &[data-trackable-episode-table-row-tracked='true'] {
     background-color: rgba(242, 245, 245, 0.8);
 
     a {
