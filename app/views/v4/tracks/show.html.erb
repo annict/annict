@@ -8,7 +8,10 @@
     </div>
 
     <div class="col-md-9">
-      <table class="table table-hover">
+      <table
+        class="table table-hover"
+        data-controller="bulk-track-episodes"
+      >
         <tbody>
           <% @slot_entities.each do |slot_entity| %>
             <%= render TrackableEpisodeTableRowComponent.new(episode_entity: slot_entity.episode) do %>
@@ -50,7 +53,7 @@
                   </div>
 
                   <div>
-                    <div class="font-weight-bold">
+                    <div class="font-weight-bold small">
                       <%= link_to slot_entity.anime.local_title, anime_path(anime_id: slot_entity.anime.database_id), class: "u-text-body" %>
                     </div>
 
