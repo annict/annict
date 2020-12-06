@@ -93,7 +93,6 @@ group :development do
   gem "graphql-docs"
   gem "i18n-tasks"
   gem "listen" # Using with `rails s` since Rails 5
-  gem "memory_profiler"
   gem "meta_request"
   gem "rubocop"
   gem "ruby_identicon"
