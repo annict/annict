@@ -11,7 +11,7 @@ module Canary
         field :database_id, Integer, null: false
         field :channel, Canary::Types::Objects::ChannelType, null: false
         field :anime, Canary::Types::Objects::AnimeType, null: false
-        field :started_at, Canary::Types::Scalars::DateTime, null: false
+        field :started_at, Canary::Types::Scalars::DateTime, null: true
         field :vod_title_code, String, null: false
         field :vod_title_name, String, null: false
         field :vod_title_url, String, null: false
