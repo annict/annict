@@ -1,6 +1,21 @@
-query {
+query($first: Int, $last: Int, $before: String, $after: String) {
   viewer {
-    slots(untilNextNight: true, viewerUnwatchedOnly: true, orderBy: { field: STARTED_AT, direction: DESC }) {
+    slots(
+      untilNextNight: true
+      viewerUnwatchedOnly: true
+      orderBy: { field: STARTED_AT, direction: DESC }
+      first: $first
+      last: $last
+      before: $before
+      after: $after
+    ) {
+      pageInfo {
+        startCursor
+        endCursor
+        hasNextPage
+        hasPreviousPage
+      }
+
       nodes {
         startedAt
         rebroadcast
