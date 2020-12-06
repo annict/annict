@@ -77,6 +77,7 @@ gem "wilson_score"
 group :development, :test do
   gem "awesome_print"
   gem "dotenv-rails"
+  gem "factory_bot_rails"
   gem "pry-rails"
   gem "rspec_junit_formatter" # Using on CircleCI
   gem "rspec-mocks"
@@ -107,7 +108,6 @@ end
 
 group :test do
   gem "capybara"
-  gem "factory_bot_rails"
   gem "selenium-webdriver"
   # Use < 0.18 until the following issue will be resolved.
   # https://github.com/codeclimate/test-reporter/issues/418
