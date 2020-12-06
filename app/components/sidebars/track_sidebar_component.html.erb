@@ -27,7 +27,7 @@
         </span>
 
         <span class="badge badge-pill badge-light">
-          <%= le_entity.tracked_episodes_count %> / <%= le_entity.anime.episodes_count.presence || "?" %>
+          <%= le_entity.tracked_episodes_count_in_current_status %> / <%= le_entity.anime.episodes_count.presence || "?" %>
         </span>
       <% end %>
     <% end %>

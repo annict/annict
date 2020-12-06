@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class LibraryEntryEntity < ApplicationEntity
-  attribute? :tracked_episodes_count, Types::Integer
+  attribute? :tracked_episodes_count_in_current_status, Types::Integer
   attribute? :anime, AnimeEntity
 
   def self.from_nodes(nodes)
@@ -13,8 +13,8 @@ class LibraryEntryEntity < ApplicationEntity
   def self.from_node(node)
     attrs = {}
 
-    if tracked_episodes_count = node["trackedEpisodesCount"]
-      attrs[:tracked_episodes_count] = tracked_episodes_count
+    if tracked_episodes_count_in_current_status = node["trackedEpisodesCountInCurrentStatus"]
+      attrs[:tracked_episodes_count_in_current_status] = tracked_episodes_count_in_current_status
     end
 
     if anime_node = node["anime"]

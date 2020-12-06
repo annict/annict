@@ -8,13 +8,13 @@ module Canary
 
         global_id_field :id
 
-        field :tracked_episodes_count, Int, null: false
+        field :tracked_episodes_count_in_current_status, Int, null: false
         field :user, Canary::Types::Objects::UserType, null: false
         field :anime, Canary::Types::Objects::AnimeType, null: false
         field :status, Canary::Types::Objects::StatusType, null: true
         field :program, Canary::Types::Objects::ProgramType, null: true
 
-        def tracked_episodes_count
+        def tracked_episodes_count_in_current_status
           object.watched_episode_ids.size
         end
 
