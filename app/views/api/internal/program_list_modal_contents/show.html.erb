@@ -15,44 +15,50 @@
     </p>
 
     <div class="container-fluid">
-      <div
-        class="row"
-      >
-        <% @program_entities.each do |program_entity| %>
-          <div class="col-6 mb-3">
-            <input
-              class="form-check-input"
-              data-target="program-list-modal-content.programId"
-              id="<%= program_entity.id %>"
-              name="program"
-              type="radio"
-              value="<%= program_entity.id %>"
-              <%= program_entity.viewer_did_check ? 'checked' : '' %>
-            >
-            <label class="form-check-label" for="<%= program_entity.id %>">
-              <div>
-                <%= program_entity.channel.name %>
-              </div>
-              <small>
-                <%= display_time(program_entity.started_at) %>~
-              </small>
-            </label>
-          </div>
-        <% end %>
-      </div>
+      <% if @program_entities.length > 0 %>
+        <div
+          class="row"
+        >
+          <% @program_entities.each do |program_entity| %>
+            <div class="col-6 mb-3">
+              <input
+                class="form-check-input"
+                data-target="program-list-modal-content.programId"
+                id="<%= program_entity.id %>"
+                name="program"
+                type="radio"
+                value="<%= program_entity.id %>"
+                <%= program_entity.viewer_did_check ? 'checked' : '' %>
+              >
+              <label class="form-check-label" for="<%= program_entity.id %>">
+                <div>
+                  <%= program_entity.channel.name %>
+                </div>
+                <small>
+                  <%= display_time(program_entity.started_at) %>~
+                </small>
+              </label>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <%= render EmptyComponent.new(text: t("messages._empty.no_programs")) %>
+      <% end %>
     </div>
   </div>
 
   <div class="align-items-center modal-footer">
     <div class="col"></div>
     <div class="col text-center">
-      <button
-        class="btn btn-primary"
-        data-action="program-list-modal-content#check"
-        type="button"
-      >
-        <%= t "verb.check" %>
-      </button>
+      <% if @program_entities.length > 0 %>
+        <button
+          class="btn btn-primary"
+          data-action="program-list-modal-content#check"
+          type="button"
+        >
+          <%= t "verb.check" %>
+        </button>
+      <% end %>
     </div>
     <div class="col text-right">
       <% if @program_entities.any? { |pe| pe.viewer_did_check } %>

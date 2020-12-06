@@ -1,7 +1,7 @@
 query($animeId: ID!) {
   node(id: $animeId) {
     ... on Anime {
-      programs(onlyViewerCheckedChannels: true) {
+      programs(hasSlots: true, onlyViewerCheckedChannels: true) {
         nodes {
           id
           viewerDidCheck
