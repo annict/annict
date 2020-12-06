@@ -134,14 +134,18 @@ module Canary
           argument :order_by, Canary::Types::InputObjects::EpisodeOrder, required: false
         end
 
-        field :records, Canary::Types::Objects::RecordType.connection_type, null: false, resolver: Canary::Resolvers::RecordsOnAnime do
+        field :records, Canary::Types::Objects::RecordType.connection_type,
+          null: false,
+          resolver: Canary::Resolvers::RecordsOnAnime do
           argument :has_body, Boolean, required: false
           argument :by_viewer, Boolean, required: false
           argument :by_following, Boolean, required: false
           argument :order_by, Canary::Types::InputObjects::RecordOrder, required: false
         end
 
-        field :programs, Canary::Types::Objects::ProgramType.connection_type, null: true, resolver: Canary::Resolvers::Programs do
+        field :programs, Canary::Types::Objects::ProgramType.connection_type,
+          null: true,
+          resolver: Canary::Resolvers::Programs do
           argument :only_viewer_checked_channels, Boolean, required: false
           argument :order_by, Canary::Types::InputObjects::ProgramOrder, required: false
         end
@@ -227,7 +231,7 @@ module Canary
           end
         end
 
-        def is_no_episodes
+        def is_no_episodes # rubocop:disable Naming/PredicateName
           object.no_episodes?
         end
 

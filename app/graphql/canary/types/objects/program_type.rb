@@ -38,9 +38,11 @@ module Canary
         end
 
         def viewer_did_check
-          RecordLoader.for(LibraryEntry, column: :program_id, where: { user_id: context[:viewer].id }).load(object.id).then do |le|
-            !le.nil?
-          end
+          RecordLoader.
+            for(LibraryEntry, column: :program_id, where: { user_id: context[:viewer].id }).
+            load(object.id).then do |le|
+              !le.nil?
+            end
         end
       end
     end
