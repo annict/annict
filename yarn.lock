@@ -9547,9 +9547,9 @@ webpack-manifest-plugin@latest:
     tapable "^1.0.0"
 
 webpack-merge@^5.1.2:
-  version "5.2.0"
-  resolved "https://registry.yarnpkg.com/webpack-merge/-/webpack-merge-5.2.0.tgz#31cbcc954f8f89cd4b06ca8d97a38549f7f3f0c9"
-  integrity sha512-QBglJBg5+lItm3/Lopv8KDDK01+hjdg2azEwi/4vKJ8ZmGPdtJsTpjtNNOW3a4WiqzXdCATtTudOZJngE7RKkA==
+  version "5.5.0"
+  resolved "https://registry.yarnpkg.com/webpack-merge/-/webpack-merge-5.5.0.tgz#18b860249ee3f940ed1607c6b0cf1912b27dbf44"
+  integrity sha512-EYKu2To70zpXh65y+ERG/8TbOy0YxPERP1hGvl5nnx7zY0HLZU57zNRlIowiPYQ8lI7kXsCHa5owKMgv/ImW/w==
   dependencies:
     clone-deep "^4.0.1"
     wildcard "^2.0.0"
