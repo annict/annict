@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-class BaseServiceResult < ApplicationResult
+class ServiceResult < ApplicationResult
   attribute :errors, Types::Array.of(ServiceError)
 end

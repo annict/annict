@@ -2,6 +2,12 @@
 
 class ApplicationService
   def initialize
-    @result = ServiceResult.new(errors: [])
+    @result = result_class.new(errors: [])
+  end
+
+  private
+
+  def result_class
+    raise NotImplementedError
   end
 end
