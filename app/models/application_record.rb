@@ -24,6 +24,10 @@ class ApplicationRecord < ActiveRecord::Base
     false
   end
 
+  def reactable?
+    false
+  end
+
   def decorate
     ActiveDecorator::Decorator.instance.decorate(self)
   end

@@ -15,37 +15,10 @@ module Canary
         viewer = context[:viewer]
         reactable = Canary::AnnictSchema.object_from_id(reactable_id)
 
-        recipient = case reactable
-        when Record
-          if reactable.episode_record?
-            reactable.episode_record
-          else
-            reactable.work_record
-          end
-        end
-
-        like = viewer.likes.find_by(recipient: recipient)
-
-        if like
-          return {
-            reaction: like,
-            reactable: reactable
-          }
-        end
-
-        like = viewer.like(recipient)
-
-        if recipient.is_a?(EpisodeRecord)
-          EmailNotificationService.send_email(
-            "liked_episode_record",
-            reactable.user,
-            viewer.id,
-            recipient.id
-          )
-        end
+        result = AddReactionService.new(user: viewer, reactable: reactable).call
 
         {
-          reaction: like,
+          reaction: result.reaction,
           reactable: reactable
         }
       end

@@ -32,6 +32,20 @@ class Like < ApplicationRecord
 
   after_create :save_notification
 
+  def send_notification_to(user)
+    unless recipient.is_a?(EpisodeRecord)
+      return
+    end
+
+    EmailNotificationService.send_email(
+      "liked_episode_record",
+      user,
+      user.id,
+      recipient.id
+    )
+  end
+end
+
   private
 
   def save_notification

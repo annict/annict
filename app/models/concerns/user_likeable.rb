@@ -9,7 +9,16 @@ module UserLikeable
     end
 
     def like(recipient)
-      likes.create(recipient: recipient) unless like?(recipient)
+      like = likes.find_by(recipient: recipient)
+
+      if like
+        return like
+      end
+
+      like = likes.create(recipient: recipient)
+      like.send_notification_to(user)
+
+      like
     end
 
     def unlike(recipient)
