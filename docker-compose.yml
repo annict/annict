@@ -10,9 +10,6 @@ services:
       - delayed_job
       - postgresql
       - webpack
-    env_file:
-      - .env.development
-      - .env.development.local
     environment:
       LANG: C.UTF-8
     ports:
@@ -30,9 +27,6 @@ services:
     command: /bin/ash -c 'bundle exec rails jobs:work'
     depends_on:
       - postgresql
-    env_file:
-      - .env.development
-      - .env.development.local
     volumes:
       - .:/workspace
       - gems_vol:/usr/local/bundle
