@@ -16,7 +16,7 @@ module UserLikeable
       end
 
       like = likes.create(recipient: recipient)
-      like.send_notification_to(user)
+      like.send_notification_to(self)
 
       like
     end

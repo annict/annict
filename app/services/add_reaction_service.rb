@@ -6,7 +6,7 @@ class AddReactionService < ApplicationService
   end
 
   def initialize(user:, resource:)
-    super
+    super()
     @user = user
     @resource = resource
   end

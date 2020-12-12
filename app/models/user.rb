@@ -345,9 +345,9 @@ class User < ApplicationRecord
       raise Annict::Errors::NotReactableError.new
     end
 
-    recipient = resource.episode_record? ? episode_record : work_record
+    recipient = resource.episode_record? ? resource.episode_record : resource.work_record
 
-    like = user.like(recipient)
+    like = like(recipient)
 
     like
   end
