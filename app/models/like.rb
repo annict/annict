@@ -32,6 +32,16 @@ class Like < ApplicationRecord
 
   after_create :save_notification
 
+  def self.find_by_resource(resource)
+    unless resource.reactable?
+      raise Annict::Errors::NotReactableError
+    end
+
+    recipient = resource.episode_record? ? resource.episode_record : resource.work_record
+
+    find_by(recipient: recipient)
+  end
+
   def send_notification_to(user)
     unless recipient.is_a?(EpisodeRecord)
       return
