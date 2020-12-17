@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class AddReactionService < ApplicationService
-  class AddReactionServiceResult < Result::Service
+  class AddReactionServiceResult < Result
     attr_accessor :reaction
   end
 
