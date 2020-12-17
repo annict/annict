@@ -61,7 +61,7 @@ class EpisodeRecord < ApplicationRecord
   enumerize :rating_state, in: Record::RATING_STATES, scope: true
 
   counter_culture :episode
-  counter_culture :episode, column_name: -> (episode_record) { episode_record.body.present? ? :episode_record_bodies_count : nil }
+  counter_culture :episode, column_name: ->(episode_record) { episode_record.body.present? ? :episode_record_bodies_count : nil }
   counter_culture :user
 
   attr_accessor :share_to_twitter, :mutation_error
@@ -109,6 +109,7 @@ class EpisodeRecord < ApplicationRecord
 
   def rating=(value)
     return super if value.to_f.between?(1, 5)
+
     write_attribute :rating, nil
   end
 
@@ -139,8 +140,8 @@ class EpisodeRecord < ApplicationRecord
 
   def twitter_share_body
     work_title = work.local_title
-    title = self.body.present? ? work_title.truncate(30) : work_title
-    comment = self.body.present? ? "#{self.body} / " : ""
+    title = body.present? ? work_title.truncate(30) : work_title
+    comment = body.present? ? "#{body} / " : ""
     episode_number = episode.local_number
     share_url = share_url_with_query(:twitter)
     share_hashtag = work.hashtag_with_hash
@@ -160,7 +161,7 @@ class EpisodeRecord < ApplicationRecord
   end
 
   def facebook_share_body
-    return self.body if self.body.present?
+    return body if body.present?
 
     if user.locale == "ja"
       "見ました。"
