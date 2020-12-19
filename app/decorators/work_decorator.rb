@@ -32,11 +32,13 @@ module WorkDecorator
 
   def release_season
     return "" if season.blank?
+
     season.local_name
   end
 
   def release_season_link
     return release_season if season.blank?
+
     link_to release_season, season_works_path(season.slug)
   end
 
@@ -97,7 +99,7 @@ module WorkDecorator
         if url.present?
           begin
             link_to(URI.decode(url), url, target: "_blank")
-          rescue
+          rescue StandardError
             url
           end
         end
