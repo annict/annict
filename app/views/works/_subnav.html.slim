@@ -1,5 +1,5 @@
 .c-subnav.c-subnav--transparent
-  = active_link_to work_path(work), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "works" && params[:action].in?(%w(show)) do
+  = active_link_to anime_path(anime_id: work.id), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "works" && params[:action].in?(%w(show)) do
     .c-subnav__item
       = t "noun.detail"
   - unless work.no_episodes?

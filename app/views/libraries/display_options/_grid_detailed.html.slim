@@ -8,10 +8,10 @@
         .c-card.p-3
           .row
             .col-5
-              = link_to work_path(work) do
+              = link_to anime_path(anime_id: work.id) do
                 = render WorkImageComponent.new(image_url_1x: ann_image_url(work.work_image, :image, size: "140x"), image_url_2x: ann_image_url(work.work_image, :image, size: "280x"))
             .col-7.pl-0
-              = link_to work.local_title, work_path(work), title: work.local_title, class: "d-inline-block"
+              = link_to work.local_title, anime_path(anime_id: work.id), title: work.local_title, class: "d-inline-block"
               - if user_signed_in? && current_user.id == user.id
                 .mt-2
                   = render "application/components/work_action", work_id: work.id, size: "small"

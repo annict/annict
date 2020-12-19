@@ -383,7 +383,7 @@
                 <% series.series_anime_list.each do |series_work| %>
                   <div class="col-4 col-sm-2 p-0 pr-3 mb-3">
                     <div class="c-card">
-                      <%= link_to work_path(series_work.database_id) do %>
+                      <%= link_to anime_path(anime_id: series_work.database_id) do %>
                         <div class="c-hover-image">
                           <div class="c-hover-image__image">
                             <%= render WorkImageComponent.new(image_url_1x: series_work.image_url_1x, image_url_2x: series_work.image_url_2x) %>
@@ -393,7 +393,7 @@
                       <% end %>
                       <div class="p-1">
                         <div class="u-very-small">
-                          <%= link_to series_work.local_title, work_path(series_work.database_id) %>
+                          <%= link_to series_work.local_title, anime_path(anime_id: series_work.database_id) %>
                         </div>
                         <% if series_work.local_summary.present? %>
                           <div class="u-very-small">

@@ -8,14 +8,14 @@
   .p-records-show__work-info.px-3
     .row
       .col-3.pr-0
-        = link_to work_path(@work) do
+        = link_to anime_path(anime_id: @work.id) do
           = image_tag ann_image_url(@work.work_image, :image, size: "280x", ratio: "3:4"), class: "img-fluid img-thumbnail rounded"
         - if @work.work_image.present?
           .u-very-small.mt-1
             = @work.work_image.asin_or_copyright_text
       .col-9
         h1.h2
-          = link_to work_path(@work), class: "u-text-body" do
+          = link_to anime_path(anime_id: @work), class: "u-text-body" do
             = @work.local_title
         = link_to work_episode_path(@work, @episode), class: "u-text-body mb-2 d-inline-block" do
           = @episode.title_with_number
