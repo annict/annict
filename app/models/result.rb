@@ -12,4 +12,8 @@ class Result < Dry::Struct
   end
 
   attribute :errors, Types::Array.of(Error)
+
+  def success?
+    errors.empty?
+  end
 end
