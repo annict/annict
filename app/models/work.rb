@@ -174,7 +174,7 @@ class Work < ApplicationRecord
     where(id: work_ids)
   }
 
-  scope :tracked_by, -> (user) {
+  scope :tracked_by, ->(user) {
     joins(
       "INNER JOIN (
         SELECT DISTINCT work_id, MAX(id) AS record_id FROM records
@@ -372,6 +372,7 @@ class Work < ApplicationRecord
 
   def season
     return if season_year.blank?
+
     @season ||= Season.new(season_year, season_name.presence || "all")
   end
 
@@ -443,6 +444,7 @@ class Work < ApplicationRecord
 
   def twitter_avatar_url(size = :original)
     return "" if twitter_username.blank?
+
     "https://twitter.com/#{twitter_username}/profile_image?size=#{size}"
   end
 
@@ -481,6 +483,7 @@ class Work < ApplicationRecord
 
   def hashtag_with_hash
     return "" if twitter_hashtag.blank?
+
     "##{twitter_hashtag}"
   end
 
@@ -536,6 +539,7 @@ class Work < ApplicationRecord
   def local_title
     return title if I18n.locale == :ja
     return title_en if title_en.present?
+
     title
   end
 

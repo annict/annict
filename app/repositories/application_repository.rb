@@ -20,7 +20,8 @@ class ApplicationRepository
   attr_reader :graphql_client
 
   def file_name
-    @file_name ||= "#{self.class.name.split('::').map { |str| str.camelize(:lower) }.join('/').delete_suffix('Repository')}.graphql"
+    @file_name ||=
+      "#{self.class.name.split('::').map { |str| str.camelize(:lower) }.join('/').delete_suffix('Repository')}.graphql"
   end
 
   def query_definition
@@ -49,7 +50,7 @@ class ApplicationRepository
 
   def validate!(result)
     if result["errors"]
-      raise ExecutionFailedError.new(result.dig("errors", 0, "message"))
+      raise ExecutionFailedError, result.dig("errors", 0, "message")
     end
   end
 end
