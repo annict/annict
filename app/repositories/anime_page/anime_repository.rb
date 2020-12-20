@@ -2,12 +2,23 @@
 
 module AnimePage
   class AnimeRepository < ApplicationRepository
-    def execute(anime_id:)
-      result = query(variables: { databaseId: anime_id.to_i })
-      data = result.to_h.dig("data", "animeList")
-      anime_node = data["nodes"].first
+    class AnimeRepositoryResult < Result
+      attr_accessor :anime_entity
+    end
 
-      AnimeEntity.from_node(anime_node)
+    def execute(anime_id:)
+      data = query(variables: { databaseId: anime_id.to_i })
+      anime_node = data.to_h.dig("data", "animeList", "nodes").first
+
+      @result.anime_entity = AnimeEntity.from_node(anime_node)
+
+      @result
+    end
+
+    private
+
+    def result_class
+      AnimeRepositoryResult
     end
   end
 end

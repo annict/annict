@@ -17,7 +17,7 @@ module Canary
         end
 
         if has_body
-          @records = @records.merge(WorkRecord.with_body)
+          @records = @records.joins(:work_record).merge(WorkRecord.with_body)
         end
 
         @records = case order.field

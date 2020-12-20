@@ -76,7 +76,7 @@ query($databaseId: Int!) {
       episodes(orderBy: { field: SORT_NUMBER, direction: ASC }, first: 50) {
         nodes {
           databaseId
-          numberText
+          number
           title
           titleEn
         }
@@ -91,26 +91,31 @@ query($databaseId: Int!) {
           }
         }
       }
-      animeRecords(hasBody: true, orderBy: { field: CREATED_AT, direction: DESC }, first: 11) { # Get 11 anime records to display more records link
+      records(hasBody: true, orderBy: { field: CREATED_AT, direction: DESC }, first: 11) {
+        # Get 11 anime records to display more records link
         nodes {
           databaseId
-          ratingAnimationState
-          ratingMusicState
-          ratingStoryState
-          ratingCharacterState
-          ratingOverallState
-          body
+          commentHtml
           likesCount
-          createdAt
           modifiedAt
+          createdAt
+
           user {
+            databaseId
             username
             name
             avatarUrl(size: size50)
             displaySupporterBadge
           }
-          record {
-            databaseId
+
+          recordable {
+            ... on AnimeRecord {
+              ratingAnimation
+              ratingMusic
+              ratingStory
+              ratingCharacter
+              ratingOverall
+            }
           }
         }
       }
