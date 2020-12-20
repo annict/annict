@@ -1,20 +1,32 @@
 # frozen_string_literal: true
 
 class CreateEpisodeRecordRepository < ApplicationRepository
-  def execute(form:)
-    result = mutate(variables: {
-      episodeId: form.episode_id,
-      comment: form.comment,
-      rating: form.rating,
-      shareToTwitter: form.share_to_twitter
-    })
+  class CreateEpisodeRecordRepositoryResult < Result
+    attr_accessor :record_entity
+  end
 
-    if result.to_h["errors"]
-      return [nil, MutationError.new(message: result.to_h["errors"][0]["message"])]
+  def execute(form:)
+    data = mutate(
+      variables: {
+        episodeId: form.episode_id,
+        comment: form.comment,
+        rating: form.rating,
+        shareToTwitter: form.share_to_twitter
+      }
+    )
+    @result = validate(data)
+
+    if @result.success?
+      record_node = data.dig("data", "createEpisodeRecord", "record")
+      @result.record_entity = RecordEntity.from_node(record_node)
     end
 
-    record_node = result.dig("data", "createEpisodeRecord", "record")
+    @result
+  end
 
-    [RecordEntity.from_node(record_node), nil]
+  private
+
+  def result_class
+    CreateEpisodeRecordRepositoryResult
   end
 end

@@ -7,12 +7,9 @@ class ApplicationRepository
     include Dry.Types()
   end
 
-  class MutationError < Dry::Struct
-    attribute :message, Types::String
-  end
-
   def initialize(graphql_client:)
     @graphql_client = graphql_client
+    @result = result_class.new(errors: [])
   end
 
   private
@@ -32,6 +29,10 @@ class ApplicationRepository
     @mutation_definition ||= File.read(Rails.root.join("app", "lib", "annict", "graphql", "mutations", file_name))
   end
 
+  def mutation_name
+    @mutation_name ||= file_name.delete_suffix(".graphql")
+  end
+
   def camelized_variables(variables)
     variables.deep_transform_keys { |key| key.to_s.camelize(:lower) }
   end
@@ -43,14 +44,28 @@ class ApplicationRepository
   end
 
   def mutate(variables: {})
-    result = graphql_client.execute(mutation_definition, variables: camelized_variables(variables))
-    validate! result
-    result
+    data = graphql_client.execute(mutation_definition, variables: camelized_variables(variables))
+    validate! data
+    data
   end
 
-  def validate!(result)
-    if result["errors"]
-      raise ExecutionFailedError, result.dig("errors", 0, "message")
+  def validate!(data)
+    if data["errors"]
+      raise ExecutionFailedError, data.dig("errors", 0, "message")
     end
+  end
+
+  def validate(data)
+    errors = data.dig("data", mutation_name, "errors")
+
+    if errors.present?
+      @result.errors.concat(errors.map { |err| Result::Error.new(message: err["message"]) })
+    end
+
+    @result
+  end
+
+  def result_class
+    raise NotImplementedError
   end
 end
