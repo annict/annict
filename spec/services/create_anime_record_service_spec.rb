@@ -172,7 +172,7 @@ describe CreateAnimeRecordService, type: :service do
 
         # サービスクラスからエラー内容が受け取れること
         expect(result.errors.length).to eq 1
-        expect(result.errors.first.message).to eq "本文は1048596文字以内で入力してください"
+        expect(result.errors.first.message).to eq "感想は1048596文字以内で入力してください"
       end
     end
   end

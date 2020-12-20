@@ -227,7 +227,7 @@ ja:
         sort_number: ソート番号
       work_record:
         title: タイトル
-        body: 本文
+        body: 感想
         mutation_error: ''
         rating_animation_state: 映像
         rating_music_state: 音楽
