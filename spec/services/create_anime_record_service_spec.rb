@@ -27,6 +27,9 @@ describe CreateAnimeRecordService, type: :service do
         share_to_twitter: false
       ).call
 
+      # サービスクラスからエラーは返らないはず
+      expect(result.errors.length).to eq 0
+
       # サービスクラスを呼んだので、各レコードが1件ずつ作成されるはず
       expect(Record.count).to eq 1
       expect(WorkRecord.count).to eq 1
