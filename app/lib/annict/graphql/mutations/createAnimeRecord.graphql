@@ -1,22 +1,22 @@
-mutation (
-  $animeId: ID!,
-  $comment: String,
-  $ratingOverall: Rating,
-  $ratingAnimation: Rating,
-  $ratingMusic: Rating,
-  $ratingStory: Rating,
-  $ratingCharacter: Rating,
+mutation(
+  $animeId: ID!
+  $comment: String
+  $ratingOverall: RatingState
+  $ratingAnimation: RatingState
+  $ratingMusic: RatingState
+  $ratingStory: RatingState
+  $ratingCharacter: RatingState
   $shareToTwitter: Boolean
 ) {
   createAnimeRecord(
     input: {
-      animeId: $animeId,
-      comment: $comment,
-      ratingOverall: $ratingOverall,
-      ratingAnimation: $ratingAnimation,
-      ratingMusic: $ratingMusic,
-      ratingStory: $ratingStory,
-      ratingCharacter: $ratingCharacter,
+      animeId: $animeId
+      comment: $comment
+      ratingOverall: $ratingOverall
+      ratingAnimation: $ratingAnimation
+      ratingMusic: $ratingMusic
+      ratingStory: $ratingStory
+      ratingCharacter: $ratingCharacter
       shareToTwitter: $shareToTwitter
     }
   ) {

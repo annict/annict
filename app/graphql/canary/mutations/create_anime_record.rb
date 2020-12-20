@@ -5,28 +5,29 @@ module Canary
     class CreateAnimeRecord < Canary::Mutations::Base
       argument :anime_id, ID,
         required: true
-      argument :comment, String,
-        required: false,
-        description: "作品への感想"
       WorkRecord::RATING_FIELDS.each do |rating_field|
         argument rating_field.to_s.camelcase(:lower).to_sym, Canary::Types::Enums::RatingState,
           required: false,
           description: "作品への評価"
       end
+      argument :comment, String,
+        required: false,
+        description: "作品への感想"
       argument :share_to_twitter, Boolean,
         required: false,
         description: "作品への記録をTwitterでシェアするかどうか"
 
       field :record, Canary::Types::Objects::RecordType, null: true
+      field :errors, [Canary::Types::Objects::ClientErrorType], null: false
 
-      def resolve(
+      def resolve( # rubocop:disable Metrics/ParameterLists
         anime_id:,
-        comment: nil,
         rating_overall: nil,
         rating_animation: nil,
         rating_music: nil,
         rating_story: nil,
         rating_character: nil,
+        comment: nil,
         share_to_twitter: nil
       )
         raise Annict::Errors::InvalidAPITokenScopeError unless context[:writable]
@@ -34,39 +35,21 @@ module Canary
         viewer = context[:viewer]
         anime = Work.only_kept.find_by_graphql_id(anime_id)
 
-        anime_record = viewer.work_records.new(
-          body: comment,
-          rating_overall_state: rating_overall&.downcase,
-          rating_animation_state: rating_animation&.downcase,
-          rating_music_state: rating_music&.downcase,
-          rating_story_state: rating_story&.downcase,
-          rating_character_state: rating_character&.downcase,
+        result = CreateAnimeRecordService.new(
+          user: viewer,
+          anime: anime,
+          rating_overall: rating_overall,
+          rating_animation: rating_animation,
+          rating_music: rating_music,
+          rating_story: rating_story,
+          rating_character: rating_character,
+          comment: comment,
           share_to_twitter: share_to_twitter
         )
-        anime_record.work = anime
-        anime_record.detect_locale!(:body)
-
-        ActiveRecord::Base.transaction do
-          anime_record.record = viewer.records.create!(work: anime)
-
-          unless anime_record.valid?
-            raise GraphQL::ExecutionError, anime_record.errors.full_messages.join(", ")
-          end
-
-          anime_record.save!
-
-          activity_group = viewer.create_or_last_activity_group!(anime_record)
-          viewer.activities.create!(itemable: anime_record, activity_group: activity_group)
-
-          viewer.update_share_record_setting(share_to_twitter)
-
-          if viewer.share_record_to_twitter?
-            viewer.share_work_record_to_twitter(anime_record)
-          end
-        end
 
         {
-          record: anime_record.record
+          record: result.record,
+          errors: result.errors
         }
       end
     end

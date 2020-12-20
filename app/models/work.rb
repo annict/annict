@@ -375,6 +375,31 @@ class Work < ApplicationRecord
     @season ||= Season.new(season_year, season_name.presence || "all")
   end
 
+  def build_anime_record( # rubocop:disable Metrics/ParameterLists
+    user:,
+    rating_overall: nil,
+    rating_animation: nil,
+    rating_music: nil,
+    rating_story: nil,
+    rating_character: nil,
+    comment: "",
+    share_to_twitter: false
+  )
+    anime_record = work_records.new(
+      user: user,
+      rating_overall_state: rating_overall&.downcase,
+      rating_animation_state: rating_animation&.downcase,
+      rating_music_state: rating_music&.downcase,
+      rating_story_state: rating_story&.downcase,
+      rating_character_state: rating_character&.downcase,
+      body: comment,
+      share_to_twitter: share_to_twitter
+    )
+    anime_record.detect_locale!(:body)
+    anime_record.build_record(user: user, work: self)
+    anime_record
+  end
+
   # 作品のエピソード数分の空白文字列が入った配列を返す
   # Chart.jsのx軸のラベルを消すにはこれしか方法がなかったんだ…! たぶん…。
   def chart_labels
