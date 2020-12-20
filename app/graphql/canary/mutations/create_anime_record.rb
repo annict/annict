@@ -45,7 +45,7 @@ module Canary
           rating_character: rating_character,
           comment: comment,
           share_to_twitter: share_to_twitter
-        )
+        ).call
 
         {
           record: result.record,

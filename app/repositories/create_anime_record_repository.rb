@@ -1,8 +1,12 @@
 # frozen_string_literal: true
 
 class CreateAnimeRecordRepository < ApplicationRepository
+  class CreateAnimeRecordRepositoryResult < Result
+    attr_accessor :record_entity
+  end
+
   def execute(form:)
-    result = mutate(
+    data = mutate(
       variables: {
         animeId: form.anime_id,
         comment: form.comment,
@@ -14,13 +18,19 @@ class CreateAnimeRecordRepository < ApplicationRepository
         shareToTwitter: form.share_to_twitter
       }
     )
+    @result = validate(data)
 
-    if result.to_h["errors"]
-      return [nil, MutationError.new(message: result.to_h["errors"][0]["message"])]
+    if @result.success?
+      record_node = data.dig("data", "createAnimeRecord", "record")
+      @result.record_entity = RecordEntity.from_node(record_node)
     end
 
-    record_node = result.dig("data", "createAnimeRecord", "record")
+    @result
+  end
 
-    [RecordEntity.from_node(record_node), nil]
+  private
+
+  def result_class
+    CreateAnimeRecordRepositoryResult
   end
 end

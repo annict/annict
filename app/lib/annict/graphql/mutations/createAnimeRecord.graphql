@@ -20,6 +20,10 @@ mutation(
       shareToTwitter: $shareToTwitter
     }
   ) {
+    errors {
+      message
+    }
+
     record {
       databaseId
     }
