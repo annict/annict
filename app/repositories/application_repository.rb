@@ -38,9 +38,9 @@ class ApplicationRepository
   end
 
   def query(variables: {})
-    result = graphql_client.execute(query_definition, variables: camelized_variables(variables))
-    validate! result
-    result
+    data = graphql_client.execute(query_definition, variables: camelized_variables(variables))
+    validate! data
+    data
   end
 
   def mutate(variables: {})
