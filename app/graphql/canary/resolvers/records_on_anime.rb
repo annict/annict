@@ -39,7 +39,7 @@ module Canary
 
           @records.
             joins(:work_record).
-            order(order_sql).
+            order(Arel.sql(order_sql)).
             order("records.created_at": :desc)
         else
           @records
