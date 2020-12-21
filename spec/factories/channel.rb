@@ -5,6 +5,7 @@ FactoryBot.define do
     association :channel_group
     sequence :sc_chid
     name { "テレビ夕日" }
+    vod { false }
 
     trait :published do
       unpublished_at { nil }
