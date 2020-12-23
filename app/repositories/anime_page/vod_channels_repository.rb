@@ -2,7 +2,7 @@
 
 module AnimePage
   class VodChannelsRepository < ApplicationRepository
-    class VodChannelsRepositoryResult < Result
+    class RepositoryResult < Result
       attr_accessor :vod_channel_entities
     end
 
@@ -18,7 +18,7 @@ module AnimePage
     private
 
     def result_class
-      VodChannelsRepositoryResult
+      RepositoryResult
     end
   end
 end

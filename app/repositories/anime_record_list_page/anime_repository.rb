@@ -2,7 +2,7 @@
 
 module AnimeRecordListPage
   class AnimeRepository < ApplicationRepository
-    class AnimeRepositoryResult < Result
+    class RepositoryResult < Result
       attr_accessor :anime_entity
     end
 
@@ -18,7 +18,7 @@ module AnimeRecordListPage
     private
 
     def result_class
-      AnimeRepositoryResult
+      RepositoryResult
     end
   end
 end
