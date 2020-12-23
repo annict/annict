@@ -10,9 +10,9 @@ module AnimeRecordListPage
       result = query(variables: { databaseId: database_id })
       anime_node = result.to_h.dig("data", "anime")
 
-      @result.anime_entity = AnimeEntity.from_node(anime_node)
+      result.anime_entity = AnimeEntity.from_node(anime_node)
 
-      @result
+      result
     end
 
     private

@@ -10,9 +10,9 @@ module AnimePage
       result = query
       channel_nodes = result.to_h.dig("data", "channels", "nodes")
 
-      @result.vod_channel_entities = VodChannelEntity.from_nodes(channel_nodes, anime_entity: anime_entity)
+      result.vod_channel_entities = VodChannelEntity.from_nodes(channel_nodes, anime_entity: anime_entity)
 
-      @result
+      result
     end
 
     private

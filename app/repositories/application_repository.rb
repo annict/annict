@@ -14,7 +14,7 @@ class ApplicationRepository
 
   private
 
-  attr_reader :graphql_client
+  attr_reader :graphql_client, :result
 
   def file_name
     @file_name ||=

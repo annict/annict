@@ -10,9 +10,9 @@ module AnimePage
       data = query(variables: { databaseId: anime_id.to_i })
       anime_node = data.to_h.dig("data", "animeList", "nodes").first
 
-      @result.anime_entity = AnimeEntity.from_node(anime_node)
+      result.anime_entity = AnimeEntity.from_node(anime_node)
 
-      @result
+      result
     end
 
     private
