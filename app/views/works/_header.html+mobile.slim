@@ -5,4 +5,4 @@
       li.list-inline-item = active_link_to t("noun.detail"), anime_path(anime_id: work.id), class: "c-slidable-subnav__link", class_active: "c-slidable-subnav__link--active", active: params[:controller] == "works" && params[:action].in?(%w(show))
       - unless work.no_episodes?
         li.list-inline-item = active_link_to t("noun.episodes"), work_episodes_path(work), class: "c-slidable-subnav__link", class_active: "c-slidable-subnav__link--active", active: params[:controller].in?(%w(episodes)) && params[:action].in?(%w(index show new))
-      li.list-inline-item = active_link_to t("noun.records"), work_records_path(work), class: "c-slidable-subnav__link", class_active: "c-slidable-subnav__link--active", active: params[:controller].in?(%w(work_records)) && params[:action].in?(%w(index new create edit update))
+      li.list-inline-item = active_link_to t("noun.records"), anime_record_list_path(anime_id: work.id), class: "c-slidable-subnav__link", class_active: "c-slidable-subnav__link--active", active: params[:controller].in?(%w(work_records)) && params[:action].in?(%w(index new create edit update))
