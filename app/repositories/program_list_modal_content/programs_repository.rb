@@ -2,11 +2,23 @@
 
 module ProgramListModalContent
   class ProgramsRepository < ApplicationRepository
-    def execute(anime_id:)
-      result = query(variables: { animeId: anime_id })
-      program_nodes = result.to_h.dig("data", "node", "programs", "nodes")
+    class RepositoryResult < Result
+      attr_accessor :program_entities
+    end
 
-      ProgramEntity.from_nodes(program_nodes)
+    def execute(anime_id:)
+      data = query(variables: { animeId: anime_id })
+      program_nodes = data.to_h.dig("data", "node", "programs", "nodes")
+
+      result.program_entities = ProgramEntity.from_nodes(program_nodes)
+
+      result
+    end
+
+    private
+
+    def result_class
+      RepositoryResult
     end
   end
 end

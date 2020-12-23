@@ -2,8 +2,12 @@
 
 module RecordListPage
   class RecordsRepository < ApplicationRepository
+    class RepositoryResult < Result
+      attr_accessor :record_entities, :page_info_entity
+    end
+
     def execute(username:, pagination:, month: nil)
-      result = query(
+      data = query(
         variables: {
           username: username,
           month: month,
@@ -13,9 +17,18 @@ module RecordListPage
           after: pagination.after
         }
       )
-      records_data = result.to_h.dig("data", "user", "records")
+      records_data = data.to_h.dig("data", "user", "records")
 
-      [RecordEntity.from_nodes(records_data["nodes"]), PageInfoEntity.from_node(records_data["pageInfo"])]
+      result.record_entities = RecordEntity.from_nodes(records_data["nodes"])
+      result.page_info_entity = PageInfoEntity.from_node(records_data["pageInfo"])
+
+      result
+    end
+
+    private
+
+    def result_class
+      RepositoryResult
     end
   end
 end

@@ -2,11 +2,23 @@
 
 module TrackPage
   class LibraryEntriesRepository < ApplicationRepository
-    def execute
-      result = query
-      library_entry_nodes = result.to_h.dig("data", "viewer", "libraryEntries", "nodes")
+    class RepositoryResult < Result
+      attr_accessor :library_entry_entities
+    end
 
-      LibraryEntryEntity.from_nodes(library_entry_nodes)
+    def execute
+      data = query
+      library_entry_nodes = data.to_h.dig("data", "viewer", "libraryEntries", "nodes")
+
+      result.library_entry_entities = LibraryEntryEntity.from_nodes(library_entry_nodes)
+
+      result
+    end
+
+    private
+
+    def result_class
+      RepositoryResult
     end
   end
 end

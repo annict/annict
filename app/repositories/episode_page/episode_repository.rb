@@ -2,11 +2,23 @@
 
 module EpisodePage
   class EpisodeRepository < ApplicationRepository
-    def execute(database_id:)
-      result = query(variables: { databaseId: database_id })
-      episode_node = result.to_h.dig("data", "episode")
+    class RepositoryResult < Result
+      attr_accessor :episode_entity
+    end
 
-      EpisodeEntity.from_node(episode_node)
+    def execute(database_id:)
+      data = query(variables: { databaseId: database_id })
+      episode_node = data.to_h.dig("data", "episode")
+
+      result.episode_entity = EpisodeEntity.from_node(episode_node)
+
+      result
+    end
+
+    private
+
+    def result_class
+      RepositoryResult
     end
   end
 end

@@ -2,11 +2,23 @@
 
 module RecordListPage
   class UserRepository < ApplicationRepository
-    def execute(username:)
-      result = query(variables: { username: username })
-      user_node = result.to_h.dig("data", "user")
+    class RepositoryResult < Result
+      attr_accessor :user_entity
+    end
 
-      UserEntity.from_node(user_node)
+    def execute(username:)
+      data = query(variables: { username: username })
+      user_node = data.to_h.dig("data", "user")
+
+      result.user_entity = UserEntity.from_node(user_node)
+
+      result
+    end
+
+    private
+
+    def result_class
+      RepositoryResult
     end
   end
 end

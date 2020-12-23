@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class CreateAnimeRecordRepository < ApplicationRepository
-  class CreateAnimeRecordRepositoryResult < Result
+  class RepositoryResult < Result
     attr_accessor :record_entity
   end
 
@@ -18,19 +18,19 @@ class CreateAnimeRecordRepository < ApplicationRepository
         shareToTwitter: form.share_to_twitter
       }
     )
-    @result = validate(data)
+    result = validate(data)
 
-    if @result.success?
+    if result.success?
       record_node = data.dig("data", "createAnimeRecord", "record")
-      @result.record_entity = RecordEntity.from_node(record_node)
+      result.record_entity = RecordEntity.from_node(record_node)
     end
 
-    @result
+    result
   end
 
   private
 
   def result_class
-    CreateAnimeRecordRepositoryResult
+    RepositoryResult
   end
 end
