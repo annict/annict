@@ -16,6 +16,7 @@ class AnimeEntity < ApplicationEntity
   attribute? :season_slug, Types::String.optional
   attribute? :started_on, Types::Params::Date.optional
   attribute? :episodes_count, Types::Integer
+  attribute? :final_episodes_count, Types::Integer
   attribute? :watchers_count, Types::Integer
   attribute? :satisfaction_rate, Types::Float.optional
   attribute? :ratings_count, Types::Integer
@@ -107,6 +108,10 @@ class AnimeEntity < ApplicationEntity
 
     if episodes_count = node["episodesCount"]
       attrs[:episodes_count] = episodes_count
+    end
+
+    if final_episodes_count = node["finalEpisodesCount"]
+      attrs[:final_episodes_count] = final_episodes_count
     end
 
     if watchers_count = node["watchersCount"]
