@@ -7,23 +7,24 @@ module V4
     def show
       set_page_category PageCategory::WORK
 
-      work = Work.only_kept.find(params[:id])
+      anime = Work.only_kept.find(params[:anime_id])
 
-      @work_entity = Rails.cache.fetch(work_detail_work_cache_key(work), expires_in: 3.hours) do
-        AnimePage::AnimeRepository.new(graphql_client: graphql_client).execute(anime_id: work.id)
+      result = Rails.cache.fetch(work_detail_work_cache_key(anime), expires_in: 3.hours) do
+        AnimePage::AnimeRepository.new(graphql_client: graphql_client).execute(anime_id: anime.id)
       end
+      @anime_entity = result.anime_entity
 
-      load_vod_channel_entities(work: work, work_entity: @work_entity)
+      load_vod_channel_entities(anime: anime, anime_entity: @anime_entity)
     end
 
     private
 
-    def work_detail_work_cache_key(work)
+    def work_detail_work_cache_key(anime)
       [
-        "work-detail",
-        "work",
-        work.id,
-        work.updated_at.rfc3339
+        "anime-detail",
+        "anime",
+        anime.id,
+        anime.updated_at.rfc3339
       ].freeze
     end
   end

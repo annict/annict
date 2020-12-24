@@ -13,6 +13,7 @@ query($databaseId: Int!) {
       seasonSlug
       startedOn
       episodesCount
+      finalEpisodesCount
       watchersCount
       satisfactionRate
       ratingsCount

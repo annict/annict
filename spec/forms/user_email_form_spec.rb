@@ -12,7 +12,7 @@ describe UserEmailForm do
     context "when attributes are valid" do
       it do
         expect(form.valid?).to be true
-        expect(form.error_messages).to eq []
+        expect(form.errors.full_messages).to eq []
       end
     end
 
@@ -24,7 +24,7 @@ describe UserEmailForm do
 
           it do
             expect(form.valid?).to be false
-            expect(form.error_messages).to eq ["メールアドレスはすでに存在します"]
+            expect(form.errors.full_messages).to eq ["メールアドレスはすでに存在します"]
           end
         end
 
@@ -34,7 +34,7 @@ describe UserEmailForm do
 
           it do
             expect(form.valid?).to be false
-            expect(form.error_messages).to eq ["メールアドレスはすでに存在します"]
+            expect(form.errors.full_messages).to eq ["メールアドレスはすでに存在します"]
           end
         end
 
@@ -43,7 +43,7 @@ describe UserEmailForm do
 
           it do
             expect(form.valid?).to be false
-            expect(form.error_messages).to eq ["メールアドレスを入力してください"]
+            expect(form.errors.full_messages).to eq ["メールアドレスを入力してください"]
           end
         end
 
@@ -52,7 +52,7 @@ describe UserEmailForm do
 
           it do
             expect(form.valid?).to be false
-            expect(form.error_messages).to eq ["メールアドレスが不正です"]
+            expect(form.errors.full_messages).to eq ["メールアドレスは不正な値です"]
           end
         end
       end

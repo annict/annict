@@ -3,9 +3,10 @@
 module V4
   module AnimeSidebarDisplayable
     def load_vod_channel_entities(anime:, anime_entity:)
-      @vod_channel_entities = Rails.cache.fetch(anime_detail_vod_channels_cache_key(anime), expires_in: 3.hours) do
+      result = Rails.cache.fetch(anime_detail_vod_channels_cache_key(anime), expires_in: 3.hours) do
         AnimePage::VodChannelsRepository.new(graphql_client: graphql_client).execute(anime_entity: anime_entity)
       end
+      @vod_channel_entities = result.vod_channel_entities
 
       @existing_vod_channel_entities = @vod_channel_entities.select { |vod_channel| vod_channel.programs.first.present? }
     end

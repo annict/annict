@@ -11,20 +11,21 @@ module Api
         def create
           work = Work.only_kept.find(@params.work_id)
 
-          body = @params.title.present? ? "#{@params.title}\n\n#{@params.body}" : @params.body
           work_record_params = {
-            body: body,
-            rating_animation_state: @params.rating_animation_state,
-            rating_music_state: @params.rating_music_state,
-            rating_story_state: @params.rating_story_state,
-            rating_character_state: @params.rating_character_state,
-            rating_overall_state: @params.rating_overall_state,
+            anime_id: ::Canary::AnnictSchema.id_from_object(work, work.class),
+            comment: @params.title.present? ? "#{@params.title}\n\n#{@params.body}" : @params.body,
+            rating_animation: @params.rating_animation_state,
+            rating_music: @params.rating_music_state,
+            rating_story: @params.rating_story_state,
+            rating_character: @params.rating_character_state,
+            rating_overall: @params.rating_overall_state,
             share_to_twitter: @params.share_twitter
           }
+          form = AnimeRecordForm.new(work_record_params)
 
           work_record_entity, err = CreateAnimeRecordRepository.new(
             graphql_client: graphql_client(viewer: current_user)
-          ).execute(anime: work, params: work_record_params)
+          ).execute(form: form)
 
           if err
             return render_validation_error(err.message)
