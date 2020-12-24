@@ -109,7 +109,17 @@ query($databaseId: Int!) {
             displaySupporterBadge
           }
 
+          trackable {
+            __typename
+
+            ... on Anime {
+              databaseId
+            }
+          }
+
           recordable {
+            __typename
+
             ... on AnimeRecord {
               ratingAnimation
               ratingMusic

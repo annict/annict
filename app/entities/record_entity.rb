@@ -18,38 +18,38 @@ class RecordEntity < ApplicationEntity
     end
   end
 
-  def self.from_node(node)
+  def self.from_node(node) # rubocop:disable Metrics/PerceivedComplexity
     attrs = {}
 
-    if database_id = node["databaseId"]
+    if (database_id = node["databaseId"])
       attrs[:database_id] = database_id
     end
 
-    if comment = node["comment"]
+    if (comment = node["comment"])
       attrs[:comment] = comment
     end
 
-    if comment_html = node["commentHtml"]
+    if (comment_html = node["commentHtml"])
       attrs[:comment_html] = comment_html
     end
 
-    if likes_count = node["likesCount"]
+    if (likes_count = node["likesCount"])
       attrs[:likes_count] = likes_count
     end
 
-    if modified_at = node["modifiedAt"]
+    if (modified_at = node["modifiedAt"])
       attrs[:modified_at] = modified_at
     end
 
-    if created_at = node["createdAt"]
+    if (created_at = node["createdAt"])
       attrs[:created_at] = created_at
     end
 
-    if user_node = node["user"]
+    if (user_node = node["user"])
       attrs[:user] = UserEntity.from_node(user_node)
     end
 
-    if trackable_node = node["trackable"]
+    if (trackable_node = node["trackable"])
       attrs[:trackable] = case trackable_node["__typename"]
       when "Anime"
         AnimeEntity.from_node(trackable_node)
@@ -58,7 +58,7 @@ class RecordEntity < ApplicationEntity
       end
     end
 
-    if recordable_node = node["recordable"]
+    if (recordable_node = node["recordable"])
       attrs[:recordable] = case recordable_node["__typename"]
       when "AnimeRecord"
         AnimeRecordEntity.from_node(recordable_node)

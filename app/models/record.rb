@@ -38,6 +38,8 @@ class Record < ApplicationRecord
   has_one :episode_record, dependent: :destroy
   has_one :work_record, dependent: :destroy
 
+  scope :with_anime_record, -> { joins(:work_record).merge(WorkRecord.only_kept) }
+
   def episode_record?
     episode_record.present?
   end

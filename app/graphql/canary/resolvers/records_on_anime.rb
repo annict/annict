@@ -6,7 +6,7 @@ module Canary
       def resolve(has_body: nil, by_viewer: nil, by_following: nil, order_by: nil)
         order = Canary::OrderProperty.build(order_by)
 
-        @records = object.records.only_kept
+        @records = object.records.with_anime_record.only_kept
 
         if by_viewer
           @records = @records.where(user_id: context[:viewer].id)
@@ -17,7 +17,7 @@ module Canary
         end
 
         if has_body
-          @records = @records.joins(:work_record).merge(WorkRecord.with_body)
+          @records = @records.merge(WorkRecord.with_body)
         end
 
         @records = case order.field

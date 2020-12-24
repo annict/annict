@@ -71,7 +71,7 @@ module V4
         end
         flash[:notice] = t("messages._common.updated")
         redirect_to record_path(@work_record.user.username, @work_record.record)
-      rescue
+      rescue StandardError
         render :edit
       end
     end
@@ -80,19 +80,32 @@ module V4
 
     def anime_record_form_params
       params.require(:anime_record_form).permit(
-        :anime_id, :comment, :rating_animation, :rating_music, :rating_story, :rating_character, :rating_overall, :share_to_twitter
+        :anime_id, :comment, :rating_animation,
+        :rating_music, :rating_story, :rating_character, :rating_overall,
+        :share_to_twitter
       )
     end
 
     def load_on_anime_record_list
-      @anime_entity = AnimeRecordListPage::AnimeRepository.new(graphql_client: graphql_client).execute(database_id: @anime.id)
+      result = AnimeRecordListPage::AnimeRepository.new(graphql_client: graphql_client).execute(database_id: @anime.id)
+      @anime_entity = result.anime_entity
       load_vod_channel_entities(anime: @anime, anime_entity: @anime_entity)
       @other_record_entities = @anime_entity.records
 
       if user_signed_in?
-        @my_record_entities = AnimeRecordListPage::MyRecordsRepository.new(graphql_client: graphql_client(viewer: current_user)).execute(anime_id: @anime_entity.id)
-        @following_record_entities = AnimeRecordListPage::FollowingRecordsRepository.new(graphql_client: graphql_client(viewer: current_user)).execute(anime_id: @anime_entity.id)
-        @other_record_entities = current_user.filter_records(@other_record_entities, @my_record_entities + @following_record_entities)
+        result = AnimeRecordListPage::MyRecordsRepository.new(
+          graphql_client: graphql_client(viewer: current_user)
+        ).execute(anime_id: @anime_entity.id)
+        @my_record_entities = result.record_entities
+
+        result = AnimeRecordListPage::FollowingRecordsRepository.new(
+          graphql_client: graphql_client(viewer: current_user)
+        ).execute(anime_id: @anime_entity.id)
+        @following_record_entities = result.record_entities
+
+        @other_record_entities = current_user.filter_records(
+          @other_record_entities, @my_record_entities + @following_record_entities
+        )
       end
     end
   end

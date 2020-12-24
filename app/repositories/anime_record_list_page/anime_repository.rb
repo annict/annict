@@ -7,8 +7,8 @@ module AnimeRecordListPage
     end
 
     def execute(database_id:)
-      result = query(variables: { databaseId: database_id })
-      anime_node = result.to_h.dig("data", "anime")
+      data = query(variables: { databaseId: database_id })
+      anime_node = data.to_h.dig("data", "anime")
 
       result.anime_entity = AnimeEntity.from_node(anime_node)
 
