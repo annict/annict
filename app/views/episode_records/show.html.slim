@@ -12,7 +12,7 @@
           h1.h2
             = link_to anime_path(anime_id: @work.id), class: "u-text-body" do
               = @work.local_title
-          = link_to work_episode_path(@work, @episode), class: "u-text-body" do
+          = link_to episode_path(anime_id: @work.id, episode_id: @episode.id), class: "u-text-body" do
             = @episode.title_with_number
         hr
         .p-episode_records-show__record.px-3

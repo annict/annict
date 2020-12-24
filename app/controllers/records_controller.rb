@@ -49,7 +49,7 @@ class RecordsController < ApplicationController
 
     path = if @record.episode_record?
       episode_record = @record.episode_record
-      work_episode_path(episode_record.work, episode_record.episode)
+      episode_path(anime_id: episode_record.work_id, episode_id: episode_record.episode_id)
     else
       work_record = @record.work_record
       anime_record_list_path(anime_id: work_record.work_id)

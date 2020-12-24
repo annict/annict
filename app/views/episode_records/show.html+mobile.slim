@@ -17,7 +17,7 @@
         h1.h2
           = link_to anime_path(anime_id: @work), class: "u-text-body" do
             = @work.local_title
-        = link_to work_episode_path(@work, @episode), class: "u-text-body mb-2 d-inline-block" do
+        = link_to episode_path(anime_id: @work.id, episode_id: @episode.id), class: "u-text-body mb-2 d-inline-block" do
           = @episode.title_with_number
         = render StatusSelectorComponent.new(work_id: @work.id, page_category: page_category)
 

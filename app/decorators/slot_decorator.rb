@@ -20,7 +20,7 @@ module SlotDecorator
 
         episode = work.episodes.find(send(field))
         title = episode.decorate.title_with_number
-        path = work_episode_path(episode.work, episode)
+        path = episode_path(anime_id: episode.work_id, episode_id: episode.id)
         link_to(title, path, target: "_blank")
       when :work_id
         path = anime_path(anime_id: work.id)

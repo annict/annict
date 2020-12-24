@@ -64,7 +64,7 @@
             <div class="row">
               <% @work_entity.episodes.each do |episode_entity| %>
                 <div class="col-6 col-sm-4 mb-3">
-                  <%= link_to work_episode_path(@work_entity.database_id, episode_entity.database_id) do %>
+                  <%= link_to episode_path(anime_id: @work_entity.database_id, episode_id: episode_entity.database_id) do %>
                     <%= episode_entity.number_text %>
                     <div class="small u-text-body">
                       <%= episode_entity.local_title %>
@@ -176,7 +176,7 @@
             </h2>
 
             <div>
-              <%= link_to work_records_path(@work_entity.database_id), class: "btn btn-primary btn-sm" do %>
+              <%= link_to anime_record_list_path(anime_id: @work_entity.database_id), class: "btn btn-primary btn-sm" do %>
                 <i class="far fa-edit mr-1"></i>
                 <%= t "verb.track" %>
               <% end %>
@@ -332,7 +332,7 @@
 
           <% if @work_entity.anime_records.length > 10 %>
             <div class="container mb-3">
-              <%= link_to work_records_path(@work_entity.database_id), class: "btn btn-secondary w-100" do %>
+              <%= link_to anime_record_list_path(anime_id: @work_entity.database_id), class: "btn btn-secondary w-100" do %>
                 <i class="fas fa-angle-right"></i>
                 <%= t "messages.works.view_all_n_record_body_list", n: @work_entity.anime_records_with_body_count %>
               <% end %>
