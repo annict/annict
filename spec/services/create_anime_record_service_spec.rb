@@ -15,7 +15,7 @@ describe CreateAnimeRecordService, type: :service do
       expect(user.share_record_to_twitter?).to eq false
 
       # サービスクラスを呼ぶ
-      CreateAnimeRecordService.new(
+      result = CreateAnimeRecordService.new(
         user: user,
         anime: anime,
         rating_overall: "great",

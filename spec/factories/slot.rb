@@ -6,7 +6,7 @@ FactoryBot.define do
     association :episode
     work { episode.work }
     channel { program.channel }
-    started_at { Time.parse("2017-01-29 0:00:00") }
+    started_at { Time.parse("2017-01-28 15:00:00").utc }
     rebroadcast { false }
 
     trait :published do

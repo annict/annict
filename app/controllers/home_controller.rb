@@ -19,7 +19,7 @@ class HomeController < ApplicationController
       UserlandProject.where(id: UserlandProject.pluck(:id).sample(3))
     end
 
-    @activity_group_entities, @page_info_entity = if current_user.timeline_mode.following?
+    result = if current_user.timeline_mode.following?
       UserHomePage::FollowingActivityGroupsRepository.new(
         graphql_client: graphql_client(viewer: current_user)
       ).execute(
@@ -31,5 +31,7 @@ class HomeController < ApplicationController
         graphql_client: graphql_client
       ).execute(pagination: Annict::Pagination.new(before: params[:before], after: params[:after], per: 30))
     end
+    @activity_group_entities = result.activity_group_entities
+    @page_info_entity = result.page_info_entity
   end
 end

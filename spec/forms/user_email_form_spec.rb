@@ -43,7 +43,7 @@ describe UserEmailForm do
 
           it do
             expect(form.valid?).to be false
-            expect(form.errors.full_messages).to eq ["メールアドレスを入力してください"]
+            expect(form.errors.full_messages).to eq %w(メールアドレスを入力してください メールアドレスは不正な値です)
           end
         end
 

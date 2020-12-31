@@ -21,9 +21,7 @@ module Canary
           slots = slots.where.not(episode_id: watched_episode_ids)
         end
 
-        slots = slots.order(order.field => order.direction)
-
-        slots
+        slots.order(order.field => order.direction)
       end
     end
   end
