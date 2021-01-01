@@ -8,6 +8,7 @@ class RegistrationForm < ApplicationForm
     presence: true,
     email: true
   validates :terms_and_privacy_policy_agreement,
+    presence: true,
     acceptance: true
   validates :username,
     presence: true,

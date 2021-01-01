@@ -26,7 +26,7 @@ module V4
       _, err = CreateAnimeRecordRepository.new(graphql_client: graphql_client(viewer: current_user)).execute(form: @form)
 
       if err
-        @form.error_messages = [err.message]
+        @form.errors.full_messages = [err.message]
         load_on_anime_record_list
         return render :index
       end

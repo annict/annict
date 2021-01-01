@@ -3,8 +3,6 @@
 module Beta
   module Mutations
     class CreateRecord < Beta::Mutations::Base
-      include V4::GraphqlRunnable
-
       argument :episode_id, ID, required: true
       argument :comment, String, required: false
       argument :rating_state, Beta::Types::Enums::RatingState, required: false
@@ -19,23 +17,20 @@ module Beta
         viewer = context[:viewer]
         episode = Episode.only_kept.find_by_graphql_id(episode_id)
 
-        episode_record_entity, err = CreateEpisodeRecordRepository.new(
-          graphql_client: graphql_client(viewer: viewer)
-        ).execute(
+        result = CreateEpisodeRecordService.new(
+          user: viewer,
           episode: episode,
-          params: {
-            rating_state: rating_state,
-            body: comment,
-            share_to_twitter: share_twitter&.to_s
-          }
-        )
+          rating: rating_state,
+          comment: comment,
+          share_to_twitter: share_twitter&.to_s
+        ).call
 
-        if err
-          raise GraphQL::ExecutionError, err.message
+        unless result.success?
+          raise GraphQL::ExecutionError, result.errors.first.message
         end
 
         {
-          record: viewer.episode_records.find(episode_record_entity.database_id)
+          record: viewer.episode_records.find_by!(record_id: result.record.id)
         }
       end
     end

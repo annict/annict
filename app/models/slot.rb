@@ -95,10 +95,12 @@ class Slot < ApplicationRecord
 
     if now > start
       return :broadcasting if now.between?(start, start + work.duration.minutes)
-      return :broadcasted
+
+      :broadcasted
     else
       return :tonight if start.between?(now, now.beginning_of_day + 1.day + 5.hours)
-      return :unbroadcast
+
+      :unbroadcast
     end
   end
 

@@ -23,7 +23,7 @@ module V4
       ).execute(form: @form)
 
       if err
-        @form.error_messages = [err.message]
+        @form.errors.full_messages = [err.message]
         load_episode_and_records(work_id: params[:work_id], episode_id: params[:id], form: @form)
 
         return render "/v4/episodes/show"
