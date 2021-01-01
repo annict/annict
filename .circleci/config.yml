@@ -24,9 +24,8 @@ jobs:
         environment:
           POSTGRES_USER: postgres
           POSTGRES_DB: annict_test
-          POSTGRES_PASSWORD: ""
+          POSTGRES_PASSWORD: ''
           POSTGRES_HOST_AUTH_METHOD: trust
-      - image: selenium/standalone-chrome:latest
     steps:
       # special step to check out source code to working directory
       - checkout
@@ -78,10 +77,6 @@ jobs:
       - run:
           name: Wait for DB
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
-
-      - run:
-          name: Wait for Selenium
-          command: dockerize -wait tcp://localhost:4444 -timeout 1m
 
       - run:
           name: Setup Database

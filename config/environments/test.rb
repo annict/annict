@@ -26,8 +26,8 @@ Rails.application.configure do
   config.action_controller.perform_caching = false
   config.cache_store = :null_store
 
-  asset_ip_address = Socket.ip_address_list.detect{ |addr| addr.ipv4_private? }.ip_address
-  asset_port = ENV["CI"] ? ENV.fetch("CAPYBARA_SERVER_PORT") : ENV.fetch("WEBPACK_DEV_SERVER_PORT")
+  asset_ip_address = Socket.ip_address_list.detect(&:ipv4_private?).ip_address
+  asset_port = ENV.fetch("WEBPACK_DEV_SERVER_PORT")
   config.action_controller.asset_host = "http://#{asset_ip_address}:#{asset_port}"
 
   # Raise exceptions instead of rendering exception templates.

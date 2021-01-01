@@ -107,13 +107,10 @@ group :development do
 end
 
 group :test do
-  gem "capybara"
-  gem "selenium-webdriver"
   # Use < 0.18 until the following issue will be resolved.
   # https://github.com/codeclimate/test-reporter/issues/418
   gem "simplecov", "< 0.18", require: false
   gem "timecop"
-  gem "webdrivers", require: !ENV["CI"] # Added to run spec with Chrome on local machine
 end
 
 group :production do

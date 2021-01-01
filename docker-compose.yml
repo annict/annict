@@ -52,10 +52,6 @@ services:
     image: redis:5.0.5-alpine
     ports:
       - 6379:6379
-  selenium:
-    image: selenium/standalone-chrome:latest
-    ports:
-      - 4444:4444
 
 volumes:
   # Exclude the gems/node_modules directory

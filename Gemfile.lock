@@ -118,15 +118,6 @@ GEM
       uniform_notifier (~> 1.11)
     by_star (3.0.0)
       activesupport (> 3)
-    capybara (3.33.0)
-      addressable
-      mini_mime (>= 0.1.3)
-      nokogiri (~> 1.8)
-      rack (>= 1.6.0)
-      rack-test (>= 0.6.3)
-      regexp_parser (~> 1.5)
-      xpath (~> 3.2)
-    childprocess (3.0.0)
     chunky_png (1.3.12)
     cld (0.8.0)
       ffi
@@ -522,7 +513,6 @@ GEM
     ruby2_keywords (0.0.2)
     ruby_identicon (0.0.5)
       chunky_png (~> 1.3.5)
-    rubyzip (2.3.0)
     sass (3.7.4)
       sass-listen (~> 4.0.0)
     sass-listen (4.0.0)
@@ -530,9 +520,6 @@ GEM
       rb-inotify (~> 0.9, >= 0.9.7)
     scss_lint (0.59.0)
       sass (~> 3.5, >= 3.5.5)
-    selenium-webdriver (3.142.7)
-      childprocess (>= 0.5, < 4.0)
-      rubyzip (>= 1.2.2)
     sentry-raven (3.1.1)
       faraday (>= 1.0)
     shrine (3.3.0)
@@ -618,16 +605,10 @@ GEM
       equalizer (~> 0.0, >= 0.0.9)
     warden (1.2.9)
       rack (>= 2.0.9)
-    webdrivers (4.4.1)
-      nokogiri (~> 1.6)
-      rubyzip (>= 1.3.0)
-      selenium-webdriver (>= 3.0, < 4.0)
     websocket-driver (0.7.3)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
     wilson_score (0.1.0)
-    xpath (3.2.0)
-      nokogiri (~> 1.8)
     yard (0.9.25)
     zeitwerk (2.4.1)
 
@@ -649,7 +630,6 @@ DEPENDENCIES
   browser
   bullet
   by_star
-  capybara
   cld
   commonmarker
   counter_culture
@@ -715,7 +695,6 @@ DEPENDENCIES
   rubocop
   ruby_identicon
   scss_lint
-  selenium-webdriver
   sentry-raven
   shrine
   simplecov (< 0.18)
@@ -732,7 +711,6 @@ DEPENDENCIES
   validate_url
   view_component
   virtus
-  webdrivers
   wilson_score
 
 RUBY VERSION
