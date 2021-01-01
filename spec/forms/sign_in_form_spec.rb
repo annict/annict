@@ -25,7 +25,7 @@ describe SignInForm do
 
           it do
             expect(form.valid?).to be false
-            expect(form.errors.full_messages).to eq ["メールアドレスが不正です"]
+            expect(form.errors.full_messages).to eq ["メールアドレスは不正な値です"]
           end
         end
       end

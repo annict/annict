@@ -23,15 +23,15 @@ module Api
           }
           form = AnimeRecordForm.new(work_record_params)
 
-          work_record_entity, err = CreateAnimeRecordRepository.new(
+          result = CreateAnimeRecordRepository.new(
             graphql_client: graphql_client(viewer: current_user)
           ).execute(form: form)
 
-          if err
-            return render_validation_error(err.message)
+          unless result.success?
+            return render_validation_error(result.errors.first.message)
           end
 
-          @work_record = current_user.work_records.find(work_record_entity.database_id)
+          @work_record = current_user.work_records.find_by!(record_id: result.record_entity.database_id)
         end
 
         def update

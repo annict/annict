@@ -127,7 +127,10 @@ describe RegistrationForm do
 
           it do
             expect(form.valid?).to be false
-            expect(form.errors.full_messages).to eq ["利用規約とプライバシーポリシーを受諾してください"]
+            expect(form.errors.full_messages).to eq %w(
+              利用規約とプライバシーポリシーを入力してください
+              利用規約とプライバシーポリシーを受諾してください
+            )
           end
         end
       end
