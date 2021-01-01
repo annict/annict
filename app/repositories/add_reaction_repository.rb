@@ -1,18 +1,16 @@
 # frozen_string_literal: true
 
 class AddReactionRepository < ApplicationRepository
+  class RepositoryResult < Result; end
+
   def execute(reactable:, content:)
-    result = mutate(
+    data = mutate(
       variables: {
         reactableId: Canary::AnnictSchema.id_from_object(reactable, reactable.class),
         content: content
       }
     )
 
-    if result.to_h["errors"]
-      return [nil, MutationError.new(message: result.to_h["errors"][0]["message"])]
-    end
-
-    [nil, nil]
+    validate(data)
   end
 end

@@ -68,8 +68,8 @@ describe UpdateStatusRepository, type: :repository do
 
       status = user.statuses.last
       activity_group = user.activity_groups.first
-      activity_1 = user.activities.first
-      activity_2 = user.activities.last
+      activity1 = user.activities.first
+      activity2 = user.activities.last
       library_entry = user.library_entries.first
 
       expect(status.kind).to eq "watching"
@@ -78,10 +78,10 @@ describe UpdateStatusRepository, type: :repository do
       expect(activity_group.itemable_type).to eq "Status"
       expect(activity_group.single).to eq false
 
-      expect(activity_1.activity_group_id).to eq activity_group.id
+      expect(activity1.activity_group_id).to eq activity_group.id
 
-      expect(activity_2.itemable).to eq status
-      expect(activity_2.activity_group_id).to eq activity_group.id
+      expect(activity2.itemable).to eq status
+      expect(activity2.activity_group_id).to eq activity_group.id
 
       expect(library_entry.status_id).to eq status.id
       expect(library_entry.work_id).to eq work.id

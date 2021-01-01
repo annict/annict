@@ -1,15 +1,19 @@
 # frozen_string_literal: true
 
 class BulkCreateEpisodeRecordsRepository < ApplicationRepository
-  def execute(form:)
-    result = mutate(variables: { episodeIds: form.episode_ids })
+  class RepositoryResult < Result
+    attr_accessor :bulk_operation_entity
+  end
 
-    if result.to_h["errors"]
-      return [nil, MutationError.new(message: result.to_h["errors"][0]["message"])]
+  def execute(form:)
+    data = mutate(variables: { episodeIds: form.episode_ids })
+    result = validate(data)
+
+    if result.success?
+      bulk_operation_node = data.dig("data", "bulkCreateEpisodeRecords", "bulkOperation")
+      result.bulk_operation_entity = BulkOperationEntity.from_node(bulk_operation_node)
     end
 
-    bulk_operation_node = result.dig("data", "bulkCreateEpisodeRecords", "bulkOperation")
-
-    [BulkOperationEntity.from_node(bulk_operation_node), nil]
+    result
   end
 end

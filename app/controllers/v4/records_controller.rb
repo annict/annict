@@ -9,17 +9,20 @@ module V4
 
       @months = user.records.only_kept.group_by_month(:created_at, time_zone: user.time_zone).count.to_a.reverse.to_h
 
-      @user_entity = Rails.cache.fetch(user_cache_key(user), expires_in: 3.hours) do
+      result = Rails.cache.fetch(user_cache_key(user), expires_in: 3.hours) do
         RecordListPage::UserRepository.new(graphql_client: graphql_client).execute(username: user.username)
       end
+      @user_entity = result.user_entity
 
-      @record_entities, @page_info_entity = RecordListPage::RecordsRepository.
+      result = RecordListPage::RecordsRepository.
         new(graphql_client: graphql_client).
         execute(
           username: user.username,
           pagination: Annict::Pagination.new(before: params[:before], after: params[:after], per: 30),
           month: params[:month]
         )
+      @record_entities = result.record_entities
+      @page_info_entity = result.page_info_entity
     end
 
     private

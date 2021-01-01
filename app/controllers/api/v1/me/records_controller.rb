@@ -10,24 +10,20 @@ module Api
 
         def create
           episode = Episode.only_kept.find(@params.episode_id)
-
-          episode_record, err = CreateEpisodeRecordRepository.new(
-            graphql_client: graphql_client(viewer: current_user)
-          ).execute(
+          result = CreateEpisodeRecordService.new(
+            user: current_user,
             episode: episode,
-            params: {
-              rating: @params.rating,
-              rating_state: @params.rating_state,
-              body: @params.comment,
-              share_to_twitter: @params.share_twitter
-            }
-          )
+            rating: @params.rating_state,
+            deprecated_rating: @params.rating,
+            comment: @params.comment,
+            share_to_twitter: @params.share_twitter
+          ).call
 
-          if err
-            return render_validation_error(err.message)
+          unless result.success?
+            return render_validation_error(result.errors.first.message)
           end
 
-          @episode_record = current_user.episode_records.find(episode_record.database_id)
+          @episode_record = current_user.episode_records.find_by!(record_id: result.record.id)
         end
 
         def update

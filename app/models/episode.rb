@@ -48,6 +48,7 @@
 class Episode < ApplicationRecord
   include DbActivityMethods
   include Unpublishable
+  include GraphqlResolvable
 
   DIFF_FIELDS = %i(
     number sort_number sc_count title prev_episode_id fetch_syobocal raw_number title_en
@@ -142,10 +143,11 @@ class Episode < ApplicationRecord
     episode_records.select(:created_at).last&.created_at
   end
 
-  def build_episode_record(user:, rating: nil, comment: "", share_to_twitter: false)
+  def build_episode_record(user:, rating: nil, deprecated_rating: nil, comment: "", share_to_twitter: false)
     episode_record = episode_records.new(
       user: user,
       rating_state: rating&.downcase,
+      rating: deprecated_rating,
       body: comment,
       share_to_twitter: share_to_twitter
     )

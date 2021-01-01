@@ -1,18 +1,30 @@
 # frozen_string_literal: true
 
 class UpdateStatusRepository < ApplicationRepository
-  def execute(anime:, kind:)
-    result = mutate(variables: {
-      animeId: Canary::AnnictSchema.id_from_object(anime, Work),
-      kind: Status.kind_v2_to_v3(kind)&.upcase&.to_s
-    })
+  class RepositoryResult < Result
+    attr_accessor :anime_entity
+  end
 
-    if result.to_h["errors"]
-      return [nil, MutationError.new(message: result.to_h["errors"][0]["message"])]
+  def execute(anime:, kind:)
+    data = mutate(
+      variables: {
+        animeId: Canary::AnnictSchema.id_from_object(anime, Work),
+        kind: Status.kind_v2_to_v3(kind)&.upcase&.to_s
+      }
+    )
+    result = validate(data)
+
+    if result.success?
+      anime_node = data.dig("data", "updateStatus", "anime")
+      result.anime_entity = AnimeEntity.from_node(anime_node)
     end
 
-    anime_node = result.dig("data", "updateStatus", "anime")
+    result
+  end
 
-    [AnimeEntity.from_node(anime_node), nil]
+  private
+
+  def result_class
+    RepositoryResult
   end
 end

@@ -5,12 +5,13 @@ class CreateEpisodeRecordService < ApplicationService
     attr_accessor :record
   end
 
-  def initialize(user:, episode:, rating: nil, comment: "", share_to_twitter: false)
+  def initialize(user:, episode:, rating: nil, deprecated_rating: nil, comment: "", share_to_twitter: false) # rubocop:disable Metrics/ParameterLists
     super()
     @user = user
     @episode = episode
     @work = episode.work
     @rating = rating
+    @deprecated_rating = deprecated_rating
     @comment = comment
     @share_to_twitter = share_to_twitter
   end
@@ -19,6 +20,7 @@ class CreateEpisodeRecordService < ApplicationService
     episode_record = @episode.build_episode_record(
       user: @user,
       rating: @rating,
+      deprecated_rating: @deprecated_rating,
       comment: @comment,
       share_to_twitter: @share_to_twitter
     )

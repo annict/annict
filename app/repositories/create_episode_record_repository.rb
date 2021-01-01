@@ -10,7 +10,7 @@ class CreateEpisodeRecordRepository < ApplicationRepository
       variables: {
         episodeId: form.episode_id,
         comment: form.comment,
-        rating: form.rating,
+        rating: form.rating.to_s.upcase.presence,
         shareToTwitter: form.share_to_twitter
       }
     )
