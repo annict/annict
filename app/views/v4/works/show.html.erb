@@ -185,7 +185,9 @@
         </div>
 
         <% if @anime_entity.records.present? %>
-          <%= render Lists::RecordListComponent.new(viewer: current_user, record_entities: @anime_entity.records.first(10), show_card: false) %>
+          <div class="mb-3">
+            <%= render Lists::RecordListComponent.new(viewer: current_user, record_entities: @anime_entity.records.first(10), show_card: false) %>
+          </div>
 
           <% if @anime_entity.records.length > 10 %>
             <div class="container mb-3">
