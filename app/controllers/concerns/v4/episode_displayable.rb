@@ -6,9 +6,10 @@ module V4
       anime = Work.only_kept.find(work_id)
       episode = anime.episodes.only_kept.find(episode_id)
 
-      @episode_entity = Rails.cache.fetch(episode_cache_key(episode), expires_in: 3.days) do
+      result = Rails.cache.fetch(episode_cache_key(episode), expires_in: 3.days) do
         EpisodePage::EpisodeRepository.new(graphql_client: graphql_client).execute(database_id: episode.id)
       end
+      @episode_entity = result.episode_entity
       @other_record_entities = @episode_entity.records
 
       load_vod_channel_entities(anime: anime, anime_entity: @episode_entity.anime)
@@ -16,15 +17,22 @@ module V4
       @form = form.presence || EpisodeRecordForm.new(episode_id: @episode_entity.id)
 
       if user_signed_in?
-        @my_record_entities = Rails.cache.fetch(my_records_cache_key(current_user, episode), expires_in: 1.day) do
-          EpisodePage::MyRecordsRepository.new(graphql_client: graphql_client(viewer: current_user)).execute(episode_id: @episode_entity.id)
+        result = Rails.cache.fetch(my_records_cache_key(current_user, episode), expires_in: 1.day) do
+          EpisodePage::MyRecordsRepository.
+            new(graphql_client: graphql_client(viewer: current_user)).
+            execute(episode_id: @episode_entity.id)
         end
+        @my_record_entities = result.record_entities
 
-        @following_record_entities = Rails.cache.fetch(following_records_cache_key(current_user, episode), expires_in: 3.hours) do
-          EpisodePage::FollowingRecordsRepository.new(graphql_client: graphql_client(viewer: current_user)).execute(episode_id: @episode_entity.id)
+        result = Rails.cache.fetch(following_records_cache_key(current_user, episode), expires_in: 3.hours) do
+          EpisodePage::FollowingRecordsRepository.
+            new(graphql_client: graphql_client(viewer: current_user)).
+            execute(episode_id: @episode_entity.id)
         end
+        @following_record_entities = result.record_entities
 
-        @other_record_entities = current_user.filter_records(@other_record_entities, @my_record_entities + @following_record_entities)
+        @other_record_entities = current_user.
+          filter_records(@other_record_entities, @my_record_entities + @following_record_entities)
       end
     end
 

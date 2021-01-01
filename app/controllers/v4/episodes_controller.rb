@@ -21,7 +21,7 @@ module V4
     def show
       set_page_category PageCategory::EPISODE
 
-      load_episode_and_records(work_id: params[:work_id], episode_id: params[:id])
+      load_episode_and_records(work_id: params[:anime_id], episode_id: params[:episode_id])
     end
   end
 end
