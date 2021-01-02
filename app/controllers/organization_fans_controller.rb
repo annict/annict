@@ -4,7 +4,7 @@ class OrganizationFansController < ApplicationController
   before_action :load_i18n, only: %i(index)
 
   def index
-    set_page_category Rails.configuration.page_categories.organization_fan_list
+    set_page_category PageCategory::ORGANIZATION_FAN_LIST
 
     @organization = Organization.only_kept.find(params[:organization_id])
     @organization_favorites = @organization.
@@ -21,7 +21,7 @@ class OrganizationFansController < ApplicationController
       "verb.follow": nil,
       "noun.following": nil,
       "messages._components.favorite_button.add_to_favorites": nil,
-      "messages._components.favorite_button.added_to_favorites": nil,
+      "messages._components.favorite_button.added_to_favorites": nil
     }
 
     load_i18n_into_gon keys

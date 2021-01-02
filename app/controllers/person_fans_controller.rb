@@ -4,7 +4,7 @@ class PersonFansController < ApplicationController
   before_action :load_i18n, only: %i(index)
 
   def index
-    set_page_category Rails.configuration.page_categories.person_fan_list
+    set_page_category PageCategory::PERSON_FAN_LIST
 
     @person = Person.only_kept.find(params[:person_id])
     @person_favorites = @person.
