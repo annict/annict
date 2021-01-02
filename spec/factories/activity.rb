@@ -5,6 +5,12 @@ FactoryBot.define do
     association :user
     association :activity_group
 
+    trait :with_activity_group do
+      after(:create) do |activity|
+        create :activity_group, user: activity.user, itemable_type: activity.trackable_type
+      end
+    end
+
     factory :create_episode_record_activity do
       itemable { create(:episode_record, user: user) }
     end

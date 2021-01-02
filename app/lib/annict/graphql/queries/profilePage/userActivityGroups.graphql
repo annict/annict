@@ -1,10 +1,10 @@
 query($username: String!, $first: Int, $last: Int, $before: String, $after: String) {
   user(username: $username) {
     activityGroups(
-      orderBy: { field: CREATED_AT, direction: DESC },
-      first: $first,
-      last: $last,
-      before: $before,
+      orderBy: { field: CREATED_AT, direction: DESC }
+      first: $first
+      last: $last
+      before: $before
       after: $after
     ) {
       pageInfo {
@@ -52,48 +52,71 @@ query($username: String!, $first: Int, $last: Int, $before: String, $after: Stri
                 }
               }
 
-              ... on EpisodeRecord {
+              ... on Record {
                 databaseId
-                ratingState
-                body
+                commentHtml
                 likesCount
-                commentsCount
+                modifiedAt
+                createdAt
 
-                record {
+                user {
                   databaseId
+                  username
+                  name
+                  avatarUrl(size: size200)
+                  displaySupporterBadge
                 }
 
-                anime {
-                  databaseId
-                  title
-                  titleEn
-                  image {
-                    internalUrl1x: internalUrl(size: "60x")
-                    internalUrl2x: internalUrl(size: "120x")
+                trackable {
+                  __typename
+
+                  ... on Anime {
+                    databaseId
+                    title
+                    titleEn
+                    image {
+                      internalUrl1x: internalUrl(size: "60x")
+                      internalUrl2x: internalUrl(size: "120x")
+                    }
+                  }
+
+                  ... on Episode {
+                    databaseId
+                    number
+                    title
+                    titleEn
+
+                    anime {
+                      databaseId
+                      title
+                      titleEn
+                      image {
+                        internalUrl1x: internalUrl(size: "60x")
+                        internalUrl2x: internalUrl(size: "120x")
+                      }
+                    }
                   }
                 }
 
-                episode {
-                  databaseId
-                  numberText
-                  title
-                  titleEn
-                }
-              }
+                recordable {
+                  __typename
 
-              ... on AnimeRecord {
-                databaseId
-                ratingOverallState
-                body
-                likesCount
+                  ... on EpisodeRecord {
+                    rating
+                    advancedRating
+                    commentsCount
 
-                anime {
-                  databaseId
-                  title
-                  titleEn
-                  image {
-                    internalUrl1x: internalUrl(size: "60x")
-                    internalUrl2x: internalUrl(size: "120x")
+                    episode {
+                      databaseId
+                    }
+                  }
+
+                  ... on AnimeRecord {
+                    ratingAnimation
+                    ratingMusic
+                    ratingStory
+                    ratingCharacter
+                    ratingOverall
                   }
                 }
               }

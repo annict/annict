@@ -43,4 +43,8 @@ class Record < ApplicationRecord
   def episode_record?
     episode_record.present?
   end
+
+  def anime_record
+    work_record
+  end
 end

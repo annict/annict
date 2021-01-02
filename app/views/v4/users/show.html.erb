@@ -138,7 +138,7 @@
     <div class="col-12 col-lg-7 order-last order-lg-first">
       <% if @activity_group_entities.present? %>
         <%= render TimelineComponent.new(
-            username: @user_entity.username,
+            viewer: current_user,
             page_category: "profile",
             activity_group_entities: @activity_group_entities,
             page_info_entity: @page_info_entity
