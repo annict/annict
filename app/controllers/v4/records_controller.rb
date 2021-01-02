@@ -25,6 +25,23 @@ module V4
       @page_info_entity = result.page_info_entity
     end
 
+    def show
+      set_page_category PageCategory::RECORD
+
+      user = User.only_kept.find_by!(username: params[:username])
+      record = user.records.only_kept.find(params[:record_id])
+
+      @months = user.records.only_kept.group_by_month(:created_at, time_zone: user.time_zone).count.to_a.reverse.to_h
+
+      result = RecordPage::UserRepository.new(graphql_client: graphql_client).execute(username: user.username)
+      @user_entity = result.user_entity
+
+      result = RecordPage::RecordRepository.
+        new(graphql_client: graphql_client).
+        execute(username: user.username, record_database_id: record.id)
+      @record_entity = result.record_entity
+    end
+
     private
 
     def user_cache_key(user)

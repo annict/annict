@@ -77,4 +77,12 @@ class RecordEntity < ApplicationEntity
   def anime_record?
     recordable.is_a?(AnimeRecordEntity)
   end
+
+  def local_trackable_title
+    if anime_record?
+      return trackable.local_title
+    end
+
+    [trackable.anime.local_title, trackable.local_number].compact.join(" ")
+  end
 end

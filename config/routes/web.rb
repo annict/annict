@@ -102,7 +102,7 @@ scope "@:username", username: USERNAME_FORMAT do
   resources :tags, only: %i(show), controller: :user_work_tags, as: :user_work_tag
   resources :reviews, only: %i(show)
 
-  resources :records, only: %i(show destroy) do
+  resources :records, only: %i() do
     resources :comments, only: %i(create)
   end
 end
@@ -148,6 +148,7 @@ constraints format: "html" do
   end
 end
 
+# rubocop:disable Layout/LineLength
 scope module: :v4 do
   constraints format: "html" do
     devise_scope :user do
@@ -167,6 +168,7 @@ scope module: :v4 do
 
     match "/@:username",                                   via: :get,   as: :profile,                 to: "users#show",    username: USERNAME_FORMAT
     match "/@:username/records",                           via: :get,   as: :record_list,             to: "records#index", username: USERNAME_FORMAT
+    match "/@:username/records/:record_id",                via: :get,   as: :record,                  to: "records#show",  username: USERNAME_FORMAT
     match "/@:username/records/:record_id/edit",           via: :get,   as: :edit_record,             to: "records#edit",  username: USERNAME_FORMAT
     match "/episode_records",                              via: :patch, as: :episode_record_mutation, to: "episode_records#update"
     match "/timeline_mode",                                via: :patch, as: :timeline_mode,           to: "timeline_mode#update"
@@ -187,3 +189,4 @@ scope module: :legacy do
     end
   end
 end
+# rubocop:enable Layout/LineLength

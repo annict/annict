@@ -57,6 +57,10 @@ module Canary
           argument :order_by, Canary::Types::InputObjects::ActivityOrder, required: false
         end
 
+        field :record, Canary::Types::Objects::RecordType, null: true, resolver: Canary::Resolvers::Record do
+          argument :database_id, Integer, required: true
+        end
+
         field :records, Canary::Types::Objects::RecordType.connection_type, null: true, resolver: Canary::Resolvers::Records do
           argument :month, String, required: false
           argument :episode_id, ID, required: false
@@ -155,6 +159,7 @@ module Canary
 
         def email
           return if context[:viewer] != object
+
           object.email
         end
 
@@ -180,6 +185,7 @@ module Canary
 
         def notifications_count
           return if context[:viewer] != object
+
           object.notifications_count
         end
 

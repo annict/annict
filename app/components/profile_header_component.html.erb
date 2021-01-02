@@ -45,7 +45,7 @@
         <%= active_link_to t("noun.records"), record_list_path(user_entity.username),
             class: "c-subnav2__link",
             class_active: "c-subnav2__link--active",
-            active: params[:controller] == "v4/records" && params[:action] == "index"
+            active: params[:controller] == "v4/records" && params[:action].in?(%w(index show))
         %>
       </li>
       <li class="c-subnav2__item">
