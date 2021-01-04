@@ -11,7 +11,7 @@ class WorksController < ApplicationController
   end
 
   def popular
-    set_page_category Rails.configuration.page_categories.work_list_popular
+    set_page_category PageCategory::WORK_LIST_POPULAR
 
     @works = Work.
       only_kept.
@@ -24,7 +24,7 @@ class WorksController < ApplicationController
   end
 
   def newest
-    set_page_category Rails.configuration.page_categories.work_list_newest
+    set_page_category PageCategory::WORK_LIST_NEWEST
 
     @works = Work.
       only_kept.
