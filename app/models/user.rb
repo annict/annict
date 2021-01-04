@@ -71,7 +71,7 @@ class User < ApplicationRecord
 
   extend Enumerize
 
-  USERNAME_FORMAT = %r{\A[A-Za-z0-9_]+\z}.freeze
+  USERNAME_FORMAT = /\A[A-Za-z0-9_]+\z/.freeze
 
   attr_accessor :email_username, :current_password
 
@@ -173,7 +173,7 @@ class User < ApplicationRecord
     if email_username.present?
       where(conditions.to_h).where([
         "LOWER(email) = :value OR LOWER(username) = :value",
-        value: email_username.downcase
+        { value: email_username.downcase }
       ]).first
     elsif conditions.key?(:email) || conditions.key?(:username)
       where(conditions.to_h).first
@@ -246,6 +246,7 @@ class User < ApplicationRecord
 
   def expire_twitter_token
     return if twitter.blank?
+
     twitter.update_column(:token_expires_at, Time.now.to_i)
   end
 
@@ -524,10 +525,9 @@ class User < ApplicationRecord
   private
 
   def get_large_avatar_image(provider, image_url)
-    url = case provider
-    when 'twitter'  then image_url.sub('_normal', '')
-    when 'facebook' then "#{image_url.sub("http://", "https://")}?type=large"
+    case provider
+    when "twitter"  then image_url.sub("_normal", "")
+    when "facebook" then "#{image_url.sub('http://', 'https://')}?type=large"
     end
-    url
   end
 end
