@@ -5,7 +5,7 @@ class LibrariesController < ApplicationController
   before_action :set_display_option, only: %i(show)
 
   def show
-    set_page_category Rails.configuration.page_categories.library_detail
+    set_page_category PageCategory::LIBRARY
 
     @user_entity = UserEntity.from_model(@user)
     @works = @user.works.on(params[:status_kind]).only_kept

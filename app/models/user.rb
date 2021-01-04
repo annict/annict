@@ -393,7 +393,7 @@ class User < ApplicationRecord
   end
 
   def supporter?
-    gumroad_subscriber && gumroad_subscriber.active?
+    gumroad_subscriber&.active? == true
   end
 
   def weeks

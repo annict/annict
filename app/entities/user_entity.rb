@@ -120,14 +120,14 @@ class UserEntity < ApplicationEntity
     extend Imgix::Rails::UrlHelper
     extend ImageHelper
 
-    new({
+    new(
       database_id: user.id,
       username: user.username,
       name: user.profile.name,
       avatar_url: api_user_avatar_url(user.profile, "size200"),
       background_image_url: ann_api_assets_background_image_url(user.profile),
       display_supporter_badge: user.supporter? && !user.setting.hide_supporter_badge?
-    })
+    )
   end
 
   def days_from_started(time_zone)
