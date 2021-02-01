@@ -86,6 +86,7 @@ Rails.application.configure do
   config.hosts += [
     ENV.fetch("ANNICT_API_DOMAIN"),
     ENV.fetch("ANNICT_DOMAIN"),
-    ENV.fetch("ANNICT_JP_DOMAIN")
+    ENV.fetch("ANNICT_JP_DOMAIN"),
+    "api"
   ]
 end
