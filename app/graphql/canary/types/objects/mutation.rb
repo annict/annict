@@ -6,6 +6,8 @@ module Canary
       class Mutation < Canary::Types::Objects::Base
         field :updateStatus, mutation: Canary::Mutations::UpdateStatus
 
+        field :skipEpisode, mutation: Canary::Mutations::SkipEpisode
+
         field :createEpisodeRecord, mutation: Canary::Mutations::CreateEpisodeRecord
         field :updateEpisodeRecord, mutation: Canary::Mutations::UpdateEpisodeRecord
         field :deleteEpisodeRecord, mutation: Canary::Mutations::DeleteEpisodeRecord
