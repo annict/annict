@@ -26,7 +26,7 @@ Rails.application.configure do
       expires_in: 1.hour.to_i
     }
     config.public_file_server.headers = {
-      'Cache-Control' => "public, max-age=#{2.days.to_i}"
+      "Cache-Control" => "public, max-age=#{2.days.to_i}"
     }
   else
     config.cache_store = :null_store
