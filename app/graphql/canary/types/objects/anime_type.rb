@@ -133,8 +133,12 @@ module Canary
         field :synopsis_source_en, String,
           null: false
 
-        field :episodes, Canary::Types::Objects::EpisodeType.connection_type, null: true, max_page_size: 500 do
-          argument :order_by, Canary::Types::InputObjects::EpisodeOrder, required: false
+        field :episodes, Canary::Types::Objects::EpisodeType.connection_type,
+          null: true,
+          max_page_size: 500,
+          resolver: Canary::Resolvers::Episodes do
+            argument :viewer_checked_in_current_status, Boolean, required: false
+            argument :order_by, Canary::Types::InputObjects::EpisodeOrder, required: false
         end
 
         field :records, Canary::Types::Objects::RecordType.connection_type,
@@ -170,10 +174,6 @@ module Canary
 
         field :trailers, Canary::Types::Objects::TrailerType.connection_type, null: true do
           argument :order_by, Canary::Types::InputObjects::TrailerOrder, required: false
-        end
-
-        def episodes(order_by: nil)
-          SearchEpisodesQuery.new(object.episodes, order_by: order_by).call
         end
 
         def slots(order_by: nil)
