@@ -19,7 +19,7 @@ module Canary
 
         library_entries = case order.field
         when :last_checked_at
-          library_entries.order(position: order.direction)
+          library_entries.order(position: order.direction == :asc ? :desc : :asc)
         else
           library_entries.order(created_at: :asc)
         end
