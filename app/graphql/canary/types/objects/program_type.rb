@@ -18,7 +18,8 @@ module Canary
         field :rebroadcast, Boolean, null: false
         field :viewer_did_check, Boolean, null: false
 
-        field :slots, Canary::Types::Objects::SlotType.connection_type, null: true do
+        field :slots, Canary::Types::Objects::SlotType.connection_type, null: false, resolver: Canary::Resolvers::SlotsOnProgram do
+          argument :viewer_untracked, Boolean, required: false
           argument :order_by, Canary::Types::InputObjects::SlotOrder, required: false
         end
 
@@ -28,13 +29,6 @@ module Canary
 
         def anime
           RecordLoader.for(Work).load(object.work_id)
-        end
-
-        def slots(order_by: nil)
-          SlotsQuery.new(
-            object.slots.only_kept,
-            order: Canary::OrderProperty.build(order_by)
-          ).call
         end
 
         def viewer_did_check

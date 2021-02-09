@@ -82,9 +82,9 @@ module Canary
           argument :order_by, Canary::Types::InputObjects::LibraryEntryOrder, required: false
         end
 
-        field :slots, Canary::Types::Objects::SlotType.connection_type, null: false, resolver: Canary::Resolvers::Slots do
+        field :slots, Canary::Types::Objects::SlotType.connection_type, null: false, resolver: Canary::Resolvers::SlotsOnUser do
           argument :until_next_night, Boolean, required: false
-          argument :viewer_unwatched_only, Boolean, required: false
+          argument :untracked, Boolean, required: false
           argument :order_by, Canary::Types::InputObjects::SlotOrder, required: false
         end
 
