@@ -11,13 +11,13 @@ module Canary
         episode_ids = Rails.cache.fetch(cache_key(viewer, anime, viewer_checked_in_current_status), expires_in: 24.hours) do
           episodes = anime.episodes.only_kept
 
-          if viewer_checked_in_current_status
+          if viewer && viewer_checked_in_current_status
             library_entry = viewer.library_entries.with_not_deleted_work.find_by(work: anime)
 
             if library_entry
               episodes = episodes.where(id: library_entry.watched_episode_ids)
             end
-          elsif viewer_checked_in_current_status == false
+          elsif viewer && viewer_checked_in_current_status == false
             library_entry = viewer.library_entries.with_not_deleted_work.find_by(work: anime)
 
             if library_entry
@@ -43,7 +43,7 @@ module Canary
       def cache_key(viewer, anime, viewer_checked_in_current_status)
         [
           self.class.name,
-          viewer.id,
+          viewer&.id.inspect,
           anime.id,
           anime.updated_at.rfc3339,
           viewer_checked_in_current_status.inspect,
