@@ -246,7 +246,7 @@ GEM
       ruby2_keywords
     faraday_middleware (1.0.0)
       faraday (~> 1.0)
-    ffi (1.13.1)
+    ffi (1.14.2)
     ffi-compiler (1.0.1)
       ffi (>= 1.0.0)
       rake
@@ -341,7 +341,7 @@ GEM
       addressable
       faraday
       json (>= 1.8)
-    listen (3.3.2)
+    listen (3.4.1)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
     lograge (0.11.2)
