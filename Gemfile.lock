@@ -348,7 +348,7 @@ GEM
     mini_histogram (0.3.1)
     mini_magick (4.10.1)
     mini_mime (1.0.2)
-    mini_portile2 (2.4.0)
+    mini_portile2 (2.5.0)
     minitest (5.14.2)
     miro (0.4.0)
       chunky_png
@@ -362,8 +362,9 @@ GEM
     multipart-post (2.1.1)
     naught (1.1.0)
     nio4r (2.5.4)
-    nokogiri (1.10.10)
-      mini_portile2 (~> 2.4.0)
+    nokogiri (1.11.0)
+      mini_portile2 (~> 2.5.0)
+      racc (~> 1.4)
     oauth (0.5.4)
     oauth2 (1.4.4)
       faraday (>= 0.8, < 2.0)
@@ -411,6 +412,7 @@ GEM
       puma (>= 2.7)
     pundit (2.1.0)
       activesupport (>= 3.0.0)
+    racc (1.5.2)
     rack (2.2.3)
     rack-attack (6.3.1)
       rack (>= 1.0, < 3)
@@ -714,7 +716,7 @@ DEPENDENCIES
   wilson_score
 
 RUBY VERSION
-   ruby 2.7.1p83
+   ruby 2.7.2p137
 
 BUNDLED WITH
    2.1.4
