@@ -2,8 +2,8 @@
 
 module Canary
   module Resolvers
-    class Slots < Canary::Resolvers::Base
-      def resolve(until_next_night: nil, viewer_unwatched_only: nil, order_by: nil)
+    class SlotsOnUser < Canary::Resolvers::Base
+      def resolve(until_next_night: nil, untracked: nil, order_by: nil)
         user = object
         order = Canary::OrderProperty.build(order_by)
 
@@ -16,7 +16,7 @@ module Canary
           slots = slots.before(next_night, field: :started_at)
         end
 
-        if viewer_unwatched_only
+        if untracked
           watched_episode_ids = library_entries.pluck(:watched_episode_ids).flatten
           slots = slots.where.not(episode_id: watched_episode_ids)
         end

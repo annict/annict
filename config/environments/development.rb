@@ -26,7 +26,7 @@ Rails.application.configure do
       expires_in: 1.hour.to_i
     }
     config.public_file_server.headers = {
-      'Cache-Control' => "public, max-age=#{2.days.to_i}"
+      "Cache-Control" => "public, max-age=#{2.days.to_i}"
     }
   else
     config.cache_store = :null_store
@@ -86,6 +86,7 @@ Rails.application.configure do
   config.hosts += [
     ENV.fetch("ANNICT_API_DOMAIN"),
     ENV.fetch("ANNICT_DOMAIN"),
-    ENV.fetch("ANNICT_JP_DOMAIN")
+    ENV.fetch("ANNICT_JP_DOMAIN"),
+    "api"
   ]
 end

@@ -52,7 +52,7 @@ module Canary
         end
 
         def viewer_did_track_in_current_status
-          RecordLoader.for(LibraryEntry, column: :user_id, where: { work_id: object.work_id }).load(context[:viewer].id).then do |le|
+          RecordLoader.for(LibraryEntry, column: :work_id, where: { user_id: context[:viewer].id }).load(object.work_id).then do |le|
             le.watched_episode_ids.include?(object.id)
           end
         end
