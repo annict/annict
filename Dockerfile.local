@@ -25,6 +25,9 @@ ENV CFLAGS=-Wno-narrowing \
 # https://github.com/pry/pry/issues/1494#issuecomment-162336567
 ENV PAGER=busybox\ less
 
+# https://discuss.circleci.com/t/how-to-get-ffi-working-on-ruby-2-7-2-image/37787
+RUN ln -s /usr/lib/libffi.so.7 /usr/lib/libffi.so.6
+
 WORKDIR /workspace/
 
 COPY --from=node /usr/local/bin/node /usr/local/bin/
