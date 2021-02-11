@@ -8,15 +8,12 @@ module Canary
 
         field :skipEpisode, mutation: Canary::Mutations::SkipEpisode
 
-        field :createEpisodeRecord, mutation: Canary::Mutations::CreateEpisodeRecord
-        field :updateEpisodeRecord, mutation: Canary::Mutations::UpdateEpisodeRecord
-        field :deleteEpisodeRecord, mutation: Canary::Mutations::DeleteEpisodeRecord
-
-        field :bulkCreateEpisodeRecords, mutation: Canary::Mutations::BulkCreateEpisodeRecords
-
         field :createAnimeRecord, mutation: Canary::Mutations::CreateAnimeRecord
+        field :createEpisodeRecord, mutation: Canary::Mutations::CreateEpisodeRecord
+        field :bulkCreateEpisodeRecords, mutation: Canary::Mutations::BulkCreateEpisodeRecords
         field :updateAnimeRecord, mutation: Canary::Mutations::UpdateAnimeRecord
-        field :deleteAnimeRecord, mutation: Canary::Mutations::DeleteAnimeRecord
+        field :updateEpisodeRecord, mutation: Canary::Mutations::UpdateEpisodeRecord
+        field :deleteRecord, mutation: Canary::Mutations::DeleteRecord
 
         field :addReaction, mutation: Canary::Mutations::AddReaction
         field :removeReaction, mutation: Canary::Mutations::RemoveReaction
