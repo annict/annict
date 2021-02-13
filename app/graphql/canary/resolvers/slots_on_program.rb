@@ -6,7 +6,7 @@ module Canary
       include GraphQL::FragmentCache::ObjectHelpers
 
       def resolve(viewer_untracked: nil, order_by: nil)
-        cache_fragment(cache_key(context, object)) do
+        cache_fragment(query_cache_key: query_cache_key(context, object)) do
           viewer = context[:viewer]
           program = object
           order = Canary::OrderProperty.build(order_by)
@@ -26,8 +26,9 @@ module Canary
 
       private
 
-      def cache_key(context, object)
+      def query_cache_key(context, object)
         [
+          Digest::SHA1.hexdigest(context.query.query_string),
           self.class.name,
           context[:viewer]&.id.inspect,
           context[:viewer]&.status_cache_expired_at.to_i,
