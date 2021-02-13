@@ -25,6 +25,10 @@ Rails.application.configure do
       url: ENV.fetch("REDIS_URL"),
       expires_in: 1.hour.to_i
     }
+    config.graphql_fragment_cache.store = :redis_cache_store, {
+      url: ENV.fetch("REDIS_URL"),
+      expires_in: 1.hour.to_i
+    }
     config.public_file_server.headers = {
       "Cache-Control" => "public, max-age=#{2.days.to_i}"
     }
