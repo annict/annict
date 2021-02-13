@@ -4,7 +4,7 @@ module Canary
   module Types
     module Objects
       class ReactionType < Canary::Types::Objects::Base
-        implements GraphQL::Relay::Node.interface
+        implements GraphQL::Types::Relay::Node
 
         field :user, Canary::Types::Objects::UserType, null: false
         field :content, Canary::Types::Enums::ReactionContent, null: false

@@ -4,7 +4,7 @@ module Canary
   module Types
     module Objects
       class PersonFavoriteType < Canary::Types::Objects::Base
-        implements GraphQL::Relay::Node.interface
+        implements GraphQL::Types::Relay::Node
 
         field :user, Canary::Types::Objects::UserType, null: false
         field :person, Canary::Types::Objects::PersonType, null: false

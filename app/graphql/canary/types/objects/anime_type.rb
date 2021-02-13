@@ -6,7 +6,7 @@ module Canary
       class AnimeType < Canary::Types::Objects::Base
         description "作品情報"
 
-        implements GraphQL::Relay::Node.interface
+        implements GraphQL::Types::Relay::Node
 
         global_id_field :id
 

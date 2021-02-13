@@ -6,7 +6,7 @@ module Canary
       class EpisodeType < Canary::Types::Objects::Base
         description "エピソード情報"
 
-        implements GraphQL::Relay::Node.interface
+        implements GraphQL::Types::Relay::Node
 
         global_id_field :id
 
