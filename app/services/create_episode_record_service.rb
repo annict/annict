@@ -36,6 +36,7 @@ class CreateEpisodeRecordService < ApplicationService
       @user.activities.create!(itemable: episode_record, activity_group: activity_group)
 
       @user.update_share_record_setting(@share_to_twitter)
+      @user.touch(:record_cache_expired_at)
       library_entry&.append_episode!(@episode)
 
       if @user.share_record_to_twitter?

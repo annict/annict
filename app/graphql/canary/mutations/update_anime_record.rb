@@ -52,6 +52,7 @@ module Canary
 
         work_record.save!
         viewer.setting.save!
+        viewer.touch(:record_cache_expired_at)
 
         if share_twitter
           viewer.share_work_record_to_twitter(work_record)

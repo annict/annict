@@ -16,6 +16,7 @@ class DeleteRecordService < ApplicationService
 
     ActiveRecord::Base.transaction do
       @record.destroy!
+      user.touch(:record_cache_expired_at)
 
       if library_entry && @record.episode_record?
         watched_episode_ids = library_entry.watched_episode_ids - [@record.episode_record.episode_id]

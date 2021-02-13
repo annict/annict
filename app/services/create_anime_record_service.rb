@@ -50,6 +50,7 @@ class CreateAnimeRecordService < ApplicationService
       @user.activities.create!(itemable: anime_record, activity_group: activity_group)
 
       @user.update_share_record_setting(@share_to_twitter)
+      @user.touch(:record_cache_expired_at)
 
       if @user.share_record_to_twitter?
         @user.share_work_record_to_twitter(anime_record)

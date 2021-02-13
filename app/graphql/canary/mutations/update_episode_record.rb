@@ -32,6 +32,7 @@ module Canary
         record.detect_locale!(:body)
 
         record.save!
+        viewer.touch(:record_cache_expired_at)
 
         if share_twitter
           viewer.share_episode_record_to_twitter(record)
