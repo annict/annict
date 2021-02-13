@@ -140,8 +140,6 @@ en:
           new: New Work
       faqs:
         index: FAQ
-      episode_records:
-        edit: 'Edit Record'
       episodes:
         index: Episodes of %{title} (Anime)
         show: Anime "%{work_title}" - %{episode_title_with_number}

@@ -134,8 +134,6 @@ ja:
           new: 作品登録
       faqs:
         index: よくある質問
-      episode_records:
-        edit: '記録の編集'
       episodes:
         index: アニメ「%{title}」のエピソード
         show: アニメ「%{work_title}」%{episode_title_with_number}

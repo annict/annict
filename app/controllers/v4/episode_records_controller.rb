@@ -5,7 +5,7 @@ module V4
     include AnimeSidebarDisplayable
     include EpisodeDisplayable
 
-    before_action :authenticate_user!, only: %i(create edit update switch)
+    before_action :authenticate_user!, only: %i(create)
 
     def create
       set_page_category PageCategory::EPISODE
