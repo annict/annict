@@ -3,12 +3,13 @@
 module Canary
   module Resolvers
     class Episodes < Canary::Resolvers::Base
-      def resolve(viewer_checked_in_current_status: nil, order_by: nil)
-        order = Canary::OrderProperty.build(order_by)
-        viewer = context[:viewer]
-        anime = object
+      include GraphQL::FragmentCache::ObjectHelpers
 
-        episode_ids = Rails.cache.fetch(cache_key(viewer, anime, viewer_checked_in_current_status), expires_in: 24.hours) do
+      def resolve(viewer_checked_in_current_status: nil, order_by: nil)
+        cache_fragment(cache_key(context, object)) do
+          order = Canary::OrderProperty.build(order_by)
+          viewer = context[:viewer]
+          anime = object
           episodes = anime.episodes.only_kept
 
           if viewer && viewer_checked_in_current_status
@@ -25,28 +26,24 @@ module Canary
             end
           end
 
-          episodes.pluck(:id)
-        end
-
-        episodes = Episode.where(id: episode_ids)
-
-        case order.field
-        when :created_at, :sort_number
-          episodes.order(order.field => order.direction)
-        else
-          episodes
+          case order.field
+          when :created_at, :sort_number
+            episodes.order(order.field => order.direction)
+          else
+            episodes
+          end
         end
       end
 
       private
 
-      def cache_key(viewer, anime, viewer_checked_in_current_status)
+      def cache_key(context, object)
         [
           self.class.name,
-          viewer&.id.inspect,
-          anime.id,
-          anime.updated_at.rfc3339,
-          viewer_checked_in_current_status.inspect,
+          context[:viewer]&.id.inspect,
+          context[:viewer]&.status_cache_expired_at.to_i,
+          context[:viewer]&.record_cache_expired_at.to_i,
+          object.updated_at.to_i,
           '1' # キャッシュクリア用の任意の文字列
         ].freeze
       end

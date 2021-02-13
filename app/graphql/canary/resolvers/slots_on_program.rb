@@ -3,12 +3,13 @@
 module Canary
   module Resolvers
     class SlotsOnProgram < Canary::Resolvers::Base
-      def resolve(viewer_untracked: nil, order_by: nil)
-        viewer = context[:viewer]
-        program = object
-        order = Canary::OrderProperty.build(order_by)
+      include GraphQL::FragmentCache::ObjectHelpers
 
-        slot_ids = Rails.cache.fetch(cache_key(viewer, program, viewer_untracked), expires_in: 24.hours) do
+      def resolve(viewer_untracked: nil, order_by: nil)
+        cache_fragment(cache_key(context, object)) do
+          viewer = context[:viewer]
+          program = object
+          order = Canary::OrderProperty.build(order_by)
           slots = program.slots.only_kept
 
           if viewer_untracked
@@ -19,22 +20,20 @@ module Canary
             end
           end
 
-          slots.pluck(:id)
+          slots.order(order.field => order.direction)
         end
-
-        Slot.where(id: slot_ids).order(order.field => order.direction)
       end
 
       private
 
-      def cache_key(viewer, program, viewer_untracked)
+      def cache_key(context, object)
         [
           self.class.name,
-          viewer.id,
-          program.id,
-          program.updated_at.rfc3339,
-          viewer_untracked.inspect,
-          '2' # キャッシュクリア用の任意の文字列
+          context[:viewer]&.id.inspect,
+          context[:viewer]&.status_cache_expired_at.to_i,
+          context[:viewer]&.record_cache_expired_at.to_i,
+          object.updated_at.to_i,
+          '1' # キャッシュクリア用の任意の文字列
         ].freeze
       end
     end
