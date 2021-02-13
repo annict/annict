@@ -3,43 +3,39 @@
 module Canary
   module Mutations
     class UpdateEpisodeRecord < Canary::Mutations::Base
-      argument :episode_record_id, ID, required: true
+      argument :record_id, ID,
+        required: true
       argument :comment, String,
         required: false,
         description: "エピソードへの感想"
-      argument :rating_state, Canary::Types::Enums::RatingState,
+      argument :rating, Canary::Types::Enums::RatingState,
         required: false,
         description: "エピソードへの評価"
-      argument :share_twitter, Boolean,
+      argument :share_to_twitter, Boolean,
         required: false,
         description: "エピソードへの記録をTwitterでシェアするかどうか"
-      argument :share_facebook, Boolean,
-        required: false,
-        description: "エピソードへの記録をFacebookでシェアするかどうか"
 
-      field :episode_record, Canary::Types::Objects::EpisodeRecordType, null: true
+      field :record, Canary::Types::Objects::RecordType, null: true
+      field :errors, [Canary::Types::Objects::ClientErrorType], null: false
 
-      def resolve(episode_record_id:, body: nil, rating_state: nil, share_twitter: nil, share_facebook: nil)
+      def resolve(record_id:, comment: nil, rating: nil, share_to_twitter: nil)
         raise Annict::Errors::InvalidAPITokenScopeError unless context[:writable]
 
         viewer = context[:viewer]
-        record = viewer.episode_records.only_kept.find_by_graphql_id(episode_record_id)
+        record = viewer.records.only_kept.find_by_graphql_id(record_id)
 
-        record.rating_state = rating_state&.downcase
-        record.modify_body = record.body != body
-        record.body = body
-        record.oauth_application = context[:application]
-        record.detect_locale!(:body)
-
-        record.save!
-        viewer.touch(:record_cache_expired_at)
-
-        if share_twitter
-          viewer.share_episode_record_to_twitter(record)
-        end
+        result = UpdateEpisodeRecordService.new(
+          user: viewer,
+          record: record,
+          rating: rating,
+          comment: comment,
+          share_to_twitter: share_to_twitter,
+          oauth_application: context[:application]
+        ).call
 
         {
-          episode_record: record
+          record: result.record,
+          errors: result.errors
         }
       end
     end
