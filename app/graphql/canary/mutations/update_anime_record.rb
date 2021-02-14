@@ -3,63 +3,68 @@
 module Canary
   module Mutations
     class UpdateAnimeRecord < Canary::Mutations::Base
-      argument :anime_record_id, ID, required: true
-      argument :body, String,
+      argument :record_id, ID,
+        required: true
+      argument :rating_overall, Canary::Types::Enums::RatingState,
         required: false,
-        description: "作品への感想"
-      WorkRecord::STATES.each do |state|
-        argument state.to_s.camelcase(:lower).to_sym, Canary::Types::Enums::RatingState,
-          required: true,
-          description: "作品への評価"
-      end
-      argument :share_twitter, Boolean,
+        description: "アニメの評価 (全体)"
+      argument :rating_animation, Canary::Types::Enums::RatingState,
         required: false,
-        description: "作品への記録をTwitterでシェアするかどうか"
-      argument :share_facebook, Boolean,
+        description: "アニメの評価 (映像)"
+      argument :rating_music, Canary::Types::Enums::RatingState,
         required: false,
-        description: "作品への記録をFacebookでシェアするかどうか"
+        description: "アニメの評価 (音楽)"
+      argument :rating_story, Canary::Types::Enums::RatingState,
+        required: false,
+        description: "アニメの評価 (ストーリー)"
+      argument :rating_character, Canary::Types::Enums::RatingState,
+        required: false,
+        description: "アニメの評価 (キャラクター)"
+      argument :comment, String,
+        required: false,
+        description: "アニメの感想"
+      argument :share_to_twitter, Boolean,
+        required: false,
+        description: "記録をTwitterでシェアするかどうか"
 
-      field :anime_record, Canary::Types::Objects::AnimeRecordType, null: true
+      field :record, Canary::Types::Objects::RecordType, null: true
+      field :errors, [Canary::Types::Objects::ClientErrorType], null: false
 
       def resolve(
-        anime_record_id:,
-        body: nil,
-        rating_overall_state: nil,
-        rating_animation_state: nil,
-        rating_music_state: nil,
-        rating_story_state: nil,
-        rating_character_state: nil,
-        share_twitter: nil,
-        share_facebook: nil
+        record_id:,
+        rating_overall: nil,
+        rating_animation: nil,
+        rating_music: nil,
+        rating_story: nil,
+        rating_character: nil,
+        comment: nil,
+        share_to_twitter: nil
       )
         raise Annict::Errors::InvalidAPITokenScopeError unless context[:writable]
 
         viewer = context[:viewer]
-        work_record = viewer.work_records.only_kept.find_by_graphql_id(anime_record_id)
+        record = viewer.records.only_kept.find_by_graphql_id(record_id)
 
-        work_record.body = body
-        WorkRecord::STATES.each do |state|
-          work_record.send("#{state}=".to_sym, send(state.to_s.camelcase(:lower).to_sym)&.downcase)
+        unless record.anime_record?
+          raise GraphQL::ExecutionError, "record_id #{record_id} is not an anime record"
         end
-        work_record.modified_at = Time.zone.now
-        work_record.oauth_application = context[:application]
-        work_record.detect_locale!(:body)
 
-        viewer.setting.attributes = {
-          share_review_to_twitter: share_twitter == true,
-          share_review_to_facebook: share_facebook == true
-        }
-
-        work_record.save!
-        viewer.setting.save!
-        viewer.touch(:record_cache_expired_at)
-
-        if share_twitter
-          viewer.share_work_record_to_twitter(work_record)
-        end
+        result = UpdateAnimeRecordService.new(
+          user: viewer,
+          record: record,
+          rating_overall: rating_overall,
+          rating_animation: rating_animation,
+          rating_music: rating_music,
+          rating_story: rating_story,
+          rating_character: rating_character,
+          comment: comment,
+          share_to_twitter: share_to_twitter,
+          oauth_application: context[:application]
+        ).call
 
         {
-          anime_record: work_record
+          record: result.record,
+          errors: result.errors
         }
       end
     end
