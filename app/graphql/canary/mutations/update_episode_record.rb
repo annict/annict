@@ -5,20 +5,20 @@ module Canary
     class UpdateEpisodeRecord < Canary::Mutations::Base
       argument :record_id, ID,
         required: true
-      argument :comment, String,
-        required: false,
-        description: "エピソードへの感想"
       argument :rating, Canary::Types::Enums::RatingState,
         required: false,
-        description: "エピソードへの評価"
+        description: "エピソードの評価"
+      argument :comment, String,
+        required: false,
+        description: "エピソードの感想"
       argument :share_to_twitter, Boolean,
         required: false,
-        description: "エピソードへの記録をTwitterでシェアするかどうか"
+        description: "記録をTwitterでシェアするかどうか"
 
       field :record, Canary::Types::Objects::RecordType, null: true
       field :errors, [Canary::Types::Objects::ClientErrorType], null: false
 
-      def resolve(record_id:, comment: nil, rating: nil, share_to_twitter: nil)
+      def resolve(record_id:, rating: nil, comment: nil, share_to_twitter: nil)
         raise Annict::Errors::InvalidAPITokenScopeError unless context[:writable]
 
         viewer = context[:viewer]
