@@ -24,6 +24,10 @@ module Canary
         viewer = context[:viewer]
         record = viewer.records.only_kept.find_by_graphql_id(record_id)
 
+        unless record.episode_record?
+          raise GraphQL::ExecutionError, "record_id #{record_id} is not an episode record"
+        end
+
         result = UpdateEpisodeRecordService.new(
           user: viewer,
           record: record,
