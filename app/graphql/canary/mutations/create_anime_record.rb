@@ -5,17 +5,27 @@ module Canary
     class CreateAnimeRecord < Canary::Mutations::Base
       argument :anime_id, ID,
         required: true
-      WorkRecord::RATING_FIELDS.each do |rating_field|
-        argument rating_field.to_s.camelcase(:lower).to_sym, Canary::Types::Enums::Rating,
-          required: false,
-          description: "作品への評価"
-      end
+      argument :rating_overall, Canary::Types::Enums::Rating,
+        required: false,
+        description: "アニメの評価 (全体)"
+      argument :rating_animation, Canary::Types::Enums::Rating,
+        required: false,
+        description: "アニメの評価 (映像)"
+      argument :rating_music, Canary::Types::Enums::Rating,
+        required: false,
+        description: "アニメの評価 (音楽)"
+      argument :rating_story, Canary::Types::Enums::Rating,
+        required: false,
+        description: "アニメの評価 (ストーリー)"
+      argument :rating_character, Canary::Types::Enums::Rating,
+        required: false,
+        description: "アニメの評価 (キャラクター)"
       argument :comment, String,
         required: false,
-        description: "作品への感想"
+        description: "アニメの感想"
       argument :share_to_twitter, Boolean,
         required: false,
-        description: "作品への記録をTwitterでシェアするかどうか"
+        description: "記録をTwitterでシェアするかどうか"
 
       field :record, Canary::Types::Objects::RecordType, null: true
       field :errors, [Canary::Types::Objects::ClientErrorType], null: false
