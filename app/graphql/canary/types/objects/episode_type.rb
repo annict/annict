@@ -20,8 +20,8 @@ module Canary
         field :satisfaction_rate, Float,
           null: true,
           description: "満足度"
-        field :viewer_did_track, Boolean, null: false
-        field :viewer_did_track_in_current_status, Boolean, null: false
+        field :viewer_tracked, Boolean, null: false
+        field :viewer_tracked_in_current_status, Boolean, null: false
         field :episode_records_count, Integer, null: false
         field :commented_episode_records_count, Integer, null: false, method: :episode_record_bodies_count
         field :viewer_records_count, Integer, null: false
@@ -47,11 +47,11 @@ module Canary
           ForeignKeyLoader.for(Episode, :prev_episode_id).load([object.id]).then(&:first)
         end
 
-        def viewer_did_track
+        def viewer_tracked
           context[:viewer].tracked?(object)
         end
 
-        def viewer_did_track_in_current_status
+        def viewer_tracked_in_current_status
           RecordLoader.for(LibraryEntry, column: :work_id, where: { user_id: context[:viewer].id }).load(object.work_id).then do |le|
             le.watched_episode_ids.include?(object.id)
           end
