@@ -16,7 +16,7 @@
     <% end %>
 
     <% if policy(@viewer, @record_entity).update? %>
-      <%= link_to edit_record_path(@user_entity.username, @record_entity.database_id), class: "dropdown-item" do %>
+      <%= link_to "/@#{@user_entity.username}/records/#{@record_entity.database_id}/edit", class: "dropdown-item" do %>
         <%= t "noun.edit" %>
       <% end %>
 

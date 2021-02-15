@@ -1,5 +1,0 @@
-query($jobId: String!) {
-  bulkOperation(jobId: $jobId) {
-    jobId
-  }
-}
