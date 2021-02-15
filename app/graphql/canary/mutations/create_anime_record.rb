@@ -6,7 +6,7 @@ module Canary
       argument :anime_id, ID,
         required: true
       WorkRecord::RATING_FIELDS.each do |rating_field|
-        argument rating_field.to_s.camelcase(:lower).to_sym, Canary::Types::Enums::RatingState,
+        argument rating_field.to_s.camelcase(:lower).to_sym, Canary::Types::Enums::Rating,
           required: false,
           description: "作品への評価"
       end

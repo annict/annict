@@ -1,4 +1,4 @@
-mutation($episodeId: ID!, $comment: String, $rating: RatingState, $shareToTwitter: Boolean) {
+mutation($episodeId: ID!, $comment: String, $rating: Rating, $shareToTwitter: Boolean) {
   createEpisodeRecord(
     input: { episodeId: $episodeId, comment: $comment, rating: $rating, shareToTwitter: $shareToTwitter }
   ) {

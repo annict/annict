@@ -8,7 +8,7 @@ module Canary
       argument :comment, String,
         required: false,
         description: "エピソードへの感想"
-      argument :rating, Canary::Types::Enums::RatingState,
+      argument :rating, Canary::Types::Enums::Rating,
         required: false,
         description: "エピソードへの評価"
       argument :share_to_twitter, Boolean,

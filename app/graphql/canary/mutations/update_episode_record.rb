@@ -5,7 +5,7 @@ module Canary
     class UpdateEpisodeRecord < Canary::Mutations::Base
       argument :record_id, ID,
         required: true
-      argument :rating, Canary::Types::Enums::RatingState,
+      argument :rating, Canary::Types::Enums::Rating,
         required: false,
         description: "エピソードの評価"
       argument :comment, String,

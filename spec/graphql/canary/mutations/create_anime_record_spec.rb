@@ -11,11 +11,11 @@ describe Canary::Mutations::CreateAnimeRecord do
       mutation(
         $animeId: ID!
         $comment: String
-        $ratingOverall: RatingState
-        $ratingAnimation: RatingState
-        $ratingMusic: RatingState
-        $ratingStory: RatingState
-        $ratingCharacter: RatingState
+        $ratingOverall: Rating
+        $ratingAnimation: Rating
+        $ratingMusic: Rating
+        $ratingStory: Rating
+        $ratingCharacter: Rating
         $shareToTwitter: Boolean
       ) {
         createAnimeRecord(

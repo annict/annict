@@ -5,19 +5,19 @@ module Canary
     class UpdateAnimeRecord < Canary::Mutations::Base
       argument :record_id, ID,
         required: true
-      argument :rating_overall, Canary::Types::Enums::RatingState,
+      argument :rating_overall, Canary::Types::Enums::Rating,
         required: false,
         description: "アニメの評価 (全体)"
-      argument :rating_animation, Canary::Types::Enums::RatingState,
+      argument :rating_animation, Canary::Types::Enums::Rating,
         required: false,
         description: "アニメの評価 (映像)"
-      argument :rating_music, Canary::Types::Enums::RatingState,
+      argument :rating_music, Canary::Types::Enums::Rating,
         required: false,
         description: "アニメの評価 (音楽)"
-      argument :rating_story, Canary::Types::Enums::RatingState,
+      argument :rating_story, Canary::Types::Enums::Rating,
         required: false,
         description: "アニメの評価 (ストーリー)"
-      argument :rating_character, Canary::Types::Enums::RatingState,
+      argument :rating_character, Canary::Types::Enums::Rating,
         required: false,
         description: "アニメの評価 (キャラクター)"
       argument :comment, String,
