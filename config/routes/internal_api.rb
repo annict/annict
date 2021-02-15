@@ -24,10 +24,6 @@ namespace :api do
       post :unfollow, on: :collection
     end
 
-    resources :library_entries, only: [] do
-      patch :skip_episode
-    end
-
     resources :likes, only: [:create] do
       post :unlike, on: :collection
     end

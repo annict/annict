@@ -248,7 +248,6 @@ en:
     tracks:
       episodes_you_have_watched: 'Watched'
       no_trackable_episodes: No trackable episodes
-      skip_episode_confirmation: Are you sure to skip this episode and show next episode?
       see_records: See records
       tracked: Your record has been tracked.
     user_work_tags:

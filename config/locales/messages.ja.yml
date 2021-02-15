@@ -247,7 +247,6 @@ ja:
     tracks:
       episodes_you_have_watched: 視聴エピソード
       no_trackable_episodes: 記録可能なエピソードはありません
-      skip_episode_confirmation: このエピソードをスキップして、次のエピソードを表示しますか？
       see_records: 記録を見る
       tracked: 記録しました
     user_work_tags:
