@@ -2,7 +2,7 @@
 
 module Canary
   module Mutations
-    class UncheckProgram < Canary::Mutations::Base
+    class UnselectProgram < Canary::Mutations::Base
       argument :anime_id, ID, required: true
 
       field :library_entry, Canary::Types::Objects::LibraryEntryType, null: true

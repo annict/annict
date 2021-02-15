@@ -2,7 +2,7 @@
 
 module Canary
   module Mutations
-    class CheckProgram < Canary::Mutations::Base
+    class SelectProgram < Canary::Mutations::Base
       argument :program_id, ID, required: true
 
       field :library_entry, Canary::Types::Objects::LibraryEntryType, null: false
