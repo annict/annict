@@ -42,7 +42,7 @@
       <li>
         <%= link_to root_path, class: "d-flex justify-content-between py-2" do %>
           <div class="c-sidebar__icon mr-1 text-center text-muted">
-            <i class="fal fa-home"></i>
+            <i class="fas fa-home"></i>
           </div>
 
           <div class="flex-grow-1 text-body">
@@ -55,7 +55,7 @@
         <li>
           <%= link_to profile_path(user.username), class: "d-flex justify-content-between py-2" do %>
             <div class="c-sidebar__icon mr-1 text-center text-muted">
-              <i class="fal fa-user"></i>
+              <i class="fas fa-user"></i>
             </div>
 
             <div class="flex-grow-1 text-body">
@@ -67,7 +67,7 @@
         <li>
           <%= link_to notifications_path, class: "d-flex justify-content-between py-2" do %>
             <div class="c-sidebar__icon mr-1 text-center text-muted">
-              <i class="fal fa-bell"></i>
+              <i class="fas fa-bell"></i>
             </div>
 
             <div class="flex-grow-1 text-body">
@@ -87,7 +87,7 @@
         <li>
           <%= link_to track_path, class: "d-flex justify-content-between py-2" do %>
             <div class="c-sidebar__icon mr-1 text-center text-muted">
-              <i class="fal fa-tasks"></i>
+              <i class="fas fa-tasks"></i>
             </div>
 
             <div class="flex-grow-1 text-body">
@@ -114,7 +114,7 @@
           <li>
             <%= link_to library_path(username: user.username, status_kind: status_kind), class: "d-flex justify-content-between py-2" do %>
               <div class="c-sidebar__icon mr-1 text-center text-muted">
-                <i class="fal fa-<%= icon_name %>"></i>
+                <i class="fas fa-<%= icon_name %>"></i>
               </div>
 
               <div class="flex-grow-1 text-body">
@@ -135,13 +135,13 @@
         [ENV.fetch("ANNICT_CURRENT_SEASON"), Season.current.icon_name, t("noun.current_season")],
         [ENV.fetch("ANNICT_NEXT_SEASON"), Season.next.icon_name, t("noun.next_season")],
         [ENV.fetch("ANNICT_PREVIOUS_SEASON"), Season.prev.icon_name, t("noun.previous_season")],
-        [:popular, "fire", t("head.title.works.popular")],
+        [:popular, "fire-alt", t("head.title.works.popular")],
         [:newest, "bolt", t("head.title.works.newest")]
       ].each do |page_type, icon_name, link_text| %>
         <li>
           <%= link_to "/works/#{page_type}", class: "d-flex justify-content-between py-2" do %>
             <div class="c-sidebar__icon mr-1 text-center text-muted">
-              <i class="fal fa-<%= icon_name %>"></i>
+              <i class="fas fa-<%= icon_name %>"></i>
             </div>
 
             <div class="flex-grow-1 text-body">
@@ -159,7 +159,7 @@
     <ul class="list-unstyled px-3">
       <% [
         [friends_path, "search", t("head.title.friends.index"), true],
-        [channels_path, "tv-retro", t("head.title.channels.index"), true],
+        [channels_path, "tv", t("head.title.channels.index"), true],
         [profile_setting_path, "cog", t("noun.settings"), true],
         [faqs_path, "question-circle", t("head.title.faqs.index"), false],
         [about_path, "info-circle", t("head.title.pages.about"), false]
@@ -168,7 +168,7 @@
           <li>
             <%= link_to link_path, class: "d-flex justify-content-between py-2" do %>
               <div class="c-sidebar__icon mr-1 text-center text-muted">
-                <i class="fal fa-<%= icon_name %>"></i>
+                <i class="fas fa-<%= icon_name %>"></i>
               </div>
 
               <div class="flex-grow-1 text-body">
@@ -186,15 +186,15 @@
 
     <ul class="list-unstyled px-3">
       <% [
-        [userland_root_path, "signal-stream", t("noun.annict_userland")],
-        [forum_root_path, "comments-alt", t("noun.annict_forum")],
+        [userland_root_path, "satellite-dish", t("noun.annict_userland")],
+        [forum_root_path, "comments", t("noun.annict_forum")],
         [db_root_path, "database", t("noun.annict_db")],
-        [supporters_path, "sparkles", t("noun.annict_supporters")]
+        [supporters_path, "fan", t("noun.annict_supporters")]
       ].each do |link_path, icon_name, link_text| %>
         <li>
           <%= link_to link_path, class: "d-flex justify-content-between py-2" do %>
             <div class="c-sidebar__icon mr-1 text-center text-muted">
-              <i class="fal fa-<%= icon_name %>"></i>
+              <i class="fas fa-<%= icon_name %>"></i>
             </div>
 
             <div class="flex-grow-1 text-body">
@@ -207,7 +207,7 @@
       <li>
         <%= link_to "https://developers.annict.jp", class: "d-flex justify-content-between py-2", rel: "noopener", target: "_blank" do %>
           <div class="c-sidebar__icon mr-1 text-center text-muted">
-            <i class="fal fa-code"></i>
+            <i class="fas fa-code"></i>
           </div>
 
           <div class="flex-grow-1 text-body">
