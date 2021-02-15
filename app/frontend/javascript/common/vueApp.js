@@ -1,7 +1,6 @@
 import Vue from 'vue';
 
 import channelReceiveButton from './components/channelReceiveButton';
-import episodeList from './components/episodeList';
 import favoriteButton from './components/favoriteButton';
 import followButton from './components/followButton';
 import impressionButton from './components/impressionButton';
@@ -19,7 +18,6 @@ import youtubeModalPlayer from './components/youtubeModalPlayer';
 export default {
   start() {
     Vue.component('c-channel-receive-button', channelReceiveButton);
-    Vue.component('c-episode-list', episodeList);
     Vue.component('c-favorite-button', favoriteButton);
     Vue.component('c-follow-button', followButton);
     Vue.component('c-impression-button', impressionButton);
