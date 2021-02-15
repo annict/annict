@@ -144,9 +144,6 @@ en:
         tracked: Tracked.
       status_selector:
         select_status: Select Status
-    multiple_records:
-      create:
-        saved: Records have been saved.
     mutes:
       no_muted_users_found: No muted users found.
     notifications:

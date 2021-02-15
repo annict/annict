@@ -32,8 +32,6 @@ namespace :api do
       post :unlike, on: :collection
     end
 
-    resources :multiple_records, only: %i(create)
-
     resources :reactions, only: [] do
       post :add, on: :collection
       post :remove, on: :collection
