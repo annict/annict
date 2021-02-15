@@ -5,20 +5,20 @@ module Canary
     class Episodes < Canary::Resolvers::Base
       include GraphQL::FragmentCache::ObjectHelpers
 
-      def resolve(viewer_checked_in_current_status: nil, order_by: nil)
+      def resolve(viewer_tracked_in_current_status: nil, order_by: nil)
         cache_fragment(query_cache_key: query_cache_key(context, object)) do
           order = Canary::OrderProperty.build(order_by)
           viewer = context[:viewer]
           anime = object
           episodes = anime.episodes.only_kept
 
-          if viewer && viewer_checked_in_current_status
+          if viewer && viewer_tracked_in_current_status
             library_entry = viewer.library_entries.with_not_deleted_work.find_by(work: anime)
 
             if library_entry
               episodes = episodes.where(id: library_entry.watched_episode_ids)
             end
-          elsif viewer && viewer_checked_in_current_status == false
+          elsif viewer && viewer_tracked_in_current_status == false
             library_entry = viewer.library_entries.with_not_deleted_work.find_by(work: anime)
 
             if library_entry
