@@ -13,4 +13,10 @@ class AddReactionRepository < ApplicationRepository
 
     validate(data)
   end
+
+  private
+
+  def result_class
+    RepositoryResult
+  end
 end

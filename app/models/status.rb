@@ -29,6 +29,7 @@
 class Status < ApplicationRecord
   extend Enumerize
 
+  include Reactable
   include Shareable
 
   POSITIVE_KINDS = %i(wanna_watch watching watched).freeze

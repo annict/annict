@@ -13,7 +13,7 @@ describe AddReactionService, type: :service do
         expect(Like.count).to eq 0
 
         # AddReactionService#call を呼んでリアクションを付ける
-        result = AddReactionService.new(user: user, resource: record).call
+        result = AddReactionService.new(user: user, reactable: record).call
 
         # likes テーブルにレコードが1件作成されるはず
         expect(Like.count).to eq 1
@@ -40,7 +40,7 @@ describe AddReactionService, type: :service do
         like_before = Like.first
 
         # AddReactionService#call を呼んでリアクションを付けようとする
-        result = AddReactionService.new(user: user, resource: record).call
+        result = AddReactionService.new(user: user, reactable: record).call
 
         # 新たにレコードは作成せず、1件のみであることを確認する
         expect(Like.count).to eq 1
@@ -67,7 +67,7 @@ describe AddReactionService, type: :service do
         # AddReactionService#call を呼んでいないため、このタイミングでは0件のはず
         expect(Like.count).to eq 0
 
-        service = AddReactionService.new(user: user, resource: record)
+        service = AddReactionService.new(user: user, reactable: record)
         allow(service).to receive(:send_notification)
 
         # AddReactionService#call を呼んだとき AddReactionService#send_notification が一度呼ばれることを確認する
@@ -100,7 +100,7 @@ describe AddReactionService, type: :service do
 
         like_before = Like.first
 
-        service = AddReactionService.new(user: user, resource: record)
+        service = AddReactionService.new(user: user, reactable: record)
         allow(service).to receive(:send_notification)
 
         # すでにリアクションが付いているため、AddReactionService#send_notification は一度も呼ばれないはず

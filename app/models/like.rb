@@ -37,7 +37,12 @@ class Like < ApplicationRecord
       raise Annict::Errors::NotReactableError
     end
 
-    recipient = resource.episode_record? ? resource.episode_record : resource.work_record
+    recipient = case resource
+    when Record
+      resource.episode_record? ? resource.episode_record : resource.work_record
+    else
+      resource
+    end
 
     find_by(recipient: recipient)
   end
@@ -58,6 +63,8 @@ class Like < ApplicationRecord
   private
 
   def save_notification
+    return if user.id == recipient.user.id
+
     Notification.create do |n|
       n.user        = recipient.user
       n.action_user = user

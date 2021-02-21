@@ -346,7 +346,12 @@ class User < ApplicationRecord
       raise Annict::Errors::NotReactableError
     end
 
-    recipient = resource.episode_record? ? resource.episode_record : resource.work_record
+    recipient = case resource
+    when Record
+      resource.episode_record? ? resource.episode_record : resource.work_record
+    else
+      resource
+    end
 
     like(recipient)
   end

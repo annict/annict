@@ -5,15 +5,15 @@ class AddReactionService < ApplicationService
     attr_accessor :reaction
   end
 
-  def initialize(user:, resource:, content: :heart)
+  def initialize(user:, reactable:, content: :heart)
     super()
     @user = user
-    @resource = resource
+    @reactable = reactable
     @content = content
   end
 
   def call
-    like = @user.likes.find_by_resource(@resource)
+    like = @user.likes.find_by_resource(@reactable)
 
     if like
       @result.reaction = like
@@ -21,7 +21,7 @@ class AddReactionService < ApplicationService
     end
 
     ActiveRecord::Base.transaction do
-      @result.reaction = @user.add_reaction(@resource, content: @content)
+      @result.reaction = @user.add_reaction(@reactable, content: @content)
       send_notification
     end
 
@@ -31,6 +31,8 @@ class AddReactionService < ApplicationService
   private
 
   def send_notification
+    return if @user.id == @reactable.user_id
+
     @result.reaction.send_notification_to(@user)
   end
 
