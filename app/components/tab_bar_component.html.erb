@@ -3,7 +3,7 @@
     <ul class="align-items-center h-100 justify-content-around navbar-nav">
       <li class="col nav-item px-0 text-center" data-action="click->tab-bar#showSidebar">
         <%= link_to "#", class: "text-dark" do %>
-          <i class="fal fa-bars"></i>
+          <i class="fas fa-bars"></i>
 
           <div class="small mt-1">
             <%= t "noun.menu" %>
@@ -13,7 +13,7 @@
 
       <li class="col nav-item px-0 text-center">
         <%= link_to root_path, class: "text-dark" do %>
-          <i class="fal fa-home"></i>
+          <i class="fas fa-home"></i>
 
           <div class="small mt-1">
             <%= t "noun.home" %>
@@ -24,7 +24,7 @@
       <% if user %>
         <li class="col nav-item px-0 text-center">
           <%= link_to "/track", class: "text-dark" do %>
-            <i class="fal fa-check"></i>
+            <i class="fas fa-check"></i>
 
             <div class="small mt-1">
               <%= t "verb.track" %>
@@ -34,47 +34,47 @@
 
         <li class="col nav-item px-0 text-center">
           <%= link_to "/@#{user.username}/watching", class: "text-dark" do %>
-            <i class="fal fa-play"></i>
+            <i class="fas fa-play"></i>
 
             <div class="small mt-1">
-              <%= t "noun.watching_shorten" %>
+              <%= t "noun.library" %>
             </div>
           <% end %>
         </li>
 
         <li class="col nav-item px-0 text-center">
           <%= link_to "/works/#{ENV.fetch('ANNICT_CURRENT_SEASON')}", class: "text-dark" do %>
-            <i class="fal fa-tv"></i>
+            <i class="fas fa-<%= Season.current.icon_name %>"></i>
 
             <div class="small mt-1">
-              <%= t "noun.airing" %>
+              <%= t "noun.current_season_shoten" %>
             </div>
           <% end %>
         </li>
       <% else %>
         <li class="col nav-item px-0 text-center">
           <%= link_to "/works/#{ENV.fetch('ANNICT_CURRENT_SEASON')}", class: "text-dark" do %>
-            <i class="fal fa-tv"></i>
+            <i class="fas fa-<%= Season.current.icon_name %>"></i>
 
             <div class="small mt-1">
-              <%= t "noun.airing" %>
+              <%= t "noun.current_season_shoten" %>
             </div>
           <% end %>
         </li>
 
         <li class="col nav-item px-0 text-center">
-          <%= link_to "/sign_up", class: "text-dark" do %>
-            <i class="fal fa-rocket"></i>
+          <%= link_to "/sign_in", class: "text-dark" do %>
+            <i class="fas fa-sign-in-alt"></i>
 
             <div class="small mt-1">
-              <%= t "noun.sign_up_shorten" %>
+              <%= t "noun.sign_in" %>
             </div>
           <% end %>
         </li>
 
         <li class="col nav-item px-0 text-center">
           <%= link_to "/about", class: "text-dark" do %>
-            <i class="fal fa-lightbulb"></i>
+            <i class="fas fa-lightbulb"></i>
 
             <div class="small mt-1">
               <%= t "noun.about" %>

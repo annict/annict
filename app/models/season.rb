@@ -143,7 +143,7 @@ class Season
     case @name
     when "winter" then "snowman"
     when "spring" then "seedling"
-    when "summer" then "island-tropical"
+    when "summer" then "umbrella-beach"
     when "autumn" then "ghost"
     else
       raise
