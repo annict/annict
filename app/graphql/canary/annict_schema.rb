@@ -5,9 +5,6 @@ module Canary
     query Canary::Types::Objects::Query
     mutation Canary::Types::Objects::Mutation
 
-    use GraphQL::Execution::Interpreter
-    use GraphQL::Analysis::AST
-    use GraphQL::Pagination::Connections
     use GraphQL::Batch
     use GraphQL::FragmentCache
 
