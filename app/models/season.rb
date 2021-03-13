@@ -3,7 +3,7 @@
 class Season
   extend Enumerize
 
-  YEAR_LIST = 1900..(Time.now.year + 5)
+  YEAR_LIST = (1900..(Time.now.year + 5)).freeze
   NAME_HASH = { winter: 1, spring: 2, summer: 3, autumn: 4 }.freeze
 
   attr_reader :year, :name
@@ -40,7 +40,7 @@ class Season
     name_exists = name.present? && (name == "all" || name.to_sym.in?(NAME_HASH.keys))
 
     if !year_exists || !name_exists
-      raise ActionController::RoutingError.new("Not Found")
+      raise ActionController::RoutingError, "Not Found"
     end
 
     new(year, name)

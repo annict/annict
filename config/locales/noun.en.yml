@@ -92,7 +92,7 @@ en:
     music: Music
     my_anime_list: MyAnimeList
     my_records: My Records
-    n_works_watched: "%{count} Works Watched"
+    n_works_watched: '%{count} Works Watched'
     next: Next
     next_episode: Next Episode
     next_page: Next Page
@@ -103,8 +103,8 @@ en:
     or: OR
     organization: Organization
     organizations: Organizations
-    other_record_body_list_by: "Comments by %{profile_name}"
-    other_comments: "All Comments"
+    other_record_body_list_by: 'Comments by %{profile_name}'
+    other_comments: 'All Comments'
     other_users: Other Users
     overall: Overall
     password: Password
@@ -131,10 +131,10 @@ en:
     rebroadcast: Rebroadcast
     record_body_list: Comments
     record_list: Record List
-    record_of_episode: "Record of %{work_title} %{episode_title_with_number}"
+    record_of_episode: 'Record of %{work_title} %{episode_title_with_number}'
     record_of_work: 'Record of "%{work_title}"'
     records: Records
-    records_by: "Records by %{profile_name}"
+    records_by: 'Records by %{profile_name}'
     records_count: Records Count
     related_works: Related Works
     release_on: Release on
@@ -149,7 +149,7 @@ en:
     seasons: Seasons
     seasonal_anime: Seasonal Anime
     series: Series
-    series_with_name: "%{series_name} Series"
+    series_with_name: '%{series_name} Series'
     series_works: Series Works
     services: Services
     settings: Settings
@@ -187,7 +187,7 @@ en:
     unknown_season: Season unknown
     unpublish: Unpublish
     untracked_episodes: Untracked Episodes
-    users_count: "%{count} people"
+    users_count: '%{count} people'
     video_page: Video Page
     vod_works: VOD Works
     vods: Video Services
