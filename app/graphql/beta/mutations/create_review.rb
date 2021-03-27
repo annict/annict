@@ -7,7 +7,7 @@ module Beta
       argument :title, String, required: false
       argument :body, String, required: true
       WorkRecord::STATES.each do |state|
-        argument state.to_s.camelcase(:lower).to_sym, Beta::Types::Enums::RatingState, required: false
+        argument state.to_s.underscore.to_sym, Beta::Types::Enums::RatingState, required: false
       end
       argument :share_twitter, Boolean, required: false
       argument :share_facebook, Boolean, required: false
