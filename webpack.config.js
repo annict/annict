@@ -1,7 +1,7 @@
 const glob = require('glob');
 const path = require('path');
 
-const ManifestPlugin = require('webpack-manifest-plugin');
+const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
@@ -97,7 +97,7 @@ module.exports = {
     extensions: ['.css', '.gif', '.jpeg', '.jpg', '.js', '.json', '.png', '.scss', '.svg', '.ts'],
   },
   plugins: [
-    new ManifestPlugin({
+    new WebpackManifestPlugin({
       fileName: 'manifest.json',
       publicPath: '/packs/',
       writeToFileEmit: true,

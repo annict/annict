@@ -62,7 +62,7 @@
     "mini-css-extract-plugin": "^0.11.0",
     "node-fetch": "latest",
     "node-sass": "latest",
-    "postcss-loader": "latest",
+    "postcss-loader": "^3.0.0",
     "precss": "latest",
     "prettier": "^2.1.1",
     "prettier-eslint": "^11.0.0",

@@ -1,18 +1,29 @@
-FROM node:12.16.1-alpine as node
-FROM ruby:2.7.2-alpine
+FROM node:12.16.1-buster-slim as node
+FROM ruby:2.7.2-slim-buster
 
 LABEL maintainer="https://annict.jp/@shimbaco" \
   description="A platform for anime addicts."
 
-RUN apk update && \
-  apk add -t \
-  build-dependencies \
-  build-base \
+# Bashを使用する
+SHELL ["/bin/bash", "-c"]
+
+# libpq-dev: pg gemをインストールするときに必要
+RUN true \
+  && apt update \
+  && apt install -y --no-install-recommends \
+  build-essential \
+  curl \
   git \
   postgresql \
-  postgresql-dev \
+  libpq-dev \
   imagemagick \
-  yarn
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
+
+# Node.jsのイメージから node と npm をコピーする
+COPY --from=node /usr/local/bin/node /usr/local/bin/
+COPY --from=node /usr/local/lib/node_modules/ /usr/local/lib/node_modules/
+RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm
 
 ENV PATH=./node_modules/.bin/:$PATH \
   RAILS_ENV=development
@@ -30,13 +41,10 @@ RUN ln -s /usr/lib/libffi.so.7 /usr/lib/libffi.so.6
 
 WORKDIR /workspace/
 
-COPY --from=node /usr/local/bin/node /usr/local/bin/
-
-COPY Gemfile* package.json yarn.lock ./
+COPY Gemfile* package.json package-lock.json ./
 RUN gem install bundler && \
   bundle install -j$(getconf _NPROCESSORS_ONLN) && \
-  yarn install && \
-  yarn global add npm && \
-  yarn cache clean
+  npm install && \
+  npm cache clean --force
 
 EXPOSE 3000
