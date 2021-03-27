@@ -4,7 +4,7 @@ module Beta
   module Types
     module Objects
       class UserType < Beta::Types::Objects::Base
-        implements GraphQL::Relay::Node.interface
+        implements GraphQL::Types::Relay::Node
 
         global_id_field :id
 
@@ -121,11 +121,13 @@ module Beta
 
         def email
           return if context[:doorkeeper_token].owner != object
+
           object.email
         end
 
         def notifications_count
           return if context[:doorkeeper_token].owner != object
+
           object.notifications_count
         end
 

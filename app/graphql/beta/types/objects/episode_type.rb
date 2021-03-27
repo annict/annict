@@ -6,7 +6,7 @@ module Beta
       class EpisodeType < Beta::Types::Objects::Base
         description "An episode of a work"
 
-        implements GraphQL::Relay::Node.interface
+        implements GraphQL::Types::Relay::Node
 
         global_id_field :id
 

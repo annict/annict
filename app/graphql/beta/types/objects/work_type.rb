@@ -6,7 +6,7 @@ module Beta
       class WorkType < Beta::Types::Objects::Base
         description "An anime title"
 
-        implements GraphQL::Relay::Node.interface
+        implements GraphQL::Types::Relay::Node
 
         global_id_field :id
 
