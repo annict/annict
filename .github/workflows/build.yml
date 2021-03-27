@@ -1,0 +1,74 @@
+name: Build
+
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    container:
+      image: annict/ruby:2.7.2-node_12.16.1
+      env:
+        BUNDLE_JOBS: 4
+        BUNDLE_PATH: vendor/bundle
+        BUNDLE_RETRY: 3
+        CC_TEST_REPORTER_ID: 473c071c4d1900d58ceed984bd49d8a39368393ce6f010cf5d52287f3072f6ef
+        COVERAGE: true
+        POSTGRES_HOST: localhost
+        RAILS_ENV: test
+        TZ: Asia/Tokyo
+        # `CFLAGS` と `CXXFLAGS` は cld gem をインストールするときに必要になる
+        # https://github.com/jtoy/cld/issues/10
+        CFLAGS: -Wno-narrowing
+        CXXFLAGS: -Wno-narrowing
+
+    services:
+      postgresql:
+        image: postgres:12.4
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_DB: annict_test
+          POSTGRES_PASSWORD: ""
+          POSTGRES_HOST_AUTH_METHOD: trust
+        # Adding a health check via options
+        # https://github.community/t5/GitHub-Actions/Github-Actions-services-not-reachable/td-p/30050
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      selenium:
+        image: selenium/standalone-chrome:latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Run `bundle install`
+        run: |
+          bundle install --jobs $BUNDLE_JOBS --retry $BUNDLE_RETRY
+
+      - name: Run `npm install`
+        run: |
+          npm install
+
+      - name: Run `npm run heroku-postbuild`
+        run: |
+          npm run heroku-postbuild
+
+      - name: Setup Database
+        run: |
+          bin/rails db:create
+          bin/rails db:structure:load
+
+      - name: Setup Code Climate test-reporter
+        run: |
+          curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+          chmod +x ./cc-test-reporter
+
+      - name: Run tests
+        run: |
+          ./cc-test-reporter before-build
+          bundle exec rspec
+          ./cc-test-reporter after-build --coverage-input-type simplecov --exit-code $?
