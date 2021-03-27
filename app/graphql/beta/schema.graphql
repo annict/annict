@@ -548,13 +548,48 @@ type MultipleRecord implements Node {
 }
 
 type Mutation {
-  createRecord(input: CreateRecordInput!): CreateRecordPayload
-  createReview(input: CreateReviewInput!): CreateReviewPayload
-  deleteRecord(input: DeleteRecordInput!): DeleteRecordPayload
-  deleteReview(input: DeleteReviewInput!): DeleteReviewPayload
-  updateRecord(input: UpdateRecordInput!): UpdateRecordPayload
-  updateReview(input: UpdateReviewInput!): UpdateReviewPayload
-  updateStatus(input: UpdateStatusInput!): UpdateStatusPayload
+  createRecord(
+    """
+    Parameters for CreateRecord
+    """
+    input: CreateRecordInput!
+  ): CreateRecordPayload
+  createReview(
+    """
+    Parameters for CreateReview
+    """
+    input: CreateReviewInput!
+  ): CreateReviewPayload
+  deleteRecord(
+    """
+    Parameters for DeleteRecord
+    """
+    input: DeleteRecordInput!
+  ): DeleteRecordPayload
+  deleteReview(
+    """
+    Parameters for DeleteReview
+    """
+    input: DeleteReviewInput!
+  ): DeleteReviewPayload
+  updateRecord(
+    """
+    Parameters for UpdateRecord
+    """
+    input: UpdateRecordInput!
+  ): UpdateRecordPayload
+  updateReview(
+    """
+    Parameters for UpdateReview
+    """
+    input: UpdateReviewInput!
+  ): UpdateReviewPayload
+  updateStatus(
+    """
+    Parameters for UpdateStatus
+    """
+    input: UpdateStatusInput!
+  ): UpdateStatusPayload
 }
 
 """
