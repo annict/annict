@@ -8,10 +8,13 @@ LABEL maintainer="https://annict.jp/@shimbaco" \
 SHELL ["/bin/bash", "-c"]
 
 # libpq-dev: pg gemをインストールするときに必要
+# file: これをインストールしないと Shrine gem が以下のエラーを出す
+#   Shrine::Error: file command-line tool is not installed
 RUN true \
   && apt update \
   && apt install -y --no-install-recommends \
   build-essential \
+  file \
   curl \
   git \
   postgresql \
