@@ -5,8 +5,6 @@ import { EventDispatcher } from '../utils/event-dispatcher';
 
 export default class extends Controller {
   charactersCounterId!: string;
-  element!: Element;
-  data!: any;
 
   initialize() {
     this.charactersCounterId = this.data.get('charactersCounterId') ?? 'id';
