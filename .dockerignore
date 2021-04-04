@@ -1,4 +1,3 @@
-.babelrc.js
 .devcontainer
 .env.development
 .env.test
