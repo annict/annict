@@ -140,13 +140,17 @@ root "welcome#show",
   # Set :as option to avoid two routes with the same name
   as: nil
 
+# rubocop:disable Layout/LineLength
 constraints format: "html" do
   devise_scope :user do
     match "/sign_out", via: :delete, as: :sign_out, to: "devise/sessions#destroy"
   end
+scope module: :my do
+  constraints format: "html" do
+    match "/my/sidebar_profile", via: :get, as: :my_sidebar_profile, to: "sidebar_profiles#show"
+  end
 end
 
-# rubocop:disable Layout/LineLength
 scope module: :v4 do
   constraints format: "html" do
     devise_scope :user do
