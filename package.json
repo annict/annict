@@ -13,6 +13,7 @@
   "dependencies": {
     "@babel/core": "^7.11.4",
     "@babel/preset-env": "^7.11.0",
+    "@hotwired/turbo": "^7.0.0-beta.4",
     "@rails/ujs": "^6.0.3-2",
     "autoprefixer": "^9.8.6",
     "autosize": "latest",
@@ -23,7 +24,7 @@
     "britecharts": "^2.16.1",
     "cal-heatmap": "latest",
     "choices.js": "latest",
-    "core-js": "latest",
+    "core-js": "^3.10.0",
     "d3": "^6.0.0",
     "d3-selection": "^2.0.0",
     "dayjs": "^1.8.34",
@@ -34,8 +35,7 @@
     "popper.js": "latest",
     "postcss-smart-import": "latest",
     "select2": "next",
-    "stimulus": "latest",
-    "turbolinks": "latest",
+    "stimulus": "^2.0.0",
     "vanilla-lazyload": "^17.1.2",
     "vue": "^2.6.12",
     "webpack-merge": "^5.1.2"
@@ -51,7 +51,6 @@
     "@types/jquery": "^3.5.1",
     "@types/js-cookie": "latest",
     "@types/lodash": "^4.14.160",
-    "@types/turbolinks": "latest",
     "@types/webpack-env": "latest",
     "css-loader": "^4.2.2",
     "eslint": "^7.7.0",
@@ -73,6 +72,6 @@
     "webpack": "^4.44.1",
     "webpack-cli": "^3.3.12",
     "webpack-dev-server": "^3.11.0",
-    "webpack-manifest-plugin": "latest"
+    "webpack-manifest-plugin": "^3.1.1"
   }
 }

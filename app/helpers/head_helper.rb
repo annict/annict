@@ -27,7 +27,7 @@ module HeadHelper
         description: t("head.meta.description._common"),
         image: "#{ENV.fetch('ANNICT_URL')}/images/og_image.png"
       },
-      "turbolinks-cache-control": "no-cache"
+      "turbo-cache-control": "no-cache"
     )
   end
 
