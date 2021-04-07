@@ -117,4 +117,5 @@ module.exports = {
     sockPort: 3001,
     disableHostCheck: true,
   },
+  devtool: 'eval-source-map',
 };
