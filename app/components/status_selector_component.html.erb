@@ -5,7 +5,7 @@
   data-status-selector-page-category="<%= page_category %>"
 >
   <div class="c-status-selector__object">
-    <select class="w-100" data-target="status-selector.kind" data-action="status-selector#change">
+    <select class="w-100" data-status-selector-target="kind" data-action="status-selector#change">
       <% status_options.each do |status_option| %>
         <option value="<%= status_option[1] %>">
           <%= status_option[0] %>
