@@ -114,6 +114,7 @@ module.exports = {
     contentBase: path.resolve(__dirname, 'public', 'packs'),
     host: '0.0.0.0',
     port: 8080,
+    sockPort: 3001,
     disableHostCheck: true,
   },
 };
