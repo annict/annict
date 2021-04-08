@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module My
-  class SidebarProfilesController < My::ApplicationController
+module Frame
+  class SidebarProfilesController < Frame::ApplicationController
     def show
       @user = current_user
     end

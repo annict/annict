@@ -1,13 +1,11 @@
 # frozen_string_literal: true
 
-module My
+module Frame
   class ApplicationController < ActionController::Base
     include PageCategorizable
 
     layout "simple"
 
     helper_method :page_category
-
-    before_action :authenticate_user!
   end
 end
