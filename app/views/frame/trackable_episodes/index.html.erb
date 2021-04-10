@@ -1,0 +1,46 @@
+<turbo-frame id="track-page-tracked-episodes">
+  <div class="card">
+    <% @library_entries.each do |le| %>
+      <div class="card-header">
+        <div class="row">
+          <div class="col">
+            <%= le.work.local_title %>
+          </div>
+
+          <div class="col text-right">
+            <% if le.program %>
+              <% if le.program.vod_title_url.present? %>
+                <%= link_to le.program.vod_title_url, class: "text-body", rel: "noopener", target: "_blank" do %>
+                  <%= le.program.channel.name %>
+                  <i class="fas fa-external-link-alt pr-1"></i>
+                <% end %>
+              <% else %>
+                <%= le.program.channel.name %>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <ul class="list-group list-group-flush">
+        <% @untracked_episodes.filter { |episode| episode.work_id == le.work_id }.each do |episode| %>
+          <li class="list-group-item">
+            <div class="row">
+              <div class="col">
+                <%= episode.title_with_number %>
+              </div>
+
+              <div class="col text-right">
+                <% if le.program %>
+                  <span class="small text-muted">
+                    <%= display_time(@slots.filter { |slot| slot.episode_id == episode.id }.first&.started_at) %>
+                  </span>
+                <% end %>
+              </div>
+            </div>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+  </div>
+</turbo-frame>

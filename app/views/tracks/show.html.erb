@@ -1,0 +1,6 @@
+<% title = t "head.title.tracks.show" %>
+<% set_meta_tags(title: title, reverse: true, prefix: false) %>
+
+<div class="container py-3">
+  <turbo-frame id="track-page-tracked-episodes" src="<%= trackable_episodes_frame_path %>"></turbo-frame>
+</div>

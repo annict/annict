@@ -145,11 +145,14 @@ constraints format: "html" do
   devise_scope :user do
     match "/sign_out", via: :delete, as: :sign_out, to: "devise/sessions#destroy"
   end
+
+  match "/track", via: :get, as: :track, to: "tracks#show"
 end
 
 scope module: :frame do
   constraints format: "html" do
-    match "/frame/sidebar_profile", via: :get, as: :sidebar_profile_frame, to: "sidebar_profiles#show"
+    match "/frame/sidebar_profile",    via: :get, as: :sidebar_profile_frame, to: "sidebar_profiles#show"
+    match "/frame/trackable_episodes", via: :get, as: :trackable_episodes_frame, to: "trackable_episodes#index"
   end
 end
 
