@@ -23,7 +23,7 @@ class EpisodeRecordCreator
     library_entry = @user.library_entries.find_by(work: @work)
 
     if episode_record.invalid?
-      return result.failure(episode_record.errors.full_messages)
+      return result.failure(episode_record.errors)
     end
 
     ActiveRecord::Base.transaction do

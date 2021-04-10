@@ -2,15 +2,6 @@
 
 module Annict
   class Result < Struct
-    module Types
-      include Dry.Types(default: :strict)
-    end
-
-    class Error < Dry::Struct
-      schema schema.strict
-      attribute :message, Types::String
-    end
-
     def self.new(*members)
       super(*members, :errors, keyword_init: true)
     end
@@ -19,8 +10,9 @@ module Annict
       new(*values)
     end
 
-    def self.failure(messages)
-      new(errors: messages.map { |message| Error.new(message: message) })
+    # @param errors [ActiveModel::Errors]
+    def self.failure(errors)
+      new(errors: errors)
     end
 
     def success?
