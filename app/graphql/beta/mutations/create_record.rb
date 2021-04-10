@@ -17,7 +17,7 @@ module Beta
         viewer = context[:viewer]
         episode = Episode.only_kept.find_by_graphql_id(episode_id)
 
-        result = CreateEpisodeRecordService.new(
+        result = EpisodeRecordCreator.new(
           user: viewer,
           episode: episode,
           rating: rating_state,

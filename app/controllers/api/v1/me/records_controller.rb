@@ -10,7 +10,7 @@ module Api
 
         def create
           episode = Episode.only_kept.find(@params.episode_id)
-          result = CreateEpisodeRecordService.new(
+          result = EpisodeRecordCreator.new(
             user: current_user,
             episode: episode,
             rating: @params.rating_state,

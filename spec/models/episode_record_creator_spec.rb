@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe CreateEpisodeRecordService, type: :service do
+describe EpisodeRecordCreator, type: :model do
   let(:user) { create :registered_user }
 
   context "正常系" do
@@ -16,7 +16,7 @@ describe CreateEpisodeRecordService, type: :service do
       expect(user.share_record_to_twitter?).to eq false
 
       # サービスクラスを呼ぶ
-      result = CreateEpisodeRecordService.new(
+      result = EpisodeRecordCreator.new(
         user: user,
         episode: episode,
         rating: "good",
@@ -72,7 +72,7 @@ describe CreateEpisodeRecordService, type: :service do
           expect(user.share_record_to_twitter?).to eq false
 
           # サービスクラスを呼ぶ
-          CreateEpisodeRecordService.new(
+          EpisodeRecordCreator.new(
             user: user,
             episode: episode,
             rating: "good",
@@ -112,7 +112,7 @@ describe CreateEpisodeRecordService, type: :service do
           expect(user.share_record_to_twitter?).to eq false
 
           # サービスクラスを呼ぶ
-          CreateEpisodeRecordService.new(
+          EpisodeRecordCreator.new(
             user: user,
             episode: episode,
             rating: "good",
@@ -151,7 +151,7 @@ describe CreateEpisodeRecordService, type: :service do
         expect(user.share_record_to_twitter?).to eq false
 
         # サービスクラスを呼ぶ
-        result = CreateEpisodeRecordService.new(
+        result = EpisodeRecordCreator.new(
           user: user,
           episode: episode,
           rating: "good",
