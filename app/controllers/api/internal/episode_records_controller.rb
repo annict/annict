@@ -3,22 +3,21 @@
 module Api
   module Internal
     class EpisodeRecordsController < Api::Internal::ApplicationController
-      include V4::GraphqlRunnable
-
       before_action :authenticate_user!, only: %i(create)
 
       def create
-        form = EpisodeRecordForm.new(episode_id: params[:episode_id], share_to_twitter: current_user.share_record_to_twitter?)
+        episode = Episode.only_kept.find(params[:episode_id])
+        creator = EpisodeRecordCreator.new(
+          user: current_user,
+          episode: episode,
+          share_to_twitter: current_user.share_record_to_twitter?
+        ).call
 
-        episode_record, err = CreateEpisodeRecordRepository.new(
-          graphql_client: graphql_client(viewer: current_user)
-        ).execute(form: form)
-
-        if err
-          return render(status: 400, json: { message: err.message })
+        if creator.invalid?
+          return render(status: 400, json: { message: creator.errors.full_messages.first })
         end
 
-        head 201
+        render(status: 201, json: { record_id: creator.record.id })
       end
     end
   end
