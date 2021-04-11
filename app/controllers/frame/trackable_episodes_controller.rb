@@ -10,7 +10,7 @@ module Frame
         with_not_deleted_work.
         wanna_watch_and_watching.
         eager_load(:work, program: :channel).
-        order(position: :desc).
+        order(:position).
         page(params[:page]).
         per(50)
 
