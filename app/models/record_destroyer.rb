@@ -1,12 +1,9 @@
 # frozen_string_literal: true
 
-class DeleteRecordService < ApplicationService
-  class DeleteRecordServiceResult < Result
-    attr_accessor :user
-  end
+class RecordDestroyer
+  attr_accessor :user
 
   def initialize(record:)
-    super()
     @record = record
   end
 
@@ -24,13 +21,7 @@ class DeleteRecordService < ApplicationService
       end
     end
 
-    @result.user = user
-    @result
-  end
-
-  private
-
-  def result_class
-    DeleteRecordServiceResult
+    self.user = user
+    self
   end
 end

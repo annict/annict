@@ -52,7 +52,7 @@ module V4
 
       authorize(@record, :destroy?)
 
-      DeleteRecordService.new(record: @record).call
+      RecordDestroyer.new(record: @record).call
 
       path = if @record.episode_record?
         episode_record = @record.episode_record
