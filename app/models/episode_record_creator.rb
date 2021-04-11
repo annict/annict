@@ -1,7 +1,18 @@
 # frozen_string_literal: true
 
 class EpisodeRecordCreator
-  def initialize(user:, episode:, rating: nil, deprecated_rating: nil, comment: "", share_to_twitter: false) # rubocop:disable Metrics/ParameterLists
+  include ActiveModel::Validations
+
+  attr_accessor :record
+
+  def initialize(
+    user:,
+    episode:,
+    rating: nil,
+    deprecated_rating: nil,
+    comment: "",
+    share_to_twitter: false
+  ) # rubocop:disable Metrics/ParameterLists
     @user = user
     @episode = episode
     @work = episode.work
@@ -12,7 +23,6 @@ class EpisodeRecordCreator
   end
 
   def call
-    result = Annict::Result.new(:record)
     episode_record = @episode.build_episode_record(
       user: @user,
       rating: @rating,
@@ -23,7 +33,8 @@ class EpisodeRecordCreator
     library_entry = @user.library_entries.find_by(work: @work)
 
     if episode_record.invalid?
-      return result.failure(episode_record.errors)
+      errors.merge!(episode_record.errors)
+      return self
     end
 
     ActiveRecord::Base.transaction do
@@ -41,6 +52,7 @@ class EpisodeRecordCreator
       end
     end
 
-    result.success(record: episode_record.record)
+    self.record = episode_record.record
+    self
   end
 end

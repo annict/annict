@@ -16,7 +16,7 @@ describe EpisodeRecordCreator, type: :model do
       expect(user.share_record_to_twitter?).to eq false
 
       # サービスクラスを呼ぶ
-      result = EpisodeRecordCreator.new(
+      creator = EpisodeRecordCreator.new(
         user: user,
         episode: episode,
         rating: "good",
@@ -25,7 +25,7 @@ describe EpisodeRecordCreator, type: :model do
       ).call
 
       # サービスクラスからエラーは返らないはず
-      expect(result.errors.length).to eq 0
+      expect(creator.errors.count).to eq 0
 
       # サービスクラスを呼んだので、各レコードが1件ずつ作成されるはず
       expect(Record.count).to eq 1
@@ -151,7 +151,7 @@ describe EpisodeRecordCreator, type: :model do
         expect(user.share_record_to_twitter?).to eq false
 
         # サービスクラスを呼ぶ
-        result = EpisodeRecordCreator.new(
+        creator = EpisodeRecordCreator.new(
           user: user,
           episode: episode,
           rating: "good",
@@ -167,8 +167,8 @@ describe EpisodeRecordCreator, type: :model do
         expect(user.share_record_to_twitter?).to eq false
 
         # サービスクラスからエラー内容が受け取れること
-        expect(result.errors.length).to eq 1
-        expect(result.errors.first.message).to eq "感想は1048596文字以内で入力してください"
+        expect(creator.errors.count).to eq 1
+        expect(creator.errors.full_messages.first).to eq "感想は1048596文字以内で入力してください"
       end
     end
   end

@@ -10,7 +10,7 @@ module Api
 
         def create
           episode = Episode.only_kept.find(@params.episode_id)
-          result = EpisodeRecordCreator.new(
+          creator = EpisodeRecordCreator.new(
             user: current_user,
             episode: episode,
             rating: @params.rating_state,
@@ -19,11 +19,11 @@ module Api
             share_to_twitter: @params.share_twitter
           ).call
 
-          unless result.success?
-            return render_validation_error(result.errors.first.message)
+          if creator.invalid?
+            return render_validation_error(creator.errors.first.message)
           end
 
-          @episode_record = current_user.episode_records.find_by!(record_id: result.record.id)
+          @episode_record = current_user.episode_records.find_by!(record_id: creator.record.id)
         end
 
         def update

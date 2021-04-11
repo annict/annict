@@ -17,7 +17,7 @@ module Beta
         viewer = context[:viewer]
         episode = Episode.only_kept.find_by_graphql_id(episode_id)
 
-        result = EpisodeRecordCreator.new(
+        creator = EpisodeRecordCreator.new(
           user: viewer,
           episode: episode,
           rating: rating_state,
@@ -25,12 +25,12 @@ module Beta
           share_to_twitter: share_twitter&.to_s
         ).call
 
-        unless result.success?
-          raise GraphQL::ExecutionError, result.errors.first.message
+        if creator.invalid?
+          raise GraphQL::ExecutionError, creator.errors.first.message
         end
 
         {
-          record: viewer.episode_records.find_by!(record_id: result.record.id)
+          record: viewer.episode_records.find_by!(record_id: creator.record.id)
         }
       end
     end

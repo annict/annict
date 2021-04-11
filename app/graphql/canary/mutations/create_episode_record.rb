@@ -24,7 +24,7 @@ module Canary
         viewer = context[:viewer]
         episode = Episode.only_kept.find_by_graphql_id(episode_id)
 
-        result = EpisodeRecordCreator.new(
+        creator = EpisodeRecordCreator.new(
           user: viewer,
           episode: episode,
           rating: rating,
@@ -33,8 +33,8 @@ module Canary
         ).call
 
         {
-          record: result.record,
-          errors: result.errors
+          record: creator.record,
+          errors: creator.errors
         }
       end
     end
