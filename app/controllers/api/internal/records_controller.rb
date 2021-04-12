@@ -7,7 +7,9 @@ module Api
 
       def destroy
         record = current_user.records.only_kept.find(params[:record_id])
+
         RecordDestroyer.new(record: record).call
+
         head 204
       end
     end

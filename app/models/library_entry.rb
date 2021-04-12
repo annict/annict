@@ -77,4 +77,10 @@ class LibraryEntry < ApplicationRecord
 
     self
   end
+
+  def remove_episode!(episode)
+    self.watched_episode_ids = self.watched_episode_ids - [episode.id]
+    save!
+    self
+  end
 end

@@ -32,6 +32,12 @@
                 ) %>
               </div>
 
+              <div class="col-auto pl-2 pr-0">
+                <%= render Buttons::SkipEpisodeButtonComponent.new(
+                  episode_id: episode.id, class_name: "btn-sm btn-outline-secondary rounded-circle"
+                ) %>
+              </div>
+
               <div class="col">
                 <%= episode.title_with_number %>
               </div>

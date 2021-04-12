@@ -1,0 +1,10 @@
+<button
+  class="c-skip-episode-button <%= skip_episode_button_class_name %>"
+  data-controller="skip-episode-button"
+  data-skip-episode-button-episode-id="<%= @episode_id %>"
+  data-skip-episode-button-loading-class="c-skip-episode-button--loading"
+  data-action="click->skip-episode-button#toggle"
+>
+  <span class="c-skip-episode-button__spinner spinner-border spinner-border-sm"></span>
+  <i class="fas fa-forward"></i>
+</button>
