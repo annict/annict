@@ -4,7 +4,13 @@
       <div class="card-header">
         <div class="row">
           <div class="col">
-            <%= le.work.local_title %>
+            <div
+              data-controller="tracking-modal-button"
+              data-tracking-modal-button-frame-path="<%= anime_frame_path(le.work_id) %>"
+              data-action="click->tracking-modal-button#open"
+            >
+              <%= le.work.local_title %>
+            </div>
           </div>
 
           <div class="col text-right">
