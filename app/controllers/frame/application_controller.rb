@@ -4,7 +4,7 @@ module Frame
   class ApplicationController < ActionController::Base
     include PageCategorizable
 
-    layout "simple"
+    layout false
 
     helper_method :page_category
   end
