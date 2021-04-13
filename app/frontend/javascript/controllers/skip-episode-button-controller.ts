@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { Controller } from 'stimulus';
 
+import { EventDispatcher } from '../utils/event-dispatcher';
+
 export default class extends Controller {
   static classes = ['loading']
 
@@ -46,6 +48,11 @@ export default class extends Controller {
         .then(() => {
           this.endLoading()
           this.isSkipped = false;
+
+          new EventDispatcher('tracking-state:change-to-untracked', {
+            episodeId: this.episodeId
+          }).dispatch();
+
           this.render();
         });
     } else {
@@ -53,8 +60,12 @@ export default class extends Controller {
         .post('/api/internal/skipped_episodes', {
           episode_id: this.episodeId,
         })
-        .then((res: any) => {
+        .then(() => {
           this.isSkipped = true;
+
+          new EventDispatcher('tracking-state:change-to-tracked', {
+            episodeId: this.episodeId
+          }).dispatch();
         })
         .catch(() => {
           ($('.c-sign-up-modal') as any).modal('show');

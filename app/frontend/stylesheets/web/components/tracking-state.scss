@@ -1,0 +1,9 @@
+.c-tracking-state {
+  $root: &;
+
+  &--tracked {
+    #{$root}__title {
+      text-decoration: line-through;
+    }
+  }
+}

@@ -16,7 +16,12 @@
           <div class="card">
             <ul class="list-group list-group-flush">
               <% @episodes.each do |episode| %>
-                <li class="list-group-item">
+                <li
+                  class="c-tracking-state list-group-item"
+                  data-controller="tracking-state"
+                  data-tracking-state-episode-id-value="<%= episode.id %>"
+                  data-tracking-state-tracked-class="c-tracking-state--tracked"
+                >
                   <div class="align-items-center row">
                     <div class="col-auto pr-0">
                       <%= render Buttons::WatchEpisodeButtonComponent.new(
@@ -30,7 +35,7 @@
                       ) %>
                     </div>
 
-                    <div class="col">
+                    <div class="c-tracking-state__title col">
                       <%= link_to episode_frame_path(episode.id), class: "text-body" do %>
                         <%= episode.title_with_number %>
                       <% end %>

@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { Controller } from 'stimulus';
 
+import { EventDispatcher } from '../utils/event-dispatcher';
+
 export default class extends Controller {
   static classes = ['loading']
   static values = {
@@ -53,6 +55,11 @@ export default class extends Controller {
           this.endLoading()
           this.recordIdValue = null
           this.isWatched = false;
+
+          new EventDispatcher('tracking-state:change-to-untracked', {
+            episodeId: this.episodeId
+          }).dispatch();
+
           this.render();
         });
     } else {
@@ -64,6 +71,10 @@ export default class extends Controller {
         .then((res: any) => {
           this.recordIdValue = res.data.record_id
           this.isWatched = true;
+
+          new EventDispatcher('tracking-state:change-to-tracked', {
+            episodeId: this.episodeId
+          }).dispatch();
         })
         .catch(() => {
           ($('.c-sign-up-modal') as any).modal('show');
