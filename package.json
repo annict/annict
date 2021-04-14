@@ -13,7 +13,7 @@
   "dependencies": {
     "@babel/core": "^7.11.4",
     "@babel/preset-env": "^7.11.0",
-    "@hotwired/turbo": "^7.0.0-beta.4",
+    "@hotwired/turbo": "^7.0.0-beta.5",
     "@rails/ujs": "^6.0.3-2",
     "autoprefixer": "^9.8.6",
     "autosize": "latest",
