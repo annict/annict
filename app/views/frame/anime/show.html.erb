@@ -14,18 +14,19 @@
       <div class="modal-body">
         <div>
           <div class="card">
-            <ul class="list-group list-group-flush">
+            <%= render ListGroups::TrackingEpisodeListGroupComponent.new(episodes: @episodes) do %>
               <% @episodes.each do |episode| %>
-                <li
-                  class="c-tracking-state list-group-item"
-                  data-controller="tracking-state"
-                  data-tracking-state-episode-id-value="<%= episode.id %>"
-                  data-tracking-state-tracked-class="c-tracking-state--tracked"
-                >
+                <%= render ListGroupItems::TrackingEpisodeListGroupItemComponent.new(episode: episode) do %>
                   <div class="align-items-center row">
                     <div class="col-auto pr-0">
                       <%= render Buttons::WatchEpisodeButtonComponent.new(
                         episode_id: episode.id, page_category: page_category, class_name: "btn-sm btn-outline-info rounded-circle"
+                      ) %>
+                    </div>
+
+                    <div class="col-auto pl-2 px-0">
+                      <%= render Buttons::BulkWatchEpisodesButtonComponent.new(
+                        episode_id: episode.id, class_name: "btn-sm btn-outline-info rounded-circle"
                       ) %>
                     </div>
 
@@ -41,9 +42,9 @@
                       <% end %>
                     </div>
                   </div>
-                </li>
+                <% end %>
               <% end %>
-            </ul>
+            <% end %>
           </div>
 
           <div class="mt-3 text-center">

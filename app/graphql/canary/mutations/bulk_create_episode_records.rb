@@ -12,8 +12,9 @@ module Canary
         raise Annict::Errors::InvalidAPITokenScopeError unless context[:writable]
 
         viewer = context[:viewer]
+        episode_database_ids = episode_ids.map { |episode_id| GraphQL::Schema::UniqueWithinType.decode(episode_id)[1] }.compact
 
-        job = BulkCreateEpisodeRecordsJob.perform_later(viewer.id, episode_ids)
+        job = BulkCreateEpisodeRecordsJob.perform_later(viewer.id, episode_database_ids)
         bulk_operation = OpenStruct.new(job_id: job.provider_job_id)
 
         {

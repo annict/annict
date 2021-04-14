@@ -1,0 +1,10 @@
+<button
+  class="c-bulk-watch-episodes-button <%= bulk_watch_episodes_button_class_name %>"
+  data-controller="bulk-watch-episodes-button"
+  data-bulk-watch-episodes-button-episode-id-value="<%= @episode_id %>"
+  data-bulk-watch-episodes-button-loading-class="c-bulk-watch-episodes-button--loading"
+  data-action="click->bulk-watch-episodes-button#watch"
+>
+  <span class="c-bulk-watch-episodes-button__spinner spinner-border spinner-border-sm"></span>
+  <i class="fas fa-arrow-to-bottom"></i>
+</button>
