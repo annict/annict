@@ -6,16 +6,20 @@ const NO_SELECT = 'no_select';
 
 export default class extends Controller {
   static targets = ['kind'];
+  static values = { animeId: Number, initKind: String, pageCategory: String }
 
+  animeIdValue!: number;
+  initKindValue!: string;
   kindTarget!: HTMLSelectElement;
   libraryEntries!: { work_id: number; status_kind: string }[];
+  pageCategoryValue!: string;
   prevStatusKind!: string;
-  workId!: number;
-  pageCategory!: string;
 
   initialize() {
-    this.workId = Number(this.data.get('workId'));
-    this.pageCategory = this.data.get('pageCategory') || '';
+    if (this.initKindValue !== '') {
+      this.kindTarget.value = this.initKindValue
+      return
+    }
 
     this.element.classList.add('c-spinner');
 
@@ -37,7 +41,7 @@ export default class extends Controller {
     }
 
     const status = this.libraryEntries.filter((entry) => {
-      return entry.work_id === this.workId;
+      return entry.work_id === this.animeIdValue;
     })[0];
 
     if (!status) {
@@ -56,9 +60,9 @@ export default class extends Controller {
       this.element.classList.add('c-spinner');
 
       axios
-        .post(`/api/internal/works/${this.workId}/statuses/select`, {
+        .post(`/api/internal/works/${this.animeIdValue}/statuses/select`, {
           status_kind: this.kindTarget.value,
-          page_category: this.pageCategory,
+          page_category: this.pageCategoryValue,
         })
         .then(() => {
           this.element.classList.remove('unselected');

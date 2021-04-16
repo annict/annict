@@ -1,8 +1,9 @@
 <div
-  class="c-status-selector <%= 'c-status-selector--small' if small %> <%= class_name %>"
+  class="c-status-selector <%= status_selector_class_name %>"
   data-controller="status-selector"
-  data-status-selector-work-id="<%= work_id %>"
-  data-status-selector-page-category="<%= page_category %>"
+  data-status-selector-anime-id-value="<%= @anime_id %>"
+  data-status-selector-init-kind-value="<%= @init_kind %>"
+  data-status-selector-page-category-value="<%= @page_category %>"
 >
   <div class="c-status-selector__object">
     <select class="w-100" data-status-selector-target="kind" data-action="status-selector#change">
@@ -12,6 +13,7 @@
         </option>
       <% end %>
     </select>
+
     <i class="fas fa-caret-down"></i>
   </div>
 </div>
