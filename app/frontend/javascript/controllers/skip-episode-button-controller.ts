@@ -16,6 +16,7 @@ export default class extends Controller {
   startLoading() {
     this.isLoading = true
     this.element.classList.add(this.loadingClass);
+    this.element.setAttribute('disabled', "true");
   }
 
   endLoading() {
