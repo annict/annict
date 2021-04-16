@@ -19,6 +19,7 @@ services:
     volumes:
       - .:/workspace:cached
       - gems_vol:/usr/local/bundle
+      - node_modules_vol:/workspace/node_modules
   frontend:
     build:
       context: .
