@@ -8,19 +8,19 @@ export default class extends Controller {
   // NOTE:
   //   `this.element` で参照できるが、`this.element` の型は `Element` になっており、
   //   `src` 属性を参照するために `this.element.src` などと書くとTypeScriptの型エラーになるためこうしている
-  //   あと本来は `HTMLIFrameElement` ではなく `FrameElement` だが、`FrameElement` がインポートできない気がするのでこうしている
-  frameTarget!: HTMLIFrameElement;
+  //   あと本来は `FrameElement` だが、`FrameElement` がインポートできない気がするので `any` にしている
+  frameTarget!: any;
 
   initialize() {
     this.boundReload = this.reload.bind(this);
   }
 
   connect() {
-    document.addEventListener('trackable-episode-list:reload', this.boundReload);
+    document.addEventListener('reloadable-frame:reload', this.boundReload);
   }
 
   disconnect() {
-    document.removeEventListener('trackable-episode-list:reload', this.boundReload);
+    document.removeEventListener('reloadable-frame:reload', this.boundReload);
   }
 
   reload() {
