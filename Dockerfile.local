@@ -7,19 +7,36 @@ LABEL maintainer="https://annict.jp/@shimbaco" \
 # Bashを使用する
 SHELL ["/bin/bash", "-c"]
 
-# libpq-dev: pg gemをインストールするときに必要
-# file: これをインストールしないと Shrine gem が以下のエラーを出す
+# libpq-dev:
+#   pg gemをインストールするときに必要
+# file:
+#   これをインストールしないと Shrine gem が以下のエラーを出す
 #   Shrine::Error: file command-line tool is not installed
+# gnupg, gnupg2, lsb-release:
+#   postgresql-12 をインストールするときに必要
 RUN true \
   && apt update \
   && apt install -y --no-install-recommends \
   build-essential \
-  file \
   curl \
+  file \
   git \
-  postgresql \
-  libpq-dev \
+  gnupg \
+  gnupg2 \
   imagemagick \
+  libpq-dev \
+  lsb-release \
+  wget \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
+
+# PostgreSQL 12 をインストールする
+RUN true \
+  && echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list \
+  && wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
+  && apt update \
+  && apt install -y --no-install-recommends \
+  postgresql-12 \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 
