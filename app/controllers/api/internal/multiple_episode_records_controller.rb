@@ -6,9 +6,15 @@ module Api
       before_action :authenticate_user!
 
       def create
-        job = BulkCreateEpisodeRecordsJob.perform_later(current_user.id, params[:episode_ids])
+        episodes = Episode.only_kept.where(id: params[:episode_ids]).order(:sort_number)
 
-        render(status: 201, json: { job_id: job.provider_job_id })
+        ActiveRecord::Base.transaction do
+          episodes.each do |episode|
+            EpisodeRecordCreator.new(user: current_user, episode: episode).call
+          end
+        end
+
+        head 201
       end
     end
   end

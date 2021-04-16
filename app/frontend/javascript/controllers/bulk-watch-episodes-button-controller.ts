@@ -12,30 +12,12 @@ export default class extends Controller {
 
   episodeIdValue!: number;
   isLoading!: boolean;
-  // isWatched!: boolean;
   loadingClass!: string;
-  // pageCategory!: string | null;
-  // recordIdValue!: number | null;
 
-  initialize() {
-    // this.episodeId = Number(this.data.get('episodeId'));
-    // this.pageCategory = this.data.get('pageCategory');
+  reloadList() {
+    new EventDispatcher('reloadable-frame-trackable-episode-list:reload').dispatch();
+    new EventDispatcher('reloadable-frame-tracking-modal:reload').dispatch();
   }
-
-  // render() {
-  //   if (this.isWatched) {
-  //     this.element.classList.add('btn-info');
-  //     this.element.classList.remove('btn-outline-info');
-  //   } else {
-  //     this.element.classList.remove('btn-info');
-  //     this.element.classList.add('btn-outline-info');
-  //   }
-  // }
-
-  // endLoading() {
-  //   this.isLoading = false
-  //   this.element.classList.remove(this.loadingClass);
-  // }
 
   watch() {
     if (this.isLoading) {
@@ -47,13 +29,6 @@ export default class extends Controller {
     if (!listGroupElm) {
       return
     }
-
-    // const episodeIds = Array.from(listGroupElm.querySelectorAll('.list-group-item')).map((itemElm) => {
-    //   if (itemElm instanceof HTMLElement) {
-    //     return Number(itemElm.dataset.episodeId)
-    //   }
-    // })
-    // const targetEpisodeIds = episodeIds.slice(episodeIds.indexOf(this.episodeIdValue))
 
     let isCurrentEpisodeIdMatched = false
     const episodeItemElms = Array.from(listGroupElm.querySelectorAll('.list-group-item')).filter((itemElm) => {
@@ -79,6 +54,7 @@ export default class extends Controller {
     this.isLoading = true
     watchButtonElms.forEach(watchButtonElm => {
       watchButtonElm?.classList?.add(this.loadingClass);
+      watchButtonElm?.setAttribute('disabled', "true");
     })
 
     axios
@@ -86,10 +62,7 @@ export default class extends Controller {
         episode_ids: targetEpisodeIds,
       })
       .then(() => {
-        episodeItemElms.forEach(episodeItemElm => {
-          episodeItemElm.remove()
-        })
-        location.reload();
+        this.reloadList();
       })
       .catch(() => {
         ($('.c-sign-up-modal') as any).modal('show');
