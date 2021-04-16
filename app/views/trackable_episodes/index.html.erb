@@ -30,12 +30,7 @@
 
       <ul class="list-group list-group-flush">
         <% @untracked_episodes.filter { |episode| episode.work_id == le.work_id }.each do |episode| %>
-          <li
-            class="c-tracking-state list-group-item"
-            data-controller="tracking-state"
-            data-tracking-state-episode-id-value="<%= episode.id %>"
-            data-tracking-state-tracked-class="c-tracking-state--tracked"
-          >
+          <li class="list-group-item">
             <div class="align-items-center row">
               <div class="col-auto pr-0">
                 <%= render Buttons::WatchEpisodeButtonComponent.new(
