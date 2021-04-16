@@ -1,4 +1,4 @@
-<turbo-frame id="track-page-tracked-episodes">
+<turbo-frame id="trackable-episode-list">
   <div class="card">
     <% @library_entries.each do |le| %>
       <div class="card-header">
@@ -65,5 +65,9 @@
         <% end %>
       </ul>
     <% end %>
+  </div>
+
+  <div class="mt-3 text-center">
+    <%= paginate @library_entries, params: { controller: 'tracks', action: 'show' } %>
   </div>
 </turbo-frame>

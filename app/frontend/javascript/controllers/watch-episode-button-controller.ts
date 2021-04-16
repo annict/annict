@@ -6,34 +6,19 @@ import { EventDispatcher } from '../utils/event-dispatcher';
 export default class extends Controller {
   static classes = ['loading']
   static values = {
-    recordId: Number
+    episodeId: Number,
+    pageCategory: String
   }
 
-  episodeId!: number | null;
+  episodeIdValue!: number | null;
   isLoading!: boolean;
-  isWatched!: boolean;
   loadingClass!: string;
-  pageCategory!: string | null;
-  recordIdValue!: number | null;
-
-  initialize() {
-    this.episodeId = Number(this.data.get('episodeId'));
-    this.pageCategory = this.data.get('pageCategory');
-  }
-
-  render() {
-    if (this.isWatched) {
-      this.element.classList.add('btn-info');
-      this.element.classList.remove('btn-outline-info');
-    } else {
-      this.element.classList.remove('btn-info');
-      this.element.classList.add('btn-outline-info');
-    }
-  }
+  pageCategoryValue!: string | null;
 
   startLoading() {
     this.isLoading = true
     this.element.classList.add(this.loadingClass);
+    this.element.setAttribute('disabled', "true");
   }
 
   endLoading() {
@@ -41,48 +26,28 @@ export default class extends Controller {
     this.element.classList.remove(this.loadingClass);
   }
 
-  toggle() {
+  reloadList() {
+    new EventDispatcher('trackable-episode-list:reload').dispatch();
+  }
+
+  watch() {
     if (this.isLoading) {
       return;
     }
 
     this.startLoading()
 
-    if (this.isWatched) {
-      axios
-        .delete(`/api/internal/records/${this.recordIdValue}`)
-        .then(() => {
-          this.endLoading()
-          this.recordIdValue = null
-          this.isWatched = false;
-
-          new EventDispatcher('tracking-state:change-to-untracked', {
-            episodeId: this.episodeId
-          }).dispatch();
-
-          this.render();
-        });
-    } else {
-      axios
-        .post('/api/internal/episode_records', {
-          episode_id: this.episodeId,
-          page_category: this.pageCategory,
-        })
-        .then((res: any) => {
-          this.recordIdValue = res.data.record_id
-          this.isWatched = true;
-
-          new EventDispatcher('tracking-state:change-to-tracked', {
-            episodeId: this.episodeId
-          }).dispatch();
-        })
-        .catch(() => {
-          ($('.c-sign-up-modal') as any).modal('show');
-        })
-        .then(() => {
-          this.endLoading()
-          this.render();
-        });
-    }
+    axios
+      .post('/api/internal/episode_records', {
+        episode_id: this.episodeIdValue,
+        page_category: this.pageCategoryValue,
+      })
+      .then((res: any) => {
+        this.endLoading()
+        this.reloadList()
+      })
+      .catch(() => {
+        ($('.c-sign-up-modal') as any).modal('show');
+      });
   }
 }

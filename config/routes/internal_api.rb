@@ -62,7 +62,6 @@ scope module: :api do
       match "/api/internal/library_entries",              via: :get,    as: :internal_api_library_entry_list,      to: "library_entries#index"
       match "/api/internal/likes",                        via: :get,    as: :internal_api_like_list,               to: "likes#index"
       match "/api/internal/multiple_episode_records",     via: :post,   as: :internal_api_multiple_episode_record, to: "multiple_episode_records#create"
-      match "/api/internal/records/:record_id",           via: :delete, as: :internal_api_record,                  to: "records#destroy"
       match "/api/internal/skipped_episodes",             via: :post,   as: :internal_api_skipped_episode_list,    to: "skipped_episodes#create"
       match "/api/internal/skipped_episodes/:episode_id", via: :delete, as: :internal_api_skipped_episode,         to: "skipped_episodes#destroy"
       match "/api/internal/tracked_resources",            via: :get,    as: :internal_api_tracked_resource_list,   to: "tracked_resources#index"

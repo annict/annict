@@ -1,11 +1,10 @@
 <button
   class="c-watch-episode-button <%= watch_episode_button_class_name %>"
   data-controller="watch-episode-button"
-  data-watch-episode-button-episode-id="<%= @episode_id %>"
+  data-watch-episode-button-episode-id-value="<%= @episode_id %>"
   data-watch-episode-button-loading-class="c-watch-episode-button--loading"
-  data-watch-episode-button-page-category="<%= @page_category %>"
-  data-watch-episode-button-record-id-value=""
-  data-action="click->watch-episode-button#toggle"
+  data-watch-episode-button-page-category-value="<%= @page_category %>"
+  data-action="click->watch-episode-button#watch"
 >
   <span class="c-watch-episode-button__spinner spinner-border spinner-border-sm"></span>
   <i class="fas fa-check"></i>
