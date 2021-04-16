@@ -7,7 +7,7 @@
             <div
               class="u-cursor-pointer"
               data-controller="tracking-modal-button"
-              data-tracking-modal-button-frame-path="<%= anime_frame_path(le.work_id) %>"
+              data-tracking-modal-button-frame-path="<%= trackable_anime_path(le.work_id) %>"
               data-action="click->tracking-modal-button#open"
             >
               <%= le.work.local_title %>

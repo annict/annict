@@ -1,0 +1,67 @@
+<turbo-frame id="c-tracking-modal__frame">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">
+          <%= @anime.local_title %>
+        </h3>
+
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <dl>
+          <dt><%= t "noun.status" %></dt>
+          <dd class="mt-2" style="width: 300px">
+            <%= render StatusSelectorComponent.new(
+              work_id: @anime.id, init_kind: @library_entry.status.kind, page_category: "tracking-modal"
+            ) %>
+          </dd>
+
+          <dt><%= t "noun.episodes" %></dt>
+          <dd class="mt-2">
+            <div class="card">
+              <%= render ListGroups::TrackingEpisodeListGroupComponent.new(episodes: @episodes) do %>
+                <% @episodes.each do |episode| %>
+                  <%= render ListGroupItems::TrackingEpisodeListGroupItemComponent.new(episode: episode) do %>
+                    <div class="align-items-center row">
+                      <div class="col-auto pr-0">
+                        <%= render Buttons::WatchEpisodeButtonComponent.new(
+                          episode_id: episode.id, page_category: page_category, class_name: "btn-sm btn-outline-info rounded-circle"
+                        ) %>
+                      </div>
+
+                      <div class="col-auto pl-2 px-0">
+                        <%= render Buttons::BulkWatchEpisodesButtonComponent.new(
+                          episode_id: episode.id, class_name: "btn-sm btn-outline-info rounded-circle"
+                        ) %>
+                      </div>
+
+                      <div class="col-auto pl-2 pr-0">
+                        <%= render Buttons::SkipEpisodeButtonComponent.new(
+                          episode_id: episode.id, class_name: "btn-sm btn-outline-secondary rounded-circle"
+                        ) %>
+                      </div>
+
+                      <div class="c-tracking-state__title col">
+                        <%= link_to episode_frame_path(episode.id), class: "text-body" do %>
+                          <%= episode.title_with_number %>
+                        <% end %>
+                      </div>
+                    </div>
+                  <% end %>
+                <% end %>
+              <% end %>
+            </div>
+
+            <div class="mt-3 text-center">
+              <%= paginate @episodes %>
+            </div>
+          </dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+</turbo-frame>

@@ -12,7 +12,7 @@
       </div>
 
       <div class="modal-body">
-        <%= link_to anime_frame_path(@episode.work_id) do %>
+        <%= link_to trackable_anime_path(@episode.work_id) do %>
           <i class="fas fa-angle-left"></i>
           <span class="pl-1">
             <%= @episode.work.local_title %>

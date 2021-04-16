@@ -146,14 +146,14 @@ constraints format: "html" do
     match "/sign_out", via: :delete, as: :sign_out, to: "devise/sessions#destroy"
   end
 
-  match "/sidebar_profile",     via: :get, as: :sidebar_profile,        to: "sidebar_profiles#show"
-  match "/track",               via: :get, as: :track,                  to: "tracks#show"
-  match "/trackable_episodes",  via: :get, as: :trackable_episode_list, to: "trackable_episodes#index"
+  match "/sidebar_profile",           via: :get, as: :sidebar_profile,        to: "sidebar_profiles#show"
+  match "/track",                     via: :get, as: :track,                  to: "tracks#show"
+  match "/trackable_anime/:anime_id", via: :get, as: :trackable_anime,        to: "trackable_anime#show"
+  match "/trackable_episodes",        via: :get, as: :trackable_episode_list, to: "trackable_episodes#index"
 end
 
 scope module: :frame do
   constraints format: "html" do
-    match "/frame/anime/:anime_id",     via: :get, as: :anime_frame,              to: "anime#show"
     match "/frame/episode/:episode_id", via: :get, as: :episode_frame,            to: "episodes#show"
   end
 end
