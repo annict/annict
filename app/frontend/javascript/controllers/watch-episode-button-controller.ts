@@ -10,10 +10,10 @@ export default class extends Controller {
     pageCategory: String
   }
 
-  episodeIdValue!: number | null;
+  episodeIdValue!: number;
   isLoading!: boolean;
   loadingClass!: string;
-  pageCategoryValue!: string | null;
+  pageCategoryValue!: string;
 
   startLoading() {
     this.isLoading = true

@@ -9,7 +9,7 @@ export default class extends Controller {
     episodeId: Number
   }
 
-  episodeIdValue!: number | null;
+  episodeIdValue!: number;
   isLoading!: boolean;
   loadingClass!: string;
 
