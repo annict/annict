@@ -22,7 +22,6 @@ class PageCategory
     search
     slot_list
     track
-    track_anime
     user_home
     user_work_tag
     work
