@@ -25,6 +25,7 @@ export default class extends Controller {
 
   reloadList() {
     new EventDispatcher('reloadable-frame-trackable-episode-list:reload').dispatch();
+    new EventDispatcher('reloadable-frame-tracking-modal:reload').dispatch();
   }
 
   skip() {
