@@ -21,7 +21,7 @@ module Selectors
       options = @anime.
         programs.
         only_kept.
-        joins(:channel).
+        eager_load(:channel).
         merge(@user.channels.only_kept).
         order(:started_at).
         map do |program|
