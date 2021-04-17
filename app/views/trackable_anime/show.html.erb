@@ -12,55 +12,75 @@
       </div>
 
       <div class="modal-body">
-        <dl>
-          <dt><%= t "noun.status" %></dt>
-          <dd class="mt-2" style="width: 300px">
-            <%= render StatusSelectorComponent.new(
-              work_id: @anime.id, init_kind: @library_entry.status.kind, page_category: "tracking-modal"
-            ) %>
-          </dd>
+        <div class="row">
+          <div class="col">
+            <h4>
+              <%= t "noun.status" %>
+            </h4>
 
-          <dt><%= t "noun.untracked_episodes" %></dt>
-          <dd class="mt-2">
-            <div class="card">
-              <%= render ListGroups::TrackingEpisodeListGroupComponent.new(episodes: @episodes) do %>
-                <% @episodes.each do |episode| %>
-                  <%= render ListGroupItems::TrackingEpisodeListGroupItemComponent.new(episode: episode) do %>
-                    <div class="align-items-center row">
-                      <div class="col-auto pr-0">
-                        <%= render Buttons::WatchEpisodeButtonComponent.new(
-                          episode_id: episode.id, page_category: page_category, class_name: "btn-sm btn-outline-info rounded-circle"
-                        ) %>
-                      </div>
+            <div style="width: 300px">
+              <%= render StatusSelectorComponent.new(
+                work_id: @anime.id, init_kind: @library_entry.status.kind, page_category: "tracking-modal"
+              ) %>
+            </div>
+          </div>
 
-                      <div class="col-auto pl-2 px-0">
-                        <%= render Buttons::BulkWatchEpisodesButtonComponent.new(
-                          episode_id: episode.id, class_name: "btn-sm btn-outline-info rounded-circle"
-                        ) %>
-                      </div>
+          <div class="col">
+            <h4>
+              <%= t "noun.programs" %>
+            </h4>
 
-                      <div class="col-auto pl-2 pr-0">
-                        <%= render Buttons::SkipEpisodeButtonComponent.new(
-                          episode_id: episode.id, class_name: "btn-sm btn-outline-secondary rounded-circle"
-                        ) %>
-                      </div>
+            <div style="width: 300px">
+              <%= render Selectors::ProgramSelectorComponent.new(
+                anime: @anime, library_entry: @library_entry
+              ) %>
+            </div>
+          </div>
+        </div>
 
-                      <div class="c-tracking-state__title col">
-                        <%= link_to episode_frame_path(episode.id), class: "text-body" do %>
-                          <%= episode.title_with_number %>
-                        <% end %>
-                      </div>
+        <div class="mt-3">
+          <h4>
+            <%= t "noun.untracked_episodes" %>
+          </h4>
+
+          <div class="card">
+            <%= render ListGroups::TrackingEpisodeListGroupComponent.new(episodes: @episodes) do %>
+              <% @episodes.each do |episode| %>
+                <%= render ListGroupItems::TrackingEpisodeListGroupItemComponent.new(episode: episode) do %>
+                  <div class="align-items-center row">
+                    <div class="col-auto pr-0">
+                      <%= render Buttons::WatchEpisodeButtonComponent.new(
+                        episode_id: episode.id, page_category: page_category, class_name: "btn-sm btn-outline-info rounded-circle"
+                      ) %>
                     </div>
-                  <% end %>
+
+                    <div class="col-auto pl-2 px-0">
+                      <%= render Buttons::BulkWatchEpisodesButtonComponent.new(
+                        episode_id: episode.id, class_name: "btn-sm btn-outline-info rounded-circle"
+                      ) %>
+                    </div>
+
+                    <div class="col-auto pl-2 pr-0">
+                      <%= render Buttons::SkipEpisodeButtonComponent.new(
+                        episode_id: episode.id, class_name: "btn-sm btn-outline-secondary rounded-circle"
+                      ) %>
+                    </div>
+
+                    <div class="c-tracking-state__title col">
+                      <%= link_to episode_frame_path(episode.id), class: "text-body" do %>
+                        <%= episode.title_with_number %>
+                      <% end %>
+                    </div>
+                  </div>
                 <% end %>
               <% end %>
-            </div>
+            <% end %>
+          </div>
 
-            <div class="mt-3 text-center">
-              <%= paginate @episodes %>
-            </div>
-          </dd>
-        </dl>
+          <div class="mt-3 text-center">
+            <%= paginate @episodes %>
+          </div>
+        </div>
       </div>
     </div>
   </div>

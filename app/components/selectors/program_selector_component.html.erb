@@ -1,0 +1,10 @@
+<select
+  class="c-program-selector custom-select <%= program_selector_class_name %>"
+  data-controller="program-selector"
+  data-program-selector-library-entry-id-value="<%= @library_entry.id %>"
+  data-program-selector-init-program-id-value="<%= @library_entry.program_id %>"
+  data-program-selector-target="select"
+  data-action="program-selector#change"
+>
+  <%= options_for_select(program_options) %>
+</select>

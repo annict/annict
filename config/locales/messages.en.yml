@@ -34,6 +34,8 @@ en:
         add_to_favorites: Add to Favorites
         added_to_favorites: Added to Favorites
         hint: If you add this %{resource_type} into your favorites, you'll get a notification when upcoming animes which is related to this %{resource_type} will be added to Annict.
+      program_selector:
+        select_program: Select Program
       sign_up_modal:
         body: You can use this feature after sign up.
     _empty:
