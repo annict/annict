@@ -18,6 +18,6 @@ class TrackableEpisodesController < V4::ApplicationController
       episode_condition: ["id IN (?)", episodes.pluck(:id) - @library_entries.pluck(:watched_episode_ids).flatten],
       limit: 3
     )
-    @slots = Slot.only_kept.where(episode_id: @untracked_episodes.pluck(:id)).select(:episode_id, :started_at)
+    @slots = Slot.only_kept.where(episode_id: @untracked_episodes.pluck(:id)).select(:program_id, :episode_id, :started_at)
   end
 end

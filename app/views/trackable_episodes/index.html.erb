@@ -52,7 +52,7 @@
               <div class="col text-right">
                 <% if le.program %>
                   <span class="small text-muted">
-                    <%= display_time(@slots.filter { |slot| slot.episode_id == episode.id }.first&.started_at) %>
+                    <%= display_time(@slots.filter { |slot| slot.program_id == le.program.id && slot.episode_id == episode.id }.first&.started_at) %>
                   </span>
                 <% end %>
               </div>
