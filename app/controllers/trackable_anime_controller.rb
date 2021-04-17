@@ -12,6 +12,6 @@ class TrackableAnimeController < V4::ApplicationController
       where.not(id: @library_entry.watched_episode_ids).
       order(sort_number: :desc).
       page(params[:page]).
-      per(10)
+      per(15)
   end
 end
