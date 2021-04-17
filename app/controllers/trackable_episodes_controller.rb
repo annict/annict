@@ -20,4 +20,8 @@ class TrackableEpisodesController < V4::ApplicationController
     )
     @slots = Slot.only_kept.where(episode_id: @untracked_episodes.pluck(:id)).select(:program_id, :episode_id, :started_at)
   end
+
+  def show
+    @episode = Episode.only_kept.find(params[:episode_id])
+  end
 end

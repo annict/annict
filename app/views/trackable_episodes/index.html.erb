@@ -45,8 +45,15 @@
                 ) %>
               </div>
 
-              <div class="c-tracking-state__title col">
-                <%= episode.title_with_number %>
+              <div class="col">
+                <div
+                  class="u-cursor-pointer"
+                  data-controller="tracking-modal-button"
+                  data-tracking-modal-button-frame-path="<%= trackable_episode_path(episode.id) %>"
+                  data-action="click->tracking-modal-button#open"
+                >
+                  <%= episode.title_with_number %>
+                </div>
               </div>
 
               <div class="col text-right">
