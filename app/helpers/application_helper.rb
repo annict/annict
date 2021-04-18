@@ -33,6 +33,11 @@ module ApplicationHelper
     I18n.locale == :ja ? "@AnnictJP" : "@anannict"
   end
 
+  def skeleton_loader_content(size:, class_name: "")
+    width, height = size.split("x")
+    tag.div(class: "c-skeleton-loader__content #{class_name}", style: "height: #{height}px; width: #{width}px;")
+  end
+
   def annict_config
     config = {
       domain: locale == :ja ? ENV.fetch("ANNICT_JP_DOMAIN") : ENV.fetch("ANNICT_DOMAIN"),

@@ -1,12 +1,7 @@
 # frozen_string_literal: true
 
 class SidebarComponent < ApplicationComponent
-  def initialize(user:, search:)
-    @user = user
+  def initialize(search:)
     @search = search
   end
-
-  private
-
-  attr_reader :user, :search
 end

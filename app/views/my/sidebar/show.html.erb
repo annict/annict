@@ -1,0 +1,106 @@
+<div id="c-sidebar__profile-info">
+  <% if @user %>
+    <%= link_to profile_path(@user.username), class: "align-content-center row" do %>
+      <div class="col-3 pr-0">
+        <%= render ProfileImageComponent.new(image_url_1x: ann_image_url(@user.profile, :image, size: "50x50", ratio: "1:1"), alt: "@#{@user.username}", lazy_load: false) %>
+      </div>
+
+      <div class="col-auto">
+        <div class="font-weight-bold u-text-body">
+          <%= @user.profile.name %>
+        </div>
+
+        <div class="small text-secondary">
+          @<%= @user.username %>
+        </div>
+      </div>
+    <% end %>
+  <% else %>
+    <%= link_to sign_in_path, class: "d-flex justify-content-between py-2" do %>
+      <div class="c-sidebar__icon mr-1 text-center text-muted">
+        <i class="fal fa-sign-in"></i>
+      </div>
+
+      <div class="flex-grow-1 text-body">
+        <%= t "noun.sign_in" %>
+      </div>
+    <% end %>
+  <% end %>
+</div>
+
+<div
+  id="c-sidebar__profile-link"
+>
+  <%= link_to @user ? profile_path(@user.username) : sign_in_path, class: "d-flex justify-content-between py-2" do %>
+    <div class="c-sidebar__icon mr-1 text-center text-muted">
+      <i class="fas fa-user"></i>
+    </div>
+
+    <div class="flex-grow-1 text-body">
+      <%= t "noun.profile" %>
+    </div>
+  <% end %>
+</div>
+
+<div
+  data-user-data-fetcher--sidebar-target="replacement"
+  id="c-sidebar__notifications-count"
+>
+  <% if @user && @user.notifications_count > 0 %>
+    <span class="badge badge-pill badge-primary">
+      <%= @user.notifications_count %>
+    </span>
+  <% end %>
+</div>
+
+<div
+  data-user-data-fetcher--sidebar-target="replacement"
+  id="c-sidebar__library-links"
+>
+  <% [
+    [:watching, "play", t("noun.watching")],
+    [:wanna_watch, "circle", t("noun.plan_to_watch")],
+    [:watched, "check", t("noun.completed")],
+    [:on_hold, "pause", t("noun.on_hold")],
+    [:stop_watching, "stop", t("noun.dropped")]
+  ].each do |status_kind, icon_name, link_text| %>
+    <li>
+      <%= link_to @user ? library_path(username: @user.username, status_kind: status_kind) : sign_in_path, class: "d-flex justify-content-between py-2" do %>
+        <div class="c-sidebar__icon mr-1 text-center text-muted">
+          <i class="fas fa-<%= icon_name %>"></i>
+        </div>
+
+        <div class="flex-grow-1 text-body">
+          <%= link_text %>
+        </div>
+      <% end %>
+    </li>
+  <% end %>
+</div>
+
+<div id="c-sidebar__sign_out_link">
+  <% if @user %>
+    <hr>
+
+    <ul class="list-unstyled px-3">
+      <li>
+        <%= link_to(
+          sign_out_path,
+          class: "d-flex justify-content-between py-2",
+          data: {
+            confirm: t("messages._common.are_you_sure"),
+            method: :delete
+          }
+        ) do %>
+          <div class="c-sidebar__icon mr-1 text-center text-muted">
+            <i class="fal fa-sign-out"></i>
+          </div>
+
+          <div class="flex-grow-1 text-body">
+            <%= t "verb.sign_out" %>
+          </div>
+        <% end %>
+      </li>
+    </ul>
+  <% end %>
+</div>

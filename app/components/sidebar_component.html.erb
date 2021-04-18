@@ -1,4 +1,8 @@
-<div class="c-sidebar h-100" data-controller="sidebar">
+<div
+  class="c-sidebar h-100"
+  data-controller="sidebar user-data-fetcher--sidebar"
+  data-user-data-fetcher--sidebar-url-value="<%= my_sidebar_path %>"
+>
   <div class="c-sidebar__background" data-action="click->sidebar#hide"></div>
 
   <div class="c-sidebar__content">
@@ -12,15 +16,26 @@
       ) %>
     <% end %>
 
-    <% if user %>
-      <div class="mb-3 px-3">
-        <%= render SidebarProfileComponent.new %>
+    <div class="mb-3 px-3">
+      <div
+        data-user-data-fetcher--sidebar-target="replacement"
+        id="c-sidebar__profile-info"
+      >
+        <div class="c-skeleton-loader row">
+          <div class="col-3 pr-0">
+            <%= helpers.skeleton_loader_content(size: "44x44", class_name: "rounded-circle") %>
+          </div>
+          <div class="col-auto">
+            <%= helpers.skeleton_loader_content(size: "81x22") %>
+            <%= helpers.skeleton_loader_content(size: "81x18") %>
+          </div>
+        </div>
       </div>
-    <% end %>
+    </div>
 
     <div class="mb-3 px-1">
       <%= form_with html: { autocomplete: "off", method: :get }, local: true, url: search_path do %>
-        <%= text_field_tag "q", search.q, class: "form-control", placeholder: t("messages._common.search_with_keywords") %>
+        <%= text_field_tag "q", @search.q, class: "form-control", placeholder: t("messages._common.search_with_keywords") %>
       <% end %>
     </div>
 
@@ -37,80 +52,80 @@
         <% end %>
       </li>
 
-      <% if user %>
+      <li
+        data-user-data-fetcher--sidebar-target="replacement"
+        id="c-sidebar__profile-link"
+      >
+        <%= link_to sign_in_path, class: "d-flex justify-content-between py-2" do %>
+          <div class="c-sidebar__icon mr-1 text-center text-muted">
+            <i class="fas fa-user"></i>
+          </div>
+
+          <div class="flex-grow-1 text-body">
+            <%= t "noun.profile" %>
+          </div>
+        <% end %>
+      </li>
+
+      <li>
+        <%= link_to notifications_path, class: "d-flex justify-content-between py-2" do %>
+          <div class="c-sidebar__icon mr-1 text-center text-muted">
+            <i class="fas fa-bell"></i>
+          </div>
+
+          <div class="flex-grow-1 text-body">
+            <%= t "head.title.notifications.index" %>
+          </div>
+
+          <div
+            data-user-data-fetcher--sidebar-target="replacement"
+            id="c-sidebar__notifications-count"
+          ></div>
+        <% end %>
+      </li>
+
+      <li>
+        <%= link_to "/track", class: "d-flex justify-content-between py-2" do %>
+          <div class="c-sidebar__icon mr-1 text-center text-muted">
+            <i class="fas fa-tasks"></i>
+          </div>
+
+          <div class="flex-grow-1 text-body">
+            <%= t "verb.track" %>
+          </div>
+        <% end %>
+      </li>
+    </ul>
+
+    <div class="font-weight-bold mb-3 px-3 small text-secondary">
+      <%= t "noun.library" %>
+    </div>
+
+    <ul
+      class="list-unstyled px-3"
+      data-user-data-fetcher--sidebar-target="replacement"
+      id="c-sidebar__library-links"
+    >
+      <% [
+        [:watching, "play", t("noun.watching")],
+        [:wanna_watch, "circle", t("noun.plan_to_watch")],
+        [:watched, "check", t("noun.completed")],
+        [:on_hold, "pause", t("noun.on_hold")],
+        [:stop_watching, "stop", t("noun.dropped")]
+      ].each do |status_kind, icon_name, link_text| %>
         <li>
-          <%= link_to profile_path(user.username), class: "d-flex justify-content-between py-2" do %>
+          <%= link_to sign_in_path, class: "d-flex justify-content-between py-2" do %>
             <div class="c-sidebar__icon mr-1 text-center text-muted">
-              <i class="fas fa-user"></i>
+              <i class="fas fa-<%= icon_name %>"></i>
             </div>
 
             <div class="flex-grow-1 text-body">
-              <%= t "noun.profile" %>
-            </div>
-          <% end %>
-        </li>
-
-        <li>
-          <%= link_to notifications_path, class: "d-flex justify-content-between py-2" do %>
-            <div class="c-sidebar__icon mr-1 text-center text-muted">
-              <i class="fas fa-bell"></i>
-            </div>
-
-            <div class="flex-grow-1 text-body">
-              <%= t "head.title.notifications.index" %>
-            </div>
-
-            <% if user.notifications_count > 0 %>
-              <div>
-                <span class="badge badge-pill badge-primary">
-                  <%= user.notifications_count %>
-                </span>
-              </div>
-            <% end %>
-          <% end %>
-        </li>
-
-        <li>
-          <%= link_to "/track", class: "d-flex justify-content-between py-2" do %>
-            <div class="c-sidebar__icon mr-1 text-center text-muted">
-              <i class="fas fa-tasks"></i>
-            </div>
-
-            <div class="flex-grow-1 text-body">
-              <%= t "verb.track" %>
+              <%= link_text %>
             </div>
           <% end %>
         </li>
       <% end %>
     </ul>
-
-    <% if user %>
-      <div class="font-weight-bold mb-3 px-3 small text-secondary">
-        <%= t "noun.library" %>
-      </div>
-
-      <ul class="list-unstyled px-3">
-        <% [
-          [:watching, "play", t("noun.watching")],
-          [:wanna_watch, "circle", t("noun.plan_to_watch")],
-          [:watched, "check", t("noun.completed")],
-          [:on_hold, "pause", t("noun.on_hold")],
-          [:stop_watching, "stop", t("noun.dropped")]
-        ].each do |status_kind, icon_name, link_text| %>
-          <li>
-            <%= link_to library_path(username: user.username, status_kind: status_kind), class: "d-flex justify-content-between py-2" do %>
-              <div class="c-sidebar__icon mr-1 text-center text-muted">
-                <i class="fas fa-<%= icon_name %>"></i>
-              </div>
-
-              <div class="flex-grow-1 text-body">
-                <%= link_text %>
-              </div>
-            <% end %>
-          </li>
-        <% end %>
-      </ul>
-    <% end %>
 
     <div class="font-weight-bold mb-3 px-3 small text-secondary">
       <%= t "verb.explore" %>
@@ -144,25 +159,23 @@
 
     <ul class="list-unstyled px-3">
       <% [
-        [friends_path, "search", t("head.title.friends.index"), true],
-        [channels_path, "tv", t("head.title.channels.index"), true],
-        [profile_setting_path, "cog", t("noun.settings"), true],
-        [faqs_path, "question-circle", t("head.title.faqs.index"), false],
-        [about_path, "info-circle", t("head.title.pages.about"), false]
-      ].each do |link_path, icon_name, link_text, sign_in_required| %>
-        <% if user || !sign_in_required %>
-          <li>
-            <%= link_to link_path, class: "d-flex justify-content-between py-2" do %>
-              <div class="c-sidebar__icon mr-1 text-center text-muted">
-                <i class="fas fa-<%= icon_name %>"></i>
-              </div>
+        [friends_path, "search", t("head.title.friends.index")],
+        [channels_path, "tv", t("head.title.channels.index")],
+        [profile_setting_path, "cog", t("noun.settings")],
+        [faqs_path, "question-circle", t("head.title.faqs.index")],
+        [about_path, "info-circle", t("head.title.pages.about")]
+      ].each do |link_path, icon_name, link_text| %>
+        <li>
+          <%= link_to link_path, class: "d-flex justify-content-between py-2" do %>
+            <div class="c-sidebar__icon mr-1 text-center text-muted">
+              <i class="fas fa-<%= icon_name %>"></i>
+            </div>
 
-              <div class="flex-grow-1 text-body">
-                <%= link_text %>
-              </div>
-            <% end %>
-          </li>
-        <% end %>
+            <div class="flex-grow-1 text-body">
+              <%= link_text %>
+            </div>
+          <% end %>
+        </li>
       <% end %>
     </ul>
 
@@ -203,39 +216,9 @@
       </li>
     </ul>
 
-    <hr>
-
-    <ul class="list-unstyled px-3">
-      <li>
-        <% if user %>
-          <%= link_to(
-            sign_out_path,
-            class: "d-flex justify-content-between py-2",
-            data: {
-              confirm: t("messages._common.are_you_sure"),
-              method: :delete
-            }
-          ) do %>
-            <div class="c-sidebar__icon mr-1 text-center text-muted">
-              <i class="fal fa-sign-out"></i>
-            </div>
-
-            <div class="flex-grow-1 text-body">
-              <%= t "verb.sign_out" %>
-            </div>
-          <% end %>
-        <% else %>
-          <%= link_to sign_in_path, class: "d-flex justify-content-between py-2" do %>
-            <div class="c-sidebar__icon mr-1 text-center text-muted">
-              <i class="fal fa-sign-in"></i>
-            </div>
-
-            <div class="flex-grow-1 text-body">
-              <%= t "noun.sign_in" %>
-            </div>
-          <% end %>
-        <% end %>
-      </li>
-    </ul>
+    <div
+      data-user-data-fetcher--sidebar-target="replacement"
+      id="c-sidebar__sign_out_link"
+    ></div>
   </div>
 </div>
