@@ -147,7 +147,8 @@ constraints format: "html" do
   end
 
   namespace :my do
-    match "/sidebar", via: :get, as: :sidebar, to: "sidebar#show"
+    match "/sidebar",                 via: :get, as: :sidebar,                     to: "sidebar#show"
+    match "/receive_channel_buttons", via: :get, as: :receive_channel_button_list, to: "receive_channel_buttons#index"
   end
 
   match "/track",                          via: :get, as: :track,                  to: "tracks#show"

@@ -17,7 +17,6 @@ import youtubeModalPlayer from './components/youtubeModalPlayer';
 
 export default {
   start() {
-    Vue.component('c-channel-receive-button', channelReceiveButton);
     Vue.component('c-favorite-button', favoriteButton);
     Vue.component('c-follow-button', followButton);
     Vue.component('c-impression-button', impressionButton);
