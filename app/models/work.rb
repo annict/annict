@@ -237,6 +237,8 @@ class Work < ApplicationRecord
       or(where("season_year < ?", season.year))
   }
 
+  delegate :copyright, to: :work_image
+
   def self.statuses(work_ids, user)
     work_ids = work_ids.uniq
     library_entries = LibraryEntry.where(user: user, work_id: work_ids).eager_load(:status)
@@ -416,6 +418,10 @@ class Work < ApplicationRecord
     records = Record.where(episode_id: episode_ids).where("comment != ?", "")
 
     records.count
+  end
+
+  def syobocal_tid
+    sc_tid
   end
 
   def sync_with_syobocal?

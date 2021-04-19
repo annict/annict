@@ -23,7 +23,7 @@ module Canary
         field :viewer_tracked, Boolean, null: false
         field :viewer_tracked_in_current_status, Boolean, null: false
         field :episode_records_count, Integer, null: false
-        field :commented_episode_records_count, Integer, null: false, method: :episode_record_bodies_count
+        field :commented_episode_records_count, Integer, null: false
         field :viewer_records_count, Integer, null: false
         field :anime, Canary::Types::Objects::AnimeType, null: false
         field :prev_episode, Canary::Types::Objects::EpisodeType, null: true

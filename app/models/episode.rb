@@ -96,12 +96,20 @@ class Episode < ApplicationRecord
     find_by_sql(sql)
   end
 
+  def anime
+    work
+  end
+
   def next_episode
-    work.episodes.find_by(prev_episode: self)
+    @next_episode ||= work.episodes.only_kept.find_by(prev_episode: self)
   end
 
   def number_title
     "#{number}「#{title}」"
+  end
+
+  def commented_episode_records_count
+    episode_record_bodies_count
   end
 
   # 映画やOVAなどの実質エピソードを持たない作品かどうかを判定する

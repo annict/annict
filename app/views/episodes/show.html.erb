@@ -1,34 +1,34 @@
-<% title = t "head.title.episodes.show", work_title: @episode_entity.anime.local_title, episode_title_with_number: @episode_entity.title_with_number %>
-<% description = meta_description(t("head.meta.description.episodes.show", work_title: @episode_entity.anime.local_title, episode_title_with_number: @episode_entity.title_with_number)) %>
-<% image_url = @episode_entity.anime.image_url_1x %>
+<% title = t "head.title.episodes.show", work_title: @anime.local_title, episode_title_with_number: @episode.title_with_number %>
+<% description = meta_description(t("head.meta.description.episodes.show", work_title: @anime.local_title, episode_title_with_number: @episode.title_with_number)) %>
+<% image_url = ann_image_url(@anime.work_image, :image, size: "640x", ratio: "3:4") %>
 <% set_meta_tags(title: title, description: description, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false) %>
 
 <div class="container-fluid">
   <div class="row">
     <div class="col-md-3 pr-md-0 py-3">
-      <%= render Sidebars::AnimeSidebarComponent.new(anime_entity: @episode_entity.anime, vod_channel_entities: @existing_vod_channel_entities, viewer: current_user) %>
+      <%= render Sidebars::AnimeSidebarComponent2.new(anime: @anime, vod_channels: @vod_channels) %>
     </div>
 
     <div class="col-md-9">
       <div class="mb-3">
-        <%= render WorkSubNavComponent.new(work_entity: @episode_entity.anime, page_category: page_category) %>
+        <%= render AnimeSubNavComponent.new(anime: @anime, page_category: page_category) %>
       </div>
 
       <div class="align-items-center mb-1 row">
         <div class="col">
           <h2 class="mb-0">
-            <%= link_to @episode_entity.title_with_number, episode_path(@episode_entity.anime.database_id, @episode_entity.database_id), class: "u-text-body" %>
+            <%= link_to @episode.title_with_number, episode_path(@anime.id, @episode.id), class: "u-text-body" %>
           </h2>
         </div>
         <div class="col-auto pl-0">
-          <%= render ButtonGroups::EpisodeTransitionButtonGroupComponent.new(episode_entity: @episode_entity) %>
+          <%= render ButtonGroups::EpisodeTransitionButtonGroupComponent2.new(episode: @episode) %>
         </div>
       </div>
 
       <ul class="list-inline mb-3">
         <li class="list-inline-item">
           <span class="font-weight-bold h4">
-            <%= @episode_entity.episode_records_count %>
+            <%= @episode.episode_records_count %>
           </span>
           <span class="small text-muted">
             <%= t "noun.records_count" %>
@@ -36,7 +36,7 @@
         </li>
         <li class="list-inline-item">
           <span class="font-weight-bold h4">
-            <%= @episode_entity.commented_episode_records_count %>
+            <%= @episode.commented_episode_records_count %>
           </span>
           <span class="small text-muted">
             <%= t "noun.comments_count" %>
@@ -45,7 +45,7 @@
       </ul>
 
       <div class="mb-5">
-        <%= render Forms::EpisodeRecordFormComponent.new(form: @form, viewer: current_user) %>
+        <%# render Forms::EpisodeRecordFormComponent.new(form: @form, viewer: current_user) %>
       </div>
 
       <hr class="mb-5">
@@ -55,7 +55,7 @@
           <%= t "noun.my_records" %>
         </h3>
 
-        <%= render Lists::RecordListComponent.new(viewer: current_user, record_entities: @my_record_entities, show_card: false) %>
+        <%# render Lists::RecordListComponent.new(viewer: current_user, record_entities: @my_record_entities, show_card: false) %>
       </div>
 
       <hr class="mb-5">
@@ -65,7 +65,7 @@
           <%= t "noun.following_records" %>
         </h3>
 
-        <%= render Lists::RecordListComponent.new(viewer: current_user, record_entities: @following_record_entities, show_card: false) %>
+        <%# render Lists::RecordListComponent.new(viewer: current_user, record_entities: @following_record_entities, show_card: false) %>
       </div>
 
       <hr class="mb-5">
@@ -75,7 +75,7 @@
           <%= t "noun.other_comments" %>
         </h3>
 
-        <%= render Lists::RecordListComponent.new(viewer: current_user, record_entities: @other_record_entities, show_card: false) %>
+        <%# render Lists::RecordListComponent.new(viewer: current_user, record_entities: @other_record_entities, show_card: false) %>
       </div>
     </div>
   </div>

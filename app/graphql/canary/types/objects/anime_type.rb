@@ -211,10 +211,6 @@ module Canary
           object.season&.slug
         end
 
-        def syobocal_tid
-          object.sc_tid
-        end
-
         def image
           Canary::RecordLoader.for(WorkImage, column: :work_id).load(object.id).then do |work_image|
             work_image || WorkImage.new

@@ -147,14 +147,16 @@ constraints format: "html" do
   end
 
   namespace :my do
+    match "/anime/:anime_id/sidebar", via: :get, as: :anime_sidebar,               to: "anime_sidebar#show"
     match "/sidebar",                 via: :get, as: :sidebar,                     to: "sidebar#show"
     match "/receive_channel_buttons", via: :get, as: :receive_channel_button_list, to: "receive_channel_buttons#index"
   end
 
-  match "/track",                          via: :get, as: :track,                  to: "tracks#show"
-  match "/trackable_anime/:anime_id",      via: :get, as: :trackable_anime,        to: "trackable_anime#show"
-  match "/trackable_episodes",             via: :get, as: :trackable_episode_list, to: "trackable_episodes#index"
-  match "/trackable_episodes/:episode_id", via: :get, as: :trackable_episode,      to: "trackable_episodes#show"
+  match "/track",                                via: :get, as: :track,                  to: "tracks#show"
+  match "/trackable_anime/:anime_id",            via: :get, as: :trackable_anime,        to: "trackable_anime#show"
+  match "/trackable_episodes",                   via: :get, as: :trackable_episode_list, to: "trackable_episodes#index"
+  match "/trackable_episodes/:episode_id",       via: :get, as: :trackable_episode,      to: "trackable_episodes#show"
+  match "/works/:anime_id/episodes/:episode_id", via: :get, as: :episode,                to: "episodes#show"
 end
 
 scope module: :v4 do
@@ -182,7 +184,6 @@ scope module: :v4 do
     match "/works/:anime_id/episodes",                     via: :get,    as: :episode_list,            to: "episodes#index"
     match "/works/:anime_id/records",                      via: :get,    as: :anime_record_list,       to: "anime_records#index"
     match "/works/:anime_id/records",                      via: :post,                                 to: "anime_records#create"
-    match "/works/:anime_id/episodes/:episode_id",         via: :get,    as: :episode,                 to: "episodes#show"
     match "/works/:anime_id/episodes/:episode_id/records", via: :post,   as: :episode_record_list,     to: "episode_records#create"
   end
 end

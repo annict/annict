@@ -19,11 +19,5 @@ module V4
       @page_info_entity = result.page_info_entity
       load_vod_channel_entities(anime: anime, anime_entity: @anime_entity)
     end
-
-    def show
-      set_page_category PageCategory::EPISODE
-
-      load_episode_and_records(work_id: params[:anime_id], episode_id: params[:episode_id])
-    end
   end
 end
