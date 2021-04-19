@@ -1,0 +1,31 @@
+<div class="c-episode-record-card c-record-card card col-11 col-lg-10 mb-2 px-0">
+  <div class="card-body p-2">
+    <div class="row">
+      <div class="col-auto pr-0">
+        <%= link_to anime_path(@anime.id) do %>
+          <%= render WorkImageComponent.new(
+              image_url_1x: @anime.image_url(size: "60x80"),
+              image_url_2x: @anime.image_url(size: "120x160"),
+              alt: @anime.local_title
+          ) %>
+        <% end %>
+      </div>
+
+      <div class="col">
+        <div class="mb-1">
+          <%= link_to @anime.local_title, anime_path(@anime.id), class: "d-block" %>
+
+          <%= link_to episode_path(@anime.id, @episode.id), class: "d-block small" do %>
+            <span class="pr-1">
+              <%= @episode.local_number %>
+            </span>
+
+            <%= @episode.local_title %>
+          <% end %>
+        </div>
+
+        <%= render StatusSelectorComponent.new(work_id: @anime.id, page_category: "user-home", small: true) %>
+      </div>
+    </div>
+  </div>
+</div>

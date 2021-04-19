@@ -55,7 +55,14 @@
           <%= t "noun.my_records" %>
         </h3>
 
-        <%# render Lists::RecordListComponent.new(viewer: current_user, record_entities: @my_record_entities, show_card: false) %>
+        <turbo-frame
+          data-controller="reloadable-frame"
+          data-reloadable-frame-event-name-value="my-episode-record-list"
+          data-reloadable-frame-target="frame"
+          id="my-episode-record-list"
+          src="<%= my_episode_record_list_path(@episode.id) %>"
+          target="_top"
+        ></turbo-frame>
       </div>
 
       <hr class="mb-5">

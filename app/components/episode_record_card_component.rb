@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# TODO: EpisodeRecordCardComponent2 に置き換える
 class EpisodeRecordCardComponent < ApplicationComponent
   def initialize(work_entity:, episode_entity:, episode_record_entity:)
     @work_entity = work_entity

@@ -126,6 +126,10 @@ class EpisodeRecord < ApplicationRecord
     order(:id).first
   end
 
+  def comment
+    body
+  end
+
   def generate_url_hash
     SecureRandom.urlsafe_base64.slice(0, 10)
   end

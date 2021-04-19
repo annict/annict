@@ -51,4 +51,16 @@ class Record < ApplicationRecord
   def anime_record
     work_record
   end
+
+  def modified_at
+    if anime_record?
+      return anime_record.modified_at
+    end
+
+    episode_record.updated_at if episode_record.modify_body?
+  end
+
+  def likes_count
+    episode_record? ? episode_record.likes_count : anime_record.likes_count
+  end
 end

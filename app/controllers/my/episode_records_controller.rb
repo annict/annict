@@ -2,7 +2,21 @@
 
 module My
   class EpisodeRecordsController < V4::ApplicationController
+    layout false
+
     before_action :authenticate_user!, only: %i(create)
+
+    def index
+      render unless user_signed_in?
+
+      episode = Episode.only_kept.find(params[:episode_id])
+      @records = current_user.
+        records.
+        only_kept.
+        eager_load(:episode_record).
+        where(episode_records: { episode_id: episode.id }).
+        order(created_at: :desc)
+    end
 
     def create
       @form = EpisodeRecordForm.new(episode_record_form_params)

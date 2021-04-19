@@ -1,0 +1,5 @@
+<turbo-frame id="my-episode-record-list">
+  <% if user_signed_in? %>
+    <%= render Lists::RecordListComponent2.new(records: @records, current_user: current_user, show_card: false) %>
+  <% end %>
+</div>

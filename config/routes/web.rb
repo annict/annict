@@ -149,7 +149,8 @@ constraints format: "html" do
   namespace :my do
     match "/anime/:anime_id/sidebar",          via: :get,  as: :anime_sidebar,               to: "anime_sidebar#show"
     match "/episodes/:episode_id/record_form", via: :get,  as: :episode_record_form,         to: "episode_record_forms#show"
-    match "/episodes/:episode_id/records",     via: :post, as: :episode_record_list,         to: "episode_records#create"
+    match "/episodes/:episode_id/records",     via: :get,  as: :episode_record_list,         to: "episode_records#index"
+    match "/episodes/:episode_id/records",     via: :post,                                   to: "episode_records#create"
     match "/sidebar",                          via: :get,  as: :sidebar,                     to: "sidebar#show"
     match "/receive_channel_buttons",          via: :get,  as: :receive_channel_button_list, to: "receive_channel_buttons#index"
   end
