@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class EpisodeRecordForm < ApplicationForm
-  attr_accessor :episode_id, :record_id
+  attr_accessor :episode, :record_id
   attr_reader :comment, :rating, :share_to_twitter
 
   validates :comment, length: { maximum: 1 }
@@ -25,9 +25,5 @@ class EpisodeRecordForm < ApplicationForm
 
   def unique_id
     SecureRandom.uuid
-  end
-
-  def episode
-    @episode ||= Episode.only_kept.find(episode_id)
   end
 end

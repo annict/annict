@@ -8,7 +8,7 @@ module My
 
     def show
       episode = Episode.only_kept.find(params[:episode_id])
-      @form = EpisodeRecordForm.new(episode_id: episode.id)
+      @form = EpisodeRecordForm.new(episode: episode)
     end
   end
 end

@@ -1,10 +1,8 @@
-<%= form_with model: @form, url: my_episode_record_list_path(@form.episode_id), method: form_method, local: false, data: { controller: "episode-record-form", action: "ajax:error->episode-record-form#handleError ajax:success->episode-record-form#handleSuccess" } do |f| %>
+<%= form_with model: @form, url: my_episode_record_list_path(@form.episode.id), method: form_method, local: false, data: { controller: "episode-record-form", action: "ajax:error->episode-record-form#handleError ajax:success->episode-record-form#handleSuccess" } do |f| %>
   <%= render ErrorPanelComponent2.new(stimulus_controller: "episode-record-form") %>
 
   <% if @form.persisted? %>
     <%= f.hidden_field :record_id %>
-  <% else %>
-    <%= f.hidden_field :episode_id %>
   <% end %>
 
   <div class="mb-2">
