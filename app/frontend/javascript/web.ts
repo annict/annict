@@ -27,7 +27,7 @@ document.addEventListener('turbo:load', (_event) => {
     .querySelector('meta[name="csrf-token"]')
     ?.getAttribute('content');
 
-  vueApp.start();
+  // vueApp.start();
 });
 
 const application = Application.start();
