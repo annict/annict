@@ -26,7 +26,6 @@ const REQUEST_LIST: any = {
   'work-list-newest': [libraryEntriesRequest, workFriendsRequest],
   'work-list-popular': [libraryEntriesRequest, workFriendsRequest],
   'work-list-season': [libraryEntriesRequest, workFriendsRequest],
-  episode: [libraryEntriesRequest, likesRequest, trackedResourcesRequest, userRequest],
   library: [followingRequest, libraryEntriesRequest],
   profile: [followingRequest, libraryEntriesRequest, likesRequest, trackedResourcesRequest, userRequest],
   record: [libraryEntriesRequest, likesRequest, trackedResourcesRequest, userRequest],
