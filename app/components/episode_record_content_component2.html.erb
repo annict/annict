@@ -1,6 +1,6 @@
 <div class="c-episode-record-content c-record-content">
   <% if @record.episode_record.rating_state || @episode_record.body.present? %>
-    <%= render SpoilerGuardComponent.new(work_id: @record.work_id, episode_id: @episode_record.episode_id) do %>
+    <%= render SpoilerGuardComponent2.new(record: @record, current_user: @current_user) do %>
       <div class="c-record-content__wrapper mb-3">
         <% if @record.episode_record.rating_state %>
           <%= render RatingLabelComponent.new(rating: @episode_record.rating_state, advanced_rating: @episode_record.rating, class_name: "mb-1") %>

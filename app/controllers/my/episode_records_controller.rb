@@ -16,6 +16,7 @@ module My
         eager_load(:episode_record).
         where(episode_records: { episode_id: episode.id }).
         order(created_at: :desc)
+      @records.each { |record| record.is_spoiler = false }
     end
 
     def create
