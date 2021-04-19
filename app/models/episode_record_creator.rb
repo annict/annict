@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# TODO: EpisodeRecordCreator2 に置き換える
 class EpisodeRecordCreator
   include ActiveModel::Validations
 

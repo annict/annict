@@ -1,0 +1,5 @@
+<turbo-frame id="episode-record-form" target="_top">
+  <% if user_signed_in? %>
+    <%= render Forms::EpisodeRecordFormComponent.new(form: @form, user: current_user) %>
+  <% end %>
+</turbo-frame>
