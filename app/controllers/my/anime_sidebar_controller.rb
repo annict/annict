@@ -9,6 +9,7 @@ module My
     def show
       @user = current_user
       @anime = Anime.only_kept.find(params[:anime_id])
+      @library_entry = @user.library_entries.find_by(work: @anime)
     end
   end
 end
