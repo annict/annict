@@ -10,7 +10,10 @@ export default class extends Controller {
 
   open() {
     const frameElm = document.getElementById('c-tracking-modal__frame')
-    frameElm?.setAttribute('src', this.framePath)
-    $('#c-tracking-modal__frame').modal()
+
+    if (frameElm) {
+      frameElm.setAttribute('src', this.framePath)
+      $(frameElm).modal()
+    }
   }
 }
