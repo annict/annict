@@ -16,7 +16,7 @@
     <% end %>
 
     <% if RecordPolicy.new(@current_user, @record).update? %>
-      <%= link_to "/@#{@record.user.username}/records/#{@record.id}/edit", class: "dropdown-item" do %>
+      <%= link_to "/@#{@record.user.username}/records/#{@record.id}/edit", class: "dropdown-item", data: { "turbo-frame": "_top" } do %>
         <%= t "noun.edit" %>
       <% end %>
 

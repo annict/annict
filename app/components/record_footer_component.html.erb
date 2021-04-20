@@ -9,7 +9,7 @@
   ) %>
 
   <% if @record.episode_record? %>
-    <%= link_to record_path(@record.user.username, @record.id), class: "mr-3" do %>
+    <%= link_to record_path(@record.user.username, @record.id), class: "mr-3", data: { "turbo-frame": "_top" } do %>
       <i class="far fa-comment"></i>
       <%= @record.episode_record.comments_count %>
     <% end %>
