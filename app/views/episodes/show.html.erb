@@ -82,7 +82,7 @@
           <%= t "noun.other_comments" %>
         </h3>
 
-        <%# render Lists::RecordListComponent.new(viewer: current_user, record_entities: @other_record_entities, show_card: false) %>
+        <%= render Lists::RecordListComponent2.new(records: @public_records, show_card: false) %>
       </div>
     </div>
   </div>

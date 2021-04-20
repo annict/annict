@@ -95,16 +95,18 @@ class EpisodeRecord < ApplicationRecord
     count == 1 && first.id == record.id
   end
 
-  def self.rating_state_order(direction = :asc)
+  def self.order_by_rating_state(direction = :asc)
     direction = direction.in?(%i(asc desc)) ? direction : :asc
-    order <<-SQL
-    CASE
-      WHEN rating_state = 'bad' THEN '0'
-      WHEN rating_state = 'average' THEN '1'
-      WHEN rating_state = 'good' THEN '2'
-      WHEN rating_state = 'great' THEN '3'
-    END #{direction.upcase} NULLS LAST
+    sql = Arel.sql(<<-SQL)
+      CASE
+        WHEN episode_records.rating_state = 'bad' THEN '0'
+        WHEN episode_records.rating_state = 'average' THEN '1'
+        WHEN episode_records.rating_state = 'good' THEN '2'
+        WHEN episode_records.rating_state = 'great' THEN '3'
+      END #{direction.upcase} NULLS LAST
     SQL
+
+    order sql
   end
 
   def rating=(value)
