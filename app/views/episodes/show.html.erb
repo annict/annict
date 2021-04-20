@@ -50,39 +50,50 @@
 
       <hr class="mb-5">
 
-      <div class="mb-3">
-        <h3 class="font-weight-bold mb-3">
-          <%= t "noun.my_records" %>
-        </h3>
+      <turbo-frame
+        autoscroll="start"
+        data-controller="reloadable-frame"
+        data-reloadable-frame-event-name-value="my-episode-record-list"
+        data-reloadable-frame-target="frame"
+        id="my-episode-record-list"
+        src="<%= my_episode_record_list_path(@episode.id, page: params[:page]) %>"
+      >
+        <div class="mb-3">
+          <h3 class="font-weight-bold mb-3">
+            <%= t "noun.my_records" %>
+          </h3>
 
-        <turbo-frame
-          data-controller="reloadable-frame"
-          data-reloadable-frame-event-name-value="my-episode-record-list"
-          data-reloadable-frame-target="frame"
-          id="my-episode-record-list"
-          src="<%= my_episode_record_list_path(@episode.id) %>"
-        ></turbo-frame>
-      </div>
+          <div class="text-center">
+            <div class="spinner-border text-primary" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+          </div>
+        </div>
 
-      <hr class="mb-5">
+        <hr class="mb-5">
 
-      <div class="mb-3">
-        <h3 class="font-weight-bold mb-3">
-          <%= t "noun.following_records" %>
-        </h3>
+        <div class="mb-3">
+          <h3 class="font-weight-bold mb-3">
+            <%= t "noun.following_records" %>
+          </h3>
 
-        <%# render Lists::RecordListComponent.new(viewer: current_user, record_entities: @following_record_entities, show_card: false) %>
-      </div>
+          <div class="text-center">
+            <div class="spinner-border text-primary" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+          </div>
+        </div>
 
-      <hr class="mb-5">
+        <hr class="mb-5">
 
-      <div class="mb-3">
-        <h3 class="font-weight-bold mb-3">
-          <%= t "noun.other_comments" %>
-        </h3>
+        <div class="mb-3">
+          <h3 class="font-weight-bold mb-3">
+            <%= t "noun.other_comments" %>
+          </h3>
 
-        <%= render Lists::RecordListComponent2.new(records: @public_records, show_card: false) %>
-      </div>
+          <%= render Lists::RecordListComponent2.new(records: @public_records, show_card: false) %>
+        </div>
+      </turbo-frame>
     </div>
   </div>
 </div>

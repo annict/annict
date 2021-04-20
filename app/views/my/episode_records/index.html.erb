@@ -1,5 +1,33 @@
 <turbo-frame id="my-episode-record-list">
-  <% if user_signed_in? %>
-    <%= render Lists::RecordListComponent2.new(records: @records, current_user: current_user, show_card: false) %>
-  <% end %>
+  <div class="mb-3">
+    <h3 class="font-weight-bold mb-3">
+      <%= t "noun.my_records" %>
+    </h3>
+
+    <% if user_signed_in? %>
+      <%= render Lists::RecordListComponent2.new(records: @my_records, current_user: current_user, show_card: false) %>
+    <% end %>
+  </div>
+
+  <hr class="mb-5">
+
+  <div class="mb-3">
+    <h3 class="font-weight-bold mb-3">
+      <%= t "noun.following_records" %>
+    </h3>
+
+    <% if user_signed_in? %>
+      <%= render Lists::RecordListComponent2.new(records: @following_records, current_user: current_user, show_card: false) %>
+    <% end %>
+  </div>
+
+  <hr class="mb-5">
+
+  <div class="mb-3">
+    <h3 class="font-weight-bold mb-3">
+      <%= t "noun.other_comments" %>
+    </h3>
+
+    <%= render Lists::RecordListComponent2.new(records: @all_records, current_user: current_user, show_card: false) %>
+  </div>
 </div>

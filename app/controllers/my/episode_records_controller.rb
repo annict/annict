@@ -10,16 +10,32 @@ module My
       render unless user_signed_in?
 
       episode = Episode.only_kept.find(params[:episode_id])
-      @records = current_user.
+      is_tracked = current_user.episode_records.only_kept.where(episode_id: episode.id).exists?
+      likes = current_user.likes.select(:recipient_id, :recipient_type)
+
+      @my_records = current_user.
         records.
         only_kept.
         eager_load(:episode_record).
         where(episode_records: { episode_id: episode.id }).
         order(created_at: :desc)
-      likes = current_user.likes.select(:recipient_id, :recipient_type)
-
-      @records.each do |record|
+      @my_records.each do |record|
         record.is_spoiler = false
+        record.is_liked = record.liked?(likes)
+      end
+
+      records = episode.records.only_kept.eager_load(:episode_record, user: %i(gumroad_subscriber profile setting)).
+        merge(EpisodeRecord.with_body.order_by_rating_state(:desc).order(created_at: :desc))
+
+      @following_records = records.merge(current_user.followings)
+      @following_records.each do |record|
+        record.is_spoiler = !is_tracked
+        record.is_liked = record.liked?(likes)
+      end
+
+      @all_records = records.page(params[:page]).per(30)
+      @all_records.each do |record|
+        record.is_spoiler = !is_tracked
         record.is_liked = record.liked?(likes)
       end
     end

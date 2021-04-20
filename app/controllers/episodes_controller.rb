@@ -9,6 +9,6 @@ class EpisodesController < V4::ApplicationController
     @vod_channels = Channel.only_kept.eager_load(:programs).merge(@anime.programs.only_kept.in_vod).order(:sort_number)
     @public_records = @episode.records.only_kept.eager_load(:episode_record, user: %i(gumroad_subscriber profile setting)).
       merge(EpisodeRecord.with_body.order_by_rating_state(:desc).order(created_at: :desc)).
-      page(params[:page]).per(30)
+      limit(30)
   end
 end
