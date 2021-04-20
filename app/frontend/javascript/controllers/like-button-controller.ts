@@ -4,22 +4,26 @@ import { Controller } from 'stimulus';
 
 export default class extends Controller {
   static targets = ['count'];
+  static values = { initIsLiked: Boolean }
 
   countTarget!: HTMLElement;
-  resourceName!: string | null;
-  resourceId!: number | null;
-  likesCount!: number;
-  pageCategory!: string | null;
+  initIsLikedValue!: boolean;
   isLiked!: boolean;
   isLoading!: boolean;
+  likesCount!: number;
+  pageCategory!: string | null;
+  resourceId!: number | null;
+  resourceName!: string | null;
 
   initialize() {
     this.resourceName = this.data.get('resourceName');
     this.resourceId = Number(this.data.get('resourceId'));
     this.pageCategory = this.data.get('pageCategory');
+    this.isLiked = this.initIsLikedValue
+
+    this.render()
 
     document.addEventListener('user-data-fetcher:likes:fetched', ({ detail: { likes } }: any) => {
-      this.likesCount = Number(this.countTarget.innerText);
       const like = likes.filter((like: { recipient_type: string; recipient_id: number }) => {
         return like.recipient_type === this.resourceName && like.recipient_id === this.resourceId;
       })[0];
@@ -39,11 +43,9 @@ export default class extends Controller {
     if (this.isLiked) {
       this.element.classList.add('is-liked');
       iconElm.outerHTML = '<i class="c-like-button__icon fas fa-heart"></i>'; // Using outerHTML to render fontawesome icon after refetch
-      this.countTarget.innerText = this.likesCount.toString();
     } else {
       this.element.classList.remove('is-liked');
       iconElm.outerHTML = '<i class="c-like-button__icon far fa-heart"></i>';
-      this.countTarget.innerText = this.likesCount.toString();
     }
   }
 

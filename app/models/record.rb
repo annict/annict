@@ -30,7 +30,7 @@ class Record < ApplicationRecord
 
   RATING_STATES = %i(bad average good great).freeze
 
-  attr_accessor :is_spoiler
+  attr_accessor :is_liked, :is_spoiler
 
   counter_culture :user
   counter_culture :work
@@ -64,5 +64,15 @@ class Record < ApplicationRecord
 
   def likes_count
     episode_record? ? episode_record.likes_count : anime_record.likes_count
+  end
+
+  def liked?(likes)
+    recipient_type, recipient_id = if episode_record?
+      ["EpisodeRecord", episode_record.id]
+    else
+      ["WorkRecord", anime_record.id]
+    end
+
+    likes.any? { |like| like.recipient_type == recipient_type && like.recipient_id == recipient_id }
   end
 end

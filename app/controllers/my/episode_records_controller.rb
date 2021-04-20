@@ -16,7 +16,12 @@ module My
         eager_load(:episode_record).
         where(episode_records: { episode_id: episode.id }).
         order(created_at: :desc)
-      @records.each { |record| record.is_spoiler = false }
+      likes = current_user.likes.select(:recipient_id, :recipient_type)
+
+      @records.each do |record|
+        record.is_spoiler = false
+        record.is_liked = record.liked?(likes)
+      end
     end
 
     def create
