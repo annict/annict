@@ -1,5 +1,6 @@
 import 'bootstrap/js/dist/collapse';
 import 'bootstrap/js/dist/dropdown';
+import 'bootstrap/js/dist/modal';
 import 'dayjs/locale/ja';
 
 import * as Turbo from '@hotwired/turbo';
