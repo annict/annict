@@ -204,6 +204,7 @@ ja:
       providers:
         index: サービス連携
       records:
+        edit: '記録の編集'
         index: '%{profile_name} (%{username})さんの記録一覧'
         show: '%{profile_name} (%{username})の%{trackable_title}への感想'
       searches:

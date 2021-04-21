@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class EpisodeRecordForm < ApplicationForm
-  attr_accessor :episode, :record_id
+  attr_accessor :episode, :oauth_application, :record
   attr_reader :comment, :rating, :share_to_twitter
 
   validates :comment, length: { maximum: 1 }
@@ -20,7 +20,7 @@ class EpisodeRecordForm < ApplicationForm
   end
 
   def persisted?
-    !record_id.nil?
+    !record.nil?
   end
 
   def unique_id

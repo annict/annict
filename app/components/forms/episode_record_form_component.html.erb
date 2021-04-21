@@ -1,9 +1,15 @@
-<%= form_with model: @form, url: my_episode_record_list_path(@form.episode.id), method: form_method, local: true, data: { controller: "episode-record-form", action: "turbo:submit-start->episode-record-form#handleSubmitStart turbo:submit-end->episode-record-form#handleSubmitEnd", "episode-record-form-target": "form" } do |f| %>
+<%= form_with(
+  model: @form,
+  url: form_url,
+  method: form_method,
+  local: true,
+  data: {
+    controller: "episode-record-form",
+    action: "turbo:submit-start->episode-record-form#handleSubmitStart turbo:submit-end->episode-record-form#handleSubmitEnd",
+    "episode-record-form-target": "form"
+  }) do |f|
+%>
   <%= render ErrorPanelComponent2.new(stimulus_controller: "episode-record-form") %>
-
-  <% if @form.persisted? %>
-    <%= f.hidden_field :record_id %>
-  <% end %>
 
   <div class="mb-2">
     <%= render ButtonGroups::RecordRatingButtonGroupComponent.new(form: f, rating_field: :rating) %>
@@ -15,10 +21,10 @@
 
   <div class="row">
     <div class="col">
-      <% if @user.authorized_to?(:twitter, shareable: true) %>
+      <% if @current_user.authorized_to?(:twitter, shareable: true) %>
         <div class="form-check">
           <label class="form-check-label">
-            <%= f.check_box :share_to_twitter, class: "form-check-input", checked: @user.share_record_to_twitter? %>
+            <%= f.check_box :share_to_twitter, class: "form-check-input", checked: @current_user.share_record_to_twitter? %>
             <%= t "messages._common.share_to_twitter" %>
           </label>
         </div>

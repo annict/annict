@@ -203,6 +203,8 @@ en:
         show: '%{name}'
       profiles:
         show: Profile
+      records:
+        edit: Edit Record
       slots:
         index: Slot List
       providers:
