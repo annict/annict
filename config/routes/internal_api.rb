@@ -43,8 +43,6 @@ namespace :api do
 
     resources :works, only: [] do
       resource :library_entry, only: [:show]
-      resource :status_chart_data, only: %i(show)
-      resource :watchers_chart_data, only: %i(show)
 
       resources :statuses, only: [] do
         post :select, on: :collection
