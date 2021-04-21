@@ -5,14 +5,14 @@ class EpisodeRecordForm < ApplicationForm
   attr_reader :comment, :rating, :share_to_twitter
 
   validates :comment, length: { maximum: 1 }
-  validates :rating, inclusion: { in: Record::RATING_STATES }, allow_nil: true
+  validates :rating, inclusion: { in: Record::RATING_STATES.map(&:to_s) }, allow_nil: true
 
   def comment=(comment)
     @comment = comment&.strip
   end
 
   def rating=(rating)
-    @rating = rating.presence
+    @rating = rating&.downcase.presence
   end
 
   def share_to_twitter=(share_to_twitter)
