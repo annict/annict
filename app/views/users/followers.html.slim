@@ -4,6 +4,9 @@
 - image_url = ann_image_url(@user.profile, :image, size: "640x")
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 
+= content_for :vendor_assets do
+  = javascript_bundle_tag "vue.js", defer: "", "data-turbo-track": "reload"
+
 = render ProfileHeaderComponent.new(user_entity: @user_entity, current_user: current_user)
 
 .row.justify-content-center.my-3

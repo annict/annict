@@ -3,6 +3,9 @@
 - keywords = meta_keywords @character.local_name
 - set_meta_tags(title: name, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 
+= content_for :vendor_assets do
+  = javascript_bundle_tag "vue.js", defer: "", "data-turbo-track": "reload"
+
 .container.py-3.mb-4
   .row
     .col-3.pr-0

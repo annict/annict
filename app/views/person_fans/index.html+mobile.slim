@@ -3,6 +3,9 @@
 - keywords = meta_keywords @person.local_name
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 
+= content_for :vendor_assets do
+  = javascript_bundle_tag "vue.js", defer: "", "data-turbo-track": "reload"
+
 .c-card.mb-3
   = render "people/header", person: @person, favorite_resources: @person_favorites
 
