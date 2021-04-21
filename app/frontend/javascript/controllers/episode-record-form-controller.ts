@@ -1,8 +1,11 @@
 import { EventDispatcher } from '../utils/event-dispatcher';
-import RemoteFormController from './remote-form-controller'
+import FrameFormController from './frame-form-controller'
 
-export default class extends RemoteFormController {
-  handleSuccess(_event: any) {
+export default class extends FrameFormController {
+  static targets = [];
+
+  async handleSuccess(event: any) {
+    super.handleSuccess(event)
     this.reloadList()
   }
 

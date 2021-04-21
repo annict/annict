@@ -1,4 +1,4 @@
-<%= form_with model: @form, url: my_episode_record_list_path(@form.episode.id), method: form_method, local: false, data: { controller: "episode-record-form", action: "ajax:error->episode-record-form#handleError ajax:success->episode-record-form#handleSuccess" } do |f| %>
+<%= form_with model: @form, url: my_episode_record_list_path(@form.episode.id), method: form_method, local: true, data: { controller: "episode-record-form", action: "turbo:submit-start->episode-record-form#handleSubmitStart turbo:submit-end->episode-record-form#handleSubmitEnd", "episode-record-form-target": "form" } do |f| %>
   <%= render ErrorPanelComponent2.new(stimulus_controller: "episode-record-form") %>
 
   <% if @form.persisted? %>
@@ -27,7 +27,7 @@
 
     <div class="col">
       <div class="text-center">
-        <%= f.submit (f.object.persisted? ? t("verb.update") : t("verb.track")), class: "btn btn-primary" %>
+        <%= f.submit (f.object.persisted? ? t("verb.update") : t("verb.track")), class: "btn btn-primary", data: { "episode-record-form-target": "submitButton" } %>
       </div>
     </div>
 
