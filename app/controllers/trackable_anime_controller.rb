@@ -4,7 +4,7 @@ class TrackableAnimeController < V4::ApplicationController
   before_action :authenticate_user!
 
   def show
-    @anime = Work.only_kept.find(params[:anime_id])
+    @anime = Anime.only_kept.find(params[:anime_id])
     @library_entry = current_user.library_entries.find_by!(work: @anime)
     @episodes = @anime.
       episodes.
