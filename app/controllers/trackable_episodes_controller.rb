@@ -9,6 +9,7 @@ class TrackableEpisodesController < V4::ApplicationController
       with_not_deleted_work.
       wanna_watch_and_watching.
       eager_load(:work, program: :channel).
+      merge(Anime.where(no_episodes: false)).
       order(:position).
       page(params[:page]).
       per(100)
