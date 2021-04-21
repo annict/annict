@@ -13,6 +13,7 @@ ja:
     all_comments: 全ての感想
     animation: 映像
     anime: アニメ
+    anime_page: アニメページ
     annict_api: Annict API
     annict_db: Annict DB
     annict_developers: Annict Developers
@@ -57,6 +58,7 @@ ja:
     email: メールアドレス
     english: 英語
     episode_number: 話数
+    episode_page: エピソードページ
     episodes: エピソード
     error: エラー
     external_services: 外部サービス

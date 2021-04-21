@@ -23,5 +23,6 @@ class TrackableEpisodesController < V4::ApplicationController
 
   def show
     @episode = Episode.only_kept.find(params[:episode_id])
+    @anime = @episode.anime
   end
 end
