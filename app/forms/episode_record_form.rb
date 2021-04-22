@@ -24,6 +24,6 @@ class EpisodeRecordForm < ApplicationForm
   end
 
   def unique_id
-    SecureRandom.uuid
+    @unique_id ||= SecureRandom.uuid
   end
 end
