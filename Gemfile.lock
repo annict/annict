@@ -1,3 +1,10 @@
+GIT
+  remote: https://github.com/kiraka/htmlrb.git
+  revision: 5ba0e8e1642ac5763621cd661480764d47932a9b
+  branch: main
+  specs:
+    htmlrb (0.2.1)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -691,6 +698,7 @@ DEPENDENCIES
   groupdate
   hashdiff
   hiredis
+  htmlrb!
   http_accept_language
   httparty
   i18n-tasks
