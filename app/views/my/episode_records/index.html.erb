@@ -5,7 +5,7 @@
     </h3>
 
     <% if user_signed_in? %>
-      <%= render Lists::RecordListComponent2.new(records: @my_records, current_user: current_user, show_card: false) %>
+      <%= Lists::RecordListComponent2.new(self, records: @my_records, current_user: current_user, show_card: false).render %>
     <% end %>
   </div>
 
@@ -17,7 +17,7 @@
     </h3>
 
     <% if user_signed_in? %>
-      <%= render Lists::RecordListComponent2.new(records: @following_records, current_user: current_user, show_card: false) %>
+      <%= Lists::RecordListComponent2.new(self, records: @following_records, current_user: current_user, show_card: false).render %>
     <% end %>
   </div>
 
@@ -28,6 +28,6 @@
       <%= t "noun.other_comments" %>
     </h3>
 
-    <%= render Lists::RecordListComponent2.new(records: @all_records, current_user: current_user, show_card: false) %>
+    <%= Lists::RecordListComponent2.new(self, records: @all_records, current_user: current_user, show_card: false).render %>
   </div>
 </div>

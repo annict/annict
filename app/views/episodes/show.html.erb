@@ -90,7 +90,7 @@
             <%= t "noun.other_comments" %>
           </h3>
 
-          <%= render Lists::RecordListComponent2.new(records: @public_records, show_card: false) %>
+          <%= Lists::RecordListComponent2.new(self, records: @public_records, show_card: false).render %>
         </div>
       </turbo-frame>
     </div>
