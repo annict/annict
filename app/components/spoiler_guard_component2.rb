@@ -1,10 +1,9 @@
 # frozen_string_literal: true
 
 class SpoilerGuardComponent2 < ApplicationComponent2
-  def initialize(view_context, record:, current_user: nil)
+  def initialize(view_context, record:)
     super view_context
     @record = record
-    @current_user = current_user
   end
 
   def render
@@ -20,8 +19,8 @@ class SpoilerGuardComponent2 < ApplicationComponent2
   end
 
   def init_is_spoiler
-    return false unless @current_user
+    return false unless current_user
 
-    @current_user.hide_record_body? && @record.is_spoiler
+    current_user.hide_record_body? && @record.is_spoiler
   end
 end

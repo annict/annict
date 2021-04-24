@@ -2,9 +2,8 @@
 
 module Dropdowns
   class RecordOptionsDropdownComponent2 < ApplicationComponent2
-    def initialize(view_context, current_user:, record:)
+    def initialize(view_context, record:)
       super view_context
-      @current_user = current_user
       @record = record
     end
 
@@ -16,7 +15,7 @@ module Dropdowns
           end
 
           h.tag :div, class: "dropdown-menu dropdown-menu-right" do
-            if @current_user.id != @record.user_id
+            if current_user.id != @record.user_id
               h.tag :a, href: "#", class: "dropdown-item" do
                 h.tag :div,
                   data_controller: "mute-user",
@@ -26,7 +25,7 @@ module Dropdowns
               end
             end
 
-            if RecordPolicy.new(@current_user, @record).update?
+            if RecordPolicy.new(current_user, @record).update?
               h.tag :a, href: view_context.my_edit_record_path(@record.user.username, @record.id), class: "dropdown-item" do
                 h.text t("noun.edit")
               end

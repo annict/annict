@@ -2,10 +2,9 @@
 
 module Lists
   class RecordListComponent2 < ApplicationComponent2
-    def initialize(view_context, records:, current_user: nil, show_card: true)
+    def initialize(view_context, records:, show_card: true)
       super view_context
       @records = records
-      @current_user = current_user
       @show_card = show_card
     end
 
@@ -16,15 +15,11 @@ module Lists
             h.tag :div, class: "py-3 u-underline" do
               h.tag :turbo_frame, id: dom_id(record) do
                 h.tag :div, class: "mb-3" do
-                  h.html RecordHeaderComponent2.new(view_context, record: record, current_user: @current_user).render
+                  h.html RecordHeaderComponent2.new(view_context, record: record).render
                 end
 
                 if record.episode_record?
-                  h.html EpisodeRecordContentComponent2.new(view_context,
-                    current_user: @current_user,
-                    record: record,
-                    show_card: @show_card
-                  ).render
+                  h.html EpisodeRecordContentComponent2.new(view_context, record: record, show_card: @show_card).render
                 elsif record_entity.anime_record?
                   render AnimeRecordContentComponent.new(
                     user_entity: record_entity.user,

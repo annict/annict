@@ -1,10 +1,9 @@
 # frozen_string_literal: true
 
 class RecordHeaderComponent2 < ApplicationComponent2
-  def initialize(view_context, record:, current_user: nil)
+  def initialize(view_context, record:)
     super view_context
     @record = record
-    @current_user = current_user
   end
 
   def render
@@ -53,11 +52,8 @@ class RecordHeaderComponent2 < ApplicationComponent2
         end
 
         h.tag :div, class: "col-auto pl-0" do
-          if @current_user
-            h.html Dropdowns::RecordOptionsDropdownComponent2.new(view_context,
-              current_user: @current_user,
-              record: @record
-            ).render
+          if current_user
+            h.html Dropdowns::RecordOptionsDropdownComponent2.new(view_context, record: @record).render
           end
         end
       end
