@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class TrackableEpisodesController < V4::ApplicationController
+  include EpisodeRecordListLoadable
+
   before_action :authenticate_user!
 
   def index
@@ -25,5 +27,7 @@ class TrackableEpisodesController < V4::ApplicationController
   def show
     @episode = Episode.only_kept.find(params[:episode_id])
     @anime = @episode.anime
+
+    set_episode_record_list(@episode)
   end
 end

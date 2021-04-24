@@ -10,6 +10,6 @@ export default class extends FrameFormController {
   }
 
   reloadList() {
-    new EventDispatcher('reloadable-frame-my-episode-record-list:reload').dispatch();
+    new EventDispatcher('reloadable--episode-record-list-group:reload').dispatch();
   }
 }

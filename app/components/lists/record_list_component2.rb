@@ -35,7 +35,7 @@ module Lists
 
           if @records.respond_to?(:total_pages) && @records.total_pages > 1
             h.tag :div, class: "mt-3 text-center" do
-              paginate @records
+              h.html paginate(@records)
             end
           end
         else

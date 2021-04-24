@@ -50,49 +50,13 @@
 
       <hr class="mb-5">
 
-      <turbo-frame
-        data-controller="reloadable-frame"
-        data-reloadable-frame-event-name-value="my-episode-record-list"
-        data-reloadable-frame-target="frame"
-        id="my-episode-record-list"
-        src="<%= my_episode_record_list_path(@episode.id, page: params[:page]) %>"
+      <div
+        data-controller="reloadable"
+        data-reloadable-event-name-value="episode-record-list-group"
+        data-reloadable-url-value="<%= fragment_episode_record_list_path(@episode.id, page: params[:page]) %>"
       >
-        <div class="mb-3">
-          <h3 class="font-weight-bold mb-3">
-            <%= t "noun.my_records" %>
-          </h3>
-
-          <div class="text-center">
-            <div class="spinner-border text-primary" role="status">
-              <span class="sr-only">Loading...</span>
-            </div>
-          </div>
-        </div>
-
-        <hr class="mb-5">
-
-        <div class="mb-3">
-          <h3 class="font-weight-bold mb-3">
-            <%= t "noun.following_records" %>
-          </h3>
-
-          <div class="text-center">
-            <div class="spinner-border text-primary" role="status">
-              <span class="sr-only">Loading...</span>
-            </div>
-          </div>
-        </div>
-
-        <hr class="mb-5">
-
-        <div class="mb-3">
-          <h3 class="font-weight-bold mb-3">
-            <%= t "noun.other_comments" %>
-          </h3>
-
-          <%= Lists::RecordListComponent2.new(self, records: @public_records, show_card: false).render %>
-        </div>
-      </turbo-frame>
+        <%= ListGroups::EpisodeRecordListGroupComponent.new(self, my_records: @my_records, following_records: @following_records, all_records: @all_records).render %>
+      </div>
     </div>
   </div>
 </div>
