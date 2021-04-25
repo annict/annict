@@ -14,7 +14,7 @@ module Forms
     end
 
     def form_url
-      @form.persisted? ? my_record_path(@current_user.username, @form.record.id) : my_episode_record_list_path(@form.episode.id)
+      @form.persisted? ? record_path(@current_user.username, @form.record.id) : episode_record_list_path(@form.episode.id)
     end
   end
 end

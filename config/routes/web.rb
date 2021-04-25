@@ -147,23 +147,23 @@ constraints format: "html" do
   end
 
   namespace :my do
-    match "/@:username/records/:record_id",      via: :patch, as: :record,                      to: "records#update",               username: USERNAME_FORMAT
-    match "/@:username/records/:record_id/edit", via: :get,   as: :edit_record,                 to: "records#edit",                 username: USERNAME_FORMAT
     match "/anime/:anime_id/sidebar",            via: :get,   as: :anime_sidebar,               to: "anime_sidebar#show"
-    match "/episodes/:episode_id/records",       via: :post,  as: :episode_record_list,         to: "episode_records#create"
     match "/sidebar",                            via: :get,   as: :sidebar,                     to: "sidebar#show"
     match "/receive_channel_buttons",            via: :get,   as: :receive_channel_button_list, to: "receive_channel_buttons#index"
   end
 
   namespace :fragment do
-    match "/episodes/:episode_id/records",   via: :get, as: :episode_record_list,    to: "episode_records#index"
-    match "/trackable_anime/:anime_id",      via: :get, as: :trackable_anime,        to: "trackable_anime#show"
-    match "/trackable_episodes",             via: :get, as: :trackable_episode_list, to: "trackable_episodes#index"
-    match "/trackable_episodes/:episode_id", via: :get, as: :trackable_episode,      to: "trackable_episodes#show"
+    match "/@:username/records/:record_id/edit", via: :get, as: :edit_record,            to: "records#edit",             username: USERNAME_FORMAT
+    match "/episodes/:episode_id/records",       via: :get, as: :episode_record_list,    to: "episode_records#index"
+    match "/trackable_anime/:anime_id",          via: :get, as: :trackable_anime,        to: "trackable_anime#show"
+    match "/trackable_episodes",                 via: :get, as: :trackable_episode_list, to: "trackable_episodes#index"
+    match "/trackable_episodes/:episode_id",     via: :get, as: :trackable_episode,      to: "trackable_episodes#show"
   end
 
-  match "/track",                                via: :get, as: :track,                  to: "tracks#show"
-  match "/works/:anime_id/episodes/:episode_id", via: :get, as: :episode,                to: "episodes#show"
+  match "/@:username/records/:record_id",        via: :patch, as: :record,              to: "records#update",         username: USERNAME_FORMAT
+  match "/episodes/:episode_id/records",         via: :post,  as: :episode_record_list, to: "episode_records#create"
+  match "/track",                                via: :get,   as: :track,               to: "tracks#show"
+  match "/works/:anime_id/episodes/:episode_id", via: :get,   as: :episode,             to: "episodes#show"
 end
 
 scope module: :v4 do
@@ -183,7 +183,7 @@ scope module: :v4 do
 
     match "/@:username",                                   via: :get,    as: :profile,                 to: "users#show",             username: USERNAME_FORMAT
     match "/@:username/records",                           via: :get,    as: :record_list,             to: "records#index",          username: USERNAME_FORMAT
-    match "/@:username/records/:record_id",                via: :delete, as: :record,                  to: "records#destroy",        username: USERNAME_FORMAT
+    match "/@:username/records/:record_id",                via: :delete,                               to: "records#destroy",        username: USERNAME_FORMAT
     match "/@:username/records/:record_id",                via: :get,                                  to: "records#show",           username: USERNAME_FORMAT
     match "/@:username/records/:record_id",                via: :patch,                                to: "records#update",         username: USERNAME_FORMAT
     match "/episode_records",                              via: :patch,  as: :episode_record_mutation, to: "episode_records#update"
