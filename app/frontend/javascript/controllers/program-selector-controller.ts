@@ -24,7 +24,7 @@ export default class extends Controller {
   }
 
   reloadList() {
-    new EventDispatcher('reloadable-frame-trackable-episode-list:reload').dispatch();
+    new EventDispatcher('reloadable--trackable-episode-list:reload').dispatch();
   }
 
   change() {

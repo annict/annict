@@ -1,0 +1,7 @@
+<%= Lists::TrackableEpisodeListComponent.new(
+  self,
+  library_entries: @library_entries,
+  trackable_episodes: @trackable_episodes,
+  slots: @slots,
+  page_category: "tracking-modal"
+).render %>

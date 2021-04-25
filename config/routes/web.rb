@@ -157,13 +157,13 @@ constraints format: "html" do
   end
 
   namespace :fragment do
-    match "/episodes/:episode_id/records", via: :get, as: :episode_record_list, to: "episode_records#index"
+    match "/episodes/:episode_id/records",   via: :get, as: :episode_record_list,    to: "episode_records#index"
+    match "/trackable_anime/:anime_id",      via: :get, as: :trackable_anime,        to: "trackable_anime#show"
+    match "/trackable_episodes",             via: :get, as: :trackable_episode_list, to: "trackable_episodes#index"
+    match "/trackable_episodes/:episode_id", via: :get, as: :trackable_episode,      to: "trackable_episodes#show"
   end
 
   match "/track",                                via: :get, as: :track,                  to: "tracks#show"
-  match "/trackable_anime/:anime_id",            via: :get, as: :trackable_anime,        to: "trackable_anime#show"
-  match "/trackable_episodes",                   via: :get, as: :trackable_episode_list, to: "trackable_episodes#index"
-  match "/trackable_episodes/:episode_id",       via: :get, as: :trackable_episode,      to: "trackable_episodes#show"
   match "/works/:anime_id/episodes/:episode_id", via: :get, as: :episode,                to: "episodes#show"
 end
 

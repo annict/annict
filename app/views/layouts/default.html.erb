@@ -32,7 +32,7 @@
       </div>
 
       <%= render "application/sign_up_modal" %>
-      <%= render Modals::TrackingModalComponent.new %>
+      <%= Modals::TrackingModalComponent.new(self).render %>
     </div>
   </body>
 </html>

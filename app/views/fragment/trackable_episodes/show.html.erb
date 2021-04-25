@@ -5,7 +5,7 @@
         <div class="row">
           <div class="col">
             <div>
-              <%= link_to trackable_anime_path(@anime.id) do %>
+              <%= link_to fragment_trackable_anime_path(@anime.id) do %>
                 <i class="far fa-angle-left"></i>
                 <span class="pl-1">
                   <%= @episode.work.local_title %>

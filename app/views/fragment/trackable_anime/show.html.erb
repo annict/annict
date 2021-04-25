@@ -58,25 +58,25 @@
                 <%= render ListGroupItems::TrackingEpisodeListGroupItemComponent.new(episode: episode) do %>
                   <div class="align-items-center row">
                     <div class="col-auto pr-0">
-                      <%= render Buttons::WatchEpisodeButtonComponent.new(
-                        episode_id: episode.id, page_category: page_category, class_name: "btn-sm btn-outline-info rounded-circle"
-                      ) %>
+                      <%= Buttons::WatchEpisodeButtonComponent.new(
+                        self, episode_id: episode.id, page_category: "tracking-modal", class_name: "btn-sm btn-outline-info rounded-circle"
+                      ).render %>
                     </div>
 
                     <div class="col-auto pl-2 px-0">
-                      <%= render Buttons::BulkWatchEpisodesButtonComponent.new(
-                        episode_id: episode.id, class_name: "btn-sm btn-outline-info rounded-circle"
-                      ) %>
+                      <%= Buttons::BulkWatchEpisodesButtonComponent.new(
+                        self, episode_id: episode.id, class_name: "btn-sm btn-outline-info rounded-circle"
+                      ).render %>
                     </div>
 
                     <div class="col-auto pl-2 pr-0">
-                      <%= render Buttons::SkipEpisodeButtonComponent.new(
-                        episode_id: episode.id, class_name: "btn-sm btn-outline-secondary rounded-circle"
-                      ) %>
+                      <%= Buttons::SkipEpisodeButtonComponent.new(
+                        self, episode_id: episode.id, class_name: "btn-sm btn-outline-secondary rounded-circle"
+                      ).render %>
                     </div>
 
                     <div class="c-tracking-state__title col">
-                      <%= link_to trackable_episode_path(episode.id), class: "text-body" do %>
+                      <%= link_to fragment_trackable_episode_path(episode.id), class: "text-body" do %>
                         <%= episode.title_with_number %>
                       <% end %>
                     </div>

@@ -2,12 +2,17 @@
 <% set_meta_tags(title: title, reverse: true, prefix: false) %>
 
 <div class="container py-3">
-  <turbo-frame
-    data-controller="reloadable-frame"
-    data-reloadable-frame-event-name-value="trackable-episode-list"
-    data-reloadable-frame-target="frame"
-    id="trackable-episode-list"
-    src="<%= trackable_episode_list_path(page: params[:page]) %>"
-    target="_top"
-  ></turbo-frame>
+  <div
+    data-controller="reloadable"
+    data-reloadable-event-name-value="trackable-episode-list"
+    data-reloadable-url-value="<%= fragment_trackable_episode_list_path(page: params[:page]) %>"
+  >
+    <%= Lists::TrackableEpisodeListComponent.new(
+      self,
+      library_entries: @library_entries,
+      trackable_episodes: @trackable_episodes,
+      slots: @slots,
+      page_category: page_category
+    ).render %>
+  </div>
 </div>

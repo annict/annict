@@ -19,8 +19,16 @@ export default class extends Controller {
     document.removeEventListener(`reloadable--${this.eventNameValue}:reload`, this.boundReload);
   }
 
+  targetUrl() {
+    if (this.element.tagName === 'TURBO-FRAME' && this.element.hasAttribute('src')) {
+      return this.element.getAttribute('src') ?? '/500.html'
+    } else {
+      return this.urlValue
+    }
+  }
+
   async reload() {
-    const html = await (await fetch(this.urlValue)).text();
+    const html = await (await fetch(this.targetUrl())).text();
     this.element.innerHTML = html
   }
 }

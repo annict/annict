@@ -13,6 +13,7 @@ export default class extends Controller {
 
     if (frameElm) {
       frameElm.setAttribute('src', this.framePath)
+      frameElm.dataset.reloadableUrlValue = this.framePath
       $(frameElm).modal()
     }
   }
