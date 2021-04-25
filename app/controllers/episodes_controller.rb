@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class EpisodesController < V4::ApplicationController
-  include EpisodeRecordListLoadable
+  include EpisodeRecordListSettable
 
   def show
     set_page_category PageCategory::EPISODE

@@ -2,7 +2,7 @@
 
 module Fragment
   class EpisodeRecordsController < Fragment::ApplicationController
-    include EpisodeRecordListLoadable
+    include EpisodeRecordListSettable
 
     before_action :authenticate_user!, only: %i(index)
 
