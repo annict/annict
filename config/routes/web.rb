@@ -141,30 +141,28 @@ root "welcome#show",
   as: nil
 
 # rubocop:disable Layout/LineLength
-constraints format: "html" do
-  devise_scope :user do
-    match "/sign_out", via: :delete, as: :sign_out, to: "devise/sessions#destroy"
-  end
-
-  namespace :my do
-    match "/anime/:anime_id/sidebar",            via: :get,   as: :anime_sidebar,               to: "anime_sidebar#show"
-    match "/sidebar",                            via: :get,   as: :sidebar,                     to: "sidebar#show"
-    match "/receive_channel_buttons",            via: :get,   as: :receive_channel_button_list, to: "receive_channel_buttons#index"
-  end
-
-  namespace :fragment do
-    match "/@:username/records/:record_id/edit", via: :get, as: :edit_record,            to: "records#edit",             username: USERNAME_FORMAT
-    match "/episodes/:episode_id/records",       via: :get, as: :episode_record_list,    to: "episode_records#index"
-    match "/trackable_anime/:anime_id",          via: :get, as: :trackable_anime,        to: "trackable_anime#show"
-    match "/trackable_episodes",                 via: :get, as: :trackable_episode_list, to: "trackable_episodes#index"
-    match "/trackable_episodes/:episode_id",     via: :get, as: :trackable_episode,      to: "trackable_episodes#show"
-  end
-
-  match "/@:username/records/:record_id",        via: :patch, as: :record,              to: "records#update",         username: USERNAME_FORMAT
-  match "/episodes/:episode_id/records",         via: :post,  as: :episode_record_list, to: "episode_records#create"
-  match "/track",                                via: :get,   as: :track,               to: "tracks#show"
-  match "/works/:anime_id/episodes/:episode_id", via: :get,   as: :episode,             to: "episodes#show"
+devise_scope :user do
+  match "/sign_out", via: :delete, as: :sign_out, to: "devise/sessions#destroy"
 end
+
+namespace :my do
+  match "/anime/:anime_id/sidebar",            via: :get,   as: :anime_sidebar,               to: "anime_sidebar#show"
+  match "/sidebar",                            via: :get,   as: :sidebar,                     to: "sidebar#show"
+  match "/receive_channel_buttons",            via: :get,   as: :receive_channel_button_list, to: "receive_channel_buttons#index"
+end
+
+namespace :fragment do
+  match "/@:username/records/:record_id/edit", via: :get, as: :edit_record,            to: "records#edit",             username: USERNAME_FORMAT
+  match "/episodes/:episode_id/records",       via: :get, as: :episode_record_list,    to: "episode_records#index"
+  match "/trackable_anime/:anime_id",          via: :get, as: :trackable_anime,        to: "trackable_anime#show"
+  match "/trackable_episodes",                 via: :get, as: :trackable_episode_list, to: "trackable_episodes#index"
+  match "/trackable_episodes/:episode_id",     via: :get, as: :trackable_episode,      to: "trackable_episodes#show"
+end
+
+match "/@:username/records/:record_id",        via: :patch, as: :record,              to: "records#update",         username: USERNAME_FORMAT
+match "/episodes/:episode_id/records",         via: :post,  as: :episode_record_list, to: "episode_records#create"
+match "/track",                                via: :get,   as: :track,               to: "tracks#show"
+match "/works/:anime_id/episodes/:episode_id", via: :get,   as: :episode,             to: "episodes#show"
 
 scope module: :v4 do
   constraints format: "html" do
