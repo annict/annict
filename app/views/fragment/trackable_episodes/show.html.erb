@@ -36,7 +36,7 @@
         </div>
 
         <div class="mt-3">
-          <turbo-frame id="episode-record-form" src="<%= my_episode_record_form_path(@episode.id) %>"></turbo-frame>
+          <%= render Forms::EpisodeRecordFormComponent.new(form: @form, current_user: current_user) %>
         </div>
 
         <hr class="mt-3">
