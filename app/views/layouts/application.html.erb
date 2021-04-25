@@ -14,7 +14,7 @@
         data-application-params="<%= user_data_fetcher_params.to_json %>"
       >
         <div class="l-default__sidebar">
-          <%= render SidebarComponent.new(search: @search) %>
+          <%= Sidebars::MainSidebarComponent.new(self, search: @search).render %>
         </div>
 
         <div class="l-default__main d-flex flex-column">

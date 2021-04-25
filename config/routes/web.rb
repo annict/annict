@@ -147,7 +147,6 @@ end
 
 namespace :my do
   match "/anime/:anime_id/sidebar",            via: :get,   as: :anime_sidebar,               to: "anime_sidebar#show"
-  match "/sidebar",                            via: :get,   as: :sidebar,                     to: "sidebar#show"
   match "/receive_channel_buttons",            via: :get,   as: :receive_channel_button_list, to: "receive_channel_buttons#index"
 end
 

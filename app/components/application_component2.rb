@@ -3,7 +3,9 @@
 class ApplicationComponent2
   attr_reader :view_context
 
-  delegate :current_user, :display_time, :dom_id, :image_tag, :link_to, :paginate, :render_markdown, :t, to: :view_context
+  delegate :ann_image_url, :current_user, :display_time, :dom_id, :image_tag, :link_to, :paginate, :render_markdown, :t,
+    :text_field_tag,
+    to: :view_context
 
   def initialize(view_context)
     @view_context = view_context
