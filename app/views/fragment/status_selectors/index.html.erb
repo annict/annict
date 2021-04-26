@@ -1,0 +1,5 @@
+<% @anime_list.each do |anime| %>
+  <div id="status-selector-anime-<%= anime.id %>">
+    <%= Selectors::StatusSelectorComponent.new(self, anime: anime, page_category: params[:page_category]).render %>
+  </div>
+<% end %>

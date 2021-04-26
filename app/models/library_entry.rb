@@ -60,6 +60,14 @@ class LibraryEntry < ApplicationRecord
     with_not_deleted_work.with_status(status_kind).count
   end
 
+  def self.status_kinds
+    joins(:status).
+    select("library_entries.work_id, statuses.kind as status_kind").
+    each_with_object({}) do |le, h|
+      h[le.work_id] = Status.kind.find_value(le.status_kind)
+    end
+  end
+
   def fetch_next_episode
     episode_ids = work.episodes.only_kept.pluck(:id)
     next_episode_ids = episode_ids - watched_episode_ids

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# TODO: Selectors::StatusSelectorComponent に移行する
 class StatusSelectorComponent < ApplicationComponent
   def initialize(work_id:, page_category:, init_kind: "", small: false, class_name: "")
     @anime_id = work_id

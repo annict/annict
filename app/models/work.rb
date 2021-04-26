@@ -89,6 +89,8 @@ class Work < ApplicationRecord
     started_on ended_on
   ).freeze
 
+  attr_accessor :status_kind
+
   enumerize :media, in: { tv: 1, ova: 2, movie: 3, web: 4, other: 0 }
   enumerize :season_name, in: Season::NAME_HASH
 
