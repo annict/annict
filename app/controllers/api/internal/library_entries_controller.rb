@@ -7,19 +7,14 @@ module Api
 
       def index
         return render(json: []) unless user_signed_in?
+        return head(404) unless params[:anime_ids]
 
-        library_entries = current_user.
+        status_kinds = current_user.
           library_entries.
-          joins(:status).
-          select("library_entries.work_id, statuses.kind as status_kind").
-          map do |library_entry|
-            {
-              work_id: library_entry.work_id,
-              status_kind:  Status.kind.find_value(library_entry.status_kind)
-            }
-          end
+          where(work_id: params[:anime_ids].split(",")).
+          status_kinds
 
-        render json: library_entries
+        render json: status_kinds
       end
 
       def update

@@ -72,20 +72,13 @@ module Sidebars
                 end
               end
 
-              url = view_context.fragment_status_selector_list_path(anime_ids: [@anime.id], page_category: page_category)
-              h.tag :div,
-                class: "mb-3",
-                data_controller: "swapper--status-selectors",
-                data_swapper__status_selectors_target: "swap",
-                data_swapper__status_selectors_anime_ids_value: [@anime.id],
-                data_swapper__status_selectors_url_value: url,
-                id: "status-selector-anime-#{@anime.id}" do
-                  h.html Selectors::StatusSelectorComponent.new(
-                    view_context,
-                    anime: @anime,
-                    page_category: page_category
-                  ).render
-                end
+              h.tag :div, class: "mb-3" do
+                h.html Selectors::StatusSelectorComponent.new(
+                  view_context,
+                  anime: @anime,
+                  page_category: page_category
+                ).render
+              end
             end
           end
 

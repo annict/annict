@@ -6,25 +6,20 @@ const NO_SELECT = 'no_select';
 
 export default class extends Controller {
   static targets = ['kind'];
-  static values = { animeId: Number, initKind: String, pageCategory: String }
+  static values = { animeId: Number, pageCategory: String }
 
   animeIdValue!: number;
-  initKindValue!: string;
   kindTarget!: HTMLSelectElement;
-  libraryEntries!: { work_id: number; status_kind: string }[];
+  statusKinds!: { [animeId: number]: string };
   pageCategoryValue!: string;
   prevStatusKind!: string;
 
   initialize() {
-    if (this.initKindValue !== '') {
-      this.kindTarget.value = this.initKindValue
-      return
-    }
-
     this.element.classList.add('c-spinner');
 
-    document.addEventListener('user-data-fetcher:library-entries:fetched', (event: any) => {
-      this.libraryEntries = event.detail;
+    document.addEventListener('component-value-fetcher:status-selector:fetched', (event: any) => {
+      console.log('fetched!', event)
+      this.statusKinds = event.detail;
       this.kindTarget.value = this.prevStatusKind = this.currentStatusKind;
 
       if (this.currentStatusKind === NO_SELECT) {
@@ -36,19 +31,13 @@ export default class extends Controller {
   }
 
   get currentStatusKind() {
-    if (!this.libraryEntries.length) {
+    const statusKind = this.statusKinds[this.animeIdValue]
+
+    if (!statusKind) {
       return NO_SELECT;
     }
 
-    const status = this.libraryEntries.filter((entry) => {
-      return entry.work_id === this.animeIdValue;
-    })[0];
-
-    if (!status) {
-      return NO_SELECT;
-    }
-
-    return status.status_kind;
+    return statusKind;
   }
 
   resetKind() {
