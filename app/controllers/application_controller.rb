@@ -5,6 +5,7 @@ class ApplicationController < ActionController::Base
   include RavenLoadable
   include Loggable
   include Localizable
+  include KeywordSearchable
 
   layout "default"
 
@@ -20,10 +21,6 @@ class ApplicationController < ActionController::Base
     if user_signed_in?
       return redirect_to root_path
     end
-  end
-
-  def set_search_params
-    @search = SearchService.new(params[:q])
   end
 
   # Override `Devise::Controllers::Helpers#signed_in_root_path`
