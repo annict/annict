@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class RecordsController < V4::ApplicationController
+class RecordsController < ApplicationController
   include Pundit
 
   before_action :authenticate_user!, only: %i(update)

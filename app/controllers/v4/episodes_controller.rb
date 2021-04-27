@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module V4
-  class EpisodesController < V4::ApplicationController
+  class EpisodesController < ApplicationController
     include AnimeSidebarDisplayable
     include EpisodeDisplayable
 

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module V4
-  class AnimeRecordsController < V4::ApplicationController
+  class AnimeRecordsController < ApplicationController
     include AnimeSidebarDisplayable
 
     before_action :authenticate_user!, only: %i(create edit update destroy)

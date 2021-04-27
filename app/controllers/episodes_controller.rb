@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class EpisodesController < V4::ApplicationController
+class EpisodesController < ApplicationController
   include EpisodeRecordListSettable
 
   def show

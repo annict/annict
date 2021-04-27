@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module V4
-  class TimelineModeController < V4::ApplicationController
+  class TimelineModeController < ApplicationController
     before_action :authenticate_user!
 
     def update

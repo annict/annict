@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module V4
-  class SignInController < V4::ApplicationController
+  class SignInController < ApplicationController
     layout "simple"
 
     before_action :redirect_if_signed_in

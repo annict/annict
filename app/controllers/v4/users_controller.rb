@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module V4
-  class UsersController < V4::ApplicationController
+  class UsersController < ApplicationController
     def show
       set_page_category PageCategory::PROFILE
 

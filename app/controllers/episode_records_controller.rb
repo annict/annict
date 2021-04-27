@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class EpisodeRecordsController < V4::ApplicationController
+class EpisodeRecordsController < ApplicationController
   before_action :authenticate_user!, only: %i(create)
 
   def create

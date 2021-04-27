@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class TracksController < V4::ApplicationController
+class TracksController < ApplicationController
   include TrackableEpisodeListSettable
 
   before_action :authenticate_user!

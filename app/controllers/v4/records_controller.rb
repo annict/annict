@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module V4
-  class RecordsController < V4::ApplicationController
+  class RecordsController < ApplicationController
     include Pundit
 
     before_action :authenticate_user!, only: %i(destroy)
