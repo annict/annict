@@ -1,13 +1,10 @@
 <% title = t "head.title.channels.index" %>
 <% set_meta_tags(title: title, reverse: true, prefix: false) %>
 
+<%= component_value_fetcher_tag("receive-channel-button", internal_api_received_channel_list_path) %>
+
 <div class="container py-3">
-  <div
-    class="card"
-    data-controller="swapper--receive-channel-button-list"
-    data-swapper--receive-channel-button-list-url-value="<%= fragment_receive_channel_button_list_path %>"
-    data-swapper--receive-channel-button-list-channel-ids-value="<%= @channels.pluck(:id) %>"
-  >
+  <div class="card">
     <% @channel_groups.each do |channel_group| %>
       <div class="card-header">
         <%= channel_group.name %>
@@ -17,12 +14,7 @@
         <div class="row">
           <% @channels.filter { |channel| channel.channel_group_id == channel_group.id }.each do |channel| %>
             <div class="col-3 mt-2">
-              <span
-                data-swapper--receive-channel-button-list-target="swap"
-                id="receive-channel-button-list-<%= channel.id %>"
-              >
-                <%= Buttons::ReceiveChannelButtonComponent.new(self, channel: channel, class_name: "btn-sm rounded-circle").render %>
-              </span>
+              <%= Buttons::ReceiveChannelButtonComponent.new(self, channel: channel, class_name: "btn-sm rounded-circle").render %>
 
               <span class="ml-2">
                 <%= channel.name %>

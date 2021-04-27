@@ -18,7 +18,6 @@ export default class extends Controller {
     this.element.classList.add('c-spinner');
 
     document.addEventListener('component-value-fetcher:status-selector:fetched', (event: any) => {
-      console.log('fetched!', event)
       this.statusKinds = event.detail;
       this.kindTarget.value = this.prevStatusKind = this.currentStatusKind;
 

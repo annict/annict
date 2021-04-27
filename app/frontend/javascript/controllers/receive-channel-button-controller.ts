@@ -9,7 +9,6 @@ export default class extends Controller {
   static targets = ['iconWrapper'];
   static values = {
     channelId: Number,
-    initReceived: Boolean,
     notReceivedIcon: String,
     receivedIcon: String,
   }
@@ -17,13 +16,18 @@ export default class extends Controller {
   channelIdValue!: number;
   currentReceivedValue!: boolean;
   iconWrapperTarget!: HTMLElement;
-  initReceivedValue!: boolean;
   notReceivedButtonClass!: string;
   receivedButtonClass!: string;
+  receivedChannelIds!: number[]
 
   initialize() {
-    this.currentReceivedValue = this.initReceivedValue
-    this.render()
+    this.element.classList.add('c-spinner');
+
+    document.addEventListener('component-value-fetcher:receive-channel-button:fetched', (event: any) => {
+      this.receivedChannelIds = event.detail;
+      this.currentReceivedValue = this.receivedChannelIds.includes(this.channelIdValue)
+      this.render()
+    });
   }
 
   render() {
@@ -36,6 +40,8 @@ export default class extends Controller {
       this.element.classList.add(this.notReceivedButtonClass)
       this.iconWrapperTarget.innerHTML = '<i class="fal fa-plus"></i>'
     }
+
+    this.element.classList.remove('c-spinner');
   }
 
   changeToReceived() {
