@@ -6,30 +6,23 @@
   <body class="#{body_classes} #{user_signed_in? ? 'is-user' : 'is-guest'}">
     <%= include_gon %>
 
-    <div class="ann-application">
-      <div
-        class="l-default"
-        data-controller="application"
-        data-application-page-category="<%= page_category %>"
-        data-application-params="<%= user_data_fetcher_params.to_json %>"
-      >
-        <div class="l-default__sidebar">
-          <%= Sidebars::MainSidebarComponent.new(self, search: @search).render %>
+    <div class="ann-application l-default">
+      <div class="l-default__sidebar">
+        <%= Sidebars::MainSidebarComponent.new(self, search: @search).render %>
+      </div>
+
+      <div class="l-default__main d-flex flex-column">
+        <div class="l-default__content">
+          <%= render FlashComponent.new(flash) %>
+          <%= yield %>
         </div>
 
-        <div class="l-default__main d-flex flex-column">
-          <div class="l-default__content">
-            <%= render FlashComponent.new(flash) %>
-            <%= yield %>
-          </div>
+        <div class="l-default__footer">
+          <%= render FooterComponent.new %>
+        </div>
 
-          <div class="l-default__footer">
-            <%= render FooterComponent.new %>
-          </div>
-
-          <div class="l-default__tab_bar">
-            <%= render TabBarComponent.new(user: current_user) %>
-          </div>
+        <div class="l-default__tab_bar">
+          <%= render TabBarComponent.new(user: current_user) %>
         </div>
       </div>
 

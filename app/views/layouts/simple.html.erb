@@ -4,15 +4,9 @@
     <%= render "application/v4/head" %>
   </head>
   <body>
-    <div class="ann-application">
-      <div
-        class="l-simple"
-        data-controller="application"
-        data-application-page-category="<%= page_category %>"
-      >
-        <%= render FlashComponent.new(flash) %>
-        <%= yield %>
-      </div>
+    <div class="ann-application l-simple">
+      <%= render FlashComponent.new(flash) %>
+      <%= yield %>
     </div>
   </body>
 </html>
