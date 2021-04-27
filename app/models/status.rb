@@ -85,6 +85,10 @@ class Status < ApplicationRecord
     count == 1 && initial.id == status.id
   end
 
+  def anime
+    work
+  end
+
   def share_to_sns
     return if !user.setting.share_status_to_twitter? || !user.authorized_to?(:twitter, shareable: true)
 

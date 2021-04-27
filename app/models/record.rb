@@ -37,6 +37,7 @@ class Record < ApplicationRecord
 
   belongs_to :user
   belongs_to :work
+  has_one :anime_record, class_name: "WorkRecord", dependent: :destroy
   has_one :episode_record, dependent: :destroy
   has_one :work_record, dependent: :destroy
 
@@ -48,10 +49,6 @@ class Record < ApplicationRecord
 
   def anime_record?
     !episode_record?
-  end
-
-  def anime_record
-    work_record
   end
 
   def modified_at
