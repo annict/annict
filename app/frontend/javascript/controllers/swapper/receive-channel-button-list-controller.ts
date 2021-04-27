@@ -8,5 +8,5 @@ export default class extends BaseController {
 
   channelIdsValue!: string[];
 
-  replacementSelectors = this.channelIdsValue.map(channelId => `#receive-channel-button-list-${channelId}`)
+  swapSelectors = this.channelIdsValue.map(channelId => `#receive-channel-button-list-${channelId}`)
 }

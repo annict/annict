@@ -40,6 +40,8 @@ class Channel < ApplicationRecord
   NETFLIX_ID = 244
   ABEMA_VIDEO_ID = 260
 
+  attr_accessor :is_received
+
   belongs_to :channel_group
   has_many :programs, dependent: :destroy
   has_many :slots, dependent: :destroy

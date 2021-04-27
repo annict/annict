@@ -1,9 +1,9 @@
 <% @channels.each do |channel| %>
   <div id="receive-channel-button-list-<%= channel.id %>">
-    <%= render Buttons::ReceiveChannelButtonComponent.new(
+    <%= Buttons::ReceiveChannelButtonComponent.new(
+      self,
       channel: channel,
-      init_received: @received_channel_ids.include?(channel.id),
       class_name: "btn-sm rounded-circle"
-    ) %>
+    ).render %>
   </div>
 <% end %>

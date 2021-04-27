@@ -1,11 +1,29 @@
 # frozen_string_literal: true
 
 module Buttons
-  class ReceiveChannelButtonComponent < ApplicationComponent
-    def initialize(channel:, init_received: false, class_name: "")
+  class ReceiveChannelButtonComponent < ApplicationComponent2
+    def initialize(view_context, channel:, class_name: "")
+      super view_context
       @channel = channel
-      @init_received = init_received
       @class_name = class_name
+      @init_received = @channel.is_received == true
+    end
+
+    def render
+      build_html do |h|
+        h.tag :button,
+          class: "c-receive-channel-button #{receive_channel_button_class_name}",
+          data_action: "click->receive-channel-button#toggle",
+          data_controller: "receive-channel-button",
+          data_receive_channel_button_channel_id_value: @channel.id,
+          data_receive_channel_button_init_received_value: @init_received,
+          data_receive_channel_button_not_received_button_class: "btn-outline-info",
+          data_receive_channel_button_received_button_class: "btn-info" do
+            h.tag :span, data_receive_channel_button_target: "iconWrapper" do
+              h.tag :i, class: "fal #{icon_name}"
+            end
+          end
+      end
     end
 
     private

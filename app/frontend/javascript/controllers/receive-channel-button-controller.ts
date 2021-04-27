@@ -23,20 +23,27 @@ export default class extends Controller {
 
   initialize() {
     this.currentReceivedValue = this.initReceivedValue
+    this.render()
+  }
+
+  render() {
+    if (this.currentReceivedValue) {
+      this.element.classList.add(this.receivedButtonClass)
+      this.element.classList.remove(this.notReceivedButtonClass)
+      this.iconWrapperTarget.innerHTML = `<i class="fal fa-minus"></i>`
+    } else {
+      this.element.classList.remove(this.receivedButtonClass)
+      this.element.classList.add(this.notReceivedButtonClass)
+      this.iconWrapperTarget.innerHTML = '<i class="fal fa-plus"></i>'
+    }
   }
 
   changeToReceived() {
     this.currentReceivedValue = true
-    this.element.classList.add(this.receivedButtonClass)
-    this.element.classList.remove(this.notReceivedButtonClass)
-    this.iconWrapperTarget.innerHTML = `<i class="fal fa-minus"></i>`
   }
 
   changeToNotReceived() {
     this.currentReceivedValue = false
-    this.element.classList.remove(this.receivedButtonClass)
-    this.element.classList.add(this.notReceivedButtonClass)
-    this.iconWrapperTarget.innerHTML = '<i class="fal fa-plus"></i>'
   }
 
   toggle() {
@@ -48,6 +55,7 @@ export default class extends Controller {
         .then(() => {
           this.changeToNotReceived()
           this.element.removeAttribute('disabled');
+          this.render()
         });
     } else {
       axios
@@ -57,6 +65,7 @@ export default class extends Controller {
         .then(() => {
           this.changeToReceived()
           this.element.removeAttribute('disabled');
+          this.render()
         });
     }
   }
