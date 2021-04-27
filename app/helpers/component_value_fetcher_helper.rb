@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 module ComponentValueFetcherHelper
-  def component_value_fetcher_tag(controller_name, url)
+  def component_value_fetcher_tag(component_name, url)
     tag.div(
       data: {
-        controller: "component-value-fetcher--#{controller_name}",
-        "component-value-fetcher--#{controller_name}-url-value": url,
-        "component-value-fetcher--#{controller_name}-event-name-value": "component-value-fetcher:#{controller_name}:fetched"
+        controller: "component-value-fetcher",
+        component_value_fetcher_url_value: url,
+        component_value_fetcher_event_name_value: "component-value-fetcher:#{component_name}:fetched"
       }
     )
   end
