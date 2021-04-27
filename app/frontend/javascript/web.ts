@@ -12,7 +12,6 @@ import { Application } from 'stimulus';
 import { definitionsFromContext } from 'stimulus/webpack-helpers';
 
 import { getTimeZone } from './utils/time-zone';
-import vueApp from './common/vueApp';
 
 document.addEventListener('turbo:load', (_event) => {
   const annConfig = (window as any).AnnConfig;
@@ -27,8 +26,6 @@ document.addEventListener('turbo:load', (_event) => {
   axios.defaults.headers.common['X-CSRF-Token'] = document
     .querySelector('meta[name="csrf-token"]')
     ?.getAttribute('content');
-
-  // vueApp.start();
 });
 
 const application = Application.start();

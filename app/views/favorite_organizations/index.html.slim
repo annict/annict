@@ -2,9 +2,6 @@
 - description = meta_description(t("head.meta.description.favorite_organizations.index", profile_name: @user.profile.name, username: @user.username))
 - set_meta_tags(title: title, description: description, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 
-= content_for :vendor_assets do
-  = javascript_bundle_tag "vue.js", defer: "", "data-turbo-track": "reload"
-
 = render ProfileHeaderComponent.new(user_entity: @user_entity, current_user: current_user)
 = render "users/favorite_nav", user: @user
 

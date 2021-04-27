@@ -3,9 +3,6 @@
 - keywords = meta_keywords(@season.local_name)
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, reverse: true, prefix: false)
 
-= content_for :vendor_assets do
-  = javascript_bundle_tag "vue.js", defer: "", "data-turbo-track": "reload"
-
 h1.h2.text-center.my-3
   = title
 
