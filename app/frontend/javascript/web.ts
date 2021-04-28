@@ -11,6 +11,7 @@ import Cookies from 'js-cookie';
 import { Application } from 'stimulus';
 import { definitionsFromContext } from 'stimulus/webpack-helpers';
 
+import lazyLoad from './utils/lazy-load';
 import { getTimeZone } from './utils/time-zone';
 
 document.addEventListener('turbo:load', (_event) => {
@@ -26,6 +27,8 @@ document.addEventListener('turbo:load', (_event) => {
   axios.defaults.headers.common['X-CSRF-Token'] = document
     .querySelector('meta[name="csrf-token"]')
     ?.getAttribute('content');
+
+  lazyLoad.update()
 });
 
 const application = Application.start();
