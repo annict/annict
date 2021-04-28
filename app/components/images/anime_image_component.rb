@@ -2,7 +2,7 @@
 
 module Images
   class AnimeImageComponent < ApplicationComponent2
-    def initialize(view_context, image_url_1x:, image_url_2x:, alt: "Work Image", bg_color: "#F1F1F1", class_name: "")
+    def initialize(view_context, image_url_1x:, image_url_2x:, alt: "", bg_color: "#F1F1F1", class_name: "")
       super view_context
       @image_url_1x = image_url_1x
       @image_url_2x = image_url_2x

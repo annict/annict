@@ -125,12 +125,6 @@ ja:
     home:
       index:
         there_are_no_activities: アクティビティはありません
-      index_guest:
-        hero_description_html: Annict (アニクト) は、アニメの視聴記録ができるWebサービスです。<br>人気ランキングや友達の視聴記録から好きなアニメを見つけて、管理することができます。
-        hero_description_mobile_html: Annict (アニクト) は、アニメの視聴記録ができるWebサービスです。
-        hero_title: 見たアニメを記録して、共有しよう。
-        hero_title_mobile_html: 見たアニメを記録して、<br>共有しよう。
-        start_tracking: 視聴記録を始める
     ics:
       you_can_see: Google Calendarに以下のURLを登録すると、「見てる」「見たい」にしている作品の放送情報などがカレンダーに表示されます。
     components:
@@ -264,6 +258,13 @@ ja:
       allowed_locales_description: 'サイト内に投稿された文書 (感想やレビューなど) の中で、どの言語で書かれたものを表示するかを設定することができます。'
       bye_bye: '退会しました。(´・ω;:..'
       no_works: 作品はありません
+    welcome:
+      show:
+        hero_description_html: Annict (アニクト) は、アニメの視聴記録ができるWebサービスです。<br>人気ランキングや友達の視聴記録から好きなアニメを見つけて、管理することができます。
+        hero_description_mobile_html: Annict (アニクト) は、アニメの視聴記録ができるWebサービスです。
+        hero_title: 見たアニメを記録して、共有しよう。
+        hero_title_mobile_html: 見たアニメを記録して、<br>共有しよう。
+        start_tracking: 視聴記録を始める
     work_records:
       new:
         write_your_comment: 見た感想を残しませんか？ (自由入力)

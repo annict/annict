@@ -158,7 +158,6 @@ ja:
         index: 友達を探す
       home:
         index: Annict
-        index_guest: 見たアニメを記録して、共有しよう
       legacy_sign_in:
         new: パスワードでログイン
       libraries:
@@ -241,6 +240,8 @@ ja:
         followers: '%{profile_name} (%{username})をフォローしている人'
         following: '%{profile_name} (%{username})がフォローしている人'
         show: '%{profile_name} (%{username})'
+      welcome:
+        show: 見たアニメを記録して、共有しよう
       work_records:
         edit: 記録の編集
         index: アニメ「%{work_title}」の記録一覧

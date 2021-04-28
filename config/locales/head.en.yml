@@ -164,7 +164,6 @@ en:
         index: Find Friends
       home:
         index: Annict
-        index_guest: The platform for anime addicts.
       legacy_sign_in:
         new: Sign In with Password
       libraries:
@@ -246,6 +245,8 @@ en:
         followers: People following %{profile_name} (%{username})
         following: People followed by %{profile_name} (%{username})
         show: '%{profile_name} (%{username})'
+      welcome:
+        show: The platform for anime addicts.
       works:
         newest: Just Added Anime
         popular: Popular Anime

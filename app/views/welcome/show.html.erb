@@ -1,0 +1,90 @@
+<% title = t("head.title.welcome.show") %>
+<% set_meta_tags(title: title, reverse: false) %>
+<% content_for(:no_sidebar, true) %>
+
+<%= component_value_fetcher_tag("status-selector", internal_api_library_entry_list_path(anime_ids: [])) %>
+
+<div class="hero d-flex align-items-center position-relative">
+  <div class="hero__bg-image position-absolute w-100" style="background-image: url(<%= ann_image_url(@cover_image_anime.work_image, :image, size: '600x', blur: 60) %>);"></div>
+  <div class="hero__content text-center align-self-center">
+    <h1 class="display-1 font-weight-bold text-white">
+      <%= t("messages.welcome.show.hero_title") %>
+    </h1>
+
+    <p class="lead pt-3 text-white">
+      <%= t("messages.welcome.show.hero_description_html") %>
+    </p>
+
+    <div class="pt-3 text-center">
+      <%= link_to sign_up_path, class: "btn btn-primary" do %>
+        <i class="far fa-rocket"></i>
+        <span class="ml-1">
+          <%= t("noun.sign_up") %>
+        </span>
+      <% end %>
+
+      <%= link_to sign_in_path, class: "btn btn-outline-light ml-2" do %>
+        <%= t("noun.sign_in") %>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+
+<div class="container">
+  <div class="mb-0 py-5 row">
+    <div class="col">
+      <h2 class="font-weight-bold h3 m-0">
+        <%= t("noun.current_season") %>
+      </h2>
+    </div>
+
+    <div class="col text-right">
+      <%= link_to season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")) do %>
+        <i class="far fa-angle-right"></i>
+        <%= t("verb.view_more") %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <div class="mx-n1 row">
+        <% @seasonal_anime_list.each do |anime| %>
+          <div class="col-2 px-1">
+            <%= Cards::AnimeCardComponent.new(self, anime: anime).render %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="mb-0 py-5 row">
+    <div class="col">
+      <h2 class="font-weight-bold h3 m-0">
+        <%= t("noun.popular_anime") %>
+      </h2>
+    </div>
+
+    <div class="col text-right">
+      <%= link_to popular_works_path do %>
+        <i class="far fa-angle-right"></i>
+        <%= t("verb.view_more") %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <div class="mx-n1 row">
+        <% @popular_anime_list.each do |anime| %>
+          <div class="col-2 px-1">
+            <%= Cards::AnimeCardComponent.new(self, anime: anime).render %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="mb-0 mt-5" />
