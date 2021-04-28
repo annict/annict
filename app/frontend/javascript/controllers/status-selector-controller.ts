@@ -5,10 +5,12 @@ import { Controller } from 'stimulus';
 const NO_SELECT = 'no_select';
 
 export default class extends Controller {
+  static classes = ['selected']
   static targets = ['kind'];
   static values = { animeId: Number, pageCategory: String }
 
   animeIdValue!: number;
+  selectedClass!: string;
   kindTarget!: HTMLSelectElement;
   statusKinds!: { [animeId: number]: string };
   pageCategoryValue!: string;
@@ -21,8 +23,8 @@ export default class extends Controller {
       this.statusKinds = event.detail;
       this.kindTarget.value = this.prevStatusKind = this.currentStatusKind;
 
-      if (this.currentStatusKind === NO_SELECT) {
-        this.element.classList.add('unselected');
+      if (this.currentStatusKind !== NO_SELECT) {
+        this.element.classList.add(this.selectedClass);
       }
 
       this.element.classList.remove('c-spinner');
@@ -53,7 +55,9 @@ export default class extends Controller {
           page_category: this.pageCategoryValue,
         })
         .then(() => {
-          this.element.classList.remove('unselected');
+          if (this.kindTarget.value === NO_SELECT) {
+            this.element.classList.remove(this.selectedClass);
+          }
         })
         .catch(() => {
           ($('.c-sign-up-modal') as any).modal('show');
