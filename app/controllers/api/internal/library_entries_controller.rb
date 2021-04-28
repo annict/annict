@@ -7,7 +7,7 @@ module Api
 
       def index
         return render(json: []) unless user_signed_in?
-        return head(404) unless params[:anime_ids]
+        return render(json: []) unless params[:anime_ids]
 
         status_kinds = current_user.
           library_entries.
