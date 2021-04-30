@@ -1,0 +1,23 @@
+:root {
+  @include ann-base-variables;
+
+  &[data-appearance-switcher-color-scheme='light'] {
+    @include ann-light-variables;
+  }
+
+  &[data-appearance-switcher-color-scheme='dark'] {
+    @include ann-dark-variables;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-appearance-switcher-color-scheme='dark']) {
+    @include ann-light-variables;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-appearance-switcher-color-scheme='light']) {
+    @include ann-dark-variables;
+  }
+}
