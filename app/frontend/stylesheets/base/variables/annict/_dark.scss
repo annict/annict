@@ -1,7 +1,32 @@
+$ann-color-dark-base-map: (
+  "average":  #ff6d00,
+  "bad":      #757575,
+  "black":      map-get($ann-color-black-map, "090"),
+  "blue":       map-get($ann-color-blue-map, "040"),
+  "body-bg":    map-get($ann-color-black-map, "070"),
+  "body":       map-get($ann-color-black-map, "005"),
+  "footer-bg":#334854,
+  "good":     #00C853,
+  "great":    #00B0FF,
+  "green":      map-get($ann-color-green-map, "040"),
+  "hr-border":  map-get($ann-color-black-map, "005"),
+  "link":       map-get($ann-color-blue-map, "020"),
+  "mizuho":     map-get($ann-color-mizuho-map, "040"),
+  "red":        map-get($ann-color-red-map, "040"),
+  "sidebar-bg": map-get($ann-color-black-map, "070"),
+  "supporter":#00BCD4,
+  "text-muted": map-get($ann-color-black-map, "040"),
+  "white":    #FFFFFF,
+  "yellow":     map-get($ann-color-yellow-map, "040"),
+);
+
+$ann-color-dark-map: map-merge(
+  (),
+  $ann-color-dark-base-map
+);
+
 @mixin ann-dark-variables {
-  --ann-color-body-bg: var(--ann-color-black-060);
-  --ann-color-body: var(--ann-color-black-005);
-  --ann-color-hr-border: var(--ann-color-black-005);
-  --ann-color-link: #3291ff;
-  --ann-color-text-muted: var(--ann-color-black-040);
+  @each $name, $value in $ann-color-dark-map {
+    --ann-color-#{$name}: #{$value};
+  }
 }
