@@ -11,20 +11,26 @@ module Selectors
 
     def render
       build_html do |h|
-        h.tag :select, {
-          class: "c-status-selector custom-select #{status_selector_class_name}",
-          data_action: "status-selector#change",
+        h.tag :div, {
+          class: "c-status-selector #{status_selector_class_name}",
           data_controller: "status-selector",
           data_status_selector_anime_id_value: @anime.id,
           data_status_selector_selected_class: "c-status-selector--selected",
           data_status_selector_page_category_value: @page_category,
           data_status_selector_target: "kind"
-        } do
-          status_options.each do |status_option|
-            h.tag :option, value: status_option[1] do
-              h.text status_option[0]
+      } do
+          h.tag :select, {
+            class: "custom-select",
+            data_action: "status-selector#change",
+          } do
+            status_options.each do |status_option|
+              h.tag :option, value: status_option[1] do
+                h.text status_option[0]
+              end
             end
           end
+
+          h.tag :i, class: "far fa-caret-down"
         end
       end
     end
