@@ -1,10 +1,10 @@
 // Original: https://github.com/twbs/bootstrap/blob/v4.5.2/scss/_reboot.scss
 
 body {
-  background-color: var(--ann-color-body-bg);
-  color: var(--ann-color-body);
+  background-color: var(--bs-body-bg);
+  color: var(--bs-body-color);
 }
 
 a {
-  color: var(--ann-color-link);
+  color: var(--bs-link-color);
 }

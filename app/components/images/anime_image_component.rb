@@ -14,7 +14,7 @@ module Images
     def render
       build_html do |h|
         h.tag :div,
-          class: "c-work-image img-fluid js-lazy rounded-sm #{@class_name}",
+          class: "c-anime-image img-fluid js-lazy rounded-sm #{@class_name}",
           data_bg: @image_url_1x,
           data_bg_hidpi: @image_url_2x,
           style: "background-color: #{@bg_color};" do

@@ -6,14 +6,14 @@
 @import './base/foundations';
 // @import './web/foundations';
 
-// @import './web/layouts';
+@import './main/layouts';
 
 // @import './v2/projects';
 // @import './pc/projects';
 // @import './mobile/projects';
 
-// @import './common/components';
-// @import './web/components';
+@import './base/components';
+@import './main/components';
 // @import './v2/components';
 // @import './pc/components';
 // @import './mobile/components';

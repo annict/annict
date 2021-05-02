@@ -136,18 +136,4 @@ $ann-navbar-height: 52px;
 $ann-navbar-height-mobile: 70px;
 
 
-@mixin ann-base-variables {
-  @each $map-name, $map in (
-    "mizuho": $ann-color-mizuho-map,
-    "green":  $ann-color-green-map,
-    "black":  $ann-color-black-map,
-    "blue":   $ann-color-blue-map,
-    "yellow": $ann-color-yellow-map,
-    "red":    $ann-color-red-map,
-    "orange": $ann-color-orange-map,
-  ) {
-    @each $color-name, $color-value in $map {
-      --ann-color-#{$map-name}-#{$color-name}: #{$color-value};
-    }
-  }
-}
+$theme-name-list: "primary";
