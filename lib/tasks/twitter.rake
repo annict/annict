@@ -28,7 +28,7 @@ namespace :twitter do
         puts "tweet: #{tweet.url}"
 
         # Prevent to embed https://support.discordapp.com/hc/en-us/articles/206342858--How-do-I-disable-auto-embed-
-        tweet_body = tweet.attrs[:full_text].gsub(%r{(https?:/[\S)}, "<\\1>")
+        tweet_body = tweet.attrs[:full_text].gsub(%r{(https?:\/\/[\S]+)}, "<\\1>")
         work_urls = Work
           .only_kept
           .where(twitter_username: tweet.user.screen_name)
