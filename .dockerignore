@@ -7,7 +7,6 @@
 .idea
 .prettierrc
 .rspec
-.rubocop.yml
 .sass-cache
 .sass-lint.yml
 .solargraph.yml
