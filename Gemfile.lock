@@ -1,3 +1,10 @@
+GIT
+  remote: https://github.com/kiraka/htmlrb.git
+  revision: 5c7895ca0ae72756180cc9cb38da5ef50899f489
+  branch: main
+  specs:
+    htmlrb (0.2.1)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -118,7 +125,6 @@ GEM
       rack (>= 0.9.0)
     binding_of_caller (0.8.0)
       debug_inspector (>= 0.0.1)
-    browser (5.1.0)
     buftok (0.2.0)
     builder (3.2.4)
     bullet (6.1.0)
@@ -243,11 +249,6 @@ GEM
     github-markup (3.0.4)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
-    gon (6.4.0)
-      actionpack (>= 3.0.20)
-      i18n (>= 0.7)
-      multi_json
-      request_store (>= 1.0)
     graphql (1.12.6)
     graphql-batch (0.4.3)
       graphql (>= 1.3, < 2)
@@ -524,6 +525,9 @@ GEM
       unicode-display_width (>= 1.4.0, < 2.0)
     rubocop-ast (1.1.1)
       parser (>= 2.7.1.5)
+    rubocop-performance (1.8.1)
+      rubocop (>= 0.87.0)
+      rubocop-ast (>= 0.4.0)
     ruby-enum (0.8.0)
       i18n
     ruby-next (0.11.0)
@@ -558,9 +562,6 @@ GEM
       json (>= 1.8, < 3)
       simplecov-html (~> 0.10.0)
     simplecov-html (0.10.2)
-    slim (4.1.0)
-      temple (>= 0.7.6, < 0.9)
-      tilt (>= 2.0.6, < 2.1)
     solargraph (0.39.17)
       backport (~> 1.1)
       benchmark
@@ -587,11 +588,13 @@ GEM
       sprockets (>= 3.0.0)
     squasher (0.6.2)
     stackprof (0.2.15)
+    standard (0.6.1)
+      rubocop (~> 0.90)
+      rubocop-performance (~> 1.8.0)
     syoboi_calendar (0.9.4)
       faraday
       faraday_middleware
       multi_xml
-    temple (0.8.2)
     terminal-table (1.8.0)
       unicode-display_width (~> 1.1, >= 1.1.1)
     terrapin (0.6.0)
@@ -664,7 +667,6 @@ DEPENDENCIES
   aws-sdk-s3
   better_errors
   binding_of_caller
-  browser
   bullet
   by_star
   cld
@@ -683,7 +685,6 @@ DEPENDENCIES
   factory_bot_rails
   flutie
   github-markup
-  gon
   graphql (>= 1.10.0.pre3)
   graphql-batch
   graphql-docs
@@ -691,6 +692,7 @@ DEPENDENCIES
   groupdate
   hashdiff
   hiredis
+  htmlrb!
   http_accept_language
   httparty
   i18n-tasks
@@ -729,18 +731,17 @@ DEPENDENCIES
   redis
   rspec-mocks
   rspec-rails
-  rubocop
   ruby_identicon
   scss_lint
   sentry-raven
   shrine
   simplecov (< 0.18)
-  slim
   solargraph
   spring
   spring-commands-rspec
   squasher
   stackprof
+  standard
   syoboi_calendar
   timecop
   traceroute

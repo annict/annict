@@ -2,14 +2,14 @@
 
 module Db
   class ChannelsController < Db::ApplicationController
-    before_action :authenticate_user!, only: %i(new create edit update destroy)
+    before_action :authenticate_user!, only: %i[new create edit update destroy]
 
     def index
-      @channels = Channel.
-        without_deleted.
-        eager_load(:channel_group).
-        merge(ChannelGroup.without_deleted).
-        order(vod: :desc, "channel_groups.sort_number": :asc, sort_number: :asc)
+      @channels = Channel
+        .without_deleted
+        .eager_load(:channel_group)
+        .merge(ChannelGroup.without_deleted)
+        .order(vod: :desc, "channel_groups.sort_number": :asc, sort_number: :asc)
     end
 
     def new

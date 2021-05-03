@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module V4
-  class WorksController < V4::ApplicationController
+  class WorksController < ApplicationController
     include AnimeSidebarDisplayable
 
     def show
@@ -9,9 +9,9 @@ module V4
 
       anime = Work.only_kept.find(params[:anime_id])
 
-      result = Rails.cache.fetch(work_detail_work_cache_key(anime), expires_in: 3.hours) do
+      result = Rails.cache.fetch(work_detail_work_cache_key(anime), expires_in: 3.hours) {
         AnimePage::AnimeRepository.new(graphql_client: graphql_client).execute(anime_id: anime.id)
-      end
+      }
       @anime_entity = result.anime_entity
 
       load_vod_channel_entities(anime: anime, anime_entity: @anime_entity)

@@ -10,7 +10,7 @@ class CreateUserlandProjectMembers < ActiveRecord::Migration[5.0]
 
     add_index :userland_project_members, :user_id
     add_index :userland_project_members, :userland_project_id
-    add_index :userland_project_members, %i(user_id userland_project_id),
+    add_index :userland_project_members, %i[user_id userland_project_id],
       unique: true,
       name: :index_userland_pm_on_uid_and_userland_pid
 

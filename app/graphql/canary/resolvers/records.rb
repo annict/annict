@@ -13,7 +13,7 @@ module Canary
         end
 
         if month
-          if !%r{[0-9]{4}-[0-9]{2}}.match?(month)
+          unless %r{[0-9]{4}-[0-9]{2}}.match?(month)
             raise GraphQL::ExecutionError, "The `month` argument should be like `2020-03`"
           end
 
@@ -29,7 +29,7 @@ module Canary
             raise GraphQL::ExecutionError, "Episode #{episode_id} not found"
           end
 
-          @records = @records.joins(:episode_record).where(episode_records: { episode_id: episode.id })
+          @records = @records.joins(:episode_record).where(episode_records: {episode_id: episode.id})
         end
 
         if by_following
@@ -40,9 +40,9 @@ module Canary
         when :created_at
           @records.order(order.field => order.direction)
         when :likes_count
-          @records.
-            joins(:episode_record).
-            order("episode_records.likes_count": order.direction, "records.created_at": :desc)
+          @records
+            .joins(:episode_record)
+            .order("episode_records.likes_count": order.direction, "records.created_at": :desc)
         when :rating
           order_sql = <<~SQL
             CASE
@@ -53,10 +53,10 @@ module Canary
             END #{order.direction.upcase} NULLS LAST
           SQL
 
-          @records.
-            joins(:episode_record).
-            order(order_sql).
-            order("records.created_at": :desc)
+          @records
+            .joins(:episode_record)
+            .order(order_sql)
+            .order("records.created_at": :desc)
         else
           @records
         end

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# TODO: Buttons::ShareToFacebookButtonComponent に移行する
 class ShareToFacebookButtonComponent < ApplicationComponent
   def initialize(url:, class_name: "")
     @url = url

@@ -202,32 +202,6 @@
         <% end %>
       </div>
 
-      <div class="mb-5">
-        <h2 class="font-weight-bold h3 mb-3">
-          <%= t "noun.stats" %>
-        </h2>
-
-        <div class="container mt-3 pt-3">
-          <div class="row">
-            <div class="col-12 col-sm-6 mb-3">
-              <h3 class="small text-center">
-                Watchers
-              </h3>
-
-              <c-work-watchers-chart :work-id="<%= @anime_entity.database_id %>"></c-work-watchers-chart>
-            </div>
-
-            <div class="col-12 col-sm-6 mb-3">
-              <h3 class="small text-center">
-                Status
-              </h3>
-
-              <c-work-status-chart :work-id="<%= @anime_entity.database_id %>"></c-work-status-chart>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <% if @anime_entity.series_list.present? %>
         <h2 class="h4 text-center my-4 font-weight-bold">
           <%= t "noun.related_works" %>

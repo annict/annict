@@ -2,10 +2,10 @@
 
 module WorkTagsHelper
   def build_work_tags_json(user, work)
-    user.tags_by_work(work).map do |work_tag|
+    user.tags_by_work(work).map { |work_tag|
       {
         name: work_tag.name
       }
-    end.to_json
+    }.to_json
   end
 end

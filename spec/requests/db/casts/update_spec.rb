@@ -14,7 +14,7 @@ describe "PATCH /db/casts/:id", type: :request do
     end
 
     it "user can not access this page" do
-      patch "/db/casts/#{cast.id}", params: { cast: cast_params }
+      patch "/db/casts/#{cast.id}", params: {cast: cast_params}
       cast.reload
 
       expect(response.status).to eq(302)
@@ -43,7 +43,7 @@ describe "PATCH /db/casts/:id", type: :request do
     end
 
     it "user can not access" do
-      patch "/db/casts/#{cast.id}", params: { cast: cast_params }
+      patch "/db/casts/#{cast.id}", params: {cast: cast_params}
       cast.reload
 
       expect(response.status).to eq(302)
@@ -76,7 +76,7 @@ describe "PATCH /db/casts/:id", type: :request do
       expect(cast.character_id).to eq(old_cast["character_id"])
       expect(cast.person_id).to eq(old_cast["person_id"])
 
-      patch "/db/casts/#{cast.id}", params: { cast: cast_params }
+      patch "/db/casts/#{cast.id}", params: {cast: cast_params}
       cast.reload
 
       expect(response.status).to eq(302)

@@ -16,7 +16,6 @@ module Canary
         episode = Episode.only_kept.find_by_graphql_id(episode_id)
         library_entry = viewer.library_entries.where(work_id: episode.work_id).first_or_create!
 
-        sleep 3
         library_entry.append_episode!(episode)
 
         {

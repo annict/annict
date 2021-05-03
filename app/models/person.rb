@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: people
@@ -52,20 +53,20 @@ class Person < ApplicationRecord
   include RootResourceCommon
   include Unpublishable
 
-  DIFF_FIELDS = %i(
+  DIFF_FIELDS = %i[
     prefecture_id name name_kana nickname gender url wikipedia_url twitter_username
     birthday blood_type height name_en nickname_en url_en wikipedia_url_en
     twitter_username_en
-  ).freeze
+  ].freeze
 
-  enumerize :blood_type, in: %i(a b ab o)
-  enumerize :gender, in: %i(male female)
+  enumerize :blood_type, in: %i[a b ab o]
+  enumerize :gender, in: %i[male female]
 
   validates :name, presence: true, uniqueness: true
-  validates :url, url: { allow_blank: true }
-  validates :url_en, url: { allow_blank: true }
-  validates :wikipedia_url, url: { allow_blank: true }
-  validates :wikipedia_url_en, url: { allow_blank: true }
+  validates :url, url: {allow_blank: true}
+  validates :url_en, url: {allow_blank: true}
+  validates :wikipedia_url, url: {allow_blank: true}
+  validates :wikipedia_url_en, url: {allow_blank: true}
 
   belongs_to :prefecture, optional: true
   has_many :casts, dependent: :destroy
@@ -99,10 +100,10 @@ class Person < ApplicationRecord
   end
 
   def to_diffable_hash
-    data = self.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
+    data = self.class::DIFF_FIELDS.each_with_object({}) { |field, hash|
       hash[field] = send(field)
       hash
-    end
+    }
 
     data.delete_if { |_, v| v.blank? }
   end

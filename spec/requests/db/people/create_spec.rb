@@ -9,7 +9,7 @@ describe "POST /db/people", type: :request do
     end
 
     it "user can not access this page" do
-      post "/db/people", params: { db_person_rows_form: person_params }
+      post "/db/people", params: {db_person_rows_form: person_params}
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("ログインしてください")
@@ -31,7 +31,7 @@ describe "POST /db/people", type: :request do
     end
 
     it "user can not access" do
-      post "/db/people", params: { db_person_rows_form: person_params }
+      post "/db/people", params: {db_person_rows_form: person_params}
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("アクセスできません")
@@ -55,7 +55,7 @@ describe "POST /db/people", type: :request do
     it "user can create person" do
       expect(Person.all.size).to eq(0)
 
-      post "/db/people", params: { db_person_rows_form: person_params }
+      post "/db/people", params: {db_person_rows_form: person_params}
 
       expect(response.status).to eq(302)
       expect(flash[:notice]).to eq("登録しました")

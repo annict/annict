@@ -11,7 +11,7 @@ describe "PATCH /db/people/:id", type: :request do
     end
 
     it "user can not access this page" do
-      patch "/db/people/#{person.id}", params: { person: person_params }
+      patch "/db/people/#{person.id}", params: {person: person_params}
       person.reload
 
       expect(response.status).to eq(302)
@@ -36,7 +36,7 @@ describe "PATCH /db/people/:id", type: :request do
     end
 
     it "user can not access" do
-      patch "/db/people/#{person.id}", params: { person: person_params }
+      patch "/db/people/#{person.id}", params: {person: person_params}
       person.reload
 
       expect(response.status).to eq(302)
@@ -63,7 +63,7 @@ describe "PATCH /db/people/:id", type: :request do
     it "user can update person" do
       expect(person.name).to eq(old_person["name"])
 
-      patch "/db/people/#{person.id}", params: { person: person_params }
+      patch "/db/people/#{person.id}", params: {person: person_params}
       person.reload
 
       expect(response.status).to eq(302)

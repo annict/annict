@@ -1,5 +1,6 @@
 import { Controller } from 'stimulus';
 
+// TODO: spoiler-guard2-controller に置き換える
 export default class extends Controller {
   workId!: number;
   episodeId!: number;

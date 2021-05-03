@@ -20,7 +20,7 @@ namespace :mal do
         break if anime_list.key?("error")
 
         anime_list.each do |anime|
-          print "Anime ##{anime['id']}: "
+          print "Anime ##{anime["id"]}: "
 
           if Work.find_by(mal_anime_id: anime["id"]).present?
             puts "already saved"
@@ -60,7 +60,7 @@ namespace :mal do
     private
 
     def fetch_anime_list(page: 1)
-      self.class.get("/anime/popular", query: { page: page })
+      self.class.get("/anime/popular", query: {page: page})
     end
 
     def fetch_anime(mal_anime_id)

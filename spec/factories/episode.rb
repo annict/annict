@@ -4,7 +4,7 @@ FactoryBot.define do
   factory :episode do
     work
     sequence(:number) { |n| "第#{n}話" }
-    sequence(:title)  { |n| "Yes! プリキュア#{n}" }
+    sequence(:title) { |n| "Yes! プリキュア#{n}" }
 
     trait :published do
       unpublished_at { nil }

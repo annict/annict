@@ -13,6 +13,7 @@ en:
     all_comments: All Comments
     animation: Animation
     anime: Anime
+    anime_page: Anime Page
     annict_api: Annict API
     annict_db: Annict DB
     annict_developers: Annict Developers
@@ -57,6 +58,7 @@ en:
     email: Email
     english: English
     episode_number: Number
+    episode_page: Episode Page
     episodes: Episodes
     error: Error
     external_services: External Services
@@ -170,6 +172,7 @@ en:
     state: State
     state_change: State Change
     stats: Stats
+    status: Status
     story: Story
     summer: Summer
     supporter: Supporter

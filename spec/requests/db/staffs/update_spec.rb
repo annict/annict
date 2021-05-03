@@ -12,7 +12,7 @@ describe "PATCH /db/staffs/:id", type: :request do
     end
 
     it "user can not access this page" do
-      patch "/db/staffs/#{staff.id}", params: { staff: staff_params }
+      patch "/db/staffs/#{staff.id}", params: {staff: staff_params}
       staff.reload
 
       expect(response.status).to eq(302)
@@ -38,7 +38,7 @@ describe "PATCH /db/staffs/:id", type: :request do
     end
 
     it "user can not access" do
-      patch "/db/staffs/#{staff.id}", params: { staff: staff_params }
+      patch "/db/staffs/#{staff.id}", params: {staff: staff_params}
       staff.reload
 
       expect(response.status).to eq(302)
@@ -67,7 +67,7 @@ describe "PATCH /db/staffs/:id", type: :request do
     it "user can update staff" do
       expect(staff.resource_id).to eq(old_staff["resource_id"])
 
-      patch "/db/staffs/#{staff.id}", params: { staff: staff_params }
+      patch "/db/staffs/#{staff.id}", params: {staff: staff_params}
       staff.reload
 
       expect(response.status).to eq(302)

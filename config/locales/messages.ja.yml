@@ -34,10 +34,13 @@ ja:
         add_to_favorites: お気に入りに登録
         added_to_favorites: 登録済み
         hint: 'お気に入りに登録すると、この%{resource_type}が関係する新作アニメがAnnictに登録されたとき通知します (通知をオフにすることもできます)'
+      program_selector:
+        select_program: 放送情報を選択
       sign_up_modal:
         body: アカウント作成するとこの機能が使えます。
     _empty:
       no_activities: アクティビティはありません
+      no_anime: アニメはありません
       no_characters: キャラクターはいません
       no_episodes: エピソードはありません
       no_followers: フォローされていません
@@ -123,12 +126,6 @@ ja:
     home:
       index:
         there_are_no_activities: アクティビティはありません
-      index_guest:
-        hero_description_html: Annict (アニクト) は、アニメの視聴記録ができるWebサービスです。<br>人気ランキングや友達の視聴記録から好きなアニメを見つけて、管理することができます。
-        hero_description_mobile_html: Annict (アニクト) は、アニメの視聴記録ができるWebサービスです。
-        hero_title: 見たアニメを記録して、共有しよう。
-        hero_title_mobile_html: 見たアニメを記録して、<br>共有しよう。
-        start_tracking: 視聴記録を始める
     ics:
       you_can_see: Google Calendarに以下のURLを登録すると、「見てる」「見たい」にしている作品の放送情報などがカレンダーに表示されます。
     components:
@@ -137,7 +134,7 @@ ja:
       slot_list:
         tracked: 記録しました
       status_selector:
-        select_status: ステータスを選択
+        select_status: 視聴ステータス
     mutes:
       no_muted_users_found: ミュートした人はいません
     notifications:
@@ -262,6 +259,12 @@ ja:
       allowed_locales_description: 'サイト内に投稿された文書 (感想やレビューなど) の中で、どの言語で書かれたものを表示するかを設定することができます。'
       bye_bye: '退会しました。(´・ω;:..'
       no_works: 作品はありません
+    welcome:
+      show:
+        hero_description_html: Annict (アニクト) は、アニメの視聴記録ができるWebサービスです。<br>人気ランキングや友達の視聴記録から好きなアニメを見つけて、管理することができます。
+        hero_description_mobile_html: Annict (アニクト) は、アニメの視聴記録ができるWebサービスです。
+        hero_title_html: 見たアニメを記録して、<br class="d-sm-none">共有しよう。
+        start_tracking: 視聴記録を始める
     work_records:
       new:
         write_your_comment: 見た感想を残しませんか？ (自由入力)

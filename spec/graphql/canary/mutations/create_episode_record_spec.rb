@@ -5,7 +5,7 @@ describe Canary::Mutations::CreateEpisodeRecord do
   let(:episode) { create :episode }
   let(:anime) { episode.work }
   let(:token) { create(:oauth_access_token) }
-  let(:context) { { viewer: user, doorkeeper_token: token, writable: true } }
+  let(:context) { {viewer: user, doorkeeper_token: token, writable: true} }
   let(:id) { GraphQL::Schema::UniqueWithinType.encode(episode.class.name, episode.id) }
 
   context "正常系" do
@@ -49,7 +49,7 @@ describe Canary::Mutations::CreateEpisodeRecord do
           mutation {
             createEpisodeRecord(input: {
               episodeId: "#{id}",
-              comment: "#{'a' * (1_048_596 + 1)}", # 文字数制限 (1,048,596文字) 以上の感想を書く
+              comment: "#{"a" * (1_048_596 + 1)}", # 文字数制限 (1,048,596文字) 以上の感想を書く
               rating: GOOD
             }) {
               record {

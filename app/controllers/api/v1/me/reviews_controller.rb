@@ -6,7 +6,7 @@ module Api
       class ReviewsController < Api::V1::ApplicationController
         include V4::GraphqlRunnable
 
-        before_action :prepare_params!, only: %i(create update destroy)
+        before_action :prepare_params!, only: %i[create update destroy]
 
         def create
           work = Work.only_kept.find(@params.work_id)
@@ -74,14 +74,14 @@ module Api
         private
 
         def render_validation_errors(review)
-          errors = review.errors.full_messages.map do |message|
+          errors = review.errors.full_messages.map { |message|
             {
               type: "invalid_params",
               message: message
             }
-          end
+          }
 
-          render json: { errors: errors }, status: 400
+          render json: {errors: errors}, status: 400
         end
 
         def render_validation_error(message)

@@ -13,7 +13,6 @@ gem "activerecord-session_store"
 gem "acts_as_list"
 gem "addressable"
 gem "aws-sdk-s3" # Using in Shrine
-gem "browser", require: "browser/browser"
 gem "by_star"
 gem "cld"
 gem "commonmarker" # Using github-markup
@@ -29,13 +28,13 @@ gem "email_validator"
 gem "enumerize"
 gem "flutie"
 gem "github-markup"
-gem "gon"
 gem "graphql", ">= 1.10.0.pre3" # https://github.com/rmosolgo/graphql-ruby/pull/2640
 gem "graphql-batch"
 gem "graphql-fragment_cache"
 gem "groupdate"
 gem "hashdiff"
 gem "hiredis"
+gem "htmlrb", github: "kiraka/htmlrb", branch: "main"
 gem "http_accept_language"
 gem "httparty"
 gem "image_processing"
@@ -68,7 +67,6 @@ gem "ransack"
 gem "redis"
 gem "sentry-raven"
 gem "shrine"
-gem "slim"
 gem "syoboi_calendar"
 gem "twitter"
 gem "validate_url"
@@ -82,6 +80,7 @@ group :development, :test do
   gem "pry-rails"
   gem "rspec-mocks"
   gem "rspec-rails"
+  gem "standard"
 end
 
 group :development do
@@ -95,7 +94,6 @@ group :development do
   gem "i18n-tasks"
   gem "listen" # Using with `rails s` since Rails 5
   gem "meta_request"
-  gem "rubocop"
   gem "ruby_identicon"
   gem "scss_lint", require: false
   gem "solargraph"

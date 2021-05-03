@@ -1,0 +1,54 @@
+.l-welcome {
+  $root: &;
+
+  &__main {
+    #{$root}__content {
+      flex: 1;
+
+      @include media-breakpoint-up(lg) {
+        .hero {
+          height: 400px;
+          width: 100%;
+
+          &__bg-image {
+            background-position: center;
+            background-size: cover;
+            filter: brightness(50%);
+            height: 100%;
+          }
+
+          &__content {
+            width: 100%;
+            z-index: 1;
+          }
+        }
+      }
+
+      @include media-breakpoint-down(lg) {
+        .hero {
+          height: 260px;
+          position: relative;
+
+          &__bg-image {
+            background-position: center;
+            background-size: cover;
+            filter: brightness(50%);
+            height: 100%;
+          }
+
+          &__content {
+            height: 100%;
+            left: 0;
+            position: absolute;
+            top: 0;
+            width: 100%;
+
+            h1 {
+              margin-top: 1rem;
+            }
+          }
+        }
+      }
+    }
+  }
+}

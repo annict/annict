@@ -7,7 +7,7 @@ module AnimePage
     end
 
     def execute(anime_id:)
-      data = query(variables: { databaseId: anime_id.to_i })
+      data = query(variables: {databaseId: anime_id.to_i})
       anime_node = data.to_h.dig("data", "animeList", "nodes").first
 
       result.anime_entity = AnimeEntity.from_node(anime_node)

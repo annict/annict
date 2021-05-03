@@ -9,7 +9,7 @@ module Forms
     end
 
     def textarea_classname
-      @textarea_classname = %w()
+      @textarea_classname = %w[]
       @textarea_classname << @optional_textarea_classname
       @textarea_classname.join(" ")
     end

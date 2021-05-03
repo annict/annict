@@ -2,14 +2,14 @@
 
 module Db
   class OrganizationsController < Db::ApplicationController
-    before_action :authenticate_user!, only: %i(new create edit update destroy)
+    before_action :authenticate_user!, only: %i[new create edit update destroy]
 
     def index
-      @organizations = Organization.
-        without_deleted.
-        order(id: :desc).
-        page(params[:page]).
-        per(100)
+      @organizations = Organization
+        .without_deleted
+        .order(id: :desc)
+        .page(params[:page])
+        .per(100)
     end
 
     def new

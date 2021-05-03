@@ -66,10 +66,10 @@ class Like < ApplicationRecord
     return if user.id == recipient.user.id
 
     Notification.create do |n|
-      n.user        = recipient.user
+      n.user = recipient.user
       n.action_user = user
-      n.trackable   = self
-      n.action      = "likes.create"
+      n.trackable = self
+      n.action = "likes.create"
     end
   end
 end

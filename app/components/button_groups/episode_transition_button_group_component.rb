@@ -11,7 +11,7 @@ module ButtonGroups
     attr_reader :episode_entity
 
     def prev_episode_class_name
-      class_name = %w(btn btn-secondary)
+      class_name = %w[btn btn-secondary]
 
       if episode_entity.prev_episode.blank?
         class_name << "disabled"
@@ -21,7 +21,7 @@ module ButtonGroups
     end
 
     def next_episode_class_name
-      class_name = %w(btn btn-secondary)
+      class_name = %w[btn btn-secondary]
 
       if episode_entity.next_episode.blank?
         class_name << "disabled"

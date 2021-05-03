@@ -6,11 +6,11 @@ module Settings
 
     def index
       @apps = current_user.connected_applications.available.authorized
-      @tokens = current_user.
-        oauth_access_tokens.
-        available.
-        personal.
-        order(created_at: :desc)
+      @tokens = current_user
+        .oauth_access_tokens
+        .available
+        .personal
+        .order(created_at: :desc)
     end
 
     def revoke

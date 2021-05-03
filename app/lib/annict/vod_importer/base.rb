@@ -12,9 +12,9 @@ module Annict
           print "name: #{attr[:name]} -> "
 
           conditions = if channel.amazon_video?
-            { channel: channel, name: attr[:name] }
+            {channel: channel, name: attr[:name]}
           else
-            { channel: channel, code: attr[:code] }
+            {channel: channel, code: attr[:code]}
           end
           vod_title = VodTitle.find_by(conditions)
           if vod_title

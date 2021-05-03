@@ -32,7 +32,7 @@ class Status < ApplicationRecord
   include Reactable
   include Shareable
 
-  POSITIVE_KINDS = %i(wanna_watch watching watched).freeze
+  POSITIVE_KINDS = %i[wanna_watch watching watched].freeze
 
   KIND_MAPPING = {
     wanna_watch: :plan_to_watch,
@@ -85,6 +85,10 @@ class Status < ApplicationRecord
     count == 1 && initial.id == status.id
   end
 
+  def anime
+    work
+  end
+
   def share_to_sns
     return if !user.setting.share_status_to_twitter? || !user.authorized_to?(:twitter, shareable: true)
 
@@ -131,7 +135,7 @@ class Status < ApplicationRecord
   def save_library_entry
     library_entry = user.library_entries.find_or_initialize_by(work: work)
     library_entry.status = self
-    library_entry.watched_episode_ids = [] if %w(watched stop_watching).include?(kind)
+    library_entry.watched_episode_ids = [] if %w[watched stop_watching].include?(kind)
     library_entry.save!
   end
 end

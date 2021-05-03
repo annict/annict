@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: users
@@ -79,16 +80,17 @@ class User < ApplicationRecord
   # :confirmable, :lockable, :timeoutable
   devise :database_authenticatable, :omniauthable, :registerable, :trackable,
     :rememberable, :recoverable,
-    omniauth_providers: %i(facebook gumroad twitter),
-    authentication_keys: %i(email_username)
+    omniauth_providers: %i[facebook gumroad twitter],
+    authentication_keys: %i[email_username]
 
   enumerize :allowed_locales, in: ApplicationRecord::LOCALES, multiple: true, default: ApplicationRecord::LOCALES
-  enumerize :locale, in: %i(ja en)
-  enumerize :role, in: { user: 0, admin: 1, editor: 2 }, default: :user, scope: true
+  enumerize :locale, in: %i[ja en]
+  enumerize :role, in: {user: 0, admin: 1, editor: 2}, default: :user, scope: true
 
   belongs_to :gumroad_subscriber, optional: true
   has_many :activity_groups, dependent: :destroy
   has_many :activities, dependent: :destroy
+  has_many :anime_records, dependent: :destroy, class_name: "WorkRecord"
   has_many :character_favorites, dependent: :destroy
   has_many :collections, dependent: :destroy
   has_many :collection_items, dependent: :destroy
@@ -143,26 +145,27 @@ class User < ApplicationRecord
   has_one :profile, dependent: :destroy
   has_one :setting, dependent: :destroy
 
+  delegate :name, to: :profile
   delegate :admin?, :editor?, to: :role
-  delegate :share_record_to_twitter?, :timeline_mode, to: :setting
+  delegate :hide_record_body?, :share_record_to_twitter?, :timeline_mode, to: :setting
 
   validates :email,
     presence: true,
-    uniqueness: { case_sensitive: false },
+    uniqueness: {case_sensitive: false},
     email: true
   validates :password,
-    length: { in: Devise.password_length },
+    length: {in: Devise.password_length},
     allow_blank: true,
-    confirmation: { on: :password_update }
+    confirmation: {on: :password_update}
   validates :password_confirmation,
-    presence: { on: :password_update }
+    presence: {on: :password_update}
   validates :current_password,
-    valid_password: { on: :password_check }
+    valid_password: {on: :password_check}
   validates :username,
     presence: true,
-    length: { maximum: 20 },
-    format: { with: USERNAME_FORMAT },
-    uniqueness: { case_sensitive: false }
+    length: {maximum: 20},
+    format: {with: USERNAME_FORMAT},
+    uniqueness: {case_sensitive: false}
 
   # Override the Devise's `find_for_database_authentication`
   # https://github.com/plataformatec/devise/wiki/How-To:-Allow-users-to-sign-in-using-their-username-or-email-address
@@ -173,7 +176,7 @@ class User < ApplicationRecord
     if email_username.present?
       where(conditions.to_h).where([
         "LOWER(email) = :value OR LOWER(username) = :value",
-        { value: email_username.downcase }
+        {value: email_username.downcase}
       ]).first
     elsif conditions.key?(:email) || conditions.key?(:username)
       where(conditions.to_h).first
@@ -267,7 +270,7 @@ class User < ApplicationRecord
   end
 
   def friends_interested_in(work)
-    status_kinds = %w(wanna_watch watching watched)
+    status_kinds = %w[wanna_watch watching watched]
     library_entries = LibraryEntry.where(work: work).with_status(*status_kinds)
 
     followings.joins(:library_entries).merge(library_entries)
@@ -420,17 +423,15 @@ class User < ApplicationRecord
     channel_works = self.channel_works.where(work_id: library_entries.pluck(:work_id))
     channel_ids = channel_works.pluck(:channel_id)
     episode_ids = library_entries.pluck(:next_episode_id)
-    slots = Slot.
-      includes(:channel, work: :work_image).
-      where(channel_id: channel_ids, episode_id: episode_ids).
-      only_kept
+    slots = Slot
+      .includes(:channel, work: :work_image)
+      .where(channel_id: channel_ids, episode_id: episode_ids)
+      .only_kept
 
     channel_works.map do |cw|
-      slot = slots.
-        select { |p| p.work_id == cw.work_id && p.channel_id == cw.channel_id }.
-        sort_by(&:started_at).
-        reverse.
-        first
+      slot = slots
+        .select { |p| p.work_id == cw.work_id && p.channel_id == cw.channel_id }
+        .max_by(&:started_at)
 
       slot
     end
@@ -531,8 +532,8 @@ class User < ApplicationRecord
 
   def get_large_avatar_image(provider, image_url)
     case provider
-    when "twitter"  then image_url.sub("_normal", "")
-    when "facebook" then "#{image_url.sub('http://', 'https://')}?type=large"
+    when "twitter" then image_url.sub("_normal", "")
+    when "facebook" then "#{image_url.sub("http://", "https://")}?type=large"
     end
   end
 end

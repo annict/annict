@@ -2,7 +2,7 @@
 
 module Forum
   class PostsController < Forum::ApplicationController
-    before_action :authenticate_user!, only: %i(new create edit update)
+    before_action :authenticate_user!, only: %i[new create edit update]
 
     def new
       @post = ForumPost.new

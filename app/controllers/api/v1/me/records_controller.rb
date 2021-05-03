@@ -6,11 +6,11 @@ module Api
       class RecordsController < Api::V1::ApplicationController
         include V4::GraphqlRunnable
 
-        before_action :prepare_params!, only: %i(create update destroy)
+        before_action :prepare_params!, only: %i[create update destroy]
 
         def create
           episode = Episode.only_kept.find(@params.episode_id)
-          result = CreateEpisodeRecordService.new(
+          creator = EpisodeRecordCreator.new(
             user: current_user,
             episode: episode,
             rating: @params.rating_state,
@@ -19,11 +19,11 @@ module Api
             share_to_twitter: @params.share_twitter
           ).call
 
-          unless result.success?
-            return render_validation_error(result.errors.first.message)
+          if creator.invalid?
+            return render_validation_error(creator.errors.first.message)
           end
 
-          @episode_record = current_user.episode_records.find_by!(record_id: result.record.id)
+          @episode_record = current_user.episode_records.find_by!(record_id: creator.record.id)
         end
 
         def update
@@ -59,15 +59,15 @@ module Api
         private
 
         def render_validation_errors(record)
-          errors = record.errors.full_messages.map do |message|
+          errors = record.errors.full_messages.map { |message|
             {
               type: "invalid_params",
               message: message,
               url: "http://example.com/docs/api/validations"
             }
-          end
+          }
 
-          render json: { errors: errors }, status: 400
+          render json: {errors: errors}, status: 400
         end
 
         def render_validation_error(message)

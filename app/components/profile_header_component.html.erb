@@ -26,7 +26,6 @@
       <div class="align-self-center col-12 col-lg text-center text-lg-right">
         <% if current_user&.id != user_entity.database_id %>
           <c-follow-button :user-id="<%= user_entity.database_id %>"></c-follow-button>
-          <c-user-actions-dropdown :user-id="<%= user_entity.database_id %>"></c-user-actions-dropdown>
         <% end %>
       </div>
     </div>

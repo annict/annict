@@ -1,13 +1,18 @@
 # frozen_string_literal: true
 
 class EpisodeRecordForm < ApplicationForm
-  attr_accessor :episode_id, :rating, :record_id
-  attr_reader :comment, :share_to_twitter
+  attr_accessor :episode, :oauth_application, :record
+  attr_reader :comment, :rating, :share_to_twitter
 
-  validates :rating, inclusion: { in: ApplicationEntity::Types::RecordRatingState.values }
+  validates :comment, length: {maximum: 1}
+  validates :rating, inclusion: {in: Record::RATING_STATES.map(&:to_s)}, allow_nil: true
 
   def comment=(comment)
     @comment = comment&.strip
+  end
+
+  def rating=(rating)
+    @rating = rating&.downcase.presence
   end
 
   def share_to_twitter=(share_to_twitter)
@@ -15,10 +20,10 @@ class EpisodeRecordForm < ApplicationForm
   end
 
   def persisted?
-    !record_id.nil?
+    !record.nil?
   end
 
   def unique_id
-    SecureRandom.uuid
+    @unique_id ||= SecureRandom.uuid
   end
 end

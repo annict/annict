@@ -2,8 +2,8 @@
 
 module Userland
   class ProjectsController < Userland::ApplicationController
-    before_action :authenticate_user!, only: %i(new create edit update destroy)
-    before_action :load_i18n, only: %i(show)
+    before_action :authenticate_user!, only: %i[new create edit update destroy]
+    before_action :load_i18n, only: %i[show]
 
     def new
       @project = UserlandProject.new

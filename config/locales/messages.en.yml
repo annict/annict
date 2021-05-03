@@ -34,10 +34,13 @@ en:
         add_to_favorites: Add to Favorites
         added_to_favorites: Added to Favorites
         hint: If you add this %{resource_type} into your favorites, you'll get a notification when upcoming animes which is related to this %{resource_type} will be added to Annict.
+      program_selector:
+        select_program: Select Program
       sign_up_modal:
         body: You can use this feature after sign up.
     _empty:
       no_activities: No Activities
+      no_anime: No Anime
       no_characters: No Characters
       no_episodes: No Episodes
       no_followers: No Followers
@@ -123,12 +126,6 @@ en:
     home:
       index:
         there_are_no_activities: There are no activities
-      index_guest:
-        hero_description_html: Explore the anime database, track anime you are watching<br>and see what friends are watching.
-        hero_description_mobile_html: Track anime you are watching<br>and see what friends are watching.
-        hero_title: The platform for anime addicts.
-        hero_title_mobile_html: The platform for anime addicts.
-        start_tracking: Start Tracking
     ics:
       you_can_see: You can see slots of works which you set "Watching", "Plan to Watch" when you add the following URL to Google Calendar.
     components:
@@ -263,6 +260,12 @@ en:
       allowed_locales_description: 'This setting which languages you are more likely to see throughout the site, but you may still see other languages, especially english.'
       bye_bye: 'Bye Bye... (´・ω;:..'
       no_works: No works
+    welcome:
+      show:
+        hero_description_html: Explore the anime database, track anime you are watching<br>and see what friends are watching.
+        hero_description_mobile_html: Track anime you are watching<br>and see what friends are watching.
+        hero_title_html: The platform for anime addicts.
+        start_tracking: Start Tracking
     work_records:
       new:
         write_your_comment: Write Your Comment! (optional)

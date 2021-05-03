@@ -11,8 +11,8 @@ module Api
 
       attr_reader :current_user
 
-      before_action -> { doorkeeper_authorize! :read }, only: %i(index show)
-      before_action only: %i(create update destroy) do
+      before_action -> { doorkeeper_authorize! :read }, only: %i[index show]
+      before_action only: %i[create update destroy] do
         doorkeeper_authorize! :write
       end
       before_action :logging_request
@@ -24,7 +24,7 @@ module Api
           message: "リクエストに失敗しました",
           developer_message: "404 Not Found"
         }
-        render json: { errors: [error] }, status: 404
+        render json: {errors: [error]}, status: 404
       end
 
       private
@@ -42,15 +42,15 @@ module Api
       end
 
       def response_params_error
-        errors = @params.errors.full_messages.map do |message|
+        errors = @params.errors.full_messages.map { |message|
           {
             type: "invalid_params",
             message: "リクエストに失敗しました",
             developer_message: message
           }
-        end
+        }
 
-        render json: { errors: errors }, status: 400
+        render json: {errors: errors}, status: 400
       end
 
       def logging_request

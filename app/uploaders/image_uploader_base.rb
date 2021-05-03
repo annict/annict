@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ImageUploaderBase < Shrine
-  ALLOWED_TYPES = %w(image/gif image/jpeg image/png).freeze
+  ALLOWED_TYPES = %w[image/gif image/jpeg image/png].freeze
   MAX_SIZE = 10.megabytes
   MAX_SIDE_LENGTH = 5000
 
@@ -27,17 +27,17 @@ class ImageUploaderBase < Shrine
       io.data["metadata"]["filename"] = "#{io.hash}.#{ext}" if ext
     end
 
-    versions = { original: io }
+    versions = {original: io}
 
     io.download do |original|
-      versions[:master] = ImageProcessing::MiniMagick.
-        source(original).
-        loader(page: 0). # For gif animation image
-        convert(:jpg).
-        saver(quality: 90).
-        strip.
-        resize_to_limit(1000, nil, sharpen: false).
-        call
+      versions[:master] = ImageProcessing::MiniMagick
+        .source(original)
+        .loader(page: 0) # For gif animation image
+        .convert(:jpg)
+        .saver(quality: 90)
+        .strip
+        .resize_to_limit(1000, nil, sharpen: false)
+        .call
     end
 
     versions

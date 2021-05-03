@@ -12,8 +12,8 @@ class RegistrationForm < ApplicationForm
     acceptance: true
   validates :username,
     presence: true,
-    length: { maximum: 20 },
-    format: { with: User::USERNAME_FORMAT }
+    length: {maximum: 20},
+    format: {with: User::USERNAME_FORMAT}
 
   validate :email_uniqueness
   validate :username_uniqueness

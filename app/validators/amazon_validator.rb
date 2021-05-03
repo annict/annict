@@ -3,7 +3,7 @@ class AmazonValidator < ActiveModel::EachValidator
     if value.present?
       begin
         url = URI.parse(value)
-        unless /amazon\.co\.jp\z/ === url.host
+        unless /amazon\.co\.jp\z/.match?(url.host)
           record.errors.add(:url, "にはAmazon.co.jpの商品URLを入力してください。")
         end
       rescue URI::InvalidURIError => err

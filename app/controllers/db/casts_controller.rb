@@ -2,15 +2,15 @@
 
 module Db
   class CastsController < Db::ApplicationController
-    before_action :authenticate_user!, only: %i(new create edit update destroy)
+    before_action :authenticate_user!, only: %i[new create edit update destroy]
 
     def index
       @work = Work.without_deleted.find(params[:work_id])
-      @casts = @work.
-        casts.
-        without_deleted.
-        includes(:person, :character).
-        order(:sort_number)
+      @casts = @work
+        .casts
+        .without_deleted
+        .includes(:person, :character)
+        .order(:sort_number)
     end
 
     def new

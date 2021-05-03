@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: series_works
@@ -32,9 +33,9 @@ class SeriesWork < ApplicationRecord
   include DbActivityMethods
   include Unpublishable
 
-  DIFF_FIELDS = %i(work_id).freeze
+  DIFF_FIELDS = %i[work_id].freeze
 
-  counter_culture :series, column_name: -> (series_work) { series_work.published? ? :series_works_count : nil }
+  counter_culture :series, column_name: ->(series_work) { series_work.published? ? :series_works_count : nil }
 
   belongs_to :series
   belongs_to :work, touch: true
@@ -42,16 +43,16 @@ class SeriesWork < ApplicationRecord
   has_many :db_comments, as: :resource, dependent: :destroy
 
   def self.sort_season(sort_type: "ASC")
-    joins(:work).
-      order("works.season_year #{sort_type}").
-      order("works.season_name #{sort_type}")
+    joins(:work)
+      .order("works.season_year #{sort_type}")
+      .order("works.season_name #{sort_type}")
   end
 
   def to_diffable_hash
-    data = self.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
+    data = self.class::DIFF_FIELDS.each_with_object({}) { |field, hash|
       hash[field] = send(field)
       hash
-    end
+    }
 
     data.delete_if { |_, v| v.blank? }
   end

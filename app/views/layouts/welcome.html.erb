@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="<%= I18n.locale %>">
+  <head>
+    <%= render "application/head" %>
+  </head>
+  <body>
+    <div class="l-welcome">
+      <div class="l-welcome__main d-flex flex-column">
+        <div class="l-welcome__content">
+          <%= render FlashComponent.new(flash) %>
+          <%= yield %>
+        </div>
+
+        <div class="l-welcome__footer">
+          <%= render FooterComponent.new %>
+        </div>
+      </div>
+    </div>
+
+    <%= render "application/sign_up_modal" %>
+  </body>
+</html>

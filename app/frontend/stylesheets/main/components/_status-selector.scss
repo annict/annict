@@ -1,0 +1,37 @@
+.c-status-selector {
+  position: relative;
+
+  select {
+    background-color: rgba(0, 0, 0, 0);
+    background: none;
+    border: solid 1px var(--bs-green);
+    color: var(--bs-green);
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+
+  svg {
+    margin-top: -8px;
+    pointer-events: none; // Caretをクリックしたときセレクトボックスを開くようにする
+    position: absolute;
+    right: 10px;
+    top: 50%;
+
+    path {
+      fill: var(--bs-green);
+    }
+  }
+
+  &--selected {
+    select {
+      background-color: var(--bs-green);
+      color: var(--bs-white);
+    }
+
+    svg {
+      path: {
+        fill: var(--bs-white);
+      }
+    }
+  }
+}

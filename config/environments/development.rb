@@ -39,7 +39,7 @@ Rails.application.configure do
   # Don't care if the mailer can't send.
   config.action_mailer.raise_delivery_errors = false
   config.action_mailer.perform_caching = false
-  config.action_mailer.default_url_options = { host: ENV.fetch("ANNICT_HOST") }
+  config.action_mailer.default_url_options = {host: ENV.fetch("ANNICT_HOST")}
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
     user_name: ENV.fetch("MAILTRAP_USERNAME"),
@@ -67,10 +67,10 @@ Rails.application.configure do
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 
   config.after_initialize do
-    Bullet.enable        = true
+    Bullet.enable = true
     Bullet.bullet_logger = true
-    Bullet.console       = true
-    Bullet.rails_logger  = true
+    Bullet.console = true
+    Bullet.rails_logger = true
   end
 
   # Vagrant環境でもBetter Errorsが使いたい

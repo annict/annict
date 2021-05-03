@@ -14,10 +14,10 @@ namespace :email_notification do
 
     next if works.blank?
 
-    users = User.
-      only_kept.
-      joins(:email_notification).
-      where(email_notifications: { event_favorite_works_added: true })
+    users = User
+      .only_kept
+      .joins(:email_notification)
+      .where(email_notifications: {event_favorite_works_added: true})
 
     users.find_each do |user|
       favorite_character_ids = user.favorite_characters.only_kept.pluck(:id)
@@ -26,10 +26,10 @@ namespace :email_notification do
 
       next if favorite_character_ids.blank? && favorite_person_ids.blank? && favorite_organization_ids.blank?
 
-      character_works = works.joins(:casts).where(casts: { character_id: favorite_character_ids })
-      cast_person_works = works.joins(:cast_people).where(casts: { person_id: favorite_person_ids })
-      staff_person_works = works.joins(:staff_people).where(staffs: { resource_id: favorite_person_ids })
-      organization_works = works.joins(:organizations).where(staffs: { resource_id: favorite_organization_ids })
+      character_works = works.joins(:casts).where(casts: {character_id: favorite_character_ids})
+      cast_person_works = works.joins(:cast_people).where(casts: {person_id: favorite_person_ids})
+      staff_person_works = works.joins(:staff_people).where(staffs: {resource_id: favorite_person_ids})
+      organization_works = works.joins(:organizations).where(staffs: {resource_id: favorite_organization_ids})
 
       work_ids = (character_works | cast_person_works | staff_person_works | organization_works).pluck(:id)
       library_work_ids = user.statuses.where(work_id: work_ids).pluck(:work_id)
@@ -48,10 +48,10 @@ namespace :email_notification do
     series_ids = SeriesWork.where(work: works).pluck(:series_id)
     next if series_ids.blank?
 
-    users = User.
-      only_kept.
-      joins(:email_notification).
-      where(email_notifications: { event_related_works_added: true })
+    users = User
+      .only_kept
+      .joins(:email_notification)
+      .where(email_notifications: {event_related_works_added: true})
 
     users = User.where(id: 2)
 
@@ -63,7 +63,7 @@ namespace :email_notification do
       target_series_ids = series_works.pluck(:series_id).uniq
       next if target_series_ids.blank?
 
-      target_work_ids = works.joins(:series_works).where(series_works: { series_id: target_series_ids }).pluck(:id)
+      target_work_ids = works.joins(:series_works).where(series_works: {series_id: target_series_ids}).pluck(:id)
       next if target_work_ids.blank?
 
       EmailNotificationService.send_email("related_works_added", user, target_work_ids)

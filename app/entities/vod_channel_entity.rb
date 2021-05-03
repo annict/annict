@@ -22,9 +22,9 @@ class VodChannelEntity < ApplicationEntity
       attrs[:name] = name
     end
 
-    attrs[:programs] = anime_entity.programs.select do |program_entity|
+    attrs[:programs] = anime_entity.programs.select { |program_entity|
       program_entity.channel.database_id == channel_node["databaseId"]
-    end
+    }
 
     new attrs
   end

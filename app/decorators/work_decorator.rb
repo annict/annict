@@ -8,21 +8,21 @@ module WorkDecorator
   end
 
   def twitter_username_link
-    link_to "@#{twitter_username}", twitter_username_url, target: "_blank"
+    link_to "@#{twitter_username}", twitter_username_url, target: "_blank", rel: "noopener"
   end
 
   def twitter_hashtag_link
-    link_to "##{twitter_hashtag}", twitter_hashtag_url, target: "_blank"
+    link_to "##{twitter_hashtag}", twitter_hashtag_url, target: "_blank", rel: "noopener"
   end
 
   def syobocal_link(title = nil)
     title = title.presence || sc_tid
-    link_to title, syobocal_url, target: "_blank"
+    link_to title, syobocal_url, target: "_blank", rel: "noopener"
   end
 
   def mal_anime_link(title = nil)
     title = title.presence || mal_anime_id
-    link_to title, mal_anime_url, target: "_blank"
+    link_to title, mal_anime_url, target: "_blank", rel: "noopener"
   end
 
   def db_detail_link(options = {})
@@ -83,6 +83,10 @@ module WorkDecorator
     end
   end
 
+  def image_url(size:)
+    ann_image_url(work_image, :image, size: size, ratio: "3:4")
+  end
+
   def to_values
     self.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
       hash[field] = case field
@@ -99,7 +103,7 @@ module WorkDecorator
         if url.present?
           begin
             link_to(URI.decode(url), url, target: "_blank")
-          rescue StandardError
+          rescue
             url
           end
         end

@@ -1,0 +1,27 @@
+$bs-green: map-get($ann-color-green-map, "040");
+$bs-white: #FFFFFF;
+
+@mixin bs-dark-variables {
+  $bs-dark-map: (
+    "black":                                  map-get($ann-color-black-map, "090"),
+    "blue":                                   map-get($ann-color-blue-map, "040"),
+    "body-bg":                                map-get($ann-color-black-map, "080"),
+    "body-color":                             $ann-color-dark-body,
+    "border-color":                           $ann-color-dark-border,
+    "card-bg":                                map-get($ann-color-black-map, "070"),
+    "card-border-color":                      $ann-color-dark-border,
+    "custom-select-indicator-color":          $bs-green,
+    "custom-select-indicator-selected-color": $bs-white,
+    "green":                                  $bs-green,
+    "hr-border-color":                        $ann-color-dark-border,
+    "link-color":                             map-get($ann-color-blue-map, "020"),
+    "red":                                    map-get($ann-color-red-map, "040"),
+    "text-muted":                             map-get($ann-color-black-map, "040"),
+    "white":                                  $bs-white,
+    "yellow":                                 map-get($ann-color-yellow-map, "040"),
+  );
+
+  @each $name, $value in $bs-dark-map {
+    --bs-#{$name}: #{$value};
+  }
+}

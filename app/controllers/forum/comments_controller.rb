@@ -2,7 +2,7 @@
 
 module Forum
   class CommentsController < Forum::ApplicationController
-    before_action :authenticate_user!, only: %i(create edit update)
+    before_action :authenticate_user!, only: %i[create edit update]
 
     def create
       @post = ForumPost.find(params[:post_id])

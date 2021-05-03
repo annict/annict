@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: slots
@@ -45,7 +46,7 @@ class Slot < ApplicationRecord
   include DbActivityMethods
   include Unpublishable
 
-  DIFF_FIELDS = %i(channel_id episode_id started_at rebroadcast).freeze
+  DIFF_FIELDS = %i[channel_id episode_id started_at rebroadcast].freeze
 
   attr_accessor :time_zone, :is_started_at_calced, :shift_time_along_with_after_slots
 
@@ -81,10 +82,10 @@ class Slot < ApplicationRecord
   end
 
   def to_diffable_hash
-    data = self.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
+    data = self.class::DIFF_FIELDS.each_with_object({}) { |field, hash|
       hash[field] = send(field)
       hash
-    end
+    }
 
     data.delete_if { |_, v| v.blank? }
   end

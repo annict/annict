@@ -1,11 +1,15 @@
-<%= form_with model: @form, url: episode_record_list_path(params[:anime_id], params[:episode_id]), method: form_method, local: true do |f| %>
-  <%= render ErrorPanelComponent.new(form: @form) %>
-
-  <% if @form.persisted? %>
-    <%= f.hidden_field :record_id %>
-  <% else %>
-    <%= f.hidden_field :episode_id %>
-  <% end %>
+<%= form_with(
+  model: @form,
+  url: form_url,
+  method: form_method,
+  local: true,
+  data: {
+    controller: "episode-record-form",
+    action: "turbo:submit-start->episode-record-form#handleSubmitStart turbo:submit-end->episode-record-form#handleSubmitEnd",
+    "episode-record-form-target": "form"
+  }) do |f|
+%>
+  <%= render ErrorPanelComponent2.new(stimulus_controller: "episode-record-form") %>
 
   <div class="mb-2">
     <%= render ButtonGroups::RecordRatingButtonGroupComponent.new(form: f, rating_field: :rating) %>
@@ -17,10 +21,10 @@
 
   <div class="row">
     <div class="col">
-      <% if @viewer&.authorized_to?(:twitter, shareable: true) %>
+      <% if @current_user.authorized_to?(:twitter, shareable: true) %>
         <div class="form-check">
           <label class="form-check-label">
-            <%= f.check_box :share_to_twitter, class: "form-check-input", checked: @viewer.share_record_to_twitter? %>
+            <%= f.check_box :share_to_twitter, class: "form-check-input", checked: @current_user.share_record_to_twitter? %>
             <%= t "messages._common.share_to_twitter" %>
           </label>
         </div>
@@ -29,14 +33,7 @@
 
     <div class="col">
       <div class="text-center">
-        <%= f.button class: "btn btn-primary" do %>
-          <i class="far fa-edit mr-1"></i>
-          <% if f.object.persisted? %>
-            <%= t "verb.update" %>
-          <% else %>
-            <%= t "verb.track" %>
-          <% end %>
-        <% end %>
+        <%= f.submit (f.object.persisted? ? t("verb.update") : t("verb.track")), class: "btn btn-primary", data: { "episode-record-form-target": "submitButton" } %>
       </div>
     </div>
 

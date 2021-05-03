@@ -1,0 +1,139 @@
+// Colors
+// Generated on https://www.colorbox.io
+// Major Steps => Total: 10
+// Saturation => Start: 4, End: 90, Curve: Quad - EaseOut, Rate: 130
+// Brightness => Start: 100, End: 53, Curve: Quad - EaseOut
+
+$ann-color-mizuho-map: (
+  "000": #FFF2FB,
+  "005": #FFE1F4,
+  "010": #FFD0E9,
+  "020": #FFA1C6,
+  "030": #FE799D,
+  "040": #F85B73,
+  "050": #E9305E,
+  "060": #D51C5B,
+  "070": #BE115A,
+  "080": #A30757,
+  "090": #870051,
+);
+
+$ann-color-green-map: (
+  "000": #F2FFFC,
+  "005": #CDF6ED,
+  "010": #ABECE1,
+  "020": #71E0CE,
+  "030": #43D1BC,
+  "040": #21C0A8,
+  "050": #0ABC93,
+  "060": #03B47C,
+  "070": #02A762,
+  "080": #019849,
+  "090": #008734,
+);
+
+$ann-color-black-map: (
+  "000": #F1F1F1,
+  "005": #E6E6E6,
+  "010": #CCCCCC,
+  "020": #B3B3B3,
+  "030": #999999,
+  "040": #808080,
+  "050": #666666,
+  "060": #4D4D4D,
+  "070": #333333,
+  "080": #191919,
+  "090": #000000,
+);
+
+$ann-color-blue-map: (
+  "000": #F2F7FF,
+  "005": #CCE1FD,
+  "010": #A8CDFB,
+  "020": #68ABF5,
+  "030": #318FEE,
+  "040": #0779E4,
+  "050": #006AD9,
+  "060": #005CC9,
+  "070": #004EB6,
+  "080": #003F9F,
+  "090": #003287,
+);
+
+$ann-color-yellow-map: (
+  "000": #FFFEF2,
+  "005": #FFFDD9,
+  "010": #FFFCBF,
+  "020": #FFF489,
+  "030": #FDE95A,
+  "040": #F6DA35,
+  "050": #E7C614,
+  "060": #D4B109,
+  "070": #BD9A05,
+  "080": #A38002,
+  "090": #876800,
+);
+
+$ann-color-red-map: (
+  "000": #FFF2F7,
+  "005": #FEDCE9,
+  "010": #FCC6D8,
+  "020": #F894AF,
+  "030": #F16A86,
+  "040": #E84A5F,
+  "050": #DC253D,
+  "060": #CC1529,
+  "070": #B70D1A,
+  "080": #A0050C,
+  "090": #870002,
+);
+
+$ann-color-orange-map: (
+  "000": #FFF2F2,
+  "005": #FFD6D2,
+  "010": #FFC0B1,
+  "020": #FF9A73,
+  "030": #FF853C,
+  "040": #FC8210,
+  "050": #EC6800,
+  "060": #D85900,
+  "070": #BF4B00,
+  "080": #A43D00,
+  "090": #872F00,
+);
+
+$ann-color-shirobako-map: (
+  "s":  #D5AB1C,
+  "ho": #D24488,
+  "ik": #7C608C,
+  "rb": #2985BE,
+  "o":  #A3BC5C,
+  "a":  #D74F13,
+);
+
+$ann-color-service-map: (
+  "facebook": #2E6499,
+  "gumroad":  #3CABBA,
+  "twitter":  #24B1EC,
+);
+
+
+// Typography
+
+$ann-line-height-sizes: (
+  0: 0,
+  1: 1,
+  2: 1.15,
+  3: 1.5,
+  4: 1.7,
+  5: 1.9
+);
+
+
+// Navbar
+
+$ann-navbar-height: 52px;
+$ann-navbar-height-mobile: 70px;
+
+
+$theme-name-list: "primary";

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class PageCategory
-  NAMES = %i(
+  NAMES = %i[
     anime_record_list
     character_fan_list
     episode
@@ -11,7 +11,6 @@ class PageCategory
     favorite_person_list
     follower_list
     following_list
-    guest_home
     library
     organization_fan_list
     person_fan_list
@@ -22,14 +21,14 @@ class PageCategory
     search
     slot_list
     track
-    track_anime
     user_home
     user_work_tag
+    welcome
     work
     work_list_newest
     work_list_popular
     work_list_season
-  ).freeze
+  ].freeze
 
   NAMES.each do |name|
     const_set(name.upcase, name.to_s.dasherize)

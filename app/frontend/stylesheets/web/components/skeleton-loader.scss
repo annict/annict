@@ -1,0 +1,14 @@
+.c-skeleton-loader {
+  // 重くなるので一旦コメントアウトしておく
+  // animation: pulse 2s cubic-bezier(.4,0,.6,1) infinite;
+
+  &__content {
+    background-color: $progress-bg;
+  }
+
+  @keyframes pulse {
+    50% {
+      opacity: 0.5;
+    }
+  }
+}

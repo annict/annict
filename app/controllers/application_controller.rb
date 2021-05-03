@@ -1,47 +1,34 @@
 # frozen_string_literal: true
 
 class ApplicationController < ActionController::Base
-  include Pundit
-
-  include ControllerCommon
-  include Localable
-  include Analyzable
-  include LogrageSetting
-  include Gonable
-  include ViewSelector
-  include FlashMessage
-  include RavenContext
   include PageCategorizable
-  include V4::UserDataFetchable
+  include RavenLoadable
+  include Loggable
+  include Localizable
+  include KeywordSearchable
 
-  # Prevent CSRF attacks by raising an exception.
-  # For APIs, you may want to use :null_session instead.
-  protect_from_forgery with: :exception, prepend: true
+  layout "default"
 
-  helper_method :gon, :locale_ja?, :locale_en?, :local_url, :page_category
+  helper_method :client_uuid, :local_url_with_path, :locale_en?, :locale_ja?, :local_url, :page_category
 
-  around_action :switch_locale
-  before_action :redirect_if_unexpected_subdomain
+  before_action :set_raven_context
   before_action :set_search_params
-  before_action :load_new_user
-  before_action :store_data_into_gon
-
-  # テスト実行時にDragonflyでアップロードした画像を読み込むときに呼ばれるアクション
-  # 画像サーバはこのRailsアプリから切り離しているので、CircleCI等でテストを実行するときは
-  # このダミーのアクションを画像だと思って呼ぶ
-  def dummy_image
-    # テストを実行するときは画像は表示されていなくて良いので、ただ200を返す
-    head 200
-  end
+  around_action :set_locale
 
   private
 
-  def after_sign_in_path_for(resource)
-    path = stored_location_for(resource)
-    return path if path.present?
+  def redirect_if_signed_in
+    if user_signed_in?
+      redirect_to root_path
+    end
+  end
+
+  # Override `Devise::Controllers::Helpers#signed_in_root_path`
+  def signed_in_root_path(_resource_or_scope)
     root_path
   end
 
+  # Override `Devise::Controllers::Helpers#after_sign_out_path_for`
   def after_sign_out_path_for(_resource_or_scope)
     root_path
   end

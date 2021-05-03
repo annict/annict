@@ -26,12 +26,12 @@ module Annict
           links = result.css(".channel_info a.channel_name")
           break if links.blank?
 
-          attrs << links.map do |link|
+          attrs << links.map { |link|
             {
               code: link.attr(:href)[/(ch[0-9]+)/],
               name: link.text.strip
             }
-          end
+          }
 
           vod_title_ids = create_vod_title!(channel, attrs.flatten)
           break if vod_title_ids.all?(&:nil?)

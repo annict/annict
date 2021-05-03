@@ -12,7 +12,7 @@ describe "PATCH /db/programs/:id", type: :request do
     end
 
     it "user can not access this page" do
-      patch "/db/programs/#{program.id}", params: { program: program_params }
+      patch "/db/programs/#{program.id}", params: {program: program_params}
       program.reload
 
       expect(response.status).to eq(302)
@@ -38,7 +38,7 @@ describe "PATCH /db/programs/:id", type: :request do
     end
 
     it "user can not access" do
-      patch "/db/programs/#{program.id}", params: { program: program_params }
+      patch "/db/programs/#{program.id}", params: {program: program_params}
       program.reload
 
       expect(response.status).to eq(302)
@@ -68,7 +68,7 @@ describe "PATCH /db/programs/:id", type: :request do
     it "user can update program" do
       expect(program.channel_id).to eq(old_program["channel_id"])
 
-      patch "/db/programs/#{program.id}", params: { program: program_params }
+      patch "/db/programs/#{program.id}", params: {program: program_params}
       program.reload
 
       expect(response.status).to eq(302)

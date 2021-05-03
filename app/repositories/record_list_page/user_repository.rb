@@ -7,7 +7,7 @@ module RecordListPage
     end
 
     def execute(username:)
-      data = query(variables: { username: username })
+      data = query(variables: {username: username})
       user_node = data.to_h.dig("data", "user")
 
       result.user_entity = UserEntity.from_node(user_node)

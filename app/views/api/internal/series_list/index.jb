@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-resources = @series_list.map do |series|
+resources = @series_list.map { |series|
   {
     id: series.id,
     text: series.local_name
   }
-end
+}
 
 {
   resources: resources

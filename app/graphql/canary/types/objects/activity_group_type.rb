@@ -32,7 +32,7 @@ module Canary
         end
 
         def activities
-          Canary::AssociationLoader.for(ActivityGroup, %i(ordered_activities)).load(object)
+          Canary::AssociationLoader.for(ActivityGroup, %i[ordered_activities]).load(object)
         end
       end
     end

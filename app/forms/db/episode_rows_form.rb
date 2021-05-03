@@ -24,7 +24,7 @@ module Db
 
     def attrs_list
       sort_number = @work.episodes.count * 100
-      @attrs_list ||= parsed_rows.map do |row_columns|
+      @attrs_list ||= parsed_rows.map { |row_columns|
         sort_number += 100
         {
           work_id: @work.id,
@@ -33,7 +33,7 @@ module Db
           title: row_columns[2],
           sort_number: sort_number
         }
-      end
+      }
     end
 
     def new_episodes
@@ -41,10 +41,10 @@ module Db
     end
 
     def new_episodes_with_user
-      @new_episodes_with_user ||= new_episodes.map do |episode|
+      @new_episodes_with_user ||= new_episodes.map { |episode|
         episode.user = @user
         episode
-      end
+      }
     end
   end
 end

@@ -5,11 +5,11 @@ class UserWorkRecordsQuery
     @work_records = work_records
     @user = user
 
-    @work_records = @work_records.
-      only_kept.
-      preload(:record, user: :profile).
-      joins(:user).
-      merge(User.only_kept)
+    @work_records = @work_records
+      .only_kept
+      .preload(:record, user: :profile)
+      .joins(:user)
+      .merge(User.only_kept)
     @work_records = @work_records.where.not(user_id: @user.mute_users.pluck(:muted_user_id)) if @user
     @work_records = join_likes if @user
     @work_records = join_library_entries if @user

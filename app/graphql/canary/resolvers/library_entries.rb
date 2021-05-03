@@ -17,14 +17,12 @@ module Canary
           library_entries = library_entries.joins(:work).merge(Work.lt_current_season)
         end
 
-        library_entries = case order.field
+        case order.field
         when :last_tracked_at
           library_entries.order(position: order.direction == :asc ? :desc : :asc)
         else
           library_entries.order(created_at: :asc)
         end
-
-        library_entries
       end
     end
   end
