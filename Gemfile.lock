@@ -553,8 +553,13 @@ GEM
       rb-inotify (~> 0.9, >= 0.9.7)
     scss_lint (0.59.0)
       sass (~> 3.5, >= 3.5.5)
-    sentry-raven (3.1.2)
+    sentry-ruby (4.3.2)
+      concurrent-ruby (~> 1.0, >= 1.0.2)
       faraday (>= 1.0)
+      sentry-ruby-core (= 4.3.2)
+    sentry-ruby-core (4.3.2)
+      concurrent-ruby
+      faraday
     shrine (3.3.0)
       content_disposition (~> 1.0)
       down (~> 5.1)
@@ -735,7 +740,7 @@ DEPENDENCIES
   rspec-rails
   ruby_identicon
   scss_lint
-  sentry-raven
+  sentry-ruby
   shrine
   simplecov (< 0.18)
   solargraph

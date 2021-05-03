@@ -106,9 +106,14 @@ module Annict
     # https://schneems.com/2017/11/08/80-smaller-rails-footprint-with-rack-deflate/
     config.middleware.insert_after ActionDispatch::Static, Rack::Deflater
 
-    Raven.configure do |config|
+    Sentry.init do |config|
       config.dsn = ENV.fetch("SENTRY_DSN")
-      config.sanitize_fields = Rails.application.config.filter_parameters.map(&:to_s)
+
+      filter = ActiveSupport::ParameterFilter.new(Rails.application.config.filter_parameters)
+      config.before_send = lambda do |event, hint|
+        # Use Rails' parameter filter to sanitize the event
+        filter.filter(event.to_hash)
+      end
     end
 
     ActiveRecord::SessionStore::Session.serializer = :null

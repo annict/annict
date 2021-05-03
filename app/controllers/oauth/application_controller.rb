@@ -5,7 +5,7 @@ module Oauth
     include Doorkeeper::Helpers::Controller
 
     include PageCategorizable
-    include RavenLoadable
+    include SentryLoadable
     include Loggable
     include Localizable
     include KeywordSearchable
@@ -14,7 +14,7 @@ module Oauth
 
     helper_method :locale_ja?, :locale_en?, :local_url, :page_category
 
-    before_action :set_raven_context
+    before_action :set_sentry_context
     before_action :set_search_params
     around_action :set_locale
   end

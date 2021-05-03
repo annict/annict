@@ -2,7 +2,7 @@
 
 class ApplicationController < ActionController::Base
   include PageCategorizable
-  include RavenLoadable
+  include SentryLoadable
   include Loggable
   include Localizable
   include KeywordSearchable
@@ -11,7 +11,7 @@ class ApplicationController < ActionController::Base
 
   helper_method :client_uuid, :local_url_with_path, :locale_en?, :locale_ja?, :local_url, :page_category
 
-  before_action :set_raven_context
+  before_action :set_sentry_context
   before_action :set_search_params
   around_action :set_locale
 
