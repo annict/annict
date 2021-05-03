@@ -72,7 +72,7 @@ class User < ApplicationRecord
 
   extend Enumerize
 
-  USERNAME_FORMAT = /\A[A-Za-z0-9_]+\z/.freeze
+  USERNAME_FORMAT = /\A[A-Za-z0-9_]+\z/
 
   attr_accessor :email_username, :current_password
 

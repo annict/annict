@@ -3,7 +3,7 @@
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby "2.7.2"
+ruby "3.0.1"
 
 gem "rails", "~> 6.1.0"
 
@@ -94,7 +94,6 @@ group :development do
   gem "graphql-docs"
   gem "i18n-tasks"
   gem "listen" # Using with `rails s` since Rails 5
-  gem "meta_request"
   gem "ruby_identicon"
   gem "scss_lint", require: false
   gem "solargraph"
