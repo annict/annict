@@ -5,10 +5,10 @@ describe "GET /", type: :request do
     host! "annict-jp.test:3000"
   end
 
-  context "when user does not sign in" do
+  context "ログインしていないとき" do
     let!(:work) { create(:work, :with_current_season) }
 
-    it "displays welcome page" do
+    it "Welcomeページが表示されること" do
       get "/"
 
       expect(response.status).to eq(200)
