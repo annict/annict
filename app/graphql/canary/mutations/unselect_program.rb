@@ -24,7 +24,7 @@ module Canary
         {
           library_entry: library_entry
         }
-    end
+      end
     end
   end
 end

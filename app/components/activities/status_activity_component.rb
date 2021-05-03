@@ -18,8 +18,7 @@ module Activities
                 h.html ProfileImageComponent2.new(view_context,
                   image_url_1x: @user.avatar_url(size: "50x50"),
                   alt: "@#{@user.username}",
-                  lazy_load: false
-                ).render
+                  lazy_load: false).render
               end
             end
 

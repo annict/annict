@@ -10,7 +10,7 @@ describe "GET /db/search", type: :request do
       let!(:character) { create(:character, name: "きゃらくたー検索") }
 
       it "responses search result" do
-        get "/db/search", params: { q: "検索" }
+        get "/db/search", params: {q: "検索"}
 
         expect(response.status).to eq(200)
         expect(response.body).to include(series.name)
@@ -23,7 +23,7 @@ describe "GET /db/search", type: :request do
 
     context "when resources are not saved" do
       it "responses search result" do
-        get "/db/search", params: { q: "検索" }
+        get "/db/search", params: {q: "検索"}
 
         expect(response.status).to eq(200)
         expect(response.body).to include("登録されていません")
@@ -46,7 +46,7 @@ describe "GET /db/search", type: :request do
       let!(:character) { create(:character, name: "きゃらくたー検索") }
 
       it "responses search result" do
-        get "/db/search", params: { q: "検索" }
+        get "/db/search", params: {q: "検索"}
 
         expect(response.status).to eq(200)
         expect(response.body).to include(series.name)
@@ -59,7 +59,7 @@ describe "GET /db/search", type: :request do
 
     context "when resources are not saved" do
       it "responses search result" do
-        get "/db/search", params: { q: "検索" }
+        get "/db/search", params: {q: "検索"}
 
         expect(response.status).to eq(200)
         expect(response.body).to include("登録されていません")

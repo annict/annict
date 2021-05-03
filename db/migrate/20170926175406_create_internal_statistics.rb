@@ -10,6 +10,6 @@ class CreateInternalStatistics < ActiveRecord::Migration[5.1]
     end
 
     add_index :internal_statistics, :key
-    add_index :internal_statistics, %i(key date), unique: true
+    add_index :internal_statistics, %i[key date], unique: true
   end
 end

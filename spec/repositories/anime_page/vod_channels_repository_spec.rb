@@ -17,9 +17,9 @@ describe AnimePage::VodChannelsRepository, type: :repository do
 
   context "正常系" do
     it "動画配信サービス情報が取得できること" do
-      result = AnimePage::VodChannelsRepository.
-        new(graphql_client: graphql_client).
-        execute(anime_entity: anime_entity)
+      result = AnimePage::VodChannelsRepository
+        .new(graphql_client: graphql_client)
+        .execute(anime_entity: anime_entity)
 
       # VODなチャンネルと非VODなチャンネルが1つずつ存在するはず
       expect(Channel.count).to eq 2

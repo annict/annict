@@ -2,7 +2,7 @@
 
 module Db
   class ProgramsController < Db::ApplicationController
-    before_action :authenticate_user!, only: %i(new create edit update destroy)
+    before_action :authenticate_user!, only: %i[new create edit update destroy]
 
     def index
       @work = Work.without_deleted.find(params[:work_id])

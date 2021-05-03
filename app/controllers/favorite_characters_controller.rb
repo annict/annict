@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class FavoriteCharactersController < ApplicationController
-  before_action :load_i18n, only: %i(index)
+  before_action :load_i18n, only: %i[index]
 
   def index
     set_page_category PageCategory::FAVORITE_CHARACTER_LIST

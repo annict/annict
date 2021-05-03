@@ -24,9 +24,9 @@ module Canary
         when :created_at
           @records.order(order.field => order.direction)
         when :likes_count
-          @records.
-            joins(:work_record).
-            order("work_records.likes_count": order.direction, "records.created_at": :desc)
+          @records
+            .joins(:work_record)
+            .order("work_records.likes_count": order.direction, "records.created_at": :desc)
         when :rating
           order_sql = <<~SQL
             CASE
@@ -37,10 +37,10 @@ module Canary
             END #{order.direction.upcase} NULLS LAST
           SQL
 
-          @records.
-            joins(:work_record).
-            order(Arel.sql(order_sql)).
-            order("records.created_at": :desc)
+          @records
+            .joins(:work_record)
+            .order(Arel.sql(order_sql))
+            .order("records.created_at": :desc)
         else
           @records
         end

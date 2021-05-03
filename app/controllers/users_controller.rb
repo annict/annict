@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 class UsersController < ApplicationController
-  before_action :load_i18n, only: %i(following followers)
-  before_action :authenticate_user!, only: %i(destroy share)
-  before_action :set_user, only: %i(following followers)
+  before_action :load_i18n, only: %i[following followers]
+  before_action :authenticate_user!, only: %i[destroy share]
+  before_action :set_user, only: %i[following followers]
 
   def following
     set_page_category PageCategory::FOLLOWING_LIST

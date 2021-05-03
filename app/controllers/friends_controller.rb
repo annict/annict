@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class FriendsController < ApplicationController
-  before_action :load_i18n, only: %i(index)
+  before_action :load_i18n, only: %i[index]
   before_action :authenticate_user!
 
   def index

@@ -15,8 +15,7 @@ class RecordFooterComponent2 < ApplicationComponent2
           likes_count: @record.likes_count,
           page_category: "user-home",
           class_name: "mr-3",
-          init_is_liked: @record.is_liked
-        ).render
+          init_is_liked: @record.is_liked).render
 
         if @record.episode_record?
           h.tag :a, href: view_context.record_path(@record.user.username, @record.id), class: "mr-3", data_turbo_frame: "_top" do

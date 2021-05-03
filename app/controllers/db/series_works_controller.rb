@@ -2,7 +2,7 @@
 
 module Db
   class SeriesWorksController < Db::ApplicationController
-    before_action :authenticate_user!, only: %i(new create edit update destroy)
+    before_action :authenticate_user!, only: %i[new create edit update destroy]
 
     def index
       @series = Series.without_deleted.find(params[:series_id])

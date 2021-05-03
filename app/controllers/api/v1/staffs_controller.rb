@@ -3,7 +3,7 @@
 module Api
   module V1
     class StaffsController < Api::V1::ApplicationController
-      before_action :prepare_params!, only: %i(index)
+      before_action :prepare_params!, only: %i[index]
 
       def index
         @staffs = Staff.only_kept

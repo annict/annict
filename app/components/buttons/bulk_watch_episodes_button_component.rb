@@ -25,7 +25,7 @@ module Buttons
     private
 
     def bulk_watch_episodes_button_class_name
-      classes = %w(btn)
+      classes = %w[btn]
       classes += @class_name.split(" ")
       classes.uniq.join(" ")
     end

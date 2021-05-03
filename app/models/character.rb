@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: characters
@@ -53,12 +54,12 @@ class Character < ApplicationRecord
   include RootResourceCommon
   include Unpublishable
 
-  DIFF_FIELDS = %i(
+  DIFF_FIELDS = %i[
     name name_en series_id nickname nickname_en birthday birthday_en age age_en
     blood_type blood_type_en height height_en weight weight_en nationality nationality_en
     occupation occupation_en description description_en name_kana description_source
     description_source_en
-  ).freeze
+  ].freeze
 
   belongs_to :series
   has_many :casts, dependent: :destroy
@@ -69,7 +70,7 @@ class Character < ApplicationRecord
   has_many :works, through: :casts
 
   validates :series_id, presence: true
-  validates :name, presence: true, uniqueness: { scope: :series_id }
+  validates :name, presence: true, uniqueness: {scope: :series_id}
   validates :description, presence_pair: :description_source
   validates :description_en, presence_pair: :description_source_en
 
@@ -82,10 +83,10 @@ class Character < ApplicationRecord
   end
 
   def to_diffable_hash
-    data = self.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
+    data = self.class::DIFF_FIELDS.each_with_object({}) { |field, hash|
       hash[field] = send(field)
       hash
-    end
+    }
 
     data.delete_if { |_, v| v.blank? }
   end

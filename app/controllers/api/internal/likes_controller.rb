@@ -5,17 +5,17 @@ module Api
     class LikesController < Api::Internal::ApplicationController
       include V4::GraphqlRunnable
 
-      before_action :authenticate_user!, only: %i(unlike)
+      before_action :authenticate_user!, only: %i[unlike]
 
       def index
         return render(json: []) unless user_signed_in?
 
-        likes = current_user.likes.pluck(:recipient_id, :recipient_type).map do |(recipient_id, recipient_type)|
+        likes = current_user.likes.pluck(:recipient_id, :recipient_type).map { |(recipient_id, recipient_type)|
           {
             recipient_type: recipient_type,
             recipient_id: recipient_id
           }
-        end
+        }
 
         render json: likes
       end

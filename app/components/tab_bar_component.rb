@@ -53,7 +53,7 @@ class TabBarComponent < ApplicationComponent2
               end
 
               h.tag :li, class: "col nav-item px-0 text-center" do
-                h.tag :a, href: "/works/#{ENV.fetch('ANNICT_CURRENT_SEASON')}", class: "text-dark" do
+                h.tag :a, href: "/works/#{ENV.fetch("ANNICT_CURRENT_SEASON")}", class: "text-dark" do
                   h.tag :i, class: "far fa-#{Season.current.icon_name}"
 
                   h.tag :div, class: "small mt-1" do
@@ -63,7 +63,7 @@ class TabBarComponent < ApplicationComponent2
               end
             else
               h.tag :li, class: "col nav-item px-0 text-center" do
-                h.tag :a, href: "/works/#{ENV.fetch('ANNICT_CURRENT_SEASON')}", class: "text-dark" do
+                h.tag :a, href: "/works/#{ENV.fetch("ANNICT_CURRENT_SEASON")}", class: "text-dark" do
                   h.tag :i, class: "far fa-#{Season.current.icon_name}"
 
                   h.tag :div, class: "small mt-1" do

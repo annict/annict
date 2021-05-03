@@ -2,7 +2,7 @@
 
 json = {}
 
-json[:episodes] = @episodes.map do |episode|
+json[:episodes] = @episodes.map { |episode|
   episode_json = {}
   episode_json.merge!(render("api/v1/episodes/episode", episode: episode, params: @params, field_prefix: ""))
 
@@ -21,7 +21,7 @@ json[:episodes] = @episodes.map do |episode|
   end
 
   episode_json
-end
+}
 
 json.merge!(render("api/v1/application/pagination", collection: @episodes, params: @params))
 

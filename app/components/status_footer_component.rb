@@ -14,8 +14,7 @@ class StatusFooterComponent < ApplicationComponent2
           resource_name: "Status",
           resource_id: @status.id,
           likes_count: @status.likes_count,
-          page_category: @page_category,
-        ).render
+          page_category: @page_category).render
       end
     end
   end

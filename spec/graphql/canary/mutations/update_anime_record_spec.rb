@@ -5,7 +5,7 @@ describe Canary::Mutations::UpdateAnimeRecord do
   let!(:record) { create(:record, user: user) }
   let!(:anime_record) { create(:work_record, user: user, record: record) }
   let(:token) { create(:oauth_access_token) }
-  let(:context) { { viewer: user, doorkeeper_token: token, writable: true } }
+  let(:context) { {viewer: user, doorkeeper_token: token, writable: true} }
   let(:record_id) { GraphQL::Schema::UniqueWithinType.encode(record.class.name, record.id) }
 
   context "正常系" do

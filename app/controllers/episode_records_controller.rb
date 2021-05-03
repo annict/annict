@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class EpisodeRecordsController < ApplicationController
-  before_action :authenticate_user!, only: %i(create)
+  before_action :authenticate_user!, only: %i[create]
 
   def create
     @form = EpisodeRecordForm.new(episode_record_form_params)

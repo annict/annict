@@ -2,7 +2,7 @@
 
 json = {}
 
-json[:programs] = @slots.map do |slot|
+json[:programs] = @slots.map { |slot|
   slot_json = {}
   slot_json.merge! render("api/v1/slots/slot", slot: slot, params: @params, field_prefix: "")
 
@@ -11,7 +11,7 @@ json[:programs] = @slots.map do |slot|
   slot_json[:episode] = render("api/v1/episodes/episode", episode: slot.episode, params: @params, field_prefix: "episode.")
 
   slot_json
-end
+}
 
 json.merge! render("api/v1/application/pagination", collection: @slots, params: @params)
 

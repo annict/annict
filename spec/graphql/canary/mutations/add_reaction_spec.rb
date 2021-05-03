@@ -4,9 +4,9 @@ describe Canary::Mutations::AddReaction do
   let(:user_1) { create :registered_user }
   let(:user_2) { create :registered_user }
   let(:token) { create(:oauth_access_token) }
-  let(:context) { { viewer: user_1, doorkeeper_token: token, writable: true } }
+  let(:context) { {viewer: user_1, doorkeeper_token: token, writable: true} }
   let(:reactable_id) { Canary::AnnictSchema.id_from_object(reactable, reactable.class) }
-  let(:variables) { { reactableId: reactable_id, content: "HEART" } }
+  let(:variables) { {reactableId: reactable_id, content: "HEART"} }
   let(:query) do
     <<~GRAPHQL
       mutation($reactableId: ID!, $content: ReactionContent!) {

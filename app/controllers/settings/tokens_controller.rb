@@ -13,7 +13,7 @@ module Settings
 
       if @token.save(context: :personal)
         flash[:notice] = t("messages.settings.tokens.created")
-        flash[:created_token] = { id: @token.id, token: @token.token }
+        flash[:created_token] = {id: @token.id, token: @token.token}
         redirect_to settings_apps_path
       else
         render :new

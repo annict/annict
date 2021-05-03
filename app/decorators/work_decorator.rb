@@ -103,7 +103,7 @@ module WorkDecorator
         if url.present?
           begin
             link_to(URI.decode(url), url, target: "_blank")
-          rescue StandardError
+          rescue
             url
           end
         end

@@ -14,8 +14,7 @@ class RecordHeaderComponent2 < ApplicationComponent2
             h.html ProfileImageComponent2.new(view_context,
               image_url_1x: @record.user.avatar_url(size: "50x50"),
               alt: "@#{@record.user.username}",
-              lazy_load: false
-            ).render
+              lazy_load: false).render
           end
         end
 

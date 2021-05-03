@@ -10,7 +10,7 @@ class CreateForumPostParticipants < ActiveRecord::Migration[5.0]
 
     add_index :forum_post_participants, :forum_post_id
     add_index :forum_post_participants, :user_id
-    add_index :forum_post_participants, %i(forum_post_id user_id), unique: true
+    add_index :forum_post_participants, %i[forum_post_id user_id], unique: true
 
     add_foreign_key :forum_post_participants, :forum_posts
     add_foreign_key :forum_post_participants, :users

@@ -2,15 +2,15 @@
 
 module Db
   class EpisodesController < Db::ApplicationController
-    before_action :authenticate_user!, only: %i(new create edit update destroy)
+    before_action :authenticate_user!, only: %i[new create edit update destroy]
 
     def index
       @work = Work.without_deleted.find(params[:work_id])
-      @episodes = @work.episodes.without_deleted.
-        includes(:prev_episode).
-        order(sort_number: :desc).
-        page(params[:page]).
-        per(100)
+      @episodes = @work.episodes.without_deleted
+        .includes(:prev_episode)
+        .order(sort_number: :desc)
+        .page(params[:page])
+        .per(100)
     end
 
     def new

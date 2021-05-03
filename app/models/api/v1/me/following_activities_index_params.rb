@@ -19,7 +19,7 @@ module Api
         validates :filter_actions,
           allow_blank: true,
           inclusion: {
-            in: %w(create_record create_multiple_records create_review create_status)
+            in: %w[create_record create_multiple_records create_review create_status]
           }
         validates :filter_muted,
           allow_blank: true,

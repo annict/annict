@@ -30,7 +30,7 @@ module Api
           filter_season_params: true
         validates :filter_status,
           allow_blank: true,
-          format: { with: KINDS, message: "の値が不正です。" }
+          format: {with: KINDS, message: "の値が不正です。"}
         validates :per_page,
           allow_blank: true,
           numericality: {

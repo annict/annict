@@ -27,7 +27,7 @@ module Buttons
     private
 
     def receive_channel_button_class_name
-      classes = %w(btn btn-outline-info)
+      classes = %w[btn btn-outline-info]
       classes += @class_name.split(" ")
       classes.uniq.join(" ")
     end

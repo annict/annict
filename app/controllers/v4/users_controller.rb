@@ -7,9 +7,9 @@ module V4
 
       user = User.only_kept.find_by!(username: params[:username])
 
-      result = Rails.cache.fetch(profile_user_cache_key(user), expires_in: 3.hours) do
+      result = Rails.cache.fetch(profile_user_cache_key(user), expires_in: 3.hours) {
         ProfilePage::UserRepository.new(graphql_client: graphql_client).execute(username: user.username)
-      end
+      }
       @user_entity = result.user_entity
 
       result = ProfilePage::UserActivityGroupsRepository.new(

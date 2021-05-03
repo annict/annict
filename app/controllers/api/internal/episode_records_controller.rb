@@ -3,7 +3,7 @@
 module Api
   module Internal
     class EpisodeRecordsController < Api::Internal::ApplicationController
-      before_action :authenticate_user!, only: %i(create)
+      before_action :authenticate_user!, only: %i[create]
 
       def create
         episode = Episode.only_kept.find(params[:episode_id])
@@ -14,10 +14,10 @@ module Api
         ).call
 
         if creator.invalid?
-          return render(status: 400, json: { message: creator.errors.full_messages.first })
+          return render(status: 400, json: {message: creator.errors.full_messages.first})
         end
 
-        render(status: 201, json: { record_id: creator.record.id })
+        render(status: 201, json: {record_id: creator.record.id})
       end
     end
   end

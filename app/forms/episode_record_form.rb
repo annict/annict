@@ -4,8 +4,8 @@ class EpisodeRecordForm < ApplicationForm
   attr_accessor :episode, :oauth_application, :record
   attr_reader :comment, :rating, :share_to_twitter
 
-  validates :comment, length: { maximum: 1 }
-  validates :rating, inclusion: { in: Record::RATING_STATES.map(&:to_s) }, allow_nil: true
+  validates :comment, length: {maximum: 1}
+  validates :rating, inclusion: {in: Record::RATING_STATES.map(&:to_s)}, allow_nil: true
 
   def comment=(comment)
     @comment = comment&.strip

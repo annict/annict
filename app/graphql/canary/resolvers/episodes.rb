@@ -45,7 +45,7 @@ module Canary
           context[:viewer]&.status_cache_expired_at.to_i,
           context[:viewer]&.record_cache_expired_at.to_i,
           object.updated_at.to_i,
-          '1' # キャッシュクリア用の任意の文字列
+          "1" # キャッシュクリア用の任意の文字列
         ].freeze
       end
     end

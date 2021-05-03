@@ -6,7 +6,7 @@ module Api
       class RecordsController < Api::V1::ApplicationController
         include V4::GraphqlRunnable
 
-        before_action :prepare_params!, only: %i(create update destroy)
+        before_action :prepare_params!, only: %i[create update destroy]
 
         def create
           episode = Episode.only_kept.find(@params.episode_id)
@@ -59,15 +59,15 @@ module Api
         private
 
         def render_validation_errors(record)
-          errors = record.errors.full_messages.map do |message|
+          errors = record.errors.full_messages.map { |message|
             {
               type: "invalid_params",
               message: message,
               url: "http://example.com/docs/api/validations"
             }
-          end
+          }
 
-          render json: { errors: errors }, status: 400
+          render json: {errors: errors}, status: 400
         end
 
         def render_validation_error(message)

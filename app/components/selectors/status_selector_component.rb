@@ -18,10 +18,10 @@ module Selectors
           data_status_selector_selected_class: "c-status-selector--selected",
           data_status_selector_page_category_value: @page_category,
           data_status_selector_target: "kind"
-      } do
+        } do
           h.tag :select, {
             class: "custom-select",
-            data_action: "status-selector#change",
+            data_action: "status-selector#change"
           } do
             status_options.each do |status_option|
               h.tag :option, value: status_option[1] do

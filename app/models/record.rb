@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: records
@@ -28,7 +29,7 @@ class Record < ApplicationRecord
   include SoftDeletable
   include Reactable
 
-  RATING_STATES = %i(bad average good great).freeze
+  RATING_STATES = %i[bad average good great].freeze
 
   attr_accessor :is_liked, :is_spoiler
 

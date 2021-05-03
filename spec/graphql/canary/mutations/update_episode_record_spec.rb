@@ -5,7 +5,7 @@ describe Canary::Mutations::UpdateEpisodeRecord do
   let(:episode_record) { create(:episode_record, user: user, rating: nil) }
   let!(:record) { episode_record.record }
   let(:token) { create(:oauth_access_token) }
-  let(:context) { { viewer: user, doorkeeper_token: token, writable: true } }
+  let(:context) { {viewer: user, doorkeeper_token: token, writable: true} }
   let(:record_id) { GraphQL::Schema::UniqueWithinType.encode(record.class.name, record.id) }
 
   context "正常系" do

@@ -21,10 +21,10 @@ class LikeButtonComponent2 < ApplicationComponent2
         data_like_button_page_category: @page_category,
         data_like_button_init_is_liked_value: @init_is_liked,
         data_action: "click->like-button#toggle" do
-          h.tag :i, class: "c-like-button__icon"
-          h.tag :span, class: "c-like-button__count", data_like_button_target: "count" do
-            h.text @likes_count
-          end
+        h.tag :i, class: "c-like-button__icon"
+        h.tag :span, class: "c-like-button__count", data_like_button_target: "count" do
+          h.text @likes_count
+        end
       end
     end
   end
@@ -32,7 +32,7 @@ class LikeButtonComponent2 < ApplicationComponent2
   private
 
   def like_button_class_name
-    classes = %w(d-inline-block u-fake-link)
+    classes = %w[d-inline-block u-fake-link]
     classes += @class_name.split(" ")
     classes.uniq.join(" ")
   end

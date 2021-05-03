@@ -137,8 +137,8 @@ module Canary
           null: true,
           max_page_size: 500,
           resolver: Canary::Resolvers::Episodes do
-            argument :viewer_tracked_in_current_status, Boolean, required: false
-            argument :order_by, Canary::Types::InputObjects::EpisodeOrder, required: false
+          argument :viewer_tracked_in_current_status, Boolean, required: false
+          argument :order_by, Canary::Types::InputObjects::EpisodeOrder, required: false
         end
 
         field :records, Canary::Types::Objects::RecordType.connection_type,

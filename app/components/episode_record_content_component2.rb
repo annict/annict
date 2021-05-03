@@ -12,17 +12,17 @@ class EpisodeRecordContentComponent2 < ApplicationComponent2
     build_html do |h|
       h.tag :div, class: "c-episode-record-content c-record-content" do
         if @record.episode_record.rating_state || @episode_record.body.present?
-          h.html(SpoilerGuardComponent2.new(view_context, record: @record).render do |h|
+          h.html(SpoilerGuardComponent2.new(view_context, record: @record).render { |h|
             h.tag :div, class: "c-record-content__wrapper mb-3" do
               if @record.episode_record.rating_state
                 h.html RatingLabelComponent2.new(view_context, rating: @episode_record.rating_state, advanced_rating: @episode_record.rating, class_name: "mb-1").render
               end
 
-              h.html(BodyComponent2.new(view_context, height: 300, format: :html).render do |h|
+              h.html(BodyComponent2.new(view_context, height: 300, format: :html).render { |h|
                 h.html render_markdown(@episode_record.comment)
-              end)
+              })
             end
-          end)
+          })
         end
 
         if @show_card

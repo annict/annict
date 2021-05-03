@@ -10,25 +10,25 @@ module Api
 
         friends_data = Work.watching_friends_data(work_ids, current_user)
 
-        result = work_ids.map do |work_id|
+        result = work_ids.map { |work_id|
           data = {
             work_id: work_id
           }
 
-          data[:users] = friends_data.
-            select { |ud| ud[:work_id] == work_id }.
-            first[:users_data].
-            sort_by { |ud| ud[:library_entry_id] }.
-            reverse.
-            map do |ud|
+          data[:users] = friends_data
+            .select { |ud| ud[:work_id] == work_id }
+            .first[:users_data]
+            .sort_by { |ud| ud[:library_entry_id] }
+            .reverse
+            .map { |ud|
               {
                 username: ud[:user].username,
                 avatar_url: helpers.ann_image_url(ud[:user].profile, :image, size: "30x30")
               }
-            end
+            }
 
           data
-        end
+        }
 
         render json: result
       end

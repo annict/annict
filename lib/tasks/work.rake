@@ -3,7 +3,7 @@
 namespace :work do
   # 指定したWorkを削除する
   # コマンド実行例: rake work:hide_overlapped_work[4458,4485]
-  task :hide_overlapped_work, %i(target_work_id original_work_id) => :environment do |_, args|
+  task :hide_overlapped_work, %i[target_work_id original_work_id] => :environment do |_, args|
     # 削除対象のWork
     target_work = Work.find(args[:target_work_id])
     # オリジナルのWork
@@ -11,7 +11,7 @@ namespace :work do
 
     ActiveRecord::Base.transaction do
       [
-        { resource_class: Activity, column: :recipient }
+        {resource_class: Activity, column: :recipient}
       ].each do |hash|
         update_or_delete_pol_resource(hash[:resource_class], hash[:column], target_work, original_work)
       end
@@ -26,7 +26,7 @@ namespace :work do
 
   def update_or_delete_pol_resource(resource_class, column, target_work, original_work)
     resource_class.where(column.to_sym => target_work).find_each do |t_resource|
-      o_resource = resource_class.where(user: t_resource.user, column.to_sym => original_work).first
+      o_resource = resource_class.where(:user => t_resource.user, column.to_sym => original_work).first
 
       if o_resource.blank?
         t_resource.update_column("#{column}_id".to_sym, original_work.id)
@@ -72,7 +72,7 @@ namespace :work do
         "rates_avg: #{rates_avg}",
         "satisfaction_rate: #{satisfaction_rate}"
       ]
-      puts "Work: #{w.id} => #{outputs.join(', ')}"
+      puts "Work: #{w.id} => #{outputs.join(", ")}"
 
       w.update_columns(satisfaction_rate: satisfaction_rate, ratings_count: ratings_count)
     end

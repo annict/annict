@@ -21,8 +21,8 @@ class TimelineComponent < ApplicationComponent2
                   activity_group_struct: activity_group_struct,
                   page_category: @page_category
                 ).render
-              # elsif activity_group.itemable_type.record?
-              #   <%= render RecordActivityComponent.new(viewer: @viewer, activity_group_entity: activity_group_entity, page_category: @page_category) %>
+                # elsif activity_group.itemable_type.record?
+                #   <%= render RecordActivityComponent.new(viewer: @viewer, activity_group_entity: activity_group_entity, page_category: @page_category) %>
               end
             end
           end

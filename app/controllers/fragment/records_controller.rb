@@ -4,7 +4,7 @@ module Fragment
   class RecordsController < Fragment::ApplicationController
     include Pundit
 
-    before_action :authenticate_user!, only: %i(edit)
+    before_action :authenticate_user!, only: %i[edit]
 
     def edit
       user = User.only_kept.find_by!(username: params[:username])
@@ -12,8 +12,8 @@ module Fragment
 
       authorize @record, :edit?
 
-      if @record.episode_record?
-        @form = EpisodeRecordForm.new(
+      @form = if @record.episode_record?
+        EpisodeRecordForm.new(
           record: @record,
           episode: @record.episode_record.episode,
           comment: @record.episode_record.body,
@@ -21,7 +21,7 @@ module Fragment
           share_to_twitter: current_user.share_record_to_twitter?
         )
       else
-        @form = AnimeRecordForm.new(episode: episode)
+        AnimeRecordForm.new(episode: episode)
       end
     end
   end

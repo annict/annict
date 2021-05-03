@@ -23,13 +23,13 @@ module Api
           }
         validates :share_twitter,
           allow_blank: true,
-          format: { with: /\A(true|false)\z/, message: "の値が不正です。" }
+          format: {with: /\A(true|false)\z/, message: "の値が不正です。"}
         validates :share_facebook,
           allow_blank: true,
-          format: { with: /\A(true|false)\z/, message: "の値が不正です。" }
+          format: {with: /\A(true|false)\z/, message: "の値が不正です。"}
         validates :rating_state,
           presence: true,
-          format: { with: STATES, message: "の値が不正です。" },
+          format: {with: STATES, message: "の値が不正です。"},
           allow_blank: true
       end
     end

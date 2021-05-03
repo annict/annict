@@ -22,7 +22,7 @@ class ProfileImageComponent2 < ApplicationComponent2
     else
       image_tag(@image_url_1x, {
         alt: @alt,
-        class: img_class_name,
+        class: img_class_name
       }.merge(@img_options))
     end
   end
@@ -30,7 +30,7 @@ class ProfileImageComponent2 < ApplicationComponent2
   private
 
   def img_class_name
-    classes = %w(c-profile-image img-fluid img-thumbnail js-lazy rounded-circle)
+    classes = %w[c-profile-image img-fluid img-thumbnail js-lazy rounded-circle]
     classes << "js-lazy" if @lazy_load
     classes += @class_name.split(" ")
     classes.join(" ")

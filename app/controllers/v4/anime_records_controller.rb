@@ -4,7 +4,7 @@ module V4
   class AnimeRecordsController < ApplicationController
     include AnimeSidebarDisplayable
 
-    before_action :authenticate_user!, only: %i(create edit update destroy)
+    before_action :authenticate_user!, only: %i[create edit update destroy]
 
     def index
       set_page_category PageCategory::ANIME_RECORD_LIST
@@ -40,22 +40,22 @@ module V4
       set_page_category Rails.configuration.page_categories.record_edit
 
       @record = current_user.records.find(params[:id])
-      @work_record = current_user.
-        work_records.
-        only_kept.
-        where(work_id: params[:work_id]).
-        find(@record.work_record&.id)
+      @work_record = current_user
+        .work_records
+        .only_kept
+        .where(work_id: params[:work_id])
+        .find(@record.work_record&.id)
       @work = @work_record.work
       authorize @work_record, :edit?
     end
 
     def update
       @record = current_user.records.find(params[:id])
-      @work_record = current_user.
-        work_records.
-        only_kept.
-        where(work_id: params[:work_id]).
-        find(@record.work_record&.id)
+      @work_record = current_user
+        .work_records
+        .only_kept
+        .where(work_id: params[:work_id])
+        .find(@record.work_record&.id)
       @work = @work_record.work
       authorize @work_record, :update?
 
@@ -71,7 +71,7 @@ module V4
         end
         flash[:notice] = t("messages._common.updated")
         redirect_to record_path(@work_record.user.username, @work_record.record)
-      rescue StandardError
+      rescue
         render :edit
       end
     end

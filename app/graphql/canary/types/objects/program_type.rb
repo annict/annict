@@ -32,9 +32,9 @@ module Canary
         end
 
         def viewer_selected
-          RecordLoader.
-            for(LibraryEntry, column: :program_id, where: { user_id: context[:viewer].id }).
-            load(object.id).then do |le|
+          RecordLoader
+            .for(LibraryEntry, column: :program_id, where: {user_id: context[:viewer].id})
+            .load(object.id).then do |le|
               !le.nil?
             end
         end

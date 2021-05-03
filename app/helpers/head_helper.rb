@@ -14,7 +14,7 @@ module HeadHelper
         url: request.url,
         description: t("head.meta.description._common"),
         site_name: t("noun.annict"),
-        image: "#{ENV.fetch('ANNICT_URL')}/images/og_image.png",
+        image: "#{ENV.fetch("ANNICT_URL")}/images/og_image.png",
         locale: (I18n.locale == :ja ? "ja_JP" : "en_US")
       },
       fb: {
@@ -25,7 +25,7 @@ module HeadHelper
         site: twitter_username,
         title: meta_tags.full_title(site: site, separator: " |"),
         description: t("head.meta.description._common"),
-        image: "#{ENV.fetch('ANNICT_URL')}/images/og_image.png"
+        image: "#{ENV.fetch("ANNICT_URL")}/images/og_image.png"
       },
       "turbo-cache-control": "no-cache"
     )

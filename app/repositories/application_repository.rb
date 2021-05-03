@@ -18,7 +18,7 @@ class ApplicationRepository
 
   def file_name
     @file_name ||=
-      "#{self.class.name.split('::').map { |str| str.camelize(:lower) }.join('/').delete_suffix('Repository')}.graphql"
+      "#{self.class.name.split("::").map { |str| str.camelize(:lower) }.join("/").delete_suffix("Repository")}.graphql"
   end
 
   def query_definition

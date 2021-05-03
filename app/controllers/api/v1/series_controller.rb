@@ -3,7 +3,7 @@
 module Api
   module V1
     class SeriesController < Api::V1::ApplicationController
-      before_action :prepare_params!, only: %i(index)
+      before_action :prepare_params!, only: %i[index]
 
       def index
         @series_list = Series.only_kept

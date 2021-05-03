@@ -221,7 +221,7 @@ class AnimeEntity < ApplicationEntity
   def local_season_name
     return I18n.t("resources.season.no_season") if season_year.nil? && season_type.nil?
 
-    I18n.t("resources.season.yearly.#{season_type.presence || 'all'}", year: season_year)
+    I18n.t("resources.season.yearly.#{season_type.presence || "all"}", year: season_year)
   end
 
   def media_text

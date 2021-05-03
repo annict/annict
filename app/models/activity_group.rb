@@ -26,11 +26,11 @@ class ActivityGroup < ApplicationRecord
 
   include BatchDestroyable
 
-  ITEMABLE_TYPES = %w(
+  ITEMABLE_TYPES = %w[
     Status
     EpisodeRecord
     WorkRecord
-  ).freeze
+  ].freeze
 
   enumerize :itemable_type, in: ITEMABLE_TYPES, scope: true
 

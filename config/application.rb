@@ -2,7 +2,7 @@
 
 require_relative "boot"
 
-%w(
+%w[
   rails
   active_model/railtie
   active_job/railtie
@@ -11,7 +11,7 @@ require_relative "boot"
   action_mailer/railtie
   action_view/railtie
   view_component/engine
-).each do |railtie|
+].each do |railtie|
   require railtie
 end
 
@@ -51,7 +51,7 @@ module Annict
     # config/locales/*.rb,yml are auto loaded.
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     config.i18n.default_locale = :ja
-    config.i18n.available_locales = %i(ja en)
+    config.i18n.available_locales = %i[ja en]
 
     config.generators do |g|
       g.test_framework :rspec, controller_specs: false, helper_specs: false,
@@ -65,17 +65,17 @@ module Annict
 
     config.middleware.insert_before(Rack::Runtime, Rack::Rewrite) do
       # Redirect: annict.herokuapp.com -> annict.com
-      r301 /.*/, "https://#{ENV.fetch('ANNICT_HOST')}$&", if: proc { |rack_env|
+      r301(/.*/, "https://#{ENV.fetch("ANNICT_HOST")}$&", if: proc { |rack_env|
         rack_env["SERVER_NAME"].include?("annict.herokuapp.com")
-      }
+      })
       # Redirect: www.annict.com -> annict.com
-      r301 /.*/, "https://#{ENV.fetch('ANNICT_HOST')}$&", if: proc { |rack_env|
-        rack_env["SERVER_NAME"].in?(["www.#{ENV.fetch('ANNICT_HOST')}"])
-      }
+      r301(/.*/, "https://#{ENV.fetch("ANNICT_HOST")}$&", if: proc { |rack_env|
+        rack_env["SERVER_NAME"].in?(["www.#{ENV.fetch("ANNICT_HOST")}"])
+      })
       # Redirect: www.annict.jp -> annict.jp
-      r301 /.*/, "https://#{ENV.fetch('ANNICT_JP_HOST')}$&", if: proc { |rack_env|
-        rack_env["SERVER_NAME"].in?(["www.#{ENV.fetch('ANNICT_JP_HOST')}"])
-      }
+      r301(/.*/, "https://#{ENV.fetch("ANNICT_JP_HOST")}$&", if: proc { |rack_env|
+        rack_env["SERVER_NAME"].in?(["www.#{ENV.fetch("ANNICT_JP_HOST")}"])
+      })
       r301 %r{\A/activities}, "/"
       r301 %r{\A/programs}, "/track"
       r301 %r{\A/users/([A-Za-z0-9_]+)\z}, "/@$1"
@@ -86,18 +86,18 @@ module Annict
       r301 %r{\A/works/[0-9]+/items}, "/"
 
       maintenance_file = File.join(Rails.root, "public", "maintenance.html")
-      send_file /(.*)$(?<!maintenance|favicons)/, maintenance_file, if: proc { |rack_env|
+      send_file(/(.*)$(?<!maintenance|favicons)/, maintenance_file, if: proc { |rack_env|
         ip_address = rack_env["HTTP_X_FORWARDED_FOR"]&.split(",")&.first&.strip
 
         File.exist?(maintenance_file) &&
           ENV["ANNICT_MAINTENANCE_MODE"] == "on" &&
           ip_address != ENV["ANNICT_ADMIN_IP"]
-      }
+      })
     end
 
     config.middleware.insert_before(0, Rack::Cors) do
-      ALLOWED_METHODS = %i(get post patch delete options).freeze
-      EXPOSED_HEADERS = %w(ETag).freeze
+      ALLOWED_METHODS = %i[get post patch delete options].freeze
+      EXPOSED_HEADERS = %w[ETag].freeze
       allow do
         origins "*"
         resource "*", headers: :any, methods: ALLOWED_METHODS, expose: EXPOSED_HEADERS

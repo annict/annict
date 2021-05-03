@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: collection_items
@@ -41,6 +42,6 @@ class CollectionItem < ApplicationRecord
   belongs_to :work
   has_many :reactions, dependent: :destroy
 
-  validates :title, presence: true, length: { maximum: 50 }
-  validates :comment, length: { maximum: 1000 }
+  validates :title, presence: true, length: {maximum: 50}
+  validates :comment, length: {maximum: 1000}
 end

@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 module Localizable
-  SKIP_TO_SET_LOCALE_PATHS = %w(
+  SKIP_TO_SET_LOCALE_PATHS = %w[
     /users/auth/gumroad/callback
-  ).freeze
+  ].freeze
   private_constant :SKIP_TO_SET_LOCALE_PATHS
 
   private

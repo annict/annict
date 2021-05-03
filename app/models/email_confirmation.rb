@@ -26,7 +26,7 @@
 class EmailConfirmation < ApplicationRecord
   extend Enumerize
 
-  enumerize :event, in: %i(sign_up sign_in update_email)
+  enumerize :event, in: %i[sign_up sign_in update_email]
 
   belongs_to :user, optional: true
 

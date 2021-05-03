@@ -3,7 +3,7 @@
 require "graphql/rake_task"
 
 namespace :graphql do
-  task :dump_schema, %i(version) => :environment do |_, args|
+  task :dump_schema, %i[version] => :environment do |_, args|
     version = args[:version]
 
     unless version

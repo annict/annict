@@ -3,7 +3,7 @@
 class RecordsController < ApplicationController
   include Pundit
 
-  before_action :authenticate_user!, only: %i(update)
+  before_action :authenticate_user!, only: %i[update]
 
   def update
     user = User.only_kept.find_by!(username: params[:username])
@@ -21,7 +21,6 @@ class RecordsController < ApplicationController
       end
 
       EpisodeRecordUpdater.new(user: current_user, form: @form).call
-    else
     end
 
     head 204

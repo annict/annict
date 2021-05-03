@@ -10,7 +10,7 @@ describe Canary::Mutations::DeleteRecord do
   let!(:activity) { create(:activity, user: user, activity_group: activity_group, itemable: episode_record) }
   let!(:library_entry) { create(:library_entry, user: user, work: anime, watched_episode_ids: [episode.id]) }
   let(:token) { create(:oauth_access_token) }
-  let(:context) { { viewer: user, doorkeeper_token: token, writable: true } }
+  let(:context) { {viewer: user, doorkeeper_token: token, writable: true} }
   let(:record_id) { Canary::AnnictSchema.id_from_object(record, record.class) }
   let(:query) do
     <<~GRAPHQL
@@ -25,7 +25,7 @@ describe Canary::Mutations::DeleteRecord do
   end
 
   context "正常系" do
-    let(:variables) { { recordId: record_id } }
+    let(:variables) { {recordId: record_id} }
 
     it "記録が削除されること" do
       expect(ActivityGroup.count).to eq 1

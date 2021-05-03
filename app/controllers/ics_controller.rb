@@ -9,14 +9,14 @@ class IcsController < ApplicationController
         @user,
         Slot.only_kept.with_works(@user.works_on(:wanna_watch, :watching).only_kept),
         watched: false
-      ).call.
-        where("started_at >= ?", Date.today.beginning_of_day).
-        where("started_at <= ?", 7.days.since.end_of_day)
+      ).call
+        .where("started_at >= ?", Date.today.beginning_of_day)
+        .where("started_at <= ?", 7.days.since.end_of_day)
 
-      @works = @user.
-        works_on(:wanna_watch, :watching).
-        only_kept.
-        where.not(started_on: nil)
+      @works = @user
+        .works_on(:wanna_watch, :watching)
+        .only_kept
+        .where.not(started_on: nil)
 
       render layout: false
     end

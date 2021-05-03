@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: library_entries
@@ -37,7 +38,7 @@
 class LibraryEntry < ApplicationRecord
   acts_as_list scope: :user
 
-  self.ignored_columns = %w(kind)
+  self.ignored_columns = %w[kind]
 
   belongs_to :next_episode, class_name: "Episode", optional: true
   belongs_to :program, optional: true
@@ -53,7 +54,7 @@ class LibraryEntry < ApplicationRecord
   scope :wanna_watch, -> { with_status(:wanna_watch) }
   scope :watching, -> { with_status(:watching) }
   scope :has_next_episode, -> { where.not(next_episode_id: nil) }
-  scope :with_status, ->(*status_kinds) { joins(:status).where(statuses: { kind: status_kinds }) }
+  scope :with_status, ->(*status_kinds) { joins(:status).where(statuses: {kind: status_kinds}) }
   scope :with_not_deleted_work, -> { joins(:work).merge(Work.only_kept) }
 
   def self.count_on(status_kind)
@@ -61,9 +62,9 @@ class LibraryEntry < ApplicationRecord
   end
 
   def self.status_kinds
-    joins(:status).
-    select("library_entries.work_id, statuses.kind as status_kind").
-    each_with_object({}) do |le, h|
+    joins(:status)
+      .select("library_entries.work_id, statuses.kind as status_kind")
+      .each_with_object({}) do |le, h|
       h[le.work_id] = Status.kind.find_value(le.status_kind)
     end
   end
@@ -87,7 +88,7 @@ class LibraryEntry < ApplicationRecord
   end
 
   def remove_episode!(episode)
-    self.watched_episode_ids = self.watched_episode_ids - [episode.id]
+    self.watched_episode_ids = watched_episode_ids - [episode.id]
     save!
     self
   end

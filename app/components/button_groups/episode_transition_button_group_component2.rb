@@ -9,7 +9,7 @@ module ButtonGroups
     private
 
     def prev_episode_class_name
-      class_name = %w(btn btn-secondary)
+      class_name = %w[btn btn-secondary]
 
       if @episode.prev_episode.blank?
         class_name << "disabled"
@@ -19,7 +19,7 @@ module ButtonGroups
     end
 
     def next_episode_class_name
-      class_name = %w(btn btn-secondary)
+      class_name = %w[btn btn-secondary]
 
       if @episode.next_episode.blank?
         class_name << "disabled"

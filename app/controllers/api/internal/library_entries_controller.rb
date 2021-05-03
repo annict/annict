@@ -3,16 +3,16 @@
 module Api
   module Internal
     class LibraryEntriesController < Api::Internal::ApplicationController
-      before_action :authenticate_user!, only: %i(update)
+      before_action :authenticate_user!, only: %i[update]
 
       def index
         return render(json: []) unless user_signed_in?
         return render(json: []) unless params[:anime_ids]
 
-        status_kinds = current_user.
-          library_entries.
-          where(work_id: params[:anime_ids].split(",")).
-          status_kinds
+        status_kinds = current_user
+          .library_entries
+          .where(work_id: params[:anime_ids].split(","))
+          .status_kinds
 
         render json: status_kinds
       end

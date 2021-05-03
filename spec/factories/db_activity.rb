@@ -7,7 +7,7 @@ FactoryBot.define do
     factory :works_create_activity do
       trackable { create(:work) }
       action { "works.create" }
-      parameters { { new: trackable.attributes, old: {} } }
+      parameters { {new: trackable.attributes, old: {}} }
       root_resource { create(:work) }
     end
   end

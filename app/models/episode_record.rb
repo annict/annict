@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: episode_records
@@ -56,7 +57,7 @@ class EpisodeRecord < ApplicationRecord
   include Shareable
   include SoftDeletable
 
-  self.ignored_columns = %w(aasm_state multiple_episode_record_id review_id shared_facebook shared_twitter)
+  self.ignored_columns = %w[aasm_state multiple_episode_record_id review_id shared_facebook shared_twitter]
 
   enumerize :rating_state, in: Record::RATING_STATES, scope: true
 
@@ -80,7 +81,7 @@ class EpisodeRecord < ApplicationRecord
     dependent: :destroy,
     as: :recipient
 
-  validates :body, length: { maximum: 1_048_596 }
+  validates :body, length: {maximum: 1_048_596}
   validates :rating,
     allow_blank: true,
     numericality: {
@@ -96,7 +97,7 @@ class EpisodeRecord < ApplicationRecord
   end
 
   def self.order_by_rating_state(direction = :asc)
-    direction = direction.in?(%i(asc desc)) ? direction : :asc
+    direction = direction.in?(%i[asc desc]) ? direction : :asc
     sql = Arel.sql(<<-SQL)
       CASE
         WHEN episode_records.rating_state = 'bad' THEN '0'

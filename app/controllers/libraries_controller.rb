@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class LibrariesController < ApplicationController
-  before_action :set_user, only: %i(show)
-  before_action :set_display_option, only: %i(show)
+  before_action :set_user, only: %i[show]
+  before_action :set_display_option, only: %i[show]
 
   def show
     set_page_category PageCategory::LIBRARY
@@ -10,10 +10,10 @@ class LibrariesController < ApplicationController
     @user_entity = UserEntity.from_model(@user)
     @works = @user.works.on(params[:status_kind]).only_kept
     season_slugs = @works.map(&:season).select(&:present?).map(&:slug).uniq
-    @seasons = season_slugs.
-      map { |slug| Season.find_by_slug(slug) }.
-      sort_by { |s| "#{s.year}#{s.name_value}".to_i }.
-      reverse
+    @seasons = season_slugs
+      .map { |slug| Season.find_by_slug(slug) }
+      .sort_by { |s| "#{s.year}#{s.name_value}".to_i }
+      .reverse
     @seasons << Season.no_season if @works.with_no_season.present?
     paginate_per = @display_option == "grid_detailed" ? 8 : 20
     @seasons = Kaminari.paginate_array(@seasons).page(params[:page]).per(paginate_per)

@@ -24,13 +24,13 @@ module Annict
           ].join("&")
           path = "/s/ref=sr_pg_2?#{query}"
           puts "Accessing to: #{path}"
-          headers = { "User-Agent": "Mozilla/5.0" }
+          headers = {"User-Agent": "Mozilla/5.0"}
           response = self.class.get(path, headers: headers)
           result = Nokogiri::HTML(response)
           item_list = result.css(".s-result-item")
           break if item_list.blank?
 
-          attrs << item_list.map do |item|
+          attrs << item_list.map { |item|
             name = item.css(".s-access-title").text
             name = name.sub("【TBSオンデマンド】", "")
             name = name.sub("（フジテレビオンデマンド）", "")
@@ -38,7 +38,7 @@ module Annict
               code: item.attr("data-asin"),
               name: name.strip
             }
-          end
+          }
 
           vod_title_ids = create_vod_title!(channel, attrs.flatten)
           break if vod_title_ids.all?(&:nil?)

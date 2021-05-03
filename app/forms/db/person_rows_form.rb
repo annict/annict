@@ -20,19 +20,19 @@ module Db
     private
 
     def attrs_list
-      @attrs_list ||= fetched_rows.map do |row_data|
+      @attrs_list ||= fetched_rows.map { |row_data|
         {
           name: row_data[:name][:value],
           name_kana: row_data[:name_kana][:value].presence || ""
         }
-      end
+      }
     end
 
     def fetched_rows
       parsed_rows.map do |row_columns|
         {
-          name: { value: row_columns[0] },
-          name_kana: { value: row_columns[1] }
+          name: {value: row_columns[0]},
+          name_kana: {value: row_columns[1]}
         }
       end
     end

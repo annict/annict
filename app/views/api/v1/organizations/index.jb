@@ -2,9 +2,9 @@
 
 json = {}
 
-json[:organizations] = @organizations.map do |organization|
+json[:organizations] = @organizations.map { |organization|
   render("api/v1/organizations/organization", organization: organization, params: @params, field_prefix: "")
-end
+}
 
 json.merge!(render("api/v1/application/pagination", collection: @organizations, params: @params))
 

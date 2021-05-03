@@ -15,7 +15,7 @@ module Db
     end
 
     def label_text
-      I18n.t("resources.series.state.#{resource.published? ? 'published' : 'hidden'}")
+      I18n.t("resources.series.state.#{resource.published? ? "published" : "hidden"}")
     end
   end
 end

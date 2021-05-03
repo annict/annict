@@ -48,14 +48,12 @@ module Lists
                     h.tag :div, class: "align-items-center row" do
                       h.tag :div, class: "col-auto pr-0" do
                         h.html Buttons::WatchEpisodeButtonComponent.new(view_context,
-                          episode_id: episode.id, page_category: @page_category, class_name: "btn-sm btn-outline-info rounded-circle"
-                        ).render
+                          episode_id: episode.id, page_category: @page_category, class_name: "btn-sm btn-outline-info rounded-circle").render
                       end
 
                       h.tag :div, class: "col-auto pl-2 pr-0" do
                         h.html Buttons::SkipEpisodeButtonComponent.new(view_context,
-                          episode_id: episode.id, class_name: "btn-sm btn-outline-secondary rounded-circle"
-                        ).render
+                          episode_id: episode.id, class_name: "btn-sm btn-outline-secondary rounded-circle").render
                       end
 
                       h.tag :div, class: "col" do
@@ -87,7 +85,7 @@ module Lists
           end
 
           h.tag :div, class: "mt-3 text-center" do
-            h.html paginate(@library_entries, params: { controller: '/tracks', action: 'show' })
+            h.html paginate(@library_entries, params: {controller: "/tracks", action: "show"})
           end
         end
       end

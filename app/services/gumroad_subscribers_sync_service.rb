@@ -23,7 +23,7 @@ class GumroadSubscribersSyncService
     url = "#{API_ENDPOINT}#{path}"
     options = {
       headers: {
-        "Authorization" => "Bearer #{ENV.fetch('GUMROAD_ACCESS_TOKEN')}"
+        "Authorization" => "Bearer #{ENV.fetch("GUMROAD_ACCESS_TOKEN")}"
       }
     }
     response = HTTParty.get(url, options)

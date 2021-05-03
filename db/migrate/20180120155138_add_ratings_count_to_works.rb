@@ -7,6 +7,6 @@ class AddRatingsCountToWorks < ActiveRecord::Migration[5.1]
 
     add_column :works, :satisfaction_rate, :float
     add_index :works, :satisfaction_rate
-    add_index :works, %i(satisfaction_rate ratings_count)
+    add_index :works, %i[satisfaction_rate ratings_count]
   end
 end

@@ -5,7 +5,7 @@ class AnimeRecordForm < ApplicationForm
   attr_reader :comment, :share_to_twitter
 
   WorkRecord::RATING_FIELDS.each do |rating_field|
-    validates rating_field, allow_nil: true, inclusion: { in: ApplicationEntity::Types::RecordRatingState.values }
+    validates rating_field, allow_nil: true, inclusion: {in: ApplicationEntity::Types::RecordRatingState.values}
 
     define_method "#{rating_field}=" do |value|
       instance_variable_set "@#{rating_field}", value.presence

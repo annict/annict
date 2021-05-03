@@ -4,7 +4,7 @@ class Season
   extend Enumerize
 
   YEAR_LIST = (1900..(Time.now.year + 5)).freeze
-  NAME_HASH = { winter: 1, spring: 2, summer: 3, autumn: 4 }.freeze
+  NAME_HASH = {winter: 1, spring: 2, summer: 3, autumn: 4}.freeze
 
   attr_reader :year, :name
 
@@ -27,11 +27,11 @@ class Season
     name_hash = name_hash.merge(all: 0) if include_all
     names = Hash[name_hash.sort_by { |_, v| sort == :desc ? -v : v }].keys
 
-    years.map do |year|
+    years.map { |year|
       names.map do |name|
         new(year, name)
       end
-    end.flatten
+    }.flatten
   end
 
   def self.find_by_slug(slug)

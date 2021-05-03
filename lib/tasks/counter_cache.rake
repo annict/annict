@@ -17,7 +17,7 @@ namespace :counter_cache do
       :refresh_on_users,
       :refresh_on_work_records,
       :refresh_on_work_tags,
-      :refresh_on_works,
+      :refresh_on_works
     ].each do |task_name|
       puts "============== #{task_name} =============="
       Rake::Task["counter_cache:#{task_name}"].invoke
@@ -346,7 +346,7 @@ namespace :counter_cache do
 
   task refresh_on_works: :environment do
     Work.only_kept.find_each do |work|
-      kinds = %w(wanna_watch watching watched).freeze
+      kinds = %w[wanna_watch watching watched].freeze
 
       episodes_count = work.episodes.only_kept.count
       records_count = work.records.only_kept.count

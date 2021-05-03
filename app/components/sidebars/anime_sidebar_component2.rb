@@ -300,7 +300,7 @@ module Sidebars
 
             h.html Buttons::ShareToFacebookButtonComponent.new(
               view_context,
-              url: "#{local_url}/works/#{@anime.id}",
+              url: "#{local_url}/works/#{@anime.id}"
             ).render
           end
 

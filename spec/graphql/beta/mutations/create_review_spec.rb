@@ -5,7 +5,7 @@ describe "GraphQL API Mutation" do
     let!(:user) { create(:user, :with_setting) }
     let!(:work) { create(:work) }
     let!(:token) { create(:oauth_access_token) }
-    let!(:context) { { viewer: user, doorkeeper_token: token } }
+    let!(:context) { {viewer: user, doorkeeper_token: token} }
     let!(:id) { GraphQL::Schema::UniqueWithinType.encode(work.class.name, work.id) }
     let!(:body) { "とてもよかった！" }
     let!(:result) do

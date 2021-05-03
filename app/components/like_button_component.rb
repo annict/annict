@@ -13,7 +13,7 @@ class LikeButtonComponent < ApplicationComponent
   private
 
   def like_button_class_name
-    classes = %w(d-inline-block u-fake-link)
+    classes = %w[d-inline-block u-fake-link]
     classes += @class_name.split(" ")
     classes.uniq.join(" ")
   end
