@@ -1,0 +1,54 @@
+# Auto generated files with errors to ignore.
+# Remove from this list as you refactor files.
+---
+ignore:
+- app/components/lists/trackable_episode_list_component.rb
+- app/components/sidebars/anime_sidebar_component2.rb
+- app/controllers/api/internal/work_friends_controller.rb
+- app/controllers/api/v1/application_controller.rb
+- app/decorators/organization_decorator.rb
+- app/decorators/person_decorator.rb
+- app/decorators/work_decorator.rb
+- app/entities/anime_entity.rb
+- app/entities/bulk_operation_entity.rb
+- app/entities/cast_entity.rb
+- app/entities/channel_entity.rb
+- app/entities/character_entity.rb
+- app/entities/character_favorite_entity.rb
+- app/entities/episode_entity.rb
+- app/entities/episode_record_entity.rb
+- app/entities/library_entry_entity.rb
+- app/entities/organization_entity.rb
+- app/entities/organization_favorite_entity.rb
+- app/entities/page_info_entity.rb
+- app/entities/person_entity.rb
+- app/entities/person_favorite_entity.rb
+- app/entities/program_entity.rb
+- app/entities/series_anime_entity.rb
+- app/entities/series_entity.rb
+- app/entities/slot_entity.rb
+- app/entities/staff_entity.rb
+- app/entities/status_entity.rb
+- app/entities/trailer_entity.rb
+- app/entities/user_entity.rb
+- app/entities/vod_channel_entity.rb
+- app/graphql/canary/mutations/update_status.rb
+- app/helpers/db/application_helper.rb
+- app/models/episode_record.rb
+- app/models/work.rb
+- app/repositories/user_home_page/global_activity_groups_repository.rb
+- app/validators/amazon_validator.rb
+- app/validators/redirect_uri_validator.rb
+- app/views/api/internal/library_entries/_library_entry.jb
+- app/views/api/v1/characters/index.jb
+- app/views/api/v1/episodes/index.jb
+- app/views/api/v1/people/index.jb
+- config/application.rb
+- config/puma.rb
+- lib/tasks/email_notification.rake
+- lib/tasks/episode.rake
+- lib/tasks/mal.rake
+- lib/tasks/twitter.rake
+- lib/tasks/work.rake
+- spec/spec_helper.rb
+- spec/support/devise.rb
