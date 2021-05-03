@@ -96,8 +96,7 @@ jobs:
 
       - name: Setup Database
         run: |
-          bin/rails db:create
-          bin/rails db:structure:load
+          bin/rails db:setup
 
       - name: Setup Code Climate test-reporter
         run: |
