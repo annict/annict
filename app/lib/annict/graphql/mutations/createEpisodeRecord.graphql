@@ -1,20 +1,12 @@
-mutation (
-  $episodeId: ID!,
-  $body: String,
-  $rating: Float,
-  $ratingState: RatingState,
-  $shareToTwitter: Boolean
-) {
+mutation($episodeId: ID!, $comment: String, $rating: Rating, $shareToTwitter: Boolean) {
   createEpisodeRecord(
-    input: {
-      episodeId: $episodeId,
-      body: $body,
-      rating: $rating,
-      ratingState: $ratingState,
-      shareToTwitter: $shareToTwitter
-    }
+    input: { episodeId: $episodeId, comment: $comment, rating: $rating, shareToTwitter: $shareToTwitter }
   ) {
-    episodeRecord {
+    errors {
+      message
+    }
+
+    record {
       databaseId
     }
   }

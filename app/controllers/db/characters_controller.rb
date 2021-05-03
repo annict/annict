@@ -2,15 +2,15 @@
 
 module Db
   class CharactersController < Db::ApplicationController
-    before_action :authenticate_user!, only: %i(new create edit update destroy)
+    before_action :authenticate_user!, only: %i[new create edit update destroy]
 
     def index
-      @characters = Character.
-        without_deleted.
-        preload(:series).
-        order(id: :desc).
-        page(params[:page]).
-        per(100)
+      @characters = Character
+        .without_deleted
+        .preload(:series)
+        .order(id: :desc)
+        .page(params[:page])
+        .per(100)
     end
 
     def new

@@ -74,7 +74,7 @@ describe "POST /v1/me/reviews" do
         errors: [
           {
             type: "invalid_params",
-            message: "本文は1048596文字以内で入力してください"
+            message: "感想は1048596文字以内で入力してください"
           }
         ]
       }

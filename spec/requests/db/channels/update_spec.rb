@@ -11,7 +11,7 @@ describe "PATCH /db/channels/:id", type: :request do
     end
 
     it "user can not access this page" do
-      patch "/db/channels/#{channel.id}", params: { channel: channel_params }
+      patch "/db/channels/#{channel.id}", params: {channel: channel_params}
       channel.reload
 
       expect(response.status).to eq(302)
@@ -36,7 +36,7 @@ describe "PATCH /db/channels/:id", type: :request do
     end
 
     it "user can not access" do
-      patch "/db/channels/#{channel.id}", params: { channel: channel_params }
+      patch "/db/channels/#{channel.id}", params: {channel: channel_params}
       channel.reload
 
       expect(response.status).to eq(302)
@@ -61,7 +61,7 @@ describe "PATCH /db/channels/:id", type: :request do
     end
 
     it "user can not access" do
-      patch "/db/channels/#{channel.id}", params: { channel: channel_params }
+      patch "/db/channels/#{channel.id}", params: {channel: channel_params}
       channel.reload
 
       expect(response.status).to eq(302)
@@ -88,7 +88,7 @@ describe "PATCH /db/channels/:id", type: :request do
     it "user can update channel" do
       expect(channel.name).to eq(old_channel["name"])
 
-      patch "/db/channels/#{channel.id}", params: { channel: channel_params }
+      patch "/db/channels/#{channel.id}", params: {channel: channel_params}
       channel.reload
 
       expect(response.status).to eq(302)

@@ -3,7 +3,7 @@
 module Api
   module V1
     class FollowersController < Api::V1::ApplicationController
-      before_action :prepare_params!, only: %i(index)
+      before_action :prepare_params!, only: %i[index]
 
       def index
         follows = Follow.includes(user: :profile)

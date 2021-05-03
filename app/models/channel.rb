@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: channels
@@ -53,7 +54,7 @@ class Channel < ApplicationRecord
     receivable_channel_ids = pluck(:id)
 
     if receivable_channel_ids.present? && work.episodes.present?
-      conditions = { channel_id: receivable_channel_ids, episode: work.episodes.first }
+      conditions = {channel_id: receivable_channel_ids, episode: work.episodes.first}
       fastest_slot = Slot.where(conditions).order(:started_at).first
 
       fastest_slot.present? ? fastest_slot.channel : nil

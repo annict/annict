@@ -4,7 +4,7 @@ module Beta
   module Types
     module Objects
       class WorkImageType < Beta::Types::Objects::Base
-        implements GraphQL::Relay::Node.interface
+        implements GraphQL::Types::Relay::Node
 
         global_id_field :id
 
@@ -28,36 +28,43 @@ module Beta
         def internal_url(size:)
           return unless context[:doorkeeper_token].owner.role.admin?
           return "" if object.blank?
+
           ann_image_url object, :image, size: size
         end
 
         def facebook_og_image_url
           return "" if object.blank?
+
           object.work.facebook_og_image_url
         end
 
         def twitter_avatar_url
           return "" if object.blank?
+
           object.work.twitter_avatar_url
         end
 
         def twitter_mini_avatar_url
           return "" if object.blank?
+
           object.work.twitter_avatar_url(:mini)
         end
 
         def twitter_normal_avatar_url
           return "" if object.blank?
+
           object.work.twitter_avatar_url(:normal)
         end
 
         def twitter_bigger_avatar_url
           return "" if object.blank?
+
           object.work.twitter_avatar_url(:bigger)
         end
 
         def recommended_image_url
           return "" if object.blank?
+
           object.work.recommended_image_url
         end
       end

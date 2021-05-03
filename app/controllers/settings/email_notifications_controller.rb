@@ -2,7 +2,7 @@
 
 module Settings
   class EmailNotificationsController < ApplicationController
-    before_action :authenticate_user!, only: %i(show update)
+    before_action :authenticate_user!, only: %i[show update]
 
     def show
       @email_notification = current_user.email_notification

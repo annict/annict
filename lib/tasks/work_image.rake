@@ -31,18 +31,16 @@ namespace :work_image do
       end
 
       image_urls.each do |key, image_url|
-        begin
-          image = MiniMagick::Image.open(image_url)
-          dimension = image.dimensions.inject(1, :*)
-          recommended_image_url = image_url if dimension > max_dimension
-          max_dimension = dimension
-        rescue
-          case key
-          when :og_image
-            work.update_column(:facebook_og_image_url, "")
-          when :twitter_image
-            work.update_column(:twitter_image_url, "")
-          end
+        image = MiniMagick::Image.open(image_url)
+        dimension = image.dimensions.inject(1, :*)
+        recommended_image_url = image_url if dimension > max_dimension
+        max_dimension = dimension
+      rescue
+        case key
+        when :og_image
+          work.update_column(:facebook_og_image_url, "")
+        when :twitter_image
+          work.update_column(:twitter_image_url, "")
         end
       end
 

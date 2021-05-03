@@ -4,10 +4,7 @@
   ChannelGroup,
   Channel,
   NumberFormat,
-  Prefecture,
-  Tip,
-  Work,
-  Episode
+  Prefecture
 ].each do |model_class|
   file_path = "#{Dir.pwd}/db/data/csv/#{model_class.table_name}.csv"
 

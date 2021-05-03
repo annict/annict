@@ -5,8 +5,8 @@ module Canary
     query Canary::Types::Objects::Query
     mutation Canary::Types::Objects::Mutation
 
-    use GraphQL::Pagination::Connections
     use GraphQL::Batch
+    use GraphQL::FragmentCache
 
     default_max_page_size 50
 
@@ -18,6 +18,12 @@ module Canary
       type_name, item_id = GraphQL::Schema::UniqueWithinType.decode(id)
 
       return nil if type_name.blank? || item_id.blank?
+
+      type_name = case type_name
+      when "Anime" then "Work"
+      else
+        type_name
+      end
 
       Object.const_get(type_name).find(item_id)
     end
@@ -32,8 +38,6 @@ module Canary
         Canary::Types::Objects::EpisodeRecordType
       when Episode
         Canary::Types::Objects::EpisodeType
-      when MultipleEpisodeRecord
-        Canary::Types::Objects::MultipleEpisodeRecordType
       when Organization
         Canary::Types::Objects::OrganizationType
       when Person
@@ -42,6 +46,8 @@ module Canary
         Canary::Types::Objects::SlotType
       when Program
         Canary::Types::Objects::ProgramType
+      when Record
+        Canary::Types::Objects::RecordType
       when Status
         Canary::Types::Objects::StatusType
       when User

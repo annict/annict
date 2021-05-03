@@ -6,7 +6,7 @@ module Canary
       class AnimeType < Canary::Types::Objects::Base
         description "作品情報"
 
-        implements GraphQL::Relay::Node.interface
+        implements GraphQL::Types::Relay::Node
 
         global_id_field :id
 
@@ -93,6 +93,10 @@ module Canary
         field :episodes_count, Integer,
           null: false
 
+        field :final_episodes_count, Integer,
+          null: true,
+          method: :manual_episodes_count
+
         field :watchers_count, Integer,
           null: false
 
@@ -129,16 +133,28 @@ module Canary
         field :synopsis_source_en, String,
           null: false
 
-        field :episodes, Canary::Types::Objects::EpisodeType.connection_type, null: true do
+        field :episodes, Canary::Types::Objects::EpisodeType.connection_type,
+          null: true,
+          max_page_size: 500,
+          resolver: Canary::Resolvers::Episodes do
+          argument :viewer_tracked_in_current_status, Boolean, required: false
           argument :order_by, Canary::Types::InputObjects::EpisodeOrder, required: false
         end
 
-        field :anime_records, Canary::Types::Objects::AnimeRecordType.connection_type, null: true do
-          argument :order_by, Canary::Types::InputObjects::AnimeRecordOrder, required: false
+        field :records, Canary::Types::Objects::RecordType.connection_type,
+          null: false,
+          resolver: Canary::Resolvers::RecordsOnAnime do
           argument :has_body, Boolean, required: false
+          argument :by_viewer, Boolean, required: false
+          argument :by_following, Boolean, required: false
+          argument :order_by, Canary::Types::InputObjects::RecordOrder, required: false
         end
 
-        field :programs, Canary::Types::Objects::ProgramType.connection_type, null: true, resolver: Canary::Resolvers::Programs do
+        field :programs, Canary::Types::Objects::ProgramType.connection_type,
+          null: true,
+          resolver: Canary::Resolvers::Programs do
+          argument :has_slots, Boolean, required: false
+          argument :only_viewer_selected_channels, Boolean, required: false
           argument :order_by, Canary::Types::InputObjects::ProgramOrder, required: false
         end
 
@@ -158,19 +174,6 @@ module Canary
 
         field :trailers, Canary::Types::Objects::TrailerType.connection_type, null: true do
           argument :order_by, Canary::Types::InputObjects::TrailerOrder, required: false
-        end
-
-        def episodes(order_by: nil)
-          SearchEpisodesQuery.new(object.episodes, order_by: order_by).call
-        end
-
-        def anime_records(order_by: nil, has_body: nil)
-          SearchWorkRecordsQuery.new(
-            object.work_records,
-            context: context,
-            order_by: order_by,
-            has_body: has_body
-          ).call
         end
 
         def slots(order_by: nil)
@@ -208,10 +211,6 @@ module Canary
           object.season&.slug
         end
 
-        def syobocal_tid
-          object.sc_tid
-        end
-
         def image
           Canary::RecordLoader.for(WorkImage, column: :work_id).load(object.id).then do |work_image|
             work_image || WorkImage.new
@@ -227,10 +226,12 @@ module Canary
         end
 
         def copyright
-          object.work_image&.copyright
+          image.then do |work_image|
+            work_image&.copyright
+          end
         end
 
-        def is_no_episodes
+        def is_no_episodes # rubocop:disable Naming/PredicateName
           object.no_episodes?
         end
 

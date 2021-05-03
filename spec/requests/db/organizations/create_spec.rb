@@ -9,7 +9,7 @@ describe "POST /db/organizations", type: :request do
     end
 
     it "user can not access this page" do
-      post "/db/organizations", params: { db_organization_rows_form: organization_params }
+      post "/db/organizations", params: {db_organization_rows_form: organization_params}
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("ログインしてください")
@@ -31,7 +31,7 @@ describe "POST /db/organizations", type: :request do
     end
 
     it "user can not access" do
-      post "/db/organizations", params: { db_organization_rows_form: organization_params }
+      post "/db/organizations", params: {db_organization_rows_form: organization_params}
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("アクセスできません")
@@ -55,7 +55,7 @@ describe "POST /db/organizations", type: :request do
     it "user can create organization" do
       expect(Organization.all.size).to eq(0)
 
-      post "/db/organizations", params: { db_organization_rows_form: organization_params }
+      post "/db/organizations", params: {db_organization_rows_form: organization_params}
 
       expect(response.status).to eq(302)
       expect(flash[:notice]).to eq("登録しました")

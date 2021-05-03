@@ -5,9 +5,9 @@ class InternalStatisticMailer < ActionMailer::Base
 
   def result_mail(date_str)
     statistcs = InternalStatistic.where(date: Date.parse(date_str))
-    @data = statistcs.map do |s|
+    @data = statistcs.map { |s|
       [s.key, s.value.presence || 0]
-    end
+    }
     @data = Hash[@data]
 
     mail(to: "hello@annict.com", subject: "Annict Statistic - #{date_str}")

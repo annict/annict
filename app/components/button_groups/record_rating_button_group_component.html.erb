@@ -1,0 +1,23 @@
+<div
+  class="c-record-rating"
+  data-controller="record-rating"
+>
+  <div class="btn-group btn-group-sm">
+    <% EpisodeRecord.rating_state.values.each do |rating_state| %>
+      <div
+        class="<%= button_class_name(rating_state) %>"
+        data-action="click->record-rating#changeState"
+        data-state="<%= rating_state %>"
+      >
+        <%= helpers.rating_state_icon rating_state, class: "mr-1" %>
+        <%= rating_state.text %>
+      </div>
+    <% end %>
+  </div>
+
+  <%= hidden_field_tag(
+    input_name,
+    rating,
+    "data-record-rating-target": "input"
+  ) %>
+</div>

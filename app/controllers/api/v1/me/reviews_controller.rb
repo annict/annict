@@ -6,31 +6,32 @@ module Api
       class ReviewsController < Api::V1::ApplicationController
         include V4::GraphqlRunnable
 
-        before_action :prepare_params!, only: %i(create update destroy)
+        before_action :prepare_params!, only: %i[create update destroy]
 
         def create
           work = Work.only_kept.find(@params.work_id)
 
-          body = @params.title.present? ? "#{@params.title}\n\n#{@params.body}" : @params.body
           work_record_params = {
-            body: body,
-            rating_animation_state: @params.rating_animation_state,
-            rating_music_state: @params.rating_music_state,
-            rating_story_state: @params.rating_story_state,
-            rating_character_state: @params.rating_character_state,
-            rating_overall_state: @params.rating_overall_state,
+            anime_id: ::Canary::AnnictSchema.id_from_object(work, work.class),
+            comment: @params.title.present? ? "#{@params.title}\n\n#{@params.body}" : @params.body,
+            rating_animation: @params.rating_animation_state,
+            rating_music: @params.rating_music_state,
+            rating_story: @params.rating_story_state,
+            rating_character: @params.rating_character_state,
+            rating_overall: @params.rating_overall_state,
             share_to_twitter: @params.share_twitter
           }
+          form = AnimeRecordForm.new(work_record_params)
 
-          work_record_entity, err = CreateAnimeRecordRepository.new(
+          result = CreateAnimeRecordRepository.new(
             graphql_client: graphql_client(viewer: current_user)
-          ).execute(anime: work, params: work_record_params)
+          ).execute(form: form)
 
-          if err
-            return render_validation_error(err.message)
+          unless result.success?
+            return render_validation_error(result.errors.first.message)
           end
 
-          @work_record = current_user.work_records.find(work_record_entity.database_id)
+          @work_record = current_user.work_records.find_by!(record_id: result.record_entity.database_id)
         end
 
         def update
@@ -73,14 +74,14 @@ module Api
         private
 
         def render_validation_errors(review)
-          errors = review.errors.full_messages.map do |message|
+          errors = review.errors.full_messages.map { |message|
             {
               type: "invalid_params",
               message: message
             }
-          end
+          }
 
-          render json: { errors: errors }, status: 400
+          render json: {errors: errors}, status: 400
         end
 
         def render_validation_error(message)

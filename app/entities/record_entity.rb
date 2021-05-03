@@ -3,51 +3,86 @@
 class RecordEntity < ApplicationEntity
   attribute? :id, Types::String
   attribute? :database_id, Types::Integer
-  attribute? :itemable_type, Types::RecordResourceKinds
+  attribute? :comment, Types::String.optional
+  attribute? :comment_html, Types::String.optional
+  attribute? :likes_count, Types::Integer
   attribute? :modified_at, Types::Params::Time.optional
   attribute? :created_at, Types::Params::Time
-  attribute? :anime, AnimeEntity
-  attribute? :itemable, EpisodeRecordEntity | AnimeRecordEntity
+  attribute? :user, UserEntity
+  attribute? :trackable, AnimeEntity | EpisodeEntity
+  attribute? :recordable, AnimeRecordEntity | EpisodeRecordEntity
 
-  def self.from_nodes(record_nodes)
-    record_nodes.map do |record_node|
-      from_node(record_node)
+  def self.from_nodes(nodes)
+    nodes.map do |node|
+      from_node(node)
     end
   end
 
-  def self.from_node(record_node)
+  def self.from_node(node) # rubocop:disable Metrics/PerceivedComplexity
     attrs = {}
 
-    if database_id = record_node["databaseId"]
+    if (database_id = node["databaseId"])
       attrs[:database_id] = database_id
     end
 
-    if itemable_type = record_node["itemableType"]
-      attrs[:itemable_type] = itemable_type.downcase
+    if (comment = node["comment"])
+      attrs[:comment] = comment
     end
 
-    if modified_at = record_node["modifiedAt"]
+    if (comment_html = node["commentHtml"])
+      attrs[:comment_html] = comment_html
+    end
+
+    if (likes_count = node["likesCount"])
+      attrs[:likes_count] = likes_count
+    end
+
+    if (modified_at = node["modifiedAt"])
       attrs[:modified_at] = modified_at
     end
 
-    if created_at = record_node["createdAt"]
+    if (created_at = node["createdAt"])
       attrs[:created_at] = created_at
     end
 
-    if anime_node = record_node["anime"]
-      attrs[:anime] = AnimeEntity.from_node(anime_node)
+    if (user_node = node["user"])
+      attrs[:user] = UserEntity.from_node(user_node)
     end
 
-    itemable_node = record_node["itemable"]
-    if itemable_type && itemable_node
-      attrs[:itemable] = case itemable_type
-      when "EPISODE_RECORD"
-        EpisodeRecordEntity.from_node(itemable_node)
-      when "ANIME_RECORD"
-        AnimeRecordEntity.from_node(itemable_node)
+    if (trackable_node = node["trackable"])
+      attrs[:trackable] = case trackable_node["__typename"]
+      when "Anime"
+        AnimeEntity.from_node(trackable_node)
+      when "Episode"
+        EpisodeEntity.from_node(trackable_node)
+      end
+    end
+
+    if (recordable_node = node["recordable"])
+      attrs[:recordable] = case recordable_node["__typename"]
+      when "AnimeRecord"
+        AnimeRecordEntity.from_node(recordable_node)
+      when "EpisodeRecord"
+        EpisodeRecordEntity.from_node(recordable_node)
       end
     end
 
     new attrs
+  end
+
+  def episode_record?
+    recordable.is_a?(EpisodeRecordEntity)
+  end
+
+  def anime_record?
+    recordable.is_a?(AnimeRecordEntity)
+  end
+
+  def local_trackable_title
+    if anime_record?
+      return trackable.local_title
+    end
+
+    [trackable.anime.local_title, trackable.local_number].compact.join(" ")
   end
 end

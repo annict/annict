@@ -1,0 +1,28 @@
+<% title = t "head.title.channels.index" %>
+<% set_meta_tags(title: title, reverse: true, prefix: false) %>
+
+<%= component_value_fetcher_tag("receive-channel-button", internal_api_received_channel_list_path) %>
+
+<div class="container py-3">
+  <div class="card">
+    <% @channel_groups.each do |channel_group| %>
+      <div class="card-header">
+        <%= channel_group.name %>
+      </div>
+
+      <div class="border-bottom card-body pt-2 pb-3">
+        <div class="row">
+          <% @channels.filter { |channel| channel.channel_group_id == channel_group.id }.each do |channel| %>
+            <div class="col-3 mt-2">
+              <%= Buttons::ReceiveChannelButtonComponent.new(self, channel: channel, class_name: "btn-sm rounded-circle").render %>
+
+              <span class="ml-2">
+                <%= channel.name %>
+              </span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,43 @@
+query($animeId: ID!) {
+  node(id: $animeId) {
+    ... on Anime {
+      records(byViewer: true, orderBy: { field: CREATED_AT, direction: DESC }, first: 50) {
+        nodes {
+          databaseId
+          commentHtml
+          likesCount
+          modifiedAt
+          createdAt
+
+          user {
+            databaseId
+            username
+            name
+            avatarUrl(size: size200)
+            displaySupporterBadge
+          }
+
+          trackable {
+            __typename
+
+            ... on Anime {
+              databaseId
+            }
+          }
+
+          recordable {
+            __typename
+
+            ... on AnimeRecord {
+              ratingAnimation
+              ratingMusic
+              ratingStory
+              ratingCharacter
+              ratingOverall
+            }
+          }
+        }
+      }
+    }
+  }
+}

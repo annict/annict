@@ -4,7 +4,7 @@ module Beta
   module Types
     module Objects
       class ActivityType < Beta::Types::Objects::Base
-        implements GraphQL::Relay::Node.interface
+        implements GraphQL::Types::Relay::Node
 
         field :annict_id, Integer, null: false
         field :user, Beta::Types::Objects::UserType, null: false

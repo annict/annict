@@ -4,13 +4,13 @@ module Canary
   module Types
     module Objects
       class SlotType < Canary::Types::Objects::Base
-        implements GraphQL::Relay::Node.interface
+        implements GraphQL::Types::Relay::Node
 
         global_id_field :id
 
         field :database_id, Integer, null: false
         field :channel, Canary::Types::Objects::ChannelType, null: false
-        field :episode, Canary::Types::Objects::EpisodeType, null: false
+        field :episode, Canary::Types::Objects::EpisodeType, null: true
         field :anime, Canary::Types::Objects::AnimeType, null: false
         field :started_at, Canary::Types::Scalars::DateTime, null: false
         field :sc_pid, Integer, null: true

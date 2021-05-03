@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: work_taggables
@@ -28,5 +29,5 @@ class WorkTaggable < ApplicationRecord
   belongs_to :user
   belongs_to :work_tag
 
-  validates :description, length: { maximum: 500 }
+  validates :description, length: {maximum: 500}
 end

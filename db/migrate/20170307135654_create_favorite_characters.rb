@@ -10,7 +10,7 @@ class CreateFavoriteCharacters < ActiveRecord::Migration[5.0]
 
     add_index :favorite_characters, :user_id
     add_index :favorite_characters, :character_id
-    add_index :favorite_characters, %i(user_id character_id), unique: true
+    add_index :favorite_characters, %i[user_id character_id], unique: true
 
     add_foreign_key :favorite_characters, :users
     add_foreign_key :favorite_characters, :characters

@@ -11,7 +11,7 @@ export default class extends Controller {
   }
 
   get time() {
-    return dayjs(this.data.get('time')!)
+    return dayjs(this.data.get('time')!);
   }
 
   get absoluteTime() {

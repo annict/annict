@@ -7,6 +7,6 @@ class AddRatingsCountToEpisodes < ActiveRecord::Migration[5.1]
 
     add_column :episodes, :satisfaction_rate, :float
     add_index :episodes, :satisfaction_rate
-    add_index :episodes, %i(satisfaction_rate ratings_count)
+    add_index :episodes, %i[satisfaction_rate ratings_count]
   end
 end

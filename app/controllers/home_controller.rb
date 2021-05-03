@@ -1,35 +1,26 @@
 # frozen_string_literal: true
 
 class HomeController < ApplicationController
-  include V4::GraphqlRunnable
-
   before_action :authenticate_user!
 
   def show
-    set_page_category Rails.configuration.page_categories.user_home
+    set_page_category PageCategory::USER_HOME
 
-    @forum_posts = Rails.cache.fetch("user-home-forum-posts", expires_in: 1.hour) do
-      posts = ForumPost.
-        joins(:forum_category).
-        merge(ForumCategory.with_slug(:site_news))
-      localable_resources(posts).order(created_at: :desc).limit(5)
-    end
+    @new_anime_list = Rails.cache.fetch("user-home-new-anime-list", expires_in: 3.hours) {
+      Anime.order(created_at: :desc).limit(4)
+    }
 
-    @userland_projects = Rails.cache.fetch("user-home-userland-projects", expires_in: 12.hours) do
-      UserlandProject.where(id: UserlandProject.pluck(:id).sample(3))
-    end
+    @forum_posts = Rails.cache.fetch("user-home-forum-posts", expires_in: 1.hour) {
+      ForumPost.joins(:forum_category).merge(ForumCategory.with_slug(:site_news)).order(created_at: :desc).limit(5)
+    }
 
-    @activity_group_entities, @page_info_entity = if current_user.timeline_mode.following?
-      UserHome::FollowingActivityGroupsRepository.new(
-        graphql_client: graphql_client(viewer: current_user)
-      ).execute(
-        username: current_user.username,
-        pagination: Annict::Pagination.new(before: params[:before], after: params[:after], per: 30)
-      )
+    @activity_groups = if current_user.timeline_mode.following?
+      ActivityGroup.eager_load(user: :profile).preload(:activities).merge(current_user.followings).order(created_at: :desc).page(params[:page]).per(30)
     else
-      UserHome::GlobalActivityGroupsRepository.new(
+      UserHomePage::GlobalActivityGroupsRepository.new(
         graphql_client: graphql_client
       ).execute(pagination: Annict::Pagination.new(before: params[:before], after: params[:after], per: 30))
     end
+    @activity_group_structs = Builder::Activity.build(@activity_groups)
   end
 end

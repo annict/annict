@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: activities
@@ -40,7 +41,7 @@
 class Activity < ApplicationRecord
   extend Enumerize
 
-  self.ignored_columns = %w(
+  self.ignored_columns = %w[
     action
     episode_id
     episode_record_id
@@ -52,7 +53,7 @@ class Activity < ApplicationRecord
     status_id
     work_id
     work_record_id
-  )
+  ]
 
   enumerize :trackable_type, in: ActivityGroup::ITEMABLE_TYPES, scope: true
 

@@ -1,5 +1,5 @@
 module Syobocal
   def self.table_name_prefix
-    'syobocal_'
+    "syobocal_"
   end
 end

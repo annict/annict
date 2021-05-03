@@ -1,19 +1,19 @@
 # frozen_string_literal: true
 
 class UsersController < ApplicationController
-  before_action :load_i18n, only: %i(following followers)
-  before_action :authenticate_user!, only: %i(destroy share)
-  before_action :set_user, only: %i(following followers)
+  before_action :load_i18n, only: %i[following followers]
+  before_action :authenticate_user!, only: %i[destroy share]
+  before_action :set_user, only: %i[following followers]
 
   def following
-    set_page_category Rails.configuration.page_categories.following_list
+    set_page_category PageCategory::FOLLOWING_LIST
 
     @user_entity = UserEntity.from_model(@user)
     @users = @user.followings.only_kept.order("follows.id DESC")
   end
 
   def followers
-    set_page_category Rails.configuration.page_categories.follower_list
+    set_page_category PageCategory::FOLLOWER_LIST
 
     @user_entity = UserEntity.from_model(@user)
     @users = @user.followers.only_kept.order("follows.id DESC")

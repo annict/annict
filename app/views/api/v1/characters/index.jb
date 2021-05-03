@@ -2,7 +2,7 @@
 
 json = {}
 
-json[:characters] = @characters.map do |character|
+json[:characters] = @characters.map { |character|
   character_json = {}
   character_json.merge!(render("api/v1/characters/character", character: character, params: @params, field_prefix: ""))
 
@@ -13,7 +13,7 @@ json[:characters] = @characters.map do |character|
   end
 
   character_json
-end
+}
 
 json.merge!(render("api/v1/application/pagination", collection: @characters, params: @params))
 

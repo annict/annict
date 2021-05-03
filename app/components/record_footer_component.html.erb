@@ -1,0 +1,17 @@
+<div class="c-record-footer">
+  <%= render LikeButtonComponent.new(
+    resource_name: "Record",
+    resource_id: @record.id,
+    likes_count: @record.likes_count,
+    page_category: "user-home",
+    class_name: "mr-3",
+    init_is_liked: @record.is_liked
+  ) %>
+
+  <% if @record.episode_record? %>
+    <%= link_to record_path(@record.user.username, @record.id), class: "mr-3", data: { "turbo-frame": "_top" } do %>
+      <i class="far fa-comment"></i>
+      <%= @record.episode_record.comments_count %>
+    <% end %>
+  <% end %>
+</div>

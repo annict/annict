@@ -1,0 +1,34 @@
+$ann-color-dark-body:   map-get($ann-color-black-map, "005");
+$ann-color-dark-border: map-get($ann-color-black-map, "060");
+
+@mixin ann-dark-variables {
+  $ann-color-dark-map: (
+    "average":                       #ff6d00,
+    "bad":                           #757575,
+    "footer-bg":                     #334854,
+    "footer-title":                  $ann-color-dark-body,
+    "good":                          #00C853,
+    "great":                         #00B0FF,
+    "mizuho":                        map-get($ann-color-mizuho-map, "040"),
+    "sidebar-bg":                    map-get($ann-color-black-map, "070"),
+    "supporter":                     #00BCD4,
+  );
+
+  @each $key, $value in (
+    "primary": "mizuho"
+  ) {
+    $ann-color-dark-map: map-merge(
+      (
+        "#{$key}-button-background": map-get($ann-color-dark-map, $value),
+        "#{$key}-button-border": map-get($ann-color-dark-map, $value),
+        "#{$key}-button-background-hover": darken(map-get($ann-color-dark-map, $value), 7.5%),
+        "#{$key}-button-border-hover": darken(map-get($ann-color-dark-map, $value), 10%),
+      ),
+      $ann-color-dark-map
+    )
+  }
+
+  @each $name, $value in $ann-color-dark-map {
+    --ann-color-#{$name}: #{$value};
+  }
+}

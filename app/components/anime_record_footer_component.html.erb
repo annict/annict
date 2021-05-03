@@ -1,0 +1,9 @@
+<div class="c-anime-record-footer">
+  <%= render LikeButtonComponent.new(
+      resource_name: "Record",
+      resource_id: @record_entity.database_id,
+      likes_count: @record_entity.likes_count,
+      page_category: "user-home",
+      class_name: "mr-3"
+  ) %>
+</div>

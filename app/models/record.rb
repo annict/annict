@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: records
@@ -26,18 +27,50 @@
 
 class Record < ApplicationRecord
   include SoftDeletable
+  include Reactable
 
-  RATING_STATES = %i(bad average good great).freeze
+  RATING_STATES = %i[bad average good great].freeze
+
+  attr_accessor :is_liked, :is_spoiler
 
   counter_culture :user
   counter_culture :work
 
   belongs_to :user
   belongs_to :work
+  has_one :anime_record, class_name: "WorkRecord", dependent: :destroy
   has_one :episode_record, dependent: :destroy
   has_one :work_record, dependent: :destroy
 
+  scope :with_anime_record, -> { joins(:work_record).merge(WorkRecord.only_kept) }
+
   def episode_record?
     episode_record.present?
+  end
+
+  def anime_record?
+    !episode_record?
+  end
+
+  def modified_at
+    if anime_record?
+      return anime_record.modified_at
+    end
+
+    episode_record.updated_at if episode_record.modify_body?
+  end
+
+  def likes_count
+    episode_record? ? episode_record.likes_count : anime_record.likes_count
+  end
+
+  def liked?(likes)
+    recipient_type, recipient_id = if episode_record?
+      ["EpisodeRecord", episode_record.id]
+    else
+      ["WorkRecord", anime_record.id]
+    end
+
+    likes.any? { |like| like.recipient_type == recipient_type && like.recipient_id == recipient_id }
   end
 end

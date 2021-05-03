@@ -11,7 +11,7 @@ describe "PATCH /db/organizations/:id", type: :request do
     end
 
     it "user can not access this page" do
-      patch "/db/organizations/#{organization.id}", params: { organization: organization_params }
+      patch "/db/organizations/#{organization.id}", params: {organization: organization_params}
       organization.reload
 
       expect(response.status).to eq(302)
@@ -36,7 +36,7 @@ describe "PATCH /db/organizations/:id", type: :request do
     end
 
     it "user can not access" do
-      patch "/db/organizations/#{organization.id}", params: { organization: organization_params }
+      patch "/db/organizations/#{organization.id}", params: {organization: organization_params}
       organization.reload
 
       expect(response.status).to eq(302)
@@ -63,7 +63,7 @@ describe "PATCH /db/organizations/:id", type: :request do
     it "user can update organization" do
       expect(organization.name).to eq(old_organization["name"])
 
-      patch "/db/organizations/#{organization.id}", params: { organization: organization_params }
+      patch "/db/organizations/#{organization.id}", params: {organization: organization_params}
       organization.reload
 
       expect(response.status).to eq(302)

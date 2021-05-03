@@ -2,7 +2,7 @@
 
 class DropUnusedTables20170703 < ActiveRecord::Migration[5.1]
   def change
-    %i(
+    %i[
       cover_images
       draft_casts
       draft_episodes
@@ -15,7 +15,7 @@ class DropUnusedTables20170703 < ActiveRecord::Migration[5.1]
       edit_request_comments
       edit_request_participants
       edit_requests
-    ).each do |table_name|
+    ].each do |table_name|
       drop_table table_name, force: true
     end
   end

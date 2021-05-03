@@ -1,24 +1,36 @@
 # frozen_string_literal: true
 
 class CreateAnimeRecordRepository < ApplicationRepository
-  def execute(anime:, params:)
-    result = mutate(variables: {
-      animeId: Canary::AnnictSchema.id_from_object(anime, Work),
-      body: params[:body],
-      ratingOverallState: params[:rating_overall_state]&.upcase.presence || nil,
-      ratingAnimationState: params[:rating_animation_state]&.upcase.presence || nil,
-      ratingMusicState: params[:rating_music_state]&.upcase.presence || nil,
-      ratingStoryState: params[:rating_story_state]&.upcase.presence || nil,
-      ratingCharacterState: params[:rating_character_state]&.upcase.presence || nil,
-      shareToTwitter: params[:share_to_twitter].in?(%w(true 1))
-    })
+  class RepositoryResult < Result
+    attr_accessor :record_entity
+  end
 
-    if result.to_h["errors"]
-      return [nil, MutationError.new(message: result.to_h["errors"][0]["message"])]
+  def execute(form:)
+    data = mutate(
+      variables: {
+        animeId: form.anime_id,
+        comment: form.comment,
+        ratingOverall: form.rating_overall&.upcase.presence,
+        ratingAnimation: form.rating_animation&.upcase.presence,
+        ratingMusic: form.rating_music&.upcase.presence,
+        ratingStory: form.rating_story&.upcase.presence,
+        ratingCharacter: form.rating_character&.upcase.presence,
+        shareToTwitter: form.share_to_twitter
+      }
+    )
+    result = validate(data)
+
+    if result.success?
+      record_node = data.dig("data", "createAnimeRecord", "record")
+      result.record_entity = RecordEntity.from_node(record_node)
     end
 
-    anime_record_node = result.dig("data", "createAnimeRecord", "animeRecord")
+    result
+  end
 
-    [AnimeRecordEntity.from_node(anime_record_node), nil]
+  private
+
+  def result_class
+    RepositoryResult
   end
 end

@@ -13,7 +13,7 @@ describe "PATCH /db/trailers/:id", type: :request do
     end
 
     it "user can not access this page" do
-      patch "/db/trailers/#{trailer.id}", params: { trailer: trailer_params }
+      patch "/db/trailers/#{trailer.id}", params: {trailer: trailer_params}
       trailer.reload
 
       expect(response.status).to eq(302)
@@ -40,7 +40,7 @@ describe "PATCH /db/trailers/:id", type: :request do
     end
 
     it "user can not access" do
-      patch "/db/trailers/#{trailer.id}", params: { trailer: trailer_params }
+      patch "/db/trailers/#{trailer.id}", params: {trailer: trailer_params}
       trailer.reload
 
       expect(response.status).to eq(302)
@@ -70,7 +70,7 @@ describe "PATCH /db/trailers/:id", type: :request do
     it "user can update trailer" do
       expect(trailer.title).to eq(old_trailer["title"])
 
-      patch "/db/trailers/#{trailer.id}", params: { trailer: trailer_params }
+      patch "/db/trailers/#{trailer.id}", params: {trailer: trailer_params}
       trailer.reload
 
       expect(response.status).to eq(302)

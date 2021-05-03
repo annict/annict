@@ -1,6 +1,15 @@
 ja:
   form:
     attributes:
+      anime_record_form:
+        rating_animation: 映像
+        rating_music: 音楽
+        rating_story: ストーリー
+        rating_character: キャラクター
+        rating_overall: 全体
+      episode_record_form:
+        comment: 感想
+        rating: 評価
       registration_form:
         email: メールアドレス
         terms_and_privacy_policy_agreement: 利用規約とプライバシーポリシー
@@ -13,3 +22,15 @@ ja:
         email: メールアドレス
       user_email_form:
         email: メールアドレス
+    errors:
+      models:
+        registration_form:
+          attributes:
+            email:
+              email_uniqueness: はすでに存在します
+            username:
+              username_uniqueness: はすでに存在します
+        user_email_form:
+          attributes:
+            email:
+              email_uniqueness: はすでに存在します

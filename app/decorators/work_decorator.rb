@@ -4,25 +4,25 @@ module WorkDecorator
   include RootResourceDecoratorCommon
 
   def title_link
-    link_to local_title, work_path(self)
+    link_to local_title, anime_path(anime_id: self)
   end
 
   def twitter_username_link
-    link_to "@#{twitter_username}", twitter_username_url, target: "_blank"
+    link_to "@#{twitter_username}", twitter_username_url, target: "_blank", rel: "noopener"
   end
 
   def twitter_hashtag_link
-    link_to "##{twitter_hashtag}", twitter_hashtag_url, target: "_blank"
+    link_to "##{twitter_hashtag}", twitter_hashtag_url, target: "_blank", rel: "noopener"
   end
 
   def syobocal_link(title = nil)
     title = title.presence || sc_tid
-    link_to title, syobocal_url, target: "_blank"
+    link_to title, syobocal_url, target: "_blank", rel: "noopener"
   end
 
   def mal_anime_link(title = nil)
     title = title.presence || mal_anime_id
-    link_to title, mal_anime_url, target: "_blank"
+    link_to title, mal_anime_url, target: "_blank", rel: "noopener"
   end
 
   def db_detail_link(options = {})
@@ -32,11 +32,13 @@ module WorkDecorator
 
   def release_season
     return "" if season.blank?
+
     season.local_name
   end
 
   def release_season_link
     return release_season if season.blank?
+
     link_to release_season, season_works_path(season.slug)
   end
 
@@ -79,6 +81,10 @@ module WorkDecorator
     else
       I18n.t("noun.start_to_publish_date")
     end
+  end
+
+  def image_url(size:)
+    ann_image_url(work_image, :image, size: size, ratio: "3:4")
   end
 
   def to_values

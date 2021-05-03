@@ -13,7 +13,7 @@ Rails.application.configure do
   config.eager_load = true
 
   # Full error reports are disabled and caching is turned on.
-  config.consider_all_requests_local       = false
+  config.consider_all_requests_local = false
   config.action_controller.perform_caching = true
 
   # Ensures that a master key has been made available in either ENV["RAILS_MASTER_KEY"]
@@ -62,6 +62,10 @@ Rails.application.configure do
 
   # Use a different cache store in production.
   config.cache_store = :redis_cache_store, {
+    url: ENV.fetch("REDISCLOUD_URL"),
+    expires_in: 24.hours.to_i
+  }
+  config.graphql_fragment_cache.store = :redis_cache_store, {
     url: ENV.fetch("REDISCLOUD_URL"),
     expires_in: 24.hours.to_i
   }

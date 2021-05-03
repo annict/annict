@@ -2,9 +2,9 @@ ja:
   activerecord:
     attributes:
       doorkeeper/application:
-        name: "アプリケーション名"
-        redirect_uri: "リダイレクトURI"
-        scopes: "スコープ"
+        name: 'アプリケーション名'
+        redirect_uri: 'リダイレクトURI'
+        scopes: 'スコープ'
       doorkeeper/access_token:
         description: トークンの説明
         scopes: スコープ
@@ -78,7 +78,10 @@ ja:
     errors:
       messages:
         # Common error messages
-        invalid_request: 'The request is missing a required parameter, includes an unsupported parameter value, or is otherwise malformed.'
+        invalid_request:
+          unknown: 'The request is missing a required parameter, includes an unsupported parameter value, or is otherwise malformed.'
+          missing_param: 'Missing required parameter: %{value}.'
+          request_not_authorized: 'Request need to be authorized. Required parameter for authorizing request is missing or invalid.'
         invalid_redirect_uri: 'The redirect uri included is not valid.'
         unauthorized_client: 'The client is not authorized to perform this request using this method.'
         access_denied: 'The resource owner or authorization server denied the request.'
@@ -102,9 +105,9 @@ ja:
         invalid_resource_owner: 'The provided resource owner credentials are not valid, or resource owner cannot be found'
 
         invalid_token:
-          revoked: "The access token was revoked"
-          expired: "The access token expired"
-          unknown: "The access token is invalid"
+          revoked: 'The access token was revoked'
+          expired: 'The access token expired'
+          unknown: 'The access token is invalid'
 
     flash:
       applications:

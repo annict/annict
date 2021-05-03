@@ -1,9 +1,0 @@
-.m-0
-  - if user_signed_in?
-    - user_records = current_user.episode_records.only_kept.where(episode: episode)
-  span.small
-    = icon "edit", class: "mr-1"
-    - if user_signed_in?
-      = user_records.length
-    - else
-      = episode.episode_records.only_kept.length

@@ -11,7 +11,7 @@ describe "PATCH /db/works/:id", type: :request do
     end
 
     it "user can not access this page" do
-      patch "/db/works/#{work.id}", params: { work: work_params }
+      patch "/db/works/#{work.id}", params: {work: work_params}
       work.reload
 
       expect(response.status).to eq(302)
@@ -36,7 +36,7 @@ describe "PATCH /db/works/:id", type: :request do
     end
 
     it "user can not access" do
-      patch "/db/works/#{work.id}", params: { work: work_params }
+      patch "/db/works/#{work.id}", params: {work: work_params}
       work.reload
 
       expect(response.status).to eq(302)
@@ -92,7 +92,7 @@ describe "PATCH /db/works/:id", type: :request do
         expect(work.send(attr_name)).to eq(old_work[attr_name.to_s])
       end
 
-      patch "/db/works/#{work.id}", params: { work: work_params }
+      patch "/db/works/#{work.id}", params: {work: work_params}
       work.reload
 
       expect(response.status).to eq(302)

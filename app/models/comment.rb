@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: comments
@@ -44,7 +45,7 @@ class Comment < ApplicationRecord
     foreign_type: :trackable,
     dependent: :destroy
 
-  validates :body, presence: true, length: { maximum: 500 }
+  validates :body, presence: true, length: {maximum: 500}
 
   after_create :save_notification
 

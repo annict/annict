@@ -2,15 +2,15 @@
 
 module Db
   class StaffsController < Db::ApplicationController
-    before_action :authenticate_user!, only: %i(new create edit update destroy)
+    before_action :authenticate_user!, only: %i[new create edit update destroy]
 
     def index
       @work = Work.without_deleted.find(params[:work_id])
-      @staffs = @work.
-        staffs.
-        without_deleted.
-        includes(:resource).
-        order(:sort_number)
+      @staffs = @work
+        .staffs
+        .without_deleted
+        .includes(:resource)
+        .order(:sort_number)
     end
 
     def new

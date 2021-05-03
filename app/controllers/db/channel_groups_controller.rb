@@ -2,12 +2,12 @@
 
 module Db
   class ChannelGroupsController < Db::ApplicationController
-    before_action :authenticate_user!, only: %i(new create edit update destroy)
+    before_action :authenticate_user!, only: %i[new create edit update destroy]
 
     def index
-      @channel_groups = ChannelGroup.
-        without_deleted.
-        order(:sort_number)
+      @channel_groups = ChannelGroup
+        .without_deleted
+        .order(:sort_number)
     end
 
     def new

@@ -12,7 +12,7 @@ describe "POST /registrations", type: :request do
           email: email_confirmation.email,
           token: email_confirmation.token,
           username: "example",
-          terms_and_privacy_policy_agreement: true
+          terms_and_privacy_policy_agreement: 1
         }
       }
 

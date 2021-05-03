@@ -24,11 +24,6 @@ script#t-impression-button-modal type="x-template"
                 label for="comment"
                   = t "noun.comment"
                 textarea#comment.form-control type="text" rows="3" v-model="comment" name="comment"
-                .text-right.text-muted.small
-                  c-input-words-count :max-words-count="150" :init-words-count="comment ? comment.length : 0" input-name="comment"
               .text-center
                 button.btn.btn-primary :class='{ "c-spinner": isSaving }'
                   = t "verb.update"
-
-- content_for :js_templates do
-  = render "application/js_templates/input_words_count"

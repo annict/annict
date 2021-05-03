@@ -3,10 +3,10 @@
     .u-underline.py-3
       .row
         .col-auto.pr-0
-          = link_to profile_detail_path(mute_user.muted_user.username) do
+          = link_to profile_path(mute_user.muted_user.username) do
             = ann_image_tag(mute_user.muted_user.profile, :image, size: "50x50", class: "rounded-circle")
         .col
-          = link_to mute_user.muted_user.profile.name, profile_detail_path(mute_user.muted_user.username), class: "profile-name"
+          = link_to mute_user.muted_user.profile.name, profile_path(mute_user.muted_user.username), class: "profile-name"
         .col-auto
           = link_to t("verb.unmute"), mute_user_path(mute_user), class: "btn btn-primary btn-sm", data: { method: :delete, confirm: t("messages._common.are_you_sure") }
 - else

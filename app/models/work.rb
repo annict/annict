@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: works
@@ -81,15 +82,17 @@ class Work < ApplicationRecord
   include RootResourceCommon
   include Unpublishable
 
-  DIFF_FIELDS = %i(
+  DIFF_FIELDS = %i[
     sc_tid title title_kana title_en media official_site_url
     official_site_url_en wikipedia_url wikipedia_url_en twitter_username
     twitter_hashtag number_format_id synopsis synopsis_en synopsis_source
     synopsis_source_en mal_anime_id season_year season_name manual_episodes_count
     started_on ended_on
-  ).freeze
+  ].freeze
 
-  enumerize :media, in: { tv: 1, ova: 2, movie: 3, web: 4, other: 0 }
+  attr_accessor :status_kind
+
+  enumerize :media, in: {tv: 1, ova: 2, movie: 3, web: 4, other: 0}
   enumerize :season_name, in: Season::NAME_HASH
 
   belongs_to :number_format, optional: true
@@ -106,7 +109,6 @@ class Work < ApplicationRecord
     foreign_key: :recipient_id,
     foreign_type: :recipient
   has_many :cast_people, through: :casts, source: :person
-  has_many :channel_works
   has_many :characters, through: :casts
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
@@ -129,14 +131,14 @@ class Work < ApplicationRecord
   has_one :work_image, dependent: :destroy
 
   validates :sc_tid,
-    numericality: { only_integer: true },
+    numericality: {only_integer: true},
     allow_blank: true
-  validates :title, presence: true, uniqueness: { conditions: -> { only_kept } }
+  validates :title, presence: true, uniqueness: {conditions: -> { only_kept }}
   validates :media, presence: true
-  validates :official_site_url, url: { allow_blank: true }
-  validates :official_site_url_en, url: { allow_blank: true }
-  validates :wikipedia_url, url: { allow_blank: true }
-  validates :wikipedia_url_en, url: { allow_blank: true }
+  validates :official_site_url, url: {allow_blank: true}
+  validates :official_site_url_en, url: {allow_blank: true}
+  validates :wikipedia_url, url: {allow_blank: true}
+  validates :wikipedia_url_en, url: {allow_blank: true}
   validates :synopsis, presence_pair: :synopsis_source
   validates :synopsis_en, presence_pair: :synopsis_source_en
 
@@ -149,33 +151,33 @@ class Work < ApplicationRecord
   scope(:by_seasons, ->(season_slugs) {
     return self if season_slugs.blank?
 
-    season_pairs = season_slugs.map do |slug|
+    season_pairs = season_slugs.map { |slug|
       season = Season.find_by_slug(slug)
       [season.year, season.name]
-    end
+    }
     season_year, season_name = season_pairs.shift
 
     t = Work.arel_table
-    works = where(t[:season_year].eq(season_year)).
-      where(t[:season_name].eq(season_name))
+    works = where(t[:season_year].eq(season_year))
+      .where(t[:season_name].eq(season_name))
     season_pairs.inject(works) do |query, season_pair|
-      query.
-        or(
-          where(t[:season_year].eq(season_pair[0])).
-          where(t[:season_name].eq(season_pair[1]))
+      query
+        .or(
+          where(t[:season_year].eq(season_pair[0]))
+          .where(t[:season_name].eq(season_pair[1]))
         )
     end
   })
 
   scope :slot_registered, -> {
-    work_ids = joins(:slots).
-      merge(Slot.only_kept.where(work_id: all.pluck(:id))).
-      pluck(:id).
-      uniq
+    work_ids = joins(:slots)
+      .merge(Slot.only_kept.where(work_id: all.pluck(:id)))
+      .pluck(:id)
+      .uniq
     where(id: work_ids)
   }
 
-  scope :tracked_by, -> (user) {
+  scope :tracked_by, ->(user) {
     joins(
       "INNER JOIN (
         SELECT DISTINCT work_id, MAX(id) AS record_id FROM records
@@ -214,8 +216,8 @@ class Work < ApplicationRecord
 
   # 作品画像が設定されていない作品
   scope :with_no_image, -> {
-    joins("LEFT OUTER JOIN work_images ON work_images.work_id = works.id").
-      where("work_images.id IS NULL")
+    joins("LEFT OUTER JOIN work_images ON work_images.work_id = works.id")
+      .where("work_images.id IS NULL")
   }
 
   scope :order_by_season, ->(type = :asc) {
@@ -225,11 +227,20 @@ class Work < ApplicationRecord
   scope :gt_current_season, -> {
     season = Season.find_by_slug(ENV.fetch("ANNICT_CURRENT_SEASON"))
 
-    where("season_year >= ? AND season_name > ?", season.year, season.name_value).
-      or(where("season_year > ?", season.year)).
-      or(where(season_year: season.year, season_name: nil)).
-      or(where(season_year: nil))
+    where("season_year >= ? AND season_name > ?", season.year, season.name_value)
+      .or(where("season_year > ?", season.year))
+      .or(where(season_year: season.year, season_name: nil))
+      .or(where(season_year: nil))
   }
+
+  scope :lt_current_season, -> {
+    season = Season.find_by_slug(ENV.fetch("ANNICT_CURRENT_SEASON"))
+
+    where("season_year <= ? AND season_name <= ?", season.year, season.name_value)
+      .or(where("season_year < ?", season.year))
+  }
+
+  delegate :copyright, to: :work_image
 
   def self.statuses(work_ids, user)
     work_ids = work_ids.uniq
@@ -249,9 +260,9 @@ class Work < ApplicationRecord
     work_tags = WorkTag.where(id: work_taggings.pluck(:work_tag_id))
 
     work_ids.map do |work_id|
-      work_tag_ids = work_taggings.
-        select { |wt| wt.work_id == work_id }.
-        map(&:work_tag_id)
+      work_tag_ids = work_taggings
+        .select { |wt| wt.work_id == work_id }
+        .map(&:work_tag_id)
 
       {
         work_id: work_id,
@@ -274,26 +285,26 @@ class Work < ApplicationRecord
 
   def self.watching_friends_data(work_ids, user)
     work_ids = work_ids.uniq
-    status_kinds = %w(wanna_watch watching watched)
+    status_kinds = %w[wanna_watch watching watched]
     users = user.followings.only_kept.includes(:profile)
     user_ids = users.pluck(:id)
-    library_entries = LibraryEntry.
-      where(work: work_ids, user: user_ids).
-      with_status(*status_kinds)
+    library_entries = LibraryEntry
+      .where(work: work_ids, user: user_ids)
+      .with_status(*status_kinds)
 
     work_ids.map do |work_id|
       library_entries_ = library_entries.select { |ls| ls.work_id == work_id }
       users_ = users.select { |u| u.id.in?(library_entries_.map(&:user_id)) }
-      users_data = users_.map do |u|
-        library_entry = library_entries_.select do |ls|
+      users_data = users_.map { |u|
+        library_entry = library_entries_.select { |ls|
           ls.user_id == u.id && ls.work_id == work_id
-        end.first
+        }.first
 
         {
           user: u,
           library_entry_id: library_entry.id
         }
-      end
+      }
 
       {
         work_id: work_id,
@@ -343,9 +354,9 @@ class Work < ApplicationRecord
     work_ids = works.pluck(:id)
     programs = Program.only_kept.where(work_id: work_ids).includes(:channel)
     if only_vod
-      programs = programs.
-        joins(:channel).
-        where(channels: { vod: true })
+      programs = programs
+        .joins(:channel)
+        .where(channels: {vod: true})
     end
 
     work_ids.map do |work_id|
@@ -366,7 +377,33 @@ class Work < ApplicationRecord
 
   def season
     return if season_year.blank?
+
     @season ||= Season.new(season_year, season_name.presence || "all")
+  end
+
+  def build_anime_record( # rubocop:disable Metrics/ParameterLists
+    user:,
+    rating_overall: nil,
+    rating_animation: nil,
+    rating_music: nil,
+    rating_story: nil,
+    rating_character: nil,
+    comment: "",
+    share_to_twitter: false
+  )
+    anime_record = work_records.new(
+      user: user,
+      rating_overall_state: rating_overall&.downcase,
+      rating_animation_state: rating_animation&.downcase,
+      rating_music_state: rating_music&.downcase,
+      rating_story_state: rating_story&.downcase,
+      rating_character_state: rating_character&.downcase,
+      body: comment,
+      share_to_twitter: share_to_twitter
+    )
+    anime_record.detect_locale!(:body)
+    anime_record.build_record(user: user, work: self)
+    anime_record
   end
 
   # 作品のエピソード数分の空白文字列が入った配列を返す
@@ -384,6 +421,10 @@ class Work < ApplicationRecord
     records = Record.where(episode_id: episode_ids).where("comment != ?", "")
 
     records.count
+  end
+
+  def syobocal_tid
+    sc_tid
   end
 
   def sync_with_syobocal?
@@ -412,6 +453,7 @@ class Work < ApplicationRecord
 
   def twitter_avatar_url(size = :original)
     return "" if twitter_username.blank?
+
     "https://twitter.com/#{twitter_username}/profile_image?size=#{size}"
   end
 
@@ -450,11 +492,12 @@ class Work < ApplicationRecord
 
   def hashtag_with_hash
     return "" if twitter_hashtag.blank?
+
     "##{twitter_hashtag}"
   end
 
   def to_diffable_hash
-    data = self.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
+    data = self.class::DIFF_FIELDS.each_with_object({}) { |field, hash|
       hash[field] = case field
       when :media
         send(field).to_s
@@ -463,29 +506,29 @@ class Work < ApplicationRecord
       end
 
       hash
-    end
+    }
 
     data.delete_if { |_, v| v.blank? }
   end
 
   def watchers_chart_dataset
-    (3.months.ago.to_date..Date.today).map do |date|
+    (3.months.ago.to_date..Date.today).map { |date|
       count = library_entries.with_status(:wanna_watch, :watching, :watched).before(date).count
       {
         date: date.to_time.to_datetime.strftime("%Y/%m/%d"),
         value: count
       }
-    end.to_json
+    }.to_json
   end
 
   def status_chart_dataset
-    Status.kind.values.map do |kind|
+    Status.kind.values.map { |kind|
       kind_count = library_entries.with_status(kind).count
       {
         name: kind.text,
         value: kind_count
       }
-    end.to_json
+    }.to_json
   end
 
   def image_color_rgb
@@ -505,6 +548,7 @@ class Work < ApplicationRecord
   def local_title
     return title if I18n.locale == :ja
     return title_en if title_en.present?
+
     title
   end
 

@@ -4,7 +4,7 @@ module Beta
   module Types
     module Objects
       class SeriesType < Beta::Types::Objects::Base
-        implements GraphQL::Relay::Node.interface
+        implements GraphQL::Types::Relay::Node
 
         global_id_field :id
 

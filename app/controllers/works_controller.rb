@@ -3,49 +3,49 @@
 class WorksController < ApplicationController
   include ApplicationHelper
 
-  before_action :authenticate_user!, only: %i(switch)
-  before_action :set_display_option, only: %i(popular newest season)
+  before_action :authenticate_user!, only: %i[switch]
+  before_action :set_display_option, only: %i[popular newest season]
 
   def index
     redirect_to season_works_path(ENV["ANNICT_CURRENT_SEASON"])
   end
 
   def popular
-    set_page_category Rails.configuration.page_categories.work_list_popular
+    set_page_category PageCategory::WORK_LIST_POPULAR
 
-    @works = Work.
-      only_kept.
-      preload(:work_image).
-      order(watchers_count: :desc, id: :desc).
-      page(params[:page]).
-      per(display_works_count)
+    @works = Work
+      .only_kept
+      .preload(:work_image)
+      .order(watchers_count: :desc, id: :desc)
+      .page(params[:page])
+      .per(display_works_count)
 
     render_list
   end
 
   def newest
-    set_page_category Rails.configuration.page_categories.work_list_newest
+    set_page_category PageCategory::WORK_LIST_NEWEST
 
-    @works = Work.
-      only_kept.
-      preload(:work_image).
-      order(id: :desc).
-      page(params[:page]).
-      per(display_works_count)
+    @works = Work
+      .only_kept
+      .preload(:work_image)
+      .order(id: :desc)
+      .page(params[:page])
+      .per(display_works_count)
 
     render_list
   end
 
   def season
-    set_page_category Rails.configuration.page_categories.work_list_season
+    set_page_category PageCategory::WORK_LIST_SEASON
 
-    @works = Work.
-      only_kept.
-      by_season(params[:slug]).
-      preload(:work_image).
-      order(watchers_count: :desc, id: :desc).
-      page(params[:page]).
-      per(display_works_count)
+    @works = Work
+      .only_kept
+      .by_season(params[:slug])
+      .preload(:work_image)
+      .order(watchers_count: :desc, id: :desc)
+      .page(params[:page])
+      .per(display_works_count)
 
     @seasons = Season.list(sort: :desc, include_all: true)
     @season = Season.find_by_slug(params[:slug])

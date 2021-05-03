@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module V4
-  class RegistrationsController < V4::ApplicationController
+  class RegistrationsController < ApplicationController
     layout "simple"
 
     before_action :redirect_if_signed_in
@@ -28,16 +28,17 @@ module V4
     end
 
     def create
-      token = registration_form_attributes[:token]
-      @confirmation = EmailConfirmation.find_by(event: :sign_up, token: token)
+      @confirmation = EmailConfirmation.find_by(event: :sign_up, token: registration_form_params[:token])
 
       unless @confirmation
         return redirect_to root_path
       end
 
-      @form = RegistrationForm.new(registration_form_attributes.merge(email: @confirmation.email))
+      @form = RegistrationForm.new(registration_form_params.merge(email: @confirmation.email))
 
-      return render(:new) unless @form.valid?
+      if @form.invalid?
+        return render(:new)
+      end
 
       user = User.new(
         username: @form.username,
@@ -61,8 +62,8 @@ module V4
 
     private
 
-    def registration_form_attributes
-      @registration_form_attributes ||= params.to_unsafe_h["registration_form"]
+    def registration_form_params
+      params.require(:registration_form).permit(:email, :terms_and_privacy_policy_agreement, :token, :username)
     end
   end
 end

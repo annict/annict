@@ -5,7 +5,7 @@
       .col
         = link_to character.local_name, character_path(character)
         - if character.oldest_work.present?
-          = link_to work_path(character.oldest_work) do
+          = link_to anime_path(anime_id: character.oldest_work.id) do
             .text-muted.u-very-small
               = character.oldest_work.local_title
       .col.col-auto

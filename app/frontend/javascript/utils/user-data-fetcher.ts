@@ -8,9 +8,9 @@ import { EventDispatcher } from './event-dispatcher';
 
 const REQUEST_LIST: any = {
   'activity-list': [libraryEntriesRequest, likesRequest],
+  'anime-record-list': [libraryEntriesRequest, likesRequest, trackedResourcesRequest, userRequest],
   'character-fan-list': [followingRequest],
   'edit-record': [libraryEntriesRequest],
-  'episode-detail': [libraryEntriesRequest, likesRequest, trackedResourcesRequest, userRequest],
   'episode-list': [libraryEntriesRequest],
   'favorite-character-list': [followingRequest],
   'favorite-organization-list': [followingRequest],
@@ -18,20 +18,19 @@ const REQUEST_LIST: any = {
   'follower-list': [followingRequest],
   'following-list': [followingRequest],
   'guest-home': [libraryEntriesRequest],
-  'library-detail': [followingRequest, libraryEntriesRequest],
   'organization-fan-list': [followingRequest],
   'person-fan-list': [followingRequest],
-  'profile-detail': [followingRequest, libraryEntriesRequest, likesRequest, trackedResourcesRequest, userRequest],
-  'record-detail': [libraryEntriesRequest, likesRequest, trackedResourcesRequest, userRequest],
   'record-list': [followingRequest, libraryEntriesRequest, likesRequest, trackedResourcesRequest, userRequest],
-  'search-detail': [libraryEntriesRequest],
   'user-home': [libraryEntriesRequest, likesRequest, trackedResourcesRequest, userRequest],
-  'user-work-tag-detail': [libraryEntriesRequest],
-  'work-detail': [libraryEntriesRequest, likesRequest, trackedResourcesRequest, userRequest],
+  'user-work-tag': [libraryEntriesRequest],
   'work-list-newest': [libraryEntriesRequest, workFriendsRequest],
   'work-list-popular': [libraryEntriesRequest, workFriendsRequest],
   'work-list-season': [libraryEntriesRequest, workFriendsRequest],
-  'work-record-list': [libraryEntriesRequest, likesRequest, trackedResourcesRequest, userRequest],
+  library: [followingRequest, libraryEntriesRequest],
+  profile: [followingRequest, libraryEntriesRequest, likesRequest, trackedResourcesRequest, userRequest],
+  record: [libraryEntriesRequest, likesRequest, trackedResourcesRequest, userRequest],
+  search: [libraryEntriesRequest],
+  work: [libraryEntriesRequest, likesRequest, trackedResourcesRequest, userRequest],
 };
 
 export class UserDataFetcher {

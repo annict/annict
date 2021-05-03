@@ -1,0 +1,11 @@
+mutation($reactableId: ID!, $content: ReactionContent!) {
+  addReaction(input:{ reactableId: $reactableId, content: $content }) {
+    reaction {
+      user {
+        username
+      }
+      content
+      createdAt
+    }
+  }
+}

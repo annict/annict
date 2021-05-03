@@ -2,7 +2,7 @@
   <div class="card-body p-2">
     <div class="row">
       <div class="col-auto pr-0">
-        <%= link_to work_path(work_entity.database_id) do %>
+        <%= link_to anime_path(anime_id: work_entity.database_id) do %>
           <%= render WorkImageComponent.new(
               image_url_1x: work_entity.image_url_1x,
               image_url_2x: work_entity.image_url_2x,
@@ -13,11 +13,11 @@
 
       <div class="col">
         <div class="mb-1">
-          <%= link_to work_entity.local_title, work_path(work_entity.database_id), class: "d-block" %>
+          <%= link_to work_entity.local_title, anime_path(anime_id: work_entity.database_id), class: "d-block" %>
 
-          <%= link_to work_episode_path(work_entity.database_id, episode_entity.database_id), class: "d-block small" do %>
+          <%= link_to episode_path(anime_id: work_entity.database_id, episode_id: episode_entity.database_id), class: "d-block small" do %>
             <span class="pr-1">
-              <%= episode_entity.number_text %>
+              <%= episode_entity.local_number %>
             </span>
 
             <%= episode_entity.local_title %>

@@ -2,7 +2,7 @@
 
 module Db
   class WorksController < Db::ApplicationController
-    before_action :authenticate_user!, only: %i(new create edit update destroy)
+    before_action :authenticate_user!, only: %i[new create edit update destroy]
 
     def index
       @is_no_episodes = search_params[:no_episodes] == "1"

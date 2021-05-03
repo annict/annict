@@ -22,9 +22,12 @@ module Canary
           argument :order_by, Canary::Types::InputObjects::AnimeOrder, required: false
         end
 
-        field :episodes, Canary::Types::Objects::EpisodeType.connection_type, null: true do
-          argument :database_ids, [Integer], required: false
-          argument :order_by, Canary::Types::InputObjects::EpisodeOrder, required: false
+        field :anime, Canary::Types::Objects::AnimeType, null: true do
+          argument :database_id, Integer, required: true
+        end
+
+        field :episode, Canary::Types::Objects::EpisodeType, null: true do
+          argument :database_id, Integer, required: true
         end
 
         field :people, Canary::Types::Objects::PersonType.connection_type, null: true do
@@ -53,6 +56,10 @@ module Canary
           argument :order_by, Canary::Types::InputObjects::ActivityOrder, required: false
         end
 
+        field :bulk_operation, Canary::Types::Objects::BulkOperationType, null: true do
+          argument :job_id, String, required: true
+        end
+
         def viewer
           context[:viewer]
         end
@@ -61,11 +68,12 @@ module Canary
           User.only_kept.find_by(username: username)
         end
 
-        def episodes(database_ids: nil, order_by: nil)
-          SearchEpisodesQuery.new(
-            annict_ids: database_ids,
-            order_by: order_by
-          ).call
+        def anime(database_id:)
+          Work.only_kept.find_by(id: database_id)
+        end
+
+        def episode(database_id:)
+          Episode.only_kept.find_by(id: database_id)
         end
 
         def people(database_ids: nil, names: nil, order_by: nil)
@@ -102,6 +110,11 @@ module Canary
         def activity_groups(order_by: nil)
           order = Canary::OrderProperty.build(order_by)
           ActivityGroup.joins(:user).merge(User.only_kept).order(order.field => order.direction)
+        end
+
+        def bulk_operation(job_id:)
+          job = Delayed::Job.find_by(id: job_id)
+          job ? OpenStruct.new(job_id: job.id) : nil
         end
       end
     end

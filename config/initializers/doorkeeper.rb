@@ -50,7 +50,7 @@ Doorkeeper.configure do
   # Define access token scopes for your provider
   # For more information go to
   # https://github.com/doorkeeper-gem/doorkeeper/wiki/Using-Scopes
-  default_scopes  :read
+  default_scopes :read
   optional_scopes :write
 
   # Change the way client credentials are retrieved from the request object.
@@ -121,7 +121,7 @@ Doorkeeper::Application.class_eval do
   scope :unavailable, -> {
     unscoped.where.not(deleted_at: nil).or(where(owner: nil))
   }
-  scope :authorized, -> { where(oauth_access_tokens: { revoked_at: nil }) }
+  scope :authorized, -> { where(oauth_access_tokens: {revoked_at: nil}) }
 end
 
 Doorkeeper::AccessToken.class_eval do
@@ -132,9 +132,9 @@ Doorkeeper::AccessToken.class_eval do
   scope :available, -> { where(revoked_at: nil) }
   scope :personal, -> { where(application_id: nil) }
 
-  validates :description, presence: { on: :personal }
+  validates :description, presence: {on: :personal}
 
-  before_validation :generate_token, on: %i(create personal)
+  before_validation :generate_token, on: %i[create personal]
 
   def writable?
     scopes.include?("write")

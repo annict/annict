@@ -5,10 +5,10 @@ describe "Api::V1::Me::Slots" do
   let(:user) { access_token.owner }
   let(:work) { create(:work, :with_current_season, watchers_count: 1) }
   let(:episode) { create(:episode, work: work) }
+  let(:channel) { create(:channel) }
   let(:status) { create(:status, kind: "watching", work: work, user: user) }
-  let!(:library_entry) { create(:library_entry, user: user, work: work, status: status) }
-  let(:channel_work) { create(:channel_work, user: user, work: work) }
-  let!(:slot) { create(:slot, work: work, episode: episode, channel: channel_work.channel) }
+  let!(:slot) { create(:slot, work: work, episode: episode, channel: channel) }
+  let!(:library_entry) { create(:library_entry, user: user, work: work, status: status, program: slot.program) }
 
   describe "GET /v1/me/programs" do
     before do
@@ -23,7 +23,6 @@ describe "Api::V1::Me::Slots" do
     end
 
     it "gets slots which user is watching" do
-      channel = channel_work.channel
       work = episode.work
       expected_hash = {
         "id" => slot.id,

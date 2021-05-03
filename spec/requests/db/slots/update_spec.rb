@@ -12,7 +12,7 @@ describe "PATCH /db/slots/:id", type: :request do
     end
 
     it "user can not access this page" do
-      patch "/db/slots/#{slot.id}", params: { slot: slot_params }
+      patch "/db/slots/#{slot.id}", params: {slot: slot_params}
       slot.reload
 
       expect(response.status).to eq(302)
@@ -38,7 +38,7 @@ describe "PATCH /db/slots/:id", type: :request do
     end
 
     it "user can not access" do
-      patch "/db/slots/#{slot.id}", params: { slot: slot_params }
+      patch "/db/slots/#{slot.id}", params: {slot: slot_params}
       slot.reload
 
       expect(response.status).to eq(302)
@@ -68,7 +68,7 @@ describe "PATCH /db/slots/:id", type: :request do
     it "user can update slot" do
       expect(slot.channel_id).to eq(old_slot["channel_id"])
 
-      patch "/db/slots/#{slot.id}", params: { slot: slot_params }
+      patch "/db/slots/#{slot.id}", params: {slot: slot_params}
       slot.reload
 
       expect(response.status).to eq(302)

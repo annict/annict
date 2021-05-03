@@ -120,7 +120,8 @@ describe "GET /works/:id", type: :request do
 
   context "when work records have been added" do
     let!(:work) { create(:work) }
-    let!(:work_record) { create(:work_record, work: work) }
+    let!(:record) { create(:record, work: work) }
+    let!(:work_record) { create(:work_record, work: work, record: record) }
 
     before do
       get "/works/#{work.id}"

@@ -13,7 +13,7 @@ describe "GraphQL API Query" do
         }
       GRAPHQL
 
-      res = Beta::AnnictSchema.execute(query_string, context: { viewer: user })
+      res = Beta::AnnictSchema.execute(query_string, context: {viewer: user})
       pp(res) if res["errors"]
       res
     end

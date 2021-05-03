@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module V4
-  class SignInController < V4::ApplicationController
+  class SignInController < ApplicationController
     layout "simple"
 
     before_action :redirect_if_signed_in
@@ -21,10 +21,10 @@ module V4
     end
 
     def create
-      @form = SignInForm.new(sign_in_form_attributes)
+      @form = SignInForm.new(sign_in_form_params)
       @recaptcha = Recaptcha.new(action: "sign_in")
 
-      unless @form.valid?
+      if @form.invalid?
         return render(:new)
       end
 
@@ -41,8 +41,8 @@ module V4
 
     private
 
-    def sign_in_form_attributes
-      params.to_unsafe_h["sign_in_form"].merge(back: stored_location_for(:user))
+    def sign_in_form_params
+      params.require(:sign_in_form).permit(:email).merge(back: stored_location_for(:user))
     end
   end
 end

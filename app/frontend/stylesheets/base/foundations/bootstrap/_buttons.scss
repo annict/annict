@@ -1,0 +1,11 @@
+@each $theme-name in $theme-name-list {
+  .btn-#{$theme-name} {
+    background-color: var(--ann-color-#{$theme-name}-button-background);
+    border-color: var(--ann-color-#{$theme-name}-button-border);
+
+    &:hover {
+      background-color: var(--ann-color-#{$theme-name}-button-background-hover);
+      border-color: var(--ann-color-#{$theme-name}-button-border-hover);
+    }
+  }
+}

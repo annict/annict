@@ -6,28 +6,24 @@ module Api
       class RecordsController < Api::V1::ApplicationController
         include V4::GraphqlRunnable
 
-        before_action :prepare_params!, only: %i(create update destroy)
+        before_action :prepare_params!, only: %i[create update destroy]
 
         def create
           episode = Episode.only_kept.find(@params.episode_id)
-
-          episode_record, err = CreateEpisodeRecordRepository.new(
-            graphql_client: graphql_client(viewer: current_user)
-          ).execute(
+          creator = EpisodeRecordCreator.new(
+            user: current_user,
             episode: episode,
-            params: {
-              rating: @params.rating,
-              rating_state: @params.rating_state,
-              body: @params.comment,
-              share_to_twitter: @params.share_twitter
-            }
-          )
+            rating: @params.rating_state,
+            deprecated_rating: @params.rating,
+            comment: @params.comment,
+            share_to_twitter: @params.share_twitter
+          ).call
 
-          if err
-            return render_validation_error(err.message)
+          if creator.invalid?
+            return render_validation_error(creator.errors.first.message)
           end
 
-          @episode_record = current_user.episode_records.find(episode_record.database_id)
+          @episode_record = current_user.episode_records.find_by!(record_id: creator.record.id)
         end
 
         def update
@@ -63,15 +59,15 @@ module Api
         private
 
         def render_validation_errors(record)
-          errors = record.errors.full_messages.map do |message|
+          errors = record.errors.full_messages.map { |message|
             {
               type: "invalid_params",
               message: message,
               url: "http://example.com/docs/api/validations"
             }
-          end
+          }
 
-          render json: { errors: errors }, status: 400
+          render json: {errors: errors}, status: 400
         end
 
         def render_validation_error(message)

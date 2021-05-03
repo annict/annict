@@ -16,8 +16,7 @@ module Beta
 
       def resolve(
         review_id:,
-        title: nil,
-        body:,
+        body:, title: nil,
         rating_overall_state: nil,
         rating_animation_state: nil,
         rating_music_state: nil,

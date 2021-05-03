@@ -94,24 +94,24 @@ class UserEntity < ApplicationEntity
     end
 
     character_favorite_nodes = user_node.dig("characterFavorites", "nodes")
-    attrs[:character_favorites] = (character_favorite_nodes || []).map do |character_favorite_node|
+    attrs[:character_favorites] = (character_favorite_nodes || []).map { |character_favorite_node|
       CharacterFavoriteEntity.from_node(character_favorite_node)
-    end
+    }
 
     cast_favorite_nodes = user_node.dig("castFavorites", "nodes")
-    attrs[:cast_favorites] = (cast_favorite_nodes || []).map do |cast_favorite_node|
+    attrs[:cast_favorites] = (cast_favorite_nodes || []).map { |cast_favorite_node|
       PersonFavoriteEntity.from_node(cast_favorite_node)
-    end
+    }
 
     staff_favorite_nodes = user_node.dig("staffFavorites", "nodes")
-    attrs[:staff_favorites] = (staff_favorite_nodes || []).map do |staff_favorite_node|
+    attrs[:staff_favorites] = (staff_favorite_nodes || []).map { |staff_favorite_node|
       PersonFavoriteEntity.from_node(staff_favorite_node)
-    end
+    }
 
     organization_favorite_nodes = user_node.dig("organizationFavorites", "nodes")
-    attrs[:organization_favorites] = (organization_favorite_nodes || []).map do |organization_favorite_node|
+    attrs[:organization_favorites] = (organization_favorite_nodes || []).map { |organization_favorite_node|
       OrganizationFavoriteEntity.from_node(organization_favorite_node)
-    end
+    }
 
     new attrs
   end
@@ -120,14 +120,14 @@ class UserEntity < ApplicationEntity
     extend Imgix::Rails::UrlHelper
     extend ImageHelper
 
-    new({
+    new(
       database_id: user.id,
       username: user.username,
       name: user.profile.name,
       avatar_url: api_user_avatar_url(user.profile, "size200"),
       background_image_url: ann_api_assets_background_image_url(user.profile),
       display_supporter_badge: user.supporter? && !user.setting.hide_supporter_badge?
-    })
+    )
   end
 
   def days_from_started(time_zone)

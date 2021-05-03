@@ -2,7 +2,7 @@
 
 class AddLocaleToUserCreatedResources < ActiveRecord::Migration[5.1]
   def change
-    table_names = %i(
+    table_names = %i[
       checkins
       comments
       db_comments
@@ -15,7 +15,7 @@ class AddLocaleToUserCreatedResources < ActiveRecord::Migration[5.1]
       work_comments
       work_taggables
       work_tags
-    )
+    ]
 
     table_names.each do |tn|
       add_column tn, :locale, :string, null: false, default: "other"

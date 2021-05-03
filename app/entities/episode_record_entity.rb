@@ -2,10 +2,8 @@
 
 class EpisodeRecordEntity < ApplicationEntity
   attribute? :database_id, Types::Integer
-  attribute? :rating_state, Types::RecordRatingStateKinds.optional
-  attribute? :body, Types::String.optional
-  attribute? :body_html, Types::String.optional
-  attribute? :likes_count, Types::Integer
+  attribute? :rating, Types::RecordRatingState.optional
+  attribute? :advanced_rating, Types::Float.optional
   attribute? :comments_count, Types::Integer
   attribute? :user, UserEntity
   attribute? :record, RecordEntity
@@ -19,16 +17,12 @@ class EpisodeRecordEntity < ApplicationEntity
       attrs[:database_id] = database_id
     end
 
-    if rating_state = episode_record_node["ratingState"]
-      attrs[:rating_state] = rating_state.downcase
+    if rating = episode_record_node["rating"]
+      attrs[:rating] = rating.downcase
     end
 
-    if body = episode_record_node["body"]
-      attrs[:body] = body
-    end
-
-    if likes_count = episode_record_node["likesCount"]
-      attrs[:likes_count] = likes_count
+    if advanced_rating = episode_record_node["advancedRating"]
+      attrs[:advanced_rating] = advanced_rating
     end
 
     if comments_count = episode_record_node["commentsCount"]

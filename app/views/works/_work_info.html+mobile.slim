@@ -1,13 +1,13 @@
 .row.mb-3
   .col-3.pr-0
-    = link_to work_path(work) do
+    = link_to anime_path(anime_id: work.id) do
       = ann_image_tag work.work_image, :image, size: "110x", ratio: "3:4", class: "img-fluid img-thumbnail rounded"
     - if work.work_image.present?
       .u-very-small.mt-1
         = work.work_image.asin_or_copyright_text
   .col-9
     h1.h2.font-weight-bold.mb-3
-      = link_to work.local_title, work_path(work), class: "u-text-body"
+      = link_to work.local_title, anime_path(anime_id: work.id), class: "u-text-body"
 
     .row.mb-3
       .col.text-center

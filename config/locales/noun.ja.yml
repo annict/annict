@@ -13,6 +13,7 @@ ja:
     all_comments: 全ての感想
     animation: 映像
     anime: アニメ
+    anime_page: アニメページ
     annict_api: Annict API
     annict_db: Annict DB
     annict_developers: Annict Developers
@@ -40,13 +41,15 @@ ja:
     channels: チャンネル
     character: キャラクター
     characters: キャラクター
+    characters2: 文字
     comment: コメント
-    comments_count: コメント数
+    comments_count: 感想数
     comments_count_shorten: コメント
     contents: コンテンツ
     column: 項目
     completed: 見たアニメ
     current_season: 今期のアニメ
+    current_season_shoten: 今期アニメ
     delete: 削除
     detail: 詳細
     development_members: 開発メンバー
@@ -55,6 +58,7 @@ ja:
     email: メールアドレス
     english: 英語
     episode_number: 話数
+    episode_page: エピソードページ
     episodes: エピソード
     error: エラー
     external_services: 外部サービス
@@ -72,8 +76,8 @@ ja:
     first: First
     followers: フォロワー
     following: フォロー中
+    following_records: フォロイーの記録
     following_shorten: フォロー
-    friend_comments: 友達の感想
     friends_who_are_watching: 見てる友達
     global: グローバル
     google_calendar: Googleカレンダー
@@ -90,7 +94,8 @@ ja:
     music: 音楽
     my_anime_list: MyAnimeList
     my_records: 自分の記録
-    n_works_watched: "%{count}作品見た"
+    n_works_watched: '%{count}作品見た'
+    next: 次へ
     next_episode: 次のエピソード
     next_page: 次のページ
     next_season: 来期のアニメ
@@ -100,8 +105,8 @@ ja:
     or: または
     organization: 団体
     organizations: 団体
-    other_record_body_list_by: "%{profile_name}が書いた感想"
-    other_record_body_list: みんなの感想
+    other_record_body_list_by: '%{profile_name}が書いた感想'
+    other_comments: みんなの感想
     other_users: その他利用者さん
     overall: 全体
     password: パスワード
@@ -113,6 +118,7 @@ ja:
     popular_airing_anime: 人気の放送中アニメ
     popular_anime: 人気アニメ
     popular_tags: 人気のタグ
+    prev: 前へ
     prev_page: 前のページ
     prev_season: 前期のアニメ
     previous_season: 前期のアニメ
@@ -127,10 +133,10 @@ ja:
     rebroadcast: 再放送
     record_body_list: 感想
     record_list: 記録一覧
-    record_of_episode: "「%{work_title}」%{episode_title_with_number}への記録"
-    record_of_work: "「%{work_title}」の記録"
+    record_of_episode: '「%{work_title}」%{episode_title_with_number}への記録'
+    record_of_work: '「%{work_title}」の記録'
     records: 記録
-    records_by: "%{profile_name}の記録"
+    records_by: '%{profile_name}の記録'
     records_count: 記録数
     related_works: 関連作品
     release_on: リリース日
@@ -145,7 +151,7 @@ ja:
     seasons: シーズン
     seasonal_anime: シーズン別アニメ
     series: シリーズ
-    series_with_name: "%{series_name}シリーズ"
+    series_with_name: '%{series_name}シリーズ'
     series_works: シリーズ作品
     services: サービス
     settings: 設定
@@ -166,6 +172,7 @@ ja:
     state: 状態
     state_change: 状態変更
     stats: 統計
+    status: ステータス
     story: ストーリー
     summer: 夏
     supporter: サポーター
@@ -174,6 +181,8 @@ ja:
     terms_of_use: 利用規約
     timeline: タイムライン
     title: タイトル
+    today: 今日
+    tomorrow: 明日
     tonight: 今夜
     tweet: ツイート
     unbroadcast: 未放送
@@ -181,7 +190,7 @@ ja:
     unknown_season: 公開日不明
     unpublish: 非公開
     untracked_episodes: 未視聴エピソード
-    users_count: "%{count}人"
+    users_count: '%{count}人'
     video_page: 動画ページ
     vod_works: VOD作品
     vods: 動画サービス
@@ -189,10 +198,12 @@ ja:
     voice_actors: 声優
     watchers_count: 視聴者数
     watching: 見てるアニメ
+    watching_and_plan_to_watch: 見てる・見たいアニメ
     watching_shorten: 見てる
     winter: 冬
     work_detail_page: 作品ページ
     work_image: 作品画像
     work: 作品
     works: 作品
+    yesterday: 昨日
     your_statistics: 視聴状況

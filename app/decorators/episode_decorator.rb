@@ -2,7 +2,7 @@
 
 module EpisodeDecorator
   def number_link
-    link_to local_number, work_episode_path(work, self)
+    link_to local_number, episode_path(anime_id: work.id, episode_id: id)
   end
 
   def db_detail_link(options = {})
@@ -24,7 +24,7 @@ module EpisodeDecorator
           episode = work.episodes.where(id: send(field)).first
           if episode.present?
             title = episode.decorate.title_with_number
-            path = work_episode_path(episode.work, episode)
+            path = episode_path(anime_id: episode.work_id, episode_id: episode.id)
             link_to(title, path, target: "_blank")
           else
             ""

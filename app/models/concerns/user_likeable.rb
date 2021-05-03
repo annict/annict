@@ -9,12 +9,13 @@ module UserLikeable
     end
 
     def like(recipient)
-      likes.create(recipient: recipient) unless like?(recipient)
+      likes.create(recipient: recipient)
     end
 
     def unlike(recipient)
       like = likes.where(recipient: recipient).first
       like.destroy if like.present?
+      like
     end
   end
 end

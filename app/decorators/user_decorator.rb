@@ -2,7 +2,7 @@
 
 module UserDecorator
   def name_link(options = {})
-    link_to(profile.name, annict_url(:profile_detail_url, username), options)
+    link_to(profile.name, annict_url(:profile_url, username), options)
   end
 
   def role_badge
@@ -15,5 +15,9 @@ module UserDecorator
 
   def name_with_username
     "#{profile.name} (@#{username})"
+  end
+
+  def avatar_url(size:)
+    ann_image_url(profile, :image, size: size, ratio: "1:1")
   end
 end

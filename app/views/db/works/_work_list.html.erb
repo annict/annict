@@ -31,7 +31,7 @@
     <% resources.each do |work| %>
       <tr>
         <td>
-          <%= link_to work.id, work_path(work), target: "_blank" %>
+          <%= link_to work.id, anime_path(anime_id: work.id), target: "_blank" %>
         </td>
         <td>
           <%= render WorkMediaLabelComponent.new(work_entity: work.to_entity) %>

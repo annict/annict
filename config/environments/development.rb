@@ -17,9 +17,7 @@ Rails.application.configure do
   # Show full error reports.
   config.consider_all_requests_local = true
 
-  asset_ip_address = Socket.ip_address_list.detect{ |addr| addr.ipv4_private? }.ip_address
-  asset_port = ENV.fetch("WEBPACK_DEV_SERVER_PORT")
-  config.action_controller.asset_host = "http://#{asset_ip_address}:#{asset_port}"
+  config.action_controller.asset_host = ENV.fetch("ANNICT_ASSET_URL")
   config.action_controller.perform_caching = is_cache_enabled
 
   if is_cache_enabled
@@ -27,8 +25,12 @@ Rails.application.configure do
       url: ENV.fetch("REDIS_URL"),
       expires_in: 1.hour.to_i
     }
+    config.graphql_fragment_cache.store = :redis_cache_store, {
+      url: ENV.fetch("REDIS_URL"),
+      expires_in: 1.hour.to_i
+    }
     config.public_file_server.headers = {
-      'Cache-Control' => "public, max-age=#{2.days.to_i}"
+      "Cache-Control" => "public, max-age=#{2.days.to_i}"
     }
   else
     config.cache_store = :null_store
@@ -37,7 +39,7 @@ Rails.application.configure do
   # Don't care if the mailer can't send.
   config.action_mailer.raise_delivery_errors = false
   config.action_mailer.perform_caching = false
-  config.action_mailer.default_url_options = { host: ENV.fetch("ANNICT_HOST") }
+  config.action_mailer.default_url_options = {host: ENV.fetch("ANNICT_HOST")}
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
     user_name: ENV.fetch("MAILTRAP_USERNAME"),
@@ -65,10 +67,10 @@ Rails.application.configure do
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 
   config.after_initialize do
-    Bullet.enable        = true
+    Bullet.enable = true
     Bullet.bullet_logger = true
-    Bullet.console       = true
-    Bullet.rails_logger  = true
+    Bullet.console = true
+    Bullet.rails_logger = true
   end
 
   # Vagrant環境でもBetter Errorsが使いたい
@@ -88,6 +90,7 @@ Rails.application.configure do
   config.hosts += [
     ENV.fetch("ANNICT_API_DOMAIN"),
     ENV.fetch("ANNICT_DOMAIN"),
-    ENV.fetch("ANNICT_JP_DOMAIN")
+    ENV.fetch("ANNICT_JP_DOMAIN"),
+    "api"
   ]
 end

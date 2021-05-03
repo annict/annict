@@ -3,8 +3,8 @@
 - work = multiple_record.work
 - records = multiple_record.episode_records.order(:id)
 
-- user_name = link_to action_user.profile.name, profile_detail_path(action_user.username), class: "username"
-- work_title = link_to work.title, work_path(work), class: "work-title"
+- user_name = link_to action_user.profile.name, profile_path(action_user.username), class: "username"
+- work_title = link_to work.title, anime_path(anime_id: work.id), class: "work-title"
 
 span.mr-1
   = action_user.name_link

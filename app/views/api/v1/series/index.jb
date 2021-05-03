@@ -2,12 +2,12 @@
 
 json = {}
 
-json[:series] = @series_list.map do |series|
+json[:series] = @series_list.map { |series|
   series_json = {}
   series_json.merge!(render("api/v1/series/series", series: series, params: @params, field_prefix: ""))
 
   series_json
-end
+}
 
 json.merge!(render("api/v1/application/pagination", collection: @series_list, params: @params))
 

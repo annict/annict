@@ -4,8 +4,9 @@ module Beta
   module Types
     module Objects
       class Query < Beta::Types::Objects::Base
-        field :node, field: GraphQL::Relay::Node.field
-        field :nodes, field: GraphQL::Relay::Node.plural_field
+        add_field GraphQL::Types::Relay::NodeField
+        add_field GraphQL::Types::Relay::NodesField
+
         field :viewer, Beta::Types::Objects::UserType, null: true
 
         field :user, Beta::Types::Objects::UserType, null: true do

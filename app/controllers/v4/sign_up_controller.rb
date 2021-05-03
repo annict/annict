@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module V4
-  class SignUpController < V4::ApplicationController
+  class SignUpController < ApplicationController
     layout "simple"
 
     before_action :redirect_if_signed_in
@@ -12,10 +12,10 @@ module V4
     end
 
     def create
-      @form = SignUpForm.new(sign_up_form_attributes)
+      @form = SignUpForm.new(sign_up_form_params)
       @recaptcha = Recaptcha.new(action: "sign_up")
 
-      unless @form.valid?
+      if @form.invalid?
         return render(:new)
       end
 
@@ -32,8 +32,10 @@ module V4
 
     private
 
-    def sign_up_form_attributes
-      params.to_unsafe_h["sign_up_form"].merge(back: stored_location_for(:user))
+    def sign_up_form_params
+      permitted = params.require(:sign_up_form).permit(:email)
+      permitted[:back] = stored_location_for(:user)
+      permitted
     end
   end
 end

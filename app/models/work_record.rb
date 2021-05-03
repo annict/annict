@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: work_records
@@ -48,20 +49,28 @@ class WorkRecord < ApplicationRecord
   include Shareable
   include SoftDeletable
 
-  STATES = %i(
+  STATES = %i[
     rating_overall_state
     rating_animation_state
     rating_music_state
     rating_story_state
     rating_character_state
-  ).freeze
+  ].freeze
+
+  RATING_FIELDS = %i[
+    rating_overall
+    rating_animation
+    rating_music
+    rating_story
+    rating_character
+  ].freeze
 
   STATES.each do |state|
     enumerize state, in: Record::RATING_STATES
   end
 
   counter_culture :work
-  counter_culture :work, column_name: -> (work_record) { work_record.body.present? ? :work_records_with_body_count : nil }
+  counter_culture :work, column_name: ->(work_record) { work_record.body.present? ? :work_records_with_body_count : nil }
 
   attr_accessor :share_to_twitter, :mutation_error
 
@@ -76,7 +85,7 @@ class WorkRecord < ApplicationRecord
     dependent: :destroy,
     as: :recipient
 
-  validates :body, length: { maximum: 1_048_596 }
+  validates :body, length: {maximum: 1_048_596}
 
   scope :with_body, -> { where.not(body: ["", nil]) }
   scope :with_no_body, -> { where(body: ["", nil]) }
@@ -93,8 +102,8 @@ class WorkRecord < ApplicationRecord
 
   def twitter_share_body
     work_title = work.local_title
-    title = self.body.present? ? work_title.truncate(30) : work_title
-    comment = self.body.present? ? "#{self.body} / " : ""
+    title = body.present? ? work_title.truncate(30) : work_title
+    comment = body.present? ? "#{body} / " : ""
     share_url = share_url_with_query(:twitter)
     share_hashtag = work.hashtag_with_hash
 
@@ -113,7 +122,7 @@ class WorkRecord < ApplicationRecord
   end
 
   def facebook_share_body
-    return self.body if self.body.present?
+    return body if body.present?
 
     if user.locale == "ja"
       "見ました。"

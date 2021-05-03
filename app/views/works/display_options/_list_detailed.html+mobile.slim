@@ -6,7 +6,7 @@
     .container
       .row.mb-3
         .col-4.pr-0
-          = link_to work_path(work), class: "d-inline-block" do
+          = link_to anime_path(anime_id: work.id), class: "d-inline-block" do
             = render WorkImageComponent.new(image_url_1x: ann_image_url(work.work_image, :image, size: "250x"), image_url_2x: ann_image_url(work.work_image, :image, size: "500x"))
           - if work.work_image.present?
             .u-very-small.text-right
@@ -15,7 +15,7 @@
           .mb-1.u-lh-0
             = work.media_label
           h3.font-weight-bold.mb-1
-            = link_to work.local_title, work_path(work), class: "u-text-body"
+            = link_to work.local_title, anime_path(anime_id: work.id), class: "u-text-body"
           .mb-2
             span.font-weight-bold.mr-1 = work.watchers_count
             span.text-muted.small Watchers
@@ -25,7 +25,7 @@
         .font-weight-bold.mb-1
           = t "activerecord.attributes.work.synopsis"
         .mb-3
-          = render BodyComponent.new(height: 250, markdown: false) do
+          = render BodyComponent.new(height: 250) do
             = sanitize(work.local_synopsis(raw: true))
           .small.mt-2.text-right
             span.mr-1

@@ -18,7 +18,7 @@ describe RegistrationForm do
     context "when attributes are valid" do
       it do
         expect(form.valid?).to be true
-        expect(form.error_messages).to eq []
+        expect(form.errors.full_messages).to eq []
       end
     end
 
@@ -30,7 +30,7 @@ describe RegistrationForm do
 
           it do
             expect(form.valid?).to be false
-            expect(form.error_messages).to eq ["メールアドレスはすでに存在します"]
+            expect(form.errors.full_messages).to eq ["メールアドレスはすでに存在します"]
           end
         end
 
@@ -40,7 +40,7 @@ describe RegistrationForm do
 
           it do
             expect(form.valid?).to be false
-            expect(form.error_messages).to eq ["メールアドレスはすでに存在します"]
+            expect(form.errors.full_messages).to eq ["メールアドレスはすでに存在します"]
           end
         end
 
@@ -49,7 +49,7 @@ describe RegistrationForm do
 
           it do
             expect(form.valid?).to be false
-            expect(form.error_messages).to eq ["メールアドレスを入力してください"]
+            expect(form.errors.full_messages).to eq %w[メールアドレスを入力してください メールアドレスは不正な値です]
           end
         end
 
@@ -58,7 +58,7 @@ describe RegistrationForm do
 
           it do
             expect(form.valid?).to be false
-            expect(form.error_messages).to eq ["メールアドレスが不正です"]
+            expect(form.errors.full_messages).to eq ["メールアドレスは不正な値です"]
           end
         end
       end
@@ -70,7 +70,7 @@ describe RegistrationForm do
 
           it do
             expect(form.valid?).to be false
-            expect(form.error_messages).to eq ["ユーザ名はすでに存在します"]
+            expect(form.errors.full_messages).to eq ["ユーザ名はすでに存在します"]
           end
         end
 
@@ -80,7 +80,7 @@ describe RegistrationForm do
 
           it do
             expect(form.valid?).to be false
-            expect(form.error_messages).to eq ["ユーザ名はすでに存在します"]
+            expect(form.errors.full_messages).to eq ["ユーザ名はすでに存在します"]
           end
         end
 
@@ -89,7 +89,7 @@ describe RegistrationForm do
 
           it do
             expect(form.valid?).to be false
-            expect(form.error_messages).to eq ["ユーザ名を入力してください"]
+            expect(form.errors.full_messages).to eq %w[ユーザ名を入力してください ユーザ名は不正な値です]
           end
         end
 
@@ -98,7 +98,7 @@ describe RegistrationForm do
 
           it do
             expect(form.valid?).to be false
-            expect(form.error_messages).to eq ["ユーザ名には半角英数字とアンダースコア以外の文字は使用できません"]
+            expect(form.errors.full_messages).to eq ["ユーザ名は不正な値です"]
           end
         end
 
@@ -107,7 +107,7 @@ describe RegistrationForm do
 
           it do
             expect(form.valid?).to be false
-            expect(form.error_messages).to eq ["ユーザ名は20文字以下で入力してください"]
+            expect(form.errors.full_messages).to eq ["ユーザ名は20文字以内で入力してください"]
           end
         end
       end
@@ -118,7 +118,7 @@ describe RegistrationForm do
 
           it do
             expect(form.valid?).to be false
-            expect(form.error_messages).to eq ["利用規約とプライバシーポリシーを入力してください"]
+            expect(form.errors.full_messages).to eq ["利用規約とプライバシーポリシーを入力してください"]
           end
         end
 
@@ -127,7 +127,10 @@ describe RegistrationForm do
 
           it do
             expect(form.valid?).to be false
-            expect(form.error_messages).to eq ["利用規約とプライバシーポリシーに同意してください"]
+            expect(form.errors.full_messages).to eq %w[
+              利用規約とプライバシーポリシーを入力してください
+              利用規約とプライバシーポリシーを受諾してください
+            ]
           end
         end
       end

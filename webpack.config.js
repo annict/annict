@@ -1,7 +1,7 @@
 const glob = require('glob');
 const path = require('path');
 
-const ManifestPlugin = require('webpack-manifest-plugin');
+const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
@@ -39,13 +39,6 @@ module.exports = {
             loader: 'babel-loader',
           },
         ],
-      },
-      {
-        test: require.resolve('jquery'),
-        loader: 'expose-loader',
-        options: {
-          exposes: ['$', 'jQuery'],
-        },
       },
       {
         test: /\.scss$/,
@@ -90,14 +83,11 @@ module.exports = {
     ],
   },
   resolve: {
-    alias: {
-      vue: isProd ? 'vue/dist/vue.min.js' : 'vue/dist/vue.js',
-    },
     modules: ['node_modules', path.resolve(__dirname, 'app', 'frontend')],
     extensions: ['.css', '.gif', '.jpeg', '.jpg', '.js', '.json', '.png', '.scss', '.svg', '.ts'],
   },
   plugins: [
-    new ManifestPlugin({
+    new WebpackManifestPlugin({
       fileName: 'manifest.json',
       publicPath: '/packs/',
       writeToFileEmit: true,
@@ -114,6 +104,8 @@ module.exports = {
     contentBase: path.resolve(__dirname, 'public', 'packs'),
     host: '0.0.0.0',
     port: 8080,
+    sockPort: 3001,
     disableHostCheck: true,
   },
+  devtool: 'eval-source-map',
 };

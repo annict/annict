@@ -1,22 +1,25 @@
 # frozen_string_literal: true
 
 module V4
-  class UsersController < V4::ApplicationController
+  class UsersController < ApplicationController
     def show
-      set_page_category Rails.configuration.page_categories.profile_detail
+      set_page_category PageCategory::PROFILE
 
       user = User.only_kept.find_by!(username: params[:username])
 
-      @user_entity = Rails.cache.fetch(profile_user_cache_key(user), expires_in: 3.hours) do
-        ProfileDetail::UserRepository.new(graphql_client: graphql_client).execute(username: user.username)
-      end
+      result = Rails.cache.fetch(profile_user_cache_key(user), expires_in: 3.hours) {
+        ProfilePage::UserRepository.new(graphql_client: graphql_client).execute(username: user.username)
+      }
+      @user_entity = result.user_entity
 
-      @activity_group_entities, @page_info_entity = ProfileDetail::UserActivityGroupsRepository.new(
+      result = ProfilePage::UserActivityGroupsRepository.new(
         graphql_client: graphql_client
       ).execute(
         username: user.username,
         pagination: Annict::Pagination.new(before: params[:before], after: params[:after], per: 30)
       )
+      @activity_group_entities = result.activity_group_entities
+      @page_info_entity = result.page_info_entity
     end
 
     private

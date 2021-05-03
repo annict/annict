@@ -12,7 +12,6 @@ module UserReceivable
       return if receiving?(channel)
 
       receptions.create(channel: channel)
-      CreateChannelWorksJob.perform_later(self, channel)
     end
 
     def unreceive(channel)
@@ -21,7 +20,6 @@ module UserReceivable
       return if reception.blank?
 
       reception.destroy
-      DestroyChannelWorksJob.perform_later(self, channel)
     end
   end
 end

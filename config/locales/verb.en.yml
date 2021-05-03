@@ -2,6 +2,7 @@ en:
   verb:
     agree: Agree
     attach: Attach
+    check: Check
     check_all: Check All
     close: Close
     comment: Comment
@@ -34,4 +35,4 @@ en:
     view: View
     view_all: View All
     view_more: View More
-    view_work_detail: View Work Detail
+    view_work_detail: View Anime

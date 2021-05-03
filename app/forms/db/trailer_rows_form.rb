@@ -14,21 +14,21 @@ module Db
 
     def attrs_list
       trailers_count = @work.trailers.count
-      @attrs_list ||= fetched_rows.map.with_index do |row_data, i|
+      @attrs_list ||= fetched_rows.map.with_index { |row_data, i|
         {
           work_id: @work.id,
           url: row_data[:url][:value],
           title: row_data[:title][:value],
           sort_number: (i + trailers_count) * 10
         }
-      end
+      }
     end
 
     def fetched_rows
       parsed_rows.map do |row_columns|
         {
-          url: { value: row_columns[0] },
-          title: { value: row_columns[1] }
+          url: {value: row_columns[0]},
+          title: {value: row_columns[1]}
         }
       end
     end

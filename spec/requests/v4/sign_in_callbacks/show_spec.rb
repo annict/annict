@@ -8,7 +8,7 @@ describe "GET /sign_in/callback", type: :request do
     it "signs in" do
       expect(EmailConfirmation.count).to eq 1
 
-      get "/sign_in/callback", params: { token: email_confirmation.token }
+      get "/sign_in/callback", params: {token: email_confirmation.token}
 
       expect(EmailConfirmation.count).to eq 0
 

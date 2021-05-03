@@ -20,13 +20,12 @@ class SearchesController < ApplicationController
   private
 
   def select_view(resource)
-    resources = %w(work character person organization)
+    resources = %w[work character person organization]
     return resource if resource.in?(resources)
-    collection = [@works, @characters, @people, @organizations].
-      select { |c| c.count.positive? }.
-      sort_by(&:count).
-      reverse.
-      first
+    collection = [@works, @characters, @people, @organizations]
+      .select { |c| c.count.positive? }
+      .max_by(&:count)
+
     return collection.model.name.downcase if collection.present?
     "work"
   end

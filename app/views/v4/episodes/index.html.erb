@@ -1,0 +1,37 @@
+<% title = t "head.title.episodes.index", title: @anime_entity.local_title %>
+<% description = meta_description(t("head.meta.description.episodes.index", title: @anime_entity.local_title)) %>
+<% image_url = @anime_entity.image_url_1x %>
+<% set_meta_tags(title: title, description: description, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false) %>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-3 pr-md-0 py-3">
+      <%= render Sidebars::AnimeSidebarComponent.new(anime_entity: @anime_entity, vod_channel_entities: @existing_vod_channel_entities, viewer: current_user) %>
+    </div>
+
+    <div class="col-md-9">
+      <div class="mb-3">
+        <%= render WorkSubNavComponent.new(work_entity: @anime_entity, page_category: page_category) %>
+      </div>
+
+      <% if @anime_entity.episodes && @anime_entity.episodes.length > 0 %>
+        <div class="row mb-3">
+          <% @anime_entity.episodes.each do |episode_entity| %>
+            <div class="col-6 col-sm-4 mb-3">
+              <%= link_to episode_path(anime_id: @anime_entity.database_id, episode_id: episode_entity.database_id) do %>
+                <%= episode_entity.local_number %>
+                <div class="small u-text-body">
+                  <%= episode_entity.local_title %>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+
+        <%= render PaginationComponent.new(page_info_entity: @page_info_entity, resources_path: current_path_with_query) %>
+      <% else %>
+        <%= render EmptyComponent.new(text: t("messages._empty.no_episodes")) %>
+      <% end %>
+    </div>
+  </div>
+</div>
