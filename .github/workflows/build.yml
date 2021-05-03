@@ -7,24 +7,14 @@ jobs:
     name: Lint (Standard)
     runs-on: ubuntu-latest
 
-    container:
-      image: annict/ruby:2.7.2-node_12.16.1
-      env:
-        BUNDLE_JOBS: 4
-        BUNDLE_RETRY: 3
-
     steps:
       - uses: actions/checkout@v2
 
-      - name: Restore Bundler cache
-        uses: actions/cache@v2
+      - name: Setup Ruby and install gems
+        uses: ruby/setup-ruby@v1
         with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
-
-      - name: Run `bundle install`
-        run: |
-          bundle install --path=vendor/bundle --jobs $BUNDLE_JOBS --retry $BUNDLE_RETRY
+          ruby-version: 3.0.1
+          bundler-cache: true
 
       - name: Run Standard`
         run: |
@@ -33,21 +23,16 @@ jobs:
   test_rspec:
     name: Test (RSpec)
     runs-on: ubuntu-latest
-
-    container:
-      image: annict/ruby:2.7.2-node_12.16.1
-      env:
-        BUNDLE_JOBS: 4
-        BUNDLE_RETRY: 3
-        CC_TEST_REPORTER_ID: 473c071c4d1900d58ceed984bd49d8a39368393ce6f010cf5d52287f3072f6ef
-        COVERAGE: true
-        POSTGRES_HOST: postgresql
-        RAILS_ENV: test
-        TZ: Asia/Tokyo
-        # `CFLAGS` と `CXXFLAGS` は cld gem をインストールするときに必要になる
-        # https://github.com/jtoy/cld/issues/10
-        CFLAGS: -Wno-narrowing
-        CXXFLAGS: -Wno-narrowing
+    env:
+      CC_TEST_REPORTER_ID: 473c071c4d1900d58ceed984bd49d8a39368393ce6f010cf5d52287f3072f6ef
+      COVERAGE: true
+      POSTGRES_HOST: postgresql
+      RAILS_ENV: test
+      TZ: Asia/Tokyo
+      # `CFLAGS` と `CXXFLAGS` は cld gem をインストールするときに必要になる
+      # https://github.com/jtoy/cld/issues/10
+      CFLAGS: -Wno-narrowing
+      CXXFLAGS: -Wno-narrowing
 
     services:
       postgresql:
@@ -70,21 +55,16 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Restore Bundler cache
-        uses: actions/cache@v2
+      - name: Setup Ruby and install gems
+        uses: ruby/setup-ruby@v1
         with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+          ruby-version: 3.0.1
+          bundler-cache: true
 
-      - name: Restore npm cache
-        uses: actions/cache@v2
+      - name: Setup Node
+        uses: actions/setup-node@v1
         with:
-          path: ~/.npm
-          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
-
-      - name: Run `bundle install`
-        run: |
-          bundle install --path=vendor/bundle --jobs $BUNDLE_JOBS --retry $BUNDLE_RETRY
+          node-version: 12.16.1
 
       - name: Run `npm install`
         run: |
