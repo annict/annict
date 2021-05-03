@@ -22,7 +22,18 @@ Bundler.require(*Rails.groups)
 module Annict
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 6.0
+    config.load_defaults 6.1
+
+    # Configuration for the application, engines, and railties goes here.
+    #
+    # These settings can be overridden in specific environments using the files
+    # in config/environments, which are processed later.
+    #
+    # config.time_zone = "Central Time (US & Canada)"
+    # config.eager_load_paths << Rails.root.join("extras")
+
+    # Don't generate system test files.
+    config.generators.system_tests = nil
 
     # Heroku will set `RAILS_LOG_TO_STDOUT` when you deploy a Ruby app via
     # the Heroku Ruby Buildpack for Rails 4.2+ apps.
@@ -30,20 +41,6 @@ module Annict
     if ENV["RAILS_LOG_TO_STDOUT"].present?
       config.logger = ActiveSupport::Logger.new(STDOUT)
     end
-
-    # Don't generate system test files.
-    config.generators.system_tests = nil
-
-    # Settings in config/environments/* take precedence over those specified here.
-    # Application configuration can go into files in config/initializers
-    # -- all .rb files in that directory are automatically loaded after loading
-    # the framework and any gems in your application.
-
-    # Set Time.zone default to the specified zone and
-    # make Active Record auto-convert to this zone.
-    # Run "rake -D time" for a list of tasks for finding time zone names. Default is UTC.
-    # config.time_zone = 'UTC'
-    # config.active_record.default_timezone = :local
 
     config.i18n.enforce_available_locales = false
 
@@ -106,9 +103,14 @@ module Annict
     # https://schneems.com/2017/11/08/80-smaller-rails-footprint-with-rack-deflate/
     config.middleware.insert_after ActionDispatch::Static, Rack::Deflater
 
-    Raven.configure do |config|
+    Sentry.init do |config|
       config.dsn = ENV.fetch("SENTRY_DSN")
-      config.sanitize_fields = Rails.application.config.filter_parameters.map(&:to_s)
+
+      filter = ActiveSupport::ParameterFilter.new(Rails.application.config.filter_parameters)
+      config.before_send = lambda do |event, hint|
+        # Use Rails' parameter filter to sanitize the event
+        filter.filter(event.to_hash)
+      end
     end
 
     ActiveRecord::SessionStore::Session.serializer = :null

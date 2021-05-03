@@ -1,6 +1,6 @@
-class WorkMailer < ActionMailer::Base
-  default from: "Annict <no-reply@annict.com>"
+# frozen_string_literal: true
 
+class WorkMailer < ApplicationMailer
   def untouched_works_notification(work_ids)
     @works = Work.where(id: work_ids)
 

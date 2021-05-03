@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-class AdminMailer < ActionMailer::Base
-  default from: "Annict <no-reply@annict.com>"
-
+class AdminMailer < ApplicationMailer
   def episode_created_notification(episode_id)
     @episode = Episode.find(episode_id)
 

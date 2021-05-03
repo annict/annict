@@ -18,9 +18,7 @@ module Loggable
   end
 
   def client_uuid
-    @client_uuid ||= begin
-      cookies[:ann_client_uuid].presence || set_client_uuid
-    end
+    @client_uuid ||= cookies[:ann_client_uuid].presence || set_client_uuid
   end
 
   # Add custom variables to the event payload

@@ -5,12 +5,13 @@ module Api
     class ApplicationController < ActionController::Base
       include Analyzable
       include LogrageSetting
-      include RavenContext
+      include SentryLoadable
 
       rescue_from ActiveRecord::RecordNotFound, with: :not_found
 
       attr_reader :current_user
 
+      before_action :set_sentry_context
       before_action -> { doorkeeper_authorize! :read }, only: %i[index show]
       before_action only: %i[create update destroy] do
         doorkeeper_authorize! :write
