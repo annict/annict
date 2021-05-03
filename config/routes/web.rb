@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-USERNAME_FORMAT = /[A-Za-z0-9_]+/.freeze
+USERNAME_FORMAT = /[A-Za-z0-9_]+/
 
 get "dummy_image", to: "application#dummy_image" if Rails.env.test?
 
