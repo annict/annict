@@ -20,7 +20,7 @@
         </div>
 
         <div class="l-default__tab_bar">
-          <%= render TabBarComponent.new(user: current_user) %>
+          <%= TabBarComponent.new(self, current_user: current_user).render %>
         </div>
       </div>
 

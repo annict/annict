@@ -16,7 +16,7 @@
         </div>
 
         <div class="l-welcome__tab-bar">
-          <%= render TabBarComponent.new(user: current_user) %>
+          <%= TabBarComponent.new(self, current_user: current_user).render %>
         </div>
       </div>
     </div>
