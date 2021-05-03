@@ -45,7 +45,7 @@ services:
     ports:
       - 35432:5432
     volumes:
-      - ./volumes/postgresql:/var/lib/postgresql/data
+      - postgresql_data:/var/lib/postgresql/data:delegated
     environment:
       POSTGRES_HOST_AUTH_METHOD: trust
   redis:
@@ -54,6 +54,7 @@ services:
       - 36379:6379
 
 volumes:
+  postgresql_data:
   # Exclude the gems/node_modules directory
   # https://stackoverflow.com/questions/29181032/add-a-volume-to-docker-but-exclude-a-sub-folder
   gems_vol:
