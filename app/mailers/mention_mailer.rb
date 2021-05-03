@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-class MentionMailer < ActionMailer::Base
-  default from: "Annict <no-reply@annict.com>"
-
+class MentionMailer < ApplicationMailer
   def notify(username, resource_id, resource_type, column)
     @user = User.where(username: username).first
     return if @user.blank?

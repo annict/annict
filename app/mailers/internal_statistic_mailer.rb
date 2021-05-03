@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-class InternalStatisticMailer < ActionMailer::Base
-  default from: "Annict <no-reply@annict.com>"
-
+class InternalStatisticMailer < ApplicationMailer
   def result_mail(date_str)
     statistcs = InternalStatistic.where(date: Date.parse(date_str))
     @data = statistcs.map { |s|

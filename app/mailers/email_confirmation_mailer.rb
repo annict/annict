@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
-class EmailConfirmationMailer < ActionMailer::Base
+class EmailConfirmationMailer < ApplicationMailer
   include Localable
-
-  default from: "Annict <no-reply@annict.com>"
 
   def sign_up_confirmation(email_confirmation_id, locale)
     email_confirmation = EmailConfirmation.find(email_confirmation_id)
