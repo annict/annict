@@ -525,6 +525,9 @@ GEM
       unicode-display_width (>= 1.4.0, < 2.0)
     rubocop-ast (1.1.1)
       parser (>= 2.7.1.5)
+    rubocop-performance (1.8.1)
+      rubocop (>= 0.87.0)
+      rubocop-ast (>= 0.4.0)
     ruby-enum (0.8.0)
       i18n
     ruby-next (0.11.0)
@@ -585,6 +588,9 @@ GEM
       sprockets (>= 3.0.0)
     squasher (0.6.2)
     stackprof (0.2.15)
+    standard (0.6.1)
+      rubocop (~> 0.90)
+      rubocop-performance (~> 1.8.0)
     syoboi_calendar (0.9.4)
       faraday
       faraday_middleware
@@ -725,7 +731,6 @@ DEPENDENCIES
   redis
   rspec-mocks
   rspec-rails
-  rubocop
   ruby_identicon
   scss_lint
   sentry-raven
@@ -736,6 +741,7 @@ DEPENDENCIES
   spring-commands-rspec
   squasher
   stackprof
+  standard
   syoboi_calendar
   timecop
   traceroute

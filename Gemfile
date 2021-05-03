@@ -80,6 +80,7 @@ group :development, :test do
   gem "pry-rails"
   gem "rspec-mocks"
   gem "rspec-rails"
+  gem "standard"
 end
 
 group :development do
@@ -93,7 +94,6 @@ group :development do
   gem "i18n-tasks"
   gem "listen" # Using with `rails s` since Rails 5
   gem "meta_request"
-  gem "rubocop"
   gem "ruby_identicon"
   gem "scss_lint", require: false
   gem "solargraph"
