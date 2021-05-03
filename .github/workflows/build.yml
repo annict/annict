@@ -107,5 +107,6 @@ jobs:
       - name: Run tests
         run: |
           ./cc-test-reporter before-build
-          bundle exec rspec
+          bundle exec rspec \
+            spec/requests/welcome/show_spec.rb
           ./cc-test-reporter after-build --coverage-input-type simplecov --exit-code $?
