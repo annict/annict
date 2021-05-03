@@ -263,8 +263,7 @@ en:
       show:
         hero_description_html: Explore the anime database, track anime you are watching<br>and see what friends are watching.
         hero_description_mobile_html: Track anime you are watching<br>and see what friends are watching.
-        hero_title: The platform for anime addicts.
-        hero_title_mobile_html: The platform for anime addicts.
+        hero_title_html: The platform for anime addicts.
         start_tracking: Start Tracking
     work_records:
       new:

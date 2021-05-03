@@ -4,7 +4,7 @@
   &__bg-image {
     background-position: center;
     background-size: cover;
-    filter: brightness(50%);
+    filter: brightness(35%);
     height: 100%;
   }
 
@@ -16,12 +16,18 @@
 
 @include media-breakpoint-up(lg) {
   .c-hero {
-    height: 400px;
+    min-height: 400px;
   }
 }
 
 @include media-breakpoint-down(lg) {
   .c-hero {
-    height: 260px;
+    .display-1 {
+      font-size: 2rem;
+    }
+
+    .lead {
+      font-size: 1rem;
+    }
   }
 }
