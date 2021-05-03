@@ -105,9 +105,7 @@ class Work < ApplicationRecord
   has_many :series_works, dependent: :destroy
   has_many :staffs, dependent: :destroy
   has_many :work_taggings
-  has_many :activities,
-    foreign_key: :recipient_id,
-    foreign_type: :recipient
+  has_many :activities, as: :recipient
   has_many :cast_people, through: :casts, source: :person
   has_many :characters, through: :casts
   has_many :db_activities, as: :trackable, dependent: :destroy
