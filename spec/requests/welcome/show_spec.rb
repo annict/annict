@@ -6,14 +6,26 @@ describe "GET /", type: :request do
   end
 
   context "ログインしていないとき" do
-    let!(:work) { create(:work, :with_current_season) }
+    context "アニメが登録されていないとき" do
+      it "Welcomeページが表示されること" do
+        get "/"
 
-    it "Welcomeページが表示されること" do
-      get "/"
+        expect(response.status).to eq(200)
+        expect(response.body).to include("The platform for anime addicts.")
+        expect(response.body).to include("アニメはありません")
+      end
+    end
 
-      expect(response.status).to eq(200)
-      expect(response.body).to include("The platform for anime addicts.")
-      expect(response.body).to include(work.title)
+    context "アニメが登録されているとき" do
+      let!(:work) { create(:work, :with_current_season) }
+
+      it "Welcomeページが表示されること" do
+        get "/"
+
+        expect(response.status).to eq(200)
+        expect(response.body).to include("The platform for anime addicts.")
+        expect(response.body).to include(work.title)
+      end
     end
   end
 end
