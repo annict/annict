@@ -94,7 +94,6 @@ group :development do
   gem "graphql-docs"
   gem "i18n-tasks"
   gem "listen" # Using with `rails s` since Rails 5
-  gem "meta_request"
   gem "ruby_identicon"
   gem "scss_lint", require: false
   gem "solargraph"
