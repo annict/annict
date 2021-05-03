@@ -3,14 +3,41 @@ name: Build
 on: [push]
 
 jobs:
-  test:
+  lint_standard:
+    name: Lint (Standard)
     runs-on: ubuntu-latest
 
     container:
       image: annict/ruby:2.7.2-node_12.16.1
       env:
         BUNDLE_JOBS: 4
-        BUNDLE_PATH: vendor/bundle
+        BUNDLE_RETRY: 3
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Restore Bundler cache
+        uses: actions/cache@v2
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+
+      - name: Run `bundle install`
+        run: |
+          bundle install --path=vendor/bundle --jobs $BUNDLE_JOBS --retry $BUNDLE_RETRY
+
+      - name: Run Standard`
+        run: |
+          bundle exec standardrb
+
+  test_rspec:
+    name: Test (RSpec)
+    runs-on: ubuntu-latest
+
+    container:
+      image: annict/ruby:2.7.2-node_12.16.1
+      env:
+        BUNDLE_JOBS: 4
         BUNDLE_RETRY: 3
         CC_TEST_REPORTER_ID: 473c071c4d1900d58ceed984bd49d8a39368393ce6f010cf5d52287f3072f6ef
         COVERAGE: true
