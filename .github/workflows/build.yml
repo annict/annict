@@ -26,7 +26,7 @@ jobs:
     env:
       CC_TEST_REPORTER_ID: 473c071c4d1900d58ceed984bd49d8a39368393ce6f010cf5d52287f3072f6ef
       COVERAGE: true
-      POSTGRES_HOST: postgresql
+      ANNICT_POSTGRES_HOST: localhost
       RAILS_ENV: test
       TZ: Asia/Tokyo
       # `CFLAGS` と `CXXFLAGS` は cld gem をインストールするときに必要になる
