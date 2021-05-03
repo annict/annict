@@ -4,6 +4,7 @@
 
 The platform for anime addicts.
 
+[![Build](https://github.com/kiraka/annict-web/actions/workflows/build.yml/badge.svg)](https://github.com/kiraka/annict-web/actions/workflows/build.yml)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/ba10b596888853bc3f83/test_coverage)](https://codeclimate.com/github/annict/annict/test_coverage)
 [![Code Climate](https://codeclimate.com/github/annict/annict/badges/gpa.svg)](https://codeclimate.com/github/annict/annict)
 [![Ruby Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://github.com/testdouble/standard)
