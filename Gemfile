@@ -45,7 +45,6 @@ gem "koala"
 gem "memory_profiler" # Used by rack-mini-profiler
 gem "meta-tags"
 gem "mini_magick"
-gem "miro"
 gem "mjml-rails"
 gem "moji"
 gem "nokogiri"

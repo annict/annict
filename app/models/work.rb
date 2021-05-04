@@ -529,14 +529,6 @@ class Work < ApplicationRecord
     }.to_json
   end
 
-  def image_color_rgb
-    work_image&.color_rgb.presence || "255,255,255"
-  end
-
-  def image_text_color_rgb
-    work_image&.text_color_rgb.presence || "0,0,0"
-  end
-
   def related_works
     series_work_ids = SeriesWork.where(series_id: series_list.pluck(:id)).pluck(:id)
     series_works = SeriesWork.where(id: series_work_ids)
