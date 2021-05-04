@@ -1,7 +1,7 @@
-import { EventDispatcher } from '../utils/event-dispatcher';
-import FrameFormController from './frame-form-controller'
+import { EventDispatcher } from '../../utils/event-dispatcher';
+import BasicFormController from './basic-form-controller'
 
-export default class extends FrameFormController {
+export default class extends BasicFormController {
   static targets = [];
 
   async handleSuccess(event: any) {

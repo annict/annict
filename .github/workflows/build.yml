@@ -87,5 +87,6 @@ jobs:
         run: |
           ./cc-test-reporter before-build
           bundle exec rspec \
+            spec/requests/sign_in/new_spec.rb \
             spec/requests/welcome/show_spec.rb
           ./cc-test-reporter after-build --coverage-input-type simplecov --exit-code $?

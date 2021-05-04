@@ -34,7 +34,9 @@ FactoryBot.define do
     end
 
     factory :registered_user, traits: %i[with_profile with_provider with_setting] do
-      after :create, &:confirm
+      after :create do |user|
+        user.confirm
+      end
     end
   end
 end

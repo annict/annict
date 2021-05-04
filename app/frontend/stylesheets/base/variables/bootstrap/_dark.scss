@@ -16,7 +16,7 @@ $bs-white: #FFFFFF;
     "hr-border-color":                        $ann-color-dark-border,
     "link-color":                             map-get($ann-color-blue-map, "020"),
     "red":                                    map-get($ann-color-red-map, "040"),
-    "text-muted":                             map-get($ann-color-black-map, "040"),
+    "text-muted":                             map-get($ann-color-black-map, "020"),
     "thumbnail-bg":                           map-get($ann-color-black-map, "060"),
     "thumbnail-border-color":                 $ann-color-dark-border,
     "white":                                  $bs-white,

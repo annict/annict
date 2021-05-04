@@ -5,6 +5,7 @@ $ann-color-dark-border: map-get($ann-color-black-map, "060");
   $ann-color-dark-map: (
     "average":                       #ff6d00,
     "bad":                           #757575,
+    "facebook":                      map-get($ann-color-service-map, "facebook"),
     "footer-bg":                     #334854,
     "footer-title":                  $ann-color-dark-body,
     "good":                          #00C853,
@@ -12,17 +13,17 @@ $ann-color-dark-border: map-get($ann-color-black-map, "060");
     "mizuho":                        map-get($ann-color-mizuho-map, "050"),
     "sidebar-bg":                    map-get($ann-color-black-map, "070"),
     "supporter":                     #00BCD4,
+    "twitter":                       map-get($ann-color-service-map, "twitter"),
   );
 
-  @each $key, $value in (
-    "primary": "mizuho"
-  ) {
+  @each $name, $value-map in $ann-button-name-map {
     $ann-color-dark-map: map-merge(
       (
-        "#{$key}-button-background": map-get($ann-color-dark-map, $value),
-        "#{$key}-button-border": map-get($ann-color-dark-map, $value),
-        "#{$key}-button-background-hover": darken(map-get($ann-color-dark-map, $value), 7.5%),
-        "#{$key}-button-border-hover": darken(map-get($ann-color-dark-map, $value), 10%),
+        "#{$name}-button-background": map-get($ann-color-dark-map, map-get($value-map, "bg")),
+        "#{$name}-button-border": map-get($ann-color-dark-map, map-get($value-map, "bg")),
+        "#{$name}-button-background-hover": darken(map-get($ann-color-dark-map, map-get($value-map, "bg")), 7.5%),
+        "#{$name}-button-border-hover": darken(map-get($ann-color-dark-map, map-get($value-map, "bg")), 10%),
+        "#{$name}-button-color": map-get($ann-color-dark-map, map-get($value-map, "color")),
       ),
       $ann-color-dark-map
     )
