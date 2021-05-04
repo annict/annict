@@ -84,6 +84,8 @@ module WorkDecorator
   end
 
   def processed_image_url(format:, height:, width:)
+    return unless work_image
+
     ix_image_url(work_image.path, {
       fill: "solid",
       fit: "fill",
