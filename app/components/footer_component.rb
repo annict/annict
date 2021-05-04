@@ -20,7 +20,7 @@ class FooterComponent < ApplicationComponent
               h.tag :div, class: "c-footer__social-links row" do
                 social_urls.each do |url, icon_name|
                   h.tag :div, class: "col col-auto" do
-                    h.tag :a, href: url, class: "h2", target: "_blank", rel: "noopener" do
+                    h.tag :a, aria_label: icon_name.humanize, href: url, class: "h2", target: "_blank", rel: "noopener" do
                       h.tag :i, class: "fab fa-#{icon_name}"
                     end
                   end
@@ -29,7 +29,7 @@ class FooterComponent < ApplicationComponent
             end
 
             h.tag :div, class: "col-12 col-sm-3 mb-3 mb-sm-0" do
-              h.tag :h4, class: "font-weight-bold mb-3" do
+              h.tag :h6, class: "font-weight-bold h4 mb-3" do
                 h.text t("noun.services")
               end
 
@@ -45,7 +45,7 @@ class FooterComponent < ApplicationComponent
             end
 
             h.tag :div, class: "col-12 col-sm-3 mb-3 mb-sm-0" do
-              h.tag :h4, class: "font-weight-bold mb-3" do
+              h.tag :h6, class: "font-weight-bold h4 mb-3" do
                 h.text t("noun.contents")
               end
 
@@ -63,7 +63,7 @@ class FooterComponent < ApplicationComponent
             end
 
             h.tag :div, class: "col-12 col-sm-3" do
-              h.tag :h4, class: "font-weight-bold mb-3" do
+              h.tag :h6, class: "font-weight-bold h4 mb-3" do
                 h.text t("noun.seasonal_anime")
               end
 
