@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class EmptyComponent < ApplicationComponent2
+class EmptyComponent < ApplicationComponent
   def initialize(view_context, text:)
     super view_context
     @text = text

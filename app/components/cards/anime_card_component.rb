@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Cards
-  class AnimeCardComponent < ApplicationComponent2
+  class AnimeCardComponent < ApplicationComponent
     def initialize(view_context, anime:, width:, mb_width:, page_category: "")
       super view_context
       @anime = anime

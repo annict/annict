@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Lists
-  class TrackableEpisodeListComponent < ApplicationComponent2
+  class TrackableEpisodeListComponent < ApplicationComponent
     def initialize(view_context, library_entries:, trackable_episodes:, slots:, page_category: "")
       super view_context
       @library_entries = library_entries

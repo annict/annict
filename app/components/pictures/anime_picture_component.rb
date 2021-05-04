@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Pictures
-  class AnimePictureComponent < ApplicationComponent2
+  class AnimePictureComponent < ApplicationComponent
     def initialize(view_context, anime:, width:, mb_width:, alt: "", class_name: "")
       super view_context
       @anime = anime

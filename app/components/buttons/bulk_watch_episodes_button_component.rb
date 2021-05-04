@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Buttons
-  class BulkWatchEpisodesButtonComponent < ApplicationComponent2
+  class BulkWatchEpisodesButtonComponent < ApplicationComponent
     def initialize(view_context, episode_id:, class_name: "")
       super view_context
       @episode_id = episode_id

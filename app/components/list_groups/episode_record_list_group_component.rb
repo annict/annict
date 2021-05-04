@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module ListGroups
-  class EpisodeRecordListGroupComponent < ApplicationComponent2
+  class EpisodeRecordListGroupComponent < ApplicationComponent
     def initialize(view_context, my_records:, following_records:, all_records:)
       super view_context
       @my_records = my_records

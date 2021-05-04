@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class StatusFooterComponent < ApplicationComponent2
+class StatusFooterComponent < ApplicationComponent
   def initialize(view_context, status:, page_category: "")
     super view_context
     @status = status

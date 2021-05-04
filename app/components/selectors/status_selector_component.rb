@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Selectors
-  class StatusSelectorComponent < ApplicationComponent2
+  class StatusSelectorComponent < ApplicationComponent
     def initialize(view_context, anime:, page_category:, class_name: "")
       super view_context
       @anime = anime

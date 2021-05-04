@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class RelativeTimeComponent < ApplicationComponent2
+class RelativeTimeComponent < ApplicationComponent
   def initialize(view_context, time:, class_name: "")
     super view_context
     @time = time

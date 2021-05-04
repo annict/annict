@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Modals
-  class TrackingModalComponent < ApplicationComponent2
+  class TrackingModalComponent < ApplicationComponent
     def initialize(view_context)
       super view_context
     end
