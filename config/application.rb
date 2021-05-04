@@ -10,7 +10,6 @@ require_relative "boot"
   action_controller/railtie
   action_mailer/railtie
   action_view/railtie
-  view_component/engine
 ].each do |railtie|
   require railtie
 end
