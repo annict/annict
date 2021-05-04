@@ -53,7 +53,7 @@
         <div class="mx-n1 row">
           <% @seasonal_anime_list.each do |anime| %>
             <div class="col-4 col-sm-2 mt-2 px-1">
-              <%= Cards::AnimeCardComponent.new(self, anime: anime).render %>
+              <%= Cards::AnimeCardComponent.new(self, anime: anime, width: 175, mb_width: 105).render %>
             </div>
           <% end %>
         </div>
@@ -84,7 +84,7 @@
         <div class="mx-n1 row">
           <% @popular_anime_list.each do |anime| %>
             <div class="col-4 col-sm-2 mt-2 px-1">
-              <%= Cards::AnimeCardComponent.new(self, anime: anime).render %>
+              <%= Cards::AnimeCardComponent.new(self, anime: anime, width: 175, mb_width: 105).render %>
             </div>
           <% end %>
         </div>

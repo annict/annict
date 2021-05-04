@@ -59,6 +59,12 @@ class WorkImage < ApplicationRecord
     color_rgb.split(",").map { |i| i.to_i.to_s(16).rjust(2, "0") }.join
   end
 
+  def path
+    id = uploaded_file(:image)&.id
+    path = id ? "shrine/#{id}" : ""
+    path.presence || "no-image.jpg"
+  end
+
   private
 
   def set_color_rgb
