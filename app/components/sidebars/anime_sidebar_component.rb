@@ -308,7 +308,7 @@ module Sidebars
             class: "mt-3",
             data_user_data_fetcher__anime_sidebar_target: "replacement",
             id: "c-anime-sidebar__db-link" do
-              if current_user && current_user.committer?
+              if current_user&.committer?
                 h.tag :a, href: view_context.db_edit_work_path(@anime.id), class: "btn btn-secondary w-100 mt-2" do
                   h.text t("messages._common.edit_on_annict_db")
                 end
