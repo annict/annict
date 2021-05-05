@@ -1,33 +1,22 @@
 # frozen_string_literal: true
 
-module V4
+module Api::Internal
   class SignUpController < ApplicationController
-    layout "simple"
-
-    before_action :redirect_if_signed_in
-
-    def new
-      @form = SignUpForm.new
-      @recaptcha = Recaptcha.new(action: "sign_up")
-    end
-
     def create
       @form = SignUpForm.new(sign_up_form_params)
       @recaptcha = Recaptcha.new(action: "sign_up")
 
       if @form.invalid?
-        return render(:new)
+        return render json: @form.errors.full_messages, status: :unprocessable_entity
       end
 
       unless @recaptcha.verify?(params[:recaptcha_token])
-        flash.now[:alert] = t("messages.recaptcha.not_verified")
-        return render(:new)
+        return render json: [t("messages.recaptcha.not_verified")], status: :unprocessable_entity
       end
 
       EmailConfirmation.new(email: @form.email, back: @form.back).confirm_to_sign_up!
 
-      flash[:notice] = t("messages.sign_up.create.mail_has_sent")
-      redirect_to root_path
+      render json: {flash: {type: :notice, message: t("messages.sign_up.create.mail_has_sent")}}, status: 201
     end
 
     private

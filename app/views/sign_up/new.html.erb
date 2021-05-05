@@ -2,6 +2,10 @@
 <% description = meta_description t("head.meta.description.sign_up.new") %>
 <% set_meta_tags(title: title, description: description, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false) %>
 
+<%= content_for :vendor_assets do %>
+  <%= render "recaptcha", recaptcha: @recaptcha %>
+<% end %>
+
 <div class="container">
   <div class="justify-content-center row">
     <div class="col-12 col-lg-6 py-5">
@@ -20,11 +24,20 @@
           <%= t "messages.sign_up.new.description_html" %>
         </p>
 
-        <%= form_with model: @form, url: sign_up_path, local: true do |f| %>
-          <%= render ErrorPanelComponent.new(form: @form) %>
+        <%= form_with(
+          data: {
+            controller: "forms--basic-form",
+            action: "turbo:submit-start->forms--basic-form#handleSubmitStart turbo:submit-end->forms--basic-form#handleSubmitEnd",
+            "forms--basic-form-target": "form"
+          },
+          local: true,
+          model: @form,
+          url: internal_api_sign_up_path
+        ) do |f| %>
+          <%= ErrorPanelComponent.new(self, stimulus_controller: "forms--basic-form").render %>
 
           <% if @recaptcha.enabled? %>
-            <%= render RecaptchaInputComponent.new(recaptcha: @recaptcha) %>
+            <%= RecaptchaInputComponent.new(self, recaptcha: @recaptcha).render %>
           <% end %>
 
           <div class="form-group">
@@ -33,8 +46,8 @@
           </div>
 
           <div class="text-center">
-            <%= f.button class: "btn btn-primary", tabindex: 2 do %>
-              <%= icon "rocket" %>
+            <%= f.button class: "btn btn-primary", data: { "forms--basic-form-target": "submitButton" }, tabindex: 2, type: :submit do %>
+              <i class="far fa-rocket mr-1"></i>
               <%= t "verb.send" %>
             <% end %>
           </div>

@@ -11,8 +11,7 @@ module Api::Internal
       end
 
       unless @recaptcha.verify?(params[:recaptcha_token])
-        flash.now[:alert] = t("messages.recaptcha.not_verified")
-        return render(:new)
+        return render json: [t("messages.recaptcha.not_verified")], status: :unprocessable_entity
       end
 
       EmailConfirmation.new(email: @form.email, back: @form.back).confirm_to_sign_in!
