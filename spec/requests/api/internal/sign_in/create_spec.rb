@@ -46,7 +46,12 @@ describe "POST /api/internal/sign_in", type: :request do
       expect(confirmation.token).to be_present
 
       expect(response.status).to eq(201)
-      expect(JSON.parse(response.body)).to eq({"flash" => {"notice" => "ログインのためのメールを送信しました"}})
+      expect(JSON.parse(response.body)).to eq({
+        "flash" => {
+          "type" => "notice",
+          "message" => "ログインのためのメールを送信しました"
+        }
+      })
     end
   end
 end

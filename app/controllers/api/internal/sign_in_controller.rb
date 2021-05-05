@@ -17,7 +17,7 @@ module Api::Internal
 
       EmailConfirmation.new(email: @form.email, back: @form.back).confirm_to_sign_in!
 
-      render json: {flash: {notice: t("messages.sign_in.create.mail_has_sent")}}, status: 201
+      render json: {flash: {type: :notice, message: t("messages.sign_in.create.mail_has_sent")}}, status: 201
     end
 
     private
