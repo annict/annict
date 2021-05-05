@@ -1,5 +1,7 @@
 import { Controller } from 'stimulus';
 
+import { EventDispatcher } from '../../utils/event-dispatcher';
+
 export default class extends Controller {
   static targets = ['errorPanel', 'errorMessageList', 'form', 'submitButton'];
 
@@ -26,6 +28,13 @@ export default class extends Controller {
 
   async handleSuccess(event: any) {
     this.formTarget.reset()
+
+    const { fetchResponse } = event.detail
+    const data = JSON.parse(await fetchResponse.responseText)
+
+    if (data && data.flash) {
+      new EventDispatcher('flash:show', data.flash).dispatch();
+    }
   };
 
   async handleError(event: any) {
