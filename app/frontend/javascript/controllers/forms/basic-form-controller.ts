@@ -1,3 +1,4 @@
+import * as Turbo from '@hotwired/turbo';
 import { Controller } from 'stimulus';
 
 import { EventDispatcher } from '../../utils/event-dispatcher';
@@ -34,7 +35,11 @@ export default class extends Controller {
     const { fetchResponse } = event.detail
     const data = JSON.parse(await fetchResponse.responseText)
 
-    if (data && data.flash) {
+    if (!data) return
+
+    if (data.redirect_path) {
+      Turbo.visit(data.redirect_path, { action: "replace" })
+    } else if (data.flash) {
       new EventDispatcher('flash:show', data.flash).dispatch();
     }
   };
@@ -43,7 +48,7 @@ export default class extends Controller {
     const { fetchResponse } = event.detail
     const errorMessages = JSON.parse(await fetchResponse.responseText)
 
-    this.errorMessageListTarget.innerHTML = errorMessages.map((msg: string) => `<li>${msg}</li>`)
+    this.errorMessageListTarget.innerHTML = errorMessages.map((msg: string) => `<li>${msg}</li>`).join("")
     this.errorPanelTarget.classList.remove('d-none')
   }
 }

@@ -87,7 +87,14 @@ jobs:
         run: |
           ./cc-test-reporter before-build
           bundle exec rspec \
+            spec/requests/api/internal/registrations/create_spec.rb \
             spec/requests/api/internal/sign_in/create_spec.rb \
+            spec/requests/api/internal/sign_up/create_spec.rb \
+            spec/requests/legacy/sessions/create_spec.rb \
+            spec/requests/legacy/sessions/new_spec.rb \
+            spec/requests/registrations/new_spec.rb \
+            spec/requests/sign_in_callbacks/show_spec.rb \
             spec/requests/sign_in/new_spec.rb \
+            spec/requests/sign_up/new_spec.rb \
             spec/requests/welcome/show_spec.rb
           ./cc-test-reporter after-build --coverage-input-type simplecov --exit-code $?

@@ -1,43 +1,14 @@
 # frozen_string_literal: true
 
-module V4
+module Api::Internal
   class RegistrationsController < ApplicationController
-    layout "simple"
-
-    before_action :redirect_if_signed_in
-
-    def new
-      token = params[:token]
-
-      unless token
-        return redirect_to root_path
-      end
-
-      confirmation = EmailConfirmation.find_by(event: :sign_up, token: token)
-
-      if !confirmation || confirmation.expired?
-        @expired = true
-        return
-      end
-
-      confirmation.touch(:expires_at)
-
-      @form = RegistrationForm.new
-      @form.email = confirmation.email
-      @form.token = confirmation.token
-    end
-
     def create
-      @confirmation = EmailConfirmation.find_by(event: :sign_up, token: registration_form_params[:token])
-
-      unless @confirmation
-        return redirect_to root_path
-      end
+      @confirmation = EmailConfirmation.find_by!(event: :sign_up, token: registration_form_params[:token])
 
       @form = RegistrationForm.new(registration_form_params.merge(email: @confirmation.email))
 
       if @form.invalid?
-        return render(:new)
+        return render json: @form.errors.full_messages, status: :unprocessable_entity
       end
 
       user = User.new(
@@ -57,7 +28,10 @@ module V4
       end
 
       flash[:notice] = t("messages.registrations.create.welcome")
-      redirect_to(@confirmation.back.presence || root_path)
+      render(
+        json: {redirect_path: @confirmation.back.presence || root_path},
+        status: 201
+      )
     end
 
     private

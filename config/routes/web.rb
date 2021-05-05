@@ -145,6 +145,15 @@ devise_scope :user do
   match "/sign_out", via: :delete, as: :sign_out, to: "devise/sessions#destroy"
 end
 
+scope module: :legacy do
+  constraints format: "html" do
+    devise_scope :user do
+      match "/legacy/sign_in", via: :get, as: :legacy_sign_in, to: "sessions#new"
+      match "/legacy/sign_in", via: :post, as: :user_session, to: "sessions#create"
+    end
+  end
+end
+
 namespace :fragment do
   match "/@:username/records/:record_id/edit", via: :get, as: :edit_record, to: "records#edit", username: USERNAME_FORMAT
   match "/episodes/:episode_id/records", via: :get, as: :episode_record_list, to: "episode_records#index"
@@ -156,19 +165,17 @@ end
 
 match "/@:username/records/:record_id", via: :patch, as: :record, to: "records#update", username: USERNAME_FORMAT
 match "/episodes/:episode_id/records", via: :post, as: :episode_record_list, to: "episode_records#create"
+match "/registrations/new", via: :get, as: :new_registration, to: "registrations#new"
 match "/sign_in", via: :get, as: :new_user_session, to: "sign_in#new" # for Devise
 match "/sign_in", via: :get, as: :sign_in, to: "sign_in#new"
+match "/sign_in/callback", via: :get, as: :sign_in_callback, to: "sign_in_callbacks#show"
+match "/sign_up", via: :get, as: :sign_up, to: "sign_up#new"
 match "/track", via: :get, as: :track, to: "tracks#show"
 match "/works/:anime_id/episodes/:episode_id", via: :get, as: :episode, to: "episodes#show"
 
 scope module: :v4 do
   constraints format: "html" do
     devise_scope :user do
-      match "/registrations", via: :post, as: :registrations, to: "registrations#create"
-      match "/registrations/new", via: :get, as: :new_registration, to: "registrations#new"
-      match "/sign_in/callback", via: :get, as: :sign_in_callback, to: "sign_in_callbacks#show"
-      match "/sign_up", via: :get, as: :sign_up, to: "sign_up#new"
-      match "/sign_up", via: :post, to: "sign_up#create"
       match "/user_email", via: :patch, as: :user_email, to: "user_emails#update"
       match "/user_email/callback", via: :get, as: :user_email_callback, to: "user_email_callbacks#show"
     end
@@ -184,15 +191,6 @@ scope module: :v4 do
     match "/works/:anime_id/episodes", via: :get, as: :episode_list, to: "episodes#index"
     match "/works/:anime_id/records", via: :get, as: :anime_record_list, to: "anime_records#index"
     match "/works/:anime_id/records", via: :post, to: "anime_records#create"
-  end
-end
-
-scope module: :legacy do
-  constraints format: "html" do
-    devise_scope :user do
-      match "/legacy/sign_in", via: :get, as: :legacy_sign_in, to: "sessions#new"
-      match "/legacy/sign_in", via: :post, as: :user_session, to: "sessions#create"
-    end
   end
 end
 # rubocop:enable Layout/LineLength

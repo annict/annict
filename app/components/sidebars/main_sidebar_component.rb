@@ -27,7 +27,7 @@ module Sidebars
               if current_user
                 h.tag :a, href: view_context.profile_path(current_user.username), class: "align-content-center row" do
                   h.tag :div, class: "col-3 pr-0" do
-                    h.html ProfileImageComponent2.new(view_context, image_url_1x: ann_image_url(current_user.profile, :image, size: "50x50", ratio: "1:1"), alt: "@#{current_user.username}", lazy_load: false).render
+                    h.html ProfileImageComponent.new(view_context, image_url_1x: ann_image_url(current_user.profile, :image, size: "50x50", ratio: "1:1"), alt: "@#{current_user.username}", lazy_load: false).render
                   end
 
                   h.tag :div, class: "col-auto" do

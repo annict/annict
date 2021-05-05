@@ -20,8 +20,17 @@
             <%= t "messages.registrations.new.expired_html" %>
           </p>
         <% else %>
-          <%= form_for @form, url: registrations_path do |f| %>
-            <%= render ErrorPanelComponent.new(form: @form) %>
+          <%= form_with(
+            data: {
+              controller: "forms--basic-form",
+              action: "turbo:submit-start->forms--basic-form#handleSubmitStart turbo:submit-end->forms--basic-form#handleSubmitEnd",
+              "forms--basic-form-target": "form"
+            },
+            local: true,
+            model: @form,
+            url: internal_api_registrations_path
+          ) do |f| %>
+            <%= ErrorPanelComponent.new(self, stimulus_controller: "forms--basic-form").render %>
 
             <div class="form-group">
               <%= f.label :username %>
@@ -46,8 +55,8 @@
             <%= f.hidden_field :token %>
 
             <div class="text-center">
-              <%= f.button class: "btn btn-primary", tabindex: 3 do %>
-                <%= icon "rocket" %>
+              <%= f.button class: "btn btn-primary", data: { "forms--basic-form-target": "submitButton" }, tabindex: 3, type: :submit do %>
+                <i class="far fa-rocket mr-1"></i>
                 <%= t "noun.sign_up" %>
               <% end %>
             </div>

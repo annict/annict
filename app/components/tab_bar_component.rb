@@ -43,7 +43,7 @@ class TabBarComponent < ApplicationComponent
               end
 
               h.tag :li, class: "col nav-item px-0 text-center" do
-                h.tag :a, href: "/@#{user.username}/watching", class: "text-dark" do
+                h.tag :a, href: "/@#{@current_user.username}/watching", class: "text-dark" do
                   h.tag :i, class: "far fa-play"
 
                   h.tag :div, class: "small mt-1" do

@@ -187,7 +187,7 @@ ja:
       view_record_body: '感想を見る'
     registrations:
       new:
-        expired_html: アカウント作成用リンクの有効期限が切れました。<br>再度<a href="/sign_up">アカウント作成ページ</a>でメールアドレスを入力してください。
+        expired_html: アカウント作成用リンクの有効期限が切れました。<br>再度<a href="/sign_up">サインアップページ</a>でメールアドレスを入力してください。
         password_hint: 8文字以上入力してください。
         sign_in_link_html: 作成済みですか？ %{link}
         start_with_facebook: Facebookでログイン
