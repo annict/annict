@@ -7,6 +7,7 @@
     &:hover {
       background-color: var(--ann-color-#{$name}-button-background-hover);
       border-color: var(--ann-color-#{$name}-button-border-hover);
+      color: var(--ann-color-#{$name}-button-color);
     }
   }
 }
