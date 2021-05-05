@@ -11,7 +11,7 @@ describe "POST /api/internal/registrations", type: :request do
         registration_form: {
           email: email_confirmation.email,
           token: email_confirmation.token,
-          username: "this-is-not-username",
+          username: "this-is-not-username"
         }
       }
 
