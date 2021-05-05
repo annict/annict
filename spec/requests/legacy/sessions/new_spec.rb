@@ -1,12 +1,10 @@
 # frozen_string_literal: true
 
 describe "GET /legacy/sign_in", type: :request do
-  context "when request is valid" do
-    it "displays sign in page" do
-      get "/legacy/sign_in"
+  it "パスワードでログインページが表示されること" do
+    get "/legacy/sign_in"
 
-      expect(response.status).to eq(200)
-      expect(response.body).to include("おかえりなさい！")
-    end
+    expect(response.status).to eq(200)
+    expect(response.body).to include("おかえりなさい！")
   end
 end

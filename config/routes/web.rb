@@ -145,6 +145,15 @@ devise_scope :user do
   match "/sign_out", via: :delete, as: :sign_out, to: "devise/sessions#destroy"
 end
 
+scope module: :legacy do
+  constraints format: "html" do
+    devise_scope :user do
+      match "/legacy/sign_in", via: :get, as: :legacy_sign_in, to: "sessions#new"
+      match "/legacy/sign_in", via: :post, as: :user_session, to: "sessions#create"
+    end
+  end
+end
+
 namespace :fragment do
   match "/@:username/records/:record_id/edit", via: :get, as: :edit_record, to: "records#edit", username: USERNAME_FORMAT
   match "/episodes/:episode_id/records", via: :get, as: :episode_record_list, to: "episode_records#index"
@@ -184,15 +193,6 @@ scope module: :v4 do
     match "/works/:anime_id/episodes", via: :get, as: :episode_list, to: "episodes#index"
     match "/works/:anime_id/records", via: :get, as: :anime_record_list, to: "anime_records#index"
     match "/works/:anime_id/records", via: :post, to: "anime_records#create"
-  end
-end
-
-scope module: :legacy do
-  constraints format: "html" do
-    devise_scope :user do
-      match "/legacy/sign_in", via: :get, as: :legacy_sign_in, to: "sessions#new"
-      match "/legacy/sign_in", via: :post, as: :user_session, to: "sessions#create"
-    end
   end
 end
 # rubocop:enable Layout/LineLength

@@ -16,7 +16,7 @@
           <%= t "messages._common.welcome_back" %>
         </h1>
 
-        <%= form_with model: resource, url: user_session_path, local: true do |f| %>
+        <%= form_with model: resource, url: user_session_path, local: true, data: { turbo: false } do |f| %>
           <div class="form-group">
             <%= f.label :email_username %>
             <%= f.text_field :email_username, class: "form-control", autofocus: true, required: true, tabindex: 1 %>
@@ -36,7 +36,7 @@
 
           <div class="text-center">
             <%= f.button class: "btn btn-primary", tabindex: 4 do %>
-              <%= icon "sign-in-alt" %>
+              <i class="far fa-sign-in-alt mr-1"></i>
               <%= t "noun.sign_in" %>
             <% end %>
           </div>
