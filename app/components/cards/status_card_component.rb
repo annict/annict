@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Cards
-  class StatusCardComponent < ApplicationComponent2
+  class StatusCardComponent < ApplicationComponent
     def initialize(view_context, status:, page_category: "")
       super view_context
       @status = status

@@ -26,7 +26,6 @@ gem "down"
 gem "dry-struct"
 gem "email_validator"
 gem "enumerize"
-gem "flutie"
 gem "github-markup"
 gem "graphql", ">= 1.10.0.pre3" # https://github.com/rmosolgo/graphql-ruby/pull/2640
 gem "graphql-batch"
@@ -45,7 +44,6 @@ gem "koala"
 gem "memory_profiler" # Used by rack-mini-profiler
 gem "meta-tags"
 gem "mini_magick"
-gem "miro"
 gem "mjml-rails"
 gem "moji"
 gem "nokogiri"
@@ -71,7 +69,6 @@ gem "shrine"
 gem "syoboi_calendar"
 gem "twitter"
 gem "validate_url"
-gem "view_component"
 gem "virtus"
 gem "wilson_score"
 
@@ -94,8 +91,6 @@ group :development do
   gem "graphql-docs"
   gem "i18n-tasks"
   gem "listen" # Using with `rails s` since Rails 5
-  gem "ruby_identicon"
-  gem "scss_lint", require: false
   gem "solargraph"
   gem "spring"
   gem "spring-commands-rspec", require: false

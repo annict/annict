@@ -83,8 +83,16 @@ module WorkDecorator
     end
   end
 
-  def image_url(size:)
-    ann_image_url(work_image, :image, size: size, ratio: "3:4")
+  def processed_image_url(format:, height:, width:)
+    return unless work_image
+
+    ix_image_url(work_image.path, {
+      fill: "solid",
+      fit: "fill",
+      fm: format,
+      height: height,
+      w: width,
+    })
   end
 
   def to_values

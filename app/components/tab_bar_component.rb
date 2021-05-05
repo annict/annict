@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class TabBarComponent < ApplicationComponent2
+class TabBarComponent < ApplicationComponent
   def initialize(view_context, current_user:)
     super view_context
     @current_user = current_user

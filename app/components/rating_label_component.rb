@@ -1,10 +1,20 @@
 # frozen_string_literal: true
 
 class RatingLabelComponent < ApplicationComponent
-  def initialize(rating:, advanced_rating: nil, class_name: "")
+  def initialize(view_context, rating:, advanced_rating: nil, class_name: "")
+    super view_context
     @rating = rating.downcase.to_sym
     @advanced_rating = advanced_rating
     @class_name = class_name
+  end
+
+  def render
+    build_html do |h|
+      h.tag :span, class: label_class_name do
+        h.tag :i, class: icon_class_name
+        h.text label_text
+      end
+    end
   end
 
   private

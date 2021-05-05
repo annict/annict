@@ -133,16 +133,11 @@ GEM
       uniform_notifier (~> 1.11)
     by_star (3.0.0)
       activesupport (> 3)
-    chunky_png (1.3.15)
     cld (0.8.0)
       ffi
-    climate_control (0.2.0)
-    cocaine (0.6.0)
-      terrapin (= 0.6.0)
     coderay (1.1.3)
     coercible (1.0.0)
       descendants_tracker (~> 0.0.1)
-    color (1.8)
     commonmarker (0.21.2)
       ruby-enum (~> 0.5)
     concord (0.1.6)
@@ -246,7 +241,6 @@ GEM
     ffi-compiler (1.0.1)
       ffi (>= 1.0.0)
       rake
-    flutie (2.2.0)
     gemoji (3.0.1)
     get_process_mem (0.2.7)
       ffi (~> 1.0)
@@ -366,11 +360,6 @@ GEM
     mini_mime (1.0.3)
     mini_portile2 (2.5.1)
     minitest (5.14.4)
-    miro (0.4.0)
-      chunky_png
-      cocaine
-      color
-      oily_png
     mjml-rails (4.6.1)
     moji (1.6)
     mprelude (0.1.0)
@@ -395,8 +384,6 @@ GEM
       multi_json (~> 1.3)
       multi_xml (~> 0.5)
       rack (>= 1.2, < 3)
-    oily_png (1.2.1)
-      chunky_png (~> 1.3.7)
     omniauth (1.9.1)
       hashie (>= 3.4.6)
       rack (>= 1.6.2, < 3)
@@ -543,15 +530,11 @@ GEM
     ruby-vips (2.1.0)
       ffi (~> 1.12)
     ruby2_keywords (0.0.4)
-    ruby_identicon (0.0.5)
-      chunky_png (~> 1.3.5)
     sass (3.7.4)
       sass-listen (~> 4.0.0)
     sass-listen (4.0.0)
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
-    scss_lint (0.59.0)
-      sass (~> 3.5, >= 3.5.5)
     sentry-ruby (4.3.2)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       faraday (>= 1.0)
@@ -602,8 +585,6 @@ GEM
       faraday_middleware
       multi_xml
     terminal-table (1.6.0)
-    terrapin (0.6.0)
-      climate_control (>= 0.0.3, < 1.0)
     thor (1.1.0)
     thread_safe (0.3.6)
     tilt (2.0.10)
@@ -641,8 +622,6 @@ GEM
     validate_url (1.0.13)
       activemodel (>= 3.0.0)
       public_suffix
-    view_component (2.31.1)
-      activesupport (>= 5.0.0, < 7.0)
     virtus (1.0.5)
       axiom-types (~> 0.1)
       coercible (~> 1.0)
@@ -688,7 +667,6 @@ DEPENDENCIES
   email_validator
   enumerize
   factory_bot_rails
-  flutie
   github-markup
   graphql (>= 1.10.0.pre3)
   graphql-batch
@@ -711,7 +689,6 @@ DEPENDENCIES
   memory_profiler
   meta-tags
   mini_magick
-  miro
   mjml-rails
   moji
   nokogiri
@@ -736,8 +713,6 @@ DEPENDENCIES
   redis
   rspec-mocks
   rspec-rails
-  ruby_identicon
-  scss_lint
   sentry-ruby
   shrine
   simplecov (< 0.18)
@@ -752,7 +727,6 @@ DEPENDENCIES
   traceroute
   twitter
   validate_url
-  view_component
   virtus
   wilson_score
 

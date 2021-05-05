@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class TimelineComponent < ApplicationComponent2
+class TimelineComponent < ApplicationComponent
   def initialize(view_context, activity_group_structs:, activity_groups:, page_category: "")
     super view_context
     @activity_group_structs = activity_group_structs

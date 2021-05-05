@@ -1,5 +1,7 @@
 import { Controller } from 'stimulus';
 
+import { EventDispatcher } from '../../utils/event-dispatcher';
+
 export default class extends Controller {
   static targets = ['errorPanel', 'errorMessageList', 'form', 'submitButton'];
 
@@ -10,10 +12,12 @@ export default class extends Controller {
 
   handleSubmitStart(_event: any) {
     this.submitButtonTarget.setAttribute('disabled', 'true');
+    this.submitButtonTarget.classList.add('c-spinner');
   }
 
   async handleSubmitEnd(event: any) {
     this.submitButtonTarget.removeAttribute('disabled');
+    this.submitButtonTarget.classList.remove('c-spinner');
 
     const { success } = event.detail
 
@@ -26,6 +30,13 @@ export default class extends Controller {
 
   async handleSuccess(event: any) {
     this.formTarget.reset()
+
+    const { fetchResponse } = event.detail
+    const data = JSON.parse(await fetchResponse.responseText)
+
+    if (data && data.flash) {
+      new EventDispatcher('flash:show', data.flash).dispatch();
+    }
   };
 
   async handleError(event: any) {

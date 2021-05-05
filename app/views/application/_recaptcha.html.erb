@@ -1,0 +1,11 @@
+<script src="https://www.google.com/recaptcha/api.js?render=<%= recaptcha.site_key %>" data-turbo-track="reload"></script>
+
+<script>
+  document.addEventListener('turbo:load', function() {
+    grecaptcha.ready(function() {
+      grecaptcha.execute('<%= recaptcha.site_key %>', { action: '<%= recaptcha.action %>' }).then(function(token) {
+        document.getElementById('<%= recaptcha.id %>').value = token;
+      });
+    });
+  });
+</script>

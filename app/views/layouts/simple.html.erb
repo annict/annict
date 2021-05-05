@@ -5,7 +5,7 @@
   </head>
   <body>
     <div class="l-simple">
-      <%= render FlashComponent.new(flash) %>
+      <%= FlashComponent.new(self, flash: flash).render %>
       <%= yield %>
     </div>
   </body>

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Activities
-  class StatusActivityComponent < ApplicationComponent2
+  class StatusActivityComponent < ApplicationComponent
     def initialize(view_context, activity_group_struct:, page_category: "")
       super view_context
       @activity_group_struct = activity_group_struct

@@ -1,13 +1,26 @@
 # frozen_string_literal: true
 
-# TODO: SpoilerGuardComponent2 に置き換える
 class SpoilerGuardComponent < ApplicationComponent
-  def initialize(work_id:, episode_id: nil)
-    @work_id = work_id
-    @episode_id = episode_id
+  def initialize(view_context, record:)
+    super view_context
+    @record = record
   end
 
-  private
+  def render
+    build_html do |h|
+      h.tag :div,
+        class: "c-spoiler-guard",
+        data_controller: "spoiler-guard2",
+        data_action: "click->spoiler-guard2#hide",
+        data_spoiler_guard2_init_is_spoiler_value: init_is_spoiler do
+          yield h
+        end
+    end
+  end
 
-  attr_reader :work_id, :episode_id
+  def init_is_spoiler
+    return false unless current_user
+
+    current_user.hide_record_body? && @record.is_spoiler
+  end
 end

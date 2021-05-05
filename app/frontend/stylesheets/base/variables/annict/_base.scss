@@ -136,4 +136,8 @@ $ann-navbar-height: 52px;
 $ann-navbar-height-mobile: 70px;
 
 
-$theme-name-list: "primary";
+$ann-button-name-map: (
+  "facebook": (bg: "facebook", color: "white"),
+  "primary":  (bg: "mizuho",   color: "white"),
+  "twitter":  (bg: "twitter",  color: "white")
+);

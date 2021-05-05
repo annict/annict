@@ -2,6 +2,10 @@
 <% description = meta_description t("head.meta.description.sign_in.new") %>
 <% set_meta_tags(title: title, description: description, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false) %>
 
+<%= content_for :vendor_assets do %>
+  <%= render "recaptcha", recaptcha: @recaptcha %>
+<% end %>
+
 <div class="container">
   <div class="justify-content-center row">
     <div class="col-12 col-lg-6 py-5">
@@ -11,7 +15,7 @@
         <% end %>
       </div>
 
-      <div class="c-sign-up-form px-3 mb-3">
+      <div class="c-sign-upin-form px-3 mb-3">
         <h1 class="my-5 text-center">
           <%= t "messages._common.welcome_back" %>
         </h1>
@@ -20,11 +24,21 @@
           <%= t "messages.sign_in.new.description_html" %>
         </p>
 
-        <%= form_with model: @form, url: sign_in_path, html: { class: "mb-5" }, local: true do |f| %>
-          <%= render ErrorPanelComponent.new(form: @form) %>
+        <%= form_with(
+          model: @form,
+          url: internal_api_sign_in_path,
+          html: { class: "mb-5" },
+          local: true,
+          data: {
+            controller: "forms--basic-form",
+            action: "turbo:submit-start->forms--basic-form#handleSubmitStart turbo:submit-end->forms--basic-form#handleSubmitEnd",
+            "forms--basic-form-target": "form"
+          }
+        ) do |f| %>
+          <%= ErrorPanelComponent.new(self, stimulus_controller: "forms--basic-form").render %>
 
           <% if @recaptcha.enabled? %>
-            <%= render RecaptchaInputComponent.new(recaptcha: @recaptcha) %>
+            <%= RecaptchaInputComponent.new(self, recaptcha: @recaptcha).render %>
           <% end %>
 
           <div class="form-group">
@@ -33,9 +47,9 @@
           </div>
 
           <div class="text-center">
-            <%= f.button class: "btn btn-primary", tabindex: 2 do %>
-              <%= icon "rocket" %>
-              <%= t "verb.send" %>
+            <%= f.button class: "btn btn-primary", data: { "forms--basic-form-target": "submitButton" }, tabindex: 2, type: :submit do %>
+              <i class="far fa-rocket mr-1"></i>
+              <%= t("verb.send") %>
             <% end %>
           </div>
         <% end %>
@@ -46,21 +60,21 @@
 
         <% if !@oauth_app || !@oauth_app.hide_social_login? %>
           <div class="mb-3 text-center">
-            <%= link_to user_twitter_omniauth_authorize_path, class: "btn d-inline-flex justify-content-between u-btn-twitter" do %>
-                <span class="col-1 px-0">
-                  <%= icon "twitter", "fab" %>
-                </span>
+            <%= button_to user_twitter_omniauth_authorize_path, class: "btn d-inline-flex justify-content-between btn-twitter", data: { turbo: "false" } do %>
+              <span class="col-1 px-0">
+                <i class="fab fa-twitter"></i>
+              </span>
 
               <span class="col">
-                  <%= t "messages.registrations.new.start_with_twitter" %>
-                </span>
+                <%= t "messages.registrations.new.start_with_twitter" %>
+              </span>
             <% end %>
           </div>
 
           <div class="mb-3 text-center">
-            <%= link_to user_facebook_omniauth_authorize_path, class: "btn d-inline-flex justify-content-between u-btn-facebook" do %>
+            <%= button_to user_facebook_omniauth_authorize_path, class: "btn d-inline-flex justify-content-between btn-facebook", data: { turbo: "false" } do %>
                 <span class="col-1 px-0">
-                  <%= icon "facebook", "fab" %>
+                  <i class="fab fa-facebook"></i>
                 </span>
 
               <span class="col">
@@ -73,7 +87,7 @@
         <div class="mb-5 text-center">
           <%= link_to legacy_sign_in_path, class: "btn btn-light d-inline-flex justify-content-between" do %>
               <span class="col-1 px-0">
-                <%= icon "key", "fas" %>
+                <i class="far fa-key"></i>
               </span>
 
             <span class="col">

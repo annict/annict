@@ -7,12 +7,12 @@
     <div class="l-welcome">
       <div class="l-welcome__main d-flex flex-column">
         <div class="l-welcome__content">
-          <%= render FlashComponent.new(flash) %>
+          <%= FlashComponent.new(self, flash: flash).render %>
           <%= yield %>
         </div>
 
         <div class="l-welcome__footer">
-          <%= render FooterComponent.new %>
+          <%= FooterComponent.new(self).render %>
         </div>
       </div>
     </div>

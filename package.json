@@ -36,7 +36,6 @@
     "postcss-smart-import": "latest",
     "select2": "next",
     "stimulus": "^2.0.0",
-    "vanilla-lazyload": "^17.1.2",
     "webpack-merge": "^5.1.2"
   },
   "devDependencies": {

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Contents
-  class StatusContentComponent < ApplicationComponent2
+  class StatusContentComponent < ApplicationComponent
     def initialize(view_context, status:, page_category: "")
       super view_context
       @status = status
