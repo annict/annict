@@ -102,7 +102,7 @@ end
 group :test do
   # Use < 0.18 until the following issue will be resolved.
   # https://github.com/codeclimate/test-reporter/issues/418
-  gem "simplecov", "< 0.18", require: false
+  gem "simplecov", "< 0.22", require: false
   gem "timecop"
 end
 
