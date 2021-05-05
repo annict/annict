@@ -6,7 +6,7 @@ class InternalStatisticMailer < ApplicationMailer
     @data = statistcs.map { |s|
       [s.key, s.value.presence || 0]
     }
-    @data = Hash[@data]
+    @data = @data.to_h
 
     mail(to: "hello@annict.com", subject: "Annict Statistic - #{date_str}")
   end
