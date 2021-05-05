@@ -43,7 +43,7 @@ export default class extends Controller {
     const { fetchResponse } = event.detail
     const errorMessages = JSON.parse(await fetchResponse.responseText)
 
-    this.errorMessageListTarget.innerHTML = errorMessages.map((msg: string) => `<li>${msg}</li>`)
+    this.errorMessageListTarget.innerHTML = errorMessages.map((msg: string) => `<li>${msg}</li>`).join("")
     this.errorPanelTarget.classList.remove('d-none')
   }
 }
