@@ -21,7 +21,7 @@
     "babel-loader": "latest",
     "bootstrap": "^4.6.0",
     "bourbon": "latest",
-    "britecharts": "^2.16.1",
+    "britecharts": "^2.18.0",
     "cal-heatmap": "latest",
     "choices.js": "latest",
     "core-js": "^3.11.2",
