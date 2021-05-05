@@ -73,21 +73,21 @@ class TabBarComponent < ApplicationComponent
               end
 
               h.tag :li, class: "col nav-item px-0 text-center" do
-                h.tag :a, href: view_context.sign_in_path, class: "text-dark" do
-                  h.tag :i, class: "far fa-sign-in-alt"
+                h.tag :a, href: view_context.sign_up_path, class: "text-dark" do
+                  h.tag :i, class: "far fa-rocket"
 
                   h.tag :div, class: "small mt-1" do
-                    h.text t("noun.sign_in")
+                    h.text t("noun.sign_up")
                   end
                 end
               end
 
               h.tag :li, class: "col nav-item px-0 text-center" do
-                h.tag :a, href: view_context.about_path, class: "text-dark" do
-                  h.tag :i, class: "far fa-lightbulb"
+                h.tag :a, href: view_context.sign_in_path, class: "text-dark" do
+                  h.tag :i, class: "far fa-sign-in-alt"
 
                   h.tag :div, class: "small mt-1" do
-                    h.text t("noun.about")
+                    h.text t("noun.sign_in")
                   end
                 end
               end

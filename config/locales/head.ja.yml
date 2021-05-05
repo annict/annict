@@ -184,8 +184,6 @@ ja:
       organizations:
         show: '%{name}'
       pages:
-        about: Annictとは？
-        about_shoten: About
         legal: 特定商取引法に基づく表記
         privacy: プライバシーポリシー
         terms: 利用規約

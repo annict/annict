@@ -190,8 +190,6 @@ en:
       organizations:
         show: '%{name}'
       pages:
-        about: About
-        about_shoten: About
         legal: Legal
         privacy: Privacy policy
         terms: Terms of Service

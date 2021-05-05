@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
 describe "GET /", type: :request do
-  before do
-    host! "annict-jp.test:3000"
-  end
-
   context "ログインしていないとき" do
     context "アニメが登録されていないとき" do
       it "Welcomeページが表示されること" do
