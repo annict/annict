@@ -19,7 +19,7 @@
     "autosize": "latest",
     "axios": "^0.21.1",
     "babel-loader": "latest",
-    "bootstrap": "^4.5.2",
+    "bootstrap": "^4.6.0",
     "bourbon": "latest",
     "britecharts": "^2.16.1",
     "cal-heatmap": "latest",
