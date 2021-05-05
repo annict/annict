@@ -41,7 +41,7 @@ module Api
 
     def bad_credentials
       json = {
-        "message": "Bad credentials"
+        message: "Bad credentials"
       }
       render json: json, status: 401
     end

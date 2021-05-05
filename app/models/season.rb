@@ -25,7 +25,7 @@ class Season
     years = years.reverse if sort == :desc
     name_hash = NAME_HASH
     name_hash = name_hash.merge(all: 0) if include_all
-    names = Hash[name_hash.sort_by { |_, v| sort == :desc ? -v : v }].keys
+    names = name_hash.sort_by { |_, v| sort == :desc ? -v : v }.to_h.keys
 
     years.map { |year|
       names.map do |name|
