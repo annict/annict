@@ -27,7 +27,7 @@
     "core-js": "^3.10.0",
     "d3": "^6.0.0",
     "d3-selection": "^2.0.0",
-    "dayjs": "^1.8.34",
+    "dayjs": "^1.10.4",
     "jquery": "latest",
     "js-cookie": "latest",
     "lodash": "^4.17.20",
