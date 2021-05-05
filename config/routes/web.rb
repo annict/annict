@@ -122,8 +122,6 @@ resources :works, only: %i[index] do
   end
 end
 
-get "terms", to: "pages#terms"
-
 # 新リダイレクト用URL
 get "r/:provider/:url_hash",
   to: "episode_records#redirect",
@@ -169,6 +167,7 @@ match "/sign_in", via: :get, as: :new_user_session, to: "sign_in#new" # for Devi
 match "/sign_in", via: :get, as: :sign_in, to: "sign_in#new"
 match "/sign_in/callback", via: :get, as: :sign_in_callback, to: "sign_in_callbacks#show"
 match "/sign_up", via: :get, as: :sign_up, to: "sign_up#new"
+match "/terms", via: :get, as: :terms, to: "pages#terms"
 match "/track", via: :get, as: :track, to: "tracks#show"
 match "/works/:anime_id/episodes/:episode_id", via: :get, as: :episode, to: "episodes#show"
 
