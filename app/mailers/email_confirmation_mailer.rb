@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class EmailConfirmationMailer < ApplicationMailer
-  include Localable
+  include Localizable
 
   def sign_up_confirmation(email_confirmation_id, locale)
     email_confirmation = EmailConfirmation.find(email_confirmation_id)

@@ -158,7 +158,6 @@ match "/@:username/records/:record_id", via: :patch, as: :record, to: "records#u
 match "/episodes/:episode_id/records", via: :post, as: :episode_record_list, to: "episode_records#create"
 match "/sign_in", via: :get, as: :new_user_session, to: "sign_in#new" # for Devise
 match "/sign_in", via: :get, as: :sign_in, to: "sign_in#new"
-match "/sign_in", via: :post, to: "sign_in#create"
 match "/track", via: :get, as: :track, to: "tracks#show"
 match "/works/:anime_id/episodes/:episode_id", via: :get, as: :episode, to: "episodes#show"
 

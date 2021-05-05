@@ -5,7 +5,7 @@ class SignInForm < ApplicationForm
   attr_reader :email
 
   validates :back, format: {with: %r{\A/}, allow_blank: true}
-  validates :email, presence: true, email: true, length: {maximum: 1}
+  validates :email, presence: true, email: true
 
   def email=(email)
     @email = email&.strip
