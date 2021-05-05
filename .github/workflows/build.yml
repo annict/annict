@@ -93,6 +93,7 @@ jobs:
             spec/requests/legacy/sessions/create_spec.rb \
             spec/requests/legacy/sessions/new_spec.rb \
             spec/requests/pages/legal_spec.rb \
+            spec/requests/pages/privacy_spec.rb \
             spec/requests/registrations/new_spec.rb \
             spec/requests/sign_in_callbacks/show_spec.rb \
             spec/requests/sign_in/new_spec.rb \

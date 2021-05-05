@@ -1,0 +1,14 @@
+<% title = t("head.title.pages.privacy") %>
+<% set_meta_tags(title: title, reverse: true, prefix: false) %>
+
+<div class="container py-3">
+  <h1 class="font-weight-bold h3 mb-3">
+    <%= title %>
+  </h1>
+
+  <div class="card">
+    <div class="card-body">
+      <%== render_markdown File.read("app/docs/privacy_policy.ja.md") %>
+    </div>
+  </div>
+</div>

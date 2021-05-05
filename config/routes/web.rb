@@ -122,7 +122,6 @@ resources :works, only: %i[index] do
   end
 end
 
-get "privacy", to: "pages#privacy"
 get "terms", to: "pages#terms"
 
 # 新リダイレクト用URL
@@ -164,6 +163,7 @@ end
 match "/@:username/records/:record_id", via: :patch, as: :record, to: "records#update", username: USERNAME_FORMAT
 match "/episodes/:episode_id/records", via: :post, as: :episode_record_list, to: "episode_records#create"
 match "/legal", via: :get, as: :legal, to: "pages#legal"
+match "/privacy", via: :get, as: :privacy, to: "pages#privacy"
 match "/registrations/new", via: :get, as: :new_registration, to: "registrations#new"
 match "/sign_in", via: :get, as: :new_user_session, to: "sign_in#new" # for Devise
 match "/sign_in", via: :get, as: :sign_in, to: "sign_in#new"
