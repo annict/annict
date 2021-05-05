@@ -139,7 +139,6 @@ class FooterComponent < ApplicationComponent
   def content_urls
     [
       [view_context.faqs_path, t("head.title.faqs.index"), true],
-      [view_context.about_path, t("head.title.pages.about"), false],
       [view_context.terms_path, t("noun.terms_of_use"), true],
       [view_context.privacy_path, t("noun.privacy_policy"), true],
       [view_context.legal_path, t("head.title.pages.legal"), true]
