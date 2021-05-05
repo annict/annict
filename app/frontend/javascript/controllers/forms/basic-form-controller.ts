@@ -12,10 +12,12 @@ export default class extends Controller {
 
   handleSubmitStart(_event: any) {
     this.submitButtonTarget.setAttribute('disabled', 'true');
+    this.submitButtonTarget.classList.add('c-spinner');
   }
 
   async handleSubmitEnd(event: any) {
     this.submitButtonTarget.removeAttribute('disabled');
+    this.submitButtonTarget.classList.remove('c-spinner');
 
     const { success } = event.detail
 

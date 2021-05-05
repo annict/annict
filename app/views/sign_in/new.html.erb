@@ -47,7 +47,10 @@
           </div>
 
           <div class="text-center">
-            <%= f.submit t("verb.send"), class: "btn btn-primary", data: { "forms--basic-form-target": "submitButton" }, tabindex: 2 %>
+            <%= f.button class: "btn btn-primary", data: { "forms--basic-form-target": "submitButton" }, tabindex: 2, type: :submit do %>
+              <i class="far fa-rocket mr-1"></i>
+              <%= t("verb.send") %>
+            <% end %>
           </div>
         <% end %>
 
