@@ -172,7 +172,7 @@ module Sidebars
                 [view_context.friends_path, "search", t("head.title.friends.index")],
                 [view_context.channels_path, "tv-retro", t("head.title.channels.index")],
                 [view_context.profile_setting_path, "cog", t("noun.settings")],
-                [view_context.faqs_path, "question-circle", t("head.title.faqs.index")],
+                [view_context.faqs_path, "question-circle", t("head.title.faqs.index")]
               ].each do |link_path, icon_name, link_text|
                 h.tag :li do
                   h.tag :a, href: link_path, class: "d-flex justify-content-between py-2" do
