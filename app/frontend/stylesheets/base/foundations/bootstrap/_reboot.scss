@@ -1,8 +1,12 @@
-// Original: https://github.com/twbs/bootstrap/blob/v4.5.2/scss/_reboot.scss
+// Original: https://github.com/twbs/bootstrap/blob/v5.0.0/scss/_reboot.scss
 
 body {
   background-color: var(--bs-body-bg);
   color: var(--bs-body-color);
+}
+
+hr {
+  color: var(--bs-hr-color);
 }
 
 a {
