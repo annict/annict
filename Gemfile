@@ -5,7 +5,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby "3.0.1"
 
-gem "rails", "~> 6.1.0"
+gem "rails", "~> 6.1.3"
 
 gem "active_decorator"
 gem "active_link_to"
