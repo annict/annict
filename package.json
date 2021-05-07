@@ -30,7 +30,7 @@
     "dayjs": "^1.10.4",
     "jquery": "latest",
     "js-cookie": "latest",
-    "lodash": "^4.17.20",
+    "lodash": "^4.17.21",
     "mjml": "latest",
     "popper.js": "latest",
     "postcss-smart-import": "latest",
