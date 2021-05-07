@@ -16,12 +16,12 @@ module Selectors
           data_controller: "status-selector",
           data_status_selector_anime_id_value: @anime.id,
           data_status_selector_selected_class: "c-status-selector--selected",
-          data_status_selector_page_category_value: @page_category,
-          data_status_selector_target: "kind"
+          data_status_selector_page_category_value: @page_category
         } do
           h.tag :select, {
             class: "form-select",
-            data_action: "status-selector#change"
+            data_action: "status-selector#change",
+            data_status_selector_target: "kind"
           } do
             status_options.each do |status_option|
               h.tag :option, value: status_option[1] do
