@@ -8,7 +8,7 @@
     </h1>
 
     <% if policy(Character).create? %>
-      <div class="text-right">
+      <div class="text-end">
         <%= link_to db_new_character_path, class: "btn btn-outline-primary" do %>
           <%= icon "plus" %>
           <%= t "resources._common.new" %>

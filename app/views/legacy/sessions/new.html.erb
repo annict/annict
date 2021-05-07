@@ -17,13 +17,13 @@
         </h1>
 
         <%= form_with model: resource, url: user_session_path, local: true, data: { turbo: false } do |f| %>
-          <div class="form-group">
-            <%= f.label :email_username %>
+          <div class="mb-3">
+            <%= f.label :email_username, class: "form-label" %>
             <%= f.text_field :email_username, class: "form-control", autofocus: true, required: true, tabindex: 1 %>
           </div>
 
-          <div class="form-group">
-            <%= f.label :password %>
+          <div class="mb-3">
+            <%= f.label :password, class: "form-label" %>
             <%= f.password_field :password, autocomplete: "off", class: "form-control", required: true, tabindex: 2 %>
           </div>
 
@@ -36,7 +36,7 @@
 
           <div class="text-center">
             <%= f.button class: "btn btn-primary", tabindex: 4 do %>
-              <i class="far fa-sign-in-alt mr-1"></i>
+              <i class="far fa-sign-in-alt me-1"></i>
               <%= t "noun.sign_in" %>
             <% end %>
           </div>

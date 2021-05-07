@@ -9,33 +9,33 @@
           = link_to anime_path(anime_id: work.id), class: "d-inline-block" do
             = render WorkImageComponent.new(image_url_1x: ann_image_url(work.work_image, :image, size: "250x"), image_url_2x: ann_image_url(work.work_image, :image, size: "500x"))
           - if work.work_image.present?
-            .u-very-small.text-right
+            .u-very-small.text-end
               = work.work_image.asin_or_copyright_text
         .col-8
           .mb-1.u-lh-0
             = work.media_label
-          h3.font-weight-bold.mb-1
+          h3.fw-bold.mb-1
             = link_to work.local_title, anime_path(anime_id: work.id), class: "u-text-body"
           .mb-2
-            span.font-weight-bold.mr-1 = work.watchers_count
+            span.fw-bold.me-1 = work.watchers_count
             span.text-muted.small Watchers
           = render StatusSelectorComponent.new(work_id: work.id, page_category: page_category)
 
       - if work.local_synopsis.present?
-        .font-weight-bold.mb-1
+        .fw-bold.mb-1
           = t "activerecord.attributes.work.synopsis"
         .mb-3
           = render BodyComponent.new(height: 250) do
             = sanitize(work.local_synopsis(raw: true))
-          .small.mt-2.text-right
-            span.mr-1
+          .small.mt-2.text-end
+            span.me-1
               = t "noun.source"
               | :
             = work.local_synopsis_source
 
       - trailers = @trailers_data.select { |pd| pd[:work_id] == work.id }.first[:trailers].sort_by { |p| p.sort_number }
       - if trailers.present?
-        .font-weight-bold.mb-1
+        .fw-bold.mb-1
           = t "noun.pv"
         .row
           - trailers.each do |trailer|
@@ -53,12 +53,12 @@
       - casts = @casts_data.select { |cd| cd[:work_id] == work.id }.first[:casts].sort_by { |c| c.sort_number }
       - casts = casts.select { |c| locale_ja? ? true : c.support_en? }
       - if casts.present?
-        .font-weight-bold.mb-1
+        .fw-bold.mb-1
           = t "noun.casts"
         ul.list-inline.mb-0.u-lh-5
           - casts.first(10).each do |cast|
-            li.list-inline-item.mr-3
-              span.mr-1
+            li.list-inline-item.me-3
+              span.me-1
                 = cast.character.decorate.name_link
                 | :
               = cast.decorate.local_name_with_old_link
@@ -67,11 +67,11 @@
       - staffs = staffs.select { |s| locale_ja? ? true : s.support_en? }
       - if staffs.present?
         .mt-3
-          .font-weight-bold.mb-1
+          .fw-bold.mb-1
             = t "noun.staffs"
           ul.list-inline.mb-0.u-lh-5
             - staffs.each do |staff|
-              li.list-inline-item.mr-3
+              li.list-inline-item.me-3
                 = "#{staff.decorate.role_name}: "
                 = staff.decorate.local_name_with_old_link
 
@@ -79,7 +79,7 @@
       - programs = programs.select { |pd| locale_ja? ? true : pd.support_en? }
       - if programs.present?
         .mt-3
-          .font-weight-bold.mb-1
+          .fw-bold.mb-1
             = t "noun.vods"
         = render "works/vod_list", channels: @channels, slice: 2, programs: programs
 

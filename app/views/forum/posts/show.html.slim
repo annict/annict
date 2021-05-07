@@ -18,7 +18,7 @@
             = link_to profile_path(@post.user.username) do
               = render ProfileImageComponent.new(image_url_1x: ann_image_url(@post.user.profile, :image, size: "45x", ratio: "1:1"), alt: "@#{@post.user.username}")
           .col.pl-2
-            = link_to @post.user.profile.name, profile_path(@post.user.username), class: "mr-2"
+            = link_to @post.user.profile.name, profile_path(@post.user.username), class: "me-2"
             = @post.user.role_badge
             .mt-1
               = link_to forum_post_path(@post), class: "small text-muted", title: display_time(@post.created_at) do
@@ -28,9 +28,9 @@
           = @post.body
 
         - if user_signed_in? && current_user == @post.user
-          .text-right
+          .text-end
             = link_to edit_forum_post_path(@post), class: "small" do
-              = icon "pencil-alt", class: "mr-1"
+              = icon "pencil-alt", class: "me-1"
               = t "noun.edit"
 
       - if @comments.present?
@@ -42,7 +42,7 @@
                   = link_to profile_path(comment.user.username) do
                     = render ProfileImageComponent.new(image_url_1x: ann_image_url(comment.user.profile, :image, size: "45x", ratio: "1:1"), alt: "@#{comment.user.username}")
                 .col.pl-2
-                  = link_to comment.user.profile.name, profile_path(comment.user.username), class: "mr-2"
+                  = link_to comment.user.profile.name, profile_path(comment.user.username), class: "me-2"
                   = comment.user.role_badge
                   .mt-1
                     span.small.text-muted title="#{display_time(comment.created_at)}"
@@ -52,9 +52,9 @@
                 = comment.body
 
               - if user_signed_in? && current_user == comment.user
-                .text-right
+                .text-end
                   = link_to edit_forum_post_comment_path(@post, comment), class: "small" do
-                    = icon "pencil-alt", class: "mr-1"
+                    = icon "pencil-alt", class: "me-1"
                     = t "noun.edit"
             - else
               = t "messages.forum.comments.deleted"

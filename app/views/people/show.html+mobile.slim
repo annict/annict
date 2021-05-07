@@ -6,45 +6,45 @@
 .c-card.mb-3
   = render "people/header", person: @person, favorite_resources: @person_favorites
 
-h2.h4.font-weight-bold.text-center.mt-3.mb-4
+h2.h4.fw-bold.text-center.mt-3.mb-4
   = t "noun.information"
 .c-card.py-3.mb-3
   .container
     dl.row.mb-0
-      dt.col-6.text-right = t "activerecord.attributes.person.name"
+      dt.col-6.text-end = t "activerecord.attributes.person.name"
       dd.col-6 = @person.name
       - if @person.name_kana.present?
-        dt.col-6.text-right = t "activerecord.attributes.person.name_kana"
+        dt.col-6.text-end = t "activerecord.attributes.person.name_kana"
         dd.col-6 = @person.name_kana
       - if @person.name_en.present?
-        dt.col-6.text-right = t "activerecord.attributes.person.name_en"
+        dt.col-6.text-end = t "activerecord.attributes.person.name_en"
         dd.col-6 = @person.name_en
       - if @person.nickname.present?
-        dt.col-6.text-right = t "activerecord.attributes.person.nickname"
+        dt.col-6.text-end = t "activerecord.attributes.person.nickname"
         dd.col-6 = @person.nickname
       - if @person.gender.present?
-        dt.col-6.text-right = t "activerecord.attributes.person.gender"
+        dt.col-6.text-end = t "activerecord.attributes.person.gender"
         dd.col-6 = @person.gender_text
       - if @person.birthday.present?
-        dt.col-6.text-right = t "activerecord.attributes.person.birthday"
+        dt.col-6.text-end = t "activerecord.attributes.person.birthday"
         dd.col-6 = @person.birthday.strftime("%Y年%m月%d日")
       - if @person.blood_type.present?
-        dt.col-6.text-right = t "activerecord.attributes.person.blood_type"
+        dt.col-6.text-end = t "activerecord.attributes.person.blood_type"
         dd.col-6 = @person.blood_type_text
       - if @person.height.present?
-        dt.col-6.text-right = t "activerecord.attributes.person.height"
+        dt.col-6.text-end = t "activerecord.attributes.person.height"
         dd.col-6 = "#{@person.height}cm"
       - if @person.url.present?
-        dt.col-6.text-right = t "activerecord.attributes.person.url"
+        dt.col-6.text-end = t "activerecord.attributes.person.url"
         dd.col-6 = link_with_domain @person.url
       - if @person.twitter_username.present?
-        dt.col-6.text-right = t "activerecord.attributes.person.twitter"
+        dt.col-6.text-end = t "activerecord.attributes.person.twitter"
         dd.col-6 = @person.twitter_username_link
       - if @person.wikipedia_url.present?
-        dt.col-6.text-right = t "activerecord.attributes.person.wikipedia"
+        dt.col-6.text-end = t "activerecord.attributes.person.wikipedia"
         dd.col-6 = link_with_domain @person.wikipedia_url
 
-h2.h4.text-center.font-weight-bold.mt-3.mb-4
+h2.h4.text-center.fw-bold.mt-3.mb-4
   = t "noun.works"
 .c-card.p-3.mb-3
   - if @person.voice_actor?

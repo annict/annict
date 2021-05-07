@@ -11,7 +11,7 @@
     </h1>
 
     <% if policy(SeriesWork).create? %>
-      <div class="text-right">
+      <div class="text-end">
         <%= link_to db_new_series_work_path(@series), class: "btn btn-outline-primary" do %>
           <%= icon "plus" %>
           <%= t "resources._common.new" %>

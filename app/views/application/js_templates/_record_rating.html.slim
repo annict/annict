@@ -3,7 +3,7 @@ script#t-record-rating type="x-template"
     .btn-group.btn-group-sm
       - EpisodeRecord.rating_state.values.each do |state|
         .btn :class=="[record.ratingState === '#{state}' ? 'u-btn-#{state}' : 'u-btn-outline-input-border']" @click=="changeState('#{state}')"
-          = rating_state_icon state, class: "mr-1 #{device_pc? ? '' : 'u-very-small'}"
+          = rating_state_icon state, class: "me-1 #{device_pc? ? '' : 'u-very-small'}"
           span class="#{device_pc? ? '' : 'u-very-small'}" = state.text
 
     input type="hidden" :name="inputName" v-model="record.ratingState"

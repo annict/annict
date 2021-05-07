@@ -2,13 +2,18 @@
 
 $spacer: 1rem;
 $spacers: (
-  5: ($spacer * 2)
-);
+  0: 0,
+  1: $spacer * .25,
+  2: $spacer * .5,
+  3: $spacer,
+  4: $spacer * 1.5,
+  5: $spacer * 2,
+) !default;
 
 
 // Links
 
-$link-hover-decoration: none;
+$link-decoration: none;
 
 
 // Grid columns
@@ -17,8 +22,6 @@ $grid-gutter-width: 2rem;
 
 
 // Typography
-
-$font-weight-bold: 600;
 
 $h1-font-size: 1.75rem;
 $h2-font-size: 1.5rem;
@@ -46,11 +49,6 @@ $border-radius-sm: 3px;
 // Navbar
 
 $navbar-padding-y: .3rem;
-
-
-// Cards
-
-$card-spacer-x: 0.5rem;
 
 
 // Image thumbnails

@@ -16,7 +16,7 @@
 
       <% if @anime_entity.trailers.present? %>
         <div>
-          <h2 class="font-weight-bold h3 mb-3">
+          <h2 class="fw-bold h3 mb-3">
             <%= t "noun.pv" %>
           </h2>
 
@@ -40,7 +40,7 @@
 
       <% if @anime_entity.local_synopsis.present? %>
         <div class="mb-3">
-          <h2 class="font-weight-bold h3 mb-3">
+          <h2 class="fw-bold h3 mb-3">
             <%= t "activerecord.attributes.work.synopsis" %>
           </h2>
 
@@ -48,7 +48,7 @@
             <%= @anime_entity.local_synopsis.html_safe %>
           <% end %>
 
-          <div class="small text-right">
+          <div class="small text-end">
             <%= t "noun.source" %>: <%= @anime_entity.local_synopsis_source %>
           </div>
         </div>
@@ -56,7 +56,7 @@
 
       <% unless @anime_entity.is_no_episodes %>
         <div class="mb-3">
-          <h2 class="font-weight-bold h3 mb-3">
+          <h2 class="fw-bold h3 mb-3">
             <%= t "noun.episodes" %>
           </h2>
 
@@ -89,7 +89,7 @@
       <% end %>
 
       <div class="mb-3">
-        <h2 class="font-weight-bold h3 mb-3">
+        <h2 class="fw-bold h3 mb-3">
           <%= t "noun.characters" %>
         </h2>
 
@@ -111,7 +111,7 @@
       </div>
 
       <div class="mb-3">
-        <h2 class="font-weight-bold h3 mb-3">
+        <h2 class="fw-bold h3 mb-3">
           <%= t "noun.staffs" %>
         </h2>
 
@@ -137,7 +137,7 @@
 
       <% if locale_ja? %>
         <div class="mb-3">
-          <h2 class="font-weight-bold h3 mb-3">
+          <h2 class="fw-bold h3 mb-3">
             <%= t "noun.vods" %>
           </h2>
 
@@ -171,13 +171,13 @@
       <div class="mb-5">
         <div class="container">
           <div class="row justify-content-between">
-            <h2 class="font-weight-bold h3 mb-3">
+            <h2 class="fw-bold h3 mb-3">
               <%= t "noun.record_body_list" %>
             </h2>
 
             <div>
               <%= link_to anime_record_list_path(anime_id: @anime_entity.database_id), class: "btn btn-primary btn-sm" do %>
-                <i class="far fa-edit mr-1"></i>
+                <i class="far fa-edit me-1"></i>
                 <%= t "verb.track" %>
               <% end %>
             </div>
@@ -203,7 +203,7 @@
       </div>
 
       <% if @anime_entity.series_list.present? %>
-        <h2 class="h4 text-center my-4 font-weight-bold">
+        <h2 class="h4 text-center my-4 fw-bold">
           <%= t "noun.related_works" %>
         </h2>
         <div class="p-works-show__series mt-3 pl-3 py-3">

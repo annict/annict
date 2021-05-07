@@ -17,7 +17,7 @@ module Buttons
           data_share_to_facebook_button_app_id: ENV.fetch("FACEBOOK_APP_ID") do
             h.tag :span, class: "btn btn-sm u-btn-facebook", data_action: "click->share-to-facebook-button#open" do
               h.tag :div, class: "small" do
-                h.tag :i, class: "fab fa-facebook mr-1"
+                h.tag :i, class: "fab fa-facebook me-1"
                 h.text t("noun.share")
               end
             end

@@ -17,8 +17,8 @@ script#t-impression-button-modal type="x-template"
                 template v-if="popularTagNames.length > 0"
                   .small.mt-2
                     = t "noun.popular_tags"
-                  span.u-cursor-pointer.mr-1.badge.badge-secondary v-for="tagName in popularTagNames" @click="add(tagName)"
-                    = icon "plus", class: "mr-1"
+                  span.u-cursor-pointer.me-1.badge.badge-secondary v-for="tagName in popularTagNames" @click="add(tagName)"
+                    = icon "plus", class: "me-1"
                     | {{ tagName }}
               .form-group.mt-4
                 label for="comment"

@@ -7,15 +7,15 @@
             = link_to anime_path(anime_id: work.id) do
               = render WorkImageComponent.new(image_url_1x: ann_image_url(work.work_image, :image, size: "270x"), image_url_2x: ann_image_url(work.work_image, :image, size: "540x"))
             - if work.work_image.present?
-              .u-very-small.text-right
+              .u-very-small.text-end
                 = work.work_image.asin_or_copyright_text
           .col
             .mb-1.u-lh-0
               = work.media_label
-            h3.h3.font-weight-bold.mb-1
+            h3.h3.fw-bold.mb-1
               = link_to work.local_title, anime_path(anime_id: work.id), class: "u-text-body"
             .mb-2
-              span.font-weight-bold.mr-1 = work.watchers_count
+              span.fw-bold.me-1 = work.watchers_count
               span.text-muted.small Watchers
             .div style="width: 200px;"
               = render StatusSelectorComponent.new(work_id: work.id, page_category: page_category)

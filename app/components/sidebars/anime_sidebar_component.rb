@@ -31,7 +31,7 @@ module Sidebars
             end
 
             h.tag :div, class: "col-8 col-sm-12 pl-0 pl-sm-3" do
-              h.tag :h1, class: "font-weight-bold h2 mb-3 text-sm-left" do
+              h.tag :h1, class: "fw-bold h2 mb-3 text-sm-left" do
                 h.tag :a, href: view_context.anime_path(anime_id: @anime.id), class: "u-text-body" do
                   h.text @anime.local_title
                 end
@@ -39,7 +39,7 @@ module Sidebars
 
               h.tag :div, class: "row mb-3" do
                 h.tag :div, class: "col text-center" do
-                  h.tag :div, class: "h4 font-weight-bold mb-1" do
+                  h.tag :div, class: "h4 fw-bold mb-1" do
                     h.text @anime.watchers_count
                   end
 
@@ -49,7 +49,7 @@ module Sidebars
                 end
 
                 h.tag :div, class: "col text-center" do
-                  h.tag :div, class: "h4 font-weight-bold mb-1" do
+                  h.tag :div, class: "h4 fw-bold mb-1" do
                     h.text @anime.satisfaction_rate.presence || "-"
                     h.tag :span, class: "small ml-1" do
                       h.text "%"
@@ -62,7 +62,7 @@ module Sidebars
                 end
 
                 h.tag :div, class: "col text-center" do
-                  h.tag :div, class: "h4 font-weight-bold mb-1" do
+                  h.tag :div, class: "h4 fw-bold mb-1" do
                     h.text @anime.ratings_count
                   end
 
@@ -83,7 +83,7 @@ module Sidebars
           end
 
           h.tag :div, class: "mb-3" do
-            h.tag :h2, class: "font-weight-bold h4 mb-3" do
+            h.tag :h2, class: "fw-bold h4 mb-3" do
               h.text t("noun.information")
             end
 
@@ -270,7 +270,7 @@ module Sidebars
 
           if @vod_channels.present?
             h.tag :div, class: "mb-sm-1" do
-              h.tag :h2, class: "font-weight-bold h4 mb-3" do
+              h.tag :h2, class: "fw-bold h4 mb-3" do
                 h.text t("noun.vods")
               end
 
@@ -287,7 +287,7 @@ module Sidebars
           end
 
           h.tag :div, class: "mb-3" do
-            h.tag :h2, class: "font-weight-bold h4 mb-3" do
+            h.tag :h2, class: "fw-bold h4 mb-3" do
               h.text t("noun.share")
             end
 

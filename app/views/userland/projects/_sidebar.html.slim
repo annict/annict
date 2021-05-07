@@ -2,15 +2,15 @@
   = link_to userland_project_path(project) do
     = ann_image_tag project, :image, size: "280x280", class: "img-fluid img-thumbnail rounded"
 
-h1.h2.font-weight-bold.mb-2
+h1.h2.fw-bold.mb-2
   = link_to project.name, userland_project_path(project), class: "u-text-body"
 
 .text-muted
-  span.mr-2
+  span.me-2
     = project.summary
 
-h2.h4.font-weight-bold.mt-4.mb-3
-  = icon "sticky-note", "far", class: "mr-1"
+h2.h4.fw-bold.mt-4.mb-3
+  = icon "sticky-note", "far", class: "me-1"
   = t "noun.information"
 
 dl
@@ -19,8 +19,8 @@ dl
   dt.small = t "activerecord.attributes.userland_project.url"
   dd = link_with_domain project.url
 
-h2.h4.font-weight-bold.mt-4.mb-3
-  = icon "user", "far", class: "mr-1"
+h2.h4.fw-bold.mt-4.mb-3
+  = icon "user", "far", class: "me-1"
   = t "noun.development_members"
 
 .row.px-3

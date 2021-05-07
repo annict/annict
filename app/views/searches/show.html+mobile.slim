@@ -14,19 +14,19 @@
           li.list-inline-item
             = active_link_to search_path(q: @search.q, resource: "work"), class: "c-slidable-subnav__link", class_active: "c-slidable-subnav__link--active", active: (@view == "work") do
               = t "noun.works"
-              span.badge.badge-pill.badge-secondary.ml-1 = @works.count
+              span.badge.badge-pill.badge-secondary.ms-1 = @works.count
           li.list-inline-item
             = active_link_to search_path(q: @search.q, resource: "character"), class: "c-slidable-subnav__link", class_active: "c-slidable-subnav__link--active", active: (@view == "character") do
               = t "noun.characters"
-              span.badge.badge-pill.badge-secondary.ml-1 = @characters.count
+              span.badge.badge-pill.badge-secondary.ms-1 = @characters.count
           li.list-inline-item
             = active_link_to search_path(q: @search.q, resource: "person"), class: "c-slidable-subnav__link", class_active: "c-slidable-subnav__link--active", active: (@view == "person") do
               = t "noun.people"
-              span.badge.badge-pill.badge-secondary.ml-1 = @people.count
+              span.badge.badge-pill.badge-secondary.ms-1 = @people.count
           li.list-inline-item
             = active_link_to search_path(q: @search.q, resource: "organization"), class: "c-slidable-subnav__link", class_active: "c-slidable-subnav__link--active", active: (@view == "organization") do
               = t "noun.organizations"
-              span.badge.badge-pill.badge-secondary.ml-1 = @organizations.count
+              span.badge.badge-pill.badge-secondary.ms-1 = @organizations.count
     - resources = instance_variable_get("@#{@view.pluralize}").page(params[:page])
     = render "#{@view}_list", view: @view, "#{@view.pluralize}": resources
     .text-center

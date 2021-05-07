@@ -20,8 +20,8 @@ class RecordHeaderComponent < ApplicationComponent
 
         h.tag :div, class: "col" do
           h.tag :div do
-            h.tag :a, href: view_context.profile_path(@record.user.username), class: "font-weight-bold mr-1 text-body" do
-              h.tag :span, class: "mr-1" do
+            h.tag :a, href: view_context.profile_path(@record.user.username), class: "fw-bold me-1 text-body" do
+              h.tag :span, class: "me-1" do
                 h.text @record.user.name
               end
 

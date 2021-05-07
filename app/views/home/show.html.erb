@@ -9,12 +9,12 @@
     <div class="col-12 col-lg-7">
       <div class="align-items-start justify-content-between row">
         <div class="col-auto">
-          <h2 class="font-weight-bold h3 mb-0">
+          <h2 class="fw-bold h3 mb-0">
             <%= t "noun.timeline" %>
           </h2>
         </div>
 
-        <div class="col text-right">
+        <div class="col text-end">
           <div class="c-timeline-mode-switcher">
             <%= form_with html: { class: "d-inline", method: :patch }, local: true, url: timeline_mode_path do %>
               <%= hidden_field_tag "setting[timeline_mode]", "following", id: :setting_timeline_mode_following %>
@@ -53,14 +53,14 @@
         <% if @userland_projects.present? %>
           <div class="align-items-start justify-content-between mb-3 row">
             <div class="col-auto">
-              <h2 class="font-weight-bold h3 mb-0">
+              <h2 class="fw-bold h3 mb-0">
                 Userland
               </h2>
             </div>
 
-            <div class="col text-right">
+            <div class="col text-end">
               <%= link_to userland_root_path, class: "small" do %>
-                <%= icon "angle-right", class: "mr-1" %>
+                <%= icon "angle-right", class: "me-1" %>
                 <%= t "verb.view_all" %>
               <% end %>
             </div>
@@ -95,14 +95,14 @@
         <% if @forum_posts.present? %>
           <div class="align-items-start justify-content-between row">
             <div class="col-auto">
-              <h2 class="font-weight-bold h3 mb-3">
+              <h2 class="fw-bold h3 mb-3">
                 <%= t "resources.forum_category.site_news" %>
               </h2>
             </div>
 
-            <div class="col text-right">
+            <div class="col text-end">
               <%= link_to forum_category_path(:site_news), class: "small" do %>
-                <%= icon "angle-right", class: "mr-1" %>
+                <%= icon "angle-right", class: "me-1" %>
                 <%= t "messages.forum._common.view_all_site_news" %>
               <% end %>
             </div>

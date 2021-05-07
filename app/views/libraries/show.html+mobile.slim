@@ -19,7 +19,7 @@
 
 - if @seasons.present?
   .text-center.mb-3
-    = render ShareToTwitterButtonComponent.new(text: title, url: "#{local_url}#{library_path(@user.username, params[:status_kind])}", class_name: "mr-2")
+    = render ShareToTwitterButtonComponent.new(text: title, url: "#{local_url}#{library_path(@user.username, params[:status_kind])}", class_name: "me-2")
     = render ShareToFacebookButtonComponent.new(url: "#{local_url}#{library_path(@user.username, params[:status_kind])}")
   .mb-3
     - @seasons.each_with_index do |season, i|
@@ -27,9 +27,9 @@
         .container.mb-3
           .row.align-items-center
             .col-4
-              h3.h4.font-weight-bold.mb-0
+              h3.h4.fw-bold.mb-0
                 = season.local_name
-            .col-8.text-right
+            .col-8.text-end
               - if i == 0
                 = render "display_option_buttons", display_option: @display_option
         - works = season.no_season? ? @works.with_no_season : @works.by_season(season.slug)

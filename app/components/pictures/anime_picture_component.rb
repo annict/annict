@@ -22,7 +22,7 @@ module Pictures
           h.tag :source, type: "image/jpeg", srcset: srcset(@mb_height, @mb_width, "jpg")
           h.tag :img, {
             alt: @alt,
-            class: "img-fluid img-thumbnail #{@class_name}",
+            class: "img-thumbnail #{@class_name}",
             height: @height,
             loading: "lazy",
             src: @anime.processed_image_url(height: @height, width: @width, format: "jpg"),

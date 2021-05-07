@@ -6,7 +6,7 @@
     .col
       h1.h2.mb-0
         = @category.local_name
-    .col.text-right
+    .col.text-end
       = link_to new_forum_post_path(category: @category.slug), class: "btn btn-primary" do
         = icon "plus"
         = t "resources.forum_post.new"

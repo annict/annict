@@ -1,6 +1,6 @@
 = form_for application, url: doorkeeper_submit_path(application) do |f|
   = render "application/components/error_panel", resource: application
-  
+
   = hidden_field_tag :page_category, page_category
 
   .form-group.row
@@ -25,5 +25,5 @@
       = doorkeeper_errors_for application, :scopes
 
   .form-group.row.mb-0
-    .col-10.ml-auto
+    .col-10.ms-auto
       = f.submit class: "btn btn-primary"

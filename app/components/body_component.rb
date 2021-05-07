@@ -27,7 +27,7 @@ class BodyComponent < ApplicationComponent
           data_body_target: "readMoreButton",
           data_action: "click->body#readMore" do
           h.tag :div, class: "c-body__read-more-content small u-fake-link w-100" do
-            h.tag :i, class: "fal fa-chevron-double-down mr-1"
+            h.tag :i, class: "fal fa-chevron-double-down me-1"
             h.text t("messages._components.body.view_full_text")
           end
         end

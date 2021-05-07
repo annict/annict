@@ -7,7 +7,7 @@ describe "GET /", type: :request do
         get "/"
 
         expect(response.status).to eq(200)
-        expect(response.body).to include("The platform for anime addicts.")
+        expect(response.body).to include("A platform for anime addicts.")
         expect(response.body).to include("アニメはありません")
       end
     end
@@ -19,7 +19,7 @@ describe "GET /", type: :request do
         get "/"
 
         expect(response.status).to eq(200)
-        expect(response.body).to include("The platform for anime addicts.")
+        expect(response.body).to include("A platform for anime addicts.")
         expect(response.body).to include(work.title)
       end
     end

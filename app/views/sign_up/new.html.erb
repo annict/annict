@@ -40,14 +40,14 @@
             <%= RecaptchaInputComponent.new(self, recaptcha: @recaptcha).render %>
           <% end %>
 
-          <div class="form-group">
-            <%= f.label :email %>
+          <div class="mb-3">
+            <%= f.label :email, class: "form-label" %>
             <%= f.email_field :email, autofocus: true, class: "form-control", placeholder: "hello@annict.com", required: true, tabindex: 1 %>
           </div>
 
           <div class="text-center">
             <%= f.button class: "btn btn-primary", data: { "forms--basic-form-target": "submitButton" }, tabindex: 2, type: :submit do %>
-              <i class="far fa-rocket mr-1"></i>
+              <i class="far fa-rocket me-1"></i>
               <%= t "verb.send" %>
             <% end %>
           </div>

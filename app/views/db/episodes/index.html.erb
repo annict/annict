@@ -11,7 +11,7 @@
     </h1>
 
     <% if policy(Episode).create? %>
-      <div class="text-right">
+      <div class="text-end">
         <%= link_to db_new_episode_path(@work), class: "btn btn-outline-primary" do %>
           <%= icon "plus" %>
           <%= t "resources._common.new" %>

@@ -3,7 +3,7 @@
     .px-3
       | Twitter
   .col
-    .px-3.text-right
+    .px-3.text-end
       - if current_user.authorized_to?(:twitter)
         - if current_user.encrypted_password? || current_user.authorized_to?(:facebook)
           = link_to t("noun.disconnect"), provider_path(current_user.twitter), class: "btn btn-sm btn-link w-100", data: { method: :delete, confirm: t("messages._common.are_you_sure") }
@@ -19,7 +19,7 @@
     .px-3
       | Facebook
   .col
-    .px-3.text-right
+    .px-3.text-end
       - if current_user.authorized_to?(:facebook)
         - if current_user.encrypted_password? || current_user.authorized_to?(:twitter)
           = link_to t("noun.disconnect"), provider_path(current_user.facebook), class: "btn btn-sm btn-link w-100", data: { method: :delete, confirm: t("messages._common.are_you_sure") }

@@ -23,12 +23,12 @@
       <%= link_to(
         t("noun.all"),
         db_new_slot_path(program_ids: @programs.pluck(:id).join(",")),
-        class: "btn btn-sm mb-2 mr-2 #{params[:program_id] == 'all' ? 'btn-secondary' : 'btn-outline-secondary'}"
+        class: "btn btn-sm mb-2 me-2 #{params[:program_id] == 'all' ? 'btn-secondary' : 'btn-outline-secondary'}"
       ) %>
       <% @programs.each do |p| %>
         <%= link_to(
           db_new_slot_path(program_ids: p.id),
-          class: "btn btn-sm mb-2 mr-2 #{p.id.to_s == params[:program_id] ? 'btn-secondary' : 'btn-outline-secondary'}"
+          class: "btn btn-sm mb-2 me-2 #{p.id.to_s == params[:program_id] ? 'btn-secondary' : 'btn-outline-secondary'}"
         ) do %>
           <%= p.channel_name %> (<%= p.id %>)
           <br>

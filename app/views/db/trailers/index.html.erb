@@ -11,7 +11,7 @@
     </h1>
 
     <% if policy(Trailer).create? %>
-      <div class="text-right">
+      <div class="text-end">
         <%= link_to db_new_trailer_path(@work), class: "btn btn-outline-primary" do %>
           <%= icon "plus" %>
           <%= t "resources._common.new" %>
@@ -63,7 +63,7 @@
               </td>
               <td>
                 <% if trailer.youtube? %>
-                  <span class="mr-1">
+                  <span class="me-1">
                     YouTube:
                   </span>
                   <%= link_to trailer.youtube_video_id, trailer.url, target: "_blank", rel: "noopener" %>
