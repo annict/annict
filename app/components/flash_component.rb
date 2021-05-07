@@ -13,11 +13,11 @@ class FlashComponent < ApplicationComponent
         data_controller: "flash",
         data_flash_type: flash_type,
         data_flash_message: @flash[flash_type] do
-        h.tag :div, class: "alert alert-dismissible align-items-center border-0 d-flex mb-0 rounded-0" do
+        h.tag :div, class: "alert align-items-center border-0 d-flex mb-0 rounded-0" do
           h.tag :span, class: "c-flash__alert-icon h2 mb-0 me-2"
-          h.tag :span, class: "c-flash__message"
+          h.tag :span, class: "c-flash__message flex-grow-1"
 
-          h.tag :button, aria_label: "Close", class: "btn-close", data_dismiss: "alert", type: "button"
+          h.tag :i, class: "far fa-times u-cursor-pointer", data_action: "click->flash#close"
         end
       end
     end

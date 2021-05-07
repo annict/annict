@@ -34,6 +34,10 @@ export default class extends Controller {
     }
   }
 
+  close() {
+    this.element.classList.add('d-none');
+  }
+
   get alertClass() {
     switch (this.type) {
       case 'alert':
