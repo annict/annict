@@ -90,7 +90,7 @@ module Sidebars
 
                   h.tag :div do
                     if current_user && current_user.notifications_count > 0
-                      h.tag :span, class: "badge badge-pill badge-primary" do
+                      h.tag :span, class: "badge badge-pill bg-danger" do
                         h.text current_user.notifications_count
                       end
                     end
