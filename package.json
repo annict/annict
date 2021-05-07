@@ -60,7 +60,7 @@
     "node-sass": "latest",
     "postcss-loader": "^3.0.0",
     "precss": "latest",
-    "prettier": "^2.1.1",
+    "prettier": "^2.2.1",
     "prettier-eslint": "^12.0.0",
     "sass-lint": "latest",
     "sass-loader": "^10.0.1",
