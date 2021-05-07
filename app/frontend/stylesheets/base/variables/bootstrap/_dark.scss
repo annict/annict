@@ -1,4 +1,5 @@
 $bs-green: map-get($ann-color-green-map, "040");
+$bs-link-color: map-get($ann-color-blue-map, "020");
 $bs-white: #FFFFFF;
 
 @mixin bs-dark-variables {
@@ -15,7 +16,8 @@ $bs-white: #FFFFFF;
     "green":                                  $bs-green,
     "hr-color":                               $ann-color-dark-border,
     "input-plaintext-color":                  $ann-color-dark-body,
-    "link-color":                             map-get($ann-color-blue-map, "020"),
+    "link-color":                             $bs-link-color,
+    "link-hover-color":                       shift-color($bs-link-color, $link-shade-percentage),
     "red":                                    map-get($ann-color-red-map, "040"),
     "text-muted":                             map-get($ann-color-black-map, "020"),
     "thumbnail-bg":                           map-get($ann-color-black-map, "060"),

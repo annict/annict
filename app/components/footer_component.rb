@@ -29,7 +29,7 @@ class FooterComponent < ApplicationComponent
             end
 
             h.tag :div, class: "col-12 col-sm-3 mb-3 mb-sm-0" do
-              h.tag :h6, class: "font-weight-bold h4 mb-3" do
+              h.tag :h6, class: "fw-bold h4 mb-3" do
                 h.text t("noun.services")
               end
 
@@ -45,7 +45,7 @@ class FooterComponent < ApplicationComponent
             end
 
             h.tag :div, class: "col-12 col-sm-3 mb-3 mb-sm-0" do
-              h.tag :h6, class: "font-weight-bold h4 mb-3" do
+              h.tag :h6, class: "fw-bold h4 mb-3" do
                 h.text t("noun.contents")
               end
 
@@ -63,7 +63,7 @@ class FooterComponent < ApplicationComponent
             end
 
             h.tag :div, class: "col-12 col-sm-3" do
-              h.tag :h6, class: "font-weight-bold h4 mb-3" do
+              h.tag :h6, class: "fw-bold h4 mb-3" do
                 h.text t("noun.seasonal_anime")
               end
 
@@ -85,7 +85,7 @@ class FooterComponent < ApplicationComponent
           h.tag :div, class: "container-fluid py-2" do
             h.tag :div, class: "align-items-center row" do
               h.tag :div, class: "col-6" do
-                h.tag :h4, class: "d-inline-block font-weight-bold mb-0 mr-2 small" do
+                h.tag :h4, class: "d-inline-block fw-bold mb-0 me-2 small" do
                   h.text "#{t("noun.language")}:"
                 end
 
@@ -103,9 +103,9 @@ class FooterComponent < ApplicationComponent
                 end
               end
 
-              h.tag :div, class: "col-6 text-right" do
+              h.tag :div, class: "col-6 text-end" do
                 h.tag :div, class: "c-footer__copyright small" do
-                  h.tag :i, class: "fal fa-copyright mr-1"
+                  h.tag :i, class: "fal fa-copyright me-1"
                   h.text "2014-2021 Annict"
                 end
               end

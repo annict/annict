@@ -22,7 +22,7 @@ module Cards
               alt: @anime.local_title
             ).render
 
-            h.tag :h5, class: "font-weight-bold mb-0 mt-2 text-truncate" do
+            h.tag :h5, class: "fw-bold mb-0 mt-2 text-truncate" do
               h.text @anime.local_title
             end
           end

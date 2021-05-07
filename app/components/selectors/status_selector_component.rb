@@ -20,7 +20,7 @@ module Selectors
           data_status_selector_target: "kind"
         } do
           h.tag :select, {
-            class: "custom-select",
+            class: "form-select",
             data_action: "status-selector#change"
           } do
             status_options.each do |status_option|
