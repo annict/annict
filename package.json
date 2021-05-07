@@ -25,7 +25,7 @@
     "cal-heatmap": "latest",
     "choices.js": "latest",
     "core-js": "^3.11.2",
-    "d3": "^6.0.0",
+    "d3": "^6.7.0",
     "d3-selection": "^2.0.0",
     "dayjs": "^1.10.4",
     "jquery": "latest",
