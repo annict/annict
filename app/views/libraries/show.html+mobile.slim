@@ -29,7 +29,7 @@
             .col-4
               h3.h4.fw-bold.mb-0
                 = season.local_name
-            .col-8.text-right
+            .col-8.text-end
               - if i == 0
                 = render "display_option_buttons", display_option: @display_option
         - works = season.no_season? ? @works.with_no_season : @works.by_season(season.slug)

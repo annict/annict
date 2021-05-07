@@ -24,7 +24,7 @@
           - else
             = render "application/components/empty", text: t("messages._empty.no_projects")
     .col-4.mt-3
-      .text-right.mb-3
+      .text-end.mb-3
         = link_to new_userland_project_path, class: "btn btn-primary" do
           = icon "plus", class: "me-1"
           = t "resources.userland_project.new"

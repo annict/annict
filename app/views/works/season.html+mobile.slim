@@ -19,14 +19,14 @@ h1.h2.text-center.my-3
         - @seasons.each do |season|
           = link_to season.local_name, season_works_path(slug: season.slug, display: params[:display]), class: "dropdown-item"
     - if @next_season.present?
-      = link_to season_works_path(slug: @next_season.slug, display: params[:display]), class: "ml-3" do
+      = link_to season_works_path(slug: @next_season.slug, display: params[:display]), class: "ms-3" do
         = @next_season.local_name
-        = icon "angle-right", class: "ml-2"
+        = icon "angle-right", class: "ms-2"
   .row.align-items-center.mb-3
     .col.pr-0
       = render ShareToTwitterButtonComponent.new(text: title, url: "#{local_url}#{season_works_path(slug: @season.slug)}", class_name: "me-2")
       = render ShareToFacebookButtonComponent.new(url: "#{local_url}#{season_works_path(slug: @season.slug)}")
-    .col.text-right
+    .col.text-end
       = render "display_option_buttons", display_option: @display_option
 
 = render "works/display_options/#{@display_option}", works: @works

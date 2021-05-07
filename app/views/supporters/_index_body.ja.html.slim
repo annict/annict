@@ -67,16 +67,16 @@ p.mb-0
       | サポータープログラムへのご参加ありがとうございます！サポーターとしてAnnictにログインしています。
 
     dl.row.mb-0
-      dt.col-6.text-right
+      dt.col-6.text-end
         | Gumroad ID
       dd.col-6
         = current_user.gumroad_subscriber.gumroad_id
-      dt.col-6.text-right
+      dt.col-6.text-end
         | 参加日時
       dd.col-6
         = display_time(current_user.gumroad_subscriber.gumroad_created_at)
       - if current_user.gumroad_subscriber.gumroad_cancelled_at.present?
-        dt.col-6.text-right
+        dt.col-6.text-end
           | キャンセル日時
         dd.col-6
           = display_time(current_user.gumroad_subscriber.gumroad_cancelled_at)

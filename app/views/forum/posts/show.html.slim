@@ -28,7 +28,7 @@
           = @post.body
 
         - if user_signed_in? && current_user == @post.user
-          .text-right
+          .text-end
             = link_to edit_forum_post_path(@post), class: "small" do
               = icon "pencil-alt", class: "me-1"
               = t "noun.edit"
@@ -52,7 +52,7 @@
                 = comment.body
 
               - if user_signed_in? && current_user == comment.user
-                .text-right
+                .text-end
                   = link_to edit_forum_post_comment_path(@post, comment), class: "small" do
                     = icon "pencil-alt", class: "me-1"
                     = t "noun.edit"

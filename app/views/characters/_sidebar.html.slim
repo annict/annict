@@ -75,7 +75,7 @@ h1.h2.fw-bold
             = ann_image_tag(character_favorite.user.profile, :image, size: "30x30", class: "rounded-circle", alt: character_favorite.user.name_with_username, title: character_favorite.user.name_with_username)
 
     - if character_favorites.length > 30
-      .text-right
+      .text-end
         = link_to t("verb.view_all"), character_fans_path(character)
 
 - if user_signed_in? && current_user.committer?

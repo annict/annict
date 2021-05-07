@@ -25,7 +25,7 @@
                     = link_to anime_path(anime_id: work.id) do
                       = ann_image_tag work.work_image, :image, size: "250x", ratio: "3:4", class: "img-fluid img-thumbnail rounded"
                     - if work.work_image.present?
-                      .u-very-small.text-right
+                      .u-very-small.text-end
                         = work.work_image.asin_or_copyright_text
                     - if !user_signed_in? || current_user.id == @user.id
                       .mt-2
@@ -38,7 +38,7 @@
                   c-work-comment.p-2.mt-2.mb-0 :work-id="#{work.id}" init-comment="#{comment.present? ? comment.body : ''}"
           .row.mt-3
             .col
-              .text-right
+              .text-end
                 = render ShareToTwitterButtonComponent.new(text: title, url: "#{local_url}#{user_work_tag_path(@user.username, @tag.name)}", class_name: "me-2")
                 = render ShareToFacebookButtonComponent.new(url: "#{local_url}#{user_work_tag_path(@user.username, @tag.name)}")
     .col-4

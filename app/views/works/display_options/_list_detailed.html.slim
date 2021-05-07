@@ -27,7 +27,7 @@
         .mb-3
           = render BodyComponent.new(height: 250) do
             = sanitize(work.local_synopsis(raw: true))
-          .small.mt-2.text-right
+          .small.mt-2.text-end
             span.me-1
               = t "noun.source"
               | :

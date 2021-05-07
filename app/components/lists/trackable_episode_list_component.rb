@@ -27,7 +27,7 @@ module Lists
                       end
                   end
 
-                  h.tag :div, class: "col text-right" do
+                  h.tag :div, class: "col text-end" do
                     if le.program
                       if le.program.vod_title_url.present?
                         h.tag :a, href: le.program.vod_title_url, class: "text-body", rel: "noopener", target: "_blank" do
@@ -70,7 +70,7 @@ module Lists
                         started_at = @slots.filter { |slot| slot.program_id == le.program.id && slot.episode_id == episode.id }.first&.started_at
 
                         if started_at
-                          h.tag :div, class: "col text-right" do
+                          h.tag :div, class: "col text-end" do
                             h.tag :span, class: "small text-muted" do
                               h.html display_time(started_at)
                             end

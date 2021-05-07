@@ -71,16 +71,16 @@ p.mb-0
       |  You're logged into Annict as a supporter.
 
     dl.row.mb-0
-      dt.col-6.text-right
+      dt.col-6.text-end
         | Gumroad ID
       dd.col-6
         = current_user.gumroad_subscriber.gumroad_id
-      dt.col-6.text-right
+      dt.col-6.text-end
         | Joined at
       dd.col-6
         = display_time(current_user.gumroad_subscriber.gumroad_created_at)
       - if current_user.gumroad_subscriber.gumroad_cancelled_at.present?
-        dt.col-6.text-right
+        dt.col-6.text-end
           | Canceled at
         dd.col-6
           = display_time(current_user.gumroad_subscriber.gumroad_cancelled_at)

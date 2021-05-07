@@ -31,7 +31,7 @@
         c-work-comment.p-2.mt-2.mb-0 :work-id="#{work.id}" init-comment="#{comment.present? ? comment.body : ''}"
     .row.mt-3
       .col
-        .text-right
+        .text-end
           = render ShareToTwitterButtonComponent.new(text: title, url: "#{local_url}#{user_work_tag_path(@user.username, @tag.name)}", class_name: "me-2")
           = render ShareToFacebookButtonComponent.new(url: "#{local_url}#{user_work_tag_path(@user.username, @tag.name)}")
 

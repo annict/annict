@@ -17,9 +17,9 @@ h2.h4.fw-bold.text-center.mt-3.mb-4
 .c-card.py-3.mb-3
   .container
     dl.row.mb-0
-      dt.col-6.text-right = t "noun.category"
+      dt.col-6.text-end = t "noun.category"
       dd.col-6 = @project.userland_category.local_name
-      dt.col-6.text-right = t "activerecord.attributes.userland_project.url"
+      dt.col-6.text-end = t "activerecord.attributes.userland_project.url"
       dd.col-6 = link_with_domain @project.url
 
 h2.h4.fw-bold.text-center.mt-3.mb-4

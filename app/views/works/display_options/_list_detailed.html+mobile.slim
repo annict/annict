@@ -9,7 +9,7 @@
           = link_to anime_path(anime_id: work.id), class: "d-inline-block" do
             = render WorkImageComponent.new(image_url_1x: ann_image_url(work.work_image, :image, size: "250x"), image_url_2x: ann_image_url(work.work_image, :image, size: "500x"))
           - if work.work_image.present?
-            .u-very-small.text-right
+            .u-very-small.text-end
               = work.work_image.asin_or_copyright_text
         .col-8
           .mb-1.u-lh-0
@@ -27,7 +27,7 @@
         .mb-3
           = render BodyComponent.new(height: 250) do
             = sanitize(work.local_synopsis(raw: true))
-          .small.mt-2.text-right
+          .small.mt-2.text-end
             span.me-1
               = t "noun.source"
               | :
