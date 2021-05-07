@@ -6,7 +6,7 @@
     .col
       h1 = @application.name
     .col.text-right
-      = link_to t("noun.edit"), edit_oauth_application_path(@application), class: "btn btn-secondary mr-2"
+      = link_to t("noun.edit"), edit_oauth_application_path(@application), class: "btn btn-secondary me-2"
       = link_to t("noun.delete"), oauth_application_path(@application), class: "btn btn-danger", data: { method: :delete, confirm: t("messages._common.are_you_sure") }
 
   dl

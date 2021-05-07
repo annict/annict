@@ -20,7 +20,7 @@ module Buttons
           data_share_to_twitter_button_hashtags: @hashtags do
             h.tag :span, class: "btn btn-sm u-btn-twitter", data_action: "click->share-to-twitter-button#open" do
               h.tag :div, class: "small" do
-                h.tag :i, class: "fab fa-twitter mr-1"
+                h.tag :i, class: "fab fa-twitter me-1"
                 h.text t("noun.tweet")
               end
             end

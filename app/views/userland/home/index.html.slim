@@ -5,7 +5,7 @@
   .row
     .col-8
       - @categories.each do |category|
-        h2.h4.text-center.my-4.font-weight-bold
+        h2.h4.text-center.my-4.fw-bold
           = category.local_name
         .c-card
           - projects = localable_resources(category.userland_projects)
@@ -26,7 +26,7 @@
     .col-4.mt-3
       .text-right.mb-3
         = link_to new_userland_project_path, class: "btn btn-primary" do
-          = icon "plus", class: "mr-1"
+          = icon "plus", class: "me-1"
           = t "resources.userland_project.new"
       .alert.alert-info
         h2.h3.alert-heading

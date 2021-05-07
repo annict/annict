@@ -6,7 +6,7 @@
 .c-card.mb-3
   = render "people/header", person: @person, favorite_resources: @person_favorites
 
-h2.h4.font-weight-bold.text-center.mt-3.mb-4
+h2.h4.fw-bold.text-center.mt-3.mb-4
   = t "noun.information"
 .c-card.py-3.mb-3
   .container
@@ -44,7 +44,7 @@ h2.h4.font-weight-bold.text-center.mt-3.mb-4
         dt.col-6.text-right = t "activerecord.attributes.person.wikipedia"
         dd.col-6 = link_with_domain @person.wikipedia_url
 
-h2.h4.text-center.font-weight-bold.mt-3.mb-4
+h2.h4.text-center.fw-bold.mt-3.mb-4
   = t "noun.works"
 .c-card.p-3.mb-3
   - if @person.voice_actor?

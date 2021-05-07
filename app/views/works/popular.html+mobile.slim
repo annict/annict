@@ -9,7 +9,7 @@ h1.h2.text-center.my-3
 .px-3
   .row.align-items-center.mb-3
     .col.pr-0
-      = render ShareToTwitterButtonComponent.new(text: title, url: "#{local_url}#{popular_works_path}", class_name: "mr-2")
+      = render ShareToTwitterButtonComponent.new(text: title, url: "#{local_url}#{popular_works_path}", class_name: "me-2")
       = render ShareToFacebookButtonComponent.new(url: "#{local_url}#{popular_works_path}")
     .col.text-right
       = render "display_option_buttons", display_option: @display_option

@@ -1,6 +1,6 @@
 .container.py-3.mb-3
   .text-center
-    h1.h2.font-weight-bold
+    h1.h2.fw-bold
       = link_to @character.local_name, character_path(@character), class: "u-text-body"
     span.badge.u-badge-characters
       = t "noun.character"
@@ -8,7 +8,7 @@
   .mt-3.text-center
     c-favorite-button resource-type="Character" :resource-id="#{@character.id}" :init-is-favorited="#{user_signed_in? && current_user.favorite?(@character)}" :is-signed-in="#{user_signed_in?}"
     .u-very-small.text-muted.mt-2.text-center
-      = icon "info-circle", class: "mr-1"
+      = icon "info-circle", class: "me-1"
       = t "messages._components.favorite_button.hint", resource_type: t("noun.character").downcase
 
 .container

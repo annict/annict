@@ -6,8 +6,8 @@
     h1.h2
       = link_to t("messages.user_work_tags.anime_list_tagged", tag_name: @tag.name), user_work_tag_path(@user.username, @tag.name), class: "u-text-body"
     .small
-      span.mr-1 by
-      = link_to @user.profile.name, profile_path(username: @user.username), class: "mr-1"
+      span.me-1 by
+      = link_to @user.profile.name, profile_path(username: @user.username), class: "me-1"
       | (
       = link_to "@#{@user.username}", profile_path(username: @user.username)
       | )
@@ -21,7 +21,7 @@
         - if work.work_image.present?
           .u-very-small.text-muted
             = work.work_image.asin_or_copyright_text
-        h3.h3.font-weight-bold.my-2
+        h3.h3.fw-bold.my-2
           = link_to work.local_title, anime_path(anime_id: work.id)
         - if !user_signed_in? || current_user.id == @user.id
           .mt-2
@@ -32,7 +32,7 @@
     .row.mt-3
       .col
         .text-right
-          = render ShareToTwitterButtonComponent.new(text: title, url: "#{local_url}#{user_work_tag_path(@user.username, @tag.name)}", class_name: "mr-2")
+          = render ShareToTwitterButtonComponent.new(text: title, url: "#{local_url}#{user_work_tag_path(@user.username, @tag.name)}", class_name: "me-2")
           = render ShareToFacebookButtonComponent.new(url: "#{local_url}#{user_work_tag_path(@user.username, @tag.name)}")
 
 c-impression-button-modal

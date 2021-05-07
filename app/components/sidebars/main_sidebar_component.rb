@@ -25,7 +25,7 @@ module Sidebars
                   end
 
                   h.tag :div, class: "col-auto" do
-                    h.tag :div, class: "font-weight-bold u-text-body" do
+                    h.tag :div, class: "fw-bold u-text-body" do
                       h.text current_user.profile.name
                     end
 
@@ -36,7 +36,7 @@ module Sidebars
                 end
               else
                 h.tag :a, href: view_context.sign_in_path, class: "d-flex justify-content-between py-2" do
-                  h.tag :div, class: "c-main-sidebar__icon mr-1 text-center text-muted" do
+                  h.tag :div, class: "c-main-sidebar__icon me-1 text-center text-muted" do
                     h.tag :i, class: "far fa-sign-in"
                   end
 
@@ -56,7 +56,7 @@ module Sidebars
             h.tag :ul, class: "list-unstyled px-3" do
               h.tag :li do
                 h.tag :a, href: view_context.root_path, class: "d-flex justify-content-between py-2" do
-                  h.tag :div, class: "c-main-sidebar__icon mr-1 text-center text-muted" do
+                  h.tag :div, class: "c-main-sidebar__icon me-1 text-center text-muted" do
                     h.tag :i, class: "far fa-home"
                   end
 
@@ -68,7 +68,7 @@ module Sidebars
 
               h.tag :li do
                 h.tag :a, href: current_user ? view_context.profile_path(current_user.username) : view_context.sign_in_path, class: "d-flex justify-content-between py-2" do
-                  h.tag :div, class: "c-main-sidebar__icon mr-1 text-center text-muted" do
+                  h.tag :div, class: "c-main-sidebar__icon me-1 text-center text-muted" do
                     h.tag :i, class: "far fa-user"
                   end
 
@@ -80,7 +80,7 @@ module Sidebars
 
               h.tag :li do
                 h.tag :a, href: view_context.notifications_path, class: "d-flex justify-content-between py-2" do
-                  h.tag :div, class: "c-main-sidebar__icon mr-1 text-center text-muted" do
+                  h.tag :div, class: "c-main-sidebar__icon me-1 text-center text-muted" do
                     h.tag :i, class: "far fa-bell"
                   end
 
@@ -100,7 +100,7 @@ module Sidebars
 
               h.tag :li do
                 h.tag :a, href: "/track", class: "d-flex justify-content-between py-2" do
-                  h.tag :div, class: "c-main-sidebar__icon mr-1 text-center text-muted" do
+                  h.tag :div, class: "c-main-sidebar__icon me-1 text-center text-muted" do
                     h.tag :i, class: "far fa-tasks"
                   end
 
@@ -111,7 +111,7 @@ module Sidebars
               end
             end
 
-            h.tag :div, class: "font-weight-bold mb-3 px-3 small text-secondary" do
+            h.tag :div, class: "fw-bold mb-3 px-3 small text-secondary" do
               h.text t("noun.library")
             end
 
@@ -125,7 +125,7 @@ module Sidebars
               ].each do |status_kind, icon_name, link_text|
                 h.tag :li do
                   h.tag :a, href: current_user ? view_context.library_path(username: current_user.username, status_kind: status_kind) : view_context.sign_in_path, class: "d-flex justify-content-between py-2" do
-                    h.tag :div, class: "c-main-sidebar__icon mr-1 text-center text-muted" do
+                    h.tag :div, class: "c-main-sidebar__icon me-1 text-center text-muted" do
                       h.tag :i, class: "far fa-#{icon_name}"
                     end
 
@@ -137,7 +137,7 @@ module Sidebars
               end
             end
 
-            h.tag :div, class: "font-weight-bold mb-3 px-3 small text-secondary" do
+            h.tag :div, class: "fw-bold mb-3 px-3 small text-secondary" do
               h.text t("verb.explore")
             end
 
@@ -151,7 +151,7 @@ module Sidebars
               ].each do |page_type, icon_name, link_text|
                 h.tag :li do
                   h.tag :a, href: "/works/#{page_type}", class: "d-flex justify-content-between py-2" do
-                    h.tag :div, class: "c-main-sidebar__icon mr-1 text-center text-muted" do
+                    h.tag :div, class: "c-main-sidebar__icon me-1 text-center text-muted" do
                       h.tag :i, class: "far fa-#{icon_name}"
                     end
 
@@ -163,7 +163,7 @@ module Sidebars
               end
             end
 
-            h.tag :div, class: "font-weight-bold mb-3 px-3 small text-secondary" do
+            h.tag :div, class: "fw-bold mb-3 px-3 small text-secondary" do
               h.text "Misc"
             end
 
@@ -176,7 +176,7 @@ module Sidebars
               ].each do |link_path, icon_name, link_text|
                 h.tag :li do
                   h.tag :a, href: link_path, class: "d-flex justify-content-between py-2" do
-                    h.tag :div, class: "c-main-sidebar__icon mr-1 text-center text-muted" do
+                    h.tag :div, class: "c-main-sidebar__icon me-1 text-center text-muted" do
                       h.tag :i, class: "far fa-#{icon_name}"
                     end
 
@@ -188,7 +188,7 @@ module Sidebars
               end
             end
 
-            h.tag :div, class: "font-weight-bold mb-3 px-3 small text-secondary" do
+            h.tag :div, class: "fw-bold mb-3 px-3 small text-secondary" do
               h.text t("noun.services")
             end
 
@@ -201,7 +201,7 @@ module Sidebars
               ].each do |link_path, icon_name, link_text|
                 h.tag :li do
                   h.tag :a, href: link_path, class: "d-flex justify-content-between py-2" do
-                    h.tag :div, class: "c-main-sidebar__icon mr-1 text-center text-muted" do
+                    h.tag :div, class: "c-main-sidebar__icon me-1 text-center text-muted" do
                       h.tag :i, class: "far fa-#{icon_name}"
                     end
 
@@ -214,7 +214,7 @@ module Sidebars
 
               h.tag :li do
                 h.tag :a, href: "https://developers.annict.jp", class: "d-flex justify-content-between py-2", rel: "noopener", target: "_blank" do
-                  h.tag :div, class: "c-main-sidebar__icon mr-1 text-center text-muted" do
+                  h.tag :div, class: "c-main-sidebar__icon me-1 text-center text-muted" do
                     h.tag :i, class: "far fa-code"
                   end
 
@@ -235,7 +235,7 @@ module Sidebars
                     class: "d-flex justify-content-between py-2",
                     data_confirm: t("messages._common.are_you_sure"),
                     data_method: :delete do
-                      h.tag :div, class: "c-main-sidebar__icon mr-1 text-center text-muted" do
+                      h.tag :div, class: "c-main-sidebar__icon me-1 text-center text-muted" do
                         h.tag :i, class: "far fa-sign-out"
                       end
 

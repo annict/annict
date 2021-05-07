@@ -3,12 +3,12 @@
 
 = render "settings/subnav"
 
-h2.h4.text-center.my-4.font-weight-bold = t "noun.applications"
+h2.h4.text-center.my-4.fw-bold = t "noun.applications"
 .c-card.u-mw-600.mx-auto.mb-4
   .px-3
     = render "settings/apps/app_list", apps: @apps
 
-h2.h4.text-center.mt-4.font-weight-bold = t "noun.personal_access_tokens"
+h2.h4.text-center.mt-4.fw-bold = t "noun.personal_access_tokens"
 .u-mw-600.mx-auto
   .text-right
     = link_to new_settings_token_path, class: "btn btn-primary btn-sm" do

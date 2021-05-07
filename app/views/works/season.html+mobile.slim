@@ -9,13 +9,13 @@ h1.h2.text-center.my-3
 .px-3
   .text-center.mb-3
     - if @prev_season.present?
-      = link_to season_works_path(slug: @prev_season.slug, display: params[:display]), class: "mr-3" do
-        = icon "angle-left", class: "mr-2"
+      = link_to season_works_path(slug: @prev_season.slug, display: params[:display]), class: "me-3" do
+        = icon "angle-left", class: "me-2"
         = @prev_season.local_name
     .dropdown.d-inline-block
       a.dropdown-toggle href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"
         = @season.local_name
-      .dropdown-menu.pre-scrollable.mr-3
+      .dropdown-menu.pre-scrollable.me-3
         - @seasons.each do |season|
           = link_to season.local_name, season_works_path(slug: season.slug, display: params[:display]), class: "dropdown-item"
     - if @next_season.present?
@@ -24,7 +24,7 @@ h1.h2.text-center.my-3
         = icon "angle-right", class: "ml-2"
   .row.align-items-center.mb-3
     .col.pr-0
-      = render ShareToTwitterButtonComponent.new(text: title, url: "#{local_url}#{season_works_path(slug: @season.slug)}", class_name: "mr-2")
+      = render ShareToTwitterButtonComponent.new(text: title, url: "#{local_url}#{season_works_path(slug: @season.slug)}", class_name: "me-2")
       = render ShareToFacebookButtonComponent.new(url: "#{local_url}#{season_works_path(slug: @season.slug)}")
     .col.text-right
       = render "display_option_buttons", display_option: @display_option

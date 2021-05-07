@@ -12,7 +12,7 @@
         <%= render ShareToTwitterButtonComponent.new(
           text: title,
           url: "#{local_url}#{profile_path(@user_entity.username)}",
-          class_name: "mr-2"
+          class_name: "me-2"
         ) %>
 
         <%= render ShareToFacebookButtonComponent.new(
@@ -37,7 +37,7 @@
       </div>
 
       <div class="mb-5">
-        <h2 class="font-weight-bold h3 mb-3">
+        <h2 class="fw-bold h3 mb-3">
           <%= t "noun.your_statistics" %>
         </h2>
 
@@ -68,7 +68,7 @@
       <% if @user_entity.character_favorites.present? %>
         <div class="mb-3">
           <div class="align-items-center mb-3 row">
-            <h2 class="col font-weight-bold h3 mb-0">
+            <h2 class="col fw-bold h3 mb-0">
               <%= t("noun.favorite_characters") %>
             </h2>
 
@@ -105,7 +105,7 @@
         <% if resource_favorites.present? %>
           <div class="mb-3">
             <div class="align-items-center mb-3 row">
-              <h2 class="col font-weight-bold h3 mb-0">
+              <h2 class="col fw-bold h3 mb-0">
                 <%= title %>
               </h2>
 

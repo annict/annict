@@ -10,12 +10,12 @@ p
 p
   | サポーターになると以下の特典が得られます。
 
-h2.h4.text-center.my-5.font-weight-bold
+h2.h4.text-center.my-5.fw-bold
   | 特典
 
 .row.mb-3
   .col-6.offset-3
-    h3.h4.font-weight-bold
+    h3.h4.fw-bold
       | プロフィールページなどにサポーターバッジが表示されます
     p.mb-0
       | サポーターであることを示すバッジが表示されるようになります。
@@ -23,7 +23,7 @@ h2.h4.text-center.my-5.font-weight-bold
       small
         | (オプションで非表示にできます)
 
-h2.h4.text-center.my-5.font-weight-bold
+h2.h4.text-center.my-5.fw-bold
   | 価格とお支払い方法について
 
 p
@@ -41,7 +41,7 @@ p.mb-0
     = icon "shopping-cart"
     | Gumroadで支払う
 
-h2.h4.text-center.my-5.font-weight-bold
+h2.h4.text-center.my-5.fw-bold
   | Gumroadとの連携
 
 p.mb-0
@@ -59,7 +59,7 @@ p.mb-0
       | Gumroadと連携する
 
 - if user_signed_in?
-  h2.h4.text-center.my-5.font-weight-bold
+  h2.h4.text-center.my-5.fw-bold
     | サポーター情報
 
   - if current_user.supporter?

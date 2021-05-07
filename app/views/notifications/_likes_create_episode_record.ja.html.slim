@@ -3,13 +3,13 @@
 - episode = episode_record.episode
 - work = episode.work
 
-span.mr-1
+span.me-1
   = action_user.name_link
 | が
 span.mx-1
   = work.title_link
 - unless work.single?
-  span.mr-1
+  span.me-1
     = episode.number_link
 | への記録に「いいね！」しました
 

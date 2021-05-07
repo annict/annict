@@ -25,10 +25,10 @@
           .col-4
             - if i == 0
               .pl-3
-                = render ShareToTwitterButtonComponent.new(text: title, url: "#{local_url}#{library_path(@user.username, params[:status_kind])}", class_name: "mr-2")
+                = render ShareToTwitterButtonComponent.new(text: title, url: "#{local_url}#{library_path(@user.username, params[:status_kind])}", class_name: "me-2")
                 = render ShareToFacebookButtonComponent.new(url: "#{local_url}#{library_path(@user.username, params[:status_kind])}")
           .col-4.text-center
-            h2.h4.font-weight-bold.mb-0
+            h2.h4.fw-bold.mb-0
               = season.local_name
           .col-4.text-right
             - if i == 0

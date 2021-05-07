@@ -12,7 +12,7 @@ module ListGroups
     def render
       build_html do |h|
         h.tag :div, class: "mb-3" do
-          h.tag :h3, class: "font-weight-bold mb-3" do
+          h.tag :h3, class: "fw-bold mb-3" do
             h.text t("noun.my_records")
           end
 
@@ -24,7 +24,7 @@ module ListGroups
         h.tag :hr, class: "mb-5"
 
         h.tag :div, class: "mb-3" do
-          h.tag :h3, class: "font-weight-bold mb-3" do
+          h.tag :h3, class: "fw-bold mb-3" do
             h.text t("noun.following_records")
           end
 
@@ -36,7 +36,7 @@ module ListGroups
         h.tag :hr, class: "mb-5"
 
         h.tag :div, class: "mb-3" do
-          h.tag :h3, class: "font-weight-bold mb-3" do
+          h.tag :h3, class: "fw-bold mb-3" do
             h.text t("noun.other_comments")
           end
 
