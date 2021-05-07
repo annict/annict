@@ -50,7 +50,7 @@
     "@types/js-cookie": "latest",
     "@types/lodash": "^4.14.160",
     "@types/webpack-env": "latest",
-    "css-loader": "^4.2.2",
+    "css-loader": "^5.2.4",
     "eslint": "^7.25.0",
     "eslint-plugin-import": "^2.22.0",
     "file-loader": "latest",
