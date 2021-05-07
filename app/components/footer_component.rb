@@ -14,7 +14,7 @@ class FooterComponent < ApplicationComponent
               end
 
               h.tag :div, class: "c-footer__description mb-3 small" do
-                h.text "The platform for anime addicts."
+                h.text "A platform for anime addicts."
               end
 
               h.tag :div, class: "c-footer__social-links row" do
