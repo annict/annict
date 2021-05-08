@@ -19,6 +19,7 @@ describe "Api::V1::Works" do
           "id" => work.id,
           "title" => work.title,
           "title_kana" => work.title_kana,
+          "title_en" => work.title_en,
           "media" => "tv",
           "media_text" => "TV",
           "season_name" => "2017-winter",
