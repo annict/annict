@@ -89,6 +89,10 @@ class Status < ApplicationRecord
     work
   end
 
+  def kind_v3
+    self.class.kind_v2_to_v3(kind)
+  end
+
   def share_to_sns
     return if !user.setting.share_status_to_twitter? || !user.authorized_to?(:twitter, shareable: true)
 

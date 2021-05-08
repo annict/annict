@@ -157,7 +157,7 @@ ja:
       friends:
         index: 友達を探す
       home:
-        index: Annict
+        show: Annict
       legacy_sign_in:
         new: パスワードでログイン
       libraries:

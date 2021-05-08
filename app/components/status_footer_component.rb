@@ -10,11 +10,12 @@ class StatusFooterComponent < ApplicationComponent
   def render
     build_html do |h|
       h.tag :div, class: "c-status-footer" do
-        h.html LikeButtonComponent2.new(view_context,
+        h.html Buttons::LikeButtonComponent.new(view_context,
           resource_name: "Status",
           resource_id: @status.id,
           likes_count: @status.likes_count,
-          page_category: @page_category).render
+          page_category: @page_category
+        ).render
       end
     end
   end

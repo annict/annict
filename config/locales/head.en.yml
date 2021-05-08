@@ -163,7 +163,7 @@ en:
       friends:
         index: Find Friends
       home:
-        index: Annict
+        show: Annict
       legacy_sign_in:
         new: Sign In with Password
       libraries:

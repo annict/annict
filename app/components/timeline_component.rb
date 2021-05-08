@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class TimelineComponent < ApplicationComponent
-  def initialize(view_context, activity_group_structs:, activity_groups:, page_category: "")
+  def initialize(view_context, activity_group_structs:, activity_groups:, page_category:)
     super view_context
     @activity_group_structs = activity_group_structs
     @activity_groups = activity_groups
@@ -11,7 +11,7 @@ class TimelineComponent < ApplicationComponent
   def render
     build_html do |h|
       h.tag :div, class: "c-timeline" do
-        h.tag :div, class: "c-timeline__activities mb-3" do
+        h.tag :div, class: "c-timeline__activities" do
           @activity_group_structs.each do |activity_group_struct|
             h.tag :div, class: "c-timeline__activity py-3 u-underline" do
               case activity_group_struct.itemable_type

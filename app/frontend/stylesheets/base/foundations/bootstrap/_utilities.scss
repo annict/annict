@@ -1,0 +1,21 @@
+.text-body {
+  color: var(--bs-body-color) !important;
+}
+
+@each $name in (
+  average
+  bad
+  completed
+  dropped
+  good
+  great
+  mizuho
+  on-hold
+  plan-to-watch
+  supporter
+  watching
+) {
+  .bg-#{$name} {
+    background-color: var(--ann-color-#{$name}) !important;
+  }
+}

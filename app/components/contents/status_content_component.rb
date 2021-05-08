@@ -12,7 +12,10 @@ module Contents
       build_html do |h|
         h.tag :div, class: "c-status-content" do
           h.html Cards::StatusCardComponent.new(view_context, status: @status).render
-          h.html StatusFooterComponent.new(view_context, status: @status, page_category: @page_category).render
+
+          h.tag :div, class: "mt-2" do
+            h.html StatusFooterComponent.new(view_context, status: @status, page_category: @page_category).render
+          end
         end
       end
     end

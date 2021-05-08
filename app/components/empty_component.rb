@@ -9,7 +9,7 @@ class EmptyComponent < ApplicationComponent
   def render
     build_html do |h|
       h.tag :div, class: "c-empty p-4 text-center" do
-        h.tag :i, class: "far fa-meh"
+        h.tag :i, class: "far fa-meh display-4"
 
         h.tag :div, class: "h2 mt-3" do
           h.text @text

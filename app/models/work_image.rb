@@ -38,10 +38,4 @@ class WorkImage < ApplicationRecord
 
   belongs_to :work, touch: true
   belongs_to :user
-
-  def path
-    id = uploaded_file(:image)&.id
-    path = id ? "shrine/#{id}" : ""
-    path.presence || "no-image.jpg"
-  end
 end

@@ -11,29 +11,29 @@ module Cards
 
     def render
       build_html do |h|
-        h.tag :div, class: "c-status-card card col-11 col-lg-10 mb-2 px-0" do
-          h.tag :div, class: "card-body p-2" do
-            h.tag :div, class: "row" do
-              h.tag :div, class: "col-auto pr-0" do
+        h.tag :div, class: "card" do
+          h.tag :div, class: "card-body" do
+            h.tag :div, class: "row g-3" do
+              h.tag :div, class: "col-auto" do
                 h.tag :a, href: view_context.anime_path(@anime.id) do
-                  h.html Images::AnimeImageComponent.new(
+                  h.html Pictures::AnimePictureComponent.new(
                     view_context,
-                    image_url_1x: @anime.image_url(size: "350x"),
-                    image_url_2x: @anime.image_url(size: "700x"),
-                    alt: @anime.local_title
+                    anime: @anime,
+                    width: 80,
+                    mb_width: 60
                   ).render
                 end
               end
 
               h.tag :div, class: "col" do
                 h.tag :div do
-                  h.tag :span, class: "badge u-badge-#{@status.kind}" do
-                    h.text t("enumerize.status.kind_v3.#{@status.kind}")
+                  h.tag :span, class: "badge bg-#{@status.kind_v3}" do
+                    h.text t("enumerize.status.kind_v3.#{@status.kind_v3}")
                   end
                 end
 
                 h.tag :div, class: "mb-1" do
-                  h.tag :a, href: view_context.anime_path(@anime.id) do
+                  h.tag :a, href: view_context.anime_path(@anime.id), class: "fw-bold text-body" do
                     h.text @anime.local_title
                   end
                 end
@@ -42,7 +42,7 @@ module Cards
                   view_context,
                   anime: @anime,
                   page_category: @page_category,
-                  small: true
+                  style: "width: 200px;"
                 ).render
               end
             end
