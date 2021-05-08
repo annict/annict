@@ -49,44 +49,33 @@
 
     <div class="col-12 col-lg-4">
       <div class="mb-5">
-        <% if @userland_projects.present? %>
+        <% if @new_anime_list.present? %>
           <div class="align-items-start justify-content-between mb-3 row">
             <div class="col-auto">
               <h2 class="fw-bold h3 mb-0">
-                Userland
+                <%= t("head.title.works.newest") %>
               </h2>
             </div>
 
             <div class="col text-end">
-              <%= link_to userland_root_path, class: "small" do %>
-                <%= icon "angle-right", class: "me-1" %>
+              <%= link_to newest_works_path, class: "small" do %>
+                <i class="far fa-angle-right me-1"></i>
                 <%= t "verb.view_all" %>
               <% end %>
             </div>
           </div>
 
-          <% @userland_projects.each do |project| %>
-            <div class="row mb-3">
-              <div class="col-auto pr-0">
-                <%= link_to userland_project_path(project) do %>
-                  <%= render UserlandProjectImageComponent.new(image_url_1x: ann_image_url(project, :image, size: "80x"), alt: project.name) %>
+          <div class="card">
+            <div class="card-body p-2">
+              <div class="row g-2">
+                <% @new_anime_list.each do |anime| %>
+                  <div class="col-6 col-sm-4">
+                    <%= Cards::AnimeCardComponent.new(self, anime: anime, width: 195, mb_width: 77).render %>
+                  </div>
                 <% end %>
               </div>
-
-              <div class="col">
-                <div class="mb-1">
-                  <div class="small">
-                    <%= project.userland_category.local_name %>
-                  </div>
-                  <%= link_to project.name, userland_project_path(project) %>
-                </div>
-
-                <div class="small text-muted">
-                  <%= project.summary %>
-                </div>
-              </div>
             </div>
-          <% end %>
+          </div>
         <% end %>
       </div>
 

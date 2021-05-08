@@ -7,7 +7,7 @@ class HomeController < ApplicationController
     set_page_category PageCategory::HOME
 
     @new_anime_list = Rails.cache.fetch("user-home-new-anime-list", expires_in: 3.hours) {
-      Anime.order(created_at: :desc).limit(4)
+      Anime.order(created_at: :desc).limit(6)
     }
 
     @forum_posts = Rails.cache.fetch("user-home-forum-posts", expires_in: 1.hour) {

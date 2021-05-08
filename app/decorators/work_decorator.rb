@@ -84,9 +84,9 @@ module WorkDecorator
   end
 
   def processed_image_url(format:, height:, width:)
-    return unless work_image
+    path = work_image ? work_image.uploaded_file_path(:image) : "no-image.jpg"
 
-    ix_image_url(work_image.uploaded_file_path(:image), {
+    ix_image_url(path, {
       fill: "solid",
       fit: "fill",
       fm: format,
