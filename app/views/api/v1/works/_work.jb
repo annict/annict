@@ -5,6 +5,7 @@ json = {}
 json[:id] = work.id if params.fields_contain?("#{field_prefix}id")
 json[:title] = work.title if params.fields_contain?("#{field_prefix}title")
 json[:title_kana] = work.title_kana if params.fields_contain?("#{field_prefix}title_kana")
+json[:title_en] = work.title_en if params.fields_contain?("#{field_prefix}title_en")
 json[:media] = work.media if params.fields_contain?("#{field_prefix}media")
 json[:media_text] = work.media_text if params.fields_contain?("#{field_prefix}media_text")
 json[:released_on] = work.released_at&.strftime("%Y-%m-%d").presence || "" if params.fields_contain?("#{field_prefix}released_on")
