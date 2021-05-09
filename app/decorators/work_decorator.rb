@@ -77,18 +77,6 @@ module WorkDecorator
     end
   end
 
-  def processed_image_url(format:, height:, width:)
-    path = anime_image ? anime_image.uploaded_file_path(:image) : "no-image.jpg"
-
-    ix_image_url(path, {
-      fill: "solid",
-      fit: "fill",
-      fm: format,
-      height: height,
-      w: width,
-    })
-  end
-
   def to_values
     self.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
       hash[field] = case field

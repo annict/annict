@@ -1,36 +1,16 @@
 # frozen_string_literal: true
 
 module ImageHelper
-  def ann_image_url(record, field, options = {})
-    path = image_path(record, field)
-    size = options[:size]
+  def ann_image_url(record, field, format:, height:, width:)
+    path = record ? record.uploaded_file_path(field) : "no-image.jpg"
 
-    width, = size.split("x").map { |s|
-      s.present? ? (s.to_i * (options[:size_rate].presence || 1)) : nil
-    }
-
-    ix_options = {
-      auto: "format"
-    }
-
-    if width
-      ix_options[:w] = width
-    end
-
-    if options[:crop]
-      ix_options[:fit] = "crop"
-    end
-
-    if options[:ratio]
-      ix_options[:fit] = "crop"
-      ix_options[:ar] = options[:ratio]
-    end
-
-    if options[:blur]
-      ix_options[:blur] = options[:blur]
-    end
-
-    ix_image_url(path, ix_options)
+    ix_image_url(path, {
+      fill: "solid",
+      fit: "fill",
+      fm: format,
+      height: height,
+      w: width,
+    })
   end
 
   def ann_image_tag(record, field, options = {})
