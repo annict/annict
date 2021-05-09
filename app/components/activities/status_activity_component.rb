@@ -44,14 +44,14 @@ module Activities
             h.tag :div, class: "card mt-3" do
               h.tag :div, class: "card-body" do
                 h.tag :div, class: "row gy-3" do
-                  @activity_group.items.each do |status|
-                    h.tag :div do
-                      h.html Contents::StatusContentComponent.new(
-                        view_context,
-                        status: status,
-                        page_category: @page_category
-                      ).render
-                    end
+                  status = @activity_group.first_item
+
+                  h.tag :div do
+                    h.html Contents::StatusContentComponent.new(
+                      view_context,
+                      status: status,
+                      page_category: @page_category
+                    ).render
                   end
 
                   if @activity_group.activities_count > 2

@@ -44,7 +44,7 @@ module Activities
             h.tag :div, class: "card mt-3" do
               h.tag :div, class: "card-body" do
                 if @activity_group.single?
-                  record = @activity_group.items.first
+                  record = @activity_group.first_item
 
                   if record.episode_record?
                     h.html Contents::EpisodeRecordContentComponent.new(view_context,
@@ -59,34 +59,34 @@ module Activities
                   end
                 else
                   h.tag :div, class: "row gy-3" do
-                    @activity_group.items.each do |record|
-                      h.tag :div do
-                        if record.episode_record?
-                          h.html Contents::EpisodeRecordContentComponent.new(view_context,
-                            record: record,
-                            page_category: @page_category
-                          ).render
-                        else
-                          h.html Contents::AnimeRecordContentComponent.new(view_context,
-                            record: record,
-                            page_category: @page_category
-                          ).render
-                        end
+                    record = @activity_group.first_item
+
+                    h.tag :div do
+                      if record.episode_record?
+                        h.html Contents::EpisodeRecordContentComponent.new(view_context,
+                          record: record,
+                          page_category: @page_category
+                        ).render
+                      else
+                        h.html Contents::AnimeRecordContentComponent.new(view_context,
+                          record: record,
+                          page_category: @page_category
+                        ).render
                       end
                     end
-                  end
-                end
 
-                if @activity_group.activities_count > 2
-                  h.tag :div, {
-                    class: "text-center",
-                    data_action: "click->timeline-activity#next",
-                    data_target: "timeline-activity.nextButton"
-                  } do
-                    h.tag :div, class: "text-center" do
-                      h.tag :div, class: "c-activity-more-button btn btn-outline-secondary btn-small py-1" do
-                        h.tag :i, class: "fal fa-chevron-double-down me-1"
-                        h.text t("messages._components.activities.episode_record.more", n: @activity_group.activities_count - 2)
+                    if @activity_group.activities_count > 1
+                      h.tag :div, {
+                        class: "text-center",
+                        data_action: "click->timeline-activity#next",
+                        data_target: "timeline-activity.nextButton"
+                      } do
+                        h.tag :div, class: "text-center" do
+                          h.tag :div, class: "c-activity-more-button btn btn-outline-secondary btn-small py-1" do
+                            h.tag :i, class: "fal fa-chevron-double-down me-1"
+                            h.text t("messages._components.activities.episode_record.more", n: @activity_group.activities_count - 1)
+                          end
+                        end
                       end
                     end
                   end
