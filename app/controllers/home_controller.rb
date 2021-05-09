@@ -22,6 +22,7 @@ class HomeController < ApplicationController
         .order(created_at: :desc)
         .page(params[:page])
         .per(30)
+        .without_count
     else
       UserHomePage::GlobalActivityGroupsRepository.new(
         graphql_client: graphql_client

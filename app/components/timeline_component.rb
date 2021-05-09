@@ -31,10 +31,8 @@ class TimelineComponent < ApplicationComponent
           end
         end
 
-        if @activity_groups.total_pages > 1
-          h.tag :div, class: "mt-3 text-center" do
-            h.html paginate(@activity_groups)
-          end
+        h.tag :div, class: "mt-3 text-center" do
+          h.html ButtonGroups::PaginationButtonGroupComponent.new(view_context, collection: @activity_groups).render
         end
       end
     end
