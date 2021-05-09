@@ -33,7 +33,9 @@
 class Setting < ApplicationRecord
   extend Enumerize
 
-  self.ignored_columns = %w[share_record_to_facebook share_review_to_facebook share_review_to_twitter]
+  self.ignored_columns = %w[
+    share_record_to_facebook share_review_to_facebook share_review_to_twitter timeline_mode
+  ]
 
   belongs_to :user
 
@@ -74,11 +76,4 @@ class Setting < ApplicationRecord
       my_episode_records
     ],
     default: :all_comments
-
-  enumerize :timeline_mode,
-    in: %i[
-      following
-      global
-    ],
-    default: :following
 end

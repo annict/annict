@@ -147,7 +147,7 @@ class User < ApplicationRecord
 
   delegate :name, to: :profile
   delegate :admin?, :editor?, to: :role
-  delegate :hide_record_body?, :share_record_to_twitter?, :timeline_mode, to: :setting
+  delegate :hide_record_body?, :share_record_to_twitter?, to: :setting
 
   validates :email,
     presence: true,

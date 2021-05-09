@@ -14,20 +14,14 @@ class HomeController < ApplicationController
       ForumPost.joins(:forum_category).merge(ForumCategory.with_slug(:site_news)).order(created_at: :desc).limit(5)
     }
 
-    @activity_groups = if current_user.timeline_mode.following?
-      ActivityGroup
-        .preload(user: :profile)
-        .joins(:user)
-        .merge(current_user.followings)
-        .order(created_at: :desc)
-        .page(params[:page])
-        .per(30)
-        .without_count
-    else
-      UserHomePage::GlobalActivityGroupsRepository.new(
-        graphql_client: graphql_client
-      ).execute(pagination: Annict::Pagination.new(before: params[:before], after: params[:after], per: 30))
-    end
+    @activity_groups = ActivityGroup
+      .preload(user: :profile)
+      .joins(:user)
+      .merge(current_user.followings)
+      .order(created_at: :desc)
+      .page(params[:page])
+      .per(30)
+      .without_count
 
     # @anime_ids = @activity_structs.flat_map { |ags| ags.items.pluck(:anime_id) }
   end

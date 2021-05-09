@@ -12,25 +12,6 @@
             <%= t "noun.timeline" %>
           </h2>
         </div>
-
-        <div class="col text-end">
-          <div class="c-timeline-mode-switcher">
-            <%= form_with html: { class: "d-inline", method: :patch }, local: true, url: timeline_mode_path do %>
-              <%= hidden_field_tag "setting[timeline_mode]", "following", id: :setting_timeline_mode_following %>
-              <%= submit_tag(
-                t("noun.following_shorten"),
-                class: "btn btn-sm rounded-start #{current_user.timeline_mode.following? ? 'btn-secondary' : 'btn-outline-secondary'}"
-              ) %>
-            <% end %>
-            <%= form_with html: { class: "d-inline", method: :patch }, local: true, url: timeline_mode_path do %>
-              <%= hidden_field_tag "setting[timeline_mode]", "global", id: :setting_timeline_mode_global %>
-              <%= submit_tag(
-                t("noun.global"),
-                class: "btn btn-sm rounded-end #{current_user.timeline_mode.global? ? 'btn-secondary' : 'btn-outline-secondary'}"
-              ) %>
-            <% end %>
-          </div>
-        </div>
       </div>
 
       <% if @activity_groups.present? %>
