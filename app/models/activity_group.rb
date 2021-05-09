@@ -37,4 +37,21 @@ class ActivityGroup < ApplicationRecord
   belongs_to :user
   has_many :activities, dependent: :destroy
   has_many :ordered_activities, -> { order(created_at: :desc) }, class_name: "Activity"
+
+  define_prelude(:items) do |activity_groups|
+    all_activities = Activity.where(activity_group: activity_groups.pluck(:id))
+    all_activities_by_activity_group_id = all_activities.group_by(&:activity_group_id)
+    all_activities_by_trackable_type = all_activities.group_by(&:trackable_type)
+    all_statuses = Status.eager_load(anime: :anime_image).where(id: all_activities_by_trackable_type["Status"].pluck(:trackable_id))
+
+    activity_groups.index_with do |activity_group|
+      activities = all_activities_by_activity_group_id[activity_group.id]
+      trackable_type = activities.first.trackable_type
+
+      case trackable_type
+      when "Status"
+        all_statuses.find_all { |s| activities.pluck(:trackable_id).include?(s.id) }
+      end
+    end
+  end
 end

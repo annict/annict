@@ -21,6 +21,7 @@ class HomeController < ApplicationController
     # }
     @activity_groups = if current_user.timeline_mode.following?
       ActivityGroup
+        .preload(user: :profile)
         .joins(:user)
         .merge(current_user.followings)
         .order(created_at: :desc)
@@ -36,9 +37,9 @@ class HomeController < ApplicationController
     #   binding.pry
     #   Builder::Activity::ActivityGroupStruct.new(activity_group_mapping.keys.zip(ag).to_h)
     # end
-    @activity_structs = ActivityStructs::Builder.new(activity_groups: @activity_groups, current_user: current_user).call.compact
+    # @activity_structs = ActivityStructs::Builder.new(activity_groups: @activity_groups, current_user: current_user).call.compact
 
-    @anime_ids = @activity_structs.flat_map { |ags| ags.items.pluck(:anime_id) }
-    @anime_ids += @new_anime_list.pluck(:id)
+    # @anime_ids = @activity_structs.flat_map { |ags| ags.items.pluck(:anime_id) }
+    # @anime_ids += @new_anime_list.pluck(:id)
   end
 end

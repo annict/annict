@@ -2,11 +2,11 @@
 
 module Activities
   class StatusActivityComponent < ApplicationComponent
-    def initialize(view_context, activity_struct:, page_category: "")
+    def initialize(view_context, activity_group:, page_category: "")
       super view_context
-      @activity_struct = activity_struct
+      @activity_group = activity_group
       @page_category = page_category
-      @user = activity_group_struct.user.decorate
+      @user = activity_group.user.decorate
     end
 
     def render
@@ -37,13 +37,13 @@ module Activities
 
                 h.html RelativeTimeComponent.new(
                   view_context,
-                  time: @activity_group_struct.created_at.iso8601,
+                  time: @activity_group.created_at.iso8601,
                   class_name: "ms-1 small text-muted"
                 ).render
               end
 
               h.tag :div, class: "c-timeline__activity-cards" do
-                @activity_group_struct.itemables.each do |status|
+                @activity_group.items.each do |status|
                   h.tag :div, class: "mt-3" do
                     h.html Contents::StatusContentComponent.new(
                       view_context,
@@ -54,11 +54,11 @@ module Activities
                 end
               end
 
-              if @activity_group_struct.itemables.length > 2
+              if @activity_group.activities_count > 2
                 h.tag :div, class: "text-center" do
                   h.tag :a, class: "c-activity-more-button btn btn-outline-secondary btn-small py-1", href: "" do
                     h.tag :i, class: "fal fa-chevron-double-down me-1"
-                    h.text t("messages._components.activities.status.more", n: @activity_group_struct.itemables.length - 2)
+                    h.text t("messages._components.activities.status.more", n: @activity_group.activities_count - 2)
                   end
                 end
               end
