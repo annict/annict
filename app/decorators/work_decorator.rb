@@ -65,12 +65,6 @@ module WorkDecorator
     raw ? text : simple_format(text)
   end
 
-  def media_label
-    content_tag :span, class: "badge u-badge-works" do
-      media.text
-    end
-  end
-
   def started_on_label
     if media.tv?
       I18n.t("noun.start_to_broadcast_tv_date")

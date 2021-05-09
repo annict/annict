@@ -64,17 +64,29 @@
             </div>
           </div>
 
-          <div class="card">
-            <div class="card-body p-2">
-              <div class="row g-2">
-                <% @new_anime_list.each do |anime| %>
-                  <div class="col-6 col-sm-4">
-                    <%= Cards::AnimeCardComponent.new(self, anime: anime, width: 195, mb_width: 77).render %>
-                  </div>
-                <% end %>
-              </div>
-            </div>
-          </div>
+          <ul class="list-unstyled">
+            <% @new_anime_list.each do |anime| %>
+              <li class="g-3 mb-2 row">
+                <div class="col-auto">
+                  <a href="<%= anime_path(anime) %>">
+                    <%= Pictures::AnimePictureComponent.new(self, anime: anime, width: 50, mb_width: 50, alt: anime.local_title).render %>
+                  </a>
+                </div>
+
+                <div class="col">
+                  <a href="<%= anime_path(anime) %>">
+                    <div class="mb-1">
+                      <%= Labels::AnimeMediaLabelComponent.new(self, anime: anime).render %>
+                    </div>
+
+                    <span class="text-body">
+                      <%= anime.local_title %>
+                    </span>
+                  </a>
+                </div>
+              </li>
+            <% end %>
+          </ul>
         <% end %>
       </div>
 
