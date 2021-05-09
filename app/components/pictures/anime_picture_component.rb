@@ -25,7 +25,7 @@ module Pictures
             class: "img-thumbnail #{@class_name}",
             height: @height,
             loading: "lazy",
-            src: @anime.processed_image_url(height: @height, width: @width, format: "jpg"),
+            src: view_context.ann_image_url(@anime.anime_image, :image, height: @height, width: @width, format: "jpg"),
             width: @width
           }
         end
@@ -40,8 +40,8 @@ module Pictures
 
     def srcset(height, width, format)
       [
-        "#{@anime.processed_image_url(height: height, width: width, format: format)} 1x",
-        "#{@anime.processed_image_url(height: height * 2, width: width * 2, format: format)} 2x"
+        "#{view_context.ann_image_url(@anime.anime_image, :image, height: height, width: width, format: format)} 1x",
+        "#{view_context.ann_image_url(@anime.anime_image, :image, height: height * 2, width: width * 2, format: format)} 2x"
       ].join(", ")
     end
   end
