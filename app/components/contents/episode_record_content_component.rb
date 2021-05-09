@@ -11,7 +11,7 @@ module Contents
 
     def render
       build_html do |h|
-        h.tag :div, class: "c-episode-record-content c-record-content" do
+        h.tag :div, class: "" do
           if @record.episode_record.rating_state || @episode_record.body.present?
             h.html(SpoilerGuardComponent.new(view_context, record: @record).render { |h|
               h.tag :div, class: "c-record-content__wrapper mb-3" do
@@ -30,7 +30,9 @@ module Contents
             h.html Cards::EpisodeRecordCardComponent.new(view_context, episode_record: @episode_record).render
           end
 
-          h.html Footers::RecordFooterComponent.new(view_context, record: @record).render
+          h.tag :div, class: "mt-1" do
+            h.html Footers::RecordFooterComponent.new(view_context, record: @record).render
+          end
         end
       end
     end

@@ -32,17 +32,19 @@ module Cards
                   end
                 end
 
-                h.tag :div, class: "mb-1" do
+                h.tag :div, class: "mt-1" do
                   h.tag :a, href: view_context.anime_path(@anime.id), class: "fw-bold text-body" do
                     h.text @anime.local_title
                   end
                 end
 
-                h.html Selectors::StatusSelectorComponent.new(
-                  view_context,
-                  anime: @anime,
-                  page_category: @page_category
-                ).render
+                h.tag :div, class: "mt-1" do
+                  h.html Selectors::StatusSelectorComponent.new(
+                    view_context,
+                    anime: @anime,
+                    page_category: @page_category
+                  ).render
+                end
               end
             end
           end

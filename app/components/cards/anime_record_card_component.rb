@@ -10,10 +10,10 @@ module Cards
 
     def render
       build_html do |h|
-        h.tag :div, class: "c-work-record-card c-record-card card col-11 col-lg-10 mb-2 px-0" do
-          h.tag :div, class: "card-body p-2" do
-            h.tag :div, class: "row" do
-              h.tag :div, class: "col-auto pr-0" do
+        h.tag :div, class: "card" do
+          h.tag :div, class: "card-body" do
+            h.tag :div, class: "row g-3" do
+              h.tag :div, class: "col-auto" do
                 h.tag :a, href: view_context.anime_path(@anime.id) do
                   h.html Pictures::AnimePictureComponent.new(
                     view_context,

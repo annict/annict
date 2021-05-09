@@ -13,7 +13,7 @@ module Contents
         h.tag :div, class: "c-status-content" do
           h.html Cards::StatusCardComponent.new(view_context, status: @status).render
 
-          h.tag :div, class: "mt-2" do
+          h.tag :div, class: "mt-1" do
             h.html Footers::StatusFooterComponent.new(view_context, status: @status, page_category: @page_category).render
           end
         end

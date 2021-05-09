@@ -98,7 +98,9 @@ module Contents
             h.html Cards::AnimeRecordCardComponent.new(view_context, anime_record: @anime_record).render
           end
 
-          h.html Footers::RecordFooterComponent.new(view_context, record: @record).render
+          h.tag :div, class: "mt-1" do
+            h.html Footers::RecordFooterComponent.new(view_context, record: @record).render
+          end
         end
       end
     end

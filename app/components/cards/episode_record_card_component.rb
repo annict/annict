@@ -11,10 +11,10 @@ module Cards
 
     def render
       build_html do |h|
-        h.tag :div, class: "c-episode-record-card c-record-card card col-11 col-lg-10 mb-2 px-0" do
-          h.tag :div, class: "card-body p-2" do
-            h.tag :div, class: "row" do
-              h.tag :div, class: "col-auto pr-0" do
+        h.tag :div, class: "card" do
+          h.tag :div, class: "card-body" do
+            h.tag :div, class: "row g-3" do
+              h.tag :div, class: "col-auto" do
                 h.tag :a, href: view_context.anime_path(@anime.id) do
                   h.html Pictures::AnimePictureComponent.new(
                     view_context,
@@ -26,13 +26,15 @@ module Cards
               end
 
               h.tag :div, class: "col" do
-                h.tag :div, class: "mb-1" do
-                  h.tag :a, href: view_context.anime_path(@anime.id), class: "fw-bold text-body" do
+                h.tag :div do
+                  h.tag :a, href: view_context.anime_path(@anime.id), class: "text-body" do
                     h.text @anime.local_title
                   end
+                end
 
+                h.tag :div do
                   h.tag :a, href: view_context.episode_path(@anime.id, @episode.id), class: "fw-bold small text-body" do
-                    h.tag :span, class: "pr-1" do
+                    h.tag :span, class: "px-1" do
                       h.text @episode.local_number
                     end
 
@@ -43,7 +45,8 @@ module Cards
                 h.html Selectors::StatusSelectorComponent.new(
                   view_context,
                   anime: @anime,
-                  page_category: @page_category
+                  page_category: @page_category,
+                  class_name: "mt-1"
                 ).render
               end
             end

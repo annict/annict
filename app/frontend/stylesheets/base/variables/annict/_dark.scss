@@ -1,4 +1,5 @@
 $ann-color-dark-body:          map-get($ann-color-black-map, "005");
+$ann-color-dark-card-bg:       map-get($ann-color-black-map, "070");
 $ann-color-dark-border:        map-get($ann-color-black-map, "060");
 $ann-color-dark-completed:     map-get($ann-color-green-map, "060");
 $ann-color-dark-dropped:       map-get($ann-color-black-map, "050");
@@ -8,6 +9,9 @@ $ann-color-dark-watching:      map-get($ann-color-blue-map, "040");
 
 @mixin ann-dark-variables {
   $ann-color-dark-map: (
+    "body-bg-gradient-1":            rgba(255, 255, 255, 0),
+    "body-bg-gradient-2":            rgba(255, 255, 255, 0),
+    "body-bg-gradient-3":            $ann-color-dark-card-bg,
     "completed":                     $ann-color-dark-completed,
     "dropped":                       $ann-color-dark-dropped,
     "on-hold":                       $ann-color-dark-on-hold,

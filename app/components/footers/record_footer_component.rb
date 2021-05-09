@@ -18,8 +18,8 @@ module Footers
           ).render
 
           if @record.episode_record?
-            h.tag :a, href: view_context.record_path(@record.user.username, @record.id), class: "me-3", data_turbo_frame: "_top" do
-              h.tag :i, class: "far fa-comment"
+            h.tag :a, href: view_context.record_path(@record.user.username, @record.id), class: "ms-3", data_turbo_frame: "_top" do
+              h.tag :i, class: "far fa-comment me-1"
               h.text @record.episode_record.comments_count
             end
           end

@@ -12,7 +12,7 @@ class TimelineComponent < ApplicationComponent
       h.tag :div, class: "c-timeline" do
         h.tag :div, class: "c-timeline__activities" do
           @activity_groups.each.with_prelude do |activity_group|
-            h.tag :div, class: "c-timeline__activity py-3 u-underline" do
+            h.tag :div, class: "c-timeline__activity py-3" do
               case activity_group.itemable_type
               when "Status"
                 h.html Activities::StatusActivityComponent.new(

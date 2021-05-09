@@ -9,7 +9,7 @@ $bs-white: #FFFFFF;
     "body-bg":                                map-get($ann-color-black-map, "080"),
     "body-color":                             $ann-color-dark-body,
     "border-color":                           $ann-color-dark-border,
-    "card-bg":                                map-get($ann-color-black-map, "070"),
+    "card-bg":                                $ann-color-dark-card-bg,
     "card-border-color":                      $ann-color-dark-border,
     "custom-select-indicator-color":          $bs-green,
     "custom-select-indicator-selected-color": $bs-white,
