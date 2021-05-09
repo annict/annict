@@ -2,11 +2,11 @@
 
 module Activities
   class RecordActivityComponent < ApplicationComponent
-    def initialize(view_context, activity_group_struct:, page_category: "")
+    def initialize(view_context, activity_group:, page_category: "")
       super view_context
-      @activity_group_struct = activity_group_struct
+      @activity_group = activity_group
       @page_category = page_category
-      @user = activity_group_struct.user.decorate
+      @user = activity_group.user.decorate
     end
 
     def render
@@ -37,13 +37,13 @@ module Activities
 
                 h.html RelativeTimeComponent.new(
                   view_context,
-                  time: @activity_group_struct.created_at.iso8601,
+                  time: @activity_group.created_at.iso8601,
                   class_name: "ms-1 small text-muted"
                 ).render
               end
 
-              if @activity_group_struct.outstanding
-                record = @activity_group_struct.itemables.first
+              if @activity_group.single?
+                record = @activity_group.items.first
                 if record.episode_record?
                   h.html Contents::EpisodeRecordContentComponent.new(view_context, record: record).render
                 else
@@ -51,7 +51,7 @@ module Activities
                 end
               else
                 h.tag :div, class: "c-timeline__activity-cards" do
-                  @activity_group_struct.itemables.each do |record|
+                  @activity_group.items.each do |record|
                     h.tag :div, class: "mb-3" do
                       if record.episode_record?
                         h.html Cards::EpisodeRecordCardComponent.new(view_context, episode_record: record.episode_record).render
@@ -65,7 +65,7 @@ module Activities
                 end
               end
 
-              if @activity_group_struct.itemables.length > 2
+              if @activity_group.activities_count > 2
                 h.tag :div, {
                   class: "text-center",
                   data_action: "click->timeline-activity#next",
@@ -74,7 +74,7 @@ module Activities
                   h.tag :div, class: "text-center" do
                     h.tag :div, class: "c-activity-more-button btn btn-outline-secondary btn-small py-1" do
                       h.tag :i, class: "fal fa-chevron-double-down"
-                      h.text t("messages._components.activities.episode_record.more", n: @activity_group_struct.itemables.length - 2)
+                      h.text t("messages._components.activities.episode_record.more", n: @activity_group.activities_count - 2)
                     end
                   end
                 end

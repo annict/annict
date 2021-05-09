@@ -20,12 +20,12 @@ class TimelineComponent < ApplicationComponent
                   activity_group: activity_group,
                   page_category: @page_category
                 ).render
-              # when "record"
-              #   h.html Activities::RecordActivityComponent.new(
-              #     view_context,
-              #     activity_group_struct: activity_group_struct,
-              #     page_category: @page_category
-              #   ).render
+              when "EpisodeRecord", "WorkRecord"
+                h.html Activities::RecordActivityComponent.new(
+                  view_context,
+                  activity_group: activity_group,
+                  page_category: @page_category
+                ).render
               end
             end
           end
