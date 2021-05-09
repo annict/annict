@@ -33,10 +33,10 @@
         </div>
       </div>
 
-      <% if @activity_group_structs.present? %>
+      <% if @activity_structs.present? %>
         <%= TimelineComponent.new(
           self,
-          activity_group_structs: @activity_group_structs,
+          activity_structs: @activity_structs,
           activity_groups: @activity_groups,
           page_category: page_category
         ).render %>

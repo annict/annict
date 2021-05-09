@@ -127,6 +127,7 @@ class Work < ApplicationRecord
   has_many :work_records
   has_many :work_tags, through: :work_taggings
   has_one :work_image, dependent: :destroy
+  has_one :anime_image, class_name: "WorkImage", dependent: :destroy
 
   validates :sc_tid,
     numericality: {only_integer: true},

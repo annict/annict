@@ -1,20 +1,19 @@
 # frozen_string_literal: true
 
 module Cards
-  class StatusCardComponent < ApplicationComponent
-    def initialize(view_context, status:, page_category: "")
+  class AnimeRecordCardComponent < ApplicationComponent
+    def initialize(view_context, anime_record:)
       super view_context
-      @status = status
-      @page_category = page_category
-      @anime = @status.anime.decorate
+      @anime_record = anime_record
+      @anime = @anime_record.anime
     end
 
     def render
       build_html do |h|
-        h.tag :div, class: "card" do
-          h.tag :div, class: "card-body" do
-            h.tag :div, class: "row g-3" do
-              h.tag :div, class: "col-auto" do
+        h.tag :div, class: "c-work-record-card c-record-card card col-11 col-lg-10 mb-2 px-0" do
+          h.tag :div, class: "card-body p-2" do
+            h.tag :div, class: "row" do
+              h.tag :div, class: "col-auto pr-0" do
                 h.tag :a, href: view_context.anime_path(@anime.id) do
                   h.html Pictures::AnimePictureComponent.new(
                     view_context,
@@ -26,12 +25,6 @@ module Cards
               end
 
               h.tag :div, class: "col" do
-                h.tag :div do
-                  h.tag :span, class: "badge bg-#{@status.kind_v3}" do
-                    h.text t("enumerize.status.kind_v3.#{@status.kind_v3}")
-                  end
-                end
-
                 h.tag :div, class: "mb-1" do
                   h.tag :a, href: view_context.anime_path(@anime.id), class: "fw-bold text-body" do
                     h.text @anime.local_title

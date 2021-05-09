@@ -14,7 +14,7 @@ module Contents
           h.html Cards::StatusCardComponent.new(view_context, status: @status).render
 
           h.tag :div, class: "mt-2" do
-            h.html StatusFooterComponent.new(view_context, status: @status, page_category: @page_category).render
+            h.html Footers::StatusFooterComponent.new(view_context, status: @status, page_category: @page_category).render
           end
         end
       end

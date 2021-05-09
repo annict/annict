@@ -37,12 +37,4 @@ class ActivityGroup < ApplicationRecord
   belongs_to :user
   has_many :activities, dependent: :destroy
   has_many :ordered_activities, -> { order(created_at: :desc) }, class_name: "Activity"
-
-  def itemables
-    trackable_ids = activities.pluck(:trackable_id)
-
-    case itemable_type
-    when "Status" then user.statuses.where(id: trackable_ids)
-    end
-  end
 end

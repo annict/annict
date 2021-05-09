@@ -36,6 +36,7 @@ class Record < ApplicationRecord
   counter_culture :user
   counter_culture :work
 
+  belongs_to :anime, foreign_key: :work_id
   belongs_to :user
   belongs_to :work
   has_one :anime_record, class_name: "WorkRecord", dependent: :destroy

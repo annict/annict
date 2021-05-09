@@ -52,6 +52,7 @@ class Status < ApplicationRecord
   }
 
   belongs_to :activity, counter_cache: :resources_count, optional: true
+  belongs_to :anime, foreign_key: :work_id
   belongs_to :oauth_application, class_name: "Doorkeeper::Application", optional: true
   belongs_to :user
   belongs_to :work
@@ -83,10 +84,6 @@ class Status < ApplicationRecord
 
   def self.initial?(status)
     count == 1 && initial.id == status.id
-  end
-
-  def anime
-    work
   end
 
   def kind_v3

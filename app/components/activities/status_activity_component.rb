@@ -2,9 +2,9 @@
 
 module Activities
   class StatusActivityComponent < ApplicationComponent
-    def initialize(view_context, activity_group_struct:, page_category: "")
+    def initialize(view_context, activity_struct:, page_category: "")
       super view_context
-      @activity_group_struct = activity_group_struct
+      @activity_struct = activity_struct
       @page_category = page_category
       @user = activity_group_struct.user.decorate
     end
@@ -13,7 +13,7 @@ module Activities
       build_html do |h|
         h.tag :div, class: "c-timeline__status-activity" do
           h.tag :div, class: "row g-3" do
-            h.tag :div, class: "col-auto pr-0" do
+            h.tag :div, class: "col-auto" do
               h.tag :a, href: view_context.profile_path(@user.username) do
                 h.html Pictures::AvatarPictureComponent.new(view_context,
                   user: @user,
@@ -54,11 +54,11 @@ module Activities
                 end
               end
 
-              if @activity_group_struct.activities_count > 2
+              if @activity_group_struct.itemables.length > 2
                 h.tag :div, class: "text-center" do
                   h.tag :a, class: "c-activity-more-button btn btn-outline-secondary btn-small py-1", href: "" do
                     h.tag :i, class: "fal fa-chevron-double-down me-1"
-                    h.text t("messages._components.activities.status.more", n: @activity_group_struct.activities_count - 2)
+                    h.text t("messages._components.activities.status.more", n: @activity_group_struct.itemables.length - 2)
                   end
                 end
               end

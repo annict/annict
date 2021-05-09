@@ -67,6 +67,7 @@ class EpisodeRecord < ApplicationRecord
 
   attr_accessor :share_to_twitter, :mutation_error
 
+  belongs_to :anime, foreign_key: :work_id
   belongs_to :oauth_application, class_name: "Doorkeeper::Application", optional: true
   belongs_to :record
   belongs_to :work
