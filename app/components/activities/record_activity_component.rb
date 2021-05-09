@@ -47,22 +47,30 @@ module Activities
                   record = @activity_group.items.first
 
                   if record.episode_record?
-                    h.html Contents::EpisodeRecordContentComponent.new(view_context, record: record).render
+                    h.html Contents::EpisodeRecordContentComponent.new(view_context,
+                      record: record,
+                      page_category: @page_category
+                    ).render
                   else
-                    h.html Contents::AnimeRecordContentComponent.new(view_context, record: record).render
+                    h.html Contents::AnimeRecordContentComponent.new(view_context,
+                      record: record,
+                      page_category: @page_category
+                    ).render
                   end
                 else
                   h.tag :div, class: "row gy-3" do
                     @activity_group.items.each do |record|
                       h.tag :div do
                         if record.episode_record?
-                          h.html Cards::EpisodeRecordCardComponent.new(view_context, episode_record: record.episode_record).render
+                          h.html Contents::EpisodeRecordContentComponent.new(view_context,
+                            record: record,
+                            page_category: @page_category
+                          ).render
                         else
-                          h.html Cards::AnimeRecordCardComponent.new(view_context, anime_record: record.anime_record).render
-                        end
-
-                        h.tag :div, class: "mt-1" do
-                          h.html Footers::RecordFooterComponent.new(view_context, record: record).render
+                          h.html Contents::AnimeRecordContentComponent.new(view_context,
+                            record: record,
+                            page_category: @page_category
+                          ).render
                         end
                       end
                     end

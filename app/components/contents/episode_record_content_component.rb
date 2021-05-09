@@ -2,17 +2,20 @@
 
 module Contents
   class EpisodeRecordContentComponent < ApplicationComponent
-    def initialize(view_context, record:, show_card: true)
+    def initialize(view_context, record:, page_category:, show_box: true)
       super view_context
       @record = record
+      @page_category = page_category
       @episode_record = @record.episode_record
-      @show_card = show_card
+      @show_box = show_box
+      @anime = @record.anime
+      @episode = @episode_record.episode
     end
 
     def render
       build_html do |h|
         h.tag :div, class: "" do
-          if @record.episode_record.rating_state || @episode_record.body.present?
+          if rating_or_comment?
             h.html(SpoilerGuardComponent.new(view_context, record: @record).render { |h|
               h.tag :div, class: "c-record-content__wrapper mb-3" do
                 if @record.episode_record.rating_state
@@ -26,8 +29,18 @@ module Contents
             })
           end
 
-          if @show_card
-            h.html Cards::EpisodeRecordCardComponent.new(view_context, episode_record: @episode_record).render
+          if @show_box
+            if rating_or_comment?
+              h.tag :hr
+            end
+
+            h.html Boxes::AnimeBoxComponent.new(view_context,
+              anime: @anime,
+              page_category: @page_category,
+              episode: @episode
+            ).render
+
+            h.tag :hr
           end
 
           h.tag :div, class: "mt-1" do
@@ -35,6 +48,12 @@ module Contents
           end
         end
       end
+    end
+
+    private
+
+    def rating_or_comment?
+      @record.episode_record.rating_state || @episode_record.body.present?
     end
   end
 end

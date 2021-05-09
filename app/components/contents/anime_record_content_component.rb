@@ -2,11 +2,13 @@
 
 module Contents
   class AnimeRecordContentComponent < ApplicationComponent
-    def initialize(view_context, record:, show_card: true)
+    def initialize(view_context, record:, page_category:, show_box: true)
       super view_context
       @record = record
+      @page_category = page_category
       @anime_record = @record.anime_record
-      @show_card = show_card
+      @show_box = show_box
+      @anime = @arecord.anime
     end
 
     def render
@@ -94,8 +96,15 @@ module Contents
             })
           end
 
-          if @show_card
-            h.html Cards::AnimeRecordCardComponent.new(view_context, anime_record: @anime_record).render
+          if @show_box
+            h.tag :hr
+
+            h.html Boxes::AnimeBoxComponent.new(view_context,
+              anime: @anime,
+              page_category: @page_category
+            ).render
+
+            h.tag :hr
           end
 
           h.tag :div, class: "mt-1" do
