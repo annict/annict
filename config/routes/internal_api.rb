@@ -71,13 +71,5 @@ scope module: :api do
       match "/api/internal/work_friends",                      via: :get,    as: :internal_api_work_friend_list,        to: "work_friends#index"
       # rubocop:enable Layout/ExtraSpacing, Layout/LineLength
     end
-
-    constraints format: "html" do
-      # rubocop:disable Layout/ExtraSpacing, Layout/LineLength
-      match "/api/internal/activities",                 via: :get, as: :internal_api_activity_list,              to: "activities#index"
-      match "/api/internal/bulk_operations/:job_id",    via: :get, as: :internal_api_bulk_operation_list,        to: "bulk_operations#show"
-      match "/api/internal/program_list_modal_content", via: :get, as: :internal_api_program_list_modal_content, to: "program_list_modal_contents#show"
-      # rubocop:enable Layout/ExtraSpacing, Layout/LineLength
-    end
   end
 end
