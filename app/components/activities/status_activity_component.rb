@@ -43,21 +43,23 @@ module Activities
 
             h.tag :div, class: "card mt-3" do
               h.tag :div, class: "card-body" do
-                @activity_group.items.each do |status|
-                  h.tag :div, class: "mb-3" do
-                    h.html Contents::StatusContentComponent.new(
-                      view_context,
-                      status: status,
-                      page_category: @page_category
-                    ).render
+                h.tag :div, class: "row gy-3" do
+                  @activity_group.items.each do |status|
+                    h.tag :div do
+                      h.html Contents::StatusContentComponent.new(
+                        view_context,
+                        status: status,
+                        page_category: @page_category
+                      ).render
+                    end
                   end
-                end
 
-                if @activity_group.activities_count > 2
-                  h.tag :div, class: "text-center" do
-                    h.tag :a, class: "c-activity-more-button btn btn-outline-secondary btn-small py-1", href: "" do
-                      h.tag :i, class: "fal fa-chevron-double-down me-1"
-                      h.text t("messages._components.activities.status.more", n: @activity_group.activities_count - 2)
+                  if @activity_group.activities_count > 2
+                    h.tag :div, class: "text-center" do
+                      h.tag :a, class: "c-activity-more-button btn btn-outline-secondary btn-small py-1", href: "" do
+                        h.tag :i, class: "fal fa-chevron-double-down me-1"
+                        h.text t("messages._components.activities.status.more", n: @activity_group.activities_count - 2)
+                      end
                     end
                   end
                 end

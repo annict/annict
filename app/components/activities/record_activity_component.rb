@@ -52,16 +52,18 @@ module Activities
                     h.html Contents::AnimeRecordContentComponent.new(view_context, record: record).render
                   end
                 else
-                  @activity_group.items.each do |record|
-                    h.tag :div, class: "mb-3" do
-                      if record.episode_record?
-                        h.html Cards::EpisodeRecordCardComponent.new(view_context, episode_record: record.episode_record).render
-                      else
-                        h.html Cards::AnimeRecordCardComponent.new(view_context, anime_record: record.anime_record).render
-                      end
+                  h.tag :div, class: "row gy-3" do
+                    @activity_group.items.each do |record|
+                      h.tag :div do
+                        if record.episode_record?
+                          h.html Cards::EpisodeRecordCardComponent.new(view_context, episode_record: record.episode_record).render
+                        else
+                          h.html Cards::AnimeRecordCardComponent.new(view_context, anime_record: record.anime_record).render
+                        end
 
-                      h.tag :div, class: "mt-1" do
-                        h.html Footers::RecordFooterComponent.new(view_context, record: record).render
+                        h.tag :div, class: "mt-1" do
+                          h.html Footers::RecordFooterComponent.new(view_context, record: record).render
+                        end
                       end
                     end
                   end
