@@ -58,34 +58,29 @@ module Activities
                     ).render
                   end
                 else
-                  h.tag :div, class: "row gy-3" do
+                  h.tag :turbo_frame, id: view_context.dom_id(@activity_group) do
                     record = @activity_group.first_item
 
-                    h.tag :div do
-                      if record.episode_record?
-                        h.html Contents::EpisodeRecordContentComponent.new(view_context,
-                          record: record,
-                          page_category: @page_category
-                        ).render
-                      else
-                        h.html Contents::AnimeRecordContentComponent.new(view_context,
-                          record: record,
-                          page_category: @page_category
-                        ).render
-                      end
+                    if record.episode_record?
+                      h.html Contents::EpisodeRecordContentComponent.new(view_context,
+                        record: record,
+                        page_category: @page_category
+                      ).render
+                    else
+                      h.html Contents::AnimeRecordContentComponent.new(view_context,
+                        record: record,
+                        page_category: @page_category
+                      ).render
                     end
 
                     if @activity_group.activities_count > 1
-                      h.tag :div, {
-                        class: "text-center",
-                        data_action: "click->timeline-activity#next",
-                        data_target: "timeline-activity.nextButton"
-                      } do
-                        h.tag :div, class: "text-center" do
-                          h.tag :div, class: "c-activity-more-button btn btn-outline-secondary btn-small py-1" do
-                            h.tag :i, class: "fal fa-chevron-double-down me-1"
-                            h.text t("messages._components.activities.episode_record.more", n: @activity_group.activities_count - 1)
-                          end
+                      h.tag :div, class: "text-center" do
+                        h.tag :a, {
+                          class: "py-1 small",
+                          href: view_context.fragment_activity_item_list_path(@activity_group, page_category: @page_category)
+                        } do
+                          h.tag :i, class: "fal fa-chevron-double-down me-1"
+                          h.text t("messages._components.activities.episode_record.more", n: @activity_group.activities_count - 1)
                         end
                       end
                     end

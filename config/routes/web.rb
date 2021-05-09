@@ -151,6 +151,7 @@ end
 
 namespace :fragment do
   match "/@:username/records/:record_id/edit", via: :get, as: :edit_record, to: "records#edit", username: USERNAME_FORMAT
+  match "/activity_groups/:activity_group_id/items", via: :get, as: :activity_item_list, to: "activity_items#index"
   match "/episodes/:episode_id/records", via: :get, as: :episode_record_list, to: "episode_records#index"
   match "/receive_channel_buttons", via: :get, as: :receive_channel_button_list, to: "receive_channel_buttons#index"
   match "/trackable_anime/:anime_id", via: :get, as: :trackable_anime, to: "trackable_anime#show"

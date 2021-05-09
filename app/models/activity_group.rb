@@ -39,6 +39,14 @@ class ActivityGroup < ApplicationRecord
   has_many :ordered_activities, -> { order(created_at: :desc) }, class_name: "Activity"
 
   define_prelude(:first_item) do |activity_groups|
+    load_items(activity_groups, :first)
+  end
+
+  define_prelude(:items) do |activity_groups|
+    load_items(activity_groups, :all)
+  end
+
+  def self.load_items(activity_groups, limit)
     all_activities = Activity.where(activity_group: activity_groups.pluck(:id))
     all_activities_by_activity_group_id = all_activities.group_by(&:activity_group_id)
     all_activities_by_trackable_type = all_activities.group_by(&:trackable_type)
@@ -57,15 +65,22 @@ class ActivityGroup < ApplicationRecord
       activities = all_activities_by_activity_group_id[activity_group.id]
       trackable_type = activities.first.trackable_type
 
-      case trackable_type
+      items = case trackable_type
       when "Status"
-        all_statuses.find_all { |s| activities.pluck(:trackable_id).include?(s.id) }.first
+        all_statuses.find_all { |s| activities.pluck(:trackable_id).include?(s.id) }
       when "EpisodeRecord"
         episode_records = all_episode_records.find_all { |er| activities.pluck(:trackable_id).include?(er.id) }
-        all_records.find_all { |r| episode_records.pluck(:record_id).include?(r.id) }.first
+        all_records.find_all { |r| episode_records.pluck(:record_id).include?(r.id) }
       when "WorkRecord"
         anime_records = all_anime_records.find_all { |ar| activities.pluck(:trackable_id).include?(ar.id) }
-        all_records.find_all { |r| anime_records.pluck(:record_id).include?(r.id) }.first
+        all_records.find_all { |r| anime_records.pluck(:record_id).include?(r.id) }
+      end
+
+      case limit
+      when :first
+        items.first
+      else
+        items
       end
     end
   end

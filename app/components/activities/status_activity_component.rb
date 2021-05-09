@@ -43,22 +43,23 @@ module Activities
 
             h.tag :div, class: "card mt-3" do
               h.tag :div, class: "card-body" do
-                h.tag :div, class: "row gy-3" do
+                h.tag :turbo_frame, id: view_context.dom_id(@activity_group) do
                   status = @activity_group.first_item
 
-                  h.tag :div do
-                    h.html Contents::StatusContentComponent.new(
-                      view_context,
-                      status: status,
-                      page_category: @page_category
-                    ).render
-                  end
+                  h.html Contents::StatusContentComponent.new(
+                    view_context,
+                    status: status,
+                    page_category: @page_category
+                  ).render
 
-                  if @activity_group.activities_count > 2
+                  if @activity_group.activities_count > 1
                     h.tag :div, class: "text-center" do
-                      h.tag :a, class: "c-activity-more-button btn btn-outline-secondary btn-small py-1", href: "" do
+                      h.tag :a, {
+                        class: "py-1 small",
+                        href: view_context.fragment_activity_item_list_path(@activity_group, page_category: @page_category)
+                      } do
                         h.tag :i, class: "fal fa-chevron-double-down me-1"
-                        h.text t("messages._components.activities.status.more", n: @activity_group.activities_count - 2)
+                        h.text t("messages._components.activities.status.more", n: @activity_group.activities_count - 1)
                       end
                     end
                   end
