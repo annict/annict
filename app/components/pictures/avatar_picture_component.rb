@@ -25,7 +25,7 @@ module Pictures
             class: "img-thumbnail rounded-circle #{@class_name}",
             height: @height,
             loading: "lazy",
-            src: @user.processed_avatar_url(height: @height, width: @width, format: "jpg"),
+            src: view_context.ann_image_url(@user.profile, :image, height: @height, width: @width, format: "jpg"),
             width: @width
           }
         end
@@ -36,8 +36,8 @@ module Pictures
 
     def srcset(height, width, format)
       [
-        "#{@user.processed_avatar_url(height: height, width: width, format: format)} 1x",
-        "#{@user.processed_avatar_url(height: height * 2, width: width * 2, format: format)} 2x"
+        "#{view_context.ann_image_url(@user.profile, :image, height: height, width: width, format: format)} 1x",
+        "#{view_context.ann_image_url(@user.profile, :image, height: height * 2, width: width * 2, format: format)} 2x"
       ].join(", ")
     end
   end

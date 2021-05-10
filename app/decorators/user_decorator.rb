@@ -20,14 +20,4 @@ module UserDecorator
   def avatar_url(size:)
     ann_image_url(profile, :image, size: size, ratio: "1:1")
   end
-
-  def processed_avatar_url(format:, height:, width:)
-    ix_image_url(profile.uploaded_file_path(:image), {
-      fill: "solid",
-      fit: "fill",
-      fm: format,
-      height: height,
-      w: width,
-    })
-  end
 end
