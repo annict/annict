@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Labels
-  class AnimeMediaLabelComponent < ApplicationComponent
+module Badges
+  class AnimeMediaBadgeComponent < ApplicationComponent
     def initialize(view_context, anime:)
       super view_context
       @anime = anime
