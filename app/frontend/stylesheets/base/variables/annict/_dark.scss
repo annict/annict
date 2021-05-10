@@ -1,8 +1,24 @@
-$ann-color-dark-body:   map-get($ann-color-black-map, "005");
-$ann-color-dark-border: map-get($ann-color-black-map, "060");
+$ann-color-dark-anime:         map-get($ann-color-shirobako-map, "rb");
+$ann-color-dark-body:          map-get($ann-color-black-map, "005");
+$ann-color-dark-card-bg:       map-get($ann-color-black-map, "070");
+$ann-color-dark-border:        map-get($ann-color-black-map, "060");
+$ann-color-dark-completed:     map-get($ann-color-green-map, "060");
+$ann-color-dark-dropped:       map-get($ann-color-black-map, "050");
+$ann-color-dark-on-hold:       map-get($ann-color-red-map, "080");
+$ann-color-dark-plan-to-watch: map-get($ann-color-orange-map, "080");
+$ann-color-dark-watching:      map-get($ann-color-blue-map, "040");
 
 @mixin ann-dark-variables {
   $ann-color-dark-map: (
+    "anime":                         $ann-color-dark-anime,
+    "body-bg-gradient-1":            rgba(255, 255, 255, 0),
+    "body-bg-gradient-2":            rgba(255, 255, 255, 0),
+    "body-bg-gradient-3":            $ann-color-dark-card-bg,
+    "completed":                     $ann-color-dark-completed,
+    "dropped":                       $ann-color-dark-dropped,
+    "on-hold":                       $ann-color-dark-on-hold,
+    "plan-to-watch":                 $ann-color-dark-plan-to-watch,
+    "watching":                      $ann-color-dark-watching,
     "average":                       #ff6d00,
     "bad":                           #757575,
     "facebook":                      map-get($ann-color-service-map, "facebook"),

@@ -36,6 +36,7 @@ class Record < ApplicationRecord
   counter_culture :user
   counter_culture :work
 
+  belongs_to :anime, foreign_key: :work_id
   belongs_to :user
   belongs_to :work
   has_one :anime_record, class_name: "WorkRecord", dependent: :destroy
@@ -43,6 +44,10 @@ class Record < ApplicationRecord
   has_one :work_record, dependent: :destroy
 
   scope :with_anime_record, -> { joins(:work_record).merge(WorkRecord.only_kept) }
+
+  def anime_id
+    work_id
+  end
 
   def episode_record?
     episode_record.present?

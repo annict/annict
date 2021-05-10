@@ -90,6 +90,8 @@ jobs:
             spec/requests/api/internal/registrations/create_spec.rb \
             spec/requests/api/internal/sign_in/create_spec.rb \
             spec/requests/api/internal/sign_up/create_spec.rb \
+            spec/requests/fragment/activity_items/index_spec.rb \
+            spec/requests/home/show_spec.rb \
             spec/requests/legacy/sessions/create_spec.rb \
             spec/requests/legacy/sessions/new_spec.rb \
             spec/requests/pages/legal_spec.rb \

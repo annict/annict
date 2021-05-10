@@ -27,7 +27,7 @@ class RatingLabelComponent < ApplicationComponent
   end
 
   def icon_class_name
-    classes = %w[far]
+    classes = %w[far me-1]
     classes << {
       great: "fa-heart",
       good: "fa-thumbs-up",
@@ -38,7 +38,7 @@ class RatingLabelComponent < ApplicationComponent
   end
 
   def badge_class_name
-    "u-badge-#{@rating}"
+    "bg-#{@rating}"
   end
 
   def label_text

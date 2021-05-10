@@ -2,11 +2,12 @@
 
 module Selectors
   class StatusSelectorComponent < ApplicationComponent
-    def initialize(view_context, anime:, page_category:, class_name: "")
+    def initialize(view_context, anime:, page_category:, class_name: "", style: "")
       super view_context
       @anime = anime
       @page_category = page_category
       @class_name = class_name
+      @style = style
     end
 
     def render
@@ -17,11 +18,12 @@ module Selectors
           data_status_selector_anime_id_value: @anime.id,
           data_status_selector_selected_class: "c-status-selector--selected",
           data_status_selector_page_category_value: @page_category,
-          data_status_selector_target: "kind"
+          style: @style
         } do
           h.tag :select, {
             class: "form-select",
-            data_action: "status-selector#change"
+            data_action: "status-selector#change",
+            data_status_selector_target: "kind"
           } do
             status_options.each do |status_option|
               h.tag :option, value: status_option[1] do
@@ -30,7 +32,7 @@ module Selectors
             end
           end
 
-          h.tag :i, class: "far fa-caret-down"
+          h.tag :i, class: "fas fa-caret-down"
         end
       end
     end

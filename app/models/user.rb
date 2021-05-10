@@ -147,7 +147,7 @@ class User < ApplicationRecord
 
   delegate :name, to: :profile
   delegate :admin?, :editor?, to: :role
-  delegate :hide_record_body?, :share_record_to_twitter?, :timeline_mode, to: :setting
+  delegate :hide_record_body?, :share_record_to_twitter?, to: :setting
 
   validates :email,
     presence: true,
@@ -498,6 +498,13 @@ class User < ApplicationRecord
     resources = model.joins(:user).merge(target_users)
 
     resources.order(order.field => order.direction)
+  end
+
+  def following_user_ids
+    user_ids = followings.only_kept.pluck(:id)
+    user_ids -= mute_users&.pluck(:muted_user_id).presence || []
+    user_ids << id
+    user_ids
   end
 
   def confirm_to_update_email!(new_email:)

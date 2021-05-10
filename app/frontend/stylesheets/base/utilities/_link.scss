@@ -1,0 +1,16 @@
+.u-link {
+  &:hover {
+    color: var(--bs-link-hover-color) !important;
+  }
+}
+
+.u-fake-link {
+  color: var(--bs-link-color);
+  cursor: pointer;
+  text-decoration: $link-decoration;
+
+  &:hover {
+    color: var(--bs-link-hover-color);
+    text-decoration: $link-hover-decoration;
+  }
+}

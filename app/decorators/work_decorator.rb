@@ -65,12 +65,6 @@ module WorkDecorator
     raw ? text : simple_format(text)
   end
 
-  def media_label
-    content_tag :span, class: "badge u-badge-works" do
-      media.text
-    end
-  end
-
   def started_on_label
     if media.tv?
       I18n.t("noun.start_to_broadcast_tv_date")
@@ -81,18 +75,6 @@ module WorkDecorator
     else
       I18n.t("noun.start_to_publish_date")
     end
-  end
-
-  def processed_image_url(format:, height:, width:)
-    return unless work_image
-
-    ix_image_url(work_image.path, {
-      fill: "solid",
-      fit: "fill",
-      fm: format,
-      height: height,
-      w: width,
-    })
   end
 
   def to_values

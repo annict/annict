@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
 class TimelineComponent < ApplicationComponent
-  def initialize(view_context, activity_group_structs:, activity_groups:, page_category: "")
+  def initialize(view_context, activity_groups:, page_category:)
     super view_context
-    @activity_group_structs = activity_group_structs
     @activity_groups = activity_groups
     @page_category = page_category
   end
@@ -11,27 +10,29 @@ class TimelineComponent < ApplicationComponent
   def render
     build_html do |h|
       h.tag :div, class: "c-timeline" do
-        h.tag :div, class: "c-timeline__activities mb-3" do
-          @activity_group_structs.each do |activity_group_struct|
-            h.tag :div, class: "c-timeline__activity py-3 u-underline" do
-              case activity_group_struct.itemable_type
-              when "status"
+        h.tag :div, class: "c-timeline__activities" do
+          @activity_groups.each.with_prelude do |activity_group|
+            h.tag :div, class: "c-timeline__activity py-3" do
+              case activity_group.itemable_type
+              when "Status"
                 h.html Activities::StatusActivityComponent.new(
                   view_context,
-                  activity_group_struct: activity_group_struct,
+                  activity_group: activity_group,
                   page_category: @page_category
                 ).render
-                # elsif activity_group.itemable_type.record?
-                #   <%= render RecordActivityComponent.new(viewer: @viewer, activity_group_entity: activity_group_entity, page_category: @page_category) %>
+              when "EpisodeRecord", "WorkRecord"
+                h.html Activities::RecordActivityComponent.new(
+                  view_context,
+                  activity_group: activity_group,
+                  page_category: @page_category
+                ).render
               end
             end
           end
         end
 
-        if @activity_groups.total_pages > 1
-          h.tag :div, class: "mt-3 text-center" do
-            h.html paginate(@activity_groups)
-          end
+        h.tag :div, class: "mt-3 text-center" do
+          h.html ButtonGroups::PaginationButtonGroupComponent.new(view_context, collection: @activity_groups).render
         end
       end
     end

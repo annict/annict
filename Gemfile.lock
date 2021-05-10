@@ -409,6 +409,8 @@ GEM
     parser (3.0.1.1)
       ast (~> 2.4.1)
     pg (1.2.3)
+    prelude-batch-loader (0.0.5)
+      activerecord (>= 6)
     procto (0.0.3)
     promise.rb (0.7.4)
     pry (0.14.1)
@@ -698,6 +700,7 @@ DEPENDENCIES
   omniauth-rails_csrf_protection
   omniauth-twitter
   pg
+  prelude-batch-loader
   pry-rails
   puma
   puma_worker_killer

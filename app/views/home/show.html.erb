@@ -1,93 +1,73 @@
-<% title = t "head.title.home.index" %>
+<% title = t "head.title.home.show" %>
 <% set_meta_tags(title: title, site: false) %>
 
-<%
-=begin
-%>
+<%= component_value_fetcher_tag("status-selector", internal_api_library_entry_list_path(anime_ids: @anime_ids)) %>
+
 <div class="container-fluid py-3">
-  <div class="row">
-    <div class="col-12 col-lg-7">
+  <div class="row g-3">
+    <div class="col-12 col-lg-8">
       <div class="align-items-start justify-content-between row">
         <div class="col-auto">
           <h2 class="fw-bold h3 mb-0">
             <%= t "noun.timeline" %>
           </h2>
         </div>
-
-        <div class="col text-end">
-          <div class="c-timeline-mode-switcher">
-            <%= form_with html: { class: "d-inline", method: :patch }, local: true, url: timeline_mode_path do %>
-              <%= hidden_field_tag "setting[timeline_mode]", "following", id: :setting_timeline_mode_following %>
-              <%= submit_tag(
-                t("noun.following_shorten"),
-                class: "btn btn-sm rounded-left #{current_user.timeline_mode.following? ? 'btn-secondary' : 'btn-outline-secondary'}"
-              ) %>
-            <% end %>
-            <%= form_with html: { class: "d-inline", method: :patch }, local: true, url: timeline_mode_path do %>
-              <%= hidden_field_tag "setting[timeline_mode]", "global", id: :setting_timeline_mode_global %>
-              <%= submit_tag(
-                t("noun.global"),
-                class: "btn btn-sm rounded-right #{current_user.timeline_mode.global? ? 'btn-secondary' : 'btn-outline-secondary'}"
-              ) %>
-            <% end %>
-          </div>
-        </div>
       </div>
 
-      <% if @activity_group_structs.present? %>
+      <% if @activity_groups.present? %>
         <%= TimelineComponent.new(
           self,
-          activity_group_structs: @activity_group_structs,
           activity_groups: @activity_groups,
           page_category: page_category
         ).render %>
       <% else %>
-        <%= render EmptyComponent.new(text: t("messages._empty.no_activities")) %>
+        <%= EmptyComponent.new(self, text: t("messages._empty.no_activities")).render %>
       <% end %>
     </div>
 
     <hr class="d-lg-none my-5 w-100">
 
-    <div class="col-12 col-lg-5">
+    <div class="col-12 col-lg-4">
       <div class="mb-5">
-        <% if @userland_projects.present? %>
+        <% if @new_anime_list.present? %>
           <div class="align-items-start justify-content-between mb-3 row">
             <div class="col-auto">
               <h2 class="fw-bold h3 mb-0">
-                Userland
+                <%= t("head.title.works.newest") %>
               </h2>
             </div>
 
             <div class="col text-end">
-              <%= link_to userland_root_path, class: "small" do %>
-                <%= icon "angle-right", class: "me-1" %>
+              <%= link_to newest_works_path, class: "small" do %>
+                <i class="far fa-angle-right me-1"></i>
                 <%= t "verb.view_all" %>
               <% end %>
             </div>
           </div>
 
-          <% @userland_projects.each do |project| %>
-            <div class="row mb-3">
-              <div class="col-auto pr-0">
-                <%= link_to userland_project_path(project) do %>
-                  <%= render UserlandProjectImageComponent.new(image_url_1x: ann_image_url(project, :image, size: "80x"), alt: project.name) %>
-                <% end %>
-              </div>
-
-              <div class="col">
-                <div class="mb-1">
-                  <div class="small">
-                    <%= project.userland_category.local_name %>
-                  </div>
-                  <%= link_to project.name, userland_project_path(project) %>
+          <ul class="list-unstyled">
+            <% @new_anime_list.each do |anime| %>
+              <li class="g-3 mb-2 row">
+                <div class="col-auto">
+                  <a href="<%= anime_path(anime) %>">
+                    <%= Pictures::AnimePictureComponent.new(self, anime: anime, width: 50, mb_width: 50, alt: anime.local_title).render %>
+                  </a>
                 </div>
 
-                <div class="small text-muted">
-                  <%= project.summary %>
+                <div class="col">
+                  <a href="<%= anime_path(anime) %>">
+                    <div class="mb-1">
+                      <%= Labels::AnimeMediaLabelComponent.new(self, anime: anime).render %>
+                    </div>
+
+                    <span class="text-body">
+                      <%= anime.local_title %>
+                    </span>
+                  </a>
                 </div>
-              </div>
-            </div>
-          <% end %>
+              </li>
+            <% end %>
+          </ul>
         <% end %>
       </div>
 
@@ -102,7 +82,7 @@
 
             <div class="col text-end">
               <%= link_to forum_category_path(:site_news), class: "small" do %>
-                <%= icon "angle-right", class: "me-1" %>
+                <i class="far fa-angle-right me-1"></i>
                 <%= t "messages.forum._common.view_all_site_news" %>
               <% end %>
             </div>
@@ -123,6 +103,3 @@
     </div>
   </div>
 </div>
-<%
-=end
-%>

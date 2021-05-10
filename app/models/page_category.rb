@@ -11,6 +11,7 @@ class PageCategory
     favorite_person_list
     follower_list
     following_list
+    home
     library
     organization_fan_list
     person_fan_list
@@ -21,7 +22,6 @@ class PageCategory
     search
     slot_list
     track
-    user_home
     user_work_tag
     welcome
     work
