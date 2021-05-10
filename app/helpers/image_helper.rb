@@ -9,7 +9,7 @@ module ImageHelper
       fit: "fill",
       fm: format,
       height: height,
-      w: width,
+      w: width
     })
   end
 

@@ -17,8 +17,7 @@ module Activities
               h.html Pictures::AvatarPictureComponent.new(view_context,
                 user: @user,
                 width: 32,
-                mb_width: 32
-              ).render
+                mb_width: 32).render
             end
           end
 

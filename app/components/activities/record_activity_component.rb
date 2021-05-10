@@ -17,8 +17,7 @@ module Activities
               h.html Pictures::AvatarPictureComponent.new(view_context,
                 user: @user,
                 width: 32,
-                mb_width: 32
-              ).render
+                mb_width: 32).render
             end
           end
 
@@ -49,13 +48,11 @@ module Activities
                   if record.episode_record?
                     h.html Contents::EpisodeRecordContentComponent.new(view_context,
                       record: record,
-                      page_category: @page_category
-                    ).render
+                      page_category: @page_category).render
                   else
                     h.html Contents::AnimeRecordContentComponent.new(view_context,
                       record: record,
-                      page_category: @page_category
-                    ).render
+                      page_category: @page_category).render
                   end
                 else
                   h.tag :turbo_frame, id: view_context.dom_id(@activity_group) do
@@ -64,13 +61,11 @@ module Activities
                     if record.episode_record?
                       h.html Contents::EpisodeRecordContentComponent.new(view_context,
                         record: record,
-                        page_category: @page_category
-                      ).render
+                        page_category: @page_category).render
                     else
                       h.html Contents::AnimeRecordContentComponent.new(view_context,
                         record: record,
-                        page_category: @page_category
-                      ).render
+                        page_category: @page_category).render
                     end
 
                     if @activity_group.activities_count > 1

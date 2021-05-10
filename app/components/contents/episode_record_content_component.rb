@@ -37,8 +37,7 @@ module Contents
             h.html Boxes::AnimeBoxComponent.new(view_context,
               anime: @anime,
               page_category: @page_category,
-              episode: @episode
-            ).render
+              episode: @episode).render
 
             h.tag :hr
           end

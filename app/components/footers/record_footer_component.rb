@@ -14,8 +14,7 @@ module Footers
             resource_name: "Record",
             resource_id: @record.id,
             likes_count: @record.likes_count,
-            page_category: @page_category
-          ).render
+            page_category: @page_category).render
 
           if @record.episode_record?
             h.tag :a, href: view_context.record_path(@record.user.username, @record.id), class: "ms-3", data_turbo_frame: "_top" do

@@ -20,8 +20,7 @@ module Contents
 
           h.html Boxes::AnimeBoxComponent.new(view_context,
             anime: @anime,
-            page_category: @page_category
-          ).render
+            page_category: @page_category).render
 
           h.tag :hr
 

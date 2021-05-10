@@ -23,7 +23,6 @@ module ButtonGroups
       end
     end
 
-
     private
 
     def base_button_class_name
