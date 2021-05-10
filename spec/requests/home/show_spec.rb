@@ -1,19 +1,15 @@
 # frozen_string_literal: true
 
 describe "GET /", type: :request do
-  before do
-    host! "annict-jp.test:3000"
-  end
-
-  context "when user signs in" do
+  context "ログインしているとき" do
     let!(:user) { create(:registered_user) }
 
     before do
       login_as(user, scope: :user)
     end
 
-    context "when activities do not exist" do
-      it "displays no activity exists message" do
+    context "アクティビティが存在しないとき" do
+      it "アクティビティが無い旨を表示すること" do
         get "/"
 
         expect(response.status).to eq(200)
@@ -21,12 +17,12 @@ describe "GET /", type: :request do
       end
     end
 
-    context "when activities exist" do
+    context "アクティビティが存在するとき" do
       let!(:episode_record) { create(:episode_record, user: user, body: "楽しかった") }
       let!(:activity_group) { create(:activity_group, user: user, itemable_type: "EpisodeRecord", single: true) }
       let!(:activity) { create(:activity, user: user, itemable: episode_record, activity_group: activity_group) }
 
-      it "displays activity" do
+      it "アクティビティを表示すること" do
         get "/"
 
         expect(response.status).to eq(200)
