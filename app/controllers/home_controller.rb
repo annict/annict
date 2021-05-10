@@ -16,13 +16,16 @@ class HomeController < ApplicationController
 
     @activity_groups = ActivityGroup
       .preload(user: :profile)
-      .joins(:user)
-      .merge(current_user.followings)
+      .where(user_id: current_user.following_user_ids)
       .order(created_at: :desc)
       .page(params[:page])
       .per(30)
       .without_count
 
-    @anime_ids = @activity_groups.flat_map.with_prelude { |ags| ags.first_item.anime_id }.uniq
+    @anime_ids = if @activity_groups.present?
+      @activity_groups.flat_map.with_prelude { |ags| ags.first_item.anime_id }.uniq
+    else
+      []
+    end
   end
 end

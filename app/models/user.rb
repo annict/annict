@@ -500,6 +500,13 @@ class User < ApplicationRecord
     resources.order(order.field => order.direction)
   end
 
+  def following_user_ids
+    user_ids = followings.only_kept.pluck(:id)
+    user_ids -= mute_users&.pluck(:muted_user_id).presence || []
+    user_ids << id
+    user_ids
+  end
+
   def confirm_to_update_email!(new_email:)
     email_confirmations.new(email: new_email).confirm_to_update_email!
   end
