@@ -8,6 +8,7 @@ module Fragment
       set_page_category params[:page_category]
 
       @activity_group = ActivityGroup.find(params[:activity_group_id])
+      @anime_ids = @activity_group.items.map(&:anime_id).uniq
     end
   end
 end

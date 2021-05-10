@@ -86,6 +86,10 @@ class Status < ApplicationRecord
     count == 1 && initial.id == status.id
   end
 
+  def anime_id
+    work_id
+  end
+
   def kind_v3
     self.class.kind_v2_to_v3(kind)
   end

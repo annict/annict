@@ -23,6 +23,6 @@ class HomeController < ApplicationController
       .per(30)
       .without_count
 
-    # @anime_ids = @activity_structs.flat_map { |ags| ags.items.pluck(:anime_id) }
+    @anime_ids = @activity_groups.flat_map.with_prelude { |ags| ags.first_item.anime_id }.uniq
   end
 end

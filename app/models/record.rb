@@ -45,6 +45,10 @@ class Record < ApplicationRecord
 
   scope :with_anime_record, -> { joins(:work_record).merge(WorkRecord.only_kept) }
 
+  def anime_id
+    work_id
+  end
+
   def episode_record?
     episode_record.present?
   end
