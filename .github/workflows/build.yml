@@ -94,6 +94,7 @@ jobs:
             spec/requests/home/show_spec.rb \
             spec/requests/legacy/sessions/create_spec.rb \
             spec/requests/legacy/sessions/new_spec.rb \
+            spec/requests/libraries/show_spec.rb \
             spec/requests/pages/legal_spec.rb \
             spec/requests/pages/privacy_spec.rb \
             spec/requests/pages/terms_spec.rb \

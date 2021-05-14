@@ -7,7 +7,7 @@ class LibrariesController < ApplicationController
   def show
     set_page_category PageCategory::LIBRARY
 
-    @user_entity = UserEntity.from_model(@user)
+    @user_entity = Deprecated::UserEntity.from_model(@user)
     @works = @user.works.on(params[:status_kind]).only_kept
     season_slugs = @works.map(&:season).select(&:present?).map(&:slug).uniq
     @seasons = season_slugs
