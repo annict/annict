@@ -1,14 +1,14 @@
-.c-subnav2 {
+.c-subnav {
   $root: &;
 
-  border-bottom: 1px solid $ann-color-border;
+  border-bottom: 1px solid var(--bs-border-color);
   overflow-y: hidden;
 
   &__list {
     list-style: none;
     margin-bottom: 0;
     overflow-x: auto;
-    padding: 0 1rem;
+    padding: 0;
     white-space: nowrap;
 
     &::-webkit-scrollbar {
@@ -25,12 +25,13 @@
   }
 
   &__link {
+    color: var(--bs-body-color);
     display: inline-block;
     height: $ann-navbar-height;
     line-height: $ann-navbar-height;
 
     &--active {
-      border-bottom: solid .15rem $ann-color-mizuho;
+      border-bottom: solid .15rem var(--ann-color-mizuho);
     }
   }
 }
