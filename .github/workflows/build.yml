@@ -97,6 +97,7 @@ jobs:
             spec/requests/pages/legal_spec.rb \
             spec/requests/pages/privacy_spec.rb \
             spec/requests/pages/terms_spec.rb \
+            spec/requests/records/index_spec.rb \
             spec/requests/registrations/new_spec.rb \
             spec/requests/sign_in_callbacks/show_spec.rb \
             spec/requests/sign_in/new_spec.rb \

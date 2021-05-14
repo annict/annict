@@ -1,0 +1,31 @@
+<% if @record_entities.present? %>
+  <% @record_entities.each do |record_entity| %>
+    <div class="py-3 u-underline">
+      <div class="mb-3">
+        <%= render Deprecated::RecordHeaderComponent.new(viewer: @viewer, user_entity: record_entity.user, record_entity: record_entity) %>
+      </div>
+
+      <% if record_entity.episode_record? %>
+        <%= render Deprecated::EpisodeRecordContentComponent.new(
+          viewer: @viewer,
+          user_entity: record_entity.user,
+          work_entity: record_entity.trackable.anime,
+          episode_entity: record_entity.trackable,
+          record_entity: record_entity,
+          episode_record_entity: record_entity.recordable,
+          show_card: @show_card
+        ) %>
+      <% elsif record_entity.anime_record? %>
+        <%= render Deprecated::AnimeRecordContentComponent.new(
+          user_entity: record_entity.user,
+          anime_entity: record_entity.trackable,
+          record_entity: record_entity,
+          anime_record_entity: record_entity.recordable,
+          show_card: @show_card
+        ) %>
+      <% end %>
+    </div>
+  <% end %>
+<% else %>
+  <%= render Deprecated::EmptyComponent.new(text: t("messages._empty.no_records")) %>
+<% end %>
