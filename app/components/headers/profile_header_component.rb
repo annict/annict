@@ -57,7 +57,7 @@ module Headers
               h.html active_link_to t("noun.records"), view_context.record_list_path(@user.username),
                 class: "c-subnav__link",
                 class_active: "c-subnav__link--active",
-                active: @params[:controller] == "v4/records" && @params[:action].in?(%w(index show))
+                active: @params[:controller] == "v4/records" && @params[:action].in?(%w[index show])
             end
 
             h.tag :li, class: "c-subnav__item" do
@@ -71,7 +71,7 @@ module Headers
               h.html active_link_to t("noun.favorites"), view_context.favorite_characters_path(@user.username),
                 class: "c-subnav__link",
                 class_active: "c-subnav__link--active",
-                active: @params[:controller].in?(%w(favorite_characters favorite_people favorite_organizations)) && @params[:action] == "index"
+                active: @params[:controller].in?(%w[favorite_characters favorite_people favorite_organizations]) && @params[:action] == "index"
             end
 
             h.tag :li, class: "c-subnav__item" do
