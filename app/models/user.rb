@@ -183,12 +183,24 @@ class User < ApplicationRecord
     end
   end
 
+  def watching_anime_count
+    watching_works_count
+  end
+
   def works
     @works ||= UserWorksQuery.new(self)
   end
 
   def works_on(*status_kinds)
     Work.joins(:library_entries).merge(library_entries.with_status(*status_kinds))
+  end
+
+  def cast_favorites
+    person_favorites.with_cast
+  end
+
+  def staff_favorites
+    person_favorites.with_cast
   end
 
   def social_friends
@@ -408,6 +420,10 @@ class User < ApplicationRecord
   def weeks
     days = (Time.zone.now.to_date - created_at.to_date).to_f
     (days / 7).floor
+  end
+
+  def days_from_started(time_zone)
+    ((Time.zone.now.in_time_zone(time_zone) - created_at.in_time_zone(time_zone)) / 86_400).ceil
   end
 
   def validate_to_destroy

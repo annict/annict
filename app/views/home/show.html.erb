@@ -57,7 +57,7 @@
                 <div class="col">
                   <a href="<%= anime_path(anime) %>">
                     <div class="mb-1">
-                      <%= Labels::AnimeMediaLabelComponent.new(self, anime: anime).render %>
+                      <%= Badges::AnimeMediaBadgeComponent.new(self, anime: anime).render %>
                     </div>
 
                     <span class="text-body">

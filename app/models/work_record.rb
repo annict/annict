@@ -92,6 +92,10 @@ class WorkRecord < ApplicationRecord
 
   before_save :append_title_to_body
 
+  def comment
+    body
+  end
+
   def share_url
     "#{user.preferred_annict_url}/@#{user.username}/records/#{record.id}"
   end
