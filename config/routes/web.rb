@@ -27,6 +27,7 @@ resources :supporters, only: %i[index]
 resources :settings, only: [:index]
 scope :settings do
   resource :account, only: %i[show update]
+  # TODO: /my/profile パスに変更する
   resource :profile, only: %i[show update], as: :profile_setting
   resources :mutes, only: [:index]
   resources :options, only: [:index]
@@ -159,9 +160,11 @@ namespace :fragment do
   match "/trackable_episodes/:episode_id", via: :get, as: :trackable_episode, to: "trackable_episodes#show"
 end
 
+match "/@:username", via: :get, as: :profile, to: "users#show", username: USERNAME_FORMAT
 match "/@:username/records/:record_id", via: :patch, as: :record, to: "records#update", username: USERNAME_FORMAT
 match "/episodes/:episode_id/records", via: :post, as: :episode_record_list, to: "episode_records#create"
 match "/legal", via: :get, as: :legal, to: "pages#legal"
+match "/my/profile", via: :get, as: :my_profile, to: "my/profiles#show"
 match "/privacy", via: :get, as: :privacy, to: "pages#privacy"
 match "/registrations/new", via: :get, as: :new_registration, to: "registrations#new"
 match "/sign_in", via: :get, as: :new_user_session, to: "sign_in#new" # for Devise
@@ -179,7 +182,6 @@ scope module: :v4 do
       match "/user_email/callback", via: :get, as: :user_email_callback, to: "user_email_callbacks#show"
     end
 
-    match "/@:username", via: :get, as: :profile, to: "users#show", username: USERNAME_FORMAT
     match "/@:username/records", via: :get, as: :record_list, to: "records#index", username: USERNAME_FORMAT
     match "/@:username/records/:record_id", via: :delete, to: "records#destroy", username: USERNAME_FORMAT
     match "/@:username/records/:record_id", via: :get, to: "records#show", username: USERNAME_FORMAT

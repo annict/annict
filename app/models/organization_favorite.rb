@@ -31,6 +31,10 @@ class OrganizationFavorite < ApplicationRecord
   belongs_to :organization
   belongs_to :user
 
+  def watched_anime_count
+    watched_works_count
+  end
+
   def update_watched_works_count(user)
     staff_work_ids = organization.staff_works.pluck(:id)
     library_entries = user.library_entries.with_not_deleted_work.with_status(:watched)

@@ -8,78 +8,78 @@ module Contents
       @page_category = page_category
       @anime_record = @record.anime_record
       @show_box = show_box
-      @anime = @arecord.anime
+      @anime = @record.anime
     end
 
     def render
       build_html do |h|
         h.tag :div do
-          if @anime_record.rating_overall || @record_entity.body.present?
+          if @anime_record.rating_overall_state || @anime_record.comment.present?
             h.html(SpoilerGuardComponent.new(view_context, record: @record).render { |h|
               h.tag :div, class: "mb-3 row" do
                 h.tag :div, class: "col-12 col-xl-4 order-1 order-xl-2" do
-                  if @anime_record.rating_overall
+                  if @anime_record.rating_overall_state
                     h.tag :div, class: "mb-3 mb-xl-0 p-3 rounded u-bg-black-000" do
                       h.tag :div, class: "small fw-bold text-center mb-2" do
                         h.text t("noun.rating")
                       end
 
-                      if @anime_record.rating_animation
+                      if @anime_record.rating_animation_state
                         h.tag :div, class: "row" do
                           h.tag :div, class: "col" do
                             h.text t("noun.animation")
                           end
 
                           h.tag :div, class: "col pl-0 text-end" do
-                            h.html RatingLabelComponent.new(view_context, rating: @anime_record.rating_animation).render
+                            h.html RatingLabelComponent.new(view_context, rating: @anime_record.rating_animation_state).render
                           end
                         end
                       end
 
-                      if @anime_record.rating_music
+                      if @anime_record.rating_music_state
                         h.tag :div, class: "row" do
                           h.tag :div, class: "col" do
                             h.text t("noun.music")
                           end
 
                           h.tag :div, class: "col pl-0 text-end" do
-                            h.html RatingLabelComponent.new(view_context, rating: @anime_record.rating_music).render
+                            h.html RatingLabelComponent.new(view_context, rating: @anime_record.rating_music_state).render
                           end
                         end
                       end
 
-                      if @anime_record.rating_story
+                      if @anime_record.rating_story_state
                         h.tag :div, class: "row" do
                           h.tag :div, class: "col" do
                             h.text t("noun.story")
                           end
 
                           h.tag :div, class: "col pl-0 text-end" do
-                            h.html RatingLabelComponent.new(view_context, rating: @anime_record.rating_story).render
+                            h.html RatingLabelComponent.new(view_context, rating: @anime_record.rating_story_state).render
                           end
                         end
                       end
 
-                      if @anime_record.rating_character
+                      if @anime_record.rating_character_state
                         h.tag :div, class: "row" do
                           h.tag :div, class: "col" do
                             h.text t("noun.character")
                           end
 
                           h.tag :div, class: "col pl-0 text-end" do
-                            h.html RatingLabelComponent.new(view_context, rating: @anime_record.rating_character).render
+                            h.html RatingLabelComponent.new(view_context, rating: @anime_record.rating_character_state).render
                           end
                         end
                       end
 
-                      if @anime_record.rating_overall
+                      if @anime_record.rating_overall_state
                         h.tag :div, class: "row" do
                           h.tag :div, class: "col" do
                             h.text t("noun.overall")
                           end
 
                           h.tag :div, class: "col pl-0 text-end" do
-                            h.html RatingLabelComponent.new(view_context, rating: @anime_record.rating_overall).render
+                            h.html RatingLabelComponent.new(view_context, rating: @anime_record.rating_overall_state).render
                           end
                         end
                       end

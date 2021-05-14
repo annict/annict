@@ -34,6 +34,10 @@ class PersonFavorite < ApplicationRecord
   scope :with_cast, -> { joins(:person).where("people.casts_count > ?", 0) }
   scope :with_staff, -> { joins(:person).where("people.staffs_count > ?", 0) }
 
+  def watched_anime_count
+    watched_works_count
+  end
+
   def update_watched_works_count(user)
     cast_work_ids = person.cast_works.pluck(:id)
     staff_work_ids = person.staff_works.pluck(:id)
