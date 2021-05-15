@@ -1,6 +1,13 @@
-<%= render "application/google_tag_manager" %>
-<%= ann_display_meta_tags %>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=<%= ga_tracking_id(request) %>"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', '<%= ga_tracking_id(request) %>');
+</script>
 
+<%= ann_display_meta_tags %>
 <meta http-equiv="x-dns-prefetch-control" content="on">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <%= yield :head_meta %>
@@ -25,5 +32,4 @@
 
 <%= annict_config %>
 
-<%= stylesheet_bundle_tag "web.css", media: "all", "data-turbo-track": "reload" %>
-<%= javascript_bundle_tag "web.js", defer: "", "data-turbo-track": "reload" %>
+<%= yield :head_assets %>
