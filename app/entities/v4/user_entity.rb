@@ -30,67 +30,67 @@ module V4
     def self.from_node(user_node)
       attrs = {}
 
-      if database_id = user_node["databaseId"]
+      if (database_id = user_node["databaseId"])
         attrs[:database_id] = database_id
       end
 
-      if username = user_node["username"]
+      if (username = user_node["username"])
         attrs[:username] = username
       end
 
-      if name = user_node["name"]
+      if (name = user_node["name"])
         attrs[:name] = name
       end
 
-      if description = user_node["description"]
+      if (description = user_node["description"])
         attrs[:description] = description
       end
 
-      if url = user_node["url"]
+      if (url = user_node["url"])
         attrs[:url] = url
       end
 
-      if avatar_url = user_node["avatarUrl"]
+      if (avatar_url = user_node["avatarUrl"])
         attrs[:avatar_url] = avatar_url
       end
 
-      if background_image_url = user_node["backgroundImageUrl"]
+      if (background_image_url = user_node["backgroundImageUrl"])
         attrs[:background_image_url] = background_image_url
       end
 
-      if display_supporter_badge = user_node["displaySupporterBadge"]
+      if (display_supporter_badge = user_node["displaySupporterBadge"])
         attrs[:display_supporter_badge] = display_supporter_badge
       end
 
-      if records_count = user_node["recordsCount"]
+      if (records_count = user_node["recordsCount"])
         attrs[:records_count] = records_count
       end
 
-      if watching_anime_count = user_node["watchingAnimeCount"]
+      if (watching_anime_count = user_node["watchingAnimeCount"])
         attrs[:watching_anime_count] = watching_anime_count
       end
 
-      if following_count = user_node["followingCount"]
+      if (following_count = user_node["followingCount"])
         attrs[:following_count] = following_count
       end
 
-      if followers_count = user_node["followersCount"]
+      if (followers_count = user_node["followersCount"])
         attrs[:followers_count] = followers_count
       end
 
-      if character_favorites_count = user_node["characterFavoritesCount"]
+      if (character_favorites_count = user_node["characterFavoritesCount"])
         attrs[:character_favorites_count] = character_favorites_count
       end
 
-      if person_favorites_count = user_node["personFavoritesCount"]
+      if (person_favorites_count = user_node["personFavoritesCount"])
         attrs[:person_favorites_count] = person_favorites_count
       end
 
-      if organization_favorites_count = user_node["organizationFavoritesCount"]
+      if (organization_favorites_count = user_node["organizationFavoritesCount"])
         attrs[:organization_favorites_count] = organization_favorites_count
       end
 
-      if created_at = user_node["createdAt"]
+      if (created_at = user_node["createdAt"])
         attrs[:created_at] = created_at
       end
 

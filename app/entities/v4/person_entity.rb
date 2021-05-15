@@ -11,15 +11,15 @@ module V4
     def self.from_node(person_node)
       attrs = {}
 
-      if database_id = person_node["databaseId"]
+      if (database_id = person_node["databaseId"])
         attrs[:database_id] = database_id
       end
 
-      if name = person_node["name"]
+      if (name = person_node["name"])
         attrs[:name] = name
       end
 
-      if name_en = person_node["nameEn"]
+      if (name_en = person_node["nameEn"])
         attrs[:name_en] = name_en
       end
 

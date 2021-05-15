@@ -18,19 +18,19 @@ module V4
     def self.from_node(cast_node)
       attrs = {}
 
-      if accurate_name = cast_node["accurateName"]
+      if (accurate_name = cast_node["accurateName"])
         attrs[:accurate_name] = accurate_name
       end
 
-      if accurate_name_en = cast_node["accurateNameEn"]
+      if (accurate_name_en = cast_node["accurateNameEn"])
         attrs[:accurate_name_en] = accurate_name_en
       end
 
-      if character_node = cast_node["character"]
+      if (character_node = cast_node["character"])
         attrs[:character] = V4::CharacterEntity.from_node(character_node)
       end
 
-      if person_node = cast_node["person"]
+      if (person_node = cast_node["person"])
         attrs[:person] = V4::PersonEntity.from_node(person_node)
       end
 

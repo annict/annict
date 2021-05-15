@@ -22,23 +22,23 @@ module V4
     def self.from_node(staff_node)
       attrs = {}
 
-      if accurate_name = staff_node["accurateName"]
+      if (accurate_name = staff_node["accurateName"])
         attrs[:accurate_name] = accurate_name
       end
 
-      if accurate_name_en = staff_node["accurateNameEn"]
+      if (accurate_name_en = staff_node["accurateNameEn"])
         attrs[:accurate_name_en] = accurate_name_en
       end
 
-      if role = staff_node["role"]
+      if (role = staff_node["role"])
         attrs[:role] = role
       end
 
-      if role_en = staff_node["roleEn"]
+      if (role_en = staff_node["roleEn"])
         attrs[:role_en] = role_en
       end
 
-      if resource_node = staff_node["resource"]
+      if (resource_node = staff_node["resource"])
         attrs[:resource] = {
           typename: resource_node["__typename"],
           database_id: resource_node["databaseId"]

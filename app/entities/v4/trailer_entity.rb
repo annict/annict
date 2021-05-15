@@ -15,15 +15,15 @@ module V4
     def self.from_node(trailer_node)
       attrs = {}
 
-      if title = trailer_node["title"]
+      if (title = trailer_node["title"])
         attrs[:title] = title
       end
 
-      if url = trailer_node["url"]
+      if (url = trailer_node["url"])
         attrs[:url] = url
       end
 
-      if image_url = trailer_node["internalImageUrl"]
+      if (image_url = trailer_node["internalImageUrl"])
         attrs[:image_url] = image_url
       end
 

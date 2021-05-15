@@ -15,11 +15,11 @@ module V4
     def self.from_node(channel_node, anime_entity:)
       attrs = {}
 
-      if database_id = channel_node["databaseId"]
+      if (database_id = channel_node["databaseId"])
         attrs[:database_id] = database_id
       end
 
-      if name = channel_node["name"]
+      if (name = channel_node["name"])
         attrs[:name] = name
       end
 

@@ -14,11 +14,11 @@ module V4
     def self.from_node(node)
       attrs = {}
 
-      if tracked_episodes_count_in_current_status = node["trackedEpisodesCountInCurrentStatus"]
+      if (tracked_episodes_count_in_current_status = node["trackedEpisodesCountInCurrentStatus"])
         attrs[:tracked_episodes_count_in_current_status] = tracked_episodes_count_in_current_status
       end
 
-      if anime_node = node["anime"]
+      if (anime_node = node["anime"])
         attrs[:anime] = V4::AnimeEntity.from_node(anime_node)
       end
 

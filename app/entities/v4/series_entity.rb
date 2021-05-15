@@ -17,11 +17,11 @@ module V4
     def self.from_node(series_node)
       attrs = {}
 
-      if name = series_node["name"]
+      if (name = series_node["name"])
         attrs[:name] = name
       end
 
-      if name_en = series_node["nameEn"]
+      if (name_en = series_node["nameEn"])
         attrs[:name_en] = name_en
       end
 

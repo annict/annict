@@ -13,7 +13,7 @@ module V4
     def self.from_node(node)
       attrs = {}
 
-      if job_id = node["jobId"]
+      if (job_id = node["jobId"])
         attrs[:job_id] = job_id
       end
 

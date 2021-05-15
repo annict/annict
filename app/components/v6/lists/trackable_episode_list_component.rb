@@ -67,7 +67,7 @@ module Lists
                       end
 
                       if le.program
-                        started_at = @slots.filter { |slot| slot.program_id == le.program.id && slot.episode_id == episode.id }.first&.started_at
+                        started_at = @slots.find { |slot| slot.program_id == le.program.id && slot.episode_id == episode.id }&.started_at
 
                         if started_at
                           h.tag :div, class: "col text-end" do

@@ -12,19 +12,19 @@ module V4
     def self.from_node(character_node)
       attrs = {}
 
-      if database_id = character_node["databaseId"]
+      if (database_id = character_node["databaseId"])
         attrs[:database_id] = database_id
       end
 
-      if name = character_node["name"]
+      if (name = character_node["name"])
         attrs[:name] = name
       end
 
-      if name_en = character_node["nameEn"]
+      if (name_en = character_node["nameEn"])
         attrs[:name_en] = name_en
       end
 
-      if series_node = character_node["series"]
+      if (series_node = character_node["series"])
         attrs[:series] = V4::SeriesEntity.from_node(series_node)
       end
 

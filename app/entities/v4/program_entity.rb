@@ -18,27 +18,27 @@ module V4
     def self.from_node(node)
       attrs = {}
 
-      if id = node["id"]
+      if (id = node["id"])
         attrs[:id] = id
       end
 
-      if vod_title_name = node["vodTitleName"]
+      if (vod_title_name = node["vodTitleName"])
         attrs[:vod_title_name] = vod_title_name
       end
 
-      if vod_title_url = node["vodTitleUrl"]
+      if (vod_title_url = node["vodTitleUrl"])
         attrs[:vod_title_url] = vod_title_url
       end
 
-      if viewer_did_check = node["viewerDidCheck"]
+      if (viewer_did_check = node["viewerDidCheck"])
         attrs[:viewer_did_check] = viewer_did_check
       end
 
-      if started_at = node["startedAt"]
+      if (started_at = node["startedAt"])
         attrs[:started_at] = started_at
       end
 
-      if channel_node = node["channel"]
+      if (channel_node = node["channel"])
         attrs[:channel] = V4::ChannelEntity.from_node(channel_node)
       end
 

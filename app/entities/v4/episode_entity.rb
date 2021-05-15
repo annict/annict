@@ -28,55 +28,55 @@ module V4
     def self.from_node(node)
       attrs = {}
 
-      if id = node["id"]
+      if (id = node["id"])
         attrs[:id] = id
       end
 
-      if database_id = node["databaseId"]
+      if (database_id = node["databaseId"])
         attrs[:database_id] = database_id
       end
 
-      if raw_number = node["rawNumber"]
+      if (raw_number = node["rawNumber"])
         attrs[:raw_number] = raw_number
       end
 
-      if number = node["number"]
+      if (number = node["number"])
         attrs[:number] = number
       end
 
-      if number_en = node["numberEn"]
+      if (number_en = node["numberEn"])
         attrs[:number_en] = number_en
       end
 
-      if title = node["title"]
+      if (title = node["title"])
         attrs[:title] = title
       end
 
-      if title_en = node["titleEn"]
+      if (title_en = node["titleEn"])
         attrs[:title_en] = title_en
       end
 
-      if viewer_did_track_in_current_status = node["viewerDidTrackInCurrentStatus"]
+      if (viewer_did_track_in_current_status = node["viewerDidTrackInCurrentStatus"])
         attrs[:viewer_did_track_in_current_status] = viewer_did_track_in_current_status
       end
 
-      if episode_records_count = node["episodeRecordsCount"]
+      if (episode_records_count = node["episodeRecordsCount"])
         attrs[:episode_records_count] = episode_records_count
       end
 
-      if commented_episode_records_count = node["commentedEpisodeRecordsCount"]
+      if (commented_episode_records_count = node["commentedEpisodeRecordsCount"])
         attrs[:commented_episode_records_count] = commented_episode_records_count
       end
 
-      if prev_episode_node = node["prevEpisode"]
+      if (prev_episode_node = node["prevEpisode"])
         attrs[:prev_episode] = from_node(prev_episode_node)
       end
 
-      if next_episode_node = node["nextEpisode"]
+      if (next_episode_node = node["nextEpisode"])
         attrs[:next_episode] = from_node(next_episode_node)
       end
 
-      if anime_node = node["anime"]
+      if (anime_node = node["anime"])
         attrs[:anime] = V4::AnimeEntity.from_node(anime_node)
       end
 
