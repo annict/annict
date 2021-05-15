@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Badges
-  class SupporterBadgeComponent < ApplicationComponent
+module V6::Badges
+  class SupporterBadgeComponent < V6::ApplicationComponent
     def initialize(view_context, user:)
       super view_context
       @user = user

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Activities
-  class RecordActivityComponent < ApplicationComponent
+module V6::Activities
+  class RecordActivityComponent < V6::ApplicationComponent
     def initialize(view_context, activity_group:, page_category: "")
       super view_context
       @activity_group = activity_group
@@ -14,7 +14,7 @@ module Activities
         h.tag :div, class: "row g-3" do
           h.tag :div, class: "col-auto" do
             h.tag :a, href: view_context.profile_path(@user.username) do
-              h.html Pictures::AvatarPictureComponent.new(view_context,
+              h.html V6::Pictures::AvatarPictureComponent.new(view_context,
                 user: @user,
                 width: 32,
                 mb_width: 32).render
@@ -33,7 +33,7 @@ module Activities
                 h.text t("messages._components.activities.episode_record.created")
               end
 
-              h.html RelativeTimeComponent.new(
+              h.html V6::RelativeTimeComponent.new(
                 view_context,
                 time: @activity_group.created_at.iso8601,
                 class_name: "ms-1 small text-muted"
@@ -46,11 +46,11 @@ module Activities
                   record = @activity_group.first_item
 
                   if record.episode_record?
-                    h.html Contents::EpisodeRecordContentComponent.new(view_context,
+                    h.html V6::Contents::EpisodeRecordContentComponent.new(view_context,
                       record: record,
                       page_category: @page_category).render
                   else
-                    h.html Contents::AnimeRecordContentComponent.new(view_context,
+                    h.html V6::Contents::AnimeRecordContentComponent.new(view_context,
                       record: record,
                       page_category: @page_category).render
                   end
@@ -59,11 +59,11 @@ module Activities
                     record = @activity_group.first_item
 
                     if record.episode_record?
-                      h.html Contents::EpisodeRecordContentComponent.new(view_context,
+                      h.html V6::Contents::EpisodeRecordContentComponent.new(view_context,
                         record: record,
                         page_category: @page_category).render
                     else
-                      h.html Contents::AnimeRecordContentComponent.new(view_context,
+                      h.html V6::Contents::AnimeRecordContentComponent.new(view_context,
                         record: record,
                         page_category: @page_category).render
                     end

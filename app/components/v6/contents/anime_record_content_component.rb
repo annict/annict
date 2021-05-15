@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Contents
-  class AnimeRecordContentComponent < ApplicationComponent
+module V6::Contents
+  class AnimeRecordContentComponent < V6::ApplicationComponent
     def initialize(view_context, record:, page_category:, show_box: true)
       super view_context
       @record = record
@@ -15,7 +15,7 @@ module Contents
       build_html do |h|
         h.tag :div do
           if @anime_record.rating_overall_state || @anime_record.comment.present?
-            h.html(SpoilerGuardComponent.new(view_context, record: @record).render { |h|
+            h.html(V6::SpoilerGuardComponent.new(view_context, record: @record).render { |h|
               h.tag :div, class: "mb-3 row" do
                 h.tag :div, class: "col-12 col-xl-4 order-1 order-xl-2" do
                   if @anime_record.rating_overall_state
@@ -31,7 +31,7 @@ module Contents
                           end
 
                           h.tag :div, class: "col pl-0 text-end" do
-                            h.html RatingLabelComponent.new(view_context, rating: @anime_record.rating_animation_state).render
+                            h.html V6::RatingLabelComponent.new(view_context, rating: @anime_record.rating_animation_state).render
                           end
                         end
                       end
@@ -43,7 +43,7 @@ module Contents
                           end
 
                           h.tag :div, class: "col pl-0 text-end" do
-                            h.html RatingLabelComponent.new(view_context, rating: @anime_record.rating_music_state).render
+                            h.html V6::RatingLabelComponent.new(view_context, rating: @anime_record.rating_music_state).render
                           end
                         end
                       end
@@ -55,7 +55,7 @@ module Contents
                           end
 
                           h.tag :div, class: "col pl-0 text-end" do
-                            h.html RatingLabelComponent.new(view_context, rating: @anime_record.rating_story_state).render
+                            h.html V6::RatingLabelComponent.new(view_context, rating: @anime_record.rating_story_state).render
                           end
                         end
                       end
@@ -67,7 +67,7 @@ module Contents
                           end
 
                           h.tag :div, class: "col pl-0 text-end" do
-                            h.html RatingLabelComponent.new(view_context, rating: @anime_record.rating_character_state).render
+                            h.html V6::RatingLabelComponent.new(view_context, rating: @anime_record.rating_character_state).render
                           end
                         end
                       end
@@ -79,7 +79,7 @@ module Contents
                           end
 
                           h.tag :div, class: "col pl-0 text-end" do
-                            h.html RatingLabelComponent.new(view_context, rating: @anime_record.rating_overall_state).render
+                            h.html V6::RatingLabelComponent.new(view_context, rating: @anime_record.rating_overall_state).render
                           end
                         end
                       end
@@ -88,7 +88,7 @@ module Contents
                 end
 
                 h.tag :div, class: "col-12 col-xl-8 order-2 order-xl-1" do
-                  h.html(BodyComponent.new(view_context, height: 300, format: :html).render { |h|
+                  h.html(V6::BodyComponent.new(view_context, height: 300, format: :html).render { |h|
                     h.html render_markdown(@anime_record.comment)
                   })
                 end
@@ -99,7 +99,7 @@ module Contents
           if @show_box
             h.tag :hr
 
-            h.html Boxes::AnimeBoxComponent.new(view_context,
+            h.html V6::Boxes::AnimeBoxComponent.new(view_context,
               anime: @anime,
               page_category: @page_category).render
 
@@ -107,7 +107,7 @@ module Contents
           end
 
           h.tag :div, class: "mt-1" do
-            h.html Footers::RecordFooterComponent.new(view_context, record: @record).render
+            h.html V6::Footers::RecordFooterComponent.new(view_context, record: @record).render
           end
         end
       end

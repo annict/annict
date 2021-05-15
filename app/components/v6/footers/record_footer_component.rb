@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Footers
-  class RecordFooterComponent < ApplicationComponent
+module V6::Footers
+  class RecordFooterComponent < V6::ApplicationComponent
     def initialize(view_context, record:)
       super view_context
       @record = record
@@ -10,7 +10,7 @@ module Footers
     def render
       build_html do |h|
         h.tag :div, class: "c-record-footer" do
-          h.html Buttons::LikeButtonComponent.new(view_context,
+          h.html V6::Buttons::LikeButtonComponent.new(view_context,
             resource_name: "Record",
             resource_id: @record.id,
             likes_count: @record.likes_count,

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Contents
-  class StatusContentComponent < ApplicationComponent
+module V6::Contents
+  class StatusContentComponent < V6::ApplicationComponent
     def initialize(view_context, status:, page_category:)
       super view_context
       @status = status
@@ -18,14 +18,14 @@ module Contents
 
           h.tag :hr
 
-          h.html Boxes::AnimeBoxComponent.new(view_context,
+          h.html V6::Boxes::AnimeBoxComponent.new(view_context,
             anime: @anime,
             page_category: @page_category).render
 
           h.tag :hr
 
           h.tag :div, class: "mt-1" do
-            h.html Footers::StatusFooterComponent.new(view_context, status: @status, page_category: @page_category).render
+            h.html V6::Footers::StatusFooterComponent.new(view_context, status: @status, page_category: @page_category).render
           end
         end
       end

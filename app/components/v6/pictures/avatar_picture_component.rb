@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Pictures
-  class AvatarPictureComponent < ApplicationComponent
+module V6::Pictures
+  class AvatarPictureComponent < V6::ApplicationComponent
     def initialize(view_context, user:, width:, mb_width:, alt: "", class_name: "")
       super view_context
       @user = user

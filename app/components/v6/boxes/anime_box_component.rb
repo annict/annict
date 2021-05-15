@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Boxes
-  class AnimeBoxComponent < ApplicationComponent
+module V6::Boxes
+  class AnimeBoxComponent < V6::ApplicationComponent
     def initialize(view_context, anime:, page_category:, episode: nil)
       super view_context
       @anime = anime
@@ -14,7 +14,7 @@ module Boxes
         h.tag :div, class: "row g-3" do
           h.tag :div, class: "col-auto" do
             h.tag :a, href: view_context.anime_path(@anime.id) do
-              h.html Pictures::AnimePictureComponent.new(
+              h.html V6::Pictures::AnimePictureComponent.new(
                 view_context,
                 anime: @anime,
                 width: 80,
@@ -42,7 +42,7 @@ module Boxes
               end
             end
 
-            h.html Selectors::StatusSelectorComponent.new(
+            h.html V6::Selectors::StatusSelectorComponent.new(
               view_context,
               anime: @anime,
               page_category: @page_category,

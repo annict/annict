@@ -6,19 +6,19 @@
 <%= component_value_fetcher_tag("status-selector", internal_api_library_entry_list_path(anime_ids: @anime_ids)) %>
 
 <div class="container py-3">
-  <%= Headers::ProfileHeaderComponent.new(self, user: @user, current_user: current_user, params: params).render %>
+  <%= V6::Headers::ProfileHeaderComponent.new(self, user: @user, current_user: current_user, params: params).render %>
 
   <div class="gx-3 mt-3 row">
     <div class="col-12 col-lg-5 order-first order-lg-last">
       <div class="text-center">
-        <%= Buttons::ShareToTwitterButtonComponent.new(
+        <%= V6::Buttons::ShareToTwitterButtonComponent.new(
           self,
           text: title,
           url: "#{local_url}#{profile_path(@user.username)}",
           class_name: "me-2"
         ).render %>
 
-        <%= Buttons::ShareToFacebookButtonComponent.new(
+        <%= V6::Buttons::ShareToFacebookButtonComponent.new(
           self,
           url: "#{local_url}#{profile_path(@user.username)}"
         ).render %>
@@ -141,13 +141,13 @@
 
     <div class="col-12 col-lg-7 order-last order-lg-first">
       <% if @activity_groups.present? %>
-        <%= TimelineComponent.new(
+        <%= V6::TimelineComponent.new(
           self,
           activity_groups: @activity_groups,
           page_category: page_category
         ).render %>
       <% else %>
-        <%= EmptyComponent.new(self, text: t("messages._empty.no_activities")).render %>
+        <%= V6::EmptyComponent.new(self, text: t("messages._empty.no_activities")).render %>
       <% end %>
     </div>
   </div>

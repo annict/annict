@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Buttons
-  class FollowButtonComponent < ApplicationComponent
+module V6::Buttons
+  class FollowButtonComponent < V6::ApplicationComponent
     def initialize(view_context, user:, page_category:, class_name: "")
       super view_context
       @user = user

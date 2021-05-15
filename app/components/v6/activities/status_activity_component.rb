@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Activities
-  class StatusActivityComponent < ApplicationComponent
+module V6::Activities
+  class StatusActivityComponent < V6::ApplicationComponent
     def initialize(view_context, activity_group:, page_category: "")
       super view_context
       @activity_group = activity_group
@@ -14,7 +14,7 @@ module Activities
         h.tag :div, class: "row g-3" do
           h.tag :div, class: "col-auto" do
             h.tag :a, href: view_context.profile_path(@user.username) do
-              h.html Pictures::AvatarPictureComponent.new(view_context,
+              h.html V6::Pictures::AvatarPictureComponent.new(view_context,
                 user: @user,
                 width: 32,
                 mb_width: 32).render
@@ -33,7 +33,7 @@ module Activities
                 h.text t("messages._components.activities.status.changed")
               end
 
-              h.html RelativeTimeComponent.new(
+              h.html V6::RelativeTimeComponent.new(
                 view_context,
                 time: @activity_group.created_at.iso8601,
                 class_name: "ms-1 small text-muted"
@@ -45,7 +45,7 @@ module Activities
                 h.tag :turbo_frame, id: view_context.dom_id(@activity_group) do
                   status = @activity_group.first_item
 
-                  h.html Contents::StatusContentComponent.new(
+                  h.html V6::Contents::StatusContentComponent.new(
                     view_context,
                     status: status,
                     page_category: @page_category

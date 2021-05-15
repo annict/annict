@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Headers
-  class ProfileHeaderComponent < ApplicationComponent
+module V6::Headers
+  class ProfileHeaderComponent < V6::ApplicationComponent
     def initialize(view_context, user:, current_user:, params:)
       super view_context
       @user = user
@@ -15,12 +15,12 @@ module Headers
         h.tag :div, class: "align-items-center row g-3" do
           h.tag :div, class: "col-auto" do
             h.tag :a, href: view_context.profile_path(@user.username) do
-              h.html Pictures::AvatarPictureComponent.new(view_context, user: @user, width: 80, mb_width: 80).render
+              h.html V6::Pictures::AvatarPictureComponent.new(view_context, user: @user, width: 80, mb_width: 80).render
             end
           end
 
           h.tag :div, class: "col" do
-            h.html Badges::SupporterBadgeComponent.new(view_context, user: @user).render
+            h.html V6::Badges::SupporterBadgeComponent.new(view_context, user: @user).render
 
             h.tag :h1, class: "h2" do
               h.tag :a, class: "text-body", href: view_context.profile_path(@user.username) do
@@ -39,7 +39,7 @@ module Headers
                 h.text t("noun.edit_profile")
               end
             else
-              h.html Buttons::FollowButtonComponent.new(view_context, user: @user, page_category: page_category).render
+              h.html V6::Buttons::FollowButtonComponent.new(view_context, user: @user, page_category: page_category).render
             end
           end
         end

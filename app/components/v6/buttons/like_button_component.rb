@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Buttons
-  class LikeButtonComponent < ApplicationComponent
+module V6::Buttons
+  class LikeButtonComponent < V6::ApplicationComponent
     def initialize(view_context, resource_name:, resource_id:, likes_count:, page_category:, class_name: "", init_is_liked: false)
       super view_context
       @resource_name = resource_name

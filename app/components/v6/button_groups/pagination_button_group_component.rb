@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module ButtonGroups
-  class PaginationButtonGroupComponent < ApplicationComponent
+module V6::ButtonGroups
+  class PaginationButtonGroupComponent < V6::ApplicationComponent
     def initialize(view_context, collection:)
       super view_context
       @collection = collection

@@ -152,7 +152,7 @@ namespace :fragment do
   match "/trackable_episodes/:episode_id", via: :get, as: :trackable_episode, to: "trackable_episodes#show"
 end
 
-match "/@:username", via: :get, as: :profile, to: "users#show", username: USERNAME_FORMAT
+match "/@:username", via: :get, as: :profile, to: "v6/users#show", username: USERNAME_FORMAT
 match "/@:username/records/:record_id", via: :patch, as: :record, to: "records#update", username: USERNAME_FORMAT
 match "/episodes/:episode_id/records", via: :post, as: :episode_record_list, to: "episode_records#create"
 match "/legal", via: :get, as: :legal, to: "pages#legal"
