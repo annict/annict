@@ -123,15 +123,6 @@ devise_scope :user do
   match "/sign_out", via: :delete, as: :sign_out, to: "devise/sessions#destroy"
 end
 
-scope module: :legacy do
-  constraints format: "html" do
-    devise_scope :user do
-      match "/legacy/sign_in", via: :get, as: :legacy_sign_in, to: "sessions#new"
-      match "/legacy/sign_in", via: :post, as: :user_session, to: "sessions#create"
-    end
-  end
-end
-
 namespace :fragment do
   match "/@:username/records/:record_id/edit", via: :get, as: :edit_record, to: "records#edit", username: USERNAME_FORMAT
   match "/activity_groups/:activity_group_id/items", via: :get, as: :activity_item_list, to: "activity_items#index"
@@ -178,6 +169,11 @@ scope module: :v4 do
 end
 
 scope module: :v6 do
+  devise_scope :user do
+    match "/legacy/sign_in", via: :get, as: :legacy_sign_in, to: "legacy/sessions#new"
+    match "/legacy/sign_in", via: :post, as: :user_session, to: "legacy/sessions#create"
+  end
+
   match "/@:username", via: :get, as: :profile, to: "users#show", username: USERNAME_FORMAT
   match "/sign_in", via: :get, as: :new_user_session, to: "sign_in#new" # for Devise
   match "/sign_in", via: :get, as: :sign_in, to: "sign_in#new"

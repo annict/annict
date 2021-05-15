@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-module Legacy
+module V6::Legacy
   class SessionsController < Devise::SessionsController
-    layout "simple"
+    layout "v6/simple"
 
     def new
       store_location_for(:user, params[:back]) if params[:back].present?
