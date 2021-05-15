@@ -5,13 +5,13 @@ module V3
     include Pundit
 
     include V3::ControllerCommon
-    include V3::Localable
     include V3::Analyzable
     include V3::LogrageSetting
     include V3::Gonable
     include V3::ViewSelector
     include V3::FlashMessage
     include V6::SentryLoadable
+    include V6::Localizable
     include V6::PageCategorizable
     include V6::KeywordSearchable
 
@@ -23,8 +23,6 @@ module V3
 
     helper_method :gon, :locale_ja?, :locale_en?, :local_url, :page_category
 
-    around_action :switch_locale
-    before_action :redirect_if_unexpected_subdomain
     before_action :load_new_user
     before_action :store_data_into_gon
 
