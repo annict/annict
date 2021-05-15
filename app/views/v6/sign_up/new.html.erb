@@ -3,7 +3,7 @@
 <% set_meta_tags(title: title, description: description, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false) %>
 
 <%= content_for :head_vendor_assets do %>
-  <%= render "recaptcha", recaptcha: @recaptcha %>
+  <%= render "application/recaptcha", recaptcha: @recaptcha %>
 <% end %>
 
 <div class="container">
@@ -34,10 +34,10 @@
           model: @form,
           url: internal_api_sign_up_path
         ) do |f| %>
-          <%= ErrorPanelComponent.new(self, stimulus_controller: "forms--basic-form").render %>
+          <%= V6::ErrorPanelComponent.new(self, stimulus_controller: "forms--basic-form").render %>
 
           <% if @recaptcha.enabled? %>
-            <%= RecaptchaInputComponent.new(self, recaptcha: @recaptcha).render %>
+            <%= V6::RecaptchaInputComponent.new(self, recaptcha: @recaptcha).render %>
           <% end %>
 
           <div class="mb-3">
