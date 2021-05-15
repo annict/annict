@@ -16,11 +16,9 @@
     <%= render "application/head" %>
   </head>
   <body>
-    <div class="ann-application">
-      <div class="l-simple">
-        <%= render FlashComponent.new(flash) %>
-        <%= yield %>
-      </div>
+    <div class="l-simple">
+      <%= render FlashComponent.new(flash) %>
+      <%= yield %>
     </div>
   </body>
 </html>

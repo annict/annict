@@ -16,29 +16,27 @@
     <%= render "application/head" %>
   </head>
   <body>
-    <div class="ann-application">
-      <div class="l-default">
-        <div class="l-default__sidebar">
-          <%= V6::Sidebars::MainSidebarComponent.new(self, search: @search).render %>
-        </div>
-
-        <div class="l-default__main d-flex flex-column">
-          <div class="l-default__content">
-            <%= render V4::FlashComponent.new(flash) %>
-            <%= yield %>
-          </div>
-
-          <div class="l-default__footer">
-            <%= V6::FooterComponent.new(self).render %>
-          </div>
-
-          <div class="l-default__tab_bar">
-            <%= V6::TabBarComponent.new(self, current_user: current_user).render %>
-          </div>
-        </div>
+    <div class="l-default">
+      <div class="l-default__sidebar">
+        <%= V6::Sidebars::MainSidebarComponent.new(self, search: @search).render %>
       </div>
 
-      <%= render "application/sign_up_modal" %>
+      <div class="l-default__main d-flex flex-column">
+        <div class="l-default__content">
+          <%= render V4::FlashComponent.new(flash) %>
+          <%= yield %>
+        </div>
+
+        <div class="l-default__footer">
+          <%= V6::FooterComponent.new(self).render %>
+        </div>
+
+        <div class="l-default__tab_bar">
+          <%= V6::TabBarComponent.new(self, current_user: current_user).render %>
+        </div>
+      </div>
     </div>
+
+    <%= render "application/sign_up_modal" %>
   </body>
 </html>
