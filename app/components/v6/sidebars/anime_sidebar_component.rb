@@ -73,7 +73,7 @@ module V6::Sidebars
               end
 
               h.tag :div, class: "mb-3" do
-                h.html Selectors::StatusSelectorComponent.new(
+                h.html V6::Selectors::StatusSelectorComponent.new(
                   view_context,
                   anime: @anime,
                   page_category: page_category

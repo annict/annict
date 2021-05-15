@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
 module V4
-  class RecordsController < ApplicationController
+  class RecordsController < V4::ApplicationController
     include Pundit
-    include V4::GraphqlRunnable
 
     before_action :authenticate_user!, only: %i[destroy]
 
