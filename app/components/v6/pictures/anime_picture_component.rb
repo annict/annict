@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Pictures
-  class AnimePictureComponent < ApplicationComponent
+module V6::Pictures
+  class AnimePictureComponent < V6::ApplicationComponent
     def initialize(view_context, anime:, width:, mb_width:, alt: "", class_name: "")
       super view_context
       @anime = anime
@@ -25,7 +25,7 @@ module Pictures
             class: "img-thumbnail #{@class_name}",
             height: @height,
             loading: "lazy",
-            src: view_context.ann_image_url(@anime.anime_image, :image, height: @height, width: @width, format: "jpg"),
+            src: view_context.v6_ann_image_url(@anime.anime_image, :image, height: @height, width: @width, format: "jpg"),
             width: @width
           }
         end
@@ -40,8 +40,8 @@ module Pictures
 
     def srcset(height, width, format)
       [
-        "#{view_context.ann_image_url(@anime.anime_image, :image, height: height, width: width, format: format)} 1x",
-        "#{view_context.ann_image_url(@anime.anime_image, :image, height: height * 2, width: width * 2, format: format)} 2x"
+        "#{view_context.v6_ann_image_url(@anime.anime_image, :image, height: height, width: width, format: format)} 1x",
+        "#{view_context.v6_ann_image_url(@anime.anime_image, :image, height: height * 2, width: width * 2, format: format)} 2x"
       ].join(", ")
     end
   end
