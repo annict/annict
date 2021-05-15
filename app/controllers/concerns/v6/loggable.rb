@@ -3,6 +3,10 @@
 module V6::Loggable
   extend ActiveSupport::Concern
 
+  included do
+    helper_method :client_uuid
+  end
+
   def annict_logger
     @annict_logger ||= Annict::Logger.new(request, current_user)
   end

@@ -1,10 +1,18 @@
 # frozen_string_literal: true
 
 module V6::Localizable
+  extend ActiveSupport::Concern
+
   SKIP_TO_SET_LOCALE_PATHS = %w[
     /users/auth/gumroad/callback
   ].freeze
   private_constant :SKIP_TO_SET_LOCALE_PATHS
+
+  included do
+    helper_method :local_url_with_path, :locale_en?, :locale_ja?, :local_url
+
+    around_action :set_locale
+  end
 
   private
 
