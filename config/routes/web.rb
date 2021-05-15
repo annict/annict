@@ -131,7 +131,7 @@ get "r/:provider/:url_hash",
 
 root "home#show",
   constraints: Annict::RoutingConstraints::Member.new
-root "welcome#show",
+root "v6/welcome#show",
   constraints: Annict::RoutingConstraints::Guest.new,
   # Set :as option to avoid two routes with the same name
   as: nil
