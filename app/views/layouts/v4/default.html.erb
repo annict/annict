@@ -19,7 +19,7 @@
     <div class="ann-application">
       <div class="l-default">
         <div class="l-default__sidebar">
-          <%= render V4::SidebarComponent.new(user: current_user, search: @search) %>
+          <%= V6::Sidebars::MainSidebarComponent.new(self, search: @search).render %>
         </div>
 
         <div class="l-default__main d-flex flex-column">
