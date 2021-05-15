@@ -1,3 +1,10 @@
+<%= content_for :head_vendor_assets do %>
+  <script>
+    <%# Set this config to rerender icon when Vue's state changed %>
+    window.FontAwesomeConfig = { autoReplaceSvg: 'nest' };
+  </script>
+<% end %>
+
 <%= content_for :head_assets do %>
   <%= stylesheet_bundle_tag "v4.css", media: "all", "data-turbo-track": "reload" %>
   <%= javascript_bundle_tag "v4.js", defer: "", "data-turbo-track": "reload" %>
@@ -10,12 +17,7 @@
   </head>
   <body>
     <div class="ann-application">
-      <div
-        class="l-simple"
-        data-controller="application"
-        data-application-page-category="<%= page_category %>"
-        data-application-params="<%= user_data_fetcher_params.to_json %>"
-      >
+      <div class="l-simple">
         <%= render FlashComponent.new(flash) %>
         <%= yield %>
       </div>

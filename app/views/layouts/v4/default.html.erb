@@ -1,3 +1,10 @@
+<%= content_for :head_vendor_assets do %>
+  <script>
+    <%# Set this config to rerender icon when Vue's state changed %>
+    window.FontAwesomeConfig = { autoReplaceSvg: 'nest' };
+  </script>
+<% end %>
+
 <%= content_for :head_assets do %>
   <%= stylesheet_bundle_tag "v4.css", media: "all", "data-turbo-track": "reload" %>
   <%= javascript_bundle_tag "v4.js", defer: "", "data-turbo-track": "reload" %>
@@ -9,12 +16,10 @@
     <%= render "application/head" %>
   </head>
   <body>
-    <div class="">
-      <div
-        class="l-default"
-      >
+    <div class="ann-application">
+      <div class="l-default">
         <div class="l-default__sidebar">
-          <%= V6::Sidebars::MainSidebarComponent.new(self, search: @search).render %>
+          <%= render V4::SidebarComponent.new(user: current_user, search: @search) %>
         </div>
 
         <div class="l-default__main d-flex flex-column">

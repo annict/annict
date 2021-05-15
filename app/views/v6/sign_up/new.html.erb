@@ -2,7 +2,7 @@
 <% description = meta_description t("head.meta.description.sign_up.new") %>
 <% set_meta_tags(title: title, description: description, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false) %>
 
-<%= content_for :vendor_assets do %>
+<%= content_for :head_vendor_assets do %>
   <%= render "recaptcha", recaptcha: @recaptcha %>
 <% end %>
 
