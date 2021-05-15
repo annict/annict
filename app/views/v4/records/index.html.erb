@@ -3,20 +3,20 @@
 <% image_url = @user_entity.avatar_url %>
 <% set_meta_tags(title: title, description: description, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false) %>
 
-<%= render ProfileHeaderComponent.new(user_entity: @user_entity, current_user: current_user) %>
+<div class="container py-3">
+  <%= V6::Headers::ProfileHeaderComponent.new(self, user: @user, current_user: current_user, params: params).render %>
 
-<div class="container-fluid">
   <div class="row">
     <div class="col-12 col-lg-9">
       <div class="mb-3">
-        <%= render Lists::RecordListComponent.new(viewer: current_user, record_entities: @record_entities) %>
+        <%= render V4::Lists::RecordListComponent.new(viewer: current_user, record_entities: @record_entities) %>
       </div>
 
-      <%= render PaginationComponent.new(page_info_entity: @page_info_entity, resources_path: current_path_with_query) %>
+      <%= render V4::PaginationComponent.new(page_info_entity: @page_info_entity, resources_path: current_path_with_query) %>
     </div>
 
     <div class="col-12 col-lg-3 py-3">
-      <%= render ListGroups::RecordMonthComponent.new(user_entity: @user_entity, months: @months) %>
+      <%= render V4::ListGroups::RecordMonthComponent.new(user_entity: @user_entity, months: @months) %>
     </div>
   </div>
 </div>

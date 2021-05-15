@@ -1,0 +1,78 @@
+h1.h2.fw-bold
+  = link_to person.local_name, person_path(person), class: "u-text-body"
+
+.mb-3
+  - if person.voice_actor?
+    span.badge.u-badge-people
+      = t "noun.voice_actor"
+  - if person.staff?
+    span.badge.u-badge-people
+      = t "noun.staff"
+
+.mb-4
+  c-favorite-button.w-100 resource-type="Person" :resource-id="#{person.id}" :init-is-favorited="#{user_signed_in? && current_user.favorite?(person)}" :is-signed-in="#{user_signed_in?}"
+  .small.text-muted.mt-2
+    = icon "info-circle", class: "me-1"
+    = t "messages._components.favorite_button.hint", resource_type: t("noun.person").downcase
+
+.mb-4
+  h2.h4.fw-bold.mb-3
+    = icon "sticky-note", "far", class: "me-1"
+    = t "noun.information"
+  dl
+    dt.small = t "activerecord.attributes.person.name"
+    dd = person.name
+    - if person.name_kana.present?
+      dt.small = t "activerecord.attributes.person.name_kana"
+      dd = person.name_kana
+    - if person.name_en.present?
+      dt.small = t "activerecord.attributes.person.name_en"
+      dd = person.name_en
+    - if person.nickname.present?
+      dt.small = t "activerecord.attributes.person.nickname"
+      dd = person.nickname
+    - if person.gender.present?
+      dt.small = t "activerecord.attributes.person.gender"
+      dd = person.gender_text
+    - if person.birthday.present?
+      dt.small = t "activerecord.attributes.person.birthday"
+      dd = person.birthday.strftime("%Y/%m/%d")
+    - if person.blood_type.present?
+      dt.small = t "activerecord.attributes.person.blood_type"
+      dd = person.blood_type_text
+    - if person.height.present?
+      dt.small = t "activerecord.attributes.person.height"
+      dd = "#{person.height}cm"
+    - if person.url.present?
+      dt.small = t "activerecord.attributes.person.url"
+      dd = link_with_domain person.url
+    - if person.twitter_username.present?
+      dt.small = t "activerecord.attributes.person.twitter"
+      dd = person.twitter_username_link
+    - if person.wikipedia_url.present?
+      dt.small = t "activerecord.attributes.person.wikipedia"
+      dd = link_with_domain person.wikipedia_url
+
+- if person_favorites.present?
+  .mb-4
+    h2.h4.fw-bold.mb-3
+      = icon "users", class: "me-1"
+      = t "noun.fans"
+      span.ps-1
+        = "(#{t('noun.users_count', count: person_favorites.length)})"
+
+    .row.px-3
+      - person_favorites.each do |person_favorite|
+        .col.col-auto.ps-0.pe-2.pb-2
+          = link_to profile_path(person_favorite.user.username) do
+            = ann_image_tag(person_favorite.user.profile, :image, size: "30x30", class: "rounded-circle", alt: person_favorite.user.name_with_username, title: person_favorite.user.name_with_username)
+
+    - if person_favorites.length > 30
+      .text-end
+        = link_to t("verb.view_all"), person_fans_path(person)
+
+- if user_signed_in? && current_user.committer?
+  = link_to t("messages._common.edit_on_annict_db"), db_edit_person_path(person), class: "btn btn-secondary w-100 mt-2"
+
+- content_for :js_templates
+  = render "application/js_templates/favorite_button"

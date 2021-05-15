@@ -21,7 +21,7 @@ module ResourceImageDecoratorCommon
     end
 
     def image_url(field, options = {})
-      ann_image_url(model, field, options)
+      v4_ann_image_url(model, field, options)
     end
 
     private

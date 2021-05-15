@@ -12,7 +12,7 @@ document.addEventListener('turbo:load', (_event) => {
 });
 
 const application = Application.start();
-const context = (require as any).context('./controllers', true, /\.ts$/);
+const context = (require as any).context('./db/controllers', true, /\.ts$/);
 application.load(definitionsFromContext(context));
 
 ujs.start();

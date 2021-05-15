@@ -1,0 +1,56 @@
+<turbo-frame id="c-tracking-modal__frame">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div class="row">
+          <div class="col">
+            <div>
+              <%= link_to fragment_trackable_anime_path(@anime.id) do %>
+                <i class="far fa-angle-left"></i>
+                <span class="ps-1">
+                  <%= @episode.work.local_title %>
+                </span>
+              <% end %>
+            </div>
+
+            <h3 class="my-1">
+              <%= @episode.title_with_number %>
+            </h3>
+
+            <%= link_to anime_path(@anime.id), class: "small", data: { "turbo-frame": "_top" } do %>
+              <%= t("noun.anime_page") %>
+              <i class="far fa-angle-right ps-1"></i>
+            <% end %>
+
+            <%= link_to episode_path(@anime.id, @episode.id), class: "ms-2 small", data: { "turbo-frame": "_top" } do %>
+              <%= t("noun.episode_page") %>
+              <i class="far fa-angle-right ps-1"></i>
+            <% end %>
+          </div>
+
+          <div class="col-auto">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="mt-3">
+          <%= render Forms::EpisodeRecordFormComponent.new(form: @form, current_user: current_user) %>
+        </div>
+
+        <hr class="mt-3">
+
+        <div class="mt-3">
+          <div
+            data-controller="reloadable"
+            data-reloadable-event-name-value="episode-record-list-group"
+            data-reloadable-url-value="<%= fragment_episode_record_list_path(@episode.id, page: params[:page]) %>"
+          >
+            <%= ListGroups::EpisodeRecordListGroupComponent.new(self, my_records: @my_records, following_records: @following_records, all_records: @all_records).render %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</turbo-frame>

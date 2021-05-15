@@ -19,7 +19,7 @@
     <div class="col-6">
       <div class="card mb-3">
         <div class="card-body">
-          <%= image_tag ann_image_url(@image, :image, size: "280x", ratio: "3:4"), class: "rounded img-thumbnail" %>
+          <%= image_tag v4_ann_image_url(@image, :image, size: "280x", ratio: "3:4"), class: "rounded img-thumbnail" %>
         </div>
       </div>
       <%= form_with model: @image, url: db_work_image_detail_path(@work), local: true do |f| %>

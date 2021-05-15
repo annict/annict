@@ -5,13 +5,13 @@
 
 <div class="container-fluid py-3">
   <div class="row">
-    <div class="col-md-3 pr-md-0">
-      <%= render Sidebars::AnimeSidebarComponent.new(anime_entity: @anime_entity, vod_channel_entities: @existing_vod_channel_entities, viewer: current_user) %>
+    <div class="col-md-3 pe-md-0">
+      <%= render V4::Sidebars::AnimeSidebarComponent.new(anime_entity: @anime_entity, vod_channel_entities: @existing_vod_channel_entities, viewer: current_user) %>
     </div>
 
     <div class="col-md-9">
       <div class="mb-3">
-        <%= render WorkSubNavComponent.new(work_entity: @anime_entity, page_category: "work_detail") %>
+        <%= render V4::WorkSubNavComponent.new(work_entity: @anime_entity, page_category: "work_detail") %>
       </div>
 
       <% if @anime_entity.trailers.present? %>
@@ -44,7 +44,7 @@
             <%= t "activerecord.attributes.work.synopsis" %>
           </h2>
 
-          <%= render BodyComponent.new do %>
+          <%= render V4::BodyComponent.new do %>
             <%= @anime_entity.local_synopsis.html_safe %>
           <% end %>
 
@@ -83,7 +83,7 @@
               <% end %>
             </div>
           <% else %>
-            <%= render EmptyComponent.new(text: t("messages._empty.no_episodes")) %>
+            <%= render V4::EmptyComponent.new(text: t("messages._empty.no_episodes")) %>
           <% end %>
         </div>
       <% end %>
@@ -106,7 +106,7 @@
             <% end %>
           </div>
         <% else %>
-          <%= render EmptyComponent.new(text: t("messages._empty.no_characters")) %>
+          <%= render V4::EmptyComponent.new(text: t("messages._empty.no_characters")) %>
         <% end %>
       </div>
 
@@ -131,7 +131,7 @@
             <% end %>
           </div>
         <% else %>
-          <%= render EmptyComponent.new(text: t("messages._empty.no_staffs")) %>
+          <%= render V4::EmptyComponent.new(text: t("messages._empty.no_staffs")) %>
         <% end %>
       </div>
 
@@ -186,7 +186,7 @@
 
         <% if @anime_entity.records.present? %>
           <div class="mb-3">
-            <%= render Lists::RecordListComponent.new(viewer: current_user, record_entities: @anime_entity.records.first(10), show_card: false) %>
+            <%= render V4::Lists::RecordListComponent.new(viewer: current_user, record_entities: @anime_entity.records.first(10), show_card: false) %>
           </div>
 
           <% if @anime_entity.records.length > 10 %>
@@ -198,7 +198,7 @@
             </div>
           <% end %>
         <% else %>
-          <%= render EmptyComponent.new(text: t("messages._empty.no_record_body_list")) %>
+          <%= render V4::EmptyComponent.new(text: t("messages._empty.no_record_body_list")) %>
         <% end %>
       </div>
 
@@ -206,7 +206,7 @@
         <h2 class="h4 text-center my-4 fw-bold">
           <%= t "noun.related_works" %>
         </h2>
-        <div class="p-works-show__series mt-3 pl-3 py-3">
+        <div class="p-works-show__series mt-3 ps-3 py-3">
           <% @anime_entity.series_list.each do |series| %>
             <h3 class="text-center mb-3">
               <%= t "noun.series_with_name", series_name: series.local_name %>
@@ -214,12 +214,12 @@
             <div class="px-3">
               <div class="row">
                 <% series.series_anime_list.each do |series_work| %>
-                  <div class="col-4 col-sm-2 p-0 pr-3 mb-3">
+                  <div class="col-4 col-sm-2 p-0 pe-3 mb-3">
                     <div class="c-card">
                       <%= link_to anime_path(anime_id: series_work.database_id) do %>
                         <div class="c-hover-image">
                           <div class="c-hover-image__image">
-                            <%= render WorkImageComponent.new(image_url_1x: series_work.image_url_1x, image_url_2x: series_work.image_url_2x) %>
+                            <%= render V4::WorkImageComponent.new(image_url_1x: series_work.image_url_1x, image_url_2x: series_work.image_url_2x) %>
                           </div>
                           <div class="c-hover-image__over"></div>
                         </div>

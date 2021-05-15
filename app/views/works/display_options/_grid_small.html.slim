@@ -1,14 +1,14 @@
 .c-grid-work.c-grid-work--small.container-fluid
-  .row.pl-3
+  .row.ps-3
     - works.each do |work|
-      .col-1.p-0.pr-3.mb-3.u-lh-0
+      .col-1.p-0.pe-3.mb-3.u-lh-0
         .u-lh-0
           = link_to anime_path(anime_id: work.id), title: work.local_title do
             .c-hover-image
               .c-hover-image__image
-                = render WorkImageComponent.new(image_url_1x: ann_image_url(work.work_image, :image, size: "140x"), image_url_2x: ann_image_url(work.work_image, :image, size: "280x"))
+                = render V4::WorkImageComponent.new(image_url_1x: v4_ann_image_url(work.work_image, :image, format: "jpg", height: 187, width: 140), image_url_2x: v4_ann_image_url(work.work_image, :image, format: "jpg", height: 374, width: 280))
               .c-hover-image__over.p-1.u-lh-3.w-100
                 .c-grid-work__work-title.u-very-small.fw-bold
                   = work.local_title
         - if page_category.in?(%w(work-list-season work-list-popular work-list-newest))
-          = render StatusSelectorComponent.new(work_id: work.id, small: true, page_category: page_category)
+          = Selectors::StatusSelectorComponent.new(self, anime: work, page_category: page_category).render

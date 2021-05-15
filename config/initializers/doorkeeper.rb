@@ -111,7 +111,7 @@ Doorkeeper.configure do
   # WWW-Authenticate Realm (default "Doorkeeper").
   # realm "Doorkeeper"
 
-  base_controller "Oauth::ApplicationController"
+  base_controller "V4::Oauth::ApplicationController"
 end
 
 Rails.application.reloader.to_prepare do

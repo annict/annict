@@ -30,7 +30,9 @@ module Canary
         def internal_url(size:)
           return "" unless context[:admin]
 
-          ann_image_url object, :image, size: size
+          width, height = size.split("x")
+
+          v6_ann_image_url object, :image, format: "jpg", height: height, width: width
         end
 
         def facebook_og_image_url

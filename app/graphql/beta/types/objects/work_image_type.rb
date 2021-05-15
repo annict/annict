@@ -29,7 +29,7 @@ module Beta
           return unless context[:doorkeeper_token].owner.role.admin?
           return "" if object.blank?
 
-          ann_image_url object, :image, size: size
+          v4_ann_image_url object, :image, size: size
         end
 
         def facebook_og_image_url

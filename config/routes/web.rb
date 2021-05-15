@@ -90,16 +90,6 @@ scope "@:username", username: USERNAME_FORMAT do
   get :followers, to: "users#followers", as: :followers_user
   get :ics, to: "ics#show", as: :user_ics
 
-  get ":status_kind",
-    to: "libraries#show",
-    as: :library,
-    constraints: {
-      status_kind: /wanna_watch|watching|watched|on_hold|stop_watching/
-    }
-
-  resources :favorite_characters, only: %i[index]
-  resources :favorite_organizations, only: %i[index]
-  resources :favorite_people, only: %i[index]
   resources :tags, only: %i[show], controller: :user_work_tags, as: :user_work_tag
   resources :reviews, only: %i[show]
 
@@ -129,30 +119,12 @@ get "r/:provider/:url_hash",
   provider: /fb|tw/,
   url_hash: /[0-9a-zA-Z_-]{10}/
 
-root "home#show",
-  constraints: Annict::RoutingConstraints::Member.new
-root "welcome#show",
-  constraints: Annict::RoutingConstraints::Guest.new,
-  # Set :as option to avoid two routes with the same name
-  as: nil
-
-# rubocop:disable Layout/LineLength
 devise_scope :user do
   match "/sign_out", via: :delete, as: :sign_out, to: "devise/sessions#destroy"
 end
 
-scope module: :legacy do
-  constraints format: "html" do
-    devise_scope :user do
-      match "/legacy/sign_in", via: :get, as: :legacy_sign_in, to: "sessions#new"
-      match "/legacy/sign_in", via: :post, as: :user_session, to: "sessions#create"
-    end
-  end
-end
-
 namespace :fragment do
   match "/@:username/records/:record_id/edit", via: :get, as: :edit_record, to: "records#edit", username: USERNAME_FORMAT
-  match "/activity_groups/:activity_group_id/items", via: :get, as: :activity_item_list, to: "activity_items#index"
   match "/episodes/:episode_id/records", via: :get, as: :episode_record_list, to: "episode_records#index"
   match "/receive_channel_buttons", via: :get, as: :receive_channel_button_list, to: "receive_channel_buttons#index"
   match "/trackable_anime/:anime_id", via: :get, as: :trackable_anime, to: "trackable_anime#show"
@@ -160,37 +132,57 @@ namespace :fragment do
   match "/trackable_episodes/:episode_id", via: :get, as: :trackable_episode, to: "trackable_episodes#show"
 end
 
-match "/@:username", via: :get, as: :profile, to: "users#show", username: USERNAME_FORMAT
 match "/@:username/records/:record_id", via: :patch, as: :record, to: "records#update", username: USERNAME_FORMAT
 match "/episodes/:episode_id/records", via: :post, as: :episode_record_list, to: "episode_records#create"
-match "/legal", via: :get, as: :legal, to: "pages#legal"
 match "/my/profile", via: :get, as: :my_profile, to: "my/profiles#show"
-match "/privacy", via: :get, as: :privacy, to: "pages#privacy"
-match "/registrations/new", via: :get, as: :new_registration, to: "registrations#new"
-match "/sign_in", via: :get, as: :new_user_session, to: "sign_in#new" # for Devise
-match "/sign_in", via: :get, as: :sign_in, to: "sign_in#new"
-match "/sign_in/callback", via: :get, as: :sign_in_callback, to: "sign_in_callbacks#show"
-match "/sign_up", via: :get, as: :sign_up, to: "sign_up#new"
-match "/terms", via: :get, as: :terms, to: "pages#terms"
 match "/track", via: :get, as: :track, to: "tracks#show"
 match "/works/:anime_id/episodes/:episode_id", via: :get, as: :episode, to: "episodes#show"
 
-scope module: :v4 do
-  constraints format: "html" do
-    devise_scope :user do
-      match "/user_email", via: :patch, as: :user_email, to: "user_emails#update"
-      match "/user_email/callback", via: :get, as: :user_email_callback, to: "user_email_callbacks#show"
-    end
-
-    match "/@:username/records", via: :get, as: :record_list, to: "records#index", username: USERNAME_FORMAT
-    match "/@:username/records/:record_id", via: :delete, to: "records#destroy", username: USERNAME_FORMAT
-    match "/@:username/records/:record_id", via: :get, to: "records#show", username: USERNAME_FORMAT
-    match "/@:username/records/:record_id", via: :patch, to: "records#update", username: USERNAME_FORMAT
-    match "/episode_records", via: :patch, as: :episode_record_mutation, to: "episode_records#update"
-    match "/works/:anime_id", via: :get, as: :anime, to: "works#show"
-    match "/works/:anime_id/episodes", via: :get, as: :episode_list, to: "episodes#index"
-    match "/works/:anime_id/records", via: :get, as: :anime_record_list, to: "anime_records#index"
-    match "/works/:anime_id/records", via: :post, to: "anime_records#create"
-  end
+scope module: :v3 do
+  match "/@:username/favorite_characters", via: :get, as: :favorite_character_list, to: "favorite_characters#index", username: USERNAME_FORMAT
+  match "/@:username/favorite_organizations", via: :get, as: :favorite_organization_list, to: "favorite_organizations#index", username: USERNAME_FORMAT
+  match "/@:username/favorite_people", via: :get, as: :favorite_person_list, to: "favorite_people#index", username: USERNAME_FORMAT
 end
-# rubocop:enable Layout/LineLength
+
+scope module: :v4 do
+  devise_scope :user do
+    match "/user_email", via: :patch, as: :user_email, to: "user_emails#update"
+    match "/user_email/callback", via: :get, as: :user_email_callback, to: "user_email_callbacks#show"
+  end
+
+  match "/@:username/:status_kind", via: :get, as: :library, to: "libraries#show", username: USERNAME_FORMAT, status_kind: /wanna_watch|watching|watched|on_hold|stop_watching/
+  match "/@:username/records", via: :get, as: :record_list, to: "records#index", username: USERNAME_FORMAT
+  match "/@:username/records/:record_id", via: :delete, to: "records#destroy", username: USERNAME_FORMAT
+  match "/@:username/records/:record_id", via: :get, to: "records#show", username: USERNAME_FORMAT
+  match "/@:username/records/:record_id", via: :patch, to: "records#update", username: USERNAME_FORMAT
+  match "/episode_records", via: :patch, as: :episode_record_mutation, to: "episode_records#update"
+  match "/works/:anime_id", via: :get, as: :anime, to: "works#show"
+  match "/works/:anime_id/episodes", via: :get, as: :episode_list, to: "episodes#index"
+  match "/works/:anime_id/records", via: :get, as: :anime_record_list, to: "anime_records#index"
+  match "/works/:anime_id/records", via: :post, to: "anime_records#create"
+end
+
+scope module: :v6 do
+  devise_scope :user do
+    match "/legacy/sign_in", via: :get, as: :legacy_sign_in, to: "legacy/sessions#new"
+    match "/legacy/sign_in", via: :post, as: :user_session, to: "legacy/sessions#create"
+  end
+
+  match "/@:username", via: :get, as: :profile, to: "users#show", username: USERNAME_FORMAT
+  match "/fragment/activity_groups/:activity_group_id/items", via: :get, as: :fragment_activity_item_list, to: "fragment/activity_items#index"
+  match "/legal", via: :get, as: :legal, to: "pages#legal"
+  match "/privacy", via: :get, as: :privacy, to: "pages#privacy"
+  match "/registrations/new", via: :get, as: :new_registration, to: "registrations#new"
+  match "/sign_in", via: :get, as: :new_user_session, to: "sign_in#new" # for Devise
+  match "/sign_in", via: :get, as: :sign_in, to: "sign_in#new"
+  match "/sign_in/callback", via: :get, as: :sign_in_callback, to: "sign_in_callbacks#show"
+  match "/sign_up", via: :get, as: :sign_up, to: "sign_up#new"
+  match "/terms", via: :get, as: :terms, to: "pages#terms"
+end
+
+root "v6/home#show",
+  constraints: Annict::RoutingConstraints::Member.new
+root "v6/welcome#show",
+  constraints: Annict::RoutingConstraints::Guest.new,
+  # Set :as option to avoid two routes with the same name
+  as: nil

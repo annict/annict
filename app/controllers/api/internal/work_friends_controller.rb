@@ -23,7 +23,7 @@ module Api
             .map { |ud|
               {
                 username: ud[:user].username,
-                avatar_url: helpers.ann_image_url(ud[:user].profile, :image, size: "30x30")
+                avatar_url: helpers.v4_ann_image_url(ud[:user].profile, :image, size: "30x30")
               }
             }
 

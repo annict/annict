@@ -1,5 +1,5 @@
 .row.mb-3
-  .col-3.pr-0
+  .col-3.pe-0
     = link_to anime_path(anime_id: work.id) do
       = ann_image_tag work.work_image, :image, size: "110x", ratio: "3:4", class: "img-fluid img-thumbnail rounded"
     - if work.work_image.present?

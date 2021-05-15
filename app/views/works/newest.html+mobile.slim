@@ -8,7 +8,7 @@ h1.h2.text-center.my-3
 
 .px-3
   .row.align-items-center.mb-3
-    .col.pr-0
+    .col.pe-0
       = render ShareToTwitterButtonComponent.new(text: title, url: "#{local_url}#{newest_works_path}", class_name: "me-2")
       = render ShareToFacebookButtonComponent.new(url: "#{local_url}#{newest_works_path}")
     .col.text-end

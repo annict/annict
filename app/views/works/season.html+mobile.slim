@@ -23,7 +23,7 @@ h1.h2.text-center.my-3
         = @next_season.local_name
         = icon "angle-right", class: "ms-2"
   .row.align-items-center.mb-3
-    .col.pr-0
+    .col.pe-0
       = render ShareToTwitterButtonComponent.new(text: title, url: "#{local_url}#{season_works_path(slug: @season.slug)}", class_name: "me-2")
       = render ShareToFacebookButtonComponent.new(url: "#{local_url}#{season_works_path(slug: @season.slug)}")
     .col.text-end

@@ -8,7 +8,7 @@ json = {
   work: {
     id: work.id,
     title: work.local_title,
-    image_url: ann_image_url(work.work_image, :image, size: "125x", ratio: "3:4"),
+    image_url: v4_ann_image_url(work.work_image, :image, size: "125x", ratio: "3:4"),
     episodes_count: work.actual_episodes_count,
     watched_episodes_count: library_entry.watched_episode_ids.length
   }

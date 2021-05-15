@@ -1,0 +1,36 @@
+<%= content_for :head_assets do %>
+  <%= stylesheet_bundle_tag "v6.css", media: "all", "data-turbo-track": "reload" %>
+  <%= javascript_bundle_tag "v6.js", defer: "", "data-turbo-track": "reload" %>
+<% end %>
+
+<!DOCTYPE html>
+<html lang="<%= I18n.locale %>">
+  <head>
+    <%= render "application/head" %>
+  </head>
+  <body>
+    <div class="l-default">
+      <div class="l-default__sidebar">
+        <%= V6::Sidebars::MainSidebarComponent.new(self, search: @search).render %>
+      </div>
+
+      <div class="l-default__main d-flex flex-column">
+        <div class="l-default__content">
+          <%= V6::FlashComponent.new(self, flash: flash).render %>
+          <%= yield %>
+        </div>
+
+        <div class="l-default__footer">
+          <%= V6::FooterComponent.new(self).render %>
+        </div>
+
+        <div class="l-default__tab_bar">
+          <%= V6::TabBarComponent.new(self, current_user: current_user).render %>
+        </div>
+      </div>
+
+      <%= render "application/sign_up_modal" %>
+      <%= V6::Modals::TrackingModalComponent.new(self).render %>
+    </div>
+  </body>
+</html>

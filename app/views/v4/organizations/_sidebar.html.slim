@@ -1,0 +1,59 @@
+h1.h2.fw-bold
+  = link_to organization.local_name, organization_path(organization), class: "u-text-body"
+
+.mb-3
+  span.badge.u-badge-organizations
+    = t "noun.organization"
+
+.mb-4
+  c-favorite-button.w-100 resource-type="Organization" :resource-id="#{organization.id}" :init-is-favorited="#{user_signed_in? && current_user.favorite?(organization)}" :is-signed-in="#{user_signed_in?}"
+  .small.text-muted.mt-2
+    = icon "info-circle", class: "me-1"
+    = t "messages._components.favorite_button.hint", resource_type: t("noun.organization").downcase
+
+.mb-4
+  h2.h4.fw-bold.mt-4.mb-3
+    = icon "sticky-note", "far", class: "me-1"
+    = t "noun.information"
+  dl
+    dt.small = t "activerecord.attributes.organization.name"
+    dd = organization.name
+    - if organization.name_kana.present?
+      dt.small = t "activerecord.attributes.organization.name_kana"
+      dd = organization.name_kana
+    - if organization.name_en.present?
+      dt.small = t "activerecord.attributes.organization.name_en"
+      dd = organization.name_en
+    - if organization.url.present?
+      dt.small = t "noun.official_site"
+      dd = link_with_domain organization.url
+    - if organization.twitter_username.present?
+      dt.small = t "noun.twitter"
+      dd = organization.twitter_username_link
+    - if organization.wikipedia_url.present?
+      dt.small = t "noun.wikipedia"
+      dd = link_with_domain organization.wikipedia_url
+
+- if organization_favorites.present?
+  .mb-4
+    h2.h4.fw-bold.mb-3
+      = icon "users", class: "me-1"
+      = t "noun.fans"
+      span.ps-1
+        = "(#{t('noun.users_count', count: @organization_favorites.length)})"
+
+    .row.px-3
+      - @organization_favorites.each do |organization_favorite|
+        .col.col-auto.ps-0.pe-2.pb-2
+          = link_to profile_path(organization_favorite.user.username) do
+            = ann_image_tag(organization_favorite.user.profile, :image, size: "30x30", class: "rounded-circle", alt: organization_favorite.user.name_with_username, title: organization_favorite.user.name_with_username)
+
+    - if @organization_favorites.length > 30
+      .text-end
+        = link_to t("verb.view_all"), organization_fans_path(organization)
+
+- if user_signed_in? && current_user.committer?
+  = link_to t("messages._common.edit_on_annict_db"), db_edit_organization_path(organization), class: "btn btn-secondary w-100 mt-2"
+
+- content_for :js_templates
+  = render "application/js_templates/favorite_button"

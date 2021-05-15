@@ -30,7 +30,7 @@ module Canary
 
         def internal_image_url(size:)
           return unless context[:admin]
-          ann_image_url object, :image, size: size
+          v4_ann_image_url object, :image, size: size
         end
       end
     end

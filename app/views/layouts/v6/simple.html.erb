@@ -1,0 +1,17 @@
+<%= content_for :head_assets do %>
+  <%= stylesheet_bundle_tag "v6.css", media: "all", "data-turbo-track": "reload" %>
+  <%= javascript_bundle_tag "v6.js", defer: "", "data-turbo-track": "reload" %>
+<% end %>
+
+<!DOCTYPE html>
+<html lang="<%= I18n.locale %>">
+  <head>
+    <%= render "application/head" %>
+  </head>
+  <body>
+    <div class="l-simple">
+      <%= V6::FlashComponent.new(self, flash: flash).render %>
+      <%= yield %>
+    </div>
+  </body>
+</html>

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 module V4
-  class WorksController < ApplicationController
-    include AnimeSidebarDisplayable
+  class WorksController < V4::ApplicationController
+    include V4::AnimeSidebarDisplayable
 
     def show
       set_page_category PageCategory::WORK

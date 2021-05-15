@@ -6,7 +6,7 @@
 h1.text-center.my-3
   = title
 
-.mb-3 class="#{@display_option == "list_detailed" ? 'container pr-0' : 'px-3'}"
+.mb-3 class="#{@display_option == "list_detailed" ? 'container pe-0' : 'px-3'}"
   .row.align-items-center
     .col
       = render ShareToTwitterButtonComponent.new(text: title, url: "#{local_url}#{season_works_path(slug: @season.slug)}", class_name: "me-2")
