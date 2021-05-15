@@ -184,7 +184,7 @@ scope module: :v6 do
   match "/@:username", via: :get, as: :profile, to: "users#show", username: USERNAME_FORMAT
 end
 
-root "home#show",
+root "v6/home#show",
   constraints: Annict::RoutingConstraints::Member.new
 root "v6/welcome#show",
   constraints: Annict::RoutingConstraints::Guest.new,

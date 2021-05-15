@@ -15,13 +15,13 @@
       </div>
 
       <% if @activity_groups.present? %>
-        <%= TimelineComponent.new(
+        <%= V6::TimelineComponent.new(
           self,
           activity_groups: @activity_groups,
           page_category: page_category
         ).render %>
       <% else %>
-        <%= EmptyComponent.new(self, text: t("messages._empty.no_activities")).render %>
+        <%= V6::EmptyComponent.new(self, text: t("messages._empty.no_activities")).render %>
       <% end %>
     </div>
 
@@ -50,14 +50,14 @@
               <li class="g-3 mb-2 row">
                 <div class="col-auto">
                   <a href="<%= anime_path(anime) %>">
-                    <%= Pictures::AnimePictureComponent.new(self, anime: anime, width: 50, mb_width: 50, alt: anime.local_title).render %>
+                    <%= V6::Pictures::AnimePictureComponent.new(self, anime: anime, width: 50, mb_width: 50, alt: anime.local_title).render %>
                   </a>
                 </div>
 
                 <div class="col">
                   <a href="<%= anime_path(anime) %>">
                     <div class="mb-1">
-                      <%= Badges::AnimeMediaBadgeComponent.new(self, anime: anime).render %>
+                      <%= V6::Badges::AnimeMediaBadgeComponent.new(self, anime: anime).render %>
                     </div>
 
                     <span class="text-body">
