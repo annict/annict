@@ -25,5 +25,4 @@ module V4
       new attrs
     end
   end
-
 end

@@ -17,7 +17,7 @@ module V4
     end
 
     def prev_page_item_class_name
-      classes = %w(page-item)
+      classes = %w[page-item]
 
       unless page_info_entity.has_previous_page
         classes << "disabled"
@@ -27,7 +27,7 @@ module V4
     end
 
     def next_page_item_class_name
-      classes = %w(page-item)
+      classes = %w[page-item]
 
       unless page_info_entity.has_next_page
         classes << "disabled"
@@ -37,15 +37,15 @@ module V4
     end
 
     def next_resources_path
-      query_values.
-        except("before").
-        merge(after: page_info_entity.end_cursor)
+      query_values
+        .except("before")
+        .merge(after: page_info_entity.end_cursor)
     end
 
     def prev_resources_path
-      query_values.
-        except("after").
-        merge(before: page_info_entity.start_cursor)
+      query_values
+        .except("after")
+        .merge(before: page_info_entity.start_cursor)
     end
 
     def query_values

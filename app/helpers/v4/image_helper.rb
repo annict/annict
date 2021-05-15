@@ -54,7 +54,7 @@ module V4::ImageHelper
     image = profile.send(field)
 
     if background_image.present? && profile.background_image_animated?
-      return "#{ENV.fetch('ANNICT_FILE_STORAGE_URL')}/shrine/#{image[:original].id}"
+      return "#{ENV.fetch("ANNICT_FILE_STORAGE_URL")}/shrine/#{image[:original].id}"
     end
 
     v4_ann_image_url(profile, field, options)
@@ -62,7 +62,7 @@ module V4::ImageHelper
 
   def ann_api_assets_url(record, field)
     path = image_path(record, field)
-    "#{ENV.fetch('ANNICT_API_ASSETS_URL')}/#{path}"
+    "#{ENV.fetch("ANNICT_API_ASSETS_URL")}/#{path}"
   end
 
   def ann_api_assets_background_image_url(profile)
@@ -71,7 +71,7 @@ module V4::ImageHelper
     image = profile.send(field)
 
     if background_image.present? && profile.background_image_animated?
-      return "#{ENV.fetch('ANNICT_API_ASSETS_URL')}/shrine/#{image[:original].id}"
+      return "#{ENV.fetch("ANNICT_API_ASSETS_URL")}/shrine/#{image[:original].id}"
     end
 
     ann_api_assets_url(profile, field)

@@ -98,5 +98,4 @@ module V4
       local_number
     end
   end
-
 end

@@ -11,7 +11,7 @@ module V3::FlashMessage
 
   def store_flash_message
     key = flash.keys.first
-    message = { type: key.to_s, message: flash[key] } if flash[key].present?
+    message = {type: key.to_s, message: flash[key]} if flash[key].present?
 
     gon.push(flash: message.presence || {})
   end

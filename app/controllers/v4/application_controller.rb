@@ -15,7 +15,7 @@ module V4
 
     def redirect_if_signed_in
       if user_signed_in?
-        return redirect_to root_path
+        redirect_to root_path
       end
     end
 
