@@ -148,8 +148,6 @@ match "/legal", via: :get, as: :legal, to: "pages#legal"
 match "/my/profile", via: :get, as: :my_profile, to: "my/profiles#show"
 match "/privacy", via: :get, as: :privacy, to: "pages#privacy"
 match "/registrations/new", via: :get, as: :new_registration, to: "registrations#new"
-match "/sign_in", via: :get, as: :new_user_session, to: "sign_in#new" # for Devise
-match "/sign_in", via: :get, as: :sign_in, to: "sign_in#new"
 match "/sign_in/callback", via: :get, as: :sign_in_callback, to: "sign_in_callbacks#show"
 match "/terms", via: :get, as: :terms, to: "pages#terms"
 match "/track", via: :get, as: :track, to: "tracks#show"
@@ -181,6 +179,8 @@ end
 
 scope module: :v6 do
   match "/@:username", via: :get, as: :profile, to: "users#show", username: USERNAME_FORMAT
+  match "/sign_in", via: :get, as: :new_user_session, to: "sign_in#new" # for Devise
+  match "/sign_in", via: :get, as: :sign_in, to: "sign_in#new"
   match "/sign_up", via: :get, as: :sign_up, to: "sign_up#new"
 end
 
