@@ -2,13 +2,12 @@
 
 module V4
   class ProfileImageComponent < ApplicationComponent
-    def initialize(image_url_1x:, alt:, bg_color: "#F1F1F1", class_name: "", img_options: {}, lazy_load: true)
+    def initialize(image_url_1x:, alt:, bg_color: "#F1F1F1", class_name: "", img_options: {})
       @image_url_1x = image_url_1x
       @alt = alt
       @bg_color = bg_color
       @class_name = class_name
       @img_options = img_options
-      @lazy_load = lazy_load
     end
 
     def call
@@ -23,8 +22,7 @@ module V4
     attr_reader :alt, :bg_color, :class_name, :image_url_1x, :img_options
 
     def img_class_name
-      classes = %w[c-profile-image img-fluid img-thumbnail js-lazy rounded-circle]
-      classes << "js-lazy" if @lazy_load
+      classes = %w[c-profile-image img-fluid img-thumbnail rounded-circle]
       classes += class_name.split(" ")
       classes.join(" ")
     end

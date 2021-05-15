@@ -1,8 +1,8 @@
 <div
-  class="c-work-image img-fluid js-lazy rounded-sm <%= class_name %>"
+  class="c-work-image img-fluid rounded-sm <%= class_name %>"
   data-bg="<%= image_url_1x %>"
   data-bg-hidpi="<%= image_url_2x %>"
-  style="background-color: <%= bg_color %>;"
+  style="background-color: <%= bg_color %>; background-image: url(<%= image_url_2x %>);"
 >
   <%= image_tag dummy_src, alt: alt %>
 </div>
