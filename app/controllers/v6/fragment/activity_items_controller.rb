@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Fragment
-  class ActivityItemsController < Fragment::ApplicationController
+module V6::Fragment
+  class ActivityItemsController < V6::Fragment::ApplicationController
     before_action :authenticate_user!, only: %i[index]
 
     def index

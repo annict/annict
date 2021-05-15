@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
-module Fragment
+module V6::Fragment
   class ApplicationController < ActionController::Base
-    include PageCategorizable
+    include V6::PageCategorizable
 
     layout false
-
-    helper_method :page_category
   end
 end
