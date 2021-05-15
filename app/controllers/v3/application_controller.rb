@@ -4,16 +4,18 @@ module V3
   class ApplicationController < ActionController::Base
     include Pundit
 
-    include ControllerCommon
-    include Localable
-    include Analyzable
-    include LogrageSetting
-    include Gonable
-    include ViewSelector
-    include FlashMessage
-    include RavenContext
-    include PageCategorizable
-    include V4::UserDataFetchable
+    include V3::ControllerCommon
+    include V3::Localable
+    include V3::Analyzable
+    include V3::LogrageSetting
+    include V3::Gonable
+    include V3::ViewSelector
+    include V3::FlashMessage
+    include V6::SentryLoadable
+    include V6::PageCategorizable
+    include V6::KeywordSearchable
+
+    layout "v3/default"
 
     # Prevent CSRF attacks by raising an exception.
     # For APIs, you may want to use :null_session instead.
@@ -23,7 +25,6 @@ module V3
 
     around_action :switch_locale
     before_action :redirect_if_unexpected_subdomain
-    before_action :set_search_params
     before_action :load_new_user
     before_action :store_data_into_gon
 

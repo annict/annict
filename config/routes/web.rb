@@ -90,9 +90,6 @@ scope "@:username", username: USERNAME_FORMAT do
   get :followers, to: "users#followers", as: :followers_user
   get :ics, to: "ics#show", as: :user_ics
 
-  resources :favorite_characters, only: %i[index]
-  resources :favorite_organizations, only: %i[index]
-  resources :favorite_people, only: %i[index]
   resources :tags, only: %i[show], controller: :user_work_tags, as: :user_work_tag
   resources :reviews, only: %i[show]
 
@@ -158,6 +155,12 @@ match "/sign_up", via: :get, as: :sign_up, to: "sign_up#new"
 match "/terms", via: :get, as: :terms, to: "pages#terms"
 match "/track", via: :get, as: :track, to: "tracks#show"
 match "/works/:anime_id/episodes/:episode_id", via: :get, as: :episode, to: "episodes#show"
+
+scope module: :v3 do
+  match "/@:username/favorite_characters", via: :get, as: :favorite_character_list, to: "favorite_characters#index", username: USERNAME_FORMAT
+  match "/@:username/favorite_organizations", via: :get, as: :favorite_organization_list, to: "favorite_organizations#index", username: USERNAME_FORMAT
+  match "/@:username/favorite_people", via: :get, as: :favorite_person_list, to: "favorite_people#index", username: USERNAME_FORMAT
+end
 
 scope module: :v4 do
   devise_scope :user do

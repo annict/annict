@@ -1,0 +1,41 @@
+<%= content_for :head_assets do %>
+  <%= stylesheet_bundle_tag "v4.css", media: "all", "data-turbo-track": "reload" %>
+  <%= javascript_bundle_tag "v4.js", defer: "", "data-turbo-track": "reload" %>
+<% end %>
+
+<!DOCTYPE html>
+<html lang="<%= I18n.locale %>">
+  <head>
+    <%= render "application/head" %>
+  </head>
+  <body class="#{body_classes} #{user_signed_in? ? 'is-user' : 'is-guest'}">
+    <%= include_gon %>
+
+    <div class="ann-application">
+      <div class="l-default">
+        <div class="l-default__sidebar">
+          <%= V6::Sidebars::MainSidebarComponent.new(self, search: @search).render %>
+        </div>
+
+        <div class="l-default__main d-flex flex-column">
+          <div class="l-default__content">
+            <%= render V4::FlashComponent.new(flash) %>
+            <%= yield %>
+          </div>
+
+          <div class="l-default__footer">
+            <%= V6::FooterComponent.new(self).render %>
+          </div>
+
+          <div class="l-default__tab_bar">
+            <%= V6::TabBarComponent.new(self, current_user: current_user).render %>
+          </div>
+        </div>
+      </div>
+
+      <%= render "application/sign_up_modal" %>
+    </div>
+
+    <%= yield :js_templates %>
+  </body>
+</html>

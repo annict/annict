@@ -68,10 +68,10 @@ module V6::Headers
             end
 
             h.tag :li, class: "c-subnav__item" do
-              h.html active_link_to t("noun.favorites"), view_context.favorite_characters_path(@user.username),
+              h.html active_link_to t("noun.favorites"), view_context.favorite_character_list_path(@user.username),
                 class: "c-subnav__link",
                 class_active: "c-subnav__link--active",
-                active: @params[:controller].in?(%w[favorite_characters favorite_people favorite_organizations]) && @params[:action] == "index"
+                active: @params[:controller].in?(%w[v3/favorite_characters favorite_people favorite_organizations]) && @params[:action] == "index"
             end
 
             h.tag :li, class: "c-subnav__item" do
