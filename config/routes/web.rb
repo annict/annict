@@ -135,7 +135,6 @@ end
 match "/@:username/records/:record_id", via: :patch, as: :record, to: "records#update", username: USERNAME_FORMAT
 match "/episodes/:episode_id/records", via: :post, as: :episode_record_list, to: "episode_records#create"
 match "/my/profile", via: :get, as: :my_profile, to: "my/profiles#show"
-match "/registrations/new", via: :get, as: :new_registration, to: "registrations#new"
 match "/track", via: :get, as: :track, to: "tracks#show"
 match "/works/:anime_id/episodes/:episode_id", via: :get, as: :episode, to: "episodes#show"
 
@@ -173,6 +172,7 @@ scope module: :v6 do
   match "/fragment/activity_groups/:activity_group_id/items", via: :get, as: :fragment_activity_item_list, to: "fragment/activity_items#index"
   match "/legal", via: :get, as: :legal, to: "pages#legal"
   match "/privacy", via: :get, as: :privacy, to: "pages#privacy"
+  match "/registrations/new", via: :get, as: :new_registration, to: "registrations#new"
   match "/sign_in", via: :get, as: :new_user_session, to: "sign_in#new" # for Devise
   match "/sign_in", via: :get, as: :sign_in, to: "sign_in#new"
   match "/sign_in/callback", via: :get, as: :sign_in_callback, to: "sign_in_callbacks#show"

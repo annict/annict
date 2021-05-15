@@ -30,7 +30,7 @@
             model: @form,
             url: internal_api_registrations_path
           ) do |f| %>
-            <%= ErrorPanelComponent.new(self, stimulus_controller: "forms--basic-form").render %>
+            <%= V6::ErrorPanelComponent.new(self, stimulus_controller: "forms--basic-form").render %>
 
             <div class="mb-3">
               <%= f.label :username, class: "form-label" %>
