@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Deprecated
-  class PaginationComponent < Deprecated::ApplicationComponent
+module V4
+  class PaginationComponent < V4::ApplicationComponent
     def initialize(page_info_entity:, resources_path:, position: "center")
       @page_info_entity = page_info_entity
       @resources_path = resources_path

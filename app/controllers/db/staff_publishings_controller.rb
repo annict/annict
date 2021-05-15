@@ -2,7 +2,7 @@
 
 module Db
   class StaffPublishingsController < Db::ApplicationController
-    include ResourcePublishable
+    include Db::ResourcePublishable
 
     before_action :authenticate_user!
 

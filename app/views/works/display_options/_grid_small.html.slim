@@ -6,7 +6,7 @@
           = link_to anime_path(anime_id: work.id), title: work.local_title do
             .c-hover-image
               .c-hover-image__image
-                = render Deprecated::WorkImageComponent.new(image_url_1x: ann_image_url(work.work_image, :image, format: "jpg", height: 187, width: 140), image_url_2x: ann_image_url(work.work_image, :image, format: "jpg", height: 374, width: 280))
+                = render V4::WorkImageComponent.new(image_url_1x: ann_image_url(work.work_image, :image, format: "jpg", height: 187, width: 140), image_url_2x: ann_image_url(work.work_image, :image, format: "jpg", height: 374, width: 280))
               .c-hover-image__over.p-1.u-lh-3.w-100
                 .c-grid-work__work-title.u-very-small.fw-bold
                   = work.local_title

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module KeywordSearchable
+module V6::KeywordSearchable
   extend ActiveSupport::Concern
 
   private

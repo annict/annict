@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Deprecated
-  class WorkImageComponent < Deprecated::ApplicationComponent
+module V4
+  class WorkImageComponent < V4::ApplicationComponent
     def initialize(image_url_1x:, image_url_2x:, alt: "Work Image", bg_color: "#F1F1F1", class_name: "")
       @image_url_1x = image_url_1x
       @image_url_2x = image_url_2x

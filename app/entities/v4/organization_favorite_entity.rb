@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Deprecated
-  class OrganizationFavoriteEntity < Deprecated::ApplicationEntity
+module V4
+  class OrganizationFavoriteEntity < V4::ApplicationEntity
     attribute? :organization, OrganizationEntity
     attribute? :watched_anime_count, Types::Integer
 
@@ -9,7 +9,7 @@ module Deprecated
       attrs = {}
 
       if organization_node = organization_favorite_node["organization"]
-        attrs[:organization] = Deprecated::OrganizationEntity.from_node(organization_node)
+        attrs[:organization] = V4::OrganizationEntity.from_node(organization_node)
       end
 
       if watched_anime_count = organization_favorite_node["watchedAnimeCount"]

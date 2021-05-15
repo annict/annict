@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Deprecated::RecordListPage
-  class RecordsRepository < Deprecated::ApplicationRepository
+module V4::RecordListPage
+  class RecordsRepository < V4::ApplicationRepository
     class RepositoryResult < Result
       attr_accessor :record_entities, :page_info_entity
     end
@@ -19,8 +19,8 @@ module Deprecated::RecordListPage
       )
       records_data = data.to_h.dig("data", "user", "records")
 
-      result.record_entities = Deprecated::RecordEntity.from_nodes(records_data["nodes"])
-      result.page_info_entity = Deprecated::PageInfoEntity.from_node(records_data["pageInfo"])
+      result.record_entities = V4::RecordEntity.from_nodes(records_data["nodes"])
+      result.page_info_entity = V4::PageInfoEntity.from_node(records_data["pageInfo"])
 
       result
     end

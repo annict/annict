@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Deprecated
-  class ChannelEntity < Deprecated::ApplicationEntity
+module V4
+  class ChannelEntity < V4::ApplicationEntity
     attribute? :database_id, Types::Integer
     attribute? :name, Types::String
 

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Deprecated
+module V4
   class ProfileImageComponent < ApplicationComponent
     def initialize(image_url_1x:, alt:, bg_color: "#F1F1F1", class_name: "", img_options: {}, lazy_load: true)
       @image_url_1x = image_url_1x

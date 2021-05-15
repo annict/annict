@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-module Deprecated
-  class StatusEntity < Deprecated::ApplicationEntity
+module V4
+  class StatusEntity < V4::ApplicationEntity
     attribute? :database_id, Types::Integer
     attribute? :kind, Types::StatusKinds
     attribute? :likes_count, Types::Integer
-    attribute? :user, Deprecated::UserEntity
-    attribute? :anime, Deprecated::AnimeEntity
+    attribute? :user, V4::UserEntity
+    attribute? :anime, V4::AnimeEntity
 
     def self.from_node(status_node, user_node: nil)
       attrs = {}
@@ -24,11 +24,11 @@ module Deprecated
       end
 
       if anime_node = status_node["anime"]
-        attrs[:anime] = Deprecated::AnimeEntity.from_node(anime_node)
+        attrs[:anime] = V4::AnimeEntity.from_node(anime_node)
       end
 
       if user_node = status_node["user"] || user_node
-        attrs[:user] = Deprecated::UserEntity.from_node(user_node)
+        attrs[:user] = V4::UserEntity.from_node(user_node)
       end
 
       new attrs

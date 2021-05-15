@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-module Deprecated
-  class CastEntity < Deprecated::ApplicationEntity
+module V4
+  class CastEntity < V4::ApplicationEntity
     local_attributes :accurate_name
 
     attribute? :accurate_name, Types::String
     attribute? :accurate_name_en, Types::String.optional
-    attribute? :character, Deprecated::CharacterEntity
-    attribute? :person, Deprecated::PersonEntity
+    attribute? :character, V4::CharacterEntity
+    attribute? :person, V4::PersonEntity
 
     def self.from_nodes(cast_nodes)
       cast_nodes.map do |cast_node|
@@ -27,11 +27,11 @@ module Deprecated
       end
 
       if character_node = cast_node["character"]
-        attrs[:character] = Deprecated::CharacterEntity.from_node(character_node)
+        attrs[:character] = V4::CharacterEntity.from_node(character_node)
       end
 
       if person_node = cast_node["person"]
-        attrs[:person] = Deprecated::PersonEntity.from_node(person_node)
+        attrs[:person] = V4::PersonEntity.from_node(person_node)
       end
 
       new attrs

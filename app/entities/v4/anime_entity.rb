@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Deprecated
-  class AnimeEntity < Deprecated::ApplicationEntity
+module V4
+  class AnimeEntity < V4::ApplicationEntity
     local_attributes :title, :title_alter, :synopsis, :synopsis_source
 
     attribute? :id, Types::String
@@ -196,25 +196,25 @@ module Deprecated
       end
 
       trailer_nodes = node.dig("trailers", "nodes")
-      attrs[:trailers] = Deprecated::TrailerEntity.from_nodes(trailer_nodes || [])
+      attrs[:trailers] = V4::TrailerEntity.from_nodes(trailer_nodes || [])
 
       cast_nodes = node.dig("casts", "nodes")
-      attrs[:casts] = Deprecated::CastEntity.from_nodes(cast_nodes || [])
+      attrs[:casts] = V4::CastEntity.from_nodes(cast_nodes || [])
 
       staff_nodes = node.dig("staffs", "nodes")
-      attrs[:staffs] = Deprecated::StaffEntity.from_nodes(staff_nodes || [])
+      attrs[:staffs] = V4::StaffEntity.from_nodes(staff_nodes || [])
 
       episode_nodes = node.dig("episodes", "nodes")
-      attrs[:episodes] = Deprecated::EpisodeEntity.from_nodes(episode_nodes || [])
+      attrs[:episodes] = V4::EpisodeEntity.from_nodes(episode_nodes || [])
 
       program_nodes = node.dig("programs", "nodes")
-      attrs[:programs] = Deprecated::ProgramEntity.from_nodes(program_nodes || [])
+      attrs[:programs] = V4::ProgramEntity.from_nodes(program_nodes || [])
 
       record_nodes = node.dig("records", "nodes")
-      attrs[:records] = Deprecated::RecordEntity.from_nodes(record_nodes || [])
+      attrs[:records] = V4::RecordEntity.from_nodes(record_nodes || [])
 
       series_nodes = node.dig("seriesList", "nodes")
-      attrs[:series_list] = Deprecated::SeriesEntity.from_nodes(series_nodes || [])
+      attrs[:series_list] = V4::SeriesEntity.from_nodes(series_nodes || [])
 
       new attrs
     end

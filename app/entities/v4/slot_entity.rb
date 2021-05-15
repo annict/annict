@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-module Deprecated
-  class SlotEntity < Deprecated::ApplicationEntity
+module V4
+  class SlotEntity < V4::ApplicationEntity
     attribute? :started_at, Types::Params::Time
     attribute? :rebroadcast, Types::Bool
-    attribute? :episode, Deprecated::EpisodeEntity
-    attribute? :anime, Deprecated::AnimeEntity
-    attribute? :channel, Deprecated::ChannelEntity
+    attribute? :episode, V4::EpisodeEntity
+    attribute? :anime, V4::AnimeEntity
+    attribute? :channel, V4::ChannelEntity
 
     def self.from_nodes(nodes)
       nodes.map do |node|
@@ -26,15 +26,15 @@ module Deprecated
       end
 
       if episode_node = node["episode"]
-        attrs[:episode] = Deprecated::EpisodeEntity.from_node(episode_node)
+        attrs[:episode] = V4::EpisodeEntity.from_node(episode_node)
       end
 
       if anime_node = node["anime"]
-        attrs[:anime] = Deprecated::AnimeEntity.from_node(anime_node)
+        attrs[:anime] = V4::AnimeEntity.from_node(anime_node)
       end
 
       if channel_node = node["channel"]
-        attrs[:channel] = Deprecated::ChannelEntity.from_node(channel_node)
+        attrs[:channel] = V4::ChannelEntity.from_node(channel_node)
       end
 
       new attrs

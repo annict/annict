@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Deprecated::RecordListPage
-  class UserRepository < Deprecated::ApplicationRepository
+module V4::RecordListPage
+  class UserRepository < V4::ApplicationRepository
     class RepositoryResult < Result
       attr_accessor :user_entity
     end
@@ -10,7 +10,7 @@ module Deprecated::RecordListPage
       data = query(variables: {username: username})
       user_node = data.to_h.dig("data", "user")
 
-      result.user_entity = Deprecated::UserEntity.from_node(user_node)
+      result.user_entity = V4::UserEntity.from_node(user_node)
 
       result
     end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Loggable
+module V6::Loggable
   extend ActiveSupport::Concern
 
   def annict_logger

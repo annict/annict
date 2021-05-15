@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Deprecated
-  class BulkOperationEntity < Deprecated::ApplicationEntity
+module V4
+  class BulkOperationEntity < V4::ApplicationEntity
     attribute? :job_id, Types::String
 
     def self.from_nodes(nodes)

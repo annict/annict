@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-module Deprecated
-  class CharacterEntity < Deprecated::ApplicationEntity
+module V4
+  class CharacterEntity < V4::ApplicationEntity
     local_attributes :name
 
     attribute? :database_id, Types::Integer
     attribute? :name, Types::String
     attribute? :name_en, Types::String.optional
-    attribute? :series, Deprecated::SeriesEntity.optional
+    attribute? :series, V4::SeriesEntity.optional
 
     def self.from_node(character_node)
       attrs = {}
@@ -25,7 +25,7 @@ module Deprecated
       end
 
       if series_node = character_node["series"]
-        attrs[:series] = Deprecated::SeriesEntity.from_node(series_node)
+        attrs[:series] = V4::SeriesEntity.from_node(series_node)
       end
 
       new attrs

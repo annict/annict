@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Deprecated
+module V4
   class ApplicationEntity < Dry::Struct
     schema schema.strict
 

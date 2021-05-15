@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-module Oauth
+module V4::Oauth
   class ApplicationController < ActionController::Base
     include Doorkeeper::Helpers::Controller
 
-    include PageCategorizable
-    include SentryLoadable
-    include Loggable
-    include Localizable
-    include KeywordSearchable
+    include V6::PageCategorizable
+    include V6::SentryLoadable
+    include V6::Loggable
+    include V6::Localizable
+    include V6::KeywordSearchable
 
     layout "default"
 

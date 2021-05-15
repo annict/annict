@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Deprecated
-  class TrailerEntity < Deprecated::ApplicationEntity
+module V4
+  class TrailerEntity < V4::ApplicationEntity
     attribute? :title, Types::String
     attribute? :url, Types::String
     attribute? :image_url, Types::String

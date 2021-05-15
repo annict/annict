@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module TrackableEpisodeListSettable
+module V6::TrackableEpisodeListSettable
   extend ActiveSupport::Concern
 
   def set_trackable_episode_list

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Deprecated
-  class BodyComponent < Deprecated::ApplicationComponent
+module V4
+  class BodyComponent < V4::ApplicationComponent
     def initialize(height: nil, format: :simple, class_name: "")
       @height = height
       @format = format

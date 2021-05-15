@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Deprecated
-  class EpisodeEntity < Deprecated::ApplicationEntity
+module V4
+  class EpisodeEntity < V4::ApplicationEntity
     local_attributes :number, :title
 
     attribute? :id, Types::String
@@ -77,11 +77,11 @@ module Deprecated
       end
 
       if anime_node = node["anime"]
-        attrs[:anime] = Deprecated::AnimeEntity.from_node(anime_node)
+        attrs[:anime] = V4::AnimeEntity.from_node(anime_node)
       end
 
       record_nodes = node.dig("records", "nodes")
-      attrs[:records] = Deprecated::RecordEntity.from_nodes(record_nodes || [])
+      attrs[:records] = V4::RecordEntity.from_nodes(record_nodes || [])
 
       new attrs
     end

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Deprecated::Lists
-  class RecordListComponent < Deprecated::ApplicationComponent
+module V4::Lists
+  class RecordListComponent < V4::ApplicationComponent
     def initialize(viewer:, record_entities:, show_card: true)
       super
       @viewer = viewer

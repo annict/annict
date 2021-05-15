@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Deprecated
-  class RatingLabelComponent < Deprecated::ApplicationComponent
+module V4
+  class RatingLabelComponent < V4::ApplicationComponent
     def initialize(rating:, advanced_rating: nil, class_name: "")
       @rating = rating.downcase.to_sym
       @advanced_rating = advanced_rating

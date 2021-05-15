@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Deprecated
+module V4
   class EpisodeRecordContentComponent < ApplicationComponent
     def initialize(viewer:, user_entity:, work_entity:, episode_entity:, record_entity:, episode_record_entity:, show_card: true)
       @viewer = viewer

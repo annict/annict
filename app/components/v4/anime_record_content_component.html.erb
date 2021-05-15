@@ -1,6 +1,6 @@
 <div class="c-work-record-content c-record-content">
   <% if @anime_record_entity.rating_overall || @record_entity.comment_html.present? %>
-    <%= render Deprecated::SpoilerGuardComponent.new(work_id: @anime_entity.database_id) do %>
+    <%= render V4::SpoilerGuardComponent.new(work_id: @anime_entity.database_id) do %>
       <div class="c-record-content__wrapper mb-3 row">
         <div class="col-12 col-xl-4 order-1 order-xl-2">
           <% if @anime_record_entity.rating_overall %>
@@ -14,7 +14,7 @@
                     <%= t "noun.animation" %>
                   </div>
                   <div class="col pl-0 text-right">
-                    <%= render Deprecated::RatingLabelComponent.new(rating: @anime_record_entity.rating_animation) %>
+                    <%= render V4::RatingLabelComponent.new(rating: @anime_record_entity.rating_animation) %>
                   </div>
                 </div>
               <% end %>
@@ -24,7 +24,7 @@
                     <%= t "noun.music" %>
                   </div>
                   <div class="col pl-0 text-right">
-                    <%= render Deprecated::RatingLabelComponent.new(rating: @anime_record_entity.rating_music) %>
+                    <%= render V4::RatingLabelComponent.new(rating: @anime_record_entity.rating_music) %>
                   </div>
                 </div>
               <% end %>
@@ -34,7 +34,7 @@
                     <%= t "noun.story" %>
                   </div>
                   <div class="col pl-0 text-right">
-                    <%= render Deprecated::RatingLabelComponent.new(rating: @anime_record_entity.rating_story) %>
+                    <%= render V4::RatingLabelComponent.new(rating: @anime_record_entity.rating_story) %>
                   </div>
                 </div>
               <% end %>
@@ -44,7 +44,7 @@
                     <%= t "noun.character" %>
                   </div>
                   <div class="col pl-0 text-right">
-                    <%= render Deprecated::RatingLabelComponent.new(rating: @anime_record_entity.rating_character) %>
+                    <%= render V4::RatingLabelComponent.new(rating: @anime_record_entity.rating_character) %>
                   </div>
                 </div>
               <% end %>
@@ -54,7 +54,7 @@
                     <%= t "noun.overall" %>
                   </div>
                   <div class="col pl-0 text-right">
-                    <%= render Deprecated::RatingLabelComponent.new(rating: @anime_record_entity.rating_overall) %>
+                    <%= render V4::RatingLabelComponent.new(rating: @anime_record_entity.rating_overall) %>
                   </div>
                 </div>
               <% end %>
@@ -63,7 +63,7 @@
         </div>
 
         <div class="col-12 col-xl-8 order-2 order-xl-1">
-          <%= render Deprecated::BodyComponent.new(height: 300, format: :html) do %>
+          <%= render V4::BodyComponent.new(height: 300, format: :html) do %>
             <%== @record_entity.comment_html %>
           <% end %>
         </div>
@@ -71,7 +71,7 @@
     <% end %>
   <% end %>
   <% if @show_card %>
-    <%= render Deprecated::AnimeRecordCardComponent.new(anime_entity: @anime_entity, anime_record_entity: @anime_record_entity) %>
+    <%= render V4::AnimeRecordCardComponent.new(anime_entity: @anime_entity, anime_record_entity: @anime_record_entity) %>
   <% end %>
-  <%= render Deprecated::AnimeRecordFooterComponent.new(record_entity: @record_entity) %>
+  <%= render V4::AnimeRecordFooterComponent.new(record_entity: @record_entity) %>
 </div>

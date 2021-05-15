@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Deprecated
-  class LibraryEntryEntity < Deprecated::ApplicationEntity
+module V4
+  class LibraryEntryEntity < V4::ApplicationEntity
     attribute? :tracked_episodes_count_in_current_status, Types::Integer
     attribute? :anime, AnimeEntity
 
@@ -19,7 +19,7 @@ module Deprecated
       end
 
       if anime_node = node["anime"]
-        attrs[:anime] = Deprecated::AnimeEntity.from_node(anime_node)
+        attrs[:anime] = V4::AnimeEntity.from_node(anime_node)
       end
 
       new attrs

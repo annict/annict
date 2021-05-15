@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module PageCategorizable
+module V6::PageCategorizable
   private
 
   def page_category

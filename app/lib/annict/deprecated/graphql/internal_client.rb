@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Annict::Deprecated::Graphql
+module Annict::V4::Graphql
   class InternalClient
     def initialize(viewer:)
       @viewer = viewer

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Deprecated
-  class RecordEntity < Deprecated::ApplicationEntity
+module V4
+  class RecordEntity < V4::ApplicationEntity
     attribute? :id, Types::String
     attribute? :database_id, Types::Integer
     attribute? :comment, Types::String.optional
@@ -47,24 +47,24 @@ module Deprecated
       end
 
       if (user_node = node["user"])
-        attrs[:user] = Deprecated::UserEntity.from_node(user_node)
+        attrs[:user] = V4::UserEntity.from_node(user_node)
       end
 
       if (trackable_node = node["trackable"])
         attrs[:trackable] = case trackable_node["__typename"]
         when "Anime"
-          Deprecated::AnimeEntity.from_node(trackable_node)
+          V4::AnimeEntity.from_node(trackable_node)
         when "Episode"
-          Deprecated::EpisodeEntity.from_node(trackable_node)
+          V4::EpisodeEntity.from_node(trackable_node)
         end
       end
 
       if (recordable_node = node["recordable"])
         attrs[:recordable] = case recordable_node["__typename"]
         when "AnimeRecord"
-          Deprecated::AnimeRecordEntity.from_node(recordable_node)
+          V4::AnimeRecordEntity.from_node(recordable_node)
         when "EpisodeRecord"
-          Deprecated::EpisodeRecordEntity.from_node(recordable_node)
+          V4::EpisodeRecordEntity.from_node(recordable_node)
         end
       end
 

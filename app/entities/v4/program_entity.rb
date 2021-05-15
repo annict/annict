@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-module Deprecated
-  class ProgramEntity < Deprecated::ApplicationEntity
+module V4
+  class ProgramEntity < V4::ApplicationEntity
     attribute? :id, Types::String
     attribute? :vod_title_name, Types::String.optional
     attribute? :vod_title_url, Types::String.optional
     attribute? :viewer_did_check, Types::Bool
     attribute? :started_at, Types::Params::Time
-    attribute? :channel, Deprecated::ChannelEntity
+    attribute? :channel, V4::ChannelEntity
 
     def self.from_nodes(nodes)
       nodes.map do |node|
@@ -39,7 +39,7 @@ module Deprecated
       end
 
       if channel_node = node["channel"]
-        attrs[:channel] = Deprecated::ChannelEntity.from_node(channel_node)
+        attrs[:channel] = V4::ChannelEntity.from_node(channel_node)
       end
 
       new attrs

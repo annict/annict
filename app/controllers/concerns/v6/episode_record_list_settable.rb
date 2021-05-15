@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module EpisodeRecordListSettable
+module V6::EpisodeRecordListSettable
   extend ActiveSupport::Concern
 
   def set_episode_record_list(episode)

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Deprecated
-  class AnimeRecordCardComponent < Deprecated::ApplicationComponent
+module V4
+  class AnimeRecordCardComponent < V4::ApplicationComponent
     def initialize(anime_entity:, anime_record_entity:)
       @anime_entity = anime_entity
       @anime_record_entity = anime_record_entity

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Deprecated
-  class AnimeRecordEntity < Deprecated::ApplicationEntity
+module V4
+  class AnimeRecordEntity < V4::ApplicationEntity
     attribute? :rating_animation, Types::RecordRatingState.optional
     attribute? :rating_music, Types::RecordRatingState.optional
     attribute? :rating_story, Types::RecordRatingState.optional

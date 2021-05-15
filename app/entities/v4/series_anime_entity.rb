@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Deprecated
-  class SeriesAnimeEntity < Deprecated::ApplicationEntity
+module V4
+  class SeriesAnimeEntity < V4::ApplicationEntity
     local_attributes :summary, :title
 
     attribute? :database_id, Types::Integer

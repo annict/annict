@@ -2,11 +2,11 @@
   <% @record_entities.each do |record_entity| %>
     <div class="py-3 u-underline">
       <div class="mb-3">
-        <%= render Deprecated::RecordHeaderComponent.new(viewer: @viewer, user_entity: record_entity.user, record_entity: record_entity) %>
+        <%= render V4::RecordHeaderComponent.new(viewer: @viewer, user_entity: record_entity.user, record_entity: record_entity) %>
       </div>
 
       <% if record_entity.episode_record? %>
-        <%= render Deprecated::EpisodeRecordContentComponent.new(
+        <%= render V4::EpisodeRecordContentComponent.new(
           viewer: @viewer,
           user_entity: record_entity.user,
           work_entity: record_entity.trackable.anime,
@@ -16,7 +16,7 @@
           show_card: @show_card
         ) %>
       <% elsif record_entity.anime_record? %>
-        <%= render Deprecated::AnimeRecordContentComponent.new(
+        <%= render V4::AnimeRecordContentComponent.new(
           user_entity: record_entity.user,
           anime_entity: record_entity.trackable,
           record_entity: record_entity,
@@ -27,5 +27,5 @@
     </div>
   <% end %>
 <% else %>
-  <%= render Deprecated::EmptyComponent.new(text: t("messages._empty.no_records")) %>
+  <%= render V4::EmptyComponent.new(text: t("messages._empty.no_records")) %>
 <% end %>

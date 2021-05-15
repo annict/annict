@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Deprecated::IconHelper
+module V4::IconHelper
   def icon(icon, style_prefix = "fas", html_options = {})
     if style_prefix.is_a?(Hash)
       html_options = style_prefix

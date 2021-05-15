@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module SentryLoadable
+module V6::SentryLoadable
   extend ActiveSupport::Concern
 
   def set_sentry_context

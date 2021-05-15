@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Deprecated
-  class SeriesEntity < Deprecated::ApplicationEntity
+module V4
+  class SeriesEntity < V4::ApplicationEntity
     local_attributes :name
 
     attribute? :name, Types::String
@@ -26,7 +26,7 @@ module Deprecated
       end
 
       series_anime_edges = series_node.dig("animeList", "edges")
-      attrs[:series_anime_list] = Deprecated::SeriesAnimeEntity.from_edges(series_anime_edges || [])
+      attrs[:series_anime_list] = V4::SeriesAnimeEntity.from_edges(series_anime_edges || [])
 
       new attrs
     end

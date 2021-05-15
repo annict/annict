@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Deprecated
-  class PageInfoEntity < Deprecated::ApplicationEntity
+module V4
+  class PageInfoEntity < V4::ApplicationEntity
     attribute? :start_cursor, Types::String.optional
     attribute? :end_cursor, Types::String.optional
     attribute? :has_next_page, Types::Bool

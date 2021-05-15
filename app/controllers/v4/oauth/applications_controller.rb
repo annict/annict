@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Oauth
-  class ApplicationsController < Oauth::ApplicationController
+module V4::Oauth
+  class ApplicationsController < V4::Oauth::ApplicationController
     before_action :authenticate_admin!
 
     def index

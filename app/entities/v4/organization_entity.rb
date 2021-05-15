@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Deprecated
-  class OrganizationEntity < Deprecated::ApplicationEntity
+module V4
+  class OrganizationEntity < V4::ApplicationEntity
     local_attributes :name
 
     attribute? :database_id, Types::Integer

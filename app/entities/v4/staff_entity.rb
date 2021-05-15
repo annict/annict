@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Deprecated
-  class StaffEntity < Deprecated::ApplicationEntity
+module V4
+  class StaffEntity < V4::ApplicationEntity
     local_attributes :accurate_name, :role
 
     attribute? :accurate_name, Types::String

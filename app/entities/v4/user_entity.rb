@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Deprecated
-  class UserEntity < Deprecated::ApplicationEntity
+module V4
+  class UserEntity < V4::ApplicationEntity
     attribute? :database_id, Types::Integer
     attribute? :username, Types::String
     attribute? :name, Types::String.optional
@@ -96,22 +96,22 @@ module Deprecated
 
       character_favorite_nodes = user_node.dig("characterFavorites", "nodes")
       attrs[:character_favorites] = (character_favorite_nodes || []).map { |character_favorite_node|
-        Deprecated::CharacterFavoriteEntity.from_node(character_favorite_node)
+        V4::CharacterFavoriteEntity.from_node(character_favorite_node)
       }
 
       cast_favorite_nodes = user_node.dig("castFavorites", "nodes")
       attrs[:cast_favorites] = (cast_favorite_nodes || []).map { |cast_favorite_node|
-        Deprecated::PersonFavoriteEntity.from_node(cast_favorite_node)
+        V4::PersonFavoriteEntity.from_node(cast_favorite_node)
       }
 
       staff_favorite_nodes = user_node.dig("staffFavorites", "nodes")
       attrs[:staff_favorites] = (staff_favorite_nodes || []).map { |staff_favorite_node|
-        Deprecated::PersonFavoriteEntity.from_node(staff_favorite_node)
+        V4::PersonFavoriteEntity.from_node(staff_favorite_node)
       }
 
       organization_favorite_nodes = user_node.dig("organizationFavorites", "nodes")
       attrs[:organization_favorites] = (organization_favorite_nodes || []).map { |organization_favorite_node|
-        Deprecated::OrganizationFavoriteEntity.from_node(organization_favorite_node)
+        V4::OrganizationFavoriteEntity.from_node(organization_favorite_node)
       }
 
       new attrs

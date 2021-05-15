@@ -1,7 +1,7 @@
 <div class="c-deprecated-record-header row">
   <div class="col-auto pr-0">
     <%= link_to profile_path(@user_entity.username) do %>
-      <%= render Deprecated::ProfileImageComponent.new(
+      <%= render V4::ProfileImageComponent.new(
           image_url_1x: @user_entity.avatar_url,
           alt: "@#{@user_entity.username}"
       ) %>
@@ -39,7 +39,7 @@
   </div>
 
   <div class="col-auto pl-0">
-    <%= render Deprecated::Dropdowns::RecordOptionsDropdownComponent.new(
+    <%= render V4::Dropdowns::RecordOptionsDropdownComponent.new(
       viewer: @viewer,
       user_entity: @user_entity,
       record_entity: @record_entity

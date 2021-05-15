@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Deprecated
-  class SpoilerGuardComponent < Deprecated::ApplicationComponent
+module V4
+  class SpoilerGuardComponent < V4::ApplicationComponent
     def initialize(work_id:, episode_id: nil)
       @work_id = work_id
       @episode_id = episode_id

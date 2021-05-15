@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module ResourcePublishable
+module Db::ResourcePublishable
   extend ActiveSupport::Concern
 
   def create

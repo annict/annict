@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Localizable
+module V6::Localizable
   SKIP_TO_SET_LOCALE_PATHS = %w[
     /users/auth/gumroad/callback
   ].freeze
