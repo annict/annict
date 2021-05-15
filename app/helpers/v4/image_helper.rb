@@ -34,8 +34,8 @@ module V4::ImageHelper
   end
 
   def ann_image_tag(record, field, options = {})
-    url = ann_image_url(record, field, options)
-    url2x = ann_image_url(record, field, options.merge(size_rate: 2))
+    url = v4_ann_image_url(record, field, options)
+    url2x = v4_ann_image_url(record, field, options.merge(size_rate: 2))
 
     options["data-src"] = url
     options[:class] = if options[:class].present?
@@ -57,7 +57,7 @@ module V4::ImageHelper
       return "#{ENV.fetch('ANNICT_FILE_STORAGE_URL')}/shrine/#{image[:original].id}"
     end
 
-    ann_image_url(profile, field, options)
+    v4_ann_image_url(profile, field, options)
   end
 
   def ann_api_assets_url(record, field)
@@ -87,7 +87,7 @@ module V4::ImageHelper
       "200x200"
     end
 
-    ann_image_url(profile, :image, size: size, ratio: "1:1")
+    v4_ann_image_url(profile, :image, size: size, ratio: "1:1")
   end
 
   private

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Annict::Deprecated
+module Annict::V4
   class Pagination
     attr_reader :after, :before
 

@@ -129,14 +129,6 @@ get "r/:provider/:url_hash",
   provider: /fb|tw/,
   url_hash: /[0-9a-zA-Z_-]{10}/
 
-root "home#show",
-  constraints: Annict::RoutingConstraints::Member.new
-root "v6/welcome#show",
-  constraints: Annict::RoutingConstraints::Guest.new,
-  # Set :as option to avoid two routes with the same name
-  as: nil
-
-# rubocop:disable Layout/LineLength
 devise_scope :user do
   match "/sign_out", via: :delete, as: :sign_out, to: "devise/sessions#destroy"
 end
@@ -173,6 +165,7 @@ match "/sign_in/callback", via: :get, as: :sign_in_callback, to: "sign_in_callba
 match "/sign_up", via: :get, as: :sign_up, to: "sign_up#new"
 match "/terms", via: :get, as: :terms, to: "pages#terms"
 match "/track", via: :get, as: :track, to: "tracks#show"
+match "/works/:anime_id", via: :get, as: :anime, to: "v4/works#show"
 match "/works/:anime_id/episodes/:episode_id", via: :get, as: :episode, to: "episodes#show"
 
 scope module: :v4 do
@@ -187,10 +180,15 @@ scope module: :v4 do
     match "/@:username/records/:record_id", via: :get, to: "records#show", username: USERNAME_FORMAT
     match "/@:username/records/:record_id", via: :patch, to: "records#update", username: USERNAME_FORMAT
     match "/episode_records", via: :patch, as: :episode_record_mutation, to: "episode_records#update"
-    match "/works/:anime_id", via: :get, as: :anime, to: "works#show"
     match "/works/:anime_id/episodes", via: :get, as: :episode_list, to: "episodes#index"
     match "/works/:anime_id/records", via: :get, as: :anime_record_list, to: "anime_records#index"
     match "/works/:anime_id/records", via: :post, to: "anime_records#create"
   end
 end
-# rubocop:enable Layout/LineLength
+
+root "home#show",
+  constraints: Annict::RoutingConstraints::Member.new
+root "v6/welcome#show",
+  constraints: Annict::RoutingConstraints::Guest.new,
+  # Set :as option to avoid two routes with the same name
+  as: nil

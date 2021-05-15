@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Buttons
-  class ShareToFacebookButtonComponent < ApplicationComponent
+module V6::Buttons
+  class ShareToFacebookButtonComponent < V6::ApplicationComponent
     def initialize(view_context, url:, class_name: "")
       super view_context
       @url = url

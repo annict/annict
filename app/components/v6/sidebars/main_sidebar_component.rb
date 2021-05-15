@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Sidebars
-  class MainSidebarComponent < ApplicationComponent
+module V6::Sidebars
+  class MainSidebarComponent < V6::ApplicationComponent
     def initialize(view_context, search:)
       super view_context
       @search = search

@@ -7,7 +7,7 @@
       .row.mb-3
         .col-4.pr-0
           = link_to anime_path(anime_id: work.id), class: "d-inline-block" do
-            = render WorkImageComponent.new(image_url_1x: ann_image_url(work.work_image, :image, size: "250x"), image_url_2x: ann_image_url(work.work_image, :image, size: "500x"))
+            = render WorkImageComponent.new(image_url_1x: v4_ann_image_url(work.work_image, :image, size: "250x"), image_url_2x: v4_ann_image_url(work.work_image, :image, size: "500x"))
           - if work.work_image.present?
             .u-very-small.text-end
               = work.work_image.asin_or_copyright_text
@@ -41,7 +41,7 @@
           - trailers.each do |trailer|
             .col-6.text-center.mb-3
               - if trailer.youtube?
-                c-youtube-modal-player thumbnail-url="#{ann_image_url(trailer, :image, size: "300x169")}" video-id="#{trailer.youtube_video_id}" video-title="#{locale_ja? ? trailer.title : trailer.title_en}" annict-url="#{ENV.fetch('ANNICT_URL')}" :width="320" :height="180" :is-auto-play="false"
+                c-youtube-modal-player thumbnail-url="#{v4_ann_image_url(trailer, :image, size: "300x169")}" video-id="#{trailer.youtube_video_id}" video-title="#{locale_ja? ? trailer.title : trailer.title_en}" annict-url="#{ENV.fetch('ANNICT_URL')}" :width="320" :height="180" :is-auto-play="false"
               - else
                 = link_to trailer.url, target: "_blank" do
                   .c-video-thumbnail

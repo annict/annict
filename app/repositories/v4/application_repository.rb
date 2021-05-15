@@ -23,11 +23,11 @@ module V4
     end
 
     def query_definition
-      @query_definition ||= File.read(Rails.root.join("app", "lib", "annict", "deprecated", "graphql", "queries", file_name))
+      @query_definition ||= File.read(Rails.root.join("app", "lib", "annict", "v4", "graphql", "queries", file_name))
     end
 
     def mutation_definition
-      @mutation_definition ||= File.read(Rails.root.join("app", "lib", "annict", "deprecated", "graphql", "mutations", file_name))
+      @mutation_definition ||= File.read(Rails.root.join("app", "lib", "annict", "v4", "graphql", "mutations", file_name))
     end
 
     def mutation_name

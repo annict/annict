@@ -22,7 +22,7 @@ module Canary
         end
 
         def anime_list(order_by: nil)
-          SearchSeriesWorksQuery.new(
+          V4::SearchSeriesWorksQuery.new(
             object.series_works,
             order_by: order_by
           ).call

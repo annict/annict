@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Sidebars
+module V6::Sidebars
   class AnimeSidebarComponent < ApplicationComponent
     def initialize(view_context, anime:, vod_channels:)
       super view_context

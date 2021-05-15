@@ -2,7 +2,7 @@
 - title = t "head.title.libraries.show", profile_name: @user.profile.name, username: @user.username, action: action
 - description = meta_description(t("head.meta.description.libraries.show", profile_name: @user.profile.name, username: @user.username, action: action))
 - keywords = meta_keywords(@user.profile.name, @user.username)
-- image_url = ann_image_url(@user.profile, :image, format: "jpg", height: 640, width: 640)
+- image_url = v6_ann_image_url(@user.profile, :image, format: "jpg", height: 640, width: 640)
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 
 .container.py-3

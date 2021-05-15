@@ -9,7 +9,7 @@
           .row
             .col-5
               = link_to anime_path(anime_id: work.id) do
-                = render WorkImageComponent.new(image_url_1x: ann_image_url(work.work_image, :image, size: "140x"), image_url_2x: ann_image_url(work.work_image, :image, size: "280x"))
+                = render WorkImageComponent.new(image_url_1x: v4_ann_image_url(work.work_image, :image, size: "140x"), image_url_2x: v4_ann_image_url(work.work_image, :image, size: "280x"))
             .col-7.pl-0
               = link_to work.local_title, anime_path(anime_id: work.id), title: work.local_title, class: "d-inline-block"
               - if user_signed_in? && current_user.id == user.id

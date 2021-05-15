@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module AnimePage
-  class VodChannelsRepository < ApplicationRepository
+module V4::AnimePage
+  class VodChannelsRepository < V4::ApplicationRepository
     class RepositoryResult < Result
       attr_accessor :vod_channel_entities
     end
@@ -10,7 +10,7 @@ module AnimePage
       data = query
       channel_nodes = data.to_h.dig("data", "channels", "nodes")
 
-      result.vod_channel_entities = VodChannelEntity.from_nodes(channel_nodes, anime_entity: anime_entity)
+      result.vod_channel_entities = V4::VodChannelEntity.from_nodes(channel_nodes, anime_entity: anime_entity)
 
       result
     end

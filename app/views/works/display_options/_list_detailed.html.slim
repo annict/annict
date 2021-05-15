@@ -5,7 +5,7 @@
   .c-card.row.py-3.mb-3
     .col-3.pr-0
       = link_to anime_path(anime_id: work.id) do
-        = render WorkImageComponent.new(image_url_1x: ann_image_url(work.work_image, :image, size: "270x"), image_url_2x: ann_image_url(work.work_image, :image, size: "540x"))
+        = render WorkImageComponent.new(image_url_1x: v4_ann_image_url(work.work_image, :image, size: "270x"), image_url_2x: v4_ann_image_url(work.work_image, :image, size: "540x"))
       - if work.work_image.present?
         .u-very-small
           = work.work_image.asin_or_copyright_text
@@ -41,7 +41,7 @@
           - trailers.each do |trailer|
             .col-4.text-center.mb-3
               - if trailer.youtube?
-                c-youtube-modal-player thumbnail-url="#{ann_image_url(trailer, :image, size: "255x144")}" video-id="#{trailer.youtube_video_id}" video-title="#{locale_ja? ? trailer.title : trailer.title_en}" annict-url="#{ENV.fetch('ANNICT_URL')}"
+                c-youtube-modal-player thumbnail-url="#{v4_ann_image_url(trailer, :image, size: "255x144")}" video-id="#{trailer.youtube_video_id}" video-title="#{locale_ja? ? trailer.title : trailer.title_en}" annict-url="#{ENV.fetch('ANNICT_URL')}"
               - else
                 = link_to trailer.url, target: "_blank" do
                   .c-video-thumbnail

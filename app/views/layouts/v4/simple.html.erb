@@ -1,7 +1,12 @@
+<%= content_for :head_assets do %>
+  <%= stylesheet_bundle_tag "v4.css", media: "all", "data-turbo-track": "reload" %>
+  <%= javascript_bundle_tag "v4.js", defer: "", "data-turbo-track": "reload" %>
+<% end %>
+
 <!DOCTYPE html>
 <html lang="<%= I18n.locale %>">
   <head>
-    <%= render "application/v4/head" %>
+    <%= render "application/head" %>
   </head>
   <body>
     <div class="ann-application">

@@ -32,7 +32,7 @@ module Canary
 
           width, height = size.split("x")
 
-          ann_image_url object, :image, format: "jpg", height: height, width: width
+          v6_ann_image_url object, :image, format: "jpg", height: height, width: width
         end
 
         def facebook_og_image_url

@@ -1,0 +1,251 @@
+<div class="c-anime-sidebar">
+  <div class="row mb-3 mb-sm-0">
+    <div class="col-4 col-sm-12">
+      <div class="mb-2 text-sm-left">
+        <%= link_to anime_path(anime_id: @anime_entity.database_id) do %>
+          <%= render V4::WorkImageComponent.new(image_url_1x: @anime_entity.image_url_1x, image_url_2x: @anime_entity.image_url_2x, alt: @anime_entity.local_title) %>
+        <% end %>
+        <div class="u-very-small text-muted">
+          <i class="far fa-copyright"></i>
+          <%= @anime_entity.copyright %>
+        </div>
+      </div>
+    </div>
+    <div class="col-8 col-sm-12 pl-0 pl-sm-3">
+      <h1 class="font-weight-bold h2 mb-3 text-sm-left">
+        <%= link_to anime_path(anime_id: @anime_entity.database_id), class: "u-text-body" do %>
+          <%= @anime_entity.local_title %>
+        <% end %>
+      </h1>
+
+      <div class="row mb-3">
+        <div class="col text-center">
+          <div class="h4 font-weight-bold mb-1">
+            <%= @anime_entity.watchers_count %>
+          </div>
+          <div class="text-muted small">
+            <%= t "noun.watchers_count" %>
+          </div>
+        </div>
+        <div class="col text-center">
+          <div class="h4 font-weight-bold mb-1">
+            <%= @anime_entity.satisfaction_rate.presence || "-" %><span class="small ml-1">%</span>
+          </div>
+          <div class="text-muted small">
+            <%= t "noun.satisfaction_rate_shorten" %>
+          </div>
+        </div>
+        <div class="col text-center">
+          <div class="h4 font-weight-bold mb-1">
+            <%= @anime_entity.ratings_count %>
+          </div>
+          <div class="text-muted small">
+            <%= t "noun.ratings_count" %>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <%= V6::Selectors::StatusSelectorComponent.new(self, anime: @anime_entity.to_model, page_category: "work-detail").render %>
+      </div>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <h2 class="font-weight-bold h4 mb-3">
+      <%= t "noun.information" %>
+    </h2>
+
+    <div class="mb-3 row">
+      <% if @anime_entity.title_kana.present? %>
+        <div class="col-6 col-sm-12 mb-2">
+          <div class="small">
+            <%= t "activerecord.attributes.work.title_kana" %>
+          </div>
+          <div>
+            <%= @anime_entity.title_kana %>
+          </div>
+        </div>
+      <% end %>
+      <% if @anime_entity.title_alter.present? %>
+        <div class="col-6 col-sm-12 mb-2">
+          <div class="small">
+            <%= t "activerecord.attributes.work.title_alter" %>
+          </div>
+          <div>
+            <%= @anime_entity.title_alter %>
+          </div>
+        </div>
+      <% end %>
+      <% if @anime_entity.title_en.present? %>
+        <div class="col-6 col-sm-12 mb-2">
+          <div class="small">
+            <%= t "activerecord.attributes.work.title_en" %>
+          </div>
+          <div>
+            <%= @anime_entity.title_en %>
+          </div>
+        </div>
+      <% end %>
+      <% if @anime_entity.title_alter_en.present? %>
+        <div class="col-6 col-sm-12 mb-2">
+          <div class="small">
+            <%= t "activerecord.attributes.work.title_alter_en" %>
+          </div>
+          <div>
+            <%= @anime_entity.title_alter_en %>
+          </div>
+        </div>
+      <% end %>
+
+      <div class="col-6 col-sm-12 mb-2">
+        <div class="small">
+          <%= t "activerecord.attributes.work.media" %>
+        </div>
+        <div>
+          <%= @anime_entity.media_text %>
+        </div>
+      </div>
+
+      <% if @anime_entity.season_year.present? %>
+        <div class="col-6 col-sm-12 mb-2">
+          <div class="small">
+            <%= t "noun.release_season" %>
+          </div>
+          <div>
+            <%= link_to @anime_entity.local_season_name, season_works_path(slug: @anime_entity.season_slug) %>
+          </div>
+        </div>
+      <% end %>
+      <% if @anime_entity.started_on.present? %>
+        <div class="col-6 col-sm-12 mb-2">
+          <div class="small">
+            <%= t "noun.aired" %>
+          </div>
+          <div>
+            <%= @anime_entity.started_on %>
+          </div>
+        </div>
+      <% end %>
+      <% if @anime_entity.official_site_url.present? %>
+        <div class="col-6 col-sm-12 mb-2">
+          <div class="small">
+            <%= t "activerecord.attributes.work.official_site_url" %>
+          </div>
+          <div>
+            <%= helpers.link_with_domain(@anime_entity.official_site_url) %>
+          </div>
+        </div>
+      <% end %>
+      <% if @anime_entity.official_site_url_en.present? %>
+        <div class="col-6 col-sm-12 mb-2">
+          <div class="small">
+            <%= t "activerecord.attributes.work.official_site_url_en" %>
+          </div>
+          <div>
+            <%= helpers.link_with_domain(@anime_entity.official_site_url_en) %>
+          </div>
+        </div>
+      <% end %>
+      <% if @anime_entity.twitter_username.present? %>
+        <div class="col-6 col-sm-12 mb-2">
+          <div class="small">
+            <%= t "activerecord.attributes.work.twitter_username" %>
+          </div>
+          <div>
+            <%= render V4::TwitterProfileLinkComponent.new(entity: @anime_entity)  %>
+          </div>
+        </div>
+      <% end %>
+      <% if @anime_entity.twitter_hashtag.present? %>
+        <div class="col-6 col-sm-12 mb-2">
+          <div class="small">
+            <%= t "activerecord.attributes.work.twitter_hashtag" %>
+          </div>
+          <div>
+            <%= render V4::TwitterHashtagLinkComponent.new(entity: @anime_entity) %>
+          </div>
+        </div>
+      <% end %>
+      <% if @anime_entity.wikipedia_url.present? %>
+        <div class="col-6 col-sm-12 mb-2">
+          <div class="small">
+            <%= t "activerecord.attributes.work.wikipedia_url" %>
+          </div>
+          <div>
+            <%= helpers.link_with_domain(@anime_entity.wikipedia_url) %>
+          </div>
+        </div>
+      <% end %>
+      <% if @anime_entity.wikipedia_url_en.present? %>
+        <div class="col-6 col-sm-12 mb-2">
+          <div class="small">
+            <%= t "activerecord.attributes.work.wikipedia_url_en" %>
+          </div>
+          <div>
+            <%= helpers.link_with_domain(@anime_entity.wikipedia_url_en) %>
+          </div>
+        </div>
+      <% end %>
+      <% if @anime_entity.syobocal_tid.present? %>
+        <div class="col-6 col-sm-12 mb-2">
+          <div class="small">
+            <%= t "noun.syobocal" %>
+          </div>
+          <div>
+            <%= render V4::SyobocalLinkComponent.new(work_entity: @anime_entity) %>
+          </div>
+        </div>
+      <% end %>
+      <% if @anime_entity.mal_anime_id.present? %>
+        <div class="col-6 col-sm-12 mb-2">
+          <div class="small">
+            <%= t "noun.my_anime_list" %>
+          </div>
+          <div>
+            <%= render V4::MalLinkComponent.new(work_entity: @anime_entity) %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <% if @vod_channel_entities.present? %>
+    <div class="mb-sm-1">
+      <h2 class="font-weight-bold h4 mb-3">
+        <%= t "noun.vods" %>
+      </h2>
+
+      <ul class="list-unstyled mb-0 row">
+        <% @vod_channel_entities.each do |vod_channel_entity| %>
+          <li class="col-6 col-sm-12 mb-3 mb-sm-2">
+            <%= link_to vod_channel_entity.name, vod_channel_entity.programs.first.vod_title_url, rel: "noopener", target: "_blank" %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <h2 class="font-weight-bold h4 mb-3">
+      <%= t "noun.share" %>
+    </h2>
+
+    <%= V6::Buttons::ShareToTwitterButtonComponent.new(
+        self,
+        text: @anime_entity.local_title,
+        url: "#{helpers.local_url}/works/#{@anime_entity.database_id}",
+        hashtags: @anime_entity.twitter_hashtag.presence || ''
+    ).render %>
+    <%= V6::Buttons::ShareToFacebookButtonComponent.new(
+        self,
+        url: "#{helpers.local_url}/works/#{@anime_entity.database_id}",
+    ).render %>
+  </div>
+
+  <% if @viewer && @viewer.committer? %>
+    <div class="mt-3">
+      <%= link_to t("messages._common.edit_on_annict_db"), db_edit_work_path(@anime_entity.database_id), class: "btn btn-secondary w-100 mt-2" %>
+    </div>
+  <% end %>
+</div>

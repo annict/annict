@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Buttons
-  class ShareToTwitterButtonComponent < ApplicationComponent
+module V6::Buttons
+  class ShareToTwitterButtonComponent < V6::ApplicationComponent
     def initialize(view_context, text:, url:, hashtags: "", class_name: "")
       super view_context
       @text = text

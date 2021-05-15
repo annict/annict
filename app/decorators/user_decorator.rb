@@ -18,6 +18,6 @@ module UserDecorator
   end
 
   def avatar_url(size:)
-    ann_image_url(profile, :image, size: size, ratio: "1:1")
+    v4_ann_image_url(profile, :image, size: size, ratio: "1:1")
   end
 end

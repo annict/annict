@@ -1,32 +1,34 @@
+<%= content_for :head_assets do %>
+  <%= stylesheet_bundle_tag "v4.css", media: "all", "data-turbo-track": "reload" %>
+  <%= javascript_bundle_tag "v4.js", defer: "", "data-turbo-track": "reload" %>
+<% end %>
+
 <!DOCTYPE html>
 <html lang="<%= I18n.locale %>">
   <head>
-    <%= render "application/v4/head" %>
+    <%= render "application/head" %>
   </head>
   <body>
-    <div class="ann-application">
+    <div class="">
       <div
         class="l-default"
-        data-controller="application"
-        data-application-page-category="<%= page_category %>"
-        data-application-params="<%= user_data_fetcher_params.to_json %>"
       >
         <div class="l-default__sidebar">
-          <%= render SidebarComponent.new(user: current_user, search: @search) %>
+          <%= V6::Sidebars::MainSidebarComponent.new(self, search: @search).render %>
         </div>
 
         <div class="l-default__main d-flex flex-column">
           <div class="l-default__content">
-            <%= render FlashComponent.new(flash) %>
+            <%= render V4::FlashComponent.new(flash) %>
             <%= yield %>
           </div>
 
           <div class="l-default__footer">
-            <%= render FooterComponent.new %>
+            <%= V6::FooterComponent.new(self).render %>
           </div>
 
           <div class="l-default__tab_bar">
-            <%= render TabBarComponent.new(user: current_user) %>
+            <%= V6::TabBarComponent.new(self, current_user: current_user).render %>
           </div>
         </div>
       </div>

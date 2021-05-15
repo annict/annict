@@ -73,11 +73,11 @@ module Beta
         end
 
         def casts(order_by: nil)
-          SearchCastsQuery.new(object.casts, order_by: order_by).call
+          V4::SearchCastsQuery.new(object.casts, order_by: order_by).call
         end
 
         def staffs(order_by: nil)
-          SearchStaffsQuery.new(object.staffs, order_by: order_by).call
+          V4::SearchStaffsQuery.new(object.staffs, order_by: order_by).call
         end
 
         def series_list
