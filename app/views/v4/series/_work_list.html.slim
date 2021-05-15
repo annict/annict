@@ -1,7 +1,7 @@
 .row
   - series.series_works.where.not(work: work.id).sort_season.each do |series_work|
     - work = series_work.work
-    .col-2.p-0.pr-3.mb-3
+    .col-2.p-0.pe-3.mb-3
       .c-card
         = link_to anime_path(anime_id: work.id) do
           .c-hover-image

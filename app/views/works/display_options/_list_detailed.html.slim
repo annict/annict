@@ -3,7 +3,7 @@
 
 - works.each do |work|
   .c-card.row.py-3.mb-3
-    .col-3.pr-0
+    .col-3.pe-0
       = link_to anime_path(anime_id: work.id) do
         = render WorkImageComponent.new(image_url_1x: v4_ann_image_url(work.work_image, :image, size: "270x"), image_url_2x: v4_ann_image_url(work.work_image, :image, size: "540x"))
       - if work.work_image.present?

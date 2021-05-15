@@ -7,16 +7,16 @@ const DISPLAY_USERS_LIMIT = 12;
 export default {
   template: `
     <div class="c-work-friends" v-if="users.length">
-      <div class="font-weight-bold">
+      <div class="fw-bold">
         {{ title }}
       </div>
       <div class="align-items-center px-3 pt-2 row">
-        <div class="col col-auto pl-0 pb-2 pr-2" v-for="user in users">
+        <div class="col col-auto ps-0 pb-2 pe-2" v-for="user in users">
           <a :href="'/@' + user.username">
             <img class="js-lazy rounded-circle" :data-src="user.avatar_url" width="30" height="30" :alt="user.username">
           </a>
         </div>
-        <div class="col pb-2 pl-2">
+        <div class="col pb-2 ps-2">
           <div class="u-fake-link" v-if="isMoreUsers" @click="more">
             {{ moreText }}
           </div>

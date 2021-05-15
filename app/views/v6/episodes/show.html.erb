@@ -7,7 +7,7 @@
 
 <div class="container-fluid">
   <div class="row">
-    <div class="col-md-3 pr-md-0 py-3">
+    <div class="col-md-3 pe-md-0 py-3">
       <%= Sidebars::AnimeSidebarComponent2.new(self, anime: @anime, vod_channels: @vod_channels).render %>
     </div>
 
@@ -22,7 +22,7 @@
             <%= link_to @episode.title_with_number, episode_path(@anime.id, @episode.id), class: "u-text-body" %>
           </h2>
         </div>
-        <div class="col-auto pl-0">
+        <div class="col-auto ps-0">
           <%= render ButtonGroups::EpisodeTransitionButtonGroupComponent2.new(episode: @episode) %>
         </div>
       </div>

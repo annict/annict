@@ -10,7 +10,7 @@
 
             <%= link_to anime_path(@anime.id), class: "small", data: { "turbo-frame": "_top" } do %>
               <%= t("noun.anime_page") %>
-              <i class="far fa-angle-right pl-1"></i>
+              <i class="far fa-angle-right ps-1"></i>
             <% end %>
           </div>
 
@@ -57,19 +57,19 @@
               <% @episodes.each do |episode| %>
                 <%= render ListGroupItems::TrackingEpisodeListGroupItemComponent.new(episode: episode) do %>
                   <div class="align-items-center row">
-                    <div class="col-auto pr-0">
+                    <div class="col-auto pe-0">
                       <%= Buttons::WatchEpisodeButtonComponent.new(
                         self, episode_id: episode.id, page_category: "tracking-modal", class_name: "btn-sm btn-outline-info rounded-circle"
                       ).render %>
                     </div>
 
-                    <div class="col-auto pl-2 px-0">
+                    <div class="col-auto ps-2 px-0">
                       <%= Buttons::BulkWatchEpisodesButtonComponent.new(
                         self, episode_id: episode.id, class_name: "btn-sm btn-outline-info rounded-circle"
                       ).render %>
                     </div>
 
-                    <div class="col-auto pl-2 pr-0">
+                    <div class="col-auto ps-2 pe-0">
                       <%= Buttons::SkipEpisodeButtonComponent.new(
                         self, episode_id: episode.id, class_name: "btn-sm btn-outline-secondary rounded-circle"
                       ).render %>

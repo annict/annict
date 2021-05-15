@@ -30,7 +30,7 @@ module V6::Sidebars
               end
             end
 
-            h.tag :div, class: "col-8 col-sm-12 pl-0 pl-sm-3" do
+            h.tag :div, class: "col-8 col-sm-12 ps-0 ps-sm-3" do
               h.tag :h1, class: "fw-bold h2 mb-3 text-sm-left" do
                 h.tag :a, href: view_context.anime_path(anime_id: @anime.id), class: "u-text-body" do
                   h.text @anime.local_title
@@ -51,7 +51,7 @@ module V6::Sidebars
                 h.tag :div, class: "col text-center" do
                   h.tag :div, class: "h4 fw-bold mb-1" do
                     h.text @anime.satisfaction_rate.presence || "-"
-                    h.tag :span, class: "small ml-1" do
+                    h.tag :span, class: "small ms-1" do
                       h.text "%"
                     end
                   end

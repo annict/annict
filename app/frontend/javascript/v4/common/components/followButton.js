@@ -7,7 +7,7 @@ export default {
       :class="{ 'u-btn-outline-green': !isFollowing, 'u-btn-green': isFollowing, 'c-spinner': isSaving }"
       @click="toggle"
     >
-      <i class="fa mr-2" :class="{ 'fa-plus': !isFollowing, 'fa-check': isFollowing }"></i>
+      <i class="fa me-2" :class="{ 'fa-plus': !isFollowing, 'fa-check': isFollowing }"></i>
       <span>
         {{ buttonText }}
       </span>

@@ -5,10 +5,10 @@
     resource_id: @record_entity.database_id,
     likes_count: @record_entity.likes_count,
     page_category: "user-home",
-    class_name: "mr-3"
+    class_name: "me-3"
   ).render %>
   <% if false # TODO: あとで復活させる %>
-  <%= link_to record_path(@user_entity.username, @record_entity.database_id), class: "mr-3" do %>
+  <%= link_to record_path(@user_entity.username, @record_entity.database_id), class: "me-3" do %>
     <i class="far fa-comment"></i>
     <%= @episode_record_entity.comments_count %>
   <% end %>

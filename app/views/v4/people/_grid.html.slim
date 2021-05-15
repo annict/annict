@@ -1,9 +1,9 @@
 - resource_years.each do |year|
   h3.text-center.mb-3 = year
-  .row.pl-3.mb-4
+  .row.ps-3.mb-4
     - resources_with_year[year].group_by(&:work_id).each do |_, resources|
       - work = resources.first.work
-      .col-2.p-0.pr-3.mb-3
+      .col-2.p-0.pe-3.mb-3
         .c-card
           = link_to anime_path(anime_id: work.id) do
             .c-hover-image

@@ -9,7 +9,7 @@
   h1.text-center.mb-4
     = t "head.title.oauth.authorizations.new"
   p = t "messages.oauth.authorizations.authorize_account_html", client_name: @pre_auth.client.name
-  
+
   h2.h4
     = t "messages.oauth.authorizations.this_application_will_be_able_to"
   - if @pre_auth.scopes.present?
@@ -18,7 +18,7 @@
         li = t scope, scope: [:doorkeeper, :scopes]
 
   .row.align-items-center
-    .col.col-auto.pr-0
+    .col.col-auto.pe-0
       = form_tag oauth_authorization_path, method: :post do
         = hidden_field_tag :client_id, @pre_auth.client.uid
         = hidden_field_tag :redirect_uri, @pre_auth.redirect_uri

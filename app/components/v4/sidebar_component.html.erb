@@ -14,12 +14,12 @@
     <% if user %>
       <div class="mb-3 px-3">
         <%= link_to profile_detail_path(user.username), class: "align-content-center row" do %>
-          <div class="col-3 pr-0">
+          <div class="col-3 pe-0">
             <%= render ProfileImageComponent.new(image_url_1x: helpers.ann_image_url(user.profile, :image, size: "50x50", ratio: "1:1"), alt: "@#{user.username}") %>
           </div>
 
           <div class="col-auto">
-            <div class="font-weight-bold u-text-body">
+            <div class="fw-bold u-text-body">
               <%= user.profile.name %>
             </div>
 
@@ -40,7 +40,7 @@
     <ul class="list-unstyled px-3">
       <li>
         <%= link_to root_path, class: "d-flex justify-content-between py-2" do %>
-          <div class="c-sidebar__icon mr-1 text-center text-muted">
+          <div class="c-sidebar__icon me-1 text-center text-muted">
             <i class="fal fa-home"></i>
           </div>
 
@@ -53,7 +53,7 @@
       <% if user %>
         <li>
           <%= link_to profile_detail_path(user.username), class: "d-flex justify-content-between py-2" do %>
-            <div class="c-sidebar__icon mr-1 text-center text-muted">
+            <div class="c-sidebar__icon me-1 text-center text-muted">
               <i class="fal fa-user"></i>
             </div>
 
@@ -65,7 +65,7 @@
 
         <li>
           <%= link_to notifications_path, class: "d-flex justify-content-between py-2" do %>
-            <div class="c-sidebar__icon mr-1 text-center text-muted">
+            <div class="c-sidebar__icon me-1 text-center text-muted">
               <i class="fal fa-bell"></i>
             </div>
 
@@ -85,7 +85,7 @@
 
         <li>
           <%= link_to track_path, class: "d-flex justify-content-between py-2" do %>
-            <div class="c-sidebar__icon mr-1 text-center text-muted">
+            <div class="c-sidebar__icon me-1 text-center text-muted">
               <i class="fal fa-tasks"></i>
             </div>
 
@@ -97,7 +97,7 @@
 
         <li>
           <%= link_to programs_path, class: "d-flex justify-content-between py-2" do %>
-            <div class="c-sidebar__icon mr-1 text-center text-muted">
+            <div class="c-sidebar__icon me-1 text-center text-muted">
               <i class="fal fa-calendar"></i>
             </div>
 
@@ -110,7 +110,7 @@
     </ul>
 
     <% if user %>
-      <div class="font-weight-bold mb-3 px-3 small text-secondary">
+      <div class="fw-bold mb-3 px-3 small text-secondary">
         <%= t "noun.library" %>
       </div>
 
@@ -124,7 +124,7 @@
         ].each do |status_kind, icon_name, link_text| %>
           <li>
             <%= link_to library_path(username: user.username, status_kind: status_kind), class: "d-flex justify-content-between py-2" do %>
-              <div class="c-sidebar__icon mr-1 text-center text-muted">
+              <div class="c-sidebar__icon me-1 text-center text-muted">
                 <i class="fal fa-<%= icon_name %>"></i>
               </div>
 
@@ -137,7 +137,7 @@
       </ul>
     <% end %>
 
-    <div class="font-weight-bold mb-3 px-3 small text-secondary">
+    <div class="fw-bold mb-3 px-3 small text-secondary">
       <%= t "verb.explore" %>
     </div>
 
@@ -151,7 +151,7 @@
       ].each do |page_type, icon_name, link_text| %>
         <li>
           <%= link_to "/works/#{page_type}", class: "d-flex justify-content-between py-2" do %>
-            <div class="c-sidebar__icon mr-1 text-center text-muted">
+            <div class="c-sidebar__icon me-1 text-center text-muted">
               <i class="fal fa-<%= icon_name %>"></i>
             </div>
 
@@ -163,7 +163,7 @@
       <% end %>
     </ul>
 
-    <div class="font-weight-bold mb-3 px-3 small text-secondary">
+    <div class="fw-bold mb-3 px-3 small text-secondary">
       Misc
     </div>
 
@@ -177,7 +177,7 @@
         <% if user || !sign_in_required %>
           <li>
             <%= link_to link_path, class: "d-flex justify-content-between py-2" do %>
-              <div class="c-sidebar__icon mr-1 text-center text-muted">
+              <div class="c-sidebar__icon me-1 text-center text-muted">
                 <i class="fal fa-<%= icon_name %>"></i>
               </div>
 
@@ -190,7 +190,7 @@
       <% end %>
     </ul>
 
-    <div class="font-weight-bold mb-3 px-3 small text-secondary">
+    <div class="fw-bold mb-3 px-3 small text-secondary">
       <%= t "noun.services" %>
     </div>
 
@@ -203,7 +203,7 @@
       ].each do |link_path, icon_name, link_text| %>
         <li>
           <%= link_to link_path, class: "d-flex justify-content-between py-2" do %>
-            <div class="c-sidebar__icon mr-1 text-center text-muted">
+            <div class="c-sidebar__icon me-1 text-center text-muted">
               <i class="fal fa-<%= icon_name %>"></i>
             </div>
 
@@ -216,7 +216,7 @@
 
       <li>
         <%= link_to "https://developers.annict.jp", class: "d-flex justify-content-between py-2", rel: "noopener", target: "_blank" do %>
-          <div class="c-sidebar__icon mr-1 text-center text-muted">
+          <div class="c-sidebar__icon me-1 text-center text-muted">
             <i class="fal fa-code"></i>
           </div>
 
@@ -240,7 +240,7 @@
               method: :delete
             }
           ) do %>
-            <div class="c-sidebar__icon mr-1 text-center text-muted">
+            <div class="c-sidebar__icon me-1 text-center text-muted">
               <i class="fal fa-sign-out"></i>
             </div>
 
@@ -250,7 +250,7 @@
           <% end %>
         <% else %>
           <%= link_to sign_in_path, class: "d-flex justify-content-between py-2" do %>
-            <div class="c-sidebar__icon mr-1 text-center text-muted">
+            <div class="c-sidebar__icon me-1 text-center text-muted">
               <i class="fal fa-sign-in"></i>
             </div>
 

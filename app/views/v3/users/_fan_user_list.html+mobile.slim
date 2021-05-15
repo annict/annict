@@ -1,10 +1,10 @@
 - favorite_resources.each do |favorite_resource|
   .px-3.u-underline
     .row.p-3.align-items-center
-      .col.u-flex-grow-0.pl-0
+      .col.u-flex-grow-0.ps-0
         = link_to profile_path(username: favorite_resource.user.username) do
           = ann_image_tag(favorite_resource.user.profile, :image, size: "50x50", class: "rounded-circle")
-      .col.pr-0
+      .col.pe-0
         .row.align-items-center
           .col.px-0
             - unless favorite_resource.instance_of?(CharacterFavorite)

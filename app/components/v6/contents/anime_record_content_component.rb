@@ -30,7 +30,7 @@ module V6::Contents
                             h.text t("noun.animation")
                           end
 
-                          h.tag :div, class: "col pl-0 text-end" do
+                          h.tag :div, class: "col ps-0 text-end" do
                             h.html V6::RatingLabelComponent.new(view_context, rating: @anime_record.rating_animation_state).render
                           end
                         end
@@ -42,7 +42,7 @@ module V6::Contents
                             h.text t("noun.music")
                           end
 
-                          h.tag :div, class: "col pl-0 text-end" do
+                          h.tag :div, class: "col ps-0 text-end" do
                             h.html V6::RatingLabelComponent.new(view_context, rating: @anime_record.rating_music_state).render
                           end
                         end
@@ -54,7 +54,7 @@ module V6::Contents
                             h.text t("noun.story")
                           end
 
-                          h.tag :div, class: "col pl-0 text-end" do
+                          h.tag :div, class: "col ps-0 text-end" do
                             h.html V6::RatingLabelComponent.new(view_context, rating: @anime_record.rating_story_state).render
                           end
                         end
@@ -66,7 +66,7 @@ module V6::Contents
                             h.text t("noun.character")
                           end
 
-                          h.tag :div, class: "col pl-0 text-end" do
+                          h.tag :div, class: "col ps-0 text-end" do
                             h.html V6::RatingLabelComponent.new(view_context, rating: @anime_record.rating_character_state).render
                           end
                         end
@@ -78,7 +78,7 @@ module V6::Contents
                             h.text t("noun.overall")
                           end
 
-                          h.tag :div, class: "col pl-0 text-end" do
+                          h.tag :div, class: "col ps-0 text-end" do
                             h.html V6::RatingLabelComponent.new(view_context, rating: @anime_record.rating_overall_state).render
                           end
                         end

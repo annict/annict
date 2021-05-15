@@ -58,12 +58,12 @@ h1.h2.fw-bold
     h2.h4.fw-bold.mb-3
       = icon "users", class: "me-1"
       = t "noun.fans"
-      span.pl-1
+      span.ps-1
         = "(#{t('noun.users_count', count: person_favorites.length)})"
 
     .row.px-3
       - person_favorites.each do |person_favorite|
-        .col.col-auto.pl-0.pr-2.pb-2
+        .col.col-auto.ps-0.pe-2.pb-2
           = link_to profile_path(person_favorite.user.username) do
             = ann_image_tag(person_favorite.user.profile, :image, size: "30x30", class: "rounded-circle", alt: person_favorite.user.name_with_username, title: person_favorite.user.name_with_username)
 

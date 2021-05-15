@@ -9,7 +9,7 @@ class RecordHeaderComponent < ApplicationComponent
   def render
     build_html do |h|
       h.tag :div, class: "c-record-header row" do
-        h.tag :div, class: "col-auto pr-0" do
+        h.tag :div, class: "col-auto pe-0" do
           link_to view_context.profile_path(@record.user.username) do
             h.html ProfileImageComponent2.new(view_context,
               image_url_1x: @record.user.avatar_url(size: "50x50"),
@@ -43,14 +43,14 @@ class RecordHeaderComponent < ApplicationComponent
             end
 
             if @record.modified_at
-              h.tag :small, class: "ml-1 text-muted" do
+              h.tag :small, class: "ms-1 text-muted" do
                 h.tag :i, class: "fas fa-pencil-alt"
               end
             end
           end
         end
 
-        h.tag :div, class: "col-auto pl-0" do
+        h.tag :div, class: "col-auto ps-0" do
           if current_user
             h.html Dropdowns::RecordOptionsDropdownComponent2.new(view_context, record: @record).render
           end

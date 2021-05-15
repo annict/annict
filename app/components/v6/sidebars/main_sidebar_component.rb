@@ -20,7 +20,7 @@ module V6::Sidebars
             h.tag :div, class: "mb-3 px-3" do
               if current_user
                 h.tag :a, href: view_context.profile_path(current_user.username), class: "align-content-center row" do
-                  h.tag :div, class: "col-3 pr-0" do
+                  h.tag :div, class: "col-3 pe-0" do
                     h.html Pictures::AvatarPictureComponent.new(view_context, user: current_user, width: 50, mb_width: 50).render
                   end
 

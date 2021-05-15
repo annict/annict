@@ -3,7 +3,7 @@
 
 .container.py-3
   .row
-    .col-8.pr-0
+    .col-8.pe-0
       .c-card.py-3
         .container
           h1
@@ -30,7 +30,7 @@
                     - if !user_signed_in? || current_user.id == @user.id
                       .mt-2
                         = render "application/components/work_action", work_id: work.id
-                .col.col-8.pl-0
+                .col.col-8.ps-0
                   h2.h3.fw-bold.mb-2
                     = link_to work.local_title, anime_path(anime_id: work.id)
                   c-work-tags :work-id="#{work.id}" :init-tags="#{build_work_tags_json(@user, work)}" path="/@#{@user.username}/tags"
@@ -47,7 +47,7 @@
           .col.col-auto
             = link_to profile_path(username: @user.username) do
               = ann_image_tag(@user.profile, :image, size: "65x65", class: "img-thumbnail rounded-circle")
-          .col.pl-0
+          .col.ps-0
             .text-left
               = link_to @user.profile.name, profile_path(username: @user.username), class: "me-1"
               | (

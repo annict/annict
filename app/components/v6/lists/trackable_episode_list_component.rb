@@ -32,7 +32,7 @@ module Lists
                       if le.program.vod_title_url.present?
                         h.tag :a, href: le.program.vod_title_url, class: "text-body", rel: "noopener", target: "_blank" do
                           h.text le.program.channel.name
-                          h.tag :i, class: "fas fa-external-link-alt pr-1"
+                          h.tag :i, class: "fas fa-external-link-alt pe-1"
                         end
                       else
                         h.text le.program.channel.name
@@ -46,12 +46,12 @@ module Lists
                 @trackable_episodes.filter { |episode| episode.work_id == le.work_id }.each do |episode|
                   h.tag :li, class: "list-group-item" do
                     h.tag :div, class: "align-items-center row" do
-                      h.tag :div, class: "col-auto pr-0" do
+                      h.tag :div, class: "col-auto pe-0" do
                         h.html Buttons::WatchEpisodeButtonComponent.new(view_context,
                           episode_id: episode.id, page_category: @page_category, class_name: "btn-sm btn-outline-info rounded-circle").render
                       end
 
-                      h.tag :div, class: "col-auto pl-2 pr-0" do
+                      h.tag :div, class: "col-auto ps-2 pe-0" do
                         h.html Buttons::SkipEpisodeButtonComponent.new(view_context,
                           episode_id: episode.id, class_name: "btn-sm btn-outline-secondary rounded-circle").render
                       end

@@ -1,7 +1,7 @@
 <div class="c-work-record-card c-record-card card col-11 col-lg-10 mb-2 px-0">
   <div class="card-body p-2">
     <div class="row">
-      <div class="col-auto pr-0">
+      <div class="col-auto pe-0">
         <%= link_to anime_path(anime_id: @anime_entity.database_id) do %>
           <%= render V4::WorkImageComponent.new(
               image_url_1x: @anime_entity.image_url_1x,

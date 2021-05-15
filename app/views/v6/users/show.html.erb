@@ -88,7 +88,7 @@
 
           <div class="g-3 row">
             <% @user.character_favorites.preload(character: :series).first(6).each do |cf| %>
-              <div class="col-4 pr-2">
+              <div class="col-4 pe-2">
                 <%= link_to cf.character.local_name, character_path(cf.character_id) %>
                 <% if cf.character.series %>
                   <div class="small text-muted text-truncate">

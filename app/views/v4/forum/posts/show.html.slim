@@ -14,10 +14,10 @@
     .col-8
       .c-card.p-3.mb-3
         .row.mb-3
-          .col.col-auto.pr-0
+          .col.col-auto.pe-0
             = link_to profile_path(@post.user.username) do
               = render ProfileImageComponent.new(image_url_1x: v4_ann_image_url(@post.user.profile, :image, size: "45x", ratio: "1:1"), alt: "@#{@post.user.username}")
-          .col.pl-2
+          .col.ps-2
             = link_to @post.user.profile.name, profile_path(@post.user.username), class: "me-2"
             = @post.user.role_badge
             .mt-1
@@ -38,10 +38,10 @@
           .c-card.p-3.mb-3
             - if comment.user
               .row.mb-3
-                .col.col-auto.pr-0
+                .col.col-auto.pe-0
                   = link_to profile_path(comment.user.username) do
                     = render ProfileImageComponent.new(image_url_1x: v4_ann_image_url(comment.user.profile, :image, size: "45x", ratio: "1:1"), alt: "@#{comment.user.username}")
-                .col.pl-2
+                .col.ps-2
                   = link_to comment.user.profile.name, profile_path(comment.user.username), class: "me-2"
                   = comment.user.role_badge
                   .mt-1

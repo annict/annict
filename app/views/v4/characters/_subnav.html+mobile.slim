@@ -5,5 +5,5 @@
     li.list-inline-item
       = active_link_to character_fans_path(character), class: "c-slidable-subnav__link", class_active: "c-slidable-subnav__link--active", active: params[:controller] == "character_fans" && params[:action].in?(%w(index)) do
         = t "noun.fans"
-        span.pl-1
+        span.ps-1
           = "(#{t('noun.users_count', count: favorite_resources.length)})"

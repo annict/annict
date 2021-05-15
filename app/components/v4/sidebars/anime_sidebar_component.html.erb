@@ -11,8 +11,8 @@
         </div>
       </div>
     </div>
-    <div class="col-8 col-sm-12 pl-0 pl-sm-3">
-      <h1 class="font-weight-bold h2 mb-3 text-sm-left">
+    <div class="col-8 col-sm-12 ps-0 ps-sm-3">
+      <h1 class="fw-bold h2 mb-3 text-sm-left">
         <%= link_to anime_path(anime_id: @anime_entity.database_id), class: "u-text-body" do %>
           <%= @anime_entity.local_title %>
         <% end %>
@@ -20,7 +20,7 @@
 
       <div class="row mb-3">
         <div class="col text-center">
-          <div class="h4 font-weight-bold mb-1">
+          <div class="h4 fw-bold mb-1">
             <%= @anime_entity.watchers_count %>
           </div>
           <div class="text-muted small">
@@ -28,15 +28,15 @@
           </div>
         </div>
         <div class="col text-center">
-          <div class="h4 font-weight-bold mb-1">
-            <%= @anime_entity.satisfaction_rate.presence || "-" %><span class="small ml-1">%</span>
+          <div class="h4 fw-bold mb-1">
+            <%= @anime_entity.satisfaction_rate.presence || "-" %><span class="small ms-1">%</span>
           </div>
           <div class="text-muted small">
             <%= t "noun.satisfaction_rate_shorten" %>
           </div>
         </div>
         <div class="col text-center">
-          <div class="h4 font-weight-bold mb-1">
+          <div class="h4 fw-bold mb-1">
             <%= @anime_entity.ratings_count %>
           </div>
           <div class="text-muted small">
@@ -52,7 +52,7 @@
   </div>
 
   <div class="mb-3">
-    <h2 class="font-weight-bold h4 mb-3">
+    <h2 class="fw-bold h4 mb-3">
       <%= t "noun.information" %>
     </h2>
 
@@ -212,7 +212,7 @@
 
   <% if @vod_channel_entities.present? %>
     <div class="mb-sm-1">
-      <h2 class="font-weight-bold h4 mb-3">
+      <h2 class="fw-bold h4 mb-3">
         <%= t "noun.vods" %>
       </h2>
 
@@ -227,7 +227,7 @@
   <% end %>
 
   <div class="mb-3">
-    <h2 class="font-weight-bold h4 mb-3">
+    <h2 class="fw-bold h4 mb-3">
       <%= t "noun.share" %>
     </h2>
 
