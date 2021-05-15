@@ -6,7 +6,7 @@
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 
 .container.py-3
-  = Headers::ProfileHeaderComponent.new(self, user: @user, current_user: current_user, params: params).render
+  = V6::Headers::ProfileHeaderComponent.new(self, user: @user, current_user: current_user, params: params).render
 
 .p-libraries-show__subnav.c-subnav.mb-3
   - %i(watching wanna_watch watched on_hold stop_watching).each do |status_kind|
@@ -26,8 +26,8 @@
           .col-4
             - if i == 0
               .pl-3
-                = Buttons::ShareToTwitterButtonComponent.new(self, text: title, url: "#{local_url}#{library_path(@user.username, params[:status_kind])}", class_name: "me-2").render
-                = Buttons::ShareToFacebookButtonComponent.new(self, url: "#{local_url}#{library_path(@user.username, params[:status_kind])}").render
+                = V6::Buttons::ShareToTwitterButtonComponent.new(self, text: title, url: "#{local_url}#{library_path(@user.username, params[:status_kind])}", class_name: "me-2").render
+                = V6::Buttons::ShareToFacebookButtonComponent.new(self, url: "#{local_url}#{library_path(@user.username, params[:status_kind])}").render
           .col-4.text-center
             h2.h4.fw-bold.mb-0
               = season.local_name
@@ -39,7 +39,7 @@
       - works = works.order(watchers_count: :desc).includes(:work_image)
       .mx-3
         - if @display_option == "grid_detailed"
-          = render "libraries/display_options/#{@display_option}", works: works, work_tags_data: @work_tags_data, work_comment_data: @work_comment_data, user: @user
+          = render "v4/libraries/display_options/#{@display_option}", works: works, work_tags_data: @work_tags_data, work_comment_data: @work_comment_data, user: @user
         - else
           = render "works/display_options/#{@display_option}", works: works
   .text-center

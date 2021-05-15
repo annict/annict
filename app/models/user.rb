@@ -188,7 +188,7 @@ class User < ApplicationRecord
   end
 
   def works
-    @works ||= UserWorksQuery.new(self)
+    @works ||= V4::UserWorksQuery.new(self)
   end
 
   def works_on(*status_kinds)

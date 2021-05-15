@@ -90,13 +90,6 @@ scope "@:username", username: USERNAME_FORMAT do
   get :followers, to: "users#followers", as: :followers_user
   get :ics, to: "ics#show", as: :user_ics
 
-  get ":status_kind",
-    to: "libraries#show",
-    as: :library,
-    constraints: {
-      status_kind: /wanna_watch|watching|watched|on_hold|stop_watching/
-    }
-
   resources :favorite_characters, only: %i[index]
   resources :favorite_organizations, only: %i[index]
   resources :favorite_people, only: %i[index]
@@ -172,6 +165,7 @@ scope module: :v4 do
     match "/user_email/callback", via: :get, as: :user_email_callback, to: "user_email_callbacks#show"
   end
 
+  match "/@:username/:status_kind", via: :get, as: :library, to: "libraries#show", username: USERNAME_FORMAT, status_kind: /wanna_watch|watching|watched|on_hold|stop_watching/
   match "/@:username/records", via: :get, as: :record_list, to: "records#index", username: USERNAME_FORMAT
   match "/@:username/records/:record_id", via: :delete, to: "records#destroy", username: USERNAME_FORMAT
   match "/@:username/records/:record_id", via: :get, to: "records#show", username: USERNAME_FORMAT
