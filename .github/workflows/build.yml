@@ -87,14 +87,14 @@ jobs:
         run: |
           ./cc-test-reporter before-build
           bundle exec rspec \
+            spec/requests/api/internal/registrations/create_spec.rb \
+            spec/requests/api/internal/sign_in/create_spec.rb \
+            spec/requests/api/internal/sign_up/create_spec.rb \
             spec/requests/v3/favorite_characters/index_spec.rb \
             spec/requests/v3/favorite_organizations/index_spec.rb \
             spec/requests/v3/favorite_people/index_spec.rb \
             spec/requests/v3/libraries/show_spec.rb \
             spec/requests/v4/records/index_spec.rb \
-            spec/requests/v6/api/internal/registrations/create_spec.rb \
-            spec/requests/v6/api/internal/sign_in/create_spec.rb \
-            spec/requests/v6/api/internal/sign_up/create_spec.rb \
             spec/requests/v6/fragment/activity_items/index_spec.rb \
             spec/requests/v6/home/show_spec.rb \
             spec/requests/v6/legacy/sessions/create_spec.rb \

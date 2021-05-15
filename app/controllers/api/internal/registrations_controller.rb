@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Api::Internal
-  class RegistrationsController < ApplicationController
+  class RegistrationsController < Api::Internal::ApplicationController
     def create
       @confirmation = EmailConfirmation.find_by!(event: :sign_up, token: registration_form_params[:token])
 

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Api::Internal
-  class SignInController < ApplicationController
+  class SignInController < Api::Internal::ApplicationController
     def create
       @form = SignInForm.new(sign_in_form_params)
       @recaptcha = Recaptcha.new(action: "sign_in")
