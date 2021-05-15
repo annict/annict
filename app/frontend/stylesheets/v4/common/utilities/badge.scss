@@ -7,7 +7,7 @@ $ann-bootstrap-badge-colors: (
   info: map-get($theme-colors, 'info'),
   primary: map-get($theme-colors, 'primary'),
   success: map-get($theme-colors, 'success'),
-  warning: map-get($theme-colors, 'warning')
+  warning: map-get($theme-colors, 'warning'),
 );
 
 $ann-badge-colors: (
@@ -21,12 +21,12 @@ $ann-badge-colors: (
   on_hold: $ann-color-red-005,
   plan_to_watch: $ann-color-orange-005,
   supporter: $ann-color-supporter,
-  watching: $ann-color-blue-005
+  watching: $ann-color-blue-005,
 );
 
 @each $color-name, $color in $ann-badge-colors {
   .u-badge-#{$color-name} {
-    @include badge-variant($color);
+    // @include badge-variant($color);
   }
 }
 
@@ -49,17 +49,17 @@ $ann-badge-colors: (
 }
 
 .u-badge-works {
-  @include badge-variant(map-get($ann-color-shirobako, rb));
+  // @include badge-variant(map-get($ann-color-shirobako, rb));
 }
 
 .u-badge-people {
-  @include badge-variant(map-get($ann-color-shirobako, ho));
+  // @include badge-variant(map-get($ann-color-shirobako, ho));
 }
 
 .u-badge-organizations {
-  @include badge-variant(map-get($ann-color-shirobako, a));
+  // @include badge-variant(map-get($ann-color-shirobako, a));
 }
 
 .u-badge-characters {
-  @include badge-variant(map-get($ann-color-shirobako, ik));
+  // @include badge-variant(map-get($ann-color-shirobako, ik));
 }
