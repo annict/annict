@@ -5,26 +5,6 @@ class UsersController < ApplicationController
   before_action :authenticate_user!, only: %i[destroy share]
   before_action :set_user, only: %i[following followers]
 
-  def show
-    set_page_category PageCategory::PROFILE
-
-    @user = User.only_kept.find_by!(username: params[:username])
-    @profile = @user.profile
-
-    @activity_groups = @user
-      .activity_groups
-      .order(created_at: :desc)
-      .page(params[:page])
-      .per(30)
-      .without_count
-
-    @anime_ids = if @activity_groups.present?
-      @activity_groups.flat_map.with_prelude { |ags| ags.first_item.anime_id }.uniq
-    else
-      []
-    end
-  end
-
   def following
     set_page_category PageCategory::FOLLOWING_LIST
 
@@ -76,22 +56,5 @@ class UsersController < ApplicationController
     }
 
     load_i18n_into_gon keys
-  end
-
-  def profile_user_cache_key(user)
-    [
-      "profile",
-      "user",
-      user.id,
-      user.updated_at.rfc3339,
-      user.records_count,
-      user.watching_works_count,
-      user.completed_works_count,
-      user.following_count,
-      user.followers_count,
-      user.character_favorites_count,
-      user.person_favorites_count,
-      user.organization_favorites_count
-    ].freeze
   end
 end
