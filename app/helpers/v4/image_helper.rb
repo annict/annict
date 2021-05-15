@@ -1,16 +1,36 @@
 # frozen_string_literal: true
 
-module ImageHelper
-  def ann_image_url(record, field, format:, height:, width:)
-    path = record ? record.uploaded_file_path(field) : "no-image.jpg"
+module V4::ImageHelper
+  def v4_ann_image_url(record, field, options = {})
+    path = image_path(record, field)
+    size = options[:size]
 
-    ix_image_url(path, {
-      fill: "solid",
-      fit: "fill",
-      fm: format,
-      height: height,
-      w: width
-    })
+    width, = size.split("x").map do |s|
+      s.present? ? (s.to_i * (options[:size_rate].presence || 1)) : nil
+    end
+
+    ix_options = {
+      auto: "format"
+    }
+
+    if width
+      ix_options[:w] = width
+    end
+
+    if options[:crop]
+      ix_options[:fit] = "crop"
+    end
+
+    if options[:ratio]
+      ix_options[:fit] = "crop"
+      ix_options[:ar] = options[:ratio]
+    end
+
+    if options[:blur]
+      ix_options[:blur] = options[:blur]
+    end
+
+    ix_image_url(path, ix_options)
   end
 
   def ann_image_tag(record, field, options = {})
@@ -34,7 +54,7 @@ module ImageHelper
     image = profile.send(field)
 
     if background_image.present? && profile.background_image_animated?
-      return "#{ENV.fetch("ANNICT_FILE_STORAGE_URL")}/shrine/#{image[:original].id}"
+      return "#{ENV.fetch('ANNICT_FILE_STORAGE_URL')}/shrine/#{image[:original].id}"
     end
 
     ann_image_url(profile, field, options)
@@ -42,7 +62,7 @@ module ImageHelper
 
   def ann_api_assets_url(record, field)
     path = image_path(record, field)
-    "#{ENV.fetch("ANNICT_API_ASSETS_URL")}/#{path}"
+    "#{ENV.fetch('ANNICT_API_ASSETS_URL')}/#{path}"
   end
 
   def ann_api_assets_background_image_url(profile)
@@ -51,23 +71,23 @@ module ImageHelper
     image = profile.send(field)
 
     if background_image.present? && profile.background_image_animated?
-      return "#{ENV.fetch("ANNICT_API_ASSETS_URL")}/shrine/#{image[:original].id}"
+      return "#{ENV.fetch('ANNICT_API_ASSETS_URL')}/shrine/#{image[:original].id}"
     end
 
     ann_api_assets_url(profile, field)
   end
 
   def api_user_avatar_url(profile, size)
-    height, width = case size
-    when "size50" then [50, 50]
-    when "size100" then [100, 100]
-    when "size150" then [150, 150]
-    when "size200" then [200, 200]
+    size = case size
+    when "size50" then "50x50"
+    when "size100" then "100x100"
+    when "size150" then "150x150"
+    when "size200" then "200x200"
     else
-      [200, 200]
+      "200x200"
     end
 
-    ann_image_url(profile, :image, format: "jpg", height: height, width: width)
+    ann_image_url(profile, :image, size: size, ratio: "1:1")
   end
 
   private
