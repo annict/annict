@@ -25,10 +25,7 @@ class Like < ApplicationRecord
 
   belongs_to :recipient, polymorphic: true
   belongs_to :user
-  has_many :notifications,
-    foreign_key: :trackable_id,
-    foreign_type: :trackable,
-    dependent: :destroy
+  has_many :notifications, as: :trackable, dependent: :destroy
 
   after_create :save_notification
 
