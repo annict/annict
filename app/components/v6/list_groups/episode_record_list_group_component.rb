@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
-module ListGroups
-  class EpisodeRecordListGroupComponent < ApplicationComponent
-    def initialize(view_context, my_records:, following_records:, all_records:)
+module V6::ListGroups
+  class EpisodeRecordListGroupComponent < V6::ApplicationComponent
+    def initialize(view_context, my_records:, following_records:, all_records:, page_category:)
       super view_context
       @my_records = my_records
       @following_records = following_records
       @all_records = all_records
+      @page_category = page_category
     end
 
     def render
@@ -17,7 +18,12 @@ module ListGroups
           end
 
           if current_user
-            h.html Lists::RecordListComponent2.new(view_context, records: @my_records, show_card: false).render
+            h.html V6::Lists::RecordListComponent.new(
+              view_context,
+              records: @my_records,
+              page_category: @page_category,
+              show_box: false
+            ).render
           end
         end
 
@@ -29,7 +35,12 @@ module ListGroups
           end
 
           if current_user
-            h.html Lists::RecordListComponent2.new(view_context, records: @following_records, show_card: false).render
+            h.html V6::Lists::RecordListComponent.new(
+              view_context,
+              records: @following_records,
+              page_category: @page_category,
+              show_box: false
+            ).render
           end
         end
 
@@ -40,7 +51,12 @@ module ListGroups
             h.text t("noun.other_comments")
           end
 
-          h.html Lists::RecordListComponent2.new(view_context, records: @all_records, show_card: false).render
+          h.html V6::Lists::RecordListComponent.new(
+            view_context,
+            records: @all_records,
+            page_category: @page_category,
+            show_box: false
+          ).render
         end
       end
     end

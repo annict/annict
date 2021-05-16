@@ -131,7 +131,6 @@ match "/@:username/records/:record_id", via: :patch, as: :record, to: "records#u
 match "/episodes/:episode_id/records", via: :post, as: :episode_record_list, to: "episode_records#create"
 match "/my/profile", via: :get, as: :my_profile, to: "my/profiles#show"
 match "/track", via: :get, as: :track, to: "tracks#show"
-match "/works/:anime_id/episodes/:episode_id", via: :get, as: :episode, to: "episodes#show"
 
 scope module: :v3 do
   match "/@:username/favorite_characters", via: :get, as: :favorite_character_list, to: "favorite_characters#index", username: USERNAME_FORMAT
@@ -175,6 +174,7 @@ scope module: :v6 do
   match "/sign_in/callback", via: :get, as: :sign_in_callback, to: "sign_in_callbacks#show"
   match "/sign_up", via: :get, as: :sign_up, to: "sign_up#new"
   match "/terms", via: :get, as: :terms, to: "pages#terms"
+  match "/works/:anime_id/episodes/:episode_id", via: :get, as: :episode, to: "episodes#show"
 end
 
 root "v6/home#show",

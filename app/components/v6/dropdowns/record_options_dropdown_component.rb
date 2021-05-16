@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Dropdowns
-  class RecordOptionsDropdownComponent < ApplicationComponent
+module V6::Dropdowns
+  class RecordOptionsDropdownComponent < V6::ApplicationComponent
     def initialize(view_context, record:)
       super view_context
       @record = record

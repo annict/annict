@@ -8,12 +8,12 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-md-3 pe-md-0 py-3">
-      <%= Sidebars::AnimeSidebarComponent2.new(self, anime: @anime, vod_channels: @vod_channels).render %>
+      <%= V6::Sidebars::AnimeSidebarComponent.new(self, anime: @anime, vod_channels: @vod_channels).render %>
     </div>
 
     <div class="col-md-9">
       <div class="mb-3">
-        <%= render AnimeSubNavComponent.new(anime: @anime, page_category: page_category) %>
+        <%= V6::SubNavs::AnimeSubNavComponent.new(self, anime: @anime, page_category: page_category).render %>
       </div>
 
       <div class="align-items-center mb-1 row">
@@ -23,7 +23,7 @@
           </h2>
         </div>
         <div class="col-auto ps-0">
-          <%= render ButtonGroups::EpisodeTransitionButtonGroupComponent2.new(episode: @episode) %>
+          <%= V6::ButtonGroups::EpisodeTransitionButtonGroupComponent.new(self, episode: @episode).render %>
         </div>
       </div>
 
@@ -47,7 +47,7 @@
       </ul>
 
       <div class="mb-5">
-        <%= render Forms::EpisodeRecordFormComponent.new(form: @form, current_user: current_user) %>
+        <%= V6::Forms::EpisodeRecordFormComponent.new(self, form: @form, current_user: current_user).render %>
       </div>
 
       <hr class="mb-5">
@@ -57,7 +57,13 @@
         data-reloadable-event-name-value="episode-record-list-group"
         data-reloadable-url-value="<%= fragment_episode_record_list_path(@episode.id, page: params[:page]) %>"
       >
-        <%= ListGroups::EpisodeRecordListGroupComponent.new(self, my_records: @my_records, following_records: @following_records, all_records: @all_records).render %>
+        <%= V6::ListGroups::EpisodeRecordListGroupComponent.new(
+          self,
+          my_records: @my_records,
+          following_records: @following_records,
+          all_records: @all_records,
+          page_category: page_category
+        ).render %>
       </div>
     </div>
   </div>

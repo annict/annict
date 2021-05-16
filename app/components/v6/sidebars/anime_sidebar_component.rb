@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module V6::Sidebars
-  class AnimeSidebarComponent < ApplicationComponent
+  class AnimeSidebarComponent < V6::ApplicationComponent
     def initialize(view_context, anime:, vod_channels:)
       super view_context
       @anime = anime
@@ -15,17 +15,19 @@ module V6::Sidebars
             h.tag :div, class: "col-4 col-sm-12" do
               h.tag :div, class: "mb-2 text-sm-left" do
                 h.tag :a, href: view_context.anime_path(anime_id: @anime.id) do
-                  h.html Images::AnimeImageComponent.new(
+                  h.html V6::Pictures::AnimePictureComponent.new(
                     view_context,
-                    image_url_1x: @anime.image_url(size: "350x"),
-                    image_url_2x: @anime.image_url(size: "700x"),
-                    alt: @anime.local_title
+                    anime: @anime,
+                    width: 350,
+                    mb_width: 175
                   ).render
                 end
 
-                h.tag :div, class: "u-very-small text-muted" do
-                  h.tag :i, class: "far fa-copyright"
-                  h.text @anime.copyright
+                if @anime.copyright
+                  h.tag :div, class: "u-very-small text-muted" do
+                    h.tag :i, class: "far fa-copyright"
+                    h.text @anime.copyright
+                  end
                 end
               end
             end
@@ -291,14 +293,14 @@ module V6::Sidebars
               h.text t("noun.share")
             end
 
-            h.html Buttons::ShareToTwitterButtonComponent.new(
+            h.html V6::Buttons::ShareToTwitterButtonComponent.new(
               view_context,
               text: @anime.local_title,
               url: "#{local_url}/works/#{@anime.id}",
               hashtags: @anime.twitter_hashtag.presence || ""
             ).render
 
-            h.html Buttons::ShareToFacebookButtonComponent.new(
+            h.html V6::Buttons::ShareToFacebookButtonComponent.new(
               view_context,
               url: "#{local_url}/works/#{@anime.id}"
             ).render
