@@ -92,6 +92,8 @@ class Work < ApplicationRecord
 
   attr_accessor :status_kind
 
+  delegate :copyright, to: :work_image, allow_nil: true
+
   enumerize :media, in: {tv: 1, ova: 2, movie: 3, web: 4, other: 0}
   enumerize :season_name, in: Season::NAME_HASH
 
@@ -238,8 +240,6 @@ class Work < ApplicationRecord
     where("season_year <= ? AND season_name <= ?", season.year, season.name_value)
       .or(where("season_year < ?", season.year))
   }
-
-  delegate :copyright, to: :work_image
 
   def self.statuses(work_ids, user)
     work_ids = work_ids.uniq
