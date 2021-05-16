@@ -15,7 +15,6 @@ end
 
 resource :confirmation, only: [:show]
 resource :search, only: [:show]
-resource :work_display_option, only: %i[show]
 resources :comments, only: %i[edit update destroy]
 resources :faqs, only: %i[index]
 resources :friends, only: [:index]
@@ -138,6 +137,7 @@ scope module: :v3 do
   match "/@:username/favorite_characters", via: :get, as: :favorite_character_list, to: "favorite_characters#index", username: USERNAME_FORMAT
   match "/@:username/favorite_organizations", via: :get, as: :favorite_organization_list, to: "favorite_organizations#index", username: USERNAME_FORMAT
   match "/@:username/favorite_people", via: :get, as: :favorite_person_list, to: "favorite_people#index", username: USERNAME_FORMAT
+  match "/work_display_option", via: :get, as: :work_display_option, to: "work_display_options#show"
   match "/works/:slug", via: :get, as: :seasonal_anime_list, to: "works#season", slug: /[0-9]{4}-(all|spring|summer|autumn|winter)/
 end
 
