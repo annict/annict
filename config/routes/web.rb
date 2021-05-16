@@ -106,10 +106,6 @@ resources :works, only: %i[index] do
   collection do
     get :newest
     get :popular
-    get ":slug",
-      action: :season,
-      slug: /[0-9]{4}-(all|spring|summer|autumn|winter)/,
-      as: :season
   end
 end
 
@@ -142,6 +138,7 @@ scope module: :v3 do
   match "/@:username/favorite_characters", via: :get, as: :favorite_character_list, to: "favorite_characters#index", username: USERNAME_FORMAT
   match "/@:username/favorite_organizations", via: :get, as: :favorite_organization_list, to: "favorite_organizations#index", username: USERNAME_FORMAT
   match "/@:username/favorite_people", via: :get, as: :favorite_person_list, to: "favorite_people#index", username: USERNAME_FORMAT
+  match "/works/:slug", via: :get, as: :seasonal_anime_list, to: "works#season", slug: /[0-9]{4}-(all|spring|summer|autumn|winter)/
 end
 
 scope module: :v4 do

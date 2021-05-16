@@ -8,7 +8,7 @@ module V3
     before_action :set_display_option, only: %i[popular newest season]
 
     def index
-      redirect_to season_works_path(ENV["ANNICT_CURRENT_SEASON"])
+      redirect_to seasonal_anime_list_path(ENV["ANNICT_CURRENT_SEASON"])
     end
 
     def popular
@@ -47,6 +47,7 @@ module V3
         .order(watchers_count: :desc, id: :desc)
         .page(params[:page])
         .per(display_works_count)
+        .without_count
 
       @seasons = Season.list(sort: :desc, include_all: true)
       @season = Season.find_by_slug(params[:slug])
@@ -81,11 +82,6 @@ module V3
         @programs_data = Work.programs_data(@works, only_vod: true)
         @channels = Channel.only_kept.with_vod
       end
-
-      set_user_data_fetcher_params(
-        work_ids: @works.pluck(:id),
-        display_option: @display_option
-      )
     end
   end
 end

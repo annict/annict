@@ -72,7 +72,7 @@ module V6
                   Season.latest_slugs.each do |slug|
                     h.tag :li, class: "mb-2" do
                       year, name = slug.split("-")
-                      h.tag :a, href: view_context.season_works_path(slug: slug) do
+                      h.tag :a, href: view_context.seasonal_anime_list_path(slug: slug) do
                         h.text Season.new(year, name).local_name
                       end
                     end
