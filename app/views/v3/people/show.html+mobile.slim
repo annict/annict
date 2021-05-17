@@ -4,7 +4,7 @@
 - set_meta_tags(title: name, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 
 .c-card.mb-3
-  = render "people/header", person: @person, favorite_resources: @person_favorites
+  = render "v3/people/header", person: @person, favorite_resources: @person_favorites
 
 h2.h4.fw-bold.text-center.mt-3.mb-4
   = t "noun.information"
