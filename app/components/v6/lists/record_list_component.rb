@@ -1,11 +1,12 @@
 # frozen_string_literal: true
 
-module Lists
-  class RecordListComponent < ApplicationComponent
-    def initialize(view_context, records:, show_card: true)
+module V6::Lists
+  class RecordListComponent < V6::ApplicationComponent
+    def initialize(view_context, records:, page_category:, show_box: true)
       super view_context
       @records = records
-      @show_card = show_card
+      @page_category = page_category
+      @show_box = show_box
     end
 
     def render
@@ -15,18 +16,21 @@ module Lists
             h.tag :div, class: "py-3 u-underline" do
               h.tag :turbo_frame, id: dom_id(record) do
                 h.tag :div, class: "mb-3" do
-                  h.html RecordHeaderComponent2.new(view_context, record: record).render
+                  h.html V6::RecordHeaderComponent.new(view_context, record: record).render
                 end
 
                 if record.episode_record?
-                  h.html EpisodeRecordContentComponent2.new(view_context, record: record, show_card: @show_card).render
+                  h.html V6::Contents::EpisodeRecordContentComponent.new(
+                    view_context,
+                    record: record,
+                    page_category: @page_category,
+                    show_box: @show_box
+                  ).render
                 elsif record_entity.anime_record?
-                  render AnimeRecordContentComponent.new(
-                    user_entity: record_entity.user,
-                    anime_entity: record_entity.trackable,
-                    record_entity: record_entity,
-                    anime_record_entity: record_entity.recordable,
-                    show_card: @show_card
+                  render V6::Contents::AnimeRecordContentComponent.new(
+                    view_context,
+                    record: record,
+                    show_box: @show_box
                   )
                 end
               end
@@ -39,7 +43,7 @@ module Lists
             end
           end
         else
-          h.html EmptyComponent2.new(view_context, text: t("messages._empty.no_records")).render
+          h.html V6::EmptyComponent.new(view_context, text: t("messages._empty.no_records")).render
         end
       end
     end

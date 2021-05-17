@@ -39,7 +39,7 @@
     </div>
 
     <div class="col text-end">
-      <%= link_to season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")) do %>
+      <%= link_to seasonal_anime_list_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")) do %>
         <i class="far fa-angle-right"></i>
         <%= t("verb.view_more") %>
       <% end %>
@@ -70,7 +70,7 @@
     </div>
 
     <div class="col text-end">
-      <%= link_to popular_works_path do %>
+      <%= link_to popular_anime_list_path do %>
         <i class="far fa-angle-right"></i>
         <%= t("verb.view_more") %>
       <% end %>

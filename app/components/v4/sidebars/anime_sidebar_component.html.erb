@@ -113,7 +113,7 @@
             <%= t "noun.release_season" %>
           </div>
           <div>
-            <%= link_to @anime_entity.local_season_name, season_works_path(slug: @anime_entity.season_slug) %>
+            <%= link_to @anime_entity.local_season_name, seasonal_anime_list_path(slug: @anime_entity.season_slug) %>
           </div>
         </div>
       <% end %>

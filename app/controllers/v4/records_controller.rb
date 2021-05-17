@@ -31,17 +31,17 @@ module V4
     def show
       set_page_category PageCategory::RECORD
 
-      user = User.only_kept.find_by!(username: params[:username])
-      record = user.records.only_kept.find(params[:record_id])
+      @user = User.only_kept.find_by!(username: params[:username])
+      record = @user.records.only_kept.find(params[:record_id])
 
-      @months = user.records.only_kept.group_by_month(:created_at, time_zone: user.time_zone).count.to_a.reverse.to_h
+      @months = @user.records.only_kept.group_by_month(:created_at, time_zone: @user.time_zone).count.to_a.reverse.to_h
 
-      result = RecordPage::UserRepository.new(graphql_client: graphql_client).execute(username: user.username)
+      result = V4::RecordPage::UserRepository.new(graphql_client: graphql_client).execute(username: @user.username)
       @user_entity = result.user_entity
 
-      result = RecordPage::RecordRepository
+      result = V4::RecordPage::RecordRepository
         .new(graphql_client: graphql_client)
-        .execute(username: user.username, record_database_id: record.id)
+        .execute(username: @user.username, record_database_id: record.id)
       @record_entity = result.record_entity
     end
 
