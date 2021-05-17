@@ -6,10 +6,10 @@
 .container.py-3.mb-4
   .row
     .col-3.pe-0
-      = render "characters/sidebar", character: @character, character_favorites: @character_favorites
+      = render "v3/characters/sidebar", character: @character, character_favorites: @character_favorites
     .col-9
-      = render "characters/subnav", character: @character
+      = render "v3/characters/subnav", character: @character
 
       .c-card
         .container.py-3
-          = render "people/grid", root_resource: @character, resource_years: @cast_years, resources_with_year: @casts_with_year
+          = render "v3/people/grid", root_resource: @character, resource_years: @cast_years, resources_with_year: @casts_with_year

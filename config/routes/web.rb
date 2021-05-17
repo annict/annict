@@ -48,7 +48,7 @@ namespace :settings do
   resources :tokens, only: %i[new create edit update destroy]
 end
 
-resources :characters, only: %i[show] do
+resources :characters, only: %i[] do
   resources :fans, only: %i[index], controller: "character_fans"
 end
 
@@ -131,6 +131,7 @@ scope module: :v3 do
   match "/@:username/favorite_characters", via: :get, as: :favorite_character_list, to: "favorite_characters#index", username: USERNAME_FORMAT
   match "/@:username/favorite_organizations", via: :get, as: :favorite_organization_list, to: "favorite_organizations#index", username: USERNAME_FORMAT
   match "/@:username/favorite_people", via: :get, as: :favorite_person_list, to: "favorite_people#index", username: USERNAME_FORMAT
+  match "/characters/:character_id", via: :get, as: :character, to: "characters#show"
   match "/work_display_option", via: :get, as: :work_display_option, to: "work_display_options#show"
   match "/works/:slug", via: :get, as: :seasonal_anime_list, to: "works#season", slug: /[0-9]{4}-(all|spring|summer|autumn|winter)/
   match "/works/newest", via: :get, as: :newest_anime_list, to: "works#newest"

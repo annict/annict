@@ -90,6 +90,7 @@ jobs:
             spec/requests/api/internal/registrations/create_spec.rb \
             spec/requests/api/internal/sign_in/create_spec.rb \
             spec/requests/api/internal/sign_up/create_spec.rb \
+            spec/requests/v3/characters/show_spec.rb \
             spec/requests/v3/favorite_characters/index_spec.rb \
             spec/requests/v3/favorite_organizations/index_spec.rb \
             spec/requests/v3/favorite_people/index_spec.rb \
