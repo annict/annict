@@ -3,10 +3,6 @@
 describe "GET /works/newest", type: :request do
   let!(:anime) { create(:work) }
 
-  before do
-    host! ENV.fetch("ANNICT_JP_HOST")
-  end
-
   it "アクセスできること" do
     get "/works/newest"
 

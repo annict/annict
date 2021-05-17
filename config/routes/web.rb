@@ -101,10 +101,6 @@ resources :works, only: %i[index] do
   resources :episodes, only: [] do
     resources :checkins, only: %i[show]
   end
-
-  collection do
-    get :newest
-  end
 end
 
 # 新リダイレクト用URL
@@ -137,6 +133,7 @@ scope module: :v3 do
   match "/@:username/favorite_people", via: :get, as: :favorite_person_list, to: "favorite_people#index", username: USERNAME_FORMAT
   match "/work_display_option", via: :get, as: :work_display_option, to: "work_display_options#show"
   match "/works/:slug", via: :get, as: :seasonal_anime_list, to: "works#season", slug: /[0-9]{4}-(all|spring|summer|autumn|winter)/
+  match "/works/newest", via: :get, as: :newest_anime_list, to: "works#newest"
   match "/works/popular", via: :get, as: :popular_anime_list, to: "works#popular"
 end
 

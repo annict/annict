@@ -95,6 +95,7 @@ jobs:
             spec/requests/v3/favorite_people/index_spec.rb \
             spec/requests/v3/libraries/show_spec.rb \
             spec/requests/v3/work_display_options/show_spec.rb \
+            spec/requests/v3/works/newest_spec.rb \
             spec/requests/v3/works/popular_spec.rb \
             spec/requests/v3/works/season_spec.rb \
             spec/requests/v4/records/index_spec.rb \
