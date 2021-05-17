@@ -16,8 +16,7 @@ module V6
               h.html V6::Pictures::AvatarPictureComponent.new(view_context,
                 user: @user,
                 width: 50,
-                mb_width: 50
-              ).render
+                mb_width: 50).render
             end
           end
 
