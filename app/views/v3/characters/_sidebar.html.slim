@@ -76,7 +76,7 @@ h1.h2.fw-bold
 
     - if character_favorites.length > 30
       .text-end
-        = link_to t("verb.view_all"), character_fans_path(character)
+        = link_to t("verb.view_all"), character_fan_list_path(character)
 
 - if user_signed_in? && current_user.committer?
   = link_to t("messages._common.edit_on_annict_db"), db_edit_character_path(character), class: "btn btn-secondary w-100 mt-2"

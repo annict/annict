@@ -5,10 +5,6 @@ describe "GET /characters/:character_id/fans", type: :request do
   let!(:user) { create(:registered_user) }
   let!(:character_favorite) { create(:character_favorite, user: user, character: character) }
 
-  before do
-    host! ENV.fetch("ANNICT_JP_HOST")
-  end
-
   it "アクセスできること" do
     get "/characters/#{character.id}/fans"
 
