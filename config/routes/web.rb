@@ -66,7 +66,7 @@ resources :episodes, only: [] do
   end
 end
 
-resources :organizations, only: %i[show] do
+resources :organizations, only: %i[] do
   resources :fans, only: %i[index], controller: "organization_fans"
 end
 
@@ -125,6 +125,7 @@ scope module: :v3 do
   match "/@:username/favorite_people", via: :get, as: :favorite_person_list, to: "favorite_people#index", username: USERNAME_FORMAT
   match "/characters/:character_id", via: :get, as: :character, to: "characters#show"
   match "/characters/:character_id/fans", via: :get, as: :character_fan_list, to: "character_fans#index"
+  match "/organizations/:organization_id", via: :get, as: :organization, to: "organizations#show"
   match "/people/:person_id", via: :get, as: :person, to: "people#show"
   match "/people/:person_id/fans", via: :get, as: :person_fan_list, to: "person_fans#index"
   match "/work_display_option", via: :get, as: :work_display_option, to: "work_display_options#show"
