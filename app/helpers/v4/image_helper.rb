@@ -34,18 +34,9 @@ module V4::ImageHelper
   end
 
   def ann_image_tag(record, field, options = {})
-    url = v4_ann_image_url(record, field, options)
     url2x = v4_ann_image_url(record, field, options.merge(size_rate: 2))
 
-    options["data-src"] = url
-    options[:class] = if options[:class].present?
-      options[:class].split(" ").push("js-lazy").join(" ")
-    else
-      "js-lazy"
-    end
-    options["data-srcset"] = "#{url} 320w, #{url2x} 640w"
-
-    image_tag("", options)
+    image_tag(url2x, options)
   end
 
   def profile_background_image_url(profile, options)
