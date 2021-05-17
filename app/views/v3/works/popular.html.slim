@@ -15,9 +15,9 @@ h1.text-center.mb-0.my-3
 
 - if @display_option == "list_detailed"
   .container
-    = render "works/display_options/list_detailed", works: @works
+    = render "v3/works/display_options/list_detailed", works: @works
 - else
-  = render "works/display_options/#{@display_option}", works: @works
+  = render "v3/works/display_options/#{@display_option}", works: @works
 
 - if @works.present? && @works.total_pages > 1
   .mb-3.text-center

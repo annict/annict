@@ -77,6 +77,6 @@
       - programs = programs.select { |pd| locale_ja? ? true : pd.support_en? }
       - if programs.present?
         .fw-bold.mb-1 = t "noun.vods"
-        = render "works/vod_list", channels: @channels, slice: 3, programs: programs
+        = render "v3/works/vod_list", channels: @channels, slice: 3, programs: programs
 
       c-work-friends :work-id="#{work.id}" title="#{t('noun.friends_who_are_watching')}" more-text="#{t('verb.view_all')}"
