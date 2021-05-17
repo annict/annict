@@ -70,10 +70,6 @@ resources :organizations, only: %i[show] do
   resources :fans, only: %i[index], controller: "organization_fans"
 end
 
-resources :people, only: %i[] do
-  resources :fans, only: %i[index], controller: "person_fans"
-end
-
 resources :users, only: [] do
   collection do
     delete :destroy
@@ -130,6 +126,7 @@ scope module: :v3 do
   match "/characters/:character_id", via: :get, as: :character, to: "characters#show"
   match "/characters/:character_id/fans", via: :get, as: :character_fan_list, to: "character_fans#index"
   match "/people/:person_id", via: :get, as: :person, to: "people#show"
+  match "/people/:person_id/fans", via: :get, as: :person_fan_list, to: "person_fans#index"
   match "/work_display_option", via: :get, as: :work_display_option, to: "work_display_options#show"
   match "/works/:slug", via: :get, as: :seasonal_anime_list, to: "works#season", slug: /[0-9]{4}-(all|spring|summer|autumn|winter)/
   match "/works/newest", via: :get, as: :newest_anime_list, to: "works#newest"

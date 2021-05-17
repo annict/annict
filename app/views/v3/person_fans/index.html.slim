@@ -6,13 +6,13 @@
 .container.py-3.mb-4
   .row
     .col-3.pe-0
-      = render "people/sidebar", person: @person, person_favorites: @person_favorites
+      = render "v3/people/sidebar", person: @person, person_favorites: @person_favorites
     .col-9
-      = render "people/subnav", person: @person
+      = render "v3/people/subnav", person: @person
 
       .c-card
         .container
           - if @person_favorites.present?
-            = render "users/fan_user_list", favorite_resources: @person_favorites
+            = render "v3/users/fan_user_list", favorite_resources: @person_favorites
           - else
             = render "application/components/empty", text: t("messages.person_fans.no_users")
