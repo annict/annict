@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module RecordPage
-  class RecordRepository < ApplicationRepository
+module V4::RecordPage
+  class RecordRepository < V4::ApplicationRepository
     class RepositoryResult < Result
       attr_accessor :user_entity, :record_entity
     end
@@ -15,7 +15,7 @@ module RecordPage
       )
       record_node = data.to_h.dig("data", "user", "record")
 
-      result.record_entity = RecordEntity.from_node(record_node)
+      result.record_entity = V4::RecordEntity.from_node(record_node)
 
       result
     end
