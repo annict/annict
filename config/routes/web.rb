@@ -15,7 +15,6 @@ end
 
 resource :confirmation, only: [:show]
 resources :comments, only: %i[edit update destroy]
-resources :friends, only: [:index]
 resources :mute_users, only: [:destroy]
 resources :notifications, only: [:index]
 
@@ -123,6 +122,7 @@ match "/fragment/receive_channel_buttons", via: :get, as: :fragment_receive_chan
 match "/fragment/trackable_anime/:anime_id", via: :get, as: :fragment_trackable_anime, to: "v6/fragment/trackable_anime#show"
 match "/fragment/trackable_episodes", via: :get, as: :fragment_trackable_episode_list, to: "v6/fragment/trackable_episodes#index"
 match "/fragment/trackable_episodes/:episode_id", via: :get, as: :fragment_trackable_episode, to: "v6/fragment/trackable_episodes#show"
+match "/friends", via: :get, as: :friend_list, to: "v3/friends#index"
 match "/legal", via: :get, as: :legal, to: "v6/pages#legal"
 match "/my/profile", via: :get, as: :my_profile, to: "my/profiles#show"
 match "/organizations/:organization_id", via: :get, as: :organization, to: "v3/organizations#show"

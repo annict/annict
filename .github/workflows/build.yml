@@ -95,6 +95,7 @@ jobs:
             spec/requests/v3/favorite_characters/index_spec.rb \
             spec/requests/v3/favorite_organizations/index_spec.rb \
             spec/requests/v3/favorite_people/index_spec.rb \
+            spec/requests/v3/friends/index_spec.rb \
             spec/requests/v3/libraries/show_spec.rb \
             spec/requests/v3/organizations/show_spec.rb \
             spec/requests/v3/organization_fans/index_spec.rb \
