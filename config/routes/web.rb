@@ -18,7 +18,6 @@ resources :comments, only: %i[edit update destroy]
 resources :friends, only: [:index]
 resources :mute_users, only: [:destroy]
 resources :notifications, only: [:index]
-resources :supporters, only: %i[index]
 
 resources :settings, only: [:index]
 scope :settings do
@@ -137,6 +136,7 @@ match "/sign_in", via: :get, as: :new_user_session, to: "v6/sign_in#new" # for D
 match "/sign_in", via: :get, as: :sign_in, to: "v6/sign_in#new"
 match "/sign_in/callback", via: :get, as: :sign_in_callback, to: "v6/sign_in_callbacks#show"
 match "/sign_up", via: :get, as: :sign_up, to: "v6/sign_up#new"
+match "/supporters", via: :get, as: :supporters, to: "v3/supporters#show"
 match "/terms", via: :get, as: :terms, to: "v6/pages#terms"
 match "/track", via: :get, as: :track, to: "tracks#show"
 match "/work_display_option", via: :get, as: :work_display_option, to: "v3/work_display_options#show"
