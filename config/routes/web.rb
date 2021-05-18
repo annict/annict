@@ -14,7 +14,6 @@ use_doorkeeper do
 end
 
 resource :confirmation, only: [:show]
-resource :search, only: [:show]
 resources :comments, only: %i[edit update destroy]
 resources :faqs, only: %i[index]
 resources :friends, only: [:index]
@@ -134,6 +133,7 @@ match "/people/:person_id", via: :get, as: :person, to: "v3/people#show"
 match "/people/:person_id/fans", via: :get, as: :person_fan_list, to: "v3/person_fans#index"
 match "/privacy", via: :get, as: :privacy, to: "v6/pages#privacy"
 match "/registrations/new", via: :get, as: :new_registration, to: "v6/registrations#new"
+match "/search", via: :get, as: :search, to: "v3/searches#show"
 match "/sign_in", via: :get, as: :new_user_session, to: "v6/sign_in#new" # for Devise
 match "/sign_in", via: :get, as: :sign_in, to: "v6/sign_in#new"
 match "/sign_in/callback", via: :get, as: :sign_in_callback, to: "v6/sign_in_callbacks#show"
