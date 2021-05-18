@@ -1,13 +1,15 @@
 # frozen_string_literal: true
 
-class ApplicationService
-  def initialize
-    @result = result_class.new(errors: [])
-  end
+module V4
+  class ApplicationService
+    def initialize
+      @result = result_class.new(errors: [])
+    end
 
-  private
+    private
 
-  def result_class
-    raise NotImplementedError
+    def result_class
+      raise NotImplementedError
+    end
   end
 end

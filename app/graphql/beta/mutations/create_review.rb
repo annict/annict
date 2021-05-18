@@ -30,7 +30,7 @@ module Beta
         viewer = context[:viewer]
         work = Work.only_kept.find_by_graphql_id(work_id)
 
-        result = CreateAnimeRecordService.new(
+        result = V4::CreateAnimeRecordService.new(
           user: viewer,
           anime: work,
           rating_overall: rating_overall_state,

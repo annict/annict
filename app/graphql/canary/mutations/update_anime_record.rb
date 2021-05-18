@@ -49,7 +49,7 @@ module Canary
           raise GraphQL::ExecutionError, "record_id #{record_id} is not an anime record"
         end
 
-        result = UpdateAnimeRecordService.new(
+        result = V4::UpdateAnimeRecordService.new(
           user: viewer,
           record: record,
           rating_overall: rating_overall,

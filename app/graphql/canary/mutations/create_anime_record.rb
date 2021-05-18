@@ -45,7 +45,7 @@ module Canary
         viewer = context[:viewer]
         anime = Work.only_kept.find_by_graphql_id(anime_id)
 
-        result = CreateAnimeRecordService.new(
+        result = V4::CreateAnimeRecordService.new(
           user: viewer,
           anime: anime,
           rating_overall: rating_overall,
