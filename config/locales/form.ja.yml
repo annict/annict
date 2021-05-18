@@ -7,7 +7,7 @@ ja:
         rating_story: ストーリー
         rating_character: キャラクター
         rating_overall: 全体
-      episode_record_form:
+      forms/episode_record_form:
         comment: 感想
         rating: 評価
       registration_form:
