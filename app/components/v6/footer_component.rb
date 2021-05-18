@@ -139,7 +139,7 @@ module V6
 
     def content_urls
       [
-        [view_context.faqs_path, t("head.title.faqs.index"), true],
+        [view_context.faq_path, t("noun.faq"), true],
         [view_context.terms_path, t("noun.terms_of_use"), true],
         [view_context.privacy_path, t("noun.privacy_policy"), true],
         [view_context.legal_path, t("head.title.pages.legal"), true]

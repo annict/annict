@@ -138,8 +138,6 @@ en:
           edit: '%{title}'
           index: Works
           new: New Work
-      faqs:
-        index: FAQ
       episodes:
         index: Episodes of %{title} (Anime)
         show: Anime "%{work_title}" - %{episode_title_with_number}

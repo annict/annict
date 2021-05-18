@@ -108,6 +108,7 @@ jobs:
             spec/requests/v4/records/index_spec.rb \
             spec/requests/v4/records/show_spec.rb \
             spec/requests/v6/episodes/show_spec.rb \
+            spec/requests/v6/faqs/show_spec.rb \
             spec/requests/v6/fragment/activity_items/index_spec.rb \
             spec/requests/v6/home/show_spec.rb \
             spec/requests/v6/legacy/sessions/create_spec.rb \

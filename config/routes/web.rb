@@ -15,7 +15,6 @@ end
 
 resource :confirmation, only: [:show]
 resources :comments, only: %i[edit update destroy]
-resources :faqs, only: %i[index]
 resources :friends, only: [:index]
 resources :mute_users, only: [:destroy]
 resources :notifications, only: [:index]
@@ -118,6 +117,7 @@ match "/characters/:character_id", via: :get, as: :character, to: "v3/characters
 match "/characters/:character_id/fans", via: :get, as: :character_fan_list, to: "v3/character_fans#index"
 match "/episode_records", via: :patch, as: :episode_record_mutation, to: "v4/episode_records#update"
 match "/episodes/:episode_id/records", via: :post, as: :episode_record_list, to: "episode_records#create"
+match "/faq", via: :get, as: :faq, to: "v6/faqs#show"
 match "/fragment/@:username/records/:record_id/edit", via: :get, as: :fragment_edit_record, to: "v6/fragment/records#edit", username: USERNAME_FORMAT
 match "/fragment/activity_groups/:activity_group_id/items", via: :get, as: :fragment_activity_item_list, to: "v6/fragment/activity_items#index"
 match "/fragment/episodes/:episode_id/records", via: :get, as: :fragment_episode_record_list, to: "v6/fragment/episode_records#index"
