@@ -1,12 +1,13 @@
 en:
   form:
     attributes:
-      anime_record_form:
+      forms/anime_record_form:
+        comment: Comment
         rating_animation: Animation
-        rating_music: Music
-        rating_story: Story
         rating_character: Character
+        rating_music: Music
         rating_overall: Overall
+        rating_story: Story
       forms/episode_record_form:
         comment: Comment
         rating: Rating
