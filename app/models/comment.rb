@@ -36,14 +36,8 @@ class Comment < ApplicationRecord
   belongs_to :episode_record
   belongs_to :user
   belongs_to :work
-  has_many :likes,
-    foreign_key: :recipient_id,
-    foreign_type: :recipient,
-    dependent: :destroy
-  has_many :notifications,
-    foreign_key: :trackable_id,
-    foreign_type: :trackable,
-    dependent: :destroy
+  has_many :likes, as: :recipient, dependent: :destroy
+  has_many :notifications, as: :trackable, dependent: :destroy
 
   validates :body, presence: true, length: {maximum: 500}
 
