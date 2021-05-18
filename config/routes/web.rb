@@ -18,7 +18,6 @@ resources :comments, only: %i[edit update destroy]
 resources :friends, only: [:index]
 resources :mute_users, only: [:destroy]
 resources :notifications, only: [:index]
-resources :review_comments, only: %i[edit update destroy]
 resources :supporters, only: %i[index]
 
 resources :settings, only: [:index]
