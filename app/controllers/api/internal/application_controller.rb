@@ -9,6 +9,7 @@ module Api
       include V6::PageCategorizable
 
       skip_before_action :verify_authenticity_token
+      around_action :set_locale
     end
   end
 end
