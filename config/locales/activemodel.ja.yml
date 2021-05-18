@@ -69,13 +69,13 @@ ja:
     errors:
       forms:
         db/cast_rows_form:
-          invalid: "は不正です: %{value}が見つかりません"
+          invalid: 'は不正です: %{value}が見つかりません'
         db/character_rows_form:
-          invalid: "は不正です: %{value}が見つかりません"
+          invalid: 'は不正です: %{value}が見つかりません'
         db/slot_rows_form:
-          invalid: "は不正です: %{value}が見つかりません"
-          invalid_start_time: "は不正な時刻です"
+          invalid: 'は不正です: %{value}が見つかりません'
+          invalid_start_time: 'は不正な時刻です'
         db/staff_rows_form:
-          invalid: "は不正です: %{value}が見つかりません"
+          invalid: 'は不正です: %{value}が見つかりません'
         db/series_work_rows_form:
-          invalid: "は不正です: %{value}が見つかりません"
+          invalid: 'は不正です: %{value}が見つかりません'
