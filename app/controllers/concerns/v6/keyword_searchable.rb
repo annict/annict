@@ -10,6 +10,6 @@ module V6::KeywordSearchable
   private
 
   def set_search_params
-    @search = V4::SearchService.new(params[:q])
+    @search = SearchService.new(params[:q])
   end
 end
