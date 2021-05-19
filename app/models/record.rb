@@ -27,7 +27,7 @@
 
 class Record < ApplicationRecord
   include SoftDeletable
-  include Reactable
+  include Likeable
 
   RATING_STATES = %i[bad average good great].freeze
 

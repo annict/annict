@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-module Reactable
+module Likeable
   extend ActiveSupport::Concern
 
   included do
-    def reactable?
+    def likeable?
       true
     end
   end

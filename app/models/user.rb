@@ -356,21 +356,6 @@ class User < ApplicationRecord
     end
   end
 
-  def add_reaction(resource, content: :heart)
-    unless resource.reactable?
-      raise Annict::Errors::NotReactableError
-    end
-
-    recipient = case resource
-    when Record
-      resource.episode_record? ? resource.episode_record : resource.work_record
-    else
-      resource
-    end
-
-    like(recipient)
-  end
-
   def add_work_tag!(work, tag_name)
     work_tag = nil
 

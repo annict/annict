@@ -24,7 +24,7 @@ class ApplicationRecord < ActiveRecord::Base
     false
   end
 
-  def reactable?
+  def likeable?
     false
   end
 
