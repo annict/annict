@@ -2,7 +2,7 @@
 
 module Forms
   class AnimeRecordForm < Forms::ApplicationForm
-    attr_accessor :anime, :comment,
+    attr_accessor :anime, :comment, :oauth_application,
       :rating_animation, :rating_character, :rating_music, :rating_overall, :rating_story,
       :record, :share_to_twitter
 
@@ -13,7 +13,7 @@ module Forms
       validates rating_field, allow_nil: true, inclusion: {in: Record::RATING_STATES.map(&:to_s)}
 
       define_method "#{rating_field}=" do |value|
-        instance_variable_set "@#{rating_field}", value.presence
+        instance_variable_set "@#{rating_field}", value&.downcase.presence
       end
     end
 
