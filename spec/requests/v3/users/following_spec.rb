@@ -3,10 +3,6 @@
 describe "GET /@:username/following", type: :request do
   let!(:user) { create(:registered_user) }
 
-  before do
-    host! ENV.fetch("ANNICT_JP_HOST")
-  end
-
   context "フォロイーがいないとき" do
     it "アクセスできること" do
       get "/@#{user.username}/following"

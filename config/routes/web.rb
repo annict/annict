@@ -68,8 +68,6 @@ resources :users, only: [] do
 end
 
 scope "@:username", username: USERNAME_FORMAT do
-  get :following, to: "users#following", as: :following_user
-  get :followers, to: "users#followers", as: :followers_user
   get :ics, to: "ics#show", as: :user_ics
 
   resources :tags, only: %i[show], controller: :user_work_tags, as: :user_work_tag
@@ -105,6 +103,8 @@ match "/@:username/:status_kind", via: :get, as: :library, to: "v4/libraries#sho
 match "/@:username/favorite_characters", via: :get, as: :favorite_character_list, to: "v3/favorite_characters#index", username: USERNAME_FORMAT
 match "/@:username/favorite_organizations", via: :get, as: :favorite_organization_list, to: "v3/favorite_organizations#index", username: USERNAME_FORMAT
 match "/@:username/favorite_people", via: :get, as: :favorite_person_list, to: "v3/favorite_people#index", username: USERNAME_FORMAT
+match "/@:username/followers", via: :get, as: :followers_user, to: "v3/users#followers", username: USERNAME_FORMAT
+match "/@:username/following", via: :get, as: :following_user, to: "v3/users#following", username: USERNAME_FORMAT
 match "/@:username/records", via: :get, as: :record_list, to: "v4/records#index", username: USERNAME_FORMAT
 match "/@:username/records/:record_id", via: :delete, to: "v4/records#destroy", username: USERNAME_FORMAT
 match "/@:username/records/:record_id", via: :get, to: "v4/records#show", username: USERNAME_FORMAT
