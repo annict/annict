@@ -22,7 +22,7 @@ module V6
 
       confirmation.touch(:expires_at)
 
-      @form = RegistrationForm.new
+      @form = ::Forms::RegistrationForm.new
       @form.email = confirmation.email
       @form.token = confirmation.token
     end

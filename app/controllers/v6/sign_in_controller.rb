@@ -16,7 +16,7 @@ module V6
         @oauth_app = Doorkeeper::Application.available.find_by(uid: params[:client_id])
       end
 
-      @form = SignInForm.new
+      @form = ::Forms::SignInForm.new
       @recaptcha = Recaptcha.new(action: "sign_in")
     end
   end
