@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe UserEpisodesQuery, type: :query do
+describe V4::UserEpisodesQuery, type: :query do
   let!(:user) { create :user }
   let!(:setting) { create :setting, user: user }
   let!(:work_1) { create :work }
@@ -14,7 +14,7 @@ describe UserEpisodesQuery, type: :query do
   context "when the user does not set status on works" do
     context "when the `watched` option is not specified" do
       it "returns no episodes" do
-        episodes = UserEpisodesQuery.new(
+        episodes = V4::UserEpisodesQuery.new(
           user,
           Episode.all
         ).call
@@ -25,7 +25,7 @@ describe UserEpisodesQuery, type: :query do
 
     context "when the `watched` option is `true`" do
       it "returns no episodes" do
-        episodes = UserEpisodesQuery.new(
+        episodes = V4::UserEpisodesQuery.new(
           user,
           Episode.all,
           watched: true
@@ -37,7 +37,7 @@ describe UserEpisodesQuery, type: :query do
 
     context "when the `watched` option is `false`" do
       it "returns no episodes" do
-        episodes = UserEpisodesQuery.new(
+        episodes = V4::UserEpisodesQuery.new(
           user,
           Episode.all,
           watched: false
@@ -55,7 +55,7 @@ describe UserEpisodesQuery, type: :query do
     context "when the user does not track episodes" do
       context "when the `watched` option is not specified" do
         it "returns episodes" do
-          episodes = UserEpisodesQuery.new(
+          episodes = V4::UserEpisodesQuery.new(
             user,
             Episode.all
           ).call
@@ -66,7 +66,7 @@ describe UserEpisodesQuery, type: :query do
 
       context "when the `watched` option is `true`" do
         it "returns no episodes" do
-          episodes = UserEpisodesQuery.new(
+          episodes = V4::UserEpisodesQuery.new(
             user,
             Episode.all,
             watched: true
@@ -78,7 +78,7 @@ describe UserEpisodesQuery, type: :query do
 
       context "when the `watched` option is `false`" do
         it "returns episodes" do
-          episodes = UserEpisodesQuery.new(
+          episodes = V4::UserEpisodesQuery.new(
             user,
             Episode.all,
             watched: false
@@ -98,7 +98,7 @@ describe UserEpisodesQuery, type: :query do
 
       context "when the `watched` option is not specified" do
         it "returns episodes" do
-          episodes = UserEpisodesQuery.new(
+          episodes = V4::UserEpisodesQuery.new(
             user,
             Episode.all
           ).call
@@ -109,7 +109,7 @@ describe UserEpisodesQuery, type: :query do
 
       context "when the `watched` option is `true`" do
         it "returns episodes" do
-          episodes = UserEpisodesQuery.new(
+          episodes = V4::UserEpisodesQuery.new(
             user,
             Episode.all,
             watched: true
@@ -121,7 +121,7 @@ describe UserEpisodesQuery, type: :query do
 
       context "when the `watched` option is `false`" do
         it "returns episodes" do
-          episodes = UserEpisodesQuery.new(
+          episodes = V4::UserEpisodesQuery.new(
             user,
             Episode.all,
             watched: false
@@ -137,7 +137,7 @@ describe UserEpisodesQuery, type: :query do
 
       context "when the `watched` option is not specified" do
         it "returns episodes" do
-          episodes = UserEpisodesQuery.new(
+          episodes = V4::UserEpisodesQuery.new(
             user,
             Episode.all
           ).call
@@ -148,7 +148,7 @@ describe UserEpisodesQuery, type: :query do
 
       context "when the `watched` option is `true`" do
         it "returns no episodes" do
-          episodes = UserEpisodesQuery.new(
+          episodes = V4::UserEpisodesQuery.new(
             user,
             Episode.all,
             watched: true
@@ -160,7 +160,7 @@ describe UserEpisodesQuery, type: :query do
 
       context "when the `watched` option is `false`" do
         it "returns episodes" do
-          episodes = UserEpisodesQuery.new(
+          episodes = V4::UserEpisodesQuery.new(
             user,
             Episode.all,
             watched: false
@@ -181,7 +181,7 @@ describe UserEpisodesQuery, type: :query do
     context "when the user does not track episodes" do
       context "when the `watched` option is not specified" do
         it "returns episodes" do
-          episodes = UserEpisodesQuery.new(
+          episodes = V4::UserEpisodesQuery.new(
             user,
             Episode.all
           ).call
@@ -192,7 +192,7 @@ describe UserEpisodesQuery, type: :query do
 
       context "when the `watched` option is `true`" do
         it "returns no episodes" do
-          episodes = UserEpisodesQuery.new(
+          episodes = V4::UserEpisodesQuery.new(
             user,
             Episode.all,
             watched: true
@@ -204,7 +204,7 @@ describe UserEpisodesQuery, type: :query do
 
       context "when the `watched` option is `false`" do
         it "returns episodes" do
-          episodes = UserEpisodesQuery.new(
+          episodes = V4::UserEpisodesQuery.new(
             user,
             Episode.all,
             watched: false
@@ -224,7 +224,7 @@ describe UserEpisodesQuery, type: :query do
 
       context "when the `watched` option is not specified" do
         it "returns episodes" do
-          episodes = UserEpisodesQuery.new(
+          episodes = V4::UserEpisodesQuery.new(
             user,
             Episode.all
           ).call
@@ -235,7 +235,7 @@ describe UserEpisodesQuery, type: :query do
 
       context "when the `watched` option is `true`" do
         it "returns episodes" do
-          episodes = UserEpisodesQuery.new(
+          episodes = V4::UserEpisodesQuery.new(
             user,
             Episode.all,
             watched: true
@@ -247,7 +247,7 @@ describe UserEpisodesQuery, type: :query do
 
       context "when the `watched` option is `false`" do
         it "returns episodes" do
-          episodes = UserEpisodesQuery.new(
+          episodes = V4::UserEpisodesQuery.new(
             user,
             Episode.all,
             watched: false
@@ -268,7 +268,7 @@ describe UserEpisodesQuery, type: :query do
     context "when the user does not track episodes" do
       context "when the `watched` option is not specified" do
         it "returns episodes" do
-          episodes = UserEpisodesQuery.new(
+          episodes = V4::UserEpisodesQuery.new(
             user,
             Episode.all
           ).call
@@ -279,7 +279,7 @@ describe UserEpisodesQuery, type: :query do
 
       context "when the `watched` option is `true`" do
         it "returns no episodes" do
-          episodes = UserEpisodesQuery.new(
+          episodes = V4::UserEpisodesQuery.new(
             user,
             Episode.all,
             watched: true
@@ -291,7 +291,7 @@ describe UserEpisodesQuery, type: :query do
 
       context "when the `watched` option is `false`" do
         it "returns episodes" do
-          episodes = UserEpisodesQuery.new(
+          episodes = V4::UserEpisodesQuery.new(
             user,
             Episode.all,
             watched: false
@@ -311,7 +311,7 @@ describe UserEpisodesQuery, type: :query do
 
       context "when the `watched` option is not specified" do
         it "returns episodes" do
-          episodes = UserEpisodesQuery.new(
+          episodes = V4::UserEpisodesQuery.new(
             user,
             Episode.all
           ).call
@@ -322,7 +322,7 @@ describe UserEpisodesQuery, type: :query do
 
       context "when the `watched` option is `true`" do
         it "returns episodes" do
-          episodes = UserEpisodesQuery.new(
+          episodes = V4::UserEpisodesQuery.new(
             user,
             Episode.all,
             watched: true
@@ -334,7 +334,7 @@ describe UserEpisodesQuery, type: :query do
 
       context "when the `watched` option is `false`" do
         it "returns episodes" do
-          episodes = UserEpisodesQuery.new(
+          episodes = V4::UserEpisodesQuery.new(
             user,
             Episode.all,
             watched: false
@@ -354,7 +354,7 @@ describe UserEpisodesQuery, type: :query do
 
       context "when the `watched` option is not specified" do
         it "returns episodes" do
-          episodes = UserEpisodesQuery.new(
+          episodes = V4::UserEpisodesQuery.new(
             user,
             Episode.all
           ).call
@@ -365,7 +365,7 @@ describe UserEpisodesQuery, type: :query do
 
       context "when the `watched` option is `true`" do
         it "returns no episodes" do
-          episodes = UserEpisodesQuery.new(
+          episodes = V4::UserEpisodesQuery.new(
             user,
             Episode.all,
             watched: true
@@ -377,7 +377,7 @@ describe UserEpisodesQuery, type: :query do
 
       context "when the `watched` option is `false`" do
         it "returns episodes" do
-          episodes = UserEpisodesQuery.new(
+          episodes = V4::UserEpisodesQuery.new(
             user,
             Episode.all,
             watched: false
