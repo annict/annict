@@ -28,18 +28,30 @@ module Canary
           raise GraphQL::ExecutionError, "record_id #{record_id} is not an episode record"
         end
 
-        result = UpdateEpisodeRecordService.new(
-          user: viewer,
-          record: record,
-          rating: rating,
+        form = Forms::EpisodeRecordForm.new(
           comment: comment,
+          episode: record.episode_record.episode,
+          oauth_application: context[:application],
+          rating: rating,
+          record: record,
           share_to_twitter: share_to_twitter,
-          oauth_application: context[:application]
+        )
+
+        if form.invalid?
+          return {
+            record: nil,
+            errors: form.errors.full_messages.map { |message| { message: message } }
+          }
+        end
+
+        result = Updaters::EpisodeRecordUpdater.new(
+          user: viewer,
+          form: form
         ).call
 
         {
           record: result.record,
-          errors: result.errors
+          errors: []
         }
       end
     end

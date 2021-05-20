@@ -24,17 +24,26 @@ module Canary
         viewer = context[:viewer]
         episode = Episode.only_kept.find_by_graphql_id(episode_id)
 
-        creator = EpisodeRecordCreator.new(
-          user: viewer,
-          episode: episode,
-          rating: rating,
+        form = Forms::EpisodeRecordForm.new(
           comment: comment,
+          episode: episode,
+          oauth_application: context[:application],
+          rating: rating,
           share_to_twitter: share_to_twitter
-        ).call
+        )
+
+        if form.invalid?
+          return {
+            record: nil,
+            errors: form.errors.full_messages.map { |message| { message: message } }
+          }
+        end
+
+        creator = Creators::EpisodeRecordCreator.new(user: viewer, form: form).call
 
         {
           record: creator.record,
-          errors: creator.errors
+          errors: []
         }
       end
     end
