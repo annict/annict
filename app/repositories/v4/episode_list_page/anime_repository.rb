@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module EpisodeListPage
-  class AnimeRepository < ApplicationRepository
+module V4::EpisodeListPage
+  class AnimeRepository < V4::ApplicationRepository
     class RepositoryResult < Result
       attr_accessor :anime_entity, :page_info_entity
     end
@@ -18,8 +18,8 @@ module EpisodeListPage
       )
       anime_node = data.to_h.dig("data", "anime")
 
-      result.anime_entity = AnimeEntity.from_node(anime_node)
-      result.page_info_entity = PageInfoEntity.from_node(anime_node.dig("episodes", "pageInfo"))
+      result.anime_entity = V4::AnimeEntity.from_node(anime_node)
+      result.page_info_entity = V4::PageInfoEntity.from_node(anime_node.dig("episodes", "pageInfo"))
 
       result
     end

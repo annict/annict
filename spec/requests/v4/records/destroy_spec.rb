@@ -2,10 +2,10 @@
 
 describe "DELETE /@:username/records/:record_id", type: :request do
   let(:user) { create :registered_user }
-  let(:episode_record) { create(:episode_record, user: user) }
-  let(:record) { episode_record.record }
-  let(:anime) { record.work }
-  let(:episode) { episode_record.episode }
+  let!(:anime) { create(:work) }
+  let(:episode) { create(:episode, work: anime) }
+  let!(:record) { create(:record, user: user, work: anime) }
+  let(:episode_record) { create(:episode_record, user: user, record: record, work: anime, episode: episode) }
   let(:activity_group) { create(:activity_group, user: user, itemable_type: "EpisodeRecord") }
   let!(:activity) { create(:activity, user: user, activity_group: activity_group, itemable: episode_record) }
   let!(:library_entry) { create(:library_entry, user: user, work: anime, watched_episode_ids: [episode.id]) }

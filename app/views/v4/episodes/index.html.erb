@@ -6,12 +6,12 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-md-3 pe-md-0 py-3">
-      <%= render Sidebars::AnimeSidebarComponent.new(anime_entity: @anime_entity, vod_channel_entities: @existing_vod_channel_entities, viewer: current_user) %>
+      <%= render V4::Sidebars::AnimeSidebarComponent.new(anime_entity: @anime_entity, vod_channel_entities: @existing_vod_channel_entities, viewer: current_user) %>
     </div>
 
     <div class="col-md-9">
       <div class="mb-3">
-        <%= render WorkSubNavComponent.new(work_entity: @anime_entity, page_category: page_category) %>
+        <%= render V4::WorkSubNavComponent.new(work_entity: @anime_entity, page_category: page_category) %>
       </div>
 
       <% if @anime_entity.episodes && @anime_entity.episodes.length > 0 %>
@@ -28,9 +28,9 @@
           <% end %>
         </div>
 
-        <%= render PaginationComponent.new(page_info_entity: @page_info_entity, resources_path: current_path_with_query) %>
+        <%= render V4::PaginationComponent.new(page_info_entity: @page_info_entity, resources_path: current_path_with_query) %>
       <% else %>
-        <%= render EmptyComponent.new(text: t("messages._empty.no_episodes")) %>
+        <%= render V4::EmptyComponent.new(text: t("messages._empty.no_episodes")) %>
       <% end %>
     </div>
   </div>

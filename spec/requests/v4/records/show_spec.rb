@@ -9,9 +9,9 @@ describe "GET /@:username/records/:record_id", type: :request do
     end
 
     context "アニメへの記録を参照するとき" do
-      let!(:record) { create(:record, user: user) }
-      let!(:anime_record) { create(:work_record, user: user, record: record, body: "最高") }
-      let(:anime) { anime_record.work }
+      let!(:anime) { create(:work) }
+      let!(:record) { create(:record, user: user, work: anime) }
+      let!(:anime_record) { create(:work_record, user: user, record: record, work: anime, body: "最高") }
 
       it "記録が表示されること" do
         get "/@#{user.username}/records/#{record.id}"
@@ -24,10 +24,10 @@ describe "GET /@:username/records/:record_id", type: :request do
     end
 
     context "エピソードへの記録を参照するとき" do
-      let!(:episode_record) { create(:episode_record, user: user, body: "楽しかった") }
-      let(:record) { episode_record.record }
-      let(:anime) { episode_record.work }
-      let(:episode) { episode_record.episode }
+      let!(:anime) { create(:work) }
+      let!(:episode) { create(:episode, work: anime) }
+      let!(:record) { create(:record, user: user, work: anime) }
+      let!(:episode_record) { create(:episode_record, record: record, work: anime, episode: episode, user: user, body: "楽しかった") }
 
       it "記録が表示されること" do
         get "/@#{user.username}/records/#{record.id}"
@@ -43,9 +43,9 @@ describe "GET /@:username/records/:record_id", type: :request do
 
   context "ログインしていないとき" do
     context "アニメへの記録を参照したとき" do
-      let!(:record) { create(:record, user: user) }
-      let!(:anime_record) { create(:work_record, user: user, record: record, body: "最高") }
-      let(:anime) { anime_record.work }
+      let!(:anime) { create(:work) }
+      let!(:record) { create(:record, user: user, work: anime) }
+      let!(:anime_record) { create(:work_record, user: user, record: record, work: anime, body: "最高") }
 
       it "記録が表示されること" do
         get "/@#{user.username}/records/#{record.id}"
@@ -58,10 +58,10 @@ describe "GET /@:username/records/:record_id", type: :request do
     end
 
     context "エピソードへの記録を参照したとき" do
-      let!(:episode_record) { create(:episode_record, user: user, body: "楽しかった") }
-      let(:record) { episode_record.record }
-      let(:anime) { episode_record.work }
-      let(:episode) { episode_record.episode }
+      let!(:anime) { create(:work) }
+      let!(:episode) { create(:episode, work: anime) }
+      let!(:record) { create(:record, user: user, work: anime) }
+      let!(:episode_record) { create(:episode_record, record: record, work: anime, episode: episode, user: user, body: "楽しかった") }
 
       it "記録が表示されること" do
         get "/@#{user.username}/records/#{record.id}"
