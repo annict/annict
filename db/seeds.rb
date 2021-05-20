@@ -16,5 +16,5 @@
   end
 end
 
-ActiveRecord::Base.connection.execute("ALTER SEQUENCE channels_id_seq RESTART WITH #{Channel.last.id};")
-ActiveRecord::Base.connection.execute("ALTER SEQUENCE channel_groups_id_seq RESTART WITH #{ChannelGroup.last.id};")
+ActiveRecord::Base.connection.execute("ALTER SEQUENCE channels_id_seq RESTART WITH #{Channel.last.id + 1};")
+ActiveRecord::Base.connection.execute("ALTER SEQUENCE channel_groups_id_seq RESTART WITH #{ChannelGroup.last.id + 1};")
