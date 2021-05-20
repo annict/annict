@@ -18,8 +18,8 @@ module V3
 
     def users_via(provider_name)
       uids = case provider_name.to_s
-      when "twitter" then V3::TwitterService.new(@user).uids
-      when "facebook" then V3::FacebookService.new(@user).uids
+      when "twitter" then TwitterService.new(@user).uids
+      when "facebook" then FacebookService.new(@user).uids
       end
 
       User.only_kept.joins(:providers).where(providers: {name: provider_name, uid: uids})
@@ -28,8 +28,8 @@ module V3
     private
 
     def twitter_and_facebook_users
-      twitter_uids = V3::TwitterService.new(@user).uids
-      facebook_uids = V3::FacebookService.new(@user).uids
+      twitter_uids = TwitterService.new(@user).uids
+      facebook_uids = FacebookService.new(@user).uids
 
       t = Provider.arel_table
       twitter_conds = t[:name].eq("twitter").and(t[:uid].in(twitter_uids))
