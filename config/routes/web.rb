@@ -140,11 +140,11 @@ match "/supporters", via: :get, as: :supporters, to: "v3/supporters#show"
 match "/terms", via: :get, as: :terms, to: "v6/pages#terms"
 match "/track", via: :get, as: :track, to: "tracks#show"
 match "/work_display_option", via: :get, as: :work_display_option, to: "v3/work_display_options#show"
-match "/works/:anime_id", via: :get, as: :anime, to: "v4/works#show"
-match "/works/:anime_id/episodes", via: :get, as: :episode_list, to: "v4/episodes#index"
-match "/works/:anime_id/episodes/:episode_id", via: :get, as: :episode, to: "v6/episodes#show"
-match "/works/:anime_id/records", via: :get, as: :anime_record_list, to: "v4/anime_records#index"
-match "/works/:anime_id/records", via: :post, to: "v4/anime_records#create"
+match "/works/:anime_id", via: :get, as: :anime, to: "v4/works#show", anime_id: /[0-9]+/
+match "/works/:anime_id/episodes", via: :get, as: :episode_list, to: "v4/episodes#index", anime_id: /[0-9]+/
+match "/works/:anime_id/episodes/:episode_id", via: :get, as: :episode, to: "v6/episodes#show", anime_id: /[0-9]+/
+match "/works/:anime_id/records", via: :get, as: :anime_record_list, to: "v4/anime_records#index", anime_id: /[0-9]+/
+match "/works/:anime_id/records", via: :post, to: "v4/anime_records#create", anime_id: /[0-9]+/
 match "/works/:slug", via: :get, as: :seasonal_anime_list, to: "v3/works#season", slug: /[0-9]{4}-(all|spring|summer|autumn|winter)/
 match "/works/newest", via: :get, as: :newest_anime_list, to: "v3/works#newest"
 match "/works/popular", via: :get, as: :popular_anime_list, to: "v3/works#popular"
