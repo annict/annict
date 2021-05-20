@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module AnimeRecordListPage
-  class AnimeRepository < ApplicationRepository
+module V4::AnimeRecordListPage
+  class AnimeRepository < V4::ApplicationRepository
     class RepositoryResult < Result
       attr_accessor :anime_entity
     end
@@ -10,7 +10,7 @@ module AnimeRecordListPage
       data = query(variables: {databaseId: database_id})
       anime_node = data.to_h.dig("data", "anime")
 
-      result.anime_entity = AnimeEntity.from_node(anime_node)
+      result.anime_entity = V4::AnimeEntity.from_node(anime_node)
 
       result
     end

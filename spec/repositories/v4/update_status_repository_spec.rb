@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe UpdateStatusRepository, type: :repository do
+describe V4::UpdateStatusRepository, type: :repository do
   include V4::GraphqlRunnable
 
   context "when user does not add work to library entry" do
@@ -13,7 +13,7 @@ describe UpdateStatusRepository, type: :repository do
       expect(Activity.count).to eq 0
       expect(LibraryEntry.count).to eq 0
 
-      UpdateStatusRepository.new(
+      V4::UpdateStatusRepository.new(
         graphql_client: graphql_client(viewer: user)
       ).execute(anime: work, kind: :watching)
 
@@ -57,7 +57,7 @@ describe UpdateStatusRepository, type: :repository do
       expect(LibraryEntry.count).to eq 1
       expect(library_entry.status.kind).to eq "wanna_watch"
 
-      UpdateStatusRepository.new(
+      V4::UpdateStatusRepository.new(
         graphql_client: graphql_client(viewer: user)
       ).execute(anime: work, kind: :watching)
 
@@ -103,7 +103,7 @@ describe UpdateStatusRepository, type: :repository do
       expect(LibraryEntry.count).to eq 1
       expect(library_entry.status.kind).to eq "wanna_watch"
 
-      UpdateStatusRepository.new(
+      V4::UpdateStatusRepository.new(
         graphql_client: graphql_client(viewer: user)
       ).execute(anime: work, kind: :no_select)
 

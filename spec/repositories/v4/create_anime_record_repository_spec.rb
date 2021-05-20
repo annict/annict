@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-describe CreateAnimeRecordRepository, type: :repository do
+describe V4::CreateAnimeRecordRepository, type: :repository do
   include V4::GraphqlRunnable
 
   let(:user) { create :registered_user }
   let(:anime) { create :work }
   let(:anime_id) { Canary::AnnictSchema.id_from_object(anime, anime.class) }
   let(:form) do
-    AnimeRecordForm.new(
-      anime_id: anime_id,
+    Forms::AnimeRecordForm.new(
+      anime: anime,
       rating_overall: "GOOD",
       rating_animation: "GOOD",
       rating_music: "GOOD",
@@ -25,7 +25,7 @@ describe CreateAnimeRecordRepository, type: :repository do
     it "RecordEntityが返ること" do
       expect(Record.count).to eq 0
 
-      result = CreateAnimeRecordRepository.new(
+      result = V4::CreateAnimeRecordRepository.new(
         graphql_client: graphql_client(viewer: user)
       ).execute(form: form)
 
@@ -42,7 +42,7 @@ describe CreateAnimeRecordRepository, type: :repository do
       let(:comment) { "a" * (1_048_596 + 1) } # 文字数制限 (1,048,596文字) 以上の感想
 
       it "エラー内容が返ること" do
-        result = CreateAnimeRecordRepository.new(
+        result = V4::CreateAnimeRecordRepository.new(
           graphql_client: graphql_client(viewer: user)
         ).execute(form: form)
 
