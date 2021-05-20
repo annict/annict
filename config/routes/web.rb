@@ -16,7 +16,6 @@ end
 resources :comments, only: %i[edit update destroy]
 resources :mute_users, only: [:destroy]
 
-resources :settings, only: [:index]
 scope :settings do
   resource :account, only: %i[show update]
   # TODO: /my/profile パスに変更する
@@ -131,6 +130,7 @@ match "/people/:person_id/fans", via: :get, as: :person_fan_list, to: "v3/person
 match "/privacy", via: :get, as: :privacy, to: "v6/pages#privacy"
 match "/registrations/new", via: :get, as: :new_registration, to: "v6/registrations#new"
 match "/search", via: :get, as: :search, to: "v3/searches#show"
+match "/settings", via: :get, as: :setting_list, to: "v3/settings#index"
 match "/sign_in", via: :get, as: :new_user_session, to: "v6/sign_in#new" # for Devise
 match "/sign_in", via: :get, as: :sign_in, to: "v6/sign_in#new"
 match "/sign_in/callback", via: :get, as: :sign_in_callback, to: "v6/sign_in_callbacks#show"
