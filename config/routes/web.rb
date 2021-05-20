@@ -13,7 +13,6 @@ use_doorkeeper do
   skip_controllers :authorized_applications
 end
 
-resource :confirmation, only: [:show]
 resources :comments, only: %i[edit update destroy]
 resources :mute_users, only: [:destroy]
 resources :notifications, only: [:index]
