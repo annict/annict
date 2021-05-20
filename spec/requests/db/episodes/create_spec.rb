@@ -43,7 +43,6 @@ describe "POST /db/works/:work_id/episodes", type: :request do
   end
 
   context "user who is editor signs in" do
-    let!(:number_format) { create(:number_format) }
     let!(:work) { create(:work) }
     let!(:user) { create(:registered_user, :with_editor_role) }
     let!(:form_params) do

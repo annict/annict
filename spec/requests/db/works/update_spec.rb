@@ -47,7 +47,7 @@ describe "PATCH /db/works/:id", type: :request do
   end
 
   context "user who is editor signs in" do
-    let!(:number_format) { create(:number_format) }
+    let!(:number_format) { NumberFormat.first }
     let!(:user) { create(:registered_user, :with_editor_role) }
     let!(:work) { create(:work) }
     let!(:old_work) { work.attributes }

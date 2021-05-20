@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Db
-  class PublishingStateLabelComponent < ApplicationComponent
+  class PublishingStateLabelComponent < V4::ApplicationComponent
     def initialize(resource:)
       @resource = resource
     end

@@ -2,7 +2,7 @@
 
 describe "DELETE /db/channel_groups/:id/publishing", type: :request do
   context "user does not sign in" do
-    let!(:channel_group) { create(:channel_group, :published) }
+    let!(:channel_group) { ChannelGroup.first }
 
     it "user can not access this page" do
       delete "/db/channel_groups/#{channel_group.id}/publishing"
@@ -17,7 +17,7 @@ describe "DELETE /db/channel_groups/:id/publishing", type: :request do
 
   context "user who is not editor signs in" do
     let!(:user) { create(:registered_user) }
-    let!(:channel_group) { create(:channel_group, :published) }
+    let!(:channel_group) { ChannelGroup.first }
 
     before do
       login_as(user, scope: :user)
@@ -36,7 +36,7 @@ describe "DELETE /db/channel_groups/:id/publishing", type: :request do
 
   context "user who is editor signs in" do
     let!(:user) { create(:registered_user, :with_editor_role) }
-    let!(:channel_group) { create(:channel_group, :published) }
+    let!(:channel_group) { ChannelGroup.first }
 
     before do
       login_as(user, scope: :user)
@@ -55,7 +55,7 @@ describe "DELETE /db/channel_groups/:id/publishing", type: :request do
 
   context "user who is admin signs in" do
     let!(:user) { create(:registered_user, :with_admin_role) }
-    let!(:channel_group) { create(:channel_group, :published) }
+    let!(:channel_group) { ChannelGroup.first }
 
     before do
       login_as(user, scope: :user)
