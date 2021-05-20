@@ -5,7 +5,7 @@ USERNAME_FORMAT = /[A-Za-z0-9_]+/
 get "dummy_image", to: "application#dummy_image" if Rails.env.test?
 
 devise_for :users,
-  controllers: {omniauth_callbacks: :callbacks},
+  controllers: {omniauth_callbacks: "v6/callbacks"},
   skip: %i[passwords registrations sessions]
 
 use_doorkeeper do
