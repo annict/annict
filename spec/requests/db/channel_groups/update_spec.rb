@@ -2,7 +2,7 @@
 
 describe "PATCH /db/channel_groups/:id", type: :request do
   context "user does not sign in" do
-    let!(:channel_group) { create(:channel_group) }
+    let!(:channel_group) { ChannelGroup.first }
     let!(:old_channel_group) { channel_group.attributes }
     let!(:channel_group_params) do
       {
@@ -23,7 +23,7 @@ describe "PATCH /db/channel_groups/:id", type: :request do
 
   context "user who is not editor signs in" do
     let!(:user) { create(:registered_user) }
-    let!(:channel_group) { create(:channel_group) }
+    let!(:channel_group) { ChannelGroup.first }
     let!(:old_channel_group) { channel_group.attributes }
     let!(:channel_group_params) do
       {
@@ -48,7 +48,7 @@ describe "PATCH /db/channel_groups/:id", type: :request do
 
   context "user who is editor signs in" do
     let!(:user) { create(:registered_user, :with_editor_role) }
-    let!(:channel_group) { create(:channel_group) }
+    let!(:channel_group) { ChannelGroup.first }
     let!(:old_channel_group) { channel_group.attributes }
     let!(:channel_group_params) do
       {
@@ -73,7 +73,7 @@ describe "PATCH /db/channel_groups/:id", type: :request do
 
   context "user who is admin signs in" do
     let!(:user) { create(:registered_user, :with_admin_role) }
-    let!(:channel_group) { create(:channel_group) }
+    let!(:channel_group) { ChannelGroup.first }
     let!(:old_channel_group) { channel_group.attributes }
     let!(:channel_group_params) do
       {

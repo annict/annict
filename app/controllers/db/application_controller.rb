@@ -4,18 +4,15 @@ module Db
   class ApplicationController < ActionController::Base
     include Pundit
 
-    include PageCategorizable
-    include SentryLoadable
-    include V4::Loggable
-    include V4::Localizable
+    include V6::PageCategorizable
+    include V6::SentryLoadable
+    include V6::Loggable
+    include V6::Localizable
 
-    layout "db"
+    layout "db/default"
 
     rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
-    helper_method :client_uuid, :locale_en?, :locale_ja?, :page_category
-
-    before_action :set_sentry_context
     before_action :set_search_params
     around_action :set_locale
 

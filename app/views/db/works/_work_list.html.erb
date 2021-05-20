@@ -34,7 +34,7 @@
           <%= link_to work.id, anime_path(anime_id: work.id), target: "_blank" %>
         </td>
         <td>
-          <%= render WorkMediaLabelComponent.new(work_entity: work.to_entity) %>
+          <%= V6::Badges::AnimeMediaBadgeComponent.new(self, anime: work) %>
           <br>
           <%= work.title %>
           <br>
@@ -46,11 +46,11 @@
           <dl>
             <dt>しょぼかる</dt>
             <dd>
-              <%= render SyobocalLinkComponent.new(work_entity: work.to_entity) %>
+              <%= render V4::SyobocalLinkComponent.new(work_entity: work.to_entity) %>
             </dd>
             <dt>MyAnimeList</dt>
             <dd>
-              <%= render MalLinkComponent.new(work_entity: work.to_entity) %>
+              <%= render V4::MalLinkComponent.new(work_entity: work.to_entity) %>
             </dd>
           </dl>
         </td>

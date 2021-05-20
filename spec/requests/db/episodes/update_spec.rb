@@ -47,7 +47,6 @@ describe "PATCH /db/episodes/:id", type: :request do
   end
 
   context "user who is editor signs in" do
-    let!(:number_format) { create(:number_format) }
     let!(:user) { create(:registered_user, :with_editor_role) }
     let!(:episode) { create(:episode) }
     let!(:old_episode) { episode.attributes }

@@ -204,7 +204,7 @@ class User < ApplicationRecord
   end
 
   def social_friends
-    @social_friends ||= UserSocialFriendsQuery.new(self)
+    @social_friends ||= V3::UserSocialFriendsQuery.new(self)
   end
 
   def build_relations(oauth = nil)
@@ -354,21 +354,6 @@ class User < ApplicationRecord
       reactions = reactions.where(collection_item: resource)
       reactions.destroy_all
     end
-  end
-
-  def add_reaction(resource, content: :heart)
-    unless resource.reactable?
-      raise Annict::Errors::NotReactableError
-    end
-
-    recipient = case resource
-    when Record
-      resource.episode_record? ? resource.episode_record : resource.work_record
-    else
-      resource
-    end
-
-    like(recipient)
   end
 
   def add_work_tag!(work, tag_name)

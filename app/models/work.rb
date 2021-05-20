@@ -367,7 +367,7 @@ class Work < ApplicationRecord
   end
 
   def to_entity
-    @to_entity ||= AnimeEntity.from_model(self)
+    @to_entity ||= V4::AnimeEntity.from_model(self)
   end
 
   def people

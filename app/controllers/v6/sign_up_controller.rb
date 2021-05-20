@@ -7,7 +7,7 @@ module V6
     before_action :redirect_if_signed_in
 
     def new
-      @form = SignUpForm.new
+      @form = ::Forms::SignUpForm.new
       @recaptcha = Recaptcha.new(action: "sign_up")
     end
   end

@@ -45,8 +45,7 @@ module Canary
         viewer = context[:viewer]
         anime = Work.only_kept.find_by_graphql_id(anime_id)
 
-        result = CreateAnimeRecordService.new(
-          user: viewer,
+        form = Forms::AnimeRecordForm.new(
           anime: anime,
           rating_overall: rating_overall,
           rating_animation: rating_animation,
@@ -55,11 +54,20 @@ module Canary
           rating_character: rating_character,
           comment: comment,
           share_to_twitter: share_to_twitter
-        ).call
+        )
+
+        if form.invalid?
+          return {
+            record: nil,
+            errors: form.errors.full_messages.map { |message| {message: message} }
+          }
+        end
+
+        result = Creators::AnimeRecordCreator.new(user: viewer, form: form).call
 
         {
           record: result.record,
-          errors: result.errors
+          errors: []
         }
       end
     end

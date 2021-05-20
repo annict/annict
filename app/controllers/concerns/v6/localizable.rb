@@ -10,8 +10,6 @@ module V6::Localizable
 
   included do
     helper_method :local_url_with_path, :locale_en?, :locale_ja?, :local_url
-
-    around_action :set_locale
   end
 
   private

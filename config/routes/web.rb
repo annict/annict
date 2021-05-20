@@ -14,14 +14,9 @@ use_doorkeeper do
 end
 
 resource :confirmation, only: [:show]
-resource :search, only: [:show]
 resources :comments, only: %i[edit update destroy]
-resources :faqs, only: %i[index]
-resources :friends, only: [:index]
 resources :mute_users, only: [:destroy]
 resources :notifications, only: [:index]
-resources :review_comments, only: %i[edit update destroy]
-resources :supporters, only: %i[index]
 
 resources :settings, only: [:index]
 scope :settings do
@@ -66,14 +61,6 @@ resources :episodes, only: [] do
   end
 end
 
-resources :organizations, only: %i[show] do
-  resources :fans, only: %i[index], controller: "organization_fans"
-end
-
-resources :people, only: %i[show] do
-  resources :fans, only: %i[index], controller: "person_fans"
-end
-
 resources :users, only: [] do
   collection do
     delete :destroy
@@ -81,8 +68,6 @@ resources :users, only: [] do
 end
 
 scope "@:username", username: USERNAME_FORMAT do
-  get :following, to: "users#following", as: :following_user
-  get :followers, to: "users#followers", as: :followers_user
   get :ics, to: "ics#show", as: :user_ics
 
   resources :tags, only: %i[show], controller: :user_work_tags, as: :user_work_tag
@@ -106,71 +91,63 @@ get "r/:provider/:url_hash",
   url_hash: /[0-9a-zA-Z_-]{10}/
 
 devise_scope :user do
+  match "/legacy/sign_in", via: :get, as: :legacy_sign_in, to: "v6/legacy/sessions#new"
+  match "/legacy/sign_in", via: :post, as: :user_session, to: "v6/legacy/sessions#create"
   match "/sign_out", via: :delete, as: :sign_out, to: "devise/sessions#destroy"
+  match "/user_email", via: :patch, as: :user_email, to: "v4/user_emails#update"
+  match "/user_email/callback", via: :get, as: :user_email_callback, to: "v4/user_email_callbacks#show"
 end
 
-namespace :fragment do
-  match "/@:username/records/:record_id/edit", via: :get, as: :edit_record, to: "records#edit", username: USERNAME_FORMAT
-  match "/episodes/:episode_id/records", via: :get, as: :episode_record_list, to: "episode_records#index"
-  match "/receive_channel_buttons", via: :get, as: :receive_channel_button_list, to: "receive_channel_buttons#index"
-  match "/trackable_anime/:anime_id", via: :get, as: :trackable_anime, to: "trackable_anime#show"
-  match "/trackable_episodes", via: :get, as: :trackable_episode_list, to: "trackable_episodes#index"
-  match "/trackable_episodes/:episode_id", via: :get, as: :trackable_episode, to: "trackable_episodes#show"
-end
-
+match "/@:username", via: :get, as: :profile, to: "v6/users#show", username: USERNAME_FORMAT
+match "/@:username/:status_kind", via: :get, as: :library, to: "v4/libraries#show", username: USERNAME_FORMAT, status_kind: /wanna_watch|watching|watched|on_hold|stop_watching/
+match "/@:username/favorite_characters", via: :get, as: :favorite_character_list, to: "v3/favorite_characters#index", username: USERNAME_FORMAT
+match "/@:username/favorite_organizations", via: :get, as: :favorite_organization_list, to: "v3/favorite_organizations#index", username: USERNAME_FORMAT
+match "/@:username/favorite_people", via: :get, as: :favorite_person_list, to: "v3/favorite_people#index", username: USERNAME_FORMAT
+match "/@:username/followers", via: :get, as: :followers_user, to: "v3/users#followers", username: USERNAME_FORMAT
+match "/@:username/following", via: :get, as: :following_user, to: "v3/users#following", username: USERNAME_FORMAT
+match "/@:username/records", via: :get, as: :record_list, to: "v4/records#index", username: USERNAME_FORMAT
+match "/@:username/records/:record_id", via: :delete, to: "v4/records#destroy", username: USERNAME_FORMAT
+match "/@:username/records/:record_id", via: :get, to: "v4/records#show", username: USERNAME_FORMAT
 match "/@:username/records/:record_id", via: :patch, as: :record, to: "records#update", username: USERNAME_FORMAT
+match "/@:username/records/:record_id", via: :patch, to: "v4/records#update", username: USERNAME_FORMAT
+match "/characters/:character_id", via: :get, as: :character, to: "v3/characters#show"
+match "/characters/:character_id/fans", via: :get, as: :character_fan_list, to: "v3/character_fans#index"
+match "/episode_records", via: :patch, as: :episode_record_mutation, to: "v4/episode_records#update"
 match "/episodes/:episode_id/records", via: :post, as: :episode_record_list, to: "episode_records#create"
+match "/faq", via: :get, as: :faq, to: "v6/faqs#show"
+match "/fragment/@:username/records/:record_id/edit", via: :get, as: :fragment_edit_record, to: "v6/fragment/records#edit", username: USERNAME_FORMAT
+match "/fragment/activity_groups/:activity_group_id/items", via: :get, as: :fragment_activity_item_list, to: "v6/fragment/activity_items#index"
+match "/fragment/episodes/:episode_id/records", via: :get, as: :fragment_episode_record_list, to: "v6/fragment/episode_records#index"
+match "/fragment/receive_channel_buttons", via: :get, as: :fragment_receive_channel_button_list, to: "v6/fragment/receive_channel_buttons#index"
+match "/fragment/trackable_anime/:anime_id", via: :get, as: :fragment_trackable_anime, to: "v6/fragment/trackable_anime#show"
+match "/fragment/trackable_episodes", via: :get, as: :fragment_trackable_episode_list, to: "v6/fragment/trackable_episodes#index"
+match "/fragment/trackable_episodes/:episode_id", via: :get, as: :fragment_trackable_episode, to: "v6/fragment/trackable_episodes#show"
+match "/friends", via: :get, as: :friend_list, to: "v3/friends#index"
+match "/legal", via: :get, as: :legal, to: "v6/pages#legal"
 match "/my/profile", via: :get, as: :my_profile, to: "my/profiles#show"
+match "/organizations/:organization_id", via: :get, as: :organization, to: "v3/organizations#show"
+match "/organizations/:organization_id/fans", via: :get, as: :organization_fan_list, to: "v3/organization_fans#index"
+match "/people/:person_id", via: :get, as: :person, to: "v3/people#show"
+match "/people/:person_id/fans", via: :get, as: :person_fan_list, to: "v3/person_fans#index"
+match "/privacy", via: :get, as: :privacy, to: "v6/pages#privacy"
+match "/registrations/new", via: :get, as: :new_registration, to: "v6/registrations#new"
+match "/search", via: :get, as: :search, to: "v3/searches#show"
+match "/sign_in", via: :get, as: :new_user_session, to: "v6/sign_in#new" # for Devise
+match "/sign_in", via: :get, as: :sign_in, to: "v6/sign_in#new"
+match "/sign_in/callback", via: :get, as: :sign_in_callback, to: "v6/sign_in_callbacks#show"
+match "/sign_up", via: :get, as: :sign_up, to: "v6/sign_up#new"
+match "/supporters", via: :get, as: :supporters, to: "v3/supporters#show"
+match "/terms", via: :get, as: :terms, to: "v6/pages#terms"
 match "/track", via: :get, as: :track, to: "tracks#show"
-
-scope module: :v3 do
-  match "/@:username/favorite_characters", via: :get, as: :favorite_character_list, to: "favorite_characters#index", username: USERNAME_FORMAT
-  match "/@:username/favorite_organizations", via: :get, as: :favorite_organization_list, to: "favorite_organizations#index", username: USERNAME_FORMAT
-  match "/@:username/favorite_people", via: :get, as: :favorite_person_list, to: "favorite_people#index", username: USERNAME_FORMAT
-  match "/characters/:character_id", via: :get, as: :character, to: "characters#show"
-  match "/characters/:character_id/fans", via: :get, as: :character_fan_list, to: "character_fans#index"
-  match "/work_display_option", via: :get, as: :work_display_option, to: "work_display_options#show"
-  match "/works/:slug", via: :get, as: :seasonal_anime_list, to: "works#season", slug: /[0-9]{4}-(all|spring|summer|autumn|winter)/
-  match "/works/newest", via: :get, as: :newest_anime_list, to: "works#newest"
-  match "/works/popular", via: :get, as: :popular_anime_list, to: "works#popular"
-end
-
-scope module: :v4 do
-  devise_scope :user do
-    match "/user_email", via: :patch, as: :user_email, to: "user_emails#update"
-    match "/user_email/callback", via: :get, as: :user_email_callback, to: "user_email_callbacks#show"
-  end
-
-  match "/@:username/:status_kind", via: :get, as: :library, to: "libraries#show", username: USERNAME_FORMAT, status_kind: /wanna_watch|watching|watched|on_hold|stop_watching/
-  match "/@:username/records", via: :get, as: :record_list, to: "records#index", username: USERNAME_FORMAT
-  match "/@:username/records/:record_id", via: :delete, to: "records#destroy", username: USERNAME_FORMAT
-  match "/@:username/records/:record_id", via: :get, to: "records#show", username: USERNAME_FORMAT
-  match "/@:username/records/:record_id", via: :patch, to: "records#update", username: USERNAME_FORMAT
-  match "/episode_records", via: :patch, as: :episode_record_mutation, to: "episode_records#update"
-  match "/works/:anime_id", via: :get, as: :anime, to: "works#show"
-  match "/works/:anime_id/episodes", via: :get, as: :episode_list, to: "episodes#index"
-  match "/works/:anime_id/records", via: :get, as: :anime_record_list, to: "anime_records#index"
-  match "/works/:anime_id/records", via: :post, to: "anime_records#create"
-end
-
-scope module: :v6 do
-  devise_scope :user do
-    match "/legacy/sign_in", via: :get, as: :legacy_sign_in, to: "legacy/sessions#new"
-    match "/legacy/sign_in", via: :post, as: :user_session, to: "legacy/sessions#create"
-  end
-
-  match "/@:username", via: :get, as: :profile, to: "users#show", username: USERNAME_FORMAT
-  match "/fragment/activity_groups/:activity_group_id/items", via: :get, as: :fragment_activity_item_list, to: "fragment/activity_items#index"
-  match "/legal", via: :get, as: :legal, to: "pages#legal"
-  match "/privacy", via: :get, as: :privacy, to: "pages#privacy"
-  match "/registrations/new", via: :get, as: :new_registration, to: "registrations#new"
-  match "/sign_in", via: :get, as: :new_user_session, to: "sign_in#new" # for Devise
-  match "/sign_in", via: :get, as: :sign_in, to: "sign_in#new"
-  match "/sign_in/callback", via: :get, as: :sign_in_callback, to: "sign_in_callbacks#show"
-  match "/sign_up", via: :get, as: :sign_up, to: "sign_up#new"
-  match "/terms", via: :get, as: :terms, to: "pages#terms"
-  match "/works/:anime_id/episodes/:episode_id", via: :get, as: :episode, to: "episodes#show"
-end
+match "/work_display_option", via: :get, as: :work_display_option, to: "v3/work_display_options#show"
+match "/works/:anime_id", via: :get, as: :anime, to: "v4/works#show", anime_id: /[0-9]+/
+match "/works/:anime_id/episodes", via: :get, as: :episode_list, to: "v4/episodes#index", anime_id: /[0-9]+/
+match "/works/:anime_id/episodes/:episode_id", via: :get, as: :episode, to: "v6/episodes#show", anime_id: /[0-9]+/
+match "/works/:anime_id/records", via: :get, as: :anime_record_list, to: "v4/anime_records#index", anime_id: /[0-9]+/
+match "/works/:anime_id/records", via: :post, to: "v4/anime_records#create", anime_id: /[0-9]+/
+match "/works/:slug", via: :get, as: :seasonal_anime_list, to: "v3/works#season", slug: /[0-9]{4}-(all|spring|summer|autumn|winter)/
+match "/works/newest", via: :get, as: :newest_anime_list, to: "v3/works#newest"
+match "/works/popular", via: :get, as: :popular_anime_list, to: "v3/works#popular"
 
 root "v6/home#show",
   constraints: Annict::RoutingConstraints::Member.new

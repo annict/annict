@@ -51,7 +51,7 @@ module V4
 
       authorize(@record, :destroy?)
 
-      RecordDestroyer.new(record: @record).call
+      Destroyers::RecordDestroyer.new(record: @record).call
 
       path = if @record.episode_record?
         episode_record = @record.episode_record

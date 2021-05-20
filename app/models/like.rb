@@ -29,9 +29,9 @@ class Like < ApplicationRecord
 
   after_create :save_notification
 
-  def self.find_by_resource(resource)
-    unless resource.reactable?
-      raise Annict::Errors::NotReactableError
+  def self.find_by_resource!(resource)
+    unless resource.likeable?
+      raise Annict::Errors::NotLikeableError
     end
 
     recipient = case resource

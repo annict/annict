@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Canary::Mutations::AddReaction do
+xdescribe Canary::Mutations::AddReaction do
   let(:user_1) { create :registered_user }
   let(:user_2) { create :registered_user }
   let(:token) { create(:oauth_access_token) }

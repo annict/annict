@@ -11,6 +11,8 @@ module V4
 
     layout "v4/default"
 
+    around_action :set_locale
+
     private
 
     def redirect_if_signed_in

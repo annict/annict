@@ -8,8 +8,19 @@ module UserLikeable
       likes.where(recipient: recipient).present?
     end
 
-    def like(recipient)
-      likes.create(recipient: recipient)
+    def like!(resource)
+      unless resource.likeable?
+        raise Annict::Errors::NotLikeableError
+      end
+
+      recipient = case resource
+      when Record
+        resource.episode_record? ? resource.episode_record : resource.work_record
+      else
+        resource
+      end
+
+      likes.create!(recipient: recipient)
     end
 
     def unlike(recipient)

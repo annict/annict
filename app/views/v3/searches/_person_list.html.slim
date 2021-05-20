@@ -1,0 +1,4 @@
+- if people.present?
+  = render "v3/#{view.pluralize}/list", people: people
+- else
+  = render "application/components/empty", text: t("messages._empty.no_people")

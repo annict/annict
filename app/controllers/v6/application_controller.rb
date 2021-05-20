@@ -10,6 +10,8 @@ module V6
 
     layout "v6/default"
 
+    around_action :set_locale
+
     private
 
     def redirect_if_signed_in

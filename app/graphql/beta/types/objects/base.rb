@@ -5,7 +5,7 @@ module Beta
     module Objects
       class Base < GraphQL::Schema::Object
         include Imgix::Rails::UrlHelper
-        include ImageHelper
+        include V4::ImageHelper
 
         def annict_id
           object.id

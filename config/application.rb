@@ -76,6 +76,7 @@ module Annict
       r301 %r{\A/users/([A-Za-z0-9_]+)/(following|followers|wanna_watch|watching|watched|on_hold|stop_watching)\z}, "/@$1/$2"
       r301 %r{\A/@([A-Za-z0-9_]+)/reviews\z}, "/@$1/records"
       r301 %r{\A/episodes/[0-9]+/items}, "/"
+      r301 %r{\A/faqs}, "/faq"
       r301 %r{\A/menu}, "/"
       r301 %r{\A/works/[0-9]+/items}, "/"
 

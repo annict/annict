@@ -1,12 +1,14 @@
 # frozen_string_literal: true
 
 describe Canary::Mutations::UpdateEpisodeRecord do
-  let(:user) { create :registered_user }
-  let(:episode_record) { create(:episode_record, user: user, rating: nil) }
-  let!(:record) { episode_record.record }
-  let(:token) { create(:oauth_access_token) }
-  let(:context) { {viewer: user, doorkeeper_token: token, writable: true} }
-  let(:record_id) { GraphQL::Schema::UniqueWithinType.encode(record.class.name, record.id) }
+  let!(:user) { create :registered_user }
+  let!(:anime) { create :work }
+  let!(:episode) { create :episode, work: anime }
+  let!(:record) { create :record, user: user, work: anime }
+  let!(:episode_record) { create(:episode_record, user: user, record: record, work: anime, episode: episode, rating: nil) }
+  let!(:token) { create(:oauth_access_token) }
+  let!(:context) { {viewer: user, doorkeeper_token: token, writable: true} }
+  let!(:record_id) { GraphQL::Schema::UniqueWithinType.encode(record.class.name, record.id) }
 
   context "正常系" do
     let(:query) do
@@ -49,6 +51,7 @@ describe Canary::Mutations::UpdateEpisodeRecord do
       expect(EpisodeRecord.count).to eq 1
 
       expect(result["errors"]).to be_nil
+      expect(result.dig("data", "updateEpisodeRecord", "errors")).to be_empty
       expect(result.dig("data", "updateEpisodeRecord", "record", "comment")).to eq "またーり"
       expect(result.dig("data", "updateEpisodeRecord", "record", "recordable", "rating")).to eq "GREAT"
       expect(result.dig("data", "updateEpisodeRecord", "errors")).to eq []
