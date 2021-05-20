@@ -17,20 +17,25 @@ module Beta
         viewer = context[:viewer]
         episode = Episode.only_kept.find_by_graphql_id(episode_id)
 
-        creator = EpisodeRecordCreator.new(
-          user: viewer,
-          episode: episode,
-          rating: rating_state,
+        form = Forms::EpisodeRecordForm.new(
           comment: comment,
+          episode: episode,
+          oauth_application: context[:doorkeeper_token].application,
+          rating: rating_state,
           share_to_twitter: share_twitter&.to_s
-        ).call
+        )
 
-        if creator.invalid?
-          raise GraphQL::ExecutionError, creator.errors.first.message
+        if form.invalid?
+          raise GraphQL::ExecutionError, form.errors.first.message
         end
 
+        result = Creators::EpisodeRecordCreator.new(
+          user: viewer,
+          form: form
+        ).call
+
         {
-          record: viewer.episode_records.find_by!(record_id: creator.record.id)
+          record: viewer.episode_records.find_by!(record_id: result.record.id)
         }
       end
     end
