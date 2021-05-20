@@ -5,7 +5,7 @@
   .c-card.container
     - if @notifications.present?
       - @notifications.each do |notification|
-        = render "notification", notification: notification
+        = render "v3/notifications/notification", notification: notification
     - else
       = render "application/components/empty", text: t("messages.notifications.no_notifications")
   .text-center.mt-3

@@ -15,7 +15,6 @@ end
 
 resources :comments, only: %i[edit update destroy]
 resources :mute_users, only: [:destroy]
-resources :notifications, only: [:index]
 
 resources :settings, only: [:index]
 scope :settings do
@@ -124,6 +123,7 @@ match "/fragment/trackable_episodes/:episode_id", via: :get, as: :fragment_track
 match "/friends", via: :get, as: :friend_list, to: "v3/friends#index"
 match "/legal", via: :get, as: :legal, to: "v6/pages#legal"
 match "/my/profile", via: :get, as: :my_profile, to: "my/profiles#show"
+match "/notifications", via: :get, as: :notification_list, to: "v3/notifications#index"
 match "/organizations/:organization_id", via: :get, as: :organization, to: "v3/organizations#show"
 match "/organizations/:organization_id/fans", via: :get, as: :organization_fan_list, to: "v3/organization_fans#index"
 match "/people/:person_id", via: :get, as: :person, to: "v3/people#show"

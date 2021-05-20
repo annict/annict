@@ -79,7 +79,7 @@ module V6::Sidebars
               end
 
               h.tag :li do
-                h.tag :a, href: view_context.notifications_path, class: "d-flex justify-content-between py-2" do
+                h.tag :a, href: view_context.notification_list_path, class: "d-flex justify-content-between py-2" do
                   h.tag :div, class: "c-main-sidebar__icon me-1 text-center text-muted" do
                     h.tag :i, class: "far fa-bell"
                   end
