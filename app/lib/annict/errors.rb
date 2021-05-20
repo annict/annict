@@ -5,7 +5,9 @@ module Annict
     class AnnictError < StandardError; end
 
     class InvalidAPITokenScopeError < AnnictError; end
+
     class ModelMismatchError < AnnictError; end
+
     class NotLikeableError < AnnictError; end
   end
 end

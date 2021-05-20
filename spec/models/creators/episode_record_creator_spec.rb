@@ -14,7 +14,7 @@ describe Creators::EpisodeRecordCreator, type: :model do
     expect(user.share_record_to_twitter?).to eq false
 
     # Creatorを呼ぶ
-    creator = Creators::EpisodeRecordCreator.new(
+    Creators::EpisodeRecordCreator.new(
       user: user,
       form: Forms::EpisodeRecordForm.new(
         comment: "にぱー",

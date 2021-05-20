@@ -59,7 +59,7 @@ module Canary
         if form.invalid?
           return {
             record: nil,
-            errors: form.errors.full_messages.map { |message| { message: message } }
+            errors: form.errors.full_messages.map { |message| {message: message} }
           }
         end
 

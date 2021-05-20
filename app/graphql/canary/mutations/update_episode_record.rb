@@ -34,13 +34,13 @@ module Canary
           oauth_application: context[:application],
           rating: rating,
           record: record,
-          share_to_twitter: share_to_twitter,
+          share_to_twitter: share_to_twitter
         )
 
         if form.invalid?
           return {
             record: nil,
-            errors: form.errors.full_messages.map { |message| { message: message } }
+            errors: form.errors.full_messages.map { |message| {message: message} }
           }
         end
 
