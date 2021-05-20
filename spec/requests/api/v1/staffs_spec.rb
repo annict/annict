@@ -26,6 +26,7 @@ describe "Api::V1::Staffs" do
           "work" => {
             "id" => staff.work.id,
             "title" => staff.work.title,
+            "title_en" => "",
             "title_kana" => staff.work.title_kana,
             "media" => staff.work.media,
             "media_text" => staff.work.media_text,

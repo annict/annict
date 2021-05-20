@@ -15,6 +15,7 @@ module Creators
       episode_record = @episode.build_episode_record(
         user: @user,
         rating: @form.rating,
+        deprecated_rating: @form.deprecated_rating,
         comment: @form.comment,
         share_to_twitter: @form.share_to_twitter
       )

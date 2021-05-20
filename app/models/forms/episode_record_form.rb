@@ -2,7 +2,7 @@
 
 module Forms
   class EpisodeRecordForm < Forms::ApplicationForm
-    attr_accessor :comment, :episode, :oauth_application, :rating, :record, :share_to_twitter
+    attr_accessor :comment, :deprecated_rating, :episode, :oauth_application, :rating, :record, :share_to_twitter
 
     validates :comment, length: {maximum: 1_048_596}
     validates :episode, presence: true

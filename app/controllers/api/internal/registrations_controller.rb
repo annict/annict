@@ -5,7 +5,7 @@ module Api::Internal
     def create
       @confirmation = EmailConfirmation.find_by!(event: :sign_up, token: registration_form_params[:token])
 
-      @form = RegistrationForm.new(registration_form_params.merge(email: @confirmation.email))
+      @form = Forms::RegistrationForm.new(registration_form_params.merge(email: @confirmation.email))
 
       if @form.invalid?
         return render json: @form.errors.full_messages, status: :unprocessable_entity

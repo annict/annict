@@ -11,7 +11,7 @@ module Api
         def create
           work = Work.only_kept.find(@params.work_id)
 
-          UpdateStatusRepository.new(
+          V4::UpdateStatusRepository.new(
             graphql_client: graphql_client(viewer: current_user)
           ).execute(anime: work, kind: @params.kind)
 

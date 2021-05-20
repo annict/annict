@@ -23,6 +23,7 @@ describe "Api::V1::Casts" do
           "work" => {
             "id" => cast.work.id,
             "title" => cast.work.title,
+            "title_en" => "",
             "title_kana" => cast.work.title_kana,
             "media" => cast.work.media,
             "media_text" => cast.work.media_text,

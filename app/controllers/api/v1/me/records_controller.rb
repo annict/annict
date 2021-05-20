@@ -10,18 +10,22 @@ module Api
 
         def create
           episode = Episode.only_kept.find(@params.episode_id)
-          creator = EpisodeRecordCreator.new(
-            user: current_user,
+          form = Forms::EpisodeRecordForm.new(
+            comment: @params.comment,
+            deprecated_rating: @params.rating,
             episode: episode,
             rating: @params.rating_state,
-            deprecated_rating: @params.rating,
-            comment: @params.comment,
             share_to_twitter: @params.share_twitter
-          ).call
+          )
 
-          if creator.invalid?
-            return render_validation_error(creator.errors.first.message)
+          if form.invalid?
+            return render_validation_error(form.errors.full_messages.first)
           end
+
+          creator = Creators::EpisodeRecordCreator.new(
+            user: current_user,
+            form: form
+          ).call
 
           @episode_record = current_user.episode_records.find_by!(record_id: creator.record.id)
         end

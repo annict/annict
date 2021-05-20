@@ -29,6 +29,7 @@ describe "Api::V1::Episodes" do
           "work" => {
             "id" => work.id,
             "title" => work.title,
+            "title_en" => "",
             "title_kana" => work.title_kana,
             "media" => "tv",
             "media_text" => "TV",
