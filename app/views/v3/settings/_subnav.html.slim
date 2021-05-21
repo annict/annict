@@ -17,6 +17,6 @@
   = active_link_to settings_muted_user_list_path, class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "v3/settings/muted_users"
     .c-subnav__item
       = t "head.title.mutes.index"
-  = active_link_to options_path, class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "v3/settings/options"
+  = active_link_to settings_option_list_path, class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "v3/settings/options"
     .c-subnav__item
       = t "head.title.options.index"
