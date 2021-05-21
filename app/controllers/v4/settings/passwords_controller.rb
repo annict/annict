@@ -16,7 +16,7 @@ module Settings
       @user.save(validate: false)
       bypass_sign_in(@user)
 
-      redirect_to account_path, notice: t("messages.accounts.updated")
+      redirect_to settings_account_path, notice: t("messages.accounts.updated")
     end
 
     private

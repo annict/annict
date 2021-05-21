@@ -2,7 +2,7 @@
   = active_link_to settings_profile_path, class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "v3/settings/profiles" do
     .c-subnav__item
       = t "head.title.profiles.show"
-  = active_link_to account_path, class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "v3/settings/accounts"
+  = active_link_to settings_account_path, class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "v3/settings/accounts"
     .c-subnav__item
       = t "head.title.accounts.show"
   = active_link_to settings_apps_path, class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "v3/settings/apps"

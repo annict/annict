@@ -3,7 +3,7 @@ ul.nav.nav-pills.justify-content-center
     = active_link_to settings_profile_path, class: "nav-link", class_active: "active", active: params[:controller] == "v3/settings/profiles" do
       = t "head.title.profiles.show"
   li.nav-item
-    = active_link_to account_path, class: "nav-link", class_active: "active", active: params[:controller] == "v3/settings/accounts"
+    = active_link_to settings_account_path, class: "nav-link", class_active: "active", active: params[:controller] == "v3/settings/accounts"
       = t "head.title.accounts.show"
   li.nav-item
     = active_link_to settings_apps_path, class: "nav-link", class_active: "active", active: params[:controller] == "v3/settings/apps"

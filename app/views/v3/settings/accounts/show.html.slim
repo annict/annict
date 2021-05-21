@@ -1,12 +1,12 @@
 - title = t "head.title.accounts.show"
 - set_meta_tags(title: title, reverse: true, prefix: false)
 
-= render "settings/subnav"
+= render "v3/settings/subnav"
 
 h2.h4.text-center.my-4.fw-bold
   = t "noun.basic_info"
 .c-card.u-mw-600.mx-auto.p-3.mt-3.mb-4
-  = form_for @user, url: account_path, method: :patch do |f|
+  = form_for @user, url: settings_account_path, method: :patch do |f|
     - if params[:controller] == "accounts"
       = render "application/components/error_panel", resource: @user
 
@@ -37,7 +37,7 @@ h2.h4.text-center.my-4.fw-bold
   = t "noun.email"
 .c-card.u-mw-600.mx-auto.p-3.mt-3.mb-4
   = form_for @user_email_form, url: user_email_path do |f|
-    = render ErrorPanelComponent.new(form: @user_email_form)
+    = render V4::ErrorPanelComponent.new(form: @user_email_form)
 
     .form-group
       = f.label :email
@@ -50,7 +50,7 @@ h2.h4.text-center.my-4.fw-bold
   = t "noun.password"
 .c-card.u-mw-600.mx-auto.p-3.mt-3.mb-4
   = form_for @user, url: settings_password_path, method: :patch do |f|
-    - if params[:controller] == "settings/passwords"
+    - if params[:controller] == "v3/settings/passwords"
       = render "application/components/error_panel", resource: @user
 
     - if current_user.encrypted_password.present?
@@ -69,4 +69,4 @@ h2.h4.text-center.my-4.fw-bold
 h2.h4.text-center.my-4.fw-bold
   = t "noun.account_deletion"
 .c-card.u-mw-600.mx-auto.p-3.mt-3.mb-4
-  = render "sayonara/content"
+  = render "v3/sayonara/content"
