@@ -16,10 +16,6 @@ end
 resources :comments, only: %i[edit update destroy]
 resources :mute_users, only: [:destroy]
 
-scope :settings do
-
-  patch "options", to: "options#update"
-end
 namespace :settings do
   resource :password, only: %i[update]
 
@@ -128,6 +124,7 @@ match "/settings/account", via: :get, as: :settings_account, to: "v3/settings/ac
 match "/settings/account", via: :patch, to: "v3/settings/accounts#update"
 match "/settings/muted_users", via: :get, as: :settings_muted_user_list, to: "v3/settings/muted_users#index"
 match "/settings/options", via: :get, as: :settings_option_list, to: "v3/settings/options#index"
+match "/settings/options", via: :patch, to: "v3/settings/options#update"
 match "/settings/profile", via: :get, as: :settings_profile, to: "v3/settings/profiles#show"
 match "/settings/profile", via: :patch, to: "v3/settings/profiles#update"
 match "/settings/providers", via: :get, as: :settings_provider_list, to: "v3/settings/providers#index"
