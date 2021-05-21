@@ -14,7 +14,7 @@ module V3
         @friends = User.only_kept.where(id: not_following_friend_ids).sample(20)
       rescue Koala::Facebook::AuthenticationError
         message = "Facebookとのセッションが切れました。再連携をしてください。"
-        return redirect_to providers_path, alert: message
+        return redirect_to settings_provider_list_path, alert: message
       end
 
       user_ids = (User.pluck(:id) - (me_and_following_ids + @friends.map(&:id)))

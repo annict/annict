@@ -9,7 +9,7 @@ ul.nav.nav-pills.justify-content-center
     = active_link_to settings_apps_path, class: "nav-link", class_active: "active", active: params[:controller] == "v3/settings/apps"
       = t "head.title.settings.apps.index"
   li.nav-item
-    = active_link_to providers_path, class: "nav-link", class_active: "active", active: params[:controller] == "v3/settings/providers"
+    = active_link_to settings_provider_list_path, class: "nav-link", class_active: "active", active: params[:controller] == "v3/settings/providers"
       = t "head.title.providers.index"
   li.nav-item
     = active_link_to settings_email_notification_path, class: "nav-link", class_active: "active", active: params[:controller] == "v3/settings/email_notifications"

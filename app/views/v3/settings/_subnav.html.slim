@@ -8,7 +8,7 @@
   = active_link_to settings_apps_path, class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "v3/settings/apps"
     .c-subnav__item
       = t "head.title.settings.apps.index"
-  = active_link_to providers_path, class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "v3/settings/providers"
+  = active_link_to settings_provider_list_path, class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "v3/settings/providers"
     .c-subnav__item
       = t "head.title.providers.index"
   = active_link_to settings_email_notification_path, class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "v3/settings/email_notifications"

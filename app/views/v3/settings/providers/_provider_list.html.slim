@@ -6,12 +6,12 @@
     .px-3.text-end
       - if current_user.authorized_to?(:twitter)
         - if current_user.encrypted_password? || current_user.authorized_to?(:facebook)
-          = link_to t("noun.disconnect"), provider_path(current_user.twitter), class: "btn btn-sm btn-link w-100", data: { method: :delete, confirm: t("messages._common.are_you_sure") }
+          = link_to t("noun.disconnect"), settings_provider_path(current_user.twitter), class: "btn btn-sm btn-link w-100", data: { method: :delete, confirm: t("messages._common.are_you_sure") }
         - else
           span.cancel-disabled
             = t "messages.providers.you_can_not_disconnect"
       - else
-        = link_to user_twitter_omniauth_authorize_path(back: providers_path), class: "btn btn-sm u-btn-twitter w-100" do
+        = link_to user_twitter_omniauth_authorize_path(back: settings_provider_list_path), class: "btn btn-sm u-btn-twitter w-100" do
           = icon("twitter", "fab")
           = t "noun.connect"
 .row.align-items-center
@@ -22,11 +22,11 @@
     .px-3.text-end
       - if current_user.authorized_to?(:facebook)
         - if current_user.encrypted_password? || current_user.authorized_to?(:twitter)
-          = link_to t("noun.disconnect"), provider_path(current_user.facebook), class: "btn btn-sm btn-link w-100", data: { method: :delete, confirm: t("messages._common.are_you_sure") }
+          = link_to t("noun.disconnect"), settings_provider_path(current_user.facebook), class: "btn btn-sm btn-link w-100", data: { method: :delete, confirm: t("messages._common.are_you_sure") }
         - else
           span.cancel-disabled
             = t "messages.providers.you_can_not_disconnect"
       - else
-        = link_to user_facebook_omniauth_authorize_path(back: providers_path), class: "btn btn-sm u-btn-facebook w-100" do
+        = link_to user_facebook_omniauth_authorize_path(back: settings_provider_list_path), class: "btn btn-sm u-btn-facebook w-100" do
           = icon("facebook", "fab")
           = t "noun.connect"
