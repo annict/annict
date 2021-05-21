@@ -18,8 +18,6 @@ resources :mute_users, only: [:destroy]
 
 scope :settings do
   resource :account, only: %i[show update]
-  # TODO: /my/profile パスに変更する
-  resource :profile, only: %i[show update], as: :profile_setting
   resources :mutes, only: [:index]
   resources :options, only: [:index]
   resources :providers, only: %i[index destroy]
@@ -121,7 +119,6 @@ match "/fragment/trackable_episodes", via: :get, as: :fragment_trackable_episode
 match "/fragment/trackable_episodes/:episode_id", via: :get, as: :fragment_trackable_episode, to: "v6/fragment/trackable_episodes#show"
 match "/friends", via: :get, as: :friend_list, to: "v3/friends#index"
 match "/legal", via: :get, as: :legal, to: "v6/pages#legal"
-match "/my/profile", via: :get, as: :my_profile, to: "my/profiles#show"
 match "/notifications", via: :get, as: :notification_list, to: "v3/notifications#index"
 match "/organizations/:organization_id", via: :get, as: :organization, to: "v3/organizations#show"
 match "/organizations/:organization_id/fans", via: :get, as: :organization_fan_list, to: "v3/organization_fans#index"
@@ -131,6 +128,8 @@ match "/privacy", via: :get, as: :privacy, to: "v6/pages#privacy"
 match "/registrations/new", via: :get, as: :new_registration, to: "v6/registrations#new"
 match "/search", via: :get, as: :search, to: "v3/searches#show"
 match "/settings", via: :get, as: :setting_list, to: "v3/settings#index"
+match "/settings/profile", via: :get, as: :settings_profile, to: "v3/settings/profiles#show"
+match "/settings/profile", via: :patch, to: "v3/settings/profiles#update"
 match "/sign_in", via: :get, as: :new_user_session, to: "v6/sign_in#new" # for Devise
 match "/sign_in", via: :get, as: :sign_in, to: "v6/sign_in#new"
 match "/sign_in/callback", via: :get, as: :sign_in_callback, to: "v6/sign_in_callbacks#show"

@@ -6,7 +6,7 @@ module V3
 
     def index
       return render(:index) unless device_pc?
-      redirect_to profile_setting_path
+      redirect_to settings_profile_path
     end
   end
 end

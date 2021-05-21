@@ -171,7 +171,7 @@ module V6::Sidebars
               [
                 [view_context.friend_list_path, "search", t("head.title.friends.index")],
                 [view_context.channels_path, "tv-retro", t("head.title.channels.index")],
-                [view_context.profile_setting_path, "cog", t("noun.settings")],
+                [view_context.settings_profile_path, "cog", t("noun.settings")],
                 [view_context.faq_path, "question-circle", t("noun.faq")]
               ].each do |link_path, icon_name, link_text|
                 h.tag :li do
