@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Settings
-  class AppsController < ApplicationController
+module V3::Settings
+  class AppsController < V3::ApplicationController
     before_action :authenticate_user!
 
     def index
@@ -18,7 +18,7 @@ module Settings
       access_tokens.each(&:revoke)
 
       flash[:notice] = t("messages.settings.apps.disconnected")
-      redirect_back fallback_location: settings_apps_path
+      redirect_back fallback_location: settings_app_list_path
     end
   end
 end

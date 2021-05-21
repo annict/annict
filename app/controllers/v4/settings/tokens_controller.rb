@@ -14,7 +14,7 @@ module Settings
       if @token.save(context: :personal)
         flash[:notice] = t("messages.settings.tokens.created")
         flash[:created_token] = {id: @token.id, token: @token.token}
-        redirect_to settings_apps_path
+        redirect_to settings_app_list_path
       else
         render :new
       end
@@ -30,7 +30,7 @@ module Settings
 
       if @token.save
         flash[:notice] = t("messages.settings.tokens.updated")
-        redirect_to settings_apps_path
+        redirect_to settings_app_list_path
       else
         render :edit
       end
@@ -42,7 +42,7 @@ module Settings
       @token.destroy
 
       flash[:notice] = t("messages.settings.tokens.deleted")
-      redirect_to settings_apps_path
+      redirect_to settings_app_list_path
     end
 
     private
