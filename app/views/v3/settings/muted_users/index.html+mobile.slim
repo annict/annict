@@ -3,6 +3,6 @@
 
 .container.py-3
   .mb-3
-    = render "settings/subnav"
+    = render "v3/settings/subnav"
 
-  = render "mutes/user_list", users: @mute_users
+  = render "v3/settings/muted_users/user_list", users: @mute_users

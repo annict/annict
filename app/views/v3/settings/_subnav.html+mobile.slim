@@ -15,7 +15,7 @@ ul.nav.nav-pills.justify-content-center
     = active_link_to settings_email_notification_path, class: "nav-link", class_active: "active", active: params[:controller] == "v3/settings/email_notifications"
       = t "head.title.settings.email_notifications.show"
   li.nav-item
-    = active_link_to mutes_path, class: "nav-link", class_active: "active", active: params[:controller] == "v3/settings/mutes"
+    = active_link_to settings_muted_user_list_path, class: "nav-link", class_active: "active", active: params[:controller] == "v3/settings/muted_users"
       = t "head.title.mutes.index"
   li.nav-item
     = active_link_to options_path, class: "nav-link", class_active: "active", active: params[:controller] == "v3/settings/options"
