@@ -19,10 +19,6 @@ resources :mute_users, only: [:destroy]
 namespace :settings do
   resource :password, only: %i[update]
 
-  resources :apps, only: %i[] do
-    patch :revoke
-  end
-
   resource :email_notification, only: %i[show update] do
     get :unsubscribe, on: :collection
   end
@@ -123,6 +119,7 @@ match "/settings", via: :get, as: :setting_list, to: "v3/settings#index"
 match "/settings/account", via: :get, as: :settings_account, to: "v3/settings/accounts#show"
 match "/settings/account", via: :patch, to: "v3/settings/accounts#update"
 match "/settings/apps", via: :get, as: :settings_app_list, to: "v3/settings/apps#index"
+match "/settings/apps/:app_id/revoke", via: :patch, as: :settings_revoke_app, to: "v3/settings/apps#revoke"
 match "/settings/muted_users", via: :get, as: :settings_muted_user_list, to: "v3/settings/muted_users#index"
 match "/settings/options", via: :get, as: :settings_option_list, to: "v3/settings/options#index"
 match "/settings/options", via: :patch, to: "v3/settings/options#update"
