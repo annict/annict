@@ -35,7 +35,7 @@ module V6::Headers
 
           h.tag :div, class: "col text-end" do
             if current_user&.id == @user.id
-              h.tag :a, href: view_context.my_profile_path, class: "btn btn-secondary" do
+              h.tag :a, href: view_context.settings_profile_path, class: "btn btn-secondary" do
                 h.text t("noun.edit_profile")
               end
             else

@@ -2,93 +2,14 @@
 
 USERNAME_FORMAT = /[A-Za-z0-9_]+/
 
-get "dummy_image", to: "application#dummy_image" if Rails.env.test?
-
 devise_for :users,
-  controllers: {omniauth_callbacks: :callbacks},
+  controllers: {omniauth_callbacks: "v6/callbacks"},
   skip: %i[passwords registrations sessions]
 
 use_doorkeeper do
   controllers applications: "oauth/applications"
   skip_controllers :authorized_applications
 end
-
-resource :confirmation, only: [:show]
-resources :comments, only: %i[edit update destroy]
-resources :mute_users, only: [:destroy]
-resources :notifications, only: [:index]
-
-resources :settings, only: [:index]
-scope :settings do
-  resource :account, only: %i[show update]
-  # TODO: /my/profile パスに変更する
-  resource :profile, only: %i[show update], as: :profile_setting
-  resources :mutes, only: [:index]
-  resources :options, only: [:index]
-  resources :providers, only: %i[index destroy]
-
-  patch "options", to: "options#update"
-end
-namespace :settings do
-  resource :password, only: %i[update]
-
-  resources :apps, only: %i[index] do
-    patch :revoke
-  end
-
-  resource :email_notification, only: %i[show update] do
-    get :unsubscribe, on: :collection
-  end
-
-  resources :tokens, only: %i[new create edit update destroy]
-end
-
-resources :channels, only: [:index]
-
-resources :checkins, only: [] do
-  # 旧リダイレクト用URL
-  get "redirect/:provider/:url_hash",
-    on: :collection,
-    as: :redirect,
-    to: "episode_records#redirect",
-    provider: /fb|tw/,
-    url_hash: /[0-9a-zA-Z_-]{10}/
-end
-
-resources :episodes, only: [] do
-  resources :records, only: [], controller: :episode_records do
-    post :switch, on: :collection
-  end
-end
-
-resources :users, only: [] do
-  collection do
-    delete :destroy
-  end
-end
-
-scope "@:username", username: USERNAME_FORMAT do
-  get :ics, to: "ics#show", as: :user_ics
-
-  resources :tags, only: %i[show], controller: :user_work_tags, as: :user_work_tag
-  resources :reviews, only: %i[show]
-
-  resources :records, only: %i[] do
-    resources :comments, only: %i[create]
-  end
-end
-
-resources :works, only: %i[index] do
-  resources :episodes, only: [] do
-    resources :checkins, only: %i[show]
-  end
-end
-
-# 新リダイレクト用URL
-get "r/:provider/:url_hash",
-  to: "episode_records#redirect",
-  provider: /fb|tw/,
-  url_hash: /[0-9a-zA-Z_-]{10}/
 
 devise_scope :user do
   match "/legacy/sign_in", via: :get, as: :legacy_sign_in, to: "v6/legacy/sessions#new"
@@ -105,13 +26,16 @@ match "/@:username/favorite_organizations", via: :get, as: :favorite_organizatio
 match "/@:username/favorite_people", via: :get, as: :favorite_person_list, to: "v3/favorite_people#index", username: USERNAME_FORMAT
 match "/@:username/followers", via: :get, as: :followers_user, to: "v3/users#followers", username: USERNAME_FORMAT
 match "/@:username/following", via: :get, as: :following_user, to: "v3/users#following", username: USERNAME_FORMAT
+match "/@:username/ics", via: :get, as: :user_ics, to: "v3/ics#show", username: USERNAME_FORMAT
 match "/@:username/records", via: :get, as: :record_list, to: "v4/records#index", username: USERNAME_FORMAT
 match "/@:username/records/:record_id", via: :delete, to: "v4/records#destroy", username: USERNAME_FORMAT
 match "/@:username/records/:record_id", via: :get, to: "v4/records#show", username: USERNAME_FORMAT
 match "/@:username/records/:record_id", via: :patch, as: :record, to: "records#update", username: USERNAME_FORMAT
 match "/@:username/records/:record_id", via: :patch, to: "v4/records#update", username: USERNAME_FORMAT
+match "/channels", via: :get, as: :channel_list, to: "v6/channels#index"
 match "/characters/:character_id", via: :get, as: :character, to: "v3/characters#show"
 match "/characters/:character_id/fans", via: :get, as: :character_fan_list, to: "v3/character_fans#index"
+match "/dummy_image", via: :get, to: "application#dummy_image" if Rails.env.test?
 match "/episode_records", via: :patch, as: :episode_record_mutation, to: "v4/episode_records#update"
 match "/episodes/:episode_id/records", via: :post, as: :episode_record_list, to: "episode_records#create"
 match "/faq", via: :get, as: :faq, to: "v6/faqs#show"
@@ -124,7 +48,7 @@ match "/fragment/trackable_episodes", via: :get, as: :fragment_trackable_episode
 match "/fragment/trackable_episodes/:episode_id", via: :get, as: :fragment_trackable_episode, to: "v6/fragment/trackable_episodes#show"
 match "/friends", via: :get, as: :friend_list, to: "v3/friends#index"
 match "/legal", via: :get, as: :legal, to: "v6/pages#legal"
-match "/my/profile", via: :get, as: :my_profile, to: "my/profiles#show"
+match "/notifications", via: :get, as: :notification_list, to: "v3/notifications#index"
 match "/organizations/:organization_id", via: :get, as: :organization, to: "v3/organizations#show"
 match "/organizations/:organization_id/fans", via: :get, as: :organization_fan_list, to: "v3/organization_fans#index"
 match "/people/:person_id", via: :get, as: :person, to: "v3/people#show"
@@ -132,6 +56,29 @@ match "/people/:person_id/fans", via: :get, as: :person_fan_list, to: "v3/person
 match "/privacy", via: :get, as: :privacy, to: "v6/pages#privacy"
 match "/registrations/new", via: :get, as: :new_registration, to: "v6/registrations#new"
 match "/search", via: :get, as: :search, to: "v3/searches#show"
+match "/settings", via: :get, as: :setting_list, to: "v3/settings#index"
+match "/settings/account", via: :get, as: :settings_account, to: "v3/settings/accounts#show"
+match "/settings/account", via: :patch, to: "v3/settings/accounts#update"
+match "/settings/apps", via: :get, as: :settings_app_list, to: "v3/settings/apps#index"
+match "/settings/apps/:app_id/revoke", via: :patch, as: :settings_revoke_app, to: "v3/settings/apps#revoke"
+match "/settings/email_notification", via: :get, as: :settings_email_notification, to: "v3/settings/email_notifications#show"
+match "/settings/email_notification", via: :patch, to: "v3/settings/email_notifications#update"
+match "/settings/email_notification/unsubscribe", via: :get, as: :settings_unsubscribe_email_notification, to: "v3/settings/email_notifications#unsubscribe"
+match "/settings/muted_users", via: :get, as: :settings_muted_user_list, to: "v3/settings/muted_users#index"
+match "/settings/muted_users/:mute_user_id", via: :delete, as: :settings_muted_user, to: "v6/settings/muted_users#destroy"
+match "/settings/options", via: :get, as: :settings_option_list, to: "v3/settings/options#index"
+match "/settings/options", via: :patch, to: "v3/settings/options#update"
+match "/settings/password", via: :patch, as: :settings_password, to: "v3/settings/passwords#update"
+match "/settings/profile", via: :get, as: :settings_profile, to: "v3/settings/profiles#show"
+match "/settings/profile", via: :patch, to: "v3/settings/profiles#update"
+match "/settings/providers", via: :get, as: :settings_provider_list, to: "v3/settings/providers#index"
+match "/settings/providers/:provider_id", via: :delete, as: :settings_provider, to: "v3/settings/providers#destroy"
+match "/settings/tokens", via: :post, as: :settings_token_list, to: "v3/settings/tokens#create"
+match "/settings/tokens/:token_id", via: :delete, as: :settings_token, to: "v3/settings/tokens#destroy"
+match "/settings/tokens/:token_id", via: :patch, to: "v3/settings/tokens#update"
+match "/settings/tokens/:token_id/edit", via: :get, as: :settings_edit_token, to: "v3/settings/tokens#edit"
+match "/settings/tokens/new", via: :get, as: :settings_new_token, to: "v3/settings/tokens#new"
+match "/settings/user", via: :delete, as: :settings_user, to: "v3/settings/users#destroy"
 match "/sign_in", via: :get, as: :new_user_session, to: "v6/sign_in#new" # for Devise
 match "/sign_in", via: :get, as: :sign_in, to: "v6/sign_in#new"
 match "/sign_in/callback", via: :get, as: :sign_in_callback, to: "v6/sign_in_callbacks#show"

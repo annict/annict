@@ -1,0 +1,8 @@
+- title = t "head.title.mutes.index"
+- set_meta_tags(title: title, og: { title: title }, reverse: true, prefix: false)
+
+.container.py-3
+  .mb-3
+    = render "v3/settings/subnav"
+
+  = render "v3/settings/muted_users/user_list", users: @mute_users

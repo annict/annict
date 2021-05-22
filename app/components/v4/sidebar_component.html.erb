@@ -64,7 +64,7 @@
         </li>
 
         <li>
-          <%= link_to notifications_path, class: "d-flex justify-content-between py-2" do %>
+          <%= link_to notification_list_path, class: "d-flex justify-content-between py-2" do %>
             <div class="c-sidebar__icon me-1 text-center text-muted">
               <i class="fal fa-bell"></i>
             </div>
@@ -170,8 +170,8 @@
     <ul class="list-unstyled px-3">
       <% [
         [friend_list_path, "search", t("head.title.friends.index"), true],
-        [channels_path, "tv-retro", t("head.title.channels.index"), true],
-        [profile_setting_path, "cog", t("noun.settings"), true],
+        [channel_list_path, "tv-retro", t("head.title.channels.index"), true],
+        [settings_profile_path, "cog", t("noun.settings"), true],
         [faq_path, "question-circle", t("noun.faq"), false],
       ].each do |link_path, icon_name, link_text, sign_in_required| %>
         <% if user || !sign_in_required %>

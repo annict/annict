@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Buttons
-  class ReceiveChannelButtonComponent < ApplicationComponent
+module V6::Buttons
+  class ReceiveChannelButtonComponent < V6::ApplicationComponent
     def initialize(view_context, channel:, class_name: "")
       super view_context
       @channel = channel

@@ -79,7 +79,7 @@ module V6::Sidebars
               end
 
               h.tag :li do
-                h.tag :a, href: view_context.notifications_path, class: "d-flex justify-content-between py-2" do
+                h.tag :a, href: view_context.notification_list_path, class: "d-flex justify-content-between py-2" do
                   h.tag :div, class: "c-main-sidebar__icon me-1 text-center text-muted" do
                     h.tag :i, class: "far fa-bell"
                   end
@@ -170,8 +170,8 @@ module V6::Sidebars
             h.tag :ul, class: "list-unstyled px-3" do
               [
                 [view_context.friend_list_path, "search", t("head.title.friends.index")],
-                [view_context.channels_path, "tv-retro", t("head.title.channels.index")],
-                [view_context.profile_setting_path, "cog", t("noun.settings")],
+                [view_context.channel_list_path, "tv-retro", t("head.title.channels.index")],
+                [view_context.settings_profile_path, "cog", t("noun.settings")],
                 [view_context.faq_path, "question-circle", t("noun.faq")]
               ].each do |link_path, icon_name, link_text|
                 h.tag :li do

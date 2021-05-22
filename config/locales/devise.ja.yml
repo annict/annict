@@ -8,8 +8,6 @@ ja:
         unauthenticated: ログインしてください
         unconfirmed: メールアドレスの確認が完了していないため、ログインできませんでした
     mailer:
-      confirmation_instructions:
-        subject: メールアドレスの確認 - Annict
       reset_password_instructions:
         subject: パスワード再設定 - Annict
     omniauth_callbacks:

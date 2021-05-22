@@ -7,10 +7,6 @@ module V3
     before_action :authenticate_user!, only: %i[switch]
     before_action :set_display_option, only: %i[popular newest season]
 
-    def index
-      redirect_to seasonal_anime_list_path(ENV["ANNICT_CURRENT_SEASON"])
-    end
-
     def popular
       set_page_category PageCategory::WORK_LIST_POPULAR
 
