@@ -13,14 +13,7 @@ use_doorkeeper do
   skip_controllers :authorized_applications
 end
 
-resources :comments, only: %i[edit update destroy]
 resources :mute_users, only: [:destroy]
-
-scope "@:username", username: USERNAME_FORMAT do
-  resources :records, only: %i[] do
-    resources :comments, only: %i[create]
-  end
-end
 
 resources :works, only: %i[index]
 
