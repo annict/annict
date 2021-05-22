@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Settings
-  class PasswordsController < ApplicationController
+module V3::Settings
+  class PasswordsController < V3::ApplicationController
     before_action :authenticate_user!
 
     def update
@@ -22,9 +22,9 @@ module Settings
     private
 
     def render_account_page
-      @user_email_form = UserEmailForm.new(email: current_user.email)
+      @user_email_form = Forms::UserEmailForm.new(email: current_user.email)
 
-      render "/accounts/show"
+      render "/v3/settings/accounts/show"
     end
 
     def user_params
