@@ -18,16 +18,6 @@ resources :mute_users, only: [:destroy]
 
 resources :channels, only: [:index]
 
-resources :checkins, only: [] do
-  # 旧リダイレクト用URL
-  get "redirect/:provider/:url_hash",
-    on: :collection,
-    as: :redirect,
-    to: "episode_records#redirect",
-    provider: /fb|tw/,
-    url_hash: /[0-9a-zA-Z_-]{10}/
-end
-
 resources :episodes, only: [] do
   resources :records, only: [], controller: :episode_records do
     post :switch, on: :collection
