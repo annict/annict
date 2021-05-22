@@ -16,8 +16,6 @@ end
 resources :comments, only: %i[edit update destroy]
 resources :mute_users, only: [:destroy]
 
-resources :channels, only: [:index]
-
 resources :episodes, only: [] do
   resources :records, only: [], controller: :episode_records do
     post :switch, on: :collection
@@ -73,6 +71,7 @@ match "/@:username/records/:record_id", via: :delete, to: "v4/records#destroy", 
 match "/@:username/records/:record_id", via: :get, to: "v4/records#show", username: USERNAME_FORMAT
 match "/@:username/records/:record_id", via: :patch, as: :record, to: "records#update", username: USERNAME_FORMAT
 match "/@:username/records/:record_id", via: :patch, to: "v4/records#update", username: USERNAME_FORMAT
+match "/channels", via: :get, as: :channel_list, to: "v6/channels#index"
 match "/characters/:character_id", via: :get, as: :character, to: "v3/characters#show"
 match "/characters/:character_id/fans", via: :get, as: :character_fan_list, to: "v3/character_fans#index"
 match "/episode_records", via: :patch, as: :episode_record_mutation, to: "v4/episode_records#update"
