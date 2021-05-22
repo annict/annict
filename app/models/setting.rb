@@ -34,7 +34,7 @@ class Setting < ApplicationRecord
   extend Enumerize
 
   self.ignored_columns = %w[
-    share_record_to_facebook share_review_to_facebook share_review_to_twitter timeline_mode
+    display_option_record_list share_record_to_facebook share_review_to_facebook share_review_to_twitter timeline_mode
   ]
 
   belongs_to :user
