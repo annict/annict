@@ -18,24 +18,13 @@ resources :mute_users, only: [:destroy]
 
 scope "@:username", username: USERNAME_FORMAT do
   resources :tags, only: %i[show], controller: :user_work_tags, as: :user_work_tag
-  resources :reviews, only: %i[show]
 
   resources :records, only: %i[] do
     resources :comments, only: %i[create]
   end
 end
 
-resources :works, only: %i[index] do
-  resources :episodes, only: [] do
-    resources :checkins, only: %i[show]
-  end
-end
-
-# 新リダイレクト用URL
-get "r/:provider/:url_hash",
-  to: "episode_records#redirect",
-  provider: /fb|tw/,
-  url_hash: /[0-9a-zA-Z_-]{10}/
+resources :works, only: %i[index]
 
 devise_scope :user do
   match "/legacy/sign_in", via: :get, as: :legacy_sign_in, to: "v6/legacy/sessions#new"
