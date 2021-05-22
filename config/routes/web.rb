@@ -13,8 +13,6 @@ use_doorkeeper do
   skip_controllers :authorized_applications
 end
 
-resources :works, only: %i[index]
-
 devise_scope :user do
   match "/legacy/sign_in", via: :get, as: :legacy_sign_in, to: "v6/legacy/sessions#new"
   match "/legacy/sign_in", via: :post, as: :user_session, to: "v6/legacy/sessions#create"

@@ -78,6 +78,7 @@ module Annict
       r301 %r{\A/episodes/[0-9]+/items}, "/"
       r301 %r{\A/faqs}, "/faq"
       r301 %r{\A/menu}, "/"
+      r301 %r{\A/works\z}, "/works/#{ENV.fetch("ANNICT_CURRENT_SEASON")}"
       r301 %r{\A/works/[0-9]+/items}, "/"
 
       maintenance_file = File.join(Rails.root, "public", "maintenance.html")
