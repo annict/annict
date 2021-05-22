@@ -16,12 +16,6 @@ end
 resources :comments, only: %i[edit update destroy]
 resources :mute_users, only: [:destroy]
 
-resources :episodes, only: [] do
-  resources :records, only: [], controller: :episode_records do
-    post :switch, on: :collection
-  end
-end
-
 resources :users, only: [] do
   collection do
     delete :destroy
