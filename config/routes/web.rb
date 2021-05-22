@@ -16,12 +16,6 @@ end
 resources :comments, only: %i[edit update destroy]
 resources :mute_users, only: [:destroy]
 
-resources :users, only: [] do
-  collection do
-    delete :destroy
-  end
-end
-
 scope "@:username", username: USERNAME_FORMAT do
   get :ics, to: "ics#show", as: :user_ics
 
@@ -109,6 +103,7 @@ match "/settings/tokens/:token_id", via: :delete, as: :settings_token, to: "v3/s
 match "/settings/tokens/:token_id", via: :patch, to: "v3/settings/tokens#update"
 match "/settings/tokens/:token_id/edit", via: :get, as: :settings_edit_token, to: "v3/settings/tokens#edit"
 match "/settings/tokens/new", via: :get, as: :settings_new_token, to: "v3/settings/tokens#new"
+match "/settings/user", via: :delete, as: :settings_user, to: "v3/settings/users#destroy"
 match "/sign_in", via: :get, as: :new_user_session, to: "v6/sign_in#new" # for Devise
 match "/sign_in", via: :get, as: :sign_in, to: "v6/sign_in#new"
 match "/sign_in/callback", via: :get, as: :sign_in_callback, to: "v6/sign_in_callbacks#show"
