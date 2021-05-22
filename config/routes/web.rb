@@ -13,8 +13,6 @@ use_doorkeeper do
   skip_controllers :authorized_applications
 end
 
-resources :mute_users, only: [:destroy]
-
 resources :works, only: %i[index]
 
 devise_scope :user do
@@ -70,6 +68,7 @@ match "/settings/email_notification", via: :get, as: :settings_email_notificatio
 match "/settings/email_notification", via: :patch, to: "v3/settings/email_notifications#update"
 match "/settings/email_notification/unsubscribe", via: :get, as: :settings_unsubscribe_email_notification, to: "v3/settings/email_notifications#unsubscribe"
 match "/settings/muted_users", via: :get, as: :settings_muted_user_list, to: "v3/settings/muted_users#index"
+match "/settings/muted_users/:mute_user_id", via: :delete, as: :settings_muted_user, to: "v6/settings/muted_users#destroy"
 match "/settings/options", via: :get, as: :settings_option_list, to: "v3/settings/options#index"
 match "/settings/options", via: :patch, to: "v3/settings/options#update"
 match "/settings/password", via: :patch, as: :settings_password, to: "v3/settings/passwords#update"

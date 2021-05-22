@@ -8,6 +8,6 @@
         .col
           = link_to mute_user.muted_user.profile.name, profile_path(mute_user.muted_user.username), class: "profile-name"
         .col-auto
-          = link_to t("verb.unmute"), mute_user_path(mute_user), class: "btn btn-primary btn-sm", data: { method: :delete, confirm: t("messages._common.are_you_sure") }
+          = link_to t("verb.unmute"), settings_muted_user_path(mute_user), class: "btn btn-primary btn-sm", data: { method: :delete, confirm: t("messages._common.are_you_sure") }
 - else
   = render "application/components/empty", text: t("messages.mutes.no_muted_users_found")
