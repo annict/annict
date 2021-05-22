@@ -13,7 +13,7 @@
             .small.text-muted
               = token.local_scopes
         .col-auto
-          = link_to t("verb.edit"), edit_settings_token_path(token), class: "btn btn-sm btn-link"
+          = link_to t("verb.edit"), settings_edit_token_path(token), class: "btn btn-sm btn-link"
         .col-auto
           = link_to t("verb.delete"), settings_token_path(token), class: "btn btn-sm btn-link", data: { method: :delete, confirm: t("messages._common.are_you_sure") }
 - else

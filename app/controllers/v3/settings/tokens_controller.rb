@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Settings
-  class TokensController < ApplicationController
+module V3::Settings
+  class TokensController < V3::ApplicationController
     before_action :authenticate_user!
 
     def new
@@ -21,11 +21,11 @@ module Settings
     end
 
     def edit
-      @token = current_user.oauth_access_tokens.available.personal.find(params[:id])
+      @token = current_user.oauth_access_tokens.available.personal.find(params[:token_id])
     end
 
     def update
-      @token = current_user.oauth_access_tokens.available.personal.find(params[:id])
+      @token = current_user.oauth_access_tokens.available.personal.find(params[:token_id])
       @token.attributes = access_token_params
 
       if @token.save
@@ -37,7 +37,7 @@ module Settings
     end
 
     def destroy
-      @token = current_user.oauth_access_tokens.available.personal.find(params[:id])
+      @token = current_user.oauth_access_tokens.available.personal.find(params[:token_id])
 
       @token.destroy
 

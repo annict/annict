@@ -1,4 +1,4 @@
-- url = token.new_record? ? settings_tokens_path : settings_token_path(token)
+- url = token.new_record? ? settings_token_list_path : settings_token_path(token)
 = form_for token, url: url do |f|
   = render "application/components/error_panel", resource: token
 

@@ -22,8 +22,6 @@ namespace :settings do
   resource :email_notification, only: %i[show update] do
     get :unsubscribe, on: :collection
   end
-
-  resources :tokens, only: %i[new create edit update destroy]
 end
 
 resources :channels, only: [:index]
@@ -127,6 +125,11 @@ match "/settings/profile", via: :get, as: :settings_profile, to: "v3/settings/pr
 match "/settings/profile", via: :patch, to: "v3/settings/profiles#update"
 match "/settings/providers", via: :get, as: :settings_provider_list, to: "v3/settings/providers#index"
 match "/settings/providers/:provider_id", via: :delete, as: :settings_provider, to: "v3/settings/providers#destroy"
+match "/settings/tokens", via: :post, as: :settings_token_list, to: "v3/settings/tokens#create"
+match "/settings/tokens/:token_id", via: :delete, as: :settings_token, to: "v3/settings/tokens#destroy"
+match "/settings/tokens/:token_id", via: :patch, to: "v3/settings/tokens#update"
+match "/settings/tokens/:token_id/edit", via: :get, as: :settings_edit_token, to: "v3/settings/tokens#edit"
+match "/settings/tokens/new", via: :get, as: :settings_new_token, to: "v3/settings/tokens#new"
 match "/sign_in", via: :get, as: :new_user_session, to: "v6/sign_in#new" # for Devise
 match "/sign_in", via: :get, as: :sign_in, to: "v6/sign_in#new"
 match "/sign_in/callback", via: :get, as: :sign_in_callback, to: "v6/sign_in_callbacks#show"
