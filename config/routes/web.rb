@@ -17,8 +17,6 @@ resources :comments, only: %i[edit update destroy]
 resources :mute_users, only: [:destroy]
 
 scope "@:username", username: USERNAME_FORMAT do
-  get :ics, to: "ics#show", as: :user_ics
-
   resources :tags, only: %i[show], controller: :user_work_tags, as: :user_work_tag
   resources :reviews, only: %i[show]
 
@@ -54,6 +52,7 @@ match "/@:username/favorite_organizations", via: :get, as: :favorite_organizatio
 match "/@:username/favorite_people", via: :get, as: :favorite_person_list, to: "v3/favorite_people#index", username: USERNAME_FORMAT
 match "/@:username/followers", via: :get, as: :followers_user, to: "v3/users#followers", username: USERNAME_FORMAT
 match "/@:username/following", via: :get, as: :following_user, to: "v3/users#following", username: USERNAME_FORMAT
+match "/@:username/ics", via: :get, as: :user_ics, to: "v3/ics#show", username: USERNAME_FORMAT
 match "/@:username/records", via: :get, as: :record_list, to: "v4/records#index", username: USERNAME_FORMAT
 match "/@:username/records/:record_id", via: :delete, to: "v4/records#destroy", username: USERNAME_FORMAT
 match "/@:username/records/:record_id", via: :get, to: "v4/records#show", username: USERNAME_FORMAT

@@ -26,9 +26,9 @@ BEGIN:VEVENT
 DTSTART;VALUE=DATE:<%= w.started_on.strftime("%Y%m%d") %>
 DTEND;VALUE=DATE:<%= (w.started_on + 1.day).strftime("%Y%m%d") %>
 DTSTAMP:<%= Time.now.utc.strftime("%Y%m%d\T%H%M%S\Z") %>
-UID:<%= work_url(w) %>
+UID:<%= anime_url(w) %>
 CREATED:<%= w.created_at.strftime("%Y%m%d\T%H%M%S\Z") %>
-DESCRIPTION:<%= w.local_title %> <%= work_url(w) %>
+DESCRIPTION:<%= w.local_title %> <%= anime_url(w) %>
 LAST-MODIFIED:<%= w.updated_at.strftime("%Y%m%d\T%H%M%S\Z") %>
 SEQUENCE:0
 SUMMARY:<%= w.local_title %>
