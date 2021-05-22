@@ -8,7 +8,7 @@ describe "GET /settings", type: :request do
   end
 
   it "ページが表示されること" do
-    get "/settings", headers: { "User-Agent" => "Android" }
+    get "/settings", headers: {"User-Agent" => "Android"}
 
     expect(response.status).to eq(200)
     expect(response.body).to include("サービス連携")

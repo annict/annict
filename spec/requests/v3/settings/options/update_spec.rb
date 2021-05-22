@@ -10,7 +10,7 @@ describe "PATCH /settings/options", type: :request do
   it "オプションが更新できること" do
     expect(user.hide_record_body?).to eq(true)
 
-    patch "/settings/options", params: { setting: {hide_record_body: false} }
+    patch "/settings/options", params: {setting: {hide_record_body: false}}
 
     expect(response.status).to eq(302)
     expect(flash[:notice]).to eq("更新しました")
