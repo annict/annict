@@ -17,8 +17,6 @@ resources :comments, only: %i[edit update destroy]
 resources :mute_users, only: [:destroy]
 
 scope "@:username", username: USERNAME_FORMAT do
-  resources :tags, only: %i[show], controller: :user_work_tags, as: :user_work_tag
-
   resources :records, only: %i[] do
     resources :comments, only: %i[create]
   end
