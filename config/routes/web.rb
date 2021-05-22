@@ -2,8 +2,6 @@
 
 USERNAME_FORMAT = /[A-Za-z0-9_]+/
 
-get "dummy_image", to: "application#dummy_image" if Rails.env.test?
-
 devise_for :users,
   controllers: {omniauth_callbacks: "v6/callbacks"},
   skip: %i[passwords registrations sessions]
@@ -37,6 +35,7 @@ match "/@:username/records/:record_id", via: :patch, to: "v4/records#update", us
 match "/channels", via: :get, as: :channel_list, to: "v6/channels#index"
 match "/characters/:character_id", via: :get, as: :character, to: "v3/characters#show"
 match "/characters/:character_id/fans", via: :get, as: :character_fan_list, to: "v3/character_fans#index"
+match "/dummy_image", via: :get, to: "application#dummy_image" if Rails.env.test?
 match "/episode_records", via: :patch, as: :episode_record_mutation, to: "v4/episode_records#update"
 match "/episodes/:episode_id/records", via: :post, as: :episode_record_list, to: "episode_records#create"
 match "/faq", via: :get, as: :faq, to: "v6/faqs#show"
