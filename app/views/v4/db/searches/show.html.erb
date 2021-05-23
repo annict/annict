@@ -15,7 +15,7 @@
       </h2>
 
       <% if resources.present? %>
-        <%= render "db/#{resource_name.to_s.pluralize}/#{resource_name}_list", resources: resources %>
+        <%= render "v4/db/#{resource_name.to_s.pluralize}/#{resource_name}_list", resources: resources %>
       <% else %>
         <%= render "application/components/empty", text: t("messages._empty.no_resources") %>
       <% end %>
