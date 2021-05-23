@@ -11,3 +11,11 @@
     cursor: pointer;
   }
 }
+
+.btn-primary {
+  color: $color-contrast-light;
+
+  &:hover {
+    color: $color-contrast-light;
+  }
+}
