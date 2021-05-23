@@ -1,6 +1,6 @@
 <%= content_for :head_assets do %>
-  <%= stylesheet_bundle_tag "db.css", media: "all", "data-turbo-track": "reload" %>
-  <%= javascript_bundle_tag "db.js", defer: "", "data-turbo-track": "reload" %>
+  <%= stylesheet_bundle_tag "v4.css", media: "all", "data-turbo-track": "reload" %>
+  <%= javascript_bundle_tag "v4.js", defer: "", "data-turbo-track": "reload" %>
 <% end %>
 
 <!DOCTYPE html>
@@ -9,11 +9,11 @@
     <%= render "application/head" %>
   </head>
   <body>
-    <div class="f-app">
-      <div class="f-app__sidebar">
+    <div class="l-db-default">
+      <div class="l-db-default__sidebar">
         <%= render Db::SidebarComponent.new(search: @search) %>
       </div>
-      <div class="f-app__main d-flex flex-column">
+      <div class="l-db-default__main d-flex flex-column">
         <div class="f-application__main__content">
           <%= render V4::FlashComponent.new(flash) %>
           <%= yield %>
