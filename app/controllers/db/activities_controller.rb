@@ -7,6 +7,7 @@ module Db
         .preload(:trackable, :root_resource, user: :profile)
         .order(id: :desc)
         .page(params[:page])
+        .without_count
     end
   end
 end

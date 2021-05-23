@@ -21,6 +21,6 @@
   </div>
 
   <div class="text-center">
-    <%= paginate @activities %>
+    <%= V6::ButtonGroups::PaginationButtonGroupComponent.new(self, collection: @activities).render %>
   </div>
 </div>
