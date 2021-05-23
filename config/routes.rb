@@ -2,7 +2,6 @@
 
 Rails.application.routes.draw do
   draw :api
-  draw :chat
   draw :db
   draw :forum
   draw :internal_api
