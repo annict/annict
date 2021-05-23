@@ -22,6 +22,6 @@
   </div>
 
   <div class="text-center">
-    <%= paginate @series_list %>
+    <%= V6::ButtonGroups::PaginationButtonGroupComponent.new(self, collection: @series_list).render %>
   </div>
 </div>
