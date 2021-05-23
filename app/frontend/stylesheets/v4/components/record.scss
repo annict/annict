@@ -6,3 +6,12 @@
     }
   }
 }
+
+@include media-breakpoint-up(lg) {
+  .c-record {
+    &__avatar {
+      flex-basis: 50px;
+      flex-grow: 0;
+    }
+  }
+}

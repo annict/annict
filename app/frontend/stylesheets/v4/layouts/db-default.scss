@@ -1,4 +1,4 @@
-.f-app {
+.l-db-default {
   &__sidebar {
     background-color: $ann-color-white;
     height: 100%;
@@ -22,7 +22,7 @@
 }
 
 @include media-breakpoint-down(sm) {
-  .f-app {
+  .l-db-default {
     &__sidebar {
       display: none;
     }
