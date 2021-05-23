@@ -11,7 +11,7 @@ module Db
     attr_reader :resource
 
     def label_class
-      resource.published? ? "badge badge-success" : "badge badge-warning"
+      resource.published? ? "badge bg-success" : "badge bg-warning"
     end
 
     def label_text
