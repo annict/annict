@@ -19,7 +19,7 @@
 
   <div class="mb-3 row">
     <div class="col-6">
-      <%= form_with model: @form, url: db_episode_list_path(@work), local: true do |f| %>
+      <%= form_with model: @form, url: db_episode_list_path(@work) do |f| %>
         <%= render "application/components/error_panel", resource: f.object %>
 
         <% unless @work.manual_episodes_creatable? %>

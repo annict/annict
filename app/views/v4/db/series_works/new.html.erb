@@ -17,7 +17,7 @@
 
   <div class="mb-3 row">
     <div class="col-6">
-      <%= form_with model: @form, url: db_series_work_list_path(@series), local: true do |f| %>
+      <%= form_with model: @form, url: db_series_work_list_path(@series) do |f| %>
         <%= render "application/components/error_panel", resource: f.object %>
 
         <div class="mb-3">

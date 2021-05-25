@@ -10,7 +10,7 @@
 
   <div class="mb-3 row">
     <div class="col-6">
-      <%= form_with model: @form, url: db_organization_list_path, local: true do |f| %>
+      <%= form_with model: @form, url: db_organization_list_path do |f| %>
         <%= render "application/components/error_panel", resource: f.object %>
 
         <div class="mb-3">

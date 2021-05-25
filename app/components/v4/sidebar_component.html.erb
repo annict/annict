@@ -32,7 +32,7 @@
     <% end %>
 
     <div class="mb-3 px-1">
-      <%= form_with html: { autocomplete: "off", method: :get }, local: true, url: search_path do %>
+      <%= form_with html: { autocomplete: "off", method: :get }, url: search_path do %>
         <%= text_field_tag "q", search.q, class: "form-control", placeholder: t("messages._common.search_with_keywords") %>
       <% end %>
     </div>

@@ -19,7 +19,7 @@
 
   <div class="card mb-3">
     <div class="card-body">
-      <%= form_with url: db_work_list_path, method: :get, local: true do %>
+      <%= form_with url: db_work_list_path, method: :get do %>
         <div class="row mb-3">
           <div class="col-4">
             <%= label_tag :season_slugs, t("noun.release_season") %>

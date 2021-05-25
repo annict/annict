@@ -28,7 +28,6 @@
           model: @form,
           url: internal_api_sign_in_path,
           html: { class: "mb-5" },
-          local: true,
           data: {
             controller: "forms--basic-form",
             action: "turbo:submit-start->forms--basic-form#handleSubmitStart turbo:submit-end->forms--basic-form#handleSubmitEnd",

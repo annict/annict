@@ -13,7 +13,6 @@ module V6::Forms
         model: @form,
         url: form_url,
         method: form_method,
-        local: true,
         data: {
           controller: "episode-record-form",
           action: "turbo:submit-start->episode-record-form#handleSubmitStart turbo:submit-end->episode-record-form#handleSubmitEnd",

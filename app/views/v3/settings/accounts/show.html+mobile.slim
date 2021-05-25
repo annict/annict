@@ -54,7 +54,7 @@
     = t "noun.password"
 
   .mb-5
-    = form_for @user, url: settings_password_path, method: :patch, local: true, data: { turbo: false } do |f|
+    = form_for @user, url: settings_password_path, method: :patch, data: { turbo: false } do |f|
       - if params[:controller] == "v3/settings/passwords"
         = render "application/components/error_panel", resource: @user
 

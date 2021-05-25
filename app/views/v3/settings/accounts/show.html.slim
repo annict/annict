@@ -49,7 +49,7 @@ h2.h4.text-center.my-4.fw-bold
 h2.h4.text-center.my-4.fw-bold
   = t "noun.password"
 .c-card.u-mw-600.mx-auto.p-3.mt-3.mb-4
-  = form_for @user, url: settings_password_path, method: :patch, local: true, data: { turbo: false } do |f|
+  = form_for @user, url: settings_password_path, method: :patch, data: { turbo: false } do |f|
     - if params[:controller] == "v3/settings/passwords"
       = render "application/components/error_panel", resource: @user
 

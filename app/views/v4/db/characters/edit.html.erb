@@ -17,7 +17,7 @@
 
   <div class="mb-3 row">
     <div class="col-6">
-      <%= form_with model: @character, url: db_character_detail_path(@character), method: :patch, local: true do |f| %>
+      <%= form_with model: @character, url: db_character_detail_path(@character), method: :patch do |f| %>
         <%= render "application/components/error_panel", resource: f.object %>
 
         <div class="mb-3">

@@ -1,4 +1,4 @@
-<%= form_with model: @form, url: anime_record_list_path(anime_id: params[:anime_id]), method: form_method, local: true do |f| %>
+<%= form_with model: @form, url: anime_record_list_path(anime_id: params[:anime_id]), method: form_method do |f| %>
   <%= render ErrorPanelComponent.new(form: f.object) %>
 
   <% if @form.persisted? %>
