@@ -22,6 +22,6 @@
   </div>
 
   <div class="text-center">
-    <%= paginate @characters %>
+    <%= V6::ButtonGroups::PaginationButtonGroupComponent.new(self, collection: @characters).render %>
   </div>
 </div>

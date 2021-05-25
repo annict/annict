@@ -5,7 +5,12 @@ module V4::Db
     before_action :authenticate_user!, only: %i[new create edit update destroy]
 
     def index
-      @people = Person.without_deleted.order(id: :desc).page(params[:page]).per(100)
+      @people = Person
+        .without_deleted
+        .order(id: :desc)
+        .page(params[:page])
+        .per(100)
+        .without_count
     end
 
     def new
