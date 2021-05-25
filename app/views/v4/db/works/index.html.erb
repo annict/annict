@@ -20,18 +20,18 @@
   <div class="card mb-3">
     <div class="card-body">
       <%= form_with url: db_work_list_path, method: :get, local: true do %>
-        <div class="form-row mb-3">
-          <div class="col-md-4">
+        <div class="row mb-3">
+          <div class="col-4">
             <%= label_tag :season_slugs, t("noun.release_season") %>
             <%= select_tag(
               :season_slugs,
               options_for_select(Season.list(sort: :desc).map { |s| [s.local_name, s.slug] }, @season_slugs),
               multiple: true,
-              class: "custom-select",
+              class: "form-select",
               style: "height: 150px;"
             ) %>
           </div>
-          <div class="col-md-8">
+          <div class="col-8">
             <div class="row">
               <div class="col-md-6">
                 <div class="form-check">
@@ -73,6 +73,6 @@
   </div>
 
   <div class="text-center">
-    <%= paginate @works %>
+    <%= V6::ButtonGroups::PaginationButtonGroupComponent.new(self, collection: @works).render %>
   </div>
 </div>

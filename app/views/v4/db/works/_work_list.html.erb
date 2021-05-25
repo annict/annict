@@ -34,7 +34,7 @@
           <%= link_to work.id, anime_path(anime_id: work.id), target: "_blank" %>
         </td>
         <td>
-          <%= V6::Badges::AnimeMediaBadgeComponent.new(self, anime: work) %>
+          <%= V6::Badges::AnimeMediaBadgeComponent.new(self, anime: work).render %>
           <br>
           <%= work.title %>
           <br>
