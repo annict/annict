@@ -30,7 +30,7 @@ module V4::Db
       @work.user = current_user
       authorize @work
 
-      return render(:new) unless @work.valid?
+      return render(:new, status: :unprocessable_entity) unless @work.valid?
 
       @work.save_and_create_activity!
 
@@ -49,7 +49,7 @@ module V4::Db
       @work.attributes = work_params
       @work.user = current_user
 
-      return render(:edit) unless @work.valid?
+      return render(:edit, status: :unprocessable_entity) unless @work.valid?
 
       @work.save_and_create_activity!
 

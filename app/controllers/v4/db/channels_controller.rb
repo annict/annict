@@ -21,7 +21,7 @@ module V4::Db
       @channel = Channel.new(channel_params)
       authorize @channel
 
-      return render(:new) unless @channel.valid?
+      return render(:new, status: :unprocessable_entity) unless @channel.valid?
 
       @channel.save
 
@@ -39,7 +39,7 @@ module V4::Db
 
       @channel.attributes = channel_params
 
-      return render(:edit) unless @channel.valid?
+      return render(:edit, status: :unprocessable_entity) unless @channel.valid?
 
       @channel.save
 

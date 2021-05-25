@@ -19,7 +19,7 @@ module V4::Db
       @channel_group = ChannelGroup.new(channel_group_params)
       authorize @channel_group
 
-      return render(:new) unless @channel_group.valid?
+      return render(:new, status: :unprocessable_entity) unless @channel_group.valid?
 
       @channel_group.save
 
@@ -37,7 +37,7 @@ module V4::Db
 
       @channel_group.attributes = channel_group_params
 
-      return render(:edit) unless @channel_group.valid?
+      return render(:edit, status: :unprocessable_entity) unless @channel_group.valid?
 
       @channel_group.save
 

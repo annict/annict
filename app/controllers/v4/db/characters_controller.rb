@@ -24,7 +24,7 @@ module V4::Db
       @form.user = current_user
       authorize @form
 
-      return render(:new) unless @form.valid?
+      return render(:new, status: :unprocessable_entity) unless @form.valid?
 
       @form.save!
 
@@ -43,7 +43,7 @@ module V4::Db
       @character.attributes = character_params
       @character.user = current_user
 
-      return render(:edit) unless @character.valid?
+      return render(:edit, status: :unprocessable_entity) unless @character.valid?
 
       @character.save_and_create_activity!
 

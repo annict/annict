@@ -26,7 +26,7 @@ module V4::Db
       @form.work = @work
       authorize @form
 
-      return render(:new) unless @form.valid?
+      return render(:new, status: :unprocessable_entity) unless @form.valid?
 
       @form.save!
 
@@ -47,7 +47,7 @@ module V4::Db
       @staff.attributes = staff_params
       @staff.user = current_user
 
-      return render(:edit) unless @staff.valid?
+      return render(:edit, status: :unprocessable_entity) unless @staff.valid?
 
       @staff.save_and_create_activity!
 

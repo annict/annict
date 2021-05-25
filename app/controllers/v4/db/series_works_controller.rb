@@ -22,7 +22,7 @@ module V4::Db
       @form.series = @series
       authorize @form, :create?
 
-      return render(:new) unless @form.valid?
+      return render(:new, status: :unprocessable_entity) unless @form.valid?
 
       @form.save!
 
@@ -46,7 +46,7 @@ module V4::Db
       @series_work.attributes = series_work_params
       @series_work.user = current_user
 
-      return render(:edit) unless @series_work.valid?
+      return render(:edit, status: :unprocessable_entity) unless @series_work.valid?
 
       @series_work.save_and_create_activity!
 

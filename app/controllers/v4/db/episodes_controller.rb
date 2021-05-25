@@ -27,7 +27,7 @@ module V4::Db
       @form.work = @work
       authorize @form
 
-      return render(:new) unless @form.valid?
+      return render(:new, status: :unprocessable_entity) unless @form.valid?
 
       @form.save!
 
@@ -48,7 +48,7 @@ module V4::Db
       @episode.attributes = episode_params
       @episode.user = current_user
 
-      return render(:edit) unless @episode.valid?
+      return render(:edit, status: :unprocessable_entity) unless @episode.valid?
 
       @episode.save_and_create_activity!
 

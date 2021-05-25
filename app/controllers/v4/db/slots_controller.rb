@@ -28,7 +28,7 @@ module V4::Db
       @form.work = @work
       authorize @form
 
-      return render(:new) unless @form.valid?
+      return render(:new, status: :unprocessable_entity) unless @form.valid?
 
       ActiveRecord::Base.transaction do
         @form.save!
@@ -55,7 +55,7 @@ module V4::Db
       @slot.attributes = slot_params
       @slot.user = current_user
 
-      return render(:edit) unless @slot.valid?
+      return render(:edit, status: :unprocessable_entity) unless @slot.valid?
 
       @slot.save_all_and_create_activity!
 
