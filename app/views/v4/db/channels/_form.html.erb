@@ -7,7 +7,7 @@
       :channel_group_id,
       options_from_collection_for_select(ChannelGroup.only_kept.order(:name), :id, :name, f.object.channel_group_id),
       { include_blank: true },
-      { class: "form-control" }
+      { class: "form-select" }
     ) %>
   </div>
 

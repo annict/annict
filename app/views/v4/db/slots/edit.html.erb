@@ -26,7 +26,7 @@
             :program_id,
             options_from_collection_for_select(@programs.map(&:decorate), :id, :name, f.object.program.try!(:id)),
             { include_blank: true },
-            { class: "form-control" }
+            { class: "form-select" }
           ) %>
         </div>
 
@@ -36,7 +36,7 @@
             :channel_id,
             options_from_collection_for_select(@channels, :id, :name, f.object.channel.try!(:id)),
             { include_blank: true },
-            { class: "form-control" }
+            { class: "form-select" }
           ) %>
         </div>
 
@@ -73,7 +73,7 @@
               f.object.episode.try!(:id)
             ),
             { include_blank: true },
-            { class: "form-control" }
+            { class: "form-select" }
           ) %>
         </div>
 
@@ -85,7 +85,7 @@
               ActiveSupport::TimeZone.all.map { |time_zone| [decorated_tz_name(time_zone), time_zone.tzinfo.name] },
               current_user.time_zone
             ),
-            { class: "form-control" }
+            { class: "form-select" }
           ) %>
         </div>
 

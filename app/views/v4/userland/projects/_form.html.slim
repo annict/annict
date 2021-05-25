@@ -4,7 +4,7 @@
   .mb-3.row
     = f.label :userland_category_id, class: "col-2 col-form-label c-label-required"
     .col-4
-      = f.select :userland_category_id, options_from_collection_for_select(UserlandCategory.all.order(:sort_number), :id, :local_name, project.userland_category_id), { include_blank: true }, class: "form-control", required: true
+      = f.select :userland_category_id, options_from_collection_for_select(UserlandCategory.all.order(:sort_number), :id, :local_name, project.userland_category_id), { include_blank: true }, class: "form-select", required: true
 
   .mb-3.row
     = f.label :name, class: "col-2 col-form-label c-label-required"

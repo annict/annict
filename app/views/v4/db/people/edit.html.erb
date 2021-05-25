@@ -51,7 +51,7 @@
             :gender,
             options_for_select(Person.gender.options, f.object.gender),
             { include_blank: true },
-            { class: "form-control" }
+            { class: "form-select" }
           ) %>
         </div>
 
@@ -61,7 +61,7 @@
             :blood_type,
             options_for_select(Person.blood_type.options, f.object.blood_type),
             { include_blank: true },
-            { class: "form-control" }
+            { class: "form-select" }
           ) %>
         </div>
 
@@ -71,7 +71,7 @@
             :prefecture_id,
             options_from_collection_for_select(Prefecture.all, :id, :name, f.object.prefecture_id),
             { include_blank: true },
-            { class: "form-control" }
+            { class: "form-select" }
           ) %>
         </div>
 

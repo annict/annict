@@ -10,7 +10,7 @@
   .mb-3.row
     = f.label :scopes, class: "col-3 col-form-label"
     .col-9
-      = select_tag "doorkeeper_access_token[scopes]", options_for_select([[t("messages.oauth.applications.read_only"), "read"], [t("messages.oauth.applications.read_write"), "read write"]], token.scopes), class: "form-control"
+      = select_tag "doorkeeper_access_token[scopes]", options_for_select([[t("messages.oauth.applications.read_only"), "read"], [t("messages.oauth.applications.read_write"), "read write"]], token.scopes), class: "form-select"
       = doorkeeper_errors_for token, :scopes
 
   .mb-3.row.mb-0

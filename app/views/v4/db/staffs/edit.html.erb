@@ -24,7 +24,7 @@
           <% if f.object.resource_type == "Person" %>
             <%= f.label :resource_id, value: t("noun.person") %>
             <select
-              class="form-control"
+              class="form-select"
               data-controller="db--resource-selector"
               data-db--resource-selector-model-name="Person"
               name="staff[resource_id]"
@@ -36,7 +36,7 @@
           <% elsif f.object.resource_type == "Organization" %>
             <%= f.label :resource_id, value: t("noun.organization") %>
             <select
-              class="form-control"
+              class="form-select"
               data-controller="db--resource-selector"
               data-db--resource-selector-model-name="Organization"
               name="staff[resource_id]"
@@ -65,7 +65,7 @@
             :role,
             options_for_select(Staff.role.options, f.object.role),
             { include_blank: true },
-            { class: "form-control" }
+            { class: "form-select" }
           ) %>
         </div>
 
