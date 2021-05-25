@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module V4::Db
-  class SidebarComponent < Db::ApplicationComponent
+  class SidebarComponent < V4::Db::ApplicationComponent
     include AssetsHelper
 
     def initialize(search:)
