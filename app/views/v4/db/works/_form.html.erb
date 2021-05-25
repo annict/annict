@@ -32,7 +32,7 @@
       :media,
       options_for_select(Work.media.options, f.object.media),
       { include_blank: true },
-      { class: "form-control", required: true }
+      { class: "form-select", required: true }
     ) %>
   </div>
 
@@ -42,7 +42,7 @@
       :season_year,
       options_for_select(Season::YEAR_LIST.to_a.reverse, f.object.season_year),
       { include_blank: true },
-      { class: "form-control" }
+      { class: "form-select" }
     ) %>
   </div>
 
@@ -52,7 +52,7 @@
       :season_name,
       options_for_select(Season::NAME_HASH.map { |h| [t("noun.#{h[0]}"), h[1]] }, f.object.season_name&.value),
       { include_blank: true },
-      { class: "form-control" }
+      { class: "form-select" }
     ) %>
   </div>
 
@@ -208,7 +208,7 @@
       :number_format_id,
       options_from_collection_for_select(NumberFormat.order(:sort_number), :id, :name, f.object.number_format_id),
       { include_blank: true },
-      { class: "form-control" }
+      { class: "form-select" }
     ) %>
   </div>
 
