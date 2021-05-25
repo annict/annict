@@ -20,7 +20,7 @@
       <%= form_with model: @staff, url: db_staff_detail_path(@staff), method: :patch, local: true do |f| %>
         <%= render "application/components/error_panel", resource: f.object %>
 
-        <div class="form-group">
+        <div class="mb-3">
           <% if f.object.resource_type == "Person" %>
             <%= f.label :resource_id, value: t("noun.person") %>
             <select
@@ -49,17 +49,17 @@
           <%= hidden_field_tag "#{f.object.class.name.underscore}[resource_type]", f.object.resource_type %>
         </div>
 
-        <div class="form-group">
+        <div class="mb-3">
           <%= f.label :name %>
           <%= f.text_field :name, class: "form-control" %>
         </div>
 
-        <div class="form-group">
+        <div class="mb-3">
           <%= f.label :name_en %>
           <%= f.text_field :name_en, class: "form-control" %>
         </div>
 
-        <div class="form-group">
+        <div class="mb-3">
           <%= f.label :role %>
           <%= f.select(
             :role,
@@ -69,17 +69,17 @@
           ) %>
         </div>
 
-        <div class="form-group">
+        <div class="mb-3">
           <%= f.label :role_other %>
           <%= f.text_field :role_other, class: "form-control" %>
         </div>
 
-        <div class="form-group">
+        <div class="mb-3">
           <%= f.label :role_other_en %>
           <%= f.text_field :role_other_en, class: "form-control" %>
         </div>
 
-        <div class="form-group">
+        <div class="mb-3">
           <%= f.label :sort_number %>
           <%= f.number_field :sort_number, class: "form-control" %>
         </div>

@@ -20,7 +20,7 @@
       <%= form_with model: @cast, url: db_cast_detail_path(@cast), method: :patch, local: true do |f| %>
         <%= render "application/components/error_panel", resource: f.object %>
 
-        <div class="form-group">
+        <div class="mb-3">
           <%= f.label :character_id %>
           <select
             class="form-control"
@@ -38,7 +38,7 @@
           </select>
         </div>
 
-        <div class="form-group">
+        <div class="mb-3">
           <%= f.label :person_id %>
           <select
             class="form-control"
@@ -56,17 +56,17 @@
           </select>
         </div>
 
-        <div class="form-group">
+        <div class="mb-3">
           <%= f.label :name %>
           <%= f.text_field :name, class: "form-control" %>
         </div>
 
-        <div class="form-group">
+        <div class="mb-3">
           <%= f.label :name_en %>
           <%= f.text_field :name_en, class: "form-control" %>
         </div>
 
-        <div class="form-group">
+        <div class="mb-3">
           <%= f.label :sort_number %>
           <%= f.number_field :sort_number, class: "form-control" %>
         </div>

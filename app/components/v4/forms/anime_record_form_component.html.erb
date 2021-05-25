@@ -9,14 +9,14 @@
 
   <div class="form-row">
     <% WorkRecord::RATING_FIELDS.each do |rating_field| %>
-      <div class="col-md-6 form-group">
+      <div class="col-md-6 mb-3">
         <%= f.label rating_field %>
         <%= render ButtonGroups::RecordRatingButtonGroupComponent.new(form: f, rating_field: rating_field) %>
       </div>
     <% end %>
   </div>
 
-  <div class="form-group">
+  <div class="mb-3">
     <%= render Forms::RecordTextareaComponent.new(form: f, optional_textarea_classname: "form-control", textarea_name: "anime_record_form[comment]") %>
   </div>
 

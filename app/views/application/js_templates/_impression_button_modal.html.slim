@@ -7,7 +7,7 @@ script#t-impression-button-modal type="x-template"
             .c-spinner.p-5
           template v-else=""
             form @submit.prevent="save"
-              .form-group
+              .mb-3
                 label for="tags"
                   = t "noun.tags"
                 .d-block
@@ -20,7 +20,7 @@ script#t-impression-button-modal type="x-template"
                   span.u-cursor-pointer.me-1.badge.badge-secondary v-for="tagName in popularTagNames" @click="add(tagName)"
                     = icon "plus", class: "me-1"
                     | {{ tagName }}
-              .form-group.mt-4
+              .mb-3.mt-4
                 label for="comment"
                   = t "noun.comment"
                 textarea#comment.form-control type="text" rows="3" v-model="comment" name="comment"

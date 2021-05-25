@@ -1,19 +1,19 @@
 = form_for post do |f|
   = render "application/components/error_panel", resource: post
 
-  .form-group
+  .mb-3
     = f.label :forum_category_id, class: "c-label-required"
     = f.select :forum_category_id, options_from_collection_for_select(ForumCategory.selectable(current_user), :id, :local_name, post.forum_category_id), { include_blank: true }, class: "form-control"
 
-  .form-group
+  .mb-3
     = f.label :title, class: "c-label-required"
     = f.text_field :title, class: "form-control"
 
-  .form-group
+  .mb-3
     = f.label :body, class: "c-label-required"
     = f.text_area :body, rows: 15, class: "form-control"
 
-  .form-group.text-center.mb-0
+  .mb-3.text-center.mb-0
     = f.button class: "btn btn-primary" do
       = icon "paper-plane", "far"
       = t "verb.post"

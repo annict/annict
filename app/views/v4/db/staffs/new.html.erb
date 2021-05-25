@@ -20,7 +20,7 @@
       <%= form_with model: @form, url: db_staff_list_path(@work), local: true do |f| %>
         <%= render "application/components/error_panel", resource: f.object %>
 
-        <div class="form-group">
+        <div class="mb-3">
           <%= f.label :rows, class: "c-label-required" %>
           <%= f.text_area :rows, class: "form-control", autofocus: true, required: true, rows: 30 %>
         </div>

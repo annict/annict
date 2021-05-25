@@ -27,7 +27,7 @@ module V6::Forms
             h.html V6::ButtonGroups::RecordRatingButtonGroupComponent.new(view_context, form: f, rating_field: :rating).render
           end
 
-          h.tag :div, class: "form-group" do
+          h.tag :div, class: "mb-3" do
             h.html V6::Textareas::RecordTextareaComponent.new(
               view_context,
               form: f,

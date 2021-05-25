@@ -25,13 +25,13 @@
       <%= form_with model: @image, url: db_work_image_detail_path(@work), local: true do |f| %>
         <%= render "application/components/error_panel", resource: @image %>
 
-        <div class="form-group">
+        <div class="mb-3">
           <%= f.label :attachment %>
           <%= f.hidden_field :image, value: @image.cached_image_data %>
           <%= f.file_field :image, class: "form-control-file" %>
         </div>
 
-        <div class="form-group">
+        <div class="mb-3">
           <%= f.label :copyright %>
           <%= f.text_field :copyright, class: "form-control" %>
         </div>

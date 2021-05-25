@@ -1,32 +1,32 @@
 <%= form_with model: model, url: form_url, method: form_method, local: true do |f| %>
   <%= render "application/components/error_panel", resource: f.object %>
 
-  <div class="form-group">
+  <div class="mb-3">
     <%= f.label :title, class: "c-label-required" %>
     <%= f.text_field :title, class: "form-control", autofocus: true, required: true %>
   </div>
 
-  <div class="form-group">
+  <div class="mb-3">
     <%= f.label :title_kana %>
     <%= f.text_field :title_kana, class: "form-control" %>
   </div>
 
-  <div class="form-group">
+  <div class="mb-3">
     <%= f.label :title_alter %>
     <%= f.text_field :title_alter, class: "form-control" %>
   </div>
 
-  <div class="form-group">
+  <div class="mb-3">
     <%= f.label :title_en %>
     <%= f.text_field :title_en, class: "form-control" %>
   </div>
 
-  <div class="form-group">
+  <div class="mb-3">
     <%= f.label :title_alter_en %>
     <%= f.text_field :title_alter_en, class: "form-control" %>
   </div>
 
-  <div class="form-group">
+  <div class="mb-3">
     <%= f.label :media, class: "c-label-required" %>
     <%= f.select(
       :media,
@@ -36,7 +36,7 @@
     ) %>
   </div>
 
-  <div class="form-group">
+  <div class="mb-3">
     <%= f.label :season_year %>
     <%= f.select(
       :season_year,
@@ -46,7 +46,7 @@
     ) %>
   </div>
 
-  <div class="form-group">
+  <div class="mb-3">
     <%= f.label :season_name %>
     <%= f.select(
       :season_name,
@@ -56,7 +56,7 @@
     ) %>
   </div>
 
-  <div class="form-group">
+  <div class="mb-3">
     <%= f.label :started_on %>
     <%= f.text_field(
       :started_on,
@@ -66,7 +66,7 @@
     ) %>
   </div>
 
-  <div class="form-group">
+  <div class="mb-3">
     <%= f.label :ended_on %>
     <%= f.text_field(
       :ended_on,
@@ -76,7 +76,7 @@
     ) %>
   </div>
 
-  <div class="form-group">
+  <div class="mb-3">
     <%= f.label :official_site_url do %>
       <%= t "activerecord.attributes.work.official_site_url" %>
       <% if f.object.official_site_url.present? %>
@@ -88,7 +88,7 @@
     <%= f.text_field :official_site_url, class: "form-control" %>
   </div>
 
-  <div class="form-group">
+  <div class="mb-3">
     <%= f.label :official_site_url_en do %>
       <%= t "activerecord.attributes.work.official_site_url_en" %>
       <% if f.object.official_site_url_en.present? %>
@@ -100,7 +100,7 @@
     <%= f.text_field :official_site_url_en, class: "form-control" %>
   </div>
 
-  <div class="form-group">
+  <div class="mb-3">
     <%= f.label :wikipedia_url do %>
       <%= t "activerecord.attributes.work.wikipedia_url" %>
       <% if f.object.wikipedia_url.present? %>
@@ -112,7 +112,7 @@
     <%= f.text_field :wikipedia_url, class: "form-control" %>
   </div>
 
-  <div class="form-group">
+  <div class="mb-3">
     <%= f.label :wikipedia_url_en do %>
       <%= t "activerecord.attributes.work.wikipedia_url_en" %>
       <% if f.object.wikipedia_url_en.present? %>
@@ -124,7 +124,7 @@
     <%= f.text_field :wikipedia_url_en, class: "form-control" %>
   </div>
 
-  <div class="form-group">
+  <div class="mb-3">
     <%= f.label :twitter_username do %>
       <%= t "activerecord.attributes.work.twitter_username" %>
       <% if f.object.twitter_username.present? %>
@@ -136,7 +136,7 @@
     <%= f.text_field :twitter_username, class: "form-control", placeholder: t("resources.work.twitter_username_placeholder") %>
   </div>
 
-  <div class="form-group">
+  <div class="mb-3">
     <%= f.label :twitter_hashtag do %>
       <%= t "activerecord.attributes.work.twitter_hashtag" %>
       <% if f.object.twitter_hashtag.present? %>
@@ -148,7 +148,7 @@
     <%= f.text_field :twitter_hashtag, class: "form-control", placeholder: t("resources.work.twitter_hashtag_placeholder") %>
   </div>
 
-  <div class="form-group">
+  <div class="mb-3">
     <%= f.label :sc_tid do %>
       <%= t "activerecord.attributes.work.sc_tid" %>
       <% if f.object.sc_tid.present? %>
@@ -160,7 +160,7 @@
     <%= f.text_field :sc_tid, class: "form-control" %>
   </div>
 
-  <div class="form-group">
+  <div class="mb-3">
     <%= f.label :mal_anime_id do %>
       <%= t "activerecord.attributes.work.mal_anime_id" %>
       <% if f.object.mal_anime_id.present? %>
@@ -172,37 +172,37 @@
     <%= f.text_field :mal_anime_id, class: "form-control" %>
   </div>
 
-  <div class="form-group">
+  <div class="mb-3">
     <%= f.label :synopsis %>
     <%= f.text_area :synopsis, class: "form-control", rows: 10 %>
   </div>
 
-  <div class="form-group">
+  <div class="mb-3">
     <%= f.label :synopsis_source %>
     <%= f.text_field :synopsis_source, class: "form-control" %>
   </div>
 
-  <div class="form-group">
+  <div class="mb-3">
     <%= f.label :synopsis_en %>
     <%= f.text_area :synopsis_en, class: "form-control", rows: 10 %>
   </div>
 
-  <div class="form-group">
+  <div class="mb-3">
     <%= f.label :synopsis_source_en %>
     <%= f.text_field :synopsis_source_en, class: "form-control" %>
   </div>
 
-  <div class="form-group">
+  <div class="mb-3">
     <%= f.label :manual_episodes_count %>
     <%= f.text_field :manual_episodes_count, class: "form-control" %>
   </div>
 
-  <div class="form-group">
+  <div class="mb-3">
     <%= f.label :start_episode_raw_number %>
     <%= f.text_field :start_episode_raw_number, class: "form-control" %>
   </div>
 
-  <div class="form-group">
+  <div class="mb-3">
     <%= f.label :number_format_id %>
     <%= f.select(
       :number_format_id,
@@ -212,7 +212,7 @@
     ) %>
   </div>
 
-  <div class="form-group">
+  <div class="mb-3">
     <div class="form-check">
       <%= f.label :no_episodes, class: "form-check-label" do %>
         <%= f.check_box :no_episodes, class: "form-check-input" %>

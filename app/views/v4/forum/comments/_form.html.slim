@@ -2,7 +2,7 @@
 = form_for comment, url: url do |f|
   = render "application/components/error_panel", resource: comment
 
-  .form-group
+  .mb-3
     = f.text_area :body, rows: 10, class: "form-control", placeholder: t("messages.forum.comments.leave_a_comment")
 
   .text-center

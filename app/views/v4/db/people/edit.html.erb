@@ -20,32 +20,32 @@
       <%= form_with model: @person, url: db_person_detail_path(@person), method: :patch, local: true do |f| %>
         <%= render "application/components/error_panel", resource: f.object %>
 
-        <div class="form-group">
+        <div class="mb-3">
           <%= f.label :name, class: "c-label-required" %>
           <%= f.text_field :name, class: "form-control", autofocus: true, required: true %>
         </div>
 
-        <div class="form-group">
+        <div class="mb-3">
           <%= f.label :name_kana %>
           <%= f.text_field :name_kana, class: "form-control" %>
         </div>
 
-        <div class="form-group">
+        <div class="mb-3">
           <%= f.label :name_en %>
           <%= f.text_field :name_en, class: "form-control" %>
         </div>
 
-        <div class="form-group">
+        <div class="mb-3">
           <%= f.label :nickname %>
           <%= f.text_field :nickname, class: "form-control" %>
         </div>
 
-        <div class="form-group">
+        <div class="mb-3">
           <%= f.label :nickname_en %>
           <%= f.text_field :nickname_en, class: "form-control" %>
         </div>
 
-        <div class="form-group">
+        <div class="mb-3">
           <%= f.label :gender %>
           <%= f.select(
             :gender,
@@ -55,7 +55,7 @@
           ) %>
         </div>
 
-        <div class="form-group">
+        <div class="mb-3">
           <%= f.label :blood_type %>
           <%= f.select(
             :blood_type,
@@ -65,7 +65,7 @@
           ) %>
         </div>
 
-        <div class="form-group">
+        <div class="mb-3">
           <%= f.label :prefecture_id %>
           <%= f.select(
             :prefecture_id,
@@ -75,12 +75,12 @@
           ) %>
         </div>
 
-        <div class="form-group">
+        <div class="mb-3">
           <%= f.label :birthday %>
           <%= f.date_field :birthday, class: "form-control", placeholder: "例: 1990-01-01" %>
         </div>
 
-        <div class="form-group">
+        <div class="mb-3">
           <%= f.label :height %>
           <div class="input-group">
             <%= f.number_field :height, class: "form-control" %>
@@ -90,32 +90,32 @@
           </div>
         </div>
 
-        <div class="form-group">
+        <div class="mb-3">
           <%= f.label :url %>
           <%= f.url_field :url, class: "form-control" %>
         </div>
 
-        <div class="form-group">
+        <div class="mb-3">
           <%= f.label :url_en %>
           <%= f.url_field :url_en, class: "form-control" %>
         </div>
 
-        <div class="form-group">
+        <div class="mb-3">
           <%= f.label :wikipedia_url %>
           <%= f.url_field :wikipedia_url, class: "form-control" %>
         </div>
 
-        <div class="form-group">
+        <div class="mb-3">
           <%= f.label :wikipedia_url_en %>
           <%= f.url_field :wikipedia_url_en, class: "form-control" %>
         </div>
 
-        <div class="form-group">
+        <div class="mb-3">
           <%= f.label :twitter_username %>
           <%= f.text_field :twitter_username, class: "form-control", placeholder: t("resources.person.twitter_hashtag_placeholder") %>
         </div>
 
-        <div class="form-group">
+        <div class="mb-3">
           <%= f.label :twitter_username_en %>
           <%= f.text_field :twitter_username_en, class: "form-control", placeholder: t("resources.person.twitter_hashtag_placeholder") %>
         </div>

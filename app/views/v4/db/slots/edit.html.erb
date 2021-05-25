@@ -20,7 +20,7 @@
       <%= form_with model: @slot, url: db_slot_detail_path(@slot), method: :patch, local: true do |f| %>
         <%= render "application/components/error_panel", resource: f.object %>
 
-        <div class="form-group">
+        <div class="mb-3">
           <%= f.label :program_id %>
           <%= f.select(
             :program_id,
@@ -30,7 +30,7 @@
           ) %>
         </div>
 
-        <div class="form-group">
+        <div class="mb-3">
           <%= f.label :channel_id %>
           <%= f.select(
             :channel_id,
@@ -40,7 +40,7 @@
           ) %>
         </div>
 
-        <div class="form-group">
+        <div class="mb-3">
           <%= f.label :started_at %>
           <%= f.text_field(
             :started_at,
@@ -50,7 +50,7 @@
           ) %>
         </div>
 
-        <div class="form-group">
+        <div class="mb-3">
           <div class="form-check">
             <%= f.label :shift_time_along_with_after_slots, class: "form-check-label" do %>
               <%= f.check_box :shift_time_along_with_after_slots, class: "form-check-input" %>
@@ -59,12 +59,12 @@
           </div>
         </div>
 
-        <div class="form-group">
+        <div class="mb-3">
           <%= f.label :number %>
           <%= f.text_field :number, class: "form-control-plaintext", readonly: true %>
         </div>
 
-        <div class="form-group">
+        <div class="mb-3">
           <%= f.label :episode_id %>
           <%= f.select(
             :episode_id,
@@ -77,7 +77,7 @@
           ) %>
         </div>
 
-        <div class="form-group">
+        <div class="mb-3">
           <%= label_tag :time_zone, t("activerecord.attributes.slot.time_zone") %>
           <%= select_tag(
             "slot[time_zone]",
@@ -89,7 +89,7 @@
           ) %>
         </div>
 
-        <div class="form-group">
+        <div class="mb-3">
           <div class="form-check">
             <%= f.label :rebroadcast, class: "form-check-label" do %>
               <%= f.check_box :rebroadcast, class: "form-check-input" %>
@@ -98,7 +98,7 @@
           </div>
         </div>
 
-        <div class="form-group">
+        <div class="mb-3">
           <div class="form-check">
             <%= f.label :irregular, class: "form-check-label" do %>
               <%= f.check_box :irregular, class: "form-check-input" %>
