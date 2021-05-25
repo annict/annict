@@ -13,7 +13,7 @@
       db_episode_list_path(work),
       class: "nav-link",
       class_active: "active",
-      active: params[:controller]  == "db/episodes"
+      active: params[:controller]  == "v4/db/episodes"
     ) %>
   <% end %>
 
@@ -22,7 +22,7 @@
     db_program_list_path(work),
     class: "nav-link",
     class_active: "active",
-    active: params[:controller]  == "db/programs"
+    active: params[:controller]  == "v4/db/programs"
   ) %>
 
   <% unless work.no_episodes? %>
@@ -31,7 +31,7 @@
       db_slot_list_path(work),
       class: "nav-link",
       class_active: "active",
-      active: params[:controller]  == "db/slots"
+      active: params[:controller]  == "v4/db/slots"
     ) %>
   <% end %>
 
@@ -40,7 +40,7 @@
     db_cast_list_path(work),
     class: "nav-link",
     class_active: "active",
-    active: params[:controller]  == "db/casts"
+    active: params[:controller]  == "v4/db/casts"
   ) %>
 
   <%= active_link_to(
@@ -48,7 +48,7 @@
     db_staff_list_path(work),
     class: "nav-link",
     class_active: "active",
-    active: params[:controller]  == "db/staffs"
+    active: params[:controller]  == "v4/db/staffs"
   ) %>
 
   <%= active_link_to(
@@ -56,7 +56,7 @@
     db_work_image_detail_path(work),
     class: "nav-link",
     class_active: "active",
-    active: params[:controller]  == "db/work_images"
+    active: params[:controller]  == "v4/db/work_images"
   ) %>
 
   <%= active_link_to(
@@ -64,6 +64,6 @@
     db_trailer_list_path(work),
     class: "nav-link",
     class_active: "active",
-    active: params[:controller]  == "db/trailers"
+    active: params[:controller]  == "v4/db/trailers"
   ) %>
 </ul>
