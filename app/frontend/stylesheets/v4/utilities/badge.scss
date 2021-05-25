@@ -1,5 +1,3 @@
-@import '~bootstrap/scss/mixins';
-
 $ann-bootstrap-badge-colors: (
   danger: map-get($theme-colors, 'danger'),
   dark: map-get($theme-colors, 'dark'),
@@ -25,8 +23,8 @@ $ann-badge-colors: (
 );
 
 @each $color-name, $color in $ann-badge-colors {
-  .u-badge-#{$color-name} {
-    // @include badge-variant($color);
+  .ann-bg-#{$color-name} {
+    background-color: $color !important;
   }
 }
 
@@ -48,18 +46,18 @@ $ann-badge-colors: (
   }
 }
 
-.u-badge-works {
-  // @include badge-variant(map-get($ann-color-shirobako, rb));
+.ann-bg-anime {
+  background-color: map-get($ann-color-shirobako, rb) !important;
 }
 
-.u-badge-people {
-  // @include badge-variant(map-get($ann-color-shirobako, ho));
+.ann-bg-people {
+  background-color: map-get($ann-color-shirobako, ho) !important;
 }
 
-.u-badge-organizations {
-  // @include badge-variant(map-get($ann-color-shirobako, a));
+.ann-bg-organizations {
+  background-color: map-get($ann-color-shirobako, a) !important;
 }
 
-.u-badge-characters {
-  // @include badge-variant(map-get($ann-color-shirobako, ik));
+.ann-bg-characters {
+  background-color: map-get($ann-color-shirobako, ik) !important;
 }
