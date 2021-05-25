@@ -64,10 +64,10 @@
           <%= image_tag v4_ann_image_url(work.work_image, :image, size: "70x", ratio: "3:4"), class: "rounded img-thumbnail" %>
         </td>
         <td>
-          <%= render Db::PublishingStateLabelComponent.new(resource: work) %>
+          <%= render V4::Db::PublishingStateLabelComponent.new(resource: work) %>
         </td>
         <td>
-          <%= render Db::ActionButtonsComponent.new(
+          <%= render V4::Db::ActionButtonsComponent.new(
               user: current_user,
               resource: work,
               detail_path: db_work_detail_path(work),

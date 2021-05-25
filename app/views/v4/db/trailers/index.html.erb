@@ -78,10 +78,10 @@
                 <%= trailer.sort_number %>
               </td>
               <td>
-                <%= render Db::PublishingStateLabelComponent.new(resource: trailer) %>
+                <%= render V4::Db::PublishingStateLabelComponent.new(resource: trailer) %>
               </td>
               <td>
-                <%= render Db::ActionButtonsComponent.new(
+                <%= render V4::Db::ActionButtonsComponent.new(
                     user: current_user,
                     resource: trailer,
                     detail_path: db_trailer_detail_path(trailer),

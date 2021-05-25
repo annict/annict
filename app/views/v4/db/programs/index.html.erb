@@ -96,10 +96,10 @@
                 <% end %>
               </td>
               <td>
-                <%= render Db::PublishingStateLabelComponent.new(resource: program) %>
+                <%= render V4::Db::PublishingStateLabelComponent.new(resource: program) %>
               </td>
               <td>
-                <%= render Db::ActionButtonsComponent.new(
+                <%= render V4::Db::ActionButtonsComponent.new(
                     user: current_user,
                     resource: program,
                     detail_path: db_program_detail_path(program),

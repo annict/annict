@@ -92,10 +92,10 @@
                 <%= episode.episode_records.only_kept.count %>
               </td>
               <td>
-                <%= render Db::PublishingStateLabelComponent.new(resource: episode) %>
+                <%= render V4::Db::PublishingStateLabelComponent.new(resource: episode) %>
               </td>
               <td>
-                <%= render Db::ActionButtonsComponent.new(
+                <%= render V4::Db::ActionButtonsComponent.new(
                   user: current_user,
                   resource: episode,
                   detail_path: db_episode_detail_path(episode),

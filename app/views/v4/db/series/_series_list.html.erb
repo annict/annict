@@ -27,10 +27,10 @@
           <%= series.name_en.presence || "-" %>
         </td>
         <td>
-          <%= render Db::PublishingStateLabelComponent.new(resource: series) %>
+          <%= render V4::Db::PublishingStateLabelComponent.new(resource: series) %>
         </td>
         <td>
-          <%= render Db::ActionButtonsComponent.new(
+          <%= render V4::Db::ActionButtonsComponent.new(
             user: current_user,
             resource: series,
             detail_path: db_series_detail_path(series),

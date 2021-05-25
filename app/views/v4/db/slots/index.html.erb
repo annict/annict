@@ -111,10 +111,10 @@
                 <%= slot.irregular? ? icon("circle", "far") : icon("times") %>
               </td>
               <td>
-                <%= render Db::PublishingStateLabelComponent.new(resource: slot) %>
+                <%= render V4::Db::PublishingStateLabelComponent.new(resource: slot) %>
               </td>
               <td>
-                <%= render Db::ActionButtonsComponent.new(
+                <%= render V4::Db::ActionButtonsComponent.new(
                     user: current_user,
                     resource: slot,
                     detail_path: db_slot_detail_path(slot),
