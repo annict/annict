@@ -132,7 +132,7 @@ en:
           index: Slot Details
           new: New Slot Detail
         work_images:
-          show: Work Image - %{title}
+          show: Work Image
         works:
           activities: Activities
           edit: '%{title}'

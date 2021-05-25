@@ -126,7 +126,7 @@ ja:
           index: 放送情報一覧
           new: 放送情報登録
         work_images:
-          show: 作品画像 - %{title}
+          show: 作品画像
         works:
           activities: アクティビティ
           edit: '%{title}'
