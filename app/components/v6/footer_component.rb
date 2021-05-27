@@ -130,7 +130,7 @@ module V6
     def service_urls
       [
         [view_context.userland_root_path, t("noun.annict_userland")],
-        [view_context.forum_root_path, t("noun.annict_forum")],
+        [view_context.forum_path, t("noun.annict_forum")],
         [view_context.db_root_path, t("noun.annict_db")],
         ["https://developers.annict.jp", t("noun.annict_developers")],
         [view_context.supporters_path, t("noun.annict_supporters")]

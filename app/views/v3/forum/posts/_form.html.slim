@@ -1,4 +1,4 @@
-= form_for post do |f|
+= form_with model: post, url: form_url, method: form_method do |f|
   = render "application/components/error_panel", resource: post
 
   .mb-3
@@ -14,6 +14,4 @@
     = f.text_area :body, rows: 15, class: "form-control"
 
   .mb-3.text-center.mb-0
-    = f.button class: "btn btn-primary" do
-      = icon "paper-plane", "far"
-      = t "verb.post"
+    = f.submit submit_text, class: "btn btn-primary"

@@ -195,7 +195,7 @@ module V6::Sidebars
             h.tag :ul, class: "list-unstyled px-3" do
               [
                 [view_context.userland_root_path, "signal-stream", t("noun.annict_userland")],
-                [view_context.forum_root_path, "comments-alt", t("noun.annict_forum")],
+                [view_context.forum_path, "comments-alt", t("noun.annict_forum")],
                 [view_context.db_root_path, "database", t("noun.annict_db")],
                 [view_context.supporters_path, "sparkles", t("noun.annict_supporters")]
               ].each do |link_path, icon_name, link_text|

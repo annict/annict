@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Forum
-  class PostsController < Forum::ApplicationController
+module V3::Forum
+  class PostsController < V3::Forum::ApplicationController
     before_action :authenticate_user!, only: %i[new create edit update]
 
     def new
@@ -23,31 +23,29 @@ module Forum
         @post.notify_discord
       end
 
-      Flash.store_data(cookies[:ann_client_uuid], notice: t("messages.forum.posts.created"))
-      redirect_to forum_post_path(@post)
+      redirect_to forum_post_path(@post), notice: t("messages.forum.posts.created")
     end
 
     def show
-      @post = ForumPost.joins(:user).merge(User.only_kept).find(params[:id])
+      @post = ForumPost.joins(:user).merge(User.only_kept).find(params[:post_id])
       @comments = @post.forum_comments.order(:created_at)
       @comment = @post.forum_comments.new
     end
 
     def edit
-      @post = ForumPost.find(params[:id])
+      @post = ForumPost.find(params[:post_id])
       authorize @post, :edit?
     end
 
     def update
-      @post = ForumPost.find(params[:id])
+      @post = ForumPost.find(params[:post_id])
       authorize @post, :update?
 
       @post.attributes = forum_post_params
       @post.detect_locale!(:body)
 
       if @post.save
-        Flash.store_data(cookies[:ann_client_uuid], notice: t("messages.forum.posts.updated"))
-        redirect_to forum_post_path(@post)
+        redirect_to forum_post_path(@post), notice: t("messages.forum.posts.updated")
       else
         render :edit
       end
