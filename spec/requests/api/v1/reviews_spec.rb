@@ -89,7 +89,7 @@ describe "Api::V1::Reviews" do
             "watchers_count" => 0,
             "reviews_count" => 1,
             "no_episodes" => false
-          },
+          }
         }
         actual_hash = json["reviews"][0]
         actual_hash["user"].delete("avatar_url")

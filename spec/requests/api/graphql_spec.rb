@@ -20,7 +20,7 @@ describe "POST /graphql", type: :request do
   let(:headers) { {"Authorization" => "bearer #{access_token.token}"} }
 
   it "リクエストできること" do
-    post "/graphql", params: { variables: { "workId": id }, query: query }, headers: headers
+    post "/graphql", params: {variables: {workId: id}, query: query}, headers: headers
 
     expect(response.status).to eq(200)
     expect(json).to include({

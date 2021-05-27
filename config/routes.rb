@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-ID_FORMAT = /[0-9]+/.freeze
-USERNAME_FORMAT = /[A-Za-z0-9_]+/.freeze
+ID_FORMAT = /[0-9]+/
+USERNAME_FORMAT = /[A-Za-z0-9_]+/
 
 Rails.application.routes.draw do
   draw :api

@@ -20,7 +20,7 @@ describe "POST /canary/graphql", type: :request do
   let(:headers) { {"Authorization" => "bearer #{access_token.token}"} }
 
   it "リクエストできること" do
-    post "/canary/graphql", params: { variables: { "animeId": id }, query: query }, headers: headers
+    post "/canary/graphql", params: {variables: {animeId: id}, query: query}, headers: headers
 
     expect(response.status).to eq(200)
     expect(json).to include({
