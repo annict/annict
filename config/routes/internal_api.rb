@@ -4,7 +4,6 @@ namespace :api do
   namespace :internal do
     resources :mute_users, only: [:create]
     resources :receptions, only: %i[create destroy]
-    resources :works, only: %i[show]
 
     resources :favorites, only: %i[create] do
       post :unfavorite, on: :collection
