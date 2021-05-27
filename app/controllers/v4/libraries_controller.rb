@@ -19,11 +19,6 @@ module V4
       paginate_per = @display_option == "grid_detailed" ? 8 : 20
       @seasons = Kaminari.paginate_array(@seasons).page(params[:page]).per(paginate_per)
 
-      if @display_option == "grid_detailed"
-        @work_tags_data = Work.work_tags_data(@works, @user)
-        @work_comment_data = Work.work_comment_data(@works, @user)
-      end
-
       return unless user_signed_in?
 
       if @display_option.in?(Setting.display_option_user_work_list.values)

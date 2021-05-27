@@ -2,7 +2,6 @@
 
 namespace :api do
   namespace :internal do
-    resource :impression, only: %i[show update]
     resource :privacy_policy_agreement, only: %i[create]
     resource :records_sort_type, only: %i[update]
     resource :search, only: [:show]

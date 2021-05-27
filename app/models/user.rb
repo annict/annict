@@ -368,32 +368,6 @@ class User < ApplicationRecord
     work_tag
   end
 
-  def update_work_tags!(work, tag_names)
-    tags = tags_by_work(work)
-    removed_tag_names = tags.pluck(:name) - tag_names
-    added_tag_names = tag_names - tags.pluck(:name)
-
-    ActiveRecord::Base.transaction do
-      work_tags = WorkTag.where(name: removed_tag_names)
-      work_taggings.where(work: work, work_tag: work_tags).destroy_all
-
-      work_tags.each do |work_tag|
-        unless work_taggings.where(work_tag: work_tag).exists?
-          taggable = work_taggables.find_by(work_tag: work_tag)
-          taggable.destroy if taggable.present?
-        end
-      end
-
-      added_tag_names.map do |tag_name|
-        add_work_tag!(work, tag_name)
-      end
-    end
-  end
-
-  def tags_by_work(work)
-    work_tags.only_kept.joins(:work_taggings).merge(work_taggings.where(work: work))
-  end
-
   def comment_by_work(work)
     work_comments.find_by(work: work)
   end

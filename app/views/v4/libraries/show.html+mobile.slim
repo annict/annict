@@ -35,18 +35,10 @@
         - works = season.no_season? ? @works.with_no_season : @works.by_season(season.slug)
         - works = works.order(watchers_count: :desc).includes(:work_image)
         - if @display_option == "grid_detailed"
-          = render "libraries/display_options/#{@display_option}", works: works, work_tags_data: @work_tags_data, work_comment_data: @work_comment_data, user: @user
+          = render "libraries/display_options/#{@display_option}", works: works, user: @user
         - else
           = render "works/display_options/#{@display_option}", works: works
     .text-center
       = paginate @seasons, window: 2
 - else
   = render "application/components/empty", text: t("messages.users.no_works")
-
-c-impression-button-modal
-
-- content_for :js_templates do
-  = render "application/js_templates/impression_button_modal"
-  = render "application/js_templates/impression_button"
-  = render "application/js_templates/work_comment"
-  = render "application/js_templates/work_tags"
