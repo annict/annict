@@ -28,6 +28,8 @@ module Canary
         Canary::Types::Objects::ActivityType
       when ActivityGroup
         Canary::Types::Objects::ActivityGroupType
+      when Anime
+        Canary::Types::Objects::AnimeType
       when EpisodeRecord
         Canary::Types::Objects::EpisodeRecordType
       when Episode
@@ -46,7 +48,7 @@ module Canary
         Canary::Types::Objects::StatusType
       when User
         Canary::Types::Objects::UserType
-      when Anime
+      when Work
         Canary::Types::Objects::AnimeType
       when WorkImage
         Canary::Types::Objects::AnimeImageType
