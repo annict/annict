@@ -25,8 +25,8 @@
             <%= f.label :resource_id, value: t("noun.person") %>
             <select
               class="form-select"
-              data-controller="db--resource-selector"
-              data-db--resource-selector-model-name="Person"
+              data-controller="resource-selector"
+              data-resource-selector-model-name="Person"
               name="staff[resource_id]"
             >
               <option value="<%= f.object.resource.id %>" selected="">
@@ -37,8 +37,8 @@
             <%= f.label :resource_id, value: t("noun.organization") %>
             <select
               class="form-select"
-              data-controller="db--resource-selector"
-              data-db--resource-selector-model-name="Organization"
+              data-controller="resource-selector"
+              data-resource-selector-model-name="Organization"
               name="staff[resource_id]"
             >
               <option value="<%= f.object.resource.id %>" selected="">
