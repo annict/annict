@@ -42,6 +42,11 @@ Rails.application.routes.draw do
   match "/@:username/records/:record_id",                     via: :get,                                                  to: "v4/records#show",                 username: USERNAME_FORMAT
   match "/@:username/records/:record_id",                     via: :patch,                                                to: "v4/records#update",               username: USERNAME_FORMAT
   match "/@:username/records/:record_id",                     via: :patch,  as: :record,                                  to: "records#update",                  username: USERNAME_FORMAT
+  match "/api/internal/characters",                           via: :get,    as: :internal_api_character_list,             to: "api/internal/characters#index"
+  match "/api/internal/organizations",                        via: :get,    as: :internal_api_organization_list,          to: "api/internal/organizations#index"
+  match "/api/internal/people",                               via: :get,    as: :internal_api_person_list,                to: "api/internal/people#index"
+  match "/api/internal/series_list",                          via: :get,    as: :internal_api_series_list,                to: "api/internal/series_list#index"
+  match "/api/internal/works",                                via: :get,    as: :internal_api_work_list,                  to: "api/internal/works#index"
   match "/channels",                                          via: :get,    as: :channel_list,                            to: "v6/channels#index"
   match "/characters/:character_id",                          via: :get,    as: :character,                               to: "v3/characters#show"
   match "/characters/:character_id/fans",                     via: :get,    as: :character_fan_list,                      to: "v3/character_fans#index"

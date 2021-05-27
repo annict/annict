@@ -2,13 +2,9 @@
 
 namespace :api do
   namespace :internal do
-    resources :characters, only: [:index]
     resources :mute_users, only: [:create]
-    resources :organizations, only: [:index]
-    resources :people, only: [:index]
     resources :receptions, only: %i[create destroy]
-    resources :series_list, only: %i[index]
-    resources :works, only: %i[index show]
+    resources :works, only: %i[show]
 
     resources :favorites, only: %i[create] do
       post :unfavorite, on: :collection
