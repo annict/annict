@@ -25,8 +25,8 @@
             = render "application/components/empty", text: t("messages._empty.no_projects")
     .col-4.mt-3
       .text-end.mb-3
-        = link_to new_userland_project_path, class: "btn btn-primary" do
-          = icon "plus", class: "me-1"
+        = link_to userland_new_project_path, class: "btn btn-primary" do
+          i.far.fa-plus.me-2
           = t "resources.userland_project.new"
       .alert.alert-info
         h2.h3.alert-heading

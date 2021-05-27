@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Userland
-  class ProjectsController < Userland::ApplicationController
+module V3::Userland
+  class ProjectsController < V3::Userland::ApplicationController
     before_action :authenticate_user!, only: %i[new create edit update destroy]
     before_action :load_i18n, only: %i[show]
 
@@ -25,16 +25,16 @@ module Userland
     end
 
     def show
-      @project = UserlandProject.find(params[:id])
+      @project = UserlandProject.find(params[:project_id])
     end
 
     def edit
-      @project = UserlandProject.find(params[:id])
+      @project = UserlandProject.find(params[:project_id])
       authorize @project, :edit?
     end
 
     def update
-      @project = UserlandProject.find(params[:id])
+      @project = UserlandProject.find(params[:project_id])
       authorize @project, :update?
 
       @project.attributes = userland_project_params
@@ -49,10 +49,10 @@ module Userland
     end
 
     def destroy
-      @project = UserlandProject.find(params[:id])
+      @project = UserlandProject.find(params[:project_id])
       authorize @project, :destroy?
       @project.destroy
-      redirect_to userland_root_path, notice: t("messages._common.deleted")
+      redirect_to userland_path, notice: t("messages._common.deleted")
     end
 
     private

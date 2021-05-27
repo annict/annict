@@ -30,5 +30,5 @@ h2.h4.fw-bold.mt-4.mb-3
         = ann_image_tag(user.profile, :image, size: "30x30", class: "rounded-circle", alt: user.decorate.name_with_username, title: user.decorate.name_with_username)
 
 - if user_signed_in? && current_user.userland_project_member?(project)
-  = link_to t("resources.userland_project.edit"), edit_userland_project_path(project), class: "btn btn-secondary w-100 mt-2"
+  = link_to t("resources.userland_project.edit"), userland_edit_project_path(project), class: "btn btn-secondary w-100 mt-2"
   = link_to t("resources.userland_project.delete"), userland_project_path(project), class: "btn btn-secondary w-100 mt-2", data: { method: :delete, confirm: t("messages._common.are_you_sure") }

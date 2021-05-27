@@ -3,4 +3,4 @@
 
 .container.py-3
   .c-card.p-3
-    = render "userland/projects/form", project: @project
+    = render "v3/userland/projects/form", project: @project, form_url: userland_project_path(@project), form_method: :patch

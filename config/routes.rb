@@ -7,7 +7,6 @@ Rails.application.routes.draw do
   draw :api
   draw :internal_api
   draw :local_api
-  draw :userland
 
   devise_for :users,
     controllers: {omniauth_callbacks: "v6/callbacks"},
@@ -231,6 +230,13 @@ Rails.application.routes.draw do
   match "/supporters",                                        via: :get,    as: :supporters,                              to: "v3/supporters#show"
   match "/terms",                                             via: :get,    as: :terms,                                   to: "v6/pages#terms"
   match "/track",                                             via: :get,    as: :track,                                   to: "tracks#show"
+  match "/userland",                                          via: :get,    as: :userland,                                to: "v3/userland/home#show"
+  match "/userland/projects",                                 via: :post,   as: :userland_project_list,                   to: "v3/userland/projects#create"
+  match "/userland/projects/:project_id",                     via: :delete, as: :userland_project,                        to: "v3/userland/projects#destroy",   project_id: ID_FORMAT
+  match "/userland/projects/:project_id",                     via: :get,                                                  to: "v3/userland/projects#show",   project_id: ID_FORMAT
+  match "/userland/projects/:project_id",                     via: :patch,                                                to: "v3/userland/projects#update", project_id: ID_FORMAT
+  match "/userland/projects/:project_id/edit",                via: :get,    as: :userland_edit_project,                   to: "v3/userland/projects#edit",   project_id: ID_FORMAT
+  match "/userland/projects/new",                             via: :get,    as: :userland_new_project,                    to: "v3/userland/projects#new"
   match "/work_display_option",                               via: :get,    as: :work_display_option,                     to: "v3/work_display_options#show"
   match "/works/:anime_id",                                   via: :get,    as: :anime,                                   to: "v4/works#show",               anime_id: ID_FORMAT
   match "/works/:anime_id/episodes",                          via: :get,    as: :episode_list,                            to: "v4/episodes#index",           anime_id: ID_FORMAT
