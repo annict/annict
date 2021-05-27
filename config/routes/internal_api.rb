@@ -2,9 +2,6 @@
 
 namespace :api do
   namespace :internal do
-    resource :privacy_policy_agreement, only: %i[create]
-    resource :records_sort_type, only: %i[update]
-    resource :search, only: [:show]
     resources :characters, only: [:index]
     resources :mute_users, only: [:create]
     resources :organizations, only: [:index]
