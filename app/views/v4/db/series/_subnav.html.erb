@@ -1,0 +1,8 @@
+<ul class="justify-content-center nav nav-pills">
+  <li class="nav-item">
+    <%= active_link_to t("noun.series"), db_edit_series_path(series), class: "nav-link", class_active: "active", active: current_page?(db_edit_series_path(series)) %>
+  </li>
+  <li class="nav-item">
+    <%= active_link_to t("noun.series_works"), db_series_work_list_path(series), class: "nav-link", class_active: "active", active: params[:controller]  == "v4/db/series_works" %>
+  </li>
+</ul>

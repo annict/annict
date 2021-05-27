@@ -241,8 +241,6 @@ en:
       no_trackable_episodes: No trackable episodes
       see_records: See records
       tracked: Your record has been tracked.
-    user_work_tags:
-      anime_list_tagged: "Anime list tagged '%{tag_name}'"
     userland:
       description_html: 'Userland is the place to discover 3rd party applications which uses Annict API.'
       description_mobile_html: 'Userland is the place to discover 3rd party applications which uses Annict API.'

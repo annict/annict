@@ -6,21 +6,15 @@ module Api
       before_action :authenticate_user!
 
       def create
-        @channel = Channel.only_kept.find(channel_id)
+        @channel = Channel.only_kept.find(params[:channel_id])
         current_user.receive(@channel)
         head 200
       end
 
       def destroy
-        @channel = Channel.only_kept.find(channel_id)
+        @channel = Channel.only_kept.find(params[:channel_id])
         current_user.unreceive(@channel)
         head 200
-      end
-
-      private
-
-      def channel_id
-        params[:id] || params[:channel_id]
       end
     end
   end

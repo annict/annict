@@ -16,7 +16,7 @@
           <%= t "messages._common.welcome_back" %>
         </h1>
 
-        <%= form_with model: resource, url: user_session_path, local: true, data: { turbo: false } do |f| %>
+        <%= form_with model: resource, url: user_session_path, data: { turbo: false } do |f| %>
           <div class="mb-3">
             <%= f.label :email_username, class: "form-label" %>
             <%= f.text_field :email_username, class: "form-control", autofocus: true, required: true, tabindex: 1 %>

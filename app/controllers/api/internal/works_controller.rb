@@ -11,10 +11,6 @@ module Api
           Work.none
         end
       end
-
-      def show
-        @work = Work.only_kept.find(params[:id])
-      end
     end
   end
 end

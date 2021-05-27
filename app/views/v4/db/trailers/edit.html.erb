@@ -1,0 +1,46 @@
+<% title = t "head.title.db.trailers.edit" %>
+<% set_meta_tags(title: title, reverse: true, prefix: false) %>
+
+<div class="container-fluid py-3">
+  <div class="mb-3">
+    <div class="mb-1">
+      <%= link_to @work.local_title, db_edit_work_path(@work) %>
+    </div>
+    <h1>
+      <%= title %>
+    </h1>
+  </div>
+
+  <div class="mb-3">
+    <%= render "v4/db/works/subnav", work: @work %>
+  </div>
+
+  <div class="mb-3 row">
+    <div class="col-6">
+      <%= form_with model: @trailer, url: db_trailer_detail_path(@trailer), method: :patch do |f| %>
+        <%= render "application/components/error_panel", resource: f.object %>
+
+        <div class="mb-3">
+          <%= f.label :url, class: "c-label-required" %>
+          <%= f.text_field :url, class: "form-control", autofocus: true, required: true %>
+        </div>
+
+        <div class="mb-3">
+          <%= f.label :title, class: "c-label-required" %>
+          <%= f.text_field :title, class: "form-control", required: true %>
+        </div>
+
+        <div class="mb-3">
+          <%= f.label :sort_number, class: "c-label-required" %>
+          <%= f.text_field :sort_number, class: "form-control", required: true %>
+        </div>
+
+        <%= f.submit t("helpers.submit.update"), class: "btn btn-primary" %>
+      <% end %>
+    </div>
+
+    <div class="col-6">
+      <%= render "sidebar_edit" %>
+    </div>
+  </div>
+</div>

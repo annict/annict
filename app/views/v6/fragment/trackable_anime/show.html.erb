@@ -53,9 +53,9 @@
           </h4>
 
           <div class="card">
-            <%= render ListGroups::TrackingEpisodeListGroupComponent.new(episodes: @episodes) do %>
+            <ul class="list-group list-group-flush">
               <% @episodes.each do |episode| %>
-                <%= render ListGroupItems::TrackingEpisodeListGroupItemComponent.new(episode: episode) do %>
+                <li class="list-group-item" data-episode-id="<%= @episode.id %>">
                   <div class="align-items-center row">
                     <div class="col-auto pe-0">
                       <%= Buttons::WatchEpisodeButtonComponent.new(
@@ -81,7 +81,7 @@
                       <% end %>
                     </div>
                   </div>
-                <% end %>
+                </li>
               <% end %>
             <% end %>
           </div>

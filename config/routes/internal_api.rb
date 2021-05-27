@@ -2,19 +2,7 @@
 
 namespace :api do
   namespace :internal do
-    post :graphql, to: "graphql#execute"
-
-    resource :impression, only: %i[show update]
-    resource :privacy_policy_agreement, only: %i[create]
-    resource :records_sort_type, only: %i[update]
-    resource :search, only: [:show]
-    resources :characters, only: [:index]
     resources :mute_users, only: [:create]
-    resources :organizations, only: [:index]
-    resources :people, only: [:index]
-    resources :receptions, only: %i[create destroy]
-    resources :series_list, only: %i[index]
-    resources :works, only: %i[index show]
 
     resources :favorites, only: %i[create] do
       post :unfavorite, on: :collection

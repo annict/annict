@@ -1,0 +1,17 @@
+= form_with model: post, url: form_url, method: form_method do |f|
+  = render "application/components/error_panel", resource: post
+
+  .mb-3
+    = f.label :forum_category_id, class: "c-label-required"
+    = f.select :forum_category_id, options_from_collection_for_select(ForumCategory.selectable(current_user), :id, :local_name, post.forum_category_id), { include_blank: true }, class: "form-select"
+
+  .mb-3
+    = f.label :title, class: "c-label-required"
+    = f.text_field :title, class: "form-control"
+
+  .mb-3
+    = f.label :body, class: "c-label-required"
+    = f.text_area :body, rows: 15, class: "form-control"
+
+  .mb-3.text-center.mb-0
+    = f.submit submit_text, class: "btn btn-primary"

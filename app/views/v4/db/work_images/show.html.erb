@@ -1,0 +1,46 @@
+<% title = t "head.title.db.work_images.show" %>
+<% set_meta_tags(title: "#{title} | #{@work.local_title}", reverse: true, prefix: false) %>
+
+<div class="container-fluid py-3">
+  <div class="mb-3">
+    <div class="mb-1">
+      <%= link_to @work.local_title, db_edit_work_path(@work) %>
+    </div>
+    <h1>
+      <%= title %>
+    </h1>
+  </div>
+
+  <div class="mb-3">
+    <%= render "v4/db/works/subnav", work: @work %>
+  </div>
+
+  <div class="mb-3 row">
+    <div class="col-6">
+      <%= V6::Pictures::AnimePictureComponent.new(self, anime: @work, width: 280, mb_width: 280).render %>
+
+      <div class="mt-3">
+        <%= form_with model: @image, url: db_work_image_detail_path(@work) do |f| %>
+          <%= render "application/components/error_panel", resource: @image %>
+
+          <div class="mb-3">
+            <%= f.label :attachment %>
+            <%= f.hidden_field :image, value: @image.cached_image_data %>
+            <%= f.file_field :image, class: "form-control-file" %>
+          </div>
+
+          <div class="mb-3">
+            <%= f.label :copyright %>
+            <%= f.text_field :copyright, class: "form-control" %>
+          </div>
+
+          <%= f.submit t("helpers.submit.create"), class: "btn btn-primary" %>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="col-6">
+      <%= render "sidebar" %>
+    </div>
+  </div>
+</div>

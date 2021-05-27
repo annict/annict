@@ -17,7 +17,7 @@ services:
     stdin_open: true # for Pry
     tty: true # for Pry
     volumes:
-      - .:/workspace:cached
+      - .:/workspace
       - gems_vol:/usr/local/bundle
       - node_modules_vol:/workspace/node_modules
   frontend:
@@ -28,7 +28,7 @@ services:
     ports:
       - 3001:8080
     volumes:
-      - .:/workspace:cached
+      - .:/workspace
       - node_modules_vol:/workspace/node_modules
   worker:
     build:
@@ -38,7 +38,7 @@ services:
     depends_on:
       - postgresql
     volumes:
-      - .:/workspace:cached
+      - .:/workspace
       - gems_vol:/usr/local/bundle
   postgresql:
     image: postgres:12.4-alpine

@@ -1,0 +1,10 @@
+- post = local_assigns.fetch(:post, nil)
+
+.c-subnav
+  = active_link_to forum_path, class: "c-subnav__link", class_active: "c-subnav__link--active", active: (params[:controller] == "v3/forum/home" && params[:action].in?(%w(show))) || (params[:controller].in?(["v3/forum/posts"]) && post&.forum_category.blank?) do
+    .c-subnav__item
+      = t "noun.all"
+  - ForumCategory.order(:sort_number).each do |fc|
+    = active_link_to forum_category_path(fc.slug), class: "c-subnav__link", class_active: "c-subnav__link--active", active: (params[:controller] == "v3/forum/categories" && params[:category_id] == fc.slug) || (post&.forum_category&.slug == fc.slug)
+      .c-subnav__item
+        = t "resources.forum_category.#{fc.slug}"

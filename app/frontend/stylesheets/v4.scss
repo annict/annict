@@ -1,23 +1,8 @@
-@import './v4/common/variables';
-
-@import './v4/common/vendors';
-@import './v4/web/vendors';
-@import './v4/v2/vendors';
-
-@import './v4/common/foundations';
-@import './v4/web/foundations';
-
-@import './v4/web/layouts';
-
-@import './v4/v2/projects';
-@import './v4/pc/projects';
-@import './v4/mobile/projects';
-
-@import './v4/common/components';
-@import './v4/web/components';
-@import './v4/v2/components';
-@import './v4/pc/components';
-@import './v4/mobile/components';
+@import './v4/variables';
+@import './v4/vendors';
+@import './v4/foundations';
+@import './v4/layouts';
+@import './v4/projects';
+@import './v4/components';
 @import './v6/main/components/main-sidebar';
-
-@import './v4/common/utilities';
+@import './v4/utilities';

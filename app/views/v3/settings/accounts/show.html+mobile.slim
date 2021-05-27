@@ -13,18 +13,18 @@
       - if params[:controller] == "accounts"
         = render "application/components/error_panel", resource: @user
 
-      .form-group
+      .mb-3
         = f.label :username
         = f.text_field :username, class: "form-control"
-      .form-group
+      .mb-3
         = f.label :locale
         - options = options_for_select([[t("noun.japanese"), "ja"], [t("noun.english"), "en"]], current_user.locale)
-        = f.select :locale, options, {}, { class: "form-control" }
-      .form-group
+        = f.select :locale, options, {}, { class: "form-select" }
+      .mb-3
         = f.label :time_zone
         - options = options_for_select(ActiveSupport::TimeZone.all.map { |time_zone| [decorated_tz_name(time_zone), time_zone.tzinfo.name] }, current_user.time_zone)
-        = f.select :time_zone, options, {}, { class: "form-control" }
-      .form-group
+        = f.select :time_zone, options, {}, { class: "form-select" }
+      .mb-3
         = f.label :allowed_locales
         .small.text-muted.mb-2
           = t "messages.users.allowed_locales_description"
@@ -43,7 +43,7 @@
     = form_for @user_email_form, url: user_email_path do |f|
       = render V4::ErrorPanelComponent.new(form: @user_email_form)
 
-      .form-group
+      .mb-3
         = f.label :email
         = f.email_field :email, class: "form-control", required: true
 
@@ -54,18 +54,18 @@
     = t "noun.password"
 
   .mb-5
-    = form_for @user, url: settings_password_path, method: :patch, local: true, data: { turbo: false } do |f|
+    = form_for @user, url: settings_password_path, method: :patch, data: { turbo: false } do |f|
       - if params[:controller] == "v3/settings/passwords"
         = render "application/components/error_panel", resource: @user
 
       - if current_user.encrypted_password.present?
-        .form-group
+        .mb-3
           = f.label :current_password
           = f.password_field :current_password, class: "form-control"
-      .form-group
+      .mb-3
         = f.label :password
         = f.password_field :password, class: "form-control"
-      .form-group
+      .mb-3
         = f.label :password_confirmation
         = f.password_field :password_confirmation, class: "form-control"
       .form-submit.text-center

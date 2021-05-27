@@ -32,7 +32,7 @@
     <% end %>
 
     <div class="mb-3 px-1">
-      <%= form_with html: { autocomplete: "off", method: :get }, local: true, url: search_path do %>
+      <%= form_with html: { autocomplete: "off", method: :get }, url: search_path do %>
         <%= text_field_tag "q", search.q, class: "form-control", placeholder: t("messages._common.search_with_keywords") %>
       <% end %>
     </div>
@@ -196,8 +196,8 @@
 
     <ul class="list-unstyled px-3">
       <% [
-        [userland_root_path, "signal-stream", t("noun.annict_userland")],
-        [forum_root_path, "comments-alt", t("noun.annict_forum")],
+        [userland_path, "signal-stream", t("noun.annict_userland")],
+        [forum_path, "comments-alt", t("noun.annict_forum")],
         [db_root_path, "database", t("noun.annict_db")],
         [supporters_path, "sparkles", t("noun.annict_supporters")]
       ].each do |link_path, icon_name, link_text| %>
