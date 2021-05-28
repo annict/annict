@@ -24,8 +24,8 @@ module.exports = {
   entry,
   mode: isProd ? 'production' : 'development',
   output: {
-    filename: '[name]-[hash].js',
-    chunkFilename: '[name].bundle-[hash].js',
+    filename: '[name]-[contenthash].js',
+    chunkFilename: '[name].bundle-[contenthash].js',
     path: path.resolve(__dirname, 'public', 'packs'),
     publicPath: '/packs/',
   },
@@ -74,7 +74,7 @@ module.exports = {
           {
             loader: 'file-loader',
             options: {
-              name: '[path][name]-[hash].[ext]',
+              name: '[path][name]-[contenthash].[ext]',
               context: 'app/frontend',
             },
           },
@@ -95,8 +95,8 @@ module.exports = {
     new MiniCssExtractPlugin({
       // Options similar to the same options in webpackOptions.output
       // both options are optional
-      filename: '[name]-[hash].css',
-      chunkFilename: '[name].bundle-[hash].css',
+      filename: '[name]-[contenthash].css',
+      chunkFilename: '[name].bundle-[contenthash].css',
     }),
     new ForkTsCheckerWebpackPlugin(),
   ],
