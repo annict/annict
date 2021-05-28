@@ -1,0 +1,14 @@
+.container {
+  > .card {
+    @include media-breakpoint-down(lg) {
+      border-radius: 0;
+    }
+  }
+}
+
+.container-flat {
+  @include media-breakpoint-down(lg) {
+    padding-right: 0;
+    padding-left: 0;
+  }
+}
