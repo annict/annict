@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module V4::Oauth
-  class ApplicationsController < V4::Oauth::ApplicationController
+module V3::Oauth
+  class ApplicationsController < V3::Oauth::ApplicationController
     before_action :authenticate_admin!
 
     def index
@@ -17,8 +17,6 @@ module V4::Oauth
       @application.owner = current_user
 
       if @application.save
-        ga_client.page_category = params[:page_category]
-        ga_client.events.create(:oauth_applications, :create)
         flash[:notice] = t "messages.oauth.applications.created"
         redirect_to oauth_application_url(@application)
       else

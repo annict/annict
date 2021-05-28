@@ -19,7 +19,7 @@
 
   .row.align-items-center
     .col.col-auto.pe-0
-      = form_tag oauth_authorization_path, method: :post do
+      = form_tag oauth_authorization_path, method: :post, data: { turbo: "false" } do
         = hidden_field_tag :client_id, @pre_auth.client.uid
         = hidden_field_tag :redirect_uri, @pre_auth.redirect_uri
         = hidden_field_tag :state, @pre_auth.state
@@ -27,7 +27,7 @@
         = hidden_field_tag :scope, @pre_auth.scope
         = submit_tag t("messages.oauth.authorizations.authorize"), class: "btn btn-primary"
     .col
-      = form_tag oauth_authorization_path, method: :delete do
+      = form_tag oauth_authorization_path, method: :delete, data: { turbo: "false" } do
         = hidden_field_tag :client_id, @pre_auth.client.uid
         = hidden_field_tag :redirect_uri, @pre_auth.redirect_uri
         = hidden_field_tag :state, @pre_auth.state

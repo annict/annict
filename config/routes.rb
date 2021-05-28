@@ -12,9 +12,16 @@ Rails.application.routes.draw do
     controllers: {omniauth_callbacks: "v6/callbacks"},
     skip: %i[passwords registrations sessions]
 
-  use_doorkeeper do
-    controllers applications: "oauth/applications"
-    skip_controllers :authorized_applications
+  scope module: :v3 do
+    use_doorkeeper do
+      controllers(
+        applications: "oauth/applications",
+        authorizations: "oauth/authorizations",
+        token_info: "oauth/token_info",
+        tokens: "oauth/tokens"
+      )
+      skip_controllers :authorized_applications
+    end
   end
 
   devise_scope :user do
