@@ -11,3 +11,11 @@
     @include button-outline-variant($color);
   }
 }
+
+.u-btn-gumroad {
+  color: $color-contrast-light;
+
+  &:hover {
+    color: $color-contrast-light;
+  }
+}

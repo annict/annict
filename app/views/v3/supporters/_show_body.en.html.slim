@@ -41,7 +41,7 @@ p.mb-0
 
 .my-5.text-center
   a.btn.btn-primary href="https://gum.co/AnnictJP"
-    = icon "shopping-cart"
+    i.far.fa-shopping-cart.me-2
     | Pay by Gumroad
 
 h2.h4.text-center.my-5.fw-bold
@@ -54,11 +54,11 @@ p.mb-0
 .my-5.text-center
   - if user_signed_in? && current_user.authorized_to?(:gumroad)
     button.btn.u-btn-gumroad disabled=""
-      = icon "link"
+      i.far.fa-link.me-2
       | Connected with Gumroad
   - else
-    = link_to user_gumroad_omniauth_authorize_path(back: supporters_path), class: "btn u-btn-gumroad" do
-      = icon "link"
+    = button_to user_gumroad_omniauth_authorize_path(back: supporters_path), class: "btn u-btn-gumroad", data: { turbo: "false" } do
+      i.far.fa-link.me-2
       | Connect to Gumroad
 
 - if user_signed_in?
@@ -93,8 +93,8 @@ p.mb-0
         |  to get the latest payment data from Gumroad.
 
       .mt-5.mb-4.text-center
-        = link_to user_gumroad_omniauth_authorize_path(back: supporters_path), class: "btn u-btn-gumroad" do
-          = icon "link"
+        = button_to user_gumroad_omniauth_authorize_path(back: supporters_path), class: "btn u-btn-gumroad", data: { turbo: "false" } do
+          i.far.fa-link.me-2
           | Reconnect to Gumroad
     - else
       p
