@@ -4,9 +4,23 @@
     border-color: var(--ann-color-#{$name}-button-border);
     color: var(--ann-color-#{$name}-button-color);
 
-    &:hover {
+    &:hover,
+    &:focus {
       background-color: var(--ann-color-#{$name}-button-background-hover);
       border-color: var(--ann-color-#{$name}-button-border-hover);
+      color: var(--ann-color-#{$name}-button-color);
+    }
+
+    &:active {
+      background-color: var(--ann-color-#{$name}-button-background-active);
+      border-color: var(--ann-color-#{$name}-button-border-active);
+      color: var(--ann-color-#{$name}-button-color);
+    }
+
+    &:disabled,
+    &.disabled {
+      background-color: var(--ann-color-#{$name}-button-background-disabled);
+      border-color: var(--ann-color-#{$name}-button-border-disabled);
       color: var(--ann-color-#{$name}-button-color);
     }
   }
