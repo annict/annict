@@ -1,12 +1,13 @@
 @import '~bootstrap/scss/functions';
 
-@import './v6/variables/annict';
+@import './v6/variables/annict-before';
 @import './v6/variables/bootstrap-before';
 
 @import '~bootstrap/scss/variables';
 @import '~bootstrap/scss/mixins';
 @import '~bootstrap/scss/utilities';
 
+@import './v6/variables/annict-after';
 @import './v6/variables/bootstrap-after';
 
 @import './v6/vendors';

@@ -1,5 +1,7 @@
 .text-body {
-  color: var(--bs-body-color) !important;
+  @include color-scheme(dark) {
+    color: $ann-body-color-dark !important;
+  }
 }
 
 @each $name in (anime average bad completed dropped good great mizuho on-hold plan-to-watch supporter watching) {

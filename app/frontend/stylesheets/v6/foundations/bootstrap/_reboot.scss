@@ -2,8 +2,8 @@
 
 body {
   @include color-scheme(dark) {
-    background-color: $gray-900;
-    color: $gray-200;
+    background-color: $ann-body-bg-dark;
+    color: $ann-body-color-dark;
   }
 }
 
