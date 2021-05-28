@@ -5,7 +5,7 @@
     "node": "12.16.1"
   },
   "scripts": {
-    "webpack:start": "webpack-dev-server",
+    "webpack:start": "webpack serve",
     "webpack:watch": "webpack -w --progress",
     "heroku-postbuild": "NODE_ENV=production webpack",
     "graphql:update-api-reference": "bundle exec rake graphql:dump_schema && bundle exec rake graphql:build_docs && cp -rf ./tmp/docs/graphql-api/reference/ ../annict-developers-jp/docs/.vuepress/public/graphql-api/reference"
