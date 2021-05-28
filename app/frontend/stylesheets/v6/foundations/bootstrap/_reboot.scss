@@ -1,0 +1,18 @@
+// Original: https://github.com/twbs/bootstrap/blob/v5.0.0/scss/_reboot.scss
+
+body {
+  @include color-scheme(dark) {
+    background-color: $gray-900;
+    color: $gray-200;
+  }
+}
+
+a {
+  @include color-scheme(dark) {
+    color: tint-color($link-color, 40%);
+
+    &:hover {
+      color: tint-color($link-hover-color, 40%);
+    }
+  }
+}

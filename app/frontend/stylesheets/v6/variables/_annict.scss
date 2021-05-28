@@ -1,0 +1,26 @@
+// Color system
+
+$ann-mizuho: #d51c5b;
+$ann-theme-color-map: (
+  'primary': $ann-mizuho,
+);
+
+$ann-shirobako-color-map: (
+  's': #d5ab1c,
+  'ho': #d24488,
+  'ik': #7c608c,
+  'rb': #2985be,
+  'o': #a3bc5c,
+  'a': #d74f13,
+);
+
+$ann-service-color-map: (
+  'facebook': #2e6499,
+  'gumroad': #3cabba,
+  'twitter': #24b1ec,
+);
+
+// Navbar
+
+$ann-navbar-height: 52px;
+$ann-navbar-height-mobile: 70px;
