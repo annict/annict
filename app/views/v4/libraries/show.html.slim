@@ -39,18 +39,10 @@
       - works = works.order(watchers_count: :desc).includes(:work_image)
       .mx-3
         - if @display_option == "grid_detailed"
-          = render "v4/libraries/display_options/#{@display_option}", works: works, work_tags_data: @work_tags_data, work_comment_data: @work_comment_data, user: @user
+          = render "v4/libraries/display_options/#{@display_option}", works: works, user: @user
         - else
           = render "works/display_options/#{@display_option}", works: works
   .text-center
     = paginate @seasons
 - else
   = render "application/components/empty", text: t("messages.users.no_works")
-
-c-impression-button-modal
-
-- content_for :js_templates do
-  = render "application/js_templates/impression_button_modal"
-  = render "application/js_templates/impression_button"
-  = render "application/js_templates/work_comment"
-  = render "application/js_templates/work_tags"

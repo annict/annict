@@ -18,9 +18,10 @@ describe "GET /@:username/records", type: :request do
     end
 
     context "when records exist" do
-      let!(:episode_record) { create(:episode_record, user: user, body: "楽しかった") }
-      let!(:record) { create(:record, user: user) }
-      let!(:work_record) { create(:work_record, user: user, record: record, body: "最高") }
+      let!(:record_1) { create(:record, user: user) }
+      let!(:episode_record) { create(:episode_record, record: record_1, user: user, body: "楽しかった") }
+      let!(:record_2) { create(:record, user: user) }
+      let!(:work_record) { create(:work_record, user: user, record: record_2, body: "最高") }
 
       it "displays records" do
         get "/@#{user.username}/records"
@@ -46,9 +47,10 @@ describe "GET /@:username/records", type: :request do
     end
 
     context "when records exist" do
-      let!(:episode_record) { create(:episode_record, user: user, body: "楽しかった") }
-      let!(:record) { create(:record, user: user) }
-      let!(:work_record) { create(:work_record, user: user, record: record, body: "最高") }
+      let!(:record_1) { create(:record, user: user) }
+      let!(:episode_record) { create(:episode_record, record: record_1, user: user, body: "楽しかった") }
+      let!(:record_2) { create(:record, user: user) }
+      let!(:work_record) { create(:work_record, user: user, record: record_2, body: "最高") }
 
       it "displays records" do
         get "/@#{user.username}/records"

@@ -6,10 +6,10 @@
 .container.py-3.mb-4
   .row
     .col-3.pe-0
-      = render "organizations/sidebar", organization: @organization, organization_favorites: @organization_favorites
+      = render "v3/organizations/sidebar", organization: @organization, organization_favorites: @organization_favorites
     .col-9
-      = render "organizations/subnav", organization: @organization
+      = render "v3/organizations/subnav", organization: @organization
 
       .c-card
         .container.py-3
-          = render "people/grid", root_resource: @organization, resource_years: @staff_years, resources_with_year: @staffs_with_year
+          = render "v3/people/grid", root_resource: @organization, resource_years: @staff_years, resources_with_year: @staffs_with_year

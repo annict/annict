@@ -13,7 +13,6 @@ module V6::Forms
         model: @form,
         url: form_url,
         method: form_method,
-        local: true,
         data: {
           controller: "episode-record-form",
           action: "turbo:submit-start->episode-record-form#handleSubmitStart turbo:submit-end->episode-record-form#handleSubmitEnd",
@@ -27,7 +26,7 @@ module V6::Forms
             h.html V6::ButtonGroups::RecordRatingButtonGroupComponent.new(view_context, form: f, rating_field: :rating).render
           end
 
-          h.tag :div, class: "form-group" do
+          h.tag :div, class: "mb-3" do
             h.html V6::Textareas::RecordTextareaComponent.new(
               view_context,
               form: f,

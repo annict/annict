@@ -5,7 +5,7 @@ describe "Api::V1::Me::Slots" do
   let(:user) { access_token.owner }
   let(:work) { create(:work, :with_current_season, watchers_count: 1) }
   let(:episode) { create(:episode, work: work) }
-  let(:channel) { create(:channel) }
+  let(:channel) { Channel.first }
   let(:status) { create(:status, kind: "watching", work: work, user: user) }
   let!(:slot) { create(:slot, work: work, episode: episode, channel: channel) }
   let!(:library_entry) { create(:library_entry, user: user, work: work, status: status, program: slot.program) }
@@ -35,6 +35,7 @@ describe "Api::V1::Me::Slots" do
         "work" => {
           "id" => work.id,
           "title" => work.title,
+          "title_en" => "",
           "title_kana" => work.title_kana,
           "media" => "tv",
           "media_text" => "TV",

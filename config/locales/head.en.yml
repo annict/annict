@@ -132,14 +132,12 @@ en:
           index: Slot Details
           new: New Slot Detail
         work_images:
-          show: Work Image - %{title}
+          show: Work Image
         works:
           activities: Activities
           edit: '%{title}'
           index: Works
           new: New Work
-      faqs:
-        index: FAQ
       episodes:
         index: Episodes of %{title} (Anime)
         show: Anime "%{work_title}" - %{episode_title_with_number}
@@ -227,11 +225,9 @@ en:
       staffs:
         index: Staff of %{title} (Anime)
       supporters:
-        index: Annict Supporters
+        show: Annict Supporters
       tracks:
         show: Track
-      user_work_tags:
-        show: "Anime list for %{profile_name} (%{username}) tagged '%{tag_name}'"
       userland:
         home:
           index: Userland

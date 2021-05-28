@@ -2,7 +2,7 @@
 
 describe "POST /db/channels/:id/publishing", type: :request do
   context "user does not sign in" do
-    let!(:channel) { create(:channel, :unpublished) }
+    let!(:channel) { Channel.first.tap { |c| c.unpublish } }
 
     it "user can not access this page" do
       post "/db/channels/#{channel.id}/publishing"
@@ -17,7 +17,7 @@ describe "POST /db/channels/:id/publishing", type: :request do
 
   context "user who is not editor signs in" do
     let!(:user) { create(:registered_user) }
-    let!(:channel) { create(:channel, :unpublished) }
+    let!(:channel) { Channel.first.tap { |c| c.unpublish } }
 
     before do
       login_as(user, scope: :user)
@@ -36,7 +36,7 @@ describe "POST /db/channels/:id/publishing", type: :request do
 
   context "user who is editor signs in" do
     let!(:user) { create(:registered_user, :with_editor_role) }
-    let!(:channel) { create(:channel, :unpublished) }
+    let!(:channel) { Channel.first.tap { |c| c.unpublish } }
 
     before do
       login_as(user, scope: :user)
@@ -55,7 +55,7 @@ describe "POST /db/channels/:id/publishing", type: :request do
 
   context "user who is admin signs in" do
     let!(:user) { create(:registered_user, :with_admin_role) }
-    let!(:channel) { create(:channel, :unpublished) }
+    let!(:channel) { Channel.first.tap { |c| c.unpublish } }
 
     before do
       login_as(user, scope: :user)

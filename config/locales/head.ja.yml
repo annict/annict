@@ -126,14 +126,12 @@ ja:
           index: 放送情報一覧
           new: 放送情報登録
         work_images:
-          show: 作品画像 - %{title}
+          show: 作品画像
         works:
           activities: アクティビティ
           edit: '%{title}'
           index: 作品一覧
           new: 作品登録
-      faqs:
-        index: よくある質問
       episodes:
         index: アニメ「%{title}」のエピソード
         show: アニメ「%{work_title}」%{episode_title_with_number}
@@ -222,11 +220,9 @@ ja:
       staffs:
         index: アニメ「%{title}」のスタッフ一覧
       supporters:
-        index: Annict Supporters
+        show: Annict Supporters
       tracks:
         show: 記録する
-      user_work_tags:
-        show: '%{profile_name} (%{username})が「%{tag_name}」タグを付けた作品'
       userland:
         home:
           index: Userland

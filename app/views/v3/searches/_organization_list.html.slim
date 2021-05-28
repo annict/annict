@@ -1,0 +1,4 @@
+- if organizations.present?
+  = render "v3/#{view.pluralize}/list", organizations: organizations
+- else
+  = render "application/components/empty", text: t("messages._empty.no_organizations")

@@ -12,7 +12,7 @@ module Api
           work = Work.only_kept.find(@params.work_id)
 
           work_record_params = {
-            anime_id: ::Canary::AnnictSchema.id_from_object(work, work.class),
+            anime: work,
             comment: @params.title.present? ? "#{@params.title}\n\n#{@params.body}" : @params.body,
             rating_animation: @params.rating_animation_state,
             rating_music: @params.rating_music_state,
@@ -21,9 +21,9 @@ module Api
             rating_overall: @params.rating_overall_state,
             share_to_twitter: @params.share_twitter
           }
-          form = AnimeRecordForm.new(work_record_params)
+          form = Forms::AnimeRecordForm.new(work_record_params)
 
-          result = CreateAnimeRecordRepository.new(
+          result = V4::CreateAnimeRecordRepository.new(
             graphql_client: graphql_client(viewer: current_user)
           ).execute(form: form)
 

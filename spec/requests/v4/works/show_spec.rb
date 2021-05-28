@@ -102,7 +102,7 @@ describe "GET /works/:id", type: :request do
 
   context "when vods have been added" do
     let!(:work) { create(:work) }
-    let!(:channel) { create(:channel, vod: true) }
+    let!(:channel) { Channel.with_vod.first }
     let!(:program) { create(:program, work: work, channel: channel, vod_title_code: "xxx") }
     let!(:vod_title_url) { "https://example.com/#{program.vod_title_code}" }
 

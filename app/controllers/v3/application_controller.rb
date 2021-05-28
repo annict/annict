@@ -25,6 +25,7 @@ module V3
 
     before_action :load_new_user
     before_action :store_data_into_gon
+    around_action :set_locale
 
     # テスト実行時にDragonflyでアップロードした画像を読み込むときに呼ばれるアクション
     # 画像サーバはこのRailsアプリから切り離しているので、CircleCI等でテストを実行するときは

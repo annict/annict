@@ -2,7 +2,7 @@
 
 describe "GET /db/channel_groups", type: :request do
   context "user does not sign in" do
-    let!(:channel_group) { create(:channel_group) }
+    let!(:channel_group) { ChannelGroup.first }
 
     it "responses channel_group list" do
       get "/db/channel_groups"
@@ -14,7 +14,7 @@ describe "GET /db/channel_groups", type: :request do
 
   context "user signs in" do
     let!(:user) { create(:registered_user) }
-    let!(:channel_group) { create(:channel_group) }
+    let!(:channel_group) { ChannelGroup.first }
 
     before do
       login_as(user, scope: :user)

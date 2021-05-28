@@ -50,7 +50,7 @@ h1.h2.fw-bold
 
     - if @organization_favorites.length > 30
       .text-end
-        = link_to t("verb.view_all"), organization_fans_path(organization)
+        = link_to t("verb.view_all"), organization_fan_list_path(organization)
 
 - if user_signed_in? && current_user.committer?
   = link_to t("messages._common.edit_on_annict_db"), db_edit_organization_path(organization), class: "btn btn-secondary w-100 mt-2"

@@ -30,21 +30,26 @@ module Beta
         viewer = context[:viewer]
         work = Work.only_kept.find_by_graphql_id(work_id)
 
-        result = CreateAnimeRecordService.new(
-          user: viewer,
+        form = Forms::AnimeRecordForm.new(
           anime: work,
-          rating_overall: rating_overall_state,
-          rating_animation: rating_animation_state,
-          rating_music: rating_music_state,
-          rating_story: rating_story_state,
-          rating_character: rating_character_state,
           comment: title.present? ? "#{title}\n\n#{body}" : body,
+          oauth_application: context[:doorkeeper_token].application,
+          rating_animation: rating_animation_state,
+          rating_character: rating_character_state,
+          rating_music: rating_music_state,
+          rating_overall: rating_overall_state,
+          rating_story: rating_story_state,
           share_to_twitter: share_twitter&.to_s
-        ).call
+        )
 
-        unless result.success?
-          raise GraphQL::ExecutionError, result.errors.first.message
+        if form.invalid?
+          raise GraphQL::ExecutionError, form.errors.first.message
         end
+
+        result = Creators::AnimeRecordCreator.new(
+          user: viewer,
+          form: form
+        ).call
 
         {
           review: viewer.work_records.find_by!(record_id: result.record.id)

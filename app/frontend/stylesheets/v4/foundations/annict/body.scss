@@ -1,0 +1,9 @@
+body {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+
+  @include media-breakpoint-down(lg) {
+    padding-bottom: $ann-navbar-height-mobile;
+  }
+}

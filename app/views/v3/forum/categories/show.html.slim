@@ -1,0 +1,24 @@
+- title = "#{t('head.title.forum.categories.show', name: @category.local_name)} - Forum"
+- set_meta_tags(title: title, reverse: true, prefix: false)
+
+= render "v3/forum/application/subnav"
+
+.container.py-3.mb-3
+  .row
+    .col
+      h1.h2.mb-3
+        = @category.local_name
+    .col
+      - if !@category.slug.site_news?
+        .text-end.mb-3
+          = link_to forum_new_post_path(category: @category.slug), class: "btn btn-primary" do
+            i.far.fa-plus.me-2
+            = t "resources.forum_post.new"
+  .c-card
+    - if @posts.present?
+      = render "v3/forum/posts/post_list", posts: @posts
+    - else
+      = render "application/components/empty", text: t("messages.forum.posts.no_posts")
+  - if @posts.present?
+    .text-center.mt-3
+      = V6::ButtonGroups::PaginationButtonGroupComponent.new(self, collection: @posts).render

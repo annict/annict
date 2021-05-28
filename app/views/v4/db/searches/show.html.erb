@@ -1,0 +1,24 @@
+<% title = t "head.title.db.searches.show" %>
+<% set_meta_tags(title: title, reverse: true, prefix: false) %>
+
+<div class="container-fluid py-3">
+  <div class="mb-3">
+    <h1>
+      <%= title %>
+    </h1>
+  </div>
+
+  <% @results.each do |resource_name, resources| %>
+    <div class="mb-5">
+      <h2 class="mb-5 text-center">
+        <%= t "noun.#{resource_name.to_s.pluralize}" %>
+      </h2>
+
+      <% if resources.present? %>
+        <%= render "v4/db/#{resource_name.to_s.pluralize}/#{resource_name}_list", resources: resources %>
+      <% else %>
+        <%= render "application/components/empty", text: t("messages._empty.no_resources") %>
+      <% end %>
+    </div>
+  <% end %>
+</div>

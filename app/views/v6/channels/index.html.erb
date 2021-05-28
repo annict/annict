@@ -14,7 +14,7 @@
         <div class="row">
           <% @channels.filter { |channel| channel.channel_group_id == channel_group.id }.each do |channel| %>
             <div class="col-3 mt-2">
-              <%= Buttons::ReceiveChannelButtonComponent.new(self, channel: channel, class_name: "btn-sm rounded-circle").render %>
+              <%= V6::Buttons::ReceiveChannelButtonComponent.new(self, channel: channel, class_name: "btn-sm rounded-circle").render %>
 
               <span class="ms-2">
                 <%= channel.name %>

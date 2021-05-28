@@ -1,0 +1,21 @@
+.btn {
+  i {
+    margin-right: 0.5rem;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &:not(:disabled):hover {
+    cursor: pointer;
+  }
+}
+
+.btn-primary {
+  color: $color-contrast-light;
+
+  &:hover {
+    color: $color-contrast-light;
+  }
+}

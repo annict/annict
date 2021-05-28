@@ -2,7 +2,7 @@
 
 describe EpisodeGeneratorService, type: :service do
   context "New work" do
-    let(:channel) { create(:channel) }
+    let(:channel) { Channel.first }
 
     context "has no episodes" do
       let(:work) { create(:work) }
@@ -108,7 +108,7 @@ describe EpisodeGeneratorService, type: :service do
   end
 
   context "Old work" do
-    let(:channel) { create(:channel) }
+    let(:channel) { Channel.first }
     let(:work) { create(:work) }
 
     context "has no irregular episodes" do

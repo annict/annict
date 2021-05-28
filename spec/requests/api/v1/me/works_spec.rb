@@ -23,6 +23,7 @@ describe "Api::V1::Me::Works" do
       expected_hash = {
         "id" => work.id,
         "title" => work.title,
+        "title_en" => "",
         "title_kana" => work.title_kana,
         "media" => "tv",
         "media_text" => "TV",

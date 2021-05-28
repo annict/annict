@@ -31,7 +31,7 @@ module V4
     end
 
     def mutation_name
-      @mutation_name ||= file_name.delete_suffix(".graphql")
+      @mutation_name ||= file_name.delete_prefix("v4/").delete_suffix(".graphql")
     end
 
     def camelized_variables(variables)

@@ -1,0 +1,76 @@
+<% title = t "head.title.db.organizations.edit", name: @organization.name %>
+<% set_meta_tags(title: title, reverse: true, prefix: false) %>
+
+<div class="container-fluid py-3">
+  <div class="mb-3">
+    <h1>
+      <%= title %>
+    </h1>
+
+    <div class="text-end">
+      <%= link_to organization_path(@organization), class: "btn btn-outline-primary", target: "_blank" do %>
+        <%= icon "external-link-alt" %>
+        <%= t("resources.organization.go_to_organization") %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="mb-3 row">
+    <div class="col-6">
+      <%= form_with model: @organization, url: db_organization_detail_path(@organization), method: :patch do |f| %>
+        <%= render "application/components/error_panel", resource: f.object %>
+
+        <div class="mb-3">
+          <%= f.label :name, class: "c-label-required" %>
+          <%= f.text_field :name, class: "form-control", autofocus: true, required: true %>
+        </div>
+
+        <div class="mb-3">
+          <%= f.label :name_kana %>
+          <%= f.text_field :name_kana, class: "form-control" %>
+        </div>
+
+        <div class="mb-3">
+          <%= f.label :name_en %>
+          <%= f.text_field :name_en, class: "form-control" %>
+        </div>
+
+        <div class="mb-3">
+          <%= f.label :url %>
+          <%= f.url_field :url, class: "form-control" %>
+        </div>
+
+        <div class="mb-3">
+          <%= f.label :url_en %>
+          <%= f.url_field :url_en, class: "form-control" %>
+        </div>
+
+        <div class="mb-3">
+          <%= f.label :wikipedia_url %>
+          <%= f.url_field :wikipedia_url, class: "form-control" %>
+        </div>
+
+        <div class="mb-3">
+          <%= f.label :wikipedia_url_en %>
+          <%= f.url_field :wikipedia_url_en, class: "form-control" %>
+        </div>
+
+        <div class="mb-3">
+          <%= f.label :twitter_username %>
+          <%= f.text_field :twitter_username, class: "form-control", placeholder: t("resources.organization.twitter_hashtag_placeholder") %>
+        </div>
+
+        <div class="mb-3">
+          <%= f.label :twitter_username_en %>
+          <%= f.text_field :twitter_username_en, class: "form-control", placeholder: t("resources.organization.twitter_hashtag_en_placeholder") %>
+        </div>
+
+        <%= f.submit class: "btn btn-primary" %>
+      <% end %>
+    </div>
+
+    <div class="col-6">
+      <%= render "sidebar_edit" %>
+    </div>
+  </div>
+</div>

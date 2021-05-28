@@ -1,0 +1,29 @@
+- title = t "head.title.profiles.show"
+- set_meta_tags(title: title, reverse: true, prefix: false)
+
+.container.py-3
+  .mb-3
+    = render "v3/settings/subnav"
+
+  = form_for current_user.profile, url: settings_profile_path, method: :patch do |f|
+    = render "application/components/error_panel", resource: current_user.profile
+
+    .mb-3
+      = f.label :name
+      = f.text_field :name, class: "form-control"
+    .mb-3
+      = f.label :description
+      = f.text_field :description, class: "form-control"
+    .mb-3
+      = f.label :url
+      = f.text_field :url, class: "form-control"
+    .mb-3
+      = f.label :avatar
+      = f.hidden_field :image, value: f.object.cached_image_data
+      = f.file_field :image
+    .mb-3
+      = f.label :background_image
+      = f.hidden_field :background_image, value: f.object.cached_background_image_data
+      = f.file_field :background_image
+    .form-submit.text-center
+      = f.submit class: "btn btn-primary"

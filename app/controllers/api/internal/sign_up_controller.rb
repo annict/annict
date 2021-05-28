@@ -3,7 +3,7 @@
 module Api::Internal
   class SignUpController < Api::Internal::ApplicationController
     def create
-      @form = SignUpForm.new(sign_up_form_params)
+      @form = Forms::SignUpForm.new(sign_up_form_params)
       @recaptcha = Recaptcha.new(action: "sign_up")
 
       if @form.invalid?

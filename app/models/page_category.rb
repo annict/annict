@@ -22,7 +22,6 @@ class PageCategory
     search
     slot_list
     track
-    user_work_tag
     welcome
     work
     work_list_newest

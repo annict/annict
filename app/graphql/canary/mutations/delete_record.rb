@@ -11,7 +11,7 @@ module Canary
         raise Annict::Errors::InvalidAPITokenScopeError unless context[:writable]
 
         record = context[:viewer].records.only_kept.find_by_graphql_id(record_id)
-        RecordDestroyer.new(record: record).call
+        Destroyers::RecordDestroyer.new(record: record).call
 
         {
           user: context[:viewer]

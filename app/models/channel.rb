@@ -46,6 +46,7 @@ class Channel < ApplicationRecord
   has_many :slots, dependent: :destroy
 
   scope :with_vod, -> { where(vod: true) }
+  scope :without_vod, -> { where.not(vod: true) }
 
   validates :name, presence: true
   validates :channel_group, presence: true

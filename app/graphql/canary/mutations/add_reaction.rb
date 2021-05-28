@@ -15,7 +15,7 @@ module Canary
         viewer = context[:viewer]
         reactable = Canary::AnnictSchema.object_from_id(reactable_id)
 
-        result = AddReactionService.new(user: viewer, reactable: reactable).call
+        result = V4::AddReactionService.new(user: viewer, reactable: reactable).call
 
         {
           reaction: result.reaction,

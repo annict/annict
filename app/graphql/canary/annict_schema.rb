@@ -19,12 +19,6 @@ module Canary
 
       return nil if type_name.blank? || item_id.blank?
 
-      type_name = case type_name
-      when "Anime" then "Work"
-      else
-        type_name
-      end
-
       Object.const_get(type_name).find(item_id)
     end
 
@@ -34,6 +28,8 @@ module Canary
         Canary::Types::Objects::ActivityType
       when ActivityGroup
         Canary::Types::Objects::ActivityGroupType
+      when Anime
+        Canary::Types::Objects::AnimeType
       when EpisodeRecord
         Canary::Types::Objects::EpisodeRecordType
       when Episode
