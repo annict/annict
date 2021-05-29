@@ -1,13 +1,16 @@
+import Modal from 'bootstrap/js/dist/modal';
 import $ from 'jquery';
 import axios from 'axios';
 import { Controller } from 'stimulus';
 
+import fetcher from '../utils/fetcher';
+
 const NO_SELECT = 'no_select';
 
 export default class extends Controller {
-  static classes = ['selected']
+  static classes = ['selected'];
   static targets = ['kind'];
-  static values = { animeId: Number, pageCategory: String }
+  static values = { animeId: Number, pageCategory: String };
 
   animeIdValue!: number;
   selectedClass!: string;
@@ -32,7 +35,7 @@ export default class extends Controller {
   }
 
   get currentStatusKind() {
-    const statusKind = this.statusKinds[this.animeIdValue]
+    const statusKind = this.statusKinds[this.animeIdValue];
 
     if (!statusKind) {
       return NO_SELECT;
@@ -45,27 +48,28 @@ export default class extends Controller {
     this.kindTarget.value = NO_SELECT;
   }
 
-  change() {
+  async change() {
     if (this.kindTarget.value !== this.prevStatusKind) {
       this.element.classList.add('c-spinner');
 
-      axios
-        .post(`/api/internal/works/${this.animeIdValue}/statuses/select`, {
+      try {
+        await fetcher.post(`/api/internal/works/${this.animeIdValue}/statuses/select`, {
           status_kind: this.kindTarget.value,
           page_category: this.pageCategoryValue,
-        })
-        .then(() => {
-          if (this.kindTarget.value === NO_SELECT) {
-            this.element.classList.remove(this.selectedClass);
-          }
-        })
-        .catch(() => {
-          ($('.c-sign-up-modal') as any).modal('show');
-          this.resetKind();
-        })
-        .then(() => {
-          this.element.classList.remove('c-spinner');
         });
+
+        if (this.kindTarget.value === NO_SELECT) {
+          this.element.classList.remove(this.selectedClass);
+        }
+      } catch (err) {
+        if (err.response.status === 401) {
+          new Modal('.c-sign-up-modal').show();
+        }
+
+        this.resetKind();
+      } finally {
+        this.element.classList.remove('c-spinner');
+      }
     }
   }
 }
