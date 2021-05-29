@@ -15,6 +15,7 @@ module Types
       field :twitter_normal_avatar_url, String, null: true
       field :twitter_bigger_avatar_url, String, null: true
       field :recommended_image_url, String, null: true
+      field :copyright, String, null: true
 
       field :internal_url, String, null: true do
         argument :size, String, required: true
