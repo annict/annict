@@ -1,8 +1,17 @@
 // Color system
 
-$ann-mizuho: #d51c5b;
+$ann-mizuho-color: #d51c5b;
+$ann-supporter-color: #00bcd4;
+
 $ann-theme-color-map: (
-  'primary': $ann-mizuho,
+  'primary': $ann-mizuho-color,
+);
+
+$ann-rating-map: (
+  bad: #757575,
+  average: #ff6d00,
+  good: #00c853,
+  great: #00b0ff,
 );
 
 $ann-shirobako-color-map: (
@@ -18,6 +27,19 @@ $ann-service-color-map: (
   'facebook': #2e6499,
   'gumroad': #3cabba,
   'twitter': #24b1ec,
+);
+
+// Buttons
+
+$ann-btn-color-map: (
+  average: map-get($ann-rating-map, 'average'),
+  bad: map-get($ann-rating-map, 'bad'),
+  facebook: map-get($ann-service-color-map, 'facebook'),
+  good: map-get($ann-rating-map, 'good'),
+  great: map-get($ann-rating-map, 'great'),
+  gumroad: map-get($ann-service-color-map, 'gumroad'),
+  supporter: $ann-supporter-color,
+  twitter: map-get($ann-service-color-map, 'twitter'),
 );
 
 // Navbar

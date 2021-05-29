@@ -59,7 +59,7 @@
 
         <% if !@oauth_app || !@oauth_app.hide_social_login? %>
           <div class="mb-3 text-center">
-            <%= button_to user_twitter_omniauth_authorize_path, class: "btn d-inline-flex justify-content-between btn-twitter", data: { turbo: "false" } do %>
+            <%= button_to user_twitter_omniauth_authorize_path, class: "btn d-inline-flex justify-content-between u-btn-twitter", data: { turbo: "false" } do %>
               <span class="col-1 px-0">
                 <i class="fab fa-twitter"></i>
               </span>
@@ -71,7 +71,7 @@
           </div>
 
           <div class="mb-3 text-center">
-            <%= button_to user_facebook_omniauth_authorize_path, class: "btn d-inline-flex justify-content-between btn-facebook", data: { turbo: "false" } do %>
+            <%= button_to user_facebook_omniauth_authorize_path, class: "btn d-inline-flex justify-content-between u-btn-facebook", data: { turbo: "false" } do %>
                 <span class="col-1 px-0">
                   <i class="fab fa-facebook"></i>
                 </span>
