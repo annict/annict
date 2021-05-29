@@ -1,13 +1,19 @@
+$ann-status-selector-color-dark: shade-color($green, 20%);
+
 .c-status-selector {
   position: relative;
 
   select {
     background-color: rgba(0, 0, 0, 0);
     background: none;
-    border: solid 1px var(--bs-green);
-    color: var(--bs-green);
+    border: solid 1px $green;
+    color: $green;
     cursor: pointer;
     font-size: 0.9rem;
+
+    @include color-scheme(dark) {
+      border: solid 1px $ann-status-selector-color-dark;
+    }
   }
 
   svg {
@@ -18,19 +24,27 @@
     top: 50%;
 
     path {
-      fill: var(--bs-green);
+      fill: $green;
+
+      @include color-scheme(dark) {
+        fill: $ann-status-selector-color-dark;
+      }
     }
   }
 
   &--selected {
     select {
-      background-color: var(--bs-green);
-      color: var(--bs-white);
+      background-color: $green;
+      color: $white;
+
+      @include color-scheme(dark) {
+        background-color: $ann-status-selector-color-dark;
+      }
     }
 
     svg {
       path {
-        fill: var(--bs-white);
+        fill: $white;
       }
     }
   }

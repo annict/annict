@@ -1,5 +1,5 @@
 .card {
   @include color-scheme(dark) {
-    background-color: $gray-800;
+    background-color: $ann-card-bg-dark;
   }
 }

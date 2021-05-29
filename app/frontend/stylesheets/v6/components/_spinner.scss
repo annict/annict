@@ -6,9 +6,9 @@
   z-index: 100;
 
   &::before {
-    background: rgba(255, 255, 255, .8);
+    background: rgba(255, 255, 255, 0.8);
     border-radius: inherit;
-    content: "";
+    content: '';
     height: 100%;
     left: 0;
     position: absolute;
@@ -18,14 +18,14 @@
   }
 
   &::after {
-    animation: ann-spin .7s infinite linear;
-    border: 0.2rem solid var(--ann-color-spinner);
+    animation: ann-spin 0.7s infinite linear;
+    border: 0.2rem solid $ann-mizuho-color;
     border-right-color: transparent;
     border-radius: 50%;
-    content: "";
+    content: '';
     height: 1rem;
     left: 50%;
-    margin: -.5rem 0 0 -.5rem;
+    margin: -0.5rem 0 0 -0.5rem;
     position: absolute;
     top: 50%;
     width: 1rem;

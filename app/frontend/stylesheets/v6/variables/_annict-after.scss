@@ -2,3 +2,12 @@
 
 $ann-body-bg-dark: $gray-900;
 $ann-body-color-dark: $gray-200;
+
+// Links
+
+$ann-link-color-dark: tint-color($link-color, 40%);
+$ann-link-hover-color-dark: tint-color($link-hover-color, 40%);
+
+// Cards
+
+$ann-card-bg-dark: $gray-800;

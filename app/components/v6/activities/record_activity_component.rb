@@ -24,7 +24,7 @@ module V6::Activities
           h.tag :div, class: "col" do
             h.tag :div do
               h.tag :span, class: "c-timeline__user-name" do
-                h.tag :a, href: view_context.profile_path(@user.username), class: "text-body fw-bold u-link" do
+                h.tag :a, href: view_context.profile_path(@user.username), class: "text-body fw-bold" do
                   h.text @user.name
                 end
               end

@@ -9,10 +9,10 @@ body {
 
 a {
   @include color-scheme(dark) {
-    color: tint-color($link-color, 40%);
+    color: $ann-link-color-dark;
 
     &:hover {
-      color: tint-color($link-hover-color, 40%);
+      color: $ann-link-hover-color-dark;
     }
   }
 }

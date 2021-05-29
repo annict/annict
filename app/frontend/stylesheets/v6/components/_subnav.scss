@@ -31,7 +31,7 @@
     line-height: $ann-navbar-height;
 
     &--active {
-      border-bottom: solid .15rem var(--ann-color-mizuho);
+      border-bottom: solid 0.15rem $ann-mizuho-color;
     }
   }
 }
