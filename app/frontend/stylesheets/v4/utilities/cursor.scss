@@ -1,7 +1,0 @@
-@each $type in default, pointer {
-  .u-cursor-#{$type} {
-    &:hover {
-      cursor: $type;
-    }
-  }
-}
