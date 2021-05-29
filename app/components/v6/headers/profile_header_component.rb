@@ -12,36 +12,34 @@ module V6::Headers
 
     def render
       build_html do |h|
-        h.tag :div, class: "container" do
-          h.tag :div, class: "align-items-center row gx-3" do
-            h.tag :div, class: "col-auto" do
-              h.tag :a, href: view_context.profile_path(@user.username) do
-                h.html V6::Pictures::AvatarPictureComponent.new(view_context, user: @user, width: 80, mb_width: 80).render
-              end
+        h.tag :div, class: "align-items-center row gx-3" do
+          h.tag :div, class: "col-auto" do
+            h.tag :a, href: view_context.profile_path(@user.username) do
+              h.html V6::Pictures::AvatarPictureComponent.new(view_context, user: @user, width: 80, mb_width: 80).render
             end
+          end
 
-            h.tag :div, class: "col" do
-              h.html V6::Badges::SupporterBadgeComponent.new(view_context, user: @user).render
+          h.tag :div, class: "col" do
+            h.html V6::Badges::SupporterBadgeComponent.new(view_context, user: @user).render
 
-              h.tag :h1, class: "h2" do
-                h.tag :a, class: "text-body", href: view_context.profile_path(@user.username) do
-                  h.text @profile.name
+            h.tag :h1, class: "h2" do
+              h.tag :a, class: "text-body", href: view_context.profile_path(@user.username) do
+                h.text @profile.name
 
-                  h.tag :div, class: "h3 text-muted" do
-                    h.text "@#{@user.username}"
-                  end
+                h.tag :div, class: "h3 text-muted" do
+                  h.text "@#{@user.username}"
                 end
               end
             end
+          end
 
-            h.tag :div, class: "col-12 col-sm-auto text-center" do
-              if current_user&.id == @user.id
-                h.tag :a, href: view_context.settings_profile_path, class: "btn btn-outline-secondary" do
-                  h.text t("noun.edit_profile")
-                end
-              else
-                h.html V6::Buttons::FollowButtonComponent.new(view_context, user: @user, page_category: page_category).render
+          h.tag :div, class: "col-12 col-sm-auto text-center" do
+            if current_user&.id == @user.id
+              h.tag :a, href: view_context.settings_profile_path, class: "btn btn-outline-secondary" do
+                h.text t("noun.edit_profile")
               end
+            else
+              h.html V6::Buttons::FollowButtonComponent.new(view_context, user: @user, page_category: page_category).render
             end
           end
         end

@@ -11,7 +11,7 @@ module V6::Activities
 
     def render
       build_html do |h|
-        h.tag :div, class: "card u-card-flat" do
+        h.tag :div, class: "card" do
           h.tag :div, class: "card-body" do
             h.tag :div, class: "mb-3" do
               h.tag :a, href: view_context.profile_path(@user.username) do

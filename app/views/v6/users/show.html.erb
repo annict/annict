@@ -5,7 +5,7 @@
 
 <%= component_value_fetcher_tag("status-selector", internal_api_library_entry_list_path(anime_ids: @anime_ids)) %>
 
-<div class="py-3">
+<div class="container py-3">
   <%= V6::Headers::ProfileHeaderComponent.new(self, user: @user, current_user: current_user, params: params).render %>
 
   <div class="gx-3 mt-3 row">
