@@ -7,12 +7,16 @@
   overflow-x: auto;
 
   &__day {
-    background: $gray-400;
+    background: shade-color($body-bg, 15%);
     border-radius: 3px;
     display: inline-block;
     height: 10px;
     position: relative;
     width: 10px;
+
+    @include color-scheme(dark) {
+      background: tint-color($ann-body-bg-dark, 15%);
+    }
   }
 
   &__density-1 {
