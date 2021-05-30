@@ -92,7 +92,6 @@ group :development do
   gem "better_errors"
   gem "binding_of_caller" # Using better_errors
   gem "bullet"
-  gem "derailed_benchmarks"
   gem "graphql-docs"
   gem "i18n-tasks"
   gem "listen" # Using with `rails s` since Rails 5
@@ -100,7 +99,6 @@ group :development do
   gem "spring"
   gem "spring-commands-rspec", require: false
   gem "squasher"
-  gem "stackprof"
   gem "traceroute"
 end
 
