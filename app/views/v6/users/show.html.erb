@@ -45,10 +45,14 @@
           <%= t "noun.your_statistics" %>
         </h2>
 
-        <c-user-heatmap class="mb-3" username="<%= @user.username %>"></c-user-heatmap>
+        <turbo-frame
+          data-controller="tracking-heatmap"
+          data-tracking-heatmap-frame-path-value="<%= fragment_tracking_heatmap_path %>"
+          id="tracking-heatmap"
+        ></turbo-frame>
       </div>
 
-      <div class="g-3 row">
+      <div class="g-3 mt-3 row">
         <% [
           [record_list_path(@user.username), @user.records_count, "Records"],
           [library_path(@user.username, :watching), @user.watching_anime_count, "Watching"],
