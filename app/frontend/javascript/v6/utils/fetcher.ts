@@ -38,4 +38,8 @@ export default {
   post: async (url: string, data = {}, options = {}) => {
     return await requestWithData(url, 'POST', data, { ...options });
   },
+
+  delete: async (url: string, data = {}, options = {}) => {
+    return await requestWithData(url, 'DELETE', data, { ...options });
+  },
 };
