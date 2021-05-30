@@ -22,7 +22,6 @@
     "bootstrap": "^5.0.0",
     "bourbon": "^7.0.0",
     "britecharts": "^2.18.0",
-    "cal-heatmap": "^3.6.2",
     "choices.js": "^9.0.1",
     "core-js": "^3.12.1",
     "d3": "^6.7.0",

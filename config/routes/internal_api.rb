@@ -21,10 +21,6 @@ namespace :api do
       post :remove, on: :collection
     end
 
-    resources :statistics, only: [] do
-      get :user_heatmap, on: :collection
-    end
-
     resource :user, only: [] do
       resources :slots, only: [:index], controller: "user_slots"
     end
