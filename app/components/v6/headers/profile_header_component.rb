@@ -20,13 +20,15 @@ module V6::Headers
           end
 
           h.tag :div, class: "col" do
-            h.html V6::Badges::SupporterBadgeComponent.new(view_context, user: @user).render
+            if @user.supporter?
+              h.html V6::Badges::SupporterBadgeComponent.new(view_context, user: @user).render
+            end
 
             h.tag :h1, class: "h2" do
               h.tag :a, class: "text-body", href: view_context.profile_path(@user.username) do
                 h.text @profile.name
 
-                h.tag :div, class: "h3 text-muted" do
+                h.tag :div, class: "h4 text-muted" do
                   h.text "@#{@user.username}"
                 end
               end
