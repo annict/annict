@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 class EmailNotificationMailer < ApplicationMailer
-  add_template_helper AssetsHelper
-  add_template_helper ImageHelper
-  add_template_helper LocalHelper
+  helper :assets
+  helper :local
+  helper "v4/image"
 
   def followed_user(followed_user_id, user_id)
     @followed_user = User.only_kept.find(followed_user_id)
