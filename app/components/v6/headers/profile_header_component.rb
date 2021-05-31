@@ -41,7 +41,7 @@ module V6::Headers
                 h.text t("noun.edit_profile")
               end
             else
-              h.html V6::Buttons::FollowButtonComponent.new(view_context, user: @user, page_category: page_category).render
+              h.html V6::ButtonGroups::UserButtonGroupComponent.new(view_context, user: @user).render
             end
           end
         end
