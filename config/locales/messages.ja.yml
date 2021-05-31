@@ -34,6 +34,9 @@ ja:
         add_to_favorites: お気に入りに登録
         added_to_favorites: 登録済み
         hint: 'お気に入りに登録すると、この%{resource_type}が関係する新作アニメがAnnictに登録されたとき通知します (通知をオフにすることもできます)'
+      mute_user_button:
+        the_user_has_been_muted: ミュートしました
+        the_user_has_been_unmuted: ミュートを解除しました
       program_selector:
         select_program: 放送情報を選択
       sign_up_modal:
@@ -129,8 +132,6 @@ ja:
     ics:
       you_can_see: Google Calendarに以下のURLを登録すると、「見てる」「見たい」にしている作品の放送情報などがカレンダーに表示されます。
     components:
-      mute_user_button:
-        the_user_has_been_muted: ミュートしました
       slot_list:
         tracked: 記録しました
       status_selector:

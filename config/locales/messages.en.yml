@@ -34,6 +34,9 @@ en:
         add_to_favorites: Add to Favorites
         added_to_favorites: Added to Favorites
         hint: If you add this %{resource_type} into your favorites, you'll get a notification when upcoming animes which is related to this %{resource_type} will be added to Annict.
+      mute_user_button:
+        the_user_has_been_muted: The user has been muted.
+        the_user_has_been_unmuted: The user has been unmuted.
       program_selector:
         select_program: Select Program
       sign_up_modal:
@@ -129,8 +132,6 @@ en:
     ics:
       you_can_see: You can see slots of works which you set "Watching", "Plan to Watch" when you add the following URL to Google Calendar.
     components:
-      mute_user_button:
-        the_user_has_been_muted: The user has been muted.
       slot_list:
         tracked: Tracked.
       status_selector:
