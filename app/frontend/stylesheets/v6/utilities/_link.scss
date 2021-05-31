@@ -1,0 +1,18 @@
+.u-fake-link {
+  color: $link-color;
+  cursor: pointer;
+  text-decoration: $link-decoration;
+
+  &:hover {
+    color: $link-hover-color;
+    text-decoration: $link-hover-decoration;
+  }
+
+  @include color-scheme(dark) {
+    color: $ann-link-color-dark;
+
+    &:hover {
+      color: $ann-link-hover-color-dark;
+    }
+  }
+}

@@ -9,7 +9,7 @@ module V6::Badges
 
     def render
       build_html do |h|
-        h.tag :span, class: "badge ann-bg-anime" do
+        h.tag :span, class: "badge u-bg-anime" do
           h.text @anime.media.text
         end
       end

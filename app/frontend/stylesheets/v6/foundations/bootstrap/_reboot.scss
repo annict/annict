@@ -1,0 +1,18 @@
+// Original: https://github.com/twbs/bootstrap/blob/v5.0.0/scss/_reboot.scss
+
+body {
+  @include color-scheme(dark) {
+    background-color: $ann-body-bg-dark;
+    color: $ann-body-color-dark;
+  }
+}
+
+a {
+  @include color-scheme(dark) {
+    color: $ann-link-color-dark;
+
+    &:hover {
+      color: $ann-link-hover-color-dark;
+    }
+  }
+}

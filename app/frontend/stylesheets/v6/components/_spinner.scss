@@ -1,0 +1,44 @@
+.c-spinner {
+  border: 0;
+  cursor: default;
+  position: relative;
+  transition: all 0s linear;
+  z-index: 100;
+
+  &::before {
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: inherit;
+    content: '';
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 100;
+  }
+
+  &::after {
+    animation: ann-spin 0.7s infinite linear;
+    border: 0.2rem solid $ann-mizuho-color;
+    border-right-color: transparent;
+    border-radius: 50%;
+    content: '';
+    height: 1rem;
+    left: 50%;
+    margin: -0.5rem 0 0 -0.5rem;
+    position: absolute;
+    top: 50%;
+    width: 1rem;
+    z-index: 101;
+  }
+}
+
+@keyframes ann-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}

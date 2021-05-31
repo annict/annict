@@ -1,23 +1,18 @@
-@import './v6/base/variables';
+@import '~bootstrap/scss/functions';
 
-@import './v6/base/vendors';
-@import './v6/main/vendors';
+@import './v6/variables/annict-before';
+@import './v6/variables/bootstrap-before';
 
-@import './v6/base/foundations';
-// @import './v6/web/foundations';
+@import '~bootstrap/scss/variables';
+@import '~bootstrap/scss/mixins';
+@import '~bootstrap/scss/utilities';
 
-@import './v6/base/utilities';
+@import './v6/variables/annict-after';
+@import './v6/variables/bootstrap-after';
 
-@import './v6/main/layouts';
+@import './v6/vendors';
 
-// @import './v6/v2/projects';
-// @import './v6/pc/projects';
-// @import './v6/mobile/projects';
-
-@import './v6/base/components';
-@import './v6/main/components';
-// @import './v6/v2/components';
-// @import './v6/pc/components';
-// @import './v6/mobile/components';
-
-// @import './v6/common/utilities';
+@import './v6/foundations';
+@import './v6/utilities';
+@import './v6/layouts';
+@import './v6/components';

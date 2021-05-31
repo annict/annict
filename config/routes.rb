@@ -12,9 +12,16 @@ Rails.application.routes.draw do
     controllers: {omniauth_callbacks: "v6/callbacks"},
     skip: %i[passwords registrations sessions]
 
-  use_doorkeeper do
-    controllers applications: "oauth/applications"
-    skip_controllers :authorized_applications
+  scope module: :v3 do
+    use_doorkeeper do
+      controllers(
+        applications: "oauth/applications",
+        authorizations: "oauth/authorizations",
+        token_info: "oauth/token_info",
+        tokens: "oauth/tokens"
+      )
+      skip_controllers :authorized_applications
+    end
   end
 
   devise_scope :user do
@@ -44,6 +51,12 @@ Rails.application.routes.draw do
   match "/api/internal/channels/:channel_id/reception",       via: :delete, as: :internal_api_channel_reception,          to: "api/internal/receptions#destroy"
   match "/api/internal/channels/:channel_id/reception",       via: :post,                                                 to: "api/internal/receptions#create"
   match "/api/internal/characters",                           via: :get,    as: :internal_api_character_list,             to: "api/internal/characters#index"
+  match "/api/internal/follow",                               via: :delete, as: :internal_api_follow,                     to: "api/internal/follows#destroy"
+  match "/api/internal/follow",                               via: :post,                                                 to: "api/internal/follows#create"
+  match "/api/internal/following",                            via: :get,    as: :internal_api_following_list,             to: "api/internal/following#index"
+  match "/api/internal/mute_user",                            via: :delete, as: :internal_api_mute_user,                  to: "api/internal/mute_users#destroy"
+  match "/api/internal/mute_user",                            via: :post,                                                 to: "api/internal/mute_users#create"
+  match "/api/internal/muted_users",                          via: :get,    as: :internal_api_muted_user_list,            to: "api/internal/muted_users#index"
   match "/api/internal/organizations",                        via: :get,    as: :internal_api_organization_list,          to: "api/internal/organizations#index"
   match "/api/internal/people",                               via: :get,    as: :internal_api_person_list,                to: "api/internal/people#index"
   match "/api/internal/series_list",                          via: :get,    as: :internal_api_series_list,                to: "api/internal/series_list#index"
@@ -174,16 +187,17 @@ Rails.application.routes.draw do
   match "/episodes/:episode_id/records",                      via: :post,   as: :episode_record_list,                     to: "episode_records#create"
   match "/faq",                                               via: :get,    as: :faq,                                     to: "v6/faqs#show"
   match "/forum",                                             via: :get,    as: :forum,                                   to: "v3/forum/home#show"
-  match "/forum/categories/:category_id",                     via: :get,    as: :forum_category,                          to: "v3/forum/categories#show",        category_id: /[a-z_]+/
+  match "/forum/categories/:category_id",                     via: :get,    as: :forum_category,                          to: "v3/forum/categories#show",           category_id: /[a-z_]+/
   match "/forum/posts",                                       via: :post,   as: :forum_post_list,                         to: "v3/forum/posts#create"
-  match "/forum/posts/:post_id",                              via: :get,    as: :forum_post,                              to: "v3/forum/posts#show",             post_id: ID_FORMAT
-  match "/forum/posts/:post_id",                              via: :patch,                                                to: "v3/forum/posts#update",           post_id: ID_FORMAT
-  match "/forum/posts/:post_id/comments",                     via: :post,   as: :forum_comment_list,                      to: "v3/forum/comments#create",        post_id: ID_FORMAT
-  match "/forum/posts/:post_id/comments/:comment_id",         via: :patch,  as: :forum_comment,                           to: "v3/forum/comments#update",        post_id: ID_FORMAT, comment_id: ID_FORMAT
-  match "/forum/posts/:post_id/comments/:comment_id/edit",    via: :get,    as: :forum_edit_comment,                      to: "v3/forum/comments#edit",          post_id: ID_FORMAT, comment_id: ID_FORMAT
-  match "/forum/posts/:post_id/edit",                         via: :get,    as: :forum_edit_post,                         to: "v3/forum/posts#edit",             post_id: ID_FORMAT
+  match "/forum/posts/:post_id",                              via: :get,    as: :forum_post,                              to: "v3/forum/posts#show",                post_id: ID_FORMAT
+  match "/forum/posts/:post_id",                              via: :patch,                                                to: "v3/forum/posts#update",              post_id: ID_FORMAT
+  match "/forum/posts/:post_id/comments",                     via: :post,   as: :forum_comment_list,                      to: "v3/forum/comments#create",           post_id: ID_FORMAT
+  match "/forum/posts/:post_id/comments/:comment_id",         via: :patch,  as: :forum_comment,                           to: "v3/forum/comments#update",           post_id: ID_FORMAT, comment_id: ID_FORMAT
+  match "/forum/posts/:post_id/comments/:comment_id/edit",    via: :get,    as: :forum_edit_comment,                      to: "v3/forum/comments#edit",             post_id: ID_FORMAT, comment_id: ID_FORMAT
+  match "/forum/posts/:post_id/edit",                         via: :get,    as: :forum_edit_post,                         to: "v3/forum/posts#edit",                post_id: ID_FORMAT
   match "/forum/posts/new",                                   via: :get,    as: :forum_new_post,                          to: "v3/forum/posts#new"
-  match "/fragment/@:username/records/:record_id/edit",       via: :get,    as: :fragment_edit_record,                    to: "v6/fragment/records#edit",        username: USERNAME_FORMAT
+  match "/fragment/@:username/records/:record_id/edit",       via: :get,    as: :fragment_edit_record,                    to: "v6/fragment/records#edit",           username: USERNAME_FORMAT
+  match "/fragment/@:username/tracking_heatmap",              via: :get,    as: :fragment_tracking_heatmap,               to: "v6/fragment/tracking_heatmaps#show", username: USERNAME_FORMAT
   match "/fragment/activity_groups/:activity_group_id/items", via: :get,    as: :fragment_activity_item_list,             to: "v6/fragment/activity_items#index"
   match "/fragment/episodes/:episode_id/records",             via: :get,    as: :fragment_episode_record_list,            to: "v6/fragment/episode_records#index"
   match "/fragment/receive_channel_buttons",                  via: :get,    as: :fragment_receive_channel_button_list,    to: "v6/fragment/receive_channel_buttons#index"

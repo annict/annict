@@ -11,7 +11,7 @@ module V6::Badges
       return "" unless @user.supporter?
 
       build_html do |h|
-        h.tag :div, class: "badge bg-supporter" do
+        h.tag :div, class: "badge u-bg-supporter" do
           h.text t("noun.supporter")
         end
       end

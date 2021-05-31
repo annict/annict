@@ -1,6 +1,6 @@
 <%= content_for :head_assets do %>
-  <%= stylesheet_bundle_tag "v4.css", media: "all", "data-turbo-track": "reload" %>
-  <%= javascript_bundle_tag "v4.js", defer: "", "data-turbo-track": "reload" %>
+  <%= stylesheet_bundle_tag "v6.css", media: "all", "data-turbo-track": "reload" %>
+  <%= javascript_bundle_tag "v6.js", defer: "", "data-turbo-track": "reload" %>
 <% end %>
 
 <!DOCTYPE html>
@@ -8,7 +8,7 @@
   <head>
     <%= render "application/head" %>
   </head>
-  <body class="#{body_classes} #{user_signed_in? ? 'is-user' : 'is-guest'}">
+  <body>
     <%= include_gon %>
 
     <div class="l-default">

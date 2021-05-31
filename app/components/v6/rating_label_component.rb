@@ -39,7 +39,7 @@ module V6
     end
 
     def badge_class_name
-      "bg-#{@rating}"
+      "u-bg-#{@rating}"
     end
 
     def label_text

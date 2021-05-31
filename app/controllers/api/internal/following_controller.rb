@@ -6,13 +6,7 @@ module Api
       def index
         return render(json: []) unless user_signed_in?
 
-        following = current_user.followings.only_kept.pluck(:id).map { |user_id|
-          {
-            user_id: user_id
-          }
-        }
-
-        render json: following
+        render(json: current_user.followings.only_kept.pluck(:id))
       end
     end
   end

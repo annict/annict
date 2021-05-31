@@ -27,8 +27,7 @@ module V3
       keys = {
         "verb.follow": nil,
         "noun.following": nil,
-        "messages._common.are_you_sure": nil,
-        "messages.components.mute_user_button.the_user_has_been_muted": nil
+        "messages._common.are_you_sure": nil
       }
 
       load_i18n_into_gon keys

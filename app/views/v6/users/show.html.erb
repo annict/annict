@@ -3,6 +3,8 @@
 <% image_url = v6_ann_image_url(@profile, :image, height: 200, width: 200, format: "jpg") %>
 <% set_meta_tags(title: title, description: description, og: { description: description, image: image_url }, twitter: { description: description }, reverse: true, prefix: false) %>
 
+<%= component_value_fetcher_tag("follow-button", internal_api_following_list_path) %>
+<%= component_value_fetcher_tag("mute-user-button", internal_api_muted_user_list_path) %>
 <%= component_value_fetcher_tag("status-selector", internal_api_library_entry_list_path(anime_ids: @anime_ids)) %>
 
 <div class="container py-3">
@@ -45,10 +47,14 @@
           <%= t "noun.your_statistics" %>
         </h2>
 
-        <c-user-heatmap class="mb-3" username="<%= @user.username %>"></c-user-heatmap>
+        <turbo-frame
+          data-controller="tracking-heatmap"
+          data-tracking-heatmap-frame-path-value="<%= fragment_tracking_heatmap_path %>"
+          id="tracking-heatmap"
+        ></turbo-frame>
       </div>
 
-      <div class="g-3 row">
+      <div class="g-3 mt-3 row">
         <% [
           [record_list_path(@user.username), @user.records_count, "Records"],
           [library_path(@user.username, :watching), @user.watching_anime_count, "Watching"],

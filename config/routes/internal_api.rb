@@ -8,10 +8,6 @@ namespace :api do
       post :unfavorite, on: :collection
     end
 
-    resources :follows, only: %i[create] do
-      post :unfollow, on: :collection
-    end
-
     resources :likes, only: [:create] do
       post :unlike, on: :collection
     end
@@ -19,10 +15,6 @@ namespace :api do
     resources :reactions, only: [] do
       post :add, on: :collection
       post :remove, on: :collection
-    end
-
-    resources :statistics, only: [] do
-      get :user_heatmap, on: :collection
     end
 
     resource :user, only: [] do
@@ -44,7 +36,6 @@ scope module: :api do
     constraints format: "json" do
       # rubocop:disable Layout/ExtraSpacing, Layout/LineLength
       match "/api/internal/episode_records",                   via: :post,   as: :internal_api_episode_record_list,     to: "episode_records#create"
-      match "/api/internal/following",                         via: :get,    as: :internal_api_following_list,          to: "following#index"
       match "/api/internal/library_entries",                   via: :get,    as: :internal_api_library_entry_list,      to: "library_entries#index"
       match "/api/internal/library_entries/:library_entry_id", via: :patch,  as: :internal_api_library_entry,           to: "library_entries#update"
       match "/api/internal/likes",                             via: :get,    as: :internal_api_like_list,               to: "likes#index"

@@ -47,8 +47,7 @@ module ApplicationHelper
       },
       i18n: {
         messages: {
-          areYouSure: t("messages._common.are_you_sure"),
-          userHasBeenMuted: t("messages.components.mute_user_button.the_user_has_been_muted")
+          areYouSure: t("messages._common.are_you_sure")
         },
         noun: {
           following: t("noun.following")

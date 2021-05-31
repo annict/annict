@@ -1,0 +1,61 @@
+@each $name,
+  $color-value
+    in (
+      anime: (
+        light: $ann-anime-color,
+        dark: $ann-anime-color,
+      ),
+      average: (
+        light: $ann-rating-average-color,
+        dark: $ann-rating-average-color,
+      ),
+      bad: (
+        light: $ann-rating-bad-color,
+        dark: $ann-rating-bad-color,
+      ),
+      completed: (
+        light: $ann-status-completed-color,
+        dark: $ann-status-completed-color,
+      ),
+      dropped: (
+        light: $ann-status-dropped-color,
+        dark: $ann-status-dropped-color,
+      ),
+      good: (
+        light: $ann-rating-good-color,
+        dark: $ann-rating-good-color,
+      ),
+      great: (
+        light: $ann-rating-great-color,
+        dark: $ann-rating-great-color,
+      ),
+      mizuho: (
+        light: $ann-mizuho-color,
+        dark: $ann-mizuho-color,
+      ),
+      on-hold: (
+        light: $ann-status-on-hold-color,
+        dark: $ann-status-on-hold-color,
+      ),
+      plan-to-watch: (
+        light: $ann-status-plan-to-watch-color,
+        dark: $ann-status-plan-to-watch-color,
+      ),
+      supporter: (
+        light: $ann-supporter-color,
+        dark: $ann-supporter-color,
+      ),
+      watching: (
+        light: $ann-status-watching-color,
+        dark: $ann-status-watching-color,
+      )
+    )
+{
+  .u-bg-#{$name} {
+    background-color: map-get($color-value, 'light') !important;
+
+    @include color-scheme(dark) {
+      background-color: map-get($color-value, 'dark') !important;
+    }
+  }
+}

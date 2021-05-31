@@ -1,0 +1,10 @@
+.u-container-flat {
+  @include media-breakpoint-down(sm) {
+    padding-right: 0;
+    padding-left: 0;
+
+    .u-card-flat {
+      border-radius: 0;
+    }
+  }
+}

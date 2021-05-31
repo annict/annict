@@ -14,7 +14,7 @@ module V6::Contents
 
     def render
       build_html do |h|
-        h.tag :div, class: "" do
+        h.tag :div do
           if rating_or_comment?
             h.html(V6::SpoilerGuardComponent.new(view_context, record: @record).render { |h|
               h.tag :div, class: "c-record-content__wrapper mb-3" do
@@ -30,9 +30,7 @@ module V6::Contents
           end
 
           if @show_box
-            if rating_or_comment?
-              h.tag :hr
-            end
+            h.tag :hr
 
             h.html V6::Boxes::AnimeBoxComponent.new(view_context,
               anime: @anime,

@@ -9,7 +9,7 @@ module V6
             h.tag :div, class: "row" do
               h.tag :div, class: "col-12 col-sm-3 mb-3 mb-sm-0" do
                 h.tag :h2, class: "mb-1" do
-                  h.tag :a, href: view_context.root_path do
+                  h.tag :a, class: "text-body", href: view_context.root_path do
                     h.text "Annict"
                   end
                 end
