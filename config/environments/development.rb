@@ -101,6 +101,6 @@ Rails.application.configure do
     ENV.fetch("ANNICT_API_DOMAIN"),
     ENV.fetch("ANNICT_DOMAIN"),
     ENV.fetch("ANNICT_JP_DOMAIN"),
-    ".ngrok.io",
+    ".ngrok.io"
   ]
 end

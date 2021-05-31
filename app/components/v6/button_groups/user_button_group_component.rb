@@ -17,7 +17,7 @@ module V6::ButtonGroups
             h.tag :button, {
               class: "btn btn-outline-primary dropdown-toggle",
               data_bs_toggle: "dropdown",
-              type: "button",
+              type: "button"
             } do
               h.tag :i, class: "far fa-ellipsis-h"
             end
