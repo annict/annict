@@ -301,6 +301,7 @@ GEM
     imgix (4.0.2)
     imgix-rails (4.2.0)
       imgix (>= 3.0)
+    io-wait (0.1.0)
     jaro_winkler (1.5.4)
     jb (0.8.0)
     jmespath (1.4.0)
@@ -351,7 +352,8 @@ GEM
     mime-types-data (3.2021.0225)
     mini_magick (4.11.0)
     mini_mime (1.0.3)
-    mini_portile2 (2.5.1)
+    mini_portile2 (2.5.2)
+      net-ftp (~> 0.1)
     minitest (5.14.4)
     mjml-rails (4.6.1)
     moji (1.6)
@@ -366,6 +368,12 @@ GEM
     multi_xml (0.6.0)
     multipart-post (2.1.1)
     naught (1.1.0)
+    net-ftp (0.1.2)
+      net-protocol
+      time
+    net-protocol (0.1.1)
+      io-wait
+      timeout
     nio4r (2.5.7)
     nokogiri (1.11.6)
       mini_portile2 (~> 2.5.0)
@@ -506,7 +514,7 @@ GEM
       rubocop-ast (>= 1.5.0, < 2.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 1.4.0, < 3.0)
-    rubocop-ast (1.5.0)
+    rubocop-ast (1.7.0)
       parser (>= 3.0.1.1)
     rubocop-performance (1.11.2)
       rubocop (>= 1.7.0, < 2.0)
@@ -549,7 +557,7 @@ GEM
     slim (4.1.0)
       temple (>= 0.7.6, < 0.9)
       tilt (>= 2.0.6, < 2.1)
-    solargraph (0.40.4)
+    solargraph (0.41.0)
       backport (~> 1.1)
       benchmark
       bundler (>= 1.17.2)
@@ -586,7 +594,9 @@ GEM
     thor (1.1.0)
     thread_safe (0.3.6)
     tilt (2.0.10)
+    time (0.1.0)
     timecop (0.9.4)
+    timeout (0.1.1)
     traceroute (0.8.1)
       rails (>= 3.0.0)
     twitter (7.0.0)
