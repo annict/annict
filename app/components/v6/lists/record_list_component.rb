@@ -24,21 +24,19 @@ module V6::Lists
                     record: record,
                     show_box: @show_box
                   ).render
-                elsif record_entity.anime_record?
-                  render V6::Contents::AnimeRecordContentComponent.new(
+                elsif record.anime_record?
+                  h.html V6::Contents::AnimeRecordContentComponent.new(
                     view_context,
                     record: record,
                     show_box: @show_box
-                  )
+                  ).render
                 end
               end
             end
           end
 
-          if @records.respond_to?(:total_pages) && @records.total_pages > 1
-            h.tag :div, class: "mt-3 text-center" do
-              h.html paginate(@records)
-            end
+          h.tag :div, class: "mt-3 text-center" do
+            h.html V6::ButtonGroups::PaginationButtonGroupComponent.new(view_context, collection: @records).render
           end
         else
           h.html V6::EmptyComponent.new(view_context, text: t("messages._empty.no_records")).render

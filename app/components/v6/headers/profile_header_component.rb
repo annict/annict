@@ -59,7 +59,7 @@ module V6::Headers
               h.html active_link_to t("noun.records"), view_context.record_list_path(@user.username),
                 class: "c-nav__link",
                 class_active: "c-nav__link--active",
-                active: @params[:controller] == "v4/records" && @params[:action].in?(%w[index show])
+                active: @params[:controller] == "v6/records" && @params[:action].in?(%w[index show])
             end
 
             h.tag :li, class: "c-nav__item" do
