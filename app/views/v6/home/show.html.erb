@@ -15,8 +15,7 @@
   <% if @activity_groups.present? %>
     <%= V6::TimelineComponent.new(
       self,
-      activity_groups: @activity_groups,
-      page_category: page_category
+      activity_groups: @activity_groups
     ).render %>
   <% else %>
     <div class="container">

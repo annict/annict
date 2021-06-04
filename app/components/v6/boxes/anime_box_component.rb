@@ -2,10 +2,9 @@
 
 module V6::Boxes
   class AnimeBoxComponent < V6::ApplicationComponent
-    def initialize(view_context, anime:, page_category:, episode: nil)
+    def initialize(view_context, anime:, episode: nil)
       super view_context
       @anime = anime
-      @page_category = page_category
       @episode = episode
     end
 
@@ -45,7 +44,6 @@ module V6::Boxes
             h.html V6::Selectors::StatusSelectorComponent.new(
               view_context,
               anime: @anime,
-              page_category: @page_category,
               class_name: "mt-1"
             ).render
           end

@@ -2,10 +2,9 @@
 
 module V6::Contents
   class EpisodeRecordContentComponent < V6::ApplicationComponent
-    def initialize(view_context, record:, page_category:, show_box: true)
+    def initialize(view_context, record:, show_box: true)
       super view_context
       @record = record
-      @page_category = page_category
       @episode_record = @record.episode_record
       @show_box = show_box
       @anime = @record.anime
@@ -34,7 +33,6 @@ module V6::Contents
 
             h.html V6::Boxes::AnimeBoxComponent.new(view_context,
               anime: @anime,
-              page_category: @page_category,
               episode: @episode).render
 
             h.tag :hr

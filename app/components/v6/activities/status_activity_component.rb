@@ -2,10 +2,9 @@
 
 module V6::Activities
   class StatusActivityComponent < V6::ApplicationComponent
-    def initialize(view_context, activity_group:, page_category: "")
+    def initialize(view_context, activity_group:)
       super view_context
       @activity_group = activity_group
-      @page_category = page_category
       @user = activity_group.user.decorate
     end
 
@@ -41,17 +40,13 @@ module V6::Activities
             h.tag :turbo_frame, id: view_context.dom_id(@activity_group) do
               status = @activity_group.first_item
 
-              h.html V6::Contents::StatusContentComponent.new(
-                view_context,
-                status: status,
-                page_category: @page_category
-              ).render
+              h.html V6::Contents::StatusContentComponent.new(view_context, status: status).render
 
               if @activity_group.activities_count > 1
                 h.tag :div, class: "text-center" do
                   h.tag :a, {
                     class: "py-1 small",
-                    href: view_context.fragment_activity_item_list_path(@activity_group, page_category: @page_category)
+                    href: view_context.fragment_activity_item_list_path(@activity_group, page_category: page_category)
                   } do
                     h.tag :i, class: "fal fa-chevron-double-down me-1"
                     h.text t("messages._components.activities.status.more", n: @activity_group.activities_count - 1)

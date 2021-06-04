@@ -16,7 +16,7 @@
           <%= link_to @anime_entity.local_title, anime_path(anime_id: @anime_entity.database_id), class: "d-block" %>
         </div>
 
-        <%= V6::Selectors::StatusSelectorComponent.new(self, anime: @anime_entity.to_model, page_category: "user-home").render %>
+        <%= V6::Selectors::StatusSelectorComponent.new(self, anime: @anime_entity.to_model).render %>
       </div>
     </div>
   </div>

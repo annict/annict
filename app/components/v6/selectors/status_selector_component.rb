@@ -2,10 +2,9 @@
 
 module V6::Selectors
   class StatusSelectorComponent < V6::ApplicationComponent
-    def initialize(view_context, anime:, page_category:, class_name: "", style: "")
+    def initialize(view_context, anime:, class_name: "", style: "")
       super view_context
       @anime = anime
-      @page_category = page_category
       @class_name = class_name
       @style = style
     end
@@ -17,7 +16,7 @@ module V6::Selectors
           data_controller: "status-selector",
           data_status_selector_anime_id_value: @anime.id,
           data_status_selector_selected_class: "c-status-selector--selected",
-          data_status_selector_page_category_value: @page_category,
+          data_status_selector_page_category_value: page_category,
           style: @style
         } do
           h.tag :select, {

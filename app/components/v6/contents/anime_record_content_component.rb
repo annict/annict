@@ -2,10 +2,9 @@
 
 module V6::Contents
   class AnimeRecordContentComponent < V6::ApplicationComponent
-    def initialize(view_context, record:, page_category:, show_box: true)
+    def initialize(view_context, record:, show_box: true)
       super view_context
       @record = record
-      @page_category = page_category
       @anime_record = @record.anime_record
       @show_box = show_box
       @anime = @record.anime
@@ -98,11 +97,7 @@ module V6::Contents
 
           if @show_box
             h.tag :hr
-
-            h.html V6::Boxes::AnimeBoxComponent.new(view_context,
-              anime: @anime,
-              page_category: @page_category).render
-
+            h.html V6::Boxes::AnimeBoxComponent.new(view_context, anime: @anime).render
             h.tag :hr
           end
 

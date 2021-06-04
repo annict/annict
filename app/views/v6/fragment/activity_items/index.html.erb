@@ -5,24 +5,15 @@
     <% case @activity_group.itemable_type %>
     <% when "Status" %>
       <% @activity_group.items.each do |status| %>
-        <%= V6::Contents::StatusContentComponent.new(self,
-          status: status,
-          page_category: page_category
-        ).render %>
+        <%= V6::Contents::StatusContentComponent.new(self, status: status).render %>
       <% end %>
     <% when "EpisodeRecord" %>
       <% @activity_group.items.each do |record| %>
-        <%= V6::Contents::EpisodeRecordContentComponent.new(self,
-          record: record,
-          page_category: page_category
-        ).render %>
+        <%= V6::Contents::EpisodeRecordContentComponent.new(self, record: record).render %>
       <% end %>
     <% when "WorkRecord" %>
       <% @activity_group.items.each do |record| %>
-        <%= V6::Contents::AnimeRecordContentComponent.new(self,
-          record: record,
-          page_category: page_category
-        ).render %>
+        <%= V6::Contents::AnimeRecordContentComponent.new(self, record: record).render %>
       <% end %>
     <% end %>
   </div>

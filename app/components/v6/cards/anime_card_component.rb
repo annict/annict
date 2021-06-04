@@ -2,12 +2,11 @@
 
 module V6::Cards
   class AnimeCardComponent < V6::ApplicationComponent
-    def initialize(view_context, anime:, width:, mb_width:, page_category: "")
+    def initialize(view_context, anime:, width:, mb_width:)
       super view_context
       @anime = anime
       @width = width
       @mb_width = mb_width
-      @page_category = page_category
     end
 
     def render
@@ -30,7 +29,6 @@ module V6::Cards
           h.html V6::Selectors::StatusSelectorComponent.new(
             view_context,
             anime: @anime,
-            page_category: @page_category,
             class_name: "mt-2"
           ).render
         end

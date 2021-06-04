@@ -2,10 +2,9 @@
 
 module V6::Lists
   class RecordListComponent < V6::ApplicationComponent
-    def initialize(view_context, records:, page_category:, show_box: true)
+    def initialize(view_context, records:, show_box: true)
       super view_context
       @records = records
-      @page_category = page_category
       @show_box = show_box
     end
 
@@ -23,7 +22,6 @@ module V6::Lists
                   h.html V6::Contents::EpisodeRecordContentComponent.new(
                     view_context,
                     record: record,
-                    page_category: @page_category,
                     show_box: @show_box
                   ).render
                 elsif record_entity.anime_record?
