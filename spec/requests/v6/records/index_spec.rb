@@ -71,7 +71,7 @@ describe "GET /@:username/records", type: :request do
     let!(:record_2_work_record) { create(:work_record, user: user, record: record_2, body: "すごく良かった") }
 
     it "displays records" do
-      get "/@#{user.username}/records?month=2020-05"
+      get "/@#{user.username}/records?year=2020&month=5"
 
       expect(response.status).to eq(200)
       expect(response.body).to include(user.profile.name)
