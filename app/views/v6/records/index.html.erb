@@ -19,8 +19,9 @@
       <%= V6::ListGroups::RecordMonthListGroupComponent.new(
         self,
         user: @user,
-        months: @months,
+        dates: @dates,
         controller_name: params[:controller],
+        current_year: params[:year],
         current_month: params[:month]
       ).render %>
     </div>

@@ -11,7 +11,7 @@ module V6
 
       @user = User.only_kept.find_by!(username: params[:username])
       @profile = @user.profile
-      @months = @user.records.only_kept.group_by_month(:created_at, time_zone: @user.time_zone).count.to_a.reverse.to_h
+      @dates = @user.records.only_kept.group_by_month(:created_at).count.to_a.reverse.to_h
 
       @records = @user
         .records
@@ -20,6 +20,7 @@ module V6
         .page(params[:page])
         .per(30)
         .without_count
+      @records = @records.by_month(params[:month], year: params[:year]) if params[:month] && params[:year]
       @anime_ids = @records.pluck(:work_id)
     end
 

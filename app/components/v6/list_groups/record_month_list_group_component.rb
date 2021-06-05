@@ -2,12 +2,13 @@
 
 module V6::ListGroups
   class RecordMonthListGroupComponent < V6::ApplicationComponent
-    def initialize(view_context, user:, months:, controller_name:, current_month:)
+    def initialize(view_context, user:, dates:, controller_name:, current_year:, current_month:)
       super view_context
       @user = user
-      @months = months
+      @dates = dates
       @controller_name = controller_name
-      @current_month = current_month
+      @current_year = current_year&.to_i
+      @current_month = current_month&.to_i
     end
 
     def render
@@ -16,14 +17,14 @@ module V6::ListGroups
           h.tag :a, href: view_context.record_list_path(@user.username), class: all_link_class_name do
             h.text t("noun.all")
             h.tag :span, class: "badge badge-pill bg-secondary" do
-              h.text @months.values.reduce(&:+)
+              h.text @dates.values.reduce(&:+)
             end
           end
 
-          @months.each do |month, count|
+          @dates.each do |date, count|
             if count > 0
-              h.tag :a, href: view_context.record_list_path(@user.username, month: month.to_s(:ym)), class: month_link_class_name(month) do
-                h.text month.to_s(:ym)
+              h.tag :a, href: view_context.record_list_path(@user.username, year: date.year, month: date.month), class: month_link_class_name(date) do
+                h.text date.to_s(:ym)
 
                 h.tag :span, class: "badge badge-pill bg-secondary" do
                   h.text count
@@ -43,9 +44,9 @@ module V6::ListGroups
       class_name
     end
 
-    def month_link_class_name(month)
+    def month_link_class_name(date)
       class_name = "align-items-center d-flex justify-content-between list-group-item"
-      class_name += " active" if @current_month == month.to_s(:ym)
+      class_name += " active" if @current_year == date.year && @current_month == date.month
       class_name
     end
   end
