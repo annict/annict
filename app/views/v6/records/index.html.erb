@@ -10,7 +10,7 @@
 <div class="container py-3">
   <%= V6::Headers::ProfileHeaderComponent.new(self, user: @user, current_user: current_user, params: params).render %>
 
-  <div class="row">
+  <div class="gx-3 row">
     <div class="col-12 col-lg-9">
       <%= V6::Lists::RecordListComponent.new(self, records: @records).render %>
     </div>

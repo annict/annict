@@ -10,36 +10,40 @@ module V6::Lists
 
     def render
       build_html do |h|
-        if @records.present?
-          @records.each do |record|
-            h.tag :div, class: "py-3 u-underline" do
-              h.tag :turbo_frame, id: dom_id(record) do
-                h.tag :div, class: "mb-3" do
-                  h.html V6::RecordHeaderComponent.new(view_context, record: record).render
-                end
+        h.tag :div, class: "c-record-list" do
+          if @records.present?
+            @records.each do |record|
+              h.tag :div, class: "card mt-3" do
+                h.tag :div, class: "card-body" do
+                  h.tag :turbo_frame, id: dom_id(record) do
+                    h.tag :div, class: "mb-3" do
+                      h.html V6::RecordHeaderComponent.new(view_context, record: record).render
+                    end
 
-                if record.episode_record?
-                  h.html V6::Contents::EpisodeRecordContentComponent.new(
-                    view_context,
-                    record: record,
-                    show_box: @show_box
-                  ).render
-                elsif record.anime_record?
-                  h.html V6::Contents::AnimeRecordContentComponent.new(
-                    view_context,
-                    record: record,
-                    show_box: @show_box
-                  ).render
+                    if record.episode_record?
+                      h.html V6::Contents::EpisodeRecordContentComponent.new(
+                        view_context,
+                        record: record,
+                        show_box: @show_box
+                      ).render
+                    elsif record.anime_record?
+                      h.html V6::Contents::AnimeRecordContentComponent.new(
+                        view_context,
+                        record: record,
+                        show_box: @show_box
+                      ).render
+                    end
+                  end
                 end
               end
             end
-          end
 
-          h.tag :div, class: "mt-3 text-center" do
-            h.html V6::ButtonGroups::PaginationButtonGroupComponent.new(view_context, collection: @records).render
+            h.tag :div, class: "mt-3 text-center" do
+              h.html V6::ButtonGroups::PaginationButtonGroupComponent.new(view_context, collection: @records).render
+            end
+          else
+            h.html V6::EmptyComponent.new(view_context, text: t("messages._empty.no_records")).render
           end
-        else
-          h.html V6::EmptyComponent.new(view_context, text: t("messages._empty.no_records")).render
         end
       end
     end

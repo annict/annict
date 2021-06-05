@@ -9,22 +9,12 @@ module V6::Dropdowns
 
     def render
       build_html do |h|
-        h.tag :div, class: "c-record-options-dropdown d-inline-block dropdown" do
-          h.tag :div, class: "dropdown-toggle", data_toggle: "dropdown" do
+        h.tag :div, class: "c-record-options-dropdown d-inline-block dropdown u-cursor-pointer" do
+          h.tag :div, class: "dropdown-toggle", data_bs_toggle: "dropdown" do
             h.tag :i, class: "far fa-ellipsis-h"
           end
 
-          h.tag :div, class: "dropdown-menu dropdown-menu-right" do
-            if current_user.id != @record.user_id
-              h.tag :a, href: "#", class: "dropdown-item" do
-                h.tag :div,
-                  data_controller: "mute-user",
-                  data_mute_user_user_id: @record.user_id do
-                    h.text t("verb.mute")
-                  end
-              end
-            end
-
+          h.tag :div, class: "dropdown-menu" do
             if RecordPolicy.new(current_user, @record).update?
               h.tag :a, href: view_context.fragment_edit_record_path(@record.user.username, @record.id), class: "dropdown-item" do
                 h.text t("noun.edit")
