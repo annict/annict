@@ -46,7 +46,7 @@
       </div>
 
       <div class="mb-3">
-        <%= V6::Selectors::StatusSelectorComponent.new(self, anime: @anime_entity.to_model).render %>
+        <%= V6::Selectors::StatusSelectorComponent.new(helpers, anime: @anime_entity.to_model).render %>
       </div>
     </div>
   </div>
