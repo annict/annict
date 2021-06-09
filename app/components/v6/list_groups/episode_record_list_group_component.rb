@@ -2,12 +2,11 @@
 
 module V6::ListGroups
   class EpisodeRecordListGroupComponent < V6::ApplicationComponent
-    def initialize(view_context, my_records:, following_records:, all_records:, page_category:)
+    def initialize(view_context, my_records:, following_records:, all_records:)
       super view_context
       @my_records = my_records
       @following_records = following_records
       @all_records = all_records
-      @page_category = page_category
     end
 
     def render
@@ -21,7 +20,6 @@ module V6::ListGroups
             h.html V6::Lists::RecordListComponent.new(
               view_context,
               records: @my_records,
-              page_category: @page_category,
               show_box: false
             ).render
           end
@@ -38,7 +36,6 @@ module V6::ListGroups
             h.html V6::Lists::RecordListComponent.new(
               view_context,
               records: @following_records,
-              page_category: @page_category,
               show_box: false
             ).render
           end
@@ -54,7 +51,6 @@ module V6::ListGroups
           h.html V6::Lists::RecordListComponent.new(
             view_context,
             records: @all_records,
-            page_category: @page_category,
             show_box: false
           ).render
         end

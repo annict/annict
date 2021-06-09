@@ -13,7 +13,7 @@
 
     <div class="col-md-9">
       <div class="mb-3">
-        <%= V6::SubNavs::AnimeSubNavComponent.new(self, anime: @anime, page_category: page_category).render %>
+        <%= V6::Navs::AnimeNavComponent.new(self, anime: @anime).render %>
       </div>
 
       <div class="align-items-center mb-1 row">
@@ -61,8 +61,7 @@
           self,
           my_records: @my_records,
           following_records: @following_records,
-          all_records: @all_records,
-          page_category: page_category
+          all_records: @all_records
         ).render %>
       </div>
     </div>

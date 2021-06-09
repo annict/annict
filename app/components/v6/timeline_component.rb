@@ -2,10 +2,9 @@
 
 module V6
   class TimelineComponent < V6::ApplicationComponent
-    def initialize(view_context, activity_groups:, page_category:)
+    def initialize(view_context, activity_groups:)
       super view_context
       @activity_groups = activity_groups
-      @page_category = page_category
     end
 
     def render
@@ -16,17 +15,9 @@ module V6
               h.tag :div, class: "c-timeline__activity pt-3" do
                 case activity_group.itemable_type
                 when "Status"
-                  h.html V6::Activities::StatusActivityComponent.new(
-                    view_context,
-                    activity_group: activity_group,
-                    page_category: @page_category
-                  ).render
+                  h.html V6::Activities::StatusActivityComponent.new(view_context, activity_group: activity_group).render
                 when "EpisodeRecord", "WorkRecord"
-                  h.html V6::Activities::RecordActivityComponent.new(
-                    view_context,
-                    activity_group: activity_group,
-                    page_category: @page_category
-                  ).render
+                  h.html V6::Activities::RecordActivityComponent.new(view_context, activity_group: activity_group).render
                 end
               end
             end

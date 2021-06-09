@@ -10,7 +10,7 @@
         .u-very-small
           = work.work_image.asin_or_copyright_text
       .mt-2
-        = V6::Selectors::StatusSelectorComponent.new(self, anime: work, page_category: "work-list").render
+        = V6::Selectors::StatusSelectorComponent.new(self, anime: work).render
 
     .col
       .mb-1.u-lh-0

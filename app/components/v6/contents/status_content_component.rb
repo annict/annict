@@ -2,10 +2,9 @@
 
 module V6::Contents
   class StatusContentComponent < V6::ApplicationComponent
-    def initialize(view_context, status:, page_category:)
+    def initialize(view_context, status:)
       super view_context
       @status = status
-      @page_category = page_category
       @anime = @status.anime
     end
 
@@ -18,9 +17,7 @@ module V6::Contents
 
           h.tag :hr
 
-          h.html V6::Boxes::AnimeBoxComponent.new(view_context,
-            anime: @anime,
-            page_category: @page_category).render
+          h.html V6::Boxes::AnimeBoxComponent.new(view_context, anime: @anime).render
 
           h.tag :hr
 

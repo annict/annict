@@ -43,7 +43,7 @@ Rails.application.routes.draw do
   match "/@:username/followers",                              via: :get,    as: :followers_user,                          to: "v3/users#followers",              username: USERNAME_FORMAT
   match "/@:username/following",                              via: :get,    as: :following_user,                          to: "v3/users#following",              username: USERNAME_FORMAT
   match "/@:username/ics",                                    via: :get,    as: :user_ics,                                to: "v3/ics#show",                     username: USERNAME_FORMAT
-  match "/@:username/records",                                via: :get,    as: :record_list,                             to: "v4/records#index",                username: USERNAME_FORMAT
+  match "/@:username/records",                                via: :get,    as: :record_list,                             to: "v6/records#index",                username: USERNAME_FORMAT
   match "/@:username/records/:record_id",                     via: :delete,                                               to: "v4/records#destroy",              username: USERNAME_FORMAT
   match "/@:username/records/:record_id",                     via: :get,                                                  to: "v4/records#show",                 username: USERNAME_FORMAT
   match "/@:username/records/:record_id",                     via: :patch,                                                to: "v4/records#update",               username: USERNAME_FORMAT

@@ -53,7 +53,7 @@ module V6
           end
 
           h.tag :div, class: "col-auto ps-0" do
-            if current_user
+            if current_user && RecordPolicy.new(current_user, @record).update?
               h.html V6::Dropdowns::RecordOptionsDropdownComponent.new(view_context, record: @record).render
             end
           end
