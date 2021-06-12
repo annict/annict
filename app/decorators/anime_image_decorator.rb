@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-module WorkImageDecorator
+module AnimeImageDecorator
   include ResourceImageDecoratorCommon
 end
