@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module V6::ImageHelper
+module ImageV6Helper
   def v6_ann_image_url(record, field, height:, width:, blur: 0, format: "jpg")
     path = record ? record.uploaded_file_path(field) : "no-image.jpg"
 

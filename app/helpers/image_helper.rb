@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module V4::ImageHelper
+module ImageHelper
   def v4_ann_image_url(record, field, options = {})
     path = image_path(record, field)
     size = options[:size]
