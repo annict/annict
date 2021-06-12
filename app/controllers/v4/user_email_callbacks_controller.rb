@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module V4
-  class UserEmailCallbacksController < ApplicationController
+  class UserEmailCallbacksController < V4::ApplicationController
     before_action :authenticate_user!
 
     def show
