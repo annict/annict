@@ -21,8 +21,10 @@
 #  index_work_tags_on_work_taggings_count  (work_taggings_count)
 #
 
-class WorkTag < ApplicationRecord
+class AnimeTag < ApplicationRecord
   include SoftDeletable
+
+  self.table_name = "work_tags"
 
   has_many :work_taggables, dependent: :destroy
   has_many :work_taggings, dependent: :destroy

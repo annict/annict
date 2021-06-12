@@ -28,10 +28,11 @@
 #  fk_rails_...  (work_id => works.id)
 #
 
-class WorkImage < ApplicationRecord
+class AnimeImage < ApplicationRecord
   include WorkImageUploader::Attachment.new(:image)
   include ImageUploadable
 
+  self.table_name = "work_images"
   self.ignored_columns = %w[color_rgb]
 
   validates :copyright, presence: true

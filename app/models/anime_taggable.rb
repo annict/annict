@@ -25,7 +25,9 @@
 #  fk_rails_...  (work_tag_id => work_tags.id)
 #
 
-class WorkTaggable < ApplicationRecord
+class AnimeTaggable < ApplicationRecord
+  self.table_name = "work_taggables"
+
   belongs_to :user
   belongs_to :work_tag
 

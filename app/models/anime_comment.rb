@@ -25,7 +25,9 @@
 #  fk_rails_...  (work_id => works.id)
 #
 
-class WorkComment < ApplicationRecord
+class AnimeComment < ApplicationRecord
+  self.table_name = "work_comments"
+
   belongs_to :user
   belongs_to :work
 

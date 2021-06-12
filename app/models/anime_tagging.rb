@@ -25,7 +25,9 @@
 #  fk_rails_...  (work_tag_id => work_tags.id)
 #
 
-class WorkTagging < ApplicationRecord
+class AnimeTagging < ApplicationRecord
+  self.table_name = "work_taggings"
+
   counter_culture :work_tag
 
   belongs_to :user

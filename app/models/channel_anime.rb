@@ -25,7 +25,9 @@
 #  channel_works_work_id_fk     (work_id => works.id) ON DELETE => cascade
 #
 
-class ChannelWork < ApplicationRecord
+class ChannelAnime < ApplicationRecord
+  self.table_name = "channel_works"
+
   belongs_to :channel
   belongs_to :user
   belongs_to :work

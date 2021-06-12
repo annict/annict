@@ -29,11 +29,13 @@
 #  fk_rails_...  (work_id => works.id)
 #
 
-class SeriesWork < ApplicationRecord
+class SeriesAnime < ApplicationRecord
   include DbActivityMethods
   include Unpublishable
 
   DIFF_FIELDS = %i[work_id].freeze
+
+  self.table_name = "series_works"
 
   counter_culture :series, column_name: ->(series_work) { series_work.published? ? :series_works_count : nil }
 
