@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module V4::RecordPage
-  class RecordRepository < V4::ApplicationRepository
+module RecordPage
+  class RecordRepository < ApplicationRepository
     class RepositoryResult < Result
       attr_accessor :user_entity, :record_entity
     end

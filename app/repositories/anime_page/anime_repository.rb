@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module V4::AnimePage
-  class AnimeRepository < V4::ApplicationRepository
+module AnimePage
+  class AnimeRepository < ApplicationRepository
     class RepositoryResult < Result
       attr_accessor :anime_entity
     end

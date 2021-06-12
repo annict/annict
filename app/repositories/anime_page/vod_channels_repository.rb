@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module V4::AnimePage
-  class VodChannelsRepository < V4::ApplicationRepository
+module AnimePage
+  class VodChannelsRepository < ApplicationRepository
     class RepositoryResult < Result
       attr_accessor :vod_channel_entities
     end
