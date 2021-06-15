@@ -11,6 +11,16 @@ module Db
         without_deleted.
         includes(:resource).
         order(:sort_number)
+      @staffs_csv = @staffs.map do |staff|
+        str = staff.decorate.role_name
+        case staff.resource_type
+        when "Person"
+          str += ",#{staff.resource.name}"
+        when "Organization"
+          str += ",,#{staff.resource.name}"
+        end
+        str
+      end.join("\n")
     end
 
     def new
