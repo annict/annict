@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 class ApplicationV6Controller < ActionController::Base
-  include V6::PageCategorizable
-  include V6::SentryLoadable
-  include V6::Loggable
-  include V6::Localizable
-  include V6::KeywordSearchable
+  include PageCategorizable
+  include SentryLoadable
+  include Loggable
+  include Localizable
+  include KeywordSearchable
 
-  layout "v6/default"
+  layout "default_v6"
 
   around_action :set_locale
 

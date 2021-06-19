@@ -3,8 +3,8 @@
 
   box-shadow: inset 0 -1px 0 $border-color;
   overflow-y: hidden;
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
 
   &__list {
     list-style: none;
@@ -20,10 +20,6 @@
 
   &__item {
     display: inline-block;
-
-    // &:last-child {
-    //   padding-right: 1rem;
-    // }
   }
 
   &__link {
@@ -32,8 +28,8 @@
     display: inline-block;
     height: $ann-navbar-height;
     line-height: $ann-navbar-height;
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
 
     &--active {
       border-bottom-color: $ann-mizuho-color;

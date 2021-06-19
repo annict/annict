@@ -1,4 +1,5 @@
 .img-thumbnail {
-  background-color: var(--bs-thumbnail-bg);
-  border: $thumbnail-border-width solid var(--bs-thumbnail-border-color);
+  background-color: transparent;
+  border: none;
+  border-radius: 0;
 }

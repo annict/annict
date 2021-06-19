@@ -83,7 +83,7 @@ ja:
     global: グローバル
     google_calendar: Googleカレンダー
     home: ホーム
-    information: 基本情報
+    information: 情報
     japanese: 日本語
     joined_works: 参加作品
     language: 言語
@@ -110,6 +110,7 @@ ja:
     other_comments: みんなの感想
     other_users: その他利用者さん
     overall: 全体
+    overview: 概要
     password: パスワード
     people: 人物
     person: 人物
@@ -193,6 +194,7 @@ ja:
     untracked_episodes: 未視聴エピソード
     users_count: '%{count}人'
     video_page: 動画ページ
+    videos: 動画
     vod_works: VOD作品
     vods: 動画サービス
     voice_actor: 声優

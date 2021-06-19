@@ -54,7 +54,7 @@
     }
 
     @include color-scheme(dark) {
-      background-color: $ann-card-bg-dark;
+      background-color: shade-color($ann-card-bg-dark, 25%);
     }
   }
 

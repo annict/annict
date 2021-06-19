@@ -11,26 +11,26 @@
   <body>
     <div class="l-default">
       <div class="l-default__sidebar">
-        <%= V6::Sidebars::MainSidebarComponent.new(self, search: @search).render %>
+        <%= Sidebars::MainSidebarComponent.new(self, search: @search).render %>
       </div>
 
       <div class="l-default__main d-flex flex-column">
         <div class="l-default__content">
-          <%= V6::FlashComponent.new(self, flash: flash).render %>
+          <%= FlashV6Component.new(self, flash: flash).render %>
           <%= yield %>
         </div>
 
         <div class="l-default__footer">
-          <%= V6::FooterComponent.new(self).render %>
+          <%= Footers::MainFooterComponent.new(self).render %>
         </div>
 
         <div class="l-default__tab_bar">
-          <%= V6::TabBarComponent.new(self, current_user: current_user).render %>
+          <%= TabBarComponent.new(self, current_user: current_user).render %>
         </div>
       </div>
 
       <%= render "application/sign_up_modal" %>
-      <%= V6::Modals::TrackingModalComponent.new(self).render %>
+      <%= Modals::TrackingModalComponent.new(self).render %>
     </div>
   </body>
 </html>

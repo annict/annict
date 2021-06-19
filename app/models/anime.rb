@@ -94,18 +94,15 @@ class Anime < ApplicationRecord
 
   attr_accessor :status_kind
 
-  delegate :copyright, to: :work_image, allow_nil: true
+  delegate :copyright, to: :anime_image, allow_nil: true
 
   enumerize :media, in: {tv: 1, ova: 2, movie: 3, web: 4, other: 0}
   enumerize :season_name, in: Season::NAME_HASH
 
   belongs_to :number_format, optional: true
-  belongs_to :season_model,
-    class_name: "SeasonModel",
-    foreign_key: :season_id,
-    optional: true
+  belongs_to :season_model, class_name: "SeasonModel", foreign_key: :season_id, optional: true
   has_many :casts, dependent: :destroy
-  has_many :programs, dependent: :destroy
+  has_many :programs, dependent: :destroy, foreign_key: :work_id
   has_many :series_works, dependent: :destroy
   has_many :staffs, dependent: :destroy
   has_many :work_taggings
@@ -115,14 +112,11 @@ class Anime < ApplicationRecord
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
   has_many :episode_records
-  has_many :episodes, dependent: :destroy
+  has_many :episodes, dependent: :destroy, foreign_key: :work_id
   has_many :library_entries
-  has_many :organizations,
-    through: :staffs,
-    source: :resource,
-    source_type: "Organization"
+  has_many :organizations, through: :staffs, source: :resource, source_type: "Organization"
   has_many :slots, dependent: :destroy
-  has_many :trailers, dependent: :destroy
+  has_many :trailers, dependent: :destroy, foreign_key: :work_id
   has_many :records
   has_many :series_list, through: :series_works, source: :series
   has_many :statuses
@@ -130,20 +124,17 @@ class Anime < ApplicationRecord
   has_many :channels, through: :programs
   has_many :work_records
   has_many :work_tags, through: :work_taggings
-  has_one :work_image, dependent: :destroy
-  has_one :anime_image, class_name: "WorkImage", dependent: :destroy
+  has_one :anime_image, dependent: :destroy, foreign_key: :work_id
 
-  validates :sc_tid,
-    numericality: {only_integer: true},
-    allow_blank: true
-  validates :title, presence: true, uniqueness: {conditions: -> { only_kept }}
   validates :media, presence: true
-  validates :official_site_url, url: {allow_blank: true}
   validates :official_site_url_en, url: {allow_blank: true}
-  validates :wikipedia_url, url: {allow_blank: true}
-  validates :wikipedia_url_en, url: {allow_blank: true}
-  validates :synopsis, presence_pair: :synopsis_source
+  validates :official_site_url, url: {allow_blank: true}
+  validates :sc_tid, numericality: {only_integer: true}, allow_blank: true
   validates :synopsis_en, presence_pair: :synopsis_source_en
+  validates :synopsis, presence_pair: :synopsis_source
+  validates :title, presence: true, uniqueness: {conditions: -> { only_kept }}
+  validates :wikipedia_url_en, url: {allow_blank: true}
+  validates :wikipedia_url, url: {allow_blank: true}
 
   scope(:by_season, ->(season_slug) {
     return self if season_slug.blank?

@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 class BodyV6Component < ApplicationV6Component
-  def initialize(view_context, height: nil, format: :simple, class_name: "")
+  def initialize(view_context, content:, height: nil, format: :simple, class_name: "")
     super view_context
+    @content = content
     @height = height
     @format = format
     @class_name = class_name
@@ -10,22 +11,24 @@ class BodyV6Component < ApplicationV6Component
 
   def render
     build_html do |h|
-      h.tag :div,
-        class: "c-body #{class_name}",
+      h.tag :div, {
+        class: "c-body #{@class_name}",
         data_controller: "body",
-        data_body_height: height do
+        data_body_height: @height
+      } do
         h.tag :div, class: "c-body__content", data_body_target: "content" do
-          yield h
+          h.html render_content
         end
 
         h.tag :div,
           class: "c-body__read-more-background d-none w-100",
           data_body_target: "readMoreBackground"
 
-        h.tag :div,
+        h.tag :div, {
           class: "c-body__read-more-button d-none text-center w-100",
           data_body_target: "readMoreButton",
-          data_action: "click->body#readMore" do
+          data_action: "click->body#readMore"
+        } do
           h.tag :div, class: "c-body__read-more-content small u-fake-link w-100" do
             h.tag :i, class: "fal fa-chevron-double-down me-1"
             h.text t("messages._components.body.view_full_text")
@@ -37,16 +40,14 @@ class BodyV6Component < ApplicationV6Component
 
   private
 
-  attr_reader :class_name, :height
-
   def render_content
     case @format
     when :simple
-      simple_format(content)
+      simple_format(@content)
     when :markdown
-      helpers.render_markdown(content)
+      render_markdown(@content)
     when :html
-      content
+      @content
     end
   end
 end
