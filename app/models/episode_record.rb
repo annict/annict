@@ -53,7 +53,7 @@
 class EpisodeRecord < ApplicationRecord
   extend Enumerize
 
-  include Localizable
+  include UgcLocalizable
   include Shareable
   include SoftDeletable
 

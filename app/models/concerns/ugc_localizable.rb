@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Localizable
+module UgcLocalizable
   extend ActiveSupport::Concern
 
   included do

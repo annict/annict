@@ -29,7 +29,7 @@
 #
 
 class Comment < ApplicationRecord
-  include Localizable
+  include UgcLocalizable
 
   counter_culture :episode_record
 

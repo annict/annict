@@ -29,7 +29,7 @@
 #
 
 class ForumPost < ApplicationRecord
-  include Localizable
+  include UgcLocalizable
 
   belongs_to :user
   belongs_to :forum_category

@@ -45,7 +45,7 @@
 class AnimeRecord < ApplicationRecord
   extend Enumerize
 
-  include Localizable
+  include UgcLocalizable
   include Shareable
   include SoftDeletable
 
