@@ -14,5 +14,9 @@ a {
     &:hover {
       color: $ann-link-hover-color-dark;
     }
+
+    &.badge {
+      color: inherit;
+    }
   }
 }

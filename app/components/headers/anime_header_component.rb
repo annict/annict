@@ -23,13 +23,8 @@ module Headers
 
               h.tag :div, class: "col" do
                 h.tag :div do
-                  h.html Badges::AnimeMediaBadgeComponent.new(self, anime: @anime).render
-
-                  if @anime.release_season_link.present?
-                    h.tag :span, class: "ms-2" do
-                      h.html @anime.release_season_link
-                    end
-                  end
+                  h.html Badges::AnimeMediaBadgeComponent.new(view_context, anime: @anime).render
+                  h.html Badges::AnimeSeasonBadgeComponent.new(view_context, anime: @anime, class_name: "ms-2").render
                 end
 
                 h.tag :h1, class: "fw-bold h2 mt-1" do
@@ -111,7 +106,7 @@ module Headers
                   h.tag :ul, class: "list-inline" do
                     @programs.each do |program|
                       h.tag :li, class: "list-inline-item" do
-                        h.tag :a, class: "btn btn-outline-primary btn-sm", href: program.vod_title_url, target: "_blank", rel: "noopener" do
+                        h.tag :a, class: "btn btn-outline-primary btn-sm rounded-pill", href: program.vod_title_url, target: "_blank", rel: "noopener" do
                           h.text program.channel.name
 
                           if program.vod_title_name.present? && program.vod_title_name != @anime.title
@@ -138,7 +133,7 @@ module Headers
           h.tag :div, class: "c-nav mt-2" do
             h.tag :ul, class: "c-nav__list" do
               h.tag :li, class: "c-nav__item" do
-                h.html active_link_to t("noun.overview"), view_context.anime_path(anime_id: @anime.id),
+                h.html active_link_to t("noun.top"), view_context.anime_path(anime_id: @anime.id),
                   active: page_category.in?(%w[anime]),
                   class: "c-nav__link",
                   class_active: "c-nav__link--active"
