@@ -16,8 +16,7 @@ module Activities
               h.tag :a, href: view_context.profile_path(@user.username) do
                 h.html V6::Pictures::AvatarPictureComponent.new(view_context,
                   user: @user,
-                  width: 32,
-                  mb_width: 32).render
+                  width: 32).render
               end
 
               h.tag :span, class: "c-timeline__user-name ms-3" do

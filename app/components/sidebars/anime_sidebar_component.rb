@@ -18,8 +18,7 @@ module Sidebars
                   h.html V6::Pictures::AnimePictureComponent.new(
                     view_context,
                     anime: @anime,
-                    width: 350,
-                    mb_width: 175
+                    width: 350
                   ).render
                 end
 

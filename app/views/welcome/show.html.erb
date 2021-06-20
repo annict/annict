@@ -54,7 +54,7 @@
         <div class="row g-3">
           <% @seasonal_anime_list.each do |anime| %>
             <div class="col-4 col-sm-2">
-              <%= V6::Cards::AnimeCardComponent.new(self, anime: anime, width: 195, mb_width: 77).render %>
+              <%= V6::Cards::AnimeCardComponent.new(self, anime: anime, width: 195).render %>
             </div>
           <% end %>
         </div>
@@ -89,7 +89,7 @@
         <div class="row g-3">
           <% @popular_anime_list.each do |anime| %>
             <div class="col-4 col-sm-2">
-              <%= V6::Cards::AnimeCardComponent.new(self, anime: anime, width: 195, mb_width: 77).render %>
+              <%= V6::Cards::AnimeCardComponent.new(self, anime: anime, width: 195).render %>
             </div>
           <% end %>
         </div>

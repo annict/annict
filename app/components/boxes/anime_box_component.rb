@@ -16,8 +16,7 @@ module Boxes
               h.html V6::Pictures::AnimePictureComponent.new(
                 view_context,
                 anime: @anime,
-                width: 80,
-                mb_width: 40
+                width: 80
               ).render
             end
           end

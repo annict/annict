@@ -15,8 +15,7 @@ module Headers
             link_to view_context.profile_path(@record.user.username) do
               h.html V6::Pictures::AvatarPictureComponent.new(view_context,
                 user: @user,
-                width: 50,
-                mb_width: 50).render
+                width: 50).render
             end
           end
 

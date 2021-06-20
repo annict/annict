@@ -2,11 +2,10 @@
 
 module Cards
   class AnimeCardComponent < ApplicationV6Component
-    def initialize(view_context, anime:, width:, mb_width:)
+    def initialize(view_context, anime:, width:)
       super view_context
       @anime = anime
       @width = width
-      @mb_width = mb_width
     end
 
     def render
@@ -17,7 +16,6 @@ module Cards
               view_context,
               anime: @anime,
               width: @width,
-              mb_width: @mb_width,
               alt: @anime.local_title
             ).render
 
