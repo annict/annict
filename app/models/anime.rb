@@ -117,7 +117,7 @@ class Anime < ApplicationRecord
   has_many :organizations, through: :staffs, source: :resource, source_type: "Organization"
   has_many :slots, dependent: :destroy
   has_many :trailers, dependent: :destroy, foreign_key: :work_id
-  has_many :records
+  has_many :records, foreign_key: :work_id
   has_many :series_list, through: :series_works, source: :series
   has_many :statuses
   has_many :staff_people, through: :staffs, source: :resource, source_type: "Person"

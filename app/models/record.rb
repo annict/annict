@@ -39,9 +39,8 @@ class Record < ApplicationRecord
   belongs_to :anime, foreign_key: :work_id
   belongs_to :user
   belongs_to :work
-  has_one :anime_record, class_name: "WorkRecord", dependent: :destroy
+  has_one :anime_record, dependent: :destroy
   has_one :episode_record, dependent: :destroy
-  has_one :work_record, dependent: :destroy
 
   scope :with_anime_record, -> { joins(:work_record).merge(WorkRecord.only_kept) }
 
