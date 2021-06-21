@@ -50,7 +50,7 @@
     "@types/lodash": "^4.14.160",
     "@types/webpack-env": "^1.16.0",
     "css-loader": "^5.2.6",
-    "eslint": "^7.26.0",
+    "eslint": "^7.29.0",
     "eslint-plugin-import": "^2.22.0",
     "file-loader": "^6.2.0",
     "fork-ts-checker-webpack-plugin": "^6.2.10",
