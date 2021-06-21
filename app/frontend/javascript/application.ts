@@ -11,7 +11,7 @@ import Cookies from 'js-cookie';
 import { Application } from 'stimulus';
 import { definitionsFromContext } from 'stimulus/webpack-helpers';
 
-import { getTimeZone } from './v6/utils/time-zone';
+import { getTimeZone } from './utils/time-zone';
 
 document.addEventListener('turbo:load', (_event) => {
   const annConfig = (window as any).AnnConfig;
@@ -29,7 +29,7 @@ document.addEventListener('turbo:load', (_event) => {
 });
 
 const application = Application.start();
-const context = (require as any).context('./v6/controllers', true, /\.ts$/);
+const context = (require as any).context('./controllers', true, /\.ts$/);
 application.load(definitionsFromContext(context));
 
 ujs.start();
