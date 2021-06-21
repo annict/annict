@@ -42,7 +42,19 @@ class Record < ApplicationRecord
   has_one :anime_record, dependent: :destroy
   has_one :episode_record, dependent: :destroy
 
-  scope :with_anime_record, -> { joins(:work_record).merge(WorkRecord.only_kept) }
+  scope :with_anime_record, -> { joins(:anime_record).merge(AnimeRecord.only_kept) }
+  scope :order_by_rating, ->(direction) {
+    order_sql = <<~SQL
+      CASE
+        WHEN "work_records"."rating_overall_state" = 'bad' THEN '0'
+        WHEN "work_records"."rating_overall_state" = 'average' THEN '1'
+        WHEN "work_records"."rating_overall_state" = 'good' THEN '2'
+        WHEN "work_records"."rating_overall_state" = 'great' THEN '3'
+      END #{direction.upcase} NULLS LAST
+    SQL
+
+    joins(:anime_record).order(Arel.sql(order_sql)).order("records.created_at": :desc)
+  }
 
   def anime_id
     work_id

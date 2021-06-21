@@ -104,4 +104,27 @@
       </div>
     </div>
   <% end %>
+
+  <div class="mt-5">
+    <div class="d-flex justify-content-between">
+      <h2 class="fw-bold h3 mb-3">
+        <%= t "noun.record_body_list" %>
+      </h2>
+
+      <% if @records.present? && @records.size > 10 %>
+        <div>
+          <%= link_to anime_record_list_path(@anime) do %>
+            <i class="far fa-angle-right me-1"></i>
+            <%= t("verb.view_all") %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="card">
+      <div class="card-body pt-0">
+        <%= Lists::RecordListComponent.new(self, records: @records, show_box: false).render %>
+      </div>
+    </div>
+  </div>
 </div>

@@ -13,7 +13,7 @@ module Headers
         h.tag :div, class: "c-record-header row" do
           h.tag :div, class: "col-auto pe-0" do
             link_to view_context.profile_path(@record.user.username) do
-              h.html V6::Pictures::AvatarPictureComponent.new(view_context,
+              h.html Pictures::AvatarPictureComponent.new(view_context,
                 user: @user,
                 width: 50).render
             end
@@ -53,7 +53,7 @@ module Headers
 
           h.tag :div, class: "col-auto ps-0" do
             if current_user && RecordPolicy.new(current_user, @record).update?
-              h.html V6::Dropdowns::RecordOptionsDropdownComponent.new(view_context, record: @record).render
+              h.html Dropdowns::RecordOptionsDropdownComponent.new(view_context, record: @record).render
             end
           end
         end

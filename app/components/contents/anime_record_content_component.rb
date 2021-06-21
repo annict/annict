@@ -14,7 +14,7 @@ module Contents
       build_html do |h|
         h.tag :div do
           if @anime_record.rating_overall_state || @anime_record.comment.present?
-            h.html(V6::SpoilerGuardComponent.new(view_context, record: @record).render { |h|
+            h.html(SpoilerGuardV6Component.new(view_context, record: @record).render { |h|
               h.tag :div, class: "mb-3 row" do
                 h.tag :div, class: "col-12 col-xl-4 order-1 order-xl-2" do
                   if @anime_record.rating_overall_state
@@ -30,7 +30,7 @@ module Contents
                           end
 
                           h.tag :div, class: "col ps-0 text-end" do
-                            h.html V6::RatingLabelComponent.new(view_context, rating: @anime_record.rating_animation_state).render
+                            h.html Labels::RatingLabelComponent.new(view_context, rating: @anime_record.rating_animation_state).render
                           end
                         end
                       end
@@ -42,7 +42,7 @@ module Contents
                           end
 
                           h.tag :div, class: "col ps-0 text-end" do
-                            h.html V6::RatingLabelComponent.new(view_context, rating: @anime_record.rating_music_state).render
+                            h.html Labels::RatingLabelComponent.new(view_context, rating: @anime_record.rating_music_state).render
                           end
                         end
                       end
@@ -54,7 +54,7 @@ module Contents
                           end
 
                           h.tag :div, class: "col ps-0 text-end" do
-                            h.html V6::RatingLabelComponent.new(view_context, rating: @anime_record.rating_story_state).render
+                            h.html Labels::RatingLabelComponent.new(view_context, rating: @anime_record.rating_story_state).render
                           end
                         end
                       end
@@ -66,7 +66,7 @@ module Contents
                           end
 
                           h.tag :div, class: "col ps-0 text-end" do
-                            h.html V6::RatingLabelComponent.new(view_context, rating: @anime_record.rating_character_state).render
+                            h.html Labels::RatingLabelComponent.new(view_context, rating: @anime_record.rating_character_state).render
                           end
                         end
                       end
@@ -78,7 +78,7 @@ module Contents
                           end
 
                           h.tag :div, class: "col ps-0 text-end" do
-                            h.html V6::RatingLabelComponent.new(view_context, rating: @anime_record.rating_overall_state).render
+                            h.html Labels::RatingLabelComponent.new(view_context, rating: @anime_record.rating_overall_state).render
                           end
                         end
                       end
@@ -87,9 +87,7 @@ module Contents
                 end
 
                 h.tag :div, class: "col-12 col-xl-8 order-2 order-xl-1" do
-                  h.html(BodyComponentV6.new(view_context, height: 300, format: :html).render { |h|
-                    h.html render_markdown(@anime_record.comment)
-                  })
+                  h.html BodyV6Component.new(view_context, content: @anime_record.comment, height: 300, format: :markdown).render
                 end
               end
             })
@@ -102,7 +100,7 @@ module Contents
           end
 
           h.tag :div, class: "mt-1" do
-            h.html V6::Footers::RecordFooterComponent.new(view_context, record: @record).render
+            h.html Footers::RecordFooterComponent.new(view_context, record: @record).render
           end
         end
       end
