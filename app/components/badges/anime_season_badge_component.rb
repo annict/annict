@@ -13,7 +13,7 @@ module Badges
       return "" if @season.blank?
 
       build_html do |h|
-        h.tag :a, class: "badge u-bg-season-#{bg_class_name} #{@class_name}", href: view_context.seasonal_anime_list_path(@season.slug) do
+        h.tag :a, class: "badge rounded-pill u-bg-season-#{bg_class_name} #{@class_name}", href: view_context.seasonal_anime_list_path(@season.slug) do
           h.text @season.local_name
         end
       end

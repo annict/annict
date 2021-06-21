@@ -21,7 +21,7 @@ module Labels
     private
 
     def label_class_name
-      classes = %w[badge]
+      classes = %w[badge rounded-pill]
       classes += @class_name.split(" ")
       classes << badge_class_name
       classes.join(" ")

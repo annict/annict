@@ -49,7 +49,7 @@ module Sidebars
 
             h.tag :div, class: "mb-3 px-1" do
               h.tag :form, autocomplete: "off", method: :get, action: view_context.search_path do
-                h.html text_field_tag("q", @search.q, class: "form-control", placeholder: t("messages._common.search_with_keywords"))
+                h.html text_field_tag("q", @search.q, class: "form-control rounded-pill", placeholder: t("messages._common.search_with_keywords"))
               end
             end
 
