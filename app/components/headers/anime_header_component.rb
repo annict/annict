@@ -18,6 +18,10 @@ module Headers
                   h.tag :a, href: view_context.anime_path(anime_id: @anime.id) do
                     h.html Pictures::AnimePictureComponent.new(view_context, anime: @anime, width: 180).render
                   end
+
+                  h.tag :div, class: "mt-2 text-center" do
+                    h.html ButtonGroups::AnimeButtonGroupComponent.new(view_context, anime: @anime).render
+                  end
                 end
               end
 
