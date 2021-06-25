@@ -48,6 +48,7 @@ Rails.application.routes.draw do
   match "/@:username/records/:record_id",                     via: :get,                                                  to: "records#show",                 username: USERNAME_FORMAT
   match "/@:username/records/:record_id",                     via: :patch,                                                to: "records#update",               username: USERNAME_FORMAT
   match "/@:username/records/:record_id",                     via: :patch,  as: :record,                                  to: "records#update",                  username: USERNAME_FORMAT
+  match "/api/internal/animes/:anime_id/status_select",       via: :post,   as: :internal_api_anime_status_select,        to: "api/internal/status_selects#create"
   match "/api/internal/channels/:channel_id/reception",       via: :delete, as: :internal_api_channel_reception,          to: "api/internal/receptions#destroy"
   match "/api/internal/channels/:channel_id/reception",       via: :post,                                                 to: "api/internal/receptions#create"
   match "/api/internal/characters",                           via: :get,    as: :internal_api_character_list,             to: "api/internal/characters#index"

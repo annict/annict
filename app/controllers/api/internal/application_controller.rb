@@ -3,10 +3,10 @@
 module Api
   module Internal
     class ApplicationController < ActionController::Base
-      include V6::Localizable
-      include V6::Loggable
-      include V6::SentryLoadable
-      include V6::PageCategorizable
+      include Localizable
+      include Loggable
+      include SentryLoadable
+      include PageCategorizable
 
       skip_before_action :verify_authenticity_token
       around_action :set_locale
