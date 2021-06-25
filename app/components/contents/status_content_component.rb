@@ -22,7 +22,7 @@ module Contents
           h.tag :hr
 
           h.tag :div, class: "mt-1" do
-            h.html V6::Footers::StatusFooterComponent.new(view_context, status: @status, page_category: @page_category).render
+            h.html Footers::StatusFooterComponent.new(view_context, status: @status, page_category: @page_category).render
           end
         end
       end

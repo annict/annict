@@ -11,7 +11,7 @@ module Footers
     def render
       build_html do |h|
         h.tag :div, class: "c-status-footer" do
-          h.html V6::Buttons::LikeButtonComponent.new(view_context,
+          h.html Buttons::LikeButtonComponent.new(view_context,
             resource_name: "Status",
             resource_id: @status.id,
             likes_count: @status.likes_count,

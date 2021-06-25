@@ -13,7 +13,7 @@ module Boxes
         h.tag :div, class: "row g-3" do
           h.tag :div, class: "col-auto" do
             h.tag :a, href: view_context.anime_path(@anime.id) do
-              h.html V6::Pictures::AnimePictureComponent.new(
+              h.html Pictures::AnimePictureComponent.new(
                 view_context,
                 anime: @anime,
                 width: 80

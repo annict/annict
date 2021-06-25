@@ -13,13 +13,13 @@
   </div>
 
   <% if @activity_groups.present? %>
-    <%= V6::TimelineComponent.new(
+    <%= TimelineComponent.new(
       self,
       activity_groups: @activity_groups
     ).render %>
   <% else %>
     <div class="container">
-      <%= V6::EmptyComponent.new(self, text: t("messages._empty.no_activities")).render %>
+      <%= EmptyV6Component.new(self, text: t("messages._empty.no_activities")).render %>
     </div>
   <% end %>
 </div>

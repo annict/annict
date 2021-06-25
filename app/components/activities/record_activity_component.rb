@@ -14,7 +14,7 @@ module Activities
           h.tag :div, class: "card-body" do
             h.tag :div, class: "mb-3" do
               h.tag :a, href: view_context.profile_path(@user.username) do
-                h.html V6::Pictures::AvatarPictureComponent.new(view_context,
+                h.html Pictures::AvatarPictureComponent.new(view_context,
                   user: @user,
                   width: 32).render
               end
@@ -29,7 +29,7 @@ module Activities
                 h.text t("messages._components.activities.episode_record.created")
               end
 
-              h.html V6::RelativeTimeComponent.new(
+              h.html RelativeTimeComponent.new(
                 view_context,
                 time: @activity_group.created_at.iso8601,
                 class_name: "ms-1 small text-muted"
@@ -40,18 +40,18 @@ module Activities
               record = @activity_group.first_item
 
               if record.episode_record?
-                h.html V6::Contents::EpisodeRecordContentComponent.new(view_context, record: record).render
+                h.html Contents::EpisodeRecordContentComponent.new(view_context, record: record).render
               else
-                h.html V6::Contents::AnimeRecordContentComponent.new(view_context, record: record).render
+                h.html Contents::AnimeRecordContentComponent.new(view_context, record: record).render
               end
             else
               h.tag :turbo_frame, id: view_context.dom_id(@activity_group) do
                 record = @activity_group.first_item
 
                 if record.episode_record?
-                  h.html V6::Contents::EpisodeRecordContentComponent.new(view_context, record: record).render
+                  h.html Contents::EpisodeRecordContentComponent.new(view_context, record: record).render
                 else
-                  h.html V6::Contents::AnimeRecordContentComponent.new(view_context, record: record).render
+                  h.html Contents::AnimeRecordContentComponent.new(view_context, record: record).render
                 end
 
                 if @activity_group.activities_count > 1

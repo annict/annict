@@ -14,7 +14,7 @@ module Activities
           h.tag :div, class: "card-body" do
             h.tag :div, class: "mb-3" do
               h.tag :a, href: view_context.profile_path(@user.username) do
-                h.html V6::Pictures::AvatarPictureComponent.new(view_context,
+                h.html Pictures::AvatarPictureComponent.new(view_context,
                   user: @user,
                   width: 32).render
               end
@@ -29,7 +29,7 @@ module Activities
                 h.text t("messages._components.activities.status.changed")
               end
 
-              h.html V6::RelativeTimeComponent.new(
+              h.html RelativeTimeComponent.new(
                 view_context,
                 time: @activity_group.created_at.iso8601,
                 class_name: "ms-1 small text-muted"
@@ -39,7 +39,7 @@ module Activities
             h.tag :turbo_frame, id: view_context.dom_id(@activity_group) do
               status = @activity_group.first_item
 
-              h.html V6::Contents::StatusContentComponent.new(view_context, status: status).render
+              h.html Contents::StatusContentComponent.new(view_context, status: status).render
 
               if @activity_group.activities_count > 1
                 h.tag :div, class: "text-center" do

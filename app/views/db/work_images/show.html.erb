@@ -17,7 +17,7 @@
 
   <div class="mb-3 row">
     <div class="col-6">
-      <%= V6::Pictures::AnimePictureComponent.new(self, anime: @work, width: 280).render %>
+      <%= Pictures::AnimePictureComponent.new(self, anime: @work, width: 280).render %>
 
       <div class="mt-3">
         <%= form_with model: @image, url: db_work_image_detail_path(@work) do |f| %>

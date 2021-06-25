@@ -15,13 +15,13 @@ module Contents
       build_html do |h|
         h.tag :div do
           if rating_or_comment?
-            h.html(V6::SpoilerGuardComponent.new(view_context, record: @record).render { |h|
+            h.html(SpoilerGuardV6Component.new(view_context, record: @record).render { |h|
               h.tag :div, class: "c-record-content__wrapper mb-3" do
                 if @record.episode_record.rating_state
-                  h.html V6::RatingLabelComponent.new(view_context, rating: @episode_record.rating_state, advanced_rating: @episode_record.rating, class_name: "mb-1").render
+                  h.html Labels::RatingLabelComponent.new(view_context, rating: @episode_record.rating_state, advanced_rating: @episode_record.rating, class_name: "mb-1").render
                 end
 
-                h.html(BodyComponentV6.new(view_context, height: 300, format: :html).render { |h|
+                h.html(BodyV6Component.new(view_context, height: 300, format: :html).render { |h|
                   h.html render_markdown(@episode_record.comment)
                 })
               end
@@ -39,7 +39,7 @@ module Contents
           end
 
           h.tag :div, class: "mt-1" do
-            h.html V6::Footers::RecordFooterComponent.new(view_context, record: @record).render
+            h.html Footers::RecordFooterComponent.new(view_context, record: @record).render
           end
         end
       end

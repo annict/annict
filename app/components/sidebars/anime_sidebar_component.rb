@@ -15,7 +15,7 @@ module Sidebars
             h.tag :div, class: "col-4 col-sm-12" do
               h.tag :div, class: "mb-2 text-sm-left" do
                 h.tag :a, href: view_context.anime_path(anime_id: @anime.id) do
-                  h.html V6::Pictures::AnimePictureComponent.new(
+                  h.html Pictures::AnimePictureComponent.new(
                     view_context,
                     anime: @anime,
                     width: 350

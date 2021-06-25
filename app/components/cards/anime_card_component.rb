@@ -12,7 +12,7 @@ module Cards
       build_html do |h|
         h.tag :div, class: "border-0 card h-100" do
           h.tag :a, href: view_context.anime_path(@anime), class: "text-reset" do
-            h.html V6::Pictures::AnimePictureComponent.new(
+            h.html Pictures::AnimePictureComponent.new(
               view_context,
               anime: @anime,
               width: @width,
