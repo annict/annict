@@ -23,6 +23,11 @@ $ann-supporter-color: #00bcd4;
 
 $ann-theme-color-map: (
   'primary': $ann-mizuho-color,
+  'status-completed': $ann-status-completed-color,
+  'status-dropped': $ann-status-dropped-color,
+  'status-on-hold': $ann-status-on-hold-color,
+  'status-plan-to-watch': $ann-status-plan-to-watch-color,
+  'status-watching': $ann-status-watching-color
 );
 
 $ann-shirobako-color-map: (
@@ -44,6 +49,7 @@ $ann-link-hover-color-dark: tint-color($link-hover-color, 40%);
 
 // Components
 $ann-border-color-dark: shade-color($border-color, 40%);
+$ann-border-color-dark-2: shade-color($border-color, 50%);
 
 // Buttons
 

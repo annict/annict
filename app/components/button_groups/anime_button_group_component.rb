@@ -11,11 +11,11 @@ module ButtonGroups
     def render
       build_html do |h|
         h.tag :div, class: "btn-group c-anime-button-group #{@class_name}" do
-          h.html Dropdowns::AnimeStatusDropdownComponent.new(view_context, anime: @anime).render
+          h.html Dropdowns::StatusSelectDropdownComponent.new(view_context, anime: @anime).render
 
           # TODO: アニメをお気に入りできるようにする
-          # h.tag :button, type: "button", class: "btn btn-warning" do
-          #   h.text "fav"
+          # h.tag :button, type: "button", class: "btn btn-outline-warning" do
+          #   h.tag :i, class: "far fa-star"
           # end
 
           h.tag :div, class: "btn-group c-anime-button-group__options" do

@@ -3,7 +3,12 @@
     display: none;
   }
 
-  .c-anime-status-dropdown {
+  .c-status-select-dropdown {
+    &.c-spinner {
+      border-bottom-left-radius: $border-radius-pill;
+      border-top-left-radius: $border-radius-pill;
+    }
+
     .btn.dropdown-toggle {
       border-bottom-left-radius: $border-radius-pill;
       border-top-left-radius: $border-radius-pill;

@@ -44,7 +44,7 @@ class LibraryEntry < ApplicationRecord
   belongs_to :program, optional: true
   belongs_to :status, optional: true
   belongs_to :user
-  belongs_to :work
+  belongs_to :anime, foreign_key: :work_id
 
   scope :desiring_to_watch, -> { with_status(:wanna_watch, :watching, :on_hold) }
   scope :finished_to_watch, -> { with_status(:watched, :stop_watching) }
@@ -65,7 +65,7 @@ class LibraryEntry < ApplicationRecord
     joins(:status)
       .select("library_entries.work_id, statuses.kind as status_kind")
       .each_with_object({}) do |le, h|
-      h[le.work_id] = Status.kind.find_value(le.status_kind)
+      h[le.work_id] = Status.kind_v2_to_v3(Status.kind.find_value(le.status_kind))
     end
   end
 

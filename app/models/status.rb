@@ -43,6 +43,15 @@ class Status < ApplicationRecord
     no_select: :no_status
   }.freeze
 
+  KIND_ICONS = {
+    completed: :check,
+    dropped: :stop,
+    on_hold: :pause,
+    plan_to_watch: :circle,
+    watching: :play,
+    no_status: :bars
+  }.freeze
+
   enumerize :kind, scope: true, in: {
     wanna_watch: 1,
     watching: 2,
@@ -83,6 +92,10 @@ class Status < ApplicationRecord
 
   def self.initial?(status)
     count == 1 && initial.id == status.id
+  end
+
+  def self.kind_icon(kind_v3)
+    KIND_ICONS[kind_v3]
   end
 
   def anime_id
