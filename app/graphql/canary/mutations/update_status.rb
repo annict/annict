@@ -12,41 +12,18 @@ module Canary
         raise Annict::Errors::InvalidAPITokenScopeError unless context[:writable]
 
         viewer = context[:viewer]
-        work = Work.only_kept.find_by_graphql_id(anime_id)
+        anime = Anime.only_kept.find_by_graphql_id(anime_id)
 
-        library_entry = viewer.library_entries.find_by(work: work)
+        form = Forms::StatusForm.new(anime: anime, kind: kind)
 
-        if kind == "NO_STATUS"
-          ActiveRecord::Base.transaction do
-            library_entry.update!(status_id: nil) if library_entry
-            UserWatchedWorksCountJob.perform_later(viewer.id)
-          end
-
-          return {
-            anime: work
-          }
+        if form.invalid?
+          raise GraphQL::ExecutionError, "status update failed"
         end
 
-        v2_kind = Status.kind_v3_to_v2(kind.downcase)
-        status = viewer.statuses.new(work: work, kind: v2_kind)
-
-        ActiveRecord::Base.transaction do
-          status.save!
-          status.save_library_entry
-
-          activity_group = viewer.create_or_last_activity_group!(status)
-          viewer.activities.create!(itemable: status, activity_group: activity_group)
-
-          prev_state_kind = library_entry&.status&.kind
-          viewer.update_works_count!(prev_state_kind, v2_kind)
-          work.update_watchers_count!(prev_state_kind, v2_kind)
-
-          UserWatchedWorksCountJob.perform_later(viewer.id)
-          status.share_to_sns
-        end
+        Updaters::StatusUpdater.new(user: viewer, form: form).call
 
         {
-          anime: work
+          anime: anime
         }
       end
     end

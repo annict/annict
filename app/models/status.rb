@@ -55,7 +55,6 @@ class Status < ApplicationRecord
   belongs_to :anime, foreign_key: :work_id
   belongs_to :oauth_application, class_name: "Doorkeeper::Application", optional: true
   belongs_to :user
-  belongs_to :work
   has_many :activities,
     dependent: :destroy,
     as: :trackable
@@ -64,7 +63,7 @@ class Status < ApplicationRecord
     as: :recipient
 
   scope :positive, -> { with_kind(*POSITIVE_KINDS) }
-  scope :with_not_deleted_work, -> { joins(:work).merge(Work.only_kept) }
+  scope :with_not_deleted_work, -> { joins(:work).merge(Anime.only_kept) }
 
   def self.kind_v2_to_v3(kind_v2)
     return if kind_v2.blank?
@@ -138,7 +137,7 @@ class Status < ApplicationRecord
   end
 
   def save_library_entry
-    library_entry = user.library_entries.find_or_initialize_by(work: work)
+    library_entry = user.library_entries.find_or_initialize_by(anime: anime)
     library_entry.status = self
     library_entry.watched_episode_ids = [] if %w[watched stop_watching].include?(kind)
     library_entry.save!
