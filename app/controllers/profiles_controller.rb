@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class UsersV6Controller < ApplicationV6Controller
+class ProfilesController < ApplicationV6Controller
   def show
     set_page_category PageCategory::PROFILE
 

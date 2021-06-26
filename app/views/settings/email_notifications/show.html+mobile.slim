@@ -3,7 +3,7 @@
 
 .container.py-3
   .mb-5
-    = render "v3/settings/subnav"
+    = render "settings/subnav"
 
   = form_for [:settings, @email_notification], method: :patch do |f|
     = render "application/components/error_panel", resource: @email_notification

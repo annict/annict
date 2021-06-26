@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class PeopleController < ApplicationController
+class PeopleController < ApplicationV6Controller
   before_action :load_i18n, only: %i[show]
 
   def show
@@ -10,7 +10,7 @@ class PeopleController < ApplicationController
       @casts_with_year = @person
         .casts
         .only_kept
-        .joins(:work)
+        .joins(:anime)
         .where(works: {deleted_at: nil})
         .includes(:character, work: :work_image)
         .group_by { |cast| cast.work.season_year.presence || 0 }
@@ -21,7 +21,7 @@ class PeopleController < ApplicationController
       @staffs_with_year = @person
         .staffs
         .only_kept
-        .joins(:work)
+        .joins(:anime)
         .where(works: {deleted_at: nil})
         .includes(work: :work_image)
         .group_by { |staff| staff.work.season_year.presence || 0 }

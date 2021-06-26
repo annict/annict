@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CharactersController < ApplicationController
+class CharactersController < ApplicationV6Controller
   before_action :load_i18n, only: %i[show]
 
   def show
@@ -9,7 +9,7 @@ class CharactersController < ApplicationController
       .casts
       .only_kept
       .preload(:person, work: :work_image)
-      .joins(:work)
+      .joins(:anime)
       .where(works: {deleted_at: nil})
       .group_by { |cast| cast.work.season_year.presence || 0 }
     @cast_years = @casts_with_year.keys.sort.reverse

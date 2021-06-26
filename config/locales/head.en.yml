@@ -30,6 +30,8 @@ en:
           show: Looking for information on %{name}? Find out more with Annict!
         person_fans:
           index: Check out fans of %{person_name}!
+        profiles:
+          show: Check out %{profile_name} (%{username})'s profile!
         records:
           index: "Check out %{profile_name} (%{username})'s records!"
           show: "Check out %{profile_name} (%{username})'s record on %{trackable_title}"
@@ -42,7 +44,6 @@ en:
         users:
           followers: Check out %{profile_name} (%{username})'s profile!
           following: Check out %{profile_name} (%{username})'s profile!
-          show: Check out %{profile_name} (%{username})'s profile!
         works:
           popular: Looking for popular anime? Find out more with Annict!
           season: Looking for information on %{name} anime? Find out more with Annict!
@@ -196,12 +197,12 @@ en:
         new: Forgot your password?
       people:
         show: '%{name}'
-      profiles:
-        show: Profile
       records:
         edit: Edit Record
       slots:
         index: Slot List
+      profiles:
+        show: '%{profile_name} (%{username})'
       providers:
         index: Connections
       records:
@@ -238,7 +239,6 @@ en:
       users:
         followers: People following %{profile_name} (%{username})
         following: People followed by %{profile_name} (%{username})
-        show: '%{profile_name} (%{username})'
       welcome:
         show: A platform for anime addicts.
       works:

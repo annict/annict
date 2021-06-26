@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Settings
-  class TokensController < ApplicationController
+  class TokensController < ApplicationV6Controller
     before_action :authenticate_user!
 
     def new

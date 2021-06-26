@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Settings
-  class AppsController < ApplicationController
+  class AppsController < ApplicationV6Controller
     before_action :authenticate_user!
 
     def index

@@ -24,12 +24,12 @@ h1.h2.text-center.my-3
         = icon "angle-right", class: "ms-2"
   .row.align-items-center.mb-3
     .col.pe-0
-      = V6::Buttons::ShareToTwitterButtonComponent.new(self, text: title, url: "#{local_url}#{seasonal_anime_list_path(slug: @season.slug)}", class_name: "me-2").render
-      = V6::Buttons::ShareToFacebookButtonComponent.new(self, url: "#{local_url}#{seasonal_anime_list_path(slug: @season.slug)}").render
+      = Buttons::ShareToTwitterButtonComponent.new(self, text: title, url: "#{local_url}#{seasonal_anime_list_path(slug: @season.slug)}", class_name: "me-2").render
+      = Buttons::ShareToFacebookButtonComponent.new(self, url: "#{local_url}#{seasonal_anime_list_path(slug: @season.slug)}").render
     .col.text-end
       = render "display_option_buttons", display_option: @display_option
 
-= render "v3/works/display_options/#{@display_option}", works: @works
+= render "works/display_options/#{@display_option}", works: @works
 - if @works.present?
   .mb-3.text-center
     = V6::ButtonGroups::PaginationButtonGroupComponent.new(self, collection: @works).render

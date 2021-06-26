@@ -4,10 +4,10 @@
     .row.align-items-center.mb-2.pt-2
       .col
         = link_to character.local_name, character_path(character)
-        - if character.oldest_work.present?
-          = link_to anime_path(anime_id: character.oldest_work.id) do
+        - if character.oldest_anime.present?
+          = link_to anime_path(anime_id: character.oldest_anime.id) do
             .text-muted.u-very-small
-              = character.oldest_work.local_title
+              = character.oldest_anime.local_title
       .col.col-auto
         c-favorite-button.btn-sm.w-100 resource-type="Character" :resource-id="#{character.id}" :init-is-favorited="#{user_signed_in? && current_user.favorite?(character)}" :is-signed-in="#{user_signed_in?}"
 - else

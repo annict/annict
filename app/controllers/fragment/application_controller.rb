@@ -2,7 +2,7 @@
 
 module Fragment
   class ApplicationController < ActionController::Base
-    include V6::PageCategorizable
+    include PageCategorizable
 
     layout false
   end

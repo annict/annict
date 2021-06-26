@@ -9,7 +9,7 @@ module Api
         before_action :prepare_params!, only: [:create]
 
         def create
-          work = Work.only_kept.find(@params.work_id)
+          work = Anime.only_kept.find(@params.work_id)
 
           V4::UpdateStatusRepository.new(
             graphql_client: graphql_client(viewer: current_user)

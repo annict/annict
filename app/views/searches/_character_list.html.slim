@@ -1,4 +1,4 @@
 - if characters.present?
-  = render "v3/#{view.pluralize}/list", characters: characters
+  = render "#{view.pluralize}/list", characters: characters
 - else
   = render "application/components/empty", text: t("messages._empty.no_characters")

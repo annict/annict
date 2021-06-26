@@ -13,7 +13,7 @@ module Beta
       def resolve(work_id:, state:)
         raise Annict::Errors::InvalidAPITokenScopeError unless context[:doorkeeper_token].writable?
 
-        work = Work.only_kept.find_by_graphql_id(work_id)
+        work = Anime.only_kept.find_by_graphql_id(work_id)
 
         state = case state
         when "NO_STATE" then "no_select"

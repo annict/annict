@@ -187,12 +187,8 @@ class User < ApplicationRecord
     watching_works_count
   end
 
-  def works
-    @works ||= V4::UserWorksQuery.new(self)
-  end
-
-  def works_on(*status_kinds)
-    Work.joins(:library_entries).merge(library_entries.with_status(*status_kinds))
+  def animes_on(*status_kinds)
+    Anime.joins(:library_entries).merge(library_entries.with_status(*status_kinds))
   end
 
   def cast_favorites
@@ -204,7 +200,7 @@ class User < ApplicationRecord
   end
 
   def social_friends
-    @social_friends ||= V3::UserSocialFriendsQuery.new(self)
+    @social_friends ||= UserSocialFriendsQuery.new(self)
   end
 
   def build_relations(oauth = nil)
@@ -267,7 +263,7 @@ class User < ApplicationRecord
 
   def hide_episode_record_body?(episode)
     setting.hide_record_body? &&
-      works.desiring_to_watch.include?(episode.work) &&
+      works.desiring_to_watch.include?(episode.anime) &&
       !episode_records.pluck(:episode_id).include?(episode.id)
   end
 

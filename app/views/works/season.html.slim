@@ -9,8 +9,7 @@ h1.text-center.my-3
 .mb-3 class="#{@display_option == "list_detailed" ? 'container pe-0' : 'px-3'}"
   .row.align-items-center
     .col
-      = V6::Buttons::ShareToTwitterButtonComponent.new(self, text: title, url: "#{local_url}#{seasonal_anime_list_path(slug: @season.slug)}", class_name: "me-2").render
-      = V6::Buttons::ShareToFacebookButtonComponent.new(self, url: "#{local_url}#{seasonal_anime_list_path(slug: @season.slug)}").render
+      = Buttons::ShareToTwitterButtonComponent.new(self, text: title, url: "#{local_url}#{seasonal_anime_list_path(slug: @season.slug)}", class_name: "me-2").render
     .col.text-center
       - if @prev_season.present?
         = link_to seasonal_anime_list_path(slug: @prev_season.slug, display: params[:display]), class: "me-3" do
@@ -31,13 +30,13 @@ h1.text-center.my-3
 
 - if @display_option == "list_detailed"
   .container
-    = render "v3/works/display_options/list_detailed", works: @works
+    = render "works/display_options/list_detailed", works: @works
 - else
-  = render "v3/works/display_options/#{@display_option}", works: @works
+  = render "works/display_options/#{@display_option}", animes: @works
 
 - if @works.present?
   .mb-3.text-center
-    = V6::ButtonGroups::PaginationButtonGroupComponent.new(self, collection: @works).render
+    = ButtonGroups::PaginationButtonGroupComponent.new(self, collection: @works).render
 
 - content_for :js_templates do
   = render "application/js_templates/youtube_modal_player"

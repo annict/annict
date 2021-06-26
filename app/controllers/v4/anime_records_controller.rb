@@ -1,20 +1,20 @@
 # frozen_string_literal: true
 
 module V4
-  class AnimeRecordsController < ApplicationController
+  class AnimeRecordsController < ApplicationV6Controller
     include AnimeSidebarDisplayable
 
     before_action :authenticate_user!, only: %i[create edit update destroy]
 
     def index
       set_page_category PageCategory::ANIME_RECORD_LIST
-      @anime = Work.only_kept.find(params[:anime_id])
+      @anime = Anime.only_kept.find(params[:anime_id])
       load_on_anime_record_list
       @form = AnimeRecordForm.new(anime_id: @anime_entity.id)
     end
 
     def create
-      @anime = Work.only_kept.find(params[:anime_id])
+      @anime = Anime.only_kept.find(params[:anime_id])
       @form = AnimeRecordForm.new(anime_record_form_params)
 
       if @form.invalid?

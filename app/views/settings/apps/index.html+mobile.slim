@@ -3,13 +3,13 @@
 
 .container.py-3
   .mb-3
-    = render "v3/settings/subnav"
+    = render "settings/subnav"
 
   h2.h4.fw-bold.mb-3
     = t "noun.applications"
 
   .mb-5
-    = render "v3/settings/apps/app_list", apps: @apps
+    = render "settings/apps/app_list", apps: @apps
 
   .align-items-center.row.mb-3
     .col
@@ -21,4 +21,4 @@
           = icon "plus"
           = t "messages.settings.tokens.new"
 
-  = render "v3/settings/tokens/token_list", tokens: @tokens
+  = render "settings/tokens/token_list", tokens: @tokens

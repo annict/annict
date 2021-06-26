@@ -35,7 +35,7 @@ Rails.application.routes.draw do
   end
 
   # standard:disable Layout/ExtraSpacing, Layout/LineLength
-  match "/@:username",                                        via: :get,    as: :profile,                                 to: "users#show",                   username: USERNAME_FORMAT
+  match "/@:username",                                        via: :get,    as: :profile,                                 to: "profiles#show",                username: USERNAME_FORMAT
   match "/@:username/:status_kind",                           via: :get,    as: :library,                                 to: "libraries#show",               username: USERNAME_FORMAT, status_kind: /wanna_watch|watching|watched|on_hold|stop_watching/
   match "/@:username/favorite_characters",                    via: :get,    as: :favorite_character_list,                 to: "favorite_characters#index",    username: USERNAME_FORMAT
   match "/@:username/favorite_organizations",                 via: :get,    as: :favorite_organization_list,              to: "favorite_organizations#index", username: USERNAME_FORMAT

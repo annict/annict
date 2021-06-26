@@ -1,11 +1,11 @@
-- works.each do |work|
+- animes.each do |anime|
   .c-card.p-3.mb-3
     .row
       .col-5
-        = link_to anime_path(anime_id: work.id) do
-          = render WorkImageComponent.new(image_url_1x: v4_ann_image_url(work.work_image, :image, size: "140x"), image_url_2x: v4_ann_image_url(work.work_image, :image, size: "280x"))
+        = link_to anime_path(anime_id: anime.id) do
+          = Pictures::AnimePictureComponent.new(self, anime: anime, width: 280).render
       .col-7.ps-0
-        = link_to work.local_title, anime_path(anime_id: work.id), title: work.local_title, class: "d-inline-block"
+        = link_to anime.local_title, anime_path(anime_id: anime.id), title: anime.local_title, class: "d-inline-block"
         - if user_signed_in? && current_user.id == user.id
           .mt-2
-            = render "application/components/work_action", work_id: work.id, size: "small"
+            = render "application/components/work_action", anime: anime, size: "small"

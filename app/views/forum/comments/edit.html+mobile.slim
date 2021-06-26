@@ -3,4 +3,4 @@
 
 .c-card.mb-3
   .container.py-3
-    = render "v3/forum/comments/form", comment: @comment, form_url: forum_comment_path(@comment.forum_post, @comment), form_method: :patch, submit_text: t("verb.update")
+    = render "forum/comments/form", comment: @comment, form_url: forum_comment_path(@comment.forum_post, @comment), form_method: :patch, submit_text: t("verb.update")

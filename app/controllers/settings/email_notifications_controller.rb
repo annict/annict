@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Settings
-  class EmailNotificationsController < ApplicationController
+  class EmailNotificationsController < ApplicationV6Controller
     before_action :authenticate_user!, only: %i[show update]
 
     def show

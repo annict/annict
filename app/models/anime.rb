@@ -113,7 +113,7 @@ class Anime < ApplicationRecord
   has_many :db_comments, as: :resource, dependent: :destroy
   has_many :episode_records
   has_many :episodes, dependent: :destroy, foreign_key: :work_id
-  has_many :library_entries
+  has_many :library_entries, foreign_key: :work_id
   has_many :organizations, through: :staffs, source: :resource, source_type: "Organization"
   has_many :slots, dependent: :destroy
   has_many :trailers, dependent: :destroy, foreign_key: :work_id

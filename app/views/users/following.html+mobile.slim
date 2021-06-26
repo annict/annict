@@ -8,6 +8,6 @@
 
 .c-card.mt-3.mb-4
   - if @users.present?
-    = render "v3/users/user_list", users: @users
+    = render "users/user_list", users: @users
   - else
     = render V4::EmptyComponent.new(text: t("messages._empty.no_following"))

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class IcsController < ApplicationController
+class IcsController < ApplicationV6Controller
   def show
     @user = User.only_kept.find_by!(username: params[:username])
 

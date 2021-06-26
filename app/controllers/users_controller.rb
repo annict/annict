@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-class UsersController < ApplicationController
-  before_action :load_i18n, only: %i[following followers]
+class UsersController < ApplicationV6Controller
   before_action :set_user, only: %i[following followers]
 
   def following
@@ -20,15 +19,5 @@ class UsersController < ApplicationController
 
   def set_user
     @user = User.only_kept.find_by!(username: params[:username])
-  end
-
-  def load_i18n
-    keys = {
-      "verb.follow": nil,
-      "noun.following": nil,
-      "messages._common.are_you_sure": nil
-    }
-
-    load_i18n_into_gon keys
   end
 end

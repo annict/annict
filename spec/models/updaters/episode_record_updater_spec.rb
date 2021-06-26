@@ -3,7 +3,7 @@
 describe Updaters::EpisodeRecordUpdater, type: :model do
   let(:user) { create :registered_user }
   let(:episode) { create :episode }
-  let(:anime) { episode.work }
+  let(:anime) { episode.anime }
   let!(:record) { create :record, user: user, work: anime }
   let!(:episode_record) { create :episode_record, user: user, work: anime, episode: episode, record: record }
 

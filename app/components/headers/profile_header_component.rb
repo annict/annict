@@ -52,14 +52,14 @@ module Headers
               h.html active_link_to t("noun.profile"), view_context.profile_path(@user.username),
                 class: "c-nav__link",
                 class_active: "c-nav__link--active",
-                active: @params[:controller] == "v6/users" && @params[:action] == "show"
+                active: [profiles: :show]
             end
 
             h.tag :li, class: "c-nav__item" do
               h.html active_link_to t("noun.records"), view_context.record_list_path(@user.username),
                 class: "c-nav__link",
                 class_active: "c-nav__link--active",
-                active: @params[:controller] == "v6/records" && @params[:action].in?(%w[index show])
+                active: [records: :index, "v4/records": :show]
             end
 
             h.tag :li, class: "c-nav__item" do

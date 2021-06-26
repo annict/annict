@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CheckinsController < ApplicationController
+class CheckinsController < ApplicationV6Controller
   # Old record page
   def show
     record = Record.only_kept.find(params[:id])

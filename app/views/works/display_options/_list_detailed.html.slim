@@ -5,16 +5,16 @@
   .c-card.row.py-3.mb-3
     .col-3.pe-0
       = link_to anime_path(anime_id: work.id) do
-        = render V4::WorkImageComponent.new(image_url_1x: v4_ann_image_url(work.work_image, :image, size: "270x"), image_url_2x: v4_ann_image_url(work.work_image, :image, size: "540x"))
-      - if work.work_image.present?
+        = Pictures::AnimePictureComponent.new(self, anime: work, width: 270).render
+      - if work.anime_image.present?
         .u-very-small
-          = work.work_image.asin_or_copyright_text
+          = work.anime_image.asin_or_copyright_text
       .mt-2
-        = V6::Selectors::StatusSelectorComponent.new(self, anime: work).render
+        = ButtonGroups::AnimeButtonGroupComponent.new(self, anime: work).render
 
     .col
       .mb-1.u-lh-0
-        = V6::Badges::AnimeMediaBadgeComponent.new(self, anime: work).render
+        = Badges::AnimeMediaBadgeComponent.new(self, anime: work).render
       h3.h2.fw-bold.mb-1
         = link_to work.local_title, anime_path(anime_id: work.id), class: "u-text-body"
       .mb-2
@@ -25,7 +25,7 @@
         .fw-bold.mb-1
           = t "activerecord.attributes.work.synopsis"
         .mb-3
-          = render V4::BodyComponent.new(height: 250) do
+          = BodyV6Component.new(self, height: 250).render do
             = sanitize(work.local_synopsis(raw: true))
           .small.mt-2.text-end
             span.me-1
@@ -77,6 +77,6 @@
       - programs = programs.select { |pd| locale_ja? ? true : pd.support_en? }
       - if programs.present?
         .fw-bold.mb-1 = t "noun.vods"
-        = render "v3/works/vod_list", channels: @channels, slice: 3, programs: programs
+        = render "works/vod_list", channels: @channels, slice: 3, programs: programs
 
       c-work-friends :work-id="#{work.id}" title="#{t('noun.friends_who_are_watching')}" more-text="#{t('verb.view_all')}"

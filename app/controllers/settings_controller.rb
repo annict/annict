@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class SettingsController < ApplicationController
+class SettingsController < ApplicationV6Controller
   before_action :authenticate_user!
 
   def index

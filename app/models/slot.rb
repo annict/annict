@@ -61,8 +61,8 @@ class Slot < ApplicationRecord
   validates :started_at, presence: true
 
   scope :episode_published, -> { joins(:episode).merge(Episode.only_kept) }
-  scope :with_not_deleted_work, -> { joins(:work).merge(Work.only_kept) }
-  scope :with_works, ->(works) { joins(:work).merge(works) }
+  scope :with_not_deleted_anime, -> { joins(:anime).merge(Anime.only_kept) }
+  scope :with_works, ->(works) { joins(:anime).merge(works) }
 
   before_validation :calc_for_timezone
 

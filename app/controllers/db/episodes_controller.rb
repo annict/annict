@@ -37,13 +37,13 @@ module Db
     def edit
       @episode = Episode.without_deleted.find(params[:id])
       authorize @episode
-      @work = @episode.work
+      @work = @episode.anime
     end
 
     def update
       @episode = Episode.without_deleted.find(params[:id])
       authorize @episode
-      @work = @episode.work
+      @work = @episode.anime
 
       @episode.attributes = episode_params
       @episode.user = current_user
@@ -62,7 +62,7 @@ module Db
       @episode.destroy_in_batches
 
       redirect_back(
-        fallback_location: db_episode_list_path(@episode.work),
+        fallback_location: db_episode_list_path(@episode.anime),
         notice: t("messages._common.deleted")
       )
     end

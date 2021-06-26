@@ -16,7 +16,7 @@ class SyobocalEpisodeDataFetcherService
       .merge(Work.where.not(sc_tid: nil))
       .merge(Slot.where.not(program_id: nil))
       .distinct
-    works = Work.only_kept.where(id: episodes.pluck(:work_id).uniq)
+    works = Anime.only_kept.where(id: episodes.pluck(:work_id).uniq)
     titles = client.list_titles(title_id: works.pluck(:sc_tid))
 
     episodes.each do |e|

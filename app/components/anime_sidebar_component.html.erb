@@ -231,13 +231,13 @@
       <%= t "noun.share" %>
     </h2>
 
-    <%= V6::Buttons::ShareToTwitterButtonComponent.new(
+    <%= Buttons::ShareToTwitterButtonComponent.new(
         self,
         text: @anime_entity.local_title,
         url: "#{helpers.local_url}/works/#{@anime_entity.database_id}",
         hashtags: @anime_entity.twitter_hashtag.presence || ''
     ).render %>
-    <%= V6::Buttons::ShareToFacebookButtonComponent.new(
+    <%= Buttons::ShareToFacebookButtonComponent.new(
         self,
         url: "#{helpers.local_url}/works/#{@anime_entity.database_id}",
     ).render %>

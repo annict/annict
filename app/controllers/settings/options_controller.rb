@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Settings
-  class OptionsController < ApplicationController
+  class OptionsController < ApplicationV6Controller
     before_action :authenticate_user!
 
     def update

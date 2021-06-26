@@ -51,7 +51,7 @@ namespace :work do
   task update_score: :environment do
     RATE_MAX = 100
 
-    Work.only_kept.find_each do |w|
+    Anime.only_kept.find_each do |w|
       episodes = w.episodes.only_kept.where.not(satisfaction_rate: nil)
       ratings_count = episodes.pluck(:ratings_count).inject(&:+)
       rates = episodes.pluck(:satisfaction_rate)

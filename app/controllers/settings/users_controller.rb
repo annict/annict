@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Settings
-  class UsersController < ApplicationController
+  class UsersController < ApplicationV6Controller
     before_action :authenticate_user!, only: %i[destroy]
 
     def destroy

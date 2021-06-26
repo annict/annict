@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class OrganizationsController < ApplicationController
+class OrganizationsController < ApplicationV6Controller
   before_action :load_i18n, only: %i[show]
 
   def show
@@ -8,7 +8,7 @@ class OrganizationsController < ApplicationController
     @staffs_with_year = @organization
       .staffs
       .only_kept
-      .joins(:work)
+      .joins(:anime)
       .where(works: {deleted_at: nil})
       .includes(work: :work_image)
       .group_by { |s| s.work.season_year.presence || 0 }

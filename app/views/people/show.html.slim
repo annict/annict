@@ -6,9 +6,9 @@
 .container.py-3.mb-4
   .row
     .col-3.pe-0
-      = render "v3/people/sidebar", person: @person, person_favorites: @person_favorites
+      = render "people/sidebar", person: @person, person_favorites: @person_favorites
     .col-9
-      = render "v3/people/subnav", person: @person
+      = render "people/subnav", person: @person
 
       .c-card
         .container.py-3

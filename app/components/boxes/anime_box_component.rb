@@ -40,11 +40,9 @@ module Boxes
               end
             end
 
-            h.html V6::Selectors::StatusSelectorComponent.new(
-              view_context,
-              anime: @anime,
-              class_name: "mt-1"
-            ).render
+            h.tag :div, class: "mt-1" do
+              h.html ButtonGroups::AnimeButtonGroupComponent.new(view_context, anime: @anime).render
+            end
           end
         end
       end

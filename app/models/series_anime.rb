@@ -45,7 +45,7 @@ class SeriesAnime < ApplicationRecord
   has_many :db_comments, as: :resource, dependent: :destroy
 
   def self.sort_season(sort_type: "ASC")
-    joins(:work)
+    joins(:anime)
       .order("works.season_year #{sort_type}")
       .order("works.season_name #{sort_type}")
   end

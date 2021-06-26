@@ -2,7 +2,7 @@
 
 module Api
   module Internal
-    class FollowsController < ApplicationController
+    class FollowsController < ApplicationV6Controller
       before_action :authenticate_user!
 
       def create

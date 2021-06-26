@@ -9,12 +9,12 @@ h1.h2.text-center.my-3
 .px-3
   .row.align-items-center.mb-3
     .col.pe-0
-      = V6::Buttons::ShareToTwitterButtonComponent.new(self, text: title, url: "#{local_url}#{popular_anime_list_path}", class_name: "me-2").render
-      = V6::Buttons::ShareToFacebookButtonComponent.new(self, url: "#{local_url}#{popular_anime_list_path}").render
+      = Buttons::ShareToTwitterButtonComponent.new(self, text: title, url: "#{local_url}#{popular_anime_list_path}", class_name: "me-2").render
+      = Buttons::ShareToFacebookButtonComponent.new(self, url: "#{local_url}#{popular_anime_list_path}").render
     .col.text-end
       = render "display_option_buttons", display_option: @display_option
 
-= render "v3/works/display_options/#{@display_option}", works: @works
+= render "works/display_options/#{@display_option}", works: @works
 - if @works.present? && @works.total_pages > 1
   .mb-3.text-center
     = paginate @works, window: 2

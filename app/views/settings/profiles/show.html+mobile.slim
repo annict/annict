@@ -3,7 +3,7 @@
 
 .container.py-3
   .mb-3
-    = render "v3/settings/subnav"
+    = render "settings/subnav"
 
   = form_for current_user.profile, url: settings_profile_path, method: :patch do |f|
     = render "application/components/error_panel", resource: current_user.profile

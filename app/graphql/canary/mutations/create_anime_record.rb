@@ -43,7 +43,7 @@ module Canary
         raise Annict::Errors::InvalidAPITokenScopeError unless context[:writable]
 
         viewer = context[:viewer]
-        anime = Work.only_kept.find_by_graphql_id(anime_id)
+        anime = Anime.only_kept.find_by_graphql_id(anime_id)
 
         form = Forms::AnimeRecordForm.new(
           anime: anime,

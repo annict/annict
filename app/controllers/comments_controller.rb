@@ -2,7 +2,7 @@
 
 # 現状使われていない
 # TODO: https://github.com/kiraka/annict/issues/4 で復活させる
-class CommentsController < ApplicationController
+class CommentsController < ApplicationV6Controller
   before_action :authenticate_user!
 
   def create

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class OrganizationFansController < ApplicationController
+class OrganizationFansController < ApplicationV6Controller
   before_action :load_i18n, only: %i[index]
 
   def index

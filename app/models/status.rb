@@ -72,7 +72,7 @@ class Status < ApplicationRecord
     as: :recipient
 
   scope :positive, -> { with_kind(*POSITIVE_KINDS) }
-  scope :with_not_deleted_work, -> { joins(:work).merge(Anime.only_kept) }
+  scope :with_not_deleted_anime, -> { joins(:anime).merge(Anime.only_kept) }
 
   def self.kind_v2_to_v3(kind_v2)
     return if kind_v2.blank?

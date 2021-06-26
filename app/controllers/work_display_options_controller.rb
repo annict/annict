@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class WorkDisplayOptionsController < ApplicationController
+class WorkDisplayOptionsController < ApplicationV6Controller
   def show
     redirect_path = params[:to].presence || root_path
 

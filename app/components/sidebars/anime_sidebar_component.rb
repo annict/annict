@@ -291,14 +291,14 @@ module Sidebars
               h.text t("noun.share")
             end
 
-            h.html V6::Buttons::ShareToTwitterButtonComponent.new(
+            h.html Buttons::ShareToTwitterButtonComponent.new(
               view_context,
               text: @anime.local_title,
               url: "#{local_url}/works/#{@anime.id}",
               hashtags: @anime.twitter_hashtag.presence || ""
             ).render
 
-            h.html V6::Buttons::ShareToFacebookButtonComponent.new(
+            h.html Buttons::ShareToFacebookButtonComponent.new(
               view_context,
               url: "#{local_url}/works/#{@anime.id}"
             ).render

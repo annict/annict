@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class WorksController < ApplicationController
+class WorksController < ApplicationV6Controller
   include ApplicationHelper
 
   before_action :authenticate_user!, only: %i[switch]
@@ -9,9 +9,9 @@ class WorksController < ApplicationController
   def popular
     set_page_category PageCategory::WORK_LIST_POPULAR
 
-    @works = Work
+    @works = Anime
       .only_kept
-      .preload(:work_image)
+      .preload(:anime_image)
       .order(watchers_count: :desc, id: :desc)
       .page(params[:page])
       .per(display_works_count)
@@ -22,9 +22,9 @@ class WorksController < ApplicationController
   def newest
     set_page_category PageCategory::WORK_LIST_NEWEST
 
-    @works = Work
+    @works = Anime
       .only_kept
-      .preload(:work_image)
+      .preload(:anime_image)
       .order(id: :desc)
       .page(params[:page])
       .per(display_works_count)
@@ -35,10 +35,10 @@ class WorksController < ApplicationController
   def season
     set_page_category PageCategory::WORK_LIST_SEASON
 
-    @works = Work
+    @works = Anime
       .only_kept
       .by_season(params[:slug])
-      .preload(:work_image)
+      .preload(:anime_image)
       .order(watchers_count: :desc, id: :desc)
       .page(params[:page])
       .per(display_works_count)
@@ -71,10 +71,10 @@ class WorksController < ApplicationController
 
   def render_list
     if @display_option == "list_detailed"
-      @trailers_data = Work.trailers_data(@works)
-      @casts_data = Work.casts_data(@works)
-      @staffs_data = Work.staffs_data(@works, major: true)
-      @programs_data = Work.programs_data(@works, only_vod: true)
+      @trailers_data = Anime.trailers_data(@works)
+      @casts_data = Anime.casts_data(@works)
+      @staffs_data = Anime.staffs_data(@works, major: true)
+      @programs_data = Anime.programs_data(@works, only_vod: true)
       @channels = Channel.only_kept.with_vod
     end
   end

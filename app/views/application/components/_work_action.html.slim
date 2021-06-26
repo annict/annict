@@ -2,4 +2,4 @@
 
 .c-work-action.row
   .col.pe-0.u-lh-0
-    = render StatusSelectorComponent.new(work_id: work_id, small: true, page_category: "library-detail")
+    = ButtonGroups::AnimeButtonGroupComponent.new(self, anime: anime).render

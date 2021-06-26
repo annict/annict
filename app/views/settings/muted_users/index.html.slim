@@ -1,7 +1,7 @@
 - title = t "head.title.mutes.index"
 - set_meta_tags(title: title, reverse: true, prefix: false)
 
-= render "v3/settings/subnav"
+= render "settings/subnav"
 
 .c-card.u-mw-600.mx-auto.mt-3.mb-4.p-3
-  = render "v3/settings/muted_users/user_list", users: @mute_users
+  = render "settings/muted_users/user_list", users: @mute_users

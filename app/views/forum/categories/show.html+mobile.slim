@@ -13,7 +13,7 @@
 .c-card.mb-3
   .container
     - if @posts.present?
-      = render "v3/forum/posts/post_list", posts: @posts
+      = render "forum/posts/post_list", posts: @posts
     - else
       = render "application/components/empty", text: t("messages.forum.posts.no_posts")
 - if @posts.present?

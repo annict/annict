@@ -345,7 +345,7 @@ namespace :counter_cache do
   end
 
   task refresh_on_works: :environment do
-    Work.only_kept.find_each do |work|
+    Anime.only_kept.find_each do |work|
       kinds = %w[wanna_watch watching watched].freeze
 
       episodes_count = work.episodes.only_kept.count

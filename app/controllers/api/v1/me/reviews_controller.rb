@@ -9,7 +9,7 @@ module Api
         before_action :prepare_params!, only: %i[create update destroy]
 
         def create
-          work = Work.only_kept.find(@params.work_id)
+          work = Anime.only_kept.find(@params.work_id)
 
           work_record_params = {
             anime: work,

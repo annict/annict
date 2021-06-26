@@ -4,7 +4,7 @@
 - set_meta_tags(title: name, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 
 .c-card.mb-3
-  = render "v3/characters/header", character: @character, favorite_resources: @character_favorites
+  = render "characters/header", character: @character, favorite_resources: @character_favorites
 
 h2.h4.fw-bold.text-center.mt-3.mb-4
   = t "noun.information"
@@ -80,7 +80,7 @@ h2.h4.text-center.fw-bold.mt-3.mb-4
   = t "noun.works"
 .c-card.py-3.mb-3
   .container
-    = render "v3/people/grid", root_resource: @character, resource_years: @cast_years, resources_with_year: @casts_with_year
+    = render "people/grid", root_resource: @character, resource_years: @cast_years, resources_with_year: @casts_with_year
 
 - content_for :js_templates
   = render "application/js_templates/favorite_button"

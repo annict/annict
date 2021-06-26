@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class SearchesController < ApplicationController
+class SearchesController < ApplicationV6Controller
   def show
     set_page_category PageCategory::SEARCH
 

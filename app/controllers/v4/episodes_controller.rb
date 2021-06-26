@@ -7,7 +7,7 @@ module V4
     def index
       set_page_category PageCategory::EPISODE_LIST
 
-      anime = Work.only_kept.find(params[:anime_id])
+      anime = Anime.only_kept.find(params[:anime_id])
       raise ActionController::RoutingError, "Not Found" if anime.no_episodes?
 
       result = V4::EpisodeListPage::AnimeRepository.new(graphql_client: graphql_client).execute(

@@ -5,18 +5,18 @@
         = ann_image_tag(notification.action_user.profile, :image, size: "50x50", class: "rounded-circle")
     .col
       - if notification.action == "follows.create"
-        = render "v3/notifications/follows_create", notification: notification
+        = render "notifications/follows_create", notification: notification
       - elsif notification.action == "likes.create"
         - recipient = notification.trackable.recipient
         - if recipient.class.name == "EpisodeRecord"
-          = render "v3/notifications/likes_create_episode_record", notification: notification
+          = render "notifications/likes_create_episode_record", notification: notification
         - elsif recipient.class.name == "MultipleEpisodeRecord"
-          = render "v3/notifications/likes_create_multiple_episode_records", notification: notification
+          = render "notifications/likes_create_multiple_episode_records", notification: notification
         - elsif recipient.class.name == "Comment"
-          = render "v3/notifications/likes_create_comment", notification: notification
+          = render "notifications/likes_create_comment", notification: notification
         - elsif recipient.class.name == "Status"
-          = render "v3/notifications/likes_create_status", notification: notification
+          = render "notifications/likes_create_status", notification: notification
         - elsif recipient.class.name == "WorkRecord"
-          = render "v3/notifications/likes_create_work_record", notification: notification
+          = render "notifications/likes_create_work_record", notification: notification
       - elsif notification.action == "comments.create"
-        = render "v3/notifications/comments_create_record", notification: notification
+        = render "notifications/comments_create_record", notification: notification

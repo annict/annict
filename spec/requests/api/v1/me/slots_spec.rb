@@ -23,7 +23,7 @@ describe "Api::V1::Me::Slots" do
     end
 
     it "gets slots which user is watching" do
-      work = episode.work
+      work = episode.anime
       expected_hash = {
         "id" => slot.id,
         "started_at" => "2017-01-28T15:00:00.000Z",

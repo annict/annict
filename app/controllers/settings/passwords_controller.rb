@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Settings
-  class PasswordsController < ApplicationController
+  class PasswordsController < ApplicationV6Controller
     before_action :authenticate_user!
 
     def update

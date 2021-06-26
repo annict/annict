@@ -58,4 +58,4 @@
         = render "application/components/empty", text: t("messages.forum.posts.no_comments")
 
 .c-card.p-3.mb-3
-  = render "v3/forum/comments/form", comment: @comment, form_url: forum_comment_list_path(@comment.forum_post), form_method: :post, submit_text: t("verb.comment")
+  = render "forum/comments/form", comment: @comment, form_url: forum_comment_list_path(@comment.forum_post), form_method: :post, submit_text: t("verb.comment")

@@ -69,7 +69,7 @@ module Canary
         end
 
         def anime(database_id:)
-          Work.only_kept.find_by(id: database_id)
+          Anime.only_kept.find_by(id: database_id)
         end
 
         def episode(database_id:)

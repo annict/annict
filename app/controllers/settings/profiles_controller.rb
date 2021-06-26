@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Settings
-  class ProfilesController < ApplicationController
+  class ProfilesController < ApplicationV6Controller
     before_action :authenticate_user!
 
     def update

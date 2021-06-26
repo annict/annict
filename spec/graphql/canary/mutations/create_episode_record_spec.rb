@@ -3,7 +3,7 @@
 describe Canary::Mutations::CreateEpisodeRecord do
   let(:user) { create :registered_user }
   let(:episode) { create :episode }
-  let(:anime) { episode.work }
+  let(:anime) { episode.anime }
   let(:token) { create(:oauth_access_token) }
   let(:context) { {viewer: user, doorkeeper_token: token, writable: true} }
   let(:id) { GraphQL::Schema::UniqueWithinType.encode(episode.class.name, episode.id) }
