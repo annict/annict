@@ -166,7 +166,8 @@ module Headers
                 end
               end
 
-              if true # TODO: @anime.casts_count > 0
+              # TODO: @anime.casts_count > 0
+              if true # standard:disable Lint/LiteralAsCondition
                 h.tag :li, class: "c-nav__item" do
                   h.html active_link_to t("noun.casts"), "#",
                     active: page_category.in?(%w[cast-list]),
@@ -175,7 +176,8 @@ module Headers
                 end
               end
 
-              if true # TODO: @anime.staffs_count > 0
+              # TODO: @anime.staffs_count > 0
+              if true # standard:disable Lint/LiteralAsCondition
                 h.tag :li, class: "c-nav__item" do
                   h.html active_link_to t("noun.staffs"), "#",
                     active: page_category.in?(%w[staff-list]),
@@ -184,7 +186,8 @@ module Headers
                 end
               end
 
-              if true # TODO: @anime.videos_count > 0
+              # TODO: @anime.videos_count > 0
+              if true # standard:disable Lint/LiteralAsCondition
                 h.tag :li, class: "c-nav__item" do
                   h.html active_link_to t("noun.videos"), "#",
                     active: page_category.in?(%w[video-list]),
@@ -193,7 +196,8 @@ module Headers
                 end
               end
 
-              if true # TODO: @anime.series_list_count > 0
+              # TODO: @anime.series_list_count > 0
+              if true # standard:disable Lint/LiteralAsCondition
                 h.tag :li, class: "c-nav__item" do
                   h.html active_link_to t("noun.related_works"), "#",
                     active: page_category.in?(%w[related-anime-list]),

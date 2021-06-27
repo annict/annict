@@ -92,7 +92,7 @@ module AnimeDecorator
         url = send(field)
         if url.present?
           begin
-            link_to(URI.decode(url), url, target: "_blank")
+            link_to(url, url, target: "_blank")
           rescue
             url
           end
