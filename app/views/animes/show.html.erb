@@ -56,7 +56,9 @@
 
       <div class="card rounded-3">
         <div class="card-body">
-          <%= BodyV6Component.new(self, content: @anime.local_synopsis(raw: true), height: 150).render %>
+          <%= BodyV6Component.new(self, height: 150).render do %>
+            <%= @anime.local_synopsis(raw: true) %>
+          <% end %>
 
           <div class="text-end text-muted u-very-small">
             <%= t "noun.source" %>: <%= @anime.local_synopsis_source %>

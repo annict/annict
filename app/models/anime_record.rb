@@ -92,6 +92,18 @@ class AnimeRecord < ApplicationRecord
 
   scope :with_body, -> { where.not(body: ["", nil]) }
   scope :with_no_body, -> { where(body: ["", nil]) }
+  scope :order_by_rating, ->(direction) {
+    order_sql = <<~SQL
+      CASE
+        WHEN "work_records"."rating_overall_state" = 'bad' THEN '0'
+        WHEN "work_records"."rating_overall_state" = 'average' THEN '1'
+        WHEN "work_records"."rating_overall_state" = 'good' THEN '2'
+        WHEN "work_records"."rating_overall_state" = 'great' THEN '3'
+      END #{direction.upcase} NULLS LAST
+    SQL
+
+    order(Arel.sql(order_sql))
+  }
 
   before_save :append_title_to_body
 

@@ -11,13 +11,13 @@
     <% WorkRecord::RATING_FIELDS.each do |rating_field| %>
       <div class="col-md-6 mb-3">
         <%= f.label rating_field %>
-        <%= render ButtonGroups::RecordRatingButtonGroupComponent.new(form: f, rating_field: rating_field) %>
+        <%= ButtonGroups::RecordRatingButtonGroupComponent.new(helpers, form: f, rating_field: rating_field).render %>
       </div>
     <% end %>
   </div>
 
   <div class="mb-3">
-    <%= render Forms::RecordTextareaComponent.new(form: f, optional_textarea_classname: "form-control", textarea_name: "anime_record_form[comment]") %>
+    <%= Textareas::RecordTextareaComponent.new(helpers, form: f, optional_textarea_classname: "form-control", textarea_name: "anime_record_form[comment]").render %>
   </div>
 
   <div class="row">
