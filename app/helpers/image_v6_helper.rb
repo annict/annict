@@ -7,7 +7,7 @@ module ImageV6Helper
       when [AnimeImage, :image] then ((4 * width) / 3).ceil
       when [Profile, :image] then width
       when [Trailer, :image] then ((9 * width) / 16).ceil
-      end
+    end
     fit = width == height ? "crop" : "fill"
 
     ix_image_url(path, {
