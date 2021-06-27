@@ -21,7 +21,7 @@
   </div>
 
   <div class="mb-3">
-    <%= render "v4/db/series/subnav", series: @series %>
+    <%= render "db/series/subnav", series: @series %>
   </div>
 
   <div class="mb-3">
@@ -67,10 +67,10 @@
                 <%= series_work.summary_en.presence || "-" %>
               </td>
               <td>
-                <%= render V4::Db::PublishingStateLabelComponent.new(resource: series_work) %>
+                <%= render Db::PublishingStateLabelComponent.new(resource: series_work) %>
               </td>
               <td>
-                <%= render V4::Db::ActionButtonsComponent.new(
+                <%= render Db::ActionButtonsComponent.new(
                     user: current_user,
                     resource: series_work,
                     detail_path: db_series_work_detail_path(series_work),

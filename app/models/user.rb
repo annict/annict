@@ -395,7 +395,7 @@ class User < ApplicationRecord
     channel_ids = channel_works.pluck(:channel_id)
     episode_ids = library_entries.pluck(:next_episode_id)
     slots = Slot
-      .includes(:channel, work: :work_image)
+      .includes(:channel, work: :anime_image)
       .where(channel_id: channel_ids, episode_id: episode_ids)
       .only_kept
 

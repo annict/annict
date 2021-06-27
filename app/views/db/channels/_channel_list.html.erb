@@ -43,10 +43,10 @@
           <%= channel.sort_number %>
         </td>
         <td>
-          <%= render V4::Db::PublishingStateLabelComponent.new(resource: channel) %>
+          <%= render Db::PublishingStateLabelComponent.new(resource: channel) %>
         </td>
         <td>
-          <%= render V4::Db::ActionButtonsComponent.new(
+          <%= render Db::ActionButtonsComponent.new(
               user: current_user,
               resource: channel,
               detail_path: db_channel_detail_path(channel),

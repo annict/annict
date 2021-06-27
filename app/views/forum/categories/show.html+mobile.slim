@@ -18,4 +18,4 @@
       = render "application/components/empty", text: t("messages.forum.posts.no_posts")
 - if @posts.present?
   .text-center.mb-3
-    = V6::ButtonGroups::PaginationButtonGroupComponent.new(self, collection: @posts).render
+    = ButtonGroups::PaginationButtonGroupComponent.new(self, collection: @posts).render

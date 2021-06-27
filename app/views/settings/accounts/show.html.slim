@@ -37,7 +37,7 @@ h2.h4.text-center.my-4.fw-bold
   = t "noun.email"
 .c-card.u-mw-600.mx-auto.p-3.mt-3.mb-4
   = form_for @user_email_form, url: user_email_path do |f|
-    = render V4::ErrorPanelComponent.new(form: @user_email_form)
+    = render ErrorPanelComponent.new(form: @user_email_form)
 
     .mb-3
       = f.label :email

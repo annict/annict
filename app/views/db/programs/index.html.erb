@@ -21,7 +21,7 @@
   </div>
 
   <div class="mb-3">
-    <%= render "v4/db/works/subnav", work: @work %>
+    <%= render "db/works/subnav", work: @work %>
   </div>
 
   <div class="mb-3">
@@ -96,10 +96,10 @@
                 <% end %>
               </td>
               <td>
-                <%= render V4::Db::PublishingStateLabelComponent.new(resource: program) %>
+                <%= render Db::PublishingStateLabelComponent.new(resource: program) %>
               </td>
               <td>
-                <%= render V4::Db::ActionButtonsComponent.new(
+                <%= render Db::ActionButtonsComponent.new(
                     user: current_user,
                     resource: program,
                     detail_path: db_program_detail_path(program),

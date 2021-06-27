@@ -8,7 +8,7 @@ class CharactersController < ApplicationV6Controller
     @casts_with_year = @character
       .casts
       .only_kept
-      .preload(:person, work: :work_image)
+      .preload(:person, work: :anime_image)
       .joins(:anime)
       .where(works: {deleted_at: nil})
       .group_by { |cast| cast.work.season_year.presence || 0 }

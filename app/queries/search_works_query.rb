@@ -2,7 +2,7 @@
 
 class SearchWorksQuery
   def initialize(
-    collection = Work.all,
+    collection = Anime.all,
     user: nil,
     annict_ids: nil,
     seasons: nil,

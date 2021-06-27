@@ -7,13 +7,13 @@
       .row.mb-3
         .col-4.pe-0
           = link_to anime_path(anime_id: work.id), class: "d-inline-block" do
-            = render V4::WorkImageComponent.new(image_url_1x: v4_ann_image_url(work.work_image, :image, size: "250x"), image_url_2x: v4_ann_image_url(work.work_image, :image, size: "500x"))
-          - if work.work_image.present?
+            = render V4::WorkImageComponent.new(image_url_1x: v4_ann_image_url(work.anime_image, :image, size: "250x"), image_url_2x: v4_ann_image_url(work.anime_image, :image, size: "500x"))
+          - if work.anime_image.present?
             .u-very-small.text-end
-              = work.work_image.asin_or_copyright_text
+              = work.anime_image.asin_or_copyright_text
         .col-8
           .mb-1.u-lh-0
-            = V6::Badges::AnimeMediaBadgeComponent.new(self, anime: work).render
+            = Badges::AnimeMediaBadgeComponent.new(self, anime: work).render
           h3.fw-bold.mb-1
             = link_to work.local_title, anime_path(anime_id: work.id), class: "u-text-body"
           .mb-2
@@ -25,7 +25,7 @@
         .fw-bold.mb-1
           = t "activerecord.attributes.work.synopsis"
         .mb-3
-          = render V4::BodyComponent.new(height: 250) do
+          = render BodyComponent.new(height: 250) do
             = sanitize(work.local_synopsis(raw: true))
           .small.mt-2.text-end
             span.me-1

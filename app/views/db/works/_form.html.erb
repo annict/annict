@@ -30,7 +30,7 @@
     <%= f.label :media, class: "c-label-required" %>
     <%= f.select(
       :media,
-      options_for_select(Work.media.options, f.object.media),
+      options_for_select(Anime.media.options, f.object.media),
       { include_blank: true },
       { class: "form-select", required: true }
     ) %>

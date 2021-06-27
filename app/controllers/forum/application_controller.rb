@@ -4,22 +4,32 @@ module Forum
   class ApplicationController < ActionController::Base
     include Pundit
 
-    include V3::Analyzable
-    include V3::ControllerCommon
-    include V3::FlashMessage
-    include V3::Gonable
-    include V3::LogrageSetting
-    include V3::ViewSelector
-    include V6::KeywordSearchable
-    include V6::Localizable
-    include V6::PageCategorizable
-    include V6::SentryLoadable
+    include PageCategorizable
+    include SentryLoadable
+    include Loggable
+    include Localizable
+    include KeywordSearchable
 
-    layout "v3/default"
+    layout "default_v6"
 
-    helper_method :gon
+    around_action :set_locale
 
-    before_action :store_data_into_gon
-    before_action :load_new_user
+    private
+
+    def redirect_if_signed_in
+      if user_signed_in?
+        redirect_to root_path
+      end
+    end
+
+    # Override `Devise::Controllers::Helpers#signed_in_root_path`
+    def signed_in_root_path(_resource_or_scope)
+      root_path
+    end
+
+    # Override `Devise::Controllers::Helpers#after_sign_out_path_for`
+    def after_sign_out_path_for(_resource_or_scope)
+      root_path
+    end
   end
 end

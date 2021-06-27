@@ -31,10 +31,10 @@
           <%= channel_group.sort_number %>
         </td>
         <td>
-          <%= render V4::Db::PublishingStateLabelComponent.new(resource: channel_group) %>
+          <%= render Db::PublishingStateLabelComponent.new(resource: channel_group) %>
         </td>
         <td>
-          <%= render V4::Db::ActionButtonsComponent.new(
+          <%= render Db::ActionButtonsComponent.new(
               user: current_user,
               resource: channel_group,
               detail_path: db_channel_group_detail_path(channel_group),

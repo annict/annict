@@ -13,7 +13,7 @@ class SyobocalEpisodeDataFetcherService
       .where.not(raw_number: nil)
       .after(now - 7.days)
       .joins(:work, :slots)
-      .merge(Work.where.not(sc_tid: nil))
+      .merge(Anime.where.not(sc_tid: nil))
       .merge(Slot.where.not(program_id: nil))
       .distinct
     works = Anime.only_kept.where(id: episodes.pluck(:work_id).uniq)

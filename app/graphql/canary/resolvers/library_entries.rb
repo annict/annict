@@ -14,7 +14,7 @@ module Canary
         end
 
         if until_current_season
-          library_entries = library_entries.joins(:anime).merge(Work.lt_current_season)
+          library_entries = library_entries.joins(:anime).merge(Anime.lt_current_season)
         end
 
         case order.field

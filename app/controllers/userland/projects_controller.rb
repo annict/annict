@@ -3,7 +3,6 @@
 module Userland
   class ProjectsController < Userland::ApplicationController
     before_action :authenticate_user!, only: %i[new create edit update destroy]
-    before_action :load_i18n, only: %i[show]
 
     def new
       @project = UserlandProject.new
@@ -56,15 +55,6 @@ module Userland
     end
 
     private
-
-    def load_i18n
-      keys = {
-        "verb.follow": nil,
-        "noun.following": nil
-      }
-
-      load_i18n_into_gon keys
-    end
 
     def userland_project_params
       params.require(:userland_project).permit(

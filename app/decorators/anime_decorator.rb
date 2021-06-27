@@ -87,7 +87,7 @@ module AnimeDecorator
           link_to(sc_tid, url, target: "_blank")
         end
       when :media
-        Work.media.find_value(send(:media)).text
+        Anime.media.find_value(send(:media)).text
       when :official_site_url, :wikipedia_url
         url = send(field)
         if url.present?

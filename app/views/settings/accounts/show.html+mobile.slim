@@ -41,7 +41,7 @@
 
   .mb-5
     = form_for @user_email_form, url: user_email_path do |f|
-      = render V4::ErrorPanelComponent.new(form: @user_email_form)
+      = render ErrorPanelComponent.new(form: @user_email_form)
 
       .mb-3
         = f.label :email

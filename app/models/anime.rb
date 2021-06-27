@@ -101,10 +101,10 @@ class Anime < ApplicationRecord
 
   belongs_to :number_format, optional: true
   belongs_to :season_model, class_name: "SeasonModel", foreign_key: :season_id, optional: true
-  has_many :casts, dependent: :destroy
+  has_many :casts, dependent: :destroy, foreign_key: :work_id
   has_many :programs, dependent: :destroy, foreign_key: :work_id
   has_many :series_works, dependent: :destroy
-  has_many :staffs, dependent: :destroy
+  has_many :staffs, dependent: :destroy, foreign_key: :work_id
   has_many :work_taggings
   has_many :activities, as: :recipient
   has_many :cast_people, through: :casts, source: :person
@@ -115,7 +115,7 @@ class Anime < ApplicationRecord
   has_many :episodes, dependent: :destroy, foreign_key: :work_id
   has_many :library_entries, foreign_key: :work_id
   has_many :organizations, through: :staffs, source: :resource, source_type: "Organization"
-  has_many :slots, dependent: :destroy
+  has_many :slots, dependent: :destroy, foreign_key: :work_id
   has_many :trailers, dependent: :destroy, foreign_key: :work_id
   has_many :records, foreign_key: :work_id
   has_many :series_list, through: :series_works, source: :series
@@ -151,7 +151,7 @@ class Anime < ApplicationRecord
     }
     season_year, season_name = season_pairs.shift
 
-    t = Work.arel_table
+    t = Anime.arel_table
     works = where(t[:season_year].eq(season_year))
       .where(t[:season_name].eq(season_name))
     season_pairs.inject(works) do |query, season_pair|
@@ -497,7 +497,7 @@ class Anime < ApplicationRecord
   def related_works
     series_work_ids = SeriesWork.where(series_id: series_list.pluck(:id)).pluck(:id)
     series_works = SeriesWork.where(id: series_work_ids)
-    Work.where(id: series_works.pluck(:work_id) - [id])
+    Anime.where(id: series_works.pluck(:work_id) - [id])
   end
 
   def local_title

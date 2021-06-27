@@ -35,10 +35,10 @@
           <%= character.series&.local_name.presence || "-" %>
         </td>
         <td>
-          <%= render V4::Db::PublishingStateLabelComponent.new(resource: character) %>
+          <%= render Db::PublishingStateLabelComponent.new(resource: character) %>
         </td>
         <td>
-          <%= render V4::Db::ActionButtonsComponent.new(
+          <%= render Db::ActionButtonsComponent.new(
               user: current_user,
               resource: character,
               detail_path: db_character_detail_path(character),

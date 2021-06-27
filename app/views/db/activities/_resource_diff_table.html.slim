@@ -5,4 +5,4 @@ table.c-resource-diff-table.table.table-bordered.mb-0
       th.c-resource-diff-table__new = t("noun.after")
       th.c-resource-diff-table__old = t("noun.before")
   tbody
-    = render "v4/db/application/resource_diff_table_body", resource: resource, diffs: diffs, draft_values: draft_values, origin_values: origin_values
+    = render "db/application/resource_diff_table_body", resource: resource, diffs: diffs, draft_values: draft_values, origin_values: origin_values

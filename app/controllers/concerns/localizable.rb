@@ -11,7 +11,7 @@ module Localizable
   included do
     around_action :switch_time_zone, if: :current_user
 
-    helper_method :local_url_with_path, :locale_en?, :locale_ja?, :local_url
+    helper_method :local_url_with_path, :locale_en?, :locale_ja?, :local_url, :localable_resources
   end
 
   private
@@ -59,5 +59,30 @@ module Localizable
   def switch_time_zone(&block)
     Groupdate.time_zone = current_user.time_zone
     Time.use_zone(current_user.time_zone, &block)
+  end
+
+  def localable_resources(resources)
+    if user_signed_in?
+      localable_resources_with_own(resources)
+    elsif !user_signed_in? && locale_en?
+      resources.with_locale(:en)
+    elsif !user_signed_in? && locale_ja?
+      resources.with_locale(:ja)
+    else
+      resources
+    end
+  end
+
+  def localable_resources_with_own(resources)
+    collection = resources.with_locale(*current_user.allowed_locales)
+
+    return resources.where(user: current_user).or(collection) if resources.column_names.include?("user_id")
+
+    case resources.first.class.name
+    when "UserlandProject"
+      UserlandProject.where(id: collection.pluck(:id) + resources.merge(current_user.userland_projects).pluck(:id))
+    else
+      collection
+    end
   end
 end

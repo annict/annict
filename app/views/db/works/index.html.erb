@@ -7,7 +7,7 @@
       <%= title %>
     </h1>
 
-    <% if policy(Work).create? %>
+    <% if policy(Anime).create? %>
       <div class="text-end">
         <%= link_to db_new_work_path, class: "btn btn-outline-primary" do %>
           <%= icon "plus" %>
@@ -73,6 +73,6 @@
   </div>
 
   <div class="text-center">
-    <%= V6::ButtonGroups::PaginationButtonGroupComponent.new(self, collection: @works).render %>
+    <%= ButtonGroups::PaginationButtonGroupComponent.new(self, collection: @works).render %>
   </div>
 </div>

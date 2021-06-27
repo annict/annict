@@ -5,18 +5,18 @@ module Db
     before_action :authenticate_user!, only: %i[new create edit update destroy]
 
     def index
-      @work = Work.without_deleted.find(params[:work_id])
+      @work = Anime.without_deleted.find(params[:work_id])
       @programs = @work.programs.without_deleted.order(started_at: :desc, channel_id: :asc)
     end
 
     def new
-      @work = Work.without_deleted.find(params[:work_id])
+      @work = Anime.without_deleted.find(params[:work_id])
       @form = Db::ProgramRowsForm.new
       authorize @form
     end
 
     def create
-      @work = Work.without_deleted.find(params[:work_id])
+      @work = Anime.without_deleted.find(params[:work_id])
       @form = Db::ProgramRowsForm.new(program_rows_form_params)
       @form.user = current_user
       @form.work = @work

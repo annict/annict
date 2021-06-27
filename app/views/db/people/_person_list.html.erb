@@ -29,10 +29,10 @@
           <%= person.name_en.presence || "-" %>
         </td>
         <td>
-          <%= render V4::Db::PublishingStateLabelComponent.new(resource: person) %>
+          <%= render Db::PublishingStateLabelComponent.new(resource: person) %>
         </td>
         <td>
-          <%= render V4::Db::ActionButtonsComponent.new(
+          <%= render Db::ActionButtonsComponent.new(
               user: current_user,
               resource: person,
               detail_path: db_person_detail_path(person),

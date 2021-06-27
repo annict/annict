@@ -32,7 +32,7 @@ h1.h2.text-center.my-3
 = render "works/display_options/#{@display_option}", works: @works
 - if @works.present?
   .mb-3.text-center
-    = V6::ButtonGroups::PaginationButtonGroupComponent.new(self, collection: @works).render
+    = ButtonGroups::PaginationButtonGroupComponent.new(self, collection: @works).render
 
 - content_for :js_templates do
   = render "application/js_templates/youtube_modal_player"

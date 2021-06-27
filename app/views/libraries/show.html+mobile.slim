@@ -33,7 +33,7 @@
               - if i == 0
                 = render "display_option_buttons", display_option: @display_option
         - works = season.no_season? ? @works.with_no_season : @works.by_season(season.slug)
-        - works = works.order(watchers_count: :desc).includes(:work_image)
+        - works = works.order(watchers_count: :desc).includes(:anime_image)
         - if @display_option == "grid_detailed"
           = render "libraries/display_options/#{@display_option}", works: works, user: @user
         - else

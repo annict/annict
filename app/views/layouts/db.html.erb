@@ -11,11 +11,11 @@
   <body>
     <div class="l-db-default">
       <div class="l-db-default__sidebar">
-        <%= render V4::Db::SidebarComponent.new(search: @search) %>
+        <%= render Db::SidebarComponent.new(search: @search) %>
       </div>
       <div class="l-db-default__main d-flex flex-column">
         <div class="f-application__main__content">
-          <%= render V4::FlashComponent.new(flash) %>
+          <%= render FlashComponent.new(flash) %>
           <%= yield %>
         </div>
       </div>

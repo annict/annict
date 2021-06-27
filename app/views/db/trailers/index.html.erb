@@ -21,7 +21,7 @@
   </div>
 
   <div class="mb-3">
-    <%= render "v4/db/works/subnav", work: @work %>
+    <%= render "db/works/subnav", work: @work %>
   </div>
 
   <div class="mb-3">
@@ -78,10 +78,10 @@
                 <%= trailer.sort_number %>
               </td>
               <td>
-                <%= render V4::Db::PublishingStateLabelComponent.new(resource: trailer) %>
+                <%= render Db::PublishingStateLabelComponent.new(resource: trailer) %>
               </td>
               <td>
-                <%= render V4::Db::ActionButtonsComponent.new(
+                <%= render Db::ActionButtonsComponent.new(
                     user: current_user,
                     resource: trailer,
                     detail_path: db_trailer_detail_path(trailer),

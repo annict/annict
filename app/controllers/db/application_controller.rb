@@ -4,12 +4,12 @@ module Db
   class ApplicationController < ActionController::Base
     include Pundit
 
-    include V6::PageCategorizable
-    include V6::SentryLoadable
-    include V6::Loggable
-    include V6::Localizable
+    include PageCategorizable
+    include SentryLoadable
+    include Loggable
+    include Localizable
 
-    layout "v4/db_default"
+    layout "db"
 
     rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 

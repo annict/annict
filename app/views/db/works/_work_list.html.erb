@@ -34,7 +34,7 @@
           <%= link_to work.id, anime_path(anime_id: work.id), target: "_blank" %>
         </td>
         <td>
-          <%= V6::Badges::AnimeMediaBadgeComponent.new(self, anime: work).render %>
+          <%= Badges::AnimeMediaBadgeComponent.new(self, anime: work).render %>
           <br>
           <%= work.title %>
           <br>
@@ -46,11 +46,11 @@
           <dl>
             <dt>しょぼかる</dt>
             <dd>
-              <%= render V4::SyobocalLinkComponent.new(work_entity: work.to_entity) %>
+              <%= render SyobocalLinkComponent.new(anime: work) %>
             </dd>
             <dt>MyAnimeList</dt>
             <dd>
-              <%= render V4::MalLinkComponent.new(work_entity: work.to_entity) %>
+              <%= render MalLinkComponent.new(anime: work) %>
             </dd>
           </dl>
         </td>
@@ -61,13 +61,13 @@
           <%= work.release_season.presence || "-" %>
         </td>
         <td>
-          <%= image_tag v4_ann_image_url(work.work_image, :image, size: "70x", ratio: "3:4"), class: "rounded img-thumbnail" %>
+          <%= image_tag v4_ann_image_url(work.anime_image, :image, size: "70x", ratio: "3:4"), class: "rounded img-thumbnail" %>
         </td>
         <td>
-          <%= render V4::Db::PublishingStateLabelComponent.new(resource: work) %>
+          <%= render Db::PublishingStateLabelComponent.new(resource: work) %>
         </td>
         <td>
-          <%= render V4::Db::ActionButtonsComponent.new(
+          <%= render Db::ActionButtonsComponent.new(
               user: current_user,
               resource: work,
               detail_path: db_work_detail_path(work),
