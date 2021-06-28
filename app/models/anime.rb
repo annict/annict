@@ -330,10 +330,6 @@ class Anime < ApplicationRecord
     end
   end
 
-  def to_entity
-    @to_entity ||= V4::AnimeEntity.from_model(self)
-  end
-
   def people
     Person.where(id: (cast_people.pluck(:id) | staff_people.pluck(:id)))
   end
