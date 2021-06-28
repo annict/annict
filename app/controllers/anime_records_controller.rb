@@ -36,7 +36,7 @@ class AnimeRecordsController < ApplicationV6Controller
 
   def create
     @anime = Anime.only_kept.find(params[:anime_id])
-    @form = AnimeRecordForm.new(anime_record_form_params)
+    @form = Forms::AnimeRecordForm.new(anime: @anime, **anime_record_form_params)
 
     if @form.invalid?
       set_page_category PageCategory::ANIME_RECORD_LIST
@@ -44,16 +44,9 @@ class AnimeRecordsController < ApplicationV6Controller
       return render :index
     end
 
-    _, err = CreateAnimeRecordRepository.new(graphql_client: graphql_client(viewer: current_user)).execute(form: @form)
-
-    if err
-      @form.errors.full_messages = [err.message]
-      load_on_anime_record_list
-      return render :index
-    end
+    Creators::AnimeRecordCreator.new(user: current_user, form: @form).call
 
     flash[:notice] = t("messages._common.post")
-
     redirect_to anime_record_list_path(anime_id: @anime.id)
   end
 

@@ -23,15 +23,13 @@ module Api
           }
           form = Forms::AnimeRecordForm.new(work_record_params)
 
-          result = V4::CreateAnimeRecordRepository.new(
-            graphql_client: graphql_client(viewer: current_user)
-          ).execute(form: form)
-
-          unless result.success?
-            return render_validation_error(result.errors.first.message)
+          if form.invalid?
+            return render_validation_error(form.errors.first.message)
           end
 
-          @work_record = current_user.work_records.find_by!(record_id: result.record_entity.database_id)
+          result = Creators::AnimeRecordCreator.new(user: viewer, form: form).call
+
+          @work_record = current_user.work_records.find_by!(record_id: result.record.id)
         end
 
         def update
