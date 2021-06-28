@@ -66,7 +66,7 @@ module Beta
         end
 
         def programs(order_by: nil)
-          V4::SlotsQuery.new(
+          SlotsQuery.new(
             object.slots.only_kept,
             order: build_order(order_by)
           ).call
