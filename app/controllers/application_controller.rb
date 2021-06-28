@@ -3,16 +3,16 @@
 class ApplicationController < ActionController::Base
   include Pundit
 
-  include V3::ControllerCommon
-  include V3::Analyzable
-  include V3::LogrageSetting
-  include V3::Gonable
-  include V3::ViewSelector
-  include V3::FlashMessage
-  include V6::SentryLoadable
-  include V6::Localizable
-  include V6::PageCategorizable
-  include V6::KeywordSearchable
+  include ControllerCommon
+  include Analyzable
+  include LogrageSetting
+  include Gonable
+  include ViewSelector
+  include FlashMessage
+  include SentryLoadable
+  include Localizable
+  include PageCategorizable
+  include KeywordSearchable
 
   layout "v3/default"
 

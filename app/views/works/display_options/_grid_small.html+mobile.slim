@@ -11,4 +11,4 @@
                 .c-grid-work__work-title.u-very-small.fw-bold
                   = anime.local_title
         - if page_category.in?(%w(work-list-season work-list-popular work-list-newest))
-          = V6::Selectors::StatusSelectorComponent.new(self, anime: work).render
+          = ButtonGroups::AnimeButtonGroupComponent.new(self, anime: work).render

@@ -20,14 +20,14 @@ module Forms
         }
       ) do |f|
         build_html do |h|
-          h.html V6::ErrorPanelComponent.new(view_context, stimulus_controller: "episode-record-form").render
+          h.html ErrorPanelV6Component.new(view_context, stimulus_controller: "episode-record-form").render
 
           h.tag :div, class: "mb-2" do
             h.html ButtonGroups::RecordRatingButtonGroupComponent.new(view_context, form: f, rating_field: :rating).render
           end
 
           h.tag :div, class: "mb-3" do
-            h.html V6::Textareas::RecordTextareaComponent.new(
+            h.html Textareas::RecordTextareaComponent.new(
               view_context,
               form: f,
               optional_textarea_classname: "form-control",

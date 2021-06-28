@@ -19,7 +19,7 @@
           .mb-2
             span.fw-bold.me-1 = work.watchers_count
             span.text-muted.small Watchers
-          = V6::Selectors::StatusSelectorComponent.new(self, anime: work).render
+          = ButtonGroups::AnimeButtonGroupComponent.new(self, anime: work).render
 
       - if work.local_synopsis.present?
         .fw-bold.mb-1

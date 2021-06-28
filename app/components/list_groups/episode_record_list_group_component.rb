@@ -17,7 +17,7 @@ module ListGroups
           end
 
           if current_user
-            h.html V6::Lists::RecordListComponent.new(
+            h.html Lists::RecordListComponent.new(
               view_context,
               records: @my_records,
               show_box: false
@@ -33,7 +33,7 @@ module ListGroups
           end
 
           if current_user
-            h.html V6::Lists::RecordListComponent.new(
+            h.html Lists::RecordListComponent.new(
               view_context,
               records: @following_records,
               show_box: false
@@ -48,7 +48,7 @@ module ListGroups
             h.text t("noun.other_comments")
           end
 
-          h.html V6::Lists::RecordListComponent.new(
+          h.html Lists::RecordListComponent.new(
             view_context,
             records: @all_records,
             show_box: false

@@ -32,7 +32,7 @@
           = t "noun.ratings_count"
 
     .mb-3
-      = render StatusSelectorComponent.new(work_id: work.id, page_category: page_category)
+      = ButtonGroups::AnimeButtonGroupComponent.new(self, anime: work).render
 
     = render ShareToTwitterButtonComponent.new(text: "#{work.local_title}", url: "#{local_url}#{work_path(work)}", hashtags: "#{work.twitter_hashtag.presence || ''}", class_name: "me-2")
     = render ShareToFacebookButtonComponent.new(url: "#{local_url}#{work_path(work)}")

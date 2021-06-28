@@ -41,7 +41,7 @@ module Headers
                 h.text t("noun.edit_profile")
               end
             else
-              h.html V6::ButtonGroups::UserButtonGroupComponent.new(view_context, user: @user).render
+              h.html ButtonGroups::UserButtonGroupComponent.new(view_context, user: @user).render
             end
           end
         end

@@ -24,11 +24,7 @@ module Cards
             end
           end
 
-          h.html V6::Selectors::StatusSelectorComponent.new(
-            view_context,
-            anime: @anime,
-            class_name: "mt-2"
-          ).render
+          h.html ButtonGroups::AnimeButtonGroupComponent.new(view_context, anime: @anime, class_name: "mt-2").render
         end
       end
     end

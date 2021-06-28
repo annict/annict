@@ -28,9 +28,7 @@
             </h4>
 
             <div style="width: 300px">
-              <%= render StatusSelectorComponent.new(
-                work_id: @anime.id, init_kind: @library_entry.status.kind
-              ) %>
+              <%= ButtonGroups::AnimeButtonGroupComponent.new(self, anime: @anime).render %>
             </div>
           </div>
 
