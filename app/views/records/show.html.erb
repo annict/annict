@@ -1,40 +1,29 @@
-<% title = t "head.title.records.show", profile_name: @user_entity.name, username: @user_entity.username, trackable_title: @record_entity.local_trackable_title %>
-<% description = meta_description t("head.meta.description.records.show", profile_name: @user_entity.name, username: @user_entity.username, trackable_title: @record_entity.local_trackable_title) %>
-<% image_url = @user_entity.avatar_url %>
+<% title = t "head.title.records.show", profile_name: @profile.name, username: @user.username, trackable_title: @record.local_trackable_title %>
+<% description = meta_description t("head.meta.description.records.show", profile_name: @profile.name, username: @user.username, trackable_title: @record.local_trackable_title) %>
+<% image_url = ann_image_url(@profile, :image, width: 200) %>
 <% set_meta_tags(title: title, description: description, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false) %>
 
-<%= V6::Headers::ProfileHeaderComponent.new(self, user: @user, current_user: current_user, params: params).render %>
+<%= component_value_fetcher_tag("follow-button", internal_api_following_list_path) %>
+<%= component_value_fetcher_tag("mute-user-button", internal_api_muted_user_list_path) %>
+<%= component_value_fetcher_tag("status-select-dropdown", internal_api_library_entry_list_path(anime_ids: @anime_ids)) %>
 
-<div class="container-fluid py-3">
-  <div class="row">
+<div class="container py-3">
+  <%= Headers::ProfileHeaderComponent.new(self, user: @user, current_user: current_user, params: params).render %>
+
+  <div class="gx-3 py-3 row">
     <div class="col-12 col-lg-9">
-      <div class="mb-3">
-        <%= render V4::RecordHeaderComponent.new(viewer: current_user, user_entity: @user_entity, record_entity: @record_entity) %>
-      </div>
-
-      <% if @record_entity.episode_record? %>
-        <%= render V4::EpisodeRecordContentComponent.new(
-          viewer: current_user,
-          user_entity: @user_entity,
-          work_entity: @record_entity.trackable.anime,
-          episode_entity: @record_entity.trackable,
-          record_entity: @record_entity,
-          episode_record_entity: @record_entity.recordable,
-          show_card: true
-        ) %>
-      <% elsif @record_entity.anime_record? %>
-        <%= render V4::AnimeRecordContentComponent.new(
-          user_entity: @user_entity,
-          anime_entity: @record_entity.trackable,
-          record_entity: @record_entity,
-          anime_record_entity: @record_entity.recordable,
-          show_card: true
-        ) %>
-      <% end %>
+      <%= Contents::RecordContentComponent.new(self, record: @record).render %>
     </div>
 
     <div class="col-12 col-lg-3">
-      <%= render V4::ListGroups::RecordMonthComponent.new(user_entity: @user_entity, months: @months) %>
+      <%= ListGroups::RecordMonthListGroupComponent.new(
+        self,
+        user: @user,
+        dates: @dates,
+        controller_name: params[:controller],
+        current_year: params[:year],
+        current_month: params[:month]
+      ).render %>
     </div>
   </div>
 </div>

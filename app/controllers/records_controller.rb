@@ -23,6 +23,17 @@ class RecordsController < ApplicationV6Controller
     @anime_ids = @records.pluck(:work_id)
   end
 
+  def show
+    set_page_category PageCategory::RECORD
+
+    @user = User.only_kept.find_by!(username: params[:username])
+    @profile = @user.profile
+    @dates = @user.records.only_kept.group_by_month(:created_at).count.to_a.reverse.to_h
+
+    @record = @user.records.only_kept.find(params[:record_id])
+    @anime_ids = [@record.work_id]
+  end
+
   def update
     user = User.only_kept.find_by!(username: params[:username])
     @record = current_user.records.only_kept.find_by!(id: params[:record_id], user_id: user.id)
