@@ -1,36 +1,35 @@
-<% title = t "head.title.episodes.index", title: @anime_entity.local_title %>
-<% description = meta_description(t("head.meta.description.episodes.index", title: @anime_entity.local_title)) %>
-<% image_url = @anime_entity.image_url_1x %>
+<% title = t "head.title.episodes.index", title: @anime.local_title %>
+<% description = meta_description(t("head.meta.description.episodes.index", title: @anime.local_title)) %>
+<% image_url = ann_image_url(@anime.anime_image, :image, width: 640) %>
 <% set_meta_tags(title: title, description: description, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false) %>
 
-<div class="container-fluid">
-  <div class="row">
-    <div class="col-md-3 pe-md-0 py-3">
-      <%= render V4::Sidebars::AnimeSidebarComponent.new(anime_entity: @anime_entity, vod_channel_entities: @existing_vod_channel_entities, viewer: current_user) %>
-    </div>
+<%= component_value_fetcher_tag("status-select-dropdown", internal_api_library_entry_list_path(anime_ids: @anime_ids)) %>
 
-    <div class="col-md-9">
-      <div class="mb-3">
-        <%= render V4::WorkSubNavComponent.new(work_entity: @anime_entity, page_category: page_category) %>
-      </div>
+<%= Headers::AnimeHeaderComponent.new(self, anime: @anime, programs: @programs).render %>
 
-      <% if @anime_entity.episodes && @anime_entity.episodes.length > 0 %>
-        <div class="row mb-3">
-          <% @anime_entity.episodes.each do |episode_entity| %>
-            <div class="col-6 col-sm-4 mb-3">
-              <%= link_to episode_path(anime_id: @anime_entity.database_id, episode_id: episode_entity.database_id) do %>
-                <%= episode_entity.local_number %>
-                <div class="small u-text-body">
-                  <%= episode_entity.local_title %>
+<div class="container my-3">
+  <div class="card rounded-3">
+    <div class="card-body">
+      <% if @episodes.present? %>
+        <div class="gx-3 row">
+          <% @episodes.each do |episode| %>
+            <div class="col-6 col-sm-3 mb-3">
+              <%= link_to episode_path(@anime, episode), class: "btn p-0 text-start u-fake-link" do %>
+                <%= episode.local_number %>
+
+                <div class="small text-body">
+                  <%= episode.local_title %>
                 </div>
               <% end %>
             </div>
           <% end %>
         </div>
 
-        <%= render V4::PaginationComponent.new(page_info_entity: @page_info_entity, resources_path: current_path_with_query) %>
+        <div class="mt-3 text-center">
+        <%= ButtonGroups::PaginationButtonGroupComponent.new(self, collection: @episodes).render %>
+        </div>
       <% else %>
-        <%= render V4::EmptyComponent.new(text: t("messages._empty.no_episodes")) %>
+        <%= EmptyV6Component.new(self, text: t("messages._empty.no_episodes")).render %>
       <% end %>
     </div>
   </div>

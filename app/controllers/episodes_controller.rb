@@ -1,7 +1,18 @@
 # frozen_string_literal: true
 
 class EpisodesController < ApplicationV6Controller
-  include V6::EpisodeRecordListSettable
+  include EpisodeRecordListSettable
+
+  def index
+    set_page_category PageCategory::EPISODE_LIST
+
+    @anime = Anime.only_kept.find(params[:anime_id])
+    raise ActionController::RoutingError, "Not Found" if @anime.no_episodes?
+
+    @programs = @anime.programs.eager_load(:channel).only_kept.in_vod.merge(Channel.order(:sort_number))
+    @episodes = @anime.episodes.only_kept.order(:sort_number).page(params[:page]).per(100).without_count
+    @anime_ids = [@anime.id]
+end
 
   def show
     set_page_category PageCategory::EPISODE
