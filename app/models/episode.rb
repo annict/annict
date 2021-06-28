@@ -98,7 +98,7 @@ class Episode < ApplicationRecord
   end
 
   def next_episode
-    @next_episode ||= work.episodes.only_kept.find_by(prev_episode: self)
+    @next_episode ||= anime.episodes.only_kept.find_by(prev_episode: self)
   end
 
   def number_title
