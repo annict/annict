@@ -58,11 +58,11 @@ module Beta
         field :series_list, Beta::Types::Objects::SeriesType.connection_type, null: true
 
         def episodes(order_by: nil)
-          V4::SearchEpisodesQuery.new(object.episodes, order_by: order_by).call
+          SearchEpisodesQuery.new(object.episodes, order_by: order_by).call
         end
 
         def reviews(order_by: nil, has_body: nil)
-          V4::SearchWorkRecordsQuery.new(object.work_records, order_by: order_by, has_body: has_body).call
+          SearchWorkRecordsQuery.new(object.work_records, order_by: order_by, has_body: has_body).call
         end
 
         def programs(order_by: nil)
@@ -73,11 +73,11 @@ module Beta
         end
 
         def casts(order_by: nil)
-          V4::SearchCastsQuery.new(object.casts, order_by: order_by).call
+          SearchCastsQuery.new(object.casts, order_by: order_by).call
         end
 
         def staffs(order_by: nil)
-          V4::SearchStaffsQuery.new(object.staffs, order_by: order_by).call
+          SearchStaffsQuery.new(object.staffs, order_by: order_by).call
         end
 
         def series_list

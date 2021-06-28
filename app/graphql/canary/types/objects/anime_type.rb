@@ -184,11 +184,11 @@ module Canary
         end
 
         def casts(order_by: nil)
-          V4::SearchCastsQuery.new(object.casts, order_by: order_by).call
+          SearchCastsQuery.new(object.casts, order_by: order_by).call
         end
 
         def staffs(order_by: nil)
-          V4::SearchStaffsQuery.new(object.staffs, order_by: order_by).call
+          SearchStaffsQuery.new(object.staffs, order_by: order_by).call
         end
 
         def series_list
@@ -196,7 +196,7 @@ module Canary
         end
 
         def trailers(order_by: nil)
-          V4::SearchTrailersQuery.new(object.trailers, order_by: order_by).call
+          SearchTrailersQuery.new(object.trailers, order_by: order_by).call
         end
 
         def media
