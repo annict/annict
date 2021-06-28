@@ -7,8 +7,8 @@ module Canary
         include GraphQL::FragmentCache::Object
         include Imgix::Rails::UrlHelper
 
-        include V4::ImageHelper
-        include V6::ImageHelper
+        include ImageHelper
+        include ImageV6Helper
         include MarkdownHelper
 
         def database_id

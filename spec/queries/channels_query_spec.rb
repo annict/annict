@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-describe V4::ChannelsQuery, type: :query do
+describe ChannelsQuery, type: :query do
   context "when `is_vod` options is nil" do
     it "returns all channels" do
-      channels = V4::ChannelsQuery.new(Channel.all, is_vod: nil).call
+      channels = ChannelsQuery.new(Channel.all, is_vod: nil).call
 
       expect(channels.pluck(:id)).to contain_exactly(
         1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 28, 31, 32, 33, 34,
@@ -21,7 +21,7 @@ describe V4::ChannelsQuery, type: :query do
 
   context "when `is_vod` options is true" do
     it "returns channels which are VOD" do
-      channels = V4::ChannelsQuery.new(Channel.all, is_vod: true).call
+      channels = ChannelsQuery.new(Channel.all, is_vod: true).call
 
       expect(channels.pluck(:id)).to contain_exactly(107, 165, 241, 243, 244, 260)
     end
@@ -29,7 +29,7 @@ describe V4::ChannelsQuery, type: :query do
 
   context "when `is_vod` options is false" do
     it "returns channels which are not VOD" do
-      channels = V4::ChannelsQuery.new(Channel.all, is_vod: false).call
+      channels = ChannelsQuery.new(Channel.all, is_vod: false).call
 
       expect(channels.pluck(:id)).to contain_exactly(
         1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 28, 31, 32, 33, 34,
