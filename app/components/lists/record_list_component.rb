@@ -16,23 +16,7 @@ module Lists
             @records.each do |record|
               h.tag :div, class: "mt-3" do
                 h.tag :turbo_frame, id: dom_id(record) do
-                  h.tag :div, class: "mb-3" do
-                    h.html Headers::RecordHeaderComponent.new(view_context, record: record).render
-                  end
-
-                  if record.episode_record?
-                    h.html Contents::EpisodeRecordContentComponent.new(
-                      view_context,
-                      record: record,
-                      show_box: @show_box
-                    ).render
-                  elsif record.anime_record?
-                    h.html Contents::AnimeRecordContentComponent.new(
-                      view_context,
-                      record: record,
-                      show_box: @show_box
-                    ).render
-                  end
+                  h.html Contents::RecordContentComponent.new(view_context, record: record, show_box: show_box).render
                 end
               end
             end
