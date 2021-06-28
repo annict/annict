@@ -14,7 +14,7 @@ describe "Api::V1::Me::FollowingActivities" do
     let(:user2) { create(:user, :with_profile) }
     let(:access_token) { create(:oauth_access_token, owner: user1) }
     let!(:follow) { create(:follow, user: user1, following: user2) }
-    let!(:anime) { create(:work) }
+    let!(:anime) { create(:anime) }
     let!(:episode) { create(:episode, work: anime) }
     let!(:record) { create(:record, user: user2) }
     let!(:episode_record) { create(:episode_record, record: record, user: user2, work: anime, episode: episode) }

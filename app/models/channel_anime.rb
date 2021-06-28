@@ -30,7 +30,7 @@ class ChannelAnime < ApplicationRecord
 
   belongs_to :channel
   belongs_to :user
-  belongs_to :work
+  belongs_to :anime, foreign_key: :work_id
 
   def self.current_channel(work)
     channel_work = find_by(work_id: work.id)

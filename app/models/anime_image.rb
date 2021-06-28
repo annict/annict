@@ -37,6 +37,6 @@ class AnimeImage < ApplicationRecord
 
   validates :copyright, presence: true
 
-  belongs_to :work, touch: true
+  belongs_to :anime, foreign_key: :work_id, touch: true
   belongs_to :user
 end

@@ -40,7 +40,7 @@ class SeriesAnime < ApplicationRecord
   counter_culture :series, column_name: ->(series_work) { series_work.published? ? :series_works_count : nil }
 
   belongs_to :series
-  belongs_to :work, touch: true
+  belongs_to :anime, foreign_key: :work_id, touch: true
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
 

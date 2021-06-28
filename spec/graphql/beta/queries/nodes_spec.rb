@@ -2,8 +2,8 @@
 
 describe "GraphQL API Query" do
   describe "nodes" do
-    let(:work1) { create(:work) }
-    let(:work2) { create(:work) }
+    let(:work1) { create(:anime) }
+    let(:work2) { create(:anime) }
     let(:id1) { GraphQL::Schema::UniqueWithinType.encode(work1.class.name, work1.id) }
     let(:id2) { GraphQL::Schema::UniqueWithinType.encode(work2.class.name, work2.id) }
     let(:result) do

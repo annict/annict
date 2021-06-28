@@ -5,7 +5,7 @@ describe EpisodeGeneratorService, type: :service do
     let(:channel) { Channel.first }
 
     context "has no episodes" do
-      let(:work) { create(:work) }
+      let(:work) { create(:anime) }
       let(:program) { create(:program, channel: channel, work: work, started_at: Time.parse("2019-01-04 0:00:00")) }
       let!(:slot1) { create(:slot, program: program, channel: channel, work: work, episode: nil, number: 1, started_at: Time.parse("2019-01-04 0:00:00")) }
       let!(:slot2) { create(:slot, program: program, channel: channel, work: work, episode: nil, number: 2, started_at: Time.parse("2019-01-11 0:00:00")) }
@@ -37,7 +37,7 @@ describe EpisodeGeneratorService, type: :service do
     end
 
     context "has episodes but no irregular" do
-      let(:work) { create(:work) }
+      let(:work) { create(:anime) }
       let(:program) { create(:program, channel: channel, work: work, started_at: Time.parse("2019-01-04 0:00:00")) }
       let(:episode1) { create(:episode, work: work, raw_number: 1.0) }
       let!(:slot1) { create(:slot, program: program, channel: channel, work: work, episode: episode1, number: 1, started_at: Time.parse("2019-01-04 0:00:00")) }
@@ -70,7 +70,7 @@ describe EpisodeGeneratorService, type: :service do
     end
 
     context "has irregular episodes" do
-      let(:work) { create(:work) }
+      let(:work) { create(:anime) }
       let(:program) { create(:program, channel: channel, work: work, started_at: Time.parse("2019-01-04 0:00:00")) }
       let(:episode1) { create(:episode, work: work, raw_number: 1.0) }
       let(:episode2) { create(:episode, work: work, raw_number: 1.5, title: "2話目から総集編！") }
@@ -109,7 +109,7 @@ describe EpisodeGeneratorService, type: :service do
 
   context "Old work" do
     let(:channel) { Channel.first }
-    let(:work) { create(:work) }
+    let(:work) { create(:anime) }
 
     context "has no irregular episodes" do
       let(:program) { create(:program, channel: channel, work: work, started_at: Time.parse("2018-04-01 0:00:00"), minimum_episode_generatable_number: 35) }

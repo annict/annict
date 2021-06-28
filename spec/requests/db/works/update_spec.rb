@@ -2,7 +2,7 @@
 
 describe "PATCH /db/works/:id", type: :request do
   context "user does not sign in" do
-    let!(:work) { create(:work) }
+    let!(:work) { create(:anime) }
     let!(:old_work) { work.attributes }
     let!(:work_params) do
       {
@@ -23,7 +23,7 @@ describe "PATCH /db/works/:id", type: :request do
 
   context "user who is not editor signs in" do
     let!(:user) { create(:registered_user) }
-    let!(:work) { create(:work) }
+    let!(:work) { create(:anime) }
     let!(:old_work) { work.attributes }
     let!(:work_params) do
       {
@@ -49,7 +49,7 @@ describe "PATCH /db/works/:id", type: :request do
   context "user who is editor signs in" do
     let!(:number_format) { NumberFormat.first }
     let!(:user) { create(:registered_user, :with_editor_role) }
-    let!(:work) { create(:work) }
+    let!(:work) { create(:anime) }
     let!(:old_work) { work.attributes }
     let!(:work_params) do
       {

@@ -3,7 +3,7 @@
 describe "GraphQL API Mutation" do
   describe "createReview" do
     let!(:user) { create(:user, :with_setting) }
-    let!(:work) { create(:work) }
+    let!(:work) { create(:anime) }
     let!(:token) { create(:oauth_access_token) }
     let!(:context) { {viewer: user, doorkeeper_token: token} }
     let!(:id) { GraphQL::Schema::UniqueWithinType.encode(work.class.name, work.id) }

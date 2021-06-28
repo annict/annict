@@ -3,7 +3,7 @@
 describe "GET /notifications", type: :request do
   let!(:user_1) { create(:registered_user) }
   let!(:user_2) { create(:registered_user) }
-  let!(:anime) { create(:work) }
+  let!(:anime) { create(:anime) }
   let!(:record) { create(:record, user: user_1, work: anime) }
   let!(:anime_record) { create(:work_record, user: user_1, work: anime, record: record) }
 

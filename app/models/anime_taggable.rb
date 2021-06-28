@@ -29,7 +29,7 @@ class AnimeTaggable < ApplicationRecord
   self.table_name = "work_taggables"
 
   belongs_to :user
-  belongs_to :work_tag
+  belongs_to :anime_tag
 
   validates :description, length: {maximum: 500}
 end

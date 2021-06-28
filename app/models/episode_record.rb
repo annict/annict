@@ -70,7 +70,6 @@ class EpisodeRecord < ApplicationRecord
   belongs_to :anime, foreign_key: :work_id
   belongs_to :oauth_application, class_name: "Doorkeeper::Application", optional: true
   belongs_to :record
-  belongs_to :work
   belongs_to :episode
   belongs_to :multiple_episode_record, optional: true
   belongs_to :user

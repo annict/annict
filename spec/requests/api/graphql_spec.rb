@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe "POST /graphql", type: :request do
-  let(:anime) { create(:work) }
+  let(:anime) { create(:anime) }
   let(:access_token) { create(:oauth_access_token) }
   let(:id) { GraphQL::Schema::UniqueWithinType.encode(anime.class.name, anime.id) }
   let(:query) do

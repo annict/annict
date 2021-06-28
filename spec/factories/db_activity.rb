@@ -5,10 +5,10 @@ FactoryBot.define do
     association :user, factory: :registered_user
 
     factory :works_create_activity do
-      trackable { create(:work) }
+      trackable { create(:anime) }
       action { "works.create" }
       parameters { {new: trackable.attributes, old: {}} }
-      root_resource { create(:work) }
+      root_resource { create(:anime) }
     end
   end
 end

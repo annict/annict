@@ -9,7 +9,7 @@ describe "GET /@:username/records/:record_id", type: :request do
     end
 
     context "アニメへの記録を参照するとき" do
-      let!(:anime) { create(:work) }
+      let!(:anime) { create(:anime) }
       let!(:record) { create(:record, user: user, work: anime) }
       let!(:anime_record) { create(:work_record, user: user, record: record, work: anime, body: "最高") }
 
@@ -24,7 +24,7 @@ describe "GET /@:username/records/:record_id", type: :request do
     end
 
     context "エピソードへの記録を参照するとき" do
-      let!(:anime) { create(:work) }
+      let!(:anime) { create(:anime) }
       let!(:episode) { create(:episode, work: anime) }
       let!(:record) { create(:record, user: user, work: anime) }
       let!(:episode_record) { create(:episode_record, record: record, work: anime, episode: episode, user: user, body: "楽しかった") }
@@ -43,7 +43,7 @@ describe "GET /@:username/records/:record_id", type: :request do
 
   context "ログインしていないとき" do
     context "アニメへの記録を参照したとき" do
-      let!(:anime) { create(:work) }
+      let!(:anime) { create(:anime) }
       let!(:record) { create(:record, user: user, work: anime) }
       let!(:anime_record) { create(:work_record, user: user, record: record, work: anime, body: "最高") }
 
@@ -58,7 +58,7 @@ describe "GET /@:username/records/:record_id", type: :request do
     end
 
     context "エピソードへの記録を参照したとき" do
-      let!(:anime) { create(:work) }
+      let!(:anime) { create(:anime) }
       let!(:episode) { create(:episode, work: anime) }
       let!(:record) { create(:record, user: user, work: anime) }
       let!(:episode_record) { create(:episode_record, record: record, work: anime, episode: episode, user: user, body: "楽しかった") }

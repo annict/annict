@@ -2,7 +2,7 @@
 
 describe "DELETE /@:username/records/:record_id", type: :request do
   let(:user) { create :registered_user }
-  let!(:anime) { create(:work) }
+  let!(:anime) { create(:anime) }
   let(:episode) { create(:episode, work: anime) }
   let!(:record) { create(:record, user: user, work: anime) }
   let(:episode_record) { create(:episode_record, user: user, record: record, work: anime, episode: episode) }

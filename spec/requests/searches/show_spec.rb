@@ -2,7 +2,7 @@
 
 describe "GET /search", type: :request do
   describe "アニメ検索" do
-    let!(:anime) { create(:work) }
+    let!(:anime) { create(:anime) }
 
     it "検索結果が表示できること" do
       get "/search", params: {q: anime.title}

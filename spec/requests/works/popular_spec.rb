@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe "GET /works/popular", type: :request do
-  let!(:anime) { create(:work) }
+  let!(:anime) { create(:anime) }
 
   it "アクセスできること" do
     get "/works/popular"

@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :series_work do
+  factory :series_anime do
     series
-    work
+    anime
     summary { "TVシリーズ" }
 
     trait :published do

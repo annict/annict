@@ -31,6 +31,6 @@ class AnimeTagging < ApplicationRecord
   counter_culture :work_tag
 
   belongs_to :user
-  belongs_to :work
-  belongs_to :work_tag
+  belongs_to :anime, foreign_key: :work_id
+  belongs_to :anime_tag
 end

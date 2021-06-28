@@ -491,8 +491,8 @@ class Anime < ApplicationRecord
   end
 
   def related_works
-    series_work_ids = SeriesWork.where(series_id: series_list.pluck(:id)).pluck(:id)
-    series_works = SeriesWork.where(id: series_work_ids)
+    series_work_ids = SeriesAnime.where(series_id: series_list.pluck(:id)).pluck(:id)
+    series_works = SeriesAnime.where(id: series_work_ids)
     Anime.where(id: series_works.pluck(:work_id) - [id])
   end
 

@@ -80,7 +80,6 @@ class AnimeRecord < ApplicationRecord
   belongs_to :oauth_application, class_name: "Doorkeeper::Application", optional: true
   belongs_to :record
   belongs_to :user
-  belongs_to :work
   has_many :activities,
     dependent: :destroy,
     as: :trackable

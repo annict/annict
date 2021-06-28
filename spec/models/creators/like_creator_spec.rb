@@ -3,7 +3,7 @@
 describe Creators::LikeCreator, type: :model do
   context "Record (WorkRecord) にLikeするとき" do
     let!(:user) { create(:user, :with_setting) }
-    let!(:work) { create(:work) }
+    let!(:work) { create(:anime) }
     let!(:record) { create(:record, user: user, work: work) }
     let!(:work_record) { create(:work_record, user: user, work: work, record: record) }
 
@@ -57,7 +57,7 @@ describe Creators::LikeCreator, type: :model do
 
   context "Record (EpisodeRecord) にLikeするとき" do
     let!(:user) { create(:user, :with_setting) }
-    let!(:work) { create(:work) }
+    let!(:work) { create(:anime) }
     let!(:episode) { create(:episode, work: work) }
     let!(:episode_record) { create(:episode_record, user: user, episode: episode) }
     let!(:record) { episode_record.record }

@@ -5,9 +5,9 @@ namespace :work do
   # コマンド実行例: rake work:hide_overlapped_work[4458,4485]
   task :hide_overlapped_work, %i[target_work_id original_work_id] => :environment do |_, args|
     # 削除対象のWork
-    target_work = Work.find(args[:target_work_id])
+    target_work = Anime.find(args[:target_work_id])
     # オリジナルのWork
-    original_work = Work.find(args[:original_work_id])
+    original_work = Anime.find(args[:original_work_id])
 
     ActiveRecord::Base.transaction do
       [

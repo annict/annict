@@ -29,7 +29,7 @@ class AnimeComment < ApplicationRecord
   self.table_name = "work_comments"
 
   belongs_to :user
-  belongs_to :work
+  belongs_to :anime, foreign_key: :work_id
 
   validates :body, length: {maximum: 150}, allow_blank: true
 end
