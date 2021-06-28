@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module V4::ResourcePublishable
+module ResourcePublishable
   extend ActiveSupport::Concern
 
   def create

@@ -4,10 +4,10 @@
 - image_url = v4_ann_image_url(@user.profile, :image, size: "640x")
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 
-= V6::Headers::ProfileHeaderComponent.new(self, user: @user, current_user: current_user, params: params).render
+= Headers::ProfileHeaderComponent.new(self, user: @user, current_user: current_user, params: params).render
 
 .c-card.mt-3.mb-4
   - if @users.present?
     = render "users/user_list", users: @users
   - else
-    = render V4::EmptyComponent.new(text: t("messages._empty.no_following"))
+    = EmptyV6Component.new(self, text: t("messages._empty.no_following")).render

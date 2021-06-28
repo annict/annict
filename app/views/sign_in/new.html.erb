@@ -34,10 +34,10 @@
             "forms--basic-form-target": "form"
           }
         ) do |f| %>
-          <%= V6::ErrorPanelComponent.new(self, stimulus_controller: "forms--basic-form").render %>
+          <%= ErrorPanelV6Component.new(self, stimulus_controller: "forms--basic-form").render %>
 
           <% if @recaptcha.enabled? %>
-            <%= V6::RecaptchaInputComponent.new(self, recaptcha: @recaptcha).render %>
+            <%= Inputs::RecaptchaInputComponent.new(self, recaptcha: @recaptcha).render %>
           <% end %>
 
           <div class="mb-3">

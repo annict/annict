@@ -7,7 +7,7 @@ module Api
         before_action :prepare_params!, only: %i[index]
 
         def index
-          slots = V4::UserSlotsQuery.new(
+          slots = UserSlotsQuery.new(
             current_user,
             Slot.only_kept.with_works(current_user.works_on(:wanna_watch, :watching).only_kept)
           ).call

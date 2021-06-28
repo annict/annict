@@ -10,7 +10,7 @@
   </head>
   <body>
     <div class="l-simple">
-      <%= V6::FlashComponent.new(self, flash: flash).render %>
+      <%= FlashV6Component.new(self, flash: flash).render %>
       <%= yield %>
     </div>
   </body>

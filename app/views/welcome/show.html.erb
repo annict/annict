@@ -59,7 +59,7 @@
           <% end %>
         </div>
       <% else %>
-        <%= V6::EmptyComponent.new(self, text: t("messages._empty.no_anime")).render %>
+        <%= EmptyV6Component.new(self, text: t("messages._empty.no_anime")).render %>
       <% end %>
     </div>
   </div>

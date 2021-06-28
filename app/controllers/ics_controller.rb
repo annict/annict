@@ -5,7 +5,7 @@ class IcsController < ApplicationV6Controller
     @user = User.only_kept.find_by!(username: params[:username])
 
     I18n.with_locale(@user.locale) do
-      @slots = V4::UserSlotsQuery.new(
+      @slots = UserSlotsQuery.new(
         @user,
         Slot.only_kept.with_works(@user.works_on(:wanna_watch, :watching).only_kept),
         watched: false

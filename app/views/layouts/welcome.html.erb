@@ -12,7 +12,7 @@
     <div class="l-welcome">
       <div class="l-welcome__main d-flex flex-column">
         <div class="l-welcome__content">
-          <%= V6::FlashComponent.new(self, flash: flash).render %>
+          <%= FlashV6Component.new(self, flash: flash).render %>
           <%= yield %>
         </div>
 

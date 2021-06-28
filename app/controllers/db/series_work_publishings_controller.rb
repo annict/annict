@@ -2,7 +2,7 @@
 
 module Db
   class SeriesWorkPublishingsController < Db::ApplicationController
-    include V4::Db::ResourcePublishable
+    include ResourcePublishable
 
     before_action :authenticate_user!
 
