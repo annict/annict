@@ -16,7 +16,7 @@ module Lists
             @records.each do |record|
               h.tag :div, class: "mt-3" do
                 h.tag :turbo_frame, id: dom_id(record) do
-                  h.html Contents::RecordContentComponent.new(view_context, record: record, show_box: show_box).render
+                  h.html Contents::RecordContentComponent.new(view_context, record: record, show_box: @show_box).render
                 end
               end
             end
