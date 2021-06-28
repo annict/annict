@@ -7,7 +7,7 @@
       .row.mb-3
         .col-4.pe-0
           = link_to anime_path(anime_id: work.id), class: "d-inline-block" do
-            = render V4::WorkImageComponent.new(image_url_1x: v4_ann_image_url(work.anime_image, :image, size: "250x"), image_url_2x: v4_ann_image_url(work.anime_image, :image, size: "500x"))
+            = Pictures::AnimePictureComponent.new(self, anime: work, width: 250).render
           - if work.anime_image.present?
             .u-very-small.text-end
               = work.anime_image.asin_or_copyright_text
