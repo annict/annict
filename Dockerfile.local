@@ -45,8 +45,7 @@ COPY --from=node /usr/local/bin/node /usr/local/bin/
 COPY --from=node /usr/local/lib/node_modules/ /usr/local/lib/node_modules/
 RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm
 
-ENV PATH=./node_modules/.bin/:$PATH \
-  RAILS_ENV=development
+ENV PATH=./node_modules/.bin/:$PATH
 
 # Set to install cld gem
 # https://github.com/jtoy/cld/issues/10
