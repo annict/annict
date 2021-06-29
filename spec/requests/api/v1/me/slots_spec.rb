@@ -3,7 +3,7 @@
 describe "Api::V1::Me::Slots" do
   let(:access_token) { create(:oauth_access_token) }
   let(:user) { access_token.owner }
-  let(:work) { create(:work, :with_current_season, watchers_count: 1) }
+  let(:work) { create(:anime, :with_current_season, watchers_count: 1) }
   let(:episode) { create(:episode, work: work) }
   let(:channel) { Channel.first }
   let(:status) { create(:status, kind: "watching", work: work, user: user) }

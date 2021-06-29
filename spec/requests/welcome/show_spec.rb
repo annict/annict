@@ -13,7 +13,7 @@ describe "GET /", type: :request do
     end
 
     context "アニメが登録されているとき" do
-      let!(:work) { create(:work, :with_current_season) }
+      let!(:work) { create(:anime, :with_current_season) }
 
       it "Welcomeページが表示されること" do
         get "/"

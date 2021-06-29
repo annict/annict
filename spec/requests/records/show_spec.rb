@@ -11,7 +11,7 @@ describe "GET /@:username/records/:record_id", type: :request do
     context "アニメへの記録を参照するとき" do
       let!(:anime) { create(:anime) }
       let!(:record) { create(:record, user: user, work: anime) }
-      let!(:anime_record) { create(:work_record, user: user, record: record, work: anime, body: "最高") }
+      let!(:anime_record) { create(:anime_record, user: user, record: record, work: anime, body: "最高") }
 
       it "記録が表示されること" do
         get "/@#{user.username}/records/#{record.id}"
@@ -45,7 +45,7 @@ describe "GET /@:username/records/:record_id", type: :request do
     context "アニメへの記録を参照したとき" do
       let!(:anime) { create(:anime) }
       let!(:record) { create(:record, user: user, work: anime) }
-      let!(:anime_record) { create(:work_record, user: user, record: record, work: anime, body: "最高") }
+      let!(:anime_record) { create(:anime_record, user: user, record: record, work: anime, body: "最高") }
 
       it "記録が表示されること" do
         get "/@#{user.username}/records/#{record.id}"

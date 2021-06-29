@@ -5,7 +5,7 @@ describe "POST /v1/me/reviews" do
     let(:user) { create(:user, :with_profile, :with_setting) }
     let(:application) { create(:oauth_application, owner: user) }
     let(:access_token) { create(:oauth_access_token, application: application) }
-    let(:work) { create(:work, :with_current_season) }
+    let(:work) { create(:anime, :with_current_season) }
 
     it "creates work record" do
       expect(Record.count).to eq 0
@@ -58,7 +58,7 @@ describe "POST /v1/me/reviews" do
     let(:user) { create(:user, :with_profile, :with_setting) }
     let(:application) { create(:oauth_application, owner: user) }
     let(:access_token) { create(:oauth_access_token, application: application) }
-    let(:work) { create(:work, :with_current_season) }
+    let(:work) { create(:anime, :with_current_season) }
 
     it "returns error" do
       data = {

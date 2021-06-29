@@ -48,7 +48,7 @@ xdescribe Canary::Mutations::AddReaction do
   end
 
   context "記録 (アニメ) にリアクションしたとき" do
-    let(:anime_record) { create(:work_record, user: user_2) }
+    let(:anime_record) { create(:anime_record, user: user_2) }
     let(:reactable) { anime_record.record }
 
     it "Likeが保存されること" do

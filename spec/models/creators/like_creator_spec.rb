@@ -5,7 +5,7 @@ describe Creators::LikeCreator, type: :model do
     let!(:user) { create(:user, :with_setting) }
     let!(:work) { create(:anime) }
     let!(:record) { create(:record, user: user, work: work) }
-    let!(:work_record) { create(:work_record, user: user, work: work, record: record) }
+    let!(:work_record) { create(:anime_record, user: user, work: work, record: record) }
 
     context "Likeしていないとき" do
       it "Likeできること" do

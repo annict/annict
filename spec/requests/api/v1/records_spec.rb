@@ -11,7 +11,7 @@ describe "Api::V1::Records" do
 
   let(:access_token) { create(:oauth_access_token) }
   let(:user) { create(:user, :with_profile) }
-  let(:work) { create(:work, :with_current_season) }
+  let(:work) { create(:anime, :with_current_season) }
   let(:episode) { create(:episode, work: work) }
   let!(:record) { create(:record, user: user) }
   let!(:episode_record) { create(:episode_record, record: record, work: work, episode: episode, user: user) }

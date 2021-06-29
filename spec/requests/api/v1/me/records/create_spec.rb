@@ -5,7 +5,7 @@ describe "POST /v1/me/records" do
     let(:user) { create(:user, :with_profile, :with_setting) }
     let(:application) { create(:oauth_application, owner: user) }
     let(:access_token) { create(:oauth_access_token, application: application) }
-    let(:work) { create(:work, :with_current_season) }
+    let(:work) { create(:anime, :with_current_season) }
     let(:episode) { create(:episode, work: work) }
 
     it "creates episode record" do
@@ -62,7 +62,7 @@ describe "POST /v1/me/records" do
     let(:user) { create(:user, :with_profile, :with_setting) }
     let(:application) { create(:oauth_application, owner: user) }
     let(:access_token) { create(:oauth_access_token, application: application) }
-    let(:work) { create(:work, :with_current_season) }
+    let(:work) { create(:anime, :with_current_season) }
     let(:episode) { create(:episode, work: work) }
 
     it "returns error" do

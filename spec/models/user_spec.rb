@@ -58,7 +58,7 @@ describe User, type: :model do
 
     context "when itemable is WorkRecord object and it has body" do
       let(:user) { create :user }
-      let(:work_record) { create(:work_record, user: user, body: "良かった") }
+      let(:work_record) { create(:anime_record, user: user, body: "良かった") }
 
       it "creates activity group" do
         expect(ActivityGroup.count).to eq 0
@@ -76,7 +76,7 @@ describe User, type: :model do
 
     context "when itemable is WorkRecord object and it does not have body" do
       let(:user) { create :user }
-      let(:work_record) { create(:work_record, user: user, body: "") }
+      let(:work_record) { create(:anime_record, user: user, body: "") }
 
       it "creates activity group" do
         expect(ActivityGroup.count).to eq 0

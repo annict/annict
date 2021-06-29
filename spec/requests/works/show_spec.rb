@@ -121,7 +121,7 @@ describe "GET /works/:id", type: :request do
   context "when work records have been added" do
     let!(:work) { create(:anime) }
     let!(:record) { create(:record, work: work) }
-    let!(:work_record) { create(:work_record, work: work, record: record) }
+    let!(:work_record) { create(:anime_record, work: work, record: record) }
 
     before do
       get "/works/#{work.id}"
@@ -135,7 +135,7 @@ describe "GET /works/:id", type: :request do
 
   context "when series have been added" do
     let!(:work) { create(:anime) }
-    let!(:work2) { create(:work, :with_current_season) }
+    let!(:work2) { create(:anime, :with_current_season) }
     let!(:series) { create(:series) }
     let!(:series_work) { create(:series_work, series: series, work: work) }
     let!(:series_work2) { create(:series_work, series: series, work: work2) }

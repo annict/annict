@@ -2,7 +2,7 @@
 
 describe "GraphQL API Query" do
   describe "searchEpisodes" do
-    let!(:work) { create(:work, :with_current_season) }
+    let!(:work) { create(:anime, :with_current_season) }
     let!(:episode1) { create(:episode, work: work, sort_number: 1) }
     let!(:episode2) { create(:episode, work: work, sort_number: 3) }
     let!(:episode3) { create(:episode, work: work, sort_number: 2) }

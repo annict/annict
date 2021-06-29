@@ -11,7 +11,7 @@ describe "GET /works/:slug", type: :request do
   end
 
   context "アニメが登録されているとき" do
-    let!(:anime) { create(:work, :with_current_season) }
+    let!(:anime) { create(:anime, :with_current_season) }
 
     it "アクセスできること" do
       get "/works/#{ENV["ANNICT_CURRENT_SEASON"]}"

@@ -3,7 +3,7 @@
 describe Canary::Mutations::UpdateAnimeRecord do
   let(:user) { create :registered_user }
   let!(:record) { create(:record, user: user) }
-  let!(:anime_record) { create(:work_record, user: user, record: record) }
+  let!(:anime_record) { create(:anime_record, user: user, record: record) }
   let(:token) { create(:oauth_access_token) }
   let(:context) { {viewer: user, doorkeeper_token: token, writable: true} }
   let(:record_id) { GraphQL::Schema::UniqueWithinType.encode(record.class.name, record.id) }

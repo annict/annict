@@ -3,7 +3,7 @@
 FactoryBot.define do
   factory :library_entry do
     association :user
-    association :work
+    association :anime
     association :status
     association :next_episode, factory: :episode
     watched_episode_ids { [] }

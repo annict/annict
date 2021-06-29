@@ -2,9 +2,9 @@
 
 describe "GraphQL API Query" do
   describe "searchWorks" do
-    let!(:work1) { create(:work, :with_current_season, watchers_count: 10) }
-    let!(:work2) { create(:work, :with_next_season, watchers_count: 30) }
-    let!(:work3) { create(:work, :with_prev_season, watchers_count: 20) }
+    let!(:work1) { create(:anime, :with_current_season, watchers_count: 10) }
+    let!(:work2) { create(:anime, :with_next_season, watchers_count: 30) }
+    let!(:work3) { create(:anime, :with_prev_season, watchers_count: 20) }
 
     context "when `annictIds` argument is specified" do
       let(:result) do
@@ -337,7 +337,7 @@ describe "GraphQL API Query" do
     context "when `reviews` are fetched" do
       let(:user) { create(:registered_user) }
       let(:record) { create(:record, user: user, work: work1) }
-      let!(:work_record) { create(:work_record, user: user, work: work1, record: record, body: "Review~~~") }
+      let!(:work_record) { create(:anime_record, user: user, work: work1, record: record, body: "Review~~~") }
       let(:result) do
         query_string = <<~QUERY
           query {
