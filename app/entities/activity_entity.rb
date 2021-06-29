@@ -7,8 +7,10 @@ class ActivityEntity < ApplicationEntity
 
   def self.from_nodes(activity_nodes, user_node: nil)
     activity_nodes.map do |activity_node|
-      from_node(activity_node, user_node: user_node)
-    end
+      if activity_node
+        from_node(activity_node, user_node: user_node)
+      end
+    end.compact
   end
 
   def self.from_node(activity_node, user_node: nil)
