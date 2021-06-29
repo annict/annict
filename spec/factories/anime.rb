@@ -34,8 +34,8 @@ FactoryBot.define do
     end
 
     trait :with_episode do
-      after :create do |work|
-        create(:episode, work: work)
+      after :create do |anime|
+        create(:episode, anime: anime)
       end
     end
 

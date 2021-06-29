@@ -36,7 +36,7 @@ module Db
     def edit
       @cast = Cast.without_deleted.find(params[:id])
       authorize @cast
-      @work = @cast.work
+      @work = @cast.anime
     end
 
     def update

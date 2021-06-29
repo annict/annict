@@ -70,7 +70,7 @@ class LibraryEntry < ApplicationRecord
   end
 
   def fetch_next_episode
-    episode_ids = work.episodes.only_kept.pluck(:id)
+    episode_ids = anime.episodes.only_kept.pluck(:id)
     next_episode_ids = episode_ids - watched_episode_ids
     Episode.where(id: next_episode_ids).order(:sort_number).first
   end

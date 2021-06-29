@@ -1,6 +1,6 @@
 .row.px-2
-  - series.series_works.where.not(work: work.id).sort_season.each do |series_work|
-    - work = series_work.work
+  - series.series_animes.where.not(work: work.id).sort_season.each do |series_work|
+    - work = series_work.anime
     .col-4.px-2.mb-3
       .c-card
         = link_to anime_path(anime_id: work.id) do

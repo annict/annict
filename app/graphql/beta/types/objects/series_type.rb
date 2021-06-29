@@ -19,7 +19,7 @@ module Beta
 
         def works(order_by: nil)
           SearchSeriesWorksQuery.new(
-            object.series_works,
+            object.series_animes,
             order_by: order_by
           ).call
         end

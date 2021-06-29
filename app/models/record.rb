@@ -34,7 +34,7 @@ class Record < ApplicationRecord
   attr_accessor :is_liked, :is_spoiler
 
   counter_culture :user
-  counter_culture :work
+  counter_culture :anime
 
   belongs_to :anime, foreign_key: :work_id
   belongs_to :user

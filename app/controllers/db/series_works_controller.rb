@@ -6,7 +6,7 @@ module Db
 
     def index
       @series = Series.without_deleted.find(params[:series_id])
-      @series_works = @series.series_works.preload(:work).without_deleted.sort_season.order(:id)
+      @series_works = @series.series_animes.preload(:anime).without_deleted.sort_season.order(:id)
     end
 
     def new

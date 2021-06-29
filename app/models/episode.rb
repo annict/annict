@@ -55,7 +55,7 @@ class Episode < ApplicationRecord
     number sort_number sc_count title prev_episode_id fetch_syobocal raw_number title_en
   ].freeze
 
-  counter_culture :work, column_name: ->(episode) { episode.published? ? :episodes_count : nil }
+  counter_culture :anime, column_name: ->(episode) { episode.published? ? :episodes_count : nil }
 
   belongs_to :prev_episode,
     class_name: "Episode",
@@ -111,7 +111,7 @@ class Episode < ApplicationRecord
 
   # 映画やOVAなどの実質エピソードを持たない作品かどうかを判定する
   def single?
-    number.blank? && title.present? && title == work.title
+    number.blank? && title.present? && title == anime.title
   end
 
   def to_hash
@@ -177,9 +177,9 @@ class Episode < ApplicationRecord
       body: comment,
       share_to_twitter: share_to_twitter
     )
-    episode_record.work = work
+    episode_record.anime = anime
     episode_record.detect_locale!(:body)
-    episode_record.build_record(user: user, work: work)
+    episode_record.build_record(user: user, anime: anime)
     episode_record
   end
 
@@ -194,7 +194,7 @@ class Episode < ApplicationRecord
   end
 
   def update_prev_episode
-    prev_episode = work.episodes.where.not(id: id).order(sort_number: :desc).first
+    prev_episode = anime.episodes.where.not(id: id).order(sort_number: :desc).first
     update_column(:prev_episode_id, prev_episode.id) if prev_episode
   end
 end

@@ -8,7 +8,7 @@ module Db
 
     attr_accessor :series
 
-    row_model SeriesWork
+    row_model SeriesAnime
 
     validate :valid_resource
 

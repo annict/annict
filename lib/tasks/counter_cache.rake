@@ -190,7 +190,7 @@ namespace :counter_cache do
 
   task refresh_on_series: :environment do
     Series.only_kept.find_each do |series|
-      series_works_count = series.series_works.only_kept.count
+      series_works_count = series.series_animes.only_kept.count
 
       next if series.series_works_count == series_works_count
 
