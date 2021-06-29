@@ -55,22 +55,22 @@ class AnimeRecordsController < ApplicationV6Controller
 
     @record = current_user.records.find(params[:id])
     @work_record = current_user
-      .work_records
+      .anime_records
       .only_kept
       .where(work_id: params[:work_id])
-      .find(@record.work_record&.id)
-    @work = @work_record.work
+      .find(@record.anime_record&.id)
+    @work = @work_record.anime
     authorize @work_record, :edit?
   end
 
   def update
     @record = current_user.records.find(params[:id])
     @work_record = current_user
-      .work_records
+      .anime_records
       .only_kept
       .where(work_id: params[:work_id])
-      .find(@record.work_record&.id)
-    @work = @work_record.work
+      .find(@record.anime_record&.id)
+    @work = @work_record.anime
     authorize @work_record, :update?
 
     @work_record.attributes = work_record_params

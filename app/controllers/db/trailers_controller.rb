@@ -46,7 +46,7 @@ module Db
 
       @trailer.save_and_create_activity!
 
-      redirect_to db_trailer_list_path(@trailer.work), notice: t("messages._common.updated")
+      redirect_to db_trailer_list_path(@trailer.anime), notice: t("messages._common.updated")
     end
 
     def destroy
@@ -56,7 +56,7 @@ module Db
       @trailer.destroy_in_batches
 
       redirect_back(
-        fallback_location: db_trailer_list_path(@trailer.work),
+        fallback_location: db_trailer_list_path(@trailer.anime),
         notice: t("messages._common.deleted")
       )
     end

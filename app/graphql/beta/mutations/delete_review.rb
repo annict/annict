@@ -14,7 +14,7 @@ module Beta
         work_record.record.destroy
 
         {
-          work: work_record.work
+          work: work_record.anime
         }
       end
     end

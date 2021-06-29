@@ -23,7 +23,7 @@ module Lists
                       data_controller: "tracking-modal-button",
                       data_tracking_modal_button_frame_path: view_context.fragment_trackable_anime_path(le.work_id),
                       data_action: "click->tracking-modal-button#open" do
-                        h.text le.work.local_title
+                        h.text le.anime.local_title
                       end
                   end
 

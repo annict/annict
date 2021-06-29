@@ -8,10 +8,10 @@ class CharactersController < ApplicationV6Controller
     @casts_with_year = @character
       .casts
       .only_kept
-      .preload(:person, work: :anime_image)
+      .preload(:person, anime: :anime_image)
       .joins(:anime)
       .where(works: {deleted_at: nil})
-      .group_by { |cast| cast.work.season_year.presence || 0 }
+      .group_by { |cast| cast.anime.season_year.presence || 0 }
     @cast_years = @casts_with_year.keys.sort.reverse
 
     @character_favorites = @character

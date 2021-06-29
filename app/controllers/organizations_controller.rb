@@ -10,8 +10,8 @@ class OrganizationsController < ApplicationV6Controller
       .only_kept
       .joins(:anime)
       .where(works: {deleted_at: nil})
-      .includes(work: :anime_image)
-      .group_by { |s| s.work.season_year.presence || 0 }
+      .includes(anime: :anime_image)
+      .group_by { |s| s.anime.season_year.presence || 0 }
     @staff_years = @staffs_with_year.keys.sort.reverse
 
     @organization_favorites = @organization

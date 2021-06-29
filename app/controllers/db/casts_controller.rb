@@ -42,7 +42,7 @@ module Db
     def update
       @cast = Cast.without_deleted.find(params[:id])
       authorize @cast
-      @work = @cast.work
+      @work = @cast.anime
 
       @cast.attributes = cast_params
       @cast.user = current_user
@@ -61,7 +61,7 @@ module Db
       @cast.destroy_in_batches
 
       redirect_back(
-        fallback_location: db_cast_list_path(@cast.work),
+        fallback_location: db_cast_list_path(@cast.anime),
         notice: t("messages._common.deleted")
       )
     end

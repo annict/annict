@@ -32,13 +32,13 @@ module Db
     def edit
       @program = Program.without_deleted.find(params[:id])
       authorize @program
-      @work = @program.work
+      @work = @program.anime
     end
 
     def update
       @program = Program.without_deleted.find(params[:id])
       authorize @program
-      @work = @program.work
+      @work = @program.anime
 
       @program.attributes = program_params
       @program.user = current_user
@@ -57,7 +57,7 @@ module Db
       @program.destroy_in_batches
 
       redirect_back(
-        fallback_location: db_program_list_path(@program.work),
+        fallback_location: db_program_list_path(@program.anime),
         notice: t("messages._common.deleted")
       )
     end

@@ -36,13 +36,13 @@ module Db
     def edit
       @staff = Staff.without_deleted.find(params[:id])
       authorize @staff
-      @work = @staff.work
+      @work = @staff.anime
     end
 
     def update
       @staff = Staff.without_deleted.find(params[:id])
       authorize @staff
-      @work = @staff.work
+      @work = @staff.anime
 
       @staff.attributes = staff_params
       @staff.user = current_user
@@ -61,7 +61,7 @@ module Db
       @staff.destroy_in_batches
 
       redirect_back(
-        fallback_location: db_staff_list_path(@staff.work),
+        fallback_location: db_staff_list_path(@staff.anime),
         notice: t("messages._common.deleted")
       )
     end

@@ -12,8 +12,8 @@ class PeopleController < ApplicationV6Controller
         .only_kept
         .joins(:anime)
         .where(works: {deleted_at: nil})
-        .includes(:character, work: :anime_image)
-        .group_by { |cast| cast.work.season_year.presence || 0 }
+        .includes(:character, anime: :anime_image)
+        .group_by { |cast| cast.anime.season_year.presence || 0 }
       @cast_years = @casts_with_year.keys.sort.reverse
     end
 
@@ -23,8 +23,8 @@ class PeopleController < ApplicationV6Controller
         .only_kept
         .joins(:anime)
         .where(works: {deleted_at: nil})
-        .includes(work: :anime_image)
-        .group_by { |staff| staff.work.season_year.presence || 0 }
+        .includes(anime: :anime_image)
+        .group_by { |staff| staff.anime.season_year.presence || 0 }
       @staff_years = @staffs_with_year.keys.sort.reverse
     end
 

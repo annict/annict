@@ -41,7 +41,7 @@ module Db
     def edit
       @slot = Slot.without_deleted.find(params[:id])
       authorize @slot
-      @work = @slot.work
+      @work = @slot.anime
       @programs = @work.programs.order(:started_at)
       @channels = Channel.only_kept.order(:name)
       @episodes = @work.episodes.only_kept.order(sort_number: :desc)
@@ -50,7 +50,7 @@ module Db
     def update
       @slot = Slot.without_deleted.find(params[:id])
       authorize @slot
-      @work = @slot.work
+      @work = @slot.anime
 
       @slot.attributes = slot_params
       @slot.user = current_user

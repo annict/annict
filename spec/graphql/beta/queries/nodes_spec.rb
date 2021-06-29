@@ -4,8 +4,8 @@ describe "GraphQL API Query" do
   describe "nodes" do
     let(:work1) { create(:anime) }
     let(:work2) { create(:anime) }
-    let(:id1) { GraphQL::Schema::UniqueWithinType.encode(work1.class.name, work1.id) }
-    let(:id2) { GraphQL::Schema::UniqueWithinType.encode(work2.class.name, work2.id) }
+    let(:id1) { Beta::AnnictSchema.id_from_object(work1, work1.class) }
+    let(:id2) { Beta::AnnictSchema.id_from_object(work2, work2.class) }
     let(:result) do
       query_string = <<~GRAPHQL
         query {
