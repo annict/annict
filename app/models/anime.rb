@@ -122,7 +122,7 @@ class Anime < ApplicationRecord
   has_many :statuses
   has_many :staff_people, through: :staffs, source: :resource, source_type: "Person"
   has_many :channels, through: :programs
-  has_many :work_records
+  has_many :anime_records, foreign_key: :work_id
   has_many :work_tags, through: :work_taggings
   has_one :anime_image, dependent: :destroy, foreign_key: :work_id
 
@@ -350,7 +350,7 @@ class Anime < ApplicationRecord
     comment: "",
     share_to_twitter: false
   )
-    anime_record = work_records.new(
+    anime_record = anime_records.new(
       user: user,
       rating_overall_state: rating_overall&.downcase,
       rating_animation_state: rating_animation&.downcase,
@@ -361,7 +361,7 @@ class Anime < ApplicationRecord
       share_to_twitter: share_to_twitter
     )
     anime_record.detect_locale!(:body)
-    anime_record.build_record(user: user, work: self)
+    anime_record.build_record(user: user, anime: self)
     anime_record
   end
 

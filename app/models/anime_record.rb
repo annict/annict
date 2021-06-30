@@ -71,8 +71,8 @@ class AnimeRecord < ApplicationRecord
     enumerize state, in: Record::RATING_STATES
   end
 
-  counter_culture :work
-  counter_culture :work, column_name: ->(work_record) { work_record.body.present? ? :work_records_with_body_count : nil }
+  counter_culture :anime, column_name: :work_records_count
+  counter_culture :anime, column_name: ->(anime_record) { anime_record.body.present? ? :work_records_with_body_count : nil }
 
   attr_accessor :share_to_twitter, :mutation_error
 
@@ -115,15 +115,15 @@ class AnimeRecord < ApplicationRecord
   end
 
   def facebook_share_title
-    work.local_title
+    anime.local_title
   end
 
   def twitter_share_body
-    work_title = work.local_title
+    work_title = anime.local_title
     title = body.present? ? work_title.truncate(30) : work_title
     comment = body.present? ? "#{body} / " : ""
     share_url = share_url_with_query(:twitter)
-    share_hashtag = work.hashtag_with_hash
+    share_hashtag = anime.hashtag_with_hash
 
     base_body = if user.locale == "ja"
       "%s#{title} を見ました #{share_url} #{share_hashtag}"

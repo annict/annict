@@ -29,11 +29,11 @@ module Api
 
           result = Creators::AnimeRecordCreator.new(user: viewer, form: form).call
 
-          @work_record = current_user.work_records.find_by!(record_id: result.record.id)
+          @work_record = current_user.anime_records.find_by!(record_id: result.record.id)
         end
 
         def update
-          @work_record = current_user.work_records.only_kept.find(@params.id)
+          @work_record = current_user.anime_records.only_kept.find(@params.id)
           @work_record.title = @params.title
           @work_record.body = @params.body
           @work_record.rating_animation_state = @params.rating_animation_state
@@ -64,7 +64,7 @@ module Api
         end
 
         def destroy
-          @work_record = current_user.work_records.only_kept.find(@params.id)
+          @work_record = current_user.anime_records.only_kept.find(@params.id)
           @work_record.record.destroy
           head 204
         end

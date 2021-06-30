@@ -27,6 +27,7 @@ class ActivityGroup < ApplicationRecord
   include BatchDestroyable
 
   ITEMABLE_TYPES = %w[
+    AnimeRecord
     Status
     EpisodeRecord
     WorkRecord

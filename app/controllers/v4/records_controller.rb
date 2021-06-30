@@ -18,7 +18,7 @@ module V4
         episode_record = @record.episode_record
         episode_path(anime_id: episode_record.work_id, episode_id: episode_record.episode_id)
       else
-        work_record = @record.work_record
+        work_record = @record.anime_record
         anime_record_list_path(anime_id: work_record.work_id)
       end
 
