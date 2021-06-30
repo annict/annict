@@ -4,7 +4,7 @@
 <%= component_value_fetcher_tag("status-select-dropdown", internal_api_library_entry_list_path(anime_ids: [])) %>
 
 <div class="align-items-center c-hero d-flex position-relative py-3">
-  <div class="c-hero__bg-image position-absolute w-100" style="background-image: url(<%= @cover_image_anime ? v6_ann_image_url(@cover_image_anime.anime_image, :image, blur: 60, height: 800, width: 600) : "" %>);"></div>
+  <div class="c-hero__bg-image position-absolute w-100" style="background-image: url(<%= @cover_image_url %>);"></div>
   <div class="c-hero__content text-center align-self-center">
     <h1 class="display-3 mb-0 text-white">
       <%= t("messages.welcome.show.hero_title_html") %>

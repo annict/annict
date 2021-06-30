@@ -10,6 +10,7 @@ class WelcomeController < ApplicationV6Controller
     @seasonal_anime_list = anime_list.by_season(ENV.fetch("ANNICT_CURRENT_SEASON")).order(watchers_count: :desc).limit(6)
     @popular_anime_list = anime_list.order(watchers_count: :desc).limit(6)
 
-    @cover_image_anime = @seasonal_anime_list.sample
+    cover_image_path = @seasonal_anime_list.sample&.anime_image&.uploaded_file_path(:image)
+    @cover_image_url = cover_image_path ? helpers.ix_image_url(cover_image_path, blur: 60, height: 800, width: 600) : ""
   end
 end
