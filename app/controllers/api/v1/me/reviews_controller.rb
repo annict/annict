@@ -4,8 +4,6 @@ module Api
   module V1
     module Me
       class ReviewsController < Api::V1::ApplicationController
-        include V4::GraphqlRunnable
-
         before_action :prepare_params!, only: %i[create update destroy]
 
         def create
@@ -24,10 +22,10 @@ module Api
           form = Forms::AnimeRecordForm.new(work_record_params)
 
           if form.invalid?
-            return render_validation_error(form.errors.first.message)
+            return render_validation_error(form.errors.full_messages.first)
           end
 
-          result = Creators::AnimeRecordCreator.new(user: viewer, form: form).call
+          result = Creators::AnimeRecordCreator.new(user: current_user, form: form).call
 
           @work_record = current_user.anime_records.find_by!(record_id: result.record.id)
         end
