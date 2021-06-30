@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :channel_work do
+  factory :channel_anime do
     user
-    work
+    anime
     channel
   end
 end
