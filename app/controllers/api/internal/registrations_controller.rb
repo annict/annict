@@ -37,7 +37,7 @@ module Api::Internal
     private
 
     def registration_form_params
-      params.require(:registration_form).permit(:email, :terms_and_privacy_policy_agreement, :token, :username)
+      params.require(:forms_registration_form).permit(:email, :terms_and_privacy_policy_agreement, :token, :username)
     end
   end
 end
