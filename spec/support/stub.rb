@@ -9,7 +9,7 @@ RSpec.configure do |config|
     end
 
     ImageV6Helper.module_eval do
-      def v6_ann_image_url(*)
+      def ann_image_url(*)
         "#{ENV.fetch("ANNICT_URL")}/dummy_image"
       end
     end
