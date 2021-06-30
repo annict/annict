@@ -3,7 +3,7 @@
 describe "GET /works/:anime_id/episodes", type: :request do
   context "ログインしていないとき" do
     let!(:anime) { create(:anime) }
-    let!(:episode) { create(:episode, work: anime) }
+    let!(:episode) { create(:episode, anime: anime) }
 
     it "エピソード一覧ページが表示されること" do
       get "/works/#{anime.id}/episodes"
@@ -16,7 +16,7 @@ describe "GET /works/:anime_id/episodes", type: :request do
   context "ログインしているとき" do
     let!(:user) { create(:registered_user) }
     let!(:anime) { create(:anime) }
-    let!(:episode) { create(:episode, work: anime) }
+    let!(:episode) { create(:episode, anime: anime) }
 
     before do
       login_as(user, scope: :user)

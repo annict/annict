@@ -2,12 +2,12 @@
 
 describe Destroyers::RecordDestroyer, type: :model do
   let!(:user) { create :registered_user }
-  let!(:anime) { create :work }
-  let!(:record) { create :record, user: user, work: anime }
+  let!(:anime) { create :anime }
+  let!(:record) { create :record, user: user, anime: anime }
 
   context "エピソードへの記録を削除するとき" do
-    let!(:episode) { create :episode, work: anime }
-    let!(:episode_record) { create :episode_record, user: user, work: anime, episode: episode, record: record }
+    let!(:episode) { create :episode, anime: anime }
+    let!(:episode_record) { create :episode_record, user: user, anime: anime, episode: episode, record: record }
 
     it "削除できること" do
       # Destroyerを呼ぶ前なので、各レコードは1件のはず
@@ -22,7 +22,7 @@ describe Destroyers::RecordDestroyer, type: :model do
   end
 
   context "アニメへの記録を削除するとき" do
-    let!(:anime_record) { create :work_record, user: user, work: anime, record: record }
+    let!(:anime_record) { create :anime_record, user: user, anime: anime, record: record }
 
     it "削除できること" do
       # Destroyerを呼ぶ前なので、各レコードは1件のはず

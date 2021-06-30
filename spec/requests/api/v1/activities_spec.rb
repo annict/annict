@@ -13,9 +13,9 @@ describe "Api::V1::Activities" do
     let(:user) { create(:user, :with_profile) }
     let(:access_token) { create(:oauth_access_token, owner: user) }
     let!(:anime) { create(:anime) }
-    let!(:episode) { create(:episode, work: anime) }
-    let!(:record) { create(:record, user: user, work: anime) }
-    let!(:episode_record) { create(:episode_record, record: record, user: user, work: anime, episode: episode) }
+    let!(:episode) { create(:episode, anime: anime) }
+    let!(:record) { create(:record, user: user, anime: anime) }
+    let!(:episode_record) { create(:episode_record, record: record, user: user, anime: anime, episode: episode) }
     let!(:activity) { create(:activity, user: user, itemable: episode_record) }
 
     before do

@@ -2,7 +2,7 @@
 
 describe Creators::AnimeRecordCreator, type: :model do
   let(:user) { create :registered_user }
-  let(:anime) { create :work }
+  let(:anime) { create :anime }
 
   it "アニメへの記録ができること" do
     # Creatorを呼んでいないので、各レコードは0件のはず
@@ -60,9 +60,9 @@ describe Creators::AnimeRecordCreator, type: :model do
 
   describe "アクティビティの作成" do
     context "直前の記録に感想が書かれていて、その後に新たに感想付きの記録をしたとき" do
-      let(:anime) { create :work, work_records_with_body_count: 1 }
+      let(:anime) { create :anime, work_records_with_body_count: 1 }
       # 感想付きの記録が直前にある
-      let!(:anime_record) { create(:anime_record, user: user, work: anime, body: "さいこー") }
+      let!(:anime_record) { create(:anime_record, user: user, anime: anime, body: "さいこー") }
       let!(:activity_group) { create(:activity_group, user: user, itemable_type: "WorkRecord", single: true) }
       let!(:activity) { create(:activity, user: user, itemable: anime_record, activity_group: activity_group) }
 
@@ -101,9 +101,9 @@ describe Creators::AnimeRecordCreator, type: :model do
     end
 
     context "直前の記録に感想が書かれていない & その後に新たに感想無しの記録をしたとき" do
-      let(:anime) { create :work }
+      let(:anime) { create :anime }
       # 感想無しの記録が直前にある
-      let!(:anime_record) { create(:anime_record, user: user, work: anime, body: "") }
+      let!(:anime_record) { create(:anime_record, user: user, anime: anime, body: "") }
       let!(:activity_group) { create(:activity_group, user: user, itemable_type: "WorkRecord", single: false) }
       let!(:activity) { create(:activity, user: user, itemable: anime_record, activity_group: activity_group) }
 

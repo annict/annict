@@ -30,7 +30,7 @@ describe "GET /works/:id", type: :request do
 
   context "when trailers are added" do
     let!(:work) { create(:anime) }
-    let!(:trailer) { create(:trailer, work: work) }
+    let!(:trailer) { create(:trailer, anime: work) }
 
     before do
       get "/works/#{work.id}"
@@ -44,7 +44,7 @@ describe "GET /works/:id", type: :request do
 
   context "when episodes have been added" do
     let!(:work) { create(:anime) }
-    let!(:episode) { create(:episode, work: work) }
+    let!(:episode) { create(:episode, anime: work) }
 
     before do
       get "/works/#{work.id}"
@@ -58,7 +58,7 @@ describe "GET /works/:id", type: :request do
 
   context "when characters have been added" do
     let!(:work) { create(:anime) }
-    let!(:cast) { create(:cast, work: work) }
+    let!(:cast) { create(:cast, anime: work) }
 
     before do
       get "/works/#{work.id}"
@@ -73,7 +73,7 @@ describe "GET /works/:id", type: :request do
   context "when staffs (people) have been added" do
     let!(:work) { create(:anime) }
     let!(:person) { create(:person) }
-    let!(:staff) { create(:staff, work: work, resource: person) }
+    let!(:staff) { create(:staff, anime: work, resource: person) }
 
     before do
       get "/works/#{work.id}"
@@ -88,7 +88,7 @@ describe "GET /works/:id", type: :request do
   context "when staffs (organizations) have been added" do
     let!(:work) { create(:anime) }
     let!(:organization) { create(:organization) }
-    let!(:staff) { create(:staff, work: work, resource: organization) }
+    let!(:staff) { create(:staff, anime: work, resource: organization) }
 
     before do
       get "/works/#{work.id}"
@@ -103,7 +103,7 @@ describe "GET /works/:id", type: :request do
   context "when vods have been added" do
     let!(:work) { create(:anime) }
     let!(:channel) { Channel.with_vod.first }
-    let!(:program) { create(:program, work: work, channel: channel, vod_title_code: "xxx") }
+    let!(:program) { create(:program, anime: work, channel: channel, vod_title_code: "xxx") }
     let!(:vod_title_url) { "https://example.com/#{program.vod_title_code}" }
 
     before do
@@ -120,8 +120,8 @@ describe "GET /works/:id", type: :request do
 
   context "when work records have been added" do
     let!(:work) { create(:anime) }
-    let!(:record) { create(:record, work: work) }
-    let!(:work_record) { create(:anime_record, work: work, record: record) }
+    let!(:record) { create(:record, anime: work) }
+    let!(:work_record) { create(:anime_record, anime: work, record: record) }
 
     before do
       get "/works/#{work.id}"
@@ -137,8 +137,8 @@ describe "GET /works/:id", type: :request do
     let!(:work) { create(:anime) }
     let!(:work2) { create(:anime, :with_current_season) }
     let!(:series) { create(:series) }
-    let!(:series_work) { create(:series_work, series: series, work: work) }
-    let!(:series_work2) { create(:series_work, series: series, work: work2) }
+    let!(:series_work) { create(:series_work, series: series, anime: work) }
+    let!(:series_work2) { create(:series_work, series: series, anime: work2) }
 
     before do
       get "/works/#{work.id}"

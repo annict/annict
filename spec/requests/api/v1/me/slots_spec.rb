@@ -4,11 +4,11 @@ describe "Api::V1::Me::Slots" do
   let(:access_token) { create(:oauth_access_token) }
   let(:user) { access_token.owner }
   let(:work) { create(:anime, :with_current_season, watchers_count: 1) }
-  let(:episode) { create(:episode, work: work) }
+  let(:episode) { create(:episode, anime: work) }
   let(:channel) { Channel.first }
-  let(:status) { create(:status, kind: "watching", work: work, user: user) }
-  let!(:slot) { create(:slot, work: work, episode: episode, channel: channel) }
-  let!(:library_entry) { create(:library_entry, user: user, work: work, status: status, program: slot.program) }
+  let(:status) { create(:status, kind: "watching", anime: work, user: user) }
+  let!(:slot) { create(:slot, anime: work, episode: episode, channel: channel) }
+  let!(:library_entry) { create(:library_entry, user: user, anime: work, status: status, program: slot.program) }
 
   describe "GET /v1/me/programs" do
     before do

@@ -3,12 +3,12 @@
 describe "DELETE /@:username/records/:record_id", type: :request do
   let(:user) { create :registered_user }
   let!(:anime) { create(:anime) }
-  let(:episode) { create(:episode, work: anime) }
-  let!(:record) { create(:record, user: user, work: anime) }
-  let(:episode_record) { create(:episode_record, user: user, record: record, work: anime, episode: episode) }
+  let(:episode) { create(:episode, anime: anime) }
+  let!(:record) { create(:record, user: user, anime: anime) }
+  let(:episode_record) { create(:episode_record, user: user, record: record, anime: anime, episode: episode) }
   let(:activity_group) { create(:activity_group, user: user, itemable_type: "EpisodeRecord") }
   let!(:activity) { create(:activity, user: user, activity_group: activity_group, itemable: episode_record) }
-  let!(:library_entry) { create(:library_entry, user: user, work: anime, watched_episode_ids: [episode.id]) }
+  let!(:library_entry) { create(:library_entry, user: user, anime: anime, watched_episode_ids: [episode.id]) }
 
   context "ログインしているとき" do
     before do

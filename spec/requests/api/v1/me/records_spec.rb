@@ -5,10 +5,10 @@ describe "Api::V1::Me::Records" do
   let(:application) { create(:oauth_application, owner: user) }
   let(:access_token) { create(:oauth_access_token, application: application) }
   let(:work) { create(:anime, :with_current_season) }
-  let(:episode) { create(:episode, work: work) }
+  let(:episode) { create(:episode, anime: work) }
 
   describe "PATCH /v1/me/records/:id" do
-    let(:record) { create(:episode_record, work: work, episode: episode, user: user) }
+    let(:record) { create(:episode_record, anime: work, episode: episode, user: user) }
     let(:uniq_comment) { SecureRandom.uuid }
 
     before do
@@ -30,7 +30,7 @@ describe "Api::V1::Me::Records" do
   end
 
   describe "DELETE /v1/me/records/:id" do
-    let!(:record) { create(:episode_record, work: work, episode: episode, user: user) }
+    let!(:record) { create(:episode_record, anime: work, episode: episode, user: user) }
 
     it "responses 204" do
       delete api("/v1/me/records/#{record.id}", access_token: access_token.token)

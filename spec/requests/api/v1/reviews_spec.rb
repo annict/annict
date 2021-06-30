@@ -12,7 +12,7 @@ describe "Api::V1::Reviews" do
   let(:access_token) { create(:oauth_access_token) }
   let(:user) { create(:user, :with_profile) }
   let(:anime) { create(:anime, :with_current_season) }
-  let!(:record) { create(:record, user: user, work: anime) }
+  let!(:record) { create(:record, user: user, anime: anime) }
   let!(:anime_record) { create(:anime_record, record: record, anime: anime, user: user) }
 
   describe "GET /v1/reviews" do
