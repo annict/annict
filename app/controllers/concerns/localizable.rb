@@ -11,7 +11,7 @@ module Localizable
   included do
     around_action :switch_time_zone, if: :current_user
 
-    helper_method :local_url_with_path, :locale_en?, :locale_ja?, :local_url, :localable_resources
+    helper_method :local_url_with_path, :locale_en?, :locale_ja?, :localable_resources
   end
 
   private
@@ -40,14 +40,8 @@ module Localizable
     locale.to_s == "en"
   end
 
-  def local_url(locale: I18n.locale)
-    return ENV.fetch("ANNICT_JP_URL") if locale.to_s == "ja"
-
-    ENV.fetch("ANNICT_URL")
-  end
-
   def local_url_with_path(locale: I18n.locale)
-    ["#{local_url(locale: locale)}#{request.path}", request.query_string].select(&:present?).join("?")
+    ["#{helpers.local_url(locale: locale)}#{request.path}", request.query_string].select(&:present?).join("?")
   end
 
   def preferred_locale
