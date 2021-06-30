@@ -3,7 +3,7 @@
 describe "POST /graphql", type: :request do
   let(:anime) { create(:anime) }
   let(:access_token) { create(:oauth_access_token) }
-  let(:id) { GraphQL::Schema::UniqueWithinType.encode(anime.class.name, anime.id) }
+  let(:id) { Beta::AnnictSchema.id_from_object(anime, anime.class) }
   let(:query) do
     <<~GRAPHQL
       query($workId: ID!) {

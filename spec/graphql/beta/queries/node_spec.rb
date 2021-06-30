@@ -3,7 +3,7 @@
 describe "GraphQL API Query" do
   describe "node" do
     let(:work) { create(:anime) }
-    let(:id) { GraphQL::Schema::UniqueWithinType.encode(work.class.name, work.id) }
+    let(:id) { Beta::AnnictSchema.id_from_object(work, work.class) }
     let(:result) do
       query_string = <<~GRAPHQL
         query {

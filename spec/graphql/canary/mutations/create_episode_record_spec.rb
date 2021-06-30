@@ -6,7 +6,7 @@ describe Canary::Mutations::CreateEpisodeRecord do
   let(:anime) { episode.anime }
   let(:token) { create(:oauth_access_token) }
   let(:context) { {viewer: user, doorkeeper_token: token, writable: true} }
-  let(:id) { GraphQL::Schema::UniqueWithinType.encode(episode.class.name, episode.id) }
+  let(:id) { Canary::AnnictSchema.id_from_object(episode, episode.class) }
 
   context "正常系" do
     let(:query) do
