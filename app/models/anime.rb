@@ -340,7 +340,7 @@ class Anime < ApplicationRecord
     @season ||= Season.new(season_year, season_name.presence || "all")
   end
 
-  def build_anime_record( # rubocop:disable Metrics/ParameterLists
+  def build_anime_record(
     user:,
     rating_overall: nil,
     rating_animation: nil,
@@ -363,16 +363,6 @@ class Anime < ApplicationRecord
     anime_record.detect_locale!(:body)
     anime_record.build_record(user: user, anime: self)
     anime_record
-  end
-
-  # 作品のエピソード数分の空白文字列が入った配列を返す
-  # Chart.jsのx軸のラベルを消すにはこれしか方法がなかったんだ…! たぶん…。
-  def chart_labels
-    episodes.only_kept.pluck(:id).map { "" }
-  end
-
-  def chart_values
-    episodes.only_kept.order(:sort_number).pluck(:episode_records_count)
   end
 
   def comments_count
