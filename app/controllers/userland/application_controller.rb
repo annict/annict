@@ -10,7 +10,7 @@ module Userland
     include Localizable
     include KeywordSearchable
 
-    layout "default_v6"
+    layout "main_default"
 
     around_action :set_locale
 

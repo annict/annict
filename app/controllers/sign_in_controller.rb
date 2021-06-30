@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class SignInController < ApplicationV6Controller
-  layout "v6/simple"
+  layout "main_simple"
 
   before_action :redirect_if_signed_in
 

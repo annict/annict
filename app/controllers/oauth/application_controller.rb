@@ -12,7 +12,7 @@ module Oauth
     include PageCategorizable
     include SentryLoadable
 
-    layout "v3/default"
+    layout "main_default"
 
     around_action :set_locale
   end

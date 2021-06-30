@@ -9,7 +9,7 @@ module V4
     include SentryLoadable
     include V4::GraphqlRunnable
 
-    layout "v4/main_default"
+    layout "main_default"
 
     around_action :set_locale
 

@@ -2,6 +2,6 @@
 
 module Oauth
   class AuthorizationsController < Doorkeeper::AuthorizationsController
-    layout "v3/simple"
+    layout "main_simple"
   end
 end

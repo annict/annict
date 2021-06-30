@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class WelcomeController < ApplicationV6Controller
-  layout "v6/welcome"
+  layout "main_welcome"
 
   def show
     set_page_category PageCategory::WELCOME

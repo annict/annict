@@ -2,7 +2,7 @@
 
 module Legacy
   class SessionsController < Devise::SessionsController
-    layout "v6/simple"
+    layout "main_simple"
 
     def new
       store_location_for(:user, params[:back]) if params[:back].present?
