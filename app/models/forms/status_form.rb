@@ -9,6 +9,11 @@ module Forms
 
     def kind=(value)
       @kind = value&.to_s&.downcase.presence
+
+      if @kind
+        # v2からv3に変換する
+        @kind = Status::KIND_MAPPING[@kind.to_sym]&.to_s.presence || @kind
+      end
     end
 
     def no_status?

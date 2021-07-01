@@ -8,7 +8,7 @@ describe "Api::V1::Me::Statuses" do
     before do
       data = {
         work_id: work.id,
-        kind: "watching",
+        kind: "wanna_watch",
         access_token: access_token.token
       }
       post api("/v1/me/statuses", data)
@@ -20,7 +20,7 @@ describe "Api::V1::Me::Statuses" do
 
     it "saves status info" do
       expect(access_token.owner.statuses.count).to eq(1)
-      expect(access_token.owner.statuses.first.kind).to eq("watching")
+      expect(access_token.owner.statuses.first.kind).to eq("wanna_watch")
     end
   end
 end
