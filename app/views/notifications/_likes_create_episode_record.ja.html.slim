@@ -1,0 +1,24 @@
+- action_user = notification.action_user
+- episode_record = notification.trackable.recipient
+- episode = episode_record.episode
+- work = episode.anime
+
+span.me-1
+  = action_user.name_link
+| が
+span.mx-1
+  = work.title_link
+- unless work.single?
+  span.me-1
+    = episode.number_link
+| への記録に「いいね！」しました
+
+.small.text-muted.my-2
+  = link_to local_time_ago_in_words(episode_record.created_at), record_path(current_user.username, episode_record.record)
+  - if episode_record.body.present?
+    | :
+    span.ms-1
+    = episode_record.body
+
+.small.text-muted
+  = local_time_ago_in_words(notification.created_at)

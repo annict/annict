@@ -34,16 +34,14 @@ class Record < ApplicationRecord
   attr_accessor :is_liked, :is_spoiler
 
   counter_culture :user
-  counter_culture :work
+  counter_culture :anime
 
   belongs_to :anime, foreign_key: :work_id
   belongs_to :user
-  belongs_to :work
-  has_one :anime_record, class_name: "WorkRecord", dependent: :destroy
+  has_one :anime_record, dependent: :destroy
   has_one :episode_record, dependent: :destroy
-  has_one :work_record, dependent: :destroy
 
-  scope :with_anime_record, -> { joins(:work_record).merge(WorkRecord.only_kept) }
+  scope :with_anime_record, -> { joins(:anime_record).merge(AnimeRecord.only_kept) }
 
   def anime_id
     work_id
@@ -77,5 +75,13 @@ class Record < ApplicationRecord
     end
 
     likes.any? { |like| like.recipient_type == recipient_type && like.recipient_id == recipient_id }
+  end
+
+  def local_trackable_title
+    if anime_record?
+      return anime.local_title
+    end
+
+    [anime.local_title, episode_record.episode.local_number].compact.join(" ")
   end
 end

@@ -27,7 +27,7 @@ module Canary
                 episode_record.first.body
               end
             when "AnimeRecord"
-              Canary::AssociationLoader.for(Record, %i[work_record]).load(object).then do |work_record|
+              Canary::AssociationLoader.for(Record, %i[anime_record]).load(object).then do |work_record|
                 work_record.first.body
               end
             end
@@ -42,7 +42,7 @@ module Canary
                 render_markdown(episode_record.first.body)
               end
             when "AnimeRecord"
-              Canary::AssociationLoader.for(Record, %i[work_record]).load(object).then do |work_record|
+              Canary::AssociationLoader.for(Record, %i[anime_record]).load(object).then do |work_record|
                 render_markdown(work_record.first.body)
               end
             end
@@ -61,7 +61,7 @@ module Canary
                 episode_record.first.modify_body ? episode_record.first.updated_at : nil
               end
             when "AnimeRecord"
-              Canary::AssociationLoader.for(Record, %i[work_record]).load(object).then do |work_record|
+              Canary::AssociationLoader.for(Record, %i[anime_record]).load(object).then do |work_record|
                 work_record.first.modified_at
               end
             end
@@ -77,7 +77,7 @@ module Canary
             if comp.is_a?(EpisodeRecord)
               Canary::RecordLoader.for(Episode).load(comp.episode_id)
             else
-              Canary::RecordLoader.for(Work).load(comp.work_id)
+              Canary::RecordLoader.for(Anime).load(comp.work_id)
             end
           end
         end
@@ -88,7 +88,7 @@ module Canary
             when "EpisodeRecord"
               Canary::AssociationLoader.for(Record, %i[episode_record]).load(object).then(&:first)
             when "AnimeRecord"
-              Canary::AssociationLoader.for(Record, %i[work_record]).load(object).then(&:first)
+              Canary::AssociationLoader.for(Record, %i[anime_record]).load(object).then(&:first)
             end
           end
         end

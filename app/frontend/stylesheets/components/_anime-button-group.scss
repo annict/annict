@@ -1,0 +1,28 @@
+.c-anime-button-group {
+  .dropdown-toggle::after {
+    display: none;
+  }
+
+  .c-status-select-dropdown {
+    &.c-spinner {
+      border-bottom-left-radius: $border-radius-pill;
+      border-top-left-radius: $border-radius-pill;
+    }
+
+    .btn.dropdown-toggle {
+      border-bottom-left-radius: $border-radius-pill;
+      border-top-left-radius: $border-radius-pill;
+      padding-left: 1.2rem;
+      padding-right: 1rem;
+    }
+  }
+
+  &__options {
+    .btn.dropdown-toggle {
+      border-bottom-right-radius: $border-radius-pill;
+      border-top-right-radius: $border-radius-pill;
+      padding-left: 1rem;
+      padding-right: 1.2rem;
+    }
+  }
+}

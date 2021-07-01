@@ -1,0 +1,18 @@
+- title = t "head.title.forum.home.index"
+- set_meta_tags(title: title, reverse: true, prefix: false)
+
+= render "forum/application/subnav"
+
+.container.py-3
+  .text-end.mb-3
+    = link_to forum_new_post_path, class: "btn btn-primary" do
+      i.far.fa-plus.me-2
+      = t "resources.forum_post.new"
+  .c-card
+    - if @posts.present?
+      = render "forum/posts/post_list", posts: @posts
+    - else
+      = render "application/components/empty", text: t("messages.forum.posts.no_posts")
+  - if @posts.present?
+    .text-center.mt-3
+      = ButtonGroups::PaginationButtonGroupComponent.new(self, collection: @posts).render

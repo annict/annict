@@ -37,7 +37,7 @@ class OrganizationFavorite < ApplicationRecord
 
   def update_watched_works_count(user)
     staff_work_ids = organization.staff_works.pluck(:id)
-    library_entries = user.library_entries.with_not_deleted_work.with_status(:watched)
+    library_entries = user.library_entries.with_not_deleted_anime.with_status(:watched)
     count = library_entries.where(work_id: staff_work_ids).count
 
     update_column(:watched_works_count, count)

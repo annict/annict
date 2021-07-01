@@ -1,0 +1,27 @@
+<% title = t "head.title.db.characters.index" %>
+<% set_meta_tags(title: title, reverse: true, prefix: false) %>
+
+<div class="container-fluid py-3">
+  <div class="mb-3">
+    <h1>
+      <%= title %>
+    </h1>
+
+    <% if policy(Character).create? %>
+      <div class="text-end">
+        <%= link_to db_new_character_path, class: "btn btn-outline-primary" do %>
+          <%= icon "plus" %>
+          <%= t "resources._common.new" %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="mb-3">
+    <%= render "character_list", resources: @characters %>
+  </div>
+
+  <div class="text-center">
+    <%= ButtonGroups::PaginationButtonGroupComponent.new(self, collection: @characters).render %>
+  </div>
+</div>

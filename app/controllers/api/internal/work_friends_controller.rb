@@ -8,7 +8,7 @@ module Api
         return render(json: []) if params[:display_option] != "list_detailed"
         return render(json: []) if work_ids.empty?
 
-        friends_data = Work.watching_friends_data(work_ids, current_user)
+        friends_data = Anime.watching_friends_data(work_ids, current_user)
 
         result = work_ids.map { |work_id|
           data = {

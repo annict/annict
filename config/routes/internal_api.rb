@@ -23,10 +23,6 @@ namespace :api do
 
     resources :works, only: [] do
       resource :library_entry, only: [:show]
-
-      resources :statuses, only: [] do
-        post :select, on: :collection
-      end
     end
   end
 end

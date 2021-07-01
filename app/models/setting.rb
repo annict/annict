@@ -5,7 +5,6 @@
 # Table name: settings
 #
 #  id                            :bigint           not null, primary key
-#  display_option_record_list    :string           default("all_comments"), not null
 #  display_option_user_work_list :string           default("grid_detailed"), not null
 #  display_option_work_list      :string           default("list_detailed"), not null
 #  hide_record_body              :boolean          default(TRUE), not null
@@ -16,7 +15,6 @@
 #  share_status_to_facebook      :boolean          default(FALSE), not null
 #  share_status_to_twitter       :boolean          default(FALSE), not null
 #  slots_sort_type               :string           default(NULL), not null
-#  timeline_mode                 :string           default("following"), not null
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
 #  user_id                       :bigint           not null

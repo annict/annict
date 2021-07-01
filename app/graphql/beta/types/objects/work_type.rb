@@ -58,26 +58,26 @@ module Beta
         field :series_list, Beta::Types::Objects::SeriesType.connection_type, null: true
 
         def episodes(order_by: nil)
-          V4::SearchEpisodesQuery.new(object.episodes, order_by: order_by).call
+          SearchEpisodesQuery.new(object.episodes, order_by: order_by).call
         end
 
         def reviews(order_by: nil, has_body: nil)
-          V4::SearchWorkRecordsQuery.new(object.work_records, order_by: order_by, has_body: has_body).call
+          SearchWorkRecordsQuery.new(object.anime_records, order_by: order_by, has_body: has_body).call
         end
 
         def programs(order_by: nil)
-          V4::SlotsQuery.new(
+          SlotsQuery.new(
             object.slots.only_kept,
             order: build_order(order_by)
           ).call
         end
 
         def casts(order_by: nil)
-          V4::SearchCastsQuery.new(object.casts, order_by: order_by).call
+          SearchCastsQuery.new(object.casts, order_by: order_by).call
         end
 
         def staffs(order_by: nil)
-          V4::SearchStaffsQuery.new(object.staffs, order_by: order_by).call
+          SearchStaffsQuery.new(object.staffs, order_by: order_by).call
         end
 
         def series_list
@@ -97,7 +97,7 @@ module Beta
         end
 
         def image
-          Beta::RecordLoader.for(WorkImage).load(object.work_image&.id)
+          Beta::RecordLoader.for(WorkImage).load(object.anime_image&.id)
         end
 
         def reviews_count

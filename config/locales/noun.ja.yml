@@ -83,7 +83,7 @@ ja:
     global: グローバル
     google_calendar: Googleカレンダー
     home: ホーム
-    information: 基本情報
+    information: 情報
     japanese: 日本語
     joined_works: 参加作品
     language: 言語
@@ -100,6 +100,7 @@ ja:
     next_episode: 次のエピソード
     next_page: 次のページ
     next_season: 来期のアニメ
+    no_select: 未選択
     notification: 通知
     official_site: 公式サイト
     on_hold: 一時中断してるアニメ
@@ -110,6 +111,7 @@ ja:
     other_comments: みんなの感想
     other_users: その他利用者さん
     overall: 全体
+    overview: 概要
     password: パスワード
     people: 人物
     person: 人物
@@ -185,6 +187,7 @@ ja:
     today: 今日
     tomorrow: 明日
     tonight: 今夜
+    top: トップ
     tweet: ツイート
     unbroadcast: 未放送
     unknown: 未登録
@@ -193,6 +196,7 @@ ja:
     untracked_episodes: 未視聴エピソード
     users_count: '%{count}人'
     video_page: 動画ページ
+    videos: 動画
     vod_works: VOD作品
     vods: 動画サービス
     voice_actor: 声優

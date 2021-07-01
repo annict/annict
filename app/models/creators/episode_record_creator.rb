@@ -19,7 +19,7 @@ module Creators
         comment: @form.comment,
         share_to_twitter: @form.share_to_twitter
       )
-      library_entry = @user.library_entries.find_by(work: @anime)
+      library_entry = @user.library_entries.find_by(anime: @anime)
 
       ActiveRecord::Base.transaction do
         episode_record.save!

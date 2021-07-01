@@ -2,9 +2,9 @@
 
 describe Updaters::AnimeRecordUpdater, type: :model do
   let!(:user) { create :registered_user }
-  let!(:anime) { create :work }
-  let!(:record) { create :record, user: user, work: anime }
-  let!(:anime_record) { create :work_record, user: user, work: anime, record: record }
+  let!(:anime) { create :anime }
+  let!(:record) { create :record, user: user, anime: anime }
+  let!(:anime_record) { create :anime_record, user: user, anime: anime, record: record }
 
   it "アニメへの記録の更新ができること" do
     # 各レコードは1件のはず
@@ -32,7 +32,7 @@ describe Updaters::AnimeRecordUpdater, type: :model do
     expect(WorkRecord.count).to eq 1
 
     record = user.records.first
-    anime_record = user.work_records.first
+    anime_record = user.anime_records.first
 
     expect(record.work_id).to eq anime.id
 

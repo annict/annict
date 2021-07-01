@@ -1,0 +1,56 @@
+<% title = t "head.title.db.series_works.edit" %>
+<% set_meta_tags(title: title, reverse: true, prefix: false) %>
+
+<div class="container-fluid py-3">
+  <div class="mb-3">
+    <div class="mb-1">
+      <%= link_to t("head.title.db.series_works.index"), db_series_work_list_path(@series) %>
+    </div>
+    <h1>
+      <%= title %>
+    </h1>
+  </div>
+
+  <div class="mb-3">
+    <%= render "db/series/subnav", series: @series %>
+  </div>
+
+  <div class="mb-3 row">
+    <div class="col-6">
+      <%= form_with model: @series_work, url: db_series_work_detail_path(@series_work) do |f| %>
+        <%= render "application/components/error_panel", resource: f.object %>
+
+        <div class="mb-3">
+          <%= f.label :work_id %>
+          <select
+            class="form-select"
+            data-controller="resource-selector"
+            data-resource-selector-model-name="Work"
+            name="series_work[work_id]"
+          >
+            <% if f.object.anime&.id %>
+              <option value="<%= f.object.anime.id %>" selected="">
+                <%= f.object.anime.local_title %>
+              </option>
+            <% else %>
+              <option value="" selected=""></option>
+            <% end %>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <%= f.label :summary %>
+          <%= f.text_field :summary, class: "form-control" %>
+        </div>
+        <div class="mb-3">
+          <%= f.label :summary_en %>
+          <%= f.text_field :summary_en, class: "form-control" %>
+        </div>
+        <%= f.submit t("helpers.submit.update"), class: "btn btn-primary" %>
+      <% end %>
+    </div>
+    <div class="col-6">
+      <%= render "sidebar_edit" %>
+    </div>
+  </div>
+</div>

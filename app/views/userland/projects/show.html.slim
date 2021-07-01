@@ -1,0 +1,11 @@
+- title = t "head.title.userland.projects.show", name: @project.name
+- set_meta_tags(title: title, reverse: true, prefix: false)
+
+.container.py-3.mb-3
+  .row
+    .col-3.pe-0
+      = render "userland/projects/sidebar", project: @project
+    .col-9
+      .c-card
+        .container.py-3
+          == render_markdown @project.description

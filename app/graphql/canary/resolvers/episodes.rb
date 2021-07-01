@@ -13,13 +13,13 @@ module Canary
           episodes = anime.episodes.only_kept
 
           if viewer && viewer_tracked_in_current_status
-            library_entry = viewer.library_entries.with_not_deleted_work.find_by(work: anime)
+            library_entry = viewer.library_entries.with_not_deleted_anime.find_by(work: anime)
 
             if library_entry
               episodes = episodes.where(id: library_entry.watched_episode_ids)
             end
           elsif viewer && viewer_tracked_in_current_status == false
-            library_entry = viewer.library_entries.with_not_deleted_work.find_by(work: anime)
+            library_entry = viewer.library_entries.with_not_deleted_anime.find_by(work: anime)
 
             if library_entry
               episodes = episodes.where(id: episodes.pluck(:id) - library_entry.watched_episode_ids)

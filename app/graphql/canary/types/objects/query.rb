@@ -69,7 +69,7 @@ module Canary
         end
 
         def anime(database_id:)
-          Work.only_kept.find_by(id: database_id)
+          Anime.only_kept.find_by(id: database_id)
         end
 
         def episode(database_id:)
@@ -101,7 +101,7 @@ module Canary
         end
 
         def channels(is_vod: nil)
-          V4::ChannelsQuery.new(
+          ChannelsQuery.new(
             Channel.only_kept,
             is_vod: is_vod
           ).call

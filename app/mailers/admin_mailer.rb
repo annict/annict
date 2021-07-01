@@ -9,7 +9,7 @@ class AdminMailer < ApplicationMailer
 
   def error_in_episode_generator_notification(slot_id, error_message)
     @slot = Slot.find(slot_id)
-    @work = @slot.work
+    @work = @slot.anime
     @error_message = error_message
 
     mail(to: "hello@annict.com", subject: "エピソード生成中にエラーが発生しました")

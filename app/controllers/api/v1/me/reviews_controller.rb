@@ -4,12 +4,10 @@ module Api
   module V1
     module Me
       class ReviewsController < Api::V1::ApplicationController
-        include V4::GraphqlRunnable
-
         before_action :prepare_params!, only: %i[create update destroy]
 
         def create
-          work = Work.only_kept.find(@params.work_id)
+          work = Anime.only_kept.find(@params.work_id)
 
           work_record_params = {
             anime: work,
@@ -23,19 +21,17 @@ module Api
           }
           form = Forms::AnimeRecordForm.new(work_record_params)
 
-          result = V4::CreateAnimeRecordRepository.new(
-            graphql_client: graphql_client(viewer: current_user)
-          ).execute(form: form)
-
-          unless result.success?
-            return render_validation_error(result.errors.first.message)
+          if form.invalid?
+            return render_validation_error(form.errors.full_messages.first)
           end
 
-          @work_record = current_user.work_records.find_by!(record_id: result.record_entity.database_id)
+          result = Creators::AnimeRecordCreator.new(user: current_user, form: form).call
+
+          @work_record = current_user.anime_records.find_by!(record_id: result.record.id)
         end
 
         def update
-          @work_record = current_user.work_records.only_kept.find(@params.id)
+          @work_record = current_user.anime_records.only_kept.find(@params.id)
           @work_record.title = @params.title
           @work_record.body = @params.body
           @work_record.rating_animation_state = @params.rating_animation_state
@@ -66,7 +62,7 @@ module Api
         end
 
         def destroy
-          @work_record = current_user.work_records.only_kept.find(@params.id)
+          @work_record = current_user.anime_records.only_kept.find(@params.id)
           @work_record.record.destroy
           head 204
         end

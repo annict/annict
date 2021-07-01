@@ -1,0 +1,23 @@
+- if works.present?
+  .c-card.px-3
+    - works.each do |work|
+      .u-underline.py-3
+        .row
+          .col-2.pe-0
+            = link_to anime_path(anime_id: work.id) do
+              = Pictures::AnimePictureComponent.new(self, anime: work, width: 270).render
+            - if work.anime_image.present?
+              .u-very-small.text-end
+                = work.anime_image.asin_or_copyright_text
+          .col
+            .mb-1.u-lh-0
+              = Badges::AnimeMediaBadgeComponent.new(self, anime: work).render
+            h3.h3.fw-bold.mb-1
+              = link_to work.local_title, anime_path(anime_id: work.id), class: "u-text-body"
+            .mb-2
+              span.fw-bold.me-1 = work.watchers_count
+              span.text-muted.small Watchers
+            .div style="width: 200px;"
+              = ButtonGroups::AnimeButtonGroupComponent.new(self, anime: work).render
+- else
+  = render "application/components/empty", text: t("messages._empty.no_works")

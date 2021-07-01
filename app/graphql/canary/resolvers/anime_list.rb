@@ -6,7 +6,7 @@ module Canary
       def resolve(database_ids: nil, seasons: nil, titles: nil, order_by: nil)
         order = Canary::OrderProperty.build(order_by)
 
-        @anime_list = Work.only_kept
+        @anime_list = Anime.only_kept
 
         if database_ids
           @anime_list = @anime_list.where(id: database_ids)

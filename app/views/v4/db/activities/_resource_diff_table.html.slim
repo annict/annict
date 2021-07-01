@@ -1,8 +1,0 @@
-table.c-resource-diff-table.table.table-bordered.mb-0
-  thead
-    tr
-      th.c-resource-diff-table__column = t("noun.column")
-      th.c-resource-diff-table__new = t("noun.after")
-      th.c-resource-diff-table__old = t("noun.before")
-  tbody
-    = render "v4/db/application/resource_diff_table_body", resource: resource, diffs: diffs, draft_values: draft_values, origin_values: origin_values

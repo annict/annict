@@ -1,0 +1,18 @@
+.row
+  - series.series_animes.where.not(work: work.id).sort_season.each do |series_work|
+    - work = series_work.anime
+    .col-2.p-0.pe-3.mb-3
+      .c-card
+        = link_to anime_path(anime_id: work.id) do
+          .c-hover-image
+            .c-hover-image__image
+              = ann_image_tag(work.anime_image, :image, size: "280x", ratio: "3:4", class: "img-fluid rounded")
+            .c-hover-image__over
+        .p-1
+          .u-very-small
+            = link_to work.local_title, anime_path(anime_id: work.id)
+
+          - summary = series_work.local_summary(fallback: false)
+          - if summary.present?
+            .u-very-small
+              = summary

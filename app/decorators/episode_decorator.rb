@@ -2,7 +2,7 @@
 
 module EpisodeDecorator
   def number_link
-    link_to local_number, episode_path(anime_id: work.id, episode_id: id)
+    link_to local_number, episode_path(anime_id: anime.id, episode_id: id)
   end
 
   def db_detail_link(options = {})
@@ -21,7 +21,7 @@ module EpisodeDecorator
       hash[field] = case field
       when :prev_episode_id
         if send(field).present?
-          episode = work.episodes.where(id: send(field)).first
+          episode = anime.episodes.where(id: send(field)).first
           if episode.present?
             title = episode.decorate.title_with_number
             path = episode_path(anime_id: episode.work_id, episode_id: episode.id)
@@ -49,9 +49,9 @@ module EpisodeDecorator
   end
 
   def number_with_work_title
-    work_title = work.local_title
+    work_title = anime.local_title
 
-    return work_title if work.single?
+    return work_title if anime.single?
     return "#{work_title} #{local_title}" if local_number.blank?
 
     "#{work_title} #{local_number}"

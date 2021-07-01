@@ -22,7 +22,7 @@ module Api::Internal
     private
 
     def sign_up_form_params
-      permitted = params.require(:sign_up_form).permit(:email)
+      permitted = params.require(:forms_sign_up_form).permit(:email)
       permitted[:back] = stored_location_for(:user)
       permitted
     end

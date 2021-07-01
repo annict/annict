@@ -3,7 +3,7 @@
 describe Creators::EpisodeRecordCreator, type: :model do
   let(:user) { create :registered_user }
   let(:episode) { create :episode }
-  let(:anime) { episode.work }
+  let(:anime) { episode.anime }
 
   it "エピソードへの記録が作成できること" do
     # Creatorを呼んでいないので、各レコードは0件のはず
@@ -55,7 +55,7 @@ describe Creators::EpisodeRecordCreator, type: :model do
   describe "アクティビティの作成" do
     context "直前の記録に感想が書かれていて、その後に新たに感想付きの記録をしたとき" do
       let(:episode) { create :episode, episode_record_bodies_count: 1 }
-      let(:anime) { episode.work }
+      let(:anime) { episode.anime }
       # 感想付きの記録が直前にある
       let(:episode_record) { create(:episode_record, user: user, episode: episode, body: "はうー") }
       let!(:activity_group) { create(:activity_group, user: user, itemable_type: "EpisodeRecord", single: true) }
@@ -97,7 +97,7 @@ describe Creators::EpisodeRecordCreator, type: :model do
     context "直前の記録に感想が書かれていない & その後に新たに感想無しの記録をしたとき" do
       let(:user) { create :registered_user }
       let(:episode) { create :episode }
-      let(:anime) { episode.work }
+      let(:anime) { episode.anime }
       # 感想無しの記録が直前にある
       let(:episode_record) { create(:episode_record, user: user, episode: episode, body: "") }
       let!(:activity_group) { create(:activity_group, user: user, itemable_type: "EpisodeRecord", single: false) }

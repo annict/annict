@@ -27,6 +27,8 @@ ja:
           show: '%{name}の情報をチェック！'
         person_fans:
           index: '%{person_name}のファンをチェック！'
+        profiles:
+          show: Check out %{profile_name} (%{username})'s profile!
         records:
           index: '%{profile_name} (%{username})さんの記録をチェック！'
           show: '%{profile_name} (%{username})さんのアニメ %{trackable_title} への記録をチェック！'
@@ -39,7 +41,6 @@ ja:
         users:
           followers: Check out %{profile_name} (%{username})'s profile!
           following: Check out %{profile_name} (%{username})'s profile!
-          show: Check out %{profile_name} (%{username})'s profile!
         works:
           popular: 人気アニメをチェック！
           season: '%{name}アニメをチェック！'
@@ -192,10 +193,10 @@ ja:
         index: '%{person_name}のファン一覧'
       people:
         show: '%{name}'
-      profiles:
-        show: プロフィール
       slots:
         index: 放送予定
+      profiles:
+        show: '%{profile_name} (%{username})'
       providers:
         index: サービス連携
       records:
@@ -233,7 +234,6 @@ ja:
       users:
         followers: '%{profile_name} (%{username})をフォローしている人'
         following: '%{profile_name} (%{username})がフォローしている人'
-        show: '%{profile_name} (%{username})'
       welcome:
         show: 見たアニメを記録して、共有しよう
       work_records:

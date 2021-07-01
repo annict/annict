@@ -2,7 +2,7 @@
 
 describe Canary::Mutations::CreateAnimeRecord do
   let(:user) { create :registered_user }
-  let(:anime) { create :work }
+  let(:anime) { create :anime }
   let(:token) { create(:oauth_access_token) }
   let(:context) { {viewer: user, doorkeeper_token: token, writable: true} }
   let(:anime_id) { Canary::AnnictSchema.id_from_object(anime, anime.class) }

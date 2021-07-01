@@ -6,9 +6,9 @@ module Api
       def index
         q = params[:q]
         @works = if q
-          Work.where("title ILIKE ?", "%#{q}%").only_kept
+          Anime.where("title ILIKE ?", "%#{q}%").only_kept
         else
-          Work.none
+          Anime.none
         end
       end
     end

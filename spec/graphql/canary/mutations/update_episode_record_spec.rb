@@ -2,13 +2,13 @@
 
 describe Canary::Mutations::UpdateEpisodeRecord do
   let!(:user) { create :registered_user }
-  let!(:anime) { create :work }
-  let!(:episode) { create :episode, work: anime }
-  let!(:record) { create :record, user: user, work: anime }
-  let!(:episode_record) { create(:episode_record, user: user, record: record, work: anime, episode: episode, rating: nil) }
+  let!(:anime) { create :anime }
+  let!(:episode) { create :episode, anime: anime }
+  let!(:record) { create :record, user: user, anime: anime }
+  let!(:episode_record) { create(:episode_record, user: user, record: record, anime: anime, episode: episode, rating: nil) }
   let!(:token) { create(:oauth_access_token) }
   let!(:context) { {viewer: user, doorkeeper_token: token, writable: true} }
-  let!(:record_id) { GraphQL::Schema::UniqueWithinType.encode(record.class.name, record.id) }
+  let!(:record_id) { Canary::AnnictSchema.id_from_object(record, record.class) }
 
   context "正常系" do
     let(:query) do

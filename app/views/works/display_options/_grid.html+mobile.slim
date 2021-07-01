@@ -1,0 +1,14 @@
+.c-grid-work.c-grid-work--default.container-fluid
+  .row.ps-3
+    - works.each do |work|
+      .col-6.p-0.pe-3.mb-3.u-lh-0
+        .u-lh-0
+          = link_to anime_path(anime_id: work.id), title: work.local_title do
+            .c-hover-image
+              .c-hover-image__image
+                = Pictures::AnimePictureComponent.new(self, anime: work, width: 280).render
+              .c-hover-image__over.p-1.u-lh-3.w-100
+                .c-grid-work__work-title.small.fw-bold
+                  = work.local_title
+        - if page_category.in?(%w(work-list-season work-list-popular work-list-newest))
+          = ButtonGroups::AnimeButtonGroupComponent.new(self, anime: work).render

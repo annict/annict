@@ -2,7 +2,7 @@
 
 describe Creators::AnimeRecordCreator, type: :model do
   let(:user) { create :registered_user }
-  let(:anime) { create :work }
+  let(:anime) { create :anime }
 
   it "アニメへの記録ができること" do
     # Creatorを呼んでいないので、各レコードは0件のはず
@@ -35,7 +35,7 @@ describe Creators::AnimeRecordCreator, type: :model do
     expect(user.share_record_to_twitter?).to eq false
 
     record = user.records.first
-    anime_record = user.work_records.first
+    anime_record = user.anime_records.first
     activity_group = user.activity_groups.first
     activity = user.activities.first
 
@@ -51,7 +51,7 @@ describe Creators::AnimeRecordCreator, type: :model do
     expect(anime_record.record_id).to eq record.id
     expect(anime_record.work_id).to eq anime.id
 
-    expect(activity_group.itemable_type).to eq "WorkRecord"
+    expect(activity_group.itemable_type).to eq "AnimeRecord"
     expect(activity_group.single).to eq true
 
     expect(activity.itemable).to eq anime_record
@@ -60,9 +60,9 @@ describe Creators::AnimeRecordCreator, type: :model do
 
   describe "アクティビティの作成" do
     context "直前の記録に感想が書かれていて、その後に新たに感想付きの記録をしたとき" do
-      let(:anime) { create :work, work_records_with_body_count: 1 }
+      let(:anime) { create :anime, work_records_with_body_count: 1 }
       # 感想付きの記録が直前にある
-      let!(:anime_record) { create(:work_record, user: user, work: anime, body: "さいこー") }
+      let!(:anime_record) { create(:anime_record, user: user, anime: anime, body: "さいこー") }
       let!(:activity_group) { create(:activity_group, user: user, itemable_type: "WorkRecord", single: true) }
       let!(:activity) { create(:activity, user: user, itemable: anime_record, activity_group: activity_group) }
 
@@ -88,11 +88,11 @@ describe Creators::AnimeRecordCreator, type: :model do
         expect(ActivityGroup.count).to eq 2 # ActivityGroup が新たに作成されるはず
         expect(Activity.count).to eq 2
 
-        anime_record = user.work_records.last
+        anime_record = user.anime_records.last
         activity_group = user.activity_groups.last
         activity = user.activities.last
 
-        expect(activity_group.itemable_type).to eq "WorkRecord"
+        expect(activity_group.itemable_type).to eq "AnimeRecord"
         expect(activity_group.single).to eq true
 
         expect(activity.itemable).to eq anime_record
@@ -101,10 +101,10 @@ describe Creators::AnimeRecordCreator, type: :model do
     end
 
     context "直前の記録に感想が書かれていない & その後に新たに感想無しの記録をしたとき" do
-      let(:anime) { create :work }
+      let(:anime) { create :anime }
       # 感想無しの記録が直前にある
-      let!(:anime_record) { create(:work_record, user: user, work: anime, body: "") }
-      let!(:activity_group) { create(:activity_group, user: user, itemable_type: "WorkRecord", single: false) }
+      let!(:anime_record) { create(:anime_record, user: user, anime: anime, body: "") }
+      let!(:activity_group) { create(:activity_group, user: user, itemable_type: "AnimeRecord", single: false) }
       let!(:activity) { create(:activity, user: user, itemable: anime_record, activity_group: activity_group) }
 
       it "ActivityGroup が新たに作成されないこと" do
@@ -129,11 +129,11 @@ describe Creators::AnimeRecordCreator, type: :model do
         expect(ActivityGroup.count).to eq 1 # ActivityGroup は新たに作成されないはず
         expect(Activity.count).to eq 2
 
-        anime_record = user.work_records.last
+        anime_record = user.anime_records.last
         activity_group = user.activity_groups.first
         activity = user.activities.last
 
-        expect(activity_group.itemable_type).to eq "WorkRecord"
+        expect(activity_group.itemable_type).to eq "AnimeRecord"
         expect(activity_group.single).to eq false
 
         expect(activity.itemable).to eq anime_record

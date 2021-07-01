@@ -3,7 +3,7 @@
 module V4
   module LocalApi
     class GraphqlController < ActionController::Base
-      include V4::Localizable
+      include Localizable
 
       around_action :set_locale_with_params
       skip_before_action :verify_authenticity_token

@@ -2,7 +2,7 @@
 
 describe Beta::Connections::ActivityConnection do
   let(:user) { create(:user) }
-  let(:id) { GraphQL::Schema::UniqueWithinType.encode(user.class.name, user.id) }
+  let(:id) { Beta::AnnictSchema.id_from_object(user, user.class) }
   let!(:activity) { create(:create_episode_record_activity, user: user) }
   let!(:status) { create(:status, user: user) }
   let!(:activity_2) { create(:activity, user: user, itemable: status) }

@@ -1,0 +1,67 @@
+- title = "#{t('head.title.forum.posts.show', title: @post.title)} - Forum"
+- set_meta_tags(title: title, reverse: true, prefix: false)
+
+= render "forum/application/subnav", post: @post
+
+.container.py-3.mb-3
+  .mb-3
+    .mb-1
+      = link_to @post.forum_category.local_name,  forum_category_path(@post.forum_category.slug), class: "badge badge-secondary"
+    h1.h2.mb-0
+      = @post.title
+
+  .row
+    .col-8
+      .c-card.p-3.mb-3
+        .row.mb-3
+          .col.col-auto.pe-0
+            = link_to profile_path(@post.user.username) do
+              = Pictures::AvatarPictureComponent.new(self, user: @post.user, width: 45).render
+          .col.ps-2
+            = link_to @post.user.profile.name, profile_path(@post.user.username), class: "me-2"
+            = @post.user.role_badge
+            .mt-1
+              = link_to forum_post_path(@post), class: "small text-muted", title: display_time(@post.created_at) do
+                = display_time(@post.created_at)
+
+        = render BodyComponent.new(format: :markdown) do
+          = @post.body
+
+        - if user_signed_in? && current_user == @post.user
+          .text-end
+            = link_to forum_edit_post_path(@post), class: "small" do
+              = icon "pencil-alt", class: "me-1"
+              = t "noun.edit"
+
+      - if @comments.present?
+        - @comments.each do |comment|
+          .c-card.p-3.mb-3
+            - if comment.user
+              .row.mb-3
+                .col.col-auto.pe-0
+                  = link_to profile_path(comment.user.username) do
+                    = Pictures::AvatarPictureComponent.new(self, user: comment.user, width: 45).render
+                .col.ps-2
+                  = link_to comment.user.profile.name, profile_path(comment.user.username), class: "me-2"
+                  = comment.user.role_badge
+                  .mt-1
+                    span.small.text-muted title="#{display_time(comment.created_at)}"
+                      = display_time(comment.created_at)
+
+              = render BodyComponent.new(format: :markdown) do
+                = comment.body
+
+              - if user_signed_in? && current_user == comment.user
+                .text-end
+                  = link_to forum_edit_comment_path(@post, comment), class: "small" do
+                    = icon "pencil-alt", class: "me-1"
+                    = t "noun.edit"
+            - else
+              = t "messages.forum.comments.deleted"
+      - else
+        .mb-3
+          = render "application/components/empty", text: t("messages.forum.posts.no_comments")
+
+      .c-card.p-3.mb-3
+        = render "forum/comments/form", comment: @comment, form_url: forum_comment_list_path(@comment.forum_post), form_method: :post, submit_text: t("verb.comment")
+    .col-4

@@ -2,14 +2,14 @@
 
 module V4
   class ApplicationController < ActionController::Base
-    include V6::KeywordSearchable
-    include V6::Localizable
-    include V6::Loggable
-    include V6::PageCategorizable
-    include V6::SentryLoadable
+    include KeywordSearchable
+    include Localizable
+    include Loggable
+    include PageCategorizable
+    include SentryLoadable
     include V4::GraphqlRunnable
 
-    layout "v4/main_default"
+    layout "main_default"
 
     around_action :set_locale
 

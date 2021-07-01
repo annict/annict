@@ -1,0 +1,15 @@
+- action_user = notification.action_user
+- like = notification.trackable
+- work_record = like.recipient
+
+span.me-1
+  = action_user.name_link
+| liked
+span.mx-1
+  = link_to "your record", record_path(work_record.user.username, work_record.record)
+| on
+span.mx-1
+  = work_record.anime.title_link
+
+.small.text-muted
+  = local_time_ago_in_words(notification.created_at)

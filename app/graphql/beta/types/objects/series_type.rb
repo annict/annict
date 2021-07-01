@@ -18,8 +18,8 @@ module Beta
         end
 
         def works(order_by: nil)
-          V4::SearchSeriesWorksQuery.new(
-            object.series_works,
+          SearchSeriesWorksQuery.new(
+            object.series_animes,
             order_by: order_by
           ).call
         end

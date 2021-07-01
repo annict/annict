@@ -1,0 +1,5 @@
+- title = t "head.title.oauth.applications.new"
+- set_meta_tags(title: title, og: { title: title }, reverse: true, prefix: false)
+
+.container.p-3
+  = render "oauth/applications/form", application: @application

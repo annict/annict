@@ -1,0 +1,63 @@
+<% title = t "head.title.sign_up.new" %>
+<% description = meta_description t("head.meta.description.sign_up.new") %>
+<% set_meta_tags(title: title, description: description, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false) %>
+
+<%= content_for :head_vendor_assets do %>
+  <%= render "application/recaptcha", recaptcha: @recaptcha %>
+<% end %>
+
+<div class="container">
+  <div class="justify-content-center row">
+    <div class="col-12 col-lg-6 py-5">
+      <div class="mb-5 text-center">
+        <%= link_to root_path do %>
+          <%= image_tag asset_bundle_path("images/logos/color-mizuho.png"), size: "50x61", alt: "Annict" %>
+        <% end %>
+      </div>
+
+      <div class="c-sign-up-form px-3 mb-5">
+        <h1 class="my-5 text-center">
+          <%= t "messages._common.join_annict" %>
+        </h1>
+
+        <p class="mb-5 text-center">
+          <%= t "messages.sign_up.new.description_html" %>
+        </p>
+
+        <%= form_with(
+          data: {
+            controller: "forms--basic-form",
+            action: "turbo:submit-start->forms--basic-form#handleSubmitStart turbo:submit-end->forms--basic-form#handleSubmitEnd",
+            "forms--basic-form-target": "form"
+          },
+          model: @form,
+          url: internal_api_sign_up_path
+        ) do |f| %>
+          <%= ErrorPanelV6Component.new(self, stimulus_controller: "forms--basic-form").render %>
+
+          <% if @recaptcha.enabled? %>
+            <%= Inputs::RecaptchaInputComponent.new(self, recaptcha: @recaptcha).render %>
+          <% end %>
+
+          <div class="mb-3">
+            <%= f.label :email, class: "form-label" %>
+            <%= f.email_field :email, autofocus: true, class: "form-control", placeholder: "hello@annict.com", required: true, tabindex: 1 %>
+          </div>
+
+          <div class="text-center">
+            <%= f.button class: "btn btn-primary", data: { "forms--basic-form-target": "submitButton" }, tabindex: 2, type: :submit do %>
+              <i class="far fa-rocket me-1"></i>
+              <%= t "verb.send" %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="text-center">
+        <small>
+          <%= t "messages.registrations.new.sign_in_link_html", link: link_to(t("noun.sign_in"), sign_in_path) %>
+        </small>
+      </div>
+    </div>
+  </div>
+</div>

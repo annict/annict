@@ -28,7 +28,7 @@ module Beta
         raise Annict::Errors::InvalidAPITokenScopeError unless context[:doorkeeper_token].writable?
 
         viewer = context[:viewer]
-        work_record = viewer.work_records.only_kept.find_by_graphql_id(review_id)
+        work_record = viewer.anime_records.only_kept.find_by_graphql_id(review_id)
 
         work_record.title = title
         work_record.body = body

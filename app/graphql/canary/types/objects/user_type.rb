@@ -226,7 +226,7 @@ module Canary
 
         def anime_list(database_ids: nil, seasons: nil, titles: nil, status_kind: nil, order_by: nil)
           SearchWorksQuery.new(
-            object.works.all,
+            object.animes,
             user: object,
             annict_ids: database_ids,
             seasons: seasons,

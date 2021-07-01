@@ -6,7 +6,7 @@ describe "GraphQL API Mutation" do
     let!(:user) { create(:user, :with_setting) }
     let!(:token) { create(:oauth_access_token) }
     let!(:context) { {viewer: user, doorkeeper_token: token} }
-    let!(:id) { GraphQL::Schema::UniqueWithinType.encode(episode.class.name, episode.id) }
+    let!(:id) { Beta::AnnictSchema.id_from_object(episode, episode.class) }
     let!(:body) { "とてもよかった！" }
     let!(:result) do
       query_string = <<~GRAPHQL

@@ -1,0 +1,69 @@
+<% title = t "head.title.db.episodes.edit" %>
+<% set_meta_tags(title: title, reverse: true, prefix: false) %>
+
+<div class="container-fluid py-3">
+  <div class="mb-3">
+    <div class="mb-1">
+      <%= link_to @work.local_title, db_edit_work_path(@work) %>
+    </div>
+    <h1>
+      <%= title %>
+    </h1>
+  </div>
+
+  <div class="mb-3">
+    <%= render "db/works/subnav", work: @work %>
+  </div>
+
+  <div class="mb-3 row">
+    <div class="col-6">
+      <%= form_with model: @episode, url: db_episode_detail_path(@episode), method: :patch do |f| %>
+        <%= render "application/components/error_panel", resource: f.object %>
+
+        <div class="mb-3">
+          <%= f.label :number %>
+          <%= f.text_field :number, class: "form-control", autofocus: true %>
+        </div>
+
+        <div class="mb-3">
+          <%= f.label :raw_number %>
+          <%= f.text_field :raw_number, class: "form-control" %>
+        </div>
+
+        <div class="mb-3">
+          <%= f.label :sort_number, class: "c-label-required" %>
+          <%= f.text_field :sort_number, class: "form-control", required: true %>
+        </div>
+
+        <div class="mb-3">
+          <%= f.label :title %>
+          <%= f.text_field :title, class: "form-control" %>
+        </div>
+
+        <div class="mb-3">
+          <%= f.label :title_en %>
+          <%= f.text_field :title_en, class: "form-control" %>
+        </div>
+
+        <div class="mb-3">
+          <%= f.label :prev_episode_id %>
+          <%= f.select(
+            :prev_episode_id,
+            options_for_select(
+              @work.episodes.order(:sort_number).map { |episode| ["#{episode.number} #{episode.title}", episode.id] },
+              f.object.prev_episode_id
+            ),
+            { include_blank: true },
+            { class: "form-select" }
+          ) %>
+        </div>
+
+        <%= f.submit t("helpers.submit.update"), class: "btn btn-primary" %>
+      <% end %>
+    </div>
+
+    <div class="col-6">
+      <%= render "sidebar" %>
+    </div>
+  </div>
+</div>

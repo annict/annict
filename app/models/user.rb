@@ -90,7 +90,7 @@ class User < ApplicationRecord
   belongs_to :gumroad_subscriber, optional: true
   has_many :activity_groups, dependent: :destroy
   has_many :activities, dependent: :destroy
-  has_many :anime_records, dependent: :destroy, class_name: "WorkRecord"
+  has_many :anime_records, dependent: :destroy
   has_many :character_favorites, dependent: :destroy
   has_many :collections, dependent: :destroy
   has_many :collection_items, dependent: :destroy
@@ -187,12 +187,12 @@ class User < ApplicationRecord
     watching_works_count
   end
 
-  def works
-    @works ||= V4::UserWorksQuery.new(self)
+  def animes
+    Anime.joins(:library_entries).merge(library_entries)
   end
 
-  def works_on(*status_kinds)
-    Work.joins(:library_entries).merge(library_entries.with_status(*status_kinds))
+  def animes_on(*status_kinds)
+    Anime.joins(:library_entries).merge(library_entries.with_status(*status_kinds))
   end
 
   def cast_favorites
@@ -204,7 +204,7 @@ class User < ApplicationRecord
   end
 
   def social_friends
-    @social_friends ||= V3::UserSocialFriendsQuery.new(self)
+    @social_friends ||= UserSocialFriendsQuery.new(self)
   end
 
   def build_relations(oauth = nil)
@@ -267,7 +267,7 @@ class User < ApplicationRecord
 
   def hide_episode_record_body?(episode)
     setting.hide_record_body? &&
-      works.desiring_to_watch.include?(episode.work) &&
+      works.desiring_to_watch.include?(episode.anime) &&
       !episode_records.pluck(:episode_id).include?(episode.id)
   end
 
@@ -289,11 +289,11 @@ class User < ApplicationRecord
   end
 
   def status_kind(work)
-    library_entries.find_by(work: work)&.status&.kind.presence || "no_select"
+    library_entries.find_by(anime: work)&.status&.kind.presence || "no_select"
   end
 
   def status_kind_v3(work)
-    Status.kind_v2_to_v3(library_entries.find_by(work: work)&.status&.kind)&.to_s.presence || "no_status"
+    Status.kind_v2_to_v3(library_entries.find_by(anime: work)&.status&.kind)&.to_s.presence || "no_status"
   end
 
   def encoded_id
@@ -399,7 +399,7 @@ class User < ApplicationRecord
     channel_ids = channel_works.pluck(:channel_id)
     episode_ids = library_entries.pluck(:next_episode_id)
     slots = Slot
-      .includes(:channel, work: :work_image)
+      .includes(:channel, work: :anime_image)
       .where(channel_id: channel_ids, episode_id: episode_ids)
       .only_kept
 

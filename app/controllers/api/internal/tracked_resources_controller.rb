@@ -8,7 +8,7 @@ module Api
 
         render json: {
           episode_ids: current_user.episode_records.pluck(:episode_id),
-          work_ids: current_user.work_records.pluck(:work_id)
+          work_ids: current_user.anime_records.pluck(:work_id)
         }
       end
     end

@@ -2,6 +2,7 @@
 
 class PageCategory
   NAMES = %i[
+    anime
     anime_record_list
     character_fan_list
     episode
@@ -23,7 +24,6 @@ class PageCategory
     slot_list
     track
     welcome
-    work
     work_list_newest
     work_list_popular
     work_list_season

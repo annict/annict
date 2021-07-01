@@ -12,10 +12,10 @@ describe "Api::V1::Activities" do
   describe "GET /v1/activities" do
     let(:user) { create(:user, :with_profile) }
     let(:access_token) { create(:oauth_access_token, owner: user) }
-    let!(:anime) { create(:work) }
-    let!(:episode) { create(:episode, work: anime) }
-    let!(:record) { create(:record, user: user, work: anime) }
-    let!(:episode_record) { create(:episode_record, record: record, user: user, work: anime, episode: episode) }
+    let!(:anime) { create(:anime) }
+    let!(:episode) { create(:episode, anime: anime) }
+    let!(:record) { create(:record, user: user, anime: anime) }
+    let!(:episode_record) { create(:episode_record, record: record, user: user, anime: anime, episode: episode) }
     let!(:activity) { create(:activity, user: user, itemable: episode_record) }
 
     before do
@@ -53,10 +53,10 @@ describe "Api::V1::Activities" do
           "action" => "create_record",
           "created_at" => "2017-01-28T23:39:04Z",
           "work" => {
-            "id" => record.work.id,
-            "title" => record.work.title,
+            "id" => record.anime.id,
+            "title" => record.anime.title,
             "title_en" => "",
-            "title_kana" => record.work.title_kana,
+            "title_kana" => record.anime.title_kana,
             "media" => "tv",
             "media_text" => "TV",
             "released_on" => "2012-04-05",

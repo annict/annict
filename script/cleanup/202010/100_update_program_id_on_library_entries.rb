@@ -7,7 +7,7 @@ users.find_each do |user|
   p "user: #{user.id}"
 
   ActiveRecord::Base.transaction do
-    ChannelWork.where(user: user).find_each do |cw|
+    ChannelAnime.where(user: user).find_each do |cw|
       program = Program.find_by(channel_id: cw.channel_id, work_id: cw.work_id)
 
       next unless program

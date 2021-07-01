@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module V4
-  class UserEmailsController < ApplicationController
+  class UserEmailsController < V4::ApplicationController
     before_action :authenticate_user!
 
     def update

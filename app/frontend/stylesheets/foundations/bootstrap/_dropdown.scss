@@ -1,0 +1,13 @@
+.dropdown-menu {
+  @include color-scheme(dark) {
+    background-color: $ann-card-bg-dark;
+    border-color: $ann-border-color-dark-2;
+    color: $ann-body-color-dark;
+  }
+}
+
+.dropdown-item {
+  @include color-scheme(dark) {
+    color: $ann-body-color-dark;
+  }
+}

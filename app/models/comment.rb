@@ -29,13 +29,13 @@
 #
 
 class Comment < ApplicationRecord
-  include Localizable
+  include UgcLocalizable
 
   counter_culture :episode_record
 
   belongs_to :episode_record
   belongs_to :user
-  belongs_to :work
+  belongs_to :anime, foreign_key: :work_id
   has_many :likes, as: :recipient, dependent: :destroy
   has_many :notifications, as: :trackable, dependent: :destroy
 

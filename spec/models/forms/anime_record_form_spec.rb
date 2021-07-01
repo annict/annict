@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe Forms::AnimeRecordForm do
-  let(:anime) { create :work }
+  let(:anime) { create :anime }
 
   context "バリデーションエラーになったとき" do
     it "エラー内容を返すこと" do

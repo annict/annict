@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :trailer do
-    work
+    anime
     url { "https://www.youtube.com/watch?v=2ZR6fCnPcvA" }
     title { "コミックマーケット86公開PV" }
 
