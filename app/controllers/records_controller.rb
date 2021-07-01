@@ -3,7 +3,7 @@
 class RecordsController < ApplicationV6Controller
   include Pundit
 
-  before_action :authenticate_user!, only: %i[update]
+  before_action :authenticate_user!, only: %i[update destroy]
 
   def index
     set_page_category PageCategory::RECORD_LIST
@@ -53,6 +53,25 @@ class RecordsController < ApplicationV6Controller
     end
 
     head 204
+  end
+
+  def destroy
+    @user = User.only_kept.find_by!(username: params[:username])
+    @record = @user.records.only_kept.find(params[:record_id])
+
+    authorize(@record, :destroy?)
+
+    Destroyers::RecordDestroyer.new(record: @record).call
+
+    path = if @record.episode_record?
+      episode_record = @record.episode_record
+      episode_path(anime_id: episode_record.work_id, episode_id: episode_record.episode_id)
+    else
+      work_record = @record.anime_record
+      anime_record_list_path(anime_id: work_record.work_id)
+    end
+
+    redirect_to path, notice: t("messages._common.deleted")
   end
 
   private
