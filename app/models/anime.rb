@@ -103,7 +103,7 @@ class Anime < ApplicationRecord
   belongs_to :season_model, class_name: "SeasonModel", foreign_key: :season_id, optional: true
   has_many :casts, dependent: :destroy, foreign_key: :work_id
   has_many :programs, dependent: :destroy, foreign_key: :work_id
-  has_many :series_works, dependent: :destroy
+  has_many :series_animes, dependent: :destroy, foreign_key: :work_id
   has_many :staffs, dependent: :destroy, foreign_key: :work_id
   has_many :work_taggings
   has_many :activities, as: :recipient
@@ -118,7 +118,7 @@ class Anime < ApplicationRecord
   has_many :slots, dependent: :destroy, foreign_key: :work_id
   has_many :trailers, dependent: :destroy, foreign_key: :work_id
   has_many :records, foreign_key: :work_id
-  has_many :series_list, through: :series_works, source: :series
+  has_many :series_list, through: :series_animes, source: :series
   has_many :statuses
   has_many :staff_people, through: :staffs, source: :resource, source_type: "Person"
   has_many :channels, through: :programs

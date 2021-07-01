@@ -56,7 +56,7 @@
                 <%= series_work.id %>
               </td>
               <td>
-                <%= link_to series_work.anime.local_title, anime_path(anime_id: series_work.work.id), target: "_blank" %>
+                <%= link_to series_work.anime.local_title, anime_path(anime_id: series_work.anime.id), target: "_blank" %>
               </td>
               <td>
                 <%= series_work.anime.release_season.presence || "-" %>

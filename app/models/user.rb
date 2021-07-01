@@ -289,11 +289,11 @@ class User < ApplicationRecord
   end
 
   def status_kind(work)
-    library_entries.find_by(work: work)&.status&.kind.presence || "no_select"
+    library_entries.find_by(anime: work)&.status&.kind.presence || "no_select"
   end
 
   def status_kind_v3(work)
-    Status.kind_v2_to_v3(library_entries.find_by(work: work)&.status&.kind)&.to_s.presence || "no_status"
+    Status.kind_v2_to_v3(library_entries.find_by(anime: work)&.status&.kind)&.to_s.presence || "no_status"
   end
 
   def encoded_id
