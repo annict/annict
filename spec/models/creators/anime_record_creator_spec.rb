@@ -104,7 +104,7 @@ describe Creators::AnimeRecordCreator, type: :model do
       let(:anime) { create :anime }
       # 感想無しの記録が直前にある
       let!(:anime_record) { create(:anime_record, user: user, anime: anime, body: "") }
-      let!(:activity_group) { create(:activity_group, user: user, itemable_type: "WorkRecord", single: false) }
+      let!(:activity_group) { create(:activity_group, user: user, itemable_type: "AnimeRecord", single: false) }
       let!(:activity) { create(:activity, user: user, itemable: anime_record, activity_group: activity_group) }
 
       it "ActivityGroup が新たに作成されないこと" do
@@ -133,7 +133,7 @@ describe Creators::AnimeRecordCreator, type: :model do
         activity_group = user.activity_groups.first
         activity = user.activities.last
 
-        expect(activity_group.itemable_type).to eq "WorkRecord"
+        expect(activity_group.itemable_type).to eq "AnimeRecord"
         expect(activity_group.single).to eq false
 
         expect(activity.itemable).to eq anime_record
