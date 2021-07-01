@@ -51,7 +51,7 @@ describe Creators::AnimeRecordCreator, type: :model do
     expect(anime_record.record_id).to eq record.id
     expect(anime_record.work_id).to eq anime.id
 
-    expect(activity_group.itemable_type).to eq "WorkRecord"
+    expect(activity_group.itemable_type).to eq "AnimeRecord"
     expect(activity_group.single).to eq true
 
     expect(activity.itemable).to eq anime_record
@@ -92,7 +92,7 @@ describe Creators::AnimeRecordCreator, type: :model do
         activity_group = user.activity_groups.last
         activity = user.activities.last
 
-        expect(activity_group.itemable_type).to eq "WorkRecord"
+        expect(activity_group.itemable_type).to eq "AnimeRecord"
         expect(activity_group.single).to eq true
 
         expect(activity.itemable).to eq anime_record
