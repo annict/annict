@@ -61,7 +61,7 @@ module Canary
         end
 
         def anime
-          RecordLoader.for(Work).load(object.work_id)
+          RecordLoader.for(Anime).load(object.work_id)
         end
       end
     end

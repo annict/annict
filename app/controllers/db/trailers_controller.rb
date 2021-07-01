@@ -32,7 +32,7 @@ module Db
     def edit
       @trailer = Trailer.without_deleted.find(params[:id])
       authorize @trailer
-      @work = @trailer.work
+      @work = @trailer.anime
     end
 
     def update

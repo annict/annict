@@ -187,6 +187,10 @@ class User < ApplicationRecord
     watching_works_count
   end
 
+  def animes
+    Anime.joins(:library_entries).merge(library_entries)
+  end
+
   def animes_on(*status_kinds)
     Anime.joins(:library_entries).merge(library_entries.with_status(*status_kinds))
   end

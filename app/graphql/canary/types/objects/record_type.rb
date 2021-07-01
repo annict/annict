@@ -77,7 +77,7 @@ module Canary
             if comp.is_a?(EpisodeRecord)
               Canary::RecordLoader.for(Episode).load(comp.episode_id)
             else
-              Canary::RecordLoader.for(Work).load(comp.work_id)
+              Canary::RecordLoader.for(Anime).load(comp.work_id)
             end
           end
         end

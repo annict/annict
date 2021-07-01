@@ -7,7 +7,7 @@ class EpisodeGeneratorService
 
   def execute!(now:)
     episodeless_slots(now).order(:started_at).each do |slot|
-      work = slot.work
+      work = slot.anime
 
       next if work.manual_episodes_count && work.manual_episodes_count < slot.number
 

@@ -22,7 +22,7 @@ class SyobocalEpisodeDataFetcherService
     episodes.each do |e|
       next if e.raw_number.to_i != e.raw_number
 
-      title = titles.find { |t| t.id == e.work.sc_tid }
+      title = titles.find { |t| t.id == e.anime.sc_tid }
       next unless title
       next unless title.sub_titles
 

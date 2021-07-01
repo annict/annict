@@ -2,7 +2,7 @@
   h3.text-center.mb-3 = year
   .row.ps-3.mb-4
     - resources_with_year[year].group_by(&:work_id).each do |_, resources|
-      - work = resources.first.work
+      - work = resources.first.anime
       .col-2.p-0.pe-3.mb-3
         .c-card
           = link_to anime_path(anime_id: work.id) do
