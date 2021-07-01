@@ -68,7 +68,7 @@ describe "POST /db/series/:series_id/series_works", type: :request do
 
       expect(SeriesAnime.all.size).to eq(1)
       series_work = SeriesAnime.first
-      expect(series_work.work).to eq(work)
+      expect(series_work.anime).to eq(work)
       expect(series_work.summary).to eq("Season 1")
     end
   end

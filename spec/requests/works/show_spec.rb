@@ -137,8 +137,8 @@ describe "GET /works/:id", type: :request do
     let!(:work) { create(:anime) }
     let!(:work2) { create(:anime, :with_current_season) }
     let!(:series) { create(:series) }
-    let!(:series_work) { create(:series_work, series: series, anime: work) }
-    let!(:series_work2) { create(:series_work, series: series, anime: work2) }
+    let!(:series_work) { create(:series_anime, series: series, anime: work) }
+    let!(:series_work2) { create(:series_anime, series: series, anime: work2) }
 
     before do
       get "/works/#{work.id}"

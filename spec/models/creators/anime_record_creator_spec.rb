@@ -35,7 +35,7 @@ describe Creators::AnimeRecordCreator, type: :model do
     expect(user.share_record_to_twitter?).to eq false
 
     record = user.records.first
-    anime_record = user.work_records.first
+    anime_record = user.anime_records.first
     activity_group = user.activity_groups.first
     activity = user.activities.first
 
@@ -88,7 +88,7 @@ describe Creators::AnimeRecordCreator, type: :model do
         expect(ActivityGroup.count).to eq 2 # ActivityGroup が新たに作成されるはず
         expect(Activity.count).to eq 2
 
-        anime_record = user.work_records.last
+        anime_record = user.anime_records.last
         activity_group = user.activity_groups.last
         activity = user.activities.last
 
@@ -129,7 +129,7 @@ describe Creators::AnimeRecordCreator, type: :model do
         expect(ActivityGroup.count).to eq 1 # ActivityGroup は新たに作成されないはず
         expect(Activity.count).to eq 2
 
-        anime_record = user.work_records.last
+        anime_record = user.anime_records.last
         activity_group = user.activity_groups.first
         activity = user.activities.last
 

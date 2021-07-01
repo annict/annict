@@ -53,10 +53,10 @@ describe "Api::V1::Activities" do
           "action" => "create_record",
           "created_at" => "2017-01-28T23:39:04Z",
           "work" => {
-            "id" => record.work.id,
-            "title" => record.work.title,
+            "id" => record.anime.id,
+            "title" => record.anime.title,
             "title_en" => "",
-            "title_kana" => record.work.title_kana,
+            "title_kana" => record.anime.title_kana,
             "media" => "tv",
             "media_text" => "TV",
             "released_on" => "2012-04-05",
