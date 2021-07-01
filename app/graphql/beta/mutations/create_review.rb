@@ -52,7 +52,7 @@ module Beta
         ).call
 
         {
-          review: viewer.work_records.find_by!(record_id: result.record.id)
+          review: viewer.anime_records.find_by!(record_id: result.record.id)
         }
       end
     end

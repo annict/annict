@@ -32,7 +32,7 @@ describe Updaters::AnimeRecordUpdater, type: :model do
     expect(WorkRecord.count).to eq 1
 
     record = user.records.first
-    anime_record = user.work_records.first
+    anime_record = user.anime_records.first
 
     expect(record.work_id).to eq anime.id
 

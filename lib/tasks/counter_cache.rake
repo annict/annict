@@ -351,8 +351,8 @@ namespace :counter_cache do
       episodes_count = work.episodes.only_kept.count
       records_count = work.records.only_kept.count
       watchers_count = work.library_entries.with_status(*kinds).count
-      work_records_count = work.work_records.only_kept.count
-      work_records_with_body_count = work.work_records.only_kept.with_body.count
+      work_records_count = work.anime_records.only_kept.count
+      work_records_with_body_count = work.anime_records.only_kept.with_body.count
 
       next if work.episodes_count == episodes_count &&
         work.records_count == records_count &&
