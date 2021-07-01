@@ -11,7 +11,7 @@
     "graphql:update-api-reference": "bundle exec rake graphql:dump_schema && bundle exec rake graphql:build_docs && cp -rf ./tmp/docs/graphql-api/reference/ ../annict-developers-jp/docs/.vuepress/public/graphql-api/reference"
   },
   "dependencies": {
-    "@babel/core": "^7.11.4",
+    "@babel/core": "^7.14.6",
     "@babel/preset-env": "^7.14.1",
     "@hotwired/turbo": "^7.0.0-beta.5",
     "@rails/ujs": "^6.0.3-7",
@@ -19,7 +19,7 @@
     "autosize": "^4.0.2",
     "axios": "^0.21.1",
     "babel-loader": "^8.2.2",
-    "bootstrap": "^5.0.0",
+    "bootstrap": "^5.0.2",
     "bourbon": "^7.0.0",
     "britecharts": "^2.18.0",
     "choices.js": "^9.0.1",
@@ -50,7 +50,7 @@
     "@types/lodash": "^4.14.160",
     "@types/webpack-env": "^1.16.0",
     "css-loader": "^5.2.6",
-    "eslint": "^7.26.0",
+    "eslint": "^7.29.0",
     "eslint-plugin-import": "^2.22.0",
     "file-loader": "^6.2.0",
     "fork-ts-checker-webpack-plugin": "^6.2.10",
