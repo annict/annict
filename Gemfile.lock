@@ -116,7 +116,7 @@ GEM
       descendants_tracker (~> 0.0.4)
       ice_nine (~> 0.11.0)
       thread_safe (~> 0.3, >= 0.3.1)
-    backport (1.1.2)
+    backport (1.2.0)
     bcrypt (3.1.16)
     benchmark (0.1.1)
     better_errors (2.9.1)
@@ -143,7 +143,7 @@ GEM
     concord (0.1.6)
       adamantium (~> 0.2.0)
       equalizer (~> 0.0.9)
-    concurrent-ruby (1.1.8)
+    concurrent-ruby (1.1.9)
     content_disposition (1.0.0)
     counter_culture (2.8.0)
       activerecord (>= 4.2)
@@ -301,7 +301,6 @@ GEM
     imgix (4.0.2)
     imgix-rails (4.2.0)
       imgix (>= 3.0)
-    io-wait (0.1.0)
     jaro_winkler (1.5.4)
     jb (0.8.0)
     jmespath (1.4.0)
@@ -352,8 +351,7 @@ GEM
     mime-types-data (3.2021.0225)
     mini_magick (4.11.0)
     mini_mime (1.0.3)
-    mini_portile2 (2.5.2)
-      net-ftp (~> 0.1)
+    mini_portile2 (2.5.3)
     minitest (5.14.4)
     mjml-rails (4.6.1)
     moji (1.6)
@@ -368,12 +366,6 @@ GEM
     multi_xml (0.6.0)
     multipart-post (2.1.1)
     naught (1.1.0)
-    net-ftp (0.1.2)
-      net-protocol
-      time
-    net-protocol (0.1.1)
-      io-wait
-      timeout
     nio4r (2.5.7)
     nokogiri (1.11.6)
       mini_portile2 (~> 2.5.0)
@@ -544,7 +536,7 @@ GEM
     sentry-ruby-core (4.5.0)
       concurrent-ruby
       faraday
-    shrine (3.3.0)
+    shrine (3.4.0)
       content_disposition (~> 1.0)
       down (~> 5.1)
     simple_oauth (0.3.1)
@@ -557,10 +549,11 @@ GEM
     slim (4.1.0)
       temple (>= 0.7.6, < 0.9)
       tilt (>= 2.0.6, < 2.1)
-    solargraph (0.41.0)
-      backport (~> 1.1)
+    solargraph (0.42.3)
+      backport (~> 1.2)
       benchmark
       bundler (>= 1.17.2)
+      diff-lcs (~> 1.4)
       e2mmap
       jaro_winkler (~> 1.5)
       kramdown (~> 2.3)
@@ -594,9 +587,7 @@ GEM
     thor (1.1.0)
     thread_safe (0.3.6)
     tilt (2.0.10)
-    time (0.1.0)
     timecop (0.9.4)
-    timeout (0.1.1)
     traceroute (0.8.1)
       rails (>= 3.0.0)
     twitter (7.0.0)
@@ -630,7 +621,7 @@ GEM
     validate_url (1.0.13)
       activemodel (>= 3.0.0)
       public_suffix
-    view_component (2.32.0)
+    view_component (2.34.0)
       activesupport (>= 5.0.0, < 7.0)
     virtus (1.0.5)
       axiom-types (~> 0.1)
