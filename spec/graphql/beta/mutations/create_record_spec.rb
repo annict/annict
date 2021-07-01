@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe "GraphQL API Mutation" do
+describe "GraphQL API (Beta) Mutation" do
   describe "createRecord" do
     let!(:episode) { create(:episode) }
     let!(:user) { create(:user, :with_setting) }
