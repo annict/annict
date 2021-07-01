@@ -56,50 +56,6 @@ describe "GET /works/:id", type: :request do
     end
   end
 
-  context "when characters have been added" do
-    let!(:work) { create(:anime) }
-    let!(:cast) { create(:cast, anime: work) }
-
-    before do
-      get "/works/#{work.id}"
-    end
-
-    it "displays character name" do
-      expect(response.status).to eq(200)
-      expect(response.body).to include(cast.character.name)
-    end
-  end
-
-  context "when staffs (people) have been added" do
-    let!(:work) { create(:anime) }
-    let!(:person) { create(:person) }
-    let!(:staff) { create(:staff, anime: work, resource: person) }
-
-    before do
-      get "/works/#{work.id}"
-    end
-
-    it "displays staff name" do
-      expect(response.status).to eq(200)
-      expect(response.body).to include(staff.resource.name)
-    end
-  end
-
-  context "when staffs (organizations) have been added" do
-    let!(:work) { create(:anime) }
-    let!(:organization) { create(:organization) }
-    let!(:staff) { create(:staff, anime: work, resource: organization) }
-
-    before do
-      get "/works/#{work.id}"
-    end
-
-    it "displays staff name" do
-      expect(response.status).to eq(200)
-      expect(response.body).to include(staff.resource.name)
-    end
-  end
-
   context "when vods have been added" do
     let!(:work) { create(:anime) }
     let!(:channel) { Channel.with_vod.first }
@@ -130,24 +86,6 @@ describe "GET /works/:id", type: :request do
     it "displays work record body" do
       expect(response.status).to eq(200)
       expect(response.body).to include(work_record.body)
-    end
-  end
-
-  context "when series have been added" do
-    let!(:work) { create(:anime) }
-    let!(:work2) { create(:anime, :with_current_season) }
-    let!(:series) { create(:series) }
-    let!(:series_work) { create(:series_anime, series: series, anime: work) }
-    let!(:series_work2) { create(:series_anime, series: series, anime: work2) }
-
-    before do
-      get "/works/#{work.id}"
-    end
-
-    it "displays series" do
-      expect(response.status).to eq(200)
-      expect(response.body).to include(series_work.series.name)
-      expect(response.body).to include(series_work2.series.name)
     end
   end
 end
