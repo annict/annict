@@ -143,7 +143,7 @@ GEM
     concord (0.1.6)
       adamantium (~> 0.2.0)
       equalizer (~> 0.0.9)
-    concurrent-ruby (1.1.8)
+    concurrent-ruby (1.1.9)
     content_disposition (1.0.0)
     counter_culture (2.8.0)
       activerecord (>= 4.2)
@@ -621,7 +621,7 @@ GEM
     validate_url (1.0.13)
       activemodel (>= 3.0.0)
       public_suffix
-    view_component (2.32.0)
+    view_component (2.34.0)
       activesupport (>= 5.0.0, < 7.0)
     virtus (1.0.5)
       axiom-types (~> 0.1)
