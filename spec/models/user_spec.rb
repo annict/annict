@@ -69,7 +69,7 @@ describe User, type: :model do
 
         activity_group = user.activity_groups.first
 
-        expect(activity_group.itemable_type).to eq "WorkRecord"
+        expect(activity_group.itemable_type).to eq "AnimeRecord"
         expect(activity_group.single).to eq true
       end
     end
@@ -87,7 +87,7 @@ describe User, type: :model do
 
         activity_group = user.activity_groups.first
 
-        expect(activity_group.itemable_type).to eq "WorkRecord"
+        expect(activity_group.itemable_type).to eq "AnimeRecord"
         expect(activity_group.single).to eq false
       end
     end

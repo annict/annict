@@ -39,7 +39,7 @@ class UserSlotsQuery
   end
 
   def call
-    collection = user_slots.preload(:channel, work: :anime_image, episode: :work)
+    collection = user_slots.preload(:channel, anime: :anime_image, episode: :anime)
     order_collection(collection)
   end
 

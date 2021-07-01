@@ -25,7 +25,7 @@ module Canary
           @records.order(order.field => order.direction)
         when :likes_count
           @records
-            .joins(:work_record)
+            .joins(:anime_record)
             .order("work_records.likes_count": order.direction, "records.created_at": :desc)
         when :rating
           order_sql = <<~SQL
@@ -38,7 +38,7 @@ module Canary
           SQL
 
           @records
-            .joins(:work_record)
+            .joins(:anime_record)
             .order(Arel.sql(order_sql))
             .order("records.created_at": :desc)
         else

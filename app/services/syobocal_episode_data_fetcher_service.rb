@@ -12,7 +12,7 @@ class SyobocalEpisodeDataFetcherService
       .where(title: [nil, ""])
       .where.not(raw_number: nil)
       .after(now - 7.days)
-      .joins(:work, :slots)
+      .joins(:anime, :slots)
       .merge(Anime.where.not(sc_tid: nil))
       .merge(Slot.where.not(program_id: nil))
       .distinct

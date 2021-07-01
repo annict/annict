@@ -8,7 +8,7 @@ module TrackableEpisodeListSettable
       .library_entries
       .with_not_deleted_anime
       .wanna_watch_and_watching
-      .eager_load(:work, program: :channel)
+      .eager_load(:anime, program: :channel)
       .merge(Anime.where(no_episodes: false))
       .order(:position)
       .page(params[:page])
