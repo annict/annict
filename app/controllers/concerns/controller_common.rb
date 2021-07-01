@@ -61,11 +61,6 @@ module ControllerCommon
 
     private
 
-    def load_new_user
-      return if user_signed_in?
-      @new_user = User.new_with_session({}, session)
-    end
-
     def discord_invite_url
       ENV.fetch("ANNICT_DISCORD_INVITE_URL")
     end
