@@ -6,7 +6,6 @@ class ApplicationController < ActionController::Base
   include ControllerCommon
   include Analyzable
   include LogrageSetting
-  include Gonable
   include ViewSelector
   include FlashMessage
   include SentryLoadable
@@ -23,7 +22,6 @@ class ApplicationController < ActionController::Base
   helper_method :gon, :locale_ja?, :locale_en?, :local_url, :page_category
 
   before_action :load_new_user
-  before_action :store_data_into_gon
   around_action :set_locale
 
   # テスト実行時にDragonflyでアップロードした画像を読み込むときに呼ばれるアクション

@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class OrganizationsController < ApplicationV6Controller
-  before_action :load_i18n, only: %i[show]
-
   def show
     @organization = Organization.only_kept.find(params[:organization_id])
     @staffs_with_year = @organization
@@ -19,16 +17,5 @@ class OrganizationsController < ApplicationV6Controller
       .eager_load(user: :profile)
       .merge(User.only_kept)
       .order(id: :desc)
-  end
-
-  private
-
-  def load_i18n
-    keys = {
-      "messages._components.favorite_button.add_to_favorites": nil,
-      "messages._components.favorite_button.added_to_favorites": nil
-    }
-
-    load_i18n_into_gon keys
   end
 end

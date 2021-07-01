@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class PeopleController < ApplicationV6Controller
-  before_action :load_i18n, only: %i[show]
-
   def show
     @person = Person.only_kept.find(params[:person_id])
 
@@ -34,16 +32,5 @@ class PeopleController < ApplicationV6Controller
       .joins(:user)
       .merge(User.only_kept)
       .order(id: :desc)
-  end
-
-  private
-
-  def load_i18n
-    keys = {
-      "messages._components.favorite_button.add_to_favorites": nil,
-      "messages._components.favorite_button.added_to_favorites": nil
-    }
-
-    load_i18n_into_gon keys
   end
 end
