@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class WorkRecordPolicy < ApplicationPolicy
+class AnimeRecordPolicy < ApplicationPolicy
   def update?
     user == record.user
   end

@@ -56,7 +56,9 @@ class ActivityGroup < ApplicationRecord
       .where(id: all_activities_by_trackable_type["Status"]&.pluck(:trackable_id))
       .order(created_at: :desc)
     all_episode_records = EpisodeRecord.where(id: all_activities_by_trackable_type["EpisodeRecord"]&.pluck(:trackable_id))
-    all_anime_records = AnimeRecord.where(id: all_activities_by_trackable_type["WorkRecord"]&.pluck(:trackable_id))
+    anime_record_ids = (all_activities_by_trackable_type["AnimeRecord"]&.pluck(:trackable_id).presence || []) +
+      (all_activities_by_trackable_type["WorkRecord"]&.pluck(:trackable_id).presence || [])
+    all_anime_records = AnimeRecord.where(id: anime_record_ids)
     all_records = Record
       .preload(:user, anime: :anime_image, episode_record: [:episode])
       .where(id: all_episode_records.pluck(:record_id) + all_anime_records.pluck(:record_id))
@@ -72,7 +74,7 @@ class ActivityGroup < ApplicationRecord
       when "EpisodeRecord"
         episode_records = all_episode_records.find_all { |er| activities.pluck(:trackable_id).include?(er.id) }
         all_records.find_all { |r| episode_records.pluck(:record_id).include?(r.id) }
-      when "WorkRecord"
+      when "AnimeRecord", "WorkRecord"
         anime_records = all_anime_records.find_all { |ar| activities.pluck(:trackable_id).include?(ar.id) }
         all_records.find_all { |r| anime_records.pluck(:record_id).include?(r.id) }
       end
