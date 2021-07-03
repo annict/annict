@@ -21,9 +21,11 @@ module Beta
 
         form = Forms::StatusForm.new(anime: anime, kind: state)
 
-        if form.valid?
-          Updaters::StatusUpdater.new(user: context[:viewer], form: form).call
+        if form.invalid?
+          raise GraphQL::ExecutionError, form.errors.full_messages.first
         end
+
+        Updaters::StatusUpdater.new(user: context[:viewer], form: form).call
 
         {
           work: anime
