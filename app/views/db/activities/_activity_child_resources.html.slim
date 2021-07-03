@@ -1,7 +1,7 @@
 .c-db-activity
   .c-db-activity__header.row.mb-3
     .col
-      span.c-db-activity__avatar
+      span.me-1
         = link_to profile_path(activity.user.username) do
           = image_tag v4_ann_image_url(activity.user.profile, :image, size: "35x35"), alt: activity.user.username, class: "rounded-circle", loading: :lazy
       = render "db/activities/activity_child_resources_action", activity: activity
