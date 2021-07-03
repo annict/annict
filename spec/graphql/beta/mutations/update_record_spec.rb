@@ -13,9 +13,9 @@ describe Beta::Mutations::UpdateRecord do
   context "正常系" do
     let(:query) do
       <<~GRAPHQL
-        mutation {
+        mutation($recordId: ID!) {
           updateRecord(input: {
-            recordId: "#{episode_record_id}",
+            recordId: $recordId,
             comment: "またーり",
             ratingState: GREAT
           }) {
@@ -28,6 +28,7 @@ describe Beta::Mutations::UpdateRecord do
         }
       GRAPHQL
     end
+    let(:variables) { {recordId: episode_record_id} }
 
     it "更新されたRecordデータが返ること" do
       expect(Record.count).to eq 1
@@ -36,7 +37,7 @@ describe Beta::Mutations::UpdateRecord do
       expect(episode_record.rating_state).to be_nil
 
       record_cache_expired_at = user.record_cache_expired_at
-      result = Beta::AnnictSchema.execute(query, context: context)
+      result = Beta::AnnictSchema.execute(query, variables: variables, context: context)
 
       expect(Record.count).to eq 1
       expect(EpisodeRecord.count).to eq 1
