@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Canary::Mutations::UpdateEpisodeRecord do
+describe Beta::Mutations::UpdateRecord do
   let!(:user) { create :registered_user }
   let!(:anime) { create :anime }
   let!(:episode) { create :episode, anime: anime }
@@ -8,36 +8,27 @@ describe Canary::Mutations::UpdateEpisodeRecord do
   let!(:episode_record) { create(:episode_record, user: user, record: record, anime: anime, episode: episode, rating: nil) }
   let!(:token) { create(:oauth_access_token) }
   let!(:context) { {viewer: user, doorkeeper_token: token, writable: true} }
-  let!(:record_id) { Canary::AnnictSchema.id_from_object(record, record.class) }
+  let!(:episode_record_id) { Canary::AnnictSchema.id_from_object(episode_record, episode_record.class) }
 
   context "正常系" do
     let(:query) do
       <<~GRAPHQL
         mutation($recordId: ID!) {
-          updateEpisodeRecord(input: {
+          updateRecord(input: {
             recordId: $recordId,
             comment: "またーり",
-            rating: GREAT
+            ratingState: GREAT
           }) {
             record {
-              databaseId
+              annictId
               comment
-
-              recordable {
-                ... on EpisodeRecord {
-                  rating
-                }
-              }
-            }
-
-            errors {
-              message
+              ratingState
             }
           }
         }
       GRAPHQL
     end
-    let(:variables) { {recordId: record_id} }
+    let(:variables) { {recordId: episode_record_id} }
 
     it "更新されたRecordデータが返ること" do
       expect(Record.count).to eq 1
@@ -46,15 +37,14 @@ describe Canary::Mutations::UpdateEpisodeRecord do
       expect(episode_record.rating_state).to be_nil
 
       record_cache_expired_at = user.record_cache_expired_at
-      result = Canary::AnnictSchema.execute(query, variables: variables, context: context)
+      result = Beta::AnnictSchema.execute(query, variables: variables, context: context)
 
       expect(Record.count).to eq 1
       expect(EpisodeRecord.count).to eq 1
 
       expect(result["errors"]).to be_nil
-      expect(result.dig("data", "updateEpisodeRecord", "errors")).to be_empty
-      expect(result.dig("data", "updateEpisodeRecord", "record", "comment")).to eq "またーり"
-      expect(result.dig("data", "updateEpisodeRecord", "record", "recordable", "rating")).to eq "GREAT"
+      expect(result.dig("data", "updateRecord", "record", "comment")).to eq "またーり"
+      expect(result.dig("data", "updateRecord", "record", "ratingState")).to eq "GREAT"
       expect(user.record_cache_expired_at).to_not eq record_cache_expired_at
     end
   end

@@ -22,6 +22,10 @@ module Creators
         share_to_twitter: @form.share_to_twitter
       )
 
+      if @form.deprecated_title.present?
+        anime_record.body = "#{@form.deprecated_title}\n\n#{anime_record.body}"
+      end
+
       ActiveRecord::Base.transaction do
         anime_record.save!
 

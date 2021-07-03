@@ -6,8 +6,8 @@ module Beta
       argument :review_id, ID, required: true
       argument :title, String, required: false
       argument :body, String, required: true
-      WorkRecord::STATES.each do |state|
-        argument state.to_s.camelcase(:lower).to_sym, Beta::Types::Enums::RatingState, required: true
+      AnimeRecord::STATES.each do |state|
+        argument state, Beta::Types::Enums::RatingState, required: true
       end
       argument :share_twitter, Boolean, required: false
       argument :share_facebook, Boolean, required: false
@@ -16,7 +16,8 @@ module Beta
 
       def resolve(
         review_id:,
-        body:, title: nil,
+        body:,
+        title: nil,
         rating_overall_state: nil,
         rating_animation_state: nil,
         rating_music_state: nil,
@@ -28,31 +29,34 @@ module Beta
         raise Annict::Errors::InvalidAPITokenScopeError unless context[:doorkeeper_token].writable?
 
         viewer = context[:viewer]
-        work_record = viewer.anime_records.only_kept.find_by_graphql_id(review_id)
+        anime_record = viewer.anime_records.only_kept.find_by_graphql_id(review_id)
+        anime = anime_record.anime
+        record = anime_record.record
 
-        work_record.title = title
-        work_record.body = body
-        WorkRecord::STATES.each do |state|
-          work_record.send("#{state}=".to_sym, send(state.to_s.camelcase(:lower).to_sym)&.downcase)
+        form = Forms::AnimeRecordForm.new(
+          anime: anime,
+          comment: body,
+          oauth_application: context[:doorkeeper_token].application,
+          rating_animation: rating_animation_state,
+          rating_character: rating_character_state,
+          rating_music: rating_music_state,
+          rating_overall: rating_overall_state,
+          rating_story: rating_story_state,
+          record: record,
+          share_to_twitter: share_twitter
+        )
+
+        if form.invalid?
+          raise GraphQL::ExecutionError, form.errors.full_messages.first
         end
-        work_record.modified_at = Time.now
-        work_record.oauth_application = context[:doorkeeper_token].application
-        work_record.detect_locale!(:body)
 
-        viewer.setting.attributes = {
-          share_review_to_twitter: share_twitter == true,
-          share_review_to_facebook: share_facebook == true
-        }
-
-        work_record.save!
-        viewer.setting.save!
-
-        if share_twitter
-          viewer.share_work_record_to_twitter(work_record)
-        end
+        result = Updaters::AnimeRecordUpdater.new(
+          user: viewer,
+          form: form
+        ).call
 
         {
-          review: work_record
+          review: result.record.anime_record
         }
       end
     end

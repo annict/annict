@@ -32,31 +32,32 @@ module Api
 
         def update
           @episode_record = current_user.episode_records.only_kept.find(@params.id)
-          @episode_record.rating = @params.rating
-          @episode_record.rating_state = @params.rating_state
-          @episode_record.body = @params.comment
-          @episode_record.share_to_twitter = @params.share_twitter == "true"
-          @episode_record.modify_body = true
-          @episode_record.oauth_application = doorkeeper_token.application
-          @episode_record.detect_locale!(:body)
+          episode = @episode_record.episode
+          record = @episode_record.record
 
-          if @episode_record.valid?
-            ActiveRecord::Base.transaction do
-              @episode_record.save(validate: false)
-              current_user.update_share_record_setting(@episode_record.share_to_twitter)
+          form = Forms::EpisodeRecordForm.new(
+            comment: @params.comment,
+            episode: episode,
+            oauth_application: doorkeeper_token.application,
+            rating: @params.rating_state,
+            deprecated_rating: @params.rating,
+            record: record,
+            share_to_twitter: @params.share_twitter
+          )
 
-              if current_user.share_record_to_twitter?
-                current_user.share_episode_record_to_twitter(@episode_record)
-              end
-            end
-          else
-            render_validation_errors(@episode_record)
+          if form.invalid?
+            return render_validation_error(form.errors.full_messages.first)
           end
+
+          Updaters::EpisodeRecordUpdater.new(
+            user: current_user,
+            form: form
+          ).call
         end
 
         def destroy
           @episode_record = current_user.episode_records.only_kept.find(@params.id)
-          @episode_record.record.destroy
+          Destroyers::RecordDestroyer.new(record: @episode_record.record).call
           head 204
         end
 

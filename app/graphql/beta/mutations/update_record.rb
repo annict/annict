@@ -15,22 +15,28 @@ module Beta
         raise Annict::Errors::InvalidAPITokenScopeError unless context[:doorkeeper_token].writable?
 
         viewer = context[:viewer]
-        record = viewer.episode_records.only_kept.find_by_graphql_id(record_id)
+        episode_record = viewer.episode_records.only_kept.find_by_graphql_id(record_id)
 
-        record.rating_state = rating_state&.downcase
-        record.modify_body = record.body != comment
-        record.body = comment
-        record.oauth_application = context[:doorkeeper_token].application
-        record.detect_locale!(:comment)
+        form = Forms::EpisodeRecordForm.new(
+          comment: comment,
+          episode: episode_record.episode,
+          oauth_application: context[:doorkeeper_token].application,
+          rating: rating_state&.downcase,
+          record: episode_record.record,
+          share_to_twitter: share_twitter
+        )
 
-        record.save!
-
-        if share_twitter
-          viewer.share_episode_record_to_twitter(record)
+        if form.invalid?
+          raise GraphQL::ExecutionError, form.errors.full_messages.first
         end
 
+        result = Updaters::EpisodeRecordUpdater.new(
+          user: viewer,
+          form: form
+        ).call
+
         {
-          record: record
+          record: result.record.episode_record
         }
       end
     end

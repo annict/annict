@@ -26,7 +26,7 @@ module Beta
         )
 
         if form.invalid?
-          raise GraphQL::ExecutionError, form.errors.first.message
+          raise GraphQL::ExecutionError, form.errors.full_messages.first
         end
 
         result = Creators::EpisodeRecordCreator.new(

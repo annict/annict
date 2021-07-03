@@ -11,9 +11,9 @@ describe Canary::Mutations::UpdateAnimeRecord do
   context "正常系" do
     let(:query) do
       <<~GRAPHQL
-        mutation {
+        mutation($recordId: ID!) {
           updateAnimeRecord(input: {
-            recordId: "#{record_id}",
+            recordId: $recordId,
             ratingOverall: GREAT,
             ratingAnimation: GREAT,
             ratingMusic: GREAT,
@@ -43,6 +43,7 @@ describe Canary::Mutations::UpdateAnimeRecord do
         }
       GRAPHQL
     end
+    let(:variables) { {recordId: record_id} }
 
     it "更新されたRecordデータが返ること" do
       expect(Record.count).to eq 1
@@ -55,7 +56,7 @@ describe Canary::Mutations::UpdateAnimeRecord do
       expect(anime_record.rating_character_state).to be_nil
 
       record_cache_expired_at = user.record_cache_expired_at
-      result = Canary::AnnictSchema.execute(query, context: context)
+      result = Canary::AnnictSchema.execute(query, variables: variables, context: context)
 
       expect(Record.count).to eq 1
       expect(WorkRecord.count).to eq 1

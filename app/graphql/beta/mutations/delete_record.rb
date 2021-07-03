@@ -11,7 +11,7 @@ module Beta
         raise Annict::Errors::InvalidAPITokenScopeError unless context[:doorkeeper_token].writable?
 
         episode_record = context[:viewer].episode_records.only_kept.find_by_graphql_id(record_id)
-        episode_record.record.destroy
+        Destroyers::RecordDestroyer.new(record: episode_record.record).call
 
         {
           episode: episode_record.episode
