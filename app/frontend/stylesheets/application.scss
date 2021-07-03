@@ -77,8 +77,9 @@
 
 // Layouts
 
-@import './layouts/default';
-@import './layouts/welcome';
+@import './layouts/db-default';
+@import './layouts/main-default';
+@import './layouts/main-welcome';
 
 // Components
 
@@ -86,6 +87,7 @@
 @import './components/anime-header';
 @import './components/anime-picture';
 @import './components/body';
+@import './components/db-sidebar';
 @import './components/flash';
 @import './components/footer';
 @import './components/hero';

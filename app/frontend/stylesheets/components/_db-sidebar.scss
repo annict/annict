@@ -1,0 +1,46 @@
+.c-db-sidebar {
+  a {
+    color: $white;
+
+    &:hover {
+      color: $white;
+      text-decoration: none;
+    }
+  }
+
+  input {
+    font-size: 0.95rem;
+  }
+
+  &__lockup {
+    display: block;
+    font-size: 1.5rem;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    width: 100%;
+
+    &__logo {
+      font-family: 'Raleway', sans-serif;
+    }
+
+    &__brand {
+      margin-left: 0.3rem;
+    }
+  }
+
+  &__menu {
+    a {
+      padding: 0.5rem 0;
+      width: 100%;
+    }
+  }
+
+  &__annict-link {
+    background-color: $ann-mizuho-color;
+    bottom: 0;
+    padding: 0.3rem;
+    position: absolute;
+    width: 100%;
+  }
+}
