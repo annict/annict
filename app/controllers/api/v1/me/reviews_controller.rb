@@ -31,54 +31,43 @@ module Api
         end
 
         def update
-          @work_record = current_user.anime_records.only_kept.find(@params.id)
-          @work_record.title = @params.title
-          @work_record.body = @params.body
-          @work_record.rating_animation_state = @params.rating_animation_state
-          @work_record.rating_music_state = @params.rating_music_state
-          @work_record.rating_story_state = @params.rating_story_state
-          @work_record.rating_character_state = @params.rating_character_state
-          @work_record.rating_overall_state = @params.rating_overall_state
-          @work_record.modified_at = Time.now
-          @work_record.oauth_application = doorkeeper_token.application
-          @work_record.detect_locale!(:body)
-          current_user.setting.attributes = {
-            share_review_to_twitter: @params.share_twitter == "true",
-            share_review_to_facebook: @params.share_facebook == "true"
-          }
+          anime_record = current_user.anime_records.only_kept.find(@params.id)
+          anime = anime_record.anime
+          record = anime_record.record
 
-          if @work_record.valid?
-            ActiveRecord::Base.transaction do
-              @work_record.save(validate: false)
-              current_user.setting.save!
-            end
+          form = Forms::AnimeRecordForm.new(
+            anime: anime,
+            deprecated_title: @params.title,
+            comment: @params.body,
+            oauth_application: doorkeeper_token.application,
+            rating_animation: @params.rating_animation_state,
+            rating_character: @params.rating_character_state,
+            rating_music: @params.rating_music_state,
+            rating_overall: @params.rating_overall_state,
+            rating_story: @params.rating_story_state,
+            record: record,
+            share_to_twitter: @params.share_twitter
+          )
 
-            if @params.share_twitter == "true"
-              current_user.share_work_record_to_twitter(@work_record)
-            end
-          else
-            render_validation_errors(@work_record)
+          if form.invalid?
+            return render_validation_error(form.errors.full_messages.first)
           end
+
+          result = Updaters::AnimeRecordUpdater.new(
+            user: current_user,
+            form: form
+          ).call
+
+          @work_record = result.record.anime_record
         end
 
         def destroy
-          @work_record = current_user.anime_records.only_kept.find(@params.id)
-          @work_record.record.destroy
+          anime_record = current_user.anime_records.only_kept.find(@params.id)
+          Destroyers::RecordDestroyer.new(record: anime_record.record).call
           head 204
         end
 
         private
-
-        def render_validation_errors(review)
-          errors = review.errors.full_messages.map { |message|
-            {
-              type: "invalid_params",
-              message: message
-            }
-          }
-
-          render json: {errors: errors}, status: 400
-        end
 
         def render_validation_error(message)
           render(
