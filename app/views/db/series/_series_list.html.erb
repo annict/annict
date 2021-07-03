@@ -1,4 +1,4 @@
-<table class="table table-hover table-sm">
+<table class="table table-sm">
   <thead>
     <tr>
       <th>
@@ -26,10 +26,10 @@
           <br>
           <%= series.name_en.presence || "-" %>
         </td>
-        <td>
+        <td class="align-middle">
           <%= render Db::PublishingStateLabelComponent.new(resource: series) %>
         </td>
-        <td>
+        <td class="align-middle">
           <%= render Db::ActionButtonsComponent.new(
             user: current_user,
             resource: series,

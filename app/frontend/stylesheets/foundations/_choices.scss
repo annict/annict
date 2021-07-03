@@ -1,0 +1,5 @@
+.choices {
+  @include color-scheme(dark) {
+    color: $body-color;
+  }
+}

@@ -45,6 +45,7 @@
 @import '~bootstrap/scss/helpers';
 @import '~bootstrap/scss/utilities/api';
 @import '~britecharts/src/styles/britecharts';
+@import '~choices.js/src/styles/choices';
 
 // Foundations
 
@@ -60,6 +61,7 @@
 @import './foundations/bootstrap/table';
 @import './foundations/bootstrap/text';
 @import './foundations/bootstrap/utilities';
+@import './foundations/choices';
 
 @import './foundations/annict/html';
 @import './foundations/annict/body';
@@ -92,6 +94,7 @@
 @import './components/flash';
 @import './components/footer';
 @import './components/hero';
+@import './components/label-required';
 @import './components/main-sidebar';
 @import './components/nav';
 @import './components/record-header';
