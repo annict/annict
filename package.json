@@ -19,7 +19,7 @@
     "autosize": "^4.0.2",
     "axios": "^0.21.1",
     "babel-loader": "^8.2.2",
-    "bootstrap": "^5.0.0",
+    "bootstrap": "^5.0.2",
     "bourbon": "^7.0.0",
     "britecharts": "^2.18.0",
     "choices.js": "^9.0.1",
