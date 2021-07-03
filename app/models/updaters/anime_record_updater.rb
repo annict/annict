@@ -22,6 +22,10 @@ module Updaters
       @anime_record.oauth_application = @form.oauth_application
       @anime_record.detect_locale!(:body)
 
+      if @form.deprecated_title.present?
+        @anime_record.body = "#{@form.deprecated_title}\n\n#{@anime_record.body}"
+      end
+
       ActiveRecord::Base.transaction do
         @anime_record.save!
         @record.touch

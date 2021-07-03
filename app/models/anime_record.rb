@@ -104,8 +104,6 @@ class AnimeRecord < ApplicationRecord
     order(Arel.sql(order_sql))
   }
 
-  before_save :append_title_to_body
-
   def comment
     body
   end
@@ -151,13 +149,5 @@ class AnimeRecord < ApplicationRecord
 
   def needs_single_activity_group?
     body.present?
-  end
-
-  private
-
-  # For backward compatible on API
-  def append_title_to_body
-    self.body = "#{title}\n\n#{body}" if title.present?
-    self.title = ""
   end
 end
