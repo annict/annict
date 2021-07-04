@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
 class BodyV6Component < ApplicationV6Component
-  def initialize(view_context, height: nil, class_name: "")
+  def initialize(view_context, content:, format: :simple, height: nil, class_name: "")
     super view_context
+    @content = content
+    @format = format
     @height = height
     @class_name = class_name
   end
@@ -15,7 +17,7 @@ class BodyV6Component < ApplicationV6Component
         data_body_height: @height
       } do
         h.tag :div, class: "c-body__content", data_body_target: "content" do
-          yield h
+          h.html render_content
         end
 
         h.tag :div,
@@ -33,6 +35,17 @@ class BodyV6Component < ApplicationV6Component
           end
         end
       end
+    end
+  end
+
+  private
+
+  def render_content
+    case @format
+    when :simple
+      simple_format(@content)
+    when :markdown
+      view_context.render_markdown(@content)
     end
   end
 end
