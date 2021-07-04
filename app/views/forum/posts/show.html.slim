@@ -6,12 +6,12 @@
 .container.py-3
   div
     .mb-1
-      = link_to @post.forum_category.local_name,  forum_category_path(@post.forum_category.slug), class: "badge bg-secondary"
+      = link_to @post.forum_category.local_name,  forum_category_path(@post.forum_category.slug), class: "badge bg-secondary rounded-pill"
     h1.h2.mb-0
       = @post.title
 
 .container
-  .card
+  .card.rounded-3
     .card-body
       .gx-3.row
         .col-auto
@@ -34,7 +34,7 @@
 
   - if @comments.present?
     - @comments.each do |comment|
-      .card.mt-3
+      .card.rounded-3.mt-3
         .card-body
           - if comment.user
             .row.mb-3
@@ -58,10 +58,10 @@
           - else
             = t "messages.forum.comments.deleted"
   - else
-    .card.mt-3
+    .card.mt-3.rounded-3
       .card-body
         = render "application/components/empty", text: t("messages.forum.posts.no_comments")
 
-  .card.mt-3
+  .card.mt-3.rounded-3
     .card-body
       = render "forum/comments/form", comment: @comment, form_url: forum_comment_list_path(@comment.forum_post), form_method: :post, submit_text: t("verb.comment")
