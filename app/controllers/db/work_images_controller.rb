@@ -11,7 +11,7 @@ module Db
 
     def create
       @work = Anime.without_deleted.find(params[:work_id])
-      @image = @work.build_work_image(work_image_params)
+      @image = @work.build_anime_image(work_image_params)
       authorize @image
       @image.user = current_user
 
