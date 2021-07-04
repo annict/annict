@@ -3,15 +3,16 @@
 
 = render "forum/application/nav"
 
-.text-end.m-3
-  = link_to forum_new_post_path, class: "btn btn-primary" do
-    i.far.fa-plus.me-2
-    = t "resources.forum_post.new"
+.container.mt-3
+  .text-end
+    = link_to forum_new_post_path, class: "btn btn-primary" do
+      i.far.fa-plus.me-2
+      = t "resources.forum_post.new"
 
-.container.u-container-flat
+.container.mt-3.u-container-flat
   - if @posts.present?
     .card.u-card-flat
-      .card-body
+      .card-body.py-0
         = render "forum/posts/post_list", posts: @posts
     .text-center.mt-3
       = ButtonGroups::PaginationButtonGroupComponent.new(self, collection: @posts).render
