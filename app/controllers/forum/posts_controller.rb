@@ -15,7 +15,7 @@ module Forum
       @post.last_commented_at = Time.now
       @post.detect_locale!(:body)
 
-      return render(:new) unless @post.valid?
+      return render(:new, status: :unprocessable_entity) unless @post.valid?
 
       ActiveRecord::Base.transaction do
         @post.save!(validate: false)
@@ -47,7 +47,7 @@ module Forum
       if @post.save
         redirect_to forum_post_path(@post), notice: t("messages.forum.posts.updated")
       else
-        render :edit
+        render :edit, status: :unprocessable_entity
       end
     end
 
