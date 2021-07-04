@@ -9,7 +9,7 @@ describe "POST /db/works", type: :request do
     end
 
     it "user can not access this page" do
-      post "/db/works", params: {work: work_params}
+      post "/db/works", params: {anime: work_params}
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("ログインしてください")
@@ -31,7 +31,7 @@ describe "POST /db/works", type: :request do
     end
 
     it "user can not access" do
-      post "/db/works", params: {work: work_params}
+      post "/db/works", params: {anime: work_params}
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("アクセスできません")
@@ -81,7 +81,7 @@ describe "POST /db/works", type: :request do
     it "user can create work" do
       expect(Anime.all.size).to eq(0)
 
-      post "/db/works", params: {work: work_params}
+      post "/db/works", params: {anime: work_params}
 
       expect(response.status).to eq(302)
       expect(flash[:notice]).to eq("登録しました")

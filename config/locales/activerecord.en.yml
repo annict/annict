@@ -7,7 +7,7 @@ en:
         name: Name
         person_id: Person
         sort_number: Sort number
-        work_id: Work
+        work_id: Anime
       channel:
         channel_group: Channel Group
         channel_group_id: Channel Group
@@ -149,10 +149,10 @@ en:
         name_alter: Name (alter)
         name_alter_en: Name (alter/en)
         name_en: Name (en)
-      series_work:
+      series_anime:
         summary: Summary
         summary_en: Summary (en)
-        work_id: Work
+        work_id: Anime
       staff:
         name_en: Name (en)
         name: Name
@@ -161,7 +161,7 @@ en:
         role_other: Role (other)
         role: Role
         sort_number: Sort number
-        work_id: Work
+        work_id: Anime
       userland_project:
         available: Available?
         description: Description
@@ -188,7 +188,7 @@ en:
         code: Code
         created_at: Created At
         name: Name
-      work:
+      anime:
         ended_on: Ended On
         mal_anime_id: MAL Anime ID
         manual_episodes_count: Episodes
@@ -217,16 +217,16 @@ en:
         twitter_username: Twitter username
         wikipedia_url_en: Wikipedia (en)
         wikipedia_url: Wikipedia (ja)
-      work_image:
+      anime_image:
         attachment: Image
         copyright: Copyright
-      work_organization:
+      anime_organization:
         organization_id: Organization
-        work_id: Work
+        work_id: Anime
         role: Role
         role_other: Role (Other)
         sort_number: Sort Number
-      work_record:
+      anime_record:
         title: Title
         body: Body
         mutation_error: ""
@@ -267,12 +267,12 @@ en:
       series:
         one: Series
         other: Series
-      series_work:
-        one: Series Work
-        other: Series Works
+      series_anime:
+        one: Series Anime
+        other: Series Animes
       staff:
         one: Staff
         other: Staff
-      work:
-        one: Work
-        other: Works
+      anime:
+        one: Anime
+        other: Animes

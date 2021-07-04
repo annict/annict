@@ -75,7 +75,7 @@ module Db
     end
 
     def work_params
-      params.require(:work).permit(
+      params.require(:anime).permit(
         :title, :title_kana, :title_alter, :title_en, :title_alter_en, :media, :official_site_url,
         :official_site_url_en, :wikipedia_url, :wikipedia_url_en, :twitter_username,
         :twitter_hashtag, :sc_tid, :mal_anime_id, :number_format_id, :synopsis,
