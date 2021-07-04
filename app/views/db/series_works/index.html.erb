@@ -72,10 +72,10 @@
                   <br>
                   <%= series_work.summary_en.presence || "-" %>
                 </td>
-                <td class="align-middle">
+                <td>
                   <%= render Db::PublishingStateLabelComponent.new(resource: series_work) %>
                 </td>
-                <td class="align-middle">
+                <td>
                   <%= render Db::ActionButtonsComponent.new(
                       user: current_user,
                       resource: series_work,
