@@ -6,6 +6,6 @@
     .col-3.pe-0
       = render "userland/projects/sidebar", project: @project
     .col-9
-      .c-card
-        .container.py-3
+      .card.rounded-3
+        .card-body
           == render_markdown @project.description
