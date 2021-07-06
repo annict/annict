@@ -25,8 +25,7 @@
         .fw-bold.mb-1
           = t "activerecord.attributes.work.synopsis"
         .mb-3
-          = BodyV6Component.new(self, height: 250).render do
-            = sanitize(work.local_synopsis(raw: true))
+          = BodyV6Component.new(self, content: work.local_synopsis(raw: true), format: :simple, height: 250).render
           .small.mt-2.text-end
             span.me-1
               = t "noun.source"

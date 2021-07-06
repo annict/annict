@@ -87,9 +87,7 @@ module Contents
                 end
 
                 h.tag :div, class: "col-12 col-xl-8 order-2 order-xl-1" do
-                  h.html(BodyV6Component.new(view_context, height: 300).render { |h|
-                    h.html render_markdown(@anime_record.comment)
-                  })
+                  h.html BodyV6Component.new(view_context, content: @anime_record.comment, format: :markdown, height: 300).render
                 end
               end
             })

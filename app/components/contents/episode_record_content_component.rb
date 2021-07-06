@@ -21,9 +21,7 @@ module Contents
                   h.html Labels::RatingLabelComponent.new(view_context, rating: @episode_record.rating_state, advanced_rating: @episode_record.rating, class_name: "mb-1").render
                 end
 
-                h.html(BodyV6Component.new(view_context, height: 300).render { |h|
-                  h.html render_markdown(@episode_record.comment)
-                })
+                h.html BodyV6Component.new(view_context, content: @episode_record.comment, format: :markdown, height: 300).render
               end
             })
           end
