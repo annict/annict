@@ -14,7 +14,3 @@
             .small
               = link_to "@#{favorite_resource.user.username}", profile_path(username: favorite_resource.user.username)
           .col-auto.pe-0.u-flex-grow-0
-            - if user_signed_in? && current_user != favorite_resource.user
-              c-follow-button :user-id="#{favorite_resource.user.id}"
-            - elsif !user_signed_in?
-              c-follow-button :user-id="#{favorite_resource.user.id}"

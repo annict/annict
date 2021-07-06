@@ -11,7 +11,3 @@
           .small
             = link_to "@#{user.username}", profile_path(username: user.username), class: "text-body"
         .col-auto.u-flex-grow-0
-          - if user_signed_in? && current_user != user
-            c-follow-button :user-id="#{user.id}"
-          - elsif !user_signed_in?
-            c-follow-button :user-id="#{user.id}"

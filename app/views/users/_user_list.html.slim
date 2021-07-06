@@ -12,5 +12,3 @@
             .small
               = link_to "@#{user.username}", profile_path(username: user.username)
           .col-auto.pe-0.u-flex-grow-0
-            - if current_user != user
-              c-follow-button :user-id="#{user.id}"
