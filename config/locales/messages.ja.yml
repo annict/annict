@@ -261,7 +261,7 @@ ja:
       no_works: 作品はありません
     welcome:
       show:
-        hero_description_html: Annict (アニクト) は、アニメの視聴記録ができるWebサービスです。<br>人気ランキングや友達の視聴記録から好きなアニメを見つけて、管理することができます。
+        hero_description_html: Annict (アニクト) は、アニメの視聴記録ができるWebサービスです。<br>何話まで見たかを記録したり、友達の視聴記録などから好きなアニメを見つけて、管理することができます。
         hero_description_mobile_html: Annict (アニクト) は、アニメの視聴記録ができるWebサービスです。
         hero_title_html: 見たアニメを<span class="fw-bold">記録</span>して、<br class="d-sm-none"><span class="fw-bold">発見</span>しよう。
         start_tracking: 視聴記録を始める
