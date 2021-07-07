@@ -24,7 +24,7 @@
 
   &__link {
     border-bottom: 2px solid transparent;
-    color: $body-color;
+    color: var(--ann-body-color);
     display: inline-block;
     height: $ann-navbar-height;
     line-height: $ann-navbar-height;
@@ -38,9 +38,5 @@
 
   @include color-scheme(dark) {
     box-shadow: inset 0 -1px 0 $ann-border-color-dark;
-
-    &__link {
-      color: $ann-body-color-dark;
-    }
   }
 }

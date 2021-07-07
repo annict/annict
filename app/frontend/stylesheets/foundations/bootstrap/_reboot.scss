@@ -1,9 +1,10 @@
 // Original: https://github.com/twbs/bootstrap/blob/v5.0.0/scss/_reboot.scss
 
 body {
+  color: var(--ann-body-color);
+
   @include color-scheme(dark) {
     background-color: $ann-body-bg-dark;
-    color: $ann-body-color-dark;
   }
 }
 

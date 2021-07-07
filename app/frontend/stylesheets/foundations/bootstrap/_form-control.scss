@@ -1,0 +1,10 @@
+.form-control {
+  background-color: var(--ann-input-bg);
+  border-color: var(--ann-input-border-color);
+  color: var(--ann-input-color);
+
+  &:focus {
+    background-color: var(--ann-input-focus-bg);
+    color: var(--ann-input-focus-color);
+  }
+}

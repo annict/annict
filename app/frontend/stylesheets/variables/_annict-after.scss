@@ -27,7 +27,7 @@ $ann-theme-color-map: (
   'status-dropped': $ann-status-dropped-color,
   'status-on-hold': $ann-status-on-hold-color,
   'status-plan-to-watch': $ann-status-plan-to-watch-color,
-  'status-watching': $ann-status-watching-color
+  'status-watching': $ann-status-watching-color,
 );
 
 $ann-shirobako-color-map: (
@@ -40,7 +40,6 @@ $ann-shirobako-color-map: (
 );
 
 $ann-body-bg-dark: $gray-900;
-$ann-body-color-dark: $gray-200;
 
 // Links
 

@@ -1,3 +1,12 @@
 @mixin ann-variables-light {
+  // Body
+  --ann-body-color: #{$body-color};
+
+  // Forms
+
   --ann-input-bg: #{$input-bg};
+  --ann-input-color: #{$input-color};
+  --ann-input-border-color: #{$input-border-color};
+  --ann-input-focus-bg: #{$input-focus-bg};
+  --ann-input-focus-color: #{$input-focus-color};
 }
