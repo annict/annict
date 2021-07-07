@@ -8,6 +8,9 @@
 
 @import './variables/annict-after';
 @import './variables/bootstrap-after';
+@import './variables/annict-base';
+@import './variables/annict-dark';
+@import './variables/annict-light';
 
 // Vendors
 
@@ -63,6 +66,7 @@
 @import './foundations/bootstrap/utilities';
 @import './foundations/choices';
 
+@import './foundations/annict/root';
 @import './foundations/annict/html';
 @import './foundations/annict/body';
 @import './foundations/annict/a';
