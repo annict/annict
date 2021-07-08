@@ -1,6 +1,29 @@
 @mixin ann-variables-dark {
+  // -------------------------------------------------------------------
+  // Annict独自の変数
+  // -------------------------------------------------------------------
+
+  --ann-color-sidebar-bg: #{shade-color($gray-800, 25%)};
+
+  // -------------------------------------------------------------------
+  // Bootstrap関係の変数
+  // -------------------------------------------------------------------
+
   // Body
+
   --ann-body-color: #{$gray-200};
+
+  // Components
+
+  --ann-border-color: #{shade-color($border-color, 40%)};
+
+  // Typography
+
+  --ann-hr-color: var(--ann-body-color);
+
+  // Tables
+
+  --ann-table-border-color: var(--ann-border-color);
 
   // Forms
 
@@ -9,4 +32,12 @@
   --ann-input-border-color: #{$gray-700};
   --ann-input-focus-bg: var(--ann-input-bg);
   --ann-input-focus-color: var(--ann-input-color);
+
+  // Dropdowns
+
+  --ann-dropdown-border-color: #{shade-color($border-color, 50%)};
+
+  // Cards
+
+  --ann-card-bg: #{$gray-800};
 }

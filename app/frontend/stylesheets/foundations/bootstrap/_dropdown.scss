@@ -1,10 +1,7 @@
 .dropdown-menu {
+  background-color: var(--ann-card-bg);
+  border-color: var(--ann-dropdown-border-color);
   color: var(--ann-body-color);
-
-  @include color-scheme(dark) {
-    background-color: $ann-card-bg-dark;
-    border-color: $ann-border-color-dark-2;
-  }
 }
 
 .dropdown-item {

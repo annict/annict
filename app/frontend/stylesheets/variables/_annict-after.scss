@@ -46,10 +46,6 @@ $ann-body-bg-dark: $gray-900;
 $ann-link-color-dark: tint-color($link-color, 40%);
 $ann-link-hover-color-dark: tint-color($link-hover-color, 40%);
 
-// Components
-$ann-border-color-dark: shade-color($border-color, 40%);
-$ann-border-color-dark-2: shade-color($border-color, 50%);
-
 // Buttons
 
 $ann-btn-color-map: (
@@ -68,7 +64,3 @@ $ann-btn-color-map: (
 
 $ann-navbar-height: 52px;
 $ann-navbar-height-mobile: 70px;
-
-// Cards
-
-$ann-card-bg-dark: $gray-800;

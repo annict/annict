@@ -1,5 +1,3 @@
 .card {
-  @include color-scheme(dark) {
-    background-color: $ann-card-bg-dark;
-  }
+  background-color: var(--ann-card-bg);
 }

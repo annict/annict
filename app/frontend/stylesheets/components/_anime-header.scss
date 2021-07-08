@@ -1,7 +1,5 @@
 .c-anime-header {
-  @include color-scheme(dark) {
-    background-color: $ann-card-bg-dark;
-  }
+  background-color: var(--ann-card-bg);
 
   &__anime-picture {
     width: 180px;
