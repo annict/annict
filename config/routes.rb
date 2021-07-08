@@ -12,18 +12,6 @@ Rails.application.routes.draw do
     controllers: {omniauth_callbacks: "callbacks"},
     skip: %i[passwords registrations sessions]
 
-  scope module: :v3 do
-    use_doorkeeper do
-      controllers(
-        applications: "oauth/applications",
-        authorizations: "oauth/authorizations",
-        token_info: "oauth/token_info",
-        tokens: "oauth/tokens"
-      )
-      skip_controllers :authorized_applications
-    end
-  end
-
   devise_scope :user do
     # standard:disable Layout/ExtraSpacing, Layout/LineLength
     match "/legacy/sign_in",      via: :get,    as: :legacy_sign_in,      to: "legacy/sessions#new"
@@ -32,6 +20,16 @@ Rails.application.routes.draw do
     match "/user_email",          via: :patch,  as: :user_email,          to: "user_emails#update"
     match "/user_email/callback", via: :get,    as: :user_email_callback, to: "user_email_callbacks#show"
     # standard:enable Layout/ExtraSpacing, Layout/LineLength
+  end
+
+  use_doorkeeper do
+    controllers(
+      applications: "oauth/applications",
+      authorizations: "oauth/authorizations",
+      token_info: "oauth/token_info",
+      tokens: "oauth/tokens"
+    )
+    skip_controllers :authorized_applications
   end
 
   # standard:disable Layout/ExtraSpacing, Layout/LineLength
