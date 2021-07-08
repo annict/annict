@@ -9,7 +9,7 @@
   </div>
 
   <% @activities.each do |activity| %>
-    <div class="card mt-3 rounded-3">
+    <div class="card mt-3">
       <div class="card-body">
         <% if activity.trackable.present? %>
           <% if activity.root_resource_action? %>

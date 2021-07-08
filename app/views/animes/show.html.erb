@@ -25,14 +25,14 @@
         <% end %>
       </div>
 
-      <div class="card rounded-3">
+      <div class="card">
         <div class="card-body">
           <div class="gx-3 row">
             <% @trailers.first(4).each do |trailer| %>
               <div class="col-md-3 col-6 text-center">
                 <%= link_to trailer.url, rel: "noopener", target: "_blank" do %>
                   <div class="c-video-thumbnail">
-                    <div class="c-video-thumbnail__image rounded-3" style="background-image: url(<%= ann_image_url(trailer, :image, width: 300) %>);"></div>
+                    <div class="c-video-thumbnail__image" style="background-image: url(<%= ann_image_url(trailer, :image, width: 300) %>);"></div>
                     <i class="far fa-play-circle"></i>
                   </div>
 
@@ -54,7 +54,7 @@
         <%= t "activerecord.attributes.work.synopsis" %>
       </h2>
 
-      <div class="card rounded-3">
+      <div class="card">
         <div class="card-body">
           <%= BodyV6Component.new(self, content: @anime.local_synopsis(raw: true), format: :simple, height: 150).render %>
 
@@ -83,7 +83,7 @@
         <% end %>
       </div>
 
-      <div class="card rounded-3">
+      <div class="card">
         <div class="card-body pt-0">
           <% if @episodes.present? %>
             <div class="gx-3 row">
@@ -123,7 +123,7 @@
       <% end %>
     </div>
 
-    <div class="card rounded-3">
+    <div class="card">
       <div class="card-body pt-0">
         <%= Lists::RecordListComponent.new(self, records: @records, show_box: false).render %>
       </div>

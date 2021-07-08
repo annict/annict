@@ -4,7 +4,7 @@
 <%= render "forum/application/nav", post: @post %>
 
 <div class="container py-3 u-container-flat">
-  <div class="card rounded-3 u-card-flat">
+  <div class="card u-card-flat">
     <div class="card-body">
       <%= render "forum/posts/form", post: @post, form_url: forum_post_list_path, form_method: :post, submit_text: t("verb.post") %>
     </div>
