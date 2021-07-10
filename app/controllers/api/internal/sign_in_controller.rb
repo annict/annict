@@ -22,7 +22,7 @@ module Api::Internal
     private
 
     def sign_in_form_params
-      params.require(:sign_in_form).permit(:email).merge(back: stored_location_for(:user))
+      params.require(:forms_sign_in_form).permit(:email).merge(back: stored_location_for(:user))
     end
   end
 end
