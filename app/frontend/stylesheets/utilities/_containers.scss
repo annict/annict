@@ -1,10 +1,19 @@
-.u-container-flat {
-  @include media-breakpoint-down(sm) {
-    padding-right: 0;
-    padding-left: 0;
+.u-container-narrow {
+  @include make-container();
 
-    .u-card-flat {
-      border-radius: 0 !important;
+  max-width: 700px;
+}
+
+.container,
+.u-container-narrow {
+  &.u-container-flat {
+    @include media-breakpoint-down(sm) {
+      padding-right: 0;
+      padding-left: 0;
+
+      .u-card-flat {
+        border-radius: 0 !important;
+      }
     }
   }
 }

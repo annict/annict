@@ -13,11 +13,17 @@
     .card-body
       dl
         dt = t "activerecord.attributes.oauth_application.uid"
-        dd = @application.uid
+        dd
+          code.user-select-all
+            = @application.uid
         dt = t "activerecord.attributes.oauth_application.secret"
-        dd = @application.secret
+        dd
+          code.user-select-all
+            = @application.secret
         dt = t "activerecord.attributes.oauth_application.scope"
-        dd = @application.scopes
+        dd
+          code.user-select-all
+            = @application.scopes
         dt = t "activerecord.attributes.oauth_application.redirect_uri"
         dd
           table.table.table-borderless
@@ -25,6 +31,7 @@
               - @application.redirect_uri.split.each do |uri|
                 tr
                   td
-                    = uri
+                    code.user-select-all
+                      = uri
                   td
                     = link_to t("messages.oauth.applications.authorize"), oauth_authorization_path(client_id: @application.uid, redirect_uri: uri, response_type: "code", scope: @application.scopes), class: "btn btn-primary", target: "_blank"

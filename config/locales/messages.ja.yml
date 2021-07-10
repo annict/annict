@@ -152,7 +152,7 @@ ja:
         you_can_use_the_uri_for_local_application: ローカルアプリ用に urn:ietf:wg:oauth:2.0:oob もご利用頂けます
       authorizations:
         authorize: 承認
-        authorize_account_html: '<b>%{client_name}</b>からのアクセスをを承認しますか？'
+        authorize_account_html: '<b>%{client_name}</b> からのアクセスをを承認しますか？'
         cancel: キャンセル
         this_application_will_be_able_to: 'このアプリができること:'
     oauth_users:
