@@ -1,0 +1,46 @@
+<% title = t "head.title.settings.email_notifications.show" %>
+<% set_meta_tags title: title, reverse: true, prefix: false %>
+
+<%= render "settings/nav" %>
+
+<div class="mt-3 u-container-narrow u-container-flat">
+  <div class="card u-card-flat">
+    <div class="card-body">
+      <%= form_for [:settings, @email_notification], method: :patch do |f| %>
+        <%= render "application/components/error_panel", resource: @email_notification %>
+
+        <div class="form-check">
+          <%= f.check_box :event_followed_user, class: "form-check-input" %>
+          <%= f.label :event_followed_user, class: "form-check-label" do %>
+            <%= t "activerecord.attributes.email_notification.event_followed_user" %>
+          <% end %>
+        </div>
+
+        <div class="form-check">
+          <%= f.check_box :event_liked_episode_record, class: "form-check-input" %>
+          <%= f.label :event_liked_episode_record, class: "form-check-label" do %>
+            <%= t "activerecord.attributes.email_notification.event_liked_episode_record" %>
+          <% end %>
+        </div>
+
+        <div class="form-check">
+          <%= f.check_box :event_favorite_works_added, class: "form-check-input" %>
+          <%= f.label :event_favorite_works_added, class: "form-check-label" do %>
+            <%= t "activerecord.attributes.email_notification.event_favorite_works_added" %>
+          <% end %>
+        </div>
+
+        <div class="form-check">
+          <%= f.check_box :event_related_works_added, class: "form-check-input" %>
+          <%= f.label :event_related_works_added, class: "form-check-label" do %>
+            <%= t "activerecord.attributes.email_notification.event_related_works_added" %>
+          <% end %>
+        </div>
+
+        <div class="form-submit mt-3 text-center">
+          <%= f.submit class: "btn btn-primary" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -13,13 +13,18 @@
 
   --ann-body-color: #{$gray-200};
 
+  // Links
+
+  --ann-link-color: #{tint-color($link-color, 40%)};
+  --ann-link-hover-color: #{tint-color($link-hover-color, 40%)};
+
   // Components
 
   --ann-border-color: #{shade-color($border-color, 40%)};
 
   // Typography
 
-  --ann-hr-color: var(--ann-body-color);
+  --ann-hr-color: var(--ann-border-color);
 
   // Tables
 

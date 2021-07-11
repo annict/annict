@@ -16,7 +16,7 @@ module Settings
         flash[:created_token] = {id: @token.id, token: @token.token}
         redirect_to settings_app_list_path
       else
-        render :new
+        render :new, status: :unprocessable_entity
       end
     end
 
@@ -32,7 +32,7 @@ module Settings
         flash[:notice] = t("messages.settings.tokens.updated")
         redirect_to settings_app_list_path
       else
-        render :edit
+        render :edit, status: :unprocessable_entity
       end
     end
 

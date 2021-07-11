@@ -1,0 +1,86 @@
+<% title = t "head.title.providers.index" %>
+<% set_meta_tags title: title, reverse: true, prefix: false %>
+
+<%= render "settings/nav" %>
+
+<div class="mt-3 u-container-narrow u-container-flat">
+  <div class="card u-card-flat">
+    <div class="card-body py-0">
+      <div class="u-underline">
+        <div class="align-items-center gx-3 py-3 row">
+          <div class="col">
+            <div class="px-3">
+              Twitter
+            </div>
+          </div>
+
+          <div class="col">
+            <div class="px-3 text-end">
+              <% if current_user.authorized_to?(:twitter) %>
+                <% if current_user.encrypted_password? || current_user.authorized_to?(:facebook) %>
+                  <%= link_to t("verb.disconnect"), settings_provider_path(current_user.twitter), class: "btn btn-sm btn-link w-100", data: { method: :delete, confirm: t("messages._common.are_you_sure") } %>
+                <% else %>
+                  <span class="cancel-disabled">
+                    <%= t "messages.providers.you_can_not_disconnect" %>
+                  </span>
+                <% end %>
+              <% else %>
+                <%= link_to user_twitter_omniauth_authorize_path(back: settings_provider_list_path), class: "btn btn-sm u-btn-twitter w-100" do %>
+                  <i class="fab fa-twitter me-1"></i>
+                  <%= t "verb.connect" %>
+                <% end %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="u-underline">
+        <div class="align-items-center gx-3 py-3 row">
+          <div class="col">
+            <div class="px-3">
+              Facebook
+            </div>
+          </div>
+
+          <div class="col">
+            <div class="px-3 text-end">
+              <% if current_user.authorized_to?(:facebook) %>
+                <% if current_user.encrypted_password? || current_user.authorized_to?(:twitter) %>
+                  <%= link_to t("verb.disconnect"), settings_provider_path(current_user.facebook), class: "btn btn-sm btn-link w-100", data: { method: :delete, confirm: t("messages._common.are_you_sure") } %>
+                <% else %>
+                  <span class="cancel-disabled">
+                    <%= t "messages.providers.you_can_not_disconnect" %>
+                  </span>
+                <% end %>
+              <% else %>
+                <%= link_to user_facebook_omniauth_authorize_path(back: settings_provider_list_path), class: "btn btn-sm u-btn-facebook w-100" do %>
+                  <i class="fab fa-facebook me-1"></i>
+                  <%= t "verb.connect" %>
+                <% end %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="u-container-narrow mt-3">
+  <h2 class="fw-bold h3 mb-0">
+    <%= t "noun.google_calendar" %>
+  </h2>
+</div>
+
+<div class="mt-3 u-container-narrow u-container-flat">
+  <div class="card u-card-flat">
+    <div class="card-body">
+      <p class="mb-3">
+        <%= t "messages.ics.you_can_see" %>
+      </p>
+
+      <%= text_field_tag "", "#{ENV.fetch('ANNICT_URL')}#{user_ics_path(current_user.username)}", onclick: "this.select();", class: "form-control" %>
+    </div>
+  </div>
+</div>

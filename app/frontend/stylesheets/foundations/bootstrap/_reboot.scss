@@ -9,15 +9,13 @@ body {
 }
 
 a {
-  @include color-scheme(dark) {
-    color: $ann-link-color-dark;
+  color: var(--ann-link-color);
 
-    &:hover {
-      color: $ann-link-hover-color-dark;
-    }
+  &:hover {
+    color: var(--ann-link-hover-color);
+  }
 
-    &.badge {
-      color: inherit;
-    }
+  &.badge {
+    color: inherit;
   }
 }

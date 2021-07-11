@@ -51,8 +51,6 @@ en:
       keywords:
         _common: annict, anime, review
     title:
-      accounts:
-        show: Account
       anime_records:
         edit: Edit Record
         index: Records of %{anime_title} (Anime)
@@ -211,11 +209,19 @@ en:
       searches:
         show: '%{q}Anime Search'
       settings:
+        accounts:
+          show: Account
         apps:
           index: Applications
+        emails:
+          show: Email
         email_notifications:
           show: Notifications
           unsubscribe: Unsubscribe email
+        passwords:
+          show: Password
+        profiles:
+          show: Profile
         tokens:
           edit: Edit token
           new: Generate new token
