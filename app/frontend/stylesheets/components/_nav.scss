@@ -1,7 +1,7 @@
 .c-nav {
   $root: &;
 
-  box-shadow: inset 0 -1px 0 $border-color;
+  box-shadow: inset 0 -1px 0 var(--ann-border-color);
   overflow-y: hidden;
   padding-left: 1rem;
   padding-right: 1rem;
@@ -24,7 +24,7 @@
 
   &__link {
     border-bottom: 2px solid transparent;
-    color: $body-color;
+    color: var(--ann-body-color);
     display: inline-block;
     height: $ann-navbar-height;
     line-height: $ann-navbar-height;
@@ -33,14 +33,6 @@
 
     &--active {
       border-bottom-color: $ann-mizuho-color;
-    }
-  }
-
-  @include color-scheme(dark) {
-    box-shadow: inset 0 -1px 0 $ann-border-color-dark;
-
-    &__link {
-      color: $ann-body-color-dark;
     }
   }
 }

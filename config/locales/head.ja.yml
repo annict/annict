@@ -51,8 +51,6 @@ ja:
       keywords:
         _common: annict, anime, review
     title:
-      accounts:
-        show: アカウント
       channels:
         index: チャンネル一覧
       character_fans:
@@ -206,11 +204,19 @@ ja:
       searches:
         show: '%{q}検索'
       settings:
+        accounts:
+          show: アカウント
         apps:
           index: アプリケーション
+        emails:
+          show: メールアドレス
         email_notifications:
           show: メール通知
           unsubscribe: メール購読解除
+        passwords:
+          show: パスワード
+        profiles:
+          show: プロフィール
         tokens:
           edit: 個人用アクセストークン編集
           new: 個人用アクセストークン作成

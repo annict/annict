@@ -152,7 +152,7 @@ ja:
         you_can_use_the_uri_for_local_application: ローカルアプリ用に urn:ietf:wg:oauth:2.0:oob もご利用頂けます
       authorizations:
         authorize: 承認
-        authorize_account_html: '<b>%{client_name}</b>からのアクセスをを承認しますか？'
+        authorize_account_html: '<b>%{client_name}</b> からのアクセスをを承認しますか？'
         cancel: キャンセル
         this_application_will_be_able_to: 'このアプリができること:'
     oauth_users:
@@ -179,8 +179,8 @@ ja:
       no_slots: 放送予定はありません
       please_set_channels_html: '%{channels_link}でチャンネルを設定して下さい'
     providers:
-      removed: 接続解除しました
-      you_can_not_disconnect: 接続解除できません
+      removed: 連携解除しました
+      you_can_not_disconnect: 連携解除できません
     recaptcha:
       not_verified: reCAPTCHAの認証に失敗しました。時間を置いて再度お試しください
     records:
@@ -202,7 +202,7 @@ ja:
     sayonara:
       are_you_sure_really: 後戻りできませんがよろしいですか？
       delete_account: アカウントを削除する
-      description: 退会すると、アカウント情報や見たアニメの記録、ステータス変更等のデータが全て削除されます。
+      description: アカウント情報や見たアニメの記録、ステータス変更など、あなたに紐付くデータが全て削除されます。
     sessions:
       new:
         remember_me: 保存する
@@ -261,7 +261,7 @@ ja:
       no_works: 作品はありません
     welcome:
       show:
-        hero_description_html: Annict (アニクト) は、アニメの視聴記録ができるWebサービスです。<br>人気ランキングや友達の視聴記録から好きなアニメを見つけて、管理することができます。
+        hero_description_html: Annict (アニクト) は、アニメの視聴記録ができるWebサービスです。<br>何話まで見たかを記録したり、友達の視聴記録などから好きなアニメを見つけて、管理することができます。
         hero_description_mobile_html: Annict (アニクト) は、アニメの視聴記録ができるWebサービスです。
         hero_title_html: 見たアニメを<span class="fw-bold">記録</span>して、<br class="d-sm-none"><span class="fw-bold">発見</span>しよう。
         start_tracking: 視聴記録を始める

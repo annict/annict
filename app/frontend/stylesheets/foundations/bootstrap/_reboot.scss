@@ -1,22 +1,21 @@
 // Original: https://github.com/twbs/bootstrap/blob/v5.0.0/scss/_reboot.scss
 
 body {
+  color: var(--ann-body-color);
+
   @include color-scheme(dark) {
     background-color: $ann-body-bg-dark;
-    color: $ann-body-color-dark;
   }
 }
 
 a {
-  @include color-scheme(dark) {
-    color: $ann-link-color-dark;
+  color: var(--ann-link-color);
 
-    &:hover {
-      color: $ann-link-hover-color-dark;
-    }
+  &:hover {
+    color: var(--ann-link-hover-color);
+  }
 
-    &.badge {
-      color: inherit;
-    }
+  &.badge {
+    color: inherit;
   }
 }

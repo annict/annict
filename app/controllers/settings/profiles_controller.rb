@@ -6,9 +6,10 @@ module Settings
 
     def update
       if current_user.profile.update(profile_params)
-        redirect_to settings_profile_path, notice: t("messages.profiles.saved")
+        flash[:notice] = t "messages._common.updated"
+        redirect_to settings_profile_path
       else
-        render :show
+        render :show, status: :unprocessable_entity
       end
     end
 

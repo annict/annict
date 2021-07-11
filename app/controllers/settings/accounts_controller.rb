@@ -6,26 +6,27 @@ module Settings
 
     def show
       @user = current_user
-      @user_email_form = Forms::UserEmailForm.new(email: current_user.email)
     end
 
     def update
       @user = User.find(current_user.id)
       @user.attributes = user_params
 
-      if @user.save
-        I18n.with_locale(@user.locale) do
-          url = case I18n.locale.to_s
-          when "ja" then ENV.fetch("ANNICT_JP_URL")
-          else
-            ENV.fetch("ANNICT_URL")
-          end
-
-          redirect_to("#{url}#{settings_account_path}", notice: t("messages.accounts.updated"))
-        end
-      else
-        render "/v3/settings/accounts/show"
+      if @user.invalid?
+        return render :show, status: :unprocessable_entity
       end
+
+      @user.save!
+
+      url = case @user.locale.to_s
+      when "ja"
+        ENV.fetch("ANNICT_JP_URL")
+      else
+        ENV.fetch("ANNICT_URL")
+      end
+
+      flash[:notice] = t "messages._common.updated"
+      redirect_to "#{url}#{settings_account_path}"
     end
 
     private

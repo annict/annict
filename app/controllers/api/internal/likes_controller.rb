@@ -3,19 +3,22 @@
 module Api
   module Internal
     class LikesController < Api::Internal::ApplicationController
-      include V4::GraphqlRunnable
-
-      before_action :authenticate_user!, only: %i[unlike]
-
       def index
         return render(json: []) unless user_signed_in?
 
-        likes = current_user.likes.pluck(:recipient_id, :recipient_type).map { |(recipient_id, recipient_type)|
+        likes = current_user.likes.map do |like|
+          likeable = case like.recipient_type
+          when "AnimeRecord", "EpisodeRecord", "WorkRecord"
+            like.recipient.record
+          else
+            like.recipient
+          end
+
           {
-            recipient_type: recipient_type,
-            recipient_id: recipient_id
+            recipient_type: likeable.class.name,
+            recipient_id: likeable.id
           }
-        }
+        end
 
         render json: likes
       end
@@ -24,24 +27,9 @@ module Api
         return head(:unauthorized) unless user_signed_in?
 
         recipient = params[:recipient_type].constantize.find(params[:recipient_id])
+        Creators::LikeCreator.new(user: current_user, likeable: recipient).call
 
-        AddReactionRepository.new(
-          graphql_client: graphql_client(viewer: current_user)
-        ).execute(reactable: recipient, content: "HEART")
-
-        head 200
-      end
-
-      def unlike
-        return head(:unauthorized) unless user_signed_in?
-
-        recipient = params[:recipient_type].constantize.find(params[:recipient_id])
-
-        RemoveReactionRepository.new(
-          graphql_client: graphql_client(viewer: current_user)
-        ).execute(reactable: recipient, content: "HEART")
-
-        head 200
+        head 201
       end
     end
   end

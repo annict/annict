@@ -8,7 +8,7 @@ module Settings
       if current_user.setting.update(setting_params)
         redirect_to settings_option_list_path, notice: t("messages._common.updated")
       else
-        render :show
+        render :show, status: :unprocessable_entity
       end
     end
 

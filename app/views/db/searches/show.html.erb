@@ -14,7 +14,7 @@
         <%= t "noun.#{resource_name.to_s.pluralize}" %>
       </h2>
 
-      <div class="card rounded-3">
+      <div class="card">
         <div class="card-body">
           <% if resources.present? %>
             <%= render "db/#{resource_name.to_s.pluralize}/#{resource_name}_list", resources: resources %>

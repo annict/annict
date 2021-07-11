@@ -8,6 +8,9 @@
 
 @import './variables/annict-after';
 @import './variables/bootstrap-after';
+@import './variables/annict-base';
+@import './variables/annict-dark';
+@import './variables/annict-light';
 
 // Vendors
 
@@ -53,6 +56,8 @@
 @import './foundations/bootstrap/buttons';
 @import './foundations/bootstrap/card';
 @import './foundations/bootstrap/dropdown';
+@import './foundations/bootstrap/form-control';
+@import './foundations/bootstrap/form-select';
 @import './foundations/bootstrap/forms';
 @import './foundations/bootstrap/images';
 @import './foundations/bootstrap/list-group';
@@ -63,6 +68,7 @@
 @import './foundations/bootstrap/utilities';
 @import './foundations/choices';
 
+@import './foundations/annict/root';
 @import './foundations/annict/html';
 @import './foundations/annict/body';
 @import './foundations/annict/a';
@@ -95,6 +101,7 @@
 @import './components/footer';
 @import './components/hero';
 @import './components/label-required';
+@import './components/like-button';
 @import './components/main-sidebar';
 @import './components/nav';
 @import './components/record-header';

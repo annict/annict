@@ -8,7 +8,7 @@
 <%= Headers::AnimeHeaderComponent.new(self, anime: @anime, programs: @programs).render %>
 
 <div class="container">
-  <div class="card rounded-3">
+  <div class="card">
     <div class="card-body">
       <div class="align-items-center mb-1 row">
         <div class="col">
@@ -42,13 +42,13 @@
     </div>
   </div>
 
-  <div class="card rounded-3">
+  <div class="card">
     <div class="card-body">
       <%= Forms::EpisodeRecordFormComponent.new(self, form: @form, current_user: current_user).render %>
     </div>
   </div>
 
-  <div class="card rounded-3">
+  <div class="card">
     <div class="card-body">
       <div
         data-controller="reloadable"

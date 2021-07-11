@@ -1,6 +1,4 @@
 .list-group-item {
-  @include color-scheme(dark) {
-    color: $ann-body-color-dark;
-    background-color: $ann-card-bg-dark;
-  }
+  background-color: var(--ann-card-bg);
+  color: var(--ann-body-color);
 }

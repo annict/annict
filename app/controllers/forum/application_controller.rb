@@ -4,11 +4,13 @@ module Forum
   class ApplicationController < ActionController::Base
     include Pundit
 
+    include ControllerCommon
     include PageCategorizable
     include SentryLoadable
     include Loggable
     include Localizable
     include KeywordSearchable
+    include ViewSelector
 
     layout "main_default"
 

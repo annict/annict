@@ -8,7 +8,7 @@ module UserDecorator
   def role_badge
     return "" unless committer?
 
-    content_tag(:span, class: "u-badge-outline u-badge-outline-dark") do
+    content_tag(:span, class: "badge bg-secondary rounded-pill") do
       role_text
     end
   end

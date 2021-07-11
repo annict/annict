@@ -4,13 +4,11 @@ module Oauth
   class ApplicationController < ActionController::Base
     include Doorkeeper::Helpers::Controller
 
-    include ControllerCommon
-    include ViewSelector
-    include KeywordSearchable
-    include Localizable
-    include Loggable
     include PageCategorizable
     include SentryLoadable
+    include Loggable
+    include Localizable
+    include KeywordSearchable
 
     layout "main_default"
 

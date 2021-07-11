@@ -6,8 +6,10 @@ en:
     check_all: Check All
     close: Close
     comment: Comment
+    connect: Connect
     create: Create
     delete: Delete
+    disconnect: Disconnect
     edit: Edit
     explore: Explore
     follow: Follow

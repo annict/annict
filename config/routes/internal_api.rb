@@ -8,10 +8,6 @@ namespace :api do
       post :unfavorite, on: :collection
     end
 
-    resources :likes, only: [:create] do
-      post :unlike, on: :collection
-    end
-
     resources :reactions, only: [] do
       post :add, on: :collection
       post :remove, on: :collection
@@ -34,7 +30,6 @@ scope module: :api do
       match "/api/internal/episode_records",                   via: :post,   as: :internal_api_episode_record_list,     to: "episode_records#create"
       match "/api/internal/library_entries",                   via: :get,    as: :internal_api_library_entry_list,      to: "library_entries#index"
       match "/api/internal/library_entries/:library_entry_id", via: :patch,  as: :internal_api_library_entry,           to: "library_entries#update"
-      match "/api/internal/likes",                             via: :get,    as: :internal_api_like_list,               to: "likes#index"
       match "/api/internal/multiple_episode_records",          via: :post,   as: :internal_api_multiple_episode_record, to: "multiple_episode_records#create"
       match "/api/internal/received_channels",                 via: :get,    as: :internal_api_received_channel_list,   to: "received_channels#index"
       match "/api/internal/registrations",                     via: :post,   as: :internal_api_registrations,           to: "registrations#create"

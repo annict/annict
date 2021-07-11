@@ -19,12 +19,14 @@ module Cards
               alt: @anime.local_title
             ).render
 
-            h.tag :h5, class: "fw-bold mb-0 mt-2 text-truncate" do
+            h.tag :div, class: "fw-bold h5 mb-0 mt-2 text-center text-truncate" do
               h.text @anime.local_title
             end
           end
 
-          h.html ButtonGroups::AnimeButtonGroupComponent.new(view_context, anime: @anime, class_name: "mt-2").render
+          h.tag :div, class: "mt-2 text-center" do
+            h.html ButtonGroups::AnimeButtonGroupComponent.new(view_context, anime: @anime).render
+          end
         end
       end
     end

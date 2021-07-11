@@ -17,7 +17,7 @@
 
   <div class="gx-3 row mt-3">
     <div class="col-6">
-      <div class="card rounded-3">
+      <div class="card">
         <div class="card-body">
           <%= form_with model: @series_work, url: db_series_work_detail_path(@series_work) do |f| %>
             <%= render "application/components/error_panel", resource: f.object %>

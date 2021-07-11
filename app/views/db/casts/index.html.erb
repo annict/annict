@@ -29,7 +29,7 @@
   </div>
 
   <% if @casts.present? %>
-    <div class="card mt-3 rounded-3">
+    <div class="card mt-3">
       <div class="card-body">
         <table class="table table-sm">
           <thead>
@@ -110,7 +110,7 @@
       </div>
     </div>
   <% else %>
-    <div class="card mt-3 rounded-3">
+    <div class="card mt-3">
       <div class="card-body">
         <%= render "application/components/empty", text: t("messages._empty.no_resources") %>
       </div>

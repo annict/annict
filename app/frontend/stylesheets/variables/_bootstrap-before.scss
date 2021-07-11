@@ -35,6 +35,12 @@ $link-decoration: none;
 
 $grid-gutter-width: 2rem;
 
+// Components
+
+$border-radius: 0.3rem;
+$border-radius-sm: 0.25rem;
+$border-radius-lg: 1rem;
+
 // Typography
 
 $h1-font-size: 1.75rem;
@@ -53,15 +59,12 @@ $headings-font-weight: 400;
 
 $list-inline-padding: 0.5rem;
 
-// Components
-
-$border-radius: 0.3rem;
-$border-radius-sm: 0.25rem;
-$border-radius-lg: 1rem;
-
 // Navbar
 
 $navbar-padding-y: 0.3rem;
+
+// Cards
+$card-border-radius: $border-radius-lg;
 
 // Image thumbnails
 

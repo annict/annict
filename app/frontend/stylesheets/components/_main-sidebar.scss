@@ -22,7 +22,7 @@
   }
 
   &__content {
-    background-color: $card-bg;
+    background-color: var(--ann-color-sidebar-bg);
     display: none;
     font-size: 0.95rem;
     height: 100%;
@@ -42,19 +42,11 @@
     }
 
     a {
-      color: $body-color;
-
-      @include color-scheme(dark) {
-        color: $ann-body-color-dark;
-      }
+      color: var(--ann-body-color);
     }
 
     input {
       font-size: 0.95rem;
-    }
-
-    @include color-scheme(dark) {
-      background-color: shade-color($ann-card-bg-dark, 25%);
     }
   }
 

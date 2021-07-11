@@ -1,8 +1,0 @@
-query {
-  channels(isVod: true) {
-    nodes {
-      databaseId
-      name
-    }
-  }
-}

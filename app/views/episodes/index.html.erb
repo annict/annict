@@ -8,7 +8,7 @@
 <%= Headers::AnimeHeaderComponent.new(self, anime: @anime, programs: @programs).render %>
 
 <div class="container my-3">
-  <div class="card rounded-3">
+  <div class="card">
     <div class="card-body">
       <% if @episodes.present? %>
         <div class="gx-3 row">

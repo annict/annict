@@ -1,0 +1,62 @@
+<% title = t "head.title.oauth.authorizations.new" %>
+<% set_meta_tags title: title, reverse: true, prefix: false %>
+
+<div class="py-5">
+  <div class="text-center">
+    <%= link_to root_path do %>
+      <%= image_tag asset_bundle_path("images/logos/color-mizuho.png"), size: "50x61", alt: "Annict" %>
+    <% end %>
+  </div>
+
+  <div class="mt-5 u-container-narrow u-container-flat">
+    <div class="card u-card-flat">
+      <div class="card-body">
+        <h1 class="text-center">
+          <%= t "head.title.oauth.authorizations.new" %>
+        </h1>
+
+        <p class="mt-3">
+          <%= t "messages.oauth.authorizations.authorize_account_html", client_name: @pre_auth.client.name %>
+        </p>
+
+        <h2 class="h4">
+          <%= t "messages.oauth.authorizations.this_application_will_be_able_to" %>
+        </h2>
+
+        <% if @pre_auth.scopes.present? %>
+          <ul>
+            <% @pre_auth.scopes.each do |scope| %>
+              <li>
+                <%= t scope, scope: [:doorkeeper, :scopes] %>
+              </li>
+            <% end %>
+          </ul>
+        <% end %>
+
+        <div class="align-items-center mt-5 row">
+          <div class="col-6">
+            <%= form_tag oauth_authorization_path, method: :post, data: { turbo: "false" } do %>
+              <%= hidden_field_tag :client_id, @pre_auth.client.uid %>
+              <%= hidden_field_tag :redirect_uri, @pre_auth.redirect_uri %>
+              <%= hidden_field_tag :state, @pre_auth.state %>
+              <%= hidden_field_tag :response_type, @pre_auth.response_type %>
+              <%= hidden_field_tag :scope, @pre_auth.scope %>
+              <%= submit_tag t("messages.oauth.authorizations.authorize"), class: "btn btn-primary w-100" %>
+            <% end %>
+          </div>
+
+          <div class="col-6 text-center">
+            <%= form_tag oauth_authorization_path, method: :delete, data: { turbo: "false" } do %>
+              <%= hidden_field_tag :client_id, @pre_auth.client.uid %>
+              <%= hidden_field_tag :redirect_uri, @pre_auth.redirect_uri %>
+              <%= hidden_field_tag :state, @pre_auth.state %>
+              <%= hidden_field_tag :response_type, @pre_auth.response_type %>
+              <%= hidden_field_tag :scope, @pre_auth.scope %>
+              <%= submit_tag t("messages.oauth.authorizations.cancel"), class: "btn btn-outline-secondary w-100" %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

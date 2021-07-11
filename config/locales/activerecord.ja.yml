@@ -116,7 +116,7 @@ ja:
       profile:
         avatar: プロフィール画像
         background_image: 背景画像
-        description: ヒトコト
+        description: 自己紹介
         name: 名前
         url: URL
       slot:

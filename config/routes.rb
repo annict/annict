@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-ID_FORMAT = /[0-9]+/
-USERNAME_FORMAT = /[A-Za-z0-9_]+/
-
 Rails.application.routes.draw do
   draw :api
   draw :internal_api
@@ -12,42 +9,38 @@ Rails.application.routes.draw do
     controllers: {omniauth_callbacks: "callbacks"},
     skip: %i[passwords registrations sessions]
 
-  scope module: :v3 do
-    use_doorkeeper do
-      controllers(
-        applications: "oauth/applications",
-        authorizations: "oauth/authorizations",
-        token_info: "oauth/token_info",
-        tokens: "oauth/tokens"
-      )
-      skip_controllers :authorized_applications
-    end
-  end
-
   devise_scope :user do
     # standard:disable Layout/ExtraSpacing, Layout/LineLength
     match "/legacy/sign_in",      via: :get,    as: :legacy_sign_in,      to: "legacy/sessions#new"
     match "/legacy/sign_in",      via: :post,   as: :user_session,        to: "legacy/sessions#create"
     match "/sign_out",            via: :delete, as: :sign_out,            to: "devise/sessions#destroy"
-    match "/user_email",          via: :patch,  as: :user_email,          to: "user_emails#update"
-    match "/user_email/callback", via: :get,    as: :user_email_callback, to: "user_email_callbacks#show"
     # standard:enable Layout/ExtraSpacing, Layout/LineLength
   end
 
+  use_doorkeeper do
+    controllers(
+      applications: "oauth/applications",
+      authorizations: "oauth/authorizations",
+      token_info: "oauth/token_info",
+      tokens: "oauth/tokens"
+    )
+    skip_controllers :authorized_applications
+  end
+
   # standard:disable Layout/ExtraSpacing, Layout/LineLength
-  match "/@:username",                                        via: :get,    as: :profile,                                 to: "profiles#show",                username: USERNAME_FORMAT
-  match "/@:username/:status_kind",                           via: :get,    as: :library,                                 to: "libraries#show",               username: USERNAME_FORMAT, status_kind: /wanna_watch|watching|watched|on_hold|stop_watching/
-  match "/@:username/favorite_characters",                    via: :get,    as: :favorite_character_list,                 to: "favorite_characters#index",    username: USERNAME_FORMAT
-  match "/@:username/favorite_organizations",                 via: :get,    as: :favorite_organization_list,              to: "favorite_organizations#index", username: USERNAME_FORMAT
-  match "/@:username/favorite_people",                        via: :get,    as: :favorite_person_list,                    to: "favorite_people#index",        username: USERNAME_FORMAT
-  match "/@:username/followers",                              via: :get,    as: :followers_user,                          to: "users#followers",              username: USERNAME_FORMAT
-  match "/@:username/following",                              via: :get,    as: :following_user,                          to: "users#following",              username: USERNAME_FORMAT
-  match "/@:username/ics",                                    via: :get,    as: :user_ics,                                to: "ics#show",                     username: USERNAME_FORMAT
-  match "/@:username/records",                                via: :get,    as: :record_list,                             to: "records#index",                username: USERNAME_FORMAT
-  match "/@:username/records/:record_id",                     via: :delete,                                               to: "records#destroy",              username: USERNAME_FORMAT
-  match "/@:username/records/:record_id",                     via: :get,                                                  to: "records#show",                 username: USERNAME_FORMAT
-  match "/@:username/records/:record_id",                     via: :patch,                                                to: "records#update",               username: USERNAME_FORMAT
-  match "/@:username/records/:record_id",                     via: :patch,  as: :record,                                  to: "records#update",                  username: USERNAME_FORMAT
+  match "/@:username",                                        via: :get,    as: :profile,                                 to: "profiles#show",                username: ROUTING_USERNAME_FORMAT
+  match "/@:username/:status_kind",                           via: :get,    as: :library,                                 to: "libraries#show",               username: ROUTING_USERNAME_FORMAT, status_kind: /wanna_watch|watching|watched|on_hold|stop_watching/
+  match "/@:username/favorite_characters",                    via: :get,    as: :favorite_character_list,                 to: "favorite_characters#index",    username: ROUTING_USERNAME_FORMAT
+  match "/@:username/favorite_organizations",                 via: :get,    as: :favorite_organization_list,              to: "favorite_organizations#index", username: ROUTING_USERNAME_FORMAT
+  match "/@:username/favorite_people",                        via: :get,    as: :favorite_person_list,                    to: "favorite_people#index",        username: ROUTING_USERNAME_FORMAT
+  match "/@:username/followers",                              via: :get,    as: :followers_user,                          to: "users#followers",              username: ROUTING_USERNAME_FORMAT
+  match "/@:username/following",                              via: :get,    as: :following_user,                          to: "users#following",              username: ROUTING_USERNAME_FORMAT
+  match "/@:username/ics",                                    via: :get,    as: :user_ics,                                to: "ics#show",                     username: ROUTING_USERNAME_FORMAT
+  match "/@:username/records",                                via: :get,    as: :record_list,                             to: "records#index",                username: ROUTING_USERNAME_FORMAT
+  match "/@:username/records/:record_id",                     via: :delete,                                               to: "records#destroy",              username: ROUTING_USERNAME_FORMAT
+  match "/@:username/records/:record_id",                     via: :get,                                                  to: "records#show",                 username: ROUTING_USERNAME_FORMAT
+  match "/@:username/records/:record_id",                     via: :patch,                                                to: "records#update",               username: ROUTING_USERNAME_FORMAT
+  match "/@:username/records/:record_id",                     via: :patch,  as: :record,                                  to: "records#update",               username: ROUTING_USERNAME_FORMAT
   match "/api/internal/animes/:anime_id/status_select",       via: :post,   as: :internal_api_anime_status_select,        to: "api/internal/status_selects#create"
   match "/api/internal/channels/:channel_id/reception",       via: :delete, as: :internal_api_channel_reception,          to: "api/internal/receptions#destroy"
   match "/api/internal/channels/:channel_id/reception",       via: :post,                                                 to: "api/internal/receptions#create"
@@ -55,12 +48,15 @@ Rails.application.routes.draw do
   match "/api/internal/follow",                               via: :delete, as: :internal_api_follow,                     to: "api/internal/follows#destroy"
   match "/api/internal/follow",                               via: :post,                                                 to: "api/internal/follows#create"
   match "/api/internal/following",                            via: :get,    as: :internal_api_following_list,             to: "api/internal/following#index"
+  match "/api/internal/likes",                                via: :get,    as: :internal_api_like_list,                  to: "api/internal/likes#index"
+  match "/api/internal/likes",                                via: :post,                                                 to: "api/internal/likes#create"
   match "/api/internal/mute_user",                            via: :delete, as: :internal_api_mute_user,                  to: "api/internal/mute_users#destroy"
   match "/api/internal/mute_user",                            via: :post,                                                 to: "api/internal/mute_users#create"
   match "/api/internal/muted_users",                          via: :get,    as: :internal_api_muted_user_list,            to: "api/internal/muted_users#index"
   match "/api/internal/organizations",                        via: :get,    as: :internal_api_organization_list,          to: "api/internal/organizations#index"
   match "/api/internal/people",                               via: :get,    as: :internal_api_person_list,                to: "api/internal/people#index"
   match "/api/internal/series_list",                          via: :get,    as: :internal_api_series_list,                to: "api/internal/series_list#index"
+  match "/api/internal/unlikes",                              via: :post,   as: :internal_api_unlike_list,                to: "api/internal/unlikes#create"
   match "/api/internal/works",                                via: :get,    as: :internal_api_work_list,                  to: "api/internal/works#index"
   match "/channels",                                          via: :get,    as: :channel_list,                            to: "channels#index"
   match "/characters/:character_id",                          via: :get,    as: :character,                               to: "characters#show"
@@ -190,15 +186,15 @@ Rails.application.routes.draw do
   match "/forum",                                             via: :get,    as: :forum,                                   to: "forum/home#show"
   match "/forum/categories/:category_id",                     via: :get,    as: :forum_category,                          to: "forum/categories#show",           category_id: /[a-z_]+/
   match "/forum/posts",                                       via: :post,   as: :forum_post_list,                         to: "forum/posts#create"
-  match "/forum/posts/:post_id",                              via: :get,    as: :forum_post,                              to: "forum/posts#show",                post_id: ID_FORMAT
-  match "/forum/posts/:post_id",                              via: :patch,                                                to: "forum/posts#update",              post_id: ID_FORMAT
-  match "/forum/posts/:post_id/comments",                     via: :post,   as: :forum_comment_list,                      to: "forum/comments#create",           post_id: ID_FORMAT
-  match "/forum/posts/:post_id/comments/:comment_id",         via: :patch,  as: :forum_comment,                           to: "forum/comments#update",           post_id: ID_FORMAT, comment_id: ID_FORMAT
-  match "/forum/posts/:post_id/comments/:comment_id/edit",    via: :get,    as: :forum_edit_comment,                      to: "forum/comments#edit",             post_id: ID_FORMAT, comment_id: ID_FORMAT
-  match "/forum/posts/:post_id/edit",                         via: :get,    as: :forum_edit_post,                         to: "forum/posts#edit",                post_id: ID_FORMAT
+  match "/forum/posts/:post_id",                              via: :get,    as: :forum_post,                              to: "forum/posts#show",                post_id: ROUTING_ID_FORMAT
+  match "/forum/posts/:post_id",                              via: :patch,                                                to: "forum/posts#update",              post_id: ROUTING_ID_FORMAT
+  match "/forum/posts/:post_id/comments",                     via: :post,   as: :forum_comment_list,                      to: "forum/comments#create",           post_id: ROUTING_ID_FORMAT
+  match "/forum/posts/:post_id/comments/:comment_id",         via: :patch,  as: :forum_comment,                           to: "forum/comments#update",           post_id: ROUTING_ID_FORMAT, comment_id: ROUTING_ID_FORMAT
+  match "/forum/posts/:post_id/comments/:comment_id/edit",    via: :get,    as: :forum_edit_comment,                      to: "forum/comments#edit",             post_id: ROUTING_ID_FORMAT, comment_id: ROUTING_ID_FORMAT
+  match "/forum/posts/:post_id/edit",                         via: :get,    as: :forum_edit_post,                         to: "forum/posts#edit",                post_id: ROUTING_ID_FORMAT
   match "/forum/posts/new",                                   via: :get,    as: :forum_new_post,                          to: "forum/posts#new"
-  match "/fragment/@:username/records/:record_id/edit",       via: :get,    as: :fragment_edit_record,                    to: "fragment/records#edit",           username: USERNAME_FORMAT
-  match "/fragment/@:username/tracking_heatmap",              via: :get,    as: :fragment_tracking_heatmap,               to: "fragment/tracking_heatmaps#show", username: USERNAME_FORMAT
+  match "/fragment/@:username/records/:record_id/edit",       via: :get,    as: :fragment_edit_record,                    to: "fragment/records#edit",           username: ROUTING_USERNAME_FORMAT
+  match "/fragment/@:username/tracking_heatmap",              via: :get,    as: :fragment_tracking_heatmap,               to: "fragment/tracking_heatmaps#show", username: ROUTING_USERNAME_FORMAT
   match "/fragment/activity_groups/:activity_group_id/items", via: :get,    as: :fragment_activity_item_list,             to: "fragment/activity_items#index"
   match "/fragment/episodes/:episode_id/records",             via: :get,    as: :fragment_episode_record_list,            to: "fragment/episode_records#index"
   match "/fragment/receive_channel_buttons",                  via: :get,    as: :fragment_receive_channel_button_list,    to: "fragment/receive_channel_buttons#index"
@@ -215,11 +211,13 @@ Rails.application.routes.draw do
   match "/privacy",                                           via: :get,    as: :privacy,                                 to: "pages#privacy"
   match "/registrations/new",                                 via: :get,    as: :new_registration,                        to: "registrations#new"
   match "/search",                                            via: :get,    as: :search,                                  to: "searches#show"
-  match "/settings",                                          via: :get,    as: :setting_list,                            to: "settings#index"
   match "/settings/account",                                  via: :get,    as: :settings_account,                        to: "settings/accounts#show"
   match "/settings/account",                                  via: :patch,                                                to: "settings/accounts#update"
   match "/settings/apps",                                     via: :get,    as: :settings_app_list,                       to: "settings/apps#index"
   match "/settings/apps/:app_id/revoke",                      via: :patch,  as: :settings_revoke_app,                     to: "settings/apps#revoke"
+  match "/settings/email",                                    via: :get,    as: :settings_email,                          to: "settings/emails#show"
+  match "/settings/email",                                    via: :patch,                                                to: "settings/emails#update"
+  match "/settings/email/callback",                           via: :get,    as: :settings_email_callback,                 to: "settings/email_callbacks#show"
   match "/settings/email_notification",                       via: :get,    as: :settings_email_notification,             to: "settings/email_notifications#show"
   match "/settings/email_notification",                       via: :patch,                                                to: "settings/email_notifications#update"
   match "/settings/email_notification/unsubscribe",           via: :get,    as: :settings_unsubscribe_email_notification, to: "settings/email_notifications#unsubscribe"
@@ -227,7 +225,8 @@ Rails.application.routes.draw do
   match "/settings/muted_users/:mute_user_id",                via: :delete, as: :settings_muted_user,                     to: "settings/muted_users#destroy"
   match "/settings/options",                                  via: :get,    as: :settings_option_list,                    to: "settings/options#index"
   match "/settings/options",                                  via: :patch,                                                to: "settings/options#update"
-  match "/settings/password",                                 via: :patch,  as: :settings_password,                       to: "settings/passwords#update"
+  match "/settings/password",                                 via: :get,    as: :settings_password,                       to: "settings/passwords#show"
+  match "/settings/password",                                 via: :patch,                                                to: "settings/passwords#update"
   match "/settings/profile",                                  via: :get,    as: :settings_profile,                        to: "settings/profiles#show"
   match "/settings/profile",                                  via: :patch,                                                to: "settings/profiles#update"
   match "/settings/providers",                                via: :get,    as: :settings_provider_list,                  to: "settings/providers#index"
@@ -247,17 +246,17 @@ Rails.application.routes.draw do
   match "/track",                                             via: :get,    as: :track,                                   to: "tracks#show"
   match "/userland",                                          via: :get,    as: :userland,                                to: "userland/home#show"
   match "/userland/projects",                                 via: :post,   as: :userland_project_list,                   to: "userland/projects#create"
-  match "/userland/projects/:project_id",                     via: :delete, as: :userland_project,                        to: "userland/projects#destroy",   project_id: ID_FORMAT
-  match "/userland/projects/:project_id",                     via: :get,                                                  to: "userland/projects#show",   project_id: ID_FORMAT
-  match "/userland/projects/:project_id",                     via: :patch,                                                to: "userland/projects#update", project_id: ID_FORMAT
-  match "/userland/projects/:project_id/edit",                via: :get,    as: :userland_edit_project,                   to: "userland/projects#edit",   project_id: ID_FORMAT
+  match "/userland/projects/:project_id",                     via: :delete, as: :userland_project,                        to: "userland/projects#destroy", project_id: ROUTING_ID_FORMAT
+  match "/userland/projects/:project_id",                     via: :get,                                                  to: "userland/projects#show",    project_id: ROUTING_ID_FORMAT
+  match "/userland/projects/:project_id",                     via: :patch,                                                to: "userland/projects#update",  project_id: ROUTING_ID_FORMAT
+  match "/userland/projects/:project_id/edit",                via: :get,    as: :userland_edit_project,                   to: "userland/projects#edit",    project_id: ROUTING_ID_FORMAT
   match "/userland/projects/new",                             via: :get,    as: :userland_new_project,                    to: "userland/projects#new"
   match "/work_display_option",                               via: :get,    as: :work_display_option,                     to: "work_display_options#show"
-  match "/works/:anime_id",                                   via: :get,    as: :anime,                                   to: "animes#show",              anime_id: ID_FORMAT
-  match "/works/:anime_id/episodes",                          via: :get,    as: :episode_list,                            to: "episodes#index",           anime_id: ID_FORMAT
-  match "/works/:anime_id/episodes/:episode_id",              via: :get,    as: :episode,                                 to: "episodes#show",            anime_id: ID_FORMAT
-  match "/works/:anime_id/records",                           via: :get,    as: :anime_record_list,                       to: "anime_records#index",      anime_id: ID_FORMAT
-  match "/works/:anime_id/records",                           via: :post,                                                 to: "anime_records#create",     anime_id: ID_FORMAT
+  match "/works/:anime_id",                                   via: :get,    as: :anime,                                   to: "animes#show",              anime_id: ROUTING_ID_FORMAT
+  match "/works/:anime_id/episodes",                          via: :get,    as: :episode_list,                            to: "episodes#index",           anime_id: ROUTING_ID_FORMAT
+  match "/works/:anime_id/episodes/:episode_id",              via: :get,    as: :episode,                                 to: "episodes#show",            anime_id: ROUTING_ID_FORMAT
+  match "/works/:anime_id/records",                           via: :get,    as: :anime_record_list,                       to: "anime_records#index",      anime_id: ROUTING_ID_FORMAT
+  match "/works/:anime_id/records",                           via: :post,                                                 to: "anime_records#create",     anime_id: ROUTING_ID_FORMAT
   match "/works/:slug",                                       via: :get,    as: :seasonal_anime_list,                     to: "works#season",             slug: /[0-9]{4}-(all|spring|summer|autumn|winter)/
   match "/works/newest",                                      via: :get,    as: :newest_anime_list,                       to: "works#newest"
   match "/works/popular",                                     via: :get,    as: :popular_anime_list,                      to: "works#popular"

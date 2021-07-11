@@ -23,7 +23,14 @@ module UserLikeable
       likes.create!(recipient: recipient)
     end
 
-    def unlike(recipient)
+    def unlike(resource)
+      recipient = case resource
+      when Record
+        resource.episode_record? ? resource.episode_record : resource.anime_record
+      else
+        resource
+      end
+
       like = likes.where(recipient: recipient).first
       like.destroy if like.present?
       like

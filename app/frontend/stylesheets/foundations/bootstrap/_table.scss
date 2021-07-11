@@ -1,5 +1,4 @@
 .table {
-  @include color-scheme(dark) {
-    color: $ann-body-color-dark;
-  }
+  color: var(--ann-body-color);
+  border-color: var(--ann-table-border-color);
 }

@@ -7,5 +7,11 @@ module Settings
     def index
       @mute_users = current_user.mute_users.order(id: :desc)
     end
+
+    def destroy
+      mute_user = current_user.mute_users.find(params[:mute_user_id])
+      mute_user.destroy
+      redirect_to settings_muted_user_list_path, notice: "ミュートを解除しました"
+    end
   end
 end
