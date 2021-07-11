@@ -4,8 +4,6 @@ module Api
   module V1
     module Me
       class RecordsController < Api::V1::ApplicationController
-        include V4::GraphqlRunnable
-
         before_action :prepare_params!, only: %i[create update destroy]
 
         def create

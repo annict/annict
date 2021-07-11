@@ -7,7 +7,6 @@ module V4
     include Loggable
     include PageCategorizable
     include SentryLoadable
-    include V4::GraphqlRunnable
 
     layout "main_default"
 
