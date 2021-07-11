@@ -14,7 +14,6 @@ Rails.application.routes.draw do
     match "/legacy/sign_in",      via: :get,    as: :legacy_sign_in,      to: "legacy/sessions#new"
     match "/legacy/sign_in",      via: :post,   as: :user_session,        to: "legacy/sessions#create"
     match "/sign_out",            via: :delete, as: :sign_out,            to: "devise/sessions#destroy"
-    match "/user_email/callback", via: :get,    as: :user_email_callback, to: "user_email_callbacks#show"
     # standard:enable Layout/ExtraSpacing, Layout/LineLength
   end
 
@@ -215,6 +214,7 @@ Rails.application.routes.draw do
   match "/settings/apps/:app_id/revoke",                      via: :patch,  as: :settings_revoke_app,                     to: "settings/apps#revoke"
   match "/settings/email",                                    via: :get,    as: :settings_email,                          to: "settings/emails#show"
   match "/settings/email",                                    via: :patch,                                                to: "settings/emails#update"
+  match "/settings/email/callback",                           via: :get,    as: :settings_email_callback,                 to: "settings/email_callbacks#show"
   match "/settings/email_notification",                       via: :get,    as: :settings_email_notification,             to: "settings/email_notifications#show"
   match "/settings/email_notification",                       via: :patch,                                                to: "settings/email_notifications#update"
   match "/settings/email_notification/unsubscribe",           via: :get,    as: :settings_unsubscribe_email_notification, to: "settings/email_notifications#unsubscribe"
