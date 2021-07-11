@@ -13,7 +13,7 @@ module ListGroups
 
     def render
       build_html do |h|
-        h.tag :div, class: "list-group" do
+        h.tag :div, class: "list-group rounded-3" do
           h.tag :a, href: view_context.record_list_path(@user.username), class: all_link_class_name do
             h.text t("noun.all")
             h.tag :span, class: "badge badge-pill bg-secondary" do

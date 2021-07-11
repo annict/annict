@@ -14,9 +14,11 @@ module Lists
         h.tag :div, class: "c-record-list" do
           if @records.present?
             @records.each do |record|
-              h.tag :div, class: "mt-3" do
-                h.tag :turbo_frame, id: dom_id(record) do
-                  h.html Contents::RecordContentComponent.new(view_context, record: record, show_box: @show_box).render
+              h.tag :div, class: "card mt-3 u-card-flat" do
+                h.tag :div, class: "card-body" do
+                  h.tag :turbo_frame, id: dom_id(record) do
+                    h.html Contents::RecordContentComponent.new(view_context, record: record, show_box: @show_box).render
+                  end
                 end
               end
             end
@@ -27,7 +29,11 @@ module Lists
               end
             end
           else
-            h.html EmptyV6Component.new(view_context, text: t("messages._empty.no_records")).render
+            h.tag :div, class: "card mt-3 u-card-flat" do
+              h.tag :div, class: "card-body" do
+                h.html EmptyV6Component.new(view_context, text: t("messages._empty.no_records")).render
+              end
+            end
           end
         end
       end
