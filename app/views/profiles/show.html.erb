@@ -6,6 +6,7 @@
 <%= component_value_fetcher_tag("follow-button", internal_api_following_list_path) %>
 <%= component_value_fetcher_tag("mute-user-button", internal_api_muted_user_list_path) %>
 <%= component_value_fetcher_tag("status-select-dropdown", internal_api_library_entry_list_path(anime_ids: @anime_ids)) %>
+<%= component_value_fetcher_tag("like-button", internal_api_like_list_path) %>
 
 <div class="container py-3">
   <%= Headers::ProfileHeaderComponent.new(self, user: @user, current_user: current_user, params: params).render %>
