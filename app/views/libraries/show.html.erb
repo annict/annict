@@ -29,16 +29,9 @@
     <% end %>
   </ul>
 
-  <div class="container mt-3">
-    <div class="align-items-center row">
-      <div class="col-6">
-        <%= Buttons::ShareToTwitterButtonComponent.new(self, text: title, url: "#{local_url}#{library_path(@user.username, params[:status_kind])}").render %>
-      </div>
-
-      <div class="col-6 text-end">
-        <%= render "display_option_buttons", display_option: @display_option %>
-      </div>
-    </div>
+  <div class="container mt-3 text-end">
+    <%= Buttons::ShareToTwitterButtonComponent.new(self, text: title, url: "#{local_url}#{library_path(@user.username, params[:status_kind])}", class_name: "me-3").render %>
+    <%= render "display_option_buttons", display_option: @display_option %>
   </div>
 
   <% if @seasons.present? %>
@@ -57,7 +50,7 @@
             <% if @display_option == "grid_detailed" %>
               <%= render "libraries/display_options/#{@display_option}", animes: animes, user: @user %>
             <% else %>
-              <%= render "works/display_options/grid_small", animes: animes %>
+              <%= render "animes/display_options/grid_small", animes: animes %>
             <% end %>
           </div>
         </div>
