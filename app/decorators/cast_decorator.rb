@@ -25,6 +25,10 @@ module CastDecorator
     link_to local_name_with_old, person_path(person)
   end
 
+  def local_name_link
+    link_to local_name, person_path(person_id)
+  end
+
   def to_values
     self.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
       next unless respond_to?(field)

@@ -1,7 +1,7 @@
 <div class="overflow-hidden">
-  <div class="g-3 row">
+  <div class="gx-1 gy-2 row">
     <% animes.each do |anime| %>
-      <div class="col-4 col-sm-1">
+      <div class="col-3 col-sm-1">
         <%= Cards::AnimeCardComponent.new(self, anime: anime, width: 100, show_button: false).render %>
       </div>
     <% end %>

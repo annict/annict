@@ -31,6 +31,15 @@ module StaffDecorator
     link_to local_name_with_old, path
   end
 
+  def local_name_link
+    path = case resource_type
+    when "Person" then person_path(resource_id)
+    when "Organization" then organization_path(resource_id)
+    end
+
+    link_to local_name, path
+  end
+
   def to_values
     self.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
       hash[field] = case field

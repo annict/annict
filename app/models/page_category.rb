@@ -21,12 +21,12 @@ class PageCategory
     record_edit
     record_list
     search
+    seasonal_anime_list
     slot_list
     track
     welcome
     work_list_newest
     work_list_popular
-    work_list_season
   ].freeze
 
   NAMES.each do |name|

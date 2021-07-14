@@ -41,6 +41,11 @@
   --ann-form-select-bg: var(--ann-input-bg);
   --ann-form-select-border-color: var(--ann-input-border-color);
 
+  // Navs
+
+  --ann-nav-link-color: var(--ann-link-color);
+  --ann-nav-link-hover-color: var(--ann-link-hover-color);
+
   // Dropdowns
 
   --ann-dropdown-border-color: #{shade-color($border-color, 50%)};
