@@ -14,8 +14,10 @@ class PageCategory
     following_list
     home
     library
+    newest_anime_list
     organization_fan_list
     person_fan_list
+    popular_anime_list
     profile
     record
     record_edit
@@ -25,8 +27,6 @@ class PageCategory
     slot_list
     track
     welcome
-    work_list_newest
-    work_list_popular
   ].freeze
 
   NAMES.each do |name|
