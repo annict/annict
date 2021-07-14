@@ -38,7 +38,7 @@ module Navs
               h.html active_link_to t("noun.favorites"), view_context.favorite_character_list_path(@user.username),
                 class: "c-nav__link",
                 class_active: "c-nav__link--active",
-                active: @params[:controller].in?(%w[v3/favorite_characters favorite_people favorite_organizations]) && @params[:action] == "index"
+                active: @params[:controller].in?(%w[favorite_characters favorite_people favorite_organizations])
             end
 
             h.tag :li, class: "c-nav__item" do
