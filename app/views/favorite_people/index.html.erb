@@ -2,6 +2,9 @@
 <% description = meta_description(t("head.meta.description.favorite_people.index", profile_name: @user.profile.name, username: @user.username)) %>
 <% set_meta_tags(title: title, description: description, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false) %>
 
+<%= component_value_fetcher_tag("follow-button", internal_api_following_list_path) %>
+<%= component_value_fetcher_tag("star-button", internal_api_star_list_path) %>
+
 <div class="py-3">
   <div class="container">
     <%= Headers::ProfileHeaderComponent.new(self, user: @user).render %>
@@ -38,7 +41,7 @@
                       </div>
 
                       <div class="col-auto">
-                        <%= Buttons::FavoriteButtonComponent.new(self, favoritable: person).render %>
+                        <%= Buttons::StarButtonComponent.new(self, starrable: person).render %>
                       </div>
                     </div>
                   </div>
@@ -72,7 +75,7 @@
                       </div>
 
                       <div class="col-auto">
-                        <%= Buttons::FavoriteButtonComponent.new(self, favoritable: person).render %>
+                        <%= Buttons::StarButtonComponent.new(self, starrable: person).render %>
                       </div>
                     </div>
                   </div>
