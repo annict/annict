@@ -61,8 +61,8 @@
               <% [
                 [record_list_path(@user.username), @user.records_count, "Records"],
                 [library_path(@user.username, :watching), @user.watching_anime_count, "Watching"],
-                [following_user_path(@user.username), @user.following_count, "Following"],
-                [followers_user_path(@user.username), @user.followers_count, "Followers"],
+                [followee_list_path(@user.username), @user.following_count, "Following"],
+                [follower_list_path(@user.username), @user.followers_count, "Followers"],
                 [favorite_character_list_path(@user.username), @user.character_favorites_count, "Characters"],
                 [favorite_person_list_path(@user.username), @user.person_favorites_count, "People"],
                 [favorite_organization_list_path(@user.username), @user.organization_favorites_count, "Orgs"],

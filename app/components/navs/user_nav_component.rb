@@ -42,17 +42,17 @@ module Navs
             end
 
             h.tag :li, class: "c-nav__item" do
-              h.html active_link_to t("noun.following"), view_context.following_user_path(@user.username),
+              h.html active_link_to t("noun.following"), view_context.followee_list_path(@user.username),
                 class: "c-nav__link",
                 class_active: "c-nav__link--active",
-                active: @params[:controller] == "users" && @params[:action] == "following"
+                active: @params[:controller] == "followees"
             end
 
             h.tag :li, class: "c-nav__item" do
-              h.html active_link_to t("noun.followers"), view_context.followers_user_path(@user.username),
+              h.html active_link_to t("noun.followers"), view_context.follower_list_path(@user.username),
                 class: "c-nav__link",
                 class_active: "c-nav__link--active",
-                active: @params[:controller] == "users" && @params[:action] == "followers"
+                active: @params[:controller] == "followers"
             end
           end
         end

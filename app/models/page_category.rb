@@ -10,8 +10,8 @@ class PageCategory
     favorite_character_list
     favorite_organization_list
     favorite_person_list
+    followee_list
     follower_list
-    following_list
     home
     library
     newest_anime_list

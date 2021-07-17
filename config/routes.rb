@@ -33,8 +33,8 @@ Rails.application.routes.draw do
   match "/@:username/favorite_characters",                    via: :get,    as: :favorite_character_list,                 to: "favorite_characters#index",    username: ROUTING_USERNAME_FORMAT
   match "/@:username/favorite_organizations",                 via: :get,    as: :favorite_organization_list,              to: "favorite_organizations#index", username: ROUTING_USERNAME_FORMAT
   match "/@:username/favorite_people",                        via: :get,    as: :favorite_person_list,                    to: "favorite_people#index",        username: ROUTING_USERNAME_FORMAT
-  match "/@:username/followers",                              via: :get,    as: :followers_user,                          to: "users#followers",              username: ROUTING_USERNAME_FORMAT
-  match "/@:username/following",                              via: :get,    as: :following_user,                          to: "users#following",              username: ROUTING_USERNAME_FORMAT
+  match "/@:username/followers",                              via: :get,    as: :follower_list,                           to: "followers#index",              username: ROUTING_USERNAME_FORMAT
+  match "/@:username/following",                              via: :get,    as: :followee_list,                           to: "followees#index",              username: ROUTING_USERNAME_FORMAT
   match "/@:username/ics",                                    via: :get,    as: :user_ics,                                to: "ics#show",                     username: ROUTING_USERNAME_FORMAT
   match "/@:username/records",                                via: :get,    as: :record_list,                             to: "records#index",                username: ROUTING_USERNAME_FORMAT
   match "/@:username/records/:record_id",                     via: :delete,                                               to: "records#destroy",              username: ROUTING_USERNAME_FORMAT
