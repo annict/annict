@@ -24,7 +24,7 @@ module Navs
               h.html active_link_to t("noun.records"), view_context.record_list_path(@user.username),
                 class: "c-nav__link",
                 class_active: "c-nav__link--active",
-                active: [records: :index, "v4/records": :show]
+                active: @params[:controller] == "records"
             end
 
             h.tag :li, class: "c-nav__item" do
