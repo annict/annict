@@ -1,6 +1,6 @@
 .u-underline.py-3
-  .row
-    .col.u-flex-grow-0.pe-0
+  .gx-3.row
+    .col-auto
       = link_to profile_path(notification.action_user.username) do
         = ann_image_tag(notification.action_user.profile, :image, size: "50x50", class: "rounded-circle")
     .col
