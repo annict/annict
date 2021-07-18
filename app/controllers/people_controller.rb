@@ -32,5 +32,6 @@ class PeopleController < ApplicationV6Controller
       .joins(:user)
       .merge(User.only_kept)
       .order(id: :desc)
+      .limit(8)
   end
 end

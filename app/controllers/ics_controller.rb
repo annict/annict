@@ -12,6 +12,7 @@ class IcsController < ApplicationV6Controller
       ).call
         .where("started_at >= ?", Date.today.beginning_of_day)
         .where("started_at <= ?", 7.days.since.end_of_day)
+        .where.not(episode_id: nil)
 
       @works = @user
         .animes_on(:wanna_watch, :watching)

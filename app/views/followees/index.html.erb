@@ -1,0 +1,27 @@
+<% title = t "head.title.users.following", profile_name: @user.profile.name, username: @user.username %>
+<% description = meta_description(t("head.meta.description.users.following", profile_name: @user.profile.name, username: @user.username)) %>
+<% image_url = ann_image_url(@profile, :image, width: 200) %>
+<% set_meta_tags(title: title, description: description, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false) %>
+
+<%= component_value_fetcher_tag("follow-button", internal_api_following_list_path) %>
+<%= component_value_fetcher_tag("mute-user-button", internal_api_muted_user_list_path) %>
+
+<div class="py-3">
+  <div class="container">
+    <%= Headers::ProfileHeaderComponent.new(self, user: @user).render %>
+  </div>
+
+  <%= Navs::UserNavComponent.new(self, user: @user, params: params).render %>
+
+  <div class="container mt-3 u-container-flat">
+    <div class="card u-card-flat">
+      <div class="card-body">
+        <% if @users.present? %>
+          <%= render "application/user_list", users: @users %>
+        <% else %>
+          <%= EmptyV6Component.new(self, text: t("messages._empty.no_following")).render %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

@@ -11,7 +11,7 @@ module Contents
     def render
       build_html do |h|
         h.tag :div, class: "c-status-content" do
-          h.tag :span, class: "badge u-bg-#{@status.kind_v3}" do
+          h.tag :span, class: "badge rounded-pill u-bg-#{@status.kind_v3.to_s.dasherize}" do
             h.text t("enumerize.status.kind_v3.#{@status.kind_v3}")
           end
 

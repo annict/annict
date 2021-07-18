@@ -1,0 +1,50 @@
+<% title = t "head.title.favorite_organizations.index", profile_name: @user.profile.name, username: @user.username %>
+<% description = meta_description(t("head.meta.description.favorite_organizations.index", profile_name: @user.profile.name, username: @user.username)) %>
+<% set_meta_tags(title: title, description: description, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false) %>
+
+<%= component_value_fetcher_tag("follow-button", internal_api_following_list_path) %>
+<%= component_value_fetcher_tag("star-button", internal_api_star_list_path) %>
+
+<div class="py-3">
+  <div class="container">
+    <%= Headers::ProfileHeaderComponent.new(self, user: @user).render %>
+  </div>
+
+  <%= Navs::UserNavComponent.new(self, user: @user, params: params).render %>
+
+  <div class="mt-3">
+    <%= render "users/favorite_nav", user: @user %>
+  </div>
+
+  <div class="container mt-3 u-container-flat">
+    <div class="card u-card-flat">
+      <div class="card-body">
+        <% if @organization_favorites.exists? %>
+          <div class="g-3 row">
+            <% @organization_favorites.each do |organization_favorite| %>
+              <% organization = organization_favorite.organization %>
+
+              <div class="col-3 col-sm-3">
+                <div class="align-items-center row">
+                  <div class="col">
+                    <%= link_to organization.local_name, organization_path(organization), class: "text-body" %>
+
+                    <div class="text-muted u-very-small">
+                      <%= t("noun.n_works_watched", count: organization_favorite.watched_works_count) %>
+                    </div>
+                  </div>
+
+                  <div class="col-auto">
+                    <%= Buttons::StarButtonComponent.new(self, starrable: organization).render %>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <%= EmptyV6Component.new(self, text: t("messages.favorite_organizations.no_organizations")).render %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

@@ -6,7 +6,7 @@ module Api
       def index
         return render(json: []) unless user_signed_in?
 
-        likes = current_user.likes.map do |like|
+        likes = current_user.likes.preload(recipient: %i[record status]).map do |like|
           likeable = case like.recipient_type
           when "AnimeRecord", "EpisodeRecord", "WorkRecord"
             like.recipient.record
@@ -16,7 +16,7 @@ module Api
 
           {
             recipient_type: likeable.class.name,
-            recipient_id: likeable.id
+            recipient_id: likeable&.id
           }
         end
 

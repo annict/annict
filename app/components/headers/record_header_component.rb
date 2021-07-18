@@ -31,10 +31,8 @@ module Headers
                 end
               end
 
-              if @record.user.supporter? && !@record.user.setting.hide_supporter_badge?
-                h.tag :span, class: "badge u-badge-supporter" do
-                  h.text t("noun.supporter")
-                end
+              if @user.supporter? && !@user.setting.hide_supporter_badge?
+                h.html Badges::SupporterBadgeComponent.new(view_context, user: @user).render
               end
             end
 

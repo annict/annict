@@ -1,0 +1,53 @@
+<div class="overflow-hidden">
+  <div class="g-3 row">
+    <% animes.each do |anime| %>
+      <div class="col-6 col-sm-2">
+        <%= link_to anime_path(anime) do %>
+          <%= Pictures::AnimePictureComponent.new(self, anime: anime, width: 250).render %>
+        <% end %>
+
+        <h2 class="fw-bold mt-2 small text-center text-truncate">
+          <%= link_to anime.local_title, anime_path(anime), class: "text-body" %>
+        </h2>
+
+        <div class="mt-2 text-center">
+          <%= ButtonGroups::AnimeButtonGroupComponent.new(self, anime: anime).render %>
+        </div>
+
+        <div class="mt-2">
+          <% casts = @casts_data[anime.id] %>
+          <% if casts.present? %>
+            <div class="fw-bold small">
+                <%= t "noun.casts" %>
+            </div>
+
+            <ul class="list-inline mb-0">
+              <% casts.uniq(&:name).first(6).each do |cast| %>
+                <li class="list-inline-item small">
+                  <%= cast.decorate.local_name_link %>
+                </li>
+              <% end %>
+            </ul>
+          <% end %>
+        </div>
+
+        <div class="mt-2">
+          <% staffs = @staffs_data[anime.id] %>
+          <% if staffs.present? %>
+            <div class="fw-bold small">
+                <%= t "noun.staffs" %>
+            </div>
+
+            <ul class="list-inline mb-0">
+              <% staffs.uniq(&:name).each do |staff| %>
+                <li class="list-inline-item small">
+                  <%= staff.decorate.local_name_link %>
+                </li>
+              <% end %>
+            </ul>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

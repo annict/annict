@@ -1,7 +1,0 @@
-.c-tabs
-  .content
-    - [:watching, :wanna_watch, :watched, :on_hold, :stop_watching].each do |status_kind|
-      = link_to library_path(user.username, status_kind), class: "tab #{'tab--active' if status_kind.to_s == params[:status_kind]}" do
-        .count = user.library_entries.count_on(status_kind)
-        .text
-          = t("enumerize.status.kind.#{status_kind}")

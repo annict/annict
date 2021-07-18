@@ -276,60 +276,6 @@ class Anime < ApplicationRecord
     end
   end
 
-  def self.trailers_data(works)
-    work_ids = works.pluck(:id)
-    trailers = Trailer.only_kept.where(work_id: work_ids)
-
-    work_ids.map do |work_id|
-      {
-        work_id: work_id,
-        trailers: trailers.select { |p| p.work_id == work_id }
-      }
-    end
-  end
-
-  def self.casts_data(works)
-    work_ids = works.pluck(:id)
-    casts = Cast.only_kept.where(work_id: work_ids).includes(:person, :character)
-
-    work_ids.map do |work_id|
-      {
-        work_id: work_id,
-        casts: casts.select { |c| c.work_id == work_id }
-      }
-    end
-  end
-
-  def self.staffs_data(works, major: false)
-    work_ids = works.pluck(:id)
-    staffs = Staff.only_kept.where(work_id: work_ids).includes(:resource)
-    staffs = staffs.major if major
-
-    work_ids.map do |work_id|
-      {
-        work_id: work_id,
-        staffs: staffs.select { |s| s.work_id == work_id }
-      }
-    end
-  end
-
-  def self.programs_data(works, only_vod: false)
-    work_ids = works.pluck(:id)
-    programs = Program.only_kept.where(work_id: work_ids).includes(:channel)
-    if only_vod
-      programs = programs
-        .joins(:channel)
-        .where(channels: {vod: true})
-    end
-
-    work_ids.map do |work_id|
-      {
-        work_id: work_id,
-        programs: programs.select { |pd| pd.work_id == work_id }
-      }
-    end
-  end
-
   def people
     Person.where(id: (cast_people.pluck(:id) | staff_people.pluck(:id)))
   end

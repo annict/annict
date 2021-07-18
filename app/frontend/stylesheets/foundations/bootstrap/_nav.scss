@@ -1,0 +1,8 @@
+.nav-link {
+  color: var(--ann-nav-link-color);
+
+  &:hover,
+  &:focus {
+    color: var(--ann-nav-link-hover-color);
+  }
+}

@@ -33,8 +33,8 @@ Rails.application.routes.draw do
   match "/@:username/favorite_characters",                    via: :get,    as: :favorite_character_list,                 to: "favorite_characters#index",    username: ROUTING_USERNAME_FORMAT
   match "/@:username/favorite_organizations",                 via: :get,    as: :favorite_organization_list,              to: "favorite_organizations#index", username: ROUTING_USERNAME_FORMAT
   match "/@:username/favorite_people",                        via: :get,    as: :favorite_person_list,                    to: "favorite_people#index",        username: ROUTING_USERNAME_FORMAT
-  match "/@:username/followers",                              via: :get,    as: :followers_user,                          to: "users#followers",              username: ROUTING_USERNAME_FORMAT
-  match "/@:username/following",                              via: :get,    as: :following_user,                          to: "users#following",              username: ROUTING_USERNAME_FORMAT
+  match "/@:username/followers",                              via: :get,    as: :follower_list,                           to: "followers#index",              username: ROUTING_USERNAME_FORMAT
+  match "/@:username/following",                              via: :get,    as: :followee_list,                           to: "followees#index",              username: ROUTING_USERNAME_FORMAT
   match "/@:username/ics",                                    via: :get,    as: :user_ics,                                to: "ics#show",                     username: ROUTING_USERNAME_FORMAT
   match "/@:username/records",                                via: :get,    as: :record_list,                             to: "records#index",                username: ROUTING_USERNAME_FORMAT
   match "/@:username/records/:record_id",                     via: :delete,                                               to: "records#destroy",              username: ROUTING_USERNAME_FORMAT
@@ -56,7 +56,10 @@ Rails.application.routes.draw do
   match "/api/internal/organizations",                        via: :get,    as: :internal_api_organization_list,          to: "api/internal/organizations#index"
   match "/api/internal/people",                               via: :get,    as: :internal_api_person_list,                to: "api/internal/people#index"
   match "/api/internal/series_list",                          via: :get,    as: :internal_api_series_list,                to: "api/internal/series_list#index"
+  match "/api/internal/stars",                                via: :get,    as: :internal_api_star_list,                  to: "api/internal/stars#index"
+  match "/api/internal/stars",                                via: :post,                                                 to: "api/internal/stars#create"
   match "/api/internal/unlikes",                              via: :post,   as: :internal_api_unlike_list,                to: "api/internal/unlikes#create"
+  match "/api/internal/unstars",                              via: :post,   as: :internal_api_unstar_list,                to: "api/internal/unstars#create"
   match "/api/internal/works",                                via: :get,    as: :internal_api_work_list,                  to: "api/internal/works#index"
   match "/channels",                                          via: :get,    as: :channel_list,                            to: "channels#index"
   match "/characters/:character_id",                          via: :get,    as: :character,                               to: "characters#show"
@@ -257,9 +260,9 @@ Rails.application.routes.draw do
   match "/works/:anime_id/episodes/:episode_id",              via: :get,    as: :episode,                                 to: "episodes#show",            anime_id: ROUTING_ID_FORMAT
   match "/works/:anime_id/records",                           via: :get,    as: :anime_record_list,                       to: "anime_records#index",      anime_id: ROUTING_ID_FORMAT
   match "/works/:anime_id/records",                           via: :post,                                                 to: "anime_records#create",     anime_id: ROUTING_ID_FORMAT
-  match "/works/:slug",                                       via: :get,    as: :seasonal_anime_list,                     to: "works#season",             slug: /[0-9]{4}-(all|spring|summer|autumn|winter)/
-  match "/works/newest",                                      via: :get,    as: :newest_anime_list,                       to: "works#newest"
-  match "/works/popular",                                     via: :get,    as: :popular_anime_list,                      to: "works#popular"
+  match "/works/:season_slug",                                via: :get,    as: :seasonal_anime_list,                     to: "seasonal_animes#index",    season_slug: /[0-9]{4}-(all|spring|summer|autumn|winter)/
+  match "/works/newest",                                      via: :get,    as: :newest_anime_list,                       to: "newest_animes#index"
+  match "/works/popular",                                     via: :get,    as: :popular_anime_list,                      to: "popular_animes#index"
   # standard:enable Layout/ExtraSpacing, Layout/LineLength
 
   root "home#show",
