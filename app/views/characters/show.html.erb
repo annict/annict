@@ -1,0 +1,23 @@
+<% name = t "head.title.characters.show", name: @character.name_with_series %>
+<% description = meta_description t("head.meta.description.characters.show", name: name) %>
+<% set_meta_tags(title: name, description: description, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false) %>
+
+<%= component_value_fetcher_tag("star-button", internal_api_star_list_path) %>
+
+<div class="py-3">
+  <div class="container">
+    <div class="gx-3 row">
+      <div class="col-12 col-sm-3">
+        <%= render "characters/sidebar", character: @character, character_favorites: @character_favorites %>
+      </div>
+
+      <div class="col-12 col-sm-9 mt-3 mt-sm-0">
+        <div class="card">
+          <div class="card-body">
+            <%= render "people/grid", root_resource: @character, resource_years: @cast_years, resources_with_year: @casts_with_year %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
