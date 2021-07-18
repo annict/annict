@@ -1,7 +1,0 @@
-= form_tag search_path, method: :get do
-  .input-group
-    = text_field_tag :q, @search.q, placeholder: t("messages._common.search_with_keywords"), class: "form-control", autofocus: true
-    span.input-group-btn
-      = button_tag class: "btn btn-primary" do
-        = icon "search"
-        = t "noun.search"

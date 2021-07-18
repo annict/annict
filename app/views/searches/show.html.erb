@@ -1,0 +1,42 @@
+<% title = t "head.title.searches.show", q: @search.q.present? ? "#{@search.q} - " : "" %>
+<% description = meta_description %>
+<% set_meta_tags title: title, description: description, og: { description: description }, reverse: true, prefix: false %>
+
+<div class="py-3">
+  <div class="container">
+    <%= form_tag search_path, method: :get do %>
+      <%= text_field_tag :q, @search.q, placeholder: t("messages._common.search_with_keywords"), class: "form-control" %>
+    <% end %>
+  </div>
+
+  <ul class="justify-content-center mt-3 nav nav-pills">
+    <% [
+      ["work", @view == "work", t("noun.works"), @works.count],
+      ["character", @view == "character", t("noun.characters"), @characters.count],
+      ["person", @view == "person", t("noun.people"), @people.count],
+      ["organization", @view == "organization", t("noun.organizations"), @organizations.count]
+    ].each do |(resource, active, text, count)| %>
+      <li class="nav-item">
+        <%= active_link_to search_path(q: @search.q, resource: resource), class: "nav-link rounded-pill text-body", active: active do %>
+          <%= text %>
+
+          <span class="badge bg-secondary ms-1">
+            <%= count %>
+          </span>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+
+  <div class="container mt-3 u-container-flat">
+    <div class="card u-card-flat">
+      <div class="card-body">
+        <%= render @partial_name, view: @view, resources: @resources %>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-3 text-center">
+    <%= ButtonGroups::PaginationButtonGroupComponent.new(self, collection: @resources).render %>
+  </div>
+</div>

@@ -1,4 +1,7 @@
-- if people.present?
-  = render "#{view.pluralize}/list", people: people
+- if resources.present?
+  ul.list-unstyled.mb-0
+    - resources.each do |person|
+      li
+        = link_to person.name, person_path(person.id), class: "text-body"
 - else
   = render "application/components/empty", text: t("messages._empty.no_people")
