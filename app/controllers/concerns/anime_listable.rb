@@ -14,7 +14,7 @@ module AnimeListable
   end
 
   def display_works_count
-    @display_option == "grid" ? 60 : 120
+    @display_option == "grid" ? 30 : 120
   end
 
   def set_resource_data(animes)
