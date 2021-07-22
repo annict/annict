@@ -20,7 +20,7 @@ module Lists
                     h.tag :div, class: "row" do
                       h.tag :div, class: "col" do
                         h.tag :div,
-                          class: "u-cursor-pointer",
+                          class: "fw-bold u-cursor-pointer",
                           data_controller: "tracking-modal-button",
                           data_tracking_modal_button_frame_path: view_context.fragment_trackable_anime_path(le.work_id),
                           data_action: "click->tracking-modal-button#open" do
