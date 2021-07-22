@@ -27,7 +27,6 @@ export default class extends Controller {
   }
 
   change(event: any) {
-    console.log('changed!', event.currentTarget.value);
     const newProgramId = event.currentTarget.value;
 
     if (newProgramId !== this.currentProgramId) {
