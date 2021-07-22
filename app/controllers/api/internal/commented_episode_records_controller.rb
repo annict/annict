@@ -20,7 +20,7 @@ module Api::Internal
     private
 
     def episode_record_form_params
-      params.required(:episode_record_form).permit(:comment, :rating, :share_to_twitter)
+      params.required(:forms_episode_record_form).permit(:comment, :rating, :share_to_twitter)
     end
   end
 end
