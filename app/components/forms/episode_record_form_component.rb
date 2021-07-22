@@ -14,13 +14,13 @@ module Forms
         url: form_url,
         method: form_method,
         data: {
-          controller: "episode-record-form",
-          action: "turbo:submit-start->episode-record-form#handleSubmitStart turbo:submit-end->episode-record-form#handleSubmitEnd",
-          "episode-record-form-target": "form"
+          controller: "forms--episode-record-form",
+          action: "turbo:submit-start->forms--episode-record-form#handleSubmitStart turbo:submit-end->forms--episode-record-form#handleSubmitEnd",
+          forms__episode_record_form_target: "form"
         }
       ) do |f|
         build_html do |h|
-          h.html ErrorPanelV6Component.new(view_context, stimulus_controller: "episode-record-form").render
+          h.html ErrorPanelV6Component.new(view_context, stimulus_controller: "forms--episode-record-form").render
 
           h.tag :div, class: "mb-2" do
             h.html ButtonGroups::RecordRatingButtonGroupComponent.new(view_context, form: f, rating_field: :rating).render
@@ -49,7 +49,7 @@ module Forms
 
             h.tag :div, class: "col" do
               h.tag :div, class: "text-center" do
-                h.html f.submit((f.object.persisted? ? t("verb.update") : t("verb.track")), class: "btn btn-primary", data: {"episode-record-form-target": "submitButton"})
+                h.html f.submit((f.object.persisted? ? t("verb.update") : t("verb.track")), class: "btn btn-primary", data: {"forms--episode-record-form-target": "submitButton"})
               end
             end
 
@@ -66,7 +66,7 @@ module Forms
     end
 
     def form_url
-      @form.persisted? ? view_context.record_path(@current_user.username, @form.record.id) : view_context.episode_record_list_path(@form.episode.id)
+      @form.persisted? ? view_context.record_path(@current_user.username, @form.record.id) : view_context.internal_api_commented_episode_record_list_path(@form.episode.id)
     end
   end
 end
