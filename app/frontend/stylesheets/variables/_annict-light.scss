@@ -4,6 +4,7 @@
   // -------------------------------------------------------------------
 
   --ann-color-sidebar-bg: #{$card-bg};
+  --ann-color-tracking-heatmap-bg: #{shade-color($body-bg, 15%)};
 
   // -------------------------------------------------------------------
   // Bootstrap関係の変数
@@ -11,6 +12,7 @@
 
   // Body
 
+  --ann-body-bg: #{$body-bg};
   --ann-body-color: #{$body-color};
 
   // Links

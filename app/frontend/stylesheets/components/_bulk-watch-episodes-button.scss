@@ -1,0 +1,17 @@
+.c-bulk-watch-episodes-button {
+  $root: &;
+
+  &__spinner {
+    display: none;
+  }
+
+  &--loading {
+    .fa-arrow-from-bottom {
+      display: none;
+    }
+
+    #{$root}__spinner {
+      display: inline-block;
+    }
+  }
+}

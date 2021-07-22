@@ -8,14 +8,17 @@ module Modals
 
     def render
       build_html do |h|
-        h.tag :div, class: "c-tracking-modal" do
-          h.tag :turbo_frame,
-            class: "modal",
-            data_controller: "reloadable",
-            data_reloadable_event_name_value: "tracking-modal",
-            id: "c-tracking-modal__frame",
-            src: "",
-            tabindex: "-1"
+        h.tag :div, class: "c-tracking-modal modal" do
+          h.tag :div, class: "modal-dialog modal-lg" do
+            h.tag :div, class: "modal-content" do
+              h.tag :turbo_frame,
+                data_controller: "reloadable",
+                data_reloadable_event_name_value: "tracking-modal",
+                id: "c-tracking-modal-frame",
+                src: "",
+                tabindex: "-1"
+            end
+          end
         end
       end
     end

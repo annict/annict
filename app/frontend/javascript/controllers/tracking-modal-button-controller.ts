@@ -1,4 +1,4 @@
-import $ from 'jquery';
+import Modal from 'bootstrap/js/dist/modal';
 import { Controller } from 'stimulus';
 
 export default class extends Controller {
@@ -9,12 +9,14 @@ export default class extends Controller {
   }
 
   open() {
-    const frameElm = document.getElementById('c-tracking-modal__frame')
+    const modalElm = document.querySelector('.c-tracking-modal');
+    const frameElm = modalElm?.querySelector('#c-tracking-modal-frame');
 
-    if (frameElm) {
-      frameElm.setAttribute('src', this.framePath)
-      frameElm.dataset.reloadableUrlValue = this.framePath
-      $(frameElm).modal()
+    if (modalElm && frameElm) {
+      frameElm.setAttribute('src', this.framePath);
+      (frameElm as HTMLElement).dataset.reloadableUrlValue = this.framePath;
+
+      new Modal(modalElm).show();
     }
   }
 }

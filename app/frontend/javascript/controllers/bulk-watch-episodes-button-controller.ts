@@ -5,10 +5,10 @@ import { Controller } from 'stimulus';
 import { EventDispatcher } from '../utils/event-dispatcher';
 
 export default class extends Controller {
-  static classes = ['loading']
+  static classes = ['loading'];
   static values = {
-    episodeId: Number
-  }
+    episodeId: Number,
+  };
 
   episodeIdValue!: number;
   isLoading!: boolean;
@@ -19,43 +19,32 @@ export default class extends Controller {
     new EventDispatcher('reloadable--tracking-modal:reload').dispatch();
   }
 
+  startLoading() {
+    this.isLoading = true;
+    this.element.classList.add(this.loadingClass);
+    this.element.setAttribute('disabled', 'true');
+  }
+
   watch() {
     if (this.isLoading) {
       return;
     }
 
-    const listGroupElm = this.element.closest('.c-tracking-episode-list-group')
+    const listGroupElm = this.element.closest('.c-tracking-episode-list-group');
 
     if (!listGroupElm) {
-      return
+      return;
     }
 
-    let isCurrentEpisodeIdMatched = false
-    const episodeItemElms = Array.from(listGroupElm.querySelectorAll('.list-group-item')).filter((itemElm) => {
-      if (!(itemElm instanceof HTMLElement)) {
-        return
-      }
+    const episodeItemElms = Array.from(listGroupElm.querySelectorAll('.list-group-item'));
+    const clickedEpisodeItemElmIndex = episodeItemElms.findIndex((itemElm) => {
+      return Number((itemElm as HTMLElement).dataset.episodeId) === this.episodeIdValue;
+    });
+    const targetEpisodeIds = episodeItemElms.slice(0, clickedEpisodeItemElmIndex + 1).map((episodeItemElm) => {
+      return (episodeItemElm as HTMLElement).dataset.episodeId;
+    });
 
-      if (Number(itemElm.dataset.episodeId) === this.episodeIdValue) {
-        isCurrentEpisodeIdMatched = true
-      }
-
-      if (isCurrentEpisodeIdMatched) {
-        return true
-      }
-
-      return false
-    })
-    const targetEpisodeIds = episodeItemElms.map(episodeItemElm => {
-      if (episodeItemElm instanceof HTMLElement) return episodeItemElm.dataset.episodeId
-    })
-    const watchButtonElms = episodeItemElms.map(episodeItemElm => episodeItemElm.querySelector('.c-bulk-watch-episodes-button'))
-
-    this.isLoading = true
-    watchButtonElms.forEach(watchButtonElm => {
-      watchButtonElm?.classList?.add(this.loadingClass);
-      watchButtonElm?.setAttribute('disabled', "true");
-    })
+    this.startLoading();
 
     axios
       .post('/api/internal/multiple_episode_records', {
@@ -66,6 +55,6 @@ export default class extends Controller {
       })
       .catch(() => {
         ($('.c-sign-up-modal') as any).modal('show');
-      })
+      });
   }
 }

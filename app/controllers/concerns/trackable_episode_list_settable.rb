@@ -13,6 +13,7 @@ module TrackableEpisodeListSettable
       .order(:position)
       .page(params[:page])
       .per(3)
+      .without_count
 
     episodes = Episode.only_kept.where(work_id: @library_entries.pluck(:work_id))
     @trackable_episodes = Episode.partitioned_episodes(

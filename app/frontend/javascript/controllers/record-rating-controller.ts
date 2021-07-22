@@ -16,7 +16,7 @@ export default class extends Controller {
       (event.currentTarget as HTMLInputElement).classList.remove('u-btn-outline-input-border');
       (event.currentTarget as HTMLInputElement).classList.add(`u-btn-${state}`);
 
-      this.inputTarget.value = state?.toUpperCase() ?? '';
+      this.inputTarget.value = state ?? '';
     }
   }
 
