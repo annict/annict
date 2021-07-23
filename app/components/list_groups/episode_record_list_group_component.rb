@@ -11,43 +11,41 @@ module ListGroups
 
     def render
       build_html do |h|
-        h.tag :div, class: "mb-3" do
-          h.tag :h3, class: "fw-bold mb-3" do
+        h.tag :div, class: "container" do
+          h.tag :h3, class: "fw-bold mb-0" do
             h.text t("noun.my_records")
           end
-
-          if current_user
-            h.html Lists::RecordListComponent.new(
-              view_context,
-              records: @my_records,
-              show_box: false
-            ).render
-          end
         end
 
-        h.tag :hr, class: "mb-5"
+        h.tag :div, class: "container mt-3 u-container-flat" do
+          h.html Lists::RecordListComponent.new(
+            view_context,
+            records: @my_records,
+            show_box: false
+          ).render
+        end
 
-        h.tag :div, class: "mb-3" do
-          h.tag :h3, class: "fw-bold mb-3" do
+        h.tag :div, class: "container mt-5" do
+          h.tag :h3, class: "fw-bold mb-0" do
             h.text t("noun.following_records")
           end
+        end
 
-          if current_user
-            h.html Lists::RecordListComponent.new(
-              view_context,
-              records: @following_records,
-              show_box: false
-            ).render
+        h.tag :div, class: "container mt-3 u-container-flat" do
+          h.html Lists::RecordListComponent.new(
+            view_context,
+            records: @following_records,
+            show_box: false
+          ).render
+        end
+
+        h.tag :div, class: "container mt-5" do
+          h.tag :h3, class: "fw-bold mb-0" do
+            h.text t("noun.other_comments")
           end
         end
 
-        h.tag :hr, class: "mb-5"
-
-        h.tag :div, class: "mb-3" do
-          h.tag :h3, class: "fw-bold mb-3" do
-            h.text t("noun.other_comments")
-          end
-
+        h.tag :div, class: "container mt-3 u-container-flat" do
           h.html Lists::RecordListComponent.new(
             view_context,
             records: @all_records,

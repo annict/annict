@@ -7,61 +7,69 @@
 
 <%= Headers::AnimeHeaderComponent.new(self, anime: @anime, programs: @programs).render %>
 
-<div class="container">
-  <div class="card">
-    <div class="card-body">
-      <div class="align-items-center mb-1 row">
-        <div class="col">
-          <h2 class="mb-0">
-            <%= link_to @episode.title_with_number, episode_path(@anime.id, @episode.id), class: "u-text-body" %>
-          </h2>
-        </div>
-        <div class="col-auto ps-0">
-          <%= ButtonGroups::EpisodeTransitionButtonGroupComponent.new(self, episode: @episode).render %>
-        </div>
-      </div>
+<div class="py-3">
+  <div class="container u-container-flat">
+    <div class="card u-card-flat">
+      <div class="card-body">
+        <div class="align-items-center gx-3 row">
+          <div class="col">
+            <h2 class="fw-bold mb-0">
+              <%= link_to @episode.title_with_number, episode_path(@anime.id, @episode.id), class: "text-body" %>
+            </h2>
+          </div>
 
-      <ul class="list-inline mb-3">
-        <li class="list-inline-item">
-          <span class="fw-bold h4">
-            <%= @episode.episode_records_count %>
-          </span>
-          <span class="small text-muted">
-            <%= t "noun.records_count" %>
-          </span>
-        </li>
-        <li class="list-inline-item">
-          <span class="fw-bold h4">
-            <%= @episode.commented_episode_records_count %>
-          </span>
-          <span class="small text-muted">
-            <%= t "noun.comments_count" %>
-          </span>
-        </li>
-      </ul>
+          <div class="col-auto">
+            <%= ButtonGroups::EpisodeTransitionButtonGroupComponent.new(self, episode: @episode).render %>
+          </div>
+        </div>
+
+        <ul class="list-inline mb-0">
+          <li class="list-inline-item">
+            <span class="small text-muted">
+              <%= t "noun.records_count" %>
+              :
+            </span>
+
+            <span class="fw-bold ms-1">
+              <%= @episode.episode_records_count %>
+            </span>
+          </li>
+
+          <li class="list-inline-item">
+            <span class="small text-muted">
+              <%= t "noun.comments_count" %>
+              :
+            </span>
+
+            <span class="fw-bold ms-1">
+              <%= @episode.commented_episode_records_count %>
+            </span>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 
-  <div class="card">
-    <div class="card-body">
-      <%= Forms::EpisodeRecordFormComponent.new(self, form: @form, current_user: current_user).render %>
+  <div class="container mt-3 u-container-flat">
+    <div class="card u-card-flat">
+      <div class="card-body">
+        <%= Forms::EpisodeRecordFormComponent.new(self, form: @form, current_user: current_user).render %>
+      </div>
     </div>
   </div>
 
-  <div class="card">
-    <div class="card-body">
-      <div
-        data-controller="reloadable"
-        data-reloadable-event-name-value="episode-record-list-group"
-        data-reloadable-url-value="<%= fragment_episode_record_list_path(@episode.id, page: params[:page]) %>"
-      >
-        <%= ListGroups::EpisodeRecordListGroupComponent.new(
-          self,
-          my_records: @my_records,
-          following_records: @following_records,
-          all_records: @all_records
-        ).render %>
-      </div>
+  <div class="mt-5">
+    <div
+      data-controller="reloadable"
+      data-reloadable-event-name-value="episode-record-list-group"
+      data-reloadable-url-value="<%= fragment_episode_record_list_path(@episode.id, page: params[:page]) %>"
+    >
+      <%= ListGroups::EpisodeRecordListGroupComponent.new(
+        self,
+        my_records: @my_records,
+        following_records: @following_records,
+        all_records: @all_records
+      ).render %>
     </div>
   </div>
 </div>
