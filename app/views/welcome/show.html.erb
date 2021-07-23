@@ -1,7 +1,7 @@
 <% title = t("head.title.welcome.show") %>
 <% set_meta_tags(title: title, reverse: false) %>
 
-<%= component_value_fetcher_tag("status-select-dropdown", internal_api_library_entry_list_path(anime_ids: [])) %>
+<%= component_value_fetcher_tag("status-select-dropdown", internal_api_library_entry_list_path, method: :post, payload: {anime_ids: []}) %>
 
 <div class="align-items-center c-hero d-flex position-relative py-3">
   <div class="c-hero__bg-image position-absolute w-100" style="background-image: url(<%= @cover_image_url %>);"></div>

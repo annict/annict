@@ -5,6 +5,8 @@ module Api
     class LibraryEntriesController < Api::Internal::ApplicationController
       before_action :authenticate_user!, only: %i[update]
 
+      # POST /api/internal/library_entries
+      # NOTE: `anime_ids` の量が大きいときがあるため、POSTで受け付けている
       def index
         return render(json: []) unless user_signed_in?
         return render(json: []) unless params[:anime_ids]

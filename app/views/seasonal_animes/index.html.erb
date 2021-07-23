@@ -2,7 +2,7 @@
 <% description = meta_description(t("head.meta.description.works.season", name: @season.local_name)) %>
 <% set_meta_tags(title: title, description: description, og: { description: description }, reverse: true, prefix: false) %>
 
-<%= component_value_fetcher_tag("status-select-dropdown", internal_api_library_entry_list_path(anime_ids: @anime_ids)) %>
+<%= component_value_fetcher_tag("status-select-dropdown", internal_api_library_entry_list_path, method: :post, payload: {anime_ids: @anime_ids}) %>
 
 <div class="container mt-3">
   <ul class="justify-content-center nav">

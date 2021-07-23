@@ -49,6 +49,7 @@ Rails.application.routes.draw do
   match "/api/internal/follow",                                 via: :delete, as: :internal_api_follow,                        to: "api/internal/follows#destroy"
   match "/api/internal/follow",                                 via: :post,                                                    to: "api/internal/follows#create"
   match "/api/internal/following",                              via: :get,    as: :internal_api_following_list,                to: "api/internal/following#index"
+  match "/api/internal/library_entries",                        via: :post,   as: :internal_api_library_entry_list,            to: "api/internal/library_entries#index"
   match "/api/internal/likes",                                  via: :get,    as: :internal_api_like_list,                     to: "api/internal/likes#index"
   match "/api/internal/likes",                                  via: :post,                                                    to: "api/internal/likes#create"
   match "/api/internal/mute_user",                              via: :delete, as: :internal_api_mute_user,                     to: "api/internal/mute_users#destroy"
