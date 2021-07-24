@@ -2,7 +2,6 @@
 
 Rails.application.routes.draw do
   draw :api
-  draw :internal_api
   draw :local_api
 
   devise_for :users,
@@ -45,6 +44,7 @@ Rails.application.routes.draw do
   match "/api/internal/channels/:channel_id/reception",         via: :delete, as: :internal_api_channel_reception,             to: "api/internal/receptions#destroy"
   match "/api/internal/channels/:channel_id/reception",         via: :post,                                                    to: "api/internal/receptions#create"
   match "/api/internal/characters",                             via: :get,    as: :internal_api_character_list,                to: "api/internal/characters#index"
+  match "/api/internal/episode_records",                        via: :post,   as: :internal_api_episode_record_list,           to: "api/internal/episode_records#create"
   match "/api/internal/episodes/:episode_id/commented_records", via: :post,   as: :internal_api_commented_episode_record_list, to: "api/internal/commented_episode_records#create"
   match "/api/internal/follow",                                 via: :delete, as: :internal_api_follow,                        to: "api/internal/follows#destroy"
   match "/api/internal/follow",                                 via: :post,                                                    to: "api/internal/follows#create"
@@ -53,11 +53,13 @@ Rails.application.routes.draw do
   match "/api/internal/library_entries/:library_entry_id",      via: :patch,  as: :internal_api_library_entry,                 to: "api/internal/library_entries#update"
   match "/api/internal/likes",                                  via: :get,    as: :internal_api_like_list,                     to: "api/internal/likes#index"
   match "/api/internal/likes",                                  via: :post,                                                    to: "api/internal/likes#create"
+  match "/api/internal/multiple_episode_records",               via: :post,   as: :internal_api_multiple_episode_record,       to: "api/internal/multiple_episode_records#create"
   match "/api/internal/mute_user",                              via: :delete, as: :internal_api_mute_user,                     to: "api/internal/mute_users#destroy"
   match "/api/internal/mute_user",                              via: :post,                                                    to: "api/internal/mute_users#create"
   match "/api/internal/muted_users",                            via: :get,    as: :internal_api_muted_user_list,               to: "api/internal/muted_users#index"
   match "/api/internal/organizations",                          via: :get,    as: :internal_api_organization_list,             to: "api/internal/organizations#index"
   match "/api/internal/people",                                 via: :get,    as: :internal_api_person_list,                   to: "api/internal/people#index"
+  match "/api/internal/received_channels",                      via: :get,    as: :internal_api_received_channel_list,         to: "api/internal/received_channels#index"
   match "/api/internal/registrations",                          via: :post,   as: :internal_api_registrations,                 to: "api/internal/registrations#create"
   match "/api/internal/series_list",                            via: :get,    as: :internal_api_series_list,                   to: "api/internal/series_list#index"
   match "/api/internal/sign_in",                                via: :post,   as: :internal_api_sign_in,                       to: "api/internal/sign_in#create"
