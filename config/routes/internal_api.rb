@@ -31,9 +31,6 @@ scope module: :api do
       match "/api/internal/sign_in",                           via: :post,   as: :internal_api_sign_in,                 to: "sign_in#create"
       match "/api/internal/sign_up",                           via: :post,   as: :internal_api_sign_up,                 to: "sign_up#create"
       match "/api/internal/skipped_episodes",                  via: :post,   as: :internal_api_skipped_episode_list,    to: "skipped_episodes#create"
-      match "/api/internal/tracked_resources",                 via: :get,    as: :internal_api_tracked_resource_list,   to: "tracked_resources#index"
-      match "/api/internal/user",                              via: :get,    as: :internal_api_user_detail,             to: "users#show"
-      match "/api/internal/work_friends",                      via: :get,    as: :internal_api_work_friend_list,        to: "work_friends#index"
       # rubocop:enable Layout/ExtraSpacing, Layout/LineLength
     end
   end

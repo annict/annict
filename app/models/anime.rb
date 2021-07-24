@@ -246,36 +246,6 @@ class Anime < ApplicationRecord
     end
   end
 
-  def self.watching_friends_data(work_ids, user)
-    work_ids = work_ids.uniq
-    status_kinds = %w[wanna_watch watching watched]
-    users = user.followings.only_kept.includes(:profile)
-    user_ids = users.pluck(:id)
-    library_entries = LibraryEntry
-      .where(work: work_ids, user: user_ids)
-      .with_status(*status_kinds)
-
-    work_ids.map do |work_id|
-      library_entries_ = library_entries.select { |ls| ls.work_id == work_id }
-      users_ = users.select { |u| u.id.in?(library_entries_.map(&:user_id)) }
-      users_data = users_.map { |u|
-        library_entry = library_entries_.find { |ls|
-          ls.user_id == u.id && ls.work_id == work_id
-        }
-
-        {
-          user: u,
-          library_entry_id: library_entry.id
-        }
-      }
-
-      {
-        work_id: work_id,
-        users_data: users_data
-      }
-    end
-  end
-
   def people
     Person.where(id: (cast_people.pluck(:id) | staff_people.pluck(:id)))
   end
