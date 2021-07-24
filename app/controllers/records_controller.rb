@@ -44,10 +44,10 @@ class RecordsController < ApplicationV6Controller
 
     path = if @record.episode_record?
       episode_record = @record.episode_record
-      episode_path(anime_id: episode_record.work_id, episode_id: episode_record.episode_id)
+      episode_path(episode_record.work_id, episode_record.episode_id)
     else
       work_record = @record.anime_record
-      anime_record_list_path(anime_id: work_record.work_id)
+      anime_record_list_path(work_record.work_id)
     end
 
     redirect_to path, notice: t("messages._common.deleted")
