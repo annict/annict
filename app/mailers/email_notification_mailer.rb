@@ -3,7 +3,7 @@
 class EmailNotificationMailer < ApplicationMailer
   helper :assets
   helper :local
-  helper "v4/image"
+  helper :image
 
   def followed_user(followed_user_id, user_id)
     @followed_user = User.only_kept.find(followed_user_id)
