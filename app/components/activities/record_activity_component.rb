@@ -39,20 +39,12 @@ module Activities
             if @activity_group.single?
               record = @activity_group.first_item
 
-              if record.episode_record?
-                h.html Contents::EpisodeRecordContentComponent.new(view_context, record: record).render
-              else
-                h.html Contents::AnimeRecordContentComponent.new(view_context, record: record).render
-              end
+              h.html Contents::RecordContentComponent.new(view_context, record: record).render
             else
               h.tag :turbo_frame, id: view_context.dom_id(@activity_group) do
                 record = @activity_group.first_item
 
-                if record.episode_record?
-                  h.html Contents::EpisodeRecordContentComponent.new(view_context, record: record).render
-                else
-                  h.html Contents::AnimeRecordContentComponent.new(view_context, record: record).render
-                end
+                h.html Contents::RecordContentComponent.new(view_context, record: record).render
 
                 if @activity_group.activities_count > 1
                   h.tag :div, class: "text-center" do

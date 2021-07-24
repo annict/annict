@@ -7,13 +7,9 @@
       <% @activity_group.items.each do |status| %>
         <%= Contents::StatusContentComponent.new(self, status: status).render %>
       <% end %>
-    <% when "EpisodeRecord" %>
+    <% when "EpisodeRecord", "WorkRecord" %>
       <% @activity_group.items.each do |record| %>
-        <%= Contents::EpisodeRecordContentComponent.new(self, record: record).render %>
-      <% end %>
-    <% when "WorkRecord" %>
-      <% @activity_group.items.each do |record| %>
-        <%= Contents::AnimeRecordContentComponent.new(self, record: record).render %>
+        <%= Contents::RecordContentComponent.new(self, record: record).render %>
       <% end %>
     <% end %>
   </div>
