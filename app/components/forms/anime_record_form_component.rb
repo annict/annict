@@ -21,10 +21,6 @@ module Forms
         build_html do |h|
           h.html ErrorPanelV6Component.new(view_context, stimulus_controller: "forms--anime-record-form").render
 
-          # <% if @form.persisted? %>
-          #   <%= f.hidden_field :record_id %>
-          # <% end %>
-
           h.tag :div, class: "mb-2" do
             h.html ButtonGroups::RecordRatingButtonGroupComponent.new(view_context, form: f, rating_field: :rating_overall).render
           end
@@ -67,7 +63,7 @@ module Forms
     end
 
     def form_url
-      @form.persisted? ? view_context.record_path(current_user.username, @form.record.id) : view_context.internal_api_commented_anime_record_list_path(@form.anime.id)
+      @form.persisted? ? view_context.internal_api_record_path(current_user.username, @form.record.id) : view_context.internal_api_commented_anime_record_list_path(@form.anime.id)
     end
   end
 end

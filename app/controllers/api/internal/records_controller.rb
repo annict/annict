@@ -22,6 +22,16 @@ module Api::Internal
         end
 
         Updaters::EpisodeRecordUpdater.new(user: current_user, form: @form).call
+      else
+        @form = Forms::AnimeRecordForm.new(anime_record_form_params)
+        @form.record = @record
+        @form.anime = @record.anime
+
+        if @form.invalid?
+          return render json: @form.errors.full_messages, status: :unprocessable_entity
+        end
+
+        Updaters::AnimeRecordUpdater.new(user: current_user, form: @form).call
       end
 
       render json: {}, status: 200
@@ -31,6 +41,10 @@ module Api::Internal
 
     def episode_record_form_params
       params.required(:forms_episode_record_form).permit(:comment, :rating, :share_to_twitter)
+    end
+
+    def anime_record_form_params
+      params.required(:forms_anime_record_form).permit(:comment, :rating_overall, :share_to_twitter)
     end
   end
 end
