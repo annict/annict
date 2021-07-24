@@ -45,6 +45,7 @@ Rails.application.routes.draw do
   match "/api/internal/channels/:channel_id/reception",         via: :delete, as: :internal_api_channel_reception,             to: "api/internal/receptions#destroy"
   match "/api/internal/channels/:channel_id/reception",         via: :post,                                                    to: "api/internal/receptions#create"
   match "/api/internal/characters",                             via: :get,    as: :internal_api_character_list,                to: "api/internal/characters#index"
+  match "/api/internal/animes/:anime_id/commented_records",     via: :post,   as: :internal_api_commented_anime_record_list,   to: "api/internal/commented_anime_records#create",   anime_id: ROUTING_ID_FORMAT
   match "/api/internal/episodes/:episode_id/commented_records", via: :post,   as: :internal_api_commented_episode_record_list, to: "api/internal/commented_episode_records#create"
   match "/api/internal/follow",                                 via: :delete, as: :internal_api_follow,                        to: "api/internal/follows#destroy"
   match "/api/internal/follow",                                 via: :post,                                                    to: "api/internal/follows#create"
@@ -200,6 +201,7 @@ Rails.application.routes.draw do
   match "/fragment/@:username/records/:record_id/edit",         via: :get,    as: :fragment_edit_record,                       to: "fragment/records#edit",           username: ROUTING_USERNAME_FORMAT
   match "/fragment/@:username/tracking_heatmap",                via: :get,    as: :fragment_tracking_heatmap,                  to: "fragment/tracking_heatmaps#show", username: ROUTING_USERNAME_FORMAT
   match "/fragment/activity_groups/:activity_group_id/items",   via: :get,    as: :fragment_activity_item_list,                to: "fragment/activity_items#index"
+  match "/fragment/animes/:anime_id/records",                   via: :get,    as: :fragment_anime_record_list,                 to: "fragment/anime_records#index"
   match "/fragment/episodes/:episode_id/records",               via: :get,    as: :fragment_episode_record_list,               to: "fragment/episode_records#index"
   match "/fragment/receive_channel_buttons",                    via: :get,    as: :fragment_receive_channel_button_list,       to: "fragment/receive_channel_buttons#index"
   match "/fragment/trackable_anime/:anime_id",                  via: :get,    as: :fragment_trackable_anime,                   to: "fragment/trackable_anime#show"
@@ -260,7 +262,6 @@ Rails.application.routes.draw do
   match "/works/:anime_id/episodes",                            via: :get,    as: :episode_list,                               to: "episodes#index",           anime_id: ROUTING_ID_FORMAT
   match "/works/:anime_id/episodes/:episode_id",                via: :get,    as: :episode,                                    to: "episodes#show",            anime_id: ROUTING_ID_FORMAT
   match "/works/:anime_id/records",                             via: :get,    as: :anime_record_list,                          to: "anime_records#index",      anime_id: ROUTING_ID_FORMAT
-  match "/works/:anime_id/records",                             via: :post,                                                    to: "anime_records#create",     anime_id: ROUTING_ID_FORMAT
   match "/works/:season_slug",                                  via: :get,    as: :seasonal_anime_list,                        to: "seasonal_animes#index",    season_slug: /[0-9]{4}-(all|spring|summer|autumn|winter)/
   match "/works/newest",                                        via: :get,    as: :newest_anime_list,                          to: "newest_animes#index"
   match "/works/popular",                                       via: :get,    as: :popular_anime_list,                         to: "popular_animes#index"

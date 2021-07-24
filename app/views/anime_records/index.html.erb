@@ -7,38 +7,22 @@
 
 <%= Headers::AnimeHeaderComponent.new(self, anime: @anime, programs: @programs).render %>
 
-<div class="container">
-  <div class="mb-5">
-    <%= render AnimeRecordFormComponent.new(form: @form, viewer: current_user) %>
+<div class="py-3">
+  <div class="container u-container-flat">
+    <div class="card u-card-flat">
+      <div class="card-body">
+        <%= Forms::AnimeRecordFormComponent.new(self, form: @form).render %>
+      </div>
+    </div>
   </div>
 
-  <hr class="mb-5">
-
-  <div class="mb-3">
-    <h3 class="fw-bold mb-3">
-      <%= t "noun.my_records" %>
-    </h3>
-
-    <%= Lists::RecordListComponent.new(self, records: @my_records, show_box: false).render %>
-  </div>
-
-  <hr class="mb-5">
-
-  <div class="mb-3">
-    <h3 class="fw-bold mb-3">
-      <%= t "noun.following_records" %>
-    </h3>
-
-  <%= Lists::RecordListComponent.new(self, records: @following_records, show_box: false).render %>
-  </div>
-
-  <hr class="mb-5">
-
-  <div class="mb-3">
-    <h3 class="fw-bold mb-3">
-      <%= t "noun.other_comments" %>
-    </h3>
-
-    <%= Lists::RecordListComponent.new(self, records: @other_records, show_box: false).render %>
+  <div class="mt-3">
+    <div
+      data-controller="reloadable"
+      data-reloadable-event-name-value="anime-record-list-group"
+      data-reloadable-url-value="<%= fragment_anime_record_list_path(@anime.id, page: params[:page]) %>"
+    >
+      <%= ListGroups::RecordListGroupComponent.new(self, my_records: @my_records, following_records: @following_records, all_records: @all_records).render %>
+    </div>
   </div>
 </div>

@@ -17,7 +17,7 @@ module Lists
               h.tag :div, class: "card mt-3 u-card-flat" do
                 h.tag :div, class: "card-body" do
                   h.tag :turbo_frame, id: dom_id(record) do
-                    h.html Contents::RecordContentComponent.new(view_context, record: record, show_box: @show_box).render
+                    h.html ListItems::RecordListItemComponent.new(view_context, record: record, show_box: @show_box).render
                   end
                 end
               end

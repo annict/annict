@@ -55,6 +55,22 @@ class Record < ApplicationRecord
     !episode_record?
   end
 
+  def episode
+    episode_record? ? episode_record.episode : nil
+  end
+
+  def rating
+    episode_record? ? episode_record.rating_state : anime_record.rating_overall_state
+  end
+
+  def advanced_rating
+    episode_record? ? episode_record.rating : nil
+  end
+
+  def comment
+    episode_record? ? episode_record.body : anime_record.body
+  end
+
   def modified_at
     if anime_record?
       return anime_record.modified_at

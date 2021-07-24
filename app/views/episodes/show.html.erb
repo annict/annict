@@ -64,7 +64,7 @@
       data-reloadable-event-name-value="episode-record-list-group"
       data-reloadable-url-value="<%= fragment_episode_record_list_path(@episode.id, page: params[:page]) %>"
     >
-      <%= ListGroups::EpisodeRecordListGroupComponent.new(
+      <%= ListGroups::RecordListGroupComponent.new(
         self,
         my_records: @my_records,
         following_records: @following_records,
