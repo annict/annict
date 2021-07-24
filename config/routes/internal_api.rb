@@ -1,24 +1,5 @@
 # frozen_string_literal: true
 
-namespace :api do
-  namespace :internal do
-    resources :mute_users, only: [:create]
-
-    resources :reactions, only: [] do
-      post :add, on: :collection
-      post :remove, on: :collection
-    end
-
-    resource :user, only: [] do
-      resources :slots, only: [:index], controller: "user_slots"
-    end
-
-    resources :works, only: [] do
-      resource :library_entry, only: [:show]
-    end
-  end
-end
-
 scope module: :api do
   scope module: :internal do
     constraints format: "json" do
