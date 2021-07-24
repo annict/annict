@@ -24,13 +24,8 @@ scope module: :api do
     constraints format: "json" do
       # rubocop:disable Layout/ExtraSpacing, Layout/LineLength
       match "/api/internal/episode_records",                   via: :post,   as: :internal_api_episode_record_list,     to: "episode_records#create"
-      match "/api/internal/library_entries/:library_entry_id", via: :patch,  as: :internal_api_library_entry,           to: "library_entries#update"
       match "/api/internal/multiple_episode_records",          via: :post,   as: :internal_api_multiple_episode_record, to: "multiple_episode_records#create"
       match "/api/internal/received_channels",                 via: :get,    as: :internal_api_received_channel_list,   to: "received_channels#index"
-      match "/api/internal/registrations",                     via: :post,   as: :internal_api_registrations,           to: "registrations#create"
-      match "/api/internal/sign_in",                           via: :post,   as: :internal_api_sign_in,                 to: "sign_in#create"
-      match "/api/internal/sign_up",                           via: :post,   as: :internal_api_sign_up,                 to: "sign_up#create"
-      match "/api/internal/skipped_episodes",                  via: :post,   as: :internal_api_skipped_episode_list,    to: "skipped_episodes#create"
       # rubocop:enable Layout/ExtraSpacing, Layout/LineLength
     end
   end
