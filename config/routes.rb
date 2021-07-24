@@ -37,10 +37,9 @@ Rails.application.routes.draw do
   match "/@:username/following",                                via: :get,    as: :followee_list,                              to: "followees#index",              username: ROUTING_USERNAME_FORMAT
   match "/@:username/ics",                                      via: :get,    as: :user_ics,                                   to: "ics#show",                     username: ROUTING_USERNAME_FORMAT
   match "/@:username/records",                                  via: :get,    as: :record_list,                                to: "records#index",                username: ROUTING_USERNAME_FORMAT
-  match "/@:username/records/:record_id",                       via: :delete,                                                  to: "records#destroy",              username: ROUTING_USERNAME_FORMAT
+  match "/@:username/records/:record_id",                       via: :delete,  as: :record,                                    to: "records#destroy",              username: ROUTING_USERNAME_FORMAT
   match "/@:username/records/:record_id",                       via: :get,                                                     to: "records#show",                 username: ROUTING_USERNAME_FORMAT
-  match "/@:username/records/:record_id",                       via: :patch,                                                   to: "records#update",               username: ROUTING_USERNAME_FORMAT
-  match "/@:username/records/:record_id",                       via: :patch,  as: :record,                                     to: "records#update",               username: ROUTING_USERNAME_FORMAT
+  match "/api/internal/@:username/records/:record_id",          via: :patch,  as: :internal_api_record,                        to: "api/internal/records#update",  username: ROUTING_USERNAME_FORMAT
   match "/api/internal/animes/:anime_id/status_select",         via: :post,   as: :internal_api_anime_status_select,           to: "api/internal/status_selects#create"
   match "/api/internal/channels/:channel_id/reception",         via: :delete, as: :internal_api_channel_reception,             to: "api/internal/receptions#destroy"
   match "/api/internal/channels/:channel_id/reception",         via: :post,                                                    to: "api/internal/receptions#create"

@@ -13,7 +13,7 @@ module Fragment
       authorize @record, :edit?
 
       @form = if @record.episode_record?
-        EpisodeRecordForm.new(
+        Forms::EpisodeRecordForm.new(
           record: @record,
           episode: @record.episode_record.episode,
           comment: @record.episode_record.body,

@@ -66,7 +66,7 @@ module Forms
     end
 
     def form_url
-      @form.persisted? ? view_context.record_path(@current_user.username, @form.record.id) : view_context.internal_api_commented_episode_record_list_path(@form.episode.id)
+      @form.persisted? ? view_context.internal_api_record_path(@current_user.username, @form.record.id) : view_context.internal_api_commented_episode_record_list_path(@form.episode.id)
     end
   end
 end
