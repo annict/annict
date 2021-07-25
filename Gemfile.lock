@@ -705,7 +705,7 @@ DEPENDENCIES
   rack-cors
   rack-mini-profiler
   rack-rewrite
-  rails (~> 6.1.3)
+  rails (>= 6.1.0)
   rails-html-sanitizer
   rails-i18n
   rails_autolink
