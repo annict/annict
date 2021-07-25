@@ -1,4 +1,4 @@
-FROM node:12.16.1-buster-slim
+FROM node:14.17.3-buster-slim
 
 LABEL maintainer="https://annict.jp/@shimbaco" \
   description="A platform for anime addicts."
