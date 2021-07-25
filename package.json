@@ -14,7 +14,7 @@
     "@babel/core": "^7.14.6",
     "@babel/preset-env": "^7.14.1",
     "@hotwired/turbo": "^7.0.0-rc.1",
-    "@rails/ujs": "^6.0.3-7",
+    "@rails/ujs": "^6.1.4",
     "autoprefixer": "^9.8.6",
     "autosize": "^5.0.1",
     "axios": "^0.21.1",
