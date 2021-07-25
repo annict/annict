@@ -6,9 +6,9 @@ module Api
       before_action :authenticate_user!
 
       def index
-        character_stars = current_user.character_favorites.map { |fav| { starrable_type: "Character", starrable_id: fav.character_id } }
-        person_stars = current_user.person_favorites.map { |fav| { starrable_type: "Person", starrable_id: fav.person_id } }
-        organization_stars = current_user.organization_favorites.map { |fav| { starrable_type: "Organization", starrable_id: fav.organization_id } }
+        character_stars = current_user.character_favorites.map { |fav| {starrable_type: "Character", starrable_id: fav.character_id} }
+        person_stars = current_user.person_favorites.map { |fav| {starrable_type: "Person", starrable_id: fav.person_id} }
+        organization_stars = current_user.organization_favorites.map { |fav| {starrable_type: "Organization", starrable_id: fav.organization_id} }
 
         render(json: character_stars + person_stars + organization_stars)
       end

@@ -39,7 +39,7 @@ module ButtonGroups
     private
 
     def input_name
-      "#{@form.object.class.name.underscore.tr('/', '_')}[#{@rating_field}]"
+      "#{@form.object.class.name.underscore.tr("/", "_")}[#{@rating_field}]"
     end
 
     def rating
