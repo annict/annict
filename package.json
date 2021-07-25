@@ -16,7 +16,7 @@
     "@hotwired/turbo": "^7.0.0-rc.1",
     "@rails/ujs": "^6.0.3-7",
     "autoprefixer": "^9.8.6",
-    "autosize": "^4.0.2",
+    "autosize": "^5.0.1",
     "axios": "^0.21.1",
     "babel-loader": "^8.2.2",
     "bootstrap": "^5.0.2",
