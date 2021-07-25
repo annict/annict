@@ -15,20 +15,24 @@
   <hr>
 
   <div class="container mt-3 u-container-flat">
-    <div class="card u-card-flat">
-      <div class="card-body py-0">
-        <% if @notifications.present? %>
+    <% if @notifications.present? %>
+      <div class="card u-card-flat">
+        <div class="card-body py-0">
           <% @notifications.each do |notification| %>
             <%= render "notifications/notification", notification: notification %>
           <% end %>
-        <% else %>
-          <%= render "application/components/empty", text: t("messages.notifications.no_notifications") %>
-        <% end %>
+        </div>
       </div>
-    </div>
 
-    <div class="mt-3 text-center">
-      <%= ButtonGroups::PaginationButtonGroupComponent.new(self, collection: @notifications).render %>
-    </div>
+      <div class="mt-3 text-center">
+        <%= ButtonGroups::PaginationButtonGroupComponent.new(self, collection: @notifications).render %>
+      </div>
+    <% else %>
+      <div class="card u-card-flat">
+        <div class="card-body">
+          <%= render "application/components/empty", text: t("messages.notifications.no_notifications") %>
+        </div>
+      </div>
+    <% end %>
   </div>
 </div>
