@@ -15,6 +15,18 @@ class SearchesController < ApplicationV6Controller
       [Anime.none, Character.none, Person.none, Organization.none]
     end
     @view = select_view(params[:resource].presence || "work")
+
+    @resources, @partial_name = case @view
+    when "work"
+      [@works, "work_list"]
+    when "character"
+      [@characters, "character_list"]
+    when "person"
+      [@people, "person_list"]
+    when "organization"
+      [@organizations, "organization_list"]
+    end
+    @resources = @resources.page(params[:page]).without_count
   end
 
   private

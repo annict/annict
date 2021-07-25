@@ -20,35 +20,36 @@ export default class extends Controller {
     this.submitButtonTarget.removeAttribute('disabled');
     this.submitButtonTarget.classList.remove('c-spinner');
 
-    const { success } = event.detail
+    const { success } = event.detail;
 
     if (success) {
-      await this.handleSuccess(event)
+      await this.handleSuccess(event);
     } else {
-      await this.handleError(event)
+      await this.handleError(event);
     }
   }
 
   async handleSuccess(event: any) {
-    this.formTarget.reset()
+    this.formTarget.reset();
 
-    const { fetchResponse } = event.detail
-    const data = JSON.parse(await fetchResponse.responseText)
+    const { fetchResponse } = event.detail;
+    const responseText = await fetchResponse.responseText;
+    const data = JSON.parse(responseText);
 
-    if (!data) return
+    if (!data) return;
 
     if (data.redirect_path) {
-      Turbo.visit(data.redirect_path, { action: "replace" })
+      Turbo.visit(data.redirect_path, { action: 'replace' });
     } else if (data.flash) {
       new EventDispatcher('flash:show', data.flash).dispatch();
     }
-  };
+  }
 
   async handleError(event: any) {
-    const { fetchResponse } = event.detail
-    const errorMessages = JSON.parse(await fetchResponse.responseText)
+    const { fetchResponse } = event.detail;
+    const errorMessages = JSON.parse(await fetchResponse.responseText);
 
-    this.errorMessageListTarget.innerHTML = errorMessages.map((msg: string) => `<li>${msg}</li>`).join("")
-    this.errorPanelTarget.classList.remove('d-none')
+    this.errorMessageListTarget.innerHTML = errorMessages.map((msg: string) => `<li>${msg}</li>`).join('');
+    this.errorPanelTarget.classList.remove('d-none');
   }
 }

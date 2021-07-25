@@ -39,7 +39,7 @@ module ButtonGroups
     private
 
     def input_name
-      "#{@form.object.class.name.underscore}[#{@rating_field}]"
+      "#{@form.object.class.name.underscore.tr("/", "_")}[#{@rating_field}]"
     end
 
     def rating
@@ -47,8 +47,8 @@ module ButtonGroups
     end
 
     def button_class_name(rating_state)
-      class_name = %w[btn]
-      class_name << (rating&.downcase == rating_state ? "u-btn-#{rating_state}" : "u-btn-outline-input-border")
+      class_name = %w[btn text-body]
+      class_name << (rating&.downcase == rating_state ? "u-btn-#{rating_state}" : "btn-outline-secondary")
       class_name.join(" ")
     end
   end

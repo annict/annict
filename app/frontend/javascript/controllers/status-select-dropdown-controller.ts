@@ -1,6 +1,7 @@
 import Modal from 'bootstrap/js/dist/modal';
 import { Controller } from 'stimulus';
 
+import { EventDispatcher } from '../utils/event-dispatcher';
 import fetcher from '../utils/fetcher';
 
 enum STATUS_KIND {
@@ -25,13 +26,17 @@ export default class extends Controller {
   prevStatusKind!: STATUS_KIND;
 
   initialize() {
-    this.startLoading()
+    this.startLoading();
 
     document.addEventListener('component-value-fetcher:status-select-dropdown:fetched', (event: any) => {
+      if (this.currentStatusKind) {
+        return;
+      }
+
       const statusKinds = event.detail;
-      this.setCurrentStatusKindFromStatusKinds(statusKinds)
+      this.setCurrentStatusKindFromStatusKinds(statusKinds);
       this.prevStatusKind = this.currentStatusKind;
-      this.render()
+      this.render();
     });
   }
 
@@ -55,26 +60,29 @@ export default class extends Controller {
 
   resetKind() {
     this.currentStatusKind = STATUS_KIND.NO_STATUS;
-    this.render()
+    this.render();
   }
 
   render() {
     this.buttonTarget.innerHTML = `<i class="fas fa-${this.kindIconsValue[this.currentStatusKind]}">`;
 
     if (this.currentStatusKind === STATUS_KIND.NO_STATUS) {
-      this.buttonTarget.className = `btn dropdown-toggle u-btn-outline-status`
+      this.buttonTarget.className = `btn dropdown-toggle u-btn-outline-status`;
     } else {
-      this.buttonTarget.className = `btn dropdown-toggle bg-status-${this.currentStatusKind.replace(/_/g, '-')} text-white`
+      this.buttonTarget.className = `btn dropdown-toggle bg-status-${this.currentStatusKind.replace(
+        /_/g,
+        '-',
+      )} text-white`;
     }
 
-    this.stopLoading()
+    this.stopLoading();
   }
 
   async change(event: any) {
     const selectedStatusKind = event.currentTarget.dataset.statusKind;
 
     if (selectedStatusKind !== this.currentStatusKind) {
-      this.startLoading()
+      this.startLoading();
 
       try {
         await fetcher.post(`/api/internal/animes/${this.animeIdValue}/status_select`, {
@@ -83,7 +91,8 @@ export default class extends Controller {
         });
 
         this.currentStatusKind = selectedStatusKind;
-        this.render()
+        this.render();
+        new EventDispatcher('tracking-modal-button:enabled', { animeId: this.animeIdValue }).dispatch();
       } catch (err) {
         if (err.response.status === 401) {
           new Modal('.c-sign-up-modal').show();
@@ -91,7 +100,7 @@ export default class extends Controller {
 
         this.resetKind();
       } finally {
-        this.stopLoading()
+        this.stopLoading();
       }
     }
   }

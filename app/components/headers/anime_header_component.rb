@@ -13,8 +13,8 @@ module Headers
         h.tag :div, class: "c-anime-header pt-3" do
           h.tag :div, class: "container" do
             h.tag :div, class: "gx-3 row" do
-              h.tag :div, class: "col-auto" do
-                h.tag :div, class: "c-anime-header__anime-picture" do
+              h.tag :div, class: "col-12 col-sm-auto" do
+                h.tag :div, class: "c-anime-header__anime-picture text-center" do
                   h.tag :a, href: view_context.anime_path(anime_id: @anime.id) do
                     h.html Pictures::AnimePictureComponent.new(view_context, anime: @anime, width: 180).render
                   end
@@ -25,7 +25,7 @@ module Headers
                 end
               end
 
-              h.tag :div, class: "col" do
+              h.tag :div, class: "col mt-3 mt-sm-0" do
                 h.tag :div do
                   h.html Badges::AnimeMediaBadgeComponent.new(view_context, anime: @anime).render
                   h.html Badges::AnimeSeasonBadgeComponent.new(view_context, anime: @anime, class_name: "ms-2").render
@@ -76,17 +76,19 @@ module Headers
                   end
                 end
 
-                h.tag :ul, class: "list-inline" do
+                h.tag :ul, class: "list-inline mb-0" do
                   if locale_ja? && @anime.official_site_url.present?
                     h.tag :li, class: "list-inline-item" do
                       h.tag :a, href: @anime.official_site_url, target: "_blank", rel: "noopener" do
-                        h.text t("activerecord.attributes.work.official_site_url")
+                        h.text t("activerecord.attributes.anime.official_site_url")
+                        h.tag :i, class: "fas fa-external-link-alt ms-1 small"
                       end
                     end
                   elsif locale_en? && @anime.official_site_url_en.present?
                     h.tag :li, class: "list-inline-item" do
                       h.tag :a, href: @anime.official_site_url_en, target: "_blank", rel: "noopener" do
-                        h.text t("activerecord.attributes.work.official_site_url")
+                        h.text t("activerecord.attributes.anime.official_site_url")
+                        h.tag :i, class: "fas fa-external-link-alt ms-1 small"
                       end
                     end
                   end
@@ -94,22 +96,24 @@ module Headers
                   if locale_ja? && @anime.wikipedia_url.present?
                     h.tag :li, class: "list-inline-item" do
                       h.tag :a, href: @anime.wikipedia_url, target: "_blank", rel: "noopener" do
-                        h.text t("activerecord.attributes.work.wikipedia_url")
+                        h.text t("activerecord.attributes.anime.wikipedia_url")
+                        h.tag :i, class: "fas fa-external-link-alt ms-1 small"
                       end
                     end
                   elsif locale_en? && @anime.wikipedia_url_en.present?
                     h.tag :li, class: "list-inline-item" do
                       h.tag :a, href: @anime.wikipedia_url_en, target: "_blank", rel: "noopener" do
-                        h.text t("activerecord.attributes.work.wikipedia_url")
+                        h.text t("activerecord.attributes.anime.wikipedia_url")
+                        h.tag :i, class: "fas fa-external-link-alt ms-1 small"
                       end
                     end
                   end
                 end
 
                 if @programs.present?
-                  h.tag :ul, class: "list-inline" do
+                  h.tag :ul, class: "list-inline mt-2" do
                     @programs.each do |program|
-                      h.tag :li, class: "list-inline-item" do
+                      h.tag :li, class: "list-inline-item mt-2" do
                         h.tag :a, class: "btn btn-outline-primary btn-sm rounded-pill", href: program.vod_title_url, target: "_blank", rel: "noopener" do
                           h.text program.channel.name
 
@@ -118,6 +122,8 @@ module Headers
                               h.text "(#{program.vod_title_name})"
                             end
                           end
+
+                          h.tag :i, class: "fas fa-external-link-alt ms-1 small"
                         end
                       end
                     end

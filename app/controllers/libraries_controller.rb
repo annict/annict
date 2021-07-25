@@ -8,6 +8,7 @@ class LibrariesController < ApplicationV6Controller
 
     @user = User.only_kept.find_by!(username: params[:username])
     @animes = @user.animes_on(params[:status_kind]).only_kept
+    @anime_ids = @animes.pluck(:id)
     season_slugs = @animes.map(&:season).select(&:present?).map(&:slug).uniq
     @seasons = season_slugs
       .map { |slug| Season.find_by_slug(slug) }

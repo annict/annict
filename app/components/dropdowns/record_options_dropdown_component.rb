@@ -20,7 +20,7 @@ module Dropdowns
                 h.text t("noun.edit")
               end
 
-              h.tag :a, href: view_context.record_path(@record.user.username, @record.id), class: "dropdown-item", data: {confirm: t("messages._common.are_you_sure")}, method: :delete do
+              h.tag :a, href: view_context.record_path(@record.user.username, @record.id), class: "dropdown-item", data_confirm: t("messages._common.are_you_sure"), data_method: :delete do
                 h.text t("noun.delete")
               end
             end

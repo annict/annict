@@ -10,23 +10,23 @@ class PageCategory
     favorite_character_list
     favorite_organization_list
     favorite_person_list
+    followee_list
     follower_list
-    following_list
     home
     library
+    newest_anime_list
     organization_fan_list
     person_fan_list
+    popular_anime_list
     profile
     record
     record_edit
     record_list
     search
+    seasonal_anime_list
     slot_list
     track
     welcome
-    work_list_newest
-    work_list_popular
-    work_list_season
   ].freeze
 
   NAMES.each do |name|

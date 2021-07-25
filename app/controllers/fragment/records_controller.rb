@@ -13,7 +13,7 @@ module Fragment
       authorize @record, :edit?
 
       @form = if @record.episode_record?
-        EpisodeRecordForm.new(
+        Forms::EpisodeRecordForm.new(
           record: @record,
           episode: @record.episode_record.episode,
           comment: @record.episode_record.body,
@@ -21,7 +21,13 @@ module Fragment
           share_to_twitter: current_user.share_record_to_twitter?
         )
       else
-        AnimeRecordForm.new(episode: episode)
+        Forms::AnimeRecordForm.new(
+          record: @record,
+          anime: @record.anime,
+          comment: @record.comment,
+          rating_overall: @record.rating,
+          share_to_twitter: current_user.share_record_to_twitter?
+        )
       end
     end
   end

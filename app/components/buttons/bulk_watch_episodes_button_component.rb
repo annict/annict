@@ -17,7 +17,7 @@ module Buttons
           data_bulk_watch_episodes_button_loading_class: "c-bulk-watch-episodes-button--loading",
           data_action: "click->bulk-watch-episodes-button#watch" do
             h.tag :span, class: "c-bulk-watch-episodes-button__spinner spinner-border spinner-border-sm"
-            h.tag :i, class: "far fa-arrow-from-top"
+            h.tag :i, class: "far fa-arrow-from-bottom"
           end
       end
     end

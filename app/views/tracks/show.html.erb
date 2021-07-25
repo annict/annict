@@ -1,7 +1,15 @@
 <% title = t "head.title.tracks.show" %>
-<% set_meta_tags(title: title, reverse: true, prefix: false) %>
+<% set_meta_tags title: title, reverse: true, prefix: false %>
 
-<div class="container py-3">
+<div class="py-3">
+  <div class="container">
+    <h1 class="fw-bold mb-0">
+      <%= title %>
+    </h1>
+  </div>
+
+  <hr>
+
   <div
     data-controller="reloadable"
     data-reloadable-event-name-value="trackable-episode-list"
@@ -11,8 +19,7 @@
       self,
       library_entries: @library_entries,
       trackable_episodes: @trackable_episodes,
-      slots: @slots,
-      page_category: page_category
+      slots: @slots
     ).render %>
   </div>
 </div>

@@ -14,7 +14,7 @@ module Fragment
     def show
       @episode = Episode.only_kept.find(params[:episode_id])
       @anime = @episode.anime
-      @form = EpisodeRecordForm.new(episode: @episode)
+      @form = Forms::EpisodeRecordForm.new(episode: @episode)
 
       set_episode_record_list(@episode)
     end

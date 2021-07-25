@@ -40,6 +40,7 @@ services:
     volumes:
       - .:/workspace
       - gems_vol:/usr/local/bundle
+      - node_modules_vol:/workspace/node_modules
   postgresql:
     image: postgres:12.4-alpine
     ports:

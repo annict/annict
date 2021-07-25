@@ -17,5 +17,6 @@ class OrganizationsController < ApplicationV6Controller
       .eager_load(user: :profile)
       .merge(User.only_kept)
       .order(id: :desc)
+      .limit(8)
   end
 end

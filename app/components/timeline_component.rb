@@ -15,7 +15,7 @@ class TimelineComponent < ApplicationV6Component
               case activity_group.itemable_type
               when "Status"
                 h.html Activities::StatusActivityComponent.new(view_context, activity_group: activity_group).render
-              when "EpisodeRecord", "WorkRecord"
+              when "EpisodeRecord", "WorkRecord", "AnimeRecord"
                 h.html Activities::RecordActivityComponent.new(view_context, activity_group: activity_group).render
               end
             end

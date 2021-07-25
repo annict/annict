@@ -3,26 +3,42 @@
 
 <%= component_value_fetcher_tag("receive-channel-button", internal_api_received_channel_list_path) %>
 
-<div class="container py-3">
-  <div class="card">
-    <% @channel_groups.each do |channel_group| %>
-      <div class="card-header">
+<div class="py-3">
+  <div class="container">
+    <h1 class="fw-bold mb-0">
+      <%= title %>
+    </h1>
+  </div>
+
+  <hr>
+
+  <% @channel_groups.each do |channel_group| %>
+    <div class="container mt-3">
+      <h2 class="fw-bold h3 mb-0">
         <%= channel_group.name %>
-      </div>
+      </h2>
+    </div>
 
-      <div class="border-bottom card-body pt-2 pb-3">
-        <div class="row">
-          <% @channels.filter { |channel| channel.channel_group_id == channel_group.id }.each do |channel| %>
-            <div class="col-3 mt-2">
-              <%= Buttons::ReceiveChannelButtonComponent.new(self, channel: channel, class_name: "btn-sm rounded-circle").render %>
+    <div class="container mt-3 u-container-flat">
+      <div class="card u-card-flat">
+        <div class="card-body">
+          <div class="g-3 row">
+            <% @channels.filter { |channel| channel.channel_group_id == channel_group.id }.each do |channel| %>
+              <div class="col-6 col-sm-3">
+                <div class="align-items-center gx-3 row">
+                  <div class="col-auto">
+                    <%= Buttons::ReceiveChannelButtonComponent.new(self, channel: channel, class_name: "btn-sm rounded-circle").render %>
+                  </div>
 
-              <span class="ms-2">
-                <%= channel.name %>
-              </span>
-            </div>
-          <% end %>
+                  <div class="col">
+                    <%= channel.name %>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
         </div>
       </div>
-    <% end %>
-  </div>
+    </div>
+  <% end %>
 </div>

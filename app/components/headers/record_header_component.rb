@@ -12,16 +12,14 @@ module Headers
       build_html do |h|
         h.tag :div, class: "c-record-header row" do
           h.tag :div, class: "col-auto pe-0" do
-            link_to view_context.profile_path(@record.user.username) do
-              h.html Pictures::AvatarPictureComponent.new(view_context,
-                user: @user,
-                width: 50).render
+            h.tag :a, href: view_context.profile_path(@record.user.username), target: "_top" do
+              h.html Pictures::AvatarPictureComponent.new(view_context, user: @user, width: 50).render
             end
           end
 
           h.tag :div, class: "col" do
             h.tag :div do
-              h.tag :a, href: view_context.profile_path(@record.user.username), class: "fw-bold me-1 text-body" do
+              h.tag :a, href: view_context.profile_path(@record.user.username), class: "fw-bold me-1 text-body", target: "_top" do
                 h.tag :span, class: "me-1" do
                   h.text @record.user.name
                 end
@@ -31,15 +29,13 @@ module Headers
                 end
               end
 
-              if @record.user.supporter? && !@record.user.setting.hide_supporter_badge?
-                h.tag :span, class: "badge u-badge-supporter" do
-                  h.text t("noun.supporter")
-                end
+              if @user.supporter? && !@user.setting.hide_supporter_badge?
+                h.html Badges::SupporterBadgeComponent.new(view_context, user: @user).render
               end
             end
 
             h.tag :div do
-              h.tag :a, href: view_context.record_path(@record.user.username, @record.id), class: "small text-muted" do
+              h.tag :a, href: view_context.record_path(@record.user.username, @record.id), class: "small text-muted", target: "_top" do
                 h.text display_time(@record.created_at)
               end
 

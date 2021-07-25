@@ -7,15 +7,13 @@ module Api
 
       def create
         episode = Episode.only_kept.find(params[:episode_id])
-        creator = EpisodeRecordCreator.new(
-          user: current_user,
-          episode: episode,
-          share_to_twitter: current_user.share_record_to_twitter?
-        ).call
+        form = Forms::EpisodeRecordForm.new(episode: episode, share_to_twitter: current_user.share_record_to_twitter?)
 
-        if creator.invalid?
-          return render(status: 400, json: {message: creator.errors.full_messages.first})
+        if form.invalid?
+          return render(status: 400, json: {message: form.errors.full_messages.first})
         end
+
+        creator = Creators::EpisodeRecordCreator.new(user: current_user, form: form).call
 
         render(status: 201, json: {record_id: creator.record.id})
       end

@@ -12,7 +12,8 @@ module TrackableEpisodeListSettable
       .merge(Anime.where(no_episodes: false))
       .order(:position)
       .page(params[:page])
-      .per(3)
+      .per(10)
+      .without_count
 
     episodes = Episode.only_kept.where(work_id: @library_entries.pluck(:work_id))
     @trackable_episodes = Episode.partitioned_episodes(

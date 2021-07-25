@@ -7,16 +7,12 @@
   overflow-x: auto;
 
   &__day {
-    background: shade-color($body-bg, 15%);
+    background: var(--ann-color-tracking-heatmap-bg);
     border-radius: 3px;
     display: inline-block;
     height: 10px;
     position: relative;
     width: 10px;
-
-    @include color-scheme(dark) {
-      background: tint-color($ann-body-bg-dark, 15%);
-    }
   }
 
   &__density-1 {

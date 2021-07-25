@@ -2,10 +2,9 @@
 
 module Buttons
   class WatchEpisodeButtonComponent < ApplicationV6Component
-    def initialize(view_context, episode_id:, page_category:, class_name: "")
+    def initialize(view_context, episode_id:, class_name: "")
       super view_context
       @episode_id = episode_id
-      @page_category = page_category
       @class_name = class_name
     end
 
@@ -16,7 +15,7 @@ module Buttons
           data_controller: "watch-episode-button",
           data_watch_episode_button_episode_id_value: @episode_id,
           data_watch_episode_button_loading_class: "c-watch-episode-button--loading",
-          data_watch_episode_button_page_category_value: @page_category,
+          data_watch_episode_button_page_category_value: page_category,
           data_action: "click->watch-episode-button#watch" do
             h.tag :span, class: "c-watch-episode-button__spinner spinner-border spinner-border-sm"
             h.tag :i, class: "far fa-check"

@@ -334,28 +334,6 @@ class User < ApplicationRecord
     end
   end
 
-  def add_reaction!(resource, kind)
-    reaction = reactions.new(kind: kind)
-
-    case resource
-    when CollectionItem
-      reaction.target_user = resource.user
-      reaction.collection_item = resource
-    end
-
-    reaction.save!
-  end
-
-  def remove_reaction!(resource, kind)
-    reactions = self.reactions.where(kind: kind)
-
-    case resource
-    when CollectionItem
-      reactions = reactions.where(collection_item: resource)
-      reactions.destroy_all
-    end
-  end
-
   def add_work_tag!(work, tag_name)
     work_tag = nil
 

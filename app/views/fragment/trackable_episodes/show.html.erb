@@ -1,55 +1,69 @@
-<turbo-frame id="c-tracking-modal__frame">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-body">
-        <div class="row">
-          <div class="col">
-            <div>
-              <%= link_to fragment_trackable_anime_path(@anime.id) do %>
-                <i class="far fa-angle-left"></i>
-                <span class="ps-1">
-                  <%= @episode.anime.local_title %>
-                </span>
+<turbo-frame id="c-tracking-modal-frame">
+  <%= component_value_fetcher_tag("status-select-dropdown", internal_api_library_entry_list_path, method: :post, payload: {anime_ids: [@anime.id]}) %>
+
+  <div class="modal-body px-0">
+    <div class="container">
+      <div class="gx-3 row">
+        <div class="col-auto">
+          <%= link_to anime_path(@anime.id) do %>
+            <%= Pictures::AnimePictureComponent.new(self, anime: @anime, width: 100).render %>
+          <% end %>
+
+          <div class="mt-2 text-center">
+            <%= ButtonGroups::AnimeButtonGroupComponent.new(self, anime: @anime, show_option_button: false).render %>
+          </div>
+        </div>
+
+        <div class="col">
+          <%= link_to fragment_trackable_anime_path(@anime.id), class: "small" do %>
+            <i class="far fa-angle-left"></i>
+            <span class="ps-1">
+              <%= @episode.anime.local_title %>
+            </span>
+          <% end %>
+
+          <h3 class="fw-bold mb-0 mt-1">
+            <%= @episode.title_with_number %>
+          </h3>
+
+          <ul class="list-inline mt-2 small">
+            <li class="list-inline-item">
+              <%= link_to anime_path(@anime.id), data: { "turbo-frame": "_top" } do %>
+                <%= t("noun.work_detail_page") %>
+                <i class="far fa-angle-right ms-1"></i>
               <% end %>
-            </div>
+            </li>
 
-            <h3 class="my-1">
-              <%= @episode.title_with_number %>
-            </h3>
-
-            <%= link_to anime_path(@anime.id), class: "small", data: { "turbo-frame": "_top" } do %>
-              <%= t("noun.anime_page") %>
-              <i class="far fa-angle-right ps-1"></i>
-            <% end %>
-
-            <%= link_to episode_path(@anime.id, @episode.id), class: "ms-2 small", data: { "turbo-frame": "_top" } do %>
-              <%= t("noun.episode_page") %>
-              <i class="far fa-angle-right ps-1"></i>
-            <% end %>
-          </div>
-
-          <div class="col-auto">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
+            <li class="list-inline-item">
+              <%= link_to episode_path(@anime.id, @episode.id), data: { "turbo-frame": "_top" } do %>
+                <%= t("noun.episode_page") %>
+                <i class="far fa-angle-right ms-1"></i>
+              <% end %>
+            </li>
+          </ul>
         </div>
 
-        <div class="mt-3">
-          <%= render Forms::EpisodeRecordFormComponent.new(form: @form, current_user: current_user) %>
+        <div class="col-auto">
+          <button class="btn-close" data-bs-dismiss="modal" type="button"></button>
         </div>
+      </div>
 
-        <hr class="mt-3">
-
-        <div class="mt-3">
-          <div
-            data-controller="reloadable"
-            data-reloadable-event-name-value="episode-record-list-group"
-            data-reloadable-url-value="<%= fragment_episode_record_list_path(@episode.id, page: params[:page]) %>"
-          >
-            <%= ListGroups::EpisodeRecordListGroupComponent.new(self, my_records: @my_records, following_records: @following_records, all_records: @all_records).render %>
-          </div>
+      <div class="card mt-3">
+        <div class="card-body">
+          <%= Forms::EpisodeRecordFormComponent.new(self, form: @form, current_user: current_user).render %>
         </div>
+      </div>
+
+      <hr class="mt-3">
+    </div>
+
+    <div class="mt-3">
+      <div
+        data-controller="reloadable"
+        data-reloadable-event-name-value="episode-record-list-group"
+        data-reloadable-url-value="<%= fragment_episode_record_list_path(@episode.id, page: params[:page]) %>"
+      >
+        <%= ListGroups::RecordListGroupComponent.new(self, my_records: @my_records, following_records: @following_records, all_records: @all_records).render %>
       </div>
     </div>
   </div>

@@ -1,10 +1,6 @@
 .c-anime-header {
   background-color: var(--ann-card-bg);
 
-  &__anime-picture {
-    width: 180px;
-  }
-
   .list-inline-item:not(:last-child) {
     margin-right: 0.8rem;
   }

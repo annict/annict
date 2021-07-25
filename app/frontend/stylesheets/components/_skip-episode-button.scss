@@ -1,0 +1,17 @@
+.c-skip-episode-button {
+  $root: &;
+
+  &__spinner {
+    display: none;
+  }
+
+  &--loading {
+    .fa-forward {
+      display: none;
+    }
+
+    #{$root}__spinner {
+      display: inline-block;
+    }
+  }
+}

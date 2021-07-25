@@ -2,7 +2,6 @@
 # Remove from this list as you refactor files.
 ---
 ignore:
-  - app/controllers/api/internal/work_friends_controller.rb
   - app/controllers/api/v1/application_controller.rb
   - app/decorators/organization_decorator.rb
   - app/decorators/person_decorator.rb

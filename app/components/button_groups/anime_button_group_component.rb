@@ -2,10 +2,11 @@
 
 module ButtonGroups
   class AnimeButtonGroupComponent < ApplicationV6Component
-    def initialize(view_context, anime:, class_name: "")
+    def initialize(view_context, anime:, class_name: "", show_option_button: true)
       super view_context
       @anime = anime
       @class_name = class_name
+      @show_option_button = show_option_button
     end
 
     def render
@@ -18,24 +19,16 @@ module ButtonGroups
           #   h.tag :i, class: "far fa-star"
           # end
 
-          h.tag :div, class: "btn-group c-anime-button-group__options" do
+          if @show_option_button
             h.tag :button, {
-              class: "btn btn-outline-secondary dropdown-toggle",
-              data_bs_toggle: "dropdown",
+              class: "btn btn-outline-secondary",
+              data_controller: "tracking-modal-button",
+              data_tracking_modal_button_anime_id_value: @anime.id,
+              data_tracking_modal_button_frame_path: view_context.fragment_trackable_anime_path(@anime.id),
+              data_action: "click->tracking-modal-button#open",
               type: "button"
             } do
               h.tag :i, class: "far fa-ellipsis-h"
-            end
-
-            h.tag :ul, class: "dropdown-menu" do
-              h.tag :li do
-                h.tag :button, {
-                  class: "btn #{@class_name}",
-                  type: "button"
-                } do
-                  h.text "menu item"
-                end
-              end
             end
           end
         end

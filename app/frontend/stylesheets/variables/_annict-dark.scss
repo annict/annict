@@ -4,6 +4,7 @@
   // -------------------------------------------------------------------
 
   --ann-color-sidebar-bg: #{shade-color($gray-800, 25%)};
+  --ann-color-tracking-heatmap-bg: #{tint-color($gray-900, 15%)};
 
   // -------------------------------------------------------------------
   // Bootstrap関係の変数
@@ -11,6 +12,7 @@
 
   // Body
 
+  --ann-body-bg: #{$gray-900};
   --ann-body-color: #{$gray-200};
 
   // Links
@@ -40,6 +42,11 @@
   --ann-form-select-color: var(--ann-input-color);
   --ann-form-select-bg: var(--ann-input-bg);
   --ann-form-select-border-color: var(--ann-input-border-color);
+
+  // Navs
+
+  --ann-nav-link-color: var(--ann-link-color);
+  --ann-nav-link-hover-color: var(--ann-link-hover-color);
 
   // Dropdowns
 
