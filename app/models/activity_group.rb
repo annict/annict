@@ -60,7 +60,7 @@ class ActivityGroup < ApplicationRecord
       (all_activities_by_trackable_type["WorkRecord"]&.pluck(:trackable_id).presence || [])
     all_anime_records = AnimeRecord.where(id: anime_record_ids)
     all_records = Record
-      .preload(:user, anime: :anime_image, episode_record: [:episode])
+      .preload(:user, :anime_record, anime: :anime_image, episode_record: [:episode])
       .where(id: all_episode_records.pluck(:record_id) + all_anime_records.pluck(:record_id))
       .order(created_at: :desc)
 
