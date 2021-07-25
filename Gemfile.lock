@@ -533,7 +533,7 @@ GEM
     sentry-ruby-core (4.5.0)
       concurrent-ruby
       faraday
-    shrine (3.3.0)
+    shrine (3.4.0)
       content_disposition (~> 1.0)
       down (~> 5.1)
     simple_oauth (0.3.1)
