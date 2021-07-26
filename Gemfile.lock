@@ -133,7 +133,7 @@ GEM
       uniform_notifier (~> 1.11)
     by_star (3.0.0)
       activesupport (> 3)
-    cld (0.8.0)
+    cld (0.10.0)
       ffi
     coderay (1.1.3)
     coercible (1.0.0)
@@ -227,7 +227,7 @@ GEM
     faraday-net_http_persistent (1.1.0)
     faraday_middleware (1.0.0)
       faraday (~> 1.0)
-    ffi (1.15.0)
+    ffi (1.15.3)
     ffi-compiler (1.0.1)
       ffi (>= 1.0.0)
       rake
