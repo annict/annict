@@ -123,6 +123,7 @@ class Anime < ApplicationRecord
   has_many :staff_people, through: :staffs, source: :resource, source_type: "Person"
   has_many :channels, through: :programs
   has_many :anime_records, foreign_key: :work_id
+  has_many :records_only_anime, class_name: "Record", source: :record, through: :anime_records
   has_many :work_tags, through: :work_taggings
   has_one :anime_image, dependent: :destroy, foreign_key: :work_id
 

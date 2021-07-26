@@ -5,10 +5,10 @@ module AnimeRecordListSettable
 
   def set_anime_record_list(anime)
     records = anime
-      .records
+      .records_only_anime
       .only_kept
       .eager_load(:anime, :anime_record, :episode_record, user: %i[gumroad_subscriber profile setting])
-      .merge(AnimeRecord.only_kept.with_body.order_by_rating(:desc).order(created_at: :desc))
+      .merge(AnimeRecord.only_kept.order_by_rating(:desc).order(created_at: :desc))
     @my_records = @following_records = []
 
     if user_signed_in?
@@ -16,6 +16,7 @@ module AnimeRecordListSettable
       @following_records = records.merge(current_user.followings)
       @all_records = records
         .where.not(user: [current_user, *current_user.followings])
+        .merge(AnimeRecord.with_body)
         .page(params[:page])
         .per(100)
         .without_count
