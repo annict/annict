@@ -28,7 +28,6 @@ gem "dry-struct"
 gem "email_validator"
 gem "enumerize"
 gem "github-markup"
-gem "gon"
 gem "graphql", ">= 1.10.0.pre3" # https://github.com/rmosolgo/graphql-ruby/pull/2640
 gem "graphql-batch"
 gem "graphql-fragment_cache"

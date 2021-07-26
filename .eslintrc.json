@@ -11,8 +11,7 @@
   ],
   "globals": {
     "AnnConfig": true,
-    "ga": true,
-    "gon": true
+    "ga": true
   },
   "parserOptions": {
     "ecmaVersion": 2018,
