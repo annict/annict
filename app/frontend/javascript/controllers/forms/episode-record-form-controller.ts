@@ -1,12 +1,12 @@
 import { EventDispatcher } from '../../utils/event-dispatcher';
-import BasicFormController from './basic-form-controller'
+import BasicFormController from './basic-form-controller';
 
 export default class extends BasicFormController {
   static targets = [];
 
   async handleSuccess(event: any) {
-    super.handleSuccess(event)
-    this.reloadList()
+    super.handleSuccess(event);
+    this.reloadList();
   }
 
   reloadList() {

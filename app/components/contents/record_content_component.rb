@@ -14,7 +14,7 @@ module Contents
       build_html do |h|
         h.tag :div do
           if rating_or_comment?
-            h.html(SpoilerGuardV6Component.new(view_context, record: @record).render { |h|
+            h.html(SpoilerGuardComponent.new(view_context, record: @record).render { |h|
               h.tag :div, class: "c-record-content__wrapper mb-3" do
                 if @record.rating
                   h.html Labels::RatingLabelComponent.new(view_context, rating: @record.rating, advanced_rating: @record.advanced_rating, class_name: "mb-1").render

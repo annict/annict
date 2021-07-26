@@ -65,6 +65,7 @@ Rails.application.routes.draw do
   match "/api/internal/sign_in",                                via: :post,   as: :internal_api_sign_in,                       to: "api/internal/sign_in#create"
   match "/api/internal/sign_up",                                via: :post,   as: :internal_api_sign_up,                       to: "api/internal/sign_up#create"
   match "/api/internal/skipped_episodes",                       via: :post,   as: :internal_api_skipped_episode_list,          to: "api/internal/skipped_episodes#create"
+  match "/api/internal/spoiler_guard",                          via: :get,    as: :internal_api_spoiler_guard,                 to: "api/internal/spoiler_guards#show"
   match "/api/internal/stars",                                  via: :get,    as: :internal_api_star_list,                     to: "api/internal/stars#index"
   match "/api/internal/stars",                                  via: :post,                                                    to: "api/internal/stars#create"
   match "/api/internal/unlikes",                                via: :post,   as: :internal_api_unlike_list,                   to: "api/internal/unlikes#create"
