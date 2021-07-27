@@ -238,7 +238,7 @@ en:
       sign_up:
         new: Sign Up
       staffs:
-        index: Staff of %{title} (Anime)
+        index: Staffs of %{title}
       supporters:
         show: Annict Supporters
       tracks:

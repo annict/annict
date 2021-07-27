@@ -185,7 +185,7 @@ module Headers
               # TODO: @anime.staffs_count > 0
               if true # standard:disable Lint/LiteralAsCondition
                 h.tag :li, class: "c-nav__item" do
-                  h.html active_link_to t("noun.staffs"), "#",
+                  h.html active_link_to t("noun.staffs"), view_context.staff_list_path(@anime.id),
                     active: page_category.in?(%w[staff-list]),
                     class: "c-nav__link",
                     class_active: "c-nav__link--active"

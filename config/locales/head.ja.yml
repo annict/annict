@@ -41,7 +41,7 @@ ja:
         sign_up:
           new: Annictのアカウントを作成して視聴記録を残そう！
         staffs:
-          index: 'アニメ「%{title}」のスタッフ情報をチェック！'
+          index: 'アニメ「%{title}」のスタッフをチェック！'
         users:
           followers: Check out %{profile_name} (%{username})'s profile!
           following: Check out %{profile_name} (%{username})'s profile!
@@ -233,7 +233,7 @@ ja:
       sign_up:
         new: アカウント作成
       staffs:
-        index: アニメ「%{title}」のスタッフ一覧
+        index: アニメ「%{title}」のスタッフ
       supporters:
         show: Annict Supporters
       tracks:

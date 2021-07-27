@@ -27,6 +27,7 @@ class PageCategory
     search
     seasonal_anime_list
     slot_list
+    staff_list
     track
     welcome
   ].freeze
