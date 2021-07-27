@@ -3,6 +3,8 @@ en:
     meta:
       description:
         _common: Annict is a platform for anime addicts. Track your watching anime, follow friends, read their reviews, and much more!
+        anime_infos:
+          show: Looking for info of %{title}? Find out more with Annict!
         anime_records:
           index: Looking for records of %{anime_title}? Find out more with Annict!
           show: Check out %{profile_name} (%{username})'s records!
@@ -51,6 +53,8 @@ en:
       keywords:
         _common: annict, anime, review
     title:
+      anime_infos:
+        show: Info of %{title}
       anime_records:
         edit: Edit Record
         index: Records of %{anime_title} (Anime)

@@ -3,6 +3,7 @@
 class PageCategory
   NAMES = %i[
     anime
+    anime_info
     anime_record_list
     character_fan_list
     episode

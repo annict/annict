@@ -150,8 +150,8 @@ module Headers
               end
 
               h.tag :li, class: "c-nav__item" do
-                h.html active_link_to t("noun.information"), "#",
-                  active: page_category.in?(%w[]),
+                h.html active_link_to t("noun.information"), view_context.anime_info_path(@anime.id),
+                  active: page_category.in?(%w[anime-info]),
                   class: "c-nav__link",
                   class_active: "c-nav__link--active"
               end
