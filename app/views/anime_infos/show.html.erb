@@ -13,7 +13,7 @@
       <div class="card-body">
         <div class="g-3 row">
           <% if @anime.title_kana.present? %>
-            <div class="col-6 col-4">
+            <div class="col-6 col-sm-4">
               <div class="fw-bold small">
                 <%= t "activerecord.attributes.anime.title_kana" %>
               </div>
@@ -24,7 +24,7 @@
           <% end %>
 
           <% if @anime.title_en.present? %>
-            <div class="col-6 col-4">
+            <div class="col-6 col-sm-4">
               <div class="fw-bold small">
                 <%= t "activerecord.attributes.anime.title_en" %>
               </div>
@@ -34,7 +34,7 @@
             </div>
           <% end %>
 
-          <div class="col-6 col-4">
+          <div class="col-6 col-sm-4">
             <div class="fw-bold small">
               <%= t "activerecord.attributes.anime.media" %>
             </div>
@@ -44,7 +44,7 @@
           </div>
 
           <% if @anime.season.present? %>
-            <div class="col-6 col-4">
+            <div class="col-6 col-sm-4">
               <div class="fw-bold small">
                 <%= t "noun.release_season" %>
               </div>
@@ -55,7 +55,7 @@
           <% end %>
 
           <% if @anime.started_on.present? %>
-            <div class="col-6 col-4">
+            <div class="col-6 col-sm-4">
               <div class="fw-bold small">
                 <%= @anime.started_on_label %>
               </div>
@@ -66,7 +66,7 @@
           <% end %>
 
           <% if @anime.official_site_url.present? %>
-            <div class="col-6 col-4">
+            <div class="col-6 col-sm-4">
               <div class="fw-bold small">
                 <%= t "activerecord.attributes.anime.official_site_url" %>
               </div>
@@ -77,7 +77,7 @@
           <% end %>
 
           <% if @anime.official_site_url_en.present? %>
-            <div class="col-6 col-4">
+            <div class="col-6 col-sm-4">
               <div class="fw-bold small">
                 <%= t "activerecord.attributes.anime.official_site_url_en" %>
               </div>
@@ -88,7 +88,7 @@
           <% end %>
 
           <% if @anime.twitter_username.present? %>
-            <div class="col-6 col-4">
+            <div class="col-6 col-sm-4">
               <div class="fw-bold small">
                 <%= t "activerecord.attributes.anime.twitter_username" %>
               </div>
@@ -99,7 +99,7 @@
           <% end %>
 
           <% if @anime.twitter_hashtag.present? %>
-            <div class="col-6 col-4">
+            <div class="col-6 col-sm-4">
               <div class="fw-bold small">
                 <%= t "activerecord.attributes.anime.twitter_hashtag" %>
               </div>
@@ -110,7 +110,7 @@
           <% end %>
 
           <% if @anime.wikipedia_url.present? %>
-            <div class="col-6 col-4">
+            <div class="col-6 col-sm-4">
               <div class="fw-bold small">
                 <%= t "activerecord.attributes.anime.wikipedia_url" %>
               </div>
@@ -121,7 +121,7 @@
           <% end %>
 
           <% if @anime.wikipedia_url_en.present? %>
-            <div class="col-6 col-4">
+            <div class="col-6 col-sm-4">
               <div class="fw-bold small">
                 <%= t "activerecord.attributes.anime.wikipedia_url_en" %>
               </div>
@@ -132,7 +132,7 @@
           <% end %>
 
           <% if @anime.sc_tid.present? %>
-            <div class="col-6 col-4">
+            <div class="col-6 col-sm-4">
               <div class="fw-bold small">
                 <%= t "noun.syobocal" %>
               </div>
@@ -143,7 +143,7 @@
           <% end %>
 
           <% if @anime.mal_anime_id.present? %>
-            <div class="col-6 col-4">
+            <div class="col-6 col-sm-4">
               <div class="fw-bold small">
                 <%= t "noun.my_anime_list" %>
               </div>
