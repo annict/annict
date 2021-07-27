@@ -9,7 +9,7 @@ en:
           index: Looking for records of %{anime_title}? Find out more with Annict!
           show: Check out %{profile_name} (%{username})'s records!
         casts:
-          index: Check out fans of %{title}!
+          index: Looking for cast information on %{title}? Find out more with Annict!
         character_fans:
           index: Check out fans of %{character_name}!
         characters:
