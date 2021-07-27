@@ -5,6 +5,7 @@ class PageCategory
     anime
     anime_info
     anime_record_list
+    cast_list
     character_fan_list
     episode
     episode_list

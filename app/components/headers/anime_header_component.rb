@@ -175,7 +175,7 @@ module Headers
               # TODO: @anime.casts_count > 0
               if true # standard:disable Lint/LiteralAsCondition
                 h.tag :li, class: "c-nav__item" do
-                  h.html active_link_to t("noun.casts"), "#",
+                  h.html active_link_to t("noun.casts"), view_context.cast_list_path(@anime.id),
                     active: page_category.in?(%w[cast-list]),
                     class: "c-nav__link",
                     class_active: "c-nav__link--active"

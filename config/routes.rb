@@ -266,6 +266,7 @@ Rails.application.routes.draw do
   match "/userland/projects/new",                               via: :get,    as: :userland_new_project,                       to: "userland/projects#new"
   match "/work_display_option",                                 via: :get,    as: :work_display_option,                        to: "work_display_options#show"
   match "/works/:anime_id",                                     via: :get,    as: :anime,                                      to: "animes#show",              anime_id: ROUTING_ID_FORMAT
+  match "/works/:anime_id/casts",                               via: :get,    as: :cast_list,                                  to: "casts#index",              anime_id: ROUTING_ID_FORMAT
   match "/works/:anime_id/episodes",                            via: :get,    as: :episode_list,                               to: "episodes#index",           anime_id: ROUTING_ID_FORMAT
   match "/works/:anime_id/episodes/:episode_id",                via: :get,    as: :episode,                                    to: "episodes#show",            anime_id: ROUTING_ID_FORMAT
   match "/works/:anime_id/info",                                via: :get,    as: :anime_info,                                 to: "anime_infos#show",         anime_id: ROUTING_ID_FORMAT

@@ -8,6 +8,8 @@ en:
         anime_records:
           index: Looking for records of %{anime_title}? Find out more with Annict!
           show: Check out %{profile_name} (%{username})'s records!
+        casts:
+          index: Check out fans of %{title}!
         character_fans:
           index: Check out fans of %{character_name}!
         characters:
@@ -59,6 +61,8 @@ en:
         edit: Edit Record
         index: Records of %{anime_title} (Anime)
         show: "%{anime_title} - %{profile_name} (%{username})'s Record"
+      casts:
+        index: Casts of %{title}
       channels:
         index: Channel List
       character_fans:
