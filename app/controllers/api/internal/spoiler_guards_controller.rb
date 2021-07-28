@@ -7,14 +7,14 @@ module Api::Internal
         return render json: {
           is_signed_in: false,
           episode_ids: [],
-          work_ids: [],
+          work_ids: []
         }
       end
 
-      return render json: {
+      render json: {
         is_signed_in: true,
         episode_ids: current_user.episode_records.only_kept.pluck(:episode_id).uniq,
-        work_ids: current_user.anime_records.only_kept.pluck(:work_id).uniq,
+        work_ids: current_user.anime_records.only_kept.pluck(:work_id).uniq
       }
     end
   end
