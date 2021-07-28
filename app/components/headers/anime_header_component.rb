@@ -150,8 +150,8 @@ module Headers
               end
 
               h.tag :li, class: "c-nav__item" do
-                h.html active_link_to t("noun.information"), "#",
-                  active: page_category.in?(%w[]),
+                h.html active_link_to t("noun.information"), view_context.anime_info_path(@anime.id),
+                  active: page_category.in?(%w[anime-info]),
                   class: "c-nav__link",
                   class_active: "c-nav__link--active"
               end
@@ -175,7 +175,7 @@ module Headers
               # TODO: @anime.casts_count > 0
               if true # standard:disable Lint/LiteralAsCondition
                 h.tag :li, class: "c-nav__item" do
-                  h.html active_link_to t("noun.casts"), "#",
+                  h.html active_link_to t("noun.casts"), view_context.cast_list_path(@anime.id),
                     active: page_category.in?(%w[cast-list]),
                     class: "c-nav__link",
                     class_active: "c-nav__link--active"
@@ -185,7 +185,7 @@ module Headers
               # TODO: @anime.staffs_count > 0
               if true # standard:disable Lint/LiteralAsCondition
                 h.tag :li, class: "c-nav__item" do
-                  h.html active_link_to t("noun.staffs"), "#",
+                  h.html active_link_to t("noun.staffs"), view_context.staff_list_path(@anime.id),
                     active: page_category.in?(%w[staff-list]),
                     class: "c-nav__link",
                     class_active: "c-nav__link--active"
@@ -195,7 +195,7 @@ module Headers
               # TODO: @anime.videos_count > 0
               if true # standard:disable Lint/LiteralAsCondition
                 h.tag :li, class: "c-nav__item" do
-                  h.html active_link_to t("noun.videos"), "#",
+                  h.html active_link_to t("noun.videos"), view_context.video_list_path(@anime.id),
                     active: page_category.in?(%w[video-list]),
                     class: "c-nav__link",
                     class_active: "c-nav__link--active"
@@ -205,7 +205,7 @@ module Headers
               # TODO: @anime.series_list_count > 0
               if true # standard:disable Lint/LiteralAsCondition
                 h.tag :li, class: "c-nav__item" do
-                  h.html active_link_to t("noun.related_works"), "#",
+                  h.html active_link_to t("noun.related_works"), view_context.related_anime_list_path(@anime.id),
                     active: page_category.in?(%w[related-anime-list]),
                     class: "c-nav__link",
                     class_active: "c-nav__link--active"

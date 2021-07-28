@@ -12,7 +12,7 @@ module Boxes
       build_html do |h|
         h.tag :div, class: "row g-3" do
           h.tag :div, class: "col-auto" do
-            h.tag :a, href: view_context.anime_path(@anime.id) do
+            h.tag :a, href: view_context.anime_path(@anime.id), target: "_top" do
               h.html Pictures::AnimePictureComponent.new(
                 view_context,
                 anime: @anime,
@@ -23,14 +23,14 @@ module Boxes
 
           h.tag :div, class: "col" do
             h.tag :div do
-              h.tag :a, href: view_context.anime_path(@anime.id), class: "text-body" do
+              h.tag :a, href: view_context.anime_path(@anime.id), class: "text-body", target: "_top" do
                 h.text @anime.local_title
               end
             end
 
             if @episode
               h.tag :div do
-                h.tag :a, href: view_context.episode_path(@anime.id, @episode.id), class: "fw-bold small text-body" do
+                h.tag :a, href: view_context.episode_path(@anime.id, @episode.id), class: "fw-bold small text-body", target: "_top" do
                   h.tag :span, class: "px-1" do
                     h.text @episode.local_number
                   end

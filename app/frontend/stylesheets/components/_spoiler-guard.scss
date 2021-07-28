@@ -1,0 +1,14 @@
+.c-spoiler-guard {
+  &.is-spoiler {
+    color: var(--ann-color-spoiler-guard-body);
+    filter: blur(5px);
+
+    &:hover {
+      cursor: pointer;
+    }
+
+    .badge {
+      display: none;
+    }
+  }
+}

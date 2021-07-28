@@ -2,10 +2,11 @@
 
 module Cards
   class AnimeCardComponent < ApplicationV6Component
-    def initialize(view_context, anime:, width:, show_button: true)
+    def initialize(view_context, anime:, width:, caption: "", show_button: true)
       super view_context
       @anime = anime
       @width = width
+      @caption = caption
       @show_button = show_button
     end
 
@@ -22,6 +23,12 @@ module Cards
 
             h.tag :div, class: "fw-bold h5 mb-0 mt-2 text-center text-truncate" do
               h.text @anime.local_title
+            end
+
+            if @caption.present?
+              h.tag :div, class: "mb-0 small text-center text-muted text-truncate" do
+                h.text @caption
+              end
             end
           end
 

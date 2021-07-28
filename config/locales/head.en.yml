@@ -3,9 +3,13 @@ en:
     meta:
       description:
         _common: Annict is a platform for anime addicts. Track your watching anime, follow friends, read their reviews, and much more!
+        anime_infos:
+          show: Looking for info of %{title}? Find out more with Annict!
         anime_records:
           index: Looking for records of %{anime_title}? Find out more with Annict!
           show: Check out %{profile_name} (%{username})'s records!
+        casts:
+          index: Looking for cast information on %{title}? Find out more with Annict!
         character_fans:
           index: Check out fans of %{character_name}!
         characters:
@@ -35,6 +39,8 @@ en:
         records:
           index: "Check out %{profile_name} (%{username})'s records!"
           show: "Check out %{profile_name} (%{username})'s record on %{trackable_title}"
+        related_animes:
+          index: Looking for related anime information on %{title}? Find out more with Annict!
         sign_in:
           new: Welcome back!
         sign_up:
@@ -44,6 +50,8 @@ en:
         users:
           followers: Check out %{profile_name} (%{username})'s profile!
           following: Check out %{profile_name} (%{username})'s profile!
+        videos:
+          index: Looking for videos on %{title}? Find out more with Annict!
         works:
           popular: Looking for popular anime? Find out more with Annict!
           season: Looking for information on %{name} anime? Find out more with Annict!
@@ -51,10 +59,14 @@ en:
       keywords:
         _common: annict, anime, review
     title:
+      anime_infos:
+        show: Info of %{title}
       anime_records:
         edit: Edit Record
         index: Records of %{anime_title} (Anime)
         show: "%{anime_title} - %{profile_name} (%{username})'s Record"
+      casts:
+        index: Casts of %{title}
       channels:
         index: Channel List
       character_fans:
@@ -197,6 +209,8 @@ en:
         show: '%{name}'
       records:
         edit: Edit Record
+      related_animes:
+        index: Related Animes of %{title}
       slots:
         index: Slot List
       profiles:
@@ -230,7 +244,7 @@ en:
       sign_up:
         new: Sign Up
       staffs:
-        index: Staff of %{title} (Anime)
+        index: Staffs of %{title}
       supporters:
         show: Annict Supporters
       tracks:
@@ -245,6 +259,8 @@ en:
       users:
         followers: People following %{profile_name} (%{username})
         following: People followed by %{profile_name} (%{username})
+      videos:
+        index: Videos of %{title}
       welcome:
         show: A platform for anime addicts.
       works:

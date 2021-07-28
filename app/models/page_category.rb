@@ -3,7 +3,9 @@
 class PageCategory
   NAMES = %i[
     anime
+    anime_info
     anime_record_list
+    cast_list
     character_fan_list
     episode
     episode_list
@@ -22,10 +24,13 @@ class PageCategory
     record
     record_edit
     record_list
+    related_anime_list
     search
     seasonal_anime_list
     slot_list
+    staff_list
     track
+    video_list
     welcome
   ].freeze
 

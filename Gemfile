@@ -3,9 +3,9 @@
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby "3.0.1"
+ruby "3.0.2"
 
-gem "rails", "~> 6.1.3"
+gem "rails", ">= 6.1.0"
 
 gem "active_decorator"
 gem "active_link_to"
@@ -28,7 +28,6 @@ gem "dry-struct"
 gem "email_validator"
 gem "enumerize"
 gem "github-markup"
-gem "gon"
 gem "graphql", ">= 1.10.0.pre3" # https://github.com/rmosolgo/graphql-ruby/pull/2640
 gem "graphql-batch"
 gem "graphql-fragment_cache"

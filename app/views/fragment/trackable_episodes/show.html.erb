@@ -1,5 +1,6 @@
 <turbo-frame id="c-tracking-modal-frame">
   <%= component_value_fetcher_tag("status-select-dropdown", internal_api_library_entry_list_path, method: :post, payload: {anime_ids: [@anime.id]}) %>
+  <%= component_value_fetcher_tag("like-button", internal_api_like_list_path) %>
 
   <div class="modal-body px-0">
     <div class="container">

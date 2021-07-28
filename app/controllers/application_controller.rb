@@ -7,7 +7,6 @@ class ApplicationController < ActionController::Base
   include Analyzable
   include LogrageSetting
   include ViewSelector
-  include FlashMessage
   include SentryLoadable
   include Localizable
   include PageCategorizable

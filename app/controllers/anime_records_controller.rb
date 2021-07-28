@@ -2,14 +2,14 @@
 
 class AnimeRecordsController < ApplicationV6Controller
   include AnimeRecordListSettable
+  include AnimeHeaderLoadable
 
   before_action :authenticate_user!, only: %i[edit update destroy]
 
   def index
     set_page_category PageCategory::ANIME_RECORD_LIST
 
-    @anime = Anime.only_kept.find(params[:anime_id])
-    @programs = @anime.programs.eager_load(:channel).only_kept.in_vod.merge(Channel.order(:sort_number))
+    set_anime_header_resources
 
     @form = Forms::AnimeRecordForm.new(anime: @anime)
 

@@ -3,6 +3,10 @@ ja:
     meta:
       description:
         _common: Annict (アニクト)は、見たアニメを記録したり、見た感想を友達にシェアすることができるWebサービスです。「今どの作品を何話まで見ているんだっけ？」を解消します。
+        anime_infos:
+          show: アニメ「%{title}」の情報をチェック！
+        casts:
+          index: アニメ「%{title}」のキャストをチェック！
         character_fans:
           index: '%{character_name}のファンをチェック！'
         characters:
@@ -32,15 +36,19 @@ ja:
         records:
           index: '%{profile_name} (%{username})さんの記録をチェック！'
           show: '%{profile_name} (%{username})さんのアニメ %{trackable_title} への記録をチェック！'
+        related_animes:
+          index: アニメ「%{title}」の関連作品をチェック！
         sign_in:
           new: おかえりなさい！
         sign_up:
           new: Annictのアカウントを作成して視聴記録を残そう！
         staffs:
-          index: 'アニメ「%{title}」のスタッフ情報をチェック！'
+          index: 'アニメ「%{title}」のスタッフをチェック！'
         users:
           followers: Check out %{profile_name} (%{username})'s profile!
           following: Check out %{profile_name} (%{username})'s profile!
+        videos:
+          index: アニメ「%{title}」の動画をチェック！
         works:
           popular: 人気アニメをチェック！
           season: '%{name}アニメをチェック！'
@@ -51,6 +59,10 @@ ja:
       keywords:
         _common: annict, anime, review
     title:
+      anime_infos:
+        show: アニメ「%{title}」の情報
+      casts:
+        index: アニメ「%{title}」のキャスト
       channels:
         index: チャンネル一覧
       character_fans:
@@ -201,6 +213,8 @@ ja:
         edit: '記録の編集'
         index: '%{profile_name} (%{username})さんの記録一覧'
         show: '%{profile_name} (%{username})の%{trackable_title}への感想'
+      related_animes:
+        index: アニメ「%{title}」の関連作品
       searches:
         show: '%{q}検索'
       settings:
@@ -225,7 +239,7 @@ ja:
       sign_up:
         new: アカウント作成
       staffs:
-        index: アニメ「%{title}」のスタッフ一覧
+        index: アニメ「%{title}」のスタッフ
       supporters:
         show: Annict Supporters
       tracks:
@@ -240,6 +254,8 @@ ja:
       users:
         followers: '%{profile_name} (%{username})をフォローしている人'
         following: '%{profile_name} (%{username})がフォローしている人'
+      videos:
+        index: アニメ「%{title}」の動画
       welcome:
         show: 見たアニメを記録して、共有しよう
       work_records:
