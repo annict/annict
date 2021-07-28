@@ -12,6 +12,7 @@ class ApplicationController < ActionController::Base
   include FlashMessage
   include RavenContext
   include PageCategorizable
+  include V4::Localizable
   include V4::UserDataFetchable
 
   # Prevent CSRF attacks by raising an exception.
@@ -20,6 +21,7 @@ class ApplicationController < ActionController::Base
 
   helper_method :gon, :locale_ja?, :locale_en?, :local_url, :page_category
 
+  around_action :set_locale
   before_action :redirect_if_unexpected_subdomain
   before_action :set_search_params
   before_action :load_new_user
