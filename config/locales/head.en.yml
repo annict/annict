@@ -48,6 +48,8 @@ en:
         users:
           followers: Check out %{profile_name} (%{username})'s profile!
           following: Check out %{profile_name} (%{username})'s profile!
+        videos:
+          index: Looking for videos on %{title}? Find out more with Annict!
         works:
           popular: Looking for popular anime? Find out more with Annict!
           season: Looking for information on %{name} anime? Find out more with Annict!
@@ -253,6 +255,8 @@ en:
       users:
         followers: People following %{profile_name} (%{username})
         following: People followed by %{profile_name} (%{username})
+      videos:
+        index: Videos of %{title}
       welcome:
         show: A platform for anime addicts.
       works:

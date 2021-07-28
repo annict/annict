@@ -195,7 +195,7 @@ module Headers
               # TODO: @anime.videos_count > 0
               if true # standard:disable Lint/LiteralAsCondition
                 h.tag :li, class: "c-nav__item" do
-                  h.html active_link_to t("noun.videos"), "#",
+                  h.html active_link_to t("noun.videos"), view_context.video_list_path(@anime.id),
                     active: page_category.in?(%w[video-list]),
                     class: "c-nav__link",
                     class_active: "c-nav__link--active"

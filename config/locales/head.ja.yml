@@ -45,6 +45,8 @@ ja:
         users:
           followers: Check out %{profile_name} (%{username})'s profile!
           following: Check out %{profile_name} (%{username})'s profile!
+        videos:
+          index: アニメ「%{title}」の動画をチェック！
         works:
           popular: 人気アニメをチェック！
           season: '%{name}アニメをチェック！'
@@ -248,6 +250,8 @@ ja:
       users:
         followers: '%{profile_name} (%{username})をフォローしている人'
         following: '%{profile_name} (%{username})がフォローしている人'
+      videos:
+        index: アニメ「%{title}」の動画
       welcome:
         show: 見たアニメを記録して、共有しよう
       work_records:

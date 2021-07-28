@@ -29,6 +29,7 @@ class PageCategory
     slot_list
     staff_list
     track
+    video_list
     welcome
   ].freeze
 
