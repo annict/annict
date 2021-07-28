@@ -39,6 +39,8 @@ en:
         records:
           index: "Check out %{profile_name} (%{username})'s records!"
           show: "Check out %{profile_name} (%{username})'s record on %{trackable_title}"
+        related_animes:
+          index: Looking for related anime information on %{title}? Find out more with Annict!
         sign_in:
           new: Welcome back!
         sign_up:
@@ -207,6 +209,8 @@ en:
         show: '%{name}'
       records:
         edit: Edit Record
+      related_animes:
+        index: Related Animes of %{title}
       slots:
         index: Slot List
       profiles:

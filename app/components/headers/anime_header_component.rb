@@ -205,7 +205,7 @@ module Headers
               # TODO: @anime.series_list_count > 0
               if true # standard:disable Lint/LiteralAsCondition
                 h.tag :li, class: "c-nav__item" do
-                  h.html active_link_to t("noun.related_works"), "#",
+                  h.html active_link_to t("noun.related_works"), view_context.related_anime_list_path(@anime.id),
                     active: page_category.in?(%w[related-anime-list]),
                     class: "c-nav__link",
                     class_active: "c-nav__link--active"

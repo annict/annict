@@ -271,6 +271,7 @@ Rails.application.routes.draw do
   match "/works/:anime_id/episodes/:episode_id",                via: :get,    as: :episode,                                    to: "episodes#show",            anime_id: ROUTING_ID_FORMAT
   match "/works/:anime_id/info",                                via: :get,    as: :anime_info,                                 to: "anime_infos#show",         anime_id: ROUTING_ID_FORMAT
   match "/works/:anime_id/records",                             via: :get,    as: :anime_record_list,                          to: "anime_records#index",      anime_id: ROUTING_ID_FORMAT
+  match "/works/:anime_id/related_works",                       via: :get,    as: :related_anime_list,                         to: "related_animes#index",     anime_id: ROUTING_ID_FORMAT
   match "/works/:anime_id/staffs",                              via: :get,    as: :staff_list,                                 to: "staffs#index",             anime_id: ROUTING_ID_FORMAT
   match "/works/:anime_id/videos",                              via: :get,    as: :video_list,                                 to: "videos#index",             anime_id: ROUTING_ID_FORMAT
   match "/works/:season_slug",                                  via: :get,    as: :seasonal_anime_list,                        to: "seasonal_animes#index",    season_slug: /[0-9]{4}-(all|spring|summer|autumn|winter)/

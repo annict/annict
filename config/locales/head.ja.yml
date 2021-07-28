@@ -36,6 +36,8 @@ ja:
         records:
           index: '%{profile_name} (%{username})さんの記録をチェック！'
           show: '%{profile_name} (%{username})さんのアニメ %{trackable_title} への記録をチェック！'
+        related_animes:
+          index: アニメ「%{title}」の関連作品をチェック！
         sign_in:
           new: おかえりなさい！
         sign_up:
@@ -211,6 +213,8 @@ ja:
         edit: '記録の編集'
         index: '%{profile_name} (%{username})さんの記録一覧'
         show: '%{profile_name} (%{username})の%{trackable_title}への感想'
+      related_animes:
+        index: アニメ「%{title}」の関連作品
       searches:
         show: '%{q}検索'
       settings:

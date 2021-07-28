@@ -24,6 +24,7 @@ class PageCategory
     record
     record_edit
     record_list
+    related_anime_list
     search
     seasonal_anime_list
     slot_list
