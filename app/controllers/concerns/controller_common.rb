@@ -89,26 +89,6 @@ module ControllerCommon
       redirect_to_root_domain(status: 301)
     end
 
-    def switch_locale(&action)
-      white_list = [
-        "/users/auth/gumroad/callback"
-      ]
-      return if request.path.in?(white_list)
-
-      case [request.subdomain, request.domain].select(&:present?).join(".")
-      when ENV.fetch("ANNICT_DOMAIN")
-        return redirect_to local_url_with_path(locale: :ja) if user_signed_in? && current_user.locale == "ja"
-
-        I18n.with_locale(:en, &action)
-      when ENV.fetch("ANNICT_JP_DOMAIN")
-        return redirect_to local_url_with_path(locale: :en) if user_signed_in? && current_user.locale == "en"
-
-        I18n.with_locale(:ja, &action)
-      else
-        I18n.with_locale(:ja, &action)
-      end
-    end
-
     def preferred_locale
       preferred_languages = http_accept_language.user_preferred_languages
       # Chrome returns "ja", but Safari would return "ja-JP", not "ja".

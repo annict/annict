@@ -19,7 +19,6 @@ module Userland
 
     helper_method :gon, :locale_ja?, :locale_en?, :local_url, :page_category
 
-    around_action :switch_locale
     before_action :redirect_if_unexpected_subdomain
     before_action :set_search_params
     before_action :store_data_into_gon
