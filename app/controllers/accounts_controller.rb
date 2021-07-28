@@ -15,9 +15,9 @@ class AccountsController < ApplicationController
     if @user.save
       I18n.with_locale(@user.locale) do
         url = case I18n.locale.to_s
-        when "ja" then ENV.fetch("ANNICT_JP_URL")
+        when "ja" then ENV.fetch("ANNICT_URL")
         else
-          ENV.fetch("ANNICT_URL")
+          ENV.fetch("ANNICT_EN_URL")
         end
 
         redirect_to("#{url}#{account_path}", notice: t("messages.accounts.updated"))

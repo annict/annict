@@ -27,8 +27,8 @@ module Gonable
       },
       I18n: default_i18n_data,
       annict: {
-        domain: locale == :ja ? ENV.fetch("ANNICT_JP_DOMAIN") : ENV.fetch("ANNICT_DOMAIN"),
-        url: locale == :ja ? ENV.fetch("ANNICT_JP_URL") : ENV.fetch("ANNICT_URL")
+        domain: locale == :ja ? ENV.fetch("ANNICT_DOMAIN") : ENV.fetch("ANNICT_EN_DOMAIN"),
+        url: locale == :ja ? ENV.fetch("ANNICT_URL") : ENV.fetch("ANNICT_EN_URL")
       },
       facebook: {
         appId: ENV.fetch("FACEBOOK_APP_ID")

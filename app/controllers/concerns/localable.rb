@@ -14,9 +14,9 @@ module Localable
   def local_url(locale: I18n.locale)
     case locale.to_s
     when "ja"
-      ENV.fetch("ANNICT_JP_URL")
-    else
       ENV.fetch("ANNICT_URL")
+    else
+      ENV.fetch("ANNICT_EN_URL")
     end
   end
 
@@ -25,6 +25,6 @@ module Localable
   end
 
   def domain_jp?
-    request.domain == ENV.fetch("ANNICT_JP_DOMAIN")
+    request.domain == ENV.fetch("ANNICT_DOMAIN")
   end
 end

@@ -8,7 +8,7 @@ Devise.setup do |config|
 
   config.omniauth :gumroad,
     ENV.fetch("GUMROAD_APPLICATION_ID"), ENV.fetch("GUMROAD_APP_SECRET"),
-    redirect_uri: "#{ENV.fetch('ANNICT_JP_URL')}/users/auth/gumroad/callback"
+    redirect_uri: "#{ENV.fetch('ANNICT_URL')}/users/auth/gumroad/callback"
 
   config.omniauth :twitter,
     ENV.fetch("TWITTER_CONSUMER_KEY"), ENV.fetch("TWITTER_CONSUMER_SECRET")

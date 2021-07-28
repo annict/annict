@@ -13,7 +13,7 @@ module V4
       return yield if request.path.in?(SKIP_TO_SET_LOCALE_PATHS)
 
       case [request.subdomain, request.domain].select(&:present?).join(".")
-      when ENV.fetch("ANNICT_DOMAIN")
+      when ENV.fetch("ANNICT_EN_DOMAIN")
         I18n.with_locale(:en, &action)
       else
         I18n.with_locale(:ja, &action)
@@ -34,9 +34,9 @@ module V4
     end
 
     def local_url(locale: I18n.locale)
-      return ENV.fetch("ANNICT_JP_URL") if locale.to_s == "ja"
+      return ENV.fetch("ANNICT_URL") if locale.to_s == "ja"
 
-      ENV.fetch("ANNICT_URL")
+      ENV.fetch("ANNICT_EN_URL")
     end
 
     def local_url_with_path(locale: I18n.locale)

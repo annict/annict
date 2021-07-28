@@ -35,7 +35,7 @@ module ApplicationHelper
 
   def annict_config
     config = {
-      domain: locale == :ja ? ENV.fetch("ANNICT_JP_DOMAIN") : ENV.fetch("ANNICT_DOMAIN"),
+      domain: locale == :ja ? ENV.fetch("ANNICT_DOMAIN") : ENV.fetch("ANNICT_EN_DOMAIN"),
       flash: {
         type: flash.keys.first,
         message: flash[flash.keys.first]
