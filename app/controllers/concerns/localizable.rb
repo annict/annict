@@ -20,7 +20,7 @@ module Localizable
     return yield if request.path.in?(SKIP_TO_SET_LOCALE_PATHS)
 
     case [request.subdomain, request.domain].select(&:present?).join(".")
-    when ENV.fetch("ANNICT_DOMAIN")
+    when ENV.fetch("ANNICT_EN_DOMAIN")
       I18n.with_locale(:en, &action)
     else
       I18n.with_locale(:ja, &action)
