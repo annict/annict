@@ -5,6 +5,6 @@ import { EventDispatcher } from '../utils/event-dispatcher';
 export default class extends Controller {
   showSidebar(event: Event) {
     event.preventDefault();
-    new EventDispatcher('sidebar:show').dispatch();
+    new EventDispatcher('main-sidebar:show').dispatch();
   }
 }
