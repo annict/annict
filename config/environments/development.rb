@@ -98,9 +98,10 @@ Rails.application.configure do
   }
 
   config.hosts += [
+    ".ngrok.io",
     ENV.fetch("ANNICT_API_DOMAIN"),
     ENV.fetch("ANNICT_DOMAIN"),
-    ENV.fetch("ANNICT_JP_DOMAIN"),
-    ".ngrok.io"
+    ENV.fetch("ANNICT_EN_DOMAIN"),
+    ENV.fetch("ANNICT_JP_DOMAIN")
   ]
 end

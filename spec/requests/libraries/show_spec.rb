@@ -4,7 +4,7 @@ describe "GET /@:username/:status_kind", type: :request do
   let!(:user) { create(:registered_user) }
 
   before do
-    host! ENV.fetch("ANNICT_JP_HOST")
+    host! ENV.fetch("ANNICT_HOST")
   end
 
   it "アクセスできること" do

@@ -1,8 +1,8 @@
-「<%= link_to "#{@episode.anime.title}", work_url(@episode.anime, host: ENV.fetch("ANNICT_JP_URL")) %>」のエピソードが追加されました。<br>
+「<%= link_to "#{@episode.anime.title}", work_url(@episode.anime, host: ENV.fetch("ANNICT_URL")) %>」のエピソードが追加されました。<br>
 <br>
 <%= @episode.number %><br>
-<%= link_to db_episode_list_url(@episode.anime, host: ENV.fetch("ANNICT_JP_URL")), db_episode_list_url(@episode.anime, host: ENV.fetch("ANNICT_JP_URL")) %><br>
+<%= link_to db_episode_list_url(@episode.anime, host: ENV.fetch("ANNICT_URL")), db_episode_list_url(@episode.anime, host: ENV.fetch("ANNICT_URL")) %><br>
 <br>
 <br>
 ---<br>
-<%= ENV['ANNICT_JP_URL'] %>
+<%= ENV['ANNICT_URL'] %>

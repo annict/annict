@@ -11,6 +11,7 @@ module Db
         .without_deleted
         .includes(:person, :character)
         .order(:sort_number)
+      @casts_csv = @casts.map { |cast| "#{cast.character.name},#{cast.person.name}" }.join("\n")
     end
 
     def new

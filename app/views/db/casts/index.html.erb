@@ -109,6 +109,16 @@
         </table>
       </div>
     </div>
+
+    <form>
+      <div class="form-group">
+        <label for="casts">CSV</label>
+        <textarea class="form-control" id="casts" onclick="this.select();" readonly rows="5"><%= @casts_csv %></textarea>
+        <small class="form-text text-muted">
+          他の作品に同じキャストを登録するときなどに利用できます。
+        </small>
+      </div>
+    </form>
   <% else %>
     <div class="card mt-3">
       <div class="card-body">

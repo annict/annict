@@ -48,7 +48,7 @@ class ForumPost < ApplicationRecord
     options = {
       url: ENV.fetch("ANNICT_DISCORD_WEBHOOK_URL_FOR_FORUM_#{forum_category.slug.upcase}")
     }
-    host = ENV.fetch("ANNICT_JP_URL")
+    host = ENV.fetch("ANNICT_URL")
     url = Rails.application.routes.url_helpers.forum_post_url(self, host: host)
     message = [
       user.profile.name,
