@@ -1867,6 +1867,7 @@ type WorkEdge {
 
 type WorkImage implements Node {
   annictId: Int
+  copyright: String
   facebookOgImageUrl: String
   id: ID!
   internalUrl(size: String!): String
