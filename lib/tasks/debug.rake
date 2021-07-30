@@ -10,5 +10,10 @@ namespace :debug do
     EmailNotificationMailer.liked_episode_record(user.id, user.id, episode_record.id).deliver_now
     EmailNotificationMailer.favorite_works_added(user.id, works.pluck(:id)).deliver_now
     EmailNotificationMailer.related_works_added(user.id, works.pluck(:id)).deliver_now
+
+    ForumMailer.comment_notification(user.id, ForumComment.first.id).deliver_now
+
+    AdminMailer.episode_created_notification(Episode.first.id).deliver_now
+    AdminMailer.error_in_episode_generator_notification(Slot.first.id, "テストなんだよなあ").deliver_now
   end
 end
