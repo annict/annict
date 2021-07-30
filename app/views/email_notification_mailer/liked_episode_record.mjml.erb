@@ -7,7 +7,7 @@
 
   <mj-section>
     <mj-column width="35%">
-      <mj-image src="<%= v4_ann_image_url(@work.anime_image, :image, size: "300x", ratio: "3:4") %>" align="center" href="<%= work_url(@work) %>"></mj-image>
+      <mj-image src="<%= v4_ann_image_url(@work.anime_image, :image, size: "300x", ratio: "3:4") %>" align="center" href="<%= anime_url(@work) %>"></mj-image>
     </mj-column>
     <mj-column width="65%">
       <mj-text font-size="24px" font-weight="600" padding-bottom="7px"><%= "#{@work.local_title}" %></mj-text>
@@ -25,7 +25,7 @@
 
   <mj-section>
     <mj-column>
-      <mj-button href="<%= record_url(username: @liked_user.username, id: @episode_record.record_id, utm_source: 'email_notification', utm_campaign: 'liked_episode_record', utm_medium: 'email', domain: local_domain) %>" background-color="#f85b73">
+      <mj-button href="<%= record_url(username: @liked_user.username, record_id: @episode_record.record_id, utm_source: 'email_notification', utm_campaign: 'liked_episode_record', utm_medium: 'email', domain: local_domain) %>" background-color="#f85b73">
         <%= I18n.t("email_notification_mailer.liked_episode_record.view_record") %>
       </mj-button>
     </mj-column>

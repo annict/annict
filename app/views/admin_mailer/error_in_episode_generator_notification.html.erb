@@ -1,4 +1,4 @@
-「<%= link_to "#{@work.title}", work_url(@work, host: ENV.fetch("ANNICT_URL")) %>」のエピソード生成中にエラーが発生しました。<br>
+「<%= link_to "#{@work.title}", anime_url(@work, host: ENV.fetch("ANNICT_URL")) %>」のエピソード生成中にエラーが発生しました。<br>
 <br>
 slot.id: <%= @slot.id %><br>
 エラーメッセージ: <%= @error_message.inspect %><br>
