@@ -19,7 +19,13 @@
   <div class="container mt-3">
     <div class="gx-3 row">
       <div class="col-12 col-sm-9">
-        <%= Contents::RecordContentComponent.new(self, record: @record).render %>
+        <div
+          data-controller="reloadable"
+          data-reloadable-event-name-value="record"
+          data-reloadable-url-value="<%= fragment_record_path(@user.username, @record.id) %>"
+        >
+          <%= ListItems::RecordListItemComponent.new(self, record: @record).render %>
+        </div>
       </div>
 
       <div class="col-12 col-sm-3 mt-3 mt-sm-0">
