@@ -11,7 +11,7 @@ module ButtonGroups
     def render
       build_html do |h|
         h.tag :div, {
-          class: "c-record-rating",
+          class: "c-record-rating-button-group",
           data_controller: "record-rating"
         } do
           h.tag :div, class: "btn-group btn-group-sm" do

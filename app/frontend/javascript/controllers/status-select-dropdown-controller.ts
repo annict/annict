@@ -69,10 +69,7 @@ export default class extends Controller {
     if (this.currentStatusKind === STATUS_KIND.NO_STATUS) {
       this.buttonTarget.className = `btn dropdown-toggle u-btn-outline-status`;
     } else {
-      this.buttonTarget.className = `btn dropdown-toggle bg-status-${this.currentStatusKind.replace(
-        /_/g,
-        '-',
-      )} text-white`;
+      this.buttonTarget.className = `btn dropdown-toggle u-bg-${this.currentStatusKind.replace(/_/g, '-')} text-white`;
     }
 
     this.stopLoading();

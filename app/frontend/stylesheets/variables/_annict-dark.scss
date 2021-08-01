@@ -3,9 +3,26 @@
   // Annict独自の変数
   // -------------------------------------------------------------------
 
-  --ann-color-sidebar-bg: #{shade-color($gray-800, 25%)};
+  --ann-anime-color: #{$ann-anime-color};
+  --ann-color-sidebar-bg: #{tint-color($ann-scheme-dark-color, 5%)};
   --ann-color-spoiler-guard-body: #{rgba($gray-200, 0.5)};
   --ann-color-tracking-heatmap-bg: #{tint-color($gray-900, 15%)};
+  --ann-mizuho-color: #{$ann-mizuho-color};
+  --ann-rating-average-color: #{$ann-rating-average-color};
+  --ann-rating-bad-color: #{$ann-rating-bad-color};
+  --ann-rating-good-color: #{$ann-rating-good-color};
+  --ann-rating-great-color: #{$ann-rating-great-color};
+  --ann-season-autumn-color: #{$ann-season-autumn-color};
+  --ann-season-spring-color: #{$ann-season-spring-color};
+  --ann-season-summer-color: #{$ann-season-summer-color};
+  --ann-season-unknown-color: #{$ann-season-unknown-color};
+  --ann-season-winter-color: #{$ann-season-winter-color};
+  --ann-status-completed-color: #{$ann-status-completed-color};
+  --ann-status-dropped-color: #{$ann-status-dropped-color};
+  --ann-status-on-hold-color: #{$ann-status-on-hold-color};
+  --ann-status-plan-to-watch-color: #{$ann-status-plan-to-watch-color};
+  --ann-status-watching-color: #{$ann-status-watching-color};
+  --ann-supporter-color: #{$ann-supporter-color};
 
   // -------------------------------------------------------------------
   // Bootstrap関係の変数
@@ -13,7 +30,7 @@
 
   // Body
 
-  --ann-body-bg: #{$gray-900};
+  --ann-body-bg: #{$ann-scheme-dark-color};
   --ann-body-color: #{$gray-200};
 
   // Links
@@ -55,5 +72,5 @@
 
   // Cards
 
-  --ann-card-bg: #{$gray-800};
+  --ann-card-bg: #{tint-color($ann-scheme-dark-color, 8%)};
 }

@@ -1,81 +1,26 @@
 @each $name,
   $color-value
     in (
-      anime: (
-        light: $ann-anime-color,
-        dark: $ann-anime-color,
-      ),
-      average: (
-        light: $ann-rating-average-color,
-        dark: $ann-rating-average-color,
-      ),
-      bad: (
-        light: $ann-rating-bad-color,
-        dark: $ann-rating-bad-color,
-      ),
-      season-autumn: (
-        light: $ann-season-autumn-color,
-        dark: $ann-season-autumn-color,
-      ),
-      season-spring: (
-        light: $ann-season-spring-color,
-        dark: $ann-season-spring-color,
-      ),
-      season-summer: (
-        light: $ann-season-summer-color,
-        dark: $ann-season-summer-color,
-      ),
-      season-unknown: (
-        light: $ann-season-unknown-color,
-        dark: $ann-season-unknown-color,
-      ),
-      season-winter: (
-        light: $ann-season-winter-color,
-        dark: $ann-season-winter-color,
-      ),
-      completed: (
-        light: $ann-status-completed-color,
-        dark: $ann-status-completed-color,
-      ),
-      dropped: (
-        light: $ann-status-dropped-color,
-        dark: $ann-status-dropped-color,
-      ),
-      good: (
-        light: $ann-rating-good-color,
-        dark: $ann-rating-good-color,
-      ),
-      great: (
-        light: $ann-rating-great-color,
-        dark: $ann-rating-great-color,
-      ),
-      mizuho: (
-        light: $ann-mizuho-color,
-        dark: $ann-mizuho-color,
-      ),
-      on-hold: (
-        light: $ann-status-on-hold-color,
-        dark: $ann-status-on-hold-color,
-      ),
-      plan-to-watch: (
-        light: $ann-status-plan-to-watch-color,
-        dark: $ann-status-plan-to-watch-color,
-      ),
-      supporter: (
-        light: $ann-supporter-color,
-        dark: $ann-supporter-color,
-      ),
-      watching: (
-        light: $ann-status-watching-color,
-        dark: $ann-status-watching-color,
-      )
+      anime: var(--ann-anime-color),
+      average: var(--ann-rating-average-color),
+      bad: var(--ann-rating-bad-color),
+      season-autumn: var(--ann-season-autumn-color),
+      season-spring: var(--ann-season-spring-color),
+      season-summer: var(--ann-season-summer-color),
+      season-unknown: var(--ann-season-unknown-color),
+      season-winter: var(--ann-season-winter-color),
+      completed: var(--ann-status-completed-color),
+      dropped: var(--ann-status-dropped-color),
+      good: var(--ann-rating-good-color),
+      great: var(--ann-rating-great-color),
+      mizuho: var(--ann-mizuho-color),
+      on-hold: var(--ann-status-on-hold-color),
+      plan-to-watch: var(--ann-status-plan-to-watch-color),
+      supporter: var(--ann-supporter-color),
+      watching: var(--ann-status-watching-color)
     )
 {
   .u-bg-#{$name} {
-    background-color: map-get($color-value, 'light') !important;
-
-    @include color-scheme(dark) {
-      background-color: map-get($color-value, 'dark') !important;
-    }
+    background-color: $color-value !important;
   }
 }

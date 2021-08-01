@@ -1,12 +1,16 @@
 :root {
-  @include ann-variables-base;
-
   &[data-color-scheme='light'] {
     @include ann-variables-light;
   }
 
   &[data-color-scheme='dark'] {
     @include ann-variables-dark;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-color-scheme='dark']) {
+    @include ann-variables-light;
   }
 }
 
