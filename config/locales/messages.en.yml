@@ -28,6 +28,8 @@ en:
         work_record:
           created: 'tracked'
           more: 'Show %{n} records'
+      adsense:
+        hide_ads_html: You can hide ads by becoming <a href="/supporters">Annict Supporters</a>
       body:
         view_full_text: View Full Text
       favorite_button:
