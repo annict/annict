@@ -52,43 +52,51 @@
         <%= t "noun.untracked_episodes" %>
       </h4>
 
-      <div class="card">
-        <ul class="c-tracking-episode-list-group list-group list-group-flush">
-          <% @episodes.each do |episode| %>
-            <li class="list-group-item" data-episode-id="<%= episode.id %>">
-              <div class="align-items-center row">
-                <div class="col-auto pe-0">
-                  <%= Buttons::WatchEpisodeButtonComponent.new(
-                    self, episode_id: episode.id, class_name: "btn-sm btn-outline-info rounded-circle"
-                  ).render %>
-                </div>
+      <% if @episodes.present? %>
+        <div class="card">
+          <ul class="c-tracking-episode-list-group list-group list-group-flush">
+            <% @episodes.each do |episode| %>
+              <li class="list-group-item" data-episode-id="<%= episode.id %>">
+                <div class="align-items-center row">
+                  <div class="col-auto pe-0">
+                    <%= Buttons::WatchEpisodeButtonComponent.new(
+                      self, episode_id: episode.id, class_name: "btn-sm btn-outline-info rounded-circle"
+                    ).render %>
+                  </div>
 
-                <div class="col-auto ps-2 px-0">
-                  <%= Buttons::BulkWatchEpisodesButtonComponent.new(
-                    self, episode_id: episode.id, class_name: "btn-sm btn-outline-info rounded-circle"
-                  ).render %>
-                </div>
+                  <div class="col-auto ps-2 px-0">
+                    <%= Buttons::BulkWatchEpisodesButtonComponent.new(
+                      self, episode_id: episode.id, class_name: "btn-sm btn-outline-info rounded-circle"
+                    ).render %>
+                  </div>
 
-                <div class="col-auto ps-2 pe-0">
-                  <%= Buttons::SkipEpisodeButtonComponent.new(
-                    self, episode_id: episode.id, class_name: "btn-sm btn-outline-secondary rounded-circle"
-                  ).render %>
-                </div>
+                  <div class="col-auto ps-2 pe-0">
+                    <%= Buttons::SkipEpisodeButtonComponent.new(
+                      self, episode_id: episode.id, class_name: "btn-sm btn-outline-secondary rounded-circle"
+                    ).render %>
+                  </div>
 
-                <div class="c-tracking-state__title col">
-                  <%= link_to fragment_trackable_episode_path(episode.id), class: "text-body" do %>
-                    <%= episode.title_with_number %>
-                  <% end %>
+                  <div class="c-tracking-state__title col">
+                    <%= link_to fragment_trackable_episode_path(episode.id), class: "text-body" do %>
+                      <%= episode.title_with_number %>
+                    <% end %>
+                  </div>
                 </div>
-              </div>
-            </li>
-          <% end %>
-        </ul>
-      </div>
+              </li>
+            <% end %>
+          </ul>
+        </div>
 
-      <div class="mt-3 text-center">
-        <%= ButtonGroups::PaginationButtonGroupComponent.new(self, collection: @episodes).render %>
-      </div>
+        <div class="mt-3 text-center">
+          <%= ButtonGroups::PaginationButtonGroupComponent.new(self, collection: @episodes).render %>
+        </div>
+      <% else %>
+        <div class="card">
+          <div class="card-body">
+            <%= EmptyV6Component.new(self, text: t("messages.tracks.no_trackable_episodes")).render %>
+          </div>
+        </div>
+      <% end %>
     </div>
   </div>
 </turbo-frame>

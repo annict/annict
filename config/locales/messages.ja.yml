@@ -245,7 +245,7 @@ ja:
         description_html: 入力したメールアドレス宛てに<br>アカウント作成用のリンクをお送りします。
     tracks:
       episodes_you_have_watched: 視聴エピソード
-      no_trackable_episodes: 記録可能なエピソードはありません
+      no_trackable_episodes: 未視聴エピソードはありません
       see_records: 記録を見る
       tracked: 記録しました
     userland:
