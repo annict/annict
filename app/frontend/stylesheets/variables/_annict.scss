@@ -6,6 +6,8 @@ $ann-rating-average-color: #ff6d00;
 $ann-rating-bad-color: #757575;
 $ann-rating-good-color: #00c853;
 $ann-rating-great-color: #00b0ff;
+$ann-scheme-dark-color: #212529;
+$ann-scheme-light-color: #f5f5f4;
 $ann-season-autumn-color: #ff7043;
 $ann-season-spring-color: #ec407a;
 $ann-season-summer-color: #42a5f5;
@@ -14,30 +16,14 @@ $ann-season-winter-color: #78909c;
 $ann-service-facebook-color: #2e6499;
 $ann-service-gumroad-color: #3cabba;
 $ann-service-twitter-color: #24b1ec;
+$ann-status-color: #4dd4ac;
 $ann-status-completed-color: #16a34a;
 $ann-status-dropped-color: #52525b;
 $ann-status-on-hold-color: #dc2626;
 $ann-status-plan-to-watch-color: #ea580c;
 $ann-status-watching-color: #0284c7;
 $ann-supporter-color: #00bcd4;
-
-$ann-theme-color-map: (
-  'primary': $ann-mizuho-color,
-  'status-completed': $ann-status-completed-color,
-  'status-dropped': $ann-status-dropped-color,
-  'status-on-hold': $ann-status-on-hold-color,
-  'status-plan-to-watch': $ann-status-plan-to-watch-color,
-  'status-watching': $ann-status-watching-color,
-);
-
-$ann-shirobako-color-map: (
-  's': #d5ab1c,
-  'ho': #d24488,
-  'ik': #7c608c,
-  'rb': $ann-anime-color,
-  'o': #a3bc5c,
-  'a': #d74f13,
-);
+$ann-white-color: #fff;
 
 // Buttons
 
@@ -48,7 +34,7 @@ $ann-btn-color-map: (
   good: $ann-rating-good-color,
   great: $ann-rating-great-color,
   gumroad: $ann-service-gumroad-color,
-  status: $teal-400,
+  status: $ann-status-color,
   supporter: $ann-supporter-color,
   twitter: $ann-service-twitter-color,
 );

@@ -7,6 +7,14 @@
   gtag('config', '<%= ga_tracking_id(request) %>');
 </script>
 
+<% if Rails.env.production? %>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=<%= ENV.fetch('GOOGLE_AD_CLIENT') %>" crossorigin="anonymous"></script>
+
+<script>
+  // (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+<% end %>
+
 <%= ann_display_meta_tags %>
 <meta http-equiv="x-dns-prefetch-control" content="on">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">

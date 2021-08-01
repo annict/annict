@@ -1,0 +1,5 @@
+@each $name, $color in (mizuho: $ann-mizuho-color) {
+  .u-text-#{$name} {
+    color: $color !important;
+  }
+}

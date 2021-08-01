@@ -10,7 +10,7 @@ module ListItems
 
     def render
       build_html do |h|
-        h.tag :div do
+        h.tag :turbo_frame, id: dom_id(@record) do
           h.html Headers::RecordHeaderComponent.new(view_context, record: @record).render
 
           h.tag :div, class: "mt-3" do

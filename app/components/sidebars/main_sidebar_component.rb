@@ -9,8 +9,8 @@ module Sidebars
 
     def render
       build_html do |h|
-        h.tag :div, class: "c-main-sidebar h-100" do
-          h.tag :div, class: "c-main-sidebar__background", data_action: "click->sidebar#hide"
+        h.tag :div, class: "c-main-sidebar h-100", data_controller: "main-sidebar" do
+          h.tag :div, class: "c-main-sidebar__background", data_action: "click->main-sidebar#hide"
 
           h.tag :div, class: "c-main-sidebar__content" do
             h.tag :a, href: view_context.root_path, class: "c-main-sidebar__logo d-inline-block mb-3 text-center w-100" do

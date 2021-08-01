@@ -77,7 +77,7 @@ class TabBarComponent < ApplicationV6Component
                   h.tag :i, class: "far fa-rocket"
 
                   h.tag :div, class: "small mt-1" do
-                    h.text t("noun.sign_up")
+                    h.text t("noun.sign_up_shorten")
                   end
                 end
               end

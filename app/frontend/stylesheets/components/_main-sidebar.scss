@@ -4,7 +4,7 @@
   height: 100%;
   left: 0;
   position: fixed;
-  z-index: $zindex-fixed;
+  z-index: $zindex-popover;
 
   &__background {
     background-color: rgba(0, 0, 0, 0.4);

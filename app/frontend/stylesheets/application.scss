@@ -1,14 +1,11 @@
 @import '~bootstrap/scss/functions';
 
-@import './variables/annict-before';
-@import './variables/bootstrap-before';
+@import './variables/annict';
+@import './variables/bootstrap';
 
 @import '~bootstrap/scss/variables';
 @import '~bootstrap/scss/mixins';
 
-@import './variables/annict-after';
-@import './variables/bootstrap-after';
-@import './variables/annict-base';
 @import './variables/annict-dark';
 @import './variables/annict-light';
 
@@ -82,6 +79,7 @@
 @import './utilities/containers';
 @import './utilities/cursor';
 @import './utilities/link';
+@import './utilities/text';
 @import './utilities/type';
 @import './utilities/underline';
 
@@ -93,6 +91,7 @@
 
 // Components
 
+@import './components/about';
 @import './components/anime-button-group';
 @import './components/anime-header';
 @import './components/anime-picture';
@@ -106,8 +105,10 @@
 @import './components/like-button';
 @import './components/main-sidebar';
 @import './components/nav';
+@import './components/receive-channel-button';
 @import './components/record-header';
 @import './components/record-options-dropdown';
+@import './components/record-rating-button-group';
 @import './components/resource-diff-table';
 @import './components/season-dropdown';
 @import './components/sign-upin-form';

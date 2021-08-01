@@ -74,6 +74,7 @@ Rails.application.routes.draw do
   match "/channels",                                            via: :get,    as: :channel_list,                               to: "channels#index"
   match "/characters/:character_id",                            via: :get,    as: :character,                                  to: "characters#show"
   match "/characters/:character_id/fans",                       via: :get,    as: :character_fan_list,                         to: "character_fans#index"
+  match "/checkins/redirect/:provider/:url_hash",               via: :get,    as: :legacy_record_redirect_1,                   to: "legacy/record_redirects#show", provider: /fb|tw/, url_hash: /[0-9a-zA-Z_-]{10}/
   match "/db",                                                  via: :get,    as: :db_root,                                    to: "db/home#show"
   match "/db/activities",                                       via: :get,    as: :db_activity_list,                           to: "db/activities#index"
   match "/db/casts/:id",                                        via: :delete, as: :db_cast_detail,                             to: "db/casts#destroy"
@@ -205,6 +206,7 @@ Rails.application.routes.draw do
   match "/forum/posts/:post_id/comments/:comment_id/edit",      via: :get,    as: :forum_edit_comment,                         to: "forum/comments#edit",             post_id: ROUTING_ID_FORMAT, comment_id: ROUTING_ID_FORMAT
   match "/forum/posts/:post_id/edit",                           via: :get,    as: :forum_edit_post,                            to: "forum/posts#edit",                post_id: ROUTING_ID_FORMAT
   match "/forum/posts/new",                                     via: :get,    as: :forum_new_post,                             to: "forum/posts#new"
+  match "/fragment/@:username/records/:record_id",              via: :get,    as: :fragment_record,                            to: "fragment/records#show",           username: ROUTING_USERNAME_FORMAT
   match "/fragment/@:username/records/:record_id/edit",         via: :get,    as: :fragment_edit_record,                       to: "fragment/records#edit",           username: ROUTING_USERNAME_FORMAT
   match "/fragment/@:username/tracking_heatmap",                via: :get,    as: :fragment_tracking_heatmap,                  to: "fragment/tracking_heatmaps#show", username: ROUTING_USERNAME_FORMAT
   match "/fragment/activity_groups/:activity_group_id/items",   via: :get,    as: :fragment_activity_item_list,                to: "fragment/activity_items#index"
@@ -222,6 +224,7 @@ Rails.application.routes.draw do
   match "/people/:person_id",                                   via: :get,    as: :person,                                     to: "people#show"
   match "/people/:person_id/fans",                              via: :get,    as: :person_fan_list,                            to: "person_fans#index"
   match "/privacy",                                             via: :get,    as: :privacy,                                    to: "pages#privacy"
+  match "/r/:provider/:url_hash",                               via: :get,    as: :legacy_record_redirect_2,                   to: "legacy/record_redirects#show", provider: /fb|tw/, url_hash: /[0-9a-zA-Z_-]{10}/
   match "/registrations/new",                                   via: :get,    as: :new_registration,                           to: "registrations#new"
   match "/search",                                              via: :get,    as: :search,                                     to: "searches#show"
   match "/settings/account",                                    via: :get,    as: :settings_account,                           to: "settings/accounts#show"

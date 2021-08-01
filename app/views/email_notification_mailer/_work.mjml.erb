@@ -4,8 +4,8 @@
               padding-right="0"
               src="<%= v4_ann_image_url(work.anime_image, :image, size: "240x", ratio: "3:4") %>"
               align="center"
-              href="<%= work_url(work, utm_source: 'email_notification', utm_campaign: utm_campaign, utm_medium: 'email', domain: local_domain) %>"></mj-image>
-    <mj-button href="<%= work_url(id: work.id, utm_source: 'email_notification', utm_campaign: utm_campaign, utm_medium: 'email', domain: local_domain) %>"
+              href="<%= anime_url(work.id, utm_source: 'email_notification', utm_campaign: utm_campaign, utm_medium: 'email', domain: local_domain) %>"></mj-image>
+    <mj-button href="<%= anime_url(work.id, utm_source: 'email_notification', utm_campaign: utm_campaign, utm_medium: 'email', domain: local_domain) %>"
                background-color="#fff"
                border="1px solid #f85b73"
                color="#f85b73"
@@ -33,7 +33,7 @@
     </mj-text>
 
     <mj-text font-size="18px" font-weight="400" padding-top="0" padding-bottom="5px">
-      <%= link_to "#{work.local_title}", work_url(id: work.id, utm_source: 'email_notification', utm_campaign: utm_campaign, utm_medium: 'email', domain: local_domain), style: "color: #0366d6; text-decoration: none;" %>
+      <%= link_to "#{work.local_title}", anime_url(work.id, utm_source: 'email_notification', utm_campaign: utm_campaign, utm_medium: 'email', domain: local_domain), style: "color: #0366d6; text-decoration: none;" %>
     </mj-text>
     <mj-text font-size="14px" padding-top="0px" padding-bottom="7px"><%= "#{work.watchers_count} Watchers" %></mj-text>
 

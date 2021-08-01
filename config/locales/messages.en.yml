@@ -28,6 +28,8 @@ en:
         work_record:
           created: 'tracked'
           more: 'Show %{n} records'
+      adsense:
+        hide_ads_html: You can hide ads by becoming <a href="/supporters">Annict Supporters</a>
       body:
         view_full_text: View Full Text
       favorite_button:
@@ -268,10 +270,11 @@ en:
       no_works: No works
     welcome:
       show:
+        annict_features: Features
         hero_description_html: Explore the anime database, track anime you are watching<br>and see what friends are watching.
         hero_description_mobile_html: Track anime you are watching<br>and see what friends are watching.
         hero_title_html: A platform for anime addicts.
-        start_tracking: Start Tracking
+        lets_start_tracking: Let's start tracking.
     work_records:
       new:
         write_your_comment: Write Your Comment! (optional)

@@ -16,33 +16,37 @@
 
   <hr>
 
-  <% @channel_groups.each do |channel_group| %>
-    <div class="container mt-3">
-      <h2 class="fw-bold h3 mb-0">
-        <%= channel_group.name %>
-      </h2>
-    </div>
+  <div class="gx-3 gy-5 row">
+    <% @channel_groups.each do |channel_group| %>
+      <div class="col-12">
+        <div class="container">
+          <h2 class="fw-bold h3 mb-0">
+            <%= channel_group.name %>
+          </h2>
+        </div>
 
-    <div class="container mt-3 u-container-flat">
-      <div class="card u-card-flat">
-        <div class="card-body">
-          <div class="g-3 row">
-            <% @channels.filter { |channel| channel.channel_group_id == channel_group.id }.each do |channel| %>
-              <div class="col-6 col-sm-3">
-                <div class="align-items-center gx-3 row">
-                  <div class="col-auto">
-                    <%= Buttons::ReceiveChannelButtonComponent.new(self, channel: channel, class_name: "btn-sm rounded-circle").render %>
-                  </div>
+        <div class="container mt-3 u-container-flat">
+          <div class="card u-card-flat">
+            <div class="card-body">
+              <div class="g-3 row">
+                <% @channels.filter { |channel| channel.channel_group_id == channel_group.id }.each do |channel| %>
+                  <div class="col-6 col-sm-3">
+                    <div class="align-items-center gx-3 row">
+                      <div class="col-auto">
+                        <%= Buttons::ReceiveChannelButtonComponent.new(self, channel: channel, class_name: "btn-sm rounded-circle").render %>
+                      </div>
 
-                  <div class="col">
-                    <%= channel.name %>
+                      <div class="col">
+                        <%= channel.name %>
+                      </div>
+                    </div>
                   </div>
-                </div>
+                <% end %>
               </div>
-            <% end %>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  <% end %>
+    <% end %>
+  </div>
 </div>

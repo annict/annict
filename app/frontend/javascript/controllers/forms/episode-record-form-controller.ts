@@ -12,5 +12,6 @@ export default class extends BasicFormController {
   reloadList() {
     new EventDispatcher('reloadable--episode-record-list-group:reload').dispatch();
     new EventDispatcher('reloadable--trackable-episode-list:reload').dispatch();
+    new EventDispatcher('reloadable--record:reload').dispatch();
   }
 }

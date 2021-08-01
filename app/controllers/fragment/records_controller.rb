@@ -6,6 +6,12 @@ module Fragment
 
     before_action :authenticate_user!, only: %i[edit]
 
+    def show
+      user = User.only_kept.find_by!(username: params[:username])
+      @record = user.records.only_kept.find(params[:record_id])
+      @anime_ids = [@record.work_id]
+    end
+
     def edit
       user = User.only_kept.find_by!(username: params[:username])
       @record = current_user.records.only_kept.find_by!(id: params[:record_id], user_id: user.id)

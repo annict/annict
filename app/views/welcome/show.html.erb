@@ -29,26 +29,12 @@
   </div>
 </div>
 
+<div class="container py-5 u-container-flat">
+  <h2 class="fw-bold h1 mb-0 text-center">
+    <%= t("noun.current_season") %>
+  </h2>
 
-<div class="container">
-  <div class="mb-0 py-5 row">
-    <div class="col">
-      <h2 class="fw-bold h3 m-0">
-        <%= t("noun.current_season") %>
-      </h2>
-    </div>
-
-    <div class="col text-end">
-      <%= link_to seasonal_anime_list_path(ENV.fetch("ANNICT_CURRENT_SEASON")) do %>
-        <i class="far fa-angle-right"></i>
-        <%= t("verb.view_more") %>
-      <% end %>
-    </div>
-  </div>
-</div>
-
-<div class="container container-flat">
-  <div class="card">
+  <div class="card mt-5 u-card-flat">
     <div class="card-body">
       <% if @seasonal_anime_list.present? %>
         <div class="row g-3">
@@ -63,41 +49,29 @@
       <% end %>
     </div>
   </div>
-</div>
 
-<div class="container">
-  <div class="mb-0 py-5 row">
-    <div class="col">
-      <h2 class="fw-bold h3 m-0">
-        <%= t("noun.popular_anime") %>
-      </h2>
-    </div>
-
-    <div class="col text-end">
-      <%= link_to popular_anime_list_path do %>
-        <i class="far fa-angle-right"></i>
-        <%= t("verb.view_more") %>
-      <% end %>
-    </div>
+  <div class="mt-3 text-center">
+    <%= link_to seasonal_anime_list_path(ENV.fetch("ANNICT_CURRENT_SEASON")), class: "btn btn-outline-secondary rounded-pill" do %>
+      <i class="far fa-angle-right"></i>
+      <%= t("verb.view_more") %>
+    <% end %>
   </div>
 </div>
 
-<div class="container container-flat">
-  <div class="card">
-    <div class="card-body">
-      <% if @seasonal_anime_list.present? %>
-        <div class="row g-3">
-          <% @popular_anime_list.each do |anime| %>
-            <div class="col-4 col-sm-2">
-              <%= Cards::AnimeCardComponent.new(self, anime: anime, width: 195).render %>
-            </div>
-          <% end %>
-        </div>
-      <% else %>
-        <%= EmptyV6Component.new(self, text: t("messages._empty.no_anime")).render %>
-      <% end %>
+<%= render "about" %>
+
+<div class="l-welcome__cta">
+  <div class="container">
+    <div class="h1 fw-bold text-white">
+      <%= t "messages.welcome.show.lets_start_tracking" %>
     </div>
+
+
+    <%= link_to sign_up_path, class: "btn btn-light mt-1 rounded-pill u-text-mizuho" do %>
+      <i class="far fa-rocket"></i>
+      <span class="ms-1">
+        <%= t("noun.sign_up") %>
+      </span>
+    <% end %>
   </div>
 </div>
-
-<hr class="mb-0 mt-5" />

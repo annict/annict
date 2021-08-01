@@ -11,4 +11,16 @@
       flex: 1;
     }
   }
+
+  &__about {
+    background-color: var(--ann-card-bg);
+  }
+
+  &__cta {
+    background: rgb(213, 28, 91);
+    background: linear-gradient(150deg, rgba(213, 28, 91, 1) 27%, rgba(213, 28, 91, 0.6) 100%);
+    background-color: white;
+    padding-bottom: 10rem;
+    padding-top: 10rem;
+  }
 }

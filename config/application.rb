@@ -70,6 +70,7 @@ module Annict
       r301 /.*/, "https://#{ENV.fetch('ANNICT_HOST')}$&", if: proc { |rack_env|
         rack_env["SERVER_NAME"].in?(["www.#{ENV.fetch('ANNICT_JP_HOST')}", ENV.fetch('ANNICT_JP_HOST'), "ja.annict.com", "jp.annict.com"])
       }
+      r301 %r{\A/about}, "/"
       r301 %r{\A/activities}, "/"
       r301 %r{\A/programs}, "/track"
       r301 %r{\A/users/([A-Za-z0-9_]+)\z}, "/@$1"

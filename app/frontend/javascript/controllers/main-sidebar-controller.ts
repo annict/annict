@@ -5,10 +5,10 @@ export default class extends Controller {
   contentElm!: Element | null;
 
   initialize() {
-    this.backgroundElm = this.element.querySelector('.c-sidebar__background');
-    this.contentElm = this.element.querySelector('.c-sidebar__content');
+    this.backgroundElm = this.element.querySelector('.c-main-sidebar__background');
+    this.contentElm = this.element.querySelector('.c-main-sidebar__content');
 
-    document.addEventListener('sidebar:show', (event: any) => {
+    document.addEventListener('main-sidebar:show', (event: any) => {
       this.show();
     });
   }
