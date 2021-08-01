@@ -62,9 +62,7 @@ en:
       anime_infos:
         show: Info of %{title}
       anime_records:
-        edit: Edit Record
-        index: Records of %{anime_title} (Anime)
-        show: "%{anime_title} - %{profile_name} (%{username})'s Record"
+        index: Records of Anime %{anime_title}
       casts:
         index: Casts of %{title}
       channels:

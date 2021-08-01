@@ -61,6 +61,8 @@ ja:
     title:
       anime_infos:
         show: アニメ「%{title}」の情報
+      anime_records:
+        index: アニメ「%{anime_title}」の記録・感想
       casts:
         index: アニメ「%{title}」のキャスト
       channels:
