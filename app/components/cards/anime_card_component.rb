@@ -2,12 +2,13 @@
 
 module Cards
   class AnimeCardComponent < ApplicationV6Component
-    def initialize(view_context, anime:, width:, caption: "", show_button: true)
+    def initialize(view_context, anime:, width:, caption: "", show_button: true, user: nil)
       super view_context
       @anime = anime
       @width = width
       @caption = caption
       @show_button = show_button
+      @user = user
     end
 
     def render
@@ -32,7 +33,7 @@ module Cards
             end
           end
 
-          if @show_button
+          if @show_button && (!current_user || !@user || current_user.id == @user.id)
             h.tag :div, class: "mt-2 text-center" do
               h.html ButtonGroups::AnimeButtonGroupComponent.new(view_context, anime: @anime).render
             end

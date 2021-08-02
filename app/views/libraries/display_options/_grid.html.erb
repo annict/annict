@@ -1,0 +1,13 @@
+<div class="gx-2 gy-3 row">
+  <% animes.each_slice(3) do |sliced_animes| %>
+    <div class="col-12 col-sm-4">
+      <div class="gx-2 gy-3 row">
+        <% sliced_animes.each do |anime| %>
+          <div class="col-4 col-sm-4">
+            <%= Cards::AnimeCardComponent.new(self, anime: anime, width: 140, user: user).render %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>
