@@ -9,12 +9,20 @@ export default class extends Controller {
 
   initialize() {
     document.addEventListener('component-value-fetcher:spoiler-guard:fetched', (event: any) => {
-      const { is_signed_in, episode_ids, work_ids } = event.detail;
+      const {
+        is_signed_in,
+        hide_record_body,
+        watched_anime_ids,
+        anime_ids_in_library,
+        tracked_episode_ids,
+      } = event.detail;
 
       this.isNotSpoiler =
         !is_signed_in ||
-        (!this.episodeIdValue && work_ids.includes(this.workIdValue)) ||
-        episode_ids.includes(this.episodeIdValue);
+        !hide_record_body ||
+        !anime_ids_in_library.includes(this.workIdValue) ||
+        (!this.episodeIdValue && watched_anime_ids.includes(this.workIdValue)) ||
+        (this.episodeIdValue && tracked_episode_ids.includes(this.episodeIdValue));
 
       this.render();
     });
