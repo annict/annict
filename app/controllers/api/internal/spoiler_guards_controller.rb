@@ -21,7 +21,7 @@ module Api::Internal
         hide_record_body: current_user.hide_record_body?,
         watched_anime_ids: tracked_anime_ids + finished_anime_ids,
         anime_ids_in_library: anime_ids_in_library,
-        tracked_episode_ids:  tracked_episode_ids
+        tracked_episode_ids: tracked_episode_ids
       }
     end
   end
