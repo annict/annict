@@ -7,7 +7,7 @@
   <div class="card u-card-flat">
     <div class="card-body">
       <%= form_for @user_email_form, url: settings_email_path do |f| %>
-        <%= render ErrorPanelComponent.new(form: @user_email_form) %>
+        <%= render "application/components/error_panel", resource: @user_email_form %>
 
         <div class="mb-3">
           <%= f.label :email, class: "form-label" %>
