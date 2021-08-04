@@ -31,8 +31,6 @@ class Record < ApplicationRecord
 
   RATING_STATES = %i[bad average good great].freeze
 
-  attr_accessor :is_liked, :is_spoiler
-
   counter_culture :user
   counter_culture :anime
 
