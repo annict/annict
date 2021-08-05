@@ -18,7 +18,8 @@ const request = async (url: string, method: string, options: any = {}) => {
     throw new (ResponseError as any)(res);
   }
 
-  return res.json();
+  const data = await res.text();
+  return data === '' ? {} : JSON.parse(data);
 };
 
 const requestWithData = async (url: string, method: string, data = {}, options = {}) => {
