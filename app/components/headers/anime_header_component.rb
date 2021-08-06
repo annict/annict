@@ -51,21 +51,6 @@ module Headers
 
                   h.tag :li, class: "list-inline-item" do
                     h.tag :span, class: "small text-muted" do
-                      h.text t("noun.satisfaction_rate_shorten")
-                      h.text ":"
-                    end
-
-                    h.tag :span, class: "fw-bold ms-1" do
-                      h.text @anime.satisfaction_rate.presence || "-"
-
-                      h.tag :span, class: "ms-1 small" do
-                        h.text "%"
-                      end
-                    end
-                  end
-
-                  h.tag :li, class: "list-inline-item" do
-                    h.tag :span, class: "small text-muted" do
                       h.text t("noun.ratings_count")
                       h.text ":"
                     end
