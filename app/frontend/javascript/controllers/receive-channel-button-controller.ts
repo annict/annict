@@ -1,5 +1,7 @@
-import axios from 'axios';
+import Modal from 'bootstrap/js/dist/modal';
 import { Controller } from 'stimulus';
+
+import fetcher from '../utils/fetcher';
 
 export default class extends Controller {
   static classes = ['notReceivedButton', 'receivedButton'];
@@ -39,6 +41,7 @@ export default class extends Controller {
     }
 
     this.element.classList.remove('c-spinner');
+    this.element.removeAttribute('disabled');
   }
 
   changeToReceived() {
@@ -49,21 +52,25 @@ export default class extends Controller {
     this.currentReceivedValue = false;
   }
 
-  toggle() {
+  async toggle() {
     this.element.setAttribute('disabled', 'true');
 
-    if (this.currentReceivedValue) {
-      axios.delete(`/api/internal/channels/${this.channelIdValue}/reception`).then(() => {
+    try {
+      if (this.currentReceivedValue) {
+        const data = await fetcher.delete(`/api/internal/channels/${this.channelIdValue}/reception`);
+
         this.changeToNotReceived();
-        this.element.removeAttribute('disabled');
-        this.render();
-      });
-    } else {
-      axios.post(`/api/internal/channels/${this.channelIdValue}/reception`).then(() => {
+      } else {
+        const data = await fetcher.post(`/api/internal/channels/${this.channelIdValue}/reception`);
+
         this.changeToReceived();
-        this.element.removeAttribute('disabled');
-        this.render();
-      });
+      }
+    } catch (err) {
+      if (err.response.status === 401) {
+        new Modal('.c-sign-up-modal').show();
+      }
+    } finally {
+      this.render();
     }
   }
 }

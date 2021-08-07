@@ -1,9 +1,0 @@
-<div class="btn-group">
-  <%= active_link_to library_path(display: :grid_detailed, page: params[:page]), class: "btn", class_active: "btn-primary", class_inactive: "btn-secondary", active: (display_option == "grid_detailed" ) do %>
-    <%= icon "th-large" %>
-  <% end %>
-
-  <%= active_link_to library_path(display: :grid_small, page: params[:page]), class: "btn", class_active: "btn-primary", class_inactive: "btn-secondary", active: (display_option == "grid_small" ) do %>
-    <%= icon "th" %>
-  <% end %>
-</div>
