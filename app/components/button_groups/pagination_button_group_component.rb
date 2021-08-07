@@ -26,18 +26,38 @@ module ButtonGroups
     private
 
     def base_button_class_name
-      %w[btn btn-secondary]
+      %w[btn]
+    end
+
+    def enabled_button_class_name
+      %w[btn-secondary]
+    end
+
+    def disabled_button_class_name
+      %w[btn-outline-secondary disabled]
     end
 
     def prev_button_class_name
       class_name = base_button_class_name
-      class_name << "disabled" if @collection.first_page?
+
+      if @collection.first_page?
+        class_name += disabled_button_class_name
+      else
+        class_name += enabled_button_class_name
+      end
+
       class_name.join(" ")
     end
 
     def next_button_class_name
       class_name = base_button_class_name
-      class_name << "disabled" if @collection.last_page?
+
+      if @collection.last_page?
+        class_name += disabled_button_class_name
+      else
+        class_name += enabled_button_class_name
+      end
+
       class_name.join(" ")
     end
   end
