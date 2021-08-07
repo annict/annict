@@ -45,6 +45,7 @@
   // Typography
 
   --ann-hr-color: var(--ann-border-color);
+  --ann-text-muted-color: #{tint-color($text-muted, 30%)};
 
   // Tables
 

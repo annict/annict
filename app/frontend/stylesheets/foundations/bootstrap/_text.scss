@@ -1,5 +1,3 @@
 .text-muted {
-  @include color-scheme(dark) {
-    color: tint-color($text-muted, 30%) !important;
-  }
+  color: var(--ann-text-muted-color) !important;
 }
