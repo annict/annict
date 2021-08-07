@@ -28,7 +28,7 @@ class TwitterService
   end
 
   def share!(resource)
-    client.update(resource.twitter_share_body)
+    client&.update(resource.twitter_share_body)
   rescue Twitter::Error::Unauthorized
     resource.user.expire_twitter_token
   end
