@@ -21,7 +21,7 @@ module OrganizationDecorator
       when :wikipedia_url
         wikipedia_url = send(field)
         if wikipedia_url.present?
-          link_to(URI.decode(wikipedia_url), wikipedia_url, target: "_blank")
+          link_to(wikipedia_url, wikipedia_url, target: "_blank")
         end
       when :twitter_username
         username = send(:twitter_username)
