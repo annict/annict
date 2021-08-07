@@ -2,10 +2,11 @@
 
 module Lists
   class RecordListComponent < ApplicationV6Component
-    def initialize(view_context, records:, show_box: true)
+    def initialize(view_context, records:, show_box: true, empty_text: :no_records)
       super view_context
       @records = records
       @show_box = show_box
+      @empty_text = empty_text
       @pagenation = @records.respond_to?(:first_page?)
     end
 
@@ -29,7 +30,7 @@ module Lists
           else
             h.tag :div, class: "card mt-3 u-card-flat" do
               h.tag :div, class: "card-body" do
-                h.html EmptyV6Component.new(view_context, text: t("messages._empty.no_records")).render
+                h.html EmptyV6Component.new(view_context, text: t("messages._empty.#{@empty_text}")).render
               end
             end
           end

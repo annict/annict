@@ -107,7 +107,7 @@
             <% end %>
           </div>
         <% else %>
-          <%= EmptyV6Component.new(self, text: t("messages._empty.no_episodes")) %>
+          <%= EmptyV6Component.new(self, text: t("messages._empty.no_episodes")).render %>
         <% end %>
       </div>
     </div>
@@ -132,5 +132,5 @@
 </div>
 
 <div class="container u-container-flat">
-  <%= Lists::RecordListComponent.new(self, records: @records, show_box: false).render %>
+  <%= Lists::RecordListComponent.new(self, records: @records, show_box: false, empty_text: :no_comments).render %>
 </div>
