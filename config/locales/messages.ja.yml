@@ -68,7 +68,7 @@ ja:
       friend_list_html: '%{link}ページでTwitter連携すると、TwitterでフォローしているAnnictユーザが表示されます。'
       home: 利用者をフォローすると、タイムラインにフォローした人のアクティビティが表示されるようになります。
       notification_list: フォローされたり自分の記録がいいねされたりすると通知されます。
-      track_html: 視聴ステータスを「見てる」や「見たい」にした作品が表示されます。<br>%{link}ページでチャンネルを登録したあと作品の番組情報を設定すると、その番組の放送予定も表示されます。
+      track_html: 視聴ステータスを「見てる」にした作品が表示されます。<br>%{link}ページでチャンネルを登録したあと作品の番組情報を設定すると、その番組の放送予定も表示されます。
     _validators:
       and_other_are_required: と%{column_name}は両方入力してください
       is_required_true_or_false: には `true` または `false` を指定してください
