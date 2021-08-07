@@ -613,9 +613,6 @@ GEM
       mprelude (~> 0.1.0)
       parser (>= 3.0.0)
       procto (~> 0.0.2)
-    validate_url (1.0.13)
-      activemodel (>= 3.0.0)
-      public_suffix
     view_component (2.34.0)
       activesupport (>= 5.0.0, < 7.0)
     virtus (1.0.5)
@@ -724,7 +721,6 @@ DEPENDENCIES
   timecop
   traceroute
   twitter
-  validate_url
   view_component
   virtus
   wilson_score
