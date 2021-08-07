@@ -2,14 +2,17 @@ ja:
   verb:
     agree: 同意する
     attach: 選択する
+    check: チェックする
     check_all: 全て選択する
     close: 閉じる
     comment: コメントする
+    connect: 連携する
     create: 作成する
     delete: 削除する
+    disconnect: 連携解除する
     edit: 編集する
     explore: 見つける
-    follow: フォロー
+    follow: フォローする
     hide: 隠す
     more: もっと見る
     mute: ミュートする

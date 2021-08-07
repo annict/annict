@@ -2,15 +2,16 @@
 
 module Db
   class CharactersController < Db::ApplicationController
-    before_action :authenticate_user!, only: %i(new create edit update destroy)
+    before_action :authenticate_user!, only: %i[new create edit update destroy]
 
     def index
-      @characters = Character.
-        without_deleted.
-        preload(:series).
-        order(id: :desc).
-        page(params[:page]).
-        per(100)
+      @characters = Character
+        .without_deleted
+        .preload(:series)
+        .order(id: :desc)
+        .page(params[:page])
+        .per(100)
+        .without_count
     end
 
     def new
@@ -23,7 +24,7 @@ module Db
       @form.user = current_user
       authorize @form
 
-      return render(:new) unless @form.valid?
+      return render(:new, status: :unprocessable_entity) unless @form.valid?
 
       @form.save!
 
@@ -42,7 +43,7 @@ module Db
       @character.attributes = character_params
       @character.user = current_user
 
-      return render(:edit) unless @character.valid?
+      return render(:edit, status: :unprocessable_entity) unless @character.valid?
 
       @character.save_and_create_activity!
 

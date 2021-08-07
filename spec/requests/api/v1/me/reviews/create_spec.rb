@@ -5,11 +5,11 @@ describe "POST /v1/me/reviews" do
     let(:user) { create(:user, :with_profile, :with_setting) }
     let(:application) { create(:oauth_application, owner: user) }
     let(:access_token) { create(:oauth_access_token, application: application) }
-    let(:work) { create(:work, :with_current_season) }
+    let(:work) { create(:anime, :with_current_season) }
 
     it "creates work record" do
       expect(Record.count).to eq 0
-      expect(WorkRecord.count).to eq 0
+      expect(AnimeRecord.count).to eq 0
       expect(ActivityGroup.count).to eq 0
       expect(Activity.count).to eq 0
 
@@ -25,12 +25,12 @@ describe "POST /v1/me/reviews" do
       expect(response.status).to eq(200)
 
       expect(Record.count).to eq 1
-      expect(WorkRecord.count).to eq 1
+      expect(AnimeRecord.count).to eq 1
       expect(ActivityGroup.count).to eq 1
       expect(Activity.count).to eq 1
 
       record = user.records.first
-      work_record = user.work_records.first
+      work_record = user.anime_records.first
       activity_group = user.activity_groups.first
       activity = user.activities.first
 
@@ -42,7 +42,7 @@ describe "POST /v1/me/reviews" do
       expect(work_record.record_id).to eq record.id
       expect(work_record.work_id).to eq work.id
 
-      expect(activity_group.itemable_type).to eq "WorkRecord"
+      expect(activity_group.itemable_type).to eq "AnimeRecord"
       expect(activity_group.single).to eq true
 
       expect(activity.activity_group_id).to eq activity_group.id
@@ -58,7 +58,7 @@ describe "POST /v1/me/reviews" do
     let(:user) { create(:user, :with_profile, :with_setting) }
     let(:application) { create(:oauth_application, owner: user) }
     let(:access_token) { create(:oauth_access_token, application: application) }
-    let(:work) { create(:work, :with_current_season) }
+    let(:work) { create(:anime, :with_current_season) }
 
     it "returns error" do
       data = {
@@ -74,7 +74,7 @@ describe "POST /v1/me/reviews" do
         errors: [
           {
             type: "invalid_params",
-            message: "本文は1048596文字以内で入力してください"
+            message: "感想は1048596文字以内で入力してください"
           }
         ]
       }

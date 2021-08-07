@@ -4,7 +4,7 @@ module Canary
   module Types
     module Objects
       class CastType < Canary::Types::Objects::Base
-        implements GraphQL::Relay::Node.interface
+        implements GraphQL::Types::Relay::Node
 
         global_id_field :id
 
@@ -31,7 +31,7 @@ module Canary
           null: false,
           description: "ソート番号"
 
-        field :work, Canary::Types::Objects::WorkType,
+        field :anime, Canary::Types::Objects::AnimeType,
           null: false
 
         field :character, Canary::Types::Objects::CharacterType,
@@ -46,6 +46,10 @@ module Canary
 
         def accurate_name_en
           object.decorate.accurate_name_en
+        end
+
+        def anime
+          RecordLoader.for(Anime).load(object.work_id)
         end
       end
     end

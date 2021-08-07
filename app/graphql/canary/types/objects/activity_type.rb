@@ -4,7 +4,7 @@ module Canary
   module Types
     module Objects
       class ActivityType < Canary::Types::Objects::Base
-        implements GraphQL::Relay::Node.interface
+        implements GraphQL::Types::Relay::Node
 
         global_id_field :id
 
@@ -15,7 +15,14 @@ module Canary
         field :itemable, Canary::Types::Unions::ActivityItemable, null: false
 
         def itemable_type
-          object.itemable_type.underscore.upcase
+          value = object.itemable_type.underscore.upcase
+
+          case value
+          when "EPISODE_RECORD", "WORK_RECORD"
+            "RECORD"
+          else
+            value
+          end
         end
 
         def user
@@ -25,11 +32,15 @@ module Canary
         def itemable
           case object.itemable_type
           when "EpisodeRecord"
-            RecordLoader.for(EpisodeRecord).load(object.itemable_id)
+            RecordLoader.for(EpisodeRecord).load(object.itemable_id).then do |er|
+              RecordLoader.for(Record).load(er.record_id)
+            end
           when "Status"
             RecordLoader.for(Status).load(object.itemable_id)
           when "WorkRecord"
-            RecordLoader.for(WorkRecord).load(object.itemable_id)
+            RecordLoader.for(WorkRecord).load(object.itemable_id).then do |wr|
+              RecordLoader.for(Record).load(wr.record_id)
+            end
           end
         end
       end

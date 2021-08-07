@@ -1,0 +1,166 @@
+<% title = t("head.title.profiles.show", profile_name: @profile.name, username: @user.username) %>
+<% description = meta_description(@profile.description.presence || t("head.meta.description.profiles.show", profile_name: @profile.name, username: @user.username)) %>
+<% image_url = ann_image_url(@profile, :image, width: 200) %>
+<% set_meta_tags(title: title, description: description, og: { description: description, image: image_url }, twitter: { description: description }, reverse: true, prefix: false) %>
+
+<%= component_value_fetcher_tag("follow-button", internal_api_following_list_path) %>
+<%= component_value_fetcher_tag("mute-user-button", internal_api_muted_user_list_path) %>
+<%= component_value_fetcher_tag("status-select-dropdown", internal_api_library_entry_list_path, method: :post, payload: {anime_ids: @anime_ids}) %>
+<%= component_value_fetcher_tag("like-button", internal_api_like_list_path) %>
+<%= component_value_fetcher_tag("spoiler-guard", internal_api_spoiler_guard_path) %>
+
+<div class="py-3">
+  <div class="container">
+    <%= Headers::ProfileHeaderComponent.new(self, user: @user).render %>
+  </div>
+
+  <%= Navs::UserNavComponent.new(self, user: @user, params: params).render %>
+
+  <div class="container u-container-flat">
+    <div class="gx-3 row">
+      <div class="col-12 col-lg-5 mt-3 order-first order-lg-last">
+        <div class="card u-card-flat">
+          <div class="card-body">
+            <div class="text-center">
+              <%= Buttons::ShareToTwitterButtonComponent.new(
+                self,
+                text: title,
+                url: "#{local_url}#{profile_path(@user.username)}",
+                class_name: "me-2"
+              ).render %>
+            </div>
+
+            <div class="mt-3">
+              <div>
+                <div>
+                  <%= @profile.description %>
+                </div>
+
+                <% if @profile.url.present? %>
+                  <%= link_with_domain(@profile.url) %>
+                <% end %>
+              </div>
+
+              <p class="small">
+                <%= t("resources.user.start_date", started_on: display_date(@user.created_at), days: @user.days_from_started(local_time_zone)) %>
+              </p>
+            </div>
+
+            <div class="mt-5">
+              <h2 class="fw-bold h3 mb-3">
+                <%= t "noun.your_statistics" %>
+              </h2>
+
+              <turbo-frame
+                data-controller="tracking-heatmap"
+                data-tracking-heatmap-frame-path-value="<%= fragment_tracking_heatmap_path %>"
+                id="tracking-heatmap"
+              ></turbo-frame>
+            </div>
+
+            <div class="g-3 mt-3 row">
+              <% [
+                [record_list_path(@user.username), @user.records_count, "Records"],
+                [library_path(@user.username, :watching), @user.watching_anime_count, "Watching"],
+                [followee_list_path(@user.username), @user.following_count, "Following"],
+                [follower_list_path(@user.username), @user.followers_count, "Followers"],
+                [favorite_character_list_path(@user.username), @user.character_favorites_count, "Characters"],
+                [favorite_person_list_path(@user.username), @user.person_favorites_count, "People"],
+                [favorite_organization_list_path(@user.username), @user.organization_favorites_count, "Orgs"],
+              ].each do |path, count, text| %>
+                <div class="col-3">
+                  <%= link_to path, class: "text-body" do %>
+                    <div class="h3">
+                      <%= count %>
+                    </div>
+                    <%= text %>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+
+            <% if @user.character_favorites.present? %>
+              <div class="mt-5">
+                <div class="align-items-center mb-3 row">
+                  <h2 class="col fw-bold h3 mb-0">
+                    <%= t("noun.favorite_characters") %>
+                  </h2>
+
+                  <% if @user.character_favorites.size > 6 %>
+                    <div class="col col-auto text-end">
+                      <%= link_to favorite_character_list_path(@user.username), class: "small" do %>
+                        <i class="fal fa-angle-right"></i>
+                        <%= t "verb.view_all" %>
+                      <% end %>
+                    </div>
+                  <% end %>
+                </div>
+
+                <div class="g-3 row">
+                  <% @user.character_favorites.preload(character: :series).first(6).each do |cf| %>
+                    <div class="col-4 pe-2">
+                      <%= link_to cf.character.local_name, character_path(cf.character_id) %>
+                      <% if cf.character.series %>
+                        <div class="small text-muted text-truncate">
+                          <%= cf.character.series.local_name %>
+                        </div>
+                      <% end %>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+
+            <% [
+              [@user.cast_favorites.preload(:person), t("noun.favorite_voice_actors"), favorite_person_list_path(@user.username), :person],
+              [@user.staff_favorites.preload(:person), t("noun.favorite_staffs"), favorite_person_list_path(@user.username), :person],
+              [@user.organization_favorites.preload(:organization), t("noun.favorite_organizations"), favorite_organization_list_path(@user.username), :organization]
+            ].each do |resource_favorites, title, resource_favorite_list_path, resource_name| %>
+              <% if resource_favorites.present? %>
+                <div class="mt-5">
+                  <div class="align-items-center mb-3 row">
+                    <h2 class="col fw-bold h3 mb-0">
+                      <%= title %>
+                    </h2>
+
+                    <% if resource_favorites.length > 6 %>
+                      <div class="col col-auto text-end">
+                        <%= link_to resource_favorite_list_path, class: "small" do %>
+                          <i class="fal fa-angle-right"></i>
+                          <%= t "verb.view_all" %>
+                        <% end %>
+                      </div>
+                    <% end %>
+                  </div>
+
+                  <div class="g-3 row">
+                    <% resource_favorites.first(6).each do |rf| %>
+                      <div class="col-4">
+                        <% resource = rf.send(resource_name) %>
+                        <%= link_to resource.local_name, send("#{resource_name}_path", resource.id) %>
+                        <div class="small text-muted">
+                          <%= t("noun.n_works_watched", count: rf.watched_anime_count) %>
+                        </div>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-7 order-last order-lg-first">
+        <% if @activity_groups.present? %>
+          <%= TimelineComponent.new(
+            self,
+            activity_groups: @activity_groups
+          ).render %>
+        <% else %>
+          <%= EmptyV6Component.new(self, text: t("messages._empty.no_activities")).render %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: forum_categories
@@ -23,7 +24,7 @@
 class ForumCategory < ApplicationRecord
   extend Enumerize
 
-  enumerize :slug, in: %i(site_news general feedback db_request), scope: true
+  enumerize :slug, in: %i[site_news general feedback db_request], scope: true
 
   has_many :forum_posts, inverse_of: :forum_category, dependent: :destroy
 

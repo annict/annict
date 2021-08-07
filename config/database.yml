@@ -1,28 +1,17 @@
 default: &default
   adapter: postgresql
+  database: <%= ENV.fetch("ANNICT_POSTGRES_DATABASE") %>
   encoding: unicode
-  # For details on connection pooling, see rails configuration guide
-  # http://guides.rubyonrails.org/configuring.html#database-pooling
+  host: <%= ENV.fetch("ANNICT_POSTGRES_HOST") %>
+  password: <%= ENV.fetch("ANNICT_POSTGRES_PASSWORD") %>
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  # `.where('started_at < ?', Date.tomorrow + 1.day + 5.hours)` というメソッドを実行すると
-  # エラーになったので、prepared_statementsをfalseにする
-  # http://stackoverflow.com/questions/21035561/why-am-i-getting-these-postgresql-errors-since-upgrading-to-rails-4
-  prepared_statements: false
+  username: <%= ENV.fetch("ANNICT_POSTGRES_USERNAME") %>
 
 development:
   <<: *default
-  host: <%= ENV.fetch("POSTGRES_HOST", "0.0.0.0") %>
-  username: postgres
-  password:
-  database: annict_development
 
 test:
   <<: *default
-  host: <%= ENV.fetch("POSTGRES_HOST", "0.0.0.0") %>
-  username: postgres
-  password:
-  database: annict_test
 
 production:
   <<: *default
-  database: annict_production

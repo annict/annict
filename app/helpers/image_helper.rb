@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module ImageHelper
-  def ann_image_url(record, field, options = {})
+  def v4_ann_image_url(record, field, options = {})
     path = image_path(record, field)
     size = options[:size]
 
@@ -34,18 +34,9 @@ module ImageHelper
   end
 
   def ann_image_tag(record, field, options = {})
-    url = ann_image_url(record, field, options)
-    url2x = ann_image_url(record, field, options.merge(size_rate: 2))
+    url2x = v4_ann_image_url(record, field, options.merge(size_rate: 2))
 
-    options["data-src"] = url
-    options[:class] = if options[:class].present?
-      options[:class].split(" ").push("js-lazy").join(" ")
-    else
-      "js-lazy"
-    end
-    options["data-srcset"] = "#{url} 320w, #{url2x} 640w"
-
-    image_tag("", options)
+    image_tag(url2x, options)
   end
 
   def profile_background_image_url(profile, options)
@@ -54,15 +45,15 @@ module ImageHelper
     image = profile.send(field)
 
     if background_image.present? && profile.background_image_animated?
-      return "#{ENV.fetch('ANNICT_FILE_STORAGE_URL')}/shrine/#{image[:original].id}"
+      return "#{ENV.fetch("ANNICT_FILE_STORAGE_URL")}/shrine/#{image[:original].id}"
     end
 
-    ann_image_url(profile, field, options)
+    v4_ann_image_url(profile, field, options)
   end
 
   def ann_api_assets_url(record, field)
     path = image_path(record, field)
-    "#{ENV.fetch('ANNICT_API_ASSETS_URL')}/#{path}"
+    "#{ENV.fetch("ANNICT_API_ASSETS_URL")}/#{path}"
   end
 
   def ann_api_assets_background_image_url(profile)
@@ -71,7 +62,7 @@ module ImageHelper
     image = profile.send(field)
 
     if background_image.present? && profile.background_image_animated?
-      return "#{ENV.fetch('ANNICT_API_ASSETS_URL')}/shrine/#{image[:original].id}"
+      return "#{ENV.fetch("ANNICT_API_ASSETS_URL")}/shrine/#{image[:original].id}"
     end
 
     ann_api_assets_url(profile, field)
@@ -87,7 +78,7 @@ module ImageHelper
       "200x200"
     end
 
-    ann_image_url(profile, :image, size: size, ratio: "1:1")
+    v4_ann_image_url(profile, :image, size: size, ratio: "1:1")
   end
 
   private

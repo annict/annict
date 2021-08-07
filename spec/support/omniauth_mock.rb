@@ -3,17 +3,17 @@
 module OmniauthMock
   rspec
 
-  def mock_auth_hash(uid = '12345')
+  def mock_auth_hash(uid = "12345")
     hash = {
-      provider: 'twitter',
-      uid:      uid,
+      provider: "twitter",
+      uid: uid,
       info: {
-        nickname:  'mockuser',
+        nickname: "mockuser",
         image: "https://placeholdit.imgix.net/~text?txtsize=28&txt=300%C3%97300&w=300&h=300"
       },
       credentials: {
-        token:  'mock_token',
-        secret: 'mock_secret'
+        token: "mock_token",
+        secret: "mock_secret"
       }
     }
 

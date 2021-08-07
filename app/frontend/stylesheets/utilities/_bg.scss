@@ -1,0 +1,26 @@
+@each $name,
+  $color-value
+    in (
+      anime: var(--ann-anime-color),
+      average: var(--ann-rating-average-color),
+      bad: var(--ann-rating-bad-color),
+      season-autumn: var(--ann-season-autumn-color),
+      season-spring: var(--ann-season-spring-color),
+      season-summer: var(--ann-season-summer-color),
+      season-unknown: var(--ann-season-unknown-color),
+      season-winter: var(--ann-season-winter-color),
+      completed: var(--ann-status-completed-color),
+      dropped: var(--ann-status-dropped-color),
+      good: var(--ann-rating-good-color),
+      great: var(--ann-rating-great-color),
+      mizuho: var(--ann-mizuho-color),
+      on-hold: var(--ann-status-on-hold-color),
+      plan-to-watch: var(--ann-status-plan-to-watch-color),
+      supporter: var(--ann-supporter-color),
+      watching: var(--ann-status-watching-color)
+    )
+{
+  .u-bg-#{$name} {
+    background-color: $color-value !important;
+  }
+}

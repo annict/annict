@@ -1,0 +1,16 @@
+<turbo-frame class="row gy-3" id="<%= dom_id(@activity_group) %>">
+  <%= component_value_fetcher_tag("status-select-dropdown", internal_api_library_entry_list_path, method: :post, payload: {anime_ids: @anime_ids}) %>
+
+  <div class="row gy-3">
+    <% case @activity_group.itemable_type %>
+    <% when "Status" %>
+      <% @activity_group.items.each do |status| %>
+        <%= Contents::StatusContentComponent.new(self, status: status).render %>
+      <% end %>
+    <% when "EpisodeRecord", "WorkRecord" %>
+      <% @activity_group.items.each do |record| %>
+        <%= Contents::RecordContentComponent.new(self, record: record).render %>
+      <% end %>
+    <% end %>
+  </div>
+</turbo-frame>

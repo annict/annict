@@ -2,14 +2,15 @@
 
 module Db
   class OrganizationsController < Db::ApplicationController
-    before_action :authenticate_user!, only: %i(new create edit update destroy)
+    before_action :authenticate_user!, only: %i[new create edit update destroy]
 
     def index
-      @organizations = Organization.
-        without_deleted.
-        order(id: :desc).
-        page(params[:page]).
-        per(100)
+      @organizations = Organization
+        .without_deleted
+        .order(id: :desc)
+        .page(params[:page])
+        .per(100)
+        .without_count
     end
 
     def new
@@ -22,7 +23,7 @@ module Db
       @form.user = current_user
       authorize @form
 
-      return render(:new) unless @form.valid?
+      return render(:new, status: :unprocessable_entity) unless @form.valid?
 
       @form.save!
 
@@ -41,7 +42,7 @@ module Db
       @organization.attributes = organization_params
       @organization.user = current_user
 
-      return render(:edit) unless @organization.valid?
+      return render(:edit, status: :unprocessable_entity) unless @organization.valid?
 
       @organization.save_and_create_activity!
 

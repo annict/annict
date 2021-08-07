@@ -1,0 +1,27 @@
+# Auto generated files with errors to ignore.
+# Remove from this list as you refactor files.
+---
+ignore:
+  - app/controllers/api/v1/application_controller.rb
+  - app/decorators/organization_decorator.rb
+  - app/decorators/person_decorator.rb
+  - app/decorators/work_decorator.rb
+  - app/graphql/canary/mutations/update_status.rb
+  - app/helpers/db/application_helper.rb
+  - app/models/episode_record.rb
+  - app/models/work.rb
+  - app/validators/amazon_validator.rb
+  - app/validators/redirect_uri_validator.rb
+  - app/views/api/internal/library_entries/_library_entry.jb
+  - app/views/api/v1/characters/index.jb
+  - app/views/api/v1/episodes/index.jb
+  - app/views/api/v1/people/index.jb
+  - config/application.rb
+  - config/puma.rb
+  - lib/tasks/email_notification.rake
+  - lib/tasks/episode.rake
+  - lib/tasks/mal.rake
+  - lib/tasks/twitter.rake
+  - lib/tasks/work.rake
+  - spec/spec_helper.rb
+  - spec/support/devise.rb

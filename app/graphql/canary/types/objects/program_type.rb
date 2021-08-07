@@ -4,20 +4,22 @@ module Canary
   module Types
     module Objects
       class ProgramType < Canary::Types::Objects::Base
-        implements GraphQL::Relay::Node.interface
+        implements GraphQL::Types::Relay::Node
 
         global_id_field :id
 
         field :database_id, Integer, null: false
         field :channel, Canary::Types::Objects::ChannelType, null: false
-        field :work, Canary::Types::Objects::WorkType, null: false
-        field :started_at, Canary::Types::Scalars::DateTime, null: false
+        field :anime, Canary::Types::Objects::AnimeType, null: false
+        field :started_at, Canary::Types::Scalars::DateTime, null: true
         field :vod_title_code, String, null: false
         field :vod_title_name, String, null: false
         field :vod_title_url, String, null: false
         field :rebroadcast, Boolean, null: false
+        field :viewer_selected, Boolean, null: false
 
-        field :slots, Canary::Types::Objects::SlotType.connection_type, null: true do
+        field :slots, Canary::Types::Objects::SlotType.connection_type, null: false, resolver: Canary::Resolvers::SlotsOnProgram do
+          argument :viewer_untracked, Boolean, required: false
           argument :order_by, Canary::Types::InputObjects::SlotOrder, required: false
         end
 
@@ -25,15 +27,16 @@ module Canary
           RecordLoader.for(Channel).load(object.channel_id)
         end
 
-        def work
-          RecordLoader.for(Work).load(object.work_id)
+        def anime
+          RecordLoader.for(Anime).load(object.work_id)
         end
 
-        def slots(order_by: nil)
-          SlotsQuery.new(
-            object.slots.only_kept,
-            order: build_order(order_by)
-          ).call
+        def viewer_selected
+          RecordLoader
+            .for(LibraryEntry, column: :program_id, where: {user_id: context[:viewer].id})
+            .load(object.id).then do |le|
+              !le.nil?
+            end
         end
       end
     end

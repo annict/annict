@@ -33,12 +33,12 @@ module Annict
               works = json.dig("data", "workList")
               break if works.blank?
 
-              attrs << works.map do |work|
+              attrs << works.map { |work|
                 {
                   code: work["workId"],
                   name: work["workInfo"]["workTitle"].strip
                 }
-              end
+              }
 
               sleep rand(1..5)
             end

@@ -7,27 +7,32 @@
       .mb-3
         = link_to userland_project_path(@project) do
           = ann_image_tag @project, :image, size: "100x100", class: "img-fluid img-thumbnail rounded"
-      h1.h2.font-weight-bold
-        = link_to @project.name, userland_project_path(@project), class: "u-text-body"
+      h1.h2.fw-bold
+        = link_to @project.name, userland_project_path(@project), class: "text-body"
       .text-muted
         = @project.summary
 
-h2.h4.font-weight-bold.text-center.mt-3.mb-4
+h2.h4.fw-bold.text-center.my-3
   = t "noun.information"
-.c-card.py-3.mb-3
-  .container
-    dl.row.mb-0
-      dt.col-6.text-right = t "noun.category"
-      dd.col-6 = @project.userland_category.local_name
-      dt.col-6.text-right = t "activerecord.attributes.userland_project.url"
-      dd.col-6 = link_with_domain @project.url
+.container.u-container-flat
+  .card.rounded-3.u-card-flat
+    .card-body
+      dl.row.mb-0
+        dt.col-6.text-end = t "noun.category"
+        dd.col-6 = @project.userland_category.local_name
+        dt.col-6.text-end = t "activerecord.attributes.userland_project.url"
+        dd.col-6 = link_with_domain @project.url
 
-h2.h4.font-weight-bold.text-center.mt-3.mb-4
+h2.h4.fw-bold.text-center.my-3
   = t "activerecord.attributes.userland_project.description"
-.c-card.p-3.mb-3
-  == render_markdown @project.description
+.container.u-container-flat
+  .card.rounded-3.u-card-flat
+    .card-body
+      == render_markdown @project.description
 
-h2.h4.font-weight-bold.text-center.mt-3.mb-4
+h2.h4.fw-bold.text-center.my-3
   = t "noun.development_members"
-.c-card.mb-3
-  = render "users/user_list", users: @project.users.only_kept
+.container.u-container-flat
+  .card.rounded-3.u-card-flat
+    .card-body
+      = render "users/user_list", users: @project.users.only_kept

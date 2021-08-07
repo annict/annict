@@ -6,7 +6,7 @@ module Api
       before_action :prepare_params!, only: [:index]
 
       def index
-        @works = Work.only_kept
+        @works = Anime.only_kept
         @works = Api::V1::WorkIndexService.new(@works, @params).result
       end
     end

@@ -1,7 +1,0 @@
-- if resource.errors.any?
-  .c-error-panel.alert.alert-danger
-    h4.alert-heading
-      = t "noun.error"
-    ul
-      - resource.errors.full_messages.each do |msg|
-        li = msg

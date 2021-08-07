@@ -44,17 +44,17 @@ module Db
       14.times do |i|
         rows << [
           program.id,
-          (base_started_at + (i * 7).days).in_time_zone(time_zone).strftime("%Y-%m-%d %H:%M"),
+          (base_started_at + (i * 7).days).in_time_zone(time_zone).strftime("%Y-%m-%d %H:%M")
         ]
       end
 
-      self.rows = (self.rows || "") + rows.map do |r|
+      self.rows = (self.rows || "") + rows.map { |r|
         r.join(",")
-      end.join("\n") + "\n"
+      }.join("\n") + "\n"
     end
 
     def attrs_list
-      @attrs_list ||= fetched_rows.map do |row_data|
+      @attrs_list ||= fetched_rows.map { |row_data|
         {
           work_id: @work.id,
           channel_id: row_data[:channel][:id],
@@ -64,7 +64,7 @@ module Db
           rebroadcast: row_data[:rebroadcast][:value],
           time_zone: @user.time_zone
         }
-      end
+      }
     end
 
     def fetched_rows
@@ -73,11 +73,11 @@ module Db
         episode = @work.episodes.without_deleted.find_by(id: row_columns[2])
 
         {
-          channel: { id: program&.channel&.id, value: row_columns[0] },
-          started_at: { value: row_columns[1] },
-          episode: { id: episode&.id },
-          rebroadcast: { value: program&.rebroadcast? == true },
-          program: { id: program&.id, value: row_columns[0] }
+          channel: {id: program&.channel&.id, value: row_columns[0]},
+          started_at: {value: row_columns[1]},
+          episode: {id: episode&.id},
+          rebroadcast: {value: program&.rebroadcast? == true},
+          program: {id: program&.id, value: row_columns[0]}
         }
       end
     end

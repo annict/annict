@@ -4,7 +4,7 @@ module Canary
   module Types
     module Objects
       class UserType < Canary::Types::Objects::Base
-        implements GraphQL::Relay::Node.interface
+        implements GraphQL::Types::Relay::Node
 
         global_id_field :id
 
@@ -25,14 +25,15 @@ module Canary
         field :is_committer, Boolean, null: false
         field :locale, String, null: true
         field :display_supporter_badge, Boolean, null: false
+        field :share_record_to_twitter, Boolean, null: false, method: :share_record_to_twitter?
         field :records_count, Integer, null: false
         field :following_count, Integer, null: false
         field :followers_count, Integer, null: false
-        field :plan_to_watch_works_count, Integer, null: false
-        field :watching_works_count, Integer, null: false
-        field :completed_works_count, Integer, null: false
-        field :on_hold_works_count, Integer, null: false
-        field :dropped_works_count, Integer, null: false
+        field :plan_to_watch_anime_count, Integer, null: false
+        field :watching_anime_count, Integer, null: false
+        field :completed_anime_count, Integer, null: false
+        field :on_hold_anime_count, Integer, null: false
+        field :dropped_anime_count, Integer, null: false
         field :notifications_count, Integer, null: true
         field :character_favorites_count, Integer, null: false
         field :person_favorites_count, Integer, null: false
@@ -57,26 +58,33 @@ module Canary
           argument :order_by, Canary::Types::InputObjects::ActivityOrder, required: false
         end
 
-        field :records, Canary::Types::Objects::RecordType.connection_type, null: true do
+        field :record, Canary::Types::Objects::RecordType, null: true, resolver: Canary::Resolvers::Record do
+          argument :database_id, Integer, required: true
+        end
+
+        field :records, Canary::Types::Objects::RecordType.connection_type, null: true, resolver: Canary::Resolvers::Records do
           argument :month, String, required: false
+          argument :episode_id, ID, required: false
           argument :order_by, Canary::Types::InputObjects::RecordOrder, required: false
         end
 
-        field :episode_records, Canary::Types::Objects::EpisodeRecordType.connection_type, null: true do
-          argument :order_by, Canary::Types::InputObjects::EpisodeRecordOrder, required: false
-          argument :has_body, Boolean, required: false
-        end
-
-        field :works, Canary::Types::Objects::WorkType.connection_type, null: true do
+        field :anime_list, Canary::Types::Objects::AnimeType.connection_type, null: true do
           argument :database_ids, [Integer], required: false
           argument :seasons, [String], required: false
           argument :titles, [String], required: false
           argument :status_kind, Canary::Types::Enums::StatusKind, required: false
-          argument :order_by, Canary::Types::InputObjects::WorkOrder, required: false
+          argument :order_by, Canary::Types::InputObjects::AnimeOrder, required: false
         end
 
-        field :slots, Canary::Types::Objects::SlotType.connection_type, null: true do
-          argument :unwatched, Boolean, required: false
+        field :library_entries, Canary::Types::Objects::LibraryEntryType.connection_type, null: true, resolver: Canary::Resolvers::LibraryEntries do
+          argument :status_kinds, [Canary::Types::Enums::StatusKind], required: false
+          argument :until_current_season, Boolean, required: false
+          argument :order_by, Canary::Types::InputObjects::LibraryEntryOrder, required: false
+        end
+
+        field :slots, Canary::Types::Objects::SlotType.connection_type, null: false, resolver: Canary::Resolvers::SlotsOnUser do
+          argument :until_next_night, Boolean, required: false
+          argument :untracked, Boolean, required: false
           argument :order_by, Canary::Types::InputObjects::SlotOrder, required: false
         end
 
@@ -131,8 +139,12 @@ module Canary
         end
 
         def display_supporter_badge
+          return false unless object.gumroad_subscriber_id
+
           Canary::RecordLoader.for(Setting, column: :user_id).load(object.id).then do |setting|
-            context[:viewer] == object ? !setting.hide_supporter_badge? : object.supporter? && !setting.hide_supporter_badge?
+            Canary::RecordLoader.for(GumroadSubscriber).load(object.gumroad_subscriber_id).then do |gumroad_subscriber|
+              context[:viewer] == object ? !setting.hide_supporter_badge? : gumroad_subscriber&.active? && !setting.hide_supporter_badge?
+            end
           end
         end
 
@@ -148,11 +160,33 @@ module Canary
 
         def email
           return if context[:viewer] != object
+
           object.email
+        end
+
+        def plan_to_watch_anime_count
+          object.plan_to_watch_works_count
+        end
+
+        def watching_anime_count
+          object.watching_works_count
+        end
+
+        def completed_anime_count
+          object.completed_works_count
+        end
+
+        def on_hold_anime_count
+          object.on_hold_works_count
+        end
+
+        def dropped_anime_count
+          object.dropped_works_count
         end
 
         def notifications_count
           return if context[:viewer] != object
+
           object.notifications_count
         end
 
@@ -165,38 +199,21 @@ module Canary
         end
 
         def activity_groups(order_by: nil)
-          order = build_order(order_by)
+          order = Canary::OrderProperty.build(order_by)
           object.activity_groups.order(order.field => order.direction)
         end
 
         def activities(order_by: nil)
-          order = build_order(order_by)
+          order = Canary::OrderProperty.build(order_by)
           object.activities.order(order.field => order.direction)
         end
 
         def following_activity_groups(order_by: nil)
-          object.following_resources(model: ActivityGroup, viewer: context[:viewer], order: build_order(order_by))
+          object.following_resources(model: ActivityGroup, viewer: context[:viewer], order: Canary::OrderProperty.build(order_by))
         end
 
         def following_activities(order_by: nil)
-          object.following_resources(model: Activity, viewer: context[:viewer], order: build_order(order_by))
-        end
-
-        def records(month: nil, order_by: nil)
-          collection = object.records.only_kept
-
-          if month
-            if !%r{[0-9]{4}-[0-9]{2}}.match?(month)
-              raise GraphQL::ExecutionError, "The `month` argument should be like `2020-03`"
-            end
-
-            start_time = Time.zone.parse("#{month}-01").in_time_zone(object.time_zone).beginning_of_month
-            end_time = start_time.end_of_month
-            collection = collection.between_times(start_time, end_time)
-          end
-
-          order = build_order(order_by)
-          collection.order(order.field => order.direction)
+          object.following_resources(model: Activity, viewer: context[:viewer], order: Canary::OrderProperty.build(order_by))
         end
 
         def episode_records(order_by: nil, has_body: nil)
@@ -207,9 +224,9 @@ module Canary
           ).call
         end
 
-        def works(database_ids: nil, seasons: nil, titles: nil, status_kind: nil, order_by: nil)
+        def anime_list(database_ids: nil, seasons: nil, titles: nil, status_kind: nil, order_by: nil)
           SearchWorksQuery.new(
-            object.works.all,
+            object.animes,
             user: object,
             annict_ids: database_ids,
             seasons: seasons,
@@ -219,32 +236,23 @@ module Canary
           ).call
         end
 
-        def slots(watched: nil, order_by: nil)
-          UserSlotsQuery.new(
-            object,
-            Slot.only_kept.with_works(object.works_on(:wanna_watch, :watching).only_kept),
-            watched: watched,
-            order: build_order(order_by)
-          ).call
-        end
-
         def character_favorites(order_by: nil)
-          order = build_order(order_by)
+          order = Canary::OrderProperty.build(order_by)
           object.character_favorites.order(order.field => order.direction)
         end
 
         def cast_favorites(order_by: nil)
-          order = build_order(order_by)
+          order = Canary::OrderProperty.build(order_by)
           object.person_favorites.with_cast.order(order.field => order.direction)
         end
 
         def staff_favorites(order_by: nil)
-          order = build_order(order_by)
+          order = Canary::OrderProperty.build(order_by)
           object.person_favorites.with_staff.order(order.field => order.direction)
         end
 
         def organization_favorites(order_by: nil)
-          order = build_order(order_by)
+          order = Canary::OrderProperty.build(order_by)
           object.organization_favorites.order(order.field => order.direction)
         end
       end

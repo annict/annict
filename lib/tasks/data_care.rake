@@ -1,19 +1,19 @@
 # frozen_string_literal: true
 
 namespace :data_care do
-  task :merge_work, %i(base_work_id work_id) => :environment do |_, args|
+  task :merge_work, %i[base_work_id work_id] => :environment do |_, args|
     base_work_id, work_id = args.values_at(:base_work_id, :work_id)
     merge_work = Annict::DataCare::MergeWork.new(base_work_id, work_id)
     merge_work.run!
   end
 
-  task :merge_episode, %i(base_episode_id episode_id) => :environment do |_, args|
+  task :merge_episode, %i[base_episode_id episode_id] => :environment do |_, args|
     base_episode_id, episode_id = args.values_at(:base_episode_id, :episode_id)
     merge_episode = Annict::DataCare::MergeEpisode.new(base_episode_id, episode_id)
     merge_episode.run!
   end
 
-  task :move_episode, %i(episode_id work_id) => :environment do |_, args|
+  task :move_episode, %i[episode_id work_id] => :environment do |_, args|
     episode_id, work_id = args.values_at(:episode_id, :work_id)
     move_episode = Annict::DataCare::MoveEpisode.new(episode_id, work_id)
     move_episode.run!
@@ -43,27 +43,27 @@ namespace :data_care do
     person.destroy_in_batches
   end
 
-  task :copy_casts, %i(base_work_id work_id) => :environment do |_, args|
-    base_work = Work.find(args[:base_work_id])
-    work = Work.find(args[:work_id])
+  task :copy_casts, %i[base_work_id work_id] => :environment do |_, args|
+    base_work = Anime.find(args[:base_work_id])
+    work = Anime.find(args[:work_id])
 
     base_work.casts.order(:sort_number).each do |cast|
       work.casts.create(cast.attributes.except("id", "created_at", "updated_at"))
     end
   end
 
-  task :copy_staffs, %i(base_work_id work_id) => :environment do |_, args|
-    base_work = Work.find(args[:base_work_id])
-    work = Work.find(args[:work_id])
+  task :copy_staffs, %i[base_work_id work_id] => :environment do |_, args|
+    base_work = Anime.find(args[:base_work_id])
+    work = Anime.find(args[:work_id])
 
     base_work.staffs.order(:sort_number).each do |staff|
       work.staffs.create(staff.attributes.except("id", "created_at", "updated_at"))
     end
   end
 
-  task :set_sc_count_and_raw_number_to_works, %i(work_id) => :environment do |_, args|
+  task :set_sc_count_and_raw_number_to_works, %i[work_id] => :environment do |_, args|
     ActiveRecord::Base.transaction do
-      work = Work.find(args[:work_id])
+      work = Anime.find(args[:work_id])
       work.episodes.order(:sort_number).each_with_index do |e, i|
         number = i + 1
         puts "#{e.number}: #{number}"
@@ -72,7 +72,7 @@ namespace :data_care do
     end
   end
 
-  task :reset_user_records_and_statuses, %i(username) => :environment do |_, args|
+  task :reset_user_records_and_statuses, %i[username] => :environment do |_, args|
     user = User.only_kept.find_by(username: args[:username])
 
     puts "Deleting Records..."

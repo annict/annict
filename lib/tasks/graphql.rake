@@ -3,20 +3,16 @@
 require "graphql/rake_task"
 
 namespace :graphql do
-  task :dump_schema, %i(version) => :environment do |_, args|
+  task :dump_schema, %i[version] => :environment do |_, args|
     version = args[:version]
 
-    schema_definition = if version
-      "#{version.classify}::AnnictSchema".constantize.to_definition
-    else
-      AnnictSchema.to_definition
+    unless version
+      puts "version required"
+      next
     end
 
-    schema_path = if version
-      "app/graphql/#{version}/schema.graphql"
-    else
-      "app/graphql/schema.graphql"
-    end
+    schema_definition = "#{version.camelize}::AnnictSchema".constantize.to_definition
+    schema_path = "app/graphql/#{version}/schema.graphql"
 
     File.write(Rails.root.join(schema_path), schema_definition)
 

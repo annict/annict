@@ -1,7 +1,0 @@
-html {
-  font-size: 16px;
-
-  @include media-breakpoint-down(sm) {
-    font-size: 14px;
-  }
-}

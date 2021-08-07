@@ -22,11 +22,11 @@ module Annict
       private
 
       def base_work
-        @base_work ||= Work.find(base_work_id)
+        @base_work ||= Anime.find(base_work_id)
       end
 
       def work
-        @work ||= Work.find(work_id)
+        @work ||= Anime.find(work_id)
       end
 
       def merge_statuses!

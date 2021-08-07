@@ -1,22 +1,22 @@
 - action_user = notification.action_user
 - episode_record = notification.trackable.recipient
 - episode = episode_record.episode
-- work = episode.work
+- work = episode.anime
 
-span.mr-1
+span.me-1
   = action_user.name_link
 | liked your episode_record on
-span.ml-1
+span.ms-1
   = work.title_link
 - unless work.single?
-  span.ml-1
+  span.ms-1
     = episode.number_link
 
 .small.text-muted.my-2
   = link_to local_time_ago_in_words(episode_record.created_at), record_path(current_user.username, episode_record.record)
   - if episode_record.body.present?
     | :
-    span.ml-1
+    span.ms-1
     = episode_record.body
 
 .small.text-muted

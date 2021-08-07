@@ -2,15 +2,15 @@
   = link_to userland_project_path(project) do
     = ann_image_tag project, :image, size: "280x280", class: "img-fluid img-thumbnail rounded"
 
-h1.h2.font-weight-bold.mb-2
-  = link_to project.name, userland_project_path(project), class: "u-text-body"
+h1.h2.fw-bold.mb-2
+  = link_to project.name, userland_project_path(project), class: "text-body"
 
 .text-muted
-  span.mr-2
+  span.me-2
     = project.summary
 
-h2.h4.font-weight-bold.mt-4.mb-3
-  = icon "sticky-note", "far", class: "mr-1"
+h2.h4.fw-bold.mt-4.mb-3
+  = icon "sticky-note", "far", class: "me-1"
   = t "noun.information"
 
 dl
@@ -19,16 +19,16 @@ dl
   dt.small = t "activerecord.attributes.userland_project.url"
   dd = link_with_domain project.url
 
-h2.h4.font-weight-bold.mt-4.mb-3
-  = icon "user", "far", class: "mr-1"
+h2.h4.fw-bold.mt-4.mb-3
+  = icon "user", "far", class: "me-1"
   = t "noun.development_members"
 
 .row.px-3
   - project.users.only_kept.each do |user|
-    .col.col-auto.pl-0.pr-2.pb-2
-      = link_to profile_detail_path(user.username) do
+    .col.col-auto.ps-0.pe-2.pb-2
+      = link_to profile_path(user.username) do
         = ann_image_tag(user.profile, :image, size: "30x30", class: "rounded-circle", alt: user.decorate.name_with_username, title: user.decorate.name_with_username)
 
 - if user_signed_in? && current_user.userland_project_member?(project)
-  = link_to t("resources.userland_project.edit"), edit_userland_project_path(project), class: "btn btn-secondary w-100 mt-2"
+  = link_to t("resources.userland_project.edit"), userland_edit_project_path(project), class: "btn btn-secondary w-100 mt-2"
   = link_to t("resources.userland_project.delete"), userland_project_path(project), class: "btn btn-secondary w-100 mt-2", data: { method: :delete, confirm: t("messages._common.are_you_sure") }

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: userland_projects
@@ -31,7 +32,7 @@
 
 class UserlandProject < ApplicationRecord
   include UserlandProjectImageUploader::Attachment.new(:image)
-  include Localizable
+  include UgcLocalizable
   include ImageUploadable
 
   counter_culture :userland_category
@@ -41,7 +42,7 @@ class UserlandProject < ApplicationRecord
   has_many :users, through: :userland_project_members
 
   validates :description, presence: true
-  validates :name, presence: true, length: { maximum: 50 }
-  validates :summary, presence: true, length: { maximum: 150 }
+  validates :name, presence: true, length: {maximum: 50}
+  validates :summary, presence: true, length: {maximum: 150}
   validates :url, presence: true, url: true
 end

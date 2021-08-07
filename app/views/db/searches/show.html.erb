@@ -1,7 +1,7 @@
 <% title = t "head.title.db.searches.show" %>
 <% set_meta_tags(title: title, reverse: true, prefix: false) %>
 
-<div class="container-fluid py-3">
+<div class="container py-3">
   <div class="mb-3">
     <h1>
       <%= title %>
@@ -14,11 +14,15 @@
         <%= t "noun.#{resource_name.to_s.pluralize}" %>
       </h2>
 
-      <% if resources.present? %>
-        <%= render "db/#{resource_name.to_s.pluralize}/#{resource_name}_list", resources: resources %>
-      <% else %>
-        <%= render "application/components/empty", text: t("messages._empty.no_resources") %>
-      <% end %>
+      <div class="card">
+        <div class="card-body">
+          <% if resources.present? %>
+            <%= render "db/#{resource_name.to_s.pluralize}/#{resource_name}_list", resources: resources %>
+          <% else %>
+            <%= render "application/components/empty", text: t("messages._empty.no_resources") %>
+          <% end %>
+        </div>
+      </div>
     </div>
   <% end %>
 </div>

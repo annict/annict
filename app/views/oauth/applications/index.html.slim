@@ -1,26 +1,28 @@
 - title = t "head.title.oauth.applications.index"
 - set_meta_tags(title: title, og: { title: title }, reverse: true, prefix: false)
 
-.c-card.container.mt-3.mb-4.py-3
-  .text-right.mb-3
+.container.py-3
+  .text-end
     = link_to new_oauth_application_path, class: "btn btn-primary" do
-      = icon "plus"
+      i.far.fa-plus.me-2
       = t "messages.oauth.applications.new"
 
-  - if @applications.present?
-    table.table
-      thead
-        tr
-          th = t "activerecord.attributes.oauth_application.name"
-          th = t "activerecord.attributes.oauth_application.redirect_uri"
-          th = t "noun.edit"
-          th = t "noun.delete"
-      tbody
-        - @applications.each do |application|
-          tr
-            td = link_to application.name, oauth_application_path(application)
-            td = application.redirect_uri
-            td = link_to t("noun.edit"), edit_oauth_application_path(application), class: "btn btn-secondary"
-            td = link_to t("noun.delete"), oauth_application_path(application), class: "btn btn-danger", data: { method: :delete, confirm: t("messages._common.are_you_sure") }
-  - else
-    = render "application/components/empty", text: t("messages._empty.no_resources")
+  .card.mt-3
+    .card-body
+      - if @applications.present?
+        table.table
+          thead
+            tr
+              th = t "activerecord.attributes.oauth_application.name"
+              th = t "activerecord.attributes.oauth_application.redirect_uri"
+              th = t "noun.edit"
+              th = t "noun.delete"
+          tbody
+            - @applications.each do |application|
+              tr
+                td = link_to application.name, oauth_application_path(application)
+                td = application.redirect_uri
+                td = link_to t("noun.edit"), edit_oauth_application_path(application), class: "btn btn-secondary"
+                td = link_to t("noun.delete"), oauth_application_path(application), class: "btn btn-danger", data: { method: :delete, confirm: t("messages._common.are_you_sure") }
+      - else
+        = render "application/components/empty", text: t("messages._empty.no_resources")

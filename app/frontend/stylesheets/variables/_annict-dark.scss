@@ -1,0 +1,76 @@
+@mixin ann-variables-dark {
+  // -------------------------------------------------------------------
+  // Annict独自の変数
+  // -------------------------------------------------------------------
+
+  --ann-anime-color: #{$ann-anime-color};
+  --ann-color-sidebar-bg: #{tint-color($ann-scheme-dark-color, 5%)};
+  --ann-color-spoiler-guard-body: #{rgba($gray-200, 0.5)};
+  --ann-color-tracking-heatmap-bg: #{tint-color($gray-900, 15%)};
+  --ann-mizuho-color: #{$ann-mizuho-color};
+  --ann-rating-average-color: #{$ann-rating-average-color};
+  --ann-rating-bad-color: #{$ann-rating-bad-color};
+  --ann-rating-good-color: #{$ann-rating-good-color};
+  --ann-rating-great-color: #{$ann-rating-great-color};
+  --ann-season-autumn-color: #{$ann-season-autumn-color};
+  --ann-season-spring-color: #{$ann-season-spring-color};
+  --ann-season-summer-color: #{$ann-season-summer-color};
+  --ann-season-unknown-color: #{$ann-season-unknown-color};
+  --ann-season-winter-color: #{$ann-season-winter-color};
+  --ann-status-completed-color: #{$ann-status-completed-color};
+  --ann-status-dropped-color: #{$ann-status-dropped-color};
+  --ann-status-on-hold-color: #{$ann-status-on-hold-color};
+  --ann-status-plan-to-watch-color: #{$ann-status-plan-to-watch-color};
+  --ann-status-watching-color: #{$ann-status-watching-color};
+  --ann-supporter-color: #{$ann-supporter-color};
+
+  // -------------------------------------------------------------------
+  // Bootstrap関係の変数
+  // -------------------------------------------------------------------
+
+  // Body
+
+  --ann-body-bg: #{$ann-scheme-dark-color};
+  --ann-body-color: #{$gray-200};
+
+  // Links
+
+  --ann-link-color: #{tint-color($link-color, 40%)};
+  --ann-link-hover-color: #{tint-color($link-hover-color, 40%)};
+
+  // Components
+
+  --ann-border-color: #{shade-color($border-color, 40%)};
+
+  // Typography
+
+  --ann-hr-color: var(--ann-border-color);
+
+  // Tables
+
+  --ann-table-border-color: var(--ann-border-color);
+
+  // Forms
+
+  --ann-input-bg: #{$gray-900};
+  --ann-input-color: var(--ann-body-color);
+  --ann-input-border-color: #{$gray-700};
+  --ann-input-focus-bg: var(--ann-input-bg);
+  --ann-input-focus-color: var(--ann-input-color);
+  --ann-form-select-color: var(--ann-input-color);
+  --ann-form-select-bg: var(--ann-input-bg);
+  --ann-form-select-border-color: var(--ann-input-border-color);
+
+  // Navs
+
+  --ann-nav-link-color: var(--ann-link-color);
+  --ann-nav-link-hover-color: var(--ann-link-hover-color);
+
+  // Dropdowns
+
+  --ann-dropdown-border-color: #{shade-color($border-color, 50%)};
+
+  // Cards
+
+  --ann-card-bg: #{tint-color($ann-scheme-dark-color, 8%)};
+}

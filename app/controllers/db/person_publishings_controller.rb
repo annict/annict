@@ -2,7 +2,7 @@
 
 module Db
   class PersonPublishingsController < Db::ApplicationController
-    include V4::ResourcePublishable
+    include ResourcePublishable
 
     before_action :authenticate_user!
 

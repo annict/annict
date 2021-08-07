@@ -6,10 +6,10 @@ module Mentionable
   included do
     def notify_mentioned_users(*columns)
       columns.each do |column|
-        usernames = send(column).scan(/@[A-Za-z0-9_]+/).map do |str|
+        usernames = send(column).scan(/@[A-Za-z0-9_]+/).map { |str|
           str[0] = ""
           str
-        end
+        }
 
         usernames.each do |username|
           MentionMailer.notify(username, id, self.class.name, column.to_s).deliver_later

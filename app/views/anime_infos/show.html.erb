@@ -1,0 +1,159 @@
+<% title = t "head.title.anime_infos.show", title: @anime.local_title %>
+<% description = meta_description(t("head.meta.description.anime_infos.show", title: @anime.local_title)) %>
+<% image_url = ann_image_url(@anime.anime_image, :image, width: 640) %>
+<% set_meta_tags(title: title, description: description, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false) %>
+
+<%= component_value_fetcher_tag("status-select-dropdown", internal_api_library_entry_list_path, method: :post, payload: {anime_ids: [@anime.id]}) %>
+
+<%= Headers::AnimeHeaderComponent.new(self, anime: @anime, programs: @programs).render %>
+
+<div class="py-3">
+  <div class="container u-container-flat">
+    <div class="card u-card-flat">
+      <div class="card-body">
+        <div class="g-3 row">
+          <% if @anime.title_kana.present? %>
+            <div class="col-6 col-sm-4">
+              <div class="fw-bold small">
+                <%= t "activerecord.attributes.anime.title_kana" %>
+              </div>
+              <div>
+                <%= @anime.title_kana %>
+              </div>
+            </div>
+          <% end %>
+
+          <% if @anime.title_en.present? %>
+            <div class="col-6 col-sm-4">
+              <div class="fw-bold small">
+                <%= t "activerecord.attributes.anime.title_en" %>
+              </div>
+              <div>
+                <%= @anime.title_en %>
+              </div>
+            </div>
+          <% end %>
+
+          <div class="col-6 col-sm-4">
+            <div class="fw-bold small">
+              <%= t "activerecord.attributes.anime.media" %>
+            </div>
+            <div>
+              <%= @anime.media.text %>
+            </div>
+          </div>
+
+          <% if @anime.season.present? %>
+            <div class="col-6 col-sm-4">
+              <div class="fw-bold small">
+                <%= t "noun.release_season" %>
+              </div>
+              <div>
+                <%= @anime.release_season_link %>
+              </div>
+            </div>
+          <% end %>
+
+          <% if @anime.started_on.present? %>
+            <div class="col-6 col-sm-4">
+              <div class="fw-bold small">
+                <%= @anime.started_on_label %>
+              </div>
+              <div>
+                <%= display_date(@anime.started_on) %>
+              </div>
+            </div>
+          <% end %>
+
+          <% if @anime.official_site_url.present? %>
+            <div class="col-6 col-sm-4">
+              <div class="fw-bold small">
+                <%= t "activerecord.attributes.anime.official_site_url" %>
+              </div>
+              <div>
+                <%= link_with_domain @anime.official_site_url %>
+              </div>
+            </div>
+          <% end %>
+
+          <% if @anime.official_site_url_en.present? %>
+            <div class="col-6 col-sm-4">
+              <div class="fw-bold small">
+                <%= t "activerecord.attributes.anime.official_site_url_en" %>
+              </div>
+              <div>
+                <%= link_with_domain @anime.official_site_url_en %>
+              </div>
+            </div>
+          <% end %>
+
+          <% if @anime.twitter_username.present? %>
+            <div class="col-6 col-sm-4">
+              <div class="fw-bold small">
+                <%= t "activerecord.attributes.anime.twitter_username" %>
+              </div>
+              <div>
+                <%= @anime.twitter_username_link %>
+              </div>
+            </div>
+          <% end %>
+
+          <% if @anime.twitter_hashtag.present? %>
+            <div class="col-6 col-sm-4">
+              <div class="fw-bold small">
+                <%= t "activerecord.attributes.anime.twitter_hashtag" %>
+              </div>
+              <div>
+                <%= @anime.twitter_hashtag_link %>
+              </div>
+            </div>
+          <% end %>
+
+          <% if @anime.wikipedia_url.present? %>
+            <div class="col-6 col-sm-4">
+              <div class="fw-bold small">
+                <%= t "activerecord.attributes.anime.wikipedia_url" %>
+              </div>
+              <div>
+                <%= link_with_domain @anime.wikipedia_url %>
+              </div>
+            </div>
+          <% end %>
+
+          <% if @anime.wikipedia_url_en.present? %>
+            <div class="col-6 col-sm-4">
+              <div class="fw-bold small">
+                <%= t "activerecord.attributes.anime.wikipedia_url_en" %>
+              </div>
+              <div>
+                <%= link_with_domain .wikipedia_url_en %>
+              </div>
+            </div>
+          <% end %>
+
+          <% if @anime.sc_tid.present? %>
+            <div class="col-6 col-sm-4">
+              <div class="fw-bold small">
+                <%= t "noun.syobocal" %>
+              </div>
+              <div>
+                <%= @anime.syobocal_link %>
+              </div>
+            </div>
+          <% end %>
+
+          <% if @anime.mal_anime_id.present? %>
+            <div class="col-6 col-sm-4">
+              <div class="fw-bold small">
+                <%= t "noun.my_anime_list" %>
+              </div>
+              <div>
+                <%= @anime.mal_anime_link %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

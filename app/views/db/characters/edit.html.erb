@@ -1,13 +1,15 @@
 <% title = t "head.title.db.characters.edit", name: @character.name %>
 <% set_meta_tags(title: title, reverse: true, prefix: false) %>
 
-<div class="container-fluid py-3">
-  <div class="mb-3">
-    <h1>
-      <%= title %>
-    </h1>
+<div class="container py-3">
+  <div class="align-items-center row">
+    <div class="col">
+      <h1>
+        <%= title %>
+      </h1>
+    </div>
 
-    <div class="text-right">
+    <div class="col-auto">
       <%= link_to character_path(@character), class: "btn btn-outline-primary", target: "_blank" do %>
         <%= icon "external-link-alt" %>
         <%= t("resources.character.go_to_character") %>
@@ -15,146 +17,150 @@
     </div>
   </div>
 
-  <div class="mb-3 row">
+  <div class="gx-3 row mt-3">
     <div class="col-6">
-      <%= form_with model: @character, url: db_character_detail_path(@character), method: :patch, local: true do |f| %>
-        <%= render "application/components/error_panel", resource: f.object %>
+      <div class="card">
+        <div class="card-body">
+          <%= form_with model: @character, url: db_character_detail_path(@character), method: :patch do |f| %>
+            <%= render "application/components/error_panel", resource: f.object %>
 
-        <div class="form-group">
-          <%= f.label :name, class: "c-label-required" %>
-          <%= f.text_field :name, class: "form-control", required: true, autofocus: true %>
+            <div class="mb-3">
+              <%= f.label :name, class: "c-label-required" %>
+              <%= f.text_field :name, class: "form-control", required: true, autofocus: true %>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :name_kana %>
+              <%= f.text_field :name_kana, class: "form-control" %>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :name_en %>
+              <%= f.text_field :name_en, class: "form-control" %>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :nickname %>
+              <%= f.text_field :nickname, class: "form-control" %>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :nickname_en %>
+              <%= f.text_field :nickname_en, class: "form-control" %>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :series_id %>
+              <select
+                class="form-select"
+                data-controller="resource-selector"
+                data-resource-selector-model-name="Series"
+                name="character[series_id]"
+              >
+                <% if f.object.series&.id %>
+                  <option value="<%= f.object.series.id %>" selected="">
+                    <%= f.object.series.local_name %>
+                  </option>
+                <% else %>
+                  <option value="" selected=""></option>
+                <% end %>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :birthday %>
+              <%= f.text_field :birthday, class: "form-control" %>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :birthday_en %>
+              <%= f.text_field :birthday_en, class: "form-control" %>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :age %>
+              <%= f.text_field :age, class: "form-control" %>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :age_en %>
+              <%= f.text_field :age_en, class: "form-control" %>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :blood_type %>
+              <%= f.text_field :blood_type, class: "form-control" %>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :blood_type_en %>
+              <%= f.text_field :blood_type_en, class: "form-control" %>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :height %>
+              <%= f.text_field :height, class: "form-control" %>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :height_en %>
+              <%= f.text_field :height_en, class: "form-control" %>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :weight %>
+              <%= f.text_field :weight, class: "form-control" %>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :weight_en %>
+              <%= f.text_field :weight_en, class: "form-control" %>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :nationality %>
+              <%= f.text_field :nationality, class: "form-control" %>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :nationality_en %>
+              <%= f.text_field :nationality_en, class: "form-control" %>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :occupation %>
+              <%= f.text_field :occupation, class: "form-control" %>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :occupation_en %>
+              <%= f.text_field :occupation_en, class: "form-control" %>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :description %>
+              <%= f.text_area :description, class: "form-control", rows: 10 %>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :description_source %>
+              <%= f.text_field :description_source, class: "form-control" %>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :description_en %>
+              <%= f.text_area :description_en, class: "form-control", rows: 10 %>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :description_source_en %>
+              <%= f.text_field :description_source_en, class: "form-control" %>
+            </div>
+
+            <%= f.submit t("helpers.submit.update"), class: "btn btn-primary" %>
+          <% end %>
         </div>
-
-        <div class="form-group">
-          <%= f.label :name_kana %>
-          <%= f.text_field :name_kana, class: "form-control" %>
-        </div>
-
-        <div class="form-group">
-          <%= f.label :name_en %>
-          <%= f.text_field :name_en, class: "form-control" %>
-        </div>
-
-        <div class="form-group">
-          <%= f.label :nickname %>
-          <%= f.text_field :nickname, class: "form-control" %>
-        </div>
-
-        <div class="form-group">
-          <%= f.label :nickname_en %>
-          <%= f.text_field :nickname_en, class: "form-control" %>
-        </div>
-
-        <div class="form-group">
-          <%= f.label :series_id %>
-          <select
-            class="form-control"
-            data-controller="db--resource-selector"
-            data-db--resource-selector-model-name="Series"
-            name="character[series_id]"
-          >
-            <% if f.object.series&.id %>
-              <option value="<%= f.object.series.id %>" selected="">
-                <%= f.object.series.local_name %>
-              </option>
-            <% else %>
-              <option value="" selected=""></option>
-            <% end %>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <%= f.label :birthday %>
-          <%= f.text_field :birthday, class: "form-control" %>
-        </div>
-
-        <div class="form-group">
-          <%= f.label :birthday_en %>
-          <%= f.text_field :birthday_en, class: "form-control" %>
-        </div>
-
-        <div class="form-group">
-          <%= f.label :age %>
-          <%= f.text_field :age, class: "form-control" %>
-        </div>
-
-        <div class="form-group">
-          <%= f.label :age_en %>
-          <%= f.text_field :age_en, class: "form-control" %>
-        </div>
-
-        <div class="form-group">
-          <%= f.label :blood_type %>
-          <%= f.text_field :blood_type, class: "form-control" %>
-        </div>
-
-        <div class="form-group">
-          <%= f.label :blood_type_en %>
-          <%= f.text_field :blood_type_en, class: "form-control" %>
-        </div>
-
-        <div class="form-group">
-          <%= f.label :height %>
-          <%= f.text_field :height, class: "form-control" %>
-        </div>
-
-        <div class="form-group">
-          <%= f.label :height_en %>
-          <%= f.text_field :height_en, class: "form-control" %>
-        </div>
-
-        <div class="form-group">
-          <%= f.label :weight %>
-          <%= f.text_field :weight, class: "form-control" %>
-        </div>
-
-        <div class="form-group">
-          <%= f.label :weight_en %>
-          <%= f.text_field :weight_en, class: "form-control" %>
-        </div>
-
-        <div class="form-group">
-          <%= f.label :nationality %>
-          <%= f.text_field :nationality, class: "form-control" %>
-        </div>
-
-        <div class="form-group">
-          <%= f.label :nationality_en %>
-          <%= f.text_field :nationality_en, class: "form-control" %>
-        </div>
-
-        <div class="form-group">
-          <%= f.label :occupation %>
-          <%= f.text_field :occupation, class: "form-control" %>
-        </div>
-
-        <div class="form-group">
-          <%= f.label :occupation_en %>
-          <%= f.text_field :occupation_en, class: "form-control" %>
-        </div>
-
-        <div class="form-group">
-          <%= f.label :description %>
-          <%= f.text_area :description, class: "form-control", rows: 10 %>
-        </div>
-
-        <div class="form-group">
-          <%= f.label :description_source %>
-          <%= f.text_field :description_source, class: "form-control" %>
-        </div>
-
-        <div class="form-group">
-          <%= f.label :description_en %>
-          <%= f.text_area :description_en, class: "form-control", rows: 10 %>
-        </div>
-
-        <div class="form-group">
-          <%= f.label :description_source_en %>
-          <%= f.text_field :description_source_en, class: "form-control" %>
-        </div>
-
-        <%= f.submit t("helpers.submit.update"), class: "btn btn-primary" %>
-      <% end %>
+      </div>
     </div>
 
     <div class="col-6">

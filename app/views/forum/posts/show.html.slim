@@ -1,67 +1,67 @@
 - title = "#{t('head.title.forum.posts.show', title: @post.title)} - Forum"
 - set_meta_tags(title: title, reverse: true, prefix: false)
 
-= render "forum/application/subnav", post: @post
+= render "forum/application/nav", post: @post
 
-.container.py-3.mb-3
-  .mb-3
+.container.py-3
+  div
     .mb-1
-      = link_to @post.forum_category.local_name,  forum_category_path(@post.forum_category.slug), class: "badge badge-secondary"
+      = link_to @post.forum_category.local_name,  forum_category_path(@post.forum_category.slug), class: "badge bg-secondary rounded-pill"
     h1.h2.mb-0
       = @post.title
 
-  .row
-    .col-8
-      .c-card.p-3.mb-3
-        .row.mb-3
-          .col.col-auto.pr-0
-            = link_to profile_detail_path(@post.user.username) do
-              = render ProfileImageComponent.new(image_url_1x: ann_image_url(@post.user.profile, :image, size: "45x", ratio: "1:1"), alt: "@#{@post.user.username}")
-          .col.pl-2
-            = link_to @post.user.profile.name, profile_detail_path(@post.user.username), class: "mr-2"
-            = @post.user.role_badge
-            .mt-1
-              = link_to forum_post_path(@post), class: "small text-muted", title: display_time(@post.created_at) do
-                = display_time(@post.created_at)
+.container
+  .card.rounded-3
+    .card-body
+      .gx-3.row
+        .col-auto
+          = link_to profile_path(@post.user.username) do
+            = Pictures::AvatarPictureComponent.new(self, user: @post.user, width: 45).render
+        .col
+          = link_to @post.user.profile.name, profile_path(@post.user.username), class: "me-2"
+          = @post.user.role_badge
+          .mt-1
+            = link_to forum_post_path(@post), class: "small text-muted", title: display_time(@post.created_at) do
+              = display_time(@post.created_at)
 
-        = render BodyComponent.new(markdown: true) do
-          = @post.body
+      = BodyV6Component.new(self, content: @post.body, format: :markdown).render
 
-        - if user_signed_in? && current_user == @post.user
-          .text-right
-            = link_to edit_forum_post_path(@post), class: "small" do
-              = icon "pencil-alt", class: "mr-1"
-              = t "noun.edit"
+      - if user_signed_in? && current_user == @post.user
+        .text-end
+          = link_to forum_edit_post_path(@post), class: "small" do
+            = icon "pencil-alt", class: "me-1"
+            = t "noun.edit"
 
-      - if @comments.present?
-        - @comments.each do |comment|
-          .c-card.p-3.mb-3
-            - if comment.user
-              .row.mb-3
-                .col.col-auto.pr-0
-                  = link_to profile_detail_path(comment.user.username) do
-                    = render ProfileImageComponent.new(image_url_1x: ann_image_url(comment.user.profile, :image, size: "45x", ratio: "1:1"), alt: "@#{comment.user.username}")
-                .col.pl-2
-                  = link_to comment.user.profile.name, profile_detail_path(comment.user.username), class: "mr-2"
-                  = comment.user.role_badge
-                  .mt-1
-                    span.small.text-muted title="#{display_time(comment.created_at)}"
-                      = display_time(comment.created_at)
+  - if @comments.present?
+    - @comments.each do |comment|
+      .card.rounded-3.mt-3
+        .card-body
+          - if comment.user
+            .row.mb-3
+              .col.col-auto.pe-0
+                = link_to profile_path(comment.user.username) do
+                  = Pictures::AvatarPictureComponent.new(self, user: comment.user, width: 45).render
+              .col.ps-2
+                = link_to comment.user.profile.name, profile_path(comment.user.username), class: "me-2"
+                = comment.user.role_badge
+                .mt-1
+                  span.small.text-muted title="#{display_time(comment.created_at)}"
+                    = display_time(comment.created_at)
 
-              = render BodyComponent.new(markdown: true) do
-                = comment.body
+            = BodyV6Component.new(self, content: comment.body, format: :markdown).render
 
-              - if user_signed_in? && current_user == comment.user
-                .text-right
-                  = link_to edit_forum_post_comment_path(@post, comment), class: "small" do
-                    = icon "pencil-alt", class: "mr-1"
-                    = t "noun.edit"
-            - else
-              = t "messages.forum.comments.deleted"
-      - else
-        .mb-3
-          = render "application/components/empty", text: t("messages.forum.posts.no_comments")
+            - if user_signed_in? && current_user == comment.user
+              .text-end
+                = link_to forum_edit_comment_path(@post, comment), class: "small" do
+                  = icon "pencil-alt", class: "me-1"
+                  = t "noun.edit"
+          - else
+            = t "messages.forum.comments.deleted"
+  - else
+    .card.mt-3.rounded-3
+      .card-body
+        = render "application/components/empty", text: t("messages.forum.posts.no_comments")
 
-      .c-card.p-3.mb-3
-        = render "forum/comments/form", comment: @comment
-    .col-4
+  .card.mt-3.rounded-3
+    .card-body
+      = render "forum/comments/form", comment: @comment, form_url: forum_comment_list_path(@comment.forum_post), form_method: :post, submit_text: t("verb.comment")

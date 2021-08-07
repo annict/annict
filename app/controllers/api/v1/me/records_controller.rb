@@ -4,74 +4,73 @@ module Api
   module V1
     module Me
       class RecordsController < Api::V1::ApplicationController
-        include V4::GraphqlRunnable
-
-        before_action :prepare_params!, only: %i(create update destroy)
+        before_action :prepare_params!, only: %i[create update destroy]
 
         def create
           episode = Episode.only_kept.find(@params.episode_id)
-
-          episode_record, err = CreateEpisodeRecordRepository.new(
-            graphql_client: graphql_client(viewer: current_user)
-          ).create(
+          form = Forms::EpisodeRecordForm.new(
+            comment: @params.comment,
+            deprecated_rating: @params.rating,
             episode: episode,
-            params: {
-              rating: @params.rating,
-              rating_state: @params.rating_state,
-              body: @params.comment,
-              share_to_twitter: @params.share_twitter
-            }
+            rating: @params.rating_state,
+            share_to_twitter: @params.share_twitter
           )
 
-          if err
-            return render_validation_error(err.message)
+          if form.invalid?
+            return render_validation_error(form.errors.full_messages.first)
           end
 
-          @episode_record = current_user.episode_records.find(episode_record.database_id)
+          creator = Creators::EpisodeRecordCreator.new(
+            user: current_user,
+            form: form
+          ).call
+
+          @episode_record = current_user.episode_records.find_by!(record_id: creator.record.id)
         end
 
         def update
           @episode_record = current_user.episode_records.only_kept.find(@params.id)
-          @episode_record.rating = @params.rating
-          @episode_record.rating_state = @params.rating_state
-          @episode_record.body = @params.comment
-          @episode_record.share_to_twitter = @params.share_twitter == "true"
-          @episode_record.modify_body = true
-          @episode_record.oauth_application = doorkeeper_token.application
-          @episode_record.detect_locale!(:body)
+          episode = @episode_record.episode
+          record = @episode_record.record
 
-          if @episode_record.valid?
-            ActiveRecord::Base.transaction do
-              @episode_record.save(validate: false)
-              current_user.update_share_record_setting(@episode_record.share_to_twitter)
+          form = Forms::EpisodeRecordForm.new(
+            comment: @params.comment,
+            episode: episode,
+            oauth_application: doorkeeper_token.application,
+            rating: @params.rating_state,
+            deprecated_rating: @params.rating,
+            record: record,
+            share_to_twitter: @params.share_twitter
+          )
 
-              if current_user.share_record_to_twitter?
-                current_user.share_episode_record_to_twitter(@episode_record)
-              end
-            end
-          else
-            render_validation_errors(@episode_record)
+          if form.invalid?
+            return render_validation_error(form.errors.full_messages.first)
           end
+
+          Updaters::EpisodeRecordUpdater.new(
+            user: current_user,
+            form: form
+          ).call
         end
 
         def destroy
           @episode_record = current_user.episode_records.only_kept.find(@params.id)
-          @episode_record.record.destroy
+          Destroyers::RecordDestroyer.new(record: @episode_record.record).call
           head 204
         end
 
         private
 
         def render_validation_errors(record)
-          errors = record.errors.full_messages.map do |message|
+          errors = record.errors.full_messages.map { |message|
             {
               type: "invalid_params",
               message: message,
               url: "http://example.com/docs/api/validations"
             }
-          end
+          }
 
-          render json: { errors: errors }, status: 400
+          render json: {errors: errors}, status: 400
         end
 
         def render_validation_error(message)

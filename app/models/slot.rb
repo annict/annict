@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: slots
@@ -45,14 +46,14 @@ class Slot < ApplicationRecord
   include DbActivityMethods
   include Unpublishable
 
-  DIFF_FIELDS = %i(channel_id episode_id started_at rebroadcast).freeze
+  DIFF_FIELDS = %i[channel_id episode_id started_at rebroadcast].freeze
 
   attr_accessor :time_zone, :is_started_at_calced, :shift_time_along_with_after_slots
 
   belongs_to :channel
   belongs_to :episode, optional: true
   belongs_to :program, optional: true
-  belongs_to :work, touch: true
+  belongs_to :anime, foreign_key: :work_id, touch: true
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
 
@@ -60,8 +61,8 @@ class Slot < ApplicationRecord
   validates :started_at, presence: true
 
   scope :episode_published, -> { joins(:episode).merge(Episode.only_kept) }
-  scope :with_not_deleted_work, -> { joins(:work).merge(Work.only_kept) }
-  scope :with_works, ->(works) { joins(:work).merge(works) }
+  scope :with_not_deleted_anime, -> { joins(:anime).merge(Anime.only_kept) }
+  scope :with_works, ->(works) { joins(:anime).merge(works) }
 
   before_validation :calc_for_timezone
 
@@ -81,10 +82,10 @@ class Slot < ApplicationRecord
   end
 
   def to_diffable_hash
-    data = self.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
+    data = self.class::DIFF_FIELDS.each_with_object({}) { |field, hash|
       hash[field] = send(field)
       hash
-    end
+    }
 
     data.delete_if { |_, v| v.blank? }
   end
@@ -95,10 +96,12 @@ class Slot < ApplicationRecord
 
     if now > start
       return :broadcasting if now.between?(start, start + work.duration.minutes)
-      return :broadcasted
+
+      :broadcasted
     else
       return :tonight if start.between?(now, now.beginning_of_day + 1.day + 5.hours)
-      return :unbroadcast
+
+      :unbroadcast
     end
   end
 

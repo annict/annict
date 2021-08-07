@@ -1,0 +1,33 @@
+.c-hero {
+  width: 100%;
+
+  &__bg-image {
+    background-position: center;
+    background-size: cover;
+    filter: brightness(35%);
+    height: 100%;
+  }
+
+  &__content {
+    width: 100%;
+    z-index: 1;
+  }
+}
+
+@include media-breakpoint-up(lg) {
+  .c-hero {
+    min-height: 400px;
+  }
+}
+
+@include media-breakpoint-down(lg) {
+  .c-hero {
+    .display-3 {
+      font-size: 2rem;
+    }
+
+    .lead {
+      font-size: 1rem;
+    }
+  }
+}

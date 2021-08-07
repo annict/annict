@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: staffs
@@ -39,11 +40,11 @@ class Staff < ApplicationRecord
   include DbActivityMethods
   include Unpublishable
 
-  DIFF_FIELDS = %i(
+  DIFF_FIELDS = %i[
     resource_id name role role_other sort_number name_en role_other_en
-  ).freeze
+  ].freeze
 
-  enumerize :role, in: %w(
+  enumerize :role, in: %w[
     original_creator
     chief_director
     director
@@ -58,12 +59,12 @@ class Staff < ApplicationRecord
     music
     studio
     other
-  )
+  ]
 
-  counter_culture :resource, column_name: -> (staff) { staff.published? ? :staffs_count : nil }
+  counter_culture :resource, column_name: ->(staff) { staff.published? ? :staffs_count : nil }
 
   belongs_to :resource, polymorphic: true
-  belongs_to :work, touch: true
+  belongs_to :anime, foreign_key: :work_id, touch: true
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
 
@@ -77,7 +78,7 @@ class Staff < ApplicationRecord
   before_validation :set_name
 
   def to_diffable_hash
-    data = self.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
+    data = self.class::DIFF_FIELDS.each_with_object({}) { |field, hash|
       hash[field] = case field
       when :role
         send(field).to_s if send(field).present?
@@ -86,7 +87,7 @@ class Staff < ApplicationRecord
       end
 
       hash
-    end
+    }
 
     data.delete_if { |_, v| v.blank? }
   end

@@ -1,28 +1,37 @@
 <% title = t "head.title.db.works.edit", title: @work.local_title %>
 <% set_meta_tags(title: title, reverse: true, prefix: false) %>
 
-<div class="container-fluid py-3">
-  <div class="mb-3">
-    <h1>
-      <%= title %>
-    </h1>
+<div class="container py-3">
+  <div class="align-items-center row">
+    <div class="col">
+      <h1>
+        <%= title %>
+      </h1>
+    </div>
 
-    <div class="text-right">
-      <%= link_to work_path(@work), class: "btn btn-outline-primary", target: "_blank" do %>
-        <%= icon "external-link-alt" %>
-        <%= t("resources.work.go_to_work") %>
-      <% end %>
+    <div class="col-auto">
+      <div class="text-end">
+        <%= link_to anime_path(anime_id: @work.id), class: "btn btn-outline-primary", target: "_blank" do %>
+          <%= icon "external-link-alt" %>
+          <%= t("resources.work.go_to_work") %>
+        <% end %>
+      </div>
     </div>
   </div>
 
-  <div class="mb-3">
+  <div class="mt-3">
     <%= render "db/works/subnav", work: @work %>
   </div>
 
-  <div class="mb-3 row">
+  <div class="gx-3 row mt-3">
     <div class="col-6">
-      <%= render "form", model: @work, form_url: db_work_detail_path(@work), form_method: :patch %>
+      <div class="card">
+        <div class="card-body">
+          <%= render "form", model: @work, form_url: db_work_detail_path(@work), form_method: :patch %>
+        </div>
+      </div>
     </div>
+
     <div class="col-6">
       <%= render "sidebar" %>
     </div>

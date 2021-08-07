@@ -2,7 +2,7 @@
 
 describe "PATCH /db/programs/:id", type: :request do
   context "user does not sign in" do
-    let!(:channel) { create(:channel) }
+    let!(:channel) { Channel.last }
     let!(:program) { create(:program) }
     let!(:old_program) { program.attributes }
     let!(:program_params) do
@@ -12,7 +12,7 @@ describe "PATCH /db/programs/:id", type: :request do
     end
 
     it "user can not access this page" do
-      patch "/db/programs/#{program.id}", params: { program: program_params }
+      patch "/db/programs/#{program.id}", params: {program: program_params}
       program.reload
 
       expect(response.status).to eq(302)
@@ -23,7 +23,7 @@ describe "PATCH /db/programs/:id", type: :request do
   end
 
   context "user who is not editor signs in" do
-    let!(:channel) { create(:channel) }
+    let!(:channel) { Channel.last }
     let!(:user) { create(:registered_user) }
     let!(:program) { create(:program) }
     let!(:old_program) { program.attributes }
@@ -38,7 +38,7 @@ describe "PATCH /db/programs/:id", type: :request do
     end
 
     it "user can not access" do
-      patch "/db/programs/#{program.id}", params: { program: program_params }
+      patch "/db/programs/#{program.id}", params: {program: program_params}
       program.reload
 
       expect(response.status).to eq(302)
@@ -49,8 +49,7 @@ describe "PATCH /db/programs/:id", type: :request do
   end
 
   context "user who is editor signs in" do
-    let!(:channel) { create(:channel) }
-    let!(:number_format) { create(:number_format) }
+    let!(:channel) { Channel.first }
     let!(:user) { create(:registered_user, :with_editor_role) }
     let!(:program) { create(:program) }
     let!(:old_program) { program.attributes }
@@ -68,7 +67,7 @@ describe "PATCH /db/programs/:id", type: :request do
     it "user can update program" do
       expect(program.channel_id).to eq(old_program["channel_id"])
 
-      patch "/db/programs/#{program.id}", params: { program: program_params }
+      patch "/db/programs/#{program.id}", params: {program: program_params}
       program.reload
 
       expect(response.status).to eq(302)

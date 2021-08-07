@@ -1,8 +1,0 @@
-.c-card.container.pt-3.mb-3
-  = render "works/work_info", work: work
-  .c-slidable-subnav
-    ul.c-slidable-subnav__list.list-inline
-      li.list-inline-item = active_link_to t("noun.detail"), work_path(work), class: "c-slidable-subnav__link", class_active: "c-slidable-subnav__link--active", active: params[:controller] == "works" && params[:action].in?(%w(show))
-      - unless work.no_episodes?
-        li.list-inline-item = active_link_to t("noun.episodes"), work_episodes_path(work), class: "c-slidable-subnav__link", class_active: "c-slidable-subnav__link--active", active: params[:controller].in?(%w(episodes)) && params[:action].in?(%w(index show new))
-      li.list-inline-item = active_link_to t("noun.records"), work_records_path(work), class: "c-slidable-subnav__link", class_active: "c-slidable-subnav__link--active", active: params[:controller].in?(%w(work_records)) && params[:action].in?(%w(index new create edit update))

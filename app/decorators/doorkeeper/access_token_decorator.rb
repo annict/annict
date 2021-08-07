@@ -3,9 +3,9 @@
 module Doorkeeper
   module AccessTokenDecorator
     def local_scopes
-      scopes.to_a.map do |scope|
+      scopes.to_a.map { |scope|
         I18n.t("doorkeeper.scopes.#{scope}")
-      end.join(", ")
+      }.join(", ")
     end
   end
 end

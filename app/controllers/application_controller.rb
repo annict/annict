@@ -4,28 +4,21 @@ class ApplicationController < ActionController::Base
   include Pundit
 
   include ControllerCommon
-  include Localable
   include Analyzable
   include LogrageSetting
-  include Gonable
   include ViewSelector
-  include FlashMessage
-  include RavenContext
+  include SentryLoadable
+  include Localizable
   include PageCategorizable
-  include V4::Localizable
-  include V4::UserDataFetchable
+  include KeywordSearchable
+
+  layout "main_default"
 
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception, prepend: true
 
-  helper_method :gon, :locale_ja?, :locale_en?, :local_url, :page_category
-
   around_action :set_locale
-  before_action :redirect_if_unexpected_subdomain
-  before_action :set_search_params
-  before_action :load_new_user
-  before_action :store_data_into_gon
 
   # テスト実行時にDragonflyでアップロードした画像を読み込むときに呼ばれるアクション
   # 画像サーバはこのRailsアプリから切り離しているので、CircleCI等でテストを実行するときは

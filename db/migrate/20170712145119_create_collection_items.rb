@@ -17,7 +17,7 @@ class CreateCollectionItems < ActiveRecord::Migration[5.1]
     add_index :collection_items, :user_id
     add_index :collection_items, :collection_id
     add_index :collection_items, :work_id
-    add_index :collection_items, %i(collection_id work_id), unique: true
+    add_index :collection_items, %i[collection_id work_id], unique: true
 
     add_foreign_key :collection_items, :users
     add_foreign_key :collection_items, :collections

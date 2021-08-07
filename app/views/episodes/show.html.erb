@@ -1,0 +1,77 @@
+<% title = t "head.title.episodes.show", work_title: @anime.local_title, episode_title_with_number: @episode.title_with_number %>
+<% description = meta_description(t("head.meta.description.episodes.show", work_title: @anime.local_title, episode_title_with_number: @episode.title_with_number)) %>
+<% image_url = ann_image_url(@anime.anime_image, :image, width: 640) %>
+<% set_meta_tags(title: title, description: description, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false) %>
+
+<%= component_value_fetcher_tag("status-select-dropdown", internal_api_library_entry_list_path, method: :post, payload: {anime_ids: [@anime.id]}) %>
+<%= component_value_fetcher_tag("like-button", internal_api_like_list_path) %>
+<%= component_value_fetcher_tag("spoiler-guard", internal_api_spoiler_guard_path) %>
+
+<%= Headers::AnimeHeaderComponent.new(self, anime: @anime, programs: @programs).render %>
+
+<div class="py-3">
+  <div class="container u-container-flat">
+    <div class="card u-card-flat">
+      <div class="card-body">
+        <div class="align-items-center gx-3 row">
+          <div class="col">
+            <h2 class="fw-bold mb-0">
+              <%= link_to @episode.title_with_number, episode_path(@anime.id, @episode.id), class: "text-body" %>
+            </h2>
+          </div>
+
+          <div class="col-auto">
+            <%= ButtonGroups::EpisodeTransitionButtonGroupComponent.new(self, episode: @episode).render %>
+          </div>
+        </div>
+
+        <ul class="list-inline mb-0">
+          <li class="list-inline-item">
+            <span class="small text-muted">
+              <%= t "noun.records_count" %>
+              :
+            </span>
+
+            <span class="fw-bold ms-1">
+              <%= @episode.episode_records_count %>
+            </span>
+          </li>
+
+          <li class="list-inline-item">
+            <span class="small text-muted">
+              <%= t "noun.comments_count" %>
+              :
+            </span>
+
+            <span class="fw-bold ms-1">
+              <%= @episode.commented_episode_records_count %>
+            </span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="container mt-3 u-container-flat">
+    <div class="card u-card-flat">
+      <div class="card-body">
+        <%= Forms::EpisodeRecordFormComponent.new(self, form: @form, current_user: current_user).render %>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-5">
+    <div
+      data-controller="reloadable"
+      data-reloadable-event-name-value="episode-record-list-group"
+      data-reloadable-url-value="<%= fragment_episode_record_list_path(@episode.id, page: params[:page]) %>"
+    >
+      <%= ListGroups::RecordListGroupComponent.new(
+        self,
+        my_records: @my_records,
+        following_records: @following_records,
+        all_records: @all_records
+      ).render %>
+    </div>
+  </div>
+</div>

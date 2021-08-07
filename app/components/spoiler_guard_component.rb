@@ -1,12 +1,22 @@
 # frozen_string_literal: true
 
-class SpoilerGuardComponent < ApplicationComponent
-  def initialize(work_id:, episode_id: nil)
-    @work_id = work_id
-    @episode_id = episode_id
+class SpoilerGuardComponent < ApplicationV6Component
+  def initialize(view_context, record:)
+    super view_context
+    @record = record
   end
 
-  private
-
-  attr_reader :work_id, :episode_id
+  def render
+    build_html do |h|
+      h.tag :div, {
+        class: "c-spoiler-guard is-spoiler",
+        data_controller: "spoiler-guard",
+        data_action: "click->spoiler-guard#hide",
+        data_spoiler_guard_work_id_value: @record.work_id,
+        data_spoiler_guard_episode_id_value: @record.episode_record&.episode_id
+      } do
+        yield h
+      end
+    end
+  end
 end

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: vod_titles
@@ -33,7 +34,7 @@ class VodTitle < ApplicationRecord
   include SoftDeletable
 
   belongs_to :channel
-  belongs_to :work, optional: true
+  belongs_to :anime, foreign_key: :work_id, optional: true
 
   def import_csv
     [

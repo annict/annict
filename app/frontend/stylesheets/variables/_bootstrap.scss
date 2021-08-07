@@ -1,0 +1,85 @@
+// Color system
+
+$blue: #2563eb;
+$indigo: #6366f1;
+$purple: #8b5cf6;
+$pink: #ec4899;
+$red: #ef4444;
+$orange: #f97316;
+$yellow: #eab308;
+$green: #22c55e;
+$teal: #14b8a6;
+$cyan: #06b6d4;
+
+$primary: $ann-mizuho-color;
+
+// Spacing
+
+$spacer: 1rem;
+$spacers: (
+  0: 0,
+  1: $spacer * 0.25,
+  2: $spacer * 0.5,
+  3: $spacer,
+  4: $spacer * 1.5,
+  5: $spacer * 2,
+) !default;
+
+// Body
+
+$body-bg: $ann-scheme-light-color;
+
+// Links
+
+$link-color: $blue;
+$link-decoration: none;
+
+// Grid columns
+
+$grid-gutter-width: 2rem;
+
+// Components
+
+$border-radius: 0.3rem;
+$border-radius-sm: 0.25rem;
+$border-radius-lg: 1rem;
+$border-radius-pill: 50rem;
+
+// Typography
+
+$h1-font-size: 1.75rem;
+$h2-font-size: 1.5rem;
+$h3-font-size: 1.25rem;
+$h4-font-size: 1rem;
+$h5-font-size: 0.75rem;
+$h6-font-size: 0.5rem;
+
+$display1-size: 3rem;
+$display2-size: 2.5rem;
+
+$headings-font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Segoe UI', 'ヒラギノ角ゴ ProN W3',
+  Hiragino Kaku Gothic ProN, Arial, 'メイリオ', Meiryo, sans-serif;
+$headings-font-weight: 400;
+
+$list-inline-padding: 0.5rem;
+
+// Navbar
+
+$navbar-padding-y: 0.3rem;
+
+// Cards
+
+$card-border-radius: $border-radius-lg;
+$card-border-width: 0;
+
+// Badges
+
+$badge-border-radius: $border-radius-lg;
+
+// Image thumbnails
+
+$thumbnail-padding: 0;
+
+// Buttons
+
+$btn-border-radius: $border-radius-pill;

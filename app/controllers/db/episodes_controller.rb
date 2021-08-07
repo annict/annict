@@ -2,31 +2,32 @@
 
 module Db
   class EpisodesController < Db::ApplicationController
-    before_action :authenticate_user!, only: %i(new create edit update destroy)
+    before_action :authenticate_user!, only: %i[new create edit update destroy]
 
     def index
-      @work = Work.without_deleted.find(params[:work_id])
-      @episodes = @work.episodes.without_deleted.
-        includes(:prev_episode).
-        order(sort_number: :desc).
-        page(params[:page]).
-        per(100)
+      @work = Anime.without_deleted.find(params[:work_id])
+      @episodes = @work.episodes.without_deleted
+        .includes(:prev_episode)
+        .order(sort_number: :desc)
+        .page(params[:page])
+        .per(100)
+        .without_count
     end
 
     def new
-      @work = Work.without_deleted.find(params[:work_id])
+      @work = Anime.without_deleted.find(params[:work_id])
       @form = Db::EpisodeRowsForm.new
       authorize @form
     end
 
     def create
-      @work = Work.without_deleted.find(params[:work_id])
+      @work = Anime.without_deleted.find(params[:work_id])
       @form = Db::EpisodeRowsForm.new(episode_rows_form_params)
       @form.user = current_user
       @form.work = @work
       authorize @form
 
-      return render(:new) unless @form.valid?
+      return render(:new, status: :unprocessable_entity) unless @form.valid?
 
       @form.save!
 
@@ -36,18 +37,18 @@ module Db
     def edit
       @episode = Episode.without_deleted.find(params[:id])
       authorize @episode
-      @work = @episode.work
+      @work = @episode.anime
     end
 
     def update
       @episode = Episode.without_deleted.find(params[:id])
       authorize @episode
-      @work = @episode.work
+      @work = @episode.anime
 
       @episode.attributes = episode_params
       @episode.user = current_user
 
-      return render(:edit) unless @episode.valid?
+      return render(:edit, status: :unprocessable_entity) unless @episode.valid?
 
       @episode.save_and_create_activity!
 
@@ -61,7 +62,7 @@ module Db
       @episode.destroy_in_batches
 
       redirect_back(
-        fallback_location: db_episode_list_path(@episode.work),
+        fallback_location: db_episode_list_path(@episode.anime),
         notice: t("messages._common.deleted")
       )
     end

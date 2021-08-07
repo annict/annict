@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: db_comments
@@ -25,7 +26,7 @@
 
 class DbComment < ApplicationRecord
   include Mentionable
-  include Localizable
+  include UgcLocalizable
 
   belongs_to :resource, polymorphic: true
   belongs_to :user

@@ -20,12 +20,12 @@ module Annict
         result = Nokogiri::HTML(html)
         links = result.css(".search-list .ttl-list li a")
 
-        attrs = links.map do |link|
+        attrs = links.map { |link|
           {
             code: link.attr(:href)[/([0-9]+)/],
             name: link.text.strip
           }
-        end
+        }
 
         return if attrs.blank?
 

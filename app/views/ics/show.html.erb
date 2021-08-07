@@ -13,12 +13,12 @@ BEGIN:VEVENT
 DTSTART:<%= p.started_at.strftime("%Y%m%d\T%H%M%S\Z") %>
 DTEND:<%= (p.started_at + 30.minutes).strftime("%Y%m%d\T%H%M%S\Z") %>
 DTSTAMP:<%= Time.now.utc.strftime("%Y%m%d\T%H%M%S\Z") %>
-UID:<%= work_episode_url(p.work, p.episode) %>
+UID:<%= episode_url(p.work_id, p.episode_id) %>
 CREATED:<%= p.created_at.strftime("%Y%m%d\T%H%M%S\Z") %>
-DESCRIPTION:<%= p.work.local_title %> <%= p.episode.title_with_number %> <%= work_episode_url(p.work, p.episode) %>
+DESCRIPTION:<%= p.anime.local_title %> <%= p.episode.title_with_number %> <%= episode_url(p.work_id, p.episode_id) %>
 LAST-MODIFIED:<%= p.updated_at.strftime("%Y%m%d\T%H%M%S\Z") %>
 SEQUENCE:0
-SUMMARY:<%= p.work.local_title %> <%= p.episode.title_with_number %> (<%= p.channel.name %>)
+SUMMARY:<%= p.anime.local_title %> <%= p.episode.title_with_number %> (<%= p.channel.name %>)
 END:VEVENT
 <% end %>
 <% @works.each do |w| %>
@@ -26,9 +26,9 @@ BEGIN:VEVENT
 DTSTART;VALUE=DATE:<%= w.started_on.strftime("%Y%m%d") %>
 DTEND;VALUE=DATE:<%= (w.started_on + 1.day).strftime("%Y%m%d") %>
 DTSTAMP:<%= Time.now.utc.strftime("%Y%m%d\T%H%M%S\Z") %>
-UID:<%= work_url(w) %>
+UID:<%= anime_url(w) %>
 CREATED:<%= w.created_at.strftime("%Y%m%d\T%H%M%S\Z") %>
-DESCRIPTION:<%= w.local_title %> <%= work_url(w) %>
+DESCRIPTION:<%= w.local_title %> <%= anime_url(w) %>
 LAST-MODIFIED:<%= w.updated_at.strftime("%Y%m%d\T%H%M%S\Z") %>
 SEQUENCE:0
 SUMMARY:<%= w.local_title %>

@@ -12,9 +12,9 @@ module Canary
       records = @model.where(@foreign_key => foreign_values).to_a
 
       foreign_value_sets.each do |foreign_value_set|
-        matching_records = records.select do |r|
+        matching_records = records.select { |r|
           foreign_value_set.include?(r.send(@foreign_key))
-        end
+        }
         fulfill(foreign_value_set, matching_records)
       end
     end

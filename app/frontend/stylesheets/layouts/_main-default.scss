@@ -1,0 +1,22 @@
+.l-default {
+  $root: &;
+
+  &__main {
+    margin-left: 0;
+    // For sticky footer
+    // https://philipwalton.github.io/solved-by-flexbox/demos/sticky-footer/
+    min-height: 100vh;
+
+    #{$root}__content {
+      flex: 1;
+    }
+  }
+}
+
+@include media-breakpoint-up(lg) {
+  .l-default {
+    &__main {
+      margin-left: 240px;
+    }
+  }
+}

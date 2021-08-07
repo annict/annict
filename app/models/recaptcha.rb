@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Recaptcha
-  SITE_KEY   = Rails.env.production? ? ENV.fetch("RECAPTCHA_SITE_KEY") : ENV["RECAPTCHA_SITE_KEY"]
+  SITE_KEY = Rails.env.production? ? ENV.fetch("RECAPTCHA_SITE_KEY") : ENV["RECAPTCHA_SITE_KEY"]
   SECRET_KEY = Rails.env.production? ? ENV.fetch("RECAPTCHA_SECRET_KEY") : ENV["RECAPTCHA_SECRET_KEY"]
   MINIMUM_SCORE = 0.5
 

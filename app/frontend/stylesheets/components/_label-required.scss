@@ -1,0 +1,6 @@
+.c-label-required {
+  &::after {
+    color: $danger;
+    content: ' *';
+  }
+}

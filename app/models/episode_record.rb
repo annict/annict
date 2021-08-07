@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: episode_records
@@ -52,23 +53,23 @@
 class EpisodeRecord < ApplicationRecord
   extend Enumerize
 
-  include Localizable
+  include UgcLocalizable
   include Shareable
   include SoftDeletable
 
-  self.ignored_columns = %w(aasm_state multiple_episode_record_id review_id shared_facebook shared_twitter)
+  self.ignored_columns = %w[aasm_state multiple_episode_record_id review_id shared_facebook shared_twitter]
 
   enumerize :rating_state, in: Record::RATING_STATES, scope: true
 
   counter_culture :episode
-  counter_culture :episode, column_name: -> (episode_record) { episode_record.body.present? ? :episode_record_bodies_count : nil }
+  counter_culture :episode, column_name: ->(episode_record) { episode_record.body.present? ? :episode_record_bodies_count : nil }
   counter_culture :user
 
   attr_accessor :share_to_twitter, :mutation_error
 
+  belongs_to :anime, foreign_key: :work_id
   belongs_to :oauth_application, class_name: "Doorkeeper::Application", optional: true
   belongs_to :record
-  belongs_to :work
   belongs_to :episode
   belongs_to :multiple_episode_record, optional: true
   belongs_to :user
@@ -80,7 +81,7 @@ class EpisodeRecord < ApplicationRecord
     dependent: :destroy,
     as: :recipient
 
-  validates :body, length: { maximum: 1_048_596 }
+  validates :body, length: {maximum: 1_048_596}
   validates :rating,
     allow_blank: true,
     numericality: {
@@ -95,34 +96,41 @@ class EpisodeRecord < ApplicationRecord
     count == 1 && first.id == record.id
   end
 
-  def self.rating_state_order(direction = :asc)
-    direction = direction.in?(%i(asc desc)) ? direction : :asc
-    order <<-SQL
-    CASE
-      WHEN rating_state = 'bad' THEN '0'
-      WHEN rating_state = 'average' THEN '1'
-      WHEN rating_state = 'good' THEN '2'
-      WHEN rating_state = 'great' THEN '3'
-    END #{direction.upcase} NULLS LAST
+  def self.order_by_rating_state(direction = :asc)
+    direction = direction.in?(%i[asc desc]) ? direction : :asc
+    sql = Arel.sql(<<-SQL)
+      CASE
+        WHEN episode_records.rating_state = 'bad' THEN '0'
+        WHEN episode_records.rating_state = 'average' THEN '1'
+        WHEN episode_records.rating_state = 'good' THEN '2'
+        WHEN episode_records.rating_state = 'great' THEN '3'
+      END #{direction.upcase} NULLS LAST
     SQL
+
+    order sql
   end
 
   def rating=(value)
     return super if value.to_f.between?(1, 5)
+
     write_attribute :rating, nil
   end
 
   def rating_to_rating_state
     case rating
-    when 1.0...3.0 then :bad
-    when 3.0...3.5 then :average
-    when 3.5...4.5 then :good
-    when 4.5..5.0 then :great
+    when 1.0...2.0 then :bad
+    when 2.0...3.0 then :average
+    when 3.0...4.0 then :good
+    when 4.0..5.0 then :great
     end
   end
 
   def initial
     order(:id).first
+  end
+
+  def comment
+    body
   end
 
   def generate_url_hash
@@ -139,8 +147,8 @@ class EpisodeRecord < ApplicationRecord
 
   def twitter_share_body
     work_title = work.local_title
-    title = self.body.present? ? work_title.truncate(30) : work_title
-    comment = self.body.present? ? "#{self.body} / " : ""
+    title = body.present? ? work_title.truncate(30) : work_title
+    comment = body.present? ? "#{body} / " : ""
     episode_number = episode.local_number
     share_url = share_url_with_query(:twitter)
     share_hashtag = work.hashtag_with_hash
@@ -160,7 +168,7 @@ class EpisodeRecord < ApplicationRecord
   end
 
   def facebook_share_body
-    return self.body if self.body.present?
+    return body if body.present?
 
     if user.locale == "ja"
       "見ました。"

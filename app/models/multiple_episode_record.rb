@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: multiple_episode_records
@@ -23,7 +24,7 @@
 
 class MultipleEpisodeRecord < ApplicationRecord
   belongs_to :user
-  belongs_to :work
+  belongs_to :anime, foreign_key: :work_id
   has_many :activities,
     dependent: :destroy,
     as: :trackable

@@ -1,0 +1,38 @@
+<% title = t "head.title.notifications.index" %>
+<% set_meta_tags title: title, reverse: true, prefix: false %>
+
+<div class="py-3">
+  <div class="container">
+    <h1 class="fw-bold">
+      <%= title %>
+    </h1>
+
+    <p>
+      <%= t "messages._page_hints.notification_list" %>
+    </p>
+  </div>
+
+  <hr>
+
+  <div class="container mt-3 u-container-flat">
+    <% if @notifications.present? %>
+      <div class="card u-card-flat">
+        <div class="card-body py-0">
+          <% @notifications.each do |notification| %>
+            <%= render "notifications/notification", notification: notification %>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="mt-3 text-center">
+        <%= ButtonGroups::PaginationButtonGroupComponent.new(self, collection: @notifications).render %>
+      </div>
+    <% else %>
+      <div class="card u-card-flat">
+        <div class="card-body">
+          <%= render "application/components/empty", text: t("messages.notifications.no_notifications") %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

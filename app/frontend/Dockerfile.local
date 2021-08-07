@@ -1,19 +1,25 @@
-FROM node:12.16.1-alpine
+FROM node:14.17.3-buster-slim
 
-LABEL maintainer="https://annict.com/@shimbaco" \
-      description="A platform for anime addicts."
+LABEL maintainer="https://annict.jp/@shimbaco" \
+  description="A platform for anime addicts."
 
-RUN apk update && \
-    apk add -t \
-        git
+# Bashを使用する
+SHELL ["/bin/bash", "-c"]
+
+RUN true \
+  && apt update \
+  && apt install -y --no-install-recommends \
+  build-essential \
+  git \
+  python
 
 ENV PATH=./node_modules/.bin/:$PATH \
-    NODE_ENV=development
+  NODE_ENV=development
 
-WORKDIR /annict/
+WORKDIR /workspace/
 
-COPY package.json yarn.lock ./
-RUN yarn install && \
-    yarn cache clean
+COPY package.json package-lock.json ./
+RUN npm install && \
+  npm cache clean --force
 
 EXPOSE 8080

@@ -2,11 +2,11 @@
 - like = notification.trackable
 - work_record = like.recipient
 
-span.mr-1
+span.me-1
   = action_user.name_link
 | が
 span.mx-1
-  = work_record.work.title_link
+  = work_record.anime.title_link
 | への
 = link_to "記録", record_path(work_record.user.username, work_record.record)
 | に「いいね！」しました

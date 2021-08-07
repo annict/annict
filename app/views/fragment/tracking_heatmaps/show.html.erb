@@ -1,0 +1,12 @@
+<turbo-frame id="tracking-heatmap">
+  <div class="c-tracking-heatmap">
+    <% @tracking_data.each do |date, data| %>
+      <div
+        class="c-tracking-heatmap__day c-tracking-heatmap__density-<%= data[:leveled_count] %>"
+        data-bs-toggle="tooltip"
+        data-bs-placement="top"
+        title="<%= "#{date}: #{data[:count]}" %>"
+      ></div>
+    <% end %>
+  </div>
+</div>

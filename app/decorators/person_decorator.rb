@@ -34,7 +34,7 @@ module PersonDecorator
         url = send(:url)
         link_to(url, url, target: "_blank") if url.present?
       when :media
-        Work.media.find_value(send(:media)).text
+        Anime.media.find_value(send(:media)).text
       when :wikipedia_url
         wikipedia_url = send(field)
         if wikipedia_url.present?

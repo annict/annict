@@ -37,9 +37,9 @@ class SearchEpisodesQuery
   end
 
   def apply_filters
-    %i(
+    %i[
       annict_ids
-    ).each do |arg_name|
+    ].each do |arg_name|
       next if @args[arg_name].nil?
       @collection = send(arg_name)
     end

@@ -20,9 +20,9 @@ namespace :mal do
         break if anime_list.key?("error")
 
         anime_list.each do |anime|
-          print "Anime ##{anime['id']}: "
+          print "Anime ##{anime["id"]}: "
 
-          if Work.find_by(mal_anime_id: anime["id"]).present?
+          if Anime.find_by(mal_anime_id: anime["id"]).present?
             puts "already saved"
             next
           end
@@ -60,7 +60,7 @@ namespace :mal do
     private
 
     def fetch_anime_list(page: 1)
-      self.class.get("/anime/popular", query: { page: page })
+      self.class.get("/anime/popular", query: {page: page})
     end
 
     def fetch_anime(mal_anime_id)
@@ -68,11 +68,11 @@ namespace :mal do
     end
 
     def find_work(mal_anime)
-      work = Work.where("lower(title) = ?", mal_anime["title"].downcase).first
+      work = Anime.where("lower(title) = ?", mal_anime["title"].downcase).first
 
       if work.blank?
         (mal_anime.dig("other_titles", "japanese").presence || []).each do |title|
-          work = Work.find_by(title: title)
+          work = Anime.find_by(title: title)
         end
       end
 

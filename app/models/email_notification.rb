@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: email_notifications
@@ -25,5 +26,5 @@
 #
 
 class EmailNotification < ApplicationRecord
-  self.ignored_columns = %w(event_friends_joined)
+  self.ignored_columns = %w[event_friends_joined]
 end

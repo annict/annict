@@ -1,9 +1,0 @@
-- if user_signed_in?
-  - user_records = current_user.episode_records.only_kept.where(episode: episode)
-td
-  .c-episode-row__records-count
-    small
-      - if user_signed_in?
-        = user_records.length
-      - else
-        = episode.episode_records_count

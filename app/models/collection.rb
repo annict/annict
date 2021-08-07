@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: collections
@@ -31,8 +32,8 @@ class Collection < ApplicationRecord
   has_many :collection_items, dependent: :destroy
   has_many :works, through: :collection_items
 
-  validates :title, presence: true, length: { maximum: 50 }
-  validates :description, length: { maximum: 500 }
+  validates :title, presence: true, length: {maximum: 50}
+  validates :description, length: {maximum: 500}
 
   def contain?(work)
     collection_items.where(work: work).exists?
@@ -41,7 +42,7 @@ class Collection < ApplicationRecord
   def positions_for_select
     collection_items.only_kept.order(:position).map do |item|
       key = item.position.to_s
-      key += " (#{I18n.t('messages.collections.position_of_x', item_title: item.title)})"
+      key += " (#{I18n.t("messages.collections.position_of_x", item_title: item.title)})"
       [key, item.position]
     end
   end

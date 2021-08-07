@@ -2,7 +2,7 @@
 
 describe "PATCH /db/works/:id", type: :request do
   context "user does not sign in" do
-    let!(:work) { create(:work) }
+    let!(:work) { create(:anime) }
     let!(:old_work) { work.attributes }
     let!(:work_params) do
       {
@@ -11,7 +11,7 @@ describe "PATCH /db/works/:id", type: :request do
     end
 
     it "user can not access this page" do
-      patch "/db/works/#{work.id}", params: { work: work_params }
+      patch "/db/works/#{work.id}", params: {anime: work_params}
       work.reload
 
       expect(response.status).to eq(302)
@@ -23,7 +23,7 @@ describe "PATCH /db/works/:id", type: :request do
 
   context "user who is not editor signs in" do
     let!(:user) { create(:registered_user) }
-    let!(:work) { create(:work) }
+    let!(:work) { create(:anime) }
     let!(:old_work) { work.attributes }
     let!(:work_params) do
       {
@@ -36,7 +36,7 @@ describe "PATCH /db/works/:id", type: :request do
     end
 
     it "user can not access" do
-      patch "/db/works/#{work.id}", params: { work: work_params }
+      patch "/db/works/#{work.id}", params: {anime: work_params}
       work.reload
 
       expect(response.status).to eq(302)
@@ -47,9 +47,9 @@ describe "PATCH /db/works/:id", type: :request do
   end
 
   context "user who is editor signs in" do
-    let!(:number_format) { create(:number_format) }
+    let!(:number_format) { NumberFormat.first }
     let!(:user) { create(:registered_user, :with_editor_role) }
-    let!(:work) { create(:work) }
+    let!(:work) { create(:anime) }
     let!(:old_work) { work.attributes }
     let!(:work_params) do
       {
@@ -92,7 +92,7 @@ describe "PATCH /db/works/:id", type: :request do
         expect(work.send(attr_name)).to eq(old_work[attr_name.to_s])
       end
 
-      patch "/db/works/#{work.id}", params: { work: work_params }
+      patch "/db/works/#{work.id}", params: {anime: work_params}
       work.reload
 
       expect(response.status).to eq(302)

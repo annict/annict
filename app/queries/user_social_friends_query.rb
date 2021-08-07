@@ -21,13 +21,13 @@ class UserSocialFriendsQuery
     when "facebook" then FacebookService.new(@user).uids
     end
 
-    User.only_kept.joins(:providers).where(providers: { name: provider_name, uid: uids })
+    User.only_kept.joins(:providers).where(providers: {name: provider_name, uid: uids})
   end
 
   private
 
   def twitter_and_facebook_users
-    twitter_uids =  TwitterService.new(@user).uids
+    twitter_uids = TwitterService.new(@user).uids
     facebook_uids = FacebookService.new(@user).uids
 
     t = Provider.arel_table

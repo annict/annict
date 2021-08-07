@@ -4,7 +4,7 @@ module Api
   class GraphqlController < ActionController::Base
     include Analyzable
     include LogrageSetting
-    include RavenContext
+    include SentryLoadable
 
     before_action :doorkeeper_authorize!
     skip_before_action :verify_authenticity_token
@@ -19,7 +19,7 @@ module Api
         viewer: current_user,
         ga_client: ga_client
       }
-      result = AnnictSchema.execute(query, variables: variables, context: context)
+      result = Beta::AnnictSchema.execute(query, variables: variables, context: context)
       annict_logger.log(
         :info,
         :GRAPHQL_API_REQUEST,
@@ -40,7 +40,7 @@ module Api
 
     def bad_credentials
       json = {
-        "message": "Bad credentials"
+        message: "Bad credentials"
       }
       render json: json, status: 401
     end

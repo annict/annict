@@ -2,5 +2,6 @@
 - set_meta_tags(title: title, og: { title: title }, reverse: true, prefix: false)
 
 .container.py-3
-  .c-card.p-3
-    = render "userland/projects/form", project: @project
+  .card.rounded-3
+    .card-body
+      = render "userland/projects/form", project: @project, form_url: userland_project_path(@project), form_method: :patch

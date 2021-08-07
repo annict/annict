@@ -23,8 +23,8 @@ class ChangeSchemaForUserDetail202005 < ActiveRecord::Migration[6.0]
 
     add_index :activities, :activity_group_id
     add_index :activities, :created_at
-    add_index :activities, %i(activity_group_id created_at)
-    add_index :activities, %i(trackable_id trackable_type)
+    add_index :activities, %i[activity_group_id created_at]
+    add_index :activities, %i[trackable_id trackable_type]
 
     add_foreign_key :activities, :activity_groups
   end

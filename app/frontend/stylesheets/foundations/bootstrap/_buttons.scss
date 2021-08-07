@@ -1,0 +1,17 @@
+.btn-secondary {
+  @include button-variant(tint-color($secondary, 40%), tint-color($secondary, 40%));
+}
+
+.btn-outline-secondary {
+  @include color-scheme(dark) {
+    @include button-outline-variant(tint-color($secondary, 40%));
+  }
+}
+
+.btn-link {
+  color: var(--ann-link-color);
+
+  &:hover {
+    color: var(--ann-link-hover-color);
+  }
+}

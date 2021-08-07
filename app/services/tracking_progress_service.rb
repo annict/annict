@@ -39,7 +39,11 @@ class TrackingProgressService
   end
 
   def ratio
-    (halfway_checked_count / work.episodes.only_kept.count.to_f rescue 1) * 100
+    begin
+      halfway_checked_count / work.episodes.only_kept.count.to_f
+    rescue
+      1
+    end * 100
   end
 
   private

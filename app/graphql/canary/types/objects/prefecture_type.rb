@@ -4,7 +4,7 @@ module Canary
   module Types
     module Objects
       class PrefectureType < Canary::Types::Objects::Base
-        implements GraphQL::Relay::Node.interface
+        implements GraphQL::Types::Relay::Node
 
         global_id_field :id
 

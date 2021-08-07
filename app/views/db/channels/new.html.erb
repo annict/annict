@@ -1,16 +1,20 @@
 <% title = t "head.title.db.channels.new" %>
 <% set_meta_tags(title: title, reverse: true, prefix: false) %>
 
-<div class="container-fluid py-3">
-  <div class="mb-3">
+<div class="container py-3">
+  <div>
     <h1>
       <%= title %>
     </h1>
   </div>
 
-  <div class="mb-3 row">
+  <div class="gx-3 row mt-3">
     <div class="col-6">
-      <%= render "form", channel: @channel, form_url: db_channel_list_path, form_method: :post %>
+      <div class="card">
+        <div class="card-body">
+          <%= render "form", channel: @channel, form_url: db_channel_list_path, form_method: :post %>
+        </div>
+      </div>
     </div>
   </div>
 </div>

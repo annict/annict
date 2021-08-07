@@ -29,7 +29,7 @@ module Api
           filter_boolean_params: true
         validates :rating_state,
           presence: true,
-          format: { with: STATES, message: "の値が不正です。" },
+          format: {with: STATES, message: "の値が不正です。"},
           allow_blank: true
       end
     end

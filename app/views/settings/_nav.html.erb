@@ -1,0 +1,39 @@
+<div class="c-nav">
+  <ul class="c-nav__list">
+    <li class="c-nav__item">
+      <%= active_link_to t("head.title.settings.profiles.show"), settings_profile_path, class: "c-nav__link", class_active: "c-nav__link--active", active: [["settings/profiles"], ["show", "update"]] %>
+    </li>
+
+    <li class="c-nav__item">
+      <%= active_link_to t("head.title.settings.accounts.show"), settings_account_path, class: "c-nav__link", class_active: "c-nav__link--active", active: [["settings/accounts"], ["show", "update"]] %>
+    </li>
+
+    <li class="c-nav__item">
+      <%= active_link_to t("head.title.settings.passwords.show"), settings_password_path, class: "c-nav__link", class_active: "c-nav__link--active", active: [["settings/passwords"], ["show", "update"]] %>
+    </li>
+
+    <li class="c-nav__item">
+      <%= active_link_to t("head.title.settings.emails.show"), settings_email_path, class: "c-nav__link", class_active: "c-nav__link--active", active: [["settings/emails"], ["show", "update"]] %>
+    </li>
+
+    <li class="c-nav__item">
+      <%= active_link_to t("head.title.settings.apps.index"), settings_app_list_path, class: "c-nav__link", class_active: "c-nav__link--active", active: [["settings/apps", "settings/tokens"], ["index", "new", "create"]] %>
+    </li>
+
+    <li class="c-nav__item">
+      <%= active_link_to t("head.title.providers.index"), settings_provider_list_path, class: "c-nav__link", class_active: "c-nav__link--active", active: ["settings/providers": :index] %>
+    </li>
+
+    <li class="c-nav__item">
+      <%= active_link_to t("head.title.settings.email_notifications.show"), settings_email_notification_path, class: "c-nav__link", class_active: "c-nav__link--active", active: ["settings/email_notifications": :show] %>
+    </li>
+
+    <li class="c-nav__item">
+      <%= active_link_to t("head.title.mutes.index"), settings_muted_user_list_path, class: "c-nav__link", class_active: "c-nav__link--active", active: ["settings/muted_users": :index] %>
+    </li>
+
+    <li class="c-nav__item">
+      <%= active_link_to t("head.title.options.index"), settings_option_list_path, class: "c-nav__link", class_active: "c-nav__link--active", active: ["settings/options": :index] %>
+    </li>
+  </ul>
+</div>

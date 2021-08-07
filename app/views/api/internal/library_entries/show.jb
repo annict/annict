@@ -1,5 +1,0 @@
-# frozen_string_literal: true
-
-slot_data = @user.slot_data([@library_entry])
-
-render "api/internal/library_entries/library_entry", library_entry: @library_entry, user: @user, slot_data: slot_data

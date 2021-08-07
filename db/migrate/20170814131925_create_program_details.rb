@@ -13,7 +13,7 @@ class CreateProgramDetails < ActiveRecord::Migration[5.1]
 
     add_index :program_details, :channel_id
     add_index :program_details, :work_id
-    add_index :program_details, %i(channel_id work_id), unique: true
+    add_index :program_details, %i[channel_id work_id], unique: true
 
     add_foreign_key :program_details, :channels
     add_foreign_key :program_details, :works

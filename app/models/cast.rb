@@ -38,13 +38,13 @@ class Cast < ApplicationRecord
   include DbActivityMethods
   include Unpublishable
 
-  DIFF_FIELDS = %i(person_id name part sort_number character_id name_en).freeze
+  DIFF_FIELDS = %i[person_id name part sort_number character_id name_en].freeze
 
-  counter_culture :person, column_name: -> (cast) { cast.published? ? :casts_count : nil }
+  counter_culture :person, column_name: ->(cast) { cast.published? ? :casts_count : nil }
 
   belongs_to :character, touch: true
   belongs_to :person, touch: true
-  belongs_to :work, touch: true
+  belongs_to :anime, foreign_key: :work_id, touch: true
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
 
@@ -56,10 +56,10 @@ class Cast < ApplicationRecord
   before_validation :set_name
 
   def to_diffable_hash
-    data = self.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
+    data = self.class::DIFF_FIELDS.each_with_object({}) { |field, hash|
       hash[field] = send(field) if respond_to?(field)
       hash
-    end
+    }
 
     data.delete_if { |_, v| v.blank? }
   end

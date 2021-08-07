@@ -1,19 +1,17 @@
-= form_for post do |f|
+= form_with model: post, url: form_url, method: form_method do |f|
   = render "application/components/error_panel", resource: post
 
-  .form-group
+  .mb-3
     = f.label :forum_category_id, class: "c-label-required"
-    = f.select :forum_category_id, options_from_collection_for_select(ForumCategory.selectable(current_user), :id, :local_name, post.forum_category_id), { include_blank: true }, class: "form-control"
+    = f.select :forum_category_id, options_from_collection_for_select(ForumCategory.selectable(current_user), :id, :local_name, post.forum_category_id), { include_blank: true }, class: "form-select"
 
-  .form-group
+  .mb-3
     = f.label :title, class: "c-label-required"
     = f.text_field :title, class: "form-control"
 
-  .form-group
+  .mb-3
     = f.label :body, class: "c-label-required"
     = f.text_area :body, rows: 15, class: "form-control"
 
-  .form-group.text-center.mb-0
-    = f.button class: "btn btn-primary" do
-      = icon "paper-plane", "far"
-      = t "verb.post"
+  .text-center
+    = f.submit submit_text, class: "btn btn-primary rounded-pill"

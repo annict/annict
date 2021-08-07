@@ -1,0 +1,27 @@
+<% title = t "head.title.organization_fans.index", organization_name: @organization.name_with_other_name %>
+<% description = meta_description t("head.meta.description.organization_fans.index", organization_name: @organization.name_with_other_name) %>
+<% set_meta_tags(title: title, description: description, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false) %>
+
+<%= component_value_fetcher_tag("star-button", internal_api_star_list_path) %>
+
+<div class="py-3">
+  <div class="container">
+    <div class="gx-3 row">
+      <div class="col-12 col-sm-3">
+        <%= render "organizations/sidebar", organization: @organization, organization_favorites: @organization_favorites %>
+      </div>
+
+      <div class="col-12 col-sm-9 mt-3 mt-sm-0">
+        <div class="card">
+          <div class="card-body">
+            <% if @organization_favorites.present? %>
+              <%= render "application/fan_user_list", favorite_resources: @organization_favorites %>
+            <% else %>
+              <%= render "application/components/empty", text: t("messages.organization_fans.no_users") %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

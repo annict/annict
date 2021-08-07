@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-class FaqsController < ApplicationController
-  def index
-    @faq_categories = FaqCategory.only_kept.order(:sort_number)
+class FaqsController < ApplicationV6Controller
+  def show
+    redirect_to "https://github.com/kiraka/annict/blob/main/docs/faq.md"
   end
 end

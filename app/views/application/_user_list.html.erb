@@ -1,0 +1,31 @@
+<div class="g-3 row">
+  <% users.each do |user| %>
+    <div class="col-12 col-sm-6">
+      <div class="align-items-center gx-3 row">
+        <div class="col-auto">
+          <%= link_to profile_path(user.username) do %>
+            <%= Pictures::AvatarPictureComponent.new(self, user: user, width: 50).render %>
+          <% end %>
+        </div>
+
+        <div class="col">
+          <div class="align-items-center gx-3 row">
+            <div class="col">
+              <div>
+                <%= link_to user.profile.name, profile_path(user.username), class: "text-body" %>
+              </div>
+
+              <div class="small">
+                <%= link_to "@#{user.username}", profile_path(user.username), class: "text-muted" %>
+              </div>
+            </div>
+
+            <div class="col-12 col-sm-auto mt-2 mt-sm-0">
+              <%= ButtonGroups::UserButtonGroupComponent.new(self, user: user).render %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

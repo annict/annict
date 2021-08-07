@@ -3,9 +3,9 @@
 
 .container.py-3.mb-3
   .row
-    .col-3.pr-0
+    .col-3.pe-0
       = render "userland/projects/sidebar", project: @project
     .col-9
-      .c-card
-        .container.py-3
+      .card.rounded-3
+        .card-body
           == render_markdown @project.description

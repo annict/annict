@@ -13,6 +13,7 @@ en:
     all_comments: All Comments
     animation: Animation
     anime: Anime
+    anime_page: Anime Page
     annict_api: Annict API
     annict_db: Annict DB
     annict_developers: Annict Developers
@@ -40,6 +41,7 @@ en:
     channels: Channels
     character: Character
     characters: Characters
+    characters2: Characters
     comment: コメント
     comments_count: Comments
     comments_count_shorten: Comments
@@ -47,33 +49,34 @@ en:
     column: Column
     completed: Completed
     current_season: Current Season
+    current_season_shoten: Airing
     delete: Delete
     detail: Detail
     development_members: Development Members
     dropped: Dropped
     edit: Edit
+    edit_profile: Edit Profile
     email: Email
     english: English
     episode_number: Number
+    episode_page: Episode Page
     episodes: Episodes
     error: Error
     external_services: External Services
     fans: Fans
-    faqs: FAQs
-    favorite_characters_shorten: Characters
+    faq: FAQ
     favorite_characters: Favorite Characters
-    favorite_organizations_shorten: Organizations
     favorite_organizations: Favorite Organizations
-    favorite_people_shorten: People
     favorite_people: Favorite People
     favorite_staffs: Favorite Staffs
     favorite_voice_actors: Favorite Voice Actors
     favorites: Favorites
     first: First
+    follow: Follow
     followers: Followers
     following: Following
+    following_records: Following Records
     following_shorten: Following
-    friend_comments: Friend's Comments
     friends_who_are_watching: Friends Who Are Watching
     global: Global
     google_calendar: Google Calendar
@@ -90,20 +93,23 @@ en:
     music: Music
     my_anime_list: MyAnimeList
     my_records: My Records
-    n_works_watched: "%{count} Works Watched"
+    n_works_watched: '%{count} Works Watched'
+    next: Next
     next_episode: Next Episode
     next_page: Next Page
     next_season: Next Season
+    no_select: No Select
     notification: Notification
     official_site: Official Site
     on_hold: On Hold
     or: OR
     organization: Organization
     organizations: Organizations
-    other_record_body_list_by: "Comments by %{profile_name}"
-    other_record_body_list: "All Comments"
+    other_record_body_list_by: 'Comments by %{profile_name}'
+    other_comments: 'All Comments'
     other_users: Other Users
     overall: Overall
+    overview: Overview
     password: Password
     people: People
     person: Person
@@ -113,6 +119,7 @@ en:
     popular_airing_anime: Popular Airing Anime
     popular_anime: Popular Anime
     popular_tags: Popular Tags
+    prev: Prev
     prev_page: Prev Page
     prev_season: Previous Season
     previous_season: Previous Season
@@ -127,10 +134,10 @@ en:
     rebroadcast: Rebroadcast
     record_body_list: Comments
     record_list: Record List
-    record_of_episode: "Record of %{work_title} %{episode_title_with_number}"
+    record_of_episode: 'Record of %{work_title} %{episode_title_with_number}'
     record_of_work: 'Record of "%{work_title}"'
     records: Records
-    records_by: "Records by %{profile_name}"
+    records_by: 'Records by %{profile_name}'
     records_count: Records Count
     related_works: Related Works
     release_on: Release on
@@ -145,7 +152,7 @@ en:
     seasons: Seasons
     seasonal_anime: Seasonal Anime
     series: Series
-    series_with_name: "%{series_name} Series"
+    series_with_name: '%{series_name} Series'
     series_works: Series Works
     services: Services
     settings: Settings
@@ -166,6 +173,7 @@ en:
     state: State
     state_change: State Change
     stats: Stats
+    status: Status
     story: Story
     summer: Summer
     supporter: Supporter
@@ -174,25 +182,31 @@ en:
     terms_of_use: Terms of Use
     timeline: Timeline
     title: Title
+    today: Today
+    tomorrow: Tomorrow
     tonight: Tonight
+    top: Top
     tweet: Tweet
     unbroadcast: Unbroadcast
     unknown: Unknown
     unknown_season: Season unknown
     unpublish: Unpublish
     untracked_episodes: Untracked Episodes
-    users_count: "%{count} people"
+    users_count: '%{count} people'
     video_page: Video Page
+    videos: Videos
     vod_works: VOD Works
     vods: Video Services
     voice_actor: Voice Actor
     voice_actors: Voice Actors
     watchers_count: Watchers
     watching: Watching
+    watching_and_plan_to_watch: Watching & Plan to Watch
     watching_shorten: Watching
     winter: Winter
-    work_detail_page: Work Detail
+    work_detail_page: Anime
     work_image: Work image
     work: Work
     works: Works
+    yesterday: Yesterday
     your_statistics: Statistics

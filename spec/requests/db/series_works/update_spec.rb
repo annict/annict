@@ -2,7 +2,7 @@
 
 describe "PATCH /db/series_works/:id", type: :request do
   context "user does not sign in" do
-    let!(:series_work) { create(:series_work) }
+    let!(:series_work) { create(:series_anime) }
     let!(:old_series_work) { series_work.attributes }
     let!(:series_work_params) do
       {
@@ -13,7 +13,7 @@ describe "PATCH /db/series_works/:id", type: :request do
     end
 
     it "user can not access this page" do
-      patch "/db/series_works/#{series_work.id}", params: { series_work: series_work_params }
+      patch "/db/series_works/#{series_work.id}", params: {series_work: series_work_params}
       series_work.reload
 
       expect(response.status).to eq(302)
@@ -25,7 +25,7 @@ describe "PATCH /db/series_works/:id", type: :request do
 
   context "user who is not editor signs in" do
     let!(:user) { create(:registered_user) }
-    let!(:series_work) { create(:series_work) }
+    let!(:series_work) { create(:series_anime) }
     let!(:old_series_work) { series_work.attributes }
     let!(:series_work_params) do
       {
@@ -40,7 +40,7 @@ describe "PATCH /db/series_works/:id", type: :request do
     end
 
     it "user can not access" do
-      patch "/db/series_works/#{series_work.id}", params: { series_work: series_work_params }
+      patch "/db/series_works/#{series_work.id}", params: {series_work: series_work_params}
       series_work.reload
 
       expect(response.status).to eq(302)
@@ -52,7 +52,7 @@ describe "PATCH /db/series_works/:id", type: :request do
 
   context "user who is editor signs in" do
     let!(:user) { create(:registered_user, :with_editor_role) }
-    let!(:series_work) { create(:series_work) }
+    let!(:series_work) { create(:series_anime) }
     let!(:old_series_work) { series_work.attributes }
     let!(:series_work_params) do
       {
@@ -62,11 +62,11 @@ describe "PATCH /db/series_works/:id", type: :request do
       }
     end
     let!(:attr_names) do
-      %i(
+      %i[
         work_id
         summary
         summary_en
-      )
+      ]
     end
 
     before do
@@ -78,7 +78,7 @@ describe "PATCH /db/series_works/:id", type: :request do
         expect(series_work.send(attr_name)).to eq(old_series_work[attr_name.to_s])
       end
 
-      patch "/db/series_works/#{series_work.id}", params: { series_work: series_work_params }
+      patch "/db/series_works/#{series_work.id}", params: {series_work: series_work_params}
       series_work.reload
 
       expect(response.status).to eq(302)

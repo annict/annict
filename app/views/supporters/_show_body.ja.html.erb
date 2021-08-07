@@ -1,0 +1,138 @@
+<% content_for :head_vendor_assets do %>
+  <script src="https://gumroad.com/js/gumroad.js"></script>
+<% end %>
+
+<p>
+  「Annictサポーター」はAnnictファンのためのサブスクリプションプログラムです。
+  毎月または毎年お支払い頂くことで加入でき、Annictの運営をサポート頂けます。
+  <br>
+  (主にサーバ費用)
+</p>
+
+<h2 class="fw-bold h4 my-5 text-center">
+  特典
+</h2>
+
+<p>
+  サポーターになると以下の特典が得られます。
+</p>
+
+<div class="gx-3 row">
+  <div class="col-12 col-sm-6">
+    <h3 class="fw-bold h4">
+      プロフィールページなどにサポーターバッジが表示されます
+    </h3>
+
+    <p class="mb-0">
+      サポーターであることを示すバッジが表示されるようになります。
+      <div class="small">
+        (オプションで非表示にもできます)
+      </div>
+    </p>
+  </div>
+</div>
+
+<h2 class="fw-bold h4 my-5 text-center">
+  価格とお支払い方法について
+</h2>
+
+<p>
+  サポータープログラムは ¥290/月 または ¥2,900/年 (¥242/月) で加入することができます。
+  年額でお支払い頂くと2ヶ月分無料になります。
+  <br>
+  ※支払いは最新の為替レートに基づき米ドルで行われます。
+</p>
+
+<p class="mb-0">
+  決済には「<a href="https://gumroad.com" target="_blank" rel="noopener">Gumroad</a>」を利用しており、
+  クレジットカードまたはPayPalを利用してお支払い頂けます。
+  サブスクリプションはGumroadのサイトからいつでもキャンセルすることができます
+</p>
+
+<div class="my-5 text-center">
+  <a class="btn btn-primary" href="https://gum.co/AnnictJP">
+    <i class="far fa-shopping-cart me-1"></i>
+    Gumroadで支払う
+  </a>
+</div>
+
+<h2 class="fw-bold h4 my-5 text-center">
+  Gumroadとの連携
+</h2>
+
+<p class="mb-0">
+  どのGumroadアカウントでお支払い頂いたのかを知るため、
+  AnnictのアカウントとGumroadのアカウントを連携させる必要があります。
+</p>
+
+<div class="my-5 text-center">
+  <% if user_signed_in? && current_user.authorized_to?(:gumroad) %>
+    <button class="btn u-btn-gumroad" disabled="">
+      <i class="far fa-link me-2"></i>
+      Gumroadと連携しています
+    </button>
+  <% else %>
+    <%= button_to user_gumroad_omniauth_authorize_path(back: supporters_path), class: "btn u-btn-gumroad", data: { turbo: "false" } do %>
+      <i class="far fa-link me-1"></i>
+      Gumroadと連携する
+    <% end %>
+  <% end %>
+</div>
+
+<% if user_signed_in? %>
+  <h2 class="h4 text-center my-5 fw-bold">
+    サポーター情報
+  </h2>
+
+  <% if current_user.supporter? %>
+    <p>
+      サポータープログラムへのご参加ありがとうございます！サポーターとしてAnnictにログインしています。
+    </p>
+
+    <dl class="mb-0 row">
+      <dt class="col-6 text-end">
+        Gumroad ID
+      </dt>
+      <dd class="col-6">
+        <%= current_user.gumroad_subscriber.gumroad_id %>
+      <dd>
+
+      <dt class="col-6 text-end">
+        参加日時
+      </dt>
+      <dd class="col-6">
+        <%= display_time(current_user.gumroad_subscriber.gumroad_created_at) %>
+      </dd>
+
+      <% if current_user.gumroad_subscriber.gumroad_cancelled_at.present? %>
+        <dt class="col-6 text-end">
+          キャンセル日時
+        </dt>
+        <dd class="col-6">
+          <%= display_time(current_user.gumroad_subscriber.gumroad_cancelled_at) %>
+        </dd>
+      <% end %>
+    </dl>
+  <% else %>
+    <p>
+      まだサポーターになっていないようです。
+    </p>
+
+    <% if user_signed_in? && current_user.authorized_to?(:gumroad) %>
+      <p>
+        もしGumroadでの支払いがお済みの場合は、Gumroadから最新の情報を取得するため、下の「Gumroadと再連携する」ボタンを押してください。
+      </p>
+
+      <div class="mt-5 mb-4 text-center">
+        <%= button_to user_gumroad_omniauth_authorize_path(back: supporters_path), class: "btn u-btn-gumroad", data: { turbo: "false" } do %>
+          <i class="far fa-link me-2">
+          Gumroadと再連携する
+        <% end %>
+      </div>
+    <% else %>
+      <p>
+        もしGumroadでの支払いがお済みの場合は、Gumroadとの連携をお願いします。
+      </p>
+    <% end %>
+  <% end %>
+<% end %>

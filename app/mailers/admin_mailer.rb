@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-class AdminMailer < ActionMailer::Base
-  default from: "Annict <no-reply@annict.com>"
-
+class AdminMailer < ApplicationMailer
   def episode_created_notification(episode_id)
     @episode = Episode.find(episode_id)
 
@@ -11,7 +9,7 @@ class AdminMailer < ActionMailer::Base
 
   def error_in_episode_generator_notification(slot_id, error_message)
     @slot = Slot.find(slot_id)
-    @work = @slot.work
+    @work = @slot.anime
     @error_message = error_message
 
     mail(to: "hello@annict.com", subject: "エピソード生成中にエラーが発生しました")

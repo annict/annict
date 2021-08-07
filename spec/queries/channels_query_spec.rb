@@ -2,50 +2,46 @@
 
 describe ChannelsQuery, type: :query do
   context "when `is_vod` options is nil" do
-    let!(:vod_1) { create :channel, vod: true }
-    let!(:vod_2) { create :channel, vod: true }
-    let!(:not_vod_1) { create :channel, vod: false }
-    let!(:not_vod_2) { create :channel, vod: false }
-
     it "returns all channels" do
-      channels = ChannelsQuery.new(
-        Channel.all,
-        is_vod: nil
-      ).call
+      channels = ChannelsQuery.new(Channel.all, is_vod: nil).call
 
-      expect(channels.pluck(:id)).to contain_exactly(vod_1.id, vod_2.id, not_vod_1.id, not_vod_2.id)
+      expect(channels.pluck(:id)).to contain_exactly(
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 28, 31, 32, 33, 34,
+        39, 40, 42, 43, 44, 45, 47, 48, 50, 51, 52, 54, 55, 56, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 70, 71, 72, 74,
+        76, 77, 79, 80, 81, 82, 83, 84, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 102, 103, 104, 105,
+        107, 109, 111, 112, 113, 114, 115, 116, 117, 119, 121, 123, 124, 125, 126, 127, 128, 129, 131, 136, 137, 138, 141,
+        142, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 158, 159, 160, 161, 163, 164, 165, 167, 168, 169,
+        170, 171, 172, 173, 174, 175, 176, 177, 179, 180, 182, 188, 193, 195, 197, 199, 200, 201, 202, 203, 204, 205, 206,
+        207, 208, 209, 211, 212, 213, 214, 215, 216, 217, 220, 221, 222, 223, 229, 238, 239, 241, 242, 243, 244, 245, 246,
+        249, 250, 251, 252, 253, 254, 255, 257, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273,
+        274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291
+      )
     end
   end
 
   context "when `is_vod` options is true" do
-    let!(:vod_1) { create :channel, vod: true }
-    let!(:vod_2) { create :channel, vod: true }
-    let!(:not_vod_1) { create :channel, vod: false }
-    let!(:not_vod_2) { create :channel, vod: false }
-
     it "returns channels which are VOD" do
-      channels = ChannelsQuery.new(
-        Channel.all,
-        is_vod: true
-      ).call
+      channels = ChannelsQuery.new(Channel.all, is_vod: true).call
 
-      expect(channels.pluck(:id)).to contain_exactly(vod_1.id, vod_2.id)
+      expect(channels.pluck(:id)).to contain_exactly(107, 165, 241, 243, 244, 260)
     end
   end
 
   context "when `is_vod` options is false" do
-    let!(:vod_1) { create :channel, vod: true }
-    let!(:vod_2) { create :channel, vod: true }
-    let!(:not_vod_1) { create :channel, vod: false }
-    let!(:not_vod_2) { create :channel, vod: false }
-
     it "returns channels which are not VOD" do
-      channels = ChannelsQuery.new(
-        Channel.all,
-        is_vod: false
-      ).call
+      channels = ChannelsQuery.new(Channel.all, is_vod: false).call
 
-      expect(channels.pluck(:id)).to contain_exactly(not_vod_1.id, not_vod_2.id)
+      expect(channels.pluck(:id)).to contain_exactly(
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 28, 31, 32, 33, 34,
+        39, 40, 42, 43, 44, 45, 47, 48, 50, 51, 52, 54, 55, 56, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 70, 71, 72, 74,
+        76, 77, 79, 80, 81, 82, 83, 84, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 102, 103, 104, 105,
+        109, 111, 112, 113, 114, 115, 116, 117, 119, 121, 123, 124, 125, 126, 127, 128, 129, 131, 136, 137, 138, 141, 142,
+        144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 158, 159, 160, 161, 163, 164, 167, 168, 169, 170, 171,
+        172, 173, 174, 175, 176, 177, 179, 180, 182, 188, 193, 195, 197, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208,
+        209, 211, 212, 213, 214, 215, 216, 217, 220, 221, 222, 223, 229, 238, 239, 242, 245, 246, 249, 250, 251, 252, 253,
+        254, 255, 257, 259, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279,
+        280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291
+      )
     end
   end
 end

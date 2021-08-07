@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
-class CommentsController < ApplicationController
+# 現状使われていない
+# TODO: https://github.com/kiraka/annict/issues/4 で復活させる
+class CommentsController < ApplicationV6Controller
   before_action :authenticate_user!
 
   def create
@@ -9,14 +11,14 @@ class CommentsController < ApplicationController
     @user = @record.user
     @comment = @record.episode_record.comments.new(comment_params)
     @comment.user = current_user
-    @comment.work = @record.work
+    @comment.anime = @record.anime
     @comment.detect_locale!(:body)
 
     if @comment.save
       redirect_to record_path(@user.username, @record),
         notice: t("messages.comments.saved")
     else
-      @work = @record.work
+      @work = @record.anime
       @episode = @record.episode
       @comments = @record.episode_record.comments.order(created_at: :desc)
       render "/records/show"

@@ -1,0 +1,71 @@
+<% title = t "head.title.settings.accounts.show" %>
+<% set_meta_tags title: title, reverse: true, prefix: false %>
+
+<%= render "settings/nav" %>
+
+<div class="mt-3 u-container-narrow u-container-flat">
+  <h2 class="fw-bold h3 mb-0">
+    <%= t "noun.basic_info" %>
+  </h2>
+
+  <div class="card mt-3 u-card-flat">
+    <div class="card-body">
+      <%= form_for @user, url: settings_account_path, method: :patch do |f| %>
+        <%= render "application/components/error_panel", resource: @user %>
+
+        <div class="mb-3">
+          <%= f.label :username, class: "form-label" %>
+          <%= f.text_field :username, class: "form-control" %>
+        </div>
+
+        <div class="mb-3">
+          <%= f.label :locale, class: "form-label" %>
+          <% options = options_for_select([[t("noun.japanese"), "ja"], [t("noun.english"), "en"]], current_user.locale) %>
+          <%= f.select :locale, options, {}, { class: "form-control" } %>
+        </div>
+
+        <div class="mb-3">
+          <%= f.label :time_zone, class: "form-label" %>
+          <% options = options_for_select(ActiveSupport::TimeZone.all.map { |time_zone| [decorated_tz_name(time_zone), time_zone.tzinfo.name] }, current_user.time_zone) %>
+          <%= f.select :time_zone, options, {}, { class: "form-select" } %>
+        </div>
+
+        <div class="mb-3">
+          <%= f.label :allowed_locales, class: "form-label" %>
+          <div class="mb-2 small text-muted">
+            <%= t "messages.users.allowed_locales_description" %>
+          </div>
+
+          <%= f.collection_check_boxes :allowed_locales, User.allowed_locales.options, :last, :first do |cb| %>
+            <div class="form-check">
+              <%= cb.label(class: "form-check-label") do %>
+                <%= cb.check_box(class: "form-check-input") %>
+                <%= cb.object.first %>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="form-submit text-center">
+          <%= f.submit class: "btn btn-primary" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <h2 class="fw-bold h3 mb-0 mt-3">
+    <%= t "noun.account_deletion" %>
+  </h2>
+
+  <div class="card mt-3 u-card-flat">
+    <div class="card-body">
+      <p>
+        <%= t "messages.sayonara.description" %>
+      </p>
+
+      <div class="text-center">
+        <%= link_to t("messages.sayonara.delete_account"), settings_user_path, data: { confirm: t("messages.sayonara.are_you_sure_really"), method: :delete } %>
+      </div>
+    </div>
+  </div>
+</div>

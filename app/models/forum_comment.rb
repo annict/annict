@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: forum_comments
@@ -25,14 +26,14 @@
 #
 
 class ForumComment < ApplicationRecord
-  include Localizable
+  include UgcLocalizable
 
   counter_culture :forum_post
 
   belongs_to :forum_post
   belongs_to :user, optional: true
 
-  validates :body, presence: true, length: { maximum: 5000 }
+  validates :body, presence: true, length: {maximum: 5000}
   validates :forum_post, presence: true
   validates :user, presence: true
 

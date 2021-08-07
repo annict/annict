@@ -7,7 +7,7 @@ ja:
         name: 名義
         person_id: キャスト
         sort_number: ソート番号
-        work_id: 作品
+        work_id: アニメ
       channel:
         channel_group: チャンネルグループ
         channel_group_id: チャンネルグループ
@@ -52,8 +52,8 @@ ja:
       email_notification:
         event_followed_user: フォローされたときメールを受け取る
         event_liked_episode_record: 自分の記録が「いいね！」されたときメールを受け取る
-        event_favorite_works_added: お気に入りの人物などが関わる作品が追加されたとき受け取る
-        event_related_works_added: 自分が見た作品に関連する作品が追加されたとき受け取る
+        event_favorite_works_added: お気に入りの人物などが関わるアニメが追加されたとき受け取る
+        event_related_works_added: 自分が見た作品に関連するアニメが追加されたとき受け取る
       episode:
         records_count: 記録数
         fetch_syobocal: しょぼかると同期する
@@ -67,7 +67,7 @@ ja:
       episode_record:
         body: 感想
         rating_state: レーティング
-        mutation_error: ""
+        mutation_error: ''
       forum_comment:
         body: 本文
       forum_post:
@@ -116,7 +116,7 @@ ja:
       profile:
         avatar: プロフィール画像
         background_image: 背景画像
-        description: ヒトコト
+        description: 自己紹介
         name: 名前
         url: URL
       slot:
@@ -148,10 +148,10 @@ ja:
         name_alter: 別名
         name_alter_en: 別名 (英語)
         name_en: 名前 (英語)
-      series_work:
+      series_anime:
         summary: 関係性
         summary_en: 関係性 (英語)
-        work_id: 作品
+        work_id: アニメ
       staff:
         name_en: 名義 (英語)
         name: 名義
@@ -160,7 +160,7 @@ ja:
         role_other: 担当 (その他)
         role: 担当
         sort_number: ソート番号
-        work_id: 作品
+        work_id: アニメ
       userland_project:
         available: 利用可能？
         description: 概要
@@ -187,7 +187,7 @@ ja:
         code: 作品コード
         created_at: 作成日
         name: 作品名
-      work:
+      anime:
         ended_on: 終了日
         mal_anime_id: MAL Anime ID
         manual_episodes_count: エピソード数
@@ -216,19 +216,19 @@ ja:
         twitter_username: 公式Twitter
         wikipedia_url_en: Wikipedia (英)
         wikipedia_url: Wikipedia
-      work_image:
-        attachment: 作品画像
+      anime_image:
+        attachment: アニメ画像
         copyright: 著作者情報
-      work_organization:
+      anime_organization:
         organization_id: 団体
-        work_id: 作品
+        work_id: アニメ
         role: 担当
         role_other: 担当 (その他)
         sort_number: ソート番号
-      work_record:
+      アニメ_record:
         title: タイトル
-        body: 本文
-        mutation_error: ""
+        body: 感想
+        mutation_error: ''
         rating_animation_state: 映像
         rating_music_state: 音楽
         rating_story_state: ストーリー
@@ -266,12 +266,12 @@ ja:
       series:
         one: シリーズ
         other: シリーズ
-      series_work:
-        one: シリーズ作品
-        other: シリーズ作品
+      series_anime:
+        one: シリーズアニメ
+        other: シリーズアニメ
       staff:
         one: スタッフ
         other: スタッフ
-      work:
-        one: 作品
-        other: 作品
+      anime:
+        one: アニメ
+        other: アニメ

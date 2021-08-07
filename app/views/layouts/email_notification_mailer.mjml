@@ -10,7 +10,7 @@
       <mj-column>
         <mj-text align="center" color="#9a9a9a" font-size="8px" padding-top="0px">
           <%= t("email_notification_mailer._layout.unsubscribe_message") %>
-          <a href="<%= unsubscribe_settings_email_notification_url(key: @unsubscription_key, action_name: action_name, utm_source: 'email_notification', utm_campaign: 'unsubscribe', utm_medium: 'email', domain: local_domain) %>" style="color: #364f6b; padding-left: 3px; text-decoration: none;"><%= t("email_notification_mailer._layout.unsubscribe") %></a>
+          <a href="<%= settings_unsubscribe_email_notification_url(key: @unsubscription_key, action_name: action_name, utm_source: 'email_notification', utm_campaign: 'unsubscribe', utm_medium: 'email', domain: local_domain) %>" style="color: #364f6b; padding-left: 3px; text-decoration: none;"><%= t("email_notification_mailer._layout.unsubscribe") %></a>
         </mj-text>
       </mj-column>
     </mj-section>

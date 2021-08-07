@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # Use this hook to configure devise mailer, warden hooks and so forth.
 # Many of these configuration options can be set straight in your model.
 Devise.setup do |config|
@@ -8,7 +9,7 @@ Devise.setup do |config|
 
   config.omniauth :gumroad,
     ENV.fetch("GUMROAD_APPLICATION_ID"), ENV.fetch("GUMROAD_APP_SECRET"),
-    redirect_uri: "#{ENV.fetch('ANNICT_URL')}/users/auth/gumroad/callback"
+    redirect_uri: "#{ENV.fetch("ANNICT_URL")}/users/auth/gumroad/callback"
 
   config.omniauth :twitter,
     ENV.fetch("TWITTER_CONSUMER_KEY"), ENV.fetch("TWITTER_CONSUMER_SECRET")
@@ -247,8 +248,8 @@ Devise.setup do |config|
   #
   config.warden do |manager|
     manager.failure_app = Annict::Devise::CustomFailure
-  #   manager.intercept_401 = false
-  #   manager.default_strategies(:scope => :user).unshift :some_external_strategy
+    #   manager.intercept_401 = false
+    #   manager.default_strategies(:scope => :user).unshift :some_external_strategy
   end
 
   # ==> Mountable engine configurations
@@ -265,5 +266,5 @@ Devise.setup do |config|
   # so you need to do it manually. For the users scope, it would be:
   # config.omniauth_path_prefix = '/my_engine/users/auth'
 
-  config.parent_controller = "V4::ApplicationController"
+  config.parent_controller = "ApplicationV6Controller"
 end

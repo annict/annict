@@ -1,12 +1,14 @@
-span.c-db-activity__profile-link
+span.me-1
   = activity.user.name_link
 
-| が
+span.me-1
+  | が
 
-span.c-db-activity__resource-title
+span.me-1
   = activity.trackable.db_detail_link
 
-= "の#{activity.trackable.class.model_name.human} (##{activity.trackable.id}) を"
+span.me-1
+  = "の#{activity.trackable.class.model_name.human} (##{activity.trackable.id}) を"
 
 - action = activity.action.split(".")[1]
 - if action == "create"

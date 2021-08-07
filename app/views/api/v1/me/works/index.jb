@@ -2,10 +2,10 @@
 
 json = {}
 
-json[:works] = @works.map do |work|
+json[:works] = @works.map { |work|
   work_hash = render("api/v1/works/work", work: work, params: @params, field_prefix: "")
   work_hash.merge!(status: render("api/v1/me/statuses/status", work: work, params: @params, field_prefix: "status."))
-end
+}
 
 json.merge! render("api/v1/application/pagination", collection: @works, params: @params)
 

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: channels
@@ -45,6 +46,7 @@ class Channel < ApplicationRecord
   has_many :slots, dependent: :destroy
 
   scope :with_vod, -> { where(vod: true) }
+  scope :without_vod, -> { where.not(vod: true) }
 
   validates :name, presence: true
   validates :channel_group, presence: true
@@ -53,7 +55,7 @@ class Channel < ApplicationRecord
     receivable_channel_ids = pluck(:id)
 
     if receivable_channel_ids.present? && work.episodes.present?
-      conditions = { channel_id: receivable_channel_ids, episode: work.episodes.first }
+      conditions = {channel_id: receivable_channel_ids, episode: work.episodes.first}
       fastest_slot = Slot.where(conditions).order(:started_at).first
 
       fastest_slot.present? ? fastest_slot.channel : nil

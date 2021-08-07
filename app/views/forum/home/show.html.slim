@@ -1,0 +1,20 @@
+- title = t "head.title.forum.home.index"
+- set_meta_tags(title: title, reverse: true, prefix: false)
+
+= render "forum/application/nav"
+
+.container.py-3
+  .text-end.mb-3
+    = link_to forum_new_post_path, class: "btn btn-primary rounded-pill" do
+      i.far.fa-plus.me-2
+      = t "resources.forum_post.new"
+  - if @posts.present?
+    .card.rounded-3
+      .card-body
+        = render "forum/posts/post_list", posts: @posts
+    .text-center.mt-3
+      = ButtonGroups::PaginationButtonGroupComponent.new(self, collection: @posts).render
+  - else
+    .card.rounded-3
+      .card-body
+        = render "application/components/empty", text: t("messages.forum.posts.no_posts")

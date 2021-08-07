@@ -1,39 +1,19 @@
+<%= content_for :head_assets do %>
+  <%= stylesheet_bundle_tag "application.css", media: "all", "data-turbo-track": "reload" %>
+  <%= javascript_bundle_tag "application.js", defer: "", "data-turbo-track": "reload" %>
+<% end %>
+
 <!DOCTYPE html>
 <html lang="<%= I18n.locale %>">
   <head>
-    <%= render "application/google_tag_manager" %>
-    <%= ann_display_meta_tags %>
-
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <link rel="dns-prefetch" href="//ajax.googleapis.com">
-    <link rel="dns-prefetch" href="//annict.imgix.net">
-    <link rel="dns-prefetch" href="//fonts.googleapis.com">
-    <link rel="dns-prefetch" href="//fonts.gstatic.com">
-    <link rel="dns-prefetch" href="//kit.fontawesome.com">
-    <link rel="dns-prefetch" href="//www.googletagmanager.com">
-
-    <link rel="shortcut icon" href="/images/favicon.png" type="image/png">
-    <link rel="canonical" href="<%= "#{request.protocol}#{request.host_with_port}#{request.path}" %>">
-    <link rel="alternate" hreflang="ja" href="<%= "#{ENV.fetch('ANNICT_URL')}#{request.path}" %>">
-    <link rel="alternate" hreflang="en" href="<%= "#{ENV.fetch('ANNICT_EN_URL')}#{request.path}" %>">
-    <link rel="alternate" hreflang="x-default" href="<%= "#{ENV.fetch('ANNICT_URL')}#{request.path}" %>">
-
-    <script data-mutate-approach="sync" crossorigin="anonymous" src="https://kit.fontawesome.com/0099029c12.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js" defer></script>
-
-    <%= csrf_meta_tags %>
-    <%= csp_meta_tag %>
-
-    <%= stylesheet_bundle_tag "db.css", media: "all", "data-turbolinks-track": "reload" %>
-    <%= javascript_bundle_tag "db.js", defer: "", "data-turbolinks-track": "reload" %>
+    <%= render "application/head" %>
   </head>
   <body>
-    <div class="f-app">
-      <div class="f-app__sidebar">
+    <div class="l-db-default">
+      <div class="l-db-default__sidebar">
         <%= render Db::SidebarComponent.new(search: @search) %>
       </div>
-      <div class="f-app__main d-flex flex-column">
+      <div class="l-db-default__main d-flex flex-column">
         <div class="f-application__main__content">
           <%= render FlashComponent.new(flash) %>
           <%= yield %>

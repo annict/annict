@@ -5,17 +5,14 @@ module Db
     include Pundit
 
     include PageCategorizable
-    include V4::RavenContext
-    include V4::Loggable
-    include V4::Localizable
+    include SentryLoadable
+    include Loggable
+    include Localizable
 
     layout "db"
 
     rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
-    helper_method :client_uuid, :locale_en?, :locale_ja?, :page_category
-
-    before_action :set_raven_context
     before_action :set_search_params
     around_action :set_locale
 

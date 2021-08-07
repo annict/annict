@@ -1,0 +1,37 @@
+- title = t "head.title.userland.home.index"
+- set_meta_tags(title: title, reverse: true, prefix: false)
+
+.container.py-3.mb-3
+  .row
+    .col-8
+      - @categories.each do |category|
+        h2.h4.text-center.my-4.fw-bold
+          = category.local_name
+
+        .card.rounded-3
+          .card-body.pt-0
+            - projects = localable_resources(category.userland_projects)
+            - if projects.exists?
+              - projects.order(:available, created_at: :desc).each do |project|
+                .container.mt-3
+                  .row.align-items-center
+                    .col-auto
+                      = link_to userland_project_path(project) do
+                        = ann_image_tag project, :image, size: "80x80", class: "img-fluid img-thumbnail rounded"
+                    .col
+                      .mb-2
+                        = link_to project.name, userland_project_path(project)
+                      .small.text-muted
+                        = project.summary
+            - else
+              = render "application/components/empty", text: t("messages._empty.no_projects")
+    .col-4.mt-3
+      .text-end.mb-3
+        = link_to userland_new_project_path, class: "btn btn-primary rounded-pill" do
+          i.far.fa-plus.me-2
+          = t "resources.userland_project.new"
+      .alert.alert-info.rounded-3
+        h2.h3.alert-heading
+          = t "messages.userland.welcome"
+        p.mb-0
+          = t "messages.userland.description_html"

@@ -2,15 +2,15 @@
 
 module Db
   class StaffsController < Db::ApplicationController
-    before_action :authenticate_user!, only: %i(new create edit update destroy)
+    before_action :authenticate_user!, only: %i[new create edit update destroy]
 
     def index
-      @work = Work.without_deleted.find(params[:work_id])
-      @staffs = @work.
-        staffs.
-        without_deleted.
-        includes(:resource).
-        order(:sort_number)
+      @work = Anime.without_deleted.find(params[:work_id])
+      @staffs = @work
+        .staffs
+        .without_deleted
+        .includes(:resource)
+        .order(:sort_number)
       @staffs_csv = @staffs.map do |staff|
         str = staff.decorate.role_name
         case staff.resource_type
@@ -24,19 +24,19 @@ module Db
     end
 
     def new
-      @work = Work.without_deleted.find(params[:work_id])
+      @work = Anime.without_deleted.find(params[:work_id])
       @form = Db::StaffRowsForm.new
       authorize @form
     end
 
     def create
-      @work = Work.without_deleted.find(params[:work_id])
+      @work = Anime.without_deleted.find(params[:work_id])
       @form = Db::StaffRowsForm.new(staff_rows_form_params)
       @form.user = current_user
       @form.work = @work
       authorize @form
 
-      return render(:new) unless @form.valid?
+      return render(:new, status: :unprocessable_entity) unless @form.valid?
 
       @form.save!
 
@@ -46,18 +46,18 @@ module Db
     def edit
       @staff = Staff.without_deleted.find(params[:id])
       authorize @staff
-      @work = @staff.work
+      @work = @staff.anime
     end
 
     def update
       @staff = Staff.without_deleted.find(params[:id])
       authorize @staff
-      @work = @staff.work
+      @work = @staff.anime
 
       @staff.attributes = staff_params
       @staff.user = current_user
 
-      return render(:edit) unless @staff.valid?
+      return render(:edit, status: :unprocessable_entity) unless @staff.valid?
 
       @staff.save_and_create_activity!
 
@@ -71,7 +71,7 @@ module Db
       @staff.destroy_in_batches
 
       redirect_back(
-        fallback_location: db_staff_list_path(@staff.work),
+        fallback_location: db_staff_list_path(@staff.anime),
         notice: t("messages._common.deleted")
       )
     end

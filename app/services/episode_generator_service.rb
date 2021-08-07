@@ -7,50 +7,48 @@ class EpisodeGeneratorService
 
   def execute!(now:)
     episodeless_slots(now).order(:started_at).each do |slot|
-      begin
-        work = slot.work
+      work = slot.anime
 
-        next if work.manual_episodes_count && work.manual_episodes_count < slot.number
+      next if work.manual_episodes_count && work.manual_episodes_count < slot.number
 
-        raw_number = target_raw_number(slot)
-        episode = work.episodes.only_kept.find_by(raw_number: raw_number)
+      raw_number = target_raw_number(slot)
+      episode = work.episodes.only_kept.find_by(raw_number: raw_number)
 
-        if episode
-          slot.update_column(:episode_id, episode.id)
-          next
-        end
-
-        create_new_episode!(slot, raw_number)
-      rescue StandardError => e
-        AdminMailer.error_in_episode_generator_notification(slot.id, e.message).deliver_later
+      if episode
+        slot.update_column(:episode_id, episode.id)
+        next
       end
+
+      create_new_episode!(slot, raw_number)
+    rescue => e
+      AdminMailer.error_in_episode_generator_notification(slot.id, e.message).deliver_later
     end
   end
 
   private
 
   def episodeless_slots(now)
-    Slot.
-      only_kept.
-      where(episode_id: nil, rebroadcast: false, irregular: false).
-      where.not(program_id: nil).
-      where.not(number: nil).
-      before(now + 7.days, field: :started_at).
-      includes(:work)
+    Slot
+      .only_kept
+      .where(episode_id: nil, rebroadcast: false, irregular: false)
+      .where.not(program_id: nil)
+      .where.not(number: nil)
+      .before(now + 7.days, field: :started_at)
+      .includes(:anime)
   end
 
   def target_raw_number(slot)
-    irregular_slots_count = Slot.
-      only_kept.
-      where(program_id: slot.program_id, irregular: true).
-      where("number >= ?", slot.program.minimum_episode_generatable_number).
-      count
+    irregular_slots_count = Slot
+      .only_kept
+      .where(program_id: slot.program_id, irregular: true)
+      .where("number >= ?", slot.program.minimum_episode_generatable_number)
+      .count
     raw_number = slot.number - irregular_slots_count
-    raw_number + slot.work.start_episode_raw_number - 1
+    raw_number + slot.anime.start_episode_raw_number - 1
   end
 
   def create_new_episode!(slot, raw_number)
-    work = slot.work
+    work = slot.anime
     new_episode = nil
 
     ActiveRecord::Base.transaction do

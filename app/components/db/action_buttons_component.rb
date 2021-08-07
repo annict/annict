@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Db
-  class ActionButtonsComponent < ApplicationComponent
+  class ActionButtonsComponent < Db::ApplicationComponent
     def initialize(user:, resource:, detail_path:, edit_path:, publishing_path:)
       @user = user
       @resource = resource

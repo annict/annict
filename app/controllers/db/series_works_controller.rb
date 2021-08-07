@@ -2,11 +2,11 @@
 
 module Db
   class SeriesWorksController < Db::ApplicationController
-    before_action :authenticate_user!, only: %i(new create edit update destroy)
+    before_action :authenticate_user!, only: %i[new create edit update destroy]
 
     def index
       @series = Series.without_deleted.find(params[:series_id])
-      @series_works = @series.series_works.preload(:work).without_deleted.sort_season.order(:id)
+      @series_works = @series.series_animes.preload(:anime).without_deleted.sort_season.order(:id)
     end
 
     def new
@@ -22,7 +22,7 @@ module Db
       @form.series = @series
       authorize @form, :create?
 
-      return render(:new) unless @form.valid?
+      return render(:new, status: :unprocessable_entity) unless @form.valid?
 
       @form.save!
 
@@ -30,7 +30,7 @@ module Db
     end
 
     def edit
-      @series_work = SeriesWork.without_deleted.find(params[:id])
+      @series_work = SeriesAnime.without_deleted.find(params[:id])
 
       authorize @series_work
 
@@ -38,7 +38,7 @@ module Db
     end
 
     def update
-      @series_work = SeriesWork.without_deleted.find(params[:id])
+      @series_work = SeriesAnime.without_deleted.find(params[:id])
 
       authorize @series_work
 
@@ -46,7 +46,7 @@ module Db
       @series_work.attributes = series_work_params
       @series_work.user = current_user
 
-      return render(:edit) unless @series_work.valid?
+      return render(:edit, status: :unprocessable_entity) unless @series_work.valid?
 
       @series_work.save_and_create_activity!
 
@@ -54,7 +54,7 @@ module Db
     end
 
     def destroy
-      @series_work = SeriesWork.without_deleted.find(params[:id])
+      @series_work = SeriesAnime.without_deleted.find(params[:id])
       authorize @series_work
 
       @series_work.destroy_in_batches

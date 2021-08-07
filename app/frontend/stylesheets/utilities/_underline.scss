@@ -1,0 +1,5 @@
+.u-underline {
+  &:not(:last-child) {
+    border-bottom: $border-width solid var(--ann-hr-color);
+  }
+}

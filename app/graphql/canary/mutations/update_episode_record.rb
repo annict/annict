@@ -3,42 +3,55 @@
 module Canary
   module Mutations
     class UpdateEpisodeRecord < Canary::Mutations::Base
-      argument :episode_record_id, ID, required: true
+      argument :record_id, ID,
+        required: true
+      argument :rating, Canary::Types::Enums::Rating,
+        required: false,
+        description: "エピソードの評価"
       argument :comment, String,
         required: false,
-        description: "エピソードへの感想"
-      argument :rating_state, Canary::Types::Enums::RatingState,
+        description: "エピソードの感想"
+      argument :share_to_twitter, Boolean,
         required: false,
-        description: "エピソードへの評価"
-      argument :share_twitter, Boolean,
-        required: false,
-        description: "エピソードへの記録をTwitterでシェアするかどうか"
-      argument :share_facebook, Boolean,
-        required: false,
-        description: "エピソードへの記録をFacebookでシェアするかどうか"
+        description: "記録をTwitterでシェアするかどうか"
 
-      field :episode_record, Canary::Types::Objects::EpisodeRecordType, null: true
+      field :record, Canary::Types::Objects::RecordType, null: true
+      field :errors, [Canary::Types::Objects::ClientErrorType], null: false
 
-      def resolve(episode_record_id:, body: nil, rating_state: nil, share_twitter: nil, share_facebook: nil)
+      def resolve(record_id:, rating: nil, comment: nil, share_to_twitter: nil)
         raise Annict::Errors::InvalidAPITokenScopeError unless context[:writable]
 
         viewer = context[:viewer]
-        record = viewer.episode_records.only_kept.find_by_graphql_id(episode_record_id)
+        record = viewer.records.only_kept.find_by_graphql_id(record_id)
 
-        record.rating_state = rating_state&.downcase
-        record.modify_body = record.body != body
-        record.body = body
-        record.oauth_application = context[:application]
-        record.detect_locale!(:body)
-
-        record.save!
-
-        if share_twitter
-          viewer.share_episode_record_to_twitter(record)
+        unless record.episode_record?
+          raise GraphQL::ExecutionError, "record_id #{record_id} is not an episode record"
         end
 
+        form = Forms::EpisodeRecordForm.new(
+          comment: comment,
+          episode: record.episode_record.episode,
+          oauth_application: context[:application],
+          rating: rating,
+          record: record,
+          share_to_twitter: share_to_twitter
+        )
+
+        if form.invalid?
+          return {
+            record: nil,
+            errors: form.errors.full_messages.map { |message| {message: message} }
+          }
+        end
+
+        result = Updaters::EpisodeRecordUpdater.new(
+          user: viewer,
+          form: form
+        ).call
+
         {
-          episode_record: record
+          record: result.record,
+          errors: []
         }
       end
     end

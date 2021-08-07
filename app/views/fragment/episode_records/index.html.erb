@@ -1,0 +1,3 @@
+<%= component_value_fetcher_tag("spoiler-guard", internal_api_spoiler_guard_path) %>
+
+<%= ListGroups::RecordListGroupComponent.new(self, my_records: @my_records, following_records: @following_records, all_records: @all_records).render %>

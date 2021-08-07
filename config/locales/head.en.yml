@@ -2,14 +2,19 @@ en:
   head:
     meta:
       description:
-        _common: Annict is the platform for anime addicts. Track your watching anime, follow friends, read their reviews, and much more!
+        _common: Annict is a platform for anime addicts. Track your watching anime, follow friends, read their reviews, and much more!
+        anime_infos:
+          show: Looking for info of %{title}? Find out more with Annict!
+        anime_records:
+          index: Looking for records of %{anime_title}? Find out more with Annict!
+          show: Check out %{profile_name} (%{username})'s records!
+        casts:
+          index: Looking for cast information on %{title}? Find out more with Annict!
         character_fans:
           index: Check out fans of %{character_name}!
         characters:
           index: Looking for character information on %{title}? Find out more with Annict!
           show: Looking for character information on %{name}? Find out more with Annict!
-        episode_records:
-          show: Check out %{profile_name} (%{username})'s records!
         episodes:
           index: Looking for episode information on %{title}? Find out more with Annict!
           show: Looking for reviews on %{work_title} %{episode_title_with_number}? Find out more with Annict!
@@ -29,8 +34,13 @@ en:
           show: Looking for information on %{name}? Find out more with Annict!
         person_fans:
           index: Check out fans of %{person_name}!
+        profiles:
+          show: Check out %{profile_name} (%{username})'s profile!
         records:
-          index: Check out %{profile_name} (%{username})'s records!
+          index: "Check out %{profile_name} (%{username})'s records!"
+          show: "Check out %{profile_name} (%{username})'s record on %{trackable_title}"
+        related_animes:
+          index: Looking for related anime information on %{title}? Find out more with Annict!
         sign_in:
           new: Welcome back!
         sign_up:
@@ -40,28 +50,28 @@ en:
         users:
           followers: Check out %{profile_name} (%{username})'s profile!
           following: Check out %{profile_name} (%{username})'s profile!
-          show: Check out %{profile_name} (%{username})'s profile!
+        videos:
+          index: Looking for videos on %{title}? Find out more with Annict!
         works:
           popular: Looking for popular anime? Find out more with Annict!
           season: Looking for information on %{name} anime? Find out more with Annict!
           show: Looking for information on %{title}? Find out more with Annict!
-        work_records:
-          index: Looking for records of %{work_title}? Find out more with Annict!
-          show: Check out %{profile_name} (%{username})'s records!
       keywords:
         _common: annict, anime, review
     title:
-      accounts:
-        show: Account
-      channel_works:
-        index: Channel Works
+      anime_infos:
+        show: Info of %{title}
+      anime_records:
+        index: Records of Anime %{anime_title}
+      casts:
+        index: Casts of %{title}
       channels:
         index: Channel List
       character_fans:
         index: Fans of %{character_name} (Anime)
       characters:
         index: Characters of %{title} (Anime)
-        show: "%{name}"
+        show: '%{name}'
       comments:
         edit: Edit Comment
       db:
@@ -73,15 +83,15 @@ en:
           index: Casts
           new: Create Casts
         channel_groups:
-          edit: "%{name}"
+          edit: '%{name}'
           index: Channel Groups
           new: New Channel Group
         channels:
-          edit: "%{name}"
+          edit: '%{name}'
           index: Channels
           new: New Channel
         characters:
-          edit: "%{name}"
+          edit: '%{name}'
           index: Characters
           new: New Characters
         episodes:
@@ -90,11 +100,11 @@ en:
           index: Episodes
           new: New Episode
         organizations:
-          edit: "%{name}"
+          edit: '%{name}'
           index: Organizations
           new: New Organizations
         people:
-          edit: "%{name}"
+          edit: '%{name}'
           index: People
           new: New People
         person_fans:
@@ -131,17 +141,12 @@ en:
           index: Slot Details
           new: New Slot Detail
         work_images:
-          show: Work Image - %{title}
+          show: Work Image
         works:
           activities: Activities
-          edit: "%{title}"
+          edit: '%{title}'
           index: Works
           new: New Work
-      faqs:
-        index: FAQ
-      episode_records:
-        edit: "Edit Record"
-        show: "A Record by %{profile_name} (%{username}) on %{work_title} - %{episode_title_with_number}"
       episodes:
         index: Episodes of %{title} (Anime)
         show: Anime "%{work_title}" - %{episode_title_with_number}
@@ -153,24 +158,23 @@ en:
         index: "%{profile_name} (%{username})'s favorite people"
       forum:
         categories:
-          show: "%{name}"
+          show: '%{name}'
         comments:
-          edit: "Edit Comment"
+          edit: 'Edit Comment'
         home:
           index: Forum
         posts:
-          edit: "Edit Post"
-          new: "New Post"
-          show: "%{title}"
+          edit: 'Edit Post'
+          new: 'New Post'
+          show: '%{title}'
       friends:
         index: Find Friends
       home:
-        index: Annict
-        index_guest: The platform for anime addicts.
+        show: Annict
       legacy_sign_in:
         new: Sign In with Password
       libraries:
-        show: "%{profile_name} (%{username})'s \"%{action}\" anime"
+        show: '%{profile_name} (%{username})''s "%{action}" anime'
       mutes:
         index: Mute Filters
       notifications:
@@ -180,7 +184,7 @@ en:
           edit: Edit Application
           index: Applications
           new: New application
-          show: "%{application_name} | Application Detail"
+          show: '%{application_name} | Application Detail'
         authorizations:
           new: Authorize an application
           show: Authorization code
@@ -191,10 +195,8 @@ en:
       organization_fans:
         index: Fans of %{organization_name}
       organizations:
-        show: "%{name}"
+        show: '%{name}'
       pages:
-        about: About
-        about_shoten: About
         legal: Legal
         privacy: Privacy policy
         terms: Terms of Service
@@ -202,23 +204,36 @@ en:
         edit: Forgot your password?
         new: Forgot your password?
       people:
-        show: "%{name}"
-      profiles:
-        show: Profile
+        show: '%{name}'
+      records:
+        edit: Edit Record
+      related_animes:
+        index: Related Animes of %{title}
       slots:
         index: Slot List
+      profiles:
+        show: '%{profile_name} (%{username})'
       providers:
         index: Connections
       records:
         index: "%{profile_name} (%{username})'s Records"
+        show: "%{profile_name} (%{username})'s record on %{trackable_title}"
       searches:
-        show: "%{q}Anime Search"
+        show: '%{q}Anime Search'
       settings:
+        accounts:
+          show: Account
         apps:
           index: Applications
+        emails:
+          show: Email
         email_notifications:
           show: Notifications
           unsubscribe: Unsubscribe email
+        passwords:
+          show: Password
+        profiles:
+          show: Profile
         tokens:
           edit: Edit token
           new: Generate new token
@@ -227,30 +242,27 @@ en:
       sign_up:
         new: Sign Up
       staffs:
-        index: Staff of %{title} (Anime)
+        index: Staffs of %{title}
       supporters:
-        index: Annict Supporters
+        show: Annict Supporters
       tracks:
         show: Track
-      user_work_tags:
-        show: "Anime list for %{profile_name} (%{username}) tagged '%{tag_name}'"
       userland:
         home:
           index: Userland
         projects:
           edit: Edit Project - Userland
           new: New Project - Userland
-          show: "%{name} - Userland"
+          show: '%{name} - Userland'
       users:
         followers: People following %{profile_name} (%{username})
         following: People followed by %{profile_name} (%{username})
-        show: "%{profile_name} (%{username})"
-      work_records:
-        edit: Edit Record
-        index: Records of %{work_title} (Anime)
-        show: "%{work_title} - %{profile_name} (%{username})'s Record"
+      videos:
+        index: Videos of %{title}
+      welcome:
+        show: A platform for anime addicts.
       works:
         newest: Just Added Anime
         popular: Popular Anime
-        season: "%{name} Anime"
-        show: "%{title} (Anime)"
+        season: '%{name} Anime'
+        show: '%{title} (Anime)'

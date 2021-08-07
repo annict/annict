@@ -1,6 +1,0 @@
-.c-label-required {
-  &::after {
-    color: map-get($theme-colors, 'danger');
-    content: " *";
-  }
-}

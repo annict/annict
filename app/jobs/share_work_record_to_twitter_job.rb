@@ -5,7 +5,7 @@ class ShareWorkRecordToTwitterJob < ApplicationJob
 
   def perform(user_id, work_record_id)
     user = User.find(user_id)
-    work_record = user.work_records.only_kept.find(work_record_id)
+    work_record = user.anime_records.only_kept.find(work_record_id)
 
     TwitterService.new(user).share!(work_record)
   end

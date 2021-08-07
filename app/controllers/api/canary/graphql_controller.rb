@@ -5,7 +5,7 @@ module Api
     class GraphqlController < ActionController::Base
       include Analyzable
       include LogrageSetting
-      include RavenContext
+      include SentryLoadable
 
       before_action :doorkeeper_authorize!
       skip_before_action :verify_authenticity_token

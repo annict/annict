@@ -1,133 +1,143 @@
 <% title = t "head.title.db.slots.index" %>
-<% set_meta_tags(title: title, reverse: true, prefix: false) %>
+<% set_meta_tags(title: "#{title} | #{@work.local_title}", reverse: true, prefix: false) %>
 
-<div class="container-fluid py-3">
-  <div class="mb-3">
-    <div class="mb-1">
-      <%= link_to @work.local_title, db_edit_work_path(@work) %>
-    </div>
-    <h1>
-      <%= title %>
-    </h1>
-
-    <% if policy(Slot).create? %>
-      <div class="text-right">
-        <%= link_to db_new_slot_path(@work), class: "btn btn-outline-primary" do %>
-          <%= icon "plus" %>
-          <%= t "resources._common.new" %>
-        <% end %>
+<div class="container py-3">
+  <div class="align-items-center row">
+    <div class="col">
+      <div class="mb-1">
+        <%= link_to @work.local_title, db_edit_work_path(@work) %>
       </div>
-    <% end %>
+      <h1>
+        <%= title %>
+      </h1>
+    </div>
+
+    <div class="col-auto">
+      <% if policy(Slot).create? %>
+        <div class="text-end">
+          <%= link_to db_new_slot_path(@work), class: "btn btn-outline-primary" do %>
+            <%= icon "plus" %>
+            <%= t "resources._common.new" %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
   </div>
 
-  <div class="mb-3">
+  <div class="mt-3">
     <%= render "db/works/subnav", work: @work %>
   </div>
 
-  <div class="mb-3">
-    <div class="mb-3 p-3">
+  <div class="mt-3 p-3">
+    <%= link_to(
+      t("noun.all"),
+      db_slot_list_path(@work),
+      class: "btn btn-sm mb-2 me-2 #{params[:program_id] ? 'btn-outline-secondary' : 'btn-secondary'}"
+    ) %>
+    <% @programs.each do |p| %>
       <%= link_to(
-        t("noun.all"),
-        db_slot_list_path(@work),
-        class: "btn btn-sm mb-2 mr-2 #{params[:program_id] ? 'btn-outline-secondary' : 'btn-secondary'}"
-      ) %>
-      <% @programs.each do |p| %>
-        <%= link_to(
-            db_slot_list_path(program_id: p.id),
-            class: "btn btn-sm mb-2 mr-2 #{p.id.to_s == params[:program_id] ? 'btn-secondary' : 'btn-outline-secondary'}"
-        ) do %>
-          <%= p.channel_name %> (<%= p.id %>)
-          <br>
-          <%= display_time(p.started_at) %>~
-        <% end %>
+          db_slot_list_path(program_id: p.id),
+          class: "btn btn-sm mb-2 me-2 #{p.id.to_s == params[:program_id] ? 'btn-secondary' : 'btn-outline-secondary'}"
+      ) do %>
+        <%= p.channel_name %> (<%= p.id %>)
+        <br>
+        <%= display_time(p.started_at) %>~
       <% end %>
-    </div>
-
-    <% if @slots.present? %>
-      <table class="mb-3 table table-hover table-sm">
-        <thead>
-          <tr>
-            <th>
-              ID
-            </th>
-            <th>
-              <%= t "activerecord.attributes.slot.program_id" %>
-            </th>
-            <th>
-              <%= t "activerecord.attributes.slot.started_at" %>
-            </th>
-            <th>
-              <%= t "activerecord.attributes.slot.number" %>
-            </th>
-            <th>
-              <%= t "activerecord.attributes.slot.episode_id" %>
-            </th>
-            <th>
-              <%= t "activerecord.attributes.slot.rebroadcast" %>
-            </th>
-            <th>
-              <%= t "activerecord.attributes.slot.irregular" %>
-            </th>
-            <th>
-              <%= t "noun.state" %>
-            </th>
-            <th>
-              <%= t "noun.actions" %>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <% @slots.each do |slot| %>
-            <tr>
-              <td>
-                <%= slot.id %>
-              </td>
-              <td>
-                <% if slot.program %>
-                  <%= link_to db_edit_program_path(slot.program) do %>
-                    <%= slot.program.channel_name %>
-                    <br>
-                    <%= display_time(slot.program.started_at) %>~
-                  <% end %>
-                <% else %>
-                  -
-                  <br>
-                  <%= slot.channel.name %>
-                <% end %>
-              </td>
-              <td>
-                <%= display_time(slot.started_at)&.presence || "-" %>
-              </td>
-              <td>
-                <%= slot.number.presence || "-" %>
-              </td>
-              <td>
-                <%= slot.episode&.title_with_number.presence || "-" %>
-              </td>
-              <td>
-                <%= slot.rebroadcast? ? icon("circle", "far") : icon("times") %>
-              </td>
-              <td>
-                <%= slot.irregular? ? icon("circle", "far") : icon("times") %>
-              </td>
-              <td>
-                <%= render Db::PublishingStateLabelComponent.new(resource: slot) %>
-              </td>
-              <td>
-                <%= render Db::ActionButtonsComponent.new(
-                    user: current_user,
-                    resource: slot,
-                    detail_path: db_slot_detail_path(slot),
-                    edit_path: db_edit_slot_path(slot),
-                    publishing_path: db_slot_publishing_path(slot)
-                ) %>
-              </td>
-            </tr>
-        <% end %>
-        </tbody>
-      </table>
-    <% else %>
-      <%= render "application/components/empty", text: t("messages._empty.no_resources") %>
     <% end %>
   </div>
+
+  <% if @slots.present? %>
+    <div class="card mt-3">
+      <div class="card-body">
+        <table class="table table-sm">
+          <thead>
+            <tr>
+              <th>
+                ID
+              </th>
+              <th>
+                <%= t "activerecord.attributes.slot.program_id" %>
+              </th>
+              <th>
+                <%= t "activerecord.attributes.slot.started_at" %>
+              </th>
+              <th>
+                <%= t "activerecord.attributes.slot.number" %>
+              </th>
+              <th>
+                <%= t "activerecord.attributes.slot.episode_id" %>
+              </th>
+              <th>
+                <%= t "activerecord.attributes.slot.rebroadcast" %>
+              </th>
+              <th>
+                <%= t "activerecord.attributes.slot.irregular" %>
+              </th>
+              <th>
+                <%= t "noun.state" %>
+              </th>
+              <th>
+                <%= t "noun.actions" %>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @slots.each do |slot| %>
+              <tr>
+                <td>
+                  <%= slot.id %>
+                </td>
+                <td>
+                  <% if slot.program %>
+                    <%= link_to db_edit_program_path(slot.program) do %>
+                      <%= slot.program.channel_name %>
+                      <br>
+                      <%= display_time(slot.program.started_at) %>~
+                    <% end %>
+                  <% else %>
+                    -
+                    <br>
+                    <%= slot.channel.name %>
+                  <% end %>
+                </td>
+                <td>
+                  <%= display_time(slot.started_at)&.presence || "-" %>
+                </td>
+                <td>
+                  <%= slot.number.presence || "-" %>
+                </td>
+                <td>
+                  <%= slot.episode&.title_with_number.presence || "-" %>
+                </td>
+                <td>
+                  <%= slot.rebroadcast? ? icon("circle", "far") : icon("times") %>
+                </td>
+                <td>
+                  <%= slot.irregular? ? icon("circle", "far") : icon("times") %>
+                </td>
+                <td>
+                  <%= render Db::PublishingStateLabelComponent.new(resource: slot) %>
+                </td>
+                <td>
+                  <%= render Db::ActionButtonsComponent.new(
+                      user: current_user,
+                      resource: slot,
+                      detail_path: db_slot_detail_path(slot),
+                      edit_path: db_edit_slot_path(slot),
+                      publishing_path: db_slot_publishing_path(slot)
+                  ) %>
+                </td>
+              </tr>
+          <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% else %>
+    <div class="card mt-3">
+      <div class="card-body">
+        <%= render "application/components/empty", text: t("messages._empty.no_resources") %>
+      </div>
+    </div>
+  <% end %>
 </div>

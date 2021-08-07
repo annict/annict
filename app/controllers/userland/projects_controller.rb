@@ -2,8 +2,7 @@
 
 module Userland
   class ProjectsController < Userland::ApplicationController
-    before_action :authenticate_user!, only: %i(new create edit update destroy)
-    before_action :load_i18n, only: %i(show)
+    before_action :authenticate_user!, only: %i[new create edit update destroy]
 
     def new
       @project = UserlandProject.new
@@ -25,16 +24,16 @@ module Userland
     end
 
     def show
-      @project = UserlandProject.find(params[:id])
+      @project = UserlandProject.find(params[:project_id])
     end
 
     def edit
-      @project = UserlandProject.find(params[:id])
+      @project = UserlandProject.find(params[:project_id])
       authorize @project, :edit?
     end
 
     def update
-      @project = UserlandProject.find(params[:id])
+      @project = UserlandProject.find(params[:project_id])
       authorize @project, :update?
 
       @project.attributes = userland_project_params
@@ -49,22 +48,13 @@ module Userland
     end
 
     def destroy
-      @project = UserlandProject.find(params[:id])
+      @project = UserlandProject.find(params[:project_id])
       authorize @project, :destroy?
       @project.destroy
-      redirect_to userland_root_path, notice: t("messages._common.deleted")
+      redirect_to userland_path, notice: t("messages._common.deleted")
     end
 
     private
-
-    def load_i18n
-      keys = {
-        "verb.follow": nil,
-        "noun.following": nil
-      }
-
-      load_i18n_into_gon keys
-    end
 
     def userland_project_params
       params.require(:userland_project).permit(

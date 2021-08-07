@@ -9,7 +9,7 @@ namespace :episode do
   task update_score: :environment do
     RATING_MAX = 2
 
-    works = Work.only_kept
+    works = Anime.only_kept
 
     works.find_each do |work|
       episodes = work.episodes.only_kept.recorded
@@ -23,13 +23,13 @@ namespace :episode do
           next
         end
 
-        ratings = rating_states.map do |state|
+        ratings = rating_states.map { |state|
           case state.to_s
           when "bad" then 0
           when "average" then 1
           when "good", "great" then RATING_MAX
           end
-        end
+        }
 
         ratings_count = ratings.length
         ratings_sum = ratings.inject(:+)
@@ -42,7 +42,7 @@ namespace :episode do
           "ratings_avg: #{ratings_avg}",
           "satisfaction_rate: #{satisfaction_rate}"
         ]
-        puts "Work: #{work.id}, Episode: #{episode.id} => #{outputs.join(', ')}"
+        puts "Work: #{work.id}, Episode: #{episode.id} => #{outputs.join(", ")}"
 
         episode.update_columns(satisfaction_rate: satisfaction_rate, ratings_count: ratings_count)
       end

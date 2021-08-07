@@ -1,4 +1,7 @@
-- if organizations.present?
-  = render "#{view.pluralize}/list", organizations: organizations
+- if resources.present?
+  ul.list-unstyled.mb-0
+    - resources.each do |organization|
+      li
+        = link_to organization.name, organization_path(organization.id), class: "text-body"
 - else
   = render "application/components/empty", text: t("messages._empty.no_organizations")

@@ -1,15 +1,37 @@
 ja:
   form:
     attributes:
-      registration_form:
+      forms/anime_record_form:
+        comment: 感想
+        rating_animation: 映像
+        rating_character: キャラクター
+        rating_music: 音楽
+        rating_overall: 全体
+        rating_story: ストーリー
+      forms/episode_record_form:
+        comment: 感想
+        rating: 評価
+      forms/registration_form:
         email: メールアドレス
         terms_and_privacy_policy_agreement: 利用規約とプライバシーポリシー
         username: ユーザ名
-      sign_in_form:
+      forms/sign_in_form:
         back: 戻り先
         email: メールアドレス
-      sign_up_form:
+      forms/sign_up_form:
         back: 戻り先
         email: メールアドレス
-      user_email_form:
+      forms/user_email_form:
         email: メールアドレス
+    errors:
+      models:
+        forms/registration_form:
+          attributes:
+            email:
+              email_uniqueness: はすでに存在します
+            username:
+              username_uniqueness: はすでに存在します
+        forms/user_email_form:
+          attributes:
+            email:
+              email_uniqueness: はすでに存在します

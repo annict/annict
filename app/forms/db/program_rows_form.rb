@@ -15,7 +15,7 @@ module Db
     private
 
     def attrs_list
-      @attrs_list ||= fetched_rows.map do |row_data|
+      @attrs_list ||= fetched_rows.map { |row_data|
         {
           channel_id: row_data[:channel][:id],
           work_id: @work.id,
@@ -25,7 +25,7 @@ module Db
           vod_title_name: row_data[:vod_title_name][:value],
           time_zone: @user.time_zone
         }
-      end
+      }
     end
 
     def valid_time
@@ -45,15 +45,15 @@ module Db
 
     def fetched_rows
       parsed_rows.map do |row_columns|
-        channel = Channel.only_kept.where(id: row_columns[0]).
-          or(Channel.only_kept.where(name: row_columns[0])).first
+        channel = Channel.only_kept.where(id: row_columns[0])
+          .or(Channel.only_kept.where(name: row_columns[0])).first
 
         {
-          channel: { id: channel&.id, value: row_columns[0] },
-          started_at: { value: row_columns[1] },
-          rebroadcast: { value: row_columns[2] == "1" },
-          vod_title_code: { value: row_columns[3].presence || "" },
-          vod_title_name: { value: row_columns[4].presence || "" }
+          channel: {id: channel&.id, value: row_columns[0]},
+          started_at: {value: row_columns[1]},
+          rebroadcast: {value: row_columns[2] == "1"},
+          vod_title_code: {value: row_columns[3].presence || ""},
+          vod_title_name: {value: row_columns[4].presence || ""}
         }
       end
     end

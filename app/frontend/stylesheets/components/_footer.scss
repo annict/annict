@@ -1,0 +1,11 @@
+.c-footer {
+  $root: &;
+
+  &__main {
+    h2 {
+      a {
+        font-family: 'Raleway', sans-serif;
+      }
+    }
+  }
+}

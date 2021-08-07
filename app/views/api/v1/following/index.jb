@@ -2,9 +2,9 @@
 
 json = {}
 
-json[:users] = @follows.map do |follow|
+json[:users] = @follows.map { |follow|
   render "api/v1/users/user", user: follow.following, show_all: false, params: @params, field_prefix: ""
-end
+}
 
 json.merge! render("api/v1/application/pagination", collection: @follows, params: @params)
 

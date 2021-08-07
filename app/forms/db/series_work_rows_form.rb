@@ -8,30 +8,30 @@ module Db
 
     attr_accessor :series
 
-    row_model SeriesWork
+    row_model SeriesAnime
 
     validate :valid_resource
 
     private
 
     def attrs_list
-      @attrs_list ||= fetched_rows.map do |row_data|
+      @attrs_list ||= fetched_rows.map { |row_data|
         {
           series_id: @series.id,
           work_id: row_data[:work][:id],
           summary: row_data[:summary][:value]
         }
-      end
+      }
     end
 
     def fetched_rows
       parsed_rows.map do |row_columns|
-        work = Work.only_kept.where(id: row_columns[0]).
-          or(Work.only_kept.where(title: row_columns[0])).first
+        work = Anime.only_kept.where(id: row_columns[0])
+          .or(Anime.only_kept.where(title: row_columns[0])).first
 
         {
-          work: { id: work&.id, value: row_columns[0] },
-          summary: { value: row_columns[1].presence || "" }
+          work: {id: work&.id, value: row_columns[0]},
+          summary: {value: row_columns[1].presence || ""}
         }
       end
     end

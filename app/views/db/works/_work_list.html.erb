@@ -1,4 +1,4 @@
-<table class="table table-hover table-sm">
+<table class="table table-sm">
   <thead>
     <tr>
       <th>
@@ -31,10 +31,10 @@
     <% resources.each do |work| %>
       <tr>
         <td>
-          <%= link_to work.id, work_path(work), target: "_blank" %>
+          <%= link_to work.id, anime_path(anime_id: work.id), target: "_blank" %>
         </td>
         <td>
-          <%= render WorkMediaLabelComponent.new(work_entity: work.to_entity) %>
+          <%= Badges::AnimeMediaBadgeComponent.new(self, anime: work).render %>
           <br>
           <%= work.title %>
           <br>
@@ -46,11 +46,11 @@
           <dl>
             <dt>しょぼかる</dt>
             <dd>
-              <%= render SyobocalLinkComponent.new(work_entity: work.to_entity) %>
+              <%= render SyobocalLinkComponent.new(anime: work) %>
             </dd>
             <dt>MyAnimeList</dt>
             <dd>
-              <%= render MalLinkComponent.new(work_entity: work.to_entity) %>
+              <%= render MalLinkComponent.new(anime: work) %>
             </dd>
           </dl>
         </td>
@@ -61,7 +61,7 @@
           <%= work.release_season.presence || "-" %>
         </td>
         <td>
-          <%= image_tag ann_image_url(work.work_image, :image, size: "70x", ratio: "3:4"), class: "rounded img-thumbnail" %>
+          <%= image_tag v4_ann_image_url(work.anime_image, :image, size: "70x", ratio: "3:4"), class: "rounded img-thumbnail" %>
         </td>
         <td>
           <%= render Db::PublishingStateLabelComponent.new(resource: work) %>

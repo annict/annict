@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-resources = @organizations.map do |org|
+resources = @organizations.map { |org|
   {
     id: org.id,
     text: org.name
   }
-end
+}
 
 {
   resources: resources

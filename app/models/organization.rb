@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: organizations
@@ -36,23 +37,23 @@ class Organization < ApplicationRecord
   include RootResourceCommon
   include Unpublishable
 
-  DIFF_FIELDS = %i(
+  DIFF_FIELDS = %i[
     name name_kana url wikipedia_url twitter_username name_kana name_en url_en
     wikipedia_url_en twitter_username_en
-  ).freeze
+  ].freeze
 
   validates :name, presence: true, uniqueness: true
-  validates :url, url: { allow_blank: true }
-  validates :url_en, url: { allow_blank: true }
-  validates :wikipedia_url, url: { allow_blank: true }
-  validates :wikipedia_url_en, url: { allow_blank: true }
+  validates :url, url: {allow_blank: true}
+  validates :url_en, url: {allow_blank: true}
+  validates :wikipedia_url, url: {allow_blank: true}
+  validates :wikipedia_url_en, url: {allow_blank: true}
 
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
   # organization_favorites are user data. so do not add `dependent: :destroy`
   has_many :organization_favorites
   has_many :staffs, as: :resource, dependent: :destroy
-  has_many :staff_works, through: :staffs, source: :work
+  has_many :staff_works, through: :staffs, source: :anime
   has_many :users, through: :organization_favorites
 
   def favorites
@@ -63,10 +64,10 @@ class Organization < ApplicationRecord
   after_destroy :touch_children
 
   def to_diffable_hash
-    data = self.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
+    data = self.class::DIFF_FIELDS.each_with_object({}) { |field, hash|
       hash[field] = send(field)
       hash
-    end
+    }
 
     data.delete_if { |_, v| v.blank? }
   end

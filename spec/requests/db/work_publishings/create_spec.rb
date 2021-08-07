@@ -2,7 +2,7 @@
 
 describe "POST /db/works/:id/publishing", type: :request do
   context "user does not sign in" do
-    let!(:work) { create(:work, :unpublished) }
+    let!(:work) { create(:anime, :unpublished) }
 
     it "user can not access this page" do
       post "/db/works/#{work.id}/publishing"
@@ -17,7 +17,7 @@ describe "POST /db/works/:id/publishing", type: :request do
 
   context "user who is not editor signs in" do
     let!(:user) { create(:registered_user) }
-    let!(:work) { create(:work, :unpublished) }
+    let!(:work) { create(:anime, :unpublished) }
 
     before do
       login_as(user, scope: :user)
@@ -36,7 +36,7 @@ describe "POST /db/works/:id/publishing", type: :request do
 
   context "user who is editor signs in" do
     let!(:user) { create(:registered_user, :with_editor_role) }
-    let!(:work) { create(:work, :unpublished) }
+    let!(:work) { create(:anime, :unpublished) }
 
     before do
       login_as(user, scope: :user)

@@ -20,9 +20,9 @@ module Api
 
       def filter_username
         return @collection if @params.filter_username.blank?
-        @collection.
-          joins(:following).
-          where(users: { username: @params.filter_username })
+        @collection
+          .joins(:following)
+          .where(users: {username: @params.filter_username})
       end
     end
   end

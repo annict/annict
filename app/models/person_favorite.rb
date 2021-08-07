@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: person_favorites
@@ -33,10 +34,14 @@ class PersonFavorite < ApplicationRecord
   scope :with_cast, -> { joins(:person).where("people.casts_count > ?", 0) }
   scope :with_staff, -> { joins(:person).where("people.staffs_count > ?", 0) }
 
+  def watched_anime_count
+    watched_works_count
+  end
+
   def update_watched_works_count(user)
     cast_work_ids = person.cast_works.pluck(:id)
     staff_work_ids = person.staff_works.pluck(:id)
-    library_entries = user.library_entries.with_not_deleted_work.with_status(:watched)
+    library_entries = user.library_entries.with_not_deleted_anime.with_status(:watched)
     count = library_entries.where(work_id: (cast_work_ids | staff_work_ids)).count
 
     update_column(:watched_works_count, count)

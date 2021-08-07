@@ -1,5 +1,0 @@
-<p><%= @resource.username %>さん、こんにちは。</p>
-
-<p>Annictをご利用の前に、下のリンクをクリックしてメールアドレスの確認をお願いします。</p>
-
-<p><%= link_to 'メールアドレスを確認する', confirmation_url(confirmation_token: @token, host: @resource.annict_host) %></p>

@@ -1,0 +1,19 @@
+<% url = token.new_record? ? settings_token_list_path : settings_token_path(token) %>
+<%= form_for token, url: url do |f| %>
+  <%= render "application/components/error_panel", resource: token %>
+
+  <div class="mb-3">
+    <%= f.label :description, class: "form-label" %>
+    <%= f.text_field :description, class: "form-control", required: true %>
+  </div>
+
+  <div class="mb-3">
+    <%= f.label :scopes, class: "form-label" %>
+    <%= select_tag "doorkeeper_access_token[scopes]", options_for_select([[t("messages.oauth.applications.read_only"), "read"], [t("messages.oauth.applications.read_write"), "read write"]], token.scopes), class: "form-select" %>
+    <%= doorkeeper_errors_for token, :scopes %>
+  </div>
+
+  <div class="form-submit text-center">
+    <%= f.submit class: "btn btn-primary" %>
+  </div>
+<% end %>

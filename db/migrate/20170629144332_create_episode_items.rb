@@ -15,7 +15,7 @@ class CreateEpisodeItems < ActiveRecord::Migration[5.1]
     add_index :episode_items, :item_id
     add_index :episode_items, :user_id
     add_index :episode_items, :work_id
-    add_index :episode_items, %i(episode_id item_id), unique: true
+    add_index :episode_items, %i[episode_id item_id], unique: true
 
     add_foreign_key :episode_items, :episodes
     add_foreign_key :episode_items, :items

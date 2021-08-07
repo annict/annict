@@ -38,10 +38,10 @@ module ResourceRows
     end
 
     def new_resources_with_user
-      @new_resources_with_user ||= new_resources.map do |resource|
+      @new_resources_with_user ||= new_resources.map { |resource|
         resource.user = @user
         resource
-      end
+      }
     end
   end
 end

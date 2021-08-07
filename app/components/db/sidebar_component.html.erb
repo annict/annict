@@ -8,13 +8,13 @@
     </span>
   <% end %>
 
-  <%= form_with class: "px-1", html: { method: :get }, local: true, url: db_search_path do %>
-    <div class="form-group">
+  <%= form_with class: "px-1", html: { method: :get }, url: db_search_path do %>
+    <div class="mb-3">
       <%= text_field_tag "q", search.q, class: "form-control", placeholder: t("messages._common.search_with_keywords") %>
     </div>
   <% end %>
 
-  <ul class="c-db-sidebar__menu nav navbar-nav px-3">
+  <ul class="c-db-sidebar__menu nav navbar-nav px-3 mt-3">
     <li>
       <%= link_to t("noun.activities"), db_activity_list_path, class: "d-inline-block" %>
     </li>

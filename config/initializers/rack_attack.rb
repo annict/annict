@@ -11,7 +11,7 @@ end
 ActiveSupport::Notifications.subscribe(/rack_attack/) do |_name, _start, _finish, _request_id, payload|
   req = payload[:request]
 
-  next unless %i(throttle blacklist).include? req.env["rack.attack.match_type"]
+  next unless %i[throttle blacklist].include? req.env["rack.attack.match_type"]
 
-  Rails.logger.info("Rate limit hit (#{req.env['rack.attack.match_type']}): #{remote_ip(req)} #{req.request_method} #{req.fullpath}")
+  Rails.logger.info("Rate limit hit (#{req.env["rack.attack.match_type"]}): #{remote_ip(req)} #{req.request_method} #{req.fullpath}")
 end

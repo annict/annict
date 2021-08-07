@@ -1,58 +1,53 @@
 # frozen_string_literal: true
 
-class RecordsController < ApplicationController
-  before_action :authenticate_user!, only: %i(destroy)
+class RecordsController < ApplicationV6Controller
+  include Pundit
 
-  def show
-    set_page_category Rails.configuration.page_categories.record_detail
+  before_action :authenticate_user!, only: %i[destroy]
+
+  def index
+    set_page_category PageCategory::RECORD_LIST
 
     @user = User.only_kept.find_by!(username: params[:username])
-    @record = @user.records.only_kept.find(params[:id])
+    @profile = @user.profile
+    @dates = @user.records.only_kept.group_by_month(:created_at).count.to_a.reverse.to_h
 
-    if @record.episode_record?
-      @episode_record = UserEpisodeRecordsQuery.new.call(
-        episode_records: EpisodeRecord.where(id: @record.episode_record),
-        user: current_user
-      ).first
-      raise ActiveRecord::RecordNotFound unless @episode_record
+    @records = @user
+      .records
+      .preload(:anime_record, anime: :anime_image, episode_record: :episode)
+      .order(created_at: :desc)
+      .page(params[:page])
+      .per(30)
+      .without_count
+    @records = @records.by_month(params[:month], year: params[:year]) if params[:month] && params[:year]
+    @anime_ids = @records.pluck(:work_id)
+  end
 
-      @work = @episode_record.work
-      @episode = @episode_record.episode
-      @comments = @episode_record.comments.order(created_at: :desc)
-      @comment = @episode_record.comments.new
-      @is_spoiler = user_signed_in? && current_user.hide_episode_record_body?(@episode)
-      render "episode_records/show"
-    else
-      @work_record = UserWorkRecordsQuery.new.call(
-        work_records: WorkRecord.where(id: @record.work_record),
-        user: current_user
-      ).first
-      raise ActiveRecord::RecordNotFound unless @work_record
+  def show
+    set_page_category PageCategory::RECORD
 
-      @work = @work_record.work
-      @is_spoiler = user_signed_in? && current_user.hide_work_record_body?(@work)
-      @work_records = UserWorkRecordsQuery.new.call(
-        work_records: @user.work_records.where.not(id: @work_record.id),
-        user: current_user
-      )
-      render "work_records/show"
-    end
+    @user = User.only_kept.find_by!(username: params[:username])
+    @profile = @user.profile
+    @dates = @user.records.only_kept.group_by_month(:created_at).count.to_a.reverse.to_h
+
+    @record = @user.records.only_kept.find(params[:record_id])
+    @anime_ids = [@record.work_id]
   end
 
   def destroy
     @user = User.only_kept.find_by!(username: params[:username])
-    @record = @user.records.only_kept.find(params[:id])
+    @record = @user.records.only_kept.find(params[:record_id])
 
-    authorize @record, :destroy?
+    authorize(@record, :destroy?)
 
-    @record.destroy
+    Destroyers::RecordDestroyer.new(record: @record).call
 
     path = if @record.episode_record?
       episode_record = @record.episode_record
-      work_episode_path(episode_record.work, episode_record.episode)
+      episode_path(episode_record.work_id, episode_record.episode_id)
     else
-      work_record = @record.work_record
-      work_records_path(work_record.work)
+      work_record = @record.anime_record
+      anime_record_list_path(work_record.work_id)
     end
 
     redirect_to path, notice: t("messages._common.deleted")

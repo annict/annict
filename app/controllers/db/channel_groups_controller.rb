@@ -2,12 +2,12 @@
 
 module Db
   class ChannelGroupsController < Db::ApplicationController
-    before_action :authenticate_user!, only: %i(new create edit update destroy)
+    before_action :authenticate_user!, only: %i[new create edit update destroy]
 
     def index
-      @channel_groups = ChannelGroup.
-        without_deleted.
-        order(:sort_number)
+      @channel_groups = ChannelGroup
+        .without_deleted
+        .order(:sort_number)
     end
 
     def new
@@ -19,7 +19,7 @@ module Db
       @channel_group = ChannelGroup.new(channel_group_params)
       authorize @channel_group
 
-      return render(:new) unless @channel_group.valid?
+      return render(:new, status: :unprocessable_entity) unless @channel_group.valid?
 
       @channel_group.save
 
@@ -37,7 +37,7 @@ module Db
 
       @channel_group.attributes = channel_group_params
 
-      return render(:edit) unless @channel_group.valid?
+      return render(:edit, status: :unprocessable_entity) unless @channel_group.valid?
 
       @channel_group.save
 

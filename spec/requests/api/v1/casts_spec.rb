@@ -21,36 +21,37 @@ describe "Api::V1::Casts" do
           "name_en" => cast.name_en,
           "sort_number" => cast.sort_number,
           "work" => {
-            "id" => cast.work.id,
-            "title" => cast.work.title,
-            "title_kana" => cast.work.title_kana,
-            "media" => cast.work.media,
-            "media_text" => cast.work.media_text,
-            "released_on" => cast.work.released_at&.strftime("%Y-%m-%d"),
-            "released_on_about" => cast.work.released_at_about,
-            "official_site_url" => cast.work.official_site_url,
-            "wikipedia_url" => cast.work.wikipedia_url,
-            "twitter_username" => cast.work.twitter_username,
-            "twitter_hashtag" => cast.work.twitter_hashtag,
+            "id" => cast.anime.id,
+            "title" => cast.anime.title,
+            "title_en" => "",
+            "title_kana" => cast.anime.title_kana,
+            "media" => cast.anime.media,
+            "media_text" => cast.anime.media_text,
+            "released_on" => cast.anime.released_at&.strftime("%Y-%m-%d"),
+            "released_on_about" => cast.anime.released_at_about,
+            "official_site_url" => cast.anime.official_site_url,
+            "wikipedia_url" => cast.anime.wikipedia_url,
+            "twitter_username" => cast.anime.twitter_username,
+            "twitter_hashtag" => cast.anime.twitter_hashtag,
             "syobocal_tid" => "",
-            "mal_anime_id" => cast.work.mal_anime_id&.to_s,
+            "mal_anime_id" => cast.anime.mal_anime_id&.to_s,
             "images" => {
-              "recommended_url" => cast.work.recommended_image_url,
+              "recommended_url" => cast.anime.recommended_image_url,
               "facebook" => {
-                "og_image_url" => cast.work.facebook_og_image_url
+                "og_image_url" => cast.anime.facebook_og_image_url
               },
               "twitter" => {
-                "mini_avatar_url" => cast.work.twitter_avatar_url(:mini),
-                "normal_avatar_url" => cast.work.twitter_avatar_url(:normal),
-                "bigger_avatar_url" => cast.work.twitter_avatar_url(:bigger),
-                "original_avatar_url" => cast.work.twitter_avatar_url,
-                "image_url" => cast.work.twitter_image_url
+                "mini_avatar_url" => cast.anime.twitter_avatar_url(:mini),
+                "normal_avatar_url" => cast.anime.twitter_avatar_url(:normal),
+                "bigger_avatar_url" => cast.anime.twitter_avatar_url(:bigger),
+                "original_avatar_url" => cast.anime.twitter_avatar_url,
+                "image_url" => cast.anime.twitter_image_url
               }
             },
-            "episodes_count" => cast.work.episodes_count,
-            "watchers_count" => cast.work.watchers_count,
-            "reviews_count" => cast.work.work_records_with_body_count,
-            "no_episodes" => cast.work.no_episodes?
+            "episodes_count" => cast.anime.episodes_count,
+            "watchers_count" => cast.anime.watchers_count,
+            "reviews_count" => cast.anime.work_records_with_body_count,
+            "no_episodes" => cast.anime.no_episodes?
           },
           "character" => {
             "id" => cast.character.id,
@@ -77,7 +78,7 @@ describe "Api::V1::Casts" do
             "description_en" => cast.character.description_en,
             "description_source" => cast.character.description_source,
             "description_source_en" => cast.character.description_source_en,
-            "favorite_characters_count" => cast.character.favorite_users_count,
+            "favorite_characters_count" => cast.character.favorite_users_count
           },
           "person" => {
             "id" => cast.person.id,
@@ -98,7 +99,7 @@ describe "Api::V1::Casts" do
             "height" => cast.person.height,
             "favorite_people_count" => cast.person.favorite_users_count,
             "casts_count" => cast.person.casts.count,
-            "staffs_count" => cast.person.staffs.count,
+            "staffs_count" => cast.person.staffs.count
           }
         }
         expect(json["casts"][0]).to include(expected_hash)

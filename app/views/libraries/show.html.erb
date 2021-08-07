@@ -1,0 +1,71 @@
+<% action = t("enumerize.status.kind_action.#{params[:status_kind]}") %>
+<% title = t "head.title.libraries.show", profile_name: @user.profile.name, username: @user.username, action: action %>
+<% description = meta_description(t("head.meta.description.libraries.show", profile_name: @user.profile.name, username: @user.username, action: action)) %>
+<% keywords = meta_keywords(@user.profile.name, @user.username) %>
+<% image_url = ann_image_url(@user.profile, :image, width: 640) %>
+<% set_meta_tags title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false %>
+
+<%= component_value_fetcher_tag("follow-button", internal_api_following_list_path) %>
+<%= component_value_fetcher_tag("mute-user-button", internal_api_muted_user_list_path) %>
+<%= component_value_fetcher_tag("status-select-dropdown", internal_api_library_entry_list_path, method: :post, payload: {anime_ids: @anime_ids}) %>
+
+<div class="py-3">
+  <div class="container">
+    <%= Headers::ProfileHeaderComponent.new(self, user: @user).render %>
+  </div>
+
+  <%= Navs::UserNavComponent.new(self, user: @user, params: params).render %>
+
+  <ul class="justify-content-center mt-3 nav nav-pills">
+    <% %i(watching wanna_watch watched on_hold stop_watching).each do |status_kind| %>
+      <li class="nav-item">
+        <%= active_link_to library_path(@user.username, status_kind, display: params[:display]), class: "nav-link rounded-pill text-body", active: (status_kind.to_s == params[:status_kind]) do %>
+          <%= t "enumerize.status.kind.#{status_kind}" %>
+          <span class="badge bg-secondary ms-1">
+            <%= @user.library_entries.count_on(status_kind) %>
+          </span>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+
+  <div class="container mt-3 text-end">
+    <%= Buttons::ShareToTwitterButtonComponent.new(self, text: title, url: "#{local_url}#{library_path(@user.username, params[:status_kind])}", class_name: "me-3").render %>
+  </div>
+
+  <% if @seasons.present? %>
+    <div class="gx-3 gy-5 row">
+      <% @seasons.each_with_index do |season, i| %>
+        <div class="col-12">
+          <div class="container">
+            <h2 class="fw-bold h3">
+              <%= season.local_name %>
+            </h2>
+          </div>
+
+          <div class="container mt-3 u-container-flat">
+            <div class="card u-card-flat">
+              <div class="card-body">
+                <% animes = season.no_season? ? @animes.with_no_season : @animes.by_season(season.slug) %>
+                <% animes = animes.order(watchers_count: :desc).includes(:anime_image) %>
+                <%= render "libraries/display_options/grid", animes: animes, user: @user %>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="mt-3 text-center">
+      <%= ButtonGroups::PaginationButtonGroupComponent.new(self, collection: @seasons).render %>
+    </div>
+  <% else %>
+    <div class="container u-container-flat">
+      <div class="card u-card-flat">
+        <div class="card-body">
+          <%= render "application/components/empty", text: t("messages.users.no_works") %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

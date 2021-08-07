@@ -2,10 +2,15 @@
 
 module Db
   class SeriesController < Db::ApplicationController
-    before_action :authenticate_user!, only: %i(new create edit update destroy)
+    before_action :authenticate_user!, only: %i[new create edit update destroy]
 
     def index
-      @series_list = Series.without_deleted.order(id: :desc).page(params[:page]).per(100)
+      @series_list = Series
+        .without_deleted
+        .order(id: :desc)
+        .page(params[:page])
+        .per(100)
+        .without_count
     end
 
     def new
@@ -18,7 +23,7 @@ module Db
       @series.user = current_user
       authorize @series
 
-      return render(:new) unless @series.valid?
+      return render(:new, status: :unprocessable_entity) unless @series.valid?
 
       @series.save_and_create_activity!
 
@@ -37,7 +42,7 @@ module Db
       @series.attributes = series_params
       @series.user = current_user
 
-      return render(:edit) unless @series.valid?
+      return render(:edit, status: :unprocessable_entity) unless @series.valid?
 
       @series.save_and_create_activity!
 

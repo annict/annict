@@ -4,9 +4,9 @@ FactoryBot.define do
   factory :slot do
     association :program
     association :episode
-    work { episode.work }
+    anime { episode.anime }
     channel { program.channel }
-    started_at { Time.parse("2017-01-29 0:00:00") }
+    started_at { Time.parse("2017-01-29 00:00:00").utc }
     rebroadcast { false }
 
     trait :published do

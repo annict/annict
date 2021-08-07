@@ -2,18 +2,18 @@
 
 module Db
   class WorkPublishingsController < Db::ApplicationController
-    include V4::ResourcePublishable
+    include ResourcePublishable
 
     before_action :authenticate_user!
 
     private
 
     def create_resource
-      @create_resource ||= Work.without_deleted.unpublished.find(params[:id])
+      @create_resource ||= Anime.without_deleted.unpublished.find(params[:id])
     end
 
     def destroy_resource
-      @destroy_resource ||= Work.without_deleted.published.find(params[:id])
+      @destroy_resource ||= Anime.without_deleted.published.find(params[:id])
     end
 
     def after_created_path

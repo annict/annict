@@ -3,10 +3,10 @@
 module Api
   module V1
     class ReviewsController < Api::V1::ApplicationController
-      before_action :prepare_params!, only: %i(index)
+      before_action :prepare_params!, only: %i[index]
 
       def index
-        @work_records = WorkRecord.includes(:work).all
+        @work_records = WorkRecord.includes(:anime).all
         @work_records = Api::V1::WorkRecordIndexService.new(@work_records, @params).result
       end
     end

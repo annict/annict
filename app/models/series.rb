@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: series
@@ -28,7 +29,9 @@ class Series < ApplicationRecord
   include RootResourceCommon
   include Unpublishable
 
-  DIFF_FIELDS = %i(name name_en).freeze
+  DIFF_FIELDS = %i[name name_en].freeze
 
-  has_many :series_works, dependent: :destroy
+  has_many :series_animes, dependent: :destroy
+
+  validates :name, presence: true, uniqueness: {conditions: -> { only_kept }}
 end

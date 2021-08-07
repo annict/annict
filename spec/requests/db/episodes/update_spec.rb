@@ -11,7 +11,7 @@ describe "PATCH /db/episodes/:id", type: :request do
     end
 
     it "user can not access this page" do
-      patch "/db/episodes/#{episode.id}", params: { episode: episode_params }
+      patch "/db/episodes/#{episode.id}", params: {episode: episode_params}
       episode.reload
 
       expect(response.status).to eq(302)
@@ -36,7 +36,7 @@ describe "PATCH /db/episodes/:id", type: :request do
     end
 
     it "user can not access" do
-      patch "/db/episodes/#{episode.id}", params: { episode: episode_params }
+      patch "/db/episodes/#{episode.id}", params: {episode: episode_params}
       episode.reload
 
       expect(response.status).to eq(302)
@@ -47,7 +47,6 @@ describe "PATCH /db/episodes/:id", type: :request do
   end
 
   context "user who is editor signs in" do
-    let!(:number_format) { create(:number_format) }
     let!(:user) { create(:registered_user, :with_editor_role) }
     let!(:episode) { create(:episode) }
     let!(:old_episode) { episode.attributes }
@@ -65,7 +64,7 @@ describe "PATCH /db/episodes/:id", type: :request do
     it "user can update episode" do
       expect(episode.title).to eq(old_episode["title"])
 
-      patch "/db/episodes/#{episode.id}", params: { episode: episode_params }
+      patch "/db/episodes/#{episode.id}", params: {episode: episode_params}
       episode.reload
 
       expect(response.status).to eq(302)

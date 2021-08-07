@@ -4,18 +4,15 @@ module Canary
   module Types
     module Objects
       class Base < GraphQL::Schema::Object
+        include GraphQL::FragmentCache::Object
         include Imgix::Rails::UrlHelper
+
         include ImageHelper
+        include ImageV6Helper
         include MarkdownHelper
 
         def database_id
           object.id
-        end
-
-        def build_order(order_by)
-          return OrderProperty.new unless order_by
-
-          OrderProperty.new(order_by[:field], order_by[:direction])
         end
 
         def method_missing(method_name, *arguments, &block)

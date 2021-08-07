@@ -2,14 +2,14 @@
 - comment = notification.trackable.recipient
 - episode_record = comment.episode_record
 
-span.mr-1
+span.me-1
   = action_user.name_link
 | があなたのコメントに「いいね！」しました
 
 .small.text-muted.my-2
   = link_to local_time_ago_in_words(comment.created_at), record_path(current_user.username, episode_record.record)
   | :
-  span.ml-1
+  span.ms-1
     = comment.body
 
 .small.text-muted

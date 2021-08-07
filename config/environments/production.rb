@@ -13,7 +13,7 @@ Rails.application.configure do
   config.eager_load = true
 
   # Full error reports are disabled and caching is turned on.
-  config.consider_all_requests_local       = false
+  config.consider_all_requests_local = false
   config.action_controller.perform_caching = true
 
   # Ensures that a master key has been made available in either ENV["RAILS_MASTER_KEY"]
@@ -30,12 +30,6 @@ Rails.application.configure do
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   config.action_controller.asset_host = ENV.fetch("ANNICT_ASSET_URL")
 
-  # Enable Rack::Cache to put a simple HTTP cache in front of your application
-  # Add `rack-cache` to your Gemfile before enabling this.
-  # For large-scale production use, consider using a caching reverse proxy
-  # like nginx, varnish or squid.
-  # config.action_dispatch.rack_cache = true
-
   # Specifies the header that your server uses for sending files.
   # config.action_dispatch.x_sendfile_header = "X-Sendfile" # for Apache
   # config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect' # for NGINX
@@ -51,17 +45,12 @@ Rails.application.configure do
   # Prepend all log lines with the following tags.
   config.log_tags = [:request_id]
 
-  config.lograge.enabled = true
-  config.lograge.formatter = Lograge::Formatters::Json.new
-  config.lograge.custom_options = lambda do |event|
-    options = event.payload.slice(:request_id, :client_uuid, :user_id)
-    options[:params] = event.payload[:params].except("controller", "action")
-    options
-  end
-  config.log_formatter = config.lograge.formatter
-
   # Use a different cache store in production.
   config.cache_store = :redis_cache_store, {
+    url: ENV.fetch("REDISCLOUD_URL"),
+    expires_in: 24.hours.to_i
+  }
+  config.graphql_fragment_cache.store = :redis_cache_store, {
     url: ENV.fetch("REDISCLOUD_URL"),
     expires_in: 24.hours.to_i
   }
@@ -76,14 +65,33 @@ Rails.application.configure do
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
   # config.action_mailer.raise_delivery_errors = false
 
-  config.action_mailer.asset_host = config.action_controller.asset_host
-
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).
   config.i18n.fallbacks = true
 
   # Send deprecation notices to registered listeners.
   config.active_support.deprecation = :notify
+
+  # Log disallowed deprecations.
+  config.active_support.disallowed_deprecation = :log
+
+  # Tell Active Support which deprecation messages to disallow.
+  config.active_support.disallowed_deprecation_warnings = []
+
+  config.lograge.enabled = true
+  config.lograge.formatter = Lograge::Formatters::Json.new
+  config.lograge.custom_options = lambda do |event|
+    options = event.payload.slice(:request_id, :client_uuid, :user_id)
+    options[:params] = event.payload[:params].except("controller", "action")
+    options
+  end
+  config.log_formatter = config.lograge.formatter
+
+  # Use a different logger for distributed setups.
+  # require "syslog/logger"
+  # config.logger = ActiveSupport::TaggedLogging.new(Syslog::Logger.new 'app-name')
+
+  config.action_mailer.asset_host = config.action_controller.asset_host
 
   config.action_mailer.default_url_options = {
     protocol: "https://",

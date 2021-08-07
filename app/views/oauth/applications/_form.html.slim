@@ -1,29 +1,29 @@
 = form_for application, url: doorkeeper_submit_path(application) do |f|
   = render "application/components/error_panel", resource: application
-  
+
   = hidden_field_tag :page_category, page_category
 
-  .form-group.row
+  .mb-3.row
     = f.label :name, class: "col-2 col-form-label"
     .col-10
       = f.text_field :name, class: "form-control"
 
-  .form-group.row
+  .mb-3.row
     = f.label :redirect_uri, class: "col-2 col-form-label"
     .col-10
       = f.text_area :redirect_uri, rows: 5, class: "form-control"
-      small.form-text.text-muted
+      .small.form-text.text-muted
         = t "messages.oauth.applications.please_input_uris_with_new_line"
       - if Doorkeeper.configuration.native_redirect_uri
-        small.form-text.text-muted
+        .small.form-text.text-muted
           = t "messages.oauth.applications.you_can_use_the_uri_for_local_application", uri: Doorkeeper.configuration.native_redirect_uri
 
-  .form-group.row
+  .mb-3.row
     = f.label :scopes, class: "col-2 col-form-label"
     .col-10
-      = select_tag "doorkeeper_application[scopes]", options_for_select([[t("messages.oauth.applications.read_only"), "read"], [t("messages.oauth.applications.read_write"), "read write"]]), class: "form-control"
+      = select_tag "doorkeeper_application[scopes]", options_for_select([[t("messages.oauth.applications.read_only"), "read"], [t("messages.oauth.applications.read_write"), "read write"]]), class: "form-select"
       = doorkeeper_errors_for application, :scopes
 
-  .form-group.row.mb-0
-    .col-10.ml-auto
+  .mb-3.row.mb-0
+    .col-10.ms-auto
       = f.submit class: "btn btn-primary"

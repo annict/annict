@@ -12,7 +12,7 @@ class CreateWorkTaggings < ActiveRecord::Migration[5.1]
     add_index :work_taggings, :user_id
     add_index :work_taggings, :work_id
     add_index :work_taggings, :work_tag_id
-    add_index :work_taggings, %i(user_id work_id work_tag_id), unique: true
+    add_index :work_taggings, %i[user_id work_id work_tag_id], unique: true
     add_foreign_key :work_taggings, :users
     add_foreign_key :work_taggings, :works
     add_foreign_key :work_taggings, :work_tags

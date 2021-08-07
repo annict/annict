@@ -1,0 +1,7 @@
+<turbo-frame id="<%= dom_id(@form.record) %>">
+  <% if @record.episode_record? %>
+    <%= Forms::EpisodeRecordFormComponent.new(self, form: @form, current_user: current_user).render %>
+  <% else %>
+    <%= Forms::AnimeRecordFormComponent.new(self, form: @form).render %>
+  <% end %>
+</turbo-frame>

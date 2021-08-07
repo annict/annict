@@ -1,0 +1,103 @@
+<% title = t("head.title.pages.legal") %>
+<% set_meta_tags(title: title, reverse: true, prefix: false) %>
+
+<% content_for :head_meta do %>
+  <meta name="robots" content="noindex,nofollow,noarchive">
+<% end %>
+
+<div class="py-3">
+  <div class="container">
+    <h1 class="fw-bold mb-0">
+      <%= title %>
+    </h1>
+  </div>
+
+  <hr>
+
+  <div class="container mt-3 u-container-flat">
+    <div class="card u-card-flat">
+      <div class="card-body">
+        <dl class="row">
+          <dt class="col-sm-3">
+            サービス名
+          </dt>
+          <dd class="col-sm-9 mb-3">
+            Annict (アニクト)
+          </dd>
+          <dt class="col-sm-3">
+            サービスURL
+          </dt>
+          <dd class="col-sm-9 mb-3">
+            https://annict.jp
+          </dd>
+          <dt class="col-sm-3">
+            運営責任者
+          </dt>
+          <dd class="col-sm-9 mb-3">
+            榛葉 光二
+          </dd>
+          <dt class="col-sm-3">
+            住所
+          </dt>
+          <dd class="col-sm-9 mb-3">
+            <%= image_tag asset_bundle_path("images/address.jpg"), width: 230 %>
+          </dd>
+          <dt class="col-sm-3">
+            メールアドレス
+          </dt>
+          <dd class="col-sm-9 mb-3">
+            hello@annict.com
+          </dd>
+          <dt class="col-sm-3">
+            お支払い方法
+          </dt>
+          <dd class="col-sm-9 mb-3">
+            決済サービス「Gumroad」を利用したクレジットカードまたはPayPal決済
+          </dd>
+          <dt class="col-sm-3">
+            販売価格
+          </dt>
+          <dd class="col-sm-9 mb-3">
+            月額290円または年額2,900円
+            br
+            small
+              支払いは最新の為替レートに基づき米ドルで行われます。
+          </dd>
+          <dt class="col-sm-3">
+            商品代金以外の必要料金
+          </dt>
+          <dd class="col-sm-9 mb-3">
+            ありません。
+          </dd>
+          <dt class="col-sm-3">
+            サービス提供時期
+          </dt>
+          <dd class="col-sm-9 mb-3">
+            お支払い手続きが完了し次第、すぐにご利用いただけます。
+          </dd>
+          <dt class="col-sm-3">
+            返品・キャンセルについて
+          </dt>
+          <dd class="col-sm-9 mb-3">
+            デジタルコンテンツの性質上、返品またはキャンセルはできません。
+          </dd>
+          <dt class="col-sm-3">
+            動作環境
+          </dt>
+          <dd class="col-sm-9 mb-3">
+            <a href="<%= faq_path %>">よくある質問</a>の対応ブラウザの項目をご確認下さい。
+          </dd>
+        </dl>
+
+        <ul class="list-unstyled small">
+          <li>
+            ※ 住所はバーチャルオフィスの住所になります
+          </li>
+          <li>
+            ※ 電話番号は利用者からの請求により遅滞なく提供します
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

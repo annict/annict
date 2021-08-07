@@ -1,0 +1,90 @@
+name: Build
+
+on: [push]
+
+jobs:
+  lint_standard:
+    name: Lint (Standard)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Ruby and install gems
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.0.2
+          bundler-cache: true
+
+      - name: Run Standard`
+        run: |
+          bundle exec standardrb
+
+  test_rspec:
+    name: Test (RSpec)
+    runs-on: ubuntu-latest
+    env:
+      CC_TEST_REPORTER_ID: 473c071c4d1900d58ceed984bd49d8a39368393ce6f010cf5d52287f3072f6ef
+      COVERAGE: true
+      ANNICT_POSTGRES_HOST: localhost
+      RAILS_ENV: test
+      TZ: Asia/Tokyo
+      # `CFLAGS` と `CXXFLAGS` は cld gem をインストールするときに必要になる
+      # https://github.com/jtoy/cld/issues/10
+      CFLAGS: -Wno-narrowing
+      CXXFLAGS: -Wno-narrowing
+
+    services:
+      postgresql:
+        image: postgres:12.4
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_DB: annict_test
+          POSTGRES_PASSWORD: ''
+          POSTGRES_HOST_AUTH_METHOD: trust
+        # Adding a health check via options
+        # https://github.community/t5/GitHub-Actions/Github-Actions-services-not-reachable/td-p/30050
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Ruby and install gems
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.0.2
+          bundler-cache: true
+
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.17.3
+
+      - name: Run `npm install`
+        run: |
+          npm install
+
+      - name: Run `npm run heroku-postbuild`
+        run: |
+          npm run heroku-postbuild
+
+      - name: Setup Database
+        run: |
+          bin/rails db:setup
+
+      - name: Setup Code Climate test-reporter
+        run: |
+          curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+          chmod +x ./cc-test-reporter
+
+      - name: Run tests
+        run: |
+          ./cc-test-reporter before-build
+          bundle exec rspec
+          ./cc-test-reporter after-build --coverage-input-type simplecov --exit-code $?

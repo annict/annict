@@ -9,12 +9,12 @@ describe "POST /db/channel_groups", type: :request do
     end
 
     it "user can not access this page" do
-      post "/db/channel_groups", params: { channel_group: channel_group_params }
+      post "/db/channel_groups", params: {channel_group: channel_group_params}
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("ログインしてください")
 
-      expect(ChannelGroup.all.size).to eq(0)
+      expect(ChannelGroup.all.size).to eq(18)
     end
   end
 
@@ -31,12 +31,12 @@ describe "POST /db/channel_groups", type: :request do
     end
 
     it "user can not access" do
-      post "/db/channel_groups", params: { channel_group: channel_group_params }
+      post "/db/channel_groups", params: {channel_group: channel_group_params}
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("アクセスできません")
 
-      expect(ChannelGroup.all.size).to eq(0)
+      expect(ChannelGroup.all.size).to eq(18)
     end
   end
 
@@ -53,12 +53,12 @@ describe "POST /db/channel_groups", type: :request do
     end
 
     it "user can not access" do
-      post "/db/channel_groups", params: { channel_group: channel_group_params }
+      post "/db/channel_groups", params: {channel_group: channel_group_params}
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("アクセスできません")
 
-      expect(ChannelGroup.all.size).to eq(0)
+      expect(ChannelGroup.all.size).to eq(18)
     end
   end
 
@@ -75,15 +75,15 @@ describe "POST /db/channel_groups", type: :request do
     end
 
     it "user can create channel_group" do
-      expect(ChannelGroup.all.size).to eq(0)
+      expect(ChannelGroup.all.size).to eq(18)
 
-      post "/db/channel_groups", params: { channel_group: channel_group_params }
+      post "/db/channel_groups", params: {channel_group: channel_group_params}
 
       expect(response.status).to eq(302)
       expect(flash[:notice]).to eq("登録しました")
 
-      expect(ChannelGroup.all.size).to eq(1)
-      channel_group = ChannelGroup.first
+      expect(ChannelGroup.all.size).to eq(19)
+      channel_group = ChannelGroup.last
 
       expect(channel_group.name).to eq("ちゃんねるぐるーぷ")
     end

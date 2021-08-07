@@ -5,11 +5,11 @@ class UserEpisodeRecordsQuery
     @episode_records = episode_records
     @user = user
 
-    @episode_records = @episode_records.
-      only_kept.
-      preload(:record, episode: { work: :work_image }, user: %i(profile setting gumroad_subscriber)).
-      joins(:user).
-      merge(User.only_kept)
+    @episode_records = @episode_records
+      .only_kept
+      .preload(:record, episode: {work: :anime_image}, user: %i[profile setting gumroad_subscriber])
+      .joins(:user)
+      .merge(User.only_kept)
     @episode_records = @episode_records.where.not(user_id: @user.mute_users.pluck(:muted_user_id)) if @user
     @episode_records = join_likes if @user
 

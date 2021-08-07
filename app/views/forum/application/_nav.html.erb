@@ -1,0 +1,19 @@
+<% post = local_assigns.fetch(:post, nil) %>
+
+<div class="c-nav">
+  <ul class="c-nav__list">
+    <li class="c-nav__item">
+      <%= active_link_to forum_path, class: "c-nav__link", class_active: "c-nav__link--active", active: (params[:controller] == "forum/home" && params[:action].in?(%w(show))) || (params[:controller].in?(["forum/posts"]) && post&.forum_category.blank?) do %>
+        <%= t "noun.all" %>
+      <% end %>
+    </li>
+
+    <% ForumCategory.order(:sort_number).each do |fc| %>
+      <li class="c-nav__item">
+        <%= active_link_to forum_category_path(fc.slug), class: "c-nav__link", class_active: "c-nav__link--active", active: (params[:controller] == "forum/categories" && params[:category_id] == fc.slug) || (post&.forum_category&.slug == fc.slug) do %>
+          <%= t "resources.forum_category.#{fc.slug}" %>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+</div>

@@ -1,6 +1,12 @@
 # frozen_string_literal: true
 
 module PageCategorizable
+  extend ActiveSupport::Concern
+
+  included do
+    helper_method :page_category
+  end
+
   private
 
   def page_category

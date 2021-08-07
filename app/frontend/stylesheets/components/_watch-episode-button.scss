@@ -1,0 +1,17 @@
+.c-watch-episode-button {
+  $root: &;
+
+  &__spinner {
+    display: none;
+  }
+
+  &--loading {
+    .fa-check {
+      display: none;
+    }
+
+    #{$root}__spinner {
+      display: inline-block;
+    }
+  }
+}

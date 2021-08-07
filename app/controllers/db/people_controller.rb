@@ -2,10 +2,15 @@
 
 module Db
   class PeopleController < Db::ApplicationController
-    before_action :authenticate_user!, only: %i(new create edit update destroy)
+    before_action :authenticate_user!, only: %i[new create edit update destroy]
 
     def index
-      @people = Person.without_deleted.order(id: :desc).page(params[:page]).per(100)
+      @people = Person
+        .without_deleted
+        .order(id: :desc)
+        .page(params[:page])
+        .per(100)
+        .without_count
     end
 
     def new
@@ -18,7 +23,7 @@ module Db
       @form.user = current_user
       authorize @form
 
-      return render(:new) unless @form.valid?
+      return render(:new, status: :unprocessable_entity) unless @form.valid?
 
       @form.save!
 
@@ -37,7 +42,7 @@ module Db
       @person.attributes = person_params
       @person.user = current_user
 
-      return render(:edit) unless @person.valid?
+      return render(:edit, status: :unprocessable_entity) unless @person.valid?
 
       @person.save_and_create_activity!
 

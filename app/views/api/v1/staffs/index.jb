@@ -2,11 +2,11 @@
 
 json = {}
 
-json[:staffs] = @staffs.map do |staff|
+json[:staffs] = @staffs.map { |staff|
   staff_json = {}
   staff_json.merge!(render("api/v1/staffs/staff", staff: staff, params: @params, field_prefix: ""))
 
-  staff_json[:work] = render("api/v1/works/work", work: staff.work, params: @params, field_prefix: "work.")
+  staff_json[:work] = render("api/v1/works/work", work: staff.anime, params: @params, field_prefix: "work.")
 
   case staff.resource_type
   when "Person"
@@ -16,7 +16,7 @@ json[:staffs] = @staffs.map do |staff|
   end
 
   staff_json
-end
+}
 
 json.merge!(render("api/v1/application/pagination", collection: @staffs, params: @params))
 

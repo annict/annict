@@ -1,12 +1,12 @@
-<%= form_with model: channel_group, url: form_url, method: form_method, local: true do |f| %>
+<%= form_with model: channel_group, url: form_url, method: form_method do |f| %>
   <%= render "application/components/error_panel", resource: f.object %>
 
-  <div class="form-group">
+  <div class="mb-3">
     <%= f.label :name, class: "c-label-required" %>
     <%= f.text_field :name, class: "form-control", autofocus: true, required: true %>
   </div>
 
-  <div class="form-group">
+  <div class="mb-3">
     <%= f.label :sort_number %>
     <%= f.text_field :sort_number, class: "form-control" %>
   </div>

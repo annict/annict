@@ -12,12 +12,12 @@ class TwitterService
   def client
     return nil if provider.blank?
 
-    @client ||= Twitter::REST::Client.new do |config|
+    @client ||= Twitter::REST::Client.new { |config|
       config.consumer_key = ENV.fetch("TWITTER_CONSUMER_KEY")
       config.consumer_secret = ENV.fetch("TWITTER_CONSUMER_SECRET")
       config.access_token = provider.token
       config.access_token_secret = provider.token_secret
-    end
+    }
   end
 
   def uids

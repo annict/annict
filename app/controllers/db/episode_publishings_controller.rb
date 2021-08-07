@@ -2,7 +2,7 @@
 
 module Db
   class EpisodePublishingsController < Db::ApplicationController
-    include V4::ResourcePublishable
+    include ResourcePublishable
 
     before_action :authenticate_user!
 
@@ -17,11 +17,11 @@ module Db
     end
 
     def after_created_path
-      db_episode_list_path(create_resource.work)
+      db_episode_list_path(create_resource.anime)
     end
 
     def after_destroyed_path
-      db_episode_list_path(destroy_resource.work)
+      db_episode_list_path(destroy_resource.anime)
     end
   end
 end

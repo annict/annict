@@ -1,0 +1,27 @@
+<% title = t "head.title.people.show", name: @person.name_with_other_name %>
+<% description = meta_description t("head.meta.description.people.show", name: @person.name_with_other_name) %>
+<% set_meta_tags(title: title, description: description, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false) %>
+
+<%= component_value_fetcher_tag("star-button", internal_api_star_list_path) %>
+
+<div class="py-3">
+  <div class="container">
+    <div class="gx-3 row">
+      <div class="col-12 col-sm-3">
+        <%= render "people/sidebar", person: @person, person_favorites: @person_favorites %>
+      </div>
+
+      <div class="col-12 col-sm-9 mt-3 mt-sm-0">
+        <div class="card">
+          <div class="card-body">
+            <% if @person.voice_actor? %>
+              <%= render "grid", root_resource: @person, resource_years: @cast_years, resources_with_year: @casts_with_year %>
+            <% elsif @person.staff? %>
+              <%= render "grid", root_resource: @person, resource_years: @staff_years, resources_with_year: @staffs_with_year %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

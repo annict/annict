@@ -12,8 +12,11 @@ describe "Api::V1::Activities" do
   describe "GET /v1/activities" do
     let(:user) { create(:user, :with_profile) }
     let(:access_token) { create(:oauth_access_token, owner: user) }
-    let!(:record) { create(:episode_record, user: user) }
-    let!(:activity) { create(:activity, user: user, itemable: record) }
+    let!(:anime) { create(:anime) }
+    let!(:episode) { create(:episode, anime: anime) }
+    let!(:record) { create(:record, user: user, anime: anime) }
+    let!(:episode_record) { create(:episode_record, record: record, user: user, anime: anime, episode: episode) }
+    let!(:activity) { create(:activity, user: user, itemable: episode_record) }
 
     before do
       params = {
@@ -50,9 +53,10 @@ describe "Api::V1::Activities" do
           "action" => "create_record",
           "created_at" => "2017-01-28T23:39:04Z",
           "work" => {
-            "id" => record.work.id,
-            "title" => record.work.title,
-            "title_kana" => record.work.title_kana,
+            "id" => record.anime.id,
+            "title" => record.anime.title,
+            "title_en" => "",
+            "title_kana" => record.anime.title_kana,
             "media" => "tv",
             "media_text" => "TV",
             "released_on" => "2012-04-05",
@@ -82,16 +86,16 @@ describe "Api::V1::Activities" do
             "no_episodes" => false
           },
           "episode" => {
-            "id" => record.episode.id,
-            "number" => record.episode.raw_number,
-            "number_text" => record.episode.number,
-            "sort_number" => record.episode.sort_number,
-            "title" => record.episode.title,
+            "id" => episode.id,
+            "number" => episode.raw_number,
+            "number_text" => episode.number,
+            "sort_number" => episode.sort_number,
+            "title" => episode.title,
             "records_count" => 1,
             "record_comments_count" => 1
           },
           "record" => {
-            "id" => record.id,
+            "id" => episode_record.id,
             "comment" => "おもしろかった",
             "rating" => 3.0,
             "rating_state" => nil,

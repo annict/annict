@@ -13,7 +13,7 @@ class CreateWorkItems < ActiveRecord::Migration[5.1]
     add_index :work_items, :work_id
     add_index :work_items, :item_id
     add_index :work_items, :user_id
-    add_index :work_items, %i(work_id item_id), unique: true
+    add_index :work_items, %i[work_id item_id], unique: true
 
     add_foreign_key :work_items, :works
     add_foreign_key :work_items, :items

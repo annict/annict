@@ -1,23 +1,29 @@
 <% title = t "head.title.db.channels.index" %>
 <% set_meta_tags(title: title, reverse: true, prefix: false) %>
 
-<div class="container-fluid py-3">
-  <div class="mb-3">
-    <h1>
-      <%= title %>
-    </h1>
+<div class="container py-3">
+  <div class="align-items-center row">
+    <div class="col">
+      <h1>
+        <%= title %>
+      </h1>
+    </div>
 
-    <% if policy(Channel).create? %>
-      <div class="text-right">
-        <%= link_to db_new_channel_path, class: "btn btn-outline-primary" do %>
-          <%= icon "plus" %>
-          <%= t "resources._common.new" %>
-        <% end %>
-      </div>
-    <% end %>
+    <div class="col-auto">
+      <% if policy(Channel).create? %>
+        <div class="text-end">
+          <%= link_to db_new_channel_path, class: "btn btn-outline-primary" do %>
+            <%= icon "plus" %>
+            <%= t "resources._common.new" %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
   </div>
 
-  <div class="mb-3">
-    <%= render "channel_list", channels: @channels %>
+  <div class="card mt-3">
+    <div class="card-body">
+      <%= render "channel_list", channels: @channels %>
+    </div>
   </div>
 </div>

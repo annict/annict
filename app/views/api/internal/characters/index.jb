@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-resources = @characters.map do |character|
+resources = @characters.map { |character|
   text_list = [character.local_name]
   text_list << " (#{character.series.local_name})" if character.series.present?
 
@@ -8,7 +8,7 @@ resources = @characters.map do |character|
     id: character.id,
     text: text_list.join
   }
-end
+}
 
 {
   resources: resources

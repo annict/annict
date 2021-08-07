@@ -19,7 +19,7 @@ module ApplicationHelper
     days = (Time.zone.now.to_date - from_time.to_date).to_i
     return display_time(from_time) if days > 3
     spacer = I18n.locale == :en ? " " : ""
-    "#{time_ago_in_words(from_time, options)}#{spacer}#{I18n.t('noun.ago')}"
+    "#{time_ago_in_words(from_time, options)}#{spacer}#{I18n.t("noun.ago")}"
   end
 
   def local_datetime(datetime)
@@ -33,6 +33,11 @@ module ApplicationHelper
     I18n.locale == :ja ? "@AnnictJP" : "@anannict"
   end
 
+  def skeleton_loader_content(size:, class_name: "")
+    width, height = size.split("x")
+    tag.div(class: "c-skeleton-loader__content #{class_name}", style: "height: #{height}px; width: #{width}px;")
+  end
+
   def annict_config
     config = {
       domain: locale == :ja ? ENV.fetch("ANNICT_DOMAIN") : ENV.fetch("ANNICT_EN_DOMAIN"),
@@ -42,8 +47,7 @@ module ApplicationHelper
       },
       i18n: {
         messages: {
-          areYouSure: t("messages._common.are_you_sure"),
-          userHasBeenMuted: t("messages.components.mute_user_button.the_user_has_been_muted")
+          areYouSure: t("messages._common.are_you_sure")
         },
         noun: {
           following: t("noun.following")
@@ -58,7 +62,7 @@ module ApplicationHelper
         env: Rails.env
       },
       viewer: {
-        locale: locale,
+        locale: locale
       }
     }.freeze
 

@@ -1,122 +1,32 @@
-<% title = t "head.title.home.index" %>
+<% title = t "head.title.home.show" %>
 <% set_meta_tags(title: title, site: false) %>
 
-<div class="container-fluid py-3">
-  <div class="row">
-    <div class="col-12 col-lg-7">
-      <div class="align-items-start justify-content-between row">
-        <div class="col-auto">
-          <h2 class="font-weight-bold h3 mb-0">
-            <%= t "noun.timeline" %>
-          </h2>
-        </div>
+<%= component_value_fetcher_tag("status-select-dropdown", internal_api_library_entry_list_path, method: :post, payload: {anime_ids: @anime_ids}) %>
+<%= component_value_fetcher_tag("like-button", internal_api_like_list_path) %>
+<%= component_value_fetcher_tag("spoiler-guard", internal_api_spoiler_guard_path) %>
 
-        <div class="col text-right">
-          <div class="c-timeline-mode-switcher">
-            <%= form_with html: { class: "d-inline", method: :patch }, local: true, url: timeline_mode_path do %>
-              <%= hidden_field_tag "setting[timeline_mode]", "following", id: :setting_timeline_mode_following %>
-              <%= submit_tag(
-                t("noun.following_shorten"),
-                class: "btn btn-sm rounded-left #{current_user.timeline_mode.following? ? 'btn-secondary' : 'btn-outline-secondary'}"
-              ) %>
-            <% end %>
-            <%= form_with html: { class: "d-inline", method: :patch }, local: true, url: timeline_mode_path do %>
-              <%= hidden_field_tag "setting[timeline_mode]", "global", id: :setting_timeline_mode_global %>
-              <%= submit_tag(
-                t("noun.global"),
-                class: "btn btn-sm rounded-right #{current_user.timeline_mode.global? ? 'btn-secondary' : 'btn-outline-secondary'}"
-              ) %>
-            <% end %>
-          </div>
-        </div>
-      </div>
+<div class="py-3">
+  <div class="container">
+    <h1 class="fw-bold">
+      <%= t "noun.timeline" %>
+    </h1>
 
-      <% if @activity_group_entities.present? %>
-        <%= render TimelineComponent.new(
-          username: current_user.username,
-          page_category: "user-home",
-          activity_group_entities: @activity_group_entities,
-          page_info_entity: @page_info_entity
-        ) %>
-      <% else %>
-        <%= render EmptyComponent.new(text: t("messages._empty.no_activities")) %>
-      <% end %>
-    </div>
-
-    <hr class="d-lg-none my-5 w-100">
-
-    <div class="col-12 col-lg-5">
-      <div class="mb-5">
-        <% if @userland_projects.present? %>
-          <div class="align-items-start justify-content-between mb-3 row">
-            <div class="col-auto">
-              <h2 class="font-weight-bold h3 mb-0">
-                Userland
-              </h2>
-            </div>
-
-            <div class="col text-right">
-              <%= link_to userland_root_path, class: "small" do %>
-                <%= icon "angle-right", class: "mr-1" %>
-                <%= t "verb.view_all" %>
-              <% end %>
-            </div>
-          </div>
-
-          <% @userland_projects.each do |project| %>
-            <div class="row mb-3">
-              <div class="col-auto pr-0">
-                <%= link_to userland_project_path(project) do %>
-                  <%= render UserlandProjectImageComponent.new(image_url_1x: ann_image_url(project, :image, size: "80x"), alt: project.name) %>
-                <% end %>
-              </div>
-
-              <div class="col">
-                <div class="mb-1">
-                  <div class="small">
-                    <%= project.userland_category.local_name %>
-                  </div>
-                  <%= link_to project.name, userland_project_path(project) %>
-                </div>
-
-                <div class="small text-muted">
-                  <%= project.summary %>
-                </div>
-              </div>
-            </div>
-          <% end %>
-        <% end %>
-      </div>
-
-      <div>
-        <% if @forum_posts.present? %>
-          <div class="align-items-start justify-content-between row">
-            <div class="col-auto">
-              <h2 class="font-weight-bold h3 mb-3">
-                <%= t "resources.forum_category.site_news" %>
-              </h2>
-            </div>
-
-            <div class="col text-right">
-              <%= link_to forum_category_path(:site_news), class: "small" do %>
-                <%= icon "angle-right", class: "mr-1" %>
-                <%= t "messages.forum._common.view_all_site_news" %>
-              <% end %>
-            </div>
-          </div>
-
-          <ul class="list-unstyled">
-            <% @forum_posts.each do |p| %>
-              <li class="mb-2">
-                <div class="small text-muted">
-                  <%= display_time p.created_at %>
-                </div>
-                <%= link_to p.title, forum_post_path(p) %>
-              </li>
-            <% end %>
-          </ul>
-        <% end %>
-      </div>
-    </div>
+    <p>
+      <%= t "messages._page_hints.home" %>
+    </p>
   </div>
+
+  <hr class="mb-0">
+
+  <%= AdsenseComponent.new(self, slot: ENV["GOOGLE_AD_SLOT_HOME_TOP"]).render %>
+
+  <% if @activity_groups.present? %>
+    <div class="container u-container-flat">
+      <%= TimelineComponent.new(self, activity_groups: @activity_groups).render %>
+    </div>
+  <% else %>
+    <div class="container mt-3 u-container-flat">
+      <%= EmptyV6Component.new(self, text: t("messages._empty.no_activities")).render %>
+    </div>
+  <% end %>
 </div>

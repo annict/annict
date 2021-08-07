@@ -2,16 +2,16 @@
 
 json = {}
 
-json[:programs] = @slots.map do |slot|
+json[:programs] = @slots.map { |slot|
   slot_json = {}
   slot_json.merge! render("api/v1/slots/slot", slot: slot, params: @params, field_prefix: "")
 
   slot_json[:channel] = render("api/v1/channels/channel", channel: slot.channel, params: @params, field_prefix: "channel.")
-  slot_json[:work] = render("api/v1/works/work", work: slot.work, params: @params, field_prefix: "work.")
+  slot_json[:work] = render("api/v1/works/work", work: slot.anime, params: @params, field_prefix: "work.")
   slot_json[:episode] = render("api/v1/episodes/episode", episode: slot.episode, params: @params, field_prefix: "episode.")
 
   slot_json
-end
+}
 
 json.merge! render("api/v1/application/pagination", collection: @slots, params: @params)
 

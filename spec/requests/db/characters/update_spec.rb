@@ -11,7 +11,7 @@ describe "PATCH /db/characters/:id", type: :request do
     end
 
     it "user can not access this page" do
-      patch "/db/characters/#{character.id}", params: { character: character_params }
+      patch "/db/characters/#{character.id}", params: {character: character_params}
       character.reload
 
       expect(response.status).to eq(302)
@@ -36,7 +36,7 @@ describe "PATCH /db/characters/:id", type: :request do
     end
 
     it "user can not access" do
-      patch "/db/characters/#{character.id}", params: { character: character_params }
+      patch "/db/characters/#{character.id}", params: {character: character_params}
       character.reload
 
       expect(response.status).to eq(302)
@@ -63,7 +63,7 @@ describe "PATCH /db/characters/:id", type: :request do
     it "user can update character" do
       expect(character.name).to eq(old_character["name"])
 
-      patch "/db/characters/#{character.id}", params: { character: character_params }
+      patch "/db/characters/#{character.id}", params: {character: character_params}
       character.reload
 
       expect(response.status).to eq(302)

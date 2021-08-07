@@ -1,0 +1,33 @@
+.c-tracking-heatmap {
+  display: grid;
+  grid-auto-flow: column dense;
+  grid-gap: 6px;
+  grid-template-rows: repeat(7, 1fr);
+  justify-items: center;
+  overflow-x: auto;
+
+  &__day {
+    background: var(--ann-color-tracking-heatmap-bg);
+    border-radius: 3px;
+    display: inline-block;
+    height: 10px;
+    position: relative;
+    width: 10px;
+  }
+
+  &__density-1 {
+    background: tint-color($ann-mizuho-color, 60%);
+  }
+
+  &__density-2 {
+    background: tint-color($ann-mizuho-color, 30%);
+  }
+
+  &__density-3 {
+    background: $ann-mizuho-color;
+  }
+
+  &__density-4 {
+    background: shade-color($ann-mizuho-color, 30%);
+  }
+}

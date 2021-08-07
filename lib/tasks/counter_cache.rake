@@ -17,7 +17,7 @@ namespace :counter_cache do
       :refresh_on_users,
       :refresh_on_work_records,
       :refresh_on_work_tags,
-      :refresh_on_works,
+      :refresh_on_works
     ].each do |task_name|
       puts "============== #{task_name} =============="
       Rake::Task["counter_cache:#{task_name}"].invoke
@@ -190,7 +190,7 @@ namespace :counter_cache do
 
   task refresh_on_series: :environment do
     Series.only_kept.find_each do |series|
-      series_works_count = series.series_works.only_kept.count
+      series_works_count = series.series_animes.only_kept.count
 
       next if series.series_works_count == series_works_count
 
@@ -345,14 +345,14 @@ namespace :counter_cache do
   end
 
   task refresh_on_works: :environment do
-    Work.only_kept.find_each do |work|
-      kinds = %w(wanna_watch watching watched).freeze
+    Anime.only_kept.find_each do |work|
+      kinds = %w[wanna_watch watching watched].freeze
 
       episodes_count = work.episodes.only_kept.count
       records_count = work.records.only_kept.count
       watchers_count = work.library_entries.with_status(*kinds).count
-      work_records_count = work.work_records.only_kept.count
-      work_records_with_body_count = work.work_records.only_kept.with_body.count
+      work_records_count = work.anime_records.only_kept.count
+      work_records_with_body_count = work.anime_records.only_kept.with_body.count
 
       next if work.episodes_count == episodes_count &&
         work.records_count == records_count &&

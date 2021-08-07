@@ -2,31 +2,22 @@
 
 module V4
   class ApplicationController < ActionController::Base
+    include KeywordSearchable
+    include Localizable
+    include Loggable
     include PageCategorizable
-    include V4::RavenContext
-    include V4::Loggable
-    include V4::Localizable
-    include V4::GraphqlRunnable
-    include V4::UserDataFetchable
+    include SentryLoadable
 
-    layout "default"
+    layout "main_default"
 
-    helper_method :client_uuid, :local_url_with_path, :locale_en?, :locale_ja?, :local_url, :page_category
-
-    before_action :set_raven_context
-    before_action :set_search_params
     around_action :set_locale
 
     private
 
     def redirect_if_signed_in
       if user_signed_in?
-        return redirect_to root_path
+        redirect_to root_path
       end
-    end
-
-    def set_search_params
-      @search = SearchService.new(params[:q])
     end
 
     # Override `Devise::Controllers::Helpers#signed_in_root_path`

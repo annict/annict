@@ -1,61 +1,68 @@
 - title = "#{t('head.title.forum.posts.show', title: @post.title)} - Forum"
 - set_meta_tags(title: title, reverse: true, prefix: false)
 
-.container.my-3
+= render "forum/application/nav", post: @post
+
+.container.mt-3
   .mb-1
-    = link_to @post.forum_category.local_name,  forum_category_path(@post.forum_category.slug), class: "badge badge-secondary"
+    = link_to @post.forum_category.local_name,  forum_category_path(@post.forum_category.slug), class: "badge bg-secondary rounded-pill"
   h1.h2.mb-0
     = @post.title
 
-.c-card.p-3.mb-3
-  .row.mb-3
-    .col.col-auto.pr-0
-      = link_to profile_detail_path(@post.user.username) do
-        = ann_image_tag @post.user.profile, :image, size: "45x45", class: "rounded-circle"
-    .col.pl-2
-      = link_to @post.user.profile.name, profile_detail_path(@post.user.username), class: "mr-2"
-      = @post.user.role_badge
-      .mt-1
-        = link_to forum_post_path(@post), class: "small text-muted", title: display_time(@post.created_at) do
-          = display_time(@post.created_at)
-  = render BodyComponent.new(markdown: true) do
-    = @post.body
+.container.mt-3.u-container-flat
+  .card.u-card-flat
+    .card-body
+      .row.mb-3
+        .col.col-auto.pe-0
+          = link_to profile_path(@post.user.username) do
+            = ann_image_tag @post.user.profile, :image, size: "45x45", class: "rounded-circle"
+        .col.ps-2
+          = link_to @post.user.profile.name, profile_path(@post.user.username), class: "me-2"
+          = @post.user.role_badge
+          .mt-1
+            = link_to forum_post_path(@post), class: "small text-muted", title: display_time(@post.created_at) do
+              = display_time(@post.created_at)
 
-  - if user_signed_in? && current_user == @post.user
-    .text-right
-      = link_to edit_forum_post_path(@post), class: "small" do
-        = icon "pencil-alt", class: "mr-1"
-        = t "noun.edit"
+      = BodyV6Component.new(self, content: @post.body, format: :markdown).render
 
-.c-card.mb-3
-  .container
-    - if @comments.present?
-      - @comments.each do |comment|
-        .u-underline.py-3
+      - if user_signed_in? && current_user == @post.user
+        .text-end
+          = link_to forum_edit_post_path(@post), class: "small" do
+            = icon "pencil-alt", class: "me-1"
+            = t "noun.edit"
+
+.container.mt-3.u-container-flat
+  - if @comments.present?
+    - @comments.each do |comment|
+      .card.mt-3.u-card-flat
+        .card-body
           - if comment.user
-            .row.mb-3
-              .col.col-auto.pr-0
-                = link_to profile_detail_path(comment.user.username) do
+            .gx-3.row
+              .col-auto
+                = link_to profile_path(comment.user.username) do
                   = ann_image_tag comment.user.profile, :image, size: "45x45", class: "rounded-circle"
-              .col.pl-2
-                = link_to comment.user.profile.name, profile_detail_path(comment.user.username), class: "mr-2"
+              .col
+                = link_to comment.user.profile.name, profile_path(comment.user.username), class: "me-2"
                 = comment.user.role_badge
                 .mt-1
                   span.small.text-muted title="#{display_time(comment.created_at)}"
                     = display_time(comment.created_at)
-            = render BodyComponent.new(markdown: true) do
-              = comment.body
+
+            = BodyV6Component.new(self, content: comment.body, format: :markdown).render
 
             - if user_signed_in? && current_user == comment.user
-              .text-right
-                = link_to edit_forum_post_comment_path(@post, comment), class: "small" do
-                  = icon "pencil-alt", class: "mr-1"
+              .text-end
+                = link_to forum_edit_comment_path(@post, comment), class: "small" do
+                  = icon "pencil-alt", class: "me-1"
                   = t "noun.edit"
           - else
             = t "messages.forum.comments.deleted"
-    - else
-      .mb-3
+  - else
+    .card.u-card-flat
+      .card-body
         = render "application/components/empty", text: t("messages.forum.posts.no_comments")
 
-.c-card.p-3.mb-3
-  = render "forum/comments/form", comment: @comment
+.container.mt-3.u-container-flat
+  .card.u-card-flat
+    .card-body
+      = render "forum/comments/form", comment: @comment, form_url: forum_comment_list_path(@comment.forum_post), form_method: :post, submit_text: t("verb.comment")

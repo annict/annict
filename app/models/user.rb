@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: users
@@ -71,7 +72,7 @@ class User < ApplicationRecord
 
   extend Enumerize
 
-  USERNAME_FORMAT = %r{\A[A-Za-z0-9_]+\z}.freeze
+  USERNAME_FORMAT = /\A[A-Za-z0-9_]+\z/
 
   attr_accessor :email_username, :current_password
 
@@ -79,17 +80,17 @@ class User < ApplicationRecord
   # :confirmable, :lockable, :timeoutable
   devise :database_authenticatable, :omniauthable, :registerable, :trackable,
     :rememberable, :recoverable,
-    omniauth_providers: %i(facebook gumroad twitter),
-    authentication_keys: %i(email_username)
+    omniauth_providers: %i[facebook gumroad twitter],
+    authentication_keys: %i[email_username]
 
   enumerize :allowed_locales, in: ApplicationRecord::LOCALES, multiple: true, default: ApplicationRecord::LOCALES
-  enumerize :locale, in: %i(ja en)
-  enumerize :role, in: { user: 0, admin: 1, editor: 2 }, default: :user, scope: true
+  enumerize :locale, in: %i[ja en]
+  enumerize :role, in: {user: 0, admin: 1, editor: 2}, default: :user, scope: true
 
   belongs_to :gumroad_subscriber, optional: true
   has_many :activity_groups, dependent: :destroy
   has_many :activities, dependent: :destroy
-  has_many :channel_works, dependent: :destroy
+  has_many :anime_records, dependent: :destroy
   has_many :character_favorites, dependent: :destroy
   has_many :collections, dependent: :destroy
   has_many :collection_items, dependent: :destroy
@@ -112,7 +113,7 @@ class User < ApplicationRecord
   has_many :notifications, dependent: :destroy
   has_many :providers, dependent: :destroy
   has_many :receptions, dependent: :destroy
-  has_many :channels, through:   :receptions
+  has_many :channels, through: :receptions
   has_many :statuses, dependent: :destroy
   has_many :multiple_episode_records, dependent: :destroy
   has_many :mute_users, dependent: :destroy
@@ -144,26 +145,27 @@ class User < ApplicationRecord
   has_one :profile, dependent: :destroy
   has_one :setting, dependent: :destroy
 
+  delegate :name, to: :profile
   delegate :admin?, :editor?, to: :role
-  delegate :share_record_to_twitter?, :timeline_mode, to: :setting
+  delegate :hide_record_body?, :share_record_to_twitter?, to: :setting
 
   validates :email,
     presence: true,
-    uniqueness: { case_sensitive: false },
+    uniqueness: {case_sensitive: false},
     email: true
   validates :password,
-    length: { in: Devise.password_length },
+    length: {in: Devise.password_length},
     allow_blank: true,
-    confirmation: { on: :password_update }
+    confirmation: {on: :password_update}
   validates :password_confirmation,
-    presence: { on: :password_update }
+    presence: {on: :password_update}
   validates :current_password,
-    valid_password: { on: :password_check }
+    valid_password: {on: :password_check}
   validates :username,
     presence: true,
-    length: { maximum: 20 },
-    format: { with: USERNAME_FORMAT },
-    uniqueness: { case_sensitive: false }
+    length: {maximum: 20},
+    format: {with: USERNAME_FORMAT},
+    uniqueness: {case_sensitive: false}
 
   # Override the Devise's `find_for_database_authentication`
   # https://github.com/plataformatec/devise/wiki/How-To:-Allow-users-to-sign-in-using-their-username-or-email-address
@@ -174,19 +176,31 @@ class User < ApplicationRecord
     if email_username.present?
       where(conditions.to_h).where([
         "LOWER(email) = :value OR LOWER(username) = :value",
-        value: email_username.downcase
+        {value: email_username.downcase}
       ]).first
     elsif conditions.key?(:email) || conditions.key?(:username)
       where(conditions.to_h).first
     end
   end
 
-  def works
-    @works ||= UserWorksQuery.new(self)
+  def watching_anime_count
+    watching_works_count
   end
 
-  def works_on(*status_kinds)
-    Work.joins(:library_entries).merge(library_entries.with_status(*status_kinds))
+  def animes
+    Anime.joins(:library_entries).merge(library_entries)
+  end
+
+  def animes_on(*status_kinds)
+    Anime.joins(:library_entries).merge(library_entries.with_status(*status_kinds))
+  end
+
+  def cast_favorites
+    person_favorites.with_cast
+  end
+
+  def staff_favorites
+    person_favorites.with_cast
   end
 
   def social_friends
@@ -247,12 +261,13 @@ class User < ApplicationRecord
 
   def expire_twitter_token
     return if twitter.blank?
+
     twitter.update_column(:token_expires_at, Time.now.to_i)
   end
 
   def hide_episode_record_body?(episode)
     setting.hide_record_body? &&
-      works.desiring_to_watch.include?(episode.work) &&
+      works.desiring_to_watch.include?(episode.anime) &&
       !episode_records.pluck(:episode_id).include?(episode.id)
   end
 
@@ -267,18 +282,18 @@ class User < ApplicationRecord
   end
 
   def friends_interested_in(work)
-    status_kinds = %w(wanna_watch watching watched)
+    status_kinds = %w[wanna_watch watching watched]
     library_entries = LibraryEntry.where(work: work).with_status(*status_kinds)
 
     followings.joins(:library_entries).merge(library_entries)
   end
 
   def status_kind(work)
-    library_entries.find_by(work: work)&.status&.kind.presence || "no_select"
+    library_entries.find_by(anime: work)&.status&.kind.presence || "no_select"
   end
 
   def status_kind_v3(work)
-    Status.kind_v2_to_v3(library_entries.find_by(work: work)&.status&.kind)&.to_s.presence || "no_status"
+    Status.kind_v2_to_v3(library_entries.find_by(anime: work)&.status&.kind)&.to_s.presence || "no_status"
   end
 
   def encoded_id
@@ -319,28 +334,6 @@ class User < ApplicationRecord
     end
   end
 
-  def add_reaction!(resource, kind)
-    reaction = reactions.new(kind: kind)
-
-    case resource
-    when CollectionItem
-      reaction.target_user = resource.user
-      reaction.collection_item = resource
-    end
-
-    reaction.save!
-  end
-
-  def remove_reaction!(resource, kind)
-    reactions = self.reactions.where(kind: kind)
-
-    case resource
-    when CollectionItem
-      reactions = reactions.where(collection_item: resource)
-      reactions.destroy_all
-    end
-  end
-
   def add_work_tag!(work, tag_name)
     work_tag = nil
 
@@ -353,44 +346,21 @@ class User < ApplicationRecord
     work_tag
   end
 
-  def update_work_tags!(work, tag_names)
-    tags = tags_by_work(work)
-    removed_tag_names = tags.pluck(:name) - tag_names
-    added_tag_names = tag_names - tags.pluck(:name)
-
-    ActiveRecord::Base.transaction do
-      work_tags = WorkTag.where(name: removed_tag_names)
-      work_taggings.where(work: work, work_tag: work_tags).destroy_all
-
-      work_tags.each do |work_tag|
-        unless work_taggings.where(work_tag: work_tag).exists?
-          taggable = work_taggables.find_by(work_tag: work_tag)
-          taggable.destroy if taggable.present?
-        end
-      end
-
-      added_tag_names.map do |tag_name|
-        add_work_tag!(work, tag_name)
-      end
-    end
-  end
-
-  def tags_by_work(work)
-    work_tags.only_kept.joins(:work_taggings).merge(work_taggings.where(work: work))
-  end
-
   def comment_by_work(work)
     work_comments.find_by(work: work)
   end
 
   def supporter?
-    gumroad_subscriber.present? &&
-      (gumroad_subscriber.gumroad_ended_at.nil? || gumroad_subscriber.gumroad_ended_at > Time.zone.now)
+    gumroad_subscriber&.active? == true
   end
 
   def weeks
     days = (Time.zone.now.to_date - created_at.to_date).to_f
     (days / 7).floor
+  end
+
+  def days_from_started(time_zone)
+    ((Time.zone.now.in_time_zone(time_zone) - created_at.in_time_zone(time_zone)) / 86_400).ceil
   end
 
   def validate_to_destroy
@@ -406,17 +376,15 @@ class User < ApplicationRecord
     channel_works = self.channel_works.where(work_id: library_entries.pluck(:work_id))
     channel_ids = channel_works.pluck(:channel_id)
     episode_ids = library_entries.pluck(:next_episode_id)
-    slots = Slot.
-      includes(:channel, work: :work_image).
-      where(channel_id: channel_ids, episode_id: episode_ids).
-      only_kept
+    slots = Slot
+      .includes(:channel, work: :anime_image)
+      .where(channel_id: channel_ids, episode_id: episode_ids)
+      .only_kept
 
     channel_works.map do |cw|
-      slot = slots.
-        select { |p| p.work_id == cw.work_id && p.channel_id == cw.channel_id }.
-        sort_by(&:started_at).
-        reverse.
-        first
+      slot = slots
+        .select { |p| p.work_id == cw.work_id && p.channel_id == cw.channel_id }
+        .max_by(&:started_at)
 
       slot
     end
@@ -485,6 +453,13 @@ class User < ApplicationRecord
     resources.order(order.field => order.direction)
   end
 
+  def following_user_ids
+    user_ids = followings.only_kept.pluck(:id)
+    user_ids -= mute_users&.pluck(:muted_user_id).presence || []
+    user_ids << id
+    user_ids
+  end
+
   def confirm_to_update_email!(new_email:)
     email_confirmations.new(email: new_email).confirm_to_update_email!
   end
@@ -497,13 +472,28 @@ class User < ApplicationRecord
     !!confirmed_at
   end
 
+  def last_record_watched_at
+    records.select(:created_at).last&.created_at
+  end
+
+  def filter_records(base_record_entities, record_entities)
+    muted_user_ids = mute_users.pluck(:muted_user_id)
+    record_ids = record_entities.pluck(:database_id)
+
+    base_record_entities.filter do |record_entity|
+      user_id = record_entity.user.database_id
+      record_id = record_entity.database_id
+
+      !user_id.in?(muted_user_ids) && !record_id.in?(record_ids)
+    end
+  end
+
   private
 
   def get_large_avatar_image(provider, image_url)
-    url = case provider
-    when 'twitter'  then image_url.sub('_normal', '')
-    when 'facebook' then "#{image_url.sub("http://", "https://")}?type=large"
+    case provider
+    when "twitter" then image_url.sub("_normal", "")
+    when "facebook" then "#{image_url.sub("http://", "https://")}?type=large"
     end
-    url
   end
 end

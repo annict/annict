@@ -3,8 +3,8 @@
 class Season
   extend Enumerize
 
-  YEAR_LIST = 1900..(Time.now.year + 5)
-  NAME_HASH = { winter: 1, spring: 2, summer: 3, autumn: 4 }.freeze
+  YEAR_LIST = (1900..(Time.now.year + 5))
+  NAME_HASH = {winter: 1, spring: 2, summer: 3, autumn: 4}.freeze
 
   attr_reader :year, :name
 
@@ -25,13 +25,13 @@ class Season
     years = years.reverse if sort == :desc
     name_hash = NAME_HASH
     name_hash = name_hash.merge(all: 0) if include_all
-    names = Hash[name_hash.sort_by { |_, v| sort == :desc ? -v : v }].keys
+    names = name_hash.sort_by { |_, v| sort == :desc ? -v : v }.to_h.keys
 
-    years.map do |year|
+    years.map { |year|
       names.map do |name|
         new(year, name)
       end
-    end.flatten
+    }.flatten
   end
 
   def self.find_by_slug(slug)
@@ -40,10 +40,22 @@ class Season
     name_exists = name.present? && (name == "all" || name.to_sym.in?(NAME_HASH.keys))
 
     if !year_exists || !name_exists
-      raise ActionController::RoutingError.new("Not Found")
+      raise ActionController::RoutingError, "Not Found"
     end
 
     new(year, name)
+  end
+
+  def self.current
+    find_by_slug(ENV.fetch("ANNICT_CURRENT_SEASON"))
+  end
+
+  def self.next
+    find_by_slug(ENV.fetch("ANNICT_NEXT_SEASON"))
+  end
+
+  def self.prev
+    find_by_slug(ENV.fetch("ANNICT_PREVIOUS_SEASON"))
   end
 
   def self.no_season
@@ -124,6 +136,17 @@ class Season
     when "autumn" then "#ff7043"
     else
       "#66bb6a"
+    end
+  end
+
+  def icon_name
+    case @name
+    when "winter" then "snowflakes"
+    when "spring" then "flower-daffodil"
+    when "summer" then "island-tropical"
+    when "autumn" then "pumpkin"
+    else
+      raise
     end
   end
 end

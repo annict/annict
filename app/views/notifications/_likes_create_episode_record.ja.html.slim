@@ -1,15 +1,15 @@
 - action_user = notification.action_user
 - episode_record = notification.trackable.recipient
 - episode = episode_record.episode
-- work = episode.work
+- work = episode.anime
 
-span.mr-1
+span.me-1
   = action_user.name_link
 | が
 span.mx-1
   = work.title_link
 - unless work.single?
-  span.mr-1
+  span.me-1
     = episode.number_link
 | への記録に「いいね！」しました
 
@@ -17,7 +17,7 @@ span.mx-1
   = link_to local_time_ago_in_words(episode_record.created_at), record_path(current_user.username, episode_record.record)
   - if episode_record.body.present?
     | :
-    span.ml-1
+    span.ms-1
     = episode_record.body
 
 .small.text-muted

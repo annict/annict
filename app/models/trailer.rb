@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: trailers
@@ -37,11 +38,11 @@ class Trailer < ApplicationRecord
   include ImageUploadable
   include Unpublishable
 
-  DIFF_FIELDS = %i(title url sort_number).freeze
+  DIFF_FIELDS = %i[title url sort_number].freeze
 
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
-  belongs_to :work, touch: true
+  belongs_to :anime, foreign_key: :work_id, touch: true
 
   validates :title, presence: true
   validates :url, url: true
@@ -49,16 +50,16 @@ class Trailer < ApplicationRecord
   before_save :attach_thumbnail
 
   def to_diffable_hash
-    data = self.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
+    data = self.class::DIFF_FIELDS.each_with_object({}) { |field, hash|
       hash[field] = send(field)
       hash
-    end
+    }
 
     data.delete_if { |_, v| v.blank? }
   end
 
   def youtube?
-    url.match?(%r{\A(https?\:\/\/)?(www\.youtube\.com|youtu\.?be)\/.+\z})
+    url.match?(%r{\A(https?://)?(www\.youtube\.com|youtu\.?be)/.+\z})
   end
 
   def youtube_video_id
@@ -75,13 +76,13 @@ class Trailer < ApplicationRecord
 
     image_url = ""
 
-    %w(
+    %w[
       maxresdefault
       sddefault
       hqdefault
       mqdefault
       default
-    ).each do |size|
+    ].each do |size|
       image_url = "http://i.ytimg.com/vi/#{youtube_video_id}/#{size}.jpg"
       res = HTTParty.get(image_url)
       break if res.code == 200

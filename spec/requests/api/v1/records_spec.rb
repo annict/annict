@@ -11,9 +11,10 @@ describe "Api::V1::Records" do
 
   let(:access_token) { create(:oauth_access_token) }
   let(:user) { create(:user, :with_profile) }
-  let(:work) { create(:work, :with_current_season) }
-  let(:episode) { create(:episode, work: work) }
-  let!(:record) { create(:episode_record, work: work, episode: episode, user: user) }
+  let(:work) { create(:anime, :with_current_season) }
+  let(:episode) { create(:episode, anime: work) }
+  let!(:record) { create(:record, user: user) }
+  let!(:episode_record) { create(:episode_record, record: record, anime: work, episode: episode, user: user) }
 
   describe "GET /v1/records" do
     before do
@@ -27,7 +28,7 @@ describe "Api::V1::Records" do
 
       it "gets record info" do
         expected_hash = {
-          "id" => record.id,
+          "id" => episode_record.id,
           "comment" => "おもしろかった",
           "rating" => 3.0,
           "rating_state" => nil,
@@ -54,6 +55,7 @@ describe "Api::V1::Records" do
           "work" => {
             "id" => work.id,
             "title" => work.title,
+            "title_en" => "",
             "title_kana" => work.title_kana,
             "media" => "tv",
             "media_text" => "TV",

@@ -1,8 +1,8 @@
 <% title = t "head.title.db.slots.new" %>
 <% set_meta_tags(title: title, reverse: true, prefix: false) %>
 
-<div class="container-fluid py-3">
-  <div class="mb-3">
+<div class="container py-3">
+  <div>
     <div class="mb-1">
       <%= link_to @work.local_title, db_edit_work_path(@work) %>
     </div>
@@ -11,24 +11,24 @@
     </h1>
   </div>
 
-  <div class="mb-3">
+  <div class="mt-3">
     <%= render "db/works/subnav", work: @work %>
   </div>
 
   <% if @programs.exists? %>
-    <div class="mb-3 p-3">
+    <div class="mt-3 p-3">
       <h3 class="h4">
         <%= t("messages.slots.new_slots_csv_by_program") %>
       </h3>
       <%= link_to(
         t("noun.all"),
         db_new_slot_path(program_ids: @programs.pluck(:id).join(",")),
-        class: "btn btn-sm mb-2 mr-2 #{params[:program_id] == 'all' ? 'btn-secondary' : 'btn-outline-secondary'}"
+        class: "btn btn-sm mb-2 me-2 #{params[:program_id] == 'all' ? 'btn-secondary' : 'btn-outline-secondary'}"
       ) %>
       <% @programs.each do |p| %>
         <%= link_to(
           db_new_slot_path(program_ids: p.id),
-          class: "btn btn-sm mb-2 mr-2 #{p.id.to_s == params[:program_id] ? 'btn-secondary' : 'btn-outline-secondary'}"
+          class: "btn btn-sm mb-2 me-2 #{p.id.to_s == params[:program_id] ? 'btn-secondary' : 'btn-outline-secondary'}"
         ) do %>
           <%= p.channel_name %> (<%= p.id %>)
           <br>
@@ -38,18 +38,22 @@
     </div>
   <% end %>
 
-  <div class="mb-3 row">
+  <div class="gx-3 row mt-3">
     <div class="col-6">
-      <%= form_with model: @form, url: db_slot_list_path(@work), local: true do |f| %>
-        <%= render "application/components/error_panel", resource: f.object %>
+      <div class="card">
+        <div class="card-body">
+          <%= form_with model: @form, url: db_slot_list_path(@work) do |f| %>
+            <%= render "application/components/error_panel", resource: f.object %>
 
-        <div class="form-group">
-          <%= f.label :rows, class: "c-label-required" %>
-          <%= f.text_area :rows, class: "form-control", autofocus: true, required: true, rows: 30 %>
+            <div class="mb-3">
+              <%= f.label :rows, class: "c-label-required" %>
+              <%= f.text_area :rows, class: "form-control", autofocus: true, required: true, rows: 30 %>
+            </div>
+
+            <%= f.submit t("helpers.submit.create"), class: "btn btn-primary" %>
+          <% end %>
         </div>
-
-        <%= f.submit t("helpers.submit.create"), class: "btn btn-primary" %>
-      <% end %>
+      </div>
     </div>
 
     <div class="col-6">

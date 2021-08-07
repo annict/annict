@@ -1,27 +1,33 @@
 <% title = t "head.title.db.organizations.index" %>
 <% set_meta_tags(title: title, reverse: true, prefix: false) %>
 
-<div class="container-fluid py-3">
-  <div class="mb-3">
-    <h1>
-      <%= title %>
-    </h1>
+<div class="container py-3">
+  <div class="align-items-center row">
+    <div class="col">
+      <h1>
+        <%= title %>
+      </h1>
+    </div>
 
-    <% if policy(Organization).create? %>
-      <div class="text-right">
-        <%= link_to db_new_organization_path, class: "btn btn-outline-primary" do %>
-          <%= icon "plus" %>
-          <%= t "resources._common.new" %>
-        <% end %>
-      </div>
-    <% end %>
+    <div class="col-auto">
+      <% if policy(Organization).create? %>
+        <div class="text-end">
+          <%= link_to db_new_organization_path, class: "btn btn-outline-primary" do %>
+            <%= icon "plus" %>
+            <%= t "resources._common.new" %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
   </div>
 
-  <div class="mb-3">
-    <%= render "organization_list", resources: @organizations %>
+  <div class="card mt-3">
+    <div class="card-body">
+      <%= render "organization_list", resources: @organizations %>
+    </div>
   </div>
 
-  <div class="text-center">
-    <%= paginate @organizations %>
+  <div class="mt-3 text-center">
+    <%= ButtonGroups::PaginationButtonGroupComponent.new(self, collection: @organizations).render %>
   </div>
 </div>

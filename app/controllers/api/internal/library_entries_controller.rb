@@ -3,35 +3,31 @@
 module Api
   module Internal
     class LibraryEntriesController < Api::Internal::ApplicationController
-      before_action :authenticate_user!, only: %i(show skip_episode)
+      before_action :authenticate_user!, only: %i[update]
 
+      # POST /api/internal/library_entries
+      # NOTE: `anime_ids` の量が大きいときがあるため、POSTで受け付けている
       def index
         return render(json: []) unless user_signed_in?
+        return render(json: []) unless params[:anime_ids]
 
-        library_entries = current_user.
-          library_entries.
-          joins(:status).
-          select("library_entries.work_id, statuses.kind as status_kind").
-          map do |library_entry|
-            {
-              work_id: library_entry.work_id,
-              status_kind:  Status.kind.find_value(library_entry.status_kind)
-            }
-          end
+        status_kinds = current_user
+          .library_entries
+          .where(work_id: params[:anime_ids].split(","))
+          .status_kinds
 
-        render json: library_entries
+        render json: status_kinds
       end
 
-      def show
-        @library_entry = current_user.library_entries.find_by(work_id: params[:work_id])
-        @user = current_user
-      end
+      def update
+        library_entry = current_user.library_entries.find(params[:library_entry_id])
+        program = if params[:program_id] != "no_select"
+          library_entry.anime.programs.only_kept.find(params[:program_id])
+        end
 
-      def skip_episode
-        @library_entry = LibraryEntry.find(params[:library_entry_id])
-        @library_entry.append_episode!(@library_entry.next_episode)
-        @user = current_user
-        render :show
+        library_entry.update!(program_id: program&.id)
+
+        head 204
       end
     end
   end

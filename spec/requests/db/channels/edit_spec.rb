@@ -2,7 +2,7 @@
 
 describe "GET /db/channels/:id/edit", type: :request do
   context "user does not sign in" do
-    let!(:channel) { create(:channel) }
+    let!(:channel) { Channel.first }
 
     it "user can not access this page" do
       get "/db/channels/#{channel.id}/edit"
@@ -14,7 +14,7 @@ describe "GET /db/channels/:id/edit", type: :request do
 
   context "user who is not editor signs in" do
     let!(:user) { create(:registered_user) }
-    let!(:channel) { create(:channel) }
+    let!(:channel) { Channel.first }
 
     before do
       login_as(user, scope: :user)
@@ -30,7 +30,7 @@ describe "GET /db/channels/:id/edit", type: :request do
 
   context "user who is editor signs in" do
     let!(:user) { create(:registered_user, :with_editor_role) }
-    let!(:channel) { create(:channel) }
+    let!(:channel) { Channel.first }
 
     before do
       login_as(user, scope: :user)
@@ -46,7 +46,7 @@ describe "GET /db/channels/:id/edit", type: :request do
 
   context "user who is admin signs in" do
     let!(:user) { create(:registered_user, :with_admin_role) }
-    let!(:channel) { create(:channel) }
+    let!(:channel) { Channel.first }
 
     before do
       login_as(user, scope: :user)

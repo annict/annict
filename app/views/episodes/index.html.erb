@@ -1,0 +1,42 @@
+<% title = t "head.title.episodes.index", title: @anime.local_title %>
+<% description = meta_description(t("head.meta.description.episodes.index", title: @anime.local_title)) %>
+<% image_url = ann_image_url(@anime.anime_image, :image, width: 640) %>
+<% set_meta_tags(title: title, description: description, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false) %>
+
+<%= component_value_fetcher_tag("status-select-dropdown", internal_api_library_entry_list_path, method: :post, payload: {anime_ids: @anime_ids}) %>
+
+<%= Headers::AnimeHeaderComponent.new(self, anime: @anime, programs: @programs).render %>
+
+<div class="py-3">
+  <div class="container u-container-flat">
+    <% if @episodes.present? %>
+      <div class="card u-card-flat">
+        <div class="card-body">
+          <div class="g-3 row">
+            <% @episodes.each do |episode| %>
+              <div class="col-6 col-sm-3">
+                <%= link_to episode_path(@anime, episode), class: "btn p-0 text-start u-fake-link" do %>
+                  <%= episode.local_number %>
+
+                  <div class="small text-body">
+                    <%= episode.local_title %>
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-3 text-center">
+        <%= ButtonGroups::PaginationButtonGroupComponent.new(self, collection: @episodes).render %>
+      </div>
+    <% else %>
+      <div class="card u-card-flat">
+        <div class="card-body">
+          <%= EmptyV6Component.new(self, text: t("messages._empty.no_episodes")).render %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

@@ -6,16 +6,20 @@ module Canary
       class Mutation < Canary::Types::Objects::Base
         field :updateStatus, mutation: Canary::Mutations::UpdateStatus
 
+        field :skipEpisode, mutation: Canary::Mutations::SkipEpisode
+
+        field :createAnimeRecord, mutation: Canary::Mutations::CreateAnimeRecord
         field :createEpisodeRecord, mutation: Canary::Mutations::CreateEpisodeRecord
+        field :bulkCreateEpisodeRecords, mutation: Canary::Mutations::BulkCreateEpisodeRecords
+        field :updateAnimeRecord, mutation: Canary::Mutations::UpdateAnimeRecord
         field :updateEpisodeRecord, mutation: Canary::Mutations::UpdateEpisodeRecord
-        field :deleteEpisodeRecord, mutation: Canary::Mutations::DeleteEpisodeRecord
+        field :deleteRecord, mutation: Canary::Mutations::DeleteRecord
 
-        field :createWorkRecord, mutation: Canary::Mutations::CreateWorkRecord
-        field :updateWorkRecord, mutation: Canary::Mutations::UpdateWorkRecord
-        field :deleteWorkRecord, mutation: Canary::Mutations::DeleteWorkRecord
+        field :addReaction, mutation: Canary::Mutations::AddReaction
+        field :removeReaction, mutation: Canary::Mutations::RemoveReaction
 
-        field :likeWorkRecord, mutation: Canary::Mutations::LikeWorkRecord
-        field :unlikeWorkRecord, mutation: Canary::Mutations::UnlikeWorkRecord
+        field :selectProgram, mutation: Canary::Mutations::SelectProgram
+        field :unselectProgram, mutation: Canary::Mutations::UnselectProgram
       end
     end
   end

@@ -1,0 +1,55 @@
+<% title = t "head.title.friends.index" %>
+<% set_meta_tags title: title, reverse: true, prefix: false %>
+
+<%= component_value_fetcher_tag("follow-button", internal_api_following_list_path) %>
+<%= component_value_fetcher_tag("mute-user-button", internal_api_muted_user_list_path) %>
+
+<div class="py-3">
+  <div class="container">
+    <h1 class="fw-bold">
+      <%= title %>
+    </h1>
+
+    <p>
+      <%= t "messages._page_hints.friend_list_html", link: link_to(t("head.title.providers.index"), settings_provider_list_path) %>
+    </p>
+  </div>
+
+  <hr>
+
+  <div class="container mt-3">
+    <h2 class="fw-bold h3 mb-0">
+      <%= t("noun.sns_friends") %>
+    </h2>
+  </div>
+
+  <div class="container mt-3 u-container-flat">
+    <div class="card u-card-flat">
+      <div class="card-body">
+        <% if @friends.present? %>
+          <%= render "application/user_list", users: @friends %>
+        <% else %>
+          <%= render "application/components/empty", text: t("messages.friends.no_sns_friends") %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="container mt-3">
+    <h2 class="fw-bold h3 mb-0">
+      <%= t("noun.other_users") %>
+    </h2>
+  </div>
+
+  <div class="container mt-3 u-container-flat">
+    <div class="card u-card-flat">
+      <div class="card-body">
+        <% if @users.present? %>
+          <%= render "application/user_list", users: @users %>
+        <% else %>
+          <%= render "application/components/empty", text: t("messages.friends.no_users") %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

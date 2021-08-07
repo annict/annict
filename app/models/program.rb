@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: programs
@@ -36,29 +37,29 @@ class Program < ApplicationRecord
   include DbActivityMethods
   include Unpublishable
 
-  DIFF_FIELDS = %i(channel_id work_id url started_at).freeze
+  DIFF_FIELDS = %i[channel_id work_id url started_at].freeze
 
   attr_accessor :time_zone
 
-  validates :url, url: { allow_blank: true }
+  validates :url, url: {allow_blank: true}
 
   belongs_to :channel
-  belongs_to :work, touch: true
+  belongs_to :anime, foreign_key: :work_id, touch: true
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
   has_many :slots, dependent: :destroy
 
-  scope :in_vod, -> { joins(:channel).where(channels: { vod: true }) }
+  scope :in_vod, -> { joins(:channel).where(channels: {vod: true}) }
 
   delegate :name, to: :channel, prefix: true
 
   before_save :calc_for_timezone
 
   def to_diffable_hash
-    data = self.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
+    data = self.class::DIFF_FIELDS.each_with_object({}) { |field, hash|
       hash[field] = send(field)
       hash
-    end
+    }
 
     data.delete_if { |_, v| v.blank? }
   end

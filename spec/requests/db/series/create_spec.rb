@@ -12,7 +12,7 @@ describe "POST /db/series", type: :request do
     end
 
     it "user can not access this page" do
-      post "/db/series", params: { series: series_params }
+      post "/db/series", params: {series: series_params}
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("ログインしてください")
@@ -37,7 +37,7 @@ describe "POST /db/series", type: :request do
     end
 
     it "user can not access" do
-      post "/db/series", params: { series: series_params }
+      post "/db/series", params: {series: series_params}
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("アクセスできません")
@@ -64,7 +64,7 @@ describe "POST /db/series", type: :request do
     it "user can create series" do
       expect(Series.all.size).to eq(0)
 
-      post "/db/series", params: { series: series_params }
+      post "/db/series", params: {series: series_params}
 
       expect(response.status).to eq(302)
       expect(flash[:notice]).to eq("登録しました")

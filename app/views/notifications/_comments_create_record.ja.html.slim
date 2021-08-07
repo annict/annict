@@ -1,13 +1,13 @@
 - action_user = notification.action_user
 - comment = notification.trackable
 - episode_record = comment.episode_record
-- work = episode_record.work
+- work = episode_record.anime
 - episode = episode_record.episode
 
-span.mr-1
+span.me-1
   = action_user.name_link
 | が
-span.ml-1
+span.ms-1
   = work.title_link
 span.mx-1
   = episode.number_link
@@ -17,7 +17,7 @@ span.mx-1
   = link_to local_time_ago_in_words(comment.created_at), record_path(current_user.username, episode_record.record)
   - if episode_record.body.present?
     | :
-    span.ml-1
+    span.ms-1
     = episode_record.body
 
 .small.text-muted

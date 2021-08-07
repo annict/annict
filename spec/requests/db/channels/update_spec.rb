@@ -2,7 +2,7 @@
 
 describe "PATCH /db/channels/:id", type: :request do
   context "user does not sign in" do
-    let!(:channel) { create(:channel) }
+    let!(:channel) { Channel.first }
     let!(:old_channel) { channel.attributes }
     let!(:channel_params) do
       {
@@ -11,7 +11,7 @@ describe "PATCH /db/channels/:id", type: :request do
     end
 
     it "user can not access this page" do
-      patch "/db/channels/#{channel.id}", params: { channel: channel_params }
+      patch "/db/channels/#{channel.id}", params: {channel: channel_params}
       channel.reload
 
       expect(response.status).to eq(302)
@@ -23,7 +23,7 @@ describe "PATCH /db/channels/:id", type: :request do
 
   context "user who is not editor signs in" do
     let!(:user) { create(:registered_user) }
-    let!(:channel) { create(:channel) }
+    let!(:channel) { Channel.first }
     let!(:old_channel) { channel.attributes }
     let!(:channel_params) do
       {
@@ -36,7 +36,7 @@ describe "PATCH /db/channels/:id", type: :request do
     end
 
     it "user can not access" do
-      patch "/db/channels/#{channel.id}", params: { channel: channel_params }
+      patch "/db/channels/#{channel.id}", params: {channel: channel_params}
       channel.reload
 
       expect(response.status).to eq(302)
@@ -48,7 +48,7 @@ describe "PATCH /db/channels/:id", type: :request do
 
   context "user who is editor signs in" do
     let!(:user) { create(:registered_user, :with_editor_role) }
-    let!(:channel) { create(:channel) }
+    let!(:channel) { Channel.first }
     let!(:old_channel) { channel.attributes }
     let!(:channel_params) do
       {
@@ -61,7 +61,7 @@ describe "PATCH /db/channels/:id", type: :request do
     end
 
     it "user can not access" do
-      patch "/db/channels/#{channel.id}", params: { channel: channel_params }
+      patch "/db/channels/#{channel.id}", params: {channel: channel_params}
       channel.reload
 
       expect(response.status).to eq(302)
@@ -73,7 +73,7 @@ describe "PATCH /db/channels/:id", type: :request do
 
   context "user who is admin signs in" do
     let!(:user) { create(:registered_user, :with_admin_role) }
-    let!(:channel) { create(:channel) }
+    let!(:channel) { Channel.first }
     let!(:old_channel) { channel.attributes }
     let!(:channel_params) do
       {
@@ -88,7 +88,7 @@ describe "PATCH /db/channels/:id", type: :request do
     it "user can update channel" do
       expect(channel.name).to eq(old_channel["name"])
 
-      patch "/db/channels/#{channel.id}", params: { channel: channel_params }
+      patch "/db/channels/#{channel.id}", params: {channel: channel_params}
       channel.reload
 
       expect(response.status).to eq(302)

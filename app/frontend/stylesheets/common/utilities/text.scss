@@ -1,5 +1,0 @@
-@import '~bootstrap/scss/mixins';
-
-@each $color-name, $color in $ann-text-colors {
-  @include text-emphasis-variant('.u-text-#{$color-name}', $color, true);
-}

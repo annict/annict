@@ -3,7 +3,7 @@
 FactoryBot.define do
   factory :user do
     sequence(:username) { |n| "user_#{n}" }
-    sequence(:email)    { |n| "user_#{n}@example.com" }
+    sequence(:email) { |n| "user_#{n}@example.com" }
     time_zone { "Asia/Tokyo" }
     locale { "ja" }
 
@@ -33,8 +33,10 @@ FactoryBot.define do
       role { :admin }
     end
 
-    factory :registered_user, traits: %i(with_profile with_provider with_setting) do
-      after :create, &:confirm
+    factory :registered_user, traits: %i[with_profile with_provider with_setting] do
+      after :create do |user|
+        user.confirm
+      end
     end
   end
 end

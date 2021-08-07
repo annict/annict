@@ -9,7 +9,7 @@ module.exports = function (api) {
           corejs: 3,
           forceAllTransforms: api.env('production'),
         },
-        "@babel/preset-typescript"
+        '@babel/preset-typescript',
       ],
     ],
 

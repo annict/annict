@@ -20,38 +20,55 @@ en:
     _components:
       activities:
         episode_record:
-          created: "tracked"
-          more: "Show %{n} records"
+          created: 'tracked'
+          more: 'Show %{n} records'
         status:
-          changed: "changed status"
-          more: "Show %{n} status changes"
+          changed: 'changed status'
+          more: 'Show %{n} status changes'
         work_record:
-          created: "tracked"
-          more: "Show %{n} records"
+          created: 'tracked'
+          more: 'Show %{n} records'
+      adsense:
+        hide_ads_html: You can hide ads by becoming <a href="/supporters">Annict Supporters</a>
       body:
         view_full_text: View Full Text
       favorite_button:
         add_to_favorites: Add to Favorites
         added_to_favorites: Added to Favorites
         hint: If you add this %{resource_type} into your favorites, you'll get a notification when upcoming animes which is related to this %{resource_type} will be added to Annict.
+      mute_user_button:
+        the_user_has_been_muted: The user has been muted.
+        the_user_has_been_unmuted: The user has been unmuted.
+      program_selector:
+        select_program: Select Program
       sign_up_modal:
         body: You can use this feature after sign up.
     _empty:
       no_activities: No Activities
+      no_anime: No Anime
       no_characters: No Characters
+      no_comments: No Comments
       no_episodes: No Episodes
       no_followers: No Followers
       no_following: No Following Users
       no_organizations: No Organizations
       no_people: No People
+      no_programs: No Programs
       no_projects: No Projects
       no_record_body_list: No Comments
       no_records: No Records
       no_resources: No Resources
       no_series_works: No Series Works
       no_series: No Series
+      no_slots: No Slots
       no_staffs: No Staffs
       no_works: No Works
+    _page_hints:
+      channel_list_html: If you set a program information of a work after following channels, broadcast schedules of the program will be displayed on the %{link} page.
+      friend_list_html: 'When you link to Twitter on the %{link} page, Annict users you follow on Twitter will be displayed.'
+      home: When you follow a user, activities who followed will be displayed on the timeline.
+      notification_list: You will be notified when you are followed or your record is liked.
+      track_html: The works whose status is "Watching" or "Plan to watch" are displayed.
     _validators:
       and_other_are_required: and %{column_name} are required
       is_required_true_or_false: is required `true` or `false`
@@ -62,8 +79,6 @@ en:
       updated: Account has been updated.
     callbacks:
       sign_in_failed: Sign in failed.
-    channel_works:
-      no_works: No works
     channels:
       supported_vod: Video Service
     character_fans:
@@ -82,7 +97,7 @@ en:
       comments:
         created: Comment has been created.
       episodes:
-        auto_generate_info_html: "Total episodes: %{manual_episodes_count}<br>Published episodes: %{episodes_count}<br>Auto generate episodes: %{max_generate_episodes_count}"
+        auto_generate_info_html: 'Total episodes: %{manual_episodes_count}<br>Published episodes: %{episodes_count}<br>Auto generate episodes: %{max_generate_episodes_count}'
       works:
         no_episodes: No Episodes
         no_image: No Image
@@ -106,7 +121,7 @@ en:
       no_people: No Poeple
     forum:
       _common:
-        view_all_site_news: "View All"
+        view_all_site_news: 'View All'
       comments:
         created: Created
         deleted: This comment has been deleted.
@@ -123,26 +138,13 @@ en:
     home:
       index:
         there_are_no_activities: There are no activities
-      index_guest:
-        hero_description_html: Explore the anime database, track anime you are watching<br>and see what friends are watching.
-        hero_description_mobile_html: Track anime you are watching<br>and see what friends are watching.
-        hero_title: The platform for anime addicts.
-        hero_title_mobile_html: The platform for anime addicts.
-        start_tracking: Start Tracking
     ics:
       you_can_see: You can see slots of works which you set "Watching", "Plan to Watch" when you add the following URL to Google Calendar.
     components:
-      load_more_button:
-        more: View more
-      mute_user_button:
-        the_user_has_been_muted: The user has been muted.
       slot_list:
         tracked: Tracked.
       status_selector:
         select_status: Select Status
-    multiple_records:
-      create:
-        saved: Records have been saved.
     mutes:
       no_muted_users_found: No muted users found.
     notifications:
@@ -160,7 +162,7 @@ en:
         authorize: Authorize
         authorize_account_html: Authorize <b>%{client_name}</b> to use your account?
         cancel: Cancel
-        this_application_will_be_able_to: "This application will be able to:"
+        this_application_will_be_able_to: 'This application will be able to:'
     oauth_users:
       new:
         sign_up_with_oauth: Sign Up with %{provider_name}
@@ -192,7 +194,7 @@ en:
     records:
       show:
         record_by_name: "%{name}'s Record"
-      view_record_body: "View Comment"
+      view_record_body: 'View Comment'
     registrations:
       new:
         expired_html: Your sign up link has expired.<br>Please reenter your email on the <a href="/sign_up">sign up page</a>.
@@ -245,16 +247,13 @@ en:
       new:
         description_html: We'll send a link for sign up to the email you input.
     tracks:
-      episodes_you_have_watched: "Watched"
+      episodes_you_have_watched: 'Watched'
       no_trackable_episodes: No trackable episodes
-      skip_episode_confirmation: Are you sure to skip this episode and show next episode?
       see_records: See records
       tracked: Your record has been tracked.
-    user_work_tags:
-      anime_list_tagged: "Anime list tagged '%{tag_name}'"
     userland:
-      description_html: "Userland is the place to discover 3rd party applications which uses Annict API."
-      description_mobile_html: "Userland is the place to discover 3rd party applications which uses Annict API."
+      description_html: 'Userland is the place to discover 3rd party applications which uses Annict API.'
+      description_mobile_html: 'Userland is the place to discover 3rd party applications which uses Annict API.'
       projects:
         about_available: Please check this when the project is published and users can use it.
         markdown_support: You can write in Markdown.
@@ -266,9 +265,16 @@ en:
     users:
       _validators:
         exists_active_oauth_applications: which you created are active.
-      allowed_locales_description: "This setting which languages you are more likely to see throughout the site, but you may still see other languages, especially english."
-      bye_bye: "Bye Bye... (´・ω;:.."
+      allowed_locales_description: 'This setting which languages you are more likely to see throughout the site, but you may still see other languages, especially english.'
+      bye_bye: 'Bye Bye... (´・ω;:..'
       no_works: No works
+    welcome:
+      show:
+        annict_features: Features
+        hero_description_html: Explore the anime database, track anime you are watching<br>and see what friends are watching.
+        hero_description_mobile_html: Track anime you are watching<br>and see what friends are watching.
+        hero_title_html: A platform for anime addicts.
+        lets_start_tracking: Let's start tracking.
     work_records:
       new:
         write_your_comment: Write Your Comment! (optional)
@@ -281,5 +287,5 @@ en:
       view_all_n_episodes: View All %{n} Episodes
       view_all_n_record_body_list: View All %{n} Comments
       view_all_n_staffs: View All %{n} Staffs
-      creating_episodes_restricted_episodes_filled: "You can not add episodes because episodes are created enough."
-      creating_episodes_restricted_slots_exists: "You can not add episodes because slots have been added."
+      creating_episodes_restricted_episodes_filled: 'You can not add episodes because episodes are created enough.'
+      creating_episodes_restricted_slots_exists: 'You can not add episodes because slots have been added.'

@@ -2,7 +2,7 @@
 
 describe "DELETE /db/series_works/:id/publishing", type: :request do
   context "user does not sign in" do
-    let!(:series_work) { create(:series_work, :published) }
+    let!(:series_work) { create(:series_anime, :published) }
 
     it "user can not access this page" do
       delete "/db/series_works/#{series_work.id}/publishing"
@@ -17,7 +17,7 @@ describe "DELETE /db/series_works/:id/publishing", type: :request do
 
   context "user who is not editor signs in" do
     let!(:user) { create(:registered_user) }
-    let!(:series_work) { create(:series_work, :published) }
+    let!(:series_work) { create(:series_anime, :published) }
 
     before do
       login_as(user, scope: :user)
@@ -36,7 +36,7 @@ describe "DELETE /db/series_works/:id/publishing", type: :request do
 
   context "user who is editor signs in" do
     let!(:user) { create(:registered_user, :with_editor_role) }
-    let!(:series_work) { create(:series_work, :published) }
+    let!(:series_work) { create(:series_anime, :published) }
 
     before do
       login_as(user, scope: :user)

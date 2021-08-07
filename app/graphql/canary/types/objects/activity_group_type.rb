@@ -4,7 +4,7 @@ module Canary
   module Types
     module Objects
       class ActivityGroupType < Canary::Types::Objects::Base
-        implements GraphQL::Relay::Node.interface
+        implements GraphQL::Types::Relay::Node
 
         global_id_field :id
 
@@ -17,7 +17,14 @@ module Canary
         field :activities, Canary::Types::Objects::ActivityType.connection_type, null: false
 
         def itemable_type
-          object.itemable_type.underscore.upcase
+          value = object.itemable_type.underscore.upcase
+
+          case value
+          when "EPISODE_RECORD", "WORK_RECORD"
+            "RECORD"
+          else
+            value
+          end
         end
 
         def user
@@ -25,7 +32,7 @@ module Canary
         end
 
         def activities
-          Canary::AssociationLoader.for(ActivityGroup, %i(ordered_activities)).load(object)
+          Canary::AssociationLoader.for(ActivityGroup, %i[ordered_activities]).load(object)
         end
       end
     end

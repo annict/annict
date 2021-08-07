@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: forum_posts
@@ -28,17 +29,17 @@
 #
 
 class ForumPost < ApplicationRecord
-  include Localizable
+  include UgcLocalizable
 
   belongs_to :user
   belongs_to :forum_category
   has_many :forum_comments, dependent: :destroy
   has_many :forum_post_participants, dependent: :destroy
 
-  validates :body, presence: true, length: { maximum: 5000 }
+  validates :body, presence: true, length: {maximum: 5000}
   validates :forum_category, presence: true
   validates :last_commented_at, presence: true
-  validates :title, presence: true, length: { maximum: 100 }
+  validates :title, presence: true, length: {maximum: 100}
   validates :user, presence: true
 
   def notify_discord

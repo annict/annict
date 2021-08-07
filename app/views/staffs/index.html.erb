@@ -1,0 +1,36 @@
+<% title = t "head.title.staffs.index", title: @anime.local_title %>
+<% description = meta_description(t("head.meta.description.staffs.index", title: @anime.local_title)) %>
+<% image_url = ann_image_url(@anime.anime_image, :image, width: 640) %>
+<% set_meta_tags(title: title, description: description, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false) %>
+
+<%= component_value_fetcher_tag("status-select-dropdown", internal_api_library_entry_list_path, method: :post, payload: {anime_ids: [@anime.id]}) %>
+
+<%= Headers::AnimeHeaderComponent.new(self, anime: @anime, programs: @programs).render %>
+
+<div class="py-3">
+  <div class="container u-container-flat">
+    <div class="card u-card-flat">
+      <div class="card-body">
+        <div class="g-3 row">
+          <% if @staffs.present? %>
+            <% @staffs.each do |staff| %>
+              <div class="col-12 col-sm-6">
+                <div class="g-3 row">
+                  <div class="col-6 text-end">
+                    <%= staff.role_name %>
+                  </div>
+
+                  <div class="col-6">
+                    <%= link_to staff.local_accurate_name, staff.resource_path, class: "text-body" %>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          <% else %>
+            <%= EmptyV6Component.new(self, text: t("messages._empty.no_resources")) %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

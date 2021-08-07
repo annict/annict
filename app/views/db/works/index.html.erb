@@ -1,37 +1,41 @@
 <% title = t "head.title.db.works.index" %>
 <% set_meta_tags(title: title, reverse: true, prefix: false) %>
 
-<div class="container-fluid py-3">
-  <div class="mb-3">
-    <h1>
-      <%= title %>
-    </h1>
+<div class="container py-3">
+  <div class="align-items-center row">
+    <div class="col">
+      <h1>
+        <%= title %>
+      </h1>
+    </div>
 
-    <% if policy(Work).create? %>
-      <div class="text-right">
-        <%= link_to db_new_work_path, class: "btn btn-outline-primary" do %>
-          <%= icon "plus" %>
-          <%= t "resources._common.new" %>
-        <% end %>
-      </div>
-    <% end %>
+    <div class="col-auto">
+      <% if policy(Anime).create? %>
+        <div class="text-end">
+          <%= link_to db_new_work_path, class: "btn btn-outline-primary" do %>
+            <%= icon "plus" %>
+            <%= t "resources._common.new" %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
   </div>
 
-  <div class="card mb-3">
+  <div class="card mt-3">
     <div class="card-body">
-      <%= form_with url: db_work_list_path, method: :get, local: true do %>
-        <div class="form-row mb-3">
-          <div class="col-md-4">
+      <%= form_with url: db_work_list_path, method: :get do %>
+        <div class="row mb-3">
+          <div class="col-4">
             <%= label_tag :season_slugs, t("noun.release_season") %>
             <%= select_tag(
               :season_slugs,
               options_for_select(Season.list(sort: :desc).map { |s| [s.local_name, s.slug] }, @season_slugs),
               multiple: true,
-              class: "custom-select",
+              class: "form-select",
               style: "height: 150px;"
             ) %>
           </div>
-          <div class="col-md-8">
+          <div class="col-8">
             <div class="row">
               <div class="col-md-6">
                 <div class="form-check">
@@ -68,11 +72,13 @@
     </div>
   </div>
 
-  <div class="mb-3">
-    <%= render "work_list", resources: @works %>
+  <div class="card mt-3">
+    <div class="card-body">
+      <%= render "work_list", resources: @works %>
+    </div>
   </div>
 
-  <div class="text-center">
-    <%= paginate @works %>
+  <div class="text-center mt-3">
+    <%= ButtonGroups::PaginationButtonGroupComponent.new(self, collection: @works).render %>
   </div>
 </div>

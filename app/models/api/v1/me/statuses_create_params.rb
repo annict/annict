@@ -19,7 +19,7 @@ module Api
           }
         validates :kind,
           presence: true,
-          format: { with: KINDS, message: "の値が不正です。" }
+          format: {with: KINDS, message: "の値が不正です。"}
       end
     end
   end

@@ -1,118 +1,128 @@
 <% title = t "head.title.db.programs.index" %>
-<% set_meta_tags(title: title, reverse: true, prefix: false) %>
+<% set_meta_tags(title: "#{title} | #{@work.local_title}", reverse: true, prefix: false) %>
 
-<div class="container-fluid py-3">
-  <div class="mb-3">
-    <div class="mb-1">
-      <%= link_to @work.local_title, db_edit_work_path(@work) %>
-    </div>
-    <h1>
-      <%= title %>
-    </h1>
-
-    <% if policy(Program).create? %>
-      <div class="text-right">
-        <%= link_to db_new_program_path(@work), class: "btn btn-outline-primary" do %>
-          <%= icon "plus" %>
-          <%= t "resources._common.new" %>
-        <% end %>
+<div class="container py-3">
+  <div class="align-items-center row">
+    <div class="col">
+      <div class="mb-1">
+        <%= link_to @work.local_title, db_edit_work_path(@work) %>
       </div>
-    <% end %>
+      <h1>
+        <%= title %>
+      </h1>
+    </div>
+
+    <div class="col-auto">
+      <% if policy(Program).create? %>
+        <div class="text-end">
+          <%= link_to db_new_program_path(@work), class: "btn btn-outline-primary" do %>
+            <%= icon "plus" %>
+            <%= t "resources._common.new" %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
   </div>
 
-  <div class="mb-3">
+  <div class="mt-3">
     <%= render "db/works/subnav", work: @work %>
   </div>
 
-  <div class="mb-3">
-    <% if @programs.present? %>
-      <table class="mb-3 table table-hover table-sm">
-        <thead>
-          <tr>
-            <th>
-              ID
-            </th>
-            <th>
-              <%= t "noun.channel_id" %>
-            </th>
-            <th>
-              <%= t "activerecord.attributes.program.channel_id" %>
-            </th>
-            <th>
-              <%= t "activerecord.attributes.program.started_at" %>
-            </th>
-            <th>
-              <%= t "activerecord.attributes.program.rebroadcast" %>
-            </th>
-            <th>
-              <%= t "activerecord.attributes.program.vod_title_code" %>
-            </th>
-            <th>
-              <%= t "activerecord.attributes.program.vod_title_name" %>
-            </th>
-            <th>
-              <%= t "noun.state" %>
-            </th>
-            <th>
-              <%= t "noun.actions" %>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <% @programs.each do |program| %>
+  <% if @programs.present? %>
+    <div class="card mt-3">
+      <div class="card-body">
+        <table class="table table-sm">
+          <thead>
             <tr>
-              <td>
-                <%= program.id %>
-              </td>
-              <td>
-                <%= program.channel_id %>
-              </td>
-              <td>
-                <%= program.channel.name %>
-              </td>
-              <td>
-                <%= display_time(program.started_at)&.presence || "-" %>
-              </td>
-              <td>
-                <%= program.rebroadcast? ? icon("circle", "far") : icon("times") %>
-              </td>
-              <td>
-                <% if program.vod_title_code.present? %>
-                  <%= link_to(
-                    program.vod_title_code,
-                    vod_title_url(program.channel_id, program.vod_title_code),
-                    target: "_blank",
-                    rel: "noopener"
-                  ) %>
-                <% else %>
-                  -
-                <% end %>
-              </td>
-              <td>
-                <% if program.vod_title_name.present? %>
-                  <%= program.vod_title_name %>
-                <% else %>
-                  -
-                <% end %>
-              </td>
-              <td>
-                <%= render Db::PublishingStateLabelComponent.new(resource: program) %>
-              </td>
-              <td>
-                <%= render Db::ActionButtonsComponent.new(
-                    user: current_user,
-                    resource: program,
-                    detail_path: db_program_detail_path(program),
-                    edit_path: db_edit_program_path(program),
-                    publishing_path: db_program_publishing_path(program)
-                ) %>
-              </td>
+              <th>
+                ID
+              </th>
+              <th>
+                <%= t "noun.channel_id" %>
+              </th>
+              <th>
+                <%= t "activerecord.attributes.program.channel_id" %>
+              </th>
+              <th>
+                <%= t "activerecord.attributes.program.started_at" %>
+              </th>
+              <th>
+                <%= t "activerecord.attributes.program.rebroadcast" %>
+              </th>
+              <th>
+                <%= t "activerecord.attributes.program.vod_title_code" %>
+              </th>
+              <th>
+                <%= t "activerecord.attributes.program.vod_title_name" %>
+              </th>
+              <th>
+                <%= t "noun.state" %>
+              </th>
+              <th>
+                <%= t "noun.actions" %>
+              </th>
             </tr>
-          <% end %>
-        </tbody>
-      </table>
-    <% else %>
-      <%= render "application/components/empty", text: t("messages._empty.no_resources") %>
-    <% end %>
-  </div>
+          </thead>
+          <tbody>
+            <% @programs.each do |program| %>
+              <tr>
+                <td>
+                  <%= program.id %>
+                </td>
+                <td>
+                  <%= program.channel_id %>
+                </td>
+                <td>
+                  <%= program.channel.name %>
+                </td>
+                <td>
+                  <%= display_time(program.started_at)&.presence || "-" %>
+                </td>
+                <td>
+                  <%= program.rebroadcast? ? icon("circle", "far") : icon("times") %>
+                </td>
+                <td>
+                  <% if program.vod_title_code.present? %>
+                    <%= link_to(
+                      program.vod_title_code,
+                      vod_title_url(program.channel_id, program.vod_title_code),
+                      target: "_blank",
+                      rel: "noopener"
+                    ) %>
+                  <% else %>
+                    -
+                  <% end %>
+                </td>
+                <td>
+                  <% if program.vod_title_name.present? %>
+                    <%= program.vod_title_name %>
+                  <% else %>
+                    -
+                  <% end %>
+                </td>
+                <td>
+                  <%= render Db::PublishingStateLabelComponent.new(resource: program) %>
+                </td>
+                <td>
+                  <%= render Db::ActionButtonsComponent.new(
+                      user: current_user,
+                      resource: program,
+                      detail_path: db_program_detail_path(program),
+                      edit_path: db_edit_program_path(program),
+                      publishing_path: db_program_publishing_path(program)
+                  ) %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% else %>
+    <div class="card mt-3">
+      <div class="card-body">
+        <%= render "application/components/empty", text: t("messages._empty.no_resources") %>
+      </div>
+    </div>
+  <% end %>
 </div>

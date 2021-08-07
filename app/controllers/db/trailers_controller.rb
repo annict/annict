@@ -2,27 +2,27 @@
 
 module Db
   class TrailersController < Db::ApplicationController
-    before_action :authenticate_user!, only: %i(new create edit update destroy)
+    before_action :authenticate_user!, only: %i[new create edit update destroy]
 
     def index
-      @work = Work.without_deleted.find(params[:work_id])
+      @work = Anime.without_deleted.find(params[:work_id])
       @trailers = @work.trailers.without_deleted.order(:sort_number)
     end
 
     def new
-      @work = Work.without_deleted.find(params[:work_id])
+      @work = Anime.without_deleted.find(params[:work_id])
       @form = Db::TrailerRowsForm.new
       authorize @form
     end
 
     def create
-      @work = Work.without_deleted.find(params[:work_id])
+      @work = Anime.without_deleted.find(params[:work_id])
       @form = Db::TrailerRowsForm.new(trailer_rows_form_params)
       @form.user = current_user
       @form.work = @work
       authorize @form
 
-      return render(:new) unless @form.valid?
+      return render(:new, status: :unprocessable_entity) unless @form.valid?
 
       @form.save!
 
@@ -32,7 +32,7 @@ module Db
     def edit
       @trailer = Trailer.without_deleted.find(params[:id])
       authorize @trailer
-      @work = @trailer.work
+      @work = @trailer.anime
     end
 
     def update
@@ -42,11 +42,11 @@ module Db
       @trailer.attributes = trailer_params
       @trailer.user = current_user
 
-      return render(:edit) unless @trailer.valid?
+      return render(:edit, status: :unprocessable_entity) unless @trailer.valid?
 
       @trailer.save_and_create_activity!
 
-      redirect_to db_trailer_list_path(@trailer.work), notice: t("messages._common.updated")
+      redirect_to db_trailer_list_path(@trailer.anime), notice: t("messages._common.updated")
     end
 
     def destroy
@@ -56,7 +56,7 @@ module Db
       @trailer.destroy_in_batches
 
       redirect_back(
-        fallback_location: db_trailer_list_path(@trailer.work),
+        fallback_location: db_trailer_list_path(@trailer.anime),
         notice: t("messages._common.deleted")
       )
     end

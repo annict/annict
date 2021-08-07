@@ -2,11 +2,11 @@
 
 json = {}
 
-json[:episodes] = @episodes.map do |episode|
+json[:episodes] = @episodes.map { |episode|
   episode_json = {}
   episode_json.merge!(render("api/v1/episodes/episode", episode: episode, params: @params, field_prefix: ""))
 
-  episode_json[:work] = render("api/v1/works/work", work: episode.work, params: @params, field_prefix: "work.")
+  episode_json[:work] = render("api/v1/works/work", work: episode.anime, params: @params, field_prefix: "work.")
 
   if episode.prev_episode.present?
     episode_json[:prev_episode] = render("api/v1/episodes/episode", episode: episode.prev_episode, params: @params, field_prefix: "prev_episode.")
@@ -21,7 +21,7 @@ json[:episodes] = @episodes.map do |episode|
   end
 
   episode_json
-end
+}
 
 json.merge!(render("api/v1/application/pagination", collection: @episodes, params: @params))
 

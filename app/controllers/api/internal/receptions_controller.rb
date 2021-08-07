@@ -3,24 +3,22 @@
 module Api
   module Internal
     class ReceptionsController < Api::Internal::ApplicationController
-      before_action :authenticate_user!
-
       def create
-        @channel = Channel.only_kept.find(channel_id)
+        return head(:unauthorized) unless user_signed_in?
+
+        @channel = Channel.only_kept.find(params[:channel_id])
         current_user.receive(@channel)
-        head 200
+
+        head 201
       end
 
       def destroy
-        @channel = Channel.only_kept.find(channel_id)
+        return head(:unauthorized) unless user_signed_in?
+
+        @channel = Channel.only_kept.find(params[:channel_id])
         current_user.unreceive(@channel)
+
         head 200
-      end
-
-      private
-
-      def channel_id
-        params[:id] || params[:channel_id]
       end
     end
   end

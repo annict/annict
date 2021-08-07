@@ -2,7 +2,7 @@
 
 module Db
   class WorksController < Db::ApplicationController
-    before_action :authenticate_user!, only: %i(new create edit update destroy)
+    before_action :authenticate_user!, only: %i[new create edit update destroy]
 
     def index
       @is_no_episodes = search_params[:no_episodes] == "1"
@@ -11,26 +11,26 @@ module Db
       @is_no_slots = search_params[:no_slots] == "1"
       @season_slugs = search_params[:season_slugs]
 
-      @works = Work.without_deleted.preload(:work_image)
+      @works = Anime.without_deleted.preload(:anime_image)
       @works = @works.with_no_episodes if @is_no_episodes
       @works = @works.with_no_image if @is_no_image
       @works = @works.with_no_season if @is_no_release_season
       @works = @works.with_no_slots if @is_no_slots
       @works = @works.by_seasons(@season_slugs) if @season_slugs.present?
-      @works = @works.order(id: :desc).page(params[:page]).per(100)
+      @works = @works.order(id: :desc).page(params[:page]).per(100).without_count
     end
 
     def new
-      @work = Work.new
+      @work = Anime.new
       authorize @work
     end
 
     def create
-      @work = Work.new(work_params)
+      @work = Anime.new(work_params)
       @work.user = current_user
       authorize @work
 
-      return render(:new) unless @work.valid?
+      return render(:new, status: :unprocessable_entity) unless @work.valid?
 
       @work.save_and_create_activity!
 
@@ -38,18 +38,18 @@ module Db
     end
 
     def edit
-      @work = Work.without_deleted.find(params[:id])
+      @work = Anime.without_deleted.find(params[:id])
       authorize @work
     end
 
     def update
-      @work = Work.without_deleted.find(params[:id])
+      @work = Anime.without_deleted.find(params[:id])
       authorize @work
 
       @work.attributes = work_params
       @work.user = current_user
 
-      return render(:edit) unless @work.valid?
+      return render(:edit, status: :unprocessable_entity) unless @work.valid?
 
       @work.save_and_create_activity!
 
@@ -57,7 +57,7 @@ module Db
     end
 
     def destroy
-      @work = Work.without_deleted.find(params[:id])
+      @work = Anime.without_deleted.find(params[:id])
       authorize @work
 
       @work.destroy_in_batches
@@ -75,7 +75,7 @@ module Db
     end
 
     def work_params
-      params.require(:work).permit(
+      params.require(:anime).permit(
         :title, :title_kana, :title_alter, :title_en, :title_alter_en, :media, :official_site_url,
         :official_site_url_en, :wikipedia_url, :wikipedia_url_en, :twitter_username,
         :twitter_hashtag, :sc_tid, :mal_anime_id, :number_format_id, :synopsis,

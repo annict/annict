@@ -4,16 +4,16 @@ module Api
   module V1
     module Me
       class StatusesController < Api::V1::ApplicationController
-        include V4::GraphqlRunnable
-
         before_action :prepare_params!, only: [:create]
 
         def create
-          work = Work.only_kept.find(@params.work_id)
+          anime = Anime.only_kept.find(@params.work_id)
 
-          UpdateStatusRepository.new(
-            graphql_client: graphql_client(viewer: current_user)
-          ).create(work: work, kind: @params.kind)
+          form = Forms::StatusForm.new(anime: anime, kind: @params.kind)
+
+          if form.valid?
+            Updaters::StatusUpdater.new(user: current_user, form: form).call
+          end
 
           head 204
         end

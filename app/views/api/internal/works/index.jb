@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-resources = @works.map do |work|
+resources = @works.map { |work|
   {
     id: work.id,
     text: work.local_title
   }
-end
+}
 
 {
   resources: resources

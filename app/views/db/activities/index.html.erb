@@ -1,26 +1,28 @@
 <% title = t "head.title.db.activities.index" %>
 <% set_meta_tags(title: title, reverse: true, prefix: false) %>
 
-<div class="container-fluid py-3">
+<div class="container py-3">
   <div class="mb-3">
     <h1>
       <%= t "noun.activities" %>
     </h1>
   </div>
 
-  <div class="mb-3">
-    <% @activities.each do |activity| %>
-      <% if activity.trackable.present? %>
-        <% if activity.root_resource_action? %>
-          <%= render "activity_root_resources", activity: activity %>
-        <% elsif activity.child_resource_action? %>
-          <%= render "activity_child_resources", activity: activity %>
+  <% @activities.each do |activity| %>
+    <div class="card mt-3">
+      <div class="card-body">
+        <% if activity.trackable.present? %>
+          <% if activity.root_resource_action? %>
+            <%= render "activity_root_resources", activity: activity %>
+          <% elsif activity.child_resource_action? %>
+            <%= render "activity_child_resources", activity: activity %>
+          <% end %>
         <% end %>
-      <% end %>
-    <% end %>
-  </div>
+      </div>
+    </div>
+  <% end %>
 
-  <div class="text-center">
-    <%= paginate @activities %>
+  <div class="mt-3 text-center">
+    <%= ButtonGroups::PaginationButtonGroupComponent.new(self, collection: @activities).render %>
   </div>
 </div>

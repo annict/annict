@@ -1,7 +1,7 @@
 const glob = require('glob');
 const path = require('path');
 
-const ManifestPlugin = require('webpack-manifest-plugin');
+const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
@@ -24,8 +24,8 @@ module.exports = {
   entry,
   mode: isProd ? 'production' : 'development',
   output: {
-    filename: '[name]-[hash].js',
-    chunkFilename: '[name].bundle-[hash].js',
+    filename: '[name]-[contenthash].js',
+    chunkFilename: '[name].bundle-[contenthash].js',
     path: path.resolve(__dirname, 'public', 'packs'),
     publicPath: '/packs/',
   },
@@ -39,13 +39,6 @@ module.exports = {
             loader: 'babel-loader',
           },
         ],
-      },
-      {
-        test: require.resolve('jquery'),
-        loader: 'expose-loader',
-        options: {
-          exposes: ['$', 'jQuery'],
-        },
       },
       {
         test: /\.scss$/,
@@ -64,10 +57,12 @@ module.exports = {
           {
             loader: 'postcss-loader', // Run post css actions
             options: {
-              plugins: function () {
-                // post css plugins, can be exported to postcss.config.js
-                return [require('precss'), require('autoprefixer')];
-              },
+              postcssOptions: {
+                plugins: function () {
+                  // post css plugins, can be exported to postcss.config.js
+                  return [require('precss'), require('autoprefixer')];
+                },
+              }
             },
           },
           {
@@ -81,7 +76,7 @@ module.exports = {
           {
             loader: 'file-loader',
             options: {
-              name: '[path][name]-[hash].[ext]',
+              name: '[path][name]-[contenthash].[ext]',
               context: 'app/frontend',
             },
           },
@@ -90,14 +85,11 @@ module.exports = {
     ],
   },
   resolve: {
-    alias: {
-      vue: isProd ? 'vue/dist/vue.min.js' : 'vue/dist/vue.js',
-    },
     modules: ['node_modules', path.resolve(__dirname, 'app', 'frontend')],
     extensions: ['.css', '.gif', '.jpeg', '.jpg', '.js', '.json', '.png', '.scss', '.svg', '.ts'],
   },
   plugins: [
-    new ManifestPlugin({
+    new WebpackManifestPlugin({
       fileName: 'manifest.json',
       publicPath: '/packs/',
       writeToFileEmit: true,
@@ -105,8 +97,8 @@ module.exports = {
     new MiniCssExtractPlugin({
       // Options similar to the same options in webpackOptions.output
       // both options are optional
-      filename: '[name]-[hash].css',
-      chunkFilename: '[name].bundle-[hash].css',
+      filename: '[name]-[contenthash].css',
+      chunkFilename: '[name].bundle-[contenthash].css',
     }),
     new ForkTsCheckerWebpackPlugin(),
   ],
@@ -114,6 +106,8 @@ module.exports = {
     contentBase: path.resolve(__dirname, 'public', 'packs'),
     host: '0.0.0.0',
     port: 8080,
+    sockPort: 3001,
     disableHostCheck: true,
   },
+  devtool: 'eval-source-map',
 };

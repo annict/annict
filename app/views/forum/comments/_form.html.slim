@@ -1,9 +1,8 @@
-- url = comment.new_record? ? forum_post_comments_path(comment.forum_post) : forum_post_comment_path(comment.forum_post, comment)
-= form_for comment, url: url do |f|
+= form_with model: comment, url: form_url, method: form_method do |f|
   = render "application/components/error_panel", resource: comment
 
-  .form-group
+  .mb-3
     = f.text_area :body, rows: 10, class: "form-control", placeholder: t("messages.forum.comments.leave_a_comment")
 
   .text-center
-    = f.submit t("verb.comment"), class: "btn btn-primary"
+    = f.submit submit_text, class: "btn btn-primary rounded-pill"

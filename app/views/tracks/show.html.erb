@@ -1,0 +1,29 @@
+<% title = t "head.title.tracks.show" %>
+<% set_meta_tags title: title, reverse: true, prefix: false %>
+
+<div class="py-3">
+  <div class="container">
+    <h1 class="fw-bold">
+      <%= title %>
+    </h1>
+
+    <p>
+      <%= t "messages._page_hints.track_html", link: link_to(t("head.title.channels.index"), channel_list_path) %>
+    </p>
+  </div>
+
+  <hr>
+
+  <div
+    data-controller="reloadable"
+    data-reloadable-event-name-value="trackable-episode-list"
+    data-reloadable-url-value="<%= fragment_trackable_episode_list_path(page: params[:page]) %>"
+  >
+    <%= Lists::TrackableEpisodeListComponent.new(
+      self,
+      library_entries: @library_entries,
+      trackable_episodes: @trackable_episodes,
+      slots: @slots
+    ).render %>
+  </div>
+</div>

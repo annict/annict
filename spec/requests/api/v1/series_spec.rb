@@ -19,7 +19,7 @@ describe "Api::V1::Series" do
           "id" => series.id,
           "name" => series.name,
           "name_ro" => series.name_ro,
-          "name_en" => series.name_en,
+          "name_en" => series.name_en
         }
         expect(json["series"][0]).to include(expected_hash)
         expect(json["total_count"]).to eq(1)

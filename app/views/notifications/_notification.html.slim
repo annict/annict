@@ -1,7 +1,7 @@
 .u-underline.py-3
-  .row
-    .col.u-flex-grow-0.pr-0
-      = link_to profile_detail_path(notification.action_user.username) do
+  .gx-3.row
+    .col-auto
+      = link_to profile_path(notification.action_user.username) do
         = ann_image_tag(notification.action_user.profile, :image, size: "50x50", class: "rounded-circle")
     .col
       - if notification.action == "follows.create"
@@ -16,7 +16,7 @@
           = render "notifications/likes_create_comment", notification: notification
         - elsif recipient.class.name == "Status"
           = render "notifications/likes_create_status", notification: notification
-        - elsif recipient.class.name == "WorkRecord"
+        - elsif recipient.class.name == "AnimeRecord"
           = render "notifications/likes_create_work_record", notification: notification
       - elsif notification.action == "comments.create"
         = render "notifications/comments_create_record", notification: notification

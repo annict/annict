@@ -2,7 +2,7 @@
 
 describe "POST /db/works/:work_id/trailers", type: :request do
   context "user does not sign in" do
-    let!(:work) { create(:work) }
+    let!(:work) { create(:anime) }
     let!(:form_params) do
       {
         rows: "https://www.youtube.com/watch?v=nGgm5yBznTM,第1弾"
@@ -10,7 +10,7 @@ describe "POST /db/works/:work_id/trailers", type: :request do
     end
 
     it "user can not access this page" do
-      post "/db/works/#{work.id}/trailers", params: { db_trailer_rows_form: form_params }
+      post "/db/works/#{work.id}/trailers", params: {db_trailer_rows_form: form_params}
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("ログインしてください")
@@ -20,7 +20,7 @@ describe "POST /db/works/:work_id/trailers", type: :request do
   end
 
   context "user who is not editor signs in" do
-    let!(:work) { create(:work) }
+    let!(:work) { create(:anime) }
     let!(:user) { create(:registered_user) }
     let!(:form_params) do
       {
@@ -33,7 +33,7 @@ describe "POST /db/works/:work_id/trailers", type: :request do
     end
 
     it "user can not access" do
-      post "/db/works/#{work.id}/trailers", params: { db_trailer_rows_form: form_params }
+      post "/db/works/#{work.id}/trailers", params: {db_trailer_rows_form: form_params}
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("アクセスできません")
@@ -43,7 +43,7 @@ describe "POST /db/works/:work_id/trailers", type: :request do
   end
 
   context "user who is editor signs in" do
-    let!(:work) { create(:work) }
+    let!(:work) { create(:anime) }
     let!(:user) { create(:registered_user, :with_editor_role) }
     let!(:form_params) do
       {
@@ -58,7 +58,7 @@ describe "POST /db/works/:work_id/trailers", type: :request do
     it "user can create trailer" do
       expect(Trailer.all.size).to eq(0)
 
-      post "/db/works/#{work.id}/trailers", params: { db_trailer_rows_form: form_params }
+      post "/db/works/#{work.id}/trailers", params: {db_trailer_rows_form: form_params}
 
       expect(response.status).to eq(302)
       expect(flash[:notice]).to eq("登録しました")

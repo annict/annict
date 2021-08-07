@@ -1,8 +1,8 @@
 <% title = t "head.title.db.slots.edit" %>
 <% set_meta_tags(title: title, reverse: true, prefix: false) %>
 
-<div class="container-fluid py-3">
-  <div class="mb-3">
+<div class="container py-3">
+  <div>
     <div class="mb-1">
       <%= link_to @work.local_title, db_edit_work_path(@work) %>
     </div>
@@ -11,104 +11,108 @@
     </h1>
   </div>
 
-  <div class="mb-3">
+  <div class="mt-3">
     <%= render "db/works/subnav", work: @work %>
   </div>
 
-  <div class="mb-3 row">
+  <div class="gx-3 row mt-3">
     <div class="col-6">
-      <%= form_with model: @slot, url: db_slot_detail_path(@slot), method: :patch, local: true do |f| %>
-        <%= render "application/components/error_panel", resource: f.object %>
+      <div class="card">
+        <div class="card-body">
+          <%= form_with model: @slot, url: db_slot_detail_path(@slot), method: :patch do |f| %>
+            <%= render "application/components/error_panel", resource: f.object %>
 
-        <div class="form-group">
-          <%= f.label :program_id %>
-          <%= f.select(
-            :program_id,
-            options_from_collection_for_select(@programs.map(&:decorate), :id, :name, f.object.program.try!(:id)),
-            { include_blank: true },
-            { class: "form-control" }
-          ) %>
+            <div class="mb-3">
+              <%= f.label :program_id %>
+              <%= f.select(
+                :program_id,
+                options_from_collection_for_select(@programs.map(&:decorate), :id, :name, f.object.program.try!(:id)),
+                { include_blank: true },
+                { class: "form-select" }
+              ) %>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :channel_id %>
+              <%= f.select(
+                :channel_id,
+                options_from_collection_for_select(@channels, :id, :name, f.object.channel.try!(:id)),
+                { include_blank: true },
+                { class: "form-select" }
+              ) %>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :started_at %>
+              <%= f.text_field(
+                :started_at,
+                class: "form-control",
+                value: display_time(f.object.started_at),
+                placeholder: t("resources.slot.started_at_eg")
+              ) %>
+            </div>
+
+            <div class="mb-3">
+              <div class="form-check">
+                <%= f.label :shift_time_along_with_after_slots, class: "form-check-label" do %>
+                  <%= f.check_box :shift_time_along_with_after_slots, class: "form-check-input" %>
+                  <%= t "activerecord.attributes.slot.shift_time_along_with_after_slots" %>
+                <% end %>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :number %>
+              <%= f.text_field :number, class: "form-control-plaintext", readonly: true %>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :episode_id %>
+              <%= f.select(
+                :episode_id,
+                options_for_select(
+                  @episodes.map { |episode| [episode.decorate.title_with_number, episode.id] },
+                  f.object.episode.try!(:id)
+                ),
+                { include_blank: true },
+                { class: "form-select" }
+              ) %>
+            </div>
+
+            <div class="mb-3">
+              <%= label_tag :time_zone, t("activerecord.attributes.slot.time_zone") %>
+              <%= select_tag(
+                "slot[time_zone]",
+                options_for_select(
+                  ActiveSupport::TimeZone.all.map { |time_zone| [decorated_tz_name(time_zone), time_zone.tzinfo.name] },
+                  current_user.time_zone
+                ),
+                { class: "form-select" }
+              ) %>
+            </div>
+
+            <div class="mb-3">
+              <div class="form-check">
+                <%= f.label :rebroadcast, class: "form-check-label" do %>
+                  <%= f.check_box :rebroadcast, class: "form-check-input" %>
+                  <%= t "activerecord.attributes.slot.rebroadcast" %>
+                <% end %>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <div class="form-check">
+                <%= f.label :irregular, class: "form-check-label" do %>
+                  <%= f.check_box :irregular, class: "form-check-input" %>
+                  <%= t "activerecord.attributes.slot.irregular" %>
+                <% end %>
+              </div>
+            </div>
+
+            <%= f.submit t("helpers.submit.update"), class: "btn btn-primary" %>
+          <% end %>
         </div>
-
-        <div class="form-group">
-          <%= f.label :channel_id %>
-          <%= f.select(
-            :channel_id,
-            options_from_collection_for_select(@channels, :id, :name, f.object.channel.try!(:id)),
-            { include_blank: true },
-            { class: "form-control" }
-          ) %>
-        </div>
-
-        <div class="form-group">
-          <%= f.label :started_at %>
-          <%= f.text_field(
-            :started_at,
-            class: "form-control",
-            value: display_time(f.object.started_at),
-            placeholder: t("resources.slot.started_at_eg")
-          ) %>
-        </div>
-
-        <div class="form-group">
-          <div class="form-check">
-            <%= f.label :shift_time_along_with_after_slots, class: "form-check-label" do %>
-              <%= f.check_box :shift_time_along_with_after_slots, class: "form-check-input" %>
-              <%= t "activerecord.attributes.slot.shift_time_along_with_after_slots" %>
-            <% end %>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <%= f.label :number %>
-          <%= f.text_field :number, class: "form-control-plaintext", readonly: true %>
-        </div>
-
-        <div class="form-group">
-          <%= f.label :episode_id %>
-          <%= f.select(
-            :episode_id,
-            options_for_select(
-              @episodes.map { |episode| [episode.decorate.title_with_number, episode.id] },
-              f.object.episode.try!(:id)
-            ),
-            { include_blank: true },
-            { class: "form-control" }
-          ) %>
-        </div>
-
-        <div class="form-group">
-          <%= label_tag :time_zone, t("activerecord.attributes.slot.time_zone") %>
-          <%= select_tag(
-            "slot[time_zone]",
-            options_for_select(
-              ActiveSupport::TimeZone.all.map { |time_zone| [decorated_tz_name(time_zone), time_zone.tzinfo.name] },
-              current_user.time_zone
-            ),
-            { class: "form-control" }
-          ) %>
-        </div>
-
-        <div class="form-group">
-          <div class="form-check">
-            <%= f.label :rebroadcast, class: "form-check-label" do %>
-              <%= f.check_box :rebroadcast, class: "form-check-input" %>
-              <%= t "activerecord.attributes.slot.rebroadcast" %>
-            <% end %>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <div class="form-check">
-            <%= f.label :irregular, class: "form-check-label" do %>
-              <%= f.check_box :irregular, class: "form-check-input" %>
-              <%= t "activerecord.attributes.slot.irregular" %>
-            <% end %>
-          </div>
-        </div>
-
-        <%= f.submit t("helpers.submit.update"), class: "btn btn-primary" %>
-      <% end %>
+      </div>
     </div>
     <div class="col-6">
       <%= render "sidebar_edit" %>

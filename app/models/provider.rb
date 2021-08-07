@@ -27,13 +27,13 @@
 class Provider < ApplicationRecord
   extend Enumerize
 
-  enumerize :name, in: %i(facebook gumroad twitter)
+  enumerize :name, in: %i[facebook gumroad twitter]
 
   belongs_to :user
 
   scope :token_available, -> {
-    where(token_expires_at: nil).
-      or(where("token_expires_at > ?", Time.now.to_i))
+    where(token_expires_at: nil)
+      .or(where("token_expires_at > ?", Time.now.to_i))
   }
 
   after_save :update_supporter
@@ -54,9 +54,9 @@ class Provider < ApplicationRecord
     return unless name.gumroad?
 
     GumroadSubscribersSyncService.execute
-    subscriber = GumroadSubscriber.
-      where(gumroad_user_id: uid, gumroad_ended_at: nil).
-      or(GumroadSubscriber.where(gumroad_user_id: uid).after(field: :gumroad_ended_at)).first
+    subscriber = GumroadSubscriber
+      .where(gumroad_user_id: uid, gumroad_ended_at: nil)
+      .or(GumroadSubscriber.where(gumroad_user_id: uid).after(field: :gumroad_ended_at)).first
 
     return if subscriber.blank?
 

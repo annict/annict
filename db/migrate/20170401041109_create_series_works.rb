@@ -13,7 +13,7 @@ class CreateSeriesWorks < ActiveRecord::Migration[5.0]
 
     add_index :series_works, :series_id
     add_index :series_works, :work_id
-    add_index :series_works, %i(series_id work_id), unique: true
+    add_index :series_works, %i[series_id work_id], unique: true
 
     add_foreign_key :series_works, :series
     add_foreign_key :series_works, :works

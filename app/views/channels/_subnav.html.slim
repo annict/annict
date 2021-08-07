@@ -1,7 +1,0 @@
-.c-subnav
-  = active_link_to channels_path, class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "channels" && params[:action].in?(%w(index)) do
-    .c-subnav__item
-      = t "noun.channel"
-  = active_link_to channel_works_path, class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "channel_works" && params[:action].in?(%w(index)) do
-    .c-subnav__item
-      = t "noun.works"

@@ -1,35 +1,23 @@
 # frozen_string_literal: true
 
-class HomeController < ApplicationController
-  include V4::GraphqlRunnable
-
+class HomeController < ApplicationV6Controller
   before_action :authenticate_user!
 
   def show
-    set_page_category Rails.configuration.page_categories.user_home
+    set_page_category PageCategory::HOME
 
-    @forum_posts = Rails.cache.fetch("user-home-forum-posts", expires_in: 1.hour) do
-      posts = ForumPost.
-        joins(:forum_category).
-        merge(ForumCategory.with_slug(:site_news))
-      localable_resources(posts).order(created_at: :desc).limit(5)
-    end
+    @activity_groups = ActivityGroup
+      .preload(user: :profile)
+      .where(user_id: current_user.following_user_ids)
+      .order(created_at: :desc)
+      .page(params[:page])
+      .per(30)
+      .without_count
 
-    @userland_projects = Rails.cache.fetch("user-home-userland-projects", expires_in: 12.hours) do
-      UserlandProject.where(id: UserlandProject.pluck(:id).sample(3))
-    end
-
-    @activity_group_entities, @page_info_entity = if current_user.timeline_mode.following?
-      UserHome::FetchFollowingActivityGroupsRepository.new(
-        graphql_client: graphql_client(viewer: current_user)
-      ).fetch(
-        username: current_user.username,
-        pagination: Annict::Pagination.new(before: params[:before], after: params[:after], per: 30)
-      )
+    @anime_ids = if @activity_groups.present?
+      @activity_groups.flat_map.with_prelude { |ags| ags.first_item.anime_id }.uniq
     else
-      UserHome::FetchGlobalActivityGroupsRepository.new(
-        graphql_client: graphql_client
-      ).fetch(pagination: Annict::Pagination.new(before: params[:before], after: params[:after], per: 30))
+      []
     end
   end
 end

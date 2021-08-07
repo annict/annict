@@ -1,19 +1,23 @@
 # frozen_string_literal: true
 
-class ProfilesController < ApplicationController
-  before_action :authenticate_user!
+class ProfilesController < ApplicationV6Controller
+  def show
+    set_page_category PageCategory::PROFILE
 
-  def update
-    if current_user.profile.update(profile_params)
-      redirect_to profile_setting_path, notice: t("messages.profiles.saved")
+    @user = User.only_kept.find_by!(username: params[:username])
+    @profile = @user.profile
+
+    @activity_groups = @user
+      .activity_groups
+      .order(created_at: :desc)
+      .page(params[:page])
+      .per(30)
+      .without_count
+
+    @anime_ids = if @activity_groups.present?
+      @activity_groups.flat_map.with_prelude { |ags| ags.first_item.anime_id }.uniq
     else
-      render :show
+      []
     end
-  end
-
-  private
-
-  def profile_params
-    params.require(:profile).permit(:image, :background_image, :description, :name, :url)
   end
 end

@@ -1,0 +1,7 @@
+@each $name, $color in (body: var(--ann-body-color), secondary: tint-color($secondary, 30%)) {
+  .text-#{$name} {
+    @include color-scheme(dark) {
+      color: $color !important;
+    }
+  }
+}

@@ -2,32 +2,32 @@
 
 module Db
   class CastsController < Db::ApplicationController
-    before_action :authenticate_user!, only: %i(new create edit update destroy)
+    before_action :authenticate_user!, only: %i[new create edit update destroy]
 
     def index
-      @work = Work.without_deleted.find(params[:work_id])
-      @casts = @work.
-        casts.
-        without_deleted.
-        includes(:person, :character).
-        order(:sort_number)
+      @work = Anime.without_deleted.find(params[:work_id])
+      @casts = @work
+        .casts
+        .without_deleted
+        .includes(:person, :character)
+        .order(:sort_number)
       @casts_csv = @casts.map { |cast| "#{cast.character.name},#{cast.person.name}" }.join("\n")
     end
 
     def new
-      @work = Work.without_deleted.find(params[:work_id])
+      @work = Anime.without_deleted.find(params[:work_id])
       @form = Db::CastRowsForm.new
       authorize @form
     end
 
     def create
-      @work = Work.without_deleted.find(params[:work_id])
+      @work = Anime.without_deleted.find(params[:work_id])
       @form = Db::CastRowsForm.new(cast_rows_form_params)
       @form.user = current_user
       @form.work = @work
       authorize @form
 
-      return render(:new) unless @form.valid?
+      return render(:new, status: :unprocessable_entity) unless @form.valid?
 
       @form.save!
 
@@ -37,18 +37,18 @@ module Db
     def edit
       @cast = Cast.without_deleted.find(params[:id])
       authorize @cast
-      @work = @cast.work
+      @work = @cast.anime
     end
 
     def update
       @cast = Cast.without_deleted.find(params[:id])
       authorize @cast
-      @work = @cast.work
+      @work = @cast.anime
 
       @cast.attributes = cast_params
       @cast.user = current_user
 
-      return render(:edit) unless @cast.valid?
+      return render(:edit, status: :unprocessable_entity) unless @cast.valid?
 
       @cast.save_and_create_activity!
 
@@ -62,7 +62,7 @@ module Db
       @cast.destroy_in_batches
 
       redirect_back(
-        fallback_location: db_cast_list_path(@cast.work),
+        fallback_location: db_cast_list_path(@cast.anime),
         notice: t("messages._common.deleted")
       )
     end

@@ -2,7 +2,7 @@
 
 class SearchWorksQuery
   def initialize(
-    collection = Work.all,
+    collection = Anime.all,
     user: nil,
     annict_ids: nil,
     seasons: nil,
@@ -28,12 +28,12 @@ class SearchWorksQuery
   private
 
   def from_arguments
-    %i(
+    %i[
       annict_ids
       titles
       seasons
       state
-    ).each do |arg_name|
+    ].each do |arg_name|
       next if @args[arg_name].nil?
       @collection = send(arg_name)
     end

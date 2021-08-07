@@ -1,8 +1,8 @@
 <% title = t "head.title.db.casts.edit" %>
 <% set_meta_tags(title: title, reverse: true, prefix: false) %>
 
-<div class="container-fluid py-3">
-  <div class="mb-3">
+<div class="container py-3">
+  <div>
     <div class="mb-1">
       <%= link_to @work.local_title, db_edit_work_path(@work) %>
     </div>
@@ -11,68 +11,72 @@
     </h1>
   </div>
 
-  <div class="mb-3">
+  <div class="mt-3">
     <%= render "db/works/subnav", work: @work %>
   </div>
 
-  <div class="mb-3 row">
+  <div class="gx-3 row mt-3">
     <div class="col-6">
-      <%= form_with model: @cast, url: db_cast_detail_path(@cast), method: :patch, local: true do |f| %>
-        <%= render "application/components/error_panel", resource: f.object %>
+      <div class="card">
+        <div class="card-body">
+          <%= form_with model: @cast, url: db_cast_detail_path(@cast), method: :patch do |f| %>
+            <%= render "application/components/error_panel", resource: f.object %>
 
-        <div class="form-group">
-          <%= f.label :character_id %>
-          <select
-            class="form-control"
-            data-controller="db--resource-selector"
-            data-db--resource-selector-model-name="Character"
-            name="cast[character_id]"
-          >
-            <% if f.object.character&.id %>
-              <option value="<%= f.object.character.id %>" selected="">
-                <%= f.object.character.name %>
-              </option>
-            <% else %>
-              <option value="" selected=""></option>
-            <% end %>
-          </select>
+            <div class="mb-3">
+              <%= f.label :character_id %>
+              <select
+                class="form-select"
+                data-controller="resource-selector"
+                data-resource-selector-model-name="Character"
+                name="cast[character_id]"
+              >
+                <% if f.object.character&.id %>
+                  <option value="<%= f.object.character.id %>" selected="">
+                    <%= f.object.character.name %>
+                  </option>
+                <% else %>
+                  <option value="" selected=""></option>
+                <% end %>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :person_id %>
+              <select
+                class="form-select"
+                data-controller="resource-selector"
+                data-resource-selector-model-name="Person"
+                name="cast[person_id]"
+              >
+                <% if f.object.person&.id %>
+                  <option value="<%= f.object.person.id %>" selected="">
+                    <%= f.object.person.name %>
+                  </option>
+                <% else %>
+                  <option value="" selected=""></option>
+                <% end %>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :name %>
+              <%= f.text_field :name, class: "form-control" %>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :name_en %>
+              <%= f.text_field :name_en, class: "form-control" %>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :sort_number %>
+              <%= f.number_field :sort_number, class: "form-control" %>
+            </div>
+
+            <%= f.submit t("helpers.submit.update"), class: "btn btn-primary" %>
+          <% end %>
         </div>
-
-        <div class="form-group">
-          <%= f.label :person_id %>
-          <select
-            class="form-control"
-            data-controller="db--resource-selector"
-            data-db--resource-selector-model-name="Person"
-            name="cast[person_id]"
-          >
-            <% if f.object.person&.id %>
-              <option value="<%= f.object.person.id %>" selected="">
-                <%= f.object.person.name %>
-              </option>
-            <% else %>
-              <option value="" selected=""></option>
-            <% end %>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <%= f.label :name %>
-          <%= f.text_field :name, class: "form-control" %>
-        </div>
-
-        <div class="form-group">
-          <%= f.label :name_en %>
-          <%= f.text_field :name_en, class: "form-control" %>
-        </div>
-
-        <div class="form-group">
-          <%= f.label :sort_number %>
-          <%= f.number_field :sort_number, class: "form-control" %>
-        </div>
-
-        <%= f.submit t("helpers.submit.update"), class: "btn btn-primary" %>
-      <% end %>
+      </div>
     </div>
 
     <div class="col-6">

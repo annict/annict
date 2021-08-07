@@ -14,7 +14,7 @@ describe "PATCH /db/series/:id", type: :request do
     end
 
     it "user can not access this page" do
-      patch "/db/series/#{series.id}", params: { series: series_params }
+      patch "/db/series/#{series.id}", params: {series: series_params}
       series.reload
 
       expect(response.status).to eq(302)
@@ -42,7 +42,7 @@ describe "PATCH /db/series/:id", type: :request do
     end
 
     it "user can not access" do
-      patch "/db/series/#{series.id}", params: { series: series_params }
+      patch "/db/series/#{series.id}", params: {series: series_params}
       series.reload
 
       expect(response.status).to eq(302)
@@ -57,12 +57,12 @@ describe "PATCH /db/series/:id", type: :request do
     let!(:series) { create(:series) }
     let!(:old_series) { series.attributes }
     let!(:attr_names) do
-      %i(
+      %i[
         name
         name_alter
         name_en
         name_alter_en
-      )
+      ]
     end
     let!(:series_params) do
       {
@@ -82,7 +82,7 @@ describe "PATCH /db/series/:id", type: :request do
         expect(series.send(attr_name)).to eq(old_series[attr_name.to_s])
       end
 
-      patch "/db/series/#{series.id}", params: { series: series_params }
+      patch "/db/series/#{series.id}", params: {series: series_params}
       series.reload
 
       expect(response.status).to eq(302)

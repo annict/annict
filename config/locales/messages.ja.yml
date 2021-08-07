@@ -20,38 +20,55 @@ ja:
     _components:
       activities:
         episode_record:
-          created: "が記録しました"
-          more: "残り%{n}件の記録を見る"
+          created: 'が記録しました'
+          more: '残り%{n}件の記録を見る'
         status:
-          changed: "がステータスを変更しました"
-          more: "残り%{n}件のステータス変更を見る"
+          changed: 'がステータスを変更しました'
+          more: '残り%{n}件のステータス変更を見る'
         work_record:
-          created: "が記録しました"
-          more: "残り%{n}件の記録を見る"
+          created: 'が記録しました'
+          more: '残り%{n}件の記録を見る'
+      adsense:
+        hide_ads_html: <a href="/supporters">Annictサポーター</a>になると広告を非表示にできます
       body:
         view_full_text: 全文読む
       favorite_button:
         add_to_favorites: お気に入りに登録
         added_to_favorites: 登録済み
-        hint: "お気に入りに登録すると、この%{resource_type}が関係する新作アニメがAnnictに登録されたとき通知します (通知をオフにすることもできます)"
+        hint: 'お気に入りに登録すると、この%{resource_type}が関係する新作アニメがAnnictに登録されたとき通知します (通知をオフにすることもできます)'
+      mute_user_button:
+        the_user_has_been_muted: ミュートしました
+        the_user_has_been_unmuted: ミュートを解除しました
+      program_selector:
+        select_program: 番組情報を選択
       sign_up_modal:
         body: アカウント作成するとこの機能が使えます。
     _empty:
       no_activities: アクティビティはありません
+      no_anime: アニメはありません
       no_characters: キャラクターはいません
+      no_comments: 感想はありません
       no_episodes: エピソードはありません
       no_followers: フォローされていません
       no_following: フォローしていません
       no_organizations: 団体はありません
       no_people: 人物はいません
+      no_programs: 番組情報はありません
       no_projects: プロジェクトはありません
       no_record_body_list: 感想はありません
       no_records: 記録はありません
       no_resources: 登録されていません
       no_series_works: シリーズ作品はありません
       no_series: シリーズはありません
+      no_slots: 放送予定はありません
       no_staffs: スタッフはいません
       no_works: 作品はありません
+    _page_hints:
+      channel_list_html: チャンネルを登録したあと作品の番組情報を設定すると、%{link}ページにその番組の放送予定が表示されます。
+      friend_list_html: '%{link}ページでTwitter連携すると、TwitterでフォローしているAnnictユーザが表示されます。'
+      home: 利用者をフォローすると、タイムラインにフォローした人のアクティビティが表示されるようになります。
+      notification_list: フォローされたり自分の記録がいいねされたりすると通知されます。
+      track_html: 視聴ステータスを「見てる」や「見たい」にした作品が表示されます。<br>%{link}ページでチャンネルを登録したあと作品の番組情報を設定すると、その番組の放送予定も表示されます。
     _validators:
       and_other_are_required: と%{column_name}は両方入力してください
       is_required_true_or_false: には `true` または `false` を指定してください
@@ -62,8 +79,6 @@ ja:
       updated: 更新しました
     callbacks:
       sign_in_failed: ログインに失敗しました。ソーシャルアカウントと紐づくユーザが見つかりません
-    channel_works:
-      no_works: 作品はありません
     channels:
       supported_vod: (Annictがサポートしている) 動画サービス
     character_fans:
@@ -82,7 +97,7 @@ ja:
       comments:
         created: 投稿しました
       episodes:
-        auto_generate_info_html: "エピソード数: %{manual_episodes_count}<br>公開中のエピソード数: %{episodes_count}<br>自動生成されるエピソード数: %{max_generate_episodes_count}"
+        auto_generate_info_html: 'エピソード数: %{manual_episodes_count}<br>公開中のエピソード数: %{episodes_count}<br>自動生成されるエピソード数: %{max_generate_episodes_count}'
       works:
         no_episodes: エピソード未登録
         no_image: 画像未登録
@@ -96,7 +111,7 @@ ja:
       comments: 感想
       comments_by_others: 皆さんの感想
       no_comments: 感想はありません
-      watched_x_times: "%{records_count}回見ました"
+      watched_x_times: '%{records_count}回見ました'
       your_records: あなたの記録
     favorite_characters:
       no_characters: キャラクターはいません
@@ -106,7 +121,7 @@ ja:
       no_people: 人物はいません
     forum:
       _common:
-        view_all_site_news: "全て見る"
+        view_all_site_news: '全て見る'
       comments:
         created: 投稿しました
         deleted: このコメントは削除されています
@@ -123,26 +138,13 @@ ja:
     home:
       index:
         there_are_no_activities: アクティビティはありません
-      index_guest:
-        hero_description_html: Annict (アニクト) は、アニメの視聴記録ができるWebサービスです。<br>人気ランキングや友達の視聴記録から好きなアニメを見つけて、管理することができます。
-        hero_description_mobile_html: Annict (アニクト) は、アニメの視聴記録ができるWebサービスです。
-        hero_title: 見たアニメを記録して、共有しよう。
-        hero_title_mobile_html: 見たアニメを記録して、<br>共有しよう。
-        start_tracking: 視聴記録を始める
     ics:
       you_can_see: Google Calendarに以下のURLを登録すると、「見てる」「見たい」にしている作品の放送情報などがカレンダーに表示されます。
     components:
-      load_more_button:
-        more: もっと見る
-      mute_user_button:
-        the_user_has_been_muted: ミュートしました
       slot_list:
         tracked: 記録しました
       status_selector:
-        select_status: ステータスを選択
-    multiple_records:
-      create:
-        saved: 記録しました
+        select_status: 視聴ステータス
     mutes:
       no_muted_users_found: ミュートした人はいません
     notifications:
@@ -158,19 +160,19 @@ ja:
         you_can_use_the_uri_for_local_application: ローカルアプリ用に urn:ietf:wg:oauth:2.0:oob もご利用頂けます
       authorizations:
         authorize: 承認
-        authorize_account_html: "<b>%{client_name}</b>からのアクセスをを承認しますか？"
+        authorize_account_html: '<b>%{client_name}</b> からのアクセスをを承認しますか？'
         cancel: キャンセル
-        this_application_will_be_able_to: "このアプリができること:"
+        this_application_will_be_able_to: 'このアプリができること:'
     oauth_users:
       new:
-        sign_up_with_oauth: "%{provider_name}で始める"
+        sign_up_with_oauth: '%{provider_name}で始める'
     options:
       hide_supporter_badge: Annictサポーターのバッジを非表示にする
       hide_supporter_badge_detail: プロフィールページなどに表示されるAnnictサポーターを示すバッジを非表示にします。
       prevent_spoiler_of_episode_you_have_not_watched: 未記録エピソードのネタバレを防ぐ
       prevent_spoiler_of_episode_you_have_not_watched_detail: 見てる、見たい、または一時中断したアニメの中で、記録していないエピソードに投稿された他の利用者からの感想を表示しないようにします。
       share_status_to_twitter: ステータスの変更をTwitterにシェアする
-      share_status_to_twitter_detail_html: "作品のステータスを変更したとき、自動でTwitterにシェアします。<br>テキスト例: アニメ「(作品名)」の視聴ステータスを「見たい」にしました。 (URL)"
+      share_status_to_twitter_detail_html: '作品のステータスを変更したとき、自動でTwitterにシェアします。<br>テキスト例: アニメ「(作品名)」の視聴ステータスを「見たい」にしました。 (URL)'
     organization_fans:
       no_users: ファンはいません
     passwords:
@@ -183,19 +185,19 @@ ja:
     slots:
       new_slots_csv_by_program: 放送情報をもとに放送予定CSVを生成する
       no_slots: 放送予定はありません
-      please_set_channels_html: "%{channels_link}でチャンネルを設定して下さい"
+      please_set_channels_html: '%{channels_link}でチャンネルを設定して下さい'
     providers:
-      removed: 接続解除しました
-      you_can_not_disconnect: 接続解除できません
+      removed: 連携解除しました
+      you_can_not_disconnect: 連携解除できません
     recaptcha:
       not_verified: reCAPTCHAの認証に失敗しました。時間を置いて再度お試しください
     records:
       show:
-        record_by_name: "%{name}の記録"
-      view_record_body: "感想を見る"
+        record_by_name: '%{name}の記録'
+      view_record_body: '感想を見る'
     registrations:
       new:
-        expired_html: アカウント作成用リンクの有効期限が切れました。<br>再度<a href="/sign_up">アカウント作成ページ</a>でメールアドレスを入力してください。
+        expired_html: アカウント作成用リンクの有効期限が切れました。<br>再度<a href="/sign_up">サインアップページ</a>でメールアドレスを入力してください。
         password_hint: 8文字以上入力してください。
         sign_in_link_html: 作成済みですか？ %{link}
         start_with_facebook: Facebookでログイン
@@ -204,11 +206,11 @@ ja:
       create:
         welcome: アカウント作成が完了しました。Annictにようこそ！
     reviews:
-      n_people_changed_status_to_wanna_watch: "%{count}人がこのレビューを見て視聴ステータスを「見たい」にしました"
+      n_people_changed_status_to_wanna_watch: '%{count}人がこのレビューを見て視聴ステータスを「見たい」にしました'
     sayonara:
       are_you_sure_really: 後戻りできませんがよろしいですか？
       delete_account: アカウントを削除する
-      description: 退会すると、アカウント情報や見たアニメの記録、ステータス変更等のデータが全て削除されます。
+      description: アカウント情報や見たアニメの記録、ステータス変更など、あなたに紐付くデータが全て削除されます。
     sessions:
       new:
         remember_me: 保存する
@@ -245,15 +247,12 @@ ja:
         description_html: 入力したメールアドレス宛てに<br>アカウント作成用のリンクをお送りします。
     tracks:
       episodes_you_have_watched: 視聴エピソード
-      no_trackable_episodes: 記録可能なエピソードはありません
-      skip_episode_confirmation: このエピソードをスキップして、次のエピソードを表示しますか？
+      no_trackable_episodes: 未視聴エピソードはありません
       see_records: 記録を見る
       tracked: 記録しました
-    user_work_tags:
-      anime_list_tagged: "「%{tag_name}」タグを付けたアニメ"
     userland:
       description_html: "Userlandは、Annictを便利に使うために有志によって作られたアプリケーションなどが探せる場です。<a href='https://developers.annict.jp' target='_blank'>Annict API</a>を使用して何か作った方は、「新規プロジェクト」から登録頂けるとありがたいです。"
-      description_mobile_html: "Userlandは、Annictを便利に使うために有志によって作られたアプリケーションなどが探せる場です。"
+      description_mobile_html: 'Userlandは、Annictを便利に使うために有志によって作られたアプリケーションなどが探せる場です。'
       projects:
         about_available: このプロジェクトが公開されていて、他の人が利用できるときチェックしてください。
         markdown_support: Markdownで書くことができます。
@@ -265,9 +264,16 @@ ja:
     users:
       _validators:
         exists_active_oauth_applications: が存在するため、退会できません
-      allowed_locales_description: "サイト内に投稿された文書 (感想やレビューなど) の中で、どの言語で書かれたものを表示するかを設定することができます。"
-      bye_bye: "退会しました。(´・ω;:.."
+      allowed_locales_description: 'サイト内に投稿された文書 (感想やレビューなど) の中で、どの言語で書かれたものを表示するかを設定することができます。'
+      bye_bye: '退会しました。(´・ω;:..'
       no_works: 作品はありません
+    welcome:
+      show:
+        annict_features: Annictでできること
+        hero_description_html: Annict (アニクト) は、アニメの視聴記録ができるWebサービスです。<br>何話まで見たかを記録したり、友達の視聴記録などから好きなアニメを見つけて、管理することができます。
+        hero_description_mobile_html: Annict (アニクト) は、アニメの視聴記録ができるWebサービスです。
+        hero_title_html: 見たアニメを<span class="fw-bold">記録</span>して、<br class="d-sm-none"><span class="fw-bold">発見</span>しよう。
+        lets_start_tracking: 視聴記録を始めよう
     work_records:
       new:
         write_your_comment: 見た感想を残しませんか？ (自由入力)
@@ -276,9 +282,9 @@ ja:
       deleted: 削除しました
       saved: 保存しました
     works:
-      view_all_n_characters: "%{n}人のキャラクターを全て見る"
-      view_all_n_episodes: "%{n}エピソードを全て見る"
-      view_all_n_record_body_list: "%{n}件の感想を全て見る"
-      view_all_n_staffs: "%{n}人のスタッフを全て見る"
-      creating_episodes_restricted_episodes_filled: "話数分のエピソードがすでに登録されているため、新規登録はできません。"
-      creating_episodes_restricted_slots_exists: "放送予定が登録されているため、手動によるエピソード登録はできません。エピソードは放送予定の情報を使って自動的に生成されます。"
+      view_all_n_characters: '%{n}人のキャラクターを全て見る'
+      view_all_n_episodes: '%{n}エピソードを全て見る'
+      view_all_n_record_body_list: '%{n}件の感想を全て見る'
+      view_all_n_staffs: '%{n}人のスタッフを全て見る'
+      creating_episodes_restricted_episodes_filled: '話数分のエピソードがすでに登録されているため、新規登録はできません。'
+      creating_episodes_restricted_slots_exists: '放送予定が登録されているため、手動によるエピソード登録はできません。エピソードは放送予定の情報を使って自動的に生成されます。'

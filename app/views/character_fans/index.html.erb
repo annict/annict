@@ -1,0 +1,27 @@
+<% title = t "head.title.character_fans.index", character_name: @character.name_with_series %>
+<% description = meta_description t("head.meta.description.character_fans.index", character_name: @character.name_with_series) %>
+<% set_meta_tags(title: title, description: description, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false) %>
+
+<%= component_value_fetcher_tag("star-button", internal_api_star_list_path) %>
+
+<div class="py-3">
+  <div class="container">
+    <div class="gx-3 row">
+      <div class="col-12 col-sm-3">
+        <%= render "characters/sidebar", character: @character, character_favorites: @character_favorites %>
+      </div>
+
+      <div class="col-12 col-sm-9 mt-3 mt-sm-0">
+        <div class="card">
+          <div class="card-body">
+            <% if @character_favorites.present? %>
+              <%= render "application/fan_user_list", favorite_resources: @character_favorites %>
+            <% else %>
+              <%= render "application/components/empty", text: t("messages.character_fans.no_users") %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

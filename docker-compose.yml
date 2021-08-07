@@ -1,20 +1,50 @@
 version: '3.7'
 
 services:
-  webpack:
+  app:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.local
+    command: /bin/bash -c 'rm -rf tmp/pids/server.pid; bundle exec rails s -b 0.0.0.0'
+    depends_on:
+      - frontend
+      - worker
+      - postgresql
+    environment:
+      LANG: C.UTF-8
+    ports:
+      - 3000:3000
+    stdin_open: true # for Pry
+    tty: true # for Pry
+    volumes:
+      - .:/workspace
+      - gems_vol:/usr/local/bundle
+      - node_modules_vol:/workspace/node_modules
+  frontend:
     build:
       context: .
       dockerfile: ./app/frontend/Dockerfile.local
-    command: /bin/ash -c 'yarn webpack:start'
-    volumes:
-      - .:/annict
-      - node_modules_vol_4:/annict/node_modules
+    command: /bin/bash -c 'npm run webpack:start'
     ports:
-      - 8080:8080
+      - 3001:8080
+    volumes:
+      - .:/workspace
+      - node_modules_vol:/workspace/node_modules
+  worker:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.local
+    command: /bin/bash -c 'bundle exec rails jobs:work'
+    depends_on:
+      - postgresql
+    volumes:
+      - .:/workspace
+      - gems_vol:/usr/local/bundle
+      - node_modules_vol:/workspace/node_modules
   postgresql:
     image: postgres:12.4-alpine
     ports:
-      - 5432:5432
+      - 35432:5432
     volumes:
       - postgresql_data:/var/lib/postgresql/data:delegated
     environment:
@@ -22,14 +52,11 @@ services:
   redis:
     image: redis:5.0.5-alpine
     ports:
-      - 6379:6379
-  selenium:
-    image: selenium/standalone-chrome:latest
-    ports:
-      - 4444:4444
+      - 36379:6379
 
 volumes:
   postgresql_data:
-  # Exclude the bundle/node_modules directory
+  # Exclude the gems/node_modules directory
   # https://stackoverflow.com/questions/29181032/add-a-volume-to-docker-but-exclude-a-sub-folder
-  node_modules_vol_4:
+  gems_vol:
+  node_modules_vol:

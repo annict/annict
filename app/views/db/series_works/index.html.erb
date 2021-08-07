@@ -1,89 +1,96 @@
 <% title = t "head.title.db.series_works.index" %>
 <% set_meta_tags(title: title, reverse: true, prefix: false) %>
 
-<div class="container-fluid py-3">
-  <div class="mb-3">
-    <div class="mb-1">
-      <%= link_to @series.local_name, db_edit_series_path(@series) %>
-    </div>
-    <h1>
-      <%= title %>
-    </h1>
-
-    <% if policy(SeriesWork).create? %>
-      <div class="text-right">
-        <%= link_to db_new_series_work_path(@series), class: "btn btn-outline-primary" do %>
-          <%= icon "plus" %>
-          <%= t "resources._common.new" %>
-        <% end %>
+<div class="container py-3">
+  <div class="align-items-center row">
+    <div class="col">
+      <div class="mb-1">
+        <%= link_to @series.local_name, db_edit_series_path(@series) %>
       </div>
-    <% end %>
+
+      <h1>
+        <%= title %>
+      </h1>
+    </div>
+
+    <div class="col-auto">
+      <% if policy(SeriesAnime).create? %>
+        <div class="text-end">
+          <%= link_to db_new_series_work_path(@series), class: "btn btn-outline-primary" do %>
+            <%= icon "plus" %>
+            <%= t "resources._common.new" %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
   </div>
 
-  <div class="mb-3">
+  <div class="mt-3">
     <%= render "db/series/subnav", series: @series %>
   </div>
 
-  <div class="mb-3">
-    <% if @series_works.present? %>
-      <table class="table table-hover table-sm">
-        <thead>
-          <tr>
-            <th>
-              ID
-            </th>
-            <th>
-              <%= t "activerecord.attributes.series_work.work_id" %>
-            </th>
-            <th>
-              <%= t "activerecord.attributes.work.season" %>
-            </th>
-            <th>
-              <%= t "activerecord.attributes.series_work.summary" %>
-            </th>
-            <th>
-              <%= t "noun.state" %>
-            </th>
-            <th>
-              <%= t "noun.actions" %>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <% @series_works.each do |series_work| %>
+  <div class="card mt-3">
+    <div class="card-body">
+      <% if @series_works.present? %>
+        <table class="table table-sm">
+          <thead>
             <tr>
-              <td>
-                <%= series_work.id %>
-              </td>
-              <td>
-                <%= link_to series_work.work.local_title, work_path(series_work.work), target: "_blank" %>
-              </td>
-              <td>
-                <%= series_work.work.release_season.presence || "-" %>
-              </td>
-              <td>
-                <%= series_work.summary.presence || "-" %>
-                <br>
-                <%= series_work.summary_en.presence || "-" %>
-              </td>
-              <td>
-                <%= render Db::PublishingStateLabelComponent.new(resource: series_work) %>
-              </td>
-              <td>
-                <%= render Db::ActionButtonsComponent.new(
-                    user: current_user,
-                    resource: series_work,
-                    detail_path: db_series_work_detail_path(series_work),
-                    edit_path: db_edit_series_work_path(series_work),
-                    publishing_path: db_series_work_publishing_path(series_work)
-                ) %>
-              </td>
+              <th>
+                ID
+              </th>
+              <th>
+                <%= t "activerecord.attributes.series_work.work_id" %>
+              </th>
+              <th>
+                <%= t "activerecord.attributes.work.season" %>
+              </th>
+              <th>
+                <%= t "activerecord.attributes.series_work.summary" %>
+              </th>
+              <th>
+                <%= t "noun.state" %>
+              </th>
+              <th>
+                <%= t "noun.actions" %>
+              </th>
             </tr>
-          <% end %>
-        </tbody>
-      </table>
-    <% else %>
-      <%= render "application/components/empty", text: t("messages._empty.no_series_works") %>
-    <% end %>
+          </thead>
+          <tbody>
+            <% @series_works.each do |series_work| %>
+              <tr>
+                <td>
+                  <%= series_work.id %>
+                </td>
+                <td>
+                  <%= link_to series_work.anime.local_title, anime_path(anime_id: series_work.anime.id), target: "_blank" %>
+                </td>
+                <td>
+                  <%= series_work.anime.release_season.presence || "-" %>
+                </td>
+                <td>
+                  <%= series_work.summary.presence || "-" %>
+                  <br>
+                  <%= series_work.summary_en.presence || "-" %>
+                </td>
+                <td>
+                  <%= render Db::PublishingStateLabelComponent.new(resource: series_work) %>
+                </td>
+                <td>
+                  <%= render Db::ActionButtonsComponent.new(
+                      user: current_user,
+                      resource: series_work,
+                      detail_path: db_series_work_detail_path(series_work),
+                      edit_path: db_edit_series_work_path(series_work),
+                      publishing_path: db_series_work_publishing_path(series_work)
+                  ) %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% else %>
+        <%= render "application/components/empty", text: t("messages._empty.no_series_works") %>
+      <% end %>
+    </div>
   </div>
 </div>

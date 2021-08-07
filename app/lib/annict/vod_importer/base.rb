@@ -7,14 +7,14 @@ module Annict
         vod_title_ids = []
 
         attrs.each do |attr|
-          work = Work.only_kept.find_by(title: attr[:name])
+          work = Anime.only_kept.find_by(title: attr[:name])
 
           print "name: #{attr[:name]} -> "
 
           conditions = if channel.amazon_video?
-            { channel: channel, name: attr[:name] }
+            {channel: channel, name: attr[:name]}
           else
-            { channel: channel, code: attr[:code] }
+            {channel: channel, code: attr[:code]}
           end
           vod_title = VodTitle.find_by(conditions)
           if vod_title

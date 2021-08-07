@@ -20,11 +20,11 @@ module DbActivityMethods
 
   def root_resource
     case self.class.name
-    when "Work", "Person", "Organization", "Character", "Series"
+    when "Anime", "Person", "Organization", "Character", "Series"
       self
     when "Episode", "Slot", "Cast", "Staff"
-      work
-    when "SeriesWork"
+      anime
+    when "SeriesAnime"
       series
     end
   end
@@ -41,9 +41,9 @@ module DbActivityMethods
       a.trackable = self
       a.action = action
       a.parameters = if old_attrs.blank?
-        { new: new_attrs }
+        {new: new_attrs}
       else
-        { old: old_attrs, new: new_attrs }
+        {old: old_attrs, new: new_attrs}
       end
     end
   end
@@ -55,6 +55,6 @@ module DbActivityMethods
   end
 
   def format_action
-    "#{self.class.table_name}.#{new_record? ? 'create' : 'update'}"
+    "#{self.class.table_name}.#{new_record? ? "create" : "update"}"
   end
 end

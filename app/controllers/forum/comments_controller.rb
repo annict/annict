@@ -2,7 +2,7 @@
 
 module Forum
   class CommentsController < Forum::ApplicationController
-    before_action :authenticate_user!, only: %i(create edit update)
+    before_action :authenticate_user!, only: %i[create edit update]
 
     def create
       @post = ForumPost.find(params[:post_id])
@@ -23,27 +23,25 @@ module Forum
 
       @comment.send_notification
 
-      Flash.store_data(cookies[:ann_client_uuid], notice: t("messages.forum.comments.created"))
-      redirect_to forum_post_path(@post)
+      redirect_to forum_post_path(@post), notice: t("messages.forum.comments.created")
     end
 
     def edit
       @post = ForumPost.find(params[:post_id])
-      @comment = @post.forum_comments.find(params[:id])
+      @comment = @post.forum_comments.find(params[:comment_id])
       authorize @comment, :edit?
     end
 
     def update
       @post = ForumPost.find(params[:post_id])
-      @comment = @post.forum_comments.find(params[:id])
+      @comment = @post.forum_comments.find(params[:comment_id])
       authorize @comment, :update?
 
       @comment.attributes = forum_comment_params
       @comment.detect_locale!(:body)
 
       if @comment.save
-        Flash.store_data(cookies[:ann_client_uuid], notice: t("messages.forum.comments.updated"))
-        redirect_to forum_post_path(@post)
+        redirect_to forum_post_path(@post), notice: t("messages.forum.comments.updated")
       else
         render :edit
       end

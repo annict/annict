@@ -1,0 +1,31 @@
+<ul class="justify-content-center nav nav-pills">
+  <% [
+    [
+      favorite_character_list_path(user.username),
+      current_page?(controller: :favorite_characters, action: :index),
+      user.favorite_characters.size,
+      t("noun.characters")
+    ],
+    [
+      favorite_person_list_path(user.username),
+      current_page?(controller: :favorite_people, action: :index),
+      user.favorite_people.size,
+      t("noun.people")
+    ],
+    [
+      favorite_organization_list_path(user.username),
+      current_page?(controller: :favorite_organizations, action: :index),
+      user.favorite_organizations.size,
+      t("noun.organizations")
+    ]
+  ].each do |(path, active, count, text)| %>
+    <li class="nav-item">
+      <%= active_link_to path, class: "nav-link rounded-pill text-body", active: active do %>
+        <%= text %>
+        <span class="badge bg-secondary ms-1">
+          <%= count %>
+        </span>
+      <% end %>
+    </li>
+  <% end %>
+</ul>

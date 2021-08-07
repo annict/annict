@@ -1,13 +1,9 @@
 # frozen_string_literal: true
 
-class EmailNotificationMailer < ActionMailer::Base
-  default(
-    from: "Annict <no-reply@annict.com>"
-  )
-
-  add_template_helper AssetsHelper
-  add_template_helper ImageHelper
-  add_template_helper LocalHelper
+class EmailNotificationMailer < ApplicationMailer
+  helper :assets
+  helper :local
+  helper :image
 
   def followed_user(followed_user_id, user_id)
     @followed_user = User.only_kept.find(followed_user_id)
@@ -28,7 +24,7 @@ class EmailNotificationMailer < ActionMailer::Base
     @unsubscription_key = @liked_user.email_notification.unsubscription_key
     @user = User.only_kept.find(user_id)
     @episode_record = @liked_user.episode_records.only_kept.find(episode_record_id)
-    @work = @episode_record.work
+    @work = @episode_record.anime
     @episode = @episode_record.episode
 
     I18n.with_locale(@liked_user.locale) do
@@ -44,7 +40,7 @@ class EmailNotificationMailer < ActionMailer::Base
   def favorite_works_added(user_id, work_ids)
     @user = User.only_kept.find(user_id)
     @unsubscription_key = @user.email_notification.unsubscription_key
-    @works = Work.only_kept.where(id: work_ids)
+    @works = Anime.only_kept.where(id: work_ids)
 
     I18n.with_locale(@user.locale) do
       subject = default_i18n_subject(n: @works.size)
@@ -55,7 +51,7 @@ class EmailNotificationMailer < ActionMailer::Base
   def related_works_added(user_id, work_ids)
     @user = User.only_kept.find(user_id)
     @unsubscription_key = @user.email_notification.unsubscription_key
-    @works = Work.only_kept.where(id: work_ids)
+    @works = Anime.only_kept.where(id: work_ids)
 
     I18n.with_locale(@user.locale) do
       subject = default_i18n_subject(n: @works.size)

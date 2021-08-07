@@ -15,12 +15,12 @@ module Db
     private
 
     def attrs_list
-      roles = %i(ja en).
-        map { |l| I18n.t("enumerize.staff.role", locale: l).invert }.
-        inject(&:merge)
+      roles = %i[ja en]
+        .map { |l| I18n.t("enumerize.staff.role", locale: l).invert }
+        .inject(&:merge)
 
       staffs_count = @work.staffs.count
-      @attrs_list ||= fetched_rows.map.with_index do |row_data, i|
+      @attrs_list ||= fetched_rows.map.with_index { |row_data, i|
         role = roles[row_data[:role]]
 
         {
@@ -31,15 +31,15 @@ module Db
           role_other: role.blank? ? row_data[:role] : nil,
           sort_number: (i + staffs_count) * 10
         }
-      end
+      }
     end
 
     def fetched_rows
       parsed_rows.map do |row_columns|
-        person = Person.only_kept.where(id: row_columns[1]).
-          or(Person.only_kept.where(name: row_columns[1])).first
-        organization = Organization.only_kept.where(id: row_columns[2]).
-          or(Organization.only_kept.where(name: row_columns[2])).first
+        person = Person.only_kept.where(id: row_columns[1])
+          .or(Person.only_kept.where(name: row_columns[1])).first
+        organization = Organization.only_kept.where(id: row_columns[2])
+          .or(Organization.only_kept.where(name: row_columns[2])).first
 
         resource, value = if person.present?
           [person, row_columns[1]]
@@ -51,7 +51,7 @@ module Db
 
         {
           role: row_columns[0],
-          resource: { id: resource&.id, type: resource.class.name, value: value }
+          resource: {id: resource&.id, type: resource.class.name, value: value}
         }
       end
     end

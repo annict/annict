@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: comments
@@ -28,23 +29,17 @@
 #
 
 class Comment < ApplicationRecord
-  include Localizable
+  include UgcLocalizable
 
   counter_culture :episode_record
 
   belongs_to :episode_record
   belongs_to :user
-  belongs_to :work
-  has_many :likes,
-    foreign_key: :recipient_id,
-    foreign_type: :recipient,
-    dependent: :destroy
-  has_many :notifications,
-    foreign_key: :trackable_id,
-    foreign_type: :trackable,
-    dependent: :destroy
+  belongs_to :anime, foreign_key: :work_id
+  has_many :likes, as: :recipient, dependent: :destroy
+  has_many :notifications, as: :trackable, dependent: :destroy
 
-  validates :body, presence: true, length: { maximum: 500 }
+  validates :body, presence: true, length: {maximum: 500}
 
   after_create :save_notification
 

@@ -1,19 +1,27 @@
 # frozen_string_literal: true
 
 describe "GET /", type: :request do
-  before do
-    host! "annict-jp.test:3000"
-  end
+  context "ログインしていないとき" do
+    context "アニメが登録されていないとき" do
+      it "Welcomeページが表示されること" do
+        get "/"
 
-  context "when user does not sign in" do
-    let!(:work) { create(:work, :with_current_season) }
+        expect(response.status).to eq(200)
+        expect(response.body).to include("A platform for anime addicts.")
+        expect(response.body).to include("アニメはありません")
+      end
+    end
 
-    it "displays welcome page" do
-      get "/"
+    context "アニメが登録されているとき" do
+      let!(:work) { create(:anime, :with_current_season) }
 
-      expect(response.status).to eq(200)
-      expect(response.body).to include("The platform for anime addicts.")
-      expect(response.body).to include(work.title)
+      it "Welcomeページが表示されること" do
+        get "/"
+
+        expect(response.status).to eq(200)
+        expect(response.body).to include("A platform for anime addicts.")
+        expect(response.body).to include(work.title)
+      end
     end
   end
 end

@@ -2,27 +2,27 @@
 
 module Db
   class ProgramsController < Db::ApplicationController
-    before_action :authenticate_user!, only: %i(new create edit update destroy)
+    before_action :authenticate_user!, only: %i[new create edit update destroy]
 
     def index
-      @work = Work.without_deleted.find(params[:work_id])
+      @work = Anime.without_deleted.find(params[:work_id])
       @programs = @work.programs.without_deleted.order(started_at: :desc, channel_id: :asc)
     end
 
     def new
-      @work = Work.without_deleted.find(params[:work_id])
+      @work = Anime.without_deleted.find(params[:work_id])
       @form = Db::ProgramRowsForm.new
       authorize @form
     end
 
     def create
-      @work = Work.without_deleted.find(params[:work_id])
+      @work = Anime.without_deleted.find(params[:work_id])
       @form = Db::ProgramRowsForm.new(program_rows_form_params)
       @form.user = current_user
       @form.work = @work
       authorize @form
 
-      return render(:new) unless @form.valid?
+      return render(:new, status: :unprocessable_entity) unless @form.valid?
 
       @form.save!
 
@@ -32,18 +32,18 @@ module Db
     def edit
       @program = Program.without_deleted.find(params[:id])
       authorize @program
-      @work = @program.work
+      @work = @program.anime
     end
 
     def update
       @program = Program.without_deleted.find(params[:id])
       authorize @program
-      @work = @program.work
+      @work = @program.anime
 
       @program.attributes = program_params
       @program.user = current_user
 
-      return render(:edit) unless @program.valid?
+      return render(:edit, status: :unprocessable_entity) unless @program.valid?
 
       @program.save_and_create_activity!
 
@@ -57,7 +57,7 @@ module Db
       @program.destroy_in_batches
 
       redirect_back(
-        fallback_location: db_program_list_path(@program.work),
+        fallback_location: db_program_list_path(@program.anime),
         notice: t("messages._common.deleted")
       )
     end

@@ -4,21 +4,28 @@ import { Controller } from 'stimulus';
 
 export default class extends Controller {
   static targets = ['count'];
+  static values = { initIsLiked: Boolean };
 
   countTarget!: HTMLElement;
-  resourceName!: string | null;
-  resourceId!: number | null;
-  likesCount!: number;
-  pageCategory!: string | null;
+  initIsLikedValue!: boolean;
   isLiked!: boolean;
   isLoading!: boolean;
+  likesCount!: number;
+  pageCategory!: string | null;
+  resourceId!: number | null;
+  resourceName!: string | null;
 
   initialize() {
     this.resourceName = this.data.get('resourceName');
     this.resourceId = Number(this.data.get('resourceId'));
     this.pageCategory = this.data.get('pageCategory');
+    this.isLiked = this.initIsLikedValue;
+    this.likesCount = Number(this.countTarget.innerText);
 
-    document.addEventListener('user-data-fetcher:likes:fetched', ({ detail: { likes } }: any) => {
+    this.render();
+
+    document.addEventListener('component-value-fetcher:like-button:fetched', (event: any) => {
+      const likes = event.detail;
       this.likesCount = Number(this.countTarget.innerText);
       const like = likes.filter((like: { recipient_type: string; recipient_id: number }) => {
         return like.recipient_type === this.resourceName && like.recipient_id === this.resourceId;
@@ -56,7 +63,7 @@ export default class extends Controller {
 
     if (this.isLiked) {
       axios
-        .post('/api/internal/likes/unlike', {
+        .post('/api/internal/unlikes', {
           recipient_type: this.resourceName,
           recipient_id: this.resourceId,
         })

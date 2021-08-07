@@ -1,4 +1,7 @@
-- if characters.present?
-  = render "#{view.pluralize}/list", characters: characters
+- if resources.present?
+  ul.list-unstyled.mb-0
+    - resources.each do |character|
+      li
+        = link_to character.name, character_path(character.id), class: "text-body"
 - else
   = render "application/components/empty", text: t("messages._empty.no_characters")

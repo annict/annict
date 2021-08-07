@@ -9,4 +9,10 @@ module LocalHelper
         ENV.fetch("ANNICT_EN_DOMAIN")
     end
   end
+
+  def local_url(locale: I18n.locale)
+    return ENV.fetch("ANNICT_URL") if locale.to_s == "ja"
+
+    ENV.fetch("ANNICT_EN_URL")
+  end
 end

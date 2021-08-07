@@ -1,20 +1,20 @@
-<%= form_with model: model, url: form_url, method: form_method, local: true do |f| %>
+<%= form_with model: model, url: form_url, method: form_method do |f| %>
   <%= render "application/components/error_panel", resource: f.object %>
 
-  <div class="form-group">
-    <%= f.label :name, class: "c-label-required" %>
+  <div class="mb-3">
+    <%= f.label :name, class: "c-label-required form-label" %>
     <%= f.text_field :name, autofocus: true, class: "form-control", required: true %>
   </div>
-  <div class="form-group">
-    <%= f.label :name_alter %>
+  <div class="mb-3">
+    <%= f.label :name_alter, class: "form-label" %>
     <%= f.text_field :name_alter, class: "form-control" %>
   </div>
-  <div class="form-group">
-    <%= f.label :name_en %>
+  <div class="mb-3">
+    <%= f.label :name_en, class: "form-label" %>
     <%= f.text_field :name_en, class: "form-control" %>
   </div>
-  <div class="form-group">
-    <%= f.label :name_alter_en %>
+  <div class="mb-3">
+    <%= f.label :name_alter_en, class: "form-label" %>
     <%= f.text_field :name_alter_en, class: "form-control" %>
   </div>
 

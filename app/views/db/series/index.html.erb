@@ -1,27 +1,33 @@
 <% title = t "head.title.db.series.index" %>
 <% set_meta_tags(title: title, reverse: true, prefix: false) %>
 
-<div class="container-fluid py-3">
-  <div class="mb-3">
-    <h1>
-      <%= title %>
-    </h1>
+<div class="container py-3">
+  <div class="align-items-center row">
+    <div class="col">
+      <h1>
+        <%= title %>
+      </h1>
+    </div>
 
-    <% if policy(Series).create? %>
-      <div class="text-right">
-        <%= link_to db_new_series_path, class: "btn btn-outline-primary" do %>
-          <%= icon "plus" %>
-          <%= t "resources._common.new" %>
-        <% end %>
-      </div>
-    <% end %>
+    <div class="col-auto">
+      <% if policy(Series).create? %>
+        <div class="text-end">
+          <%= link_to db_new_series_path, class: "btn btn-outline-primary" do %>
+            <%= icon "plus" %>
+            <%= t "resources._common.new" %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
   </div>
 
-  <div class="mb-3">
-    <%= render "series_list", resources: @series_list %>
+  <div class="card mt-3">
+    <div class="card-body">
+      <%= render "series_list", resources: @series_list %>
+    </div>
   </div>
 
-  <div class="text-center">
-    <%= paginate @series_list %>
+  <div class="mt-3 text-center">
+    <%= ButtonGroups::PaginationButtonGroupComponent.new(self, collection: @series_list).render %>
   </div>
 </div>

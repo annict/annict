@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-resources = @people.map do |person|
+resources = @people.map { |person|
   {
     id: person.id,
     text: person.name
   }
-end
+}
 
 {
   resources: resources

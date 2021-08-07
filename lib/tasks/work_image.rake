@@ -2,7 +2,7 @@
 
 namespace :work_image do
   task save_sns_image: :environment do
-    Work.only_kept.find_each do |work|
+    Anime.only_kept.find_each do |work|
       puts "work: #{work.id}"
       service = SnsImageService.new(work)
       service.save_og_image
@@ -11,7 +11,7 @@ namespace :work_image do
   end
 
   task save_recommended_image: :environment do
-    Work.only_kept.find_each do |work|
+    Anime.only_kept.find_each do |work|
       puts "work: #{work.id}"
 
       image_urls = {}
@@ -31,18 +31,16 @@ namespace :work_image do
       end
 
       image_urls.each do |key, image_url|
-        begin
-          image = MiniMagick::Image.open(image_url)
-          dimension = image.dimensions.inject(1, :*)
-          recommended_image_url = image_url if dimension > max_dimension
-          max_dimension = dimension
-        rescue
-          case key
-          when :og_image
-            work.update_column(:facebook_og_image_url, "")
-          when :twitter_image
-            work.update_column(:twitter_image_url, "")
-          end
+        image = MiniMagick::Image.open(image_url)
+        dimension = image.dimensions.inject(1, :*)
+        recommended_image_url = image_url if dimension > max_dimension
+        max_dimension = dimension
+      rescue
+        case key
+        when :og_image
+          work.update_column(:facebook_og_image_url, "")
+        when :twitter_image
+          work.update_column(:twitter_image_url, "")
         end
       end
 

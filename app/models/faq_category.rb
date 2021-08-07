@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: faq_categories
@@ -23,7 +24,7 @@ class FaqCategory < ApplicationRecord
 
   include SoftDeletable
 
-  enumerize :locale, in: %i(ja en)
+  enumerize :locale, in: %i[ja en]
 
   has_many :faq_contents, dependent: :destroy
 end

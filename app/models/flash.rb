@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: flashes
@@ -18,7 +19,7 @@ class Flash < ApplicationRecord
   def self.store_data(client_uuid, hash)
     return if client_uuid.blank?
     flash = Flash.where(client_uuid: client_uuid).first_or_create
-    flash.update_column(:data, { type: hash.keys.first, message: hash.values.first })
+    flash.update_column(:data, {type: hash.keys.first, message: hash.values.first})
   end
 
   def self.reset_data(client_uuid)

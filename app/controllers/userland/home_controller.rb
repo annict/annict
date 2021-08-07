@@ -2,7 +2,7 @@
 
 module Userland
   class HomeController < Userland::ApplicationController
-    def index
+    def show
       @categories = UserlandCategory.all.order(:sort_number)
     end
   end

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: reactions
@@ -27,9 +28,9 @@
 class Reaction < ApplicationRecord
   extend Enumerize
 
-  enumerize :kind, in: %w(
+  enumerize :kind, in: %w[
     thumbs_up
-  )
+  ]
 
   validates :kind, presence: true
 

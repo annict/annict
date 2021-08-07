@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 module Settings
-  class EmailNotificationsController < ApplicationController
-    before_action :authenticate_user!, only: %i(show update)
+  class EmailNotificationsController < ApplicationV6Controller
+    before_action :authenticate_user!, only: %i[show update]
 
     def show
       @email_notification = current_user.email_notification
@@ -29,7 +29,7 @@ module Settings
         raise ActionController::RoutingError, "Not Found"
       end
 
-      notification.update_column(column, false)
+      notification.update!(column => false)
     end
 
     private

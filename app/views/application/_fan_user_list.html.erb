@@ -1,0 +1,36 @@
+<div class="overflow-hidden">
+  <div class="g-3 row">
+    <% favorite_resources.each do |favorite_resource| %>
+      <div class="col-12 col-sm-6">
+        <div class="align-items-center gx-3 row">
+          <div class="col-auto">
+            <%= link_to profile_path(username: favorite_resource.user.username) do %>
+              <%= ann_image_tag(favorite_resource.user.profile, :image, size: "50x50", class: "rounded-circle") %>
+            <% end %>
+          </div>
+
+          <div class="col">
+            <div class="align-items-center gx-3 row">
+              <div class="col">
+                <% unless favorite_resource.instance_of?(CharacterFavorite) %>
+                  <div class="text-muted u-very-small">
+                    <%= t "noun.n_works_watched", count: favorite_resource.watched_works_count %>
+                  </div>
+                <% end %>
+
+                <%= link_to favorite_resource.user.profile.name, profile_path(username: favorite_resource.user.username), class: "text-body" %>
+
+                <div class="small">
+                  <%= link_to "@#{favorite_resource.user.username}", profile_path(username: favorite_resource.user.username), class: "text-muted" %>
+                </div>
+              </div>
+
+              <div class="col-auto">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

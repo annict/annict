@@ -1,15 +1,37 @@
 en:
   form:
     attributes:
-      registration_form:
+      forms/anime_record_form:
+        comment: Comment
+        rating_animation: Animation
+        rating_character: Character
+        rating_music: Music
+        rating_overall: Overall
+        rating_story: Story
+      forms/episode_record_form:
+        comment: Comment
+        rating: Rating
+      forms/registration_form:
         email: Email
         terms_and_privacy_policy_agreement: Terms of Use and Privacy Policy
         username: Username
-      sign_in_form:
+      forms/sign_in_form:
         back: Back
         email: Email
-      sign_up_form:
+      forms/sign_up_form:
         back: Back
         email: Email
-      user_email_form:
+      forms/user_email_form:
         email: Email
+    errors:
+      models:
+        forms/registration_form:
+          attributes:
+            email:
+              email_uniqueness: has already existed
+            username:
+              username_uniqueness: has already existed
+        forms/user_email_form:
+          attributes:
+            email:
+              email_uniqueness: has already existed

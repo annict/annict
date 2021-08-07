@@ -1,0 +1,14 @@
+// Original: https://github.com/twbs/bootstrap/blob/v5.0.0/scss/_reboot.scss
+
+body {
+  background-color: var(--ann-body-bg);
+  color: var(--ann-body-color);
+}
+
+a {
+  color: var(--ann-link-color);
+
+  &:hover {
+    color: var(--ann-link-hover-color);
+  }
+}

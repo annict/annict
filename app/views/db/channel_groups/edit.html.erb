@@ -1,16 +1,20 @@
 <% title = t "head.title.db.channel_groups.edit", name: @channel_group.name %>
 <% set_meta_tags(title: title, reverse: true, prefix: false) %>
 
-<div class="container-fluid py-3">
-  <div class="mb-3">
+<div class="container py-3">
+  <div>
     <h1>
       <%= title %>
     </h1>
   </div>
 
-  <div class="mb-3 row">
+  <div class="gx-3 row mt-3">
     <div class="col-6">
-      <%= render "form", channel_group: @channel_group, form_url: db_channel_group_detail_path(@channel_group), form_method: :patch %>
+      <div class="card">
+        <div class="card-body">
+          <%= render "form", channel_group: @channel_group, form_url: db_channel_group_detail_path(@channel_group), form_method: :patch %>
+        </div>
+      </div>
     </div>
   </div>
 </div>

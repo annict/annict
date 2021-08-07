@@ -2,22 +2,20 @@
 
 module Api
   module Internal
-    class FollowsController < ApplicationController
+    class FollowsController < ApplicationV6Controller
       before_action :authenticate_user!
 
       def create
         @user = User.only_kept.find(params[:user_id])
         current_user.follow(@user)
-        ga_client.page_category = params[:page_category]
-        ga_client.events.create(:follows, :create, el: "User", ev: @user.id, ds: "internal_api")
         EmailNotificationService.send_email("followed_user", @user, current_user.id)
-        head 201
+        render(json: {}, status: 201)
       end
 
-      def unfollow
+      def destroy
         @user = User.only_kept.find(params[:user_id])
         current_user.unfollow(@user)
-        head 200
+        render(json: {}, status: 200)
       end
     end
   end

@@ -1,19 +1,19 @@
-h1.h2.font-weight-bold
-  = link_to organization.local_name, organization_path(organization), class: "u-text-body"
+h1.h2.fw-bold
+  = link_to organization.local_name, organization_path(organization), class: "text-body"
 
 .mb-3
-  span.badge.u-badge-organizations
+  span.badge.bg-secondary
     = t "noun.organization"
 
 .mb-4
   c-favorite-button.w-100 resource-type="Organization" :resource-id="#{organization.id}" :init-is-favorited="#{user_signed_in? && current_user.favorite?(organization)}" :is-signed-in="#{user_signed_in?}"
   .small.text-muted.mt-2
-    = icon "info-circle", class: "mr-1"
+    = icon "info-circle", class: "me-1"
     = t "messages._components.favorite_button.hint", resource_type: t("noun.organization").downcase
 
 .mb-4
-  h2.h4.font-weight-bold.mt-4.mb-3
-    = icon "sticky-note", "far", class: "mr-1"
+  h2.h4.fw-bold.mt-4.mb-3
+    = icon "sticky-note", "far", class: "me-1"
     = t "noun.information"
   dl
     dt.small = t "activerecord.attributes.organization.name"
@@ -36,24 +36,22 @@ h1.h2.font-weight-bold
 
 - if organization_favorites.present?
   .mb-4
-    h2.h4.font-weight-bold.mb-3
-      = icon "users", class: "mr-1"
-      = t "noun.fans"
-      span.pl-1
-        = "(#{t('noun.users_count', count: @organization_favorites.length)})"
+    .align-items-center.row
+      .col
+        h2.h4.fw-bold.mb-0
+          = icon "users", class: "me-1"
+          = t "noun.fans"
+          span.ps-1
+            = "(#{t('noun.users_count', count: @organization.favorite_users_count)})"
+      .col-auto.text-end
+        - if @organization_favorites.length > 7
+          = link_to t("verb.view_all"), organization_fan_list_path(organization)
 
-    .row.px-3
+    .g-1.mt-3.row
       - @organization_favorites.each do |organization_favorite|
-        .col.col-auto.pl-0.pr-2.pb-2
-          = link_to profile_detail_path(organization_favorite.user.username) do
+        .col-auto
+          = link_to profile_path(organization_favorite.user.username) do
             = ann_image_tag(organization_favorite.user.profile, :image, size: "30x30", class: "rounded-circle", alt: organization_favorite.user.name_with_username, title: organization_favorite.user.name_with_username)
-
-    - if @organization_favorites.length > 30
-      .text-right
-        = link_to t("verb.view_all"), organization_fans_path(organization)
 
 - if user_signed_in? && current_user.committer?
   = link_to t("messages._common.edit_on_annict_db"), db_edit_organization_path(organization), class: "btn btn-secondary w-100 mt-2"
-
-- content_for :js_templates
-  = render "application/js_templates/favorite_button"

@@ -1,47 +1,47 @@
-= form_for project do |f|
+= form_with model: project, url: form_url, method: form_method do |f|
   = render "application/components/error_panel", resource: project
 
-  .form-group.row
+  .mb-3.row
     = f.label :userland_category_id, class: "col-2 col-form-label c-label-required"
     .col-4
-      = f.select :userland_category_id, options_from_collection_for_select(UserlandCategory.all.order(:sort_number), :id, :local_name, project.userland_category_id), { include_blank: true }, class: "form-control", required: true
+      = f.select :userland_category_id, options_from_collection_for_select(UserlandCategory.all.order(:sort_number), :id, :local_name, project.userland_category_id), { include_blank: true }, class: "form-select", required: true
 
-  .form-group.row
+  .mb-3.row
     = f.label :name, class: "col-2 col-form-label c-label-required"
     .col-10
       = f.text_field :name, class: "form-control", required: true
 
-  .form-group.row
+  .mb-3.row
     = f.label :url, class: "col-2 col-form-label c-label-required"
     .col-10
       = f.text_field :url, class: "form-control", required: true
 
-  .form-group.row
+  .mb-3.row
     = f.label :summary, class: "col-2 col-form-label c-label-required"
     .col-10
       = f.text_field :summary, class: "form-control", required: true
 
-  .form-group.row
+  .mb-3.row
     = f.label :description, class: "col-2 col-form-label c-label-required"
     .col-10
       = f.text_area :description, rows: 30, class: "form-control", required: true
       small.form-text.text-muted
         = t "messages.userland.projects.markdown_support"
 
-  .form-group.row
+  .mb-3.row
     = f.label :icon, class: "col-2 col-form-label"
     .col-10
       = f.hidden_field :image, value: f.object.cached_image_data
       = f.file_field :image, class: "form-control-file"
 
-  .form-group.row
+  .mb-3.row
     = f.label :available, class: "col-2 col-form-label"
     .col-10
       .form-check
-        = f.check_box :available, class: "orm-check-input"
-        small.form-text.text-muted
+        = f.check_box :available, class: "form-check-input"
+        = f.label :available, class: "form-check-label text-muted"
           = t "messages.userland.projects.about_available"
 
-  .form-group.row.mb-0
-    .col-10.ml-auto
+  .mb-3.row.mb-0
+    .col-10.ms-auto
       = f.submit class: "btn btn-primary"

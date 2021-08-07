@@ -22,10 +22,10 @@ class SearchCharactersQuery
   private
 
   def from_arguments
-    %i(
+    %i[
       annict_ids
       names
-    ).each do |arg_name|
+    ].each do |arg_name|
       next if @args[arg_name].nil?
       @collection = send(arg_name)
     end

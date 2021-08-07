@@ -1,0 +1,9 @@
+.c-like-button {
+  &.is-liked {
+    color: $ann-mizuho-color;
+
+    &:hover {
+      color: $ann-mizuho-color;
+    }
+  }
+}

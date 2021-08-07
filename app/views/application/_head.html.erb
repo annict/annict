@@ -1,0 +1,41 @@
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=<%= ga_tracking_id(request) %>"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', '<%= ga_tracking_id(request) %>');
+</script>
+
+<% if Rails.env.production? %>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=<%= ENV.fetch('GOOGLE_AD_CLIENT') %>" crossorigin="anonymous"></script>
+
+<script>
+  // (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+<% end %>
+
+<%= ann_display_meta_tags %>
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<%= yield :head_meta %>
+
+<%= csrf_meta_tags %>
+<%= csp_meta_tag %>
+
+<link rel="dns-prefetch" href="//annict.imgix.net">
+<link rel="dns-prefetch" href="//kit.fontawesome.com">
+<link rel="dns-prefetch" href="//www.googletagmanager.com">
+
+<link rel="shortcut icon" href="/images/favicon.png" type="image/png">
+<link rel="canonical" href="<%= "#{request.protocol}#{request.host_with_port}#{request.path}" %>">
+<link rel="alternate" hreflang="ja" href="<%= "#{ENV.fetch('ANNICT_URL')}#{request.path}" %>">
+<link rel="alternate" hreflang="en" href="<%= "#{ENV.fetch('ANNICT_EN_URL')}#{request.path}" %>">
+<link rel="alternate" hreflang="x-default" href="<%= "#{ENV.fetch('ANNICT_URL')}#{request.path}" %>">
+
+<%= annict_config %>
+
+<%= yield :head_vendor_assets %>
+<script data-mutate-approach="sync" crossorigin="anonymous" src="https://kit.fontawesome.com/0099029c12.js" defer></script>
+<link href="https://fonts.googleapis.com/css2?family=Raleway&display=swap" rel="stylesheet">
+<%= yield :head_assets %>

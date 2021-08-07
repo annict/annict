@@ -1,23 +1,21 @@
-- if works.present?
-  .c-card.px-3
-    - works.each do |work|
-      .u-underline.py-3
-        .row
-          .col-2.pr-0
-            = link_to work_path(work) do
-              = render WorkImageComponent.new(image_url_1x: ann_image_url(work.work_image, :image, size: "270x"), image_url_2x: ann_image_url(work.work_image, :image, size: "540x"))
-            - if work.work_image.present?
-              .u-very-small.text-right
-                = work.work_image.asin_or_copyright_text
-          .col
-            .mb-1.u-lh-0
-              = work.media_label
-            h3.h3.font-weight-bold.mb-1
-              = link_to work.local_title, work_path(work), class: "u-text-body"
-            .mb-2
-              span.font-weight-bold.mr-1 = work.watchers_count
-              span.text-muted.small Watchers
-            .div style="width: 200px;"
-              = render StatusSelectorComponent.new(work_id: work.id, page_category: page_category)
+= component_value_fetcher_tag("status-select-dropdown", internal_api_library_entry_list_path, method: :post, payload: {anime_ids: resources.pluck(:id)})
+
+- if resources.present?
+  .overflow-hidden
+    .gy-3.row
+      - resources.each do |anime|
+        .col-12
+          .g-3.row
+            .col-2
+              = link_to anime_path(anime.id) do
+                = Pictures::AnimePictureComponent.new(self, anime: anime, width: 200).render
+              - if anime.anime_image.present?
+                .u-very-small.text-end
+                  = anime.anime_image.asin_or_copyright_text
+            .col
+              = Badges::AnimeMediaBadgeComponent.new(self, anime: anime).render
+              div
+                = link_to anime.local_title, anime_path(anime.id), class: "body-text"
+              = ButtonGroups::AnimeButtonGroupComponent.new(self, anime: anime).render
 - else
   = render "application/components/empty", text: t("messages._empty.no_works")

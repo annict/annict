@@ -9,12 +9,12 @@ describe "POST /db/works", type: :request do
     end
 
     it "user can not access this page" do
-      post "/db/works", params: { work: work_params }
+      post "/db/works", params: {anime: work_params}
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("ログインしてください")
 
-      expect(Work.all.size).to eq(0)
+      expect(Anime.all.size).to eq(0)
     end
   end
 
@@ -31,17 +31,17 @@ describe "POST /db/works", type: :request do
     end
 
     it "user can not access" do
-      post "/db/works", params: { work: work_params }
+      post "/db/works", params: {anime: work_params}
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("アクセスできません")
 
-      expect(Work.all.size).to eq(0)
+      expect(Anime.all.size).to eq(0)
     end
   end
 
   context "user who is editor signs in" do
-    let!(:number_format) { create(:number_format) }
+    let!(:number_format) { NumberFormat.first }
     let!(:user) { create(:registered_user, :with_editor_role) }
     let!(:work_params) do
       {
@@ -79,15 +79,15 @@ describe "POST /db/works", type: :request do
     end
 
     it "user can create work" do
-      expect(Work.all.size).to eq(0)
+      expect(Anime.all.size).to eq(0)
 
-      post "/db/works", params: { work: work_params }
+      post "/db/works", params: {anime: work_params}
 
       expect(response.status).to eq(302)
       expect(flash[:notice]).to eq("登録しました")
 
-      expect(Work.all.size).to eq(1)
-      work = Work.first
+      expect(Anime.all.size).to eq(1)
+      work = Anime.first
 
       expect(work.title).to eq("作品タイトル")
       expect(work.title_kana).to eq("タイトル (かな)")

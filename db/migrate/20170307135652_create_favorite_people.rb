@@ -10,7 +10,7 @@ class CreateFavoritePeople < ActiveRecord::Migration[5.0]
 
     add_index :favorite_people, :user_id
     add_index :favorite_people, :person_id
-    add_index :favorite_people, %i(user_id person_id), unique: true
+    add_index :favorite_people, %i[user_id person_id], unique: true
 
     add_foreign_key :favorite_people, :users
     add_foreign_key :favorite_people, :people

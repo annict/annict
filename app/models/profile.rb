@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: profiles
@@ -39,9 +40,9 @@ class Profile < ApplicationRecord
 
   belongs_to :user, touch: true
 
-  validates :description, length: { maximum: 150 }
+  validates :description, length: {maximum: 150}
   validates :name, presence: true
-  validates :url, url: { allow_blank: true }
+  validates :url, url: {allow_blank: true}
 
   before_save :check_animated_gif
 
