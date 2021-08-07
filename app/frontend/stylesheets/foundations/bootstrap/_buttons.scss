@@ -4,7 +4,7 @@
 
 .btn-outline-secondary {
   @include color-scheme(dark) {
-    @include button-outline-variant(tint-color($secondary, 40%));
+    @include button-outline-variant(shade-color($secondary, 10%));
   }
 }
 
