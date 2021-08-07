@@ -31,6 +31,12 @@
     p:last-child {
       margin-bottom: 1rem;
     }
+
+    blockquote {
+      border-left: 0.25em solid var(--ann-hr-color);
+      color: var(--ann-text-muted-color);
+      padding: 0 1em;
+    }
   }
 
   &__read-more-background {
