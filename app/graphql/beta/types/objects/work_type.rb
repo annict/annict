@@ -97,7 +97,7 @@ module Beta
         end
 
         def image
-          Beta::RecordLoader.for(WorkImage).load(object.anime_image&.id)
+          Beta::RecordLoader.for(AnimeImage).load(object.anime_image&.id)
         end
 
         def reviews_count
