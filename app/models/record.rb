@@ -71,7 +71,7 @@ class Record < ApplicationRecord
 
   def modified_at
     if anime_record?
-      return anime_record.modified_at
+      return anime_record&.modified_at
     end
 
     episode_record.updated_at if episode_record.modify_body?
