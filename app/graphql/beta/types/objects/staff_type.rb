@@ -17,6 +17,10 @@ module Beta
         field :sort_number, Integer, null: false
         field :work, Beta::Types::Objects::WorkType, null: false
         field :resource, Beta::Types::Unions::StaffResourceItem, null: false
+
+        def work
+          object.anime
+        end
       end
     end
   end
