@@ -1,0 +1,34 @@
+<%= component_value_fetcher_tag("status-select-dropdown", internal_api_library_entry_list_path, method: :post, payload: {anime_ids: resources.pluck(:id)}) %>
+
+<% if resources.present? %>
+  <div class="vstack gap-3">
+    <% resources.each do |anime| %>
+      <div class="g-3 row">
+        <div class="col-3 col-sm-2">
+          <%= link_to anime_path(anime.id) do %>
+            <%= Pictures::AnimePictureComponent.new(self, anime: anime, width: 200).render %>
+          <% end %>
+          <% if anime.anime_image.present? %>
+            <div class="u-very-small text-end">
+              <%= anime.anime_image.asin_or_copyright_text %>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="col">
+          <%= Badges::AnimeMediaBadgeComponent.new(self, anime: anime).render %>
+
+          <div>
+            <%= link_to anime.local_title, anime_path(anime.id), class: "body-text" %>
+          </div>
+
+          <div class="mt-2">
+            <%= ButtonGroups::AnimeButtonGroupComponent.new(self, anime: anime).render %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <%= render "application/components/empty", text: t("messages._empty.no_works") %>
+<% end %>
