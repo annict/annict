@@ -42,10 +42,10 @@ module ButtonGroups
     def prev_button_class_name
       class_name = base_button_class_name
 
-      if @collection.first_page?
-        class_name += disabled_button_class_name
+      class_name += if @collection.first_page?
+        disabled_button_class_name
       else
-        class_name += enabled_button_class_name
+        enabled_button_class_name
       end
 
       class_name.join(" ")
@@ -54,10 +54,10 @@ module ButtonGroups
     def next_button_class_name
       class_name = base_button_class_name
 
-      if @collection.last_page?
-        class_name += disabled_button_class_name
+      class_name += if @collection.last_page?
+        disabled_button_class_name
       else
-        class_name += enabled_button_class_name
+        enabled_button_class_name
       end
 
       class_name.join(" ")
