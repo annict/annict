@@ -22,7 +22,7 @@ module Annict
             vod_title_ids << nil
           else
             begin
-              vod_title = VodTitle.create!(name: attr[:name], channel: channel, work: work, code: attr[:code])
+              vod_title = VodTitle.create!(name: attr[:name], channel: channel, anime: work, code: attr[:code])
               puts "created."
               vod_title_ids << vod_title.id
             rescue ActiveRecord::NotNullViolation => e
