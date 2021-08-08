@@ -2,11 +2,13 @@
 
 module Lists
   class TrackableEpisodeListComponent < ApplicationV6Component
-    def initialize(view_context, library_entries:, trackable_episodes:, slots:)
+    def initialize(view_context, library_entries:, trackable_episodes:, slots:, controller: nil, action: nil)
       super view_context
       @library_entries = library_entries
       @trackable_episodes = trackable_episodes
       @slots = slots
+      @controller = controller
+      @action = action
     end
 
     def render
@@ -87,7 +89,7 @@ module Lists
             end
 
             h.tag :div, class: "mt-3 text-center" do
-              h.html ButtonGroups::PaginationButtonGroupComponent.new(view_context, collection: @library_entries).render
+              h.html ButtonGroups::PaginationButtonGroupComponent.new(view_context, collection: @library_entries, controller: @controller, action: @action).render
             end
           else
             h.tag :div, class: "container u-container-flat" do
