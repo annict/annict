@@ -46,7 +46,6 @@ module Lists
                             h.text le.anime.local_title
                           end
 
-
                           if episode
                             h.tag :div, {
                               class: "fw-bold mt-1 u-cursor-pointer",
