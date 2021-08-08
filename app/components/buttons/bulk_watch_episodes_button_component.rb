@@ -2,9 +2,10 @@
 
 module Buttons
   class BulkWatchEpisodesButtonComponent < ApplicationV6Component
-    def initialize(view_context, episode_id:, class_name: "")
+    def initialize(view_context, episode_id:, button_text: "", class_name: "")
       super view_context
       @episode_id = episode_id
+      @button_text = button_text
       @class_name = class_name
     end
 
@@ -18,6 +19,12 @@ module Buttons
           data_action: "click->bulk-watch-episodes-button#watch" do
             h.tag :span, class: "c-bulk-watch-episodes-button__spinner spinner-border spinner-border-sm"
             h.tag :i, class: "far fa-arrow-from-bottom"
+
+            if @button_text.present?
+              h.tag :span, class: "ms-1" do
+                h.text @button_text
+              end
+            end
           end
       end
     end
