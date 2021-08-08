@@ -18,7 +18,7 @@ module TrackableEpisodeListSettable
     episodes = Episode.only_kept.where(work_id: @library_entries.pluck(:work_id))
     @trackable_episodes = Episode.partitioned_episodes(
       episode_condition: ["id IN (?)", episodes.pluck(:id) - @library_entries.pluck(:watched_episode_ids).flatten],
-      limit: 3
+      limit: 1
     )
     @slots = Slot.only_kept.where(episode_id: @trackable_episodes.pluck(:id)).select(:program_id, :episode_id, :started_at)
   end
