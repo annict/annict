@@ -44,7 +44,7 @@
     "@babel/plugin-transform-typescript": "^7.13.0",
     "@babel/preset-typescript": "^7.13.0",
     "@types/autosize": "^3.0.7",
-    "@types/bootstrap": "^5.0.13",
+    "@types/bootstrap": "^5.0.17",
     "@types/jquery": "^3.5.1",
     "@types/js-cookie": "^2.2.6",
     "@types/lodash": "^4.14.160",
