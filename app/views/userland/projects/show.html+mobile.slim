@@ -35,4 +35,7 @@ h2.h4.fw-bold.text-center.my-3
 .container.u-container-flat
   .card.rounded-3.u-card-flat
     .card-body
-      = render "users/user_list", users: @project.users.only_kept
+      - @project.users.only_kept.each do |user|
+        .col.col-auto.ps-0.pe-2
+          = link_to profile_path(user.username) do
+            = ann_image_tag(user.profile, :image, size: "30x30", class: "rounded-circle", alt: user.decorate.name_with_username, title: user.decorate.name_with_username)
