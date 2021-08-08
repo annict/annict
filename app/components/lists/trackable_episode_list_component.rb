@@ -102,7 +102,7 @@ module Lists
                           h.tag :div, class: "col-6" do
                             h.html Buttons::SkipEpisodeButtonComponent.new(
                               view_context,
-                              episode_id: episode.id, button_text: t("verb.skip"), class_name: "btn-sm btn-outline-secondary rounded-3 w-100"
+                              episode_id: episode.id, button_text: t("verb.skip_shorten"), class_name: "btn-sm btn-outline-secondary rounded-3 w-100"
                             ).render
                           end
                         end
