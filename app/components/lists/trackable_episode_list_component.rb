@@ -56,6 +56,11 @@ module Lists
                             } do
                               h.text episode.title_with_number
                             end
+                          else
+                            h.tag :div, class: "mt-1" do
+                              h.tag :i, class: "far fa-check-circle me-1 text-success"
+                              h.text t("messages.tracks.no_trackable_episodes")
+                            end
                           end
 
                           if program
