@@ -27,7 +27,7 @@
               </div>
             <% end %>
           <% else %>
-            <%= EmptyV6Component.new(self, text: t("messages._empty.no_resources")) %>
+            <%= EmptyV6Component.new(self, text: t("messages._empty.no_resources")).render %>
           <% end %>
         </div>
       </div>
