@@ -11,7 +11,7 @@ module Canary
         slots = Slot.where(program: library_entries.select(:program_id))
 
         if until_next_night
-          tv_time = Annict::TvTime.new(time_zone: user.time_zone)
+          tv_time = TvTime.new(time_zone: user.time_zone)
           next_night = (tv_time.beginning_of_today.tomorrow.end_of_day + 5.hours).utc
           slots = slots.before(next_night, field: :started_at)
         end

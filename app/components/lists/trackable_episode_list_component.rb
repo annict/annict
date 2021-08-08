@@ -18,7 +18,9 @@ module Lists
             h.tag :div, class: "u-container-flat u-container-narrow" do
               h.tag :div, class: "gx-0 gy-3 row" do
                 @library_entries.each do |le|
+                  program = le.program
                   episode = @trackable_episodes.filter { |episode| episode.work_id == le.work_id }.first
+                  started_at = program && episode ? @slots.find { |slot| slot.program_id == program.id && slot.episode_id == episode.id }&.started_at : nil
 
                   h.tag :div, class: "card u-card-flat" do
                     h.tag :div, class: "card-body" do
@@ -36,7 +38,7 @@ module Lists
 
                         h.tag :div, class: "col" do
                           h.tag :div, {
-                            class: "fw-bold u-cursor-pointer",
+                            class: "small u-cursor-pointer",
                             data_controller: "tracking-modal-button",
                             data_tracking_modal_button_frame_path: view_context.fragment_trackable_anime_path(le.work_id),
                             data_action: "click->tracking-modal-button#open"
@@ -47,7 +49,7 @@ module Lists
 
                           if episode
                             h.tag :div, {
-                              class: "mt-1 u-cursor-pointer",
+                              class: "fw-bold mt-1 u-cursor-pointer",
                               data_controller: "tracking-modal-button",
                               data_tracking_modal_button_frame_path: view_context.fragment_trackable_episode_path(episode.id),
                               data_action: "click->tracking-modal-button#open"
@@ -56,28 +58,33 @@ module Lists
                             end
                           end
 
-                          if le.program
+                          if program
                             h.tag :div, class: "mt-1 small" do
-                              if le.program.vod_title_url.present?
-                                h.tag :a, href: le.program.vod_title_url, class: "text-muted", rel: "noopener", target: "_blank" do
-                                  h.text le.program.channel.name
+                              if program.vod_title_url.present?
+                                h.tag :a, href: program.vod_title_url, class: "text-muted", rel: "noopener", target: "_blank" do
+                                  h.text program.channel.name
                                   h.tag :i, class: "fas fa-external-link-alt ps-1"
                                 end
                               else
                                 h.tag :span, class: "text-muted" do
-                                  h.text le.program.channel.name
+                                  h.text program.channel.name
                                 end
                               end
                             end
                           end
 
-                          if episode && le.program
-                            started_at = @slots.find { |slot| slot.program_id == le.program.id && slot.episode_id == episode.id }&.started_at
-
-                            if started_at
-                              h.tag :div, class: "small text-muted" do
+                          if started_at
+                            h.tag :div, class: "small" do
+                              h.tag :span, class: "text-muted" do
                                 h.html display_time(started_at)
                               end
+
+                              h.html Badges::SlotStartDateBadgeComponent.new(
+                                view_context,
+                                started_at: started_at,
+                                time_zone: current_user.time_zone,
+                                class_name: "ms-1"
+                              ).render
                             end
                           end
                         end
