@@ -12,7 +12,7 @@ module TrackableEpisodeListSettable
       .merge(Anime.where(no_episodes: false))
       .order(:position)
       .page(params[:page])
-      .per(10)
+      .per(20)
       .without_count
 
     episodes = Episode.only_kept.where(work_id: @library_entries.pluck(:work_id))
