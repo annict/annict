@@ -5,7 +5,7 @@ module Badges
     def initialize(view_context, started_at:, time_zone:, class_name: "")
       super view_context
       @started_at = started_at
-      @time_zone = @time_zone
+      @time_zone = time_zone
       @class_name = class_name
       @tv_time = TvTime.new(time_zone: @time_zone)
     end

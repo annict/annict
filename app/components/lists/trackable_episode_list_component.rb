@@ -19,7 +19,7 @@ module Lists
               h.tag :div, class: "gx-0 gy-3 row" do
                 @library_entries.each do |le|
                   program = le.program
-                  episode = @trackable_episodes.filter { |episode| episode.work_id == le.work_id }.first
+                  episode = @trackable_episodes.find { |episode| episode.work_id == le.work_id }
                   started_at = program && episode ? @slots.find { |slot| slot.program_id == program.id && slot.episode_id == episode.id }&.started_at : nil
 
                   h.tag :div, class: "card u-card-flat" do
