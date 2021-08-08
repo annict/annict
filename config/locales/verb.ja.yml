@@ -2,6 +2,8 @@ ja:
   verb:
     agree: 同意する
     attach: 選択する
+    bulk_watch_up_to: ここまで記録する
+    bulk_watch_up_to_shorten: ここまで記録
     check: チェックする
     check_all: 全て選択する
     close: 閉じる
@@ -26,6 +28,7 @@ ja:
     sign_in: ログイン
     sign_out: ログアウト
     skip: スキップする
+    skip_shorten: スキップ
     state_change: 状態変更
     submit: 送信する
     track: 記録する
