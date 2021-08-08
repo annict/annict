@@ -15,5 +15,10 @@ class RelatedAnimesController < ApplicationV6Controller
       .order("works.season_year ASC")
       .order("works.season_name ASC")
       .order(:created_at)
+
+    @anime_ids = [@anime.id]
+    @anime_ids += @series_list.map do |series|
+      series.series_animes.pluck(:work_id)
+    end.flatten
   end
 end
