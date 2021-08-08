@@ -31,7 +31,8 @@ class RecordsController < ApplicationV6Controller
     @dates = @user.records.only_kept.group_by_month(:created_at).count.to_a.reverse.to_h
 
     @record = @user.records.only_kept.find(params[:record_id])
-    @anime_ids = [@record.work_id]
+    @anime = @record.anime
+    @anime_ids = [@anime.id]
   end
 
   def destroy

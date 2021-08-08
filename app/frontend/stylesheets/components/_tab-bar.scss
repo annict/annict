@@ -8,7 +8,7 @@
   padding-bottom: env(safe-area-inset-bottom);
   position: fixed;
   right: 0;
-  z-index: $zindex-fixed;
+  z-index: $zindex-sticky;
 }
 
 @include media-breakpoint-up(lg) {

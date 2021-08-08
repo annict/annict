@@ -19,7 +19,7 @@ class IcsController < ApplicationV6Controller
         .only_kept
         .where.not(started_on: nil)
 
-      render layout: false
+      render formats: :html, layout: false
     end
   end
 end

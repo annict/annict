@@ -2,6 +2,8 @@ en:
   verb:
     agree: Agree
     attach: Attach
+    bulk_watch_up_to: Track above from here
+    bulk_watch_up_to_shorten: Track from here
     check: Check
     check_all: Check All
     close: Close
@@ -26,6 +28,7 @@ en:
     sign_in: Sign In
     sign_out: Sign Out
     skip: Skip
+    skip_shorten: Skip
     state_change: Change state
     submit: Submit
     track: Track

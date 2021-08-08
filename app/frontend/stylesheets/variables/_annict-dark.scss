@@ -17,6 +17,10 @@
   --ann-season-summer-color: #{$ann-season-summer-color};
   --ann-season-unknown-color: #{$ann-season-unknown-color};
   --ann-season-winter-color: #{$ann-season-winter-color};
+  --ann-slot-finished-color: #{$ann-slot-finished-color};
+  --ann-slot-today-color: #{$ann-slot-today-color};
+  --ann-slot-tomorrow-color: #{$ann-slot-tomorrow-color};
+  --ann-slot-yesterday-color: #{$ann-slot-yesterday-color};
   --ann-status-completed-color: #{$ann-status-completed-color};
   --ann-status-dropped-color: #{$ann-status-dropped-color};
   --ann-status-on-hold-color: #{$ann-status-on-hold-color};
@@ -45,6 +49,7 @@
   // Typography
 
   --ann-hr-color: var(--ann-border-color);
+  --ann-text-muted-color: #{tint-color($text-muted, 30%)};
 
   // Tables
 

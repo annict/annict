@@ -28,6 +28,14 @@ namespace :data_care do
     end
   end
 
+  task :ckeck_abandoned_activity_groups, [:user_id] => :environment do |_, args|
+    User.find(args[:user_id]).activity_groups.find_each do |ag|
+      if ag.activities.blank?
+        puts "activity_groups.id: #{ag.id}"
+      end
+    end
+  end
+
   task :move_org_from_people_to_orgs, [:person_id] => :environment do |_, args|
     person = Person.find(args[:person_id])
     org = Organization.where(name: person.name).first_or_create!

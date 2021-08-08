@@ -10,8 +10,8 @@ module SeriesAnimeDecorator
     self.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
       hash[field] = case field
       when :work_id
-        path = anime_path(anime_id: work.id)
-        link_to(work.local_title, path, target: "_blank")
+        path = anime_path(anime_id: anime.id)
+        link_to(anime.local_title, path, target: "_blank")
       else
         send(field)
       end

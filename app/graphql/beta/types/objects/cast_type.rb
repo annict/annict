@@ -15,6 +15,10 @@ module Beta
         field :work, Beta::Types::Objects::WorkType, null: false
         field :character, Beta::Types::Objects::CharacterType, null: false
         field :person, Beta::Types::Objects::PersonType, null: false
+
+        def work
+          object.anime
+        end
       end
     end
   end

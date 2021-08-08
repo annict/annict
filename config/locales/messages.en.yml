@@ -68,7 +68,7 @@ en:
       friend_list_html: 'When you link to Twitter on the %{link} page, Annict users you follow on Twitter will be displayed.'
       home: When you follow a user, activities who followed will be displayed on the timeline.
       notification_list: You will be notified when you are followed or your record is liked.
-      track_html: The works whose status is "Watching" or "Plan to watch" are displayed.
+      track_html: The works whose status is "Watching" are displayed.
     _validators:
       and_other_are_required: and %{column_name} are required
       is_required_true_or_false: is required `true` or `false`

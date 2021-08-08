@@ -58,7 +58,7 @@ class Record < ApplicationRecord
   end
 
   def rating
-    episode_record? ? episode_record.rating_state : anime_record.rating_overall_state
+    episode_record? ? episode_record.rating_state : anime_record&.rating_overall_state
   end
 
   def advanced_rating
@@ -66,19 +66,19 @@ class Record < ApplicationRecord
   end
 
   def comment
-    episode_record? ? episode_record.body : anime_record.body
+    episode_record? ? episode_record.body : anime_record&.body
   end
 
   def modified_at
     if anime_record?
-      return anime_record.modified_at
+      return anime_record&.modified_at
     end
 
     episode_record.updated_at if episode_record.modify_body?
   end
 
   def likes_count
-    episode_record? ? episode_record.likes_count : anime_record.likes_count
+    episode_record? ? episode_record.likes_count : anime_record&.likes_count
   end
 
   def liked?(likes)

@@ -14,7 +14,6 @@ class SeasonalAnimesController < ApplicationV6Controller
       .page(params[:page])
       .per(display_works_count)
       .without_count
-    @anime_ids = @animes.pluck(:id)
 
     @seasons = Season.list(sort: :desc, include_all: true)
     @season = Season.find_by_slug(params[:season_slug])

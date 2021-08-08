@@ -4,7 +4,8 @@
   height: 100%;
   left: 0;
   position: fixed;
-  z-index: $zindex-popover;
+  // NOTE: $zindex-modal より小さな値にしないとモーダルを開いたときサイドバーが全面に出てしまう
+  z-index: $zindex-fixed;
 
   &__background {
     background-color: rgba(0, 0, 0, 0.4);

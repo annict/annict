@@ -121,6 +121,14 @@ module Headers
                     h.text @anime.copyright
                   end
                 end
+
+                if current_user&.committer?
+                  h.tag :div, class: "mt-3" do
+                    h.tag :a, href: view_context.db_edit_work_path(@anime) do
+                      h.text t("messages._common.edit_on_annict_db")
+                    end
+                  end
+                end
               end
             end
           end

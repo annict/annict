@@ -12,7 +12,7 @@ module Beta
 
         field :annict_id, Integer, null: false
         field :title, String, null: false
-        field :title_Kana, String, null: true
+        field :title_kana, String, null: true
         field :title_ro, String, null: true
         field :title_en, String, null: true
         field :media, Beta::Types::Enums::Media, null: false
@@ -97,7 +97,7 @@ module Beta
         end
 
         def image
-          Beta::RecordLoader.for(WorkImage).load(object.anime_image&.id)
+          Beta::RecordLoader.for(AnimeImage).load(object.anime_image&.id)
         end
 
         def reviews_count
