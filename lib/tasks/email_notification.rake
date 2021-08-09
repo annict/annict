@@ -45,7 +45,7 @@ namespace :email_notification do
     works = Anime.only_kept.past_week.gt_current_season
     next if works.blank?
 
-    series_ids = SeriesAnime.where(work: works).pluck(:series_id)
+    series_ids = SeriesAnime.where(anime: works).pluck(:series_id)
     next if series_ids.blank?
 
     users = User
