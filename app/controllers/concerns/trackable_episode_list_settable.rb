@@ -8,10 +8,11 @@ module TrackableEpisodeListSettable
       .library_entries
       .with_not_deleted_anime
       .watching
-      .preload(:next_episode, :next_slot)
-      .eager_load(anime: :anime_image, program: :channel)
+      .preload(:next_episode, program: :channel)
+      .eager_load(:next_slot, anime: :anime_image)
       .merge(Anime.where(no_episodes: false))
-      .order(:position)
+      .order("slots.started_at DESC NULLS LAST")
+      .order(position: :desc)
       .page(params[:page])
       .per(20)
       .without_count
