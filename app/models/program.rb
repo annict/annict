@@ -89,19 +89,6 @@ class Program < ApplicationRecord
     end
   end
 
-  def save_library_entry!(user)
-    library_entry = user.library_entries.find_or_initialize_by(anime: anime)
-    library_entry.program = self
-
-    next_episode = anime.episodes.only_kept.where.not(id: library_entry.watched_episode_ids).order(:sort_number).first
-    next_slot = slots.only_kept.find_by(episode: next_episode)
-
-    library_entry.next_episode = next_episode
-    library_entry.next_slot = next_slot
-
-    library_entry.save!
-  end
-
   private
 
   def calc_for_timezone

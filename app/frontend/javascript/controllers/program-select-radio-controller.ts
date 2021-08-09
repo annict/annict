@@ -4,8 +4,6 @@ import { Controller } from 'stimulus';
 import { EventDispatcher } from '../utils/event-dispatcher';
 import fetcher from '../utils/fetcher';
 
-const NO_SELECT = 'no_select';
-
 export default class extends Controller {
   static values = { animeId: Number, initProgramId: Number };
 

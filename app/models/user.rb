@@ -241,6 +241,26 @@ class User < ApplicationRecord
     end
   end
 
+  def save_program_to_library_entry!(anime, program)
+    library_entry = library_entries.find_or_initialize_by(anime: anime)
+
+    if program
+      library_entry.program = program
+
+      next_episode = anime.episodes.only_kept.where.not(id: library_entry.watched_episode_ids).order(:sort_number).first
+      next_slot = program.slots.only_kept.find_by(episode: next_episode)
+
+      library_entry.next_episode = next_episode
+      library_entry.next_slot = next_slot
+    else
+      library_entry.program = nil
+      library_entry.next_slot = nil
+      library_entry.position = 1 if library_entry.status&.kind&.watching?
+    end
+
+    library_entry.save!
+  end
+
   def authorized_to?(provider_name, shareable: false)
     records = providers
     records = records.token_available if shareable
