@@ -10,6 +10,7 @@
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
 #  next_episode_id     :bigint
+#  next_slot_id        :bigint
 #  program_id          :bigint
 #  status_id           :bigint
 #  user_id             :bigint           not null
@@ -18,6 +19,7 @@
 # Indexes
 #
 #  index_library_entries_on_next_episode_id         (next_episode_id)
+#  index_library_entries_on_next_slot_id            (next_slot_id)
 #  index_library_entries_on_program_id              (program_id)
 #  index_library_entries_on_status_id               (status_id)
 #  index_library_entries_on_user_id                 (user_id)
@@ -29,6 +31,7 @@
 # Foreign Keys
 #
 #  fk_rails_...  (next_episode_id => episodes.id)
+#  fk_rails_...  (next_slot_id => slots.id)
 #  fk_rails_...  (program_id => programs.id)
 #  fk_rails_...  (status_id => statuses.id)
 #  fk_rails_...  (user_id => users.id)
