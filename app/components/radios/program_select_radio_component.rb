@@ -14,7 +14,7 @@ module Radios
         h.tag :div, {
           class: "gx-3 row #{@class_name}",
           data_controller: "program-select-radio",
-          data_program_select_radio_library_entry_id_value: @library_entry.id,
+          data_program_select_radio_anime_id_value: @library_entry.work_id,
           data_program_select_radio_init_program_id_value: @library_entry.program_id
         } do
           @programs.each do |program|
