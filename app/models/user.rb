@@ -372,24 +372,6 @@ class User < ApplicationRecord
     true
   end
 
-  def slot_data(library_entries)
-    channel_works = self.channel_works.where(work_id: library_entries.pluck(:work_id))
-    channel_ids = channel_works.pluck(:channel_id)
-    episode_ids = library_entries.pluck(:next_episode_id)
-    slots = Slot
-      .includes(:channel, work: :anime_image)
-      .where(channel_id: channel_ids, episode_id: episode_ids)
-      .only_kept
-
-    channel_works.map do |cw|
-      slot = slots
-        .select { |p| p.work_id == cw.work_id && p.channel_id == cw.channel_id }
-        .max_by(&:started_at)
-
-      slot
-    end
-  end
-
   def registered_after_email_confirmation_required?
     # After 2020-04-07, registered users must confirm email before sign in
     created_at > Time.zone.parse("2020-04-07 0:00:00")
