@@ -44,6 +44,7 @@ class LibraryEntry < ApplicationRecord
   self.ignored_columns = %w[kind]
 
   belongs_to :next_episode, class_name: "Episode", optional: true
+  belongs_to :next_slot, class_name: "Slot", optional: true
   belongs_to :program, optional: true
   belongs_to :status, optional: true
   belongs_to :user
@@ -79,9 +80,11 @@ class LibraryEntry < ApplicationRecord
       episode_ids = anime.episodes.only_kept.pluck(:id)
       unwatched_episode_ids = episode_ids - new_watched_episode_ids
       next_episode = Episode.only_kept.where(id: unwatched_episode_ids).order(:sort_number).first
+      next_slot = program&.slots&.only_kept&.find_by(episode: next_episode)
 
       self.watched_episode_ids = new_watched_episode_ids
       self.next_episode = next_episode
+      self.next_slot = next_slot
       self.position = 1
 
       save!
