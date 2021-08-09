@@ -9,7 +9,7 @@ module Offcanvases
     def render
       build_html do |h|
         h.tag :div, class: "c-tracking-offcanvas offcanvas offcanvas-end" do
-          h.tag :div, class: "offcanvas-header" do
+          h.tag :div, class: "justify-content-end offcanvas-header" do
             h.tag :button, class: "btn-close text-reset", data_bs_dismiss: "offcanvas", type: "button"
           end
 

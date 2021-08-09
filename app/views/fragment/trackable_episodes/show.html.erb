@@ -2,7 +2,7 @@
   <%= component_value_fetcher_tag("status-select-dropdown", internal_api_library_entry_list_path, method: :post, payload: {anime_ids: [@anime.id]}) %>
   <%= component_value_fetcher_tag("like-button", internal_api_like_list_path) %>
 
-  <div class="offcanvas-body px-0">
+  <div class="offcanvas-body pt-0 px-0">
     <div class="container">
       <div class="gx-3 row">
         <div class="col-auto">
@@ -54,11 +54,7 @@
       </div>
     </div>
 
-    <div class="container mt-3">
-      <hr>
-    </div>
-
-    <div class="mt-3">
+    <div class="mt-5">
       <div
         data-controller="reloadable"
         data-reloadable-event-name-value="episode-record-list-group"
