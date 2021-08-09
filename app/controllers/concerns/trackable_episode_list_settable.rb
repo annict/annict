@@ -14,7 +14,7 @@ module TrackableEpisodeListSettable
       .order("slots.started_at DESC NULLS LAST")
       .order(position: :desc)
       .page(params[:page])
-      .per(20)
+      .per(50)
       .without_count
   end
 end
