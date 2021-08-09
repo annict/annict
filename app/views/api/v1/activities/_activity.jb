@@ -12,7 +12,7 @@ when "create_episode_record"
   json[:work] = render("api/v1/works/work", work: activity.itemable.anime, params: params, field_prefix: "work.")
   json[:episode] = render("api/v1/episodes/episode", episode: activity.itemable.episode, params: params, field_prefix: "episode.")
   json[:record] = render("api/v1/records/episode_record", episode_record: activity.itemable, params: params, field_prefix: "record.")
-when "create_work_record"
+when "create_work_record", "create_anime_record"
   json[:work] = render("api/v1/works/work", work: activity.itemable.anime, params: params, field_prefix: "work.")
   json[:review] = render("api/v1/reviews/work_record", work_record: activity.itemable, params: params, field_prefix: "review.")
 when "create_multiple_episode_records"
