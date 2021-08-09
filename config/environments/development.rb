@@ -83,10 +83,8 @@ Rails.application.configure do
     Bullet.rails_logger = true
   end
 
-  # Vagrant環境でもBetter Errorsが使いたい
   # https://github.com/charliesome/better_errors#security
-  # Wating to be fixed: https://github.com/charliesome/better_errors/issues/341
-  # BetterErrors::Middleware.allow_ip! "192.168.33.1"
+  BetterErrors::Middleware.allow_ip!("0.0.0.0/0")
 
   # https://github.com/ruckus/active-record-query-trace
   ActiveRecordQueryTrace.enabled = true
