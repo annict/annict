@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
 describe Creators::EpisodeRecordCreator, type: :model do
-  let(:user) { create :registered_user }
-  let(:episode) { create :episode }
-  let(:anime) { episode.anime }
+  let!(:user) { create :registered_user }
+  let!(:anime) { create :anime }
+  let!(:episode) { create :episode, anime: anime, sort_number: 10 }
+  let!(:next_episode) { create :episode, anime: anime, sort_number: 20 }
 
   it "エピソードへの記録が作成できること" do
     # Creatorを呼んでいないので、各レコードは0件のはず
@@ -11,6 +12,7 @@ describe Creators::EpisodeRecordCreator, type: :model do
     expect(EpisodeRecord.count).to eq 0
     expect(ActivityGroup.count).to eq 0
     expect(Activity.count).to eq 0
+    expect(LibraryEntry.count).to eq 0
     expect(user.share_record_to_twitter?).to eq false
 
     # Creatorを呼ぶ
@@ -29,12 +31,14 @@ describe Creators::EpisodeRecordCreator, type: :model do
     expect(EpisodeRecord.count).to eq 1
     expect(ActivityGroup.count).to eq 1
     expect(Activity.count).to eq 1
+    expect(LibraryEntry.count).to eq 1
     expect(user.share_record_to_twitter?).to eq false
 
     record = user.records.first
     episode_record = user.episode_records.first
     activity_group = user.activity_groups.first
     activity = user.activities.first
+    library_entry = user.library_entries.first
 
     expect(record.work_id).to eq anime.id
 
@@ -50,6 +54,10 @@ describe Creators::EpisodeRecordCreator, type: :model do
 
     expect(activity.activity_group_id).to eq activity_group.id
     expect(activity.itemable).to eq episode_record
+
+    expect(library_entry.anime).to eq anime
+    expect(library_entry.watched_episode_ids).to eq [episode.id]
+    expect(library_entry.next_episode).to eq next_episode
   end
 
   describe "アクティビティの作成" do

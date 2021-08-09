@@ -19,7 +19,6 @@ module Creators
         comment: @form.comment,
         share_to_twitter: @form.share_to_twitter
       )
-      library_entry = @user.library_entries.find_by(anime: @anime)
 
       ActiveRecord::Base.transaction do
         episode_record.save!
@@ -27,9 +26,11 @@ module Creators
         activity_group = @user.create_or_last_activity_group!(episode_record)
         @user.activities.create!(itemable: episode_record, activity_group: activity_group)
 
+        library_entry = @user.library_entries.where(anime: @anime).first_or_create!
+        library_entry.append_episode!(@episode)
+
         @user.update_share_record_setting(@form.share_to_twitter)
         @user.touch(:record_cache_expired_at)
-        library_entry&.append_episode!(@episode)
 
         if @user.share_record_to_twitter?
           @user.share_episode_record_to_twitter(episode_record)
