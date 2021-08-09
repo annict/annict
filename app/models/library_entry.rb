@@ -82,7 +82,7 @@ class LibraryEntry < ApplicationRecord
       self.watched_episode_ids = new_watched_episode_ids
       self.next_episode = next_episode
       self.next_slot = next_slot
-      self.position = 1
+      self.position = 1 if status&.kind&.watching?
 
       save!
     end
