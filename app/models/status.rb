@@ -156,7 +156,6 @@ class Status < ApplicationRecord
   def save_library_entry!
     library_entry = user.library_entries.find_or_initialize_by(anime: anime)
     library_entry.status = self
-    library_entry.position = 1
 
     case kind.to_sym
     when :watched, :stop_watching
@@ -169,6 +168,7 @@ class Status < ApplicationRecord
 
       library_entry.next_episode = next_episode
       library_entry.next_slot = next_slot
+      library_entry.position = 1
     end
 
     library_entry.save!
