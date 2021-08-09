@@ -411,7 +411,7 @@ class User < ApplicationRecord
     activity_groups.create!(itemable_type: itemable_type, single: false)
   end
 
-  def update_works_count!(prev_state_kind, next_state_kind)
+  def update_works_count!(prev_status_kind, next_status_kind)
     works_count_fields = {
       wanna_watch: :plan_to_watch_works_count,
       watching: :watching_works_count,
@@ -419,9 +419,11 @@ class User < ApplicationRecord
       on_hold: :on_hold_works_count,
       stop_watching: :dropped_works_count
     }.freeze
+    prev_no_status = Status.no_status?(prev_status_kind)
+    next_no_status = Status.no_status?(next_status_kind)
 
-    decrement!(works_count_fields[prev_state_kind.to_sym]) if prev_state_kind
-    increment!(works_count_fields[next_state_kind.to_sym])
+    decrement!(works_count_fields[prev_status_kind]) unless prev_no_status
+    increment!(works_count_fields[next_status_kind]) unless next_no_status
   end
 
   def update_share_record_setting(share_to_twitter)

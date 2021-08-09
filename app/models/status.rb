@@ -98,6 +98,10 @@ class Status < ApplicationRecord
     KIND_ICONS[kind_v3]
   end
 
+  def self.no_status?(kind)
+    kind.to_s.in?(%w[no_select no_status])
+  end
+
   def anime_id
     work_id
   end

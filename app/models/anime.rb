@@ -419,9 +419,9 @@ class Anime < ApplicationRecord
     number_format.format % number
   end
 
-  def update_watchers_count!(prev_state_kind, next_state_kind)
-    is_prev_positive = prev_state_kind&.to_sym&.in?(Status::POSITIVE_KINDS)
-    is_next_positive = next_state_kind.to_sym.in?(Status::POSITIVE_KINDS)
+  def update_watchers_count!(prev_status_kind, next_status_kind)
+    is_prev_positive = prev_status_kind.in?(Status::POSITIVE_KINDS)
+    is_next_positive = next_status_kind.in?(Status::POSITIVE_KINDS)
 
     return if is_prev_positive && is_next_positive
 
