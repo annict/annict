@@ -12,7 +12,7 @@ module TrackableEpisodeListSettable
       .eager_load(:next_slot, anime: :anime_image)
       .merge(Anime.where(no_episodes: false))
       .order("slots.started_at DESC NULLS LAST")
-      .order(position: :desc)
+      .order(:position)
       .page(params[:page])
       .per(50)
       .without_count
