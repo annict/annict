@@ -32,6 +32,7 @@ en:
     state_change: Change state
     submit: Submit
     track: Track
+    track_with_comment: Track with Comment
     tweet: Tweet
     uncheck_all: Uncheck All
     unmute: Unmute

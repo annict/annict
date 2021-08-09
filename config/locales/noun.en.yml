@@ -42,7 +42,8 @@ en:
     character: Character
     characters: Characters
     characters2: Characters
-    comment: コメント
+    comment: Comment
+    comment_alt: Comment
     comments_count: Comments
     comments_count_shorten: Comments
     contents: Contents

@@ -96,14 +96,35 @@ module Lists
 
                       if episode
                         h.tag :div, class: "align-items-center gx-3 mt-3 row" do
-                          h.tag :div, class: "col-6" do
+                          h.tag :div, class: "col-4" do
                             h.html Buttons::WatchEpisodeButtonComponent.new(
                               view_context,
                               episode_id: episode.id, button_text: t("verb.track"), class_name: "btn-sm btn-outline-info rounded-3 w-100"
                             ).render
                           end
 
-                          h.tag :div, class: "col-6" do
+                          h.tag :div, class: "col-4" do
+                            h.tag :div, {
+                              class: "btn btn-sm btn-outline-info rounded-3 w-100",
+                              data_controller: "tracking-modal-button",
+                              data_tracking_modal_button_frame_path: view_context.fragment_trackable_episode_path(episode.id),
+                              data_action: "click->tracking-modal-button#open"
+                            } do
+                              h.tag :i, class: "far fa-comment-check"
+
+                              h.tag :span, class: "d-none d-sm-inline ms-1" do
+                                h.text t("verb.track_with_comment")
+                                h.text "..."
+                              end
+
+                              h.tag :span, class: "d-inline d-sm-none ms-1" do
+                                h.text t("noun.comment_alt")
+                                h.text "..."
+                              end
+                            end
+                          end
+
+                          h.tag :div, class: "col-4" do
                             h.html Buttons::SkipEpisodeButtonComponent.new(
                               view_context,
                               episode_id: episode.id, button_text: t("verb.skip_shorten"), class_name: "btn-sm btn-outline-secondary rounded-3 w-100"

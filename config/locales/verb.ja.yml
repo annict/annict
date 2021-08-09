@@ -32,6 +32,7 @@ ja:
     state_change: 状態変更
     submit: 送信する
     track: 記録する
+    track_with_comment: 感想を書いて記録
     tweet: ツイートする
     uncheck_all: 全て解除する
     unmute: ミュートを解除する
