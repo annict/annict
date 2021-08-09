@@ -7,9 +7,13 @@ export default class extends Controller {
   animeIdValue!: number;
   framePath!: string;
   statusKinds!: { [key: number]: string };
+  offcanvasElm!: HTMLElement | null;
+  offcanvasFrameElm!: HTMLElement | null;
 
   initialize() {
     this.framePath = this.data.get('framePath') ?? '/500.html';
+    this.offcanvasElm = document.querySelector('.c-tracking-offcanvas');
+    this.offcanvasFrameElm = this.offcanvasElm?.querySelector('#c-tracking-offcanvas-frame') ?? null;
 
     document.addEventListener('component-value-fetcher:status-select-dropdown:fetched', (event: any) => {
       if (this.statusKinds) {
@@ -33,18 +37,11 @@ export default class extends Controller {
   }
 
   open() {
-    const modalElm = document.querySelector('.c-tracking-offcanvas');
-    const frameElm = modalElm?.querySelector('#c-tracking-offcanvas-frame');
+    if (this.offcanvasElm && this.offcanvasFrameElm) {
+      this.offcanvasFrameElm.setAttribute('src', this.framePath);
+      this.offcanvasFrameElm.dataset.reloadableUrlValue = this.framePath;
 
-    if (modalElm && frameElm) {
-      console.log('aaaaaaaaaaaaaaaa!!!!!!!!!!!!!!!!');
-      frameElm.setAttribute('src', this.framePath);
-      console.log('iiiiiiiiiiiiiii!!!!!!!!!!!!!!!!');
-      (frameElm as HTMLElement).dataset.reloadableUrlValue = this.framePath;
-      console.log('uuuuuuuuuuuuu!!!!!!!!!!!!!!!!');
-
-      new Offcanvas(modalElm).show(modalElm as HTMLElement);
-      console.log('eeeeeeeeeeeeeeee!!!!!!!!!!!!!!!!');
+      new Offcanvas(this.offcanvasElm).show(this.offcanvasElm);
     }
   }
 }
