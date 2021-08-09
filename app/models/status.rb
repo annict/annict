@@ -98,6 +98,10 @@ class Status < ApplicationRecord
     KIND_ICONS[kind_v3]
   end
 
+  def self.no_status?(kind)
+    kind.to_s.in?(%w[no_select no_status])
+  end
+
   def anime_id
     work_id
   end
@@ -149,10 +153,11 @@ class Status < ApplicationRecord
     false
   end
 
-  def save_library_entry
+  def save_library_entry!
     library_entry = user.library_entries.find_or_initialize_by(anime: anime)
     library_entry.status = self
     library_entry.watched_episode_ids = [] if %w[watched stop_watching].include?(kind)
+    library_entry.position = 1
     library_entry.save!
   end
 end

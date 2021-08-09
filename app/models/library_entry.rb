@@ -69,17 +69,17 @@ class LibraryEntry < ApplicationRecord
     end
   end
 
-  def fetch_next_episode
-    episode_ids = anime.episodes.only_kept.pluck(:id)
-    next_episode_ids = episode_ids - watched_episode_ids
-    Episode.where(id: next_episode_ids).order(:sort_number).first
-  end
-
   def append_episode!(episode)
     ActiveRecord::Base.transaction do
-      episode_ids = watched_episode_ids << episode.id
-      self.watched_episode_ids = episode_ids.uniq
-      self.next_episode = fetch_next_episode
+      new_watched_episode_ids = (watched_episode_ids << episode.id).uniq
+
+      episode_ids = anime.episodes.only_kept.pluck(:id)
+      unwatched_episode_ids = episode_ids - new_watched_episode_ids
+      next_episode = Episode.only_kept.where(id: unwatched_episode_ids).order(:sort_number).first
+
+      self.watched_episode_ids = new_watched_episode_ids
+      self.next_episode = next_episode
+
       save!
       move_to_top
     end

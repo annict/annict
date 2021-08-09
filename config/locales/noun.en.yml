@@ -42,7 +42,8 @@ en:
     character: Character
     characters: Characters
     characters2: Characters
-    comment: コメント
+    comment: Comment
+    comment_alt: Comment
     comments_count: Comments
     comments_count_shorten: Comments
     contents: Contents
@@ -74,10 +75,11 @@ en:
     finished: Finished
     first: First
     follow: Follow
+    followees: Followees
     followers: Followers
-    following: Following
     following_records: Following Records
     following_shorten: Following
+    following: Following
     friends_who_are_watching: Friends Who Are Watching
     global: Global
     google_calendar: Google Calendar

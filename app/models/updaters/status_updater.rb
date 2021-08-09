@@ -10,30 +10,24 @@ module Updaters
 
     def call
       library_entry = @user.library_entries.find_by(anime: @anime)
+      prev_status_kind = library_entry&.status&.kind&.to_sym.presence || :no_select
+      new_status_kind = Status.kind_v3_to_v2(@form.kind)
 
-      if @form.no_status?
-        ActiveRecord::Base.transaction do
+      ActiveRecord::Base.transaction do
+        if @form.no_status?
           library_entry&.update!(status_id: nil)
-          UserWatchedWorksCountJob.perform_later(@user.id)
-        end
-      else
-        v2_kind = Status.kind_v3_to_v2(@form.kind)
-        status = @user.statuses.new(anime: @anime, kind: v2_kind)
+        else
+          status = @user.statuses.new(anime: @anime, kind: new_status_kind)
 
-        ActiveRecord::Base.transaction do
           status.save!
-          status.save_library_entry
+          status.save_library_entry!
+          status.share_to_sns
 
           activity_group = @user.create_or_last_activity_group!(status)
           @user.activities.create!(itemable: status, activity_group: activity_group)
-
-          prev_state_kind = library_entry&.status&.kind
-          @user.update_works_count!(prev_state_kind, v2_kind)
-          @anime.update_watchers_count!(prev_state_kind, v2_kind)
-
-          UserWatchedWorksCountJob.perform_later(@user.id)
-          status.share_to_sns
         end
+
+        AfterStatusUpdateJob.perform_later(@user.id, @anime.id, prev_status_kind, new_status_kind)
       end
     end
   end

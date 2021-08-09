@@ -43,6 +43,7 @@ ja:
     characters: キャラクター
     characters2: 文字
     comment: コメント
+    comment_alt: 感想
     comments_count: 感想数
     comments_count_shorten: コメント
     contents: コンテンツ
@@ -74,10 +75,11 @@ ja:
     finished: 終了
     first: First
     follow: フォロー
+    followees: フォロイー
     followers: フォロワー
-    following: フォロー中
     following_records: フォロイーの記録
     following_shorten: フォロー
+    following: フォロー中
     friends_who_are_watching: 見てる友達
     global: グローバル
     google_calendar: Googleカレンダー
