@@ -1,4 +1,4 @@
-import Modal from 'bootstrap/js/dist/modal';
+import Offcanvas from 'bootstrap/js/dist/offcanvas';
 import { Controller } from 'stimulus';
 
 export default class extends Controller {
@@ -23,7 +23,7 @@ export default class extends Controller {
       }
     });
 
-    document.addEventListener('tracking-modal-button:enabled', (event: any) => {
+    document.addEventListener('tracking-offcanvas-button:enabled', (event: any) => {
       const { animeId } = event.detail;
 
       if (this.animeIdValue === animeId) {
@@ -33,14 +33,18 @@ export default class extends Controller {
   }
 
   open() {
-    const modalElm = document.querySelector('.c-tracking-modal');
-    const frameElm = modalElm?.querySelector('#c-tracking-modal-frame');
+    const modalElm = document.querySelector('.c-tracking-offcanvas');
+    const frameElm = modalElm?.querySelector('#c-tracking-offcanvas-frame');
 
     if (modalElm && frameElm) {
+      console.log('aaaaaaaaaaaaaaaa!!!!!!!!!!!!!!!!');
       frameElm.setAttribute('src', this.framePath);
+      console.log('iiiiiiiiiiiiiii!!!!!!!!!!!!!!!!');
       (frameElm as HTMLElement).dataset.reloadableUrlValue = this.framePath;
+      console.log('uuuuuuuuuuuuu!!!!!!!!!!!!!!!!');
 
-      new Modal(modalElm).show();
+      new Offcanvas(modalElm).show(modalElm as HTMLElement);
+      console.log('eeeeeeeeeeeeeeee!!!!!!!!!!!!!!!!');
     }
   }
 }

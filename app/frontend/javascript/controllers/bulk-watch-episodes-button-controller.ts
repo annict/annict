@@ -16,7 +16,7 @@ export default class extends Controller {
 
   reloadList() {
     new EventDispatcher('reloadable--trackable-episode-list:reload').dispatch();
-    new EventDispatcher('reloadable--tracking-modal:reload').dispatch();
+    new EventDispatcher('reloadable--tracking-offcanvas:reload').dispatch();
   }
 
   startLoading() {

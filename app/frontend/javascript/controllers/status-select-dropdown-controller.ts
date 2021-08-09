@@ -89,7 +89,7 @@ export default class extends Controller {
 
         this.currentStatusKind = selectedStatusKind;
         this.render();
-        new EventDispatcher('tracking-modal-button:enabled', { animeId: this.animeIdValue }).dispatch();
+        new EventDispatcher('tracking-offcanvas-button:enabled', { animeId: this.animeIdValue }).dispatch();
       } catch (err) {
         if (err.response.status === 401) {
           new Modal('.c-sign-up-modal').show();
