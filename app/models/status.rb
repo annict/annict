@@ -149,10 +149,11 @@ class Status < ApplicationRecord
     false
   end
 
-  def save_library_entry
+  def save_library_entry!
     library_entry = user.library_entries.find_or_initialize_by(anime: anime)
     library_entry.status = self
     library_entry.watched_episode_ids = [] if %w[watched stop_watching].include?(kind)
+    library_entry.position = 1
     library_entry.save!
   end
 end

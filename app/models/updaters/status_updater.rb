@@ -22,7 +22,7 @@ module Updaters
 
         ActiveRecord::Base.transaction do
           status.save!
-          status.save_library_entry
+          status.save_library_entry!
 
           activity_group = @user.create_or_last_activity_group!(status)
           @user.activities.create!(itemable: status, activity_group: activity_group)
