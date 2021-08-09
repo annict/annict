@@ -28,10 +28,11 @@ namespace :data_care do
     end
   end
 
-  task :ckeck_abandoned_activity_groups, [:user_id] => :environment do |_, args|
+  task :destroy_abandoned_activity_groups, [:user_id] => :environment do |_, args|
     User.find(args[:user_id]).activity_groups.find_each do |ag|
       if ag.activities.blank?
         puts "activity_groups.id: #{ag.id}"
+        ag.destroy
       end
     end
   end
