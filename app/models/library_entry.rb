@@ -82,9 +82,9 @@ class LibraryEntry < ApplicationRecord
 
       self.watched_episode_ids = new_watched_episode_ids
       self.next_episode = next_episode
+      self.position = 1
 
       save!
-      move_to_top
     end
 
     self
