@@ -21,7 +21,7 @@ module EpisodeRecordListSettable
       @following_records = records.merge(current_user.followings)
       @all_records = records.where.not(user: [current_user, *current_user.followings]).page(params[:page]).per(30)
     else
-      @all_records = records.page(params[:page]).per(30)
+      @all_records = records.page(params[:page]).per(20)
     end
   end
 end
