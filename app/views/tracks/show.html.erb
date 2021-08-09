@@ -19,11 +19,6 @@
     data-reloadable-event-name-value="trackable-episode-list"
     data-reloadable-url-value="<%= fragment_trackable_episode_list_path(page: params[:page]) %>"
   >
-    <%= Lists::TrackableEpisodeListComponent.new(
-      self,
-      library_entries: @library_entries,
-      trackable_episodes: @trackable_episodes,
-      slots: @slots
-    ).render %>
+    <%= Lists::TrackableEpisodeListComponent.new(self, library_entries: @library_entries).render %>
   </div>
 </div>
