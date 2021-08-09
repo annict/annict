@@ -4,7 +4,10 @@ module EpisodeRecordListSettable
   extend ActiveSupport::Concern
 
   def set_episode_record_list(episode)
-    records = episode.records.only_kept.eager_load(:episode_record, user: %i[gumroad_subscriber profile setting])
+    records = episode.records
+      .only_kept
+      .preload(:anime, episode_record: :episode)
+      .eager_load(user: %i[gumroad_subscriber profile setting])
       .merge(EpisodeRecord.with_body.order_by_rating_state(:desc).order(created_at: :desc))
     @my_records = @following_records = Record.none
 
