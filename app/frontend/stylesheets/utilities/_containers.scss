@@ -17,3 +17,17 @@
     }
   }
 }
+
+.offcanvas {
+  .container,
+  .u-container-narrow {
+    &.u-container-flat {
+      padding-right: 0;
+      padding-left: 0;
+
+      .u-card-flat {
+        border-radius: 0 !important;
+      }
+    }
+  }
+}

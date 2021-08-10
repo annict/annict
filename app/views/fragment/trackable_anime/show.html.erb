@@ -1,7 +1,7 @@
-<turbo-frame id="c-tracking-modal-frame">
+<turbo-frame id="c-tracking-offcanvas-frame">
   <%= component_value_fetcher_tag("status-select-dropdown", internal_api_library_entry_list_path, method: :post, payload: {anime_ids: [@anime.id]}) %>
 
-  <div class="modal-body px-0">
+  <div class="offcanvas-body pt-0 px-0">
     <div class="container">
       <div class="gx-3 row">
         <div class="col-auto">
@@ -27,10 +27,6 @@
               <% end %>
             </li>
           </ul>
-        </div>
-
-        <div class="col-auto">
-          <button class="btn-close" data-bs-dismiss="modal" type="button"></button>
         </div>
       </div>
 
@@ -62,25 +58,26 @@
             <% @episodes.each do |episode| %>
               <li class="list-group-item py-3" data-episode-id="<%= episode.id %>">
                 <div class="c-tracking-state__title col">
-                  <%= link_to fragment_trackable_episode_path(episode.id), class: "fw-bold text-body" do %>
+                  <%= link_to fragment_trackable_episode_path(episode.id), class: "text-body" do %>
+                    <i class="far fa-chevron-right me-1 text-muted"></i>
                     <%= episode.title_with_number %>
                   <% end %>
                 </div>
 
-                <div class="align-items-center gx-1 gx-sm-3 justify-content-center mt-2 row">
-                  <div class="col-auto col-sm-4">
+                <div class="align-items-center gx-3 justify-content-center mt-3 row">
+                  <div class="col-auto">
                     <%= Buttons::WatchEpisodeButtonComponent.new(
                       self, episode_id: episode.id, button_text: t("verb.track"), class_name: "btn-sm btn-outline-info rounded-3 w-100"
                     ).render %>
                   </div>
 
-                  <div class="col-auto col-sm-4">
+                  <div class="col-auto">
                   <%= Buttons::BulkWatchEpisodesButtonComponent.new(
                       self, episode_id: episode.id, button_text: t("verb.bulk_watch_up_to_shorten"), class_name: "btn-sm btn-outline-info rounded-3 w-100"
                     ).render %>
                   </div>
 
-                  <div class="col-auto col-sm-4">
+                  <div class="col-auto">
                     <%= Buttons::SkipEpisodeButtonComponent.new(
                       self, episode_id: episode.id, button_text: t("verb.skip_shorten"), class_name: "btn-sm btn-outline-secondary rounded-3 w-100"
                     ).render %>

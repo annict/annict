@@ -22,10 +22,10 @@ module ButtonGroups
           if @show_option_button
             h.tag :button, {
               class: "btn btn-outline-secondary",
-              data_controller: "tracking-modal-button",
-              data_tracking_modal_button_anime_id_value: @anime.id,
-              data_tracking_modal_button_frame_path: view_context.fragment_trackable_anime_path(@anime.id),
-              data_action: "click->tracking-modal-button#open",
+              data_controller: "tracking-offcanvas-button",
+              data_tracking_offcanvas_button_anime_id_value: @anime.id,
+              data_tracking_offcanvas_button_frame_path: view_context.fragment_trackable_anime_path(@anime.id),
+              data_action: "click->tracking-offcanvas-button#open",
               type: "button"
             } do
               h.tag :i, class: "far fa-ellipsis-h"

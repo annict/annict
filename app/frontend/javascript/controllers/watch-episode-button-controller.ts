@@ -4,11 +4,11 @@ import { Controller } from 'stimulus';
 import { EventDispatcher } from '../utils/event-dispatcher';
 
 export default class extends Controller {
-  static classes = ['loading']
+  static classes = ['loading'];
   static values = {
     episodeId: Number,
-    pageCategory: String
-  }
+    pageCategory: String,
+  };
 
   episodeIdValue!: number;
   isLoading!: boolean;
@@ -16,19 +16,19 @@ export default class extends Controller {
   pageCategoryValue!: string;
 
   startLoading() {
-    this.isLoading = true
+    this.isLoading = true;
     this.element.classList.add(this.loadingClass);
-    this.element.setAttribute('disabled', "true");
+    this.element.setAttribute('disabled', 'true');
   }
 
   endLoading() {
-    this.isLoading = false
+    this.isLoading = false;
     this.element.classList.remove(this.loadingClass);
   }
 
   reloadList() {
     new EventDispatcher('reloadable--trackable-episode-list:reload').dispatch();
-    new EventDispatcher('reloadable--tracking-modal:reload').dispatch();
+    new EventDispatcher('reloadable--tracking-offcanvas:reload').dispatch();
   }
 
   watch() {
@@ -36,7 +36,7 @@ export default class extends Controller {
       return;
     }
 
-    this.startLoading()
+    this.startLoading();
 
     axios
       .post('/api/internal/episode_records', {
@@ -44,8 +44,8 @@ export default class extends Controller {
         page_category: this.pageCategoryValue,
       })
       .then((res: any) => {
-        this.endLoading()
-        this.reloadList()
+        this.endLoading();
+        this.reloadList();
       })
       .catch(() => {
         ($('.c-sign-up-modal') as any).modal('show');

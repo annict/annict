@@ -1,4 +1,4 @@
-import Modal from 'bootstrap/js/dist/modal';
+import Offcanvas from 'bootstrap/js/dist/offcanvas';
 import { Controller } from 'stimulus';
 
 export default class extends Controller {
@@ -7,9 +7,13 @@ export default class extends Controller {
   animeIdValue!: number;
   framePath!: string;
   statusKinds!: { [key: number]: string };
+  offcanvasElm!: HTMLElement | null;
+  offcanvasFrameElm!: HTMLElement | null;
 
   initialize() {
     this.framePath = this.data.get('framePath') ?? '/500.html';
+    this.offcanvasElm = document.querySelector('.c-tracking-offcanvas');
+    this.offcanvasFrameElm = this.offcanvasElm?.querySelector('#c-tracking-offcanvas-frame') ?? null;
 
     document.addEventListener('component-value-fetcher:status-select-dropdown:fetched', (event: any) => {
       if (this.statusKinds) {
@@ -23,7 +27,7 @@ export default class extends Controller {
       }
     });
 
-    document.addEventListener('tracking-modal-button:enabled', (event: any) => {
+    document.addEventListener('tracking-offcanvas-button:enabled', (event: any) => {
       const { animeId } = event.detail;
 
       if (this.animeIdValue === animeId) {
@@ -33,14 +37,11 @@ export default class extends Controller {
   }
 
   open() {
-    const modalElm = document.querySelector('.c-tracking-modal');
-    const frameElm = modalElm?.querySelector('#c-tracking-modal-frame');
+    if (this.offcanvasElm && this.offcanvasFrameElm) {
+      this.offcanvasFrameElm.setAttribute('src', this.framePath);
+      this.offcanvasFrameElm.dataset.reloadableUrlValue = this.framePath;
 
-    if (modalElm && frameElm) {
-      frameElm.setAttribute('src', this.framePath);
-      (frameElm as HTMLElement).dataset.reloadableUrlValue = this.framePath;
-
-      new Modal(modalElm).show();
+      new Offcanvas(this.offcanvasElm).show(this.offcanvasElm);
     }
   }
 }

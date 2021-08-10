@@ -1,4 +1,4 @@
-@each $name, $color in (mizuho: $ann-mizuho-color) {
+@each $name, $color in (mizuho: $ann-mizuho-color, twitter: $ann-service-twitter-color) {
   .u-text-#{$name} {
     color: $color !important;
   }

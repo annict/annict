@@ -26,9 +26,9 @@ module Lists
                         h.tag :div, class: "col-auto" do
                           h.tag :div, {
                             class: "fw-bold u-cursor-pointer",
-                            data_controller: "tracking-modal-button",
-                            data_tracking_modal_button_frame_path: view_context.fragment_trackable_anime_path(le.work_id),
-                            data_action: "click->tracking-modal-button#open"
+                            data_controller: "tracking-offcanvas-button",
+                            data_tracking_offcanvas_button_frame_path: view_context.fragment_trackable_anime_path(le.work_id),
+                            data_action: "click->tracking-offcanvas-button#open"
                           } do
                             h.html Pictures::AnimePictureComponent.new(view_context, anime: le.anime, width: 80).render
                           end
@@ -37,9 +37,9 @@ module Lists
                         h.tag :div, class: "col" do
                           h.tag :div, {
                             class: "small u-cursor-pointer",
-                            data_controller: "tracking-modal-button",
-                            data_tracking_modal_button_frame_path: view_context.fragment_trackable_anime_path(le.work_id),
-                            data_action: "click->tracking-modal-button#open"
+                            data_controller: "tracking-offcanvas-button",
+                            data_tracking_offcanvas_button_frame_path: view_context.fragment_trackable_anime_path(le.work_id),
+                            data_action: "click->tracking-offcanvas-button#open"
                           } do
                             h.text le.anime.local_title
                           end
@@ -47,9 +47,9 @@ module Lists
                           if episode
                             h.tag :div, {
                               class: "fw-bold mt-1 u-cursor-pointer",
-                              data_controller: "tracking-modal-button",
-                              data_tracking_modal_button_frame_path: view_context.fragment_trackable_episode_path(episode.id),
-                              data_action: "click->tracking-modal-button#open"
+                              data_controller: "tracking-offcanvas-button",
+                              data_tracking_offcanvas_button_frame_path: view_context.fragment_trackable_episode_path(episode.id),
+                              data_action: "click->tracking-offcanvas-button#open"
                             } do
                               h.text episode.title_with_number
                             end
@@ -104,9 +104,9 @@ module Lists
                           h.tag :div, class: "col-4" do
                             h.tag :div, {
                               class: "btn btn-sm btn-outline-info rounded-3 w-100",
-                              data_controller: "tracking-modal-button",
-                              data_tracking_modal_button_frame_path: view_context.fragment_trackable_episode_path(episode.id),
-                              data_action: "click->tracking-modal-button#open"
+                              data_controller: "tracking-offcanvas-button",
+                              data_tracking_offcanvas_button_frame_path: view_context.fragment_trackable_episode_path(episode.id),
+                              data_action: "click->tracking-offcanvas-button#open"
                             } do
                               h.tag :i, class: "far fa-comment-check"
 
