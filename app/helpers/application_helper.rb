@@ -45,6 +45,9 @@ module ApplicationHelper
         type: flash.keys.first,
         message: flash[flash.keys.first]
       },
+      ga: {
+        trackingId: ga_tracking_id(request)
+      },
       i18n: {
         messages: {
           areYouSure: t("messages._common.are_you_sure")

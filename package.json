@@ -15,6 +15,7 @@
     "@babel/preset-env": "^7.14.1",
     "@hotwired/turbo": "^7.0.0-rc.1",
     "@rails/ujs": "^6.1.4",
+    "@types/gtag.js": "0.0.7",
     "autoprefixer": "^10.3.1",
     "autosize": "^5.0.1",
     "axios": "^0.21.1",

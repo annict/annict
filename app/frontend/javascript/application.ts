@@ -16,6 +16,11 @@ import { getTimeZone } from './utils/time-zone';
 document.addEventListener('turbo:load', (_event) => {
   const annConfig = (window as any).AnnConfig;
 
+  if (typeof gtag == 'function') {
+    gtag('js', new Date());
+    gtag('config', annConfig.ga.trackingId);
+  }
+
   dayjs.locale(annConfig.viewer.locale);
 
   Cookies.set('ann_time_zone', getTimeZone(), {
