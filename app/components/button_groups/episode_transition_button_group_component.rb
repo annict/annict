@@ -84,7 +84,6 @@ module ButtonGroups
       when :fragment_trackable_episode_path
         view_context.fragment_trackable_episode_path(@episode.next_episode.id)
       end
-
     end
   end
 end
