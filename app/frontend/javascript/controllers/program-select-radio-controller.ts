@@ -2,13 +2,12 @@ import axios from 'axios';
 import { Controller } from 'stimulus';
 
 import { EventDispatcher } from '../utils/event-dispatcher';
-
-const NO_SELECT = 'no_select';
+import fetcher from '../utils/fetcher';
 
 export default class extends Controller {
-  static values = { libraryEntryId: Number, initProgramId: Number };
+  static values = { animeId: Number, initProgramId: Number };
 
-  libraryEntryIdValue!: number;
+  animeIdValue!: number;
   initProgramIdValue!: number;
   currentProgramId!: number;
 
@@ -26,21 +25,24 @@ export default class extends Controller {
     });
   }
 
-  change(event: any) {
+  async change(event: any) {
     const newProgramId = event.currentTarget.value;
 
     if (newProgramId !== this.currentProgramId) {
       this.toggleLoading(true);
 
-      axios
-        .patch(`/api/internal/library_entries/${this.libraryEntryIdValue}`, {
+      try {
+        await fetcher.post(`/api/internal/animes/${this.animeIdValue}/program_select`, {
           program_id: newProgramId,
-        })
-        .then(() => {
-          this.currentProgramId = newProgramId;
-          this.toggleLoading(false);
-          this.reloadList();
         });
+
+        this.currentProgramId = newProgramId;
+        this.reloadList();
+      } catch (err) {
+        console.error(err);
+      } finally {
+        this.toggleLoading(false);
+      }
     }
   }
 }

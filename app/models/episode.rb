@@ -76,27 +76,6 @@ class Episode < ApplicationRecord
   after_create :update_prev_episode
   before_destroy :unset_prev_episode_id
 
-  def self.partitioned_episodes(episode_condition: "", limit: 1)
-    sanitized_episode_condition = episode_condition.present? ? "#{sanitize_sql(episode_condition)} AND" : ""
-    sql = <<~SQL
-      WITH ranked_episodes AS (
-        SELECT
-          *,
-          dense_rank() OVER (
-            PARTITION BY work_id ORDER BY sort_number ASC
-          ) AS episode_rank
-        FROM episodes
-        WHERE
-          #{sanitized_episode_condition}
-          deleted_at IS NULL AND
-          unpublished_at IS NULL
-      )
-      SELECT * FROM ranked_episodes WHERE episode_rank <= #{limit};
-    SQL
-
-    find_by_sql(sql)
-  end
-
   def next_episode
     @next_episode ||= anime.episodes.only_kept.find_by(prev_episode: self)
   end

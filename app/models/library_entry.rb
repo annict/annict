@@ -10,6 +10,7 @@
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
 #  next_episode_id     :bigint
+#  next_slot_id        :bigint
 #  program_id          :bigint
 #  status_id           :bigint
 #  user_id             :bigint           not null
@@ -18,6 +19,7 @@
 # Indexes
 #
 #  index_library_entries_on_next_episode_id         (next_episode_id)
+#  index_library_entries_on_next_slot_id            (next_slot_id)
 #  index_library_entries_on_program_id              (program_id)
 #  index_library_entries_on_status_id               (status_id)
 #  index_library_entries_on_user_id                 (user_id)
@@ -29,6 +31,7 @@
 # Foreign Keys
 #
 #  fk_rails_...  (next_episode_id => episodes.id)
+#  fk_rails_...  (next_slot_id => slots.id)
 #  fk_rails_...  (program_id => programs.id)
 #  fk_rails_...  (status_id => statuses.id)
 #  fk_rails_...  (user_id => users.id)
@@ -41,6 +44,7 @@ class LibraryEntry < ApplicationRecord
   self.ignored_columns = %w[kind]
 
   belongs_to :next_episode, class_name: "Episode", optional: true
+  belongs_to :next_slot, class_name: "Slot", optional: true
   belongs_to :program, optional: true
   belongs_to :status, optional: true
   belongs_to :user
@@ -72,16 +76,15 @@ class LibraryEntry < ApplicationRecord
   def append_episode!(episode)
     ActiveRecord::Base.transaction do
       new_watched_episode_ids = (watched_episode_ids << episode.id).uniq
-
-      episode_ids = anime.episodes.only_kept.pluck(:id)
-      unwatched_episode_ids = episode_ids - new_watched_episode_ids
-      next_episode = Episode.only_kept.where(id: unwatched_episode_ids).order(:sort_number).first
+      next_episode = anime.episodes.only_kept.where.not(id: new_watched_episode_ids).order(:sort_number).first
+      next_slot = program&.slots&.only_kept&.find_by(episode: next_episode)
 
       self.watched_episode_ids = new_watched_episode_ids
       self.next_episode = next_episode
+      self.next_slot = next_slot
+      self.position = 1 if status&.kind&.watching?
 
       save!
-      move_to_top
     end
 
     self

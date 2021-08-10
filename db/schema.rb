@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_17_210101) do
+ActiveRecord::Schema.define(version: 2021_08_09_083311) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -526,7 +526,9 @@ ActiveRecord::Schema.define(version: 2020_10_17_210101) do
     t.datetime "updated_at", null: false
     t.bigint "status_id"
     t.bigint "program_id"
+    t.bigint "next_slot_id"
     t.index ["next_episode_id"], name: "index_library_entries_on_next_episode_id"
+    t.index ["next_slot_id"], name: "index_library_entries_on_next_slot_id"
     t.index ["program_id"], name: "index_library_entries_on_program_id"
     t.index ["status_id"], name: "index_library_entries_on_status_id"
     t.index ["user_id", "position"], name: "index_library_entries_on_user_id_and_position"
@@ -1347,6 +1349,7 @@ ActiveRecord::Schema.define(version: 2020_10_17_210101) do
   add_foreign_key "forum_posts", "users"
   add_foreign_key "library_entries", "episodes", column: "next_episode_id"
   add_foreign_key "library_entries", "programs"
+  add_foreign_key "library_entries", "slots", column: "next_slot_id"
   add_foreign_key "library_entries", "statuses"
   add_foreign_key "library_entries", "users"
   add_foreign_key "library_entries", "works"

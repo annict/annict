@@ -40,6 +40,7 @@ Rails.application.routes.draw do
   match "/@:username/records/:record_id",                       via: :get,                                                     to: "records#show",                 username: ROUTING_USERNAME_FORMAT
   match "/api/internal/@:username/records/:record_id",          via: :patch,  as: :internal_api_record,                        to: "api/internal/records#update",  username: ROUTING_USERNAME_FORMAT
   match "/api/internal/animes/:anime_id/commented_records",     via: :post,   as: :internal_api_commented_anime_record_list,   to: "api/internal/commented_anime_records#create",   anime_id: ROUTING_ID_FORMAT
+  match "/api/internal/animes/:anime_id/program_select",        via: :post,   as: :internal_api_anime_program_select,          to: "api/internal/program_selects#create"
   match "/api/internal/animes/:anime_id/status_select",         via: :post,   as: :internal_api_anime_status_select,           to: "api/internal/status_selects#create"
   match "/api/internal/channels/:channel_id/reception",         via: :delete, as: :internal_api_channel_reception,             to: "api/internal/receptions#destroy"
   match "/api/internal/channels/:channel_id/reception",         via: :post,                                                    to: "api/internal/receptions#create"
@@ -50,7 +51,6 @@ Rails.application.routes.draw do
   match "/api/internal/follow",                                 via: :post,                                                    to: "api/internal/follows#create"
   match "/api/internal/following",                              via: :get,    as: :internal_api_following_list,                to: "api/internal/following#index"
   match "/api/internal/library_entries",                        via: :post,   as: :internal_api_library_entry_list,            to: "api/internal/library_entries#index"
-  match "/api/internal/library_entries/:library_entry_id",      via: :patch,  as: :internal_api_library_entry,                 to: "api/internal/library_entries#update"
   match "/api/internal/likes",                                  via: :get,    as: :internal_api_like_list,                     to: "api/internal/likes#index"
   match "/api/internal/likes",                                  via: :post,                                                    to: "api/internal/likes#create"
   match "/api/internal/multiple_episode_records",               via: :post,   as: :internal_api_multiple_episode_record,       to: "api/internal/multiple_episode_records#create"

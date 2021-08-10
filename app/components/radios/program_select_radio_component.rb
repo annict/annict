@@ -2,6 +2,8 @@
 
 module Radios
   class ProgramSelectRadioComponent < ApplicationV6Component
+    NO_SELECT = 0
+
     def initialize(view_context, library_entry:, programs:, class_name: "")
       super view_context
       @class_name = class_name
@@ -14,18 +16,43 @@ module Radios
         h.tag :div, {
           class: "gx-3 row #{@class_name}",
           data_controller: "program-select-radio",
-          data_program_select_radio_library_entry_id_value: @library_entry.id,
-          data_program_select_radio_init_program_id_value: @library_entry.program_id
+          data_program_select_radio_anime_id_value: @library_entry.work_id,
+          data_program_select_radio_init_program_id_value: @library_entry.program_id.presence || NO_SELECT
         } do
+          h.tag :div, class: "col-6" do
+            h.tag :div, class: "form-check" do
+              input_id = "program-#{NO_SELECT}"
+
+              input_attrs = {
+                class: "form-check-input",
+                data_action: "program-select-radio#change",
+                id: input_id,
+                name: "program-select",
+                type: "radio",
+                value: NO_SELECT
+              }
+              if @library_entry.program_id.nil?
+                input_attrs[:checked] = true
+              end
+              h.tag :input, input_attrs
+
+              h.tag :label, class: "form-check-label", for: input_id do
+                h.tag :div do
+                  h.text t("noun.no_select")
+                end
+              end
+            end
+          end
+
           @programs.each do |program|
             h.tag :div, class: "col-6" do
               h.tag :div, class: "form-check" do
-                id = "program-#{program.id}"
+                input_id = "program-#{program.id}"
 
                 input_attrs = {
                   class: "form-check-input",
                   data_action: "program-select-radio#change",
-                  id: id,
+                  id: input_id,
                   name: "program-select",
                   type: "radio",
                   value: program.id
@@ -35,7 +62,7 @@ module Radios
                 end
                 h.tag :input, input_attrs
 
-                h.tag :label, class: "form-check-label", for: id do
+                h.tag :label, class: "form-check-label", for: input_id do
                   h.tag :div do
                     h.text program.channel.name
                   end
