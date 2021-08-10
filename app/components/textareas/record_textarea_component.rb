@@ -2,11 +2,12 @@
 
 module Textareas
   class RecordTextareaComponent < ApplicationV6Component
-    def initialize(view_context, form:, textarea_name:, optional_textarea_classname: "")
+    def initialize(view_context, form:, textarea_name:, optional_textarea_classname: "", autofocus: true)
       super view_context
       @form = form
       @textarea_name = textarea_name
       @optional_textarea_classname = optional_textarea_classname
+      @autofocus = autofocus
     end
 
     def render
@@ -14,6 +15,7 @@ module Textareas
         h.html text_area_tag(
           @textarea_name,
           @form.object.comment,
+          autofocus: @autofocus,
           class: textarea_classname,
           "data-action": "keyup->record-textarea#updateCharactersCount",
           "data-controller": "record-textarea",
