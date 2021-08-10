@@ -83,7 +83,7 @@ class Activity < ApplicationRecord
     case action
     when "create_episode_record"
       "create_record"
-    when "create_work_record"
+    when "create_work_record", "create_anime_record"
       "create_review"
     when "create_multiple_episode_records"
       "create_multiple_records"
