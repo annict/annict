@@ -13,15 +13,13 @@ import { definitionsFromContext } from 'stimulus/webpack-helpers';
 
 import { getTimeZone } from './utils/time-zone';
 
-document.addEventListener('turbo:load', (_event) => {
-  const annConfig = (window as any).AnnConfig;
+const annConfig = (window as any).AnnConfig;
 
+document.addEventListener('turbo:load', (_event) => {
   if (typeof gtag == 'function') {
     gtag('js', new Date());
     gtag('config', annConfig.ga.trackingId);
   }
-
-  dayjs.locale(annConfig.viewer.locale);
 
   Cookies.set('ann_time_zone', getTimeZone(), {
     domain: `.${annConfig.domain}`,
@@ -32,6 +30,8 @@ document.addEventListener('turbo:load', (_event) => {
     .querySelector('meta[name="csrf-token"]')
     ?.getAttribute('content');
 });
+
+dayjs.locale(annConfig.viewer.locale);
 
 const application = Application.start();
 const context = (require as any).context('./controllers', true, /\.ts$/);

@@ -5,7 +5,7 @@ import { Controller } from 'stimulus';
 dayjs.extend(relativeTime);
 
 export default class extends Controller {
-  initialize() {
+  connect() {
     this.element.textContent = this.relativeTime;
     this.element.setAttribute('title', this.absoluteTime);
   }
