@@ -88,7 +88,7 @@ class LibraryEntry < ApplicationRecord
       new_watched_episode_ids = (watched_episode_ids << episode.id).uniq
 
       self.watched_episode_ids = new_watched_episode_ids
-      self.set_next_resources!
+      set_next_resources!
       self.position = 1 if status&.kind&.watching?
 
       save!
