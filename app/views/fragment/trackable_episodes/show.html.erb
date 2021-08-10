@@ -23,9 +23,17 @@
             </span>
           <% end %>
 
-          <h3 class="fw-bold mb-0 mt-1">
+          <h3 class="fw-bold mb-0 mt-2">
             <%= @episode.title_with_number %>
           </h3>
+
+          <%= ButtonGroups::EpisodeTransitionButtonGroupComponent.new(
+            self,
+            episode: @episode,
+            path: :fragment_trackable_episode_path,
+            button_style: false,
+            class_name: "mt-2 small"
+          ).render %>
 
           <ul class="list-inline mt-2 small">
             <li class="list-inline-item">
@@ -35,7 +43,7 @@
               <% end %>
             </li>
 
-            <li class="list-inline-item">
+            <li class="list-inline-item mt-1 mt-sm-0">
               <%= link_to episode_path(@anime.id, @episode.id), data: { "turbo-frame": "_top" } do %>
                 <%= t("noun.episode_page") %>
                 <i class="far fa-angle-right ms-1"></i>
