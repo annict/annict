@@ -89,6 +89,12 @@ class Program < ApplicationRecord
     end
   end
 
+  def slot_by_episode(episode)
+    return unless episode
+
+    slots.only_kept.find_by(episode: episode)
+  end
+
   private
 
   def calc_for_timezone

@@ -58,6 +58,8 @@ class LibraryEntry < ApplicationRecord
   scope :wanna_watch, -> { with_status(:wanna_watch) }
   scope :watching, -> { with_status(:watching) }
   scope :has_next_episode, -> { where.not(next_episode_id: nil) }
+  scope :has_no_next_episode, -> { where(next_episode_id: nil) }
+  scope :has_no_next_slot, -> { where.not(program_id: nil).where(next_slot_id: nil) }
   scope :with_status, ->(*status_kinds) { joins(:status).where(statuses: {kind: status_kinds}) }
   scope :with_not_deleted_anime, -> { joins(:anime).merge(Anime.only_kept) }
 
@@ -73,15 +75,20 @@ class LibraryEntry < ApplicationRecord
     end
   end
 
+  def set_next_resources!
+    next_episode = anime.episodes.next_episode(watched_episode_ids)
+    next_slot = program&.slot_by_episode(next_episode)
+
+    self.next_episode = next_episode
+    self.next_slot = next_slot
+  end
+
   def append_episode!(episode)
     ActiveRecord::Base.transaction do
       new_watched_episode_ids = (watched_episode_ids << episode.id).uniq
-      next_episode = anime.episodes.only_kept.where.not(id: new_watched_episode_ids).order(:sort_number).first
-      next_slot = program&.slots&.only_kept&.find_by(episode: next_episode)
 
       self.watched_episode_ids = new_watched_episode_ids
-      self.next_episode = next_episode
-      self.next_slot = next_slot
+      set_next_resources!
       self.position = 1 if status&.kind&.watching?
 
       save!
