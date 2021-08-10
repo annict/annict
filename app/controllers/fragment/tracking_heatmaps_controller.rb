@@ -2,8 +2,6 @@
 
 module Fragment
   class TrackingHeatmapsController < Fragment::ApplicationController
-    before_action :authenticate_user!
-
     def show
       user = User.only_kept.find_by!(username: params[:username])
       date_from = (Date.today - 150.days).beginning_of_week(:sunday)

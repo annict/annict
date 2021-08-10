@@ -4,6 +4,7 @@ namespace :episode do
   task generate: :environment do
     EpisodeGeneratorService.execute!
     SyobocalEpisodeDataFetcherService.execute!
+    Annict::DataCare::UpdateNextResourcesOnLibraryEntries.run!
   end
 
   task update_score: :environment do
