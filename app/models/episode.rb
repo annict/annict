@@ -76,6 +76,10 @@ class Episode < ApplicationRecord
   after_create :update_prev_episode
   before_destroy :unset_prev_episode_id
 
+  def self.next_episode(watched_episode_ids = [])
+    only_kept.where.not(id: watched_episode_ids).order(:sort_number).first
+  end
+
   def next_episode
     @next_episode ||= anime.episodes.only_kept.find_by(prev_episode: self)
   end
