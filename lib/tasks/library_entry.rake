@@ -9,6 +9,8 @@ namespace :library_entry do
       .merge(LibraryEntry.has_no_next_episode.or(LibraryEntry.has_no_next_slot))
 
     library_entries.find_each do |le|
+      puts "library_entries.id: #{le.id}"
+
       le.set_next_resources!
       le.save!
     end
