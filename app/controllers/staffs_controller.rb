@@ -8,6 +8,6 @@ class StaffsController < ApplicationV6Controller
 
     set_anime_header_resources
 
-    @staffs = @anime.staffs.only_kept.order(:sort_number)
+    @staffs = @anime.staffs.preload(:resource).only_kept.order(:sort_number)
   end
 end
