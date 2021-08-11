@@ -77,7 +77,7 @@ class Staff < ApplicationRecord
 
   before_validation :set_name
 
-  local_method :name
+  local_method :accurate_name, :name
 
   def to_diffable_hash
     data = self.class::DIFF_FIELDS.each_with_object({}) { |field, hash|
@@ -96,6 +96,16 @@ class Staff < ApplicationRecord
 
   def support_en?
     name_en.present? && resource.name_en.present?
+  end
+
+  def accurate_name
+    return name if name == resource.name
+    "#{name} (#{resource.name})"
+  end
+
+  def accurate_name_en
+    return name_en if name_en == resource.name_en
+    "#{name_en} (#{resource.name_en})"
   end
 
   private

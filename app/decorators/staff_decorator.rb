@@ -7,16 +7,6 @@ module StaffDecorator
     link_to name, path, options
   end
 
-  def accurate_name
-    return name if name == resource.name
-    "#{name} (#{resource.name})"
-  end
-
-  def accurate_name_en
-    return name_en if name_en == resource.name_en
-    "#{name_en} (#{resource.name_en})"
-  end
-
   def local_name_with_old
     return local_name if local_name == resource.local_name
     "#{local_name} (#{resource.local_name})"
