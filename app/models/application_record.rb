@@ -20,6 +20,14 @@ class ApplicationRecord < ActiveRecord::Base
     find item_id
   end
 
+  def self.local_method(*column_names)
+    column_names.each do |column_name|
+      define_method :"local_#{column_name}" do
+        _local_property(column_name)
+      end
+    end
+  end
+
   def root_resource?
     false
   end
