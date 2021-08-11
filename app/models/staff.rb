@@ -77,7 +77,7 @@ class Staff < ApplicationRecord
 
   before_validation :set_name
 
-  local_method :accurate_name, :name
+  localized_method :accurate_name, :name
 
   def to_diffable_hash
     data = self.class::DIFF_FIELDS.each_with_object({}) { |field, hash|
