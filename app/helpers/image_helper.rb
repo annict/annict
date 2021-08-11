@@ -81,6 +81,34 @@ module ImageHelper
     v4_ann_image_url(profile, :image, size: size, ratio: "1:1")
   end
 
+  def ann_image_url(record, field, width:, height:, format: "jpg")
+    path = record ? record.uploaded_file_path(field) : "no-image.jpg"
+    fit = width == height ? "crop" : "fill"
+
+    ix_image_url(path, {
+      fill: "solid",
+      fit: fit,
+      fm: format,
+      height: height,
+      w: width
+    })
+  end
+
+  def ann_anime_image_url(anime, width:, format: "jpg")
+    height = anime.anime_image_height(width)
+    ann_image_url(anime.anime_image, :image, width: width, height: height, format: format)
+  end
+
+  def ann_anime_video_image_url(anime, trailer, width:, format: "jpg")
+    height = anime.video_image_height(width)
+    ann_image_url(trailer, :image, width: width, height: height, format: format)
+  end
+
+  def ann_avatar_image_url(user, width:, format: "jpg")
+    height = width
+    ann_image_url(user.profile, :image, width: width, height: height, format: format)
+  end
+
   private
 
   def image_path(record, field)
