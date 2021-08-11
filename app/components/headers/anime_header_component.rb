@@ -122,6 +122,14 @@ module Headers
                   end
                 end
 
+                h.tag :div, class: "mt-3" do
+                  h.html Buttons::ShareToTwitterButtonComponent.new(
+                    view_context,
+                    text: @anime.local_title,
+                    url: "#{local_url}#{view_context.anime_path(@anime.id)}"
+                  ).render
+                end
+
                 if current_user&.committer?
                   h.tag :div, class: "mt-3" do
                     h.tag :a, href: view_context.db_edit_work_path(@anime) do
