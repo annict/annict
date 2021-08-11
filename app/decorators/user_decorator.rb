@@ -16,8 +16,4 @@ module UserDecorator
   def name_with_username
     "#{profile.name} (@#{username})"
   end
-
-  def avatar_url(size:)
-    v4_ann_image_url(profile, :image, size: size, ratio: "1:1")
-  end
 end
