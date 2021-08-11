@@ -116,7 +116,7 @@ module Headers
                 end
 
                 if @anime.copyright
-                  h.tag :div, class: "text-muted u-very-small" do
+                  h.tag :div, class: "mt-3 text-muted u-very-small" do
                     h.tag :i, class: "far fa-copyright me-1"
                     h.text @anime.copyright
                   end
