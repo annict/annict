@@ -78,4 +78,5 @@
   // Cards
 
   --ann-card-bg: #{$card-bg};
+  --ann-card-bg-rgb: #{hexToRGBString($card-bg)};
 }

@@ -40,7 +40,11 @@
   }
 
   &__read-more-background {
-    background: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0), var(--ann-card-bg));
+    background: linear-gradient(
+      rgba(var(--ann-card-bg-rgb), 0),
+      rgba(var(--ann-card-bg-rgb), 0),
+      rgba(var(--ann-card-bg-rgb), 1)
+    );
     position: absolute;
     top: 0;
   }
