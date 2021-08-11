@@ -3,7 +3,7 @@
 module ButtonGroups
   class PaginationButtonGroupComponent < ApplicationV6Component
     PAGE_WINDOW = 10
-    PARAM_KEY_EXCEPT_LIST = %i[action controller] + Kaminari::Helpers::PARAM_KEY_EXCEPT_LIST
+    PARAM_KEY_EXCEPT_LIST = Kaminari::Helpers::PARAM_KEY_EXCEPT_LIST
 
     def initialize(view_context, collection:, without_count: false, controller: nil, action: nil)
       super view_context
@@ -132,7 +132,11 @@ module ButtonGroups
     def page_url_for(page:)
       params = view_context.params.to_unsafe_h.except(*PARAM_KEY_EXCEPT_LIST)
       params[:page] = page
-      url_for(controller: controller, action: action, only_path: true, params: params)
+      params[:controller] = controller
+      params[:action] = action
+      params[:only_path] = true
+
+      url_for params
     end
 
     def current_page
