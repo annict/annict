@@ -8,7 +8,6 @@ module Canary
         include Imgix::Rails::UrlHelper
 
         include ImageHelper
-        include ImageV6Helper
         include MarkdownHelper
 
         def database_id

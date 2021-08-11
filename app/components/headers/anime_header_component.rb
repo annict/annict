@@ -116,10 +116,18 @@ module Headers
                 end
 
                 if @anime.copyright
-                  h.tag :div, class: "text-muted u-very-small" do
+                  h.tag :div, class: "mt-3 text-muted u-very-small" do
                     h.tag :i, class: "far fa-copyright me-1"
                     h.text @anime.copyright
                   end
+                end
+
+                h.tag :div, class: "mt-3" do
+                  h.html Buttons::ShareToTwitterButtonComponent.new(
+                    view_context,
+                    text: @anime.local_title,
+                    url: "#{local_url}#{view_context.anime_path(@anime.id)}"
+                  ).render
                 end
 
                 if current_user&.committer?
