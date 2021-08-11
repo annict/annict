@@ -70,6 +70,21 @@ class Cast < ApplicationRecord
     name_en.present? && character.name_en.present? && person.name_en.present?
   end
 
+  def accurate_name
+    return name if name == person.name
+    "#{name} (#{person.name})"
+  end
+
+  def accurate_name_en
+    return name_en if name_en == person.name_en
+    "#{name_en} (#{person.name_en})"
+  end
+
+  def local_name_with_old
+    return local_name if local_name == person.local_name
+    "#{local_name} (#{person.local_name})"
+  end
+
   private
 
   def set_name

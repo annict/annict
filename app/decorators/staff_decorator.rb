@@ -7,11 +7,6 @@ module StaffDecorator
     link_to name, path, options
   end
 
-  def local_name_with_old
-    return local_name if local_name == resource.local_name
-    "#{local_name} (#{resource.local_name})"
-  end
-
   def to_values
     self.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
       hash[field] = case field
@@ -27,15 +22,5 @@ module StaffDecorator
 
       hash
     end
-  end
-
-  def role_name
-    return local_role_other if role_value == "other"
-    role_text
-  end
-
-  def local_role_other
-    return role_other_en if I18n.locale != :ja && role_other_en.present?
-    role_other
   end
 end

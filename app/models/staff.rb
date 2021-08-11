@@ -108,6 +108,21 @@ class Staff < ApplicationRecord
     "#{name_en} (#{resource.name_en})"
   end
 
+  def local_name_with_old
+    return local_name if local_name == resource.local_name
+    "#{local_name} (#{resource.local_name})"
+  end
+
+  def role_name
+    return local_role_other if role_value == "other"
+    role_text
+  end
+
+  def local_role_other
+    return role_other_en if I18n.locale != :ja && role_other_en.present?
+    role_other
+  end
+
   private
 
   def set_name
