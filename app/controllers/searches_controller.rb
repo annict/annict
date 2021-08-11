@@ -26,7 +26,7 @@ class SearchesController < ApplicationV6Controller
     when "organization"
       [@organizations, "organization_list"]
     end
-    @resources = @resources.page(params[:page]).without_count
+    @resources = @resources.page(params[:page])
   end
 
   private

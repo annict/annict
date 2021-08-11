@@ -17,7 +17,7 @@ module Db
       @works = @works.with_no_season if @is_no_release_season
       @works = @works.with_no_slots if @is_no_slots
       @works = @works.by_seasons(@season_slugs) if @season_slugs.present?
-      @works = @works.order(id: :desc).page(params[:page]).per(100).without_count
+      @works = @works.order(id: :desc).page(params[:page]).per(100)
     end
 
     def new

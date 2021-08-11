@@ -18,7 +18,6 @@ class RecordsController < ApplicationV6Controller
       .order(created_at: :desc)
       .page(params[:page])
       .per(30)
-      .without_count
     @records = @records.by_month(params[:month], year: params[:year]) if params[:month] && params[:year]
     @anime_ids = @records.pluck(:work_id)
   end

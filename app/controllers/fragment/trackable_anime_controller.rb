@@ -14,7 +14,6 @@ module Fragment
         .order(:sort_number)
         .page(params[:page])
         .per(15)
-        .without_count
       @programs = @anime
         .programs
         .only_kept

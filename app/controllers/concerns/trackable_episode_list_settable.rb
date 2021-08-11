@@ -15,6 +15,5 @@ module TrackableEpisodeListSettable
       .order(:position)
       .page(params[:page])
       .per(50)
-      .without_count
   end
 end

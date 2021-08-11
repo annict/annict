@@ -23,7 +23,7 @@ class TimelineComponent < ApplicationV6Component
         end
 
         h.tag :div, class: "mt-3 text-center" do
-          h.html ButtonGroups::PaginationButtonGroupComponent.new(view_context, collection: @activity_groups).render
+          h.html ButtonGroups::PaginationButtonGroupComponent.new(view_context, collection: @activity_groups, without_count: true).render
         end
       end
     end

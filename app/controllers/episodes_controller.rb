@@ -11,7 +11,7 @@ class EpisodesController < ApplicationV6Controller
     raise ActionController::RoutingError, "Not Found" if @anime.no_episodes?
 
     @anime_ids = [@anime.id]
-    @episodes = @anime.episodes.only_kept.order(:sort_number).page(params[:page]).per(100).without_count
+    @episodes = @anime.episodes.only_kept.order(:sort_number).page(params[:page]).per(100)
   end
 
   def show
