@@ -99,6 +99,8 @@ class Program < ApplicationRecord
 
   def calc_for_timezone
     return if time_zone.blank?
+    return if self.started_at.nil?
+
     started_at = ActiveSupport::TimeZone.new(time_zone).local_to_utc(self.started_at)
     self.started_at = started_at
   end
