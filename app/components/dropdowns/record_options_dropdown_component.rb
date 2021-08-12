@@ -2,9 +2,11 @@
 
 module Dropdowns
   class RecordOptionsDropdownComponent < ApplicationV6Component
-    def initialize(view_context, record:)
+    def initialize(view_context, record:, show_box: true, show_options: true)
       super view_context
       @record = record
+      @show_box = show_box
+      @show_options = show_options
     end
 
     def render
@@ -16,7 +18,7 @@ module Dropdowns
 
           h.tag :div, class: "dropdown-menu" do
             if RecordPolicy.new(current_user, @record).update?
-              h.tag :a, href: view_context.fragment_edit_record_path(@record.user.username, @record.id), class: "dropdown-item" do
+              h.tag :a, href: view_context.fragment_edit_record_path(@record.user.username, @record.id, show_box: @show_box, show_options: @show_options), class: "dropdown-item" do
                 h.text t("noun.edit")
               end
 

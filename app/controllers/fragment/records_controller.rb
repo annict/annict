@@ -24,6 +24,8 @@ module Fragment
     def edit
       user = User.only_kept.find_by!(username: params[:username])
       @record = current_user.records.only_kept.find_by!(id: params[:record_id], user_id: user.id)
+      @anime = @record.anime
+      @episode = @record.episode
 
       authorize @record, :edit?
 
@@ -44,6 +46,10 @@ module Fragment
           share_to_twitter: current_user.share_record_to_twitter?
         )
       end
+
+      @show_options = params[:show_options] == "true"
+      @show_box = params[:show_box] == "true"
+      @anime_ids = [@anime.id]
     end
   end
 end
