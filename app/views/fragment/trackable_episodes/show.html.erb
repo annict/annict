@@ -1,6 +1,7 @@
 <turbo-frame id="c-tracking-offcanvas-frame">
   <%= component_value_fetcher_tag("status-select-dropdown", internal_api_library_entry_list_path, method: :post, payload: {anime_ids: [@anime.id]}) %>
   <%= component_value_fetcher_tag("like-button", internal_api_like_list_path) %>
+  <%= component_value_fetcher_tag("spoiler-guard", internal_api_spoiler_guard_path) %>
 
   <div class="offcanvas-body pt-0 px-0">
     <div class="container">
