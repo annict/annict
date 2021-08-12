@@ -32,6 +32,8 @@ ja:
         hide_ads_html: <a href="/supporters">Annictサポーター</a>になると広告を非表示にできます
       body:
         view_full_text: 全文読む
+      deprecated_ratings_collapse:
+        hint: 以前作品の記録に設定できた4項目の評価を表示しています
       favorite_button:
         add_to_favorites: お気に入りに登録
         added_to_favorites: 登録済み

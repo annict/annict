@@ -32,6 +32,8 @@ en:
         hide_ads_html: You can hide ads by becoming <a href="/supporters">Annict Supporters</a>
       body:
         view_full_text: View Full Text
+      deprecated_ratings_collapse:
+        hint: This 4 ratings are an old feature that existed in Annict.
       favorite_button:
         add_to_favorites: Add to Favorites
         added_to_favorites: Added to Favorites
