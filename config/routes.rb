@@ -206,6 +206,7 @@ Rails.application.routes.draw do
   match "/forum/posts/:post_id/comments/:comment_id/edit",      via: :get,    as: :forum_edit_comment,                         to: "forum/comments#edit",             post_id: ROUTING_ID_FORMAT, comment_id: ROUTING_ID_FORMAT
   match "/forum/posts/:post_id/edit",                           via: :get,    as: :forum_edit_post,                            to: "forum/posts#edit",                post_id: ROUTING_ID_FORMAT
   match "/forum/posts/new",                                     via: :get,    as: :forum_new_post,                             to: "forum/posts#new"
+  match "/fragment/@:username/records",                         via: :get,    as: :fragment_record_list,                       to: "fragment/records#index",          username: ROUTING_USERNAME_FORMAT
   match "/fragment/@:username/records/:record_id",              via: :get,    as: :fragment_record,                            to: "fragment/records#show",           username: ROUTING_USERNAME_FORMAT
   match "/fragment/@:username/records/:record_id/edit",         via: :get,    as: :fragment_edit_record,                       to: "fragment/records#edit",           username: ROUTING_USERNAME_FORMAT
   match "/fragment/@:username/tracking_heatmap",                via: :get,    as: :fragment_tracking_heatmap,                  to: "fragment/tracking_heatmaps#show", username: ROUTING_USERNAME_FORMAT

@@ -2,6 +2,7 @@
 
 class RecordsController < ApplicationV6Controller
   include Pundit
+  include RecordListSettable
 
   before_action :authenticate_user!, only: %i[destroy]
 
@@ -12,14 +13,7 @@ class RecordsController < ApplicationV6Controller
     @profile = @user.profile
     @dates = @user.records.only_kept.group_by_month(:created_at).count.to_a.reverse.to_h
 
-    @records = @user
-      .records
-      .preload(:anime_record, anime: :anime_image, episode_record: :episode)
-      .order(created_at: :desc)
-      .page(params[:page])
-      .per(30)
-    @records = @records.by_month(params[:month], year: params[:year]) if params[:month] && params[:year]
-    @anime_ids = @records.pluck(:work_id)
+    set_user_record_list(@user)
   end
 
   def show

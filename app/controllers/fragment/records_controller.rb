@@ -3,8 +3,17 @@
 module Fragment
   class RecordsController < Fragment::ApplicationController
     include Pundit
+    include RecordListSettable
 
     before_action :authenticate_user!, only: %i[edit]
+
+    def index
+      set_page_category PageCategory::RECORD_LIST
+
+      @user = User.only_kept.find_by!(username: params[:username])
+
+      set_user_record_list(@user)
+    end
 
     def show
       user = User.only_kept.find_by!(username: params[:username])
