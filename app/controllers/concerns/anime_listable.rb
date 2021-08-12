@@ -18,7 +18,7 @@ module AnimeListable
   end
 
   def set_resource_data(animes)
-    @anime_ids = animes.pluck(:id)
+    @anime_ids = animes.map(&:id)
 
     if @display_option == "grid"
       @casts_data = Cast.only_kept.where(anime: animes).order(:sort_number).group_by(&:work_id)

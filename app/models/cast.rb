@@ -55,6 +55,8 @@ class Cast < ApplicationRecord
 
   before_validation :set_name
 
+  localized_method :name
+
   def to_diffable_hash
     data = self.class::DIFF_FIELDS.each_with_object({}) { |field, hash|
       hash[field] = send(field) if respond_to?(field)
@@ -66,6 +68,21 @@ class Cast < ApplicationRecord
 
   def support_en?
     name_en.present? && character.name_en.present? && person.name_en.present?
+  end
+
+  def accurate_name
+    return name if name == person.name
+    "#{name} (#{person.name})"
+  end
+
+  def accurate_name_en
+    return name_en if name_en == person.name_en
+    "#{name_en} (#{person.name_en})"
+  end
+
+  def local_name_with_old
+    return local_name if local_name == person.local_name
+    "#{local_name} (#{person.local_name})"
   end
 
   private

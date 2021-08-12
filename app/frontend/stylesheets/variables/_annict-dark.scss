@@ -78,4 +78,5 @@
   // Cards
 
   --ann-card-bg: #{tint-color($ann-scheme-dark-color, 8%)};
+  --ann-card-bg-rgb: #{hexToRGBString(tint-color($ann-scheme-dark-color, 8%))};
 }

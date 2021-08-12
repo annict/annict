@@ -11,7 +11,6 @@ module Db
         .order(sort_number: :desc)
         .page(params[:page])
         .per(100)
-        .without_count
     end
 
     def new

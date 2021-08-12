@@ -9,7 +9,6 @@ class NotificationsController < ApplicationV6Controller
       .includes(:action_user)
       .order(created_at: :desc)
       .page(params[:page])
-      .without_count
 
     current_user.read_notifications! if current_user.notifications_count.positive?
   end

@@ -77,6 +77,8 @@ class Staff < ApplicationRecord
 
   before_validation :set_name
 
+  localized_method :accurate_name, :name
+
   def to_diffable_hash
     data = self.class::DIFF_FIELDS.each_with_object({}) { |field, hash|
       hash[field] = case field
@@ -94,6 +96,31 @@ class Staff < ApplicationRecord
 
   def support_en?
     name_en.present? && resource.name_en.present?
+  end
+
+  def accurate_name
+    return name if name == resource.name
+    "#{name} (#{resource.name})"
+  end
+
+  def accurate_name_en
+    return name_en if name_en == resource.name_en
+    "#{name_en} (#{resource.name_en})"
+  end
+
+  def local_name_with_old
+    return local_name if local_name == resource.local_name
+    "#{local_name} (#{resource.local_name})"
+  end
+
+  def role_name
+    return local_role_other if role_value == "other"
+    role_text
+  end
+
+  def local_role_other
+    return role_other_en if I18n.locale != :ja && role_other_en.present?
+    role_other
   end
 
   private

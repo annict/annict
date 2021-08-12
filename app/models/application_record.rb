@@ -20,6 +20,14 @@ class ApplicationRecord < ActiveRecord::Base
     find item_id
   end
 
+  def self.localized_method(*column_names)
+    column_names.each do |column_name|
+      define_method :"local_#{column_name}" do
+        _local_property(column_name)
+      end
+    end
+  end
+
   def root_resource?
     false
   end
@@ -36,6 +44,9 @@ class ApplicationRecord < ActiveRecord::Base
     return super if method_name.blank?
     return super unless method_name.to_s.start_with?("local_")
 
+    unless Rails.env.production?
+      ActiveSupport::Deprecation.warn("local_* methods using method_missing are deprecated. (#{self.class.name}##{method_name})")
+    end
     _local_property(method_name.to_s.sub("local_", ""), *arguments)
   end
 

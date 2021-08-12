@@ -10,7 +10,6 @@ module Db
         .order(id: :desc)
         .page(params[:page])
         .per(100)
-        .without_count
     end
 
     def new

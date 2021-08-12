@@ -24,7 +24,7 @@
             <ul class="list-inline mb-0">
               <% casts.uniq(&:name).first(6).each do |cast| %>
                 <li class="list-inline-item small">
-                  <%= cast.decorate.local_name_link %>
+                  <%= link_to cast.local_name, person_path(cast.person_id) %>
                 </li>
               <% end %>
             </ul>
@@ -41,7 +41,7 @@
             <ul class="list-inline mb-0">
               <% staffs.uniq(&:name).each do |staff| %>
                 <li class="list-inline-item small">
-                  <%= staff.decorate.local_name_link %>
+                  <%= link_to staff.local_name, staff_resource_path(staff) %>
                 </li>
               <% end %>
             </ul>

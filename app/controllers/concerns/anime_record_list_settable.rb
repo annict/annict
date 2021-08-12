@@ -19,12 +19,10 @@ module AnimeRecordListSettable
         .merge(AnimeRecord.with_body)
         .page(params[:page])
         .per(100)
-        .without_count
     else
       @all_records = records
         .page(params[:page])
         .per(100)
-        .without_count
     end
   end
 end
