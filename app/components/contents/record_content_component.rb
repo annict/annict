@@ -20,6 +20,10 @@ module Contents
                   h.html Labels::RatingLabelComponent.new(view_context, rating: @record.rating, advanced_rating: @record.advanced_rating, class_name: "mb-1").render
                 end
 
+                if @record.deprecated_rating_exists?
+                  h.html Collapses::DeprecatedRatingsCollapseComponent.new(view_context, record: @record, class_name: "ms-2 text-muted").render
+                end
+
                 h.html BodyV6Component.new(view_context, content: @record.comment, format: :markdown, height: 300).render
               end
             })

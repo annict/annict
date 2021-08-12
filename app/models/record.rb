@@ -65,6 +65,26 @@ class Record < ApplicationRecord
     episode_record? ? episode_record.rating : nil
   end
 
+  def deprecated_animation_rating
+    anime_record&.rating_animation_state
+  end
+
+  def deprecated_character_rating
+    anime_record&.rating_character_state
+  end
+
+  def deprecated_music_rating
+    anime_record&.rating_music_state
+  end
+
+  def deprecated_story_rating
+    anime_record&.rating_story_state
+  end
+
+  def deprecated_rating_exists?
+    deprecated_animation_rating || deprecated_music_rating || deprecated_story_rating || deprecated_character_rating
+  end
+
   def comment
     episode_record? ? episode_record.body : anime_record&.body
   end
