@@ -2,9 +2,11 @@
 
 module Headers
   class RecordHeaderComponent < ApplicationV6Component
-    def initialize(view_context, record:)
+    def initialize(view_context, record:, show_box: true, show_options: true)
       super view_context
       @record = record
+      @show_options = show_options
+      @show_box = show_box
       @user = @record.user
     end
 
@@ -48,8 +50,8 @@ module Headers
           end
 
           h.tag :div, class: "col-auto ps-0" do
-            if current_user && RecordPolicy.new(current_user, @record).update?
-              h.html Dropdowns::RecordOptionsDropdownComponent.new(view_context, record: @record).render
+            if @show_options && current_user && RecordPolicy.new(current_user, @record).update?
+              h.html Dropdowns::RecordOptionsDropdownComponent.new(view_context, record: @record, show_box: @show_box, show_options: @show_options).render
             end
           end
         end

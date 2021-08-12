@@ -3,8 +3,17 @@
 module Fragment
   class RecordsController < Fragment::ApplicationController
     include Pundit
+    include RecordListSettable
 
     before_action :authenticate_user!, only: %i[edit]
+
+    def index
+      set_page_category PageCategory::RECORD_LIST
+
+      @user = User.only_kept.find_by!(username: params[:username])
+
+      set_user_record_list(@user)
+    end
 
     def show
       user = User.only_kept.find_by!(username: params[:username])
@@ -15,6 +24,8 @@ module Fragment
     def edit
       user = User.only_kept.find_by!(username: params[:username])
       @record = current_user.records.only_kept.find_by!(id: params[:record_id], user_id: user.id)
+      @anime = @record.anime
+      @episode = @record.episode
 
       authorize @record, :edit?
 
@@ -35,6 +46,10 @@ module Fragment
           share_to_twitter: current_user.share_record_to_twitter?
         )
       end
+
+      @show_options = params[:show_options] == "true"
+      @show_box = params[:show_box] == "true"
+      @anime_ids = [@anime.id]
     end
   end
 end

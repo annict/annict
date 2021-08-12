@@ -18,7 +18,12 @@
 
   <div class="container u-container-flat">
     <div class="gx-3 row">
-      <div class="col-12 col-lg-9 px-0 px-lg-2">
+      <div
+        class="col-12 col-lg-9 px-0 px-lg-2"
+        data-controller="reloadable"
+        data-reloadable-event-name-value="record-list"
+        data-reloadable-url-value="<%= fragment_record_list_path(@user.username, page: params[:page]) %>"
+      >
         <%= Lists::RecordListComponent.new(self, records: @records).render %>
       </div>
 
