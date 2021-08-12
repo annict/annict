@@ -2,10 +2,11 @@
 
 module Lists
   class RecordListComponent < ApplicationV6Component
-    def initialize(view_context, records:, show_box: true, empty_text: :no_records)
+    def initialize(view_context, records:, show_box: true, show_options: true, empty_text: :no_records)
       super view_context
       @records = records
       @show_box = show_box
+      @show_options = show_options
       @empty_text = empty_text
       @pagenation = @records.respond_to?(:first_page?)
     end
@@ -17,7 +18,7 @@ module Lists
             @records.each do |record|
               h.tag :div, class: "card mt-3 u-card-flat" do
                 h.tag :div, class: "card-body" do
-                  h.html ListItems::RecordListItemComponent.new(view_context, record: record, show_box: @show_box).render
+                  h.html ListItems::RecordListItemComponent.new(view_context, record: record, show_box: @show_box, show_options: @show_options).render
                 end
               end
             end
