@@ -27,7 +27,13 @@ module ButtonGroups
           end
 
           unless @without_count
-            h.tag :div, class: "btn-group" do
+            prev_pages.each do |page|
+              h.tag :a, class: "btn btn-secondary d-none d-sm-inline-block", href: page_url_for(page: page) do
+                h.text page
+              end
+            end
+
+            h.tag :div, class: "btn-group d-inline-flex d-sm-none" do
               h.tag :button, class: "#{prev_button_class_name} dropdown-toggle", id: "prevDrop", type: "button", data_bs_toggle: "dropdown" do
                 h.text "..."
               end
@@ -49,7 +55,13 @@ module ButtonGroups
           end
 
           unless @without_count
-            h.tag :div, class: "btn-group" do
+            next_pages.each do |page|
+              h.tag :a, class: "btn btn-secondary d-none d-sm-inline-block", href: page_url_for(page: page) do
+                h.text page
+              end
+            end
+
+            h.tag :div, class: "btn-group d-inline-flex d-sm-none" do
               h.tag :button, class: "#{next_button_class_name} dropdown-toggle", id: "nextDrop", type: "button", data_bs_toggle: "dropdown" do
                 h.text "..."
               end
