@@ -2,8 +2,6 @@
 
 module Fragment
   class ActivityItemsController < Fragment::ApplicationController
-    before_action :authenticate_user!, only: %i[index]
-
     def index
       set_page_category params[:page_category]
 
