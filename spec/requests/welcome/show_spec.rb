@@ -8,12 +8,12 @@ describe "GET /", type: :request do
 
         expect(response.status).to eq(200)
         expect(response.body).to include("A platform for anime addicts.")
-        expect(response.body).to include("アニメはありません")
+        expect(response.body).to include("作品はありません")
       end
     end
 
     context "アニメが登録されているとき" do
-      let!(:work) { create(:anime, :with_current_season) }
+      let!(:work) { create(:work, :with_current_season) }
 
       it "Welcomeページが表示されること" do
         get "/"

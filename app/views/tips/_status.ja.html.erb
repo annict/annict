@@ -1,6 +1,6 @@
 <p>ステータスを設定することで、過去に何を見たか、今何を見ているのか、などを整理することができます。</p>
-<p>「<%= link_to "今期のアニメ", seasonal_anime_list_path(ENV.fetch("ANNICT_CURRENT_SEASON")) %>」ページなどにあるセレクトボックスからステータスを選ぶことができます。</p>
+<p>「<%= link_to "今期のアニメ", seasonal_work_list_path(ENV.fetch("ANNICT_CURRENT_SEASON")) %>」ページなどにあるセレクトボックスからステータスを選ぶことができます。</p>
 
 <div class="text-center">
-  <%= link_to "「今期のアニメ」ページへ", seasonal_anime_list_path(ENV.fetch("ANNICT_CURRENT_SEASON")), class: "btn btn-primary" %>
+  <%= link_to "「今期のアニメ」ページへ", seasonal_work_list_path(ENV.fetch("ANNICT_CURRENT_SEASON")), class: "btn btn-primary" %>
 </div>

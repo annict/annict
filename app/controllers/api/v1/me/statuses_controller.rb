@@ -7,9 +7,9 @@ module Api
         before_action :prepare_params!, only: [:create]
 
         def create
-          anime = Anime.only_kept.find(@params.work_id)
+          work = Work.only_kept.find(@params.work_id)
 
-          form = Forms::StatusForm.new(anime: anime, kind: @params.kind)
+          form = Forms::StatusForm.new(work: work, kind: @params.kind)
 
           if form.valid?
             Updaters::StatusUpdater.new(user: current_user, form: form).call

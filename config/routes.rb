@@ -39,9 +39,9 @@ Rails.application.routes.draw do
   match "/@:username/records/:record_id",                       via: :delete,  as: :record,                                    to: "records#destroy",              username: ROUTING_USERNAME_FORMAT
   match "/@:username/records/:record_id",                       via: :get,                                                     to: "records#show",                 username: ROUTING_USERNAME_FORMAT
   match "/api/internal/@:username/records/:record_id",          via: :patch,  as: :internal_api_record,                        to: "api/internal/records#update",  username: ROUTING_USERNAME_FORMAT
-  match "/api/internal/animes/:anime_id/commented_records",     via: :post,   as: :internal_api_commented_anime_record_list,   to: "api/internal/commented_anime_records#create",   anime_id: ROUTING_ID_FORMAT
-  match "/api/internal/animes/:anime_id/program_select",        via: :post,   as: :internal_api_anime_program_select,          to: "api/internal/program_selects#create"
-  match "/api/internal/animes/:anime_id/status_select",         via: :post,   as: :internal_api_anime_status_select,           to: "api/internal/status_selects#create"
+  match "/api/internal/works/:work_id/commented_records",       via: :post,   as: :internal_api_commented_work_record_list,    to: "api/internal/commented_work_records#create",   work_id: ROUTING_ID_FORMAT
+  match "/api/internal/works/:work_id/program_select",          via: :post,   as: :internal_api_work_program_select,           to: "api/internal/program_selects#create"
+  match "/api/internal/works/:work_id/status_select",           via: :post,   as: :internal_api_work_status_select,            to: "api/internal/status_selects#create"
   match "/api/internal/channels/:channel_id/reception",         via: :delete, as: :internal_api_channel_reception,             to: "api/internal/receptions#destroy"
   match "/api/internal/channels/:channel_id/reception",         via: :post,                                                    to: "api/internal/receptions#create"
   match "/api/internal/characters",                             via: :get,    as: :internal_api_character_list,                to: "api/internal/characters#index"
@@ -211,10 +211,10 @@ Rails.application.routes.draw do
   match "/fragment/@:username/records/:record_id/edit",         via: :get,    as: :fragment_edit_record,                       to: "fragment/records#edit",           username: ROUTING_USERNAME_FORMAT
   match "/fragment/@:username/tracking_heatmap",                via: :get,    as: :fragment_tracking_heatmap,                  to: "fragment/tracking_heatmaps#show", username: ROUTING_USERNAME_FORMAT
   match "/fragment/activity_groups/:activity_group_id/items",   via: :get,    as: :fragment_activity_item_list,                to: "fragment/activity_items#index"
-  match "/fragment/animes/:anime_id/records",                   via: :get,    as: :fragment_anime_record_list,                 to: "fragment/anime_records#index"
+  match "/fragment/works/:work_id/records",                     via: :get,    as: :fragment_work_record_list,                  to: "fragment/work_records#index"
   match "/fragment/episodes/:episode_id/records",               via: :get,    as: :fragment_episode_record_list,               to: "fragment/episode_records#index"
   match "/fragment/receive_channel_buttons",                    via: :get,    as: :fragment_receive_channel_button_list,       to: "fragment/receive_channel_buttons#index"
-  match "/fragment/trackable_anime/:anime_id",                  via: :get,    as: :fragment_trackable_anime,                   to: "fragment/trackable_anime#show"
+  match "/fragment/trackable_works/:work_id",                   via: :get,    as: :fragment_trackable_work,                    to: "fragment/trackable_works#show"
   match "/fragment/trackable_episodes",                         via: :get,    as: :fragment_trackable_episode_list,            to: "fragment/trackable_episodes#index"
   match "/fragment/trackable_episodes/:episode_id",             via: :get,    as: :fragment_trackable_episode,                 to: "fragment/trackable_episodes#show"
   match "/friends",                                             via: :get,    as: :friend_list,                                to: "friends#index"
@@ -269,18 +269,18 @@ Rails.application.routes.draw do
   match "/userland/projects/:project_id/edit",                  via: :get,    as: :userland_edit_project,                      to: "userland/projects#edit",    project_id: ROUTING_ID_FORMAT
   match "/userland/projects/new",                               via: :get,    as: :userland_new_project,                       to: "userland/projects#new"
   match "/work_display_option",                                 via: :get,    as: :work_display_option,                        to: "work_display_options#show"
-  match "/works/:anime_id",                                     via: :get,    as: :anime,                                      to: "animes#show",              anime_id: ROUTING_ID_FORMAT
-  match "/works/:anime_id/casts",                               via: :get,    as: :cast_list,                                  to: "casts#index",              anime_id: ROUTING_ID_FORMAT
-  match "/works/:anime_id/episodes",                            via: :get,    as: :episode_list,                               to: "episodes#index",           anime_id: ROUTING_ID_FORMAT
-  match "/works/:anime_id/episodes/:episode_id",                via: :get,    as: :episode,                                    to: "episodes#show",            anime_id: ROUTING_ID_FORMAT
-  match "/works/:anime_id/info",                                via: :get,    as: :anime_info,                                 to: "anime_infos#show",         anime_id: ROUTING_ID_FORMAT
-  match "/works/:anime_id/records",                             via: :get,    as: :anime_record_list,                          to: "anime_records#index",      anime_id: ROUTING_ID_FORMAT
-  match "/works/:anime_id/related_works",                       via: :get,    as: :related_anime_list,                         to: "related_animes#index",     anime_id: ROUTING_ID_FORMAT
-  match "/works/:anime_id/staffs",                              via: :get,    as: :staff_list,                                 to: "staffs#index",             anime_id: ROUTING_ID_FORMAT
-  match "/works/:anime_id/videos",                              via: :get,    as: :video_list,                                 to: "videos#index",             anime_id: ROUTING_ID_FORMAT
-  match "/works/:season_slug",                                  via: :get,    as: :seasonal_anime_list,                        to: "seasonal_animes#index",    season_slug: /[0-9]{4}-(all|spring|summer|autumn|winter)/
-  match "/works/newest",                                        via: :get,    as: :newest_anime_list,                          to: "newest_animes#index"
-  match "/works/popular",                                       via: :get,    as: :popular_anime_list,                         to: "popular_animes#index"
+  match "/works/:work_id",                                      via: :get,    as: :work,                                       to: "works#show",               work_id: ROUTING_ID_FORMAT
+  match "/works/:work_id/casts",                                via: :get,    as: :cast_list,                                  to: "casts#index",              work_id: ROUTING_ID_FORMAT
+  match "/works/:work_id/episodes",                             via: :get,    as: :episode_list,                               to: "episodes#index",           work_id: ROUTING_ID_FORMAT
+  match "/works/:work_id/episodes/:episode_id",                 via: :get,    as: :episode,                                    to: "episodes#show",            work_id: ROUTING_ID_FORMAT
+  match "/works/:work_id/info",                                 via: :get,    as: :work_info,                                  to: "work_infos#show",          work_id: ROUTING_ID_FORMAT
+  match "/works/:work_id/records",                              via: :get,    as: :work_record_list,                           to: "work_records#index",       work_id: ROUTING_ID_FORMAT
+  match "/works/:work_id/related_works",                        via: :get,    as: :related_work_list,                          to: "related_works#index",      work_id: ROUTING_ID_FORMAT
+  match "/works/:work_id/staffs",                               via: :get,    as: :staff_list,                                 to: "staffs#index",             work_id: ROUTING_ID_FORMAT
+  match "/works/:work_id/videos",                               via: :get,    as: :video_list,                                 to: "videos#index",             work_id: ROUTING_ID_FORMAT
+  match "/works/:season_slug",                                  via: :get,    as: :seasonal_work_list,                         to: "seasonal_works#index",     season_slug: /[0-9]{4}-(all|spring|summer|autumn|winter)/
+  match "/works/newest",                                        via: :get,    as: :newest_work_list,                           to: "newest_works#index"
+  match "/works/popular",                                       via: :get,    as: :popular_work_list,                          to: "popular_works#index"
   # standard:enable Layout/ExtraSpacing, Layout/LineLength
 
   root "home#show",

@@ -20,11 +20,11 @@ en:
         started_at_asc: Older
         started_at_desc: Newer
       records_sort_type:
-        likes_count_desc: "Most Likes"
-        rating_state_desc: "Rating: Highest First"
-        rating_state_asc: "Rating: Lowest First"
-        created_at_desc: "Date Post: Recent First"
-        created_at_asc: "Date Post: Oldest First"
+        likes_count_desc: 'Most Likes'
+        rating_state_desc: 'Rating: Highest First'
+        rating_state_asc: 'Rating: Lowest First'
+        created_at_desc: 'Date Post: Recent First'
+        created_at_asc: 'Date Post: Oldest First'
     staff:
       role:
         animation_director: Animation Director
@@ -66,7 +66,7 @@ en:
       role:
         admin: Admin
         editor: Editor
-    anime:
+    work:
       media:
         tv: TV
         ova: OVA

@@ -90,7 +90,7 @@ class User < ApplicationRecord
   belongs_to :gumroad_subscriber, optional: true
   has_many :activity_groups, dependent: :destroy
   has_many :activities, dependent: :destroy
-  has_many :anime_records, dependent: :destroy
+  has_many :work_records, dependent: :destroy
   has_many :character_favorites, dependent: :destroy
   has_many :collections, dependent: :destroy
   has_many :collection_items, dependent: :destroy
@@ -183,16 +183,16 @@ class User < ApplicationRecord
     end
   end
 
-  def watching_anime_count
+  def watching_work_count
     watching_works_count
   end
 
-  def animes
-    Anime.joins(:library_entries).merge(library_entries)
+  def works
+    Work.joins(:library_entries).merge(library_entries)
   end
 
-  def animes_on(*status_kinds)
-    Anime.joins(:library_entries).merge(library_entries.with_status(*status_kinds))
+  def works_on(*status_kinds)
+    Work.joins(:library_entries).merge(library_entries.with_status(*status_kinds))
   end
 
   def cast_favorites
@@ -241,8 +241,8 @@ class User < ApplicationRecord
     end
   end
 
-  def save_program_to_library_entry!(anime, program)
-    library_entry = library_entries.find_or_initialize_by(anime: anime)
+  def save_program_to_library_entry!(work, program)
+    library_entry = library_entries.find_or_initialize_by(work: work)
 
     if program
       library_entry.program = program
@@ -282,7 +282,7 @@ class User < ApplicationRecord
 
   def hide_episode_record_body?(episode)
     setting.hide_record_body? &&
-      works.desiring_to_watch.include?(episode.anime) &&
+      works.desiring_to_watch.include?(episode.work) &&
       !episode_records.pluck(:episode_id).include?(episode.id)
   end
 
@@ -304,11 +304,11 @@ class User < ApplicationRecord
   end
 
   def status_kind(work)
-    library_entries.find_by(anime: work)&.status&.kind.presence || "no_select"
+    library_entries.find_by(work: work)&.status&.kind.presence || "no_select"
   end
 
   def status_kind_v3(work)
-    Status.kind_v2_to_v3(library_entries.find_by(anime: work)&.status&.kind)&.to_s.presence || "no_status"
+    Status.kind_v2_to_v3(library_entries.find_by(work: work)&.status&.kind)&.to_s.presence || "no_status"
   end
 
   def encoded_id

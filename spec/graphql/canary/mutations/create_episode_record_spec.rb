@@ -3,7 +3,7 @@
 describe Canary::Mutations::CreateEpisodeRecord do
   let(:user) { create :registered_user }
   let(:episode) { create :episode }
-  let(:anime) { episode.anime }
+  let(:work) { episode.work }
   let(:token) { create(:oauth_access_token) }
   let(:context) { {viewer: user, doorkeeper_token: token, writable: true} }
   let(:id) { Canary::AnnictSchema.id_from_object(episode, episode.class) }

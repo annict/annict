@@ -2,7 +2,7 @@
 
 describe "GET /db/works/:work_id/programs/new", type: :request do
   context "user does not sign in" do
-    let!(:work) { create(:anime) }
+    let!(:work) { create(:work) }
 
     it "user can not access this page" do
       get "/db/works/#{work.id}/programs/new"
@@ -13,7 +13,7 @@ describe "GET /db/works/:work_id/programs/new", type: :request do
   end
 
   context "user who is not editor signs in" do
-    let!(:work) { create(:anime) }
+    let!(:work) { create(:work) }
     let!(:user) { create(:registered_user) }
 
     before do
@@ -29,7 +29,7 @@ describe "GET /db/works/:work_id/programs/new", type: :request do
   end
 
   context "user who is editor signs in" do
-    let!(:work) { create(:anime) }
+    let!(:work) { create(:work) }
     let!(:user) { create(:registered_user, :with_editor_role) }
 
     before do

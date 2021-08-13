@@ -3,10 +3,10 @@ en:
     meta:
       description:
         _common: Annict is a platform for anime addicts. Track your watching anime, follow friends, read their reviews, and much more!
-        anime_infos:
+        work_infos:
           show: Looking for info of %{title}? Find out more with Annict!
-        anime_records:
-          index: Looking for records of %{anime_title}? Find out more with Annict!
+        work_records:
+          index: Looking for records of %{work_title}? Find out more with Annict!
           show: Check out %{profile_name} (%{username})'s records!
         casts:
           index: Looking for cast information on %{title}? Find out more with Annict!
@@ -39,7 +39,7 @@ en:
         records:
           index: "Check out %{profile_name} (%{username})'s records!"
           show: "Check out %{profile_name} (%{username})'s record on %{trackable_title}"
-        related_animes:
+        related_works:
           index: Looking for related anime information on %{title}? Find out more with Annict!
         sign_in:
           new: Welcome back!
@@ -59,10 +59,10 @@ en:
       keywords:
         _common: annict, anime, review
     title:
-      anime_infos:
+      work_infos:
         show: Info of %{title}
-      anime_records:
-        index: Records of Anime %{anime_title}
+      work_records:
+        index: Records of Anime %{work_title}
       casts:
         index: Casts of %{title}
       channels:
@@ -207,7 +207,7 @@ en:
         show: '%{name}'
       records:
         edit: Edit Record
-      related_animes:
+      related_works:
         index: Related Animes of %{title}
       slots:
         index: Slot List

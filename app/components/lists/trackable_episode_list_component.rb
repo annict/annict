@@ -27,10 +27,10 @@ module Lists
                           h.tag :div, {
                             class: "fw-bold u-cursor-pointer",
                             data_controller: "tracking-offcanvas-button",
-                            data_tracking_offcanvas_button_frame_path: view_context.fragment_trackable_anime_path(le.work_id),
+                            data_tracking_offcanvas_button_frame_path: view_context.fragment_trackable_work_path(le.work_id),
                             data_action: "click->tracking-offcanvas-button#open"
                           } do
-                            h.html Pictures::AnimePictureComponent.new(view_context, anime: le.anime, width: 80).render
+                            h.html Pictures::WorkPictureComponent.new(view_context, work: le.work, width: 80).render
                           end
                         end
 
@@ -38,10 +38,10 @@ module Lists
                           h.tag :div, {
                             class: "small u-cursor-pointer",
                             data_controller: "tracking-offcanvas-button",
-                            data_tracking_offcanvas_button_frame_path: view_context.fragment_trackable_anime_path(le.work_id),
+                            data_tracking_offcanvas_button_frame_path: view_context.fragment_trackable_work_path(le.work_id),
                             data_action: "click->tracking-offcanvas-button#open"
                           } do
-                            h.text le.anime.local_title
+                            h.text le.work.local_title
                           end
 
                           if episode

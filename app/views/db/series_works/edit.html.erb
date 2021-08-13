@@ -30,9 +30,9 @@
                 data-resource-selector-model-name="Work"
                 name="series_work[work_id]"
               >
-                <% if f.object.anime&.id %>
-                  <option value="<%= f.object.anime.id %>" selected="">
-                    <%= f.object.anime.local_title %>
+                <% if f.object.work&.id %>
+                  <option value="<%= f.object.work.id %>" selected="">
+                    <%= f.object.work.local_title %>
                   </option>
                 <% else %>
                   <option value="" selected=""></option>

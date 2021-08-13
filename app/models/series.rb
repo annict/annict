@@ -31,7 +31,7 @@ class Series < ApplicationRecord
 
   DIFF_FIELDS = %i[name name_en].freeze
 
-  has_many :series_animes, dependent: :destroy
+  has_many :series_works, dependent: :destroy
 
   validates :name, presence: true, uniqueness: {conditions: -> { only_kept }}
 end

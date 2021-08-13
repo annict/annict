@@ -31,13 +31,13 @@ class OrganizationFavorite < ApplicationRecord
   belongs_to :organization
   belongs_to :user
 
-  def watched_anime_count
+  def watched_work_count
     watched_works_count
   end
 
   def update_watched_works_count(user)
     staff_work_ids = organization.staff_works.pluck(:id)
-    library_entries = user.library_entries.with_not_deleted_anime.with_status(:watched)
+    library_entries = user.library_entries.with_not_deleted_work.with_status(:watched)
     count = library_entries.where(work_id: staff_work_ids).count
 
     update_column(:watched_works_count, count)

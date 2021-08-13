@@ -3,7 +3,7 @@
 FactoryBot.define do
   factory :record do
     association :user, :with_profile
-    association :anime
+    association :work
 
     trait :with_episode_record do
       transient do
@@ -11,14 +11,14 @@ FactoryBot.define do
       end
 
       after(:create) do |record, evaluator|
-        episode = evaluator.episode.presence || create(:episode, anime: record.anime)
+        episode = evaluator.episode.presence || create(:episode, work: record.work)
         create :episode_record, user: record.user, record: record, episode: episode
       end
     end
 
-    trait :with_anime_record do
+    trait :with_work_record do
       after(:create) do |record|
-        create :anime_record, user: record.user, record: record, anime: record.anime
+        create :work_record, user: record.user, record: record, work: record.work
       end
     end
   end

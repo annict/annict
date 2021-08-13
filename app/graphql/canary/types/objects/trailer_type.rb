@@ -14,7 +14,7 @@ module Canary
         field :title_en, String, null: false
         field :sort_number, Integer, null: false
         field :is_youtube, Boolean, null: false
-        field :anime, Canary::Types::Objects::AnimeType, null: false
+        field :work, Canary::Types::Objects::WorkType, null: false
 
         field :internal_image_url, String, null: true, description: "このフィールドの値は公開されていません" do
           argument :size, String, required: true
@@ -24,8 +24,8 @@ module Canary
           object.youtube?
         end
 
-        def anime
-          RecordLoader.for(Anime).load(object.work_id)
+        def work
+          RecordLoader.for(Work).load(object.work_id)
         end
 
         def internal_image_url(size:)

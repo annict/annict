@@ -17,11 +17,11 @@ module Db
     end
 
     def after_created_path
-      db_slot_list_path(create_resource.anime)
+      db_slot_list_path(create_resource.work)
     end
 
     def after_destroyed_path
-      db_slot_list_path(destroy_resource.anime)
+      db_slot_list_path(destroy_resource.work)
     end
   end
 end

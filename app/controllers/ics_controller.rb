@@ -7,7 +7,7 @@ class IcsController < ApplicationV6Controller
     I18n.with_locale(@user.locale) do
       @slots = UserSlotsQuery.new(
         @user,
-        Slot.only_kept.with_works(@user.animes_on(:wanna_watch, :watching).only_kept),
+        Slot.only_kept.with_works(@user.works_on(:wanna_watch, :watching).only_kept),
         watched: false
       ).call
         .where("started_at >= ?", Date.today.beginning_of_day)
@@ -15,7 +15,7 @@ class IcsController < ApplicationV6Controller
         .where.not(episode_id: nil)
 
       @works = @user
-        .animes_on(:wanna_watch, :watching)
+        .works_on(:wanna_watch, :watching)
         .only_kept
         .where.not(started_on: nil)
 

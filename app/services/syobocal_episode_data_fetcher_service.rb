@@ -12,17 +12,17 @@ class SyobocalEpisodeDataFetcherService
       .where(title: [nil, ""])
       .where.not(raw_number: nil)
       .after(now - 7.days)
-      .joins(:anime, :slots)
-      .merge(Anime.where.not(sc_tid: nil))
+      .joins(:work, :slots)
+      .merge(Work.where.not(sc_tid: nil))
       .merge(Slot.where.not(program_id: nil))
       .distinct
-    works = Anime.only_kept.where(id: episodes.pluck(:work_id).uniq)
+    works = Work.only_kept.where(id: episodes.pluck(:work_id).uniq)
     titles = client.list_titles(title_id: works.pluck(:sc_tid))
 
     episodes.each do |e|
       next if e.raw_number.to_i != e.raw_number
 
-      title = titles.find { |t| t.id == e.anime.sc_tid }
+      title = titles.find { |t| t.id == e.work.sc_tid }
       next unless title
       next unless title.sub_titles
 

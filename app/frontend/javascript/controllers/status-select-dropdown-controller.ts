@@ -15,13 +15,13 @@ enum STATUS_KIND {
 
 export default class extends Controller {
   static targets = ['button', 'kind'];
-  static values = { animeId: Number, kindIcons: Object, pageCategory: String };
+  static values = { workId: Number, kindIcons: Object, pageCategory: String };
 
-  animeIdValue!: number;
+  workIdValue!: number;
   buttonTarget!: HTMLButtonElement;
   currentStatusKind!: STATUS_KIND;
   kindIconsValue!: any;
-  statusKinds!: { [animeId: number]: STATUS_KIND };
+  statusKinds!: { [workId: number]: STATUS_KIND };
   pageCategoryValue!: string;
   prevStatusKind!: STATUS_KIND;
 
@@ -41,7 +41,7 @@ export default class extends Controller {
   }
 
   setCurrentStatusKindFromStatusKinds(statusKinds: STATUS_KIND[]) {
-    const statusKind = statusKinds[this.animeIdValue];
+    const statusKind = statusKinds[this.workIdValue];
 
     if (!statusKind) {
       this.currentStatusKind = STATUS_KIND.NO_STATUS;
@@ -82,14 +82,14 @@ export default class extends Controller {
       this.startLoading();
 
       try {
-        await fetcher.post(`/api/internal/animes/${this.animeIdValue}/status_select`, {
+        await fetcher.post(`/api/internal/works/${this.workIdValue}/status_select`, {
           status_kind: selectedStatusKind,
           page_category: this.pageCategoryValue,
         });
 
         this.currentStatusKind = selectedStatusKind;
         this.render();
-        new EventDispatcher('tracking-offcanvas-button:enabled', { animeId: this.animeIdValue }).dispatch();
+        new EventDispatcher('tracking-offcanvas-button:enabled', { workId: this.workIdValue }).dispatch();
       } catch (err) {
         if (err.response.status === 401) {
           new Modal('.c-sign-up-modal').show();

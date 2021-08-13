@@ -26,9 +26,9 @@ describe "GET /@:username", type: :request do
       let!(:episode_record_activity_group) { create(:activity_group, user: user, itemable_type: "EpisodeRecord", single: true) }
       let!(:episode_record_activity) { create(:activity, user: user, itemable: record_1.episode_record, activity_group: episode_record_activity_group) }
 
-      let!(:record_2) { create(:record, :with_anime_record, user: user) }
-      let!(:anime_record_activity_group) { create(:activity_group, user: user, itemable_type: "WorkRecord", single: true) }
-      let!(:anime_record_activity) { create(:activity, user: user, itemable: record_2.anime_record, activity_group: anime_record_activity_group) }
+      let!(:record_2) { create(:record, :with_work_record, user: user) }
+      let!(:work_record_activity_group) { create(:activity_group, user: user, itemable_type: "WorkRecord", single: true) }
+      let!(:work_record_activity) { create(:activity, user: user, itemable: record_2.work_record, activity_group: work_record_activity_group) }
 
       it "アクティビティが表示されること" do
         get "/@#{user.username}"
@@ -59,9 +59,9 @@ describe "GET /@:username", type: :request do
       let!(:episode_record_activity_group) { create(:activity_group, user: user, itemable_type: "EpisodeRecord", single: true) }
       let!(:episode_record_activity) { create(:activity, user: user, itemable: record_1.episode_record, activity_group: episode_record_activity_group) }
 
-      let!(:record_2) { create(:record, :with_anime_record, user: user) }
-      let!(:anime_record_activity_group) { create(:activity_group, user: user, itemable_type: "WorkRecord", single: true) }
-      let!(:anime_record_activity) { create(:activity, user: user, itemable: record_2.anime_record, activity_group: anime_record_activity_group) }
+      let!(:record_2) { create(:record, :with_work_record, user: user) }
+      let!(:work_record_activity_group) { create(:activity_group, user: user, itemable_type: "WorkRecord", single: true) }
+      let!(:work_record_activity) { create(:activity, user: user, itemable: record_2.work_record, activity_group: work_record_activity_group) }
 
       it "アクティビティが表示されること" do
         get "/@#{user.username}"

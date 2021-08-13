@@ -1,5 +1,5 @@
 <turbo-frame id="<%= dom_id(@form.record) %>">
-  <%= component_value_fetcher_tag("status-select-dropdown", internal_api_library_entry_list_path, method: :post, payload: {anime_ids: @anime_ids}) %>
+  <%= component_value_fetcher_tag("status-select-dropdown", internal_api_library_entry_list_path, method: :post, payload: {work_ids: @work_ids}) %>
   <%= component_value_fetcher_tag("like-button", internal_api_like_list_path) %>
 
   <%= Headers::RecordHeaderComponent.new(self, record: @record, show_options: @show_options).render %>
@@ -8,14 +8,14 @@
     <% if @record.episode_record? %>
       <%= Forms::EpisodeRecordFormComponent.new(self, form: @form, current_user: current_user).render %>
     <% else %>
-      <%= Forms::AnimeRecordFormComponent.new(self, form: @form).render %>
+      <%= Forms::WorkRecordFormComponent.new(self, form: @form).render %>
     <% end %>
   </div>
 
   <% if @show_box %>
     <hr>
 
-    <%= Boxes::AnimeBoxComponent.new(self, anime: @anime, episode: @episode).render %>
+    <%= Boxes::WorkBoxComponent.new(self, work: @work, episode: @episode).render %>
 
     <hr>
   <% end %>

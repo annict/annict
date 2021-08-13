@@ -6,7 +6,7 @@ module Db
 
     def index
       @series = Series.without_deleted.find(params[:series_id])
-      @series_works = @series.series_animes.preload(:anime).without_deleted.sort_season.order(:id)
+      @series_works = @series.series_works.preload(:work).without_deleted.sort_season.order(:id)
     end
 
     def new
@@ -30,7 +30,7 @@ module Db
     end
 
     def edit
-      @series_work = SeriesAnime.without_deleted.find(params[:id])
+      @series_work = SeriesWork.without_deleted.find(params[:id])
 
       authorize @series_work
 
@@ -38,7 +38,7 @@ module Db
     end
 
     def update
-      @series_work = SeriesAnime.without_deleted.find(params[:id])
+      @series_work = SeriesWork.without_deleted.find(params[:id])
 
       authorize @series_work
 
@@ -54,7 +54,7 @@ module Db
     end
 
     def destroy
-      @series_work = SeriesAnime.without_deleted.find(params[:id])
+      @series_work = SeriesWork.without_deleted.find(params[:id])
       authorize @series_work
 
       @series_work.destroy_in_batches

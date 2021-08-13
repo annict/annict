@@ -48,7 +48,7 @@ class LibraryEntry < ApplicationRecord
   belongs_to :program, optional: true
   belongs_to :status, optional: true
   belongs_to :user
-  belongs_to :anime, foreign_key: :work_id
+  belongs_to :work
 
   scope :desiring_to_watch, -> { with_status(:wanna_watch, :watching, :on_hold) }
   scope :finished_to_watch, -> { with_status(:watched, :stop_watching) }
@@ -61,10 +61,10 @@ class LibraryEntry < ApplicationRecord
   scope :has_no_next_episode, -> { where(next_episode_id: nil) }
   scope :has_no_next_slot, -> { where.not(program_id: nil).where(next_slot_id: nil) }
   scope :with_status, ->(*status_kinds) { joins(:status).where(statuses: {kind: status_kinds}) }
-  scope :with_not_deleted_anime, -> { joins(:anime).merge(Anime.only_kept) }
+  scope :with_not_deleted_work, -> { joins(:work).merge(Work.only_kept) }
 
   def self.count_on(status_kind)
-    with_not_deleted_anime.with_status(status_kind).count
+    with_not_deleted_work.with_status(status_kind).count
   end
 
   def self.status_kinds
@@ -76,7 +76,7 @@ class LibraryEntry < ApplicationRecord
   end
 
   def set_next_resources!
-    next_episode = anime.episodes.next_episode(watched_episode_ids)
+    next_episode = work.episodes.next_episode(watched_episode_ids)
     next_slot = program&.slot_by_episode(next_episode)
 
     self.next_episode = next_episode

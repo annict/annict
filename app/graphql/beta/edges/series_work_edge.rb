@@ -19,7 +19,7 @@ module Beta
       end
 
       def node
-        object.node.anime
+        object.node.work
       end
     end
   end

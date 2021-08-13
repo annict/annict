@@ -5,7 +5,7 @@ module Db
     before_action :authenticate_user!, only: %i[new create edit update destroy]
 
     def index
-      @work = Anime.without_deleted.find(params[:work_id])
+      @work = Work.without_deleted.find(params[:work_id])
       @episodes = @work.episodes.without_deleted
         .includes(:prev_episode)
         .order(sort_number: :desc)
@@ -14,13 +14,13 @@ module Db
     end
 
     def new
-      @work = Anime.without_deleted.find(params[:work_id])
+      @work = Work.without_deleted.find(params[:work_id])
       @form = Db::EpisodeRowsForm.new
       authorize @form
     end
 
     def create
-      @work = Anime.without_deleted.find(params[:work_id])
+      @work = Work.without_deleted.find(params[:work_id])
       @form = Db::EpisodeRowsForm.new(episode_rows_form_params)
       @form.user = current_user
       @form.work = @work
@@ -36,13 +36,13 @@ module Db
     def edit
       @episode = Episode.without_deleted.find(params[:id])
       authorize @episode
-      @work = @episode.anime
+      @work = @episode.work
     end
 
     def update
       @episode = Episode.without_deleted.find(params[:id])
       authorize @episode
-      @work = @episode.anime
+      @work = @episode.work
 
       @episode.attributes = episode_params
       @episode.user = current_user
@@ -61,7 +61,7 @@ module Db
       @episode.destroy_in_batches
 
       redirect_back(
-        fallback_location: db_episode_list_path(@episode.anime),
+        fallback_location: db_episode_list_path(@episode.work),
         notice: t("messages._common.deleted")
       )
     end

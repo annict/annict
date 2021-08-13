@@ -1,13 +1,13 @@
-<% title = t "head.title.episodes.show", work_title: @anime.local_title, episode_title_with_number: @episode.title_with_number %>
-<% description = meta_description(t("head.meta.description.episodes.show", work_title: @anime.local_title, episode_title_with_number: @episode.title_with_number)) %>
-<% image_url = ann_anime_image_url(@anime, width: 640) %>
+<% title = t "head.title.episodes.show", work_title: @work.local_title, episode_title_with_number: @episode.title_with_number %>
+<% description = meta_description(t("head.meta.description.episodes.show", work_title: @work.local_title, episode_title_with_number: @episode.title_with_number)) %>
+<% image_url = ann_work_image_url(@work, width: 640) %>
 <% set_meta_tags(title: title, description: description, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false) %>
 
-<%= component_value_fetcher_tag("status-select-dropdown", internal_api_library_entry_list_path, method: :post, payload: {anime_ids: [@anime.id]}) %>
+<%= component_value_fetcher_tag("status-select-dropdown", internal_api_library_entry_list_path, method: :post, payload: {work_ids: [@work.id]}) %>
 <%= component_value_fetcher_tag("like-button", internal_api_like_list_path) %>
 <%= component_value_fetcher_tag("spoiler-guard", internal_api_spoiler_guard_path) %>
 
-<%= Headers::AnimeHeaderComponent.new(self, anime: @anime, programs: @programs).render %>
+<%= Headers::WorkHeaderComponent.new(self, work: @work, programs: @programs).render %>
 
 <div class="py-3">
   <div class="container u-container-flat">
@@ -16,7 +16,7 @@
         <div class="align-items-center gx-3 row">
           <div class="col">
             <h2 class="fw-bold mb-0">
-              <%= link_to @episode.title_with_number, episode_path(@anime.id, @episode.id), class: "text-body" %>
+              <%= link_to @episode.title_with_number, episode_path(@work.id, @episode.id), class: "text-body" %>
             </h2>
           </div>
 

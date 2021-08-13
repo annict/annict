@@ -23,7 +23,7 @@ module Beta
         end
 
         def work
-          Beta::RecordLoader.for(Anime).load(object.work_id)
+          Beta::RecordLoader.for(Work).load(object.work_id)
         end
 
         def internal_url(size:)
@@ -36,37 +36,37 @@ module Beta
         def facebook_og_image_url
           return "" if object.blank?
 
-          object.anime.facebook_og_image_url
+          object.work.facebook_og_image_url
         end
 
         def twitter_avatar_url
           return "" if object.blank?
 
-          object.anime.twitter_avatar_url
+          object.work.twitter_avatar_url
         end
 
         def twitter_mini_avatar_url
           return "" if object.blank?
 
-          object.anime.twitter_avatar_url(:mini)
+          object.work.twitter_avatar_url(:mini)
         end
 
         def twitter_normal_avatar_url
           return "" if object.blank?
 
-          object.anime.twitter_avatar_url(:normal)
+          object.work.twitter_avatar_url(:normal)
         end
 
         def twitter_bigger_avatar_url
           return "" if object.blank?
 
-          object.anime.twitter_avatar_url(:bigger)
+          object.work.twitter_avatar_url(:bigger)
         end
 
         def recommended_image_url
           return "" if object.blank?
 
-          object.anime.recommended_image_url
+          object.work.recommended_image_url
         end
       end
     end

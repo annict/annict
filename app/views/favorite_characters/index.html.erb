@@ -27,10 +27,10 @@
                   <div class="col">
                     <%= link_to character.local_name, character_path(character), class: "text-body" %>
 
-                    <% if character.oldest_anime.present? %>
-                      <%= link_to anime_path(anime_id: character.oldest_anime.id) do %>
+                    <% if character.oldest_work.present? %>
+                      <%= link_to work_path(work_id: character.oldest_work.id) do %>
                         <div class="text-muted u-very-small">
-                          <%= character.oldest_anime.local_title %>
+                          <%= character.oldest_work.local_title %>
                         </div>
                       <% end %>
                     <% end %>

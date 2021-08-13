@@ -2,7 +2,7 @@
 
 module Forms
   class StatusForm < Forms::ApplicationForm
-    attr_accessor :anime
+    attr_accessor :work
     attr_reader :kind
 
     validates :kind, inclusion: {in: Status::KIND_MAPPING.values.map(&:to_s)}

@@ -15,14 +15,14 @@ module Canary
           argument :username, String, required: true
         end
 
-        field :anime_list, Canary::Types::Objects::AnimeType.connection_type, null: true, resolver: Canary::Resolvers::AnimeList do
+        field :work_list, Canary::Types::Objects::WorkType.connection_type, null: true, resolver: Canary::Resolvers::WorkList do
           argument :database_ids, [Integer], required: false
           argument :seasons, [String], required: false
           argument :titles, [String], required: false
-          argument :order_by, Canary::Types::InputObjects::AnimeOrder, required: false
+          argument :order_by, Canary::Types::InputObjects::WorkOrder, required: false
         end
 
-        field :anime, Canary::Types::Objects::AnimeType, null: true do
+        field :work, Canary::Types::Objects::WorkType, null: true do
           argument :database_id, Integer, required: true
         end
 
@@ -68,8 +68,8 @@ module Canary
           User.only_kept.find_by(username: username)
         end
 
-        def anime(database_id:)
-          Anime.only_kept.find_by(id: database_id)
+        def work(database_id:)
+          Work.only_kept.find_by(id: database_id)
         end
 
         def episode(database_id:)

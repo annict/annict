@@ -34,7 +34,7 @@ module Canary
         field :sort_number, Integer,
           null: false
 
-        field :anime, Canary::Types::Objects::AnimeType,
+        field :work, Canary::Types::Objects::WorkType,
           null: false
 
         field :resource, Canary::Types::Unions::StaffResourceItem,
@@ -60,8 +60,8 @@ module Canary
           I18n.t("enumerize.staff.role.#{object.role_value}", locale: :en)
         end
 
-        def anime
-          RecordLoader.for(Anime).load(object.work_id)
+        def work
+          RecordLoader.for(Work).load(object.work_id)
         end
       end
     end

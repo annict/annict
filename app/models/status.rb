@@ -61,7 +61,7 @@ class Status < ApplicationRecord
   }
 
   belongs_to :activity, counter_cache: :resources_count, optional: true
-  belongs_to :anime, foreign_key: :work_id
+  belongs_to :work
   belongs_to :oauth_application, class_name: "Doorkeeper::Application", optional: true
   belongs_to :user
   has_many :activities,
@@ -72,7 +72,7 @@ class Status < ApplicationRecord
     as: :recipient
 
   scope :positive, -> { with_kind(*POSITIVE_KINDS) }
-  scope :with_not_deleted_anime, -> { joins(:anime).merge(Anime.only_kept) }
+  scope :with_not_deleted_work, -> { joins(:work).merge(Work.only_kept) }
 
   def self.kind_v2_to_v3(kind_v2)
     return if kind_v2.blank?
@@ -102,10 +102,6 @@ class Status < ApplicationRecord
     kind.to_s.in?(%w[no_select no_status])
   end
 
-  def anime_id
-    work_id
-  end
-
   def kind_v3
     self.class.kind_v2_to_v3(kind)
   end
@@ -125,7 +121,7 @@ class Status < ApplicationRecord
   end
 
   def twitter_share_body
-    work_title = anime.local_title
+    work_title = work.local_title
     share_url = share_url_with_query(:twitter)
 
     base_body = if user.locale == "ja"
@@ -138,7 +134,7 @@ class Status < ApplicationRecord
   end
 
   def facebook_share_body
-    work_title = anime.local_title
+    work_title = work.local_title
 
     base_body = if user.locale == "ja"
       "アニメ「%s」の視聴ステータスを「#{kind_text}」にしました。"
@@ -154,7 +150,7 @@ class Status < ApplicationRecord
   end
 
   def save_library_entry!
-    library_entry = user.library_entries.find_or_initialize_by(anime: anime)
+    library_entry = user.library_entries.find_or_initialize_by(work: work)
     library_entry.status = self
 
     case kind.to_sym

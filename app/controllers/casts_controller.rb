@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 class CastsController < ApplicationV6Controller
-  include AnimeHeaderLoadable
+  include WorkHeaderLoadable
 
   def index
     set_page_category PageCategory::CAST_LIST
 
-    set_anime_header_resources
+    set_work_header_resources
 
-    @casts = @anime.casts.only_kept.order(:sort_number)
+    @casts = @work.casts.only_kept.order(:sort_number)
   end
 end

@@ -18,13 +18,13 @@ module SlotDecorator
       when :episode_id
         next unless send(field)
 
-        episode = anime.episodes.find(send(field))
+        episode = work.episodes.find(send(field))
         title = episode.decorate.title_with_number
-        path = episode_path(anime_id: episode.work_id, episode_id: episode.id)
+        path = episode_path(work_id: episode.work_id, episode_id: episode.id)
         link_to(title, path, target: "_blank")
       when :work_id
-        path = anime_path(anime_id: anime.id)
-        link_to(anime.title, path, target: "_blank")
+        path = work_path(work_id: work.id)
+        link_to(work.title, path, target: "_blank")
       when :started_at
         send(field).in_time_zone("Asia/Tokyo").strftime("%Y/%m/%d %H:%M")
       when :rebroadcast

@@ -11,14 +11,14 @@ class CommentsController < ApplicationV6Controller
     @user = @record.user
     @comment = @record.episode_record.comments.new(comment_params)
     @comment.user = current_user
-    @comment.anime = @record.anime
+    @comment.work = @record.work
     @comment.detect_locale!(:body)
 
     if @comment.save
       redirect_to record_path(@user.username, @record),
         notice: t("messages.comments.saved")
     else
-      @work = @record.anime
+      @work = @record.work
       @episode = @record.episode
       @comments = @record.episode_record.comments.order(created_at: :desc)
       render "/records/show"

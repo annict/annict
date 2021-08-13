@@ -6,7 +6,7 @@ module Beta
       argument :review_id, ID, required: true
       argument :title, String, required: false
       argument :body, String, required: true
-      AnimeRecord::STATES.each do |state|
+      WorkRecord::STATES.each do |state|
         argument state, Beta::Types::Enums::RatingState, required: true
       end
       argument :share_twitter, Boolean, required: false
@@ -29,12 +29,12 @@ module Beta
         raise Annict::Errors::InvalidAPITokenScopeError unless context[:doorkeeper_token].writable?
 
         viewer = context[:viewer]
-        anime_record = viewer.anime_records.only_kept.find_by_graphql_id(review_id)
-        anime = anime_record.anime
-        record = anime_record.record
+        work_record = viewer.work_records.only_kept.find_by_graphql_id(review_id)
+        work = work_record.work
+        record = work_record.record
 
-        form = Forms::AnimeRecordForm.new(
-          anime: anime,
+        form = Forms::WorkRecordForm.new(
+          work: work,
           comment: body,
           oauth_application: context[:doorkeeper_token].application,
           rating_animation: rating_animation_state,
@@ -50,13 +50,13 @@ module Beta
           raise GraphQL::ExecutionError, form.errors.full_messages.first
         end
 
-        result = Updaters::AnimeRecordUpdater.new(
+        result = Updaters::WorkRecordUpdater.new(
           user: viewer,
           form: form
         ).call
 
         {
-          review: result.record.anime_record
+          review: result.record.work_record
         }
       end
     end

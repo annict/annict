@@ -19,7 +19,7 @@ module Beta
         field :resource, Beta::Types::Unions::StaffResourceItem, null: false
 
         def work
-          object.anime
+          object.work
         end
       end
     end

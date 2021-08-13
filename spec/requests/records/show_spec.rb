@@ -9,32 +9,32 @@ describe "GET /@:username/records/:record_id", type: :request do
     end
 
     context "アニメへの記録を参照するとき" do
-      let!(:anime) { create(:anime) }
-      let!(:record) { create(:record, user: user, anime: anime) }
-      let!(:anime_record) { create(:anime_record, user: user, record: record, anime: anime, body: "最高") }
+      let!(:work) { create(:work) }
+      let!(:record) { create(:record, user: user, work: work) }
+      let!(:work_record) { create(:work_record, user: user, record: record, work: work, body: "最高") }
 
       it "記録が表示されること" do
         get "/@#{user.username}/records/#{record.id}"
 
         expect(response.status).to eq(200)
         expect(response.body).to include(user.profile.name)
-        expect(response.body).to include(anime.title)
+        expect(response.body).to include(work.title)
         expect(response.body).to include("最高")
       end
     end
 
     context "エピソードへの記録を参照するとき" do
-      let!(:anime) { create(:anime) }
-      let!(:episode) { create(:episode, anime: anime) }
-      let!(:record) { create(:record, user: user, anime: anime) }
-      let!(:episode_record) { create(:episode_record, record: record, anime: anime, episode: episode, user: user, body: "楽しかった") }
+      let!(:work) { create(:work) }
+      let!(:episode) { create(:episode, work: work) }
+      let!(:record) { create(:record, user: user, work: work) }
+      let!(:episode_record) { create(:episode_record, record: record, work: work, episode: episode, user: user, body: "楽しかった") }
 
       it "記録が表示されること" do
         get "/@#{user.username}/records/#{record.id}"
 
         expect(response.status).to eq(200)
         expect(response.body).to include(user.profile.name)
-        expect(response.body).to include(anime.title)
+        expect(response.body).to include(work.title)
         expect(response.body).to include(episode.number)
         expect(response.body).to include("楽しかった")
       end
@@ -43,32 +43,32 @@ describe "GET /@:username/records/:record_id", type: :request do
 
   context "ログインしていないとき" do
     context "アニメへの記録を参照したとき" do
-      let!(:anime) { create(:anime) }
-      let!(:record) { create(:record, user: user, anime: anime) }
-      let!(:anime_record) { create(:anime_record, user: user, record: record, anime: anime, body: "最高") }
+      let!(:work) { create(:work) }
+      let!(:record) { create(:record, user: user, work: work) }
+      let!(:work_record) { create(:work_record, user: user, record: record, work: work, body: "最高") }
 
       it "記録が表示されること" do
         get "/@#{user.username}/records/#{record.id}"
 
         expect(response.status).to eq(200)
         expect(response.body).to include(user.profile.name)
-        expect(response.body).to include(anime.title)
+        expect(response.body).to include(work.title)
         expect(response.body).to include("最高")
       end
     end
 
     context "エピソードへの記録を参照したとき" do
-      let!(:anime) { create(:anime) }
-      let!(:episode) { create(:episode, anime: anime) }
-      let!(:record) { create(:record, user: user, anime: anime) }
-      let!(:episode_record) { create(:episode_record, record: record, anime: anime, episode: episode, user: user, body: "楽しかった") }
+      let!(:work) { create(:work) }
+      let!(:episode) { create(:episode, work: work) }
+      let!(:record) { create(:record, user: user, work: work) }
+      let!(:episode_record) { create(:episode_record, record: record, work: work, episode: episode, user: user, body: "楽しかった") }
 
       it "記録が表示されること" do
         get "/@#{user.username}/records/#{record.id}"
 
         expect(response.status).to eq(200)
         expect(response.body).to include(user.profile.name)
-        expect(response.body).to include(anime.title)
+        expect(response.body).to include(work.title)
         expect(response.body).to include(episode.number)
         expect(response.body).to include("楽しかった")
       end

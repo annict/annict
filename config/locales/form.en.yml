@@ -1,7 +1,7 @@
 en:
   form:
     attributes:
-      forms/anime_record_form:
+      forms/work_record_form:
         comment: Comment
         rating_animation: Animation
         rating_character: Character

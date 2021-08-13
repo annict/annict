@@ -7,7 +7,7 @@
 
   <mj-section>
     <mj-column width="35%">
-      <mj-image src="<%= v4_ann_image_url(@work.anime_image, :image, size: "300x", ratio: "3:4") %>" align="center" href="<%= anime_url(@work) %>"></mj-image>
+      <mj-image src="<%= v4_ann_image_url(@work.work_image, :image, size: "300x", ratio: "3:4") %>" align="center" href="<%= work_url(@work) %>"></mj-image>
     </mj-column>
     <mj-column width="65%">
       <mj-text font-size="24px" font-weight="600" padding-bottom="7px"><%= "#{@work.local_title}" %></mj-text>

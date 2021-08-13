@@ -2,7 +2,7 @@
 
 namespace :email_notification do
   task notify_untouched_works: :environment do
-    works = Anime.where(episodes_count: 0).order(watchers_count: :desc).limit(3)
+    works = Work.where(episodes_count: 0).order(watchers_count: :desc).limit(3)
     WorkMailer.untouched_works_notification(works.pluck(:id)).deliver_later
   end
 
@@ -10,7 +10,7 @@ namespace :email_notification do
     casts = Cast.only_kept.past_week
     staffs = Staff.only_kept.past_week
 
-    works = Anime.only_kept.where(id: casts.pluck(:work_id) | staffs.pluck(:work_id)).gt_current_season
+    works = Work.only_kept.where(id: casts.pluck(:work_id) | staffs.pluck(:work_id)).gt_current_season
 
     next if works.blank?
 
@@ -42,10 +42,10 @@ namespace :email_notification do
   end
 
   task send_related_works_added_email: :environment do
-    works = Anime.only_kept.past_week.gt_current_season
+    works = Work.only_kept.past_week.gt_current_season
     next if works.blank?
 
-    series_ids = SeriesAnime.where(anime: works).pluck(:series_id)
+    series_ids = SeriesWork.where(work: works).pluck(:series_id)
     next if series_ids.blank?
 
     users = User
@@ -59,7 +59,7 @@ namespace :email_notification do
       positive_statuses = user.library_entries.positive
       next unless positive_statuses.exists?
 
-      series_works = SeriesAnime.where(series_id: series_ids, work_id: positive_statuses.pluck(:work_id))
+      series_works = SeriesWork.where(series_id: series_ids, work_id: positive_statuses.pluck(:work_id))
       target_series_ids = series_works.pluck(:series_id).uniq
       next if target_series_ids.blank?
 

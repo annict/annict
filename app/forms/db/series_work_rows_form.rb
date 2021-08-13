@@ -8,7 +8,7 @@ module Db
 
     attr_accessor :series
 
-    row_model SeriesAnime
+    row_model SeriesWork
 
     validate :valid_resource
 
@@ -26,8 +26,8 @@ module Db
 
     def fetched_rows
       parsed_rows.map do |row_columns|
-        work = Anime.only_kept.where(id: row_columns[0])
-          .or(Anime.only_kept.where(title: row_columns[0])).first
+        work = Work.only_kept.where(id: row_columns[0])
+          .or(Work.only_kept.where(title: row_columns[0])).first
 
         {
           work: {id: work&.id, value: row_columns[0]},

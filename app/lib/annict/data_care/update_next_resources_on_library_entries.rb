@@ -20,7 +20,7 @@ module Annict
 
       def target_library_entries
         @target_library_entries ||= LibraryEntry
-          .preload(:anime, :program)
+          .preload(:work, :program)
           .watching
           .after(Date.today - 3, field: "library_entries.updated_at")
           .merge(LibraryEntry.has_no_next_episode.or(LibraryEntry.has_no_next_slot))

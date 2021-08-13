@@ -48,12 +48,12 @@ xdescribe Canary::Mutations::AddReaction do
   end
 
   context "記録 (アニメ) にリアクションしたとき" do
-    let(:anime_record) { create(:anime_record, user: user_2) }
-    let(:reactable) { anime_record.record }
+    let(:work_record) { create(:work_record, user: user_2) }
+    let(:reactable) { work_record.record }
 
     it "Likeが保存されること" do
       expect(Like.count).to eq 0
-      expect(anime_record.likes_count).to eq 0
+      expect(work_record.likes_count).to eq 0
       expect(Notification.count).to eq 0
       # アニメへの記録についたリアクションの通知は現状サポートしていない (サポートしたい)
       email_notification.should_receive(:send_email).exactly(0).times
@@ -61,12 +61,12 @@ xdescribe Canary::Mutations::AddReaction do
       Canary::AnnictSchema.execute(query, variables: variables, context: context)
 
       expect(Like.count).to eq 1
-      expect(anime_record.reload.likes_count).to eq 1
+      expect(work_record.reload.likes_count).to eq 1
       expect(Notification.count).to eq 1
 
       like = Like.first
 
-      expect(like.recipient).to eq anime_record
+      expect(like.recipient).to eq work_record
       expect(like.user).to eq user_1
     end
   end

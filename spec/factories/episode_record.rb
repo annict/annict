@@ -5,7 +5,7 @@ FactoryBot.define do
     association :user, :with_profile
     body { "おもしろかった" }
     twitter_url_hash { |n| "xxxxx#{n}" }
-    anime
+    work
     episode
     record
     rating { 3.0 }

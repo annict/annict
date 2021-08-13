@@ -25,7 +25,7 @@ module Canary
         field :episode_records_count, Integer, null: false
         field :commented_episode_records_count, Integer, null: false
         field :viewer_records_count, Integer, null: false
-        field :anime, Canary::Types::Objects::AnimeType, null: false
+        field :work, Canary::Types::Objects::WorkType, null: false
         field :prev_episode, Canary::Types::Objects::EpisodeType, null: true
         field :next_episode, Canary::Types::Objects::EpisodeType, null: true
 
@@ -35,8 +35,8 @@ module Canary
           argument :order_by, Canary::Types::InputObjects::RecordOrder, required: false
         end
 
-        def anime
-          RecordLoader.for(Anime).load(object.work_id)
+        def work
+          RecordLoader.for(Work).load(object.work_id)
         end
 
         def prev_episode

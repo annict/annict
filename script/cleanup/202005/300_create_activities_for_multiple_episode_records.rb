@@ -21,7 +21,7 @@ activities.with_action(:create_multiple_episode_records).where(mer_processed_at:
 
     episode_records.each do |episode_record|
       episode = episode_record.episode
-      work = episode.anime
+      work = episode.work
 
       user.activities.create!(
         action: :create_episode_record,

@@ -44,7 +44,7 @@ class Program < ApplicationRecord
   validates :url, url: {allow_blank: true}
 
   belongs_to :channel
-  belongs_to :anime, foreign_key: :work_id, touch: true
+  belongs_to :work, touch: true
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
   has_many :slots, dependent: :destroy
@@ -99,7 +99,7 @@ class Program < ApplicationRecord
 
   def calc_for_timezone
     return if time_zone.blank?
-    return if self.started_at.nil?
+    return if started_at.nil?
 
     started_at = ActiveSupport::TimeZone.new(time_zone).local_to_utc(self.started_at)
     self.started_at = started_at

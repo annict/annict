@@ -67,7 +67,7 @@ class EpisodeRecord < ApplicationRecord
 
   attr_accessor :share_to_twitter, :mutation_error
 
-  belongs_to :anime, foreign_key: :work_id
+  belongs_to :work
   belongs_to :oauth_application, class_name: "Doorkeeper::Application", optional: true
   belongs_to :record
   belongs_to :episode
@@ -142,16 +142,16 @@ class EpisodeRecord < ApplicationRecord
   end
 
   def facebook_share_title
-    "#{anime.title} #{episode.title_with_number}"
+    "#{work.title} #{episode.title_with_number}"
   end
 
   def twitter_share_body
-    work_title = anime.local_title
+    work_title = work.local_title
     title = body.present? ? work_title.truncate(30) : work_title
     comment = body.present? ? "#{body} / " : ""
     episode_number = episode.local_number
     share_url = share_url_with_query(:twitter)
-    share_hashtag = anime.hashtag_with_hash
+    share_hashtag = work.hashtag_with_hash
 
     base_body = if user.locale == "ja"
       "%s#{title} #{episode_number} を見ました #{share_url} #{share_hashtag}"

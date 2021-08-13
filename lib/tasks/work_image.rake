@@ -2,7 +2,7 @@
 
 namespace :work_image do
   task save_sns_image: :environment do
-    Anime.only_kept.find_each do |work|
+    Work.only_kept.find_each do |work|
       puts "work: #{work.id}"
       service = SnsImageService.new(work)
       service.save_og_image
@@ -11,7 +11,7 @@ namespace :work_image do
   end
 
   task save_recommended_image: :environment do
-    Anime.only_kept.find_each do |work|
+    Work.only_kept.find_each do |work|
       puts "work: #{work.id}"
 
       image_urls = {}

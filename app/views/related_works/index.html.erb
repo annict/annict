@@ -1,0 +1,44 @@
+<% title = t "head.title.related_works.index", title: @work.local_title %>
+<% description = meta_description(t("head.meta.description.related_works.index", title: @work.local_title)) %>
+<% image_url = ann_work_image_url(@work, width: 640) %>
+<% set_meta_tags(title: title, description: description, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false) %>
+
+<%= component_value_fetcher_tag("status-select-dropdown", internal_api_library_entry_list_path, method: :post, payload: {work_ids: @work_ids}) %>
+
+<%= Headers::WorkHeaderComponent.new(self, work: @work, programs: @programs).render %>
+
+<% if @series_list.present? %>
+  <% @series_list.each do |series| %>
+    <% series_works = series.series_works %>
+
+    <div class="container mt-5">
+      <h2 class="fw-bold h3 mb-3">
+        <%= series.local_name %> <%= t "noun.series" %>
+      </h2>
+    </div>
+
+    <div class="container u-container-flat">
+      <div class="card u-card-flat">
+        <div class="card-body">
+          <div class="g-3 row">
+            <% series_works.each do |series_work| %>
+              <div class="col-6 col-sm-2 text-center">
+                <%= Cards::WorkCardComponent.new(self, work: series_work.work, width: 195, caption: series_work.local_summary).render %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+<% else %>
+  <div class="py-3">
+    <div class="container u-container-flat">
+      <div class="card u-card-flat">
+        <div class="card-body">
+          <%= EmptyV6Component.new(self, text: t("messages._empty.no_resources")).render %>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

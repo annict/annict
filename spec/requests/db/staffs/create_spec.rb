@@ -3,7 +3,7 @@
 describe "POST /db/works/:work_id/staffs", type: :request do
   context "user does not sign in" do
     let!(:person) { create(:person) }
-    let!(:work) { create(:anime) }
+    let!(:work) { create(:work) }
     let!(:form_params) do
       {
         rows: "監督,#{person.id}"
@@ -22,7 +22,7 @@ describe "POST /db/works/:work_id/staffs", type: :request do
 
   context "user who is not editor signs in" do
     let!(:person) { create(:person) }
-    let!(:work) { create(:anime) }
+    let!(:work) { create(:work) }
     let!(:user) { create(:registered_user) }
     let!(:form_params) do
       {
@@ -46,7 +46,7 @@ describe "POST /db/works/:work_id/staffs", type: :request do
 
   context "user who is editor signs in" do
     let!(:person) { create(:person) }
-    let!(:work) { create(:anime) }
+    let!(:work) { create(:work) }
     let!(:user) { create(:registered_user, :with_editor_role) }
     let!(:form_params) do
       {

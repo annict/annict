@@ -1,5 +1,5 @@
 <turbo-frame id="c-tracking-offcanvas-frame">
-  <%= component_value_fetcher_tag("status-select-dropdown", internal_api_library_entry_list_path, method: :post, payload: {anime_ids: [@anime.id]}) %>
+  <%= component_value_fetcher_tag("status-select-dropdown", internal_api_library_entry_list_path, method: :post, payload: {work_ids: [@work.id]}) %>
   <%= component_value_fetcher_tag("like-button", internal_api_like_list_path) %>
   <%= component_value_fetcher_tag("spoiler-guard", internal_api_spoiler_guard_path) %>
 
@@ -7,20 +7,20 @@
     <div class="container">
       <div class="gx-3 row">
         <div class="col-auto">
-          <%= link_to anime_path(@anime.id) do %>
-            <%= Pictures::AnimePictureComponent.new(self, anime: @anime, width: 100).render %>
+          <%= link_to work_path(@work.id) do %>
+            <%= Pictures::WorkPictureComponent.new(self, work: @work, width: 100).render %>
           <% end %>
 
           <div class="mt-2 text-center">
-            <%= ButtonGroups::AnimeButtonGroupComponent.new(self, anime: @anime, show_option_button: false).render %>
+            <%= ButtonGroups::WorkButtonGroupComponent.new(self, work: @work, show_option_button: false).render %>
           </div>
         </div>
 
         <div class="col">
-          <%= link_to fragment_trackable_anime_path(@anime.id), class: "small" do %>
+          <%= link_to fragment_trackable_work_path(@work.id), class: "small" do %>
             <i class="far fa-angle-left"></i>
             <span class="ps-1">
-              <%= @episode.anime.local_title %>
+              <%= @episode.work.local_title %>
             </span>
           <% end %>
 
@@ -38,14 +38,14 @@
 
           <ul class="list-inline mt-2 small">
             <li class="list-inline-item">
-              <%= link_to anime_path(@anime.id), data: { "turbo-frame": "_top" } do %>
+              <%= link_to work_path(@work.id), data: { "turbo-frame": "_top" } do %>
                 <%= t("noun.work_detail_page") %>
                 <i class="far fa-angle-right ms-1"></i>
               <% end %>
             </li>
 
             <li class="list-inline-item mt-1 mt-sm-0">
-              <%= link_to episode_path(@anime.id, @episode.id), data: { "turbo-frame": "_top" } do %>
+              <%= link_to episode_path(@work.id, @episode.id), data: { "turbo-frame": "_top" } do %>
                 <%= t("noun.episode_page") %>
                 <i class="far fa-angle-right ms-1"></i>
               <% end %>

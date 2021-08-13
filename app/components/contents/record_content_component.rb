@@ -5,7 +5,7 @@ module Contents
     def initialize(view_context, record:, show_box: true)
       super view_context
       @record = record
-      @anime = @record.anime
+      @work = @record.work
       @episode = @record.episode
       @show_box = show_box
     end
@@ -32,7 +32,7 @@ module Contents
           if @show_box
             h.tag :hr
 
-            h.html Boxes::AnimeBoxComponent.new(view_context, anime: @anime, episode: @episode).render
+            h.html Boxes::WorkBoxComponent.new(view_context, work: @work, episode: @episode).render
 
             h.tag :hr
           end

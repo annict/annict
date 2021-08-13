@@ -2,9 +2,9 @@
 
 module Dropdowns
   class StatusSelectDropdownComponent < ApplicationV6Component
-    def initialize(view_context, anime:, class_name: "")
+    def initialize(view_context, work:, class_name: "")
       super view_context
-      @anime = anime
+      @work = work
       @class_name = class_name
     end
 
@@ -13,7 +13,7 @@ module Dropdowns
         h.tag :div, {
           class: "btn-group c-status-select-dropdown",
           data_controller: "status-select-dropdown",
-          data_status_select_dropdown_anime_id_value: @anime.id,
+          data_status_select_dropdown_work_id_value: @work.id,
           data_status_select_dropdown_page_category_value: page_category,
           data_status_select_dropdown_kind_icons_value: Status::KIND_ICONS.to_json
         } do
@@ -21,7 +21,7 @@ module Dropdowns
             class: "btn dropdown-toggle u-btn-outline-status",
             data_status_select_dropdown_target: "button",
             type: "button",
-            id: "anime#{@anime.id}Dropdown",
+            id: "work#{@work.id}Dropdown",
             data_bs_toggle: "dropdown"
           } do
             h.tag :i, class: "fas fa-bars"

@@ -11,7 +11,7 @@ module Beta
       def resolve(work_id:, state:)
         raise Annict::Errors::InvalidAPITokenScopeError unless context[:doorkeeper_token].writable?
 
-        anime = Anime.only_kept.find_by_graphql_id(work_id)
+        work = Work.only_kept.find_by_graphql_id(work_id)
 
         state = case state
         when "NO_STATE" then "no_select"
@@ -19,7 +19,7 @@ module Beta
           state.downcase
         end
 
-        form = Forms::StatusForm.new(anime: anime, kind: state)
+        form = Forms::StatusForm.new(work: work, kind: state)
 
         if form.invalid?
           raise GraphQL::ExecutionError, form.errors.full_messages.first
@@ -28,7 +28,7 @@ module Beta
         Updaters::StatusUpdater.new(user: context[:viewer], form: form).call
 
         {
-          work: anime
+          work: work
         }
       end
     end

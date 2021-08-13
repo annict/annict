@@ -3,7 +3,7 @@
 describe "POST /db/series/:series_id/series_works", type: :request do
   context "user does not sign in" do
     let!(:series) { create(:series) }
-    let!(:work) { create(:anime) }
+    let!(:work) { create(:work) }
     let!(:form_params) do
       {
         rows: "#{work.id}, Season 1"
@@ -16,14 +16,14 @@ describe "POST /db/series/:series_id/series_works", type: :request do
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("ログインしてください")
 
-      expect(SeriesAnime.all.size).to eq(0)
+      expect(SeriesWork.all.size).to eq(0)
     end
   end
 
   context "user who is not editor signs in" do
     let!(:user) { create(:registered_user) }
     let!(:series) { create(:series) }
-    let!(:work) { create(:anime) }
+    let!(:work) { create(:work) }
     let!(:form_params) do
       {
         rows: "#{work.id}, Season 1"
@@ -40,14 +40,14 @@ describe "POST /db/series/:series_id/series_works", type: :request do
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("アクセスできません")
 
-      expect(SeriesAnime.all.size).to eq(0)
+      expect(SeriesWork.all.size).to eq(0)
     end
   end
 
   context "user who is editor signs in" do
     let!(:user) { create(:registered_user, :with_editor_role) }
     let!(:series) { create(:series) }
-    let!(:work) { create(:anime) }
+    let!(:work) { create(:work) }
     let!(:form_params) do
       {
         rows: "#{work.id}, Season 1"
@@ -59,16 +59,16 @@ describe "POST /db/series/:series_id/series_works", type: :request do
     end
 
     it "user can create series" do
-      expect(SeriesAnime.all.size).to eq(0)
+      expect(SeriesWork.all.size).to eq(0)
 
       post "/db/series/#{series.id}/series_works", params: {db_series_work_rows_form: form_params}
 
       expect(response.status).to eq(302)
       expect(flash[:notice]).to eq("登録しました")
 
-      expect(SeriesAnime.all.size).to eq(1)
-      series_work = SeriesAnime.first
-      expect(series_work.anime).to eq(work)
+      expect(SeriesWork.all.size).to eq(1)
+      series_work = SeriesWork.first
+      expect(series_work.work).to eq(work)
       expect(series_work.summary).to eq("Season 1")
     end
   end

@@ -148,7 +148,7 @@ ja:
         name_alter: 別名
         name_alter_en: 別名 (英語)
         name_en: 名前 (英語)
-      series_anime:
+      series_work:
         summary: 関係性
         summary_en: 関係性 (英語)
         work_id: アニメ
@@ -187,7 +187,7 @@ ja:
         code: 作品コード
         created_at: 作成日
         name: 作品名
-      anime:
+      work:
         ended_on: 終了日
         mal_anime_id: MAL Anime ID
         manual_episodes_count: エピソード数
@@ -216,10 +216,10 @@ ja:
         twitter_username: 公式Twitter
         wikipedia_url_en: Wikipedia (英)
         wikipedia_url: Wikipedia
-      anime_image:
+      work_image:
         attachment: アニメ画像
         copyright: 著作者情報
-      anime_organization:
+      work_organization:
         organization_id: 団体
         work_id: アニメ
         role: 担当
@@ -266,7 +266,7 @@ ja:
       series:
         one: シリーズ
         other: シリーズ
-      series_anime:
+      series_work:
         one: シリーズアニメ
         other: シリーズアニメ
       staff:

@@ -5,7 +5,7 @@ module Db
     before_action :authenticate_user!, only: %i[new create edit update destroy]
 
     def index
-      @work = Anime.without_deleted.find(params[:work_id])
+      @work = Work.without_deleted.find(params[:work_id])
       @casts = @work
         .casts
         .without_deleted
@@ -15,13 +15,13 @@ module Db
     end
 
     def new
-      @work = Anime.without_deleted.find(params[:work_id])
+      @work = Work.without_deleted.find(params[:work_id])
       @form = Db::CastRowsForm.new
       authorize @form
     end
 
     def create
-      @work = Anime.without_deleted.find(params[:work_id])
+      @work = Work.without_deleted.find(params[:work_id])
       @form = Db::CastRowsForm.new(cast_rows_form_params)
       @form.user = current_user
       @form.work = @work
@@ -37,13 +37,13 @@ module Db
     def edit
       @cast = Cast.without_deleted.find(params[:id])
       authorize @cast
-      @work = @cast.anime
+      @work = @cast.work
     end
 
     def update
       @cast = Cast.without_deleted.find(params[:id])
       authorize @cast
-      @work = @cast.anime
+      @work = @cast.work
 
       @cast.attributes = cast_params
       @cast.user = current_user
@@ -62,7 +62,7 @@ module Db
       @cast.destroy_in_batches
 
       redirect_back(
-        fallback_location: db_cast_list_path(@cast.anime),
+        fallback_location: db_cast_list_path(@cast.work),
         notice: t("messages._common.deleted")
       )
     end

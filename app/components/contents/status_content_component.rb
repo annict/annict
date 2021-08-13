@@ -5,7 +5,7 @@ module Contents
     def initialize(view_context, status:)
       super view_context
       @status = status
-      @anime = @status.anime
+      @work = @status.work
     end
 
     def render
@@ -17,7 +17,7 @@ module Contents
 
           h.tag :hr
 
-          h.html Boxes::AnimeBoxComponent.new(view_context, anime: @anime).render
+          h.html Boxes::WorkBoxComponent.new(view_context, work: @work).render
 
           h.tag :hr
 

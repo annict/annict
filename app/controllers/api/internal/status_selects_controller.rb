@@ -6,8 +6,8 @@ module Api
       def create
         return head(:unauthorized) unless user_signed_in?
 
-        anime = Anime.only_kept.find(params[:anime_id])
-        form = Forms::StatusForm.new(anime: anime, kind: params[:status_kind])
+        work = Work.only_kept.find(params[:work_id])
+        form = Forms::StatusForm.new(work: work, kind: params[:status_kind])
 
         if form.valid?
           Updaters::StatusUpdater.new(user: current_user, form: form).call

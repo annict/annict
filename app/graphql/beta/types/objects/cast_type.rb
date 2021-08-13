@@ -17,7 +17,7 @@ module Beta
         field :person, Beta::Types::Objects::PersonType, null: false
 
         def work
-          object.anime
+          object.work
         end
       end
     end

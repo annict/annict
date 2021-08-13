@@ -1,7 +1,7 @@
 ja:
   form:
     attributes:
-      forms/anime_record_form:
+      forms/work_record_form:
         comment: 感想
         rating_animation: 映像
         rating_character: キャラクター

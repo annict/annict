@@ -7,7 +7,7 @@ users.find_each do |user|
   p "user: #{user.id}"
 
   ActiveRecord::Base.transaction do
-    ChannelAnime.where(user: user).find_each do |ca|
+    ChannelWork.where(user: user).find_each do |ca|
       program = Program.where(work_id: ca.work_id, channel_id: ca.channel_id).order(started_at: :desc).first
       next unless program
 

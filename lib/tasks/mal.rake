@@ -22,7 +22,7 @@ namespace :mal do
         anime_list.each do |anime|
           print "Anime ##{anime["id"]}: "
 
-          if Anime.find_by(mal_anime_id: anime["id"]).present?
+          if Work.find_by(mal_anime_id: anime["id"]).present?
             puts "already saved"
             next
           end
@@ -68,11 +68,11 @@ namespace :mal do
     end
 
     def find_work(mal_anime)
-      work = Anime.where("lower(title) = ?", mal_anime["title"].downcase).first
+      work = Work.where("lower(title) = ?", mal_anime["title"].downcase).first
 
       if work.blank?
         (mal_anime.dig("other_titles", "japanese").presence || []).each do |title|
-          work = Anime.find_by(title: title)
+          work = Work.find_by(title: title)
         end
       end
 

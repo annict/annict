@@ -29,11 +29,11 @@ module Canary
         field :records_count, Integer, null: false
         field :following_count, Integer, null: false
         field :followers_count, Integer, null: false
-        field :plan_to_watch_anime_count, Integer, null: false
-        field :watching_anime_count, Integer, null: false
-        field :completed_anime_count, Integer, null: false
-        field :on_hold_anime_count, Integer, null: false
-        field :dropped_anime_count, Integer, null: false
+        field :plan_to_watch_work_count, Integer, null: false
+        field :watching_work_count, Integer, null: false
+        field :completed_work_count, Integer, null: false
+        field :on_hold_work_count, Integer, null: false
+        field :dropped_work_count, Integer, null: false
         field :notifications_count, Integer, null: true
         field :character_favorites_count, Integer, null: false
         field :person_favorites_count, Integer, null: false
@@ -68,12 +68,12 @@ module Canary
           argument :order_by, Canary::Types::InputObjects::RecordOrder, required: false
         end
 
-        field :anime_list, Canary::Types::Objects::AnimeType.connection_type, null: true do
+        field :work_list, Canary::Types::Objects::WorkType.connection_type, null: true do
           argument :database_ids, [Integer], required: false
           argument :seasons, [String], required: false
           argument :titles, [String], required: false
           argument :status_kind, Canary::Types::Enums::StatusKind, required: false
-          argument :order_by, Canary::Types::InputObjects::AnimeOrder, required: false
+          argument :order_by, Canary::Types::InputObjects::WorkOrder, required: false
         end
 
         field :library_entries, Canary::Types::Objects::LibraryEntryType.connection_type, null: true, resolver: Canary::Resolvers::LibraryEntries do
@@ -164,23 +164,23 @@ module Canary
           object.email
         end
 
-        def plan_to_watch_anime_count
+        def plan_to_watch_work_count
           object.plan_to_watch_works_count
         end
 
-        def watching_anime_count
+        def watching_work_count
           object.watching_works_count
         end
 
-        def completed_anime_count
+        def completed_work_count
           object.completed_works_count
         end
 
-        def on_hold_anime_count
+        def on_hold_work_count
           object.on_hold_works_count
         end
 
-        def dropped_anime_count
+        def dropped_work_count
           object.dropped_works_count
         end
 
@@ -224,9 +224,9 @@ module Canary
           ).call
         end
 
-        def anime_list(database_ids: nil, seasons: nil, titles: nil, status_kind: nil, order_by: nil)
+        def work_list(database_ids: nil, seasons: nil, titles: nil, status_kind: nil, order_by: nil)
           SearchWorksQuery.new(
-            object.animes,
+            object.works,
             user: object,
             annict_ids: database_ids,
             seasons: seasons,

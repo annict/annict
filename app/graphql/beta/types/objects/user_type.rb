@@ -158,7 +158,7 @@ module Beta
 
         def works(annict_ids: nil, seasons: nil, titles: nil, state: nil, order_by: nil)
           SearchWorksQuery.new(
-            object.animes,
+            object.works,
             user: object,
             annict_ids: annict_ids,
             seasons: seasons,

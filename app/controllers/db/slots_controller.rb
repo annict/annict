@@ -5,7 +5,7 @@ module Db
     before_action :authenticate_user!, only: %i[new create edit update destroy]
 
     def index
-      @work = Anime.without_deleted.find(params[:work_id])
+      @work = Work.without_deleted.find(params[:work_id])
       @slots = @work.slots.without_deleted.eager_load(:channel, :episode, program: :channel)
       @slots = @slots.where(program_id: params[:program_id]) if params[:program_id]
       @slots = @slots.order(started_at: :desc, number: :desc, channel_id: :asc)
@@ -13,7 +13,7 @@ module Db
     end
 
     def new
-      @work = Anime.without_deleted.find(params[:work_id])
+      @work = Work.without_deleted.find(params[:work_id])
       @programs = @work.programs.only_kept.where.not(started_at: nil).order(:started_at, :id)
       @form = Db::SlotRowsForm.new
       @form.work = @work
@@ -22,7 +22,7 @@ module Db
     end
 
     def create
-      @work = Anime.without_deleted.find(params[:work_id])
+      @work = Work.without_deleted.find(params[:work_id])
       @form = Db::SlotRowsForm.new(slot_rows_form)
       @form.user = current_user
       @form.work = @work
@@ -41,7 +41,7 @@ module Db
     def edit
       @slot = Slot.without_deleted.find(params[:id])
       authorize @slot
-      @work = @slot.anime
+      @work = @slot.work
       @programs = @work.programs.order(:started_at)
       @channels = Channel.only_kept.order(:name)
       @episodes = @work.episodes.only_kept.order(sort_number: :desc)
@@ -50,7 +50,7 @@ module Db
     def update
       @slot = Slot.without_deleted.find(params[:id])
       authorize @slot
-      @work = @slot.anime
+      @work = @slot.work
 
       @slot.attributes = slot_params
       @slot.user = current_user

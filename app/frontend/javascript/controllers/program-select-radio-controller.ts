@@ -5,9 +5,9 @@ import { EventDispatcher } from '../utils/event-dispatcher';
 import fetcher from '../utils/fetcher';
 
 export default class extends Controller {
-  static values = { animeId: Number, initProgramId: Number };
+  static values = { workId: Number, initProgramId: Number };
 
-  animeIdValue!: number;
+  workIdValue!: number;
   initProgramIdValue!: number;
   currentProgramId!: number;
 
@@ -32,7 +32,7 @@ export default class extends Controller {
       this.toggleLoading(true);
 
       try {
-        await fetcher.post(`/api/internal/animes/${this.animeIdValue}/program_select`, {
+        await fetcher.post(`/api/internal/works/${this.workIdValue}/program_select`, {
           program_id: newProgramId,
         });
 

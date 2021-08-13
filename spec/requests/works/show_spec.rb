@@ -2,7 +2,7 @@
 
 describe "GET /works/:id", type: :request do
   context "when user does not sign in" do
-    let!(:work) { create(:anime) }
+    let!(:work) { create(:work) }
 
     it "responses work info" do
       get "/works/#{work.id}"
@@ -14,7 +14,7 @@ describe "GET /works/:id", type: :request do
 
   context "when user signs in" do
     let!(:user) { create(:registered_user) }
-    let!(:work) { create(:anime) }
+    let!(:work) { create(:work) }
 
     before do
       login_as(user, scope: :user)
@@ -29,8 +29,8 @@ describe "GET /works/:id", type: :request do
   end
 
   context "when trailers are added" do
-    let!(:work) { create(:anime) }
-    let!(:trailer) { create(:trailer, anime: work) }
+    let!(:work) { create(:work) }
+    let!(:trailer) { create(:trailer, work: work) }
 
     before do
       get "/works/#{work.id}"
@@ -43,8 +43,8 @@ describe "GET /works/:id", type: :request do
   end
 
   context "when episodes have been added" do
-    let!(:work) { create(:anime) }
-    let!(:episode) { create(:episode, anime: work) }
+    let!(:work) { create(:work) }
+    let!(:episode) { create(:episode, work: work) }
 
     before do
       get "/works/#{work.id}"
@@ -57,9 +57,9 @@ describe "GET /works/:id", type: :request do
   end
 
   context "when vods have been added" do
-    let!(:work) { create(:anime) }
+    let!(:work) { create(:work) }
     let!(:channel) { Channel.with_vod.first }
-    let!(:program) { create(:program, anime: work, channel: channel, vod_title_code: "xxx") }
+    let!(:program) { create(:program, work: work, channel: channel, vod_title_code: "xxx") }
     let!(:vod_title_url) { "https://example.com/#{program.vod_title_code}" }
 
     before do
@@ -75,9 +75,9 @@ describe "GET /works/:id", type: :request do
   end
 
   context "when work records have been added" do
-    let!(:work) { create(:anime) }
-    let!(:record) { create(:record, anime: work) }
-    let!(:work_record) { create(:anime_record, anime: work, record: record) }
+    let!(:work) { create(:work) }
+    let!(:record) { create(:record, work: work) }
+    let!(:work_record) { create(:work_record, work: work, record: record) }
 
     before do
       get "/works/#{work.id}"

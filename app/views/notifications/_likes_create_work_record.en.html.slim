@@ -9,7 +9,7 @@ span.mx-1
   = link_to "your record", record_path(work_record.user.username, work_record.record)
 | on
 span.mx-1
-  = work_record.anime.title_link
+  = work_record.work.title_link
 
 .small.text-muted
   = local_time_ago_in_words(notification.created_at)

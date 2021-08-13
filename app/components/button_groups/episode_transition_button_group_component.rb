@@ -67,7 +67,7 @@ module ButtonGroups
 
       case @path
       when :episode_path
-        view_context.episode_path(@episode.anime.id, @episode.prev_episode.id)
+        view_context.episode_path(@episode.work.id, @episode.prev_episode.id)
       when :fragment_trackable_episode_path
         view_context.fragment_trackable_episode_path(@episode.prev_episode.id)
       end
@@ -80,7 +80,7 @@ module ButtonGroups
 
       case @path
       when :episode_path
-        view_context.episode_path(@episode.anime.id, @episode.next_episode.id)
+        view_context.episode_path(@episode.work.id, @episode.next_episode.id)
       when :fragment_trackable_episode_path
         view_context.fragment_trackable_episode_path(@episode.next_episode.id)
       end

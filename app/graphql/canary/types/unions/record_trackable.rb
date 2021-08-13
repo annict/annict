@@ -6,7 +6,7 @@ module Canary
       class RecordTrackable < Canary::Types::Unions::Base
         graphql_name "RecordTrackable"
 
-        possible_types Canary::Types::Objects::AnimeType, Canary::Types::Objects::EpisodeType
+        possible_types Canary::Types::Objects::WorkType, Canary::Types::Objects::EpisodeType
       end
     end
   end

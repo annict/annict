@@ -31,7 +31,7 @@ module Canary
           null: false,
           description: "ソート番号"
 
-        field :anime, Canary::Types::Objects::AnimeType,
+        field :work, Canary::Types::Objects::WorkType,
           null: false
 
         field :character, Canary::Types::Objects::CharacterType,
@@ -48,8 +48,8 @@ module Canary
           object.decorate.accurate_name_en
         end
 
-        def anime
-          RecordLoader.for(Anime).load(object.work_id)
+        def work
+          RecordLoader.for(Work).load(object.work_id)
         end
       end
     end

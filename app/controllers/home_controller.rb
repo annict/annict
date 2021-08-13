@@ -14,8 +14,8 @@ class HomeController < ApplicationV6Controller
       .per(30)
       .without_count
 
-    @anime_ids = if @activity_groups.present?
-      @activity_groups.flat_map.with_prelude { |ags| ags.first_item.anime_id }.uniq
+    @work_ids = if @activity_groups.present?
+      @activity_groups.flat_map.with_prelude { |ags| ags.first_item.work_id }.uniq
     else
       []
     end

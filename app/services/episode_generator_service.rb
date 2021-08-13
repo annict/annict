@@ -7,7 +7,7 @@ class EpisodeGeneratorService
 
   def execute!(now:)
     episodeless_slots(now).order(:started_at).each do |slot|
-      work = slot.anime
+      work = slot.work
 
       next if work.manual_episodes_count && work.manual_episodes_count < slot.number
 
@@ -34,7 +34,7 @@ class EpisodeGeneratorService
       .where.not(program_id: nil)
       .where.not(number: nil)
       .before(now + 7.days, field: :started_at)
-      .includes(:anime)
+      .includes(:work)
   end
 
   def target_raw_number(slot)
@@ -44,11 +44,11 @@ class EpisodeGeneratorService
       .where("number >= ?", slot.program.minimum_episode_generatable_number)
       .count
     raw_number = slot.number - irregular_slots_count
-    raw_number + slot.anime.start_episode_raw_number - 1
+    raw_number + slot.work.start_episode_raw_number - 1
   end
 
   def create_new_episode!(slot, raw_number)
-    work = slot.anime
+    work = slot.work
     new_episode = nil
 
     ActiveRecord::Base.transaction do
