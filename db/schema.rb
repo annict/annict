@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_14_072817) do
+ActiveRecord::Schema.define(version: 2021_08_14_130936) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -229,6 +229,9 @@ ActiveRecord::Schema.define(version: 2021_08_14_072817) do
     t.datetime "updated_at"
     t.bigint "work_id"
     t.string "locale", default: "other", null: false
+    t.bigint "commentable_id"
+    t.string "commentable_type"
+    t.index ["commentable_id", "commentable_type"], name: "index_comments_on_commentable_id_and_commentable_type"
     t.index ["episode_record_id"], name: "comments_checkin_id_idx"
     t.index ["locale"], name: "index_comments_on_locale"
     t.index ["user_id"], name: "comments_user_id_idx"
