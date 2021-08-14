@@ -15,14 +15,14 @@ module ButtonGroups
           data_controller: "record-rating"
         } do
           h.tag :div, class: "btn-group btn-group-sm" do
-            EpisodeRecord.rating_state.values.each do |rating_state|
+            Record::RATING_KINDS.each do |rating_kind|
               h.tag :div, {
-                class: button_class_name(rating_state),
+                class: button_class_name(rating_kind),
                 data_action: "click->record-rating#changeState",
-                data_state: rating_state
+                data_state: rating_kind
               } do
-                h.html view_context.rating_state_icon(rating_state, class: "me-1")
-                h.text rating_state.text
+                h.html view_context.rating_state_icon(rating_kind, class: "me-1")
+                h.text t("activerecord.attributes.record/rating.#{rating_kind}")
               end
             end
           end

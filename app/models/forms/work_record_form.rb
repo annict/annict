@@ -2,19 +2,18 @@
 
 module Forms
   class WorkRecordForm < Forms::ApplicationForm
-    attr_accessor :work, :oauth_application,
-      :rating_animation, :rating_character, :rating_music, :rating_overall, :rating_story,
-      :record
-    attr_reader :comment, :deprecated_title, :share_to_twitter
+    attr_accessor :work, :record, :oauth_application,
+      :rating, :animation_rating, :character_rating, :music_rating, :story_rating
+    attr_reader :body, :deprecated_title, :share_to_twitter
 
     validates :work, presence: true
-    validates :comment, length: {maximum: 1_048_596}
+    validates :body, length: {maximum: 1_048_596}
 
-    WorkRecord::RATING_FIELDS.each do |rating_field|
-      validates rating_field, allow_nil: true, inclusion: {in: Record::RATING_STATES.map(&:to_s)}
+    Record::RATING_COLUMNS.each do |rating_column|
+      validates rating_column, allow_nil: true, inclusion: {in: Record::RATING_KINDS.map(&:to_s)}
 
-      define_method "#{rating_field}=" do |value|
-        instance_variable_set "@#{rating_field}", value&.downcase.presence
+      define_method "#{rating_column}=" do |value|
+        instance_variable_set "@#{rating_column}", value&.downcase.presence
       end
     end
 
@@ -22,8 +21,8 @@ module Forms
       @deprecated_title = value&.strip
     end
 
-    def comment=(comment)
-      @comment = comment&.strip
+    def body=(value)
+      @body = value&.strip
     end
 
     def share_to_twitter=(value)

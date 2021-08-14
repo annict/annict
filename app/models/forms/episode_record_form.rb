@@ -7,7 +7,7 @@ module Forms
 
     validates :comment, length: {maximum: 1_048_596}
     validates :episode, presence: true
-    validates :rating, inclusion: {in: Record::RATING_STATES.map(&:to_s)}, allow_nil: true
+    validates :rating, inclusion: {in: Record::RATING_KINDS.map(&:to_s)}, allow_nil: true
 
     def comment=(comment)
       @comment = comment&.strip

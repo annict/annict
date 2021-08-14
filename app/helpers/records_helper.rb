@@ -2,7 +2,7 @@
 
 module RecordsHelper
   def rating_state_icon(state, options)
-    case state
+    case state.to_s
     when "bad"
       icon "thumbs-down", "far", options
     when "average"

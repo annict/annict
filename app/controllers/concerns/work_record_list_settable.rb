@@ -5,10 +5,11 @@ module WorkRecordListSettable
 
   def set_work_record_list(work)
     records = work
-      .records_only_work
+      .records
+      .eager_load(:work, user: %i[gumroad_subscriber profile setting])
       .only_kept
-      .eager_load(:work, :work_record, :episode_record, user: %i[gumroad_subscriber profile setting])
-      .merge(WorkRecord.only_kept.order_by_rating(:desc).order(created_at: :desc))
+      .only_work_record
+      .order_by_rating(:desc)
     @my_records = @following_records = []
 
     if user_signed_in?
@@ -16,13 +17,14 @@ module WorkRecordListSettable
       @following_records = records.merge(current_user.followings)
       @all_records = records
         .where.not(user: [current_user, *current_user.followings])
-        .merge(WorkRecord.with_body)
+        .with_body
         .page(params[:page])
-        .per(100)
+        .per(20)
     else
       @all_records = records
+        .with_body
         .page(params[:page])
-        .per(100)
+        .per(20)
     end
   end
 end

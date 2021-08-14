@@ -121,7 +121,6 @@ class Work < ApplicationRecord
   has_many :staff_people, through: :staffs, source: :resource, source_type: "Person"
   has_many :channels, through: :programs
   has_many :work_records, foreign_key: :work_id
-  has_many :records_only_work, class_name: "Record", source: :record, through: :work_records
   has_many :work_tags, through: :work_taggings
   has_one :work_image, dependent: :destroy, foreign_key: :work_id
 

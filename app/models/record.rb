@@ -49,13 +49,15 @@ class Record < ApplicationRecord
   include SoftDeletable
   include Likeable
 
-  RATING_STATES = %i[bad average good great].freeze
+  RATING_PAIRS = {bad: 10, average: 20, good: 30, great: 40}.freeze
+  RATING_KINDS = RATING_PAIRS.keys
+  RATING_COLUMNS = %i[rating animation_rating character_rating music_rating story_rating].freeze
 
   counter_culture :user
   counter_culture :work
 
-  %i[rating animation_rating character_rating music_rating story_rating].each do |column_name|
-    enum column_name => { bad: 10, average: 20, good: 30, great: 40 }, _prefix: true
+  RATING_COLUMNS.each do |column_name|
+    enum column_name => RATING_PAIRS, _prefix: true
   end
 
   belongs_to :work

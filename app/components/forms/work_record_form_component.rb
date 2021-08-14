@@ -22,7 +22,7 @@ module Forms
           h.html ErrorPanelV6Component.new(view_context, stimulus_controller: "forms--work-record-form").render
 
           h.tag :div, class: "mb-2" do
-            h.html ButtonGroups::RecordRatingButtonGroupComponent.new(view_context, form: f, rating_field: :rating_overall).render
+            h.html ButtonGroups::RecordRatingButtonGroupComponent.new(view_context, form: f, rating_field: :rating).render
           end
 
           h.tag :div, class: "mb-3" do
