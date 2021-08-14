@@ -4,14 +4,12 @@
 #
 # Table name: likes
 #
-#  id             :bigint           not null, primary key
-#  likeable_type  :string
-#  recipient_type :string(510)      not null
-#  created_at     :datetime
-#  updated_at     :datetime
-#  likeable_id    :bigint
-#  recipient_id   :bigint           not null
-#  user_id        :bigint           not null
+#  id            :bigint           not null, primary key
+#  likeable_type :string
+#  created_at    :datetime
+#  updated_at    :datetime
+#  likeable_id   :bigint
+#  user_id       :bigint           not null
 #
 # Indexes
 #
@@ -24,6 +22,11 @@
 #
 
 class Like < ApplicationRecord
+  self.ignored_columns = %w[
+    recipient_id
+    recipient_type
+  ]
+
   counter_culture :recipient
 
   belongs_to :recipient, polymorphic: true

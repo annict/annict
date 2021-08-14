@@ -4,17 +4,15 @@
 #
 # Table name: comments
 #
-#  id                :bigint           not null, primary key
-#  body              :text             not null
-#  commentable_type  :string
-#  likes_count       :integer          default(0), not null
-#  locale            :string           default("other"), not null
-#  created_at        :datetime
-#  updated_at        :datetime
-#  commentable_id    :bigint
-#  episode_record_id :bigint           not null
-#  user_id           :bigint           not null
-#  work_id           :bigint
+#  id               :bigint           not null, primary key
+#  body             :text             not null
+#  commentable_type :string
+#  likes_count      :integer          default(0), not null
+#  locale           :string           default("other"), not null
+#  created_at       :datetime
+#  updated_at       :datetime
+#  commentable_id   :bigint
+#  user_id          :bigint           not null
 #
 # Indexes
 #
@@ -33,6 +31,11 @@
 
 class Comment < ApplicationRecord
   include UgcLocalizable
+
+  self.ignored_columns = %w[
+    episode_record_id
+    work_id
+  ]
 
   counter_culture :episode_record
 

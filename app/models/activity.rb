@@ -6,12 +6,10 @@
 #
 #  id                :bigint           not null, primary key
 #  itemable_type     :string
-#  trackable_type    :string(510)      not null
 #  created_at        :datetime
 #  updated_at        :datetime
 #  activity_group_id :bigint           not null
 #  itemable_id       :bigint
-#  trackable_id      :bigint           not null
 #  user_id           :bigint           not null
 #
 # Indexes
@@ -54,6 +52,8 @@ class Activity < ApplicationRecord
     recipient_id
     recipient_type
     status_id
+    trackable_id
+    trackable_type
     work_id
     work_record_id
   ]
