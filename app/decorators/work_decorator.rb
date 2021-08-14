@@ -39,7 +39,7 @@ module WorkDecorator
   def release_season_link
     return release_season if season.blank?
 
-    link_to release_season, seasonal_anime_list_path(season.slug)
+    link_to release_season, seasonal_work_list_path(season.slug)
   end
 
   def synopsis_html
