@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_14_130936) do
+ActiveRecord::Schema.define(version: 2021_08_14_142420) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -35,11 +35,14 @@ ActiveRecord::Schema.define(version: 2021_08_14_130936) do
     t.bigint "activity_group_id", null: false
     t.datetime "migrated_at"
     t.datetime "mer_processed_at"
+    t.bigint "itemable_id"
+    t.string "itemable_type"
     t.index ["activity_group_id", "created_at"], name: "index_activities_on_activity_group_id_and_created_at"
     t.index ["activity_group_id"], name: "index_activities_on_activity_group_id"
     t.index ["created_at"], name: "index_activities_on_created_at"
     t.index ["episode_id"], name: "index_activities_on_episode_id"
     t.index ["episode_record_id"], name: "index_activities_on_episode_record_id"
+    t.index ["itemable_id", "itemable_type"], name: "index_activities_on_itemable_id_and_itemable_type"
     t.index ["multiple_episode_record_id"], name: "index_activities_on_multiple_episode_record_id"
     t.index ["status_id"], name: "index_activities_on_status_id"
     t.index ["trackable_id", "trackable_type"], name: "index_activities_on_trackable_id_and_trackable_type"
@@ -547,6 +550,9 @@ ActiveRecord::Schema.define(version: 2021_08_14_130936) do
     t.string "recipient_type", limit: 510, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.bigint "likeable_id"
+    t.string "likeable_type"
+    t.index ["likeable_id", "likeable_type"], name: "index_likes_on_likeable_id_and_likeable_type"
     t.index ["user_id"], name: "likes_user_id_idx"
   end
 

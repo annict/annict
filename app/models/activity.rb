@@ -5,10 +5,12 @@
 # Table name: activities
 #
 #  id                :bigint           not null, primary key
+#  itemable_type     :string
 #  trackable_type    :string(510)      not null
 #  created_at        :datetime
 #  updated_at        :datetime
 #  activity_group_id :bigint           not null
+#  itemable_id       :bigint
 #  trackable_id      :bigint           not null
 #  user_id           :bigint           not null
 #
@@ -20,6 +22,7 @@
 #  index_activities_on_created_at                        (created_at)
 #  index_activities_on_episode_id                        (episode_id)
 #  index_activities_on_episode_record_id                 (episode_record_id)
+#  index_activities_on_itemable_id_and_itemable_type     (itemable_id,itemable_type)
 #  index_activities_on_multiple_episode_record_id        (multiple_episode_record_id)
 #  index_activities_on_status_id                         (status_id)
 #  index_activities_on_trackable_id_and_trackable_type   (trackable_id,trackable_type)

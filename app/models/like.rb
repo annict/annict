@@ -5,15 +5,18 @@
 # Table name: likes
 #
 #  id             :bigint           not null, primary key
+#  likeable_type  :string
 #  recipient_type :string(510)      not null
 #  created_at     :datetime
 #  updated_at     :datetime
+#  likeable_id    :bigint
 #  recipient_id   :bigint           not null
 #  user_id        :bigint           not null
 #
 # Indexes
 #
-#  likes_user_id_idx  (user_id)
+#  index_likes_on_likeable_id_and_likeable_type  (likeable_id,likeable_type)
+#  likes_user_id_idx                             (user_id)
 #
 # Foreign Keys
 #
