@@ -4,23 +4,43 @@
 #
 # Table name: records
 #
-#  id                :bigint           not null, primary key
-#  aasm_state        :string           default("published"), not null
-#  deleted_at        :datetime
-#  impressions_count :integer          default(0), not null
-#  created_at        :datetime         not null
-#  updated_at        :datetime         not null
-#  user_id           :bigint           not null
-#  work_id           :bigint           not null
+#  id                   :bigint           not null, primary key
+#  aasm_state           :string           default("published"), not null
+#  advanced_rating      :float
+#  animation_rating     :string
+#  body                 :text             default(""), not null
+#  character_rating     :string
+#  comments_count       :integer          default(0), not null
+#  deleted_at           :datetime
+#  facebook_url_hash    :string
+#  impressions_count    :integer          default(0), not null
+#  likes_count          :integer          default(0), not null
+#  locale               :integer          default(0), not null
+#  modified_at          :datetime
+#  music_rating         :string
+#  rating               :integer
+#  story_rating         :string
+#  twitter_url_hash     :string
+#  watched_at           :datetime
+#  created_at           :datetime         not null
+#  updated_at           :datetime         not null
+#  episode_id           :bigint
+#  oauth_application_id :bigint
+#  user_id              :bigint           not null
+#  work_id              :bigint           not null
 #
 # Indexes
 #
-#  index_records_on_deleted_at  (deleted_at)
-#  index_records_on_user_id     (user_id)
-#  index_records_on_work_id     (work_id)
+#  index_records_on_deleted_at            (deleted_at)
+#  index_records_on_episode_id            (episode_id)
+#  index_records_on_oauth_application_id  (oauth_application_id)
+#  index_records_on_user_id               (user_id)
+#  index_records_on_work_id               (work_id)
 #
 # Foreign Keys
 #
+#  fk_rails_...  (episode_id => episodes.id)
+#  fk_rails_...  (oauth_application_id => oauth_applications.id)
 #  fk_rails_...  (user_id => users.id)
 #  fk_rails_...  (work_id => works.id)
 #

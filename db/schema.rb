@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_09_083311) do
+ActiveRecord::Schema.define(version: 2021_08_14_072817) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -814,7 +814,25 @@ ActiveRecord::Schema.define(version: 2021_08_09_083311) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "deleted_at"
+    t.bigint "episode_id"
+    t.bigint "oauth_application_id"
+    t.text "body", default: "", null: false
+    t.integer "comments_count", default: 0, null: false
+    t.integer "likes_count", default: 0, null: false
+    t.integer "locale", default: 0, null: false
+    t.integer "rating"
+    t.float "advanced_rating"
+    t.string "animation_rating"
+    t.string "character_rating"
+    t.string "music_rating"
+    t.string "story_rating"
+    t.string "twitter_url_hash"
+    t.string "facebook_url_hash"
+    t.datetime "watched_at"
+    t.datetime "modified_at"
     t.index ["deleted_at"], name: "index_records_on_deleted_at"
+    t.index ["episode_id"], name: "index_records_on_episode_id"
+    t.index ["oauth_application_id"], name: "index_records_on_oauth_application_id"
     t.index ["user_id"], name: "index_records_on_user_id"
     t.index ["work_id"], name: "index_records_on_work_id"
   end
@@ -1378,6 +1396,8 @@ ActiveRecord::Schema.define(version: 2021_08_09_083311) do
   add_foreign_key "reactions", "users", column: "target_user_id"
   add_foreign_key "receptions", "channels", name: "receptions_channel_id_fk", on_delete: :cascade
   add_foreign_key "receptions", "users", name: "receptions_user_id_fk", on_delete: :cascade
+  add_foreign_key "records", "episodes"
+  add_foreign_key "records", "oauth_applications"
   add_foreign_key "records", "users"
   add_foreign_key "records", "works"
   add_foreign_key "series_works", "series"
