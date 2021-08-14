@@ -13,7 +13,7 @@ class SpoilerGuardComponent < ApplicationV6Component
         data_controller: "spoiler-guard",
         data_action: "click->spoiler-guard#hide",
         data_spoiler_guard_work_id_value: @record.work_id,
-        data_spoiler_guard_episode_id_value: @record.episode_record&.episode_id
+        data_spoiler_guard_episode_id_value: @record.episode_id
       } do
         yield h
       end

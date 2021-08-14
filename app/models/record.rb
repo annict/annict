@@ -54,67 +54,42 @@ class Record < ApplicationRecord
   counter_culture :user
   counter_culture :work
 
+  %i[rating animation_rating character_rating music_rating story_rating].each do |column_name|
+    enum column_name => { bad: 10, average: 20, good: 30, great: 40 }, _prefix: true
+  end
+
   belongs_to :work
   belongs_to :user
   has_one :work_record, dependent: :destroy
   has_one :episode_record, dependent: :destroy
 
-  scope :with_work_record, -> { joins(:work_record).merge(WorkRecord.only_kept) }
-
-  def episode_record?
-    episode_record.present?
-  end
+  scope :only_work_record, -> { where(episode_id: nil) }
+  scope :order_by_rating, ->(direction) { order(rating: direction, advanced_rating: direction, created_at: :desc) }
+  scope :with_body, -> { where.not(body: "") }
+  scope :with_no_body, -> { where(body: "") }
 
   def work_record?
-    !episode_record?
+    episode_id.nil?
+  end
+
+  def episode_record?
+    !work_record?
   end
 
   def episode
     episode_record? ? episode_record.episode : nil
   end
 
-  def rating
-    episode_record? ? episode_record.rating_state : work_record&.rating_overall_state
-  end
-
   def advanced_rating
     episode_record? ? episode_record.rating : nil
   end
 
-  def deprecated_animation_rating
-    work_record&.rating_animation_state
-  end
-
-  def deprecated_character_rating
-    work_record&.rating_character_state
-  end
-
-  def deprecated_music_rating
-    work_record&.rating_music_state
-  end
-
-  def deprecated_story_rating
-    work_record&.rating_story_state
-  end
-
   def deprecated_rating_exists?
-    deprecated_animation_rating || deprecated_music_rating || deprecated_story_rating || deprecated_character_rating
+    animation_rating || music_rating || story_rating || character_rating
   end
 
   def comment
     episode_record? ? episode_record.body : work_record&.body
-  end
-
-  def modified_at
-    if work_record?
-      return work_record&.modified_at
-    end
-
-    episode_record.updated_at if episode_record.modify_body?
-  end
-
-  def likes_count
-    episode_record? ? episode_record.likes_count : work_record&.likes_count
   end
 
   def liked?(likes)
