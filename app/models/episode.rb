@@ -64,8 +64,7 @@ class Episode < ApplicationRecord
   belongs_to :work, touch: true
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
-  has_many :episode_records
-  has_many :records, through: :episode_records
+  has_many :records
   has_many :library_entries, foreign_key: :next_episode_id, dependent: :nullify
   has_many :slots, dependent: :nullify
 

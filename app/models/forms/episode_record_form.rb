@@ -3,14 +3,14 @@
 module Forms
   class EpisodeRecordForm < Forms::ApplicationForm
     attr_accessor :deprecated_rating, :episode, :oauth_application, :record
-    attr_reader :comment, :rating, :share_to_twitter
+    attr_reader :body, :rating, :share_to_twitter
 
-    validates :comment, length: {maximum: 1_048_596}
+    validates :body, length: {maximum: 1_048_596}
     validates :episode, presence: true
     validates :rating, inclusion: {in: Record::RATING_KINDS.map(&:to_s)}, allow_nil: true
 
-    def comment=(comment)
-      @comment = comment&.strip
+    def body=(value)
+      @body = value&.strip
     end
 
     def rating=(rating)

@@ -60,13 +60,12 @@ class Record < ApplicationRecord
     enum column_name => RATING_PAIRS, _prefix: true
   end
 
-  belongs_to :work
+  belongs_to :episode, optional: true
   belongs_to :user
-  has_one :work_record, dependent: :destroy
-  has_one :episode_record, dependent: :destroy
+  belongs_to :work
 
   scope :only_work_record, -> { where(episode_id: nil) }
-  scope :order_by_rating, ->(direction) { order(rating: direction, advanced_rating: direction, created_at: :desc) }
+  scope :order_by_rating, ->(direction) { order("records.rating #{direction.upcase} NULLS LAST").order(advanced_rating: direction, created_at: :desc) }
   scope :with_body, -> { where.not(body: "") }
   scope :with_no_body, -> { where(body: "") }
 
@@ -76,14 +75,6 @@ class Record < ApplicationRecord
 
   def episode_record?
     !work_record?
-  end
-
-  def episode
-    episode_record? ? episode_record.episode : nil
-  end
-
-  def advanced_rating
-    episode_record? ? episode_record.rating : nil
   end
 
   def deprecated_rating_exists?
