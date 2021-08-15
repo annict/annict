@@ -81,7 +81,7 @@ module Collapses
 
           h.tag :div, class: "mt-2 text-muted u-very-small" do
             h.tag :i, class: "far fa-info-circle me-1"
-            h.text t("messages._components.ratings_collapse.hint")
+            h.text t("messages._components.deprecated_ratings_collapse.hint")
           end
         end
       end
