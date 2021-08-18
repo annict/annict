@@ -19,20 +19,24 @@ namespace :data_care do
     move_episode.run!
   end
 
-  task delete_abandoned_records: :environment do
-    Activity.find_each do |a|
-      if a.recipient.blank? || a.trackable.blank?
-        puts "activity #{a.id} will be deleted"
-        a.destroy
-      end
-    end
-  end
+  task :destroy_abandoned_records, [:username] => :environment do |_, args|
+    user = User.find_by!(username: args[:username])
+    following_users = user.followings
+    target_user_ids = [user.id] + following_users.pluck(:id)
+    target_activity_groups = ActivityGroup.where(user_id: target_user_ids)
+    target_activities = Activity.where(user_id: target_user_ids)
 
-  task :destroy_abandoned_activity_groups, [:user_id] => :environment do |_, args|
-    User.find(args[:user_id]).activity_groups.find_each do |ag|
+    target_activity_groups.find_each do |ag|
       if ag.activities.blank?
         puts "activity_groups.id: #{ag.id}"
         ag.destroy
+      end
+    end
+
+    target_activities.find_each do |a|
+      unless a.itemable
+        puts "activities.id: #{a.id}"
+        a.destroy
       end
     end
   end
