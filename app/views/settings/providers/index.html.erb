@@ -25,7 +25,7 @@
                   </span>
                 <% end %>
               <% else %>
-                <%= link_to user_twitter_omniauth_authorize_path(back: settings_provider_list_path), class: "btn btn-sm u-btn-twitter w-100" do %>
+                <%= button_to user_twitter_omniauth_authorize_path(back: settings_provider_list_path), class: "btn btn-sm u-btn-twitter w-100", data: { turbo: "false" } do %>
                   <i class="fab fa-twitter me-1"></i>
                   <%= t "verb.connect" %>
                 <% end %>
@@ -54,7 +54,7 @@
                   </span>
                 <% end %>
               <% else %>
-                <%= link_to user_facebook_omniauth_authorize_path(back: settings_provider_list_path), class: "btn btn-sm u-btn-facebook w-100" do %>
+                <%= button_to user_facebook_omniauth_authorize_path(back: settings_provider_list_path), class: "btn btn-sm u-btn-facebook w-100", data: { turbo: "false" } do %>
                   <i class="fab fa-facebook me-1"></i>
                   <%= t "verb.connect" %>
                 <% end %>
