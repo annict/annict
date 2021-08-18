@@ -200,7 +200,7 @@ class User < ApplicationRecord
   end
 
   def staff_favorites
-    person_favorites.with_cast
+    person_favorites.with_staff
   end
 
   def social_friends
