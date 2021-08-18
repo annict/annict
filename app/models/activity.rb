@@ -63,18 +63,10 @@ class Activity < ApplicationRecord
   counter_culture :activity_group
 
   belongs_to :activity_group
-  belongs_to :itemable, foreign_key: :trackable_id, foreign_type: :trackable_type, polymorphic: true
+  belongs_to :itemable, polymorphic: true
   belongs_to :user
 
   after_destroy :destroy_activity_group
-
-  def itemable_type
-    trackable_type
-  end
-
-  def itemable_id
-    trackable_id
-  end
 
   # @deprecated
   def action
