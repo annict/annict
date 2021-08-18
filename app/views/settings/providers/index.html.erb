@@ -17,7 +17,7 @@
           <div class="col">
             <div class="px-3 text-end">
               <% if current_user.authorized_to?(:twitter) %>
-                <% if current_user.encrypted_password? || current_user.authorized_to?(:facebook) %>
+                <% if current_user.confirmed_at || current_user.authorized_to?(:facebook) %>
                   <%= link_to t("verb.disconnect"), settings_provider_path(current_user.twitter), class: "btn btn-sm btn-link w-100", data: { method: :delete, confirm: t("messages._common.are_you_sure") } %>
                 <% else %>
                   <span class="cancel-disabled">
@@ -46,7 +46,7 @@
           <div class="col">
             <div class="px-3 text-end">
               <% if current_user.authorized_to?(:facebook) %>
-                <% if current_user.encrypted_password? || current_user.authorized_to?(:twitter) %>
+                <% if current_user.confirmed_at || current_user.authorized_to?(:twitter) %>
                   <%= link_to t("verb.disconnect"), settings_provider_path(current_user.facebook), class: "btn btn-sm btn-link w-100", data: { method: :delete, confirm: t("messages._common.are_you_sure") } %>
                 <% else %>
                   <span class="cancel-disabled">
