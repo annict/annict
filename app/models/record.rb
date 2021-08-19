@@ -65,6 +65,7 @@ class Record < ApplicationRecord
   belongs_to :work
 
   scope :only_work_record, -> { where(episode_id: nil) }
+  scope :only_episode_record, -> { where.not(episode_id: nil) }
   scope :order_by_rating, ->(direction) { order("records.rating #{direction.upcase} NULLS LAST").order(advanced_rating: direction, created_at: :desc) }
   scope :with_body, -> { where.not(body: "") }
   scope :with_no_body, -> { where(body: "") }
