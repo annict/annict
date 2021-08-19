@@ -58,13 +58,13 @@ class Activity < ApplicationRecord
     work_record_id
   ]
 
-  enumerize :trackable_type, in: ActivityGroup::ITEMABLE_TYPES, scope: true
-
   counter_culture :activity_group
 
   belongs_to :activity_group
   belongs_to :itemable, polymorphic: true
   belongs_to :user
+
+  validates :itemable_type, inclusion: { in: ActivityGroup::ITEMABLE_TYPES }
 
   after_destroy :destroy_activity_group
 
