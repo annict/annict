@@ -101,6 +101,6 @@ class Record < ApplicationRecord
       return work.local_title
     end
 
-    [work.local_title, episode_record.episode.local_number].compact.join(" ")
+    [work.local_title, episode.local_number].compact.join(" ")
   end
 end
