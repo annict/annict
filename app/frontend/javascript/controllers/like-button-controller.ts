@@ -27,8 +27,8 @@ export default class extends Controller {
     document.addEventListener('component-value-fetcher:like-button:fetched', (event: any) => {
       const likes = event.detail;
       this.likesCount = Number(this.countTarget.innerText);
-      const like = likes.filter((like: { recipient_type: string; recipient_id: number }) => {
-        return like.recipient_type === this.resourceName && like.recipient_id === this.resourceId;
+      const like = likes.filter((like: { likeable_type: string; likeable_id: number }) => {
+        return like.likeable_type === this.resourceName && like.likeable_id === this.resourceId;
       })[0];
 
       this.isLiked = !!like;

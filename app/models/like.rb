@@ -27,9 +27,9 @@ class Like < ApplicationRecord
     recipient_type
   ]
 
-  counter_culture :recipient
+  counter_culture :likeable
 
-  belongs_to :recipient, polymorphic: true
+  belongs_to :likeable, polymorphic: true
   belongs_to :user
   has_many :notifications, as: :trackable, dependent: :destroy
 
