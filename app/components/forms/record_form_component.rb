@@ -2,7 +2,7 @@
 
 module Forms
   class RecordFormComponent < ApplicationV6Component
-    def initialize(view_context, form:, current_user:)
+    def initialize(view_context, form:)
       super view_context
       @form = form
       @current_user = current_user
