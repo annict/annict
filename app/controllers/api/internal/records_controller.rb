@@ -6,6 +6,18 @@ module Api::Internal
 
     before_action :authenticate_user!
 
+    def create
+      @form = Forms::RecordForm.new(record_form_params)
+
+      if @form.invalid?
+        return render json: @form.errors.full_messages, status: :unprocessable_entity
+      end
+
+      Creators::RecordCreator.new(user: current_user, form: @form).call
+
+      render(json: {}, status: 201)
+    end
+
     def update
       user = User.only_kept.find_by!(username: params[:username])
       @record = current_user.records.only_kept.find_by!(id: params[:record_id], user_id: user.id)
@@ -39,8 +51,8 @@ module Api::Internal
 
     private
 
-    def episode_record_form_params
-      params.required(:forms_episode_record_form).permit(:comment, :rating, :share_to_twitter)
+    def record_form_params
+      params.required(:forms_record_form).permit(:body, :episode_id, :rating, :share_to_twitter, :work_id)
     end
 
     def work_record_form_params

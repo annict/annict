@@ -5,7 +5,7 @@ class ApplicationRecord < ActiveRecord::Base
 
   self.abstract_class = true
 
-  LOCALES = %i[en ja other].freeze
+  LOCALES = %i[other ja en].freeze
 
   def self.find_by_graphql_id(graphql_id)
     type_name, item_id = GraphQL::Schema::UniqueWithinType.decode(graphql_id)

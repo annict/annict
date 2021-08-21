@@ -15,7 +15,7 @@
 #  facebook_url_hash    :string
 #  impressions_count    :integer          default(0), not null
 #  likes_count          :integer          default(0), not null
-#  locale               :integer          default(0), not null
+#  locale               :integer          default("other"), not null
 #  modified_at          :datetime
 #  music_rating         :integer
 #  rating               :integer
@@ -46,8 +46,10 @@
 #
 
 class Record < ApplicationRecord
-  include SoftDeletable
   include Likeable
+  include Shareable
+  include SoftDeletable
+  include UgcLocalizable
 
   RATING_PAIRS = {bad: 10, average: 20, good: 30, great: 40}.freeze
   RATING_KINDS = RATING_PAIRS.keys
@@ -102,5 +104,35 @@ class Record < ApplicationRecord
     end
 
     [work.local_title, episode.local_number].compact.join(" ")
+  end
+
+  def share_url
+    "#{user.preferred_annict_url}/@#{user.username}/records/#{id}"
+  end
+
+  def twitter_share_body
+    work_title = work.local_title
+    title = body.present? ? work_title.truncate(30) : work_title
+    comment = body.present? ? "#{body} / " : ""
+    episode_number = episode ? "#{episode.local_number} " : ""
+    share_url = share_url_with_query(:twitter)
+    share_hashtag = work.hashtag_with_hash
+
+    base_body = if user.locale == "ja"
+      "%s#{title} #{episode_number}を見ました #{share_url} #{share_hashtag}"
+    else
+      "%sWatched: #{title} #{episode_number}#{share_url} #{share_hashtag}"
+    end
+
+    body = base_body % comment
+    body_without_url = body.sub(share_url, "")
+    return body if body_without_url.length <= 130
+
+    comment = comment.truncate(comment.length - (body_without_url.length - 130)) + " / "
+    base_body % comment
+  end
+
+  def needs_single_activity_group?
+    body.present?
   end
 end

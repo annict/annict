@@ -429,10 +429,10 @@ class User < ApplicationRecord
     setting.update_column(:share_record_to_twitter, share_to_twitter)
   end
 
-  def share_episode_record_to_twitter(episode_record)
+  def share_record_to_twitter(record)
     return unless share_record_to_twitter?
 
-    ShareEpisodeRecordToTwitterJob.perform_later(id, episode_record.id)
+    ShareRecordToTwitterJob.perform_later(id, record.id)
   end
 
   def share_work_record_to_twitter(work_record)

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Forms
-  class EpisodeRecordFormComponent < ApplicationV6Component
+  class RecordFormComponent < ApplicationV6Component
     def initialize(view_context, form:, current_user:)
       super view_context
       @form = form
@@ -14,13 +14,16 @@ module Forms
         url: form_url,
         method: form_method,
         data: {
-          controller: "forms--episode-record-form",
-          action: "turbo:submit-start->forms--episode-record-form#handleSubmitStart turbo:submit-end->forms--episode-record-form#handleSubmitEnd",
-          forms__episode_record_form_target: "form"
+          controller: "forms--record-form",
+          action: "turbo:submit-start->forms--record-form#handleSubmitStart turbo:submit-end->forms--record-form#handleSubmitEnd",
+          forms__record_form_target: "form"
         }
       ) do |f|
         build_html do |h|
-          h.html ErrorPanelV6Component.new(view_context, stimulus_controller: "forms--episode-record-form").render
+          h.html ErrorPanelV6Component.new(view_context, stimulus_controller: "forms--record-form").render
+
+          h.html f.hidden_field(:work_id)
+          h.html f.hidden_field(:episode_id)
 
           h.tag :div, class: "mb-2" do
             h.html ButtonGroups::RecordRatingButtonGroupComponent.new(view_context, form: f, rating_field: :rating).render
@@ -31,7 +34,7 @@ module Forms
               view_context,
               form: f,
               optional_textarea_classname: "form-control",
-              textarea_name: "forms_episode_record_form[comment]"
+              textarea_name: "forms_record_form[body]"
             ).render
           end
 
@@ -49,7 +52,7 @@ module Forms
 
             h.tag :div, class: "col" do
               h.tag :div, class: "text-center" do
-                h.html f.submit((f.object.persisted? ? t("verb.update") : t("verb.track")), class: "btn btn-primary", data: {"forms--episode-record-form-target": "submitButton"})
+                h.html f.submit((f.object.persisted? ? t("verb.update") : t("verb.track")), class: "btn btn-primary", data: {"forms--record-form-target": "submitButton"})
               end
             end
 
@@ -66,7 +69,7 @@ module Forms
     end
 
     def form_url
-      @form.persisted? ? view_context.internal_api_record_path(@current_user.username, @form.record.id) : view_context.internal_api_commented_episode_record_list_path(@form.episode.id)
+      @form.persisted? ? view_context.internal_api_record_path(@current_user.username, @form.record.id) : view_context.internal_api_record_list_path
     end
   end
 end
