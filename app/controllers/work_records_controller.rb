@@ -11,7 +11,7 @@ class WorkRecordsController < ApplicationV6Controller
 
     set_work_header_resources
 
-    @form = Forms::WorkRecordForm.new(work: @work)
+    @form = Forms::RecordForm.new(work_id: @work.id)
 
     set_work_record_list(@work)
   end
