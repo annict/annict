@@ -38,7 +38,7 @@ module Api::Internal
     private
 
     def record_form_params
-      params.required(:forms_record_form).permit(:body, :episode_id, :rating, :share_to_twitter, :work_id)
+      params.required(:forms_record_form).permit(:body, :episode_id, :instant, :rating, :share_to_twitter, :work_id)
     end
   end
 end

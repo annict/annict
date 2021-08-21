@@ -7,11 +7,13 @@ module Creators
     def initialize(user:, form:)
       @user = user
       @form = form
-      @episode = @form.episode
-      @work = @episode&.work.presence || @form.work
     end
 
     def call
+      @episode = @form.episode
+      @work = @episode&.work.presence || @form.work
+      @share_to_twitter = @form.instant ? @user.share_record_to_twitter? : @form.share_to_twitter
+
       record = @user.records.new(
         work: @work,
         episode: @episode,
@@ -34,10 +36,10 @@ module Creators
           library_entry.append_episode!(@episode)
         end
 
-        @user.update_share_record_setting(@form.share_to_twitter)
+        @user.update_share_record_setting(@share_to_twitter)
         @user.touch(:record_cache_expired_at)
 
-        if @form.share_to_twitter
+        if @share_to_twitter
           @user.share_record_to_twitter(record)
         end
       end
