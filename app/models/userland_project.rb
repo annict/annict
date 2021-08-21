@@ -32,7 +32,7 @@
 
 class UserlandProject < ApplicationRecord
   include UserlandProjectImageUploader::Attachment.new(:image)
-  include UgcLocalizable
+  include UgcLocalizableWithEnumerize
   include ImageUploadable
 
   counter_culture :userland_category

@@ -26,7 +26,7 @@
 #
 
 class ForumComment < ApplicationRecord
-  include UgcLocalizable
+  include UgcLocalizableWithEnumerize
 
   counter_culture :forum_post
 

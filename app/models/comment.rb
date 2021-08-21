@@ -30,7 +30,7 @@
 #
 
 class Comment < ApplicationRecord
-  include UgcLocalizable
+  include UgcLocalizableWithEnumerize
 
   self.ignored_columns = %w[
     episode_record_id
