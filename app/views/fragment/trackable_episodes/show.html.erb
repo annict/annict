@@ -58,7 +58,7 @@
     <div class="container mt-3 u-container-flat">
       <div class="card u-card-flat">
         <div class="card-body">
-          <%= Forms::EpisodeRecordFormComponent.new(self, form: @form, current_user: current_user).render %>
+          <%= Forms::RecordFormComponent.new(self, form: @form).render %>
         </div>
       </div>
     </div>
