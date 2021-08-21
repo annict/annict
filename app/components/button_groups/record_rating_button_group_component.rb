@@ -15,7 +15,7 @@ module ButtonGroups
           data_controller: "record-rating"
         } do
           h.tag :div, class: "btn-group btn-group-sm" do
-            Record::RATING_KINDS.each do |rating_kind|
+            Record::RATING_KINDS.map(&:to_s).each do |rating_kind|
               h.tag :div, {
                 class: button_class_name(rating_kind),
                 data_action: "click->record-rating#changeState",

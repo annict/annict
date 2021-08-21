@@ -1,15 +1,11 @@
-<turbo-frame id="<%= dom_id(@form.record) %>">
+<turbo-frame id="<%= dom_id(@record) %>">
   <%= component_value_fetcher_tag("status-select-dropdown", internal_api_library_entry_list_path, method: :post, payload: {work_ids: @work_ids}) %>
   <%= component_value_fetcher_tag("like-button", internal_api_like_list_path) %>
 
   <%= Headers::RecordHeaderComponent.new(self, record: @record, show_options: @show_options).render %>
 
   <div class="mt-3">
-    <% if @record.episode_record? %>
-      <%= Forms::EpisodeRecordFormComponent.new(self, form: @form, current_user: current_user).render %>
-    <% else %>
-      <%= Forms::WorkRecordFormComponent.new(self, form: @form).render %>
-    <% end %>
+    <%= Forms::RecordFormComponent.new(self, form: @form).render %>
   </div>
 
   <% if @show_box %>

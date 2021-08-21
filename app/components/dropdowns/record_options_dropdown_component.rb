@@ -18,7 +18,7 @@ module Dropdowns
 
           h.tag :div, class: "dropdown-menu" do
             if RecordPolicy.new(current_user, @record).update?
-              h.tag :a, href: view_context.fragment_edit_record_path(@record.user.username, @record.id, show_box: @show_box, show_options: @show_options), class: "dropdown-item" do
+              h.tag :a, href: view_context.fragment_edit_record_path(@record.id, show_box: @show_box, show_options: @show_options), class: "dropdown-item" do
                 h.text t("noun.edit")
               end
 

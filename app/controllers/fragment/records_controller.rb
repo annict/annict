@@ -22,30 +22,19 @@ module Fragment
     end
 
     def edit
-      user = User.only_kept.find_by!(username: params[:username])
-      @record = current_user.records.only_kept.find_by!(id: params[:record_id], user_id: user.id)
-      @work = @record.work
-      @episode = @record.episode
+      @record = current_user.records.only_kept.find(params[:record_id])
 
       authorize @record, :edit?
 
-      @form = if @record.episode_record?
-        Forms::EpisodeRecordForm.new(
-          record: @record,
-          episode: @record.episode_record.episode,
-          comment: @record.episode_record.body,
-          rating: @record.episode_record.rating_state,
-          share_to_twitter: current_user.share_record_to_twitter?
-        )
-      else
-        Forms::WorkRecordForm.new(
-          record: @record,
-          work: @record.work,
-          comment: @record.comment,
-          rating_overall: @record.rating,
-          share_to_twitter: current_user.share_record_to_twitter?
-        )
-      end
+      @form = Forms::RecordForm.new(
+        record: @record,
+        work_id: @record.work_id,
+        episode_id: @record.episode_id,
+        body: @record.body,
+        rating: @record.rating
+      )
+      @work = @form.work
+      @episode = @form.episode
 
       @show_options = params[:show_options] == "true"
       @show_box = params[:show_box] == "true"

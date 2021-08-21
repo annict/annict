@@ -63,6 +63,7 @@ class Record < ApplicationRecord
   end
 
   belongs_to :episode, optional: true
+  belongs_to :oauth_application, class_name: "Doorkeeper::Application", optional: true
   belongs_to :user
   belongs_to :work
 
