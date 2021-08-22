@@ -3,7 +3,7 @@
 module Forms
   class RecordForm < Forms::ApplicationForm
     attr_accessor :advanced_rating, :episode_id, :oauth_application, :record, :work_id
-    attr_reader :instant, :rating, :share_to_twitter
+    attr_reader :instant, :rating, :share_to_twitter, :skip_to_share
 
     validates :advanced_rating, allow_nil: true, numericality: {greater_than_or_equal_to: 1, less_than_or_equal_to: 5}
     validates :body, length: {maximum: 1_048_596}
@@ -25,6 +25,10 @@ module Forms
 
     def instant=(value)
       @instant = ActiveModel::Type::Boolean.new.cast(value)
+    end
+
+    def skip_to_share=(value)
+      @skip_to_share = ActiveModel::Type::Boolean.new.cast(value)
     end
 
     def episode

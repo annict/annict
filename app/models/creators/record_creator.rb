@@ -39,7 +39,7 @@ module Creators
         @user.update_share_record_setting(@share_to_twitter)
         @user.touch(:record_cache_expired_at)
 
-        if @share_to_twitter
+        if @share_to_twitter && !@form.skip_to_share
           @user.share_record_to_twitter(record)
         end
       end
