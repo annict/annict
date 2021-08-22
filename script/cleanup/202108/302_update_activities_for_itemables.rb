@@ -20,7 +20,7 @@ activities.find_each(order: :desc) do |a|
   when "Status"
     a.itemable
   else
-    a.itemable.record
+    a.itemable&.record
   end
 
   if itemable

@@ -15,7 +15,7 @@ likes.find_each(order: :desc) do |l|
 
   likeable = case l.recipient_type
   when "AnimeRecord", "WorkRecord", "EpisodeRecord"
-    l.recipient.record
+    l.recipient&.record
   else
     l.recipient
   end
