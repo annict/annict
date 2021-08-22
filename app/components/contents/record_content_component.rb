@@ -13,7 +13,7 @@ module Contents
     def render
       build_html do |h|
         h.tag :div do
-          if rating_or_body?
+          unless @record.instant?
             h.html(SpoilerGuardComponent.new(view_context, record: @record).render { |h|
               h.tag :div, class: "c-record-content__wrapper mb-3" do
                 if @record.rating
@@ -42,12 +42,6 @@ module Contents
           end
         end
       end
-    end
-
-    private
-
-    def rating_or_body?
-      @record.rating || @record.body.present?
     end
   end
 end

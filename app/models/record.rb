@@ -99,6 +99,10 @@ class Record < ApplicationRecord
     likes.any? { |like| like.recipient_type == recipient_type && like.recipient_id == recipient_id }
   end
 
+  def instant?
+    rating.nil? && body.blank?
+  end
+
   def local_trackable_title
     if work_record?
       return work.local_title
