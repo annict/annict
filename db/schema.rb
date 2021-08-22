@@ -823,7 +823,8 @@ ActiveRecord::Schema.define(version: 2021_08_14_142420) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "deleted_at"
-    t.bigint "episode_id"
+    t.bigint "watchable_id"
+    t.string "watchable_type"
     t.bigint "oauth_application_id"
     t.text "body", default: "", null: false
     t.integer "comments_count", default: 0, null: false
@@ -831,18 +832,18 @@ ActiveRecord::Schema.define(version: 2021_08_14_142420) do
     t.integer "locale", default: 0, null: false
     t.integer "rating"
     t.float "advanced_rating"
-    t.string "twitter_url_hash"
-    t.string "facebook_url_hash"
-    t.datetime "watched_at"
-    t.datetime "modified_at"
     t.integer "animation_rating"
     t.integer "character_rating"
     t.integer "music_rating"
     t.integer "story_rating"
+    t.string "twitter_url_hash"
+    t.string "facebook_url_hash"
+    t.datetime "watched_at"
+    t.datetime "modified_at"
     t.index ["deleted_at"], name: "index_records_on_deleted_at"
-    t.index ["episode_id"], name: "index_records_on_episode_id"
     t.index ["oauth_application_id"], name: "index_records_on_oauth_application_id"
     t.index ["user_id"], name: "index_records_on_user_id"
+    t.index ["watchable_id", "watchable_type"], name: "index_records_on_watchable_id_and_watchable_type"
     t.index ["work_id"], name: "index_records_on_work_id"
   end
 
@@ -1405,7 +1406,6 @@ ActiveRecord::Schema.define(version: 2021_08_14_142420) do
   add_foreign_key "reactions", "users", column: "target_user_id"
   add_foreign_key "receptions", "channels", name: "receptions_channel_id_fk", on_delete: :cascade
   add_foreign_key "receptions", "users", name: "receptions_user_id_fk", on_delete: :cascade
-  add_foreign_key "records", "episodes"
   add_foreign_key "records", "oauth_applications"
   add_foreign_key "records", "users"
   add_foreign_key "records", "works"

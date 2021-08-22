@@ -42,6 +42,8 @@ target_work_records.preload(:record).find_each(order: :desc) do |wr|
   p "work_records.id: #{wr.id}"
 
   wr.record.update_columns(
+    watchable_id: wr.work_id,
+    watchable_type: "Work",
     oauth_application_id: wr.oauth_application_id,
     body: wr.body,
     likes_count: wr.likes_count,
@@ -64,7 +66,8 @@ target_episode_records.preload(:record).find_each(order: :desc) do |er|
   p "episode_records.id: #{er.id}"
 
   er.record.update_columns(
-    episode_id: er.episode_id,
+    watchable_id: er.episode_id,
+    watchable_type: "Episode",
     oauth_application_id: er.oauth_application_id,
     body: er.body.presence || "",
     comments_count: er.comments_count,

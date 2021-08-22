@@ -21,25 +21,25 @@
 #  rating               :integer
 #  story_rating         :integer
 #  twitter_url_hash     :string
+#  watchable_type       :string
 #  watched_at           :datetime
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
-#  episode_id           :bigint
 #  oauth_application_id :bigint
 #  user_id              :bigint           not null
+#  watchable_id         :bigint
 #  work_id              :bigint           not null
 #
 # Indexes
 #
-#  index_records_on_deleted_at            (deleted_at)
-#  index_records_on_episode_id            (episode_id)
-#  index_records_on_oauth_application_id  (oauth_application_id)
-#  index_records_on_user_id               (user_id)
-#  index_records_on_work_id               (work_id)
+#  index_records_on_deleted_at                       (deleted_at)
+#  index_records_on_oauth_application_id             (oauth_application_id)
+#  index_records_on_user_id                          (user_id)
+#  index_records_on_watchable_id_and_watchable_type  (watchable_id,watchable_type)
+#  index_records_on_work_id                          (work_id)
 #
 # Foreign Keys
 #
-#  fk_rails_...  (episode_id => episodes.id)
 #  fk_rails_...  (oauth_application_id => oauth_applications.id)
 #  fk_rails_...  (user_id => users.id)
 #  fk_rails_...  (work_id => works.id)
