@@ -5,7 +5,6 @@ module Forms
     def initialize(view_context, form:)
       super view_context
       @form = form
-      @current_user = current_user
     end
 
     def render
@@ -40,10 +39,10 @@ module Forms
 
           h.tag :div, class: "row" do
             h.tag :div, class: "col" do
-              if @current_user&.authorized_to?(:twitter, shareable: true)
+              if current_user&.authorized_to?(:twitter, shareable: true)
                 h.tag :div, class: "form-check" do
                   h.tag :label, class: "form-check-label" do
-                    h.html f.check_box(:share_to_twitter, class: "form-check-input", checked: @current_user.share_record_to_twitter?)
+                    h.html f.check_box(:share_to_twitter, class: "form-check-input", checked: @form.share_to_twitter)
                     h.tag :i, class: "fab fa-twitter u-text-twitter"
                   end
                 end
