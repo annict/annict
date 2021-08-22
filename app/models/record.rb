@@ -54,6 +54,7 @@ class Record < ApplicationRecord
   RATING_PAIRS = {bad: 10, average: 20, good: 30, great: 40}.freeze
   RATING_KINDS = RATING_PAIRS.keys
   RATING_COLUMNS = %i[rating animation_rating character_rating music_rating story_rating].freeze
+  WATCHABLE_TYPES = %w[Episode Work].freeze
 
   counter_culture :user
   counter_culture :work
@@ -62,10 +63,13 @@ class Record < ApplicationRecord
     enum column_name => RATING_PAIRS, _prefix: true
   end
 
-  belongs_to :episode, optional: true
   belongs_to :oauth_application, class_name: "Doorkeeper::Application", optional: true
   belongs_to :user
   belongs_to :work
+  # TODO: データ移行が終わったら optional: true を外す
+  belongs_to :watchable, polymorphic: true, optional: true
+
+  validates :watchable_type, inclusion: { in: WATCHABLE_TYPES }
 
   scope :only_work_record, -> { where(episode_id: nil) }
   scope :only_episode_record, -> { where.not(episode_id: nil) }
