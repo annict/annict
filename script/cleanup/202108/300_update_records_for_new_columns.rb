@@ -42,6 +42,8 @@ target_work_records.preload(:record).find_each(order: :desc) do |wr|
   p "work_records.id: #{wr.id}"
 
   wr.record.update_columns(
+    watchable_id: wr.work_id,
+    watchable_type: "Work",
     oauth_application_id: wr.oauth_application_id,
     body: wr.body,
     likes_count: wr.likes_count,
@@ -51,7 +53,7 @@ target_work_records.preload(:record).find_each(order: :desc) do |wr|
     character_rating: new_rating(wr.rating_character_state),
     music_rating: new_rating(wr.rating_music_state),
     story_rating: new_rating(wr.rating_story_state),
-    watched_at: wr.created_at,
+    watched_at: wr.record.created_at,
     modified_at: wr.modified_at
   )
 end
@@ -64,7 +66,8 @@ target_episode_records.preload(:record).find_each(order: :desc) do |er|
   p "episode_records.id: #{er.id}"
 
   er.record.update_columns(
-    episode_id: er.episode_id,
+    watchable_id: er.episode_id,
+    watchable_type: "Episode",
     oauth_application_id: er.oauth_application_id,
     body: er.body.presence || "",
     comments_count: er.comments_count,
@@ -74,7 +77,7 @@ target_episode_records.preload(:record).find_each(order: :desc) do |er|
     advanced_rating: er.rating,
     twitter_url_hash: er.twitter_url_hash,
     facebook_url_hash: er.facebook_url_hash,
-    watched_at: er.created_at,
-    modified_at: er.modify_body? ? er.updated_at : nil
+    watched_at: er.record.created_at,
+    modified_at: er.modify_body? ? er.record.updated_at : nil
   )
 end
