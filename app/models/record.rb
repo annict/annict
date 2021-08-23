@@ -56,8 +56,11 @@ class Record < ApplicationRecord
   RATING_COLUMNS = %i[rating animation_rating character_rating music_rating story_rating].freeze
   WATCHABLE_TYPES = %w[Episode Work].freeze
 
+  self.ignored_columns = %w[
+    work_id
+  ]
+
   counter_culture :user
-  counter_culture :work
 
   RATING_COLUMNS.each do |column_name|
     enum column_name => RATING_PAIRS, _prefix: true
@@ -65,7 +68,6 @@ class Record < ApplicationRecord
 
   belongs_to :oauth_application, class_name: "Doorkeeper::Application", optional: true
   belongs_to :user
-  belongs_to :work
   # TODO: データ移行が終わったら optional: true を外す
   belongs_to :watchable, polymorphic: true, optional: true
 
