@@ -2,8 +2,7 @@
 
 class AddEpisodeAndWorkRecordColumnsToRecords < ActiveRecord::Migration[6.1]
   def change
-    add_column :records, :watchable_id, :bigint
-    add_column :records, :watchable_type, :string
+    add_column :records, :episode_id, :bigint
     add_column :records, :oauth_application_id, :bigint
     add_column :records, :body, :text, default: "", null: false
     add_column :records, :comments_count, :integer, default: 0, null: false
@@ -20,9 +19,10 @@ class AddEpisodeAndWorkRecordColumnsToRecords < ActiveRecord::Migration[6.1]
     add_column :records, :watched_at, :datetime
     add_column :records, :modified_at, :datetime
 
-    add_index :records, %i[watchable_id watchable_type]
+    add_index :records, :episode_id
     add_index :records, :oauth_application_id
 
+    add_foreign_key :records, :episodes
     add_foreign_key :records, :oauth_applications
   end
 end
