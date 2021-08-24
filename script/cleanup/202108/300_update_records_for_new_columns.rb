@@ -47,10 +47,6 @@ target_work_records.preload(:record).find_each(order: :desc) do |wr|
     likes_count: wr.likes_count,
     locale: new_locale(wr.locale),
     rating: new_rating(wr.rating_overall_state),
-    animation_rating: new_rating(wr.rating_animation_state),
-    character_rating: new_rating(wr.rating_character_state),
-    music_rating: new_rating(wr.rating_music_state),
-    story_rating: new_rating(wr.rating_story_state),
     watched_at: wr.record.created_at,
     modified_at: wr.modified_at
   )
@@ -72,8 +68,6 @@ target_episode_records.preload(:record).find_each(order: :desc) do |er|
     locale: new_locale(er.locale),
     rating: new_rating(er.rating_state),
     advanced_rating: er.rating,
-    twitter_url_hash: er.twitter_url_hash,
-    facebook_url_hash: er.facebook_url_hash,
     watched_at: er.record.created_at,
     modified_at: er.modify_body? ? er.record.updated_at : nil
   )
