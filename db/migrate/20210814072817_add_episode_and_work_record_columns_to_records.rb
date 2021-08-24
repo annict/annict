@@ -12,9 +12,11 @@ class AddEpisodeAndWorkRecordColumnsToRecords < ActiveRecord::Migration[6.1]
     add_column :records, :advanced_rating, :float
     add_column :records, :watched_at, :datetime
     add_column :records, :modified_at, :datetime
+    add_column :records, :migrated_at, :datetime
 
     add_index :records, :episode_id
     add_index :records, :oauth_application_id
+    add_index :records, :migrated_at
 
     add_foreign_key :records, :episodes
     add_foreign_key :records, :oauth_applications

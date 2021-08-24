@@ -13,6 +13,7 @@
 #  impressions_count    :integer          default(0), not null
 #  likes_count          :integer          default(0), not null
 #  locale               :integer          default(0), not null
+#  migrated_at          :datetime
 #  modified_at          :datetime
 #  rating               :integer
 #  watched_at           :datetime
@@ -27,6 +28,7 @@
 #
 #  index_records_on_deleted_at            (deleted_at)
 #  index_records_on_episode_id            (episode_id)
+#  index_records_on_migrated_at           (migrated_at)
 #  index_records_on_oauth_application_id  (oauth_application_id)
 #  index_records_on_user_id               (user_id)
 #  index_records_on_work_id               (work_id)

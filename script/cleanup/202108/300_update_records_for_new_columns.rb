@@ -41,6 +41,8 @@ target_work_records = target_work_records.after(from, field: :updated_at) if fro
 target_work_records.preload(:record).find_each(order: :desc) do |wr|
   p "work_records.id: #{wr.id}"
 
+  next if wr.record.migrated_at
+
   wr.record.update_columns(
     oauth_application_id: wr.oauth_application_id,
     body: wr.body,
@@ -48,7 +50,8 @@ target_work_records.preload(:record).find_each(order: :desc) do |wr|
     locale: new_locale(wr.locale),
     rating: new_rating(wr.rating_overall_state),
     watched_at: wr.record.created_at,
-    modified_at: wr.modified_at
+    modified_at: wr.modified_at,
+    migrated_at: Time.zone.now
   )
 end
 
@@ -58,6 +61,8 @@ target_episode_records = target_episode_records.after(from, field: :updated_at) 
 
 target_episode_records.preload(:record).find_each(order: :desc) do |er|
   p "episode_records.id: #{er.id}"
+
+  next if er.record.migrated_at
 
   er.record.update_columns(
     episode_id: er.episode_id,
@@ -69,6 +74,7 @@ target_episode_records.preload(:record).find_each(order: :desc) do |er|
     rating: new_rating(er.rating_state),
     advanced_rating: er.rating,
     watched_at: er.record.created_at,
-    modified_at: er.modify_body? ? er.record.updated_at : nil
+    modified_at: er.modify_body? ? er.record.updated_at : nil,
+    migrated_at: Time.zone.now
   )
 end
