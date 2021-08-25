@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_14_142420) do
+ActiveRecord::Schema.define(version: 2021_08_14_142421) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -1209,8 +1209,14 @@ ActiveRecord::Schema.define(version: 2021_08_14_142420) do
     t.string "locale", default: "other", null: false
     t.bigint "record_id", null: false
     t.datetime "deleted_at"
+    t.integer "animation_rating"
+    t.integer "character_rating"
+    t.integer "music_rating"
+    t.integer "story_rating"
+    t.datetime "migrated_at"
     t.index ["deleted_at"], name: "index_work_records_on_deleted_at"
     t.index ["locale"], name: "index_work_records_on_locale"
+    t.index ["migrated_at"], name: "index_work_records_on_migrated_at"
     t.index ["oauth_application_id"], name: "index_work_records_on_oauth_application_id"
     t.index ["record_id"], name: "index_work_records_on_record_id", unique: true
     t.index ["user_id"], name: "index_work_records_on_user_id"
