@@ -34,47 +34,49 @@ def new_rating(old_rating)
   end
 end
 
-target_work_records = WorkRecord.all
-target_work_records = target_work_records.where(user_id: user_id) if user_id
-target_work_records = target_work_records.after(from, field: :updated_at) if from
+target_records = Record.where(migrated_at: nil)
+target_records = target_records.where(user_id: user_id) if user_id
+target_records = target_records.after(from, field: :updated_at) if from
 
-target_work_records.preload(:record).find_each(order: :desc) do |wr|
-  p "work_records.id: #{wr.id}"
+target_records.preload(:episode_record, :work_record).find_in_batches(batch_size: 2_000) do |records|
+  migrated_at = Time.zone.now
+  attributes = records.map do |record|
+    if record.episode_record?
+      episode_record = record.episode_record
+      record.attributes.merge(
+        "episode_id" => episode_record.episode_id,
+        "oauth_application_id" => episode_record.oauth_application_id,
+        "body" => episode_record.body.presence || "",
+        "comments_count" => episode_record.comments_count,
+        "likes_count" => episode_record.likes_count,
+        "locale" => new_locale(episode_record.locale),
+        "rating" => new_rating(episode_record.rating_state),
+        "advanced_rating" => episode_record.rating,
+        "watched_at" => episode_record.record.created_at,
+        "modified_at" => episode_record.modify_body? ? episode_record.record.updated_at : nil,
+        "migrated_at" => migrated_at
+      )
+    else
+      work_record = record.work_record
 
-  next if wr.record.migrated_at
+      unless work_record
+        record.destroy!
+        next
+      end
 
-  wr.record.update_columns(
-    oauth_application_id: wr.oauth_application_id,
-    body: wr.body,
-    likes_count: wr.likes_count,
-    locale: new_locale(wr.locale),
-    rating: new_rating(wr.rating_overall_state),
-    watched_at: wr.record.created_at,
-    modified_at: wr.modified_at,
-    migrated_at: Time.zone.now
-  )
-end
+      record.attributes.merge(
+        "oauth_application_id" => work_record.oauth_application_id,
+        "body" => work_record.body,
+        "likes_count" => work_record.likes_count,
+        "locale" => new_locale(work_record.locale),
+        "rating" => new_rating(work_record.rating_overall_state),
+        "watched_at" => work_record.record.created_at,
+        "modified_at" => work_record.modified_at,
+        "migrated_at" => migrated_at
+      )
+    end
+  end
 
-target_episode_records = EpisodeRecord.all
-target_episode_records = target_episode_records.where(user_id: user_id) if user_id
-target_episode_records = target_episode_records.after(from, field: :updated_at) if from
-
-target_episode_records.preload(:record).find_each(order: :desc) do |er|
-  p "episode_records.id: #{er.id}"
-
-  next if er.record.migrated_at
-
-  er.record.update_columns(
-    episode_id: er.episode_id,
-    oauth_application_id: er.oauth_application_id,
-    body: er.body.presence || "",
-    comments_count: er.comments_count,
-    likes_count: er.likes_count,
-    locale: new_locale(er.locale),
-    rating: new_rating(er.rating_state),
-    advanced_rating: er.rating,
-    watched_at: er.record.created_at,
-    modified_at: er.modify_body? ? er.record.updated_at : nil,
-    migrated_at: Time.zone.now
-  )
+  result = Record.upsert_all(attributes.compact)
+  puts "upserted: #{result.rows.first(3)}..."
 end

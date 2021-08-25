@@ -9,21 +9,26 @@ opt.parse!(ARGV)
 user_id = params[:user_id]
 from = params[:from]
 
-activities = Activity.where(itemable_id: nil, itemable_type: nil).preload(:itemable)
-activities = activities.where(user_id: user_id) if user_id
-activities = activities.after(from, field: :updated_at) if from
+target_activities = Activity.where(itemable_id: nil, itemable_type: nil).preload(:itemable)
+target_activities = target_activities.where(user_id: user_id) if user_id
+target_activities = target_activities.after(from, field: :updated_at) if from
 
-activities.find_each(order: :desc) do |a|
-  p "activities.id: #{a.id}"
+target_activities.find_in_batches(batch_size: 2_000, order: :desc) do |activities|
+  attributes = activities.map do |activity|
+    itemable_id, itemable_type = case activity.trackable_type
+    when "Status"
+      [activity.itemable_id, activity.itemable_type]
+    else
+      itemable = activity.itemable
+      itemable&.record_id ? [itemable.record_id, "Record"] : [nil, nil]
+    end
 
-  itemable = case a.trackable_type
-  when "Status"
-    a.itemable
-  else
-    a.itemable&.record
+    activity.attributes.merge(
+      "itemable_id" => itemable_id,
+      "itemable_type" => itemable_type
+    )
   end
 
-  if itemable
-    a.update_columns(itemable_id: itemable.id, itemable_type: itemable.class.name)
-  end
+  result = Activity.upsert_all(attributes)
+  puts "upserted: #{result.rows.first(3)}..."
 end
