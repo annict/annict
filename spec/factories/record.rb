@@ -4,6 +4,8 @@ FactoryBot.define do
   factory :record do
     association :user, :with_profile
     association :work
+    body { "おもしろかった" }
+    rating { "good" }
 
     trait :with_episode_record do
       transient do

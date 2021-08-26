@@ -14,7 +14,7 @@ module Textareas
       build_html do |h|
         h.html text_area_tag(
           @textarea_name,
-          @form.object.comment,
+          @form.object.body,
           autofocus: @autofocus,
           class: textarea_classname,
           "data-action": "keyup->record-textarea#updateCharactersCount",

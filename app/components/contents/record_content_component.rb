@@ -13,7 +13,7 @@ module Contents
     def render
       build_html do |h|
         h.tag :div do
-          if rating_or_comment?
+          unless @record.instant?
             h.html(SpoilerGuardComponent.new(view_context, record: @record).render { |h|
               h.tag :div, class: "c-record-content__wrapper mb-3" do
                 if @record.rating
@@ -24,7 +24,7 @@ module Contents
                   h.html Collapses::DeprecatedRatingsCollapseComponent.new(view_context, record: @record, class_name: "ms-2 text-muted").render
                 end
 
-                h.html BodyV6Component.new(view_context, content: @record.comment, format: :markdown, height: 300).render
+                h.html BodyV6Component.new(view_context, content: @record.body, format: :markdown, height: 300).render
               end
             })
           end
@@ -42,12 +42,6 @@ module Contents
           end
         end
       end
-    end
-
-    private
-
-    def rating_or_comment?
-      @record.rating || @record.comment.present?
     end
   end
 end

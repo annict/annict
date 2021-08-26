@@ -12,10 +12,11 @@ class WorksController < ApplicationV6Controller
     @episodes = @work.episodes.only_kept.order(:sort_number).first(29)
     @records = @work
       .records
-      .with_work_record
+      .preload(:work, user: %i[gumroad_subscriber profile])
       .only_kept
-      .merge(WorkRecord.with_body.order_by_rating(:desc).order(created_at: :desc))
-      .preload(:work, :work_record, :episode_record, user: %i[gumroad_subscriber profile])
+      .on_work
+      .with_body
+      .order_by_rating(:desc)
       .first(11)
   end
 end

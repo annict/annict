@@ -11,8 +11,9 @@ module Api::Internal
         }
       end
 
-      tracked_work_ids = current_user.work_records.only_kept.pluck(:work_id).uniq
-      tracked_episode_ids = current_user.episode_records.only_kept.pluck(:episode_id).uniq
+      records = current_user.records.only_kept
+      tracked_work_ids = records.on_work.pluck(:work_id).uniq
+      tracked_episode_ids = records.on_episode.pluck(:episode_id).uniq
       finished_work_ids = current_user.library_entries.finished_to_watch.pluck(:work_id)
       work_ids_in_library = current_user.library_entries.pluck(:work_id)
 

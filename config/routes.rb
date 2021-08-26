@@ -38,7 +38,7 @@ Rails.application.routes.draw do
   match "/@:username/records",                                  via: :get,    as: :record_list,                                to: "records#index",                username: ROUTING_USERNAME_FORMAT
   match "/@:username/records/:record_id",                       via: :delete,  as: :record,                                    to: "records#destroy",              username: ROUTING_USERNAME_FORMAT
   match "/@:username/records/:record_id",                       via: :get,                                                     to: "records#show",                 username: ROUTING_USERNAME_FORMAT
-  match "/api/internal/@:username/records/:record_id",          via: :patch,  as: :internal_api_record,                        to: "api/internal/records#update",  username: ROUTING_USERNAME_FORMAT
+  match "/api/internal/records/:record_id",                     via: :patch,  as: :internal_api_record,                        to: "api/internal/records#update"
   match "/api/internal/works/:work_id/commented_records",       via: :post,   as: :internal_api_commented_work_record_list,    to: "api/internal/commented_work_records#create",   work_id: ROUTING_ID_FORMAT
   match "/api/internal/works/:work_id/program_select",          via: :post,   as: :internal_api_work_program_select,           to: "api/internal/program_selects#create"
   match "/api/internal/works/:work_id/status_select",           via: :post,   as: :internal_api_work_status_select,            to: "api/internal/status_selects#create"
@@ -46,7 +46,6 @@ Rails.application.routes.draw do
   match "/api/internal/channels/:channel_id/reception",         via: :post,                                                    to: "api/internal/receptions#create"
   match "/api/internal/characters",                             via: :get,    as: :internal_api_character_list,                to: "api/internal/characters#index"
   match "/api/internal/episode_records",                        via: :post,   as: :internal_api_episode_record_list,           to: "api/internal/episode_records#create"
-  match "/api/internal/episodes/:episode_id/commented_records", via: :post,   as: :internal_api_commented_episode_record_list, to: "api/internal/commented_episode_records#create"
   match "/api/internal/follow",                                 via: :delete, as: :internal_api_follow,                        to: "api/internal/follows#destroy"
   match "/api/internal/follow",                                 via: :post,                                                    to: "api/internal/follows#create"
   match "/api/internal/following",                              via: :get,    as: :internal_api_following_list,                to: "api/internal/following#index"
@@ -208,12 +207,12 @@ Rails.application.routes.draw do
   match "/forum/posts/new",                                     via: :get,    as: :forum_new_post,                             to: "forum/posts#new"
   match "/fragment/@:username/records",                         via: :get,    as: :fragment_record_list,                       to: "fragment/records#index",          username: ROUTING_USERNAME_FORMAT
   match "/fragment/@:username/records/:record_id",              via: :get,    as: :fragment_record,                            to: "fragment/records#show",           username: ROUTING_USERNAME_FORMAT
-  match "/fragment/@:username/records/:record_id/edit",         via: :get,    as: :fragment_edit_record,                       to: "fragment/records#edit",           username: ROUTING_USERNAME_FORMAT
   match "/fragment/@:username/tracking_heatmap",                via: :get,    as: :fragment_tracking_heatmap,                  to: "fragment/tracking_heatmaps#show", username: ROUTING_USERNAME_FORMAT
   match "/fragment/activity_groups/:activity_group_id/items",   via: :get,    as: :fragment_activity_item_list,                to: "fragment/activity_items#index"
   match "/fragment/works/:work_id/records",                     via: :get,    as: :fragment_work_record_list,                  to: "fragment/work_records#index"
   match "/fragment/episodes/:episode_id/records",               via: :get,    as: :fragment_episode_record_list,               to: "fragment/episode_records#index"
   match "/fragment/receive_channel_buttons",                    via: :get,    as: :fragment_receive_channel_button_list,       to: "fragment/receive_channel_buttons#index"
+  match "/fragment/records/:record_id/edit",                    via: :get,    as: :fragment_edit_record,                       to: "fragment/records#edit"
   match "/fragment/trackable_works/:work_id",                   via: :get,    as: :fragment_trackable_work,                    to: "fragment/trackable_works#show"
   match "/fragment/trackable_episodes",                         via: :get,    as: :fragment_trackable_episode_list,            to: "fragment/trackable_episodes#index"
   match "/fragment/trackable_episodes/:episode_id",             via: :get,    as: :fragment_trackable_episode,                 to: "fragment/trackable_episodes#show"

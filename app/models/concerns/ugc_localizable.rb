@@ -4,17 +4,11 @@ module UgcLocalizable
   extend ActiveSupport::Concern
 
   included do
-    extend Enumerize
-
-    enumerize :locale, in: ApplicationRecord::LOCALES, default: :other, scope: true
-
-    scope :readable_by_user, ->(user) {
-      with_locale(*user.allowed_locales).or(where(user: user))
-    }
+    enum locale: ApplicationRecord::LOCALES, _prefix: true
 
     def detect_locale!(column)
       result = CLD.detect_language(send(column))
-      self.locale = result[:code] if result[:code].in?(self.class.locale.values)
+      self.locale = result[:code] if result[:code].in?(ApplicationRecord::LOCALES.map(&:to_s))
     end
   end
 end

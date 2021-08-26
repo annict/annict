@@ -64,8 +64,7 @@ class Episode < ApplicationRecord
   belongs_to :work, touch: true
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
-  has_many :episode_records
-  has_many :records, through: :episode_records
+  has_many :records
   has_many :library_entries, foreign_key: :next_episode_id, dependent: :nullify
   has_many :slots, dependent: :nullify
 
@@ -75,6 +74,8 @@ class Episode < ApplicationRecord
 
   after_create :update_prev_episode
   before_destroy :unset_prev_episode_id
+
+  localized_method :title
 
   def self.next_episode(watched_episode_ids = [])
     only_kept.where.not(id: watched_episode_ids).order(:sort_number).first

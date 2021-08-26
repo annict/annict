@@ -37,12 +37,12 @@ module Activities
             end
 
             if @activity_group.single?
-              record = @activity_group.first_item
+              record = @activity_group.activity_items.first
 
               h.html Contents::RecordContentComponent.new(view_context, record: record).render
             else
               h.tag :turbo_frame, id: view_context.dom_id(@activity_group) do
-                record = @activity_group.first_item
+                record = @activity_group.activity_items.first
 
                 h.html Contents::RecordContentComponent.new(view_context, record: record).render
 

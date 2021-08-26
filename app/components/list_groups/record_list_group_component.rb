@@ -49,7 +49,8 @@ module ListGroups
           h.html Lists::RecordListComponent.new(
             view_context,
             records: @all_records,
-            show_box: false
+            show_box: false,
+            empty_text: :no_comments
           ).render
         end
       end

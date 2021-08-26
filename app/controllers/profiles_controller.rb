@@ -15,7 +15,7 @@ class ProfilesController < ApplicationV6Controller
       .without_count
 
     @work_ids = if @activity_groups.present?
-      @activity_groups.flat_map.with_prelude { |ags| ags.first_item.work_id }.uniq
+      @activity_groups.flat_map.with_prelude { |ag| ag.activity_items.first.work_id }.uniq
     else
       []
     end

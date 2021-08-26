@@ -120,6 +120,11 @@ en:
         description: Bio
         name: Name
         url: URL
+      record/rating:
+        average: Average
+        bad: Bad
+        good: Good
+        great: Great
       slot:
         channel_id: Channel
         episode_id: Episode

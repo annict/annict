@@ -6,7 +6,8 @@ module RecordListSettable
   def set_user_record_list(user)
     @records = user
       .records
-      .preload(:work_record, work: :work_image, episode_record: :episode)
+      .preload(:episode, work: :work_image)
+      .only_kept
       .order(created_at: :desc)
       .page(params[:page])
       .per(30)

@@ -1,22 +1,26 @@
 # frozen_string_literal: true
 
-module Api
-  module Internal
-    class EpisodeRecordsController < Api::Internal::ApplicationController
-      before_action :authenticate_user!, only: %i[create]
+module Api::Internal
+  class EpisodeRecordsController < Api::Internal::ApplicationController
+    before_action :authenticate_user!
 
-      def create
-        episode = Episode.only_kept.find(params[:episode_id])
-        form = Forms::EpisodeRecordForm.new(episode: episode, share_to_twitter: current_user.share_record_to_twitter?)
+    def create
+      form = Forms::EpisodeRecordForm.new(episode_record_form_params)
+      form.episode = Episode.only_kept.find(params[:episode_id])
 
-        if form.invalid?
-          return render(status: 400, json: {message: form.errors.full_messages.first})
-        end
-
-        creator = Creators::EpisodeRecordCreator.new(user: current_user, form: form).call
-
-        render(status: 201, json: {record_id: creator.record.id})
+      if form.invalid?
+        return render(json: @form.errors.full_messages, status: :unprocessable_entity)
       end
+
+      Creators::EpisodeRecordCreator.new(user: current_user, form: form).call
+
+      head :created
+    end
+
+    private
+
+    def episode_record_form_params
+      params.required(:forms_episode_record_form).permit(:body, :rating, :share_to_twitter)
     end
   end
 end

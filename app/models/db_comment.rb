@@ -26,7 +26,7 @@
 
 class DbComment < ApplicationRecord
   include Mentionable
-  include UgcLocalizable
+  include UgcLocalizableWithEnumerize
 
   belongs_to :resource, polymorphic: true
   belongs_to :user

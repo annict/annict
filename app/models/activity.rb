@@ -54,27 +54,21 @@ class Activity < ApplicationRecord
     recipient_id
     recipient_type
     status_id
+    trackable_id
+    trackable_type
     work_id
     work_record_id
   ]
 
-  enumerize :trackable_type, in: ActivityGroup::ITEMABLE_TYPES, scope: true
-
   counter_culture :activity_group
 
   belongs_to :activity_group
-  belongs_to :itemable, foreign_key: :trackable_id, foreign_type: :trackable_type, polymorphic: true
+  belongs_to :itemable, polymorphic: true
   belongs_to :user
 
+  validates :itemable_type, inclusion: { in: ActivityGroup::ITEMABLE_TYPES }
+
   after_destroy :destroy_activity_group
-
-  def itemable_type
-    trackable_type
-  end
-
-  def itemable_id
-    trackable_id
-  end
 
   # @deprecated
   def action

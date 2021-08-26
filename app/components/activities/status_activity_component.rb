@@ -37,7 +37,7 @@ module Activities
             end
 
             h.tag :turbo_frame, id: view_context.dom_id(@activity_group) do
-              status = @activity_group.first_item
+              status = @activity_group.activity_items.first
 
               h.html Contents::StatusContentComponent.new(view_context, status: status).render
 

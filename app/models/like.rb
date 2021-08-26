@@ -24,11 +24,18 @@
 #
 
 class Like < ApplicationRecord
-  counter_culture :recipient
+  self.ignored_columns = %w[
+    recipient_id
+    recipient_type
+  ]
 
-  belongs_to :recipient, polymorphic: true
+  counter_culture :likeable
+
+  belongs_to :likeable, polymorphic: true
   belongs_to :user
   has_many :notifications, as: :trackable, dependent: :destroy
+
+  validates :likeable_type, inclusion: { in: %w[Comment Record Status] }
 
   after_create :save_notification
 

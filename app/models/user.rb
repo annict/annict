@@ -399,7 +399,7 @@ class User < ApplicationRecord
       return activity_groups.create!(itemable_type: itemable_type, single: true)
     end
 
-    last_activity_group = activity_groups.after(Time.zone.now - 1.hour).order(created_at: :desc).first
+    last_activity_group = activity_groups.after(Time.zone.now - 12.hours).order(created_at: :desc).first
 
     if last_activity_group&.itemable_type == itemable_type && !last_activity_group.single?
       return last_activity_group
@@ -429,10 +429,10 @@ class User < ApplicationRecord
     setting.update_column(:share_record_to_twitter, share_to_twitter)
   end
 
-  def share_episode_record_to_twitter(episode_record)
+  def share_record_to_twitter(record)
     return unless share_record_to_twitter?
 
-    ShareEpisodeRecordToTwitterJob.perform_later(id, episode_record.id)
+    ShareRecordToTwitterJob.perform_later(id, record.id)
   end
 
   def share_work_record_to_twitter(work_record)

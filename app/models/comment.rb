@@ -32,7 +32,12 @@
 #
 
 class Comment < ApplicationRecord
-  include UgcLocalizable
+  include UgcLocalizableWithEnumerize
+
+  self.ignored_columns = %w[
+    episode_record_id
+    work_id
+  ]
 
   counter_culture :episode_record
 
@@ -43,6 +48,7 @@ class Comment < ApplicationRecord
   has_many :notifications, as: :trackable, dependent: :destroy
 
   validates :body, presence: true, length: {maximum: 500}
+  validates :commentable_type, inclusion: { in: %w[Record] }
 
   after_create :save_notification
 

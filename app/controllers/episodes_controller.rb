@@ -22,7 +22,7 @@ class EpisodesController < ApplicationV6Controller
     @programs = @work.programs.eager_load(:channel).only_kept.in_vod.merge(Channel.order(:sort_number))
 
     @episode = @work.episodes.only_kept.find(params[:episode_id])
-    @form = Forms::EpisodeRecordForm.new(episode: @episode)
+    @form = Forms::EpisodeRecordForm.new(episode_id: @episode.id, share_to_twitter: current_user&.share_record_to_twitter?)
 
     set_episode_record_list(@episode)
   end

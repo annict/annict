@@ -6,11 +6,11 @@
   <div class="row gy-3">
     <% case @activity_group.itemable_type %>
     <% when "Status" %>
-      <% @activity_group.items.each do |status| %>
+      <% @activity_group.activity_items.each do |status| %>
         <%= Contents::StatusContentComponent.new(self, status: status).render %>
       <% end %>
-    <% when "EpisodeRecord", "WorkRecord", "AnimeRecord" %>
-      <% @activity_group.items.each do |record| %>
+    <% when "EpisodeRecord", "WorkRecord", "AnimeRecord", "Record" %>
+      <% @activity_group.activity_items.each do |record| %>
         <%= Contents::RecordContentComponent.new(self, record: record).render %>
       <% end %>
     <% end %>

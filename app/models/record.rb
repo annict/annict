@@ -42,75 +42,49 @@
 #
 
 class Record < ApplicationRecord
-  include SoftDeletable
   include Likeable
+  include Shareable
+  include SoftDeletable
+  include UgcLocalizable
 
-  RATING_STATES = %i[bad average good great].freeze
+  RATING_PAIRS = {bad: 10, average: 20, good: 30, great: 40}.freeze
+  RATING_KINDS = RATING_PAIRS.keys
+  RATING_COLUMNS = %i[rating animation_rating character_rating music_rating story_rating].freeze
+  WATCHABLE_TYPES = %w[Episode Work].freeze
+
+  self.ignored_columns = %w[
+    work_id
+  ]
 
   counter_culture :user
-  counter_culture :work
 
-  belongs_to :work
-  belongs_to :user
-  has_one :work_record, dependent: :destroy
-  has_one :episode_record, dependent: :destroy
-
-  scope :with_work_record, -> { joins(:work_record).merge(WorkRecord.only_kept) }
-
-  def episode_record?
-    episode_record.present?
+  RATING_COLUMNS.each do |column_name|
+    enum column_name => RATING_PAIRS, _prefix: true
   end
+
+  belongs_to :oauth_application, class_name: "Doorkeeper::Application", optional: true
+  belongs_to :user
+
+  scope :on_work, -> { where(episode_id: nil) }
+  scope :on_episode, -> { where.not(episode_id: nil) }
+  scope :order_by_rating, ->(direction) { order("records.rating #{direction.upcase} NULLS LAST").order(advanced_rating: direction, created_at: :desc) }
+  scope :with_body, -> { where.not(body: "") }
+  scope :with_no_body, -> { where(body: "") }
 
   def work_record?
-    !episode_record?
+    episode_id.nil?
   end
 
-  def episode
-    episode_record? ? episode_record.episode : nil
-  end
-
-  def rating
-    episode_record? ? episode_record.rating_state : work_record&.rating_overall_state
-  end
-
-  def advanced_rating
-    episode_record? ? episode_record.rating : nil
-  end
-
-  def deprecated_animation_rating
-    work_record&.rating_animation_state
-  end
-
-  def deprecated_character_rating
-    work_record&.rating_character_state
-  end
-
-  def deprecated_music_rating
-    work_record&.rating_music_state
-  end
-
-  def deprecated_story_rating
-    work_record&.rating_story_state
+  def episode_record?
+    !work_record?
   end
 
   def deprecated_rating_exists?
-    deprecated_animation_rating || deprecated_music_rating || deprecated_story_rating || deprecated_character_rating
+    animation_rating || music_rating || story_rating || character_rating
   end
 
   def comment
     episode_record? ? episode_record.body : work_record&.body
-  end
-
-  def modified_at
-    if work_record?
-      return work_record&.modified_at
-    end
-
-    episode_record.updated_at if episode_record.modify_body?
-  end
-
-  def likes_count
-    episode_record? ? episode_record.likes_count : work_record&.likes_count
   end
 
   def liked?(likes)
@@ -123,11 +97,45 @@ class Record < ApplicationRecord
     likes.any? { |like| like.recipient_type == recipient_type && like.recipient_id == recipient_id }
   end
 
+  def instant?
+    rating.nil? && body.blank?
+  end
+
   def local_trackable_title
     if work_record?
       return work.local_title
     end
 
-    [work.local_title, episode_record.episode.local_number].compact.join(" ")
+    [work.local_title, episode.local_number].compact.join(" ")
+  end
+
+  def share_url
+    "#{user.preferred_annict_url}/@#{user.username}/records/#{id}"
+  end
+
+  def twitter_share_body
+    work_title = work.local_title
+    title = body.present? ? work_title.truncate(30) : work_title
+    comment = body.present? ? "#{body} / " : ""
+    episode_number = episode ? "#{episode.local_number} " : ""
+    share_url = share_url_with_query(:twitter)
+    share_hashtag = work.hashtag_with_hash
+
+    base_body = if user.locale == "ja"
+      "%s#{title} #{episode_number}を見ました #{share_url} #{share_hashtag}"
+    else
+      "%sWatched: #{title} #{episode_number}#{share_url} #{share_hashtag}"
+    end
+
+    body = base_body % comment
+    body_without_url = body.sub(share_url, "")
+    return body if body_without_url.length <= 130
+
+    comment = comment.truncate(comment.length - (body_without_url.length - 130)) + " / "
+    base_body % comment
+  end
+
+  def needs_single_activity_group?
+    body.present?
   end
 end

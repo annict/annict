@@ -119,6 +119,11 @@ ja:
         description: 自己紹介
         name: 名前
         url: URL
+      record/rating:
+        average: 普通
+        bad: 良くない
+        good: 良い
+        great: とても良い
       slot:
         channel_id: チャンネル
         episode_id: エピソード

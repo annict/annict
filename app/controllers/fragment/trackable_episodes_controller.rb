@@ -14,7 +14,7 @@ module Fragment
     def show
       @episode = Episode.only_kept.find(params[:episode_id])
       @work = @episode.work
-      @form = Forms::EpisodeRecordForm.new(episode: @episode)
+      @form = Forms::EpisodeRecordForm.new(episode_id: @episode.id, share_to_twitter: current_user.share_record_to_twitter?)
 
       set_episode_record_list(@episode)
     end
