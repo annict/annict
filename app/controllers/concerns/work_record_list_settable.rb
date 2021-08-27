@@ -8,7 +8,7 @@ module WorkRecordListSettable
       .records
       .eager_load(:work, user: %i[gumroad_subscriber profile setting])
       .only_kept
-      .on_work
+      .work_records
       .order_by_rating(:desc)
     @my_records = @following_records = @all_records = Record.none
 

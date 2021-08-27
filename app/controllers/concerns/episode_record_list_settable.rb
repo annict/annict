@@ -6,7 +6,7 @@ module EpisodeRecordListSettable
   def set_episode_record_list(episode)
     records = episode
       .records
-      .preload(:work, :work_record, episode_record: :episode)
+      .preload(:work, :episode)
       .eager_load(user: %i[gumroad_subscriber profile setting])
       .only_kept
     @my_records = @following_records = @all_records = Record.none
@@ -17,10 +17,10 @@ module EpisodeRecordListSettable
         .preload(:work, :episode)
         .only_kept
         .where(episode: episode)
-        .order(created_at: :desc)
+        .order(watched_at: :desc)
       @following_records = records
         .merge(current_user.followings)
-        .order(created_at: :desc)
+        .order(watched_at: :desc)
       @all_records = records
         .where.not(user: [current_user, *current_user.followings])
     else

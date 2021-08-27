@@ -6,7 +6,7 @@ module Canary
       def resolve(has_body: nil, by_viewer: nil, by_following: nil, order_by: nil)
         order = Canary::OrderProperty.build(order_by)
 
-        @records = object.records.on_work.only_kept
+        @records = object.records.work_records.only_kept
 
         if by_viewer
           @records = @records.where(user_id: context[:viewer].id)

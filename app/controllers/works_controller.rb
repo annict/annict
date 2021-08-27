@@ -14,7 +14,7 @@ class WorksController < ApplicationV6Controller
       .records
       .preload(:work, user: %i[gumroad_subscriber profile])
       .only_kept
-      .on_work
+      .work_records
       .with_body
       .order_by_rating(:desc)
       .first(11)

@@ -24,6 +24,7 @@
 #  oauth_application_id :bigint
 #  recordable_id        :bigint
 #  user_id              :bigint           not null
+#  work_id              :bigint           not null
 #
 # Indexes
 #
@@ -54,40 +55,21 @@ class Record < ApplicationRecord
   RATING_COLUMNS = %i[rating animation_rating character_rating music_rating story_rating].freeze
   WATCHABLE_TYPES = %w[Episode Work].freeze
 
-  self.ignored_columns = %w[
-    work_id
-  ]
-
   counter_culture :user
 
   RATING_COLUMNS.each do |column_name|
     enum column_name => RATING_PAIRS, _prefix: true
   end
 
+  belongs_to :episode, optional: true
   belongs_to :oauth_application, class_name: "Doorkeeper::Application", optional: true
   belongs_to :user
+  belongs_to :work
+  delegated_type :recordable, types: %w[EpisodeRecord WorkRecord], dependent: :destroy
 
-  scope :on_work, -> { where(episode_id: nil) }
-  scope :on_episode, -> { where.not(episode_id: nil) }
   scope :order_by_rating, ->(direction) { order("records.rating #{direction.upcase} NULLS LAST").order(advanced_rating: direction, created_at: :desc) }
   scope :with_body, -> { where.not(body: "") }
   scope :with_no_body, -> { where(body: "") }
-
-  def work_record?
-    episode_id.nil?
-  end
-
-  def episode_record?
-    !work_record?
-  end
-
-  def deprecated_rating_exists?
-    animation_rating || music_rating || story_rating || character_rating
-  end
-
-  def comment
-    episode_record? ? episode_record.body : work_record&.body
-  end
 
   def liked?(likes)
     recipient_type, recipient_id = if episode_record?
