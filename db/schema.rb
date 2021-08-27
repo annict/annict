@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_14_142421) do
+ActiveRecord::Schema.define(version: 2021_08_15_142421) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -21,8 +21,8 @@ ActiveRecord::Schema.define(version: 2021_08_14_142421) do
     t.bigint "user_id", null: false
     t.bigint "recipient_id"
     t.string "recipient_type", limit: 510
-    t.bigint "trackable_id", null: false
-    t.string "trackable_type", limit: 510, null: false
+    t.bigint "trackable_id"
+    t.string "trackable_type", limit: 510
     t.string "action", limit: 510
     t.datetime "created_at"
     t.datetime "updated_at"
