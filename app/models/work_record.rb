@@ -12,7 +12,7 @@
 #  deleted_at             :datetime
 #  impressions_count      :integer          default(0), not null
 #  likes_count            :integer          default(0), not null
-#  locale                 :string           default("other"), not null
+#  locale                 :string           default(NULL), not null
 #  migrated_at            :datetime
 #  modified_at            :datetime
 #  music_rating           :integer

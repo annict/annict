@@ -11,7 +11,7 @@
 #  facebook_click_count :integer          default(0), not null
 #  facebook_url_hash    :string(510)
 #  likes_count          :integer          default(0), not null
-#  locale               :string           default("other"), not null
+#  locale               :string           default(NULL), not null
 #  modify_body          :boolean          default(FALSE), not null
 #  rating               :float
 #  rating_state         :string

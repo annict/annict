@@ -12,7 +12,7 @@
 #  deleted_at           :datetime
 #  impressions_count    :integer          default(0), not null
 #  likes_count          :integer          default(0), not null
-#  locale               :integer          default(0), not null
+#  locale               :integer          default("other"), not null
 #  migrated_at          :datetime
 #  modified_at          :datetime
 #  rating               :integer
@@ -24,7 +24,6 @@
 #  oauth_application_id :bigint
 #  recordable_id        :bigint
 #  user_id              :bigint           not null
-#  work_id              :bigint           not null
 #
 # Indexes
 #
