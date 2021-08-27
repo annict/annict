@@ -44,6 +44,8 @@ target_records.preload(:episode_record, :work_record).find_in_batches(batch_size
     if record.episode_record?
       episode_record = record.episode_record
       record.attributes.merge(
+        "recordable_id" => episode_record.id,
+        "recordable_type" => "EpisodeRecord",
         "episode_id" => episode_record.episode_id,
         "oauth_application_id" => episode_record.oauth_application_id,
         "body" => episode_record.body.presence || "",
@@ -65,6 +67,8 @@ target_records.preload(:episode_record, :work_record).find_in_batches(batch_size
       end
 
       record.attributes.merge(
+        "recordable_id" => work_record.id,
+        "recordable_type" => "WorkRecord",
         "oauth_application_id" => work_record.oauth_application_id,
         "body" => work_record.body,
         "likes_count" => work_record.likes_count,
