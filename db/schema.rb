@@ -823,6 +823,8 @@ ActiveRecord::Schema.define(version: 2021_08_14_142421) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "deleted_at"
+    t.bigint "recordable_id"
+    t.string "recordable_type"
     t.bigint "episode_id"
     t.bigint "oauth_application_id"
     t.text "body", default: "", null: false
@@ -838,6 +840,7 @@ ActiveRecord::Schema.define(version: 2021_08_14_142421) do
     t.index ["episode_id"], name: "index_records_on_episode_id"
     t.index ["migrated_at"], name: "index_records_on_migrated_at"
     t.index ["oauth_application_id"], name: "index_records_on_oauth_application_id"
+    t.index ["recordable_id", "recordable_type"], name: "index_records_on_recordable_id_and_recordable_type"
     t.index ["user_id"], name: "index_records_on_user_id"
     t.index ["work_id"], name: "index_records_on_work_id"
   end

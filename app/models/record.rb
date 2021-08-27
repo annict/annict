@@ -16,22 +16,25 @@
 #  migrated_at          :datetime
 #  modified_at          :datetime
 #  rating               :integer
+#  recordable_type      :string
 #  watched_at           :datetime
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
 #  episode_id           :bigint
 #  oauth_application_id :bigint
+#  recordable_id        :bigint
 #  user_id              :bigint           not null
 #  work_id              :bigint           not null
 #
 # Indexes
 #
-#  index_records_on_deleted_at            (deleted_at)
-#  index_records_on_episode_id            (episode_id)
-#  index_records_on_migrated_at           (migrated_at)
-#  index_records_on_oauth_application_id  (oauth_application_id)
-#  index_records_on_user_id               (user_id)
-#  index_records_on_work_id               (work_id)
+#  index_records_on_deleted_at                         (deleted_at)
+#  index_records_on_episode_id                         (episode_id)
+#  index_records_on_migrated_at                        (migrated_at)
+#  index_records_on_oauth_application_id               (oauth_application_id)
+#  index_records_on_recordable_id_and_recordable_type  (recordable_id,recordable_type)
+#  index_records_on_user_id                            (user_id)
+#  index_records_on_work_id                            (work_id)
 #
 # Foreign Keys
 #
