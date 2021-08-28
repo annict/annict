@@ -4,31 +4,14 @@
 #
 # Table name: work_records
 #
-#  id                     :bigint           not null, primary key
-#  aasm_state             :string           default("published"), not null
-#  animation_rating       :integer
-#  body                   :text             not null
-#  character_rating       :integer
-#  deleted_at             :datetime
-#  impressions_count      :integer          default(0), not null
-#  likes_count            :integer          default(0), not null
-#  locale                 :string           default("other"), not null
-#  migrated_at            :datetime
-#  modified_at            :datetime
-#  music_rating           :integer
-#  rating_animation_state :string
-#  rating_character_state :string
-#  rating_music_state     :string
-#  rating_overall_state   :string
-#  rating_story_state     :string
-#  story_rating           :integer
-#  title                  :string           default("")
-#  created_at             :datetime         not null
-#  updated_at             :datetime         not null
-#  oauth_application_id   :bigint
-#  record_id              :bigint           not null
-#  user_id                :bigint           not null
-#  work_id                :bigint           not null
+#  id               :bigint           not null, primary key
+#  animation_rating :integer
+#  character_rating :integer
+#  migrated_at      :datetime
+#  music_rating     :integer
+#  story_rating     :integer
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
 #
 # Indexes
 #
