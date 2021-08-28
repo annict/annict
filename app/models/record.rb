@@ -55,7 +55,12 @@ class Record < ApplicationRecord
   RATING_COLUMNS = %i[rating animation_rating character_rating music_rating story_rating].freeze
   WATCHABLE_TYPES = %w[Episode Work].freeze
 
+  counter_culture :episode, column_name: ->(record) { record.episode_record? ? :episode_records_count : nil }
+  counter_culture :episode, column_name: ->(record) { record.episode_record? && record.body.present? ? :episode_record_bodies_count : nil }
   counter_culture :user
+  counter_culture :user, column_name: ->(record) { record.episode_record? ? :episode_records_count : nil }
+  counter_culture :work, column_name: ->(record) { record.work_record? ? :work_records_count : nil }
+  counter_culture :work, column_name: ->(record) { record.work_record? && record.body.present? ? :work_records_with_body_count : nil }
 
   RATING_COLUMNS.each do |column_name|
     enum column_name => RATING_PAIRS, _prefix: true
