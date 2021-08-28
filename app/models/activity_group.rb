@@ -26,7 +26,7 @@ class ActivityGroup < ApplicationRecord
 
   include BatchDestroyable
 
-  ITEMABLE_TYPES = %w[Record Status].freeze
+  ITEMABLE_TYPES = %w[AnimeRecord EpisodeRecord Record Status WorkRecord].freeze
 
   enumerize :itemable_type, in: ITEMABLE_TYPES, scope: true
 
@@ -41,7 +41,7 @@ class ActivityGroup < ApplicationRecord
     all_activities_by_activity_group_id = all_activities.group_by(&:activity_group_id)
     all_activities_by_itemable_type = all_activities.group_by(&:itemable_type)
     all_statuses = Status
-      .eager_load(work: :work_image)
+      .preload(work: :work_image)
       .where(id: all_activities_by_itemable_type["Status"]&.pluck(:itemable_id))
       .order(created_at: :desc)
     all_records = Record
