@@ -315,8 +315,8 @@ ActiveRecord::Schema.define(version: 2021_08_15_142421) do
   end
 
   create_table "episode_records", force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.bigint "episode_id", null: false
+    t.bigint "user_id"
+    t.bigint "episode_id"
     t.text "body"
     t.boolean "modify_body", default: false, null: false
     t.string "twitter_url_hash", limit: 510
@@ -329,7 +329,7 @@ ActiveRecord::Schema.define(version: 2021_08_15_142421) do
     t.datetime "updated_at"
     t.boolean "shared_twitter", default: false, null: false
     t.boolean "shared_facebook", default: false, null: false
-    t.bigint "work_id", null: false
+    t.bigint "work_id"
     t.float "rating"
     t.bigint "multiple_episode_record_id"
     t.bigint "oauth_application_id"
@@ -337,7 +337,7 @@ ActiveRecord::Schema.define(version: 2021_08_15_142421) do
     t.bigint "review_id"
     t.string "aasm_state", default: "published", null: false
     t.string "locale", default: "other", null: false
-    t.bigint "record_id", null: false
+    t.bigint "record_id"
     t.datetime "deleted_at"
     t.index ["episode_id", "deleted_at"], name: "index_episode_records_on_episode_id_and_deleted_at"
     t.index ["facebook_url_hash"], name: "checkins_facebook_url_hash_key", unique: true
@@ -823,6 +823,8 @@ ActiveRecord::Schema.define(version: 2021_08_15_142421) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "deleted_at"
+    t.bigint "recordable_id"
+    t.string "recordable_type"
     t.bigint "episode_id"
     t.bigint "oauth_application_id"
     t.text "body", default: "", null: false
@@ -831,17 +833,14 @@ ActiveRecord::Schema.define(version: 2021_08_15_142421) do
     t.integer "locale", default: 0, null: false
     t.integer "rating"
     t.float "advanced_rating"
-    t.integer "animation_rating"
-    t.integer "character_rating"
-    t.integer "music_rating"
-    t.integer "story_rating"
-    t.string "twitter_url_hash"
-    t.string "facebook_url_hash"
     t.datetime "watched_at"
     t.datetime "modified_at"
+    t.datetime "migrated_at"
     t.index ["deleted_at"], name: "index_records_on_deleted_at"
     t.index ["episode_id"], name: "index_records_on_episode_id"
+    t.index ["migrated_at"], name: "index_records_on_migrated_at"
     t.index ["oauth_application_id"], name: "index_records_on_oauth_application_id"
+    t.index ["recordable_id", "recordable_type"], name: "index_records_on_recordable_id_and_recordable_type"
     t.index ["user_id"], name: "index_records_on_user_id"
     t.index ["work_id"], name: "index_records_on_work_id"
   end
@@ -1213,8 +1212,14 @@ ActiveRecord::Schema.define(version: 2021_08_15_142421) do
     t.string "locale", default: "other", null: false
     t.bigint "record_id", null: false
     t.datetime "deleted_at"
+    t.integer "animation_rating"
+    t.integer "character_rating"
+    t.integer "music_rating"
+    t.integer "story_rating"
+    t.datetime "migrated_at"
     t.index ["deleted_at"], name: "index_work_records_on_deleted_at"
     t.index ["locale"], name: "index_work_records_on_locale"
+    t.index ["migrated_at"], name: "index_work_records_on_migrated_at"
     t.index ["oauth_application_id"], name: "index_work_records_on_oauth_application_id"
     t.index ["record_id"], name: "index_work_records_on_record_id", unique: true
     t.index ["user_id"], name: "index_work_records_on_user_id"

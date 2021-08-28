@@ -4,7 +4,7 @@ module Forms::Recordable
   extend ActiveSupport::Concern
 
   included do
-    attr_accessor :oauth_application, :record
+    attr_accessor :oauth_application, :record, :watched_at
     attr_reader :instant, :rating, :share_to_twitter, :skip_to_share
 
     validates :body, length: {maximum: 1_048_596}

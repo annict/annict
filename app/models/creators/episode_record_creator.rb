@@ -12,19 +12,23 @@ module Creators
     end
 
     def call
-      episode_record = @episode.build_episode_record(
-        user: @user,
+      record = @user.records.new(
+        work: @work,
+        episode: @episode,
+        oauth_application: @form.oauth_application,
+        advanced_rating: @form.advanced_rating,
+        body: @form.body,
         rating: @form.rating,
-        deprecated_rating: @form.deprecated_rating,
-        comment: @form.comment,
-        share_to_twitter: @form.share_to_twitter
+        watched_at: @form.watched_at.presence || Time.zone.now
       )
+      record.recordable = EpisodeRecord.new
+      record.detect_locale!(:body)
 
       ActiveRecord::Base.transaction do
-        episode_record.save!
+        record.save!
 
-        activity_group = @user.create_or_last_activity_group!(episode_record)
-        @user.activities.create!(itemable: episode_record, activity_group: activity_group)
+        activity_group = @user.create_or_last_activity_group!(record)
+        @user.activities.create!(itemable: record, activity_group: activity_group)
 
         library_entry = @user.library_entries.where(work: @work).first_or_create!
         library_entry.append_episode!(@episode)
@@ -33,11 +37,11 @@ module Creators
         @user.touch(:record_cache_expired_at)
 
         if @user.share_record_to_twitter?
-          @user.share_episode_record_to_twitter(episode_record)
+          @user.share_record_to_twitter(record)
         end
       end
 
-      self.record = episode_record.record
+      self.record = record
 
       self
     end

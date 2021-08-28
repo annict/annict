@@ -153,20 +153,6 @@ class Episode < ApplicationRecord
     episode_records.select(:created_at).last&.created_at
   end
 
-  def build_episode_record(user:, rating: nil, deprecated_rating: nil, comment: "", share_to_twitter: false)
-    episode_record = episode_records.new(
-      user: user,
-      rating_state: rating&.downcase,
-      rating: deprecated_rating,
-      body: comment,
-      share_to_twitter: share_to_twitter
-    )
-    episode_record.work = work
-    episode_record.detect_locale!(:body)
-    episode_record.build_record(user: user, work: work)
-    episode_record
-  end
-
   private
 
   def unset_prev_episode_id
