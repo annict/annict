@@ -20,7 +20,7 @@ module Contents
                   h.html Labels::RatingLabelComponent.new(view_context, rating: @record.rating, advanced_rating: @record.advanced_rating, class_name: "mb-1").render
                 end
 
-                if @record.deprecated_rating_exists?
+                if @record.work_record?
                   h.html Collapses::DeprecatedRatingsCollapseComponent.new(view_context, record: @record, class_name: "ms-2 text-muted").render
                 end
 

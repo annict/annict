@@ -39,7 +39,6 @@ Rails.application.routes.draw do
   match "/@:username/records/:record_id",                       via: :delete,  as: :record,                                    to: "records#destroy",              username: ROUTING_USERNAME_FORMAT
   match "/@:username/records/:record_id",                       via: :get,                                                     to: "records#show",                 username: ROUTING_USERNAME_FORMAT
   match "/api/internal/records/:record_id",                     via: :patch,  as: :internal_api_record,                        to: "api/internal/records#update"
-  match "/api/internal/works/:work_id/commented_records",       via: :post,   as: :internal_api_commented_work_record_list,    to: "api/internal/commented_work_records#create",   work_id: ROUTING_ID_FORMAT
   match "/api/internal/works/:work_id/program_select",          via: :post,   as: :internal_api_work_program_select,           to: "api/internal/program_selects#create"
   match "/api/internal/works/:work_id/status_select",           via: :post,   as: :internal_api_work_status_select,            to: "api/internal/status_selects#create"
   match "/api/internal/channels/:channel_id/reception",         via: :delete, as: :internal_api_channel_reception,             to: "api/internal/receptions#destroy"
@@ -69,6 +68,7 @@ Rails.application.routes.draw do
   match "/api/internal/stars",                                  via: :post,                                                    to: "api/internal/stars#create"
   match "/api/internal/unlikes",                                via: :post,   as: :internal_api_unlike_list,                   to: "api/internal/unlikes#create"
   match "/api/internal/unstars",                                via: :post,   as: :internal_api_unstar_list,                   to: "api/internal/unstars#create"
+  match "/api/internal/works/:work_id/records",                 via: :post,   as: :internal_api_work_record_list,              to: "api/internal/work_records#create"
   match "/api/internal/works",                                  via: :get,    as: :internal_api_work_list,                     to: "api/internal/works#index"
   match "/channels",                                            via: :get,    as: :channel_list,                               to: "channels#index"
   match "/characters/:character_id",                            via: :get,    as: :character,                                  to: "characters#show"

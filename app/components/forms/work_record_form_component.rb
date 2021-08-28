@@ -5,6 +5,8 @@ module Forms
     def initialize(view_context, form:)
       super view_context
       @form = form
+      @work = @form.work
+      @record = @form.record
     end
 
     def render
@@ -22,7 +24,7 @@ module Forms
           h.html ErrorPanelV6Component.new(view_context, stimulus_controller: "forms--work-record-form").render
 
           h.tag :div, class: "mb-2" do
-            h.html ButtonGroups::RecordRatingButtonGroupComponent.new(view_context, form: f, rating_field: :rating_overall).render
+            h.html ButtonGroups::RecordRatingButtonGroupComponent.new(view_context, form: f, rating_field: :rating).render
           end
 
           h.tag :div, class: "mb-3" do
@@ -63,7 +65,7 @@ module Forms
     end
 
     def form_url
-      @form.persisted? ? view_context.internal_api_record_path(@form.record.id) : view_context.internal_api_work_record_list_path
+      @form.persisted? ? view_context.internal_api_record_path(@record.id) : view_context.internal_api_work_record_list_path(@work.id)
     end
   end
 end
