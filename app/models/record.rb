@@ -52,7 +52,6 @@ class Record < ApplicationRecord
 
   RATING_PAIRS = {bad: 10, average: 20, good: 30, great: 40}.freeze
   RATING_KINDS = RATING_PAIRS.keys
-  RATING_COLUMNS = %i[rating animation_rating character_rating music_rating story_rating].freeze
   WATCHABLE_TYPES = %w[Episode Work].freeze
 
   counter_culture :episode, column_name: ->(record) { record.episode_record? ? :episode_records_count : nil }
@@ -62,9 +61,7 @@ class Record < ApplicationRecord
   counter_culture :work, column_name: ->(record) { record.work_record? ? :work_records_count : nil }
   counter_culture :work, column_name: ->(record) { record.work_record? && record.body.present? ? :work_records_with_body_count : nil }
 
-  RATING_COLUMNS.each do |column_name|
-    enum column_name => RATING_PAIRS, _prefix: true
-  end
+  enum rating: RATING_PAIRS, _prefix: true
 
   belongs_to :episode, optional: true
   belongs_to :oauth_application, class_name: "Doorkeeper::Application", optional: true
