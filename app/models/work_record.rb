@@ -32,6 +32,8 @@
 #
 
 class WorkRecord < ApplicationRecord
+  include Recordable
+
   self.ignored_columns = %w[
     aasm_state
     body

@@ -48,11 +48,13 @@ class UserSlotsQuery
   attr_reader :user, :slots, :watched, :order
 
   def user_slots
-    Slot.where(program: library_entries.wanna_watch_and_watching.select(:program_id))
+    slots = Slot.where(program: library_entries.select(:program_id))
+    slots = slots.where.not(episode_id: library_entries.pluck(:watched_episode_ids).flatten) if watched == false
+    slots
   end
 
   def library_entries
-    @library_entries ||= user.library_entries
+    @library_entries ||= user.library_entries.wanna_watch_and_watching
   end
 
   def order_collection(collection)

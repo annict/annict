@@ -70,20 +70,19 @@ class Activity < ApplicationRecord
 
   # @deprecated
   def action
-    "create_#{itemable_type.underscore}"
-  end
+    value = "create_#{itemable_type.underscore}"
 
-  # @deprecated
-  def deprecated_action
-    case action
+    case value
     when "create_episode_record"
       "create_record"
     when "create_work_record", "create_anime_record"
       "create_review"
     when "create_multiple_episode_records"
       "create_multiple_records"
+    when "create_record"
+      itemable.work_record? ? "create_review" : "create_record"
     else
-      action
+      value
     end
   end
 

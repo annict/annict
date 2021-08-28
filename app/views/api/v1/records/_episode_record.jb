@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
+record = episode_record.record
+
 json = {}
-
 json[:id] = episode_record.id if @params.fields_contain?("#{field_prefix}id")
-json[:comment] = episode_record.body if @params.fields_contain?("#{field_prefix}comment")
-json[:rating] = episode_record.rating if @params.fields_contain?("#{field_prefix}rating")
-json[:rating_state] = episode_record.rating_state if @params.fields_contain?("#{field_prefix}rating_state")
-json[:is_modified] = episode_record.modify_body if @params.fields_contain?("#{field_prefix}is_modified")
-json[:likes_count] = episode_record.likes_count if @params.fields_contain?("#{field_prefix}likes_count")
-json[:comments_count] = episode_record.comments_count if @params.fields_contain?("#{field_prefix}comments_count")
-json[:created_at] = episode_record.created_at.iso8601 if @params.fields_contain?("#{field_prefix}created_at")
-
+json[:comment] = record.body if @params.fields_contain?("#{field_prefix}comment")
+json[:rating] = record.advanced_rating if @params.fields_contain?("#{field_prefix}rating")
+json[:rating_state] = record.rating if @params.fields_contain?("#{field_prefix}rating_state")
+json[:is_modified] = record.modified_at.present? if @params.fields_contain?("#{field_prefix}is_modified")
+json[:likes_count] = record.likes_count if @params.fields_contain?("#{field_prefix}likes_count")
+json[:comments_count] = record.comments_count if @params.fields_contain?("#{field_prefix}comments_count")
+json[:created_at] = record.watched_at.iso8601 if @params.fields_contain?("#{field_prefix}created_at")
 json

@@ -4,18 +4,18 @@ json = {}
 
 json[:id] = activity.id if params.fields_contain?("#{field_prefix}id")
 json[:user] = render("api/v1/users/user", user: activity.user, show_all: false, params: params, field_prefix: "user.")
-json[:action] = activity.deprecated_action if params.fields_contain?("#{field_prefix}action")
+json[:action] = activity.action if params.fields_contain?("#{field_prefix}action")
 json[:created_at] = activity.created_at.iso8601 if params.fields_contain?("#{field_prefix}created_at")
 
 case activity.action
-when "create_episode_record"
+when "create_record"
   json[:work] = render("api/v1/works/work", work: activity.itemable.work, params: params, field_prefix: "work.")
   json[:episode] = render("api/v1/episodes/episode", episode: activity.itemable.episode, params: params, field_prefix: "episode.")
   json[:record] = render("api/v1/records/episode_record", episode_record: activity.itemable, params: params, field_prefix: "record.")
-when "create_work_record", "create_anime_record"
+when "create_review"
   json[:work] = render("api/v1/works/work", work: activity.itemable.work, params: params, field_prefix: "work.")
   json[:review] = render("api/v1/reviews/work_record", work_record: activity.itemable, params: params, field_prefix: "review.")
-when "create_multiple_episode_records"
+when "create_multiple_records"
   json[:work] = render("api/v1/works/work", work: activity.itemable.work, params: params, field_prefix: "work.")
   json[:multiple_record] = render("api/v1/multiple_episode_records/multiple_episode_record", multiple_episode_record: activity.itemable, params: params, field_prefix: "multiple_record.")
 when "create_status"
