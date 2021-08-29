@@ -7,32 +7,36 @@ module Updaters
     def initialize(user:, form:)
       @user = user
       @form = form
-      @record = @form.record
-      @work_record = @record.work_record
     end
 
     def call
-      @work_record.rating_overall_state = @form.rating_overall
-      @work_record.rating_animation_state = @form.rating_animation
-      @work_record.rating_music_state = @form.rating_music
-      @work_record.rating_story_state = @form.rating_story
-      @work_record.rating_character_state = @form.rating_character
-      @work_record.modified_at = Time.zone.now
-      @work_record.body = @form.comment
-      @work_record.oauth_application = @form.oauth_application
-      @work_record.detect_locale!(:body)
+      @record = @form.record
+      @work_record = @record.work_record
 
-      if @form.deprecated_title.present?
-        @work_record.body = "#{@form.deprecated_title}\n\n#{@work_record.body}"
-      end
+      @record.attributes = {
+        oauth_application: @form.oauth_application,
+        body: @form.body,
+        rating: @form.rating,
+        watched_at: @form.watched_at.presence || @record.watched_at,
+        modified_at: Time.zone.now
+      }
+      @record.detect_locale!(:body)
+      @work_record.attributes = {
+        animation_rating: @form.animation_rating,
+        character_rating: @form.character_rating,
+        music_rating: @form.music_rating,
+        story_rating: @form.story_rating
+      }
 
       ActiveRecord::Base.transaction do
+        @record.save!
         @work_record.save!
-        @record.touch
+
+        @user.update_share_record_setting(@form.share_to_twitter)
         @user.touch(:record_cache_expired_at)
 
-        if @form.share_to_twitter
-          @user.share_work_record_to_twitter(@work_record)
+        if @user.share_record_to_twitter?
+          @user.share_record_to_twitter(record)
         end
       end
 

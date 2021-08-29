@@ -31,15 +31,6 @@ module Api
         validates :share_facebook,
           allow_blank: true,
           filter_boolean_params: true
-        WorkRecord::STATES.each do |state|
-          validates state,
-            presence: true,
-            format: {
-              with: /\A(bad|average|good|great)\z/,
-              message: "の値が不正です。"
-            },
-            allow_blank: true
-        end
       end
     end
   end

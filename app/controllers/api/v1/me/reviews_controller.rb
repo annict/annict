@@ -32,20 +32,20 @@ module Api
         end
 
         def update
-          work_record = current_user.work_records.only_kept.find(@params.id)
-          work = work_record.work
+          work_record = WorkRecord.eager_load(:record).merge(current_user.records.only_kept).find(@params.id)
           record = work_record.record
+          work = record.work
 
           form = Forms::WorkRecordForm.new(
             work: work,
             deprecated_title: @params.title,
-            comment: @params.body,
+            body: @params.body,
             oauth_application: doorkeeper_token.application,
-            rating_animation: @params.rating_animation_state,
-            rating_character: @params.rating_character_state,
-            rating_music: @params.rating_music_state,
-            rating_overall: @params.rating_overall_state,
-            rating_story: @params.rating_story_state,
+            rating: @params.rating_overall_state,
+            animation_rating: @params.rating_animation_state,
+            music_rating: @params.rating_music_state,
+            story_rating: @params.rating_story_state,
+            character_rating: @params.rating_character_state,
             record: record,
             share_to_twitter: @params.share_twitter
           )
@@ -59,7 +59,8 @@ module Api
             form: form
           ).call
 
-          @work_record = result.record.work_record
+          @record = result.record
+          @work_record = @record.work_record
         end
 
         def destroy

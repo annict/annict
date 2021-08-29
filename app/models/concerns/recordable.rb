@@ -4,6 +4,6 @@ module Recordable
   extend ActiveSupport::Concern
 
   included do
-    has_one :record, as: :recordable, touch: true
+    has_one :record, as: :recordable
   end
 end
