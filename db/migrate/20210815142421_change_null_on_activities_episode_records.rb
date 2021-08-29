@@ -9,5 +9,10 @@ class ChangeNullOnActivitiesEpisodeRecords < ActiveRecord::Migration[6.1]
     change_column_null :episode_records, :episode_id, true
     change_column_null :episode_records, :work_id, true
     change_column_null :episode_records, :record_id, true
+
+    change_column_null :work_records, :user_id, true
+    change_column_null :work_records, :work_id, true
+    change_column_null :work_records, :body, true
+    change_column_null :work_records, :record_id, true
   end
 end

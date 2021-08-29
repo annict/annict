@@ -4,7 +4,7 @@ json = {}
 
 json.merge! render("api/v1/reviews/work_record", work_record: @work_record, params: @params, field_prefix: "")
 
-json[:user] = render("api/v1/users/user", user: @work_record.user, params: @params, field_prefix: "user.", show_all: false)
-json[:work] = render("api/v1/works/work", work: @work_record.work, params: @params, field_prefix: "work.")
+json[:user] = render("api/v1/users/user", user: @record.user, params: @params, field_prefix: "user.", show_all: false)
+json[:work] = render("api/v1/works/work", work: @record.work, params: @params, field_prefix: "work.")
 
 json

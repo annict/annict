@@ -5,7 +5,7 @@ module Forms
     include Forms::Recordable
 
     attr_accessor :work
-    attr_reader :deprecated_title, :animation_rating, :character_rating, :music_rating, :story_rating
+    attr_reader :animation_rating, :character_rating, :music_rating, :story_rating
 
     validates :animation_rating, allow_nil: true, inclusion: {in: Record::RATING_KINDS.map(&:to_s)}
     validates :character_rating, allow_nil: true, inclusion: {in: Record::RATING_KINDS.map(&:to_s)}
@@ -31,6 +31,16 @@ module Forms
 
     def deprecated_title=(value)
       @deprecated_title = value&.strip
+    end
+
+    def deprecated_title
+      @deprecated_title.presence || ""
+    end
+
+    def body
+      value = @body.presence || ""
+
+      deprecated_title.present? ? "#{deprecated_title}\n\n#{value}" : value
     end
   end
 end

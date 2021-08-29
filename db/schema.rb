@@ -1193,10 +1193,10 @@ ActiveRecord::Schema.define(version: 2021_08_15_142421) do
   end
 
   create_table "work_records", force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.bigint "work_id", null: false
+    t.bigint "user_id"
+    t.bigint "work_id"
     t.string "title", default: ""
-    t.text "body", null: false
+    t.text "body"
     t.string "rating_animation_state"
     t.string "rating_music_state"
     t.string "rating_story_state"
@@ -1210,7 +1210,7 @@ ActiveRecord::Schema.define(version: 2021_08_15_142421) do
     t.datetime "updated_at", null: false
     t.bigint "oauth_application_id"
     t.string "locale", default: "other", null: false
-    t.bigint "record_id", null: false
+    t.bigint "record_id"
     t.datetime "deleted_at"
     t.integer "animation_rating"
     t.integer "character_rating"

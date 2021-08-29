@@ -2,12 +2,12 @@ ja:
   form:
     attributes:
       forms/work_record_form:
+        animation_rating: 映像
+        character_rating: キャラクター
         comment: 感想
-        rating_animation: 映像
-        rating_character: キャラクター
-        rating_music: 音楽
-        rating_overall: 全体
-        rating_story: ストーリー
+        music_rating: 音楽
+        rating: 全体
+        story_rating: ストーリー
       forms/episode_record_form:
         comment: 感想
         rating: 評価

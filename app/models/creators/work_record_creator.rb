@@ -11,36 +11,36 @@ module Creators
     end
 
     def call
-      work_record = @work.build_work_record(
-        user: @user,
-        rating_overall: @form.rating_overall,
-        rating_animation: @form.rating_animation,
-        rating_music: @form.rating_music,
-        rating_story: @form.rating_story,
-        rating_character: @form.rating_character,
-        comment: @form.comment,
-        share_to_twitter: @form.share_to_twitter
+      record = @user.records.new(
+        work: @work,
+        oauth_application: @form.oauth_application,
+        body: @form.body,
+        rating: @form.rating,
+        watched_at: @form.watched_at.presence || Time.zone.now
       )
-
-      if @form.deprecated_title.present?
-        work_record.body = "#{@form.deprecated_title}\n\n#{work_record.body}"
-      end
+      record.recordable = WorkRecord.new(
+        animation_rating: @form.animation_rating,
+        character_rating: @form.character_rating,
+        music_rating: @form.music_rating,
+        story_rating: @form.story_rating
+      )
+      record.detect_locale!(:body)
 
       ActiveRecord::Base.transaction do
-        work_record.save!
+        record.save!
 
-        activity_group = @user.create_or_last_activity_group!(work_record)
-        @user.activities.create!(itemable: work_record, activity_group: activity_group)
+        activity_group = @user.create_or_last_activity_group!(record)
+        @user.activities.create!(itemable: record, activity_group: activity_group)
 
         @user.update_share_record_setting(@form.share_to_twitter)
         @user.touch(:record_cache_expired_at)
 
         if @user.share_record_to_twitter?
-          @user.share_work_record_to_twitter(work_record)
+          @user.share_record_to_twitter(record)
         end
       end
 
-      self.record = work_record.record
+      self.record = record
 
       self
     end

@@ -9,25 +9,26 @@ module Api
         def create
           work = Work.only_kept.find(@params.work_id)
 
-          work_record_params = {
+          form = Forms::WorkRecordForm.new(
             work: work,
-            comment: @params.title.present? ? "#{@params.title}\n\n#{@params.body}" : @params.body,
-            rating_animation: @params.rating_animation_state,
-            rating_music: @params.rating_music_state,
-            rating_story: @params.rating_story_state,
-            rating_character: @params.rating_character_state,
-            rating_overall: @params.rating_overall_state,
+            deprecated_title: @params.title,
+            body: @params.body,
+            rating: @params.rating_overall_state,
+            animation_rating: @params.rating_animation_state,
+            music_rating: @params.rating_music_state,
+            story_rating: @params.rating_story_state,
+            character_rating: @params.rating_character_state,
             share_to_twitter: @params.share_twitter
-          }
-          form = Forms::WorkRecordForm.new(work_record_params)
+          )
 
           if form.invalid?
             return render_validation_error(form.errors.full_messages.first)
           end
 
-          result = Creators::WorkRecordCreator.new(user: current_user, form: form).call
+          creator = Creators::WorkRecordCreator.new(user: current_user, form: form).call
 
-          @work_record = current_user.work_records.find_by!(record_id: result.record.id)
+          @record = creator.record
+          @work_record = @record.work_record
         end
 
         def update

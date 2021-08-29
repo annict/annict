@@ -30,10 +30,6 @@ module Forms::Recordable
       @skip_to_share = ActiveModel::Type::Boolean.new.cast(value)
     end
 
-    def body
-      @body.presence || ""
-    end
-
     # @overload
     def persisted?
       !record.nil?

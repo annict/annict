@@ -12,5 +12,9 @@ module Forms
     def episode
       @episode ||= Episode.only_kept.find_by(id: episode_id)
     end
+
+    def body
+      @body.presence || ""
+    end
   end
 end
