@@ -6,10 +6,10 @@ module Collapses
       super view_context
       @record = record
       @work_record = @record.work_record
-      @animation_rating = @@work_record.animation_rating
-      @music_rating = @@work_record.music_rating
-      @story_rating = @@work_record.story_rating
-      @character_rating = @@work_record.character_rating
+      @animation_rating = @work_record.animation_rating
+      @music_rating = @work_record.music_rating
+      @story_rating = @work_record.story_rating
+      @character_rating = @work_record.character_rating
       @class_name = class_name
     end
 
