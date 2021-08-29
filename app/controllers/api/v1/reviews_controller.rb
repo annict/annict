@@ -6,7 +6,11 @@ module Api
       before_action :prepare_params!, only: %i[index]
 
       def index
-        @work_records = WorkRecord.includes(:work).all
+        @work_records = WorkRecord
+          .eager_load(:record)
+          .preload(record: [:work, user: :profile])
+          .merge(Record.only_kept)
+          .all
         @work_records = Api::V1::WorkRecordIndexService.new(@work_records, @params).result
       end
     end

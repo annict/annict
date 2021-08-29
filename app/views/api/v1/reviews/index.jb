@@ -1,15 +1,13 @@
 # frozen_string_literal: true
 
 json = {}
-
-json[:reviews] = @work_records.map { |work_record|
+json[:reviews] = @work_records.map do |work_record|
+  record = work_record.record
   review_json = {}
   review_json.merge!(render("api/v1/reviews/work_record", work_record: work_record, params: @params, field_prefix: ""))
-  review_json[:user] = render("api/v1/users/user", user: work_record.user, params: @params, field_prefix: "user.", show_all: false)
-  review_json[:work] = render("api/v1/works/work", work: work_record.work, params: @params, field_prefix: "work.")
+  review_json[:user] = render("api/v1/users/user", user: record.user, params: @params, field_prefix: "user.", show_all: false)
+  review_json[:work] = render("api/v1/works/work", work: record.work, params: @params, field_prefix: "work.")
   review_json
-}
-
+end
 json.merge!(render("api/v1/application/pagination", collection: @work_records, params: @params))
-
 json

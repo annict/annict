@@ -9,8 +9,8 @@ module Api
         def create
           episode = Episode.only_kept.find(@params.episode_id)
           form = Forms::EpisodeRecordForm.new(
-            comment: @params.comment,
-            deprecated_rating: @params.rating,
+            body: @params.comment,
+            advanced_rating: @params.rating,
             episode: episode,
             rating: @params.rating_state,
             share_to_twitter: @params.share_twitter
@@ -25,7 +25,8 @@ module Api
             form: form
           ).call
 
-          @episode_record = current_user.episode_records.find_by!(record_id: creator.record.id)
+          @record = creator.record
+          @episode_record = @record.episode_record
         end
 
         def update

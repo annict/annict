@@ -1,18 +1,18 @@
 # frozen_string_literal: true
 
+record = work_record.record
+
 json = {}
-
 json[:id] = work_record.id if @params.fields_contain?("#{field_prefix}id")
-json[:title] = work_record.title if @params.fields_contain?("#{field_prefix}title")
-json[:body] = work_record.body if @params.fields_contain?("#{field_prefix}body")
-json[:rating_animation_state] = work_record.rating_animation_state if @params.fields_contain?("#{field_prefix}rating_animation_state")
-json[:rating_music_state] = work_record.rating_music_state if @params.fields_contain?("#{field_prefix}rating_music_state")
-json[:rating_story_state] = work_record.rating_story_state if @params.fields_contain?("#{field_prefix}rating_story_state")
-json[:rating_character_state] = work_record.rating_character_state if @params.fields_contain?("#{field_prefix}rating_character_state")
-json[:rating_overall_state] = work_record.rating_overall_state if @params.fields_contain?("#{field_prefix}rating_overall_state")
-json[:likes_count] = work_record.likes_count if @params.fields_contain?("#{field_prefix}likes_count")
-json[:impressions_count] = work_record.record.impressions_count if @params.fields_contain?("#{field_prefix}impressions_count")
-json[:modified_at] = work_record.modified_at if @params.fields_contain?("#{field_prefix}modified_at")
-json[:created_at] = work_record.created_at.iso8601 if @params.fields_contain?("#{field_prefix}created_at")
-
+json[:title] = "" if @params.fields_contain?("#{field_prefix}title")
+json[:body] = record.body if @params.fields_contain?("#{field_prefix}body")
+json[:rating_animation_state] = work_record.animation_rating if @params.fields_contain?("#{field_prefix}rating_animation_state")
+json[:rating_music_state] = work_record.music_rating if @params.fields_contain?("#{field_prefix}rating_music_state")
+json[:rating_story_state] = work_record.story_rating if @params.fields_contain?("#{field_prefix}rating_story_state")
+json[:rating_character_state] = work_record.character_rating if @params.fields_contain?("#{field_prefix}rating_character_state")
+json[:rating_overall_state] = record.rating if @params.fields_contain?("#{field_prefix}rating_overall_state")
+json[:likes_count] = record.likes_count if @params.fields_contain?("#{field_prefix}likes_count")
+json[:impressions_count] = record.impressions_count if @params.fields_contain?("#{field_prefix}impressions_count")
+json[:modified_at] = record.modified_at if @params.fields_contain?("#{field_prefix}modified_at")
+json[:created_at] = record.watched_at.iso8601 if @params.fields_contain?("#{field_prefix}created_at")
 json
