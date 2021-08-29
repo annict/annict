@@ -66,7 +66,7 @@ class Activity < ApplicationRecord
 
   validates :itemable_type, inclusion: { in: ActivityGroup::ITEMABLE_TYPES }
 
-  after_destroy :destroy_activity_group
+  after_destroy :destroy_activity_group!
 
   # @deprecated
   def action
@@ -88,9 +88,9 @@ class Activity < ApplicationRecord
 
   private
 
-  def destroy_activity_group
+  def destroy_activity_group!
     unless activity_group.activities.exists?
-      activity_group.destroy
+      activity_group.destroy!
     end
   end
 end

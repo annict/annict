@@ -68,6 +68,7 @@ class Record < ApplicationRecord
   belongs_to :user
   belongs_to :work
   delegated_type :recordable, types: %w[EpisodeRecord WorkRecord], dependent: :destroy
+  has_many :activities, as: :itemable, dependent: :destroy
 
   scope :order_by_rating, ->(direction) { order("records.rating #{direction.upcase} NULLS LAST").order(advanced_rating: direction, created_at: :desc) }
   scope :with_body, -> { where.not(body: "") }
