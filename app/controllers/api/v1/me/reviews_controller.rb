@@ -66,7 +66,7 @@ module Api
         def destroy
           work_record = WorkRecord.eager_load(:record).merge(current_user.records.only_kept).find(@params.id)
           Destroyers::RecordDestroyer.new(record: work_record.record).call
-          head 204
+          head :no_content
         end
 
         private

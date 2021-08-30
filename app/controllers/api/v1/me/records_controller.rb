@@ -58,9 +58,9 @@ module Api
         end
 
         def destroy
-          @episode_record = current_user.episode_records.only_kept.find(@params.id)
-          Destroyers::RecordDestroyer.new(record: @episode_record.record).call
-          head 204
+          episode_record = EpisodeRecord.eager_load(:record).merge(current_user.records.only_kept).find(@params.id)
+          Destroyers::RecordDestroyer.new(record: episode_record.record).call
+          head :no_content
         end
 
         private

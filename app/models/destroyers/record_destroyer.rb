@@ -17,7 +17,7 @@ module Destroyers
         user.touch(:record_cache_expired_at)
 
         if library_entry && @record.episode_record?
-          watched_episode_ids = library_entry.watched_episode_ids - [@record.episode_record.episode_id]
+          watched_episode_ids = library_entry.watched_episode_ids - [@record.episode_id]
           library_entry.update_column(:watched_episode_ids, watched_episode_ids)
         end
       end
