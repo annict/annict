@@ -30,16 +30,16 @@ module Api
         end
 
         def update
-          @episode_record = current_user.episode_records.only_kept.find(@params.id)
-          episode = @episode_record.episode
-          record = @episode_record.record
+          episode_record = EpisodeRecord.eager_load(:record).merge(current_user.records.only_kept).find(@params.id)
+          record = episode_record.record
+          episode = record.episode
 
           form = Forms::EpisodeRecordForm.new(
-            comment: @params.comment,
+            advanced_rating: @params.rating,
+            body: @params.comment,
             episode: episode,
             oauth_application: doorkeeper_token.application,
             rating: @params.rating_state,
-            deprecated_rating: @params.rating,
             record: record,
             share_to_twitter: @params.share_twitter
           )
@@ -48,10 +48,13 @@ module Api
             return render_validation_error(form.errors.full_messages.first)
           end
 
-          Updaters::EpisodeRecordUpdater.new(
+          result = Updaters::EpisodeRecordUpdater.new(
             user: current_user,
             form: form
           ).call
+
+          @record = result.record
+          @episode_record = @record.episode_record
         end
 
         def destroy
