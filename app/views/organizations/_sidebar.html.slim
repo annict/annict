@@ -6,7 +6,7 @@ h1.h2.fw-bold
     = t "noun.organization"
 
 .mb-4
-  c-favorite-button.w-100 resource-type="Organization" :resource-id="#{organization.id}" :init-is-favorited="#{user_signed_in? && current_user.favorite?(organization)}" :is-signed-in="#{user_signed_in?}"
+  = Buttons::StarButtonComponent.new(self, starrable: organization).render
   .small.text-muted.mt-2
     = icon "info-circle", class: "me-1"
     = t "messages._components.favorite_button.hint", resource_type: t("noun.organization").downcase
