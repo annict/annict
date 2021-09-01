@@ -39,9 +39,8 @@ export default class extends Controller {
     this.startLoading();
 
     axios
-      .post('/api/internal/episode_records', {
+      .post(`/api/internal/episodes/${this.episodeIdValue}/records`, {
         forms_episode_record_form: {
-          episode_id: this.episodeIdValue,
           instant: true,
           page_category: this.pageCategoryValue,
         },

@@ -44,7 +44,7 @@ Rails.application.routes.draw do
   match "/api/internal/channels/:channel_id/reception",         via: :delete, as: :internal_api_channel_reception,             to: "api/internal/receptions#destroy"
   match "/api/internal/channels/:channel_id/reception",         via: :post,                                                    to: "api/internal/receptions#create"
   match "/api/internal/characters",                             via: :get,    as: :internal_api_character_list,                to: "api/internal/characters#index"
-  match "/api/internal/episode_records",                        via: :post,   as: :internal_api_episode_record_list,           to: "api/internal/episode_records#create"
+  match "/api/internal/episodes/:episode_id/records",           via: :post,   as: :internal_api_episode_record_list,           to: "api/internal/episode_records#create"
   match "/api/internal/follow",                                 via: :delete, as: :internal_api_follow,                        to: "api/internal/follows#destroy"
   match "/api/internal/follow",                                 via: :post,                                                    to: "api/internal/follows#create"
   match "/api/internal/following",                              via: :get,    as: :internal_api_following_list,                to: "api/internal/following#index"
