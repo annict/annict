@@ -7,7 +7,9 @@
 #  id                   :bigint           not null, primary key
 #  aasm_state           :string           default("published"), not null
 #  advanced_rating      :float
+#  animation_rating     :integer
 #  body                 :text             default(""), not null
+#  character_rating     :integer
 #  comments_count       :integer          default(0), not null
 #  deleted_at           :datetime
 #  impressions_count    :integer          default(0), not null
@@ -15,8 +17,10 @@
 #  locale               :integer          default(0), not null
 #  migrated_at          :datetime
 #  modified_at          :datetime
+#  music_rating         :integer
 #  rating               :integer
 #  recordable_type      :string
+#  story_rating         :integer
 #  watched_at           :datetime
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null

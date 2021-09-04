@@ -74,6 +74,10 @@ target_records.preload(:episode_record, :work_record).find_in_batches(batch_size
         "likes_count" => work_record.likes_count,
         "locale" => new_locale(work_record.locale),
         "rating" => new_rating(work_record.rating_overall_state),
+        "animation_rating" => new_rating(work_record.rating_animation_state),
+        "character_rating" => new_rating(work_record.rating_character_state),
+        "music_rating" => new_rating(work_record.rating_music_state),
+        "story_rating" => new_rating(work_record.rating_story_state),
         "watched_at" => work_record.record.created_at,
         "modified_at" => work_record.modified_at,
         "migrated_at" => migrated_at

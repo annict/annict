@@ -11,6 +11,10 @@ class AddEpisodeAndWorkRecordColumnsToRecords < ActiveRecord::Migration[6.1]
     add_column :records, :likes_count, :integer, default: 0, null: false
     add_column :records, :locale, :integer, default: 0, null: false
     add_column :records, :rating, :integer
+    add_column :records, :animation_rating, :integer
+    add_column :records, :character_rating, :integer
+    add_column :records, :music_rating, :integer
+    add_column :records, :story_rating, :integer
     add_column :records, :advanced_rating, :float
     add_column :records, :watched_at, :datetime
     add_column :records, :modified_at, :datetime
