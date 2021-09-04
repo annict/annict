@@ -20,7 +20,9 @@ module Api::Internal
     private
 
     def work_record_form_params
-      params.require(:forms_work_record_form).permit(:body, :rating, :animation_rating, :character_rating, :music_rating, :story_rating, :share_to_twitter)
+      params.require(:forms_work_record_form).permit(
+        :body, :rating, :animation_rating, :character_rating, :music_rating, :story_rating, :share_to_twitter
+      )
     end
   end
 end

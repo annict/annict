@@ -23,12 +23,37 @@ module Forms
         build_html do |h|
           h.html ErrorPanelV6Component.new(view_context, stimulus_controller: "forms--work-record-form").render
 
-          h.tag :div, class: "mb-2" do
-            h.html ButtonGroups::RecordRatingButtonGroupComponent.new(view_context, form: f, rating_field: :rating).render
+          h.tag :div, class: "g-3 mb-3 row" do
+            h.tag :div, class: "col-12 col-lg-6 col-xxl-4" do
+              h.html f.label(:rating, class: "form-label small")
+              h.html ButtonGroups::RecordRatingButtonGroupComponent.new(view_context, form: f, rating_field: :rating).render
+            end
+
+            h.tag :div, class: "col-12 col-lg-6 col-xxl-4" do
+              h.html f.label(:animation_rating, class: "form-label small")
+              h.html ButtonGroups::RecordRatingButtonGroupComponent.new(view_context, form: f, rating_field: :animation_rating).render
+            end
+
+            h.tag :div, class: "col-12 col-lg-6 col-xxl-4" do
+              h.html f.label(:character_rating, class: "form-label small")
+              h.html ButtonGroups::RecordRatingButtonGroupComponent.new(view_context, form: f, rating_field: :character_rating).render
+            end
+
+            h.tag :div, class: "col-12 col-lg-6 col-xxl-4" do
+              h.html f.label(:story_rating, class: "form-label small")
+              h.html ButtonGroups::RecordRatingButtonGroupComponent.new(view_context, form: f, rating_field: :story_rating).render
+            end
+
+            h.tag :div, class: "col-12 col-lg-6 col-xxl-4" do
+              h.html f.label(:music_rating, class: "form-label small")
+              h.html ButtonGroups::RecordRatingButtonGroupComponent.new(view_context, form: f, rating_field: :music_rating).render
+            end
           end
 
           h.tag :div, class: "mb-3" do
-            h.html Textareas::RecordTextareaComponent.new(view_context, form: f, optional_textarea_classname: "form-control", textarea_name: "forms_work_record_form[comment]").render
+            h.html Textareas::RecordTextareaComponent.new(view_context,
+              form: f, optional_textarea_classname: "form-control", textarea_name: "forms_work_record_form[body]"
+            ).render
           end
 
           h.tag :div, class: "row" do
