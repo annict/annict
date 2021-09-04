@@ -6,7 +6,8 @@ module WorkRecordListSettable
   def set_work_record_list(work)
     records = work
       .records
-      .eager_load(:work, user: %i[gumroad_subscriber profile setting])
+      .eager_load(:episode, :work, user: %i[gumroad_subscriber profile setting])
+      .preload(:recordable)
       .only_kept
       .work_records
       .order_by_rating(:desc)
