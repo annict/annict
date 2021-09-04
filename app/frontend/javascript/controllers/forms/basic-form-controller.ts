@@ -30,8 +30,6 @@ export default class extends Controller {
   }
 
   async handleSuccess(event: any) {
-    this.formTarget.reset();
-
     const { fetchResponse } = event.detail;
     const responseText = await fetchResponse.responseText;
     const data = JSON.parse(responseText);

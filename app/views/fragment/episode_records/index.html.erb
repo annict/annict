@@ -1,3 +1,13 @@
 <%= component_value_fetcher_tag("spoiler-guard", internal_api_spoiler_guard_path) %>
 
-<%= ListGroups::RecordListGroupComponent.new(self, my_records: @my_records, following_records: @following_records, all_records: @all_records).render %>
+<div class="container mt-3 u-container-flat">
+  <div class="card u-card-flat">
+    <div class="card-body">
+      <%= Forms::EpisodeRecordFormComponent.new(self, form: @form).render %>
+    </div>
+  </div>
+</div>
+
+<div class="mt-5">
+  <%= ListGroups::RecordListGroupComponent.new(self, my_records: @my_records, following_records: @following_records, all_records: @all_records).render %>
+</div>
