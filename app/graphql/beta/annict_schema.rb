@@ -16,7 +16,13 @@ module Beta
 
       return nil if type_name.blank? || item_id.blank?
 
-      Object.const_get(type_name).find(item_id)
+      new_type_name = case type_name
+      when "Review" then "WorkRecord"
+      else
+        type_name
+      end
+
+      Object.const_get(new_type_name).find(item_id)
     end
 
     def self.resolve_type(_type, obj, _ctx)

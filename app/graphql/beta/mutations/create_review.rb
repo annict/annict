@@ -6,9 +6,11 @@ module Beta
       argument :work_id, ID, required: true
       argument :title, String, required: false
       argument :body, String, required: true
-      WorkRecord::STATES.each do |state|
-        argument state.to_s.underscore.to_sym, Beta::Types::Enums::RatingState, required: false
-      end
+      argument :rating_overall_state, Beta::Types::Enums::RatingState, required: false
+      argument :rating_animation_state, Beta::Types::Enums::RatingState, required: false
+      argument :rating_music_state, Beta::Types::Enums::RatingState, required: false
+      argument :rating_story_state, Beta::Types::Enums::RatingState, required: false
+      argument :rating_character_state, Beta::Types::Enums::RatingState, required: false
       argument :share_twitter, Boolean, required: false
       argument :share_facebook, Boolean, required: false
 
@@ -16,7 +18,8 @@ module Beta
 
       def resolve( # rubocop:disable Metrics/ParameterLists
         work_id:,
-        body:, title: nil,
+        body:,
+        title: nil,
         rating_overall_state: nil,
         rating_animation_state: nil,
         rating_music_state: nil,
@@ -32,14 +35,15 @@ module Beta
 
         form = Forms::WorkRecordForm.new(
           work: work,
-          comment: title.present? ? "#{title}\n\n#{body}" : body,
+          deprecated_title: title,
+          body: body,
           oauth_application: context[:doorkeeper_token].application,
-          rating_animation: rating_animation_state,
-          rating_character: rating_character_state,
-          rating_music: rating_music_state,
-          rating_overall: rating_overall_state,
-          rating_story: rating_story_state,
-          share_to_twitter: share_twitter&.to_s
+          rating: rating_overall_state,
+          animation_rating: rating_animation_state,
+          character_rating: rating_character_state,
+          music_rating: rating_music_state,
+          story_rating: rating_story_state,
+          share_to_twitter: share_twitter
         )
 
         if form.invalid?
@@ -52,7 +56,7 @@ module Beta
         ).call
 
         {
-          review: viewer.work_records.find_by!(record_id: result.record.id)
+          review: result.record.work_record
         }
       end
     end

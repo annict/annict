@@ -6,9 +6,11 @@ module Beta
       argument :review_id, ID, required: true
       argument :title, String, required: false
       argument :body, String, required: true
-      WorkRecord::STATES.each do |state|
-        argument state, Beta::Types::Enums::RatingState, required: true
-      end
+      argument :rating_overall_state, Beta::Types::Enums::RatingState, required: true
+      argument :rating_animation_state, Beta::Types::Enums::RatingState, required: true
+      argument :rating_music_state, Beta::Types::Enums::RatingState, required: true
+      argument :rating_story_state, Beta::Types::Enums::RatingState, required: true
+      argument :rating_character_state, Beta::Types::Enums::RatingState, required: true
       argument :share_twitter, Boolean, required: false
       argument :share_facebook, Boolean, required: false
 
@@ -29,19 +31,20 @@ module Beta
         raise Annict::Errors::InvalidAPITokenScopeError unless context[:doorkeeper_token].writable?
 
         viewer = context[:viewer]
-        work_record = viewer.work_records.only_kept.find_by_graphql_id(review_id)
-        work = work_record.work
+        work_record = WorkRecord.eager_load(:record).merge(context[:viewer].records.only_kept).find_by_graphql_id(review_id)
         record = work_record.record
+        work = record.work
 
         form = Forms::WorkRecordForm.new(
           work: work,
-          comment: body,
+          deprecated_title: title,
+          body: body,
           oauth_application: context[:doorkeeper_token].application,
-          rating_animation: rating_animation_state,
-          rating_character: rating_character_state,
-          rating_music: rating_music_state,
-          rating_overall: rating_overall_state,
-          rating_story: rating_story_state,
+          rating: rating_overall_state,
+          animation_rating: rating_animation_state,
+          character_rating: rating_character_state,
+          music_rating: rating_music_state,
+          story_rating: rating_story_state,
           record: record,
           share_to_twitter: share_twitter
         )

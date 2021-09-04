@@ -20,7 +20,7 @@ class SearchWorkRecordsQuery
   attr_reader :collection, :context, :args
 
   def from_arguments
-    results = collection.joins(:user).merge(User.only_kept)
+    results = collection.joins(record: :user).merge(User.only_kept)
     viewer = context[:viewer]
     locale = context[:locale]
 
@@ -29,17 +29,17 @@ class SearchWorkRecordsQuery
 
       results = case args[:order_by][:field]
       when "CREATED_AT"
-        results.order(created_at: direction)
+        results.merge(Record.order(created_at: direction))
       when "LIKES_COUNT"
-        results.order(likes_count: direction)
+        results.merge(Record.order(likes_count: direction))
       end
     end
 
     results = case args[:has_body]
     when true
-      results.with_body
+      results.merge(Record.with_body)
     when false
-      results.with_no_body
+      results.merge(Record.with_no_body)
     else
       results
     end
