@@ -4,20 +4,14 @@
 #
 # Table name: work_records
 #
-#  id               :bigint           not null, primary key
-#  animation_rating :integer
-#  character_rating :integer
-#  migrated_at      :datetime
-#  music_rating     :integer
-#  story_rating     :integer
-#  created_at       :datetime         not null
-#  updated_at       :datetime         not null
+#  id         :bigint           not null, primary key
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
 #
 # Indexes
 #
 #  index_work_records_on_deleted_at            (deleted_at)
 #  index_work_records_on_locale                (locale)
-#  index_work_records_on_migrated_at           (migrated_at)
 #  index_work_records_on_oauth_application_id  (oauth_application_id)
 #  index_work_records_on_record_id             (record_id) UNIQUE
 #  index_work_records_on_user_id               (user_id)
