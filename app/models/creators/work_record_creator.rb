@@ -16,14 +16,13 @@ module Creators
         oauth_application: @form.oauth_application,
         body: @form.body,
         rating: @form.rating,
-        watched_at: @form.watched_at.presence || Time.zone.now
-      )
-      record.recordable = WorkRecord.new(
         animation_rating: @form.animation_rating,
         character_rating: @form.character_rating,
         music_rating: @form.music_rating,
-        story_rating: @form.story_rating
+        story_rating: @form.story_rating,
+        watched_at: @form.watched_at.presence || Time.zone.now
       )
+      record.recordable = WorkRecord.new
       record.detect_locale!(:body)
 
       ActiveRecord::Base.transaction do

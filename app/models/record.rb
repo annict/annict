@@ -66,6 +66,10 @@ class Record < ApplicationRecord
   counter_culture :work, column_name: ->(record) { record.work_record? && record.body.present? ? :work_records_with_body_count : nil }
 
   enum rating: RATING_PAIRS, _prefix: true
+  enum animation_rating: RATING_PAIRS, _prefix: true
+  enum character_rating: RATING_PAIRS, _prefix: true
+  enum music_rating: RATING_PAIRS, _prefix: true
+  enum story_rating: RATING_PAIRS, _prefix: true
 
   belongs_to :episode, optional: true
   belongs_to :oauth_application, class_name: "Doorkeeper::Application", optional: true
@@ -77,6 +81,14 @@ class Record < ApplicationRecord
   scope :order_by_rating, ->(direction) { order("records.rating #{direction.upcase} NULLS LAST").order(advanced_rating: direction, created_at: :desc) }
   scope :with_body, -> { where.not(body: "") }
   scope :with_no_body, -> { where(body: "") }
+
+  def work_record?
+    episode_id.nil?
+  end
+
+  def episode_record?
+    !work_record?
+  end
 
   def liked?(likes)
     recipient_type, recipient_id = if episode_record?

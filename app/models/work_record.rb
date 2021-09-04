@@ -47,9 +47,4 @@ class WorkRecord < ApplicationRecord
     user_id
     work_id
   ]
-
-  enum animation_rating: Record::RATING_PAIRS, _prefix: true
-  enum character_rating: Record::RATING_PAIRS, _prefix: true
-  enum music_rating: Record::RATING_PAIRS, _prefix: true
-  enum story_rating: Record::RATING_PAIRS, _prefix: true
 end
