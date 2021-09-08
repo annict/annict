@@ -24,23 +24,65 @@ module Beta
         field :updated_at, Beta::Types::Scalars::DateTime, null: false
 
         def user
-          Beta::RecordLoader.for(User).load(object.user_id)
+          Beta::ForeignKeyLoader.for(Record, :recordable_id).load([object.id]).then do |records|
+            Beta::RecordLoader.for(User).load(records.first.user_id)
+          end
         end
 
         def work
-          Beta::RecordLoader.for(Work).load(object.work_id)
+          Beta::ForeignKeyLoader.for(Record, :recordable_id).load([object.id]).then do |records|
+            Beta::RecordLoader.for(Work).load(records.first.work_id)
+          end
         end
 
         def episode
-          Beta::RecordLoader.for(Episode).load(object.episode_id)
+          Beta::ForeignKeyLoader.for(Record, :recordable_id).load([object.id]).then do |records|
+            Beta::RecordLoader.for(Episode).load(records.first.episode_id)
+          end
         end
 
         def comment
-          object.body
+          Beta::ForeignKeyLoader.for(Record, :recordable_id).load([object.id]).then do |records|
+            records.first.body
+          end
+        end
+
+        def rating
+          Beta::ForeignKeyLoader.for(Record, :recordable_id).load([object.id]).then do |records|
+            records.first.advanced_rating
+          end
+        end
+
+        def rating_state
+          Beta::ForeignKeyLoader.for(Record, :recordable_id).load([object.id]).then do |records|
+            records.first.rating
+          end
         end
 
         def modified
-          object.modify_body?
+          Beta::ForeignKeyLoader.for(Record, :recordable_id).load([object.id]).then do |records|
+            !records.first.modified_at.nil?
+          end
+        end
+
+        def likes_count
+          Beta::ForeignKeyLoader.for(Record, :recordable_id).load([object.id]).then do |records|
+            records.first.likes_count
+          end
+        end
+
+        def comments_count
+          Beta::ForeignKeyLoader.for(Record, :recordable_id).load([object.id]).then do |records|
+            records.first.comments_count
+          end
+        end
+
+        def twitter_click_count
+          0
+        end
+
+        def facebook_click_count
+          0
         end
       end
     end

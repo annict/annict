@@ -15,14 +15,16 @@ module Beta
         raise Annict::Errors::InvalidAPITokenScopeError unless context[:doorkeeper_token].writable?
 
         viewer = context[:viewer]
-        episode_record = viewer.episode_records.only_kept.find_by_graphql_id(record_id)
+        type_name, item_id = Beta::AnnictSchema.decode_id(record_id)
+        episode_record = Object.const_get(type_name).eager_load(:record).merge(viewer.records.only_kept).find(item_id)
+        record = episode_record.record
 
         form = Forms::EpisodeRecordForm.new(
-          comment: comment,
-          episode: episode_record.episode,
+          body: comment,
+          episode: record.episode,
           oauth_application: context[:doorkeeper_token].application,
           rating: rating_state&.downcase,
-          record: episode_record.record,
+          record: record,
           share_to_twitter: share_twitter
         )
 

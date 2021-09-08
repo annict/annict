@@ -18,11 +18,11 @@ module Beta
         episode = Episode.only_kept.find_by_graphql_id(episode_id)
 
         form = Forms::EpisodeRecordForm.new(
-          comment: comment,
+          body: comment,
           episode: episode,
           oauth_application: context[:doorkeeper_token].application,
           rating: rating_state,
-          share_to_twitter: share_twitter&.to_s
+          share_to_twitter: share_twitter
         )
 
         if form.invalid?
@@ -35,7 +35,7 @@ module Beta
         ).call
 
         {
-          record: viewer.episode_records.find_by!(record_id: result.record.id)
+          record: result.record.episode_record
         }
       end
     end

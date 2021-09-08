@@ -11,7 +11,6 @@ module Updaters
 
     def call
       @record = @form.record
-      @episode_record = @record.episode_record
 
       @record.attributes = {
         oauth_application: @form.oauth_application,

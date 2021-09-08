@@ -10,11 +10,15 @@ module Beta
       def resolve(record_id:)
         raise Annict::Errors::InvalidAPITokenScopeError unless context[:doorkeeper_token].writable?
 
-        episode_record = context[:viewer].episode_records.only_kept.find_by_graphql_id(record_id)
-        Destroyers::RecordDestroyer.new(record: episode_record.record).call
+        viewer = context[:viewer]
+        type_name, item_id = Beta::AnnictSchema.decode_id(record_id)
+        episode_record = Object.const_get(type_name).eager_load(:record).merge(viewer.records.only_kept).find(item_id)
+        record = episode_record.record
+
+        Destroyers::RecordDestroyer.new(record: record).call
 
         {
-          episode: episode_record.episode
+          episode: record.episode
         }
       end
     end

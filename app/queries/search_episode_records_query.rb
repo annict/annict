@@ -2,7 +2,7 @@
 
 class SearchEpisodeRecordsQuery
   def initialize(collection = EpisodeRecord.all, has_body: nil, order_by: nil)
-    @collection = collection.only_kept
+    @collection = collection.joins(:record).merge(Record.only_kept)
     @args = {
       has_comment: has_body,
       order_by: order_by

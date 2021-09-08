@@ -27,15 +27,17 @@ module Beta
       def node
         activity = object.node
 
-        case activity.trackable_type
+        case activity.itemable_type
         when "Status"
-          Beta::RecordLoader.for(Status).load(activity.trackable_id)
-        when "EpisodeRecord"
-          Beta::RecordLoader.for(EpisodeRecord).load(activity.trackable_id)
-        when "WorkRecord"
-          Beta::RecordLoader.for(WorkRecord).load(activity.trackable_id)
-        when "MultipleEpisodeRecord"
-          Beta::RecordLoader.for(MultipleEpisodeRecord).load(activity.trackable_id)
+          Beta::RecordLoader.for(Status).load(activity.itemable_id)
+        when "Record"
+          Beta::RecordLoader.for(Record).load(activity.itemable_id).then do |record|
+            if record.episode_record?
+              Beta::RecordLoader.for(EpisodeRecord).load(record.recordable_id)
+            else
+              Beta::RecordLoader.for(WorkRecord).load(record.recordable_id)
+            end
+          end
         end
       end
     end

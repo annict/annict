@@ -150,7 +150,7 @@ module Beta
 
         def records(order_by: nil, has_comment: nil)
           SearchEpisodeRecordsQuery.new(
-            object.episode_records,
+            EpisodeRecord.merge(object.records.episode_records),
             order_by: order_by,
             has_body: has_comment
           ).call
