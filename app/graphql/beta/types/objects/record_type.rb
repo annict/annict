@@ -24,57 +24,47 @@ module Beta
         field :updated_at, Beta::Types::Scalars::DateTime, null: false
 
         def user
-          Beta::ForeignKeyLoader.for(Record, :recordable_id).load([object.id]).then do |records|
-            Beta::RecordLoader.for(User).load(records.first.user_id)
+          record_promise.then do |record|
+            Beta::RecordLoader.for(User).load(record.user_id)
           end
         end
 
         def work
-          Beta::ForeignKeyLoader.for(Record, :recordable_id).load([object.id]).then do |records|
-            Beta::RecordLoader.for(Work).load(records.first.work_id)
+          record_promise.then do |record|
+            Beta::RecordLoader.for(Work).load(record.work_id)
           end
         end
 
         def episode
-          Beta::ForeignKeyLoader.for(Record, :recordable_id).load([object.id]).then do |records|
-            Beta::RecordLoader.for(Episode).load(records.first.episode_id)
+          record_promise.then do |record|
+            Beta::RecordLoader.for(Episode).load(record.episode_id)
           end
         end
 
         def comment
-          Beta::ForeignKeyLoader.for(Record, :recordable_id).load([object.id]).then do |records|
-            records.first.body
-          end
+          record_promise.then(&:body)
         end
 
         def rating
-          Beta::ForeignKeyLoader.for(Record, :recordable_id).load([object.id]).then do |records|
-            records.first.advanced_rating
-          end
+          record_promise.then(&:advanced_rating)
         end
 
         def rating_state
-          Beta::ForeignKeyLoader.for(Record, :recordable_id).load([object.id]).then do |records|
-            records.first.rating
-          end
+          record_promise.then(&:rating)
         end
 
         def modified
-          Beta::ForeignKeyLoader.for(Record, :recordable_id).load([object.id]).then do |records|
-            !records.first.modified_at.nil?
+          record_promise.then do |record|
+            !record.modified_at.nil?
           end
         end
 
         def likes_count
-          Beta::ForeignKeyLoader.for(Record, :recordable_id).load([object.id]).then do |records|
-            records.first.likes_count
-          end
+          record_promise.then(&:likes_count)
         end
 
         def comments_count
-          Beta::ForeignKeyLoader.for(Record, :recordable_id).load([object.id]).then do |records|
-            records.first.comments_count
-          end
+          record_promise.then(&:comments_count)
         end
 
         def twitter_click_count
@@ -83,6 +73,12 @@ module Beta
 
         def facebook_click_count
           0
+        end
+
+        private
+
+        def record_promise
+          Beta::RecordLoader.for(Record, column: :recordable_id, where: {recordable_type: "EpisodeRecord"}).load(object.id)
         end
       end
     end

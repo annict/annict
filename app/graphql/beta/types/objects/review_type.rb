@@ -25,11 +25,15 @@ module Beta
         field :updated_at, Beta::Types::Scalars::DateTime, null: false
 
         def user
-          Beta::RecordLoader.for(User).load(object.record.user_id)
+          record_promise.then do |record|
+            Beta::RecordLoader.for(User).load(record.user_id)
+          end
         end
 
         def work
-          Beta::RecordLoader.for(Work).load(object.record.work_id)
+          record_promise.then do |record|
+            Beta::RecordLoader.for(Work).load(record.work_id)
+          end
         end
 
         def title
@@ -37,47 +41,53 @@ module Beta
         end
 
         def body
-          object.record.body
+          record_promise.then(&:body)
         end
 
         def rating_overall_state
-          object.record.rating
+          record_promise.then(&:rating)
         end
 
         def rating_animation_state
-          object.record.animation_rating
+          record_promise.then(&:animation_rating)
         end
 
         def rating_music_state
-          object.record.music_rating
+          record_promise.then(&:music_rating)
         end
 
         def rating_story_state
-          object.record.story_rating
+          record_promise.then(&:story_rating)
         end
 
         def rating_character_state
-          object.record.character_rating
+          record_promise.then(&:character_rating)
         end
 
         def likes_count
-          object.record.likes_count
+          record_promise.then(&:likes_count)
         end
 
         def impressions_count
-          object.record.impressions_count
+          record_promise.then(&:impressions_count)
         end
 
         def modified_at
-          object.record.modified_at
+          record_promise.then(&:modified_at)
         end
 
         def created_at
-          object.record.watched_at
+          record_promise.then(&:watched_at)
         end
 
         def updated_at
-          object.record.updated_at
+          record_promise.then(&:updated_at)
+        end
+
+        private
+
+        def record_promise
+          Beta::RecordLoader.for(Record, column: :recordable_id, where: {recordable_type: "WorkRecord"}).load(object.id)
         end
       end
     end
