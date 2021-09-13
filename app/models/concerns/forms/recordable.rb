@@ -4,11 +4,12 @@ module Forms::Recordable
   extend ActiveSupport::Concern
 
   included do
-    attr_accessor :oauth_application, :record, :watched_at
-    attr_reader :instant, :rating, :share_to_twitter, :skip_to_share
+    attr_accessor :oauth_application, :record, :user
+    attr_reader :instant, :rating, :share_to_twitter, :skip_to_share, :watched_at
 
     validates :body, length: {maximum: 1_048_596}
     validates :rating, allow_nil: true, inclusion: {in: Record::RATING_KINDS.map(&:to_s)}
+    validates :user, presence: true
 
     def body=(value)
       @body = value&.strip
@@ -28,6 +29,13 @@ module Forms::Recordable
 
     def skip_to_share=(value)
       @skip_to_share = ActiveModel::Type::Boolean.new.cast(value)
+    end
+
+    def watched_at=(value)
+      return if value.nil?
+
+      Time.zone = user.time_zone
+      @watched_at = Time.zone.parse(value)
     end
 
     # @overload

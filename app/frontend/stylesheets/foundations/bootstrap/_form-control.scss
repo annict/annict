@@ -7,4 +7,9 @@
     background-color: var(--ann-input-focus-bg);
     color: var(--ann-input-focus-color);
   }
+
+  &:disabled,
+  &[readonly] {
+    background-color: var(--ann-input-disabled-bg);
+  }
 }
