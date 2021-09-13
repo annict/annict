@@ -10,6 +10,8 @@ module Forms::Recordable
     validates :body, length: {maximum: 1_048_596}
     validates :rating, allow_nil: true, inclusion: {in: Record::RATING_KINDS.map(&:to_s)}
     validates :user, presence: true
+    validate :watched_at_can_only_set_supporter
+    validate :watched_at_cannot_be_in_the_future
 
     def body=(value)
       @body = value&.strip
@@ -45,6 +47,24 @@ module Forms::Recordable
 
     def unique_id
       @unique_id ||= SecureRandom.uuid
+    end
+
+    private
+
+    def watched_at_can_only_set_supporter
+      if watched_at.present? && !user.supporter?
+        i18n_path = "activemodel.errors.forms.recordable.watched_at_can_only_set_supporter"
+        errors.add(:watched_at, I18n.t(i18n_path))
+      end
+    end
+
+    def watched_at_cannot_be_in_the_future
+      Time.zone = user.time_zone
+
+      if watched_at.present? && watched_at > Time.zone.now
+        i18n_path = "activemodel.errors.forms.recordable.watched_at_cannot_be_in_the_future"
+        errors.add(:watched_at, I18n.t(i18n_path))
+      end
     end
   end
 end
