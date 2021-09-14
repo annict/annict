@@ -9,8 +9,8 @@ module Api
         def create
           work = Work.only_kept.find(@params.work_id)
 
-          form = Forms::WorkRecordForm.new(
-            work: work,
+          form = Forms::WorkRecordForm.new(user: current_user, work: work)
+          form.attributes = {
             deprecated_title: @params.title,
             body: @params.body,
             rating: @params.rating_overall_state,
@@ -19,7 +19,7 @@ module Api
             story_rating: @params.rating_story_state,
             character_rating: @params.rating_character_state,
             share_to_twitter: @params.share_twitter
-          )
+          }
 
           if form.invalid?
             return render_validation_error(form.errors.full_messages.first)
@@ -36,19 +36,18 @@ module Api
           record = work_record.record
           work = record.work
 
-          form = Forms::WorkRecordForm.new(
-            work: work,
+          form = Forms::WorkRecordForm.new(user: current_user, work: work, record: record, oauth_application: doorkeeper_token.application)
+          form.attributes = {
             deprecated_title: @params.title,
             body: @params.body,
-            oauth_application: doorkeeper_token.application,
             rating: @params.rating_overall_state,
             animation_rating: @params.rating_animation_state,
             music_rating: @params.rating_music_state,
             story_rating: @params.rating_story_state,
             character_rating: @params.rating_character_state,
-            record: record,
-            share_to_twitter: @params.share_twitter
-          )
+            share_to_twitter: @params.share_twitter,
+            watched_at: record.watched_at
+          }
 
           if form.invalid?
             return render_validation_error(form.errors.full_messages.first)

@@ -28,24 +28,31 @@ module Fragment
 
       authorize @record, :edit?
 
-      @form = Forms::EpisodeRecordForm.new(
-        record: @record,
-        user: current_user
-      )
-
       if @record.episode_record?
+        @form = Forms::EpisodeRecordForm.new(
+          user: current_user,
+          record: @record,
+          episode: @record.episode
+        )
         @form.attributes = {
-          episode: @record.episode,
           body: @record.body,
           rating: @record.rating,
           share_to_twitter: current_user.share_record_to_twitter?,
           watched_at: @record.watched_at
         }
       else
+        @form = Forms::WorkRecordForm.new(
+          user: current_user,
+          record: @record,
+          work: @record.work
+        )
         @form.attributes = {
-          work: @record.work,
           body: @record.body,
-          rating_overall: @record.rating,
+          rating: @record.rating,
+          animation_rating: @record.animation_rating,
+          character_rating: @record.character_rating,
+          music_rating: @record.music_rating,
+          story_rating: @record.story_rating,
           share_to_twitter: current_user.share_record_to_twitter?,
           watched_at: @record.watched_at
         }

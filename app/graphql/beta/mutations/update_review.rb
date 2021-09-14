@@ -31,23 +31,23 @@ module Beta
         raise Annict::Errors::InvalidAPITokenScopeError unless context[:doorkeeper_token].writable?
 
         viewer = context[:viewer]
+        oauth_application = context[:doorkeeper_token].application
         work_record = WorkRecord.eager_load(:record).merge(context[:viewer].records.only_kept).find_by_graphql_id(review_id)
         record = work_record.record
         work = record.work
 
-        form = Forms::WorkRecordForm.new(
-          work: work,
+        form = Forms::WorkRecordForm.new(user: viewer, record: record, work: work, oauth_application: oauth_application)
+        form.attributes = {
           deprecated_title: title,
           body: body,
-          oauth_application: context[:doorkeeper_token].application,
           rating: rating_overall_state,
           animation_rating: rating_animation_state,
           character_rating: rating_character_state,
           music_rating: rating_music_state,
           story_rating: rating_story_state,
-          record: record,
-          share_to_twitter: share_twitter
-        )
+          share_to_twitter: share_twitter,
+          watched_at: record.watched_at
+        }
 
         if form.invalid?
           raise GraphQL::ExecutionError, form.errors.full_messages.first

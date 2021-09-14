@@ -15,6 +15,7 @@ describe Updaters::WorkRecordUpdater, type: :model do
     Updaters::WorkRecordUpdater.new(
       user: user,
       form: Forms::WorkRecordForm.new(
+        user: user,
         work: work,
         comment: work_record.body + "！！",
         rating_animation: "great",

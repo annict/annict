@@ -8,6 +8,7 @@ en:
         rating_music: Music
         rating_overall: Overall
         rating_story: Story
+        watched_at: Watched At
       forms/episode_record_form:
         comment: Comment
         rating: Rating

@@ -20,7 +20,7 @@ module Updaters
         character_rating: @form.character_rating,
         music_rating: @form.music_rating,
         story_rating: @form.story_rating,
-        watched_at: @form.watched_at.presence || @record.watched_at,
+        watched_at: @form.watched_at.presence || Time.zone.now,
         modified_at: Time.zone.now
       }
       @record.detect_locale!(:body)

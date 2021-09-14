@@ -7,29 +7,29 @@ module Api::Internal
     before_action :authenticate_user!
 
     def update
-      @record = current_user.records.only_kept.find(params[:record_id])
+      record = current_user.records.only_kept.find(params[:record_id])
 
-      authorize @record, :update?
+      authorize record, :update?
 
-      if @record.episode_record?
-        @form = Forms::EpisodeRecordForm.new(user: current_user, record: @record, episode: @record.episode)
-        @form.attributes = episode_record_form_params
+      if record.episode_record?
+        form = Forms::EpisodeRecordForm.new(user: current_user, record: record, episode: record.episode)
+        form.attributes = episode_record_form_params
 
-        if @form.invalid?
-          return render json: @form.errors.full_messages, status: :unprocessable_entity
-        end
 
-        Updaters::EpisodeRecordUpdater.new(user: current_user, form: @form).call
+        Updaters::EpisodeRecordUpdater.new(user: current_user, form: form).call
       else
-        @form = Forms::WorkRecordForm.new(work_record_form_params)
-        @form.record = @record
-        @form.work = @record.work
+        form = Forms::WorkRecordForm.new(user: current_user, record: record, work: record.work)
+        form.attributes = work_record_form_params
 
-        if @form.invalid?
-          return render json: @form.errors.full_messages, status: :unprocessable_entity
+        if form.invalid?
+          return render json: form.errors.full_messages, status: :unprocessable_entity
         end
 
-        Updaters::WorkRecordUpdater.new(user: current_user, form: @form).call
+        Updaters::WorkRecordUpdater.new(user: current_user, form: form).call
+      end
+
+      if form.invalid?
+        return render json: form.errors.full_messages, status: :unprocessable_entity
       end
 
       render json: {}, status: 200
@@ -42,7 +42,9 @@ module Api::Internal
     end
 
     def work_record_form_params
-      params.required(:forms_work_record_form).permit(:comment, :rating_overall, :share_to_twitter)
+      params.required(:forms_work_record_form).permit(
+        :body, :rating, :animation_rating, :character_rating, :music_rating, :story_rating, :share_to_twitter, :watched_at
+      )
     end
   end
 end

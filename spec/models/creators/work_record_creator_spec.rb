@@ -16,6 +16,7 @@ describe Creators::WorkRecordCreator, type: :model do
     Creators::WorkRecordCreator.new(
       user: user,
       form: Forms::WorkRecordForm.new(
+        user: user,
         work: work,
         comment: "すごく面白かった。",
         rating_animation: "great",
@@ -74,6 +75,7 @@ describe Creators::WorkRecordCreator, type: :model do
         Creators::WorkRecordCreator.new(
           user: user,
           form: Forms::WorkRecordForm.new(
+            user: user,
             work: work,
             comment: "すごく面白かった。", # 感想付きの記録を新たにする
             rating_animation: "great",
@@ -115,6 +117,7 @@ describe Creators::WorkRecordCreator, type: :model do
         Creators::WorkRecordCreator.new(
           user: user,
           form: Forms::WorkRecordForm.new(
+            user: user,
             work: work,
             comment: "", # 感想無しの記録を新たにする
             rating_animation: "great",

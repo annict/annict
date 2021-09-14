@@ -50,9 +50,16 @@ module Forms
             end
           end
 
-          h.tag :div, class: "mb-3" do
+          h.tag :div do
             h.html Textareas::RecordTextareaComponent.new(view_context,
               form: f, optional_textarea_classname: "form-control", textarea_name: "forms_work_record_form[body]"
+            ).render
+          end
+
+          h.tag :div, class: "mb-3" do
+            h.html Collapses::RecordFormOptionsCollapseComponent.new(
+              view_context,
+              form: f
             ).render
           end
 

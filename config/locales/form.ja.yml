@@ -8,6 +8,7 @@ ja:
         music_rating: 音楽
         rating: 全体
         story_rating: ストーリー
+        watched_at: 視聴日時
       forms/episode_record_form:
         comment: 感想
         rating: 評価
