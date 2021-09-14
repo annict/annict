@@ -15,7 +15,6 @@ module Api::Internal
         form = Forms::EpisodeRecordForm.new(user: current_user, record: record, episode: record.episode)
         form.attributes = episode_record_form_params
 
-
         Updaters::EpisodeRecordUpdater.new(user: current_user, form: form).call
       else
         form = Forms::WorkRecordForm.new(user: current_user, record: record, work: record.work)

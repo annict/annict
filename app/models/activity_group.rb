@@ -34,7 +34,7 @@ class ActivityGroup < ApplicationRecord
   has_many :activities, dependent: :destroy
   has_many :ordered_activities, -> { order(created_at: :desc) }, class_name: "Activity"
 
-  validates :itemable_type, inclusion: { in: ITEMABLE_TYPES }
+  validates :itemable_type, inclusion: {in: ITEMABLE_TYPES}
 
   define_prelude(:activity_items) do |activity_groups|
     all_activities = Activity.where(activity_group: activity_groups.pluck(:id))

@@ -46,7 +46,7 @@ class Comment < ApplicationRecord
   has_many :notifications, as: :trackable, dependent: :destroy
 
   validates :body, presence: true, length: {maximum: 500}
-  validates :commentable_type, inclusion: { in: %w[Record] }
+  validates :commentable_type, inclusion: {in: %w[Record]}
 
   after_create :save_notification
 

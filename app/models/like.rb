@@ -33,7 +33,7 @@ class Like < ApplicationRecord
   belongs_to :user
   has_many :notifications, as: :trackable, dependent: :destroy
 
-  validates :likeable_type, inclusion: { in: %w[Comment Record Status] }
+  validates :likeable_type, inclusion: {in: %w[Comment Record Status]}
 
   after_create :save_notification
 

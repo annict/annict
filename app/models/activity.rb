@@ -64,7 +64,7 @@ class Activity < ApplicationRecord
   belongs_to :itemable, polymorphic: true
   belongs_to :user
 
-  validates :itemable_type, inclusion: { in: ActivityGroup::ITEMABLE_TYPES }
+  validates :itemable_type, inclusion: {in: ActivityGroup::ITEMABLE_TYPES}
 
   after_destroy :destroy_activity_group!
 
