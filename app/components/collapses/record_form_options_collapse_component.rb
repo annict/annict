@@ -10,12 +10,12 @@ module Collapses
     def render
       build_html do |h|
         h.tag :div do
-          h.tag :a, aria_expanded: "false", class: "text-body u-collapse-with-icon", data_bs_toggle: "collapse", href: "#recordFormOptions" do
+          h.tag :a, aria_expanded: "false", class: "text-body u-collapse-with-icon", data_bs_toggle: "collapse", href: "##{collapse_id}" do
             h.text t("noun.options")
             h.tag :i, class: "far fa-angle-down ms-1"
           end
 
-          h.tag :div, class: "collapse mt-2", id: "recordFormOptions" do
+          h.tag :div, class: "collapse mt-2", id: collapse_id do
             h.html @form.label(:watched_at)
 
             h.tag :div, class: "row" do
@@ -34,6 +34,12 @@ module Collapses
           end
         end
       end
+    end
+
+    private
+
+    def collapse_id
+      "recordFormOptions#{@form.object_id}"
     end
   end
 end
