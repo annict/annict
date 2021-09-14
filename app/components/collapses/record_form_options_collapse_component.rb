@@ -20,7 +20,7 @@ module Collapses
 
             h.tag :div, class: "row" do
               h.tag :div, class: "col-12 col-xl-4" do
-                h.html @form.datetime_field(:watched_at, class: "form-control", disabled: !current_user&.supporter?)
+                h.html @form.datetime_field(:watched_at, class: "form-control", disabled: !current_user&.supporter?, style: "width: 300px;")
               end
             end
 

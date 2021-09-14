@@ -10,7 +10,6 @@ module Forms
 
     def render
       form_with(
-        class: "row",
         model: @form,
         url: form_url,
         method: form_method,
@@ -21,15 +20,13 @@ module Forms
         }
       ) do |f|
         build_html do |h|
-          h.tag :div, class: "col-12" do
-            h.html ErrorPanelV6Component.new(view_context, stimulus_controller: "forms--episode-record-form").render
-          end
+          h.html ErrorPanelV6Component.new(view_context, stimulus_controller: "forms--episode-record-form").render
 
-          h.tag :div, class: "col-12 mb-2" do
+          h.tag :div, class: "mb-2" do
             h.html ButtonGroups::RecordRatingButtonGroupComponent.new(view_context, form: f, rating_field: :rating).render
           end
 
-          h.tag :div, class: "col-12" do
+          h.tag :div do
             h.html Textareas::RecordTextareaComponent.new(
               view_context,
               form: f,
@@ -38,32 +35,30 @@ module Forms
             ).render
           end
 
-          h.tag :div, class: "col-12 mb-3" do
+          h.tag :div, class: "mb-3" do
             h.html Collapses::RecordFormOptionsCollapseComponent.new(
               view_context,
               form: f
             ).render
           end
 
-          h.tag :div, class: "col-12" do
-            h.tag :div, class: "row" do
-              h.tag :div, class: "col" do
-                if current_user&.authorized_to?(:twitter, shareable: true)
-                  h.tag :div, class: "form-check" do
-                    h.html f.check_box(:share_to_twitter, class: "form-check-input", checked: @form.share_to_twitter, id: "shareToTwitter")
-                    h.tag :label, class: "form-check-label", for: "shareToTwitter" do
-                      h.tag :i, class: "fab fa-twitter u-text-twitter"
-                    end
+          h.tag :div, class: "row" do
+            h.tag :div, class: "col" do
+              if current_user&.authorized_to?(:twitter, shareable: true)
+                h.tag :div, class: "form-check" do
+                  h.html f.check_box(:share_to_twitter, class: "form-check-input", checked: @form.share_to_twitter, id: "shareToTwitter")
+                  h.tag :label, class: "form-check-label", for: "shareToTwitter" do
+                    h.tag :i, class: "fab fa-twitter u-text-twitter"
                   end
                 end
               end
+            end
 
-              h.tag :div, class: "col text-center" do
-                h.html f.submit((f.object.persisted? ? t("verb.update") : t("verb.track")), class: "btn btn-primary", data: {"forms--episode-record-form-target": "submitButton"})
-              end
+            h.tag :div, class: "col text-center" do
+              h.html f.submit((f.object.persisted? ? t("verb.update") : t("verb.track")), class: "btn btn-primary", data: {"forms--episode-record-form-target": "submitButton"})
+            end
 
-              h.tag :div, class: "col" do
-              end
+            h.tag :div, class: "col" do
             end
           end
         end
