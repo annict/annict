@@ -19,6 +19,7 @@ describe Creators::EpisodeRecordCreator, type: :model do
     Creators::EpisodeRecordCreator.new(
       user: user,
       form: Forms::EpisodeRecordForm.new(
+        user: user,
         comment: "にぱー",
         episode: episode,
         rating: "good",
@@ -80,6 +81,7 @@ describe Creators::EpisodeRecordCreator, type: :model do
         Creators::EpisodeRecordCreator.new(
           user: user,
           form: Forms::EpisodeRecordForm.new(
+            user: user,
             comment: "にぱー", # 感想付きの記録を新たにする
             episode: episode,
             rating: "good",
@@ -122,6 +124,7 @@ describe Creators::EpisodeRecordCreator, type: :model do
         Creators::EpisodeRecordCreator.new(
           user: user,
           form: Forms::EpisodeRecordForm.new(
+            user: user,
             comment: "", # 感想無しの記録を新たにする
             episode: episode,
             rating: "good",

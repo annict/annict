@@ -17,7 +17,7 @@ module Updaters
         advanced_rating: @form.advanced_rating,
         body: @form.body,
         rating: @form.rating,
-        watched_at: @form.watched_at.presence || @record.watched_at,
+        watched_at: @form.watched_at.presence || Time.zone.now,
         modified_at: Time.zone.now
       }
       @record.detect_locale!(:body)

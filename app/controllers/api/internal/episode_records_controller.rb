@@ -5,11 +5,11 @@ module Api::Internal
     before_action :authenticate_user!
 
     def create
-      form = Forms::EpisodeRecordForm.new(episode_record_form_params)
-      form.episode = Episode.only_kept.find(params[:episode_id])
+      form = Forms::EpisodeRecordForm.new(user: current_user, episode: Episode.only_kept.find(params[:episode_id]))
+      form.attributes = episode_record_form_params
 
       if form.invalid?
-        return render(json: @form.errors.full_messages, status: :unprocessable_entity)
+        return render(json: form.errors.full_messages, status: :unprocessable_entity)
       end
 
       Creators::EpisodeRecordCreator.new(user: current_user, form: form).call
@@ -20,7 +20,7 @@ module Api::Internal
     private
 
     def episode_record_form_params
-      params.required(:forms_episode_record_form).permit(:body, :rating, :share_to_twitter)
+      params.required(:forms_episode_record_form).permit(:body, :rating, :share_to_twitter, :watched_at)
     end
   end
 end

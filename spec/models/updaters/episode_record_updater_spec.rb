@@ -16,6 +16,7 @@ describe Updaters::EpisodeRecordUpdater, type: :model do
     Updaters::EpisodeRecordUpdater.new(
       user: user,
       form: Forms::EpisodeRecordForm.new(
+        user: user,
         comment: episode_record.body + "！！",
         episode: episode,
         rating: "good",

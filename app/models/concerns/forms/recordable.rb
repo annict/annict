@@ -37,7 +37,7 @@ module Forms::Recordable
       return if value.nil?
 
       Time.zone = user.time_zone
-      @watched_at = Time.zone.parse(value)
+      @watched_at = value.is_a?(Time) ? value.in_time_zone : Time.zone.parse(value)
     end
 
     # @overload

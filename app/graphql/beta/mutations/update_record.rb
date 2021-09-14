@@ -15,18 +15,18 @@ module Beta
         raise Annict::Errors::InvalidAPITokenScopeError unless context[:doorkeeper_token].writable?
 
         viewer = context[:viewer]
+        oauth_application = context[:doorkeeper_token].application
         type_name, item_id = Beta::AnnictSchema.decode_id(record_id)
         episode_record = Object.const_get(type_name).eager_load(:record).merge(viewer.records.only_kept).find(item_id)
         record = episode_record.record
 
-        form = Forms::EpisodeRecordForm.new(
+        form = Forms::EpisodeRecordForm.new(user: viewer, episode: record.episode, record: record, oauth_application: oauth_application)
+        form.attributes = {
           body: comment,
-          episode: record.episode,
-          oauth_application: context[:doorkeeper_token].application,
           rating: rating_state&.downcase,
-          record: record,
-          share_to_twitter: share_twitter
-        )
+          share_to_twitter: share_twitter,
+          watched_at: record.watched_at
+        }
 
         if form.invalid?
           raise GraphQL::ExecutionError, form.errors.full_messages.first
