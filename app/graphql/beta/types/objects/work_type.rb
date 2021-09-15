@@ -62,7 +62,7 @@ module Beta
         end
 
         def reviews(order_by: nil, has_body: nil)
-          SearchWorkRecordsQuery.new(object.work_records, order_by: order_by, has_body: has_body).call
+          SearchWorkRecordsQuery.new(WorkRecord.merge(object.records), order_by: order_by, has_body: has_body).call
         end
 
         def programs(order_by: nil)

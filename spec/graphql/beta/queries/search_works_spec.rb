@@ -336,8 +336,7 @@ describe "GraphQL API Query" do
 
     context "when `reviews` are fetched" do
       let(:user) { create(:registered_user) }
-      let(:record) { create(:record, user: user, work: work1) }
-      let!(:work_record) { create(:work_record, user: user, work: work1, record: record, body: "Review~~~") }
+      let!(:record) { create(:record, :on_work, user: user, work: work1, body: "Review~~~") }
       let(:result) do
         query_string = <<~QUERY
           query {
