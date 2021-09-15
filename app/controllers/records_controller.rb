@@ -11,7 +11,7 @@ class RecordsController < ApplicationV6Controller
 
     @user = User.only_kept.find_by!(username: params[:username])
     @profile = @user.profile
-    @dates = @user.records.only_kept.group_by_month(:created_at).count.to_a.reverse.to_h
+    @dates = @user.records.only_kept.group_by_month(:watched_at).count.to_a.reverse.to_h
 
     set_user_record_list(@user)
   end
@@ -21,7 +21,7 @@ class RecordsController < ApplicationV6Controller
 
     @user = User.only_kept.find_by!(username: params[:username])
     @profile = @user.profile
-    @dates = @user.records.only_kept.group_by_month(:created_at).count.to_a.reverse.to_h
+    @dates = @user.records.only_kept.group_by_month(:watched_at).count.to_a.reverse.to_h
 
     @record = @user.records.only_kept.find(params[:record_id])
     @work = @record.work

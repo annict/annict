@@ -6,6 +6,7 @@ FactoryBot.define do
     association :work
     body { "おもしろかった" }
     rating { "good" }
+    watched_at { Time.zone.now }
 
     trait :for_episode do
       association :episode

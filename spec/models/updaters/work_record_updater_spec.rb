@@ -3,8 +3,8 @@
 describe Updaters::WorkRecordUpdater, type: :model do
   let!(:user) { create :registered_user }
   let!(:work) { create :work }
-  let!(:record) { create :record, user: user, work: work }
-  let!(:work_record) { create :work_record, user: user, work: work, record: record }
+  let!(:work_record) { create :work_record }
+  let!(:record) { create :record, :for_work, user: user, work: work, recordable: work_record }
 
   it "アニメへの記録の更新ができること" do
     # 各レコードは1件のはず
@@ -17,12 +17,12 @@ describe Updaters::WorkRecordUpdater, type: :model do
       form: Forms::WorkRecordForm.new(
         user: user,
         work: work,
-        comment: work_record.body + "！！",
-        rating_animation: "great",
-        rating_character: "great",
-        rating_music: "great",
-        rating_overall: "great",
-        rating_story: "great",
+        body: record.body + "！！",
+        animation_rating: "great",
+        character_rating: "great",
+        music_rating: "great",
+        story_rating: "great",
+        rating: "great",
         record: record,
         share_to_twitter: false
       )
@@ -33,18 +33,18 @@ describe Updaters::WorkRecordUpdater, type: :model do
     expect(WorkRecord.count).to eq 1
 
     record = user.records.first
-    work_record = user.work_records.first
+    work_record = record.work_record
 
     expect(record.work_id).to eq work.id
+    expect(record.body).to eq "おもしろかった！！"
+    expect(record.locale).to eq "ja"
+    expect(record.rating).to eq "great"
+    expect(record.animation_rating).to eq "great"
+    expect(record.character_rating).to eq "great"
+    expect(record.music_rating).to eq "great"
+    expect(record.story_rating).to eq "great"
+    expect(record.work_id).to eq work.id
 
-    expect(work_record.body).to eq "おもしろかった！！"
-    expect(work_record.locale).to eq "ja"
-    expect(work_record.rating_overall_state).to eq "great"
-    expect(work_record.rating_animation_state).to eq "great"
-    expect(work_record.rating_character_state).to eq "great"
-    expect(work_record.rating_music_state).to eq "great"
-    expect(work_record.rating_story_state).to eq "great"
-    expect(work_record.record_id).to eq record.id
-    expect(work_record.work_id).to eq work.id
+    expect(work_record).to_not be_nil
   end
 end

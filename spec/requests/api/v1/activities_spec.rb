@@ -14,9 +14,9 @@ describe "Api::V1::Activities" do
     let(:access_token) { create(:oauth_access_token, owner: user) }
     let!(:work) { create(:work) }
     let!(:episode) { create(:episode, work: work) }
-    let!(:record) { create(:record, user: user, work: work) }
-    let!(:episode_record) { create(:episode_record, record: record, user: user, work: work, episode: episode) }
-    let!(:activity) { create(:activity, user: user, itemable: episode_record) }
+    let!(:episode_record) { create(:episode_record) }
+    let!(:record) { create(:record, :for_episode, user: user, episode: episode, work: work, recordable: episode_record) }
+    let!(:activity) { create(:activity, user: user, itemable: record) }
 
     before do
       params = {
@@ -97,8 +97,8 @@ describe "Api::V1::Activities" do
           "record" => {
             "id" => episode_record.id,
             "comment" => "おもしろかった",
-            "rating" => 3.0,
-            "rating_state" => nil,
+            "rating" => nil,
+            "rating_state" => "good",
             "is_modified" => false,
             "likes_count" => 0,
             "comments_count" => 0,

@@ -8,7 +8,7 @@ describe Forms::EpisodeRecordForm do
     it "エラー内容を返すこと" do
       form = Forms::EpisodeRecordForm.new(
         user: user,
-        comment: "a" * (1_048_596 + 1), # 文字数制限 (1,048,596文字) 以上の感想を書く
+        body: "a" * (1_048_596 + 1), # 文字数制限 (1,048,596文字) 以上の感想を書く
         episode: episode,
         rating: "good",
         share_to_twitter: false

@@ -76,8 +76,8 @@ describe "GET /works/:id", type: :request do
 
   context "when work records have been added" do
     let!(:work) { create(:work) }
-    let!(:record) { create(:record, work: work) }
-    let!(:work_record) { create(:work_record, work: work, record: record) }
+    let!(:work_record) { create(:work_record) }
+    let!(:record) { create(:record, :for_work, work: work, recordable: work_record) }
 
     before do
       get "/works/#{work.id}"
@@ -85,7 +85,7 @@ describe "GET /works/:id", type: :request do
 
     it "displays work record body" do
       expect(response.status).to eq(200)
-      expect(response.body).to include(work_record.body)
+      expect(response.body).to include(record.body)
     end
   end
 end

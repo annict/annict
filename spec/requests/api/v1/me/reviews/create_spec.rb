@@ -30,23 +30,23 @@ describe "POST /v1/me/reviews" do
       expect(Activity.count).to eq 1
 
       record = user.records.first
-      work_record = user.work_records.first
+      work_record = record.work_record
       activity_group = user.activity_groups.first
       activity = user.activities.first
 
       expect(record.work_id).to eq work.id
+      expect(record.body).to eq "#{data[:title]}\n\n#{data[:body]}"
+      expect(record.locale).to eq "ja"
+      expect(record.rating).to eq data[:rating_overall_state]
+      expect(record.work_id).to eq work.id
 
-      expect(work_record.body).to eq "#{data[:title]}\n\n#{data[:body]}"
-      expect(work_record.locale).to eq "ja"
-      expect(work_record.rating_overall_state).to eq data[:rating_overall_state]
-      expect(work_record.record_id).to eq record.id
-      expect(work_record.work_id).to eq work.id
+      expect(work_record).not_to be_nil
 
-      expect(activity_group.itemable_type).to eq "WorkRecord"
+      expect(activity_group.itemable_type).to eq "Record"
       expect(activity_group.single).to eq true
 
       expect(activity.activity_group_id).to eq activity_group.id
-      expect(activity.itemable).to eq work_record
+      expect(activity.itemable).to eq record
 
       expect(json["id"]).to eq work_record.id
       expect(json["body"]).to eq "#{data[:title]}\n\n#{data[:body]}"

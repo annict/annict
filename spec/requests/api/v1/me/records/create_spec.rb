@@ -30,26 +30,25 @@ describe "POST /v1/me/records" do
       expect(ActivityGroup.count).to eq 1
       expect(Activity.count).to eq 1
 
-      episode_record = user.episode_records.first
       record = user.records.first
+      episode_record = record.episode_record
       activity_group = user.activity_groups.first
       activity = user.activities.first
 
-      expect(episode_record.body).to eq data[:comment]
-      expect(episode_record.locale).to eq "ja"
-      expect(episode_record.rating).to eq data[:rating]
-      expect(episode_record.rating_state).to eq data[:rating_state]
-      expect(episode_record.episode_id).to eq episode.id
-      expect(episode_record.record_id).to eq record.id
-      expect(episode_record.work_id).to eq work.id
-
+      expect(record.body).to eq data[:comment]
+      expect(record.locale).to eq "ja"
+      expect(record.advanced_rating).to eq data[:rating]
+      expect(record.rating).to eq data[:rating_state]
+      expect(record.episode_id).to eq episode.id
       expect(record.work_id).to eq work.id
 
-      expect(activity_group.itemable_type).to eq "EpisodeRecord"
+      expect(episode_record).not_to be_nil
+
+      expect(activity_group.itemable_type).to eq "Record"
       expect(activity_group.single).to eq true
 
       expect(activity.activity_group_id).to eq activity_group.id
-      expect(activity.itemable).to eq episode_record
+      expect(activity.itemable).to eq record
 
       expect(json["id"]).to eq episode_record.id
       expect(json["comment"]).to eq data[:comment]
