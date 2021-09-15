@@ -19,13 +19,13 @@ class EmailNotificationMailer < ApplicationMailer
     end
   end
 
-  def liked_episode_record(liked_user_id, user_id, episode_record_id)
+  def liked_episode_record(liked_user_id, user_id, record_id)
     @liked_user = User.only_kept.find(liked_user_id)
     @unsubscription_key = @liked_user.email_notification.unsubscription_key
     @user = User.only_kept.find(user_id)
-    @episode_record = @liked_user.episode_records.only_kept.find(episode_record_id)
-    @work = @episode_record.work
-    @episode = @episode_record.episode
+    @record = @liked_user.records.only_kept.find(record_id)
+    @work = @record.work
+    @episode = @record.episode
 
     I18n.with_locale(@liked_user.locale) do
       subject = default_i18n_subject(

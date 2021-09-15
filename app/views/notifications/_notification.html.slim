@@ -7,16 +7,16 @@
       - if notification.action == "follows.create"
         = render "notifications/follows_create", notification: notification
       - elsif notification.action == "likes.create"
-        - recipient = notification.trackable.recipient
-        - if recipient.class.name == "EpisodeRecord"
+        - likeable = notification.trackable.likeable
+        - if likeable.class.name == "Record" && likeable.episode_record?
           = render "notifications/likes_create_episode_record", notification: notification
-        - elsif recipient.class.name == "MultipleEpisodeRecord"
-          = render "notifications/likes_create_multiple_episode_records", notification: notification
-        - elsif recipient.class.name == "Comment"
-          = render "notifications/likes_create_comment", notification: notification
-        - elsif recipient.class.name == "Status"
-          = render "notifications/likes_create_status", notification: notification
-        - elsif recipient.class.name == "WorkRecord"
+        - elsif likeable.class.name == "Record" && likeable.work_record?
           = render "notifications/likes_create_work_record", notification: notification
+        - elsif likeable.class.name == "MultipleEpisodeRecord"
+          = render "notifications/likes_create_multiple_episode_records", notification: notification
+        - elsif likeable.class.name == "Comment"
+          = render "notifications/likes_create_comment", notification: notification
+        - elsif likeable.class.name == "Status"
+          = render "notifications/likes_create_status", notification: notification
       - elsif notification.action == "comments.create"
         = render "notifications/comments_create_record", notification: notification

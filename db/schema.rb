@@ -546,8 +546,8 @@ ActiveRecord::Schema.define(version: 2021_08_15_142421) do
 
   create_table "likes", force: :cascade do |t|
     t.bigint "user_id", null: false
-    t.bigint "recipient_id", null: false
-    t.string "recipient_type", limit: 510, null: false
+    t.bigint "recipient_id"
+    t.string "recipient_type", limit: 510
     t.datetime "created_at"
     t.datetime "updated_at"
     t.bigint "likeable_id"

@@ -4,8 +4,8 @@ module UserLikeable
   extend ActiveSupport::Concern
 
   included do
-    def like?(recipient)
-      likes.where(recipient: recipient).present?
+    def like?(likeable)
+      likes.where(likeable: likeable).present?
     end
 
     def like!(resource)
@@ -13,25 +13,11 @@ module UserLikeable
         raise Annict::Errors::NotLikeableError
       end
 
-      recipient = case resource
-      when Record
-        resource.episode_record? ? resource.episode_record : resource.work_record
-      else
-        resource
-      end
-
-      likes.create!(recipient: recipient)
+      likes.create!(likeable: resource)
     end
 
-    def unlike(resource)
-      recipient = case resource
-      when Record
-        resource.episode_record? ? resource.episode_record : resource.work_record
-      else
-        resource
-      end
-
-      like = likes.where(recipient: recipient).first
+    def unlike(likeable)
+      like = likes.where(likeable: likeable).first
       like.destroy if like.present?
       like
     end

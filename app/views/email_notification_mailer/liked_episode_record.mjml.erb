@@ -15,17 +15,17 @@
     </mj-column>
   </mj-section>
 
-  <% if @episode_record.body.present? %>
+  <% if @record.body.present? %>
     <mj-section padding="10px 0">
       <mj-column>
-        <mj-text align="center" line-height="22px"><%= "#{@episode_record.body}" %></mj-text>
+        <mj-text align="center" line-height="22px"><%= "#{@record.body}" %></mj-text>
       </mj-column>
     </mj-section>
   <% end %>
 
   <mj-section>
     <mj-column>
-      <mj-button href="<%= record_url(username: @liked_user.username, record_id: @episode_record.record_id, utm_source: 'email_notification', utm_campaign: 'liked_episode_record', utm_medium: 'email', domain: local_domain) %>" background-color="#f85b73">
+      <mj-button href="<%= record_url(username: @liked_user.username, record_id: @record.id, utm_source: 'email_notification', utm_campaign: 'liked_episode_record', utm_medium: 'email', domain: local_domain) %>" background-color="#f85b73">
         <%= I18n.t("email_notification_mailer.liked_episode_record.view_record") %>
       </mj-button>
     </mj-column>

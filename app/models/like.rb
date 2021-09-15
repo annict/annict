@@ -42,18 +42,11 @@ class Like < ApplicationRecord
       raise Annict::Errors::NotLikeableError
     end
 
-    recipient = case resource
-    when Record
-      resource.episode_record? ? resource.episode_record : resource.work_record
-    else
-      resource
-    end
-
-    find_by(recipient: recipient)
+    find_by(likeable: resource)
   end
 
   def send_notification_to(user)
-    unless recipient.is_a?(EpisodeRecord)
+    if !likeable.is_a?(Record) || !likeable.episode_record?
       return
     end
 
@@ -61,17 +54,17 @@ class Like < ApplicationRecord
       "liked_episode_record",
       user,
       user.id,
-      recipient.id
+      likeable.id
     )
   end
 
   private
 
   def save_notification
-    return if user.id == recipient.user.id
+    return if user.id == likeable.user.id
 
     Notification.create do |n|
-      n.user = recipient.user
+      n.user = likeable.user
       n.action_user = user
       n.trackable = self
       n.action = "likes.create"

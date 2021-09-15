@@ -1,7 +1,7 @@
 - action_user = notification.action_user
-- episode_record = notification.trackable.recipient
-- episode = episode_record.episode
-- work = episode.work
+- record = notification.trackable.likeable
+- episode = record.episode
+- work = record.work
 
 span.me-1
   = action_user.name_link
@@ -14,11 +14,11 @@ span.mx-1
 | への記録に「いいね！」しました
 
 .small.text-muted.my-2
-  = link_to local_time_ago_in_words(episode_record.created_at), record_path(current_user.username, episode_record.record)
-  - if episode_record.body.present?
+  = link_to local_time_ago_in_words(record.watched_at), record_path(current_user.username, record)
+  - if record.body.present?
     | :
     span.ms-1
-    = episode_record.body
+    = record.body
 
 .small.text-muted
   = local_time_ago_in_words(notification.created_at)

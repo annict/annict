@@ -14,5 +14,8 @@ class ChangeNullOnActivitiesEpisodeRecords < ActiveRecord::Migration[6.1]
     change_column_null :work_records, :work_id, true
     change_column_null :work_records, :body, true
     change_column_null :work_records, :record_id, true
+
+    change_column_null :likes, :recipient_id, true
+    change_column_null :likes, :recipient_type, true
   end
 end
