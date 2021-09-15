@@ -13,8 +13,8 @@ describe "Api::V1::Records" do
   let(:user) { create(:user, :with_profile) }
   let(:work) { create(:work, :with_current_season) }
   let(:episode) { create(:episode, work: work) }
-  let!(:record) { create(:record, user: user) }
-  let!(:episode_record) { create(:episode_record, record: record, work: work, episode: episode, user: user) }
+  let!(:record) { create(:record, :on_episode, work: work, episode: episode, user: user, rating: nil, advanced_rating: 3.0) }
+  let!(:episode_record) { record.episode_record }
 
   describe "GET /v1/records" do
     before do

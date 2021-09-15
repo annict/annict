@@ -16,9 +16,8 @@ describe "Api::V1::Me::FollowingActivities" do
     let!(:follow) { create(:follow, user: user1, following: user2) }
     let!(:work) { create(:work) }
     let!(:episode) { create(:episode, work: work) }
-    let!(:record) { create(:record, user: user2) }
-    let!(:episode_record) { create(:episode_record, record: record, user: user2, work: work, episode: episode) }
-    let!(:activity) { create(:activity, user: user2, itemable: episode_record) }
+    let!(:record) { create(:record, :on_episode, user: user2, work: work, episode: episode, rating: nil, advanced_rating: 3.0) }
+    let!(:activity) { create(:activity, user: user2, itemable: record) }
 
     before do
       params = {
@@ -97,7 +96,7 @@ describe "Api::V1::Me::FollowingActivities" do
             "record_comments_count" => 1
           },
           "record" => {
-            "id" => episode_record.id,
+            "id" => record.episode_record.id,
             "comment" => "おもしろかった",
             "rating" => 3.0,
             "rating_state" => nil,
