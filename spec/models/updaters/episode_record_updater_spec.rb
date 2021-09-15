@@ -32,7 +32,6 @@ describe Updaters::EpisodeRecordUpdater, type: :model do
     record = user.records.first
     episode_record = record.episode_record
 
-
     expect(record.body).to eq "おもしろかった！！"
     expect(record.locale).to eq "ja"
     expect(record.rating).to eq "good"
