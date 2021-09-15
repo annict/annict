@@ -38,9 +38,10 @@ describe "GraphQL API (Beta) Mutation" do
     end
 
     it "create episode record" do
-      episode_record = EpisodeRecord.last
+      record = Record.last
+      episode_record = record.episode_record
       expect(result.dig("data", "createRecord", "record", "annictId")).to eq(episode_record.id)
-      expect(result.dig("data", "createRecord", "record", "comment")).to eq(episode_record.body)
+      expect(result.dig("data", "createRecord", "record", "comment")).to eq(record.body)
       expect(result.dig("data", "createRecord", "record", "ratingState")).to eq("GOOD")
     end
   end

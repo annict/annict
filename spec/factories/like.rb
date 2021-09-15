@@ -3,6 +3,6 @@
 FactoryBot.define do
   factory :like do
     association :user, :with_profile
-    association :recipient
+    association :likeable
   end
 end

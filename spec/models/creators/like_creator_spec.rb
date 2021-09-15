@@ -4,8 +4,7 @@ describe Creators::LikeCreator, type: :model do
   context "Record (WorkRecord) にLikeするとき" do
     let!(:user) { create(:user, :with_setting) }
     let!(:work) { create(:work) }
-    let!(:record) { create(:record, user: user, work: work) }
-    let!(:work_record) { create(:work_record, user: user, work: work, record: record) }
+    let!(:record) { create(:record, :on_work, user: user, work: work) }
 
     context "Likeしていないとき" do
       it "Likeできること" do
@@ -22,8 +21,8 @@ describe Creators::LikeCreator, type: :model do
 
         # Creatorを呼んだときに指定した User の値で保存されていることを確認する
         expect(like.user).to eq user
-        # Creatorを呼んだときに指定した Record に紐付く WorkRecord の値で保存されていることを確認する
-        expect(like.recipient).to eq work_record
+        # Creatorを呼んだときに指定した Record が保存されていることを確認する
+        expect(like.likeable).to eq record
         # Creatorの返り値から、作成した likes テーブルのレコードが取得できることを確認する
         expect(result.like).to eq like
       end
@@ -31,7 +30,7 @@ describe Creators::LikeCreator, type: :model do
 
     context "Likeしているとき" do
       # 事前にLikeしておく
-      let!(:like) { create(:like, user: user, recipient: work_record) }
+      let!(:like) { create(:like, user: user, likeable: record) }
 
       it "新しくLikeせず、すでに保存されているLikeが返ること" do
         # 事前にLikeしているため、Creatorを呼んでいなくても1件存在するはず
@@ -59,8 +58,7 @@ describe Creators::LikeCreator, type: :model do
     let!(:user) { create(:user, :with_setting) }
     let!(:work) { create(:work) }
     let!(:episode) { create(:episode, work: work) }
-    let!(:episode_record) { create(:episode_record, user: user, episode: episode) }
-    let!(:record) { episode_record.record }
+    let!(:record) { create(:record, :on_episode, user: user, work: work, episode: episode) }
 
     context "Likeしていないとき" do
       it "Likeできること" do
@@ -83,8 +81,8 @@ describe Creators::LikeCreator, type: :model do
 
         # Creatorを呼んだときに指定した User の値で保存されていることを確認する
         expect(like.user).to eq user
-        # Creatorを呼んだときに指定した Record に紐付く EpisodeRecord の値で保存されていることを確認する
-        expect(like.recipient).to eq episode_record
+        # Creatorを呼んだときに指定した Record が保存されていることを確認する
+        expect(like.likeable).to eq record
         # Creatorの返り値から、作成した likes テーブルのレコードが取得できることを確認する
         expect(result.like).to eq like
       end
@@ -92,7 +90,7 @@ describe Creators::LikeCreator, type: :model do
 
     context "Likeしているとき" do
       # 事前にLikeしておく
-      let!(:like) { create(:like, user: user, recipient: episode_record) }
+      let!(:like) { create(:like, user: user, likeable: record) }
 
       it "新しくLikeせず、すでに保存されているLikeが返ること" do
         # 事前にLikeしているため、Creatorを呼んでいなくても1件存在するはず
