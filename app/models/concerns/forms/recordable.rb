@@ -52,7 +52,9 @@ module Forms::Recordable
     private
 
     def watched_at_can_only_set_supporter
-      if watched_at.present? && !user.supporter?
+      Time.zone = user.time_zone
+
+      if watched_at.present? && !user.supporter? && watched_at != record&.watched_at&.in_time_zone
         i18n_path = "activemodel.errors.forms.recordable.watched_at_can_only_set_supporter"
         errors.add(:watched_at, I18n.t(i18n_path))
       end
