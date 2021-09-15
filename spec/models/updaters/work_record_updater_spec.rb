@@ -4,7 +4,7 @@ describe Updaters::WorkRecordUpdater, type: :model do
   let!(:user) { create :registered_user }
   let!(:work) { create :work }
   let!(:work_record) { create :work_record }
-  let!(:record) { create :record, :for_work, user: user, work: work, recordable: work_record }
+  let!(:record) { create :record, :on_work, user: user, work: work, recordable: work_record }
 
   it "アニメへの記録の更新ができること" do
     # 各レコードは1件のはず

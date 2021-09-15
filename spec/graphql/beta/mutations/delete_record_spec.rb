@@ -6,7 +6,7 @@ describe "GraphQL API (Beta) Mutation" do
     let!(:work) { create :work }
     let!(:episode) { create :episode, work: work }
     let!(:episode_record) { create(:episode_record) }
-    let!(:record) { create :record, :for_episode, user: user, work: work, episode: episode, recordable: episode_record }
+    let!(:record) { create :record, :on_episode, user: user, work: work, episode: episode, recordable: episode_record }
     let!(:activity_group) { create(:activity_group, user: user, itemable_type: "Record") }
     let!(:activity) { create(:activity, user: user, activity_group: activity_group, itemable: record) }
     let!(:library_entry) { create(:library_entry, user: user, work: work, watched_episode_ids: [episode.id]) }

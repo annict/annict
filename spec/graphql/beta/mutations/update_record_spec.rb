@@ -5,7 +5,7 @@ describe Beta::Mutations::UpdateRecord do
   let!(:work) { create :work }
   let!(:episode) { create :episode, work: work }
   let!(:episode_record) { create(:episode_record) }
-  let!(:record) { create :record, :for_episode, user: user, work: work, recordable: episode_record }
+  let!(:record) { create :record, :on_episode, user: user, work: work, recordable: episode_record }
   let!(:token) { create(:oauth_access_token) }
   let!(:context) { {viewer: user, doorkeeper_token: token, writable: true} }
   let!(:episode_record_id) { Canary::AnnictSchema.id_from_object(episode_record, episode_record.class) }

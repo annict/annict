@@ -15,7 +15,7 @@ describe "Api::V1::Activities" do
     let!(:work) { create(:work) }
     let!(:episode) { create(:episode, work: work) }
     let!(:episode_record) { create(:episode_record) }
-    let!(:record) { create(:record, :for_episode, user: user, episode: episode, work: work, recordable: episode_record) }
+    let!(:record) { create(:record, :on_episode, user: user, episode: episode, work: work, recordable: episode_record) }
     let!(:activity) { create(:activity, user: user, itemable: record) }
 
     before do

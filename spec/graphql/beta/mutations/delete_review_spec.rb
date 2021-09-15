@@ -5,7 +5,7 @@ describe "GraphQL API (Beta) Mutation" do
     let!(:user) { create :registered_user }
     let!(:work) { create :work }
     let!(:work_record) { create(:work_record) }
-    let!(:record) { create :record, :for_work, user: user, work: work, recordable: work_record }
+    let!(:record) { create :record, :on_work, user: user, work: work, recordable: work_record }
     let!(:activity_group) { create(:activity_group, user: user, itemable_type: "Record") }
     let!(:activity) { create(:activity, user: user, activity_group: activity_group, itemable: record) }
     let!(:token) { create(:oauth_access_token) }

@@ -77,7 +77,7 @@ describe "GET /works/:id", type: :request do
   context "when work records have been added" do
     let!(:work) { create(:work) }
     let!(:work_record) { create(:work_record) }
-    let!(:record) { create(:record, :for_work, work: work, recordable: work_record) }
+    let!(:record) { create(:record, :on_work, work: work, recordable: work_record) }
 
     before do
       get "/works/#{work.id}"

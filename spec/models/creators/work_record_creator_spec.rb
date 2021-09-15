@@ -63,7 +63,7 @@ describe Creators::WorkRecordCreator, type: :model do
       let(:work) { create :work, work_records_with_body_count: 1 }
       # 感想付きの記録が直前にある
       let!(:work_record) { create(:work_record) }
-      let!(:record) { create(:record, :for_work, user: user, work: work, recordable: work_record, body: "さいこー") }
+      let!(:record) { create(:record, :on_work, user: user, work: work, recordable: work_record, body: "さいこー") }
       let!(:activity_group) { create(:activity_group, user: user, itemable_type: "Record", single: true) }
       let!(:activity) { create(:activity, user: user, itemable: record, activity_group: activity_group) }
 
@@ -106,7 +106,7 @@ describe Creators::WorkRecordCreator, type: :model do
       let(:work) { create :work }
       # 感想無しの記録が直前にある
       let!(:work_record) { create(:work_record) }
-      let!(:record) { create(:record, :for_work, user: user, work: work, recordable: work_record, body: "") }
+      let!(:record) { create(:record, :on_work, user: user, work: work, recordable: work_record, body: "") }
       let!(:activity_group) { create(:activity_group, user: user, itemable_type: "Record", single: false) }
       let!(:activity) { create(:activity, user: user, itemable: record, activity_group: activity_group) }
 

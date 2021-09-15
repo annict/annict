@@ -8,12 +8,12 @@ FactoryBot.define do
     rating { "good" }
     watched_at { Time.zone.now }
 
-    trait :for_episode do
+    trait :on_episode do
       association :episode
       association :recordable, factory: :episode_record
     end
 
-    trait :for_work do
+    trait :on_work do
       association :recordable, factory: :work_record
     end
   end
