@@ -4,8 +4,8 @@ describe "GET /notifications", type: :request do
   let!(:user_1) { create(:registered_user) }
   let!(:user_2) { create(:registered_user) }
   let!(:work) { create(:work) }
-  let!(:record) { create(:record, user: user_1, work: work) }
-  let!(:work_record) { create(:work_record, user: user_1, work: work, record: record) }
+  let!(:work_record) { create(:work_record) }
+  let!(:record) { create(:record, :on_work, user: user_1, work: work, recordable: work_record) }
 
   before do
     Creators::LikeCreator.new(user: user_2, likeable: record).call

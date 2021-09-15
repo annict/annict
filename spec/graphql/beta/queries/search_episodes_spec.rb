@@ -92,7 +92,8 @@ describe "GraphQL API Query" do
     end
 
     context "when `recodes` are fetched" do
-      let!(:record) { create(:episode_record, episode: episode1) }
+      let!(:episode_record) { create(:episode_record) }
+      let!(:record) { create(:record, work: episode1.work, episode: episode1, recordable: episode_record) }
       let(:result) do
         query_string = <<~QUERY
           query {
@@ -129,7 +130,7 @@ describe "GraphQL API Query" do
                   "edges" => [
                     {
                       "node" => {
-                        "annictId" => record.id,
+                        "annictId" => episode_record.id,
                         "comment" => record.body
                       }
                     }

@@ -2,8 +2,8 @@
 
 describe Beta::Mutations::UpdateReview do
   let(:user) { create :registered_user }
-  let!(:record) { create(:record, user: user) }
-  let!(:work_record) { create(:work_record, user: user, record: record) }
+  let!(:work_record) { create(:work_record) }
+  let!(:record) { create(:record, :on_work, user: user, recordable: work_record, rating: nil) }
   let(:token) { create(:oauth_access_token) }
   let(:context) { {viewer: user, doorkeeper_token: token, writable: true} }
   let(:work_record_id) { Canary::AnnictSchema.id_from_object(work_record, work_record.class) }
@@ -39,12 +39,12 @@ describe Beta::Mutations::UpdateReview do
     it "更新されたRecordデータが返ること" do
       expect(Record.count).to eq 1
       expect(WorkRecord.count).to eq 1
-      expect(work_record.body).to eq "おもしろかった"
-      expect(work_record.rating_overall_state).to be_nil
-      expect(work_record.rating_animation_state).to be_nil
-      expect(work_record.rating_music_state).to be_nil
-      expect(work_record.rating_story_state).to be_nil
-      expect(work_record.rating_character_state).to be_nil
+      expect(record.body).to eq "おもしろかった"
+      expect(record.rating).to be_nil
+      expect(record.animation_rating).to be_nil
+      expect(record.music_rating).to be_nil
+      expect(record.story_rating).to be_nil
+      expect(record.character_rating).to be_nil
 
       record_cache_expired_at = user.record_cache_expired_at
       result = Beta::AnnictSchema.execute(query, variables: variables, context: context)

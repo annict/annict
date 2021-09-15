@@ -5,8 +5,8 @@ describe "PATCH /v1/me/reviews/:id" do
   let(:application) { create(:oauth_application, owner: user) }
   let(:access_token) { create(:oauth_access_token, application: application) }
   let(:work) { create(:work, :with_current_season) }
-  let(:record) { create(:record, work: work, user: user) }
-  let(:work_record) { create(:work_record, record: record, work: work, user: user) }
+  let(:work_record) { create(:work_record) }
+  let!(:record) { create(:record, :on_work, user: user, work: work, recordable: work_record) }
   let(:uniq_title) { SecureRandom.uuid }
   let(:uniq_body) { SecureRandom.uuid }
 
@@ -25,8 +25,8 @@ describe "PATCH /v1/me/reviews/:id" do
 
   it "updates an work record" do
     expected_body = "#{uniq_title}\n\n#{uniq_body}"
-    expect(access_token.owner.work_records.count).to eq(1)
-    expect(access_token.owner.work_records.first.body).to eq(expected_body)
+    expect(access_token.owner.records.count).to eq(1)
+    expect(access_token.owner.records.first.body).to eq(expected_body)
     expect(json["body"]).to eq(expected_body)
   end
 end
