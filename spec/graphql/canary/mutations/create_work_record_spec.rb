@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Canary::Mutations::CreateWorkRecord do
+xdescribe Canary::Mutations::CreateWorkRecord do
   let(:user) { create :registered_user }
   let(:work) { create :work }
   let(:token) { create(:oauth_access_token) }

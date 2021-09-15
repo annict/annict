@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Canary::Mutations::CreateEpisodeRecord do
+xdescribe Canary::Mutations::CreateEpisodeRecord do
   let(:user) { create :registered_user }
   let(:episode) { create :episode }
   let(:work) { episode.work }
