@@ -3,9 +3,9 @@
 describe "GET /fragment/activity_groups/:activity_group_id/items", type: :request do
   context "ログインしているとき" do
     let!(:user) { create(:registered_user) }
-    let!(:episode_record) { create(:episode_record, user: user, body: "楽しかった") }
-    let!(:activity_group) { create(:activity_group, user: user, itemable_type: "EpisodeRecord", single: true) }
-    let!(:activity) { create(:activity, user: user, itemable: episode_record, activity_group: activity_group) }
+    let!(:record) { create(:record, :on_episode, user: user, body: "楽しかった") }
+    let!(:activity_group) { create(:activity_group, user: user, itemable_type: "Record", single: true) }
+    let!(:activity) { create(:activity, user: user, itemable: record, activity_group: activity_group) }
 
     before do
       login_as(user, scope: :user)
@@ -15,7 +15,7 @@ describe "GET /fragment/activity_groups/:activity_group_id/items", type: :reques
       get "/fragment/activity_groups/#{activity_group.id}/items"
 
       expect(response.status).to eq(200)
-      expect(response.body).to include(episode_record.episode.title)
+      expect(response.body).to include(record.episode.title)
       expect(response.body).to include("楽しかった")
     end
   end

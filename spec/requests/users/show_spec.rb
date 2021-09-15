@@ -22,13 +22,13 @@ describe "GET /@:username", type: :request do
       let!(:status_activity_group) { create(:activity_group, user: user, itemable_type: "Status", single: false) }
       let!(:status_activity) { create(:activity, user: user, itemable: status, activity_group: status_activity_group) }
 
-      let!(:record_1) { create(:record, :with_episode_record, user: user) }
-      let!(:episode_record_activity_group) { create(:activity_group, user: user, itemable_type: "EpisodeRecord", single: true) }
-      let!(:episode_record_activity) { create(:activity, user: user, itemable: record_1.episode_record, activity_group: episode_record_activity_group) }
+      let!(:record_1) { create(:record, :on_episode, user: user) }
+      let!(:episode_record_activity_group) { create(:activity_group, user: user, itemable_type: "Record", single: true) }
+      let!(:episode_record_activity) { create(:activity, user: user, itemable: record_1, activity_group: episode_record_activity_group) }
 
-      let!(:record_2) { create(:record, :with_work_record, user: user) }
-      let!(:work_record_activity_group) { create(:activity_group, user: user, itemable_type: "WorkRecord", single: true) }
-      let!(:work_record_activity) { create(:activity, user: user, itemable: record_2.work_record, activity_group: work_record_activity_group) }
+      let!(:record_2) { create(:record, :on_work, user: user) }
+      let!(:work_record_activity_group) { create(:activity_group, user: user, itemable_type: "Record", single: true) }
+      let!(:work_record_activity) { create(:activity, user: user, itemable: record_2, activity_group: work_record_activity_group) }
 
       it "アクティビティが表示されること" do
         get "/@#{user.username}"
@@ -55,13 +55,13 @@ describe "GET /@:username", type: :request do
       let!(:status_activity_group) { create(:activity_group, user: user, itemable_type: "Status", single: false) }
       let!(:status_activity) { create(:activity, user: user, itemable: status, activity_group: status_activity_group) }
 
-      let!(:record_1) { create(:record, :with_episode_record, user: user) }
-      let!(:episode_record_activity_group) { create(:activity_group, user: user, itemable_type: "EpisodeRecord", single: true) }
-      let!(:episode_record_activity) { create(:activity, user: user, itemable: record_1.episode_record, activity_group: episode_record_activity_group) }
+      let!(:record_1) { create(:record, :on_episode, user: user) }
+      let!(:episode_record_activity_group) { create(:activity_group, user: user, itemable_type: "Record", single: true) }
+      let!(:episode_record_activity) { create(:activity, user: user, itemable: record_1, activity_group: episode_record_activity_group) }
 
-      let!(:record_2) { create(:record, :with_work_record, user: user) }
-      let!(:work_record_activity_group) { create(:activity_group, user: user, itemable_type: "WorkRecord", single: true) }
-      let!(:work_record_activity) { create(:activity, user: user, itemable: record_2.work_record, activity_group: work_record_activity_group) }
+      let!(:record_2) { create(:record, :on_work, user: user) }
+      let!(:work_record_activity_group) { create(:activity_group, user: user, itemable_type: "Record", single: true) }
+      let!(:work_record_activity) { create(:activity, user: user, itemable: record_2, activity_group: work_record_activity_group) }
 
       it "アクティビティが表示されること" do
         get "/@#{user.username}"

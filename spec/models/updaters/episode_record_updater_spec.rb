@@ -4,8 +4,8 @@ describe Updaters::EpisodeRecordUpdater, type: :model do
   let(:user) { create :registered_user }
   let(:episode) { create :episode }
   let(:work) { episode.work }
-  let!(:record) { create :record, user: user, work: work }
-  let!(:episode_record) { create :episode_record, user: user, work: work, episode: episode, record: record }
+  let!(:record) { create :record, :on_episode, user: user, work: work, episode: episode }
+  let!(:episode_record) { record.episode_record }
 
   it "エピソードへの記録の更新ができること" do
     # 各レコードは1件のはず
@@ -17,7 +17,7 @@ describe Updaters::EpisodeRecordUpdater, type: :model do
       user: user,
       form: Forms::EpisodeRecordForm.new(
         user: user,
-        comment: episode_record.body + "！！",
+        body: record.body + "！！",
         episode: episode,
         rating: "good",
         record: record,
@@ -30,15 +30,15 @@ describe Updaters::EpisodeRecordUpdater, type: :model do
     expect(EpisodeRecord.count).to eq 1
 
     record = user.records.first
-    episode_record = user.episode_records.first
+    episode_record = record.episode_record
 
+
+    expect(record.body).to eq "おもしろかった！！"
+    expect(record.locale).to eq "ja"
+    expect(record.rating).to eq "good"
+    expect(record.episode_id).to eq episode.id
     expect(record.work_id).to eq work.id
 
-    expect(episode_record.body).to eq "おもしろかった！！"
-    expect(episode_record.locale).to eq "ja"
-    expect(episode_record.rating_state).to eq "good"
-    expect(episode_record.episode_id).to eq episode.id
-    expect(episode_record.record_id).to eq record.id
-    expect(episode_record.work_id).to eq work.id
+    expect(episode_record).not_to be_nil
   end
 end
