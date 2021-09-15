@@ -4,10 +4,9 @@ describe "DELETE /@:username/records/:record_id", type: :request do
   let(:user) { create :registered_user }
   let!(:work) { create(:work) }
   let(:episode) { create(:episode, work: work) }
-  let!(:record) { create(:record, user: user, work: work) }
-  let(:episode_record) { create(:episode_record, user: user, record: record, work: work, episode: episode) }
-  let(:activity_group) { create(:activity_group, user: user, itemable_type: "EpisodeRecord") }
-  let!(:activity) { create(:activity, user: user, activity_group: activity_group, itemable: episode_record) }
+  let(:record) { create(:record, :on_episode, user: user, work: work, episode: episode) }
+  let(:activity_group) { create(:activity_group, user: user, itemable_type: "Record") }
+  let!(:activity) { create(:activity, user: user, activity_group: activity_group, itemable: record) }
   let!(:library_entry) { create(:library_entry, user: user, work: work, watched_episode_ids: [episode.id]) }
 
   context "ログインしているとき" do

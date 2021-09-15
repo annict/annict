@@ -29,19 +29,17 @@ class RecordsController < ApplicationV6Controller
   end
 
   def destroy
-    @user = User.only_kept.find_by!(username: params[:username])
-    @record = @user.records.only_kept.find(params[:record_id])
+    user = User.only_kept.find_by!(username: params[:username])
+    record = user.records.only_kept.find(params[:record_id])
 
-    authorize(@record, :destroy?)
+    authorize(record, :destroy?)
 
-    Destroyers::RecordDestroyer.new(record: @record).call
+    Destroyers::RecordDestroyer.new(record: record).call
 
-    path = if @record.episode_record?
-      episode_record = @record.episode_record
-      episode_path(episode_record.work_id, episode_record.episode_id)
+    path = if record.episode_record?
+      episode_path(record.work_id, record.episode_id)
     else
-      work_record = @record.work_record
-      work_record_list_path(work_record.work_id)
+      work_record_list_path(record.work_id)
     end
 
     redirect_to path, notice: t("messages._common.deleted")
