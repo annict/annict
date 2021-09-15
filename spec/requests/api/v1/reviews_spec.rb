@@ -12,8 +12,8 @@ describe "Api::V1::Reviews" do
   let(:access_token) { create(:oauth_access_token) }
   let(:user) { create(:user, :with_profile) }
   let(:work) { create(:work, :with_current_season) }
-  let!(:record) { create(:record, user: user, work: work) }
-  let!(:work_record) { create(:work_record, record: record, work: work, user: user) }
+  let!(:work_record) { create(:work_record) }
+  let!(:record) { create(:record, user: user, work: work, recordable: work_record, rating: nil) }
 
   describe "GET /v1/reviews" do
     before do

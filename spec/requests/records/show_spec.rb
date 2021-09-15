@@ -10,8 +10,7 @@ describe "GET /@:username/records/:record_id", type: :request do
 
     context "アニメへの記録を参照するとき" do
       let!(:work) { create(:work) }
-      let!(:record) { create(:record, user: user, work: work) }
-      let!(:work_record) { create(:work_record, user: user, record: record, work: work, body: "最高") }
+      let!(:record) { create(:record, :on_work, user: user, work: work, body: "最高") }
 
       it "記録が表示されること" do
         get "/@#{user.username}/records/#{record.id}"
@@ -26,8 +25,7 @@ describe "GET /@:username/records/:record_id", type: :request do
     context "エピソードへの記録を参照するとき" do
       let!(:work) { create(:work) }
       let!(:episode) { create(:episode, work: work) }
-      let!(:record) { create(:record, user: user, work: work) }
-      let!(:episode_record) { create(:episode_record, record: record, work: work, episode: episode, user: user, body: "楽しかった") }
+      let!(:record) { create(:record, :on_episode, work: work, episode: episode, user: user, body: "楽しかった") }
 
       it "記録が表示されること" do
         get "/@#{user.username}/records/#{record.id}"
@@ -44,8 +42,7 @@ describe "GET /@:username/records/:record_id", type: :request do
   context "ログインしていないとき" do
     context "アニメへの記録を参照したとき" do
       let!(:work) { create(:work) }
-      let!(:record) { create(:record, user: user, work: work) }
-      let!(:work_record) { create(:work_record, user: user, record: record, work: work, body: "最高") }
+      let!(:record) { create(:record, :on_work, user: user, work: work, body: "最高") }
 
       it "記録が表示されること" do
         get "/@#{user.username}/records/#{record.id}"
@@ -60,8 +57,7 @@ describe "GET /@:username/records/:record_id", type: :request do
     context "エピソードへの記録を参照したとき" do
       let!(:work) { create(:work) }
       let!(:episode) { create(:episode, work: work) }
-      let!(:record) { create(:record, user: user, work: work) }
-      let!(:episode_record) { create(:episode_record, record: record, work: work, episode: episode, user: user, body: "楽しかった") }
+      let!(:record) { create(:record, :on_episode, work: work, episode: episode, user: user, body: "楽しかった") }
 
       it "記録が表示されること" do
         get "/@#{user.username}/records/#{record.id}"

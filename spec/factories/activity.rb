@@ -12,7 +12,7 @@ FactoryBot.define do
     end
 
     factory :create_episode_record_activity do
-      itemable { create(:episode_record, user: user) }
+      itemable { create(:record, :on_episode, user: user) }
     end
 
     factory :create_status_activity do
