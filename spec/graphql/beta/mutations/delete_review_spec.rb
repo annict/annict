@@ -4,10 +4,10 @@ describe "GraphQL API (Beta) Mutation" do
   describe "deleteReview" do
     let!(:user) { create :registered_user }
     let!(:work) { create :work }
-    let!(:record) { create :record, user: user, work: work }
-    let!(:work_record) { create(:work_record, user: user, record: record, work: work) }
-    let!(:activity_group) { create(:activity_group, user: user, itemable_type: "WorkRecord") }
-    let!(:activity) { create(:activity, user: user, activity_group: activity_group, itemable: work_record) }
+    let!(:work_record) { create(:work_record) }
+    let!(:record) { create :record, :for_work, user: user, work: work, recordable: work_record }
+    let!(:activity_group) { create(:activity_group, user: user, itemable_type: "Record") }
+    let!(:activity) { create(:activity, user: user, activity_group: activity_group, itemable: record) }
     let!(:token) { create(:oauth_access_token) }
     let!(:context) { {viewer: user, doorkeeper_token: token, writable: true} }
     let!(:work_record_id) { Beta::AnnictSchema.id_from_object(work_record, work_record.class) }

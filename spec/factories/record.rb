@@ -7,21 +7,13 @@ FactoryBot.define do
     body { "おもしろかった" }
     rating { "good" }
 
-    trait :with_episode_record do
-      transient do
-        episode { nil }
-      end
-
-      after(:create) do |record, evaluator|
-        episode = evaluator.episode.presence || create(:episode, work: record.work)
-        create :episode_record, user: record.user, record: record, episode: episode
-      end
+    trait :for_episode do
+      association :episode
+      association :recordable, factory: :episode_record
     end
 
-    trait :with_work_record do
-      after(:create) do |record|
-        create :work_record, user: record.user, record: record, work: record.work
-      end
+    trait :for_work do
+      association :recordable, factory: :work_record
     end
   end
 end
