@@ -94,7 +94,7 @@
                   <%= episode.sort_number %>
                 </td>
                 <td>
-                  <%= episode.episode_records.only_kept.count %>
+                  <%= episode.records.only_kept.count %>
                 </td>
                 <td>
                   <%= render Db::PublishingStateLabelComponent.new(resource: episode) %>
