@@ -3,14 +3,14 @@ ja:
     attributes:
       forms/work_record_form:
         animation_rating: 映像
+        body: 感想
         character_rating: キャラクター
-        comment: 感想
         music_rating: 音楽
         rating: 全体
         story_rating: ストーリー
         watched_at: 視聴日時
       forms/episode_record_form:
-        comment: 感想
+        body: 感想
         rating: 評価
         watched_at: 視聴日時
       forms/registration_form:

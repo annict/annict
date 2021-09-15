@@ -68,7 +68,6 @@ en:
       episode_record:
         body: Comment
         rating_state: Rating
-        mutation_error: ''
       forum_comment:
         body: Body
       forum_post:
@@ -144,11 +143,13 @@ en:
         url: URL
         vod_title_code: VOD Title Code
         vod_title_name: VOD Title Name
-      trailer:
-        sort_number: Sort Number
-        title: Title
-        thumbnail: Thumbnail
-        url: URL
+      record:
+        animation_rating: Animation
+        body: Body
+        character_rating: Character
+        music_rating: Music
+        rating: Overall
+        story_rating: Story
       series:
         name: Name
         name_alter: Name (alter)
@@ -167,6 +168,11 @@ en:
         role: Role
         sort_number: Sort number
         work_id: Work
+      trailer:
+        sort_number: Sort Number
+        title: Title
+        thumbnail: Thumbnail
+        url: URL
       userland_project:
         available: Available?
         description: Description
@@ -231,15 +237,6 @@ en:
         role: Role
         role_other: Role (Other)
         sort_number: Sort Number
-      work_record:
-        title: Title
-        body: Body
-        mutation_error: ''
-        rating_animation_state: Animation
-        rating_music_state: Music
-        rating_story_state: Story
-        rating_character_state: Character
-        rating_overall_state: Overall
     errors:
       messages:
         accepted: should be accepted.

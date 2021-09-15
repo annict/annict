@@ -67,7 +67,6 @@ ja:
       episode_record:
         body: 感想
         rating_state: レーティング
-        mutation_error: ''
       forum_comment:
         body: 本文
       forum_post:
@@ -143,11 +142,13 @@ ja:
         url: URL
         vod_title_code: VOD作品コード
         vod_title_name: VOD作品名
-      trailer:
-        sort_number: ソート番号
-        title: タイトル
-        thumbnail: サムネイル
-        url: URL
+      record:
+        animation_rating: 映像
+        body: 感想
+        character_rating: キャラクター
+        music_rating: 音楽
+        rating: 全体
+        story_rating: ストーリー
       series:
         name: 名前
         name_alter: 別名
@@ -166,6 +167,11 @@ ja:
         role: 担当
         sort_number: ソート番号
         work_id: アニメ
+      trailer:
+        sort_number: ソート番号
+        title: タイトル
+        thumbnail: サムネイル
+        url: URL
       userland_project:
         available: 利用可能？
         description: 概要
@@ -230,15 +236,6 @@ ja:
         role: 担当
         role_other: 担当 (その他)
         sort_number: ソート番号
-      アニメ_record:
-        title: タイトル
-        body: 感想
-        mutation_error: ''
-        rating_animation_state: 映像
-        rating_music_state: 音楽
-        rating_story_state: ストーリー
-        rating_character_state: キャラクター
-        rating_overall_state: 全体
     errors:
       messages:
         accepted: に同意してください

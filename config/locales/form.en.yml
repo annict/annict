@@ -2,15 +2,15 @@ en:
   form:
     attributes:
       forms/work_record_form:
-        comment: Comment
-        rating_animation: Animation
-        rating_character: Character
-        rating_music: Music
-        rating_overall: Overall
-        rating_story: Story
+        animation_rating: Animation
+        body: Comment
+        character_rating: Character
+        music_rating: Music
+        rating: Overall
+        story_rating: Story
         watched_at: Watched At
       forms/episode_record_form:
-        comment: Comment
+        body: Comment
         rating: Rating
         watched_at: Watched At
       forms/registration_form:
