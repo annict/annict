@@ -6,8 +6,8 @@ module Api
       before_action :authenticate_user!
 
       def create
-        recipient = params[:recipient_type].constantize.find(params[:recipient_id])
-        Creators::UnlikeCreator.new(user: current_user, likeable: recipient).call
+        likeable = params[:likeable_type].constantize.find(params[:likeable_id])
+        Creators::UnlikeCreator.new(user: current_user, likeable: likeable).call
 
         head 201
       end

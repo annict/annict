@@ -16,8 +16,8 @@ module Api::Internal
     def create
       return head(:unauthorized) unless user_signed_in?
 
-      recipient = params[:recipient_type].constantize.find(params[:recipient_id])
-      Creators::LikeCreator.new(user: current_user, likeable: recipient).call
+      likeable = params[:likeable_type].constantize.find(params[:likeable_id])
+      Creators::LikeCreator.new(user: current_user, likeable: likeable).call
 
       head :created
     end
