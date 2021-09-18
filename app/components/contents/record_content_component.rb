@@ -24,11 +24,11 @@ module Contents
                   h.html BodyV6Component.new(view_context, content: @record.body, format: :markdown, height: 300).render
                 else
                   h.tag :div, class: "row g-3" do
-                    h.tag :div, class: "col-12 col-md-4 col-xl-3 order-1 order-md-2" do
+                    h.tag :div, class: "col-12 col-md-4 order-1 order-md-2" do
                       h.html LabelGroups::WorkRecordRatingLabelGroupComponent.new(view_context, record: @record).render
                     end
 
-                    h.tag :div, class: "col-12 col-md-8 col-xl-9 order-2 order-md-1" do
+                    h.tag :div, class: "col-12 col-md-8 order-2 order-md-1" do
                       h.html BodyV6Component.new(view_context, content: @record.body, format: :markdown, height: 300).render
                     end
                   end
