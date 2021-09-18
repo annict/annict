@@ -435,12 +435,6 @@ class User < ApplicationRecord
     ShareRecordToTwitterJob.perform_later(id, record.id)
   end
 
-  def share_work_record_to_twitter(work_record)
-    return unless share_record_to_twitter?
-
-    ShareWorkRecordToTwitterJob.perform_later(id, work_record.id)
-  end
-
   def following_resources(model: Activity, viewer: nil, order: OrderProperty.new)
     target_user_ids = followings.only_kept.pluck(:id)
     target_user_ids -= viewer&.mute_users&.pluck(:muted_user_id).presence || []
