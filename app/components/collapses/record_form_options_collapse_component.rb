@@ -26,7 +26,7 @@ module Collapses
 
             h.tag :div, class: "form-text text-muted" do
               if current_user&.supporter?
-                h.text t("messages._components.episode_record_form.hint_on_watched_at_for_supporter")
+                h.html t("messages._components.episode_record_form.hint_on_watched_at_for_supporter_html")
               else
                 h.html t("messages._components.episode_record_form.hint_on_watched_at_html")
               end

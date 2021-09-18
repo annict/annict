@@ -35,7 +35,7 @@ en:
       deprecated_ratings_collapse:
         hint: This 4 ratings are an old feature that existed in Annict.
       episode_record_form:
-        hint_on_watched_at_for_supporter: If not entered, the current time will be the watched time.
+        hint_on_watched_at_for_supporter_html: If not entered, the current time will be the watched time.
         hint_on_watched_at_html: <i class="far fa-sparkles me-1"></i>You can set by joining to <a href="/supporters">Annict Supporters</a>
       favorite_button:
         add_to_favorites: Add to Favorites

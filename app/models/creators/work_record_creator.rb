@@ -28,8 +28,10 @@ module Creators
       ActiveRecord::Base.transaction do
         record.save!
 
-        activity_group = @user.create_or_last_activity_group!(record)
-        @user.activities.create!(itemable: record, activity_group: activity_group)
+        if @form.watched_at.nil?
+          activity_group = @user.create_or_last_activity_group!(record)
+          @user.activities.create!(itemable: record, activity_group: activity_group)
+        end
 
         @user.update_share_record_setting(@form.share_to_twitter)
         @user.touch(:record_cache_expired_at)
