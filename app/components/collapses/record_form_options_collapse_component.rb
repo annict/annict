@@ -22,10 +22,14 @@ module Collapses
             end
 
             h.tag :div, class: "form-text text-muted" do
-              if current_user&.supporter?
+              h.tag :p, class: "mb-0" do
                 h.html t("messages._components.episode_record_form.hint_on_watched_at_for_supporter_html")
-              else
-                h.html t("messages._components.episode_record_form.hint_on_watched_at_html")
+              end
+
+              unless current_user&.supporter?
+                h.tag :p, class: "mb-0" do
+                  h.html t("messages._components.episode_record_form.hint_on_watched_at_html")
+                end
               end
             end
           end
