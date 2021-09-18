@@ -15,7 +15,7 @@ class SignInController < ApplicationV6Controller
       @oauth_app = Doorkeeper::Application.available.find_by(uid: params[:client_id])
     end
 
-    @form = ::Forms::SignInForm.new
+    @form = SignInForm.new
     @recaptcha = Recaptcha.new(action: "sign_in")
   end
 end

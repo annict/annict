@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-describe Forms::UserEmailForm do
+describe UserEmailForm do
   let(:email) { "example@example.com" }
   let(:form) do
-    Forms::UserEmailForm.new(
+    UserEmailForm.new(
       email: email
     )
   end

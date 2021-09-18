@@ -21,7 +21,7 @@ class RegistrationsController < ApplicationV6Controller
 
     confirmation.touch(:expires_at)
 
-    @form = ::Forms::RegistrationForm.new
+    @form = RegistrationForm.new
     @form.email = confirmation.email
     @form.token = confirmation.token
   end

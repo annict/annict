@@ -31,7 +31,7 @@ module Forms
               view_context,
               form: f,
               optional_textarea_classname: "form-control",
-              textarea_name: "forms_episode_record_form[body]"
+              textarea_name: "episode_record_form[body]"
             ).render
           end
 

@@ -20,7 +20,7 @@ module Beta
         episode_record = Object.const_get(type_name).eager_load(:record).merge(viewer.records.only_kept).find(item_id)
         record = episode_record.record
 
-        form = Forms::EpisodeRecordForm.new(user: viewer, episode: record.episode, record: record, oauth_application: oauth_application)
+        form = EpisodeRecordForm.new(user: viewer, episode: record.episode, record: record, oauth_application: oauth_application)
         form.attributes = {
           body: comment,
           rating: rating_state&.downcase,

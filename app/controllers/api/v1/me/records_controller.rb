@@ -8,7 +8,7 @@ module Api
 
         def create
           episode = Episode.only_kept.find(@params.episode_id)
-          form = Forms::EpisodeRecordForm.new(user: current_user, episode: episode)
+          form = EpisodeRecordForm.new(user: current_user, episode: episode)
           form.attributes = {
             body: @params.comment,
             advanced_rating: @params.rating,
@@ -34,7 +34,7 @@ module Api
           record = episode_record.record
           episode = record.episode
 
-          form = Forms::EpisodeRecordForm.new(user: current_user, episode: episode, record: record, oauth_application: doorkeeper_token.application)
+          form = EpisodeRecordForm.new(user: current_user, episode: episode, record: record, oauth_application: doorkeeper_token.application)
           form.attributes = {
             advanced_rating: @params.rating,
             body: @params.comment,

@@ -50,7 +50,7 @@ module Canary
           raise GraphQL::ExecutionError, "record_id #{record_id} is not a work record"
         end
 
-        form = Forms::WorkRecordForm.new(
+        form = WorkRecordForm.new(
           work: work,
           comment: comment,
           oauth_application: context[:application],

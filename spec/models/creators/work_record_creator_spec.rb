@@ -15,7 +15,7 @@ describe Creators::WorkRecordCreator, type: :model do
     # Creatorを呼ぶ
     Creators::WorkRecordCreator.new(
       user: user,
-      form: Forms::WorkRecordForm.new(
+      form: WorkRecordForm.new(
         user: user,
         work: work,
         body: "すごく面白かった。",
@@ -74,7 +74,7 @@ describe Creators::WorkRecordCreator, type: :model do
         # Creatorを呼ぶ
         Creators::WorkRecordCreator.new(
           user: user,
-          form: Forms::WorkRecordForm.new(
+          form: WorkRecordForm.new(
             user: user,
             work: work,
             body: "すごく面白かった。", # 感想付きの記録を新たにする
@@ -117,7 +117,7 @@ describe Creators::WorkRecordCreator, type: :model do
         # Creatorを呼ぶ
         Creators::WorkRecordCreator.new(
           user: user,
-          form: Forms::WorkRecordForm.new(
+          form: WorkRecordForm.new(
             user: user,
             work: work,
             body: "", # 感想無しの記録を新たにする

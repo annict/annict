@@ -8,7 +8,7 @@ describe "POST /api/internal/registrations", type: :request do
       expect(User.count).to eq 0
 
       post "/api/internal/registrations", params: {
-        forms_registration_form: {
+        registration_form: {
           email: email_confirmation.email,
           token: email_confirmation.token,
           username: "this-is-not-username"
@@ -31,7 +31,7 @@ describe "POST /api/internal/registrations", type: :request do
       expect(User.count).to eq 0
 
       post "/api/internal/registrations", params: {
-        forms_registration_form: {
+        registration_form: {
           email: email_confirmation.email,
           token: email_confirmation.token,
           username: "example",

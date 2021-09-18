@@ -7,7 +7,7 @@ module Api
         return head(:unauthorized) unless user_signed_in?
 
         work = Work.only_kept.find(params[:work_id])
-        form = Forms::StatusForm.new(work: work, kind: params[:status_kind])
+        form = StatusForm.new(work: work, kind: params[:status_kind])
 
         if form.valid?
           Updaters::StatusUpdater.new(user: current_user, form: form).call

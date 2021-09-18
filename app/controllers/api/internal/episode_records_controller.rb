@@ -5,7 +5,7 @@ module Api::Internal
     before_action :authenticate_user!
 
     def create
-      form = Forms::EpisodeRecordForm.new(user: current_user, episode: Episode.only_kept.find(params[:episode_id]))
+      form = EpisodeRecordForm.new(user: current_user, episode: Episode.only_kept.find(params[:episode_id]))
       form.attributes = episode_record_form_params
 
       if form.invalid?
@@ -20,7 +20,7 @@ module Api::Internal
     private
 
     def episode_record_form_params
-      params.required(:forms_episode_record_form).permit(:body, :rating, :share_to_twitter, :watched_at)
+      params.required(:episode_record_form).permit(:body, :rating, :share_to_twitter, :watched_at)
     end
   end
 end

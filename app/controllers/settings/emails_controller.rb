@@ -6,12 +6,12 @@ module Settings
 
     def show
       @user = current_user
-      @user_email_form = Forms::UserEmailForm.new(email: @user.email)
+      @user_email_form = UserEmailForm.new(email: @user.email)
     end
 
     def update
       @user = current_user
-      @user_email_form = Forms::UserEmailForm.new(user_email_form_params)
+      @user_email_form = UserEmailForm.new(user_email_form_params)
 
       if @user_email_form.invalid?
         return render :show, status: :unprocessable_entity
@@ -26,7 +26,7 @@ module Settings
     private
 
     def user_email_form_params
-      params.require(:forms_user_email_form).permit(:email)
+      params.require(:user_email_form).permit(:email)
     end
   end
 end

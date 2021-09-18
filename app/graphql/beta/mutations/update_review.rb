@@ -36,7 +36,7 @@ module Beta
         record = work_record.record
         work = record.work
 
-        form = Forms::WorkRecordForm.new(user: viewer, record: record, work: work, oauth_application: oauth_application)
+        form = WorkRecordForm.new(user: viewer, record: record, work: work, oauth_application: oauth_application)
         form.attributes = {
           deprecated_title: title,
           body: body,

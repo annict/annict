@@ -14,7 +14,7 @@ module Canary
         viewer = context[:viewer]
         work = Work.only_kept.find_by_graphql_id(work_id)
 
-        form = Forms::StatusForm.new(work: work, kind: kind)
+        form = StatusForm.new(work: work, kind: kind)
 
         if form.invalid?
           raise GraphQL::ExecutionError, "status update failed"

@@ -9,7 +9,7 @@ module Api::Internal
 
       ActiveRecord::Base.transaction do
         episodes.each do |episode|
-          form = Forms::EpisodeRecordForm.new(user: current_user, episode: episode, instant: true, skip_to_share: true)
+          form = EpisodeRecordForm.new(user: current_user, episode: episode, instant: true, skip_to_share: true)
           Creators::EpisodeRecordCreator.new(user: current_user, form: form).call
         end
       end

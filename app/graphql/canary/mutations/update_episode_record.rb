@@ -28,7 +28,7 @@ module Canary
           raise GraphQL::ExecutionError, "record_id #{record_id} is not an episode record"
         end
 
-        form = Forms::EpisodeRecordForm.new(
+        form = EpisodeRecordForm.new(
           comment: comment,
           episode: record.episode_record.episode,
           oauth_application: context[:application],

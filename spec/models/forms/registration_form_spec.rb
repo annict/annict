@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-describe Forms::RegistrationForm do
+describe RegistrationForm do
   let(:email) { "example@example.com" }
   let(:token) { "foobar" }
   let(:username) { "example" }
   let(:terms_and_privacy_policy_agreement) { true }
   let(:form) do
-    Forms::RegistrationForm.new(
+    RegistrationForm.new(
       email: email,
       token: token,
       username: username,

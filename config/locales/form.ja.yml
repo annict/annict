@@ -1,7 +1,7 @@
 ja:
   form:
     attributes:
-      forms/work_record_form:
+      work_record_form:
         animation_rating: 映像
         body: 感想
         character_rating: キャラクター
@@ -9,31 +9,31 @@ ja:
         rating: 全体
         story_rating: ストーリー
         watched_at: 視聴日時
-      forms/episode_record_form:
+      episode_record_form:
         body: 感想
         rating: 評価
         watched_at: 視聴日時
-      forms/registration_form:
+      registration_form:
         email: メールアドレス
         terms_and_privacy_policy_agreement: 利用規約とプライバシーポリシー
         username: ユーザ名
-      forms/sign_in_form:
+      sign_in_form:
         back: 戻り先
         email: メールアドレス
-      forms/sign_up_form:
+      sign_up_form:
         back: 戻り先
         email: メールアドレス
-      forms/user_email_form:
+      user_email_form:
         email: メールアドレス
     errors:
       models:
-        forms/registration_form:
+        registration_form:
           attributes:
             email:
               email_uniqueness: はすでに存在します
             username:
               username_uniqueness: はすでに存在します
-        forms/user_email_form:
+        user_email_form:
           attributes:
             email:
               email_uniqueness: はすでに存在します

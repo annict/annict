@@ -11,7 +11,7 @@ describe Updaters::StatusUpdater, type: :model do
       expect(Activity.count).to eq 0
       expect(LibraryEntry.count).to eq 0
 
-      form = Forms::StatusForm.new(work: work, kind: "watching")
+      form = StatusForm.new(work: work, kind: "watching")
       Updaters::StatusUpdater.new(user: user, form: form).call
 
       expect(Status.count).to eq 1
@@ -54,7 +54,7 @@ describe Updaters::StatusUpdater, type: :model do
       expect(LibraryEntry.count).to eq 1
       expect(library_entry.status.kind).to eq "wanna_watch"
 
-      form = Forms::StatusForm.new(work: work, kind: "watching")
+      form = StatusForm.new(work: work, kind: "watching")
       Updaters::StatusUpdater.new(user: user, form: form).call
 
       expect(Status.count).to eq 2
@@ -99,7 +99,7 @@ describe Updaters::StatusUpdater, type: :model do
       expect(LibraryEntry.count).to eq 1
       expect(library_entry.status.kind).to eq "wanna_watch"
 
-      form = Forms::StatusForm.new(work: work, kind: "no_status")
+      form = StatusForm.new(work: work, kind: "no_status")
       Updaters::StatusUpdater.new(user: user, form: form).call
 
       expect(Status.count).to eq 1

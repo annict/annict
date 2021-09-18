@@ -11,7 +11,7 @@ class WorkRecordsController < ApplicationV6Controller
 
     set_work_header_resources
 
-    @form = Forms::WorkRecordForm.new(work: @work, share_to_twitter: current_user&.share_record_to_twitter?)
+    @form = WorkRecordForm.new(work: @work, share_to_twitter: current_user&.share_record_to_twitter?)
 
     set_work_record_list(@work)
   end

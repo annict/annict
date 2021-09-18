@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-describe Forms::WorkRecordForm do
+describe WorkRecordForm do
   let(:user) { create :registered_user }
   let(:work) { create :work }
 
   context "バリデーションエラーになったとき" do
     it "エラー内容を返すこと" do
-      form = Forms::WorkRecordForm.new(
+      form = WorkRecordForm.new(
         user: user,
         work: work,
         body: "a" * (1_048_596 + 1), # 文字数制限 (1,048,596文字) 以上の感想を書く

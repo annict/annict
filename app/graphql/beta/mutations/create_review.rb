@@ -34,7 +34,7 @@ module Beta
         oauth_application = context[:doorkeeper_token].application
         work = Work.only_kept.find_by_graphql_id(work_id)
 
-        form = Forms::WorkRecordForm.new(user: viewer, work: work, oauth_application: oauth_application)
+        form = WorkRecordForm.new(user: viewer, work: work, oauth_application: oauth_application)
         form.attributes = {
           deprecated_title: title,
           body: body,

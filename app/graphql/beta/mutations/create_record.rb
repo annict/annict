@@ -17,7 +17,7 @@ module Beta
         viewer = context[:viewer]
         episode = Episode.only_kept.find_by_graphql_id(episode_id)
 
-        form = Forms::EpisodeRecordForm.new(user: viewer, episode: episode, oauth_application: context[:doorkeeper_token].application)
+        form = EpisodeRecordForm.new(user: viewer, episode: episode, oauth_application: context[:doorkeeper_token].application)
         form.attributes = {
           body: comment,
           rating: rating_state,

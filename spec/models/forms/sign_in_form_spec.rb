@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-describe Forms::SignInForm do
+describe SignInForm do
   let(:email) { "example@example.com" }
   let(:back) { "/foo/bar" }
   let(:form) do
-    Forms::SignInForm.new(
+    SignInForm.new(
       email: email,
       back: back
     )

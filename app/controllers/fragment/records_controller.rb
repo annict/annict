@@ -29,7 +29,7 @@ module Fragment
       authorize @record, :edit?
 
       if @record.episode_record?
-        @form = Forms::EpisodeRecordForm.new(
+        @form = EpisodeRecordForm.new(
           user: current_user,
           record: @record,
           episode: @record.episode
@@ -41,7 +41,7 @@ module Fragment
           watched_at: @record.watched_at
         }
       else
-        @form = Forms::WorkRecordForm.new(
+        @form = WorkRecordForm.new(
           user: current_user,
           record: @record,
           work: @record.work

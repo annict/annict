@@ -12,12 +12,12 @@ module Api::Internal
       authorize record, :update?
 
       if record.episode_record?
-        form = Forms::EpisodeRecordForm.new(user: current_user, record: record, episode: record.episode)
+        form = EpisodeRecordForm.new(user: current_user, record: record, episode: record.episode)
         form.attributes = episode_record_form_params
 
         Updaters::EpisodeRecordUpdater.new(user: current_user, form: form).call
       else
-        form = Forms::WorkRecordForm.new(user: current_user, record: record, work: record.work)
+        form = WorkRecordForm.new(user: current_user, record: record, work: record.work)
         form.attributes = work_record_form_params
 
         if form.invalid?
@@ -37,11 +37,11 @@ module Api::Internal
     private
 
     def episode_record_form_params
-      params.required(:forms_episode_record_form).permit(:body, :rating, :share_to_twitter, :watched_at)
+      params.required(:episode_record_form).permit(:body, :rating, :share_to_twitter, :watched_at)
     end
 
     def work_record_form_params
-      params.required(:forms_work_record_form).permit(
+      params.required(:work_record_form).permit(
         :body, :rating, :animation_rating, :character_rating, :music_rating, :story_rating, :share_to_twitter, :watched_at
       )
     end

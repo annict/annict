@@ -24,7 +24,7 @@ module Canary
         viewer = context[:viewer]
         episode = Episode.only_kept.find_by_graphql_id(episode_id)
 
-        form = Forms::EpisodeRecordForm.new(
+        form = EpisodeRecordForm.new(
           comment: comment,
           episode: episode,
           oauth_application: context[:application],

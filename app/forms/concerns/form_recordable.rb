@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Forms::Recordable
+module FormRecordable
   extend ActiveSupport::Concern
 
   included do

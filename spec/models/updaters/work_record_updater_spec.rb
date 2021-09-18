@@ -14,7 +14,7 @@ describe Updaters::WorkRecordUpdater, type: :model do
     # Updaterを呼ぶ
     Updaters::WorkRecordUpdater.new(
       user: user,
-      form: Forms::WorkRecordForm.new(
+      form: WorkRecordForm.new(
         user: user,
         work: work,
         body: record.body + "！！",

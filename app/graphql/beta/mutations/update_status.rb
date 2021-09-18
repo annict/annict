@@ -19,7 +19,7 @@ module Beta
           state.downcase
         end
 
-        form = Forms::StatusForm.new(work: work, kind: state)
+        form = StatusForm.new(work: work, kind: state)
 
         if form.invalid?
           raise GraphQL::ExecutionError, form.errors.full_messages.first

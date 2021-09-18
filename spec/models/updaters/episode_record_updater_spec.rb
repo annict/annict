@@ -15,7 +15,7 @@ describe Updaters::EpisodeRecordUpdater, type: :model do
     # Updaterを呼ぶ
     Updaters::EpisodeRecordUpdater.new(
       user: user,
-      form: Forms::EpisodeRecordForm.new(
+      form: EpisodeRecordForm.new(
         user: user,
         body: record.body + "！！",
         episode: episode,

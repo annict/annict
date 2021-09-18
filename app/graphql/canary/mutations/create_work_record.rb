@@ -45,7 +45,7 @@ module Canary
         viewer = context[:viewer]
         work = Work.only_kept.find_by_graphql_id(work_id)
 
-        form = Forms::WorkRecordForm.new(
+        form = WorkRecordForm.new(
           work: work,
           rating_overall: rating_overall,
           rating_animation: rating_animation,

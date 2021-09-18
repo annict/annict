@@ -6,7 +6,7 @@ describe "POST /api/internal/sign_up", type: :request do
       expect(EmailConfirmation.count).to eq 0
 
       post "/api/internal/sign_up", params: {
-        forms_sign_up_form: {
+        sign_up_form: {
           email: "this-is-not-email"
         }
       }
@@ -28,7 +28,7 @@ describe "POST /api/internal/sign_up", type: :request do
       expect(message_delivery).to receive(:deliver_later)
 
       post "/api/internal/sign_up", params: {
-        forms_sign_up_form: {
+        sign_up_form: {
           email: "foo@example.com"
         }
       }

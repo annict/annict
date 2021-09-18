@@ -3,7 +3,7 @@
 module Api::Internal
   class SignInController < Api::Internal::ApplicationController
     def create
-      @form = Forms::SignInForm.new(sign_in_form_params)
+      @form = SignInForm.new(sign_in_form_params)
       @recaptcha = Recaptcha.new(action: "sign_in")
 
       if @form.invalid?
@@ -22,7 +22,7 @@ module Api::Internal
     private
 
     def sign_in_form_params
-      params.require(:forms_sign_in_form).permit(:email).merge(back: stored_location_for(:user))
+      params.require(:sign_in_form).permit(:email).merge(back: stored_location_for(:user))
     end
   end
 end

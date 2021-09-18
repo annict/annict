@@ -9,7 +9,7 @@ module Api
         def create
           work = Work.only_kept.find(@params.work_id)
 
-          form = Forms::WorkRecordForm.new(user: current_user, work: work)
+          form = WorkRecordForm.new(user: current_user, work: work)
           form.attributes = {
             deprecated_title: @params.title,
             body: @params.body,
@@ -36,7 +36,7 @@ module Api
           record = work_record.record
           work = record.work
 
-          form = Forms::WorkRecordForm.new(user: current_user, work: work, record: record, oauth_application: doorkeeper_token.application)
+          form = WorkRecordForm.new(user: current_user, work: work, record: record, oauth_application: doorkeeper_token.application)
           form.attributes = {
             deprecated_title: @params.title,
             body: @params.body,

@@ -5,7 +5,7 @@ module Api::Internal
     before_action :authenticate_user!
 
     def create
-      form = Forms::WorkRecordForm.new(user: current_user, work: Work.only_kept.find(params[:work_id]))
+      form = WorkRecordForm.new(user: current_user, work: Work.only_kept.find(params[:work_id]))
       form.attributes = work_record_form_params
 
       if form.invalid?
@@ -20,7 +20,7 @@ module Api::Internal
     private
 
     def work_record_form_params
-      params.require(:forms_work_record_form).permit(
+      params.require(:work_record_form).permit(
         :body, :rating, :animation_rating, :character_rating, :music_rating, :story_rating, :share_to_twitter, :watched_at
       )
     end

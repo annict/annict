@@ -3,7 +3,7 @@
 module Api::Internal
   class SignUpController < Api::Internal::ApplicationController
     def create
-      @form = Forms::SignUpForm.new(sign_up_form_params)
+      @form = SignUpForm.new(sign_up_form_params)
       @recaptcha = Recaptcha.new(action: "sign_up")
 
       if @form.invalid?
@@ -22,7 +22,7 @@ module Api::Internal
     private
 
     def sign_up_form_params
-      permitted = params.require(:forms_sign_up_form).permit(:email)
+      permitted = params.require(:sign_up_form).permit(:email)
       permitted[:back] = stored_location_for(:user)
       permitted
     end

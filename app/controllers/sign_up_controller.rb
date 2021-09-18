@@ -6,7 +6,7 @@ class SignUpController < ApplicationV6Controller
   before_action :redirect_if_signed_in
 
   def new
-    @form = ::Forms::SignUpForm.new
+    @form = SignUpForm.new
     @recaptcha = Recaptcha.new(action: "sign_up")
   end
 end
