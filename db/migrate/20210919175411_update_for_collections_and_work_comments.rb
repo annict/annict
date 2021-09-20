@@ -3,6 +3,7 @@
 class UpdateForCollectionsAndWorkComments < ActiveRecord::Migration[6.1]
   def change
     add_column :collections, :collection_items_count, :integer, null: false, default: 0
+    rename_column :collections, :title, :name
     remove_column :collections, :aasm_state
     remove_column :collections, :impressions_count
     change_column_null :collections, :description, false

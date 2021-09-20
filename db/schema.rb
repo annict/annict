@@ -206,7 +206,7 @@ ActiveRecord::Schema.define(version: 2021_09_19_175411) do
 
   create_table "collections", force: :cascade do |t|
     t.bigint "user_id", null: false
-    t.string "title", null: false
+    t.string "name", null: false
     t.string "description", default: "", null: false
     t.integer "likes_count", default: 0, null: false
     t.datetime "created_at", null: false

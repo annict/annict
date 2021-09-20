@@ -8,7 +8,7 @@ WorkTaggable.preload(:user, :work_tag).find_each do |work_taggable|
     work_tag = work_taggable.work_tag
     description = work_taggable.description.presence || ""
 
-    collection = user.collections.where(title: work_tag.name).first_or_create!(
+    collection = user.collections.where(name: work_tag.name).first_or_create!(
       created_at: work_taggable.created_at,
       updated_at: work_taggable.updated_at
     )

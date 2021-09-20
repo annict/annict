@@ -9,7 +9,7 @@
 #  deleted_at             :datetime
 #  description            :string           default(""), not null
 #  likes_count            :integer          default(0), not null
-#  title                  :string           not null
+#  name                   :string           not null
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #  user_id                :bigint           not null
@@ -31,7 +31,7 @@ class Collection < ApplicationRecord
   has_many :collection_items, dependent: :destroy
   has_many :works, through: :collection_items
 
-  validates :title, presence: true, length: {maximum: 50}
+  validates :name, presence: true, length: {maximum: 50}
   validates :description, length: {maximum: 500}
 
   def contain?(work)
