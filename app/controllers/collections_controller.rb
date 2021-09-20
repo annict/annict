@@ -8,4 +8,14 @@ class CollectionsController < ApplicationV6Controller
     @profile = @user.profile
     @collections = @user.collections.only_kept.order(created_at: :desc)
   end
+
+  def show
+    set_page_category PageCategory::COLLECTION
+
+    @user = User.only_kept.find_by!(username: params[:username])
+    @profile = @user.profile
+    @collection = @user.collections.only_kept.find(params[:collection_id])
+    @collection_items = @collection.collection_items.only_kept.preload(:work).order(:position)
+    @work_ids = @collection_items.pluck(:work_id)
+  end
 end

@@ -4,6 +4,7 @@ class PageCategory
   NAMES = %i[
     cast_list
     character_fan_list
+    collection
     collection_list
     episode
     episode_list

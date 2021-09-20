@@ -14,6 +14,7 @@ ja:
           show: Annictで%{name}をチェック！
         collections:
           index: '%{profile_name} (%{username})が作ったアニメコレクションをチェック！'
+          show: '%{profile_name} (%{username})が作ったアニメコレクションをチェック！'
         episodes:
           index: 'アニメ「%{title}」のエピソードをチェック！'
           show: 'アニメ「%{work_title}」%{episode_title_with_number}の感想をチェック!'
@@ -76,6 +77,7 @@ ja:
         show: '%{name}'
       collections:
         index: '%{profile_name} (%{username})のアニメコレクション'
+        show: "%{collection_name} | %{profile_name} (%{username})"
       comments:
         edit: コメント編集
       db:

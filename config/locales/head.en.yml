@@ -17,6 +17,7 @@ en:
           show: Looking for character information on %{name}? Find out more with Annict!
         collections:
           index: Check out %{profile_name} (%{username})'s collection list!
+          show: Check out %{profile_name} (%{username})'s collection!
         episodes:
           index: Looking for episode information on %{title}? Find out more with Annict!
           show: Looking for reviews on %{work_title} %{episode_title_with_number}? Find out more with Annict!
@@ -76,6 +77,7 @@ en:
         show: '%{name}'
       collections:
         index: "%{profile_name} (%{username})'s collection list"
+        show: "%{collection_name} | %{profile_name} (%{username})"
       comments:
         edit: Edit Comment
       db:
