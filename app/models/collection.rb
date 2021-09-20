@@ -4,16 +4,15 @@
 #
 # Table name: collections
 #
-#  id                :bigint           not null, primary key
-#  aasm_state        :string           default("published"), not null
-#  deleted_at        :datetime
-#  description       :string
-#  impressions_count :integer          default(0), not null
-#  likes_count       :integer          default(0), not null
-#  title             :string           not null
-#  created_at        :datetime         not null
-#  updated_at        :datetime         not null
-#  user_id           :bigint           not null
+#  id                     :bigint           not null, primary key
+#  collection_items_count :integer          default(0), not null
+#  deleted_at             :datetime
+#  description            :string           default(""), not null
+#  likes_count            :integer          default(0), not null
+#  title                  :string           not null
+#  created_at             :datetime         not null
+#  updated_at             :datetime         not null
+#  user_id                :bigint           not null
 #
 # Indexes
 #
