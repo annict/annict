@@ -8,6 +8,7 @@
 #  body          :text             default(""), not null
 #  deleted_at    :datetime
 #  likes_count   :integer          default(0), not null
+#  name          :string           not null
 #  position      :integer          default(0), not null
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null

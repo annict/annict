@@ -10,7 +10,7 @@ class UpdateForCollectionsAndWorkComments < ActiveRecord::Migration[6.1]
     change_column_default :collections, :description, ""
 
     remove_column :collection_items, :aasm_state
-    remove_column :collection_items, :title
+    rename_column :collection_items, :title, :name
     rename_column :collection_items, :comment, :body
     rename_column :collection_items, :reactions_count, :likes_count
     change_column_null :collection_items, :body, false

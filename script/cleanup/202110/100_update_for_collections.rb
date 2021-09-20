@@ -20,6 +20,7 @@ WorkTaggable.preload(:user, :work_tag).find_each do |work_taggable|
       work = work_tagging.work
 
       user.collection_items.where(collection: collection, work: work).first_or_create!(
+        name: work.title,
         created_at: work_tagging.created_at,
         updated_at: work_tagging.updated_at
       )
