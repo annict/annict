@@ -22,12 +22,12 @@ module Cards
               alt: @work.local_title
             ).render
 
-            h.tag :div, class: "fw-bold h5 mb-0 mt-2 text-center text-truncate" do
+            h.tag :div, class: "fw-bold h5 mb-0 mt-2 text-center text-truncate", title: @work.local_title do
               h.text @work.local_title
             end
 
             if @caption.present?
-              h.tag :div, class: "mb-0 small text-center text-muted text-truncate" do
+              h.tag :div, class: "mb-0 small text-center text-muted text-truncate", title: @caption do
                 h.text @caption
               end
             end
