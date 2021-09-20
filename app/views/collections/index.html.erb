@@ -1,0 +1,48 @@
+<% title = t "head.title.collections.index", profile_name: @user.profile.name, username: @user.username %>
+<% description = meta_description(t("head.meta.description.collections.index", profile_name: @user.profile.name, username: @user.username)) %>
+<% set_meta_tags(title: title, description: description, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false) %>
+
+<%= component_value_fetcher_tag("follow-button", internal_api_following_list_path) %>
+<%= component_value_fetcher_tag("mute-user-button", internal_api_muted_user_list_path) %>
+
+<div class="py-3">
+  <div class="container">
+    <%= Headers::ProfileHeaderComponent.new(self, user: @user).render %>
+  </div>
+
+  <%= Navs::UserNavComponent.new(self, user: @user, params: params).render %>
+
+  <% if @collections.present? %>
+    <div class="container mt-3">
+      <div class="g-3 row">
+        <% @collections.each do |collection| %>
+          <div class="col-12 col-md-6 col-lg-4">
+            <div class="card">
+              <%= link_to collection_path(@user.username, collection.id), class: "card-body" do %>
+                <h2 class="card-title fw-bold h4 text-body">
+                  <%= collection.title %>
+                </h2>
+
+                <div class="small text-muted">
+                  <span class="fw-bold me-1">
+                    <%= collection.collection_items_count %>
+                  </span>
+
+                  <%= t "noun.works" %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% else %>
+    <div class="container mt-3 u-container-flat">
+      <div class="card u-card-flat">
+        <div class="card-body">
+          <%= EmptyV6Component.new(self, text: t("messages._empty.no_collections")).render %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

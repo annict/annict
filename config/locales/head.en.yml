@@ -15,6 +15,8 @@ en:
         characters:
           index: Looking for character information on %{title}? Find out more with Annict!
           show: Looking for character information on %{name}? Find out more with Annict!
+        collections:
+          index: Check out %{profile_name} (%{username})'s collection list!
         episodes:
           index: Looking for episode information on %{title}? Find out more with Annict!
           show: Looking for reviews on %{work_title} %{episode_title_with_number}? Find out more with Annict!
@@ -72,6 +74,8 @@ en:
       characters:
         index: Characters of %{title} (Anime)
         show: '%{name}'
+      collections:
+        index: "%{profile_name} (%{username})'s collection list"
       comments:
         edit: Edit Comment
       db:

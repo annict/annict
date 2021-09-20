@@ -2,11 +2,9 @@
 
 class PageCategory
   NAMES = %i[
-    work
-    work_info
-    work_record_list
     cast_list
     character_fan_list
+    collection_list
     episode
     episode_list
     favorite_character_list
@@ -32,6 +30,9 @@ class PageCategory
     track
     video_list
     welcome
+    work
+    work_info
+    work_record_list
   ].freeze
 
   NAMES.each do |name|
