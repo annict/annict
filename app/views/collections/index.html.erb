@@ -1,5 +1,5 @@
-<% title = t "head.title.collections.index", profile_name: @user.profile.name, username: @user.username %>
-<% description = meta_description(t("head.meta.description.collections.index", profile_name: @user.profile.name, username: @user.username)) %>
+<% title = t "head.title.collections.index", profile_name: @profile.name, username: @user.username %>
+<% description = meta_description(t("head.meta.description.collections.index", profile_name: @profile.name, username: @user.username)) %>
 <% set_meta_tags(title: title, description: description, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false) %>
 
 <%= component_value_fetcher_tag("follow-button", internal_api_following_list_path) %>
