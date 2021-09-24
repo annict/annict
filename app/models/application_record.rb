@@ -10,7 +10,14 @@ class ApplicationRecord < ActiveRecord::Base
   def self.find_by_graphql_id(graphql_id)
     type_name, item_id = GraphQL::Schema::UniqueWithinType.decode(graphql_id)
 
-    raise Annict::Errors::ModelMismatchError if Object.const_get(type_name) != self
+    new_type_name = case type_name
+    when "Record" then "EpisodeRecord"
+    when "Review" then "WorkRecord"
+    else
+      type_name
+    end
+
+    raise Annict::Errors::ModelMismatchError if Object.const_get(new_type_name) != self
 
     find item_id
   end

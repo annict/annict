@@ -53,7 +53,7 @@ class Organization < ApplicationRecord
   # organization_favorites are user data. so do not add `dependent: :destroy`
   has_many :organization_favorites
   has_many :staffs, as: :resource, dependent: :destroy
-  has_many :staff_works, through: :staffs
+  has_many :staff_works, source: :work, through: :staffs
   has_many :users, through: :organization_favorites
 
   def favorites
