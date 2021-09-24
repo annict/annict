@@ -11,10 +11,25 @@ module Beta
       GraphQL::Schema::UniqueWithinType.encode(type_definition.name, object.id)
     end
 
-    def self.object_from_id(id, _query_ctx)
+    def self.decode_id(id, ctx: nil)
       type_name, item_id = GraphQL::Schema::UniqueWithinType.decode(id)
 
-      return nil if type_name.blank? || item_id.blank?
+      if type_name.blank? || item_id.blank?
+        raise "Unexpected id: #{id.inspect}"
+      end
+
+      new_type_name = case type_name
+      when "Record" then "EpisodeRecord"
+      when "Review" then "WorkRecord"
+      else
+        type_name
+      end
+
+      [new_type_name, item_id]
+    end
+
+    def self.object_from_id(id, _query_ctx)
+      type_name, item_id = decode_id(id)
 
       Object.const_get(type_name).find(item_id)
     end

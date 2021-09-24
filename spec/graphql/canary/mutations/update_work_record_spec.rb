@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Canary::Mutations::UpdateWorkRecord do
+xdescribe Canary::Mutations::UpdateWorkRecord do
   let(:user) { create :registered_user }
   let!(:record) { create(:record, user: user) }
   let!(:work_record) { create(:work_record, user: user, record: record) }

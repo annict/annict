@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Canary::Mutations::DeleteRecord do
+xdescribe Canary::Mutations::DeleteRecord do
   let!(:user) { create :registered_user }
   let!(:work) { create :work }
   let!(:episode) { create :episode, work: work }
