@@ -45,10 +45,10 @@ class UserSlotsQuery
 
   private
 
-  attr_reader :user, :slots, :watched, :order
+  attr_reader :user, :watched, :order
 
   def user_slots
-    slots = Slot.where(program: library_entries.select(:program_id))
+    slots = @slots
     slots = slots.where.not(episode_id: library_entries.pluck(:watched_episode_ids).flatten) if watched == false
     slots
   end
