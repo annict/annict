@@ -10,7 +10,7 @@ namespace :episode do
   task update_score: :environment do
     RATING_MAX = 2
 
-    works = Anime.only_kept
+    works = Work.only_kept
 
     works.find_each do |work|
       episodes = work.episodes.only_kept.recorded

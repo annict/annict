@@ -57,8 +57,8 @@ namespace :data_care do
   end
 
   task :copy_casts, %i[base_work_id work_id] => :environment do |_, args|
-    base_work = Anime.find(args[:base_work_id])
-    work = Anime.find(args[:work_id])
+    base_work = Work.find(args[:base_work_id])
+    work = Work.find(args[:work_id])
 
     base_work.casts.order(:sort_number).each do |cast|
       work.casts.create(cast.attributes.except("id", "created_at", "updated_at"))
@@ -66,8 +66,8 @@ namespace :data_care do
   end
 
   task :copy_staffs, %i[base_work_id work_id] => :environment do |_, args|
-    base_work = Anime.find(args[:base_work_id])
-    work = Anime.find(args[:work_id])
+    base_work = Work.find(args[:base_work_id])
+    work = Work.find(args[:work_id])
 
     base_work.staffs.order(:sort_number).each do |staff|
       work.staffs.create(staff.attributes.except("id", "created_at", "updated_at"))
@@ -76,7 +76,7 @@ namespace :data_care do
 
   task :set_sc_count_and_raw_number_to_works, %i[work_id] => :environment do |_, args|
     ActiveRecord::Base.transaction do
-      work = Anime.find(args[:work_id])
+      work = Work.find(args[:work_id])
       work.episodes.order(:sort_number).each_with_index do |e, i|
         number = i + 1
         puts "#{e.number}: #{number}"

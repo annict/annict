@@ -2,25 +2,17 @@
 
 module Beta
   class AnnictSchema < GraphQL::Schema
-    RENAMED_TYPE_MAPPING = {
-      "Work" => "Anime",
-      "WorkImage" => "AnimeImage",
-      "WorkRecord" => "AnimeRecord"
-    }.freeze
-
     query Beta::Types::Objects::Query
     mutation Beta::Types::Objects::Mutation
 
     use GraphQL::Batch
 
     def self.id_from_object(object, type_definition, query_ctx = nil)
-      type_name = RENAMED_TYPE_MAPPING.invert[type_definition.name].presence || type_definition.name
-      GraphQL::Schema::UniqueWithinType.encode(type_name, object.id)
+      GraphQL::Schema::UniqueWithinType.encode(type_definition.name, object.id)
     end
 
     def self.object_from_id(id, _query_ctx)
       type_name, item_id = GraphQL::Schema::UniqueWithinType.decode(id)
-      type_name = RENAMED_TYPE_MAPPING[type_name].presence || type_name
 
       return nil if type_name.blank? || item_id.blank?
 
@@ -45,11 +37,11 @@ module Beta
         Beta::Types::Objects::StatusType
       when User
         Beta::Types::Objects::UserType
-      when Anime
+      when Work
         Beta::Types::Objects::WorkType
-      when AnimeImage
+      when WorkImage
         Beta::Types::Objects::WorkImageType
-      when AnimeRecord
+      when WorkRecord
         Beta::Types::Objects::ReviewType
       else
         raise "Unexpected object: #{obj}"

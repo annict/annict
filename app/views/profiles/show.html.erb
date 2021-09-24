@@ -5,7 +5,7 @@
 
 <%= component_value_fetcher_tag("follow-button", internal_api_following_list_path) %>
 <%= component_value_fetcher_tag("mute-user-button", internal_api_muted_user_list_path) %>
-<%= component_value_fetcher_tag("status-select-dropdown", internal_api_library_entry_list_path, method: :post, payload: {anime_ids: @anime_ids}) %>
+<%= component_value_fetcher_tag("status-select-dropdown", internal_api_library_entry_list_path, method: :post, payload: {work_ids: @work_ids}) %>
 <%= component_value_fetcher_tag("like-button", internal_api_like_list_path) %>
 <%= component_value_fetcher_tag("spoiler-guard", internal_api_spoiler_guard_path) %>
 
@@ -61,7 +61,7 @@
             <div class="g-3 mt-3 row">
               <% [
                 [record_list_path(@user.username), @user.records_count, "Records"],
-                [library_path(@user.username, :watching), @user.watching_anime_count, "Watching"],
+                [library_path(@user.username, :watching), @user.watching_work_count, "Watching"],
                 [followee_list_path(@user.username), @user.following_count, "Following"],
                 [follower_list_path(@user.username), @user.followers_count, "Followers"],
                 [favorite_character_list_path(@user.username), @user.character_favorites_count, "Characters"],
@@ -139,7 +139,7 @@
                         <% resource = rf.send(resource_name) %>
                         <%= link_to resource.local_name, send("#{resource_name}_path", resource.id) %>
                         <div class="small text-muted">
-                          <%= t("noun.n_works_watched", count: rf.watched_anime_count) %>
+                          <%= t("noun.n_works_watched", count: rf.watched_work_count) %>
                         </div>
                       </div>
                     <% end %>

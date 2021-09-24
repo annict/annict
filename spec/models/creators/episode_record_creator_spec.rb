@@ -2,9 +2,9 @@
 
 describe Creators::EpisodeRecordCreator, type: :model do
   let!(:user) { create :registered_user }
-  let!(:anime) { create :anime }
-  let!(:episode) { create :episode, anime: anime, sort_number: 10 }
-  let!(:next_episode) { create :episode, anime: anime, sort_number: 20 }
+  let!(:work) { create :work }
+  let!(:episode) { create :episode, work: work, sort_number: 10 }
+  let!(:next_episode) { create :episode, work: work, sort_number: 20 }
 
   it "エピソードへの記録が作成できること" do
     # Creatorを呼んでいないので、各レコードは0件のはず
@@ -40,14 +40,14 @@ describe Creators::EpisodeRecordCreator, type: :model do
     activity = user.activities.first
     library_entry = user.library_entries.first
 
-    expect(record.work_id).to eq anime.id
+    expect(record.work_id).to eq work.id
 
     expect(episode_record.body).to eq "にぱー"
     expect(episode_record.locale).to eq "ja"
     expect(episode_record.rating_state).to eq "good"
     expect(episode_record.episode_id).to eq episode.id
     expect(episode_record.record_id).to eq record.id
-    expect(episode_record.work_id).to eq anime.id
+    expect(episode_record.work_id).to eq work.id
 
     expect(activity_group.itemable_type).to eq "EpisodeRecord"
     expect(activity_group.single).to eq true
@@ -55,7 +55,7 @@ describe Creators::EpisodeRecordCreator, type: :model do
     expect(activity.activity_group_id).to eq activity_group.id
     expect(activity.itemable).to eq episode_record
 
-    expect(library_entry.anime).to eq anime
+    expect(library_entry.work).to eq work
     expect(library_entry.watched_episode_ids).to eq [episode.id]
     expect(library_entry.next_episode).to eq next_episode
   end
@@ -63,7 +63,7 @@ describe Creators::EpisodeRecordCreator, type: :model do
   describe "アクティビティの作成" do
     context "直前の記録に感想が書かれていて、その後に新たに感想付きの記録をしたとき" do
       let(:episode) { create :episode, episode_record_bodies_count: 1 }
-      let(:anime) { episode.anime }
+      let(:work) { episode.work }
       # 感想付きの記録が直前にある
       let(:episode_record) { create(:episode_record, user: user, episode: episode, body: "はうー") }
       let!(:activity_group) { create(:activity_group, user: user, itemable_type: "EpisodeRecord", single: true) }
@@ -105,7 +105,7 @@ describe Creators::EpisodeRecordCreator, type: :model do
     context "直前の記録に感想が書かれていない & その後に新たに感想無しの記録をしたとき" do
       let(:user) { create :registered_user }
       let(:episode) { create :episode }
-      let(:anime) { episode.anime }
+      let(:work) { episode.work }
       # 感想無しの記録が直前にある
       let(:episode_record) { create(:episode_record, user: user, episode: episode, body: "") }
       let!(:activity_group) { create(:activity_group, user: user, itemable_type: "EpisodeRecord", single: false) }

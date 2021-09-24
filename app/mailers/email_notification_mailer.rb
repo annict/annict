@@ -24,7 +24,7 @@ class EmailNotificationMailer < ApplicationMailer
     @unsubscription_key = @liked_user.email_notification.unsubscription_key
     @user = User.only_kept.find(user_id)
     @episode_record = @liked_user.episode_records.only_kept.find(episode_record_id)
-    @work = @episode_record.anime
+    @work = @episode_record.work
     @episode = @episode_record.episode
 
     I18n.with_locale(@liked_user.locale) do
@@ -40,7 +40,7 @@ class EmailNotificationMailer < ApplicationMailer
   def favorite_works_added(user_id, work_ids)
     @user = User.only_kept.find(user_id)
     @unsubscription_key = @user.email_notification.unsubscription_key
-    @works = Anime.only_kept.where(id: work_ids)
+    @works = Work.only_kept.where(id: work_ids)
 
     I18n.with_locale(@user.locale) do
       subject = default_i18n_subject(n: @works.size)
@@ -51,7 +51,7 @@ class EmailNotificationMailer < ApplicationMailer
   def related_works_added(user_id, work_ids)
     @user = User.only_kept.find(user_id)
     @unsubscription_key = @user.email_notification.unsubscription_key
-    @works = Anime.only_kept.where(id: work_ids)
+    @works = Work.only_kept.where(id: work_ids)
 
     I18n.with_locale(@user.locale) do
       subject = default_i18n_subject(n: @works.size)

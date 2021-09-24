@@ -2,9 +2,9 @@
 
 class PageCategory
   NAMES = %i[
-    anime
-    anime_info
-    anime_record_list
+    work
+    work_info
+    work_record_list
     cast_list
     character_fan_list
     episode
@@ -16,17 +16,17 @@ class PageCategory
     follower_list
     home
     library
-    newest_anime_list
+    newest_work_list
     organization_fan_list
     person_fan_list
-    popular_anime_list
+    popular_work_list
     profile
     record
     record_edit
     record_list
-    related_anime_list
+    related_work_list
     search
-    seasonal_anime_list
+    seasonal_work_list
     slot_list
     staff_list
     track

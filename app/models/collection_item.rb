@@ -39,7 +39,7 @@ class CollectionItem < ApplicationRecord
 
   belongs_to :user
   belongs_to :collection, touch: true
-  belongs_to :anime, foreign_key: :work_id
+  belongs_to :work
   has_many :reactions, dependent: :destroy
 
   validates :title, presence: true, length: {maximum: 50}

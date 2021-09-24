@@ -21,7 +21,7 @@ describe "GET /@:username/records", type: :request do
       let!(:record_1) { create(:record, user: user) }
       let!(:episode_record) { create(:episode_record, record: record_1, user: user, body: "楽しかった") }
       let!(:record_2) { create(:record, user: user) }
-      let!(:work_record) { create(:anime_record, user: user, record: record_2, body: "最高") }
+      let!(:work_record) { create(:work_record, user: user, record: record_2, body: "最高") }
 
       it "displays records" do
         get "/@#{user.username}/records"
@@ -50,7 +50,7 @@ describe "GET /@:username/records", type: :request do
       let!(:record_1) { create(:record, user: user) }
       let!(:episode_record) { create(:episode_record, record: record_1, user: user, body: "楽しかった") }
       let!(:record_2) { create(:record, user: user) }
-      let!(:work_record) { create(:anime_record, user: user, record: record_2, body: "最高") }
+      let!(:work_record) { create(:work_record, user: user, record: record_2, body: "最高") }
 
       it "displays records" do
         get "/@#{user.username}/records"
@@ -66,9 +66,9 @@ describe "GET /@:username/records", type: :request do
   context "when the month parameter is attached" do
     let!(:user) { create(:registered_user) }
     let!(:record_1) { create(:record, user: user, created_at: Time.zone.parse("2020-04-01")) }
-    let!(:record_1_work_record) { create(:anime_record, user: user, record: record_1, body: "最高") }
+    let!(:record_1_work_record) { create(:work_record, user: user, record: record_1, body: "最高") }
     let!(:record_2) { create(:record, user: user, created_at: Time.zone.parse("2020-05-01")) }
-    let!(:record_2_work_record) { create(:anime_record, user: user, record: record_2, body: "すごく良かった") }
+    let!(:record_2_work_record) { create(:work_record, user: user, record: record_2, body: "すごく良かった") }
 
     it "displays records" do
       get "/@#{user.username}/records?year=2020&month=5"

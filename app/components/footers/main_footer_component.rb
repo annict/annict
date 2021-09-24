@@ -65,14 +65,14 @@ module Footers
 
               h.tag :div, class: "col-12 col-sm-3" do
                 h.tag :h6, class: "fw-bold h4 mb-3" do
-                  h.text t("noun.seasonal_anime")
+                  h.text t("noun.seasonal_work")
                 end
 
                 h.tag :ul, class: "c-footer__list list-unstyled" do
                   Season.latest_slugs.each do |slug|
                     h.tag :li, class: "mb-2" do
                       year, name = slug.split("-")
-                      h.tag :a, href: view_context.seasonal_anime_list_path(slug) do
+                      h.tag :a, href: view_context.seasonal_work_list_path(slug) do
                         h.text Season.new(year, name).local_name
                       end
                     end

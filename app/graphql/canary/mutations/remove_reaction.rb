@@ -25,7 +25,7 @@ module Canary
 
         recipient = case reactable
         when Record
-          reactable.episode_record.presence || reactable.anime_record
+          reactable.episode_record.presence || reactable.work_record
         else
           reactable
         end

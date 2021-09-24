@@ -3,7 +3,7 @@
 FactoryBot.define do
   factory :cast do
     person
-    anime
+    work
     character
     sequence(:name) { |n| "山田#{n}郎" }
     sequence(:name_en) { |n| "Yamada, #{n}rou" }

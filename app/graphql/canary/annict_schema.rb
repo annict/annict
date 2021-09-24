@@ -28,8 +28,6 @@ module Canary
         Canary::Types::Objects::ActivityType
       when ActivityGroup
         Canary::Types::Objects::ActivityGroupType
-      when Anime
-        Canary::Types::Objects::AnimeType
       when EpisodeRecord
         Canary::Types::Objects::EpisodeRecordType
       when Episode
@@ -48,10 +46,12 @@ module Canary
         Canary::Types::Objects::StatusType
       when User
         Canary::Types::Objects::UserType
-      when AnimeImage
-        Canary::Types::Objects::AnimeImageType
-      when AnimeRecord
-        Canary::Types::Objects::AnimeRecordType
+      when Work
+        Canary::Types::Objects::WorkType
+      when WorkImage
+        Canary::Types::Objects::WorkImageType
+      when WorkRecord
+        Canary::Types::Objects::WorkRecordType
       else
         raise "Unexpected object: #{obj}"
       end

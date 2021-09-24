@@ -2,7 +2,7 @@
 
 describe "GraphQL API Query" do
   describe "node" do
-    let(:work) { create(:anime) }
+    let(:work) { create(:work) }
     let(:id) { Beta::AnnictSchema.id_from_object(work, work.class) }
     let(:result) do
       query_string = <<~GRAPHQL

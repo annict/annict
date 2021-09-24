@@ -1,0 +1,53 @@
+<div class="overflow-hidden">
+  <div class="g-3 row">
+    <% works.each do |work| %>
+      <div class="col-6 col-md-3 col-xl-2">
+        <%= link_to work_path(work) do %>
+          <%= Pictures::WorkPictureComponent.new(self, work: work, width: 250).render %>
+        <% end %>
+
+        <h2 class="fw-bold mt-2 small text-center text-truncate">
+          <%= link_to work.local_title, work_path(work), class: "text-body" %>
+        </h2>
+
+        <div class="mt-2 text-center">
+          <%= ButtonGroups::WorkButtonGroupComponent.new(self, work: work).render %>
+        </div>
+
+        <div class="mt-2">
+          <% casts = @casts_data[work.id] %>
+          <% if casts.present? %>
+            <div class="fw-bold small">
+                <%= t "noun.casts" %>
+            </div>
+
+            <ul class="list-inline mb-0">
+              <% casts.uniq(&:name).first(6).each do |cast| %>
+                <li class="list-inline-item small">
+                  <%= link_to cast.local_name, person_path(cast.person_id) %>
+                </li>
+              <% end %>
+            </ul>
+          <% end %>
+        </div>
+
+        <div class="mt-2">
+          <% staffs = @staffs_data[work.id] %>
+          <% if staffs.present? %>
+            <div class="fw-bold small">
+                <%= t "noun.staffs" %>
+            </div>
+
+            <ul class="list-inline mb-0">
+              <% staffs.uniq(&:name).each do |staff| %>
+                <li class="list-inline-item small">
+                  <%= link_to staff.local_name, staff_resource_path(staff) %>
+                </li>
+              <% end %>
+            </ul>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

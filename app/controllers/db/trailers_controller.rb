@@ -5,18 +5,18 @@ module Db
     before_action :authenticate_user!, only: %i[new create edit update destroy]
 
     def index
-      @work = Anime.without_deleted.find(params[:work_id])
+      @work = Work.without_deleted.find(params[:work_id])
       @trailers = @work.trailers.without_deleted.order(:sort_number)
     end
 
     def new
-      @work = Anime.without_deleted.find(params[:work_id])
+      @work = Work.without_deleted.find(params[:work_id])
       @form = Db::TrailerRowsForm.new
       authorize @form
     end
 
     def create
-      @work = Anime.without_deleted.find(params[:work_id])
+      @work = Work.without_deleted.find(params[:work_id])
       @form = Db::TrailerRowsForm.new(trailer_rows_form_params)
       @form.user = current_user
       @form.work = @work
@@ -32,7 +32,7 @@ module Db
     def edit
       @trailer = Trailer.without_deleted.find(params[:id])
       authorize @trailer
-      @work = @trailer.anime
+      @work = @trailer.work
     end
 
     def update
@@ -46,7 +46,7 @@ module Db
 
       @trailer.save_and_create_activity!
 
-      redirect_to db_trailer_list_path(@trailer.anime), notice: t("messages._common.updated")
+      redirect_to db_trailer_list_path(@trailer.work), notice: t("messages._common.updated")
     end
 
     def destroy
@@ -56,7 +56,7 @@ module Db
       @trailer.destroy_in_batches
 
       redirect_back(
-        fallback_location: db_trailer_list_path(@trailer.anime),
+        fallback_location: db_trailer_list_path(@trailer.work),
         notice: t("messages._common.deleted")
       )
     end

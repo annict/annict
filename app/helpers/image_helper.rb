@@ -94,13 +94,13 @@ module ImageHelper
     })
   end
 
-  def ann_anime_image_url(anime, width:, format: "jpg")
-    height = anime.anime_image_height(width)
-    ann_image_url(anime.anime_image, :image, width: width, height: height, format: format)
+  def ann_work_image_url(work, width:, format: "jpg")
+    height = work.work_image_height(width)
+    ann_image_url(work.work_image, :image, width: width, height: height, format: format)
   end
 
-  def ann_anime_video_image_url(anime, trailer, width:, format: "jpg")
-    height = anime.video_image_height(width)
+  def ann_work_video_image_url(work, trailer, width:, format: "jpg")
+    height = work.video_image_height(width)
     ann_image_url(trailer, :image, width: width, height: height, format: format)
   end
 

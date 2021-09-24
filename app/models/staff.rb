@@ -64,7 +64,7 @@ class Staff < ApplicationRecord
   counter_culture :resource, column_name: ->(staff) { staff.published? ? :staffs_count : nil }
 
   belongs_to :resource, polymorphic: true
-  belongs_to :anime, foreign_key: :work_id, touch: true
+  belongs_to :work, touch: true
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
 

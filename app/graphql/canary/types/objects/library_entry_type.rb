@@ -10,7 +10,7 @@ module Canary
 
         field :tracked_episodes_count_in_current_status, Int, null: false
         field :user, Canary::Types::Objects::UserType, null: false
-        field :anime, Canary::Types::Objects::AnimeType, null: false
+        field :work, Canary::Types::Objects::WorkType, null: false
         field :status, Canary::Types::Objects::StatusType, null: true
         field :program, Canary::Types::Objects::ProgramType, null: true
 
@@ -22,8 +22,8 @@ module Canary
           RecordLoader.for(User).load(object.user_id)
         end
 
-        def anime
-          RecordLoader.for(Anime).load(object.work_id)
+        def work
+          RecordLoader.for(Work).load(object.work_id)
         end
 
         def status

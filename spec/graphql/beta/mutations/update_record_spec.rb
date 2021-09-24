@@ -2,10 +2,10 @@
 
 describe Beta::Mutations::UpdateRecord do
   let!(:user) { create :registered_user }
-  let!(:anime) { create :anime }
-  let!(:episode) { create :episode, anime: anime }
-  let!(:record) { create :record, user: user, anime: anime }
-  let!(:episode_record) { create(:episode_record, user: user, record: record, anime: anime, episode: episode, rating: nil) }
+  let!(:work) { create :work }
+  let!(:episode) { create :episode, work: work }
+  let!(:record) { create :record, user: user, work: work }
+  let!(:episode_record) { create(:episode_record, user: user, record: record, work: work, episode: episode, rating: nil) }
   let!(:token) { create(:oauth_access_token) }
   let!(:context) { {viewer: user, doorkeeper_token: token, writable: true} }
   let!(:episode_record_id) { Canary::AnnictSchema.id_from_object(episode_record, episode_record.class) }

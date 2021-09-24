@@ -1,7 +1,7 @@
 @each $name,
   $color-value
     in (
-      anime: var(--ann-anime-color),
+      work: var(--ann-work-color),
       average: var(--ann-rating-average-color),
       bad: var(--ann-rating-bad-color),
       completed: var(--ann-status-completed-color),

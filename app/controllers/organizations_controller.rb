@@ -6,10 +6,10 @@ class OrganizationsController < ApplicationV6Controller
     @staffs_with_year = @organization
       .staffs
       .only_kept
-      .joins(:anime)
+      .joins(:work)
       .where(works: {deleted_at: nil})
-      .includes(anime: :anime_image)
-      .group_by { |s| s.anime.season_year.presence || 0 }
+      .includes(work: :work_image)
+      .group_by { |s| s.work.season_year.presence || 0 }
     @staff_years = @staffs_with_year.keys.sort.reverse
 
     @organization_favorites = @organization

@@ -4,7 +4,7 @@ describe "GET /db/search", type: :request do
   context "user does not sign in" do
     context "when resources are saved" do
       let!(:series) { create(:series, name: "しりーず検索") }
-      let!(:work) { create(:anime, title: "さくひん検索") }
+      let!(:work) { create(:work, title: "さくひん検索") }
       let!(:person) { create(:person, name: "じんぶつ検索") }
       let!(:organization) { create(:organization, name: "だんたい検索") }
       let!(:character) { create(:character, name: "きゃらくたー検索") }
@@ -40,7 +40,7 @@ describe "GET /db/search", type: :request do
 
     context "when resources are saved" do
       let!(:series) { create(:series, name: "しりーず検索") }
-      let!(:work) { create(:anime, title: "さくひん検索") }
+      let!(:work) { create(:work, title: "さくひん検索") }
       let!(:person) { create(:person, name: "じんぶつ検索") }
       let!(:organization) { create(:organization, name: "だんたい検索") }
       let!(:character) { create(:character, name: "きゃらくたー検索") }

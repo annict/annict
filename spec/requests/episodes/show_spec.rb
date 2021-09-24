@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-describe "GET /works/:anime_id/episodes/:episode_id", type: :request do
+describe "GET /works/:work_id/episodes/:episode_id", type: :request do
   context "ログインしていないとき" do
-    let!(:anime) { create(:anime) }
-    let!(:episode) { create(:episode, anime: anime) }
+    let!(:work) { create(:work) }
+    let!(:episode) { create(:episode, work: work) }
 
     it "エピソードページが表示されること" do
-      get "/works/#{anime.id}/episodes/#{episode.id}"
+      get "/works/#{work.id}/episodes/#{episode.id}"
 
       expect(response.status).to eq(200)
       expect(response.body).to include(episode.title)
@@ -15,18 +15,18 @@ describe "GET /works/:anime_id/episodes/:episode_id", type: :request do
 
   context "ログインしているとき" do
     let!(:user) { create(:registered_user) }
-    let!(:anime) { create(:anime) }
-    let!(:episode) { create(:episode, anime: anime) }
+    let!(:work) { create(:work) }
+    let!(:episode) { create(:episode, work: work) }
 
     before do
       login_as(user, scope: :user)
     end
 
     it "エピソードページが表示されること" do
-      get "/works/#{anime.id}/episodes/#{episode.id}"
+      get "/works/#{work.id}/episodes/#{episode.id}"
 
       expect(response.status).to eq(200)
-      expect(response.body).to include(anime.title)
+      expect(response.body).to include(work.title)
     end
   end
 end

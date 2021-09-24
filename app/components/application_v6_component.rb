@@ -3,7 +3,7 @@
 class ApplicationV6Component
   attr_reader :view_context
 
-  delegate :active_link_to, :ann_anime_image_url, :ann_avatar_image_url, :ann_image_url, :ann_video_image_url, :current_user, :display_date, :display_time, :dom_id,
+  delegate :active_link_to, :ann_work_image_url, :ann_avatar_image_url, :ann_image_url, :ann_video_image_url, :current_user, :display_date, :display_time, :dom_id,
     :form_with, :image_tag, :link_to, :link_with_domain, :local_url, :locale_en?, :locale_ja?, :options_for_select, :page_category, :render_markdown,
     :simple_format, :t, :text_area_tag, :text_field_tag, :url_for,
     to: :view_context

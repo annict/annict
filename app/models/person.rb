@@ -70,13 +70,13 @@ class Person < ApplicationRecord
 
   belongs_to :prefecture, optional: true
   has_many :casts, dependent: :destroy
-  has_many :cast_works, through: :casts, source: :anime
+  has_many :cast_works, through: :casts
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
   # person_favorites are user data. so do not add `dependent: :destroy`
   has_many :person_favorites
   has_many :staffs, as: :resource, dependent: :destroy
-  has_many :staff_works, through: :staffs, source: :anime
+  has_many :staff_works, through: :staffs
   has_many :users, through: :person_favorites
 
   def favorites

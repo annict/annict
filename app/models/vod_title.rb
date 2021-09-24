@@ -34,7 +34,7 @@ class VodTitle < ApplicationRecord
   include SoftDeletable
 
   belongs_to :channel
-  belongs_to :anime, foreign_key: :work_id, optional: true
+  belongs_to :work, optional: true
 
   def import_csv
     [

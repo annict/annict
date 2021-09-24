@@ -9,11 +9,11 @@ module Db
     private
 
     def create_resource
-      @create_resource ||= Anime.without_deleted.unpublished.find(params[:id])
+      @create_resource ||= Work.without_deleted.unpublished.find(params[:id])
     end
 
     def destroy_resource
-      @destroy_resource ||= Anime.without_deleted.published.find(params[:id])
+      @destroy_resource ||= Work.without_deleted.published.find(params[:id])
     end
 
     def after_created_path

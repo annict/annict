@@ -10,7 +10,7 @@ module Canary
 
         field :database_id, Integer, null: false
         field :channel, Canary::Types::Objects::ChannelType, null: false
-        field :anime, Canary::Types::Objects::AnimeType, null: false
+        field :work, Canary::Types::Objects::WorkType, null: false
         field :started_at, Canary::Types::Scalars::DateTime, null: true
         field :vod_title_code, String, null: false
         field :vod_title_name, String, null: false
@@ -27,8 +27,8 @@ module Canary
           RecordLoader.for(Channel).load(object.channel_id)
         end
 
-        def anime
-          RecordLoader.for(Anime).load(object.work_id)
+        def work
+          RecordLoader.for(Work).load(object.work_id)
         end
 
         def viewer_selected

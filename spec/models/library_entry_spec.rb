@@ -3,17 +3,17 @@
 describe LibraryEntry, type: :model do
   describe "#append_episode!" do
     let(:user) { create :user }
-    let(:existing_anime) { create :anime }
-    let(:anime) { create :anime }
-    let(:episode) { create :episode, anime: anime, sort_number: 100 }
+    let(:existing_work) { create :work }
+    let(:work) { create :work }
+    let(:episode) { create :episode, work: work, sort_number: 100 }
 
     before do
-      user.library_entries.create!(anime: existing_anime)
+      user.library_entries.create!(work: existing_work)
     end
 
     context "ステータスが設定されていないとき" do
       before do
-        @library_entry = user.library_entries.create!(anime: anime)
+        @library_entry = user.library_entries.create!(work: work)
       end
 
       it "エピソードが追加できること" do
@@ -38,10 +38,10 @@ describe LibraryEntry, type: :model do
     end
 
     context "ステータスが「見てる」のとき" do
-      let(:status) { create :status, user: user, anime: anime, kind: :watching }
+      let(:status) { create :status, user: user, work: work, kind: :watching }
 
       before do
-        @library_entry = user.library_entries.create!(anime: anime, status: status)
+        @library_entry = user.library_entries.create!(work: work, status: status)
       end
 
       it "エピソードが追加できること" do
@@ -67,10 +67,10 @@ describe LibraryEntry, type: :model do
     end
 
     context "次のエピソードが存在するとき" do
-      let!(:next_episode) { create :episode, anime: anime, sort_number: 200 }
+      let!(:next_episode) { create :episode, work: work, sort_number: 200 }
 
       before do
-        @library_entry = user.library_entries.create!(anime: anime)
+        @library_entry = user.library_entries.create!(work: work)
       end
 
       it "エピソードが追加できること" do
@@ -95,13 +95,13 @@ describe LibraryEntry, type: :model do
     end
 
     context "次の放送予定が存在するとき" do
-      let!(:next_episode) { create :episode, anime: anime, sort_number: 200 }
-      let!(:program) { create :program, anime: anime }
-      let!(:slot) { create :slot, program: program, anime: anime, episode: episode }
-      let!(:next_slot) { create :slot, program: program, anime: anime, episode: next_episode }
+      let!(:next_episode) { create :episode, work: work, sort_number: 200 }
+      let!(:program) { create :program, work: work }
+      let!(:slot) { create :slot, program: program, work: work, episode: episode }
+      let!(:next_slot) { create :slot, program: program, work: work, episode: next_episode }
 
       before do
-        @library_entry = user.library_entries.create!(anime: anime, program: program)
+        @library_entry = user.library_entries.create!(work: work, program: program)
       end
 
       it "エピソードが追加できること" do

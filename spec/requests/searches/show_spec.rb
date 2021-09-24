@@ -2,13 +2,13 @@
 
 describe "GET /search", type: :request do
   describe "アニメ検索" do
-    let!(:anime) { create(:anime) }
+    let!(:work) { create(:work) }
 
     it "検索結果が表示できること" do
-      get "/search", params: {q: anime.title}
+      get "/search", params: {q: work.title}
 
       expect(response.status).to eq(200)
-      expect(response.body).to include(anime.title)
+      expect(response.body).to include(work.title)
     end
   end
 

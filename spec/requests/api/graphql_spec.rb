@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 describe "POST /graphql", type: :request do
-  let(:anime) { create(:anime) }
+  let(:work) { create(:work) }
   let(:access_token) { create(:oauth_access_token) }
-  let(:id) { Beta::AnnictSchema.id_from_object(anime, anime.class) }
+  let(:id) { Beta::AnnictSchema.id_from_object(work, work.class) }
   let(:query) do
     <<~GRAPHQL
       query($workId: ID!) {
@@ -26,8 +26,8 @@ describe "POST /graphql", type: :request do
     expect(json).to include({
       data: {
         node: {
-          annictId: anime.id,
-          title: anime.title,
+          annictId: work.id,
+          title: work.title,
           id: id
         }
       }

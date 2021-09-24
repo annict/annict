@@ -6,9 +6,9 @@ module Api
       def create
         return head(:unauthorized) unless user_signed_in?
 
-        anime = Anime.only_kept.find(params[:anime_id])
-        program = params[:program_id] == "0" ? nil : anime.programs.only_kept.find(params[:program_id])
-        current_user.save_program_to_library_entry!(anime, program)
+        work = Work.only_kept.find(params[:work_id])
+        program = params[:program_id] == "0" ? nil : work.programs.only_kept.find(params[:program_id])
+        current_user.save_program_to_library_entry!(work, program)
 
         head 204
       end

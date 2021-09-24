@@ -36,7 +36,7 @@ class Like < ApplicationRecord
 
     recipient = case resource
     when Record
-      resource.episode_record? ? resource.episode_record : resource.anime_record
+      resource.episode_record? ? resource.episode_record : resource.work_record
     else
       resource
     end

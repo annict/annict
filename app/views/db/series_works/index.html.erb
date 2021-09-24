@@ -14,7 +14,7 @@
     </div>
 
     <div class="col-auto">
-      <% if policy(SeriesAnime).create? %>
+      <% if policy(SeriesWork).create? %>
         <div class="text-end">
           <%= link_to db_new_series_work_path(@series), class: "btn btn-outline-primary" do %>
             <%= icon "plus" %>
@@ -62,10 +62,10 @@
                   <%= series_work.id %>
                 </td>
                 <td>
-                  <%= link_to series_work.anime.local_title, anime_path(anime_id: series_work.anime.id), target: "_blank" %>
+                  <%= link_to series_work.work.local_title, work_path(work_id: series_work.work.id), target: "_blank" %>
                 </td>
                 <td>
-                  <%= series_work.anime.release_season.presence || "-" %>
+                  <%= series_work.work.release_season.presence || "-" %>
                 </td>
                 <td>
                   <%= series_work.summary.presence || "-" %>

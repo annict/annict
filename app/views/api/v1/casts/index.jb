@@ -6,7 +6,7 @@ json[:casts] = @casts.map { |cast|
   cast_json = {}
   cast_json.merge!(render("api/v1/casts/cast", cast: cast, params: @params, field_prefix: ""))
 
-  cast_json[:work] = render("api/v1/works/work", work: cast.anime, params: @params, field_prefix: "work.")
+  cast_json[:work] = render("api/v1/works/work", work: cast.work, params: @params, field_prefix: "work.")
   cast_json[:character] = render("api/v1/characters/character", character: cast.character, params: @params, field_prefix: "character.")
   cast_json[:person] = render("api/v1/people/person", person: cast.person, params: @params, field_prefix: "person.")
 

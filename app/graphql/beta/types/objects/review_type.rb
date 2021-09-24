@@ -29,11 +29,11 @@ module Beta
         end
 
         def work
-          Beta::RecordLoader.for(Anime).load(object.work_id)
+          Beta::RecordLoader.for(Work).load(object.work_id)
         end
 
         def title
-          object.title.presence || I18n.t("noun.record_of_work", work_title: object.anime.local_title)
+          object.title.presence || I18n.t("noun.record_of_work", work_title: object.work.local_title)
         end
       end
     end

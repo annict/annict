@@ -2,9 +2,9 @@ import Offcanvas from 'bootstrap/js/dist/offcanvas';
 import { Controller } from 'stimulus';
 
 export default class extends Controller {
-  static values = { animeId: Number };
+  static values = { workId: Number };
 
-  animeIdValue!: number;
+  workIdValue!: number;
   framePath!: string;
   statusKinds!: { [key: number]: string };
   offcanvasElm!: HTMLElement | null;
@@ -22,15 +22,15 @@ export default class extends Controller {
 
       this.statusKinds = event.detail;
 
-      if (!this.statusKinds[this.animeIdValue]) {
+      if (!this.statusKinds[this.workIdValue]) {
         this.element.setAttribute('disabled', 'true');
       }
     });
 
     document.addEventListener('tracking-offcanvas-button:enabled', (event: any) => {
-      const { animeId } = event.detail;
+      const { workId } = event.detail;
 
-      if (this.animeIdValue === animeId) {
+      if (this.workIdValue === workId) {
         this.element.removeAttribute('disabled');
       }
     });

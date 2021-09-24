@@ -3,7 +3,7 @@
 describe "GraphQL API (Beta) Mutation" do
   describe "createReview" do
     let!(:user) { create(:user, :with_setting) }
-    let!(:work) { create(:anime) }
+    let!(:work) { create(:work) }
     let!(:token) { create(:oauth_access_token) }
     let!(:context) { {viewer: user, doorkeeper_token: token} }
     let!(:id) { Beta::AnnictSchema.id_from_object(work, work.class) }

@@ -2,9 +2,9 @@
 
 describe "GET /db/series/:series_id/series_works", type: :request do
   context "user does not sign in" do
-    let!(:series_work) { create(:series_anime) }
+    let!(:series_work) { create(:series_work) }
     let!(:series) { series_work.series }
-    let!(:work) { series_work.anime }
+    let!(:work) { series_work.work }
 
     it "responses series work list" do
       get "/db/series/#{series.id}/series_works"
@@ -16,9 +16,9 @@ describe "GET /db/series/:series_id/series_works", type: :request do
 
   context "user signs in" do
     let!(:user) { create(:registered_user) }
-    let!(:series_work) { create(:series_anime) }
+    let!(:series_work) { create(:series_work) }
     let!(:series) { series_work.series }
-    let!(:work) { series_work.anime }
+    let!(:work) { series_work.work }
 
     before do
       login_as(user, scope: :user)

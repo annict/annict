@@ -7,13 +7,13 @@ ja:
     after: After
     ago: 前
     aired: 開始日
-    airing_anime: 放送中アニメ
+    airing_work: 放送中アニメ
     airing: 放送中
     all: 全て
     all_comments: 全ての感想
     animation: 映像
-    anime: アニメ
-    anime_page: アニメページ
+    work: アニメ
+    work_page: アニメページ
     annict_api: Annict API
     annict_db: Annict DB
     annict_developers: Annict Developers
@@ -119,8 +119,8 @@ ja:
     personal_access_tokens: 個人用アクセストークン
     plan_to_watch: 見たいアニメ
     popular: 人気アニメ
-    popular_airing_anime: 人気の放送中アニメ
-    popular_anime: 人気アニメ
+    popular_airing_work: 人気の放送中アニメ
+    popular_work: 人気アニメ
     popular_tags: 人気のタグ
     prev: 前へ
     prev_page: 前のページ
@@ -153,7 +153,7 @@ ja:
     search: 検索
     season: シーズン
     seasons: シーズン
-    seasonal_anime: シーズン別アニメ
+    seasonal_work: シーズン別アニメ
     series: シリーズ
     series_with_name: '%{series_name}シリーズ'
     series_works: シリーズ作品

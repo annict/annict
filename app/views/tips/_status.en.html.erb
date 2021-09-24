@@ -1,6 +1,6 @@
 <p>By changing statuses of works, you can manage what anime you watched.</p>
-<p>You can select statuses on "<%= link_to "Current Season", seasonal_anime_list_path(ENV.fetch("ANNICT_CURRENT_SEASON")) %>" page and so on.</p>
+<p>You can select statuses on "<%= link_to "Current Season", seasonal_work_list_path(ENV.fetch("ANNICT_CURRENT_SEASON")) %>" page and so on.</p>
 
 <div class="text-center">
-  <%= link_to "Go to Current Season page", seasonal_anime_list_path(ENV.fetch("ANNICT_CURRENT_SEASON")), class: "btn btn-primary" %>
+  <%= link_to "Go to Current Season page", seasonal_work_list_path(ENV.fetch("ANNICT_CURRENT_SEASON")), class: "btn btn-primary" %>
 </div>

@@ -28,10 +28,10 @@ module Beta
         raise Annict::Errors::InvalidAPITokenScopeError unless context[:doorkeeper_token].writable?
 
         viewer = context[:viewer]
-        work = Anime.only_kept.find_by_graphql_id(work_id)
+        work = Work.only_kept.find_by_graphql_id(work_id)
 
-        form = Forms::AnimeRecordForm.new(
-          anime: work,
+        form = Forms::WorkRecordForm.new(
+          work: work,
           comment: title.present? ? "#{title}\n\n#{body}" : body,
           oauth_application: context[:doorkeeper_token].application,
           rating_animation: rating_animation_state,
@@ -46,13 +46,13 @@ module Beta
           raise GraphQL::ExecutionError, form.errors.full_messages.first
         end
 
-        result = Creators::AnimeRecordCreator.new(
+        result = Creators::WorkRecordCreator.new(
           user: viewer,
           form: form
         ).call
 
         {
-          review: viewer.anime_records.find_by!(record_id: result.record.id)
+          review: viewer.work_records.find_by!(record_id: result.record.id)
         }
       end
     end

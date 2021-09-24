@@ -46,7 +46,7 @@ module Beta
         end
 
         def work
-          Beta::RecordLoader.for(Anime).load(object.work_id)
+          Beta::RecordLoader.for(Work).load(object.work_id)
         end
 
         def prev_episode

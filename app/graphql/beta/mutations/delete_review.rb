@@ -10,11 +10,11 @@ module Beta
       def resolve(review_id:)
         raise Annict::Errors::InvalidAPITokenScopeError unless context[:doorkeeper_token].writable?
 
-        anime_record = context[:viewer].anime_records.only_kept.find_by_graphql_id(review_id)
-        Destroyers::RecordDestroyer.new(record: anime_record.record).call
+        work_record = context[:viewer].work_records.only_kept.find_by_graphql_id(review_id)
+        Destroyers::RecordDestroyer.new(record: work_record.record).call
 
         {
-          work: anime_record.anime
+          work: work_record.work
         }
       end
     end

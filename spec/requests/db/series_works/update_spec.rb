@@ -2,7 +2,7 @@
 
 describe "PATCH /db/series_works/:id", type: :request do
   context "user does not sign in" do
-    let!(:series_work) { create(:series_anime) }
+    let!(:series_work) { create(:series_work) }
     let!(:old_series_work) { series_work.attributes }
     let!(:series_work_params) do
       {
@@ -25,7 +25,7 @@ describe "PATCH /db/series_works/:id", type: :request do
 
   context "user who is not editor signs in" do
     let!(:user) { create(:registered_user) }
-    let!(:series_work) { create(:series_anime) }
+    let!(:series_work) { create(:series_work) }
     let!(:old_series_work) { series_work.attributes }
     let!(:series_work_params) do
       {
@@ -52,7 +52,7 @@ describe "PATCH /db/series_works/:id", type: :request do
 
   context "user who is editor signs in" do
     let!(:user) { create(:registered_user, :with_editor_role) }
-    let!(:series_work) { create(:series_anime) }
+    let!(:series_work) { create(:series_work) }
     let!(:old_series_work) { series_work.attributes }
     let!(:series_work_params) do
       {

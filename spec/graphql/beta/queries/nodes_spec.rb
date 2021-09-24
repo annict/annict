@@ -2,8 +2,8 @@
 
 describe "GraphQL API Query" do
   describe "nodes" do
-    let(:work1) { create(:anime) }
-    let(:work2) { create(:anime) }
+    let(:work1) { create(:work) }
+    let(:work2) { create(:work) }
     let(:id1) { Beta::AnnictSchema.id_from_object(work1, work1.class) }
     let(:id2) { Beta::AnnictSchema.id_from_object(work2, work2.class) }
     let(:result) do

@@ -11,9 +11,9 @@ describe "Api::V1::Reviews" do
 
   let(:access_token) { create(:oauth_access_token) }
   let(:user) { create(:user, :with_profile) }
-  let(:anime) { create(:anime, :with_current_season) }
-  let!(:record) { create(:record, user: user, anime: anime) }
-  let!(:anime_record) { create(:anime_record, record: record, anime: anime, user: user) }
+  let(:work) { create(:work, :with_current_season) }
+  let!(:record) { create(:record, user: user, work: work) }
+  let!(:work_record) { create(:work_record, record: record, work: work, user: user) }
 
   describe "GET /v1/reviews" do
     before do
@@ -27,7 +27,7 @@ describe "Api::V1::Reviews" do
 
       it "gets record info" do
         expected_hash = {
-          "id" => anime_record.id,
+          "id" => work_record.id,
           "title" => "",
           "body" => "おもしろかった",
           "rating_animation_state" => nil,
@@ -56,10 +56,10 @@ describe "Api::V1::Reviews" do
             "created_at" => "2017-01-28T23:39:04Z"
           },
           "work" => {
-            "id" => anime.id,
-            "title" => anime.title,
+            "id" => work.id,
+            "title" => work.title,
             "title_en" => "",
-            "title_kana" => anime.title_kana,
+            "title_kana" => work.title_kana,
             "media" => "tv",
             "media_text" => "TV",
             "season_name" => "2017-winter",

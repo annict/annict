@@ -1,0 +1,159 @@
+<% title = t "head.title.work_infos.show", title: @work.local_title %>
+<% description = meta_description(t("head.meta.description.work_infos.show", title: @work.local_title)) %>
+<% image_url = ann_work_image_url(@work, width: 640) %>
+<% set_meta_tags(title: title, description: description, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false) %>
+
+<%= component_value_fetcher_tag("status-select-dropdown", internal_api_library_entry_list_path, method: :post, payload: {work_ids: [@work.id]}) %>
+
+<%= Headers::WorkHeaderComponent.new(self, work: @work, programs: @programs).render %>
+
+<div class="py-3">
+  <div class="container u-container-flat">
+    <div class="card u-card-flat">
+      <div class="card-body">
+        <div class="g-3 row">
+          <% if @work.title_kana.present? %>
+            <div class="col-6 col-sm-4">
+              <div class="fw-bold small">
+                <%= t "activerecord.attributes.work.title_kana" %>
+              </div>
+              <div>
+                <%= @work.title_kana %>
+              </div>
+            </div>
+          <% end %>
+
+          <% if @work.title_en.present? %>
+            <div class="col-6 col-sm-4">
+              <div class="fw-bold small">
+                <%= t "activerecord.attributes.work.title_en" %>
+              </div>
+              <div>
+                <%= @work.title_en %>
+              </div>
+            </div>
+          <% end %>
+
+          <div class="col-6 col-sm-4">
+            <div class="fw-bold small">
+              <%= t "activerecord.attributes.work.media" %>
+            </div>
+            <div>
+              <%= @work.media.text %>
+            </div>
+          </div>
+
+          <% if @work.season.present? %>
+            <div class="col-6 col-sm-4">
+              <div class="fw-bold small">
+                <%= t "noun.release_season" %>
+              </div>
+              <div>
+                <%= @work.release_season_link %>
+              </div>
+            </div>
+          <% end %>
+
+          <% if @work.started_on.present? %>
+            <div class="col-6 col-sm-4">
+              <div class="fw-bold small">
+                <%= @work.started_on_label %>
+              </div>
+              <div>
+                <%= display_date(@work.started_on) %>
+              </div>
+            </div>
+          <% end %>
+
+          <% if @work.official_site_url.present? %>
+            <div class="col-6 col-sm-4">
+              <div class="fw-bold small">
+                <%= t "activerecord.attributes.work.official_site_url" %>
+              </div>
+              <div>
+                <%= link_with_domain @work.official_site_url %>
+              </div>
+            </div>
+          <% end %>
+
+          <% if @work.official_site_url_en.present? %>
+            <div class="col-6 col-sm-4">
+              <div class="fw-bold small">
+                <%= t "activerecord.attributes.work.official_site_url_en" %>
+              </div>
+              <div>
+                <%= link_with_domain @work.official_site_url_en %>
+              </div>
+            </div>
+          <% end %>
+
+          <% if @work.twitter_username.present? %>
+            <div class="col-6 col-sm-4">
+              <div class="fw-bold small">
+                <%= t "activerecord.attributes.work.twitter_username" %>
+              </div>
+              <div>
+                <%= @work.twitter_username_link %>
+              </div>
+            </div>
+          <% end %>
+
+          <% if @work.twitter_hashtag.present? %>
+            <div class="col-6 col-sm-4">
+              <div class="fw-bold small">
+                <%= t "activerecord.attributes.work.twitter_hashtag" %>
+              </div>
+              <div>
+                <%= @work.twitter_hashtag_link %>
+              </div>
+            </div>
+          <% end %>
+
+          <% if @work.wikipedia_url.present? %>
+            <div class="col-6 col-sm-4">
+              <div class="fw-bold small">
+                <%= t "activerecord.attributes.work.wikipedia_url" %>
+              </div>
+              <div>
+                <%= link_with_domain @work.wikipedia_url %>
+              </div>
+            </div>
+          <% end %>
+
+          <% if @work.wikipedia_url_en.present? %>
+            <div class="col-6 col-sm-4">
+              <div class="fw-bold small">
+                <%= t "activerecord.attributes.work.wikipedia_url_en" %>
+              </div>
+              <div>
+                <%= link_with_domain @work.wikipedia_url_en %>
+              </div>
+            </div>
+          <% end %>
+
+          <% if @work.sc_tid.present? %>
+            <div class="col-6 col-sm-4">
+              <div class="fw-bold small">
+                <%= t "noun.syobocal" %>
+              </div>
+              <div>
+                <%= @work.syobocal_link %>
+              </div>
+            </div>
+          <% end %>
+
+          <% if @work.mal_anime_id.present? %>
+            <div class="col-6 col-sm-4">
+              <div class="fw-bold small">
+                <%= t "noun.my_anime_list" %>
+              </div>
+              <div>
+                <%= @work.mal_anime_link %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

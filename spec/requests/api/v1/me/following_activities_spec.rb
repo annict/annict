@@ -14,10 +14,10 @@ describe "Api::V1::Me::FollowingActivities" do
     let(:user2) { create(:user, :with_profile) }
     let(:access_token) { create(:oauth_access_token, owner: user1) }
     let!(:follow) { create(:follow, user: user1, following: user2) }
-    let!(:anime) { create(:anime) }
-    let!(:episode) { create(:episode, anime: anime) }
+    let!(:work) { create(:work) }
+    let!(:episode) { create(:episode, work: work) }
     let!(:record) { create(:record, user: user2) }
-    let!(:episode_record) { create(:episode_record, record: record, user: user2, anime: anime, episode: episode) }
+    let!(:episode_record) { create(:episode_record, record: record, user: user2, work: work, episode: episode) }
     let!(:activity) { create(:activity, user: user2, itemable: episode_record) }
 
     before do
@@ -55,10 +55,10 @@ describe "Api::V1::Me::FollowingActivities" do
           "action" => "create_record",
           "created_at" => "2017-01-28T23:39:04Z",
           "work" => {
-            "id" => anime.id,
-            "title" => anime.title,
+            "id" => work.id,
+            "title" => work.title,
             "title_en" => "",
-            "title_kana" => anime.title_kana,
+            "title_kana" => work.title_kana,
             "media" => "tv",
             "media_text" => "TV",
             "released_on" => "2012-04-05",

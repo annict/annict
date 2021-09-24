@@ -7,13 +7,13 @@ en:
     after: After
     ago: ago
     aired: Aired
-    airing_anime: Airing Anime
+    airing_work: Airing Anime
     airing: Airing
     all: All
     all_comments: All Comments
     animation: Animation
-    anime: Anime
-    anime_page: Anime Page
+    work: Anime
+    work_page: Anime Page
     annict_api: Annict API
     annict_db: Annict DB
     annict_developers: Annict Developers
@@ -119,8 +119,8 @@ en:
     personal_access_tokens: Personal Access Tokens
     plan_to_watch: Plan to Watch
     popular: Popular
-    popular_airing_anime: Popular Airing Anime
-    popular_anime: Popular Anime
+    popular_airing_work: Popular Airing Anime
+    popular_work: Popular Anime
     popular_tags: Popular Tags
     prev: Prev
     prev_page: Prev Page
@@ -153,7 +153,7 @@ en:
     search: Search
     season: Season
     seasons: Seasons
-    seasonal_anime: Seasonal Anime
+    seasonal_work: Seasonal Anime
     series: Series
     series_with_name: '%{series_name} Series'
     series_works: Series Works

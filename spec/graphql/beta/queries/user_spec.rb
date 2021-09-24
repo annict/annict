@@ -91,10 +91,10 @@ describe "GraphQL API Query" do
       context "when `state` argument is specified" do
         let!(:status1) { create(:status, user: user, kind: :watching) }
         let!(:status2) { create(:status, user: user, kind: :watched) }
-        let!(:work1) { status1.anime }
-        let!(:work2) { status2.anime }
-        let!(:library_entry1) { create(:library_entry, user: user, anime: work1, status: status1) }
-        let!(:library_entry2) { create(:library_entry, user: user, anime: work2, status: status2) }
+        let!(:work1) { status1.work }
+        let!(:work2) { status2.work }
+        let!(:library_entry1) { create(:library_entry, user: user, work: work1, status: status1) }
+        let!(:library_entry2) { create(:library_entry, user: user, work: work2, status: status2) }
         let(:result) do
           query_string = <<~QUERY
             query {
@@ -123,7 +123,7 @@ describe "GraphQL API Query" do
               "edges" => [
                 {
                   "node" => {
-                    "title" => status1.anime.title
+                    "title" => status1.work.title
                   }
                 }
               ]

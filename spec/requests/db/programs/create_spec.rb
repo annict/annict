@@ -3,7 +3,7 @@
 describe "POST /db/works/:work_id/programs", type: :request do
   context "user does not sign in" do
     let!(:channel) { Channel.first }
-    let!(:work) { create(:anime) }
+    let!(:work) { create(:work) }
     let!(:form_params) do
       {
         rows: "#{channel.id},2020-04-01 0:00"
@@ -22,7 +22,7 @@ describe "POST /db/works/:work_id/programs", type: :request do
 
   context "user who is not editor signs in" do
     let!(:channel) { Channel.first }
-    let!(:work) { create(:anime) }
+    let!(:work) { create(:work) }
     let!(:user) { create(:registered_user) }
     let!(:form_params) do
       {
@@ -46,7 +46,7 @@ describe "POST /db/works/:work_id/programs", type: :request do
 
   context "user who is editor signs in" do
     let!(:channel) { Channel.first }
-    let!(:work) { create(:anime) }
+    let!(:work) { create(:work) }
     let!(:user) { create(:registered_user, :with_editor_role) }
     let!(:form_params) do
       {

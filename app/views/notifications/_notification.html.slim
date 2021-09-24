@@ -16,7 +16,7 @@
           = render "notifications/likes_create_comment", notification: notification
         - elsif recipient.class.name == "Status"
           = render "notifications/likes_create_status", notification: notification
-        - elsif recipient.class.name == "AnimeRecord"
+        - elsif recipient.class.name == "WorkRecord"
           = render "notifications/likes_create_work_record", notification: notification
       - elsif notification.action == "comments.create"
         = render "notifications/comments_create_record", notification: notification

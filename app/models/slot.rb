@@ -53,7 +53,7 @@ class Slot < ApplicationRecord
   belongs_to :channel
   belongs_to :episode, optional: true
   belongs_to :program, optional: true
-  belongs_to :anime, foreign_key: :work_id, touch: true
+  belongs_to :work, touch: true
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
 
@@ -61,8 +61,8 @@ class Slot < ApplicationRecord
   validates :started_at, presence: true
 
   scope :episode_published, -> { joins(:episode).merge(Episode.only_kept) }
-  scope :with_not_deleted_anime, -> { joins(:anime).merge(Anime.only_kept) }
-  scope :with_works, ->(works) { joins(:anime).merge(works) }
+  scope :with_not_deleted_work, -> { joins(:work).merge(Work.only_kept) }
+  scope :with_works, ->(works) { joins(:work).merge(works) }
 
   before_validation :calc_for_timezone
 

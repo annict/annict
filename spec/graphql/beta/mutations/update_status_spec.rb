@@ -2,10 +2,10 @@
 
 describe Beta::Mutations::UpdateStatus do
   let(:user) { create :registered_user }
-  let(:anime) { create :anime }
+  let(:work) { create :work }
   let(:token) { create(:oauth_access_token) }
   let(:context) { {viewer: user, doorkeeper_token: token, writable: true} }
-  let(:anime_id) { Beta::AnnictSchema.id_from_object(anime, anime.class) }
+  let(:work_id) { Beta::AnnictSchema.id_from_object(work, work.class) }
 
   context "正常系" do
     let(:query) do
@@ -22,7 +22,7 @@ describe Beta::Mutations::UpdateStatus do
         }
       GRAPHQL
     end
-    let(:variables) { {workId: anime_id} }
+    let(:variables) { {workId: work_id} }
 
     it "ステータスが変更できること" do
       expect(Status.count).to eq 0
@@ -34,9 +34,9 @@ describe Beta::Mutations::UpdateStatus do
 
       status = user.statuses.first
       expect(status.kind).to eq "wanna_watch"
-      expect(status.work_id).to eq anime.id
+      expect(status.work_id).to eq work.id
 
-      expect(result.dig("data", "updateStatus", "work", "title")).to eq anime.title
+      expect(result.dig("data", "updateStatus", "work", "title")).to eq work.title
     end
   end
 end

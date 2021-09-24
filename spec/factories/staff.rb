@@ -3,7 +3,7 @@
 FactoryBot.define do
   factory :staff do
     association :resource, factory: :person
-    anime
+    work
     sequence(:name) { |n| "山田#{n}郎" }
     sequence(:name_en) { |n| "Yamada, #{n}rou" }
     role { :original_creator }

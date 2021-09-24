@@ -6,7 +6,7 @@
 
 <%= component_value_fetcher_tag("follow-button", internal_api_following_list_path) %>
 <%= component_value_fetcher_tag("mute-user-button", internal_api_muted_user_list_path) %>
-<%= component_value_fetcher_tag("status-select-dropdown", internal_api_library_entry_list_path, method: :post, payload: {anime_ids: @anime_ids}) %>
+<%= component_value_fetcher_tag("status-select-dropdown", internal_api_library_entry_list_path, method: :post, payload: {work_ids: @work_ids}) %>
 
 <div class="py-3">
   <div class="container">
@@ -45,9 +45,9 @@
           <div class="container mt-3 u-container-flat">
             <div class="card u-card-flat">
               <div class="card-body">
-                <% animes = season.no_season? ? @animes.with_no_season : @animes.by_season(season.slug) %>
-                <% animes = animes.order(watchers_count: :desc).includes(:anime_image) %>
-                <%= render "libraries/display_options/grid", animes: animes, user: @user %>
+                <% works = season.no_season? ? @works.with_no_season : @works.by_season(season.slug) %>
+                <% works = works.order(watchers_count: :desc).includes(:work_image) %>
+                <%= render "libraries/display_options/grid", works: works, user: @user %>
               </div>
             </div>
           </div>

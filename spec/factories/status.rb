@@ -3,7 +3,7 @@
 FactoryBot.define do
   factory :status do
     association :user
-    association :anime
+    association :work
     kind { :watching }
   end
 end

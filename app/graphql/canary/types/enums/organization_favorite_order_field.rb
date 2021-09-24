@@ -5,7 +5,7 @@ module Canary
     module Enums
       class OrganizationFavoriteOrderField < Canary::Types::Enums::Base
         value "CREATED_AT", "登録日時"
-        value "WATCHED_ANIME_COUNT", "見た作品数"
+        value "WATCHED_WORKS_COUNT", "見た作品数"
       end
     end
   end

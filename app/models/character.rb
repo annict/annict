@@ -63,7 +63,7 @@ class Character < ApplicationRecord
 
   belongs_to :series
   has_many :casts, dependent: :destroy
-  has_many :animes, through: :casts
+  has_many :works, through: :casts
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
   has_many :character_favorites
@@ -78,8 +78,8 @@ class Character < ApplicationRecord
     character_favorites
   end
 
-  def oldest_anime
-    animes.order("season_year ASC, season_name ASC").first
+  def oldest_work
+    works.order("season_year ASC, season_name ASC").first
   end
 
   def to_diffable_hash

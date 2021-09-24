@@ -30,7 +30,7 @@
     <%= f.label :media, class: "c-label-required" %>
     <%= f.select(
       :media,
-      options_for_select(Anime.media.options, f.object.media),
+      options_for_select(Work.media.options, f.object.media),
       { include_blank: true },
       { class: "form-select", required: true }
     ) %>
@@ -78,7 +78,7 @@
 
   <div class="mb-3">
     <%= f.label :official_site_url do %>
-      <%= t "activerecord.attributes.anime.official_site_url" %>
+      <%= t "activerecord.attributes.work.official_site_url" %>
       <% if f.object.official_site_url.present? %>
         <%= link_to f.object.official_site_url, class: "ms-2", target: "_blank", rel: "noopener" do %>
           <%= icon "external-link-alt" %>
@@ -90,7 +90,7 @@
 
   <div class="mb-3">
     <%= f.label :official_site_url_en do %>
-      <%= t "activerecord.attributes.anime.official_site_url_en" %>
+      <%= t "activerecord.attributes.work.official_site_url_en" %>
       <% if f.object.official_site_url_en.present? %>
         <%= link_to f.object.official_site_url_en, class: "ms-2", target: "_blank", rel: "noopener" do %>
           <%= icon "external-link-alt" %>
@@ -102,7 +102,7 @@
 
   <div class="mb-3">
     <%= f.label :wikipedia_url do %>
-      <%= t "activerecord.attributes.anime.wikipedia_url" %>
+      <%= t "activerecord.attributes.work.wikipedia_url" %>
       <% if f.object.wikipedia_url.present? %>
         <%= link_to f.object.wikipedia_url, class: "ms-2", target: "_blank", rel: "noopener" do %>
           <%= icon "external-link-alt" %>
@@ -114,7 +114,7 @@
 
   <div class="mb-3">
     <%= f.label :wikipedia_url_en do %>
-      <%= t "activerecord.attributes.anime.wikipedia_url_en" %>
+      <%= t "activerecord.attributes.work.wikipedia_url_en" %>
       <% if f.object.wikipedia_url_en.present? %>
         <%= link_to f.object.wikipedia_url_en, class: "ms-2", target: "_blank", rel: "noopener" do %>
           <%= icon "external-link-alt" %>
@@ -126,7 +126,7 @@
 
   <div class="mb-3">
     <%= f.label :twitter_username do %>
-      <%= t "activerecord.attributes.anime.twitter_username" %>
+      <%= t "activerecord.attributes.work.twitter_username" %>
       <% if f.object.twitter_username.present? %>
         <%= link_to f.object.twitter_username_url, class: "ms-2", target: "_blank", rel: "noopener" do %>
           <%= icon "external-link-alt" %>
@@ -138,7 +138,7 @@
 
   <div class="mb-3">
     <%= f.label :twitter_hashtag do %>
-      <%= t "activerecord.attributes.anime.twitter_hashtag" %>
+      <%= t "activerecord.attributes.work.twitter_hashtag" %>
       <% if f.object.twitter_hashtag.present? %>
         <%= link_to f.object.twitter_hashtag_url, class: "ms-2", target: "_blank", rel: "noopener" do %>
           <%= icon "external-link-alt" %>
@@ -150,7 +150,7 @@
 
   <div class="mb-3">
     <%= f.label :sc_tid do %>
-      <%= t "activerecord.attributes.anime.sc_tid" %>
+      <%= t "activerecord.attributes.work.sc_tid" %>
       <% if f.object.sc_tid.present? %>
         <%= link_to f.object.syobocal_url, class: "ms-2", target: "_blank", rel: "noopener" do %>
           <%= icon "external-link-alt" %>
@@ -162,7 +162,7 @@
 
   <div class="mb-3">
     <%= f.label :mal_anime_id do %>
-      <%= t "activerecord.attributes.anime.mal_anime_id" %>
+      <%= t "activerecord.attributes.work.mal_anime_id" %>
       <% if f.object.mal_anime_id.present? %>
         <%= link_to f.object.mal_anime_url, class: "ms-2", target: "_blank", rel: "noopener" do %>
           <%= icon "external-link-alt" %>
@@ -216,7 +216,7 @@
     <div class="form-check">
       <%= f.label :no_episodes, class: "form-check-label" do %>
         <%= f.check_box :no_episodes, class: "form-check-input" %>
-        <%= t "activerecord.attributes.anime.no_episodes" %>
+        <%= t "activerecord.attributes.work.no_episodes" %>
       <% end %>
     </div>
   </div>

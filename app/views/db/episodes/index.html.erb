@@ -75,7 +75,7 @@
             <% @episodes.each do |episode| %>
               <tr>
                 <td>
-                  <%= link_to episode.id, episode_path(anime_id: @work.id, episode_id: episode.id), target: "_blank" %>
+                  <%= link_to episode.id, episode_path(work_id: @work.id, episode_id: episode.id), target: "_blank" %>
                 </td>
                 <td>
                   <%= episode.number.presence || "-" %>

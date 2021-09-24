@@ -11,7 +11,7 @@
 
     <div class="col-auto">
       <div class="text-end">
-        <%= link_to anime_path(anime_id: @work.id), class: "btn btn-outline-primary", target: "_blank" do %>
+        <%= link_to work_path(work_id: @work.id), class: "btn btn-outline-primary", target: "_blank" do %>
           <%= icon "external-link-alt" %>
           <%= t("resources.work.go_to_work") %>
         <% end %>

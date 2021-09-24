@@ -24,7 +24,7 @@
 
 class MultipleEpisodeRecord < ApplicationRecord
   belongs_to :user
-  belongs_to :anime, foreign_key: :work_id
+  belongs_to :work
   has_many :activities,
     dependent: :destroy,
     as: :trackable

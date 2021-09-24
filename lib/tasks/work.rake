@@ -5,9 +5,9 @@ namespace :work do
   # コマンド実行例: rake work:hide_overlapped_work[4458,4485]
   task :hide_overlapped_work, %i[target_work_id original_work_id] => :environment do |_, args|
     # 削除対象のWork
-    target_work = Anime.find(args[:target_work_id])
+    target_work = Work.find(args[:target_work_id])
     # オリジナルのWork
-    original_work = Anime.find(args[:original_work_id])
+    original_work = Work.find(args[:original_work_id])
 
     ActiveRecord::Base.transaction do
       [
@@ -51,7 +51,7 @@ namespace :work do
   task update_score: :environment do
     RATE_MAX = 100
 
-    Anime.only_kept.find_each do |w|
+    Work.only_kept.find_each do |w|
       episodes = w.episodes.only_kept.where.not(satisfaction_rate: nil)
       ratings_count = episodes.pluck(:ratings_count).inject(&:+)
       rates = episodes.pluck(:satisfaction_rate)

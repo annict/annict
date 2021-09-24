@@ -8,7 +8,7 @@ module Canary
 
         field :user, Canary::Types::Objects::UserType, null: false
         field :organization, Canary::Types::Objects::OrganizationType, null: false
-        field :watched_anime_count, Integer, null: false
+        field :watched_work_count, Integer, null: false
         field :created_at, Canary::Types::Scalars::DateTime, null: false
 
         def user
@@ -19,7 +19,7 @@ module Canary
           Canary::RecordLoader.for(Organization).load(object.organization_id)
         end
 
-        def watched_anime_count
+        def watched_work_count
           object.watched_works_count
         end
       end

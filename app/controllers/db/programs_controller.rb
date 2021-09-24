@@ -5,18 +5,18 @@ module Db
     before_action :authenticate_user!, only: %i[new create edit update destroy]
 
     def index
-      @work = Anime.without_deleted.find(params[:work_id])
+      @work = Work.without_deleted.find(params[:work_id])
       @programs = @work.programs.without_deleted.order(started_at: :desc, channel_id: :asc)
     end
 
     def new
-      @work = Anime.without_deleted.find(params[:work_id])
+      @work = Work.without_deleted.find(params[:work_id])
       @form = Db::ProgramRowsForm.new
       authorize @form
     end
 
     def create
-      @work = Anime.without_deleted.find(params[:work_id])
+      @work = Work.without_deleted.find(params[:work_id])
       @form = Db::ProgramRowsForm.new(program_rows_form_params)
       @form.user = current_user
       @form.work = @work
@@ -32,13 +32,13 @@ module Db
     def edit
       @program = Program.without_deleted.find(params[:id])
       authorize @program
-      @work = @program.anime
+      @work = @program.work
     end
 
     def update
       @program = Program.without_deleted.find(params[:id])
       authorize @program
-      @work = @program.anime
+      @work = @program.work
 
       @program.attributes = program_params
       @program.user = current_user
@@ -57,7 +57,7 @@ module Db
       @program.destroy_in_batches
 
       redirect_back(
-        fallback_location: db_program_list_path(@program.anime),
+        fallback_location: db_program_list_path(@program.work),
         notice: t("messages._common.deleted")
       )
     end

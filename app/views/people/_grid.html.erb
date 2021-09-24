@@ -8,14 +8,14 @@
 
         <div class="g-3 row">
           <% resources_with_year[year].group_by(&:work_id).each do |_, resources| %>
-            <% work = resources.first.anime %>
+            <% work = resources.first.work %>
             <div class="col-4 col-sm-2">
-              <%= link_to anime_path(anime_id: work.id) do %>
-                <%= Pictures::AnimePictureComponent.new(self, anime: work, width: 140).render %>
+              <%= link_to work_path(work_id: work.id) do %>
+                <%= Pictures::WorkPictureComponent.new(self, work: work, width: 140).render %>
               <% end %>
 
               <div class="small text-truncate">
-                <%= link_to work.local_title, anime_path(anime_id: work.id), class: "text-body" %>
+                <%= link_to work.local_title, work_path(work_id: work.id), class: "text-body" %>
 
                 <div class="text-muted">
                   <% description = resources.map { |resource| root_resource.grid_description(resource) }.join(", ") %>
