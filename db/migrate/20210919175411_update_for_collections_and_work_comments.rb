@@ -8,6 +8,7 @@ class UpdateForCollectionsAndWorkComments < ActiveRecord::Migration[6.1]
     remove_column :collections, :impressions_count
     change_column_null :collections, :description, false
     change_column_default :collections, :description, ""
+    add_index :collections, %i[user_id name], unique: true
 
     remove_column :collection_items, :aasm_state
     rename_column :collection_items, :title, :name

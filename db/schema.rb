@@ -215,6 +215,7 @@ ActiveRecord::Schema.define(version: 2021_09_19_175411) do
     t.datetime "deleted_at"
     t.integer "collection_items_count", default: 0, null: false
     t.index ["deleted_at"], name: "index_collections_on_deleted_at"
+    t.index ["user_id", "name"], name: "index_collections_on_user_id_and_name", unique: true
     t.index ["user_id"], name: "index_collections_on_user_id"
   end
 

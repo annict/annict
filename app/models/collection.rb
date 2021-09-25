@@ -16,8 +16,9 @@
 #
 # Indexes
 #
-#  index_collections_on_deleted_at  (deleted_at)
-#  index_collections_on_user_id     (user_id)
+#  index_collections_on_deleted_at        (deleted_at)
+#  index_collections_on_user_id           (user_id)
+#  index_collections_on_user_id_and_name  (user_id,name) UNIQUE
 #
 # Foreign Keys
 #
