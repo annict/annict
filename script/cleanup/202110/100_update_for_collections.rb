@@ -9,12 +9,10 @@ WorkTaggable.preload(:user, :work_tag).find_each do |work_taggable|
     description = work_taggable.description.presence || ""
 
     collection = user.collections.where(name: work_tag.name).first_or_create!(
+      description: description,
       created_at: work_taggable.created_at,
       updated_at: work_taggable.updated_at
     )
-    if description != collection.description
-      collection.update_columns(description: description)
-    end
 
     user.work_taggings.where(work_tag: work_tag).preload(:work).each do |work_tagging|
       work = work_tagging.work
