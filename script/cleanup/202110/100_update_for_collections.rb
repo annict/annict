@@ -1,32 +1,20 @@
 # frozen_string_literal: true
 
-WorkTaggable.preload(:user, :work_tag).find_each do |work_taggable|
-  ActiveRecord::Base.transaction do
-    puts "work_taggable: #{work_taggable.id}"
-
+WorkTaggable.preload(:user, :work_tag).find_in_batches do |work_taggables|
+  attributes = work_taggables.map do |work_taggable|
     user = work_taggable.user
     work_tag = work_taggable.work_tag
     description = work_taggable.description.presence || ""
 
-    collection = user.collections.where(name: work_tag.name).first_or_create!(
+    {
       description: description,
+      name: work_tag.name,
       created_at: work_taggable.created_at,
-      updated_at: work_taggable.updated_at
-    )
-
-    user.work_taggings.where(work_tag: work_tag).preload(:work).each do |work_tagging|
-      work = work_tagging.work
-
-      user.collection_items.where(collection: collection, work: work).first_or_create!(
-        name: work.title,
-        created_at: work_tagging.created_at,
-        updated_at: work_tagging.updated_at
-      )
-    end
+      updated_at: work_taggable.updated_at,
+      user_id: user.id
+    }
   end
-end
 
-Collection.find_each do |collection|
-  puts "collection: #{collection.id}"
-  collection.update_columns(collection_items_count: collection.collection_items.count)
+  result = Collection.insert_all!(attributes)
+  puts "Upserted: #{result.rows.first(3)}..."
 end
