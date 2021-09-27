@@ -1,6 +1,7 @@
 import 'bootstrap/js/dist/collapse';
 import 'bootstrap/js/dist/dropdown';
 import 'bootstrap/js/dist/modal';
+import Popover from 'bootstrap/js/dist/popover';
 import 'dayjs/locale/ja';
 
 import { Application } from "@hotwired/stimulus"
@@ -32,6 +33,11 @@ document.addEventListener('turbo:load', (_event) => {
 });
 
 dayjs.locale(annConfig.viewer.locale);
+
+const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+const popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+  return new Popover(popoverTriggerEl)
+})
 
 const application = Application.start();
 const context = (require as any).context('./controllers', true, /\.ts$/);

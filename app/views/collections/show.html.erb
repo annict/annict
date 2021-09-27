@@ -17,54 +17,31 @@
     <h1 class="fw-bold">
       <%= @collection.name %>
     </h1>
+
+    <p>
+      <%= BodyV6Component.new(self, content: @collection.description, format: :markdown).render %>
+    </p>
   </div>
 
   <div class="container mt-3 u-container-flat">
-    <% if @collection_items.present? %>
-      <div class="vstack gap-3">
-        <% @collection_items.each do |collection_item| %>
-          <% work = collection_item.work %>
+    <div class="card u-card-flat">
+      <div class="card-body">
+        <% if @collection_items.present? %>
+          <div class="gx-2 gy-3 row">
+            <% @collection_items.each do |collection_item| %>
+              <div class="col-2 text-center">
+                <% user = collection_item.user %>
+                <% work = collection_item.work %>
+                <% library_entry = @library_entry_by_work_id[work.id] %>
 
-          <div class="card u-card-flat">
-            <div class="card-body">
-              <h2 class="fw-bold h3 mb-3">
-                <%= collection_item.name %>
-              </h2>
-
-              <div class="row">
-                <div class="col-2">
-                  <div class="text-center">
-                    <%= link_to work_path(work.id) do %>
-                      <%= Pictures::WorkPictureComponent.new(self, work: work, width: 200).render %>
-                    <% end %>
-                  </div>
-
-                  <% if work.copyright.present? %>
-                    <div class="mt-1 text-muted u-very-small">
-                      <i class="far fa-copyright me-1"></i>
-                      <%= work.copyright %>
-                    </div>
-                  <% end %>
-
-                  <div class="mt-2 text-center">
-                    <%= ButtonGroups::WorkButtonGroupComponent.new(self, work: work).render %>
-                  </div>
-                </div>
-
-                <div class="col-10">
-                  <%= BodyV6Component.new(self, content: collection_item.body, format: :markdown).render %>
-                </div>
+                <%= Cards::WorkCardComponent.new(self, work: work, width: 200, user: user, show_note: true, note: library_entry.note).render %>
               </div>
-            </div>
+            <% end %>
           </div>
+        <% else %>
+          <%= EmptyV6Component.new(self, text: t("messages._empty.no_works")).render %>
         <% end %>
       </div>
-    <% else %>
-      <div class="card u-card-flat">
-        <div class="card-body">
-          <%= EmptyV6Component.new(self, text: t("messages._empty.no_works")).render %>
-        </div>
-      </div>
-    <% end %>
+    </div>
   </div>
 </div>
