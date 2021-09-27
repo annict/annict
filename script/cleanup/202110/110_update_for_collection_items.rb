@@ -8,7 +8,6 @@ WorkTagging.preload(:user, :work, :work_tag).find_in_batches(batch_size: 3_000) 
     collection = user.collections.find_by!(name: work_tag.name)
 
     {
-      name: work.title,
       created_at: work_tagging.created_at,
       updated_at: work_tagging.updated_at,
       collection_id: collection.id,

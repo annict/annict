@@ -5,10 +5,7 @@
 # Table name: collection_items
 #
 #  id            :bigint           not null, primary key
-#  body          :text             default(""), not null
 #  deleted_at    :datetime
-#  likes_count   :integer          default(0), not null
-#  name          :string           not null
 #  position      :integer          default(0), not null
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
@@ -39,7 +36,4 @@ class CollectionItem < ApplicationRecord
   belongs_to :user
   belongs_to :collection
   belongs_to :work
-  has_many :likes, dependent: :destroy
-
-  validates :body, length: {maximum: 1000}
 end
