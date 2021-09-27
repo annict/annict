@@ -12,6 +12,7 @@ module WorkRecordListSettable
     @my_records = @following_records = []
 
     if user_signed_in?
+      records = records.where.not(user_id: current_user.mute_users.pluck(:muted_user_id))
       @my_records = records.merge(current_user.records.only_kept)
       @following_records = records.merge(current_user.followings)
       @all_records = records

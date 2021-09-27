@@ -12,6 +12,7 @@ module EpisodeRecordListSettable
     @my_records = @following_records = Record.none
 
     if user_signed_in?
+      records = records.where.not(user_id: current_user.mute_users.pluck(:muted_user_id))
       @my_records = current_user
         .records
         .only_kept
