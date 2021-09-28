@@ -191,6 +191,7 @@ ActiveRecord::Schema.define(version: 2021_09_19_175411) do
     t.bigint "user_id", null: false
     t.bigint "collection_id", null: false
     t.bigint "work_id", null: false
+    t.text "body", default: "", null: false
     t.integer "position", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

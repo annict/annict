@@ -5,6 +5,7 @@
 # Table name: collection_items
 #
 #  id            :bigint           not null, primary key
+#  body          :text             default(""), not null
 #  deleted_at    :datetime
 #  position      :integer          default(0), not null
 #  created_at    :datetime         not null

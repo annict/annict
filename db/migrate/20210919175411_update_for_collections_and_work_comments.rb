@@ -11,9 +11,11 @@ class UpdateForCollectionsAndWorkComments < ActiveRecord::Migration[6.1]
     add_index :collections, %i[user_id name], unique: true
 
     remove_column :collection_items, :title
-    remove_column :collection_items, :comment
     remove_column :collection_items, :aasm_state
     remove_column :collection_items, :reactions_count
+    rename_column :collection_items, :comment, :body
+    change_column_null :collection_items, :body, false
+    change_column_default :collection_items, :body, ""
 
     add_column :library_entries, :note, :text, null: false, default: ""
   end
