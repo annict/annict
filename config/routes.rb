@@ -29,8 +29,8 @@ Rails.application.routes.draw do
   # standard:disable Layout/ExtraSpacing, Layout/LineLength
   match "/@:username",                                          via: :get,    as: :profile,                                    to: "profiles#show",                username: ROUTING_USERNAME_FORMAT
   match "/@:username/:status_kind",                             via: :get,    as: :library,                                    to: "libraries#show",               username: ROUTING_USERNAME_FORMAT, status_kind: /wanna_watch|watching|watched|on_hold|stop_watching/
-  match "/@:username/collections",                              via: :get,    as: :collection_list,                            to: "collections#index",            username: ROUTING_USERNAME_FORMAT
-  match "/@:username/collections/:collection_id",               via: :get,    as: :collection,                                 to: "collections#show",             username: ROUTING_USERNAME_FORMAT
+  match "/@:username/collections",                              via: :get,    as: :user_collection_list,                       to: "collections#index",            username: ROUTING_USERNAME_FORMAT
+  match "/@:username/collections/:collection_id",               via: :get,    as: :user_collection,                            to: "collections#show",             username: ROUTING_USERNAME_FORMAT
   match "/@:username/favorite_characters",                      via: :get,    as: :favorite_character_list,                    to: "favorite_characters#index",    username: ROUTING_USERNAME_FORMAT
   match "/@:username/favorite_organizations",                   via: :get,    as: :favorite_organization_list,                 to: "favorite_organizations#index", username: ROUTING_USERNAME_FORMAT
   match "/@:username/favorite_people",                          via: :get,    as: :favorite_person_list,                       to: "favorite_people#index",        username: ROUTING_USERNAME_FORMAT
@@ -77,6 +77,8 @@ Rails.application.routes.draw do
   match "/characters/:character_id",                            via: :get,    as: :character,                                  to: "characters#show"
   match "/characters/:character_id/fans",                       via: :get,    as: :character_fan_list,                         to: "character_fans#index"
   match "/checkins/redirect/:provider/:url_hash",               via: :get,    as: :legacy_record_redirect_1,                   to: "legacy/record_redirects#show", provider: /fb|tw/, url_hash: /[0-9a-zA-Z_-]{10}/
+  match "/collections/:collection_id",                          via: :patch,  as: :collection,                                 to: "collections#update"
+  match "/collections/:collection_id/edit",                     via: :get,    as: :edit_collection,                            to: "collections#edit"
   match "/db",                                                  via: :get,    as: :db_root,                                    to: "db/home#show"
   match "/db/activities",                                       via: :get,    as: :db_activity_list,                           to: "db/activities#index"
   match "/db/casts/:id",                                        via: :delete, as: :db_cast_detail,                             to: "db/casts#destroy"

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class CollectionsController < ApplicationV6Controller
+  before_action :authenticate_user!, only: %i[edit update]
+
   def index
     set_page_category PageCategory::COLLECTION_LIST
 
@@ -18,5 +20,38 @@ class CollectionsController < ApplicationV6Controller
     @collection_items = @collection.collection_items.only_kept.preload(:user, work: :work_image).order(:position)
     @work_ids = @collection_items.pluck(:work_id)
     @library_entry_by_work_id = @user.library_entries.where(work_id: @work_ids).each_with_object({}) { |le, h| h[le.work_id] = le }
+  end
+
+  def edit
+    set_page_category PageCategory::EDIT_COLLECTION
+
+    @profile = current_user.profile
+    @collection = current_user.collections.only_kept.find(params[:collection_id])
+    @collection_form = Forms::CollectionForm.new(
+      collection: @collection,
+      name: @collection.name,
+      description: @collection.description
+    )
+  end
+
+  def update
+    @collection = current_user.collections.only_kept.find(params[:collection_id])
+    @collection_form = Forms::CollectionForm.new(collection_form_params)
+    @collection_form.collection = @collection
+
+    if @collection_form.invalid?
+      return render :edit, status: :unprocessable_entity
+    end
+
+    Updaters::CollectionUpdater.new(user: current_user, form: @collection_form).call
+
+    flash[:notice] = t "messages._common.updated"
+    redirect_to user_collection_path(current_user.username, @collection.id)
+  end
+
+  private
+
+  def collection_form_params
+    params.required(:forms_collection_form).permit(:name, :description)
   end
 end

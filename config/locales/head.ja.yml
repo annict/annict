@@ -76,6 +76,7 @@ ja:
         index: 'アニメ「%{title}」のキャラクター'
         show: '%{name}'
       collections:
+        edit: "%{collection_name} の編集"
         index: '%{profile_name} (%{username})のアニメコレクション'
         show: "%{collection_name} | %{profile_name} (%{username})"
       comments:

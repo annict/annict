@@ -1,6 +1,9 @@
 en:
   form:
     attributes:
+      forms/collection_form:
+        description: Description
+        name: Name
       forms/work_record_form:
         comment: Comment
         rating_animation: Animation

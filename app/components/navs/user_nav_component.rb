@@ -42,7 +42,7 @@ module Navs
             end
 
             h.tag :li, class: "c-nav__item" do
-              h.html active_link_to t("noun.collections"), view_context.collection_list_path(@user.username),
+              h.html active_link_to t("noun.collections"), view_context.user_collection_list_path(@user.username),
                 class: "c-nav__link",
                 class_active: "c-nav__link--active",
                 active: @params[:controller].in?(%w[collection_items collections])

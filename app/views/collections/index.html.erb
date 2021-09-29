@@ -18,7 +18,7 @@
         <% @collections.each do |collection| %>
           <div class="col-12 col-md-6 col-lg-4">
             <div class="card">
-              <%= link_to collection_path(@user.username, collection.id), class: "card-body" do %>
+              <%= link_to user_collection_path(@user.username, collection.id), class: "card-body" do %>
                 <h2 class="card-title fw-bold h4 text-body">
                   <%= collection.name %>
                 </h2>
