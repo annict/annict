@@ -1,5 +1,5 @@
 import Tooltip from 'bootstrap/js/dist/tooltip';
-import { Controller } from 'stimulus';
+import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
   static values = {

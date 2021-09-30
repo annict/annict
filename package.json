@@ -13,7 +13,9 @@
   "dependencies": {
     "@babel/core": "^7.14.8",
     "@babel/preset-env": "^7.14.1",
-    "@hotwired/turbo": "^7.0.0-rc.1",
+    "@hotwired/stimulus": "^3.0.0",
+    "@hotwired/stimulus-webpack-helpers": "^1.0.1",
+    "@hotwired/turbo": "^7.0.1",
     "@rails/ujs": "^6.1.4",
     "@types/gtag.js": "0.0.7",
     "autoprefixer": "^10.3.1",
@@ -31,7 +33,6 @@
     "popper.js": "^1.16.1",
     "postcss-smart-import": "^0.7.6",
     "select2": "^4.1.0-rc.0",
-    "stimulus": "^2.0.0",
     "webpack-merge": "^5.8.0"
   },
   "devDependencies": {
