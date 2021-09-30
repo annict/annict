@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import axios from 'axios';
-import { Controller } from 'stimulus';
+import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
   static targets = ['count'];

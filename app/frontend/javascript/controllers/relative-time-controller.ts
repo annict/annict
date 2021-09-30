@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { Controller } from 'stimulus';
+import { Controller } from '@hotwired/stimulus';
 
 dayjs.extend(relativeTime);
 

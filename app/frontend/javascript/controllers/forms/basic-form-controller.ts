@@ -1,5 +1,5 @@
 import * as Turbo from '@hotwired/turbo';
-import { Controller } from 'stimulus';
+import { Controller } from '@hotwired/stimulus';
 
 import { EventDispatcher } from '../../utils/event-dispatcher';
 

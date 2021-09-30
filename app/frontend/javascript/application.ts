@@ -3,13 +3,13 @@ import 'bootstrap/js/dist/dropdown';
 import 'bootstrap/js/dist/modal';
 import 'dayjs/locale/ja';
 
+import { Application } from "@hotwired/stimulus"
 import * as Turbo from '@hotwired/turbo';
+import { definitionsFromContext } from "@hotwired/stimulus-webpack-helpers"
 import axios from 'axios';
 import ujs from '@rails/ujs';
 import dayjs from 'dayjs';
 import Cookies from 'js-cookie';
-import { Application } from 'stimulus';
-import { definitionsFromContext } from 'stimulus/webpack-helpers';
 
 import { getTimeZone } from './utils/time-zone';
 

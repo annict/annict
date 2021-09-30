@@ -1,5 +1,5 @@
 import Modal from 'bootstrap/js/dist/modal';
-import { Controller } from 'stimulus';
+import { Controller } from '@hotwired/stimulus';
 
 import fetcher from '../utils/fetcher';
 

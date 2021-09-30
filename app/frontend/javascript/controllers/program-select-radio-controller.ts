@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Controller } from 'stimulus';
+import { Controller } from '@hotwired/stimulus';
 
 import { EventDispatcher } from '../utils/event-dispatcher';
 import fetcher from '../utils/fetcher';
