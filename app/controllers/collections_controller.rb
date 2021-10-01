@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class CollectionsController < ApplicationV6Controller
-  before_action :authenticate_user!, only: %i[edit update]
+  before_action :authenticate_user!, only: %i[edit update destroy]
 
   def index
     set_page_category PageCategory::COLLECTION_LIST
@@ -69,6 +69,15 @@ class CollectionsController < ApplicationV6Controller
 
     flash[:notice] = t "messages._common.updated"
     redirect_to user_collection_path(current_user.username, @collection.id)
+  end
+
+  def destroy
+    collection = current_user.collections.only_kept.find(params[:collection_id])
+
+    Destroyers::CollectionDestroyer.new(collection: collection).call
+
+    flash[:notice] = t "messages._common.deleted"
+    redirect_to user_collection_list_path(current_user.username)
   end
 
   private

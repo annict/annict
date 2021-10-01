@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class CollectionItemsController < ApplicationV6Controller
-  before_action :authenticate_user!, only: %i[edit update]
+  before_action :authenticate_user!, only: %i[edit update destroy]
 
   def edit
     set_page_category PageCategory::EDIT_COLLECTION_ITEM
