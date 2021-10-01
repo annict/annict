@@ -13,12 +13,7 @@
   <%= Navs::UserNavComponent.new(self, user: current_user, params: params).render %>
 
   <div class="container mt-3">
-    <%= link_to user_collection_path(current_user.username, @collection.id) do %>
-      <i class="far fa-angle-left me-1"></i>
-      <%= t("verb.back") %>
-    <% end %>
-
-    <h1 class="mb-0 mt-2">
+    <h1 class="fw-bold mb-0 mt-2">
       <%= title %>
     </h1>
   </div>
@@ -39,9 +34,18 @@
             <%= f.text_area :description, class: "form-control", rows: 5 %>
           </div>
 
-          <%= f.submit class: "btn btn-primary" %>
+          <div class="text-center">
+            <%= f.submit class: "btn btn-primary" %>
+          </div>
         <% end %>
       </div>
     </div>
+  </div>
+
+  <div class="container mt-3">
+    <%= link_to user_collection_path(current_user.username, @collection.id) do %>
+      <i class="far fa-angle-left me-1"></i>
+      <%= t("verb.back") %>
+    <% end %>
   </div>
 </div>
