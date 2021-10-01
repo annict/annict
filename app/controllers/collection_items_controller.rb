@@ -33,6 +33,15 @@ class CollectionItemsController < ApplicationV6Controller
     redirect_to user_collection_path(current_user.username, @collection_item.collection_id)
   end
 
+  def destroy
+    collection_item = current_user.collection_items.only_kept.find(params[:collection_item_id])
+
+    Destroyers::CollectionItemDestroyer.new(collection_item: collection_item).call
+
+    flash[:notice] = t "messages._common.deleted"
+    redirect_to user_collection_path(current_user.username, collection_item.collection_id)
+  end
+
   private
 
   def collection_item_form_params

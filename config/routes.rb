@@ -77,7 +77,8 @@ Rails.application.routes.draw do
   match "/characters/:character_id",                            via: :get,    as: :character,                                  to: "characters#show"
   match "/characters/:character_id/fans",                       via: :get,    as: :character_fan_list,                         to: "character_fans#index"
   match "/checkins/redirect/:provider/:url_hash",               via: :get,    as: :legacy_record_redirect_1,                   to: "legacy/record_redirects#show", provider: /fb|tw/, url_hash: /[0-9a-zA-Z_-]{10}/
-  match "/collection_items/:collection_item_id",                via: :patch,  as: :collection_item,                            to: "collection_items#update"
+  match "/collection_items/:collection_item_id",                via: :delete, as: :collection_item,                            to: "collection_items#destroy"
+  match "/collection_items/:collection_item_id",                via: :patch,                                                   to: "collection_items#update"
   match "/collection_items/:collection_item_id/edit",           via: :get,    as: :edit_collection_item,                       to: "collection_items#edit"
   match "/collections/:collection_id",                          via: :patch,  as: :collection,                                 to: "collections#update"
   match "/collections/:collection_id/edit",                     via: :get,    as: :edit_collection,                            to: "collections#edit"
