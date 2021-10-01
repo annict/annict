@@ -1,0 +1,46 @@
+<% title = t "head.title.collection_items.edit", collection_name: @collection.name, work_title: @work.local_title %>
+<% set_meta_tags(title: title, reverse: true, prefix: false) %>
+
+<%= component_value_fetcher_tag("follow-button", internal_api_following_list_path) %>
+<%= component_value_fetcher_tag("mute-user-button", internal_api_muted_user_list_path) %>
+<%= component_value_fetcher_tag("status-select-dropdown", internal_api_library_entry_list_path, method: :post, payload: {work_ids: @work_ids}) %>
+
+<div class="py-3">
+  <div class="container">
+    <%= Headers::ProfileHeaderComponent.new(self, user: current_user).render %>
+  </div>
+
+  <%= Navs::UserNavComponent.new(self, user: current_user, params: params).render %>
+
+  <div class="container mt-3">
+    <h1 class="fw-bold mb-0">
+      <%= title %>
+    </h1>
+  </div>
+
+  <div class="container mt-3 u-container-flat">
+    <div class="card u-card-flat">
+      <div class="card-body">
+        <%= form_with model: @form, url: collection_item_path(@collection_item), method: :patch do |f| %>
+          <%= render "application/components/error_panel", resource: f.object %>
+
+          <div class="mb-3">
+            <%= f.label :body, class: "form-label" %>
+            <%= f.text_area :body, class: "form-control", rows: 5 %>
+          </div>
+
+          <div class="text-center">
+            <%= f.submit class: "btn btn-primary" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="container mt-3">
+    <%= link_to user_collection_path(current_user.username, @collection.id) do %>
+      <i class="far fa-angle-left me-1"></i>
+      <%= t("verb.back") %>
+    <% end %>
+  </div>
+</div>

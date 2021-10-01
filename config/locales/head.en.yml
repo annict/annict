@@ -75,6 +75,8 @@ en:
       characters:
         index: Characters of %{title} (Anime)
         show: '%{name}'
+      collection_items:
+        edit: "Edit %{work_title} on %{collection_name}"
       collections:
         edit: "Edit %{collection_name}"
         index: "%{profile_name} (%{username})'s collection list"

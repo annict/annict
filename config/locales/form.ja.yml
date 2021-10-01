@@ -4,6 +4,8 @@ ja:
       forms/collection_form:
         description: 概要
         name: 名前
+      forms/collection_item_form:
+        body: 本文
       forms/work_record_form:
         comment: 感想
         rating_animation: 映像

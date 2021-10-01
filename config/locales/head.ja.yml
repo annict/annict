@@ -75,6 +75,8 @@ ja:
       characters:
         index: 'アニメ「%{title}」のキャラクター'
         show: '%{name}'
+      collection_items:
+        edit: "%{collection_name} > %{work_title} の編集"
       collections:
         edit: "%{collection_name} の編集"
         index: '%{profile_name} (%{username})のアニメコレクション'

@@ -7,6 +7,7 @@ class PageCategory
     collection
     collection_list
     edit_collection
+    edit_collection_item
     episode
     episode_list
     favorite_character_list
