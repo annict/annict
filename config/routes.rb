@@ -82,6 +82,7 @@ Rails.application.routes.draw do
   match "/collection_items/:collection_item_id/edit",           via: :get,    as: :edit_collection_item,                       to: "collection_items#edit"
   match "/collections/:collection_id",                          via: :patch,  as: :collection,                                 to: "collections#update"
   match "/collections/:collection_id/edit",                     via: :get,    as: :edit_collection,                            to: "collections#edit"
+  match "/collections/new",                                     via: :get,    as: :new_collection,                             to: "collections#new"
   match "/db",                                                  via: :get,    as: :db_root,                                    to: "db/home#show"
   match "/db/activities",                                       via: :get,    as: :db_activity_list,                           to: "db/activities#index"
   match "/db/casts/:id",                                        via: :delete, as: :db_cast_detail,                             to: "db/casts#destroy"

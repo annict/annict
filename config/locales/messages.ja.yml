@@ -86,6 +86,8 @@ ja:
       supported_vod: (Annictがサポートしている) 動画サービス
     character_fans:
       no_users: ファンはいません
+    collections:
+      new: 新規登録
     comments:
       comment_form_placeholder: 記録にコメントしよう！
       create: コメントする
