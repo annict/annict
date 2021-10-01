@@ -105,7 +105,11 @@
         <% end %>
       </div>
     <% else %>
-      <%= EmptyV6Component.new(self, text: t("messages._empty.no_works")).render %>
+      <div class="card u-card-flat">
+        <div class="card-body">
+          <%= EmptyV6Component.new(self, text: t("messages._empty.no_items")).render %>
+        </div>
+      </div>
     <% end %>
   </div>
 </div>
