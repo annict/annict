@@ -80,6 +80,7 @@ ja:
       collections:
         edit: "%{collection_name} の編集"
         index: '%{profile_name} (%{username})のアニメコレクション'
+        new: コレクション登録
         show: "%{collection_name} | %{profile_name} (%{username})"
       comments:
         edit: コメント編集

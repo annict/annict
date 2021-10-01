@@ -17,6 +17,7 @@ class PageCategory
     follower_list
     home
     library
+    new_collection
     newest_work_list
     organization_fan_list
     person_fan_list

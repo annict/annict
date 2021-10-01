@@ -11,6 +11,28 @@ class CollectionsController < ApplicationV6Controller
     @collections = @user.collections.only_kept.order(created_at: :desc)
   end
 
+  def new
+    set_page_category PageCategory::NEW_COLLECTION
+
+    @profile = current_user.profile
+    @form = Forms::CollectionForm.new
+  end
+
+  def create
+    @form = Forms::CollectionForm.new(collection_form_params)
+
+    if @form.invalid?
+      @profile = current_user.profile
+
+      return render :edit, status: :unprocessable_entity
+    end
+
+    result = Creators::CollectionCreator.new(user: current_user, form: @form).call
+
+    flash[:notice] = t "messages._common.created"
+    redirect_to user_collection_path(current_user.username, result.collection.id)
+  end
+
   def show
     set_page_category PageCategory::COLLECTION
 

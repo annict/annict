@@ -80,6 +80,7 @@ en:
       collections:
         edit: "Edit %{collection_name}"
         index: "%{profile_name} (%{username})'s collection list"
+        new: New Collection
         show: "%{collection_name} | %{profile_name} (%{username})"
       comments:
         edit: Edit Comment
