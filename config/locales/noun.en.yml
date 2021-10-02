@@ -51,6 +51,7 @@ en:
     contents: Contents
     column: Column
     completed: Completed
+    create: Create
     current_season: Current Season
     current_season_shoten: Airing
     delete: Delete
