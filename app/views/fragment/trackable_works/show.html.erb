@@ -43,6 +43,14 @@
           <% end %>
         </div>
       </div>
+
+      <div class="mt-5">
+        <h4 class="fw-bold">
+          <%= t "noun.collections" %>
+        </h4>
+
+        <turbo-frame id="c-new-collection-item" loading="lazy" src="<%= fragment_new_collection_item_path(@work) %>"></turbo-frame>
+      </div>
     </div>
 
     <div class="container mt-5">

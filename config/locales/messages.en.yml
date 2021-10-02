@@ -138,6 +138,11 @@ en:
         no_comments: No comments
         no_posts: No posts
         updated: Updated
+    fragment:
+      collection_items:
+        new:
+          disabled_form_hint1: No selectable collections.
+          disabled_form_hint2_html: You can create collections on <a data-turbo-frame="_top" href="/@%{username}/collections">here</a>.
     friends:
       no_sns_friends: No SNS Friends
       no_users: No users
