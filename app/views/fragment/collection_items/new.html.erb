@@ -31,7 +31,7 @@
   <ul class="list-inline mt-2">
     <% @added_collections.each do |collection| %>
       <li class="list-inline-item">
-        <%= link_to collection.name, user_collection_path(current_user.username, collection), class: "badge bg-secondary", data: { turbo_frame: "_top" } %>
+        <%= link_to collection.name, user_collection_path(current_user.username, collection), class: "badge bg-secondary text-white", data: { turbo_frame: "_top" } %>
       </li>
     <% end %>
   </ul>
