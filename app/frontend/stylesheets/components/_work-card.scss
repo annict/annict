@@ -1,0 +1,8 @@
+.c-work-card {
+  &__work-title {
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    display: -webkit-box;
+    overflow: hidden;
+  }
+}

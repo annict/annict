@@ -1,13 +1,7 @@
-<div class="gx-2 gy-3 row">
-  <% works.each_slice(3) do |sliced_works| %>
-    <div class="col-12 col-md-6 col-xl-4">
-      <div class="gx-2 gy-3 row">
-        <% sliced_works.each do |work| %>
-          <div class="col-4 text-center">
-            <%= Cards::WorkCardComponent.new(self, work: work, width: 140, user: user).render %>
-          </div>
-        <% end %>
-      </div>
+<div class="c-work-grid gx-2 gy-3 row">
+  <% works.each do |work| %>
+    <div class="c-work-grid__col">
+      <%= Cards::WorkCardComponent.new(self, work: work, width: 140, user: user).render %>
     </div>
   <% end %>
 </div>
