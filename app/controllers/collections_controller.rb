@@ -41,7 +41,6 @@ class CollectionsController < ApplicationV6Controller
     @collection = @user.collections.only_kept.find(params[:collection_id])
     @collection_items = @collection.collection_items.only_kept.preload(:user, work: :work_image).order(:position)
     @work_ids = @collection_items.pluck(:work_id)
-    @library_entry_by_work_id = @user.library_entries.where(work_id: @work_ids).each_with_object({}) { |le, h| h[le.work_id] = le }
   end
 
   def edit
