@@ -1,0 +1,22 @@
+<turbo-frame id="c-note-form">
+  <% if flash[:notice] %>
+    <div class="alert alert-success align-items-center d-flex">
+      <i class="far fa-check-circle fs-3 me-1"></i>
+      <div>
+        <%= flash[:notice] %>
+      </div>
+    </div>
+  <% end %>
+
+  <%= form_with model: @form, url: fragment_note_path(@work), method: :patch do |f| %>
+    <%= render "application/components/error_panel", resource: f.object %>
+
+    <div class="mb-2">
+      <%= f.text_area :body, class: "form-control", rows: 5 %>
+    </div>
+
+    <div class="text-center">
+      <%= f.submit class: "btn btn-primary" %>
+    </div>
+  <% end %>
+</turbo-frame>

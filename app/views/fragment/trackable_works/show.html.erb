@@ -51,6 +51,14 @@
 
         <turbo-frame id="c-new-collection-item" loading="lazy" src="<%= fragment_new_collection_item_path(@work) %>"></turbo-frame>
       </div>
+
+      <div class="mt-5">
+        <h4 class="fw-bold">
+          <%= t "noun.note_alt" %>
+        </h4>
+
+        <turbo-frame id="c-note-form" loading="lazy" src="<%= fragment_edit_note_path(@work) %>"></turbo-frame>
+      </div>
     </div>
 
     <div class="container mt-5">

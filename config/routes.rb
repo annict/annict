@@ -225,6 +225,8 @@ Rails.application.routes.draw do
   match "/fragment/episodes/:episode_id/records",               via: :get,    as: :fragment_episode_record_list,               to: "fragment/episode_records#index"
   match "/fragment/works/:work_id/collection_items",            via: :post,   as: :fragment_collection_item_list,              to: "fragment/collection_items#create"
   match "/fragment/works/:work_id/collection_items/new",        via: :get,    as: :fragment_new_collection_item,               to: "fragment/collection_items#new"
+  match "/fragment/works/:work_id/note",                        via: :patch,  as: :fragment_note,                              to: "fragment/notes#update"
+  match "/fragment/works/:work_id/note/edit",                   via: :get,    as: :fragment_edit_note,                         to: "fragment/notes#edit"
   match "/fragment/works/:work_id/records",                     via: :get,    as: :fragment_work_record_list,                  to: "fragment/work_records#index"
   match "/fragment/receive_channel_buttons",                    via: :get,    as: :fragment_receive_channel_button_list,       to: "fragment/receive_channel_buttons#index"
   match "/fragment/trackable_works/:work_id",                   via: :get,    as: :fragment_trackable_work,                    to: "fragment/trackable_works#show"
