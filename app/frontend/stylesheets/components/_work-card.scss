@@ -4,5 +4,9 @@
     -webkit-line-clamp: 2;
     display: -webkit-box;
     overflow: hidden;
+
+    &--fixed {
+      height: 32px;
+    }
   }
 }
