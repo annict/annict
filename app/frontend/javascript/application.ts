@@ -30,14 +30,14 @@ document.addEventListener('turbo:load', (_event) => {
   axios.defaults.headers.common['X-CSRF-Token'] = document
     .querySelector('meta[name="csrf-token"]')
     ?.getAttribute('content');
+
+  const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+  const popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+    return new Popover(popoverTriggerEl);
+  });
 });
 
 dayjs.locale(annConfig.viewer.locale);
-
-const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
-const popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
-  return new Popover(popoverTriggerEl)
-})
 
 const application = Application.start();
 const context = (require as any).context('./controllers', true, /\.ts$/);
