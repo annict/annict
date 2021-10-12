@@ -106,7 +106,7 @@ module.exports = {
     contentBase: path.resolve(__dirname, 'public', 'packs'),
     host: '0.0.0.0',
     port: 8080,
-    sockPort: 3001,
+    sockPort: process.env.WEBPACK_DEV_SERVER_PORT,
     disableHostCheck: true,
   },
   devtool: 'eval-source-map',

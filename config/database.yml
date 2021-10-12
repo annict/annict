@@ -5,6 +5,7 @@ default: &default
   host: <%= ENV.fetch("ANNICT_POSTGRES_HOST") %>
   password: <%= ENV.fetch("ANNICT_POSTGRES_PASSWORD") %>
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  port: <%= ENV.fetch("ANNICT_POSTGRES_PORT") %>
   username: <%= ENV.fetch("ANNICT_POSTGRES_USERNAME") %>
 
 development:
