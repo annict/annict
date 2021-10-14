@@ -42,7 +42,11 @@ module Fragment
           record: @record,
           work: @record.work,
           comment: @record.comment,
-          rating_overall: @record.rating,
+          rating_overall: @record.work_record.rating_overall_state,
+          rating_animation: @record.work_record.rating_animation_state,
+          rating_character: @record.work_record.rating_character_state,
+          rating_story: @record.work_record.rating_story_state,
+          rating_music: @record.work_record.rating_music_state,
           share_to_twitter: current_user.share_record_to_twitter?
         )
       end
