@@ -79,9 +79,9 @@ en:
         edit: "Edit %{work_title} on %{collection_name}"
       collections:
         edit: "Edit %{collection_name}"
-        index: "%{profile_name} (%{username})'s collection list"
+        index: "%{profile_name}'s anime collections"
         new: New Collection
-        show: "%{collection_name} | %{profile_name} (%{username})"
+        show: "%{collection_name} | %{profile_name}'s anime collection"
       comments:
         edit: Edit Comment
       db:

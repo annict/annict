@@ -79,9 +79,9 @@ ja:
         edit: "%{collection_name} > %{work_title} の編集"
       collections:
         edit: "%{collection_name} の編集"
-        index: '%{profile_name} (%{username})のアニメコレクション'
+        index: '%{profile_name} のアニメコレクション'
         new: コレクション作成
-        show: "%{collection_name} | %{profile_name} (%{username})"
+        show: "%{collection_name} | %{profile_name} のアニメコレクション"
       comments:
         edit: コメント編集
       db:
