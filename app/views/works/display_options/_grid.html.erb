@@ -7,7 +7,7 @@
         <% end %>
 
         <h2 class="c-work-card__work-title c-work-card__work-title--fixed fw-bold mt-2 small">
-          <%= link_to work.local_title, work_path(work), class: "text-body" %>
+          <%= link_to work.local_title, work_path(work), class: "text-body", title: work.local_title %>
         </h2>
 
         <div class="mt-2 text-center">
