@@ -1,0 +1,114 @@
+<% title = t "head.title.collections.show", profile_name: @profile.name, username: @user.username, collection_name: @collection.name %>
+<% description = meta_description(t("head.meta.description.collections.index", profile_name: @profile.name, username: @user.username)) %>
+<% set_meta_tags(title: title, description: description, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false) %>
+
+<%= component_value_fetcher_tag("follow-button", internal_api_following_list_path) %>
+<%= component_value_fetcher_tag("mute-user-button", internal_api_muted_user_list_path) %>
+<%= component_value_fetcher_tag("status-select-dropdown", internal_api_library_entry_list_path, method: :post, payload: {work_ids: @work_ids}) %>
+
+<div class="py-3">
+  <div class="container">
+    <%= Headers::ProfileHeaderComponent.new(self, user: @user).render %>
+  </div>
+
+  <%= Navs::UserNavComponent.new(self, user: @user, params: params).render %>
+
+  <div class="container mt-3">
+    <div class="g-3 row">
+      <div class="col">
+        <h1 class="fw-bold mb-3">
+          <%= @collection.name %>
+        </h1>
+
+        <% if @collection.description.present? %>
+          <%= BodyV6Component.new(self, content: @collection.description, format: :markdown).render %>
+        <% end %>
+      </div>
+
+      <div class="col-auto">
+        <div class="d-inline-block dropdown u-cursor-pointer">
+          <div class="dropdown-toggle u-hidden-dropdown-toggle-icon" data-bs-toggle="dropdown">
+            <i class="far fa-ellipsis-h"></i>
+          </div>
+
+          <div class="dropdown-menu">
+            <% if current_user && @user == current_user %>
+              <%= link_to edit_collection_path(@collection), class: "dropdown-item" do %>
+                <%= t("noun.edit") %>
+              <% end %>
+
+              <%= link_to collection_path(@collection), class: "dropdown-item", data: {confirm: t("messages._common.are_you_sure"), method: :delete} do %>
+                <%= t("noun.delete") %>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container u-container-flat">
+    <% if @collection_items.present? %>
+      <div class="g-3 row">
+        <% @collection_items.each do |collection_item| %>
+          <div class="col-12 col-lg-6">
+            <div class="card u-card-flat">
+              <div class="card-body">
+                <% user = collection_item.user %>
+                <% work = collection_item.work %>
+
+                <div class="gx-3 row">
+                  <div class="col-2">
+                    <%= link_to work_path(work) do %>
+                      <%= Pictures::WorkPictureComponent.new(self, work: work, width: 200, alt: work.local_title).render %>
+                    <% end %>
+                  </div>
+
+                  <div class="col">
+                    <h3 class="fw-bold h4 mb-0">
+                      <%= link_to work_path(work), class: "text-body" do %>
+                        <%= work.local_title %>
+                      <% end %>
+                    </h3>
+
+                    <% if collection_item.body.present? %>
+                      <div class="mt-1">
+                        <%= BodyV6Component.new(self, content: collection_item.body, format: :markdown).render %>
+                      </div>
+                    <% end %>
+                  </div>
+
+                  <div class="col-auto">
+                    <div class="d-inline-block dropdown u-cursor-pointer">
+                      <div class="dropdown-toggle u-hidden-dropdown-toggle-icon" data-bs-toggle="dropdown">
+                        <i class="far fa-ellipsis-h"></i>
+                      </div>
+
+                      <div class="dropdown-menu">
+                        <% if current_user && @user == current_user %>
+                          <%= link_to edit_collection_item_path(collection_item), class: "dropdown-item" do %>
+                            <%= t("noun.edit") %>
+                          <% end %>
+
+                          <%= link_to collection_item_path(collection_item), class: "dropdown-item", data: {confirm: t("messages._common.are_you_sure"), method: :delete} do %>
+                            <%= t("noun.delete") %>
+                          <% end %>
+                        <% end %>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="card u-card-flat">
+        <div class="card-body">
+          <%= EmptyV6Component.new(self, text: t("messages._empty.no_items")).render %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

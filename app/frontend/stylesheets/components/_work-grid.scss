@@ -1,0 +1,17 @@
+.c-work-grid {
+  &__col {
+    flex: 0 0 auto;
+    // 3 columns
+    width: 33.33333%;
+
+    @include media-breakpoint-up(md) {
+      // 6 columns
+      width: 16.66666%;
+    }
+
+    @include media-breakpoint-up(xl) {
+      // 9 columns
+      width: 11.11111%;
+    }
+  }
+}

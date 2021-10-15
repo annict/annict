@@ -29,6 +29,8 @@ Rails.application.routes.draw do
   # standard:disable Layout/ExtraSpacing, Layout/LineLength
   match "/@:username",                                          via: :get,    as: :profile,                                    to: "profiles#show",                username: ROUTING_USERNAME_FORMAT
   match "/@:username/:status_kind",                             via: :get,    as: :library,                                    to: "libraries#show",               username: ROUTING_USERNAME_FORMAT, status_kind: /wanna_watch|watching|watched|on_hold|stop_watching/
+  match "/@:username/collections",                              via: :get,    as: :user_collection_list,                       to: "collections#index",            username: ROUTING_USERNAME_FORMAT
+  match "/@:username/collections/:collection_id",               via: :get,    as: :user_collection,                            to: "collections#show",             username: ROUTING_USERNAME_FORMAT
   match "/@:username/favorite_characters",                      via: :get,    as: :favorite_character_list,                    to: "favorite_characters#index",    username: ROUTING_USERNAME_FORMAT
   match "/@:username/favorite_organizations",                   via: :get,    as: :favorite_organization_list,                 to: "favorite_organizations#index", username: ROUTING_USERNAME_FORMAT
   match "/@:username/favorite_people",                          via: :get,    as: :favorite_person_list,                       to: "favorite_people#index",        username: ROUTING_USERNAME_FORMAT
@@ -75,6 +77,15 @@ Rails.application.routes.draw do
   match "/characters/:character_id",                            via: :get,    as: :character,                                  to: "characters#show"
   match "/characters/:character_id/fans",                       via: :get,    as: :character_fan_list,                         to: "character_fans#index"
   match "/checkins/redirect/:provider/:url_hash",               via: :get,    as: :legacy_record_redirect_1,                   to: "legacy/record_redirects#show", provider: /fb|tw/, url_hash: /[0-9a-zA-Z_-]{10}/
+  match "/collection_items",                                    via: :posst,  as: :collection_item_list,                       to: "collection_items#create"
+  match "/collection_items/:collection_item_id",                via: :delete, as: :collection_item,                            to: "collection_items#destroy"
+  match "/collection_items/:collection_item_id",                via: :patch,                                                   to: "collection_items#update"
+  match "/collection_items/:collection_item_id/edit",           via: :get,    as: :edit_collection_item,                       to: "collection_items#edit"
+  match "/collections/:collection_id",                          via: :delete, as: :collection,                                 to: "collections#destroy"
+  match "/collections/:collection_id",                          via: :patch,                                                   to: "collections#update"
+  match "/collections/:collection_id/edit",                     via: :get,    as: :edit_collection,                            to: "collections#edit"
+  match "/collections",                                         via: :post,   as: :collection_list,                            to: "collections#create"
+  match "/collections/new",                                     via: :get,    as: :new_collection,                             to: "collections#new"
   match "/db",                                                  via: :get,    as: :db_root,                                    to: "db/home#show"
   match "/db/activities",                                       via: :get,    as: :db_activity_list,                           to: "db/activities#index"
   match "/db/casts/:id",                                        via: :delete, as: :db_cast_detail,                             to: "db/casts#destroy"
@@ -211,8 +222,12 @@ Rails.application.routes.draw do
   match "/fragment/@:username/records/:record_id/edit",         via: :get,    as: :fragment_edit_record,                       to: "fragment/records#edit",           username: ROUTING_USERNAME_FORMAT
   match "/fragment/@:username/tracking_heatmap",                via: :get,    as: :fragment_tracking_heatmap,                  to: "fragment/tracking_heatmaps#show", username: ROUTING_USERNAME_FORMAT
   match "/fragment/activity_groups/:activity_group_id/items",   via: :get,    as: :fragment_activity_item_list,                to: "fragment/activity_items#index"
-  match "/fragment/works/:work_id/records",                     via: :get,    as: :fragment_work_record_list,                  to: "fragment/work_records#index"
   match "/fragment/episodes/:episode_id/records",               via: :get,    as: :fragment_episode_record_list,               to: "fragment/episode_records#index"
+  match "/fragment/works/:work_id/collection_items",            via: :post,   as: :fragment_collection_item_list,              to: "fragment/collection_items#create"
+  match "/fragment/works/:work_id/collection_items/new",        via: :get,    as: :fragment_new_collection_item,               to: "fragment/collection_items#new"
+  match "/fragment/works/:work_id/note",                        via: :patch,  as: :fragment_note,                              to: "fragment/notes#update"
+  match "/fragment/works/:work_id/note/edit",                   via: :get,    as: :fragment_edit_note,                         to: "fragment/notes#edit"
+  match "/fragment/works/:work_id/records",                     via: :get,    as: :fragment_work_record_list,                  to: "fragment/work_records#index"
   match "/fragment/receive_channel_buttons",                    via: :get,    as: :fragment_receive_channel_button_list,       to: "fragment/receive_channel_buttons#index"
   match "/fragment/trackable_works/:work_id",                   via: :get,    as: :fragment_trackable_work,                    to: "fragment/trackable_works#show"
   match "/fragment/trackable_episodes",                         via: :get,    as: :fragment_trackable_episode_list,            to: "fragment/trackable_episodes#index"

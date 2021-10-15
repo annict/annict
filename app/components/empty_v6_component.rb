@@ -16,9 +16,7 @@ class EmptyV6Component < ApplicationV6Component
         end
 
         if block_given?
-          h.tag :div do
-            h.html yield
-          end
+          yield h
         end
       end
     end

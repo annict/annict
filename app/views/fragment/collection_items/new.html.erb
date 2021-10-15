@@ -1,0 +1,38 @@
+<turbo-frame id="c-new-collection-item">
+  <%= form_with model: @form, url: fragment_collection_item_list_path(@work), method: :post do |f| %>
+    <%= render "application/components/error_panel", resource: f.object %>
+
+    <div class="g-2 row">
+      <div class="col">
+        <%= f.select(
+          :collection_id,
+          options_from_collection_for_select(@selectable_collections, :id, :name),
+          { include_blank: true },
+          { class: "form-select", disabled: @form_disabled }
+        ) %>
+
+        <% if @form_disabled %>
+          <div class="form-text">
+            <%= t "messages.fragment.collection_items.new.disabled_form_hint1" %>
+          </div>
+        <% end %>
+
+        <div class="form-text">
+          <%= t "messages.fragment.collection_items.new.disabled_form_hint2_html", username: current_user.username %>
+        </div>
+      </div>
+
+      <div class="col-auto">
+        <%= f.submit t("noun.add_alt"), class: "btn btn-primary", disabled: @selectable_collections.blank? %>
+      </div>
+    </div>
+  <% end %>
+
+  <ul class="list-inline mt-2">
+    <% @added_collections.each do |collection| %>
+      <li class="list-inline-item">
+        <%= link_to collection.name, user_collection_path(current_user.username, collection), class: "badge bg-secondary text-white", data: { turbo_frame: "_top" } %>
+      </li>
+    <% end %>
+  </ul>
+</turbo-frame>

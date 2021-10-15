@@ -4,6 +4,7 @@ ja:
     account_deletion: アカウント削除
     actions: アクション
     activities: アクティビティ
+    add_alt: 登録
     after: After
     ago: 前
     aired: 開始日
@@ -42,6 +43,7 @@ ja:
     character: キャラクター
     characters: キャラクター
     characters2: 文字
+    collections: コレクション
     comment: コメント
     comment_alt: 感想
     comments_count: 感想数
@@ -49,6 +51,7 @@ ja:
     contents: コンテンツ
     column: 項目
     completed: 見たアニメ
+    create: 作成
     current_season: 今期のアニメ
     current_season_shoten: 今期アニメ
     delete: 削除
@@ -102,6 +105,7 @@ ja:
     next_page: 次のページ
     next_season: 来期のアニメ
     no_select: 未選択
+    note_alt: メモ
     notification: 通知
     official_site: 公式サイト
     on_hold: 一時中断してるアニメ

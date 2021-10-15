@@ -1,6 +1,7 @@
 import 'bootstrap/js/dist/collapse';
 import 'bootstrap/js/dist/dropdown';
 import 'bootstrap/js/dist/modal';
+import Popover from 'bootstrap/js/dist/popover';
 import 'dayjs/locale/ja';
 
 import { Application } from "@hotwired/stimulus"
@@ -29,6 +30,11 @@ document.addEventListener('turbo:load', (_event) => {
   axios.defaults.headers.common['X-CSRF-Token'] = document
     .querySelector('meta[name="csrf-token"]')
     ?.getAttribute('content');
+
+  const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+  const popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+    return new Popover(popoverTriggerEl);
+  });
 });
 
 dayjs.locale(annConfig.viewer.locale);

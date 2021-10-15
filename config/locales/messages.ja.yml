@@ -49,10 +49,12 @@ ja:
       no_activities: アクティビティはありません
       no_anime: アニメはありません
       no_characters: キャラクターはいません
+      no_collections: コレクションはありません
       no_comments: 感想はありません
       no_episodes: エピソードはありません
       no_followers: フォローされていません
       no_following: フォローしていません
+      no_items: アイテムはありません
       no_organizations: 団体はありません
       no_people: 人物はいません
       no_programs: 番組情報はありません
@@ -85,6 +87,8 @@ ja:
       supported_vod: (Annictがサポートしている) 動画サービス
     character_fans:
       no_users: ファンはいません
+    collections:
+      new: 新規作成
     comments:
       comment_form_placeholder: 記録にコメントしよう！
       create: コメントする
@@ -134,6 +138,11 @@ ja:
         no_comments: コメントはありません
         no_posts: 投稿はありません
         updated: 更新しました
+    fragment:
+      collection_items:
+        new:
+          disabled_form_hint1: 選択可能なコレクションはありません。
+          disabled_form_hint2_html: コレクションは<a data-turbo-frame="_top" href="/@%{username}/collections">こちら</a>から作成することができます。
     friends:
       no_sns_friends: 友達はいません
       no_users: 利用者はいません

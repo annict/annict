@@ -49,10 +49,12 @@ en:
       no_activities: No Activities
       no_anime: No Anime
       no_characters: No Characters
+      no_collections: No Collections
       no_comments: No Comments
       no_episodes: No Episodes
       no_followers: No Followers
       no_following: No Following Users
+      no_items: No Items
       no_organizations: No Organizations
       no_people: No People
       no_programs: No Programs
@@ -85,6 +87,8 @@ en:
       supported_vod: Video Service
     character_fans:
       no_users: No users
+    collections:
+      new: New Collection
     comments:
       comment_form_placeholder: Click here to add a new comment
       create: Create
@@ -134,6 +138,11 @@ en:
         no_comments: No comments
         no_posts: No posts
         updated: Updated
+    fragment:
+      collection_items:
+        new:
+          disabled_form_hint1: No selectable collections.
+          disabled_form_hint2_html: You can create collections on <a data-turbo-frame="_top" href="/@%{username}/collections">here</a>.
     friends:
       no_sns_friends: No SNS Friends
       no_users: No users

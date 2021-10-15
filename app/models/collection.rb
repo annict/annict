@@ -32,9 +32,6 @@ class Collection < ApplicationRecord
   has_many :collection_items, dependent: :destroy
   has_many :works, through: :collection_items
 
-  validates :name, presence: true, length: {maximum: 50}
-  validates :description, length: {maximum: 500}
-
   def contain?(work)
     collection_items.where(work: work).exists?
   end

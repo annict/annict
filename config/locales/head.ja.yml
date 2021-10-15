@@ -12,6 +12,9 @@ ja:
         characters:
           index: アニメ「%{title}」のキャラクターをチェック！
           show: Annictで%{name}をチェック！
+        collections:
+          index: '%{profile_name} (%{username})が作ったアニメコレクションをチェック！'
+          show: '%{profile_name} (%{username})が作ったアニメコレクションをチェック！'
         episodes:
           index: 'アニメ「%{title}」のエピソードをチェック！'
           show: 'アニメ「%{work_title}」%{episode_title_with_number}の感想をチェック!'
@@ -72,6 +75,13 @@ ja:
       characters:
         index: 'アニメ「%{title}」のキャラクター'
         show: '%{name}'
+      collection_items:
+        edit: "%{collection_name} > %{work_title} の編集"
+      collections:
+        edit: "%{collection_name} の編集"
+        index: '%{profile_name} (%{username})のアニメコレクション'
+        new: コレクション作成
+        show: "%{collection_name} | %{profile_name} (%{username})"
       comments:
         edit: コメント編集
       db:

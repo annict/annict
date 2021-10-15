@@ -4,6 +4,7 @@ en:
     account_deletion: Delete Account
     actions: Actions
     activities: Activities
+    add_alt: Add
     after: After
     ago: ago
     aired: Aired
@@ -42,6 +43,7 @@ en:
     character: Character
     characters: Characters
     characters2: Characters
+    collections: Collections
     comment: Comment
     comment_alt: Comment
     comments_count: Comments
@@ -49,6 +51,7 @@ en:
     contents: Contents
     column: Column
     completed: Completed
+    create: Create
     current_season: Current Season
     current_season_shoten: Airing
     delete: Delete
@@ -102,6 +105,7 @@ en:
     next_page: Next Page
     next_season: Next Season
     no_select: No Select
+    note_alt: Note
     notification: Notification
     official_site: Official Site
     on_hold: On Hold

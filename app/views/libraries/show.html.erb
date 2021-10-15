@@ -47,7 +47,7 @@
               <div class="card-body">
                 <% works = season.no_season? ? @works.with_no_season : @works.by_season(season.slug) %>
                 <% works = works.order(watchers_count: :desc).includes(:work_image) %>
-                <%= render "libraries/display_options/grid", works: works, user: @user %>
+                <%= render "libraries/display_options/grid", works: works, library_entries: @library_entries, user: @user %>
               </div>
             </div>
           </div>

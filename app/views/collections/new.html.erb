@@ -1,0 +1,47 @@
+<% title = t "head.title.collections.new" %>
+<% set_meta_tags(title: title, reverse: true, prefix: false) %>
+
+<div class="py-3">
+  <div class="container">
+    <%= Headers::ProfileHeaderComponent.new(self, user: current_user).render %>
+  </div>
+
+  <%= Navs::UserNavComponent.new(self, user: current_user, params: params).render %>
+
+  <div class="container mt-3">
+    <h1 class="fw-bold mb-0 mt-2">
+      <%= title %>
+    </h1>
+  </div>
+
+  <div class="container mt-3 u-container-flat">
+    <div class="card u-card-flat">
+      <div class="card-body">
+        <%= form_with model: @form, url: collection_list_path, method: :post do |f| %>
+          <%= render "application/components/error_panel", resource: f.object %>
+
+          <div class="mb-3">
+            <%= f.label :name, class: "c-label-required form-label" %>
+            <%= f.text_field :name, class: "form-control", autofocus: true, required: true %>
+          </div>
+
+          <div class="mb-3">
+            <%= f.label :description, class: "form-label" %>
+            <%= f.text_area :description, class: "form-control", rows: 5 %>
+          </div>
+
+          <div class="text-center">
+            <%= f.submit t("noun.create"), class: "btn btn-primary" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="container mt-3">
+    <%= link_to user_collection_list_path(current_user.username) do %>
+      <i class="far fa-angle-left me-1"></i>
+      <%= t("verb.back") %>
+    <% end %>
+  </div>
+</div>
