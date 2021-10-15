@@ -5,6 +5,12 @@ export default class extends Controller {
 
   inputTarget!: HTMLInputElement;
 
+  initialize() {
+    document.addEventListener('record-rating:reset', () => {
+      this.resetState();
+    });
+  }
+
   changeState(event: Event) {
     const { state } = (event.currentTarget as HTMLInputElement).dataset;
 

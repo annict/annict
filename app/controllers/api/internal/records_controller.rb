@@ -44,7 +44,10 @@ module Api::Internal
     end
 
     def work_record_form_params
-      params.required(:forms_work_record_form).permit(:comment, :rating_overall, :share_to_twitter)
+      params.required(:forms_work_record_form).permit(
+        :comment, :share_to_twitter,
+        :rating_overall, :rating_animation, :rating_character, :rating_story, :rating_music
+      )
     end
   end
 end

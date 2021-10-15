@@ -6,6 +6,7 @@ export default class extends BasicFormController {
 
   async handleSuccess(event: any) {
     super.handleSuccess(event);
+    new EventDispatcher('record-rating:reset').dispatch();
     this.reloadList();
   }
 

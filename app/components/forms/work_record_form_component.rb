@@ -21,12 +21,22 @@ module Forms
         build_html do |h|
           h.html ErrorPanelV6Component.new(view_context, stimulus_controller: "forms--work-record-form").render
 
-          h.tag :div, class: "mb-2" do
-            h.html ButtonGroups::RecordRatingButtonGroupComponent.new(view_context, form: f, rating_field: :rating_overall).render
+          h.tag :div, class: "g-3 mb-3 row" do
+            %i[rating_overall rating_animation rating_character rating_story rating_music].each do |rating|
+              h.tag :div, class: "col-12 col-lg-6 col-xxl-4" do
+                h.html f.label(rating, class: "form-label small")
+                h.html ButtonGroups::RecordRatingButtonGroupComponent.new(view_context, form: f, rating_field: rating).render
+              end
+            end
           end
 
-          h.tag :div, class: "mb-3" do
-            h.html Textareas::RecordTextareaComponent.new(view_context, form: f, optional_textarea_classname: "form-control", textarea_name: "forms_work_record_form[comment]").render
+          h.tag :div do
+            h.html Textareas::RecordTextareaComponent.new(
+              view_context,
+              form: f,
+              optional_textarea_classname: "form-control",
+              textarea_name: "forms_work_record_form[comment]"
+            ).render
           end
 
           h.tag :div, class: "row" do
