@@ -103,15 +103,6 @@
       <dd class="col-6">
         <%= display_time(current_user.gumroad_subscriber.gumroad_created_at) %>
       </dd>
-
-      <% if current_user.gumroad_subscriber.gumroad_cancelled_at.present? %>
-        <dt class="col-6 text-end">
-          キャンセル日時
-        </dt>
-        <dd class="col-6">
-          <%= display_time(current_user.gumroad_subscriber.gumroad_cancelled_at) %>
-        </dd>
-      <% end %>
     </dl>
 
     <p>
