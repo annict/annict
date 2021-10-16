@@ -36,8 +36,6 @@ class Provider < ApplicationRecord
       .or(where("token_expires_at > ?", Time.now.to_i))
   }
 
-  after_save :update_supporter
-
   def token_expires_at=(expires_at)
     value = expires_at if name == "facebook"
     write_attribute(:token_expires_at, value)
@@ -46,21 +44,5 @@ class Provider < ApplicationRecord
   def token_secret=(secret)
     value = secret if name == "twitter"
     write_attribute(:token_secret, value)
-  end
-
-  private
-
-  def update_supporter
-    return unless name.gumroad?
-
-    GumroadSubscribersSyncService.execute
-    subscriber = GumroadSubscriber
-      .where(gumroad_user_id: uid, gumroad_ended_at: nil)
-      .or(GumroadSubscriber.where(gumroad_user_id: uid).after(field: :gumroad_ended_at)).first
-
-    return if subscriber.blank?
-
-    user.gumroad_subscriber = subscriber
-    user.save
   end
 end
