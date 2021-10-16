@@ -45,6 +45,6 @@ class GumroadClient
       return nil
     end
 
-    json["subscribers"].filter { |subscriber| subscriber["product_id"] == product_id }.first
+    json["subscribers"].find { |subscriber| subscriber["product_id"] == product_id }
   end
 end
