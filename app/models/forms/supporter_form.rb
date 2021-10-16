@@ -89,16 +89,8 @@ module Forms
     end
 
     def fetch_subscriber(product_id)
-      endpoint = "https://api.gumroad.com/v2/products/#{product_id}/subscribers"
-      response = HTTParty.get(endpoint, {
-        headers: {
-          "Authorization" => "Bearer #{ENV.fetch("GUMROAD_ACCESS_TOKEN")}"
-        },
-        query: {
-          email: oauth_email
-        }
-      })
-      json = JSON.parse(response.body)
+      client = GumroadClient.new(access_token: ENV.fetch("GUMROAD_ACCESS_TOKEN"))
+      json = client.fetch_subscribers(product_id, oauth_email)
 
       if json["success"] != true
         return nil
