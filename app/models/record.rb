@@ -8,6 +8,7 @@
 #  aasm_state        :string           default("published"), not null
 #  deleted_at        :datetime
 #  impressions_count :integer          default(0), not null
+#  watched_at        :datetime
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
 #  user_id           :bigint           not null
@@ -17,6 +18,7 @@
 #
 #  index_records_on_deleted_at  (deleted_at)
 #  index_records_on_user_id     (user_id)
+#  index_records_on_watched_at  (watched_at)
 #  index_records_on_work_id     (work_id)
 #
 # Foreign Keys
