@@ -257,6 +257,7 @@ class Work < ApplicationRecord
 
   def build_work_record(
     user:,
+    watched_at:,
     rating_overall: nil,
     rating_animation: nil,
     rating_music: nil,
@@ -276,7 +277,7 @@ class Work < ApplicationRecord
       share_to_twitter: share_to_twitter
     )
     work_record.detect_locale!(:body)
-    work_record.build_record(user: user, work: self)
+    work_record.build_record(user: user, work: self, watched_at: watched_at)
     work_record
   end
 

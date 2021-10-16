@@ -22,6 +22,8 @@ Dir[
 ActiveRecord::Migration.check_pending! if defined?(ActiveRecord::Migration)
 
 RSpec.configure do |config|
+  config.include ActiveSupport::Testing::TimeHelpers
+
   config.expect_with :rspec do |c|
     c.syntax = :expect
   end

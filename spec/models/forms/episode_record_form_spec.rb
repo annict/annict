@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
 describe Forms::EpisodeRecordForm do
+  let(:user) { create :registered_user }
   let(:episode) { create :episode }
 
   context "バリデーションエラーになったとき" do
     it "エラー内容を返すこと" do
       form = Forms::EpisodeRecordForm.new(
+        user: user,
         comment: "a" * (1_048_596 + 1), # 文字数制限 (1,048,596文字) 以上の感想を書く
         episode: episode,
         rating: "good",

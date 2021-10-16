@@ -1,8 +1,13 @@
 # frozen_string_literal: true
 
 describe Creators::WorkRecordCreator, type: :model do
+  let!(:current_time) { Time.zone.parse("2021-09-01 10:00:00") }
   let(:user) { create :registered_user }
   let(:work) { create :work }
+
+  before do
+    travel_to current_time
+  end
 
   it "アニメへの記録ができること" do
     # Creatorを呼んでいないので、各レコードは0件のはず
@@ -16,6 +21,7 @@ describe Creators::WorkRecordCreator, type: :model do
     Creators::WorkRecordCreator.new(
       user: user,
       form: Forms::WorkRecordForm.new(
+        user: user,
         work: work,
         comment: "すごく面白かった。",
         rating_animation: "great",
@@ -40,6 +46,7 @@ describe Creators::WorkRecordCreator, type: :model do
     activity = user.activities.first
 
     expect(record.work_id).to eq work.id
+    expect(record.watched_at).to eq current_time
 
     expect(work_record.body).to eq "すごく面白かった。"
     expect(work_record.locale).to eq "ja"
@@ -74,6 +81,7 @@ describe Creators::WorkRecordCreator, type: :model do
         Creators::WorkRecordCreator.new(
           user: user,
           form: Forms::WorkRecordForm.new(
+            user: user,
             work: work,
             comment: "すごく面白かった。", # 感想付きの記録を新たにする
             rating_animation: "great",
@@ -115,6 +123,7 @@ describe Creators::WorkRecordCreator, type: :model do
         Creators::WorkRecordCreator.new(
           user: user,
           form: Forms::WorkRecordForm.new(
+            user: user,
             work: work,
             comment: "", # 感想無しの記録を新たにする
             rating_animation: "great",

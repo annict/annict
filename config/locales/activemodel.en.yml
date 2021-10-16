@@ -81,3 +81,6 @@ en:
           rows: Streaming Links
         db/series_work_rows_form:
           invalid: 'are invalid: %{value} is not found'
+        recordable:
+          watched_at_can_only_set_supporter: can only set supporter
+          watched_at_cannot_be_in_the_future: can't be in the future

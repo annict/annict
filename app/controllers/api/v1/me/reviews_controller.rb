@@ -20,6 +20,7 @@ module Api
             share_to_twitter: @params.share_twitter
           }
           form = Forms::WorkRecordForm.new(work_record_params)
+          form.user = current_user
 
           if form.invalid?
             return render_validation_error(form.errors.full_messages.first)
@@ -48,6 +49,7 @@ module Api
             record: record,
             share_to_twitter: @params.share_twitter
           )
+          form.user = current_user
 
           if form.invalid?
             return render_validation_error(form.errors.full_messages.first)

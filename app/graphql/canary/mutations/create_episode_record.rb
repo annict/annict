@@ -31,6 +31,7 @@ module Canary
           rating: rating,
           share_to_twitter: share_to_twitter
         )
+        form.user = viewer
 
         if form.invalid?
           return {

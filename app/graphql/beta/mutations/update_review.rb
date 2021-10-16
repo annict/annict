@@ -45,6 +45,7 @@ module Beta
           record: record,
           share_to_twitter: share_twitter
         )
+        form.user = viewer
 
         if form.invalid?
           raise GraphQL::ExecutionError, form.errors.full_messages.first

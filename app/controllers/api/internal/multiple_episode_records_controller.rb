@@ -11,6 +11,7 @@ module Api
         ActiveRecord::Base.transaction do
           episodes.each do |episode|
             form = Forms::EpisodeRecordForm.new(episode: episode, share_to_twitter: false)
+            form.user = current_user
             Creators::EpisodeRecordCreator.new(user: current_user, form: form).call
           end
         end
