@@ -31,6 +31,6 @@ class GumroadSubscriber < ApplicationRecord
   validates :gumroad_product_id, presence: true
 
   def active?
-    gumroad_ended_at.nil? || gumroad_ended_at > Time.zone.now
+    !gumroad_cancelled_at&.past? && !gumroad_ended_at&.past?
   end
 end

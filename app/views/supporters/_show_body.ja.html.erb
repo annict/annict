@@ -9,13 +9,13 @@
   (主にサーバ費用)
 </p>
 
-<h2 class="fw-bold h4 my-5 text-center">
-  特典
-</h2>
-
 <p>
   サポーターになると以下の特典が得られます。
 </p>
+
+<h2 class="fw-bold h4 my-5 text-center">
+  特典
+</h2>
 
 <div class="gx-3 row">
   <div class="col-12 col-sm-6">
@@ -89,7 +89,7 @@
       サポータープログラムへのご参加ありがとうございます！サポーターとしてAnnictにログインしています。
     </p>
 
-    <dl class="mb-0 row">
+    <dl class="row">
       <dt class="col-6 text-end">
         Gumroad ID
       </dt>
@@ -103,16 +103,15 @@
       <dd class="col-6">
         <%= display_time(current_user.gumroad_subscriber.gumroad_created_at) %>
       </dd>
-
-      <% if current_user.gumroad_subscriber.gumroad_cancelled_at.present? %>
-        <dt class="col-6 text-end">
-          キャンセル日時
-        </dt>
-        <dd class="col-6">
-          <%= display_time(current_user.gumroad_subscriber.gumroad_cancelled_at) %>
-        </dd>
-      <% end %>
     </dl>
+
+    <p>
+      サポーターのキャンセルは
+      <a href="https://app.gumroad.com/subscriptions/<%= current_user.gumroad_subscriber.gumroad_id %>/manage" target="_blank" rel="noopener">Gumroadのメンバーシップページ</a>
+      からGumroadのメンバーシップをキャンセルすることで行えます。
+      <br>
+      メンバーシップのキャンセルからサポーターのキャンセルまで1日ほどかかることがあります。(定期的にGumroadまでメンバーシップ情報を取得しに行っているため)
+    </p>
   <% else %>
     <p>
       まだサポーターになっていないようです。

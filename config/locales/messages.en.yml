@@ -257,6 +257,8 @@ en:
         mail_has_sent: An email has been sent to create your account.
       new:
         description_html: We'll send a link for sign up to the email you input.
+    supporters:
+      gumroad_subscriber_not_found: Could not get membership information from Gumroad.
     tracks:
       episodes_you_have_watched: 'Watched'
       no_trackable_episodes: No trackable episodes

@@ -256,6 +256,8 @@ ja:
         mail_has_sent: アカウント作成のためのメールを送信しました
       new:
         description_html: 入力したメールアドレス宛てに<br>アカウント作成用のリンクをお送りします。
+    supporters:
+      gumroad_subscriber_not_found: Gumroadからメンバーシップ情報が取得できませんでした。
     tracks:
       episodes_you_have_watched: 視聴エピソード
       no_trackable_episodes: 未視聴エピソードはありません
