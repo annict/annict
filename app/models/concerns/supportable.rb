@@ -53,5 +53,11 @@ module Supportable
     def gumroad_ended_at
       subscriber&.dig("ended_at")
     end
+
+    private
+
+    def gumroad_client
+      @gumroad_client ||= GumroadClient.new(access_token: ENV.fetch("GUMROAD_ACCESS_TOKEN"))
+    end
   end
 end

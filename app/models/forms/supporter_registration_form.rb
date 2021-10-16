@@ -30,11 +30,5 @@ module Forms
     def subscriber
       @subscriber ||= gumroad_client.fetch_subscriber_by_email(email)
     end
-
-    private
-
-    def gumroad_client
-      @gumroad_client ||= GumroadClient.new(access_token: ENV.fetch("GUMROAD_ACCESS_TOKEN"))
-    end
   end
 end

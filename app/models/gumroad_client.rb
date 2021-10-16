@@ -14,10 +14,14 @@ class GumroadClient
   end
 
   def fetch_subscriber_by_subscriber_id(subscriber_id)
-    binding.irb
     response = HTTParty.get("#{API_ENDPOINT}/v2/subscribers/#{subscriber_id}", headers: headers)
+    json = JSON.parse(response.body)
 
-    JSON.parse(response.body)
+    if json["success"] != true
+      return nil
+    end
+
+    json["subscriber"]
   end
 
   private

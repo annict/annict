@@ -9,11 +9,6 @@ module Updaters
 
     def call
       ActiveRecord::Base.transaction do
-        provider = @user.providers.where(name: @form.provider_name).first_or_initialize
-        provider.uid = @form.provider_uid
-        provider.token = @form.provider_token
-        provider.save!
-
         gs = GumroadSubscriber.where(gumroad_id: @form.gumroad_subscriber_id).first_or_initialize
         gs.gumroad_product_id                     = @form.gumroad_product_id
         gs.gumroad_product_name                   = @form.gumroad_product_name
@@ -27,7 +22,9 @@ module Updaters
         gs.gumroad_ended_at                       = @form.gumroad_ended_at
         gs.save!
 
-        @user.update!(gumroad_subscriber: gs)
+        unless gs.active?
+          @user.update!(gumroad_subscriber: nil)
+        end
       end
     end
   end
