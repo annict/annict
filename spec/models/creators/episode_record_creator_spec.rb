@@ -1,10 +1,15 @@
 # frozen_string_literal: true
 
 describe Creators::EpisodeRecordCreator, type: :model do
+  let!(:current_time) { Time.zone.parse("2021-09-01 10:00:00") }
   let!(:user) { create :registered_user }
   let!(:work) { create :work }
   let!(:episode) { create :episode, work: work, sort_number: 10 }
   let!(:next_episode) { create :episode, work: work, sort_number: 20 }
+
+  before do
+    travel_to current_time
+  end
 
   it "エピソードへの記録が作成できること" do
     # Creatorを呼んでいないので、各レコードは0件のはず
@@ -19,6 +24,7 @@ describe Creators::EpisodeRecordCreator, type: :model do
     Creators::EpisodeRecordCreator.new(
       user: user,
       form: Forms::EpisodeRecordForm.new(
+        user: user,
         comment: "にぱー",
         episode: episode,
         rating: "good",
@@ -41,6 +47,7 @@ describe Creators::EpisodeRecordCreator, type: :model do
     library_entry = user.library_entries.first
 
     expect(record.work_id).to eq work.id
+    expect(record.watched_at).to eq current_time
 
     expect(episode_record.body).to eq "にぱー"
     expect(episode_record.locale).to eq "ja"
@@ -80,6 +87,7 @@ describe Creators::EpisodeRecordCreator, type: :model do
         Creators::EpisodeRecordCreator.new(
           user: user,
           form: Forms::EpisodeRecordForm.new(
+            user: user,
             comment: "にぱー", # 感想付きの記録を新たにする
             episode: episode,
             rating: "good",
@@ -122,6 +130,7 @@ describe Creators::EpisodeRecordCreator, type: :model do
         Creators::EpisodeRecordCreator.new(
           user: user,
           form: Forms::EpisodeRecordForm.new(
+            user: user,
             comment: "", # 感想無しの記録を新たにする
             episode: episode,
             rating: "good",

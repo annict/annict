@@ -2,6 +2,8 @@
 
 module Forms
   class EpisodeRecordForm < Forms::ApplicationForm
+    include FormRecordable
+
     attr_accessor :deprecated_rating, :episode, :oauth_application, :record
     attr_reader :comment, :rating, :share_to_twitter
 

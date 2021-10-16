@@ -6,6 +6,7 @@ module Api::Internal
 
     def create
       @form = Forms::EpisodeRecordForm.new(episode_record_form_params)
+      @form.user = current_user
       @form.episode = Episode.only_kept.find(params[:episode_id])
 
       if @form.invalid?

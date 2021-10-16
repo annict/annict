@@ -4,6 +4,7 @@ FactoryBot.define do
   factory :record do
     association :user, :with_profile
     association :work
+    watched_at { Time.zone.now }
 
     trait :with_episode_record do
       transient do

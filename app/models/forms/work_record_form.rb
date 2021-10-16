@@ -2,6 +2,8 @@
 
 module Forms
   class WorkRecordForm < Forms::ApplicationForm
+    include FormRecordable
+
     attr_accessor :work, :oauth_application,
       :rating_animation, :rating_character, :rating_music, :rating_overall, :rating_story,
       :record

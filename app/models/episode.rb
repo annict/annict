@@ -152,7 +152,7 @@ class Episode < ApplicationRecord
     episode_records.select(:created_at).last&.created_at
   end
 
-  def build_episode_record(user:, rating: nil, deprecated_rating: nil, comment: "", share_to_twitter: false)
+  def build_episode_record(user:, watched_at:, rating: nil, deprecated_rating: nil, comment: "", share_to_twitter: false)
     episode_record = episode_records.new(
       user: user,
       rating_state: rating&.downcase,
@@ -162,7 +162,7 @@ class Episode < ApplicationRecord
     )
     episode_record.work = work
     episode_record.detect_locale!(:body)
-    episode_record.build_record(user: user, work: work)
+    episode_record.build_record(user: user, work: work, watched_at: watched_at)
     episode_record
   end
 

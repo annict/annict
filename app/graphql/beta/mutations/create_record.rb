@@ -24,6 +24,7 @@ module Beta
           rating: rating_state,
           share_to_twitter: share_twitter&.to_s
         )
+        form.user = viewer
 
         if form.invalid?
           raise GraphQL::ExecutionError, form.errors.full_messages.first

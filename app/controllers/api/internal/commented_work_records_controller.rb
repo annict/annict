@@ -7,6 +7,7 @@ module Api::Internal
     def create
       @work = Work.only_kept.find(params[:work_id])
       @form = Forms::WorkRecordForm.new(work: @work, **work_record_form_params)
+      @form.user = current_user
 
       if @form.invalid?
         return render json: @form.errors.full_messages, status: :unprocessable_entity

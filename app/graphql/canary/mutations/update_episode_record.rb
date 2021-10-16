@@ -36,6 +36,7 @@ module Canary
           record: record,
           share_to_twitter: share_to_twitter
         )
+        form.user = viewer
 
         if form.invalid?
           return {
