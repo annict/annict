@@ -1,0 +1,146 @@
+<% content_for :head_vendor_assets do %>
+  <script src="https://gumroad.com/js/gumroad.js"></script>
+<% end %>
+
+<p>
+  Annict Supporters is a subscription program for Annict fans.
+  You can subscribe by paying monthly or annually, and you can support the development of Annict. (Mainly server costs)
+</p>
+
+<p>
+  When you become a supporter you'll get some benefits.
+</p>
+
+<h2 class="h4 text-center my-5 fw-bold">
+  Benefits
+</h2>
+
+<div class="row mb-3">
+  <div class="col-6">
+    <h3 class="h4 fw-bold">
+      No Ads
+    </h3>
+
+    <p>
+      Ads appearing on the site will not be displayed.
+    </p>
+  </div>
+
+  <div class="col-6">
+    <h3 class="h4 fw-bold">
+      Supporter Badge
+    </h3>
+
+    <p class="mb-0">
+      The exclusive Annict Supporters badge will be displayed.
+      <br>
+      <small>
+        (optional)
+      </small>
+    </p>
+  </div>
+</div>
+
+<h2 class="h4 text-center my-5 fw-bold">
+  Price and Payment Method
+</h2>
+
+<p>
+  We've made Annict Supporters a subscription-based feature. What this means is that when you sign up,
+  You'll have two options to sign up: pay $2.99 USD per month or $29.99 per year (2 months free).
+</p>
+
+<p class="mb-0">
+  We use <a href="https://gumroad.com" target="_blank" rel="noopener">Gumroad</a>.
+  So you can pay using credit card or PayPal.
+  Subscriptions can be canceled at any time on Gumroad.
+</p>
+
+<div class="my-5 text-center">
+  <a class="btn btn-primary" href="https://gum.co/Annict">
+    <i class="far fa-shopping-cart me-2"></i>
+    Pay by Gumroad
+  </a>
+</div>
+
+<h2 class="h4 text-center my-5 fw-bold">
+  Connect to Gumroad
+</h2>
+
+<p class="mb-0">
+  In order to know which Gumroad account you have paid,
+  you need to connect Annict's account with Gumroad's account.
+</p>
+
+<div class="my-5 text-center">
+  <% if user_signed_in? && current_user.authorized_to?(:gumroad) %>
+    <button class="btn u-btn-gumroad" disabled="">
+      <i class="far fa-link me-2"></i>
+      Connected with Gumroad
+    </button>
+  <% else %>
+    <%= button_to user_gumroad_omniauth_authorize_path(back: supporters_path), class: "btn u-btn-gumroad", data: { turbo: "false" } do %>
+      <i class="far fa-link me-2"></i>
+      Connect to Gumroad
+    <% end %>
+  <% end %>
+</div>
+
+<% if user_signed_in? %>
+  <h2 class="h4 text-center my-5 fw-bold">
+    Supporter Info
+  </h2>
+
+  <% if current_user.supporter? %>
+    <p>
+      Thank you for your participation in the supporter program!
+      You're logged into Annict as a supporter.
+    </p>
+
+    <dl class="row mb-0">
+      <dt class="col-6 text-end">
+        Gumroad ID
+      </dt>
+      <dd class="col-6">
+        <%= current_user.gumroad_subscriber.gumroad_id %>
+      </dd>
+      <dt class="col-6 text-end">
+        Joined at
+      </dt>
+      <dd class="col-6">
+        <%= display_time(current_user.gumroad_subscriber.gumroad_created_at) %>
+      </dd>
+
+      <% if current_user.gumroad_subscriber.gumroad_cancelled_at.present? %>
+        <dt class="col-6 text-end">
+          Canceled at
+        </dt>
+        <dd class="col-6">
+          <%= display_time(current_user.gumroad_subscriber.gumroad_cancelled_at) %>
+        </dd>
+      <% end %>
+    </dl>
+  <% else %>
+    <p>
+      You're not a supporter yet.
+    </p>
+
+    <% if user_signed_in? && current_user.authorized_to?(:gumroad) %>
+      <p>
+        If you've paid in Gumroad, please click the "Reconnect to Gumroad" button below
+        to get the latest payment data from Gumroad.
+      </p>
+
+      <div class="mt-5 mb-4 text-center">
+        <%= button_to user_gumroad_omniauth_authorize_path(back: supporters_path), class: "btn u-btn-gumroad", data: { turbo: "false" } do %>
+          <i class="far fa-link me-2"></i>
+          Reconnect to Gumroad
+        <% end %>
+      </div>
+    <% else %>
+      <p>
+        If you've already paied at Gumroad, please connect to Gumroad.
+      </p>
+    <% end %>
+  <% end %>
+<% end %>
