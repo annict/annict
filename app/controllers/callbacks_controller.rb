@@ -20,7 +20,7 @@ class CallbacksController < Devise::OmniauthCallbacksController
     provider = Provider.find_by(name: auth[:provider], uid: auth[:uid])
 
     if user_signed_in? && auth[:provider] == "gumroad"
-      form = Forms::SupporterForm.new(auth: auth)
+      form = Forms::SupporterRegistrationForm.new(auth: auth)
 
       if form.subscriber.nil?
         return redirect_to(supporters_path, alert: t("messages.supporters.gumroad_subscriber_not_found"))
@@ -28,7 +28,7 @@ class CallbacksController < Devise::OmniauthCallbacksController
         return redirect_to(supporters_path, alert: form.errors.full_messages.first)
       end
 
-      Updaters::SupporterUpdater.new(
+      Creators::SupporterRegistrationCreator.new(
         user: current_user,
         form: form
       ).call
