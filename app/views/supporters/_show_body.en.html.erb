@@ -97,7 +97,7 @@
       You're logged into Annict as a supporter.
     </p>
 
-    <dl class="row mb-0">
+    <dl class="row">
       <dt class="col-6 text-end">
         Gumroad ID
       </dt>
@@ -120,6 +120,13 @@
         </dd>
       <% end %>
     </dl>
+
+    <p>
+      You can cancel supporter program by canceling membership on
+      <a href="https://app.gumroad.com/subscriptions/<%= current_user.gumroad_subscriber.gumroad_id %>/manage" target="_blank" rel="noopener">Gumroad membership page</a>.
+      <br>
+      It may take up to a day from cancellation of membership to cancellation of supporters. (Because we fetch membership information from Gumroad regularly.)
+    </p>
   <% else %>
     <p>
       You're not a supporter yet.

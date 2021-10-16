@@ -113,6 +113,14 @@
         </dd>
       <% end %>
     </dl>
+
+    <p>
+      サポーターのキャンセルは
+      <a href="https://app.gumroad.com/subscriptions/<%= current_user.gumroad_subscriber.gumroad_id %>/manage" target="_blank" rel="noopener">Gumroadのメンバーシップページ</a>
+      からGumroadのメンバーシップをキャンセルすることで行えます。
+      <br>
+      メンバーシップのキャンセルからサポーターのキャンセルまで1日ほどかかることがあります。(定期的にGumroadまでメンバーシップ情報を取得しに行っているため)
+    </p>
   <% else %>
     <p>
       まだサポーターになっていないようです。
