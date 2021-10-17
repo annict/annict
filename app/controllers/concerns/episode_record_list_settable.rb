@@ -18,9 +18,10 @@ module EpisodeRecordListSettable
         .where.not(user_id: current_user.mute_users.pluck(:muted_user_id))
       @my_records = current_user
         .records
-        .eager_load(:episode_record)
+        .eager_load(episode_record: :episode)
+        .preload(:work)
         .only_kept
-        .where(episode_records: {episode_id: episode.id})
+        .where(episode_records: {episodes: episode})
         .order(watched_at: :desc)
       @following_records = records
         .merge(current_user.followings)
