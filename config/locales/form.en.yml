@@ -14,9 +14,11 @@ en:
         rating_music: Music
         rating_overall: Overall
         rating_story: Story
+        watched_at: Watched At
       forms/episode_record_form:
         comment: Comment
         rating: Rating
+        watched_at: Watched At
       forms/registration_form:
         email: Email
         terms_and_privacy_policy_agreement: Terms of Use and Privacy Policy

@@ -45,8 +45,8 @@ module Canary
         viewer = context[:viewer]
         work = Work.only_kept.find_by_graphql_id(work_id)
 
-        form = Forms::WorkRecordForm.new(
-          work: work,
+        form = Forms::WorkRecordForm.new(user: viewer, work: work)
+        form.attributes = {
           rating_overall: rating_overall,
           rating_animation: rating_animation,
           rating_music: rating_music,
@@ -54,8 +54,7 @@ module Canary
           rating_character: rating_character,
           comment: comment,
           share_to_twitter: share_to_twitter
-        )
-        form.user = viewer
+        }
 
         if form.invalid?
           return {

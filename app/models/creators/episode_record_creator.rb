@@ -18,14 +18,16 @@ module Creators
         deprecated_rating: @form.deprecated_rating,
         comment: @form.comment,
         share_to_twitter: @form.share_to_twitter,
-        watched_at: @form.watched_at.presence || Time.zone.now
+        watched_at: @form.watched_at
       )
 
       ActiveRecord::Base.transaction do
         episode_record.save!
 
-        activity_group = @user.create_or_last_activity_group!(episode_record)
-        @user.activities.create!(itemable: episode_record, activity_group: activity_group)
+        if @form.create_activity?
+          activity_group = @user.create_or_last_activity_group!(episode_record)
+          @user.activities.create!(itemable: episode_record, activity_group: activity_group)
+        end
 
         library_entry = @user.library_entries.where(work: @work).first_or_create!
         library_entry.append_episode!(@episode)

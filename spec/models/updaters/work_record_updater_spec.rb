@@ -12,21 +12,19 @@ describe Updaters::WorkRecordUpdater, type: :model do
     expect(WorkRecord.count).to eq 1
 
     # Updaterを呼ぶ
-    Updaters::WorkRecordUpdater.new(
-      user: user,
-      form: Forms::WorkRecordForm.new(
-        user: user,
-        work: work,
-        comment: work_record.body + "！！",
-        rating_animation: "great",
-        rating_character: "great",
-        rating_music: "great",
-        rating_overall: "great",
-        rating_story: "great",
-        record: record,
-        share_to_twitter: false
-      )
-    ).call
+    form = Forms::WorkRecordForm.new(user: user, record: record, work: work)
+    form.attributes = {
+      comment: work_record.body + "！！",
+      rating_animation: "great",
+      rating_character: "great",
+      rating_music: "great",
+      rating_overall: "great",
+      rating_story: "great",
+      share_to_twitter: false
+    }
+    expect(form.valid?).to eq true
+
+    Updaters::WorkRecordUpdater.new(user: user, form: form).call
 
     # Updaterを呼んでも各レコードは1件のまま
     expect(Record.count).to eq 1

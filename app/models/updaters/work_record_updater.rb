@@ -21,6 +21,7 @@ module Updaters
       @work_record.body = @form.comment
       @work_record.oauth_application = @form.oauth_application
       @work_record.detect_locale!(:body)
+      @record.watched_at = @form.watched_at
 
       if @form.deprecated_title.present?
         @work_record.body = "#{@form.deprecated_title}\n\n#{@work_record.body}"
@@ -28,7 +29,7 @@ module Updaters
 
       ActiveRecord::Base.transaction do
         @work_record.save!
-        @record.touch
+        @record.save!
         @user.touch(:record_cache_expired_at)
 
         if @form.share_to_twitter

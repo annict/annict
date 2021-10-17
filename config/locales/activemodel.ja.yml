@@ -80,5 +80,4 @@ ja:
         db/series_work_rows_form:
           invalid: 'は不正です: %{value}が見つかりません'
         recordable:
-          watched_at_can_only_set_supporter: はAnnictサポーター以外の利用者は入力できません
           watched_at_cannot_be_in_the_future: には現在までの日時を入力してください

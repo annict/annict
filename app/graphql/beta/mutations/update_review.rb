@@ -32,20 +32,18 @@ module Beta
         work_record = viewer.work_records.only_kept.find_by_graphql_id(review_id)
         work = work_record.work
         record = work_record.record
+        oauth_application = context[:doorkeeper_token].application
 
-        form = Forms::WorkRecordForm.new(
-          work: work,
+        form = Forms::WorkRecordForm.new(user: viewer, record: record, work: work, oauth_application: oauth_application)
+        form.attributes = {
           comment: body,
-          oauth_application: context[:doorkeeper_token].application,
           rating_animation: rating_animation_state,
           rating_character: rating_character_state,
           rating_music: rating_music_state,
           rating_overall: rating_overall_state,
           rating_story: rating_story_state,
-          record: record,
           share_to_twitter: share_twitter
-        )
-        form.user = viewer
+        }
 
         if form.invalid?
           raise GraphQL::ExecutionError, form.errors.full_messages.first

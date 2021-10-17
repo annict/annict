@@ -42,6 +42,16 @@ module Beta
         def modified
           object.modify_body?
         end
+
+        def created_at
+          record_promise.then(&:watched_at)
+        end
+
+        private
+
+        def record_promise
+          Beta::RecordLoader.for(Record, column: :recordable_id, where: {recordable_type: "EpisodeRecord"}).load(object.id)
+        end
       end
     end
   end

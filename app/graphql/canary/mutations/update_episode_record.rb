@@ -23,20 +23,18 @@ module Canary
 
         viewer = context[:viewer]
         record = viewer.records.only_kept.find_by_graphql_id(record_id)
+        episode = record.episode_record.episode
 
         unless record.episode_record?
           raise GraphQL::ExecutionError, "record_id #{record_id} is not an episode record"
         end
 
-        form = Forms::EpisodeRecordForm.new(
+        form = Forms::EpisodeRecordForm.new(user: viewer, record: record, episode: episode, oauth_application: context[:application])
+        form.attributes = {
           comment: comment,
-          episode: record.episode_record.episode,
-          oauth_application: context[:application],
           rating: rating,
-          record: record,
           share_to_twitter: share_to_twitter
-        )
-        form.user = viewer
+        }
 
         if form.invalid?
           return {

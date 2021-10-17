@@ -20,7 +20,7 @@ module Creators
         rating_character: @form.rating_character,
         comment: @form.comment,
         share_to_twitter: @form.share_to_twitter,
-        watched_at: @form.watched_at.presence || Time.zone.now
+        watched_at: @form.watched_at
       )
 
       if @form.deprecated_title.present?
@@ -30,8 +30,10 @@ module Creators
       ActiveRecord::Base.transaction do
         work_record.save!
 
-        activity_group = @user.create_or_last_activity_group!(work_record)
-        @user.activities.create!(itemable: work_record, activity_group: activity_group)
+        if @form.create_activity?
+          activity_group = @user.create_or_last_activity_group!(work_record)
+          @user.activities.create!(itemable: work_record, activity_group: activity_group)
+        end
 
         @user.update_share_record_setting(@form.share_to_twitter)
         @user.touch(:record_cache_expired_at)

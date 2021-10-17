@@ -8,7 +8,7 @@
 #  aasm_state        :string           default("published"), not null
 #  deleted_at        :datetime
 #  impressions_count :integer          default(0), not null
-#  watched_at        :datetime
+#  watched_at        :datetime         not null
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
 #  user_id           :bigint           not null

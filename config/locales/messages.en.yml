@@ -43,6 +43,9 @@ en:
         the_user_has_been_unmuted: The user has been unmuted.
       program_selector:
         select_program: Select Program
+      record_form_options_collapse:
+        hint_on_watched_at_for_non_supporters_html: <i class="far fa-sparkles me-1"></i>You can set by joining to <a href="/supporters" target="_blank">Annict Supporters</a>
+        hint_on_watched_at_html: If not entered, the current time will be the watched time.
       sign_up_modal:
         body: You can use this feature after sign up.
     _empty:

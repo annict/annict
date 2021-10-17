@@ -17,10 +17,11 @@ module Updaters
       @episode_record.body = @form.comment
       @episode_record.oauth_application = @form.oauth_application
       @episode_record.detect_locale!(:body)
+      @record.watched_at = @form.watched_at
 
       ActiveRecord::Base.transaction do
         @episode_record.save!
-        @record.touch
+        @record.save!
         @user.touch(:record_cache_expired_at)
 
         if @form.share_to_twitter
