@@ -26,7 +26,7 @@ module EpisodeRecordListSettable
       @following_records = records
         .merge(current_user.followings)
       @all_records = records
-         .where.not(user: [current_user, *current_user.followings])
+        .where.not(user: [current_user, *current_user.followings])
     else
       @all_records = records
     end
