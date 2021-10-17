@@ -18,7 +18,13 @@ module Collapses
           h.tag :div, class: "collapse mt-2", id: collapse_id do
             h.tag :div do
               h.html @form.label(:watched_at, class: "form-label")
-              h.html @form.datetime_field(:watched_at, class: "form-control", disabled: !current_user&.supporter?, style: "width: 300px;")
+              h.html @form.datetime_field(
+                :watched_at,
+                class: "form-control",
+                disabled: !current_user&.supporter?,
+                style: "width: 300px;",
+                value: @form.object.watched_at&.strftime("%Y-%m-%dT%H:%M")
+              )
             end
 
             h.tag :div, class: "form-text text-muted" do
