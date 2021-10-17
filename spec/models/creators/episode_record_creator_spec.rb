@@ -21,16 +21,13 @@ describe Creators::EpisodeRecordCreator, type: :model do
     expect(user.share_record_to_twitter?).to eq false
 
     # Creatorを呼ぶ
-    Creators::EpisodeRecordCreator.new(
-      user: user,
-      form: Forms::EpisodeRecordForm.new(
-        user: user,
-        comment: "にぱー",
-        episode: episode,
-        rating: "good",
-        share_to_twitter: false
-      )
-    ).call
+    form = Forms::EpisodeRecordForm.new(user: user, episode: episode)
+    form.attributes = {
+      comment: "にぱー",
+      rating: "good",
+      share_to_twitter: false
+    }
+    Creators::EpisodeRecordCreator.new(user: user, form: form).call
 
     # Creatorを呼んだので、各レコードが1件ずつ作成されるはず
     expect(Record.count).to eq 1
@@ -71,17 +68,14 @@ describe Creators::EpisodeRecordCreator, type: :model do
     let!(:watched_time) { Time.zone.parse("2021-01-01 12:00:00") }
 
     it "エピソードへの記録が作成できること" do
-      Creators::EpisodeRecordCreator.new(
-        user: user,
-        form: EpisodeRecordForm.new(
-          user: user,
-          body: "にぱー",
-          episode: episode,
-          rating: "good",
-          share_to_twitter: false,
-          watched_at: watched_time
-        )
-      ).call
+      form = EpisodeRecordForm.new(user: user, episode: episode)
+      form.attributes = {
+        body: "にぱー",
+        rating: "good",
+        share_to_twitter: false,
+        watched_at: watched_time
+      }
+      Creators::EpisodeRecordCreator.new(user: user, form: form).call
 
       record = user.records.first
 
@@ -111,16 +105,13 @@ describe Creators::EpisodeRecordCreator, type: :model do
         expect(user.share_record_to_twitter?).to eq false
 
         # Creatorを呼ぶ
-        Creators::EpisodeRecordCreator.new(
-          user: user,
-          form: Forms::EpisodeRecordForm.new(
-            user: user,
-            comment: "にぱー", # 感想付きの記録を新たにする
-            episode: episode,
-            rating: "good",
-            share_to_twitter: false
-          )
-        ).call
+        form = Forms::EpisodeRecordForm.new(user: user, episode: episode)
+        form.attributes = {
+          comment: "にぱー", # 感想付きの記録を新たにする
+          rating: "good",
+          share_to_twitter: false
+        }
+        Creators::EpisodeRecordCreator.new(user: user, form: form).call
 
         expect(ActivityGroup.count).to eq 2 # ActivityGroup が新たに作成されるはず
         expect(Activity.count).to eq 2
@@ -154,16 +145,13 @@ describe Creators::EpisodeRecordCreator, type: :model do
         expect(user.share_record_to_twitter?).to eq false
 
         # Creatorを呼ぶ
-        Creators::EpisodeRecordCreator.new(
-          user: user,
-          form: Forms::EpisodeRecordForm.new(
-            user: user,
-            comment: "", # 感想無しの記録を新たにする
-            episode: episode,
-            rating: "good",
-            share_to_twitter: false
-          )
-        ).call
+        form = Forms::EpisodeRecordForm.new(user: user, episode: episode)
+        form.attributes = {
+          comment: "", # 感想無しの記録を新たにする
+          rating: "good",
+          share_to_twitter: false
+        }
+        Creators::EpisodeRecordCreator.new(user: user, form: form).call
 
         expect(ActivityGroup.count).to eq 1 # ActivityGroup は新たに作成されないはず
         expect(Activity.count).to eq 2

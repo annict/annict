@@ -8,14 +8,13 @@ module Api
 
         def create
           episode = Episode.only_kept.find(@params.episode_id)
-          form = Forms::EpisodeRecordForm.new(
+          form = Forms::EpisodeRecordForm.new(user: current_user, episode: episode)
+          form.attributes = {
             comment: @params.comment,
             deprecated_rating: @params.rating,
-            episode: episode,
             rating: @params.rating_state,
             share_to_twitter: @params.share_twitter
-          )
-          form.user = current_user
+          }
 
           if form.invalid?
             return render_validation_error(form.errors.full_messages.first)
@@ -33,17 +32,15 @@ module Api
           @episode_record = current_user.episode_records.only_kept.find(@params.id)
           episode = @episode_record.episode
           record = @episode_record.record
+          oauth_application = doorkeeper_token.application
 
-          form = Forms::EpisodeRecordForm.new(
+          form = Forms::EpisodeRecordForm.new(user: current_user, record: record, episode: episode, oauth_application: oauth_application)
+          form.attributes = {
             comment: @params.comment,
-            episode: episode,
-            oauth_application: doorkeeper_token.application,
             rating: @params.rating_state,
             deprecated_rating: @params.rating,
-            record: record,
             share_to_twitter: @params.share_twitter
-          )
-          form.user = current_user
+          }
 
           if form.invalid?
             return render_validation_error(form.errors.full_messages.first)

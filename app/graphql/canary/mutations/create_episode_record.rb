@@ -23,15 +23,14 @@ module Canary
 
         viewer = context[:viewer]
         episode = Episode.only_kept.find_by_graphql_id(episode_id)
+        oauth_application = context[:application]
 
-        form = Forms::EpisodeRecordForm.new(
+        form = Forms::EpisodeRecordForm.new(user: viewer, episode: episode, oauth_application: oauth_application)
+        form.attributes = {
           comment: comment,
-          episode: episode,
-          oauth_application: context[:application],
           rating: rating,
           share_to_twitter: share_to_twitter
-        )
-        form.user = viewer
+        }
 
         if form.invalid?
           return {

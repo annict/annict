@@ -16,16 +16,16 @@ module Beta
 
         viewer = context[:viewer]
         episode_record = viewer.episode_records.only_kept.find_by_graphql_id(record_id)
+        episode = episode_record.episode
+        record = episode_record.record
+        oauth_application = context[:doorkeeper_token].application
 
-        form = Forms::EpisodeRecordForm.new(
+        form = Forms::EpisodeRecordForm.new(user: viewer, episode: episode, record: record, oauth_application: oauth_application)
+        form.attributes = {
           comment: comment,
-          episode: episode_record.episode,
-          oauth_application: context[:doorkeeper_token].application,
           rating: rating_state&.downcase,
-          record: episode_record.record,
           share_to_twitter: share_twitter
-        )
-        form.user = viewer
+        }
 
         if form.invalid?
           raise GraphQL::ExecutionError, form.errors.full_messages.first

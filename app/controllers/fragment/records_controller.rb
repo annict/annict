@@ -29,28 +29,28 @@ module Fragment
 
       authorize @record, :edit?
 
-      @form = if @record.episode_record?
-        Forms::EpisodeRecordForm.new(
-          record: @record,
-          episode: @record.episode_record.episode,
-          comment: @record.episode_record.body,
-          rating: @record.episode_record.rating_state,
+      if @record.episode_record?
+        episode_record = @record.episode_record
+        @form = Forms::EpisodeRecordForm.new(user: current_user, record: @record, episode: episode_record.episode)
+        @form.attributes = {
+          comment: episode_record.body,
+          rating: episode_record.rating_state,
           share_to_twitter: current_user.share_record_to_twitter?,
           watched_at: @record.watched_at
-        )
+        }
       else
-        Forms::WorkRecordForm.new(
-          record: @record,
-          work: @record.work,
+        work_record = @record.work_record
+        @form = Forms::WorkRecordForm.new(user: current_user, record: @record, work: @record.work)
+        @form.attributes = {
           comment: @record.comment,
-          rating_overall: @record.work_record.rating_overall_state,
-          rating_animation: @record.work_record.rating_animation_state,
-          rating_character: @record.work_record.rating_character_state,
-          rating_story: @record.work_record.rating_story_state,
-          rating_music: @record.work_record.rating_music_state,
+          rating_overall: work_record.rating_overall_state,
+          rating_animation: work_record.rating_animation_state,
+          rating_character: work_record.rating_character_state,
+          rating_story: work_record.rating_story_state,
+          rating_music: work_record.rating_music_state,
           share_to_twitter: current_user.share_record_to_twitter?,
           watched_at: @record.watched_at
-        )
+        }
       end
 
       @show_options = params[:show_options] == "true"

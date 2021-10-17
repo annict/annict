@@ -18,20 +18,17 @@ describe Creators::WorkRecordCreator, type: :model do
     expect(user.share_record_to_twitter?).to eq false
 
     # Creatorを呼ぶ
-    Creators::WorkRecordCreator.new(
-      user: user,
-      form: Forms::WorkRecordForm.new(
-        user: user,
-        work: work,
-        comment: "すごく面白かった。",
-        rating_animation: "great",
-        rating_character: "great",
-        rating_music: "great",
-        rating_overall: "great",
-        rating_story: "great",
-        share_to_twitter: false
-      )
-    ).call
+    form = Forms::WorkRecordForm.new(user: user, work: work)
+    form.attributes = {
+      comment: "すごく面白かった。",
+      rating_animation: "great",
+      rating_character: "great",
+      rating_music: "great",
+      rating_overall: "great",
+      rating_story: "great",
+      share_to_twitter: false
+    }
+    Creators::WorkRecordCreator.new(user: user, form: form).call
 
     # Creatorを呼んだので、各レコードが1件ずつ作成されるはず
     expect(Record.count).to eq 1
@@ -69,14 +66,11 @@ describe Creators::WorkRecordCreator, type: :model do
     let!(:watched_time) { Time.zone.parse("2021-01-01 12:00:00") }
 
     it "作品への記録が作成できること" do
-      Creators::WorkRecordCreator.new(
-        user: user,
-        form: WorkRecordForm.new(
-          user: user,
-          work: work,
-          watched_at: watched_time
-        )
-      ).call
+      form = WorkRecordForm.new(user: user, work: work)
+      form.attributes = {
+        watched_at: watched_time
+      }
+      Creators::WorkRecordCreator.new(user: user, form: form).call
 
       record = user.records.first
 
@@ -102,20 +96,17 @@ describe Creators::WorkRecordCreator, type: :model do
         expect(Activity.count).to eq 1
 
         # Creatorを呼ぶ
-        Creators::WorkRecordCreator.new(
-          user: user,
-          form: Forms::WorkRecordForm.new(
-            user: user,
-            work: work,
-            comment: "すごく面白かった。", # 感想付きの記録を新たにする
-            rating_animation: "great",
-            rating_character: "great",
-            rating_music: "great",
-            rating_overall: "great",
-            rating_story: "great",
-            share_to_twitter: false
-          )
-        ).call
+        form = Forms::WorkRecordForm.new(user: user, work: work)
+        form.attributes = {
+          comment: "すごく面白かった。", # 感想付きの記録を新たにする
+          rating_animation: "great",
+          rating_character: "great",
+          rating_music: "great",
+          rating_overall: "great",
+          rating_story: "great",
+          share_to_twitter: false
+        }
+        Creators::WorkRecordCreator.new(user: user, form: form).call
 
         expect(ActivityGroup.count).to eq 2 # ActivityGroup が新たに作成されるはず
         expect(Activity.count).to eq 2
@@ -144,20 +135,17 @@ describe Creators::WorkRecordCreator, type: :model do
         expect(Activity.count).to eq 1
 
         # Creatorを呼ぶ
-        Creators::WorkRecordCreator.new(
-          user: user,
-          form: Forms::WorkRecordForm.new(
-            user: user,
-            work: work,
-            comment: "", # 感想無しの記録を新たにする
-            rating_animation: "great",
-            rating_character: "great",
-            rating_music: "great",
-            rating_overall: "great",
-            rating_story: "great",
-            share_to_twitter: false
-          )
-        ).call
+        form = Forms::WorkRecordForm.new(user: user, work: work)
+        form.attributes = {
+          comment: "", # 感想無しの記録を新たにする
+          rating_animation: "great",
+          rating_character: "great",
+          rating_music: "great",
+          rating_overall: "great",
+          rating_story: "great",
+          share_to_twitter: false
+        }
+        Creators::WorkRecordCreator.new(user: user, form: form).call
 
         expect(ActivityGroup.count).to eq 1 # ActivityGroup は新たに作成されないはず
         expect(Activity.count).to eq 2

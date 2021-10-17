@@ -13,17 +13,13 @@ describe Updaters::EpisodeRecordUpdater, type: :model do
     expect(EpisodeRecord.count).to eq 1
 
     # Updaterを呼ぶ
-    Updaters::EpisodeRecordUpdater.new(
-      user: user,
-      form: Forms::EpisodeRecordForm.new(
-        user: user,
-        comment: episode_record.body + "！！",
-        episode: episode,
-        rating: "good",
-        record: record,
-        share_to_twitter: false
-      )
-    ).call
+    form = Forms::EpisodeRecordForm.new(user: user, episode: episode, record: record)
+    form.attributes = {
+      comment: episode_record.body + "！！",
+      rating: "good",
+      share_to_twitter: false
+    }
+    Updaters::EpisodeRecordUpdater.new(user: user, form: form).call
 
     # Updaterを呼んでも各レコードは1件のまま
     expect(Record.count).to eq 1

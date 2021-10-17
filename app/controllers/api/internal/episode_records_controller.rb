@@ -7,8 +7,10 @@ module Api
 
       def create
         episode = Episode.only_kept.find(params[:episode_id])
-        form = Forms::EpisodeRecordForm.new(episode: episode, share_to_twitter: current_user.share_record_to_twitter?)
-        form.user = current_user
+        form = Forms::EpisodeRecordForm.new(user: current_user, episode: episode)
+        form.attributes = {
+          share_to_twitter: current_user.share_record_to_twitter?
+        }
 
         if form.invalid?
           return render(status: 400, json: {message: form.errors.full_messages.first})
