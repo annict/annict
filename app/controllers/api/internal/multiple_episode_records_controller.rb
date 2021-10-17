@@ -14,6 +14,11 @@ module Api
             form.attributes = {
               share_to_twitter: false
             }
+
+            if form.invalid?
+              return render json: form.errors.full_messages, status: :unprocessable_entity
+            end
+
             Creators::EpisodeRecordCreator.new(user: current_user, form: form).call
           end
         end
