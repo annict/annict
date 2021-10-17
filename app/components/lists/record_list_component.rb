@@ -2,12 +2,14 @@
 
 module Lists
   class RecordListComponent < ApplicationV6Component
-    def initialize(view_context, records:, show_box: true, show_options: true, empty_text: :no_records)
+    def initialize(view_context, records:, show_box: true, show_options: true, empty_text: :no_records, controller: nil, action: nil)
       super view_context
       @records = records
       @show_box = show_box
       @show_options = show_options
       @empty_text = empty_text
+      @controller = controller
+      @action = action
       @pagination = @records.respond_to?(:first_page?)
     end
 
@@ -25,7 +27,7 @@ module Lists
 
             if @pagination
               h.tag :div, class: "mt-3 text-center" do
-                h.html ButtonGroups::PaginationButtonGroupComponent.new(view_context, collection: @records).render
+                h.html ButtonGroups::PaginationButtonGroupComponent.new(view_context, collection: @records, controller: @controller, action: @action).render
               end
             end
           else
