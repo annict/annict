@@ -24,7 +24,7 @@ module Creators
       ActiveRecord::Base.transaction do
         episode_record.save!
 
-        if @form.watched_at.nil?
+        if @form.create_activity?
           activity_group = @user.create_or_last_activity_group!(episode_record)
           @user.activities.create!(itemable: episode_record, activity_group: activity_group)
         end

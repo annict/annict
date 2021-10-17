@@ -30,7 +30,7 @@ module Creators
       ActiveRecord::Base.transaction do
         work_record.save!
 
-        if @form.watched_at.nil?
+        if @form.create_activity?
           activity_group = @user.create_or_last_activity_group!(work_record)
           @user.activities.create!(itemable: work_record, activity_group: activity_group)
         end

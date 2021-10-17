@@ -21,6 +21,10 @@ module FormRecordable
       end
     end
 
+    def create_activity?
+      @local_watched_at.blank?
+    end
+
     private
 
     def watched_at_cannot_be_in_the_future
@@ -34,11 +38,11 @@ module FormRecordable
 
     def set_watched_at
       Time.use_zone(user.time_zone) do
-        @watched_at = if user.supporter?
-          local_watched_at = local_time(watched_at)
-          persisted? ? (local_watched_at.presence || record.watched_at) : (local_watched_at.presence || Time.zone.now)
+        if user.supporter?
+          @local_watched_at = local_time(watched_at)
+          @watched_at = persisted? ? (@local_watched_at.presence || record.watched_at) : (@local_watched_at.presence || Time.zone.now)
         else
-          persisted? ? record.watched_at : Time.zone.now
+          @watched_at = persisted? ? record.watched_at : Time.zone.now
         end
       end
     end
