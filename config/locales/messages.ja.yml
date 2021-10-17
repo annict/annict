@@ -29,7 +29,7 @@ ja:
           created: 'が記録しました'
           more: '残り%{n}件の記録を見る'
       adsense:
-        hide_ads_html: <a href="/supporters">Annictサポーター</a>になると広告を非表示にできます
+        hide_ads_html: <a href="/supporters" target="_blank">Annictサポーター</a>になると広告を非表示にできます。
       body:
         view_full_text: 全文読む
       deprecated_ratings_collapse:

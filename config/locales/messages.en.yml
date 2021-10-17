@@ -29,7 +29,7 @@ en:
           created: 'tracked'
           more: 'Show %{n} records'
       adsense:
-        hide_ads_html: You can hide ads by becoming <a href="/supporters">Annict Supporters</a>
+        hide_ads_html: You can hide ads by becoming <a href="/supporters" target="_blank">Annict Supporters</a>.
       body:
         view_full_text: View Full Text
       deprecated_ratings_collapse:

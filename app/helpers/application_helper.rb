@@ -38,6 +38,10 @@ module ApplicationHelper
     tag.div(class: "c-skeleton-loader__content #{class_name}", style: "height: #{height}px; width: #{width}px;")
   end
 
+  def display_ads?
+    Rails.env.production?
+  end
+
   def annict_config
     config = {
       domain: locale == :ja ? ENV.fetch("ANNICT_DOMAIN") : ENV.fetch("ANNICT_EN_DOMAIN"),
