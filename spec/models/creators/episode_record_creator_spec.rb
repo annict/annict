@@ -2,7 +2,7 @@
 
 describe Creators::EpisodeRecordCreator, type: :model do
   let!(:current_time) { Time.zone.parse("2021-09-01 10:00:00") }
-  let!(:user) { create :registered_user }
+  let!(:user) { create :registered_user, :with_supporter }
   let!(:work) { create :work }
   let!(:episode) { create :episode, work: work, sort_number: 10 }
   let!(:next_episode) { create :episode, work: work, sort_number: 20 }
@@ -77,6 +77,8 @@ describe Creators::EpisodeRecordCreator, type: :model do
         share_to_twitter: false,
         watched_at: watched_time
       }
+      expect(form.valid?).to eq true
+
       Creators::EpisodeRecordCreator.new(user: user, form: form).call
 
       record = user.records.first
@@ -113,6 +115,8 @@ describe Creators::EpisodeRecordCreator, type: :model do
           rating: "good",
           share_to_twitter: false
         }
+        expect(form.valid?).to eq true
+
         Creators::EpisodeRecordCreator.new(user: user, form: form).call
 
         expect(ActivityGroup.count).to eq 2 # ActivityGroup が新たに作成されるはず
@@ -153,6 +157,8 @@ describe Creators::EpisodeRecordCreator, type: :model do
           rating: "good",
           share_to_twitter: false
         }
+        expect(form.valid?).to eq true
+
         Creators::EpisodeRecordCreator.new(user: user, form: form).call
 
         expect(ActivityGroup.count).to eq 1 # ActivityGroup は新たに作成されないはず

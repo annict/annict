@@ -2,7 +2,7 @@
 
 describe Creators::WorkRecordCreator, type: :model do
   let!(:current_time) { Time.zone.parse("2021-09-01 10:00:00") }
-  let(:user) { create :registered_user }
+  let(:user) { create :registered_user, :with_supporter }
   let(:work) { create :work }
 
   before do
@@ -73,6 +73,8 @@ describe Creators::WorkRecordCreator, type: :model do
         comment: "",
         watched_at: watched_time
       }
+      expect(form.valid?).to eq true
+
       Creators::WorkRecordCreator.new(user: user, form: form).call
 
       record = user.records.first
@@ -109,6 +111,8 @@ describe Creators::WorkRecordCreator, type: :model do
           rating_story: "great",
           share_to_twitter: false
         }
+        expect(form.valid?).to eq true
+
         Creators::WorkRecordCreator.new(user: user, form: form).call
 
         expect(ActivityGroup.count).to eq 2 # ActivityGroup が新たに作成されるはず
@@ -148,6 +152,8 @@ describe Creators::WorkRecordCreator, type: :model do
           rating_story: "great",
           share_to_twitter: false
         }
+        expect(form.valid?).to eq true
+
         Creators::WorkRecordCreator.new(user: user, form: form).call
 
         expect(ActivityGroup.count).to eq 1 # ActivityGroup は新たに作成されないはず

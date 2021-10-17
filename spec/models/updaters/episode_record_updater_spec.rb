@@ -19,6 +19,8 @@ describe Updaters::EpisodeRecordUpdater, type: :model do
       rating: "good",
       share_to_twitter: false
     }
+    expect(form.valid?).to eq true
+
     Updaters::EpisodeRecordUpdater.new(user: user, form: form).call
 
     # Updaterを呼んでも各レコードは1件のまま

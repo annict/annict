@@ -22,6 +22,8 @@ describe Updaters::WorkRecordUpdater, type: :model do
       rating_story: "great",
       share_to_twitter: false
     }
+    expect(form.valid?).to eq true
+
     Updaters::WorkRecordUpdater.new(user: user, form: form).call
 
     # Updaterを呼んでも各レコードは1件のまま
