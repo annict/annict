@@ -37,7 +37,7 @@ module Beta
         end
 
         def created_at
-          record_promise.then(&:watched_at)
+          object.watched_at
         end
 
         private
