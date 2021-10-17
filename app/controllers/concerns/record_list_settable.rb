@@ -7,10 +7,10 @@ module RecordListSettable
     @records = user
       .records
       .preload(:work_record, work: :work_image, episode_record: :episode)
-      .order(created_at: :desc)
+      .order(watched_at: :desc)
       .page(params[:page])
       .per(30)
-    @records = @records.by_month(params[:month], year: params[:year]) if params[:month] && params[:year]
+    @records = @records.by_month(params[:month], year: params[:year], field: :watched_at) if params[:month] && params[:year]
     @work_ids = @records.pluck(:work_id)
   end
 end
