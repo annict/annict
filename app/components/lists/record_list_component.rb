@@ -8,7 +8,7 @@ module Lists
       @show_box = show_box
       @show_options = show_options
       @empty_text = empty_text
-      @pagenation = @records.respond_to?(:first_page?)
+      @pagination = @records.respond_to?(:first_page?)
     end
 
     def render
@@ -23,7 +23,7 @@ module Lists
               end
             end
 
-            if @pagenation
+            if @pagination
               h.tag :div, class: "mt-3 text-center" do
                 h.html ButtonGroups::PaginationButtonGroupComponent.new(view_context, collection: @records).render
               end
