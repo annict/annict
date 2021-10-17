@@ -6,7 +6,7 @@
 
   <div class="mt-3">
     <% if @record.episode_record? %>
-      <%= Forms::EpisodeRecordFormComponent.new(self, form: @form, current_user: current_user).render %>
+      <%= Forms::EpisodeRecordFormComponent.new(self, form: @form).render %>
     <% else %>
       <%= Forms::WorkRecordFormComponent.new(self, form: @form).render %>
     <% end %>
