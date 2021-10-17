@@ -37,7 +37,7 @@ module Beta
         end
 
         def created_at
-          object.watched_at
+          object.record.watched_at
         end
 
         private
