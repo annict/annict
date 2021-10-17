@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_10_16_135715) do
+ActiveRecord::Schema.define(version: 2021_10_17_074902) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -812,7 +812,7 @@ ActiveRecord::Schema.define(version: 2021_10_16_135715) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "deleted_at"
-    t.datetime "watched_at"
+    t.datetime "watched_at", null: false
     t.index ["deleted_at"], name: "index_records_on_deleted_at"
     t.index ["user_id"], name: "index_records_on_user_id"
     t.index ["watched_at"], name: "index_records_on_watched_at"
