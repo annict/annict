@@ -24,8 +24,10 @@ module Creators
       ActiveRecord::Base.transaction do
         episode_record.save!
 
-        activity_group = @user.create_or_last_activity_group!(episode_record)
-        @user.activities.create!(itemable: episode_record, activity_group: activity_group)
+        if @form.watched_at.nil?
+          activity_group = @user.create_or_last_activity_group!(episode_record)
+          @user.activities.create!(itemable: episode_record, activity_group: activity_group)
+        end
 
         library_entry = @user.library_entries.where(work: @work).first_or_create!
         library_entry.append_episode!(@episode)

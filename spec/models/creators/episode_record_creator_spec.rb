@@ -67,6 +67,33 @@ describe Creators::EpisodeRecordCreator, type: :model do
     expect(library_entry.next_episode).to eq next_episode
   end
 
+  context "watched_at が指定されているとき" do
+    let!(:watched_time) { Time.zone.parse("2021-01-01 12:00:00") }
+
+    it "エピソードへの記録が作成できること" do
+      Creators::EpisodeRecordCreator.new(
+        user: user,
+        form: EpisodeRecordForm.new(
+          user: user,
+          body: "にぱー",
+          episode: episode,
+          rating: "good",
+          share_to_twitter: false,
+          watched_at: watched_time
+        )
+      ).call
+
+      record = user.records.first
+
+      # watched_at が指定した日時になっているはず
+      expect(record.watched_at).to eq watched_time
+
+      # ActivityGroup, Activity は作成されないはず
+      expect(ActivityGroup.count).to eq 0
+      expect(Activity.count).to eq 0
+    end
+  end
+
   describe "アクティビティの作成" do
     context "直前の記録に感想が書かれていて、その後に新たに感想付きの記録をしたとき" do
       let(:episode) { create :episode, episode_record_bodies_count: 1 }

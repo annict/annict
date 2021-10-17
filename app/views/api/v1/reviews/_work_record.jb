@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+record = work_record.record
+
 json = {}
 
 json[:id] = work_record.id if @params.fields_contain?("#{field_prefix}id")
@@ -13,6 +15,6 @@ json[:rating_overall_state] = work_record.rating_overall_state if @params.fields
 json[:likes_count] = work_record.likes_count if @params.fields_contain?("#{field_prefix}likes_count")
 json[:impressions_count] = work_record.record.impressions_count if @params.fields_contain?("#{field_prefix}impressions_count")
 json[:modified_at] = work_record.modified_at if @params.fields_contain?("#{field_prefix}modified_at")
-json[:created_at] = work_record.created_at.iso8601 if @params.fields_contain?("#{field_prefix}created_at")
+json[:created_at] = record.watched_at.iso8601 if @params.fields_contain?("#{field_prefix}created_at")
 
 json

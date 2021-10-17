@@ -21,8 +21,6 @@ module FormRecordable
     private
 
     def watched_at_can_only_set_supporter
-      return if persisted?
-
       if watched_at.present? && !user.supporter?
         i18n_path = "activemodel.errors.forms.recordable.watched_at_can_only_set_supporter"
         errors.add(:watched_at, I18n.t(i18n_path))

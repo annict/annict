@@ -65,6 +65,30 @@ describe Creators::WorkRecordCreator, type: :model do
     expect(activity.activity_group_id).to eq activity_group.id
   end
 
+  context "watched_at が指定されているとき" do
+    let!(:watched_time) { Time.zone.parse("2021-01-01 12:00:00") }
+
+    it "作品への記録が作成できること" do
+      Creators::WorkRecordCreator.new(
+        user: user,
+        form: WorkRecordForm.new(
+          user: user,
+          work: work,
+          watched_at: watched_time
+        )
+      ).call
+
+      record = user.records.first
+
+      # watched_at が指定した日時になっているはず
+      expect(record.watched_at).to eq watched_time
+
+      # ActivityGroup, Activity は作成されないはず
+      expect(ActivityGroup.count).to eq 0
+      expect(Activity.count).to eq 0
+    end
+  end
+
   describe "アクティビティの作成" do
     context "直前の記録に感想が書かれていて、その後に新たに感想付きの記録をしたとき" do
       let(:work) { create :work, work_records_with_body_count: 1 }

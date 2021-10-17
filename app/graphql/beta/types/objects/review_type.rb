@@ -35,6 +35,16 @@ module Beta
         def title
           object.title.presence || I18n.t("noun.record_of_work", work_title: object.work.local_title)
         end
+
+        def created_at
+          record_promise.then(&:watched_at)
+        end
+
+        private
+
+        def record_promise
+          Beta::RecordLoader.for(Record, column: :recordable_id, where: {recordable_type: "WorkRecord"}).load(object.id)
+        end
       end
     end
   end

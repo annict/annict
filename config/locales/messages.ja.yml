@@ -34,6 +34,9 @@ ja:
         view_full_text: 全文読む
       deprecated_ratings_collapse:
         hint: 以前作品の記録に設定できた4項目の評価を表示しています
+      episode_record_form:
+        hint_on_watched_at_for_supporter_html: 視聴日時を入力した記録はタイムラインに表示されません。<br>未入力のときは現在の日時が視聴日時になります。未来の日時は入力できません。
+        hint_on_watched_at_html: <i class="far fa-sparkles me-1 text-warning"></i><a href="/supporters" target="_blank">Annictサポーター</a>になると入力できるようになります。
       favorite_button:
         add_to_favorites: お気に入りに登録
         added_to_favorites: 登録済み

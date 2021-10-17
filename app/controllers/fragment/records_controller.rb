@@ -35,7 +35,8 @@ module Fragment
           episode: @record.episode_record.episode,
           comment: @record.episode_record.body,
           rating: @record.episode_record.rating_state,
-          share_to_twitter: current_user.share_record_to_twitter?
+          share_to_twitter: current_user.share_record_to_twitter?,
+          watched_at: @record.watched_at
         )
       else
         Forms::WorkRecordForm.new(
@@ -47,7 +48,8 @@ module Fragment
           rating_character: @record.work_record.rating_character_state,
           rating_story: @record.work_record.rating_story_state,
           rating_music: @record.work_record.rating_music_state,
-          share_to_twitter: current_user.share_record_to_twitter?
+          share_to_twitter: current_user.share_record_to_twitter?,
+          watched_at: @record.watched_at
         )
       end
 

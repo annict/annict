@@ -39,6 +39,13 @@ module Forms
             ).render
           end
 
+          h.tag :div, class: "mb-3" do
+            h.html Collapses::RecordFormOptionsCollapseComponent.new(
+              view_context,
+              form: f
+            ).render
+          end
+
           h.tag :div, class: "row" do
             h.tag :div, class: "col" do
               if current_user&.authorized_to?(:twitter, shareable: true)
