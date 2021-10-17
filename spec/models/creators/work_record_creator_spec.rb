@@ -28,6 +28,8 @@ describe Creators::WorkRecordCreator, type: :model do
       rating_story: "great",
       share_to_twitter: false
     }
+    expect(form.valid?).to eq true
+
     Creators::WorkRecordCreator.new(user: user, form: form).call
 
     # Creatorを呼んだので、各レコードが1件ずつ作成されるはず
@@ -66,8 +68,9 @@ describe Creators::WorkRecordCreator, type: :model do
     let!(:watched_time) { Time.zone.parse("2021-01-01 12:00:00") }
 
     it "作品への記録が作成できること" do
-      form = WorkRecordForm.new(user: user, work: work)
+      form = Forms::WorkRecordForm.new(user: user, work: work)
       form.attributes = {
+        comment: "",
         watched_at: watched_time
       }
       Creators::WorkRecordCreator.new(user: user, form: form).call

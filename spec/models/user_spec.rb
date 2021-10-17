@@ -111,9 +111,9 @@ describe User, type: :model do
       end
     end
 
-    context "when activity group which itemable_type is same and not single is created but it created more than 1 hour ago" do
+    context "when activity group which itemable_type is same and not single is created but it created more than 12 hours ago" do
       let(:user) { create :user }
-      let!(:activity_group) { create(:activity_group, user: user, itemable_type: "Status", single: false, created_at: Time.zone.now - 2.hour) }
+      let!(:activity_group) { create(:activity_group, user: user, itemable_type: "Status", single: false, created_at: Time.zone.now - 13.hour) }
       let(:status) { create(:status, user: user) }
 
       it "creates activity group" do

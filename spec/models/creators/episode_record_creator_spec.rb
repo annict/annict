@@ -27,6 +27,8 @@ describe Creators::EpisodeRecordCreator, type: :model do
       rating: "good",
       share_to_twitter: false
     }
+    expect(form.valid?).to eq true
+
     Creators::EpisodeRecordCreator.new(user: user, form: form).call
 
     # Creatorを呼んだので、各レコードが1件ずつ作成されるはず
@@ -68,9 +70,9 @@ describe Creators::EpisodeRecordCreator, type: :model do
     let!(:watched_time) { Time.zone.parse("2021-01-01 12:00:00") }
 
     it "エピソードへの記録が作成できること" do
-      form = EpisodeRecordForm.new(user: user, episode: episode)
+      form = Forms::EpisodeRecordForm.new(user: user, episode: episode)
       form.attributes = {
-        body: "にぱー",
+        comment: "にぱー",
         rating: "good",
         share_to_twitter: false,
         watched_at: watched_time
