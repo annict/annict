@@ -18,7 +18,7 @@ module Creators
         deprecated_rating: @form.deprecated_rating,
         comment: @form.comment,
         share_to_twitter: @form.share_to_twitter,
-        watched_at: @form.watched_at.presence || Time.zone.now
+        watched_at: @form.watched_at
       )
 
       ActiveRecord::Base.transaction do

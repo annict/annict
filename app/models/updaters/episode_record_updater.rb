@@ -17,7 +17,7 @@ module Updaters
       @episode_record.body = @form.comment
       @episode_record.oauth_application = @form.oauth_application
       @episode_record.detect_locale!(:body)
-      @record.watched_at = @form.watched_at.presence || @record.watched_at
+      @record.watched_at = @form.watched_at
 
       ActiveRecord::Base.transaction do
         @episode_record.save!

@@ -21,7 +21,7 @@ module Updaters
       @work_record.body = @form.comment
       @work_record.oauth_application = @form.oauth_application
       @work_record.detect_locale!(:body)
-      @record.watched_at = @form.watched_at.presence || @record.watched_at
+      @record.watched_at = @form.watched_at
 
       if @form.deprecated_title.present?
         @work_record.body = "#{@form.deprecated_title}\n\n#{@work_record.body}"

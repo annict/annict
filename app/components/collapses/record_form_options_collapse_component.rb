@@ -23,12 +23,12 @@ module Collapses
 
             h.tag :div, class: "form-text text-muted" do
               h.tag :p, class: "mb-0" do
-                h.html watched_at_hint
+                h.html t("messages._components.record_form_options_collapse.hint_on_watched_at_html")
               end
 
               unless current_user&.supporter?
                 h.tag :p, class: "mb-0" do
-                  h.html t("messages._components.record_form_options_collapse.hint_on_watched_at_html")
+                  h.html t("messages._components.record_form_options_collapse.hint_on_watched_at_for_non_supporters_html")
                 end
               end
             end
@@ -41,14 +41,6 @@ module Collapses
 
     def collapse_id
       "recordFormOptions#{@form.object_id}"
-    end
-
-    def watched_at_hint
-      if @form.object.persisted?
-        t "messages._components.record_form_options_collapse.hint_on_watched_at_for_update_html"
-      else
-        t "messages._components.record_form_options_collapse.hint_on_watched_at_for_create_html"
-      end
     end
   end
 end

@@ -20,7 +20,7 @@ module Creators
         rating_character: @form.rating_character,
         comment: @form.comment,
         share_to_twitter: @form.share_to_twitter,
-        watched_at: @form.watched_at.presence || Time.zone.now
+        watched_at: @form.watched_at
       )
 
       if @form.deprecated_title.present?
