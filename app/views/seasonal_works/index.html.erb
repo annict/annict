@@ -4,6 +4,8 @@
 
 <%= component_value_fetcher_tag("status-select-dropdown", internal_api_library_entry_list_path, method: :post, payload: {work_ids: @work_ids}) %>
 
+<%= AdsenseComponent.new(self, slot: ENV["GOOGLE_AD_SLOT_ON_SEASONAL_WORK_LIST"]).render %>
+
 <div class="container mt-3">
   <ul class="justify-content-center nav">
     <% if @prev_season.present? %>

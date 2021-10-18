@@ -12,9 +12,12 @@
     </p>
   </div>
 
-  <hr>
+  <hr class="mb-0">
+
+  <%= AdsenseComponent.new(self, slot: ENV["GOOGLE_AD_SLOT_ON_TRACK"]).render %>
 
   <div
+    class="mt-3"
     data-controller="reloadable"
     data-reloadable-event-name-value="trackable-episode-list"
     data-reloadable-url-value="<%= fragment_trackable_episode_list_path(page: params[:page]) %>"

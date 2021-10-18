@@ -12,6 +12,8 @@
 
   <%= Navs::UserNavComponent.new(self, user: @user, params: params).render %>
 
+  <%= AdsenseComponent.new(self, slot: ENV["GOOGLE_AD_SLOT_ON_COLLECTION_LIST"]).render %>
+
   <% if @collections.present? %>
     <div class="container mt-3">
       <div class="grid" style="--bs-gap: 1rem; grid-auto-rows: 1fr;">

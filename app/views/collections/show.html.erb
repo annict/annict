@@ -13,6 +13,8 @@
 
   <%= Navs::UserNavComponent.new(self, user: @user, params: params).render %>
 
+  <%= AdsenseComponent.new(self, slot: ENV["GOOGLE_AD_SLOT_ON_COLLECTION"]).render %>
+
   <div class="container mt-3">
     <div class="g-3 row">
       <div class="col">
