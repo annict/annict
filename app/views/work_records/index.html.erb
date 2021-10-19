@@ -9,6 +9,8 @@
 
 <%= Headers::WorkHeaderComponent.new(self, work: @work, programs: @programs).render %>
 
+<%= AdsenseComponent.new(self, slot: ENV["GOOGLE_AD_SLOT_ON_WORK_RECORD_LIST"]).render %>
+
 <div class="py-3">
   <div class="container u-container-flat">
     <div class="card u-card-flat">

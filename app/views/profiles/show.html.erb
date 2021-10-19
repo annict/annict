@@ -16,6 +16,8 @@
 
   <%= Navs::UserNavComponent.new(self, user: @user, params: params).render %>
 
+  <%= AdsenseComponent.new(self, slot: ENV["GOOGLE_AD_SLOT_ON_PROFILE"]).render %>
+
   <div class="container u-container-flat">
     <div class="gx-3 row">
       <div class="col-12 col-lg-5 mt-3 order-first order-lg-last">

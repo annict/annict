@@ -9,6 +9,8 @@
 
 <%= Headers::WorkHeaderComponent.new(self, work: @work, programs: @programs).render %>
 
+<%= AdsenseComponent.new(self, slot: ENV["GOOGLE_AD_SLOT_ON_WORK"]).render %>
+
 <% if @trailers.present? %>
   <div class="container mt-5">
     <div class="d-flex justify-content-between">
