@@ -28,8 +28,8 @@ document.addEventListener('turbo:load', (_event) => {
       if (ad.firstChild) {
         ad.removeChild(ad.firstChild);
       }
-      window.adsbygoogle = window.adsbygoogle || [];
-      window.adsbygoogle.push({});
+      (window as any).adsbygoogle = (window as any).adsbygoogle || [];
+      (window as any).adsbygoogle.push({});
     });
   }
 
