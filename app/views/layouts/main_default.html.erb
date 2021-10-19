@@ -9,13 +9,6 @@
     <%= render "application/head" %>
   </head>
   <body>
-    <% if display_ads? %>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=<%= ENV.fetch('GOOGLE_AD_CLIENT') %>" crossorigin="anonymous" data-turbo-eval="false"></script>
-    <script>
-      (adsbygoogle = window.adsbygoogle || []).push({});
-    </script>
-    <% end %>
-
     <div class="l-default">
       <div class="l-default__sidebar">
         <%= Sidebars::MainSidebarComponent.new(self, search: @search).render %>
