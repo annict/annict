@@ -28,7 +28,8 @@ document.addEventListener('turbo:load', (_event) => {
       if (ad.firstChild) {
         ad.removeChild(ad.firstChild);
       }
-      (adsbygoogle = window.adsbygoogle || []).push({});
+      window.adsbygoogle = window.adsbygoogle || [];
+      window.adsbygoogle.push({});
     });
   }
 
