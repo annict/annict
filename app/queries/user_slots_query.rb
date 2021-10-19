@@ -49,12 +49,13 @@ class UserSlotsQuery
 
   def user_slots
     slots = @slots
+    slots = slots.where(program_id: library_entries.pluck(:program_id))
     slots = slots.where.not(episode_id: library_entries.pluck(:watched_episode_ids).flatten) if watched == false
     slots
   end
 
   def library_entries
-    @library_entries ||= user.library_entries
+    @library_entries ||= user.library_entries.where.not(program_id: nil)
   end
 
   def order_collection(collection)
