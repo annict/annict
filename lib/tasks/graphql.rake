@@ -19,12 +19,31 @@ namespace :graphql do
     puts "Updated #{schema_path}"
   end
 
-  task build_docs: :environment do
-    config = {
-      filename: "#{Rails.root}/app/graphql/schema.graphql",
-      output_dir: "./tmp/docs/graphql-api/reference/",
-      base_url: "/graphql-api/reference"
-    }
-    GraphQLDocs.build(config)
+  task :build_reference, %i[version] => :environment do |_, args|
+    version = args[:version]
+
+    unless version
+      puts "version required"
+      next
+    end
+
+    GraphQLDocs.build(
+      filename: "#{Rails.root}/app/graphql/#{version}/schema.graphql",
+      output_dir: "./tmp/docs/graphql-api/#{version}/reference/",
+      base_url: "/docs/graphql-api/#{version}/reference"
+    )
+  end
+
+  task :copy_reference, %i[version] => :environment do |_, args|
+    version = args[:version]
+
+    unless version
+      puts "version required"
+      next
+    end
+
+    target_path = "../annict-developers/static/docs/graphql-api/#{version}/reference"
+    system "mkdir -p #{target_path}"
+    system "cp -rf ./tmp/docs/graphql-api/#{version}/reference/ #{target_path}"
   end
 end
