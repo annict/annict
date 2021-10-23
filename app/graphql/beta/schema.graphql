@@ -1627,14 +1627,19 @@ type User implements Node {
     orderBy: LibraryEntryOrder
 
     """
+    指定したシーズンからの作品を取得する
+    """
+    seasonFrom: String
+
+    """
+    指定したシーズンまでの作品を取得する
+    """
+    seasonUntil: String
+
+    """
     視聴ステータス
     """
     states: [StatusState!]
-
-    """
-    現在のシーズンまでの作品に絞り込むかどうか
-    """
-    untilCurrentSeason: Boolean
   ): LibraryEntryConnection
   name: String!
   notificationsCount: Int
