@@ -1637,6 +1637,11 @@ type User implements Node {
     seasonUntil: String
 
     """
+    指定したシーズンの作品を取得する
+    """
+    seasons: [String!]
+
+    """
     視聴ステータス
     """
     states: [StatusState!]

@@ -59,6 +59,7 @@ module Beta
 
         field :library_entries, Beta::Types::Objects::LibraryEntryType.connection_type, null: true, resolver: Beta::Resolvers::LibraryEntries do
           argument :states, [Beta::Types::Enums::StatusState], "視聴ステータス", required: false
+          argument :seasons, [String], "指定したシーズンの作品を取得する", required: false
           argument :season_from, String, "指定したシーズンからの作品を取得する", required: false
           argument :season_until, String, "指定したシーズンまでの作品を取得する", required: false
           argument :order_by, Beta::Types::InputObjects::LibraryEntryOrder, required: false
