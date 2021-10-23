@@ -58,8 +58,8 @@ module Beta
         end
 
         field :library_entries, Beta::Types::Objects::LibraryEntryType.connection_type, null: true, resolver: Beta::Resolvers::LibraryEntries do
-          argument :states, [Beta::Types::Enums::StatusState], required: false
-          argument :until_current_season, Boolean, required: false
+          argument :states, [Beta::Types::Enums::StatusState], "視聴ステータス", required: false
+          argument :until_current_season, Boolean, "現在のシーズンまでの作品に絞り込むかどうか", required: false
           argument :order_by, Beta::Types::InputObjects::LibraryEntryOrder, required: false
         end
 
