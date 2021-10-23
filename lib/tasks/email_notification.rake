@@ -10,7 +10,7 @@ namespace :email_notification do
     casts = Cast.only_kept.past_week
     staffs = Staff.only_kept.past_week
 
-    works = Work.only_kept.where(id: casts.pluck(:work_id) | staffs.pluck(:work_id)).gt_current_season
+    works = Work.only_kept.where(id: casts.pluck(:work_id) | staffs.pluck(:work_id)).from_current_season
 
     next if works.blank?
 
@@ -42,7 +42,7 @@ namespace :email_notification do
   end
 
   task send_related_works_added_email: :environment do
-    works = Work.only_kept.past_week.gt_current_season
+    works = Work.only_kept.past_week.from_current_season
     next if works.blank?
 
     series_ids = SeriesWork.where(work: works).pluck(:series_id)
