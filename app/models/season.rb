@@ -39,9 +39,7 @@ class Season
     year_exists = year.present? && year.to_i.in?(YEAR_LIST)
     name_exists = name.present? && (name == "all" || name.to_sym.in?(NAME_HASH.keys))
 
-    if !year_exists || !name_exists
-      raise ActionController::RoutingError, "Not Found"
-    end
+    return if !year_exists || !name_exists
 
     new(year, name)
   end
