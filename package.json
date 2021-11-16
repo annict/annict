@@ -45,7 +45,7 @@
     "@types/bootstrap": "^5.1.0",
     "@types/jquery": "^3.5.1",
     "@types/js-cookie": "^2.2.6",
-    "@types/lodash": "^4.14.160",
+    "@types/lodash": "^4.14.177",
     "@types/webpack-env": "^1.16.0",
     "css-loader": "^5.2.6",
     "eslint": "^7.29.0",
