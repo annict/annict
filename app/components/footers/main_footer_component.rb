@@ -107,7 +107,7 @@ module Footers
                 h.tag :div, class: "col-6 text-end" do
                   h.tag :div, class: "c-footer__copyright small" do
                     h.tag :i, class: "fal fa-copyright me-1"
-                    h.text "2014-2021 Annict"
+                    h.text "2014-2022 Annict"
                   end
                 end
               end
