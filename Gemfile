@@ -95,8 +95,6 @@ group :development do
   gem "i18n-tasks"
   gem "listen" # Using with `rails s` since Rails 5
   gem "solargraph"
-  gem "spring"
-  gem "spring-commands-rspec", require: false
   gem "squasher"
   gem "traceroute"
 end
