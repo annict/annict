@@ -91,7 +91,10 @@ group :development do
   gem "better_errors"
   gem "binding_of_caller" # Using better_errors
   gem "bullet"
-  gem "graphql-docs"
+  # Temporary comment out until graphql-docs will replace sass with sassc.
+  # The sass gem causes LoadError.
+  # https://github.com/gjtorikian/graphql-docs/issues/86
+  # gem "graphql-docs"
   gem "i18n-tasks"
   gem "listen" # Using with `rails s` since Rails 5
   gem "solargraph"
