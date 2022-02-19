@@ -30,7 +30,7 @@ module Canary
       field :record, Canary::Types::Objects::RecordType, null: true
       field :errors, [Canary::Types::Objects::ClientErrorType], null: false
 
-      def resolve( # rubocop:disable Metrics/ParameterLists
+      def resolve(
         work_id:,
         rating_overall: nil,
         rating_animation: nil,
