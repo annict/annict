@@ -1,5 +1,5 @@
 FROM node:14.17.3-buster-slim as node
-FROM ruby:3.0.2-slim-buster
+FROM ruby:3.1.1-slim-buster
 
 LABEL maintainer="https://annict.jp/@shimbaco" \
   description="A platform for anime addicts."
