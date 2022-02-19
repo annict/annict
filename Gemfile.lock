@@ -585,7 +585,7 @@ GEM
       multi_xml
     temple (0.8.2)
     terminal-table (1.6.0)
-    thor (1.1.0)
+    thor (1.2.1)
     thread_safe (0.3.6)
     tilt (2.0.10)
     timecop (0.9.4)
