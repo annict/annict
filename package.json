@@ -20,7 +20,7 @@
     "@types/gtag.js": "0.0.7",
     "autoprefixer": "^10.3.1",
     "autosize": "^5.0.1",
-    "axios": "^0.21.1",
+    "axios": "^0.21.2",
     "babel-loader": "^8.2.2",
     "bootstrap": "^5.1.0",
     "choices.js": "^9.0.1",
