@@ -64,7 +64,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v1
         with:
-          node-version: 14.17.3
+          node-version: 16.14.0
 
       - name: Run `npm install`
         run: |
