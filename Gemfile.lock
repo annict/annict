@@ -144,7 +144,7 @@ GEM
       equalizer (~> 0.0.9)
     concurrent-ruby (1.1.9)
     content_disposition (1.0.0)
-    counter_culture (2.8.0)
+    counter_culture (3.2.0)
       activerecord (>= 4.2)
       activesupport (>= 4.2)
     crass (1.0.6)
