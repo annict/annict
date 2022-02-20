@@ -357,6 +357,14 @@ GEM
     multi_xml (0.6.0)
     multipart-post (2.1.1)
     naught (1.1.0)
+    net-imap (0.2.3)
+      digest
+      net-protocol
+      strscan
+    net-pop (0.1.1)
+      digest
+      net-protocol
+      timeout
     net-protocol (0.1.2)
       io-wait
       timeout
@@ -567,6 +575,7 @@ GEM
     standard (1.7.2)
       rubocop (= 1.25.1)
       rubocop-performance (= 1.13.2)
+    strscan (3.0.1)
     syoboi_calendar (0.9.4)
       faraday
       faraday_middleware
@@ -680,6 +689,8 @@ DEPENDENCIES
   mini_magick
   mjml-rails
   moji
+  net-imap
+  net-pop
   net-smtp
   nokogiri
   omniauth-facebook
