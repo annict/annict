@@ -9,7 +9,7 @@ Rails.application.routes.draw do
     skip: %i[passwords registrations sessions]
 
   devise_scope :user do
-    # standard:disable Layout/ExtraSpacing, Layout/LineLength
+    # standard:disable Layout/ExtraSpacing
     match "/legacy/sign_in",      via: :get,    as: :legacy_sign_in,      to: "legacy/sessions#new"
     match "/legacy/sign_in",      via: :post,   as: :user_session,        to: "legacy/sessions#create"
     match "/sign_out",            via: :delete, as: :sign_out,            to: "devise/sessions#destroy"
@@ -26,7 +26,7 @@ Rails.application.routes.draw do
     skip_controllers :authorized_applications
   end
 
-  # standard:disable Layout/ExtraSpacing, Layout/LineLength
+  # standard:disable Layout/ExtraSpacing
   match "/@:username",                                          via: :get,    as: :profile,                                    to: "profiles#show",                username: ROUTING_USERNAME_FORMAT
   match "/@:username/:status_kind",                             via: :get,    as: :library,                                    to: "libraries#show",               username: ROUTING_USERNAME_FORMAT, status_kind: /wanna_watch|watching|watched|on_hold|stop_watching/
   match "/@:username/collections",                              via: :get,    as: :user_collection_list,                       to: "collections#index",            username: ROUTING_USERNAME_FORMAT

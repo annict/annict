@@ -14,7 +14,7 @@ module Beta
 
       field :review, Beta::Types::Objects::ReviewType, null: true
 
-      def resolve( # rubocop:disable Metrics/ParameterLists
+      def resolve(
         work_id:,
         body:, title: nil,
         rating_overall_state: nil,

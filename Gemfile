@@ -3,7 +3,7 @@
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby "3.0.2"
+ruby "3.1.1"
 
 gem "rails", ">= 6.1.0"
 
@@ -47,6 +47,9 @@ gem "meta-tags"
 gem "mini_magick"
 gem "mjml-rails"
 gem "moji"
+# net-smtp, net-imap and net-pop were removed from default gems in Ruby 3.1, but is used by the `mail` gem.
+# So we need to add them as dependencies until `mail` is fixed: https://github.com/mikel/mail/pull/1439
+gem "net-smtp", require: false
 gem "nokogiri"
 gem "omniauth-facebook"
 gem "omniauth-gumroad"
@@ -91,12 +94,13 @@ group :development do
   gem "better_errors"
   gem "binding_of_caller" # Using better_errors
   gem "bullet"
-  gem "graphql-docs"
+  # Temporary comment out until graphql-docs will replace sass with sassc.
+  # The sass gem causes LoadError.
+  # https://github.com/gjtorikian/graphql-docs/issues/86
+  # gem "graphql-docs"
   gem "i18n-tasks"
   gem "listen" # Using with `rails s` since Rails 5
   gem "solargraph"
-  gem "spring"
-  gem "spring-commands-rspec", require: false
   gem "squasher"
   gem "traceroute"
 end
