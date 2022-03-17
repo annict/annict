@@ -8,7 +8,6 @@
 .prettierrc
 .rspec
 .sass-cache
-.sass-lint.yml
 .solargraph.yml
 **/.DS_Store
 Dockerfile.local
