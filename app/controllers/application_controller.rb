@@ -3,6 +3,7 @@
 class ApplicationController < ActionController::Base
   include Pundit
 
+  include BasicAuthenticatable
   include ControllerCommon
   include Analyzable
   include LogrageSetting

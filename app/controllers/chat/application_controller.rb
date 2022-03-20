@@ -2,6 +2,7 @@
 
 module Chat
   class ApplicationController < ActionController::Base
+    include BasicAuthenticatable
     include ControllerCommon
     include Localizable
 

@@ -4,6 +4,7 @@ module Userland
   class ApplicationController < ActionController::Base
     include Pundit
 
+    include BasicAuthenticatable
     include ControllerCommon
     include PageCategorizable
     include SentryLoadable

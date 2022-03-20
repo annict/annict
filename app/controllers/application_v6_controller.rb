@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class ApplicationV6Controller < ActionController::Base
+  include BasicAuthenticatable
   include PageCategorizable
   include SentryLoadable
   include Loggable
