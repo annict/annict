@@ -2,7 +2,7 @@
   "cron": [
     {
       "command": "bundle exec rails internal_statistic:calc",
-      "schedule": "40 7 * * *"
+      "schedule": "50 22 * * *"
     }
   ]
 }
