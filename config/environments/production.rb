@@ -47,11 +47,11 @@ Rails.application.configure do
 
   # Use a different cache store in production.
   config.cache_store = :redis_cache_store, {
-    url: ENV.fetch("REDISCLOUD_URL"),
+    url: ENV.fetch("ANNICT_REDIS_URL"),
     expires_in: 24.hours.to_i
   }
   config.graphql_fragment_cache.store = :redis_cache_store, {
-    url: ENV.fetch("REDISCLOUD_URL"),
+    url: ENV.fetch("ANNICT_REDIS_URL"),
     expires_in: 24.hours.to_i
   }
 
