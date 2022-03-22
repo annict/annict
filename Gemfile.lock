@@ -94,6 +94,8 @@ GEM
     annotate (3.2.0)
       activerecord (>= 3.2, < 8.0)
       rake (>= 10.4, < 14.0)
+    anyway_config (2.2.2)
+      ruby-next-core (>= 0.11.0)
     ast (2.4.2)
     awesome_print (1.9.2)
     aws-eventstream (1.2.0)
@@ -291,6 +293,8 @@ GEM
     imgix (4.0.2)
     imgix-rails (4.2.0)
       imgix (>= 3.0)
+    imgproxy (2.0.1)
+      anyway_config (>= 2.0.0)
     io-wait (0.2.1)
     jaro_winkler (1.5.4)
     jb (0.8.0)
@@ -679,6 +683,7 @@ DEPENDENCIES
   i18n-tasks
   image_processing
   imgix-rails
+  imgproxy
   jb
   kaminari
   koala
