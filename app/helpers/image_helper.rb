@@ -6,18 +6,12 @@ module ImageHelper
 
     proxy_options = {
       format: format,
+      width: width,
+      height: record.image_height(field, width)
     }
 
     if record.image_aspect_ratio(field) == "1:1"
-      proxy_options[:crop] = {
-        width: width,
-        height: width
-      }
-    else
-      proxy_options = proxy_options.merge(
-        width: width,
-        height: record.image_height(field, width)
-      )
+      proxy_options[:resizing_type] = "fill-down"
     end
 
     if blur
