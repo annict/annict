@@ -16,7 +16,7 @@
       .gx-3.row
         .col-auto
           = link_to profile_path(@post.user.username) do
-            = Pictures::AvatarPictureComponent.new(self, user: @post.user, width: 45).render
+            = render Pictures::AvatarPictureComponent.new(user: @post.user, width: 45)
         .col
           = link_to @post.user.profile.name, profile_path(@post.user.username), class: "me-2"
           = @post.user.role_badge
@@ -40,7 +40,7 @@
             .row.mb-3
               .col.col-auto.pe-0
                 = link_to profile_path(comment.user.username) do
-                  = Pictures::AvatarPictureComponent.new(self, user: comment.user, width: 45).render
+                  = render Pictures::AvatarPictureComponent.new(user: comment.user, width: 45)
               .col.ps-2
                 = link_to comment.user.profile.name, profile_path(comment.user.username), class: "me-2"
                 = comment.user.role_badge

@@ -74,7 +74,7 @@
                 <div class="gx-3 row">
                   <div class="col-2">
                     <%= link_to work_path(work) do %>
-                      <%= Pictures::WorkPictureComponent.new(self, work: work, width: 200, alt: work.local_title).render %>
+                      <%= render Pictures::WorkPictureComponent.new(work: work, width: 200, alt: work.local_title) %>
                     <% end %>
                   </div>
 

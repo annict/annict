@@ -11,7 +11,7 @@
             <% work = resources.first.work %>
             <div class="col-4 col-sm-2">
               <%= link_to work_path(work_id: work.id) do %>
-                <%= Pictures::WorkPictureComponent.new(self, work: work, width: 140).render %>
+                <%= render Pictures::WorkPictureComponent.new(work: work, width: 140) %>
               <% end %>
 
               <div class="small text-truncate">

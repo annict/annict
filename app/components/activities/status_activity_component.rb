@@ -14,9 +14,12 @@ module Activities
           h.tag :div, class: "card-body" do
             h.tag :div, class: "mb-3" do
               h.tag :a, href: view_context.profile_path(@user.username) do
-                h.html Pictures::AvatarPictureComponent.new(view_context,
-                  user: @user,
-                  width: 32).render
+                h.html view_context.render(
+                  Pictures::AvatarPictureComponent.new(
+                    user: @user,
+                    width: 32
+                  )
+                )
               end
 
               h.tag :span, class: "c-timeline__user-name ms-3" do
