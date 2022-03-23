@@ -38,4 +38,13 @@ class WorkImage < ApplicationRecord
 
   belongs_to :work, touch: true
   belongs_to :user
+
+  def image_aspect_ratio(field)
+    case field
+    when :image
+      "4:3"
+    else
+      raise Annict::Errors::UnknownImageFieldError, "Unexpected field name: #{field}"
+    end
+  end
 end

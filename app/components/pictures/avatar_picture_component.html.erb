@@ -1,0 +1,15 @@
+<div
+  class="align-items-center c-avatar-picture d-flex"
+  style="height: <%= @height %>px; width: <%= @width %>px;"
+>
+  <picture>
+    <source type="image/webp" srcset="<%= source_srcset("webp") %>">
+    <source type="image/jpeg" srcset="<%= source_srcset("jpg") %>">
+    <img
+      alt="<%= @alt %>"
+      class="img-thumbnail rounded-circle <%= @class_name %>"
+      loading="lazy"
+      src="<%= helpers.ann_image_url(@profile, :image, width: @width, format: "jpg") %>"
+    >
+  </picture>
+</div>

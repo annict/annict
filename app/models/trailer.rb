@@ -68,6 +68,15 @@ class Trailer < ApplicationRecord
     params["v"]
   end
 
+  def image_aspect_ratio(field)
+    case field
+    when :image
+      "16:9"
+    else
+      raise Annict::Errors::UnknownImageFieldError, "Unexpected field name: #{field}"
+    end
+  end
+
   private
 
   def attach_thumbnail

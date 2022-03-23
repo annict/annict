@@ -1,36 +1,30 @@
 # frozen_string_literal: true
 
 module ImageHelper
-  def v4_ann_image_url(record, field, options = {})
-    path = image_path(record, field)
-    size = options[:size]
+  def ann_image_url(record, field, width:, format: :webp, blur: nil)
+    return unless record
 
-    width, = size.split("x").map do |s|
-      s.present? ? (s.to_i * (options[:size_rate].presence || 1)) : nil
-    end
-
-    ix_options = {
-      auto: "format"
+    proxy_options = {
+      format: format,
     }
 
-    if width
-      ix_options[:w] = width
+    if record.image_aspect_ratio(field) == "1:1"
+      proxy_options[:crop] = {
+        width: width,
+        height: width
+      }
+    else
+      proxy_options = proxy_options.merge(
+        width: width,
+        height: record.image_height(field, width)
+      )
     end
 
-    if options[:crop]
-      ix_options[:fit] = "crop"
+    if blur
+      proxy_options[:blur] = blur
     end
 
-    if options[:ratio]
-      ix_options[:fit] = "crop"
-      ix_options[:ar] = options[:ratio]
-    end
-
-    if options[:blur]
-      ix_options[:blur] = options[:blur]
-    end
-
-    ix_image_url(path, ix_options)
+    Imgproxy.url_for(record.origin_image_url(field), **proxy_options)
   end
 
   def ann_image_tag(record, field, options = {})
@@ -40,8 +34,7 @@ module ImageHelper
   end
 
   def ann_api_assets_url(record, field)
-    path = image_path(record, field)
-    "#{ENV.fetch("ANNICT_API_ASSETS_URL")}/#{path}"
+    "#{ENV.fetch("ANNICT_API_ASSETS_URL")}/#{record.uploaded_file_path(field)}"
   end
 
   def ann_api_assets_background_image_url(profile)
@@ -67,41 +60,5 @@ module ImageHelper
     end
 
     v4_ann_image_url(profile, :image, size: size, ratio: "1:1")
-  end
-
-  def ann_image_url(record, field, width:, height:, format: "jpg")
-    path = record ? record.uploaded_file_path(field) : "no-image.jpg"
-    fit = width == height ? "crop" : "fill"
-
-    ix_image_url(path, {
-      fill: "solid",
-      fit: fit,
-      fm: format,
-      height: height,
-      w: width
-    })
-  end
-
-  def ann_work_image_url(work, width:, format: "jpg")
-    height = work.work_image_height(width)
-    ann_image_url(work.work_image, :image, width: width, height: height, format: format)
-  end
-
-  def ann_work_video_image_url(work, trailer, width:, format: "jpg")
-    height = work.video_image_height(width)
-    ann_image_url(trailer, :image, width: width, height: height, format: format)
-  end
-
-  def ann_avatar_image_url(user, width:, format: "jpg")
-    height = width
-    ann_image_url(user.profile, :image, width: width, height: height, format: format)
-  end
-
-  private
-
-  def image_path(record, field)
-    id = record&.uploaded_file(field)&.id
-    path = id ? "shrine/#{id}" : ""
-    path.presence || "no-image.jpg"
   end
 end

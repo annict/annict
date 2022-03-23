@@ -1,9 +1,7 @@
 .c-work-picture {
-  .img-thumbnail {
-    background-color: $gray-300;
+  background-color: $gray-300;
 
-    @include color-scheme(dark) {
-      background-color: $gray-700;
-    }
+  @include color-scheme(dark) {
+    background-color: $gray-700;
   }
 }

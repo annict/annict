@@ -51,6 +51,15 @@ class Profile < ApplicationRecord
     write_attribute(:description, value)
   end
 
+  def image_aspect_ratio(field)
+    case field
+    when :image
+      "1:1"
+    else
+      raise Annict::Errors::UnknownImageFieldError, "Unexpected field name: #{field}"
+    end
+  end
+
   private
 
   def check_animated_gif
