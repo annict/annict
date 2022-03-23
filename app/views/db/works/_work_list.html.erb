@@ -61,7 +61,7 @@
           <%= work.release_season.presence || "-" %>
         </td>
         <td>
-          <%= image_tag v4_ann_image_url(work.work_image, :image, size: "70x", ratio: "3:4"), class: "rounded img-thumbnail" %>
+          <%= image_tag ann_image_url(work.work_image, :image, width: 70), class: "rounded img-thumbnail" %>
         </td>
         <td>
           <%= render Db::PublishingStateLabelComponent.new(resource: work) %>

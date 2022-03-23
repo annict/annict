@@ -7,7 +7,7 @@
 
   <mj-section>
     <mj-column width="35%">
-      <mj-image src="<%= v4_ann_image_url(@work.work_image, :image, size: "300x", ratio: "3:4") %>" align="center" href="<%= work_url(@work) %>"></mj-image>
+      <mj-image src="<%= ann_image_url(@work.work_image, :image, width: 300) %>" align="center" href="<%= work_url(@work) %>"></mj-image>
     </mj-column>
     <mj-column width="65%">
       <mj-text font-size="24px" font-weight="600" padding-bottom="7px"><%= "#{@work.local_title}" %></mj-text>
@@ -33,7 +33,7 @@
 
   <mj-section border="1px solid rgba(0, 0, 0, .08)">
     <mj-column>
-      <mj-image src="<%= v4_ann_image_url(@user.profile, :image, size: "140x140") %>" align="center" width="70px" border-radius="50%" href="<%= profile_url(@user.username, utm_source: 'email_notification', utm_campaign: 'liked_episode_record', utm_medium: 'email', domain: local_domain) %>"></mj-image>
+      <mj-image src="<%= ann_image_url(@user.profile, :image, width: 140) %>" align="center" width="70px" border-radius="50%" href="<%= profile_url(@user.username, utm_source: 'email_notification', utm_campaign: 'liked_episode_record', utm_medium: 'email', domain: local_domain) %>"></mj-image>
       <mj-text align="center" font-size="24px" font-weight="600" padding-bottom="7px"><%= "#{@user.profile.name}" %></mj-text>
       <mj-text align="center" padding-top="0px"><%= "@#{@user.username}" %></mj-text>
       <mj-text align="center" line-height="22px"><%= "#{@user.profile.description}" %></mj-text>

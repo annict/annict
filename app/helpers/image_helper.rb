@@ -50,15 +50,15 @@ module ImageHelper
   end
 
   def api_user_avatar_url(profile, size)
-    size = case size
-    when "size50" then "50x50"
-    when "size100" then "100x100"
-    when "size150" then "150x150"
-    when "size200" then "200x200"
+    width = case size
+    when "size50" then 50
+    when "size100" then 100
+    when "size150" then 150
+    when "size200" then 200
     else
-      "200x200"
+      200
     end
 
-    v4_ann_image_url(profile, :image, size: size, ratio: "1:1")
+    ann_image_url(profile, :image, width: width)
   end
 end
