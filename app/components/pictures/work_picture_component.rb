@@ -6,7 +6,7 @@ module Pictures
       @work = work
       @work_image = work.work_image
       @width = width
-      @height = @work_image.image_height(:image, @width)
+      @height = @work_image&.image_height(:image, @width)
       @alt = alt.presence || work.local_title
       @class_name = class_name
     end
