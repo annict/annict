@@ -67,7 +67,7 @@ module ImageHelper
       200
     end
 
-    ann_image_url(profile, :image, width: width)
+    ann_image_url(profile, :image, width: width, ratio: "1:1", format: :jpg)
   end
 
   def image_height(width, ratio)
