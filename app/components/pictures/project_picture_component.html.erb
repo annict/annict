@@ -1,5 +1,5 @@
 <div
-  class="align-items-center c-project-picture d-flex"
+  class="align-items-center c-project-picture d-flex <%= @class_name %>"
   style="height: <%= @height %>px; width: <%= @width %>px;"
 >
   <picture>
@@ -7,7 +7,7 @@
     <source type="image/jpeg" srcset="<%= source_srcset("jpg") %>">
     <img
       alt="<%= @alt %>"
-      class="img-thumbnail rounded-3 <%= @class_name %>"
+      class="img-thumbnail rounded-3"
       loading="lazy"
       src="<%= helpers.ann_image_url(@project, :image, width: @width, format: "jpg") %>"
     >
