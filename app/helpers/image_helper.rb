@@ -1,12 +1,6 @@
 # frozen_string_literal: true
 
 module ImageHelper
-  def origin_image_url(record, field)
-    image_path = record&.uploaded_file_path(field).presence || "no-image.jpg"
-
-    "s3://#{ENV.fetch("S3_BUCKET_NAME")}/#{image_path}"
-  end
-
   def ann_image_url(record, field, width:, ratio:, format: :webp, blur: nil)
     proxy_options = {
       format: format,
@@ -42,7 +36,7 @@ module ImageHelper
   end
 
   def ann_api_assets_url(record, field)
-    "#{ENV.fetch("ANNICT_API_ASSETS_URL")}/#{record.uploaded_file_path(field)}"
+    "#{ENV.fetch("ANNICT_API_ASSETS_URL")}/#{image_path(record, field)}"
   end
 
   def ann_api_assets_background_image_url(profile)
@@ -68,6 +62,14 @@ module ImageHelper
     end
 
     ann_image_url(profile, :image, width: width, ratio: "1:1", format: :jpg)
+  end
+
+  def image_path(record, field)
+    record&.uploaded_file_path(field).presence || "no-image.jpg"
+  end
+
+  def origin_image_url(record, field)
+    "s3://#{ENV.fetch("S3_BUCKET_NAME")}/#{image_path(record, field)}"
   end
 
   def image_height(width, ratio)
