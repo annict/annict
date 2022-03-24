@@ -72,9 +72,9 @@
                 <% work = collection_item.work %>
 
                 <div class="gx-3 row">
-                  <div class="col-2">
+                  <div class="col-auto">
                     <%= link_to work_path(work) do %>
-                      <%= render Pictures::WorkPictureComponent.new(work: work, width: 200, alt: work.local_title) %>
+                      <%= render Pictures::WorkPictureComponent.new(work: work, width: 70, alt: work.local_title) %>
                     <% end %>
                   </div>
 

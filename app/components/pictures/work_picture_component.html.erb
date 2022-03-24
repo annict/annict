@@ -1,4 +1,7 @@
-<div class="align-items-center c-work-picture d-flex <%= @class_name %>">
+<div
+  class="align-items-center c-work-picture d-flex justify-content-center m-auto <%= @class_name %>"
+  style="width: <%= @width %>px;"
+>
   <picture>
     <source type="image/webp" srcset="<%= source_srcset("webp") %>">
     <source type="image/jpeg" srcset="<%= source_srcset("jpg") %>">
