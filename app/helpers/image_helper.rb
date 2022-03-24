@@ -4,7 +4,7 @@ module ImageHelper
   def origin_image_url(record, field)
     image_path = record&.uploaded_file_path(field).presence || "no-image.jpg"
 
-    "s3://#{ENV.fetch('S3_BUCKET_NAME')}/#{image_path}"
+    "s3://#{ENV.fetch("S3_BUCKET_NAME")}/#{image_path}"
   end
 
   def ann_image_url(record, field, width:, ratio:, format: :webp, blur: nil)
