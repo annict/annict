@@ -1,6 +1,6 @@
 .mb-2
   = link_to userland_project_path(project) do
-    = ann_image_tag project, :image, size: "280x280", class: "img-fluid img-thumbnail rounded"
+    = render Pictures::ProjectPictureComponent.new(project: project, width: 280)
 
 h1.h2.fw-bold.mb-2
   = link_to project.name, userland_project_path(project), class: "text-body"
@@ -27,7 +27,7 @@ h2.h4.fw-bold.mt-4.mb-3
   - project.users.only_kept.each do |user|
     .col.col-auto.ps-0.pe-2.pb-2
       = link_to profile_path(user.username) do
-        = ann_image_tag(user.profile, :image, size: "30x30", class: "rounded-circle", alt: user.decorate.name_with_username, title: user.decorate.name_with_username)
+        = render Pictures::AvatarPictureComponent.new(user: user, width: 30)
 
 - if user_signed_in? && current_user.userland_project_member?(project)
   = link_to t("resources.userland_project.edit"), userland_edit_project_path(project), class: "btn btn-secondary w-100 mt-2"

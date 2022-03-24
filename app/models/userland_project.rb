@@ -45,4 +45,13 @@ class UserlandProject < ApplicationRecord
   validates :name, presence: true, length: {maximum: 50}
   validates :summary, presence: true, length: {maximum: 150}
   validates :url, presence: true, url: true
+
+  def image_aspect_ratio(field)
+    case field
+    when :image
+      "1:1"
+    else
+      raise Annict::Errors::UnknownImageFieldError, "Unexpected field name: #{field}"
+    end
+  end
 end

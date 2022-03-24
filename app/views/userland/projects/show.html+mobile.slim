@@ -6,7 +6,7 @@
     .text-center
       .mb-3
         = link_to userland_project_path(@project) do
-          = ann_image_tag @project, :image, size: "100x100", class: "img-fluid img-thumbnail rounded"
+          = render Pictures::ProjectPictureComponent.new(project: @project, width: 100)
       h1.h2.fw-bold
         = link_to @project.name, userland_project_path(@project), class: "text-body"
       .text-muted
@@ -38,4 +38,4 @@ h2.h4.fw-bold.text-center.my-3
       - @project.users.only_kept.each do |user|
         .col.col-auto.ps-0.pe-2
           = link_to profile_path(user.username) do
-            = ann_image_tag(user.profile, :image, size: "30x30", class: "rounded-circle", alt: user.decorate.name_with_username, title: user.decorate.name_with_username)
+            = render Pictures::AvatarPictureComponent.new(user: user, width: 30)
