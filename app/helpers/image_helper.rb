@@ -21,12 +21,6 @@ module ImageHelper
     Imgproxy.url_for(record.origin_image_url(field), **proxy_options)
   end
 
-  def ann_image_tag(record, field, options = {})
-    url2x = v4_ann_image_url(record, field, options.merge(size_rate: 2))
-
-    image_tag(url2x, options)
-  end
-
   def ann_api_assets_url(record, field)
     "#{ENV.fetch("ANNICT_API_ASSETS_URL")}/#{record.uploaded_file_path(field)}"
   end

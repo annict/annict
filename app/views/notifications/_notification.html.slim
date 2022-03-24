@@ -2,7 +2,7 @@
   .gx-3.row
     .col-auto
       = link_to profile_path(notification.action_user.username) do
-        = ann_image_tag(notification.action_user.profile, :image, size: "50x50", class: "rounded-circle")
+        = render Pictures::AvatarPictureComponent.new(user: notification.action_user, width: 50)
     .col
       - if notification.action == "follows.create"
         = render "notifications/follows_create", notification: notification

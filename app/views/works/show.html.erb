@@ -37,7 +37,7 @@
             <div class="col-md-3 col-6 text-center">
               <%= link_to trailer.url, rel: "noopener", target: "_blank" do %>
                 <div class="c-video-thumbnail">
-                  <div class="c-video-thumbnail__image" style="background-image: url(<%= ann_work_video_image_url(@work, trailer, width: 300) %>);"></div>
+                  <div class="c-video-thumbnail__image" style="background-image: url(<%= ann_image_url(trailer, :image, width: 300) %>);"></div>
                   <i class="far fa-play-circle"></i>
                 </div>
 
