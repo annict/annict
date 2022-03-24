@@ -9,7 +9,7 @@
       alt="<%= @alt %>"
       class="img-thumbnail rounded-circle"
       loading="lazy"
-      src="<%= helpers.ann_image_url(@profile, :image, width: @width, format: "jpg") %>"
+      src="<%= helpers.ann_avatar_image_url(@user, width: @width, format: "jpg") %>"
     >
   </picture>
 </div>

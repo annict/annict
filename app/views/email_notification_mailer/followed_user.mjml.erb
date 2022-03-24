@@ -3,7 +3,7 @@
     <mj-text align="center" padding-top="0px">
       <%= I18n.t("email_notification_mailer.followed_user.followed_you", name: @user.profile.name, username: @user.username) %>
     </mj-text>
-    <mj-image src="<%= ann_image_url(@user.profile, :image, width: 140) %>" align="center" width="70px" border-radius="50%" href="<%= profile_url(@user.username, utm_source: 'email_notification', utm_campaign: 'followed_user', utm_medium: 'email', domain: local_domain) %>"></mj-image>
+    <mj-image src="<%= ann_avatar_image_url(@user, width: 140) %>" align="center" width="70px" border-radius="50%" href="<%= profile_url(@user.username, utm_source: 'email_notification', utm_campaign: 'followed_user', utm_medium: 'email', domain: local_domain) %>"></mj-image>
     <mj-text align="center" font-size="24px" font-weight="600" padding-bottom="7px"><%= "#{@user.profile.name}" %></mj-text>
     <mj-text align="center" padding-top="0px"><%= "@#{@user.username}" %></mj-text>
     <mj-text align="center" line-height="22px"><%= "#{@user.profile.description}" %></mj-text>

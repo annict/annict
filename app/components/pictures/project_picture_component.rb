@@ -14,8 +14,8 @@ module Pictures
 
     def source_srcset(format)
       [
-        "#{helpers.ann_image_url(@project, :image, width: @width, format: format)} 1x",
-        "#{helpers.ann_image_url(@project, :image, width: @width * 2, format: format)} 2x"
+        "#{helpers.ann_project_image_url(@project, width: @width, format: format)} 1x",
+        "#{helpers.ann_project_image_url(@project, width: @width * 2, format: format)} 2x"
       ].join(", ")
     end
   end
