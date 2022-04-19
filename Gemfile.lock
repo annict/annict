@@ -207,7 +207,7 @@ GEM
     e2mmap (0.1.0)
     email_validator (2.2.3)
       activemodel
-    enumerize (2.4.0)
+    enumerize (2.5.0)
       activesupport (>= 3.2)
     equalizer (0.0.11)
     erubi (1.10.0)
