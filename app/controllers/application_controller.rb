@@ -5,7 +5,6 @@ class ApplicationController < ActionController::Base
 
   include ControllerCommon
   include Analyzable
-  include LogrageSetting
   include ViewSelector
   include SentryLoadable
   include Localizable
