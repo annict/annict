@@ -47,13 +47,6 @@ gem "meta-tags"
 gem "mini_magick"
 gem "mjml-rails"
 gem "moji"
-
-# net-imap, net-pop and net-smtp were removed from default gems in Ruby 3.1, but is used by the `mail` gem.
-# So we need to add them as dependencies until `mail` is fixed: https://github.com/mikel/mail/pull/1439
-gem "net-imap", require: false
-gem "net-pop", require: false
-gem "net-smtp", require: false
-
 gem "nokogiri"
 gem "omniauth-facebook"
 gem "omniauth-gumroad"

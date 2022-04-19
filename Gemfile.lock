@@ -680,9 +680,6 @@ DEPENDENCIES
   mini_magick
   mjml-rails
   moji
-  net-imap
-  net-pop
-  net-smtp
   nokogiri
   omniauth-facebook
   omniauth-gumroad
