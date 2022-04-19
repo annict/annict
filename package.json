@@ -6,7 +6,7 @@
   },
   "scripts": {
     "build:css": "sass app/assets/stylesheets/application.scss:./app/assets/builds/application.css --no-source-map --load-path=node_modules",
-    "build": "esbuild app/javascript/*.* --bundle --sourcemap --outdir=app/assets/builds",
+    "build:js": "esbuild app/javascript/*.* --bundle --sourcemap --outdir=app/assets/builds",
     "graphql:update-api-reference": "bundle exec rake graphql:dump_schema && bundle exec rake graphql:build_docs && cp -rf ./tmp/docs/graphql-api/reference/ ../annict-developers-jp/docs/.vuepress/public/graphql-api/reference"
   },
   "dependencies": {
