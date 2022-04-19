@@ -2,7 +2,7 @@
 
 module Db
   class ApplicationController < ActionController::Base
-    include Pundit
+    include Pundit::Authorization
 
     include PageCategorizable
     include SentryLoadable

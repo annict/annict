@@ -2,7 +2,7 @@
 
 module Fragment
   class RecordsController < Fragment::ApplicationController
-    include Pundit
+    include Pundit::Authorization
     include RecordListSettable
 
     before_action :authenticate_user!, only: %i[edit]
