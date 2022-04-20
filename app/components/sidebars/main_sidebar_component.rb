@@ -14,7 +14,7 @@ module Sidebars
 
           h.tag :div, class: "c-main-sidebar__content" do
             h.tag :a, href: view_context.root_path, class: "c-main-sidebar__logo d-inline-block mb-3 text-center w-100" do
-              h.tag :img, alt: "Annict", height: 30, loading: "lazy", src: view_context.image_url("/logos/color-white.png"), width: 25
+              h.tag :img, alt: "Annict", height: 30, loading: "lazy", src: view_context.image_url("logos/color-white.png"), width: 25
             end
 
             h.tag :div, class: "mb-3 px-3" do
