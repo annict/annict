@@ -20,16 +20,6 @@ services:
       - .:/workspace
       - gems_vol:/usr/local/bundle
       - node_modules_vol:/workspace/node_modules
-  frontend:
-    build:
-      context: .
-      dockerfile: ./app/frontend/Dockerfile.local
-    command: /bin/bash -c 'npm run webpack:start'
-    ports:
-      - 3001:8080
-    volumes:
-      - .:/workspace
-      - node_modules_vol:/workspace/node_modules
   worker:
     build:
       context: .
