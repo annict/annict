@@ -2,8 +2,6 @@
 
 module Db
   class SidebarComponent < Db::ApplicationComponent
-    include AssetsHelper
-
     def initialize(search:)
       @search = search
     end
