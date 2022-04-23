@@ -4,7 +4,6 @@ module Api
   module Canary
     class GraphqlController < ActionController::Base
       include Analyzable
-      include LogrageSetting
       include SentryLoadable
 
       before_action :doorkeeper_authorize!

@@ -3,7 +3,7 @@
 module TimeZoneHelper
   def display_time(time)
     time = time&.in_time_zone(local_time_zone)
-    time&.to_s(:ymdhm)
+    time&.to_fs(:ymdhm)
   end
 
   def display_date(date)

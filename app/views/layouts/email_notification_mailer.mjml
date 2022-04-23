@@ -2,7 +2,7 @@
   <mj-body background-color="#f5f5f5">
     <mj-section>
       <mj-column>
-        <mj-image src="<%= asset_bundle_url("images/email/logos/color-mizuho.png") %>" align="center" width="32px" href="<%= root_url(domain: local_domain) %>"></mj-image>
+        <mj-image src="<%= image_url("email/logos/color-mizuho.png") %>" align="center" width="32px" href="<%= root_url(domain: local_domain) %>"></mj-image>
       </mj-column>
     </mj-section>
     <%= yield %>

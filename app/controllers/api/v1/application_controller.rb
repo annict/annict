@@ -4,7 +4,6 @@ module Api
   module V1
     class ApplicationController < ActionController::Base
       include Analyzable
-      include LogrageSetting
       include SentryLoadable
 
       rescue_from ActiveRecord::RecordNotFound, with: :not_found

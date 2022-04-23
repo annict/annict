@@ -1,6 +1,6 @@
 <%= content_for :head_assets do %>
-  <%= stylesheet_bundle_tag "application.css", media: "all", "data-turbo-track": "reload" %>
-  <%= javascript_bundle_tag "application.js", defer: "", "data-turbo-track": "reload" %>
+  <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+  <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
 <% end %>
 
 <!DOCTYPE html>

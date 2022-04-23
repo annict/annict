@@ -5,7 +5,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby "3.1.1"
 
-gem "rails", "~> 6.1.0"
+gem "rails", "~> 7.0.0"
 
 gem "active_decorator"
 gem "active_link_to"
@@ -18,6 +18,7 @@ gem "by_star"
 gem "cld"
 gem "commonmarker" # Using github-markup
 gem "counter_culture"
+gem "cssbundling-rails"
 gem "delayed_job_active_record"
 gem "devise"
 gem "discord-notifier"
@@ -41,6 +42,7 @@ gem "image_processing"
 gem "imgix-rails"
 gem "imgproxy"
 gem "jb"
+gem "jsbundling-rails"
 gem "kaminari"
 gem "koala"
 gem "memory_profiler" # Used by rack-mini-profiler
@@ -48,13 +50,6 @@ gem "meta-tags"
 gem "mini_magick"
 gem "mjml-rails"
 gem "moji"
-
-# net-imap, net-pop and net-smtp were removed from default gems in Ruby 3.1, but is used by the `mail` gem.
-# So we need to add them as dependencies until `mail` is fixed: https://github.com/mikel/mail/pull/1439
-gem "net-imap", require: false
-gem "net-pop", require: false
-gem "net-smtp", require: false
-
 gem "nokogiri"
 gem "omniauth-facebook"
 gem "omniauth-gumroad"
@@ -62,6 +57,7 @@ gem "omniauth-rails_csrf_protection"
 gem "omniauth-twitter"
 gem "pg"
 gem "prelude-batch-loader", require: "prelude"
+gem "propshaft"
 gem "puma"
 gem "puma_worker_killer"
 gem "pundit"
@@ -115,8 +111,4 @@ group :test do
   # https://github.com/codeclimate/test-reporter/issues/418
   gem "simplecov", "< 0.22", require: false
   gem "timecop"
-end
-
-group :production do
-  gem "lograge"
 end
