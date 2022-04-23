@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class EmailNotificationMailer < ApplicationMailer
-  helper :assets
   helper :local
   helper :image
 

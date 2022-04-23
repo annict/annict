@@ -7,6 +7,7 @@
 /.idea
 /.sass-cache
 /annict.iml
+/app/assets/builds/*
 /config/master.key
 /coverage
 /db/dump/*
@@ -19,3 +20,5 @@
 /tmp/*
 /vendor/bundle
 /volumes
+
+!/app/assets/builds/.keep
