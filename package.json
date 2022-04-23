@@ -28,7 +28,6 @@
     "lodash": "^4.17.21",
     "mjml": "^4.10.2",
     "popper.js": "^1.16.1",
-    "postcss-smart-import": "^0.7.6",
     "sass": "^1.50.1",
     "select2": "^4.1.0-rc.0"
   },
