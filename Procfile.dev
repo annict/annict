@@ -1,2 +1,2 @@
-css: npm run build:css -- --watch
-js: npm run build:js -- --watch
+css: yarn build:css -- --watch
+js: yarn build:js -- --watch

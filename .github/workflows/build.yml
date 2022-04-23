@@ -66,9 +66,9 @@ jobs:
         with:
           node-version: 16.14.2
 
-      - name: Run `npm install`
+      - name: Run `yarn install`
         run: |
-          npm install
+          yarn install
 
       - name: Run `assets:precompile`
         run: |
