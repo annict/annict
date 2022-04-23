@@ -70,9 +70,9 @@ jobs:
         run: |
           npm install
 
-      - name: Run `npm run heroku-postbuild`
+      - name: Run `assets:precompile`
         run: |
-          npm run heroku-postbuild
+          bin/rails assets:precompile
 
       - name: Setup Database
         run: |
