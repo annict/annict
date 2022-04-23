@@ -2,7 +2,7 @@
 
 module Api::Internal
   class RecordsController < ApplicationV6Controller
-    include Pundit
+    include Pundit::Authorization
 
     before_action :authenticate_user!
 

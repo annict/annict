@@ -2,7 +2,7 @@
 
 module Forum
   class ApplicationController < ActionController::Base
-    include Pundit
+    include Pundit::Authorization
 
     include ControllerCommon
     include PageCategorizable

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class RecordsController < ApplicationV6Controller
-  include Pundit
+  include Pundit::Authorization
   include RecordListSettable
 
   before_action :authenticate_user!, only: %i[destroy]
