@@ -22,7 +22,7 @@
     "autosize": "^5.0.1",
     "axios": "^0.21.2",
     "babel-loader": "^8.2.2",
-    "bootstrap": "^5.1.0",
+    "bootstrap": "^5.1.3",
     "choices.js": "^9.0.1",
     "core-js": "^3.12.1",
     "dayjs": "^1.10.5",
