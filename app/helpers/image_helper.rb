@@ -35,22 +35,6 @@ module ImageHelper
     ann_image_url(project, :image, width: width, ratio: "1:1", format: format, blur: blur)
   end
 
-  def ann_api_assets_url(record, field)
-    "#{ENV.fetch("ANNICT_API_ASSETS_URL")}/#{image_path(record, field)}"
-  end
-
-  def ann_api_assets_background_image_url(profile)
-    background_image = profile.background_image
-    field = background_image ? :background_image : :image
-    image = profile.send(field)
-
-    if background_image.present? && profile.background_image_animated?
-      return "#{ENV.fetch("ANNICT_API_ASSETS_URL")}/shrine/#{image[:original].id}"
-    end
-
-    ann_api_assets_url(profile, field)
-  end
-
   def api_user_avatar_url(profile, size)
     width = case size
     when "size50" then 50

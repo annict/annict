@@ -124,7 +124,7 @@ module Canary
 
         def background_image_url
           Canary::RecordLoader.for(Profile, column: :user_id).load(object.id).then do |profile|
-            ann_api_assets_background_image_url(profile)
+            ann_image_url(profile, :background_image, width: 500, ratio: "16:9", format: :jpg)
           end
         end
 

@@ -243,7 +243,7 @@ describe "GraphQL API Query" do
       it "shows user's avatar image URL" do
         expect(result.dig("data", "user")).to eq(
           "username" => user.username,
-          "avatarUrl" => "#{ENV.fetch("ANNICT_API_ASSETS_URL")}/no-image.jpg"
+          "avatarUrl" => "#{ENV.fetch("ANNICT_URL")}/dummy_image"
         )
       end
     end
