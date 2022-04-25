@@ -81,12 +81,12 @@ document.addEventListener('turbo:load', (_event) => {
 dayjs.locale(annConfig.viewer.locale);
 
 window.Stimulus = Application.start();
-Stimulus.register('basic-form', BasicFormController);
+Stimulus.register('forms--basic-form', BasicFormController);
 Stimulus.register('body', BodyController);
 Stimulus.register('bulk-watch-episodes-button', BulkWatchEpisodesButtonController);
 Stimulus.register('characters-counter', CharactersCounterController);
 Stimulus.register('component-value-fetcher', ComponentValueFetcherController);
-Stimulus.register('episode-record-form', EpisodeRecordFormController);
+Stimulus.register('forms--episode-record-form', EpisodeRecordFormController);
 Stimulus.register('flash', FlashController);
 Stimulus.register('follow-button', FollowButtonController);
 Stimulus.register('like-button', LikeButtonController);
@@ -110,7 +110,7 @@ Stimulus.register('tracking-heatmap', TrackingHeatmapController);
 Stimulus.register('tracking-offcanvas-button', TrackingOffcanvasButtonController);
 Stimulus.register('tracking-offcanvas', TrackingOffcanvasController);
 Stimulus.register('watch-episode-button', WatchEpisodeButtonController);
-Stimulus.register('work-record-form', WorkRecordFormController);
+Stimulus.register('forms--work-record-form', WorkRecordFormController);
 
 ujs.start();
 Turbo.start();
