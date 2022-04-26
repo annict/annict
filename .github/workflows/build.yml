@@ -13,7 +13,7 @@ jobs:
       - name: Setup Ruby and install gems
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.1.1
+          ruby-version: 3.1.2
           bundler-cache: true
 
       - name: Run Standard`
@@ -58,7 +58,7 @@ jobs:
       - name: Setup Ruby and install gems
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.1.1
+          ruby-version: 3.1.2
           bundler-cache: true
 
       - name: Setup Node
