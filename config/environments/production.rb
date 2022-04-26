@@ -119,10 +119,4 @@ Rails.application.configure do
   # config.active_record.database_selector = { delay: 2.seconds }
   # config.active_record.database_resolver = ActiveRecord::Middleware::DatabaseSelector::Resolver
   # config.active_record.database_resolver_context = ActiveRecord::Middleware::DatabaseSelector::Resolver::Session
-
-  config.imgix = {
-    use_https: true,
-    source: ENV.fetch("IMGIX_SOURCE"),
-    secure_url_token: ENV.fetch("IMGIX_SECURE_URL_TOKEN")
-  }
 end

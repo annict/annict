@@ -5,7 +5,6 @@ module Canary
     module Objects
       class Base < GraphQL::Schema::Object
         include GraphQL::FragmentCache::Object
-        include Imgix::Rails::UrlHelper
 
         include ImageHelper
         include MarkdownHelper
