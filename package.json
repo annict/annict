@@ -17,7 +17,7 @@
     "@hotwired/turbo": "^7.0.1",
     "@popperjs/core": "^2.11.5",
     "@rails/ujs": "^6.1.4",
-    "@types/gtag.js": "0.0.7",
+    "@types/gtag.js": "0.0.10",
     "autosize": "^5.0.1",
     "axios": "^0.21.2",
     "bootstrap": "^5.1.0",
