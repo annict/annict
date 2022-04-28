@@ -8,7 +8,5 @@ class WelcomeController < ApplicationV6Controller
 
     work_list = Work.only_kept.preload(:work_image)
     @seasonal_work_list = work_list.by_season(ENV.fetch("ANNICT_CURRENT_SEASON")).order(watchers_count: :desc).limit(6)
-    cover_image_path = @seasonal_work_list.sample&.work_image&.uploaded_file_path(:image)
-    @cover_image_url = cover_image_path ? helpers.ix_image_url(cover_image_path, blur: 60, height: 800, width: 600) : ""
   end
 end
