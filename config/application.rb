@@ -80,7 +80,7 @@ module Annict
 
       maintenance_file = File.join(Rails.root, "public", "maintenance.html")
       send_file(/(.*)$(?<!maintenance|favicons)/, maintenance_file, if: proc { |rack_env|
-        ip_address = rack_env["HTTP_X_FORWARDED_FOR"]&.split(",")&.first&.strip
+        ip_address = rack_env["HTTP_CF_CONNECTING_IP"]
 
         File.exist?(maintenance_file) &&
           ENV["ANNICT_MAINTENANCE_MODE"] == "on" &&
