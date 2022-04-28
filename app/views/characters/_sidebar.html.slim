@@ -77,7 +77,7 @@ h1.h2.fw-bold
       - character_favorites.each do |character_favorite|
         .col-auto
           = link_to profile_path(character_favorite.user.username) do
-            = ann_image_tag(character_favorite.user.profile, :image, size: "30x30", class: "rounded-circle", alt: character_favorite.user.name_with_username, title: character_favorite.user.name_with_username)
+            = render Pictures::AvatarPictureComponent.new(user: character_favorite.user, width: 30)
 
 - if user_signed_in? && current_user.committer?
   = link_to t("messages._common.edit_on_annict_db"), db_edit_character_path(character), class: "btn btn-secondary w-100 mt-2"

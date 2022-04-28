@@ -13,7 +13,7 @@ module Headers
         h.tag :div, class: "align-items-center row gx-3" do
           h.tag :div, class: "col-auto" do
             h.tag :a, href: view_context.profile_path(@user.username) do
-              h.html Pictures::AvatarPictureComponent.new(view_context, user: @user, width: 80).render
+              h.html view_context.render(Pictures::AvatarPictureComponent.new(user: @user, width: 80))
             end
           end
 

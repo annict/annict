@@ -1,0 +1,48 @@
+{
+  "cron": [
+    {
+      "command": "bundle exec rails counter_cache:refresh_on_users",
+      "schedule": "0 18 * * *"
+    },
+    {
+      "command": "bundle exec rails session:sweep",
+      "schedule": "0 19 * * *"
+    },
+    {
+      "command": "bundle exec rails episode:generate",
+      "schedule": "0 20 * * *"
+    },
+    {
+      "command": "bundle exec rails doorkeeper:revoke_access_tokens",
+      "schedule": "40 * * * *"
+    },
+    {
+      "command": "bundle exec rails email_notification:send_favorite_works_added_email",
+      "schedule": "0 22 * * 1"
+    },
+    {
+      "command": "bundle exec rails work_image:save_sns_image",
+      "schedule": "0 0 * * *"
+    },
+    {
+      "command": "bundle exec rails episode:update_score && rake work:update_score",
+      "schedule": "0 18 * * *"
+    },
+    {
+      "command": "bundle exec rails internal_statistic:calc",
+      "schedule": "30 19 * * *"
+    },
+    {
+      "command": "bundle exec rails vod:import",
+      "schedule": "30 22 * * *"
+    },
+    {
+      "command": "bundle exec rails email_notification:send_related_works_added_email",
+      "schedule": "0 2 * * 1"
+    },
+    {
+      "command": "bundle exec rails supporters:sync_with_gumroad",
+      "schedule": "0 12 * * *"
+    }
+  ]
+}

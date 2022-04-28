@@ -431,12 +431,4 @@ class Work < ApplicationRecord
     decrement!(:watchers_count) if is_prev_positive
     increment!(:watchers_count) if is_next_positive
   end
-
-  def work_image_height(width)
-    ((4 * width) / 3).ceil
-  end
-
-  def video_image_height(width)
-    ((9 * width) / 16).ceil
-  end
 end

@@ -78,11 +78,11 @@ module Beta
         end
 
         def avatar_url
-          ann_api_assets_url(object.profile, :image)
+          ann_avatar_image_url(object, width: 300, format: :jpg)
         end
 
         def background_image_url
-          ann_api_assets_background_image_url(object.profile)
+          ann_image_url(object.profile, :background_image, width: 500, ratio: "16:9", format: :jpg)
         end
 
         def records_count

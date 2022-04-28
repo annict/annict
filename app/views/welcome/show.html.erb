@@ -4,13 +4,12 @@
 <%= component_value_fetcher_tag("status-select-dropdown", internal_api_library_entry_list_path, method: :post, payload: {work_ids: []}) %>
 
 <div class="align-items-center c-hero d-flex position-relative py-3">
-  <div class="c-hero__bg-image position-absolute w-100" style="background-image: url(<%= @cover_image_url %>);"></div>
   <div class="c-hero__content text-center align-self-center">
-    <h1 class="display-3 mb-0 text-white">
+    <h1 class="display-3 mb-0">
       <%= t("messages.welcome.show.hero_title_html") %>
     </h1>
 
-    <p class="lead mb-0 mt-5 px-2 text-white">
+    <p class="lead mb-0 mt-5 px-2">
       <%= t("messages.welcome.show.hero_description_html") %>
     </p>
 
@@ -22,7 +21,7 @@
         </span>
       <% end %>
 
-      <%= link_to sign_in_path, class: "btn btn-outline-light ms-2 rounded-pill" do %>
+      <%= link_to sign_in_path, class: "btn btn-outline-primary ms-2 rounded-pill" do %>
         <%= t("noun.sign_in") %>
       <% end %>
     </div>
@@ -39,8 +38,8 @@
       <% if @seasonal_work_list.present? %>
         <div class="row g-3">
           <% @seasonal_work_list.each do |work| %>
-            <div class="col-4 col-md-2">
-              <%= Cards::WorkCardComponent.new(self, work: work, width: 195).render %>
+            <div class="col-6 col-lg-2 col-md-4 col-sm-6">
+              <%= Cards::WorkCardComponent.new(self, work: work, width: 166).render %>
             </div>
           <% end %>
         </div>

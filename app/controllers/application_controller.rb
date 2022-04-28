@@ -3,6 +3,7 @@
 class ApplicationController < ActionController::Base
   include Pundit::Authorization
 
+  include BasicAuthenticatable
   include ControllerCommon
   include Analyzable
   include ViewSelector

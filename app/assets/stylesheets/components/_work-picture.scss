@@ -1,9 +1,9 @@
 .c-work-picture {
-  .img-thumbnail {
-    background-color: $gray-300;
+  aspect-ratio: 3 / 4;
+  background-color: $gray-300;
+  overflow: hidden;
 
-    @include color-scheme(dark) {
-      background-color: $gray-700;
-    }
+  @include color-scheme(dark) {
+    background-color: $gray-700;
   }
 }

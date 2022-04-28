@@ -16,7 +16,7 @@ module Headers
               h.tag :div, class: "col-12 col-sm-auto" do
                 h.tag :div, class: "c-work-header__work-picture text-center" do
                   h.tag :a, href: view_context.work_path(work_id: @work.id) do
-                    h.html Pictures::WorkPictureComponent.new(view_context, work: @work, width: 180).render
+                    h.html view_context.render(Pictures::WorkPictureComponent.new(work: @work, width: 170))
                   end
 
                   h.tag :div, class: "mt-2 text-center" do

@@ -1,0 +1,15 @@
+<div
+  class="align-items-center c-work-picture d-flex justify-content-center m-auto <%= @class_name %>"
+  style="width: <%= @width %>px;"
+>
+  <picture>
+    <source type="image/webp" srcset="<%= source_srcset("webp") %>">
+    <source type="image/jpeg" srcset="<%= source_srcset("jpg") %>">
+    <img
+      alt="<%= @alt %>"
+      class="img-thumbnail"
+      loading="lazy"
+      src="<%= helpers.ann_work_image_url(@work, width: @width, format: "jpg") %>"
+    >
+  </picture>
+</div>

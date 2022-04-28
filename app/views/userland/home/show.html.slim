@@ -17,7 +17,7 @@
                   .row.align-items-center
                     .col-auto
                       = link_to userland_project_path(project) do
-                        = ann_image_tag project, :image, size: "80x80", class: "img-fluid img-thumbnail rounded"
+                        = render Pictures::ProjectPictureComponent.new(project: project, width: 80)
                     .col
                       .mb-2
                         = link_to project.name, userland_project_path(project)

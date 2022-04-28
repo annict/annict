@@ -13,11 +13,12 @@ module Boxes
         h.tag :div, class: "row g-3" do
           h.tag :div, class: "col-auto" do
             h.tag :a, href: view_context.work_path(@work.id), target: "_top" do
-              h.html Pictures::WorkPictureComponent.new(
-                view_context,
-                work: @work,
-                width: 80
-              ).render
+              h.html view_context.render(
+                Pictures::WorkPictureComponent.new(
+                  work: @work,
+                  width: 80
+                )
+              )
             end
           end
 

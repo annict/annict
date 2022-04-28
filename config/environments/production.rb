@@ -45,11 +45,11 @@ Rails.application.configure do
 
   # Use a different cache store in production.
   config.cache_store = :redis_cache_store, {
-    url: ENV.fetch("REDISCLOUD_URL"),
+    url: ENV.fetch("ANNICT_REDIS_URL"),
     expires_in: 24.hours.to_i
   }
   config.graphql_fragment_cache.store = :redis_cache_store, {
-    url: ENV.fetch("REDISCLOUD_URL"),
+    url: ENV.fetch("ANNICT_REDIS_URL"),
     expires_in: 24.hours.to_i
   }
 
@@ -89,10 +89,10 @@ Rails.application.configure do
   }
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-    address: ENV.fetch("SMTP_HOST"),
-    port: ENV.fetch("SMTP_PORT"),
-    user_name: ENV.fetch("SMTP_USERNAME"),
-    password: ENV.fetch("SMTP_PASSWORD"),
+    address: ENV.fetch("ANNICT_SMTP_HOST"),
+    port: ENV.fetch("ANNICT_SMTP_PORT"),
+    user_name: ENV.fetch("ANNICT_SMTP_USERNAME"),
+    password: ENV.fetch("ANNICT_SMTP_PASSWORD"),
     authentication: :plain
   }
 
@@ -119,10 +119,4 @@ Rails.application.configure do
   # config.active_record.database_selector = { delay: 2.seconds }
   # config.active_record.database_resolver = ActiveRecord::Middleware::DatabaseSelector::Resolver
   # config.active_record.database_resolver_context = ActiveRecord::Middleware::DatabaseSelector::Resolver::Session
-
-  config.imgix = {
-    use_https: true,
-    source: ENV.fetch("IMGIX_SOURCE"),
-    secure_url_token: ENV.fetch("IMGIX_SECURE_URL_TOKEN")
-  }
 end

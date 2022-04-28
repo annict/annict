@@ -5,7 +5,7 @@
         <div class="align-items-center gx-3 row">
           <div class="col-auto">
             <%= link_to profile_path(username: favorite_resource.user.username) do %>
-              <%= ann_image_tag(favorite_resource.user.profile, :image, size: "50x50", class: "rounded-circle") %>
+              <%= render Pictures::AvatarPictureComponent.new(user: favorite_resource.user, width: 50) %>
             <% end %>
           </div>
 

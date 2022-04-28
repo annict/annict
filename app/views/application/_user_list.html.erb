@@ -4,7 +4,7 @@
       <div class="align-items-center gx-3 row">
         <div class="col-auto">
           <%= link_to profile_path(user.username) do %>
-            <%= Pictures::AvatarPictureComponent.new(self, user: user, width: 50).render %>
+            <%= render Pictures::AvatarPictureComponent.new(user: user, width: 50) %>
           <% end %>
         </div>
 

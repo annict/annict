@@ -15,7 +15,7 @@ module Headers
         h.tag :div, class: "c-record-header row" do
           h.tag :div, class: "col-auto pe-0" do
             h.tag :a, href: view_context.profile_path(@user.username), target: "_top" do
-              h.html Pictures::AvatarPictureComponent.new(view_context, user: @user, width: 50).render
+              h.html view_context.render(Pictures::AvatarPictureComponent.new(user: @user, width: 50))
             end
           end
 

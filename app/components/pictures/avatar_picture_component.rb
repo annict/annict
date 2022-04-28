@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
 module Pictures
-  class AvatarPictureComponent < ApplicationV6Component
-    def initialize(view_context, user:, width:, alt: "", class_name: "")
-      super view_context
+  class AvatarPictureComponent < ApplicationComponent
+    def initialize(user:, width:, alt: "", class_name: "")
       @user = user
       @width = width
       @height = @width
@@ -11,29 +10,12 @@ module Pictures
       @class_name = class_name
     end
 
-    def render
-      build_html do |h|
-        h.tag :picture, class: "c-avatar-picture" do
-          h.tag :source, type: "image/webp", srcset: srcset("webp")
-          h.tag :source, type: "image/jpeg", srcset: srcset("jpg")
-          h.tag :img, {
-            alt: @alt,
-            class: "img-thumbnail rounded-circle #{@class_name}",
-            height: @height,
-            loading: "lazy",
-            src: ann_image_url(@user.profile, :image, width: @width, height: @height, format: "jpg"),
-            width: @width
-          }
-        end
-      end
-    end
-
     private
 
-    def srcset(format)
+    def source_srcset(format)
       [
-        "#{ann_image_url(@user.profile, :image, width: @width, height: @height, format: format)} 1x",
-        "#{ann_image_url(@user.profile, :image, width: @width * 2, height: @height * 2, format: format)} 2x"
+        "#{helpers.ann_avatar_image_url(@user, width: @width, format: format)} 1x",
+        "#{helpers.ann_avatar_image_url(@user, width: @width * 2, format: format)} 2x"
       ].join(", ")
     end
   end

@@ -30,7 +30,8 @@ module Canary
 
         def internal_image_url(size:)
           return unless context[:admin]
-          v4_ann_image_url object, :image, size: size
+
+          ann_image_url object, :image, width: size.split(":")[0]
         end
       end
     end

@@ -1,6 +1,6 @@
 <% title = t "head.title.users.followers", profile_name: @user.profile.name, username: @user.username %>
 <% description = meta_description(t("head.meta.description.users.followers", profile_name: @user.profile.name, username: @user.username)) %>
-<% image_url = ann_avatar_image_url(@user, width: 200) %>
+<% image_url = ann_avatar_image_url(@user, width: 200, format: "jpg") %>
 <% set_meta_tags(title: title, description: description, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false) %>
 
 <%= component_value_fetcher_tag("follow-button", internal_api_following_list_path) %>

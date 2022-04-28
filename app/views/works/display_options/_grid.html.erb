@@ -3,7 +3,7 @@
     <% works.each do |work| %>
       <div class="c-work-card col-6 col-md-3 col-xl-2">
         <%= link_to work_path(work) do %>
-          <%= Pictures::WorkPictureComponent.new(self, work: work, width: 250).render %>
+          <%= render Pictures::WorkPictureComponent.new(work: work, width: 164) %>
         <% end %>
 
         <h2 class="c-work-card__work-title c-work-card__work-title--fixed fw-bold mt-2 small">

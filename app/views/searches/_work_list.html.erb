@@ -6,7 +6,7 @@
       <div class="g-3 row">
         <div class="col-3 col-sm-2">
           <%= link_to work_path(work.id) do %>
-            <%= Pictures::WorkPictureComponent.new(self, work: work, width: 200).render %>
+            <%= render Pictures::WorkPictureComponent.new(work: work, width: 200) %>
           <% end %>
           <% if work.work_image.present? %>
             <div class="u-very-small text-end">

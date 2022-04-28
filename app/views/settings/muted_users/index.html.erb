@@ -12,7 +12,7 @@
             <div class="align-items-center gx-3 row">
               <div class="col-auto">
                 <%= link_to profile_path(mute_user.muted_user.username) do %>
-                  <%= ann_image_tag(mute_user.muted_user.profile, :image, size: "50x50", class: "rounded-circle") %>
+                  <%= render Pictures::AvatarPictureComponent.new(user: mute_user.muted_user, width: 50) %>
                 <% end %>
               </div>
 

@@ -1,13 +1,6 @@
 .c-hero {
   width: 100%;
 
-  &__bg-image {
-    background-position: center;
-    background-size: cover;
-    filter: brightness(35%);
-    height: 100%;
-  }
-
   &__content {
     width: 100%;
     z-index: 1;

@@ -30,7 +30,7 @@ module Lists
                             data_tracking_offcanvas_button_frame_path: view_context.fragment_trackable_work_path(le.work_id),
                             data_action: "click->tracking-offcanvas-button#open"
                           } do
-                            h.html Pictures::WorkPictureComponent.new(view_context, work: le.work, width: 80).render
+                            h.html view_context.render(Pictures::WorkPictureComponent.new(work: le.work, width: 80))
                           end
                         end
 

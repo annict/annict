@@ -18,12 +18,13 @@ module Cards
         h.tag :div, class: "align-items-end border-0 c-work-card card flex-column h-100" do
           h.tag :div, class: "text-center w-100" do
             h.tag :a, href: view_context.work_path(@work) do
-              h.html Pictures::WorkPictureComponent.new(
-                view_context,
-                work: @work,
-                width: @width,
-                alt: @work.local_title
-              ).render
+              h.html view_context.render(
+                Pictures::WorkPictureComponent.new(
+                  work: @work,
+                  width: @width,
+                  alt: @work.local_title
+                )
+              )
             end
           end
 

@@ -21,7 +21,7 @@ module Sidebars
               if current_user
                 h.tag :a, href: view_context.profile_path(current_user.username), class: "align-content-center row" do
                   h.tag :div, class: "col-3 pe-0" do
-                    h.html Pictures::AvatarPictureComponent.new(view_context, user: current_user, width: 50).render
+                    h.html view_context.render(Pictures::AvatarPictureComponent.new(user: current_user, width: 50))
                   end
 
                   h.tag :div, class: "col-auto" do
