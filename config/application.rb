@@ -54,17 +54,9 @@ module Annict
     config.active_job.queue_adapter = :delayed_job
 
     config.middleware.insert_before(Rack::Runtime, Rack::Rewrite) do
-      # Redirect: annict.herokuapp.com -> annict.com
-      r301(/.*/, "https://#{ENV.fetch("ANNICT_HOST")}$&", if: proc { |rack_env|
-        rack_env["SERVER_NAME"].include?("annict.herokuapp.com")
-      })
-      # Redirect: www.annict.com -> annict.com
+      # Redirect: www.annict.com, ja.annict.com, jp.annict.com -> annict.com
       r301 /.*/, "https://#{ENV.fetch('ANNICT_HOST')}$&", if: proc { |rack_env|
-        rack_env["SERVER_NAME"].in?(["www.#{ENV.fetch('ANNICT_HOST')}"])
-      }
-      # Redirect: www.annict.jp, annict.jp, ja.annict.com, jp.annict.com -> annict.com
-      r301 /.*/, "https://#{ENV.fetch('ANNICT_HOST')}$&", if: proc { |rack_env|
-        rack_env["SERVER_NAME"].in?(["www.#{ENV.fetch('ANNICT_JP_HOST')}", ENV.fetch('ANNICT_JP_HOST'), "ja.annict.com", "jp.annict.com"])
+        rack_env["SERVER_NAME"].in?(["www.#{ENV.fetch('ANNICT_HOST')}", "ja.annict.com", "jp.annict.com"])
       }
       r301 %r{\A/about}, "/"
       r301 %r{\A/activities}, "/"
