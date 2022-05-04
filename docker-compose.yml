@@ -13,6 +13,13 @@ services:
     image: redis:5.0.5-alpine
     ports:
       - 36379:6379
+  imgproxy:
+    image: darthsim/imgproxy:v3.5.0
+    ports:
+      - 38080:8080
+    env_file:
+      - .env.imgproxy
+      - .env.imgproxy.local
 
 volumes:
   postgresql14_data:
