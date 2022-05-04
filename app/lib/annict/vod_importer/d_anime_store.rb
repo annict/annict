@@ -5,7 +5,7 @@ module Annict
     class DAnimeStore < Annict::VodImporter::Base
       include HTTParty
 
-      base_uri "https://anime.dmkt-sp.jp"
+      base_uri "https://animestore.docomo.ne.jp"
 
       def self.import
         new.import

@@ -8,7 +8,7 @@ module VodHelper
     when Channel::BANDAI_CHANNEL_ID
       "http://www.b-ch.com/ttl/index.php?ttl_c=#{code}"
     when Channel::D_ANIME_STORE_ID
-      "https://anime.dmkt-sp.jp/animestore/ci_pc?workId=#{code}"
+      "https://animestore.docomo.ne.jp/animestore/ci_pc?workId=#{code}"
     when Channel::NICONICO_CHANNEL_ID
       "http://ch.nicovideo.jp/#{code}"
     when Channel::NETFLIX_ID
