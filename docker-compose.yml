@@ -2,17 +2,24 @@ version: '3.7'
 
 services:
   postgresql:
-    image: postgres:12.4-alpine
+    image: postgres:14.2
     ports:
       - 35432:5432
     volumes:
-      - postgresql_data:/var/lib/postgresql/data:delegated
+      - postgresql14_data:/var/lib/postgresql/data:delegated
     environment:
       POSTGRES_HOST_AUTH_METHOD: trust
   redis:
     image: redis:5.0.5-alpine
     ports:
       - 36379:6379
+  imgproxy:
+    image: darthsim/imgproxy:v3.5.0
+    ports:
+      - 38080:8080
+    env_file:
+      - .env.imgproxy
+      - .env.imgproxy.local
 
 volumes:
-  postgresql_data:
+  postgresql14_data:

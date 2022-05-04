@@ -77,7 +77,7 @@ class Program < ApplicationRecord
     when Channel::BANDAI_CHANNEL_ID
       "http://www.b-ch.com/ttl/index.php?ttl_c=#{vod_title_code}"
     when Channel::D_ANIME_STORE_ID
-      "https://anime.dmkt-sp.jp/animestore/ci_pc?workId=#{vod_title_code}"
+      "https://animestore.docomo.ne.jp/animestore/ci_pc?workId=#{vod_title_code}"
     when Channel::NICONICO_CHANNEL_ID
       "http://ch.nicovideo.jp/#{vod_title_code}"
     when Channel::NETFLIX_ID
