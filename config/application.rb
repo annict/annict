@@ -45,6 +45,8 @@ module Annict
     config.i18n.default_locale = :ja
     config.i18n.available_locales = %i[ja en]
 
+    config.asset_host = ENV.fetch("ANNICT_ASSET_URL")
+
     config.generators do |g|
       g.test_framework :rspec, controller_specs: false, helper_specs: false,
                                routing_specs: false, view_specs: false
