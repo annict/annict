@@ -2,7 +2,7 @@
   <mj-column width="180px" padding-top="0px">
     <mj-image width="180px"
               padding-right="0"
-              src="<%= ann_work_image_url(work, width: 240) %>"
+              src="<%= ann_work_image_url(work, width: 240, format: :jpg) %>"
               align="center"
               href="<%= work_url(work.id, utm_source: 'email_notification', utm_campaign: utm_campaign, utm_medium: 'email', domain: local_domain) %>"></mj-image>
     <mj-button href="<%= work_url(work.id, utm_source: 'email_notification', utm_campaign: utm_campaign, utm_medium: 'email', domain: local_domain) %>"
@@ -47,7 +47,7 @@
     <% if work.trailers.only_kept.exists? %>
       <%- trailer = work.trailers.only_kept.order(:sort_number).first %>
       <mj-text font-weight="800" padding="10px 25px 0 25px"><%= I18n.t("noun.pv") %></mj-text>
-      <mj-image src="<%= ann_video_image_url(trailer, width: 640) %>" align="center" href="<%= trailer.url %>"></mj-image>
+      <mj-image src="<%= ann_video_image_url(trailer, width: 640, format: :jpg) %>" align="center" href="<%= trailer.url %>"></mj-image>
       <mj-text padding-top="0"
                align="center"
                color="#0366d6">

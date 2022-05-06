@@ -3,10 +3,13 @@
 module ImageHelper
   def ann_image_url(record, field, width:, ratio:, format: :webp, blur: nil)
     proxy_options = {
-      format: format,
       width: width,
       height: image_height(width, ratio)
     }
+
+    if format != :jpg
+      proxy_options[:format] = format
+    end
 
     if ratio == "1:1"
       proxy_options[:resizing_type] = "fill-down"
