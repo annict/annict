@@ -617,7 +617,7 @@ GEM
       mprelude (~> 0.1.0)
       parser (>= 3.0.0)
       procto (~> 0.0.2)
-    view_component (2.50.0)
+    view_component (2.56.2)
       activesupport (>= 5.0.0, < 8.0)
       method_source (~> 1.0)
     virtus (2.0.0)
