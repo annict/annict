@@ -302,7 +302,7 @@ GEM
       anyway_config (>= 2.0.0)
     jaro_winkler (1.5.4)
     jb (0.8.0)
-    jmespath (1.6.0)
+    jmespath (1.6.1)
     jsbundling-rails (1.0.2)
       railties (>= 6.0.0)
     json (2.5.1)
