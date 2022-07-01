@@ -75,11 +75,13 @@ class Program < ApplicationRecord
     when Channel::AMAZON_VIDEO_ID
       "https://www.amazon.co.jp/dp/#{vod_title_code}"
     when Channel::BANDAI_CHANNEL_ID
-      "http://www.b-ch.com/ttl/index.php?ttl_c=#{vod_title_code}"
+      "https://www.b-ch.com/ttl/index.php?ttl_c=#{vod_title_code}"
     when Channel::D_ANIME_STORE_ID
       "https://animestore.docomo.ne.jp/animestore/ci_pc?workId=#{vod_title_code}"
+    when Channel::D_ANIME_STORE_NICONICO_ID
+      "https://www.nicovideo.jp/series/#{vod_title_code}"
     when Channel::NICONICO_CHANNEL_ID
-      "http://ch.nicovideo.jp/#{vod_title_code}"
+      "https://ch.nicovideo.jp/#{vod_title_code}"
     when Channel::NETFLIX_ID
       "https://www.netflix.com/title/#{vod_title_code}"
     when Channel::ABEMA_VIDEO_ID
