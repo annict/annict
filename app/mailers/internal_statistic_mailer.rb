@@ -8,6 +8,6 @@ class InternalStatisticMailer < ApplicationMailer
     }
     @data = @data.to_h
 
-    mail(to: "hello@annict.com", subject: "Annict Statistic - #{date_str}")
+    mail(to: "me@shimba.co", subject: "Annict Statistic - #{date_str}")
   end
 end
