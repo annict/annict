@@ -43,7 +43,7 @@
     "@types/jquery": "^3.5.1",
     "@types/js-cookie": "^2.2.6",
     "@types/lodash": "^4.14.178",
-    "eslint": "^7.29.0",
+    "eslint": "^8.22.0",
     "eslint-plugin-import": "^2.25.4",
     "node-fetch": "^3.2.0",
     "prettier": "^2.3.2",
