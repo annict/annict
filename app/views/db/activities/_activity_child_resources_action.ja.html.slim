@@ -5,11 +5,19 @@ span.me-1
   | が
 
 span.me-1
+  = activity.trackable.work.db_detail_link
+| の
+
+span.me-1
+  = activity.trackable.class.model_name.human
+
+span.me-1
   = activity.trackable.db_detail_link
 
 span.me-1
-  = "の#{activity.trackable.class.model_name.human} (##{activity.trackable.id}) を"
+  = "(##{activity.trackable.id})"
 
+| を
 - action = activity.action.split(".")[1]
 - if action == "create"
   | 登録しました
