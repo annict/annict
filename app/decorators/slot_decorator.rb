@@ -2,7 +2,7 @@
 
 module SlotDecorator
   def db_detail_link(options = {})
-    name = options.delete(:name).presence || id
+    name = options.delete(:name).presence || "##{id}"
     link_to(name, db_edit_slot_path(self), options)
   end
 

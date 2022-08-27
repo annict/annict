@@ -6,7 +6,7 @@ module EpisodeDecorator
   end
 
   def db_detail_link(options = {})
-    name = options.delete(:title).presence || title
+    name = options.delete(:title).presence || title.presence || "##{id}"
     link_to name, db_edit_episode_path(self), options
   end
 

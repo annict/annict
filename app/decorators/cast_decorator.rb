@@ -2,7 +2,7 @@
 
 module CastDecorator
   def db_detail_link(options = {})
-    name = options.delete(:name).presence || character&.name.presence || id
+    name = options.delete(:name).presence || character&.name.presence || "##{id}"
     link_to name, db_edit_cast_path(self), options
   end
 

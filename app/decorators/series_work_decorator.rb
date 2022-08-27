@@ -2,7 +2,7 @@
 
 module SeriesWorkDecorator
   def db_detail_link(options = {})
-    name = options.delete(:name).presence || id
+    name = options.delete(:name).presence || "##{id}"
     link_to(name, db_edit_series_work_path(self), options)
   end
 

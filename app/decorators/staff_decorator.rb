@@ -2,7 +2,7 @@
 
 module StaffDecorator
   def db_detail_link(options = {})
-    name = options.delete(:name).presence || resource&.name.presence || id
+    name = options.delete(:name).presence || resource&.name.presence || "##{id}"
     path = db_edit_staff_path(self)
     link_to name, path, options
   end
