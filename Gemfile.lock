@@ -146,7 +146,7 @@ GEM
     coderay (1.1.3)
     coercible (1.0.0)
       descendants_tracker (~> 0.0.1)
-    commonmarker (0.23.4)
+    commonmarker (0.23.6)
     concord (0.1.6)
       adamantium (~> 0.2.0)
       equalizer (~> 0.0.9)
