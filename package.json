@@ -19,7 +19,7 @@
     "@rails/ujs": "^6.1.4",
     "@types/gtag.js": "0.0.11",
     "autosize": "^5.0.1",
-    "axios": "^0.21.2",
+    "axios": "^0.27.2",
     "bootstrap": "^5.1.0",
     "choices.js": "^9.0.1",
     "core-js": "^3.12.1",
