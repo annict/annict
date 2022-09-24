@@ -669,7 +669,7 @@ DEPENDENCIES
   enumerize
   factory_bot_rails
   github-markup
-  graphql (>= 1.10.0.pre3)
+  graphql
   graphql-batch
   graphql-fragment_cache
   groupdate
