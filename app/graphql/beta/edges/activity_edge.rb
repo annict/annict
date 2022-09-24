@@ -8,7 +8,8 @@ module Beta
       field :annict_id, Integer, null: false
       field :user, Beta::Types::Objects::UserType, null: false
       field :action, Beta::Types::Enums::ActivityAction, null: false
-      field :node, Beta::Types::Unions::ActivityItem, null: true
+      field :node, Beta::Types::Unions::ActivityItem, null: true, deprecation_reason: "Use `item` instead."
+      field :item, Beta::Types::Unions::ActivityItem, null: true, resolver_method: :node
 
       def annict_id
         activity = object.node

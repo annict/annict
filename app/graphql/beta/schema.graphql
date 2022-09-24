@@ -45,7 +45,8 @@ type ActivityEdge {
   A cursor for use in pagination.
   """
   cursor: String!
-  node: ActivityItem
+  item: ActivityItem
+  node: ActivityItem @deprecated(reason: "Use `item` instead.")
   user: User!
 }
 
@@ -1310,7 +1311,8 @@ type SeriesWorkEdge {
   A cursor for use in pagination.
   """
   cursor: String!
-  node: Work!
+  item: Work!
+  node: Work! @deprecated(reason: "Use `item` instead.")
   summary: String
   summaryEn: String
 }

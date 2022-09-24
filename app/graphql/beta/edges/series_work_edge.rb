@@ -8,7 +8,8 @@ module Beta
 
       field :summary, String, null: true
       field :summary_en, String, null: true
-      field :node, Beta::Types::Objects::WorkType, null: false
+      field :node, Beta::Types::Objects::WorkType, null: false, deprecation_reason: "Use `item` instead."
+      field :item, Beta::Types::Objects::WorkType, null: false, resolver_method: :node
 
       def summary
         object.node.summary
