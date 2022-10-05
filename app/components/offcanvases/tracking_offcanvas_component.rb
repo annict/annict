@@ -2,10 +2,6 @@
 
 module Offcanvases
   class TrackingOffcanvasComponent < ApplicationV6Component
-    def initialize(view_context)
-      super view_context
-    end
-
     def render
       build_html do |h|
         h.tag :div, {
