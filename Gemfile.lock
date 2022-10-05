@@ -313,7 +313,7 @@ GEM
       faraday-multipart
       json (>= 1.8)
       rexml
-    kramdown (2.3.1)
+    kramdown (2.4.0)
       rexml
     kramdown-parser-gfm (1.1.0)
       kramdown (~> 2.0)
@@ -532,7 +532,7 @@ GEM
     slim (4.1.0)
       temple (>= 0.7.6, < 0.9)
       tilt (>= 2.0.6, < 2.1)
-    solargraph (0.44.3)
+    solargraph (0.47.2)
       backport (~> 1.2)
       benchmark
       bundler (>= 1.17.2)
@@ -559,7 +559,7 @@ GEM
     terminal-table (1.6.0)
     thor (1.2.1)
     thread_safe (0.3.6)
-    tilt (2.0.10)
+    tilt (2.0.11)
     timecop (0.9.4)
     timeout (0.3.0)
     traceroute (0.8.1)
@@ -600,7 +600,7 @@ GEM
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
     wilson_score (0.1.0)
-    yard (0.9.27)
+    yard (0.9.28)
       webrick (~> 1.7.0)
     zeitwerk (2.6.1)
 
