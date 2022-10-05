@@ -112,37 +112,8 @@ Doorkeeper.configure do
   # realm "Doorkeeper"
 
   base_controller "Oauth::ApplicationController"
-end
 
-Rails.application.reloader.to_prepare do
-  Doorkeeper::Application.class_eval do
-    include BatchDestroyable
-
-    scope :available, -> { where(deleted_at: nil).where.not(owner: nil) }
-    scope :unavailable, -> {
-      unscoped.where.not(deleted_at: nil).or(where(owner: nil))
-    }
-    scope :authorized, -> { where(oauth_access_tokens: {revoked_at: nil}) }
-  end
-
-  Doorkeeper::AccessToken.class_eval do
-    include BatchDestroyable
-
-    belongs_to :owner, class_name: "User", foreign_key: :resource_owner_id
-
-    scope :available, -> { where(revoked_at: nil) }
-    scope :personal, -> { where(application_id: nil) }
-
-    validates :description, presence: {on: :personal}
-
-    before_validation :generate_token, on: %i[create personal]
-
-    def writable?
-      scopes.include?("write")
-    end
-  end
-
-  Doorkeeper::AccessGrant.class_eval do
-    include BatchDestroyable
-  end
+  access_token_class "Oauth::AccessToken"
+  access_grant_class "Oauth::AccessGrant"
+  application_class "Oauth::Application"
 end

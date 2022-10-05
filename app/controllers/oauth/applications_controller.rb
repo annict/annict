@@ -9,11 +9,11 @@ module Oauth
     end
 
     def new
-      @application = Doorkeeper::Application.new
+      @application = Oauth::Application.new
     end
 
     def create
-      @application = Doorkeeper::Application.new(application_params)
+      @application = Oauth::Application.new(application_params)
       @application.owner = current_user
 
       if @application.save
@@ -53,9 +53,9 @@ module Oauth
 
     def application_params
       if params.respond_to?(:permit)
-        params.require(:doorkeeper_application).permit(:name, :redirect_uri, :scopes)
+        params.require(:oauth_application).permit(:name, :redirect_uri, :scopes)
       else
-        params[:doorkeeper_application]&.slice(:name, :redirect_uri, :scopes)
+        params[:oauth_application]&.slice(:name, :redirect_uri, :scopes)
       end
     end
   end

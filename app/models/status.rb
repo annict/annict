@@ -62,7 +62,7 @@ class Status < ApplicationRecord
 
   belongs_to :activity, counter_cache: :resources_count, optional: true
   belongs_to :work
-  belongs_to :oauth_application, class_name: "Doorkeeper::Application", optional: true
+  belongs_to :oauth_application, class_name: "Oauth::Application", optional: true
   belongs_to :user
   has_many :activities,
     dependent: :destroy,

@@ -1,16 +1,16 @@
 ja:
   activerecord:
     attributes:
-      doorkeeper/application:
+      oauth/application:
         name: 'アプリケーション名'
         redirect_uri: 'リダイレクトURI'
         scopes: 'スコープ'
-      doorkeeper/access_token:
+      oauth/access_token:
         description: トークンの説明
         scopes: スコープ
     errors:
       models:
-        doorkeeper/application:
+        oauth/application:
           attributes:
             redirect_uri:
               fragment_present: 'cannot contain a fragment.'
