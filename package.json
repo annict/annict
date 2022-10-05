@@ -15,7 +15,7 @@
     "@babel/preset-env": "^7.14.1",
     "@hotwired/stimulus": "^3.0.0",
     "@hotwired/turbo": "^7.0.1",
-    "@popperjs/core": "^2.11.5",
+    "@popperjs/core": "^2.11.6",
     "@rails/ujs": "^6.1.4",
     "@types/gtag.js": "0.0.11",
     "autosize": "^5.0.1",
