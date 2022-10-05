@@ -40,7 +40,7 @@ describe "GraphQL API Query" do
                   edges {
                     annictId
                     action
-                    node {
+                    item {
                       __typename
                     }
                   }
@@ -62,21 +62,21 @@ describe "GraphQL API Query" do
                 {
                   "annictId" => activity3.id,
                   "action" => "CREATE",
-                  "node" => {
+                  "item" => {
                     "__typename" => "Record"
                   }
                 },
                 {
                   "annictId" => activity2.id,
                   "action" => "CREATE",
-                  "node" => {
+                  "item" => {
                     "__typename" => "Record"
                   }
                 },
                 {
                   "annictId" => activity1.id,
                   "action" => "CREATE",
-                  "node" => {
+                  "item" => {
                     "__typename" => "Record"
                   }
                 }
