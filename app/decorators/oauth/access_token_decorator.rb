@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Doorkeeper
+module Oauth
   module AccessTokenDecorator
     def local_scopes
       scopes.to_a.map { |scope|

@@ -21,7 +21,7 @@
   .mb-3.row
     = f.label :scopes, class: "col-2 col-form-label"
     .col-10
-      = select_tag "doorkeeper_application[scopes]", options_for_select([[t("messages.oauth.applications.read_only"), "read"], [t("messages.oauth.applications.read_write"), "read write"]]), class: "form-select"
+      = select_tag "oauth_application[scopes]", options_for_select([[t("messages.oauth.applications.read_only"), "read"], [t("messages.oauth.applications.read_write"), "read write"]]), class: "form-select"
       = doorkeeper_errors_for application, :scopes
 
   .mb-3.row.mb-0

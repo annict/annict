@@ -118,17 +118,17 @@ class User < ApplicationRecord
   has_many :multiple_episode_records, dependent: :destroy
   has_many :mute_users, dependent: :destroy
   has_many :muted_users, dependent: :destroy, foreign_key: :muted_user_id, class_name: "MuteUser"
-  has_many :oauth_applications, class_name: "Doorkeeper::Application", as: :owner
+  has_many :oauth_applications, class_name: "Oauth::Application", as: :owner
   has_many :oauth_access_grants,
-    class_name: "Doorkeeper::AccessGrant",
+    class_name: "Oauth::AccessGrant",
     foreign_key: :resource_owner_id,
     dependent: :destroy
   has_many :oauth_access_tokens,
-    class_name: "Doorkeeper::AccessToken",
+    class_name: "Oauth::AccessToken",
     foreign_key: :resource_owner_id,
     dependent: :destroy
   has_many :connected_applications, -> { distinct },
-    class_name: "Doorkeeper::Application",
+    class_name: "Oauth::Application",
     through: :oauth_access_tokens,
     source: :application
   has_many :reactions, dependent: :destroy

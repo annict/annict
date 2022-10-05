@@ -46,7 +46,7 @@ en:
         weight: Weight
       comment:
         body: Comment
-      doorkeeper/application:
+      oauth/application:
         name: Application Name
         redirect_uri: Redirect URI
         scopes: Scopes

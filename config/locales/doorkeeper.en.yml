@@ -1,16 +1,16 @@
 en:
   activerecord:
     attributes:
-      doorkeeper/application:
+      oauth/application:
         name: 'Name'
         redirect_uri: 'Redirect URI'
         scopes: Scopes
-      doorkeeper/access_token:
+      oauth/access_token:
         description: Token description
         scopes: Scopes
     errors:
       models:
-        doorkeeper/application:
+        oauth/application:
           attributes:
             redirect_uri:
               fragment_present: 'cannot contain a fragment.'

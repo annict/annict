@@ -45,7 +45,7 @@ ja:
         weight: 体重
       comment:
         body: コメント
-      doorkeeper/application:
+      oauth/application:
         name: アプリケーション名
         redirect_uri: リダイレクトURI
         scopes: スコープ

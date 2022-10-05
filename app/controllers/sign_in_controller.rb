@@ -12,7 +12,7 @@ class SignInController < ApplicationV6Controller
 
     # From OAuth client
     if params[:client_id]
-      @oauth_app = Doorkeeper::Application.available.find_by(uid: params[:client_id])
+      @oauth_app = Oauth::Application.available.find_by(uid: params[:client_id])
     end
 
     @form = ::Forms::SignInForm.new

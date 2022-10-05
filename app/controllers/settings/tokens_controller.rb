@@ -48,7 +48,7 @@ module Settings
     private
 
     def access_token_params
-      params.require(:doorkeeper_access_token).permit(:description, :scopes)
+      params.require(:oauth_access_token).permit(:description, :scopes)
     end
   end
 end

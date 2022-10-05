@@ -9,7 +9,7 @@
 
   <div class="mb-3">
     <%= f.label :scopes, class: "form-label" %>
-    <%= select_tag "doorkeeper_access_token[scopes]", options_for_select([[t("messages.oauth.applications.read_only"), "read"], [t("messages.oauth.applications.read_write"), "read write"]], token.scopes), class: "form-select" %>
+    <%= select_tag "oauth_access_token[scopes]", options_for_select([[t("messages.oauth.applications.read_only"), "read"], [t("messages.oauth.applications.read_write"), "read write"]], token.scopes), class: "form-select" %>
     <%= doorkeeper_errors_for token, :scopes %>
   </div>
 
