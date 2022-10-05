@@ -558,7 +558,7 @@ GEM
     thor (1.2.1)
     thread_safe (0.3.6)
     tilt (2.0.11)
-    timecop (0.9.4)
+    timecop (0.9.5)
     timeout (0.3.0)
     traceroute (0.8.1)
       rails (>= 3.0.0)
