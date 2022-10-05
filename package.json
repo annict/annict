@@ -41,7 +41,7 @@
     "@types/autosize": "^4.0.1",
     "@types/bootstrap": "^5.1.0",
     "@types/jquery": "^3.5.1",
-    "@types/js-cookie": "^2.2.6",
+    "@types/js-cookie": "^3.0.2",
     "@types/lodash": "^4.14.178",
     "eslint": "^8.23.1",
     "eslint-plugin-import": "^2.25.4",
