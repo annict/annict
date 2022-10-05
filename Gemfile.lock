@@ -180,9 +180,9 @@ GEM
       unf (>= 0.0.5, < 1.0.0)
     doorkeeper (5.5.4)
       railties (>= 5)
-    dotenv (2.7.6)
-    dotenv-rails (2.7.6)
-      dotenv (= 2.7.6)
+    dotenv (2.8.1)
+    dotenv-rails (2.8.1)
+      dotenv (= 2.8.1)
       railties (>= 3.2)
     down (5.2.2)
       addressable (~> 2.5)
@@ -251,7 +251,7 @@ GEM
       rake
     get_process_mem (0.2.7)
       ffi (~> 1.0)
-    github-markup (4.0.0)
+    github-markup (4.0.1)
     globalid (1.0.0)
       activesupport (>= 5.0)
     graphql (2.0.14)
@@ -635,7 +635,7 @@ GEM
     wilson_score (0.1.0)
     yard (0.9.27)
       webrick (~> 1.7.0)
-    zeitwerk (2.6.0)
+    zeitwerk (2.6.1)
 
 PLATFORMS
   ruby
