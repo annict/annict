@@ -23,7 +23,7 @@
     "bootstrap": "^5.1.0",
     "choices.js": "^10.1.0",
     "core-js": "^3.25.5",
-    "dayjs": "^1.10.5",
+    "dayjs": "^1.11.5",
     "esbuild": "^0.14.36",
     "jquery": "^3.6.0",
     "js-cookie": "^3.0.1",
