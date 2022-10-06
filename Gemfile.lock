@@ -131,8 +131,8 @@ GEM
     bullet (7.0.3)
       activesupport (>= 3.0.0)
       uniform_notifier (~> 1.11)
-    by_star (3.0.0)
-      activesupport (> 3)
+    by_star (4.0.0)
+      activesupport (>= 3.2.0)
     cld (0.11.0)
       ffi
     coderay (1.1.3)
