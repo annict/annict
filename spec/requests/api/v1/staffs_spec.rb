@@ -54,7 +54,7 @@ describe "Api::V1::Staffs" do
             "episodes_count" => staff.work.episodes_count,
             "watchers_count" => staff.work.watchers_count,
             "reviews_count" => staff.work.work_records_with_body_count,
-            "no_episodes" => staff.work.no_episodes?
+            "no_episodes" => false
           },
           "person" => {
             "id" => staff.resource.id,
