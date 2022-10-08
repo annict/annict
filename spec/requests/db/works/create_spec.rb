@@ -68,7 +68,6 @@ describe "POST /db/works", type: :request do
         season_name: "winter",
         manual_episodes_count: 1,
         start_episode_raw_number: 1,
-        no_episodes: false,
         started_on: "2020-01-01",
         ended_on: "2020-03-31"
       }
@@ -112,7 +111,6 @@ describe "POST /db/works", type: :request do
       expect(work.season_name).to eq("winter")
       expect(work.manual_episodes_count).to eq(1)
       expect(work.start_episode_raw_number).to eq(1)
-      expect(work.no_episodes).to eq(false)
       expect(work.started_on.to_s).to eq("2020-01-01")
       expect(work.ended_on.to_s).to eq("2020-03-31")
     end
