@@ -34,7 +34,7 @@
           <%= link_to work.id, work_path(work_id: work.id), target: "_blank" %>
         </td>
         <td>
-          <%= Badges::WorkMediaBadgeComponent.new(self, work: work).render %>
+          <%= Deprecated::Badges::WorkMediaBadgeComponent.new(self, work: work).render %>
           <br>
           <%= work.title %>
           <br>

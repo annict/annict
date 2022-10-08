@@ -18,15 +18,15 @@
 
   <hr class="mb-0">
 
-  <%= AdsenseComponent.new(self, slot: ENV["GOOGLE_AD_SLOT_ON_HOME"]).render %>
+  <%= Deprecated::AdsenseComponent.new(self, slot: ENV["GOOGLE_AD_SLOT_ON_HOME"]).render %>
 
   <% if @activity_groups.present? %>
     <div class="container u-container-flat">
-      <%= TimelineComponent.new(self, activity_groups: @activity_groups).render %>
+      <%= Deprecated::TimelineComponent.new(self, activity_groups: @activity_groups).render %>
     </div>
   <% else %>
     <div class="container mt-3 u-container-flat">
-      <%= EmptyV6Component.new(self, text: t("messages._empty.no_activities")).render %>
+      <%= Deprecated::EmptyV6Component.new(self, text: t("messages._empty.no_activities")).render %>
     </div>
   <% end %>
 </div>

@@ -8,12 +8,12 @@
 
 <div class="py-3">
   <div class="container">
-    <%= Headers::ProfileHeaderComponent.new(self, user: @user).render %>
+    <%= Deprecated::Headers::ProfileHeaderComponent.new(self, user: @user).render %>
   </div>
 
-  <%= Navs::UserNavComponent.new(self, user: @user, params: params).render %>
+  <%= Deprecated::Navs::UserNavComponent.new(self, user: @user, params: params).render %>
 
-  <%= AdsenseComponent.new(self, slot: ENV["GOOGLE_AD_SLOT_ON_COLLECTION"]).render %>
+  <%= Deprecated::AdsenseComponent.new(self, slot: ENV["GOOGLE_AD_SLOT_ON_COLLECTION"]).render %>
 
   <div class="container mt-3">
     <div class="g-3 row">
@@ -23,14 +23,14 @@
         </h1>
 
         <% if @collection.description.present? %>
-          <%= BodyV6Component.new(self, content: @collection.description, format: :markdown).render %>
+          <%= Deprecated::BodyV6Component.new(self, content: @collection.description, format: :markdown).render %>
         <% end %>
       </div>
 
       <div class="col-auto">
         <div class="align-items-center gx-3 row">
           <div class="col-auto">
-            <%= Buttons::ShareToTwitterButtonComponent.new(
+            <%= Deprecated::Buttons::ShareToTwitterButtonComponent.new(
                   self,
                   text: title,
                   url: "#{local_url}#{user_collection_path(@user.username, @collection.id)}").render
@@ -87,7 +87,7 @@
 
                     <% if collection_item.body.present? %>
                       <div class="mt-1">
-                        <%= BodyV6Component.new(self, content: collection_item.body, format: :markdown).render %>
+                        <%= Deprecated::BodyV6Component.new(self, content: collection_item.body, format: :markdown).render %>
                       </div>
                     <% end %>
                   </div>
@@ -120,7 +120,7 @@
     <% else %>
       <div class="card u-card-flat">
         <div class="card-body">
-          <%= EmptyV6Component.new(self, text: t("messages._empty.no_items")).render %>
+          <%= Deprecated::EmptyV6Component.new(self, text: t("messages._empty.no_items")).render %>
         </div>
       </div>
     <% end %>
