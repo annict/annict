@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Db
-  class SeriesWorkRowsFormPolicy < ApplicationPolicy
+module Deprecated::Db
+  class ProgramRowsFormPolicy < ApplicationPolicy
     def create?
       user.present? && user.committer?
     end
