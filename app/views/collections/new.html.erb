@@ -3,10 +3,10 @@
 
 <div class="py-3">
   <div class="container">
-    <%= Headers::ProfileHeaderComponent.new(self, user: current_user).render %>
+    <%= Deprecated::Headers::ProfileHeaderComponent.new(self, user: current_user).render %>
   </div>
 
-  <%= Navs::UserNavComponent.new(self, user: current_user, params: params).render %>
+  <%= Deprecated::Navs::UserNavComponent.new(self, user: current_user, params: params).render %>
 
   <div class="container mt-3">
     <h1 class="fw-bold mb-0 mt-2">

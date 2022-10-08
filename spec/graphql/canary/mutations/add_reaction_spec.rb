@@ -22,7 +22,7 @@ xdescribe Canary::Mutations::AddReaction do
       }
     GRAPHQL
   end
-  let(:email_notification) { class_double("EmailNotificationService").as_stubbed_const }
+  let(:email_notification) { class_double("Deprecated::EmailNotificationService").as_stubbed_const }
 
   context "記録 (エピソード) にリアクションしたとき" do
     let(:episode_record) { create(:episode_record, user: user_2) }

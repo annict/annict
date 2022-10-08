@@ -7,7 +7,7 @@ module Api
 
       def index
         activities = Activity.all.includes(:itemable, user: :profile)
-        @activities = Api::V1::ActivityIndexService.new(activities, @params).result
+        @activities = Deprecated::Api::V1::ActivityIndexService.new(activities, @params).result
       end
     end
   end

@@ -15,7 +15,7 @@ module Db
     def new
       @work = Work.without_deleted.find(params[:work_id])
       @programs = @work.programs.only_kept.where.not(started_at: nil).order(:started_at, :id)
-      @form = Db::SlotRowsForm.new
+      @form = Deprecated::Db::SlotRowsForm.new
       @form.work = @work
       @form.set_default_rows_by_programs(params[:program_ids]) if params[:program_ids]
       authorize @form
@@ -23,7 +23,7 @@ module Db
 
     def create
       @work = Work.without_deleted.find(params[:work_id])
-      @form = Db::SlotRowsForm.new(slot_rows_form)
+      @form = Deprecated::Db::SlotRowsForm.new(slot_rows_form)
       @form.user = current_user
       @form.work = @work
       authorize @form

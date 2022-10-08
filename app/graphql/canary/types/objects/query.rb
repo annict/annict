@@ -77,7 +77,7 @@ module Canary
         end
 
         def people(database_ids: nil, names: nil, order_by: nil)
-          SearchPeopleQuery.new(
+          Deprecated::SearchPeopleQuery.new(
             annict_ids: database_ids,
             names: names,
             order_by: order_by
@@ -85,7 +85,7 @@ module Canary
         end
 
         def organizations(database_ids: nil, names: nil, order_by: nil)
-          SearchOrganizationsQuery.new(
+          Deprecated::SearchOrganizationsQuery.new(
             annict_ids: database_ids,
             names: names,
             order_by: order_by
@@ -93,7 +93,7 @@ module Canary
         end
 
         def characters(database_ids: nil, names: nil, order_by: nil)
-          SearchCharactersQuery.new(
+          Deprecated::SearchCharactersQuery.new(
             annict_ids: database_ids,
             names: names,
             order_by: order_by
@@ -101,7 +101,7 @@ module Canary
         end
 
         def channels(is_vod: nil)
-          ChannelsQuery.new(
+          Deprecated::ChannelsQuery.new(
             Channel.only_kept,
             is_vod: is_vod
           ).call

@@ -7,7 +7,7 @@ module Api
 
       def index
         @people = Person.only_kept
-        @people = Api::V1::PersonIndexService.new(@people, @params).result
+        @people = Deprecated::Api::V1::PersonIndexService.new(@people, @params).result
       end
     end
   end

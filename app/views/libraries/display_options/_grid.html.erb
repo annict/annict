@@ -3,7 +3,7 @@
     <% library_entry = library_entries.select { |le| le.work_id == work.id }.first %>
 
     <div class="c-work-grid__col">
-      <%= Cards::WorkCardComponent.new(self, work: work, width: 110, user: user, note: library_entry.note).render %>
+      <%= Deprecated::Cards::WorkCardComponent.new(self, work: work, width: 110, user: user, note: library_entry.note).render %>
     </div>
   <% end %>
 </div>

@@ -13,7 +13,7 @@
     </div>
 
     <div class="col-auto">
-      <%= Buttons::ShareToTwitterButtonComponent.new(self, text: title, url: "#{local_url}#{popular_work_list_path}", class_name: "me-3").render %>
+      <%= Deprecated::Buttons::ShareToTwitterButtonComponent.new(self, text: title, url: "#{local_url}#{popular_work_list_path}", class_name: "me-3").render %>
       <%= render "works/display_option_buttons", display_option: @display_option %>
     </div>
   </div>
@@ -29,6 +29,6 @@
 
 <% if @works.present? %>
   <div class="mt-3 text-center">
-    <%= ButtonGroups::PaginationButtonGroupComponent.new(self, collection: @works).render %>
+    <%= Deprecated::ButtonGroups::PaginationButtonGroupComponent.new(self, collection: @works).render %>
   </div>
 <% end %>

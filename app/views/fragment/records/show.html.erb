@@ -2,4 +2,4 @@
 <%= component_value_fetcher_tag("like-button", internal_api_like_list_path) %>
 <%= component_value_fetcher_tag("spoiler-guard", internal_api_spoiler_guard_path) %>
 
-<%= ListItems::RecordListItemComponent.new(self, record: @record).render %>
+<%= Deprecated::ListItems::RecordListItemComponent.new(self, record: @record).render %>

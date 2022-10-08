@@ -7,7 +7,7 @@ module Api
 
       def index
         @staffs = Staff.only_kept
-        @staffs = Api::V1::StaffIndexService.new(@staffs, @params).result
+        @staffs = Deprecated::Api::V1::StaffIndexService.new(@staffs, @params).result
       end
     end
   end

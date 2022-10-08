@@ -7,7 +7,7 @@ module Api
 
       def index
         @characters = Character.only_kept
-        @characters = Api::V1::CharacterIndexService.new(@characters, @params).result
+        @characters = Deprecated::Api::V1::CharacterIndexService.new(@characters, @params).result
       end
     end
   end

@@ -2,8 +2,8 @@
 
 namespace :episode do
   task generate: :environment do
-    EpisodeGeneratorService.execute!
-    SyobocalEpisodeDataFetcherService.execute!
+    Deprecated::EpisodeGeneratorService.execute!
+    Deprecated::SyobocalEpisodeDataFetcherService.execute!
     Annict::DataCare::UpdateNextResourcesOnLibraryEntries.run!
   end
 

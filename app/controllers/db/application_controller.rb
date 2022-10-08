@@ -19,7 +19,7 @@ module Db
     private
 
     def set_search_params
-      @search = SearchService.new(params[:q], scope: :all)
+      @search = Deprecated::SearchService.new(params[:q], scope: :all)
     end
 
     def user_not_authorized

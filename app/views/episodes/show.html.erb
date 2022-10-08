@@ -7,9 +7,9 @@
 <%= component_value_fetcher_tag("like-button", internal_api_like_list_path) %>
 <%= component_value_fetcher_tag("spoiler-guard", internal_api_spoiler_guard_path) %>
 
-<%= Headers::WorkHeaderComponent.new(self, work: @work, programs: @programs).render %>
+<%= Deprecated::Headers::WorkHeaderComponent.new(self, work: @work, programs: @programs).render %>
 
-<%= AdsenseComponent.new(self, slot: ENV["GOOGLE_AD_SLOT_ON_EPISODE"]).render %>
+<%= Deprecated::AdsenseComponent.new(self, slot: ENV["GOOGLE_AD_SLOT_ON_EPISODE"]).render %>
 
 <div class="py-3">
   <div class="container u-container-flat">
@@ -23,7 +23,7 @@
           </div>
 
           <div class="col-auto">
-            <%= ButtonGroups::EpisodeTransitionButtonGroupComponent.new(self, episode: @episode).render %>
+            <%= Deprecated::ButtonGroups::EpisodeTransitionButtonGroupComponent.new(self, episode: @episode).render %>
           </div>
         </div>
 
@@ -57,7 +57,7 @@
   <div class="container mt-3 u-container-flat">
     <div class="card u-card-flat">
       <div class="card-body">
-        <%= Forms::EpisodeRecordFormComponent.new(self, form: @form).render %>
+        <%= Deprecated::Forms::EpisodeRecordFormComponent.new(self, form: @form).render %>
       </div>
     </div>
   </div>
@@ -68,7 +68,7 @@
       data-reloadable-event-name-value="episode-record-list-group"
       data-reloadable-url-value="<%= fragment_episode_record_list_path(@episode.id, page: params[:page]) %>"
     >
-      <%= ListGroups::RecordListGroupComponent.new(
+      <%= Deprecated::ListGroups::RecordListGroupComponent.new(
         self,
         my_records: @my_records,
         following_records: @following_records,

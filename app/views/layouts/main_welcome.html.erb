@@ -12,12 +12,12 @@
     <div class="l-welcome">
       <div class="l-welcome__main d-flex flex-column">
         <div class="l-welcome__content">
-          <%= FlashV6Component.new(self, flash: flash).render %>
+          <%= Deprecated::FlashV6Component.new(self, flash: flash).render %>
           <%= yield %>
         </div>
 
         <div class="l-welcome__footer">
-          <%= Footers::MainFooterComponent.new(self).render %>
+          <%= Deprecated::Footers::MainFooterComponent.new(self).render %>
         </div>
       </div>
     </div>

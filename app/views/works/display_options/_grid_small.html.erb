@@ -1,7 +1,7 @@
 <div class="c-work-grid gx-2 gy-3 row">
   <% works.each do |work| %>
     <div class="c-work-grid__col">
-      <%= Cards::WorkCardComponent.new(self, work: work, width: 110).render %>
+      <%= Deprecated::Cards::WorkCardComponent.new(self, work: work, width: 110).render %>
     </div>
   <% end %>
 </div>

@@ -7,7 +7,7 @@ module Api
 
       def index
         follows = Follow.includes(following: :profile)
-        @follows = Api::V1::FollowingIndexService.new(follows, @params).result
+        @follows = Deprecated::Api::V1::FollowingIndexService.new(follows, @params).result
       end
     end
   end

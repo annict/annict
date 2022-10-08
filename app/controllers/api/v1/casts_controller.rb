@@ -7,7 +7,7 @@ module Api
 
       def index
         @casts = Cast.only_kept
-        @casts = Api::V1::CastIndexService.new(@casts, @params).result
+        @casts = Deprecated::Api::V1::CastIndexService.new(@casts, @params).result
       end
     end
   end

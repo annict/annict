@@ -12,7 +12,7 @@
           <% end %>
 
           <div class="mt-2 text-center">
-            <%= ButtonGroups::WorkButtonGroupComponent.new(self, work: @work, show_option_button: false).render %>
+            <%= Deprecated::ButtonGroups::WorkButtonGroupComponent.new(self, work: @work, show_option_button: false).render %>
           </div>
         </div>
 
@@ -28,7 +28,7 @@
             <%= @episode.title_with_number %>
           </h3>
 
-          <%= ButtonGroups::EpisodeTransitionButtonGroupComponent.new(
+          <%= Deprecated::ButtonGroups::EpisodeTransitionButtonGroupComponent.new(
             self,
             episode: @episode,
             path: :fragment_trackable_episode_path,
@@ -58,7 +58,7 @@
     <div class="container mt-3 u-container-flat">
       <div class="card u-card-flat">
         <div class="card-body">
-          <%= Forms::EpisodeRecordFormComponent.new(self, form: @form).render %>
+          <%= Deprecated::Forms::EpisodeRecordFormComponent.new(self, form: @form).render %>
         </div>
       </div>
     </div>
@@ -69,7 +69,7 @@
         data-reloadable-event-name-value="episode-record-list-group"
         data-reloadable-url-value="<%= fragment_episode_record_list_path(@episode.id, page: params[:page]) %>"
       >
-        <%= ListGroups::RecordListGroupComponent.new(self, my_records: @my_records, following_records: @following_records, all_records: @all_records).render %>
+        <%= Deprecated::ListGroups::RecordListGroupComponent.new(self, my_records: @my_records, following_records: @following_records, all_records: @all_records).render %>
       </div>
     </div>
   </div>

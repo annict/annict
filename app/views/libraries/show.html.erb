@@ -10,12 +10,12 @@
 
 <div class="py-3">
   <div class="container">
-    <%= Headers::ProfileHeaderComponent.new(self, user: @user).render %>
+    <%= Deprecated::Headers::ProfileHeaderComponent.new(self, user: @user).render %>
   </div>
 
-  <%= Navs::UserNavComponent.new(self, user: @user, params: params).render %>
+  <%= Deprecated::Navs::UserNavComponent.new(self, user: @user, params: params).render %>
 
-  <%= AdsenseComponent.new(self, slot: ENV["GOOGLE_AD_SLOT_ON_LIBRARY"]).render %>
+  <%= Deprecated::AdsenseComponent.new(self, slot: ENV["GOOGLE_AD_SLOT_ON_LIBRARY"]).render %>
 
   <ul class="justify-content-center mt-3 nav nav-pills">
     <% %i(watching wanna_watch watched on_hold stop_watching).each do |status_kind| %>
@@ -31,7 +31,7 @@
   </ul>
 
   <div class="container mt-3 text-end">
-    <%= Buttons::ShareToTwitterButtonComponent.new(self, text: title, url: "#{local_url}#{library_path(@user.username, params[:status_kind])}", class_name: "me-3").render %>
+    <%= Deprecated::Buttons::ShareToTwitterButtonComponent.new(self, text: title, url: "#{local_url}#{library_path(@user.username, params[:status_kind])}", class_name: "me-3").render %>
   </div>
 
   <% if @seasons.present? %>
@@ -58,7 +58,7 @@
     </div>
 
     <div class="mt-3 text-center">
-      <%= ButtonGroups::PaginationButtonGroupComponent.new(self, collection: @seasons).render %>
+      <%= Deprecated::ButtonGroups::PaginationButtonGroupComponent.new(self, collection: @seasons).render %>
     </div>
   <% else %>
     <div class="container u-container-flat">

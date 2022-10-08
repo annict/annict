@@ -10,7 +10,7 @@
           <% end %>
 
           <div class="mt-2 text-center">
-            <%= ButtonGroups::WorkButtonGroupComponent.new(self, work: @work, show_option_button: false).render %>
+            <%= Deprecated::ButtonGroups::WorkButtonGroupComponent.new(self, work: @work, show_option_button: false).render %>
           </div>
         </div>
 
@@ -37,7 +37,7 @@
 
         <div>
           <% if @programs.present? %>
-            <%= Radios::ProgramSelectRadioComponent.new(self, library_entry: @library_entry, programs: @programs).render %>
+            <%= Deprecated::Radios::ProgramSelectRadioComponent.new(self, library_entry: @library_entry, programs: @programs).render %>
           <% else %>
             <%= t "messages._empty.no_programs" %>
           <% end %>
@@ -82,19 +82,19 @@
 
                 <div class="align-items-center gx-3 justify-content-center mt-3 row">
                   <div class="col-auto">
-                    <%= Buttons::WatchEpisodeButtonComponent.new(
+                    <%= Deprecated::Buttons::WatchEpisodeButtonComponent.new(
                       self, episode_id: episode.id, button_text: t("verb.track"), class_name: "btn-sm btn-outline-info rounded-3 w-100"
                     ).render %>
                   </div>
 
                   <div class="col-auto">
-                  <%= Buttons::BulkWatchEpisodesButtonComponent.new(
+                  <%= Deprecated::Buttons::BulkWatchEpisodesButtonComponent.new(
                       self, episode_id: episode.id, button_text: t("verb.bulk_watch_up_to_shorten"), class_name: "btn-sm btn-outline-info rounded-3 w-100"
                     ).render %>
                   </div>
 
                   <div class="col-auto">
-                    <%= Buttons::SkipEpisodeButtonComponent.new(
+                    <%= Deprecated::Buttons::SkipEpisodeButtonComponent.new(
                       self, episode_id: episode.id, button_text: t("verb.skip_shorten"), class_name: "btn-sm btn-outline-secondary rounded-3 w-100"
                     ).render %>
                   </div>
@@ -105,12 +105,12 @@
         </div>
 
         <div class="mt-3 text-center">
-          <%= ButtonGroups::PaginationButtonGroupComponent.new(self, collection: @episodes).render %>
+          <%= Deprecated::ButtonGroups::PaginationButtonGroupComponent.new(self, collection: @episodes).render %>
         </div>
       <% else %>
         <div class="card u-card-flat">
           <div class="card-body">
-            <%= EmptyV6Component.new(self, text: t("messages.tracks.no_trackable_episodes")).render %>
+            <%= Deprecated::EmptyV6Component.new(self, text: t("messages.tracks.no_trackable_episodes")).render %>
           </div>
         </div>
       <% end %>

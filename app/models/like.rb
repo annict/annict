@@ -49,7 +49,7 @@ class Like < ApplicationRecord
       return
     end
 
-    EmailNotificationService.send_email(
+    Deprecated::EmailNotificationService.send_email(
       "liked_episode_record",
       user,
       user.id,

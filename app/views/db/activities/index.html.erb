@@ -23,6 +23,6 @@
   <% end %>
 
   <div class="mt-3 text-center">
-    <%= ButtonGroups::PaginationButtonGroupComponent.new(self, collection: @activities).render %>
+    <%= Deprecated::ButtonGroups::PaginationButtonGroupComponent.new(self, collection: @activities).render %>
   </div>
 </div>

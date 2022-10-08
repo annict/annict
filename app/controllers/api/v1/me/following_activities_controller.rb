@@ -12,7 +12,7 @@ module Api
           activities = Activity
             .where(user_id: following_ids)
             .includes(:itemable, user: :profile)
-          service = Api::V1::Me::FollowingActivityIndexService.new(activities, @params)
+          service = Deprecated::Api::V1::Me::FollowingActivityIndexService.new(activities, @params)
           service.user = current_user
           @activities = service.result
         end

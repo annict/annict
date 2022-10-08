@@ -204,7 +204,7 @@ class User < ApplicationRecord
   end
 
   def social_friends
-    @social_friends ||= UserSocialFriendsQuery.new(self)
+    @social_friends ||= Deprecated::UserSocialFriendsQuery.new(self)
   end
 
   def build_relations(oauth = nil)

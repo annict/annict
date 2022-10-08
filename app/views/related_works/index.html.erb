@@ -5,9 +5,9 @@
 
 <%= component_value_fetcher_tag("status-select-dropdown", internal_api_library_entry_list_path, method: :post, payload: {work_ids: @work_ids}) %>
 
-<%= Headers::WorkHeaderComponent.new(self, work: @work, programs: @programs).render %>
+<%= Deprecated::Headers::WorkHeaderComponent.new(self, work: @work, programs: @programs).render %>
 
-<%= AdsenseComponent.new(self, slot: ENV["GOOGLE_AD_SLOT_ON_RELATED_WORK_LIST"]).render %>
+<%= Deprecated::AdsenseComponent.new(self, slot: ENV["GOOGLE_AD_SLOT_ON_RELATED_WORK_LIST"]).render %>
 
 <% if @series_list.present? %>
   <% @series_list.each do |series| %>
@@ -25,7 +25,7 @@
           <div class="g-3 row">
             <% series_works.each do |series_work| %>
               <div class="col-6 col-sm-2">
-                <%= Cards::WorkCardComponent.new(self, work: series_work.work, width: 195, caption: series_work.local_summary).render %>
+                <%= Deprecated::Cards::WorkCardComponent.new(self, work: series_work.work, width: 195, caption: series_work.local_summary).render %>
               </div>
             <% end %>
           </div>
@@ -38,7 +38,7 @@
     <div class="container u-container-flat">
       <div class="card u-card-flat">
         <div class="card-body">
-          <%= EmptyV6Component.new(self, text: t("messages._empty.no_resources")).render %>
+          <%= Deprecated::EmptyV6Component.new(self, text: t("messages._empty.no_resources")).render %>
         </div>
       </div>
     </div>

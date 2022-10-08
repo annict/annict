@@ -5,9 +5,9 @@
 
 <%= component_value_fetcher_tag("status-select-dropdown", internal_api_library_entry_list_path, method: :post, payload: {work_ids: [@work.id]}) %>
 
-<%= Headers::WorkHeaderComponent.new(self, work: @work, programs: @programs).render %>
+<%= Deprecated::Headers::WorkHeaderComponent.new(self, work: @work, programs: @programs).render %>
 
-<%= AdsenseComponent.new(self, slot: ENV["GOOGLE_AD_SLOT_ON_CAST_LIST"]).render %>
+<%= Deprecated::AdsenseComponent.new(self, slot: ENV["GOOGLE_AD_SLOT_ON_CAST_LIST"]).render %>
 
 <div class="py-3">
   <div class="container u-container-flat">
@@ -29,7 +29,7 @@
               </div>
             <% end %>
           <% else %>
-            <%= EmptyV6Component.new(self, text: t("messages._empty.no_resources")).render %>
+            <%= Deprecated::EmptyV6Component.new(self, text: t("messages._empty.no_resources")).render %>
           <% end %>
         </div>
       </div>

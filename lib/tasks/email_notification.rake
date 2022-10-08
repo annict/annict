@@ -37,7 +37,7 @@ namespace :email_notification do
 
       next if target_work_ids.blank?
 
-      EmailNotificationService.send_email("favorite_works_added", user, target_work_ids)
+      Deprecated::EmailNotificationService.send_email("favorite_works_added", user, target_work_ids)
     end
   end
 
@@ -66,7 +66,7 @@ namespace :email_notification do
       target_work_ids = works.joins(:series_works).where(series_works: {series_id: target_series_ids}).pluck(:id)
       next if target_work_ids.blank?
 
-      EmailNotificationService.send_email("related_works_added", user, target_work_ids)
+      Deprecated::EmailNotificationService.send_email("related_works_added", user, target_work_ids)
     end
   end
 end

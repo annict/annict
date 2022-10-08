@@ -10,7 +10,7 @@ h1.h2.fw-bold
       = t "noun.staff"
 
 .mb-4
-  = Buttons::StarButtonComponent.new(self, starrable: person).render
+  = Deprecated::Buttons::StarButtonComponent.new(self, starrable: person).render
   .small.text-muted.mt-2
     = icon "info-circle", class: "me-1"
     = t "messages._components.favorite_button.hint", resource_type: t("noun.person").downcase

@@ -7,12 +7,12 @@
 
 <div class="py-3">
   <div class="container">
-    <%= Headers::ProfileHeaderComponent.new(self, user: @user).render %>
+    <%= Deprecated::Headers::ProfileHeaderComponent.new(self, user: @user).render %>
   </div>
 
-  <%= Navs::UserNavComponent.new(self, user: @user, params: params).render %>
+  <%= Deprecated::Navs::UserNavComponent.new(self, user: @user, params: params).render %>
 
-  <%= AdsenseComponent.new(self, slot: ENV["GOOGLE_AD_SLOT_ON_COLLECTION_LIST"]).render %>
+  <%= Deprecated::AdsenseComponent.new(self, slot: ENV["GOOGLE_AD_SLOT_ON_COLLECTION_LIST"]).render %>
 
   <% if @collections.present? %>
     <div class="container mt-3">
@@ -58,7 +58,7 @@
     <div class="container mt-3 u-container-flat">
       <div class="card u-card-flat">
         <div class="card-body">
-          <%= EmptyV6Component.new(self, text: t("messages._empty.no_collections")).render do |h| %>
+          <%= Deprecated::EmptyV6Component.new(self, text: t("messages._empty.no_collections")).render do |h| %>
             <%
               if current_user && current_user == @user
                 h.tag :div, class: "mt-3" do
