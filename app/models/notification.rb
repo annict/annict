@@ -6,8 +6,8 @@
 #  action         :string(510)      not null
 #  read           :boolean          default(FALSE), not null
 #  trackable_type :string(510)      not null
-#  created_at     :datetime
-#  updated_at     :datetime
+#  created_at     :timestamptz
+#  updated_at     :timestamptz
 #  action_user_id :bigint           not null
 #  trackable_id   :bigint           not null
 #  user_id        :bigint           not null

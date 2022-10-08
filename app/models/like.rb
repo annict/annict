@@ -6,8 +6,8 @@
 #
 #  id             :bigint           not null, primary key
 #  recipient_type :string(510)      not null
-#  created_at     :datetime
-#  updated_at     :datetime
+#  created_at     :timestamptz
+#  updated_at     :timestamptz
 #  recipient_id   :bigint           not null
 #  user_id        :bigint           not null
 #

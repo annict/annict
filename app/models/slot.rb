@@ -10,12 +10,12 @@
 #  irregular      :boolean          default(FALSE), not null
 #  number         :integer
 #  rebroadcast    :boolean          default(FALSE), not null
-#  sc_last_update :datetime
+#  sc_last_update :timestamptz
 #  sc_pid         :integer
-#  started_at     :datetime         not null
+#  started_at     :timestamptz      not null
 #  unpublished_at :datetime
-#  created_at     :datetime
-#  updated_at     :datetime
+#  created_at     :timestamptz
+#  updated_at     :timestamptz
 #  channel_id     :bigint           not null
 #  episode_id     :bigint
 #  program_id     :bigint

@@ -10,8 +10,8 @@
 #  sc_chgid       :string(510)
 #  sort_number    :integer          default(0), not null
 #  unpublished_at :datetime
-#  created_at     :datetime
-#  updated_at     :datetime
+#  created_at     :timestamptz
+#  updated_at     :timestamptz
 #
 # Indexes
 #
