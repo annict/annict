@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class SearchWorkRecordsQuery
+class Deprecated::SearchWorkRecordsQuery
   def initialize(collection = WorkRecord.only_kept, context: {}, order_by: nil, has_body: nil, filter_by_locale: false)
     @collection = collection
     @context = context

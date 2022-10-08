@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class UserWorkRecordsQuery
+class Deprecated::UserWorkRecordsQuery
   def call(work_records:, user:)
     @work_records = work_records
     @user = user

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class SearchCharactersQuery
+class Deprecated::SearchCharactersQuery
   def initialize(
     collection = Character.all,
     annict_ids: nil,

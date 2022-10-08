@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class SlotsQuery
+class Deprecated::SlotsQuery
   class OrderProperty
     def initialize(field_ = nil, direction_ = nil)
       @field_ = field_

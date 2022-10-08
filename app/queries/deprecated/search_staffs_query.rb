@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class SearchStaffsQuery
+class Deprecated::SearchStaffsQuery
   def initialize(collection = Staff.all, order_by: nil)
     @collection = collection.only_kept.preload(:resource)
     @args = {

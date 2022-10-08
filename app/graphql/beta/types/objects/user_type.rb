@@ -157,7 +157,7 @@ module Beta
         end
 
         def records(order_by: nil, has_comment: nil)
-          SearchEpisodeRecordsQuery.new(
+          Deprecated::SearchEpisodeRecordsQuery.new(
             object.episode_records,
             order_by: order_by,
             has_body: has_comment
@@ -165,7 +165,7 @@ module Beta
         end
 
         def works(annict_ids: nil, seasons: nil, titles: nil, state: nil, order_by: nil)
-          SearchWorksQuery.new(
+          Deprecated::SearchWorksQuery.new(
             object.works,
             user: object,
             annict_ids: annict_ids,

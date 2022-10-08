@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ChannelsQuery
+class Deprecated::ChannelsQuery
   # @param collection [Channel::ActiveRecord_Relation]
   # @param is_vod [Boolean, nil]
   #

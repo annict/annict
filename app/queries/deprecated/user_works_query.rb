@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class UserWorksQuery
+class Deprecated::UserWorksQuery
   def initialize(user)
     @user = user
   end

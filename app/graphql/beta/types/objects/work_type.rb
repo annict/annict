@@ -58,26 +58,26 @@ module Beta
         field :series_list, Beta::Types::Objects::SeriesType.connection_type, null: true
 
         def episodes(order_by: nil)
-          SearchEpisodesQuery.new(object.episodes, order_by: order_by).call
+          Deprecated::SearchEpisodesQuery.new(object.episodes, order_by: order_by).call
         end
 
         def reviews(order_by: nil, has_body: nil)
-          SearchWorkRecordsQuery.new(object.work_records, order_by: order_by, has_body: has_body).call
+          Deprecated::SearchWorkRecordsQuery.new(object.work_records, order_by: order_by, has_body: has_body).call
         end
 
         def programs(order_by: nil)
-          SlotsQuery.new(
+          Deprecated::SlotsQuery.new(
             object.slots.only_kept,
             order: build_order(order_by)
           ).call
         end
 
         def casts(order_by: nil)
-          SearchCastsQuery.new(object.casts, order_by: order_by).call
+          Deprecated::SearchCastsQuery.new(object.casts, order_by: order_by).call
         end
 
         def staffs(order_by: nil)
-          SearchStaffsQuery.new(object.staffs, order_by: order_by).call
+          Deprecated::SearchStaffsQuery.new(object.staffs, order_by: order_by).call
         end
 
         def series_list

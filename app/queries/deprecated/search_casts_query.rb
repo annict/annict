@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class SearchCastsQuery
+class Deprecated::SearchCastsQuery
   def initialize(collection = Cast.all, order_by: nil)
     @collection = collection.only_kept.preload(:person, :character)
     @args = {

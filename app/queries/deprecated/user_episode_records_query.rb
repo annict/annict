@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class UserEpisodeRecordsQuery
+class Deprecated::UserEpisodeRecordsQuery
   def call(episode_records:, user:)
     @episode_records = episode_records
     @user = user

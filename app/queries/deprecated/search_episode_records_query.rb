@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class SearchEpisodeRecordsQuery
+class Deprecated::SearchEpisodeRecordsQuery
   def initialize(collection = EpisodeRecord.all, has_body: nil, order_by: nil)
     @collection = collection.only_kept
     @args = {

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class SearchEpisodesQuery
+class Deprecated::SearchEpisodesQuery
   def initialize(
     collection = Episode.all,
     annict_ids: nil,

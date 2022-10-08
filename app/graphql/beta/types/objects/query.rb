@@ -52,7 +52,7 @@ module Beta
         end
 
         def search_works(annict_ids: nil, seasons: nil, titles: nil, order_by: nil)
-          SearchWorksQuery.new(
+          Deprecated::SearchWorksQuery.new(
             annict_ids: annict_ids,
             seasons: seasons,
             titles: titles,
@@ -61,14 +61,14 @@ module Beta
         end
 
         def search_episodes(annict_ids: nil, order_by: nil)
-          SearchEpisodesQuery.new(
+          Deprecated::SearchEpisodesQuery.new(
             annict_ids: annict_ids,
             order_by: order_by
           ).call
         end
 
         def search_people(annict_ids: nil, names: nil, order_by: nil)
-          SearchPeopleQuery.new(
+          Deprecated::SearchPeopleQuery.new(
             annict_ids: annict_ids,
             names: names,
             order_by: order_by
@@ -76,7 +76,7 @@ module Beta
         end
 
         def search_organizations(annict_ids: nil, names: nil, order_by: nil)
-          SearchOrganizationsQuery.new(
+          Deprecated::SearchOrganizationsQuery.new(
             annict_ids: annict_ids,
             names: names,
             order_by: order_by
@@ -84,7 +84,7 @@ module Beta
         end
 
         def search_characters(annict_ids: nil, names: nil, order_by: nil)
-          SearchCharactersQuery.new(
+          Deprecated::SearchCharactersQuery.new(
             annict_ids: annict_ids,
             names: names,
             order_by: order_by

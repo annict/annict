@@ -1,16 +1,22 @@
 # frozen_string_literal: true
 
-class SearchPeopleQuery
+class Deprecated::SearchWorksQuery
   def initialize(
-    collection = Person.all,
+    collection = Work.all,
+    user: nil,
     annict_ids: nil,
-    names: nil,
+    seasons: nil,
+    titles: nil,
+    state: nil,
     order_by: nil
   )
     @collection = collection.only_kept
     @args = {
+      user: user,
       annict_ids: annict_ids,
-      names: names,
+      seasons: seasons,
+      titles: titles,
+      state: state,
       order_by: order_by
     }
   end
@@ -24,7 +30,9 @@ class SearchPeopleQuery
   def from_arguments
     %i[
       annict_ids
-      names
+      titles
+      seasons
+      state
     ].each do |arg_name|
       next if @args[arg_name].nil?
       @collection = send(arg_name)
@@ -36,8 +44,10 @@ class SearchPeopleQuery
       @collection = case @args[:order_by][:field]
       when "CREATED_AT"
         @collection.order(created_at: direction)
-      when "FAVORITE_PEOPLE_COUNT"
-        @collection.order(favorite_users_count: direction)
+      when "SEASON"
+        @collection.order_by_season(direction)
+      when "WATCHERS_COUNT"
+        @collection.order(watchers_count: direction)
       end
     end
 
@@ -48,7 +58,16 @@ class SearchPeopleQuery
     @collection.where(id: @args[:annict_ids])
   end
 
-  def names
-    @collection.ransack(name_or_name_kana_cont_any: @args[:names]).result
+  def titles
+    @collection.ransack(title_or_title_kana_cont_any: @args[:titles]).result
+  end
+
+  def seasons
+    @collection.by_seasons(@args[:seasons])
+  end
+
+  def state
+    state = @args[:state].downcase
+    @collection.joins(:library_entries).merge(@args[:user].library_entries.with_status(state))
   end
 end

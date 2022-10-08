@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-class SearchOrganizationsQuery
+class Deprecated::SearchPeopleQuery
   def initialize(
-    collection = Organization.all,
+    collection = Person.all,
     annict_ids: nil,
     names: nil,
     order_by: nil
@@ -36,7 +36,7 @@ class SearchOrganizationsQuery
       @collection = case @args[:order_by][:field]
       when "CREATED_AT"
         @collection.order(created_at: direction)
-      when "FAVORITE_ORGANIZATIONS_COUNT"
+      when "FAVORITE_PEOPLE_COUNT"
         @collection.order(favorite_users_count: direction)
       end
     end

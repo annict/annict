@@ -27,7 +27,7 @@ module Api
 
           return @collection if unwatched.blank? || unwatched == "false"
 
-          UserSlotsQuery.new(
+          Deprecated::UserSlotsQuery.new(
             @user,
             @collection,
             watched: false

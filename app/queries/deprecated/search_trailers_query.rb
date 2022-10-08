@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 
-class SearchSeriesWorksQuery
-  def initialize(
-    collection = SeriesWork.all,
-    order_by: nil
-  )
+class Deprecated::SearchTrailersQuery
+  def initialize(collection = Trailer.all, order_by: nil)
     @collection = collection.only_kept
     @args = {
       order_by: order_by
@@ -22,8 +19,8 @@ class SearchSeriesWorksQuery
       direction = @args[:order_by][:direction]
 
       @collection = case @args[:order_by][:field]
-      when "SEASON"
-        @collection.sort_season(sort_type: direction)
+      when "SORT_NUMBER"
+        @collection.order(sort_number: direction)
       end
     end
 

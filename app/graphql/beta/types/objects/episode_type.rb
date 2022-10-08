@@ -66,7 +66,7 @@ module Beta
         end
 
         def records(order_by: nil, has_comment: nil)
-          SearchEpisodeRecordsQuery.new(
+          Deprecated::SearchEpisodeRecordsQuery.new(
             object.episode_records,
             order_by: order_by,
             has_body: has_comment

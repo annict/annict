@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class UserSocialFriendsQuery
+class Deprecated::UserSocialFriendsQuery
   def initialize(user)
     @user = user
   end

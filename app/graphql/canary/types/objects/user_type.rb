@@ -217,7 +217,7 @@ module Canary
         end
 
         def episode_records(order_by: nil, has_body: nil)
-          SearchEpisodeRecordsQuery.new(
+          Deprecated::SearchEpisodeRecordsQuery.new(
             object.episode_records,
             order_by: order_by,
             has_body: has_body
@@ -225,7 +225,7 @@ module Canary
         end
 
         def work_list(database_ids: nil, seasons: nil, titles: nil, status_kind: nil, order_by: nil)
-          SearchWorksQuery.new(
+          Deprecated::SearchWorksQuery.new(
             object.works,
             user: object,
             annict_ids: database_ids,
