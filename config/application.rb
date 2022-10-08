@@ -47,6 +47,8 @@ module Annict
 
     config.asset_host = ENV.fetch("ANNICT_ASSET_URL")
 
+    config.active_record.schema_format = :sql
+
     config.generators do |g|
       g.test_framework :rspec, controller_specs: false, helper_specs: false,
                                routing_specs: false, view_specs: false
