@@ -1,17 +1,17 @@
 # frozen_string_literal: true
 
-module Db
-  class PersonRowsForm
+module Deprecated::Db
+  class OrganizationRowsForm
     include ActiveModel::Model
     include Virtus.model
     include ResourceRows
 
-    row_model Person
+    row_model Organization
 
     attribute :rows, String
 
     validates :rows, presence: true
-    validate :valid_person
+    validate :valid_organization
 
     def save!
       new_resources_with_user.each(&:save_and_create_activity!)
@@ -37,7 +37,7 @@ module Db
       end
     end
 
-    def valid_person
+    def valid_organization
       return if new_resources.all?(&:valid?)
 
       new_resources.each do |c|

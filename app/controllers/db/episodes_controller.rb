@@ -15,13 +15,13 @@ module Db
 
     def new
       @work = Work.without_deleted.find(params[:work_id])
-      @form = Db::EpisodeRowsForm.new
+      @form = Deprecated::Db::EpisodeRowsForm.new
       authorize @form
     end
 
     def create
       @work = Work.without_deleted.find(params[:work_id])
-      @form = Db::EpisodeRowsForm.new(episode_rows_form_params)
+      @form = Deprecated::Db::EpisodeRowsForm.new(episode_rows_form_params)
       @form.user = current_user
       @form.work = @work
       authorize @form

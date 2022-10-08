@@ -13,12 +13,12 @@ module Db
     end
 
     def new
-      @form = Db::PersonRowsForm.new
+      @form = Deprecated::Db::PersonRowsForm.new
       authorize @form
     end
 
     def create
-      @form = Db::PersonRowsForm.new(person_rows_form_params)
+      @form = Deprecated::Db::PersonRowsForm.new(person_rows_form_params)
       @form.user = current_user
       authorize @form
 
