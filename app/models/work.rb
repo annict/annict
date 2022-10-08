@@ -89,9 +89,9 @@ class Work < ApplicationRecord
     started_on ended_on
   ].freeze
 
-  # self.ignored_columns = %w[
-  #   no_episodes
-  # ]
+  self.ignored_columns = %w[
+    no_episodes
+  ]
 
   attr_accessor :status_kind
 
