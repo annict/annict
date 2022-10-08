@@ -7,11 +7,11 @@
     <% case @activity_group.itemable_type %>
     <% when "Status" %>
       <% @activity_group.items.each do |status| %>
-        <%= Contents::StatusContentComponent.new(self, status: status).render %>
+        <%= Deprecated::Contents::StatusContentComponent.new(self, status: status).render %>
       <% end %>
     <% when "EpisodeRecord", "WorkRecord", "AnimeRecord" %>
       <% @activity_group.items.each do |record| %>
-        <%= Contents::RecordContentComponent.new(self, record: record).render %>
+        <%= Deprecated::Contents::RecordContentComponent.new(self, record: record).render %>
       <% end %>
     <% end %>
   </div>

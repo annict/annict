@@ -116,7 +116,7 @@
     </div>
 
     <div class="mt-3 text-center">
-      <%= ButtonGroups::PaginationButtonGroupComponent.new(self, collection: @episodes).render %>
+      <%= Deprecated::ButtonGroups::PaginationButtonGroupComponent.new(self, collection: @episodes).render %>
     </div>
   <% else %>
     <div class="card mt-3">

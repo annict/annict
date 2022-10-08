@@ -177,18 +177,18 @@ module Canary
         end
 
         def slots(order_by: nil)
-          SlotsQuery.new(
+          Deprecated::SlotsQuery.new(
             object.slots.only_kept,
             order: Canary::OrderProperty.build(order_by)
           ).call
         end
 
         def casts(order_by: nil)
-          SearchCastsQuery.new(object.casts, order_by: order_by).call
+          Deprecated::SearchCastsQuery.new(object.casts, order_by: order_by).call
         end
 
         def staffs(order_by: nil)
-          SearchStaffsQuery.new(object.staffs, order_by: order_by).call
+          Deprecated::SearchStaffsQuery.new(object.staffs, order_by: order_by).call
         end
 
         def series_list
@@ -196,7 +196,7 @@ module Canary
         end
 
         def trailers(order_by: nil)
-          SearchTrailersQuery.new(object.trailers, order_by: order_by).call
+          Deprecated::SearchTrailersQuery.new(object.trailers, order_by: order_by).call
         end
 
         def media

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe EpisodeGeneratorService, type: :service do
+describe Deprecated::EpisodeGeneratorService, type: :service do
   context "New work" do
     let(:channel) { Channel.first }
 
@@ -12,7 +12,7 @@ describe EpisodeGeneratorService, type: :service do
 
       context "when run on 2019-01-01" do
         before do
-          EpisodeGeneratorService.execute!(now: Time.parse("2019-01-01 0:00:00"))
+          Deprecated::EpisodeGeneratorService.execute!(now: Time.parse("2019-01-01 0:00:00"))
         end
 
         it "creates 1 episode" do
@@ -24,7 +24,7 @@ describe EpisodeGeneratorService, type: :service do
 
       context "when run on 2019-01-08" do
         before do
-          EpisodeGeneratorService.execute!(now: Time.parse("2019-01-08 0:00:00"))
+          Deprecated::EpisodeGeneratorService.execute!(now: Time.parse("2019-01-08 0:00:00"))
         end
 
         it "creates 2 episodes" do
@@ -45,7 +45,7 @@ describe EpisodeGeneratorService, type: :service do
 
       context "when run on 2019-01-01" do
         before do
-          EpisodeGeneratorService.execute!(now: Time.parse("2019-01-01 0:00:00"))
+          Deprecated::EpisodeGeneratorService.execute!(now: Time.parse("2019-01-01 0:00:00"))
         end
 
         it "does not create episodes" do
@@ -57,7 +57,7 @@ describe EpisodeGeneratorService, type: :service do
 
       context "when run on 2019-01-08" do
         before do
-          EpisodeGeneratorService.execute!(now: Time.parse("2019-01-08 0:00:00"))
+          Deprecated::EpisodeGeneratorService.execute!(now: Time.parse("2019-01-08 0:00:00"))
         end
 
         it "creates 1 episode" do
@@ -80,7 +80,7 @@ describe EpisodeGeneratorService, type: :service do
 
       context "when run on 2019-01-08" do
         before do
-          EpisodeGeneratorService.execute!(now: Time.parse("2019-01-08 0:00:00"))
+          Deprecated::EpisodeGeneratorService.execute!(now: Time.parse("2019-01-08 0:00:00"))
         end
 
         it "does not create episodes" do
@@ -93,7 +93,7 @@ describe EpisodeGeneratorService, type: :service do
 
       context "when run on 2019-01-15" do
         before do
-          EpisodeGeneratorService.execute!(now: Time.parse("2019-01-15 0:00:00"))
+          Deprecated::EpisodeGeneratorService.execute!(now: Time.parse("2019-01-15 0:00:00"))
         end
 
         it "creates 1 episode" do
@@ -123,7 +123,7 @@ describe EpisodeGeneratorService, type: :service do
 
       context "when run on 2019-01-01" do
         before do
-          EpisodeGeneratorService.execute!(now: Time.parse("2019-01-01 0:00:00"))
+          Deprecated::EpisodeGeneratorService.execute!(now: Time.parse("2019-01-01 0:00:00"))
         end
 
         it "does not create episodes" do
@@ -140,7 +140,7 @@ describe EpisodeGeneratorService, type: :service do
 
       context "when run on 2019-01-08" do
         before do
-          EpisodeGeneratorService.execute!(now: Time.parse("2019-01-08 0:00:00"))
+          Deprecated::EpisodeGeneratorService.execute!(now: Time.parse("2019-01-08 0:00:00"))
         end
 
         it "creates 1 episode" do
@@ -169,7 +169,7 @@ describe EpisodeGeneratorService, type: :service do
 
       context "when run on 2019-01-01" do
         before do
-          EpisodeGeneratorService.execute!(now: Time.parse("2019-01-01 0:00:00"))
+          Deprecated::EpisodeGeneratorService.execute!(now: Time.parse("2019-01-01 0:00:00"))
         end
 
         it "does not create episodes" do
@@ -186,7 +186,7 @@ describe EpisodeGeneratorService, type: :service do
 
       context "when run on 2019-01-08" do
         before do
-          EpisodeGeneratorService.execute!(now: Time.parse("2019-01-08 0:00:00"))
+          Deprecated::EpisodeGeneratorService.execute!(now: Time.parse("2019-01-08 0:00:00"))
         end
 
         it "creates 1 episode" do

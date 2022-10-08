@@ -22,7 +22,7 @@ module Canary
         end
 
         def work_list(order_by: nil)
-          SearchSeriesWorksQuery.new(
+          Deprecated::SearchSeriesWorksQuery.new(
             object.series_works,
             order_by: order_by
           ).call

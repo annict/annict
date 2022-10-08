@@ -11,12 +11,12 @@
 
 <div class="py-3">
   <div class="container">
-    <%= Headers::ProfileHeaderComponent.new(self, user: @user).render %>
+    <%= Deprecated::Headers::ProfileHeaderComponent.new(self, user: @user).render %>
   </div>
 
-  <%= Navs::UserNavComponent.new(self, user: @user, params: params).render %>
+  <%= Deprecated::Navs::UserNavComponent.new(self, user: @user, params: params).render %>
 
-  <%= AdsenseComponent.new(self, slot: ENV["GOOGLE_AD_SLOT_ON_PROFILE"]).render %>
+  <%= Deprecated::AdsenseComponent.new(self, slot: ENV["GOOGLE_AD_SLOT_ON_PROFILE"]).render %>
 
   <div class="container u-container-flat">
     <div class="gx-3 row">
@@ -24,7 +24,7 @@
         <div class="card u-card-flat">
           <div class="card-body">
             <div class="text-center">
-              <%= Buttons::ShareToTwitterButtonComponent.new(
+              <%= Deprecated::Buttons::ShareToTwitterButtonComponent.new(
                 self,
                 text: title,
                 url: "#{local_url}#{profile_path(@user.username)}",
@@ -155,12 +155,12 @@
 
       <div class="col-12 col-lg-7 order-last order-lg-first">
         <% if @activity_groups.present? %>
-          <%= TimelineComponent.new(
+          <%= Deprecated::TimelineComponent.new(
             self,
             activity_groups: @activity_groups
           ).render %>
         <% else %>
-          <%= EmptyV6Component.new(self, text: t("messages._empty.no_activities")).render %>
+          <%= Deprecated::EmptyV6Component.new(self, text: t("messages._empty.no_activities")).render %>
         <% end %>
       </div>
     </div>

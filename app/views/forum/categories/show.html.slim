@@ -21,7 +21,7 @@
           = render "forum/posts/post_list", posts: @posts
 
       .text-center.mt-3
-        = ButtonGroups::PaginationButtonGroupComponent.new(self, collection: @posts).render
+        = Deprecated::ButtonGroups::PaginationButtonGroupComponent.new(self, collection: @posts).render
     - else
       .card
         .card-body

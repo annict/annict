@@ -25,13 +25,13 @@ module Db
 
     def new
       @work = Work.without_deleted.find(params[:work_id])
-      @form = Db::StaffRowsForm.new
+      @form = Deprecated::Db::StaffRowsForm.new
       authorize @form
     end
 
     def create
       @work = Work.without_deleted.find(params[:work_id])
-      @form = Db::StaffRowsForm.new(staff_rows_form_params)
+      @form = Deprecated::Db::StaffRowsForm.new(staff_rows_form_params)
       @form.user = current_user
       @form.work = @work
       authorize @form

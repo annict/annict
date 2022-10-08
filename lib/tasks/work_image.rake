@@ -4,7 +4,7 @@ namespace :work_image do
   task save_sns_image: :environment do
     Work.only_kept.find_each do |work|
       puts "work: #{work.id}"
-      service = SnsImageService.new(work)
+      service = Deprecated::SnsImageService.new(work)
       service.save_og_image
       service.save_twitter_image
     end

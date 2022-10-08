@@ -7,10 +7,10 @@
 
 <div class="py-3">
   <div class="container">
-    <%= Headers::ProfileHeaderComponent.new(self, user: @user).render %>
+    <%= Deprecated::Headers::ProfileHeaderComponent.new(self, user: @user).render %>
   </div>
 
-  <%= Navs::UserNavComponent.new(self, user: @user, params: params).render %>
+  <%= Deprecated::Navs::UserNavComponent.new(self, user: @user, params: params).render %>
 
   <div class="mt-3">
     <%= render "users/favorite_nav", user: @user %>
@@ -37,14 +37,14 @@
                   </div>
 
                   <div class="col-auto">
-                    <%= Buttons::StarButtonComponent.new(self, starrable: character).render %>
+                    <%= Deprecated::Buttons::StarButtonComponent.new(self, starrable: character).render %>
                   </div>
                 </div>
               </div>
             <% end %>
           </div>
         <% else %>
-          <%= EmptyV6Component.new(self, text: t("messages.favorite_characters.no_characters")).render %>
+          <%= Deprecated::EmptyV6Component.new(self, text: t("messages.favorite_characters.no_characters")).render %>
         <% end %>
       </div>
     </div>

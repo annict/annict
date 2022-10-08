@@ -8,10 +8,10 @@
 
 <div class="py-3">
   <div class="container">
-    <%= Headers::ProfileHeaderComponent.new(self, user: @user).render %>
+    <%= Deprecated::Headers::ProfileHeaderComponent.new(self, user: @user).render %>
   </div>
 
-  <%= Navs::UserNavComponent.new(self, user: @user, params: params).render %>
+  <%= Deprecated::Navs::UserNavComponent.new(self, user: @user, params: params).render %>
 
   <div class="container mt-3 u-container-flat">
     <div class="card u-card-flat">
@@ -19,7 +19,7 @@
         <% if @users.present? %>
           <%= render "application/user_list", users: @users %>
         <% else %>
-          <%= EmptyV6Component.new(self, text: t("messages._empty.no_following")).render %>
+          <%= Deprecated::EmptyV6Component.new(self, text: t("messages._empty.no_following")).render %>
         <% end %>
       </div>
     </div>

@@ -39,12 +39,12 @@
         <div class="row g-3">
           <% @seasonal_work_list.each do |work| %>
             <div class="col-6 col-lg-2 col-md-4 col-sm-6">
-              <%= Cards::WorkCardComponent.new(self, work: work, width: 166).render %>
+              <%= Deprecated::Cards::WorkCardComponent.new(self, work: work, width: 166).render %>
             </div>
           <% end %>
         </div>
       <% else %>
-        <%= EmptyV6Component.new(self, text: t("messages._empty.no_works")).render %>
+        <%= Deprecated::EmptyV6Component.new(self, text: t("messages._empty.no_works")).render %>
       <% end %>
     </div>
   </div>

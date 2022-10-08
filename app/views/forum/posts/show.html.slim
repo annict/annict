@@ -24,7 +24,7 @@
             = link_to forum_post_path(@post), class: "small text-muted", title: display_time(@post.created_at) do
               = display_time(@post.created_at)
 
-      = BodyV6Component.new(self, content: @post.body, format: :markdown).render
+      = Deprecated::BodyV6Component.new(self, content: @post.body, format: :markdown).render
 
       - if user_signed_in? && current_user == @post.user
         .text-end
@@ -48,7 +48,7 @@
                   span.small.text-muted title="#{display_time(comment.created_at)}"
                     = display_time(comment.created_at)
 
-            = BodyV6Component.new(self, content: comment.body, format: :markdown).render
+            = Deprecated::BodyV6Component.new(self, content: comment.body, format: :markdown).render
 
             - if user_signed_in? && current_user == comment.user
               .text-end

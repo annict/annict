@@ -11,12 +11,12 @@
 
 <div class="py-3">
   <div class="container">
-    <%= Headers::ProfileHeaderComponent.new(self, user: @user).render %>
+    <%= Deprecated::Headers::ProfileHeaderComponent.new(self, user: @user).render %>
   </div>
 
-  <%= Navs::UserNavComponent.new(self, user: @user, params: params).render %>
+  <%= Deprecated::Navs::UserNavComponent.new(self, user: @user, params: params).render %>
 
-  <%= AdsenseComponent.new(self, slot: ENV["GOOGLE_AD_SLOT_ON_RECORD"]).render %>
+  <%= Deprecated::AdsenseComponent.new(self, slot: ENV["GOOGLE_AD_SLOT_ON_RECORD"]).render %>
 
   <div class="container mt-3">
     <div class="gx-3 row">
@@ -26,12 +26,12 @@
           data-reloadable-event-name-value="record"
           data-reloadable-url-value="<%= fragment_record_path(@user.username, @record.id) %>"
         >
-          <%= ListItems::RecordListItemComponent.new(self, record: @record).render %>
+          <%= Deprecated::ListItems::RecordListItemComponent.new(self, record: @record).render %>
         </div>
       </div>
 
       <div class="col-12 col-sm-3 mt-3 mt-sm-0">
-        <%= ListGroups::RecordMonthListGroupComponent.new(
+        <%= Deprecated::ListGroups::RecordMonthListGroupComponent.new(
           self,
           user: @user,
           dates: @dates,

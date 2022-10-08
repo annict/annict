@@ -7,6 +7,6 @@ class ShareStatusToTwitterJob < ApplicationJob
     user = User.find(user_id)
     status = user.statuses.find(status_id)
 
-    TwitterService.new(user).share!(status)
+    Deprecated::TwitterService.new(user).share!(status)
   end
 end

@@ -7,9 +7,9 @@
 <%= component_value_fetcher_tag("like-button", internal_api_like_list_path) %>
 <%= component_value_fetcher_tag("spoiler-guard", internal_api_spoiler_guard_path) %>
 
-<%= Headers::WorkHeaderComponent.new(self, work: @work, programs: @programs).render %>
+<%= Deprecated::Headers::WorkHeaderComponent.new(self, work: @work, programs: @programs).render %>
 
-<%= AdsenseComponent.new(self, slot: ENV["GOOGLE_AD_SLOT_ON_WORK"]).render %>
+<%= Deprecated::AdsenseComponent.new(self, slot: ENV["GOOGLE_AD_SLOT_ON_WORK"]).render %>
 
 <% if @trailers.present? %>
   <div class="container mt-5">
@@ -63,7 +63,7 @@
   <div class="container u-container-flat">
     <div class="card u-card-flat">
       <div class="card-body">
-        <%= BodyV6Component.new(self, content: @work.local_synopsis(raw: true), format: :simple, height: 150).render %>
+        <%= Deprecated::BodyV6Component.new(self, content: @work.local_synopsis(raw: true), format: :simple, height: 150).render %>
 
         <div class="text-end text-muted u-very-small">
           <%= t "noun.source" %>: <%= @work.local_synopsis_source %>
@@ -109,7 +109,7 @@
             <% end %>
           </div>
         <% else %>
-          <%= EmptyV6Component.new(self, text: t("messages._empty.no_episodes")).render %>
+          <%= Deprecated::EmptyV6Component.new(self, text: t("messages._empty.no_episodes")).render %>
         <% end %>
       </div>
     </div>
@@ -134,5 +134,5 @@
 </div>
 
 <div class="container u-container-flat">
-  <%= Lists::RecordListComponent.new(self, records: @records, show_box: false, show_options: false, empty_text: :no_comments).render %>
+  <%= Deprecated::Lists::RecordListComponent.new(self, records: @records, show_box: false, show_options: false, empty_text: :no_comments).render %>
 </div>
