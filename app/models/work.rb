@@ -12,7 +12,6 @@
 #  facebook_og_image_url        :string           default(""), not null
 #  manual_episodes_count        :integer
 #  media                        :integer          not null
-#  no_episodes                  :boolean          default(FALSE), not null
 #  official_site_url            :string(510)      default(""), not null
 #  official_site_url_en         :string           default(""), not null
 #  ratings_count                :integer          default(0), not null
@@ -89,6 +88,10 @@ class Work < ApplicationRecord
     synopsis_source_en mal_anime_id season_year season_name manual_episodes_count
     started_on ended_on
   ].freeze
+
+  self.ignored_columns = %w[
+    no_episodes
+  ]
 
   attr_accessor :status_kind
 
