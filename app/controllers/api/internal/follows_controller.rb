@@ -8,7 +8,7 @@ module Api
       def create
         @user = User.only_kept.find(params[:user_id])
         current_user.follow(@user)
-        EmailNotificationService.send_email("followed_user", @user, current_user.id)
+        Deprecated::EmailNotificationService.send_email("followed_user", @user, current_user.id)
         render(json: {}, status: 201)
       end
 

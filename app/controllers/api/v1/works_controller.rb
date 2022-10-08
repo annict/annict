@@ -7,7 +7,7 @@ module Api
 
       def index
         @works = Work.only_kept
-        @works = Api::V1::WorkIndexService.new(@works, @params).result
+        @works = Deprecated::Api::V1::WorkIndexService.new(@works, @params).result
       end
     end
   end

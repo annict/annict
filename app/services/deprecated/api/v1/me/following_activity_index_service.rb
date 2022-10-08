@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-module Api
+module Deprecated::Api
   module V1
     module Me
-      class FollowingActivityIndexService < Api::V1::BaseService
+      class FollowingActivityIndexService < Deprecated::Api::V1::BaseService
         attr_writer :user
 
         def result

@@ -7,6 +7,6 @@ class ShareWorkRecordToTwitterJob < ApplicationJob
     user = User.find(user_id)
     work_record = user.work_records.only_kept.find(work_record_id)
 
-    TwitterService.new(user).share!(work_record)
+    Deprecated::TwitterService.new(user).share!(work_record)
   end
 end

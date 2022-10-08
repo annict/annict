@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class FacebookService
+class Deprecated::FacebookService
   def initialize(user)
     @user = user
   end

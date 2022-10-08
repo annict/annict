@@ -7,7 +7,7 @@ module Api
 
       def index
         @episode_records = EpisodeRecord.only_kept.includes(episode: :work, user: :profile).all
-        @episode_records = Api::V1::EpisodeRecordIndexService.new(@episode_records, @params).result
+        @episode_records = Deprecated::Api::V1::EpisodeRecordIndexService.new(@episode_records, @params).result
       end
     end
   end

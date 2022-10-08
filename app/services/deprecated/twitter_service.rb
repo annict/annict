@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class TwitterService
+class Deprecated::TwitterService
   def initialize(user)
     @user = user
   end

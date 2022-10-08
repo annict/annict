@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class TrackingProgressService
+class Deprecated::TrackingProgressService
   attr_reader :user, :work, :episode_ids, :checked_episode_ids, :all_records_count
 
   def initialize(user, work)

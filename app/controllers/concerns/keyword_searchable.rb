@@ -10,6 +10,6 @@ module KeywordSearchable
   private
 
   def set_search_params
-    @search = SearchService.new(params[:q])
+    @search = Deprecated::SearchService.new(params[:q])
   end
 end

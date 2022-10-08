@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class EpisodeGeneratorService
+class Deprecated::EpisodeGeneratorService
   def self.execute!(now: Time.current)
     new.execute!(now: now)
   end

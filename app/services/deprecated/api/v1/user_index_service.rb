@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-module Api
+module Deprecated::Api
   module V1
-    class UserIndexService < Api::V1::BaseService
+    class UserIndexService < Deprecated::Api::V1::BaseService
       def result
         @collection = filter_ids
         @collection = filter_usernames

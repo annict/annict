@@ -1,13 +1,15 @@
 # frozen_string_literal: true
 
-module Api
+module Deprecated::Api
   module V1
-    class StaffIndexService < Api::V1::BaseService
+    class WorkIndexService < Deprecated::Api::V1::BaseService
       def result
         @collection = filter_ids
-        @collection = filter_work_id
+        @collection = filter_season
+        @collection = filter_title
         @collection = sort_id
-        @collection = sort_sort_number
+        @collection = sort_season
+        @collection = sort_watchers_count
         @collection = @collection.page(@params.page).per(@params.per_page)
         @collection
       end

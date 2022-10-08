@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class SnsImageService
+class Deprecated::SnsImageService
   include HTTParty
 
   def initialize(work)

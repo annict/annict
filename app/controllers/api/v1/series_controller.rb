@@ -7,7 +7,7 @@ module Api
 
       def index
         @series_list = Series.only_kept
-        @series_list = Api::V1::SeriesIndexService.new(@series_list, @params).result
+        @series_list = Deprecated::Api::V1::SeriesIndexService.new(@series_list, @params).result
       end
     end
   end

@@ -6,7 +6,7 @@ module Api
       before_action :prepare_params!, only: %i[index]
 
       def index
-        @users = Api::V1::UserIndexService.new(User.all, @params).result
+        @users = Deprecated::Api::V1::UserIndexService.new(User.all, @params).result
       end
     end
   end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class SyobocalEpisodeDataFetcherService
+class Deprecated::SyobocalEpisodeDataFetcherService
   def self.execute!(now: Time.current)
     new.execute!(now: now)
   end

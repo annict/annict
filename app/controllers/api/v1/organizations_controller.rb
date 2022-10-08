@@ -7,7 +7,7 @@ module Api
 
       def index
         @organizations = Organization.only_kept
-        @organizations = Api::V1::OrganizationIndexService.new(@organizations, @params).result
+        @organizations = Deprecated::Api::V1::OrganizationIndexService.new(@organizations, @params).result
       end
     end
   end

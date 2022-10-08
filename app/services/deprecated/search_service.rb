@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class SearchService
+class Deprecated::SearchService
   attr_reader :q
 
   def initialize(q, scope: :published)
