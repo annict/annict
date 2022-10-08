@@ -1831,7 +1831,11 @@ type Work implements Node {
   image: WorkImage
   malAnimeId: String
   media: Media!
-  noEpisodes: Boolean!
+
+  """
+  Deprecated: This field will be deleted. Always returns `false` currently.
+  """
+  noEpisodes: Boolean! @deprecated(reason: "Deprecated: This field will be deleted. Always returns `false` currently.")
   officialSiteUrl: String
   officialSiteUrlEn: String
   programs(
