@@ -22,8 +22,8 @@
 #  title_en                    :string           default(""), not null
 #  title_ro                    :string           default(""), not null
 #  unpublished_at              :datetime
-#  created_at                  :datetime
-#  updated_at                  :datetime
+#  created_at                  :timestamptz
+#  updated_at                  :timestamptz
 #  prev_episode_id             :bigint
 #  work_id                     :bigint           not null
 #

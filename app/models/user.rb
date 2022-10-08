@@ -9,10 +9,10 @@
 #  allowed_locales               :string           is an Array
 #  character_favorites_count     :integer          default(0), not null
 #  completed_works_count         :integer          default(0), not null
-#  confirmation_sent_at          :datetime
+#  confirmation_sent_at          :timestamptz
 #  confirmation_token            :string(510)
-#  confirmed_at                  :datetime
-#  current_sign_in_at            :datetime
+#  confirmed_at                  :timestamptz
+#  current_sign_in_at            :timestamptz
 #  current_sign_in_ip            :string(510)
 #  deleted_at                    :datetime
 #  dropped_works_count           :integer          default(0), not null
@@ -21,7 +21,7 @@
 #  episode_records_count         :integer          default(0), not null
 #  followers_count               :integer          default(0), not null
 #  following_count               :integer          default(0), not null
-#  last_sign_in_at               :datetime
+#  last_sign_in_at               :timestamptz
 #  last_sign_in_ip               :string(510)
 #  locale                        :string           not null
 #  notifications_count           :integer          default(0), not null
@@ -31,7 +31,7 @@
 #  plan_to_watch_works_count     :integer          default(0), not null
 #  record_cache_expired_at       :datetime
 #  records_count                 :integer          default(0), not null
-#  remember_created_at           :datetime
+#  remember_created_at           :timestamptz
 #  reset_password_sent_at        :datetime
 #  reset_password_token          :string
 #  role                          :integer          not null
@@ -43,8 +43,8 @@
 #  watching_works_count          :integer          default(0), not null
 #  work_comment_cache_expired_at :datetime
 #  work_tag_cache_expired_at     :datetime
-#  created_at                    :datetime
-#  updated_at                    :datetime
+#  created_at                    :timestamptz
+#  updated_at                    :timestamptz
 #  gumroad_subscriber_id         :bigint
 #
 # Indexes

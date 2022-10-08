@@ -19,8 +19,8 @@
 #  tombo_background_image_file_size    :integer
 #  tombo_background_image_updated_at   :datetime
 #  url                                 :string
-#  created_at                          :datetime
-#  updated_at                          :datetime
+#  created_at                          :timestamptz
+#  updated_at                          :timestamptz
 #  user_id                             :bigint           not null
 #
 # Indexes

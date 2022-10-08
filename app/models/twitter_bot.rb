@@ -4,8 +4,8 @@
 #
 #  id         :bigint           not null, primary key
 #  name       :string(510)      not null
-#  created_at :datetime
-#  updated_at :datetime
+#  created_at :timestamptz
+#  updated_at :timestamptz
 #
 # Indexes
 #

@@ -8,8 +8,8 @@
 #  name        :string(510)      not null
 #  sort_number :integer          not null
 #  year        :integer          not null
-#  created_at  :datetime
-#  updated_at  :datetime
+#  created_at  :timestamptz
+#  updated_at  :timestamptz
 #
 # Indexes
 #
