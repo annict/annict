@@ -45,8 +45,8 @@
 #  wikipedia_url_en             :string           default(""), not null
 #  work_records_count           :integer          default(0), not null
 #  work_records_with_body_count :integer          default(0), not null
-#  created_at                   :datetime
-#  updated_at                   :datetime
+#  created_at                   :timestamptz
+#  updated_at                   :timestamptz
 #  key_pv_id                    :bigint
 #  mal_anime_id                 :integer
 #  number_format_id             :bigint

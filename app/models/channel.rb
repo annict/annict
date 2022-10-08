@@ -13,8 +13,8 @@
 #  sort_number      :integer          default(0), not null
 #  unpublished_at   :datetime
 #  vod              :boolean          default(FALSE)
-#  created_at       :datetime
-#  updated_at       :datetime
+#  created_at       :timestamptz
+#  updated_at       :timestamptz
 #  channel_group_id :bigint           not null
 #
 # Indexes

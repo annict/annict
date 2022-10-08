@@ -6,8 +6,8 @@
 #
 #  id                :bigint           not null, primary key
 #  trackable_type    :string(510)      not null
-#  created_at        :datetime
-#  updated_at        :datetime
+#  created_at        :timestamptz
+#  updated_at        :timestamptz
 #  activity_group_id :bigint           not null
 #  trackable_id      :bigint           not null
 #  user_id           :bigint           not null

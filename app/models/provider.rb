@@ -10,8 +10,8 @@
 #  token_expires_at :integer
 #  token_secret     :string(510)
 #  uid              :string(510)      not null
-#  created_at       :datetime
-#  updated_at       :datetime
+#  created_at       :timestamptz
+#  updated_at       :timestamptz
 #  user_id          :bigint           not null
 #
 # Indexes

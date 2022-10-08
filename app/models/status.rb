@@ -7,8 +7,8 @@
 #  id                   :bigint           not null, primary key
 #  kind                 :integer          not null
 #  likes_count          :integer          default(0), not null
-#  created_at           :datetime
-#  updated_at           :datetime
+#  created_at           :timestamptz
+#  updated_at           :timestamptz
 #  oauth_application_id :bigint
 #  user_id              :bigint           not null
 #  work_id              :bigint           not null

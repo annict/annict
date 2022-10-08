@@ -3,8 +3,8 @@
 # Table name: receptions
 #
 #  id         :bigint           not null, primary key
-#  created_at :datetime
-#  updated_at :datetime
+#  created_at :timestamptz
+#  updated_at :timestamptz
 #  channel_id :bigint           not null
 #  user_id    :bigint           not null
 #

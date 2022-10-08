@@ -17,8 +17,8 @@
 #  rating_state         :string
 #  twitter_click_count  :integer          default(0), not null
 #  twitter_url_hash     :string(510)
-#  created_at           :datetime
-#  updated_at           :datetime
+#  created_at           :timestamptz
+#  updated_at           :timestamptz
 #  episode_id           :bigint           not null
 #  oauth_application_id :bigint
 #  record_id            :bigint           not null
