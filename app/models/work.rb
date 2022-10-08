@@ -186,18 +186,6 @@ class Work < ApplicationRecord
     where(season_year: nil, season_name: nil)
   }
 
-  scope :with_no_episodes, -> {
-    where(no_episodes: false).where(<<~SQL)
-      NOT EXISTS (
-        SELECT * FROM episodes WHERE
-          1 = 1
-          AND episodes.work_id = works.id
-          AND episodes.deleted_at IS NULL
-          AND episodes.unpublished_at IS NULL
-      )
-    SQL
-  }
-
   scope :with_no_slots, -> {
     where(<<~SQL)
       NOT EXISTS (

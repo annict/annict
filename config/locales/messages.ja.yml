@@ -108,7 +108,6 @@ ja:
       episodes:
         auto_generate_info_html: 'エピソード数: %{manual_episodes_count}<br>公開中のエピソード数: %{episodes_count}<br>自動生成されるエピソード数: %{max_generate_episodes_count}'
       works:
-        no_episodes: エピソード未登録
         no_image: 画像未登録
         no_release_season: リリース時期未登録
         no_slots: 放送予定未登録

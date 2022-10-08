@@ -31,7 +31,7 @@ module Beta
         field :episodes_count, Integer, null: false
         field :watchers_count, Integer, null: false
         field :reviews_count, Integer, null: false
-        field :no_episodes, Boolean, null: false
+        field :no_episodes, Boolean, "Deprecated: This field will be deleted. Always returns `false` currently.", null: false, deprecation_reason: "Deprecated: This field will be deleted. Always returns `false` currently."
         field :viewer_status_state, Beta::Types::Enums::StatusState, null: true
 
         field :episodes, Beta::Types::Objects::EpisodeType.connection_type, null: true do
@@ -105,7 +105,7 @@ module Beta
         end
 
         def no_episodes
-          object.no_episodes?
+          false
         end
 
         def viewer_status_state
