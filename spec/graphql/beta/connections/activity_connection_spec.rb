@@ -15,7 +15,7 @@ describe Beta::Connections::ActivityConnection do
             username
             activities(orderBy: { field: CREATED_AT, direction: DESC }) {
               edges {
-                item {
+                node {
                   ... on Record {
                     comment
                   }
@@ -44,12 +44,12 @@ describe Beta::Connections::ActivityConnection do
           activities: {
             edges: [
               {
-                item: {
+                node: {
                   state: status.kind.upcase.to_s
                 }
               },
               {
-                item: {
+                node: {
                   comment: activity.itemable.body
                 }
               }

@@ -48,9 +48,9 @@ type ActivityEdge {
   item: ActivityItem
 
   """
-  The item at the end of the edge.
+  Deprecated: Use `item` instead.
   """
-  node: Activity
+  node: ActivityItem @deprecated(reason: "Use `item` instead.")
   user: User!
 }
 
@@ -1318,9 +1318,9 @@ type SeriesWorkEdge {
   item: Work!
 
   """
-  The item at the end of the edge.
+  Deprecated: Use `item` instead.
   """
-  node: Work
+  node: Work! @deprecated(reason: "Use `item` instead.")
   summary: String
   summaryEn: String
 }
