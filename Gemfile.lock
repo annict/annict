@@ -244,7 +244,7 @@ GEM
     github-markup (4.0.1)
     globalid (1.2.1)
       activesupport (>= 6.1)
-    graphql (1.12.14)
+    graphql (2.0.14)
     graphql-batch (0.5.1)
       graphql (>= 1.10, < 3)
       promise.rb (~> 0.7.2)
@@ -691,7 +691,7 @@ DEPENDENCIES
   enumerize
   factory_bot_rails
   github-markup
-  graphql (>= 1.10.0.pre3)
+  graphql
   graphql-batch
   graphql-fragment_cache
   groupdate

@@ -9,7 +9,10 @@ module Beta
     use GraphQL::Batch
 
     def self.id_from_object(object, type_definition, query_ctx = nil)
-      GraphQL::Schema::UniqueWithinType.encode(type_definition.name, object.id)
+      # https://github.com/rmosolgo/graphql-ruby/blob/e94569f51606f3635d8beb042d9f9c769dc9ae49/CHANGELOG.md#breaking-changes-3
+      type_name = type_definition.respond_to?(:graphql_name) ? type_definition.graphql_name : type_definition.name
+
+      GraphQL::Schema::UniqueWithinType.encode(type_name, object.id)
     end
 
     def self.decode_id(id, ctx: nil)
