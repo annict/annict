@@ -254,7 +254,7 @@ GEM
     graphql-batch (0.5.1)
       graphql (>= 1.10, < 3)
       promise.rb (~> 0.7.2)
-    graphql-fragment_cache (1.13.0)
+    graphql-fragment_cache (1.13.1)
       graphql (>= 1.12.0)
       ruby-next (>= 0.10.0)
     groupdate (6.1.0)
