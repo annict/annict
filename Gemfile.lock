@@ -149,7 +149,7 @@ GEM
     concurrent-ruby (1.1.10)
     connection_pool (2.3.0)
     content_disposition (1.0.0)
-    counter_culture (3.2.1)
+    counter_culture (3.3.0)
       activerecord (>= 4.2)
       activesupport (>= 4.2)
     crass (1.0.6)
