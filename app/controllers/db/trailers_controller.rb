@@ -64,7 +64,7 @@ module Db
     private
 
     def trailer_rows_form_params
-      params.require(:db_trailer_rows_form).permit(:rows)
+      params.require(:deprecated_db_trailer_rows_form).permit(:rows)
     end
 
     def trailer_params

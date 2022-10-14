@@ -11,7 +11,7 @@ describe "POST /db/series/:series_id/series_works", type: :request do
     end
 
     it "user can not access this page" do
-      post "/db/series/#{series.id}/series_works", params: {db_series_work_rows_form: form_params}
+      post "/db/series/#{series.id}/series_works", params: {deprecated_db_series_work_rows_form: form_params}
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("ログインしてください")
@@ -35,7 +35,7 @@ describe "POST /db/series/:series_id/series_works", type: :request do
     end
 
     it "user can not access" do
-      post "/db/series/#{series.id}/series_works", params: {db_series_work_rows_form: form_params}
+      post "/db/series/#{series.id}/series_works", params: {deprecated_db_series_work_rows_form: form_params}
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("アクセスできません")
@@ -61,7 +61,7 @@ describe "POST /db/series/:series_id/series_works", type: :request do
     it "user can create series" do
       expect(SeriesWork.all.size).to eq(0)
 
-      post "/db/series/#{series.id}/series_works", params: {db_series_work_rows_form: form_params}
+      post "/db/series/#{series.id}/series_works", params: {deprecated_db_series_work_rows_form: form_params}
 
       expect(response.status).to eq(302)
       expect(flash[:notice]).to eq("登録しました")

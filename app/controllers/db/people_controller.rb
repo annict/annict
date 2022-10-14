@@ -63,7 +63,7 @@ module Db
     private
 
     def person_rows_form_params
-      params.require(:db_person_rows_form).permit(:rows)
+      params.require(:deprecated_db_person_rows_form).permit(:rows)
     end
 
     def person_params
