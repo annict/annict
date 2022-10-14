@@ -72,7 +72,7 @@ module Db
     end
 
     def program_rows_form_params
-      params.require(:db_program_rows_form).permit(:rows)
+      params.require(:deprecated_db_program_rows_form).permit(:rows)
     end
   end
 end

@@ -64,7 +64,7 @@ module Db
     private
 
     def character_rows_form_params
-      params.require(:db_character_rows_form).permit(:rows)
+      params.require(:deprecated_db_character_rows_form).permit(:rows)
     end
 
     def character_params

@@ -63,7 +63,7 @@ module Db
     private
 
     def organization_rows_form_params
-      params.require(:db_organization_rows_form).permit(:rows)
+      params.require(:deprecated_db_organization_rows_form).permit(:rows)
     end
 
     def organization_params

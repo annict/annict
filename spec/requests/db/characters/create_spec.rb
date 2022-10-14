@@ -10,7 +10,7 @@ describe "POST /db/characters", type: :request do
     end
 
     it "user can not access this page" do
-      post "/db/characters", params: {db_character_rows_form: character_params}
+      post "/db/characters", params: {deprecated_db_character_rows_form: character_params}
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("ログインしてください")
@@ -33,7 +33,7 @@ describe "POST /db/characters", type: :request do
     end
 
     it "user can not access" do
-      post "/db/characters", params: {db_character_rows_form: character_params}
+      post "/db/characters", params: {deprecated_db_character_rows_form: character_params}
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("アクセスできません")
@@ -58,7 +58,7 @@ describe "POST /db/characters", type: :request do
     it "user can create character" do
       expect(Character.all.size).to eq(0)
 
-      post "/db/characters", params: {db_character_rows_form: character_params}
+      post "/db/characters", params: {deprecated_db_character_rows_form: character_params}
 
       expect(response.status).to eq(302)
       expect(flash[:notice]).to eq("登録しました")

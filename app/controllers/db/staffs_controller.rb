@@ -79,7 +79,7 @@ module Db
     private
 
     def staff_rows_form_params
-      params.require(:db_staff_rows_form).permit(:rows)
+      params.require(:deprecated_db_staff_rows_form).permit(:rows)
     end
 
     def staff_params

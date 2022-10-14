@@ -11,7 +11,7 @@ describe "POST /db/works/:work_id/programs", type: :request do
     end
 
     it "user can not access this page" do
-      post "/db/works/#{work.id}/programs", params: {db_program_rows_form: form_params}
+      post "/db/works/#{work.id}/programs", params: {deprecated_db_program_rows_form: form_params}
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("ログインしてください")
@@ -35,7 +35,7 @@ describe "POST /db/works/:work_id/programs", type: :request do
     end
 
     it "user can not access" do
-      post "/db/works/#{work.id}/programs", params: {db_program_rows_form: form_params}
+      post "/db/works/#{work.id}/programs", params: {deprecated_db_program_rows_form: form_params}
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("アクセスできません")
@@ -61,7 +61,7 @@ describe "POST /db/works/:work_id/programs", type: :request do
     it "user can create program" do
       expect(Program.all.size).to eq(0)
 
-      post "/db/works/#{work.id}/programs", params: {db_program_rows_form: form_params}
+      post "/db/works/#{work.id}/programs", params: {deprecated_db_program_rows_form: form_params}
 
       expect(response.status).to eq(302)
       expect(flash[:notice]).to eq("登録しました")

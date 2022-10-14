@@ -84,7 +84,7 @@ module Db
     end
 
     def slot_rows_form
-      params.require(:db_slot_rows_form).permit(:rows)
+      params.require(:deprecated_db_slot_rows_form).permit(:rows)
     end
   end
 end

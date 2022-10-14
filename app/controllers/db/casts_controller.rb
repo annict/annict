@@ -70,7 +70,7 @@ module Db
     private
 
     def cast_rows_form_params
-      params.require(:db_cast_rows_form).permit(:rows)
+      params.require(:deprecated_db_cast_rows_form).permit(:rows)
     end
 
     def cast_params
