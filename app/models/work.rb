@@ -12,6 +12,7 @@
 #  facebook_og_image_url        :string           default(""), not null
 #  manual_episodes_count        :integer
 #  media                        :integer          not null
+#  no_episodes                  :boolean          default(FALSE), not null
 #  official_site_url            :string(510)      default(""), not null
 #  official_site_url_en         :string           default(""), not null
 #  ratings_count                :integer          default(0), not null
@@ -88,10 +89,6 @@ class Work < ApplicationRecord
     synopsis_source_en mal_anime_id season_year season_name manual_episodes_count
     started_on ended_on
   ].freeze
-
-  # self.ignored_columns = %w[
-  #   no_episodes
-  # ]
 
   attr_accessor :status_kind
 
@@ -184,6 +181,18 @@ class Work < ApplicationRecord
 
   scope :with_no_season, -> {
     where(season_year: nil, season_name: nil)
+  }
+
+  scope :with_no_episodes, -> {
+    where(no_episodes: false).where(<<~SQL)
+      NOT EXISTS (
+        SELECT * FROM episodes WHERE
+          1 = 1
+          AND episodes.work_id = works.id
+          AND episodes.deleted_at IS NULL
+          AND episodes.unpublished_at IS NULL
+      )
+    SQL
   }
 
   scope :with_no_slots, -> {

@@ -56,7 +56,7 @@ module Deprecated::Headers
                     end
 
                     h.tag :span, class: "fw-bold ms-1" do
-                      h.text @work.ratings_count
+                      h.text @work.no_episodes? ? "-" : @work.ratings_count
                     end
                   end
                 end
@@ -164,11 +164,13 @@ module Deprecated::Headers
                   class_active: "c-nav__link--active"
               end
 
-              h.tag :li, class: "c-nav__item" do
-                h.html active_link_to t("noun.episodes"), view_context.episode_list_path(work_id: @work.id),
-                  active: page_category.in?(%w[episode episode-list]),
-                  class: "c-nav__link",
-                  class_active: "c-nav__link--active"
+              unless @work.no_episodes?
+                h.tag :li, class: "c-nav__item" do
+                  h.html active_link_to t("noun.episodes"), view_context.episode_list_path(work_id: @work.id),
+                    active: page_category.in?(%w[episode episode-list]),
+                    class: "c-nav__link",
+                    class_active: "c-nav__link--active"
+                end
               end
 
               # TODO: @work.casts_count > 0

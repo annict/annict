@@ -5,12 +5,14 @@ module Db
     before_action :authenticate_user!, only: %i[new create edit update destroy]
 
     def index
+      @is_no_episodes = search_params[:no_episodes] == "1"
       @is_no_image = search_params[:no_image] == "1"
       @is_no_release_season = search_params[:no_release_season] == "1"
       @is_no_slots = search_params[:no_slots] == "1"
       @season_slugs = search_params[:season_slugs]
 
       @works = Work.without_deleted.preload(:work_image)
+      @works = @works.with_no_episodes if @is_no_episodes
       @works = @works.with_no_image if @is_no_image
       @works = @works.with_no_season if @is_no_release_season
       @works = @works.with_no_slots if @is_no_slots
@@ -69,7 +71,7 @@ module Db
     private
 
     def search_params
-      params.permit(:commit, :no_image, :no_release_season, :no_slots, season_slugs: [])
+      params.permit(:commit, :no_episodes, :no_image, :no_release_season, :no_slots, season_slugs: [])
     end
 
     def work_params
@@ -78,7 +80,7 @@ module Db
         :official_site_url_en, :wikipedia_url, :wikipedia_url_en, :twitter_username,
         :twitter_hashtag, :sc_tid, :mal_anime_id, :number_format_id, :synopsis,
         :synopsis_source, :synopsis_en, :synopsis_source_en, :season_year, :season_name,
-        :manual_episodes_count, :start_episode_raw_number, :started_on, :ended_on
+        :manual_episodes_count, :start_episode_raw_number, :no_episodes, :started_on, :ended_on
       )
     end
   end
