@@ -12,6 +12,7 @@
 #  facebook_og_image_url        :string           default(""), not null
 #  manual_episodes_count        :integer
 #  media                        :integer          not null
+#  no_episodes                  :boolean          default(FALSE), not null
 #  official_site_url            :string(510)      default(""), not null
 #  official_site_url_en         :string           default(""), not null
 #  ratings_count                :integer          default(0), not null

@@ -8,6 +8,7 @@ class EpisodesController < ApplicationV6Controller
     set_page_category PageCategory::EPISODE_LIST
 
     set_work_header_resources
+    raise ActionController::RoutingError, "Not Found" if @work.no_episodes?
 
     @work_ids = [@work.id]
     @episodes = @work.episodes.only_kept.order(:sort_number).page(params[:page]).per(100)

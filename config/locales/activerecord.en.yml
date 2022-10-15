@@ -193,6 +193,7 @@ en:
         mal_anime_id: MAL Anime ID
         manual_episodes_count: Episodes
         media: Media
+        no_episodes: No Episodes
         number_format_id: Number format
         official_site_url_en: Official site (en)
         official_site_url: Official site (ja)

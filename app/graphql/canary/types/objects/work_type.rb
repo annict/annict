@@ -232,7 +232,7 @@ module Canary
         end
 
         def is_no_episodes
-          false
+          object.no_episodes?
         end
 
         def viewer_finished_to_watch

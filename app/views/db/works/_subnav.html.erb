@@ -7,13 +7,15 @@
     active: current_page?(db_edit_work_path(work))
   ) %>
 
-  <%= active_link_to(
-    t("noun.episodes"),
-    db_episode_list_path(work),
-    class: "nav-link",
-    class_active: "active",
-    active: params[:controller]  == "db/episodes"
-  ) %>
+  <% unless work.no_episodes? %>
+    <%= active_link_to(
+      t("noun.episodes"),
+      db_episode_list_path(work),
+      class: "nav-link",
+      class_active: "active",
+      active: params[:controller]  == "db/episodes"
+    ) %>
+  <% end %>
 
   <%= active_link_to(
     t("noun.programs"),
@@ -23,13 +25,15 @@
     active: params[:controller]  == "db/programs"
   ) %>
 
-  <%= active_link_to(
-    t("noun.slots"),
-    db_slot_list_path(work),
-    class: "nav-link",
-    class_active: "active",
-    active: params[:controller]  == "db/slots"
-  ) %>
+  <% unless work.no_episodes? %>
+    <%= active_link_to(
+      t("noun.slots"),
+      db_slot_list_path(work),
+      class: "nav-link",
+      class_active: "active",
+      active: params[:controller]  == "db/slots"
+    ) %>
+  <% end %>
 
   <%= active_link_to(
     t("noun.casts"),
