@@ -11,7 +11,7 @@
     "graphql:update-api-reference": "bundle exec rake graphql:dump_schema && bundle exec rake graphql:build_docs && cp -rf ./tmp/docs/graphql-api/reference/ ../annict-developers-jp/docs/.vuepress/public/graphql-api/reference"
   },
   "dependencies": {
-    "@babel/core": "^7.19.3",
+    "@babel/core": "^7.20.7",
     "@babel/preset-env": "^7.19.4",
     "@hotwired/stimulus": "^3.1.0",
     "@hotwired/turbo": "^7.2.2",
