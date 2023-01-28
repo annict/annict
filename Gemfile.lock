@@ -251,7 +251,7 @@ GEM
     github-markup (4.0.1)
     globalid (1.1.0)
       activesupport (>= 5.0)
-    graphql (1.12.14)
+    graphql (2.0.16)
     graphql-batch (0.5.1)
       graphql (>= 1.10, < 3)
       promise.rb (~> 0.7.2)
