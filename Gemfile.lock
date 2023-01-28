@@ -671,6 +671,7 @@ DEPENDENCIES
   memory_profiler
   meta-tags
   mini_magick
+  mini_mime
   mjml-rails
   moji
   nokogiri
