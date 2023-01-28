@@ -23,7 +23,7 @@ class ImageUploaderBase < Shrine
 
   process(:store) do |io, _context|
     unless io.original_filename
-      ext = MIME::Types[io.metadata["mime_type"]].first.extensions.first
+      ext = MiniMime.lookup_by_content_type(io.metadata["mime_type"]).extension
       io.data["metadata"]["filename"] = "#{io.hash}.#{ext}" if ext
     end
 
