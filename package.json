@@ -16,7 +16,7 @@
     "@popperjs/core": "^2.11.6",
     "@rails/ujs": "^7.0.4",
     "@types/gtag.js": "0.0.12",
-    "autosize": "^5.0.1",
+    "autosize": "^5.0.2",
     "axios": "^1.1.2",
     "bootstrap": "^5.1.0",
     "choices.js": "^10.1.0",
