@@ -1,4 +1,6 @@
-# Annict Web
+<p align="center"><a href="https://annict.com" target="_blank" rel="noopener"><img src="https://user-images.githubusercontent.com/56767/56467671-fdd6ea80-645c-11e9-9056-a5d3fd5739e6.png" width="130" /></a></p>
+
+# Annict (アニクト)
 
 [![Build](https://github.com/kiraka/annict-web/actions/workflows/build.yml/badge.svg)](https://github.com/kiraka/annict-web/actions/workflows/build.yml)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/ba10b596888853bc3f83/test_coverage)](https://codeclimate.com/github/annict/annict/test_coverage)
@@ -6,7 +8,29 @@
 [![Ruby Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://github.com/testdouble/standard)
 [![Discord](https://camo.githubusercontent.com/b12a95e20b7ca35f918c0ab5103fe56b6f44c067/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f636861742d6f6e253230646973636f72642d3732383964612e737667)](https://discord.gg/PVJRUKP)
 
-[Annict](https://annict.jp) のバックエンドです。開発者向けのドキュメントは [kiraka/annict](https://github.com/kiraka/annict) で管理しています。
+[Annict](https://annict.com) は、見たアニメを記録したり友達に共有したりできるアニメ視聴記録サービスです。
+
+## 開発コミュニティに参加する
+
+開発に関するもろもろのやり取りは以下で行っています。
+
+- [GitHub Issues](https://github.com/annict/annict/issues)
+    - 機能追加や改善案、バグの管理をしています
+- [GitHub Discussions](https://github.com/annict/annict/discussions)
+    - その他質問や雑談などができる場として公開しています
+- [Discord](https://discord.gg/PVJRUKP)
+    - 雑談チャットです
+
+やることの優先度や、今何をやっているかは [GitHub Projects](https://github.com/orgs/annict/projects/12) で管理しています。
+
+## 開発環境を作る
+
+[docs/development.md](docs/development.md) をご覧ください。
+
+## セキュリティに関する報告
+
+hello@annict.com までメールをください。
+SNSなど、第三者が閲覧できる場所に投稿しないでもらえるとありがたいです。
 
 ## License
 
