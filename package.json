@@ -11,8 +11,6 @@
     "graphql:update-api-reference": "bundle exec rake graphql:dump_schema && bundle exec rake graphql:build_docs && cp -rf ./tmp/docs/graphql-api/reference/ ../annict-developers-jp/docs/.vuepress/public/graphql-api/reference"
   },
   "dependencies": {
-    "@babel/core": "^7.19.3",
-    "@babel/preset-env": "^7.19.4",
     "@hotwired/stimulus": "^3.1.0",
     "@hotwired/turbo": "^7.2.2",
     "@popperjs/core": "^2.11.6",
@@ -33,11 +31,6 @@
     "select2": "^4.1.0-rc.0"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-class-properties": "^7.18.6",
-    "@babel/plugin-proposal-object-rest-spread": "^7.18.9",
-    "@babel/plugin-transform-runtime": "^7.19.6",
-    "@babel/plugin-transform-typescript": "^7.13.0",
-    "@babel/preset-typescript": "^7.18.6",
     "@types/autosize": "^4.0.1",
     "@types/bootstrap": "^5.1.0",
     "@types/jquery": "^3.5.1",
