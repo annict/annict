@@ -68,7 +68,7 @@ Twitterのアプリは[こちら](https://twitter.com/settings/connected_apps)�
 <summary>回答</summary>
 
 [Annictの管理者にはどのような手段で連絡したら良いですか？](#Annictの管理者にはどのような手段で連絡したら良いですか？) に記載の手段にてご連絡ください。
-開発者の方向けに[GitHub](https://github.com/kiraka/annict)からも受け付けています。
+開発者の方向けに[GitHub](https://github.com/annict/annict)からも受け付けています。
 
 </details>
 

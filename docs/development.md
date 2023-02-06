@@ -15,7 +15,7 @@ $ sudo sh -c "echo '127.0.0.1  annict-jp.test' >> /etc/hosts"
 ソースコードをcloneします。
 
 ```sh
-$ git clone git@github.com:kiraka/annict-web.git
+$ git clone git@github.com:annict/annict.git
 ```
 
 `docker compose up` します。
