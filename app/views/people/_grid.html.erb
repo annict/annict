@@ -17,7 +17,7 @@
               <div class="small text-truncate">
                 <%= link_to work.local_title, work_path(work_id: work.id), class: "text-body" %>
 
-                <div class="text-muted">
+                <div class="text-muted text-truncate">
                   <% description = resources.map { |resource| root_resource.grid_description(resource) }.join(", ") %>
                   <%= description.html_safe %>
                 </div>
