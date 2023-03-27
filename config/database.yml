@@ -1,6 +1,5 @@
 default: &default
   adapter: postgresql
-  database: <%= ENV.fetch("ANNICT_POSTGRES_DATABASE") %>
   encoding: unicode
   host: <%= ENV.fetch("ANNICT_POSTGRES_HOST") %>
   password: <%= ENV.fetch("ANNICT_POSTGRES_PASSWORD") %>
@@ -10,9 +9,12 @@ default: &default
 
 development:
   <<: *default
+  database: annict_development
 
 test:
   <<: *default
+  database: annict_test
 
 production:
   <<: *default
+  database: annict_production
