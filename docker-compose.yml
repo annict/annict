@@ -19,7 +19,6 @@ services:
       - 38080:8080
     env_file:
       - .env.imgproxy
-      - .env.imgproxy.local
 
 volumes:
   postgresql14_data:
