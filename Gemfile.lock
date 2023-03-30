@@ -146,7 +146,7 @@ GEM
     coercible (1.0.0)
       descendants_tracker (~> 0.0.1)
     commonmarker (0.23.7)
-    concurrent-ruby (1.2.0)
+    concurrent-ruby (1.2.2)
     connection_pool (2.3.0)
     content_disposition (1.0.0)
     counter_culture (3.3.0)
@@ -175,7 +175,7 @@ GEM
     docile (1.3.5)
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
-    doorkeeper (5.6.0)
+    doorkeeper (5.6.6)
       railties (>= 5)
     dotenv (2.8.1)
     dotenv-rails (2.8.1)
@@ -348,7 +348,7 @@ GEM
     mini_magick (4.11.0)
     mini_mime (1.1.2)
     mini_portile2 (2.8.1)
-    minitest (5.17.0)
+    minitest (5.18.0)
     mjml-rails (4.8.0)
     moji (1.6)
     multi_json (1.15.0)
@@ -430,7 +430,7 @@ GEM
     rack-mini-profiler (3.0.0)
       rack (>= 1.2.0)
     rack-rewrite (1.5.1)
-    rack-test (2.0.2)
+    rack-test (2.1.0)
       rack (>= 1.3)
     rails (7.0.4.2)
       actioncable (= 7.0.4.2)
@@ -589,7 +589,7 @@ GEM
       multipart-post (~> 2.0)
       naught (~> 1.0)
       simple_oauth (~> 0.3.0)
-    tzinfo (2.0.5)
+    tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unf (0.1.4)
       unf_ext
@@ -616,7 +616,7 @@ GEM
     wilson_score (0.1.0)
     yard (0.9.28)
       webrick (~> 1.7.0)
-    zeitwerk (2.6.6)
+    zeitwerk (2.6.7)
 
 PLATFORMS
   ruby
