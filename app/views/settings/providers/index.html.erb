@@ -10,35 +10,6 @@
         <div class="align-items-center gx-3 py-3 row">
           <div class="col">
             <div class="px-3">
-              Twitter
-            </div>
-          </div>
-
-          <div class="col">
-            <div class="px-3 text-end">
-              <% if current_user.authorized_to?(:twitter) %>
-                <% if current_user.confirmed_at || current_user.authorized_to?(:facebook) %>
-                  <%= link_to t("verb.disconnect"), settings_provider_path(current_user.twitter), class: "btn btn-sm btn-link w-100", data: { method: :delete, confirm: t("messages._common.are_you_sure") } %>
-                <% else %>
-                  <span class="cancel-disabled">
-                    <%= t "messages.providers.you_can_not_disconnect" %>
-                  </span>
-                <% end %>
-              <% else %>
-                <%= button_to user_twitter_omniauth_authorize_path(back: settings_provider_list_path), class: "btn btn-sm u-btn-twitter w-100", data: { turbo: "false" } do %>
-                  <i class="fab fa-twitter me-1"></i>
-                  <%= t "verb.connect" %>
-                <% end %>
-              <% end %>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="u-underline">
-        <div class="align-items-center gx-3 py-3 row">
-          <div class="col">
-            <div class="px-3">
               Facebook
             </div>
           </div>
@@ -46,7 +17,7 @@
           <div class="col">
             <div class="px-3 text-end">
               <% if current_user.authorized_to?(:facebook) %>
-                <% if current_user.confirmed_at || current_user.authorized_to?(:twitter) %>
+                <% if current_user.confirmed_at %>
                   <%= link_to t("verb.disconnect"), settings_provider_path(current_user.facebook), class: "btn btn-sm btn-link w-100", data: { method: :delete, confirm: t("messages._common.are_you_sure") } %>
                 <% else %>
                   <span class="cancel-disabled">

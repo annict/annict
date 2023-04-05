@@ -52,8 +52,7 @@ module Canary
           rating_music: rating_music,
           rating_story: rating_story,
           rating_character: rating_character,
-          comment: comment,
-          share_to_twitter: share_to_twitter
+          comment: comment
         }
 
         if form.invalid?

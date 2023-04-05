@@ -38,8 +38,7 @@ module Beta
           rating_character: rating_character_state,
           rating_music: rating_music_state,
           rating_overall: rating_overall_state,
-          rating_story: rating_story_state,
-          share_to_twitter: share_twitter&.to_s
+          rating_story: rating_story_state
         }
 
         if form.invalid?

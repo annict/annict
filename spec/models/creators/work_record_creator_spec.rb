@@ -15,7 +15,6 @@ describe Creators::WorkRecordCreator, type: :model do
     expect(WorkRecord.count).to eq 0
     expect(ActivityGroup.count).to eq 0
     expect(Activity.count).to eq 0
-    expect(user.share_record_to_twitter?).to eq false
 
     # Creatorを呼ぶ
     form = Forms::WorkRecordForm.new(user: user, work: work)
@@ -25,8 +24,7 @@ describe Creators::WorkRecordCreator, type: :model do
       rating_character: "great",
       rating_music: "great",
       rating_overall: "great",
-      rating_story: "great",
-      share_to_twitter: false
+      rating_story: "great"
     }
     expect(form.valid?).to eq true
 
@@ -37,7 +35,6 @@ describe Creators::WorkRecordCreator, type: :model do
     expect(WorkRecord.count).to eq 1
     expect(ActivityGroup.count).to eq 1
     expect(Activity.count).to eq 1
-    expect(user.share_record_to_twitter?).to eq false
 
     record = user.records.first
     work_record = user.work_records.first
@@ -108,8 +105,7 @@ describe Creators::WorkRecordCreator, type: :model do
           rating_character: "great",
           rating_music: "great",
           rating_overall: "great",
-          rating_story: "great",
-          share_to_twitter: false
+          rating_story: "great"
         }
         expect(form.valid?).to eq true
 
@@ -149,8 +145,7 @@ describe Creators::WorkRecordCreator, type: :model do
           rating_character: "great",
           rating_music: "great",
           rating_overall: "great",
-          rating_story: "great",
-          share_to_twitter: false
+          rating_story: "great"
         }
         expect(form.valid?).to eq true
 

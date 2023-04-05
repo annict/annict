@@ -12,8 +12,7 @@ module Api
           form.attributes = {
             comment: @params.comment,
             deprecated_rating: @params.rating,
-            rating: @params.rating_state,
-            share_to_twitter: @params.share_twitter
+            rating: @params.rating_state
           }
 
           if form.invalid?
@@ -38,8 +37,7 @@ module Api
           form.attributes = {
             comment: @params.comment,
             rating: @params.rating_state,
-            deprecated_rating: @params.rating,
-            share_to_twitter: @params.share_twitter
+            deprecated_rating: @params.rating
           }
 
           if form.invalid?

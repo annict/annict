@@ -23,10 +23,6 @@ module Updaters
         @episode_record.save!
         @record.save!
         @user.touch(:record_cache_expired_at)
-
-        if @form.share_to_twitter
-          @user.share_episode_record_to_twitter(@episode_record)
-        end
       end
 
       self.record = @form.record

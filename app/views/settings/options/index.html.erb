@@ -19,18 +19,6 @@
           <% end %>
         </div>
 
-        <% if current_user.authorized_to?(:twitter, shareable: true) %>
-          <div class="form-check mb-3">
-            <%= f.check_box :share_status_to_twitter, class: "form-check-input" %>
-            <%= f.label :share_status_to_twitter, class: "form-check-label" do %>
-              <%= t "messages.options.share_status_to_twitter" %>
-              <div class="small text-muted">
-                <%= t "messages.options.share_status_to_twitter_detail_html" %>
-              </div>
-            <% end %>
-          </div>
-        <% end %>
-
         <% if current_user.supporter? %>
           <div class="form-check mb-3">
             <%= f.check_box :hide_supporter_badge, class: "form-check-input" %>

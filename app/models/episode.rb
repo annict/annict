@@ -152,13 +152,12 @@ class Episode < ApplicationRecord
     episode_records.select(:created_at).last&.created_at
   end
 
-  def build_episode_record(user:, watched_at:, rating: nil, deprecated_rating: nil, comment: "", share_to_twitter: false)
+  def build_episode_record(user:, watched_at:, rating: nil, deprecated_rating: nil, comment: "")
     episode_record = episode_records.new(
       user: user,
       rating_state: rating&.downcase,
       rating: deprecated_rating,
-      body: comment,
-      share_to_twitter: share_to_twitter
+      body: comment
     )
     episode_record.work = work
     episode_record.detect_locale!(:body)

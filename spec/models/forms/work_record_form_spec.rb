@@ -9,8 +9,7 @@ describe Forms::WorkRecordForm do
       form = Forms::WorkRecordForm.new(user: user, work: work)
       form.attributes = {
         comment: "a" * (1_048_596 + 1), # 文字数制限 (1,048,596文字) 以上の感想を書く
-        rating_overall: "good",
-        share_to_twitter: false
+        rating_overall: "good"
       }
 
       expect(form.valid?).to eq false

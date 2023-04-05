@@ -46,7 +46,6 @@ class WorkRecord < ApplicationRecord
   extend Enumerize
 
   include UgcLocalizable
-  include Shareable
   include SoftDeletable
 
   STATES = %i[
@@ -72,7 +71,7 @@ class WorkRecord < ApplicationRecord
   counter_culture :work, column_name: :work_records_count
   counter_culture :work, column_name: ->(work_record) { work_record.body.present? ? :work_records_with_body_count : nil }
 
-  attr_accessor :share_to_twitter, :mutation_error
+  attr_accessor :mutation_error
 
   belongs_to :work
   belongs_to :oauth_application, class_name: "Oauth::Application", optional: true
@@ -112,27 +111,6 @@ class WorkRecord < ApplicationRecord
 
   def facebook_share_title
     work.local_title
-  end
-
-  def twitter_share_body
-    work_title = work.local_title
-    title = body.present? ? work_title.truncate(30) : work_title
-    comment = body.present? ? "#{body} / " : ""
-    share_url = share_url_with_query(:twitter)
-    share_hashtag = work.hashtag_with_hash
-
-    base_body = if user.locale == "ja"
-      "%s#{title} を見ました #{share_url} #{share_hashtag}"
-    else
-      "%sWatched: #{title} #{share_url} #{share_hashtag}"
-    end
-
-    body = base_body % comment
-    body_without_url = body.sub(share_url, "")
-    return body if body_without_url.length <= 130
-
-    comment = comment.truncate(comment.length - (body_without_url.length - 130)) + " / "
-    base_body % comment
   end
 
   def facebook_share_body

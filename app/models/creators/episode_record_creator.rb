@@ -17,7 +17,6 @@ module Creators
         rating: @form.rating,
         deprecated_rating: @form.deprecated_rating,
         comment: @form.comment,
-        share_to_twitter: @form.share_to_twitter,
         watched_at: @form.watched_at
       )
 
@@ -32,12 +31,7 @@ module Creators
         library_entry = @user.library_entries.where(work: @work).first_or_create!
         library_entry.append_episode!(@episode)
 
-        @user.update_share_record_setting(@form.share_to_twitter)
         @user.touch(:record_cache_expired_at)
-
-        if @user.share_record_to_twitter?
-          @user.share_episode_record_to_twitter(episode_record)
-        end
       end
 
       self.record = episode_record.record

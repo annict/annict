@@ -35,7 +35,6 @@ module Fragment
         @form.attributes = {
           comment: episode_record.body,
           rating: episode_record.rating_state,
-          share_to_twitter: current_user.share_record_to_twitter?,
           watched_at: @record.watched_at
         }
       else
@@ -48,7 +47,6 @@ module Fragment
           rating_character: work_record.rating_character_state,
           rating_story: work_record.rating_story_state,
           rating_music: work_record.rating_music_state,
-          share_to_twitter: current_user.share_record_to_twitter?,
           watched_at: @record.watched_at
         }
       end

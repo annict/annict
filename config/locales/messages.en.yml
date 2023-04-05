@@ -10,7 +10,6 @@ en:
       post: Finished to post
       published: Published
       search_with_keywords: Search by anime title...
-      share_to_twitter: Share to Twitter
       unpublished: Unpublished
       updated: Updated
       view_amazon_product: View Amazon
@@ -185,8 +184,6 @@ en:
       hide_supporter_badge_detail: Hide supporter badges on profiles page and so on.
       prevent_spoiler_of_episode_you_have_not_watched: Prevent spoiler of episode which you have not watched
       prevent_spoiler_of_episode_you_have_not_watched_detail: This option will hide comments on unwatched episodes when you've set status as "Watched", "Plan to Watch", or "On Hold".
-      share_status_to_twitter: Share changing statuses to Twitter
-      share_status_to_twitter_detail_html: If you change a status of a work, it'll be post to Twitter.
     organization_fans:
       no_users: No users
     passwords:
@@ -215,7 +212,6 @@ en:
         password_hint: At least 8 characters.
         sign_in_link_html: Already have an account? %{link}
         start_with_facebook: Sign In with Facebook
-        start_with_twitter: Sign In with Twitter
         username_hint: Only letters, numbers, and underscores.
       create:
         welcome: Your account has been created. Welcome to Annict!

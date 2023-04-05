@@ -10,7 +10,6 @@ ja:
       post: 投稿しました
       published: 公開しました
       search_with_keywords: 作品名や人物名などで検索...
-      share_to_twitter: Twitterにシェアする
       unpublished: 非公開にしました
       updated: 更新しました
       view_amazon_product: Amazonで見る
@@ -185,8 +184,6 @@ ja:
       hide_supporter_badge_detail: プロフィールページなどに表示されるAnnictサポーターを示すバッジを非表示にします。
       prevent_spoiler_of_episode_you_have_not_watched: 未記録エピソードのネタバレを防ぐ
       prevent_spoiler_of_episode_you_have_not_watched_detail: 見てる、見たい、または一時中断したアニメの中で、記録していないエピソードに投稿された他の利用者からの感想を表示しないようにします。
-      share_status_to_twitter: ステータスの変更をTwitterにシェアする
-      share_status_to_twitter_detail_html: '作品のステータスを変更したとき、自動でTwitterにシェアします。<br>テキスト例: アニメ「(作品名)」の視聴ステータスを「見たい」にしました。 (URL)'
     organization_fans:
       no_users: ファンはいません
     passwords:
@@ -215,7 +212,6 @@ ja:
         password_hint: 8文字以上入力してください。
         sign_in_link_html: 作成済みですか？ %{link}
         start_with_facebook: Facebookでログイン
-        start_with_twitter: Twitterでログイン
         username_hint: 半角英数字とアンダースコア (_) が利用できます。
       create:
         welcome: アカウント作成が完了しました。Annictにようこそ！
