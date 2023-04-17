@@ -35,7 +35,7 @@
     "@types/bootstrap": "^5.1.0",
     "@types/jquery": "^3.5.1",
     "@types/js-cookie": "^3.0.2",
-    "@types/lodash": "^4.14.186",
+    "@types/lodash": "^4.14.194",
     "eslint": "^8.25.0",
     "eslint-plugin-import": "^2.25.4",
     "node-fetch": "^3.2.0",
