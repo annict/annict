@@ -30,7 +30,6 @@ class Status < ApplicationRecord
   extend Enumerize
 
   include Likeable
-  include Shareable
 
   POSITIVE_KINDS = %i[wanna_watch watching watched].freeze
 
@@ -106,31 +105,12 @@ class Status < ApplicationRecord
     self.class.kind_v2_to_v3(kind)
   end
 
-  def share_to_sns
-    return if !user.setting.share_status_to_twitter? || !user.authorized_to?(:twitter, shareable: true)
-
-    ShareStatusToTwitterJob.perform_later(user.id, id)
-  end
-
   def share_url
     "#{user.preferred_annict_url}/@#{user.username}/#{kind}"
   end
 
   def facebook_share_title
     work.local_title
-  end
-
-  def twitter_share_body
-    work_title = work.local_title
-    share_url = share_url_with_query(:twitter)
-
-    base_body = if user.locale == "ja"
-      "アニメ「%s」の視聴ステータスを「#{kind_text}」にしました #{share_url}"
-    else
-      "Changed %s's status to \"#{kind_text}\". Anime list: #{share_url}"
-    end
-
-    base_body % work_title
   end
 
   def facebook_share_body

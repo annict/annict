@@ -16,8 +16,7 @@ describe Updaters::EpisodeRecordUpdater, type: :model do
     form = Forms::EpisodeRecordForm.new(user: user, episode: episode, record: record)
     form.attributes = {
       comment: episode_record.body + "！！",
-      rating: "good",
-      share_to_twitter: false
+      rating: "good"
     }
     expect(form.valid?).to eq true
 

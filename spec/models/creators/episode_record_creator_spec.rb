@@ -18,14 +18,12 @@ describe Creators::EpisodeRecordCreator, type: :model do
     expect(ActivityGroup.count).to eq 0
     expect(Activity.count).to eq 0
     expect(LibraryEntry.count).to eq 0
-    expect(user.share_record_to_twitter?).to eq false
 
     # Creatorを呼ぶ
     form = Forms::EpisodeRecordForm.new(user: user, episode: episode)
     form.attributes = {
       comment: "にぱー",
-      rating: "good",
-      share_to_twitter: false
+      rating: "good"
     }
     expect(form.valid?).to eq true
 
@@ -37,7 +35,6 @@ describe Creators::EpisodeRecordCreator, type: :model do
     expect(ActivityGroup.count).to eq 1
     expect(Activity.count).to eq 1
     expect(LibraryEntry.count).to eq 1
-    expect(user.share_record_to_twitter?).to eq false
 
     record = user.records.first
     episode_record = user.episode_records.first
@@ -74,7 +71,6 @@ describe Creators::EpisodeRecordCreator, type: :model do
       form.attributes = {
         comment: "にぱー",
         rating: "good",
-        share_to_twitter: false,
         watched_at: watched_time
       }
       expect(form.valid?).to eq true
@@ -106,14 +102,12 @@ describe Creators::EpisodeRecordCreator, type: :model do
         expect(EpisodeRecord.count).to eq 1
         expect(ActivityGroup.count).to eq 1
         expect(Activity.count).to eq 1
-        expect(user.share_record_to_twitter?).to eq false
 
         # Creatorを呼ぶ
         form = Forms::EpisodeRecordForm.new(user: user, episode: episode)
         form.attributes = {
           comment: "にぱー", # 感想付きの記録を新たにする
-          rating: "good",
-          share_to_twitter: false
+          rating: "good"
         }
         expect(form.valid?).to eq true
 
@@ -148,14 +142,12 @@ describe Creators::EpisodeRecordCreator, type: :model do
         expect(EpisodeRecord.count).to eq 1
         expect(ActivityGroup.count).to eq 1
         expect(Activity.count).to eq 1
-        expect(user.share_record_to_twitter?).to eq false
 
         # Creatorを呼ぶ
         form = Forms::EpisodeRecordForm.new(user: user, episode: episode)
         form.attributes = {
           comment: "", # 感想無しの記録を新たにする
-          rating: "good",
-          share_to_twitter: false
+          rating: "good"
         }
         expect(form.valid?).to eq true
 

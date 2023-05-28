@@ -44,11 +44,7 @@ class WorkRecordsController < ApplicationV6Controller
     @work_record.modified_at = Time.now
 
     begin
-      ActiveRecord::Base.transaction do
-        @work_record.save!
-        current_user.update_share_record_setting(@work_record.share_to_twitter == "1")
-        current_user.share_work_record_to_twitter(@work_record)
-      end
+      @work_record.save!
       flash[:notice] = t("messages._common.updated")
       redirect_to record_path(@work_record.user.username, @work_record.record)
     rescue

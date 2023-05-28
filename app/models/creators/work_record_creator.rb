@@ -19,7 +19,6 @@ module Creators
         rating_story: @form.rating_story,
         rating_character: @form.rating_character,
         comment: @form.comment,
-        share_to_twitter: @form.share_to_twitter,
         watched_at: @form.watched_at
       )
 
@@ -35,12 +34,7 @@ module Creators
           @user.activities.create!(itemable: work_record, activity_group: activity_group)
         end
 
-        @user.update_share_record_setting(@form.share_to_twitter)
         @user.touch(:record_cache_expired_at)
-
-        if @user.share_record_to_twitter?
-          @user.share_work_record_to_twitter(work_record)
-        end
       end
 
       self.record = work_record.record

@@ -21,7 +21,6 @@ ignore:
   - lib/tasks/email_notification.rake
   - lib/tasks/episode.rake
   - lib/tasks/mal.rake
-  - lib/tasks/twitter.rake
   - lib/tasks/work.rake
   - spec/spec_helper.rb
   - spec/support/devise.rb

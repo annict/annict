@@ -5,7 +5,7 @@ module Forms
     include FormRecordable
 
     attr_accessor :deprecated_rating, :episode, :oauth_application, :record
-    attr_reader :comment, :rating, :share_to_twitter
+    attr_reader :comment, :rating
 
     validates :comment, length: {maximum: 1_048_596}
     validates :episode, presence: true
@@ -17,10 +17,6 @@ module Forms
 
     def rating=(rating)
       @rating = rating&.downcase.presence
-    end
-
-    def share_to_twitter=(value)
-      @share_to_twitter = ActiveModel::Type::Boolean.new.cast(value)
     end
 
     # @overload

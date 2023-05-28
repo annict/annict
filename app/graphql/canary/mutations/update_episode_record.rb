@@ -32,8 +32,7 @@ module Canary
         form = Forms::EpisodeRecordForm.new(user: viewer, record: record, episode: episode, oauth_application: context[:application])
         form.attributes = {
           comment: comment,
-          rating: rating,
-          share_to_twitter: share_to_twitter
+          rating: rating
         }
 
         if form.invalid?

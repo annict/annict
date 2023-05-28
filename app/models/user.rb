@@ -80,7 +80,7 @@ class User < ApplicationRecord
   # :confirmable, :lockable, :timeoutable
   devise :database_authenticatable, :omniauthable, :registerable, :trackable,
     :rememberable, :recoverable,
-    omniauth_providers: %i[facebook gumroad twitter],
+    omniauth_providers: %i[facebook gumroad],
     authentication_keys: %i[email_username]
 
   enumerize :allowed_locales, in: ApplicationRecord::LOCALES, multiple: true, default: ApplicationRecord::LOCALES
@@ -147,7 +147,7 @@ class User < ApplicationRecord
 
   delegate :name, to: :profile
   delegate :admin?, :editor?, to: :role
-  delegate :hide_record_body?, :hide_supporter_badge?, :share_record_to_twitter?, to: :setting
+  delegate :hide_record_body?, :hide_supporter_badge?, to: :setting
 
   validates :email,
     presence: true,
@@ -262,22 +262,12 @@ class User < ApplicationRecord
     records.pluck(:name).include?(provider_name.to_s)
   end
 
-  def twitter
-    providers.where(name: "twitter").first
-  end
-
   def facebook
     providers.where(name: "facebook").first
   end
 
   def gumroad
     providers.where(name: "gumroad").first
-  end
-
-  def expire_twitter_token
-    return if twitter.blank?
-
-    twitter.update_column(:token_expires_at, Time.now.to_i)
   end
 
   def hide_episode_record_body?(episode)
@@ -421,24 +411,6 @@ class User < ApplicationRecord
 
     decrement!(works_count_fields[prev_status_kind]) unless prev_no_status
     increment!(works_count_fields[next_status_kind]) unless next_no_status
-  end
-
-  def update_share_record_setting(share_to_twitter)
-    return if share_to_twitter == setting.share_record_to_twitter
-
-    setting.update_column(:share_record_to_twitter, share_to_twitter)
-  end
-
-  def share_episode_record_to_twitter(episode_record)
-    return unless share_record_to_twitter?
-
-    ShareEpisodeRecordToTwitterJob.perform_later(id, episode_record.id)
-  end
-
-  def share_work_record_to_twitter(work_record)
-    return unless share_record_to_twitter?
-
-    ShareWorkRecordToTwitterJob.perform_later(id, work_record.id)
   end
 
   def following_resources(model: Activity, viewer: nil, order: OrderProperty.new)

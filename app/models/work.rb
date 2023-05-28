@@ -267,8 +267,7 @@ class Work < ApplicationRecord
     rating_music: nil,
     rating_story: nil,
     rating_character: nil,
-    comment: "",
-    share_to_twitter: false
+    comment: ""
   )
     work_record = work_records.new(
       user: user,
@@ -277,8 +276,7 @@ class Work < ApplicationRecord
       rating_music_state: rating_music&.downcase,
       rating_story_state: rating_story&.downcase,
       rating_character_state: rating_character&.downcase,
-      body: comment,
-      share_to_twitter: share_to_twitter
+      body: comment
     )
     work_record.detect_locale!(:body)
     work_record.build_record(user: user, work: self, watched_at: watched_at)

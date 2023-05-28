@@ -21,7 +21,6 @@ module Updaters
 
           status.save!
           status.save_library_entry!
-          status.share_to_sns
 
           activity_group = @user.create_or_last_activity_group!(status)
           @user.activities.create!(itemable: status, activity_group: activity_group)

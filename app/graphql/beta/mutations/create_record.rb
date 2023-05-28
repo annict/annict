@@ -21,8 +21,7 @@ module Beta
         form = Forms::EpisodeRecordForm.new(user: viewer, episode: episode, oauth_application: oauth_application)
         form.attributes = {
           comment: comment,
-          rating: rating_state,
-          share_to_twitter: share_twitter&.to_s
+          rating: rating_state
         }
 
         if form.invalid?

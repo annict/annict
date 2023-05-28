@@ -42,24 +42,11 @@ module Deprecated::Forms
           end
 
           h.tag :div, class: "row" do
-            h.tag :div, class: "col" do
-              if current_user&.authorized_to?(:twitter, shareable: true)
-                h.tag :div, class: "form-check" do
-                  h.tag :label, class: "form-check-label" do
-                    h.html f.check_box(:share_to_twitter, class: "form-check-input", checked: current_user.share_record_to_twitter?)
-                    h.tag :i, class: "fab fa-twitter u-text-twitter"
-                  end
-                end
-              end
-            end
-
-            h.tag :div, class: "col" do
+            h.tag :div, class: "col-12" do
               h.tag :div, class: "text-center" do
                 h.html f.submit((f.object.persisted? ? t("verb.update") : t("verb.track")), class: "btn btn-primary", data: {"forms--episode-record-form-target": "submitButton"})
               end
             end
-
-            h.tag :div, class: "col"
           end
         end
       end

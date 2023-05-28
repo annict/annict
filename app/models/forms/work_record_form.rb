@@ -7,7 +7,7 @@ module Forms
     attr_accessor :work, :oauth_application,
       :rating_animation, :rating_character, :rating_music, :rating_overall, :rating_story,
       :record
-    attr_reader :comment, :deprecated_title, :share_to_twitter
+    attr_reader :comment, :deprecated_title
 
     validates :work, presence: true
     validates :comment, length: {maximum: 1_048_596}
@@ -26,10 +26,6 @@ module Forms
 
     def comment=(comment)
       @comment = comment&.strip
-    end
-
-    def share_to_twitter=(value)
-      @share_to_twitter = ActiveModel::Type::Boolean.new.cast(value)
     end
 
     # @overload

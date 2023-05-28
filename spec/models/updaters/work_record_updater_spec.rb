@@ -19,8 +19,7 @@ describe Updaters::WorkRecordUpdater, type: :model do
       rating_character: "great",
       rating_music: "great",
       rating_overall: "great",
-      rating_story: "great",
-      share_to_twitter: false
+      rating_story: "great"
     }
     expect(form.valid?).to eq true
 

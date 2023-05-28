@@ -9,8 +9,7 @@ describe Forms::EpisodeRecordForm do
       form = Forms::EpisodeRecordForm.new(user: user, episode: episode)
       form.attributes = {
         comment: "a" * (1_048_596 + 1), # 文字数制限 (1,048,596文字) 以上の感想を書く
-        rating: "good",
-        share_to_twitter: false
+        rating: "good"
       }
 
       expect(form.valid?).to eq false

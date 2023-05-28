@@ -54,7 +54,6 @@ class EpisodeRecord < ApplicationRecord
   extend Enumerize
 
   include UgcLocalizable
-  include Shareable
   include SoftDeletable
 
   self.ignored_columns = %w[aasm_state multiple_episode_record_id review_id shared_facebook shared_twitter]
@@ -65,7 +64,7 @@ class EpisodeRecord < ApplicationRecord
   counter_culture :episode, column_name: ->(episode_record) { episode_record.body.present? ? :episode_record_bodies_count : nil }
   counter_culture :user
 
-  attr_accessor :share_to_twitter, :mutation_error
+  attr_accessor :mutation_error
 
   belongs_to :work
   belongs_to :oauth_application, class_name: "Oauth::Application", optional: true
@@ -143,28 +142,6 @@ class EpisodeRecord < ApplicationRecord
 
   def facebook_share_title
     "#{work.title} #{episode.title_with_number}"
-  end
-
-  def twitter_share_body
-    work_title = work.local_title
-    title = body.present? ? work_title.truncate(30) : work_title
-    comment = body.present? ? "#{body} / " : ""
-    episode_number = episode.local_number
-    share_url = share_url_with_query(:twitter)
-    share_hashtag = work.hashtag_with_hash
-
-    base_body = if user.locale == "ja"
-      "%s#{title} #{episode_number} を見ました #{share_url} #{share_hashtag}"
-    else
-      "%sWatched: #{title} #{episode_number} #{share_url} #{share_hashtag}"
-    end
-
-    body = base_body % comment
-    body_without_url = body.sub(share_url, "")
-    return body if body_without_url.length <= 130
-
-    comment = comment.truncate(comment.length - (body_without_url.length - 130)) + " / "
-    base_body % comment
   end
 
   def facebook_share_body

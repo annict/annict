@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class CallbacksController < Devise::OmniauthCallbacksController
-  before_action :authorize, only: %i[gumroad twitter]
+  before_action :authorize, only: %i[gumroad]
 
   def facebook
     auth = request.env["omniauth.auth"]
@@ -57,9 +57,6 @@ class CallbacksController < Devise::OmniauthCallbacksController
   def gumroad
   end
 
-  def twitter
-  end
-
   private
 
   def authorize
@@ -113,7 +110,7 @@ class CallbacksController < Devise::OmniauthCallbacksController
       uid: auth[:uid],
       token: credentials[:token],
       token_expires_at: (auth[:provider] == "facebook" ? credentials[:expires_at] : nil),
-      token_secret: (auth[:provider] == "twitter" ? credentials[:secret] : nil)
+      token_secret: nil
     }
   end
 

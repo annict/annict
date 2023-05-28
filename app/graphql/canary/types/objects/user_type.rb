@@ -25,7 +25,7 @@ module Canary
         field :is_committer, Boolean, null: false
         field :locale, String, null: true
         field :display_supporter_badge, Boolean, null: false
-        field :share_record_to_twitter, Boolean, null: false, method: :share_record_to_twitter?
+        field :share_record_to_twitter, Boolean, null: false
         field :records_count, Integer, null: false
         field :following_count, Integer, null: false
         field :followers_count, Integer, null: false
@@ -146,6 +146,10 @@ module Canary
               context[:viewer] == object ? !setting.hide_supporter_badge? : gumroad_subscriber&.active? && !setting.hide_supporter_badge?
             end
           end
+        end
+
+        def share_record_to_twitter
+          false
         end
 
         def viewer_can_follow
