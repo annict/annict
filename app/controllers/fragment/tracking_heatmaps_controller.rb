@@ -8,7 +8,7 @@ module Fragment
       count_data = user
         .records
         .after(date_from)
-        .group_by_day(:created_at, time_zone: time_zone)
+        .group_by_day(:watched_at, time_zone: time_zone)
         .count
         .map { |date, count| [date.to_s(:ymd), count] }
         .to_h
