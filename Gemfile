@@ -111,3 +111,7 @@ group :test do
   gem "simplecov", "< 0.22", require: false
   gem "timecop"
 end
+
+group :production do
+  gem "lograge"
+end

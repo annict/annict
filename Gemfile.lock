@@ -312,6 +312,11 @@ GEM
     listen (3.7.1)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
+    lograge (0.12.0)
+      actionpack (>= 4)
+      activesupport (>= 4)
+      railties (>= 4)
+      request_store (~> 1.0)
     loofah (2.21.3)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
@@ -451,6 +456,8 @@ GEM
     redis-client (0.9.0)
       connection_pool
     regexp_parser (2.6.0)
+    request_store (1.5.1)
+      rack (>= 1.4)
     responders (3.0.1)
       actionpack (>= 5.0)
       railties (>= 5.0)
@@ -627,6 +634,7 @@ DEPENDENCIES
   kaminari
   koala
   listen
+  lograge
   memory_profiler
   meta-tags
   mini_magick
