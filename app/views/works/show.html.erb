@@ -20,7 +20,7 @@
 
       <% if @trailers.size > 4 %>
         <div>
-          <%= link_to "#" do %>
+          <%= link_to video_list_path(@work) do %>
             <i class="far fa-angle-right me-1"></i>
             <%= t("verb.view_all") %>
           <% end %>
