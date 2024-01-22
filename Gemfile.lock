@@ -1,5 +1,5 @@
 GIT
-  remote: https://github.com/kiraka/htmlrb.git
+  remote: https://github.com/shimbaco/htmlrb.git
   revision: 5c7895ca0ae72756180cc9cb38da5ef50899f489
   branch: main
   specs:
