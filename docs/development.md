@@ -1,29 +1,10 @@
 # 開発環境を作る
 
-## システム構成
-
-Annictは以下のようなシステム構成になっています。
-
-- アプリケーション
-  - Ruby on Rails
-- データベース
-  - PostgreSQL
-  - Redis
-- 画像変換サーバ
-  - [imgproxy](https://imgproxy.net/)
-
-開発環境を作るには、上記のシステム構成をローカルに再現する必要があります。
-
 ## 用意するもの
 
 以下を手元の開発環境にインストールします。
 
-- Ruby
-  - 必要なバージョンは [.tool-versions](https://github.com/annict/annict/blob/main/.tool-versions) に記載されています
-- Node.js
-  - 必要なバージョンは [.tool-versions](https://github.com/annict/annict/blob/main/.tool-versions) に記載されています
-- Yarn
-  - 必要なバージョンは [package.json](https://github.com/annict/annict/blob/main/package.json) に記載されていますが、最近のものであれば動作に支障ないと思います
+- Docker Compose
 
 ## 手順
 
@@ -32,7 +13,7 @@ Annictは以下のようなシステム構成になっています。
 まずはローカルで動かすサーバに `annict.test` というホスト名でアクセスできるようにするため、以下のように `/etc/hosts` を編集します。
 
 ```sh
-$ sudo sh -c "echo '127.0.0.1  annict.test' >> /etc/hosts"
+sudo sh -c "echo '127.0.0.1  annict.test' >> /etc/hosts"
 ```
 
 ### ソースコードを取得する
@@ -40,40 +21,31 @@ $ sudo sh -c "echo '127.0.0.1  annict.test' >> /etc/hosts"
 ソースコードをcloneします。
 
 ```sh
-$ git clone git@github.com:annict/annict.git
+git clone git@github.com:annict/annict.git
 ```
 
-### Dockerを使ってデータベースなどを立ち上げる
+### Docker Composeを使って各種サービスを立ち上げる
 
-PostgreSQLやRedisといったデータベースやimgproxyはDockerを使って立ち上げるようになっています。
-
-`docker compose up` します。
+以下を実行します。
 
 ```sh
-$ cd /path/to/annict
-$ docker compose up
+cd /path/to/annict
+docker compose up
 ```
 
 ### Railsのセットアップをする
 
-`docker compose up` したターミナルはそのままに、別のターミナルを立ち上げて以下を実行します。
+以下を実行します。
 
 ```sh
-$ cd /path/to/annict
-
-// パッケージのインストール
-$ bundle install
-$ yarn install
-
-// データベースの初期化
-$ bin/rails db:setup
-
-// JS/CSSをコンパイルするプロセスを立ち上げる
-$ foreman start -f Procfile.dev
-
-// サーバを起動する
-$ bin/rails s
+cd /path/to/annict
+docker compose exec app bin/setup
+docker compose exec app bin/dev
+docker compose exec app bin/rails jobs:work
+docker compose exec app bin/rails server
 ```
+
+### ブラウザでAnnictにアクセスする
 
 [http://annict.test:3000](http://annict.test:3000) にアクセスすると、トップページが表示されるはずです。
 
@@ -85,7 +57,7 @@ $ bin/rails s
 まず `rails console` します。
 
 ```sh
-$ bin/rails console
+docker compose exec app bin/rails console
 ```
 
 以下のスクリプトを実行して管理者を作成します。ユーザ名やメールアドレスなどは適宜置き換えてください。
@@ -108,7 +80,7 @@ user.confirm
 AnnictではRSpecを使ってテストを書いています。以下のコマンドでテストを実行することができます。
 
 ```sh
-$ bin/rspec
+docker compose exec -e RAILS_ENV=test app bin/rspec
 ```
 
 ## 画像のアップロードや表示について

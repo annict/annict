@@ -1,24 +1,46 @@
-version: '3.7'
+version: "3.8"
 
 services:
+  app:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.dev
+    depends_on:
+      - postgresql
+      - redis
+      - imgproxy
+    environment:
+      BINDING: 0.0.0.0
+    ports:
+      - "3000:3000"
+    stdin_open: true
+    tty: true
+    volumes:
+      - .:/app
+      - app_gems_data:/usr/local/bundle
+
   postgresql:
     image: postgres:14.2
     ports:
-      - 35432:5432
+      - "35432:5432"
     volumes:
       - postgresql14_data:/var/lib/postgresql/data:delegated
     environment:
       POSTGRES_HOST_AUTH_METHOD: trust
+
   redis:
     image: redis:5.0.5-alpine
     ports:
-      - 36379:6379
+      - "36379:6379"
+
   imgproxy:
     image: darthsim/imgproxy:v3.5.0
     ports:
-      - 38080:8080
+      - "38080:8080"
     env_file:
       - .env.imgproxy
+      - .env.imgproxy.local
 
 volumes:
+  app_gems_data:
   postgresql14_data:

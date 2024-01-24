@@ -26,6 +26,7 @@ jobs:
     env:
       CC_TEST_REPORTER_ID: 473c071c4d1900d58ceed984bd49d8a39368393ce6f010cf5d52287f3072f6ef
       COVERAGE: true
+      DATABASE_URL: postgresql://postgres@localhost:35432/annict_test
       ANNICT_POSTGRES_HOST: localhost
       RAILS_ENV: test
       TZ: Asia/Tokyo
