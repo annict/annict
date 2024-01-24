@@ -98,10 +98,8 @@ Rails.application.configure do
   ActiveRecordQueryTrace.enabled = true
 
   config.hosts += [
-    ".ngrok.io",
     ENV.fetch("ANNICT_API_DOMAIN"),
     ENV.fetch("ANNICT_DOMAIN"),
-    ENV.fetch("ANNICT_EN_DOMAIN"),
-    ENV.fetch("ANNICT_JP_DOMAIN")
+    ENV.fetch("ANNICT_EN_DOMAIN")
   ]
 end
