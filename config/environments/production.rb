@@ -87,14 +87,7 @@ Rails.application.configure do
     protocol: "https://",
     host: ENV.fetch("ANNICT_HOST")
   }
-  config.action_mailer.delivery_method = :smtp
-  config.action_mailer.smtp_settings = {
-    address: ENV.fetch("ANNICT_SMTP_HOST"),
-    port: ENV.fetch("ANNICT_SMTP_PORT"),
-    user_name: ENV.fetch("ANNICT_SMTP_USERNAME"),
-    password: ENV.fetch("ANNICT_SMTP_PASSWORD"),
-    authentication: :plain
-  }
+  config.action_mailer.delivery_method = :resend
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false

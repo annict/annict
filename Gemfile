@@ -114,4 +114,5 @@ end
 
 group :production do
   gem "lograge"
+  gem "resend"
 end
