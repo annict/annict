@@ -458,6 +458,8 @@ GEM
     regexp_parser (2.6.0)
     request_store (1.5.1)
       rack (>= 1.4)
+    resend (0.9.0)
+      httparty (>= 0.19.1)
     responders (3.0.1)
       actionpack (>= 5.0)
       railties (>= 5.0)
@@ -663,6 +665,7 @@ DEPENDENCIES
   rails_autolink
   ransack
   redis
+  resend
   rspec-mocks
   rspec-rails
   sentry-rails
