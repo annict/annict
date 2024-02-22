@@ -27,7 +27,7 @@
     "js-cookie": "^3.0.1",
     "lodash": "^4.17.21",
     "mjml": "^4.13.0",
-    "sass": "^1.55.0",
+    "sass": "^1.71.1",
     "select2": "^4.1.0-rc.0"
   },
   "devDependencies": {
