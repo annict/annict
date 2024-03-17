@@ -1,8 +1,12 @@
 ARG RUBY_VERSION="3.1.2"
 ARG BUNDLER_VERSION="2.3.12"
 ARG NODE_VERSION="16.14.2"
+ARG YARN_VERSION="1.22.21"
 
 FROM node:${NODE_VERSION}-bullseye-slim AS node
+ARG YARN_VERSION
+RUN yarn set version ${YARN_VERSION}
+
 FROM ruby:${RUBY_VERSION}-slim-bullseye
 
 RUN \
@@ -24,15 +28,9 @@ RUN \
     libpq-dev \
     postgresql-client-14
 
-# Yarnのセットアップ
-RUN \
-  curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
-  echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
-  apt update && \
-  apt install -y --no-install-recommends \
-    yarn
-
+ARG YARN_VERSION
 COPY --from=node /usr/local/bin/node /usr/local/bin/node
+COPY --from=node /.yarn/releases/yarn-${YARN_VERSION}.cjs /usr/local/bin/yarn
 
 RUN gem install bundler -v "${BUNDLER_VERSION}"
 
