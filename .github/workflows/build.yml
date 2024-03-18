@@ -67,6 +67,10 @@ jobs:
         with:
           node-version: 16.14.2
 
+      - name: Install Yarn
+        run: |
+          npm install --global yarn@1.22.21
+
       - name: Run `yarn install`
         run: |
           yarn install
