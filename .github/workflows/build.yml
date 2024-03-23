@@ -16,9 +16,7 @@ jobs:
           ruby-version: 3.1.4
           bundler-cache: true
 
-      - name: Run Standard`
-        run: |
-          bundle exec standardrb
+      - run: bin/standardrb
 
   test_rspec:
     name: Test (RSpec)
@@ -91,5 +89,5 @@ jobs:
       - name: Run tests
         run: |
           ./cc-test-reporter before-build
-          bundle exec rspec
+          bin/rspec
           ./cc-test-reporter after-build --coverage-input-type simplecov --exit-code $?
