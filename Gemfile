@@ -3,9 +3,9 @@
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby "3.1.2"
+ruby "3.1.4"
 
-gem "rails", "~> 7.0.4.3"
+gem "rails", "~> 7.0.8"
 
 gem "active_decorator"
 gem "active_link_to"
@@ -16,7 +16,9 @@ gem "aws-sdk-s3" # Using in Shrine
 gem "browser", require: "browser/browser"
 gem "by_star"
 gem "cld"
-gem "commonmarker" # Using github-markup
+# github-markupが1系に対応するまで0系を使う
+# ref: https://github.com/github/markup/issues/1758
+gem "commonmarker", "< 1.0" # Using github-markup
 gem "counter_culture"
 gem "cssbundling-rails"
 gem "delayed_job_active_record"

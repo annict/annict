@@ -2,25 +2,208 @@
 # Remove from this list as you refactor files.
 ---
 ignore:
-  - app/controllers/api/v1/application_controller.rb
-  - app/decorators/organization_decorator.rb
-  - app/decorators/person_decorator.rb
-  - app/decorators/work_decorator.rb
-  - app/graphql/canary/mutations/update_status.rb
-  - app/helpers/db/application_helper.rb
-  - app/models/episode_record.rb
-  - app/models/work.rb
-  - app/validators/amazon_validator.rb
-  - app/validators/redirect_uri_validator.rb
-  - app/views/api/internal/library_entries/_library_entry.jb
-  - app/views/api/v1/characters/index.jb
-  - app/views/api/v1/episodes/index.jb
-  - app/views/api/v1/people/index.jb
-  - config/application.rb
-  - config/puma.rb
-  - lib/tasks/email_notification.rake
-  - lib/tasks/episode.rake
-  - lib/tasks/mal.rake
-  - lib/tasks/work.rake
-  - spec/spec_helper.rb
-  - spec/support/devise.rb
+- app/components/deprecated/activities/record_activity_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/activities/status_activity_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/adsense_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/application_v6_component.rb:
+  - Style/ArgumentsForwarding
+- app/components/deprecated/badges/slot_start_date_badge_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/badges/supporter_badge_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/badges/work_media_badge_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/badges/work_season_badge_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/body_v6_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/boxes/work_box_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/button_groups/episode_transition_button_group_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/button_groups/pagination_button_group_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/button_groups/record_rating_button_group_component.rb:
+  - Style/SuperWithArgsParentheses
+  - Style/TernaryParentheses
+- app/components/deprecated/button_groups/user_button_group_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/button_groups/work_button_group_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/buttons/bulk_watch_episodes_button_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/buttons/follow_button_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/buttons/like_button_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/buttons/mute_user_button_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/buttons/receive_channel_button_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/buttons/share_to_facebook_button_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/buttons/share_to_twitter_button_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/buttons/skip_episode_button_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/buttons/star_button_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/buttons/watch_episode_button_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/cards/work_card_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/collapses/record_form_options_collapse_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/contents/record_content_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/contents/status_content_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/dropdowns/record_options_dropdown_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/dropdowns/status_select_dropdown_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/empty_v6_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/error_panel_v6_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/flash_v6_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/footers/record_footer_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/footers/status_footer_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/forms/episode_record_form_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/forms/work_record_form_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/headers/profile_header_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/headers/record_header_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/headers/work_header_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/inputs/recaptcha_input_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/label_groups/work_record_rating_label_group_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/labels/rating_label_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/list_groups/record_list_group_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/list_groups/record_month_list_group_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/list_items/record_list_item_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/lists/record_list_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/lists/trackable_episode_list_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/navs/user_nav_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/radios/program_select_radio_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/relative_time_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/sidebars/main_sidebar_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/spoiler_guard_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/tab_bar_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/textareas/record_textarea_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/components/deprecated/timeline_component.rb:
+  - Style/SuperWithArgsParentheses
+- app/controllers/api/internal/program_selects_controller.rb:
+  - Style/TernaryParentheses
+- app/controllers/api/v1/application_controller.rb:
+  - Lint/DuplicateMethods
+  - Style/RedundantReturn
+- app/controllers/callbacks_controller.rb:
+  - Style/TernaryParentheses
+- app/controllers/concerns/localizable.rb:
+  - Style/TernaryParentheses
+  - Style/ArgumentsForwarding
+- app/controllers/concerns/work_listable.rb:
+  - Style/TernaryParentheses
+- app/decorators/concerns/resource_image_decorator_common.rb:
+  - Style/TernaryParentheses
+- app/decorators/profile_decorator.rb:
+  - Style/TernaryParentheses
+- app/forms/deprecated/db/staff_rows_form.rb:
+  - Style/RedundantParentheses
+- app/graphql/beta/resolvers/library_entries.rb:
+  - Style/TernaryParentheses
+- app/graphql/beta/types/objects/work_type.rb:
+  - Style/TernaryParentheses
+- app/graphql/canary/resolvers/library_entries.rb:
+  - Style/TernaryParentheses
+- app/graphql/canary/types/objects/user_type.rb:
+  - Style/TernaryParentheses
+- app/graphql/canary/types/objects/work_type.rb:
+  - Style/TernaryParentheses
+- app/helpers/application_helper.rb:
+  - Style/TernaryParentheses
+- app/helpers/db/application_helper.rb:
+  - Performance/Detect
+- app/helpers/head_helper.rb:
+  - Style/TernaryParentheses
+- app/helpers/time_zone_helper.rb:
+  - Style/TernaryParentheses
+- app/models/application_record.rb:
+  - Lint/SymbolConversion
+- app/models/concerns/active_parameter.rb:
+  - Style/SuperWithArgsParentheses
+  - Performance/StringIdentifierArgument
+- app/models/concerns/resource_rows.rb:
+  - Style/RedundantRegexpArgument
+- app/models/episode_record.rb:
+  - Lint/ReturnInVoidContext
+- app/models/forms/work_record_form.rb:
+  - Performance/StringIdentifierArgument
+- app/models/season.rb:
+  - Style/TernaryParentheses
+- app/models/tv_time.rb:
+  - Style/TernaryParentheses
+- app/models/work.rb:
+  - Layout/SpaceInLambdaLiteral
+- app/services/deprecated/email_notification_service.rb:
+  - Performance/StringIdentifierArgument
+- app/validators/amazon_validator.rb:
+  - Performance/EndWith
+- app/validators/redirect_uri_validator.rb:
+  - Lint/NonLocalExitFromIterator
+- app/views/api/v1/application/_pagination.jb:
+  - Style/TernaryParentheses
+- app/views/api/v1/characters/index.jb:
+  - Style/IfInsideElse
+- app/views/api/v1/episodes/index.jb:
+  - Style/IfInsideElse
+- app/views/api/v1/people/index.jb:
+  - Style/IfInsideElse
+- app/views/api/v1/users/_user.jb:
+  - Lint/SymbolConversion
+- config/application.rb:
+  - Style/GlobalStdStream
+  - Layout/ArgumentAlignment
+  - Lint/AmbiguousRegexpLiteral
+  - Style/StringLiteralsInInterpolation
+  - Lint/ConstantDefinitionInBlock
+- config/initializers/application_controller_renderer.rb:
+  - Layout/EmptyLineAfterMagicComment
+- config/routes.rb:
+  - Layout/LineLength
+- lib/tasks/email_notification.rake:
+  - Lint/UselessAssignment
+- lib/tasks/episode.rake:
+  - Lint/ConstantDefinitionInBlock
+- lib/tasks/mal.rake:
+  - Lint/ConstantDefinitionInBlock
+- lib/tasks/work.rake:
+  - Lint/SymbolConversion
+  - Lint/ConstantDefinitionInBlock
+- spec/support/devise.rb:
+  - Style/MixinUsage
