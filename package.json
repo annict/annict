@@ -5,6 +5,7 @@
     "node": "16.14.2",
     "yarn": "1.22.21"
   },
+  "packageManager": "yarn@1.22.21",
   "scripts": {
     "build:css": "sass app/assets/stylesheets/application.scss:./app/assets/builds/application.css --no-source-map --load-path=node_modules",
     "build": "esbuild app/javascript/*.* --bundle --sourcemap --outdir=app/assets/builds",
