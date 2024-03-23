@@ -578,13 +578,11 @@ GEM
       descendants_tracker (~> 0.0, >= 0.0.3)
     warden (1.2.9)
       rack (>= 2.0.9)
-    webrick (1.7.0)
     websocket-driver (0.7.6)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
     wilson_score (0.1.0)
-    yard (0.9.28)
-      webrick (~> 1.7.0)
+    yard (0.9.36)
     zeitwerk (2.6.13)
 
 PLATFORMS
