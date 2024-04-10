@@ -17,16 +17,6 @@ module Deprecated::Footers
                 h.tag :div, class: "c-footer__description mb-3 small" do
                   h.text "A platform for anime addicts."
                 end
-
-                h.tag :div, class: "c-footer__social-links row" do
-                  social_urls.each do |url, icon_name|
-                    h.tag :div, class: "col col-auto" do
-                      h.tag :a, aria_label: icon_name.humanize, href: url, class: "h2", target: "_blank", rel: "noopener" do
-                        h.tag :i, class: "fab fa-#{icon_name}"
-                      end
-                    end
-                  end
-                end
               end
 
               h.tag :div, class: "col-12 col-sm-3 mb-3 mb-sm-0" do
@@ -119,14 +109,6 @@ module Deprecated::Footers
 
     private
 
-    def social_urls
-      [
-        ["https://twitter.com/#{view_context.twitter_username}", "twitter"],
-        ["https://github.com/annict", "github"],
-        [ENV.fetch("ANNICT_DISCORD_INVITE_URL"), "discord"]
-      ]
-    end
-
     def service_urls
       [
         [view_context.userland_path, t("noun.annict_userland")],
@@ -139,6 +121,7 @@ module Deprecated::Footers
 
     def content_urls
       [
+        [view_context.community_path, t("noun.community"), true],
         [view_context.faq_path, t("noun.faq"), true],
         [view_context.terms_path, t("noun.terms_of_use"), true],
         [view_context.privacy_path, t("noun.privacy_policy"), true],
