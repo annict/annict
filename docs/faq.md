@@ -6,9 +6,8 @@
 
 以下のいずれかよりご連絡ください。
 
-- [フォーラム](https://annict.jp/forum)
-- [Twitter](https://twitter.com/AnnictJP)
-- [Discord](https://discord.gg/PVJRUKP)
+- [フォーラム](https://annict.com/forum)
+- [各種ソーシャルメディア](https://annict.com/community)
 - メール: hello@annict.com
 
 ### 対応ブラウザは何ですか？
@@ -43,19 +42,6 @@
 
 正しくは団体です。
 スタッフのデータを外部から一括でインポートしたときの仕様で、インポート時の団体データが人物データとして登録されています。こちらは気が向いたときに修正しています。
-
-</details>
-
-
-## Twitter連携に関する質問
-
-### 記録やレビューがTwitterにシェアできなくなったのですが？
-
-<details>
-<summary>回答</summary>
-
-TwitterからAnnictのTwitterアプリケーションが削除された可能性があります。AnnictのTwitterアプリケーションを削除すると、AnnictからTwitterが提供するWeb APIにアクセスできるなくなるため、Annictを経由したツイートができなくなります。
-Twitterのアプリは[こちら](https://twitter.com/settings/connected_apps)から確認することができます。
 
 </details>
 
