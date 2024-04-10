@@ -263,7 +263,7 @@ ja:
       see_records: 記録を見る
       tracked: 記録しました
     userland:
-      description_html: "Userlandは、Annictを便利に使うために有志によって作られたアプリケーションなどが探せる場です。<a href='https://developers.annict.jp' target='_blank'>Annict API</a>を使用して何か作った方は、「新規プロジェクト」から登録頂けるとありがたいです。"
+      description_html: "Userlandは、Annictを便利に使うために有志によって作られたアプリケーションなどが探せる場です。<a href='https://developers.annict.com' target='_blank'>Annict API</a>を使用して何か作った方は、「新規プロジェクト」から登録頂けるとありがたいです。"
       description_mobile_html: 'Userlandは、Annictを便利に使うために有志によって作られたアプリケーションなどが探せる場です。'
       projects:
         about_available: このプロジェクトが公開されていて、他の人が利用できるときチェックしてください。

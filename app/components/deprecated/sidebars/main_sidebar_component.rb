@@ -213,7 +213,7 @@ module Deprecated::Sidebars
               end
 
               h.tag :li do
-                h.tag :a, href: "https://developers.annict.jp", class: "d-flex justify-content-between py-2", rel: "noopener", target: "_blank" do
+                h.tag :a, href: "https://developers.annict.com", class: "d-flex justify-content-between py-2", rel: "noopener", target: "_blank" do
                   h.tag :div, class: "c-main-sidebar__icon me-1 text-center text-muted" do
                     h.tag :i, class: "far fa-code"
                   end
