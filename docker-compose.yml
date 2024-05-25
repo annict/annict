@@ -20,7 +20,7 @@ services:
   postgresql:
     image: postgres:16.2
     ports:
-      - "35432:5432"
+      - "5432:5432"
     volumes:
       - postgresql16_data:/var/lib/postgresql/data:delegated
     environment:
@@ -29,12 +29,12 @@ services:
   redis:
     image: redis:5.0.5-alpine
     ports:
-      - "36379:6379"
+      - "6379:6379"
 
   imgproxy:
     image: darthsim/imgproxy:v3.5.0
     ports:
-      - "38080:8080"
+      - "8080:8080"
     env_file:
       - .env.imgproxy
       - .env.imgproxy.local
