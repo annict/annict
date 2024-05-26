@@ -4,9 +4,10 @@ services:
       context: .
       dockerfile: ./Dockerfile.dev
     depends_on:
+      - imgproxy
+      - minio
       - postgresql
       - redis
-      - imgproxy
     environment:
       BINDING: 0.0.0.0
     ports:
@@ -31,14 +32,31 @@ services:
     ports:
       - "6379:6379"
 
+  minio:
+    image: minio/minio
+    environment:
+      MINIO_ROOT_USER: minio_admin
+      MINIO_ROOT_PASSWORD: minio_admin
+      MINIO_DOMAIN: minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+    networks:
+      default:
+        aliases:
+          - annict-development.minio
+
   imgproxy:
     image: darthsim/imgproxy:v3.5.0
     ports:
       - "8080:8080"
     env_file:
       - .env.imgproxy
-      - .env.imgproxy.local
 
 volumes:
   app_gems_data:
+  minio_data:
   postgresql16_data:
