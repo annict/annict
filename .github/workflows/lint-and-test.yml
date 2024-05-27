@@ -1,22 +1,19 @@
-name: Build
+name: Lint and test
 
-on: [push]
+on: push
 
 jobs:
-  lint_standard:
-    name: Lint (Standard)
+  zeitwerk:
+    name: Zeitwerk
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v2
-
+      - uses: actions/checkout@v4
       - name: Setup Ruby and install gems
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.1.4
           bundler-cache: true
-
-      - run: bin/standardrb
+      - run: bin/rails zeitwerk:check
 
   sorbet:
     name: Sorbet
@@ -47,8 +44,22 @@ jobs:
           fi
       - run: bin/srb tc
 
-  test_rspec:
-    name: Test (RSpec)
+  standard:
+    name: Standard
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Ruby and install gems
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.1.4
+          bundler-cache: true
+
+      - run: bin/standardrb
+
+  rspec:
+    name: RSpec
     runs-on: ubuntu-latest
     env:
       CC_TEST_REPORTER_ID: 473c071c4d1900d58ceed984bd49d8a39368393ce6f010cf5d52287f3072f6ef
