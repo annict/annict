@@ -3,7 +3,7 @@
 module Deprecated::Db
   class SeriesWorkRowsForm
     include ActiveModel::Model
-    include Virtus.model
+    T.unsafe(self).include Virtus.model
     include ResourceRows
 
     attr_accessor :series

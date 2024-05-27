@@ -34,8 +34,8 @@
 #
 
 class Profile < ApplicationRecord
-  include ProfileImageUploader::Attachment.new(:image)
-  include ProfileImageUploader::Attachment.new(:background_image)
+  T.unsafe(self).include ProfileImageUploader::Attachment.new(:image)
+  T.unsafe(self).include ProfileImageUploader::Attachment.new(:background_image)
   include ImageUploadable
 
   belongs_to :user, touch: true

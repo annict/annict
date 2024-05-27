@@ -31,7 +31,7 @@
 #
 
 class UserlandProject < ApplicationRecord
-  include UserlandProjectImageUploader::Attachment.new(:image)
+  T.unsafe(self).include UserlandProjectImageUploader::Attachment.new(:image)
   include UgcLocalizable
   include ImageUploadable
 

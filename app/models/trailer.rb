@@ -33,7 +33,7 @@
 #
 
 class Trailer < ApplicationRecord
-  include TrailerImageUploader::Attachment.new(:image)
+  T.unsafe(self).include TrailerImageUploader::Attachment.new(:image)
   include DbActivityMethods
   include ImageUploadable
   include Unpublishable

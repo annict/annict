@@ -7,7 +7,6 @@
 module ::Spring; end
 module BulkCreateEpisodeRecordsJob::EpisodeRecordCreator; end
 module Deprecated::SearchService::Moji; end
-module Devise::OmniauthCallbacksController; end
 module GitHub::Markups::MARKUP_MARKDOWN; end
 module PageCategory::CAST_LIST; end
 module PageCategory::CHARACTER_FAN_LIST; end
