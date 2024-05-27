@@ -334,7 +334,6 @@ GEM
     method_source (1.0.0)
     mini_magick (4.11.0)
     mini_mime (1.1.5)
-    mini_portile2 (2.8.5)
     minitest (5.22.3)
     mjml-rails (4.8.0)
     moji (1.6)
@@ -352,8 +351,7 @@ GEM
       net-protocol
     netrc (0.11.0)
     nio4r (2.7.1)
-    nokogiri (1.16.3)
-      mini_portile2 (~> 2.8.2)
+    nokogiri (1.16.3-x86_64-linux)
       racc (~> 1.4)
     oauth2 (1.4.7)
       faraday (>= 0.8, < 2.0)
@@ -474,7 +472,8 @@ GEM
       railties (>= 5.0)
     reverse_markdown (2.1.1)
       nokogiri
-    rexml (3.2.6)
+    rexml (3.2.8)
+      strscan (>= 3.0.9)
     rspec-core (3.11.0)
       rspec-support (~> 3.11.0)
     rspec-expectations (3.11.1)
@@ -573,8 +572,6 @@ GEM
     sorbet (0.5.11391)
       sorbet-static (= 0.5.11391)
     sorbet-runtime (0.5.11391)
-    sorbet-static (0.5.11391-aarch64-linux)
-    sorbet-static (0.5.11391-universal-darwin)
     sorbet-static (0.5.11391-x86_64-linux)
     sorbet-static-and-runtime (0.5.11391)
       sorbet (= 0.5.11391)
@@ -603,6 +600,7 @@ GEM
     standard-sorbet (0.0.2)
       lint_roller (~> 1.1)
       rubocop-sorbet (~> 0.7.0)
+    strscan (3.1.0)
     syoboi_calendar (0.9.4)
       faraday
       faraday_middleware
@@ -654,7 +652,7 @@ GEM
     zeitwerk (2.6.13)
 
 PLATFORMS
-  ruby
+  x86_64-linux
 
 DEPENDENCIES
   active_decorator
