@@ -76,6 +76,7 @@ gem "sentry-ruby"
 gem "sentry-rails"
 gem "shrine"
 gem "slim"
+gem "sorbet-runtime"
 gem "syoboi_calendar"
 gem "view_component"
 gem "virtus"
@@ -87,7 +88,11 @@ group :development, :test do
   gem "pry-rails"
   gem "rspec-mocks"
   gem "rspec-rails"
+  gem "rubocop-factory_bot", require: false
+  gem "rubocop-rspec", require: false
   gem "standard"
+  gem "standard-rails"
+  gem "standard-sorbet"
 end
 
 group :development do
@@ -103,7 +108,9 @@ group :development do
   gem "i18n-tasks"
   gem "listen" # Using with `rails s` since Rails 5
   gem "solargraph"
+  gem "sorbet"
   gem "squasher"
+  gem "tapioca", require: false
   gem "traceroute"
 end
 

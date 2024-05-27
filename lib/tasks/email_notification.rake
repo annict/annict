@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 
 namespace :email_notification do

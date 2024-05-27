@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 
 xdescribe Canary::Mutations::UpdateEpisodeRecord do
@@ -55,7 +56,7 @@ xdescribe Canary::Mutations::UpdateEpisodeRecord do
       expect(result.dig("data", "updateEpisodeRecord", "errors")).to be_empty
       expect(result.dig("data", "updateEpisodeRecord", "record", "comment")).to eq "またーり"
       expect(result.dig("data", "updateEpisodeRecord", "record", "recordable", "rating")).to eq "GREAT"
-      expect(user.record_cache_expired_at).to_not eq record_cache_expired_at
+      expect(user.record_cache_expired_at).not_to eq record_cache_expired_at
     end
   end
 end

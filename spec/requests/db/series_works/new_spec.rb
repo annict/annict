@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 
 describe "GET /db/series/:series_id/series_works/new", type: :request do

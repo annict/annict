@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 
 # == Schema Information
@@ -99,10 +100,10 @@ class Work < ApplicationRecord
 
   belongs_to :number_format, optional: true
   belongs_to :season_model, class_name: "SeasonModel", foreign_key: :season_id, optional: true
-  has_many :casts, dependent: :destroy, foreign_key: :work_id
-  has_many :programs, dependent: :destroy, foreign_key: :work_id
-  has_many :series_works, dependent: :destroy, foreign_key: :work_id
-  has_many :staffs, dependent: :destroy, foreign_key: :work_id
+  has_many :casts, dependent: :destroy
+  has_many :programs, dependent: :destroy
+  has_many :series_works, dependent: :destroy
+  has_many :staffs, dependent: :destroy
   has_many :work_taggings
   has_many :activities, as: :recipient
   has_many :cast_people, through: :casts, source: :person
@@ -110,20 +111,20 @@ class Work < ApplicationRecord
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
   has_many :episode_records
-  has_many :episodes, dependent: :destroy, foreign_key: :work_id
-  has_many :library_entries, foreign_key: :work_id
+  has_many :episodes, dependent: :destroy
+  has_many :library_entries
   has_many :organizations, through: :staffs, source: :resource, source_type: "Organization"
-  has_many :slots, dependent: :destroy, foreign_key: :work_id
-  has_many :trailers, dependent: :destroy, foreign_key: :work_id
-  has_many :records, foreign_key: :work_id
+  has_many :slots, dependent: :destroy
+  has_many :trailers, dependent: :destroy
+  has_many :records
   has_many :series_list, through: :series_works, source: :series
   has_many :statuses
   has_many :staff_people, through: :staffs, source: :resource, source_type: "Person"
   has_many :channels, through: :programs
-  has_many :work_records, foreign_key: :work_id
+  has_many :work_records
   has_many :records_only_work, class_name: "Record", source: :record, through: :work_records
   has_many :work_tags, through: :work_taggings
-  has_one :work_image, dependent: :destroy, foreign_key: :work_id
+  has_one :work_image, dependent: :destroy
 
   validates :media, presence: true
   validates :official_site_url_en, url: {allow_blank: true}
@@ -285,7 +286,7 @@ class Work < ApplicationRecord
 
   def comments_count
     episode_ids = episodes.pluck(:id)
-    records = Record.where(episode_id: episode_ids).where("comment != ?", "")
+    records = Record.where(episode_id: episode_ids).where.not(comment: "")
 
     records.count
   end

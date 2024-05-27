@@ -33,6 +33,25 @@ cd /path/to/annict
 docker compose up
 ```
 
+### MinIOとimgproxyのセットアップをする
+
+開発環境で画像をアップロードするとき、ストレージとして[MinIO](https://github.com/minio/minio)を使っています。
+また、アップロードした画像のリサイズなどをするために[imgproxy](https://imgproxy.net/)を使っています。
+MinIOとimgproxyは `docker compose up` ですでに起動しているはずです。
+
+http://localhost:9001/login にアクセスし、以下の情報でMinIOの管理コンソールにログインします。
+
+- Username: `minio_admin`
+- Password: `minio_admin`
+
+ログイン後、 http://localhost:9001/access-keys にアクセスし、アクセスキーを作成します。
+作成したアクセスキーとシークレットキーを以下に設定します。
+
+- [.env.development](https://github.com/annict/annict/blob/main/.env.development) の `S3_ACCESS_KEY_ID` と `S3_SECRET_ACCESS_KEY`
+- [.env.imgproxy](https://github.com/annict/annict/blob/main/.env.imgproxy) の `AWS_ACCESS_KEY_ID` と `AWS_SECRET_ACCESS_KEY`
+
+次に http://localhost:9001/buckets にアクセスし、`annict-development` という名前のバケットを作成します。
+
 ### Railsのセットアップをする
 
 以下を実行します。
@@ -82,9 +101,3 @@ AnnictではRSpecを使ってテストを書いています。以下のコマン
 ```sh
 docker compose exec -e RAILS_ENV=test app bin/rspec
 ```
-
-## 画像のアップロードや表示について
-
-このドキュメントでは簡単のため画像のアップロードや表示については触れていません。
-画像をアップロードしたり表示できるようにするようにするにはAmazon S3 (互換のストレージ) やimgproxyを追加でセットアップする必要があります。
-興味ある方は他のドキュメント等を参考にセットアップしてください。

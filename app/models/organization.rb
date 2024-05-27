@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 
 # == Schema Information
@@ -60,8 +61,8 @@ class Organization < ApplicationRecord
     organization_favorites
   end
 
-  after_save :touch_children
   after_destroy :touch_children
+  after_save :touch_children
 
   def to_diffable_hash
     data = self.class::DIFF_FIELDS.each_with_object({}) { |field, hash|

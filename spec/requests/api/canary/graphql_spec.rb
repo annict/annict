@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 
 describe "POST /canary/graphql", type: :request do

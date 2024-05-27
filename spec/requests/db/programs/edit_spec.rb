@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 
 describe "GET /db/programs/:id/edit", type: :request do

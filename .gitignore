@@ -11,9 +11,11 @@
 /config/master.key
 /coverage
 /db/dump/*
+/docker-compose.override.yml
 /lib/tasks/data.rake
 /log/*
 /node_modules
+/private
 /public/packs
 /public/uploads
 /tags

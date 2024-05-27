@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 
 describe "DELETE /db/series/:id/publishing", type: :request do

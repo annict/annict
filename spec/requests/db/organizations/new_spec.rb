@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 
 describe "GET /db/organizations/new", type: :request do

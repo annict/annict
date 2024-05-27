@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 
 xdescribe Canary::Mutations::UpdateWorkRecord do
@@ -69,7 +70,7 @@ xdescribe Canary::Mutations::UpdateWorkRecord do
       expect(result.dig("data", "updateWorkRecord", "record", "recordable", "ratingStory")).to eq "GREAT"
       expect(result.dig("data", "updateWorkRecord", "record", "recordable", "ratingCharacter")).to eq "GREAT"
       expect(result.dig("data", "updateWorkRecord", "errors")).to eq []
-      expect(user.record_cache_expired_at).to_not eq record_cache_expired_at
+      expect(user.record_cache_expired_at).not_to eq record_cache_expired_at
     end
   end
 end

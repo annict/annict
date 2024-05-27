@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 
 describe "GET /db/channels/:id/edit", type: :request do

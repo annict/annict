@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 
 describe "POST /db/works/:work_id/trailers", type: :request do

@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 
 # == Schema Information
@@ -29,7 +30,7 @@
 #
 
 class WorkImage < ApplicationRecord
-  include WorkImageUploader::Attachment.new(:image)
+  T.unsafe(self).include WorkImageUploader::Attachment.new(:image)
   include ImageUploadable
 
   self.ignored_columns = %w[color_rgb]

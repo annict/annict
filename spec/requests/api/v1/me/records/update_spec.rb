@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 
 describe "PATCH /v1/me/records/:id" do

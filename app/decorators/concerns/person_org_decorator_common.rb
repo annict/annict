@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 
 module PersonOrgDecoratorCommon
@@ -26,7 +27,7 @@ module PersonOrgDecoratorCommon
 
     def twitter_username_link
       url = "https://twitter.com/#{twitter_username}"
-      link_to "@#{twitter_username}", url, target: "_blank"
+      link_to "@#{twitter_username}", url, target: "_blank", rel: "noopener"
     end
   end
 end

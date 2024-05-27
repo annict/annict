@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 
 describe "PATCH /db/casts/:id", type: :request do

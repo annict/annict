@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 
 describe Creators::EpisodeRecordCreator, type: :model do

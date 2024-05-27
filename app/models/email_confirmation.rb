@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 
 # == Schema Information
@@ -74,7 +75,7 @@ class EmailConfirmation < ApplicationRecord
       event: event,
       token: SecureRandom.uuid,
       back: back,
-      expires_at: Time.zone.now + 2.hours
+      expires_at: 2.hours.from_now
     )
   end
 end

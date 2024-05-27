@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 
 # Remove Rails field_with_errors wrapper to style with Bootstrap

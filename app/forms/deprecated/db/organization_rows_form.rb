@@ -1,9 +1,10 @@
+# typed: false
 # frozen_string_literal: true
 
 module Deprecated::Db
   class OrganizationRowsForm
     include ActiveModel::Model
-    include Virtus.model
+    T.unsafe(self).include Virtus.model
     include ResourceRows
 
     row_model Organization

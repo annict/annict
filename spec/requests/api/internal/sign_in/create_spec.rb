@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 
 describe "POST /api/internal/sign_in", type: :request do

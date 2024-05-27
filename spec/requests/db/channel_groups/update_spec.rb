@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 
 describe "PATCH /db/channel_groups/:id", type: :request do

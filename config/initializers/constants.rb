@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 
 ROUTING_ID_FORMAT = /[0-9]+/

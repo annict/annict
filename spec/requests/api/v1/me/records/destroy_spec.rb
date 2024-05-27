@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 
 describe "DELETE /v1/me/records/:id" do

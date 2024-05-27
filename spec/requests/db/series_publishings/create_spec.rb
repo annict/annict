@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 
 describe "POST /db/series/:id/publishing", type: :request do

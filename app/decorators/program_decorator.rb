@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 
 module ProgramDecorator
@@ -18,7 +19,7 @@ module ProgramDecorator
       when :locale
         send(:locale_text)
       when :unique_id
-        link_to unique_id, url, target: "_blank"
+        link_to unique_id, url, target: "_blank", rel: "noopener"
       else
         send(field)
       end

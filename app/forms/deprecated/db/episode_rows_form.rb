@@ -1,9 +1,10 @@
+# typed: false
 # frozen_string_literal: true
 
 module Deprecated::Db
   class EpisodeRowsForm
     include ActiveModel::Model
-    include Virtus.model
+    T.unsafe(self).include Virtus.model
     include ResourceRows
 
     attribute :rows, String

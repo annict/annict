@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 
 module WorkDecorator
@@ -84,7 +85,7 @@ module WorkDecorator
         sc_tid = send(:sc_tid)
         if sc_tid.present?
           url = "http://cal.syoboi.jp/tid/#{sc_tid}"
-          link_to(sc_tid, url, target: "_blank")
+          link_to(sc_tid, url, target: "_blank", rel: "noopener")
         end
       when :media
         Work.media.find_value(send(:media)).text
@@ -92,7 +93,7 @@ module WorkDecorator
         url = send(field)
         if url.present?
           begin
-            link_to(url, url, target: "_blank")
+            link_to(url, url, target: "_blank", rel: "noopener")
           rescue
             url
           end
@@ -101,13 +102,13 @@ module WorkDecorator
         username = send(:twitter_username)
         if username.present?
           url = "https://twitter.com/#{username}"
-          link_to("@#{username}", url, target: "_blank")
+          link_to("@#{username}", url, target: "_blank", rel: "noopener")
         end
       when :twitter_hashtag
         hashtag = send(:twitter_hashtag)
         if hashtag.present?
           url = "https://twitter.com/search?q=%23#{hashtag}"
-          link_to("##{hashtag}", url, target: "_blank")
+          link_to("##{hashtag}", url, target: "_blank", rel: "noopener")
         end
       when :number_format_id
         send(:number_format).name if send(:number_format_id).present?

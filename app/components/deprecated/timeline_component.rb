@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 
 class Deprecated::TimelineComponent < Deprecated::ApplicationV6Component

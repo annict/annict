@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 
 module ResourceImageDecoratorCommon
@@ -11,7 +12,7 @@ module ResourceImageDecoratorCommon
         messages << Rack::Utils.escape_html(copyright)
         content_tag(:span, messages.join.html_safe, class: "text-muted")
       elsif asin.present?
-        link_to amazon_url, target: "_blank" do
+        link_to amazon_url, target: "_blank", rel: "noopener" do
           messages = []
           messages << icon("amazon", "fab", class: "me-1")
           messages << I18n.t("messages._common.view_amazon_product")

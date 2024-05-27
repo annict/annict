@@ -16,6 +16,8 @@ RUN \
     build-essential \
     curl \
     git \
+    # Shrineによる画像アップロードに必要
+    file imagemagick \
     # PostgreSQLやYarnのインストールに必要
     gnupg
 

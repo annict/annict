@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 
 describe "GET /fragment/activity_groups/:activity_group_id/items", type: :request do

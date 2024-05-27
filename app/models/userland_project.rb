@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 
 # == Schema Information
@@ -31,7 +32,7 @@
 #
 
 class UserlandProject < ApplicationRecord
-  include UserlandProjectImageUploader::Attachment.new(:image)
+  T.unsafe(self).include UserlandProjectImageUploader::Attachment.new(:image)
   include UgcLocalizable
   include ImageUploadable
 
