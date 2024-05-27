@@ -9,11 +9,11 @@ Rails.application.routes.draw do
     skip: %i[passwords registrations sessions]
 
   devise_scope :user do
-    # standard:disable Layout/ExtraSpacing
+    # standard:disable Layout/ExtraSpacing, Rails/MatchRoute
     match "/legacy/sign_in",      via: :get,    as: :legacy_sign_in,      to: "legacy/sessions#new"
     match "/legacy/sign_in",      via: :post,   as: :user_session,        to: "legacy/sessions#create"
     match "/sign_out",            via: :delete, as: :sign_out,            to: "devise/sessions#destroy"
-    # standard:enable Layout/ExtraSpacing, Layout/LineLength
+    # standard:enable Layout/ExtraSpacing, Rails/MatchRoute
   end
 
   use_doorkeeper do
@@ -26,7 +26,7 @@ Rails.application.routes.draw do
     skip_controllers :authorized_applications
   end
 
-  # standard:disable Layout/ExtraSpacing, Layout/LineLength
+  # standard:disable Layout/ExtraSpacing, Layout/LineLength, Rails/MatchRoute
   match "/@:username",                                          via: :get,    as: :profile,                                    to: "profiles#show",                                       username: ROUTING_USERNAME_FORMAT
   match "/@:username/:status_kind",                             via: :get,    as: :library,                                    to: "libraries#show",                                      username: ROUTING_USERNAME_FORMAT, status_kind: /wanna_watch|watching|watched|on_hold|stop_watching/
   match "/@:username/collections",                              via: :get,    as: :user_collection_list,                       to: "collections#index",                                   username: ROUTING_USERNAME_FORMAT
@@ -297,7 +297,7 @@ Rails.application.routes.draw do
   match "/works/:season_slug",                                  via: :get,    as: :seasonal_work_list,                         to: "seasonal_works#index",                                season_slug: /[0-9]{4}-(all|spring|summer|autumn|winter)/
   match "/works/newest",                                        via: :get,    as: :newest_work_list,                           to: "newest_works#index"
   match "/works/popular",                                       via: :get,    as: :popular_work_list,                          to: "popular_works#index"
-  # standard:enable Layout/ExtraSpacing, Layout/LineLength
+  # standard:enable Layout/ExtraSpacing, Layout/LineLength, Rails/MatchRoute
 
   root "home#show",
     constraints: Annict::RoutingConstraints::Member.new

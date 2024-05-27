@@ -492,8 +492,6 @@ ignore:
   - Lint/ConstantDefinitionInBlock
 - config/initializers/application_controller_renderer.rb:
   - Layout/EmptyLineAfterMagicComment
-- config/routes.rb:
-  - Rails/MatchRoute
 - db/migrate/20161203102005_init_schema.rb:
   - Rails/DangerousColumnNames
 - db/migrate/20170211110911_fix_constraints_on_some_tables.rb:
