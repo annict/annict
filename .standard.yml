@@ -3,3 +3,4 @@ extend_config:
 
 plugins:
   - standard-rails
+  - standard-sorbet

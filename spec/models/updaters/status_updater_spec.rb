@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 
 describe Updaters::StatusUpdater, type: :model do

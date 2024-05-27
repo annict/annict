@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 
 class FavoritePeopleController < ApplicationV6Controller

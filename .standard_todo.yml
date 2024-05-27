@@ -127,6 +127,8 @@ ignore:
   - Rails/ApplicationController
 - app/controllers/api/internal/following_controller.rb:
   - Rails/PluckId
+- app/controllers/api/internal/likes_controller.rb:
+  - Sorbet/ConstantsFromStrings
 - app/controllers/api/internal/multiple_episode_records_controller.rb:
   - Rails/TransactionExitStatement
 - app/controllers/api/internal/mute_users_controller.rb:
@@ -137,9 +139,16 @@ ignore:
   - Rails/SaveBang
 - app/controllers/api/internal/skipped_episodes_controller.rb:
   - Rails/LexicallyScopedActionFilter
+- app/controllers/api/internal/stars_controller.rb:
+  - Sorbet/ConstantsFromStrings
+- app/controllers/api/internal/unlikes_controller.rb:
+  - Sorbet/ConstantsFromStrings
+- app/controllers/api/internal/unstars_controller.rb:
+  - Sorbet/ConstantsFromStrings
 - app/controllers/api/v1/application_controller.rb:
   - Rails/LexicallyScopedActionFilter
   - Lint/DuplicateMethods
+  - Sorbet/ConstantsFromStrings
   - Style/RedundantReturn
 - app/controllers/api/v1/me/following_activities_controller.rb:
   - Rails/PluckId
@@ -250,6 +259,8 @@ ignore:
   - Rails/TimeZone
 - app/forms/deprecated/db/staff_rows_form.rb:
   - Style/RedundantParentheses
+- app/graphql/beta/annict_schema.rb:
+  - Sorbet/ConstantsFromStrings
 - app/graphql/beta/mutations/create_record.rb:
   - Rails/DynamicFindBy
 - app/graphql/beta/mutations/create_review.rb:
@@ -273,6 +284,8 @@ ignore:
   - Rails/PluckId
 - app/graphql/beta/types/objects/work_type.rb:
   - Style/TernaryParentheses
+- app/graphql/canary/annict_schema.rb:
+  - Sorbet/ConstantsFromStrings
 - app/graphql/canary/mutations/create_episode_record.rb:
   - Rails/DynamicFindBy
 - app/graphql/canary/mutations/create_work_record.rb:
@@ -333,6 +346,8 @@ ignore:
   - Rails/Output
 - app/lib/annict/vod_importer/nico_nico_channel.rb:
   - Rails/Output
+- app/mailers/mention_mailer.rb:
+  - Sorbet/ConstantsFromStrings
 - app/models/activity.rb:
   - Rails/IgnoredColumnsAssignment
   - Rails/SaveBang
@@ -340,6 +355,7 @@ ignore:
   - Rails/HasManyOrHasOneDependent
   - Rails/InverseOf
 - app/models/application_record.rb:
+  - Sorbet/ConstantsFromStrings
   - Lint/SymbolConversion
 - app/models/cast.rb:
   - Rails/RedundantPresenceValidationOnBelongsTo
@@ -410,6 +426,8 @@ ignore:
   - Rails/CompactBlank
 - app/models/organization_favorite.rb:
   - Rails/PluckId
+- app/models/page_category.rb:
+  - Sorbet/ConstantsFromStrings
 - app/models/person.rb:
   - Rails/HasManyOrHasOneDependent
   - Rails/CompactBlank
@@ -583,6 +601,7 @@ ignore:
 - lib/tasks/episode.rake:
   - Lint/ConstantDefinitionInBlock
 - lib/tasks/graphql.rake:
+  - Sorbet/ConstantsFromStrings
   - Rails/RootPathnameMethods
   - Style/RedundantInterpolation
 - lib/tasks/internal_statistic.rake:

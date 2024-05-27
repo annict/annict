@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 
 describe "GET /works/:work_id/episodes/:episode_id", type: :request do

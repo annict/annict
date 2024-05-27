@@ -1,3 +1,5 @@
+# typed: false
+
 module ProfileDecorator
   def shorten_url
     uri = URI(url)

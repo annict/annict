@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 
 describe "Api::V1::Staffs" do

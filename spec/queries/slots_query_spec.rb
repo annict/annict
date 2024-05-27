@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 
 describe Deprecated::SlotsQuery, type: :query do

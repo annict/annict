@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 
 describe "GET /settings/apps/:app_id/revoke", type: :request do

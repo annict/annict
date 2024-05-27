@@ -1,3 +1,5 @@
+# typed: false
+
 module UserFollowable
   extend ActiveSupport::Concern
 

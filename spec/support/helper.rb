@@ -1,3 +1,5 @@
+# typed: false
+
 Module.class_eval do
   ##
   # 独自のエレメントモジュールなどをincludeする処理のショートカット
