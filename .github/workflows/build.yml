@@ -18,6 +18,35 @@ jobs:
 
       - run: bin/standardrb
 
+  sorbet:
+    name: Sorbet
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Ruby and install gems
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.1.4
+          bundler-cache: true
+      - run: bin/rails sorbet:update
+      - name: Push RBI files or fail
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            if [ "$GITHUB_ACTOR" = "dependabot[bot]" ]; then
+              git config user.email 49699333+dependabot[bot]@users.noreply.github.com
+              git config user.name dependabot[bot]
+              git add .
+              git commit -m "Update RBI files"
+              git push
+            else
+              echo "Error! 未更新のRBIファイルがあるようです。bin/rails sorbet:update を実行して差分をコミットしてください。"
+              exit 1
+            fi
+          fi
+      - run: bin/srb tc
+
   test_rspec:
     name: Test (RSpec)
     runs-on: ubuntu-latest
