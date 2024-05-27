@@ -6,7 +6,7 @@ FactoryBot.define do
     back { "/foo/bar" }
     email { "example@example.com" }
     event { "sign_in" }
-    expires_at { Time.zone.now + 2.hours }
+    expires_at { 2.hours.from_now }
     token { SecureRandom.uuid }
   end
 end

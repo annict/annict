@@ -28,7 +28,7 @@ namespace :graphql do
     end
 
     GraphQLDocs.build(
-      filename: "#{Rails.root}/app/graphql/#{version}/schema.graphql",
+      filename: "#{Rails.root.join("app/graphql/#{version}/schema.graphql")}",
       output_dir: "./tmp/docs/graphql-api/#{version}/reference/",
       base_url: "/docs/graphql-api/#{version}/reference"
     )

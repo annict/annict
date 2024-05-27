@@ -83,8 +83,8 @@ class Person < ApplicationRecord
     person_favorites
   end
 
-  after_save :touch_children
   after_destroy :touch_children
+  after_save :touch_children
 
   def voice_actor?
     casts.exists?

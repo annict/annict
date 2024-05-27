@@ -11,7 +11,7 @@ module SeriesWorkDecorator
       hash[field] = case field
       when :work_id
         path = work_path(work_id: work.id)
-        link_to(work.local_title, path, target: "_blank")
+        link_to(work.local_title, path, target: "_blank", rel: "noopener")
       else
         send(field)
       end

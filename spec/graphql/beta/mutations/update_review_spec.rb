@@ -59,7 +59,7 @@ describe Beta::Mutations::UpdateReview do
       expect(result.dig("data", "updateReview", "review", "ratingMusicState")).to eq "GREAT"
       expect(result.dig("data", "updateReview", "review", "ratingStoryState")).to eq "GREAT"
       expect(result.dig("data", "updateReview", "review", "ratingCharacterState")).to eq "GREAT"
-      expect(user.record_cache_expired_at).to_not eq record_cache_expired_at
+      expect(user.record_cache_expired_at).not_to eq record_cache_expired_at
     end
   end
 end

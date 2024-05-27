@@ -59,7 +59,6 @@ class Episode < ApplicationRecord
 
   belongs_to :prev_episode,
     class_name: "Episode",
-    foreign_key: :prev_episode_id,
     optional: true
   belongs_to :work, touch: true
   has_many :db_activities, as: :trackable, dependent: :destroy

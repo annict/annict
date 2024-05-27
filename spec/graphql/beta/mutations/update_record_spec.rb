@@ -45,7 +45,7 @@ describe Beta::Mutations::UpdateRecord do
       expect(result["errors"]).to be_nil
       expect(result.dig("data", "updateRecord", "record", "comment")).to eq "またーり"
       expect(result.dig("data", "updateRecord", "record", "ratingState")).to eq "GREAT"
-      expect(user.record_cache_expired_at).to_not eq record_cache_expired_at
+      expect(user.record_cache_expired_at).not_to eq record_cache_expired_at
     end
   end
 end

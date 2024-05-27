@@ -74,7 +74,7 @@ module Annict
       r301 %r{\A/works\z}, "/works/#{ENV.fetch("ANNICT_CURRENT_SEASON")}"
       r301 %r{\A/works/[0-9]+/items}, "/"
 
-      maintenance_file = File.join(Rails.root, "public", "maintenance.html")
+      maintenance_file = Rails.public_path.join("maintenance.html").to_s
       send_file(/(.*)$(?<!maintenance|favicons)/, maintenance_file, if: proc { |rack_env|
         ip_address = rack_env["HTTP_CF_CONNECTING_IP"]
 

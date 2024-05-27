@@ -32,19 +32,19 @@ module PersonDecorator
         self.class.gender.find_value(gender).text if gender.present?
       when :url
         url = send(:url)
-        link_to(url, url, target: "_blank") if url.present?
+        link_to(url, url, target: "_blank", rel: "noopener") if url.present?
       when :media
         Work.media.find_value(send(:media)).text
       when :wikipedia_url
         wikipedia_url = send(field)
         if wikipedia_url.present?
-          link_to(wikipedia_url, wikipedia_url, target: "_blank")
+          link_to(wikipedia_url, wikipedia_url, target: "_blank", rel: "noopener")
         end
       when :twitter_username
         username = send(:twitter_username)
         if username.present?
           url = "https://twitter.com/#{username}"
-          link_to("@#{username}", url, target: "_blank")
+          link_to("@#{username}", url, target: "_blank", rel: "noopener")
         end
       when :birthday
         birthday = send(:birthday)

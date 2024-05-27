@@ -25,7 +25,7 @@ module EpisodeDecorator
           if episode.present?
             title = episode.decorate.title_with_number
             path = episode_path(work_id: episode.work_id, episode_id: episode.id)
-            link_to(title, path, target: "_blank")
+            link_to(title, path, target: "_blank", rel: "noopener")
           else
             ""
           end

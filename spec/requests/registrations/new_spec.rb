@@ -2,7 +2,7 @@
 
 describe "GET /registrations/new", type: :request do
   context "メールアドレス確認用トークンの有効期限が切れているとき" do
-    let(:email_confirmation) { create(:email_confirmation, event: "sign_up", expires_at: Time.zone.now - 3.hours) }
+    let(:email_confirmation) { create(:email_confirmation, event: "sign_up", expires_at: 3.hours.ago) }
 
     it "有効期限切れのメッセージが表示されること" do
       get "/registrations/new", params: {token: email_confirmation.token}

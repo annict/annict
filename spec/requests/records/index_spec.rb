@@ -76,7 +76,7 @@ describe "GET /@:username/records", type: :request do
       expect(response.status).to eq(200)
       expect(response.body).to include(user.profile.name)
       expect(response.body).to include("すごく良かった")
-      expect(response.body).to_not include("最高")
+      expect(response.body).not_to include("最高")
     end
   end
 end
