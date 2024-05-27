@@ -1,0 +1,27 @@
+require:
+  - rubocop-factory_bot
+  - rubocop-rspec
+
+# https://docs.rubocop.org/rubocop-rspec/cops_rspec.html#rspeccontextwording
+RSpec/ContextWording:
+  Enabled: false
+
+# https://docs.rubocop.org/rubocop-rspec/cops_rspec.html#rspecdescribedclass
+RSpec/DescribedClass:
+  Enabled: false
+
+# https://docs.rubocop.org/rubocop-rspec/cops_rspec.html#rspecexamplelength
+RSpec/ExampleLength:
+  Enabled: false
+
+# https://docs.rubocop.org/rubocop-rspec/cops_rspec.html#rspecmultipleexpectations
+RSpec/MultipleExpectations:
+  Enabled: false
+
+# https://docs.rubocop.org/rubocop-rspec/cops_rspec.html#rspecmultiplememoizedhelpers
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+
+# https://docs.rubocop.org/rubocop-rspec/cops_rspec.html#rspecnestedgroups
+RSpec/NestedGroups:
+  Enabled: false

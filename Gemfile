@@ -87,7 +87,10 @@ group :development, :test do
   gem "pry-rails"
   gem "rspec-mocks"
   gem "rspec-rails"
+  gem "rubocop-factory_bot", require: false
+  gem "rubocop-rspec", require: false
   gem "standard"
+  gem "standard-rails"
 end
 
 group :development do
