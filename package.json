@@ -18,7 +18,7 @@
     "@types/gtag.js": "0.0.12",
     "autosize": "^5.0.1",
     "axios": "^1.1.2",
-    "bootstrap": "^5.1.0",
+    "bootstrap": "^5.2.3",
     "choices.js": "^10.1.0",
     "core-js": "^3.25.5",
     "dayjs": "^1.11.5",
@@ -32,7 +32,7 @@
   },
   "devDependencies": {
     "@types/autosize": "^4.0.1",
-    "@types/bootstrap": "^5.1.0",
+    "@types/bootstrap": "^5.2.6",
     "@types/jquery": "^3.5.1",
     "@types/js-cookie": "^3.0.2",
     "@types/lodash": "^4.14.186",
