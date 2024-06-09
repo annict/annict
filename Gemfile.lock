@@ -472,7 +472,8 @@ GEM
       railties (>= 5.0)
     reverse_markdown (2.1.1)
       nokogiri
-    rexml (3.2.6)
+    rexml (3.2.9)
+      strscan
     rspec-core (3.11.0)
       rspec-support (~> 3.11.0)
     rspec-expectations (3.11.1)
@@ -599,6 +600,7 @@ GEM
     standard-sorbet (0.0.2)
       lint_roller (~> 1.1)
       rubocop-sorbet (~> 0.7.0)
+    strscan (3.1.0)
     syoboi_calendar (0.9.4)
       faraday
       faraday_middleware
