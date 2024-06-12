@@ -5,7 +5,7 @@
 # Please instead update this file by running `bin/tapioca gem graphql-fragment_cache`.
 
 
-# source://graphql-fragment_cache//lib/graphql/fragment_cache/ext/context_fragments.rb#3
+# source://graphql-fragment_cache//lib/graphql/fragment_cache/graphql_ruby_version.rb#5
 module GraphQL
   class << self
     # source://graphql/1.12.14/lib/graphql.rb#172
@@ -36,85 +36,104 @@ end
 
 # Plugin definition
 #
-# source://graphql-fragment_cache//lib/graphql/fragment_cache/ext/context_fragments.rb#4
+# source://graphql-fragment_cache//lib/graphql/fragment_cache/graphql_ruby_version.rb#6
 module GraphQL::FragmentCache
   class << self
     # Returns the value of attribute cache_store.
     #
-    # source://graphql-fragment_cache//lib/graphql/fragment_cache.rb#24
+    # source://graphql-fragment_cache//lib/graphql/fragment_cache.rb#26
     def cache_store; end
 
-    # source://graphql-fragment_cache//lib/graphql/fragment_cache.rb#43
+    # source://graphql-fragment_cache//lib/graphql/fragment_cache.rb#54
     def cache_store=(store); end
 
     # @yield [_self]
     # @yieldparam _self [GraphQL::FragmentCache] the object that the method was called on
     #
-    # source://graphql-fragment_cache//lib/graphql/fragment_cache.rb#39
+    # source://graphql-fragment_cache//lib/graphql/fragment_cache.rb#50
     def configure; end
 
     # Returns the value of attribute default_options.
     #
-    # source://graphql-fragment_cache//lib/graphql/fragment_cache.rb#26
+    # source://graphql-fragment_cache//lib/graphql/fragment_cache.rb#29
     def default_options; end
 
     # Sets the attribute default_options
     #
     # @param value the value to set the attribute default_options to.
     #
-    # source://graphql-fragment_cache//lib/graphql/fragment_cache.rb#26
+    # source://graphql-fragment_cache//lib/graphql/fragment_cache.rb#29
     def default_options=(_arg0); end
 
-    # @return [Boolean]
+    # Returns the value of attribute enabled.
     #
-    # source://graphql-fragment_cache//lib/graphql/fragment_cache.rb#59
-    def graphql_ruby_after_2_0_13?; end
+    # source://graphql-fragment_cache//lib/graphql/fragment_cache.rb#27
+    def enabled; end
 
-    # @return [Boolean]
+    # Sets the attribute enabled
     #
-    # source://graphql-fragment_cache//lib/graphql/fragment_cache.rb#55
-    def graphql_ruby_before_2_0?; end
+    # @param value the value to set the attribute enabled to.
+    #
+    # source://graphql-fragment_cache//lib/graphql/fragment_cache.rb#27
+    def enabled=(_arg0); end
 
     # Returns the value of attribute namespace.
     #
-    # source://graphql-fragment_cache//lib/graphql/fragment_cache.rb#25
+    # source://graphql-fragment_cache//lib/graphql/fragment_cache.rb#28
     def namespace; end
 
     # Sets the attribute namespace
     #
     # @param value the value to set the attribute namespace to.
     #
-    # source://graphql-fragment_cache//lib/graphql/fragment_cache.rb#25
+    # source://graphql-fragment_cache//lib/graphql/fragment_cache.rb#28
     def namespace=(_arg0); end
 
-    # source://graphql-fragment_cache//lib/graphql/fragment_cache.rb#28
+    # Returns the value of attribute skip_cache_when_query_has_errors.
+    #
+    # source://graphql-fragment_cache//lib/graphql/fragment_cache.rb#31
+    def skip_cache_when_query_has_errors; end
+
+    # Sets the attribute skip_cache_when_query_has_errors
+    #
+    # @param value the value to set the attribute skip_cache_when_query_has_errors to.
+    #
+    # source://graphql-fragment_cache//lib/graphql/fragment_cache.rb#31
+    def skip_cache_when_query_has_errors=(_arg0); end
+
+    # Returns the value of attribute skip_cache_when_query_has_errors.
+    #
+    # source://graphql-fragment_cache//lib/graphql/fragment_cache.rb#31
+    def skip_cache_when_query_has_errors?; end
+
+    # source://graphql-fragment_cache//lib/graphql/fragment_cache.rb#33
     def use(schema_defn, options = T.unsafe(nil)); end
 
     private
 
-    # source://graphql-fragment_cache//lib/graphql/fragment_cache.rb#65
+    # source://graphql-fragment_cache//lib/graphql/fragment_cache.rb#70
     def check_graphql_version(predicate); end
 
-    # source://graphql-fragment_cache//lib/graphql/fragment_cache.rb#69
+    # source://graphql-fragment_cache//lib/graphql/fragment_cache.rb#74
     def verify_interpreter_and_analysis!(schema_defn); end
   end
 end
 
 # Extends key builder to use .expand_cache_key in Rails
 #
-# source://graphql-fragment_cache//lib/graphql/fragment_cache/cache_key_builder.rb#120
+# source://graphql-fragment_cache//lib/graphql/fragment_cache/cache_key_builder.rb#122
 class GraphQL::FragmentCache::CacheKeyBuilder
   # @return [CacheKeyBuilder] a new instance of CacheKeyBuilder
   #
-  # source://graphql-fragment_cache//lib/graphql/fragment_cache/cache_key_builder.rb#131
+  # source://graphql-fragment_cache//lib/graphql/fragment_cache/cache_key_builder.rb#133
   def initialize(query:, path:, object: T.unsafe(nil), **options); end
 
-  # source://graphql-fragment_cache//lib/graphql/fragment_cache/cache_key_builder.rb#139
+  # source://graphql-fragment_cache//lib/graphql/fragment_cache/cache_key_builder.rb#141
   def build; end
 
   # Returns the value of attribute object.
   #
-  # source://graphql-fragment_cache//lib/graphql/fragment_cache/cache_key_builder.rb#129
+  # source://graphql-fragment_cache//lib/graphql/fragment_cache/cache_key_builder.rb#131
   def object; end
 
   # source://graphql-fragment_cache//lib/graphql/fragment_cache/rails/cache_key_builder.rb#7
@@ -122,65 +141,68 @@ class GraphQL::FragmentCache::CacheKeyBuilder
 
   # Returns the value of attribute path.
   #
-  # source://graphql-fragment_cache//lib/graphql/fragment_cache/cache_key_builder.rb#129
+  # source://graphql-fragment_cache//lib/graphql/fragment_cache/cache_key_builder.rb#131
   def path; end
 
   # Returns the value of attribute query.
   #
-  # source://graphql-fragment_cache//lib/graphql/fragment_cache/cache_key_builder.rb#129
+  # source://graphql-fragment_cache//lib/graphql/fragment_cache/cache_key_builder.rb#131
   def query; end
 
   # Returns the value of attribute schema.
   #
-  # source://graphql-fragment_cache//lib/graphql/fragment_cache/cache_key_builder.rb#129
+  # source://graphql-fragment_cache//lib/graphql/fragment_cache/cache_key_builder.rb#131
   def schema; end
 
   private
 
-  # source://graphql-fragment_cache//lib/graphql/fragment_cache/cache_key_builder.rb#149
+  # source://graphql-fragment_cache//lib/graphql/fragment_cache/cache_key_builder.rb#157
   def implicit_cache_key; end
 
-  # source://graphql-fragment_cache//lib/graphql/fragment_cache/cache_key_builder.rb#198
+  # source://graphql-fragment_cache//lib/graphql/fragment_cache/cache_key_builder.rb#212
   def object_cache_key; end
 
-  # source://graphql-fragment_cache//lib/graphql/fragment_cache/cache_key_builder.rb#173
+  # source://graphql-fragment_cache//lib/graphql/fragment_cache/cache_key_builder.rb#187
   def path_cache_key; end
 
-  # source://graphql-fragment_cache//lib/graphql/fragment_cache/cache_key_builder.rb#157
+  # source://graphql-fragment_cache//lib/graphql/fragment_cache/cache_key_builder.rb#165
   def query_cache_key; end
 
-  # source://graphql-fragment_cache//lib/graphql/fragment_cache/cache_key_builder.rb#153
+  # source://graphql-fragment_cache//lib/graphql/fragment_cache/cache_key_builder.rb#161
   def schema_cache_key; end
 
-  # source://graphql-fragment_cache//lib/graphql/fragment_cache/cache_key_builder.rb#161
+  # source://graphql-fragment_cache//lib/graphql/fragment_cache/cache_key_builder.rb#169
   def selections_cache_key; end
 
-  # source://graphql-fragment_cache//lib/graphql/fragment_cache/cache_key_builder.rb#192
+  # source://graphql-fragment_cache//lib/graphql/fragment_cache/cache_key_builder.rb#181
+  def simple_path_cache_key; end
+
+  # source://graphql-fragment_cache//lib/graphql/fragment_cache/cache_key_builder.rb#206
   def traverse_argument(argument); end
 
   class << self
-    # source://graphql-fragment_cache//lib/graphql/fragment_cache/cache_key_builder.rb#124
+    # source://graphql-fragment_cache//lib/graphql/fragment_cache/cache_key_builder.rb#126
     def call(**options); end
   end
 end
 
 # Saves resolved fragment values to cache store
 #
-# source://graphql-fragment_cache//lib/graphql/fragment_cache/cacher.rb#8
+# source://graphql-fragment_cache//lib/graphql/fragment_cache/cacher.rb#31
 module GraphQL::FragmentCache::Cacher
   class << self
-    # source://graphql-fragment_cache//lib/graphql/fragment_cache/cacher.rb#10
+    # source://graphql-fragment_cache//lib/graphql/fragment_cache/cacher.rb#33
     def call(query); end
 
     private
 
-    # source://graphql-fragment_cache//lib/graphql/fragment_cache/cacher.rb#22
+    # source://graphql-fragment_cache//lib/graphql/fragment_cache/cacher.rb#45
     def batched_persist(query); end
 
-    # source://graphql-fragment_cache//lib/graphql/fragment_cache/cacher.rb#29
+    # source://graphql-fragment_cache//lib/graphql/fragment_cache/cacher.rb#57
     def persist(query); end
 
-    # source://graphql-fragment_cache//lib/graphql/fragment_cache/cacher.rb#35
+    # source://graphql-fragment_cache//lib/graphql/fragment_cache/cacher.rb#65
     def select_valid_fragments(query); end
   end
 end
@@ -212,11 +234,11 @@ class GraphQL::FragmentCache::FieldExtension < ::GraphQL::Schema::FieldExtension
   # source://graphql-fragment_cache//lib/graphql/fragment_cache/field_extension.rb#32
   def initialize(options:, **_rest); end
 
-  # source://graphql-fragment_cache//lib/graphql/fragment_cache/field_extension.rb#42
+  # source://graphql-fragment_cache//lib/graphql/fragment_cache/field_extension.rb#48
   def resolve(object:, arguments:, **_options); end
 end
 
-# source://graphql-fragment_cache//lib/graphql/fragment_cache/field_extension.rb#40
+# source://graphql-fragment_cache//lib/graphql/fragment_cache/field_extension.rb#46
 GraphQL::FragmentCache::FieldExtension::NOT_RESOLVED = T.let(T.unsafe(nil), Object)
 
 # source://graphql-fragment_cache//lib/graphql/fragment_cache/field_extension.rb#9
@@ -291,6 +313,51 @@ end
 # source://graphql-fragment_cache//lib/graphql/fragment_cache/fragment.rb#11
 GraphQL::FragmentCache::Fragment::NIL_IN_CACHE = T.let(T.unsafe(nil), Object)
 
+# source://graphql-fragment_cache//lib/graphql/fragment_cache/graphql_ruby_version.rb#7
+module GraphQL::FragmentCache::GraphRubyVersion
+  private
+
+  # source://graphql-fragment_cache//lib/graphql/fragment_cache/graphql_ruby_version.rb#14
+  def after_2_0_13?; end
+
+  # source://graphql-fragment_cache//lib/graphql/fragment_cache/graphql_ruby_version.rb#22
+  def after_2_2_5?; end
+
+  # source://graphql-fragment_cache//lib/graphql/fragment_cache/graphql_ruby_version.rb#10
+  def before_2_0?; end
+
+  # source://graphql-fragment_cache//lib/graphql/fragment_cache/graphql_ruby_version.rb#18
+  def before_2_1_4?; end
+
+  # source://graphql-fragment_cache//lib/graphql/fragment_cache/graphql_ruby_version.rb#26
+  def check_graphql_version(predicate); end
+
+  class << self
+    # @return [Boolean]
+    #
+    # source://graphql-fragment_cache//lib/graphql/fragment_cache/graphql_ruby_version.rb#14
+    def after_2_0_13?; end
+
+    # @return [Boolean]
+    #
+    # source://graphql-fragment_cache//lib/graphql/fragment_cache/graphql_ruby_version.rb#22
+    def after_2_2_5?; end
+
+    # @return [Boolean]
+    #
+    # source://graphql-fragment_cache//lib/graphql/fragment_cache/graphql_ruby_version.rb#10
+    def before_2_0?; end
+
+    # @return [Boolean]
+    #
+    # source://graphql-fragment_cache//lib/graphql/fragment_cache/graphql_ruby_version.rb#18
+    def before_2_1_4?; end
+
+    # source://graphql-fragment_cache//lib/graphql/fragment_cache/graphql_ruby_version.rb#26
+    def check_graphql_version(predicate); end
+  end
+end
+
 # Memory adapter for storing cached fragments
 #
 # source://graphql-fragment_cache//lib/graphql/fragment_cache/memory_store.rb#8
@@ -301,7 +368,7 @@ class GraphQL::FragmentCache::MemoryStore
   # source://graphql-fragment_cache//lib/graphql/fragment_cache/memory_store.rb#19
   def initialize(expires_in: T.unsafe(nil), **other); end
 
-  # source://graphql-fragment_cache//lib/graphql/fragment_cache/memory_store.rb#55
+  # source://graphql-fragment_cache//lib/graphql/fragment_cache/memory_store.rb#56
   def clear; end
 
   # Returns the value of attribute default_expires_in.
@@ -309,7 +376,7 @@ class GraphQL::FragmentCache::MemoryStore
   # source://graphql-fragment_cache//lib/graphql/fragment_cache/memory_store.rb#17
   def default_expires_in; end
 
-  # source://graphql-fragment_cache//lib/graphql/fragment_cache/memory_store.rb#50
+  # source://graphql-fragment_cache//lib/graphql/fragment_cache/memory_store.rb#51
   def delete(key); end
 
   # @return [Boolean]
@@ -324,13 +391,13 @@ class GraphQL::FragmentCache::MemoryStore
   def read(key); end
 
   # source://graphql-fragment_cache//lib/graphql/fragment_cache/memory_store.rb#45
-  def write(key, value, expires_in: T.unsafe(nil), **options); end
+  def write(key, value, options = T.unsafe(nil)); end
 
   private
 
   # Returns the value of attribute storage.
   #
-  # source://graphql-fragment_cache//lib/graphql/fragment_cache/memory_store.rb#61
+  # source://graphql-fragment_cache//lib/graphql/fragment_cache/memory_store.rb#62
   def storage; end
 end
 
@@ -407,12 +474,20 @@ module GraphQL::FragmentCache::Schema::Instrumentation
   # source://graphql-fragment_cache//lib/graphql/fragment_cache/schema/instrumentation.rb#12
   def before_query(query); end
 
+  # source://graphql-fragment_cache//lib/graphql/fragment_cache/schema/instrumentation.rb#21
+  def skip_caching?(query); end
+
   class << self
     # source://graphql-fragment_cache//lib/graphql/fragment_cache/schema/instrumentation.rb#15
     def after_query(query); end
 
     # source://graphql-fragment_cache//lib/graphql/fragment_cache/schema/instrumentation.rb#12
     def before_query(query); end
+
+    # @return [Boolean]
+    #
+    # source://graphql-fragment_cache//lib/graphql/fragment_cache/schema/instrumentation.rb#21
+    def skip_caching?(query); end
   end
 end
 
@@ -457,3 +532,44 @@ end
 
 # source://graphql-fragment_cache//lib/graphql/fragment_cache/version.rb#5
 GraphQL::FragmentCache::VERSION = T.let(T.unsafe(nil), String)
+
+# source://graphql-fragment_cache//lib/graphql/fragment_cache/cacher.rb#7
+class GraphQL::FragmentCache::WriteError < ::StandardError
+  # @return [WriteError] a new instance of WriteError
+  #
+  # source://graphql-fragment_cache//lib/graphql/fragment_cache/cacher.rb#10
+  def initialize(original_error, key, value); end
+
+  # Returns the value of attribute key.
+  #
+  # source://graphql-fragment_cache//lib/graphql/fragment_cache/cacher.rb#8
+  def key; end
+
+  # Returns the value of attribute original_error.
+  #
+  # source://graphql-fragment_cache//lib/graphql/fragment_cache/cacher.rb#8
+  def original_error; end
+
+  # Returns the value of attribute value.
+  #
+  # source://graphql-fragment_cache//lib/graphql/fragment_cache/cacher.rb#8
+  def value; end
+end
+
+# source://graphql-fragment_cache//lib/graphql/fragment_cache/cacher.rb#19
+class GraphQL::FragmentCache::WriteMultiError < ::StandardError
+  # @return [WriteMultiError] a new instance of WriteMultiError
+  #
+  # source://graphql-fragment_cache//lib/graphql/fragment_cache/cacher.rb#22
+  def initialize(original_error, values); end
+
+  # Returns the value of attribute original_error.
+  #
+  # source://graphql-fragment_cache//lib/graphql/fragment_cache/cacher.rb#20
+  def original_error; end
+
+  # Returns the value of attribute values.
+  #
+  # source://graphql-fragment_cache//lib/graphql/fragment_cache/cacher.rb#20
+  def values; end
+end
