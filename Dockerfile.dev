@@ -28,7 +28,7 @@ RUN \
   apt update && \
   apt install -y --no-install-recommends \
     libpq-dev \
-    postgresql-client-14
+    postgresql-client-16
 
 ARG YARN_VERSION
 COPY --from=node /usr/local/bin/node /usr/local/bin/node
