@@ -351,6 +351,8 @@ GEM
       net-protocol
     netrc (0.11.0)
     nio4r (2.7.1)
+    nokogiri (1.16.5-aarch64-linux)
+      racc (~> 1.4)
     nokogiri (1.16.5-x86_64-linux)
       racc (~> 1.4)
     oauth2 (1.4.7)
@@ -572,6 +574,7 @@ GEM
     sorbet (0.5.11391)
       sorbet-static (= 0.5.11391)
     sorbet-runtime (0.5.11391)
+    sorbet-static (0.5.11391-aarch64-linux)
     sorbet-static (0.5.11391-x86_64-linux)
     sorbet-static-and-runtime (0.5.11391)
       sorbet (= 0.5.11391)
@@ -652,6 +655,7 @@ GEM
     zeitwerk (2.6.13)
 
 PLATFORMS
+  aarch64-linux
   x86_64-linux
 
 DEPENDENCIES
