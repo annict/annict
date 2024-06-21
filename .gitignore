@@ -11,8 +11,9 @@
 /config/master.key
 /coverage
 /db/dump/*
+/bin/sync
 /docker-compose.override.yml
-/lib/tasks/data.rake
+/lib/tasks/dev.rake
 /log/*
 /node_modules
 /private
