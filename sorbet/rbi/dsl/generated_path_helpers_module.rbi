@@ -712,6 +712,9 @@ module GeneratedPathHelpersModule
   def user_gumroad_omniauth_callback_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }
+  def user_ics_alt_path(*args); end
+
+  sig { params(args: T.untyped).returns(String) }
   def user_ics_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }
