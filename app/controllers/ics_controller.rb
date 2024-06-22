@@ -20,7 +20,10 @@ class IcsController < ApplicationV6Controller
         .only_kept
         .where.not(started_on: nil)
 
-      render formats: :html, layout: false
+      send_data(helpers.render_user_calendar(user: @user, slots: @slots, works: @works), {
+        type: "text/calendar",
+        filename: "annict.ics"
+      })
     end
   end
 end

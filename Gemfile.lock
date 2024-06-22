@@ -274,6 +274,9 @@ GEM
       rails-i18n
       rainbow (>= 2.2.2, < 4.0)
       terminal-table (>= 1.5.1)
+    icalendar (2.10.1)
+      ice_cube (~> 0.16)
+    ice_cube (0.16.4)
     ice_nine (0.11.2)
     image_processing (1.12.2)
       mini_magick (>= 4.9.5, < 5)
@@ -698,6 +701,7 @@ DEPENDENCIES
   http_accept_language
   httparty
   i18n-tasks
+  icalendar
   image_processing
   imgproxy
   jb

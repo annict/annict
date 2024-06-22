@@ -235,6 +235,7 @@ Rails.application.routes.draw do
   match "/fragment/trackable_episodes",                         via: :get,    as: :fragment_trackable_episode_list,            to: "fragment/trackable_episodes#index"
   match "/fragment/trackable_episodes/:episode_id",             via: :get,    as: :fragment_trackable_episode,                 to: "fragment/trackable_episodes#show"
   match "/friends",                                             via: :get,    as: :friend_list,                                to: "friends#index"
+  match "/ics",                                                 via: :get,    as: :user_ics_alt,                               to: "ics#show" # NOTE: `/@:username/ics` だとAppleのカレンダーで `@` がエンコードされて404になるため、別のパスを用意している
   match "/legal",                                               via: :get,    as: :legal,                                      to: "pages#legal"
   match "/notifications",                                       via: :get,    as: :notification_list,                          to: "notifications#index"
   match "/organizations/:organization_id",                      via: :get,    as: :organization,                               to: "organizations#show"
