@@ -153,6 +153,7 @@ en:
         there_are_no_activities: There are no activities
     ics:
       you_can_see: You can see slots of works which you set "Watching", "Plan to Watch" when you add the following URL to Google Calendar.
+      you_can_use: If you have trouble registering with the above URL, please try the following URL.
     components:
       slot_list:
         tracked: Tracked.
