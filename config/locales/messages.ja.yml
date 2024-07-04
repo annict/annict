@@ -152,8 +152,8 @@ ja:
       index:
         there_are_no_activities: アクティビティはありません
     ics:
-      you_can_see: Google Calendarに以下のURLを登録すると、「見てる」「見たい」にしている作品の放送情報などがカレンダーに表示されます。
-      you_can_use: 上記のURLでうまく登録できない場合は、以下のURLをお試しください。
+      you_can_see: GoogleカレンダーやAppleのカレンダーなどに以下のURLを登録すると、「見てる」「見たい」にしている作品の放送情報などがカレンダーに表示されます。
+      you_can_use: 上記のURLでうまく登録できない場合は以下のURLをお試しください。
     components:
       slot_list:
         tracked: 記録しました
