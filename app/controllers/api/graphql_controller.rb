@@ -30,6 +30,12 @@ module Api
       render json: result
     end
 
+    def lograge_payload
+      {
+        oauth_access_token_id: doorkeeper_token&.id
+      }
+    end
+
     private
 
     def current_user

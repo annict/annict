@@ -17,6 +17,12 @@ module Db
     before_action :set_search_params
     around_action :set_locale
 
+    def lograge_payload
+      {
+        user_id: current_user&.id
+      }
+    end
+
     private
 
     def set_search_params
