@@ -300,17 +300,17 @@ class ViewComponent::Base < ::ActionView::Base
 
     # @private
     #
-    # source://view_component//lib/view_component/base.rb#672
+    # source://view_component//lib/view_component/base.rb#674
     def collection_counter_parameter; end
 
     # @private
     #
-    # source://view_component//lib/view_component/base.rb#682
+    # source://view_component//lib/view_component/base.rb#684
     def collection_iteration_parameter; end
 
     # @private
     #
-    # source://view_component//lib/view_component/base.rb#667
+    # source://view_component//lib/view_component/base.rb#669
     def collection_parameter; end
 
     # Compile templates to instance methods, assuming they haven't been compiled already.
@@ -320,18 +320,18 @@ class ViewComponent::Base < ::ActionView::Base
     #
     # @private
     #
-    # source://view_component//lib/view_component/base.rb#577
+    # source://view_component//lib/view_component/base.rb#579
     def compile(raise_errors: T.unsafe(nil), force: T.unsafe(nil)); end
 
     # @private
     # @return [Boolean]
     #
-    # source://view_component//lib/view_component/base.rb#563
+    # source://view_component//lib/view_component/base.rb#565
     def compiled?; end
 
     # @private
     #
-    # source://view_component//lib/view_component/base.rb#582
+    # source://view_component//lib/view_component/base.rb#584
     def compiler; end
 
     # source://view_component//lib/view_component/base.rb#20
@@ -347,7 +347,7 @@ class ViewComponent::Base < ::ActionView::Base
     # @private
     # @return [Boolean]
     #
-    # source://view_component//lib/view_component/base.rb#677
+    # source://view_component//lib/view_component/base.rb#679
     def counter_argument_present?; end
 
     # source://view_component//lib/view_component/base.rb#20
@@ -355,12 +355,12 @@ class ViewComponent::Base < ::ActionView::Base
 
     # @private
     #
-    # source://view_component//lib/view_component/base.rb#568
+    # source://view_component//lib/view_component/base.rb#570
     def ensure_compiled; end
 
     # @private
     #
-    # source://view_component//lib/view_component/base.rb#593
+    # source://view_component//lib/view_component/base.rb#595
     def format; end
 
     # source://view_component//lib/view_component/base.rb#20
@@ -374,7 +374,7 @@ class ViewComponent::Base < ::ActionView::Base
 
     # @private
     #
-    # source://view_component//lib/view_component/base.rb#598
+    # source://view_component//lib/view_component/base.rb#600
     def identifier; end
 
     # @private
@@ -389,7 +389,7 @@ class ViewComponent::Base < ::ActionView::Base
     # @private
     # @return [Boolean]
     #
-    # source://view_component//lib/view_component/base.rb#687
+    # source://view_component//lib/view_component/base.rb#689
     def iteration_argument_present?; end
 
     # source://view_component//lib/view_component/base.rb#20
@@ -458,14 +458,14 @@ class ViewComponent::Base < ::ActionView::Base
     #
     # @param value [Boolean] Whether to strip newlines.
     #
-    # source://view_component//lib/view_component/base.rb#623
+    # source://view_component//lib/view_component/base.rb#625
     def strip_trailing_whitespace(value = T.unsafe(nil)); end
 
     # Whether trailing whitespace will be stripped before compilation.
     #
     # @return [Boolean]
     #
-    # source://view_component//lib/view_component/base.rb#630
+    # source://view_component//lib/view_component/base.rb#632
     def strip_trailing_whitespace?; end
 
     # source://view_component//lib/view_component/base.rb#20
@@ -475,7 +475,7 @@ class ViewComponent::Base < ::ActionView::Base
     #
     # @private
     #
-    # source://view_component//lib/view_component/base.rb#588
+    # source://view_component//lib/view_component/base.rb#590
     def type; end
 
     # source://view_component//lib/view_component/base.rb#20
@@ -490,7 +490,7 @@ class ViewComponent::Base < ::ActionView::Base
     # @private TODO: add documentation
     # @raise [MissingCollectionArgumentError]
     #
-    # source://view_component//lib/view_component/base.rb#640
+    # source://view_component//lib/view_component/base.rb#642
     def validate_collection_parameter!(validate_default: T.unsafe(nil)); end
 
     # Ensure the component initializer doesn't define
@@ -500,7 +500,7 @@ class ViewComponent::Base < ::ActionView::Base
     # @private TODO: add documentation
     # @raise [ReservedParameterError]
     #
-    # source://view_component//lib/view_component/base.rb#660
+    # source://view_component//lib/view_component/base.rb#662
     def validate_initialization_parameters!; end
 
     # source://view_component//lib/view_component/base.rb#20
@@ -536,23 +536,23 @@ class ViewComponent::Base < ::ActionView::Base
     #
     # @param parameter [Symbol] The parameter name used when rendering elements of a collection.
     #
-    # source://view_component//lib/view_component/base.rb#609
+    # source://view_component//lib/view_component/base.rb#611
     def with_collection_parameter(parameter); end
 
     private
 
-    # source://view_component//lib/view_component/base.rb#698
+    # source://view_component//lib/view_component/base.rb#700
     def initialize_parameter_names; end
 
-    # source://view_component//lib/view_component/base.rb#706
+    # source://view_component//lib/view_component/base.rb#708
     def initialize_parameters; end
 
-    # source://view_component//lib/view_component/base.rb#710
+    # source://view_component//lib/view_component/base.rb#712
     def provided_collection_parameter; end
 
     # @return [Boolean]
     #
-    # source://view_component//lib/view_component/base.rb#693
+    # source://view_component//lib/view_component/base.rb#695
     def splatted_keyword_argument_present?; end
   end
 end
@@ -825,7 +825,7 @@ class ViewComponent::ComponentError < ::StandardError; end
 class ViewComponent::Config
   # @return [Config] a new instance of Config
   #
-  # source://view_component//lib/view_component/config.rb#178
+  # source://view_component//lib/view_component/config.rb#191
   def initialize; end
 
   # Returns the current ViewComponent::Config. This is persisted against this
@@ -835,7 +835,7 @@ class ViewComponent::Config
   #
   # @return [ViewComponent::Config]
   #
-  # source://view_component//lib/view_component/config.rb#176
+  # source://view_component//lib/view_component/config.rb#189
   def current; end
 
   # Returns the current ViewComponent::Config. This is persisted against this
@@ -845,27 +845,27 @@ class ViewComponent::Config
   #
   # @return [ViewComponent::Config]
   #
-  # source://view_component//lib/view_component/config.rb#176
+  # source://view_component//lib/view_component/config.rb#189
   def current=(_arg0); end
 
-  # source://activesupport/7.0.8.1/lib/active_support/core_ext/module/delegation.rb#302
+  # source://activesupport/7.0.8.4/lib/active_support/core_ext/module/delegation.rb#302
   def method_missing(method, *args, **_arg2, &block); end
 
   private
 
   # Returns the value of attribute config.
   #
-  # source://view_component//lib/view_component/config.rb#186
+  # source://view_component//lib/view_component/config.rb#199
   def config; end
 
-  # source://activesupport/7.0.8.1/lib/active_support/core_ext/module/delegation.rb#294
+  # source://activesupport/7.0.8.4/lib/active_support/core_ext/module/delegation.rb#294
   def respond_to_missing?(name, include_private = T.unsafe(nil)); end
 
   class << self
-    # source://view_component//lib/view_component/config.rb#176
+    # source://view_component//lib/view_component/config.rb#189
     def current; end
 
-    # source://view_component//lib/view_component/config.rb#176
+    # source://view_component//lib/view_component/config.rb#189
     def current=(value); end
 
     # `new` without any arguments initializes the default configuration, but
@@ -873,7 +873,7 @@ class ViewComponent::Config
     # future.
     def default(*_arg0); end
 
-    # source://view_component//lib/view_component/config.rb#163
+    # source://view_component//lib/view_component/config.rb#176
     def default_generate_options; end
 
     # Enables the experimental capture compatibility patch that makes ViewComponent
@@ -883,7 +883,7 @@ class ViewComponent::Config
     #
     # @return [Boolean]
     #
-    # source://view_component//lib/view_component/config.rb#157
+    # source://view_component//lib/view_component/config.rb#170
     def default_preview_paths; end
 
     # source://view_component//lib/view_component/config.rb#13
@@ -965,7 +965,7 @@ class ViewComponent::Engine < ::Rails::Engine
   def serve_static_preview_assets?(app_config); end
 
   class << self
-    # source://activesupport/7.0.8.1/lib/active_support/callbacks.rb#68
+    # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#68
     def __callbacks; end
   end
 end
@@ -1160,13 +1160,13 @@ class ViewComponent::Preview
   include ::ActionView::Helpers::AssetTagHelper
   extend ::ActiveSupport::DescendantsTracker
 
-  # source://actionpack/7.0.8.1/lib/action_dispatch/routing/url_for.rb#95
+  # source://actionpack/7.0.8.4/lib/action_dispatch/routing/url_for.rb#95
   def default_url_options; end
 
-  # source://actionpack/7.0.8.1/lib/action_dispatch/routing/url_for.rb#95
+  # source://actionpack/7.0.8.4/lib/action_dispatch/routing/url_for.rb#95
   def default_url_options=(_arg0); end
 
-  # source://actionpack/7.0.8.1/lib/action_dispatch/routing/url_for.rb#95
+  # source://actionpack/7.0.8.4/lib/action_dispatch/routing/url_for.rb#95
   def default_url_options?; end
 
   # source://view_component//lib/view_component/preview.rb#16
@@ -1179,7 +1179,7 @@ class ViewComponent::Preview
   def render_with_template(template: T.unsafe(nil), locals: T.unsafe(nil)); end
 
   class << self
-    # source://actionpack/7.0.8.1/lib/action_dispatch/routing/route_set.rb#564
+    # source://actionpack/7.0.8.4/lib/action_dispatch/routing/route_set.rb#564
     def _routes; end
 
     # Returns all component preview classes.
@@ -1187,13 +1187,13 @@ class ViewComponent::Preview
     # source://view_component//lib/view_component/preview.rb#37
     def all; end
 
-    # source://actionpack/7.0.8.1/lib/action_dispatch/routing/url_for.rb#95
+    # source://actionpack/7.0.8.4/lib/action_dispatch/routing/url_for.rb#95
     def default_url_options; end
 
-    # source://actionpack/7.0.8.1/lib/action_dispatch/routing/url_for.rb#95
+    # source://actionpack/7.0.8.4/lib/action_dispatch/routing/url_for.rb#95
     def default_url_options=(value); end
 
-    # source://actionpack/7.0.8.1/lib/action_dispatch/routing/url_for.rb#95
+    # source://actionpack/7.0.8.4/lib/action_dispatch/routing/url_for.rb#95
     def default_url_options?; end
 
     # Returns all of the available examples for the component preview.
@@ -1348,7 +1348,7 @@ class ViewComponent::Slot
 
   # @return [Boolean]
   #
-  # source://view_component//lib/view_component/slot.rb#99
+  # source://view_component//lib/view_component/slot.rb#109
   def html_safe?; end
 
   # Allow access to public component methods via the wrapper
@@ -1370,7 +1370,7 @@ class ViewComponent::Slot
   #   end
   # end
   #
-  # source://view_component//lib/view_component/slot.rb#94
+  # source://view_component//lib/view_component/slot.rb#104
   def method_missing(symbol, *args, **_arg2, &block); end
 
   # Used to render the slot content in the template
@@ -1397,12 +1397,12 @@ class ViewComponent::Slot
 
   # @return [Boolean]
   #
-  # source://view_component//lib/view_component/slot.rb#111
+  # source://view_component//lib/view_component/slot.rb#121
   def __vc_component_instance?; end
 
   # @return [Boolean]
   #
-  # source://view_component//lib/view_component/slot.rb#105
+  # source://view_component//lib/view_component/slot.rb#115
   def respond_to_missing?(symbol, include_all = T.unsafe(nil)); end
 end
 
@@ -1806,8 +1806,16 @@ end
 
 # source://view_component//lib/view_component/use_helpers.rb#0
 module ViewComponent::UseHelpers::ClassMethods
+  # source://view_component//lib/view_component/use_helpers.rb#11
+  def use_helper(helper_method, from: T.unsafe(nil)); end
+
   # source://view_component//lib/view_component/use_helpers.rb#7
-  def use_helpers(*args); end
+  def use_helpers(*args, from: T.unsafe(nil)); end
+
+  private
+
+  # source://view_component//lib/view_component/use_helpers.rb#24
+  def define_helper(helper_method:, source:); end
 end
 
 # source://view_component//lib/view_component/with_content_helper.rb#4
@@ -1823,14 +1831,14 @@ class ViewComponentsController < ::Rails::ApplicationController
 
   private
 
-  # source://actionview/7.0.8.1/lib/action_view/layouts.rb#328
+  # source://actionview/7.0.8.4/lib/action_view/layouts.rb#328
   def _layout(lookup_context, formats); end
 
   class << self
-    # source://activesupport/7.0.8.1/lib/active_support/callbacks.rb#68
+    # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#68
     def __callbacks; end
 
-    # source://actionpack/7.0.8.1/lib/action_controller/metal.rb#210
+    # source://actionpack/7.0.8.4/lib/action_controller/metal.rb#210
     def middleware_stack; end
   end
 end
@@ -1840,17 +1848,17 @@ class ViewComponentsSystemTestController < ::ActionController::Base
 
   private
 
-  # source://actionview/7.0.8.1/lib/action_view/layouts.rb#328
+  # source://actionview/7.0.8.4/lib/action_view/layouts.rb#328
   def _layout(lookup_context, formats); end
 
   def validate_file_path; end
   def validate_test_env; end
 
   class << self
-    # source://activesupport/7.0.8.1/lib/active_support/callbacks.rb#68
+    # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#68
     def __callbacks; end
 
-    # source://actionpack/7.0.8.1/lib/action_controller/metal.rb#210
+    # source://actionpack/7.0.8.4/lib/action_controller/metal.rb#210
     def middleware_stack; end
 
     def temp_dir; end
