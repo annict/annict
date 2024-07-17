@@ -29,6 +29,12 @@ class ApplicationController < ActionController::Base
     head 200
   end
 
+  def lograge_payload
+    {
+      user_id: current_user&.id
+    }
+  end
+
   private
 
   def after_sign_in_path_for(resource)

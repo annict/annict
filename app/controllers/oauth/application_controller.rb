@@ -14,5 +14,11 @@ module Oauth
     layout "main_default"
 
     around_action :set_locale
+
+    def lograge_payload
+      {
+        user_id: current_user&.id
+      }
+    end
   end
 end

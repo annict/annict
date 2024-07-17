@@ -47,6 +47,7 @@ gem "jb"
 gem "jsbundling-rails"
 gem "kaminari"
 gem "koala"
+gem "lograge"
 gem "memory_profiler" # Used by rack-mini-profiler
 gem "meta-tags"
 gem "mini_magick"
@@ -123,6 +124,5 @@ group :test do
 end
 
 group :production do
-  gem "lograge"
   gem "resend"
 end

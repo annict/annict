@@ -18,6 +18,12 @@ module Forum
 
     around_action :set_locale
 
+    def lograge_payload
+      {
+        user_id: current_user&.id
+      }
+    end
+
     private
 
     def redirect_if_signed_in
