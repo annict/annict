@@ -5,7 +5,7 @@
 # Please instead update this file by running `bin/tapioca gem method_source`.
 
 
-# source://method_source//lib/method_source.rb#127
+# source://method_source//lib/method_source.rb#163
 class Method
   include ::MethodSource::SourceLocation::MethodExtensions
   include ::MethodSource::MethodExtensions
@@ -16,6 +16,11 @@ module MethodSource
   extend ::MethodSource::CodeHelpers
 
   class << self
+    # Clear cache.
+    #
+    # source://method_source//lib/method_source.rb#59
+    def clear_cache; end
+
     # Helper method responsible for opening source file and buffering up
     # the comments for a specified method. Defined here to avoid polluting
     # `Method` class.
@@ -30,7 +35,7 @@ module MethodSource
 
     # @deprecated — use MethodSource::CodeHelpers#expression_at
     #
-    # source://method_source//lib/method_source.rb#66
+    # source://method_source//lib/method_source.rb#71
     def extract_code(source_location); end
 
     # Load a memoized copy of the lines in a file.
@@ -56,7 +61,7 @@ module MethodSource
     # @deprecated — use MethodSource::CodeHelpers#complete_expression?
     # @return [Boolean]
     #
-    # source://method_source//lib/method_source.rb#59
+    # source://method_source//lib/method_source.rb#64
     def valid_expression?(str); end
   end
 end
@@ -155,8 +160,21 @@ MethodSource::CodeHelpers::IncompleteExpression::RBX_ONLY_REGEXPS = T.let(T.unsa
 # This module is to be included by `Method` and `UnboundMethod` and
 # provides the `#source` functionality
 #
-# source://method_source//lib/method_source.rb#72
+# source://method_source//lib/method_source.rb#77
 module MethodSource::MethodExtensions
+  # Return the comments associated with the method class/module.
+  #
+  # @example
+  #   MethodSource::MethodExtensions.method(:included).module_comment
+  #   =>
+  #   # This module is to be included by `Method` and `UnboundMethod` and
+  #   # provides the `#source` functionality
+  # @raise SourceNotFoundException
+  # @return [String] The method's comments as a string
+  #
+  # source://method_source//lib/method_source.rb#139
+  def class_comment; end
+
   # Return the comments associated with the method as a string.
   #
   # @example
@@ -166,8 +184,21 @@ module MethodSource::MethodExtensions
   # @raise SourceNotFoundException
   # @return [String] The method's comments as a string
   #
-  # source://method_source//lib/method_source.rb#121
+  # source://method_source//lib/method_source.rb#126
   def comment; end
+
+  # Return the comments associated with the method class/module.
+  #
+  # @example
+  #   MethodSource::MethodExtensions.method(:included).module_comment
+  #   =>
+  #   # This module is to be included by `Method` and `UnboundMethod` and
+  #   # provides the `#source` functionality
+  # @raise SourceNotFoundException
+  # @return [String] The method's comments as a string
+  #
+  # source://method_source//lib/method_source.rb#139
+  def module_comment; end
 
   # Return the sourcecode for the method as a string
   #
@@ -181,7 +212,7 @@ module MethodSource::MethodExtensions
   # @raise SourceNotFoundException
   # @return [String] The method sourcecode as a string
   #
-  # source://method_source//lib/method_source.rb#109
+  # source://method_source//lib/method_source.rb#114
   def source; end
 
   class << self
@@ -192,7 +223,7 @@ module MethodSource::MethodExtensions
     #
     # @param klass [Class] The class that includes the module.
     #
-    # source://method_source//lib/method_source.rb#79
+    # source://method_source//lib/method_source.rb#84
     def included(klass); end
   end
 end
@@ -260,13 +291,13 @@ class MethodSource::SourceNotFoundError < ::StandardError; end
 # source://method_source//lib/method_source/version.rb#2
 MethodSource::VERSION = T.let(T.unsafe(nil), String)
 
-# source://method_source//lib/method_source.rb#137
+# source://method_source//lib/method_source.rb#173
 class Proc
   include ::MethodSource::SourceLocation::ProcExtensions
   include ::MethodSource::MethodExtensions
 end
 
-# source://method_source//lib/method_source.rb#132
+# source://method_source//lib/method_source.rb#168
 class UnboundMethod
   include ::MethodSource::SourceLocation::UnboundMethodExtensions
   include ::MethodSource::MethodExtensions
