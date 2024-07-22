@@ -1,6 +1,7 @@
 # typed: false
 # frozen_string_literal: true
 
+Rack::Attack.enabled = !Rails.env.test?
 Rack::Attack.cache.store = ActiveSupport::Cache::MemoryStore.new
 
 def remote_ip(req)
