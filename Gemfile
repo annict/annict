@@ -18,7 +18,7 @@ gem "by_star"
 gem "cld"
 # github-markupが1系に対応するまで0系を使う
 # ref: https://github.com/github/markup/issues/1758
-gem "commonmarker", "< 1.0" # Using github-markup
+gem "commonmarker", "< 2.0" # Using github-markup
 gem "counter_culture"
 gem "cssbundling-rails"
 gem "delayed_job_active_record"
