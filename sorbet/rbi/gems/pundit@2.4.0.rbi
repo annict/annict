@@ -12,84 +12,41 @@ module Pundit
   include ::Pundit::Authorization
 
   class << self
-    # Retrieves the policy for the given record, initializing it with the
-    # record and user and finally throwing an error if the user is not
-    # authorized to perform the given action.
-    #
     # @api public
-    # @param user [Object] the user that initiated the action
-    # @param possibly_namespaced_record [Object, Array] the object we're checking permissions of
-    # @param query [Symbol, String] the predicate method to check on the policy (e.g. `:show?`)
-    # @param policy_class [Class] the policy class we want to force use of
-    # @param cache [#[], #[]=] a Hash-like object to cache the found policy instance in
-    # @raise [NotAuthorizedError] if the given query method returned false
-    # @return [Object] Always returns the passed object record
+    # @see [Pundit::Context#authorize]
     #
-    # source://pundit//lib/pundit.rb#76
-    def authorize(user, possibly_namespaced_record, query, policy_class: T.unsafe(nil), cache: T.unsafe(nil)); end
+    # source://pundit//lib/pundit.rb#74
+    def authorize(user, record, query, policy_class: T.unsafe(nil), cache: T.unsafe(nil)); end
 
     # @api public
     # @private
     #
-    # source://pundit//lib/pundit.rb#57
+    # source://pundit//lib/pundit.rb#63
     def included(base); end
 
-    # Retrieves the policy for the given record.
-    #
     # @api public
-    # @param user [Object] the user that initiated the action
-    # @param record [Object] the object we're retrieving the policy for
-    # @raise [InvalidConstructorError] if the policy constructor called incorrectly
-    # @return [Object, nil] instance of policy class with query methods
-    # @see https://github.com/varvet/pundit#policies
+    # @see [Pundit::Context#policy]
     #
-    # source://pundit//lib/pundit.rb#137
-    def policy(user, record); end
-
-    # Retrieves the policy for the given record.
-    #
-    # @api public
-    # @param user [Object] the user that initiated the action
-    # @param record [Object] the object we're retrieving the policy for
-    # @raise [NotDefinedError] if the policy cannot be found
-    # @raise [InvalidConstructorError] if the policy constructor called incorrectly
-    # @return [Object] instance of policy class with query methods
-    # @see https://github.com/varvet/pundit#policies
-    #
-    # source://pundit//lib/pundit.rb#152
-    def policy!(user, record); end
-
-    # Retrieves the policy scope for the given record.
-    #
-    # @api public
-    # @param user [Object] the user that initiated the action
-    # @param scope [Object] the object we're retrieving the policy scope for
-    # @raise [InvalidConstructorError] if the policy constructor called incorrectly
-    # @return [Scope{#resolve}, nil] instance of scope class which can resolve to a scope
-    # @see https://github.com/varvet/pundit#scopes
-    #
-    # source://pundit//lib/pundit.rb#96
-    def policy_scope(user, scope); end
-
-    # Retrieves the policy scope for the given record.
-    #
-    # @api public
-    # @param user [Object] the user that initiated the action
-    # @param scope [Object] the object we're retrieving the policy scope for
-    # @raise [NotDefinedError] if the policy scope cannot be found
-    # @raise [InvalidConstructorError] if the policy constructor called incorrectly
-    # @return [Scope{#resolve}] instance of scope class which can resolve to a scope
-    # @see https://github.com/varvet/pundit#scopes
-    #
-    # source://pundit//lib/pundit.rb#117
-    def policy_scope!(user, scope); end
-
-    private
+    # source://pundit//lib/pundit.rb#95
+    def policy(user, *args, **kwargs, &block); end
 
     # @api public
+    # @see [Pundit::Context#policy!]
     #
-    # source://pundit//lib/pundit.rb#161
-    def pundit_model(record); end
+    # source://pundit//lib/pundit.rb#100
+    def policy!(user, *args, **kwargs, &block); end
+
+    # @api public
+    # @see [Pundit::Context#policy_scope]
+    #
+    # source://pundit//lib/pundit.rb#85
+    def policy_scope(user, *args, **kwargs, &block); end
+
+    # @api public
+    # @see [Pundit::Context#policy_scope!]
+    #
+    # source://pundit//lib/pundit.rb#90
+    def policy_scope!(user, *args, **kwargs, &block); end
   end
 end
 
@@ -110,7 +67,7 @@ module Pundit::Authorization
   # @raise [NotAuthorizedError] if the given query method returned false
   # @return [Object] Always returns the passed object record
   #
-  # source://pundit//lib/pundit/authorization.rb#62
+  # source://pundit//lib/pundit/authorization.rb#70
   def authorize(record, query = T.unsafe(nil), policy_class: T.unsafe(nil)); end
 
   # Retrieves a set of permitted attributes from the policy by instantiating
@@ -125,7 +82,7 @@ module Pundit::Authorization
   # @return [Hash{String => Object}] the permitted attributes
   # @see https://github.com/varvet/pundit#strong-parameters
   #
-  # source://pundit//lib/pundit/authorization.rb#117
+  # source://pundit//lib/pundit/authorization.rb#125
   def permitted_attributes(record, action = T.unsafe(nil)); end
 
   # Cache of policies. You should not rely on this method.
@@ -133,16 +90,16 @@ module Pundit::Authorization
   #
   # @api private
   #
-  # source://pundit//lib/pundit/authorization.rb#139
+  # source://pundit//lib/pundit/authorization.rb#147
   def policies; end
 
   # Retrieves the policy for the given record.
   #
   # @param record [Object] the object we're retrieving the policy for
-  # @return [Object, nil] instance of policy class with query methods
+  # @return [Object] instance of policy class with query methods
   # @see https://github.com/varvet/pundit#policies
   #
-  # source://pundit//lib/pundit/authorization.rb#102
+  # source://pundit//lib/pundit/authorization.rb#110
   def policy(record); end
 
   # Retrieves the policy scope for the given record.
@@ -152,7 +109,7 @@ module Pundit::Authorization
   # @return [Scope{#resolve}, nil] instance of scope class which can resolve to a scope
   # @see https://github.com/varvet/pundit#scopes
   #
-  # source://pundit//lib/pundit/authorization.rb#92
+  # source://pundit//lib/pundit/authorization.rb#100
   def policy_scope(scope, policy_scope_class: T.unsafe(nil)); end
 
   # Cache of policy scope. You should not rely on this method.
@@ -160,27 +117,32 @@ module Pundit::Authorization
   #
   # @api private
   #
-  # source://pundit//lib/pundit/authorization.rb#148
+  # source://pundit//lib/pundit/authorization.rb#156
   def policy_scopes; end
+
+  # @return [Pundit::Context] a new instance of {Pundit::Context} with the current user
+  #
+  # source://pundit//lib/pundit/authorization.rb#19
+  def pundit; end
 
   # Retrieves the params for the given record.
   #
   # @param record [Object] the object we're retrieving params for
   # @return [ActionController::Parameters] the params
   #
-  # source://pundit//lib/pundit/authorization.rb#131
+  # source://pundit//lib/pundit/authorization.rb#139
   def pundit_params_for(record); end
 
   # @return [Boolean] whether authorization has been performed, i.e. whether
   #   one {#authorize} or {#skip_authorization} has been called
   #
-  # source://pundit//lib/pundit/authorization.rb#20
+  # source://pundit//lib/pundit/authorization.rb#28
   def pundit_policy_authorized?; end
 
   # @return [Boolean] whether policy scoping has been performed, i.e. whether
   #   one {#policy_scope} or {#skip_policy_scope} has been called
   #
-  # source://pundit//lib/pundit/authorization.rb#26
+  # source://pundit//lib/pundit/authorization.rb#34
   def pundit_policy_scoped?; end
 
   # Hook method which allows customizing which user is passed to policies and
@@ -189,7 +151,7 @@ module Pundit::Authorization
   # @return [Object] the user object to be used with pundit
   # @see https://github.com/varvet/pundit#customize-pundit-user
   #
-  # source://pundit//lib/pundit/authorization.rb#158
+  # source://pundit//lib/pundit/authorization.rb#166
   def pundit_user; end
 
   # Allow this action not to perform authorization.
@@ -197,7 +159,7 @@ module Pundit::Authorization
   # @return [void]
   # @see https://github.com/varvet/pundit#ensuring-policies-and-scopes-are-used
   #
-  # source://pundit//lib/pundit/authorization.rb#74
+  # source://pundit//lib/pundit/authorization.rb#82
   def skip_authorization; end
 
   # Allow this action not to perform policy scoping.
@@ -205,7 +167,7 @@ module Pundit::Authorization
   # @return [void]
   # @see https://github.com/varvet/pundit#ensuring-policies-and-scopes-are-used
   #
-  # source://pundit//lib/pundit/authorization.rb#82
+  # source://pundit//lib/pundit/authorization.rb#90
   def skip_policy_scope; end
 
   # Raises an error if authorization has not been performed, usually used as an
@@ -216,7 +178,7 @@ module Pundit::Authorization
   # @return [void]
   # @see https://github.com/varvet/pundit#ensuring-policies-and-scopes-are-used
   #
-  # source://pundit//lib/pundit/authorization.rb#37
+  # source://pundit//lib/pundit/authorization.rb#45
   def verify_authorized; end
 
   # Raises an error if policy scoping has not been performed, usually used as an
@@ -227,12 +189,12 @@ module Pundit::Authorization
   # @return [void]
   # @see https://github.com/varvet/pundit#ensuring-policies-and-scopes-are-used
   #
-  # source://pundit//lib/pundit/authorization.rb#48
+  # source://pundit//lib/pundit/authorization.rb#56
   def verify_policy_scoped; end
 
   private
 
-  # source://pundit//lib/pundit/authorization.rb#164
+  # source://pundit//lib/pundit/authorization.rb#172
   def pundit_policy_scope(scope); end
 end
 
@@ -241,29 +203,154 @@ end
 #
 # @api public
 #
-# source://pundit//lib/pundit.rb#48
+# source://pundit//lib/pundit.rb#54
 class Pundit::AuthorizationNotPerformedError < ::Pundit::Error; end
+
+# source://pundit//lib/pundit/cache_store/null_store.rb#4
+module Pundit::CacheStore; end
+
+# @api private
+#
+# source://pundit//lib/pundit/cache_store/legacy_store.rb#6
+class Pundit::CacheStore::LegacyStore
+  # @api private
+  # @return [LegacyStore] a new instance of LegacyStore
+  #
+  # source://pundit//lib/pundit/cache_store/legacy_store.rb#7
+  def initialize(hash = T.unsafe(nil)); end
+
+  # @api private
+  #
+  # source://pundit//lib/pundit/cache_store/legacy_store.rb#11
+  def fetch(user:, record:); end
+end
+
+# @api private
+#
+# source://pundit//lib/pundit/cache_store/null_store.rb#6
+class Pundit::CacheStore::NullStore
+  # @api private
+  #
+  # source://pundit//lib/pundit/cache_store/null_store.rb#13
+  def fetch(*_arg0, **_arg1); end
+
+  class << self
+    # @api private
+    #
+    # source://pundit//lib/pundit/cache_store/null_store.rb#10
+    def instance; end
+  end
+end
+
+# source://pundit//lib/pundit/context.rb#4
+class Pundit::Context
+  # @return [Context] a new instance of Context
+  #
+  # source://pundit//lib/pundit/context.rb#5
+  def initialize(user:, policy_cache: T.unsafe(nil)); end
+
+  # Retrieves the policy for the given record, initializing it with the
+  # record and user and finally throwing an error if the user is not
+  # authorized to perform the given action.
+  #
+  # @param user [Object] the user that initiated the action
+  # @param possibly_namespaced_record [Object, Array] the object we're checking permissions of
+  # @param query [Symbol, String] the predicate method to check on the policy (e.g. `:show?`)
+  # @param policy_class [Class] the policy class we want to force use of
+  # @raise [NotAuthorizedError] if the given query method returned false
+  # @return [Object] Always returns the passed object record
+  #
+  # source://pundit//lib/pundit/context.rb#25
+  def authorize(possibly_namespaced_record, query:, policy_class:); end
+
+  # Retrieves the policy for the given record.
+  #
+  # @param user [Object] the user that initiated the action
+  # @param record [Object] the object we're retrieving the policy for
+  # @raise [InvalidConstructorError] if the policy constructor called incorrectly
+  # @return [Object, nil] instance of policy class with query methods
+  # @see https://github.com/varvet/pundit#policies
+  #
+  # source://pundit//lib/pundit/context.rb#86
+  def policy(record); end
+
+  # Retrieves the policy for the given record. Raises if not found.
+  #
+  # @param user [Object] the user that initiated the action
+  # @param record [Object] the object we're retrieving the policy for
+  # @raise [NotDefinedError] if the policy cannot be found
+  # @raise [InvalidConstructorError] if the policy constructor called incorrectly
+  # @return [Object] instance of policy class with query methods
+  # @see https://github.com/varvet/pundit#policies
+  #
+  # source://pundit//lib/pundit/context.rb#98
+  def policy!(record); end
+
+  # @api private
+  #
+  # source://pundit//lib/pundit/context.rb#13
+  def policy_cache; end
+
+  # Retrieves the policy scope for the given record.
+  #
+  # @param user [Object] the user that initiated the action
+  # @param scope [Object] the object we're retrieving the policy scope for
+  # @raise [InvalidConstructorError] if the policy constructor called incorrectly
+  # @return [Scope{#resolve}, nil] instance of scope class which can resolve to a scope
+  # @see https://github.com/varvet/pundit#scopes
+  #
+  # source://pundit//lib/pundit/context.rb#45
+  def policy_scope(scope); end
+
+  # Retrieves the policy scope for the given record. Raises if not found.
+  #
+  # @param user [Object] the user that initiated the action
+  # @param scope [Object] the object we're retrieving the policy scope for
+  # @raise [NotDefinedError] if the policy scope cannot be found
+  # @raise [InvalidConstructorError] if the policy constructor called incorrectly
+  # @return [Scope{#resolve}] instance of scope class which can resolve to a scope
+  # @see https://github.com/varvet/pundit#scopes
+  #
+  # source://pundit//lib/pundit/context.rb#66
+  def policy_scope!(scope); end
+
+  # Returns the value of attribute user.
+  #
+  # source://pundit//lib/pundit/context.rb#10
+  def user; end
+
+  private
+
+  # source://pundit//lib/pundit/context.rb#104
+  def cached_find(record); end
+
+  # source://pundit//lib/pundit/context.rb#119
+  def policy_finder(record); end
+
+  # source://pundit//lib/pundit/context.rb#123
+  def pundit_model(record); end
+end
 
 # To avoid name clashes with common Error naming when mixing in Pundit,
 # keep it here with compact class style definition.
 #
 # @api private
 #
-# source://pundit//lib/pundit.rb#15
+# source://pundit//lib/pundit.rb#18
 class Pundit::Error < ::StandardError; end
 
 # @api private
 #
-# source://pundit//lib/pundit.rb#22
+# source://pundit//lib/pundit.rb#25
 module Pundit::Generators; end
 
 # @api private
 #
-# source://pundit//lib/pundit.rb#167
+# source://pundit//lib/pundit.rb#106
 module Pundit::Helper
   # @api private
   #
-  # source://pundit//lib/pundit.rb#168
+  # source://pundit//lib/pundit.rb#107
   def policy_scope(scope); end
 end
 
@@ -271,34 +358,34 @@ end
 #
 # @api public
 #
-# source://pundit//lib/pundit.rb#44
+# source://pundit//lib/pundit.rb#50
 class Pundit::InvalidConstructorError < ::Pundit::Error; end
 
 # Error that will be raised when authorization has failed
 #
 # @api public
 #
-# source://pundit//lib/pundit.rb#25
+# source://pundit//lib/pundit.rb#28
 class Pundit::NotAuthorizedError < ::Pundit::Error
   # @api public
   # @return [NotAuthorizedError] a new instance of NotAuthorizedError
   #
-  # source://pundit//lib/pundit.rb#28
+  # source://pundit//lib/pundit.rb#31
   def initialize(options = T.unsafe(nil)); end
 
   # @api public
   #
-  # source://pundit//lib/pundit.rb#26
+  # source://pundit//lib/pundit.rb#29
   def policy; end
 
   # @api public
   #
-  # source://pundit//lib/pundit.rb#26
+  # source://pundit//lib/pundit.rb#29
   def query; end
 
   # @api public
   #
-  # source://pundit//lib/pundit.rb#26
+  # source://pundit//lib/pundit.rb#29
   def record; end
 end
 
@@ -306,7 +393,7 @@ end
 #
 # @api public
 #
-# source://pundit//lib/pundit.rb#55
+# source://pundit//lib/pundit.rb#61
 class Pundit::NotDefinedError < ::Pundit::Error; end
 
 # Finds policy and scope classes for given object.
@@ -391,12 +478,12 @@ end
 #
 # @api public
 #
-# source://pundit//lib/pundit.rb#52
+# source://pundit//lib/pundit.rb#58
 class Pundit::PolicyScopingNotPerformedError < ::Pundit::AuthorizationNotPerformedError; end
 
 # @api public
 #
-# source://pundit//lib/pundit.rb#19
+# source://pundit//lib/pundit.rb#22
 Pundit::SUFFIX = T.let(T.unsafe(nil), String)
 
 # source://pundit//lib/pundit/version.rb#4
