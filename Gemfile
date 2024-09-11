@@ -12,7 +12,7 @@ gem "active_link_to"
 gem "activerecord-session_store"
 gem "acts_as_list"
 gem "addressable"
-gem "aws-sdk-s3" # Using in Shrine
+gem "aws-sdk-s3" # Shrineで使用
 gem "browser", require: "browser/browser"
 gem "by_star"
 gem "cld"
