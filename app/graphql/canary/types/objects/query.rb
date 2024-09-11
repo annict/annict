@@ -5,8 +5,8 @@ module Canary
   module Types
     module Objects
       class Query < Canary::Types::Objects::Base
-        add_field GraphQL::Types::Relay::NodeField
-        add_field GraphQL::Types::Relay::NodesField
+        include GraphQL::Types::Relay::HasNodeField
+        include GraphQL::Types::Relay::HasNodesField
 
         field :viewer, Canary::Types::Objects::UserType,
           null: true,
