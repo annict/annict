@@ -43,14 +43,14 @@ class ApplicationRecord < ActiveRecord::Base
     ActiveDecorator::Decorator.instance.decorate(self)
   end
 
-  def method_missing(method_name, *arguments, &block)
+  def method_missing(method_name, *, &block)
     return super if method_name.blank?
     return super unless method_name.to_s.start_with?("local_")
 
     unless Rails.env.production?
       ActiveSupport::Deprecation.warn("local_* methods using method_missing are deprecated. (#{self.class.name}##{method_name})")
     end
-    _local_property(method_name.to_s.sub("local_", ""), *arguments)
+    _local_property(method_name.to_s.sub("local_", ""), *)
   end
 
   def respond_to_missing?(method_name, include_private = false)
