@@ -1,11 +1,11 @@
 .DS_Store
 
 /.bundle
-/.devcontainer
 /.env.*.local
 /.envrc
 /.idea
 /.sass-cache
+/.vscode
 /annict.iml
 /app/assets/builds/*
 /config/master.key
