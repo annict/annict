@@ -492,7 +492,7 @@ Puma::Client::TE_ERR_MSG = T.let(T.unsafe(nil), String)
 # via the `spawn_workers` method call. Each worker will have it's own
 # instance of a `Puma::Server`.
 #
-# source://puma//lib/puma/cluster/worker_handle.rb#5
+# source://puma//lib/puma/cluster/worker_handle.rb#4
 class Puma::Cluster < ::Puma::Runner
   # @return [Cluster] a new instance of Cluster
   #
@@ -918,7 +918,7 @@ module Puma::Const; end
 
 # Banned keys of response header
 #
-# source://puma//lib/puma/const.rb#285
+# source://puma//lib/puma/const.rb#293
 Puma::Const::BANNED_HEADER_KEY = T.let(T.unsafe(nil), Regexp)
 
 # source://puma//lib/puma/const.rb#224
@@ -1096,7 +1096,7 @@ Puma::Const::PORT_443 = T.let(T.unsafe(nil), String)
 # source://puma//lib/puma/const.rb#211
 Puma::Const::PORT_80 = T.let(T.unsafe(nil), String)
 
-# source://puma//lib/puma/const.rb#287
+# source://puma//lib/puma/const.rb#295
 Puma::Const::PROXY_PROTOCOL_V1_REGEX = T.let(T.unsafe(nil), Regexp)
 
 # source://puma//lib/puma/const.rb#234
@@ -1175,6 +1175,13 @@ Puma::Const::TRANSFER_ENCODING2 = T.let(T.unsafe(nil), String)
 
 # source://puma//lib/puma/const.rb#262
 Puma::Const::TRANSFER_ENCODING_CHUNKED = T.let(T.unsafe(nil), String)
+
+# The keys of headers that should not be convert to underscore
+# normalized versions. These headers are ignored at the request reading layer,
+# but if we normalize them after reading, it's just confusing for the application.
+#
+# source://puma//lib/puma/const.rb#287
+Puma::Const::UNMASKABLE_HEADERS = T.let(T.unsafe(nil), Hash)
 
 # source://puma//lib/puma/const.rb#216
 Puma::Const::UNSPECIFIED_IPV4 = T.let(T.unsafe(nil), String)
@@ -3559,7 +3566,7 @@ module Puma::Request
   # @param status [Integer] status from the app
   # @return [String] the text description from Puma::HTTP_STATUS_CODES
   #
-  # source://puma//lib/puma/request.rb#554
+  # source://puma//lib/puma/request.rb#567
   def fetch_status_code(status); end
 
   # @param header_key [#to_s]
@@ -3590,10 +3597,13 @@ module Puma::Request
   # avoid allocation in the common case (ie there are no headers
   # with `,` in their names), that's why it has the extra conditionals.
   #
+  # @note If a normalized version of a `,` header already exists, we ignore
+  #   the `,` version. This prevents clobbering headers managed by proxies
+  #   but not by clients (Like X-Forwarded-For).
   # @param env [Hash] see Puma::Client#env, from request, modifies in place
   # @version 5.0.3
   #
-  # source://puma//lib/puma/request.rb#501
+  # source://puma//lib/puma/request.rb#506
   def req_env_post_parse(env); end
 
   # Used in the lambda for env[ `Puma::Const::EARLY_HINTS` ]
@@ -3602,7 +3612,7 @@ module Puma::Request
   # @return [String]
   # @version 5.0.3
   #
-  # source://puma//lib/puma/request.rb#533
+  # source://puma//lib/puma/request.rb#546
   def str_early_hints(headers); end
 
   # Processes and write headers to the IOBuffer.
@@ -3618,7 +3628,7 @@ module Puma::Request
   # @return [Hash] resp_info
   # @version 5.0.3
   #
-  # source://puma//lib/puma/request.rb#571
+  # source://puma//lib/puma/request.rb#584
   def str_headers(env, status, headers, res_body, io_buffer, force_keep_alive); end
 end
 
@@ -4064,7 +4074,7 @@ Puma::Server::UNPACK_TCP_STATE_FROM_TCP_INFO = T.let(T.unsafe(nil), String)
 # gets created via the `start_server` method from the `Puma::Runner` class
 # that this inherits from.
 #
-# source://puma//lib/puma/single.rb#16
+# source://puma//lib/puma/single.rb#15
 class Puma::Single < ::Puma::Runner
   # source://puma//lib/puma/single.rb#31
   def halt; end
