@@ -3,7 +3,7 @@
     <% resource_years.each do |year| %>
       <div class="col-12">
         <h3 class="text-center mb-3">
-          <%= year %>
+          <%= year == 0 ? "時期未定" : year %>
         </h3>
 
         <div class="g-3 row">
