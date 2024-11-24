@@ -47,6 +47,7 @@ class SeriesWork < ApplicationRecord
     joins(:work)
       .order("works.season_year #{sort_type}")
       .order("works.season_name #{sort_type}")
+      .order("works.started_on #{sort_type}")
   end
 
   def to_diffable_hash
