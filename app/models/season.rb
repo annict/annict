@@ -4,7 +4,7 @@
 class Season
   extend Enumerize
 
-  YEAR_LIST = (1900..(Time.now.year + 5))
+  YEAR_LIST = (1890..(Time.now.year + 5))
   NAME_HASH = {winter: 1, spring: 2, summer: 3, autumn: 4}.freeze
 
   attr_reader :year, :name
