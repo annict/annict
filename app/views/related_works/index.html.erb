@@ -11,7 +11,7 @@
 
 <% if @series_list.present? %>
   <% @series_list.each do |series| %>
-    <% series_works = series.series_works %>
+    <% series_works = series.series_works.sort_season.order(:id) %>
 
     <div class="container mt-5">
       <h2 class="fw-bold h3 mb-3">
