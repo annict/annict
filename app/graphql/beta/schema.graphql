@@ -246,7 +246,7 @@ type Character implements Node {
   nicknameEn: String!
   occupation: String!
   occupationEn: String!
-  series: Series!
+  series: Series
   weight: String!
   weightEn: String!
 }

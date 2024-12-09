@@ -57,6 +57,7 @@ class Slot < ApplicationRecord
   belongs_to :work, touch: true
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
+  has_many :library_entries, dependent: :nullify, foreign_key: :next_slot_id, inverse_of: :next_slot
 
   validates :channel_id, presence: true
   validates :started_at, presence: true
