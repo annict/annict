@@ -6507,19 +6507,19 @@ end
 class ActiveRecord::AttributeMethods::GeneratedAttributeMethods < ::Module
   include ::Mutex_m
 
-  # source://mutex_m/0.1.1/mutex_m.rb#93
+  # source://mutex_m/0.2.0/mutex_m.rb#91
   def lock; end
 
-  # source://mutex_m/0.1.1/mutex_m.rb#83
+  # source://mutex_m/0.2.0/mutex_m.rb#81
   def locked?; end
 
-  # source://mutex_m/0.1.1/mutex_m.rb#78
+  # source://mutex_m/0.2.0/mutex_m.rb#76
   def synchronize(&block); end
 
-  # source://mutex_m/0.1.1/mutex_m.rb#88
+  # source://mutex_m/0.2.0/mutex_m.rb#86
   def try_lock; end
 
-  # source://mutex_m/0.1.1/mutex_m.rb#98
+  # source://mutex_m/0.2.0/mutex_m.rb#96
   def unlock; end
 end
 
@@ -7864,28 +7864,28 @@ class ActiveRecord::Base
   extend ::ByStar::Directional
   extend ::ByStar::Base
 
-  # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#68
+  # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#68
   def __callbacks; end
 
-  # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#68
+  # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#68
   def __callbacks?; end
 
-  # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#940
+  # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#940
   def _before_commit_callbacks; end
 
-  # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#940
+  # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#940
   def _commit_callbacks; end
 
-  # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#940
+  # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#940
   def _create_callbacks; end
 
-  # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#940
+  # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#940
   def _destroy_callbacks; end
 
-  # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#940
+  # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#940
   def _find_callbacks; end
 
-  # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#940
+  # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#940
   def _initialize_callbacks; end
 
   # source://ransack/3.2.1/lib/ransack/adapters/active_record/base.rb#9
@@ -7912,64 +7912,64 @@ class ActiveRecord::Base
   # source://activerecord//lib/active_record/reflection.rb#11
   def _reflections?; end
 
-  # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#940
+  # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#940
   def _rollback_callbacks; end
 
-  # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#928
+  # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#928
   def _run_before_commit_callbacks(&block); end
 
-  # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#928
+  # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#928
   def _run_commit_callbacks(&block); end
 
-  # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#928
+  # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#928
   def _run_create_callbacks(&block); end
 
-  # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#928
+  # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#928
   def _run_destroy_callbacks(&block); end
 
-  # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#928
+  # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#928
   def _run_find_callbacks(&block); end
 
-  # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#928
+  # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#928
   def _run_initialize_callbacks(&block); end
 
-  # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#928
+  # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#928
   def _run_rollback_callbacks(&block); end
 
-  # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#928
+  # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#928
   def _run_save_callbacks(&block); end
 
-  # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#928
+  # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#928
   def _run_touch_callbacks(&block); end
 
-  # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#928
+  # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#928
   def _run_update_callbacks(&block); end
 
-  # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#928
+  # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#928
   def _run_validate_callbacks(&block); end
 
-  # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#928
+  # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#928
   def _run_validation_callbacks(&block); end
 
-  # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#940
+  # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#940
   def _save_callbacks; end
 
-  # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#940
+  # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#940
   def _touch_callbacks; end
 
-  # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#940
+  # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#940
   def _update_callbacks; end
 
-  # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#940
+  # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#940
   def _validate_callbacks; end
 
-  # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#940
+  # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#940
   def _validation_callbacks; end
 
-  # source://activemodel/7.0.8.4/lib/active_model/validations.rb#52
+  # source://activemodel/7.0.8.7/lib/active_model/validations.rb#52
   def _validators; end
 
-  # source://activemodel/7.0.8.4/lib/active_model/validations.rb#52
+  # source://activemodel/7.0.8.7/lib/active_model/validations.rb#52
   def _validators?; end
 
   # source://activerecord//lib/active_record/reflection.rb#12
@@ -7978,16 +7978,16 @@ class ActiveRecord::Base
   # source://activerecord//lib/active_record/reflection.rb#12
   def aggregate_reflections?; end
 
-  # source://activemodel/7.0.8.4/lib/active_model/attribute_methods.rb#72
+  # source://activemodel/7.0.8.7/lib/active_model/attribute_methods.rb#72
   def attribute_aliases; end
 
-  # source://activemodel/7.0.8.4/lib/active_model/attribute_methods.rb#72
+  # source://activemodel/7.0.8.7/lib/active_model/attribute_methods.rb#72
   def attribute_aliases?; end
 
-  # source://activemodel/7.0.8.4/lib/active_model/attribute_methods.rb#73
+  # source://activemodel/7.0.8.7/lib/active_model/attribute_methods.rb#73
   def attribute_method_matchers; end
 
-  # source://activemodel/7.0.8.4/lib/active_model/attribute_methods.rb#73
+  # source://activemodel/7.0.8.7/lib/active_model/attribute_methods.rb#73
   def attribute_method_matchers?; end
 
   # source://activerecord//lib/active_record/reflection.rb#13
@@ -8059,10 +8059,10 @@ class ActiveRecord::Base
   # source://activerecord//lib/active_record/encryption/encryptable_record.rb#11
   def encrypted_attributes?; end
 
-  # source://activemodel/7.0.8.4/lib/active_model/serializers/json.rb#15
+  # source://activemodel/7.0.8.7/lib/active_model/serializers/json.rb#15
   def include_root_in_json; end
 
-  # source://activemodel/7.0.8.4/lib/active_model/serializers/json.rb#15
+  # source://activemodel/7.0.8.7/lib/active_model/serializers/json.rb#15
   def include_root_in_json?; end
 
   # source://activerecord//lib/active_record/locking/optimistic.rb#56
@@ -8077,7 +8077,7 @@ class ActiveRecord::Base
   # source://activerecord//lib/active_record/core.rb#20
   def logger?; end
 
-  # source://activemodel/7.0.8.4/lib/active_model/naming.rb#244
+  # source://activemodel/7.0.8.7/lib/active_model/naming.rb#244
   def model_name(*_arg0, **_arg1, &_arg2); end
 
   # source://activerecord//lib/active_record/nested_attributes.rb#15
@@ -8173,22 +8173,22 @@ class ActiveRecord::Base
   # source://activerecord//lib/active_record/model_schema.rb#171
   def type_for_attribute(*_arg0, **_arg1, &_arg2); end
 
-  # source://activemodel/7.0.8.4/lib/active_model/validations.rb#48
+  # source://activemodel/7.0.8.7/lib/active_model/validations.rb#48
   def validation_context; end
 
   private
 
-  # source://activemodel/7.0.8.4/lib/active_model/validations.rb#48
+  # source://activemodel/7.0.8.7/lib/active_model/validations.rb#48
   def validation_context=(_arg0); end
 
   class << self
-    # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#68
+    # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#68
     def __callbacks; end
 
-    # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#68
+    # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#68
     def __callbacks=(value); end
 
-    # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#68
+    # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#68
     def __callbacks?; end
 
     # source://activerecord//lib/active_record/readonly_attributes.rb#8
@@ -8200,40 +8200,40 @@ class ActiveRecord::Base
     # source://activerecord//lib/active_record/readonly_attributes.rb#8
     def _attr_readonly?; end
 
-    # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#932
+    # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#932
     def _before_commit_callbacks; end
 
-    # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#936
+    # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#936
     def _before_commit_callbacks=(value); end
 
-    # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#932
+    # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#932
     def _commit_callbacks; end
 
-    # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#936
+    # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#936
     def _commit_callbacks=(value); end
 
-    # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#932
+    # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#932
     def _create_callbacks; end
 
-    # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#936
+    # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#936
     def _create_callbacks=(value); end
 
-    # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#932
+    # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#932
     def _destroy_callbacks; end
 
-    # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#936
+    # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#936
     def _destroy_callbacks=(value); end
 
-    # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#932
+    # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#932
     def _find_callbacks; end
 
-    # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#936
+    # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#936
     def _find_callbacks=(value); end
 
-    # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#932
+    # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#932
     def _initialize_callbacks; end
 
-    # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#936
+    # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#936
     def _initialize_callbacks=(value); end
 
     # source://ransack/3.2.1/lib/ransack/adapters/active_record/base.rb#9
@@ -8263,70 +8263,70 @@ class ActiveRecord::Base
     # source://activerecord//lib/active_record/reflection.rb#11
     def _reflections?; end
 
-    # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#932
+    # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#932
     def _rollback_callbacks; end
 
-    # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#936
+    # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#936
     def _rollback_callbacks=(value); end
 
-    # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#932
+    # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#932
     def _save_callbacks; end
 
-    # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#936
+    # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#936
     def _save_callbacks=(value); end
 
-    # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#932
+    # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#932
     def _touch_callbacks; end
 
-    # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#936
+    # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#936
     def _touch_callbacks=(value); end
 
-    # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#932
+    # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#932
     def _update_callbacks; end
 
-    # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#936
+    # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#936
     def _update_callbacks=(value); end
 
-    # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#932
+    # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#932
     def _validate_callbacks; end
 
-    # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#936
+    # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#936
     def _validate_callbacks=(value); end
 
-    # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#932
+    # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#932
     def _validation_callbacks; end
 
-    # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#936
+    # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#936
     def _validation_callbacks=(value); end
 
-    # source://activemodel/7.0.8.4/lib/active_model/validations.rb#52
+    # source://activemodel/7.0.8.7/lib/active_model/validations.rb#52
     def _validators; end
 
-    # source://activemodel/7.0.8.4/lib/active_model/validations.rb#52
+    # source://activemodel/7.0.8.7/lib/active_model/validations.rb#52
     def _validators=(value); end
 
-    # source://activemodel/7.0.8.4/lib/active_model/validations.rb#52
+    # source://activemodel/7.0.8.7/lib/active_model/validations.rb#52
     def _validators?; end
 
-    # source://activemodel/7.0.8.4/lib/active_model/callbacks.rb#144
+    # source://activemodel/7.0.8.7/lib/active_model/callbacks.rb#144
     def after_create(*args, **options, &block); end
 
-    # source://activemodel/7.0.8.4/lib/active_model/callbacks.rb#144
+    # source://activemodel/7.0.8.7/lib/active_model/callbacks.rb#144
     def after_destroy(*args, **options, &block); end
 
-    # source://activemodel/7.0.8.4/lib/active_model/callbacks.rb#144
+    # source://activemodel/7.0.8.7/lib/active_model/callbacks.rb#144
     def after_find(*args, **options, &block); end
 
-    # source://activemodel/7.0.8.4/lib/active_model/callbacks.rb#144
+    # source://activemodel/7.0.8.7/lib/active_model/callbacks.rb#144
     def after_initialize(*args, **options, &block); end
 
-    # source://activemodel/7.0.8.4/lib/active_model/callbacks.rb#144
+    # source://activemodel/7.0.8.7/lib/active_model/callbacks.rb#144
     def after_save(*args, **options, &block); end
 
-    # source://activemodel/7.0.8.4/lib/active_model/callbacks.rb#144
+    # source://activemodel/7.0.8.7/lib/active_model/callbacks.rb#144
     def after_touch(*args, **options, &block); end
 
-    # source://activemodel/7.0.8.4/lib/active_model/callbacks.rb#144
+    # source://activemodel/7.0.8.7/lib/active_model/callbacks.rb#144
     def after_update(*args, **options, &block); end
 
     # source://activerecord//lib/active_record/reflection.rb#12
@@ -8341,16 +8341,16 @@ class ActiveRecord::Base
     # source://activerecord//lib/active_record/core.rb#82
     def application_record_class?; end
 
-    # source://activemodel/7.0.8.4/lib/active_model/callbacks.rb#137
+    # source://activemodel/7.0.8.7/lib/active_model/callbacks.rb#137
     def around_create(*args, **options, &block); end
 
-    # source://activemodel/7.0.8.4/lib/active_model/callbacks.rb#137
+    # source://activemodel/7.0.8.7/lib/active_model/callbacks.rb#137
     def around_destroy(*args, **options, &block); end
 
-    # source://activemodel/7.0.8.4/lib/active_model/callbacks.rb#137
+    # source://activemodel/7.0.8.7/lib/active_model/callbacks.rb#137
     def around_save(*args, **options, &block); end
 
-    # source://activemodel/7.0.8.4/lib/active_model/callbacks.rb#137
+    # source://activemodel/7.0.8.7/lib/active_model/callbacks.rb#137
     def around_update(*args, **options, &block); end
 
     # source://activerecord//lib/active_record/core.rb#129
@@ -8359,22 +8359,22 @@ class ActiveRecord::Base
     # source://activerecord//lib/active_record/core.rb#133
     def asynchronous_queries_tracker; end
 
-    # source://activemodel/7.0.8.4/lib/active_model/attribute_methods.rb#72
+    # source://activemodel/7.0.8.7/lib/active_model/attribute_methods.rb#72
     def attribute_aliases; end
 
-    # source://activemodel/7.0.8.4/lib/active_model/attribute_methods.rb#72
+    # source://activemodel/7.0.8.7/lib/active_model/attribute_methods.rb#72
     def attribute_aliases=(value); end
 
-    # source://activemodel/7.0.8.4/lib/active_model/attribute_methods.rb#72
+    # source://activemodel/7.0.8.7/lib/active_model/attribute_methods.rb#72
     def attribute_aliases?; end
 
-    # source://activemodel/7.0.8.4/lib/active_model/attribute_methods.rb#73
+    # source://activemodel/7.0.8.7/lib/active_model/attribute_methods.rb#73
     def attribute_method_matchers; end
 
-    # source://activemodel/7.0.8.4/lib/active_model/attribute_methods.rb#73
+    # source://activemodel/7.0.8.7/lib/active_model/attribute_methods.rb#73
     def attribute_method_matchers=(value); end
 
-    # source://activemodel/7.0.8.4/lib/active_model/attribute_methods.rb#73
+    # source://activemodel/7.0.8.7/lib/active_model/attribute_methods.rb#73
     def attribute_method_matchers?; end
 
     # source://activerecord//lib/active_record/attributes.rb#11
@@ -8395,16 +8395,16 @@ class ActiveRecord::Base
     # source://activerecord//lib/active_record/reflection.rb#13
     def automatic_scope_inversing?; end
 
-    # source://activemodel/7.0.8.4/lib/active_model/callbacks.rb#130
+    # source://activemodel/7.0.8.7/lib/active_model/callbacks.rb#130
     def before_create(*args, **options, &block); end
 
-    # source://activemodel/7.0.8.4/lib/active_model/callbacks.rb#130
+    # source://activemodel/7.0.8.7/lib/active_model/callbacks.rb#130
     def before_destroy(*args, **options, &block); end
 
-    # source://activemodel/7.0.8.4/lib/active_model/callbacks.rb#130
+    # source://activemodel/7.0.8.7/lib/active_model/callbacks.rb#130
     def before_save(*args, **options, &block); end
 
-    # source://activemodel/7.0.8.4/lib/active_model/callbacks.rb#130
+    # source://activemodel/7.0.8.7/lib/active_model/callbacks.rb#130
     def before_update(*args, **options, &block); end
 
     # source://activerecord//lib/active_record/core.rb#68
@@ -8584,13 +8584,13 @@ class ActiveRecord::Base
     # source://activerecord//lib/active_record/model_schema.rb#157
     def implicit_order_column?; end
 
-    # source://activemodel/7.0.8.4/lib/active_model/serializers/json.rb#15
+    # source://activemodel/7.0.8.7/lib/active_model/serializers/json.rb#15
     def include_root_in_json; end
 
-    # source://activemodel/7.0.8.4/lib/active_model/serializers/json.rb#15
+    # source://activemodel/7.0.8.7/lib/active_model/serializers/json.rb#15
     def include_root_in_json=(value); end
 
-    # source://activemodel/7.0.8.4/lib/active_model/serializers/json.rb#15
+    # source://activemodel/7.0.8.7/lib/active_model/serializers/json.rb#15
     def include_root_in_json?; end
 
     # source://activerecord//lib/active_record/model_schema.rb#160
@@ -9808,22 +9808,22 @@ class ActiveRecord::ConnectionAdapters::AbstractAdapter
   # source://activerecord//lib/active_record/connection_adapters/abstract_adapter.rb#74
   def initialize(connection, logger = T.unsafe(nil), config = T.unsafe(nil)); end
 
-  # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#68
+  # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#68
   def __callbacks; end
 
-  # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#68
+  # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#68
   def __callbacks?; end
 
-  # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#940
+  # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#940
   def _checkin_callbacks; end
 
-  # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#940
+  # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#940
   def _checkout_callbacks; end
 
-  # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#928
+  # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#928
   def _run_checkin_callbacks(&block); end
 
-  # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#928
+  # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#928
   def _run_checkout_callbacks(&block); end
 
   # Checks whether the connection to the database is still active. This includes
@@ -10454,25 +10454,25 @@ class ActiveRecord::ConnectionAdapters::AbstractAdapter
   def without_prepared_statement?(binds); end
 
   class << self
-    # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#68
+    # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#68
     def __callbacks; end
 
-    # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#68
+    # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#68
     def __callbacks=(value); end
 
-    # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#68
+    # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#68
     def __callbacks?; end
 
-    # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#932
+    # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#932
     def _checkin_callbacks; end
 
-    # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#936
+    # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#936
     def _checkin_callbacks=(value); end
 
-    # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#932
+    # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#932
     def _checkout_callbacks; end
 
-    # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#936
+    # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#936
     def _checkout_callbacks=(value); end
 
     # source://activerecord//lib/active_record/connection_adapters/abstract_adapter.rb#68
@@ -11373,7 +11373,7 @@ class ActiveRecord::ConnectionAdapters::ConnectionPool
 
   # Returns the value of attribute connection_class.
   #
-  # source://activesupport/7.0.8.4/lib/active_support/deprecation/method_wrappers.rb#63
+  # source://activesupport/7.0.8.7/lib/active_support/deprecation/method_wrappers.rb#63
   def connection_klass(*args, **_arg1, &block); end
 
   # Returns an array containing the connections currently in the pool.
@@ -12605,10 +12605,10 @@ class ActiveRecord::ConnectionAdapters::PoolConfig
   # source://activerecord//lib/active_record/connection_adapters/pool_config.rb#38
   def disconnect!; end
 
-  # source://mutex_m/0.1.1/mutex_m.rb#93
+  # source://mutex_m/0.2.0/mutex_m.rb#91
   def lock; end
 
-  # source://mutex_m/0.1.1/mutex_m.rb#83
+  # source://mutex_m/0.2.0/mutex_m.rb#81
   def locked?; end
 
   # source://activerecord//lib/active_record/connection_adapters/pool_config.rb#53
@@ -12636,13 +12636,13 @@ class ActiveRecord::ConnectionAdapters::PoolConfig
   # source://activerecord//lib/active_record/connection_adapters/pool_config.rb#8
   def shard; end
 
-  # source://mutex_m/0.1.1/mutex_m.rb#78
+  # source://mutex_m/0.2.0/mutex_m.rb#76
   def synchronize(&block); end
 
-  # source://mutex_m/0.1.1/mutex_m.rb#88
+  # source://mutex_m/0.2.0/mutex_m.rb#86
   def try_lock; end
 
-  # source://mutex_m/0.1.1/mutex_m.rb#98
+  # source://mutex_m/0.2.0/mutex_m.rb#96
   def unlock; end
 
   class << self
@@ -17326,19 +17326,19 @@ class ActiveRecord::Delegation::GeneratedRelationMethods < ::Module
   # source://activerecord//lib/active_record/relation/delegation.rb#60
   def generate_method(method); end
 
-  # source://mutex_m/0.1.1/mutex_m.rb#93
+  # source://mutex_m/0.2.0/mutex_m.rb#91
   def lock; end
 
-  # source://mutex_m/0.1.1/mutex_m.rb#83
+  # source://mutex_m/0.2.0/mutex_m.rb#81
   def locked?; end
 
-  # source://mutex_m/0.1.1/mutex_m.rb#78
+  # source://mutex_m/0.2.0/mutex_m.rb#76
   def synchronize(&block); end
 
-  # source://mutex_m/0.1.1/mutex_m.rb#88
+  # source://mutex_m/0.2.0/mutex_m.rb#86
   def try_lock; end
 
-  # source://mutex_m/0.1.1/mutex_m.rb#98
+  # source://mutex_m/0.2.0/mutex_m.rb#96
   def unlock; end
 end
 
@@ -17372,10 +17372,10 @@ class ActiveRecord::DestroyAssociationAsyncJob < ::ActiveJob::Base
   def owner_destroyed?(owner, ensuring_owner_was_method); end
 
   class << self
-    # source://activejob/7.0.8.4/lib/active_job/queue_name.rb#55
+    # source://activejob/7.0.8.7/lib/active_job/queue_name.rb#55
     def queue_name; end
 
-    # source://activesupport/7.0.8.4/lib/active_support/rescuable.rb#13
+    # source://activesupport/7.0.8.7/lib/active_support/rescuable.rb#13
     def rescue_handlers; end
   end
 end
@@ -17558,10 +17558,10 @@ module ActiveRecord::Encryption
   # source://activerecord//lib/active_record/encryption/configurable.rb#10
   def config; end
 
-  # source://activesupport/7.0.8.4/lib/active_support/core_ext/module/attribute_accessors_per_thread.rb#56
+  # source://activesupport/7.0.8.7/lib/active_support/core_ext/module/attribute_accessors_per_thread.rb#56
   def custom_contexts; end
 
-  # source://activesupport/7.0.8.4/lib/active_support/core_ext/module/attribute_accessors_per_thread.rb#100
+  # source://activesupport/7.0.8.7/lib/active_support/core_ext/module/attribute_accessors_per_thread.rb#100
   def custom_contexts=(obj); end
 
   # source://activerecord//lib/active_record/encryption/contexts.rb#17
@@ -17577,10 +17577,10 @@ module ActiveRecord::Encryption
     # source://activerecord//lib/active_record/encryption/configurable.rb#10
     def config; end
 
-    # source://activesupport/7.0.8.4/lib/active_support/core_ext/module/attribute_accessors_per_thread.rb#48
+    # source://activesupport/7.0.8.7/lib/active_support/core_ext/module/attribute_accessors_per_thread.rb#48
     def custom_contexts; end
 
-    # source://activesupport/7.0.8.4/lib/active_support/core_ext/module/attribute_accessors_per_thread.rb#92
+    # source://activesupport/7.0.8.7/lib/active_support/core_ext/module/attribute_accessors_per_thread.rb#92
     def custom_contexts=(obj); end
 
     # source://activerecord//lib/active_record/encryption/contexts.rb#17
@@ -18875,7 +18875,7 @@ class ActiveRecord::Encryption::Properties
   # source://activerecord//lib/active_record/encryption/properties.rb#37
   def iv=(value); end
 
-  # source://activesupport/7.0.8.4/lib/active_support/core_ext/module/delegation.rb#302
+  # source://activesupport/7.0.8.7/lib/active_support/core_ext/module/delegation.rb#302
   def method_missing(method, *args, **_arg2, &block); end
 
   # source://activerecord//lib/active_record/encryption/properties.rb#68
@@ -18891,7 +18891,7 @@ class ActiveRecord::Encryption::Properties
   # source://activerecord//lib/active_record/encryption/properties.rb#73
   def data; end
 
-  # source://activesupport/7.0.8.4/lib/active_support/core_ext/module/delegation.rb#294
+  # source://activesupport/7.0.8.7/lib/active_support/core_ext/module/delegation.rb#294
   def respond_to_missing?(name, include_private = T.unsafe(nil)); end
 end
 
@@ -21459,7 +21459,7 @@ class ActiveRecord::InternalMetadata < ::ActiveRecord::Base
     # source://activerecord//lib/active_record/internal_metadata.rb#28
     def []=(key, value); end
 
-    # source://activemodel/7.0.8.4/lib/active_model/validations.rb#52
+    # source://activemodel/7.0.8.7/lib/active_model/validations.rb#52
     def _validators; end
 
     # Creates an internal metadata table with columns +key+ and +value+
@@ -24776,23 +24776,23 @@ class ActiveRecord::NoDatabaseError < ::ActiveRecord::StatementInvalid
   # source://activerecord//lib/active_record/errors.rb#245
   def initialize(message = T.unsafe(nil)); end
 
-  # source://activesupport/7.0.8.4/lib/active_support/actionable_error.rb#15
+  # source://activesupport/7.0.8.7/lib/active_support/actionable_error.rb#15
   def _actions; end
 
-  # source://activesupport/7.0.8.4/lib/active_support/actionable_error.rb#15
+  # source://activesupport/7.0.8.7/lib/active_support/actionable_error.rb#15
   def _actions=(_arg0); end
 
-  # source://activesupport/7.0.8.4/lib/active_support/actionable_error.rb#15
+  # source://activesupport/7.0.8.7/lib/active_support/actionable_error.rb#15
   def _actions?; end
 
   class << self
-    # source://activesupport/7.0.8.4/lib/active_support/actionable_error.rb#15
+    # source://activesupport/7.0.8.7/lib/active_support/actionable_error.rb#15
     def _actions; end
 
-    # source://activesupport/7.0.8.4/lib/active_support/actionable_error.rb#15
+    # source://activesupport/7.0.8.7/lib/active_support/actionable_error.rb#15
     def _actions=(value); end
 
-    # source://activesupport/7.0.8.4/lib/active_support/actionable_error.rb#15
+    # source://activesupport/7.0.8.7/lib/active_support/actionable_error.rb#15
     def _actions?; end
 
     # source://activerecord//lib/active_record/errors.rb#250
@@ -24941,13 +24941,13 @@ class ActiveRecord::PendingMigrationError < ::ActiveRecord::MigrationError
   # source://activerecord//lib/active_record/migration.rb#146
   def initialize(message = T.unsafe(nil)); end
 
-  # source://activesupport/7.0.8.4/lib/active_support/actionable_error.rb#15
+  # source://activesupport/7.0.8.7/lib/active_support/actionable_error.rb#15
   def _actions; end
 
-  # source://activesupport/7.0.8.4/lib/active_support/actionable_error.rb#15
+  # source://activesupport/7.0.8.7/lib/active_support/actionable_error.rb#15
   def _actions=(_arg0); end
 
-  # source://activesupport/7.0.8.4/lib/active_support/actionable_error.rb#15
+  # source://activesupport/7.0.8.7/lib/active_support/actionable_error.rb#15
   def _actions?; end
 
   private
@@ -24956,13 +24956,13 @@ class ActiveRecord::PendingMigrationError < ::ActiveRecord::MigrationError
   def detailed_migration_message; end
 
   class << self
-    # source://activesupport/7.0.8.4/lib/active_support/actionable_error.rb#15
+    # source://activesupport/7.0.8.7/lib/active_support/actionable_error.rb#15
     def _actions; end
 
-    # source://activesupport/7.0.8.4/lib/active_support/actionable_error.rb#15
+    # source://activesupport/7.0.8.7/lib/active_support/actionable_error.rb#15
     def _actions=(value); end
 
-    # source://activesupport/7.0.8.4/lib/active_support/actionable_error.rb#15
+    # source://activesupport/7.0.8.7/lib/active_support/actionable_error.rb#15
     def _actions?; end
   end
 end
@@ -26257,10 +26257,10 @@ module ActiveRecord::QueryLogs
     # source://activerecord//lib/active_record/query_logs.rb#77
     def cache_query_log_tags=(val); end
 
-    # source://activesupport/7.0.8.4/lib/active_support/core_ext/module/attribute_accessors_per_thread.rb#48
+    # source://activesupport/7.0.8.7/lib/active_support/core_ext/module/attribute_accessors_per_thread.rb#48
     def cached_comment; end
 
-    # source://activesupport/7.0.8.4/lib/active_support/core_ext/module/attribute_accessors_per_thread.rb#92
+    # source://activesupport/7.0.8.7/lib/active_support/core_ext/module/attribute_accessors_per_thread.rb#92
     def cached_comment=(obj); end
 
     # source://activerecord//lib/active_record/query_logs.rb#81
@@ -28746,7 +28746,7 @@ end
 # Base class for AggregateReflection and AssociationReflection. Objects of
 # AggregateReflection and AssociationReflection are returned by the Reflection::ClassMethods.
 #
-# source://activerecord//lib/active_record/reflection.rb#333
+# source://activerecord//lib/active_record/reflection.rb#329
 class ActiveRecord::Reflection::MacroReflection < ::ActiveRecord::Reflection::AbstractReflection
   # @return [MacroReflection] a new instance of MacroReflection
   #
@@ -30754,7 +30754,7 @@ class ActiveRecord::SchemaMigration < ::ActiveRecord::Base
   def version; end
 
   class << self
-    # source://activemodel/7.0.8.4/lib/active_model/validations.rb#52
+    # source://activemodel/7.0.8.7/lib/active_model/validations.rb#52
     def _validators; end
 
     # source://activerecord//lib/active_record/schema_migration.rb#41
@@ -31404,10 +31404,10 @@ class ActiveRecord::SessionStore::Session < ::ActiveRecord::Base
   def serialize_data!; end
 
   class << self
-    # source://activesupport/7.0.8.4/lib/active_support/callbacks.rb#68
+    # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#68
     def __callbacks; end
 
-    # source://activemodel/7.0.8.4/lib/active_model/validations.rb#52
+    # source://activemodel/7.0.8.7/lib/active_model/validations.rb#52
     def _validators; end
 
     # source://activerecord-session_store/2.0.0/lib/active_record/session_store/session.rb#14
@@ -32347,7 +32347,7 @@ module ActiveRecord::Tasks::DatabaseTasks
   # source://activerecord//lib/active_record/tasks/database_tasks.rb#457
   def schema_dump_path(db_config, format = T.unsafe(nil)); end
 
-  # source://activesupport/7.0.8.4/lib/active_support/deprecation/method_wrappers.rb#63
+  # source://activesupport/7.0.8.7/lib/active_support/deprecation/method_wrappers.rb#63
   def schema_file_type(*args, **_arg1, &block); end
 
   # @return [Boolean]

@@ -2,3 +2,8 @@
 .
 --ignore=tmp/
 --ignore=vendor/
+--suppress-payload-superclass-redefinition-for=Net::IMAP::Atom
+--suppress-payload-superclass-redefinition-for=Net::IMAP::Literal
+--suppress-payload-superclass-redefinition-for=Net::IMAP::MessageSet
+--suppress-payload-superclass-redefinition-for=Net::IMAP::QuotedString
+--suppress-payload-superclass-redefinition-for=Net::IMAP::RawData
