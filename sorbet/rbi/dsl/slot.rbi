@@ -340,6 +340,20 @@ class Slot
     sig { params(value: T.nilable(::Episode)).void }
     def episode=(value); end
 
+    # This method is created by ActiveRecord on the `Slot` class because it declared `has_many :library_entries`.
+    # 🔗 [Rails guide for `has_many` association](https://guides.rubyonrails.org/association_basics.html#the-has-many-association)
+    sig { returns(::LibraryEntry::PrivateCollectionProxy) }
+    def library_entries; end
+
+    sig { params(value: T::Enumerable[::LibraryEntry]).void }
+    def library_entries=(value); end
+
+    sig { returns(T::Array[T.untyped]) }
+    def library_entry_ids; end
+
+    sig { params(ids: T::Array[T.untyped]).returns(T::Array[T.untyped]) }
+    def library_entry_ids=(ids); end
+
     sig { returns(T.nilable(::Program)) }
     def program; end
 

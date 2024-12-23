@@ -173,7 +173,7 @@ class ActiveSupport::ActionableError::NonActionable < ::StandardError; end
 #   variants.tablet?   # => true
 #   variants.desktop?  # => false
 #
-# source://activesupport//lib/active_support/array_inquirer.rb#24
+# source://activesupport//lib/active_support/array_inquirer.rb#12
 class ActiveSupport::ArrayInquirer < ::Array
   # Passes each element of +candidates+ collection to ArrayInquirer collection.
   # The method returns true if any element from the ArrayInquirer collection
@@ -953,7 +953,7 @@ ActiveSupport::Cache::OPTION_ALIASES = T.let(T.unsafe(nil), Hash)
 #   4.0.1+ for distributed mget support.
 # * +delete_matched+ support for Redis KEYS globs.
 #
-# source://activesupport//lib/active_support/cache/redis_cache_store.rb#52
+# source://activesupport//lib/active_support/cache/redis_cache_store.rb#51
 class ActiveSupport::Cache::RedisCacheStore < ::ActiveSupport::Cache::Store
   include ::ActiveSupport::Cache::Strategy::LocalCache
 
@@ -5578,7 +5578,7 @@ end
 #
 # which will, in turn, require this file.
 #
-# source://activesupport//lib/active_support/hash_with_indifferent_access.rb#55
+# source://activesupport//lib/active_support/hash_with_indifferent_access.rb#53
 class ActiveSupport::HashWithIndifferentAccess < ::Hash
   # @return [HashWithIndifferentAccess] a new instance of HashWithIndifferentAccess
   #
@@ -7022,7 +7022,7 @@ end
 # flushes all logs when the request finishes
 # (via <tt>action_dispatch.callback</tt> notification) in a Rails environment.
 #
-# source://activesupport//lib/active_support/log_subscriber.rb#66
+# source://activesupport//lib/active_support/log_subscriber.rb#65
 class ActiveSupport::LogSubscriber < ::ActiveSupport::Subscriber
   # source://activesupport//lib/active_support/log_subscriber.rb#80
   def colorize_logging; end
@@ -7185,7 +7185,7 @@ end
 
 # Simple formatter which only displays the message.
 #
-# source://activesupport//lib/active_support/logger.rb#87
+# source://activesupport//lib/active_support/logger.rb#86
 class ActiveSupport::Logger::SimpleFormatter < ::Logger::Formatter
   # This method is invoked when a log event occurs
   #
@@ -8408,10 +8408,10 @@ class ActiveSupport::Notifications::Fanout
   # source://activesupport//lib/active_support/notifications/fanout.rb#117
   def listening?(name); end
 
-  # source://mutex_m/0.1.1/mutex_m.rb#93
+  # source://mutex_m/0.2.0/mutex_m.rb#91
   def lock; end
 
-  # source://mutex_m/0.1.1/mutex_m.rb#83
+  # source://mutex_m/0.2.0/mutex_m.rb#81
   def locked?; end
 
   # source://activesupport//lib/active_support/notifications/fanout.rb#79
@@ -8426,13 +8426,13 @@ class ActiveSupport::Notifications::Fanout
   # source://activesupport//lib/active_support/notifications/fanout.rb#34
   def subscribe(pattern = T.unsafe(nil), callable = T.unsafe(nil), monotonic: T.unsafe(nil), &block); end
 
-  # source://mutex_m/0.1.1/mutex_m.rb#78
+  # source://mutex_m/0.2.0/mutex_m.rb#76
   def synchronize(&block); end
 
-  # source://mutex_m/0.1.1/mutex_m.rb#88
+  # source://mutex_m/0.2.0/mutex_m.rb#86
   def try_lock; end
 
-  # source://mutex_m/0.1.1/mutex_m.rb#98
+  # source://mutex_m/0.2.0/mutex_m.rb#96
   def unlock; end
 
   # source://activesupport//lib/active_support/notifications/fanout.rb#51
@@ -10688,48 +10688,48 @@ class ActiveSupport::TestCase < ::Minitest::Test
   # source://activesupport//lib/active_support/callbacks.rb#940
   def _teardown_callbacks; end
 
-  # source://minitest/5.23.1/lib/minitest/assertions.rb#736
+  # source://minitest/5.25.4/lib/minitest/assertions.rb#731
   def assert_no_match(matcher, obj, msg = T.unsafe(nil)); end
 
-  # source://minitest/5.23.1/lib/minitest/assertions.rb#665
+  # source://minitest/5.25.4/lib/minitest/assertions.rb#660
   def assert_not_empty(obj, msg = T.unsafe(nil)); end
 
-  # source://minitest/5.23.1/lib/minitest/assertions.rb#676
+  # source://minitest/5.25.4/lib/minitest/assertions.rb#671
   def assert_not_equal(exp, act, msg = T.unsafe(nil)); end
 
-  # source://minitest/5.23.1/lib/minitest/assertions.rb#688
+  # source://minitest/5.25.4/lib/minitest/assertions.rb#683
   def assert_not_in_delta(exp, act, delta = T.unsafe(nil), msg = T.unsafe(nil)); end
 
-  # source://minitest/5.23.1/lib/minitest/assertions.rb#700
+  # source://minitest/5.25.4/lib/minitest/assertions.rb#695
   def assert_not_in_epsilon(a, b, epsilon = T.unsafe(nil), msg = T.unsafe(nil)); end
 
-  # source://minitest/5.23.1/lib/minitest/assertions.rb#707
+  # source://minitest/5.25.4/lib/minitest/assertions.rb#702
   def assert_not_includes(collection, obj, msg = T.unsafe(nil)); end
 
-  # source://minitest/5.23.1/lib/minitest/assertions.rb#718
+  # source://minitest/5.25.4/lib/minitest/assertions.rb#713
   def assert_not_instance_of(cls, obj, msg = T.unsafe(nil)); end
 
-  # source://minitest/5.23.1/lib/minitest/assertions.rb#728
+  # source://minitest/5.25.4/lib/minitest/assertions.rb#723
   def assert_not_kind_of(cls, obj, msg = T.unsafe(nil)); end
 
-  # source://minitest/5.23.1/lib/minitest/assertions.rb#746
+  # source://minitest/5.25.4/lib/minitest/assertions.rb#741
   def assert_not_nil(obj, msg = T.unsafe(nil)); end
 
-  # source://minitest/5.23.1/lib/minitest/assertions.rb#781
+  # source://minitest/5.25.4/lib/minitest/assertions.rb#776
   def assert_not_operator(o1, op, o2 = T.unsafe(nil), msg = T.unsafe(nil)); end
 
-  # source://minitest/5.23.1/lib/minitest/assertions.rb#804
+  # source://minitest/5.25.4/lib/minitest/assertions.rb#799
   def assert_not_predicate(o1, op, msg = T.unsafe(nil)); end
 
-  # source://minitest/5.23.1/lib/minitest/assertions.rb#813
+  # source://minitest/5.25.4/lib/minitest/assertions.rb#808
   def assert_not_respond_to(obj, meth, msg = T.unsafe(nil), include_all: T.unsafe(nil)); end
 
-  # source://minitest/5.23.1/lib/minitest/assertions.rb#822
+  # source://minitest/5.25.4/lib/minitest/assertions.rb#817
   def assert_not_same(exp, act, msg = T.unsafe(nil)); end
 
   # test/unit backwards compatibility methods
   #
-  # source://minitest/5.23.1/lib/minitest/assertions.rb#424
+  # source://minitest/5.25.4/lib/minitest/assertions.rb#418
   def assert_raise(*exp); end
 
   # source://activesupport//lib/active_support/testing/file_fixtures.rb#20
@@ -10741,7 +10741,7 @@ class ActiveSupport::TestCase < ::Minitest::Test
   # source://activesupport//lib/active_support/test_case.rb#151
   def inspect; end
 
-  # source://minitest/5.23.1/lib/minitest.rb#346
+  # source://minitest/5.25.4/lib/minitest.rb#376
   def method_name; end
 
   class << self
@@ -15890,46 +15890,46 @@ HashWithIndifferentAccess = ActiveSupport::HashWithIndifferentAccess
 # source://activesupport//lib/active_support/i18n_railtie.rb#8
 module I18n
   class << self
-    # source://i18n/1.14.5/lib/i18n/backend/cache.rb#64
+    # source://i18n/1.14.6/lib/i18n/backend/cache.rb#64
     def cache_key_digest; end
 
-    # source://i18n/1.14.5/lib/i18n/backend/cache.rb#68
+    # source://i18n/1.14.6/lib/i18n/backend/cache.rb#68
     def cache_key_digest=(key_digest); end
 
-    # source://i18n/1.14.5/lib/i18n/backend/cache.rb#56
+    # source://i18n/1.14.6/lib/i18n/backend/cache.rb#56
     def cache_namespace; end
 
-    # source://i18n/1.14.5/lib/i18n/backend/cache.rb#60
+    # source://i18n/1.14.6/lib/i18n/backend/cache.rb#60
     def cache_namespace=(namespace); end
 
-    # source://i18n/1.14.5/lib/i18n/backend/cache.rb#48
+    # source://i18n/1.14.6/lib/i18n/backend/cache.rb#48
     def cache_store; end
 
-    # source://i18n/1.14.5/lib/i18n/backend/cache.rb#52
+    # source://i18n/1.14.6/lib/i18n/backend/cache.rb#52
     def cache_store=(store); end
 
-    # source://i18n/1.14.5/lib/i18n/backend/fallbacks.rb#17
+    # source://i18n/1.14.6/lib/i18n/backend/fallbacks.rb#17
     def fallbacks; end
 
-    # source://i18n/1.14.5/lib/i18n/backend/fallbacks.rb#23
+    # source://i18n/1.14.6/lib/i18n/backend/fallbacks.rb#23
     def fallbacks=(fallbacks); end
 
-    # source://i18n/1.14.5/lib/i18n/interpolate/ruby.rb#23
+    # source://i18n/1.14.6/lib/i18n/interpolate/ruby.rb#23
     def interpolate(string, values); end
 
-    # source://i18n/1.14.5/lib/i18n/interpolate/ruby.rb#29
+    # source://i18n/1.14.6/lib/i18n/interpolate/ruby.rb#29
     def interpolate_hash(string, values); end
 
-    # source://i18n/1.14.5/lib/i18n.rb#37
+    # source://i18n/1.14.6/lib/i18n.rb#38
     def new_double_nested_cache; end
 
-    # source://i18n/1.14.5/lib/i18n/backend/cache.rb#72
+    # source://i18n/1.14.6/lib/i18n/backend/cache.rb#72
     def perform_caching?; end
 
-    # source://i18n/1.14.5/lib/i18n.rb#45
+    # source://i18n/1.14.6/lib/i18n.rb#46
     def reserve_key(key); end
 
-    # source://i18n/1.14.5/lib/i18n.rb#50
+    # source://i18n/1.14.6/lib/i18n.rb#51
     def reserved_keys_pattern; end
   end
 end
@@ -15974,38 +15974,59 @@ class IO::Buffer
 
   def initialize(*_arg0); end
 
+  def &(_arg0); end
   def <=>(_arg0); end
+  def ^(_arg0); end
+  def and!(_arg0); end
   def clear(*_arg0); end
   def copy(*_arg0); end
+  def each(*_arg0); end
+  def each_byte(*_arg0); end
   def empty?; end
   def external?; end
   def free; end
   def get_string(*_arg0); end
   def get_value(_arg0, _arg1); end
-  def hexdump; end
+  def get_values(_arg0, _arg1); end
+  def hexdump(*_arg0); end
   def inspect; end
   def internal?; end
   def locked; end
   def locked?; end
   def mapped?; end
+  def not!; end
   def null?; end
-  def pread(_arg0, _arg1, _arg2); end
-  def pwrite(_arg0, _arg1, _arg2); end
-  def read(_arg0, _arg1); end
+  def or!(_arg0); end
+  def pread(*_arg0); end
+  def private?; end
+  def pwrite(*_arg0); end
+  def read(*_arg0); end
   def readonly?; end
   def resize(_arg0); end
   def set_string(*_arg0); end
   def set_value(_arg0, _arg1, _arg2); end
+  def set_values(_arg0, _arg1, _arg2); end
+  def shared?; end
   def size; end
-  def slice(_arg0, _arg1); end
+  def slice(*_arg0); end
   def to_s; end
   def transfer; end
   def valid?; end
-  def write(_arg0, _arg1); end
+  def values(*_arg0); end
+  def write(*_arg0); end
+  def xor!(_arg0); end
+  def |(_arg0); end
+  def ~; end
+
+  private
+
+  def initialize_copy(_arg0); end
 
   class << self
     def for(_arg0); end
     def map(*_arg0); end
+    def size_of(_arg0); end
+    def string(_arg0); end
   end
 end
 
@@ -16021,10 +16042,12 @@ IO::Buffer::LITTLE_ENDIAN = T.let(T.unsafe(nil), Integer)
 IO::Buffer::LOCKED = T.let(T.unsafe(nil), Integer)
 class IO::Buffer::LockedError < ::RuntimeError; end
 IO::Buffer::MAPPED = T.let(T.unsafe(nil), Integer)
+class IO::Buffer::MaskError < ::ArgumentError; end
 IO::Buffer::NETWORK_ENDIAN = T.let(T.unsafe(nil), Integer)
 IO::Buffer::PAGE_SIZE = T.let(T.unsafe(nil), Integer)
 IO::Buffer::PRIVATE = T.let(T.unsafe(nil), Integer)
 IO::Buffer::READONLY = T.let(T.unsafe(nil), Integer)
+IO::Buffer::SHARED = T.let(T.unsafe(nil), Integer)
 
 class IO::ConsoleMode
   def echo=(_arg0); end
@@ -16056,6 +16079,7 @@ IO::EWOULDBLOCKWaitReadable = IO::EAGAINWaitReadable
 IO::EWOULDBLOCKWaitWritable = IO::EAGAINWaitWritable
 IO::PRIORITY = T.let(T.unsafe(nil), Integer)
 IO::READABLE = T.let(T.unsafe(nil), Integer)
+class IO::TimeoutError < ::IOError; end
 IO::WRITABLE = T.let(T.unsafe(nil), Integer)
 
 # source://activesupport//lib/active_support/core_ext/object/json.rb#228
@@ -16249,19 +16273,6 @@ class LoadError < ::ScriptError
   #
   # source://activesupport//lib/active_support/core_ext/load_error.rb#6
   def is_missing?(location); end
-end
-
-# source://activesupport//lib/active_support/core_ext/object/duplicable.rb#31
-class Method
-  # Methods are not duplicable:
-  #
-  #   method(:puts).duplicable? # => false
-  #   method(:puts).dup         # => TypeError: allocator undefined for Method
-  #
-  # @return [Boolean]
-  #
-  # source://activesupport//lib/active_support/core_ext/object/duplicable.rb#36
-  def duplicable?; end
 end
 
 # == Attribute Accessors per Thread
@@ -18121,7 +18132,7 @@ SecureRandom::BASE36_ALPHABET = T.let(T.unsafe(nil), Array)
 # source://activesupport//lib/active_support/core_ext/securerandom.rb#6
 SecureRandom::BASE58_ALPHABET = T.let(T.unsafe(nil), Array)
 
-# source://activesupport//lib/active_support/core_ext/object/duplicable.rb#53
+# source://activesupport//lib/active_support/core_ext/object/duplicable.rb#62
 module Singleton
   mixes_in_class_methods ::Singleton::SingletonClassMethods
 
@@ -18131,7 +18142,7 @@ module Singleton
   #
   # @return [Boolean]
   #
-  # source://activesupport//lib/active_support/core_ext/object/duplicable.rb#57
+  # source://activesupport//lib/active_support/core_ext/object/duplicable.rb#66
   def duplicable?; end
 end
 
@@ -19395,17 +19406,4 @@ class URI::Generic
 
   # source://activesupport//lib/active_support/core_ext/object/json.rb#217
   def as_json(options = T.unsafe(nil)); end
-end
-
-# source://activesupport//lib/active_support/core_ext/object/duplicable.rb#41
-class UnboundMethod
-  # Unbound methods are not duplicable:
-  #
-  #   method(:puts).unbind.duplicable? # => false
-  #   method(:puts).unbind.dup         # => TypeError: allocator undefined for UnboundMethod
-  #
-  # @return [Boolean]
-  #
-  # source://activesupport//lib/active_support/core_ext/object/duplicable.rb#46
-  def duplicable?; end
 end
