@@ -73,8 +73,10 @@ class ActivityGroup < ApplicationRecord
       when "Status"
         all_statuses.find_all { |s| activities.pluck(:trackable_id).include?(s.id) }
       when "EpisodeRecord"
-        episode_records = all_episode_records.find_all { |er| activities.pluck(:trackable_id).include?(er.id) }
-        all_records.find_all { |r| episode_records.pluck(:record_id).include?(r.id) }
+        trackable_ids = activities.pluck(:trackable_id)
+        episode_records = all_episode_records.where(id: trackable_ids)
+        episode_record_ids = episode_records.pluck(:record_id)
+        all_records.where(id: episode_record_ids)
       when "AnimeRecord", "WorkRecord"
         work_records = all_work_records.find_all { |ar| activities.pluck(:trackable_id).include?(ar.id) }
         all_records.find_all { |r| work_records.pluck(:record_id).include?(r.id) }
