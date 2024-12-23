@@ -355,7 +355,7 @@ GEM
     net-smtp (0.5.0)
       net-protocol
     netrc (0.11.0)
-    nio4r (2.7.1)
+    nio4r (2.7.4)
     nokogiri (1.16.5-aarch64-linux)
       racc (~> 1.4)
     nokogiri (1.16.5-x86_64-linux)
@@ -401,7 +401,7 @@ GEM
     pry-rails (0.3.9)
       pry (>= 0.10.4)
     public_suffix (5.0.0)
-    puma (6.4.2)
+    puma (6.5.0)
       nio4r (~> 2.0)
     puma_worker_killer (0.3.1)
       get_process_mem (~> 0.2)
