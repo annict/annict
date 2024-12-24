@@ -7,19 +7,27 @@
 
 # Used for Czech, Slovak.
 #
-# source://rails-i18n//lib/rails_i18n/railtie.rb#3
-module RailsI18n; end
+# source://rails-i18n//lib/rails_i18n.rb#1
+module RailsI18n
+  class << self
+    # source://rails-i18n//lib/rails_i18n.rb#2
+    def enabled_modules; end
+
+    # source://rails-i18n//lib/rails_i18n.rb#6
+    def enabled_modules=(other); end
+  end
+end
 
 # source://rails-i18n//lib/rails_i18n/railtie.rb#4
 class RailsI18n::Railtie < ::Rails::Railtie
   class << self
-    # source://rails-i18n//lib/rails_i18n/railtie.rb#20
+    # source://rails-i18n//lib/rails_i18n/railtie.rb#25
     def add(pattern); end
 
-    # source://rails-i18n//lib/rails_i18n/railtie.rb#30
+    # source://rails-i18n//lib/rails_i18n/railtie.rb#35
     def init_pluralization_module; end
 
-    # source://rails-i18n//lib/rails_i18n/railtie.rb#25
+    # source://rails-i18n//lib/rails_i18n/railtie.rb#30
     def pattern_from(args); end
   end
 end
