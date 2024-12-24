@@ -10,7 +10,7 @@
 # source://ruby-next-core//lib/ruby-next/version.rb#3
 module RubyNext
   class << self
-    # source://ruby-next-core//lib/ruby-next/config.rb#28
+    # source://ruby-next-core//lib/ruby-next/config.rb#35
     def current_ruby_version; end
 
     # Returns the value of attribute debug_enabled.
@@ -24,8 +24,25 @@ module RubyNext
     # source://ruby-next-core//lib/ruby-next/logging.rb#16
     def debug_source(source, filepath = T.unsafe(nil)); end
 
-    # source://ruby-next-core//lib/ruby-next/config.rb#33
+    # Returns true if we want to use edge syntax
+    #
+    # @return [Boolean]
+    #
+    # source://ruby-next-core//lib/ruby-next/config.rb#41
+    def edge_syntax?; end
+
+    # Load transpile settings from the RC file (nextify command flags)
+    #
+    # source://ruby-next-core//lib/ruby-next/config.rb#67
+    def load_from_rc(path = T.unsafe(nil)); end
+
+    # source://ruby-next-core//lib/ruby-next/config.rb#49
     def next_ruby_version(version = T.unsafe(nil)); end
+
+    # @return [Boolean]
+    #
+    # source://ruby-next-core//lib/ruby-next/config.rb#45
+    def proposed_syntax?; end
 
     # Returns the value of attribute silence_warnings.
     #
@@ -65,7 +82,7 @@ module RubyNext::Core
     def core_ext?; end
 
     # source://ruby-next-core//lib/ruby-next/core/refinement/import.rb#7
-    def import_methods(other, bind); end
+    def import_methods(*others, bind); end
 
     # Inject `using RubyNext` at the top of the source code
     #
@@ -259,10 +276,10 @@ module RubyNext::Language
   class << self
     # @return [Boolean]
     #
-    # source://ruby-next-core//lib/ruby-next/language/setup.rb#26
+    # source://ruby-next-core//lib/ruby-next/language/setup.rb#29
     def runtime?; end
 
-    # source://ruby-next-core//lib/ruby-next/language/setup.rb#31
+    # source://ruby-next-core//lib/ruby-next/language/setup.rb#34
     def setup_gem_load_path(lib_dir = T.unsafe(nil), rbnext_dir: T.unsafe(nil), transpile: T.unsafe(nil)); end
   end
 end
@@ -298,13 +315,10 @@ module RubyNext::Utils
 
   # Returns true if modules refinement is supported in current version
   #
-  # source://ruby-next-core//lib/ruby-next/utils.rb#38
+  # source://ruby-next-core//lib/ruby-next/utils.rb#16
   def refine_modules?; end
 
-  # source://ruby-next-core//lib/ruby-next/utils.rb#8
-  def resolve_feature_path(feature); end
-
-  # source://ruby-next-core//lib/ruby-next/utils.rb#29
+  # source://ruby-next-core//lib/ruby-next/utils.rb#7
   def source_with_lines(source, path); end
 
   class << self
@@ -312,13 +326,10 @@ module RubyNext::Utils
     #
     # @return [Boolean]
     #
-    # source://ruby-next-core//lib/ruby-next/utils.rb#38
+    # source://ruby-next-core//lib/ruby-next/utils.rb#16
     def refine_modules?; end
 
-    # source://ruby-next-core//lib/ruby-next/utils.rb#8
-    def resolve_feature_path(feature); end
-
-    # source://ruby-next-core//lib/ruby-next/utils.rb#29
+    # source://ruby-next-core//lib/ruby-next/utils.rb#7
     def source_with_lines(source, path); end
   end
 end
