@@ -1839,7 +1839,21 @@ CREATE TABLE public.records (
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     deleted_at timestamp without time zone,
-    watched_at timestamp without time zone NOT NULL
+    watched_at timestamp without time zone NOT NULL,
+    oauth_application_id bigint,
+    body text DEFAULT ''::text NOT NULL,
+    comments_count integer DEFAULT 0 NOT NULL,
+    likes_count integer DEFAULT 0 NOT NULL,
+    advanced_overall_rating double precision,
+    modified_at timestamp(6) without time zone,
+    locale character varying,
+    overall_rating character varying,
+    animation_rating character varying,
+    character_rating character varying,
+    music_rating character varying,
+    story_rating character varying,
+    trackable_id bigint,
+    trackable_type character varying
 );
 
 
@@ -5106,6 +5120,20 @@ CREATE INDEX index_records_on_deleted_at ON public.records USING btree (deleted_
 
 
 --
+-- Name: index_records_on_oauth_application_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_records_on_oauth_application_id ON public.records USING btree (oauth_application_id);
+
+
+--
+-- Name: index_records_on_trackable_id_and_trackable_type; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_records_on_trackable_id_and_trackable_type ON public.records USING btree (trackable_id, trackable_type);
+
+
+--
 -- Name: index_records_on_user_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -6110,6 +6138,14 @@ ALTER TABLE ONLY public.organization_favorites
 
 
 --
+-- Name: records fk_rails_4c5f7820f8; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.records
+    ADD CONSTRAINT fk_rails_4c5f7820f8 FOREIGN KEY (oauth_application_id) REFERENCES public.oauth_applications(id);
+
+
+--
 -- Name: activities fk_rails_4ef7271728; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -7050,6 +7086,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210809083311'),
 ('20210919175411'),
 ('20211016135715'),
-('20211017074902');
+('20211017074902'),
+('20221015171455');
 
 

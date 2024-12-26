@@ -5,25 +5,42 @@
 #
 # Table name: records
 #
-#  id                :bigint           not null, primary key
-#  aasm_state        :string           default("published"), not null
-#  deleted_at        :datetime
-#  impressions_count :integer          default(0), not null
-#  watched_at        :datetime         not null
-#  created_at        :datetime         not null
-#  updated_at        :datetime         not null
-#  user_id           :bigint           not null
-#  work_id           :bigint           not null
+#  id                      :bigint           not null, primary key
+#  aasm_state              :string           default("published"), not null
+#  advanced_overall_rating :float
+#  animation_rating        :string
+#  body                    :text             default(""), not null
+#  character_rating        :string
+#  comments_count          :integer          default(0), not null
+#  deleted_at              :datetime
+#  impressions_count       :integer          default(0), not null
+#  likes_count             :integer          default(0), not null
+#  locale                  :string
+#  modified_at             :datetime
+#  music_rating            :string
+#  overall_rating          :string
+#  story_rating            :string
+#  trackable_type          :string
+#  watched_at              :datetime         not null
+#  created_at              :datetime         not null
+#  updated_at              :datetime         not null
+#  oauth_application_id    :bigint
+#  trackable_id            :bigint
+#  user_id                 :bigint           not null
+#  work_id                 :bigint           not null
 #
 # Indexes
 #
-#  index_records_on_deleted_at  (deleted_at)
-#  index_records_on_user_id     (user_id)
-#  index_records_on_watched_at  (watched_at)
-#  index_records_on_work_id     (work_id)
+#  index_records_on_deleted_at                       (deleted_at)
+#  index_records_on_oauth_application_id             (oauth_application_id)
+#  index_records_on_trackable_id_and_trackable_type  (trackable_id,trackable_type)
+#  index_records_on_user_id                          (user_id)
+#  index_records_on_watched_at                       (watched_at)
+#  index_records_on_work_id                          (work_id)
 #
 # Foreign Keys
 #
+#  fk_rails_...  (oauth_application_id => oauth_applications.id)
 #  fk_rails_...  (user_id => users.id)
 #  fk_rails_...  (work_id => works.id)
 #
