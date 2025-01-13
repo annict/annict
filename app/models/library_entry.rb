@@ -1,45 +1,6 @@
 # typed: false
 # frozen_string_literal: true
 
-# == Schema Information
-#
-# Table name: library_entries
-#
-#  id                  :bigint           not null, primary key
-#  note                :text             default(""), not null
-#  position            :integer          default(0), not null
-#  watched_episode_ids :bigint           default([]), not null, is an Array
-#  created_at          :datetime         not null
-#  updated_at          :datetime         not null
-#  next_episode_id     :bigint
-#  next_slot_id        :bigint
-#  program_id          :bigint
-#  status_id           :bigint
-#  user_id             :bigint           not null
-#  work_id             :bigint           not null
-#
-# Indexes
-#
-#  index_library_entries_on_next_episode_id         (next_episode_id)
-#  index_library_entries_on_next_slot_id            (next_slot_id)
-#  index_library_entries_on_program_id              (program_id)
-#  index_library_entries_on_status_id               (status_id)
-#  index_library_entries_on_user_id                 (user_id)
-#  index_library_entries_on_user_id_and_position    (user_id,position)
-#  index_library_entries_on_user_id_and_program_id  (user_id,program_id) UNIQUE
-#  index_library_entries_on_user_id_and_work_id     (user_id,work_id) UNIQUE
-#  index_library_entries_on_work_id                 (work_id)
-#
-# Foreign Keys
-#
-#  fk_rails_...  (next_episode_id => episodes.id)
-#  fk_rails_...  (next_slot_id => slots.id)
-#  fk_rails_...  (program_id => programs.id)
-#  fk_rails_...  (status_id => statuses.id)
-#  fk_rails_...  (user_id => users.id)
-#  fk_rails_...  (work_id => works.id)
-#
-
 class LibraryEntry < ApplicationRecord
   acts_as_list scope: :user
 

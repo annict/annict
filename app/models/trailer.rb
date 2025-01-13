@@ -1,38 +1,6 @@
 # typed: false
 # frozen_string_literal: true
 
-# == Schema Information
-#
-# Table name: trailers
-#
-#  id                     :bigint           not null, primary key
-#  aasm_state             :string           default("published"), not null
-#  deleted_at             :datetime
-#  image_data             :text
-#  sort_number            :integer          default(0), not null
-#  thumbnail_content_type :string
-#  thumbnail_file_name    :string
-#  thumbnail_file_size    :integer
-#  thumbnail_updated_at   :datetime
-#  title                  :string           not null
-#  title_en               :string           default(""), not null
-#  unpublished_at         :datetime
-#  url                    :string           not null
-#  created_at             :datetime         not null
-#  updated_at             :datetime         not null
-#  work_id                :bigint           not null
-#
-# Indexes
-#
-#  index_trailers_on_deleted_at      (deleted_at)
-#  index_trailers_on_unpublished_at  (unpublished_at)
-#  index_trailers_on_work_id         (work_id)
-#
-# Foreign Keys
-#
-#  fk_rails_...  (work_id => works.id)
-#
-
 class Trailer < ApplicationRecord
   T.unsafe(self).include TrailerImageUploader::Attachment.new(:image)
   include DbActivityMethods

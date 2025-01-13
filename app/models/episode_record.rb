@@ -1,56 +1,6 @@
 # typed: false
 # frozen_string_literal: true
 
-# == Schema Information
-#
-# Table name: episode_records
-#
-#  id                   :bigint           not null, primary key
-#  body                 :text
-#  comments_count       :integer          default(0), not null
-#  deleted_at           :datetime
-#  facebook_click_count :integer          default(0), not null
-#  facebook_url_hash    :string(510)
-#  likes_count          :integer          default(0), not null
-#  locale               :string           default("other"), not null
-#  modify_body          :boolean          default(FALSE), not null
-#  rating               :float
-#  rating_state         :string
-#  twitter_click_count  :integer          default(0), not null
-#  twitter_url_hash     :string(510)
-#  created_at           :timestamptz
-#  updated_at           :timestamptz
-#  episode_id           :bigint           not null
-#  oauth_application_id :bigint
-#  record_id            :bigint           not null
-#  user_id              :bigint           not null
-#  work_id              :bigint           not null
-#
-# Indexes
-#
-#  checkins_facebook_url_hash_key                       (facebook_url_hash) UNIQUE
-#  checkins_twitter_url_hash_key                        (twitter_url_hash) UNIQUE
-#  checkins_user_id_idx                                 (user_id)
-#  index_episode_records_on_episode_id_and_deleted_at   (episode_id,deleted_at)
-#  index_episode_records_on_locale                      (locale)
-#  index_episode_records_on_multiple_episode_record_id  (multiple_episode_record_id)
-#  index_episode_records_on_oauth_application_id        (oauth_application_id)
-#  index_episode_records_on_rating_state                (rating_state)
-#  index_episode_records_on_record_id                   (record_id) UNIQUE
-#  index_episode_records_on_review_id                   (review_id)
-#  index_episode_records_on_work_id                     (work_id)
-#
-# Foreign Keys
-#
-#  checkins_episode_id_fk  (episode_id => episodes.id) ON DELETE => cascade
-#  checkins_user_id_fk     (user_id => users.id) ON DELETE => cascade
-#  checkins_work_id_fk     (work_id => works.id)
-#  fk_rails_...            (multiple_episode_record_id => multiple_episode_records.id)
-#  fk_rails_...            (oauth_application_id => oauth_applications.id)
-#  fk_rails_...            (record_id => records.id)
-#  fk_rails_...            (review_id => work_records.id)
-#
-
 class EpisodeRecord < ApplicationRecord
   extend Enumerize
 

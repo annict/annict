@@ -1,26 +1,6 @@
 # typed: false
 # frozen_string_literal: true
 
-# == Schema Information
-#
-# Table name: likes
-#
-#  id             :bigint           not null, primary key
-#  recipient_type :string(510)      not null
-#  created_at     :timestamptz
-#  updated_at     :timestamptz
-#  recipient_id   :bigint           not null
-#  user_id        :bigint           not null
-#
-# Indexes
-#
-#  likes_user_id_idx  (user_id)
-#
-# Foreign Keys
-#
-#  likes_user_id_fk  (user_id => users.id) ON DELETE => cascade
-#
-
 class Like < ApplicationRecord
   counter_culture :recipient
 

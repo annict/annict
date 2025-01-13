@@ -1,30 +1,6 @@
 # typed: false
 # frozen_string_literal: true
 
-# == Schema Information
-#
-# Table name: providers
-#
-#  id               :bigint           not null, primary key
-#  name             :string(510)      not null
-#  token            :string(510)      not null
-#  token_expires_at :integer
-#  token_secret     :string(510)
-#  uid              :string(510)      not null
-#  created_at       :timestamptz
-#  updated_at       :timestamptz
-#  user_id          :bigint           not null
-#
-# Indexes
-#
-#  providers_name_uid_key  (name,uid) UNIQUE
-#  providers_user_id_idx   (user_id)
-#
-# Foreign Keys
-#
-#  providers_user_id_fk  (user_id => users.id) ON DELETE => cascade
-#
-
 class Provider < ApplicationRecord
   extend Enumerize
 

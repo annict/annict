@@ -1,55 +1,6 @@
 # typed: false
 # frozen_string_literal: true
 
-# == Schema Information
-#
-# Table name: characters
-#
-#  id                    :bigint           not null, primary key
-#  aasm_state            :string           default("published"), not null
-#  age                   :string           default(""), not null
-#  age_en                :string           default(""), not null
-#  birthday              :string           default(""), not null
-#  birthday_en           :string           default(""), not null
-#  blood_type            :string           default(""), not null
-#  blood_type_en         :string           default(""), not null
-#  deleted_at            :datetime
-#  description           :text             default(""), not null
-#  description_en        :text             default(""), not null
-#  description_source    :string           default(""), not null
-#  description_source_en :string           default(""), not null
-#  favorite_users_count  :integer          default(0), not null
-#  height                :string           default(""), not null
-#  height_en             :string           default(""), not null
-#  name                  :string           not null
-#  name_en               :string           default(""), not null
-#  name_kana             :string           default(""), not null
-#  nationality           :string           default(""), not null
-#  nationality_en        :string           default(""), not null
-#  nickname              :string           default(""), not null
-#  nickname_en           :string           default(""), not null
-#  occupation            :string           default(""), not null
-#  occupation_en         :string           default(""), not null
-#  unpublished_at        :datetime
-#  weight                :string           default(""), not null
-#  weight_en             :string           default(""), not null
-#  created_at            :datetime         not null
-#  updated_at            :datetime         not null
-#  series_id             :bigint
-#
-# Indexes
-#
-#  index_characters_on_deleted_at            (deleted_at)
-#  index_characters_on_favorite_users_count  (favorite_users_count)
-#  index_characters_on_name_and_series_id    (name,series_id) UNIQUE
-#  index_characters_on_series_id             (series_id)
-#  index_characters_on_unpublished_at        (unpublished_at)
-#
-# Foreign Keys
-#
-#  fk_rails_...  (series_id => series.id)
-#
-
 class Character < ApplicationRecord
   include DbActivityMethods
   include RootResourceCommon

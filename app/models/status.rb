@@ -1,32 +1,6 @@
 # typed: false
 # frozen_string_literal: true
 
-# == Schema Information
-#
-# Table name: statuses
-#
-#  id                   :bigint           not null, primary key
-#  kind                 :integer          not null
-#  likes_count          :integer          default(0), not null
-#  created_at           :timestamptz
-#  updated_at           :timestamptz
-#  oauth_application_id :bigint
-#  user_id              :bigint           not null
-#  work_id              :bigint           not null
-#
-# Indexes
-#
-#  index_statuses_on_oauth_application_id  (oauth_application_id)
-#  statuses_user_id_idx                    (user_id)
-#  statuses_work_id_idx                    (work_id)
-#
-# Foreign Keys
-#
-#  fk_rails_...         (oauth_application_id => oauth_applications.id)
-#  statuses_user_id_fk  (user_id => users.id) ON DELETE => cascade
-#  statuses_work_id_fk  (work_id => works.id) ON DELETE => cascade
-#
-
 class Status < ApplicationRecord
   extend Enumerize
 

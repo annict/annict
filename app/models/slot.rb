@@ -1,48 +1,6 @@
 # typed: false
 # frozen_string_literal: true
 
-# == Schema Information
-#
-# Table name: slots
-#
-#  id             :bigint           not null, primary key
-#  aasm_state     :string           default("published"), not null
-#  deleted_at     :datetime
-#  irregular      :boolean          default(FALSE), not null
-#  number         :integer
-#  rebroadcast    :boolean          default(FALSE), not null
-#  sc_last_update :timestamptz
-#  sc_pid         :integer
-#  started_at     :timestamptz      not null
-#  unpublished_at :datetime
-#  created_at     :timestamptz
-#  updated_at     :timestamptz
-#  channel_id     :bigint           not null
-#  episode_id     :bigint
-#  program_id     :bigint
-#  work_id        :bigint           not null
-#
-# Indexes
-#
-#  index_slots_on_aasm_state                 (aasm_state)
-#  index_slots_on_deleted_at                 (deleted_at)
-#  index_slots_on_program_id                 (program_id)
-#  index_slots_on_program_id_and_episode_id  (program_id,episode_id) UNIQUE
-#  index_slots_on_program_id_and_number      (program_id,number) UNIQUE
-#  index_slots_on_sc_pid                     (sc_pid) UNIQUE
-#  index_slots_on_unpublished_at             (unpublished_at)
-#  programs_channel_id_idx                   (channel_id)
-#  programs_episode_id_idx                   (episode_id)
-#  programs_work_id_idx                      (work_id)
-#
-# Foreign Keys
-#
-#  fk_rails_...            (program_id => programs.id)
-#  programs_channel_id_fk  (channel_id => channels.id) ON DELETE => cascade
-#  programs_episode_id_fk  (episode_id => episodes.id) ON DELETE => cascade
-#  programs_work_id_fk     (work_id => works.id) ON DELETE => cascade
-#
-
 class Slot < ApplicationRecord
   include DbActivityMethods
   include Unpublishable

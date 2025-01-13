@@ -1,44 +1,6 @@
 # typed: false
 # frozen_string_literal: true
 
-# == Schema Information
-#
-# Table name: activities
-#
-#  id                :bigint           not null, primary key
-#  trackable_type    :string(510)      not null
-#  created_at        :timestamptz
-#  updated_at        :timestamptz
-#  activity_group_id :bigint           not null
-#  trackable_id      :bigint           not null
-#  user_id           :bigint           not null
-#
-# Indexes
-#
-#  activities_user_id_idx                                (user_id)
-#  index_activities_on_activity_group_id                 (activity_group_id)
-#  index_activities_on_activity_group_id_and_created_at  (activity_group_id,created_at)
-#  index_activities_on_created_at                        (created_at)
-#  index_activities_on_episode_id                        (episode_id)
-#  index_activities_on_episode_record_id                 (episode_record_id)
-#  index_activities_on_multiple_episode_record_id        (multiple_episode_record_id)
-#  index_activities_on_status_id                         (status_id)
-#  index_activities_on_trackable_id_and_trackable_type   (trackable_id,trackable_type)
-#  index_activities_on_work_id                           (work_id)
-#  index_activities_on_work_record_id                    (work_record_id)
-#
-# Foreign Keys
-#
-#  activities_user_id_fk  (user_id => users.id) ON DELETE => cascade
-#  fk_rails_...           (activity_group_id => activity_groups.id)
-#  fk_rails_...           (episode_id => episodes.id)
-#  fk_rails_...           (episode_record_id => episode_records.id)
-#  fk_rails_...           (multiple_episode_record_id => multiple_episode_records.id)
-#  fk_rails_...           (status_id => statuses.id)
-#  fk_rails_...           (work_id => works.id)
-#  fk_rails_...           (work_record_id => work_records.id)
-#
-
 class Activity < ApplicationRecord
   extend Enumerize
 

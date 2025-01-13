@@ -1,68 +1,6 @@
 # typed: false
 # frozen_string_literal: true
 
-# == Schema Information
-#
-# Table name: users
-#
-#  id                            :bigint           not null, primary key
-#  aasm_state                    :string           default("published"), not null
-#  allowed_locales               :string           is an Array
-#  character_favorites_count     :integer          default(0), not null
-#  completed_works_count         :integer          default(0), not null
-#  confirmation_sent_at          :timestamptz
-#  confirmation_token            :string(510)
-#  confirmed_at                  :timestamptz
-#  current_sign_in_at            :timestamptz
-#  current_sign_in_ip            :string(510)
-#  deleted_at                    :datetime
-#  dropped_works_count           :integer          default(0), not null
-#  email                         :citext           not null
-#  encrypted_password            :string(510)      default(""), not null
-#  episode_records_count         :integer          default(0), not null
-#  followers_count               :integer          default(0), not null
-#  following_count               :integer          default(0), not null
-#  last_sign_in_at               :timestamptz
-#  last_sign_in_ip               :string(510)
-#  locale                        :string           not null
-#  notifications_count           :integer          default(0), not null
-#  on_hold_works_count           :integer          default(0), not null
-#  organization_favorites_count  :integer          default(0), not null
-#  person_favorites_count        :integer          default(0), not null
-#  plan_to_watch_works_count     :integer          default(0), not null
-#  record_cache_expired_at       :datetime
-#  records_count                 :integer          default(0), not null
-#  remember_created_at           :timestamptz
-#  reset_password_sent_at        :datetime
-#  reset_password_token          :string
-#  role                          :integer          not null
-#  sign_in_count                 :integer          default(0), not null
-#  status_cache_expired_at       :datetime
-#  time_zone                     :string           not null
-#  unconfirmed_email             :string(510)
-#  username                      :citext           not null
-#  watching_works_count          :integer          default(0), not null
-#  work_comment_cache_expired_at :datetime
-#  work_tag_cache_expired_at     :datetime
-#  created_at                    :timestamptz
-#  updated_at                    :timestamptz
-#  gumroad_subscriber_id         :bigint
-#
-# Indexes
-#
-#  index_users_on_aasm_state             (aasm_state)
-#  index_users_on_allowed_locales        (allowed_locales) USING gin
-#  index_users_on_deleted_at             (deleted_at)
-#  index_users_on_gumroad_subscriber_id  (gumroad_subscriber_id)
-#  users_confirmation_token_key          (confirmation_token) UNIQUE
-#  users_email_key                       (email) UNIQUE
-#  users_username_key                    (username) UNIQUE
-#
-# Foreign Keys
-#
-#  fk_rails_...  (gumroad_subscriber_id => gumroad_subscribers.id)
-#
-
 class User < ApplicationRecord
   include UserCheckable
   include UserFavoritable

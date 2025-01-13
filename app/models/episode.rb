@@ -1,52 +1,6 @@
 # typed: false
 # frozen_string_literal: true
 
-# == Schema Information
-#
-# Table name: episodes
-#
-#  id                          :bigint           not null, primary key
-#  aasm_state                  :string           default("published"), not null
-#  deleted_at                  :datetime
-#  episode_record_bodies_count :integer          default(0), not null
-#  episode_records_count       :integer          default(0), not null
-#  fetch_syobocal              :boolean          default(FALSE), not null
-#  number                      :string(510)
-#  number_en                   :string           default(""), not null
-#  ratings_count               :integer          default(0), not null
-#  raw_number                  :float
-#  satisfaction_rate           :float
-#  sc_count                    :integer
-#  score                       :float
-#  sort_number                 :integer          default(0), not null
-#  title                       :string(510)
-#  title_en                    :string           default(""), not null
-#  title_ro                    :string           default(""), not null
-#  unpublished_at              :datetime
-#  created_at                  :timestamptz
-#  updated_at                  :timestamptz
-#  prev_episode_id             :bigint
-#  work_id                     :bigint           not null
-#
-# Indexes
-#
-#  episodes_work_id_idx                                   (work_id)
-#  episodes_work_id_sc_count_key                          (work_id,sc_count) UNIQUE
-#  index_episodes_on_aasm_state                           (aasm_state)
-#  index_episodes_on_deleted_at                           (deleted_at)
-#  index_episodes_on_prev_episode_id                      (prev_episode_id)
-#  index_episodes_on_ratings_count                        (ratings_count)
-#  index_episodes_on_satisfaction_rate                    (satisfaction_rate)
-#  index_episodes_on_satisfaction_rate_and_ratings_count  (satisfaction_rate,ratings_count)
-#  index_episodes_on_score                                (score)
-#  index_episodes_on_unpublished_at                       (unpublished_at)
-#
-# Foreign Keys
-#
-#  episodes_work_id_fk  (work_id => works.id) ON DELETE => cascade
-#  fk_rails_...         (prev_episode_id => episodes.id)
-#
-
 class Episode < ApplicationRecord
   include DbActivityMethods
   include Unpublishable

@@ -1,52 +1,6 @@
 # typed: false
 # frozen_string_literal: true
 
-# == Schema Information
-#
-# Table name: people
-#
-#  id                   :bigint           not null, primary key
-#  aasm_state           :string           default("published"), not null
-#  birthday             :date
-#  blood_type           :string
-#  casts_count          :integer          default(0), not null
-#  deleted_at           :datetime
-#  favorite_users_count :integer          default(0), not null
-#  gender               :string
-#  height               :integer
-#  name                 :string           not null
-#  name_en              :string           default(""), not null
-#  name_kana            :string           default(""), not null
-#  nickname             :string
-#  nickname_en          :string           default(""), not null
-#  staffs_count         :integer          default(0), not null
-#  twitter_username     :string
-#  twitter_username_en  :string           default(""), not null
-#  unpublished_at       :datetime
-#  url                  :string
-#  url_en               :string           default(""), not null
-#  wikipedia_url        :string
-#  wikipedia_url_en     :string           default(""), not null
-#  created_at           :datetime         not null
-#  updated_at           :datetime         not null
-#  prefecture_id        :bigint
-#
-# Indexes
-#
-#  index_people_on_aasm_state            (aasm_state)
-#  index_people_on_casts_count           (casts_count)
-#  index_people_on_deleted_at            (deleted_at)
-#  index_people_on_favorite_users_count  (favorite_users_count)
-#  index_people_on_name                  (name) UNIQUE
-#  index_people_on_prefecture_id         (prefecture_id)
-#  index_people_on_staffs_count          (staffs_count)
-#  index_people_on_unpublished_at        (unpublished_at)
-#
-# Foreign Keys
-#
-#  fk_rails_...  (prefecture_id => prefectures.id)
-#
-
 class Person < ApplicationRecord
   extend Enumerize
 
