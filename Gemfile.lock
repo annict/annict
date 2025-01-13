@@ -89,9 +89,6 @@ GEM
       activerecord (>= 4.2)
     addressable (2.8.1)
       public_suffix (>= 2.0.2, < 6.0)
-    annotate (3.2.0)
-      activerecord (>= 3.2, < 8.0)
-      rake (>= 10.4, < 14.0)
     anyway_config (2.2.2)
       ruby-next-core (>= 0.11.0)
     ast (2.4.2)
@@ -668,7 +665,6 @@ DEPENDENCIES
   activerecord-session_store
   acts_as_list
   addressable
-  annotate
   awesome_print
   aws-sdk-s3
   better_errors
