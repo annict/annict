@@ -1,37 +1,6 @@
 # typed: false
 # frozen_string_literal: true
 
-# == Schema Information
-#
-# Table name: channels
-#
-#  id               :bigint           not null, primary key
-#  aasm_state       :string           default("published"), not null
-#  deleted_at       :datetime
-#  name             :string           not null
-#  name_alter       :string           default(""), not null
-#  sc_chid          :integer
-#  sort_number      :integer          default(0), not null
-#  unpublished_at   :datetime
-#  vod              :boolean          default(FALSE)
-#  created_at       :timestamptz
-#  updated_at       :timestamptz
-#  channel_group_id :bigint           not null
-#
-# Indexes
-#
-#  channels_channel_group_id_idx     (channel_group_id)
-#  channels_sc_chid_key              (sc_chid) UNIQUE
-#  index_channels_on_deleted_at      (deleted_at)
-#  index_channels_on_sort_number     (sort_number)
-#  index_channels_on_unpublished_at  (unpublished_at)
-#  index_channels_on_vod             (vod)
-#
-# Foreign Keys
-#
-#  channels_channel_group_id_fk  (channel_group_id => channel_groups.id) ON DELETE => cascade
-#
-
 class Channel < ApplicationRecord
   include Unpublishable
 

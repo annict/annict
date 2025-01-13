@@ -1,39 +1,6 @@
 # typed: false
 # frozen_string_literal: true
 
-# == Schema Information
-#
-# Table name: profiles
-#
-#  id                                  :bigint           not null, primary key
-#  background_image_animated           :boolean          default(FALSE), not null
-#  background_image_data               :text
-#  description                         :string(510)      default(""), not null
-#  image_data                          :text
-#  name                                :string(510)      default(""), not null
-#  tombo_avatar_content_type           :string
-#  tombo_avatar_file_name              :string
-#  tombo_avatar_file_size              :integer
-#  tombo_avatar_updated_at             :datetime
-#  tombo_background_image_content_type :string
-#  tombo_background_image_file_name    :string
-#  tombo_background_image_file_size    :integer
-#  tombo_background_image_updated_at   :datetime
-#  url                                 :string
-#  created_at                          :timestamptz
-#  updated_at                          :timestamptz
-#  user_id                             :bigint           not null
-#
-# Indexes
-#
-#  profiles_user_id_idx  (user_id)
-#  profiles_user_id_key  (user_id) UNIQUE
-#
-# Foreign Keys
-#
-#  profiles_user_id_fk  (user_id => users.id) ON DELETE => cascade
-#
-
 class Profile < ApplicationRecord
   T.unsafe(self).include ProfileImageUploader::Attachment.new(:image)
   T.unsafe(self).include ProfileImageUploader::Attachment.new(:background_image)

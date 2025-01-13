@@ -1,23 +1,6 @@
 # typed: false
 # frozen_string_literal: true
 
-# == Schema Information
-#
-# Table name: internal_statistics
-#
-#  id         :bigint           not null, primary key
-#  date       :date             not null
-#  key        :string           not null
-#  value      :float            not null
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
-#
-# Indexes
-#
-#  index_internal_statistics_on_key           (key)
-#  index_internal_statistics_on_key_and_date  (key,date) UNIQUE
-#
-
 class InternalStatistic < ApplicationRecord
   extend Enumerize
 

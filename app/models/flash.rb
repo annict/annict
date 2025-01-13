@@ -1,21 +1,6 @@
 # typed: false
 # frozen_string_literal: true
 
-# == Schema Information
-#
-# Table name: flashes
-#
-#  id          :bigint           not null, primary key
-#  client_uuid :string           not null
-#  data        :json
-#  created_at  :datetime         not null
-#  updated_at  :datetime         not null
-#
-# Indexes
-#
-#  index_flashes_on_client_uuid  (client_uuid) UNIQUE
-#
-
 class Flash < ApplicationRecord
   def self.store_data(client_uuid, hash)
     return if client_uuid.blank?

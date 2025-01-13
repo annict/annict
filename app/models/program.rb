@@ -1,39 +1,6 @@
 # typed: false
 # frozen_string_literal: true
 
-# == Schema Information
-#
-# Table name: programs
-#
-#  id                                 :bigint           not null, primary key
-#  aasm_state                         :string           default("published"), not null
-#  deleted_at                         :datetime
-#  minimum_episode_generatable_number :integer          default(1), not null
-#  rebroadcast                        :boolean          default(FALSE), not null
-#  started_at                         :datetime
-#  unpublished_at                     :datetime
-#  url                                :string
-#  vod_title_code                     :string           default(""), not null
-#  vod_title_name                     :string           default(""), not null
-#  created_at                         :datetime         not null
-#  updated_at                         :datetime         not null
-#  channel_id                         :bigint           not null
-#  work_id                            :bigint           not null
-#
-# Indexes
-#
-#  index_programs_on_channel_id      (channel_id)
-#  index_programs_on_deleted_at      (deleted_at)
-#  index_programs_on_unpublished_at  (unpublished_at)
-#  index_programs_on_vod_title_code  (vod_title_code)
-#  index_programs_on_work_id         (work_id)
-#
-# Foreign Keys
-#
-#  fk_rails_...  (channel_id => channels.id)
-#  fk_rails_...  (work_id => works.id)
-#
-
 class Program < ApplicationRecord
   include DbActivityMethods
   include Unpublishable

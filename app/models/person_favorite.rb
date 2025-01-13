@@ -1,30 +1,6 @@
 # typed: false
 # frozen_string_literal: true
 
-# == Schema Information
-#
-# Table name: person_favorites
-#
-#  id                  :bigint           not null, primary key
-#  watched_works_count :integer          default(0), not null
-#  created_at          :datetime         not null
-#  updated_at          :datetime         not null
-#  person_id           :bigint           not null
-#  user_id             :bigint           not null
-#
-# Indexes
-#
-#  index_person_favorites_on_person_id              (person_id)
-#  index_person_favorites_on_user_id                (user_id)
-#  index_person_favorites_on_user_id_and_person_id  (user_id,person_id) UNIQUE
-#  index_person_favorites_on_watched_works_count    (watched_works_count)
-#
-# Foreign Keys
-#
-#  fk_rails_...  (person_id => people.id)
-#  fk_rails_...  (user_id => users.id)
-#
-
 class PersonFavorite < ApplicationRecord
   counter_culture :person, column_name: :favorite_users_count
   counter_culture :user

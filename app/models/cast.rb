@@ -1,40 +1,6 @@
 # typed: false
 # frozen_string_literal: true
 
-# == Schema Information
-#
-# Table name: casts
-#
-#  id             :bigint           not null, primary key
-#  aasm_state     :string           default("published"), not null
-#  deleted_at     :datetime
-#  name           :string           not null
-#  name_en        :string           default(""), not null
-#  sort_number    :integer          default(0), not null
-#  unpublished_at :datetime
-#  created_at     :datetime         not null
-#  updated_at     :datetime         not null
-#  character_id   :bigint           not null
-#  person_id      :bigint           not null
-#  work_id        :bigint           not null
-#
-# Indexes
-#
-#  index_casts_on_aasm_state      (aasm_state)
-#  index_casts_on_character_id    (character_id)
-#  index_casts_on_deleted_at      (deleted_at)
-#  index_casts_on_person_id       (person_id)
-#  index_casts_on_sort_number     (sort_number)
-#  index_casts_on_unpublished_at  (unpublished_at)
-#  index_casts_on_work_id         (work_id)
-#
-# Foreign Keys
-#
-#  fk_rails_...  (character_id => characters.id)
-#  fk_rails_...  (person_id => people.id)
-#  fk_rails_...  (work_id => works.id)
-#
-
 class Cast < ApplicationRecord
   include DbActivityMethods
   include Unpublishable
