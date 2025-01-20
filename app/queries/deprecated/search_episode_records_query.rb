@@ -28,7 +28,7 @@ class Deprecated::SearchEpisodeRecordsQuery
       end
     end
 
-    @collection = case @args[:has_body]
+    @collection = case @args[:has_comment]
     when true
       @collection.with_body
     when false
