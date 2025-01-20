@@ -60,7 +60,9 @@ jobs:
 
   rspec:
     name: RSpec
-    runs-on: ubuntu-latest
+    # 24.04 で動かしたときエラーになったため、一旦 22.04 で動かす
+    # https://wikino.app/s/shimbaco/pages/508
+    runs-on: ubuntu-22.04
     env:
       CC_TEST_REPORTER_ID: 473c071c4d1900d58ceed984bd49d8a39368393ce6f010cf5d52287f3072f6ef
       COVERAGE: true
