@@ -86,6 +86,7 @@ gem "wilson_score"
 
 group :development, :test do
   gem "awesome_print"
+  gem "erb_lint", require: false
   gem "factory_bot_rails"
   gem "pry-rails"
   gem "rspec-mocks"

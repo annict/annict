@@ -58,6 +58,18 @@ jobs:
 
       - run: bin/standardrb
 
+  erb_lint:
+    name: ERB Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Ruby and install gems
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.3.5
+          bundler-cache: true
+      - run: bin/erb_lint --lint-all
+
   rspec:
     name: RSpec
     # 24.04 で動かしたときエラーになったため、一旦 22.04 で動かす
