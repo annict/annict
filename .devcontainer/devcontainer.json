@@ -1,11 +1,8 @@
 {
-	"name": "Annict",
-	"dockerComposeFile": [
-		"../docker-compose.yml",
-		"../docker-compose.override.yml"
-	],
-	"service": "app",
-	"workspaceFolder": "/app",
-	"forwardPorts": [3000, 5432, 6379],
-	"remoteUser": "root"
+  "name": "Annict",
+  "dockerComposeFile": ["../docker-compose.yml", "../docker-compose.override.yml"],
+  "service": "app",
+  "workspaceFolder": "/app",
+  "forwardPorts": [3000, 5432, 6379],
+  "remoteUser": "root"
 }

@@ -1,10 +1,10 @@
-import Modal from 'bootstrap/js/dist/modal';
-import { Controller } from '@hotwired/stimulus';
+import Modal from "bootstrap/js/dist/modal";
+import { Controller } from "@hotwired/stimulus";
 
-import fetcher from '../utils/fetcher';
+import fetcher from "../utils/fetcher";
 
 export default class extends Controller {
-  static classes = ['default', 'following'];
+  static classes = ["default", "following"];
   static values = {
     userId: Number,
     defaultText: String,
@@ -22,7 +22,7 @@ export default class extends Controller {
   initialize() {
     this.startLoading();
 
-    document.addEventListener('component-value-fetcher:follow-button:fetched', (event: any) => {
+    document.addEventListener("component-value-fetcher:follow-button:fetched", (event: any) => {
       const userIds = event.detail;
 
       this.isFollowing = userIds.includes(this.userIdValue);
@@ -33,12 +33,12 @@ export default class extends Controller {
   }
 
   startLoading() {
-    this.element.classList.add('c-spinner');
+    this.element.classList.add("c-spinner");
     this.isLoading = true;
   }
 
   endLoading() {
-    this.element.classList.remove('c-spinner');
+    this.element.classList.remove("c-spinner");
     this.isLoading = false;
   }
 
@@ -63,12 +63,12 @@ export default class extends Controller {
 
     try {
       if (this.isFollowing) {
-        await fetcher.delete('/api/internal/follow', {
+        await fetcher.delete("/api/internal/follow", {
           user_id: this.userIdValue,
         });
         this.isFollowing = false;
       } else {
-        await fetcher.post('/api/internal/follow', {
+        await fetcher.post("/api/internal/follow", {
           user_id: this.userIdValue,
         });
         this.isFollowing = true;
@@ -77,7 +77,7 @@ export default class extends Controller {
       this.render();
     } catch (err) {
       if (err.response?.status === 401) {
-        new Modal('.c-sign-up-modal').show();
+        new Modal(".c-sign-up-modal").show();
       }
     } finally {
       this.endLoading();

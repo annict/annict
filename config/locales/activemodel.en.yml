@@ -69,17 +69,17 @@ en:
     errors:
       forms:
         db/cast_rows_form:
-          invalid: 'are invalid: %{value} is not found'
+          invalid: "are invalid: %{value} is not found"
         db/character_rows_form:
-          invalid: 'are invalid: %{value} is not found'
+          invalid: "are invalid: %{value} is not found"
         db/slot_rows_form:
-          invalid: 'are invalid: %{value} is not found'
-          invalid_start_time: 'have invalid start time'
+          invalid: "are invalid: %{value} is not found"
+          invalid_start_time: "have invalid start time"
         db/staff_rows_form:
-          invalid: 'are invalid: %{value} is not found'
+          invalid: "are invalid: %{value} is not found"
         db/program_rows_form:
           rows: Streaming Links
         db/series_work_rows_form:
-          invalid: 'are invalid: %{value} is not found'
+          invalid: "are invalid: %{value} is not found"
         recordable:
           watched_at_cannot_be_in_the_future: can't be in the future

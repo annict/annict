@@ -19,14 +19,14 @@ en:
     _components:
       activities:
         episode_record:
-          created: 'tracked'
-          more: 'Show %{n} records'
+          created: "tracked"
+          more: "Show %{n} records"
         status:
-          changed: 'changed status'
-          more: 'Show %{n} status changes'
+          changed: "changed status"
+          more: "Show %{n} status changes"
         work_record:
-          created: 'tracked'
-          more: 'Show %{n} records'
+          created: "tracked"
+          more: "Show %{n} records"
       adsense:
         hide_ads_html: You can hide ads by becoming <a href="/supporters" target="_blank">Annict Supporters</a>.
       body:
@@ -71,7 +71,7 @@ en:
       no_works: No Works
     _page_hints:
       channel_list_html: If you set a program information of a work after following channels, broadcast schedules of the program will be displayed on the %{link} page.
-      friend_list_html: 'When you link to Twitter on the %{link} page, Annict users you follow on Twitter will be displayed.'
+      friend_list_html: "When you link to Twitter on the %{link} page, Annict users you follow on Twitter will be displayed."
       home: When you follow a user, activities who followed will be displayed on the timeline.
       notification_list: You will be notified when you are followed or your record is liked.
       track_html: The works whose status is "Watching" are displayed.
@@ -105,7 +105,7 @@ en:
       comments:
         created: Comment has been created.
       episodes:
-        auto_generate_info_html: 'Total episodes: %{manual_episodes_count}<br>Published episodes: %{episodes_count}<br>Auto generate episodes: %{max_generate_episodes_count}'
+        auto_generate_info_html: "Total episodes: %{manual_episodes_count}<br>Published episodes: %{episodes_count}<br>Auto generate episodes: %{max_generate_episodes_count}"
       works:
         no_episodes: No Episodes
         no_image: No Image
@@ -129,7 +129,7 @@ en:
       no_people: No Poeple
     forum:
       _common:
-        view_all_site_news: 'View All'
+        view_all_site_news: "View All"
       comments:
         created: Created
         deleted: This comment has been deleted.
@@ -176,7 +176,7 @@ en:
         authorize: Authorize
         authorize_account_html: Authorize <b>%{client_name}</b> to use your account?
         cancel: Cancel
-        this_application_will_be_able_to: 'This application will be able to:'
+        this_application_will_be_able_to: "This application will be able to:"
     oauth_users:
       new:
         sign_up_with_oauth: Sign Up with %{provider_name}
@@ -206,7 +206,7 @@ en:
     records:
       show:
         record_by_name: "%{name}'s Record"
-      view_record_body: 'View Comment'
+      view_record_body: "View Comment"
     registrations:
       new:
         expired_html: Your sign up link has expired.<br>Please reenter your email on the <a href="/sign_up">sign up page</a>.
@@ -260,13 +260,13 @@ en:
     supporters:
       gumroad_subscriber_not_found: Could not get membership information from Gumroad.
     tracks:
-      episodes_you_have_watched: 'Watched'
+      episodes_you_have_watched: "Watched"
       no_trackable_episodes: No trackable episodes
       see_records: See records
       tracked: Your record has been tracked.
     userland:
-      description_html: 'Userland is the place to discover 3rd party applications which uses Annict API.'
-      description_mobile_html: 'Userland is the place to discover 3rd party applications which uses Annict API.'
+      description_html: "Userland is the place to discover 3rd party applications which uses Annict API."
+      description_mobile_html: "Userland is the place to discover 3rd party applications which uses Annict API."
       projects:
         about_available: Please check this when the project is published and users can use it.
         markdown_support: You can write in Markdown.
@@ -278,8 +278,8 @@ en:
     users:
       _validators:
         exists_active_oauth_applications: which you created are active.
-      allowed_locales_description: 'This setting which languages you are more likely to see throughout the site, but you may still see other languages, especially english.'
-      bye_bye: 'Bye Bye... (´・ω;:..'
+      allowed_locales_description: "This setting which languages you are more likely to see throughout the site, but you may still see other languages, especially english."
+      bye_bye: "Bye Bye... (´・ω;:.."
       no_works: No works
     welcome:
       show:
@@ -300,5 +300,5 @@ en:
       view_all_n_episodes: View All %{n} Episodes
       view_all_n_record_body_list: View All %{n} Comments
       view_all_n_staffs: View All %{n} Staffs
-      creating_episodes_restricted_episodes_filled: 'You can not add episodes because episodes are created enough.'
-      creating_episodes_restricted_slots_exists: 'You can not add episodes because slots have been added.'
+      creating_episodes_restricted_episodes_filled: "You can not add episodes because episodes are created enough."
+      creating_episodes_restricted_slots_exists: "You can not add episodes because slots have been added."

@@ -1,13 +1,13 @@
-import autosize from 'autosize';
-import { Controller } from '@hotwired/stimulus';
+import autosize from "autosize";
+import { Controller } from "@hotwired/stimulus";
 
-import { EventDispatcher } from '../utils/event-dispatcher';
+import { EventDispatcher } from "../utils/event-dispatcher";
 
 export default class extends Controller {
   charactersCounterId!: string;
 
   initialize() {
-    this.charactersCounterId = this.data.get('charactersCounterId') ?? 'id';
+    this.charactersCounterId = this.data.get("charactersCounterId") ?? "id";
 
     autosize(this.element);
   }
@@ -15,7 +15,7 @@ export default class extends Controller {
   updateCharactersCount(event: Event) {
     const charactersCount = (event.currentTarget as HTMLInputElement).value.length;
 
-    new EventDispatcher('characters-counter:update', {
+    new EventDispatcher("characters-counter:update", {
       charactersCounterId: this.charactersCounterId,
       charactersCount,
     }).dispatch();

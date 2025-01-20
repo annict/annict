@@ -1,7 +1,7 @@
-import Modal from 'bootstrap/js/dist/modal';
-import { Controller } from '@hotwired/stimulus';
+import Modal from "bootstrap/js/dist/modal";
+import { Controller } from "@hotwired/stimulus";
 
-import fetcher from '../utils/fetcher';
+import fetcher from "../utils/fetcher";
 
 type Star = {
   starrable_type: string;
@@ -9,7 +9,7 @@ type Star = {
 };
 
 export default class extends Controller {
-  static classes = ['default', 'starred'];
+  static classes = ["default", "starred"];
   static values = {
     starrableId: Number,
     starrableType: String,
@@ -25,7 +25,7 @@ export default class extends Controller {
   initialize() {
     this.startLoading();
 
-    document.addEventListener('component-value-fetcher:star-button:fetched', (event: any) => {
+    document.addEventListener("component-value-fetcher:star-button:fetched", (event: any) => {
       const stars = event.detail;
 
       this.hasStarred = !!stars.find(
@@ -38,12 +38,12 @@ export default class extends Controller {
   }
 
   startLoading() {
-    this.element.classList.add('c-spinner');
+    this.element.classList.add("c-spinner");
     this.isLoading = true;
   }
 
   endLoading() {
-    this.element.classList.remove('c-spinner');
+    this.element.classList.remove("c-spinner");
     this.isLoading = false;
   }
 
@@ -68,13 +68,13 @@ export default class extends Controller {
 
     try {
       if (this.hasStarred) {
-        await fetcher.post('/api/internal/unstars', {
+        await fetcher.post("/api/internal/unstars", {
           starrable_type: this.starrableTypeValue,
           starrable_id: this.starrableIdValue,
         });
         this.hasStarred = false;
       } else {
-        await fetcher.post('/api/internal/stars', {
+        await fetcher.post("/api/internal/stars", {
           starrable_type: this.starrableTypeValue,
           starrable_id: this.starrableIdValue,
         });
@@ -86,7 +86,7 @@ export default class extends Controller {
       console.error(err);
 
       if (err.response?.status === 401) {
-        new Modal('.c-sign-up-modal').show();
+        new Modal(".c-sign-up-modal").show();
       }
     } finally {
       this.endLoading();

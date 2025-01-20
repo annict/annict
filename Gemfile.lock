@@ -205,6 +205,13 @@ GEM
       activemodel
     enumerize (2.5.0)
       activesupport (>= 3.2)
+    erb_lint (0.8.0)
+      activesupport
+      better_html (>= 2.0.1)
+      parser (>= 2.7.1.4)
+      rainbow
+      rubocop (>= 1)
+      smart_properties
     erubi (1.13.1)
     factory_bot (6.2.0)
       activesupport (>= 5.0.0)
@@ -685,6 +692,7 @@ DEPENDENCIES
   dry-struct
   email_validator
   enumerize
+  erb_lint
   factory_bot_rails
   github-markup
   graphql (~> 2.0.31)

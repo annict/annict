@@ -13,7 +13,6 @@ ja:
     all: 全て
     all_comments: 全ての感想
     animation: 映像
-    work: アニメ
     work_page: アニメページ
     annict_api: Annict API
     annict_db: Annict DB
@@ -101,7 +100,7 @@ ja:
     music: 音楽
     my_anime_list: MyAnimeList
     my_records: 自分の記録
-    n_works_watched: '%{count}作品見た'
+    n_works_watched: "%{count}作品見た"
     next: 次へ
     next_episode: 次のエピソード
     next_page: 次のページ
@@ -116,7 +115,7 @@ ja:
     or: または
     organization: 団体
     organizations: 団体
-    other_record_body_list_by: '%{profile_name}が書いた感想'
+    other_record_body_list_by: "%{profile_name}が書いた感想"
     other_comments: みんなの感想
     other_users: その他利用者さん
     overall: 全体
@@ -145,10 +144,10 @@ ja:
     rebroadcast: 再放送
     record_body_list: 感想
     record_list: 記録一覧
-    record_of_episode: '「%{work_title}」%{episode_title_with_number}への記録'
-    record_of_work: '「%{work_title}」の記録'
+    record_of_episode: "「%{work_title}」%{episode_title_with_number}への記録"
+    record_of_work: "「%{work_title}」の記録"
     records: 記録
-    records_by: '%{profile_name}の記録'
+    records_by: "%{profile_name}の記録"
     records_count: 記録数
     related_works: 関連作品
     release_on: リリース日
@@ -163,7 +162,7 @@ ja:
     seasons: シーズン
     seasonal_work: シーズン別アニメ
     series: シリーズ
-    series_with_name: '%{series_name}シリーズ'
+    series_with_name: "%{series_name}シリーズ"
     series_works: シリーズ作品
     services: サービス
     settings: 設定
@@ -203,7 +202,7 @@ ja:
     unknown_season: 公開日不明
     unpublish: 非公開
     untracked_episodes: 未視聴エピソード
-    users_count: '%{count}人'
+    users_count: "%{count}人"
     video_page: 動画ページ
     videos: 動画
     vod_works: VOD作品

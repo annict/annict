@@ -15,11 +15,11 @@
 開発に関するもろもろのやり取りは以下で行っています。
 
 - [GitHub Issues](https://github.com/annict/annict/issues)
-    - 機能追加や改善案、バグの管理をしています
+  - 機能追加や改善案、バグの管理をしています
 - [GitHub Discussions](https://github.com/annict/annict/discussions)
-    - その他質問や雑談などができる場として公開しています
+  - その他質問や雑談などができる場として公開しています
 - [Discord](https://discord.gg/PVJRUKP)
-    - 雑談チャットです
+  - 雑談チャットです
 
 やることの優先度や、今何をやっているかは [GitHub Projects](https://github.com/orgs/annict/projects/12) で管理しています。
 
@@ -30,7 +30,7 @@
 ## セキュリティに関する報告
 
 hello@annict.com までメールをください。
-SNSなど、第三者が閲覧できる場所に投稿しないでもらえるとありがたいです。
+SNS など、第三者が閲覧できる場所に投稿しないでもらえるとありがたいです。
 
 ## License
 

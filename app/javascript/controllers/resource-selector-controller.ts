@@ -1,6 +1,6 @@
-import { Controller } from '@hotwired/stimulus';
-import Choices from 'choices.js';
-import debounce from 'lodash/debounce';
+import { Controller } from "@hotwired/stimulus";
+import Choices from "choices.js";
+import debounce from "lodash/debounce";
 
 export default class extends Controller {
   initialize() {
@@ -10,7 +10,7 @@ export default class extends Controller {
     });
 
     this.element.addEventListener(
-      'search',
+      "search",
       debounce((event: { detail: { value: any } }) => {
         if (event.detail.value) {
           choice.clearChoices();
@@ -25,8 +25,8 @@ export default class extends Controller {
                 data.resources.map((r: { id: number; text: string }) => {
                   return { value: r.id, label: r.text };
                 }),
-                'value',
-                'label',
+                "value",
+                "label",
                 true,
               );
             });
@@ -36,18 +36,18 @@ export default class extends Controller {
   }
 
   requestPath() {
-    const modelName = this.data.get('modelName');
+    const modelName = this.data.get("modelName");
 
     if (!modelName) {
       return;
     }
 
     const paths: { [index: string]: string } = {
-      Character: '/api/internal/characters',
-      Organization: '/api/internal/organizations',
-      Person: '/api/internal/people',
-      Series: '/api/internal/series_list',
-      Work: '/api/internal/works',
+      Character: "/api/internal/characters",
+      Organization: "/api/internal/organizations",
+      Person: "/api/internal/people",
+      Series: "/api/internal/series_list",
+      Work: "/api/internal/works",
     };
 
     return paths[modelName];

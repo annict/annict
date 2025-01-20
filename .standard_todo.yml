@@ -2,763 +2,763 @@
 # Remove from this list as you refactor files.
 ---
 ignore:
-- app/components/deprecated/activities/record_activity_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/activities/status_activity_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/adsense_component.rb:
-  - Style/SuperWithArgsParentheses
-  - Rails/EnvironmentVariableAccess
-- app/components/deprecated/application_v6_component.rb:
-  - Style/ArgumentsForwarding
-- app/components/deprecated/badges/slot_start_date_badge_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/badges/supporter_badge_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/badges/work_media_badge_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/badges/work_season_badge_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/body_v6_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/boxes/work_box_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/button_groups/episode_transition_button_group_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/button_groups/pagination_button_group_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/button_groups/record_rating_button_group_component.rb:
-  - Style/SuperWithArgsParentheses
-  - Style/TernaryParentheses
-- app/components/deprecated/button_groups/user_button_group_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/button_groups/work_button_group_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/buttons/bulk_watch_episodes_button_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/buttons/follow_button_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/buttons/like_button_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/buttons/mute_user_button_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/buttons/receive_channel_button_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/buttons/share_to_facebook_button_component.rb:
-  - Style/SuperWithArgsParentheses
-  - Rails/EnvironmentVariableAccess
-- app/components/deprecated/buttons/share_to_twitter_button_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/buttons/skip_episode_button_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/buttons/star_button_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/buttons/watch_episode_button_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/cards/work_card_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/collapses/record_form_options_collapse_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/contents/record_content_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/contents/status_content_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/dropdowns/record_options_dropdown_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/dropdowns/status_select_dropdown_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/empty_v6_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/error_panel_v6_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/flash_v6_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/footers/record_footer_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/footers/status_footer_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/forms/episode_record_form_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/forms/work_record_form_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/headers/profile_header_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/headers/record_header_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/headers/work_header_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/inputs/recaptcha_input_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/label_groups/work_record_rating_label_group_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/labels/rating_label_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/list_groups/record_list_group_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/list_groups/record_month_list_group_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/list_items/record_list_item_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/lists/record_list_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/lists/trackable_episode_list_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/navs/user_nav_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/radios/program_select_radio_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/relative_time_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/sidebars/main_sidebar_component.rb:
-  - Style/SuperWithArgsParentheses
-  - Rails/EnvironmentVariableAccess
-- app/components/deprecated/spoiler_guard_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/tab_bar_component.rb:
-  - Style/SuperWithArgsParentheses
-  - Rails/EnvironmentVariableAccess
-- app/components/deprecated/textareas/record_textarea_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/components/deprecated/timeline_component.rb:
-  - Style/SuperWithArgsParentheses
-- app/controllers/api/canary/graphql_controller.rb:
-  - Rails/ApplicationController
-- app/controllers/api/graphql_controller.rb:
-  - Rails/ApplicationController
-- app/controllers/api/internal/following_controller.rb:
-  - Rails/PluckId
-- app/controllers/api/internal/likes_controller.rb:
-  - Sorbet/ConstantsFromStrings
-- app/controllers/api/internal/multiple_episode_records_controller.rb:
-  - Rails/TransactionExitStatement
-- app/controllers/api/internal/mute_users_controller.rb:
-  - Rails/SaveBang
-- app/controllers/api/internal/program_selects_controller.rb:
-  - Style/TernaryParentheses
-- app/controllers/api/internal/registrations_controller.rb:
-  - Rails/SaveBang
-- app/controllers/api/internal/skipped_episodes_controller.rb:
-  - Rails/LexicallyScopedActionFilter
-- app/controllers/api/internal/stars_controller.rb:
-  - Sorbet/ConstantsFromStrings
-- app/controllers/api/internal/unlikes_controller.rb:
-  - Sorbet/ConstantsFromStrings
-- app/controllers/api/internal/unstars_controller.rb:
-  - Sorbet/ConstantsFromStrings
-- app/controllers/api/v1/application_controller.rb:
-  - Rails/LexicallyScopedActionFilter
-  - Lint/DuplicateMethods
-  - Sorbet/ConstantsFromStrings
-  - Style/RedundantReturn
-- app/controllers/api/v1/me/following_activities_controller.rb:
-  - Rails/PluckId
-- app/controllers/application_v6_controller.rb:
-  - Rails/ApplicationController
-- app/controllers/callbacks_controller.rb:
-  - Style/TernaryParentheses
-- app/controllers/character_fans_controller.rb:
-  - Rails/OrderById
-- app/controllers/characters_controller.rb:
-  - Rails/OrderById
-- app/controllers/comments_controller.rb:
-  - Rails/SaveBang
-- app/controllers/communities_controller.rb:
-  - Rails/EnvironmentVariableAccess
-- app/controllers/concerns/basic_authenticatable.rb:
-  - Rails/EnvironmentVariableAccess
-- app/controllers/concerns/controller_common.rb:
-  - Rails/PluckId
-  - Rails/EnvironmentVariableAccess
-- app/controllers/concerns/localizable.rb:
-  - Rails/EnvironmentVariableAccess
-  - Style/TernaryParentheses
-  - Style/ArgumentsForwarding
-  - Rails/PluckId
-- app/controllers/concerns/work_listable.rb:
-  - Style/TernaryParentheses
-- app/controllers/db/activities_controller.rb:
-  - Rails/OrderById
-- app/controllers/db/channel_groups_controller.rb:
-  - Rails/SaveBang
-- app/controllers/db/channels_controller.rb:
-  - Rails/SaveBang
-- app/controllers/db/characters_controller.rb:
-  - Rails/OrderById
-- app/controllers/db/organizations_controller.rb:
-  - Rails/OrderById
-- app/controllers/db/people_controller.rb:
-  - Rails/OrderById
-- app/controllers/db/searches_controller.rb:
-  - Rails/OrderById
-- app/controllers/db/series_controller.rb:
-  - Rails/OrderById
-- app/controllers/db/series_works_controller.rb:
-  - Rails/OrderById
-- app/controllers/db/work_images_controller.rb:
-  - Rails/SaveBang
-- app/controllers/db/works_controller.rb:
-  - Rails/OrderById
-- app/controllers/favorite_characters_controller.rb:
-  - Rails/OrderById
-- app/controllers/forum/comments_controller.rb:
-  - Rails/TimeZone
-- app/controllers/forum/posts_controller.rb:
-  - Rails/TimeZone
-- app/controllers/fragment/tracking_heatmaps_controller.rb:
-  - Rails/Date
-- app/controllers/friends_controller.rb:
-  - Rails/PluckId
-- app/controllers/ics_controller.rb:
-  - Rails/Date
-- app/controllers/libraries_controller.rb:
-  - Rails/PluckId
-  - Rails/DynamicFindBy
-- app/controllers/newest_works_controller.rb:
-  - Rails/OrderById
-- app/controllers/organizations_controller.rb:
-  - Rails/OrderById
-- app/controllers/people_controller.rb:
-  - Rails/OrderById
-- app/controllers/searches_controller.rb:
-  - Rails/OrderById
-- app/controllers/seasonal_works_controller.rb:
-  - Rails/DynamicFindBy
-- app/controllers/settings/accounts_controller.rb:
-  - Rails/EnvironmentVariableAccess
-- app/controllers/settings/email_callbacks_controller.rb:
-  - Rails/SaveBang
-- app/controllers/settings/muted_users_controller.rb:
-  - Rails/OrderById
-  - Rails/SaveBang
-- app/controllers/settings/passwords_controller.rb:
-  - Rails/SaveBang
-- app/controllers/settings/providers_controller.rb:
-  - Rails/SaveBang
-- app/controllers/settings/tokens_controller.rb:
-  - Rails/SaveBang
-- app/controllers/sign_in_callbacks_controller.rb:
-  - Rails/SaveBang
-- app/controllers/userland/projects_controller.rb:
-  - Rails/SaveBang
-- app/controllers/v4/local_api/graphql_controller.rb:
-  - Rails/ApplicationController
-- app/controllers/welcome_controller.rb:
-  - Rails/EnvironmentVariableAccess
-- app/controllers/work_records_controller.rb:
-  - Rails/LexicallyScopedActionFilter
-  - Rails/TimeZone
-- app/decorators/concerns/resource_image_decorator_common.rb:
-  - Style/TernaryParentheses
-  - Rails/EnvironmentVariableAccess
-- app/decorators/profile_decorator.rb:
-  - Style/TernaryParentheses
-- app/forms/deprecated/db/program_rows_form.rb:
-  - Rails/TimeZone
-- app/forms/deprecated/db/slot_rows_form.rb:
-  - Rails/FindEach
-  - Rails/TimeZone
-- app/forms/deprecated/db/staff_rows_form.rb:
-  - Style/RedundantParentheses
-- app/graphql/beta/annict_schema.rb:
-  - Sorbet/ConstantsFromStrings
-- app/graphql/beta/mutations/create_record.rb:
-  - Rails/DynamicFindBy
-- app/graphql/beta/mutations/create_review.rb:
-  - Rails/DynamicFindBy
-- app/graphql/beta/mutations/delete_record.rb:
-  - Rails/DynamicFindBy
-- app/graphql/beta/mutations/delete_review.rb:
-  - Rails/DynamicFindBy
-- app/graphql/beta/mutations/update_record.rb:
-  - Rails/DynamicFindBy
-- app/graphql/beta/mutations/update_review.rb:
-  - Rails/DynamicFindBy
-- app/graphql/beta/mutations/update_status.rb:
-  - Rails/DynamicFindBy
-- app/graphql/beta/record_loader.rb:
-  - Rails/FindEach
-- app/graphql/beta/resolvers/library_entries.rb:
-  - Style/TernaryParentheses
-  - Rails/DynamicFindBy
-- app/graphql/beta/types/objects/user_type.rb:
-  - Rails/PluckId
-- app/graphql/beta/types/objects/work_type.rb:
-  - Style/TernaryParentheses
-- app/graphql/canary/annict_schema.rb:
-  - Sorbet/ConstantsFromStrings
-- app/graphql/canary/mutations/create_episode_record.rb:
-  - Rails/DynamicFindBy
-- app/graphql/canary/mutations/create_work_record.rb:
-  - Rails/DynamicFindBy
-- app/graphql/canary/mutations/delete_record.rb:
-  - Rails/DynamicFindBy
-- app/graphql/canary/mutations/skip_episode.rb:
-  - Rails/DynamicFindBy
-- app/graphql/canary/mutations/update_episode_record.rb:
-  - Rails/DynamicFindBy
-- app/graphql/canary/mutations/update_status.rb:
-  - Rails/DynamicFindBy
-- app/graphql/canary/mutations/update_work_record.rb:
-  - Rails/DynamicFindBy
-- app/graphql/canary/resolvers/episodes.rb:
-  - Rails/PluckId
-- app/graphql/canary/resolvers/library_entries.rb:
-  - Style/TernaryParentheses
-- app/graphql/canary/types/objects/user_type.rb:
-  - Style/TernaryParentheses
-  - Rails/PluckId
-- app/graphql/canary/types/objects/work_type.rb:
-  - Style/TernaryParentheses
-- app/helpers/application_helper.rb:
-  - Style/TernaryParentheses
-  - Rails/EnvironmentVariableAccess
-- app/helpers/db/application_helper.rb:
-  - Performance/Detect
-- app/helpers/ga_helper.rb:
-  - Rails/EnvironmentVariableAccess
-- app/helpers/head_helper.rb:
-  - Rails/EnvironmentVariableAccess
-  - Style/TernaryParentheses
-- app/helpers/image_helper.rb:
-  - Rails/EnvironmentVariableAccess
-- app/helpers/local_helper.rb:
-  - Rails/EnvironmentVariableAccess
-- app/helpers/time_zone_helper.rb:
-  - Style/TernaryParentheses
-- app/lib/annict/data_care/merge_episode.rb:
-  - Rails/Output
-  - Rails/SaveBang
-- app/lib/annict/data_care/merge_work.rb:
-  - Rails/Output
-  - Rails/SaveBang
-- app/lib/annict/data_care/move_episode.rb:
-  - Rails/Output
-- app/lib/annict/data_care/update_next_resources_on_library_entries.rb:
-  - Rails/Output
-  - Rails/Date
-- app/lib/annict/vod_importer/amazon_video.rb:
-  - Rails/Output
-- app/lib/annict/vod_importer/bandai_channel.rb:
-  - Rails/Output
-- app/lib/annict/vod_importer/base.rb:
-  - Rails/Output
-- app/lib/annict/vod_importer/d_anime_store.rb:
-  - Rails/Output
-- app/lib/annict/vod_importer/nico_nico_channel.rb:
-  - Rails/Output
-- app/mailers/mention_mailer.rb:
-  - Sorbet/ConstantsFromStrings
-- app/models/activity.rb:
-  - Rails/IgnoredColumnsAssignment
-  - Rails/SaveBang
-- app/models/activity_group.rb:
-  - Rails/HasManyOrHasOneDependent
-  - Rails/InverseOf
-- app/models/application_record.rb:
-  - Sorbet/ConstantsFromStrings
-  - Lint/SymbolConversion
-- app/models/cast.rb:
-  - Rails/RedundantPresenceValidationOnBelongsTo
-  - Rails/CompactBlank
-- app/models/channel.rb:
-  - Rails/RedundantPresenceValidationOnBelongsTo
-  - Rails/PluckId
-- app/models/channel_group.rb:
-  - Rails/HasManyOrHasOneDependent
-- app/models/character.rb:
-  - Rails/HasManyOrHasOneDependent
-  - Rails/RedundantPresenceValidationOnBelongsTo
-  - Rails/CompactBlank
-- app/models/comment.rb:
-  - Rails/SaveBang
-- app/models/concerns/active_parameter.rb:
-  - Style/SuperWithArgsParentheses
-  - Performance/StringIdentifierArgument
-- app/models/concerns/batch_destroyable.rb:
-  - Rails/SaveBang
-- app/models/concerns/resource_rows.rb:
-  - Style/RedundantRegexpArgument
-- app/models/concerns/supportable.rb:
-  - Rails/EnvironmentVariableAccess
-- app/models/concerns/user_favoritable.rb:
-  - Rails/SaveBang
-- app/models/concerns/user_followable.rb:
-  - Rails/SaveBang
-- app/models/concerns/user_likeable.rb:
-  - Rails/SaveBang
-- app/models/concerns/user_receivable.rb:
-  - Rails/SaveBang
-- app/models/creators/like_creator.rb:
-  - Rails/DynamicFindBy
-- app/models/email_notification.rb:
-  - Rails/IgnoredColumnsAssignment
-- app/models/episode.rb:
-  - Rails/HasManyOrHasOneDependent
-  - Rails/InverseOf
-  - Rails/CompactBlank
-  - Rails/Date
-- app/models/episode_record.rb:
-  - Rails/IgnoredColumnsAssignment
-  - Lint/ReturnInVoidContext
-  - Rails/OrderById
-- app/models/flash.rb:
-  - Rails/SaveBang
-- app/models/forms/work_record_form.rb:
-  - Performance/StringIdentifierArgument
-- app/models/forum_comment.rb:
-  - Rails/RedundantPresenceValidationOnBelongsTo
-  - Rails/FindEach
-- app/models/forum_post.rb:
-  - Rails/RedundantPresenceValidationOnBelongsTo
-  - Rails/EnvironmentVariableAccess
-- app/models/gumroad_client.rb:
-  - Rails/EnvironmentVariableAccess
-- app/models/library_entry.rb:
-  - Rails/IgnoredColumnsAssignment
-- app/models/like.rb:
-  - Rails/SaveBang
-- app/models/multiple_episode_record.rb:
-  - Rails/RedundantPresenceValidationOnBelongsTo
-- app/models/oauth/access_token.rb:
-  - Rails/InverseOf
-- app/models/organization.rb:
-  - Rails/HasManyOrHasOneDependent
-  - Rails/CompactBlank
-- app/models/organization_favorite.rb:
-  - Rails/PluckId
-- app/models/page_category.rb:
-  - Sorbet/ConstantsFromStrings
-- app/models/person.rb:
-  - Rails/HasManyOrHasOneDependent
-  - Rails/CompactBlank
-- app/models/person_favorite.rb:
-  - Rails/PluckId
-- app/models/program.rb:
-  - Rails/CompactBlank
-- app/models/recaptcha.rb:
-  - Rails/EnvironmentVariableAccess
-- app/models/season.rb:
-  - Rails/TimeZone
-  - Rails/EnvironmentVariableAccess
-  - Style/TernaryParentheses
-  - Rails/DynamicFindBy
-- app/models/series_work.rb:
-  - Rails/CompactBlank
-- app/models/setting.rb:
-  - Rails/IgnoredColumnsAssignment
-- app/models/slot.rb:
-  - Rails/RedundantPresenceValidationOnBelongsTo
-  - Rails/CompactBlank
-  - Rails/FindEach
-- app/models/staff.rb:
-  - Rails/RedundantPresenceValidationOnBelongsTo
-  - Rails/CompactBlank
-- app/models/status.rb:
-  - Rails/OrderById
-- app/models/trailer.rb:
-  - Rails/CompactBlank
-- app/models/tv_time.rb:
-  - Style/TernaryParentheses
-- app/models/user.rb:
-  - Rails/DuplicateAssociation
-  - Rails/InverseOf
-  - Rails/HasManyOrHasOneDependent
-  - Rails/SaveBang
-  - Rails/EnvironmentVariableAccess
-  - Rails/PluckId
-- app/models/userland_category.rb:
-  - Rails/HasManyOrHasOneDependent
-- app/models/work.rb:
-  - Rails/InverseOf
-  - Rails/HasManyOrHasOneDependent
-  - Rails/DynamicFindBy
-  - Rails/PluckId
-  - Rails/WhereEquals
-  - Layout/SpaceInLambdaLiteral
-  - Rails/EnvironmentVariableAccess
-  - Rails/CompactBlank
-  - Rails/Date
-- app/models/work_image.rb:
-  - Rails/IgnoredColumnsAssignment
-- app/services/deprecated/api/v1/base_service.rb:
-  - Rails/OrderById
-- app/services/deprecated/email_notification_service.rb:
-  - Performance/StringIdentifierArgument
-- app/services/deprecated/sns_image_service.rb:
-  - Rails/Output
-- app/services/deprecated/tracking_progress_service.rb:
-  - Rails/PluckId
-- app/validators/amazon_validator.rb:
-  - Performance/EndWith
-- app/validators/redirect_uri_validator.rb:
-  - Lint/NonLocalExitFromIterator
-- app/views/api/v1/application/_pagination.jb:
-  - Style/TernaryParentheses
-- app/views/api/v1/characters/index.jb:
-  - Style/IfInsideElse
-- app/views/api/v1/episodes/index.jb:
-  - Style/IfInsideElse
-- app/views/api/v1/people/index.jb:
-  - Style/IfInsideElse
-- app/views/api/v1/users/_user.jb:
-  - Lint/SymbolConversion
-- config/application.rb:
-  - Style/GlobalStdStream
-  - Layout/ArgumentAlignment
-  - Lint/AmbiguousRegexpLiteral
-  - Style/StringLiteralsInInterpolation
-  - Lint/ConstantDefinitionInBlock
-- config/initializers/application_controller_renderer.rb:
-  - Layout/EmptyLineAfterMagicComment
-- db/migrate/20161203102005_init_schema.rb:
-  - Rails/DangerousColumnNames
-- db/migrate/20170211110911_fix_constraints_on_some_tables.rb:
-  - Rails/BulkChangeTable
-  - Rails/ReversibleMigration
-- db/migrate/20170211135244_add_description_source_to_characters.rb:
-  - Rails/BulkChangeTable
-- db/migrate/20170318171853_add_cache_expired_date_fields_to_users.rb:
-  - Rails/BulkChangeTable
-- db/migrate/20170319141322_add_casts_count_and_staffs_count_to_people_and_orgs.rb:
-  - Rails/BulkChangeTable
-- db/migrate/20170401042901_add_series_id_to_characters.rb:
-  - Rails/ReversibleMigration
-- db/migrate/20170402135324_add_year_and_season_to_works.rb:
-  - Rails/BulkChangeTable
-- db/migrate/20170404121800_add_og_image_twitter_avatar_twitter_image_to_works.rb:
-  - Rails/BulkChangeTable
-- db/migrate/20170604123700_add_records_sort_type_to_settings.rb:
-  - Rails/BulkChangeTable
-- db/migrate/20170617192644_create_reviews.rb:
-  - Rails/BulkChangeTable
-- db/migrate/20170618013307_create_impressions_table.rb:
-  - Rails/ReversibleMigrationMethodDefinition
-- db/migrate/20170629141843_rebuild_items.rb:
-  - Rails/ReversibleMigration
-- db/migrate/20170812162147_add_work_tag_cache_expired_at.rb:
-  - Rails/BulkChangeTable
-- db/migrate/20170814131925_create_program_details.rb:
-  - Rails/BulkChangeTable
-  - Rails/ReversibleMigration
-- db/migrate/20171014094051_add_started_on_and_ended_on_to_works.rb:
-  - Rails/BulkChangeTable
-- db/migrate/20171103133758_change_default_value_on_display_option_user_work_list.rb:
-  - Rails/BulkChangeTable
-  - Rails/ReversibleMigration
-- db/migrate/20171216120948_change_default_score_on_episodes.rb:
-  - Rails/BulkChangeTable
-  - Rails/ReversibleMigration
-- db/migrate/20171225125419_update_tips.rb:
-  - Rails/ReversibleMigration
-- db/migrate/20180104134415_add_vod_title_code_to_program_details.rb:
-  - Rails/ReversibleMigration
-- db/migrate/20180401123249_add_share_status.rb:
-  - Rails/BulkChangeTable
-- db/migrate/20180527171424_rebuild_records.rb:
-  - Rails/BulkChangeTable
-- db/migrate/20180925112149_drop_twitter_tweets.rb:
-  - Rails/ReversibleMigration
-- db/migrate/20190218014736_update_for_manual_programs.rb:
-  - Rails/ReversibleMigration
-  - Rails/BulkChangeTable
-- db/migrate/20190413221017_add_sessions_table.rb:
-  - Rails/ReversibleMigration
-- db/migrate/20190501175021_add_shrine_data_to_resources.rb:
-  - Rails/BulkChangeTable
-- db/migrate/20191013172849_change_schema_20191014.rb:
-  - Rails/ReversibleMigration
-  - Rails/BulkChangeTable
-- db/migrate/20191019230403_remove_index_slots_on_program_id_and_started_at.rb:
-  - Rails/ReversibleMigration
-- db/migrate/20191130150830_add_alter_fields.rb:
-  - Rails/BulkChangeTable
-- db/migrate/20191208154530_add_episode_id_and_deleted_at_index_on_episode_records.rb:
-  - Rails/ReversibleMigration
-- db/migrate/20200310195638_refactoring_202003.rb:
-  - Rails/ReversibleMigration
-- db/migrate/20200322025837_update_202003.rb:
-  - Rails/BulkChangeTable
-- db/migrate/20200503204607_drop_unused_tables_202005.rb:
-  - Rails/ReversibleMigration
-- db/migrate/20200513125709_change_schema_for_user_detail_202005.rb:
-  - Rails/BulkChangeTable
-- db/migrate/20210919175411_update_for_collections_and_work_comments.rb:
-  - Rails/BulkChangeTable
-  - Rails/ReversibleMigration
-- db/seeds.rb:
-  - Rails/Output
-- lib/tasks/data_care.rake:
-  - Rails/PluckId
-  - Rails/SaveBang
-- lib/tasks/debug.rake:
-  - Rails/OrderById
-  - Rails/PluckId
-- lib/tasks/doorkeeper.rake:
-  - Rails/FindEach
-- lib/tasks/email_notification.rake:
-  - Rails/PluckId
-  - Lint/UselessAssignment
-- lib/tasks/episode.rake:
-  - Lint/ConstantDefinitionInBlock
-- lib/tasks/graphql.rake:
-  - Sorbet/ConstantsFromStrings
-  - Rails/RootPathnameMethods
-  - Style/RedundantInterpolation
-- lib/tasks/internal_statistic.rake:
-  - Rails/Date
-- lib/tasks/mal.rake:
-  - Lint/ConstantDefinitionInBlock
-- lib/tasks/seed.rake:
-  - Rails/OrderById
-- lib/tasks/session.rake:
-  - Rails/ToSWithArgument
-- lib/tasks/work.rake:
-  - Lint/SymbolConversion
-  - Rails/SaveBang
-  - Lint/ConstantDefinitionInBlock
-- spec/factories/profile.rb:
-  - Style/RedundantInterpolation
-- spec/factories/program.rb:
-  - Rails/TimeZone
-- spec/graphql/beta/connections/activity_connection_spec.rb:
-  - RSpec/LetSetup
-- spec/graphql/beta/mutations/create_record_spec.rb:
-  - RSpec/DescribeClass
-- spec/graphql/beta/mutations/create_review_spec.rb:
-  - RSpec/DescribeClass
-- spec/graphql/beta/mutations/delete_record_spec.rb:
-  - RSpec/DescribeClass
-  - RSpec/LetSetup
-- spec/graphql/beta/mutations/delete_review_spec.rb:
-  - RSpec/DescribeClass
-  - RSpec/LetSetup
-- spec/graphql/beta/queries/node_spec.rb:
-  - RSpec/DescribeClass
-- spec/graphql/beta/queries/nodes_spec.rb:
-  - RSpec/DescribeClass
-- spec/graphql/beta/queries/search_characters_spec.rb:
-  - RSpec/DescribeClass
-- spec/graphql/beta/queries/search_episodes_spec.rb:
-  - RSpec/DescribeClass
-- spec/graphql/beta/queries/search_organizations_spec.rb:
-  - RSpec/DescribeClass
-- spec/graphql/beta/queries/search_people_spec.rb:
-  - RSpec/DescribeClass
-- spec/graphql/beta/queries/search_works_spec.rb:
-  - RSpec/DescribeClass
-  - RSpec/LetSetup
-- spec/graphql/beta/queries/user_spec.rb:
-  - RSpec/DescribeClass
-  - RSpec/LetSetup
-- spec/graphql/beta/queries/viewer_spec.rb:
-  - RSpec/DescribeClass
-- spec/graphql/beta/schema_spec.rb:
-  - RSpec/DescribeClass
-- spec/graphql/canary/mutations/add_reaction_spec.rb:
-  - RSpec/MessageSpies
-- spec/graphql/canary/mutations/delete_record_spec.rb:
-  - RSpec/LetSetup
-- spec/models/creators/episode_record_creator_spec.rb:
-  - RSpec/LetSetup
-- spec/models/creators/like_creator_spec.rb:
-  - RSpec/LetSetup
-  - RSpec/MessageSpies
-- spec/models/creators/work_record_creator_spec.rb:
-  - RSpec/LetSetup
-- spec/models/destroyers/record_destroyer_spec.rb:
-  - RSpec/LetSetup
-- spec/models/library_entry_spec.rb:
-  - RSpec/InstanceVariable
-  - RSpec/LetSetup
-- spec/models/updaters/status_updater_spec.rb:
-  - RSpec/LetSetup
-- spec/models/user_spec.rb:
-  - RSpec/LetSetup
-- spec/queries/channels_query_spec.rb:
-  - RSpec/FilePath
-  - Rails/PluckId
-- spec/queries/slots_query_spec.rb:
-  - RSpec/FilePath
-  - Rails/TimeZone
-  - Rails/PluckId
-- spec/requests/api/internal/sign_in/create_spec.rb:
-  - RSpec/StubbedMock
-  - RSpec/MessageSpies
-- spec/requests/api/internal/sign_up/create_spec.rb:
-  - RSpec/StubbedMock
-  - RSpec/MessageSpies
-- spec/requests/api/v1/activities_spec.rb:
-  - Rails/TimeZone
-- spec/requests/api/v1/followers_spec.rb:
-  - Rails/TimeZone
-  - RSpec/LetSetup
-- spec/requests/api/v1/following_spec.rb:
-  - Rails/TimeZone
-  - RSpec/LetSetup
-- spec/requests/api/v1/me/following_activities_spec.rb:
-  - Rails/TimeZone
-  - RSpec/LetSetup
-- spec/requests/api/v1/me/index_spec.rb:
-  - Rails/TimeZone
-- spec/requests/api/v1/me/records/create_spec.rb:
-  - RSpec/MissingExampleGroupArgument
-- spec/requests/api/v1/me/reviews/create_spec.rb:
-  - RSpec/MissingExampleGroupArgument
-- spec/requests/api/v1/me/reviews/destroy_spec.rb:
-  - RSpec/LetSetup
-- spec/requests/api/v1/me/slots_spec.rb:
-  - RSpec/LetSetup
-- spec/requests/api/v1/me/works_spec.rb:
-  - RSpec/LetSetup
-- spec/requests/api/v1/records_spec.rb:
-  - Rails/TimeZone
-- spec/requests/api/v1/reviews_spec.rb:
-  - Rails/TimeZone
-- spec/requests/api/v1/users_spec.rb:
-  - Rails/TimeZone
-- spec/requests/character_fans/index_spec.rb:
-  - RSpec/LetSetup
-- spec/requests/db/casts/update_spec.rb:
-  - RSpec/LetSetup
-- spec/requests/db/episodes/update_spec.rb:
-  - RSpec/LetSetup
-- spec/requests/db/programs/update_spec.rb:
-  - RSpec/LetSetup
-- spec/requests/db/slots/update_spec.rb:
-  - RSpec/LetSetup
-- spec/requests/db/staffs/update_spec.rb:
-  - RSpec/LetSetup
-- spec/requests/db/trailers/update_spec.rb:
-  - RSpec/LetSetup
-- spec/requests/episodes/index_spec.rb:
-  - RSpec/LetSetup
-- spec/requests/fragment/activity_items/index_spec.rb:
-  - RSpec/LetSetup
-- spec/requests/home/show_spec.rb:
-  - RSpec/LetSetup
-- spec/requests/notifications/index_spec.rb:
-  - RSpec/LetSetup
-- spec/requests/organization_fans/index_spec.rb:
-  - RSpec/LetSetup
-- spec/requests/person_fans/index_spec.rb:
-  - RSpec/LetSetup
-- spec/requests/records/destroy_spec.rb:
-  - RSpec/LetSetup
-- spec/requests/records/index_spec.rb:
-  - RSpec/LetSetup
-- spec/requests/records/show_spec.rb:
-  - RSpec/LetSetup
-- spec/requests/settings/apps/index_spec.rb:
-  - RSpec/LetSetup
-- spec/requests/users/show_spec.rb:
-  - RSpec/LetSetup
-- spec/requests/works/show_spec.rb:
-  - RSpec/AnyInstance
-- spec/services/episode_generator_service_spec.rb:
-  - RSpec/FilePath
-  - Rails/TimeZone
-  - RSpec/LetSetup
-- spec/support/devise.rb:
-  - Style/MixinUsage
-- spec/support/paperclip.rb:
-  - Style/RedundantInterpolation
+  - app/components/deprecated/activities/record_activity_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/activities/status_activity_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/adsense_component.rb:
+      - Style/SuperWithArgsParentheses
+      - Rails/EnvironmentVariableAccess
+  - app/components/deprecated/application_v6_component.rb:
+      - Style/ArgumentsForwarding
+  - app/components/deprecated/badges/slot_start_date_badge_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/badges/supporter_badge_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/badges/work_media_badge_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/badges/work_season_badge_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/body_v6_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/boxes/work_box_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/button_groups/episode_transition_button_group_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/button_groups/pagination_button_group_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/button_groups/record_rating_button_group_component.rb:
+      - Style/SuperWithArgsParentheses
+      - Style/TernaryParentheses
+  - app/components/deprecated/button_groups/user_button_group_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/button_groups/work_button_group_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/buttons/bulk_watch_episodes_button_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/buttons/follow_button_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/buttons/like_button_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/buttons/mute_user_button_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/buttons/receive_channel_button_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/buttons/share_to_facebook_button_component.rb:
+      - Style/SuperWithArgsParentheses
+      - Rails/EnvironmentVariableAccess
+  - app/components/deprecated/buttons/share_to_twitter_button_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/buttons/skip_episode_button_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/buttons/star_button_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/buttons/watch_episode_button_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/cards/work_card_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/collapses/record_form_options_collapse_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/contents/record_content_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/contents/status_content_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/dropdowns/record_options_dropdown_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/dropdowns/status_select_dropdown_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/empty_v6_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/error_panel_v6_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/flash_v6_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/footers/record_footer_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/footers/status_footer_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/forms/episode_record_form_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/forms/work_record_form_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/headers/profile_header_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/headers/record_header_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/headers/work_header_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/inputs/recaptcha_input_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/label_groups/work_record_rating_label_group_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/labels/rating_label_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/list_groups/record_list_group_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/list_groups/record_month_list_group_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/list_items/record_list_item_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/lists/record_list_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/lists/trackable_episode_list_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/navs/user_nav_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/radios/program_select_radio_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/relative_time_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/sidebars/main_sidebar_component.rb:
+      - Style/SuperWithArgsParentheses
+      - Rails/EnvironmentVariableAccess
+  - app/components/deprecated/spoiler_guard_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/tab_bar_component.rb:
+      - Style/SuperWithArgsParentheses
+      - Rails/EnvironmentVariableAccess
+  - app/components/deprecated/textareas/record_textarea_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/components/deprecated/timeline_component.rb:
+      - Style/SuperWithArgsParentheses
+  - app/controllers/api/canary/graphql_controller.rb:
+      - Rails/ApplicationController
+  - app/controllers/api/graphql_controller.rb:
+      - Rails/ApplicationController
+  - app/controllers/api/internal/following_controller.rb:
+      - Rails/PluckId
+  - app/controllers/api/internal/likes_controller.rb:
+      - Sorbet/ConstantsFromStrings
+  - app/controllers/api/internal/multiple_episode_records_controller.rb:
+      - Rails/TransactionExitStatement
+  - app/controllers/api/internal/mute_users_controller.rb:
+      - Rails/SaveBang
+  - app/controllers/api/internal/program_selects_controller.rb:
+      - Style/TernaryParentheses
+  - app/controllers/api/internal/registrations_controller.rb:
+      - Rails/SaveBang
+  - app/controllers/api/internal/skipped_episodes_controller.rb:
+      - Rails/LexicallyScopedActionFilter
+  - app/controllers/api/internal/stars_controller.rb:
+      - Sorbet/ConstantsFromStrings
+  - app/controllers/api/internal/unlikes_controller.rb:
+      - Sorbet/ConstantsFromStrings
+  - app/controllers/api/internal/unstars_controller.rb:
+      - Sorbet/ConstantsFromStrings
+  - app/controllers/api/v1/application_controller.rb:
+      - Rails/LexicallyScopedActionFilter
+      - Lint/DuplicateMethods
+      - Sorbet/ConstantsFromStrings
+      - Style/RedundantReturn
+  - app/controllers/api/v1/me/following_activities_controller.rb:
+      - Rails/PluckId
+  - app/controllers/application_v6_controller.rb:
+      - Rails/ApplicationController
+  - app/controllers/callbacks_controller.rb:
+      - Style/TernaryParentheses
+  - app/controllers/character_fans_controller.rb:
+      - Rails/OrderById
+  - app/controllers/characters_controller.rb:
+      - Rails/OrderById
+  - app/controllers/comments_controller.rb:
+      - Rails/SaveBang
+  - app/controllers/communities_controller.rb:
+      - Rails/EnvironmentVariableAccess
+  - app/controllers/concerns/basic_authenticatable.rb:
+      - Rails/EnvironmentVariableAccess
+  - app/controllers/concerns/controller_common.rb:
+      - Rails/PluckId
+      - Rails/EnvironmentVariableAccess
+  - app/controllers/concerns/localizable.rb:
+      - Rails/EnvironmentVariableAccess
+      - Style/TernaryParentheses
+      - Style/ArgumentsForwarding
+      - Rails/PluckId
+  - app/controllers/concerns/work_listable.rb:
+      - Style/TernaryParentheses
+  - app/controllers/db/activities_controller.rb:
+      - Rails/OrderById
+  - app/controllers/db/channel_groups_controller.rb:
+      - Rails/SaveBang
+  - app/controllers/db/channels_controller.rb:
+      - Rails/SaveBang
+  - app/controllers/db/characters_controller.rb:
+      - Rails/OrderById
+  - app/controllers/db/organizations_controller.rb:
+      - Rails/OrderById
+  - app/controllers/db/people_controller.rb:
+      - Rails/OrderById
+  - app/controllers/db/searches_controller.rb:
+      - Rails/OrderById
+  - app/controllers/db/series_controller.rb:
+      - Rails/OrderById
+  - app/controllers/db/series_works_controller.rb:
+      - Rails/OrderById
+  - app/controllers/db/work_images_controller.rb:
+      - Rails/SaveBang
+  - app/controllers/db/works_controller.rb:
+      - Rails/OrderById
+  - app/controllers/favorite_characters_controller.rb:
+      - Rails/OrderById
+  - app/controllers/forum/comments_controller.rb:
+      - Rails/TimeZone
+  - app/controllers/forum/posts_controller.rb:
+      - Rails/TimeZone
+  - app/controllers/fragment/tracking_heatmaps_controller.rb:
+      - Rails/Date
+  - app/controllers/friends_controller.rb:
+      - Rails/PluckId
+  - app/controllers/ics_controller.rb:
+      - Rails/Date
+  - app/controllers/libraries_controller.rb:
+      - Rails/PluckId
+      - Rails/DynamicFindBy
+  - app/controllers/newest_works_controller.rb:
+      - Rails/OrderById
+  - app/controllers/organizations_controller.rb:
+      - Rails/OrderById
+  - app/controllers/people_controller.rb:
+      - Rails/OrderById
+  - app/controllers/searches_controller.rb:
+      - Rails/OrderById
+  - app/controllers/seasonal_works_controller.rb:
+      - Rails/DynamicFindBy
+  - app/controllers/settings/accounts_controller.rb:
+      - Rails/EnvironmentVariableAccess
+  - app/controllers/settings/email_callbacks_controller.rb:
+      - Rails/SaveBang
+  - app/controllers/settings/muted_users_controller.rb:
+      - Rails/OrderById
+      - Rails/SaveBang
+  - app/controllers/settings/passwords_controller.rb:
+      - Rails/SaveBang
+  - app/controllers/settings/providers_controller.rb:
+      - Rails/SaveBang
+  - app/controllers/settings/tokens_controller.rb:
+      - Rails/SaveBang
+  - app/controllers/sign_in_callbacks_controller.rb:
+      - Rails/SaveBang
+  - app/controllers/userland/projects_controller.rb:
+      - Rails/SaveBang
+  - app/controllers/v4/local_api/graphql_controller.rb:
+      - Rails/ApplicationController
+  - app/controllers/welcome_controller.rb:
+      - Rails/EnvironmentVariableAccess
+  - app/controllers/work_records_controller.rb:
+      - Rails/LexicallyScopedActionFilter
+      - Rails/TimeZone
+  - app/decorators/concerns/resource_image_decorator_common.rb:
+      - Style/TernaryParentheses
+      - Rails/EnvironmentVariableAccess
+  - app/decorators/profile_decorator.rb:
+      - Style/TernaryParentheses
+  - app/forms/deprecated/db/program_rows_form.rb:
+      - Rails/TimeZone
+  - app/forms/deprecated/db/slot_rows_form.rb:
+      - Rails/FindEach
+      - Rails/TimeZone
+  - app/forms/deprecated/db/staff_rows_form.rb:
+      - Style/RedundantParentheses
+  - app/graphql/beta/annict_schema.rb:
+      - Sorbet/ConstantsFromStrings
+  - app/graphql/beta/mutations/create_record.rb:
+      - Rails/DynamicFindBy
+  - app/graphql/beta/mutations/create_review.rb:
+      - Rails/DynamicFindBy
+  - app/graphql/beta/mutations/delete_record.rb:
+      - Rails/DynamicFindBy
+  - app/graphql/beta/mutations/delete_review.rb:
+      - Rails/DynamicFindBy
+  - app/graphql/beta/mutations/update_record.rb:
+      - Rails/DynamicFindBy
+  - app/graphql/beta/mutations/update_review.rb:
+      - Rails/DynamicFindBy
+  - app/graphql/beta/mutations/update_status.rb:
+      - Rails/DynamicFindBy
+  - app/graphql/beta/record_loader.rb:
+      - Rails/FindEach
+  - app/graphql/beta/resolvers/library_entries.rb:
+      - Style/TernaryParentheses
+      - Rails/DynamicFindBy
+  - app/graphql/beta/types/objects/user_type.rb:
+      - Rails/PluckId
+  - app/graphql/beta/types/objects/work_type.rb:
+      - Style/TernaryParentheses
+  - app/graphql/canary/annict_schema.rb:
+      - Sorbet/ConstantsFromStrings
+  - app/graphql/canary/mutations/create_episode_record.rb:
+      - Rails/DynamicFindBy
+  - app/graphql/canary/mutations/create_work_record.rb:
+      - Rails/DynamicFindBy
+  - app/graphql/canary/mutations/delete_record.rb:
+      - Rails/DynamicFindBy
+  - app/graphql/canary/mutations/skip_episode.rb:
+      - Rails/DynamicFindBy
+  - app/graphql/canary/mutations/update_episode_record.rb:
+      - Rails/DynamicFindBy
+  - app/graphql/canary/mutations/update_status.rb:
+      - Rails/DynamicFindBy
+  - app/graphql/canary/mutations/update_work_record.rb:
+      - Rails/DynamicFindBy
+  - app/graphql/canary/resolvers/episodes.rb:
+      - Rails/PluckId
+  - app/graphql/canary/resolvers/library_entries.rb:
+      - Style/TernaryParentheses
+  - app/graphql/canary/types/objects/user_type.rb:
+      - Style/TernaryParentheses
+      - Rails/PluckId
+  - app/graphql/canary/types/objects/work_type.rb:
+      - Style/TernaryParentheses
+  - app/helpers/application_helper.rb:
+      - Style/TernaryParentheses
+      - Rails/EnvironmentVariableAccess
+  - app/helpers/db/application_helper.rb:
+      - Performance/Detect
+  - app/helpers/ga_helper.rb:
+      - Rails/EnvironmentVariableAccess
+  - app/helpers/head_helper.rb:
+      - Rails/EnvironmentVariableAccess
+      - Style/TernaryParentheses
+  - app/helpers/image_helper.rb:
+      - Rails/EnvironmentVariableAccess
+  - app/helpers/local_helper.rb:
+      - Rails/EnvironmentVariableAccess
+  - app/helpers/time_zone_helper.rb:
+      - Style/TernaryParentheses
+  - app/lib/annict/data_care/merge_episode.rb:
+      - Rails/Output
+      - Rails/SaveBang
+  - app/lib/annict/data_care/merge_work.rb:
+      - Rails/Output
+      - Rails/SaveBang
+  - app/lib/annict/data_care/move_episode.rb:
+      - Rails/Output
+  - app/lib/annict/data_care/update_next_resources_on_library_entries.rb:
+      - Rails/Output
+      - Rails/Date
+  - app/lib/annict/vod_importer/amazon_video.rb:
+      - Rails/Output
+  - app/lib/annict/vod_importer/bandai_channel.rb:
+      - Rails/Output
+  - app/lib/annict/vod_importer/base.rb:
+      - Rails/Output
+  - app/lib/annict/vod_importer/d_anime_store.rb:
+      - Rails/Output
+  - app/lib/annict/vod_importer/nico_nico_channel.rb:
+      - Rails/Output
+  - app/mailers/mention_mailer.rb:
+      - Sorbet/ConstantsFromStrings
+  - app/models/activity.rb:
+      - Rails/IgnoredColumnsAssignment
+      - Rails/SaveBang
+  - app/models/activity_group.rb:
+      - Rails/HasManyOrHasOneDependent
+      - Rails/InverseOf
+  - app/models/application_record.rb:
+      - Sorbet/ConstantsFromStrings
+      - Lint/SymbolConversion
+  - app/models/cast.rb:
+      - Rails/RedundantPresenceValidationOnBelongsTo
+      - Rails/CompactBlank
+  - app/models/channel.rb:
+      - Rails/RedundantPresenceValidationOnBelongsTo
+      - Rails/PluckId
+  - app/models/channel_group.rb:
+      - Rails/HasManyOrHasOneDependent
+  - app/models/character.rb:
+      - Rails/HasManyOrHasOneDependent
+      - Rails/RedundantPresenceValidationOnBelongsTo
+      - Rails/CompactBlank
+  - app/models/comment.rb:
+      - Rails/SaveBang
+  - app/models/concerns/active_parameter.rb:
+      - Style/SuperWithArgsParentheses
+      - Performance/StringIdentifierArgument
+  - app/models/concerns/batch_destroyable.rb:
+      - Rails/SaveBang
+  - app/models/concerns/resource_rows.rb:
+      - Style/RedundantRegexpArgument
+  - app/models/concerns/supportable.rb:
+      - Rails/EnvironmentVariableAccess
+  - app/models/concerns/user_favoritable.rb:
+      - Rails/SaveBang
+  - app/models/concerns/user_followable.rb:
+      - Rails/SaveBang
+  - app/models/concerns/user_likeable.rb:
+      - Rails/SaveBang
+  - app/models/concerns/user_receivable.rb:
+      - Rails/SaveBang
+  - app/models/creators/like_creator.rb:
+      - Rails/DynamicFindBy
+  - app/models/email_notification.rb:
+      - Rails/IgnoredColumnsAssignment
+  - app/models/episode.rb:
+      - Rails/HasManyOrHasOneDependent
+      - Rails/InverseOf
+      - Rails/CompactBlank
+      - Rails/Date
+  - app/models/episode_record.rb:
+      - Rails/IgnoredColumnsAssignment
+      - Lint/ReturnInVoidContext
+      - Rails/OrderById
+  - app/models/flash.rb:
+      - Rails/SaveBang
+  - app/models/forms/work_record_form.rb:
+      - Performance/StringIdentifierArgument
+  - app/models/forum_comment.rb:
+      - Rails/RedundantPresenceValidationOnBelongsTo
+      - Rails/FindEach
+  - app/models/forum_post.rb:
+      - Rails/RedundantPresenceValidationOnBelongsTo
+      - Rails/EnvironmentVariableAccess
+  - app/models/gumroad_client.rb:
+      - Rails/EnvironmentVariableAccess
+  - app/models/library_entry.rb:
+      - Rails/IgnoredColumnsAssignment
+  - app/models/like.rb:
+      - Rails/SaveBang
+  - app/models/multiple_episode_record.rb:
+      - Rails/RedundantPresenceValidationOnBelongsTo
+  - app/models/oauth/access_token.rb:
+      - Rails/InverseOf
+  - app/models/organization.rb:
+      - Rails/HasManyOrHasOneDependent
+      - Rails/CompactBlank
+  - app/models/organization_favorite.rb:
+      - Rails/PluckId
+  - app/models/page_category.rb:
+      - Sorbet/ConstantsFromStrings
+  - app/models/person.rb:
+      - Rails/HasManyOrHasOneDependent
+      - Rails/CompactBlank
+  - app/models/person_favorite.rb:
+      - Rails/PluckId
+  - app/models/program.rb:
+      - Rails/CompactBlank
+  - app/models/recaptcha.rb:
+      - Rails/EnvironmentVariableAccess
+  - app/models/season.rb:
+      - Rails/TimeZone
+      - Rails/EnvironmentVariableAccess
+      - Style/TernaryParentheses
+      - Rails/DynamicFindBy
+  - app/models/series_work.rb:
+      - Rails/CompactBlank
+  - app/models/setting.rb:
+      - Rails/IgnoredColumnsAssignment
+  - app/models/slot.rb:
+      - Rails/RedundantPresenceValidationOnBelongsTo
+      - Rails/CompactBlank
+      - Rails/FindEach
+  - app/models/staff.rb:
+      - Rails/RedundantPresenceValidationOnBelongsTo
+      - Rails/CompactBlank
+  - app/models/status.rb:
+      - Rails/OrderById
+  - app/models/trailer.rb:
+      - Rails/CompactBlank
+  - app/models/tv_time.rb:
+      - Style/TernaryParentheses
+  - app/models/user.rb:
+      - Rails/DuplicateAssociation
+      - Rails/InverseOf
+      - Rails/HasManyOrHasOneDependent
+      - Rails/SaveBang
+      - Rails/EnvironmentVariableAccess
+      - Rails/PluckId
+  - app/models/userland_category.rb:
+      - Rails/HasManyOrHasOneDependent
+  - app/models/work.rb:
+      - Rails/InverseOf
+      - Rails/HasManyOrHasOneDependent
+      - Rails/DynamicFindBy
+      - Rails/PluckId
+      - Rails/WhereEquals
+      - Layout/SpaceInLambdaLiteral
+      - Rails/EnvironmentVariableAccess
+      - Rails/CompactBlank
+      - Rails/Date
+  - app/models/work_image.rb:
+      - Rails/IgnoredColumnsAssignment
+  - app/services/deprecated/api/v1/base_service.rb:
+      - Rails/OrderById
+  - app/services/deprecated/email_notification_service.rb:
+      - Performance/StringIdentifierArgument
+  - app/services/deprecated/sns_image_service.rb:
+      - Rails/Output
+  - app/services/deprecated/tracking_progress_service.rb:
+      - Rails/PluckId
+  - app/validators/amazon_validator.rb:
+      - Performance/EndWith
+  - app/validators/redirect_uri_validator.rb:
+      - Lint/NonLocalExitFromIterator
+  - app/views/api/v1/application/_pagination.jb:
+      - Style/TernaryParentheses
+  - app/views/api/v1/characters/index.jb:
+      - Style/IfInsideElse
+  - app/views/api/v1/episodes/index.jb:
+      - Style/IfInsideElse
+  - app/views/api/v1/people/index.jb:
+      - Style/IfInsideElse
+  - app/views/api/v1/users/_user.jb:
+      - Lint/SymbolConversion
+  - config/application.rb:
+      - Style/GlobalStdStream
+      - Layout/ArgumentAlignment
+      - Lint/AmbiguousRegexpLiteral
+      - Style/StringLiteralsInInterpolation
+      - Lint/ConstantDefinitionInBlock
+  - config/initializers/application_controller_renderer.rb:
+      - Layout/EmptyLineAfterMagicComment
+  - db/migrate/20161203102005_init_schema.rb:
+      - Rails/DangerousColumnNames
+  - db/migrate/20170211110911_fix_constraints_on_some_tables.rb:
+      - Rails/BulkChangeTable
+      - Rails/ReversibleMigration
+  - db/migrate/20170211135244_add_description_source_to_characters.rb:
+      - Rails/BulkChangeTable
+  - db/migrate/20170318171853_add_cache_expired_date_fields_to_users.rb:
+      - Rails/BulkChangeTable
+  - db/migrate/20170319141322_add_casts_count_and_staffs_count_to_people_and_orgs.rb:
+      - Rails/BulkChangeTable
+  - db/migrate/20170401042901_add_series_id_to_characters.rb:
+      - Rails/ReversibleMigration
+  - db/migrate/20170402135324_add_year_and_season_to_works.rb:
+      - Rails/BulkChangeTable
+  - db/migrate/20170404121800_add_og_image_twitter_avatar_twitter_image_to_works.rb:
+      - Rails/BulkChangeTable
+  - db/migrate/20170604123700_add_records_sort_type_to_settings.rb:
+      - Rails/BulkChangeTable
+  - db/migrate/20170617192644_create_reviews.rb:
+      - Rails/BulkChangeTable
+  - db/migrate/20170618013307_create_impressions_table.rb:
+      - Rails/ReversibleMigrationMethodDefinition
+  - db/migrate/20170629141843_rebuild_items.rb:
+      - Rails/ReversibleMigration
+  - db/migrate/20170812162147_add_work_tag_cache_expired_at.rb:
+      - Rails/BulkChangeTable
+  - db/migrate/20170814131925_create_program_details.rb:
+      - Rails/BulkChangeTable
+      - Rails/ReversibleMigration
+  - db/migrate/20171014094051_add_started_on_and_ended_on_to_works.rb:
+      - Rails/BulkChangeTable
+  - db/migrate/20171103133758_change_default_value_on_display_option_user_work_list.rb:
+      - Rails/BulkChangeTable
+      - Rails/ReversibleMigration
+  - db/migrate/20171216120948_change_default_score_on_episodes.rb:
+      - Rails/BulkChangeTable
+      - Rails/ReversibleMigration
+  - db/migrate/20171225125419_update_tips.rb:
+      - Rails/ReversibleMigration
+  - db/migrate/20180104134415_add_vod_title_code_to_program_details.rb:
+      - Rails/ReversibleMigration
+  - db/migrate/20180401123249_add_share_status.rb:
+      - Rails/BulkChangeTable
+  - db/migrate/20180527171424_rebuild_records.rb:
+      - Rails/BulkChangeTable
+  - db/migrate/20180925112149_drop_twitter_tweets.rb:
+      - Rails/ReversibleMigration
+  - db/migrate/20190218014736_update_for_manual_programs.rb:
+      - Rails/ReversibleMigration
+      - Rails/BulkChangeTable
+  - db/migrate/20190413221017_add_sessions_table.rb:
+      - Rails/ReversibleMigration
+  - db/migrate/20190501175021_add_shrine_data_to_resources.rb:
+      - Rails/BulkChangeTable
+  - db/migrate/20191013172849_change_schema_20191014.rb:
+      - Rails/ReversibleMigration
+      - Rails/BulkChangeTable
+  - db/migrate/20191019230403_remove_index_slots_on_program_id_and_started_at.rb:
+      - Rails/ReversibleMigration
+  - db/migrate/20191130150830_add_alter_fields.rb:
+      - Rails/BulkChangeTable
+  - db/migrate/20191208154530_add_episode_id_and_deleted_at_index_on_episode_records.rb:
+      - Rails/ReversibleMigration
+  - db/migrate/20200310195638_refactoring_202003.rb:
+      - Rails/ReversibleMigration
+  - db/migrate/20200322025837_update_202003.rb:
+      - Rails/BulkChangeTable
+  - db/migrate/20200503204607_drop_unused_tables_202005.rb:
+      - Rails/ReversibleMigration
+  - db/migrate/20200513125709_change_schema_for_user_detail_202005.rb:
+      - Rails/BulkChangeTable
+  - db/migrate/20210919175411_update_for_collections_and_work_comments.rb:
+      - Rails/BulkChangeTable
+      - Rails/ReversibleMigration
+  - db/seeds.rb:
+      - Rails/Output
+  - lib/tasks/data_care.rake:
+      - Rails/PluckId
+      - Rails/SaveBang
+  - lib/tasks/debug.rake:
+      - Rails/OrderById
+      - Rails/PluckId
+  - lib/tasks/doorkeeper.rake:
+      - Rails/FindEach
+  - lib/tasks/email_notification.rake:
+      - Rails/PluckId
+      - Lint/UselessAssignment
+  - lib/tasks/episode.rake:
+      - Lint/ConstantDefinitionInBlock
+  - lib/tasks/graphql.rake:
+      - Sorbet/ConstantsFromStrings
+      - Rails/RootPathnameMethods
+      - Style/RedundantInterpolation
+  - lib/tasks/internal_statistic.rake:
+      - Rails/Date
+  - lib/tasks/mal.rake:
+      - Lint/ConstantDefinitionInBlock
+  - lib/tasks/seed.rake:
+      - Rails/OrderById
+  - lib/tasks/session.rake:
+      - Rails/ToSWithArgument
+  - lib/tasks/work.rake:
+      - Lint/SymbolConversion
+      - Rails/SaveBang
+      - Lint/ConstantDefinitionInBlock
+  - spec/factories/profile.rb:
+      - Style/RedundantInterpolation
+  - spec/factories/program.rb:
+      - Rails/TimeZone
+  - spec/graphql/beta/connections/activity_connection_spec.rb:
+      - RSpec/LetSetup
+  - spec/graphql/beta/mutations/create_record_spec.rb:
+      - RSpec/DescribeClass
+  - spec/graphql/beta/mutations/create_review_spec.rb:
+      - RSpec/DescribeClass
+  - spec/graphql/beta/mutations/delete_record_spec.rb:
+      - RSpec/DescribeClass
+      - RSpec/LetSetup
+  - spec/graphql/beta/mutations/delete_review_spec.rb:
+      - RSpec/DescribeClass
+      - RSpec/LetSetup
+  - spec/graphql/beta/queries/node_spec.rb:
+      - RSpec/DescribeClass
+  - spec/graphql/beta/queries/nodes_spec.rb:
+      - RSpec/DescribeClass
+  - spec/graphql/beta/queries/search_characters_spec.rb:
+      - RSpec/DescribeClass
+  - spec/graphql/beta/queries/search_episodes_spec.rb:
+      - RSpec/DescribeClass
+  - spec/graphql/beta/queries/search_organizations_spec.rb:
+      - RSpec/DescribeClass
+  - spec/graphql/beta/queries/search_people_spec.rb:
+      - RSpec/DescribeClass
+  - spec/graphql/beta/queries/search_works_spec.rb:
+      - RSpec/DescribeClass
+      - RSpec/LetSetup
+  - spec/graphql/beta/queries/user_spec.rb:
+      - RSpec/DescribeClass
+      - RSpec/LetSetup
+  - spec/graphql/beta/queries/viewer_spec.rb:
+      - RSpec/DescribeClass
+  - spec/graphql/beta/schema_spec.rb:
+      - RSpec/DescribeClass
+  - spec/graphql/canary/mutations/add_reaction_spec.rb:
+      - RSpec/MessageSpies
+  - spec/graphql/canary/mutations/delete_record_spec.rb:
+      - RSpec/LetSetup
+  - spec/models/creators/episode_record_creator_spec.rb:
+      - RSpec/LetSetup
+  - spec/models/creators/like_creator_spec.rb:
+      - RSpec/LetSetup
+      - RSpec/MessageSpies
+  - spec/models/creators/work_record_creator_spec.rb:
+      - RSpec/LetSetup
+  - spec/models/destroyers/record_destroyer_spec.rb:
+      - RSpec/LetSetup
+  - spec/models/library_entry_spec.rb:
+      - RSpec/InstanceVariable
+      - RSpec/LetSetup
+  - spec/models/updaters/status_updater_spec.rb:
+      - RSpec/LetSetup
+  - spec/models/user_spec.rb:
+      - RSpec/LetSetup
+  - spec/queries/channels_query_spec.rb:
+      - RSpec/FilePath
+      - Rails/PluckId
+  - spec/queries/slots_query_spec.rb:
+      - RSpec/FilePath
+      - Rails/TimeZone
+      - Rails/PluckId
+  - spec/requests/api/internal/sign_in/create_spec.rb:
+      - RSpec/StubbedMock
+      - RSpec/MessageSpies
+  - spec/requests/api/internal/sign_up/create_spec.rb:
+      - RSpec/StubbedMock
+      - RSpec/MessageSpies
+  - spec/requests/api/v1/activities_spec.rb:
+      - Rails/TimeZone
+  - spec/requests/api/v1/followers_spec.rb:
+      - Rails/TimeZone
+      - RSpec/LetSetup
+  - spec/requests/api/v1/following_spec.rb:
+      - Rails/TimeZone
+      - RSpec/LetSetup
+  - spec/requests/api/v1/me/following_activities_spec.rb:
+      - Rails/TimeZone
+      - RSpec/LetSetup
+  - spec/requests/api/v1/me/index_spec.rb:
+      - Rails/TimeZone
+  - spec/requests/api/v1/me/records/create_spec.rb:
+      - RSpec/MissingExampleGroupArgument
+  - spec/requests/api/v1/me/reviews/create_spec.rb:
+      - RSpec/MissingExampleGroupArgument
+  - spec/requests/api/v1/me/reviews/destroy_spec.rb:
+      - RSpec/LetSetup
+  - spec/requests/api/v1/me/slots_spec.rb:
+      - RSpec/LetSetup
+  - spec/requests/api/v1/me/works_spec.rb:
+      - RSpec/LetSetup
+  - spec/requests/api/v1/records_spec.rb:
+      - Rails/TimeZone
+  - spec/requests/api/v1/reviews_spec.rb:
+      - Rails/TimeZone
+  - spec/requests/api/v1/users_spec.rb:
+      - Rails/TimeZone
+  - spec/requests/character_fans/index_spec.rb:
+      - RSpec/LetSetup
+  - spec/requests/db/casts/update_spec.rb:
+      - RSpec/LetSetup
+  - spec/requests/db/episodes/update_spec.rb:
+      - RSpec/LetSetup
+  - spec/requests/db/programs/update_spec.rb:
+      - RSpec/LetSetup
+  - spec/requests/db/slots/update_spec.rb:
+      - RSpec/LetSetup
+  - spec/requests/db/staffs/update_spec.rb:
+      - RSpec/LetSetup
+  - spec/requests/db/trailers/update_spec.rb:
+      - RSpec/LetSetup
+  - spec/requests/episodes/index_spec.rb:
+      - RSpec/LetSetup
+  - spec/requests/fragment/activity_items/index_spec.rb:
+      - RSpec/LetSetup
+  - spec/requests/home/show_spec.rb:
+      - RSpec/LetSetup
+  - spec/requests/notifications/index_spec.rb:
+      - RSpec/LetSetup
+  - spec/requests/organization_fans/index_spec.rb:
+      - RSpec/LetSetup
+  - spec/requests/person_fans/index_spec.rb:
+      - RSpec/LetSetup
+  - spec/requests/records/destroy_spec.rb:
+      - RSpec/LetSetup
+  - spec/requests/records/index_spec.rb:
+      - RSpec/LetSetup
+  - spec/requests/records/show_spec.rb:
+      - RSpec/LetSetup
+  - spec/requests/settings/apps/index_spec.rb:
+      - RSpec/LetSetup
+  - spec/requests/users/show_spec.rb:
+      - RSpec/LetSetup
+  - spec/requests/works/show_spec.rb:
+      - RSpec/AnyInstance
+  - spec/services/episode_generator_service_spec.rb:
+      - RSpec/FilePath
+      - Rails/TimeZone
+      - RSpec/LetSetup
+  - spec/support/devise.rb:
+      - Style/MixinUsage
+  - spec/support/paperclip.rb:
+      - Style/RedundantInterpolation

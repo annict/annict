@@ -1,10 +1,10 @@
-import axios from 'axios';
-import { Controller } from '@hotwired/stimulus';
+import axios from "axios";
+import { Controller } from "@hotwired/stimulus";
 
-import { EventDispatcher } from '../utils/event-dispatcher';
+import { EventDispatcher } from "../utils/event-dispatcher";
 
 export default class extends Controller {
-  static classes = ['loading'];
+  static classes = ["loading"];
   static values = {
     episodeId: Number,
   };
@@ -16,7 +16,7 @@ export default class extends Controller {
   startLoading() {
     this.isLoading = true;
     this.element.classList.add(this.loadingClass);
-    this.element.setAttribute('disabled', 'true');
+    this.element.setAttribute("disabled", "true");
   }
 
   endLoading() {
@@ -25,8 +25,8 @@ export default class extends Controller {
   }
 
   reloadList() {
-    new EventDispatcher('reloadable--trackable-episode-list:reload').dispatch();
-    new EventDispatcher('reloadable--tracking-offcanvas:reload').dispatch();
+    new EventDispatcher("reloadable--trackable-episode-list:reload").dispatch();
+    new EventDispatcher("reloadable--tracking-offcanvas:reload").dispatch();
   }
 
   skip() {
@@ -37,7 +37,7 @@ export default class extends Controller {
     this.startLoading();
 
     axios
-      .post('/api/internal/skipped_episodes', {
+      .post("/api/internal/skipped_episodes", {
         episode_id: this.episodeIdValue,
       })
       .then(() => {
@@ -45,7 +45,7 @@ export default class extends Controller {
         this.reloadList();
       })
       .catch(() => {
-        ($('.c-sign-up-modal') as any).modal('show');
+        ($(".c-sign-up-modal") as any).modal("show");
       });
   }
 }

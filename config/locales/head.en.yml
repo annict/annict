@@ -74,7 +74,7 @@ en:
         index: Fans of %{character_name} (Anime)
       characters:
         index: Characters of %{title} (Anime)
-        show: '%{name}'
+        show: "%{name}"
       collection_items:
         edit: "Edit %{work_title} on %{collection_name}"
       collections:
@@ -93,15 +93,15 @@ en:
           index: Casts
           new: Create Casts
         channel_groups:
-          edit: '%{name}'
+          edit: "%{name}"
           index: Channel Groups
           new: New Channel Group
         channels:
-          edit: '%{name}'
+          edit: "%{name}"
           index: Channels
           new: New Channel
         characters:
-          edit: '%{name}'
+          edit: "%{name}"
           index: Characters
           new: New Characters
         episodes:
@@ -110,11 +110,11 @@ en:
           index: Episodes
           new: New Episode
         organizations:
-          edit: '%{name}'
+          edit: "%{name}"
           index: Organizations
           new: New Organizations
         people:
-          edit: '%{name}'
+          edit: "%{name}"
           index: People
           new: New People
         person_fans:
@@ -154,7 +154,7 @@ en:
           show: Work Image
         works:
           activities: Activities
-          edit: '%{title}'
+          edit: "%{title}"
           index: Works
           new: New Work
       episodes:
@@ -168,15 +168,15 @@ en:
         index: "%{profile_name} (%{username})'s favorite people"
       forum:
         categories:
-          show: '%{name}'
+          show: "%{name}"
         comments:
-          edit: 'Edit Comment'
+          edit: "Edit Comment"
         home:
           index: Forum
         posts:
-          edit: 'Edit Post'
-          new: 'New Post'
-          show: '%{title}'
+          edit: "Edit Post"
+          new: "New Post"
+          show: "%{title}"
       friends:
         index: Find Friends
       home:
@@ -194,7 +194,7 @@ en:
           edit: Edit Application
           index: Applications
           new: New application
-          show: '%{application_name} | Application Detail'
+          show: "%{application_name} | Application Detail"
         authorizations:
           new: Authorize an application
           show: Authorization code
@@ -205,7 +205,7 @@ en:
       organization_fans:
         index: Fans of %{organization_name}
       organizations:
-        show: '%{name}'
+        show: "%{name}"
       pages:
         legal: Legal
         privacy: Privacy policy
@@ -214,22 +214,21 @@ en:
         edit: Forgot your password?
         new: Forgot your password?
       people:
-        show: '%{name}'
-      records:
-        edit: Edit Record
+        show: "%{name}"
       related_works:
         index: Related Animes of %{title}
       slots:
         index: Slot List
       profiles:
-        show: '%{profile_name} (%{username})'
+        show: "%{profile_name} (%{username})"
       providers:
         index: Connections
       records:
+        edit: Edit Record
         index: "%{profile_name} (%{username})'s Records"
         show: "%{profile_name} (%{username})'s record on %{trackable_title}"
       searches:
-        show: '%{q}Anime Search'
+        show: "%{q}Anime Search"
       settings:
         accounts:
           show: Account
@@ -263,7 +262,7 @@ en:
         projects:
           edit: Edit Project - Userland
           new: New Project - Userland
-          show: '%{name} - Userland'
+          show: "%{name} - Userland"
       users:
         followers: People following %{profile_name} (%{username})
         following: People followed by %{profile_name} (%{username})
@@ -274,5 +273,5 @@ en:
       works:
         newest: Just Added Anime
         popular: Popular Anime
-        season: '%{name} Anime'
-        show: '%{title} (Anime)'
+        season: "%{name} Anime"
+        show: "%{title} (Anime)"

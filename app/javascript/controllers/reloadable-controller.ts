@@ -1,7 +1,7 @@
-import { Controller } from '@hotwired/stimulus';
+import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static values = { eventName: String, url: String }
+  static values = { eventName: String, url: String };
 
   boundReload!: any;
   eventNameValue!: string;
@@ -20,15 +20,15 @@ export default class extends Controller {
   }
 
   targetUrl() {
-    if (this.element.tagName === 'TURBO-FRAME' && this.element.hasAttribute('src')) {
-      return this.element.getAttribute('src') ?? '/500.html'
+    if (this.element.tagName === "TURBO-FRAME" && this.element.hasAttribute("src")) {
+      return this.element.getAttribute("src") ?? "/500.html";
     } else {
-      return this.urlValue
+      return this.urlValue;
     }
   }
 
   async reload() {
     const html = await (await fetch(this.targetUrl())).text();
-    this.element.innerHTML = html
+    this.element.innerHTML = html;
   }
 }
