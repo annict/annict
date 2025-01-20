@@ -10,7 +10,13 @@
 
   <%= form_with class: "px-1", html: { method: :get }, url: db_search_path do %>
     <div class="mb-3">
-      <%= text_field_tag "q", search.q, class: "form-control", placeholder: t("messages._common.search_with_keywords") %>
+      <%= text_field_tag(
+        "q",
+        search.q,
+        class: "form-control",
+        placeholder: t("messages._common.search_with_keywords"),
+        autocomplete: "off"
+      ) %>
     </div>
   <% end %>
 

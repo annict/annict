@@ -52,7 +52,13 @@
       </p>
 
       <div class="mt-3">
-        <%= text_field_tag "", user_ics_url(current_user.username), onclick: "this.select();", class: "form-control" %>
+        <%= text_field_tag(
+          "",
+          user_ics_url(current_user.username),
+          onclick: "this.select();",
+          class: "form-control",
+          autocomplete: "off"
+        ) %>
       </div>
 
       <p class="mt-3">
@@ -60,7 +66,13 @@
       </p>
 
       <div class="mt-3">
-        <%= text_field_tag "", user_ics_alt_url(username: current_user.username), onclick: "this.select();", class: "form-control" %>
+        <%= text_field_tag(
+          "",
+          user_ics_alt_url(username: current_user.username),
+          onclick: "this.select();",
+          class: "form-control",
+          autocomplete: "off"
+        ) %>
       </div>
     </div>
   </div>

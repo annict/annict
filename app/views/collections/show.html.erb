@@ -31,10 +31,10 @@
         <div class="align-items-center gx-3 row">
           <div class="col-auto">
             <%= Deprecated::Buttons::ShareToTwitterButtonComponent.new(
-                  self,
-                  text: title,
-                  url: "#{local_url}#{user_collection_path(@user.username, @collection.id)}").render
-            %>
+              self,
+              text: title,
+              url: "#{local_url}#{user_collection_path(@user.username, @collection.id)}"
+            ).render %>
           </div>
 
           <div class="col-auto">
