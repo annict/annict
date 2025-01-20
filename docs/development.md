@@ -18,13 +18,13 @@ sudo sh -c "echo '127.0.0.1  annict.test' >> /etc/hosts"
 
 ### ソースコードを取得する
 
-ソースコードをcloneします。
+ソースコードを clone します。
 
 ```sh
 git clone git@github.com:annict/annict.git
 ```
 
-### Docker Composeを使って各種サービスを立ち上げる
+### Docker Compose を使って各種サービスを立ち上げる
 
 以下を実行します。
 
@@ -33,13 +33,13 @@ cd /path/to/annict
 docker compose up
 ```
 
-### MinIOとimgproxyのセットアップをする
+### MinIO と imgproxy のセットアップをする
 
 開発環境で画像をアップロードするとき、ストレージとして[MinIO](https://github.com/minio/minio)を使っています。
 また、アップロードした画像のリサイズなどをするために[imgproxy](https://imgproxy.net/)を使っています。
-MinIOとimgproxyは `docker compose up` ですでに起動しているはずです。
+MinIO と imgproxy は `docker compose up` ですでに起動しているはずです。
 
-http://localhost:9001/login にアクセスし、以下の情報でMinIOの管理コンソールにログインします。
+http://localhost:9001/login にアクセスし、以下の情報で MinIO の管理コンソールにログインします。
 
 - Username: `minio_admin`
 - Password: `minio_admin`
@@ -52,7 +52,7 @@ http://localhost:9001/login にアクセスし、以下の情報でMinIOの管�
 
 次に http://localhost:9001/buckets にアクセスし、`annict-development` という名前のバケットを作成します。
 
-### Railsのセットアップをする
+### Rails のセットアップをする
 
 以下を実行します。
 
@@ -64,7 +64,7 @@ docker compose exec app bin/rails jobs:work
 docker compose exec app bin/rails server
 ```
 
-### ブラウザでAnnictにアクセスする
+### ブラウザで Annict にアクセスする
 
 [http://annict.test:3000](http://annict.test:3000) にアクセスすると、トップページが表示されるはずです。
 
@@ -96,7 +96,7 @@ user.confirm
 
 ### テストを実行する
 
-AnnictではRSpecを使ってテストを書いています。以下のコマンドでテストを実行することができます。
+Annict では RSpec を使ってテストを書いています。以下のコマンドでテストを実行することができます。
 
 ```sh
 docker compose exec -e RAILS_ENV=test app bin/rspec

@@ -6,4 +6,4 @@
 ## 実装方針
 
 - `ApplicationForm` を継承すること
-  - [ActiveModel::Model](https://api.rubyonrails.org/classes/ActiveModel/Model.html) をincludeしています
+  - [ActiveModel::Model](https://api.rubyonrails.org/classes/ActiveModel/Model.html) を include しています

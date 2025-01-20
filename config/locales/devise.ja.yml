@@ -1,7 +1,7 @@
 ja:
   devise:
     failure:
-      already_authenticated: 'すでに認証されています'
+      already_authenticated: "すでに認証されています"
       user:
         invalid: ログインできません
         not_found_in_database: ユーザが見つかりません

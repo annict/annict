@@ -67,7 +67,7 @@ ja:
       episode_record:
         body: 感想
         rating_state: レーティング
-        mutation_error: ''
+        mutation_error: ""
       forum_comment:
         body: 本文
       forum_post:
@@ -228,7 +228,7 @@ ja:
       アニメ_record:
         title: タイトル
         body: 感想
-        mutation_error: ''
+        mutation_error: ""
         rating_animation_state: 映像
         rating_music_state: 音楽
         rating_story_state: ストーリー

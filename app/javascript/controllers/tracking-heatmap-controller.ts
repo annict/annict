@@ -1,5 +1,5 @@
-import Tooltip from 'bootstrap/js/dist/tooltip';
-import { Controller } from '@hotwired/stimulus';
+import Tooltip from "bootstrap/js/dist/tooltip";
+import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
   static values = {
@@ -9,7 +9,7 @@ export default class extends Controller {
   framePathValue!: string;
 
   async connect() {
-    this.element.setAttribute('src', this.framePathValue);
+    this.element.setAttribute("src", this.framePathValue);
 
     await (this.element as any).loaded;
 

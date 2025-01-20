@@ -1,10 +1,10 @@
-import * as Turbo from '@hotwired/turbo';
-import { Controller } from '@hotwired/stimulus';
+import * as Turbo from "@hotwired/turbo";
+import { Controller } from "@hotwired/stimulus";
 
-import { EventDispatcher } from '../../utils/event-dispatcher';
+import { EventDispatcher } from "../../utils/event-dispatcher";
 
 export default class extends Controller {
-  static targets = ['errorPanel', 'errorMessageList', 'form', 'submitButton'];
+  static targets = ["errorPanel", "errorMessageList", "form", "submitButton"];
 
   errorPanelTarget!: HTMLElement;
   errorMessageListTarget!: HTMLElement;
@@ -12,13 +12,13 @@ export default class extends Controller {
   submitButtonTarget!: HTMLElement;
 
   handleSubmitStart(_event: any) {
-    this.submitButtonTarget.setAttribute('disabled', 'true');
-    this.submitButtonTarget.classList.add('c-spinner');
+    this.submitButtonTarget.setAttribute("disabled", "true");
+    this.submitButtonTarget.classList.add("c-spinner");
   }
 
   async handleSubmitEnd(event: any) {
-    this.submitButtonTarget.removeAttribute('disabled');
-    this.submitButtonTarget.classList.remove('c-spinner');
+    this.submitButtonTarget.removeAttribute("disabled");
+    this.submitButtonTarget.classList.remove("c-spinner");
 
     const { success } = event.detail;
 
@@ -39,9 +39,9 @@ export default class extends Controller {
     if (!data) return;
 
     if (data.redirect_path) {
-      Turbo.visit(data.redirect_path, { action: 'replace' });
+      Turbo.visit(data.redirect_path, { action: "replace" });
     } else if (data.flash) {
-      new EventDispatcher('flash:show', data.flash).dispatch();
+      new EventDispatcher("flash:show", data.flash).dispatch();
     }
   }
 
@@ -49,7 +49,7 @@ export default class extends Controller {
     const { fetchResponse } = event.detail;
     const errorMessages = JSON.parse(await fetchResponse.responseText);
 
-    this.errorMessageListTarget.innerHTML = errorMessages.map((msg: string) => `<li>${msg}</li>`).join('');
-    this.errorPanelTarget.classList.remove('d-none');
+    this.errorMessageListTarget.innerHTML = errorMessages.map((msg: string) => `<li>${msg}</li>`).join("");
+    this.errorPanelTarget.classList.remove("d-none");
   }
 }

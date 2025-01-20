@@ -8,37 +8,37 @@ ja:
         casts:
           index: アニメ「%{title}」のキャストをチェック！
         character_fans:
-          index: '%{character_name}のファンをチェック！'
+          index: "%{character_name}のファンをチェック！"
         characters:
           index: アニメ「%{title}」のキャラクターをチェック！
           show: Annictで%{name}をチェック！
         collections:
-          index: '%{profile_name} (%{username})が作ったアニメコレクションをチェック！'
-          show: '%{profile_name} (%{username})が作ったアニメコレクションをチェック！'
+          index: "%{profile_name} (%{username})が作ったアニメコレクションをチェック！"
+          show: "%{profile_name} (%{username})が作ったアニメコレクションをチェック！"
         episodes:
-          index: 'アニメ「%{title}」のエピソードをチェック！'
-          show: 'アニメ「%{work_title}」%{episode_title_with_number}の感想をチェック!'
+          index: "アニメ「%{title}」のエピソードをチェック！"
+          show: "アニメ「%{work_title}」%{episode_title_with_number}の感想をチェック!"
         favorite_characters:
-          index: '%{profile_name} (%{username})のお気に入りのキャラをチェック！'
+          index: "%{profile_name} (%{username})のお気に入りのキャラをチェック！"
         favorite_organizations:
-          index: '%{profile_name} (%{username})のお気に入りの団体をチェック！'
+          index: "%{profile_name} (%{username})のお気に入りの団体をチェック！"
         favorite_people:
-          index: '%{profile_name} (%{username})のお気に入りの人物をチェック！'
+          index: "%{profile_name} (%{username})のお気に入りの人物をチェック！"
         libraries:
-          show: '%{profile_name} (%{username})の%{action}アニメをチェック！'
+          show: "%{profile_name} (%{username})の%{action}アニメをチェック！"
         organization_fans:
-          index: '%{organization_name}のファンをチェック！'
+          index: "%{organization_name}のファンをチェック！"
         organizations:
-          show: '%{name}の情報をチェック！'
+          show: "%{name}の情報をチェック！"
         people:
-          show: '%{name}の情報をチェック！'
+          show: "%{name}の情報をチェック！"
         person_fans:
-          index: '%{person_name}のファンをチェック！'
+          index: "%{person_name}のファンをチェック！"
         profiles:
           show: Check out %{profile_name} (%{username})'s profile!
         records:
-          index: '%{profile_name} (%{username})さんの記録をチェック！'
-          show: '%{profile_name} (%{username})さんのアニメ %{trackable_title} への記録をチェック！'
+          index: "%{profile_name} (%{username})さんの記録をチェック！"
+          show: "%{profile_name} (%{username})さんのアニメ %{trackable_title} への記録をチェック！"
         related_works:
           index: アニメ「%{title}」の関連作品をチェック！
         sign_in:
@@ -46,7 +46,7 @@ ja:
         sign_up:
           new: Annictのアカウントを作成して視聴記録を残そう！
         staffs:
-          index: 'アニメ「%{title}」のスタッフをチェック！'
+          index: "アニメ「%{title}」のスタッフをチェック！"
         users:
           followers: Check out %{profile_name} (%{username})'s profile!
           following: Check out %{profile_name} (%{username})'s profile!
@@ -54,32 +54,30 @@ ja:
           index: アニメ「%{title}」の動画をチェック！
         works:
           popular: 人気アニメをチェック！
-          season: '%{name}アニメをチェック！'
+          season: "%{name}アニメをチェック！"
           show: アニメ「%{title}」の感想や情報をチェック！
         work_records:
-          index: 'アニメ「%{work_title}」の感想をチェック！'
-          show: '%{profile_name} (%{username})さんのアニメ「%{work_title}」への記録をチェック！'
+          index: "アニメ「%{work_title}」の感想をチェック！"
+          show: "%{profile_name} (%{username})さんのアニメ「%{work_title}」への記録をチェック！"
       keywords:
         _common: annict, anime, review
     title:
       work_infos:
         show: アニメ「%{title}」の情報
-      work_records:
-        index: アニメ「%{work_title}」の記録・感想
       casts:
         index: アニメ「%{title}」のキャスト
       channels:
         index: チャンネル一覧
       character_fans:
-        index: '%{character_name}のファン一覧'
+        index: "%{character_name}のファン一覧"
       characters:
-        index: 'アニメ「%{title}」のキャラクター'
-        show: '%{name}'
+        index: "アニメ「%{title}」のキャラクター"
+        show: "%{name}"
       collection_items:
         edit: "%{collection_name} > %{work_title} の編集"
       collections:
         edit: "%{collection_name} の編集"
-        index: '%{profile_name} のアニメコレクション'
+        index: "%{profile_name} のアニメコレクション"
         new: コレクション作成
         show: "%{collection_name} | %{profile_name} のアニメコレクション"
       comments:
@@ -93,15 +91,15 @@ ja:
           index: キャスト一覧
           new: キャスト登録
         channel_groups:
-          edit: '%{name}'
+          edit: "%{name}"
           index: チャンネルグループ一覧
           new: チャンネルグループ登録
         channels:
-          edit: '%{name}'
+          edit: "%{name}"
           index: チャンネル一覧
           new: チャンネル登録
         characters:
-          edit: '%{name}'
+          edit: "%{name}"
           index: キャラクター一覧
           new: キャラクター登録
         episodes:
@@ -110,11 +108,11 @@ ja:
           index: エピソード一覧
           new: エピソード登録
         organizations:
-          edit: '%{name}'
+          edit: "%{name}"
           index: 団体一覧
           new: 団体登録
         people:
-          edit: '%{name}'
+          edit: "%{name}"
           index: 人物一覧
           new: 人物登録
         slots:
@@ -152,29 +150,29 @@ ja:
           show: 作品画像
         works:
           activities: アクティビティ
-          edit: '%{title}'
+          edit: "%{title}"
           index: 作品一覧
           new: 作品登録
       episodes:
         index: アニメ「%{title}」のエピソード
         show: アニメ「%{work_title}」%{episode_title_with_number}
       favorite_characters:
-        index: '%{profile_name} (%{username})のお気に入りのキャラ'
+        index: "%{profile_name} (%{username})のお気に入りのキャラ"
       favorite_organizations:
-        index: '%{profile_name} (%{username})のお気に入りの団体'
+        index: "%{profile_name} (%{username})のお気に入りの団体"
       favorite_people:
-        index: '%{profile_name} (%{username})のお気に入りの人物'
+        index: "%{profile_name} (%{username})のお気に入りの人物"
       forum:
         categories:
-          show: '%{name}'
+          show: "%{name}"
         comments:
-          edit: 'コメント編集'
+          edit: "コメント編集"
         home:
           index: Forum
         posts:
-          edit: '投稿編集'
-          new: '新規投稿'
-          show: '%{title}'
+          edit: "投稿編集"
+          new: "新規投稿"
+          show: "%{title}"
       friends:
         index: 友達を探す
       home:
@@ -182,7 +180,7 @@ ja:
       legacy_sign_in:
         new: パスワードでログイン
       libraries:
-        show: '%{profile_name} (%{username})が%{action}アニメ'
+        show: "%{profile_name} (%{username})が%{action}アニメ"
       mutes:
         index: ミュート
       notifications:
@@ -194,16 +192,16 @@ ja:
           edit: アプリケーション編集
           index: アプリケーション一覧
           new: アプリケーション登録
-          show: '%{application_name} | アプリケーション詳細'
+          show: "%{application_name} | アプリケーション詳細"
         authorizations:
           new: アプリケーション認証
           show: 認証コード
       options:
         index: オプション
       organization_fans:
-        index: '%{organization_name}のファン一覧'
+        index: "%{organization_name}のファン一覧"
       organizations:
-        show: '%{name}'
+        show: "%{name}"
       pages:
         legal: 特定商取引法に基づく表記
         privacy: プライバシーポリシー
@@ -212,23 +210,23 @@ ja:
         edit: パスワード忘れた？
         new: パスワード忘れた？
       person_fans:
-        index: '%{person_name}のファン一覧'
+        index: "%{person_name}のファン一覧"
       people:
-        show: '%{name}'
+        show: "%{name}"
       slots:
         index: 放送予定
       profiles:
-        show: '%{profile_name} (%{username})'
+        show: "%{profile_name} (%{username})"
       providers:
         index: サービス連携
       records:
-        edit: '記録の編集'
-        index: '%{profile_name} (%{username})さんの記録一覧'
-        show: '%{profile_name} (%{username})の%{trackable_title}への感想'
+        edit: "記録の編集"
+        index: "%{profile_name} (%{username})さんの記録一覧"
+        show: "%{profile_name} (%{username})の%{trackable_title}への感想"
       related_works:
         index: アニメ「%{title}」の関連作品
       searches:
-        show: '%{q}検索'
+        show: "%{q}検索"
       settings:
         accounts:
           show: アカウント
@@ -262,20 +260,20 @@ ja:
         projects:
           edit: プロジェクト編集 - Userland
           new: 新規プロジェクト - Userland
-          show: '%{name} - Userland'
+          show: "%{name} - Userland"
       users:
-        followers: '%{profile_name} (%{username})をフォローしている人'
-        following: '%{profile_name} (%{username})がフォローしている人'
+        followers: "%{profile_name} (%{username})をフォローしている人"
+        following: "%{profile_name} (%{username})がフォローしている人"
       videos:
         index: アニメ「%{title}」の動画
       welcome:
         show: 見たアニメを記録して、共有しよう
       work_records:
         edit: 記録の編集
-        index: アニメ「%{work_title}」の記録一覧
-        show: 'アニメ「%{work_title}」の記録 by %{profile_name} (%{username})'
+        index: アニメ「%{work_title}」の記録・感想
+        show: "アニメ「%{work_title}」の記録 by %{profile_name} (%{username})"
       works:
         newest: 新規登録アニメ
         popular: 人気アニメ
-        season: '%{name}のアニメ'
-        show: 'アニメ「%{title}」'
+        season: "%{name}のアニメ"
+        show: "アニメ「%{title}」"

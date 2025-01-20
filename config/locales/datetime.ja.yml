@@ -3,14 +3,14 @@ ja:
     distance_in_words:
       almost_x_years:
         one: 1年
-        other: ! '%{count}年'
+        other: ! "%{count}年"
       half_a_minute: 30秒
       less_than_x_minutes:
         one: 1分
-        other: ! '%{count}分'
+        other: ! "%{count}分"
       less_than_x_seconds:
         one: 1秒
-        other: ! '%{count}秒'
+        other: ! "%{count}秒"
       over_x_years:
         one: 1年
-        other: ! '%{count}年'
+        other: ! "%{count}年"

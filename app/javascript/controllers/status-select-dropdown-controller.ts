@@ -1,20 +1,20 @@
-import Modal from 'bootstrap/js/dist/modal';
-import { Controller } from '@hotwired/stimulus';
+import Modal from "bootstrap/js/dist/modal";
+import { Controller } from "@hotwired/stimulus";
 
-import { EventDispatcher } from '../utils/event-dispatcher';
-import fetcher from '../utils/fetcher';
+import { EventDispatcher } from "../utils/event-dispatcher";
+import fetcher from "../utils/fetcher";
 
 enum STATUS_KIND {
-  NO_STATUS = 'no_status',
-  COMPLETED = 'completed',
-  DROPPED = 'dropped',
-  ON_HOLD = 'on_hold',
-  PLAN_TO_WATCH = 'plan_to_watch',
-  WATCHING = 'watching',
+  NO_STATUS = "no_status",
+  COMPLETED = "completed",
+  DROPPED = "dropped",
+  ON_HOLD = "on_hold",
+  PLAN_TO_WATCH = "plan_to_watch",
+  WATCHING = "watching",
 }
 
 export default class extends Controller {
-  static targets = ['button', 'kind'];
+  static targets = ["button", "kind"];
   static values = { workId: Number, kindIcons: Object, pageCategory: String };
 
   workIdValue!: number;
@@ -28,7 +28,7 @@ export default class extends Controller {
   initialize() {
     this.startLoading();
 
-    document.addEventListener('component-value-fetcher:status-select-dropdown:fetched', (event: any) => {
+    document.addEventListener("component-value-fetcher:status-select-dropdown:fetched", (event: any) => {
       if (this.currentStatusKind) {
         return;
       }
@@ -51,11 +51,11 @@ export default class extends Controller {
   }
 
   startLoading() {
-    this.element.classList.add('c-spinner');
+    this.element.classList.add("c-spinner");
   }
 
   stopLoading() {
-    this.element.classList.remove('c-spinner');
+    this.element.classList.remove("c-spinner");
   }
 
   resetKind() {
@@ -69,7 +69,7 @@ export default class extends Controller {
     if (this.currentStatusKind === STATUS_KIND.NO_STATUS) {
       this.buttonTarget.className = `btn dropdown-toggle u-btn-outline-status`;
     } else {
-      this.buttonTarget.className = `btn dropdown-toggle u-bg-${this.currentStatusKind.replace(/_/g, '-')} text-white`;
+      this.buttonTarget.className = `btn dropdown-toggle u-bg-${this.currentStatusKind.replace(/_/g, "-")} text-white`;
     }
 
     this.stopLoading();
@@ -89,10 +89,10 @@ export default class extends Controller {
 
         this.currentStatusKind = selectedStatusKind;
         this.render();
-        new EventDispatcher('tracking-offcanvas-button:enabled', { workId: this.workIdValue }).dispatch();
+        new EventDispatcher("tracking-offcanvas-button:enabled", { workId: this.workIdValue }).dispatch();
       } catch (err) {
         if (err.response.status === 401) {
-          new Modal('.c-sign-up-modal').show();
+          new Modal(".c-sign-up-modal").show();
         }
 
         this.resetKind();

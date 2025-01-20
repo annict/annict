@@ -19,14 +19,14 @@ ja:
     _components:
       activities:
         episode_record:
-          created: 'が記録しました'
-          more: '残り%{n}件の記録を見る'
+          created: "が記録しました"
+          more: "残り%{n}件の記録を見る"
         status:
-          changed: 'がステータスを変更しました'
-          more: '残り%{n}件のステータス変更を見る'
+          changed: "がステータスを変更しました"
+          more: "残り%{n}件のステータス変更を見る"
         work_record:
-          created: 'が記録しました'
-          more: '残り%{n}件の記録を見る'
+          created: "が記録しました"
+          more: "残り%{n}件の記録を見る"
       adsense:
         hide_ads_html: <a href="/supporters" target="_blank">Annictサポーター</a>になると広告を非表示にできます。
       body:
@@ -36,7 +36,7 @@ ja:
       favorite_button:
         add_to_favorites: お気に入りに登録
         added_to_favorites: 登録済み
-        hint: 'お気に入りに登録すると、この%{resource_type}が関係する新作アニメがAnnictに登録されたとき通知します (通知をオフにすることもできます)'
+        hint: "お気に入りに登録すると、この%{resource_type}が関係する新作アニメがAnnictに登録されたとき通知します (通知をオフにすることもできます)"
       mute_user_button:
         the_user_has_been_muted: ミュートしました
         the_user_has_been_unmuted: ミュートを解除しました
@@ -71,7 +71,7 @@ ja:
       no_works: 作品はありません
     _page_hints:
       channel_list_html: チャンネルを登録したあと作品の番組情報を設定すると、%{link}ページにその番組の放送予定が表示されます。
-      friend_list_html: '%{link}ページでTwitter連携すると、TwitterでフォローしているAnnictユーザが表示されます。'
+      friend_list_html: "%{link}ページでTwitter連携すると、TwitterでフォローしているAnnictユーザが表示されます。"
       home: 利用者をフォローすると、タイムラインにフォローした人のアクティビティが表示されるようになります。
       notification_list: フォローされたり自分の記録がいいねされたりすると通知されます。
       track_html: 視聴ステータスを「見てる」にしている作品が表示されます。<br>%{link}ページでチャンネルを登録したあと作品の番組情報を設定すると、その番組の放送予定も表示されます。
@@ -105,7 +105,7 @@ ja:
       comments:
         created: 投稿しました
       episodes:
-        auto_generate_info_html: 'エピソード数: %{manual_episodes_count}<br>公開中のエピソード数: %{episodes_count}<br>自動生成されるエピソード数: %{max_generate_episodes_count}'
+        auto_generate_info_html: "エピソード数: %{manual_episodes_count}<br>公開中のエピソード数: %{episodes_count}<br>自動生成されるエピソード数: %{max_generate_episodes_count}"
       works:
         no_episodes: エピソード未登録
         no_image: 画像未登録
@@ -119,7 +119,7 @@ ja:
       comments: 感想
       comments_by_others: 皆さんの感想
       no_comments: 感想はありません
-      watched_x_times: '%{records_count}回見ました'
+      watched_x_times: "%{records_count}回見ました"
       your_records: あなたの記録
     favorite_characters:
       no_characters: キャラクターはいません
@@ -129,7 +129,7 @@ ja:
       no_people: 人物はいません
     forum:
       _common:
-        view_all_site_news: '全て見る'
+        view_all_site_news: "全て見る"
       comments:
         created: 投稿しました
         deleted: このコメントは削除されています
@@ -174,12 +174,12 @@ ja:
         you_can_use_the_uri_for_local_application: ローカルアプリ用に urn:ietf:wg:oauth:2.0:oob もご利用頂けます
       authorizations:
         authorize: 承認
-        authorize_account_html: '<b>%{client_name}</b> からのアクセスをを承認しますか？'
+        authorize_account_html: "<b>%{client_name}</b> からのアクセスをを承認しますか？"
         cancel: キャンセル
-        this_application_will_be_able_to: 'このアプリができること:'
+        this_application_will_be_able_to: "このアプリができること:"
     oauth_users:
       new:
-        sign_up_with_oauth: '%{provider_name}で始める'
+        sign_up_with_oauth: "%{provider_name}で始める"
     options:
       hide_supporter_badge: Annictサポーターのバッジを非表示にする
       hide_supporter_badge_detail: プロフィールページなどに表示されるAnnictサポーターを示すバッジを非表示にします。
@@ -197,7 +197,7 @@ ja:
     slots:
       new_slots_csv_by_program: 放送情報をもとに放送予定CSVを生成する
       no_slots: 放送予定はありません
-      please_set_channels_html: '%{channels_link}でチャンネルを設定して下さい'
+      please_set_channels_html: "%{channels_link}でチャンネルを設定して下さい"
     providers:
       removed: 連携解除しました
       you_can_not_disconnect: 連携解除できません
@@ -205,8 +205,8 @@ ja:
       not_verified: reCAPTCHAの認証に失敗しました。時間を置いて再度お試しください
     records:
       show:
-        record_by_name: '%{name}の記録'
-      view_record_body: '感想を見る'
+        record_by_name: "%{name}の記録"
+      view_record_body: "感想を見る"
     registrations:
       new:
         expired_html: アカウント作成用リンクの有効期限が切れました。<br>再度<a href="/sign_up">サインアップページ</a>でメールアドレスを入力してください。
@@ -217,7 +217,7 @@ ja:
       create:
         welcome: アカウント作成が完了しました。Annictにようこそ！
     reviews:
-      n_people_changed_status_to_wanna_watch: '%{count}人がこのレビューを見て視聴ステータスを「見たい」にしました'
+      n_people_changed_status_to_wanna_watch: "%{count}人がこのレビューを見て視聴ステータスを「見たい」にしました"
     sayonara:
       are_you_sure_really: 後戻りできませんがよろしいですか？
       delete_account: アカウントを削除する
@@ -265,7 +265,7 @@ ja:
       tracked: 記録しました
     userland:
       description_html: "Userlandは、Annictを便利に使うために有志によって作られたアプリケーションなどが探せる場です。<a href='https://developers.annict.com' target='_blank'>Annict API</a>を使用して何か作った方は、「新規プロジェクト」から登録頂けるとありがたいです。"
-      description_mobile_html: 'Userlandは、Annictを便利に使うために有志によって作られたアプリケーションなどが探せる場です。'
+      description_mobile_html: "Userlandは、Annictを便利に使うために有志によって作られたアプリケーションなどが探せる場です。"
       projects:
         about_available: このプロジェクトが公開されていて、他の人が利用できるときチェックしてください。
         markdown_support: Markdownで書くことができます。
@@ -277,8 +277,8 @@ ja:
     users:
       _validators:
         exists_active_oauth_applications: が存在するため、退会できません
-      allowed_locales_description: 'サイト内に投稿された文書 (感想やレビューなど) の中で、どの言語で書かれたものを表示するかを設定することができます。'
-      bye_bye: '退会しました。(´・ω;:..'
+      allowed_locales_description: "サイト内に投稿された文書 (感想やレビューなど) の中で、どの言語で書かれたものを表示するかを設定することができます。"
+      bye_bye: "退会しました。(´・ω;:.."
       no_works: 作品はありません
     welcome:
       show:
@@ -295,9 +295,9 @@ ja:
       deleted: 削除しました
       saved: 保存しました
     works:
-      view_all_n_characters: '%{n}人のキャラクターを全て見る'
-      view_all_n_episodes: '%{n}エピソードを全て見る'
-      view_all_n_record_body_list: '%{n}件の感想を全て見る'
-      view_all_n_staffs: '%{n}人のスタッフを全て見る'
-      creating_episodes_restricted_episodes_filled: '話数分のエピソードがすでに登録されているため、新規登録はできません。'
-      creating_episodes_restricted_slots_exists: '放送予定が登録されているため、手動によるエピソード登録はできません。エピソードは放送予定の情報を使って自動的に生成されます。'
+      view_all_n_characters: "%{n}人のキャラクターを全て見る"
+      view_all_n_episodes: "%{n}エピソードを全て見る"
+      view_all_n_record_body_list: "%{n}件の感想を全て見る"
+      view_all_n_staffs: "%{n}人のスタッフを全て見る"
+      creating_episodes_restricted_episodes_filled: "話数分のエピソードがすでに登録されているため、新規登録はできません。"
+      creating_episodes_restricted_slots_exists: "放送予定が登録されているため、手動によるエピソード登録はできません。エピソードは放送予定の情報を使って自動的に生成されます。"

@@ -1,8 +1,8 @@
-import axios from 'axios';
-import { Controller } from '@hotwired/stimulus';
+import axios from "axios";
+import { Controller } from "@hotwired/stimulus";
 
-import { EventDispatcher } from '../utils/event-dispatcher';
-import fetcher from '../utils/fetcher';
+import { EventDispatcher } from "../utils/event-dispatcher";
+import fetcher from "../utils/fetcher";
 
 export default class extends Controller {
   static values = { workId: Number, initProgramId: Number };
@@ -16,11 +16,11 @@ export default class extends Controller {
   }
 
   reloadList() {
-    new EventDispatcher('reloadable--trackable-episode-list:reload').dispatch();
+    new EventDispatcher("reloadable--trackable-episode-list:reload").dispatch();
   }
 
   toggleLoading(disabled: boolean) {
-    this.element.querySelectorAll('.form-check-input').forEach((radioElm) => {
+    this.element.querySelectorAll(".form-check-input").forEach((radioElm) => {
       (radioElm as HTMLInputElement).disabled = disabled;
     });
   }

@@ -1,6 +1,6 @@
 # コミュニティ
 
-Annictに関することは以下のソーシャルメディアで発信しています。
+Annict に関することは以下のソーシャルメディアで発信しています。
 
 - [Bluesky](https://bsky.app/profile/annict.com)
 - [Discord](https://discord.gg/PVJRUKP)

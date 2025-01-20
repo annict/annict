@@ -1,9 +1,9 @@
-import $ from 'jquery';
-import axios from 'axios';
-import { Controller } from '@hotwired/stimulus';
+import $ from "jquery";
+import axios from "axios";
+import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = ['count'];
+  static targets = ["count"];
   static values = { initIsLiked: Boolean };
 
   countTarget!: HTMLElement;
@@ -16,15 +16,15 @@ export default class extends Controller {
   resourceName!: string | null;
 
   initialize() {
-    this.resourceName = this.data.get('resourceName');
-    this.resourceId = Number(this.data.get('resourceId'));
-    this.pageCategory = this.data.get('pageCategory');
+    this.resourceName = this.data.get("resourceName");
+    this.resourceId = Number(this.data.get("resourceId"));
+    this.pageCategory = this.data.get("pageCategory");
     this.isLiked = this.initIsLikedValue;
     this.likesCount = Number(this.countTarget.innerText);
 
     this.render();
 
-    document.addEventListener('component-value-fetcher:like-button:fetched', (event: any) => {
+    document.addEventListener("component-value-fetcher:like-button:fetched", (event: any) => {
       const likes = event.detail;
       this.likesCount = Number(this.countTarget.innerText);
       const like = likes.filter((like: { recipient_type: string; recipient_id: number }) => {
@@ -37,18 +37,18 @@ export default class extends Controller {
   }
 
   render() {
-    const iconElm = this.element.querySelector('.c-like-button__icon');
+    const iconElm = this.element.querySelector(".c-like-button__icon");
 
     if (!iconElm) {
       return;
     }
 
     if (this.isLiked) {
-      this.element.classList.add('is-liked');
+      this.element.classList.add("is-liked");
       iconElm.outerHTML = '<i class="c-like-button__icon fas fa-heart"></i>'; // Using outerHTML to render fontawesome icon after refetch
       this.countTarget.innerText = this.likesCount.toString();
     } else {
-      this.element.classList.remove('is-liked');
+      this.element.classList.remove("is-liked");
       iconElm.outerHTML = '<i class="c-like-button__icon far fa-heart"></i>';
       this.countTarget.innerText = this.likesCount.toString();
     }
@@ -63,7 +63,7 @@ export default class extends Controller {
 
     if (this.isLiked) {
       axios
-        .post('/api/internal/unlikes', {
+        .post("/api/internal/unlikes", {
           recipient_type: this.resourceName,
           recipient_id: this.resourceId,
         })
@@ -75,7 +75,7 @@ export default class extends Controller {
         });
     } else {
       axios
-        .post('/api/internal/likes', {
+        .post("/api/internal/likes", {
           recipient_type: this.resourceName,
           recipient_id: this.resourceId,
           page_category: this.pageCategory,
@@ -85,7 +85,7 @@ export default class extends Controller {
           this.isLiked = true;
         })
         .catch(() => {
-          ($('.c-sign-up-modal') as any).modal('show');
+          ($(".c-sign-up-modal") as any).modal("show");
         })
         .then(() => {
           this.isLoading = false;

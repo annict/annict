@@ -1,11 +1,11 @@
-import Modal from 'bootstrap/js/dist/modal';
-import { Controller } from '@hotwired/stimulus';
+import Modal from "bootstrap/js/dist/modal";
+import { Controller } from "@hotwired/stimulus";
 
-import fetcher from '../utils/fetcher';
+import fetcher from "../utils/fetcher";
 
 export default class extends Controller {
-  static classes = ['notReceivedButton', 'receivedButton'];
-  static targets = ['iconWrapper'];
+  static classes = ["notReceivedButton", "receivedButton"];
+  static targets = ["iconWrapper"];
   static values = {
     channelId: Number,
     notReceivedIcon: String,
@@ -20,9 +20,9 @@ export default class extends Controller {
   receivedChannelIds!: number[];
 
   initialize() {
-    this.element.classList.add('c-spinner');
+    this.element.classList.add("c-spinner");
 
-    document.addEventListener('component-value-fetcher:receive-channel-button:fetched', (event: any) => {
+    document.addEventListener("component-value-fetcher:receive-channel-button:fetched", (event: any) => {
       this.receivedChannelIds = event.detail;
       this.currentReceivedValue = this.receivedChannelIds.includes(this.channelIdValue);
       this.render();
@@ -40,8 +40,8 @@ export default class extends Controller {
       this.iconWrapperTarget.innerHTML = '<i class="fal fa-plus"></i>';
     }
 
-    this.element.classList.remove('c-spinner');
-    this.element.removeAttribute('disabled');
+    this.element.classList.remove("c-spinner");
+    this.element.removeAttribute("disabled");
   }
 
   changeToReceived() {
@@ -53,7 +53,7 @@ export default class extends Controller {
   }
 
   async toggle() {
-    this.element.setAttribute('disabled', 'true');
+    this.element.setAttribute("disabled", "true");
 
     try {
       if (this.currentReceivedValue) {
@@ -67,7 +67,7 @@ export default class extends Controller {
       }
     } catch (err) {
       if (err.response.status === 401) {
-        new Modal('.c-sign-up-modal').show();
+        new Modal(".c-sign-up-modal").show();
       }
     } finally {
       this.render();

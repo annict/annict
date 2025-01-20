@@ -6,8 +6,8 @@ function ResponseError(this: any, response: any) {
 const request = async (url: string, method: string, options: any = {}) => {
   const headers = {
     ...(options.headers || {}),
-    'Content-Type': 'application/json',
-    'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
+    "Content-Type": "application/json",
+    "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')?.getAttribute("content"),
   };
 
   delete options.headers;
@@ -19,7 +19,7 @@ const request = async (url: string, method: string, options: any = {}) => {
   }
 
   const data = await res.text();
-  return data === '' ? {} : JSON.parse(data);
+  return data === "" ? {} : JSON.parse(data);
 };
 
 const requestWithData = async (url: string, method: string, data = {}, options = {}) => {
@@ -33,14 +33,14 @@ const requestWithData = async (url: string, method: string, data = {}, options =
 
 export default {
   get: async (url: string, options = {}) => {
-    return await request(url, 'GET', { ...options });
+    return await request(url, "GET", { ...options });
   },
 
   post: async (url: string, data = {}, options = {}) => {
-    return await requestWithData(url, 'POST', data, { ...options });
+    return await requestWithData(url, "POST", data, { ...options });
   },
 
   delete: async (url: string, data = {}, options = {}) => {
-    return await requestWithData(url, 'DELETE', data, { ...options });
+    return await requestWithData(url, "DELETE", data, { ...options });
   },
 };

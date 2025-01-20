@@ -1,4 +1,4 @@
-import { Controller } from '@hotwired/stimulus';
+import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
   static values = { workId: Number, episodeId: Number };
@@ -8,14 +8,9 @@ export default class extends Controller {
   workIdValue!: number;
 
   initialize() {
-    document.addEventListener('component-value-fetcher:spoiler-guard:fetched', (event: any) => {
-      const {
-        is_signed_in,
-        hide_record_body,
-        watched_work_ids,
-        work_ids_in_library,
-        tracked_episode_ids,
-      } = event.detail;
+    document.addEventListener("component-value-fetcher:spoiler-guard:fetched", (event: any) => {
+      const { is_signed_in, hide_record_body, watched_work_ids, work_ids_in_library, tracked_episode_ids } =
+        event.detail;
 
       this.isNotSpoiler =
         !is_signed_in ||
@@ -30,7 +25,7 @@ export default class extends Controller {
 
   render() {
     if (this.isNotSpoiler) {
-      this.element.classList.remove('is-spoiler');
+      this.element.classList.remove("is-spoiler");
     }
   }
 
