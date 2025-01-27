@@ -233,7 +233,7 @@ module Canary
         end
 
         def is_no_episodes
-          object.no_episodes?
+          object.single_episode?
         end
 
         def viewer_finished_to_watch

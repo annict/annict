@@ -52,7 +52,7 @@ describe "Api::V1::Casts" do
             "episodes_count" => cast.work.episodes_count,
             "watchers_count" => cast.work.watchers_count,
             "reviews_count" => cast.work.work_records_with_body_count,
-            "no_episodes" => cast.work.no_episodes?
+            "no_episodes" => cast.work.single_episode?
           },
           "character" => {
             "id" => cast.character.id,
