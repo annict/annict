@@ -73,48 +73,46 @@
   </div>
 <% end %>
 
-<% unless @work.no_episodes? %>
-  <div class="container mt-5">
-    <div class="d-flex justify-content-between">
-      <h2 class="fw-bold h3 mb-3">
-        <%= t "noun.episodes" %>
-      </h2>
+<div class="container mt-5">
+  <div class="d-flex justify-content-between">
+    <h2 class="fw-bold h3 mb-3">
+      <%= t "noun.episodes" %>
+    </h2>
 
-      <% if @episodes.present? && @episodes.size > 28 %>
-        <div>
-          <%= link_to episode_list_path(@work) do %>
-            <i class="fa-solid fa-angle-right me-1"></i>
-            <%= t("verb.view_all") %>
+    <% if @episodes.present? && @episodes.size > 28 %>
+      <div>
+        <%= link_to episode_list_path(@work) do %>
+          <i class="fa-solid fa-angle-right me-1"></i>
+          <%= t("verb.view_all") %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="container u-container-flat">
+  <div class="card u-card-flat">
+    <div class="card-body">
+      <% if @episodes.present? %>
+        <div class="g-3 row">
+          <% @episodes.first(28).each do |episode| %>
+            <div class="col-6 col-sm-3">
+              <%= link_to episode_path(@work, episode), class: "btn p-0 text-start u-fake-link" do %>
+                <%= episode.local_number %>
+
+                <div class="small text-body">
+                  <%= episode.local_title %>
+                </div>
+              <% end %>
+            </div>
           <% end %>
         </div>
+      <% else %>
+        <%= Deprecated::EmptyV6Component.new(self, text: t("messages._empty.no_episodes")).render %>
       <% end %>
     </div>
   </div>
-
-  <div class="container u-container-flat">
-    <div class="card u-card-flat">
-      <div class="card-body">
-        <% if @episodes.present? %>
-          <div class="g-3 row">
-            <% @episodes.first(28).each do |episode| %>
-              <div class="col-6 col-sm-3">
-                <%= link_to episode_path(@work, episode), class: "btn p-0 text-start u-fake-link" do %>
-                  <%= episode.local_number %>
-
-                  <div class="small text-body">
-                    <%= episode.local_title %>
-                  </div>
-                <% end %>
-              </div>
-            <% end %>
-          </div>
-        <% else %>
-          <%= Deprecated::EmptyV6Component.new(self, text: t("messages._empty.no_episodes")).render %>
-        <% end %>
-      </div>
-    </div>
-  </div>
-<% end %>
+</div>
 
 <div class="container mt-5">
   <div class="d-flex justify-content-between">
