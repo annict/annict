@@ -10,6 +10,20 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
+-- Name: public; Type: SCHEMA; Schema: -; Owner: -
+--
+
+-- *not* creating schema, since initdb creates it
+
+
+--
+-- Name: SCHEMA public; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON SCHEMA public IS '';
+
+
+--
 -- Name: citext; Type: EXTENSION; Schema: -; Owner: -
 --
 
@@ -2861,7 +2875,7 @@ CREATE TABLE public.works (
     season_name integer,
     key_pv_id bigint,
     manual_episodes_count integer,
-    no_episodes boolean DEFAULT false NOT NULL,
+    single_episode boolean DEFAULT false NOT NULL,
     work_records_count integer DEFAULT 0 NOT NULL,
     started_on date,
     ended_on date,
@@ -6374,14 +6388,6 @@ ALTER TABLE ONLY public.activities
 
 
 --
--- Name: library_entries fk_rails_ab6e2c9467; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.library_entries
-    ADD CONSTRAINT fk_rails_ab6e2c9467 FOREIGN KEY (status_id) REFERENCES public.statuses(id);
-
-
---
 -- Name: library_entries fk_rails_ac7d3615bf; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -6622,14 +6628,6 @@ ALTER TABLE ONLY public.mute_users
 
 
 --
--- Name: statuses fk_rails_fb1024dbb6; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.statuses
-    ADD CONSTRAINT fk_rails_fb1024dbb6 FOREIGN KEY (oauth_application_id) REFERENCES public.oauth_applications(id);
-
-
---
 -- Name: episode_records fk_rails_ff2b5e1c03; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -6731,22 +6729,6 @@ ALTER TABLE ONLY public.receptions
 
 ALTER TABLE ONLY public.receptions
     ADD CONSTRAINT receptions_user_id_fk FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
-
-
---
--- Name: statuses statuses_user_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.statuses
-    ADD CONSTRAINT statuses_user_id_fk FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
-
-
---
--- Name: statuses statuses_work_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.statuses
-    ADD CONSTRAINT statuses_work_id_fk FOREIGN KEY (work_id) REFERENCES public.works(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
 
 
 --
@@ -7050,6 +7032,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210809083311'),
 ('20210919175411'),
 ('20211016135715'),
-('20211017074902');
+('20211017074902'),
+('20250127095946');
 
 
