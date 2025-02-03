@@ -31,7 +31,7 @@ end
 json[:episodes_count] = work.actual_episodes_count if params.fields_contain?("#{field_prefix}episodes_count")
 json[:watchers_count] = work.watchers_count if params.fields_contain?("#{field_prefix}watchers_count")
 json[:reviews_count] = work.work_records_with_body_count if params.fields_contain?("#{field_prefix}reviews_count")
-json[:no_episodes] = work.single_episode? if params.fields_contain?("#{field_prefix}no_episodes")
+json[:no_episodes] = false if params.fields_contain?("#{field_prefix}no_episodes")
 
 if work.season.present?
   json[:season_name] = work.season.slug if params.fields_contain?("#{field_prefix}season_name")
