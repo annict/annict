@@ -151,10 +151,6 @@ class Work < ApplicationRecord
     season_until Season.find_by_slug(ENV.fetch("ANNICT_CURRENT_SEASON"))
   }
 
-  scope :with_single_episode, -> {
-    where(single_episode: true)
-  }
-
   def self.statuses(work_ids, user)
     work_ids = work_ids.uniq
     library_entries = LibraryEntry.where(user: user, work_id: work_ids).eager_load(:status)

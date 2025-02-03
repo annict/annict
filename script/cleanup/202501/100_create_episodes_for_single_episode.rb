@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-Work.with_single_episode.find_each do |work|
+Work.where(single_episode: true).find_each do |work|
   puts "work: #{work.id}"
 
   if work.episodes.any?

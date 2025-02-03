@@ -106,7 +106,7 @@ module Beta
         end
 
         def no_episodes
-          object.single_episode?
+          false
         end
 
         def viewer_status_state
