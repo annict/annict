@@ -682,11 +682,11 @@ type Organization implements Node {
   nameEn: String!
   nameKana: String!
   staffsCount: Int!
-  twitterUsername: String!
+  twitterUsername: String
   twitterUsernameEn: String!
-  url: String!
+  url: String
   urlEn: String!
-  wikipediaUrl: String!
+  wikipediaUrl: String
   wikipediaUrlEn: String!
 }
 
@@ -767,25 +767,25 @@ type PageInfo {
 
 type Person implements Node {
   annictId: Int!
-  birthday: String!
-  bloodType: String!
+  birthday: String
+  bloodType: String
   castsCount: Int!
   favoritePeopleCount: Int!
-  genderText: String!
-  height: String!
+  genderText: String
+  height: String
   id: ID!
   name: String!
   nameEn: String!
   nameKana: String!
-  nickname: String!
+  nickname: String
   nicknameEn: String!
   prefecture: Prefecture!
   staffsCount: Int!
-  twitterUsername: String!
+  twitterUsername: String
   twitterUsernameEn: String!
-  url: String!
+  url: String
   urlEn: String!
-  wikipediaUrl: String!
+  wikipediaUrl: String
   wikipediaUrlEn: String!
 }
 
