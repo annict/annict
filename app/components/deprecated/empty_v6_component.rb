@@ -10,7 +10,7 @@ class Deprecated::EmptyV6Component < Deprecated::ApplicationV6Component
   def render
     build_html do |h|
       h.tag :div, class: "c-empty p-4 text-center" do
-        h.tag :i, class: "fa-solid fa-meh display-4"
+        h.tag :i, class: "fa-regular fa-face-meh display-4"
 
         h.tag :div, class: "h2 mt-3" do
           h.text @text

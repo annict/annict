@@ -109,7 +109,7 @@ module Deprecated::Lists
                               data_tracking_offcanvas_button_frame_path: view_context.fragment_trackable_episode_path(episode.id),
                               data_action: "click->tracking-offcanvas-button#open"
                             } do
-                              h.tag :i, class: "fa-solid fa-comment-check"
+                              h.tag :i, class: "fa-regular fa-circle-check"
 
                               h.tag :span, class: "d-none d-sm-inline ms-1" do
                                 h.text t("verb.track_with_comment")
