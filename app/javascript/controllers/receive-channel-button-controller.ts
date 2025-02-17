@@ -33,11 +33,11 @@ export default class extends Controller {
     if (this.currentReceivedValue) {
       this.element.classList.add(this.receivedButtonClass);
       this.element.classList.remove(this.notReceivedButtonClass);
-      this.iconWrapperTarget.innerHTML = `<i class="fal fa-minus"></i>`;
+      this.iconWrapperTarget.innerHTML = `<i class="fa-solid fa-minus"></i>`;
     } else {
       this.element.classList.remove(this.receivedButtonClass);
       this.element.classList.add(this.notReceivedButtonClass);
-      this.iconWrapperTarget.innerHTML = '<i class="fal fa-plus"></i>';
+      this.iconWrapperTarget.innerHTML = '<i class="fa-solid fa-plus"></i>';
     }
 
     this.element.classList.remove("c-spinner");

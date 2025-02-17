@@ -26,7 +26,7 @@ class Deprecated::AdsenseComponent < Deprecated::ApplicationV6Component
         end
 
         h.tag :div, class: "mt-1 small text-muted" do
-          h.tag :i, class: "fa-solid fa-sparkles me-1 text-warning"
+          h.tag :i, class: "fa-solid fa-asterisk me-1 text-warning"
           h.html t("messages._components.adsense.hide_ads_html")
         end
       end

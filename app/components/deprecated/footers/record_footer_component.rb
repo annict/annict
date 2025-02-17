@@ -19,7 +19,7 @@ module Deprecated::Footers
 
           if @record.episode_record?
             h.tag :a, href: view_context.record_path(@record.user.username, @record.id), class: "ms-3", data_turbo_frame: "_top" do
-              h.tag :i, class: "fa-solid fa-comment me-1"
+              h.tag :i, class: "fa-regular fa-comment me-1"
               h.text @record.episode_record.comments_count
             end
           end

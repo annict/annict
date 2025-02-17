@@ -49,7 +49,7 @@ export default class extends Controller {
       this.countTarget.innerText = this.likesCount.toString();
     } else {
       this.element.classList.remove("is-liked");
-      iconElm.outerHTML = '<i class="c-like-button__icon fa-solid fa-heart"></i>';
+      iconElm.outerHTML = '<i class="c-like-button__icon fa-regular fa-heart"></i>';
       this.countTarget.innerText = this.likesCount.toString();
     }
   }

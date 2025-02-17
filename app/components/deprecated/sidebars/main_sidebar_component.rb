@@ -171,7 +171,7 @@ module Deprecated::Sidebars
             h.tag :ul, class: "list-unstyled px-3" do
               [
                 # [view_context.friend_list_path, "search", t("head.title.friends.index")],
-                [view_context.channel_list_path, "tv-retro", t("head.title.channels.index")],
+                [view_context.channel_list_path, "tv", t("head.title.channels.index")],
                 [view_context.settings_profile_path, "cog", t("noun.settings")],
                 [view_context.faq_path, "question-circle", t("noun.faq")]
               ].each do |link_path, icon_name, link_text|
@@ -195,10 +195,10 @@ module Deprecated::Sidebars
 
             h.tag :ul, class: "list-unstyled px-3" do
               [
-                [view_context.userland_path, "signal-stream", t("noun.annict_userland")],
-                [view_context.forum_path, "comments-alt", t("noun.annict_forum")],
+                [view_context.userland_path, "tower-cell", t("noun.annict_userland")],
+                [view_context.forum_path, "comments", t("noun.annict_forum")],
                 [view_context.db_root_path, "database", t("noun.annict_db")],
-                [view_context.supporters_path, "sparkles", t("noun.annict_supporters")]
+                [view_context.supporters_path, "asterisk", t("noun.annict_supporters")]
               ].each do |link_path, icon_name, link_text|
                 h.tag :li do
                   h.tag :a, href: link_path, class: "d-flex justify-content-between py-2" do
