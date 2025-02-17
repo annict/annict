@@ -45,11 +45,11 @@ export default class extends Controller {
 
     if (this.isLiked) {
       this.element.classList.add("is-liked");
-      iconElm.outerHTML = '<i class="c-like-button__icon fas fa-heart"></i>'; // Using outerHTML to render fontawesome icon after refetch
+      iconElm.outerHTML = '<i class="c-like-button__icon fa-solid fa-heart"></i>'; // Using outerHTML to render fontawesome icon after refetch
       this.countTarget.innerText = this.likesCount.toString();
     } else {
       this.element.classList.remove("is-liked");
-      iconElm.outerHTML = '<i class="c-like-button__icon far fa-heart"></i>';
+      iconElm.outerHTML = '<i class="c-like-button__icon fa-solid fa-heart"></i>';
       this.countTarget.innerText = this.likesCount.toString();
     }
   }

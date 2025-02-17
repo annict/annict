@@ -19,7 +19,7 @@ module Deprecated::Buttons
           data_receive_channel_button_not_received_button_class: "btn-outline-info",
           data_receive_channel_button_received_button_class: "btn-info" do
             h.tag :span, data_receive_channel_button_target: "iconWrapper" do
-              h.tag :i, class: "far fa-plus"
+              h.tag :i, class: "fa-solid fa-plus"
             end
           end
       end

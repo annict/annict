@@ -67,7 +67,7 @@
 
 <div class="my-5 text-center">
   <a class="btn btn-primary" href="https://gum.co/Annict">
-    <i class="far fa-shopping-cart me-2"></i>
+    <i class="fa-solid fa-shopping-cart me-2"></i>
     Pay by Gumroad
   </a>
 </div>
@@ -84,12 +84,12 @@
 <div class="my-5 text-center">
   <% if user_signed_in? && current_user.authorized_to?(:gumroad) %>
     <button class="btn u-btn-gumroad" disabled="">
-      <i class="far fa-link me-2"></i>
+      <i class="fa-solid fa-link me-2"></i>
       Connected with Gumroad
     </button>
   <% else %>
     <%= button_to user_gumroad_omniauth_authorize_path(back: supporters_path), class: "btn u-btn-gumroad", data: { turbo: "false" } do %>
-      <i class="far fa-link me-2"></i>
+      <i class="fa-solid fa-link me-2"></i>
       Connect to Gumroad
     <% end %>
   <% end %>
@@ -141,7 +141,7 @@
 
       <div class="mt-5 mb-4 text-center">
         <%= button_to user_gumroad_omniauth_authorize_path(back: supporters_path), class: "btn u-btn-gumroad", data: { turbo: "false" } do %>
-          <i class="far fa-link me-2"></i>
+          <i class="fa-solid fa-link me-2"></i>
           Reconnect to Gumroad
         <% end %>
       </div>

@@ -38,7 +38,7 @@ module Deprecated::Sidebars
               else
                 h.tag :a, href: view_context.sign_in_path, class: "d-flex justify-content-between py-2" do
                   h.tag :div, class: "c-main-sidebar__icon me-1 text-center text-muted" do
-                    h.tag :i, class: "far fa-sign-in"
+                    h.tag :i, class: "fa-solid fa-sign-in"
                   end
 
                   h.tag :div, class: "flex-grow-1" do
@@ -58,7 +58,7 @@ module Deprecated::Sidebars
               h.tag :li do
                 h.tag :a, href: view_context.root_path, class: "d-flex justify-content-between py-2" do
                   h.tag :div, class: "c-main-sidebar__icon me-1 text-center text-muted" do
-                    h.tag :i, class: "far fa-home"
+                    h.tag :i, class: "fa-solid fa-house"
                   end
 
                   h.tag :div, class: "flex-grow-1" do
@@ -70,7 +70,7 @@ module Deprecated::Sidebars
               h.tag :li do
                 h.tag :a, href: current_user ? view_context.profile_path(current_user.username) : view_context.sign_in_path, class: "d-flex justify-content-between py-2" do
                   h.tag :div, class: "c-main-sidebar__icon me-1 text-center text-muted" do
-                    h.tag :i, class: "far fa-user"
+                    h.tag :i, class: "fa-solid fa-user"
                   end
 
                   h.tag :div, class: "flex-grow-1" do
@@ -82,7 +82,7 @@ module Deprecated::Sidebars
               h.tag :li do
                 h.tag :a, href: view_context.notification_list_path, class: "d-flex justify-content-between py-2" do
                   h.tag :div, class: "c-main-sidebar__icon me-1 text-center text-muted" do
-                    h.tag :i, class: "far fa-bell"
+                    h.tag :i, class: "fa-solid fa-bell"
                   end
 
                   h.tag :div, class: "flex-grow-1" do
@@ -102,7 +102,7 @@ module Deprecated::Sidebars
               h.tag :li do
                 h.tag :a, href: "/track", class: "d-flex justify-content-between py-2" do
                   h.tag :div, class: "c-main-sidebar__icon me-1 text-center text-muted" do
-                    h.tag :i, class: "far fa-tasks"
+                    h.tag :i, class: "fa-solid fa-tasks"
                   end
 
                   h.tag :div, class: "flex-grow-1" do
@@ -127,7 +127,7 @@ module Deprecated::Sidebars
                 h.tag :li do
                   h.tag :a, href: current_user ? view_context.library_path(username: current_user.username, status_kind: status_kind) : view_context.sign_in_path, class: "d-flex justify-content-between py-2" do
                     h.tag :div, class: "c-main-sidebar__icon me-1 text-center text-muted" do
-                      h.tag :i, class: "far fa-#{icon_name}"
+                      h.tag :i, class: "fa-solid fa-#{icon_name}"
                     end
 
                     h.tag :div, class: "flex-grow-1" do
@@ -153,7 +153,7 @@ module Deprecated::Sidebars
                 h.tag :li do
                   h.tag :a, href: "/works/#{page_type}", class: "d-flex justify-content-between py-2" do
                     h.tag :div, class: "c-main-sidebar__icon me-1 text-center text-muted" do
-                      h.tag :i, class: "far fa-#{icon_name}"
+                      h.tag :i, class: "fa-solid fa-#{icon_name}"
                     end
 
                     h.tag :div, class: "flex-grow-1" do
@@ -178,7 +178,7 @@ module Deprecated::Sidebars
                 h.tag :li do
                   h.tag :a, href: link_path, class: "d-flex justify-content-between py-2" do
                     h.tag :div, class: "c-main-sidebar__icon me-1 text-center text-muted" do
-                      h.tag :i, class: "far fa-#{icon_name}"
+                      h.tag :i, class: "fa-solid fa-#{icon_name}"
                     end
 
                     h.tag :div, class: "flex-grow-1" do
@@ -203,7 +203,7 @@ module Deprecated::Sidebars
                 h.tag :li do
                   h.tag :a, href: link_path, class: "d-flex justify-content-between py-2" do
                     h.tag :div, class: "c-main-sidebar__icon me-1 text-center text-muted" do
-                      h.tag :i, class: "far fa-#{icon_name}"
+                      h.tag :i, class: "fa-solid fa-#{icon_name}"
                     end
 
                     h.tag :div, class: "flex-grow-1" do
@@ -216,7 +216,7 @@ module Deprecated::Sidebars
               h.tag :li do
                 h.tag :a, href: "https://developers.annict.com", class: "d-flex justify-content-between py-2", rel: "noopener", target: "_blank" do
                   h.tag :div, class: "c-main-sidebar__icon me-1 text-center text-muted" do
-                    h.tag :i, class: "far fa-code"
+                    h.tag :i, class: "fa-solid fa-code"
                   end
 
                   h.tag :div, class: "flex-grow-1" do
@@ -237,7 +237,7 @@ module Deprecated::Sidebars
                     data_confirm: t("messages._common.are_you_sure"),
                     data_method: :delete do
                       h.tag :div, class: "c-main-sidebar__icon me-1 text-center text-muted" do
-                        h.tag :i, class: "far fa-sign-out"
+                        h.tag :i, class: "fa-solid fa-sign-out"
                       end
 
                       h.tag :div, class: "flex-grow-1" do

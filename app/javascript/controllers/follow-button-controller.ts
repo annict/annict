@@ -46,11 +46,11 @@ export default class extends Controller {
     if (this.isFollowing) {
       this.element.classList.remove(this.defaultClass);
       this.element.classList.add(this.followingClass);
-      this.element.innerHTML = `<i class="far fa-check me-1"></i>${this.followingTextValue}`;
+      this.element.innerHTML = `<i class="fa-solid fa-check me-1"></i>${this.followingTextValue}`;
     } else {
       this.element.classList.add(this.defaultClass);
       this.element.classList.remove(this.followingClass);
-      this.element.innerHTML = `<i class="far fa-plus me-1"></i>${this.defaultTextValue}`;
+      this.element.innerHTML = `<i class="fa-solid fa-plus me-1"></i>${this.defaultTextValue}`;
     }
   }
 

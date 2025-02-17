@@ -21,7 +21,7 @@
       <% if @trailers.size > 4 %>
         <div>
           <%= link_to video_list_path(@work) do %>
-            <i class="far fa-angle-right me-1"></i>
+            <i class="fa-solid fa-angle-right me-1"></i>
             <%= t("verb.view_all") %>
           <% end %>
         </div>
@@ -38,7 +38,7 @@
               <%= link_to trailer.url, rel: "noopener", target: "_blank" do %>
                 <div class="c-video-thumbnail">
                   <div class="c-video-thumbnail__image" style="background-image: url(<%= ann_video_image_url(trailer, width: 300) %>);"></div>
-                  <i class="far fa-play-circle"></i>
+                  <i class="fa-solid fa-play-circle"></i>
                 </div>
 
                 <div class="mt-1 small text-body">
@@ -83,7 +83,7 @@
       <% if @episodes.present? && @episodes.size > 28 %>
         <div>
           <%= link_to episode_list_path(@work) do %>
-            <i class="far fa-angle-right me-1"></i>
+            <i class="fa-solid fa-angle-right me-1"></i>
             <%= t("verb.view_all") %>
           <% end %>
         </div>
@@ -125,7 +125,7 @@
     <% if @records.present? && @records.size > 10 %>
       <div>
         <%= link_to work_record_list_path(@work) do %>
-          <i class="far fa-angle-right me-1"></i>
+          <i class="fa-solid fa-angle-right me-1"></i>
           <%= t("verb.view_all") %>
         <% end %>
       </div>

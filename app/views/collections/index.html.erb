@@ -22,7 +22,7 @@
             <div class="border card h-100 u-border-3 u-border-card">
               <%= link_to new_collection_path, class: "card-body d-flex text-body text-center" do %>
                 <div class="align-self-center w-100">
-                  <i class="display-6 far fa-plus"></i>
+                  <i class="display-6 fa-solid fa-plus"></i>
 
                   <div class="fw-bold mt-1">
                     <%= t "messages.collections.new" %>
@@ -63,7 +63,7 @@
               if current_user && current_user == @user
                 h.tag :div, class: "mt-3" do
                   h.tag :a, class: "btn btn-primary", href: new_collection_path do
-                    h.tag :i, class: "far fa-plus me-1"
+                    h.tag :i, class: "fa-solid fa-plus me-1"
                     h.text t("messages.collections.new")
                   end
                 end

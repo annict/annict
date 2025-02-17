@@ -21,7 +21,7 @@ module Deprecated::Buttons
           data_action: "click->watch-episode-button#watch"
         } do
           h.tag :span, class: "c-watch-episode-button__spinner spinner-border spinner-border-sm"
-          h.tag :i, class: "far fa-check"
+          h.tag :i, class: "fa-solid fa-check"
 
           if @button_text.present?
             h.tag :span, class: "ms-1" do

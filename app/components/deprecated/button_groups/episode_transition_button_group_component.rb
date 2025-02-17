@@ -15,13 +15,13 @@ module Deprecated::ButtonGroups
       build_html do |h|
         h.tag :div, class: component_class_name do
           h.tag :a, href: prev_episode_path, class: prev_episode_class_name do
-            h.tag :i, class: "far fa-angle-left me-1"
+            h.tag :i, class: "fa-solid fa-angle-left me-1"
             h.text t("noun.prev")
           end
 
           h.tag :a, href: next_episode_path, class: next_episode_class_name do
             h.text t("noun.next")
-            h.tag :i, class: "far fa-angle-right ms-1"
+            h.tag :i, class: "fa-solid fa-angle-right ms-1"
           end
         end
       end

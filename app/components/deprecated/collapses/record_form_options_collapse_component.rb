@@ -13,7 +13,7 @@ module Deprecated::Collapses
         h.tag :div do
           h.tag :a, aria_expanded: "false", class: "text-body u-collapse-with-icon", data_bs_toggle: "collapse", href: "##{collapse_id}" do
             h.text t("noun.options")
-            h.tag :i, class: "far fa-angle-down ms-1"
+            h.tag :i, class: "fa-solid fa-angle-down ms-1"
           end
 
           h.tag :div, class: "collapse mt-2", id: collapse_id do

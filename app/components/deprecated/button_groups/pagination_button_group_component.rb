@@ -19,12 +19,12 @@ module Deprecated::ButtonGroups
         h.tag :div, class: "btn-group c-pagination-button-group" do
           unless @without_count
             h.tag :a, class: prev_button_class_name, href: page_url_for(page: 1) do
-              h.tag :i, class: "far fa-angle-double-left"
+              h.tag :i, class: "fa-solid fa-angle-double-left"
             end
           end
 
           h.tag :a, class: prev_button_class_name, href: page_url_for(page: current_page - 1) do
-            h.tag :i, class: "far fa-angle-left"
+            h.tag :i, class: "fa-solid fa-angle-left"
           end
 
           unless @without_count
@@ -80,12 +80,12 @@ module Deprecated::ButtonGroups
           end
 
           h.tag :a, class: next_button_class_name, href: page_url_for(page: current_page + 1) do
-            h.tag :i, class: "far fa-angle-right"
+            h.tag :i, class: "fa-solid fa-angle-right"
           end
 
           unless @without_count
             h.tag :a, class: next_button_class_name, href: page_url_for(page: total_page) do
-              h.tag :i, class: "far fa-angle-double-right"
+              h.tag :i, class: "fa-solid fa-angle-double-right"
             end
           end
         end

@@ -18,7 +18,7 @@
 
         <div class="col">
           <%= link_to fragment_trackable_work_path(@work.id), class: "small" do %>
-            <i class="far fa-angle-left"></i>
+            <i class="fa-solid fa-angle-left"></i>
             <span class="ps-1">
               <%= @episode.work.local_title %>
             </span>
@@ -40,14 +40,14 @@
             <li class="list-inline-item">
               <%= link_to work_path(@work.id), data: { "turbo-frame": "_top" } do %>
                 <%= t("noun.work_detail_page") %>
-                <i class="far fa-angle-right ms-1"></i>
+                <i class="fa-solid fa-angle-right ms-1"></i>
               <% end %>
             </li>
 
             <li class="list-inline-item mt-1 mt-sm-0">
               <%= link_to episode_path(@work.id, @episode.id), data: { "turbo-frame": "_top" } do %>
                 <%= t("noun.episode_page") %>
-                <i class="far fa-angle-right ms-1"></i>
+                <i class="fa-solid fa-angle-right ms-1"></i>
               <% end %>
             </li>
           </ul>

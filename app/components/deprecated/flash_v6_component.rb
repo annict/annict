@@ -18,7 +18,7 @@ class Deprecated::FlashV6Component < Deprecated::ApplicationV6Component
           h.tag :span, class: "c-flash__alert-icon h2 mb-0 me-2"
           h.tag :span, class: "c-flash__message flex-grow-1"
 
-          h.tag :i, class: "far fa-times u-cursor-pointer", data_action: "click->flash#close"
+          h.tag :i, class: "fa-solid fa-times u-cursor-pointer", data_action: "click->flash#close"
         end
       end
     end

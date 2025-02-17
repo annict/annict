@@ -21,7 +21,7 @@ module Deprecated::Buttons
           data_star_button_starrable_type_value: @starrable.class.name,
           type: "button"
         } do
-          h.tag :i, class: "far fa-star"
+          h.tag :i, class: "fa-solid fa-star"
         end
       end
     end

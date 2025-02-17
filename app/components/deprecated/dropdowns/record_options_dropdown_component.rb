@@ -14,7 +14,7 @@ module Deprecated::Dropdowns
       build_html do |h|
         h.tag :div, class: "c-record-options-dropdown d-inline-block dropdown u-cursor-pointer" do
           h.tag :div, class: "dropdown-toggle", data_bs_toggle: "dropdown" do
-            h.tag :i, class: "far fa-ellipsis-h"
+            h.tag :i, class: "fa-solid fa-ellipsis-h"
           end
 
           h.tag :div, class: "dropdown-menu" do

@@ -50,9 +50,9 @@ export default class extends Controller {
   get alertIcon() {
     switch (this.type) {
       case "alert":
-        return '<i class="far fa-exclamation-triangle"></i>';
+        return '<i class="fa-solid fa-exclamation-triangle"></i>';
       default:
-        return '<i class="far fa-check-circle"></i>';
+        return '<i class="fa-solid fa-check-circle"></i>';
     }
   }
 }
