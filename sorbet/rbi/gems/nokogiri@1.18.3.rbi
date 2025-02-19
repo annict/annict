@@ -602,7 +602,7 @@ class Nokogiri::CSS::XPathVisitor
   # source://nokogiri//lib/nokogiri/css/xpath_visitor.rb#69
   def initialize(builtins: T.unsafe(nil), doctype: T.unsafe(nil), prefix: T.unsafe(nil), namespaces: T.unsafe(nil)); end
 
-  # source://nokogiri//lib/nokogiri/css/xpath_visitor.rb#297
+  # source://nokogiri//lib/nokogiri/css/xpath_visitor.rb#298
   def accept(node); end
 
   # The visitor configuration set via the +builtins:+ keyword argument to XPathVisitor.new.
@@ -634,7 +634,7 @@ class Nokogiri::CSS::XPathVisitor
   # source://nokogiri//lib/nokogiri/css/xpath_visitor.rb#54
   def prefix; end
 
-  # source://nokogiri//lib/nokogiri/css/xpath_visitor.rb#293
+  # source://nokogiri//lib/nokogiri/css/xpath_visitor.rb#294
   def visit_attrib_name(node); end
 
   # source://nokogiri//lib/nokogiri/css/xpath_visitor.rb#175
@@ -680,24 +680,24 @@ class Nokogiri::CSS::XPathVisitor
 
   private
 
-  # source://nokogiri//lib/nokogiri/css/xpath_visitor.rb#364
+  # source://nokogiri//lib/nokogiri/css/xpath_visitor.rb#365
   def css_class(hay, needle); end
 
-  # source://nokogiri//lib/nokogiri/css/xpath_visitor.rb#309
+  # source://nokogiri//lib/nokogiri/css/xpath_visitor.rb#310
   def html5_element_name_needs_namespace_handling(node); end
 
   # @return [Boolean]
   #
-  # source://nokogiri//lib/nokogiri/css/xpath_visitor.rb#354
+  # source://nokogiri//lib/nokogiri/css/xpath_visitor.rb#355
   def is_of_type_pseudo_class?(node); end
 
-  # source://nokogiri//lib/nokogiri/css/xpath_visitor.rb#316
+  # source://nokogiri//lib/nokogiri/css/xpath_visitor.rb#317
   def nth(node, options = T.unsafe(nil)); end
 
-  # source://nokogiri//lib/nokogiri/css/xpath_visitor.rb#340
+  # source://nokogiri//lib/nokogiri/css/xpath_visitor.rb#341
   def read_a_and_positive_b(values); end
 
-  # source://nokogiri//lib/nokogiri/css/xpath_visitor.rb#303
+  # source://nokogiri//lib/nokogiri/css/xpath_visitor.rb#304
   def validate_xpath_function_name(name); end
 end
 
@@ -7849,22 +7849,22 @@ module Nokogiri::XML::Searchable
 
   private
 
-  # source://nokogiri//lib/nokogiri/xml/searchable.rb#210
+  # source://nokogiri//lib/nokogiri/xml/searchable.rb#228
   def css_internal(node, rules, handler, ns); end
 
-  # source://nokogiri//lib/nokogiri/xml/searchable.rb#241
+  # source://nokogiri//lib/nokogiri/xml/searchable.rb#232
   def css_rules_to_xpath(rules, ns); end
 
-  # source://nokogiri//lib/nokogiri/xml/searchable.rb#257
+  # source://nokogiri//lib/nokogiri/xml/searchable.rb#210
   def extract_params(params); end
 
-  # source://nokogiri//lib/nokogiri/xml/searchable.rb#229
+  # source://nokogiri//lib/nokogiri/xml/searchable.rb#263
   def xpath_impl(node, path, handler, ns, binds); end
 
-  # source://nokogiri//lib/nokogiri/xml/searchable.rb#214
+  # source://nokogiri//lib/nokogiri/xml/searchable.rb#248
   def xpath_internal(node, paths, handler, ns, binds); end
 
-  # source://nokogiri//lib/nokogiri/xml/searchable.rb#245
+  # source://nokogiri//lib/nokogiri/xml/searchable.rb#236
   def xpath_query_from_css_rule(rule, ns); end
 end
 
@@ -8047,6 +8047,7 @@ end
 # source://nokogiri//lib/nokogiri/xml/xpath_context.rb#5
 class Nokogiri::XML::XPathContext
   def evaluate(*_arg0); end
+  def node=(_arg0); end
 
   # Register namespaces in +namespaces+
   #
@@ -8055,6 +8056,9 @@ class Nokogiri::XML::XPathContext
 
   def register_ns(_arg0, _arg1); end
   def register_variable(_arg0, _arg1); end
+
+  # source://nokogiri//lib/nokogiri/xml/xpath_context.rb#16
+  def register_variables(binds); end
 
   class << self
     def new(_arg0); end
