@@ -3,6 +3,6 @@
   "dockerComposeFile": ["../docker-compose.yml", "../docker-compose.override.yml"],
   "service": "app",
   "workspaceFolder": "/app",
-  "forwardPorts": [3000, 5432, 6379],
+  "forwardPorts": [3000, 5432, 6379, 9000, 9001],
   "remoteUser": "root"
 }
