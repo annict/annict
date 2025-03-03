@@ -28,7 +28,7 @@ services:
       POSTGRES_HOST_AUTH_METHOD: trust
 
   redis:
-    image: redis:7.2.5-alpine
+    image: redis:7.4.2-alpine
     ports:
       - "6379:6379"
 
