@@ -44,7 +44,7 @@ module Deprecated::Headers
 
               if @record.modified_at
                 h.tag :small, class: "ms-1 text-muted" do
-                  h.tag :i, class: "fas fa-pencil-alt"
+                  h.tag :i, class: "fa-solid fa-pencil-alt"
                 end
               end
             end

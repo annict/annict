@@ -67,14 +67,14 @@ module Deprecated::Headers
                     h.tag :li, class: "list-inline-item" do
                       h.tag :a, href: @work.official_site_url, target: "_blank", rel: "noopener" do
                         h.text t("activerecord.attributes.work.official_site_url")
-                        h.tag :i, class: "fas fa-external-link-alt ms-1 small"
+                        h.tag :i, class: "fa-solid fa-external-link-alt ms-1 small"
                       end
                     end
                   elsif locale_en? && @work.official_site_url_en.present?
                     h.tag :li, class: "list-inline-item" do
                       h.tag :a, href: @work.official_site_url_en, target: "_blank", rel: "noopener" do
                         h.text t("activerecord.attributes.work.official_site_url")
-                        h.tag :i, class: "fas fa-external-link-alt ms-1 small"
+                        h.tag :i, class: "fa-solid fa-external-link-alt ms-1 small"
                       end
                     end
                   end
@@ -83,14 +83,14 @@ module Deprecated::Headers
                     h.tag :li, class: "list-inline-item" do
                       h.tag :a, href: @work.wikipedia_url, target: "_blank", rel: "noopener" do
                         h.text t("activerecord.attributes.work.wikipedia_url")
-                        h.tag :i, class: "fas fa-external-link-alt ms-1 small"
+                        h.tag :i, class: "fa-solid fa-external-link-alt ms-1 small"
                       end
                     end
                   elsif locale_en? && @work.wikipedia_url_en.present?
                     h.tag :li, class: "list-inline-item" do
                       h.tag :a, href: @work.wikipedia_url_en, target: "_blank", rel: "noopener" do
                         h.text t("activerecord.attributes.work.wikipedia_url")
-                        h.tag :i, class: "fas fa-external-link-alt ms-1 small"
+                        h.tag :i, class: "fa-solid fa-external-link-alt ms-1 small"
                       end
                     end
                   end
@@ -109,7 +109,7 @@ module Deprecated::Headers
                             end
                           end
 
-                          h.tag :i, class: "fas fa-external-link-alt ms-1 small"
+                          h.tag :i, class: "fa-solid fa-external-link-alt ms-1 small"
                         end
                       end
                     end
@@ -118,7 +118,7 @@ module Deprecated::Headers
 
                 if @work.copyright
                   h.tag :div, class: "mt-3 text-muted u-very-small" do
-                    h.tag :i, class: "far fa-copyright me-1"
+                    h.tag :i, class: "fa-solid fa-copyright me-1"
                     h.text @work.copyright
                   end
                 end

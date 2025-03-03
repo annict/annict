@@ -20,7 +20,7 @@ module Deprecated::Buttons
           data_action: "click->skip-episode-button#skip"
         } do
           h.tag :span, class: "c-skip-episode-button__spinner spinner-border spinner-border-sm"
-          h.tag :i, class: "far fa-forward"
+          h.tag :i, class: "fa-solid fa-forward"
 
           if @button_text.present?
             h.tag :span, class: "ms-1" do

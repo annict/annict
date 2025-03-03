@@ -17,7 +17,7 @@ module Deprecated::ButtonGroups
 
           # TODO: アニメをお気に入りできるようにする
           # h.tag :button, type: "button", class: "btn btn-outline-warning" do
-          #   h.tag :i, class: "far fa-star"
+          #   h.tag :i, class: "fa-solid fa-star"
           # end
 
           if @show_option_button
@@ -29,7 +29,7 @@ module Deprecated::ButtonGroups
               data_action: "click->tracking-offcanvas-button#open",
               type: "button"
             } do
-              h.tag :i, class: "far fa-ellipsis-h"
+              h.tag :i, class: "fa-solid fa-ellipsis-h"
             end
           end
         end

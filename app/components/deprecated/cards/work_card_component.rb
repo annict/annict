@@ -54,7 +54,7 @@ module Deprecated::Cards
                   data_bs_content: @note,
                   tabindex: "0"
                 } do
-                  h.tag :i, class: "far fa-comment-dots me-1"
+                  h.tag :i, class: "fa-solid fa-comment-dots me-1"
                   h.text t("noun.note_alt")
                 end
               end

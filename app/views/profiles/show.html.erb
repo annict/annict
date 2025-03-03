@@ -91,7 +91,7 @@
                   <% if @user.character_favorites.size > 6 %>
                     <div class="col col-auto text-end">
                       <%= link_to favorite_character_list_path(@user.username), class: "small" do %>
-                        <i class="fal fa-angle-right"></i>
+                        <i class="fa-solid fa-angle-right"></i>
                         <%= t "verb.view_all" %>
                       <% end %>
                     </div>
@@ -128,7 +128,7 @@
                     <% if resource_favorites.length > 6 %>
                       <div class="col col-auto text-end">
                         <%= link_to resource_favorite_list_path, class: "small" do %>
-                          <i class="fal fa-angle-right"></i>
+                          <i class="fa-solid fa-angle-right"></i>
                           <%= t "verb.view_all" %>
                         <% end %>
                       </div>

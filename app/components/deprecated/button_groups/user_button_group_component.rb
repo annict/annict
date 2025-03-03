@@ -20,7 +20,7 @@ module Deprecated::ButtonGroups
               data_bs_toggle: "dropdown",
               type: "button"
             } do
-              h.tag :i, class: "far fa-ellipsis-h"
+              h.tag :i, class: "fa-solid fa-ellipsis-h"
             end
 
             h.tag :ul, class: "dropdown-menu" do

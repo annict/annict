@@ -23,7 +23,7 @@
             <li class="list-inline-item">
               <%= link_to work_path(@work.id), data: { "turbo-frame": "_top" } do %>
                 <%= t("noun.work_detail_page") %>
-                <i class="far fa-angle-right ms-1"></i>
+                <i class="fa-solid fa-angle-right ms-1"></i>
               <% end %>
             </li>
           </ul>
@@ -75,7 +75,7 @@
               <li class="list-group-item py-3" data-episode-id="<%= episode.id %>">
                 <div class="c-tracking-state__title col">
                   <%= link_to fragment_trackable_episode_path(episode.id), class: "text-body" do %>
-                    <i class="far fa-chevron-right me-1 text-muted"></i>
+                    <i class="fa-solid fa-chevron-right me-1 text-muted"></i>
                     <%= episode.title_with_number %>
                   <% end %>
                 </div>

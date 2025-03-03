@@ -64,7 +64,7 @@ export default class extends Controller {
   }
 
   render() {
-    this.buttonTarget.innerHTML = `<i class="fas fa-${this.kindIconsValue[this.currentStatusKind]}">`;
+    this.buttonTarget.innerHTML = `<i class="fa-solid fa-${this.kindIconsValue[this.currentStatusKind]}">`;
 
     if (this.currentStatusKind === STATUS_KIND.NO_STATUS) {
       this.buttonTarget.className = `btn dropdown-toggle u-btn-outline-status`;

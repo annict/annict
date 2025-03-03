@@ -14,7 +14,7 @@ class Deprecated::TabBarComponent < Deprecated::ApplicationV6Component
           h.tag :ul, class: "align-items-center h-100 justify-content-around navbar-nav" do
             h.tag :li, class: "col nav-item px-0 text-center", data_action: "click->tab-bar#showSidebar" do
               h.tag :a, href: "#", class: "text-dark" do
-                h.tag :i, class: "far fa-bars"
+                h.tag :i, class: "fa-solid fa-bars"
 
                 h.tag :div, class: "small mt-1" do
                   h.text t("noun.menu")
@@ -24,7 +24,7 @@ class Deprecated::TabBarComponent < Deprecated::ApplicationV6Component
 
             h.tag :li, class: "col nav-item px-0 text-center" do
               h.tag :a, href: view_context.root_path, class: "text-dark" do
-                h.tag :i, class: "far fa-home"
+                h.tag :i, class: "fa-solid fa-home"
 
                 h.tag :div, class: "small mt-1" do
                   h.text t("noun.home")
@@ -35,7 +35,7 @@ class Deprecated::TabBarComponent < Deprecated::ApplicationV6Component
             if @current_user
               h.tag :li, class: "col nav-item px-0 text-center" do
                 h.tag :a, href: view_context.track_path, class: "text-dark" do
-                  h.tag :i, class: "far fa-check"
+                  h.tag :i, class: "fa-solid fa-check"
 
                   h.tag :div, class: "small mt-1" do
                     h.text t("verb.track")
@@ -45,7 +45,7 @@ class Deprecated::TabBarComponent < Deprecated::ApplicationV6Component
 
               h.tag :li, class: "col nav-item px-0 text-center" do
                 h.tag :a, href: "/@#{@current_user.username}/watching", class: "text-dark" do
-                  h.tag :i, class: "far fa-play"
+                  h.tag :i, class: "fa-solid fa-play"
 
                   h.tag :div, class: "small mt-1" do
                     h.text t("noun.library")
@@ -55,7 +55,7 @@ class Deprecated::TabBarComponent < Deprecated::ApplicationV6Component
 
               h.tag :li, class: "col nav-item px-0 text-center" do
                 h.tag :a, href: "/works/#{ENV.fetch("ANNICT_CURRENT_SEASON")}", class: "text-dark" do
-                  h.tag :i, class: "far fa-#{Season.current.icon_name}"
+                  h.tag :i, class: "fa-solid fa-#{Season.current.icon_name}"
 
                   h.tag :div, class: "small mt-1" do
                     h.text t("noun.current_season_shoten")
@@ -65,7 +65,7 @@ class Deprecated::TabBarComponent < Deprecated::ApplicationV6Component
             else
               h.tag :li, class: "col nav-item px-0 text-center" do
                 h.tag :a, href: "/works/#{ENV.fetch("ANNICT_CURRENT_SEASON")}", class: "text-dark" do
-                  h.tag :i, class: "far fa-#{Season.current.icon_name}"
+                  h.tag :i, class: "fa-solid fa-#{Season.current.icon_name}"
 
                   h.tag :div, class: "small mt-1" do
                     h.text t("noun.current_season_shoten")
@@ -75,7 +75,7 @@ class Deprecated::TabBarComponent < Deprecated::ApplicationV6Component
 
               h.tag :li, class: "col nav-item px-0 text-center" do
                 h.tag :a, href: view_context.sign_up_path, class: "text-dark" do
-                  h.tag :i, class: "far fa-rocket"
+                  h.tag :i, class: "fa-solid fa-rocket"
 
                   h.tag :div, class: "small mt-1" do
                     h.text t("noun.sign_up_shorten")
@@ -85,7 +85,7 @@ class Deprecated::TabBarComponent < Deprecated::ApplicationV6Component
 
               h.tag :li, class: "col nav-item px-0 text-center" do
                 h.tag :a, href: view_context.sign_in_path, class: "text-dark" do
-                  h.tag :i, class: "far fa-sign-in-alt"
+                  h.tag :i, class: "fa-solid fa-sign-in-alt"
 
                   h.tag :div, class: "small mt-1" do
                     h.text t("noun.sign_in")

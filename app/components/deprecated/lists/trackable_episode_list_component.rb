@@ -56,7 +56,7 @@ module Deprecated::Lists
                             end
                           else
                             h.tag :div, class: "mt-1" do
-                              h.tag :i, class: "far fa-check-circle me-1 text-success"
+                              h.tag :i, class: "fa-solid fa-check-circle me-1 text-success"
                               h.text t("messages.tracks.no_trackable_episodes")
                             end
                           end
@@ -66,7 +66,7 @@ module Deprecated::Lists
                               if program.vod_title_url.present?
                                 h.tag :a, href: program.vod_title_url, class: "text-muted", rel: "noopener", target: "_blank" do
                                   h.text program.channel.name
-                                  h.tag :i, class: "fas fa-external-link-alt ps-1"
+                                  h.tag :i, class: "fa-solid fa-external-link-alt ps-1"
                                 end
                               else
                                 h.tag :span, class: "text-muted" do
@@ -109,7 +109,7 @@ module Deprecated::Lists
                               data_tracking_offcanvas_button_frame_path: view_context.fragment_trackable_episode_path(episode.id),
                               data_action: "click->tracking-offcanvas-button#open"
                             } do
-                              h.tag :i, class: "far fa-comment-check"
+                              h.tag :i, class: "fa-regular fa-circle-check"
 
                               h.tag :span, class: "d-none d-sm-inline ms-1" do
                                 h.text t("verb.track_with_comment")

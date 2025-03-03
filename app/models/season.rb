@@ -140,10 +140,10 @@ class Season
 
   def icon_name
     case @name
-    when "winter" then "snowflakes"
-    when "spring" then "flower-daffodil"
-    when "summer" then "island-tropical"
-    when "autumn" then "pumpkin"
+    when "winter" then "list"
+    when "spring" then "list"
+    when "summer" then "list"
+    when "autumn" then "list"
     else
       raise
     end

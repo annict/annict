@@ -51,11 +51,11 @@ export default class extends Controller {
     if (this.hasStarred) {
       this.element.classList.remove(this.defaultClass);
       this.element.classList.add(this.starredClass);
-      this.element.innerHTML = '<i class="fas fa-star"></i>';
+      this.element.innerHTML = '<i class="fa-solid fa-star"></i>';
     } else {
       this.element.classList.add(this.defaultClass);
       this.element.classList.remove(this.starredClass);
-      this.element.innerHTML = '<i class="far fa-star"></i>';
+      this.element.innerHTML = '<i class="fa-solid fa-star"></i>';
     }
   }
 

@@ -60,7 +60,7 @@ module Deprecated::Activities
                       class: "py-1 small",
                       href: view_context.fragment_activity_item_list_path(@activity_group, page_category: page_category)
                     } do
-                      h.tag :i, class: "fal fa-chevron-double-down me-1"
+                      h.tag :i, class: "fa-solid fa-chevron-down me-1"
                       h.text t("messages._components.activities.episode_record.more", n: @activity_group.activities_count - 1)
                     end
                   end

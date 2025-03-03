@@ -25,7 +25,7 @@ module Deprecated::Dropdowns
             id: "work#{@work.id}Dropdown",
             data_bs_toggle: "dropdown"
           } do
-            h.tag :i, class: "fas fa-bars"
+            h.tag :i, class: "fa-solid fa-bars"
           end
 
           h.tag :ul, class: "dropdown-menu" do
@@ -39,9 +39,9 @@ module Deprecated::Dropdowns
                   data_status_kind: kind_v3
                 } do
                   if kind == "no_status"
-                    h.tag :i, class: "fas fa-bars me-3"
+                    h.tag :i, class: "fa-solid fa-bars me-3"
                   else
-                    h.tag :i, class: "fas fa-#{Status.kind_icon(kind_v3.to_sym)} me-3 text-status-#{kind_v3.dasherize}"
+                    h.tag :i, class: "fa-solid fa-#{Status.kind_icon(kind_v3.to_sym)} me-3 text-status-#{kind_v3.dasherize}"
                   end
 
                   h.text text
