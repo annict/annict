@@ -779,7 +779,7 @@ type Person implements Node {
   nameKana: String!
   nickname: String
   nicknameEn: String!
-  prefecture: Prefecture!
+  prefecture: Prefecture
   staffsCount: Int!
   twitterUsername: String
   twitterUsernameEn: String!
