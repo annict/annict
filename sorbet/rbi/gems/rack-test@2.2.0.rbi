@@ -8,10 +8,10 @@
 # source://rack-test//lib/rack/test/cookie_jar.rb#6
 module Rack
   class << self
-    # source://rack/2.2.9/lib/rack/version.rb#26
+    # source://rack/2.2.10/lib/rack/version.rb#26
     def release; end
 
-    # source://rack/2.2.9/lib/rack/version.rb#19
+    # source://rack/2.2.10/lib/rack/version.rb#19
     def version; end
   end
 end
@@ -47,7 +47,7 @@ class Rack::Test::Cookie
 
   # Order cookies by name, path, and domain.
   #
-  # source://rack-test//lib/rack/test/cookie_jar.rb#107
+  # source://rack-test//lib/rack/test/cookie_jar.rb#106
   def <=>(other); end
 
   # The explicit or implicit domain for the cookie.
@@ -86,7 +86,7 @@ class Rack::Test::Cookie
   #
   # @return [Boolean]
   #
-  # source://rack-test//lib/rack/test/cookie_jar.rb#102
+  # source://rack-test//lib/rack/test/cookie_jar.rb#101
   def matches?(uri); end
 
   # The name of the cookie, will be a string
@@ -122,12 +122,12 @@ class Rack::Test::Cookie
 
   # A hash of cookie options, including the cookie value, but excluding the cookie name.
   #
-  # source://rack-test//lib/rack/test/cookie_jar.rb#112
+  # source://rack-test//lib/rack/test/cookie_jar.rb#111
   def to_h; end
 
   # A hash of cookie options, including the cookie value, but excluding the cookie name.
   #
-  # source://rack-test//lib/rack/test/cookie_jar.rb#112
+  # source://rack-test//lib/rack/test/cookie_jar.rb#111
   def to_hash; end
 
   # Whether the cookie is valid for the given URI.
@@ -146,7 +146,7 @@ class Rack::Test::Cookie
 
   # The default URI to use for the cookie, including just the host.
   #
-  # source://rack-test//lib/rack/test/cookie_jar.rb#124
+  # source://rack-test//lib/rack/test/cookie_jar.rb#125
   def default_uri; end
 end
 
@@ -155,57 +155,57 @@ end
 # request.  This is considered private API and behavior of this
 # class can change at any time.
 #
-# source://rack-test//lib/rack/test/cookie_jar.rb#133
+# source://rack-test//lib/rack/test/cookie_jar.rb#134
 class Rack::Test::CookieJar
   # @return [CookieJar] a new instance of CookieJar
   #
-  # source://rack-test//lib/rack/test/cookie_jar.rb#136
+  # source://rack-test//lib/rack/test/cookie_jar.rb#137
   def initialize(cookies = T.unsafe(nil), default_host = T.unsafe(nil)); end
 
   # Add a Cookie to the cookie jar.
   #
-  # source://rack-test//lib/rack/test/cookie_jar.rb#198
+  # source://rack-test//lib/rack/test/cookie_jar.rb#197
   def <<(new_cookie); end
 
   # Return the value for first cookie with the given name, or nil
   # if no such cookie exists.
   #
-  # source://rack-test//lib/rack/test/cookie_jar.rb#149
+  # source://rack-test//lib/rack/test/cookie_jar.rb#150
   def [](name); end
 
   # Set a cookie with the given name and value in the
   # cookie jar.
   #
-  # source://rack-test//lib/rack/test/cookie_jar.rb#159
+  # source://rack-test//lib/rack/test/cookie_jar.rb#160
   def []=(name, value); end
 
   # Delete all cookies with the given name from the cookie jar.
   #
-  # source://rack-test//lib/rack/test/cookie_jar.rb#173
+  # source://rack-test//lib/rack/test/cookie_jar.rb#174
   def delete(name); end
 
   # Return a raw cookie string for the cookie header to
   # use for the given URI.
   #
-  # source://rack-test//lib/rack/test/cookie_jar.rb#209
+  # source://rack-test//lib/rack/test/cookie_jar.rb#208
   def for(uri); end
 
   # Return the first cookie with the given name, or nil if
   # no such cookie exists.
   #
-  # source://rack-test//lib/rack/test/cookie_jar.rb#165
+  # source://rack-test//lib/rack/test/cookie_jar.rb#166
   def get_cookie(name); end
 
   # Add a string of raw cookie information to the cookie jar,
   # if the cookie is valid for the given URI.
   # Cookies should be separated with a newline.
   #
-  # source://rack-test//lib/rack/test/cookie_jar.rb#183
+  # source://rack-test//lib/rack/test/cookie_jar.rb#184
   def merge(raw_cookies, uri = T.unsafe(nil)); end
 
   # Return a hash cookie names and cookie values for cookies in the jar.
   #
-  # source://rack-test//lib/rack/test/cookie_jar.rb#226
+  # source://rack-test//lib/rack/test/cookie_jar.rb#225
   def to_hash; end
 
   private
@@ -218,16 +218,16 @@ class Rack::Test::CookieJar
   # so that when we are done, the cookies will be unique by name and
   # we'll have grabbed the most specific to the URI.
   #
-  # source://rack-test//lib/rack/test/cookie_jar.rb#245
+  # source://rack-test//lib/rack/test/cookie_jar.rb#244
   def each_cookie_for(uri); end
 
   # Ensure the copy uses a distinct cookies array.
   #
-  # source://rack-test//lib/rack/test/cookie_jar.rb#142
+  # source://rack-test//lib/rack/test/cookie_jar.rb#143
   def initialize_copy(other); end
 end
 
-# source://rack-test//lib/rack/test/cookie_jar.rb#134
+# source://rack-test//lib/rack/test/cookie_jar.rb#135
 Rack::Test::CookieJar::DELIMITER = T.let(T.unsafe(nil), String)
 
 # The default host to use for requests, when a full URI is not
@@ -278,10 +278,10 @@ module Rack::Test::Methods
   # source://rack-test//lib/rack/test/methods.rb#90
   def _rack_test_current_session=(_arg0); end
 
-  # source://forwardable/1.3.2/forwardable.rb#229
+  # source://forwardable/1.3.3/forwardable.rb#231
   def authorize(*args, **_arg1, &block); end
 
-  # source://forwardable/1.3.2/forwardable.rb#229
+  # source://forwardable/1.3.3/forwardable.rb#231
   def basic_authorize(*args, **_arg1, &block); end
 
   # Create a new Rack::Test::Session for #app.
@@ -289,7 +289,7 @@ module Rack::Test::Methods
   # source://rack-test//lib/rack/test/methods.rb#40
   def build_rack_test_session(_name); end
 
-  # source://forwardable/1.3.2/forwardable.rb#229
+  # source://forwardable/1.3.3/forwardable.rb#231
   def clear_cookies(*args, **_arg1, &block); end
 
   # Return the currently actively session.  This is the session to
@@ -298,43 +298,43 @@ module Rack::Test::Methods
   # source://rack-test//lib/rack/test/methods.rb#55
   def current_session; end
 
-  # source://forwardable/1.3.2/forwardable.rb#229
+  # source://forwardable/1.3.3/forwardable.rb#231
   def custom_request(*args, **_arg1, &block); end
 
-  # source://forwardable/1.3.2/forwardable.rb#229
+  # source://forwardable/1.3.3/forwardable.rb#231
   def delete(*args, **_arg1, &block); end
 
-  # source://forwardable/1.3.2/forwardable.rb#229
+  # source://forwardable/1.3.3/forwardable.rb#231
   def env(*args, **_arg1, &block); end
 
-  # source://forwardable/1.3.2/forwardable.rb#229
+  # source://forwardable/1.3.3/forwardable.rb#231
   def follow_redirect!(*args, **_arg1, &block); end
 
-  # source://forwardable/1.3.2/forwardable.rb#229
+  # source://forwardable/1.3.3/forwardable.rb#231
   def get(*args, **_arg1, &block); end
 
-  # source://forwardable/1.3.2/forwardable.rb#229
+  # source://forwardable/1.3.3/forwardable.rb#231
   def head(*args, **_arg1, &block); end
 
-  # source://forwardable/1.3.2/forwardable.rb#229
+  # source://forwardable/1.3.3/forwardable.rb#231
   def header(*args, **_arg1, &block); end
 
-  # source://forwardable/1.3.2/forwardable.rb#229
+  # source://forwardable/1.3.3/forwardable.rb#231
   def last_request(*args, **_arg1, &block); end
 
-  # source://forwardable/1.3.2/forwardable.rb#229
+  # source://forwardable/1.3.3/forwardable.rb#231
   def last_response(*args, **_arg1, &block); end
 
-  # source://forwardable/1.3.2/forwardable.rb#229
+  # source://forwardable/1.3.3/forwardable.rb#231
   def options(*args, **_arg1, &block); end
 
-  # source://forwardable/1.3.2/forwardable.rb#229
+  # source://forwardable/1.3.3/forwardable.rb#231
   def patch(*args, **_arg1, &block); end
 
-  # source://forwardable/1.3.2/forwardable.rb#229
+  # source://forwardable/1.3.3/forwardable.rb#231
   def post(*args, **_arg1, &block); end
 
-  # source://forwardable/1.3.2/forwardable.rb#229
+  # source://forwardable/1.3.3/forwardable.rb#231
   def put(*args, **_arg1, &block); end
 
   # Return the existing session with the given name, or a new
@@ -350,10 +350,10 @@ module Rack::Test::Methods
   # source://rack-test//lib/rack/test/methods.rb#29
   def rack_test_session(name = T.unsafe(nil)); end
 
-  # source://forwardable/1.3.2/forwardable.rb#229
+  # source://forwardable/1.3.3/forwardable.rb#231
   def request(*args, **_arg1, &block); end
 
-  # source://forwardable/1.3.2/forwardable.rb#229
+  # source://forwardable/1.3.3/forwardable.rb#231
   def set_cookie(*args, **_arg1, &block); end
 
   # Create a new session (or reuse an existing session with the given name),
@@ -670,33 +670,20 @@ class Rack::Test::UploadedFile
   # Create a tempfile and copy the content from the given path into the tempfile, optionally renaming if
   # original_filename has been set.
   #
-  # source://rack-test//lib/rack/test/uploaded_file.rb#98
+  # source://rack-test//lib/rack/test/uploaded_file.rb#86
   def initialize_from_file_path(path); end
 
   # Use the StringIO as the tempfile.
   #
   # @raise [ArgumentError]
   #
-  # source://rack-test//lib/rack/test/uploaded_file.rb#90
+  # source://rack-test//lib/rack/test/uploaded_file.rb#78
   def initialize_from_stringio(stringio); end
 
   # @return [Boolean]
   #
   # source://rack-test//lib/rack/test/uploaded_file.rb#71
   def respond_to_missing?(method_name, include_private = T.unsafe(nil)); end
-
-  class << self
-    # Close and unlink the given file, used as a finalizer for the tempfile,
-    # if the tempfile is backed by a file in the filesystem.
-    #
-    # source://rack-test//lib/rack/test/uploaded_file.rb#82
-    def actually_finalize(file); end
-
-    # A proc that can be used as a finalizer to close and unlink the tempfile.
-    #
-    # source://rack-test//lib/rack/test/uploaded_file.rb#76
-    def finalize(file); end
-  end
 end
 
 # source://rack-test//lib/rack/test/utils.rb#5
