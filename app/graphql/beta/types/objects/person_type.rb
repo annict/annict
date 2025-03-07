@@ -28,7 +28,7 @@ module Beta
         field :favorite_people_count, Integer, null: false
         field :casts_count, Integer, null: false
         field :staffs_count, Integer, null: false
-        field :prefecture, Beta::Types::Objects::PrefectureType, null: false
+        field :prefecture, Beta::Types::Objects::PrefectureType, null: true
 
         def favorite_people_count
           object.favorite_users_count
