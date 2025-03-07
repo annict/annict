@@ -19,16 +19,16 @@ services:
       - app_gems_data:/usr/local/bundle
 
   postgresql:
-    image: postgres:16.4
+    image: postgres:17.3
     ports:
       - "5432:5432"
     volumes:
-      - postgresql16_data:/var/lib/postgresql/data:delegated
+      - postgresql17_data:/var/lib/postgresql/data:delegated
     environment:
       POSTGRES_HOST_AUTH_METHOD: trust
 
   redis:
-    image: redis:7.2.5-alpine
+    image: redis:7.4.2-alpine
     ports:
       - "6379:6379"
 
@@ -59,4 +59,4 @@ services:
 volumes:
   app_gems_data:
   minio_data:
-  postgresql16_data:
+  postgresql17_data:
