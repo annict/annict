@@ -50,7 +50,7 @@ services:
           - annict-development.minio
 
   imgproxy:
-    image: darthsim/imgproxy:v3.5.0
+    image: darthsim/imgproxy:v3.27.2
     ports:
       - "8080:8080"
     env_file:
