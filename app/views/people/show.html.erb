@@ -12,15 +12,33 @@
       </div>
 
       <div class="col-12 col-sm-9 mt-3 mt-sm-0">
-        <div class="card">
-          <div class="card-body">
-            <% if @person.voice_actor? %>
+        <% if @person.voice_actor? && @person.staff? %>
+          <h2 class="fw-bold h3">
+            <%= t("noun.cast") %>
+          </h2>
+        <% end %>
+
+        <% if @person.voice_actor? %>
+          <div class="card">
+            <div class="card-body">
               <%= render "grid", root_resource: @person, resource_years: @cast_years, resources_with_year: @casts_with_year %>
-            <% elsif @person.staff? %>
-              <%= render "grid", root_resource: @person, resource_years: @staff_years, resources_with_year: @staffs_with_year %>
-            <% end %>
+            </div>
           </div>
-        </div>
+        <% end %>
+
+        <% if @person.voice_actor? && @person.staff? %>
+          <h2 class="fw-bold h3 mt-3">
+            <%= t("noun.staff") %>
+          </h2>
+        <% end %>
+
+        <% if @person.staff? %>
+          <div class="card">
+            <div class="card-body">
+              <%= render "grid", root_resource: @person, resource_years: @staff_years, resources_with_year: @staffs_with_year %>
+            </div>
+          </div>
+        <% end %>
       </div>
     </div>
   </div>
