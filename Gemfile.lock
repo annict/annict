@@ -247,7 +247,7 @@ GEM
     github-markup (4.0.1)
     globalid (1.2.1)
       activesupport (>= 6.1)
-    graphql (2.0.31)
+    graphql (2.0.32)
       base64
     graphql-batch (0.5.1)
       graphql (>= 1.10, < 3)
@@ -690,7 +690,7 @@ DEPENDENCIES
   erb_lint
   factory_bot_rails
   github-markup
-  graphql (~> 2.0.31)
+  graphql (~> 2.0.32)
   graphql-batch
   graphql-fragment_cache
   groupdate
