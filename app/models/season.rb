@@ -67,10 +67,9 @@ class Season
   end
 
   def work_conditions
-    {
-      season_year: @year,
-      season_name: all? ? nil : name_value
-    }
+    conditions = {season_year: @year}
+    conditions[:season_name] = name_value unless all?
+    conditions
   end
 
   def all?
