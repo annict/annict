@@ -834,7 +834,7 @@ class Rack::CommonLogger
   # Attempt to determine the content length for the response to
   # include it in the logged data.
   #
-  # source://rack//lib/rack/common_logger.rb#78
+  # source://rack//lib/rack/common_logger.rb#79
   def extract_content_length(headers); end
 
   # Log the request to the configured logger.
@@ -5037,7 +5037,7 @@ class Rack::Static
 
   # Convert HTTP header rules to HTTP headers
   #
-  # source://rack//lib/rack/static.rb#166
+  # source://rack//lib/rack/static.rb#167
   def applicable_rules(path); end
 
   # source://rack//lib/rack/static.rb#123
