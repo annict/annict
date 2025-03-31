@@ -1,6 +1,7 @@
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
@@ -8,6 +9,20 @@ SET check_function_bodies = false;
 SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
+
+--
+-- Name: public; Type: SCHEMA; Schema: -; Owner: -
+--
+
+-- *not* creating schema, since initdb creates it
+
+
+--
+-- Name: SCHEMA public; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON SCHEMA public IS '';
+
 
 --
 -- Name: citext; Type: EXTENSION; Schema: -; Owner: -
@@ -2861,7 +2876,7 @@ CREATE TABLE public.works (
     season_name integer,
     key_pv_id bigint,
     manual_episodes_count integer,
-    no_episodes boolean DEFAULT false NOT NULL,
+    single_episode boolean DEFAULT false NOT NULL,
     work_records_count integer DEFAULT 0 NOT NULL,
     started_on date,
     ended_on date,
@@ -7050,6 +7065,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210809083311'),
 ('20210919175411'),
 ('20211016135715'),
-('20211017074902');
+('20211017074902'),
+('20250127095946');
 
 

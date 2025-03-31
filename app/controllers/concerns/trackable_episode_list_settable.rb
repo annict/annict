@@ -11,7 +11,6 @@ module TrackableEpisodeListSettable
       .watching
       .preload(:next_episode, program: :channel)
       .eager_load(:next_slot, work: :work_image)
-      .merge(Work.where(no_episodes: false))
       .order("slots.started_at DESC NULLS LAST")
       .order(:position)
       .page(params[:page])
