@@ -1,6 +1,7 @@
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
@@ -6388,6 +6389,14 @@ ALTER TABLE ONLY public.activities
 
 
 --
+-- Name: library_entries fk_rails_ab6e2c9467; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.library_entries
+    ADD CONSTRAINT fk_rails_ab6e2c9467 FOREIGN KEY (status_id) REFERENCES public.statuses(id);
+
+
+--
 -- Name: library_entries fk_rails_ac7d3615bf; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -6628,6 +6637,14 @@ ALTER TABLE ONLY public.mute_users
 
 
 --
+-- Name: statuses fk_rails_fb1024dbb6; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.statuses
+    ADD CONSTRAINT fk_rails_fb1024dbb6 FOREIGN KEY (oauth_application_id) REFERENCES public.oauth_applications(id);
+
+
+--
 -- Name: episode_records fk_rails_ff2b5e1c03; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -6729,6 +6746,22 @@ ALTER TABLE ONLY public.receptions
 
 ALTER TABLE ONLY public.receptions
     ADD CONSTRAINT receptions_user_id_fk FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: statuses statuses_user_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.statuses
+    ADD CONSTRAINT statuses_user_id_fk FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: statuses statuses_work_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.statuses
+    ADD CONSTRAINT statuses_work_id_fk FOREIGN KEY (work_id) REFERENCES public.works(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
 
 
 --
