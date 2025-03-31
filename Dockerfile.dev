@@ -13,13 +13,13 @@ RUN \
   apt update && \
   apt dist-upgrade -yq && \
   apt install -y --no-install-recommends \
-    build-essential \
-    curl \
-    git \
-    # Shrineによる画像アップロードに必要
-    file imagemagick \
-    # PostgreSQLやYarnのインストールに必要
-    gnupg
+  build-essential \
+  curl \
+  git \
+  # Shrineによる画像アップロードに必要
+  file imagemagick \
+  # PostgreSQLやYarnのインストールに必要
+  gnupg
 
 # PostgreSQLのセットアップ
 RUN \
@@ -27,8 +27,8 @@ RUN \
   echo "deb https://apt.postgresql.org/pub/repos/apt/ bullseye-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
   apt update && \
   apt install -y --no-install-recommends \
-    libpq-dev \
-    postgresql-client-16
+  libpq-dev \
+  postgresql-client-17
 
 ARG YARN_VERSION
 COPY --from=node /usr/local/bin/node /usr/local/bin/node
