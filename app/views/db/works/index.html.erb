@@ -39,6 +39,12 @@
             <div class="row">
               <div class="col-md-6">
                 <div class="form-check">
+                  <%= check_box_tag :no_episodes, "1", @is_no_episodes %>
+                  <%= label_tag :no_episodes, t("messages.db.works.no_episodes") %>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-check">
                   <%= check_box_tag :no_image, "1", @is_no_image %>
                   <%= label_tag :no_image, t("messages.db.works.no_image") %>
                 </div>
