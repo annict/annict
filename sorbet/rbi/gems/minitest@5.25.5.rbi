@@ -1338,8 +1338,8 @@ end
 #
 # source://minitest//lib/minitest/test.rb#10
 class Minitest::Test < ::Minitest::Runnable
-  include ::Minitest::Assertions
   include ::Minitest::Reportable
+  include ::Minitest::Assertions
   include ::Minitest::Test::LifecycleHooks
   include ::Minitest::Guard
   extend ::Minitest::Guard
