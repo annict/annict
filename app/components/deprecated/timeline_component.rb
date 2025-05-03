@@ -12,6 +12,8 @@ class Deprecated::TimelineComponent < Deprecated::ApplicationV6Component
       h.tag :div, class: "c-timeline" do
         h.tag :div, class: "c-timeline__activities" do
           @activity_groups.each.with_prelude do |activity_group|
+            next if activity_group.first_item.nil?
+
             h.tag :div, class: "c-timeline__activity pt-3" do
               case activity_group.itemable_type
               when "Status"
