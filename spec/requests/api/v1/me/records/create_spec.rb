@@ -69,7 +69,7 @@ describe "POST /v1/me/records" do
     it "returns error" do
       data = {
         episode_id: episode.id,
-        comment: "あぁ^～心がぴょんぴょんするんじゃぁ^～" * 52_430, # too long body
+        comment: "a" * (Record::MAX_BODY_LENGTH + 1), # too long body
         rating: 4.5,
         rating_state: "great",
         access_token: access_token.token

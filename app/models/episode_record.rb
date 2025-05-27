@@ -31,7 +31,7 @@ class EpisodeRecord < ApplicationRecord
     dependent: :destroy,
     as: :recipient
 
-  validates :body, length: {maximum: 1_048_596}
+  validates :body, length: {maximum: Record::MAX_BODY_LENGTH}
   validates :rating,
     allow_blank: true,
     numericality: {

@@ -64,7 +64,7 @@ describe "POST /v1/me/reviews" do
     it "returns error" do
       data = {
         work_id: work.id,
-        body: "あぁ^～心がぴょんぴょんするんじゃぁ^～" * 52_430, # too long body
+        body: "a" * (Record::MAX_BODY_LENGTH + 1), # too long body
         access_token: access_token.token
       }
       post api("/v1/me/reviews", data)

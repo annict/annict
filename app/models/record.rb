@@ -5,6 +5,7 @@ class Record < ApplicationRecord
   include SoftDeletable
   include Likeable
 
+  MAX_BODY_LENGTH = 1_048_596
   RATING_STATES = %i[bad average good great].freeze
 
   counter_culture :user
