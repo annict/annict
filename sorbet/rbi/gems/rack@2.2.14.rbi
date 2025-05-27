@@ -2645,21 +2645,21 @@ Rack::QUERY_STRING = T.let(T.unsafe(nil), String)
 class Rack::QueryParser
   # @return [QueryParser] a new instance of QueryParser
   #
-  # source://rack//lib/rack/query_parser.rb#29
-  def initialize(params_class, key_space_limit, param_depth_limit); end
+  # source://rack//lib/rack/query_parser.rb#54
+  def initialize(params_class, key_space_limit, param_depth_limit, bytesize_limit: T.unsafe(nil), params_limit: T.unsafe(nil)); end
 
   # Returns the value of attribute key_space_limit.
   #
-  # source://rack//lib/rack/query_parser.rb#27
+  # source://rack//lib/rack/query_parser.rb#34
   def key_space_limit; end
 
-  # source://rack//lib/rack/query_parser.rb#128
+  # source://rack//lib/rack/query_parser.rb#155
   def make_params; end
 
-  # source://rack//lib/rack/query_parser.rb#136
+  # source://rack//lib/rack/query_parser.rb#163
   def new_depth_limit(param_depth_limit); end
 
-  # source://rack//lib/rack/query_parser.rb#132
+  # source://rack//lib/rack/query_parser.rb#159
   def new_space_limit(key_space_limit); end
 
   # normalize_params recursively expands parameters into structural types. If
@@ -2668,12 +2668,12 @@ class Rack::QueryParser
   #
   # @raise [ParamsTooDeepError]
   #
-  # source://rack//lib/rack/query_parser.rb#87
+  # source://rack//lib/rack/query_parser.rb#114
   def normalize_params(params, name, v, depth); end
 
   # Returns the value of attribute param_depth_limit.
   #
-  # source://rack//lib/rack/query_parser.rb#27
+  # source://rack//lib/rack/query_parser.rb#34
   def param_depth_limit; end
 
   # parse_nested_query expands a query string into structural types. Supported
@@ -2682,7 +2682,7 @@ class Rack::QueryParser
   # ParameterTypeError is raised. Users are encouraged to return a 400 in this
   # case.
   #
-  # source://rack//lib/rack/query_parser.rb#68
+  # source://rack//lib/rack/query_parser.rb#95
   def parse_nested_query(qs, d = T.unsafe(nil)); end
 
   # Stolen from Mongrel, with some small modifications:
@@ -2691,29 +2691,35 @@ class Rack::QueryParser
   # cookies by changing the characters used in the second
   # parameter (which defaults to '&;').
   #
-  # source://rack//lib/rack/query_parser.rb#40
+  # source://rack//lib/rack/query_parser.rb#67
   def parse_query(qs, d = T.unsafe(nil), &unescaper); end
 
   private
 
+  # source://rack//lib/rack/query_parser.rb#185
+  def check_query_string(qs, sep); end
+
   # @return [Boolean]
   #
-  # source://rack//lib/rack/query_parser.rb#146
+  # source://rack//lib/rack/query_parser.rb#173
   def params_hash_has_key?(hash, key); end
 
   # @return [Boolean]
   #
-  # source://rack//lib/rack/query_parser.rb#142
+  # source://rack//lib/rack/query_parser.rb#169
   def params_hash_type?(obj); end
 
-  # source://rack//lib/rack/query_parser.rb#158
-  def unescape(s); end
+  # source://rack//lib/rack/query_parser.rb#201
+  def unescape(string); end
 
   class << self
-    # source://rack//lib/rack/query_parser.rb#23
-    def make_default(key_space_limit, param_depth_limit); end
+    # source://rack//lib/rack/query_parser.rb#30
+    def make_default(key_space_limit, param_depth_limit, **options); end
   end
 end
+
+# source://rack//lib/rack/query_parser.rb#48
+Rack::QueryParser::BYTESIZE_LIMIT = T.let(T.unsafe(nil), Integer)
 
 # source://rack//lib/rack/query_parser.rb#8
 Rack::QueryParser::COMMON_SEP = T.let(T.unsafe(nil), Hash)
@@ -2728,30 +2734,33 @@ Rack::QueryParser::DEFAULT_SEP = T.let(T.unsafe(nil), Regexp)
 # source://rack//lib/rack/query_parser.rb#17
 class Rack::QueryParser::InvalidParameterError < ::ArgumentError; end
 
+# source://rack//lib/rack/query_parser.rb#51
+Rack::QueryParser::PARAMS_LIMIT = T.let(T.unsafe(nil), Integer)
+
 # ParameterTypeError is the error that is raised when incoming structural
 # parameters (parsed by parse_nested_query) contain conflicting types.
 #
 # source://rack//lib/rack/query_parser.rb#12
 class Rack::QueryParser::ParameterTypeError < ::TypeError; end
 
-# source://rack//lib/rack/query_parser.rb#162
+# source://rack//lib/rack/query_parser.rb#205
 class Rack::QueryParser::Params
   # @return [Params] a new instance of Params
   #
-  # source://rack//lib/rack/query_parser.rb#163
+  # source://rack//lib/rack/query_parser.rb#206
   def initialize(limit); end
 
-  # source://rack//lib/rack/query_parser.rb#169
+  # source://rack//lib/rack/query_parser.rb#212
   def [](key); end
 
   # @raise [ParamsTooDeepError]
   #
-  # source://rack//lib/rack/query_parser.rb#173
+  # source://rack//lib/rack/query_parser.rb#216
   def []=(key, value); end
 
   # @return [Boolean]
   #
-  # source://rack//lib/rack/query_parser.rb#179
+  # source://rack//lib/rack/query_parser.rb#222
   def key?(key); end
 
   # Recursively unwraps nested `Params` objects and constructs an object
@@ -2772,7 +2781,7 @@ class Rack::QueryParser::Params
   #      getting the hash representation while another thread is adding a
   #      key to it is non-deterministic.
   #
-  # source://rack//lib/rack/query_parser.rb#201
+  # source://rack//lib/rack/query_parser.rb#244
   def to_h; end
 
   # Recursively unwraps nested `Params` objects and constructs an object
@@ -2793,15 +2802,23 @@ class Rack::QueryParser::Params
   #      getting the hash representation while another thread is adding a
   #      key to it is non-deterministic.
   #
-  # source://rack//lib/rack/query_parser.rb#201
+  # source://rack//lib/rack/query_parser.rb#244
   def to_params_hash; end
 end
 
-# ParamsTooDeepError is the error that is raised when params are recursively
-# nested over the specified limit.
+# ParamsTooDeepError is the old name for the error that is raised when params
+# are recursively nested over the specified limit. Make it the same as
+# as QueryLimitError, so that code that rescues ParamsTooDeepError error
+# to handle bad query strings also now handles other limits.
+#
+# source://rack//lib/rack/query_parser.rb#28
+Rack::QueryParser::ParamsTooDeepError = Rack::QueryParser::QueryLimitError
+
+# QueryLimitError is for errors raised when the query provided exceeds one
+# of the query parser limits.
 #
 # source://rack//lib/rack/query_parser.rb#21
-class Rack::QueryParser::ParamsTooDeepError < ::RangeError; end
+class Rack::QueryParser::QueryLimitError < ::RangeError; end
 
 # source://rack//lib/rack.rb#53
 Rack::RACK_ERRORS = T.let(T.unsafe(nil), String)
@@ -4791,7 +4808,7 @@ class Rack::Session::Pool < ::Rack::Session::Abstract::PersistedSecure
   # source://rack//lib/rack/session/pool.rb#33
   def initialize(app, options = T.unsafe(nil)); end
 
-  # source://rack//lib/rack/session/pool.rb#63
+  # source://rack//lib/rack/session/pool.rb#64
   def delete_session(req, session_id, options); end
 
   # source://rack//lib/rack/session/pool.rb#46
@@ -4810,7 +4827,7 @@ class Rack::Session::Pool < ::Rack::Session::Abstract::PersistedSecure
   # source://rack//lib/rack/session/pool.rb#30
   def pool; end
 
-  # source://rack//lib/rack/session/pool.rb#71
+  # source://rack//lib/rack/session/pool.rb#76
   def with_lock(req); end
 
   # source://rack//lib/rack/session/pool.rb#56
@@ -4818,7 +4835,7 @@ class Rack::Session::Pool < ::Rack::Session::Abstract::PersistedSecure
 
   private
 
-  # source://rack//lib/rack/session/pool.rb#80
+  # source://rack//lib/rack/session/pool.rb#85
   def get_session_with_fallback(sid); end
 end
 
