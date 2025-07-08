@@ -113,10 +113,8 @@ GEM
       descendants_tracker (~> 0.0.4)
       ice_nine (~> 0.11.0)
       thread_safe (~> 0.3, >= 0.3.1)
-    backport (1.2.0)
     base64 (0.2.0)
     bcrypt (3.1.16)
-    benchmark (0.2.0)
     better_errors (2.9.1)
       coderay (>= 1.0.0)
       erubi (>= 1.0.0)
@@ -200,7 +198,6 @@ GEM
       dry-core (~> 0.5, >= 0.5)
       dry-inflector (~> 0.1, >= 0.1.2)
       dry-logic (~> 1.0, >= 1.0.2)
-    e2mmap (0.1.0)
     email_validator (2.2.3)
       activemodel
     enumerize (2.5.0)
@@ -287,7 +284,6 @@ GEM
       ruby-vips (>= 2.0.17, < 3)
     imgproxy (2.1.0)
       anyway_config (>= 2.0.0)
-    jaro_winkler (1.5.4)
     jb (0.8.0)
     jmespath (1.6.2)
     jsbundling-rails (1.0.3)
@@ -312,10 +308,6 @@ GEM
       faraday-multipart
       json (>= 1.8)
       rexml
-    kramdown (2.4.0)
-      rexml
-    kramdown-parser-gfm (1.1.0)
-      kramdown (~> 2.0)
     language_server-protocol (3.17.0.3)
     lint_roller (1.1.0)
     listen (3.7.1)
@@ -359,6 +351,8 @@ GEM
     netrc (0.11.0)
     nio4r (2.7.4)
     nokogiri (1.18.8-aarch64-linux-gnu)
+      racc (~> 1.4)
+    nokogiri (1.18.8-arm64-darwin)
       racc (~> 1.4)
     nokogiri (1.18.8-x86_64-linux-gnu)
       racc (~> 1.4)
@@ -476,8 +470,6 @@ GEM
     responders (3.0.1)
       actionpack (>= 5.0)
       railties (>= 5.0)
-    reverse_markdown (2.1.1)
-      nokogiri
     rexml (3.4.0)
     rspec-core (3.11.0)
       rspec-support (~> 3.11.0)
@@ -559,25 +551,11 @@ GEM
       temple (>= 0.7.6, < 0.9)
       tilt (>= 2.0.6, < 2.1)
     smart_properties (1.17.0)
-    solargraph (0.47.2)
-      backport (~> 1.2)
-      benchmark
-      bundler (>= 1.17.2)
-      diff-lcs (~> 1.4)
-      e2mmap
-      jaro_winkler (~> 1.5)
-      kramdown (~> 2.3)
-      kramdown-parser-gfm (~> 1.1)
-      parser (~> 3.0)
-      reverse_markdown (>= 1.0.5, < 3)
-      rubocop (>= 0.52)
-      thor (~> 1.0)
-      tilt (~> 2.0)
-      yard (~> 0.9, >= 0.9.24)
     sorbet (0.5.11391)
       sorbet-static (= 0.5.11391)
     sorbet-runtime (0.5.11391)
     sorbet-static (0.5.11391-aarch64-linux)
+    sorbet-static (0.5.11391-universal-darwin)
     sorbet-static (0.5.11391-x86_64-linux)
     sorbet-static-and-runtime (0.5.11391)
       sorbet (= 0.5.11391)
@@ -658,6 +636,7 @@ GEM
 
 PLATFORMS
   aarch64-linux
+  arm64-darwin-24
   x86_64-linux
 
 DEPENDENCIES
@@ -746,7 +725,6 @@ DEPENDENCIES
   shrine
   simplecov (< 0.22)
   slim
-  solargraph
   sorbet
   sorbet-runtime
   squasher
