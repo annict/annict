@@ -5,6 +5,7 @@
 以下を手元の開発環境にインストールします。
 
 - Docker Compose
+- mise
 
 ## 手順
 
@@ -24,12 +25,18 @@ sudo sh -c "echo '127.0.0.1  annict.test' >> /etc/hosts"
 git clone git@github.com:annict/annict.git
 ```
 
+### miseで各種ソフトウェアをインストールする
+
+```sh
+cd /path/to/annict
+mise install
+```
+
 ### Docker Compose を使って各種サービスを立ち上げる
 
 以下を実行します。
 
 ```sh
-cd /path/to/annict
 docker compose up
 ```
 

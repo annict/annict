@@ -1,23 +1,4 @@
 services:
-  app:
-    build:
-      context: .
-      dockerfile: ./Dockerfile.dev
-    depends_on:
-      - imgproxy
-      - minio
-      - postgresql
-      - redis
-    environment:
-      BINDING: 0.0.0.0
-    ports:
-      - "3000:3000"
-    stdin_open: true
-    tty: true
-    volumes:
-      - .:/app
-      - app_gems_data:/usr/local/bundle
-
   postgresql:
     image: postgres:17.3
     ports:
@@ -57,6 +38,5 @@ services:
       - .env.imgproxy
 
 volumes:
-  app_gems_data:
   minio_data:
   postgresql17_data:

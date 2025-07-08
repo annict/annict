@@ -3,7 +3,7 @@
   "private": true,
   "engines": {
     "node": "16.14.2",
-    "yarn": "1.22.21"
+    "yarn": "1.22.22"
   },
   "scripts": {
     "build:css": "sass app/assets/stylesheets/application.scss:./app/assets/builds/application.css --no-source-map --load-path=node_modules",
