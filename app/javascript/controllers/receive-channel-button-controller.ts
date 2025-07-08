@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
+
 import Modal from "bootstrap/js/dist/modal";
 import { Controller } from "@hotwired/stimulus";
 

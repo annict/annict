@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import Tooltip from "bootstrap/js/dist/tooltip";
 import { Controller } from "@hotwired/stimulus";
 

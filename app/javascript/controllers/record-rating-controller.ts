@@ -29,7 +29,7 @@ export default class extends Controller {
   resetState() {
     const buttonElms = this.element.getElementsByClassName("btn");
 
-    for (let buttonElm of buttonElms) {
+    for (const buttonElm of buttonElms) {
       const { state } = (buttonElm as HTMLElement).dataset;
 
       buttonElm.classList.remove(`u-btn-${state}`);

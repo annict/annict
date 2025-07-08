@@ -1,10 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { Controller } from "@hotwired/stimulus";
 import Choices from "choices.js";
 import debounce from "lodash/debounce";
 
 export default class extends Controller {
   initialize() {
-    let choice = new Choices(this.element as HTMLSelectElement, {
+    const choice = new Choices(this.element as HTMLSelectElement, {
       searchResultLimit: 15,
       searchChoices: false,
     });

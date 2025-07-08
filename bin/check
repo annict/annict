@@ -8,6 +8,7 @@ end
   "bin/rails zeitwerk:check",
   "bin/rails sorbet:update",
   "yarn prettier . --write",
+  "yarn eslint . --fix",
   "bin/erb_lint --lint-all",
   "bin/standardrb",
   "bin/srb tc",

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import "bootstrap/js/dist/alert";
 
 import { Controller } from "@hotwired/stimulus";

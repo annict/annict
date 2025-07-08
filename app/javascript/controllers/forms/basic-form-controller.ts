@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
+
 import * as Turbo from "@hotwired/turbo";
 import { Controller } from "@hotwired/stimulus";
 

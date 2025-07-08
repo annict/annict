@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 function ResponseError(this: any, response: any) {
   this.message = `Request failed with status code ${response.status}`;
   this.response = response;

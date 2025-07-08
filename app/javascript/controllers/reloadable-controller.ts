@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {

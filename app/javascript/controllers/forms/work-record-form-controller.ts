@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { EventDispatcher } from "../../utils/event-dispatcher";
 import BasicFormController from "./basic-form-controller";
 
