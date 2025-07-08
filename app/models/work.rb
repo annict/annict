@@ -110,7 +110,7 @@ class Work < ApplicationRecord
   }
 
   scope :with_no_episodes, -> {
-    where(no_episodes: false).where(<<~SQL)
+    where(<<~SQL)
       NOT EXISTS (
         SELECT * FROM episodes WHERE
           1 = 1
