@@ -17,6 +17,12 @@
 sudo sh -c "echo '127.0.0.1  annict.test' >> /etc/hosts"
 ```
 
+### ImageMagickとlibvipsをインストールする
+
+```sh
+brew install imagemagick vips
+```
+
 ### ソースコードを取得する
 
 ソースコードを clone します。
