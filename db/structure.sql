@@ -2876,7 +2876,7 @@ CREATE TABLE public.works (
     season_name integer,
     key_pv_id bigint,
     manual_episodes_count integer,
-    single_episode boolean DEFAULT false NOT NULL,
+    no_episodes boolean DEFAULT false NOT NULL,
     work_records_count integer DEFAULT 0 NOT NULL,
     started_on date,
     ended_on date,
@@ -7065,7 +7065,6 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210809083311'),
 ('20210919175411'),
 ('20211016135715'),
-('20211017074902'),
-('20250127095946');
+('20211017074902');
 
 
