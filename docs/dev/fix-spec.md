@@ -1,4 +1,5 @@
 - エンドポイントごとにrequest specを書きます
+- トップレベルの `describe` は `RSpec.describe "<エンドポイント (例: GET /)>", type: :request do` で始まるようにしてください
 - `docs/claude/base/coding-conventions/rspec.md` に沿っていない書き方をしているテストがあるので、その場合は沿うように修正してください
 - その他 `docs/claude/base/coding-conventions` のコーディング規約も守ってください
 - エンドポイントの実装を確認し、必要であればパターンが網羅されるようにテストを追加してください
