@@ -52,21 +52,21 @@ RSpec.describe "GET /v1/characters", type: :request do
   it "filter_idsでキャラクターをフィルタリングできること" do
     access_token = create(:oauth_access_token)
     character1 = create(:character)
-    character2 = create(:character)
+    create(:character)
     character3 = create(:character)
 
     get api("/v1/characters", access_token: access_token.token, filter_ids: "#{character1.id},#{character3.id}")
 
     expect(response.status).to eq(200)
     expect(json["characters"].size).to eq(2)
-    expect(json["characters"].map { |c| c["id"] }).to contain_exactly(character1.id, character3.id)
+    expect(json["characters"].pluck("id")).to contain_exactly(character1.id, character3.id)
     expect(json["total_count"]).to eq(2)
   end
 
   it "filter_nameでキャラクター名を検索できること" do
     access_token = create(:oauth_access_token)
     character1 = create(:character, name: "テストキャラクター1")
-    character2 = create(:character, name: "別のキャラクター")
+    create(:character, name: "別のキャラクター")
 
     get api("/v1/characters", access_token: access_token.token, filter_name: "テスト")
 
@@ -78,35 +78,35 @@ RSpec.describe "GET /v1/characters", type: :request do
 
   it "sort_idでキャラクターを昇順でソートできること" do
     access_token = create(:oauth_access_token)
-    character1 = create(:character)
-    character2 = create(:character)
-    character3 = create(:character)
+    create(:character)
+    create(:character)
+    create(:character)
 
     get api("/v1/characters", access_token: access_token.token, sort_id: "asc")
 
     expect(response.status).to eq(200)
     expect(json["characters"].size).to eq(3)
-    ids = json["characters"].map { |c| c["id"] }
+    ids = json["characters"].pluck("id")
     expect(ids).to eq(ids.sort)
   end
 
   it "sort_idでキャラクターを降順でソートできること" do
     access_token = create(:oauth_access_token)
-    character1 = create(:character)
-    character2 = create(:character)
-    character3 = create(:character)
+    create(:character)
+    create(:character)
+    create(:character)
 
     get api("/v1/characters", access_token: access_token.token, sort_id: "desc")
 
     expect(response.status).to eq(200)
     expect(json["characters"].size).to eq(3)
-    ids = json["characters"].map { |c| c["id"] }
+    ids = json["characters"].pluck("id")
     expect(ids).to eq(ids.sort.reverse)
   end
 
   it "pageとper_pageでページネーションができること" do
     access_token = create(:oauth_access_token)
-    5.times { create(:character) }
+    create_list(:character, 5)
 
     get api("/v1/characters", access_token: access_token.token, page: 1, per_page: 2)
 
@@ -119,7 +119,7 @@ RSpec.describe "GET /v1/characters", type: :request do
 
   it "2ページ目を取得できること" do
     access_token = create(:oauth_access_token)
-    5.times { create(:character) }
+    create_list(:character, 5)
 
     get api("/v1/characters", access_token: access_token.token, page: 2, per_page: 2)
 
@@ -133,7 +133,7 @@ RSpec.describe "GET /v1/characters", type: :request do
   it "削除されたキャラクターは表示されないこと" do
     access_token = create(:oauth_access_token)
     character1 = create(:character)
-    character2 = create(:character, deleted_at: Time.current)
+    create(:character, deleted_at: Time.current)
 
     get api("/v1/characters", access_token: access_token.token)
 
@@ -146,7 +146,7 @@ RSpec.describe "GET /v1/characters", type: :request do
   it "未公開のキャラクターは表示されないこと" do
     access_token = create(:oauth_access_token)
     character1 = create(:character)
-    character2 = create(:character, unpublished_at: Time.current)
+    create(:character, unpublished_at: Time.current)
 
     get api("/v1/characters", access_token: access_token.token)
 
@@ -154,5 +154,81 @@ RSpec.describe "GET /v1/characters", type: :request do
     expect(json["characters"].size).to eq(1)
     expect(json["characters"][0]["id"]).to eq(character1.id)
     expect(json["total_count"]).to eq(1)
+  end
+
+  it "アクセストークンが提供されていない場合、401エラーを返すこと" do
+    get api("/v1/characters")
+
+    expect(response.status).to eq(401)
+  end
+
+  it "無効なアクセストークンが提供された場合、401エラーを返すこと" do
+    get api("/v1/characters", access_token: "invalid_token")
+
+    expect(response.status).to eq(401)
+  end
+
+  it "per_pageが上限を超える場合、400エラーを返すこと" do
+    access_token = create(:oauth_access_token)
+
+    get api("/v1/characters", access_token: access_token.token, per_page: 51)
+
+    expect(response.status).to eq(400)
+  end
+
+  it "per_pageが0の場合、400エラーを返すこと" do
+    access_token = create(:oauth_access_token)
+
+    get api("/v1/characters", access_token: access_token.token, per_page: 0)
+
+    expect(response.status).to eq(400)
+  end
+
+  it "pageが0の場合、400エラーを返すこと" do
+    access_token = create(:oauth_access_token)
+
+    get api("/v1/characters", access_token: access_token.token, page: 0)
+
+    expect(response.status).to eq(400)
+  end
+
+  it "sort_idが無効な値の場合、400エラーを返すこと" do
+    access_token = create(:oauth_access_token)
+
+    get api("/v1/characters", access_token: access_token.token, sort_id: "invalid")
+
+    expect(response.status).to eq(400)
+  end
+
+  it "キャラクターが存在しない場合、空の配列を返すこと" do
+    access_token = create(:oauth_access_token)
+
+    get api("/v1/characters", access_token: access_token.token)
+
+    expect(response.status).to eq(200)
+    expect(json["characters"]).to eq([])
+    expect(json["total_count"]).to eq(0)
+  end
+
+  it "存在しないキャラクター名で検索した場合、空の結果を返すこと" do
+    access_token = create(:oauth_access_token)
+    create(:character, name: "テストキャラクター")
+
+    get api("/v1/characters", access_token: access_token.token, filter_name: "存在しない名前")
+
+    expect(response.status).to eq(200)
+    expect(json["characters"]).to eq([])
+    expect(json["total_count"]).to eq(0)
+  end
+
+  it "存在しないIDでフィルタリングした場合、空の結果を返すこと" do
+    access_token = create(:oauth_access_token)
+    create(:character)
+
+    get api("/v1/characters", access_token: access_token.token, filter_ids: "999999")
+
+    expect(response.status).to eq(200)
+    expect(json["characters"]).to eq([])
+    expect(json["total_count"]).to eq(0)
   end
 end
