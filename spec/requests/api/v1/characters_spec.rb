@@ -1,59 +1,158 @@
 # typed: false
 # frozen_string_literal: true
 
-describe "Api::V1::Characters" do
-  let(:access_token) { create(:oauth_access_token) }
-  let!(:character) { create(:character) }
+RSpec.describe "GET /v1/characters", type: :request do
+  it "パラメータなしでキャラクター情報を取得できること" do
+    access_token = create(:oauth_access_token)
+    character = create(:character)
 
-  describe "GET /v1/characters" do
-    before do
-      get api("/v1/characters", access_token: access_token.token)
-    end
+    get api("/v1/characters", access_token: access_token.token)
 
-    context "when added no parameters" do
-      it "responses 200" do
-        expect(response.status).to eq(200)
-      end
+    expect(response.status).to eq(200)
 
-      it "gets character info" do
-        expected_hash = {
-          "id" => character.id,
-          "name" => character.name,
-          "name_kana" => character.name_kana,
-          "name_en" => character.name_en,
-          "nickname" => character.nickname,
-          "nickname_en" => character.nickname_en,
-          "birthday" => character.birthday,
-          "birthday_en" => character.birthday_en,
-          "age" => character.age,
-          "age_en" => character.age_en,
-          "blood_type" => character.blood_type,
-          "blood_type_en" => character.blood_type_en,
-          "height" => character.height,
-          "height_en" => character.height_en,
-          "weight" => character.weight,
-          "weight_en" => character.weight_en,
-          "nationality" => character.nationality,
-          "nationality_en" => character.nationality_en,
-          "occupation" => character.occupation,
-          "occupation_en" => character.occupation_en,
-          "description" => character.description,
-          "description_en" => character.description_en,
-          "description_source" => character.description_source,
-          "description_source_en" => character.description_source_en,
-          "favorite_characters_count" => character.favorite_users_count,
-          "series" => {
-            "id" => character.series.id,
-            "name" => character.series.name,
-            "name_en" => character.series.name_en,
-            "name_ro" => character.series.name_ro
-          }
-        }
-        expect(json["characters"][0]).to include(expected_hash)
-        expect(json["total_count"]).to eq(1)
-        expect(json["next_page"]).to eq(nil)
-        expect(json["prev_page"]).to eq(nil)
-      end
-    end
+    expected_hash = {
+      "id" => character.id,
+      "name" => character.name,
+      "name_kana" => character.name_kana,
+      "name_en" => character.name_en,
+      "nickname" => character.nickname,
+      "nickname_en" => character.nickname_en,
+      "birthday" => character.birthday,
+      "birthday_en" => character.birthday_en,
+      "age" => character.age,
+      "age_en" => character.age_en,
+      "blood_type" => character.blood_type,
+      "blood_type_en" => character.blood_type_en,
+      "height" => character.height,
+      "height_en" => character.height_en,
+      "weight" => character.weight,
+      "weight_en" => character.weight_en,
+      "nationality" => character.nationality,
+      "nationality_en" => character.nationality_en,
+      "occupation" => character.occupation,
+      "occupation_en" => character.occupation_en,
+      "description" => character.description,
+      "description_en" => character.description_en,
+      "description_source" => character.description_source,
+      "description_source_en" => character.description_source_en,
+      "favorite_characters_count" => character.favorite_users_count,
+      "series" => {
+        "id" => character.series.id,
+        "name" => character.series.name,
+        "name_en" => character.series.name_en,
+        "name_ro" => character.series.name_ro
+      }
+    }
+    expect(json["characters"][0]).to include(expected_hash)
+    expect(json["total_count"]).to eq(1)
+    expect(json["next_page"]).to eq(nil)
+    expect(json["prev_page"]).to eq(nil)
+  end
+
+  it "filter_idsでキャラクターをフィルタリングできること" do
+    access_token = create(:oauth_access_token)
+    character1 = create(:character)
+    character2 = create(:character)
+    character3 = create(:character)
+
+    get api("/v1/characters", access_token: access_token.token, filter_ids: "#{character1.id},#{character3.id}")
+
+    expect(response.status).to eq(200)
+    expect(json["characters"].size).to eq(2)
+    expect(json["characters"].map { |c| c["id"] }).to contain_exactly(character1.id, character3.id)
+    expect(json["total_count"]).to eq(2)
+  end
+
+  it "filter_nameでキャラクター名を検索できること" do
+    access_token = create(:oauth_access_token)
+    character1 = create(:character, name: "テストキャラクター1")
+    character2 = create(:character, name: "別のキャラクター")
+
+    get api("/v1/characters", access_token: access_token.token, filter_name: "テスト")
+
+    expect(response.status).to eq(200)
+    expect(json["characters"].size).to eq(1)
+    expect(json["characters"][0]["id"]).to eq(character1.id)
+    expect(json["characters"][0]["name"]).to eq("テストキャラクター1")
+  end
+
+  it "sort_idでキャラクターを昇順でソートできること" do
+    access_token = create(:oauth_access_token)
+    character1 = create(:character)
+    character2 = create(:character)
+    character3 = create(:character)
+
+    get api("/v1/characters", access_token: access_token.token, sort_id: "asc")
+
+    expect(response.status).to eq(200)
+    expect(json["characters"].size).to eq(3)
+    ids = json["characters"].map { |c| c["id"] }
+    expect(ids).to eq(ids.sort)
+  end
+
+  it "sort_idでキャラクターを降順でソートできること" do
+    access_token = create(:oauth_access_token)
+    character1 = create(:character)
+    character2 = create(:character)
+    character3 = create(:character)
+
+    get api("/v1/characters", access_token: access_token.token, sort_id: "desc")
+
+    expect(response.status).to eq(200)
+    expect(json["characters"].size).to eq(3)
+    ids = json["characters"].map { |c| c["id"] }
+    expect(ids).to eq(ids.sort.reverse)
+  end
+
+  it "pageとper_pageでページネーションができること" do
+    access_token = create(:oauth_access_token)
+    5.times { create(:character) }
+
+    get api("/v1/characters", access_token: access_token.token, page: 1, per_page: 2)
+
+    expect(response.status).to eq(200)
+    expect(json["characters"].size).to eq(2)
+    expect(json["total_count"]).to eq(5)
+    expect(json["next_page"]).to eq(2)
+    expect(json["prev_page"]).to eq(nil)
+  end
+
+  it "2ページ目を取得できること" do
+    access_token = create(:oauth_access_token)
+    5.times { create(:character) }
+
+    get api("/v1/characters", access_token: access_token.token, page: 2, per_page: 2)
+
+    expect(response.status).to eq(200)
+    expect(json["characters"].size).to eq(2)
+    expect(json["total_count"]).to eq(5)
+    expect(json["next_page"]).to eq(3)
+    expect(json["prev_page"]).to eq(1)
+  end
+
+  it "削除されたキャラクターは表示されないこと" do
+    access_token = create(:oauth_access_token)
+    character1 = create(:character)
+    character2 = create(:character, deleted_at: Time.current)
+
+    get api("/v1/characters", access_token: access_token.token)
+
+    expect(response.status).to eq(200)
+    expect(json["characters"].size).to eq(1)
+    expect(json["characters"][0]["id"]).to eq(character1.id)
+    expect(json["total_count"]).to eq(1)
+  end
+
+  it "未公開のキャラクターは表示されないこと" do
+    access_token = create(:oauth_access_token)
+    character1 = create(:character)
+    character2 = create(:character, unpublished_at: Time.current)
+
+    get api("/v1/characters", access_token: access_token.token)
+
+    expect(response.status).to eq(200)
+    expect(json["characters"].size).to eq(1)
+    expect(json["characters"][0]["id"]).to eq(character1.id)
+    expect(json["total_count"]).to eq(1)
   end
 end
