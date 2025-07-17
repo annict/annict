@@ -1,6 +1,7 @@
 .DS_Store
 
 /.bundle
+/.claude/settings.local.json
 /.env.*.local
 /.envrc
 /.idea
