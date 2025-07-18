@@ -2,7 +2,7 @@ services:
   postgresql:
     image: postgres:17.3
     ports:
-      - "5432:5432"
+      - "15432:5432"
     volumes:
       - postgresql17_data:/var/lib/postgresql/data:delegated
     environment:
@@ -11,7 +11,7 @@ services:
   redis:
     image: redis:7.4.2-alpine
     ports:
-      - "6379:6379"
+      - "16379:6379"
 
   minio:
     image: minio/minio
@@ -20,9 +20,9 @@ services:
       MINIO_ROOT_PASSWORD: minio_admin
       MINIO_DOMAIN: minio
     ports:
-      - "9000:9000"
-      - "9001:9001"
-    command: server /data --address "0.0.0.0:9000" --console-address "0.0.0.0:9001"
+      - "19000:9000"
+      - "19001:9001"
+    command: server /data --address "0.0.0.0:19000" --console-address "0.0.0.0:19001"
     volumes:
       - minio_data:/data
     networks:
@@ -33,7 +33,7 @@ services:
   imgproxy:
     image: darthsim/imgproxy:v3.27.2
     ports:
-      - "8080:8080"
+      - "18080:8080"
     env_file:
       - .env.imgproxy
 
