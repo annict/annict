@@ -4,11 +4,11 @@
 RSpec.describe "GET /@:username/ics", type: :request do
   it "ユーザーが存在する場合、ICカレンダー形式で応答すること" do
     user = FactoryBot.create(:user, username: "test_user")
-    work = FactoryBot.create(:work, started_on: Date.today)
+    work = FactoryBot.create(:work, started_on: Time.zone.today)
     program = FactoryBot.create(:program, work:)
     episode = FactoryBot.create(:episode, work:)
-    slot = FactoryBot.create(:slot, program:, episode:, started_at: 1.hour.since)
-    
+    FactoryBot.create(:slot, program:, episode:, started_at: 1.hour.since)
+
     status = FactoryBot.create(:status, user:, work:, kind: :wanna_watch)
     FactoryBot.create(:library_entry, user:, program:, work:, status:)
 
@@ -52,8 +52,8 @@ RSpec.describe "GET /@:username/ics", type: :request do
     work = FactoryBot.create(:work)
     program = FactoryBot.create(:program, work:)
     episode = FactoryBot.create(:episode, work:)
-    slot = FactoryBot.create(:slot, program:, episode:, started_at: 1.day.ago)
-    
+    FactoryBot.create(:slot, program:, episode:, started_at: 1.day.ago)
+
     status = FactoryBot.create(:status, user:, work:, kind: :watching)
     FactoryBot.create(:library_entry, user:, program:, work:, status:)
 
@@ -69,8 +69,8 @@ RSpec.describe "GET /@:username/ics", type: :request do
     work = FactoryBot.create(:work)
     program = FactoryBot.create(:program, work:)
     episode = FactoryBot.create(:episode, work:)
-    slot = FactoryBot.create(:slot, program:, episode:, started_at: 8.days.since)
-    
+    FactoryBot.create(:slot, program:, episode:, started_at: 8.days.since)
+
     status = FactoryBot.create(:status, user:, work:, kind: :watching)
     FactoryBot.create(:library_entry, user:, program:, work:, status:)
 
