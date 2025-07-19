@@ -26,6 +26,12 @@ FactoryBot.define do
       end
     end
 
+    trait :with_email_notification do
+      after :create do |user|
+        create(:email_notification, user: user)
+      end
+    end
+
     trait :with_editor_role do
       role { :editor }
     end

@@ -1,15 +1,41 @@
 # typed: false
 # frozen_string_literal: true
 
-describe "GET /@:username/favorite_characters", type: :request do
-  let!(:user) { create(:registered_user) }
+RSpec.describe "GET /@:username/favorite_characters", type: :request do
+  it "お気に入りキャラクターがいないとき、アクセスできること" do
+    user = create(:registered_user)
+    get "/@#{user.username}/favorite_characters"
 
-  context "お気に入りがいないとき" do
-    it "アクセスできること" do
+    expect(response.status).to eq(200)
+    expect(response.body).to include("キャラクターはいません")
+  end
+
+  it "お気に入りキャラクターがいるとき、キャラクター一覧が表示されること" do
+    user = create(:registered_user)
+    character1 = create(:character)
+    character2 = create(:character)
+    create(:character_favorite, user:, character: character1)
+    create(:character_favorite, user:, character: character2)
+
+    get "/@#{user.username}/favorite_characters"
+
+    expect(response.status).to eq(200)
+    expect(response.body).to include(character1.name)
+    expect(response.body).to include(character2.name)
+  end
+
+  it "存在しないユーザー名でアクセスしたとき、RecordNotFoundエラーが発生すること" do
+    expect {
+      get "/@nonexistentuser/favorite_characters"
+    }.to raise_error(ActiveRecord::RecordNotFound)
+  end
+
+  it "削除されたユーザーでアクセスしたとき、RecordNotFoundエラーが発生すること" do
+    user = create(:registered_user)
+    user.destroy_in_batches
+
+    expect {
       get "/@#{user.username}/favorite_characters"
-
-      expect(response.status).to eq(200)
-      expect(response.body).to include("キャラクターはいません")
-    end
+    }.to raise_error(ActiveRecord::RecordNotFound)
   end
 end

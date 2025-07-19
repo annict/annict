@@ -1,0 +1,3 @@
+[submodule "docs/claude/base"]
+	path = docs/claude/base
+	url = https://github.com/shimpleco/claude-docs.git

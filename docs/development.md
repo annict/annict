@@ -17,6 +17,12 @@
 sudo sh -c "echo '127.0.0.1  annict.test' >> /etc/hosts"
 ```
 
+### ImageMagickとlibvipsをインストールする
+
+```sh
+brew install imagemagick vips
+```
+
 ### ソースコードを取得する
 
 ソースコードを clone します。
@@ -46,18 +52,18 @@ docker compose up
 また、アップロードした画像のリサイズなどをするために[imgproxy](https://imgproxy.net/)を使っています。
 MinIO と imgproxy は `docker compose up` ですでに起動しているはずです。
 
-http://localhost:9001/login にアクセスし、以下の情報で MinIO の管理コンソールにログインします。
+http://localhost:19001/login にアクセスし、以下の情報で MinIO の管理コンソールにログインします。
 
 - Username: `minio_admin`
 - Password: `minio_admin`
 
-ログイン後、 http://localhost:9001/access-keys にアクセスし、アクセスキーを作成します。
+ログイン後、 http://localhost:19001/access-keys にアクセスし、アクセスキーを作成します。
 作成したアクセスキーとシークレットキーを以下に設定します。
 
 - [.env.development](https://github.com/annict/annict/blob/main/.env.development) の `S3_ACCESS_KEY_ID` と `S3_SECRET_ACCESS_KEY`
 - [.env.imgproxy](https://github.com/annict/annict/blob/main/.env.imgproxy) の `AWS_ACCESS_KEY_ID` と `AWS_SECRET_ACCESS_KEY`
 
-次に http://localhost:9001/buckets にアクセスし、`annict-development` という名前のバケットを作成します。
+次に http://localhost:19001/buckets にアクセスし、`annict-development` という名前のバケットを作成します。
 
 ### Rails のセットアップをする
 
