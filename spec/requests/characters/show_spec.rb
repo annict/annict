@@ -1,10 +1,10 @@
 # typed: false
 # frozen_string_literal: true
 
-describe "GET /characters/:character_id", type: :request do
-  let(:character) { create(:character) }
-
+RSpec.describe "GET /characters/:character_id", type: :request do
   it "アクセスできること" do
+    character = FactoryBot.create(:character)
+
     get "/characters/#{character.id}"
 
     expect(response.status).to eq(200)
