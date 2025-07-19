@@ -3,15 +3,15 @@
 
 RSpec.describe "POST /api/internal/follow", type: :request do
   it "未ログイン時は302ステータスを返すこと" do
-    user = create(:user)
+    user = create(:user, :with_email_notification)
     post "/api/internal/follow", params: {user_id: user.id}
 
     expect(response.status).to eq(302)
   end
 
   it "ログイン時はユーザーをフォローし201ステータスを返すこと" do
-    user = create(:user)
-    follower = create(:user)
+    user = create(:user, :with_email_notification)
+    follower = create(:user, :with_email_notification)
 
     expect(follower.following?(user)).to be(false)
 
@@ -23,8 +23,8 @@ RSpec.describe "POST /api/internal/follow", type: :request do
   end
 
   it "既にフォロー済みの場合でも201ステータスを返すこと" do
-    user = create(:user)
-    follower = create(:user)
+    user = create(:user, :with_email_notification)
+    follower = create(:user, :with_email_notification)
     follower.follow(user)
 
     expect(follower.following?(user)).to be(true)
@@ -37,7 +37,7 @@ RSpec.describe "POST /api/internal/follow", type: :request do
   end
 
   it "存在しないユーザーIDを指定した場合はActiveRecord::RecordNotFoundが発生すること" do
-    follower = create(:user)
+    follower = create(:user, :with_email_notification)
 
     login_as(follower, scope: :user)
     expect {
@@ -46,7 +46,7 @@ RSpec.describe "POST /api/internal/follow", type: :request do
   end
 
   it "user_idパラメータが不正な場合はActiveRecord::RecordNotFoundが発生すること" do
-    follower = create(:user)
+    follower = create(:user, :with_email_notification)
 
     login_as(follower, scope: :user)
     expect {
