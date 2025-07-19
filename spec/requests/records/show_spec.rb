@@ -1,78 +1,74 @@
 # typed: false
 # frozen_string_literal: true
 
-describe "GET /@:username/records/:record_id", type: :request do
-  let(:user) { create(:registered_user) }
+RSpec.describe "GET /@:username/records/:record_id", type: :request do
+  it "ログインしてアニメへの記録を参照するとき、記録が表示されること" do
+    user = create(:registered_user)
+    work = create(:work)
+    record = create(:record, user:, work:)
+    create(:work_record, user:, record:, work:, body: "最高")
 
-  context "ログインしているとき" do
-    before do
-      login_as(user, scope: :user)
-    end
+    login_as(user, scope: :user)
+    get "/@#{user.username}/records/#{record.id}"
 
-    context "アニメへの記録を参照するとき" do
-      let!(:work) { create(:work) }
-      let!(:record) { create(:record, user: user, work: work) }
-      let!(:work_record) { create(:work_record, user: user, record: record, work: work, body: "最高") }
-
-      it "記録が表示されること" do
-        get "/@#{user.username}/records/#{record.id}"
-
-        expect(response.status).to eq(200)
-        expect(response.body).to include(user.profile.name)
-        expect(response.body).to include(work.title)
-        expect(response.body).to include("最高")
-      end
-    end
-
-    context "エピソードへの記録を参照するとき" do
-      let!(:work) { create(:work) }
-      let!(:episode) { create(:episode, work: work) }
-      let!(:record) { create(:record, user: user, work: work) }
-      let!(:episode_record) { create(:episode_record, record: record, work: work, episode: episode, user: user, body: "楽しかった") }
-
-      it "記録が表示されること" do
-        get "/@#{user.username}/records/#{record.id}"
-
-        expect(response.status).to eq(200)
-        expect(response.body).to include(user.profile.name)
-        expect(response.body).to include(work.title)
-        expect(response.body).to include(episode.number)
-        expect(response.body).to include("楽しかった")
-      end
-    end
+    expect(response.status).to eq(200)
+    expect(response.body).to include(user.profile.name)
+    expect(response.body).to include(work.title)
+    expect(response.body).to include("最高")
   end
 
-  context "ログインしていないとき" do
-    context "アニメへの記録を参照したとき" do
-      let!(:work) { create(:work) }
-      let!(:record) { create(:record, user: user, work: work) }
-      let!(:work_record) { create(:work_record, user: user, record: record, work: work, body: "最高") }
+  it "ログインしてエピソードへの記録を参照するとき、記録が表示されること" do
+    user = create(:registered_user)
+    work = create(:work)
+    episode = create(:episode, work:)
+    record = create(:record, user:, work:)
+    create(:episode_record, record:, work:, episode:, user:, body: "楽しかった")
 
-      it "記録が表示されること" do
-        get "/@#{user.username}/records/#{record.id}"
+    login_as(user, scope: :user)
+    get "/@#{user.username}/records/#{record.id}"
 
-        expect(response.status).to eq(200)
-        expect(response.body).to include(user.profile.name)
-        expect(response.body).to include(work.title)
-        expect(response.body).to include("最高")
-      end
-    end
+    expect(response.status).to eq(200)
+    expect(response.body).to include(user.profile.name)
+    expect(response.body).to include(work.title)
+    expect(response.body).to include(episode.number)
+    expect(response.body).to include("楽しかった")
+  end
 
-    context "エピソードへの記録を参照したとき" do
-      let!(:work) { create(:work) }
-      let!(:episode) { create(:episode, work: work) }
-      let!(:record) { create(:record, user: user, work: work) }
-      let!(:episode_record) { create(:episode_record, record: record, work: work, episode: episode, user: user, body: "楽しかった") }
+  it "ログインしていないときアニメへの記録を参照すると、記録が表示されること" do
+    user = create(:registered_user)
+    work = create(:work)
+    record = create(:record, user:, work:)
+    create(:work_record, user:, record:, work:, body: "最高")
 
-      it "記録が表示されること" do
-        get "/@#{user.username}/records/#{record.id}"
+    get "/@#{user.username}/records/#{record.id}"
 
-        expect(response.status).to eq(200)
-        expect(response.body).to include(user.profile.name)
-        expect(response.body).to include(work.title)
-        expect(response.body).to include(episode.number)
-        expect(response.body).to include("楽しかった")
-      end
-    end
+    expect(response.status).to eq(200)
+    expect(response.body).to include(user.profile.name)
+    expect(response.body).to include(work.title)
+    expect(response.body).to include("最高")
+  end
+
+  it "ログインしていないときエピソードへの記録を参照すると、記録が表示されること" do
+    user = create(:registered_user)
+    work = create(:work)
+    episode = create(:episode, work:)
+    record = create(:record, user:, work:)
+    create(:episode_record, record:, work:, episode:, user:, body: "楽しかった")
+
+    get "/@#{user.username}/records/#{record.id}"
+
+    expect(response.status).to eq(200)
+    expect(response.body).to include(user.profile.name)
+    expect(response.body).to include(work.title)
+    expect(response.body).to include(episode.number)
+    expect(response.body).to include("楽しかった")
+  end
+
+  it "存在しない記録を参照すると、例外が発生すること" do
+    user = create(:registered_user)
+
+    expect {
+      get "/@#{user.username}/records/non-existent-id"
+    }.to raise_error(ActiveRecord::RecordNotFound)
   end
 end
