@@ -70,6 +70,17 @@ RSpec.describe "DELETE /oauth/applications/:id", type: :request do
     end.to raise_error(ActiveRecord::RecordNotFound)
   end
 
+  it "管理者でないユーザーが他のユーザーのアプリケーションを削除しようとしたとき、404エラーが発生すること" do
+    user1 = FactoryBot.create(:registered_user)
+    user2 = FactoryBot.create(:registered_user)
+    application = FactoryBot.create(:oauth_application, owner: user2)
+    login_as(user1, scope: :user)
+
+    expect do
+      delete "/oauth/applications/#{application.id}"
+    end.to raise_error(ActiveRecord::RecordNotFound)
+  end
+
   it "アプリケーションが削除されたとき、関連するアクセストークンも削除されること" do
     user = FactoryBot.create(:registered_user, :with_admin_role)
     application = FactoryBot.create(:oauth_application, owner: user)
