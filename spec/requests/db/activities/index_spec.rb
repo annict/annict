@@ -1,35 +1,49 @@
 # typed: false
 # frozen_string_literal: true
 
-describe "GET /db/activities", type: :request do
-  context "user does not sign in" do
-    let!(:db_activity) { create(:works_create_activity) }
+RSpec.describe "GET /db/activities", type: :request do
+  it "ユーザーがログインしていないとき、アクティビティリストが表示されること" do
+    db_activity = create(:works_create_activity)
+    work = db_activity.trackable
 
-    it "responses activity list" do
-      work = db_activity.trackable
+    get "/db/activities"
 
-      get "/db/activities"
-
-      expect(response.status).to eq(200)
-      expect(response.body).to include(work.title)
-    end
+    expect(response.status).to eq(200)
+    expect(response.body).to include(work.title)
   end
 
-  context "user signs in" do
-    let!(:user) { create(:registered_user) }
-    let!(:db_activity) { create(:works_create_activity) }
+  it "ユーザーがログインしているとき、アクティビティリストが表示されること" do
+    user = create(:registered_user)
+    db_activity = create(:works_create_activity)
+    work = db_activity.trackable
 
-    before do
-      login_as(user, scope: :user)
-    end
+    login_as(user, scope: :user)
 
-    it "responses series list" do
-      work = db_activity.trackable
+    get "/db/activities"
 
-      get "/db/activities"
+    expect(response.status).to eq(200)
+    expect(response.body).to include(work.title)
+  end
 
-      expect(response.status).to eq(200)
-      expect(response.body).to include(work.title)
-    end
+  it "ページネーションが正常に動作すること" do
+    create(:works_create_activity)
+
+    get "/db/activities", params: {page: 1}
+
+    expect(response.status).to eq(200)
+  end
+
+  it "アクティビティが存在しないとき、空のページが表示されること" do
+    get "/db/activities"
+
+    expect(response.status).to eq(200)
+  end
+
+  it "無効なページパラメータが指定されたとき、正常に処理されること" do
+    create(:works_create_activity)
+
+    get "/db/activities", params: {page: "invalid"}
+
+    expect(response.status).to eq(200)
   end
 end
