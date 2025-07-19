@@ -8,10 +8,6 @@ FactoryBot.define do
     time_zone { "Asia/Tokyo" }
     locale { "ja" }
 
-    after(:create) do |user|
-      create(:email_notification, user: user) unless user.email_notification
-    end
-
     trait :with_profile do
       after(:create) do |user|
         create(:profile, user: user)
