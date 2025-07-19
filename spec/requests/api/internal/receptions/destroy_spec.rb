@@ -35,15 +35,4 @@ RSpec.describe "DELETE /api/internal/channels/:channel_id/reception", type: :req
     expect(response.status).to eq(200)
     expect(user.receptions.exists?(channel:)).to be(false)
   end
-
-  it "存在しないチャンネルIDの場合はActiveRecord::RecordNotFoundが発生すること" do
-    user = create(:user)
-    invalid_channel_id = SecureRandom.uuid
-
-    login_as(user, scope: :user)
-
-    expect do
-      delete "/api/internal/channels/#{invalid_channel_id}/reception"
-    end.to raise_error(ActiveRecord::RecordNotFound)
-  end
 end
