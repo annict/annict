@@ -1,47 +1,35 @@
 # typed: false
 # frozen_string_literal: true
 
-describe "GET /db/casts/:id/edit", type: :request do
-  context "user does not sign in" do
-    let!(:cast) { create(:cast) }
+RSpec.describe "GET /db/casts/:id/edit", type: :request do
+  it "ログインしていない場合、アクセスできず認証エラーメッセージが表示されること" do
+    cast = create(:cast)
 
-    it "user can not access this page" do
-      get "/db/casts/#{cast.id}/edit"
+    get "/db/casts/#{cast.id}/edit"
 
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("ログインしてください")
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("ログインしてください")
   end
 
-  context "user who is not editor signs in" do
-    let!(:user) { create(:registered_user) }
-    let!(:cast) { create(:cast) }
+  it "エディター権限を持たないユーザーの場合、アクセスできずエラーメッセージが表示されること" do
+    user = create(:registered_user)
+    cast = create(:cast)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    login_as(user, scope: :user)
+    get "/db/casts/#{cast.id}/edit"
 
-    it "can not access" do
-      get "/db/casts/#{cast.id}/edit"
-
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("アクセスできません")
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("アクセスできません")
   end
 
-  context "user who is editor signs in" do
-    let!(:user) { create(:registered_user, :with_editor_role) }
-    let!(:cast) { create(:cast) }
+  it "エディター権限を持つユーザーの場合、キャスト編集フォームが表示されること" do
+    user = create(:registered_user, :with_editor_role)
+    cast = create(:cast)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    login_as(user, scope: :user)
+    get "/db/casts/#{cast.id}/edit"
 
-    it "responses cast edit form" do
-      get "/db/casts/#{cast.id}/edit"
-
-      expect(response.status).to eq(200)
-      expect(response.body).to include(cast.character.name)
-    end
+    expect(response.status).to eq(200)
+    expect(response.body).to include(cast.character.name)
   end
 end
