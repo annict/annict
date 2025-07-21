@@ -1,47 +1,35 @@
 # typed: false
 # frozen_string_literal: true
 
-describe "GET /db/works/:work_id/trailers/new", type: :request do
-  context "user does not sign in" do
-    let!(:work) { create(:work) }
+RSpec.describe "GET /db/works/:work_id/trailers/new", type: :request do
+  it "ログインしていないとき、ログインページにリダイレクトすること" do
+    work = create(:work)
 
-    it "user can not access this page" do
-      get "/db/works/#{work.id}/trailers/new"
+    get "/db/works/#{work.id}/trailers/new"
 
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("ログインしてください")
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("ログインしてください")
   end
 
-  context "user who is not editor signs in" do
-    let!(:work) { create(:work) }
-    let!(:user) { create(:registered_user) }
+  it "エディター権限を持たないユーザーがログインしているとき、アクセスできないこと" do
+    work = create(:work)
+    user = create(:registered_user)
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    get "/db/works/#{work.id}/trailers/new"
 
-    it "can not access" do
-      get "/db/works/#{work.id}/trailers/new"
-
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("アクセスできません")
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("アクセスできません")
   end
 
-  context "user who is editor signs in" do
-    let!(:work) { create(:work) }
-    let!(:user) { create(:registered_user, :with_editor_role) }
+  it "エディター権限を持つユーザーがログインしているとき、PV登録ページが表示されること" do
+    work = create(:work)
+    user = create(:registered_user, :with_editor_role)
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    get "/db/works/#{work.id}/trailers/new"
 
-    it "responses page" do
-      get "/db/works/#{work.id}/trailers/new"
-
-      expect(response.status).to eq(200)
-      expect(response.body).to include("PV登録")
-    end
+    expect(response.status).to eq(200)
+    expect(response.body).to include("PV登録")
   end
 end
