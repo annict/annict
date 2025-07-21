@@ -15,7 +15,7 @@ RSpec.describe "POST /db/channels", type: :request do
     expect(Channel.all.size).to eq(220)
   end
 
-  it "エディターロールを持たないユーザーがログインしているとき、アクセスできないこと" do
+  it "編集者権限を持たないユーザーがログインしているとき、アクセスできないこと" do
     user = create(:registered_user)
     channel_params = {
       name: "ちゃんねる"
@@ -31,7 +31,7 @@ RSpec.describe "POST /db/channels", type: :request do
     expect(Channel.all.size).to eq(220)
   end
 
-  it "エディターロールを持つユーザーがログインしているとき、アクセスできないこと" do
+  it "編集者権限を持つユーザーがログインしているとき、アクセスできないこと" do
     user = create(:registered_user, :with_editor_role)
     channel_params = {
       name: "ちゃんねる"
@@ -47,7 +47,7 @@ RSpec.describe "POST /db/channels", type: :request do
     expect(Channel.all.size).to eq(220)
   end
 
-  it "管理者ロールを持つユーザーがログインしているとき、チャンネルを作成できること" do
+  it "管理者権限を持つユーザーがログインしているとき、チャンネルを作成できること" do
     channel_group = ChannelGroup.first
     user = create(:registered_user, :with_admin_role)
     channel_params = {
@@ -71,7 +71,7 @@ RSpec.describe "POST /db/channels", type: :request do
     expect(channel.name).to eq("ちゃんねる")
   end
 
-  it "管理者ロールを持つユーザーがログインしているとき、バリデーションエラーがある場合、作成に失敗すること" do
+  it "管理者権限を持つユーザーがログインしているとき、バリデーションエラーがある場合、作成に失敗すること" do
     user = create(:registered_user, :with_admin_role)
     channel_params = {
       channel_group_id: nil,
@@ -88,7 +88,7 @@ RSpec.describe "POST /db/channels", type: :request do
     expect(Channel.all.size).to eq(220)
   end
 
-  it "管理者ロールを持つユーザーがログインしているとき、vodとsort_numberも設定できること" do
+  it "管理者権限を持つユーザーがログインしているとき、vodとsort_numberも設定できること" do
     channel_group = ChannelGroup.first
     user = create(:registered_user, :with_admin_role)
     channel_params = {

@@ -15,7 +15,7 @@ RSpec.describe "DELETE /db/organizations/:id", type: :request do
     expect(Organization.count).to eq(1)
   end
 
-  it "エディターロールを持つユーザーがサインインしているとき、アクセスできず削除されないこと" do
+  it "編集者権限を持つユーザーがサインインしているとき、アクセスできず削除されないこと" do
     user = create(:registered_user, :with_editor_role)
     organization = create(:organization, :not_deleted)
     login_as(user, scope: :user)
@@ -30,7 +30,7 @@ RSpec.describe "DELETE /db/organizations/:id", type: :request do
     expect(Organization.count).to eq(1)
   end
 
-  it "エディターロールを持たないユーザーがサインインしているとき、アクセスできず削除されないこと" do
+  it "編集者権限を持たないユーザーがサインインしているとき、アクセスできず削除されないこと" do
     user = create(:registered_user)
     organization = create(:organization, :not_deleted)
     login_as(user, scope: :user)
@@ -45,7 +45,7 @@ RSpec.describe "DELETE /db/organizations/:id", type: :request do
     expect(Organization.count).to eq(1)
   end
 
-  it "管理者ロールを持つユーザーがサインインしているとき、組織を論理削除できること" do
+  it "管理者権限を持つユーザーがサインインしているとき、組織を論理削除できること" do
     user = create(:registered_user, :with_admin_role)
     organization = create(:organization, :not_deleted)
     login_as(user, scope: :user)

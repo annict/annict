@@ -26,7 +26,7 @@ RSpec.describe "DELETE /db/channel_groups/:id/publishing", type: :request do
     expect(channel_group.published?).to eq(true)
   end
 
-  it "エディターロールを持つユーザーがログインしているとき、アクセスできないこと" do
+  it "編集者権限を持つユーザーがログインしているとき、アクセスできないこと" do
     user = create(:registered_user, :with_editor_role)
     channel_group = ChannelGroup.first
     login_as(user, scope: :user)
@@ -39,7 +39,7 @@ RSpec.describe "DELETE /db/channel_groups/:id/publishing", type: :request do
     expect(channel_group.published?).to eq(true)
   end
 
-  it "管理者ロールを持つユーザーがログインしているとき、チャンネルグループを非公開にできること" do
+  it "管理者権限を持つユーザーがログインしているとき、チャンネルグループを非公開にできること" do
     user = create(:registered_user, :with_admin_role)
     channel_group = ChannelGroup.first
     login_as(user, scope: :user)

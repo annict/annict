@@ -19,7 +19,7 @@ RSpec.describe "GET /db/channel_groups/new", type: :request do
     expect(flash[:alert]).to eq("アクセスできません")
   end
 
-  it "エディターロールを持つユーザーがログインしているとき、アクセスできないこと" do
+  it "編集者権限を持つユーザーがログインしているとき、アクセスできないこと" do
     user = create(:registered_user, :with_editor_role)
     login_as(user, scope: :user)
 
@@ -29,7 +29,7 @@ RSpec.describe "GET /db/channel_groups/new", type: :request do
     expect(flash[:alert]).to eq("アクセスできません")
   end
 
-  it "管理者ロールを持つユーザーがログインしているとき、ページが表示されること" do
+  it "管理者権限を持つユーザーがログインしているとき、ページが表示されること" do
     user = create(:registered_user, :with_admin_role)
     login_as(user, scope: :user)
 
