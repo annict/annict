@@ -1,47 +1,35 @@
 # typed: false
 # frozen_string_literal: true
 
-describe "GET /db/staffs/:id/edit", type: :request do
-  context "user does not sign in" do
-    let!(:staff) { create(:staff) }
+RSpec.describe "GET /db/staffs/:id/edit", type: :request do
+  it "ログインしていないとき、ログインページにリダイレクトすること" do
+    staff = create(:staff)
 
-    it "user can not access this page" do
-      get "/db/staffs/#{staff.id}/edit"
+    get "/db/staffs/#{staff.id}/edit"
 
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("ログインしてください")
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("ログインしてください")
   end
 
-  context "user who is not editor signs in" do
-    let!(:user) { create(:registered_user) }
-    let!(:staff) { create(:staff) }
+  it "編集者権限がないユーザーがログインしているとき、アクセスできないこと" do
+    user = create(:registered_user)
+    staff = create(:staff)
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    get "/db/staffs/#{staff.id}/edit"
 
-    it "can not access" do
-      get "/db/staffs/#{staff.id}/edit"
-
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("アクセスできません")
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("アクセスできません")
   end
 
-  context "user who is editor signs in" do
-    let!(:user) { create(:registered_user, :with_editor_role) }
-    let!(:staff) { create(:staff) }
+  it "編集者権限があるユーザーがログインしているとき、スタッフ編集フォームが表示されること" do
+    user = create(:registered_user, :with_editor_role)
+    staff = create(:staff)
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    get "/db/staffs/#{staff.id}/edit"
 
-    it "responses staff edit form" do
-      get "/db/staffs/#{staff.id}/edit"
-
-      expect(response.status).to eq(200)
-      expect(response.body).to include(staff.resource.name)
-    end
+    expect(response.status).to eq(200)
+    expect(response.body).to include(staff.resource.name)
   end
 end
