@@ -1,58 +1,43 @@
 # typed: false
 # frozen_string_literal: true
 
-describe "POST /db/organizations/:id/publishing", type: :request do
-  context "user does not sign in" do
-    let!(:organization) { create(:organization, :unpublished) }
+RSpec.describe "POST /db/organizations/:id/publishing", type: :request do
+  it "ログインしていないとき、ログインページにリダイレクトすること" do
+    organization = create(:organization, :unpublished)
 
-    it "user can not access this page" do
-      post "/db/organizations/#{organization.id}/publishing"
-      organization.reload
+    post "/db/organizations/#{organization.id}/publishing"
+    organization.reload
 
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("ログインしてください")
-
-      expect(organization.published?).to eq(false)
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("ログインしてください")
+    expect(organization.published?).to eq(false)
   end
 
-  context "user who is not editor signs in" do
-    let!(:user) { create(:registered_user) }
-    let!(:organization) { create(:organization, :unpublished) }
+  it "エディター権限がないユーザーがログインしているとき、アクセスできないこと" do
+    user = create(:registered_user)
+    organization = create(:organization, :unpublished)
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    post "/db/organizations/#{organization.id}/publishing"
+    organization.reload
 
-    it "user can not access" do
-      post "/db/organizations/#{organization.id}/publishing"
-      organization.reload
-
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("アクセスできません")
-
-      expect(organization.published?).to eq(false)
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("アクセスできません")
+    expect(organization.published?).to eq(false)
   end
 
-  context "user who is editor signs in" do
-    let!(:user) { create(:registered_user, :with_editor_role) }
-    let!(:organization) { create(:organization, :unpublished) }
+  it "エディター権限があるユーザーがログインしているとき、組織を公開できること" do
+    user = create(:registered_user, :with_editor_role)
+    organization = create(:organization, :unpublished)
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    expect(organization.published?).to eq(false)
 
-    it "user can publish organization" do
-      expect(organization.published?).to eq(false)
+    post "/db/organizations/#{organization.id}/publishing"
+    organization.reload
 
-      post "/db/organizations/#{organization.id}/publishing"
-      organization.reload
-
-      expect(response.status).to eq(302)
-      expect(flash[:notice]).to eq("公開しました")
-
-      expect(organization.published?).to eq(true)
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:notice]).to eq("公開しました")
+    expect(organization.published?).to eq(true)
   end
 end
