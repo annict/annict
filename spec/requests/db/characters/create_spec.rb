@@ -1,75 +1,59 @@
 # typed: false
 # frozen_string_literal: true
 
-describe "POST /db/characters", type: :request do
-  context "user does not sign in" do
-    let!(:series) { create(:series) }
-    let!(:character_params) do
-      {
-        rows: "かぐや姫,かぐやひめ,#{series.name}"
-      }
-    end
+RSpec.describe "POST /db/characters", type: :request do
+  it "ログインしていないとき、ログインページにリダイレクトすること" do
+    series = create(:series)
+    character_params = {
+      rows: "かぐや姫,かぐやひめ,#{series.name}"
+    }
 
-    it "user can not access this page" do
-      post "/db/characters", params: {deprecated_db_character_rows_form: character_params}
+    post "/db/characters", params: {deprecated_db_character_rows_form: character_params}
 
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("ログインしてください")
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("ログインしてください")
 
-      expect(Character.all.size).to eq(0)
-    end
+    expect(Character.all.size).to eq(0)
   end
 
-  context "user who is not editor signs in" do
-    let!(:series) { create(:series) }
-    let!(:user) { create(:registered_user) }
-    let!(:character_params) do
-      {
-        rows: "かぐや姫,かぐやひめ,#{series.name}"
-      }
-    end
+  it "エディター権限がないユーザーでログインしているとき、アクセスできないこと" do
+    series = create(:series)
+    user = create(:registered_user)
+    character_params = {
+      rows: "かぐや姫,かぐやひめ,#{series.name}"
+    }
 
-    before do
-      login_as(user, scope: :user)
-    end
+    login_as(user, scope: :user)
 
-    it "user can not access" do
-      post "/db/characters", params: {deprecated_db_character_rows_form: character_params}
+    post "/db/characters", params: {deprecated_db_character_rows_form: character_params}
 
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("アクセスできません")
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("アクセスできません")
 
-      expect(Character.all.size).to eq(0)
-    end
+    expect(Character.all.size).to eq(0)
   end
 
-  context "user who is editor signs in" do
-    let!(:series) { create(:series) }
-    let!(:user) { create(:registered_user, :with_editor_role) }
-    let!(:character_params) do
-      {
-        rows: "かぐや姫,かぐやひめ,#{series.name}"
-      }
-    end
+  it "エディター権限があるユーザーでログインしているとき、キャラクターを作成できること" do
+    series = create(:series)
+    user = create(:registered_user, :with_editor_role)
+    character_params = {
+      rows: "かぐや姫,かぐやひめ,#{series.name}"
+    }
 
-    before do
-      login_as(user, scope: :user)
-    end
+    login_as(user, scope: :user)
 
-    it "user can create character" do
-      expect(Character.all.size).to eq(0)
+    expect(Character.all.size).to eq(0)
 
-      post "/db/characters", params: {deprecated_db_character_rows_form: character_params}
+    post "/db/characters", params: {deprecated_db_character_rows_form: character_params}
 
-      expect(response.status).to eq(302)
-      expect(flash[:notice]).to eq("登録しました")
+    expect(response.status).to eq(302)
+    expect(flash[:notice]).to eq("登録しました")
 
-      expect(Character.all.size).to eq(1)
-      character = Character.first
+    expect(Character.all.size).to eq(1)
+    character = Character.first
 
-      expect(character.name).to eq("かぐや姫")
-      expect(character.name_kana).to eq("かぐやひめ")
-      expect(character.series_id).to eq(series.id)
-    end
+    expect(character.name).to eq("かぐや姫")
+    expect(character.name_kana).to eq("かぐやひめ")
+    expect(character.series_id).to eq(series.id)
   end
 end
