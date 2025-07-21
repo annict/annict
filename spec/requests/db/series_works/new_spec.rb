@@ -1,47 +1,37 @@
 # typed: false
 # frozen_string_literal: true
 
-describe "GET /db/series/:series_id/series_works/new", type: :request do
-  context "user does not sign in" do
-    let!(:series) { create(:series) }
+RSpec.describe "GET /db/series/:series_id/series_works/new", type: :request do
+  it "ログインしていないとき、ログインページにリダイレクトすること" do
+    series = FactoryBot.create(:series)
 
-    it "user can not access this page" do
-      get "/db/series/#{series.id}/series_works/new"
+    get "/db/series/#{series.id}/series_works/new"
 
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("ログインしてください")
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("ログインしてください")
   end
 
-  context "user who is not editor signs in" do
-    let!(:user) { create(:registered_user) }
-    let!(:series) { create(:series) }
+  it "エディター権限のないユーザーがログインしているとき、アクセスできないこと" do
+    user = FactoryBot.create(:registered_user)
+    series = FactoryBot.create(:series)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    login_as(user, scope: :user)
 
-    it "can not access" do
-      get "/db/series/#{series.id}/series_works/new"
+    get "/db/series/#{series.id}/series_works/new"
 
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("アクセスできません")
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("アクセスできません")
   end
 
-  context "user who is editor signs in" do
-    let!(:user) { create(:registered_user, :with_editor_role) }
-    let!(:series) { create(:series) }
+  it "エディター権限のあるユーザーがログインしているとき、ページが正常に表示されること" do
+    user = FactoryBot.create(:registered_user, :with_editor_role)
+    series = FactoryBot.create(:series)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    login_as(user, scope: :user)
 
-    it "responses page" do
-      get "/db/series/#{series.id}/series_works/new"
+    get "/db/series/#{series.id}/series_works/new"
 
-      expect(response.status).to eq(200)
-      expect(response.body).to include("シリーズ作品登録")
-    end
+    expect(response.status).to eq(200)
+    expect(response.body).to include("シリーズ作品登録")
   end
 end
