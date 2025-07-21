@@ -1,47 +1,65 @@
 # typed: false
 # frozen_string_literal: true
 
-describe "GET /db/series/:id/edit", type: :request do
-  context "user does not sign in" do
-    let!(:series) { create(:series) }
+RSpec.describe "GET /db/series/:id/edit", type: :request do
+  it "ログインしていないとき、ログインページにリダイレクトすること" do
+    series = FactoryBot.create(:series)
 
-    it "user can not access this page" do
-      get "/db/series/#{series.id}/edit"
+    get "/db/series/#{series.id}/edit"
 
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("ログインしてください")
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("ログインしてください")
   end
 
-  context "user who is not editor signs in" do
-    let!(:user) { create(:registered_user) }
-    let!(:series) { create(:series) }
+  it "編集権限のないユーザーがアクセスしたとき、アクセス拒否されること" do
+    user = FactoryBot.create(:registered_user)
+    series = FactoryBot.create(:series)
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    get "/db/series/#{series.id}/edit"
 
-    it "can not access" do
-      get "/db/series/#{series.id}/edit"
-
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("アクセスできません")
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("アクセスできません")
   end
 
-  context "user who is editor signs in" do
-    let!(:user) { create(:registered_user, :with_editor_role) }
-    let!(:series) { create(:series) }
+  it "編集者がアクセスしたとき、シリーズ編集フォームが表示されること" do
+    user = FactoryBot.create(:registered_user, :with_editor_role)
+    series = FactoryBot.create(:series)
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    get "/db/series/#{series.id}/edit"
 
-    it "responses series edit form" do
+    expect(response.status).to eq(200)
+    expect(response.body).to include(series.name)
+  end
+
+  it "管理者がアクセスしたとき、シリーズ編集フォームが表示されること" do
+    user = FactoryBot.create(:registered_user, :with_admin_role)
+    series = FactoryBot.create(:series)
+    login_as(user, scope: :user)
+
+    get "/db/series/#{series.id}/edit"
+
+    expect(response.status).to eq(200)
+    expect(response.body).to include(series.name)
+  end
+
+  it "削除されたシリーズにアクセスしたとき、404エラーが発生すること" do
+    user = FactoryBot.create(:registered_user, :with_editor_role)
+    series = FactoryBot.create(:series, deleted_at: Time.current)
+    login_as(user, scope: :user)
+
+    expect do
       get "/db/series/#{series.id}/edit"
+    end.to raise_error(ActiveRecord::RecordNotFound)
+  end
 
-      expect(response.status).to eq(200)
-      expect(response.body).to include(series.name)
-    end
+  it "存在しないシリーズにアクセスしたとき、404エラーが発生すること" do
+    user = FactoryBot.create(:registered_user, :with_editor_role)
+    login_as(user, scope: :user)
+
+    expect do
+      get "/db/series/999999/edit"
+    end.to raise_error(ActiveRecord::RecordNotFound)
   end
 end
