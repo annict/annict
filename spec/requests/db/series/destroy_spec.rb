@@ -1,82 +1,60 @@
 # typed: false
 # frozen_string_literal: true
 
-describe "DELETE /db/series/:id", type: :request do
-  context "user does not sign in" do
-    let!(:series) { create(:series, :not_deleted) }
+RSpec.describe "DELETE /db/series/:id", type: :request do
+  it "ログインしていないとき、アクセスできずログインページにリダイレクトすること" do
+    series = create(:series, :not_deleted)
+    expect(Series.count).to eq(1)
 
-    it "user can not access this page" do
-      expect(Series.count).to eq(1)
+    delete "/db/series/#{series.id}"
+    series.reload
 
-      delete "/db/series/#{series.id}"
-      series.reload
-
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("ログインしてください")
-
-      expect(Series.count).to eq(1)
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("ログインしてください")
+    expect(Series.count).to eq(1)
   end
 
-  context "user who is not editor signs in" do
-    let!(:user) { create(:registered_user) }
-    let!(:series) { create(:series, :not_deleted) }
+  it "編集者でないユーザーがログインしているとき、アクセスできないこと" do
+    user = create(:registered_user)
+    series = create(:series, :not_deleted)
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    expect(Series.count).to eq(1)
 
-    it "user can not access" do
-      expect(Series.count).to eq(1)
+    delete "/db/series/#{series.id}"
+    series.reload
 
-      delete "/db/series/#{series.id}"
-      series.reload
-
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("アクセスできません")
-
-      expect(Series.count).to eq(1)
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("アクセスできません")
+    expect(Series.count).to eq(1)
   end
 
-  context "user who is editor signs in" do
-    let!(:user) { create(:registered_user, :with_editor_role) }
-    let!(:series) { create(:series, :not_deleted) }
+  it "編集者がログインしているとき、アクセスできないこと" do
+    user = create(:registered_user, :with_editor_role)
+    series = create(:series, :not_deleted)
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    expect(Series.count).to eq(1)
 
-    it "user can not access" do
-      expect(Series.count).to eq(1)
+    delete "/db/series/#{series.id}"
+    series.reload
 
-      delete "/db/series/#{series.id}"
-      series.reload
-
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("アクセスできません")
-
-      expect(Series.count).to eq(1)
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("アクセスできません")
+    expect(Series.count).to eq(1)
   end
 
-  context "user who is admin signs in" do
-    let!(:user) { create(:registered_user, :with_admin_role) }
-    let!(:series) { create(:series, :not_deleted) }
+  it "管理者がログインしているとき、シリーズをソフトデリートできること" do
+    user = create(:registered_user, :with_admin_role)
+    series = create(:series, :not_deleted)
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    expect(Series.count).to eq(1)
 
-    it "user can delete series softly" do
-      expect(Series.count).to eq(1)
+    delete "/db/series/#{series.id}"
 
-      delete "/db/series/#{series.id}"
-
-      expect(response.status).to eq(302)
-      expect(flash[:notice]).to eq("削除しました")
-
-      expect(Series.count).to eq(0)
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:notice]).to eq("削除しました")
+    expect(Series.count).to eq(0)
   end
 end
