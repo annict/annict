@@ -1,58 +1,72 @@
 # typed: false
 # frozen_string_literal: true
 
-describe "POST /db/episodes/:id/publishing", type: :request do
-  context "user does not sign in" do
-    let!(:episode) { create(:episode, :unpublished) }
+RSpec.describe "POST /db/episodes/:id/publishing", type: :request do
+  it "ログインしていないとき、ログインページにリダイレクトすること" do
+    episode = create(:episode, :unpublished)
 
-    it "user can not access this page" do
-      post "/db/episodes/#{episode.id}/publishing"
-      episode.reload
+    post "/db/episodes/#{episode.id}/publishing"
+    episode.reload
 
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("ログインしてください")
-
-      expect(episode.published?).to eq(false)
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("ログインしてください")
+    expect(episode.published?).to eq(false)
   end
 
-  context "user who is not editor signs in" do
-    let!(:user) { create(:registered_user) }
-    let!(:episode) { create(:episode, :unpublished) }
+  it "編集者権限を持たないユーザーがログインしているとき、アクセスできないこと" do
+    user = create(:registered_user)
+    episode = create(:episode, :unpublished)
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    post "/db/episodes/#{episode.id}/publishing"
+    episode.reload
 
-    it "user can not access" do
-      post "/db/episodes/#{episode.id}/publishing"
-      episode.reload
-
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("アクセスできません")
-
-      expect(episode.published?).to eq(false)
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("アクセスできません")
+    expect(episode.published?).to eq(false)
   end
 
-  context "user who is editor signs in" do
-    let!(:user) { create(:registered_user, :with_editor_role) }
-    let!(:episode) { create(:episode, :unpublished) }
+  it "編集者権限を持つユーザーがログインしているとき、エピソードを公開できること" do
+    user = create(:registered_user, :with_editor_role)
+    episode = create(:episode, :unpublished)
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    expect(episode.published?).to eq(false)
 
-    it "user can publish episode" do
-      expect(episode.published?).to eq(false)
+    post "/db/episodes/#{episode.id}/publishing"
+    episode.reload
 
+    expect(response.status).to eq(302)
+    expect(flash[:notice]).to eq("公開しました")
+    expect(episode.published?).to eq(true)
+  end
+
+  it "存在しないエピソードIDを指定したとき、404エラーになること" do
+    user = create(:registered_user, :with_editor_role)
+    login_as(user, scope: :user)
+
+    expect {
+      post "/db/episodes/99999999/publishing"
+    }.to raise_error(ActiveRecord::RecordNotFound)
+  end
+
+  it "削除済みのエピソードを指定したとき、404エラーになること" do
+    user = create(:registered_user, :with_editor_role)
+    episode = create(:episode, :unpublished, deleted_at: Time.current)
+    login_as(user, scope: :user)
+
+    expect {
       post "/db/episodes/#{episode.id}/publishing"
-      episode.reload
+    }.to raise_error(ActiveRecord::RecordNotFound)
+  end
 
-      expect(response.status).to eq(302)
-      expect(flash[:notice]).to eq("公開しました")
+  it "既に公開済みのエピソードを指定したとき、404エラーになること" do
+    user = create(:registered_user, :with_editor_role)
+    episode = create(:episode, :published)
+    login_as(user, scope: :user)
 
-      expect(episode.published?).to eq(true)
-    end
+    expect {
+      post "/db/episodes/#{episode.id}/publishing"
+    }.to raise_error(ActiveRecord::RecordNotFound)
   end
 end
