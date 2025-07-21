@@ -1,82 +1,80 @@
 # typed: false
 # frozen_string_literal: true
 
-describe "DELETE /db/organizations/:id", type: :request do
-  context "user does not sign in" do
-    let!(:organization) { create(:organization, :not_deleted) }
+RSpec.describe "DELETE /db/organizations/:id", type: :request do
+  it "ログインしていないとき、アクセスできず削除されないこと" do
+    organization = create(:organization, :not_deleted)
 
-    it "user can not access this page" do
-      expect(Organization.count).to eq(1)
+    expect(Organization.count).to eq(1)
 
-      delete "/db/organizations/#{organization.id}"
-      organization.reload
+    delete "/db/organizations/#{organization.id}"
+    organization.reload
 
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("ログインしてください")
-
-      expect(Organization.count).to eq(1)
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("ログインしてください")
+    expect(Organization.count).to eq(1)
   end
 
-  context "user who is not editor signs in" do
-    let!(:user) { create(:registered_user) }
-    let!(:organization) { create(:organization, :not_deleted) }
+  it "エディターロールを持つユーザーがサインインしているとき、アクセスできず削除されないこと" do
+    user = create(:registered_user, :with_editor_role)
+    organization = create(:organization, :not_deleted)
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    expect(Organization.count).to eq(1)
 
-    it "user can not access" do
-      expect(Organization.count).to eq(1)
+    delete "/db/organizations/#{organization.id}"
+    organization.reload
 
-      delete "/db/organizations/#{organization.id}"
-      organization.reload
-
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("アクセスできません")
-
-      expect(Organization.count).to eq(1)
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("アクセスできません")
+    expect(Organization.count).to eq(1)
   end
 
-  context "user who is editor signs in" do
-    let!(:user) { create(:registered_user, :with_editor_role) }
-    let!(:organization) { create(:organization, :not_deleted) }
+  it "エディターロールを持たないユーザーがサインインしているとき、アクセスできず削除されないこと" do
+    user = create(:registered_user)
+    organization = create(:organization, :not_deleted)
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    expect(Organization.count).to eq(1)
 
-    it "user can not access" do
-      expect(Organization.count).to eq(1)
+    delete "/db/organizations/#{organization.id}"
+    organization.reload
 
-      delete "/db/organizations/#{organization.id}"
-      organization.reload
-
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("アクセスできません")
-
-      expect(Organization.count).to eq(1)
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("アクセスできません")
+    expect(Organization.count).to eq(1)
   end
 
-  context "user who is admin signs in" do
-    let!(:user) { create(:registered_user, :with_admin_role) }
-    let!(:organization) { create(:organization, :not_deleted) }
+  it "管理者ロールを持つユーザーがサインインしているとき、組織を論理削除できること" do
+    user = create(:registered_user, :with_admin_role)
+    organization = create(:organization, :not_deleted)
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    expect(Organization.count).to eq(1)
 
-    it "user can delete organization softly" do
-      expect(Organization.count).to eq(1)
+    delete "/db/organizations/#{organization.id}"
 
+    expect(response.status).to eq(302)
+    expect(flash[:notice]).to eq("削除しました")
+    expect(Organization.count).to eq(0)
+  end
+
+  it "存在しない組織IDを指定したとき、404エラーが返ること" do
+    user = create(:registered_user, :with_admin_role)
+    login_as(user, scope: :user)
+
+    expect {
+      delete "/db/organizations/non-existent-id"
+    }.to raise_error(ActiveRecord::RecordNotFound)
+  end
+
+  it "既に削除された組織を削除しようとしたとき、404エラーが返ること" do
+    user = create(:registered_user, :with_admin_role)
+    organization = create(:organization, :deleted)
+    login_as(user, scope: :user)
+
+    expect {
       delete "/db/organizations/#{organization.id}"
-
-      expect(response.status).to eq(302)
-      expect(flash[:notice]).to eq("削除しました")
-
-      expect(Organization.count).to eq(0)
-    end
+    }.to raise_error(ActiveRecord::RecordNotFound)
   end
 end
