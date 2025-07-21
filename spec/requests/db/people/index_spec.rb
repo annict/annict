@@ -1,31 +1,44 @@
 # typed: false
 # frozen_string_literal: true
 
-describe "GET /db/people", type: :request do
-  context "user does not sign in" do
-    let!(:person) { create(:person) }
+RSpec.describe "GET /db/people", type: :request do
+  it "ユーザーがサインインしていないとき、人物一覧が表示されること" do
+    person = FactoryBot.create(:person)
 
-    it "responses person list" do
-      get "/db/people"
+    get "/db/people"
 
-      expect(response.status).to eq(200)
-      expect(response.body).to include(person.name)
-    end
+    expect(response.status).to eq(200)
+    expect(response.body).to include(person.name)
   end
 
-  context "user signs in" do
-    let!(:user) { create(:registered_user) }
-    let!(:person) { create(:person) }
+  it "ユーザーがサインインしているとき、人物一覧が表示されること" do
+    user = FactoryBot.create(:registered_user)
+    person = FactoryBot.create(:person)
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    get "/db/people"
 
-    it "responses person list" do
-      get "/db/people"
+    expect(response.status).to eq(200)
+    expect(response.body).to include(person.name)
+  end
 
-      expect(response.status).to eq(200)
-      expect(response.body).to include(person.name)
-    end
+  it "ページネーションが動作すること" do
+    # 100件以上の人物を作成してページネーションをテスト
+    FactoryBot.create_list(:person, 101)
+
+    get "/db/people", params: {page: 2}
+
+    expect(response.status).to eq(200)
+  end
+
+  it "削除された人物は表示されないこと" do
+    person = FactoryBot.create(:person)
+    deleted_person = FactoryBot.create(:person, deleted_at: Time.current)
+
+    get "/db/people"
+
+    expect(response.status).to eq(200)
+    expect(response.body).to include(person.name)
+    expect(response.body).not_to include(deleted_person.name)
   end
 end
