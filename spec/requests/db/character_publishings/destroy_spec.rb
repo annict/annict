@@ -13,7 +13,7 @@ RSpec.describe "DELETE /db/characters/:id/publishing", type: :request do
     expect(character.published?).to eq(true)
   end
 
-  it "エディター権限を持たないユーザーがログインしているとき、アクセスできないこと" do
+  it "編集者権限を持たないユーザーがログインしているとき、アクセスできないこと" do
     user = create(:registered_user)
     character = create(:character, :published)
     login_as(user, scope: :user)
@@ -26,7 +26,7 @@ RSpec.describe "DELETE /db/characters/:id/publishing", type: :request do
     expect(character.published?).to eq(true)
   end
 
-  it "エディター権限を持つユーザーがログインしているとき、キャラクターを非公開にできること" do
+  it "編集者権限を持つユーザーがログインしているとき、キャラクターを非公開にできること" do
     user = create(:registered_user, :with_editor_role)
     character = create(:character, :published)
     login_as(user, scope: :user)

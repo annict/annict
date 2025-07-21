@@ -13,7 +13,7 @@ RSpec.describe "POST /db/casts/:id/publishing", type: :request do
     expect(cast.published?).to eq(false)
   end
 
-  it "エディター権限を持たないユーザーがログインしているとき、アクセスできないこと" do
+  it "編集者権限を持たないユーザーがログインしているとき、アクセスできないこと" do
     user = FactoryBot.create(:registered_user)
     cast = FactoryBot.create(:cast, :unpublished)
     login_as(user, scope: :user)
@@ -26,7 +26,7 @@ RSpec.describe "POST /db/casts/:id/publishing", type: :request do
     expect(cast.published?).to eq(false)
   end
 
-  it "エディター権限を持つユーザーがログインしているとき、キャストを公開できること" do
+  it "編集者権限を持つユーザーがログインしているとき、キャストを公開できること" do
     user = FactoryBot.create(:registered_user, :with_editor_role)
     cast = FactoryBot.create(:cast, :unpublished)
     login_as(user, scope: :user)

@@ -9,7 +9,7 @@ RSpec.describe "GET /db/characters/new", type: :request do
     expect(flash[:alert]).to eq("ログインしてください")
   end
 
-  it "エディター権限がないユーザーでログインしているとき、アクセスできないこと" do
+  it "編集者権限がないユーザーでログインしているとき、アクセスできないこと" do
     user = create(:registered_user)
     login_as(user, scope: :user)
 
@@ -19,7 +19,7 @@ RSpec.describe "GET /db/characters/new", type: :request do
     expect(flash[:alert]).to eq("アクセスできません")
   end
 
-  it "エディター権限があるユーザーでログインしているとき、ページが表示されること" do
+  it "編集者権限があるユーザーでログインしているとき、ページが表示されること" do
     user = create(:registered_user, :with_editor_role)
     login_as(user, scope: :user)
 

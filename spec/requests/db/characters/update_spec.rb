@@ -18,7 +18,7 @@ RSpec.describe "PATCH /db/characters/:id", type: :request do
     expect(character.name).to eq(old_character["name"])
   end
 
-  it "エディター権限を持たないユーザーがログインしているとき、アクセスできないこと" do
+  it "編集者権限を持たないユーザーがログインしているとき、アクセスできないこと" do
     user = create(:registered_user)
     character = create(:character)
     old_character = character.attributes
@@ -37,7 +37,7 @@ RSpec.describe "PATCH /db/characters/:id", type: :request do
     expect(character.name).to eq(old_character["name"])
   end
 
-  it "エディター権限を持つユーザーがログインしているとき、キャラクターを更新できること" do
+  it "編集者権限を持つユーザーがログインしているとき、キャラクターを更新できること" do
     user = create(:registered_user, :with_editor_role)
     character = create(:character)
     old_character = character.attributes
@@ -58,7 +58,7 @@ RSpec.describe "PATCH /db/characters/:id", type: :request do
     expect(character.name).to eq("かぐや姫")
   end
 
-  it "エディター権限を持つユーザーがログインしているとき、複数のパラメータを更新できること" do
+  it "編集者権限を持つユーザーがログインしているとき、複数のパラメータを更新できること" do
     user = create(:registered_user, :with_editor_role)
     series = create(:series)
     character = create(:character)
@@ -123,7 +123,7 @@ RSpec.describe "PATCH /db/characters/:id", type: :request do
     expect(character.description_source_en).to eq("The Tale of the Bamboo Cutter")
   end
 
-  it "エディター権限を持つユーザーがログインしているとき、名前が空の場合バリデーションエラーになること" do
+  it "編集者権限を持つユーザーがログインしているとき、名前が空の場合バリデーションエラーになること" do
     user = create(:registered_user, :with_editor_role)
     character = create(:character)
     old_name = character.name
@@ -140,7 +140,7 @@ RSpec.describe "PATCH /db/characters/:id", type: :request do
     expect(character.name).to eq(old_name)
   end
 
-  it "エディター権限を持つユーザーがログインしているとき、series_idが空の場合バリデーションエラーになること" do
+  it "編集者権限を持つユーザーがログインしているとき、series_idが空の場合バリデーションエラーになること" do
     user = create(:registered_user, :with_editor_role)
     character = create(:character)
     old_series_id = character.series_id
@@ -157,7 +157,7 @@ RSpec.describe "PATCH /db/characters/:id", type: :request do
     expect(character.series_id).to eq(old_series_id)
   end
 
-  it "エディター権限を持つユーザーがログインしているとき、削除されたキャラクターは見つからないこと" do
+  it "編集者権限を持つユーザーがログインしているとき、削除されたキャラクターは見つからないこと" do
     user = create(:registered_user, :with_editor_role)
     character = create(:character, deleted_at: Time.current)
     character_params = {
@@ -171,7 +171,7 @@ RSpec.describe "PATCH /db/characters/:id", type: :request do
     }.to raise_error(ActiveRecord::RecordNotFound)
   end
 
-  it "エディター権限を持つユーザーがログインしているとき、存在しないキャラクターIDの場合見つからないこと" do
+  it "編集者権限を持つユーザーがログインしているとき、存在しないキャラクターIDの場合見つからないこと" do
     user = create(:registered_user, :with_editor_role)
     character_params = {
       name: "更新されない名前"
@@ -184,7 +184,7 @@ RSpec.describe "PATCH /db/characters/:id", type: :request do
     }.to raise_error(ActiveRecord::RecordNotFound)
   end
 
-  it "エディター権限を持つユーザーがログインしているとき、descriptionとdescription_sourceが両方設定されること" do
+  it "編集者権限を持つユーザーがログインしているとき、descriptionとdescription_sourceが両方設定されること" do
     user = create(:registered_user, :with_editor_role)
     character = create(:character)
     character_params = {
@@ -203,7 +203,7 @@ RSpec.describe "PATCH /db/characters/:id", type: :request do
     expect(character.description_source).to eq("テスト出典")
   end
 
-  it "エディター権限を持つユーザーがログインしているとき、アクティビティが作成されること" do
+  it "編集者権限を持つユーザーがログインしているとき、アクティビティが作成されること" do
     user = create(:registered_user, :with_editor_role)
     character = create(:character)
     character_params = {

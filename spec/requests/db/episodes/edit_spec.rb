@@ -11,7 +11,7 @@ RSpec.describe "GET /db/episodes/:id/edit", type: :request do
     expect(flash[:alert]).to eq("ログインしてください")
   end
 
-  it "エディター権限を持たないユーザーがログインしている場合、アクセスできないこと" do
+  it "編集者権限を持たないユーザーがログインしている場合、アクセスできないこと" do
     user = create(:registered_user)
     episode = create(:episode)
     login_as(user, scope: :user)
@@ -22,7 +22,7 @@ RSpec.describe "GET /db/episodes/:id/edit", type: :request do
     expect(flash[:alert]).to eq("アクセスできません")
   end
 
-  it "エディター権限を持つユーザーがログインしている場合、エピソード編集フォームが表示されること" do
+  it "編集者権限を持つユーザーがログインしている場合、エピソード編集フォームが表示されること" do
     user = create(:registered_user, :with_editor_role)
     episode = create(:episode)
     login_as(user, scope: :user)

@@ -15,7 +15,7 @@ RSpec.describe "POST /db/channel_groups", type: :request do
     expect(ChannelGroup.all.size).to eq(18)
   end
 
-  it "エディター権限を持たないユーザーがログインしている場合、アクセスできないこと" do
+  it "編集者権限を持たないユーザーがログインしている場合、アクセスできないこと" do
     user = create(:registered_user)
     channel_group_params = {
       name: "ちゃんねるぐるーぷ"
@@ -31,7 +31,7 @@ RSpec.describe "POST /db/channel_groups", type: :request do
     expect(ChannelGroup.all.size).to eq(18)
   end
 
-  it "エディター権限を持つユーザーがログインしている場合、アクセスできないこと" do
+  it "編集者権限を持つユーザーがログインしている場合、アクセスできないこと" do
     user = create(:registered_user, :with_editor_role)
     channel_group_params = {
       name: "ちゃんねるぐるーぷ"

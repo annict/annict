@@ -11,7 +11,7 @@ RSpec.describe "GET /db/casts/:id/edit", type: :request do
     expect(flash[:alert]).to eq("ログインしてください")
   end
 
-  it "エディター権限を持たないユーザーの場合、アクセスできずエラーメッセージが表示されること" do
+  it "編集者権限を持たないユーザーの場合、アクセスできずエラーメッセージが表示されること" do
     user = create(:registered_user)
     cast = create(:cast)
 
@@ -22,7 +22,7 @@ RSpec.describe "GET /db/casts/:id/edit", type: :request do
     expect(flash[:alert]).to eq("アクセスできません")
   end
 
-  it "エディター権限を持つユーザーの場合、キャスト編集フォームが表示されること" do
+  it "編集者権限を持つユーザーの場合、キャスト編集フォームが表示されること" do
     user = create(:registered_user, :with_editor_role)
     cast = create(:cast)
 

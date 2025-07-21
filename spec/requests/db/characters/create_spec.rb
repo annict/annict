@@ -16,7 +16,7 @@ RSpec.describe "POST /db/characters", type: :request do
     expect(Character.all.size).to eq(0)
   end
 
-  it "エディター権限がないユーザーでログインしているとき、アクセスできないこと" do
+  it "編集者権限がないユーザーでログインしているとき、アクセスできないこと" do
     series = create(:series)
     user = create(:registered_user)
     character_params = {
@@ -33,7 +33,7 @@ RSpec.describe "POST /db/characters", type: :request do
     expect(Character.all.size).to eq(0)
   end
 
-  it "エディター権限があるユーザーでログインしているとき、キャラクターを作成できること" do
+  it "編集者権限があるユーザーでログインしているとき、キャラクターを作成できること" do
     series = create(:series)
     user = create(:registered_user, :with_editor_role)
     character_params = {

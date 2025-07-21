@@ -13,7 +13,7 @@ RSpec.describe "POST /db/characters/:id/publishing", type: :request do
     expect(character.published?).to eq(false)
   end
 
-  it "エディター権限を持たないユーザーがアクセスしたとき、アクセスできないこと" do
+  it "編集者権限を持たないユーザーがアクセスしたとき、アクセスできないこと" do
     user = FactoryBot.create(:registered_user)
     character = FactoryBot.create(:character, :unpublished)
     login_as(user, scope: :user)
@@ -26,7 +26,7 @@ RSpec.describe "POST /db/characters/:id/publishing", type: :request do
     expect(character.published?).to eq(false)
   end
 
-  it "エディター権限を持つユーザーがアクセスしたとき、キャラクターを公開できること" do
+  it "編集者権限を持つユーザーがアクセスしたとき、キャラクターを公開できること" do
     user = FactoryBot.create(:registered_user, :with_editor_role)
     character = FactoryBot.create(:character, :unpublished)
     login_as(user, scope: :user)

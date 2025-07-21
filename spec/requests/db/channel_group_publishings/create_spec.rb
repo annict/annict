@@ -13,7 +13,7 @@ RSpec.describe "POST /db/channel_groups/:id/publishing", type: :request do
     expect(channel_group.published?).to eq(false)
   end
 
-  it "エディター権限を持たないユーザーでログインしているとき、アクセスできないこと" do
+  it "編集者権限を持たないユーザーでログインしているとき、アクセスできないこと" do
     user = create(:registered_user)
     channel_group = ChannelGroup.first.tap { |cg| cg.unpublish }
     login_as(user, scope: :user)
@@ -26,7 +26,7 @@ RSpec.describe "POST /db/channel_groups/:id/publishing", type: :request do
     expect(channel_group.published?).to eq(false)
   end
 
-  it "エディター権限を持つユーザーでログインしているとき、アクセスできないこと" do
+  it "編集者権限を持つユーザーでログインしているとき、アクセスできないこと" do
     user = create(:registered_user, :with_editor_role)
     channel_group = ChannelGroup.first.tap { |cg| cg.unpublish }
     login_as(user, scope: :user)

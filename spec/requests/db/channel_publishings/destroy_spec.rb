@@ -13,7 +13,7 @@ RSpec.describe "DELETE /db/channels/:id/publishing", type: :request do
     expect(channel.published?).to eq(true)
   end
 
-  it "エディター権限を持たないユーザーがログインしているとき、アクセスを拒否すること" do
+  it "編集者権限を持たないユーザーがログインしているとき、アクセスを拒否すること" do
     user = create(:registered_user)
     channel = Channel.first
     login_as(user, scope: :user)
@@ -26,7 +26,7 @@ RSpec.describe "DELETE /db/channels/:id/publishing", type: :request do
     expect(channel.published?).to eq(true)
   end
 
-  it "エディター権限を持つユーザーがログインしているとき、アクセスを拒否すること" do
+  it "編集者権限を持つユーザーがログインしているとき、アクセスを拒否すること" do
     user = create(:registered_user, :with_editor_role)
     channel = Channel.first
     login_as(user, scope: :user)

@@ -13,7 +13,7 @@ RSpec.describe "DELETE /db/episodes/:id/publishing", type: :request do
     expect(episode.published?).to eq(true)
   end
 
-  it "エディター権限を持たないユーザーでログインしているとき、アクセスできないこと" do
+  it "編集者権限を持たないユーザーでログインしているとき、アクセスできないこと" do
     user = FactoryBot.create(:registered_user)
     episode = FactoryBot.create(:episode, :published)
     login_as(user, scope: :user)
@@ -26,7 +26,7 @@ RSpec.describe "DELETE /db/episodes/:id/publishing", type: :request do
     expect(episode.published?).to eq(true)
   end
 
-  it "エディター権限を持つユーザーでログインしているとき、エピソードを非公開にできること" do
+  it "編集者権限を持つユーザーでログインしているとき、エピソードを非公開にできること" do
     user = FactoryBot.create(:registered_user, :with_editor_role)
     episode = FactoryBot.create(:episode, :published)
     login_as(user, scope: :user)

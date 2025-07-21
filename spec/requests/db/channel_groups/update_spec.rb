@@ -17,7 +17,7 @@ RSpec.describe "PATCH /db/channel_groups/:id", type: :request do
     expect(channel_group.name).to eq(old_channel_group["name"])
   end
 
-  it "エディター権限を持たないユーザーがログインしているとき、アクセスできないこと" do
+  it "編集者権限を持たないユーザーがログインしているとき、アクセスできないこと" do
     user = create(:registered_user)
     channel_group = ChannelGroup.first
     old_channel_group = channel_group.attributes
@@ -34,7 +34,7 @@ RSpec.describe "PATCH /db/channel_groups/:id", type: :request do
     expect(channel_group.name).to eq(old_channel_group["name"])
   end
 
-  it "エディター権限を持つユーザーがログインしているとき、アクセスできないこと" do
+  it "編集者権限を持つユーザーがログインしているとき、アクセスできないこと" do
     user = create(:registered_user, :with_editor_role)
     channel_group = ChannelGroup.first
     old_channel_group = channel_group.attributes

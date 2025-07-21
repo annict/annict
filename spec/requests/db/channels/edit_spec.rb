@@ -11,7 +11,7 @@ RSpec.describe "GET /db/channels/:id/edit", type: :request do
     expect(flash[:alert]).to eq("ログインしてください")
   end
 
-  it "エディター権限を持つユーザーがログインしているとき、アクセスできないこと" do
+  it "編集者権限を持つユーザーがログインしているとき、アクセスできないこと" do
     user = create(:registered_user, :with_editor_role)
     channel = Channel.first
     login_as(user, scope: :user)

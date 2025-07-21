@@ -11,7 +11,7 @@ RSpec.describe "GET /db/characters/:id/edit", type: :request do
     expect(flash[:alert]).to eq("ログインしてください")
   end
 
-  it "エディター権限がないユーザーでログインしているとき、アクセスできないこと" do
+  it "編集者権限がないユーザーでログインしているとき、アクセスできないこと" do
     user = FactoryBot.create(:registered_user)
     character = FactoryBot.create(:character)
     login_as(user, scope: :user)
@@ -22,7 +22,7 @@ RSpec.describe "GET /db/characters/:id/edit", type: :request do
     expect(flash[:alert]).to eq("アクセスできません")
   end
 
-  it "エディター権限があるユーザーでログインしているとき、キャラクター編集フォームが表示されること" do
+  it "編集者権限があるユーザーでログインしているとき、キャラクター編集フォームが表示されること" do
     user = FactoryBot.create(:registered_user, :with_editor_role)
     character = FactoryBot.create(:character)
     login_as(user, scope: :user)
