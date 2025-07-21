@@ -1,82 +1,85 @@
 # typed: false
 # frozen_string_literal: true
 
-describe "DELETE /db/slots/:id", type: :request do
-  context "user does not sign in" do
-    let!(:slot) { create(:slot, :not_deleted) }
+RSpec.describe "DELETE /db/slots/:id", type: :request do
+  it "ログインしていないユーザーは削除できないこと" do
+    channel_group = ChannelGroup.create!(name: "テストチャンネルグループ")
+    channel = Channel.create!(channel_group:, name: "テストチャンネル")
+    work = create(:work)
+    episode = create(:episode, work:)
+    program = create(:program, work:, channel:)
+    slot = create(:slot, :not_deleted, work:, episode:, program:, channel:)
 
-    it "user can not access this page" do
-      expect(Slot.count).to eq(1)
+    expect(Slot.count).to eq(1)
 
-      delete "/db/slots/#{slot.id}"
-      slot.reload
+    delete "/db/slots/#{slot.id}"
+    slot.reload
 
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("ログインしてください")
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("ログインしてください")
 
-      expect(Slot.count).to eq(1)
-    end
+    expect(Slot.count).to eq(1)
   end
 
-  context "user who is not editor signs in" do
-    let!(:user) { create(:registered_user) }
-    let!(:slot) { create(:slot, :not_deleted) }
+  it "一般ユーザーはスロットを削除できないこと" do
+    user = create(:registered_user)
+    channel_group = ChannelGroup.create!(name: "テストチャンネルグループ")
+    channel = Channel.create!(channel_group:, name: "テストチャンネル")
+    work = create(:work)
+    episode = create(:episode, work:)
+    program = create(:program, work:, channel:)
+    slot = create(:slot, :not_deleted, work:, episode:, program:, channel:)
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    expect(Slot.count).to eq(1)
 
-    it "user can not access" do
-      expect(Slot.count).to eq(1)
+    delete "/db/slots/#{slot.id}"
+    slot.reload
 
-      delete "/db/slots/#{slot.id}"
-      slot.reload
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("アクセスできません")
 
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("アクセスできません")
-
-      expect(Slot.count).to eq(1)
-    end
+    expect(Slot.count).to eq(1)
   end
 
-  context "user who is editor signs in" do
-    let!(:user) { create(:registered_user, :with_editor_role) }
-    let!(:slot) { create(:slot, :not_deleted) }
+  it "エディター権限ユーザーはスロットを削除できないこと" do
+    user = create(:registered_user, :with_editor_role)
+    channel_group = ChannelGroup.create!(name: "テストチャンネルグループ")
+    channel = Channel.create!(channel_group:, name: "テストチャンネル")
+    work = create(:work)
+    episode = create(:episode, work:)
+    program = create(:program, work:, channel:)
+    slot = create(:slot, :not_deleted, work:, episode:, program:, channel:)
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    expect(Slot.count).to eq(1)
 
-    it "user can not access" do
-      expect(Slot.count).to eq(1)
+    delete "/db/slots/#{slot.id}"
+    slot.reload
 
-      delete "/db/slots/#{slot.id}"
-      slot.reload
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("アクセスできません")
 
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("アクセスできません")
-
-      expect(Slot.count).to eq(1)
-    end
+    expect(Slot.count).to eq(1)
   end
 
-  context "user who is admin signs in" do
-    let!(:user) { create(:registered_user, :with_admin_role) }
-    let!(:slot) { create(:slot, :not_deleted) }
+  it "管理者はスロットをソフト削除できること" do
+    user = create(:registered_user, :with_admin_role)
+    channel_group = ChannelGroup.create!(name: "テストチャンネルグループ")
+    channel = Channel.create!(channel_group:, name: "テストチャンネル")
+    work = create(:work)
+    episode = create(:episode, work:)
+    program = create(:program, work:, channel:)
+    slot = create(:slot, :not_deleted, work:, episode:, program:, channel:)
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    expect(Slot.count).to eq(1)
 
-    it "user can delete slot softly" do
-      expect(Slot.count).to eq(1)
+    delete "/db/slots/#{slot.id}"
 
-      delete "/db/slots/#{slot.id}"
+    expect(response.status).to eq(302)
+    expect(flash[:notice]).to eq("削除しました")
 
-      expect(response.status).to eq(302)
-      expect(flash[:notice]).to eq("削除しました")
-
-      expect(Slot.count).to eq(0)
-    end
+    expect(Slot.count).to eq(0)
   end
 end
