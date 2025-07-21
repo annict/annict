@@ -1,47 +1,41 @@
 # typed: false
 # frozen_string_literal: true
 
-describe "GET /db/slots/:id/edit", type: :request do
-  context "user does not sign in" do
-    let!(:slot) { create(:slot) }
+RSpec.describe "GET /db/slots/:id/edit", type: :request do
+  it "ログインしていないとき、ログインページにリダイレクトすること" do
+    channel_group = ChannelGroup.create!(name: "地上波", sort_number: 1)
+    _channel = Channel.create!(channel_group:, name: "テストチャンネル", sort_number: 1)
+    slot = create(:slot, :published)
 
-    it "user can not access this page" do
-      get "/db/slots/#{slot.id}/edit"
+    get "/db/slots/#{slot.id}/edit"
 
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("ログインしてください")
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("ログインしてください")
   end
 
-  context "user who is not editor signs in" do
-    let!(:user) { create(:registered_user) }
-    let!(:slot) { create(:slot) }
+  it "エディター権限がないユーザーでログインしているとき、アクセスできないこと" do
+    channel_group = ChannelGroup.create!(name: "地上波", sort_number: 1)
+    _channel = Channel.create!(channel_group:, name: "テストチャンネル", sort_number: 1)
+    user = create(:registered_user)
+    slot = create(:slot, :published)
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    get "/db/slots/#{slot.id}/edit"
 
-    it "can not access" do
-      get "/db/slots/#{slot.id}/edit"
-
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("アクセスできません")
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("アクセスできません")
   end
 
-  context "user who is editor signs in" do
-    let!(:user) { create(:registered_user, :with_editor_role) }
-    let!(:slot) { create(:slot) }
+  it "エディター権限があるユーザーでログインしているとき、スロット編集フォームが表示されること" do
+    channel_group = ChannelGroup.create!(name: "地上波", sort_number: 1)
+    _channel = Channel.create!(channel_group:, name: "テストチャンネル", sort_number: 1)
+    user = create(:registered_user, :with_editor_role)
+    slot = create(:slot, :published)
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    get "/db/slots/#{slot.id}/edit"
 
-    it "responses slot edit form" do
-      get "/db/slots/#{slot.id}/edit"
-
-      expect(response.status).to eq(200)
-      expect(response.body).to include(slot.channel.name)
-    end
+    expect(response.status).to eq(200)
+    expect(response.body).to include(slot.channel.name)
   end
 end
