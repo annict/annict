@@ -1,31 +1,41 @@
 # typed: false
 # frozen_string_literal: true
 
-describe "GET /db/series", type: :request do
-  context "user does not sign in" do
-    let!(:series) { create(:series) }
+RSpec.describe "GET /db/series", type: :request do
+  it "ユーザーがサインインしていないとき、シリーズ一覧が表示されること" do
+    series = create(:series)
 
-    it "responses series list" do
-      get "/db/series"
+    get "/db/series"
 
-      expect(response.status).to eq(200)
-      expect(response.body).to include(series.name)
-    end
+    expect(response.status).to eq(200)
+    expect(response.body).to include(series.name)
   end
 
-  context "user signs in" do
-    let!(:user) { create(:registered_user) }
-    let!(:series) { create(:series) }
+  it "ユーザーがサインインしているとき、シリーズ一覧が表示されること" do
+    user = create(:registered_user)
+    series = create(:series)
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    get "/db/series"
 
-    it "responses series list" do
-      get "/db/series"
+    expect(response.status).to eq(200)
+    expect(response.body).to include(series.name)
+  end
 
-      expect(response.status).to eq(200)
-      expect(response.body).to include(series.name)
-    end
+  it "削除されたシリーズが表示されないこと" do
+    series = create(:series)
+    deleted_series = create(:series, deleted_at: Time.current)
+
+    get "/db/series"
+
+    expect(response.status).to eq(200)
+    expect(response.body).to include(series.name)
+    expect(response.body).not_to include(deleted_series.name)
+  end
+
+  it "ページネーションが機能すること" do
+    get "/db/series", params: {page: 2}
+
+    expect(response.status).to eq(200)
   end
 end
