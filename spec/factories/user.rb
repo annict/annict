@@ -32,14 +32,17 @@ FactoryBot.define do
       end
     end
 
+    # 編集者権限
     trait :with_editor_role do
       role { :editor }
     end
 
+    # 管理者権限
     trait :with_admin_role do
       role { :admin }
     end
 
+    # Annictサポーター
     trait :with_supporter do
       gumroad_subscriber
     end
