@@ -17,7 +17,7 @@ RSpec.describe "PATCH /db/episodes/:id", type: :request do
     expect(episode.title).to eq(old_episode["title"])
   end
 
-  it "コミッター権限を持たないユーザーでログインしているとき、アクセスできないこと" do
+  it "編集者権限を持たないユーザーでログインしているとき、アクセスできないこと" do
     user = create(:registered_user)
     episode = create(:episode)
     old_episode = episode.attributes
@@ -35,7 +35,7 @@ RSpec.describe "PATCH /db/episodes/:id", type: :request do
     expect(episode.title).to eq(old_episode["title"])
   end
 
-  it "コミッター権限を持つユーザーでログインしているとき、エピソードを更新できること" do
+  it "編集者権限を持つユーザーでログインしているとき、エピソードを更新できること" do
     user = create(:registered_user, :with_editor_role)
     episode = create(:episode, title: "元のタイトル")
     episode_params = {
@@ -58,7 +58,7 @@ RSpec.describe "PATCH /db/episodes/:id", type: :request do
     expect(episode.sort_number).to eq(20)
   end
 
-  it "コミッター権限を持つユーザーでログインしているとき、前のエピソードを設定できること" do
+  it "編集者権限を持つユーザーでログインしているとき、前のエピソードを設定できること" do
     user = create(:registered_user, :with_editor_role)
     work = create(:work)
     prev_episode = create(:episode, work:, sort_number: 10)
@@ -77,7 +77,7 @@ RSpec.describe "PATCH /db/episodes/:id", type: :request do
     expect(episode.prev_episode_id).to eq(prev_episode.id)
   end
 
-  it "コミッター権限を持つユーザーでログインしているとき、無効なパラメータで更新に失敗すること" do
+  it "編集者権限を持つユーザーでログインしているとき、無効なパラメータで更新に失敗すること" do
     user = create(:registered_user, :with_editor_role)
     episode = create(:episode, sort_number: 10)
     episode_params = {
@@ -93,7 +93,7 @@ RSpec.describe "PATCH /db/episodes/:id", type: :request do
     expect(episode.sort_number).to eq(10)
   end
 
-  it "コミッター権限を持つユーザーでログインしているとき、許可されていないパラメータは無視されること" do
+  it "編集者権限を持つユーザーでログインしているとき、許可されていないパラメータは無視されること" do
     user = create(:registered_user, :with_editor_role)
     episode = create(:episode, title: "元のタイトル")
     episode_params = {
