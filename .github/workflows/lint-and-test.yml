@@ -154,13 +154,6 @@ jobs:
         run: |
           bin/rails db:setup
 
-      - name: Setup Code Climate test-reporter
-        run: |
-          curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-          chmod +x ./cc-test-reporter
-
       - name: Run tests
         run: |
-          ./cc-test-reporter before-build
           bin/rspec
-          ./cc-test-reporter after-build --coverage-input-type simplecov --exit-code $?
