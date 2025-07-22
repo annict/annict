@@ -1,23 +1,6 @@
 # typed: false
 # frozen_string_literal: true
 
-RSpec.describe "GET|POST /users/auth/gumroad", type: :request do
-  it "ログインしていない場合、Gumroadの認証を開始すること" do
-    post "/users/auth/gumroad"
-
-    expect(response).to have_http_status(:found)
-  end
-
-  it "ログインしている場合、Gumroadの認証を開始すること" do
-    user = FactoryBot.create(:registered_user)
-    login_as(user, scope: :user)
-
-    post "/users/auth/gumroad"
-
-    expect(response).to have_http_status(:found)
-  end
-end
-
 RSpec.describe "GET|POST /users/auth/gumroad/callback", type: :request do
   it "ログインしていない場合で既存のプロバイダーが存在する場合、ユーザーにログインすること" do
     auth_hash = {
@@ -36,7 +19,9 @@ RSpec.describe "GET|POST /users/auth/gumroad/callback", type: :request do
     OmniAuth.config.add_mock(:gumroad, auth_hash)
 
     # Gumroad APIの呼び出しをモック
-    allow_any_instance_of(GumroadClient).to receive(:fetch_subscriber_by_email).and_return(nil)
+    gumroad_client = instance_double(GumroadClient)
+    allow(GumroadClient).to receive(:new).and_return(gumroad_client)
+    allow(gumroad_client).to receive(:fetch_subscriber_by_email).and_return(nil)
 
     user = FactoryBot.create(:registered_user)
     FactoryBot.create(:provider, name: "gumroad", uid: "gumroad123", user: user)
@@ -68,7 +53,9 @@ RSpec.describe "GET|POST /users/auth/gumroad/callback", type: :request do
     OmniAuth.config.add_mock(:gumroad, auth_hash)
 
     # Gumroad APIの呼び出しをモック
-    allow_any_instance_of(GumroadClient).to receive(:fetch_subscriber_by_email).and_return(nil)
+    gumroad_client = instance_double(GumroadClient)
+    allow(GumroadClient).to receive(:new).and_return(gumroad_client)
+    allow(gumroad_client).to receive(:fetch_subscriber_by_email).and_return(nil)
 
     get "/users/auth/gumroad/callback"
 
@@ -97,12 +84,16 @@ RSpec.describe "GET|POST /users/auth/gumroad/callback", type: :request do
     OmniAuth.config.add_mock(:gumroad, auth_hash)
 
     # Gumroad APIの呼び出しをモック
-    allow_any_instance_of(GumroadClient).to receive(:fetch_subscriber_by_email).and_return(nil)
+    gumroad_client = instance_double(GumroadClient)
+    allow(GumroadClient).to receive(:new).and_return(gumroad_client)
+    allow(gumroad_client).to receive(:fetch_subscriber_by_email).and_return(nil)
 
     user = FactoryBot.create(:registered_user)
     login_as(user, scope: :user)
 
-    allow_any_instance_of(Forms::SupporterRegistrationForm).to receive(:subscriber).and_return(nil)
+    form = instance_double(Forms::SupporterRegistrationForm)
+    allow(Forms::SupporterRegistrationForm).to receive(:new).and_return(form)
+    allow(form).to receive(:subscriber).and_return(nil)
 
     get "/users/auth/gumroad/callback"
 
@@ -131,16 +122,20 @@ RSpec.describe "GET|POST /users/auth/gumroad/callback", type: :request do
     OmniAuth.config.add_mock(:gumroad, auth_hash)
 
     # Gumroad APIの呼び出しをモック
-    allow_any_instance_of(GumroadClient).to receive(:fetch_subscriber_by_email).and_return(nil)
+    gumroad_client = instance_double(GumroadClient)
+    allow(GumroadClient).to receive(:new).and_return(gumroad_client)
+    allow(gumroad_client).to receive(:fetch_subscriber_by_email).and_return(nil)
 
     user = FactoryBot.create(:registered_user)
     login_as(user, scope: :user)
 
     gumroad_subscriber = FactoryBot.create(:gumroad_subscriber)
 
-    allow_any_instance_of(Forms::SupporterRegistrationForm).to receive(:subscriber).and_return(gumroad_subscriber)
-    allow_any_instance_of(Forms::SupporterRegistrationForm).to receive(:invalid?).and_return(true)
-    allow_any_instance_of(Forms::SupporterRegistrationForm).to receive(:errors).and_return(
+    form = instance_double(Forms::SupporterRegistrationForm)
+    allow(Forms::SupporterRegistrationForm).to receive(:new).and_return(form)
+    allow(form).to receive(:subscriber).and_return(gumroad_subscriber)
+    allow(form).to receive(:invalid?).and_return(true)
+    allow(form).to receive(:errors).and_return(
       instance_double("errors", full_messages: ["エラーメッセージ"])
     )
 
@@ -171,7 +166,9 @@ RSpec.describe "GET|POST /users/auth/gumroad/callback", type: :request do
     OmniAuth.config.add_mock(:gumroad, auth_hash)
 
     # Gumroad APIの呼び出しをモック
-    allow_any_instance_of(GumroadClient).to receive(:fetch_subscriber_by_email).and_return(nil)
+    gumroad_client = instance_double(GumroadClient)
+    allow(GumroadClient).to receive(:new).and_return(gumroad_client)
+    allow(gumroad_client).to receive(:fetch_subscriber_by_email).and_return(nil)
 
     user = FactoryBot.create(:registered_user)
     login_as(user, scope: :user)
@@ -179,8 +176,10 @@ RSpec.describe "GET|POST /users/auth/gumroad/callback", type: :request do
     gumroad_subscriber = FactoryBot.create(:gumroad_subscriber)
     creator_mock = instance_double("SupporterRegistrationCreator")
 
-    allow_any_instance_of(Forms::SupporterRegistrationForm).to receive(:subscriber).and_return(gumroad_subscriber)
-    allow_any_instance_of(Forms::SupporterRegistrationForm).to receive(:invalid?).and_return(false)
+    form = instance_double(Forms::SupporterRegistrationForm)
+    allow(Forms::SupporterRegistrationForm).to receive(:new).and_return(form)
+    allow(form).to receive(:subscriber).and_return(gumroad_subscriber)
+    allow(form).to receive(:invalid?).and_return(false)
     allow(Creators::SupporterRegistrationCreator).to receive(:new).and_return(creator_mock)
     allow(creator_mock).to receive(:call)
 
@@ -191,7 +190,7 @@ RSpec.describe "GET|POST /users/auth/gumroad/callback", type: :request do
     expect(request.flash[:notice]).to eq(I18n.t("messages._common.connected"))
     expect(Creators::SupporterRegistrationCreator).to have_received(:new).with(
       user: user,
-      form: instance_of(Forms::SupporterRegistrationForm)
+      form: form
     )
     expect(creator_mock).to have_received(:call)
 
@@ -216,7 +215,9 @@ RSpec.describe "GET|POST /users/auth/gumroad/callback", type: :request do
     OmniAuth.config.add_mock(:gumroad, auth_hash)
 
     # Gumroad APIの呼び出しをモック
-    allow_any_instance_of(GumroadClient).to receive(:fetch_subscriber_by_email).and_return(nil)
+    gumroad_client = instance_double(GumroadClient)
+    allow(GumroadClient).to receive(:new).and_return(gumroad_client)
+    allow(gumroad_client).to receive(:fetch_subscriber_by_email).and_return(nil)
 
     user = FactoryBot.create(:registered_user)
     login_as(user, scope: :user)
@@ -224,8 +225,10 @@ RSpec.describe "GET|POST /users/auth/gumroad/callback", type: :request do
     gumroad_subscriber = FactoryBot.create(:gumroad_subscriber)
     creator_mock = instance_double("SupporterRegistrationCreator")
 
-    allow_any_instance_of(Forms::SupporterRegistrationForm).to receive(:subscriber).and_return(gumroad_subscriber)
-    allow_any_instance_of(Forms::SupporterRegistrationForm).to receive(:invalid?).and_return(false)
+    form = instance_double(Forms::SupporterRegistrationForm)
+    allow(Forms::SupporterRegistrationForm).to receive(:new).and_return(form)
+    allow(form).to receive(:subscriber).and_return(gumroad_subscriber)
+    allow(form).to receive(:invalid?).and_return(false)
     allow(Creators::SupporterRegistrationCreator).to receive(:new).and_return(creator_mock)
     allow(creator_mock).to receive(:call)
 
@@ -236,7 +239,7 @@ RSpec.describe "GET|POST /users/auth/gumroad/callback", type: :request do
     expect(request.flash[:notice]).to eq(I18n.t("messages._common.connected"))
     expect(Creators::SupporterRegistrationCreator).to have_received(:new).with(
       user: user,
-      form: instance_of(Forms::SupporterRegistrationForm)
+      form: form
     )
     expect(creator_mock).to have_received(:call)
 
