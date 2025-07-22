@@ -1,17 +1,31 @@
 # typed: false
 # frozen_string_literal: true
 
-describe "GET /settings/options", type: :request do
-  let!(:user) { create(:registered_user) }
+RSpec.describe "GET /settings/options", type: :request do
+  it "ログインしていないとき、ログインページにリダイレクトすること" do
+    get "/settings/options"
 
-  before do
-    login_as(user, scope: :user)
+    expect(response).to redirect_to(new_user_session_path)
   end
 
-  it "ページが表示されること" do
+  it "ログインしているとき、設定ページが正常に表示されること" do
+    user = create(:registered_user)
+    login_as(user, scope: :user)
+
     get "/settings/options"
 
     expect(response.status).to eq(200)
     expect(response.body).to include("未記録エピソードのネタバレを防ぐ")
+  end
+
+  it "ログインしているとき、ユーザーの設定が表示されること" do
+    user = create(:registered_user)
+    user.setting.update!(hide_record_body: true, hide_supporter_badge: false)
+    login_as(user, scope: :user)
+
+    get "/settings/options"
+
+    expect(response.status).to eq(200)
+    expect(response.body).to include('checked="checked"')
   end
 end
