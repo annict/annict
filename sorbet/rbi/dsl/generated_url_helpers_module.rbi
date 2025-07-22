@@ -382,9 +382,6 @@ module GeneratedUrlHelpersModule
   def fragment_note_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }
-  def fragment_receive_channel_button_list_url(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
   def fragment_record_list_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }
