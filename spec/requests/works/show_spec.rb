@@ -1,92 +1,82 @@
 # typed: false
 # frozen_string_literal: true
 
-describe "GET /works/:id", type: :request do
-  context "when user does not sign in" do
-    let!(:work) { create(:work) }
+RSpec.describe "GET /works/:work_id", type: :request do
+  it "ユーザーがログインしていないとき、作品情報が表示されること" do
+    work = create(:work)
 
-    it "responses work info" do
-      get "/works/#{work.id}"
+    get "/works/#{work.id}"
 
-      expect(response.status).to eq(200)
-      expect(response.body).to include(work.title)
-    end
+    expect(response.status).to eq(200)
+    expect(response.body).to include(work.title)
   end
 
-  context "when user signs in" do
-    let!(:user) { create(:registered_user) }
-    let!(:work) { create(:work) }
+  it "ユーザーがログインしているとき、作品情報が表示されること" do
+    user = create(:registered_user)
+    work = create(:work)
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    get "/works/#{work.id}"
 
-    it "responses series list" do
-      get "/works/#{work.id}"
-
-      expect(response.status).to eq(200)
-      expect(response.body).to include(work.title)
-    end
+    expect(response.status).to eq(200)
+    expect(response.body).to include(work.title)
   end
 
-  context "when trailers are added" do
-    let!(:work) { create(:work) }
-    let!(:trailer) { create(:trailer, work: work) }
-
-    before do
-      get "/works/#{work.id}"
-    end
-
-    it "displays trailer title" do
-      expect(response.status).to eq(200)
-      expect(response.body).to include(trailer.title)
-    end
+  it "存在しない作品にアクセスしたとき、RecordNotFoundエラーが発生すること" do
+    expect {
+      get "/works/999999"
+    }.to raise_error(ActiveRecord::RecordNotFound)
   end
 
-  context "when episodes have been added" do
-    let!(:work) { create(:work) }
-    let!(:episode) { create(:episode, work: work) }
+  it "削除された作品にアクセスしたとき、RecordNotFoundエラーが発生すること" do
+    work = create(:work, deleted_at: Time.current)
 
-    before do
+    expect {
       get "/works/#{work.id}"
-    end
-
-    it "displays episode title" do
-      expect(response.status).to eq(200)
-      expect(response.body).to include(episode.title)
-    end
+    }.to raise_error(ActiveRecord::RecordNotFound)
   end
 
-  context "when vods have been added" do
-    let!(:work) { create(:work) }
-    let!(:channel) { Channel.with_vod.first }
-    let!(:program) { create(:program, work: work, channel: channel, vod_title_code: "xxx") }
-    let!(:vod_title_url) { "https://example.com/#{program.vod_title_code}" }
+  it "トレーラーが追加されているとき、トレーラーのタイトルが表示されること" do
+    work = create(:work)
+    trailer = create(:trailer, work: work)
 
-    before do
-      allow_any_instance_of(Program).to receive(:vod_title_url).and_return(vod_title_url)
+    get "/works/#{work.id}"
 
-      get "/works/#{work.id}"
-    end
-
-    it "can access to VOD service" do
-      expect(response.status).to eq(200)
-      expect(response.body).to include(vod_title_url)
-    end
+    expect(response.status).to eq(200)
+    expect(response.body).to include(trailer.title)
   end
 
-  context "when work records have been added" do
-    let!(:work) { create(:work) }
-    let!(:record) { create(:record, work: work) }
-    let!(:work_record) { create(:work_record, work: work, record: record) }
+  it "エピソードが追加されているとき、エピソードのタイトルが表示されること" do
+    work = create(:work)
+    episode = create(:episode, work: work)
 
-    before do
-      get "/works/#{work.id}"
-    end
+    get "/works/#{work.id}"
 
-    it "displays work record body" do
-      expect(response.status).to eq(200)
-      expect(response.body).to include(work_record.body)
-    end
+    expect(response.status).to eq(200)
+    expect(response.body).to include(episode.title)
+  end
+
+  it "VODが追加されているとき、VODサービスへのリンクが表示されること" do
+    work = create(:work)
+    channel = Channel.with_vod.first
+    program = create(:program, work: work, channel: channel, vod_title_code: "xxx")
+    vod_title_url = "https://example.com/#{program.vod_title_code}"
+    allow_any_instance_of(Program).to receive(:vod_title_url).and_return(vod_title_url)
+
+    get "/works/#{work.id}"
+
+    expect(response.status).to eq(200)
+    expect(response.body).to include(vod_title_url)
+  end
+
+  it "作品記録が追加されているとき、作品記録の本文が表示されること" do
+    work = create(:work)
+    record = create(:record, work: work)
+    work_record = create(:work_record, work: work, record: record)
+
+    get "/works/#{work.id}"
+
+    expect(response.status).to eq(200)
+    expect(response.body).to include(work_record.body)
   end
 end
