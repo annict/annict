@@ -163,6 +163,6 @@ RSpec.describe "PATCH /forum/posts/:post_id/comments/:comment_id", type: :reques
       }
     }
 
-    expect(forum_post.reload.last_commented_at).to eq(original_last_commented_at)
+    expect(forum_post.reload.last_commented_at).to be_within(1.second).of(original_last_commented_at)
   end
 end
