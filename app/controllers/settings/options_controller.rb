@@ -5,6 +5,9 @@ module Settings
   class OptionsController < ApplicationV6Controller
     before_action :authenticate_user!
 
+    def index
+    end
+
     def update
       if current_user.setting.update(setting_params)
         redirect_to settings_option_list_path, notice: t("messages._common.updated")
