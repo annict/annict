@@ -207,7 +207,6 @@ Rails.application.routes.draw do
   match "/db/works/:work_id/trailers/new",                      via: :get,    as: :db_new_trailer,                             to: "db/trailers#new"
   match "/db/works/new",                                        via: :get,    as: :db_new_work,                                to: "db/works#new"
   match "/dummy_image",                                         via: :get,                                                     to: "application#dummy_image" if Rails.env.test?
-  match "/episode_records",                                     via: :patch,  as: :episode_record_mutation,                    to: "episode_records#update"
   match "/faq",                                                 via: :get,    as: :faq,                                        to: "faqs#show"
   match "/forum",                                               via: :get,    as: :forum,                                      to: "forum/home#show"
   match "/forum/categories/:category_id",                       via: :get,    as: :forum_category,                             to: "forum/categories#show",                               category_id: /[a-z_]+/
