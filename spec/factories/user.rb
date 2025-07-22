@@ -47,7 +47,7 @@ FactoryBot.define do
       gumroad_subscriber
     end
 
-    factory :registered_user, traits: %i[with_profile with_provider with_setting] do
+    factory :registered_user, traits: %i[with_profile with_provider with_setting with_email_notification] do
       after :create do |user|
         user.confirm
       end
