@@ -43,15 +43,23 @@ RSpec.describe "POST /db/works/:work_id/image", type: :request do
     # 実際の画像アップロードのテストはImageUploadableやアップローダーで行う
     # ここではコントローラーの動作確認なので、saveが成功するように
     # image_dataに有効な値を設定して保存が通るようモックする
-    allow_any_instance_of(WorkImage).to receive(:save).and_wrap_original do |method, *args|
-      work_image = method.receiver
-      work_image.image_data = {
-        "id" => "test.jpg",
-        "storage" => "cache",
-        "metadata" => {"size" => 12345, "filename" => "test.jpg", "mime_type" => "image/jpeg"}
-      }.to_json
-      method.call(*args)
+    work_image = instance_double(WorkImage)
+    allow(WorkImage).to receive(:new).and_return(work_image)
+    allow(work_image).to receive(:work=)
+    allow(work_image).to receive(:user=)
+    allow(work_image).to receive(:copyright=)
+    allow(work_image).to receive(:work).and_return(work)
+    allow(work_image).to receive(:user).and_return(user)
+    allow(work_image).to receive(:copyright).and_return("© Example")
+    allow(work_image).to receive(:save).and_return(true)
+    allow(work_image).to receive(:image_data=) do |value|
+      allow(work_image).to receive(:image_data).and_return(value)
     end
+    work_image.image_data = {
+      "id" => "test.jpg",
+      "storage" => "cache",
+      "metadata" => {"size" => 12345, "filename" => "test.jpg", "mime_type" => "image/jpeg"}
+    }.to_json
 
     expect {
       post "/db/works/#{work.id}/image", params: {
@@ -96,15 +104,16 @@ RSpec.describe "POST /db/works/:work_id/image", type: :request do
 
     # 255文字を超える著作権情報でバリデーションエラーを確認
     # image_dataがないとDBレベルでエラーになるため、バリデーションの前にダミーデータを設定
-    allow_any_instance_of(WorkImage).to receive(:valid?).and_wrap_original do |method, *args|
-      work_image = method.receiver
-      work_image.image_data = {
-        "id" => "test.jpg",
-        "storage" => "cache",
-        "metadata" => {"size" => 12345, "filename" => "test.jpg", "mime_type" => "image/jpeg"}
-      }.to_json
-      method.call(*args)
-    end
+    work_image = instance_double(WorkImage)
+    allow(WorkImage).to receive(:new).and_return(work_image)
+    allow(work_image).to receive(:work=)
+    allow(work_image).to receive(:user=)
+    allow(work_image).to receive(:copyright=)
+    allow(work_image).to receive(:image_data=)
+    allow(work_image).to receive(:valid?).and_return(false)
+    allow(work_image).to receive(:errors).and_return(
+      instance_double(ActiveModel::Errors, full_messages: ["著作者情報は255文字以内で入力してください"])
+    )
 
     expect {
       post "/db/works/#{work.id}/image", params: {

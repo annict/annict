@@ -62,7 +62,7 @@ RSpec.describe "GET /fragment/@:username/tracking_heatmap", type: :request do
     work = FactoryBot.create(:work)
 
     # コントローラーで使用される基準日
-    date_from = (Date.today - 150.days).beginning_of_week(:sunday)
+    date_from = (Time.zone.today - 150.days).beginning_of_week(:sunday)
 
     # 基準日の記録（含まれるはず）
     FactoryBot.create(:record, user: user, work: work, watched_at: date_from)
