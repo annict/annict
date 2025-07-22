@@ -61,19 +61,23 @@ RSpec.describe "GET /fragment/@:username/tracking_heatmap", type: :request do
     user = FactoryBot.create(:registered_user)
     work = FactoryBot.create(:work)
 
-    # 150日前の記録
-    date_150_days_ago = (Time.zone.today - 150.days).beginning_of_week(:sunday)
-    FactoryBot.create(:record, user: user, work: work, watched_at: date_150_days_ago)
+    # コントローラーで使用される基準日
+    date_from = (Date.today - 150.days).beginning_of_week(:sunday)
 
-    # 151日前の記録（含まれないはず）
-    date_151_days_ago = date_150_days_ago - 1.day
-    FactoryBot.create(:record, user: user, work: work, watched_at: date_151_days_ago)
+    # 基準日の記録（含まれるはず）
+    FactoryBot.create(:record, user: user, work: work, watched_at: date_from)
+
+    # 基準日の1日前の記録（含まれないはず）
+    date_before = date_from - 1.day
+    FactoryBot.create(:record, user: user, work: work, watched_at: date_before)
 
     get "/fragment/@#{user.username}/tracking_heatmap"
 
     expect(response).to have_http_status(:ok)
-    expect(response.body).to include(date_150_days_ago.strftime("%Y-%m-%d"))
-    expect(response.body).not_to include(date_151_days_ago.strftime("%Y-%m-%d"))
+    # ヒートマップには基準日が含まれる
+    expect(response.body).to include(date_from.strftime("%Y-%m-%d"))
+    # 基準日より前は含まれない
+    expect(response.body).not_to include(date_before.strftime("%Y-%m-%d"))
   end
 
   it "別のユーザーのヒートマップにアクセスした場合でも表示されること" do

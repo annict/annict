@@ -22,10 +22,11 @@ RSpec.describe "GET /friends", type: :request do
     user = create(:registered_user)
     login_as(user, scope: :user)
 
-    social_friends_mock = instance_double("ActiveRecord::Relation")
-    allow(social_friends_mock).to receive(:all)
+    # social_friendsメソッドがall.pluckでエラーを発生させるように設定
+    social_friends_mock = double("social_friends")
+    allow(social_friends_mock).to receive(:all).and_return(social_friends_mock)
+    allow(social_friends_mock).to receive(:pluck)
       .and_raise(Koala::Facebook::AuthenticationError.new(401, ""))
-    allow(User).to receive(:find).with(user.id).and_return(user)
     allow(user).to receive(:social_friends).and_return(social_friends_mock)
 
     get "/friends"
