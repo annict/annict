@@ -41,7 +41,12 @@ RSpec.describe "POST /db/works/:work_id/trailers", type: :request do
     # YouTubeサムネイルの取得をスタブ化
     allow(HTTParty).to receive(:get).and_return(instance_double(HTTParty::Response, code: 200))
     allow(Down).to receive(:open).and_return(instance_double(Tempfile))
-    allow_any_instance_of(Trailer).to receive(:image=)
+    # Trailer#saveのフックで呼ばれるimage=メソッドをスキップ
+    allow(Trailer).to receive(:new).and_wrap_original do |method, *args|
+      trailer = method.call(*args)
+      allow(trailer).to receive(:image=)
+      trailer
+    end
 
     expect(Trailer.all.size).to eq(0)
 
@@ -69,7 +74,12 @@ RSpec.describe "POST /db/works/:work_id/trailers", type: :request do
     # YouTubeサムネイルの取得をスタブ化
     allow(HTTParty).to receive(:get).and_return(instance_double(HTTParty::Response, code: 200))
     allow(Down).to receive(:open).and_return(instance_double(Tempfile))
-    allow_any_instance_of(Trailer).to receive(:image=)
+    # Trailer#saveのフックで呼ばれるimage=メソッドをスキップ
+    allow(Trailer).to receive(:new).and_wrap_original do |method, *args|
+      trailer = method.call(*args)
+      allow(trailer).to receive(:image=)
+      trailer
+    end
 
     login_as(user, scope: :user)
 

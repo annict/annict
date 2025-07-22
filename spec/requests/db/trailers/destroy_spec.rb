@@ -77,7 +77,9 @@ RSpec.describe "DELETE /db/trailers/:id", type: :request do
     login_as(user, scope: :user)
 
     # destroy_in_batchesメソッドが呼ばれることを確認
-    allow(Trailer).to receive_message_chain(:without_deleted, :find).and_return(trailer)
+    trailer_relation = instance_double("ActiveRecord::Relation")
+    allow(Trailer).to receive(:without_deleted).and_return(trailer_relation)
+    allow(trailer_relation).to receive(:find).with(trailer.id.to_s).and_return(trailer)
     allow(trailer).to receive(:destroy_in_batches)
 
     delete "/db/trailers/#{trailer.id}"

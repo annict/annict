@@ -22,8 +22,11 @@ RSpec.describe "GET /friends", type: :request do
     user = create(:registered_user)
     login_as(user, scope: :user)
 
-    allow_any_instance_of(User).to receive_message_chain(:social_friends, :all)
+    social_friends_mock = instance_double("ActiveRecord::Relation")
+    allow(social_friends_mock).to receive(:all)
       .and_raise(Koala::Facebook::AuthenticationError.new(401, ""))
+    allow(User).to receive(:find).with(user.id).and_return(user)
+    allow(user).to receive(:social_friends).and_return(social_friends_mock)
 
     get "/friends"
 

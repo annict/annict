@@ -38,6 +38,8 @@ RSpec.describe "GET /fragment/trackable_episodes", type: :request do
     get "/fragment/trackable_episodes"
 
     expect(response.status).to eq(200)
+    # 視聴中のアニメがないことを確認
+    expect(response.body).not_to include("data-episode-item")
   end
 
   it "削除されたアニメは表示されないこと" do
