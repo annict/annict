@@ -3,8 +3,6 @@
 # Annict (アニクト)
 
 [![Build](https://github.com/annict/annict/actions/workflows/lint-and-test.yml/badge.svg)](https://github.com/annict/annict/actions/workflows/lint-and-test.yml)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/ba10b596888853bc3f83/test_coverage)](https://codeclimate.com/github/annict/annict/test_coverage)
-[![Code Climate](https://codeclimate.com/github/annict/annict/badges/gpa.svg)](https://codeclimate.com/github/annict/annict)
 [![Ruby Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://github.com/testdouble/standard)
 [![Discord](https://img.shields.io/discord/371121195619450881?label=Discord&color=5865F2)](https://discord.gg/PVJRUKP)
 
