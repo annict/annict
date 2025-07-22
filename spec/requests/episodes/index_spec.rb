@@ -63,8 +63,8 @@ RSpec.describe "GET /works/:work_id/episodes", type: :request do
 
   it "削除されたエピソードは表示されないこと" do
     work = FactoryBot.create(:work)
-    episode1 = FactoryBot.create(:episode, work:, sort_number: 1, number: "第1話", title: "表示される話")
-    episode2 = FactoryBot.create(:episode, work:, sort_number: 2, number: "第2話", title: "削除された話", deleted_at: Time.current)
+    FactoryBot.create(:episode, work:, sort_number: 1, number: "第1話", title: "表示される話")
+    FactoryBot.create(:episode, work:, sort_number: 2, number: "第2話", title: "削除された話", deleted_at: Time.current)
 
     get "/works/#{work.id}/episodes"
 
@@ -77,9 +77,9 @@ RSpec.describe "GET /works/:work_id/episodes", type: :request do
 
   it "エピソードがソート番号順に表示されること" do
     work = FactoryBot.create(:work)
-    episode3 = FactoryBot.create(:episode, work:, sort_number: 3, number: "第3話")
-    episode1 = FactoryBot.create(:episode, work:, sort_number: 1, number: "第1話")
-    episode2 = FactoryBot.create(:episode, work:, sort_number: 2, number: "第2話")
+    FactoryBot.create(:episode, work:, sort_number: 3, number: "第3話")
+    FactoryBot.create(:episode, work:, sort_number: 1, number: "第1話")
+    FactoryBot.create(:episode, work:, sort_number: 2, number: "第2話")
 
     get "/works/#{work.id}/episodes"
 

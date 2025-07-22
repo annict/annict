@@ -64,7 +64,7 @@ RSpec.describe "GET /works/:work_id/episodes/:episode_id", type: :request do
     work = FactoryBot.create(:work)
     episode = FactoryBot.create(:episode, work:)
     channel = Channel.with_vod.first
-    program = FactoryBot.create(:program, work:, channel:, vod_title_code: "test-vod")
+    FactoryBot.create(:program, work:, channel:, vod_title_code: "test-vod")
 
     get "/works/#{work.id}/episodes/#{episode.id}"
 
@@ -79,7 +79,7 @@ RSpec.describe "GET /works/:work_id/episodes/:episode_id", type: :request do
     episode = FactoryBot.create(:episode, work:)
     user = FactoryBot.create(:registered_user)
     record = FactoryBot.create(:record, work:, user:)
-    episode_record = FactoryBot.create(:episode_record, episode:, record:, work:, user:)
+    FactoryBot.create(:episode_record, episode:, record:, work:, user:)
 
     get "/works/#{work.id}/episodes/#{episode.id}"
 
