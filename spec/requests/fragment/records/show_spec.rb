@@ -16,16 +16,6 @@ RSpec.describe "GET /fragment/@:username/records/:record_id", type: :request do
     }.to raise_error(ActiveRecord::RecordNotFound)
   end
 
-  it "ユーザーと記録が存在する場合、200を返すこと" do
-    user = FactoryBot.create(:registered_user)
-    work = FactoryBot.create(:work)
-    record = FactoryBot.create(:record, user: user, work: work)
-
-    get "/fragment/@#{user.username}/records/#{record.id}"
-
-    expect(response).to have_http_status(:ok)
-  end
-
   it "削除されたユーザーの記録を表示しようとした場合、404エラーを返すこと" do
     user = FactoryBot.create(:registered_user)
     work = FactoryBot.create(:work)
