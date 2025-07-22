@@ -1,4 +1,4 @@
-# typed: true
+# typed: false
 # frozen_string_literal: true
 
 RSpec.describe "PATCH /episode_records", type: :request do

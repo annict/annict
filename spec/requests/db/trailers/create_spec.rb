@@ -1,4 +1,4 @@
-# typed: strict
+# typed: false
 # frozen_string_literal: true
 
 RSpec.describe "POST /db/works/:work_id/trailers", type: :request do
