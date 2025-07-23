@@ -40,30 +40,14 @@ RSpec.describe "POST /db/works/:work_id/image", type: :request do
     work = FactoryBot.create(:work)
     login_as(user, scope: :user)
 
-    # 実際の画像アップロードのテストはImageUploadableやアップローダーで行う
-    # ここではコントローラーの動作確認なので、saveが成功するように
-    # image_dataに有効な値を設定して保存が通るようモックする
-    work_image = instance_double(WorkImage)
-    allow(WorkImage).to receive(:new).and_return(work_image)
-    allow(work_image).to receive(:work=)
-    allow(work_image).to receive(:user=)
-    allow(work_image).to receive(:copyright=)
-    allow(work_image).to receive(:work).and_return(work)
-    allow(work_image).to receive(:user).and_return(user)
-    allow(work_image).to receive(:copyright).and_return("© Example")
-    allow(work_image).to receive(:save).and_return(true)
-    allow(work_image).to receive(:image_data=) do |value|
-      allow(work_image).to receive(:image_data).and_return(value)
-    end
-    work_image.image_data = {
-      "id" => "test.jpg",
-      "storage" => "cache",
-      "metadata" => {"size" => 12345, "filename" => "test.jpg", "mime_type" => "image/jpeg"}
-    }.to_json
+    # 画像ファイルをアップロードするテスト
+    # fixture_file_uploadを使用して実際のファイルアップロードをシミュレート
+    image_file = fixture_file_upload("test_image.jpg", "image/jpeg")
 
     expect {
       post "/db/works/#{work.id}/image", params: {
         work_image: {
+          image: image_file,
           copyright: "© Example"
         }
       }
