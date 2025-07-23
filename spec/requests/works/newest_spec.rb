@@ -77,12 +77,23 @@ RSpec.describe "GET /works/newest", type: :request do
     character = create(:character)
     person = create(:person)
     cast = create(:cast, work: work, character: character, person: person)
-    create(:staff, work: work, resource: person, role: "original_creator")
+    staff = create(:staff, work: work, resource: person, role: "original_creator")
+
+    # キャストとスタッフが正しく作成され、publishedであることを確認
+    expect(cast.unpublished_at).to be_nil
+    expect(staff.unpublished_at).to be_nil
+    expect(Cast.only_kept.where(work: work)).to include(cast)
+    expect(Staff.only_kept.where(work: work)).to include(staff)
 
     get "/works/newest"
 
+    # 作品が表示されていることを確認
+    expect(response.body).to include(work.title)
+
+    # キャスト・スタッフ情報が表示されていることを確認
     expect(response.body).to include(cast.character.name)
-    expect(response.body).to include(person.name)
+    expect(response.body).to include(cast.name)
+    expect(response.body).to include(staff.name)
   end
 
   it "grid_small表示のときはキャストとスタッフ情報を含まないこと" do
@@ -90,12 +101,13 @@ RSpec.describe "GET /works/newest", type: :request do
     character = create(:character)
     person = create(:person)
     cast = create(:cast, work: work, character: character, person: person)
-    create(:staff, work: work, resource: person, role: "original_creator")
+    staff = create(:staff, work: work, resource: person, role: "original_creator")
 
     get "/works/newest", params: {display: "grid_small"}
 
     expect(response.body).to include(work.title)
     expect(response.body).not_to include(cast.character.name)
-    expect(response.body).not_to include(person.name)
+    expect(response.body).not_to include(cast.name)
+    expect(response.body).not_to include(staff.name)
   end
 end
