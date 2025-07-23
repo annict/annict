@@ -6,7 +6,7 @@ export default class extends Controller {
   declare readonly contentTarget: HTMLElement;
   declare readonly readMoreBackgroundTarget: HTMLElement;
   declare readonly readMoreButtonTarget: HTMLElement;
-  declare readonly height: number;
+  declare height: number;
 
   initialize() {
     if (!this.data.get("height")) {

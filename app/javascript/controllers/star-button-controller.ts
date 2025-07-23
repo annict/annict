@@ -17,12 +17,12 @@ export default class extends Controller {
     starrableType: String,
   };
 
-  defaultClass!: string;
-  starredClass!: string;
-  isLoading!: boolean;
-  hasStarred!: boolean;
-  starrableIdValue!: number;
-  starrableTypeValue!: string;
+  declare readonly defaultClass: string;
+  declare readonly starredClass: string;
+  declare readonly starrableIdValue: number;
+  declare readonly starrableTypeValue: string;
+  declare hasStarred: boolean;
+  declare isLoading: boolean;
 
   initialize() {
     this.startLoading();

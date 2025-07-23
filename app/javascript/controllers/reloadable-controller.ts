@@ -5,9 +5,9 @@ import { Controller } from "@hotwired/stimulus";
 export default class extends Controller {
   static values = { eventName: String, url: String };
 
-  boundReload!: any;
-  eventNameValue!: string;
-  urlValue!: string;
+  declare readonly eventNameValue: string;
+  declare readonly urlValue: string;
+  declare boundReload: any;
 
   initialize() {
     this.boundReload = this.reload.bind(this);

@@ -14,12 +14,12 @@ export default class extends Controller {
     receivedIcon: String,
   };
 
-  channelIdValue!: number;
-  currentReceivedValue!: boolean;
-  iconWrapperTarget!: HTMLElement;
-  notReceivedButtonClass!: string;
-  receivedButtonClass!: string;
-  receivedChannelIds!: number[];
+  declare readonly channelIdValue: number;
+  declare readonly iconWrapperTarget: HTMLElement;
+  declare readonly notReceivedButtonClass: string;
+  declare readonly receivedButtonClass: string;
+  declare receivedChannelIds: number[];
+  declare currentReceivedValue: boolean;
 
   initialize() {
     this.element.classList.add("c-spinner");

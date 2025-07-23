@@ -3,8 +3,8 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  backgroundElm!: Element | null;
-  contentElm!: Element | null;
+  declare backgroundElm: Element | null;
+  declare contentElm: Element | null;
 
   initialize() {
     this.backgroundElm = this.element.querySelector(".c-main-sidebar__background");

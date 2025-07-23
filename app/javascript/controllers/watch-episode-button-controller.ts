@@ -12,10 +12,10 @@ export default class extends Controller {
     pageCategory: String,
   };
 
-  episodeIdValue!: number;
-  isLoading!: boolean;
-  loadingClass!: string;
-  pageCategoryValue!: string;
+  declare readonly episodeIdValue: number;
+  declare readonly loadingClass: string;
+  declare readonly pageCategoryValue: string;
+  declare isLoading: boolean;
 
   startLoading() {
     this.isLoading = true;

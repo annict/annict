@@ -4,7 +4,7 @@ import { Controller } from "@hotwired/stimulus";
 import { EventDispatcher } from "../utils/event-dispatcher";
 
 export default class extends Controller {
-  charactersCounterId!: string;
+  declare charactersCounterId: string;
 
   initialize() {
     this.charactersCounterId = this.data.get("charactersCounterId") ?? "id";

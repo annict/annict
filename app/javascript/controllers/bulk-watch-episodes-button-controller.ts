@@ -12,9 +12,9 @@ export default class extends Controller {
     episodeId: Number,
   };
 
-  episodeIdValue!: number;
-  isLoading!: boolean;
-  loadingClass!: string;
+  declare readonly episodeIdValue: number;
+  declare readonly loadingClass: string;
+  declare isLoading: boolean;
 
   reloadList() {
     new EventDispatcher("reloadable--trackable-episode-list:reload").dispatch();

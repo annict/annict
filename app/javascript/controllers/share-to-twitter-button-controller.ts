@@ -3,9 +3,9 @@ import { Controller } from "@hotwired/stimulus";
 import urlParams from "../utils/url-params";
 
 export default class extends Controller {
-  text!: string | null;
-  url!: string | null;
-  hashtags!: string | null;
+  declare text: string | null;
+  declare url: string | null;
+  declare hashtags: string | null;
 
   initialize() {
     this.text = this.data.get("text");

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 export class EventDispatcher {
-  event!: CustomEvent;
+  declare event: CustomEvent;
 
   constructor(eventName: string, detail: any = {}) {
     this.event = new CustomEvent(eventName, {

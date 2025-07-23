@@ -13,13 +13,13 @@ export default class extends Controller {
     followingText: String,
   };
 
-  defaultClass!: string;
-  defaultTextValue!: string;
-  followingClass!: string;
-  followingTextValue!: string;
-  isLoading!: boolean;
-  isFollowing!: boolean;
-  userIdValue!: number;
+  declare readonly defaultClass: string;
+  declare readonly defaultTextValue: string;
+  declare readonly followingClass: string;
+  declare readonly followingTextValue: string;
+  declare readonly userIdValue: number;
+  declare isFollowing: boolean;
+  declare isLoading: boolean;
 
   initialize() {
     this.startLoading();

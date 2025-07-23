@@ -5,9 +5,9 @@ import { Controller } from "@hotwired/stimulus";
 export default class extends Controller {
   static targets = ["value"];
 
-  valueTarget!: HTMLElement;
-  charactersCounterId!: string;
-  boundUpdate!: any;
+  declare readonly valueTarget: HTMLElement;
+  declare charactersCounterId: string;
+  declare boundUpdate: any;
 
   initialize() {
     this.charactersCounterId = this.data.get("charactersCounterId") ?? "id";

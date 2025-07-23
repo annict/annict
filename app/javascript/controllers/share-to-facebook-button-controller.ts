@@ -3,8 +3,8 @@ import { Controller } from "@hotwired/stimulus";
 import urlParams from "../utils/url-params";
 
 export default class extends Controller {
-  url!: string | null;
-  appId!: string | null;
+  declare url: string | null;
+  declare appId: string | null;
 
   initialize() {
     this.url = this.data.get("url");

@@ -5,8 +5,8 @@ import "bootstrap/js/dist/alert";
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  type!: string;
-  message!: string;
+  declare type: string;
+  declare message: string;
 
   initialize() {
     this.type = this.data.get("type") || "notice";
