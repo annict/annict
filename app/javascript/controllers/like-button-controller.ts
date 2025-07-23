@@ -8,7 +8,7 @@ export default class extends Controller {
   static targets = ["count"];
   static values = { initIsLiked: Boolean };
 
-  countTarget!: HTMLElement;
+  declare readonly countTarget: HTMLElement;
   initIsLikedValue!: boolean;
   isLiked!: boolean;
   isLoading!: boolean;

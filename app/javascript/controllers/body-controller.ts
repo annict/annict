@@ -3,10 +3,10 @@ import { Controller } from "@hotwired/stimulus";
 export default class extends Controller {
   static targets = ["content", "readMoreButton", "readMoreBackground"];
 
-  contentTarget!: HTMLElement;
-  readMoreBackgroundTarget!: HTMLElement;
-  readMoreButtonTarget!: HTMLElement;
-  height!: number;
+  declare readonly contentTarget: HTMLElement;
+  declare readonly readMoreBackgroundTarget: HTMLElement;
+  declare readonly readMoreButtonTarget: HTMLElement;
+  declare readonly height: number;
 
   initialize() {
     if (!this.data.get("height")) {

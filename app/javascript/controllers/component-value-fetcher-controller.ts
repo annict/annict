@@ -11,10 +11,10 @@ export default class extends Controller {
     url: String,
   };
 
-  payloadValue!: object;
-  eventNameValue!: string;
-  methodValue!: string;
-  urlValue!: string;
+  declare readonly payloadValue: object;
+  declare readonly eventNameValue: string;
+  declare readonly methodValue: string;
+  declare readonly urlValue: string;
 
   async connect() {
     let data;
