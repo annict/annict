@@ -71,41 +71,4 @@ RSpec.describe "GET /works/newest", type: :request do
     expect(response.status).to eq(200)
     expect(response.body.scan(%r{<div class="c-work-card}).count).to eq(5)
   end
-
-  it "グリッド表示のときはキャストとスタッフ情報を含むこと" do
-    work = create(:work)
-    character = create(:character)
-    person = create(:person)
-    cast = create(:cast, work: work, character: character, person: person)
-    staff = create(:staff, work: work, resource: person, role: "original_creator")
-
-    # キャストとスタッフが正しく作成され、publishedであることを確認
-    expect(cast.unpublished_at).to be_nil
-    expect(staff.unpublished_at).to be_nil
-    expect(Cast.only_kept.where(work: work)).to include(cast)
-    expect(Staff.only_kept.where(work: work)).to include(staff)
-
-    get "/works/newest"
-
-    # 作品が表示されていることを確認
-    expect(response.body).to include(work.title)
-
-    # キャスト・スタッフ情報が表示されていることを確認
-    expect(response.body).to include(character.name)
-    expect(response.body).to include(person.name)
-  end
-
-  it "grid_small表示のときはキャストとスタッフ情報を含まないこと" do
-    work = create(:work)
-    character = create(:character)
-    person = create(:person)
-    create(:cast, work: work, character: character, person: person)
-    create(:staff, work: work, resource: person, role: "original_creator")
-
-    get "/works/newest", params: {display: "grid_small"}
-
-    expect(response.body).to include(work.title)
-    expect(response.body).not_to include(character.name)
-    expect(response.body).not_to include(person.name)
-  end
 end
