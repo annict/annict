@@ -1,63 +1,46 @@
 # typed: false
 # frozen_string_literal: true
 
-describe "GET /db/channel_groups/:id/edit", type: :request do
-  context "user does not sign in" do
-    let!(:channel_group) { ChannelGroup.first }
+RSpec.describe "GET /db/channel_groups/:id/edit", type: :request do
+  it "ログインしていないとき、ログインページにリダイレクトすること" do
+    channel_group = ChannelGroup.first
 
-    it "user can not access this page" do
-      get "/db/channel_groups/#{channel_group.id}/edit"
+    get "/db/channel_groups/#{channel_group.id}/edit"
 
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("ログインしてください")
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("ログインしてください")
   end
 
-  context "user who is not editor signs in" do
-    let!(:user) { create(:registered_user) }
-    let!(:channel_group) { ChannelGroup.first }
+  it "編集者権限を持たないユーザーがログインしているとき、アクセスできないこと" do
+    user = create(:registered_user)
+    channel_group = ChannelGroup.first
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    get "/db/channel_groups/#{channel_group.id}/edit"
 
-    it "can not access" do
-      get "/db/channel_groups/#{channel_group.id}/edit"
-
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("アクセスできません")
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("アクセスできません")
   end
 
-  context "user who is editor signs in" do
-    let!(:user) { create(:registered_user, :with_editor_role) }
-    let!(:channel_group) { ChannelGroup.first }
+  it "編集者権限を持つユーザーがログインしているとき、アクセスできないこと" do
+    user = create(:registered_user, :with_editor_role)
+    channel_group = ChannelGroup.first
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    get "/db/channel_groups/#{channel_group.id}/edit"
 
-    it "can not access" do
-      get "/db/channel_groups/#{channel_group.id}/edit"
-
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("アクセスできません")
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("アクセスできません")
   end
 
-  context "user who is admin signs in" do
-    let!(:user) { create(:registered_user, :with_admin_role) }
-    let!(:channel_group) { ChannelGroup.first }
+  it "管理者権限を持つユーザーがログインしているとき、チャンネルグループ編集フォームが表示されること" do
+    user = create(:registered_user, :with_admin_role)
+    channel_group = ChannelGroup.first
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    get "/db/channel_groups/#{channel_group.id}/edit"
 
-    it "responses channel_group edit form" do
-      get "/db/channel_groups/#{channel_group.id}/edit"
-
-      expect(response.status).to eq(200)
-      expect(response.body).to include(channel_group.name)
-    end
+    expect(response.status).to eq(200)
+    expect(response.body).to include(channel_group.name)
   end
 end

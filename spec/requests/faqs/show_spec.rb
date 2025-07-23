@@ -1,7 +1,7 @@
 # typed: false
 # frozen_string_literal: true
 
-describe "GET /faq", type: :request do
+RSpec.describe "GET /faq", type: :request do
   it "GitHubに置いてあるドキュメントにリダイレクトすること" do
     get "/faq"
 

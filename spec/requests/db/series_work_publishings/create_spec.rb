@@ -1,58 +1,62 @@
 # typed: false
 # frozen_string_literal: true
 
-describe "POST /db/series_works/:id/publishing", type: :request do
-  context "user does not sign in" do
-    let!(:series_work) { create(:series_work, :unpublished) }
+RSpec.describe "POST /db/series_works/:id/publishing", type: :request do
+  it "ログインしていないとき、ログインページにリダイレクトされること" do
+    series_work = FactoryBot.create(:series_work, :unpublished)
 
-    it "user can not access this page" do
-      post "/db/series_works/#{series_work.id}/publishing"
-      series_work.reload
+    post "/db/series_works/#{series_work.id}/publishing"
+    series_work.reload
 
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("ログインしてください")
-
-      expect(series_work.published?).to eq(false)
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("ログインしてください")
+    expect(series_work.published?).to eq(false)
   end
 
-  context "user who is not editor signs in" do
-    let!(:user) { create(:registered_user) }
-    let!(:series_work) { create(:series_work, :unpublished) }
+  it "エディター権限のないユーザーでログインしているとき、アクセスが拒否されること" do
+    user = FactoryBot.create(:registered_user)
+    series_work = FactoryBot.create(:series_work, :unpublished)
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    post "/db/series_works/#{series_work.id}/publishing"
+    series_work.reload
 
-    it "user can not access" do
-      post "/db/series_works/#{series_work.id}/publishing"
-      series_work.reload
-
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("アクセスできません")
-
-      expect(series_work.published?).to eq(false)
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("アクセスできません")
+    expect(series_work.published?).to eq(false)
   end
 
-  context "user who is editor signs in" do
-    let!(:user) { create(:registered_user, :with_editor_role) }
-    let!(:series_work) { create(:series_work, :unpublished) }
+  it "エディター権限のあるユーザーでログインしているとき、シリーズ作品を公開できること" do
+    user = FactoryBot.create(:registered_user, :with_editor_role)
+    series_work = FactoryBot.create(:series_work, :unpublished)
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    expect(series_work.published?).to eq(false)
 
-    it "user can publish series work" do
-      expect(series_work.published?).to eq(false)
+    post "/db/series_works/#{series_work.id}/publishing"
+    series_work.reload
 
+    expect(response.status).to eq(302)
+    expect(flash[:notice]).to eq("公開しました")
+    expect(series_work.published?).to eq(true)
+  end
+
+  it "存在しないシリーズ作品のIDが指定されたとき、404エラーが返されること" do
+    user = FactoryBot.create(:registered_user, :with_editor_role)
+    login_as(user, scope: :user)
+
+    expect {
+      post "/db/series_works/non-existent-id/publishing"
+    }.to raise_error(ActiveRecord::RecordNotFound)
+  end
+
+  it "既に公開済みのシリーズ作品のIDが指定されたとき、404エラーが返されること" do
+    user = FactoryBot.create(:registered_user, :with_editor_role)
+    series_work = FactoryBot.create(:series_work, :published)
+    login_as(user, scope: :user)
+
+    expect {
       post "/db/series_works/#{series_work.id}/publishing"
-      series_work.reload
-
-      expect(response.status).to eq(302)
-      expect(flash[:notice]).to eq("公開しました")
-
-      expect(series_work.published?).to eq(true)
-    end
+    }.to raise_error(ActiveRecord::RecordNotFound)
   end
 end

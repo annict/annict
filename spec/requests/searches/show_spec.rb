@@ -1,48 +1,78 @@
 # typed: false
 # frozen_string_literal: true
 
-describe "GET /search", type: :request do
-  describe "アニメ検索" do
-    let!(:work) { create(:work) }
+RSpec.describe "GET /search", type: :request do
+  it "アニメを検索できること" do
+    work = FactoryBot.create(:work)
 
-    it "検索結果が表示できること" do
-      get "/search", params: {q: work.title}
+    get "/search", params: {q: work.title}
 
-      expect(response.status).to eq(200)
-      expect(response.body).to include(work.title)
-    end
+    expect(response.status).to eq(200)
+    expect(response.body).to include(work.title)
   end
 
-  describe "キャラクター検索" do
-    let!(:character) { create(:character) }
+  it "キャラクターを検索できること" do
+    character = FactoryBot.create(:character)
 
-    it "検索結果が表示できること" do
-      get "/search", params: {q: character.name}
+    get "/search", params: {q: character.name}
 
-      expect(response.status).to eq(200)
-      expect(response.body).to include(character.name)
-    end
+    expect(response.status).to eq(200)
+    expect(response.body).to include(character.name)
   end
 
-  describe "人物検索" do
-    let!(:person) { create(:person) }
+  it "人物を検索できること" do
+    person = FactoryBot.create(:person)
 
-    it "検索結果が表示できること" do
-      get "/search", params: {q: person.name}
+    get "/search", params: {q: person.name}
 
-      expect(response.status).to eq(200)
-      expect(response.body).to include(person.name)
-    end
+    expect(response.status).to eq(200)
+    expect(response.body).to include(person.name)
   end
 
-  describe "団体検索" do
-    let!(:organization) { create(:organization) }
+  it "団体を検索できること" do
+    organization = FactoryBot.create(:organization)
 
-    it "検索結果が表示できること" do
-      get "/search", params: {q: organization.name}
+    get "/search", params: {q: organization.name}
 
-      expect(response.status).to eq(200)
-      expect(response.body).to include(organization.name)
-    end
+    expect(response.status).to eq(200)
+    expect(response.body).to include(organization.name)
+  end
+
+  it "検索キーワードが空の場合でも正常に表示されること" do
+    get "/search", params: {q: ""}
+
+    expect(response.status).to eq(200)
+  end
+
+  it "検索キーワードがない場合でも正常に表示されること" do
+    get "/search"
+
+    expect(response.status).to eq(200)
+  end
+
+  it "デフォルトでアニメの検索結果が表示されること" do
+    work = FactoryBot.create(:work, title: "テストアニメ")
+    character = FactoryBot.create(:character, name: "テストキャラ")
+
+    get "/search", params: {q: "テスト"}
+
+    expect(response.status).to eq(200)
+    expect(response.body).to include(work.title)
+    expect(response.body).not_to include(character.name)
+  end
+
+  it "リソースタイプを指定して検索できること" do
+    work = FactoryBot.create(:work, title: "テストアニメ")
+    character = FactoryBot.create(:character, name: "テストキャラ")
+
+    # アニメを検索
+    get "/search", params: {q: "テスト", resource: "work"}
+    expect(response.status).to eq(200)
+    expect(response.body).to include(work.title)
+
+    # キャラクターを検索
+    get "/search", params: {q: "テスト", resource: "character"}
+    expect(response.status).to eq(200)
+    expect(response.body).to include(character.name)
   end
 end

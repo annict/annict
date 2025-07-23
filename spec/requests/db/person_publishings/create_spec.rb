@@ -1,58 +1,81 @@
 # typed: false
 # frozen_string_literal: true
 
-describe "POST /db/people/:id/publishing", type: :request do
-  context "user does not sign in" do
-    let!(:person) { create(:person, :unpublished) }
+RSpec.describe "POST /db/people/:id/publishing", type: :request do
+  it "ログインしていないとき、ログインページにリダイレクトすること" do
+    person = FactoryBot.create(:person, :unpublished)
 
-    it "user can not access this page" do
-      post "/db/people/#{person.id}/publishing"
-      person.reload
+    post "/db/people/#{person.id}/publishing"
+    person.reload
 
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("ログインしてください")
-
-      expect(person.published?).to eq(false)
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("ログインしてください")
+    expect(person.published?).to eq(false)
   end
 
-  context "user who is not editor signs in" do
-    let!(:user) { create(:registered_user) }
-    let!(:person) { create(:person, :unpublished) }
+  it "エディター権限を持たないユーザーがログインしているとき、アクセスできないこと" do
+    user = FactoryBot.create(:registered_user)
+    person = FactoryBot.create(:person, :unpublished)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    login_as(user, scope: :user)
 
-    it "user can not access" do
-      post "/db/people/#{person.id}/publishing"
-      person.reload
+    post "/db/people/#{person.id}/publishing"
+    person.reload
 
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("アクセスできません")
-
-      expect(person.published?).to eq(false)
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("アクセスできません")
+    expect(person.published?).to eq(false)
   end
 
-  context "user who is editor signs in" do
-    let!(:user) { create(:registered_user, :with_editor_role) }
-    let!(:person) { create(:person, :unpublished) }
+  it "エディター権限を持つユーザーがログインしているとき、人物を公開できること" do
+    user = FactoryBot.create(:registered_user, :with_editor_role)
+    person = FactoryBot.create(:person, :unpublished)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    login_as(user, scope: :user)
 
-    it "user can publish person" do
-      expect(person.published?).to eq(false)
+    expect(person.published?).to eq(false)
 
+    post "/db/people/#{person.id}/publishing"
+    person.reload
+
+    expect(response.status).to eq(302)
+    expect(flash[:notice]).to eq("公開しました")
+    expect(person.published?).to eq(true)
+  end
+
+  it "エディター権限を持つユーザーがログインしているとき、既に公開されている人物は404エラーになること" do
+    user = FactoryBot.create(:registered_user, :with_editor_role)
+    person = FactoryBot.create(:person, :published)
+
+    login_as(user, scope: :user)
+
+    expect(person.published?).to eq(true)
+
+    expect {
       post "/db/people/#{person.id}/publishing"
-      person.reload
+    }.to raise_error(ActiveRecord::RecordNotFound)
+  end
 
-      expect(response.status).to eq(302)
-      expect(flash[:notice]).to eq("公開しました")
+  it "エディター権限を持つユーザーがログインしているとき、削除された人物は404エラーになること" do
+    user = FactoryBot.create(:registered_user, :with_editor_role)
+    person = FactoryBot.create(:person, :unpublished, :deleted)
 
-      expect(person.published?).to eq(true)
-    end
+    login_as(user, scope: :user)
+
+    expect(person.deleted?).to eq(true)
+
+    expect {
+      post "/db/people/#{person.id}/publishing"
+    }.to raise_error(ActiveRecord::RecordNotFound)
+  end
+
+  it "エディター権限を持つユーザーがログインしているとき、存在しない人物IDは404エラーになること" do
+    user = FactoryBot.create(:registered_user, :with_editor_role)
+
+    login_as(user, scope: :user)
+
+    expect {
+      post "/db/people/99999999/publishing"
+    }.to raise_error(ActiveRecord::RecordNotFound)
   end
 end

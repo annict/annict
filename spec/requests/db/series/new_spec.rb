@@ -1,43 +1,31 @@
 # typed: false
 # frozen_string_literal: true
 
-describe "GET /db/series/new", type: :request do
-  context "user does not sign in" do
-    it "user can not access this page" do
-      get "/db/series/new"
+RSpec.describe "GET /db/series/new", type: :request do
+  it "ログインしていないとき、ログインページにリダイレクトすること" do
+    get "/db/series/new"
 
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("ログインしてください")
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("ログインしてください")
   end
 
-  context "user who is not editor signs in" do
-    let!(:user) { create(:registered_user) }
+  it "エディター権限を持たないユーザーがログインしているとき、アクセスが拒否されること" do
+    user = create(:registered_user)
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    get "/db/series/new"
 
-    it "can not access" do
-      get "/db/series/new"
-
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("アクセスできません")
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("アクセスできません")
   end
 
-  context "user who is editor signs in" do
-    let!(:user) { create(:registered_user, :with_editor_role) }
+  it "エディター権限を持つユーザーがログインしているとき、ページが正常に表示されること" do
+    user = create(:registered_user, :with_editor_role)
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    get "/db/series/new"
 
-    it "responses page" do
-      get "/db/series/new"
-
-      expect(response.status).to eq(200)
-      expect(response.body).to include("シリーズ登録")
-    end
+    expect(response.status).to eq(200)
+    expect(response.body).to include("シリーズ登録")
   end
 end

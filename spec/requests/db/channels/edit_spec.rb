@@ -1,63 +1,66 @@
 # typed: false
 # frozen_string_literal: true
 
-describe "GET /db/channels/:id/edit", type: :request do
-  context "user does not sign in" do
-    let!(:channel) { Channel.first }
+RSpec.describe "GET /db/channels/:id/edit", type: :request do
+  it "ログインしていないとき、ログインページにリダイレクトすること" do
+    channel = Channel.first
 
-    it "user can not access this page" do
-      get "/db/channels/#{channel.id}/edit"
+    get "/db/channels/#{channel.id}/edit"
 
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("ログインしてください")
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("ログインしてください")
   end
 
-  context "user who is not editor signs in" do
-    let!(:user) { create(:registered_user) }
-    let!(:channel) { Channel.first }
+  it "編集者権限を持つユーザーがログインしているとき、アクセスできないこと" do
+    user = create(:registered_user, :with_editor_role)
+    channel = Channel.first
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    get "/db/channels/#{channel.id}/edit"
 
-    it "can not access" do
-      get "/db/channels/#{channel.id}/edit"
-
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("アクセスできません")
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("アクセスできません")
   end
 
-  context "user who is editor signs in" do
-    let!(:user) { create(:registered_user, :with_editor_role) }
-    let!(:channel) { Channel.first }
+  it "管理者権限を持つユーザーがログインしているとき、チャンネル編集フォームが表示されること" do
+    user = create(:registered_user, :with_admin_role)
+    channel = Channel.first
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    get "/db/channels/#{channel.id}/edit"
 
-    it "can not access" do
-      get "/db/channels/#{channel.id}/edit"
-
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("アクセスできません")
-    end
+    expect(response.status).to eq(200)
+    expect(response.body).to include(channel.name)
   end
 
-  context "user who is admin signs in" do
-    let!(:user) { create(:registered_user, :with_admin_role) }
-    let!(:channel) { Channel.first }
+  it "一般ユーザーがログインしているとき、アクセスできないこと" do
+    user = create(:registered_user)
+    channel = Channel.first
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    get "/db/channels/#{channel.id}/edit"
 
-    it "responses channel edit form" do
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("アクセスできません")
+  end
+
+  it "削除されたチャンネルにアクセスしようとしたとき、404エラーになること" do
+    user = create(:registered_user, :with_admin_role)
+    channel = Channel.first
+    channel.update!(deleted_at: Time.current)
+    login_as(user, scope: :user)
+
+    expect {
       get "/db/channels/#{channel.id}/edit"
+    }.to raise_error(ActiveRecord::RecordNotFound)
+  end
 
-      expect(response.status).to eq(200)
-      expect(response.body).to include(channel.name)
-    end
+  it "存在しないチャンネルIDでアクセスしたとき、404エラーになること" do
+    user = create(:registered_user, :with_admin_role)
+    login_as(user, scope: :user)
+
+    expect {
+      get "/db/channels/invalid-id/edit"
+    }.to raise_error(ActiveRecord::RecordNotFound)
   end
 end

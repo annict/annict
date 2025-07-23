@@ -1,48 +1,45 @@
 # typed: false
 # frozen_string_literal: true
 
-describe "GET /db/series_works/:id/edit", type: :request do
-  context "user does not sign in" do
-    let!(:series_work) { create(:series_work) }
+RSpec.describe "GET /db/series_works/:id/edit", type: :request do
+  it "ログインしていないとき、このページにアクセスできないこと" do
+    series_work = create(:series_work)
 
-    it "user can not access this page" do
-      get "/db/series_works/#{series_work.id}/edit"
+    get "/db/series_works/#{series_work.id}/edit"
 
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("ログインしてください")
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("ログインしてください")
   end
 
-  context "user who is not editor signs in" do
-    let!(:user) { create(:registered_user) }
-    let!(:series_work) { create(:series_work) }
+  it "エディター権限のないユーザーがログインしているとき、アクセスできないこと" do
+    user = create(:registered_user)
+    series_work = create(:series_work)
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    get "/db/series_works/#{series_work.id}/edit"
 
-    it "can not access" do
-      get "/db/series_works/#{series_work.id}/edit"
-
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("アクセスできません")
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("アクセスできません")
   end
 
-  context "user who is editor signs in" do
-    let!(:user) { create(:registered_user, :with_editor_role) }
-    let!(:series_work) { create(:series_work) }
-    let!(:work) { series_work.work }
+  it "エディター権限のあるユーザーがログインしているとき、シリーズ作品フォームが表示されること" do
+    user = create(:registered_user, :with_editor_role)
+    series_work = create(:series_work)
+    work = series_work.work
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    get "/db/series_works/#{series_work.id}/edit"
 
-    it "responses series work form" do
-      get "/db/series_works/#{series_work.id}/edit"
+    expect(response.status).to eq(200)
+    expect(response.body).to include(work.title)
+  end
 
-      expect(response.status).to eq(200)
-      expect(response.body).to include(work.title)
-    end
+  it "エディター権限のあるユーザーがログインしているとき、存在しないシリーズ作品IDでアクセスするとNotFoundエラーが発生すること" do
+    user = create(:registered_user, :with_editor_role)
+    login_as(user, scope: :user)
+
+    expect {
+      get "/db/series_works/00000000-0000-0000-0000-000000000000/edit"
+    }.to raise_error(ActiveRecord::RecordNotFound)
   end
 end

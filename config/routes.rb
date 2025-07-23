@@ -207,7 +207,6 @@ Rails.application.routes.draw do
   match "/db/works/:work_id/trailers/new",                      via: :get,    as: :db_new_trailer,                             to: "db/trailers#new"
   match "/db/works/new",                                        via: :get,    as: :db_new_work,                                to: "db/works#new"
   match "/dummy_image",                                         via: :get,                                                     to: "application#dummy_image" if Rails.env.test?
-  match "/episode_records",                                     via: :patch,  as: :episode_record_mutation,                    to: "episode_records#update"
   match "/faq",                                                 via: :get,    as: :faq,                                        to: "faqs#show"
   match "/forum",                                               via: :get,    as: :forum,                                      to: "forum/home#show"
   match "/forum/categories/:category_id",                       via: :get,    as: :forum_category,                             to: "forum/categories#show",                               category_id: /[a-z_]+/
@@ -230,7 +229,6 @@ Rails.application.routes.draw do
   match "/fragment/works/:work_id/note",                        via: :patch,  as: :fragment_note,                              to: "fragment/notes#update"
   match "/fragment/works/:work_id/note/edit",                   via: :get,    as: :fragment_edit_note,                         to: "fragment/notes#edit"
   match "/fragment/works/:work_id/records",                     via: :get,    as: :fragment_work_record_list,                  to: "fragment/work_records#index"
-  match "/fragment/receive_channel_buttons",                    via: :get,    as: :fragment_receive_channel_button_list,       to: "fragment/receive_channel_buttons#index"
   match "/fragment/trackable_works/:work_id",                   via: :get,    as: :fragment_trackable_work,                    to: "fragment/trackable_works#show"
   match "/fragment/trackable_episodes",                         via: :get,    as: :fragment_trackable_episode_list,            to: "fragment/trackable_episodes#index"
   match "/fragment/trackable_episodes/:episode_id",             via: :get,    as: :fragment_trackable_episode,                 to: "fragment/trackable_episodes#show"

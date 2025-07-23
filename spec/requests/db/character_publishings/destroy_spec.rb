@@ -1,58 +1,75 @@
 # typed: false
 # frozen_string_literal: true
 
-describe "DELETE /db/characters/:id/publishing", type: :request do
-  context "user does not sign in" do
-    let!(:character) { create(:character, :published) }
+RSpec.describe "DELETE /db/characters/:id/publishing", type: :request do
+  it "ログインしていないとき、ログインページにリダイレクトすること" do
+    character = create(:character, :published)
 
-    it "user can not access this page" do
-      delete "/db/characters/#{character.id}/publishing"
-      character.reload
+    delete "/db/characters/#{character.id}/publishing"
+    character.reload
 
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("ログインしてください")
-
-      expect(character.published?).to eq(true)
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("ログインしてください")
+    expect(character.published?).to eq(true)
   end
 
-  context "user who is not editor signs in" do
-    let!(:user) { create(:registered_user) }
-    let!(:character) { create(:character, :published) }
+  it "編集者権限を持たないユーザーがログインしているとき、アクセスできないこと" do
+    user = create(:registered_user)
+    character = create(:character, :published)
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    delete "/db/characters/#{character.id}/publishing"
+    character.reload
 
-    it "user can not access" do
-      delete "/db/characters/#{character.id}/publishing"
-      character.reload
-
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("アクセスできません")
-
-      expect(character.published?).to eq(true)
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("アクセスできません")
+    expect(character.published?).to eq(true)
   end
 
-  context "user who is editor signs in" do
-    let!(:user) { create(:registered_user, :with_editor_role) }
-    let!(:character) { create(:character, :published) }
+  it "編集者権限を持つユーザーがログインしているとき、キャラクターを非公開にできること" do
+    user = create(:registered_user, :with_editor_role)
+    character = create(:character, :published)
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    expect(character.published?).to eq(true)
 
-    it "user can unpublish character" do
-      expect(character.published?).to eq(true)
+    delete "/db/characters/#{character.id}/publishing"
+    character.reload
 
+    expect(response.status).to eq(302)
+    expect(flash[:notice]).to eq("非公開にしました")
+    expect(character.published?).to eq(false)
+  end
+
+  it "存在しないキャラクターIDを指定したとき、404エラーになること" do
+    user = create(:registered_user, :with_editor_role)
+    login_as(user, scope: :user)
+
+    expect {
+      delete "/db/characters/99999/publishing"
+    }.to raise_error(ActiveRecord::RecordNotFound)
+  end
+
+  it "未公開のキャラクターを指定したとき、404エラーになること" do
+    user = create(:registered_user, :with_editor_role)
+    character = create(:character, :unpublished)
+    login_as(user, scope: :user)
+
+    expect(character.published?).to eq(false)
+
+    expect {
       delete "/db/characters/#{character.id}/publishing"
-      character.reload
+    }.to raise_error(ActiveRecord::RecordNotFound)
+  end
 
-      expect(response.status).to eq(302)
-      expect(flash[:notice]).to eq("非公開にしました")
+  it "削除済みのキャラクターを指定したとき、404エラーになること" do
+    user = create(:registered_user, :with_editor_role)
+    character = create(:character, :published)
+    character.destroy_in_batches
+    login_as(user, scope: :user)
 
-      expect(character.published?).to eq(false)
-    end
+    expect {
+      delete "/db/characters/#{character.id}/publishing"
+    }.to raise_error(ActiveRecord::RecordNotFound)
   end
 end

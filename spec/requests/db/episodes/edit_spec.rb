@@ -1,47 +1,65 @@
 # typed: false
 # frozen_string_literal: true
 
-describe "GET /db/episodes/:id/edit", type: :request do
-  context "user does not sign in" do
-    let!(:episode) { create(:episode) }
+RSpec.describe "GET /db/episodes/:id/edit", type: :request do
+  it "ログインしていない場合、ログインページにリダイレクトされること" do
+    episode = create(:episode)
 
-    it "user can not access this page" do
-      get "/db/episodes/#{episode.id}/edit"
+    get "/db/episodes/#{episode.id}/edit"
 
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("ログインしてください")
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("ログインしてください")
   end
 
-  context "user who is not editor signs in" do
-    let!(:user) { create(:registered_user) }
-    let!(:episode) { create(:episode) }
+  it "編集者権限を持たないユーザーがログインしている場合、アクセスできないこと" do
+    user = create(:registered_user)
+    episode = create(:episode)
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    get "/db/episodes/#{episode.id}/edit"
 
-    it "can not access" do
-      get "/db/episodes/#{episode.id}/edit"
-
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("アクセスできません")
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("アクセスできません")
   end
 
-  context "user who is editor signs in" do
-    let!(:user) { create(:registered_user, :with_editor_role) }
-    let!(:episode) { create(:episode) }
+  it "編集者権限を持つユーザーがログインしている場合、エピソード編集フォームが表示されること" do
+    user = create(:registered_user, :with_editor_role)
+    episode = create(:episode)
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    get "/db/episodes/#{episode.id}/edit"
 
-    it "responses episode edit form" do
+    expect(response.status).to eq(200)
+    expect(response.body).to include(episode.title)
+  end
+
+  it "管理者権限を持つユーザーがログインしている場合、エピソード編集フォームが表示されること" do
+    user = create(:registered_user, :with_admin_role)
+    episode = create(:episode)
+    login_as(user, scope: :user)
+
+    get "/db/episodes/#{episode.id}/edit"
+
+    expect(response.status).to eq(200)
+    expect(response.body).to include(episode.title)
+  end
+
+  it "削除されたエピソードの場合、404エラーが発生すること" do
+    user = create(:registered_user, :with_editor_role)
+    episode = create(:episode, deleted_at: Time.current)
+    login_as(user, scope: :user)
+
+    expect {
       get "/db/episodes/#{episode.id}/edit"
+    }.to raise_error(ActiveRecord::RecordNotFound)
+  end
 
-      expect(response.status).to eq(200)
-      expect(response.body).to include(episode.title)
-    end
+  it "存在しないエピソードIDの場合、404エラーが発生すること" do
+    user = create(:registered_user, :with_editor_role)
+    login_as(user, scope: :user)
+
+    expect {
+      get "/db/episodes/999999/edit"
+    }.to raise_error(ActiveRecord::RecordNotFound)
   end
 end

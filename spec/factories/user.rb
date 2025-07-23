@@ -26,19 +26,28 @@ FactoryBot.define do
       end
     end
 
+    trait :with_email_notification do
+      after :create do |user|
+        create(:email_notification, user: user)
+      end
+    end
+
+    # 編集者権限
     trait :with_editor_role do
       role { :editor }
     end
 
+    # 管理者権限
     trait :with_admin_role do
       role { :admin }
     end
 
+    # Annictサポーター
     trait :with_supporter do
       gumroad_subscriber
     end
 
-    factory :registered_user, traits: %i[with_profile with_provider with_setting] do
+    factory :registered_user, traits: %i[with_profile with_provider with_setting with_email_notification] do
       after :create do |user|
         user.confirm
       end

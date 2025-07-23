@@ -1,58 +1,64 @@
 # typed: false
 # frozen_string_literal: true
 
-describe "DELETE /db/trailers/:id/publishing", type: :request do
-  context "user does not sign in" do
-    let!(:trailer) { create(:trailer, :published) }
+RSpec.describe "DELETE /db/trailers/:id/publishing", type: :request do
+  it "ログインしていないとき、ログインページにリダイレクトされること" do
+    trailer = FactoryBot.create(:trailer, :published)
 
-    it "user can not access this page" do
-      delete "/db/trailers/#{trailer.id}/publishing"
-      trailer.reload
+    delete "/db/trailers/#{trailer.id}/publishing"
+    trailer.reload
 
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("ログインしてください")
-
-      expect(trailer.published?).to eq(true)
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("ログインしてください")
+    expect(trailer.published?).to eq(true)
   end
 
-  context "user who is not editor signs in" do
-    let!(:user) { create(:registered_user) }
-    let!(:trailer) { create(:trailer, :published) }
+  it "エディター権限を持たないユーザーがログインしているとき、アクセスが拒否されること" do
+    user = FactoryBot.create(:registered_user)
+    trailer = FactoryBot.create(:trailer, :published)
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    delete "/db/trailers/#{trailer.id}/publishing"
+    trailer.reload
 
-    it "user can not access" do
-      delete "/db/trailers/#{trailer.id}/publishing"
-      trailer.reload
-
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("アクセスできません")
-
-      expect(trailer.published?).to eq(true)
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("アクセスできません")
+    expect(trailer.published?).to eq(true)
   end
 
-  context "user who is editor signs in" do
-    let!(:user) { create(:registered_user, :with_editor_role) }
-    let!(:trailer) { create(:trailer, :published) }
+  it "エディター権限を持つユーザーがログインしているとき、トレーラーを非公開にできること" do
+    user = FactoryBot.create(:registered_user, :with_editor_role)
+    trailer = FactoryBot.create(:trailer, :published)
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    expect(trailer.published?).to eq(true)
 
-    it "user can unpublish trailer" do
-      expect(trailer.published?).to eq(true)
+    delete "/db/trailers/#{trailer.id}/publishing"
+    trailer.reload
 
+    expect(response.status).to eq(302)
+    expect(flash[:notice]).to eq("非公開にしました")
+    expect(trailer.published?).to eq(false)
+  end
+
+  it "存在しないトレーラーIDを指定したとき、404エラーが返されること" do
+    user = FactoryBot.create(:registered_user, :with_editor_role)
+    login_as(user, scope: :user)
+
+    expect {
+      delete "/db/trailers/nonexistent-id/publishing"
+    }.to raise_error(ActiveRecord::RecordNotFound)
+  end
+
+  it "すでに非公開のトレーラーを非公開にしようとしたとき、404エラーが返されること" do
+    user = FactoryBot.create(:registered_user, :with_editor_role)
+    trailer = FactoryBot.create(:trailer, :unpublished)
+    login_as(user, scope: :user)
+
+    expect(trailer.published?).to eq(false)
+
+    expect {
       delete "/db/trailers/#{trailer.id}/publishing"
-      trailer.reload
-
-      expect(response.status).to eq(302)
-      expect(flash[:notice]).to eq("非公開にしました")
-
-      expect(trailer.published?).to eq(false)
-    end
+    }.to raise_error(ActiveRecord::RecordNotFound)
   end
 end

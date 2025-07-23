@@ -1,84 +1,81 @@
 # typed: false
 # frozen_string_literal: true
 
-describe "DELETE /db/channel_groups/:id", type: :request do
-  context "user does not sign in" do
-    let!(:channel_group) { ChannelGroup.first }
+RSpec.describe "DELETE /db/channel_groups/:id", type: :request do
+  it "ログインしていないとき、ログインページにリダイレクトすること" do
+    channel_group = ChannelGroup.first
 
-    it "user can not access this page" do
-      expect(ChannelGroup.count).to eq(18)
+    expect(ChannelGroup.count).to eq(18)
 
-      delete "/db/channel_groups/#{channel_group.id}"
-      channel_group.reload
+    delete "/db/channel_groups/#{channel_group.id}"
+    channel_group.reload
 
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("ログインしてください")
-
-      expect(ChannelGroup.count).to eq(18)
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("ログインしてください")
+    expect(ChannelGroup.count).to eq(18)
   end
 
-  context "user who is not editor signs in" do
-    let!(:user) { create(:registered_user) }
-    let!(:channel_group) { ChannelGroup.first }
+  it "一般ユーザーでログインしているとき、アクセスできないこと" do
+    user = create(:registered_user)
+    channel_group = ChannelGroup.first
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    expect(ChannelGroup.count).to eq(18)
 
-    it "user can not access" do
-      expect(ChannelGroup.count).to eq(18)
+    delete "/db/channel_groups/#{channel_group.id}"
+    channel_group.reload
 
-      delete "/db/channel_groups/#{channel_group.id}"
-      channel_group.reload
-
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("アクセスできません")
-
-      expect(ChannelGroup.count).to eq(18)
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("アクセスできません")
+    expect(ChannelGroup.count).to eq(18)
   end
 
-  context "user who is editor signs in" do
-    let!(:user) { create(:registered_user, :with_editor_role) }
-    let!(:channel_group) { ChannelGroup.first }
+  it "編集者権限を持つユーザーでログインしているとき、アクセスできないこと" do
+    user = create(:registered_user, :with_editor_role)
+    channel_group = ChannelGroup.first
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    expect(ChannelGroup.count).to eq(18)
 
-    it "user can not access" do
-      expect(ChannelGroup.count).to eq(18)
+    delete "/db/channel_groups/#{channel_group.id}"
+    channel_group.reload
 
-      delete "/db/channel_groups/#{channel_group.id}"
-      channel_group.reload
-
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("アクセスできません")
-
-      expect(ChannelGroup.count).to eq(18)
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("アクセスできません")
+    expect(ChannelGroup.count).to eq(18)
   end
 
-  context "user who is admin signs in" do
-    let!(:user) { create(:registered_user, :with_admin_role) }
-    let!(:channel_group) { ChannelGroup.first }
+  it "管理者権限を持つユーザーでログインしているとき、チャンネルグループを論理削除できること" do
+    user = create(:registered_user, :with_admin_role)
+    channel_group = ChannelGroup.first
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    expect(ChannelGroup.count).to eq(18)
+    expect(channel_group.deleted?).to eq(false)
 
-    it "user can delete channel_group softly" do
-      expect(ChannelGroup.count).to eq(18)
+    delete "/db/channel_groups/#{channel_group.id}"
 
-      expect(channel_group.deleted?).to eq(false)
+    expect(response.status).to eq(302)
+    expect(flash[:notice]).to eq("削除しました")
+    expect(ChannelGroup.count).to eq(17)
+  end
 
-      delete "/db/channel_groups/#{channel_group.id}"
+  it "管理者権限を持つユーザーでログインしているとき、存在しないチャンネルグループのIDを指定したときはエラーになること" do
+    user = create(:registered_user, :with_admin_role)
+    login_as(user, scope: :user)
+    non_existent_id = "non-existent-id"
 
-      expect(response.status).to eq(302)
-      expect(flash[:notice]).to eq("削除しました")
+    expect { delete "/db/channel_groups/#{non_existent_id}" }.to raise_error(ActiveRecord::RecordNotFound)
+  end
 
-      expect(ChannelGroup.count).to eq(17)
-    end
+  it "管理者権限を持つユーザーでログインしているとき、すでに論理削除されたチャンネルグループは削除できないこと" do
+    user = create(:registered_user, :with_admin_role)
+    channel_group = create(:channel_group)
+    channel_group.update!(deleted_at: Time.current)
+    login_as(user, scope: :user)
+
+    expect(channel_group.deleted?).to eq(true)
+
+    expect { delete "/db/channel_groups/#{channel_group.id}" }.to raise_error(ActiveRecord::RecordNotFound)
   end
 end

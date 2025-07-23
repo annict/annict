@@ -1,82 +1,76 @@
 # typed: false
 # frozen_string_literal: true
 
-describe "DELETE /db/programs/:id", type: :request do
-  context "user does not sign in" do
-    let!(:program) { create(:program, :not_deleted) }
+RSpec.describe "DELETE /db/programs/:id", type: :request do
+  it "ユーザーがログインしていないとき、ログインページにリダイレクトすること" do
+    channel_group = ChannelGroup.create!(name: "地上波", sort_number: 1)
+    channel = Channel.create!(channel_group:, name: "テレビ東京", sort_number: 1)
+    program = create(:program, :not_deleted, channel:)
 
-    it "user can not access this page" do
-      expect(Program.count).to eq(1)
+    expect(Program.count).to eq(1)
 
-      delete "/db/programs/#{program.id}"
-      program.reload
+    delete "/db/programs/#{program.id}"
+    program.reload
 
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("ログインしてください")
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("ログインしてください")
 
-      expect(Program.count).to eq(1)
-    end
+    expect(Program.count).to eq(1)
   end
 
-  context "user who is not editor signs in" do
-    let!(:user) { create(:registered_user) }
-    let!(:program) { create(:program, :not_deleted) }
+  it "通常ユーザーがログインしているとき、アクセス拒否されること" do
+    user = create(:registered_user)
+    channel_group = ChannelGroup.create!(name: "地上波", sort_number: 1)
+    channel = Channel.create!(channel_group:, name: "テレビ東京", sort_number: 1)
+    program = create(:program, :not_deleted, channel:)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    login_as(user, scope: :user)
 
-    it "user can not access" do
-      expect(Program.count).to eq(1)
+    expect(Program.count).to eq(1)
 
-      delete "/db/programs/#{program.id}"
-      program.reload
+    delete "/db/programs/#{program.id}"
+    program.reload
 
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("アクセスできません")
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("アクセスできません")
 
-      expect(Program.count).to eq(1)
-    end
+    expect(Program.count).to eq(1)
   end
 
-  context "user who is editor signs in" do
-    let!(:user) { create(:registered_user, :with_editor_role) }
-    let!(:program) { create(:program, :not_deleted) }
+  it "編集者ユーザーがログインしているとき、アクセス拒否されること" do
+    user = create(:registered_user, :with_editor_role)
+    channel_group = ChannelGroup.create!(name: "地上波", sort_number: 1)
+    channel = Channel.create!(channel_group:, name: "テレビ東京", sort_number: 1)
+    program = create(:program, :not_deleted, channel:)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    login_as(user, scope: :user)
 
-    it "user can not access" do
-      expect(Program.count).to eq(1)
+    expect(Program.count).to eq(1)
 
-      delete "/db/programs/#{program.id}"
-      program.reload
+    delete "/db/programs/#{program.id}"
+    program.reload
 
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("アクセスできません")
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("アクセスできません")
 
-      expect(Program.count).to eq(1)
-    end
+    expect(Program.count).to eq(1)
   end
 
-  context "user who is admin signs in" do
-    let!(:user) { create(:registered_user, :with_admin_role) }
-    let!(:program) { create(:program, :not_deleted) }
+  it "管理者ユーザーがログインしているとき、プログラムをソフト削除できること" do
+    user = create(:registered_user, :with_admin_role)
+    channel_group = ChannelGroup.create!(name: "地上波", sort_number: 1)
+    channel = Channel.create!(channel_group:, name: "テレビ東京", sort_number: 1)
+    program = create(:program, :not_deleted, channel:)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    login_as(user, scope: :user)
 
-    it "user can delete program softly" do
-      expect(Program.count).to eq(1)
+    expect(Program.count).to eq(1)
 
-      delete "/db/programs/#{program.id}"
+    delete "/db/programs/#{program.id}"
 
-      expect(response.status).to eq(302)
-      expect(flash[:notice]).to eq("削除しました")
+    expect(response.status).to eq(302)
+    expect(flash[:notice]).to eq("削除しました")
 
-      expect(Program.count).to eq(0)
-    end
+    expect(Program.count).to eq(0)
   end
 end

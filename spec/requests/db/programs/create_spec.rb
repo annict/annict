@@ -1,77 +1,136 @@
 # typed: false
 # frozen_string_literal: true
 
-describe "POST /db/works/:work_id/programs", type: :request do
-  context "user does not sign in" do
-    let!(:channel) { Channel.first }
-    let!(:work) { create(:work) }
-    let!(:form_params) do
-      {
-        rows: "#{channel.id},2020-04-01 0:00"
-      }
-    end
+RSpec.describe "POST /db/works/:work_id/programs", type: :request do
+  it "ログインしていないとき、ログインページにリダイレクトすること" do
+    channel = Channel.first
+    work = create(:work)
+    form_params = {
+      rows: "#{channel.id},2020-04-01 0:00"
+    }
 
-    it "user can not access this page" do
-      post "/db/works/#{work.id}/programs", params: {deprecated_db_program_rows_form: form_params}
+    post "/db/works/#{work.id}/programs", params: {deprecated_db_program_rows_form: form_params}
 
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("ログインしてください")
-
-      expect(Program.all.size).to eq(0)
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("ログインしてください")
+    expect(Program.all.size).to eq(0)
   end
 
-  context "user who is not editor signs in" do
-    let!(:channel) { Channel.first }
-    let!(:work) { create(:work) }
-    let!(:user) { create(:registered_user) }
-    let!(:form_params) do
-      {
-        rows: "#{channel.id},2020-04-01 0:00"
-      }
-    end
+  it "エディター権限を持たないユーザーがログインしているとき、アクセスできないこと" do
+    channel = Channel.first
+    work = create(:work)
+    user = create(:registered_user)
+    form_params = {
+      rows: "#{channel.id},2020-04-01 0:00"
+    }
 
-    before do
-      login_as(user, scope: :user)
-    end
+    login_as(user, scope: :user)
 
-    it "user can not access" do
-      post "/db/works/#{work.id}/programs", params: {deprecated_db_program_rows_form: form_params}
+    post "/db/works/#{work.id}/programs", params: {deprecated_db_program_rows_form: form_params}
 
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("アクセスできません")
-
-      expect(Program.all.size).to eq(0)
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("アクセスできません")
+    expect(Program.all.size).to eq(0)
   end
 
-  context "user who is editor signs in" do
-    let!(:channel) { Channel.first }
-    let!(:work) { create(:work) }
-    let!(:user) { create(:registered_user, :with_editor_role) }
-    let!(:form_params) do
-      {
-        rows: "#{channel.id},2020-04-01 0:00"
-      }
-    end
+  it "エディター権限を持つユーザーがログインしているとき、放送予定を作成できること" do
+    channel = Channel.first
+    work = create(:work)
+    user = create(:registered_user, :with_editor_role)
+    form_params = {
+      rows: "#{channel.id},2020-04-01 0:00"
+    }
 
-    before do
-      login_as(user, scope: :user)
-    end
+    login_as(user, scope: :user)
 
-    it "user can create program" do
-      expect(Program.all.size).to eq(0)
+    expect(Program.all.size).to eq(0)
 
-      post "/db/works/#{work.id}/programs", params: {deprecated_db_program_rows_form: form_params}
+    post "/db/works/#{work.id}/programs", params: {deprecated_db_program_rows_form: form_params}
 
-      expect(response.status).to eq(302)
-      expect(flash[:notice]).to eq("登録しました")
+    expect(response.status).to eq(302)
+    expect(flash[:notice]).to eq("登録しました")
+    expect(Program.all.size).to eq(1)
 
-      expect(Program.all.size).to eq(1)
-      program = Program.last
+    program = Program.last
+    expect(program.channel_id).to eq(channel.id)
+    expect(program.started_at.to_s).to eq(Time.zone.parse("2020-03-31 15:00").to_s)
+  end
 
-      expect(program.channel_id).to eq(channel.id)
-      expect(program.started_at.to_s).to eq(Time.zone.parse("2020-03-31 15:00").to_s)
-    end
+  it "管理者権限を持つユーザーがログインしているとき、放送予定を作成できること" do
+    channel = Channel.first
+    work = create(:work)
+    user = create(:registered_user, :with_admin_role)
+    form_params = {
+      rows: "#{channel.id},2020-04-01 0:00"
+    }
+
+    login_as(user, scope: :user)
+
+    expect(Program.all.size).to eq(0)
+
+    post "/db/works/#{work.id}/programs", params: {deprecated_db_program_rows_form: form_params}
+
+    expect(response.status).to eq(302)
+    expect(flash[:notice]).to eq("登録しました")
+    expect(Program.all.size).to eq(1)
+
+    program = Program.last
+    expect(program.channel_id).to eq(channel.id)
+    expect(program.started_at.to_s).to eq(Time.zone.parse("2020-03-31 15:00").to_s)
+  end
+
+  it "複数の放送予定を一度に作成できること" do
+    channel1 = Channel.first
+    channel2 = Channel.second
+    work = create(:work)
+    user = create(:registered_user, :with_editor_role)
+    form_params = {
+      rows: "#{channel1.id},2020-04-01 0:00\n#{channel2.id},2020-04-02 1:00"
+    }
+
+    login_as(user, scope: :user)
+
+    expect(Program.all.size).to eq(0)
+
+    post "/db/works/#{work.id}/programs", params: {deprecated_db_program_rows_form: form_params}
+
+    expect(response.status).to eq(302)
+    expect(flash[:notice]).to eq("登録しました")
+    expect(Program.all.size).to eq(2)
+
+    programs = Program.order(:started_at)
+    expect(programs[0].channel_id).to eq(channel1.id)
+    expect(programs[0].started_at.to_s).to eq(Time.zone.parse("2020-03-31 15:00").to_s)
+    expect(programs[1].channel_id).to eq(channel2.id)
+    expect(programs[1].started_at.to_s).to eq(Time.zone.parse("2020-04-01 16:00").to_s)
+  end
+
+  it "不正な時刻形式が指定されたとき、バリデーションエラーになること" do
+    channel = Channel.first
+    work = create(:work)
+    user = create(:registered_user, :with_editor_role)
+    form_params = {
+      rows: "#{channel.id},invalid-time"
+    }
+
+    login_as(user, scope: :user)
+
+    post "/db/works/#{work.id}/programs", params: {deprecated_db_program_rows_form: form_params}
+
+    expect(response.status).to eq(422)
+    expect(Program.all.size).to eq(0)
+  end
+
+  it "存在しない作品IDが指定されたとき、404エラーになること" do
+    channel = Channel.first
+    user = create(:registered_user, :with_editor_role)
+    form_params = {
+      rows: "#{channel.id},2020-04-01 0:00"
+    }
+
+    login_as(user, scope: :user)
+
+    expect { post "/db/works/999999/programs", params: {deprecated_db_program_rows_form: form_params} }
+      .to raise_error(ActiveRecord::RecordNotFound)
   end
 end

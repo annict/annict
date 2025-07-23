@@ -1,7 +1,7 @@
 # typed: false
 # frozen_string_literal: true
 
-describe "GET /terms", type: :request do
+RSpec.describe "GET /terms", type: :request do
   it "利用規約ページが表示されること" do
     get "/terms"
 

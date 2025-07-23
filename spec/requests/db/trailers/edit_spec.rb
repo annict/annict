@@ -1,47 +1,66 @@
 # typed: false
 # frozen_string_literal: true
 
-describe "GET /db/trailers/:id/edit", type: :request do
-  context "user does not sign in" do
-    let!(:trailer) { create(:trailer) }
+RSpec.describe "GET /db/trailers/:id/edit", type: :request do
+  it "ログインしていないとき、ログインページにリダイレクトすること" do
+    trailer = FactoryBot.create(:trailer)
 
-    it "user can not access this page" do
-      get "/db/trailers/#{trailer.id}/edit"
+    get "/db/trailers/#{trailer.id}/edit"
 
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("ログインしてください")
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("ログインしてください")
   end
 
-  context "user who is not editor signs in" do
-    let!(:user) { create(:registered_user) }
-    let!(:trailer) { create(:trailer) }
+  it "編集者でないユーザーでログインしているとき、アクセスできないこと" do
+    user = FactoryBot.create(:registered_user)
+    trailer = FactoryBot.create(:trailer)
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    get "/db/trailers/#{trailer.id}/edit"
 
-    it "can not access" do
-      get "/db/trailers/#{trailer.id}/edit"
-
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("アクセスできません")
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("アクセスできません")
   end
 
-  context "user who is editor signs in" do
-    let!(:user) { create(:registered_user, :with_editor_role) }
-    let!(:trailer) { create(:trailer) }
+  it "編集者ユーザーでログインしているとき、トレイラー編集フォームが表示されること" do
+    user = FactoryBot.create(:registered_user, :with_editor_role)
+    trailer = FactoryBot.create(:trailer)
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    get "/db/trailers/#{trailer.id}/edit"
 
-    it "responses trailer edit form" do
+    expect(response.status).to eq(200)
+    expect(response.body).to include(trailer.title)
+  end
+
+  it "管理者ユーザーでログインしているとき、トレイラー編集フォームが表示されること" do
+    user = FactoryBot.create(:registered_user, :with_admin_role)
+    trailer = FactoryBot.create(:trailer)
+    login_as(user, scope: :user)
+
+    get "/db/trailers/#{trailer.id}/edit"
+
+    expect(response.status).to eq(200)
+    expect(response.body).to include(trailer.title)
+  end
+
+  it "削除されたトレイラーの場合、404エラーになること" do
+    user = FactoryBot.create(:registered_user, :with_editor_role)
+    trailer = FactoryBot.create(:trailer)
+    trailer.destroy!
+    login_as(user, scope: :user)
+
+    expect {
       get "/db/trailers/#{trailer.id}/edit"
+    }.to raise_error(ActiveRecord::RecordNotFound)
+  end
 
-      expect(response.status).to eq(200)
-      expect(response.body).to include(trailer.title)
-    end
+  it "存在しないトレイラーIDの場合、404エラーになること" do
+    user = FactoryBot.create(:registered_user, :with_editor_role)
+    login_as(user, scope: :user)
+
+    expect {
+      get "/db/trailers/non-existent-id/edit"
+    }.to raise_error(ActiveRecord::RecordNotFound)
   end
 end

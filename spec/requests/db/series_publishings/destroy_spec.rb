@@ -1,58 +1,62 @@
 # typed: false
 # frozen_string_literal: true
 
-describe "DELETE /db/series/:id/publishing", type: :request do
-  context "user does not sign in" do
-    let!(:series) { create(:series, :published) }
+RSpec.describe "DELETE /db/series/:id/publishing", type: :request do
+  it "ログインしていないとき、アクセスできないこと" do
+    series = create(:series, :published)
 
-    it "user can not access this page" do
-      delete "/db/series/#{series.id}/publishing"
-      series.reload
+    delete "/db/series/#{series.id}/publishing"
+    series.reload
 
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("ログインしてください")
-
-      expect(series.published?).to eq(true)
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("ログインしてください")
+    expect(series.published?).to eq(true)
   end
 
-  context "user who is not editor signs in" do
-    let!(:user) { create(:registered_user) }
-    let!(:series) { create(:series, :published) }
+  it "編集者ロールを持たないユーザーがログインしているとき、アクセスできないこと" do
+    user = create(:registered_user)
+    series = create(:series, :published)
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    delete "/db/series/#{series.id}/publishing"
+    series.reload
 
-    it "user can not access" do
-      delete "/db/series/#{series.id}/publishing"
-      series.reload
-
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("アクセスできません")
-
-      expect(series.published?).to eq(true)
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("アクセスできません")
+    expect(series.published?).to eq(true)
   end
 
-  context "user who is editor signs in" do
-    let!(:user) { create(:registered_user, :with_editor_role) }
-    let!(:series) { create(:series, :published) }
+  it "編集者ロールを持つユーザーがログインしているとき、シリーズを非公開にできること" do
+    user = create(:registered_user, :with_editor_role)
+    series = create(:series, :published)
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    expect(series.published?).to eq(true)
 
-    it "user can unpublish series" do
-      expect(series.published?).to eq(true)
+    delete "/db/series/#{series.id}/publishing"
+    series.reload
 
+    expect(response.status).to eq(302)
+    expect(flash[:notice]).to eq("非公開にしました")
+    expect(series.published?).to eq(false)
+  end
+
+  it "編集者ロールを持つユーザーがログインしているとき、存在しないシリーズIDの場合404エラーになること" do
+    user = create(:registered_user, :with_editor_role)
+    login_as(user, scope: :user)
+
+    expect do
+      delete "/db/series/999999/publishing"
+    end.to raise_error(ActiveRecord::RecordNotFound)
+  end
+
+  it "編集者ロールを持つユーザーがログインしているとき、既に非公開のシリーズの場合404エラーになること" do
+    user = create(:registered_user, :with_editor_role)
+    series = create(:series, :unpublished)
+    login_as(user, scope: :user)
+
+    expect do
       delete "/db/series/#{series.id}/publishing"
-      series.reload
-
-      expect(response.status).to eq(302)
-      expect(flash[:notice]).to eq("非公開にしました")
-
-      expect(series.published?).to eq(false)
-    end
+    end.to raise_error(ActiveRecord::RecordNotFound)
   end
 end

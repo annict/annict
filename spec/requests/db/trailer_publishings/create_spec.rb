@@ -1,58 +1,89 @@
 # typed: false
 # frozen_string_literal: true
 
-describe "POST /db/trailers/:id/publishing", type: :request do
-  context "user does not sign in" do
-    let!(:trailer) { create(:trailer, :unpublished) }
+RSpec.describe "POST /db/trailers/:id/publishing", type: :request do
+  it "ログインしていないとき、ログインページにリダイレクトされること" do
+    trailer = create(:trailer, :unpublished)
 
-    it "user can not access this page" do
-      post "/db/trailers/#{trailer.id}/publishing"
-      trailer.reload
+    post "/db/trailers/#{trailer.id}/publishing"
+    trailer.reload
 
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("ログインしてください")
-
-      expect(trailer.published?).to eq(false)
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("ログインしてください")
+    expect(trailer.published?).to eq(false)
   end
 
-  context "user who is not editor signs in" do
-    let!(:user) { create(:registered_user) }
-    let!(:trailer) { create(:trailer, :unpublished) }
+  it "エディター権限のないユーザーがログインしているとき、アクセスできないこと" do
+    user = create(:registered_user)
+    trailer = create(:trailer, :unpublished)
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    post "/db/trailers/#{trailer.id}/publishing"
+    trailer.reload
 
-    it "user can not access" do
-      post "/db/trailers/#{trailer.id}/publishing"
-      trailer.reload
-
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("アクセスできません")
-
-      expect(trailer.published?).to eq(false)
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("アクセスできません")
+    expect(trailer.published?).to eq(false)
   end
 
-  context "user who is editor signs in" do
-    let!(:user) { create(:registered_user, :with_editor_role) }
-    let!(:trailer) { create(:trailer, :unpublished) }
+  it "エディター権限のあるユーザーがログインしているとき、トレイラーを公開できること" do
+    user = create(:registered_user, :with_editor_role)
+    trailer = create(:trailer, :unpublished)
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    expect(trailer.published?).to eq(false)
 
-    it "user can publish trailer" do
-      expect(trailer.published?).to eq(false)
+    post "/db/trailers/#{trailer.id}/publishing"
+    trailer.reload
 
+    expect(response.status).to eq(302)
+    expect(flash[:notice]).to eq("公開しました")
+    expect(trailer.published?).to eq(true)
+  end
+
+  it "管理者権限のあるユーザーがログインしているとき、トレイラーを公開できること" do
+    user = create(:registered_user, :with_admin_role)
+    trailer = create(:trailer, :unpublished)
+    login_as(user, scope: :user)
+
+    expect(trailer.published?).to eq(false)
+
+    post "/db/trailers/#{trailer.id}/publishing"
+    trailer.reload
+
+    expect(response.status).to eq(302)
+    expect(flash[:notice]).to eq("公開しました")
+    expect(trailer.published?).to eq(true)
+  end
+
+  it "すでに公開済みのトレイラーを公開しようとしたとき、404エラーになること" do
+    user = create(:registered_user, :with_editor_role)
+    trailer = create(:trailer, :published)
+    login_as(user, scope: :user)
+
+    expect(trailer.published?).to eq(true)
+
+    expect do
       post "/db/trailers/#{trailer.id}/publishing"
-      trailer.reload
+    end.to raise_error(ActiveRecord::RecordNotFound)
+  end
 
-      expect(response.status).to eq(302)
-      expect(flash[:notice]).to eq("公開しました")
+  it "存在しないトレイラーIDを指定したとき、404エラーになること" do
+    user = create(:registered_user, :with_editor_role)
+    login_as(user, scope: :user)
 
-      expect(trailer.published?).to eq(true)
-    end
+    expect do
+      post "/db/trailers/999999/publishing"
+    end.to raise_error(ActiveRecord::RecordNotFound)
+  end
+
+  it "削除済みのトレイラーを公開しようとしたとき、404エラーになること" do
+    user = create(:registered_user, :with_editor_role)
+    trailer = create(:trailer, :unpublished, deleted_at: Time.zone.now)
+    login_as(user, scope: :user)
+
+    expect do
+      post "/db/trailers/#{trailer.id}/publishing"
+    end.to raise_error(ActiveRecord::RecordNotFound)
   end
 end

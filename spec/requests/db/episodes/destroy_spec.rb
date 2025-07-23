@@ -1,82 +1,76 @@
 # typed: false
 # frozen_string_literal: true
 
-describe "DELETE /db/episodes/:id", type: :request do
-  context "user does not sign in" do
-    let!(:episode) { create(:episode, :not_deleted) }
+RSpec.describe "DELETE /db/episodes/:id", type: :request do
+  it "ログインしていないとき、ログインページにリダイレクトすること" do
+    episode = create(:episode, :not_deleted)
 
-    it "user can not access this page" do
-      expect(Episode.count).to eq(1)
+    expect(Episode.count).to eq(1)
 
-      delete "/db/episodes/#{episode.id}"
-      episode.reload
+    delete "/db/episodes/#{episode.id}"
+    episode.reload
 
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("ログインしてください")
-
-      expect(Episode.count).to eq(1)
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("ログインしてください")
+    expect(Episode.count).to eq(1)
   end
 
-  context "user who is not editor signs in" do
-    let!(:user) { create(:registered_user) }
-    let!(:episode) { create(:episode, :not_deleted) }
+  it "編集者権限を持たないユーザーでログインしているとき、アクセスできないこと" do
+    user = create(:registered_user)
+    episode = create(:episode, :not_deleted)
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    expect(Episode.count).to eq(1)
 
-    it "user can not access" do
-      expect(Episode.count).to eq(1)
+    delete "/db/episodes/#{episode.id}"
+    episode.reload
 
-      delete "/db/episodes/#{episode.id}"
-      episode.reload
-
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("アクセスできません")
-
-      expect(Episode.count).to eq(1)
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("アクセスできません")
+    expect(Episode.count).to eq(1)
   end
 
-  context "user who is editor signs in" do
-    let!(:user) { create(:registered_user, :with_editor_role) }
-    let!(:episode) { create(:episode, :not_deleted) }
+  it "編集者権限を持つユーザーでログインしているとき、アクセスできないこと" do
+    user = create(:registered_user, :with_editor_role)
+    episode = create(:episode, :not_deleted)
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    expect(Episode.count).to eq(1)
 
-    it "user can not access" do
-      expect(Episode.count).to eq(1)
+    delete "/db/episodes/#{episode.id}"
+    episode.reload
 
-      delete "/db/episodes/#{episode.id}"
-      episode.reload
-
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("アクセスできません")
-
-      expect(Episode.count).to eq(1)
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("アクセスできません")
+    expect(Episode.count).to eq(1)
   end
 
-  context "user who is admin signs in" do
-    let!(:user) { create(:registered_user, :with_admin_role) }
-    let!(:episode) { create(:episode, :not_deleted) }
+  it "管理者権限を持つユーザーでログインしているとき、エピソードを論理削除できること" do
+    user = create(:registered_user, :with_admin_role)
+    episode = create(:episode, :not_deleted)
+    login_as(user, scope: :user)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    expect(Episode.count).to eq(1)
 
-    it "user can delete episode softly" do
-      expect(Episode.count).to eq(1)
+    delete "/db/episodes/#{episode.id}"
 
-      delete "/db/episodes/#{episode.id}"
+    expect(response.status).to eq(302)
+    expect(flash[:notice]).to eq("削除しました")
+    expect(Episode.count).to eq(0)
+  end
 
-      expect(response.status).to eq(302)
-      expect(flash[:notice]).to eq("削除しました")
+  it "存在しないエピソードIDを指定したとき、404エラーになること" do
+    user = create(:registered_user, :with_admin_role)
+    login_as(user, scope: :user)
 
-      expect(Episode.count).to eq(0)
-    end
+    expect { delete "/db/episodes/non-existent-id" }.to raise_error(ActiveRecord::RecordNotFound)
+  end
+
+  it "削除済みのエピソードを削除しようとしたとき、404エラーになること" do
+    user = create(:registered_user, :with_admin_role)
+    episode = create(:episode, deleted_at: Time.current)
+    login_as(user, scope: :user)
+
+    expect { delete "/db/episodes/#{episode.id}" }.to raise_error(ActiveRecord::RecordNotFound)
   end
 end

@@ -1,58 +1,55 @@
 # typed: false
 # frozen_string_literal: true
 
-describe "DELETE /db/slots/:id/publishing", type: :request do
-  context "user does not sign in" do
-    let!(:slot) { create(:slot, :published) }
+RSpec.describe "DELETE /db/slots/:id/publishing", type: :request do
+  it "ログインしていないとき、アクセスできずスロットが公開状態のままであること" do
+    slot = create(:slot, :published)
 
-    it "user can not access this page" do
-      delete "/db/slots/#{slot.id}/publishing"
-      slot.reload
+    delete "/db/slots/#{slot.id}/publishing"
+    slot.reload
 
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("ログインしてください")
-
-      expect(slot.published?).to eq(true)
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("ログインしてください")
+    expect(slot.published?).to eq(true)
   end
 
-  context "user who is not editor signs in" do
-    let!(:user) { create(:registered_user) }
-    let!(:slot) { create(:slot, :published) }
+  it "編集者権限がないユーザーでログインしているとき、アクセスできずスロットが公開状態のままであること" do
+    user = create(:registered_user)
+    slot = create(:slot, :published)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    login_as(user, scope: :user)
 
-    it "user can not access" do
-      delete "/db/slots/#{slot.id}/publishing"
-      slot.reload
+    delete "/db/slots/#{slot.id}/publishing"
+    slot.reload
 
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("アクセスできません")
-
-      expect(slot.published?).to eq(true)
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("アクセスできません")
+    expect(slot.published?).to eq(true)
   end
 
-  context "user who is editor signs in" do
-    let!(:user) { create(:registered_user, :with_editor_role) }
-    let!(:slot) { create(:slot, :published) }
+  it "編集者権限があるユーザーでログインしているとき、スロットを非公開にできること" do
+    user = create(:registered_user, :with_editor_role)
+    slot = create(:slot, :published)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    login_as(user, scope: :user)
 
-    it "user can unpublish slot" do
-      expect(slot.published?).to eq(true)
+    expect(slot.published?).to eq(true)
 
-      delete "/db/slots/#{slot.id}/publishing"
-      slot.reload
+    delete "/db/slots/#{slot.id}/publishing"
+    slot.reload
 
-      expect(response.status).to eq(302)
-      expect(flash[:notice]).to eq("非公開にしました")
+    expect(response.status).to eq(302)
+    expect(flash[:notice]).to eq("非公開にしました")
+    expect(slot.published?).to eq(false)
+  end
 
-      expect(slot.published?).to eq(false)
-    end
+  it "編集者権限があるユーザーでログインしているとき、存在しないスロットへのリクエストで404エラーになること" do
+    user = create(:registered_user, :with_editor_role)
+
+    login_as(user, scope: :user)
+
+    expect do
+      delete "/db/slots/00000000-0000-0000-0000-000000000000/publishing"
+    end.to raise_error(ActiveRecord::RecordNotFound)
   end
 end

@@ -313,9 +313,6 @@ module GeneratedPathHelpersModule
   def episode_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }
-  def episode_record_mutation_path(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
   def faq_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }
@@ -380,9 +377,6 @@ module GeneratedPathHelpersModule
 
   sig { params(args: T.untyped).returns(String) }
   def fragment_note_path(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
-  def fragment_receive_channel_button_list_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }
   def fragment_record_list_path(*args); end

@@ -1,7 +1,7 @@
 # typed: false
 # frozen_string_literal: true
 
-describe "GET /privacy", type: :request do
+RSpec.describe "GET /privacy", type: :request do
   it "プライバシーポリシーページが表示されること" do
     get "/privacy"
 

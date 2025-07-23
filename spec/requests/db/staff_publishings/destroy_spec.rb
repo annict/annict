@@ -1,58 +1,66 @@
 # typed: false
 # frozen_string_literal: true
 
-describe "DELETE /db/staffs/:id/publishing", type: :request do
-  context "user does not sign in" do
-    let!(:staff) { create(:staff, :published) }
+RSpec.describe "DELETE /db/staffs/:id/publishing", type: :request do
+  it "ログインしていないとき、ログインページにリダイレクトしページが非公開にならないこと" do
+    staff = FactoryBot.create(:staff, :published)
 
-    it "user can not access this page" do
-      delete "/db/staffs/#{staff.id}/publishing"
-      staff.reload
+    delete "/db/staffs/#{staff.id}/publishing"
+    staff.reload
 
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("ログインしてください")
-
-      expect(staff.published?).to eq(true)
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("ログインしてください")
+    expect(staff.published?).to eq(true)
   end
 
-  context "user who is not editor signs in" do
-    let!(:user) { create(:registered_user) }
-    let!(:staff) { create(:staff, :published) }
+  it "エディター権限がないユーザーがログインしているとき、アクセス拒否されページが非公開にならないこと" do
+    user = FactoryBot.create(:registered_user)
+    staff = FactoryBot.create(:staff, :published)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    login_as(user, scope: :user)
 
-    it "user can not access" do
-      delete "/db/staffs/#{staff.id}/publishing"
-      staff.reload
+    delete "/db/staffs/#{staff.id}/publishing"
+    staff.reload
 
-      expect(response.status).to eq(302)
-      expect(flash[:alert]).to eq("アクセスできません")
-
-      expect(staff.published?).to eq(true)
-    end
+    expect(response.status).to eq(302)
+    expect(flash[:alert]).to eq("アクセスできません")
+    expect(staff.published?).to eq(true)
   end
 
-  context "user who is editor signs in" do
-    let!(:user) { create(:registered_user, :with_editor_role) }
-    let!(:staff) { create(:staff, :published) }
+  it "エディター権限があるユーザーがログインしているとき、スタッフ情報を非公開にできること" do
+    user = FactoryBot.create(:registered_user, :with_editor_role)
+    staff = FactoryBot.create(:staff, :published)
 
-    before do
-      login_as(user, scope: :user)
-    end
+    login_as(user, scope: :user)
 
-    it "user can unpublish staff" do
-      expect(staff.published?).to eq(true)
+    expect(staff.published?).to eq(true)
 
+    delete "/db/staffs/#{staff.id}/publishing"
+    staff.reload
+
+    expect(response.status).to eq(302)
+    expect(flash[:notice]).to eq("非公開にしました")
+    expect(staff.published?).to eq(false)
+  end
+
+  it "エディター権限があるユーザーがログインしているとき、存在しないスタッフIDを指定すると404エラーになること" do
+    user = FactoryBot.create(:registered_user, :with_editor_role)
+
+    login_as(user, scope: :user)
+
+    expect {
+      delete "/db/staffs/non-existent-id/publishing"
+    }.to raise_error(ActiveRecord::RecordNotFound)
+  end
+
+  it "エディター権限があるユーザーがログインしているとき、すでに非公開のスタッフを指定すると404エラーになること" do
+    user = FactoryBot.create(:registered_user, :with_editor_role)
+    staff = FactoryBot.create(:staff, :unpublished)
+
+    login_as(user, scope: :user)
+
+    expect {
       delete "/db/staffs/#{staff.id}/publishing"
-      staff.reload
-
-      expect(response.status).to eq(302)
-      expect(flash[:notice]).to eq("非公開にしました")
-
-      expect(staff.published?).to eq(false)
-    end
+    }.to raise_error(ActiveRecord::RecordNotFound)
   end
 end

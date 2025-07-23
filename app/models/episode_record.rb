@@ -91,6 +91,18 @@ class EpisodeRecord < ApplicationRecord
     "#{user.preferred_annict_url}/@#{user.username}/records/#{record.id}"
   end
 
+  def share_url_with_query(provider)
+    base_url = share_url
+    case provider
+    when :twitter
+      "#{base_url}?utm_source=twitter&utm_medium=social"
+    when :facebook
+      "#{base_url}?utm_source=facebook&utm_medium=social"
+    else
+      base_url
+    end
+  end
+
   def facebook_share_title
     "#{work.title} #{episode.title_with_number}"
   end
