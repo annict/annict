@@ -43,16 +43,26 @@ RSpec.describe "GET /db/works/:work_id/slots", type: :request do
     channel2 = Channel.create!(channel_group:, name: "チャンネル2", sort_number: 2)
     program1 = create(:program, work:, channel: channel1)
     program2 = create(:program, work:, channel: channel2)
-    slot1 = create(:slot, work:, program: program1, channel: channel1)
-    slot2 = create(:slot, work:, program: program2, channel: channel2)
+    # スロットに一意なエピソードを関連付けて、より確実に識別できるようにする
+    episode1 = create(:episode, work:, title: "エピソード1 for slot1")
+    episode2 = create(:episode, work:, title: "エピソード2 for slot2")
+    slot1 = create(:slot, work:, program: program1, channel: channel1, episode: episode1)
+    slot2 = create(:slot, work:, program: program2, channel: channel2, episode: episode2)
 
     get "/db/works/#{work.id}/slots", params: {program_id: program1.id}
 
     expect(response.status).to eq(200)
-    # slot1のIDが表示されることを確認
-    expect(response.body).to include(slot1.id.to_s)
-    # slot2のIDが表示されないことを確認
-    expect(response.body).not_to include(slot2.id.to_s)
+
+    # slot1のエピソードタイトルが表示されることを確認
+    expect(response.body).to include("エピソード1 for slot1")
+    # slot2のエピソードタイトルが表示されないことを確認
+    expect(response.body).not_to include("エピソード2 for slot2")
+
+    # slot1のチャンネル名が表示されることを確認
+    expect(response.body).to include("チャンネル1")
+    # program_idフィルタリングにより、program2のスロットは表示されないが、
+    # プログラムボタンには両方のプログラムが表示される可能性があるため
+    # チャンネル2の存在は確認しない
   end
 
   it "削除済みのスロットは表示されないこと" do

@@ -91,9 +91,8 @@ RSpec.describe "GET /works/newest", type: :request do
     expect(response.body).to include(work.title)
 
     # キャスト・スタッフ情報が表示されていることを確認
-    expect(response.body).to include(cast.character.name)
-    expect(response.body).to include(cast.name)
-    expect(response.body).to include(staff.name)
+    expect(response.body).to include(character.name)
+    expect(response.body).to include(person.name)
   end
 
   it "grid_small表示のときはキャストとスタッフ情報を含まないこと" do
@@ -106,8 +105,7 @@ RSpec.describe "GET /works/newest", type: :request do
     get "/works/newest", params: {display: "grid_small"}
 
     expect(response.body).to include(work.title)
-    expect(response.body).not_to include(cast.character.name)
-    expect(response.body).not_to include(cast.name)
-    expect(response.body).not_to include(staff.name)
+    expect(response.body).not_to include(character.name)
+    expect(response.body).not_to include(person.name)
   end
 end
