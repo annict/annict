@@ -151,22 +151,61 @@ RSpec.describe "GET /works/:work_id/records", type: :request do
 
   it "ページネーションが機能すること" do
     user = FactoryBot.create(:registered_user)
-    work = FactoryBot.create(:work)
+    # ユニークなタイトルで作品を作成し、他のテストとの競合を避ける
+    unique_title = "テスト作品#{SecureRandom.hex(8)}"
+    work = FactoryBot.create(:work, title: unique_title)
 
-    # 101件の記録を作成（1ページ100件なので2ページになる）
+    # この作品に関連する既存の記録を削除
+    Record.joins(:work_record).where(work_records: {work_id: work.id}).destroy_all
+
+    # レーティングが設定された記録を5件作成（これらが最初に表示される）
+    5.times do |i|
+      other_user = FactoryBot.create(:registered_user)
+      record = FactoryBot.create(:record, :with_work_record, user: other_user, work:)
+      record.work_record.update!(
+        body: "レーティングあり記録#{i + 1}",
+        created_at: Time.current - i.hours,
+        rating_overall_state: "great"
+      )
+    end
+
+    # レーティングなしの記録を101件作成（NULLS LASTにより後ろに配置される）
+    records = []
     101.times do |i|
       other_user = FactoryBot.create(:registered_user)
       record = FactoryBot.create(:record, :with_work_record, user: other_user, work:)
-      record.work_record.update!(body: "記録#{i + 1}")
+      # 作成日時を設定（i=0が最古、i=100が最新）
+      record.work_record.update!(
+        body: "#{unique_title}の記録#{i + 1}",
+        created_at: Time.current - (101 - i).hours,
+        rating_overall_state: nil # レーティングなし
+      )
+      record.update!(created_at: Time.current - (101 - i).hours)
+      records << record
     end
 
     login_as(user, scope: :user)
-    get "/works/#{work.id}/records?page=2"
 
+    # ソート順：
+    # 1. レーティングありの記録（5件）
+    # 2. レーティングなしの記録（101件）- 作成日時の新しい順
+    # 合計106件
+
+    # 現在の記録数を確認
+    all_records_count = Record.joins(:work_record).where(work_records: {work_id: work.id}).count
+    expect(all_records_count).to eq(106)
+
+    # 1ページ目: レーティングあり5件 + レーティングなし95件 = 100件
+    # 2ページ目: レーティングなし6件（記録6から記録1まで）
+
+    # 2ページ目を確認
+    get "/works/#{work.id}/records?page=2"
     expect(response.status).to eq(200)
-    # 2ページ目には1番目の記録のみ表示される
-    expect(response.body).to include("記録1")
-    expect(response.body).not_to include("記録101")
+    # レーティングなしの古い記録が表示される
+    expect(response.body).to include("#{unique_title}の記録1") # 最古の記録
+    expect(response.body).to include("#{unique_title}の記録6") # 6番目の記録
+    expect(response.body).not_to include("#{unique_title}の記録7") # 7番目以降は1ページ目
+    expect(response.body).not_to include("レーティングあり記録") # レーティングありは1ページ目
   end
 
   it "作品のタイトルがページタイトルに含まれること" do

@@ -310,9 +310,6 @@ module GeneratedUrlHelpersModule
   def episode_list_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }
-  def episode_record_mutation_url(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
   def episode_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }

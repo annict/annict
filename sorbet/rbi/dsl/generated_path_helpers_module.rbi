@@ -313,9 +313,6 @@ module GeneratedPathHelpersModule
   def episode_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }
-  def episode_record_mutation_path(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
   def faq_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }
