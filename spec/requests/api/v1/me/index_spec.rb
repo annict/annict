@@ -42,7 +42,7 @@ RSpec.describe "GET /v1/me", type: :request do
       "on_hold_count" => 0,
       "stop_watching_count" => 0,
       "created_at" => "2017-01-28T23:39:04Z",
-      "email" => "#{user.username}@example.com",
+      "email" => user.email,
       "notifications_count" => 0
     }
     actual_hash = json.stringify_keys.except(
