@@ -46,8 +46,8 @@ RSpec.describe "GET /db/works/:work_id/slots", type: :request do
     # スロットに一意なエピソードを関連付けて、より確実に識別できるようにする
     episode1 = create(:episode, work:, title: "エピソード1 for slot1")
     episode2 = create(:episode, work:, title: "エピソード2 for slot2")
-    slot1 = create(:slot, work:, program: program1, channel: channel1, episode: episode1)
-    slot2 = create(:slot, work:, program: program2, channel: channel2, episode: episode2)
+    create(:slot, work:, program: program1, channel: channel1, episode: episode1)
+    create(:slot, work:, program: program2, channel: channel2, episode: episode2)
 
     get "/db/works/#{work.id}/slots", params: {program_id: program1.id}
 

@@ -99,8 +99,8 @@ RSpec.describe "GET /works/newest", type: :request do
     work = create(:work)
     character = create(:character)
     person = create(:person)
-    cast = create(:cast, work: work, character: character, person: person)
-    staff = create(:staff, work: work, resource: person, role: "original_creator")
+    create(:cast, work: work, character: character, person: person)
+    create(:staff, work: work, resource: person, role: "original_creator")
 
     get "/works/newest", params: {display: "grid_small"}
 
