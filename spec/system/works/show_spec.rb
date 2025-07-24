@@ -20,7 +20,8 @@ RSpec.describe "Works#show page", type: :system do
 
     # JavaScriptの読み込みとcomponent-value-fetcherの初期化を待つ
     wait_for_javascript
-    sleep 2
+    # スピナーが消えるまで待つ（初期化完了を確認）
+    expect(page).not_to have_css(".c-spinner", wait: 10)
 
     # ドロップダウンボタンを探してクリック
     dropdown_button = find(".c-status-select-dropdown button.dropdown-toggle")
@@ -54,7 +55,8 @@ RSpec.describe "Works#show page", type: :system do
 
     # JavaScriptの読み込みとcomponent-value-fetcherの初期化を待つ
     wait_for_javascript
-    sleep 2
+    # スピナーが消えるまで待つ（初期化完了を確認）
+    expect(page).not_to have_css(".c-spinner", wait: 10)
 
     dropdown_button = find(".c-status-select-dropdown button.dropdown-toggle")
 
@@ -87,7 +89,8 @@ RSpec.describe "Works#show page", type: :system do
 
     # JavaScriptの読み込みとcomponent-value-fetcherの初期化を待つ
     wait_for_javascript
-    sleep 2
+    # スピナーが消えるまで待つ（初期化完了を確認）
+    expect(page).not_to have_css(".c-spinner", wait: 10)
 
     dropdown_button = find(".c-status-select-dropdown button.dropdown-toggle")
 
@@ -102,15 +105,14 @@ RSpec.describe "Works#show page", type: :system do
 
     # ステータスを外す
     dropdown_button.click
-    dropdown_menu = find(".c-status-select-dropdown .dropdown-menu", visible: true)
-    expect(dropdown_menu).to be_visible
+    # ドロップダウンメニューが再度表示されるのを待つ
+    dropdown_menu = find(".c-status-select-dropdown .dropdown-menu", visible: true, wait: 5)
 
-    within(".c-status-select-dropdown .dropdown-menu") do
+    # 「未選択」ボタンが存在することを確認
+    within(dropdown_menu) do
+      expect(page).to have_button("未選択")
       find("button", text: "未選択").click
     end
-
-    # 少し待つ
-    sleep 1
   end
 
   it "未ログインユーザーがステータスを選択しようとするとサインアップモーダルが表示されること", js: true do
@@ -120,7 +122,8 @@ RSpec.describe "Works#show page", type: :system do
 
     # JavaScriptの読み込みとcomponent-value-fetcherの初期化を待つ
     wait_for_javascript
-    sleep 2
+    # スピナーが消えるまで待つ（初期化完了を確認）
+    expect(page).not_to have_css(".c-spinner", wait: 10)
 
     dropdown_button = find(".c-status-select-dropdown button.dropdown-toggle")
     dropdown_button.click
