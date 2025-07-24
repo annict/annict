@@ -32,7 +32,7 @@ RSpec.describe "Works#show page", type: :system do
     dropdown_button.click
 
     # ドロップダウンメニューが表示されることを確認
-    dropdown_menu = find(".c-status-select-dropdown .dropdown-menu", visible: true)
+    dropdown_menu = find(".c-status-select-dropdown .dropdown-menu", visible: :visible)
     expect(dropdown_menu).to be_visible
 
     # ドロップダウンメニューに各ステータスが含まれていることを確認
@@ -64,7 +64,7 @@ RSpec.describe "Works#show page", type: :system do
     dropdown_button.click
 
     # ドロップダウンメニューが表示されることを確認
-    dropdown_menu = find(".c-status-select-dropdown .dropdown-menu", visible: true)
+    dropdown_menu = find(".c-status-select-dropdown .dropdown-menu", visible: :visible)
     expect(dropdown_menu).to be_visible
 
     # 各ステータスボタンが存在することを確認
@@ -100,13 +100,13 @@ RSpec.describe "Works#show page", type: :system do
       find("button", text: "見てる").click
     end
 
-    # 少し待つ
-    sleep 1
+    # ステータスが更新されるまで待つ
+    expect(page).to have_css(".c-status-select-dropdown button.dropdown-toggle.u-bg-watching", wait: 5)
 
     # ステータスを外す
     dropdown_button.click
     # ドロップダウンメニューが再度表示されるのを待つ
-    dropdown_menu = find(".c-status-select-dropdown .dropdown-menu", visible: true, wait: 5)
+    dropdown_menu = find(".c-status-select-dropdown .dropdown-menu", visible: :visible, wait: 5)
 
     # 「未選択」ボタンが存在することを確認
     within(dropdown_menu) do
@@ -128,7 +128,7 @@ RSpec.describe "Works#show page", type: :system do
     dropdown_button = find(".c-status-select-dropdown button.dropdown-toggle")
     dropdown_button.click
 
-    dropdown_menu = find(".c-status-select-dropdown .dropdown-menu", visible: true)
+    dropdown_menu = find(".c-status-select-dropdown .dropdown-menu", visible: :visible)
     expect(dropdown_menu).to be_visible
 
     within(".c-status-select-dropdown .dropdown-menu") do
@@ -136,7 +136,7 @@ RSpec.describe "Works#show page", type: :system do
     end
 
     # サインアップモーダルが表示されることを確認
-    expect(page).to have_css(".c-sign-up-modal", visible: true)
+    expect(page).to have_css(".c-sign-up-modal", visible: :visible)
     within(".c-sign-up-modal") do
       expect(page).to have_content("アカウント作成")
     end
