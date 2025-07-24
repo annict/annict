@@ -6,11 +6,11 @@ import { Controller } from "@hotwired/stimulus";
 export default class extends Controller {
   static values = { workId: Number };
 
-  workIdValue!: number;
-  framePath!: string;
-  statusKinds!: { [key: number]: string };
-  offcanvasElm!: HTMLElement | null;
-  offcanvasFrameElm!: HTMLElement | null;
+  declare readonly workIdValue: number;
+  declare framePath: string;
+  declare offcanvasElm: HTMLElement | null;
+  declare offcanvasFrameElm: HTMLElement | null;
+  declare statusKinds: { [key: number]: string };
 
   initialize() {
     this.framePath = this.data.get("framePath") ?? "/500.html";

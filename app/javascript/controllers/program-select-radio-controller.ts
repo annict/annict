@@ -9,9 +9,9 @@ import fetcher from "../utils/fetcher";
 export default class extends Controller {
   static values = { workId: Number, initProgramId: Number };
 
-  workIdValue!: number;
-  initProgramIdValue!: number;
-  currentProgramId!: number;
+  declare readonly workIdValue: number;
+  declare readonly initProgramIdValue: number;
+  declare currentProgramId: number;
 
   initialize() {
     this.currentProgramId = this.initProgramIdValue;

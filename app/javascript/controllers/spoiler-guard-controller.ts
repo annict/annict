@@ -5,9 +5,9 @@ import { Controller } from "@hotwired/stimulus";
 export default class extends Controller {
   static values = { workId: Number, episodeId: Number };
 
-  episodeIdValue!: number;
-  isNotSpoiler!: boolean;
-  workIdValue!: number;
+  declare readonly episodeIdValue: number;
+  declare readonly workIdValue: number;
+  declare isNotSpoiler: boolean;
 
   initialize() {
     document.addEventListener("component-value-fetcher:spoiler-guard:fetched", (event: any) => {

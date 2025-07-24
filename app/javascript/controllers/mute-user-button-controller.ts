@@ -14,13 +14,13 @@ export default class extends Controller {
     mutedText: String,
   };
 
-  defaultClass!: string;
-  defaultTextValue!: string;
-  mutedClass!: string;
-  mutedTextValue!: string;
-  isLoading!: boolean;
-  isMuted!: boolean;
-  userIdValue!: number;
+  declare readonly defaultClass: string;
+  declare readonly defaultTextValue: string;
+  declare readonly mutedClass: string;
+  declare readonly mutedTextValue: string;
+  declare readonly userIdValue: number;
+  declare isMuted: boolean;
+  declare isLoading: boolean;
 
   initialize() {
     this.startLoading();

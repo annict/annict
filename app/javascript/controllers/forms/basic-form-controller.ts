@@ -8,10 +8,10 @@ import { EventDispatcher } from "../../utils/event-dispatcher";
 export default class extends Controller {
   static targets = ["errorPanel", "errorMessageList", "form", "submitButton"];
 
-  errorPanelTarget!: HTMLElement;
-  errorMessageListTarget!: HTMLElement;
-  formTarget!: HTMLFormElement;
-  submitButtonTarget!: HTMLElement;
+  declare readonly errorPanelTarget: HTMLElement;
+  declare readonly errorMessageListTarget: HTMLElement;
+  declare readonly formTarget: HTMLFormElement;
+  declare readonly submitButtonTarget: HTMLElement;
 
   handleSubmitStart(_event: any) {
     this.submitButtonTarget.setAttribute("disabled", "true");

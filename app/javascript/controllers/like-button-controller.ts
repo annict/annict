@@ -8,14 +8,14 @@ export default class extends Controller {
   static targets = ["count"];
   static values = { initIsLiked: Boolean };
 
-  countTarget!: HTMLElement;
-  initIsLikedValue!: boolean;
-  isLiked!: boolean;
-  isLoading!: boolean;
-  likesCount!: number;
-  pageCategory!: string | null;
-  resourceId!: number | null;
-  resourceName!: string | null;
+  declare readonly countTarget: HTMLElement;
+  declare readonly initIsLikedValue: boolean;
+  declare resourceName: string | null;
+  declare resourceId: number | null;
+  declare pageCategory: string | null;
+  declare isLiked: boolean;
+  declare likesCount: number;
+  declare isLoading: boolean;
 
   initialize() {
     this.resourceName = this.data.get("resourceName");

@@ -11,9 +11,9 @@ export default class extends Controller {
     episodeId: Number,
   };
 
-  episodeIdValue!: number;
-  isLoading!: boolean;
-  loadingClass!: string;
+  declare readonly episodeIdValue: number;
+  declare readonly loadingClass: string;
+  declare isLoading: boolean;
 
   startLoading() {
     this.isLoading = true;

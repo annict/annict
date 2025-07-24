@@ -19,13 +19,14 @@ export default class extends Controller {
   static targets = ["button", "kind"];
   static values = { workId: Number, kindIcons: Object, pageCategory: String };
 
-  workIdValue!: number;
-  buttonTarget!: HTMLButtonElement;
-  currentStatusKind!: STATUS_KIND;
-  kindIconsValue!: any;
-  statusKinds!: { [workId: number]: STATUS_KIND };
-  pageCategoryValue!: string;
-  prevStatusKind!: STATUS_KIND;
+  declare readonly workIdValue: number;
+  declare readonly buttonTarget: HTMLButtonElement;
+  declare readonly kindIconsValue: any;
+  declare readonly statusKinds: { [workId: number]: STATUS_KIND };
+  declare readonly pageCategoryValue: string;
+
+  declare currentStatusKind: STATUS_KIND;
+  declare prevStatusKind: STATUS_KIND;
 
   initialize() {
     this.startLoading();

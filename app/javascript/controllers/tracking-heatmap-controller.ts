@@ -8,7 +8,7 @@ export default class extends Controller {
     framePath: String,
   };
 
-  framePathValue!: string;
+  declare readonly framePathValue: string;
 
   async connect() {
     this.element.setAttribute("src", this.framePathValue);
