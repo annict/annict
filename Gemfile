@@ -119,6 +119,7 @@ group :test do
   # https://github.com/codeclimate/test-reporter/issues/418
   gem "simplecov", "< 0.22", require: false
   gem "timecop"
+  gem "capybara-playwright-driver"
 end
 
 group :production do
