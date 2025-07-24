@@ -105,6 +105,8 @@ jobs:
       # https://github.com/jtoy/cld/issues/10
       CFLAGS: -Wno-narrowing
       CXXFLAGS: -Wno-narrowing
+      ANNICT_CAPYBARA_BROWSER: chromium
+      ANNICT_CAPYBARA_HEADLESS: "true"
 
     services:
       postgresql:
@@ -145,6 +147,10 @@ jobs:
       - name: Run `yarn install`
         run: |
           yarn install
+
+      - name: Install Playwright browsers
+        run: |
+          yarn playwright install --with-deps
 
       - name: Run `assets:precompile`
         run: |
