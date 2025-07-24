@@ -115,6 +115,7 @@ group :development do
 end
 
 group :test do
+  gem "capybara-playwright-driver"
   # Use < 0.18 until the following issue will be resolved.
   # https://github.com/codeclimate/test-reporter/issues/418
   gem "simplecov", "< 0.22", require: false
