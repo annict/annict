@@ -10,8 +10,16 @@ Capybara.register_driver(:playwright) do |app|
     headless: ENV.fetch("ANNICT_CAPYBARA_HEADLESS", "true") == "true")
 end
 
-Capybara.javascript_driver = :playwright
-Capybara.default_driver = :rack_test
+Capybara.configure do |config|
+  config.default_driver = :rack_test
+  config.javascript_driver = :playwright
+  config.server = :puma
+  config.server_host = "0.0.0.0"
+  config.server_port = 4000
+  config.app_host = ENV.fetch("ANNICT_URL")
+  config.default_max_wait_time = 5
+  config.disable_animation = true
+end
 
 RSpec.configure do |config|
   config.before(:each, type: :system) do
