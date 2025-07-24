@@ -22,7 +22,7 @@ services:
     ports:
       - "19000:9000"
       - "19001:9001"
-    command: server /data --address "0.0.0.0:19000" --console-address "0.0.0.0:19001"
+    command: server /data --address "0.0.0.0:9000" --console-address "0.0.0.0:9001"
     volumes:
       - minio_data:/data
     networks:
