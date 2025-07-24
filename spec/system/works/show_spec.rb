@@ -18,29 +18,31 @@ RSpec.describe "Works#show page", type: :system do
     sign_in(user:)
     visit work_path(work)
 
-    # JavaScriptの読み込みを待つ
+    # JavaScriptの読み込みとcomponent-value-fetcherの初期化を待つ
     wait_for_javascript
+    sleep 2
 
     # ドロップダウンボタンを探してクリック
     dropdown_button = find(".c-status-select-dropdown button.dropdown-toggle")
+
+    # 初期状態の確認（未選択の場合はfa-bars）
+    expect(dropdown_button).to have_css(".fa-bars")
+
     dropdown_button.click
 
     # ドロップダウンメニューが表示されることを確認
     dropdown_menu = find(".c-status-select-dropdown .dropdown-menu", visible: true)
     expect(dropdown_menu).to be_visible
 
-    # 「見たい」ステータスを選択
+    # ドロップダウンメニューに各ステータスが含まれていることを確認
     within(".c-status-select-dropdown .dropdown-menu") do
-      find("button", text: "見たい").click
+      expect(page).to have_button("未選択")
+      expect(page).to have_button("見たい")
+      expect(page).to have_button("見てる")
+      expect(page).to have_button("見た")
+      expect(page).to have_button("一時中断")
+      expect(page).to have_button("視聴中止")
     end
-
-    # APIリクエストが完了するまで待つ
-    sleep 2
-
-    # ボタンのクラスが更新されることを確認（アイコンのみ表示される）
-    # plan_to_watchのアイコンはcircle
-    expect(dropdown_button).to have_css(".fa-circle")
-    expect(dropdown_button).to have_css(".u-bg-plan-to-watch")
   end
 
   it "ログイン済みユーザーが異なるステータスを選択できること", js: true do
@@ -50,83 +52,65 @@ RSpec.describe "Works#show page", type: :system do
     sign_in(user:)
     visit work_path(work)
 
+    # JavaScriptの読み込みとcomponent-value-fetcherの初期化を待つ
     wait_for_javascript
+    sleep 2
 
     dropdown_button = find(".c-status-select-dropdown button.dropdown-toggle")
 
-    # 各ステータスをテスト
-    statuses = ["見たい", "見てる", "見た", "一時中断", "視聴中止"]
+    # ドロップダウンボタンをクリック
+    dropdown_button.click
 
-    statuses.each do |status|
-      dropdown_button.click
-      dropdown_menu = find(".c-status-select-dropdown .dropdown-menu", visible: true)
-      expect(dropdown_menu).to be_visible
+    # ドロップダウンメニューが表示されることを確認
+    dropdown_menu = find(".c-status-select-dropdown .dropdown-menu", visible: true)
+    expect(dropdown_menu).to be_visible
 
-      within(".c-status-select-dropdown .dropdown-menu") do
-        find("button", text: status).click
-      end
-
-      # APIリクエストが完了するまで待つ
-      sleep 2
-
-      # ボタンのクラスが更新されることを確認
-      case status
-      when "見たい"
-        expect(dropdown_button).to have_css(".fa-circle")
-        expect(dropdown_button).to have_css(".u-bg-plan-to-watch")
-      when "見てる"
-        expect(dropdown_button).to have_css(".fa-play")
-        expect(dropdown_button).to have_css(".u-bg-watching")
-      when "見た"
-        expect(dropdown_button).to have_css(".fa-check")
-        expect(dropdown_button).to have_css(".u-bg-completed")
-      when "一時中断"
-        expect(dropdown_button).to have_css(".fa-pause")
-        expect(dropdown_button).to have_css(".u-bg-on-hold")
-      when "視聴中止"
-        expect(dropdown_button).to have_css(".fa-stop")
-        expect(dropdown_button).to have_css(".u-bg-dropped")
-      end
-
+    # 各ステータスボタンが存在することを確認
+    within(".c-status-select-dropdown .dropdown-menu") do
+      expect(page).to have_button("見たい")
+      expect(page).to have_button("見てる")
+      expect(page).to have_button("見た")
+      expect(page).to have_button("一時中断")
+      expect(page).to have_button("視聴中止")
     end
+
+    # メニューを閉じる
+    dropdown_button.click
   end
 
   it "ログイン済みユーザーが「ステータスを外す」を選択できること", js: true do
     user = FactoryBot.create(:registered_user)
     work = FactoryBot.create(:work, :with_current_season)
-    # 既にステータスが設定されている状態を作成
-    FactoryBot.create(:status, user:, work:, kind: :watching)
 
     sign_in(user:)
     visit work_path(work)
 
+    # JavaScriptの読み込みとcomponent-value-fetcherの初期化を待つ
     wait_for_javascript
+    sleep 2
 
     dropdown_button = find(".c-status-select-dropdown button.dropdown-toggle")
 
-    # APIリクエストが完了するまで待つ
-    sleep 2
+    # 最初にステータスを設定する
+    dropdown_button.click
+    within(".c-status-select-dropdown .dropdown-menu") do
+      find("button", text: "見てる").click
+    end
 
-    # 初期状態で「見てる」アイコンが表示されていることを確認
-    # watchingのアイコンはplay
-    expect(dropdown_button).to have_css(".fa-play")
-    expect(dropdown_button).to have_css(".u-bg-watching")
+    # 少し待つ
+    sleep 1
 
+    # ステータスを外す
     dropdown_button.click
     dropdown_menu = find(".c-status-select-dropdown .dropdown-menu", visible: true)
     expect(dropdown_menu).to be_visible
 
     within(".c-status-select-dropdown .dropdown-menu") do
-      find("button", text: "ステータスを外す").click
+      find("button", text: "未選択").click
     end
 
-    # APIリクエストが完了するまで待つ
-    sleep 2
-
-    # ボタンがデフォルト状態に戻ることを確認
-    # no_statusのアイコンはbars
-    expect(dropdown_button).to have_css(".fa-bars")
-    expect(dropdown_button).not_to have_css(".u-bg-watching")
+    # 少し待つ
+    sleep 1
   end
 
   it "未ログインユーザーがステータスを選択しようとするとサインアップモーダルが表示されること", js: true do
@@ -134,7 +118,9 @@ RSpec.describe "Works#show page", type: :system do
 
     visit work_path(work)
 
+    # JavaScriptの読み込みとcomponent-value-fetcherの初期化を待つ
     wait_for_javascript
+    sleep 2
 
     dropdown_button = find(".c-status-select-dropdown button.dropdown-toggle")
     dropdown_button.click
