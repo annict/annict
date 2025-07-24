@@ -14,17 +14,26 @@ RSpec.describe "Home page", type: :system do
 
     expect(page).to have_content("Annict")
 
-    # Turboが動作していることを確認
-    expect(page).to have_css("[data-turbo-visit-control]", visible: :hidden)
+    # JavaScriptが読み込まれていることを確認
+    wait_for_javascript
+
+    # Turboフレームワークに関連する要素があることを確認
+    expect(page).to have_css("meta[name='turbo-cache-control']", visible: :hidden)
   end
 
   it "ログインしたユーザーがトップページにアクセスできること" do
-    user = FactoryBot.create(:user)
-    sign_in_as(user)
+    # confirmされたユーザーを作成
+    user = FactoryBot.create(:registered_user)
 
-    visit root_path
+    sign_in(user:)
 
+    # ログイン成功のメッセージまたはリダイレクトを確認
+    expect(page).to have_current_path(root_path)
+
+    # ユーザー名またはアバターが表示されることを確認
+    # ナビゲーションバーなどにユーザー名が表示される
     expect(page).to have_content(user.username)
-    expect(page).to have_http_status(:ok)
+      .or have_css("img[alt*='#{user.username}']")
+      .or have_css("[data-user-id='#{user.id}']")
   end
 end

@@ -2,11 +2,10 @@
 # frozen_string_literal: true
 
 module SystemSpecHelper
-  # ユーザーとしてログインする
-  def sign_in_as(user)
-    visit new_user_session_path
-    fill_in "user[email]", with: user.email
-    fill_in "user[password]", with: user.password
+  def sign_in(user:, password: "passw0rd")
+    visit "/legacy/sign_in"
+    fill_in "user[email_username]", with: user.email
+    fill_in "user[password]", with: password
     click_button "ログイン"
   end
 
