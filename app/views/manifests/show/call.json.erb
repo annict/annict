@@ -19,7 +19,7 @@
   ],
   "name": "<%= Rails.env.development? ? "Annict (Dev)" : "Annict" %>",
   "scope": "/",
-  "short_name": "Annict",
+  "short_name": "<%= Rails.env.development? ? "Annict (Dev)" : "Annict" %>",
   "start_url": "/",
   "theme_color": "#d51c5b"
 }
