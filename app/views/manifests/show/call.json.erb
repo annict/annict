@@ -1,0 +1,25 @@
+<%# https://developer.mozilla.org/ja/docs/Web/Manifest %>
+{
+  "background_color": "#d51c5b",
+  "description": "<%= t("head.meta.description._common") %>",
+  "display": "standalone",
+  "icons": [
+    {
+      "purpose": "any maskable",
+      "sizes": "192x192",
+      "src": "/images/icon-192.png",
+      "type": "image/png"
+    },
+    {
+      "purpose": "any maskable",
+      "sizes": "512x512",
+      "src": "/images/icon-512.png",
+      "type": "image/png"
+    }
+  ],
+  "name": "<%= Rails.env.development? ? "Annict (Dev)" : "Annict" %>",
+  "scope": "/",
+  "short_name": "Annict",
+  "start_url": "/",
+  "theme_color": "#d51c5b"
+}

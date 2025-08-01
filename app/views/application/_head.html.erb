@@ -4,7 +4,7 @@
 
 <%= ann_display_meta_tags %>
 <meta http-equiv="x-dns-prefetch-control" content="on">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <%= yield :head_meta %>
 
 <%= csrf_meta_tags %>
@@ -18,6 +18,7 @@
 <link rel="alternate" hreflang="ja" href="<%= "#{ENV.fetch('ANNICT_URL')}#{request.path}" %>">
 <link rel="alternate" hreflang="en" href="<%= "#{ENV.fetch('ANNICT_EN_URL')}#{request.path}" %>">
 <link rel="alternate" hreflang="x-default" href="<%= "#{ENV.fetch('ANNICT_URL')}#{request.path}" %>">
+<link href="/manifest.json" rel="manifest">
 
 <%= annict_config %>
 
