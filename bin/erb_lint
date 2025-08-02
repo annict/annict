@@ -23,5 +23,9 @@ end
 
 require "rubygems"
 require "bundler/setup"
+# concurrent-ruby gemを1.3.5に上げると発生するNameErrorを防ぐため、明示的に logger を読み込む
+# Rails 7.1にアップデートするとこの対応が不要になる
+# 詳細: https://stackoverflow.com/questions/79360526/uninitialized-constant-activesupportloggerthreadsafelevellogger-nameerror
+require "logger"
 
 load Gem.bin_path("erb_lint", "erb_lint")

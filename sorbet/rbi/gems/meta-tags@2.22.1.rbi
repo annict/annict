@@ -37,88 +37,88 @@ class MetaTags::Configuration
   #
   # @return [Configuration] a new instance of Configuration
   #
-  # source://meta-tags//lib/meta_tags/configuration.rb#43
+  # source://meta-tags//lib/meta_tags/configuration.rb#49
   def initialize; end
 
-  # source://meta-tags//lib/meta_tags/configuration.rb#47
+  # source://meta-tags//lib/meta_tags/configuration.rb#53
   def default_property_tags; end
 
   # How many characters to truncate description to.
   #
-  # source://meta-tags//lib/meta_tags/configuration.rb#13
+  # source://meta-tags//lib/meta_tags/configuration.rb#19
   def description_limit; end
 
   # How many characters to truncate description to.
   #
-  # source://meta-tags//lib/meta_tags/configuration.rb#13
+  # source://meta-tags//lib/meta_tags/configuration.rb#19
   def description_limit=(_arg0); end
 
   # How many characters to truncate keywords to.
   #
-  # source://meta-tags//lib/meta_tags/configuration.rb#16
+  # source://meta-tags//lib/meta_tags/configuration.rb#22
   def keywords_limit; end
 
   # How many characters to truncate keywords to.
   #
-  # source://meta-tags//lib/meta_tags/configuration.rb#16
+  # source://meta-tags//lib/meta_tags/configuration.rb#22
   def keywords_limit=(_arg0); end
 
   # Should keywords forced into lowercase?
   #
-  # source://meta-tags//lib/meta_tags/configuration.rb#22
+  # source://meta-tags//lib/meta_tags/configuration.rb#28
   def keywords_lowercase; end
 
   # Should keywords forced into lowercase?
   #
-  # source://meta-tags//lib/meta_tags/configuration.rb#22
+  # source://meta-tags//lib/meta_tags/configuration.rb#28
   def keywords_lowercase=(_arg0); end
 
   # Keywords separator - a string to join keywords with.
   #
-  # source://meta-tags//lib/meta_tags/configuration.rb#19
+  # source://meta-tags//lib/meta_tags/configuration.rb#25
   def keywords_separator; end
 
   # Keywords separator - a string to join keywords with.
   #
-  # source://meta-tags//lib/meta_tags/configuration.rb#19
+  # source://meta-tags//lib/meta_tags/configuration.rb#25
   def keywords_separator=(_arg0); end
 
   # When true, the output will not include new line characters between meta tags.
   # Default is false.
   #
-  # source://meta-tags//lib/meta_tags/configuration.rb#30
+  # source://meta-tags//lib/meta_tags/configuration.rb#36
   def minify_output; end
 
   # When true, the output will not include new line characters between meta tags.
   # Default is false.
   #
-  # source://meta-tags//lib/meta_tags/configuration.rb#30
+  # source://meta-tags//lib/meta_tags/configuration.rb#36
   def minify_output=(_arg0); end
 
   # Switches between open (<meta ... >) and closed (<meta ... />) meta tags.
   # Default is true, which means "open".
   #
-  # source://meta-tags//lib/meta_tags/configuration.rb#26
+  # source://meta-tags//lib/meta_tags/configuration.rb#32
   def open_meta_tags; end
 
   # Switches between open (<meta ... >) and closed (<meta ... />) meta tags.
   # Default is true, which means "open".
   #
-  # source://meta-tags//lib/meta_tags/configuration.rb#26
+  # source://meta-tags//lib/meta_tags/configuration.rb#32
   def open_meta_tags=(_arg0); end
 
   # @return [Boolean]
   #
-  # source://meta-tags//lib/meta_tags/configuration.rb#72
+  # source://meta-tags//lib/meta_tags/configuration.rb#78
   def open_meta_tags?; end
 
   # Custom meta tags that should use `property` attribute instead of `name`
   # - an array of strings or symbols representing their names or name-prefixes.
   #
-  # source://meta-tags//lib/meta_tags/configuration.rb#34
+  # source://meta-tags//lib/meta_tags/configuration.rb#40
   def property_tags; end
 
-  # source://meta-tags//lib/meta_tags/configuration.rb#76
+  # source://meta-tags//lib/meta_tags/configuration.rb#82
   def reset_defaults!; end
 
   # Configure whenever Meta-Tags should skip canonicals on pages with noindex: true
@@ -126,7 +126,7 @@ class MetaTags::Configuration
   # - John Mueller (Webmaster Trends Analyst at Google)
   # https://www.reddit.com/r/TechSEO/comments/8yahdr/2_questions_about_the_canonical_tag/e2dey9i/
   #
-  # source://meta-tags//lib/meta_tags/configuration.rb#40
+  # source://meta-tags//lib/meta_tags/configuration.rb#46
   def skip_canonical_links_on_noindex; end
 
   # Configure whenever Meta-Tags should skip canonicals on pages with noindex: true
@@ -134,7 +134,7 @@ class MetaTags::Configuration
   # - John Mueller (Webmaster Trends Analyst at Google)
   # https://www.reddit.com/r/TechSEO/comments/8yahdr/2_questions_about_the_canonical_tag/e2dey9i/
   #
-  # source://meta-tags//lib/meta_tags/configuration.rb#40
+  # source://meta-tags//lib/meta_tags/configuration.rb#46
   def skip_canonical_links_on_noindex=(_arg0); end
 
   # How many characters to truncate title to.
@@ -147,21 +147,41 @@ class MetaTags::Configuration
   # source://meta-tags//lib/meta_tags/configuration.rb#7
   def title_limit=(_arg0); end
 
-  # Truncate site_title instead of title.
+  # HTML attributes for the title tag.
   #
   # source://meta-tags//lib/meta_tags/configuration.rb#10
+  def title_tag_attributes; end
+
+  # HTML attributes for the title tag.
+  #
+  # source://meta-tags//lib/meta_tags/configuration.rb#10
+  def title_tag_attributes=(_arg0); end
+
+  # A string or regexp separator to truncate text at a natural break.
+  #
+  # source://meta-tags//lib/meta_tags/configuration.rb#16
+  def truncate_on_natural_separator; end
+
+  # A string or regexp separator to truncate text at a natural break.
+  #
+  # source://meta-tags//lib/meta_tags/configuration.rb#16
+  def truncate_on_natural_separator=(_arg0); end
+
+  # Truncate site_title instead of title.
+  #
+  # source://meta-tags//lib/meta_tags/configuration.rb#13
   def truncate_site_title_first; end
 
   # Truncate site_title instead of title.
   #
-  # source://meta-tags//lib/meta_tags/configuration.rb#10
+  # source://meta-tags//lib/meta_tags/configuration.rb#13
   def truncate_site_title_first=(_arg0); end
 end
 
 # Represents an HTML meta tag with content (<tag></tag>).
 # Content should be passed as a `:content` attribute.
 #
-# source://meta-tags//lib/meta_tags/content_tag.rb#11
+# source://meta-tags//lib/meta_tags/content_tag.rb#6
 class MetaTags::ContentTag < ::MetaTags::Tag
   # Render tag into a Rails view.
   #
@@ -390,7 +410,7 @@ class MetaTags::Renderer
   # @param name [String, Symbol] tag key.
   # @return [Symbol] meta tag attribute name (:property or :name).
   #
-  # source://meta-tags//lib/meta_tags/renderer.rb#285
+  # source://meta-tags//lib/meta_tags/renderer.rb#289
   def configured_name_key(name); end
 
   # Recursive method to process a hash with meta tags
@@ -399,7 +419,7 @@ class MetaTags::Renderer
   # @param property [String, Symbol] a Hash or a String to render as meta tag.
   # @param content [Array] array of nested meta tag attributes or values.
   #
-  # source://meta-tags//lib/meta_tags/renderer.rb#262
+  # source://meta-tags//lib/meta_tags/renderer.rb#266
   def process_array(tags, property, content, **opts); end
 
   # Recursive method to process a hash with meta tags
@@ -408,7 +428,7 @@ class MetaTags::Renderer
   # @param property [String, Symbol] a Hash or a String to render as meta tag.
   # @param content [Hash] nested meta tag attributes.
   #
-  # source://meta-tags//lib/meta_tags/renderer.rb#237
+  # source://meta-tags//lib/meta_tags/renderer.rb#241
   def process_hash(tags, property, content, **opts); end
 
   # Recursive method to process all the hashes and arrays on meta tags
@@ -419,21 +439,21 @@ class MetaTags::Renderer
   # @param property [String, Symbol] a Hash or a String to render as meta tag.
   # @param content [Hash, Array, String, Symbol] text content or a symbol reference to
   #
-  # source://meta-tags//lib/meta_tags/renderer.rb#218
+  # source://meta-tags//lib/meta_tags/renderer.rb#222
   def process_tree(tags, property, content, itemprop: T.unsafe(nil), **opts); end
 
   # Renders alternate link tags.
   #
   # @param tags [Array<Tag>] a buffer object to store tag in.
   #
-  # source://meta-tags//lib/meta_tags/renderer.rb#119
+  # source://meta-tags//lib/meta_tags/renderer.rb#123
   def render_alternate(tags); end
 
   # Renders canonical link
   #
   # @param tags [Array<Tag>] a buffer object to store tag in.
   #
-  # source://meta-tags//lib/meta_tags/renderer.rb#167
+  # source://meta-tags//lib/meta_tags/renderer.rb#171
   def render_canonical_link(tags); end
 
   # Renders charset tag.
@@ -447,56 +467,56 @@ class MetaTags::Renderer
   #
   # @param tags [Array<Tag>] a buffer object to store tag in.
   #
-  # source://meta-tags//lib/meta_tags/renderer.rb#202
+  # source://meta-tags//lib/meta_tags/renderer.rb#206
   def render_custom(tags); end
 
   # Renders a complex hash object by key.
   #
   # @param tags [Array<Tag>] a buffer object to store tag in.
   #
-  # source://meta-tags//lib/meta_tags/renderer.rb#190
+  # source://meta-tags//lib/meta_tags/renderer.rb#194
   def render_hash(tags, key, **opts); end
 
   # Renders complex hash objects.
   #
   # @param tags [Array<Tag>] a buffer object to store tag in.
   #
-  # source://meta-tags//lib/meta_tags/renderer.rb#180
+  # source://meta-tags//lib/meta_tags/renderer.rb#184
   def render_hashes(tags, **opts); end
 
   # Renders icon(s) tag.
   #
   # @param tags [Array<Tag>] a buffer object to store tag in.
   #
-  # source://meta-tags//lib/meta_tags/renderer.rb#69
+  # source://meta-tags//lib/meta_tags/renderer.rb#73
   def render_icon(tags); end
 
   # Renders links.
   #
   # @param tags [Array<Tag>] a buffer object to store tag in.
   #
-  # source://meta-tags//lib/meta_tags/renderer.rb#153
+  # source://meta-tags//lib/meta_tags/renderer.rb#157
   def render_links(tags); end
 
   # Renders noindex and nofollow meta tags.
   #
   # @param tags [Array<Tag>] a buffer object to store tag in.
   #
-  # source://meta-tags//lib/meta_tags/renderer.rb#100
+  # source://meta-tags//lib/meta_tags/renderer.rb#104
   def render_noindex(tags); end
 
   # Renders open_search link tag.
   #
   # @param tags [Array<Tag>] a buffer object to store tag in.
   #
-  # source://meta-tags//lib/meta_tags/renderer.rb#138
+  # source://meta-tags//lib/meta_tags/renderer.rb#142
   def render_open_search(tags); end
 
   # Renders refresh meta tag.
   #
   # @param tags [Array<Tag>] a buffer object to store tag in.
   #
-  # source://meta-tags//lib/meta_tags/renderer.rb#110
+  # source://meta-tags//lib/meta_tags/renderer.rb#114
   def render_refresh(tags); end
 
   # Recursive method to process a hash with meta tags
@@ -508,7 +528,7 @@ class MetaTags::Renderer
   # @param value [String, Symbol] text content or a symbol reference to
   # @param itemprop [String, Symbol] value of the itemprop attribute.
   #
-  # source://meta-tags//lib/meta_tags/renderer.rb#274
+  # source://meta-tags//lib/meta_tags/renderer.rb#278
   def render_tag(tags, name, value, itemprop: T.unsafe(nil)); end
 
   # Renders title tag.
@@ -524,7 +544,7 @@ class MetaTags::Renderer
   # @param tags [Array<Tag>] a buffer object to store tag in.
   # @see TextNormalizer
   #
-  # source://meta-tags//lib/meta_tags/renderer.rb#90
+  # source://meta-tags//lib/meta_tags/renderer.rb#94
   def render_with_normalization(tags, name); end
 end
 
@@ -651,32 +671,30 @@ module MetaTags::TextNormalizer
   #
   # @param string [String] input strings.
   # @param limit [Integer, nil] characters number to truncate to.
-  # @param natural_separator [String] natural separator to truncate at.
   # @return [String] truncated string.
   #
-  # source://meta-tags//lib/meta_tags/text_normalizer.rb#140
-  def truncate(string, limit = T.unsafe(nil), natural_separator = T.unsafe(nil)); end
+  # source://meta-tags//lib/meta_tags/text_normalizer.rb#139
+  def truncate(string, limit = T.unsafe(nil)); end
 
   # Truncates an array of strings to a specific limit.
   #
   # @param string_array [Array<String>] input strings.
   # @param limit [Integer, nil] characters number to truncate to.
   # @param separator [String] separator that will be used to join array later.
-  # @param natural_separator [String] natural separator to truncate at.
   # @return [Array<String>] truncated array of strings.
   #
-  # source://meta-tags//lib/meta_tags/text_normalizer.rb#160
-  def truncate_array(string_array, limit = T.unsafe(nil), separator = T.unsafe(nil), natural_separator = T.unsafe(nil)); end
+  # source://meta-tags//lib/meta_tags/text_normalizer.rb#158
+  def truncate_array(string_array, limit = T.unsafe(nil), separator = T.unsafe(nil)); end
 
   private
 
-  # source://meta-tags//lib/meta_tags/text_normalizer.rb#186
+  # source://meta-tags//lib/meta_tags/text_normalizer.rb#184
   def calculate_limit_left(limit, length, result, separator); end
 
-  # source://meta-tags//lib/meta_tags/text_normalizer.rb#204
+  # source://meta-tags//lib/meta_tags/text_normalizer.rb#202
   def calculate_title_limits(site_title, title, separator, global_limit); end
 
-  # source://meta-tags//lib/meta_tags/text_normalizer.rb#190
+  # source://meta-tags//lib/meta_tags/text_normalizer.rb#188
   def truncate_title(site_title, title, separator); end
 end
 
