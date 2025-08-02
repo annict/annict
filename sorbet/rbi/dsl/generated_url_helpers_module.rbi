@@ -505,6 +505,9 @@ module GeneratedUrlHelpersModule
   def library_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }
+  def manifest_url(*args); end
+
+  sig { params(args: T.untyped).returns(String) }
   def native_oauth_authorization_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }
