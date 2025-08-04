@@ -505,6 +505,9 @@ module GeneratedPathHelpersModule
   def library_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }
+  def manifest_path(*args); end
+
+  sig { params(args: T.untyped).returns(String) }
   def native_oauth_authorization_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }

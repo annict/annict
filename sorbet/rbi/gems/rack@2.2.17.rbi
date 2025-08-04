@@ -1881,7 +1881,12 @@ class Rack::MediaType
     # this method responds with the following Hash:
     #   { 'charset' => 'utf-8' }
     #
-    # source://rack//lib/rack/media_type.rb#30
+    # This will pass back parameters with empty strings in the hash if they
+    # lack a value (e.g., "text/plain;charset=" will return { 'charset' => '' },
+    # and "text/plain;charset" will return { 'charset' => '' }, similarly to
+    # the query params parser (barring the latter case, which returns nil instead)).
+    #
+    # source://rack//lib/rack/media_type.rb#35
     def params(content_type); end
 
     # The media type (type/subtype) portion of the CONTENT_TYPE header
@@ -1896,7 +1901,7 @@ class Rack::MediaType
 
     private
 
-    # source://rack//lib/rack/media_type.rb#43
+    # source://rack//lib/rack/media_type.rb#48
     def strip_doublequotes(str); end
   end
 end
@@ -2030,53 +2035,53 @@ Rack::Mime::MIME_TYPES = T.let(T.unsafe(nil), Hash)
 # <tt>:fatal</tt>:: Raise a FatalWarning if the app writes to rack.errors.
 # <tt>:lint</tt>:: If true, wrap the application in a Rack::Lint.
 #
-# source://rack//lib/rack/mock.rb#22
+# source://rack//lib/rack/mock.rb#21
 class Rack::MockRequest
   # @return [MockRequest] a new instance of MockRequest
   #
-  # source://rack//lib/rack/mock.rb#52
+  # source://rack//lib/rack/mock.rb#51
   def initialize(app); end
 
   # Make a DELETE request and return a MockResponse. See #request.
   #
-  # source://rack//lib/rack/mock.rb#65
+  # source://rack//lib/rack/mock.rb#64
   def delete(uri, opts = T.unsafe(nil)); end
 
   # Make a GET request and return a MockResponse. See #request.
   #
-  # source://rack//lib/rack/mock.rb#57
+  # source://rack//lib/rack/mock.rb#56
   def get(uri, opts = T.unsafe(nil)); end
 
   # Make a HEAD request and return a MockResponse. See #request.
   #
-  # source://rack//lib/rack/mock.rb#67
+  # source://rack//lib/rack/mock.rb#66
   def head(uri, opts = T.unsafe(nil)); end
 
   # Make an OPTIONS request and return a MockResponse. See #request.
   #
-  # source://rack//lib/rack/mock.rb#69
+  # source://rack//lib/rack/mock.rb#68
   def options(uri, opts = T.unsafe(nil)); end
 
   # Make a PATCH request and return a MockResponse. See #request.
   #
-  # source://rack//lib/rack/mock.rb#63
+  # source://rack//lib/rack/mock.rb#62
   def patch(uri, opts = T.unsafe(nil)); end
 
   # Make a POST request and return a MockResponse. See #request.
   #
-  # source://rack//lib/rack/mock.rb#59
+  # source://rack//lib/rack/mock.rb#58
   def post(uri, opts = T.unsafe(nil)); end
 
   # Make a PUT request and return a MockResponse. See #request.
   #
-  # source://rack//lib/rack/mock.rb#61
+  # source://rack//lib/rack/mock.rb#60
   def put(uri, opts = T.unsafe(nil)); end
 
   # Make a request using the given request method for the given
   # uri to the rack application and return a MockResponse.
   # Options given are passed to MockRequest.env_for.
   #
-  # source://rack//lib/rack/mock.rb#74
+  # source://rack//lib/rack/mock.rb#73
   def request(method = T.unsafe(nil), uri = T.unsafe(nil), opts = T.unsafe(nil)); end
 
   class << self
@@ -2089,102 +2094,105 @@ class Rack::MockRequest
     # :params :: The params to use
     # :script_name :: The SCRIPT_NAME to set
     #
-    # source://rack//lib/rack/mock.rb#105
+    # source://rack//lib/rack/mock.rb#104
     def env_for(uri = T.unsafe(nil), opts = T.unsafe(nil)); end
 
     # For historical reasons, we're pinning to RFC 2396.
     # URI::Parser = URI::RFC2396_Parser
     #
-    # source://rack//lib/rack/mock.rb#92
+    # source://rack//lib/rack/mock.rb#91
     def parse_uri_rfc2396(uri); end
   end
 end
 
-# source://rack//lib/rack/mock.rb#43
+# source://rack//lib/rack/mock.rb#42
 Rack::MockRequest::DEFAULT_ENV = T.let(T.unsafe(nil), Hash)
 
-# source://rack//lib/rack/mock.rb#26
+# source://rack//lib/rack/mock.rb#25
 class Rack::MockRequest::FatalWarner
-  # source://rack//lib/rack/mock.rb#35
+  # source://rack//lib/rack/mock.rb#34
   def flush; end
 
   # @raise [FatalWarning]
   #
-  # source://rack//lib/rack/mock.rb#27
+  # source://rack//lib/rack/mock.rb#26
   def puts(warning); end
 
-  # source://rack//lib/rack/mock.rb#38
+  # source://rack//lib/rack/mock.rb#37
   def string; end
 
   # @raise [FatalWarning]
   #
-  # source://rack//lib/rack/mock.rb#31
+  # source://rack//lib/rack/mock.rb#30
   def write(warning); end
 end
 
-# source://rack//lib/rack/mock.rb#23
+# source://rack//lib/rack/mock.rb#22
 class Rack::MockRequest::FatalWarning < ::RuntimeError; end
 
 # Rack::MockResponse provides useful helpers for testing your apps.
 # Usually, you don't create the MockResponse on your own, but use
 # MockRequest.
 #
-# source://rack//lib/rack/mock.rb#173
+# source://rack//lib/rack/mock.rb#172
 class Rack::MockResponse < ::Rack::Response
   # @return [MockResponse] a new instance of MockResponse
   #
-  # source://rack//lib/rack/mock.rb#184
+  # source://rack//lib/rack/mock.rb#213
   def initialize(status, headers, body, errors = T.unsafe(nil)); end
 
-  # source://rack//lib/rack/mock.rb#194
+  # source://rack//lib/rack/mock.rb#223
   def =~(other); end
 
-  # source://rack//lib/rack/mock.rb#202
+  # source://rack//lib/rack/mock.rb#231
   def body; end
 
-  # source://rack//lib/rack/mock.rb#226
+  # source://rack//lib/rack/mock.rb#255
   def cookie(name); end
 
   # Headers
   #
-  # source://rack//lib/rack/mock.rb#179
+  # source://rack//lib/rack/mock.rb#208
   def cookies; end
 
   # @return [Boolean]
   #
-  # source://rack//lib/rack/mock.rb#222
+  # source://rack//lib/rack/mock.rb#251
   def empty?; end
 
   # Errors
   #
-  # source://rack//lib/rack/mock.rb#182
+  # source://rack//lib/rack/mock.rb#211
   def errors; end
 
   # Errors
   #
-  # source://rack//lib/rack/mock.rb#182
+  # source://rack//lib/rack/mock.rb#211
   def errors=(_arg0); end
 
-  # source://rack//lib/rack/mock.rb#198
+  # source://rack//lib/rack/mock.rb#227
   def match(other); end
 
   # Headers
   #
-  # source://rack//lib/rack/mock.rb#179
+  # source://rack//lib/rack/mock.rb#208
   def original_headers; end
 
   private
 
-  # source://rack//lib/rack/mock.rb#253
+  # source://rack//lib/rack/mock.rb#282
   def identify_cookie_attributes(cookie_filling); end
 
-  # source://rack//lib/rack/mock.rb#232
+  # source://rack//lib/rack/mock.rb#261
   def parse_cookies_from_header; end
 
   class << self
     def [](*_arg0); end
   end
 end
+
+# source://rack//lib/rack/mock.rb#176
+Rack::MockResponse::Cookie = CGI::Cookie
 
 # A multipart form data parser, adapted from IOWA.
 #
