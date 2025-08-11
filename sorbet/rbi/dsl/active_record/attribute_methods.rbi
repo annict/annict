@@ -15,9 +15,12 @@ module ActiveRecord::AttributeMethods
     def attribute_aliases; end
     def attribute_aliases=(value); end
     def attribute_aliases?; end
-    def attribute_method_matchers; end
-    def attribute_method_matchers=(value); end
-    def attribute_method_matchers?; end
+    def attribute_method_patterns; end
+    def attribute_method_patterns=(value); end
+    def attribute_method_patterns?; end
+    def default_column_serializer; end
+    def default_column_serializer=(value); end
+    def default_column_serializer?; end
     def partial_inserts; end
     def partial_inserts=(value); end
     def partial_inserts?; end
@@ -38,8 +41,8 @@ module ActiveRecord::AttributeMethods
   module GeneratedInstanceMethods
     def attribute_aliases; end
     def attribute_aliases?; end
-    def attribute_method_matchers; end
-    def attribute_method_matchers?; end
+    def attribute_method_patterns; end
+    def attribute_method_patterns?; end
     def partial_inserts; end
     def partial_inserts?; end
     def partial_updates; end
