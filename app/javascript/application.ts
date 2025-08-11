@@ -82,7 +82,8 @@ document.addEventListener("turbo:load", (_event) => {
 
 dayjs.locale(annConfig.viewer.locale);
 
-window.Stimulus = Application.start();
+const Stimulus = Application.start();
+(window as any).Stimulus = Stimulus;
 Stimulus.register("forms--basic-form", BasicFormController);
 Stimulus.register("body", BodyController);
 Stimulus.register("bulk-watch-episodes-button", BulkWatchEpisodesButtonController);

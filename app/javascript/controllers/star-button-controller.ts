@@ -84,7 +84,7 @@ export default class extends Controller {
       }
 
       this.render();
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
 
       if (err.response?.status === 401) {
