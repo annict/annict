@@ -18,7 +18,15 @@ Bundler.require(*Rails.groups)
 module Annict
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 6.1
+    config.load_defaults 7.1
+
+    # Please, add to the `ignore` list any other `lib` subdirectories that do
+    # not contain `.rb` files, or that should not be reloaded or eager loaded.
+    # Common ones are `templates`, `generators`, or `middleware`, for example.
+    config.autoload_lib(ignore: %w[assets tasks])
+
+    # Rails 7.1の新しいキャッシュフォーマットを使用
+    config.active_support.cache_format_version = 7.1
 
     # Configuration for the application, engines, and railties goes here.
     #
@@ -97,22 +105,6 @@ module Annict
     # Gzip all the things
     # https://schneems.com/2017/11/08/80-smaller-rails-footprint-with-rack-deflate/
     config.middleware.insert_after ActionDispatch::Static, Rack::Deflater
-
-    Sentry.init do |config|
-      config.dsn = ENV.fetch("SENTRY_DSN")
-      config.breadcrumbs_logger = %i[active_support_logger http_logger]
-
-      # Set tracesSampleRate to 1.0 to capture 100%
-      # of transactions for performance monitoring.
-      # We recommend adjusting this value in production
-      config.traces_sample_rate = 0.5
-
-      filter = ActiveSupport::ParameterFilter.new(Rails.application.config.filter_parameters)
-      config.before_send = lambda do |event, hint|
-        # Use Rails' parameter filter to sanitize the event
-        filter.filter(event.to_hash)
-      end
-    end
 
     ActiveRecord::SessionStore::Session.serializer = :null
   end
