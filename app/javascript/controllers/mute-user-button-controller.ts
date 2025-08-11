@@ -83,7 +83,7 @@ export default class extends Controller {
 
       this.isMuted = !this.isMuted;
       this.render();
-    } catch (err) {
+    } catch (err: any) {
       if (err.response?.status === 401) {
         new Modal(".c-sign-up-modal").show();
       }

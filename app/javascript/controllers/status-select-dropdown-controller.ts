@@ -93,7 +93,7 @@ export default class extends Controller {
         this.currentStatusKind = selectedStatusKind;
         this.render();
         new EventDispatcher("tracking-offcanvas-button:enabled", { workId: this.workIdValue }).dispatch();
-      } catch (err) {
+      } catch (err: any) {
         if (err.response.status === 401) {
           new Modal(".c-sign-up-modal").show();
         }
