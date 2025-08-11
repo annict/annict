@@ -1,9 +1,11 @@
 # Annict プロジェクト構造
 
 ## ディレクトリ構成
+
 基本的にRailsプロジェクトの構成に従っていますが、一部独自のディレクトリがあります。
 
 ### app/ ディレクトリ
+
 - `app/assets` - 画像やCSSファイル
 - `app/components` - ViewComponentを使用したコンポーネント（再利用可能なUI要素）
 - `app/controllers` - Railsのコントローラー（HTTPリクエスト処理）
@@ -20,6 +22,7 @@
 - `app/views` - ViewComponentを使用したビュー
 
 ### その他の重要なディレクトリ
+
 - `config/` - 設定ファイル
   - `config/locales/` - 国際化ファイル（日本語・英語）
 - `db/` - データベース関連（マイグレーション等）
@@ -29,6 +32,7 @@
   - `docs/claude/` - Claude向けのドキュメント
 
 ## 設計思想
+
 - RecordとModelを分離（RecordはDB操作、Modelはドメインロジック）
 - ViewComponentを使用したコンポーネント指向のUI設計
 - RepositoryパターンでRecordとModelの変換を行う

@@ -19,6 +19,9 @@ module ActiveModel::API
     def _validators; end
     def _validators=(value); end
     def _validators?; end
+    def param_delimiter; end
+    def param_delimiter=(value); end
+    def param_delimiter?; end
   end
 
   module GeneratedInstanceMethods
@@ -26,5 +29,6 @@ module ActiveModel::API
     def __callbacks?; end
     def _validators; end
     def _validators?; end
+    def param_delimiter=(value); end
   end
 end
