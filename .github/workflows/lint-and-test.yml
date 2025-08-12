@@ -7,7 +7,7 @@ jobs:
     name: Zeitwerk
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Setup Ruby and install gems
         uses: ruby/setup-ruby@v1
         with:
@@ -21,7 +21,7 @@ jobs:
       contents: write
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Setup Ruby and install gems
         uses: ruby/setup-ruby@v1
         with:
@@ -48,7 +48,7 @@ jobs:
     name: Standard
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup Ruby and install gems
         uses: ruby/setup-ruby@v1
@@ -62,7 +62,7 @@ jobs:
     name: ERB Lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Setup Ruby and install gems
         uses: ruby/setup-ruby@v1
         with:
@@ -74,7 +74,7 @@ jobs:
     name: ESLint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -127,7 +127,7 @@ jobs:
           --health-retries 5
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup Ruby and install gems
         uses: ruby/setup-ruby@v1
