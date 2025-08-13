@@ -140,7 +140,7 @@ class Work < ApplicationRecord
   }
 
   scope :order_by_season, ->(type = :asc) {
-    order(season_year: type, season_name: type)
+    order(season_year: type, season_name: type, id: :asc)
   }
 
   scope :season_from, -> (season) {
