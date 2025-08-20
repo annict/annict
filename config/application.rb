@@ -26,7 +26,7 @@ module Annict
     config.autoload_lib(ignore: %w[assets tasks])
 
     # Rails 7.1の新しいキャッシュフォーマットを使用
-    config.active_support.cache_format_version = 7.1
+    # config.active_support.cache_format_version = 7.1
 
     # Configuration for the application, engines, and railties goes here.
     #
