@@ -49,17 +49,17 @@ RSpec.describe "GET /db/organizations/:id/edit", type: :request do
     organization = FactoryBot.create(:organization, :deleted)
     login_as(user, scope: :user)
 
-    expect {
-      get "/db/organizations/#{organization.id}/edit"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/db/organizations/#{organization.id}/edit"
+
+    expect(response.status).to eq(404)
   end
 
   it "存在しない組織を編集しようとしたとき、404エラーが返されること" do
     user = FactoryBot.create(:registered_user, :with_editor_role)
     login_as(user, scope: :user)
 
-    expect {
-      get "/db/organizations/999999999/edit"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/db/organizations/999999999/edit"
+
+    expect(response.status).to eq(404)
   end
 end
