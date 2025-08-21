@@ -112,23 +112,23 @@ end
 
 # Railtie to hook into Rails.
 #
-# source://rspec-rails//lib/rspec-rails.rb#9
+# source://rspec-rails//lib/rspec-rails.rb#8
 class RSpec::Rails::Railtie < ::Rails::Railtie
   private
 
-  # source://rspec-rails//lib/rspec-rails.rb#50
+  # source://rspec-rails//lib/rspec-rails.rb#68
   def config_default_preview_path(options); end
 
   # @return [Boolean]
   #
-  # source://rspec-rails//lib/rspec-rails.rb#40
+  # source://rspec-rails//lib/rspec-rails.rb#57
   def config_preview_path?(options); end
 
-  # source://rspec-rails//lib/rspec-rails.rb#33
+  # source://rspec-rails//lib/rspec-rails.rb#50
   def setup_preview_path(app); end
 
   # @return [Boolean]
   #
-  # source://rspec-rails//lib/rspec-rails.rb#56
+  # source://rspec-rails//lib/rspec-rails.rb#81
   def supports_action_mailer_previews?(config); end
 end

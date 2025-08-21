@@ -8,96 +8,102 @@
 # source://uniform_notifier//lib/uniform_notifier/base.rb#3
 class UniformNotifier
   class << self
-    # source://uniform_notifier//lib/uniform_notifier.rb#61
+    # source://uniform_notifier//lib/uniform_notifier.rb#64
     def active_notifiers; end
 
-    # source://uniform_notifier//lib/uniform_notifier.rb#59
+    # source://uniform_notifier//lib/uniform_notifier.rb#62
     def airbrake; end
 
-    # source://uniform_notifier//lib/uniform_notifier.rb#59
+    # source://uniform_notifier//lib/uniform_notifier.rb#62
     def airbrake=(_arg0); end
 
-    # source://uniform_notifier//lib/uniform_notifier.rb#59
+    # source://uniform_notifier//lib/uniform_notifier.rb#62
     def alert; end
 
-    # source://uniform_notifier//lib/uniform_notifier.rb#59
+    # source://uniform_notifier//lib/uniform_notifier.rb#62
     def alert=(_arg0); end
 
-    # source://uniform_notifier//lib/uniform_notifier.rb#59
+    # source://uniform_notifier//lib/uniform_notifier.rb#62
     def appsignal; end
 
-    # source://uniform_notifier//lib/uniform_notifier.rb#59
+    # source://uniform_notifier//lib/uniform_notifier.rb#62
     def appsignal=(_arg0); end
 
-    # source://uniform_notifier//lib/uniform_notifier.rb#59
+    # source://uniform_notifier//lib/uniform_notifier.rb#62
     def bugsnag; end
 
-    # source://uniform_notifier//lib/uniform_notifier.rb#59
+    # source://uniform_notifier//lib/uniform_notifier.rb#62
     def bugsnag=(_arg0); end
 
-    # source://uniform_notifier//lib/uniform_notifier.rb#59
+    # source://uniform_notifier//lib/uniform_notifier.rb#62
     def console; end
 
-    # source://uniform_notifier//lib/uniform_notifier.rb#59
+    # source://uniform_notifier//lib/uniform_notifier.rb#62
     def console=(_arg0); end
 
-    # source://uniform_notifier//lib/uniform_notifier.rb#59
+    # source://uniform_notifier//lib/uniform_notifier.rb#62
     def customized_logger; end
 
-    # source://uniform_notifier//lib/uniform_notifier.rb#71
+    # source://uniform_notifier//lib/uniform_notifier.rb#62
     def customized_logger=(logdev); end
 
-    # source://uniform_notifier//lib/uniform_notifier.rb#59
+    # source://uniform_notifier//lib/uniform_notifier.rb#62
     def honeybadger; end
 
-    # source://uniform_notifier//lib/uniform_notifier.rb#59
+    # source://uniform_notifier//lib/uniform_notifier.rb#62
     def honeybadger=(_arg0); end
 
-    # source://uniform_notifier//lib/uniform_notifier.rb#59
+    # source://uniform_notifier//lib/uniform_notifier.rb#62
+    def opentelemetry; end
+
+    # source://uniform_notifier//lib/uniform_notifier.rb#62
+    def opentelemetry=(_arg0); end
+
+    # source://uniform_notifier//lib/uniform_notifier.rb#62
     def rails_logger; end
 
-    # source://uniform_notifier//lib/uniform_notifier.rb#59
+    # source://uniform_notifier//lib/uniform_notifier.rb#62
     def rails_logger=(_arg0); end
 
-    # source://uniform_notifier//lib/uniform_notifier.rb#59
+    # source://uniform_notifier//lib/uniform_notifier.rb#62
     def raise; end
 
-    # source://uniform_notifier//lib/uniform_notifier.rb#81
+    # source://uniform_notifier//lib/uniform_notifier.rb#62
     def raise=(exception_class); end
 
-    # source://uniform_notifier//lib/uniform_notifier.rb#59
+    # source://uniform_notifier//lib/uniform_notifier.rb#62
     def rollbar; end
 
-    # source://uniform_notifier//lib/uniform_notifier.rb#59
+    # source://uniform_notifier//lib/uniform_notifier.rb#62
     def rollbar=(_arg0); end
 
-    # source://uniform_notifier//lib/uniform_notifier.rb#59
+    # source://uniform_notifier//lib/uniform_notifier.rb#62
     def sentry; end
 
-    # source://uniform_notifier//lib/uniform_notifier.rb#59
+    # source://uniform_notifier//lib/uniform_notifier.rb#62
     def sentry=(_arg0); end
 
-    # source://uniform_notifier//lib/uniform_notifier.rb#59
+    # source://uniform_notifier//lib/uniform_notifier.rb#62
     def slack; end
 
-    # source://uniform_notifier//lib/uniform_notifier.rb#76
+    # source://uniform_notifier//lib/uniform_notifier.rb#62
     def slack=(slack); end
 
-    # source://uniform_notifier//lib/uniform_notifier.rb#59
+    # source://uniform_notifier//lib/uniform_notifier.rb#62
     def terminal_notifier; end
 
-    # source://uniform_notifier//lib/uniform_notifier.rb#59
+    # source://uniform_notifier//lib/uniform_notifier.rb#62
     def terminal_notifier=(_arg0); end
 
-    # source://uniform_notifier//lib/uniform_notifier.rb#59
+    # source://uniform_notifier//lib/uniform_notifier.rb#62
     def xmpp; end
 
-    # source://uniform_notifier//lib/uniform_notifier.rb#66
+    # source://uniform_notifier//lib/uniform_notifier.rb#62
     def xmpp=(xmpp); end
   end
 end
 
-# source://uniform_notifier//lib/uniform_notifier.rb#21
+# source://uniform_notifier//lib/uniform_notifier.rb#22
 UniformNotifier::AVAILABLE_NOTIFIERS = T.let(T.unsafe(nil), Array)
 
 # source://uniform_notifier//lib/uniform_notifier/airbrake.rb#4
@@ -236,11 +242,26 @@ class UniformNotifier::JavascriptConsole < ::UniformNotifier::Base
   end
 end
 
-# source://uniform_notifier//lib/uniform_notifier.rb#38
+# source://uniform_notifier//lib/uniform_notifier.rb#40
 UniformNotifier::NOTIFIERS = T.let(T.unsafe(nil), Array)
 
-# source://uniform_notifier//lib/uniform_notifier.rb#55
+# source://uniform_notifier//lib/uniform_notifier.rb#58
 class UniformNotifier::NotificationError < ::StandardError; end
+
+# source://uniform_notifier//lib/uniform_notifier/opentelemetry.rb#4
+class UniformNotifier::OpenTelemetryNotifier < ::UniformNotifier::Base
+  class << self
+    # @return [Boolean]
+    #
+    # source://uniform_notifier//lib/uniform_notifier/opentelemetry.rb#6
+    def active?; end
+
+    protected
+
+    # source://uniform_notifier//lib/uniform_notifier/opentelemetry.rb#12
+    def _out_of_channel_notify(data); end
+  end
+end
 
 # source://uniform_notifier//lib/uniform_notifier/rails_logger.rb#4
 class UniformNotifier::RailsLogger < ::UniformNotifier::Base
