@@ -5,20 +5,53 @@
 # Please instead update this file by running `bin/tapioca gem activejob`.
 
 
+# :markup: markdown
+# :include: ../README.md
+#
 # source://activejob//lib/active_job/gem_version.rb#3
 module ActiveJob
   extend ::ActiveSupport::Autoload
 
   class << self
-    # Returns the currently loaded version of Active Job as a <tt>Gem::Version</tt>.
+    # source://activejob//lib/active_job/queue_adapter.rb#7
+    def adapter_name(adapter); end
+
+    # source://activejob//lib/active_job/deprecator.rb#4
+    def deprecator; end
+
+    # Returns the currently loaded version of Active Job as a +Gem::Version+.
     #
     # source://activejob//lib/active_job/gem_version.rb#5
     def gem_version; end
 
-    # Returns the currently loaded version of Active Job as a <tt>Gem::Version</tt>.
+    # Push many jobs onto the queue at once without running enqueue callbacks.
+    # Queue adapters may communicate the enqueue status of each job by setting
+    # successfully_enqueued and/or enqueue_error on the passed-in job instances.
+    #
+    # source://activejob//lib/active_job/enqueuing.rb#14
+    def perform_all_later(*jobs); end
+
+    # source://activejob//lib/active_job.rb#56
+    def use_big_decimal_serializer; end
+
+    # source://activejob//lib/active_job.rb#56
+    def use_big_decimal_serializer=(_arg0); end
+
+    # source://activejob//lib/active_job.rb#64
+    def verbose_enqueue_logs; end
+
+    # source://activejob//lib/active_job.rb#64
+    def verbose_enqueue_logs=(_arg0); end
+
+    # Returns the currently loaded version of Active Job as a +Gem::Version+.
     #
     # source://activejob//lib/active_job/version.rb#7
     def version; end
+
+    private
+
+    # source://activejob//lib/active_job/instrumentation.rb#6
+    def instrument_enqueue_all(queue_adapter, jobs); end
   end
 end
 
@@ -44,66 +77,63 @@ module ActiveJob::Arguments
 
   private
 
-  # source://activejob//lib/active_job/arguments.rb#204
+  # source://activejob//lib/active_job/arguments.rb#201
   def convert_to_global_id_hash(argument); end
 
   # @return [Boolean]
   #
-  # source://activejob//lib/active_job/arguments.rb#151
+  # source://activejob//lib/active_job/arguments.rb#148
   def custom_serialized?(hash); end
 
-  # source://activejob//lib/active_job/arguments.rb#122
+  # source://activejob//lib/active_job/arguments.rb#119
   def deserialize_argument(argument); end
 
-  # source://activejob//lib/active_job/arguments.rb#147
+  # source://activejob//lib/active_job/arguments.rb#144
   def deserialize_global_id(hash); end
 
-  # source://activejob//lib/active_job/arguments.rb#161
+  # source://activejob//lib/active_job/arguments.rb#158
   def deserialize_hash(serialized_hash); end
 
-  # source://activejob//lib/active_job/arguments.rb#95
+  # source://activejob//lib/active_job/arguments.rb#71
   def serialize_argument(argument); end
 
-  # source://activejob//lib/active_job/arguments.rb#155
+  # source://activejob//lib/active_job/arguments.rb#152
   def serialize_hash(argument); end
 
-  # source://activejob//lib/active_job/arguments.rb#174
+  # source://activejob//lib/active_job/arguments.rb#171
   def serialize_hash_key(key); end
 
-  # source://activejob//lib/active_job/arguments.rb#185
+  # source://activejob//lib/active_job/arguments.rb#182
   def serialize_indifferent_hash(indifferent_hash); end
 
   # @return [Boolean]
   #
-  # source://activejob//lib/active_job/arguments.rb#143
+  # source://activejob//lib/active_job/arguments.rb#140
   def serialized_global_id?(hash); end
 
-  # source://activejob//lib/active_job/arguments.rb#191
+  # source://activejob//lib/active_job/arguments.rb#188
   def transform_symbol_keys(hash, symbol_keys); end
 end
 
-# source://activejob//lib/active_job/arguments.rb#52
+# source://activejob//lib/active_job/arguments.rb#50
 ActiveJob::Arguments::GLOBALID_KEY = T.let(T.unsafe(nil), String)
 
-# source://activejob//lib/active_job/arguments.rb#60
+# source://activejob//lib/active_job/arguments.rb#58
 ActiveJob::Arguments::OBJECT_SERIALIZER_KEY = T.let(T.unsafe(nil), String)
 
-# source://activejob//lib/active_job/arguments.rb#50
-ActiveJob::Arguments::PERMITTED_TYPES = T.let(T.unsafe(nil), Array)
-
-# source://activejob//lib/active_job/arguments.rb#63
+# source://activejob//lib/active_job/arguments.rb#61
 ActiveJob::Arguments::RESERVED_KEYS = T.let(T.unsafe(nil), Array)
 
-# source://activejob//lib/active_job/arguments.rb#56
+# source://activejob//lib/active_job/arguments.rb#54
 ActiveJob::Arguments::RUBY2_KEYWORDS_KEY = T.let(T.unsafe(nil), String)
 
-# source://activejob//lib/active_job/arguments.rb#54
+# source://activejob//lib/active_job/arguments.rb#52
 ActiveJob::Arguments::SYMBOL_KEYS_KEY = T.let(T.unsafe(nil), String)
 
-# source://activejob//lib/active_job/arguments.rb#58
+# source://activejob//lib/active_job/arguments.rb#56
 ActiveJob::Arguments::WITH_INDIFFERENT_ACCESS_KEY = T.let(T.unsafe(nil), String)
 
-# = Active Job
+# = Active Job \Base
 #
 # Active Job objects can be configured to work with different backend
 # queuing frameworks. To specify a queue adapter to use:
@@ -179,83 +209,92 @@ class ActiveJob::Base
   extend ::ActiveJob::Exceptions::ClassMethods
   extend ::ActiveJob::TestHelper::TestQueueAdapter::ClassMethods
 
-  # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#68
+  # source://activejob//lib/active_job/base.rb#70
   def __callbacks; end
 
-  # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#68
+  # source://activejob//lib/active_job/base.rb#70
   def __callbacks?; end
 
-  # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#940
+  # source://activejob//lib/active_job/base.rb#70
   def _enqueue_callbacks; end
 
-  # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#940
+  # source://activejob//lib/active_job/base.rb#70
   def _perform_callbacks; end
 
-  # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#928
+  # source://activejob//lib/active_job/base.rb#70
   def _run_enqueue_callbacks(&block); end
 
-  # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#928
+  # source://activejob//lib/active_job/base.rb#70
   def _run_perform_callbacks(&block); end
 
-  # source://activejob//lib/active_job/logging.rb#11
+  # source://activejob//lib/active_job/base.rb#71
+  def after_discard_procs; end
+
+  # source://activejob//lib/active_job/base.rb#71
+  def after_discard_procs=(_arg0); end
+
+  # source://activejob//lib/active_job/base.rb#71
+  def after_discard_procs?; end
+
+  # source://activejob//lib/active_job/base.rb#73
   def logger; end
 
-  # source://activejob//lib/active_job/logging.rb#11
+  # source://activejob//lib/active_job/base.rb#73
   def logger=(val); end
 
-  # source://activejob//lib/active_job/queue_adapter.rb#15
-  def queue_adapter(*_arg0, **_arg1, &_arg2); end
+  # source://activejob//lib/active_job/base.rb#65
+  def queue_adapter(&block); end
 
-  # source://activejob//lib/active_job/queue_name.rb#57
+  # source://activejob//lib/active_job/base.rb#66
   def queue_name_prefix; end
 
-  # source://activejob//lib/active_job/queue_name.rb#57
+  # source://activejob//lib/active_job/base.rb#66
   def queue_name_prefix=(_arg0); end
 
-  # source://activejob//lib/active_job/queue_name.rb#57
+  # source://activejob//lib/active_job/base.rb#66
   def queue_name_prefix?; end
 
-  # source://activesupport/7.0.8.7/lib/active_support/rescuable.rb#13
+  # source://activejob//lib/active_job/base.rb#69
   def rescue_handlers; end
 
-  # source://activesupport/7.0.8.7/lib/active_support/rescuable.rb#13
+  # source://activejob//lib/active_job/base.rb#69
   def rescue_handlers=(_arg0); end
 
-  # source://activesupport/7.0.8.7/lib/active_support/rescuable.rb#13
+  # source://activejob//lib/active_job/base.rb#69
   def rescue_handlers?; end
 
   class << self
-    # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#68
+    # source://activejob//lib/active_job/base.rb#70
     def __callbacks; end
 
-    # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#68
+    # source://activejob//lib/active_job/base.rb#70
     def __callbacks=(value); end
 
-    # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#68
+    # source://activejob//lib/active_job/base.rb#70
     def __callbacks?; end
 
-    # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#932
+    # source://activejob//lib/active_job/base.rb#70
     def _enqueue_callbacks; end
 
-    # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#936
+    # source://activejob//lib/active_job/base.rb#70
     def _enqueue_callbacks=(value); end
 
-    # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#932
+    # source://activejob//lib/active_job/base.rb#70
     def _perform_callbacks; end
 
-    # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#936
+    # source://activejob//lib/active_job/base.rb#70
     def _perform_callbacks=(value); end
 
-    # source://activejob//lib/active_job/queue_adapter.rb#13
+    # source://activejob//lib/active_job/base.rb#65
     def _queue_adapter; end
 
-    # source://activejob//lib/active_job/queue_adapter.rb#13
+    # source://activejob//lib/active_job/base.rb#65
     def _queue_adapter=(value); end
 
-    # source://activejob//lib/active_job/queue_adapter.rb#12
+    # source://activejob//lib/active_job/base.rb#65
     def _queue_adapter_name; end
 
-    # source://activejob//lib/active_job/queue_adapter.rb#12
+    # source://activejob//lib/active_job/base.rb#65
     def _queue_adapter_name=(value); end
 
     # source://activejob//lib/active_job/test_helper.rb#19
@@ -264,81 +303,84 @@ class ActiveJob::Base
     # source://activejob//lib/active_job/test_helper.rb#19
     def _test_adapter=(value); end
 
-    # source://activejob//lib/active_job/logging.rb#12
+    # source://activejob//lib/active_job/base.rb#71
+    def after_discard_procs; end
+
+    # source://activejob//lib/active_job/base.rb#71
+    def after_discard_procs=(value); end
+
+    # source://activejob//lib/active_job/base.rb#71
+    def after_discard_procs?; end
+
+    # source://activejob//lib/active_job/base.rb#73
     def log_arguments; end
 
-    # source://activejob//lib/active_job/logging.rb#12
+    # source://activejob//lib/active_job/base.rb#73
     def log_arguments=(value); end
 
-    # source://activejob//lib/active_job/logging.rb#12
+    # source://activejob//lib/active_job/base.rb#73
     def log_arguments?; end
 
-    # source://activejob//lib/active_job/logging.rb#11
+    # source://activejob//lib/active_job/base.rb#73
     def logger; end
 
-    # source://activejob//lib/active_job/logging.rb#11
+    # source://activejob//lib/active_job/base.rb#73
     def logger=(val); end
 
-    # source://activejob//lib/active_job/queue_priority.rb#32
+    # source://activejob//lib/active_job/base.rb#67
     def priority; end
 
-    # source://activejob//lib/active_job/queue_priority.rb#32
+    # source://activejob//lib/active_job/base.rb#67
     def priority=(value); end
 
-    # source://activejob//lib/active_job/queue_priority.rb#32
+    # source://activejob//lib/active_job/base.rb#67
     def priority?; end
 
-    # source://activejob//lib/active_job/queue_name.rb#55
+    # source://activejob//lib/active_job/base.rb#66
     def queue_name; end
 
-    # source://activejob//lib/active_job/queue_name.rb#55
+    # source://activejob//lib/active_job/base.rb#66
     def queue_name=(value); end
 
-    # source://activejob//lib/active_job/queue_name.rb#55
+    # source://activejob//lib/active_job/base.rb#66
     def queue_name?; end
 
-    # source://activejob//lib/active_job/queue_name.rb#56
+    # source://activejob//lib/active_job/base.rb#66
     def queue_name_delimiter; end
 
-    # source://activejob//lib/active_job/queue_name.rb#56
+    # source://activejob//lib/active_job/base.rb#66
     def queue_name_delimiter=(value); end
 
-    # source://activejob//lib/active_job/queue_name.rb#56
+    # source://activejob//lib/active_job/base.rb#66
     def queue_name_delimiter?; end
 
-    # source://activejob//lib/active_job/queue_name.rb#57
+    # source://activejob//lib/active_job/base.rb#66
     def queue_name_prefix; end
 
-    # source://activejob//lib/active_job/queue_name.rb#57
+    # source://activejob//lib/active_job/base.rb#66
     def queue_name_prefix=(value); end
 
-    # source://activejob//lib/active_job/queue_name.rb#57
+    # source://activejob//lib/active_job/base.rb#66
     def queue_name_prefix?; end
 
-    # source://activesupport/7.0.8.7/lib/active_support/rescuable.rb#13
+    # source://activejob//lib/active_job/base.rb#69
     def rescue_handlers; end
 
-    # source://activesupport/7.0.8.7/lib/active_support/rescuable.rb#13
+    # source://activejob//lib/active_job/base.rb#69
     def rescue_handlers=(value); end
 
-    # source://activesupport/7.0.8.7/lib/active_support/rescuable.rb#13
+    # source://activejob//lib/active_job/base.rb#69
     def rescue_handlers?; end
 
-    # source://activejob//lib/active_job/exceptions.rb#11
+    # source://activejob//lib/active_job/base.rb#71
     def retry_jitter; end
 
-    # source://activejob//lib/active_job/exceptions.rb#11
+    # source://activejob//lib/active_job/base.rb#71
     def retry_jitter=(value); end
-
-    # source://activesupport/7.0.8.7/lib/active_support/deprecation/method_wrappers.rb#63
-    def skip_after_callbacks_if_terminated(*args, **_arg1, &block); end
-
-    # source://activesupport/7.0.8.7/lib/active_support/deprecation/method_wrappers.rb#63
-    def skip_after_callbacks_if_terminated=(*args, **_arg1, &block); end
   end
 end
 
-# = Active Job Callbacks
+# = Active Job \Callbacks
 #
 # Active Job provides hooks during the life cycle of a job. Callbacks allow you
 # to trigger logic during this cycle. Available callbacks are:
@@ -365,16 +407,16 @@ module ActiveJob::Callbacks
   mixes_in_class_methods ::ActiveJob::Callbacks::ClassMethods
 
   class << self
-    # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#68
+    # source://activejob//lib/active_job/callbacks.rb#26
     def __callbacks; end
 
-    # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#68
+    # source://activejob//lib/active_job/callbacks.rb#26
     def __callbacks?; end
 
-    # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#940
+    # source://activejob//lib/active_job/callbacks.rb#27
     def _execute_callbacks; end
 
-    # source://activesupport/7.0.8.7/lib/active_support/callbacks.rb#928
+    # source://activejob//lib/active_job/callbacks.rb#27
     def _run_execute_callbacks(&block); end
   end
 
@@ -393,7 +435,7 @@ end
 # These methods will be included into any Active Job object, adding
 # callbacks for +perform+ and +enqueue+ methods.
 #
-# source://activejob//lib/active_job/callbacks.rb#40
+# source://activejob//lib/active_job/callbacks.rb#37
 module ActiveJob::Callbacks::ClassMethods
   # Defines a callback that will get called right after the
   # job is enqueued.
@@ -402,7 +444,8 @@ module ActiveJob::Callbacks::ClassMethods
   #     queue_as :default
   #
   #     after_enqueue do |job|
-  #       $statsd.increment "enqueue-video-job.success"
+  #       result = job.successfully_enqueued? ? "success" : "failure"
+  #       $statsd.increment "enqueue-video-job.#{result}"
   #     end
   #
   #     def perform(video_id)
@@ -410,7 +453,7 @@ module ActiveJob::Callbacks::ClassMethods
   #     end
   #   end
   #
-  # source://activejob//lib/active_job/callbacks.rb#146
+  # source://activejob//lib/active_job/callbacks.rb#144
   def after_enqueue(*filters, &blk); end
 
   # Defines a callback that will get called right after the
@@ -428,7 +471,7 @@ module ActiveJob::Callbacks::ClassMethods
   #     end
   #   end
   #
-  # source://activejob//lib/active_job/callbacks.rb#75
+  # source://activejob//lib/active_job/callbacks.rb#72
   def after_perform(*filters, &blk); end
 
   # Defines a callback that will get called around the enqueuing
@@ -448,7 +491,7 @@ module ActiveJob::Callbacks::ClassMethods
   #     end
   #   end
   #
-  # source://activejob//lib/active_job/callbacks.rb#167
+  # source://activejob//lib/active_job/callbacks.rb#165
   def around_enqueue(*filters, &blk); end
 
   # Defines a callback that will get called around the job's perform method.
@@ -480,7 +523,7 @@ module ActiveJob::Callbacks::ClassMethods
   #     end
   #   end
   #
-  # source://activejob//lib/active_job/callbacks.rb#108
+  # source://activejob//lib/active_job/callbacks.rb#105
   def around_perform(*filters, &blk); end
 
   # Defines a callback that will get called right before the
@@ -498,7 +541,7 @@ module ActiveJob::Callbacks::ClassMethods
   #     end
   #   end
   #
-  # source://activejob//lib/active_job/callbacks.rb#127
+  # source://activejob//lib/active_job/callbacks.rb#124
   def before_enqueue(*filters, &blk); end
 
   # Defines a callback that will get called right before the
@@ -516,7 +559,7 @@ module ActiveJob::Callbacks::ClassMethods
   #     end
   #   end
   #
-  # source://activejob//lib/active_job/callbacks.rb#56
+  # source://activejob//lib/active_job/callbacks.rb#53
   def before_perform(*filters, &blk); end
 end
 
@@ -527,6 +570,9 @@ class ActiveJob::ConfiguredJob
   # source://activejob//lib/active_job/configured_job.rb#5
   def initialize(job_class, options = T.unsafe(nil)); end
 
+  # source://activejob//lib/active_job/configured_job.rb#18
+  def perform_all_later(multi_args); end
+
   # source://activejob//lib/active_job/configured_job.rb#14
   def perform_later(*_arg0, **_arg1, &_arg2); end
 
@@ -534,10 +580,12 @@ class ActiveJob::ConfiguredJob
   def perform_now(*_arg0, **_arg1, &_arg2); end
 end
 
+# = Active Job \Core
+#
 # Provides general behavior that will be included into every Active Job
 # object that inherits from ActiveJob::Base.
 #
-# source://activejob//lib/active_job/core.rb#6
+# source://activejob//lib/active_job/core.rb#8
 module ActiveJob::Core
   extend ::ActiveSupport::Concern
 
@@ -546,17 +594,20 @@ module ActiveJob::Core
   # Creates a new job instance. Takes the arguments that will be
   # passed to the perform method.
   #
-  # source://activejob//lib/active_job/core.rb#91
+  # source://activejob//lib/active_job/core.rb#95
   def initialize(*arguments, **_arg1); end
+
+  # source://activejob//lib/active_job/core.rb#18
+  def _scheduled_at_time; end
 
   # Job arguments
   #
-  # source://activejob//lib/active_job/core.rb#10
+  # source://activejob//lib/active_job/core.rb#12
   def arguments; end
 
   # Job arguments
   #
-  # source://activejob//lib/active_job/core.rb#10
+  # source://activejob//lib/active_job/core.rb#12
   def arguments=(_arg0); end
 
   # Attaches the stored job data to the current instance. Receives a hash
@@ -586,27 +637,27 @@ module ActiveJob::Core
   #      end
   #    end
   #
-  # source://activejob//lib/active_job/core.rb#146
+  # source://activejob//lib/active_job/core.rb#153
   def deserialize(job_data); end
 
   # Track any exceptions raised by the backend so callers can inspect the errors.
   #
-  # source://activejob//lib/active_job/core.rb#54
+  # source://activejob//lib/active_job/core.rb#58
   def enqueue_error; end
 
   # Track any exceptions raised by the backend so callers can inspect the errors.
   #
-  # source://activejob//lib/active_job/core.rb#54
+  # source://activejob//lib/active_job/core.rb#58
   def enqueue_error=(_arg0); end
 
   # Track when a job was enqueued
   #
-  # source://activejob//lib/active_job/core.rb#44
+  # source://activejob//lib/active_job/core.rb#48
   def enqueued_at; end
 
   # Track when a job was enqueued
   #
-  # source://activejob//lib/active_job/core.rb#44
+  # source://activejob//lib/active_job/core.rb#48
   def enqueued_at=(_arg0); end
 
   # Hash that contains the number of times this job handled errors for each specific retry_on declaration.
@@ -614,7 +665,7 @@ module ActiveJob::Core
   # while its associated value holds the number of executions where the corresponding retry_on
   # declaration handled one of its listed exceptions.
   #
-  # source://activejob//lib/active_job/core.rb#35
+  # source://activejob//lib/active_job/core.rb#39
   def exception_executions; end
 
   # Hash that contains the number of times this job handled errors for each specific retry_on declaration.
@@ -622,135 +673,133 @@ module ActiveJob::Core
   # while its associated value holds the number of executions where the corresponding retry_on
   # declaration handled one of its listed exceptions.
   #
-  # source://activejob//lib/active_job/core.rb#35
+  # source://activejob//lib/active_job/core.rb#39
   def exception_executions=(_arg0); end
 
   # Number of times this job has been executed (which increments on every retry, like after an exception).
   #
-  # source://activejob//lib/active_job/core.rb#29
+  # source://activejob//lib/active_job/core.rb#33
   def executions; end
 
   # Number of times this job has been executed (which increments on every retry, like after an exception).
   #
-  # source://activejob//lib/active_job/core.rb#29
+  # source://activejob//lib/active_job/core.rb#33
   def executions=(_arg0); end
 
   # Job Identifier
   #
-  # source://activejob//lib/active_job/core.rb#17
+  # source://activejob//lib/active_job/core.rb#21
   def job_id; end
 
   # Job Identifier
   #
-  # source://activejob//lib/active_job/core.rb#17
+  # source://activejob//lib/active_job/core.rb#21
   def job_id=(_arg0); end
 
   # I18n.locale to be used during the job.
   #
-  # source://activejob//lib/active_job/core.rb#38
+  # source://activejob//lib/active_job/core.rb#42
   def locale; end
 
   # I18n.locale to be used during the job.
   #
-  # source://activejob//lib/active_job/core.rb#38
+  # source://activejob//lib/active_job/core.rb#42
   def locale=(_arg0); end
 
   # Priority that the job will have (lower is more priority).
   #
-  # source://activejob//lib/active_job/core.rb#23
+  # source://activejob//lib/active_job/core.rb#27
   def priority=(_arg0); end
 
   # ID optionally provided by adapter
   #
-  # source://activejob//lib/active_job/core.rb#26
+  # source://activejob//lib/active_job/core.rb#30
   def provider_job_id; end
 
   # ID optionally provided by adapter
   #
-  # source://activejob//lib/active_job/core.rb#26
+  # source://activejob//lib/active_job/core.rb#30
   def provider_job_id=(_arg0); end
 
   # Queue in which the job will reside.
   #
-  # source://activejob//lib/active_job/core.rb#20
+  # source://activejob//lib/active_job/core.rb#24
   def queue_name=(_arg0); end
 
-  # Timestamp when the job should be performed
+  # Time when the job should be performed
   #
-  # source://activejob//lib/active_job/core.rb#14
+  # source://activejob//lib/active_job/core.rb#16
   def scheduled_at; end
 
-  # Timestamp when the job should be performed
-  #
-  # source://activejob//lib/active_job/core.rb#14
-  def scheduled_at=(_arg0); end
+  # source://activejob//lib/active_job/core.rb#177
+  def scheduled_at=(value); end
 
   # Returns a hash with the job data that can safely be passed to the
   # queuing adapter.
   #
-  # source://activejob//lib/active_job/core.rb#104
+  # source://activejob//lib/active_job/core.rb#110
   def serialize; end
 
   # Sets the attribute serialized_arguments
   #
   # @param value the value to set the attribute serialized_arguments to.
   #
-  # source://activejob//lib/active_job/core.rb#11
+  # source://activejob//lib/active_job/core.rb#13
   def serialized_arguments=(_arg0); end
 
   # Configures the job with the given options.
   #
-  # source://activejob//lib/active_job/core.rb#160
+  # source://activejob//lib/active_job/core.rb#168
   def set(options = T.unsafe(nil)); end
 
   # Track whether the adapter received the job successfully.
   #
-  # source://activejob//lib/active_job/core.rb#47
+  # source://activejob//lib/active_job/core.rb#51
   def successfully_enqueued=(_arg0); end
 
   # @return [Boolean]
   #
-  # source://activejob//lib/active_job/core.rb#49
+  # source://activejob//lib/active_job/core.rb#53
   def successfully_enqueued?; end
 
   # Timezone to be used during the job.
   #
-  # source://activejob//lib/active_job/core.rb#41
+  # source://activejob//lib/active_job/core.rb#45
   def timezone; end
 
   # Timezone to be used during the job.
   #
-  # source://activejob//lib/active_job/core.rb#41
+  # source://activejob//lib/active_job/core.rb#45
   def timezone=(_arg0); end
 
   private
 
   # @return [Boolean]
   #
-  # source://activejob//lib/active_job/core.rb#193
+  # source://activejob//lib/active_job/core.rb#213
   def arguments_serialized?; end
 
-  # source://activejob//lib/active_job/core.rb#189
+  # source://activejob//lib/active_job/core.rb#209
   def deserialize_arguments(serialized_args); end
 
-  # source://activejob//lib/active_job/core.rb#178
+  # source://activejob//lib/active_job/core.rb#198
   def deserialize_arguments_if_needed; end
 
-  # source://activejob//lib/active_job/core.rb#185
+  # source://activejob//lib/active_job/core.rb#205
   def serialize_arguments(arguments); end
 
-  # source://activejob//lib/active_job/core.rb#170
+  # source://activejob//lib/active_job/core.rb#190
   def serialize_arguments_if_needed(arguments); end
 end
 
 # These methods will be included into any Active Job object, adding
 # helpers for de/serialization and creation of job instances.
 #
-# source://activejob//lib/active_job/core.rb#58
+# source://activejob//lib/active_job/core.rb#62
 module ActiveJob::Core::ClassMethods
   # Creates a new job instance from a hash created with +serialize+
   #
-  # source://activejob//lib/active_job/core.rb#60
+  # source://activejob//lib/active_job/core.rb#64
   def deserialize(job_data); end
 
   # Creates a job preconfigured with the given options. You can call
@@ -772,7 +821,7 @@ module ActiveJob::Core::ClassMethods
   #    VideoJob.set(queue: :some_queue, wait_until: Time.now.tomorrow).perform_later(Video.last)
   #    VideoJob.set(queue: :some_queue, wait: 5.minutes, priority: 10).perform_later(Video.last)
   #
-  # source://activejob//lib/active_job/core.rb#84
+  # source://activejob//lib/active_job/core.rb#88
   def set(options = T.unsafe(nil)); end
 end
 
@@ -791,10 +840,10 @@ end
 # Can be raised by adapters if they wish to communicate to the caller a reason
 # why the adapter was unexpectedly unable to enqueue a job.
 #
-# source://activejob//lib/active_job/enqueuing.rb#10
+# source://activejob//lib/active_job/enqueuing.rb#8
 class ActiveJob::EnqueueError < ::StandardError; end
 
-# source://activejob//lib/active_job/enqueuing.rb#12
+# source://activejob//lib/active_job/enqueuing.rb#40
 module ActiveJob::Enqueuing
   extend ::ActiveSupport::Concern
 
@@ -816,13 +865,13 @@ module ActiveJob::Enqueuing
   #    my_job_instance.enqueue wait_until: Date.tomorrow.midnight
   #    my_job_instance.enqueue priority: 10
   #
-  # source://activejob//lib/active_job/enqueuing.rb#59
+  # source://activejob//lib/active_job/enqueuing.rb#87
   def enqueue(options = T.unsafe(nil)); end
 end
 
 # Includes the +perform_later+ method for job initialization.
 #
-# source://activejob//lib/active_job/enqueuing.rb#16
+# source://activejob//lib/active_job/enqueuing.rb#44
 module ActiveJob::Enqueuing::ClassMethods
   # Push a job onto the queue. By default the arguments must be either String,
   # Integer, Float, NilClass, TrueClass, FalseClass, BigDecimal, Symbol, Date,
@@ -838,12 +887,12 @@ module ActiveJob::Enqueuing::ClassMethods
   #
   # @yield [job]
   #
-  # source://activejob//lib/active_job/enqueuing.rb#28
+  # source://activejob//lib/active_job/enqueuing.rb#56
   def perform_later(*_arg0, **_arg1, &_arg2); end
 
   private
 
-  # source://activejob//lib/active_job/enqueuing.rb#38
+  # source://activejob//lib/active_job/enqueuing.rb#66
   def job_or_instantiate(*args, **_arg1); end
 end
 
@@ -880,34 +929,63 @@ module ActiveJob::Exceptions
   #    end
   #  end
   #
-  # source://activejob//lib/active_job/exceptions.rb#125
+  # source://activejob//lib/active_job/exceptions.rb#157
   def retry_job(options = T.unsafe(nil)); end
 
   private
 
-  # source://activejob//lib/active_job/exceptions.rb#135
+  # source://activejob//lib/active_job/exceptions.rb#167
   def determine_delay(seconds_or_duration_or_algorithm:, executions:, jitter: T.unsafe(nil)); end
 
-  # source://activejob//lib/active_job/exceptions.rb#155
+  # source://activejob//lib/active_job/exceptions.rb#188
   def determine_jitter_for_delay(delay, jitter); end
 
-  # source://activejob//lib/active_job/exceptions.rb#160
+  # source://activejob//lib/active_job/exceptions.rb#193
   def executions_for(exceptions); end
 
+  # source://activejob//lib/active_job/exceptions.rb#202
+  def run_after_discard_procs(exception); end
+
   module GeneratedClassMethods
+    def after_discard_procs; end
+    def after_discard_procs=(value); end
+    def after_discard_procs?; end
     def retry_jitter; end
     def retry_jitter=(value); end
   end
 
-  module GeneratedInstanceMethods; end
+  module GeneratedInstanceMethods
+    def after_discard_procs; end
+    def after_discard_procs=(value); end
+    def after_discard_procs?; end
+  end
 end
 
-# source://activejob//lib/active_job/exceptions.rb#14
+# source://activejob//lib/active_job/exceptions.rb#15
 module ActiveJob::Exceptions::ClassMethods
+  # A block to run when a job is about to be discarded for any reason.
+  #
+  # ==== Example
+  #
+  #  class WorkJob < ActiveJob::Base
+  #    after_discard do |job, exception|
+  #      ExceptionNotifier.report(exception)
+  #    end
+  #
+  #    ...
+  #
+  #  end
+  #
+  # source://activejob//lib/active_job/exceptions.rb#130
+  def after_discard(&blk); end
+
   # Discard the job with no attempts to retry, if the exception is raised. This is useful when the subject of the job,
   # like an Active Record, is no longer available, and the job is thus no longer relevant.
   #
   # You can also pass a block that'll be invoked. This block is yielded with the job instance as the first and the error instance as the second parameter.
+  #
+  # `retry_on` and `discard_on` handlers are searched from bottom to top, and up the class hierarchy. The handler of the first class for
+  # which <tt>exception.is_a?(klass)</tt> holds true is the one invoked, if any.
   #
   # ==== Example
   #
@@ -923,7 +1001,7 @@ module ActiveJob::Exceptions::ClassMethods
   #    end
   #  end
   #
-  # source://activejob//lib/active_job/exceptions.rb#94
+  # source://activejob//lib/active_job/exceptions.rb#109
   def discard_on(*exceptions); end
 
   # Catch the exception and reschedule job for re-execution after so many seconds, for a specific number of attempts.
@@ -934,10 +1012,13 @@ module ActiveJob::Exceptions::ClassMethods
   # You can also pass a block that'll be invoked if the retry attempts fail for custom logic rather than letting
   # the exception bubble up. This block is yielded with the job instance as the first and the error instance as the second parameter.
   #
+  # `retry_on` and `discard_on` handlers are searched from bottom to top, and up the class hierarchy. The handler of the first class for
+  # which <tt>exception.is_a?(klass)</tt> holds true is the one invoked, if any.
+  #
   # ==== Options
   # * <tt>:wait</tt> - Re-enqueues the job with a delay specified either in seconds (default: 3 seconds),
   #   as a computing proc that takes the number of executions so far as an argument, or as a symbol reference of
-  #   <tt>:exponentially_longer</tt>, which applies the wait algorithm of <tt>((executions**4) + (Kernel.rand * (executions**4) * jitter)) + 2</tt>
+  #   <tt>:polynomially_longer</tt>, which applies the wait algorithm of <tt>((executions**4) + (Kernel.rand * (executions**4) * jitter)) + 2</tt>
   #   (first wait ~3s, then ~18s, then ~83s, etc)
   # * <tt>:attempts</tt> - Re-enqueues the job the specified number of times (default: 5 attempts) or a symbol reference of <tt>:unlimited</tt>
   #   to retry the job until it succeeds
@@ -953,11 +1034,11 @@ module ActiveJob::Exceptions::ClassMethods
   #    retry_on CustomInfrastructureException, wait: 5.minutes, attempts: :unlimited
   #
   #    retry_on ActiveRecord::Deadlocked, wait: 5.seconds, attempts: 3
-  #    retry_on Net::OpenTimeout, Timeout::Error, wait: :exponentially_longer, attempts: 10 # retries at most 10 times for Net::OpenTimeout and Timeout::Error combined
+  #    retry_on Net::OpenTimeout, Timeout::Error, wait: :polynomially_longer, attempts: 10 # retries at most 10 times for Net::OpenTimeout and Timeout::Error combined
   #    # To retry at most 10 times for each individual exception:
-  #    # retry_on Net::OpenTimeout, wait: :exponentially_longer, attempts: 10
+  #    # retry_on Net::OpenTimeout, wait: :polynomially_longer, attempts: 10
   #    # retry_on Net::ReadTimeout, wait: 5.seconds, jitter: 0.30, attempts: 10
-  #    # retry_on Timeout::Error, wait: :exponentially_longer, attempts: 10
+  #    # retry_on Timeout::Error, wait: :polynomially_longer, attempts: 10
   #
   #    retry_on(YetAnotherCustomAppException) do |job, error|
   #      ExceptionNotifier.caught(error)
@@ -970,11 +1051,11 @@ module ActiveJob::Exceptions::ClassMethods
   #    end
   #  end
   #
-  # source://activejob//lib/active_job/exceptions.rb#58
+  # source://activejob//lib/active_job/exceptions.rb#62
   def retry_on(*exceptions, wait: T.unsafe(nil), attempts: T.unsafe(nil), queue: T.unsafe(nil), priority: T.unsafe(nil), jitter: T.unsafe(nil)); end
 end
 
-# source://activejob//lib/active_job/exceptions.rb#132
+# source://activejob//lib/active_job/exceptions.rb#164
 ActiveJob::Exceptions::JITTER_DEFAULT = T.let(T.unsafe(nil), Object)
 
 # = Active Job \Execution
@@ -984,7 +1065,7 @@ ActiveJob::Exceptions::JITTER_DEFAULT = T.let(T.unsafe(nil), Object)
 # {rescue_from}[rdoc-ref:ActiveSupport::Rescuable::ClassMethods#rescue_from]
 # are handled.
 #
-# source://activejob//lib/active_job/execution.rb#13
+# source://activejob//lib/active_job/execution.rb#12
 module ActiveJob::Execution
   extend ::ActiveSupport::Concern
   include GeneratedInstanceMethods
@@ -994,7 +1075,7 @@ module ActiveJob::Execution
   mixes_in_class_methods ::ActiveSupport::Rescuable::ClassMethods
   mixes_in_class_methods ::ActiveJob::Execution::ClassMethods
 
-  # source://activejob//lib/active_job/execution.rb#57
+  # source://activejob//lib/active_job/execution.rb#60
   def perform(*_arg0); end
 
   # Performs the job immediately. The job is not sent to the queuing adapter
@@ -1009,12 +1090,12 @@ module ActiveJob::Execution
   #
   #   puts MyJob.new(*args).perform_now # => "Hello World!"
   #
-  # source://activejob//lib/active_job/execution.rb#46
+  # source://activejob//lib/active_job/execution.rb#45
   def perform_now; end
 
   private
 
-  # source://activejob//lib/active_job/execution.rb#62
+  # source://activejob//lib/active_job/execution.rb#65
   def _perform_job; end
 
   module GeneratedClassMethods
@@ -1032,77 +1113,118 @@ end
 
 # Includes methods for executing and performing jobs instantly.
 #
-# source://activejob//lib/active_job/execution.rb#18
+# source://activejob//lib/active_job/execution.rb#17
 module ActiveJob::Execution::ClassMethods
-  # source://activejob//lib/active_job/execution.rb#27
+  # source://activejob//lib/active_job/execution.rb#26
   def execute(job_data); end
 
   # Performs the job immediately.
   #
   #   MyJob.perform_now("mike")
   #
-  # source://activejob//lib/active_job/execution.rb#23
+  # source://activejob//lib/active_job/execution.rb#22
   def perform_now(*_arg0, **_arg1, &_arg2); end
 end
 
-# source://activejob//lib/active_job/instrumentation.rb#4
+# source://activejob//lib/active_job/instrumentation.rb#16
 module ActiveJob::Instrumentation
   extend ::ActiveSupport::Concern
 
-  # source://activejob//lib/active_job/instrumentation.rb#13
+  # source://activejob//lib/active_job/instrumentation.rb#25
   def perform_now; end
 
   private
 
-  # source://activejob//lib/active_job/instrumentation.rb#18
+  # source://activejob//lib/active_job/instrumentation.rb#30
   def _perform_job; end
 
-  # source://activejob//lib/active_job/instrumentation.rb#39
+  # source://activejob//lib/active_job/instrumentation.rb#47
   def halted_callback_hook(*_arg0); end
 
-  # source://activejob//lib/active_job/instrumentation.rb#23
+  # source://activejob//lib/active_job/instrumentation.rb#35
   def instrument(operation, payload = T.unsafe(nil), &block); end
 end
 
-# source://activejob//lib/active_job/log_subscriber.rb#7
+# source://activejob//lib/active_job/log_subscriber.rb#6
 class ActiveJob::LogSubscriber < ::ActiveSupport::LogSubscriber
-  # source://activejob//lib/active_job/log_subscriber.rb#94
+  # source://activejob//lib/active_job/log_subscriber.rb#7
+  def backtrace_cleaner; end
+
+  # source://activejob//lib/active_job/log_subscriber.rb#7
+  def backtrace_cleaner=(_arg0); end
+
+  # source://activejob//lib/active_job/log_subscriber.rb#7
+  def backtrace_cleaner?; end
+
+  # source://activejob//lib/active_job/log_subscriber.rb#130
   def discard(event); end
 
-  # source://activejob//lib/active_job/log_subscriber.rb#8
+  # source://activejob//lib/active_job/log_subscriber.rb#9
   def enqueue(event); end
 
-  # source://activejob//lib/active_job/log_subscriber.rb#27
+  # source://activejob//lib/active_job/log_subscriber.rb#49
+  def enqueue_all(event); end
+
+  # source://activejob//lib/active_job/log_subscriber.rb#29
   def enqueue_at(event); end
 
-  # source://activejob//lib/active_job/log_subscriber.rb#71
+  # source://activejob//lib/active_job/log_subscriber.rb#105
   def enqueue_retry(event); end
 
-  # source://activejob//lib/active_job/log_subscriber.rb#53
+  # source://activejob//lib/active_job/log_subscriber.rb#86
   def perform(event); end
 
-  # source://activejob//lib/active_job/log_subscriber.rb#46
+  # source://activejob//lib/active_job/log_subscriber.rb#76
   def perform_start(event); end
 
-  # source://activejob//lib/active_job/log_subscriber.rb#85
+  # source://activejob//lib/active_job/log_subscriber.rb#120
   def retry_stopped(event); end
 
   private
 
-  # source://activejob//lib/active_job/log_subscriber.rb#108
+  # source://activejob//lib/active_job/log_subscriber.rb#145
   def args_info(job); end
 
-  # source://activejob//lib/active_job/log_subscriber.rb#117
+  # source://activejob//lib/active_job/log_subscriber.rb#203
+  def enqueued_jobs_message(adapter, enqueued_jobs); end
+
+  # source://activejob//lib/active_job/log_subscriber.rb#183
+  def error(progname = T.unsafe(nil), &block); end
+
+  # source://activejob//lib/active_job/log_subscriber.rb#199
+  def extract_enqueue_source_location(locations); end
+
+  # source://activejob//lib/active_job/log_subscriber.rb#154
   def format(arg); end
 
-  # source://activejob//lib/active_job/log_subscriber.rb#134
+  # source://activejob//lib/active_job/log_subscriber.rb#175
+  def info(progname = T.unsafe(nil), &block); end
+
+  # source://activejob//lib/active_job/log_subscriber.rb#191
+  def log_enqueue_source; end
+
+  # source://activejob//lib/active_job/log_subscriber.rb#171
   def logger; end
 
-  # source://activejob//lib/active_job/log_subscriber.rb#104
+  # source://activejob//lib/active_job/log_subscriber.rb#141
   def queue_name(event); end
 
-  # source://activejob//lib/active_job/log_subscriber.rb#130
+  # source://activejob//lib/active_job/log_subscriber.rb#167
   def scheduled_at(event); end
+
+  class << self
+    # source://activejob//lib/active_job/log_subscriber.rb#7
+    def backtrace_cleaner; end
+
+    # source://activejob//lib/active_job/log_subscriber.rb#7
+    def backtrace_cleaner=(value); end
+
+    # source://activejob//lib/active_job/log_subscriber.rb#7
+    def backtrace_cleaner?; end
+
+    # source://activejob//lib/active_job/log_subscriber.rb#27
+    def log_levels; end
+  end
 end
 
 # source://activejob//lib/active_job/logging.rb#7
@@ -1134,10 +1256,12 @@ module ActiveJob::Logging
   module GeneratedInstanceMethods; end
 end
 
-# The <tt>ActiveJob::QueueAdapter</tt> module is used to load the
+# = Active Job Queue adapter
+#
+# The +ActiveJob::QueueAdapter+ module is used to load the
 # correct adapter. The default queue adapter is the +:async+ queue.
 #
-# source://activejob//lib/active_job/queue_adapter.rb#8
+# source://activejob//lib/active_job/queue_adapter.rb#19
 module ActiveJob::QueueAdapter
   extend ::ActiveSupport::Concern
   include GeneratedInstanceMethods
@@ -1157,42 +1281,42 @@ end
 
 # Includes the setter method for changing the active queue adapter.
 #
-# source://activejob//lib/active_job/queue_adapter.rb#21
+# source://activejob//lib/active_job/queue_adapter.rb#32
 module ActiveJob::QueueAdapter::ClassMethods
   # Returns the backend queue provider. The default queue adapter
   # is the +:async+ queue. See QueueAdapters for more information.
   #
-  # source://activejob//lib/active_job/queue_adapter.rb#24
+  # source://activejob//lib/active_job/queue_adapter.rb#35
   def queue_adapter; end
 
   # Specify the backend queue provider. The default queue adapter
   # is the +:async+ queue. See QueueAdapters for more
   # information.
   #
-  # source://activejob//lib/active_job/queue_adapter.rb#37
+  # source://activejob//lib/active_job/queue_adapter.rb#48
   def queue_adapter=(name_or_adapter); end
 
   # Returns string denoting the name of the configured queue adapter.
   # By default returns <tt>"async"</tt>.
   #
-  # source://activejob//lib/active_job/queue_adapter.rb#30
+  # source://activejob//lib/active_job/queue_adapter.rb#41
   def queue_adapter_name; end
 
   private
 
-  # source://activejob//lib/active_job/queue_adapter.rb#53
+  # source://activejob//lib/active_job/queue_adapter.rb#64
   def assign_adapter(adapter_name, queue_adapter); end
 
   # @return [Boolean]
   #
-  # source://activejob//lib/active_job/queue_adapter.rb#60
+  # source://activejob//lib/active_job/queue_adapter.rb#71
   def queue_adapter?(object); end
 end
 
-# source://activejob//lib/active_job/queue_adapter.rb#58
+# source://activejob//lib/active_job/queue_adapter.rb#69
 ActiveJob::QueueAdapter::ClassMethods::QUEUE_ADAPTER_METHODS = T.let(T.unsafe(nil), Array)
 
-# == Active Job adapters
+# = Active Job adapters
 #
 # Active Job has adapters for the following queuing backends:
 #
@@ -1204,24 +1328,17 @@ ActiveJob::QueueAdapter::ClassMethods::QUEUE_ADAPTER_METHODS = T.let(T.unsafe(ni
 # * {Sidekiq}[https://sidekiq.org]
 # * {Sneakers}[https://github.com/jondot/sneakers]
 # * {Sucker Punch}[https://github.com/brandonhilkert/sucker_punch]
-# * {Active Job Async Job}[https://api.rubyonrails.org/classes/ActiveJob/QueueAdapters/AsyncAdapter.html]
-# * {Active Job Inline}[https://api.rubyonrails.org/classes/ActiveJob/QueueAdapters/InlineAdapter.html]
 # * Please Note: We are not accepting pull requests for new adapters. See the {README}[link:files/activejob/README_md.html] for more details.
+#
+# For testing and development Active Job has three built-in adapters:
+#
+# * {Active Job Async}[https://api.rubyonrails.org/classes/ActiveJob/QueueAdapters/AsyncAdapter.html]
+# * {Active Job Inline}[https://api.rubyonrails.org/classes/ActiveJob/QueueAdapters/InlineAdapter.html]
+# * {Active Job Test}[https://api.rubyonrails.org/classes/ActiveJob/QueueAdapters/TestAdapter.html]
 #
 # === Backends Features
 #
-#   |                   | Async | Queues | Delayed    | Priorities | Timeout | Retries |
 #   |-------------------|-------|--------|------------|------------|---------|---------|
-#   | Backburner        | Yes   | Yes    | Yes        | Yes        | Job     | Global  |
-#   | Delayed Job       | Yes   | Yes    | Yes        | Job        | Global  | Global  |
-#   | Que               | Yes   | Yes    | Yes        | Job        | No      | Job     |
-#   | queue_classic     | Yes   | Yes    | Yes*       | No         | No      | No      |
-#   | Resque            | Yes   | Yes    | Yes (Gem)  | Queue      | Global  | Yes     |
-#   | Sidekiq           | Yes   | Yes    | Yes        | Queue      | No      | Job     |
-#   | Sneakers          | Yes   | Yes    | No         | Queue      | Queue   | No      |
-#   | Sucker Punch      | Yes   | Yes    | Yes        | No         | No      | No      |
-#   | Active Job Async  | Yes   | Yes    | Yes        | No         | No      | No      |
-#   | Active Job Inline | No    | Yes    | N/A        | N/A        | N/A     | N/A     |
 #
 # ==== Async
 #
@@ -1297,12 +1414,7 @@ ActiveJob::QueueAdapter::ClassMethods::QUEUE_ADAPTER_METHODS = T.let(T.unsafe(ni
 # N/A: The adapter does not run in a separate process, and therefore doesn't
 # support retries.
 #
-# === Async and Inline Queue Adapters
-#
-# Active Job has two built-in queue adapters intended for development and
-# testing: +:async+ and +:inline+.
-#
-# source://activejob//lib/active_job/queue_adapters.rb#113
+# source://activejob//lib/active_job/queue_adapters.rb#114
 module ActiveJob::QueueAdapters
   extend ::ActiveSupport::Autoload
 
@@ -1312,15 +1424,15 @@ module ActiveJob::QueueAdapters
     #   ActiveJob::QueueAdapters.lookup(:sidekiq)
     #   # => ActiveJob::QueueAdapters::SidekiqAdapter
     #
-    # source://activejob//lib/active_job/queue_adapters.rb#136
+    # source://activejob//lib/active_job/queue_adapters.rb#137
     def lookup(name); end
   end
 end
 
-# source://activejob//lib/active_job/queue_adapters.rb#128
+# source://activejob//lib/active_job/queue_adapters.rb#129
 ActiveJob::QueueAdapters::ADAPTER = T.let(T.unsafe(nil), String)
 
-# == Active Job Async adapter
+# = Active Job Async adapter
 #
 # The Async adapter runs jobs with an in-process thread pool.
 #
@@ -1423,7 +1535,7 @@ end
 # source://activejob//lib/active_job/queue_adapters/async_adapter.rb#75
 ActiveJob::QueueAdapters::AsyncAdapter::Scheduler::DEFAULT_EXECUTOR_OPTIONS = T.let(T.unsafe(nil), Hash)
 
-# == Delayed Job adapter for Active Job
+# = Delayed Job adapter for Active Job
 #
 # Delayed::Job (or DJ) encapsulates the common pattern of asynchronously
 # executing longer tasks in the background. Although DJ can have many
@@ -1476,7 +1588,7 @@ class ActiveJob::QueueAdapters::DelayedJobAdapter::JobWrapper
   def log_arguments?; end
 end
 
-# == Active Job Inline adapter
+# = Active Job Inline adapter
 #
 # When enqueuing jobs with the Inline adapter the job will be executed
 # immediately.
@@ -1496,11 +1608,11 @@ class ActiveJob::QueueAdapters::InlineAdapter
   def enqueue_at(*_arg0); end
 end
 
-# == Test adapter for Active Job
+# = Test adapter for Active Job
 #
 # The test adapter should be used only in testing. Along with
 # ActiveJob::TestCase and ActiveJob::TestHelper
-# it makes a great tool to test your Rails application.
+# it makes a great tool to test your \Rails application.
 #
 # To use the test adapter set +queue_adapter+ config to +:test+.
 #
@@ -1738,7 +1850,7 @@ module ActiveJob::QueuePriority
 
   # Returns the priority that the job will be created with
   #
-  # source://activejob//lib/active_job/queue_priority.rb#36
+  # source://activejob//lib/active_job/queue_priority.rb#53
   def priority; end
 
   module GeneratedClassMethods
@@ -1770,9 +1882,26 @@ module ActiveJob::QueuePriority::ClassMethods
   #     end
   #   end
   #
-  # Specify either an argument or a block.
+  # Can be given a block that will evaluate in the context of the job
+  # so that a dynamic priority can be applied:
   #
-  # source://activejob//lib/active_job/queue_priority.rb#22
+  #   class PublishToFeedJob < ApplicationJob
+  #     queue_with_priority do
+  #       post = self.arguments.first
+  #
+  #       if post.paid?
+  #         10
+  #       else
+  #         50
+  #       end
+  #     end
+  #
+  #     def perform(post)
+  #       post.to_feed!
+  #     end
+  #   end
+  #
+  # source://activejob//lib/active_job/queue_priority.rb#39
   def queue_with_priority(priority = T.unsafe(nil), &block); end
 
   class << self
@@ -1802,29 +1931,31 @@ class ActiveJob::Railtie < ::Rails::Railtie; end
 # source://activejob//lib/active_job/arguments.rb#26
 class ActiveJob::SerializationError < ::ArgumentError; end
 
-# The <tt>ActiveJob::Serializers</tt> module is used to store a list of known serializers
+# = Active Job \Serializers
+#
+# The +ActiveJob::Serializers+ module is used to store a list of known serializers
 # and to add new ones. It also has helpers to serialize/deserialize objects.
 #
-# source://activejob//lib/active_job/serializers.rb#8
+# source://activejob//lib/active_job/serializers.rb#10
 module ActiveJob::Serializers
   extend ::ActiveSupport::Autoload
 
-  # source://activejob//lib/active_job/serializers.rb#22
+  # source://activejob//lib/active_job/serializers.rb#25
   def _additional_serializers; end
 
-  # source://activejob//lib/active_job/serializers.rb#22
+  # source://activejob//lib/active_job/serializers.rb#25
   def _additional_serializers=(val); end
 
   class << self
-    # source://activejob//lib/active_job/serializers.rb#22
+    # source://activejob//lib/active_job/serializers.rb#25
     def _additional_serializers; end
 
-    # source://activejob//lib/active_job/serializers.rb#22
+    # source://activejob//lib/active_job/serializers.rb#25
     def _additional_serializers=(val); end
 
     # Adds new serializers to a list of known serializers.
     #
-    # source://activejob//lib/active_job/serializers.rb#54
+    # source://activejob//lib/active_job/serializers.rb#57
     def add_serializers(*new_serializers); end
 
     # Returns deserialized object.
@@ -1833,23 +1964,37 @@ module ActiveJob::Serializers
     #
     # @raise [ArgumentError]
     #
-    # source://activejob//lib/active_job/serializers.rb#38
+    # source://activejob//lib/active_job/serializers.rb#41
     def deserialize(argument); end
 
     # Returns serialized representative of the passed object.
     # Will look up through all known serializers.
-    # Raises <tt>ActiveJob::SerializationError</tt> if it can't find a proper serializer.
+    # Raises ActiveJob::SerializationError if it can't find a proper serializer.
     #
     # @raise [SerializationError]
     #
-    # source://activejob//lib/active_job/serializers.rb#29
+    # source://activejob//lib/active_job/serializers.rb#32
     def serialize(argument); end
 
     # Returns list of known serializers.
     #
-    # source://activejob//lib/active_job/serializers.rb#49
+    # source://activejob//lib/active_job/serializers.rb#52
     def serializers; end
   end
+end
+
+# source://activejob//lib/active_job/serializers/big_decimal_serializer.rb#7
+class ActiveJob::Serializers::BigDecimalSerializer < ::ActiveJob::Serializers::ObjectSerializer
+  # source://activejob//lib/active_job/serializers/big_decimal_serializer.rb#12
+  def deserialize(hash); end
+
+  # source://activejob//lib/active_job/serializers/big_decimal_serializer.rb#8
+  def serialize(big_decimal); end
+
+  private
+
+  # source://activejob//lib/active_job/serializers/big_decimal_serializer.rb#17
+  def klass; end
 end
 
 # source://activejob//lib/active_job/serializers/date_serializer.rb#5
@@ -1879,7 +2024,7 @@ end
 
 # source://activejob//lib/active_job/serializers/duration_serializer.rb#5
 class ActiveJob::Serializers::DurationSerializer < ::ActiveJob::Serializers::ObjectSerializer
-  # source://activejob//lib/active_job/serializers/duration_serializer.rb#10
+  # source://activejob//lib/active_job/serializers/duration_serializer.rb#12
   def deserialize(hash); end
 
   # source://activejob//lib/active_job/serializers/duration_serializer.rb#6
@@ -1887,7 +2032,7 @@ class ActiveJob::Serializers::DurationSerializer < ::ActiveJob::Serializers::Obj
 
   private
 
-  # source://activejob//lib/active_job/serializers/duration_serializer.rb#18
+  # source://activejob//lib/active_job/serializers/duration_serializer.rb#20
   def klass; end
 end
 
@@ -1972,7 +2117,10 @@ class ActiveJob::Serializers::ObjectSerializer
 
     private
 
+    # source://activejob//lib/active_job/serializers/object_serializer.rb#25
     def allocate; end
+
+    # source://activejob//lib/active_job/serializers/object_serializer.rb#25
     def new(*_arg0); end
   end
 end
@@ -2029,15 +2177,21 @@ class ActiveJob::Serializers::TimeSerializer < ::ActiveJob::Serializers::TimeObj
 end
 
 # source://activejob//lib/active_job/serializers/time_with_zone_serializer.rb#5
-class ActiveJob::Serializers::TimeWithZoneSerializer < ::ActiveJob::Serializers::TimeObjectSerializer
-  # source://activejob//lib/active_job/serializers/time_with_zone_serializer.rb#6
+class ActiveJob::Serializers::TimeWithZoneSerializer < ::ActiveJob::Serializers::ObjectSerializer
+  # source://activejob//lib/active_job/serializers/time_with_zone_serializer.rb#15
   def deserialize(hash); end
+
+  # source://activejob//lib/active_job/serializers/time_with_zone_serializer.rb#8
+  def serialize(time_with_zone); end
 
   private
 
-  # source://activejob//lib/active_job/serializers/time_with_zone_serializer.rb#11
+  # source://activejob//lib/active_job/serializers/time_with_zone_serializer.rb#20
   def klass; end
 end
+
+# source://activejob//lib/active_job/serializers/time_with_zone_serializer.rb#6
+ActiveJob::Serializers::TimeWithZoneSerializer::NANO_PRECISION = T.let(T.unsafe(nil), Integer)
 
 # source://activejob//lib/active_job/test_case.rb#6
 class ActiveJob::TestCase < ::ActiveSupport::TestCase
@@ -2050,7 +2204,7 @@ end
 module ActiveJob::TestHelper
   include ::ActiveSupport::Testing::Assertions
 
-  # source://activejob//lib/active_job/test_helper.rb#51
+  # source://activejob//lib/active_job/test_helper.rb#53
   def after_teardown; end
 
   # Asserts that the number of enqueued jobs matches the given number.
@@ -2107,7 +2261,7 @@ module ActiveJob::TestHelper
   #     end
   #   end
   #
-  # source://activejob//lib/active_job/test_helper.rb#123
+  # source://activejob//lib/active_job/test_helper.rb#120
   def assert_enqueued_jobs(number, only: T.unsafe(nil), except: T.unsafe(nil), queue: T.unsafe(nil), &block); end
 
   # Asserts that the job has been enqueued with the given arguments.
@@ -2118,6 +2272,13 @@ module ActiveJob::TestHelper
   #
   #     MyJob.set(wait_until: Date.tomorrow.noon, queue: "my_queue").perform_later
   #     assert_enqueued_with(at: Date.tomorrow.noon, queue: "my_queue")
+  #   end
+  #
+  # For keyword arguments, specify them as a hash inside an array:
+  #
+  #   def test_assert_enqueued_with_keyword_arguments
+  #     MyJob.perform_later(arg1: 'value1', arg2: 'value2')
+  #     assert_enqueued_with(job: MyJob, args: [{ arg1: 'value1', arg2: 'value2' }])
   #   end
   #
   # The given arguments may also be specified as matcher procs that return a
@@ -2156,7 +2317,7 @@ module ActiveJob::TestHelper
   #     end
   #   end
   #
-  # source://activejob//lib/active_job/test_helper.rb#392
+  # source://activejob//lib/active_job/test_helper.rb#396
   def assert_enqueued_with(job: T.unsafe(nil), args: T.unsafe(nil), at: T.unsafe(nil), queue: T.unsafe(nil), priority: T.unsafe(nil), &block); end
 
   # Asserts that no jobs have been enqueued.
@@ -2206,7 +2367,7 @@ module ActiveJob::TestHelper
   #
   #   assert_enqueued_jobs 0, &block
   #
-  # source://activejob//lib/active_job/test_helper.rb#185
+  # source://activejob//lib/active_job/test_helper.rb#182
   def assert_no_enqueued_jobs(only: T.unsafe(nil), except: T.unsafe(nil), queue: T.unsafe(nil), &block); end
 
   # Asserts that no jobs have been performed.
@@ -2262,7 +2423,7 @@ module ActiveJob::TestHelper
   #
   #   assert_performed_jobs 0, &block
   #
-  # source://activejob//lib/active_job/test_helper.rb#343
+  # source://activejob//lib/active_job/test_helper.rb#340
   def assert_no_performed_jobs(only: T.unsafe(nil), except: T.unsafe(nil), queue: T.unsafe(nil), &block); end
 
   # Asserts that the number of performed jobs matches the given number.
@@ -2352,7 +2513,7 @@ module ActiveJob::TestHelper
   #       end
   #     end
   #
-  # source://activejob//lib/active_job/test_helper.rb#275
+  # source://activejob//lib/active_job/test_helper.rb#272
   def assert_performed_jobs(number, only: T.unsafe(nil), except: T.unsafe(nil), queue: T.unsafe(nil), &block); end
 
   # Asserts that the job has been performed with the given arguments.
@@ -2412,10 +2573,10 @@ module ActiveJob::TestHelper
   #     end
   #   end
   #
-  # source://activejob//lib/active_job/test_helper.rb#494
+  # source://activejob//lib/active_job/test_helper.rb#498
   def assert_performed_with(job: T.unsafe(nil), args: T.unsafe(nil), at: T.unsafe(nil), queue: T.unsafe(nil), priority: T.unsafe(nil), &block); end
 
-  # source://activejob//lib/active_job/test_helper.rb#39
+  # source://activejob//lib/active_job/test_helper.rb#41
   def before_setup; end
 
   # source://activejob//lib/active_job/test_helper.rb#9
@@ -2479,10 +2640,14 @@ module ActiveJob::TestHelper
   #     assert_performed_jobs 1
   #   end
   #
-  # If the +:at+ option is specified, then only run jobs enqueued to run
-  # immediately or before the given time
+  # If the +:at+ option is specified, then only jobs that have been enqueued
+  # to run at or before the given time will be performed. This includes jobs
+  # that have been enqueued without a time.
   #
-  # source://activejob//lib/active_job/test_helper.rb#598
+  # If queue_adapter_for_test is overridden to return a different adapter,
+  # +perform_enqueued_jobs+ will merely execute the block.
+  #
+  # source://activejob//lib/active_job/test_helper.rb#606
   def perform_enqueued_jobs(only: T.unsafe(nil), except: T.unsafe(nil), queue: T.unsafe(nil), at: T.unsafe(nil), &block); end
 
   # source://activejob//lib/active_job/test_helper.rb#9
@@ -2497,60 +2662,60 @@ module ActiveJob::TestHelper
   #     assert_instance_of CustomQueueAdapter, HelloJob.queue_adapter
   #   end
   #
-  # source://activejob//lib/active_job/test_helper.rb#634
+  # source://activejob//lib/active_job/test_helper.rb#644
   def queue_adapter; end
 
-  # Specifies the queue adapter to use with all Active Job test helpers.
+  # Returns a queue adapter instance to use with all Active Job test helpers.
+  # By default, returns an instance of ActiveJob::QueueAdapters::TestAdapter.
+  # Override this method to specify a different adapter. The adapter must
+  # implement the same interface as ActiveJob::QueueAdapters::TestAdapter.
   #
-  # Returns an instance of the queue adapter and defaults to
-  # ActiveJob::QueueAdapters::TestAdapter.
-  #
-  # Note: The adapter provided by this method must provide some additional
-  # methods from those expected of a standard ActiveJob::QueueAdapter
-  # in order to be used with the active job test helpers. Refer to
-  # ActiveJob::QueueAdapters::TestAdapter.
-  #
-  # source://activejob//lib/active_job/test_helper.rb#66
+  # source://activejob//lib/active_job/test_helper.rb#63
   def queue_adapter_for_test; end
 
   private
 
-  # source://activejob//lib/active_job/test_helper.rb#639
+  # source://activejob//lib/active_job/test_helper.rb#653
   def clear_enqueued_jobs; end
 
-  # source://activejob//lib/active_job/test_helper.rb#643
+  # source://activejob//lib/active_job/test_helper.rb#657
   def clear_performed_jobs; end
 
-  # source://activejob//lib/active_job/test_helper.rb#704
+  # source://activejob//lib/active_job/test_helper.rb#722
   def deserialize_args_for_assertion(job); end
 
-  # source://activejob//lib/active_job/test_helper.rb#679
+  # source://activejob//lib/active_job/test_helper.rb#693
   def enqueued_jobs_with(only: T.unsafe(nil), except: T.unsafe(nil), queue: T.unsafe(nil), at: T.unsafe(nil), &block); end
 
-  # source://activejob//lib/active_job/test_helper.rb#673
+  # source://activejob//lib/active_job/test_helper.rb#687
   def filter_as_proc(filter); end
 
-  # source://activejob//lib/active_job/test_helper.rb#687
+  # source://activejob//lib/active_job/test_helper.rb#701
   def flush_enqueued_jobs(only: T.unsafe(nil), except: T.unsafe(nil), queue: T.unsafe(nil), at: T.unsafe(nil)); end
 
-  # source://activejob//lib/active_job/test_helper.rb#711
+  # source://activejob//lib/active_job/test_helper.rb#729
   def instantiate_job(payload, skip_deserialize_arguments: T.unsafe(nil)); end
 
-  # source://activejob//lib/active_job/test_helper.rb#647
+  # source://activejob//lib/active_job/test_helper.rb#661
   def jobs_with(jobs, only: T.unsafe(nil), except: T.unsafe(nil), queue: T.unsafe(nil), at: T.unsafe(nil)); end
 
-  # source://activejob//lib/active_job/test_helper.rb#683
+  # source://activejob//lib/active_job/test_helper.rb#697
   def performed_jobs_with(only: T.unsafe(nil), except: T.unsafe(nil), queue: T.unsafe(nil), &block); end
 
-  # source://activejob//lib/active_job/test_helper.rb#695
+  # source://activejob//lib/active_job/test_helper.rb#709
   def prepare_args_for_assertion(args); end
 
-  # source://activejob//lib/active_job/test_helper.rb#718
+  # source://activejob//lib/active_job/test_helper.rb#736
   def queue_adapter_changed_jobs; end
+
+  # @return [Boolean]
+  #
+  # source://activejob//lib/active_job/test_helper.rb#649
+  def using_test_adapter?; end
 
   # @raise [ArgumentError]
   #
-  # source://activejob//lib/active_job/test_helper.rb#725
+  # source://activejob//lib/active_job/test_helper.rb#743
   def validate_option(only: T.unsafe(nil), except: T.unsafe(nil)); end
 end
 
