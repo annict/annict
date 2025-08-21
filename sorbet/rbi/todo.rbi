@@ -6,7 +6,7 @@
 
 module ::Spring; end
 module AbstractController::AssetPaths; end
-module AbstractController::Base; end
+class AbstractController::Base; end
 module AbstractController::Caching::ClassMethods; end
 module AbstractController::Caching::ConfigMethods; end
 module AbstractController::Caching::Fragments::ClassMethods; end
@@ -21,7 +21,7 @@ module ActionController::BasicImplicitRender; end
 module ActionController::ConditionalGet::ClassMethods; end
 module ActionController::Head; end
 module ActionController::InvalidAuthenticityToken; end
-module ActionController::Metal; end
+class ActionController::Metal; end
 module ActionController::Parameters; end
 module ActionController::Renderers::ClassMethods; end
 module ActionController::Rendering; end
@@ -34,7 +34,7 @@ module ActionDispatch::Assertions::RoutingAssertions; end
 module ActionDispatch::Assertions::RoutingAssertions::ClassMethods; end
 module ActionDispatch::Journey::Router::Utils; end
 module ActionDispatch::Routing::PolymorphicRoutes; end
-module ActionDispatch::Session::AbstractSecureStore; end
+class ActionDispatch::Session::AbstractSecureStore; end
 module ActionDispatch::Static; end
 module ActionDispatch::TestProcess; end
 module ActionDispatch::TestProcess::FixtureFile; end
