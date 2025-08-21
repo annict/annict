@@ -5,12 +5,7 @@
 # typed: false
 
 module ::Spring; end
-module ActiveModel::Access; end
-module ActiveModel::AttributeRegistration::ClassMethods; end
-module ActiveModel::Type::SerializeCastValue; end
-module ActiveModel::Type::SerializeCastValue::ClassMethods; end
 module BulkCreateEpisodeRecordsJob::EpisodeRecordCreator; end
-module ConnectionPool::ForkTracker; end
 module Deprecated::SearchService::Moji; end
 module GitHub::Markups::MARKUP_MARKDOWN; end
 module PageCategory::CAST_LIST; end
