@@ -20,7 +20,7 @@
     "axios": "^1.1.2",
     "bootstrap": "^5.1.0",
     "choices.js": "^10.1.0",
-    "core-js": "^3.25.5",
+    "core-js": "^3.45.1",
     "dayjs": "^1.11.5",
     "esbuild": "^0.25.0",
     "jquery": "^3.6.1",
