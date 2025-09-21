@@ -57,12 +57,6 @@ http://localhost:19001/login にアクセスし、以下の情報で MinIO の�
 - Username: `minio_admin`
 - Password: `minio_admin`
 
-ログイン後、 http://localhost:19001/access-keys にアクセスし、アクセスキーを作成します。
-作成したアクセスキーとシークレットキーを以下に設定します。
-
-- [.env.development](https://github.com/annict/annict/blob/main/.env.development) の `S3_ACCESS_KEY_ID` と `S3_SECRET_ACCESS_KEY`
-- [.env.imgproxy](https://github.com/annict/annict/blob/main/.env.imgproxy) の `AWS_ACCESS_KEY_ID` と `AWS_SECRET_ACCESS_KEY`
-
 次に http://localhost:19001/buckets にアクセスし、`annict-development` という名前のバケットを作成します。
 
 ### Rails のセットアップをする
