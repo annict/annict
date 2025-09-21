@@ -23,7 +23,7 @@ RSpec.describe "GET /@:username/collections/:collection_id", type: :request do
     expect(response.body).to include("テストコレクション")
   end
 
-  it "存在しないユーザーにアクセスしたとき、RecordNotFoundエラーが発生すること" do
+  it "存在しないユーザーにアクセスしたとき、404エラーが返されること" do
     collection = create(:collection)
 
     expect {
@@ -31,7 +31,7 @@ RSpec.describe "GET /@:username/collections/:collection_id", type: :request do
     }.to raise_error(ActiveRecord::RecordNotFound)
   end
 
-  it "削除されたユーザーにアクセスしたとき、RecordNotFoundエラーが発生すること" do
+  it "削除されたユーザーにアクセスしたとき、404エラーが返されること" do
     user = create(:registered_user)
     collection = create(:collection, user: user)
     user.update!(deleted_at: Time.current)
@@ -41,7 +41,7 @@ RSpec.describe "GET /@:username/collections/:collection_id", type: :request do
     }.to raise_error(ActiveRecord::RecordNotFound)
   end
 
-  it "存在しないコレクションにアクセスしたとき、RecordNotFoundエラーが発生すること" do
+  it "存在しないコレクションにアクセスしたとき、404エラーが返されること" do
     user = create(:registered_user)
 
     expect {
@@ -49,7 +49,7 @@ RSpec.describe "GET /@:username/collections/:collection_id", type: :request do
     }.to raise_error(ActiveRecord::RecordNotFound)
   end
 
-  it "削除されたコレクションにアクセスしたとき、RecordNotFoundエラーが発生すること" do
+  it "削除されたコレクションにアクセスしたとき、404エラーが返されること" do
     user = create(:registered_user)
     collection = create(:collection, user: user)
     collection.update!(deleted_at: Time.current)
@@ -59,7 +59,7 @@ RSpec.describe "GET /@:username/collections/:collection_id", type: :request do
     }.to raise_error(ActiveRecord::RecordNotFound)
   end
 
-  it "他のユーザーのコレクションにアクセスしたとき、RecordNotFoundエラーが発生すること" do
+  it "他のユーザーのコレクションにアクセスしたとき、404エラーが返されること" do
     user1 = create(:registered_user)
     user2 = create(:registered_user)
     collection = create(:collection, user: user1)

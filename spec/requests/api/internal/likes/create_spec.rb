@@ -89,7 +89,7 @@ RSpec.describe "POST /api/internal/likes", type: :request do
     expect(user.likes.count).to eq(1)
   end
 
-  it "存在しないrecipient_idを指定した場合はActiveRecord::RecordNotFoundが発生すること" do
+  it "存在しないrecipient_idを指定した場合は404エラーが返されること" do
     user = FactoryBot.create(:user, :with_email_notification)
 
     login_as(user, scope: :user)
@@ -124,7 +124,7 @@ RSpec.describe "POST /api/internal/likes", type: :request do
     }.to raise_error(NameError)
   end
 
-  it "recipient_idが不足している場合はActiveRecord::RecordNotFoundが発生すること" do
+  it "recipient_idが不足している場合は404エラーが返されること" do
     user = FactoryBot.create(:user, :with_email_notification)
 
     login_as(user, scope: :user)

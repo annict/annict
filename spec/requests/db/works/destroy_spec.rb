@@ -67,7 +67,9 @@ RSpec.describe "DELETE /db/works/:id", type: :request do
     user = create(:registered_user, :with_admin_role)
     login_as(user, scope: :user)
 
-    expect { delete "/db/works/non-existent-id" }.to raise_error(ActiveRecord::RecordNotFound)
+     delete "/db/works/non-existent-id" 
+
+    expect(response).to have_http_status(:not_found)
   end
 
   it "既に削除済みの作品を削除しようとしたとき、404エラーになること" do

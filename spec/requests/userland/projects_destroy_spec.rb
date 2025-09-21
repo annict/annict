@@ -47,13 +47,13 @@ RSpec.describe "DELETE /userland/projects/:project_id", type: :request do
     end.to raise_error(ActionController::RoutingError)
   end
 
-  it "有効なID形式だが存在しないプロジェクトIDでアクセスするとActiveRecord::RecordNotFoundが発生すること" do
+  it "有効なID形式だが存在しないプロジェクトIDでアクセスすると404エラーが返されること" do
     user = create(:registered_user)
     login_as(user, scope: :user)
 
-    expect do
-      delete "/userland/projects/999999"
-    end.to raise_error(ActiveRecord::RecordNotFound)
+    delete "/userland/projects/999999"
+
+    expect(response).to have_http_status(:not_found)
   end
 
   it "プロジェクトが削除されると関連するプロジェクトメンバーも削除されること" do

@@ -58,23 +58,23 @@ RSpec.describe "DELETE /@:username/records/:record_id", type: :request do
     }.to raise_error(Pundit::NotAuthorizedError)
   end
 
-  it "存在しないレコードを削除しようとしたとき、404エラーになること" do
+  it "存在しないレコードを削除しようとしたとき、404エラーが返されること" do
     user = create(:registered_user)
 
     login_as(user, scope: :user)
 
-    expect {
-      delete "/@#{user.username}/records/999999"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    delete "/@#{user.username}/records/999999"
+
+    expect(response).to have_http_status(:not_found)
   end
 
-  it "存在しないユーザーのレコードを削除しようとしたとき、404エラーになること" do
+  it "存在しないユーザーのレコードを削除しようとしたとき、404エラーが返されること" do
     user = create(:registered_user)
 
     login_as(user, scope: :user)
 
-    expect {
-      delete "/@nonexistent_user/records/999999"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    delete "/@nonexistent_user/records/999999"
+
+    expect(response).to have_http_status(:not_found)
   end
 end

@@ -53,7 +53,7 @@ RSpec.describe "POST /api/internal/registrations", type: :request do
     expect(user.email_notification).to be_present
   end
 
-  it "無効なトークンで送信したとき、ActiveRecord::RecordNotFoundが発生すること" do
+  it "無効なトークンで送信したとき、404エラーが返されること" do
     email_confirmation = create(:email_confirmation, user: nil, event: "sign_up", back: "/welcome")
 
     expect(User.count).to eq 0

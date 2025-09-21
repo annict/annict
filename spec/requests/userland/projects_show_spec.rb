@@ -13,10 +13,10 @@ RSpec.describe "GET /userland/projects/:project_id", type: :request do
     expect(response.body).to include(project.summary)
   end
 
-  it "存在しないプロジェクトの場合、404エラーが発生すること" do
-    expect {
-      get "/userland/projects/999999"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+  it "存在しないプロジェクトの場合、404エラーが返されること" do
+    get "/userland/projects/999999"
+
+    expect(response).to have_http_status(:not_found)
   end
 
   it "プロジェクトの詳細情報が表示されること" do

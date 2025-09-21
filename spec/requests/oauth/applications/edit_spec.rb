@@ -34,34 +34,34 @@ RSpec.describe "GET /oauth/applications/:id/edit", type: :request do
     expect(response.body).to include("My Test App")
   end
 
-  it "管理者ユーザーが他のユーザーのアプリケーションにアクセスしたとき、404エラーが発生すること" do
+  it "管理者ユーザーが他のユーザーのアプリケーションにアクセスしたとき、404エラーが返されること" do
     user1 = FactoryBot.create(:registered_user, :with_admin_role)
     user2 = FactoryBot.create(:registered_user, :with_admin_role)
     application = FactoryBot.create(:oauth_application, owner: user2)
     login_as(user1, scope: :user)
 
-    expect do
-      get "/oauth/applications/#{application.id}/edit"
-    end.to raise_error(ActiveRecord::RecordNotFound)
+    get "/oauth/applications/#{application.id}/edit"
+
+    expect(response).to have_http_status(:not_found)
   end
 
-  it "管理者ユーザーが削除済みアプリケーションにアクセスしたとき、404エラーが発生すること" do
+  it "管理者ユーザーが削除済みアプリケーションにアクセスしたとき、404エラーが返されること" do
     user = FactoryBot.create(:registered_user, :with_admin_role)
     application = FactoryBot.create(:oauth_application, owner: user)
     application.update!(deleted_at: Time.current)
     login_as(user, scope: :user)
 
-    expect do
-      get "/oauth/applications/#{application.id}/edit"
-    end.to raise_error(ActiveRecord::RecordNotFound)
+    get "/oauth/applications/#{application.id}/edit"
+
+    expect(response).to have_http_status(:not_found)
   end
 
-  it "存在しないアプリケーションIDでアクセスしたとき、404エラーが発生すること" do
+  it "存在しないアプリケーションIDでアクセスしたとき、404エラーが返されること" do
     user = FactoryBot.create(:registered_user, :with_admin_role)
     login_as(user, scope: :user)
 
-    expect do
-      get "/oauth/applications/non-existent-id/edit"
-    end.to raise_error(ActiveRecord::RecordNotFound)
+    get "/oauth/applications/non-existent-id/edit"
+
+    expect(response).to have_http_status(:not_found)
   end
 end

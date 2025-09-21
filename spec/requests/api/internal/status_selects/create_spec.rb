@@ -22,7 +22,7 @@ RSpec.describe "POST /api/internal/works/:work_id/status_select", type: :request
     expect(response.parsed_body["flash"]["message"]).to eq(I18n.t("messages._common.updated"))
   end
 
-  it "存在しないwork_idのとき、ActiveRecord::RecordNotFoundが発生すること" do
+  it "存在しないwork_idのとき、404エラーが返されること" do
     user = FactoryBot.create(:registered_user)
     login_as(user, scope: :user)
 

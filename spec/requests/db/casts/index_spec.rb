@@ -52,7 +52,7 @@ RSpec.describe "GET /db/works/:work_id/casts", type: :request do
     expect(body_index1).to be < body_index3
   end
 
-  it "削除済みの作品にアクセスしたとき、RecordNotFoundエラーが発生すること" do
+  it "削除済みの作品にアクセスしたとき、404エラーが返されること" do
     work = FactoryBot.create(:work, deleted_at: Time.current)
 
     expect {
@@ -60,7 +60,7 @@ RSpec.describe "GET /db/works/:work_id/casts", type: :request do
     }.to raise_error(ActiveRecord::RecordNotFound)
   end
 
-  it "存在しない作品IDを指定したとき、RecordNotFoundエラーが発生すること" do
+  it "存在しない作品IDを指定したとき、404エラーが返されること" do
     expect {
       get "/db/works/999999/casts"
     }.to raise_error(ActiveRecord::RecordNotFound)

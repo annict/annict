@@ -12,28 +12,29 @@ RSpec.describe "DELETE /settings/providers/:provider_id", type: :request do
     expect(response.status).to eq(302)
     expect(response).to redirect_to(settings_provider_list_path)
     expect(flash[:notice]).to eq(I18n.t("messages.providers.removed"))
-    expect { provider.reload }.to raise_error(ActiveRecord::RecordNotFound)
+    provider.reload
+    expect(provider.deleted?).to eq(true)
   end
 
-  it "ログインしているとき、他のユーザーのプロバイダーを削除しようとすると404エラーが発生すること" do
+  it "ログインしているとき、他のユーザーのプロバイダーを削除しようとすると404エラーが返されること" do
     user = create(:registered_user)
     other_user = create(:registered_user)
     provider = create(:provider, user: other_user)
     login_as(user, scope: :user)
 
-    expect {
-      delete "/settings/providers/#{provider.id}"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    delete "/settings/providers/#{provider.id}"
+
+    expect(response).to have_http_status(:not_found)
   end
 
-  it "ログインしているとき、存在しないプロバイダーを削除しようとすると404エラーが発生すること" do
+  it "ログインしているとき、存在しないプロバイダーを削除しようとすると404エラーが返されること" do
     user = create(:registered_user)
     login_as(user, scope: :user)
     non_existent_id = "non_existent_id"
 
-    expect {
-      delete "/settings/providers/#{non_existent_id}"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    delete "/settings/providers/#{non_existent_id}"
+
+    expect(response).to have_http_status(:not_found)
   end
 
   it "ログインしていないときログインページにリダイレクトされること" do

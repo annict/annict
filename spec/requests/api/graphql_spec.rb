@@ -92,7 +92,7 @@ RSpec.describe "POST /graphql", type: :request do
     expect(json).to have_key("data").or(have_key("errors"))
   end
 
-  it "存在しないノードIDを指定した場合例外が発生すること" do
+  it "存在しないノードIDを指定した場合404エラーが返されること" do
     user = create(:user)
     application = create(:oauth_application, owner: user)
     access_token = create(:oauth_access_token, application: application, owner: user)

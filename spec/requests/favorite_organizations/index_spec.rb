@@ -22,9 +22,9 @@ RSpec.describe "GET /@:username/favorite_organizations", type: :request do
     expect(response.body).to include(organization.name)
   end
 
-  it "存在しないユーザー名でアクセスしたとき、RecordNotFoundエラーが発生すること" do
-    expect {
-      get "/@nonexistent_user/favorite_organizations"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+  it "存在しないユーザー名でアクセスしたとき、404エラーが返されること" do
+    get "/@nonexistent_user/favorite_organizations"
+
+    expect(response).to have_http_status(:not_found)
   end
 end

@@ -55,17 +55,17 @@ RSpec.describe "GET /organizations/:organization_id", type: :request do
     expect(response.body).not_to include(work.title)
   end
 
-  it "削除済みの団体にアクセスしたときはActiveRecord::RecordNotFoundが発生すること" do
+  it "削除済みの団体にアクセスしたときは404エラーが返されること" do
     organization = FactoryBot.create(:organization, deleted_at: Time.current)
 
-    expect {
-      get "/organizations/#{organization.id}"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/organizations/#{organization.id}"
+
+    expect(response).to have_http_status(:not_found)
   end
 
-  it "存在しない団体IDを指定したときはActiveRecord::RecordNotFoundが発生すること" do
-    expect {
-      get "/organizations/999999"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+  it "存在しない団体IDを指定したときは404エラーが返されること" do
+    get "/organizations/999999"
+
+    expect(response).to have_http_status(:not_found)
   end
 end

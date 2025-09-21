@@ -64,11 +64,11 @@ RSpec.describe "GET /@:username/records/:record_id", type: :request do
     expect(response.body).to include("楽しかった")
   end
 
-  it "存在しない記録を参照すると、例外が発生すること" do
+  it "存在しない記録を参照すると、404エラーが返されること" do
     user = create(:registered_user)
 
-    expect {
-      get "/@#{user.username}/records/non-existent-id"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/@#{user.username}/records/non-existent-id"
+
+    expect(response).to have_http_status(:not_found)
   end
 end

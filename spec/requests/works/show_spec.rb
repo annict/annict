@@ -22,18 +22,18 @@ RSpec.describe "GET /works/:work_id", type: :request do
     expect(response.body).to include(work.title)
   end
 
-  it "存在しない作品にアクセスしたとき、RecordNotFoundエラーが発生すること" do
-    expect {
-      get "/works/999999"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+  it "存在しない作品にアクセスしたとき、404エラーが返されること" do
+    get "/works/999999"
+
+    expect(response).to have_http_status(:not_found)
   end
 
-  it "削除された作品にアクセスしたとき、RecordNotFoundエラーが発生すること" do
+  it "削除された作品にアクセスしたとき、404エラーが返されること" do
     work = create(:work, deleted_at: Time.current)
 
-    expect {
-      get "/works/#{work.id}"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/works/#{work.id}"
+
+    expect(response).to have_http_status(:not_found)
   end
 
   it "トレーラーが追加されているとき、トレーラーのタイトルが表示されること" do

@@ -32,13 +32,13 @@ RSpec.describe "GET /works/:work_id/related_works", type: :request do
     expect(response.body).to include(related_work.title)
   end
 
-  it "存在しない作品にアクセスしたとき、RecordNotFoundエラーが発生すること" do
+  it "存在しない作品にアクセスしたとき、404エラーが返されること" do
     expect {
       get "/works/999999/related_works"
     }.to raise_error(ActiveRecord::RecordNotFound)
   end
 
-  it "削除された作品にアクセスしたとき、RecordNotFoundエラーが発生すること" do
+  it "削除された作品にアクセスしたとき、404エラーが返されること" do
     work = create(:work, deleted_at: Time.current)
 
     expect {

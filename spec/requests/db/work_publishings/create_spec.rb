@@ -62,6 +62,8 @@ RSpec.describe "POST /db/works/:id/publishing", type: :request do
     user = create(:registered_user, :with_editor_role)
     login_as(user, scope: :user)
 
-    expect { post "/db/works/invalid-id/publishing" }.to raise_error(ActiveRecord::RecordNotFound)
+     post "/db/works/invalid-id/publishing" 
+
+    expect(response).to have_http_status(:not_found)
   end
 end

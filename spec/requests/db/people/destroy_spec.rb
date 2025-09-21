@@ -63,14 +63,16 @@ RSpec.describe "DELETE /db/people/:id", type: :request do
     expect(Person.count).to eq(0)
   end
 
-  it "存在しない人物IDを指定したとき、RecordNotFoundエラーが発生すること" do
+  it "存在しない人物IDを指定したとき、404エラーが返されること" do
     user = create(:registered_user, :with_admin_role)
     login_as(user, scope: :user)
 
-    expect { delete "/db/people/invalid-id" }.to raise_error(ActiveRecord::RecordNotFound)
+     delete "/db/people/invalid-id" 
+
+    expect(response).to have_http_status(:not_found)
   end
 
-  it "削除済みの人物を削除しようとしたとき、RecordNotFoundエラーが発生すること" do
+  it "削除済みの人物を削除しようとしたとき、404エラーが返されること" do
     user = create(:registered_user, :with_admin_role)
     person = create(:person, :not_deleted)
     person.destroy_in_batches

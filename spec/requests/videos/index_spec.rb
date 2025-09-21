@@ -75,13 +75,13 @@ RSpec.describe "GET /works/:work_id/videos", type: :request do
     expect(response.body).not_to include(unpublished_trailer.title)
   end
 
-  it "存在しない作品IDが指定されたとき、ActiveRecord::RecordNotFoundが発生すること" do
+  it "存在しない作品IDが指定されたとき、404エラーが返されること" do
     expect {
       get "/works/99999999/videos"
     }.to raise_error(ActiveRecord::RecordNotFound)
   end
 
-  it "削除された作品の動画一覧にアクセスしたとき、ActiveRecord::RecordNotFoundが発生すること" do
+  it "削除された作品の動画一覧にアクセスしたとき、404エラーが返されること" do
     work = create(:work, :deleted)
 
     expect {

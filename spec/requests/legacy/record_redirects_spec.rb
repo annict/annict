@@ -28,19 +28,19 @@ RSpec.describe "GET /r/:provider/:url_hash", type: :request do
     expect(response).to redirect_to(episode_record.share_url_with_query(:facebook))
   end
 
-  it "TwitterのURL hashが存在しないとき、ActiveRecord::RecordNotFoundエラーが発生すること" do
+  it "TwitterのURL hashが存在しないとき、404エラーが返されることエラーが発生すること" do
     expect do
       get "/r/tw/not_found1"
     end.to raise_error(ActiveRecord::RecordNotFound)
   end
 
-  it "FacebookのURL hashが存在しないとき、ActiveRecord::RecordNotFoundエラーが発生すること" do
+  it "FacebookのURL hashが存在しないとき、404エラーが返されることエラーが発生すること" do
     expect do
       get "/r/fb/not_found1"
     end.to raise_error(ActiveRecord::RecordNotFound)
   end
 
-  it "削除されたエピソード記録のとき、ActiveRecord::RecordNotFoundエラーが発生すること" do
+  it "削除されたエピソード記録のとき、404エラーが返されることエラーが発生すること" do
     user = FactoryBot.create(:user, :with_profile)
     work = FactoryBot.create(:work)
     episode = FactoryBot.create(:episode, work:)

@@ -82,12 +82,14 @@ RSpec.describe "POST /api/internal/unstars", type: :request do
     expect { post api("/api/internal/unstars", data) }.to raise_error(NameError)
   end
 
-  it "存在しないstarrable_idを指定したとき、ActiveRecord::RecordNotFoundが発生すること" do
+  it "存在しないstarrable_idを指定したとき、404エラーが返されること" do
     user = create(:registered_user)
     data = {starrable_type: "Character", starrable_id: 99999}
 
     login_as(user, scope: :user)
-    expect { post api("/api/internal/unstars", data) }.to raise_error(ActiveRecord::RecordNotFound)
+     post api("/api/internal/unstars", data) 
+
+    expect(response).to have_http_status(:not_found)
   end
 
   it "スターしていないリソースのスターを外そうとしたとき、201ステータスを返すこと" do

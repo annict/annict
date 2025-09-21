@@ -25,7 +25,7 @@ RSpec.describe "GET /works/:work_id/episodes/:episode_id", type: :request do
     expect(response.body).to include(episode.title)
   end
 
-  it "存在しない作品IDを指定したとき、ActiveRecord::RecordNotFoundが発生すること" do
+  it "存在しない作品IDを指定したとき、404エラーが返されること" do
     work = FactoryBot.create(:work)
     episode = FactoryBot.create(:episode, work:)
 
@@ -34,7 +34,7 @@ RSpec.describe "GET /works/:work_id/episodes/:episode_id", type: :request do
     }.to raise_error(ActiveRecord::RecordNotFound)
   end
 
-  it "存在しないエピソードIDを指定したとき、ActiveRecord::RecordNotFoundが発生すること" do
+  it "存在しないエピソードIDを指定したとき、404エラーが返されること" do
     work = FactoryBot.create(:work)
 
     expect {
@@ -42,7 +42,7 @@ RSpec.describe "GET /works/:work_id/episodes/:episode_id", type: :request do
     }.to raise_error(ActiveRecord::RecordNotFound)
   end
 
-  it "削除された作品のエピソードにアクセスしたとき、ActiveRecord::RecordNotFoundが発生すること" do
+  it "削除された作品のエピソードにアクセスしたとき、404エラーが返されること" do
     work = FactoryBot.create(:work, :deleted)
     episode = FactoryBot.create(:episode, work:)
 
@@ -51,7 +51,7 @@ RSpec.describe "GET /works/:work_id/episodes/:episode_id", type: :request do
     }.to raise_error(ActiveRecord::RecordNotFound)
   end
 
-  it "削除されたエピソードにアクセスしたとき、ActiveRecord::RecordNotFoundが発生すること" do
+  it "削除されたエピソードにアクセスしたとき、404エラーが返されること" do
     work = FactoryBot.create(:work)
     episode = FactoryBot.create(:episode, :deleted, work:)
 

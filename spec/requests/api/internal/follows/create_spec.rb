@@ -36,7 +36,7 @@ RSpec.describe "POST /api/internal/follow", type: :request do
     expect(follower.following?(user)).to be(true)
   end
 
-  it "存在しないユーザーIDを指定した場合はActiveRecord::RecordNotFoundが発生すること" do
+  it "存在しないユーザーIDを指定した場合は404エラーが返されること" do
     follower = create(:user, :with_email_notification)
 
     login_as(follower, scope: :user)
@@ -45,7 +45,7 @@ RSpec.describe "POST /api/internal/follow", type: :request do
     }.to raise_error(ActiveRecord::RecordNotFound)
   end
 
-  it "user_idパラメータが不正な場合はActiveRecord::RecordNotFoundが発生すること" do
+  it "user_idパラメータが不正な場合は404エラーが返されること" do
     follower = create(:user, :with_email_notification)
 
     login_as(follower, scope: :user)

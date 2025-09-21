@@ -72,17 +72,17 @@ RSpec.describe "PATCH /userland/projects/:project_id", type: :request do
     expect(response.body).to include("編集")
   end
 
-  it "存在しないプロジェクトIDの場合、404エラーになること" do
+  it "存在しないプロジェクトIDの場合、404エラーが返されること" do
     user = create(:registered_user)
     login_as(user, scope: :user)
 
-    expect {
-      patch "/userland/projects/999999", params: {
-        userland_project: {
-          name: "更新されたプロジェクト名",
-          summary: "更新された概要"
-        }
+    patch "/userland/projects/999999", params: {
+      userland_project: {
+        name: "更新されたプロジェクト名",
+        summary: "更新された概要"
       }
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    }
+
+    expect(response).to have_http_status(:not_found)
   end
 end

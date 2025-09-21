@@ -53,7 +53,7 @@ RSpec.describe "GET /db/works/:work_id/episodes", type: :request do
     expect(response.body).not_to include(deleted_episode.title)
   end
 
-  it "削除済みの作品の場合、RecordNotFoundエラーが発生すること" do
+  it "削除済みの作品の場合、404エラーが返されること" do
     work = FactoryBot.create(:work, :deleted)
 
     expect {
@@ -61,7 +61,7 @@ RSpec.describe "GET /db/works/:work_id/episodes", type: :request do
     }.to raise_error(ActiveRecord::RecordNotFound)
   end
 
-  it "存在しない作品IDの場合、RecordNotFoundエラーが発生すること" do
+  it "存在しない作品IDの場合、404エラーが返されること" do
     expect {
       get "/db/works/99999/episodes"
     }.to raise_error(ActiveRecord::RecordNotFound)
