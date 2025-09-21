@@ -48,7 +48,7 @@ RSpec.describe "DELETE /db/works/:id/publishing", type: :request do
 
     delete "/db/works/#{work.id}/publishing"
 
-    expect(response).to have_http_status(404)
+    expect(response).to have_http_status(:not_found)
   end
 
   it "エディター権限があるユーザーでログインしているとき、未公開の作品は見つからないこと" do
@@ -58,7 +58,7 @@ RSpec.describe "DELETE /db/works/:id/publishing", type: :request do
 
     delete "/db/works/#{work.id}/publishing"
 
-    expect(response).to have_http_status(404)
+    expect(response).to have_http_status(:not_found)
   end
 
   it "エディター権限があるユーザーでログインしているとき、存在しない作品IDの場合は見つからないこと" do
@@ -67,6 +67,6 @@ RSpec.describe "DELETE /db/works/:id/publishing", type: :request do
 
     delete "/db/works/nonexistent-id/publishing"
 
-    expect(response).to have_http_status(404)
+    expect(response).to have_http_status(:not_found)
   end
 end

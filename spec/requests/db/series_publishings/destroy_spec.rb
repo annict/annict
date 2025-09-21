@@ -47,7 +47,7 @@ RSpec.describe "DELETE /db/series/:id/publishing", type: :request do
 
     delete "/db/series/999999/publishing"
 
-    expect(response).to have_http_status(404)
+    expect(response).to have_http_status(:not_found)
   end
 
   it "編集者ロールを持つユーザーがログインしているとき、既に非公開のシリーズの場合404エラーになること" do
@@ -57,6 +57,6 @@ RSpec.describe "DELETE /db/series/:id/publishing", type: :request do
 
     delete "/db/series/#{series.id}/publishing"
 
-    expect(response).to have_http_status(404)
+    expect(response).to have_http_status(:not_found)
   end
 end

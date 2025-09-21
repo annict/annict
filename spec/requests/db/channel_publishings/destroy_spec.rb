@@ -60,7 +60,7 @@ RSpec.describe "DELETE /db/channels/:id/publishing", type: :request do
 
     delete "/db/channels/invalid-id/publishing"
 
-    expect(response).to have_http_status(404)
+    expect(response).to have_http_status(:not_found)
   end
 
   it "既に非公開のチャンネルに対してリクエストしたとき、404エラーを返すこと" do
@@ -71,7 +71,7 @@ RSpec.describe "DELETE /db/channels/:id/publishing", type: :request do
 
     delete "/db/channels/#{channel.id}/publishing"
 
-    expect(response).to have_http_status(404)
+    expect(response).to have_http_status(:not_found)
   end
 
   it "削除されたチャンネルに対してリクエストしたとき、404エラーを返すこと" do
@@ -83,6 +83,6 @@ RSpec.describe "DELETE /db/channels/:id/publishing", type: :request do
 
     delete "/db/channels/#{channel_id}/publishing"
 
-    expect(response).to have_http_status(404)
+    expect(response).to have_http_status(:not_found)
   end
 end

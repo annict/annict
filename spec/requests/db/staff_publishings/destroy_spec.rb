@@ -50,7 +50,7 @@ RSpec.describe "DELETE /db/staffs/:id/publishing", type: :request do
 
     delete "/db/staffs/non-existent-id/publishing"
 
-    expect(response).to have_http_status(404)
+    expect(response).to have_http_status(:not_found)
   end
 
   it "エディター権限があるユーザーがログインしているとき、すでに非公開のスタッフを指定すると404エラーになること" do
@@ -61,6 +61,6 @@ RSpec.describe "DELETE /db/staffs/:id/publishing", type: :request do
 
     delete "/db/staffs/#{staff.id}/publishing"
 
-    expect(response).to have_http_status(404)
+    expect(response).to have_http_status(:not_found)
   end
 end

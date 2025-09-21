@@ -47,7 +47,7 @@ RSpec.describe "DELETE /db/trailers/:id/publishing", type: :request do
 
     delete "/db/trailers/nonexistent-id/publishing"
 
-    expect(response).to have_http_status(404)
+    expect(response).to have_http_status(:not_found)
   end
 
   it "すでに非公開のトレーラーを非公開にしようとしたとき、404エラーが返されること" do
@@ -59,6 +59,6 @@ RSpec.describe "DELETE /db/trailers/:id/publishing", type: :request do
 
     delete "/db/trailers/#{trailer.id}/publishing"
 
-    expect(response).to have_http_status(404)
+    expect(response).to have_http_status(:not_found)
   end
 end

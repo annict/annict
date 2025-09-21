@@ -50,7 +50,7 @@ RSpec.describe "DELETE /db/people/:id/publishing", type: :request do
 
     delete "/db/people/non-existent-id/publishing"
 
-    expect(response).to have_http_status(404)
+    expect(response).to have_http_status(:not_found)
   end
 
   it "すでに非公開の人物を指定したとき、404エラーになること" do
@@ -61,7 +61,7 @@ RSpec.describe "DELETE /db/people/:id/publishing", type: :request do
 
     delete "/db/people/#{person.id}/publishing"
 
-    expect(response).to have_http_status(404)
+    expect(response).to have_http_status(:not_found)
   end
 
   it "削除済みの人物を指定したとき、404エラーになること" do
@@ -73,6 +73,6 @@ RSpec.describe "DELETE /db/people/:id/publishing", type: :request do
 
     delete "/db/people/#{person.id}/publishing"
 
-    expect(response).to have_http_status(404)
+    expect(response).to have_http_status(:not_found)
   end
 end

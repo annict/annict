@@ -47,7 +47,7 @@ RSpec.describe "DELETE /db/episodes/:id/publishing", type: :request do
 
     delete "/db/episodes/nonexistent-id/publishing"
 
-    expect(response).to have_http_status(404)
+    expect(response).to have_http_status(:not_found)
   end
 
   it "既に非公開のエピソードを指定したとき、404エラーになること" do
@@ -57,7 +57,7 @@ RSpec.describe "DELETE /db/episodes/:id/publishing", type: :request do
 
     delete "/db/episodes/#{episode.id}/publishing"
 
-    expect(response).to have_http_status(404)
+    expect(response).to have_http_status(:not_found)
   end
 
   it "削除されたエピソードを指定したとき、404エラーになること" do
@@ -67,6 +67,6 @@ RSpec.describe "DELETE /db/episodes/:id/publishing", type: :request do
 
     delete "/db/episodes/#{episode.id}/publishing"
 
-    expect(response).to have_http_status(404)
+    expect(response).to have_http_status(:not_found)
   end
 end

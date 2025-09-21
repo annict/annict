@@ -50,6 +50,6 @@ RSpec.describe "DELETE /db/slots/:id/publishing", type: :request do
 
     delete "/db/slots/00000000-0000-0000-0000-000000000000/publishing"
 
-    expect(response).to have_http_status(404)
+    expect(response).to have_http_status(:not_found)
   end
 end

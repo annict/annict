@@ -49,6 +49,6 @@ RSpec.describe "DELETE /db/series_works/:id/publishing", type: :request do
 
     delete "/db/series_works/non-existent-id/publishing"
 
-    expect(response).to have_http_status(404)
+    expect(response).to have_http_status(:not_found)
   end
 end

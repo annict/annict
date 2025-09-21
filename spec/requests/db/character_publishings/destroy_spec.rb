@@ -47,7 +47,7 @@ RSpec.describe "DELETE /db/characters/:id/publishing", type: :request do
 
     delete "/db/characters/99999/publishing"
 
-    expect(response).to have_http_status(404)
+    expect(response).to have_http_status(:not_found)
   end
 
   it "未公開のキャラクターを指定したとき、404エラーになること" do
@@ -59,7 +59,7 @@ RSpec.describe "DELETE /db/characters/:id/publishing", type: :request do
 
     delete "/db/characters/#{character.id}/publishing"
 
-    expect(response).to have_http_status(404)
+    expect(response).to have_http_status(:not_found)
   end
 
   it "削除済みのキャラクターを指定したとき、404エラーになること" do
@@ -70,6 +70,6 @@ RSpec.describe "DELETE /db/characters/:id/publishing", type: :request do
 
     delete "/db/characters/#{character.id}/publishing"
 
-    expect(response).to have_http_status(404)
+    expect(response).to have_http_status(:not_found)
   end
 end

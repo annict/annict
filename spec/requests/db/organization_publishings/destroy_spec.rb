@@ -48,7 +48,7 @@ RSpec.describe "DELETE /db/organizations/:id/publishing", type: :request do
 
     delete "/db/organizations/#{organization.id}/publishing"
 
-    expect(response).to have_http_status(404)
+    expect(response).to have_http_status(:not_found)
   end
 
   it "非公開の団体を非公開にしようとした場合、404エラーになること" do
@@ -58,7 +58,7 @@ RSpec.describe "DELETE /db/organizations/:id/publishing", type: :request do
 
     delete "/db/organizations/#{organization.id}/publishing"
 
-    expect(response).to have_http_status(404)
+    expect(response).to have_http_status(:not_found)
   end
 
   it "存在しない団体IDの場合、404エラーになること" do
@@ -67,6 +67,6 @@ RSpec.describe "DELETE /db/organizations/:id/publishing", type: :request do
 
     delete "/db/organizations/invalid-id/publishing"
 
-    expect(response).to have_http_status(404)
+    expect(response).to have_http_status(:not_found)
   end
 end
