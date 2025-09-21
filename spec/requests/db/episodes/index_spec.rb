@@ -56,9 +56,9 @@ RSpec.describe "GET /db/works/:work_id/episodes", type: :request do
   it "削除済みの作品の場合、404エラーが返されること" do
     work = FactoryBot.create(:work, :deleted)
 
-    expect {
-      get "/db/works/#{work.id}/episodes"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/db/works/#{work.id
+
+    expect(response.status).to eq(404)
   end
 
   it "存在しない作品IDの場合、404エラーが返されること" do

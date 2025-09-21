@@ -49,9 +49,9 @@ RSpec.describe "GET /db/works/:id/edit", type: :request do
     work = FactoryBot.create(:work, deleted_at: Time.current)
     login_as(user, scope: :user)
 
-    expect {
-      get "/db/works/#{work.id}/edit"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/db/works/#{work.id
+
+    expect(response.status).to eq(404)
   end
 
   it "存在しない作品IDでアクセスしようとしたとき、404エラーになること" do

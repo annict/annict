@@ -24,15 +24,9 @@ RSpec.describe "PATCH /api/internal/@:username/records/:record_id", type: :reque
 
     login_as(user, scope: :user)
 
-    expect {
-      patch "/api/internal/@#{other_user.username}/records/#{record.id}", params: {
-        forms_episode_record_form: {
-          comment: "更新されたコメント",
-          rating: "good",
-          watched_at: Time.zone.now
-        }
-      }
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    patch "/api/internal/@#{other_user.username
+
+    expect(response.status).to eq(404)
   end
 
   it "存在しないユーザーのレコードを更新しようとした場合、404を返すこと" do
@@ -41,15 +35,9 @@ RSpec.describe "PATCH /api/internal/@:username/records/:record_id", type: :reque
 
     login_as(user, scope: :user)
 
-    expect {
-      patch "/api/internal/@nonexistent/records/#{record.id}", params: {
-        forms_episode_record_form: {
-          comment: "更新されたコメント",
-          rating: "good",
-          watched_at: Time.zone.now
-        }
-      }
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    patch "/api/internal/@nonexistent/records/#{record.id
+
+    expect(response.status).to eq(404)
   end
 
   it "存在しないレコードを更新しようとした場合、404を返すこと" do
@@ -57,15 +45,9 @@ RSpec.describe "PATCH /api/internal/@:username/records/:record_id", type: :reque
 
     login_as(user, scope: :user)
 
-    expect {
-      patch "/api/internal/@#{user.username}/records/nonexistent", params: {
-        forms_episode_record_form: {
-          comment: "更新されたコメント",
-          rating: "good",
-          watched_at: Time.zone.now
-        }
-      }
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    patch "/api/internal/@#{user.username
+
+    expect(response.status).to eq(404)
   end
 
   it "エピソードレコードを正常に更新できること" do

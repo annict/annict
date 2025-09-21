@@ -49,9 +49,9 @@ RSpec.describe "GET /db/episodes/:id/edit", type: :request do
     episode = create(:episode, deleted_at: Time.current)
     login_as(user, scope: :user)
 
-    expect {
-      get "/db/episodes/#{episode.id}/edit"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/db/episodes/#{episode.id
+
+    expect(response.status).to eq(404)
   end
 
   it "存在しないエピソードIDの場合、404エラーが発生すること" do

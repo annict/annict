@@ -166,9 +166,9 @@ RSpec.describe "PATCH /db/characters/:id", type: :request do
 
     login_as(user, scope: :user)
 
-    expect {
-      patch "/db/characters/#{character.id}", params: {character: character_params}
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    patch "/db/characters/#{character.id
+
+    expect(response.status).to eq(404)
   end
 
   it "編集者権限を持つユーザーがログインしているとき、存在しないキャラクターIDの場合見つからないこと" do
@@ -179,9 +179,9 @@ RSpec.describe "PATCH /db/characters/:id", type: :request do
 
     login_as(user, scope: :user)
 
-    expect {
-      patch "/db/characters/9999999", params: {character: character_params}
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    patch "/db/characters/9999999", params: {character: character_params
+
+    expect(response.status).to eq(404)
   end
 
   it "編集者権限を持つユーザーがログインしているとき、descriptionとdescription_sourceが両方設定されること" do

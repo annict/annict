@@ -137,9 +137,9 @@ RSpec.describe "PATCH /db/works/:work_id/image", type: :request do
 
     login_as(user, scope: :user)
 
-    expect {
-      patch "/db/works/#{work.id}/image", params: {work_image: work_image_params}
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    patch "/db/works/#{work.id
+
+    expect(response.status).to eq(404)
   end
 
   it "削除された作品に対してPATCHリクエストを送ったとき、404エラーになること" do
@@ -151,8 +151,8 @@ RSpec.describe "PATCH /db/works/:work_id/image", type: :request do
 
     login_as(user, scope: :user)
 
-    expect {
-      patch "/db/works/#{work.id}/image", params: {work_image: work_image_params}
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    patch "/db/works/#{work.id
+
+    expect(response.status).to eq(404)
   end
 end

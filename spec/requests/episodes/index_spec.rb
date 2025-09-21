@@ -37,9 +37,9 @@ RSpec.describe "GET /works/:work_id/episodes", type: :request do
     work = FactoryBot.create(:work, :with_episode)
     work.update!(deleted_at: Time.current)
 
-    expect {
-      get "/works/#{work.id}/episodes"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/works/#{work.id
+
+    expect(response.status).to eq(404)
   end
 
   it "存在しない作品IDでアクセスしたとき、404エラーが返ること" do

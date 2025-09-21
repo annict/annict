@@ -31,9 +31,9 @@ RSpec.describe "GET /ics", type: :request do
     user = FactoryBot.create(:user, username: "deleted_user")
     user.update!(deleted_at: Time.zone.now)
 
-    expect {
-      get "/@#{user.username}/ics"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/@#{user.username
+
+    expect(response.status).to eq(404)
   end
 
   it "視聴リストに追加済みのアニメがない場合、空のカレンダーを返すこと" do

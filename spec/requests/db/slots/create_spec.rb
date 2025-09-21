@@ -136,9 +136,9 @@ RSpec.describe "POST /db/works/:work_id/slots", type: :request do
 
     login_as(user, scope: :user)
 
-    expect do
-      post "/db/works/non-existent-id/slots", params: {deprecated_db_slot_rows_form: {rows: ""}}
-    end.to raise_error(ActiveRecord::RecordNotFound)
+    post "/db/works/non-existent-id/slots", params: {deprecated_db_slot_rows_form: {rows: ""}}
+
+    expect(response.status).to eq(404)
   end
 
   it "削除済みの作品を指定したとき、404エラーが返ること" do
@@ -147,9 +147,9 @@ RSpec.describe "POST /db/works/:work_id/slots", type: :request do
 
     login_as(user, scope: :user)
 
-    expect do
-      post "/db/works/#{work.id}/slots", params: {deprecated_db_slot_rows_form: {rows: ""}}
-    end.to raise_error(ActiveRecord::RecordNotFound)
+    post "/db/works/#{work.id}/slots", params: {deprecated_db_slot_rows_form: {rows: ""}}
+
+    expect(response.status).to eq(404)
   end
 
   it "異なる作品のプログラムIDを指定したとき、スロットが作成されること" do

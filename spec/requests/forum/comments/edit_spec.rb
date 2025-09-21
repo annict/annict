@@ -41,9 +41,9 @@ RSpec.describe "GET /forum/posts/:post_id/comments/:comment_id/edit", type: :req
     forum_comment = create(:forum_comment, user: user)
     login_as(user, scope: :user)
 
-    expect {
-      get "/forum/posts/99999/comments/#{forum_comment.id}/edit"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/forum/posts/99999/comments/#{forum_comment.id
+
+    expect(response.status).to eq(404)
   end
 
   it "ログインしているとき、存在しないコメントIDが指定された場合、404エラーになること" do
@@ -51,9 +51,9 @@ RSpec.describe "GET /forum/posts/:post_id/comments/:comment_id/edit", type: :req
     forum_post = create(:forum_post)
     login_as(user, scope: :user)
 
-    expect {
-      get "/forum/posts/#{forum_post.id}/comments/99999/edit"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/forum/posts/#{forum_post.id
+
+    expect(response.status).to eq(404)
   end
 
   it "ログインしているとき、投稿とコメントの関連が正しくない場合、404エラーになること" do
@@ -63,8 +63,8 @@ RSpec.describe "GET /forum/posts/:post_id/comments/:comment_id/edit", type: :req
     forum_comment = create(:forum_comment, forum_post: forum_post1, user: user)
     login_as(user, scope: :user)
 
-    expect {
-      get "/forum/posts/#{forum_post2.id}/comments/#{forum_comment.id}/edit"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/forum/posts/#{forum_post2.id
+
+    expect(response.status).to eq(404)
   end
 end

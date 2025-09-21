@@ -50,9 +50,9 @@ RSpec.describe "GET /db/trailers/:id/edit", type: :request do
     trailer.destroy!
     login_as(user, scope: :user)
 
-    expect {
-      get "/db/trailers/#{trailer.id}/edit"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/db/trailers/#{trailer.id
+
+    expect(response.status).to eq(404)
   end
 
   it "存在しないトレイラーIDの場合、404エラーになること" do

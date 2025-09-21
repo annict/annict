@@ -40,17 +40,17 @@ RSpec.describe "POST /api/internal/follow", type: :request do
     follower = create(:user, :with_email_notification)
 
     login_as(follower, scope: :user)
-    expect {
-      post "/api/internal/follow", params: {user_id: "nonexistent"}
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    post "/api/internal/follow", params: {user_id: "nonexistent"
+
+    expect(response.status).to eq(404)
   end
 
   it "user_idパラメータが不正な場合は404エラーが返されること" do
     follower = create(:user, :with_email_notification)
 
     login_as(follower, scope: :user)
-    expect {
-      post "/api/internal/follow", params: {}
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    post "/api/internal/follow", params: {
+
+    expect(response.status).to eq(404)
   end
 end

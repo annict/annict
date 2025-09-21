@@ -51,9 +51,9 @@ RSpec.describe "POST /db/people/:id/publishing", type: :request do
 
     expect(person.published?).to eq(true)
 
-    expect {
-      post "/db/people/#{person.id}/publishing"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    post "/db/people/#{person.id
+
+    expect(response.status).to eq(404)
   end
 
   it "エディター権限を持つユーザーがログインしているとき、削除された人物は404エラーになること" do
@@ -64,9 +64,9 @@ RSpec.describe "POST /db/people/:id/publishing", type: :request do
 
     expect(person.deleted?).to eq(true)
 
-    expect {
-      post "/db/people/#{person.id}/publishing"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    post "/db/people/#{person.id
+
+    expect(response.status).to eq(404)
   end
 
   it "エディター権限を持つユーザーがログインしているとき、存在しない人物IDは404エラーになること" do

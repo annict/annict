@@ -20,15 +20,13 @@ RSpec.describe "POST /api/internal/works/:work_id/commented_records", type: :req
     user = FactoryBot.create(:user, :with_profile)
     login_as(user, scope: :user)
 
-    expect {
-      post "/api/internal/works/99999/commented_records", params: {
-        forms_work_record_form: {
-          comment: "テストコメント",
-          rating_overall: "good",
-          watched_at: Time.zone.now
-        }
-      }
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    post "/api/internal/works/99999/commented_records", params: {
+    forms_work_record_form: {
+    comment: "テストコメント",
+    rating_overall: "good",
+    watched_at: Time.zone.now
+
+    expect(response.status).to eq(404)
   end
 
   it "削除されたworkの場合、404エラーが発生すること" do
@@ -36,15 +34,9 @@ RSpec.describe "POST /api/internal/works/:work_id/commented_records", type: :req
     work = FactoryBot.create(:work, deleted_at: Time.zone.now)
     login_as(user, scope: :user)
 
-    expect {
-      post "/api/internal/works/#{work.id}/commented_records", params: {
-        forms_work_record_form: {
-          comment: "テストコメント",
-          rating_overall: "good",
-          watched_at: Time.zone.now
-        }
-      }
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    post "/api/internal/works/#{work.id
+
+    expect(response.status).to eq(404)
   end
 
   it "有効なパラメータでワークレコードを作成できること" do

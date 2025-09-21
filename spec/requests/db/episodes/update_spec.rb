@@ -121,9 +121,9 @@ RSpec.describe "PATCH /db/episodes/:id", type: :request do
 
     login_as(user, scope: :user)
 
-    expect {
-      patch "/db/episodes/999999", params: {episode: episode_params}
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    patch "/db/episodes/999999", params: {episode: episode_params
+
+    expect(response.status).to eq(404)
   end
 
   it "削除済みのエピソードを更新しようとしたとき、404エラーになること" do
@@ -136,8 +136,8 @@ RSpec.describe "PATCH /db/episodes/:id", type: :request do
 
     login_as(user, scope: :user)
 
-    expect {
-      patch "/db/episodes/#{episode.id}", params: {episode: episode_params}
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    patch "/db/episodes/#{episode.id
+
+    expect(response.status).to eq(404)
   end
 end

@@ -49,17 +49,17 @@ RSpec.describe "GET /db/series/:id/edit", type: :request do
     series = FactoryBot.create(:series, deleted_at: Time.current)
     login_as(user, scope: :user)
 
-    expect do
-      get "/db/series/#{series.id}/edit"
-    end.to raise_error(ActiveRecord::RecordNotFound)
+    get "/db/series/#{series.id}/edit"
+
+    expect(response.status).to eq(404)
   end
 
   it "存在しないシリーズにアクセスしたとき、404エラーが発生すること" do
     user = FactoryBot.create(:registered_user, :with_editor_role)
     login_as(user, scope: :user)
 
-    expect do
-      get "/db/series/999999/edit"
-    end.to raise_error(ActiveRecord::RecordNotFound)
+    get "/db/series/999999/edit"
+
+    expect(response.status).to eq(404)
   end
 end

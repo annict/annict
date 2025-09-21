@@ -55,9 +55,9 @@ RSpec.describe "POST /db/series/:id/publishing", type: :request do
     series = create(:series, :published)
     login_as(user, scope: :user)
 
-    expect {
-      post "/db/series/#{series.id}/publishing"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    post "/db/series/#{series.id
+
+    expect(response.status).to eq(404)
   end
 
   it "削除済みのシリーズを指定したとき、404エラーになること" do
@@ -65,8 +65,8 @@ RSpec.describe "POST /db/series/:id/publishing", type: :request do
     series = create(:series, :unpublished, deleted_at: Time.current)
     login_as(user, scope: :user)
 
-    expect {
-      post "/db/series/#{series.id}/publishing"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    post "/db/series/#{series.id
+
+    expect(response.status).to eq(404)
   end
 end

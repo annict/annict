@@ -79,9 +79,9 @@ RSpec.describe "PATCH /db/people/:id", type: :request do
 
     login_as(user, scope: :user)
 
-    expect {
-      patch "/db/people/99999999", params: {person: person_params}
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    patch "/db/people/99999999", params: {person: person_params
+
+    expect(response.status).to eq(404)
   end
 
   it "編集権限のあるユーザーがログインしているとき、複数のフィールドを更新できること" do

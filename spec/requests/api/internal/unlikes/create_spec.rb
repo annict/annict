@@ -77,12 +77,11 @@ RSpec.describe "POST /api/internal/unlikes", type: :request do
     user = create(:registered_user)
 
     login_as(user, scope: :user)
-    expect {
-      post "/api/internal/unlikes", params: {
-        recipient_type: "WorkRecord",
-        recipient_id: 999999
-      }
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    post "/api/internal/unlikes", params: {
+    recipient_type: "WorkRecord",
+    recipient_id: 999999
+
+    expect(response.status).to eq(404)
   end
 
   it "いいねしていないレコードに対してリクエストした時、201ステータスを返すこと" do

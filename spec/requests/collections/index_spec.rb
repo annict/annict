@@ -51,9 +51,9 @@ RSpec.describe "GET /@:username/collections", type: :request do
     user = create(:registered_user)
     user.update!(deleted_at: Time.current)
 
-    expect {
-      get "/@#{user.username}/collections"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/@#{user.username
+
+    expect(response.status).to eq(404)
   end
 
   it "削除されたコレクションが表示されないこと" do

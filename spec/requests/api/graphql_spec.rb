@@ -105,8 +105,8 @@ RSpec.describe "POST /graphql", type: :request do
       }
     GRAPHQL
 
-    expect {
-      post "/graphql", params: {query: query}, headers: headers
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    post "/graphql", params: {query: query
+
+    expect(response.status).to eq(404)
   end
 end

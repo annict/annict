@@ -102,13 +102,11 @@ RSpec.describe "POST /forum/posts/:post_id/comments", type: :request do
     user = create(:registered_user)
     login_as(user, scope: :user)
 
-    expect {
-      post "/forum/posts/99999/comments", params: {
-        forum_comment: {
-          body: "存在しない投稿へのコメント"
-        }
-      }
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    post "/forum/posts/99999/comments", params: {
+    forum_comment: {
+    body: "存在しない投稿へのコメント"
+
+    expect(response.status).to eq(404)
   end
 
   it "既に参加者である場合、重複した参加者レコードが作成されないこと" do

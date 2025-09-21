@@ -38,9 +38,9 @@ RSpec.describe "GET /collection_items/:collection_item_id/edit", type: :request 
 
     login_as(user, scope: :user)
 
-    expect {
-      get "/collection_items/#{other_collection_item.id}/edit"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/collection_items/#{other_collection_item.id
+
+    expect(response.status).to eq(404)
   end
 
   it "存在しないコレクションアイテムを編集しようとしたとき、404エラーになること" do
@@ -62,8 +62,8 @@ RSpec.describe "GET /collection_items/:collection_item_id/edit", type: :request 
 
     login_as(user, scope: :user)
 
-    expect {
-      get "/collection_items/#{collection_item.id}/edit"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/collection_items/#{collection_item.id
+
+    expect(response.status).to eq(404)
   end
 end

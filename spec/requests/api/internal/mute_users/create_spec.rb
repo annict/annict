@@ -54,9 +54,9 @@ RSpec.describe "POST /api/internal/mute_user", type: :request do
 
     login_as(user, scope: :user)
 
-    expect {
-      post "/api/internal/mute_user", params: {user_id: 999999}
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    post "/api/internal/mute_user", params: {user_id: 999999
+
+    expect(response.status).to eq(404)
   end
 
   it "削除されたユーザーをミュートしようとした場合、エラーになること" do
@@ -66,9 +66,9 @@ RSpec.describe "POST /api/internal/mute_user", type: :request do
 
     login_as(user, scope: :user)
 
-    expect {
-      post "/api/internal/mute_user", params: {user_id: target_user.id}
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    post "/api/internal/mute_user", params: {user_id: target_user.id
+
+    expect(response.status).to eq(404)
   end
 
   it "user_idパラメータが指定されていない場合、エラーになること" do

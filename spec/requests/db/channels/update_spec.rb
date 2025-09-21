@@ -123,9 +123,9 @@ RSpec.describe "PATCH /db/channels/:id", type: :request do
 
     login_as(user, scope: :user)
 
-    expect {
-      patch "/db/channels/non-existent-id", params: {channel: channel_params}
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    patch "/db/channels/non-existent-id", params: {channel: channel_params
+
+    expect(response.status).to eq(404)
   end
 
   it "管理者がログインしているとき、削除されたチャンネルは更新できないこと" do
@@ -138,8 +138,8 @@ RSpec.describe "PATCH /db/channels/:id", type: :request do
 
     login_as(user, scope: :user)
 
-    expect {
-      patch "/db/channels/#{channel.id}", params: {channel: channel_params}
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    patch "/db/channels/#{channel.id
+
+    expect(response.status).to eq(404)
   end
 end

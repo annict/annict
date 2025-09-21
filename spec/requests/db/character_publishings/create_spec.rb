@@ -45,9 +45,9 @@ RSpec.describe "POST /db/characters/:id/publishing", type: :request do
     user = FactoryBot.create(:registered_user, :with_editor_role)
     login_as(user, scope: :user)
 
-    expect do
-      post "/db/characters/invalid-id/publishing"
-    end.to raise_error(ActiveRecord::RecordNotFound)
+    post "/db/characters/invalid-id/publishing"
+
+    expect(response.status).to eq(404)
   end
 
   it "すでに公開済みのキャラクターを公開しようとしたとき、404エラーになること" do
@@ -57,8 +57,8 @@ RSpec.describe "POST /db/characters/:id/publishing", type: :request do
 
     expect(character.published?).to eq(true)
 
-    expect do
-      post "/db/characters/#{character.id}/publishing"
-    end.to raise_error(ActiveRecord::RecordNotFound)
+    post "/db/characters/#{character.id}/publishing"
+
+    expect(response.status).to eq(404)
   end
 end

@@ -28,9 +28,9 @@ RSpec.describe "GET /works/:work_id/staffs", type: :request do
     work = FactoryBot.create(:work, deleted_at: Time.current)
     FactoryBot.create(:staff, work:)
 
-    expect {
-      get "/works/#{work.id}/staffs"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/works/#{work.id
+
+    expect(response.status).to eq(404)
   end
 
   it "存在しないWorkの場合、404エラーが返されること" do

@@ -34,8 +34,8 @@ RSpec.describe "GET /@:username/favorite_characters", type: :request do
     user = create(:registered_user)
     user.destroy_in_batches
 
-    expect {
-      get "/@#{user.username}/favorite_characters"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/@#{user.username
+
+    expect(response.status).to eq(404)
   end
 end

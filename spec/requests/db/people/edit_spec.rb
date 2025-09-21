@@ -58,8 +58,8 @@ RSpec.describe "GET /db/people/:id/edit", type: :request do
     person = create(:person, deleted_at: Time.current)
     login_as(user, scope: :user)
 
-    expect {
-      get "/db/people/#{person.id}/edit"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/db/people/#{person.id
+
+    expect(response.status).to eq(404)
   end
 end

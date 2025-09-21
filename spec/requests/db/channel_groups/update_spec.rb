@@ -114,8 +114,8 @@ RSpec.describe "PATCH /db/channel_groups/:id", type: :request do
 
     login_as(user, scope: :user)
 
-    expect do
-      patch "/db/channel_groups/#{channel_group.id}", params: {channel_group: channel_group_params}
-    end.to raise_error(ActiveRecord::RecordNotFound)
+    patch "/db/channel_groups/#{channel_group.id}", params: {channel_group: channel_group_params}
+
+    expect(response.status).to eq(404)
   end
 end

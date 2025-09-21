@@ -76,9 +76,9 @@ RSpec.describe "GET /@:username", type: :request do
     user = create(:registered_user)
     user.update!(deleted_at: Time.current)
 
-    expect {
-      get "/@#{user.username}"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/@#{user.username
+
+    expect(response.status).to eq(404)
   end
 
   it "大量のアクティビティが存在するユーザーでも適切にページネーションされること" do

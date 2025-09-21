@@ -20,15 +20,13 @@ RSpec.describe "POST /api/internal/episodes/:episode_id/commented_records", type
     user = FactoryBot.create(:user, :with_profile)
     login_as(user, scope: :user)
 
-    expect {
-      post "/api/internal/episodes/99999/commented_records", params: {
-        forms_episode_record_form: {
-          comment: "テストコメント",
-          rating: "good",
-          watched_at: Time.zone.now
-        }
-      }
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    post "/api/internal/episodes/99999/commented_records", params: {
+    forms_episode_record_form: {
+    comment: "テストコメント",
+    rating: "good",
+    watched_at: Time.zone.now
+
+    expect(response.status).to eq(404)
   end
 
   it "削除されたエピソードの場合、404エラーが発生すること" do
@@ -36,15 +34,9 @@ RSpec.describe "POST /api/internal/episodes/:episode_id/commented_records", type
     episode = FactoryBot.create(:episode, deleted_at: Time.zone.now)
     login_as(user, scope: :user)
 
-    expect {
-      post "/api/internal/episodes/#{episode.id}/commented_records", params: {
-        forms_episode_record_form: {
-          comment: "テストコメント",
-          rating: "good",
-          watched_at: Time.zone.now
-        }
-      }
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    post "/api/internal/episodes/#{episode.id
+
+    expect(response.status).to eq(404)
   end
 
   it "有効なパラメータでエピソードレコードを作成できること" do

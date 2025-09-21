@@ -26,9 +26,9 @@ RSpec.describe "POST /api/internal/works/:work_id/status_select", type: :request
     user = FactoryBot.create(:registered_user)
     login_as(user, scope: :user)
 
-    expect {
-      post internal_api_work_status_select_path(work_id: "non-existent-id"), params: {status_kind: "watching"}
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    post internal_api_work_status_select_path(work_id: "non-existent-id"), params: {status_kind: "watching"
+
+    expect(response.status).to eq(404)
   end
 
   it "無効なstatus_kindが渡されたとき、バリデーションエラーで201を返すこと" do

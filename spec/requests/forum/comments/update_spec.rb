@@ -111,13 +111,9 @@ RSpec.describe "PATCH /forum/posts/:post_id/comments/:comment_id", type: :reques
     forum_comment = create(:forum_comment, user: user)
     login_as(user, scope: :user)
 
-    expect {
-      patch "/forum/posts/99999/comments/#{forum_comment.id}", params: {
-        forum_comment: {
-          body: "存在しない投稿の更新"
-        }
-      }
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    patch "/forum/posts/99999/comments/#{forum_comment.id
+
+    expect(response.status).to eq(404)
   end
 
   it "ログインしているとき、存在しないコメントIDが指定された場合、404エラーになること" do
@@ -125,13 +121,9 @@ RSpec.describe "PATCH /forum/posts/:post_id/comments/:comment_id", type: :reques
     forum_post = create(:forum_post)
     login_as(user, scope: :user)
 
-    expect {
-      patch "/forum/posts/#{forum_post.id}/comments/99999", params: {
-        forum_comment: {
-          body: "存在しないコメントの更新"
-        }
-      }
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    patch "/forum/posts/#{forum_post.id
+
+    expect(response.status).to eq(404)
   end
 
   it "指定された投稿に属さないコメントIDが指定された場合、404エラーになること" do
@@ -141,13 +133,9 @@ RSpec.describe "PATCH /forum/posts/:post_id/comments/:comment_id", type: :reques
     forum_comment = create(:forum_comment, forum_post: forum_post1, user: user)
     login_as(user, scope: :user)
 
-    expect {
-      patch "/forum/posts/#{forum_post2.id}/comments/#{forum_comment.id}", params: {
-        forum_comment: {
-          body: "別の投稿のコメントを更新"
-        }
-      }
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    patch "/forum/posts/#{forum_post2.id
+
+    expect(response.status).to eq(404)
   end
 
   it "コメント更新時にlast_commented_atは更新されないこと" do

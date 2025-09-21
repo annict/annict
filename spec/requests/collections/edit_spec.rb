@@ -28,9 +28,9 @@ RSpec.describe "GET /collections/:collection_id/edit", type: :request do
     collection = create(:collection, user: user1)
     login_as(user2, scope: :user)
 
-    expect {
-      get "/collections/#{collection.id}/edit"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/collections/#{collection.id
+
+    expect(response.status).to eq(404)
   end
 
   it "存在しないコレクションを編集しようとしたとき、404エラーが返されること" do
@@ -48,8 +48,8 @@ RSpec.describe "GET /collections/:collection_id/edit", type: :request do
     collection.update!(deleted_at: Time.current)
     login_as(user, scope: :user)
 
-    expect {
-      get "/collections/#{collection.id}/edit"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/collections/#{collection.id
+
+    expect(response.status).to eq(404)
   end
 end

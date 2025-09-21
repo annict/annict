@@ -113,8 +113,8 @@ RSpec.describe "PATCH /db/organizations/:id", type: :request do
 
     login_as(user, scope: :user)
 
-    expect {
-      patch "/db/organizations/#{organization.id}", params: {organization: organization_params}
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    patch "/db/organizations/#{organization.id
+
+    expect(response.status).to eq(404)
   end
 end

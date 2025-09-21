@@ -130,7 +130,8 @@ RSpec.describe "POST /db/works/:work_id/programs", type: :request do
 
     login_as(user, scope: :user)
 
-    expect { post "/db/works/999999/programs", params: {deprecated_db_program_rows_form: form_params} }
-      .to raise_error(ActiveRecord::RecordNotFound)
+    post "/db/works/999999/programs", params: {deprecated_db_program_rows_form: form_params}
+
+    expect(response.status).to eq(404)
   end
 end

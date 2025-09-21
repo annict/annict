@@ -88,13 +88,9 @@ RSpec.describe "PATCH /collection_items/:collection_item_id", type: :request do
 
     login_as(user, scope: :user)
 
-    expect {
-      patch "/collection_items/#{other_collection_item.id}", params: {
-        forms_collection_item_form: {
-          body: "更新された説明文"
-        }
-      }
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    patch "/collection_items/#{other_collection_item.id
+
+    expect(response.status).to eq(404)
   end
 
   it "存在しないコレクションアイテムを更新しようとしたとき、404エラーになること" do
@@ -102,13 +98,11 @@ RSpec.describe "PATCH /collection_items/:collection_item_id", type: :request do
 
     login_as(user, scope: :user)
 
-    expect {
-      patch "/collection_items/999999", params: {
-        forms_collection_item_form: {
-          body: "更新された説明文"
-        }
-      }
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    patch "/collection_items/999999", params: {
+    forms_collection_item_form: {
+    body: "更新された説明文"
+
+    expect(response.status).to eq(404)
   end
 
   it "削除済みのコレクションアイテムを更新しようとしたとき、404エラーになること" do
@@ -120,12 +114,8 @@ RSpec.describe "PATCH /collection_items/:collection_item_id", type: :request do
 
     login_as(user, scope: :user)
 
-    expect {
-      patch "/collection_items/#{collection_item.id}", params: {
-        forms_collection_item_form: {
-          body: "更新された説明文"
-        }
-      }
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    patch "/collection_items/#{collection_item.id
+
+    expect(response.status).to eq(404)
   end
 end

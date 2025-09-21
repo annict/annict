@@ -15,9 +15,9 @@ RSpec.describe "POST /db/works/:work_id/image", type: :request do
     work = FactoryBot.create(:work, deleted_at: Time.current)
     login_as(user, scope: :user)
 
-    expect {
-      post "/db/works/#{work.id}/image"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    post "/db/works/#{work.id
+
+    expect(response.status).to eq(404)
   end
 
   it "権限がないユーザーの場合、403エラーになること" do

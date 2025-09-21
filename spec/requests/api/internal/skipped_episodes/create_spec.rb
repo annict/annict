@@ -17,11 +17,10 @@ RSpec.describe "POST /api/internal/skipped_episodes", type: :request do
 
     login_as(user, scope: :user)
 
-    expect {
-      post "/api/internal/skipped_episodes", params: {
-        episode_id: "nonexistent"
-      }
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    post "/api/internal/skipped_episodes", params: {
+    episode_id: "nonexistent"
+
+    expect(response.status).to eq(404)
   end
 
   it "削除されたエピソードの場合、404を返すこと" do
@@ -30,11 +29,10 @@ RSpec.describe "POST /api/internal/skipped_episodes", type: :request do
 
     login_as(user, scope: :user)
 
-    expect {
-      post "/api/internal/skipped_episodes", params: {
-        episode_id: episode.id
-      }
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    post "/api/internal/skipped_episodes", params: {
+    episode_id: episode.id
+
+    expect(response.status).to eq(404)
   end
 
   it "有効なパラメータでエピソードをスキップできること" do

@@ -47,8 +47,8 @@ RSpec.describe "GET /db/works/:work_id/episodes/new", type: :request do
     user = create(:registered_user, :with_editor_role)
     login_as(user, scope: :user)
 
-    expect {
-      get "/db/works/#{work.id}/episodes/new"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/db/works/#{work.id
+
+    expect(response.status).to eq(404)
   end
 end

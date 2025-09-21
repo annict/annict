@@ -50,9 +50,9 @@ RSpec.describe "GET /db/channels/:id/edit", type: :request do
     channel.update!(deleted_at: Time.current)
     login_as(user, scope: :user)
 
-    expect {
-      get "/db/channels/#{channel.id}/edit"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/db/channels/#{channel.id
+
+    expect(response.status).to eq(404)
   end
 
   it "存在しないチャンネルIDでアクセスしたとき、404エラーになること" do

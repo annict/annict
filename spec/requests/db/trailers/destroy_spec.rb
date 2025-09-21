@@ -104,8 +104,8 @@ RSpec.describe "DELETE /db/trailers/:id", type: :request do
     trailer.update!(deleted_at: Time.current)
     login_as(user, scope: :user)
 
-    expect {
-      delete "/db/trailers/#{trailer.id}"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    delete "/db/trailers/#{trailer.id
+
+    expect(response.status).to eq(404)
   end
 end

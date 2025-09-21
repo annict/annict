@@ -84,8 +84,8 @@ RSpec.describe "GET /works/:work_id/videos", type: :request do
   it "削除された作品の動画一覧にアクセスしたとき、404エラーが返されること" do
     work = create(:work, :deleted)
 
-    expect {
-      get "/works/#{work.id}/videos"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/works/#{work.id
+
+    expect(response.status).to eq(404)
   end
 end

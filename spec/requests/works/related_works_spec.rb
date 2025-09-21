@@ -41,9 +41,9 @@ RSpec.describe "GET /works/:work_id/related_works", type: :request do
   it "削除された作品にアクセスしたとき、404エラーが返されること" do
     work = create(:work, deleted_at: Time.current)
 
-    expect {
-      get "/works/#{work.id}/related_works"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/works/#{work.id
+
+    expect(response.status).to eq(404)
   end
 
   it "複数のシリーズに属している作品の場合、すべてのシリーズと関連作品が表示されること" do

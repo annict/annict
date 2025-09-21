@@ -55,8 +55,8 @@ RSpec.describe "POST /db/slots/:id/publishing", type: :request do
     slot = create(:slot, :published)
     login_as(user, scope: :user)
 
-    expect {
-      post "/db/slots/#{slot.id}/publishing"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    post "/db/slots/#{slot.id
+
+    expect(response.status).to eq(404)
   end
 end

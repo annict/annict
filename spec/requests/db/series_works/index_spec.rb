@@ -30,9 +30,9 @@ RSpec.describe "GET /db/series/:series_id/series_works", type: :request do
   it "存在しないシリーズIDの場合、404エラーが返されること" do
     non_existent_id = "non-existent-id"
 
-    expect {
-      get "/db/series/#{non_existent_id}/series_works"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/db/series/#{non_existent_id
+
+    expect(response.status).to eq(404)
   end
 
   it "削除されたシリーズのワーク一覧にはアクセスできないこと" do
@@ -40,9 +40,9 @@ RSpec.describe "GET /db/series/:series_id/series_works", type: :request do
     series = series_work.series
     series.destroy!
 
-    expect {
-      get "/db/series/#{series.id}/series_works"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/db/series/#{series.id
+
+    expect(response.status).to eq(404)
   end
 
   it "複数のワークが存在する場合、すべて表示されること" do

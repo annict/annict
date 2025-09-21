@@ -65,7 +65,9 @@ RSpec.describe "DELETE /db/channel_groups/:id", type: :request do
     login_as(user, scope: :user)
     non_existent_id = "non-existent-id"
 
-    expect { delete "/db/channel_groups/#{non_existent_id}" }.to raise_error(ActiveRecord::RecordNotFound)
+    delete "/db/channel_groups/#{non_existent_id
+
+    expect(response.status).to eq(404)
   end
 
   it "管理者権限を持つユーザーでログインしているとき、すでに論理削除されたチャンネルグループは削除できないこと" do
@@ -76,6 +78,8 @@ RSpec.describe "DELETE /db/channel_groups/:id", type: :request do
 
     expect(channel_group.deleted?).to eq(true)
 
-    expect { delete "/db/channel_groups/#{channel_group.id}" }.to raise_error(ActiveRecord::RecordNotFound)
+    delete "/db/channel_groups/#{channel_group.id
+
+    expect(response.status).to eq(404)
   end
 end

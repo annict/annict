@@ -223,14 +223,12 @@ RSpec.describe "PATCH /forum/posts/:post_id", type: :request do
     forum_category = create(:forum_category, :general)
     login_as(user, scope: :user)
 
-    expect {
-      patch "/forum/posts/99999", params: {
-        forum_post: {
-          forum_category_id: forum_category.id,
-          title: "タイトル",
-          body: "本文"
-        }
-      }
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    patch "/forum/posts/99999", params: {
+    forum_post: {
+    forum_category_id: forum_category.id,
+    title: "タイトル",
+    body: "本文"
+
+    expect(response.status).to eq(404)
   end
 end
