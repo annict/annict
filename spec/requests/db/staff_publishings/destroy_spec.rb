@@ -48,9 +48,9 @@ RSpec.describe "DELETE /db/staffs/:id/publishing", type: :request do
 
     login_as(user, scope: :user)
 
-    expect {
-      delete "/db/staffs/non-existent-id/publishing"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    delete "/db/staffs/non-existent-id/publishing"
+
+    expect(response).to have_http_status(404)
   end
 
   it "エディター権限があるユーザーがログインしているとき、すでに非公開のスタッフを指定すると404エラーになること" do
@@ -59,8 +59,8 @@ RSpec.describe "DELETE /db/staffs/:id/publishing", type: :request do
 
     login_as(user, scope: :user)
 
-    expect {
-      delete "/db/staffs/#{staff.id}/publishing"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    delete "/db/staffs/#{staff.id}/publishing"
+
+    expect(response).to have_http_status(404)
   end
 end

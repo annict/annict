@@ -46,8 +46,9 @@ RSpec.describe "DELETE /db/organizations/:id/publishing", type: :request do
     organization = create(:organization, :published, :deleted)
     login_as(user, scope: :user)
 
-    expect { delete "/db/organizations/#{organization.id}/publishing" }
-      .to raise_error(ActiveRecord::RecordNotFound)
+    delete "/db/organizations/#{organization.id}/publishing"
+
+    expect(response).to have_http_status(404)
   end
 
   it "非公開の団体を非公開にしようとした場合、404エラーになること" do
@@ -55,15 +56,17 @@ RSpec.describe "DELETE /db/organizations/:id/publishing", type: :request do
     organization = create(:organization, :unpublished)
     login_as(user, scope: :user)
 
-    expect { delete "/db/organizations/#{organization.id}/publishing" }
-      .to raise_error(ActiveRecord::RecordNotFound)
+    delete "/db/organizations/#{organization.id}/publishing"
+
+    expect(response).to have_http_status(404)
   end
 
   it "存在しない団体IDの場合、404エラーになること" do
     user = create(:registered_user, :with_editor_role)
     login_as(user, scope: :user)
 
-    expect { delete "/db/organizations/invalid-id/publishing" }
-      .to raise_error(ActiveRecord::RecordNotFound)
+    delete "/db/organizations/invalid-id/publishing"
+
+    expect(response).to have_http_status(404)
   end
 end

@@ -48,8 +48,8 @@ RSpec.describe "DELETE /db/slots/:id/publishing", type: :request do
 
     login_as(user, scope: :user)
 
-    expect do
-      delete "/db/slots/00000000-0000-0000-0000-000000000000/publishing"
-    end.to raise_error(ActiveRecord::RecordNotFound)
+    delete "/db/slots/00000000-0000-0000-0000-000000000000/publishing"
+
+    expect(response).to have_http_status(404)
   end
 end

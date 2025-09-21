@@ -45,9 +45,9 @@ RSpec.describe "DELETE /db/trailers/:id/publishing", type: :request do
     user = FactoryBot.create(:registered_user, :with_editor_role)
     login_as(user, scope: :user)
 
-    expect {
-      delete "/db/trailers/nonexistent-id/publishing"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    delete "/db/trailers/nonexistent-id/publishing"
+
+    expect(response).to have_http_status(404)
   end
 
   it "すでに非公開のトレーラーを非公開にしようとしたとき、404エラーが返されること" do
@@ -57,8 +57,8 @@ RSpec.describe "DELETE /db/trailers/:id/publishing", type: :request do
 
     expect(trailer.published?).to eq(false)
 
-    expect {
-      delete "/db/trailers/#{trailer.id}/publishing"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    delete "/db/trailers/#{trailer.id}/publishing"
+
+    expect(response).to have_http_status(404)
   end
 end

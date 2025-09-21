@@ -48,9 +48,9 @@ RSpec.describe "DELETE /db/people/:id/publishing", type: :request do
 
     login_as(user, scope: :user)
 
-    expect {
-      delete "/db/people/non-existent-id/publishing"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    delete "/db/people/non-existent-id/publishing"
+
+    expect(response).to have_http_status(404)
   end
 
   it "すでに非公開の人物を指定したとき、404エラーになること" do
@@ -59,9 +59,9 @@ RSpec.describe "DELETE /db/people/:id/publishing", type: :request do
 
     login_as(user, scope: :user)
 
-    expect {
-      delete "/db/people/#{person.id}/publishing"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    delete "/db/people/#{person.id}/publishing"
+
+    expect(response).to have_http_status(404)
   end
 
   it "削除済みの人物を指定したとき、404エラーになること" do
@@ -71,8 +71,8 @@ RSpec.describe "DELETE /db/people/:id/publishing", type: :request do
 
     login_as(user, scope: :user)
 
-    expect {
-      delete "/db/people/#{person.id}/publishing"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    delete "/db/people/#{person.id}/publishing"
+
+    expect(response).to have_http_status(404)
   end
 end

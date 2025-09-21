@@ -47,6 +47,8 @@ RSpec.describe "DELETE /db/series_works/:id/publishing", type: :request do
 
     login_as(user, scope: :user)
 
-    expect { delete "/db/series_works/non-existent-id/publishing" }.to raise_error(ActiveRecord::RecordNotFound)
+    delete "/db/series_works/non-existent-id/publishing"
+
+    expect(response).to have_http_status(404)
   end
 end

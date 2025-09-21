@@ -45,9 +45,9 @@ RSpec.describe "DELETE /db/episodes/:id/publishing", type: :request do
     user = FactoryBot.create(:registered_user, :with_editor_role)
     login_as(user, scope: :user)
 
-    expect {
-      delete "/db/episodes/nonexistent-id/publishing"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    delete "/db/episodes/nonexistent-id/publishing"
+
+    expect(response).to have_http_status(404)
   end
 
   it "既に非公開のエピソードを指定したとき、404エラーになること" do
@@ -55,9 +55,9 @@ RSpec.describe "DELETE /db/episodes/:id/publishing", type: :request do
     episode = FactoryBot.create(:episode, :unpublished)
     login_as(user, scope: :user)
 
-    expect {
-      delete "/db/episodes/#{episode.id}/publishing"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    delete "/db/episodes/#{episode.id}/publishing"
+
+    expect(response).to have_http_status(404)
   end
 
   it "削除されたエピソードを指定したとき、404エラーになること" do
@@ -65,8 +65,8 @@ RSpec.describe "DELETE /db/episodes/:id/publishing", type: :request do
     episode = FactoryBot.create(:episode, :published, deleted_at: Time.current)
     login_as(user, scope: :user)
 
-    expect {
-      delete "/db/episodes/#{episode.id}/publishing"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    delete "/db/episodes/#{episode.id}/publishing"
+
+    expect(response).to have_http_status(404)
   end
 end

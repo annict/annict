@@ -45,9 +45,9 @@ RSpec.describe "DELETE /db/characters/:id/publishing", type: :request do
     user = create(:registered_user, :with_editor_role)
     login_as(user, scope: :user)
 
-    expect {
-      delete "/db/characters/99999/publishing"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    delete "/db/characters/99999/publishing"
+
+    expect(response).to have_http_status(404)
   end
 
   it "未公開のキャラクターを指定したとき、404エラーになること" do
@@ -57,9 +57,9 @@ RSpec.describe "DELETE /db/characters/:id/publishing", type: :request do
 
     expect(character.published?).to eq(false)
 
-    expect {
-      delete "/db/characters/#{character.id}/publishing"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    delete "/db/characters/#{character.id}/publishing"
+
+    expect(response).to have_http_status(404)
   end
 
   it "削除済みのキャラクターを指定したとき、404エラーになること" do
@@ -68,8 +68,8 @@ RSpec.describe "DELETE /db/characters/:id/publishing", type: :request do
     character.destroy_in_batches
     login_as(user, scope: :user)
 
-    expect {
-      delete "/db/characters/#{character.id}/publishing"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    delete "/db/characters/#{character.id}/publishing"
+
+    expect(response).to have_http_status(404)
   end
 end

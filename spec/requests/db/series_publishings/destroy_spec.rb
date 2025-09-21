@@ -45,9 +45,9 @@ RSpec.describe "DELETE /db/series/:id/publishing", type: :request do
     user = create(:registered_user, :with_editor_role)
     login_as(user, scope: :user)
 
-    expect do
-      delete "/db/series/999999/publishing"
-    end.to raise_error(ActiveRecord::RecordNotFound)
+    delete "/db/series/999999/publishing"
+
+    expect(response).to have_http_status(404)
   end
 
   it "編集者ロールを持つユーザーがログインしているとき、既に非公開のシリーズの場合404エラーになること" do
@@ -55,8 +55,8 @@ RSpec.describe "DELETE /db/series/:id/publishing", type: :request do
     series = create(:series, :unpublished)
     login_as(user, scope: :user)
 
-    expect do
-      delete "/db/series/#{series.id}/publishing"
-    end.to raise_error(ActiveRecord::RecordNotFound)
+    delete "/db/series/#{series.id}/publishing"
+
+    expect(response).to have_http_status(404)
   end
 end

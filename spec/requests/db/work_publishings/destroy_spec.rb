@@ -46,9 +46,9 @@ RSpec.describe "DELETE /db/works/:id/publishing", type: :request do
     work = create(:work, :published, deleted_at: Time.current)
     login_as(user, scope: :user)
 
-    expect {
-      delete "/db/works/#{work.id}/publishing"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    delete "/db/works/#{work.id}/publishing"
+
+    expect(response).to have_http_status(404)
   end
 
   it "エディター権限があるユーザーでログインしているとき、未公開の作品は見つからないこと" do
@@ -56,17 +56,17 @@ RSpec.describe "DELETE /db/works/:id/publishing", type: :request do
     work = create(:work, :unpublished)
     login_as(user, scope: :user)
 
-    expect {
-      delete "/db/works/#{work.id}/publishing"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    delete "/db/works/#{work.id}/publishing"
+
+    expect(response).to have_http_status(404)
   end
 
   it "エディター権限があるユーザーでログインしているとき、存在しない作品IDの場合は見つからないこと" do
     user = create(:registered_user, :with_editor_role)
     login_as(user, scope: :user)
 
-    expect {
-      delete "/db/works/nonexistent-id/publishing"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    delete "/db/works/nonexistent-id/publishing"
+
+    expect(response).to have_http_status(404)
   end
 end

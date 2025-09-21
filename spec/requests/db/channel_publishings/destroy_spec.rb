@@ -58,9 +58,9 @@ RSpec.describe "DELETE /db/channels/:id/publishing", type: :request do
     user = create(:registered_user, :with_admin_role)
     login_as(user, scope: :user)
 
-    expect {
-      delete "/db/channels/invalid-id/publishing"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    delete "/db/channels/invalid-id/publishing"
+
+    expect(response).to have_http_status(404)
   end
 
   it "既に非公開のチャンネルに対してリクエストしたとき、404エラーを返すこと" do
@@ -69,9 +69,9 @@ RSpec.describe "DELETE /db/channels/:id/publishing", type: :request do
     channel.unpublish
     login_as(user, scope: :user)
 
-    expect {
-      delete "/db/channels/#{channel.id}/publishing"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    delete "/db/channels/#{channel.id}/publishing"
+
+    expect(response).to have_http_status(404)
   end
 
   it "削除されたチャンネルに対してリクエストしたとき、404エラーを返すこと" do
@@ -81,8 +81,8 @@ RSpec.describe "DELETE /db/channels/:id/publishing", type: :request do
     channel.destroy_in_batches
     login_as(user, scope: :user)
 
-    expect {
-      delete "/db/channels/#{channel_id}/publishing"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    delete "/db/channels/#{channel_id}/publishing"
+
+    expect(response).to have_http_status(404)
   end
 end
