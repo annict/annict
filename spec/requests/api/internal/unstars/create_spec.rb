@@ -87,7 +87,7 @@ RSpec.describe "POST /api/internal/unstars", type: :request do
     data = {starrable_type: "Character", starrable_id: 99999}
 
     login_as(user, scope: :user)
-     post api("/api/internal/unstars", data) 
+    post api("/api/internal/unstars", data)
 
     expect(response).to have_http_status(:not_found)
   end

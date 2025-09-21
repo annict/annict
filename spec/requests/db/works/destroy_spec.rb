@@ -67,7 +67,7 @@ RSpec.describe "DELETE /db/works/:id", type: :request do
     user = create(:registered_user, :with_admin_role)
     login_as(user, scope: :user)
 
-     delete "/db/works/non-existent-id" 
+    delete "/db/works/non-existent-id"
 
     expect(response).to have_http_status(:not_found)
   end

@@ -62,7 +62,7 @@ RSpec.describe "POST /db/works/:id/publishing", type: :request do
     user = create(:registered_user, :with_editor_role)
     login_as(user, scope: :user)
 
-     post "/db/works/invalid-id/publishing" 
+    post "/db/works/invalid-id/publishing"
 
     expect(response).to have_http_status(:not_found)
   end
