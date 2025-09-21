@@ -29,9 +29,9 @@ RSpec.describe "GET /fragment/episodes/:episode_id/records", type: :request do
     user = FactoryBot.create(:registered_user)
 
     login_as(user, scope: :user)
-    expect {
-      get "/fragment/episodes/99999/records"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/fragment/episodes/99999/records"
+    
+    expect(response.status).to eq(404)
   end
 
   it "削除済みエピソードの記録にアクセスしたとき、404エラーを返すこと" do
@@ -40,9 +40,9 @@ RSpec.describe "GET /fragment/episodes/:episode_id/records", type: :request do
     episode = FactoryBot.create(:episode, :deleted, work:)
 
     login_as(user, scope: :user)
-    expect {
-      get "/fragment/episodes/#{episode.id}/records"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/fragment/episodes/#{episode.id}/records"
+    
+    expect(response.status).to eq(404)
   end
 
   it "自分の記録を表示すること" do
