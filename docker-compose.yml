@@ -18,7 +18,7 @@ services:
     environment:
       MINIO_ROOT_USER: minio_admin
       MINIO_ROOT_PASSWORD: minio_admin
-      MINIO_DOMAIN: minio
+      MINIO_SERVER_URL: http://localhost:9000
     ports:
       - "19000:9000"
       - "19001:9001"
