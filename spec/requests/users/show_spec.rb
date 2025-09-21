@@ -76,7 +76,7 @@ RSpec.describe "GET /@:username", type: :request do
     user = create(:registered_user)
     user.update!(deleted_at: Time.current)
 
-    get "/@#{user.username
+    get "/@#{user.username}"
 
     expect(response.status).to eq(404)
   end

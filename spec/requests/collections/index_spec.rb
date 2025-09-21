@@ -51,7 +51,7 @@ RSpec.describe "GET /@:username/collections", type: :request do
     user = create(:registered_user)
     user.update!(deleted_at: Time.current)
 
-    get "/@#{user.username
+    get "/@#{user.username}/collections"
 
     expect(response.status).to eq(404)
   end

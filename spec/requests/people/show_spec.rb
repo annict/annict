@@ -14,7 +14,7 @@ RSpec.describe "GET /people/:person_id", type: :request do
   it "削除済みの人物の場合、404エラーになること" do
     person = FactoryBot.create(:person, deleted_at: Time.current)
 
-    get "/people/#{person.id
+    get "/people/#{person.id}"
 
     expect(response.status).to eq(404)
   end

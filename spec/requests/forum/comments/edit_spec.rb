@@ -41,7 +41,7 @@ RSpec.describe "GET /forum/posts/:post_id/comments/:comment_id/edit", type: :req
     forum_comment = create(:forum_comment, user: user)
     login_as(user, scope: :user)
 
-    get "/forum/posts/99999/comments/#{forum_comment.id
+    get "/forum/posts/99999/comments/#{forum_comment.id}/edit"
 
     expect(response.status).to eq(404)
   end
@@ -51,7 +51,7 @@ RSpec.describe "GET /forum/posts/:post_id/comments/:comment_id/edit", type: :req
     forum_post = create(:forum_post)
     login_as(user, scope: :user)
 
-    get "/forum/posts/#{forum_post.id
+    get "/forum/posts/#{forum_post.id}/comments/99999/edit"
 
     expect(response.status).to eq(404)
   end
@@ -63,7 +63,7 @@ RSpec.describe "GET /forum/posts/:post_id/comments/:comment_id/edit", type: :req
     forum_comment = create(:forum_comment, forum_post: forum_post1, user: user)
     login_as(user, scope: :user)
 
-    get "/forum/posts/#{forum_post2.id
+    get "/forum/posts/#{forum_post2.id}/comments/#{forum_comment.id}/edit"
 
     expect(response.status).to eq(404)
   end

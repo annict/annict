@@ -31,7 +31,7 @@ RSpec.describe "GET /ics", type: :request do
     user = FactoryBot.create(:user, username: "deleted_user")
     user.update!(deleted_at: Time.zone.now)
 
-    get "/@#{user.username
+    get "/@#{user.username}/ics"
 
     expect(response.status).to eq(404)
   end

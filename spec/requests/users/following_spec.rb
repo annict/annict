@@ -31,7 +31,7 @@ RSpec.describe "GET /@:username/following", type: :request do
     user = create(:registered_user)
     user.update!(deleted_at: Time.current)
 
-    get "/@#{user.username
+    get "/@#{user.username}/following"
 
     expect(response.status).to eq(404)
   end

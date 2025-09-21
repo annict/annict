@@ -103,8 +103,10 @@ RSpec.describe "POST /forum/posts/:post_id/comments", type: :request do
     login_as(user, scope: :user)
 
     post "/forum/posts/99999/comments", params: {
-    forum_comment: {
-    body: "存在しない投稿へのコメント"
+      forum_comment: {
+        body: "存在しない投稿へのコメント"
+      }
+    }
 
     expect(response.status).to eq(404)
   end

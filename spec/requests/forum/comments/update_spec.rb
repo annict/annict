@@ -111,7 +111,11 @@ RSpec.describe "PATCH /forum/posts/:post_id/comments/:comment_id", type: :reques
     forum_comment = create(:forum_comment, user: user)
     login_as(user, scope: :user)
 
-    patch "/forum/posts/99999/comments/#{forum_comment.id
+    patch "/forum/posts/99999/comments/#{forum_comment.id}", params: {
+      forum_comment: {
+        body: "更新されたコメント"
+      }
+    }
 
     expect(response.status).to eq(404)
   end
@@ -121,7 +125,11 @@ RSpec.describe "PATCH /forum/posts/:post_id/comments/:comment_id", type: :reques
     forum_post = create(:forum_post)
     login_as(user, scope: :user)
 
-    patch "/forum/posts/#{forum_post.id
+    patch "/forum/posts/#{forum_post.id}/comments/99999", params: {
+      forum_comment: {
+        body: "更新されたコメント"
+      }
+    }
 
     expect(response.status).to eq(404)
   end
@@ -133,7 +141,11 @@ RSpec.describe "PATCH /forum/posts/:post_id/comments/:comment_id", type: :reques
     forum_comment = create(:forum_comment, forum_post: forum_post1, user: user)
     login_as(user, scope: :user)
 
-    patch "/forum/posts/#{forum_post2.id
+    patch "/forum/posts/#{forum_post2.id}/comments/#{forum_comment.id}", params: {
+      forum_comment: {
+        body: "更新されたコメント"
+      }
+    }
 
     expect(response.status).to eq(404)
   end

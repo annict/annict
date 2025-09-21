@@ -37,7 +37,7 @@ RSpec.describe "GET /works/:work_id/episodes", type: :request do
     work = FactoryBot.create(:work, :with_episode)
     work.update!(deleted_at: Time.current)
 
-    get "/works/#{work.id
+    get "/works/#{work.id}/episodes"
 
     expect(response.status).to eq(404)
   end

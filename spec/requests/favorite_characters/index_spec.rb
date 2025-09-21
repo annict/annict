@@ -34,7 +34,7 @@ RSpec.describe "GET /@:username/favorite_characters", type: :request do
     user = create(:registered_user)
     user.destroy_in_batches
 
-    get "/@#{user.username
+    get "/@#{user.username}/favorite_characters"
 
     expect(response.status).to eq(404)
   end

@@ -41,7 +41,7 @@ RSpec.describe "DELETE /collection_items/:collection_item_id", type: :request do
 
     login_as(user, scope: :user)
 
-    delete "/collection_items/#{other_collection_item.id
+    delete "/collection_items/#{other_collection_item.id}"
 
     expect(response.status).to eq(404)
   end
@@ -65,7 +65,7 @@ RSpec.describe "DELETE /collection_items/:collection_item_id", type: :request do
 
     login_as(user, scope: :user)
 
-    delete "/collection_items/#{collection_item.id
+    delete "/collection_items/#{collection_item.id}"
 
     expect(response.status).to eq(404)
   end

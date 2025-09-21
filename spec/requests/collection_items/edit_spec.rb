@@ -38,7 +38,7 @@ RSpec.describe "GET /collection_items/:collection_item_id/edit", type: :request 
 
     login_as(user, scope: :user)
 
-    get "/collection_items/#{other_collection_item.id
+    get "/collection_items/#{other_collection_item.id}/edit"
 
     expect(response.status).to eq(404)
   end
@@ -62,7 +62,7 @@ RSpec.describe "GET /collection_items/:collection_item_id/edit", type: :request 
 
     login_as(user, scope: :user)
 
-    get "/collection_items/#{collection_item.id
+    get "/collection_items/#{collection_item.id}/edit"
 
     expect(response.status).to eq(404)
   end

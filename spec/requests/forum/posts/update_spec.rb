@@ -224,10 +224,12 @@ RSpec.describe "PATCH /forum/posts/:post_id", type: :request do
     login_as(user, scope: :user)
 
     patch "/forum/posts/99999", params: {
-    forum_post: {
-    forum_category_id: forum_category.id,
-    title: "タイトル",
-    body: "本文"
+      forum_post: {
+        forum_category_id: forum_category.id,
+        title: "タイトル",
+        body: "本文"
+      }
+    }
 
     expect(response.status).to eq(404)
   end

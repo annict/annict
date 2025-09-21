@@ -28,7 +28,7 @@ RSpec.describe "GET /collections/:collection_id/edit", type: :request do
     collection = create(:collection, user: user1)
     login_as(user2, scope: :user)
 
-    get "/collections/#{collection.id
+    get "/collections/#{collection.id}/edit"
 
     expect(response.status).to eq(404)
   end
@@ -48,7 +48,7 @@ RSpec.describe "GET /collections/:collection_id/edit", type: :request do
     collection.update!(deleted_at: Time.current)
     login_as(user, scope: :user)
 
-    get "/collections/#{collection.id
+    get "/collections/#{collection.id}/edit"
 
     expect(response.status).to eq(404)
   end

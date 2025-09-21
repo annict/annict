@@ -28,7 +28,7 @@ RSpec.describe "GET /works/:work_id/staffs", type: :request do
     work = FactoryBot.create(:work, deleted_at: Time.current)
     FactoryBot.create(:staff, work:)
 
-    get "/works/#{work.id
+    get "/works/#{work.id}/staffs"
 
     expect(response.status).to eq(404)
   end
