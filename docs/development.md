@@ -65,10 +65,10 @@ http://localhost:19001/login にアクセスし、以下の情報で MinIO の�
 
 ```sh
 cd /path/to/annict
-docker compose exec app bin/setup
-docker compose exec app bin/dev
-docker compose exec app bin/rails jobs:work
-docker compose exec app bin/rails server
+./bin/setup
+./bin/dev
+./bin/rails jobs:work
+./bin/rails server
 ```
 
 ### ブラウザで Annict にアクセスする
@@ -83,7 +83,7 @@ docker compose exec app bin/rails server
 まず `rails console` します。
 
 ```sh
-docker compose exec app bin/rails console
+./bin/rails console
 ```
 
 以下のスクリプトを実行して管理者を作成します。ユーザ名やメールアドレスなどは適宜置き換えてください。
@@ -106,5 +106,5 @@ user.confirm
 Annict では RSpec を使ってテストを書いています。以下のコマンドでテストを実行することができます。
 
 ```sh
-docker compose exec -e RAILS_ENV=test app bin/rspec
+./bin/rspec
 ```
