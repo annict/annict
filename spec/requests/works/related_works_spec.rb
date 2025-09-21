@@ -125,4 +125,20 @@ RSpec.describe "GET /works/:work_id/related_works", type: :request do
     expect(body_index_2023_spring).to be < body_index_2024_winter
     expect(body_index_2024_winter).to be < body_index_2024_summer
   end
+
+  it "非公開のシリーズ作品が表示されないこと" do
+    series = create(:series)
+
+    published_on_series_work = create(:work)
+    unpublished_on_series_work = create(:work)
+    create(:series_work, series: series, work: published_on_series_work)
+    create(:series_work, series: series, work: unpublished_on_series_work, unpublished_at: Time.current)
+
+    get "/works/#{published_on_series_work.id}/related_works"
+
+    expect(response.status).to eq(200)
+    expect(response.body).to include(series.name)
+    expect(response.body).to include(published_on_series_work.title)
+    expect(response.body).not_to include(unpublished_on_series_work.title)
+  end
 end
