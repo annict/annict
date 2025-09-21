@@ -184,13 +184,13 @@ RSpec.describe "POST /fragment/works/:work_id/collection_items", type: :request 
 
     login_as(user, scope: :user)
 
-    expect {
-      post "/fragment/works/999999/collection_items", params: {
-        forms_collection_item_form: {
-          collection_id: collection.id
-        }
+    post "/fragment/works/999999/collection_items", params: {
+      forms_collection_item_form: {
+        collection_id: collection.id
       }
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    }
+
+    expect(response.status).to eq(404)
   end
 
   it "削除されたworkIDで404エラーになること" do
@@ -201,13 +201,13 @@ RSpec.describe "POST /fragment/works/:work_id/collection_items", type: :request 
 
     login_as(user, scope: :user)
 
-    expect {
-      post "/fragment/works/#{work.id}/collection_items", params: {
-        forms_collection_item_form: {
-          collection_id: collection.id
-        }
+    post "/fragment/works/#{work.id}/collection_items", params: {
+      forms_collection_item_form: {
+        collection_id: collection.id
       }
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    }
+
+    expect(response.status).to eq(404)
   end
 
   it "他のユーザーのコレクションを指定するとバリデーションエラーになること" do

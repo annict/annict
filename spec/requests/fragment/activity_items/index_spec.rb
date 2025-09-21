@@ -33,8 +33,8 @@ RSpec.describe "GET /fragment/activity_groups/:activity_group_id/items", type: :
     user = create(:registered_user)
     login_as(user, scope: :user)
 
-    expect {
-      get "/fragment/activity_groups/non-existent-id/items"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/fragment/activity_groups/non-existent-id/items"
+
+    expect(response.status).to eq(404)
   end
 end

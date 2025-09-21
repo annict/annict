@@ -36,11 +36,11 @@ RSpec.describe "PATCH /fragment/works/:work_id/note", type: :request do
 
     login_as(user, scope: :user)
 
-    expect {
-      patch fragment_note_path(work), params: {
-        forms_note_form: {body: "新しいメモ"}
-      }
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    patch fragment_note_path(work), params: {
+      forms_note_form: {body: "新しいメモ"}
+    }
+
+    expect(response.status).to eq(404)
   end
 
   it "ログインしているが、作品が削除済みのとき、404エラーになること" do
@@ -50,11 +50,11 @@ RSpec.describe "PATCH /fragment/works/:work_id/note", type: :request do
 
     login_as(user, scope: :user)
 
-    expect {
-      patch fragment_note_path(work), params: {
-        forms_note_form: {body: "新しいメモ"}
-      }
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    patch fragment_note_path(work), params: {
+      forms_note_form: {body: "新しいメモ"}
+    }
+
+    expect(response.status).to eq(404)
   end
 
   it "ログインしていて、フォームが無効なとき、編集画面を再表示すること" do
@@ -114,10 +114,10 @@ RSpec.describe "PATCH /fragment/works/:work_id/note", type: :request do
 
     login_as(user, scope: :user)
 
-    expect {
-      patch fragment_note_path(999999), params: {
-        forms_note_form: {body: "新しいメモ"}
-      }
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    patch fragment_note_path(999999), params: {
+      forms_note_form: {body: "新しいメモ"}
+    }
+
+    expect(response.status).to eq(404)
   end
 end

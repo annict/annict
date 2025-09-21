@@ -20,18 +20,18 @@ RSpec.describe "GET /fragment/@:username/records", type: :request do
   end
 
   it "ユーザーが存在しないとき、404エラーを返すこと" do
-    expect {
-      get "/fragment/@nonexistentuser/records"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/fragment/@nonexistentuser/records"
+    
+    expect(response.status).to eq(404)
   end
 
   it "削除済みユーザーの記録にアクセスしたとき、404エラーを返すこと" do
     user = FactoryBot.create(:registered_user, username: "deleteduser")
     user.destroy!
 
-    expect {
-      get "/fragment/@deleteduser/records"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/fragment/@deleteduser/records"
+    
+    expect(response.status).to eq(404)
   end
 
   it "記録が削除済みのとき、表示されないこと" do

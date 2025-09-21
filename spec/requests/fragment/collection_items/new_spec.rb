@@ -62,8 +62,8 @@ RSpec.describe "GET /fragment/works/:work_id/collection_items/new", type: :reque
     work = FactoryBot.create(:work, deleted_at: Time.current)
     login_as(user, scope: :user)
 
-    expect {
-      get fragment_new_collection_item_path(work)
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get fragment_new_collection_item_path(work)
+
+    expect(response.status).to eq(404)
   end
 end

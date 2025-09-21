@@ -3,17 +3,17 @@
 
 RSpec.describe "GET /fragment/@:username/records/:record_id", type: :request do
   it "ユーザーが存在しない場合、404エラーを返すこと" do
-    expect {
-      get "/fragment/@nonexistentuser/records/123"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/fragment/@nonexistentuser/records/123"
+    
+    expect(response.status).to eq(404)
   end
 
   it "レコードが存在しない場合、404エラーを返すこと" do
     user = FactoryBot.create(:registered_user)
 
-    expect {
-      get "/fragment/@#{user.username}/records/nonexistent"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/fragment/@#{user.username}/records/nonexistent"
+    
+    expect(response.status).to eq(404)
   end
 
   it "削除されたユーザーの記録を表示しようとした場合、404エラーを返すこと" do
@@ -22,9 +22,9 @@ RSpec.describe "GET /fragment/@:username/records/:record_id", type: :request do
     record = FactoryBot.create(:record, user: user, work: work)
     user.destroy!
 
-    expect {
-      get "/fragment/@#{user.username}/records/#{record.id}"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/fragment/@#{user.username}/records/#{record.id}"
+    
+    expect(response.status).to eq(404)
   end
 
   it "削除された記録を表示しようとした場合、404エラーを返すこと" do
@@ -33,9 +33,9 @@ RSpec.describe "GET /fragment/@:username/records/:record_id", type: :request do
     record = FactoryBot.create(:record, user: user, work: work)
     record.destroy!
 
-    expect {
-      get "/fragment/@#{user.username}/records/#{record.id}"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/fragment/@#{user.username}/records/#{record.id}"
+    
+    expect(response.status).to eq(404)
   end
 
   it "別のユーザーの記録にアクセスした場合でも、記録が表示されること" do

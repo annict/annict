@@ -3,18 +3,18 @@
 
 RSpec.describe "GET /fragment/@:username/tracking_heatmap", type: :request do
   it "ユーザーが存在しない場合、404エラーを返すこと" do
-    expect {
-      get "/fragment/@nonexistentuser/tracking_heatmap"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/fragment/@nonexistentuser/tracking_heatmap"
+    
+    expect(response.status).to eq(404)
   end
 
   it "削除されたユーザーのヒートマップを表示しようとした場合、404エラーを返すこと" do
     user = FactoryBot.create(:registered_user)
     user.destroy!
 
-    expect {
-      get "/fragment/@#{user.username}/tracking_heatmap"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/fragment/@#{user.username}/tracking_heatmap"
+    
+    expect(response.status).to eq(404)
   end
 
   it "ユーザーが存在する場合、200を返すこと" do

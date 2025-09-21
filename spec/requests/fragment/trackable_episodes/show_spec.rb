@@ -27,9 +27,9 @@ RSpec.describe "GET /fragment/trackable_episodes/:episode_id", type: :request do
     user = FactoryBot.create(:registered_user)
 
     login_as(user, scope: :user)
-    expect {
-      get "/fragment/trackable_episodes/99999"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/fragment/trackable_episodes/99999"
+
+    expect(response.status).to eq(404)
   end
 
   it "削除済みエピソードにアクセスしたとき、404エラーを返すこと" do
@@ -38,9 +38,9 @@ RSpec.describe "GET /fragment/trackable_episodes/:episode_id", type: :request do
     episode = FactoryBot.create(:episode, :deleted, work:)
 
     login_as(user, scope: :user)
-    expect {
-      get "/fragment/trackable_episodes/#{episode.id}"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/fragment/trackable_episodes/#{episode.id}"
+
+    expect(response.status).to eq(404)
   end
 
   it "エピソードに関連する作品情報を取得すること" do
