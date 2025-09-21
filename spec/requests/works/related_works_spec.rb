@@ -41,7 +41,7 @@ RSpec.describe "GET /works/:work_id/related_works", type: :request do
   it "削除された作品にアクセスしたとき、404エラーが返されること" do
     work = create(:work, deleted_at: Time.current)
 
-    get "/works/#{work.id
+    get "/works/#{work.id}/related_works"
 
     expect(response.status).to eq(404)
   end

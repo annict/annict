@@ -27,7 +27,7 @@ RSpec.describe "GET /works/:work_id/info", type: :request do
     work = FactoryBot.create(:work)
     work.destroy_in_batches
 
-    get "/works/#{work.id
+    get "/works/#{work.id}/info"
 
     expect(response.status).to eq(404)
   end
