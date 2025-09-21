@@ -42,9 +42,9 @@ RSpec.describe "GET /@:username/collections", type: :request do
   end
 
   it "存在しないユーザー名でアクセスしたとき、404エラーが返されること" do
-    expect {
-      get "/@nonexistent_user/collections"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/@nonexistent_user/collections"
+
+    expect(response.status).to eq(404)
   end
 
   it "削除されたユーザーにアクセスしたとき、404エラーが返されること" do

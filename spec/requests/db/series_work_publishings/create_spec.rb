@@ -45,9 +45,9 @@ RSpec.describe "POST /db/series_works/:id/publishing", type: :request do
     user = FactoryBot.create(:registered_user, :with_editor_role)
     login_as(user, scope: :user)
 
-    expect {
-      post "/db/series_works/non-existent-id/publishing"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    post "/db/series_works/non-existent-id/publishing"
+
+    expect(response.status).to eq(404)
   end
 
   it "既に公開済みのシリーズ作品のIDが指定されたとき、404エラーが返されること" do

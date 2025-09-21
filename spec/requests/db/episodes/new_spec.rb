@@ -37,9 +37,9 @@ RSpec.describe "GET /db/works/:work_id/episodes/new", type: :request do
     user = create(:registered_user, :with_editor_role)
     login_as(user, scope: :user)
 
-    expect {
-      get "/db/works/99999/episodes/new"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/db/works/99999/episodes/new"
+
+    expect(response.status).to eq(404)
   end
 
   it "削除された作品のエピソード登録ページにアクセスしたとき、404エラーになること" do

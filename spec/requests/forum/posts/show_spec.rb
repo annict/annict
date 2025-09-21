@@ -23,16 +23,16 @@ RSpec.describe "GET /forum/posts/:post_id", type: :request do
     forum_category = create(:forum_category, :general)
     forum_post = create(:forum_post, user: deleted_user, forum_category:, title: "削除されたユーザーの投稿")
 
-    expect {
-      get forum_post_path(forum_post)
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get forum_post_path(forum_post)
+
+    expect(response.status).to eq(404)
   end
 
   it "投稿が存在しないとき、404エラーになること" do
     # 数値のIDで存在しないものを指定する
-    expect {
-      get "/forum/posts/999999999"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/forum/posts/999999999"
+
+    expect(response.status).to eq(404)
   end
 
   it "ログインしていないユーザーでも投稿を閲覧できること" do

@@ -29,35 +29,35 @@ RSpec.describe "GET /works/:work_id/episodes/:episode_id", type: :request do
     work = FactoryBot.create(:work)
     episode = FactoryBot.create(:episode, work:)
 
-    expect {
-      get "/works/999999/episodes/#{episode.id}"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/works/999999/episodes/#{episode.id}"
+
+    expect(response.status).to eq(404)
   end
 
   it "存在しないエピソードIDを指定したとき、404エラーが返されること" do
     work = FactoryBot.create(:work)
 
-    expect {
-      get "/works/#{work.id}/episodes/999999"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/works/#{work.id}/episodes/999999"
+
+    expect(response.status).to eq(404)
   end
 
   it "削除された作品のエピソードにアクセスしたとき、404エラーが返されること" do
     work = FactoryBot.create(:work, :deleted)
     episode = FactoryBot.create(:episode, work:)
 
-    expect {
-      get "/works/#{work.id}/episodes/#{episode.id}"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/works/#{work.id}/episodes/#{episode.id}"
+
+    expect(response.status).to eq(404)
   end
 
   it "削除されたエピソードにアクセスしたとき、404エラーが返されること" do
     work = FactoryBot.create(:work)
     episode = FactoryBot.create(:episode, :deleted, work:)
 
-    expect {
-      get "/works/#{work.id}/episodes/#{episode.id}"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/works/#{work.id}/episodes/#{episode.id}"
+
+    expect(response.status).to eq(404)
   end
 
   it "VODプログラムが存在するとき、プログラム情報が取得されること" do

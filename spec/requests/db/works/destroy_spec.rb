@@ -80,6 +80,8 @@ RSpec.describe "DELETE /db/works/:id", type: :request do
     # 先に削除する
     work.destroy!
 
-    expect { delete "/db/works/#{work.id}" }.to raise_error(ActiveRecord::RecordNotFound)
+    delete "/db/works/#{work.id}"
+
+    expect(response.status).to eq(404)
   end
 end

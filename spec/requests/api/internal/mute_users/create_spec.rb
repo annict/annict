@@ -76,9 +76,9 @@ RSpec.describe "POST /api/internal/mute_user", type: :request do
 
     login_as(user, scope: :user)
 
-    expect {
-      post "/api/internal/mute_user"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    post "/api/internal/mute_user"
+
+    expect(response.status).to eq(404)
   end
 
   it "自分自身をミュートしようとした場合の動作を確認すること" do

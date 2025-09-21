@@ -63,9 +63,9 @@ RSpec.describe "DELETE /db/channels/:id", type: :request do
     user = create(:registered_user, :with_admin_role)
     login_as(user, scope: :user)
 
-    expect {
-      delete "/db/channels/non-existent-id"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    delete "/db/channels/non-existent-id"
+
+    expect(response.status).to eq(404)
   end
 
   it "管理者ユーザーがログインしているとき、Referrerがある場合はそのページにリダイレクトすること" do

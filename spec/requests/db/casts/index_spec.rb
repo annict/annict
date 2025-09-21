@@ -61,9 +61,9 @@ RSpec.describe "GET /db/works/:work_id/casts", type: :request do
   end
 
   it "存在しない作品IDを指定したとき、404エラーが返されること" do
-    expect {
-      get "/db/works/999999/casts"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/db/works/999999/casts"
+
+    expect(response.status).to eq(404)
   end
 
   it "キャストが存在しない作品にアクセスしたとき、空のリストが表示されること" do

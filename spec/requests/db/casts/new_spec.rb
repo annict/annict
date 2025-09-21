@@ -48,9 +48,9 @@ RSpec.describe "GET /db/works/:work_id/casts/new", type: :request do
     user = FactoryBot.create(:registered_user, :with_editor_role)
     login_as(user, scope: :user)
 
-    expect {
-      get "/db/works/999999/casts/new"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/db/works/999999/casts/new"
+
+    expect(response.status).to eq(404)
   end
 
   it "削除済みの作品に対してアクセスしたとき、404エラーになること" do

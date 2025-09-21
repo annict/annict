@@ -74,8 +74,8 @@ RSpec.describe "POST /db/people/:id/publishing", type: :request do
 
     login_as(user, scope: :user)
 
-    expect {
-      post "/db/people/99999999/publishing"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    post "/db/people/99999999/publishing"
+
+    expect(response.status).to eq(404)
   end
 end

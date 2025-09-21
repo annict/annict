@@ -20,9 +20,9 @@ RSpec.describe "GET /people/:person_id", type: :request do
   end
 
   it "存在しない人物IDの場合、404エラーになること" do
-    expect {
-      get "/people/nonexistent"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/people/nonexistent"
+
+    expect(response.status).to eq(404)
   end
 
   it "声優の場合、出演作品情報が表示されること" do

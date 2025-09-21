@@ -51,9 +51,9 @@ RSpec.describe "DELETE /collection_items/:collection_item_id", type: :request do
 
     login_as(user, scope: :user)
 
-    expect {
-      delete "/collection_items/999999"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    delete "/collection_items/999999"
+
+    expect(response.status).to eq(404)
   end
 
   it "削除済みのコレクションアイテムを削除しようとしたとき、404エラーになること" do

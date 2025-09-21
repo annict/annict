@@ -64,8 +64,8 @@ RSpec.describe "GET /@:username/:status_kind", type: :request do
   it "存在しないユーザーでアクセスした場合、レコードが見つからないエラーになること" do
     host! ENV.fetch("ANNICT_HOST")
 
-    expect {
-      get "/@nonexistent_user/watching"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/@nonexistent_user/watching"
+
+    expect(response.status).to eq(404)
   end
 end

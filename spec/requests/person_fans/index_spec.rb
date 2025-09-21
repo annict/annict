@@ -58,8 +58,8 @@ RSpec.describe "GET /people/:person_id/fans", type: :request do
   end
 
   it "存在しない人物の場合は404エラーになること" do
-    expect {
-      get "/people/99999999/fans"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/people/99999999/fans"
+
+    expect(response.status).to eq(404)
   end
 end

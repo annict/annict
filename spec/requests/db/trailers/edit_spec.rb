@@ -59,8 +59,8 @@ RSpec.describe "GET /db/trailers/:id/edit", type: :request do
     user = FactoryBot.create(:registered_user, :with_editor_role)
     login_as(user, scope: :user)
 
-    expect {
-      get "/db/trailers/non-existent-id/edit"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/db/trailers/non-existent-id/edit"
+
+    expect(response.status).to eq(404)
   end
 end

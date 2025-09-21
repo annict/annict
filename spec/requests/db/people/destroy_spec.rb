@@ -78,6 +78,8 @@ RSpec.describe "DELETE /db/people/:id", type: :request do
     person.destroy_in_batches
     login_as(user, scope: :user)
 
-    expect { delete "/db/people/#{person.id}" }.to raise_error(ActiveRecord::RecordNotFound)
+    delete "/db/people/#{person.id}"
+
+    expect(response.status).to eq(404)
   end
 end

@@ -16,11 +16,11 @@ RSpec.describe "POST /api/internal/works/:work_id/program_select", type: :reques
     user = FactoryBot.create(:user, :with_profile)
     login_as(user, scope: :user)
 
-    expect {
-      post "/api/internal/works/99999/program_select", params: {
-        program_id: "0"
-      }
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    post "/api/internal/works/99999/program_select", params: {
+      program_id: "0"
+    }
+
+    expect(response.status).to eq(404)
   end
 
   it "削除されたworkの場合、404エラーが発生すること" do
@@ -28,11 +28,11 @@ RSpec.describe "POST /api/internal/works/:work_id/program_select", type: :reques
     work = FactoryBot.create(:work, deleted_at: Time.zone.now)
     login_as(user, scope: :user)
 
-    expect {
-      post "/api/internal/works/#{work.id}/program_select", params: {
-        program_id: "0"
-      }
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    post "/api/internal/works/#{work.id}/program_select", params: {
+      program_id: "0"
+    }
+
+    expect(response.status).to eq(404)
   end
 
   it "program_id 0の場合、プログラムを未選択にできること" do
@@ -73,11 +73,11 @@ RSpec.describe "POST /api/internal/works/:work_id/program_select", type: :reques
     work = FactoryBot.create(:work)
     login_as(user, scope: :user)
 
-    expect {
-      post "/api/internal/works/#{work.id}/program_select", params: {
-        program_id: "99999"
-      }
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    post "/api/internal/works/#{work.id}/program_select", params: {
+      program_id: "99999"
+    }
+
+    expect(response.status).to eq(404)
   end
 
   it "削除されたプログラムの場合、404エラーが発生すること" do
@@ -86,11 +86,11 @@ RSpec.describe "POST /api/internal/works/:work_id/program_select", type: :reques
     program = FactoryBot.create(:program, work:, deleted_at: Time.zone.now)
     login_as(user, scope: :user)
 
-    expect {
-      post "/api/internal/works/#{work.id}/program_select", params: {
-        program_id: program.id
-      }
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    post "/api/internal/works/#{work.id}/program_select", params: {
+      program_id: program.id
+    }
+
+    expect(response.status).to eq(404)
   end
 
   it "他のworkのプログラムを指定した場合、404エラーが発生すること" do
@@ -100,10 +100,10 @@ RSpec.describe "POST /api/internal/works/:work_id/program_select", type: :reques
     other_program = FactoryBot.create(:program, work: other_work)
     login_as(user, scope: :user)
 
-    expect {
-      post "/api/internal/works/#{work.id}/program_select", params: {
-        program_id: other_program.id
-      }
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    post "/api/internal/works/#{work.id}/program_select", params: {
+      program_id: other_program.id
+    }
+
+    expect(response.status).to eq(404)
   end
 end

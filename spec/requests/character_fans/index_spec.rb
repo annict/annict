@@ -39,8 +39,8 @@ RSpec.describe "GET /characters/:character_id/fans", type: :request do
   end
 
   it "存在しないキャラクターIDの場合、404エラーが返されること" do
-    expect {
-      get "/characters/9999999/fans"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/characters/9999999/fans"
+
+    expect(response.status).to eq(404)
   end
 end

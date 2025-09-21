@@ -58,16 +58,16 @@ RSpec.describe "POST /api/internal/registrations", type: :request do
 
     expect(User.count).to eq 0
 
-    expect {
-      post "/api/internal/registrations", params: {
-        forms_registration_form: {
-          email: email_confirmation.email,
-          token: "invalid_token",
-          username: "example",
-          terms_and_privacy_policy_agreement: 1
-        }
+    post "/api/internal/registrations", params: {
+      forms_registration_form: {
+        email: email_confirmation.email,
+        token: "invalid_token",
+        username: "example",
+        terms_and_privacy_policy_agreement: 1
       }
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    }
+
+    expect(response.status).to eq(404)
 
     expect(User.count).to eq 0
   end

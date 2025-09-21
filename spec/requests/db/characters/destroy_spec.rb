@@ -63,9 +63,9 @@ RSpec.describe "DELETE /db/characters/:id", type: :request do
     user = create(:registered_user, :with_admin_role)
     login_as(user, scope: :user)
 
-    expect {
-      delete "/db/characters/99999999"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    delete "/db/characters/99999999"
+
+    expect(response.status).to eq(404)
   end
 
   it "管理者権限のあるユーザーがログインしているとき、既に削除されたキャラクターIDでアクセスすると404エラーになること" do

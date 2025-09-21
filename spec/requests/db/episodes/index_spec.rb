@@ -62,9 +62,9 @@ RSpec.describe "GET /db/works/:work_id/episodes", type: :request do
   end
 
   it "存在しない作品IDの場合、404エラーが返されること" do
-    expect {
-      get "/db/works/99999/episodes"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/db/works/99999/episodes"
+
+    expect(response.status).to eq(404)
   end
 
   it "ページネーションが機能すること" do

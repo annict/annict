@@ -41,18 +41,18 @@ RSpec.describe "DELETE /collections/:collection_id", type: :request do
     collection = create(:collection, user: other_user)
     login_as(user, scope: :user)
 
-    expect {
-      delete collection_path(collection.id)
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    delete collection_path(collection.id)
+
+    expect(response.status).to eq(404)
   end
 
   it "ログインしているとき存在しないコレクションを削除しようとすると、404エラーが返されること" do
     user = create(:registered_user)
     login_as(user, scope: :user)
 
-    expect {
-      delete collection_path("nonexistent")
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    delete collection_path("nonexistent")
+
+    expect(response.status).to eq(404)
   end
 
   it "ログインしているとき削除済みのコレクションを削除しようとすると、404エラーが返されること" do
@@ -60,8 +60,8 @@ RSpec.describe "DELETE /collections/:collection_id", type: :request do
     collection = create(:collection, user: user, deleted_at: Time.current)
     login_as(user, scope: :user)
 
-    expect {
-      delete collection_path(collection.id)
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    delete collection_path(collection.id)
+
+    expect(response.status).to eq(404)
   end
 end

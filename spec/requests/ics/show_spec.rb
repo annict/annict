@@ -22,9 +22,9 @@ RSpec.describe "GET /ics", type: :request do
   end
 
   it "ユーザーが存在しない場合、404エラーを返すこと" do
-    expect {
-      get "/@nonexistent_user/ics"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/@nonexistent_user/ics"
+
+    expect(response.status).to eq(404)
   end
 
   it "削除されたユーザーにアクセスした場合、404エラーを返すこと" do

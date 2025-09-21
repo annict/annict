@@ -73,6 +73,8 @@ RSpec.describe "DELETE /db/episodes/:id", type: :request do
     episode = create(:episode, deleted_at: Time.current)
     login_as(user, scope: :user)
 
-    expect { delete "/db/episodes/#{episode.id}" }.to raise_error(ActiveRecord::RecordNotFound)
+    delete "/db/episodes/#{episode.id}"
+
+    expect(response.status).to eq(404)
   end
 end

@@ -43,9 +43,9 @@ RSpec.describe "GET /forum/posts/:post_id/edit", type: :request do
 
     login_as(user, scope: :user)
 
-    expect {
-      get "/forum/posts/999999999/edit"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/forum/posts/999999999/edit"
+
+    expect(response.status).to eq(404)
   end
 
   it "投稿者が削除されている投稿を編集しようとしたとき、403エラーになること" do

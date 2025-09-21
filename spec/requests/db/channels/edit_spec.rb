@@ -59,8 +59,8 @@ RSpec.describe "GET /db/channels/:id/edit", type: :request do
     user = create(:registered_user, :with_admin_role)
     login_as(user, scope: :user)
 
-    expect {
-      get "/db/channels/invalid-id/edit"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/db/channels/invalid-id/edit"
+
+    expect(response.status).to eq(404)
   end
 end

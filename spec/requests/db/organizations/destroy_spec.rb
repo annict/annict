@@ -63,9 +63,9 @@ RSpec.describe "DELETE /db/organizations/:id", type: :request do
     user = create(:registered_user, :with_admin_role)
     login_as(user, scope: :user)
 
-    expect {
-      delete "/db/organizations/non-existent-id"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    delete "/db/organizations/non-existent-id"
+
+    expect(response.status).to eq(404)
   end
 
   it "既に削除された組織を削除しようとしたとき、404エラーが返ること" do

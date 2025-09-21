@@ -45,9 +45,9 @@ RSpec.describe "POST /db/series/:id/publishing", type: :request do
     user = create(:registered_user, :with_editor_role)
     login_as(user, scope: :user)
 
-    expect {
-      post "/db/series/non-existent-id/publishing"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    post "/db/series/non-existent-id/publishing"
+
+    expect(response.status).to eq(404)
   end
 
   it "既に公開済みのシリーズを指定したとき、404エラーになること" do

@@ -59,9 +59,9 @@ RSpec.describe "DELETE /api/internal/mute_user", type: :request do
 
     login_as(user, scope: :user)
 
-    expect {
-      delete "/api/internal/mute_user"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    delete "/api/internal/mute_user"
+
+    expect(response.status).to eq(404)
   end
 
   it "同じユーザーを複数回ミュート解除しようとした場合、2回目はエラーになること" do

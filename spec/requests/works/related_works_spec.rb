@@ -33,9 +33,9 @@ RSpec.describe "GET /works/:work_id/related_works", type: :request do
   end
 
   it "存在しない作品にアクセスしたとき、404エラーが返されること" do
-    expect {
-      get "/works/999999/related_works"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/works/999999/related_works"
+
+    expect(response.status).to eq(404)
   end
 
   it "削除された作品にアクセスしたとき、404エラーが返されること" do

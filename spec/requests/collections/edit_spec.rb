@@ -37,9 +37,9 @@ RSpec.describe "GET /collections/:collection_id/edit", type: :request do
     user = create(:registered_user)
     login_as(user, scope: :user)
 
-    expect {
-      get "/collections/99999999/edit"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/collections/99999999/edit"
+
+    expect(response.status).to eq(404)
   end
 
   it "削除されたコレクションを編集しようとしたとき、404エラーが返されること" do

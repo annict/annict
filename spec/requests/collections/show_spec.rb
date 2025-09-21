@@ -26,9 +26,9 @@ RSpec.describe "GET /@:username/collections/:collection_id", type: :request do
   it "存在しないユーザーにアクセスしたとき、404エラーが返されること" do
     collection = create(:collection)
 
-    expect {
-      get "/@nonexistent_user/collections/#{collection.id}"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/@nonexistent_user/collections/#{collection.id}"
+
+    expect(response.status).to eq(404)
   end
 
   it "削除されたユーザーにアクセスしたとき、404エラーが返されること" do
@@ -36,17 +36,17 @@ RSpec.describe "GET /@:username/collections/:collection_id", type: :request do
     collection = create(:collection, user: user)
     user.update!(deleted_at: Time.current)
 
-    expect {
-      get "/@#{user.username}/collections/#{collection.id}"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/@#{user.username}/collections/#{collection.id}"
+
+    expect(response.status).to eq(404)
   end
 
   it "存在しないコレクションにアクセスしたとき、404エラーが返されること" do
     user = create(:registered_user)
 
-    expect {
-      get "/@#{user.username}/collections/99999999"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/@#{user.username}/collections/99999999"
+
+    expect(response.status).to eq(404)
   end
 
   it "削除されたコレクションにアクセスしたとき、404エラーが返されること" do
@@ -54,9 +54,9 @@ RSpec.describe "GET /@:username/collections/:collection_id", type: :request do
     collection = create(:collection, user: user)
     collection.update!(deleted_at: Time.current)
 
-    expect {
-      get "/@#{user.username}/collections/#{collection.id}"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/@#{user.username}/collections/#{collection.id}"
+
+    expect(response.status).to eq(404)
   end
 
   it "他のユーザーのコレクションにアクセスしたとき、404エラーが返されること" do
@@ -64,8 +64,8 @@ RSpec.describe "GET /@:username/collections/:collection_id", type: :request do
     user2 = create(:registered_user)
     collection = create(:collection, user: user1)
 
-    expect {
-      get "/@#{user2.username}/collections/#{collection.id}"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/@#{user2.username}/collections/#{collection.id}"
+
+    expect(response.status).to eq(404)
   end
 end
