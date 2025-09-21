@@ -21,7 +21,7 @@ RSpec.describe "GET /fragment/@:username/records", type: :request do
 
   it "ユーザーが存在しないとき、404エラーを返すこと" do
     get "/fragment/@nonexistentuser/records"
-    
+
     expect(response.status).to eq(404)
   end
 
@@ -30,7 +30,7 @@ RSpec.describe "GET /fragment/@:username/records", type: :request do
     user.destroy!
 
     get "/fragment/@deleteduser/records"
-    
+
     expect(response.status).to eq(404)
   end
 

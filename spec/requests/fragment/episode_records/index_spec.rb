@@ -30,7 +30,7 @@ RSpec.describe "GET /fragment/episodes/:episode_id/records", type: :request do
 
     login_as(user, scope: :user)
     get "/fragment/episodes/99999/records"
-    
+
     expect(response.status).to eq(404)
   end
 
@@ -41,7 +41,7 @@ RSpec.describe "GET /fragment/episodes/:episode_id/records", type: :request do
 
     login_as(user, scope: :user)
     get "/fragment/episodes/#{episode.id}/records"
-    
+
     expect(response.status).to eq(404)
   end
 

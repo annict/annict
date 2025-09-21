@@ -4,7 +4,7 @@
 RSpec.describe "GET /fragment/@:username/records/:record_id", type: :request do
   it "ユーザーが存在しない場合、404エラーを返すこと" do
     get "/fragment/@nonexistentuser/records/123"
-    
+
     expect(response.status).to eq(404)
   end
 
@@ -12,7 +12,7 @@ RSpec.describe "GET /fragment/@:username/records/:record_id", type: :request do
     user = FactoryBot.create(:registered_user)
 
     get "/fragment/@#{user.username}/records/nonexistent"
-    
+
     expect(response.status).to eq(404)
   end
 
@@ -23,7 +23,7 @@ RSpec.describe "GET /fragment/@:username/records/:record_id", type: :request do
     user.destroy!
 
     get "/fragment/@#{user.username}/records/#{record.id}"
-    
+
     expect(response.status).to eq(404)
   end
 
@@ -34,7 +34,7 @@ RSpec.describe "GET /fragment/@:username/records/:record_id", type: :request do
     record.destroy!
 
     get "/fragment/@#{user.username}/records/#{record.id}"
-    
+
     expect(response.status).to eq(404)
   end
 

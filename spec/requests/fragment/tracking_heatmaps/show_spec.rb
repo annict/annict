@@ -4,7 +4,7 @@
 RSpec.describe "GET /fragment/@:username/tracking_heatmap", type: :request do
   it "ユーザーが存在しない場合、404エラーを返すこと" do
     get "/fragment/@nonexistentuser/tracking_heatmap"
-    
+
     expect(response.status).to eq(404)
   end
 
@@ -13,7 +13,7 @@ RSpec.describe "GET /fragment/@:username/tracking_heatmap", type: :request do
     user.destroy!
 
     get "/fragment/@#{user.username}/tracking_heatmap"
-    
+
     expect(response.status).to eq(404)
   end
 
