@@ -50,7 +50,7 @@ RSpec.describe "GET /db/channels/:id/edit", type: :request do
     channel.update!(deleted_at: Time.current)
     login_as(user, scope: :user)
 
-    get "/db/channels/#{channel.id
+    get "/db/channels/#{channel.id}/edit"
 
     expect(response.status).to eq(404)
   end

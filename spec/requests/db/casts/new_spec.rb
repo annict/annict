@@ -58,7 +58,7 @@ RSpec.describe "GET /db/works/:work_id/casts/new", type: :request do
     user = FactoryBot.create(:registered_user, :with_editor_role)
     login_as(user, scope: :user)
 
-    get "/db/works/#{work.id
+    get "/db/works/#{work.id}/casts/new"
 
     expect(response.status).to eq(404)
   end

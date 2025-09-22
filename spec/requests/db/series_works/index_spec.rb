@@ -30,7 +30,7 @@ RSpec.describe "GET /db/series/:series_id/series_works", type: :request do
   it "存在しないシリーズIDの場合、404エラーが返されること" do
     non_existent_id = "non-existent-id"
 
-    get "/db/series/#{non_existent_id
+    get "/db/series/#{non_existent_id}/series_works"
 
     expect(response.status).to eq(404)
   end
@@ -40,7 +40,7 @@ RSpec.describe "GET /db/series/:series_id/series_works", type: :request do
     series = series_work.series
     series.destroy!
 
-    get "/db/series/#{series.id
+    get "/db/series/#{series.id}/series_works"
 
     expect(response.status).to eq(404)
   end

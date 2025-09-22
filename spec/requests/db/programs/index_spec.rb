@@ -40,7 +40,7 @@ RSpec.describe "GET /db/works/:work_id/programs", type: :request do
   it "存在しない作品のプログラム一覧にアクセスしたとき、404エラーが返されることエラーが発生すること" do
     non_existent_work_id = "non-existent-id"
 
-    get "/db/works/#{non_existent_work_id
+    get "/db/works/#{non_existent_work_id}/programs"
 
     expect(response.status).to eq(404)
   end
@@ -48,7 +48,7 @@ RSpec.describe "GET /db/works/:work_id/programs", type: :request do
   it "削除された作品のプログラム一覧にアクセスしたとき、404エラーが返されることエラーが発生すること" do
     deleted_work = create(:work, :deleted)
 
-    get "/db/works/#{deleted_work.id
+    get "/db/works/#{deleted_work.id}/programs"
 
     expect(response.status).to eq(404)
   end

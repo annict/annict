@@ -18,7 +18,8 @@ RSpec.describe "POST /api/internal/episode_records", type: :request do
     login_as(user, scope: :user)
 
     post "/api/internal/episode_records", params: {
-    episode_id: "nonexistent"
+      episode_id: "nonexistent"
+    }
 
     expect(response.status).to eq(404)
   end
@@ -30,7 +31,8 @@ RSpec.describe "POST /api/internal/episode_records", type: :request do
     login_as(user, scope: :user)
 
     post "/api/internal/episode_records", params: {
-    episode_id: episode.id
+      episode_id: episode.id
+    }
 
     expect(response.status).to eq(404)
   end

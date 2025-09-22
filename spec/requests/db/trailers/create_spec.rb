@@ -121,7 +121,7 @@ RSpec.describe "POST /db/works/:work_id/trailers", type: :request do
 
     login_as(user, scope: :user)
 
-    post "/db/works/99999/trailers", params: {deprecated_db_trailer_rows_form: form_params
+    post "/db/works/99999/trailers", params: {deprecated_db_trailer_rows_form: form_params}
 
     expect(response.status).to eq(404)
   end

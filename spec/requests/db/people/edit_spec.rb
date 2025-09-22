@@ -58,7 +58,7 @@ RSpec.describe "GET /db/people/:id/edit", type: :request do
     person = create(:person, deleted_at: Time.current)
     login_as(user, scope: :user)
 
-    get "/db/people/#{person.id
+    get "/db/people/#{person.id}/edit"
 
     expect(response.status).to eq(404)
   end

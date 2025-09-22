@@ -55,7 +55,7 @@ RSpec.describe "POST /db/series_works/:id/publishing", type: :request do
     series_work = FactoryBot.create(:series_work, :published)
     login_as(user, scope: :user)
 
-    post "/db/series_works/#{series_work.id
+    post "/db/series_works/#{series_work.id}/publishing"
 
     expect(response.status).to eq(404)
   end

@@ -15,7 +15,7 @@ RSpec.describe "POST /db/works/:work_id/image", type: :request do
     work = FactoryBot.create(:work, deleted_at: Time.current)
     login_as(user, scope: :user)
 
-    post "/db/works/#{work.id
+    post "/db/works/#{work.id}/image"
 
     expect(response.status).to eq(404)
   end

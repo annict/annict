@@ -47,7 +47,7 @@ RSpec.describe "GET /db/works/:work_id/episodes/new", type: :request do
     user = create(:registered_user, :with_editor_role)
     login_as(user, scope: :user)
 
-    get "/db/works/#{work.id
+    get "/db/works/#{work.id}/episodes/new"
 
     expect(response.status).to eq(404)
   end

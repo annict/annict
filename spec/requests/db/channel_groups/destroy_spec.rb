@@ -65,7 +65,7 @@ RSpec.describe "DELETE /db/channel_groups/:id", type: :request do
     login_as(user, scope: :user)
     non_existent_id = "non-existent-id"
 
-    delete "/db/channel_groups/#{non_existent_id
+    delete "/db/channel_groups/#{non_existent_id}"
 
     expect(response.status).to eq(404)
   end
@@ -78,7 +78,7 @@ RSpec.describe "DELETE /db/channel_groups/:id", type: :request do
 
     expect(channel_group.deleted?).to eq(true)
 
-    delete "/db/channel_groups/#{channel_group.id
+    delete "/db/channel_groups/#{channel_group.id}"
 
     expect(response.status).to eq(404)
   end

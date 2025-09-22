@@ -55,7 +55,7 @@ RSpec.describe "POST /db/series/:id/publishing", type: :request do
     series = create(:series, :published)
     login_as(user, scope: :user)
 
-    post "/db/series/#{series.id
+    post "/db/series/#{series.id}/publishing"
 
     expect(response.status).to eq(404)
   end
@@ -65,7 +65,7 @@ RSpec.describe "POST /db/series/:id/publishing", type: :request do
     series = create(:series, :unpublished, deleted_at: Time.current)
     login_as(user, scope: :user)
 
-    post "/db/series/#{series.id
+    post "/db/series/#{series.id}/publishing"
 
     expect(response.status).to eq(404)
   end

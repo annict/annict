@@ -105,7 +105,7 @@ RSpec.describe "POST /graphql", type: :request do
       }
     GRAPHQL
 
-    post "/graphql", params: {query: query
+    post "/graphql", params: {query: query}, headers: headers
 
     expect(response.status).to eq(404)
   end

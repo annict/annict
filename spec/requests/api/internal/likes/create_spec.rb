@@ -94,8 +94,9 @@ RSpec.describe "POST /api/internal/likes", type: :request do
 
     login_as(user, scope: :user)
     post "/api/internal/likes", params: {
-    recipient_type: "Record",
-    recipient_id: "nonexistent"
+      recipient_type: "Record",
+      recipient_id: "nonexistent"
+    }
 
     expect(response.status).to eq(404)
   end
@@ -128,7 +129,8 @@ RSpec.describe "POST /api/internal/likes", type: :request do
 
     login_as(user, scope: :user)
     post "/api/internal/likes", params: {
-    recipient_type: "Record"
+      recipient_type: "Record"
+    }
 
     expect(response.status).to eq(404)
   end

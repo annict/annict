@@ -166,7 +166,7 @@ RSpec.describe "PATCH /db/characters/:id", type: :request do
 
     login_as(user, scope: :user)
 
-    patch "/db/characters/#{character.id
+    patch "/db/characters/#{character.id}", params: {character: character_params}
 
     expect(response.status).to eq(404)
   end
@@ -179,7 +179,7 @@ RSpec.describe "PATCH /db/characters/:id", type: :request do
 
     login_as(user, scope: :user)
 
-    patch "/db/characters/9999999", params: {character: character_params
+    patch "/db/characters/9999999", params: {character: character_params}
 
     expect(response.status).to eq(404)
   end

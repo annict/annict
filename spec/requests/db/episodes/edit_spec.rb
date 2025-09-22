@@ -49,7 +49,7 @@ RSpec.describe "GET /db/episodes/:id/edit", type: :request do
     episode = create(:episode, deleted_at: Time.current)
     login_as(user, scope: :user)
 
-    get "/db/episodes/#{episode.id
+    get "/db/episodes/#{episode.id}/edit"
 
     expect(response.status).to eq(404)
   end

@@ -123,7 +123,7 @@ RSpec.describe "PATCH /db/channels/:id", type: :request do
 
     login_as(user, scope: :user)
 
-    patch "/db/channels/non-existent-id", params: {channel: channel_params
+    patch "/db/channels/non-existent-id", params: {channel: channel_params}
 
     expect(response.status).to eq(404)
   end
@@ -138,7 +138,7 @@ RSpec.describe "PATCH /db/channels/:id", type: :request do
 
     login_as(user, scope: :user)
 
-    patch "/db/channels/#{channel.id
+    patch "/db/channels/#{channel.id}", params: {channel: channel_params}
 
     expect(response.status).to eq(404)
   end

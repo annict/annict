@@ -113,7 +113,7 @@ RSpec.describe "PATCH /db/organizations/:id", type: :request do
 
     login_as(user, scope: :user)
 
-    patch "/db/organizations/#{organization.id
+    patch "/db/organizations/#{organization.id}", params: {organization: organization_params}
 
     expect(response.status).to eq(404)
   end

@@ -55,7 +55,7 @@ RSpec.describe "POST /db/slots/:id/publishing", type: :request do
     slot = create(:slot, :published)
     login_as(user, scope: :user)
 
-    post "/db/slots/#{slot.id
+    post "/db/slots/#{slot.id}/publishing"
 
     expect(response.status).to eq(404)
   end

@@ -51,7 +51,7 @@ RSpec.describe "POST /db/people/:id/publishing", type: :request do
 
     expect(person.published?).to eq(true)
 
-    post "/db/people/#{person.id
+    post "/db/people/#{person.id}/publishing"
 
     expect(response.status).to eq(404)
   end
@@ -64,7 +64,7 @@ RSpec.describe "POST /db/people/:id/publishing", type: :request do
 
     expect(person.deleted?).to eq(true)
 
-    post "/db/people/#{person.id
+    post "/db/people/#{person.id}/publishing"
 
     expect(response.status).to eq(404)
   end

@@ -71,7 +71,7 @@ RSpec.describe "PATCH /db/trailers/:id", type: :request do
 
     login_as(user, scope: :user)
 
-    patch "/db/trailers/invalid-id", params: {trailer: trailer_params
+    patch "/db/trailers/invalid-id", params: {trailer: trailer_params}
 
     expect(response.status).to eq(404)
   end

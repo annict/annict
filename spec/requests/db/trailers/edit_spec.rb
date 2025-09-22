@@ -50,7 +50,7 @@ RSpec.describe "GET /db/trailers/:id/edit", type: :request do
     trailer.destroy!
     login_as(user, scope: :user)
 
-    get "/db/trailers/#{trailer.id
+    get "/db/trailers/#{trailer.id}/edit"
 
     expect(response.status).to eq(404)
   end

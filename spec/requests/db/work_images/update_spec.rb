@@ -137,7 +137,7 @@ RSpec.describe "PATCH /db/works/:work_id/image", type: :request do
 
     login_as(user, scope: :user)
 
-    patch "/db/works/#{work.id
+    patch "/db/works/#{work.id}/image", params: {work_image: work_image_params}
 
     expect(response.status).to eq(404)
   end
@@ -151,7 +151,7 @@ RSpec.describe "PATCH /db/works/:work_id/image", type: :request do
 
     login_as(user, scope: :user)
 
-    patch "/db/works/#{work.id
+    patch "/db/works/#{work.id}/image", params: {work_image: work_image_params}
 
     expect(response.status).to eq(404)
   end

@@ -39,7 +39,7 @@ RSpec.describe "DELETE /api/internal/mute_user", type: :request do
 
     login_as(user, scope: :user)
 
-    delete "/api/internal/mute_user", params: {user_id: not_muted_user.id
+    delete "/api/internal/mute_user", params: {user_id: not_muted_user.id}
 
     expect(response.status).to eq(404)
   end
@@ -49,7 +49,7 @@ RSpec.describe "DELETE /api/internal/mute_user", type: :request do
 
     login_as(user, scope: :user)
 
-    delete "/api/internal/mute_user", params: {user_id: 999999
+    delete "/api/internal/mute_user", params: {user_id: 999999}
 
     expect(response.status).to eq(404)
   end
@@ -76,7 +76,7 @@ RSpec.describe "DELETE /api/internal/mute_user", type: :request do
     expect(response.status).to eq(200)
 
     # 2回目のミュート解除
-    delete "/api/internal/mute_user", params: {user_id: muted_user.id
+    delete "/api/internal/mute_user", params: {user_id: muted_user.id}
 
     expect(response.status).to eq(404)
   end

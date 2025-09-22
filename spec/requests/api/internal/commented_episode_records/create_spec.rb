@@ -21,10 +21,12 @@ RSpec.describe "POST /api/internal/episodes/:episode_id/commented_records", type
     login_as(user, scope: :user)
 
     post "/api/internal/episodes/99999/commented_records", params: {
-    forms_episode_record_form: {
-    comment: "テストコメント",
-    rating: "good",
-    watched_at: Time.zone.now
+      forms_episode_record_form: {
+        comment: "テストコメント",
+        rating: "good",
+        watched_at: Time.zone.now
+      }
+    }
 
     expect(response.status).to eq(404)
   end
@@ -34,7 +36,13 @@ RSpec.describe "POST /api/internal/episodes/:episode_id/commented_records", type
     episode = FactoryBot.create(:episode, deleted_at: Time.zone.now)
     login_as(user, scope: :user)
 
-    post "/api/internal/episodes/#{episode.id
+    post "/api/internal/episodes/#{episode.id}/commented_records", params: {
+      forms_episode_record_form: {
+        comment: "テストコメント",
+        rating: "good",
+        watched_at: Time.zone.now
+      }
+    }
 
     expect(response.status).to eq(404)
   end

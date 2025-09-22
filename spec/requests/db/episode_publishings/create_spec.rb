@@ -55,7 +55,7 @@ RSpec.describe "POST /db/episodes/:id/publishing", type: :request do
     episode = create(:episode, :unpublished, deleted_at: Time.current)
     login_as(user, scope: :user)
 
-    post "/db/episodes/#{episode.id
+    post "/db/episodes/#{episode.id}/publishing"
 
     expect(response.status).to eq(404)
   end
@@ -65,7 +65,7 @@ RSpec.describe "POST /db/episodes/:id/publishing", type: :request do
     episode = create(:episode, :published)
     login_as(user, scope: :user)
 
-    post "/db/episodes/#{episode.id
+    post "/db/episodes/#{episode.id}/publishing"
 
     expect(response.status).to eq(404)
   end

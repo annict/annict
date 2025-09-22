@@ -73,7 +73,7 @@ RSpec.describe "DELETE /db/organizations/:id", type: :request do
     organization = create(:organization, :deleted)
     login_as(user, scope: :user)
 
-    delete "/db/organizations/#{organization.id
+    delete "/db/organizations/#{organization.id}"
 
     expect(response.status).to eq(404)
   end

@@ -54,7 +54,7 @@ RSpec.describe "POST /api/internal/mute_user", type: :request do
 
     login_as(user, scope: :user)
 
-    post "/api/internal/mute_user", params: {user_id: 999999
+    post "/api/internal/mute_user", params: {user_id: 999999}
 
     expect(response.status).to eq(404)
   end
@@ -66,7 +66,7 @@ RSpec.describe "POST /api/internal/mute_user", type: :request do
 
     login_as(user, scope: :user)
 
-    post "/api/internal/mute_user", params: {user_id: target_user.id
+    post "/api/internal/mute_user", params: {user_id: target_user.id}
 
     expect(response.status).to eq(404)
   end

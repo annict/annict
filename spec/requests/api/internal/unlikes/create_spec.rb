@@ -78,8 +78,9 @@ RSpec.describe "POST /api/internal/unlikes", type: :request do
 
     login_as(user, scope: :user)
     post "/api/internal/unlikes", params: {
-    recipient_type: "WorkRecord",
-    recipient_id: 999999
+      recipient_type: "WorkRecord",
+      recipient_id: 999999
+    }
 
     expect(response.status).to eq(404)
   end

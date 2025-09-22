@@ -49,7 +49,7 @@ RSpec.describe "GET /db/works/:id/edit", type: :request do
     work = FactoryBot.create(:work, deleted_at: Time.current)
     login_as(user, scope: :user)
 
-    get "/db/works/#{work.id
+    get "/db/works/#{work.id}/edit"
 
     expect(response.status).to eq(404)
   end

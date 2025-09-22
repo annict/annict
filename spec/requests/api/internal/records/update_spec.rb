@@ -24,7 +24,13 @@ RSpec.describe "PATCH /api/internal/@:username/records/:record_id", type: :reque
 
     login_as(user, scope: :user)
 
-    patch "/api/internal/@#{other_user.username
+    patch "/api/internal/@#{other_user.username}/records/#{record.id}", params: {
+      forms_episode_record_form: {
+        comment: "更新されたコメント",
+        rating: "good",
+        watched_at: Time.zone.now
+      }
+    }
 
     expect(response.status).to eq(404)
   end
@@ -35,7 +41,13 @@ RSpec.describe "PATCH /api/internal/@:username/records/:record_id", type: :reque
 
     login_as(user, scope: :user)
 
-    patch "/api/internal/@nonexistent/records/#{record.id
+    patch "/api/internal/@nonexistent/records/#{record.id}", params: {
+      forms_episode_record_form: {
+        comment: "更新されたコメント",
+        rating: "good",
+        watched_at: Time.zone.now
+      }
+    }
 
     expect(response.status).to eq(404)
   end
@@ -45,7 +57,13 @@ RSpec.describe "PATCH /api/internal/@:username/records/:record_id", type: :reque
 
     login_as(user, scope: :user)
 
-    patch "/api/internal/@#{user.username
+    patch "/api/internal/@#{user.username}/records/99999", params: {
+      forms_episode_record_form: {
+        comment: "更新されたコメント",
+        rating: "good",
+        watched_at: Time.zone.now
+      }
+    }
 
     expect(response.status).to eq(404)
   end

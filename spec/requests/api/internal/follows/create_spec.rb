@@ -40,7 +40,7 @@ RSpec.describe "POST /api/internal/follow", type: :request do
     follower = create(:user, :with_email_notification)
 
     login_as(follower, scope: :user)
-    post "/api/internal/follow", params: {user_id: "nonexistent"
+    post "/api/internal/follow", params: {user_id: "nonexistent"}
 
     expect(response.status).to eq(404)
   end
@@ -49,7 +49,7 @@ RSpec.describe "POST /api/internal/follow", type: :request do
     follower = create(:user, :with_email_notification)
 
     login_as(follower, scope: :user)
-    post "/api/internal/follow", params: {
+    post "/api/internal/follow", params: {}
 
     expect(response.status).to eq(404)
   end
