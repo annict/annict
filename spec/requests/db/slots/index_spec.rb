@@ -23,17 +23,17 @@ RSpec.describe "GET /db/works/:work_id/slots", type: :request do
   end
 
   it "存在しない作品IDを指定したとき、404エラーが返ること" do
-    expect do
-      get "/db/works/non-existent-id/slots"
-    end.to raise_error(ActiveRecord::RecordNotFound)
+    get "/db/works/non-existent-id/slots"
+
+    expect(response.status).to eq(404)
   end
 
   it "削除済みの作品を指定したとき、404エラーが返ること" do
     work = create(:work, :deleted)
 
-    expect do
-      get "/db/works/#{work.id}/slots"
-    end.to raise_error(ActiveRecord::RecordNotFound)
+    get "/db/works/#{work.id}/slots"
+
+    expect(response.status).to eq(404)
   end
 
   it "program_idパラメータを指定したとき、該当するプログラムのスロットのみが表示されること" do

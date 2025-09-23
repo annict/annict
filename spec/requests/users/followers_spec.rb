@@ -22,17 +22,17 @@ RSpec.describe "GET /@:username/followers", type: :request do
   end
 
   it "存在しないユーザー名のとき、404エラーが返されること" do
-    expect {
-      get "/@nonexistent_user/followers"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/@nonexistent_user/followers"
+
+    expect(response.status).to eq(404)
   end
 
   it "削除されたユーザーのとき、404エラーが返されること" do
     user = create(:registered_user)
     user.update!(deleted_at: Time.current)
 
-    expect {
-      get "/@#{user.username}/followers"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/@#{user.username}/followers"
+
+    expect(response.status).to eq(404)
   end
 end

@@ -15,9 +15,9 @@ RSpec.describe "GET /fragment/trackable_works/:work_id", type: :request do
     work = FactoryBot.create(:work)
     login_as(user, scope: :user)
 
-    expect {
-      get "/fragment/trackable_works/#{work.id}"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/fragment/trackable_works/#{work.id}"
+
+    expect(response.status).to eq(404)
   end
 
   it "ログインしていて有効なライブラリエントリがあるとき、視聴可能な作品情報を表示すること" do
@@ -63,9 +63,9 @@ RSpec.describe "GET /fragment/trackable_works/:work_id", type: :request do
     work = FactoryBot.create(:work, :deleted)
     login_as(user, scope: :user)
 
-    expect {
-      get "/fragment/trackable_works/#{work.id}"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/fragment/trackable_works/#{work.id}"
+
+    expect(response.status).to eq(404)
   end
 
   it "ページネーションが正しく動作すること" do

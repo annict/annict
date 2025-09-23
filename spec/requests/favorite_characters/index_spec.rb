@@ -24,18 +24,18 @@ RSpec.describe "GET /@:username/favorite_characters", type: :request do
     expect(response.body).to include(character2.name)
   end
 
-  it "存在しないユーザー名でアクセスしたとき、RecordNotFoundエラーが発生すること" do
-    expect {
-      get "/@nonexistentuser/favorite_characters"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+  it "存在しないユーザー名でアクセスしたとき、404エラーが返されること" do
+    get "/@nonexistentuser/favorite_characters"
+
+    expect(response.status).to eq(404)
   end
 
-  it "削除されたユーザーでアクセスしたとき、RecordNotFoundエラーが発生すること" do
+  it "削除されたユーザーでアクセスしたとき、404エラーが返されること" do
     user = create(:registered_user)
     user.destroy_in_batches
 
-    expect {
-      get "/@#{user.username}/favorite_characters"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/@#{user.username}/favorite_characters"
+
+    expect(response.status).to eq(404)
   end
 end

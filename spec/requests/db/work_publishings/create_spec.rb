@@ -46,7 +46,9 @@ RSpec.describe "POST /db/works/:id/publishing", type: :request do
     work = create(:work, :published)
     login_as(user, scope: :user)
 
-    expect { post "/db/works/#{work.id}/publishing" }.to raise_error(ActiveRecord::RecordNotFound)
+    post "/db/works/#{work.id}/publishing"
+
+    expect(response.status).to eq(404)
   end
 
   it "削除済みの作品の場合、404エラーになること" do
@@ -55,13 +57,17 @@ RSpec.describe "POST /db/works/:id/publishing", type: :request do
     work.destroy!
     login_as(user, scope: :user)
 
-    expect { post "/db/works/#{work.id}/publishing" }.to raise_error(ActiveRecord::RecordNotFound)
+    post "/db/works/#{work.id}/publishing"
+
+    expect(response.status).to eq(404)
   end
 
   it "存在しない作品IDの場合、404エラーになること" do
     user = create(:registered_user, :with_editor_role)
     login_as(user, scope: :user)
 
-    expect { post "/db/works/invalid-id/publishing" }.to raise_error(ActiveRecord::RecordNotFound)
+    post "/db/works/invalid-id/publishing"
+
+    expect(response).to have_http_status(:not_found)
   end
 end

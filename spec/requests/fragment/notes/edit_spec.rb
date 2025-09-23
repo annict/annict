@@ -29,9 +29,9 @@ RSpec.describe "GET /fragment/works/:work_id/note/edit", type: :request do
 
     login_as(user, scope: :user)
 
-    expect {
-      get fragment_edit_note_path(work)
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get fragment_edit_note_path(work)
+
+    expect(response.status).to eq(404)
   end
 
   it "ログインしているが、作品が削除済みのとき、404エラーになること" do
@@ -41,9 +41,9 @@ RSpec.describe "GET /fragment/works/:work_id/note/edit", type: :request do
 
     login_as(user, scope: :user)
 
-    expect {
-      get fragment_edit_note_path(work)
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get fragment_edit_note_path(work)
+
+    expect(response.status).to eq(404)
   end
 
   it "存在しない作品IDで404エラーになること" do
@@ -51,9 +51,9 @@ RSpec.describe "GET /fragment/works/:work_id/note/edit", type: :request do
 
     login_as(user, scope: :user)
 
-    expect {
-      get fragment_edit_note_path(999999)
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get fragment_edit_note_path(999999)
+
+    expect(response.status).to eq(404)
   end
 
   it "ログインしているとき、メモが空の場合も編集フォームが表示されること" do

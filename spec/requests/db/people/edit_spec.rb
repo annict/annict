@@ -48,9 +48,9 @@ RSpec.describe "GET /db/people/:id/edit", type: :request do
     user = create(:registered_user, :with_editor_role)
     login_as(user, scope: :user)
 
-    expect {
-      get "/db/people/999999/edit"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/db/people/999999/edit"
+
+    expect(response.status).to eq(404)
   end
 
   it "削除済みの人物の編集ページにアクセスしたとき、404エラーが発生すること" do
@@ -58,8 +58,8 @@ RSpec.describe "GET /db/people/:id/edit", type: :request do
     person = create(:person, deleted_at: Time.current)
     login_as(user, scope: :user)
 
-    expect {
-      get "/db/people/#{person.id}/edit"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/db/people/#{person.id}/edit"
+
+    expect(response.status).to eq(404)
   end
 end

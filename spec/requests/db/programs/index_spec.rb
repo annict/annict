@@ -37,19 +37,19 @@ RSpec.describe "GET /db/works/:work_id/programs", type: :request do
     expect(response.body).not_to include(deleted_program.channel.name)
   end
 
-  it "存在しない作品のプログラム一覧にアクセスしたとき、ActiveRecord::RecordNotFoundエラーが発生すること" do
+  it "存在しない作品のプログラム一覧にアクセスしたとき、404エラーが返されることエラーが発生すること" do
     non_existent_work_id = "non-existent-id"
 
-    expect {
-      get "/db/works/#{non_existent_work_id}/programs"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/db/works/#{non_existent_work_id}/programs"
+
+    expect(response.status).to eq(404)
   end
 
-  it "削除された作品のプログラム一覧にアクセスしたとき、ActiveRecord::RecordNotFoundエラーが発生すること" do
+  it "削除された作品のプログラム一覧にアクセスしたとき、404エラーが返されることエラーが発生すること" do
     deleted_work = create(:work, :deleted)
 
-    expect {
-      get "/db/works/#{deleted_work.id}/programs"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/db/works/#{deleted_work.id}/programs"
+
+    expect(response.status).to eq(404)
   end
 end

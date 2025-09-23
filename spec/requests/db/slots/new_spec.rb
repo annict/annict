@@ -48,9 +48,9 @@ RSpec.describe "GET /db/works/:work_id/slots/new", type: :request do
     user = FactoryBot.create(:registered_user, :with_editor_role)
     login_as(user, scope: :user)
 
-    expect {
-      get "/db/works/999999/slots/new"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/db/works/999999/slots/new"
+
+    expect(response.status).to eq(404)
   end
 
   it "削除された作品を指定したとき、404エラーになること" do
@@ -59,9 +59,9 @@ RSpec.describe "GET /db/works/:work_id/slots/new", type: :request do
     user = FactoryBot.create(:registered_user, :with_editor_role)
     login_as(user, scope: :user)
 
-    expect {
-      get "/db/works/#{work.id}/slots/new"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/db/works/#{work.id}/slots/new"
+
+    expect(response.status).to eq(404)
   end
 
   it "program_idsパラメータが指定されたとき、フォームにデフォルト値が設定されること" do

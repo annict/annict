@@ -41,19 +41,19 @@ RSpec.describe "GET /@:username/collections", type: :request do
     expect(response.body).to include("テストコレクション")
   end
 
-  it "存在しないユーザー名でアクセスしたとき、RecordNotFoundエラーが発生すること" do
-    expect {
-      get "/@nonexistent_user/collections"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+  it "存在しないユーザー名でアクセスしたとき、404エラーが返されること" do
+    get "/@nonexistent_user/collections"
+
+    expect(response.status).to eq(404)
   end
 
-  it "削除されたユーザーにアクセスしたとき、RecordNotFoundエラーが発生すること" do
+  it "削除されたユーザーにアクセスしたとき、404エラーが返されること" do
     user = create(:registered_user)
     user.update!(deleted_at: Time.current)
 
-    expect {
-      get "/@#{user.username}/collections"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/@#{user.username}/collections"
+
+    expect(response.status).to eq(404)
   end
 
   it "削除されたコレクションが表示されないこと" do

@@ -52,14 +52,14 @@ RSpec.describe "GET /people/:person_id/fans", type: :request do
   it "削除された人物の場合は404エラーになること" do
     deleted_person = create(:person, deleted_at: Time.current)
 
-    expect {
-      get "/people/#{deleted_person.id}/fans"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/people/#{deleted_person.id}/fans"
+
+    expect(response.status).to eq(404)
   end
 
   it "存在しない人物の場合は404エラーになること" do
-    expect {
-      get "/people/99999999/fans"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/people/99999999/fans"
+
+    expect(response.status).to eq(404)
   end
 end

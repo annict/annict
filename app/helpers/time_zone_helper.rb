@@ -8,7 +8,7 @@ module TimeZoneHelper
   end
 
   def display_date(date)
-    date&.to_s(:ymd)
+    date&.to_fs(:ymd)
   end
 
   def decorated_tz_name(time_zone)

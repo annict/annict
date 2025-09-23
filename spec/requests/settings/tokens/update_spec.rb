@@ -42,33 +42,33 @@ RSpec.describe "PATCH /settings/tokens/:token_id", type: :request do
     expect(token.scopes.to_s).to eq("read_anime")
   end
 
-  it "他のユーザーのトークンを更新しようとした場合、NotFoundエラーになること" do
+  it "他のユーザーのトークンを更新しようとした場合、404エラーが返されること" do
     user1 = create(:registered_user)
     user2 = create(:registered_user)
     token = create(:oauth_access_token, resource_owner_id: user1.id, application_id: nil, description: "Old Description", scopes: "read_anime")
     login_as(user2, scope: :user)
 
-    expect do
-      patch "/settings/tokens/#{token.id}", params: {
-        oauth_access_token: {
-          description: "Updated Description",
-          scopes: "read_anime write_anime"
-        }
+    patch "/settings/tokens/#{token.id}", params: {
+      oauth_access_token: {
+        description: "Updated Description",
+        scopes: "read_anime write_anime"
       }
-    end.to raise_error(ActiveRecord::RecordNotFound)
+    }
+
+    expect(response).to have_http_status(:not_found)
   end
 
-  it "存在しないトークンIDを指定した場合、NotFoundエラーになること" do
+  it "存在しないトークンIDを指定した場合、404エラーが返されること" do
     user = create(:registered_user)
     login_as(user, scope: :user)
 
-    expect do
-      patch "/settings/tokens/nonexistent", params: {
-        oauth_access_token: {
-          description: "Updated Description",
-          scopes: "read_anime write_anime"
-        }
+    patch "/settings/tokens/nonexistent", params: {
+      oauth_access_token: {
+        description: "Updated Description",
+        scopes: "read_anime write_anime"
       }
-    end.to raise_error(ActiveRecord::RecordNotFound)
+    }
+
+    expect(response).to have_http_status(:not_found)
   end
 end

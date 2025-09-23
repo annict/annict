@@ -50,13 +50,13 @@ RSpec.describe "GET /userland/projects/:project_id/edit", type: :request do
     expect(response.body).to include("userland_project[userland_category_id]")
   end
 
-  it "存在しないプロジェクトIDの場合、404エラーが発生すること" do
+  it "存在しないプロジェクトIDの場合、404エラーが返されること" do
     user = FactoryBot.create(:user, :with_profile)
 
     login_as(user, scope: :user)
 
-    expect {
-      get "/userland/projects/999999999/edit"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/userland/projects/999999999/edit"
+
+    expect(response).to have_http_status(:not_found)
   end
 end

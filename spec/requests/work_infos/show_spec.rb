@@ -27,15 +27,15 @@ RSpec.describe "GET /works/:work_id/info", type: :request do
     work = FactoryBot.create(:work)
     work.destroy_in_batches
 
-    expect {
-      get "/works/#{work.id}/info"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/works/#{work.id}/info"
+
+    expect(response.status).to eq(404)
   end
 
   it "存在しない作品IDのとき、404エラーが表示されること" do
-    expect {
-      get "/works/999999/info"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/works/999999/info"
+
+    expect(response.status).to eq(404)
   end
 
   it "VODサービスで配信中の番組が表示されること" do

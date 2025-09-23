@@ -150,48 +150,48 @@ RSpec.describe "PATCH /collections/:collection_id", type: :request do
     expect(response.status).to eq(422)
   end
 
-  it "ログインしているとき、他人のコレクションを更新しようとすると、RecordNotFoundエラーが発生すること" do
+  it "ログインしているとき、他人のコレクションを更新しようとすると、404エラーが返されること" do
     user = create(:registered_user)
     other_user = create(:registered_user)
     collection = create(:collection, user: other_user)
     login_as(user, scope: :user)
 
-    expect {
-      patch "/collections/#{collection.id}", params: {
-        forms_collection_form: {
-          name: "更新されたコレクション名",
-          description: "更新された説明文"
-        }
+    patch "/collections/#{collection.id}", params: {
+      forms_collection_form: {
+        name: "更新されたコレクション名",
+        description: "更新された説明文"
       }
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    }
+
+    expect(response.status).to eq(404)
   end
 
-  it "ログインしているとき、存在しないコレクションを更新しようとすると、RecordNotFoundエラーが発生すること" do
+  it "ログインしているとき、存在しないコレクションを更新しようとすると、404エラーが返されること" do
     user = create(:registered_user)
     login_as(user, scope: :user)
 
-    expect {
-      patch "/collections/nonexistent", params: {
-        forms_collection_form: {
-          name: "更新されたコレクション名",
-          description: "更新された説明文"
-        }
+    patch "/collections/nonexistent", params: {
+      forms_collection_form: {
+        name: "更新されたコレクション名",
+        description: "更新された説明文"
       }
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    }
+
+    expect(response.status).to eq(404)
   end
 
-  it "ログインしているとき、削除済みのコレクションを更新しようとすると、RecordNotFoundエラーが発生すること" do
+  it "ログインしているとき、削除済みのコレクションを更新しようとすると、404エラーが返されること" do
     user = create(:registered_user)
     collection = create(:collection, user: user, deleted_at: Time.current)
     login_as(user, scope: :user)
 
-    expect {
-      patch "/collections/#{collection.id}", params: {
-        forms_collection_form: {
-          name: "更新されたコレクション名",
-          description: "更新された説明文"
-        }
+    patch "/collections/#{collection.id}", params: {
+      forms_collection_form: {
+        name: "更新されたコレクション名",
+        description: "更新された説明文"
       }
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    }
+
+    expect(response.status).to eq(404)
   end
 end

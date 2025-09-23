@@ -25,7 +25,7 @@ module Deprecated::ListGroups
           @dates.each do |date, count|
             if count > 0
               h.tag :a, href: view_context.record_list_path(@user.username, year: date.year, month: date.month), class: month_link_class_name(date) do
-                h.text date.to_s(:ym)
+                h.text date.to_fs(:ym)
 
                 h.tag :span, class: "badge badge-pill bg-secondary" do
                   h.text count

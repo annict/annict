@@ -31,9 +31,9 @@ RSpec.describe "GET /works/:work_id/records", type: :request do
     user = FactoryBot.create(:registered_user)
 
     login_as(user, scope: :user)
-    expect {
-      get "/works/99999/records"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/works/99999/records"
+
+    expect(response.status).to eq(404)
   end
 
   it "削除済み作品の記録にアクセスしたとき、404エラーを返すこと" do
@@ -41,9 +41,9 @@ RSpec.describe "GET /works/:work_id/records", type: :request do
     work = FactoryBot.create(:work, :deleted)
 
     login_as(user, scope: :user)
-    expect {
-      get "/works/#{work.id}/records"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/works/#{work.id}/records"
+
+    expect(response.status).to eq(404)
   end
 
   it "自分の記録を表示すること" do

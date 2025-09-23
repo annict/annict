@@ -46,17 +46,17 @@ RSpec.describe "POST /db/staffs/:id/publishing", type: :request do
     staff = create(:staff, :published)
     login_as(user, scope: :user)
 
-    expect do
-      post "/db/staffs/#{staff.id}/publishing"
-    end.to raise_error(ActiveRecord::RecordNotFound)
+    post "/db/staffs/#{staff.id}/publishing"
+
+    expect(response.status).to eq(404)
   end
 
   it "エディター権限を持つユーザーでログインしているとき、存在しないスタッフIDにアクセスすると404エラーになること" do
     user = create(:registered_user, :with_editor_role)
     login_as(user, scope: :user)
 
-    expect do
-      post "/db/staffs/9999999/publishing"
-    end.to raise_error(ActiveRecord::RecordNotFound)
+    post "/db/staffs/9999999/publishing"
+
+    expect(response.status).to eq(404)
   end
 end

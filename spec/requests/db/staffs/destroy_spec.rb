@@ -67,9 +67,9 @@ RSpec.describe "DELETE /db/staffs/:id", type: :request do
 
     login_as(user, scope: :user)
 
-    expect do
-      delete "/db/staffs/999999"
-    end.to raise_error(ActiveRecord::RecordNotFound)
+    delete "/db/staffs/999999"
+
+    expect(response.status).to eq(404)
   end
 
   it "既に削除済みのスタッフを指定した場合、404エラーになること" do
@@ -78,8 +78,8 @@ RSpec.describe "DELETE /db/staffs/:id", type: :request do
 
     login_as(user, scope: :user)
 
-    expect do
-      delete "/db/staffs/#{staff.id}"
-    end.to raise_error(ActiveRecord::RecordNotFound)
+    delete "/db/staffs/#{staff.id}"
+
+    expect(response.status).to eq(404)
   end
 end

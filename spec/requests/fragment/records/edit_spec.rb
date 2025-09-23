@@ -16,18 +16,18 @@ RSpec.describe "GET /fragment/@:username/records/:record_id/edit", type: :reques
     user = FactoryBot.create(:registered_user)
     login_as(user, scope: :user)
 
-    expect {
-      get "/fragment/@nonexistentuser/records/123/edit"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/fragment/@nonexistentuser/records/123/edit"
+
+    expect(response.status).to eq(404)
   end
 
   it "記録が存在しない場合、404エラーを返すこと" do
     user = FactoryBot.create(:registered_user)
     login_as(user, scope: :user)
 
-    expect {
-      get "/fragment/@#{user.username}/records/nonexistent/edit"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/fragment/@#{user.username}/records/nonexistent/edit"
+
+    expect(response.status).to eq(404)
   end
 
   it "削除されたユーザーの記録を編集しようとした場合、404エラーを返すこと" do
@@ -44,9 +44,9 @@ RSpec.describe "GET /fragment/@:username/records/:record_id/edit", type: :reques
     another_user = FactoryBot.create(:registered_user)
     login_as(another_user, scope: :user)
 
-    expect {
-      get "/fragment/@#{username}/records/#{record_id}/edit"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/fragment/@#{username}/records/#{record_id}/edit"
+
+    expect(response.status).to eq(404)
   end
 
   it "削除された記録を編集しようとした場合、404エラーを返すこと" do
@@ -56,9 +56,9 @@ RSpec.describe "GET /fragment/@:username/records/:record_id/edit", type: :reques
     login_as(user, scope: :user)
     record.destroy!
 
-    expect {
-      get "/fragment/@#{user.username}/records/#{record.id}/edit"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/fragment/@#{user.username}/records/#{record.id}/edit"
+
+    expect(response.status).to eq(404)
   end
 
   it "他のユーザーの記録を編集しようとした場合、404エラーを返すこと" do
@@ -69,9 +69,9 @@ RSpec.describe "GET /fragment/@:username/records/:record_id/edit", type: :reques
 
     login_as(viewer, scope: :user)
 
-    expect {
-      get "/fragment/@#{owner.username}/records/#{record.id}/edit"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/fragment/@#{owner.username}/records/#{record.id}/edit"
+
+    expect(response.status).to eq(404)
   end
 
   it "自分の作品記録を編集できること" do

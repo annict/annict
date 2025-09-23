@@ -3,9 +3,9 @@
 
 RSpec.describe "GET /forum/categories/:category_id", type: :request do
   it "カテゴリーが存在しないとき、404エラーを返すこと" do
-    expect {
-      get "/forum/categories/non_existent_category"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/forum/categories/non_existent_category"
+
+    expect(response.status).to eq(404)
   end
 
   it "カテゴリーが存在するとき、カテゴリー情報と投稿一覧を表示すること" do

@@ -45,9 +45,9 @@ RSpec.describe "POST /db/episodes/:id/publishing", type: :request do
     user = create(:registered_user, :with_editor_role)
     login_as(user, scope: :user)
 
-    expect {
-      post "/db/episodes/99999999/publishing"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    post "/db/episodes/99999999/publishing"
+
+    expect(response.status).to eq(404)
   end
 
   it "削除済みのエピソードを指定したとき、404エラーになること" do
@@ -55,9 +55,9 @@ RSpec.describe "POST /db/episodes/:id/publishing", type: :request do
     episode = create(:episode, :unpublished, deleted_at: Time.current)
     login_as(user, scope: :user)
 
-    expect {
-      post "/db/episodes/#{episode.id}/publishing"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    post "/db/episodes/#{episode.id}/publishing"
+
+    expect(response.status).to eq(404)
   end
 
   it "既に公開済みのエピソードを指定したとき、404エラーになること" do
@@ -65,8 +65,8 @@ RSpec.describe "POST /db/episodes/:id/publishing", type: :request do
     episode = create(:episode, :published)
     login_as(user, scope: :user)
 
-    expect {
-      post "/db/episodes/#{episode.id}/publishing"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    post "/db/episodes/#{episode.id}/publishing"
+
+    expect(response.status).to eq(404)
   end
 end

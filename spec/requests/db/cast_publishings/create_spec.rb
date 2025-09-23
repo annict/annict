@@ -48,17 +48,17 @@ RSpec.describe "POST /db/casts/:id/publishing", type: :request do
 
     expect(cast.published?).to eq(true)
 
-    expect do
-      post "/db/casts/#{cast.id}/publishing"
-    end.to raise_error(ActiveRecord::RecordNotFound)
+    post "/db/casts/#{cast.id}/publishing"
+
+    expect(response.status).to eq(404)
   end
 
   it "存在しないキャストIDが指定されたとき、404エラーになること" do
     user = FactoryBot.create(:registered_user, :with_editor_role)
     login_as(user, scope: :user)
 
-    expect do
-      post "/db/casts/non-existent-id/publishing"
-    end.to raise_error(ActiveRecord::RecordNotFound)
+    post "/db/casts/non-existent-id/publishing"
+
+    expect(response.status).to eq(404)
   end
 end

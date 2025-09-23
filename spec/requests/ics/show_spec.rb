@@ -22,18 +22,18 @@ RSpec.describe "GET /ics", type: :request do
   end
 
   it "ユーザーが存在しない場合、404エラーを返すこと" do
-    expect {
-      get "/@nonexistent_user/ics"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/@nonexistent_user/ics"
+
+    expect(response.status).to eq(404)
   end
 
   it "削除されたユーザーにアクセスした場合、404エラーを返すこと" do
     user = FactoryBot.create(:user, username: "deleted_user")
     user.update!(deleted_at: Time.zone.now)
 
-    expect {
-      get "/@#{user.username}/ics"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/@#{user.username}/ics"
+
+    expect(response.status).to eq(404)
   end
 
   it "視聴リストに追加済みのアニメがない場合、空のカレンダーを返すこと" do

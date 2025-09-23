@@ -38,9 +38,9 @@ RSpec.describe "GET /characters/:character_id/fans", type: :request do
     expect(response.body).to include(user2.profile.name)
   end
 
-  it "存在しないキャラクターIDの場合、ActiveRecord::RecordNotFoundが発生すること" do
-    expect {
-      get "/characters/9999999/fans"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+  it "存在しないキャラクターIDの場合、404エラーが返されること" do
+    get "/characters/9999999/fans"
+
+    expect(response.status).to eq(404)
   end
 end

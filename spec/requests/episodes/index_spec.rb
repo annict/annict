@@ -28,24 +28,24 @@ RSpec.describe "GET /works/:work_id/episodes", type: :request do
     work = FactoryBot.create(:work)
     work.update!(no_episodes: true)
 
-    expect {
-      get "/works/#{work.id}/episodes"
-    }.to raise_error(ActionController::RoutingError, "Not Found")
+    get "/works/#{work.id}/episodes"
+
+    expect(response.status).to eq(404)
   end
 
   it "削除された作品にアクセスしたとき、404エラーが返ること" do
     work = FactoryBot.create(:work, :with_episode)
     work.update!(deleted_at: Time.current)
 
-    expect {
-      get "/works/#{work.id}/episodes"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/works/#{work.id}/episodes"
+
+    expect(response.status).to eq(404)
   end
 
   it "存在しない作品IDでアクセスしたとき、404エラーが返ること" do
-    expect {
-      get "/works/999999/episodes"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/works/999999/episodes"
+
+    expect(response.status).to eq(404)
   end
 
   it "ページネーションが正しく動作すること" do

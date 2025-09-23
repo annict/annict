@@ -15,9 +15,9 @@ RSpec.describe "GET /db/works/:work_id/image", type: :request do
     work = FactoryBot.create(:work, deleted_at: Time.current)
     login_as(user, scope: :user)
 
-    expect {
-      get db_work_image_detail_path(work)
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get db_work_image_detail_path(work)
+
+    expect(response.status).to eq(404)
   end
 
   it "画像が設定されていないとき、200ステータスでフォームが表示されること" do

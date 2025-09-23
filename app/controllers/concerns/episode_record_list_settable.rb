@@ -22,7 +22,7 @@ module EpisodeRecordListSettable
         .eager_load(episode_record: :episode)
         .preload(:work)
         .only_kept
-        .where(episode_records: {episodes: episode})
+        .where(episode_records: {episode_id: episode.id})
         .order(watched_at: :desc)
       @following_records = records
         .merge(current_user.followings)

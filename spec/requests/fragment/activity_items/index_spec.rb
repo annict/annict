@@ -29,12 +29,12 @@ RSpec.describe "GET /fragment/activity_groups/:activity_group_id/items", type: :
     expect(response.body).to include("面白かった")
   end
 
-  it "存在しないactivity_groupを指定したとき、RecordNotFoundエラーが発生すること" do
+  it "存在しないactivity_groupを指定したとき、404エラーが返されること" do
     user = create(:registered_user)
     login_as(user, scope: :user)
 
-    expect {
-      get "/fragment/activity_groups/non-existent-id/items"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/fragment/activity_groups/non-existent-id/items"
+
+    expect(response.status).to eq(404)
   end
 end

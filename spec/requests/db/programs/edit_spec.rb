@@ -57,9 +57,9 @@ RSpec.describe "GET /db/programs/:id/edit", type: :request do
 
     login_as(user, scope: :user)
 
-    expect do
-      get "/db/programs/non-existent-id/edit"
-    end.to raise_error(ActiveRecord::RecordNotFound)
+    get "/db/programs/non-existent-id/edit"
+
+    expect(response.status).to eq(404)
   end
 
   it "削除済み番組の場合、404エラーが発生すること" do
@@ -70,8 +70,8 @@ RSpec.describe "GET /db/programs/:id/edit", type: :request do
 
     login_as(user, scope: :user)
 
-    expect do
-      get "/db/programs/#{program.id}/edit"
-    end.to raise_error(ActiveRecord::RecordNotFound)
+    get "/db/programs/#{program.id}/edit"
+
+    expect(response.status).to eq(404)
   end
 end

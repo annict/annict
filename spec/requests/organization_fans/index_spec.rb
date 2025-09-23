@@ -17,9 +17,9 @@ RSpec.describe "GET /organizations/:organization_id/fans", type: :request do
   it "削除された組織の場合、404が返されること" do
     organization = create(:organization, deleted_at: Time.current)
 
-    expect {
-      get "/organizations/#{organization.id}/fans"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/organizations/#{organization.id}/fans"
+
+    expect(response).to have_http_status(:not_found)
   end
 
   it "削除されたユーザーのファン情報は表示されないこと" do

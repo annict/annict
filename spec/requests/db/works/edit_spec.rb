@@ -49,17 +49,17 @@ RSpec.describe "GET /db/works/:id/edit", type: :request do
     work = FactoryBot.create(:work, deleted_at: Time.current)
     login_as(user, scope: :user)
 
-    expect {
-      get "/db/works/#{work.id}/edit"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/db/works/#{work.id}/edit"
+
+    expect(response.status).to eq(404)
   end
 
   it "存在しない作品IDでアクセスしようとしたとき、404エラーになること" do
     user = FactoryBot.create(:registered_user, :with_editor_role)
     login_as(user, scope: :user)
 
-    expect {
-      get "/db/works/non-existent-id/edit"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/db/works/non-existent-id/edit"
+
+    expect(response.status).to eq(404)
   end
 end

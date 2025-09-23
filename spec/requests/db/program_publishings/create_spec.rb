@@ -54,9 +54,9 @@ RSpec.describe "POST /db/programs/:id/publishing", type: :request do
 
     login_as(user, scope: :user)
 
-    expect do
-      post "/db/programs/nonexistent-id/publishing"
-    end.to raise_error(ActiveRecord::RecordNotFound)
+    post "/db/programs/nonexistent-id/publishing"
+
+    expect(response.status).to eq(404)
   end
 
   it "編集者がログインしているとき、既に公開済みのプログラムを指定すると404エラーが発生すること" do
@@ -67,8 +67,8 @@ RSpec.describe "POST /db/programs/:id/publishing", type: :request do
 
     login_as(user, scope: :user)
 
-    expect do
-      post "/db/programs/#{program.id}/publishing"
-    end.to raise_error(ActiveRecord::RecordNotFound)
+    post "/db/programs/#{program.id}/publishing"
+
+    expect(response.status).to eq(404)
   end
 end

@@ -66,19 +66,19 @@ RSpec.describe "GET /@:username", type: :request do
     expect(response.body).to include("が記録しました")
   end
 
-  it "存在しないユーザー名でアクセスしたとき、RecordNotFoundエラーが発生すること" do
-    expect {
-      get "/@nonexistent_user"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+  it "存在しないユーザー名でアクセスしたとき、404エラーが返されること" do
+    get "/@nonexistent_user"
+
+    expect(response.status).to eq(404)
   end
 
-  it "削除されたユーザーにアクセスしたとき、RecordNotFoundエラーが発生すること" do
+  it "削除されたユーザーにアクセスしたとき、404エラーが返されること" do
     user = create(:registered_user)
     user.update!(deleted_at: Time.current)
 
-    expect {
-      get "/@#{user.username}"
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    get "/@#{user.username}"
+
+    expect(response.status).to eq(404)
   end
 
   it "大量のアクティビティが存在するユーザーでも適切にページネーションされること" do

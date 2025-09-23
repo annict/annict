@@ -55,41 +55,41 @@ RSpec.describe "PATCH /oauth/applications/:id", type: :request do
     expect(application.reload.name).to eq("Original Name")
   end
 
-  it "管理者ユーザーが他のユーザーのアプリケーションを更新しようとしたとき、404エラーが発生すること" do
+  it "管理者ユーザーが他のユーザーのアプリケーションを更新しようとしたとき、404エラーが返されること" do
     user1 = FactoryBot.create(:registered_user, :with_admin_role)
     user2 = FactoryBot.create(:registered_user, :with_admin_role)
     application = FactoryBot.create(:oauth_application, owner: user2)
     login_as(user1, scope: :user)
 
-    expect do
-      patch "/oauth/applications/#{application.id}", params: {
-        oauth_application: {name: "Updated Name"}
-      }
-    end.to raise_error(ActiveRecord::RecordNotFound)
+    patch "/oauth/applications/#{application.id}", params: {
+      oauth_application: {name: "Updated Name"}
+    }
+
+    expect(response).to have_http_status(:not_found)
   end
 
-  it "管理者ユーザーが削除済みアプリケーションを更新しようとしたとき、404エラーが発生すること" do
+  it "管理者ユーザーが削除済みアプリケーションを更新しようとしたとき、404エラーが返されること" do
     user = FactoryBot.create(:registered_user, :with_admin_role)
     application = FactoryBot.create(:oauth_application, owner: user)
     application.update!(deleted_at: Time.current)
     login_as(user, scope: :user)
 
-    expect do
-      patch "/oauth/applications/#{application.id}", params: {
-        oauth_application: {name: "Updated Name"}
-      }
-    end.to raise_error(ActiveRecord::RecordNotFound)
+    patch "/oauth/applications/#{application.id}", params: {
+      oauth_application: {name: "Updated Name"}
+    }
+
+    expect(response).to have_http_status(:not_found)
   end
 
-  it "存在しないアプリケーションIDで更新しようとしたとき、404エラーが発生すること" do
+  it "存在しないアプリケーションIDで更新しようとしたとき、404エラーが返されること" do
     user = FactoryBot.create(:registered_user, :with_admin_role)
     login_as(user, scope: :user)
 
-    expect do
-      patch "/oauth/applications/non-existent-id", params: {
-        oauth_application: {name: "Updated Name"}
-      }
-    end.to raise_error(ActiveRecord::RecordNotFound)
+    patch "/oauth/applications/non-existent-id", params: {
+      oauth_application: {name: "Updated Name"}
+    }
+
+    expect(response).to have_http_status(:not_found)
   end
 
   it "管理者ユーザーがリダイレクトURIを更新したとき、正常に更新されること" do

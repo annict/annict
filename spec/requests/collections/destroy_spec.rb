@@ -35,33 +35,33 @@ RSpec.describe "DELETE /collections/:collection_id", type: :request do
     }.to raise_error(ActiveRecord::RecordNotFound)
   end
 
-  it "ログインしているとき他人のコレクションを削除しようとすると、RecordNotFoundエラーが発生すること" do
+  it "ログインしているとき他人のコレクションを削除しようとすると、404エラーが返されること" do
     user = create(:registered_user)
     other_user = create(:registered_user)
     collection = create(:collection, user: other_user)
     login_as(user, scope: :user)
 
-    expect {
-      delete collection_path(collection.id)
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    delete collection_path(collection.id)
+
+    expect(response.status).to eq(404)
   end
 
-  it "ログインしているとき存在しないコレクションを削除しようとすると、RecordNotFoundエラーが発生すること" do
+  it "ログインしているとき存在しないコレクションを削除しようとすると、404エラーが返されること" do
     user = create(:registered_user)
     login_as(user, scope: :user)
 
-    expect {
-      delete collection_path("nonexistent")
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    delete collection_path("nonexistent")
+
+    expect(response.status).to eq(404)
   end
 
-  it "ログインしているとき削除済みのコレクションを削除しようとすると、RecordNotFoundエラーが発生すること" do
+  it "ログインしているとき削除済みのコレクションを削除しようとすると、404エラーが返されること" do
     user = create(:registered_user)
     collection = create(:collection, user: user, deleted_at: Time.current)
     login_as(user, scope: :user)
 
-    expect {
-      delete collection_path(collection.id)
-    }.to raise_error(ActiveRecord::RecordNotFound)
+    delete collection_path(collection.id)
+
+    expect(response.status).to eq(404)
   end
 end

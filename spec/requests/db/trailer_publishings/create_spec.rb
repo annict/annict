@@ -63,18 +63,18 @@ RSpec.describe "POST /db/trailers/:id/publishing", type: :request do
 
     expect(trailer.published?).to eq(true)
 
-    expect do
-      post "/db/trailers/#{trailer.id}/publishing"
-    end.to raise_error(ActiveRecord::RecordNotFound)
+    post "/db/trailers/#{trailer.id}/publishing"
+
+    expect(response.status).to eq(404)
   end
 
   it "存在しないトレイラーIDを指定したとき、404エラーになること" do
     user = create(:registered_user, :with_editor_role)
     login_as(user, scope: :user)
 
-    expect do
-      post "/db/trailers/999999/publishing"
-    end.to raise_error(ActiveRecord::RecordNotFound)
+    post "/db/trailers/999999/publishing"
+
+    expect(response.status).to eq(404)
   end
 
   it "削除済みのトレイラーを公開しようとしたとき、404エラーになること" do
@@ -82,8 +82,8 @@ RSpec.describe "POST /db/trailers/:id/publishing", type: :request do
     trailer = create(:trailer, :unpublished, deleted_at: Time.zone.now)
     login_as(user, scope: :user)
 
-    expect do
-      post "/db/trailers/#{trailer.id}/publishing"
-    end.to raise_error(ActiveRecord::RecordNotFound)
+    post "/db/trailers/#{trailer.id}/publishing"
+
+    expect(response.status).to eq(404)
   end
 end

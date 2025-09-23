@@ -58,13 +58,13 @@ RSpec.describe "GET /settings/email_notification/unsubscribe", type: :request do
     expect(response).to redirect_to(root_path)
   end
 
-  it "無効なunsubscription_keyの場合、レコードが見つからずエラーになること" do
-    expect {
-      get "/settings/email_notification/unsubscribe", params: {
-        key: "invalid-key",
-        action_name: "followed_user"
-      }
-    }.to raise_error(ActiveRecord::RecordNotFound)
+  it "無効なunsubscription_keyの場合、404エラーが返されること" do
+    get "/settings/email_notification/unsubscribe", params: {
+      key: "invalid-key",
+      action_name: "followed_user"
+    }
+
+    expect(response).to have_http_status(:not_found)
   end
 
   it "存在しないイベントカラムの場合、RoutingErrorが発生すること" do
@@ -72,12 +72,12 @@ RSpec.describe "GET /settings/email_notification/unsubscribe", type: :request do
     email_notification = user.email_notification
     email_notification.update!(unsubscription_key: "test-key-123")
 
-    expect {
-      get "/settings/email_notification/unsubscribe", params: {
-        key: "test-key-123",
-        action_name: "invalid_event"
-      }
-    }.to raise_error(ActionController::RoutingError, "Not Found")
+    get "/settings/email_notification/unsubscribe", params: {
+      key: "test-key-123",
+      action_name: "invalid_event"
+    }
+
+    expect(response).to have_http_status(:not_found)
   end
 
   it "liked_episode_recordイベントの通知が無効化されること" do
