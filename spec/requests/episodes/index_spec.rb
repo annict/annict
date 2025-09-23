@@ -28,9 +28,9 @@ RSpec.describe "GET /works/:work_id/episodes", type: :request do
     work = FactoryBot.create(:work)
     work.update!(no_episodes: true)
 
-    expect {
-      get "/works/#{work.id}/episodes"
-    }.to raise_error(ActionController::RoutingError, "Not Found")
+    get "/works/#{work.id}/episodes"
+
+    expect(response.status).to eq(404)
   end
 
   it "削除された作品にアクセスしたとき、404エラーが返ること" do

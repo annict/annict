@@ -42,9 +42,9 @@ RSpec.describe "DELETE /userland/projects/:project_id", type: :request do
     user = create(:registered_user)
     login_as(user, scope: :user)
 
-    expect do
-      delete "/userland/projects/non_existent_id"
-    end.to raise_error(ActionController::RoutingError)
+    delete "/userland/projects/non_existent_id"
+
+    expect(response.status).to eq(404)
   end
 
   it "有効なID形式だが存在しないプロジェクトIDでアクセスすると404エラーが返されること" do

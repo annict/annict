@@ -72,12 +72,12 @@ RSpec.describe "GET /settings/email_notification/unsubscribe", type: :request do
     email_notification = user.email_notification
     email_notification.update!(unsubscription_key: "test-key-123")
 
-    expect {
-      get "/settings/email_notification/unsubscribe", params: {
-        key: "test-key-123",
-        action_name: "invalid_event"
-      }
-    }.to raise_error(ActionController::RoutingError, "Not Found")
+    get "/settings/email_notification/unsubscribe", params: {
+      key: "test-key-123",
+      action_name: "invalid_event"
+    }
+
+    expect(response).to have_http_status(:not_found)
   end
 
   it "liked_episode_recordイベントの通知が無効化されること" do

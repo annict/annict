@@ -56,9 +56,9 @@ RSpec.describe "GET /@:username/:status_kind", type: :request do
     user = create(:registered_user)
     host! ENV.fetch("ANNICT_HOST")
 
-    expect {
-      get "/@#{user.username}/invalid_status"
-    }.to raise_error(ActionController::RoutingError)
+    get "/@#{user.username}/invalid_status"
+
+    expect(response.status).to eq(404)
   end
 
   it "存在しないユーザーでアクセスした場合、レコードが見つからないエラーになること" do
