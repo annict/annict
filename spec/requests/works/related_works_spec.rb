@@ -141,4 +141,15 @@ RSpec.describe "GET /works/:work_id/related_works", type: :request do
     expect(response.body).to include(published_on_series_work.title)
     expect(response.body).not_to include(unpublished_on_series_work.title)
   end
+
+  it "非公開でシリーズ作品が登録されている時にシリーズ自体表示されないこと" do
+    series = create(:series)
+    work = create(:work)
+    create(:series_work, series: series, work: work, unpublished_at: Time.current)
+
+    get "/works/#{work.id}/related_works"
+
+    expect(response.status).to eq(200)
+    expect(response.body).not_to include("#{series.name} #{I18n.t("noun.series")}")
+  end
 end

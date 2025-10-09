@@ -13,6 +13,7 @@ class RelatedWorksController < ApplicationV6Controller
       .series_list
       .eager_load(series_works: {work: :work_image})
       .only_kept
+      .merge(SeriesWork.only_kept)
       .order("works.season_year ASC")
       .order("works.season_name ASC")
       .order(:created_at)
