@@ -2305,57 +2305,65 @@ class Rack::Multipart::MultipartTotalPartLimitError < ::StandardError; end
 class Rack::Multipart::Parser
   # @return [Parser] a new instance of Parser
   #
-  # source://rack//lib/rack/multipart/parser.rb#180
+  # source://rack//lib/rack/multipart/parser.rb#201
   def initialize(boundary, tempfile, bufsize, query_parser); end
 
-  # source://rack//lib/rack/multipart/parser.rb#199
+  # source://rack//lib/rack/multipart/parser.rb#222
   def on_read(content); end
 
-  # source://rack//lib/rack/multipart/parser.rb#205
+  # source://rack//lib/rack/multipart/parser.rb#228
   def result; end
 
   # Returns the value of attribute state.
   #
-  # source://rack//lib/rack/multipart/parser.rb#178
+  # source://rack//lib/rack/multipart/parser.rb#199
   def state; end
 
   private
 
-  # source://rack//lib/rack/multipart/parser.rb#302
+  # Scan until the we find the start or end of the boundary.
+  # If we find it, return the appropriate symbol for the start or
+  # end of the boundary.  If we don't find the start or end of the
+  # boundary, clear the buffer and return nil.
+  #
+  # source://rack//lib/rack/multipart/parser.rb#358
   def consume_boundary; end
 
-  # source://rack//lib/rack/multipart/parser.rb#300
+  # source://rack//lib/rack/multipart/parser.rb#345
   def full_boundary; end
 
-  # source://rack//lib/rack/multipart/parser.rb#312
+  # source://rack//lib/rack/multipart/parser.rb#368
   def get_filename(head); end
 
-  # source://rack//lib/rack/multipart/parser.rb#248
+  # source://rack//lib/rack/multipart/parser.rb#277
   def handle_consume_token; end
 
-  # source://rack//lib/rack/multipart/parser.rb#377
+  # source://rack//lib/rack/multipart/parser.rb#433
   def handle_empty_content!(content); end
 
-  # source://rack//lib/rack/multipart/parser.rb#234
+  # source://rack//lib/rack/multipart/parser.rb#257
   def handle_fast_forward; end
 
-  # source://rack//lib/rack/multipart/parser.rb#281
+  # source://rack//lib/rack/multipart/parser.rb#323
   def handle_mime_body; end
 
-  # source://rack//lib/rack/multipart/parser.rb#258
+  # source://rack//lib/rack/multipart/parser.rb#287
   def handle_mime_head; end
 
-  # source://rack//lib/rack/multipart/parser.rb#217
+  # source://rack//lib/rack/multipart/parser.rb#240
   def run_parser; end
 
-  # source://rack//lib/rack/multipart/parser.rb#349
+  # source://rack//lib/rack/multipart/parser.rb#405
   def tag_multipart_encoding(filename, content_type, name, body); end
 
+  # source://rack//lib/rack/multipart/parser.rb#347
+  def update_retained_size(size); end
+
   class << self
-    # source://rack//lib/rack/multipart/parser.rb#66
+    # source://rack//lib/rack/multipart/parser.rb#87
     def parse(io, content_length, content_type, tmpfile, bufsize, qp); end
 
-    # source://rack//lib/rack/multipart/parser.rb#59
+    # source://rack//lib/rack/multipart/parser.rb#80
     def parse_boundary(content_type); end
   end
 end
@@ -2363,88 +2371,97 @@ end
 # source://rack//lib/rack/multipart/parser.rb#21
 Rack::Multipart::Parser::BOUNDARY_REGEX = T.let(T.unsafe(nil), Regexp)
 
+# source://rack//lib/rack/multipart/parser.rb#23
+Rack::Multipart::Parser::BOUNDARY_START_LIMIT = T.let(T.unsafe(nil), Integer)
+
+# source://rack//lib/rack/multipart/parser.rb#41
+Rack::Multipart::Parser::BUFFERED_UPLOAD_BYTESIZE_LIMIT = T.let(T.unsafe(nil), Integer)
+
 # source://rack//lib/rack/multipart/parser.rb#13
 Rack::Multipart::Parser::BUFSIZE = T.let(T.unsafe(nil), Integer)
 
-# source://rack//lib/rack/multipart/parser.rb#23
+# source://rack//lib/rack/multipart/parser.rb#44
 class Rack::Multipart::Parser::BoundedIO
   # @return [BoundedIO] a new instance of BoundedIO
   #
-  # source://rack//lib/rack/multipart/parser.rb#24
+  # source://rack//lib/rack/multipart/parser.rb#45
   def initialize(io, content_length); end
 
-  # source://rack//lib/rack/multipart/parser.rb#30
+  # source://rack//lib/rack/multipart/parser.rb#51
   def read(size, outbuf = T.unsafe(nil)); end
 
-  # source://rack//lib/rack/multipart/parser.rb#51
+  # source://rack//lib/rack/multipart/parser.rb#72
   def rewind; end
 end
 
-# source://rack//lib/rack/multipart/parser.rb#347
+# source://rack//lib/rack/multipart/parser.rb#403
 Rack::Multipart::Parser::CHARSET = T.let(T.unsafe(nil), String)
 
-# source://rack//lib/rack/multipart/parser.rb#87
+# source://rack//lib/rack/multipart/parser.rb#108
 class Rack::Multipart::Parser::Collector
   include ::Prelude::Enumerator
   include ::Enumerable
 
   # @return [Collector] a new instance of Collector
   #
-  # source://rack//lib/rack/multipart/parser.rb#123
+  # source://rack//lib/rack/multipart/parser.rb#144
   def initialize(tempfile); end
 
-  # source://rack//lib/rack/multipart/parser.rb#129
+  # source://rack//lib/rack/multipart/parser.rb#150
   def each; end
 
-  # source://rack//lib/rack/multipart/parser.rb#149
+  # source://rack//lib/rack/multipart/parser.rb#170
   def on_mime_body(mime_index, content); end
 
-  # source://rack//lib/rack/multipart/parser.rb#153
+  # source://rack//lib/rack/multipart/parser.rb#174
   def on_mime_finish(mime_index); end
 
-  # source://rack//lib/rack/multipart/parser.rb#133
+  # source://rack//lib/rack/multipart/parser.rb#154
   def on_mime_head(mime_index, head, filename, content_type, name); end
 
   private
 
-  # source://rack//lib/rack/multipart/parser.rb#158
+  # source://rack//lib/rack/multipart/parser.rb#179
   def check_part_limits; end
 end
 
-# source://rack//lib/rack/multipart/parser.rb#111
+# source://rack//lib/rack/multipart/parser.rb#132
 class Rack::Multipart::Parser::Collector::BufferPart < ::Rack::Multipart::Parser::Collector::MimePart
-  # source://rack//lib/rack/multipart/parser.rb#113
+  # source://rack//lib/rack/multipart/parser.rb#134
   def close; end
 
   # @return [Boolean]
   #
-  # source://rack//lib/rack/multipart/parser.rb#112
+  # source://rack//lib/rack/multipart/parser.rb#133
   def file?; end
 end
 
-# source://rack//lib/rack/multipart/parser.rb#88
+# source://rack//lib/rack/multipart/parser.rb#109
 class Rack::Multipart::Parser::Collector::MimePart < ::Struct
   # @yield [data]
   #
-  # source://rack//lib/rack/multipart/parser.rb#89
+  # source://rack//lib/rack/multipart/parser.rb#110
   def get_data; end
 end
 
-# source://rack//lib/rack/multipart/parser.rb#116
+# source://rack//lib/rack/multipart/parser.rb#137
 class Rack::Multipart::Parser::Collector::TempfilePart < ::Rack::Multipart::Parser::Collector::MimePart
-  # source://rack//lib/rack/multipart/parser.rb#118
+  # source://rack//lib/rack/multipart/parser.rb#139
   def close; end
 
   # @return [Boolean]
   #
-  # source://rack//lib/rack/multipart/parser.rb#117
+  # source://rack//lib/rack/multipart/parser.rb#138
   def file?; end
 end
 
-# source://rack//lib/rack/multipart/parser.rb#57
+# source://rack//lib/rack/multipart/parser.rb#78
 Rack::Multipart::Parser::EMPTY = T.let(T.unsafe(nil), Rack::Multipart::Parser::MultipartInfo)
 
-# source://rack//lib/rack/multipart/parser.rb#56
+# source://rack//lib/rack/multipart/parser.rb#26
+Rack::Multipart::Parser::MIME_HEADER_BYTESIZE_LIMIT = T.let(T.unsafe(nil), Integer)
+
+# source://rack//lib/rack/multipart/parser.rb#77
 class Rack::Multipart::Parser::MultipartInfo < ::Struct
   # Returns the value of attribute params
   #
@@ -2653,21 +2670,26 @@ Rack::QUERY_STRING = T.let(T.unsafe(nil), String)
 class Rack::QueryParser
   # @return [QueryParser] a new instance of QueryParser
   #
-  # source://rack//lib/rack/query_parser.rb#54
+  # source://rack//lib/rack/query_parser.rb#56
   def initialize(params_class, key_space_limit, param_depth_limit, bytesize_limit: T.unsafe(nil), params_limit: T.unsafe(nil)); end
+
+  # Returns the value of attribute bytesize_limit.
+  #
+  # source://rack//lib/rack/query_parser.rb#54
+  def bytesize_limit; end
 
   # Returns the value of attribute key_space_limit.
   #
   # source://rack//lib/rack/query_parser.rb#34
   def key_space_limit; end
 
-  # source://rack//lib/rack/query_parser.rb#155
+  # source://rack//lib/rack/query_parser.rb#157
   def make_params; end
 
-  # source://rack//lib/rack/query_parser.rb#163
+  # source://rack//lib/rack/query_parser.rb#165
   def new_depth_limit(param_depth_limit); end
 
-  # source://rack//lib/rack/query_parser.rb#159
+  # source://rack//lib/rack/query_parser.rb#161
   def new_space_limit(key_space_limit); end
 
   # normalize_params recursively expands parameters into structural types. If
@@ -2676,7 +2698,7 @@ class Rack::QueryParser
   #
   # @raise [ParamsTooDeepError]
   #
-  # source://rack//lib/rack/query_parser.rb#114
+  # source://rack//lib/rack/query_parser.rb#116
   def normalize_params(params, name, v, depth); end
 
   # Returns the value of attribute param_depth_limit.
@@ -2690,7 +2712,7 @@ class Rack::QueryParser
   # ParameterTypeError is raised. Users are encouraged to return a 400 in this
   # case.
   #
-  # source://rack//lib/rack/query_parser.rb#95
+  # source://rack//lib/rack/query_parser.rb#97
   def parse_nested_query(qs, d = T.unsafe(nil)); end
 
   # Stolen from Mongrel, with some small modifications:
@@ -2699,25 +2721,25 @@ class Rack::QueryParser
   # cookies by changing the characters used in the second
   # parameter (which defaults to '&;').
   #
-  # source://rack//lib/rack/query_parser.rb#67
+  # source://rack//lib/rack/query_parser.rb#69
   def parse_query(qs, d = T.unsafe(nil), &unescaper); end
 
   private
 
-  # source://rack//lib/rack/query_parser.rb#185
+  # source://rack//lib/rack/query_parser.rb#187
   def check_query_string(qs, sep); end
 
   # @return [Boolean]
   #
-  # source://rack//lib/rack/query_parser.rb#173
+  # source://rack//lib/rack/query_parser.rb#175
   def params_hash_has_key?(hash, key); end
 
   # @return [Boolean]
   #
-  # source://rack//lib/rack/query_parser.rb#169
+  # source://rack//lib/rack/query_parser.rb#171
   def params_hash_type?(obj); end
 
-  # source://rack//lib/rack/query_parser.rb#201
+  # source://rack//lib/rack/query_parser.rb#203
   def unescape(string); end
 
   class << self
@@ -2751,24 +2773,24 @@ Rack::QueryParser::PARAMS_LIMIT = T.let(T.unsafe(nil), Integer)
 # source://rack//lib/rack/query_parser.rb#12
 class Rack::QueryParser::ParameterTypeError < ::TypeError; end
 
-# source://rack//lib/rack/query_parser.rb#205
+# source://rack//lib/rack/query_parser.rb#207
 class Rack::QueryParser::Params
   # @return [Params] a new instance of Params
   #
-  # source://rack//lib/rack/query_parser.rb#206
+  # source://rack//lib/rack/query_parser.rb#208
   def initialize(limit); end
 
-  # source://rack//lib/rack/query_parser.rb#212
+  # source://rack//lib/rack/query_parser.rb#214
   def [](key); end
 
   # @raise [ParamsTooDeepError]
   #
-  # source://rack//lib/rack/query_parser.rb#216
+  # source://rack//lib/rack/query_parser.rb#218
   def []=(key, value); end
 
   # @return [Boolean]
   #
-  # source://rack//lib/rack/query_parser.rb#222
+  # source://rack//lib/rack/query_parser.rb#224
   def key?(key); end
 
   # Recursively unwraps nested `Params` objects and constructs an object
@@ -2789,7 +2811,7 @@ class Rack::QueryParser::Params
   #      getting the hash representation while another thread is adding a
   #      key to it is non-deterministic.
   #
-  # source://rack//lib/rack/query_parser.rb#244
+  # source://rack//lib/rack/query_parser.rb#246
   def to_h; end
 
   # Recursively unwraps nested `Params` objects and constructs an object
@@ -2810,7 +2832,7 @@ class Rack::QueryParser::Params
   #      getting the hash representation while another thread is adding a
   #      key to it is non-deterministic.
   #
-  # source://rack//lib/rack/query_parser.rb#244
+  # source://rack//lib/rack/query_parser.rb#246
   def to_params_hash; end
 end
 
@@ -3128,20 +3150,20 @@ module Rack::Request::Helpers
 
   # shortcut for <tt>request.params[key]</tt>
   #
-  # source://rack//lib/rack/request.rb#532
+  # source://rack//lib/rack/request.rb#535
   def [](key); end
 
   # shortcut for <tt>request.params[key] = value</tt>
   #
   # Note that modifications will not be persisted in the env. Use update_param or delete_param if you want to destructively modify params.
   #
-  # source://rack//lib/rack/request.rb#543
+  # source://rack//lib/rack/request.rb#546
   def []=(key, value); end
 
-  # source://rack//lib/rack/request.rb#519
+  # source://rack//lib/rack/request.rb#522
   def accept_encoding; end
 
-  # source://rack//lib/rack/request.rb#523
+  # source://rack//lib/rack/request.rb#526
   def accept_language; end
 
   # The authority of the incoming request as defined by RFC3976.
@@ -3153,7 +3175,7 @@ module Rack::Request::Helpers
   # source://rack//lib/rack/request.rb#227
   def authority; end
 
-  # source://rack//lib/rack/request.rb#502
+  # source://rack//lib/rack/request.rb#505
   def base_url; end
 
   # source://rack//lib/rack/request.rb#150
@@ -3189,7 +3211,7 @@ module Rack::Request::Helpers
   #
   # <tt>env['rack.input']</tt> is not touched.
   #
-  # source://rack//lib/rack/request.rb#497
+  # source://rack//lib/rack/request.rb#500
   def delete_param(k); end
 
   # Determine whether the request body contains form-data by checking
@@ -3215,7 +3237,7 @@ module Rack::Request::Helpers
   # source://rack//lib/rack/request.rb#338
   def forwarded_port; end
 
-  # source://rack//lib/rack/request.rb#515
+  # source://rack//lib/rack/request.rb#518
   def fullpath; end
 
   # Checks the HTTP request method (or verb) to see if it was of type GET
@@ -3301,7 +3323,7 @@ module Rack::Request::Helpers
   #
   # Note that modifications will not be persisted in the env. Use update_param or delete_param if you want to destructively modify params.
   #
-  # source://rack//lib/rack/request.rb#468
+  # source://rack//lib/rack/request.rb#471
   def params; end
 
   # Determine whether the request body contains data by checking
@@ -3319,7 +3341,7 @@ module Rack::Request::Helpers
   # source://rack//lib/rack/request.rb#196
   def patch?; end
 
-  # source://rack//lib/rack/request.rb#511
+  # source://rack//lib/rack/request.rb#514
   def path; end
 
   # source://rack//lib/rack/request.rb#154
@@ -3402,7 +3424,7 @@ module Rack::Request::Helpers
 
   # @return [Boolean]
   #
-  # source://rack//lib/rack/request.rb#527
+  # source://rack//lib/rack/request.rb#530
   def trusted_proxy?(ip); end
 
   # Checks the HTTP request method (or verb) to see if it was of type UNLINK
@@ -3418,12 +3440,12 @@ module Rack::Request::Helpers
   #
   # <tt>env['rack.input']</tt> is not touched.
   #
-  # source://rack//lib/rack/request.rb#477
+  # source://rack//lib/rack/request.rb#480
   def update_param(k, v); end
 
   # Tries to return a remake of the original request URL as a string.
   #
-  # source://rack//lib/rack/request.rb#507
+  # source://rack//lib/rack/request.rb#510
   def url; end
 
   # source://rack//lib/rack/request.rb#161
@@ -3431,7 +3453,7 @@ module Rack::Request::Helpers
 
   # like Hash#values_at
   #
-  # source://rack//lib/rack/request.rb#552
+  # source://rack//lib/rack/request.rb#555
   def values_at(*keys); end
 
   # @return [Boolean]
@@ -3441,46 +3463,46 @@ module Rack::Request::Helpers
 
   private
 
-  # source://rack//lib/rack/request.rb#641
+  # source://rack//lib/rack/request.rb#644
   def allowed_scheme(header); end
 
-  # source://rack//lib/rack/request.rb#558
+  # source://rack//lib/rack/request.rb#561
   def default_session; end
 
-  # source://rack//lib/rack/request.rb#645
+  # source://rack//lib/rack/request.rb#648
   def extract_proto_header(header); end
 
-  # source://rack//lib/rack/request.rb#636
+  # source://rack//lib/rack/request.rb#639
   def forwarded_scheme; end
 
-  # source://rack//lib/rack/request.rb#574
+  # source://rack//lib/rack/request.rb#577
   def parse_http_accept_header(header); end
 
-  # source://rack//lib/rack/request.rb#593
+  # source://rack//lib/rack/request.rb#596
   def parse_multipart; end
 
-  # source://rack//lib/rack/request.rb#589
+  # source://rack//lib/rack/request.rb#592
   def parse_query(qs, d = T.unsafe(nil)); end
 
-  # source://rack//lib/rack/request.rb#585
+  # source://rack//lib/rack/request.rb#588
   def query_parser; end
 
-  # source://rack//lib/rack/request.rb#632
+  # source://rack//lib/rack/request.rb#635
   def reject_trusted_ip_addresses(ip_addresses); end
 
-  # source://rack//lib/rack/request.rb#619
+  # source://rack//lib/rack/request.rb#622
   def split_authority(authority); end
 
-  # source://rack//lib/rack/request.rb#597
+  # source://rack//lib/rack/request.rb#600
   def split_header(value); end
 
   # Assist with compatibility when processing `X-Forwarded-For`.
   #
-  # source://rack//lib/rack/request.rb#561
+  # source://rack//lib/rack/request.rb#564
   def wrap_ipv6(host); end
 end
 
-# source://rack//lib/rack/request.rb#601
+# source://rack//lib/rack/request.rb#604
 Rack::Request::Helpers::AUTHORITY = T.let(T.unsafe(nil), Regexp)
 
 # Default ports depending on scheme. Used to decide whether or not
@@ -4048,17 +4070,22 @@ Rack::SET_COOKIE = T.let(T.unsafe(nil), String)
 #     proxy_set_header   X-Real-IP           $remote_addr;
 #     proxy_set_header   X-Forwarded-For     $proxy_add_x_forwarded_for;
 #
-#     proxy_set_header   X-Sendfile-Type     X-Accel-Redirect;
 #     proxy_set_header   X-Accel-Mapping     /var/www/=/files/;
 #
 #     proxy_pass         http://127.0.0.1:8080/;
 #   }
 #
-# Note that the X-Sendfile-Type header must be set exactly as shown above.
 # The X-Accel-Mapping header should specify the location on the file system,
 # followed by an equals sign (=), followed name of the private URL pattern
 # that it maps to. The middleware performs a simple substitution on the
 # resulting path.
+#
+# To enable X-Accel-Redirect, you must configure the middleware explicitly:
+#
+#   use Rack::Sendfile, "X-Accel-Redirect"
+#
+# For security reasons, the X-Sendfile-Type header from requests is ignored.
+# The sendfile variation must be set via the middleware constructor.
 #
 # See Also: https://www.nginx.com/resources/wiki/start/topics/examples/xsendfile
 #
@@ -4105,23 +4132,38 @@ Rack::SET_COOKIE = T.let(T.unsafe(nil), String)
 # external. The internal values may contain regular expression syntax, they
 # will be matched with case indifference.
 #
-# source://rack//lib/rack/sendfile.rb#100
+# When X-Accel-Redirect is explicitly enabled via the variation parameter,
+# and no application-level mappings are provided, the middleware will read
+# the X-Accel-Mapping header from the proxy. This allows nginx to control
+# the path mapping without requiring application-level configuration.
+#
+# === Security
+#
+# For security reasons, the X-Sendfile-Type header from HTTP requests is
+# ignored. The sendfile variation must be explicitly configured via the
+# middleware constructor to prevent information disclosure vulnerabilities
+# where attackers could bypass proxy restrictions.
+#
+# source://rack//lib/rack/sendfile.rb#117
 class Rack::Sendfile
   # @return [Sendfile] a new instance of Sendfile
   #
-  # source://rack//lib/rack/sendfile.rb#101
+  # source://rack//lib/rack/sendfile.rb#118
   def initialize(app, variation = T.unsafe(nil), mappings = T.unsafe(nil)); end
 
-  # source://rack//lib/rack/sendfile.rb#109
+  # source://rack//lib/rack/sendfile.rb#126
   def call(env); end
 
   private
 
-  # source://rack//lib/rack/sendfile.rb#149
+  # source://rack//lib/rack/sendfile.rb#177
   def map_accel_path(env, path); end
 
-  # source://rack//lib/rack/sendfile.rb#143
+  # source://rack//lib/rack/sendfile.rb#161
   def variation(env); end
+
+  # source://rack//lib/rack/sendfile.rb#167
+  def x_accel_mapping(env); end
 end
 
 # source://rack//lib/rack/server.rb#8
