@@ -24,4 +24,6 @@ module VodHelper
       "https://abema.tv/video/title/#{code}"
     end
   end
+
+  module_function :vod_title_url
 end
