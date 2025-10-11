@@ -47,7 +47,11 @@ class Program < ApplicationRecord
     when Channel::D_ANIME_STORE_ID
       "https://animestore.docomo.ne.jp/animestore/ci_pc?workId=#{vod_title_code}"
     when Channel::D_ANIME_STORE_NICONICO_ID
-      "https://www.nicovideo.jp/series/#{vod_title_code}"
+      if vod_title_code.start_with? "so"
+        "https://www.nicovideo.jp/watch/#{vod_title_code}"
+      else
+        "https://www.nicovideo.jp/series/#{vod_title_code}"
+      end
     when Channel::NICONICO_CHANNEL_ID
       "https://ch.nicovideo.jp/#{vod_title_code}"
     when Channel::NETFLIX_ID

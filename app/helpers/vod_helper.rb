@@ -11,7 +11,11 @@ module VodHelper
     when Channel::D_ANIME_STORE_ID
       "https://animestore.docomo.ne.jp/animestore/ci_pc?workId=#{code}"
     when Channel::D_ANIME_STORE_NICONICO_ID
-      "https://www.nicovideo.jp/series/#{code}"
+      if code.start_with? "so"
+        "https://www.nicovideo.jp/watch/#{code}"
+      else
+        "https://www.nicovideo.jp/series/#{code}"
+      end
     when Channel::NICONICO_CHANNEL_ID
       "https://ch.nicovideo.jp/#{code}"
     when Channel::NETFLIX_ID
