@@ -1,0 +1,43 @@
+FROM ruby:3.3.5-slim-bookworm
+
+RUN \
+  apt update && \
+  apt dist-upgrade -yq && \
+  apt install -y --no-install-recommends \
+  build-essential \
+  zsh \
+  curl \
+  git \
+  lsb-release \
+  # Shrineによる画像アップロードに必要
+  file imagemagick \
+  # PostgreSQLやNode.jsのインストールに必要
+  gnupg
+
+# PostgreSQLのセットアップ
+RUN \
+  curl -sS https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
+  echo "deb https://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
+  apt update && \
+  apt install -y --no-install-recommends \
+  libpq-dev \
+  postgresql-client-17
+
+# Node.jsのセットアップ
+RUN \
+  # https://github.com/nodesource/distributions/wiki/How-to-select-the-Node.js-version-to-install
+  curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
+  apt install -y --no-install-recommends \
+  nodejs=22.17.0-1nodesource1
+
+RUN npm install --global yarn@1.22.22
+
+RUN gem install bundler -v 2.3.12
+
+WORKDIR /workspace
+
+# zshをデフォルトシェルに設定
+SHELL ["/bin/zsh", "-c"]
+ENV SHELL=/bin/zsh
+
+CMD ["/bin/zsh"]
