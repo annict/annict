@@ -1,5 +1,9 @@
 FROM ruby:3.3.5-slim-bookworm
 
+ARG USER_ID=1000
+ARG GROUP_ID=1000
+ARG USERNAME=developer
+
 RUN \
   apt update && \
   apt dist-upgrade -yq && \

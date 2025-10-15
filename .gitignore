@@ -2,6 +2,7 @@
 
 /.bundle
 /.claude/settings.local.json
+/.devcontainer
 /.env.*.local
 /.envrc
 /.idea
