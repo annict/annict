@@ -59,4 +59,6 @@ RUN gem install bundler -v 2.3.12
 SHELL ["/bin/zsh", "-c"]
 ENV SHELL=/bin/zsh
 
+RUN touch /home/${USERNAME}/.zshrc
+
 CMD ["/bin/zsh"]
