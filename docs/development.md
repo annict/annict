@@ -98,3 +98,9 @@ Annict では RSpec を使ってテストを書いています。以下のコマ
 ```sh
 bin/rspec
 ```
+
+System specを実行するときは `playwright install` を実行して依存パッケージをインストールしてください。
+
+```sh
+yarn playwright install --with-deps
+```
