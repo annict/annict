@@ -1,3 +1,8 @@
+\restrict AvTueJ3RfEdWpA1i0E9W6jHd3i9yz6vyMLbWJ0TyeCPyUE3y8W6kOV2UpNj1Eua
+
+-- Dumped from database version 17.3 (Debian 17.3-3.pgdg120+1)
+-- Dumped by pg_dump version 17.6 (Debian 17.6-2.pgdg12+1)
+
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
@@ -9,13 +14,6 @@ SET check_function_bodies = false;
 SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
-
---
--- Name: public; Type: SCHEMA; Schema: -; Owner: -
---
-
--- *not* creating schema, since initdb creates it
-
 
 --
 -- Name: SCHEMA public; Type: COMMENT; Schema: -; Owner: -
@@ -6783,6 +6781,8 @@ ALTER TABLE ONLY public.works
 --
 -- PostgreSQL database dump complete
 --
+
+\unrestrict AvTueJ3RfEdWpA1i0E9W6jHd3i9yz6vyMLbWJ0TyeCPyUE3y8W6kOV2UpNj1Eua
 
 SET search_path TO "$user", public;
 
