@@ -7,14 +7,14 @@ Doorkeeper.configure do
 
   # This block will be called to check whether the resource owner is authenticated or not.
   resource_owner_authenticator do
-    sign_in_path = "/sign_in?#{{ back: request.fullpath, client_id: params[:client_id] }.compact.to_query}"
+    sign_in_path = "/sign_in?#{{back: request.fullpath, client_id: params[:client_id]}.compact.to_query}"
     current_user || redirect_to(sign_in_path)
   end
 
   # If you want to restrict access to the web interface for adding oauth authorized
   # applications, you need to declare the block below.
   admin_authenticator do
-    sign_in_path = "/sign_in?#{{ back: request.fullpath }.to_query}"
+    sign_in_path = "/sign_in?#{{back: request.fullpath}.to_query}"
     current_user || redirect_to(sign_in_path)
   end
 
