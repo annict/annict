@@ -1,0 +1,2 @@
+web: bin/server
+release: dbmate up

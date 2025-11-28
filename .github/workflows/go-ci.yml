@@ -1,0 +1,189 @@
+name: Go CI
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "go/**"
+      - ".github/workflows/go-ci.yml"
+  pull_request:
+    paths:
+      - "go/**"
+      - ".github/workflows/go-ci.yml"
+
+env:
+  GO_VERSION: "1.25.1"
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: go
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: ${{ env.GO_VERSION }}
+
+      - name: Check templ generate
+        run: |
+          # templファイルからGoコードを生成し、コミット忘れがないかチェック
+          make templ-generate
+          make goimports
+          git diff --exit-code internal/templates/
+
+      - name: Check go mod tidy
+        run: |
+          # 依存関係の整合性チェック: 不要なモジュールを削除し、必要なモジュールを追加
+          go mod tidy
+          # go.mod/go.sumが変更されていないことを確認（tidyし忘れを検出）
+          git diff --exit-code go.mod go.sum
+
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v9.1.0
+        with:
+          version: v2.6.2
+          working-directory: go
+          args: --config=.golangci.yml ./...
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: go
+    env:
+      APP_ENV: test
+      DATABASE_URL: postgres://postgres@localhost:5432/annict_test?sslmode=disable
+      ANNICT_REDIS_URL: redis://localhost:16379/1
+      ANNICT_PORT: "4004"
+      ANNICT_DOMAIN: "test.example.com"
+      ANNICT_COOKIE_DOMAIN: ".test.example.com"
+      ANNICT_SESSION_SECURE: "false"
+      ANNICT_SESSION_HTTPONLY: "true"
+      ANNICT_S3_BUCKET_NAME: "annict-test"
+      ANNICT_IMGPROXY_ENDPOINT: "http://localhost:8080"
+      ANNICT_IMGPROXY_KEY: "test_key"
+      ANNICT_IMGPROXY_SALT: "test_salt"
+      ANNICT_RAILS_APP_URL: "http://localhost:3000"
+      ANNICT_DISABLE_RATE_LIMIT: "false"
+      ANNICT_RESEND_FROM_EMAIL: "test@example.com"
+
+    services:
+      postgresql:
+        image: postgres:17.5
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_DB: annict_test
+          POSTGRES_HOST_AUTH_METHOD: trust
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:8.2.3-alpine
+        ports:
+          - 16379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: ${{ env.GO_VERSION }}
+
+      - name: Get dependencies
+        run: |
+          # プロジェクトの依存パッケージをダウンロード
+          go mod download
+
+      - name: Setup test database
+        run: |
+          # テスト用データベースに完全なスキーマを適用（ローカル環境と同じ方法）
+          # 注: db/schema.sqlは最新の完全なスキーマを含む（make db-dumpで生成）
+          make db-setup-test
+
+      - name: Run tests
+        shell: bash
+        env:
+          CI: true
+        run: |
+          # テスト実行（実データベースを使用）
+          echo "🧪 テストを実行中（CI環境: 短時間テストのみ）..."
+          echo ""
+
+          # エラーでスクリプトを停止しない
+          set +e
+          make test 2>&1 | tee test-output.log
+          test_exit_code=$?
+          set -e
+
+          # テスト結果のサマリーを表示
+          echo ""
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "📊 テスト結果サマリー"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+          if [ $test_exit_code -ne 0 ]; then
+            echo "❌ テストが失敗しました"
+            echo ""
+
+            # 失敗したパッケージを表示
+            echo "📦 失敗したパッケージ:"
+            grep "^FAIL" test-output.log | sed 's/^/  /' || echo "  (失敗したパッケージが見つかりません)"
+
+            echo ""
+            echo "🔍 失敗したテストの詳細:"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+            # 失敗したテストの詳細を抽出（--- FAIL: で始まる行とエラーメッセージ）
+            grep -A 2 -- "--- FAIL:" test-output.log | grep -E -- "(--- FAIL:|\.go:[0-9]+:)" || echo "  (失敗したテストの詳細が見つかりません)"
+
+            exit $test_exit_code
+          else
+            echo "✅ すべてのテストが成功しました"
+            # 成功したパッケージ数を表示
+            ok_count=$(grep -c "^ok" test-output.log || echo "0")
+            echo "   合計 ${ok_count} パッケージのテストが成功"
+          fi
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: go
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: ${{ env.GO_VERSION }}
+
+      - name: Build
+        run: |
+          # バイナリをビルド（templ generateも自動実行される）
+          make build
+
+      - name: Check binary exists
+        run: |
+          # ビルドが成功してバイナリが生成されたことを確認
+          if [ ! -f bin/server ]; then
+            echo "Build failed: binary not found"
+            exit 1
+          fi

@@ -1,62 +1,81 @@
 services:
-  app:
+  go-app:
     build:
-      context: .
+      context: ./go
       dockerfile: ./Dockerfile.dev
     depends_on:
+      - caddy
       - imgproxy
-      - minio
       - postgresql
       - redis
-    environment:
-      BINDING: 0.0.0.0
-    ports:
-      - "13000:3000"
-    stdin_open: true
-    tty: true
     volumes:
       - .:/workspace
+      - op-config:/home/developer/.config/op
+      - go-mod-cache:/go/pkg/mod
+      - go-build-cache:/go/.cache/go-build
+    ports:
+      - "4004:8080"
+    stdin_open: true
+    tty: true
+    working_dir: /workspace
+    environment:
+      - OP_SERVICE_ACCOUNT_TOKEN=${OP_SERVICE_ACCOUNT_TOKEN:-}
+
+  rails-app:
+    build:
+      context: ./rails
+      dockerfile: ./Dockerfile.dev
+    depends_on:
+      - go-app
+    volumes:
+      - .:/workspace
+      - op-config:/home/developer/.config/op
       - app_gems_data:/usr/local/bundle
+    environment:
+      - BINDING=0.0.0.0
+      - OP_SERVICE_ACCOUNT_TOKEN=${OP_SERVICE_ACCOUNT_TOKEN:-}
+    ports:
+      - "4000:3000"
+    stdin_open: true
+    tty: true
+    working_dir: /workspace
+
+  caddy:
+    image: caddy:2-alpine
+    ports:
+      - "4008:8080"
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
 
   postgresql:
-    image: postgres:17.3
+    image: postgres:17.5
     ports:
-      - "15432:5432"
+      - "4001:5432"
     volumes:
       - postgresql17_data:/var/lib/postgresql/data:delegated
     environment:
       POSTGRES_HOST_AUTH_METHOD: trust
 
   redis:
-    image: redis:7.4.2-alpine
+    image: redis:8.2.3-alpine
     ports:
-      - "16379:6379"
-
-  minio:
-    image: minio/minio
-    environment:
-      MINIO_ROOT_USER: minio_admin
-      MINIO_ROOT_PASSWORD: minio_admin
-      MINIO_SERVER_URL: http://localhost:9000
-    ports:
-      - "19000:9000"
-      - "19001:9001"
-    command: server /data --address "0.0.0.0:9000" --console-address "0.0.0.0:9001"
-    volumes:
-      - minio_data:/data
-    networks:
-      default:
-        aliases:
-          - annict-development.minio
+      - "4002:6379"
 
   imgproxy:
     image: darthsim/imgproxy:v3.27.2
     ports:
-      - "18080:8080"
+      - "4003:8080"
+    environment:
+      - IMGPROXY_S3_REGION=${IMGPROXY_S3_REGION:-}
+      - AWS_ACCESS_KEY_ID=${IMGPROXY_AWS_ACCESS_KEY_ID:-}
+      - AWS_SECRET_ACCESS_KEY=${IMGPROXY_AWS_SECRET_ACCESS_KEY:-}
+      - IMGPROXY_S3_ENDPOINT=${IMGPROXY_S3_ENDPOINT:-}
     env_file:
-      - .env.imgproxy
+      - ./imgproxy/.env
 
 volumes:
+  op-config:
   app_gems_data:
-  minio_data:
+  go-build-cache:
+  go-mod-cache:
   postgresql17_data:

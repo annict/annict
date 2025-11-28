@@ -1,0 +1,36 @@
+package errors
+
+import (
+	"context"
+)
+
+// BackLink はエラーページの戻るリンク情報
+type BackLink struct {
+	URL  string
+	Text string
+}
+
+// Error は汎用エラーページを表示します
+templ Error(ctx context.Context, errorTitle string, errorMessage string, backLink *BackLink) {
+	<div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+		<div class="max-w-md w-full space-y-8">
+			<div>
+				<h2 class="mt-6 text-center text-3xl font-bold text-gray-900">
+					{ errorTitle }
+				</h2>
+				if errorMessage != "" {
+					<p class="mt-2 text-center text-sm text-gray-600">
+						{ errorMessage }
+					</p>
+				}
+			</div>
+			if backLink != nil {
+				<div class="text-center">
+					<a href={ templ.URL(backLink.URL) } class="font-medium text-blue-600 hover:text-blue-500">
+						{ backLink.Text }
+					</a>
+				</div>
+			}
+		</div>
+	</div>
+}

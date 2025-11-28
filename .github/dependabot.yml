@@ -5,14 +5,31 @@
 
 version: 2
 updates:
-  - package-ecosystem: "bundler"
-    directory: "/"
+  # Go version dependencies
+  - package-ecosystem: "gomod"
+    directory: "/go"
     schedule:
       interval: "daily"
+
+  # Go version npm dependencies (pnpm)
   - package-ecosystem: "npm"
-    directory: "/"
+    directory: "/go"
     schedule:
       interval: "daily"
+
+  # Rails version bundler dependencies
+  - package-ecosystem: "bundler"
+    directory: "/rails"
+    schedule:
+      interval: "daily"
+
+  # Rails version npm dependencies
+  - package-ecosystem: "npm"
+    directory: "/rails"
+    schedule:
+      interval: "daily"
+
+  # GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:

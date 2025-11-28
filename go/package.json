@@ -1,0 +1,25 @@
+{
+  "name": "annict",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build:css": "tailwindcss -i web/style.css -o static/css/style.css --minify",
+    "build:js": "esbuild web/main.js --bundle --outfile=static/js/main.js --minify",
+    "build": "pnpm build:css && pnpm build:js",
+    "watch:css": "tailwindcss -i web/style.css -o static/css/style.css --watch",
+    "watch:js": "esbuild web/main.js --bundle --outfile=static/js/main.js --watch",
+    "watch": "concurrently \"pnpm:watch:css\" \"pnpm:watch:js\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "AGPL-3.0",
+  "packageManager": "pnpm@10.17.1",
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.13",
+    "basecoat-css": "^0.3.2",
+    "concurrently": "^9.1.2",
+    "esbuild": "^0.27.0",
+    "tailwindcss": "^4.1.13"
+  }
+}

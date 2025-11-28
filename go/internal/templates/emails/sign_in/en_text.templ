@@ -1,0 +1,13 @@
+package sign_in
+
+// EnText は英語版のログインコード（テキスト形式）です
+templ EnText(code string) {
+	Here is your login code.
+
+	Please enter the following 6-digit code to complete your login:
+	{ code }
+
+	This code is valid for 15 minutes.
+
+	If you did not request this, please ignore this email.
+}

@@ -1,0 +1,198 @@
+name: Rails CI
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "rails/**"
+      - ".github/workflows/rails-ci.yml"
+  pull_request:
+    paths:
+      - "rails/**"
+      - ".github/workflows/rails-ci.yml"
+
+jobs:
+  zeitwerk:
+    name: Zeitwerk
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: rails
+    steps:
+      - uses: actions/checkout@v6
+      - name: Setup Ruby and install gems
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.3.5
+          bundler-cache: true
+          working-directory: rails
+      - run: bin/rails zeitwerk:check
+
+  sorbet:
+    name: Sorbet
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: rails
+    steps:
+      - uses: actions/checkout@v6
+      - name: Setup Ruby and install gems
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.3.5
+          bundler-cache: true
+          working-directory: rails
+      - run: bin/rails sorbet:update
+      - name: Push RBI files or fail
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            if [ "$GITHUB_ACTOR" = "dependabot[bot]" ]; then
+              git config user.email 49699333+dependabot[bot]@users.noreply.github.com
+              git config user.name dependabot[bot]
+              git add .
+              git commit -m "Update RBI files"
+              git push
+            else
+              echo "Error! 未更新のRBIファイルがあるようです。bin/rails sorbet:update を実行して差分をコミットしてください。"
+              exit 1
+            fi
+          fi
+      - run: bin/srb tc
+
+  standard:
+    name: Standard
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: rails
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup Ruby and install gems
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.3.5
+          bundler-cache: true
+          working-directory: rails
+
+      - run: bin/standardrb
+
+  erb_lint:
+    name: ERB Lint
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: rails
+    steps:
+      - uses: actions/checkout@v6
+      - name: Setup Ruby and install gems
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.3.5
+          bundler-cache: true
+          working-directory: rails
+      - run: bin/erb_lint --lint-all
+
+  eslint:
+    name: ESLint
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: rails
+    steps:
+      - uses: actions/checkout@v6
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.17.0
+      - name: Install Yarn
+        run: |
+          npm install --global yarn@1.22.22
+      - name: Install npm packages
+        run: |
+          yarn install
+      - name: ESLint check
+        run: |
+          yarn eslint .
+
+  rspec:
+    name: RSpec
+    # 24.04 で動かしたときエラーになったため、一旦 22.04 で動かす
+    # https://wikino.app/s/shimbaco/pages/508
+    runs-on: ubuntu-22.04
+    defaults:
+      run:
+        working-directory: rails
+    env:
+      CC_TEST_REPORTER_ID: 473c071c4d1900d58ceed984bd49d8a39368393ce6f010cf5d52287f3072f6ef
+      COVERAGE: true
+      DATABASE_URL: postgresql://postgres@localhost:35432/annict_test
+      ANNICT_POSTGRES_HOST: localhost
+      RAILS_ENV: test
+      TZ: Asia/Tokyo
+      # `CFLAGS` と `CXXFLAGS` は cld gem をインストールするときに必要になる
+      # https://github.com/jtoy/cld/issues/10
+      CFLAGS: -Wno-narrowing
+      CXXFLAGS: -Wno-narrowing
+      ANNICT_CAPYBARA_BROWSER: chromium
+      ANNICT_CAPYBARA_HEADLESS: "true"
+
+    services:
+      postgresql:
+        image: postgres:17.5
+        ports:
+          - 35432:5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_DB: annict_test
+          POSTGRES_PASSWORD: ""
+          POSTGRES_HOST_AUTH_METHOD: trust
+        # Adding a health check via options
+        # https://github.community/t5/GitHub-Actions/Github-Actions-services-not-reachable/td-p/30050
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup Ruby and install gems
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.3.5
+          bundler-cache: true
+          working-directory: rails
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.17.0
+
+      - name: Install Yarn
+        run: |
+          npm install --global yarn@1.22.22
+
+      - name: Run `yarn install`
+        run: |
+          yarn install
+
+      - name: Install Playwright browsers
+        run: |
+          yarn playwright install --with-deps
+
+      - name: Run `assets:precompile`
+        run: |
+          bin/rails assets:precompile
+
+      - name: Setup Database
+        run: |
+          bin/rails db:setup
+
+      - name: Run tests
+        run: |
+          bin/rspec

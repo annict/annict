@@ -1,0 +1,86 @@
+package password
+
+import (
+	"context"
+	"github.com/annict/annict/internal/session"
+	"github.com/annict/annict/internal/templates"
+	"github.com/annict/annict/internal/templates/components"
+)
+
+// Reset はパスワードリセット申請フォームを表示します
+templ Reset(ctx context.Context, formErrors *session.FormErrors, csrfToken string, email string, turnstileSiteKey string) {
+	<div class="flex flex-col gap-6 min-w-full md:min-w-md px-4">
+		<div class="text-center">
+			<a href="/" class="inline-block">
+				<img
+					alt="Annict"
+					src="/static/images/logo-mizuho.png"
+					width="50"
+				/>
+			</a>
+		</div>
+		<div class="flex flex-col gap-2">
+			<h1 class="text-center text-3xl font-bold antialiased">
+				{ templates.T(ctx, "password_reset_heading") }
+			</h1>
+			<p class="text-center text-sm text-muted-foreground">
+				@templ.Raw(templates.T(ctx, "password_reset_description"))
+			</p>
+		</div>
+
+		@components.FormErrors(formErrors)
+
+		<form
+			action="/password/reset"
+			class="form grid gap-6"
+			data-on:submit__passive="$isSubmitting = true"
+			method="POST"
+		>
+			<input type="hidden" name="csrf_token" value={ csrfToken }/>
+			<div class="grid gap-2">
+				<label for="email">
+					{ templates.T(ctx, "password_reset_email_label") }
+				</label>
+				<input
+					if formErrors != nil && formErrors.Fields["email"] != nil {
+						aria-invalid="true"
+					} else {
+						aria-invalid="false"
+					}
+					autocomplete="email"
+					autofocus
+					id="email"
+					name="email"
+					required
+					tabindex="1"
+					type="email"
+					value={ email }
+				/>
+				if formErrors != nil && formErrors.Fields["email"] != nil {
+					for _, errorMsg := range formErrors.Fields["email"] {
+						<p class="text-sm text-red-600">{ errorMsg }</p>
+					}
+				}
+			</div>
+
+			@components.Turnstile(turnstileSiteKey)
+
+			<button
+				class="btn rounded-full w-fit"
+				data-attr:disabled="$isSubmitting == true"
+				tabindex="2"
+				type="submit"
+			>
+				@templates.Icon("paper-plane-tilt")
+				{ templates.T(ctx, "password_reset_submit") }
+			</button>
+
+			<div class="text-center">
+				<a href="/sign_in" class="link inline-flex items-center gap-2">
+					@templates.Icon("arrow-left", "w-[18px] h-[18px]")
+					{ templates.T(ctx, "password_reset_back_to_sign_in") }
+				</a>
+			</div>
+		</form>
+	</div>
+}

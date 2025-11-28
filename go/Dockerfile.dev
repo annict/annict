@@ -1,0 +1,76 @@
+FROM golang:1.25.1-trixie
+
+ARG USER_ID=1000
+ARG GROUP_ID=1000
+ARG USERNAME=developer
+
+RUN \
+    apt update && \
+    apt dist-upgrade -yq && \
+    apt install -y --no-install-recommends \
+    git \
+    curl \
+    build-essential \
+    # Redis の GPG キーと apt リポジトリに必要
+    gnupg \
+    # Redis の GPG キーと apt リポジトリに必要
+    lsb-release \
+    postgresql-client-17 \
+    sudo \
+    zsh \
+    && rm -rf /var/lib/apt/lists/*
+
+# Redis 7.4系のクライアントをインストール（Rails側と同じバージョン）
+RUN curl -fsSL https://packages.redis.io/gpg | gpg --dearmor -o /usr/share/keyrings/redis-archive-keyring.gpg \
+    && echo "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/redis.list \
+    && apt-get update \
+    && apt-get install -y redis-tools=6:7.4.* \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
+    && apt-get install -y nodejs=22.20.0-1nodesource1 \
+    && npm install -g npm@latest
+
+# dbmate のインストール（マイグレーション管理ツール）
+RUN curl -fsSL -o /usr/local/bin/dbmate https://github.com/amacneil/dbmate/releases/latest/download/dbmate-linux-amd64 \
+    && chmod +x /usr/local/bin/dbmate
+
+# golangci-lint のインストール
+# https://golangci-lint.run/docs/welcome/install/#install-from-sources
+RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh | sh -s -- -b $(go env GOPATH)/bin v2.6.2
+
+RUN \
+    groupadd -g ${GROUP_ID} ${USERNAME} && \
+    useradd -u ${USER_ID} -g ${GROUP_ID} -m -s /bin/bash ${USERNAME} && \
+    echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+RUN mkdir -p /go/.cache/go-build /go/pkg && \
+    chown -R ${USER_ID}:${GROUP_ID} /go
+
+WORKDIR /workspace
+
+USER ${USERNAME}
+
+# npmのグローバルインストール先を一般ユーザーのホームディレクトリに設定
+ENV NPM_CONFIG_PREFIX=/home/${USERNAME}/.npm-global
+ENV PATH=$NPM_CONFIG_PREFIX/bin:$PATH
+
+COPY --from=1password/op:2 /usr/local/bin/op /usr/local/bin/op
+
+RUN npm install -g pnpm@10.17.1
+
+RUN go install github.com/sqlc-dev/sqlc/cmd/sqlc@v1.27.0
+RUN go install github.com/air-verse/air@latest
+
+ENV GOCACHE=/go/.cache/go-build
+ENV GOMODCACHE=/go/pkg/mod
+
+EXPOSE 8080
+
+# zshをデフォルトシェルに設定
+SHELL ["/bin/zsh", "-c"]
+ENV SHELL=/bin/zsh
+
+RUN touch /home/${USERNAME}/.zshrc
+
+CMD ["/bin/zsh"]

@@ -1,0 +1,118 @@
+package sign_in_code
+
+import (
+	"context"
+	"github.com/annict/annict/internal/session"
+	"github.com/annict/annict/internal/templates"
+	"github.com/annict/annict/internal/templates/components"
+)
+
+// SignInCodeShow は6桁コード入力ページのコンテンツを表示します
+templ SignInCodeShow(ctx context.Context, email string, formErrors *session.FormErrors, csrfToken string, backURL string) {
+	<div class="flex flex-col gap-6 min-w-full md:min-w-md px-4">
+		<div class="text-center">
+			<a href="/" class="inline-block">
+				<img
+					alt="Annict"
+					src="/static/images/logo-mizuho.png"
+					width="50"
+				/>
+			</a>
+		</div>
+
+		<div class="flex flex-col gap-2">
+			<h1 class="text-center text-3xl font-bold antialiased">
+				{ templates.T(ctx, "sign_in_code_heading") }
+			</h1>
+
+			<p class="text-center text-sm text-muted-foreground">
+				{ templates.T(ctx, "sign_in_code_instruction") }
+			</p>
+		</div>
+
+		@components.FormErrors(formErrors)
+
+		<form
+			action="/sign_in/code"
+			class="form grid gap-6"
+			data-on:submit__passive="$isSubmitting = true"
+			method="POST"
+		>
+			<input type="hidden" name="csrf_token" value={ csrfToken }/>
+			<input type="hidden" name="back" value={ backURL }/>
+
+			<div class="grid gap-2">
+				<label for="code">
+					{ templates.T(ctx, "sign_in_code_label") }
+				</label>
+
+				<input
+					if formErrors != nil && formErrors.Fields["code"] != nil {
+						aria-invalid="true"
+					} else {
+						aria-invalid="false"
+					}
+					autocomplete="one-time-code"
+					autofocus
+					id="code"
+					inputmode="numeric"
+					maxlength="6"
+					name="code"
+					pattern="[0-9]{6}"
+					placeholder="000000"
+					required
+					tabindex="1"
+					type="text"
+				/>
+
+				if formErrors != nil && formErrors.Fields["code"] != nil {
+					for _, errorMsg := range formErrors.Fields["code"] {
+						<p class="text-sm text-red-600">{ errorMsg }</p>
+					}
+				}
+			</div>
+
+			<button
+				class="btn rounded-full w-fit"
+				data-attr:disabled="$isSubmitting == true"
+				tabindex="2"
+				type="submit"
+			>
+				@templates.Icon("sign-in")
+				{ templates.T(ctx, "sign_in_code_submit") }
+			</button>
+		</form>
+
+		<div class="flex justify-center items-center gap-4 text-sm">
+			<p class="text-muted-foreground">
+				{ templates.T(ctx, "sign_in_code_not_received") }
+			</p>
+
+			<form
+				action="/sign_in/code"
+				data-on:submit__passive="$isSubmitting = true"
+				method="POST"
+			>
+				<input type="hidden" name="_method" value="PATCH"/>
+				<input type="hidden" name="csrf_token" value={ csrfToken }/>
+				<input type="hidden" name="back" value={ backURL }/>
+
+				<button
+					class="btn-sm-secondary rounded-full w-fit"
+					data-attr:disabled="$isSubmitting == true"
+					tabindex="3"
+					type="submit"
+				>
+					{ templates.T(ctx, "sign_in_code_resend") }
+				</button>
+			</form>
+		</div>
+
+		<div class="text-center">
+			<a href="/sign_in" class="link inline-flex items-center gap-2">
+				@templates.Icon("arrow-left", "w-[18px] h-[18px]")
+				{ templates.T(ctx, "sign_in_code_back") }
+			</a>
+		</div>
+	</div>
+}

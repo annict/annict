@@ -1,0 +1,46 @@
+package components
+
+import "github.com/annict/annict/internal/viewmodel"
+
+// Head はHTMLのheadセクションの共通メタタグを出力します
+templ Head(meta viewmodel.PageMeta, assetVersion string) {
+	<meta charset="UTF-8"/>
+
+	<meta name="description" content={ meta.Description }/>
+
+	<meta property="og:title" content={ meta.Title }/>
+	<meta property="og:type" content={ meta.OGType }/>
+	<meta property="og:url" content={ meta.OGURL }/>
+	<meta property="og:description" content={ meta.Description }/>
+	<meta property="og:site_name" content="Annict (アニクト)"/>
+	<meta property="og:image" content={ meta.OGImage }/>
+	<meta property="og:locale" content="ja_JP"/>
+
+	<meta name="twitter:card" content="summary"/>
+	<meta name="twitter:site" content="@AnnictJP"/>
+	<meta name="twitter:title" content={ meta.Title }/>
+	<meta name="twitter:description" content={ meta.Description }/>
+	<meta name="twitter:image" content={ meta.OGImage }/>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+
+	<title>{ meta.Title }</title>
+
+	<link rel="preconnect" href="https://challenges.cloudflare.com"> // Cloudflare Turnstile
+	<link rel="shortcut icon" href="/static/images/favicon.png" type="image/png"/>
+	<link rel="canonical" href={ meta.OGURL }/>
+	<link rel="manifest" href="/manifest.json"/>
+	<link rel="stylesheet" href={ "/static/css/style.css?v=" + assetVersion }/>
+
+	<script type="module" src="https://cdn.jsdelivr.net/gh/starfederation/datastar@1.0.0-RC.6/bundles/datastar.js"></script>
+	<script>
+		(() => {
+			try {
+				if (matchMedia("(prefers-color-scheme: dark)").matches) {
+					document.documentElement.classList.add("dark");
+				}
+			} catch (_) {}
+		})();
+	</script>
+	<script type="module" src={ "/static/js/main.js?v=" + assetVersion }></script>
+}

@@ -1,0 +1,48 @@
+package components
+
+import (
+	"context"
+	"github.com/annict/annict/internal/session"
+	"github.com/annict/annict/internal/templates"
+)
+
+// Flash はフラッシュメッセージを表示します
+templ Flash(ctx context.Context, flash *session.Flash) {
+	if flash != nil {
+		<div id="toaster" class="toaster">
+			<div
+				class="toast"
+				role="status"
+				aria-atomic="true"
+				aria-hidden="false"
+				if flash.Type == session.FlashSuccess {
+					data-category="success"
+				} else if flash.Type == session.FlashError {
+					data-category="error"
+				} else if flash.Type == session.FlashWarning {
+					data-category="warning"
+				} else {
+					data-category="info"
+				}
+			>
+				<div class="toast-content">
+					if flash.Type == session.FlashSuccess {
+						@templates.Icon("success", "fill-(--success)")
+					} else if flash.Type == session.FlashError {
+						@templates.Icon("error", "fill-(--error)")
+					} else if flash.Type == session.FlashWarning {
+						@templates.Icon("warning", "fill-(--warning)")
+					} else {
+						@templates.Icon("info", "fill-(--info)")
+					}
+					<section>
+						<h2 class="whitespace-pre-line">{ flash.Message }</h2>
+					</section>
+					<footer>
+						<button type="button" class="btn" data-toast-action>{ templates.T(ctx, "flash_dismiss") }</button>
+					</footer>
+				</div>
+			</div>
+		</div>
+	}
+}
