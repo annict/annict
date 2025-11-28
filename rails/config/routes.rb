@@ -65,7 +65,6 @@ Rails.application.routes.draw do
   match "/api/internal/received_channels",                      via: :get,    as: :internal_api_received_channel_list,         to: "api/internal/received_channels#index"
   match "/api/internal/registrations",                          via: :post,   as: :internal_api_registrations,                 to: "api/internal/registrations#create"
   match "/api/internal/series_list",                            via: :get,    as: :internal_api_series_list,                   to: "api/internal/series_list#index"
-  match "/api/internal/sign_in",                                via: :post,   as: :internal_api_sign_in,                       to: "api/internal/sign_in#create"
   match "/api/internal/sign_up",                                via: :post,   as: :internal_api_sign_up,                       to: "api/internal/sign_up#create"
   match "/api/internal/skipped_episodes",                       via: :post,   as: :internal_api_skipped_episode_list,          to: "api/internal/skipped_episodes#create"
   match "/api/internal/spoiler_guard",                          via: :get,    as: :internal_api_spoiler_guard,                 to: "api/internal/spoiler_guards#show"
@@ -271,9 +270,6 @@ Rails.application.routes.draw do
   match "/settings/tokens/:token_id/edit",                      via: :get,    as: :settings_edit_token,                        to: "settings/tokens#edit"
   match "/settings/tokens/new",                                 via: :get,    as: :settings_new_token,                         to: "settings/tokens#new"
   match "/settings/user",                                       via: :delete, as: :settings_user,                              to: "settings/users#destroy"
-  match "/sign_in",                                             via: :get,    as: :new_user_session,                           to: "sign_in#new" # for Devise
-  match "/sign_in",                                             via: :get,    as: :sign_in,                                    to: "sign_in#new"
-  match "/sign_in/callback",                                    via: :get,    as: :sign_in_callback,                           to: "sign_in_callbacks#show"
   match "/sign_up",                                             via: :get,    as: :sign_up,                                    to: "sign_up#new"
   match "/supporters",                                          via: :get,    as: :supporters,                                 to: "supporters#show"
   match "/terms",                                               via: :get,    as: :terms,                                      to: "pages#terms"

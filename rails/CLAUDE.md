@@ -141,32 +141,31 @@ yarn install
 bin/dev
 
 # Railsサーバーのみ起動
-bin/rails server
+op run --env-file=".env.local" -- bin/rails server
 
 # コンソール起動
-bin/rails console
+op run --env-file=".env.local" -- bin/rails console
 
 # テスト実行
-bundle exec rspec
+op run --env-file=".env.local" -- bin/rspec
 # 特定のテストを実行
-bundle exec rspec spec/models/work_spec.rb
+op run --env-file=".env.local" -- bin/rspec spec/models/work_spec.rb
 # E2Eテストを実行（Playwright）
-bundle exec rspec spec/system/
+op run --env-file=".env.local" -- bin/rspec spec/system/
 
 # コードフォーマット
-bundle exec rubocop -A             # Ruby（自動修正）
+op run --env-file=".env.local" -- bin/standardrb --fix               # Ruby（自動修正）
 yarn prettier --write "**/*.js"    # JavaScript
 
 # リント
-bundle exec rubocop                # Ruby
-bundle exec erblint --lint-all     # ERB
-yarn eslint "**/*.js"              # JavaScript
+op run --env-file=".env.local" -- bin/standardrb # Ruby
+yarn eslint "**/*.js"                            # JavaScript
 
 # Sorbet型チェック
-bundle exec srb tc
+bin/srb tc
 
 # Zeitwerk（オートロード）チェック
-bundle exec rails zeitwerk:check
+op run --env-file=".env.local" -- bin/rails zeitwerk:check
 
 # PostgreSQL（開発環境）に接続
 psql -h host.docker.internal -p 15432 -U postgres -d annict_development
@@ -175,18 +174,18 @@ psql -h host.docker.internal -p 15432 -U postgres -d annict_development
 psql -h host.docker.internal -p 15432 -U postgres -d annict_test
 
 # データベースマイグレーション
-bin/rails db:migrate
-bin/rails db:rollback              # 最後のマイグレーションをロールバック
+op run --env-file=".env.local" -- bin/rails db:migrate
+op run --env-file=".env.local" -- bin/rails db:rollback              # 最後のマイグレーションをロールバック
 
 # データベースのセットアップ
-bin/rails db:setup                 # DBの作成、スキーマ読み込み、シード実行
+op run --env-file=".env.local" -- bin/rails db:setup                 # DBの作成、スキーマ読み込み、シード実行
 
 # フロントエンドアセットのビルド
 yarn build       # JavaScript（本番用、minify有効）
 yarn build:css   # CSS（本番用）
 
 # GraphQL APIスキーマのダンプ
-bundle exec rake graphql:dump_schema
+op run --env-file=".env.local" -- bin/rails graphql:dump_schema
 ```
 
 ### コミット前に実行するコマンド
@@ -194,26 +193,23 @@ bundle exec rake graphql:dump_schema
 **重要**: コードをコミットする前に、以下のコマンドを実行してCIが通ることを確認してください：
 
 ```sh
-# 1. Zeitwerk（オートロード）チェック
-bundle exec rails zeitwerk:check
+# 1. 型の更新
+op run --env-file=".env.local" -- bin/rails sorbet:update
 
-# 2. Sorbet型チェック
-bundle exec srb tc
+# 2. Zeitwerk（オートロード）チェック
+op run --env-file=".env.local" -- bin/rails zeitwerk:check
 
-# 3. Rubyコードのリント・フォーマット
-bundle exec rubocop -A
+# 3. Sorbet型チェック
+bin/srb tc
 
-# 4. ERBテンプレートのリント
-bundle exec erblint --lint-all
+# 4. Rubyコードのリント・フォーマット
+op run --env-file=".env.local" -- bin/standardrb --fix
 
 # 5. JavaScriptのリント
 yarn eslint "**/*.js"
 
 # 6. テストを実行
-bundle exec rspec
-
-# すべてを一度に実行するワンライナー:
-bundle exec rails zeitwerk:check && bundle exec srb tc && bundle exec rubocop -A && bundle exec erblint --lint-all && yarn eslint "**/*.js" && bundle exec rspec
+op run --env-file=".env.local" -- bin/rspec
 ```
 
 ## Pull Requestのガイドライン
