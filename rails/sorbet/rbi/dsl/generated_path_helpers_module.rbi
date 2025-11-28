@@ -460,9 +460,6 @@ module GeneratedPathHelpersModule
   def internal_api_series_list_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }
-  def internal_api_sign_in_path(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
   def internal_api_sign_up_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }
@@ -518,9 +515,6 @@ module GeneratedPathHelpersModule
 
   sig { params(args: T.untyped).returns(String) }
   def new_registration_path(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
-  def new_user_session_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }
   def newest_work_list_path(*args); end
@@ -665,12 +659,6 @@ module GeneratedPathHelpersModule
 
   sig { params(args: T.untyped).returns(String) }
   def settings_user_path(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
-  def sign_in_callback_path(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
-  def sign_in_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }
   def sign_out_path(*args); end

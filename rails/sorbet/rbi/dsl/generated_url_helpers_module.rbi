@@ -460,9 +460,6 @@ module GeneratedUrlHelpersModule
   def internal_api_series_list_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }
-  def internal_api_sign_in_url(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
   def internal_api_sign_up_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }
@@ -518,9 +515,6 @@ module GeneratedUrlHelpersModule
 
   sig { params(args: T.untyped).returns(String) }
   def new_registration_url(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
-  def new_user_session_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }
   def newest_work_list_url(*args); end
@@ -665,12 +659,6 @@ module GeneratedUrlHelpersModule
 
   sig { params(args: T.untyped).returns(String) }
   def settings_user_url(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
-  def sign_in_callback_url(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
-  def sign_in_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }
   def sign_out_url(*args); end
