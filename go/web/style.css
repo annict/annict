@@ -1,0 +1,93 @@
+@import "tailwindcss";
+@import "basecoat-css";
+
+@theme {
+  --color-mizuho-50: #fff1f2;
+  --color-mizuho-100: #ffe4e6;
+  --color-mizuho-200: #fdced4;
+  --color-mizuho-300: #fca5b1;
+  --color-mizuho-400: #f85b73; /* オリジナル */
+  --color-mizuho-500: #f14261;
+  --color-mizuho-600: #de204c;
+  --color-mizuho-700: #bc143e;
+  --color-mizuho-800: #9d143b;
+  --color-mizuho-900: #861539;
+  --color-mizuho-950: #4b061a;
+}
+
+/* タッチデバイスかどうかを判別するためのカスタムバリアント */
+/*
+  hover: none ... hoverがサポートされていないデバイスかどうか
+  pointer: coarse ... タッチスクリーンのようなポインターが粗いデバイスかどうか
+*/
+@custom-variant touch (@media (hover: none) and (pointer: coarse));
+/*
+  hover: hover ... hoverがサポートされているデバイスかどうか
+  pointer: fine ... マウスのような精密なポインターデバイスかどうか
+*/
+@custom-variant non-touch (@media (hover: hover) and (pointer: fine));
+
+/* 共通ユーティリティクラス */
+@layer components {
+  /* リンク */
+  .link,
+  .link-muted {
+    @apply underline underline-offset-4 transition-colors duration-150;
+  }
+
+  .link {
+    @apply text-blue-600 hover:text-blue-700;
+    @apply dark:text-blue-400 dark:hover:text-blue-300;
+  }
+
+  .link-muted {
+    @apply text-muted-foreground/90 hover:text-muted-foreground;
+    @apply dark:text-muted-foreground/90 dark:hover:text-muted-foreground;
+  }
+
+  /* フォーカス状態 */
+  .link:focus,
+  .link-muted:focus {
+    @apply outline-none ring-2 ring-ring;
+  }
+}
+
+:root {
+  /* Basecoatの変数上書き */
+  --background: #f5f5f4;
+  --foreground: var(--color-stone-950);
+  --primary: var(--color-mizuho-600);
+  --primary-foreground: var(--color-white);
+  --secondary: var(--color-stone-300);
+  --secondary-foreground: var(--color-stone-950);
+
+  /* 独自の変数 */
+  --success: var(--color-green-600);
+  --success-foreground: var(--color-white);
+  --error: var(--color-red-600);
+  --error-foreground: var(--color-white);
+  --warning: var(--color-yellow-600);
+  --warning-foreground: var(--color-black);
+  --info: var(--color-blue-600);
+  --info-foreground: var(--color-white);
+}
+
+.dark {
+  /* Basecoatの変数上書き */
+  --background: #212529;
+  --foreground: var(--color-stone-300);
+  --primary: var(--color-mizuho-600);
+  --primary-foreground: var(--color-white);
+  --secondary: var(--color-stone-600);
+  --secondary-foreground: var(--color-stone-50);
+
+  /* 独自の変数 */
+  --success: var(--color-green-400);
+  --success-foreground: var(--color-black);
+  --error: var(--color-red-400);
+  --error-foreground: var(--color-black);
+  --warning: var(--color-yellow-400);
+  --warning-foreground: var(--color-black);
+  --info: var(--color-blue-400);
+  --info-foreground: var(--color-black);
+}

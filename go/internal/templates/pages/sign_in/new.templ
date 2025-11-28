@@ -1,0 +1,88 @@
+package sign_in
+
+import (
+	"context"
+	"github.com/annict/annict/internal/session"
+	"github.com/annict/annict/internal/templates"
+	"github.com/annict/annict/internal/templates/components"
+)
+
+// New はメールアドレス入力ページのコンテンツを表示します
+templ New(ctx context.Context, formErrors *session.FormErrors, csrfToken string, turnstileSiteKey string, backURL string) {
+	<div class="flex flex-col gap-6 min-w-full md:min-w-md px-4">
+		<div class="text-center">
+			<a href="/" class="inline-block">
+				<img
+					alt="Annict"
+					src="/static/images/logo-mizuho.png"
+					width="50"
+				/>
+			</a>
+		</div>
+
+		<div class="flex flex-col gap-2">
+			<h1 class="text-center text-3xl font-bold antialiased">
+				{ templates.T(ctx, "sign_in_heading") }
+			</h1>
+		</div>
+
+		@components.FormErrors(formErrors)
+
+		<form
+			action="/sign_in"
+			class="form grid gap-6"
+			data-on:submit__passive="$isSubmitting = true"
+			method="POST"
+		>
+			<input type="hidden" name="csrf_token" value={ csrfToken }/>
+			<input type="hidden" name="back" value={ backURL }/>
+
+			<div class="grid gap-2">
+				<label for="email">
+					{ templates.T(ctx, "sign_in_email_label") }
+				</label>
+
+				<input
+					if formErrors != nil && formErrors.Fields["email"] != nil {
+						aria-invalid="true"
+					} else {
+						aria-invalid="false"
+					}
+					autocomplete="email"
+					autofocus
+					id="email"
+					name="email"
+					required
+					tabindex="1"
+					type="email"
+				/>
+
+				if formErrors != nil && formErrors.Fields["email"] != nil {
+					for _, errorMsg := range formErrors.Fields["email"] {
+						<p class="text-sm text-red-600">{ errorMsg }</p>
+					}
+				}
+			</div>
+
+			@components.Turnstile(turnstileSiteKey)
+
+			<button
+				class="btn rounded-full w-fit"
+				tabindex="2"
+				type="submit"
+				data-attr:disabled="$isSubmitting == true"
+			>
+				@templates.Icon("arrow-right")
+				{ templates.T(ctx, "sign_in_next_button") }
+			</button>
+		</form>
+
+		<div class="text-center text-muted-foreground">
+			{ templates.T(ctx, "sign_in_no_account") }
+			{ " " }
+			<a href="/sign_up" class="link">
+				{ templates.T(ctx, "sign_in_sign_up") }
+			</a>
+		</div>
+	</div>
+}

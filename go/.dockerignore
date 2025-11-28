@@ -1,0 +1,42 @@
+# Git
+.git
+.gitignore
+.github
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# ビルド成果物（ローカル開発用）
+bin/
+tmp/
+
+# 環境変数ファイル
+.env
+.env.local
+.env.*.local
+
+# テストファイル
+*_test.go
+
+# ドキュメント
+README.md
+CLAUDE.md
+docs/
+
+# Node modules（pnpm install で再インストール）
+node_modules/
+
+# pnpm ストア
+.pnpm-store/
+
+# ログファイル
+*.log
+
+# OS ファイル
+.DS_Store
+
+# 開発ツール設定
+air.toml

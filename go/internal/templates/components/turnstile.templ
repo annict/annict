@@ -1,0 +1,23 @@
+package components
+
+// Turnstile は Cloudflare Turnstile のウィジェットを表示します
+// Bot対策として、フォーム送信時に自動的にチャレンジを実行します
+//
+// 引数:
+//   - siteKey: Turnstile Site Key（公開可能）
+//
+// 使い方:
+//   @components.Turnstile(cfg.TurnstileSiteKey)
+//
+// フォーム送信時に `cf-turnstile-response` トークンが自動的に含まれます
+templ Turnstile(siteKey string) {
+	if siteKey != "" {
+		<!-- Turnstile JavaScript を非同期で読み込む -->
+		<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+		<!-- Turnstile ウィジェット -->
+		<div
+			class="cf-turnstile"
+			data-sitekey={ siteKey }
+		></div>
+	}
+}

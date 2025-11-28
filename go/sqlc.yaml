@@ -1,0 +1,22 @@
+version: "2"
+sql:
+  - schema: "db/schema.sql"
+    queries: "internal/query/queries"
+    engine: "postgresql"
+    gen:
+      go:
+        package: "query"
+        out: "internal/query"
+        sql_package: "database/sql"
+        emit_db_tags: true
+        emit_interface: true
+        emit_empty_slices: true
+        overrides:
+          - db_type: "timestamptz"
+            go_type: "time.Time"
+          - db_type: "timestamp"
+            go_type: "time.Time"
+          - db_type: "pg_catalog.citext"
+            go_type: "string"
+          - db_type: "public.citext"
+            go_type: "string"

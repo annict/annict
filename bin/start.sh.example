@@ -1,0 +1,38 @@
+# 1PasswordのVault名
+OP_VAULT="VAULT_EXAMPLE"
+
+load_op_token() {
+  echo "🔐 1Password から service account token を取得中..."
+
+  local token=$(
+    if ! op whoami >/dev/null 2>&1; then
+      eval $(op signin)
+    fi
+
+    op read "op://${OP_VAULT}/OP_SERVICE_ACCOUNT_TOKEN/credential" 2>/dev/null
+  )
+
+  if [ -z "$token" ]; then
+    echo "❌ Service account token の取得に失敗しました"
+    return 1
+  fi
+
+  export OP_SERVICE_ACCOUNT_TOKEN="$token"
+
+  if op whoami &>/dev/null; then
+    echo "✅ Service Account token を正常に取得しました"
+  else
+    echo "❌ Service Account token の認証に失敗しました"
+    unset OP_SERVICE_ACCOUNT_TOKEN
+    return 1
+  fi
+}
+
+load_op_token
+
+export IMGPROXY_S3_REGION=$(op read "op://${OP_VAULT}/env_dev/Imgproxy/IMGPROXY_S3_REGION")
+export IMGPROXY_AWS_ACCESS_KEY_ID=$(op read "op://${OP_VAULT}/env_dev/Imgproxy/IMGPROXY_AWS_ACCESS_KEY_ID")
+export IMGPROXY_AWS_SECRET_ACCESS_KEY=$(op read "op://${OP_VAULT}/env_dev/Imgproxy/IMGPROXY_AWS_SECRET_ACCESS_KEY")
+export IMGPROXY_S3_ENDPOINT=$(op read "op://${OP_VAULT}/env_dev/Imgproxy/IMGPROXY_S3_ENDPOINT")
+
+docker compose up

@@ -1,0 +1,24 @@
+package layouts
+
+import (
+	"context"
+	"github.com/annict/annict/internal/templates"
+	"github.com/annict/annict/internal/templates/components"
+	"github.com/annict/annict/internal/session"
+	"github.com/annict/annict/internal/viewmodel"
+)
+
+// Simple はシンプルなレイアウトです
+// ヘッダー、フラッシュメッセージ、コンテンツのみを含みます
+templ Simple(ctx context.Context, meta viewmodel.PageMeta, flash *session.Flash, assetVersion string, content templ.Component) {
+	<!DOCTYPE html>
+	<html lang={ templates.Locale(ctx) }>
+		<head>
+			@components.Head(meta, assetVersion)
+		</head>
+		<body class="min-h-screen flex items-center justify-center">
+			@components.Flash(ctx, flash)
+			@content
+		</body>
+	</html>
+}

@@ -1,0 +1,52 @@
+package password
+
+import (
+	"context"
+	"github.com/annict/annict/internal/templates"
+)
+
+// ResetSent はパスワードリセットメール送信完了ページを表示します
+templ ResetSent(ctx context.Context) {
+	<div class="flex flex-col gap-6 min-w-full md:min-w-md md:max-w-lg px-4">
+		<div class="text-center">
+			<a href="/" class="inline-block">
+				<img
+					alt="Annict"
+					src="/static/images/logo-mizuho.png"
+					width="50"
+				/>
+			</a>
+		</div>
+		<div class="flex flex-col gap-2">
+			<h1 class="text-center text-3xl font-bold antialiased">
+				{ templates.T(ctx, "password_reset_sent_heading") }
+			</h1>
+		</div>
+		<div class="flex flex-col gap-4">
+			<div class="alert">
+				@templates.Icon("check-circle", "fill-(--info)")
+				<h2>
+					{ templates.T(ctx, "password_reset_sent_message") }
+				</h2>
+				<section>
+					@templ.Raw(templates.T(ctx, "password_reset_sent_instructions"))
+				</section>
+			</div>
+			<div class="alert">
+				@templates.Icon("check-circle", "fill-(--info)")
+				<h2>
+					{ templates.T(ctx, "password_reset_email_not_received_heading") }
+				</h2>
+				<section>
+					@templ.Raw(templates.T(ctx, "password_reset_email_not_received_help"))
+				</section>
+			</div>
+		</div>
+		<div class="text-center">
+			<a href="/sign_in" class="link inline-flex items-center gap-2">
+				@templates.Icon("arrow-left", "w-[18px] h-[18px]")
+				{ templates.T(ctx, "password_reset_back_to_sign_in") }
+			</a>
+		</div>
+	</div>
+}
