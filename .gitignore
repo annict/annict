@@ -3,6 +3,5 @@
 /.claude
 /.devcontainer
 /.vscode
-/bin/start.sh
-/caddy/Caddyfile
 /docker-compose.override.yml
+/start.sh
