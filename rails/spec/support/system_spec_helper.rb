@@ -2,11 +2,11 @@
 # frozen_string_literal: true
 
 module SystemSpecHelper
-  def sign_in(user:, password: "passw0rd")
-    visit "/legacy/sign_in"
-    fill_in "user[email_username]", with: user.email
-    fill_in "user[password]", with: password
-    click_button "ログイン"
+  include Warden::Test::Helpers
+
+  def sign_in(user:, password: nil)
+    login_as(user, scope: :user)
+    visit root_path
   end
 
   # ページの読み込みを待つ
