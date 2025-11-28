@@ -131,6 +131,9 @@ docker compose logs -f app
 
 ### コンテナ内で実行するコマンド (Claude Codeが実行できるコマンド)
 
+環境変数の読み込みが必要なコマンドは **Makefile** でラップされています。
+`make help` で利用可能なコマンド一覧を確認できます。
+
 ```sh
 # 依存関係のインストール
 bundle install
@@ -141,31 +144,31 @@ yarn install
 bin/dev
 
 # Railsサーバーのみ起動
-op run --env-file=".env.local" -- bin/rails server
+make server
 
 # コンソール起動
-op run --env-file=".env.local" -- bin/rails console
+make console
 
 # テスト実行
-op run --env-file=".env.local" -- bin/rspec
+make test
 # 特定のテストを実行
-op run --env-file=".env.local" -- bin/rspec spec/models/work_spec.rb
+make test-file FILE=spec/models/work_spec.rb
 # E2Eテストを実行（Playwright）
-op run --env-file=".env.local" -- bin/rspec spec/system/
+make test-file FILE=spec/system/
 
 # コードフォーマット
-op run --env-file=".env.local" -- bin/standardrb --fix               # Ruby（自動修正）
+make fmt                           # Ruby（自動修正）
 yarn prettier --write "**/*.js"    # JavaScript
 
 # リント
-op run --env-file=".env.local" -- bin/standardrb # Ruby
-yarn eslint "**/*.js"                            # JavaScript
+make lint                          # Ruby
+yarn eslint "**/*.js"              # JavaScript
 
 # Sorbet型チェック
-bin/srb tc
+make sorbet
 
 # Zeitwerk（オートロード）チェック
-op run --env-file=".env.local" -- bin/rails zeitwerk:check
+make zeitwerk
 
 # PostgreSQL（開発環境）に接続
 psql -h host.docker.internal -p 15432 -U postgres -d annict_development
@@ -174,18 +177,18 @@ psql -h host.docker.internal -p 15432 -U postgres -d annict_development
 psql -h host.docker.internal -p 15432 -U postgres -d annict_test
 
 # データベースマイグレーション
-op run --env-file=".env.local" -- bin/rails db:migrate
-op run --env-file=".env.local" -- bin/rails db:rollback              # 最後のマイグレーションをロールバック
+make db-migrate
+make db-rollback    # 最後のマイグレーションをロールバック
 
 # データベースのセットアップ
-op run --env-file=".env.local" -- bin/rails db:setup                 # DBの作成、スキーマ読み込み、シード実行
+make db-setup       # DBの作成、スキーマ読み込み、シード実行
 
 # フロントエンドアセットのビルド
 yarn build       # JavaScript（本番用、minify有効）
 yarn build:css   # CSS（本番用）
 
 # GraphQL APIスキーマのダンプ
-op run --env-file=".env.local" -- bin/rails graphql:dump_schema
+make graphql-dump
 ```
 
 ### コミット前に実行するコマンド
@@ -194,22 +197,25 @@ op run --env-file=".env.local" -- bin/rails graphql:dump_schema
 
 ```sh
 # 1. 型の更新
-op run --env-file=".env.local" -- bin/rails sorbet:update
+make sorbet-update
 
 # 2. Zeitwerk（オートロード）チェック
-op run --env-file=".env.local" -- bin/rails zeitwerk:check
+make zeitwerk
 
 # 3. Sorbet型チェック
-bin/srb tc
+make sorbet
 
 # 4. Rubyコードのリント・フォーマット
-op run --env-file=".env.local" -- bin/standardrb --fix
+make fmt
 
 # 5. JavaScriptのリント
 yarn eslint "**/*.js"
 
 # 6. テストを実行
-op run --env-file=".env.local" -- bin/rspec
+make test
+
+# すべてを一度に実行するワンライナー:
+make sorbet-update && make zeitwerk && make sorbet && make fmt && yarn eslint "**/*.js" && make test
 ```
 
 ## Pull Requestのガイドライン
@@ -423,13 +429,13 @@ Webアプリケーションのセキュリティは**最優先事項**です。
 bin/rails generate migration CreateWorks
 
 # マイグレーションを実行
-bin/rails db:migrate
+make db-migrate
 
 # マイグレーションをロールバック
-bin/rails db:rollback
+make db-rollback
 
 # スキーマをダンプ（structure.sql）
-bin/rails db:migrate
+make db-migrate
 ```
 
 ### スキーマ管理
@@ -450,7 +456,7 @@ bin/rails db:migrate
 ### スキーマのダンプ
 
 ```sh
-bundle exec rake graphql:dump_schema
+make graphql-dump
 ```
 
 ## 関連ドキュメント
