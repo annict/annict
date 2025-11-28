@@ -5,6 +5,7 @@
 # typed: false
 
 module ::Spring; end
+module ActionDispatch::SystemTestCase; end
 module BulkCreateEpisodeRecordsJob::EpisodeRecordCreator; end
 module Deprecated::SearchService::Moji; end
 module GitHub::Markups::MARKUP_MARKDOWN; end
