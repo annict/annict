@@ -147,14 +147,14 @@ bin/rails server
 bin/rails console
 
 # テスト実行
-bundle exec rspec
+bin/rspec
 # 特定のテストを実行
-bundle exec rspec spec/models/work_spec.rb
+bin/rspec spec/models/work_spec.rb
 # E2Eテストを実行（Playwright）
-bundle exec rspec spec/system/
+bin/rspec spec/system/
 
 # コードフォーマット
-bundle exec rubocop -A             # Ruby（自動修正）
+bin/standardrb --fix               # Ruby（自動修正）
 yarn prettier --write "**/*.js"    # JavaScript
 
 # リント
@@ -163,10 +163,10 @@ bundle exec erblint --lint-all     # ERB
 yarn eslint "**/*.js"              # JavaScript
 
 # Sorbet型チェック
-bundle exec srb tc
+bin/srb tc
 
 # Zeitwerk（オートロード）チェック
-bundle exec rails zeitwerk:check
+bin/rails zeitwerk:check
 
 # PostgreSQL（開発環境）に接続
 psql -h host.docker.internal -p 15432 -U postgres -d annict_development
@@ -186,7 +186,7 @@ yarn build       # JavaScript（本番用、minify有効）
 yarn build:css   # CSS（本番用）
 
 # GraphQL APIスキーマのダンプ
-bundle exec rake graphql:dump_schema
+bin/rails graphql:dump_schema
 ```
 
 ### コミット前に実行するコマンド
@@ -194,26 +194,26 @@ bundle exec rake graphql:dump_schema
 **重要**: コードをコミットする前に、以下のコマンドを実行してCIが通ることを確認してください：
 
 ```sh
-# 1. Zeitwerk（オートロード）チェック
-bundle exec rails zeitwerk:check
+# 1. 型の更新
+bin/rails sorbet:update
 
-# 2. Sorbet型チェック
-bundle exec srb tc
+# 2. Zeitwerk（オートロード）チェック
+bin/rails zeitwerk:check
 
-# 3. Rubyコードのリント・フォーマット
-bundle exec rubocop -A
+# 3. Sorbet型チェック
+bin/srb tc
 
-# 4. ERBテンプレートのリント
-bundle exec erblint --lint-all
+# 4. Rubyコードのリント・フォーマット
+bin/standardrb --fix
 
 # 5. JavaScriptのリント
 yarn eslint "**/*.js"
 
 # 6. テストを実行
-bundle exec rspec
+bin/rspec
 
 # すべてを一度に実行するワンライナー:
-bundle exec rails zeitwerk:check && bundle exec srb tc && bundle exec rubocop -A && bundle exec erblint --lint-all && yarn eslint "**/*.js" && bundle exec rspec
+bin/rails sorbet:update && bin/rails zeitwerk:check && bin/srb tc && bin/standardrb --fix && yarn eslint "**/*.js" && bin/rspec
 ```
 
 ## Pull Requestのガイドライン
