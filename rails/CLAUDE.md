@@ -141,32 +141,31 @@ yarn install
 bin/dev
 
 # Railsサーバーのみ起動
-bin/rails server
+op run --env-file=".env.local" -- bin/rails server
 
 # コンソール起動
-bin/rails console
+op run --env-file=".env.local" -- bin/rails console
 
 # テスト実行
-bin/rspec
+op run --env-file=".env.local" -- bin/rspec
 # 特定のテストを実行
-bin/rspec spec/models/work_spec.rb
+op run --env-file=".env.local" -- bin/rspec spec/models/work_spec.rb
 # E2Eテストを実行（Playwright）
-bin/rspec spec/system/
+op run --env-file=".env.local" -- bin/rspec spec/system/
 
 # コードフォーマット
-bin/standardrb --fix               # Ruby（自動修正）
+op run --env-file=".env.local" -- bin/standardrb --fix               # Ruby（自動修正）
 yarn prettier --write "**/*.js"    # JavaScript
 
 # リント
-bundle exec rubocop                # Ruby
-bundle exec erblint --lint-all     # ERB
-yarn eslint "**/*.js"              # JavaScript
+op run --env-file=".env.local" -- bin/standardrb # Ruby
+yarn eslint "**/*.js"                            # JavaScript
 
 # Sorbet型チェック
 bin/srb tc
 
 # Zeitwerk（オートロード）チェック
-bin/rails zeitwerk:check
+op run --env-file=".env.local" -- bin/rails zeitwerk:check
 
 # PostgreSQL（開発環境）に接続
 psql -h host.docker.internal -p 15432 -U postgres -d annict_development
@@ -175,18 +174,18 @@ psql -h host.docker.internal -p 15432 -U postgres -d annict_development
 psql -h host.docker.internal -p 15432 -U postgres -d annict_test
 
 # データベースマイグレーション
-bin/rails db:migrate
-bin/rails db:rollback              # 最後のマイグレーションをロールバック
+op run --env-file=".env.local" -- bin/rails db:migrate
+op run --env-file=".env.local" -- bin/rails db:rollback              # 最後のマイグレーションをロールバック
 
 # データベースのセットアップ
-bin/rails db:setup                 # DBの作成、スキーマ読み込み、シード実行
+op run --env-file=".env.local" -- bin/rails db:setup                 # DBの作成、スキーマ読み込み、シード実行
 
 # フロントエンドアセットのビルド
 yarn build       # JavaScript（本番用、minify有効）
 yarn build:css   # CSS（本番用）
 
 # GraphQL APIスキーマのダンプ
-bin/rails graphql:dump_schema
+op run --env-file=".env.local" -- bin/rails graphql:dump_schema
 ```
 
 ### コミット前に実行するコマンド
@@ -195,25 +194,22 @@ bin/rails graphql:dump_schema
 
 ```sh
 # 1. 型の更新
-bin/rails sorbet:update
+op run --env-file=".env.local" -- bin/rails sorbet:update
 
 # 2. Zeitwerk（オートロード）チェック
-bin/rails zeitwerk:check
+op run --env-file=".env.local" -- bin/rails zeitwerk:check
 
 # 3. Sorbet型チェック
 bin/srb tc
 
 # 4. Rubyコードのリント・フォーマット
-bin/standardrb --fix
+op run --env-file=".env.local" -- bin/standardrb --fix
 
 # 5. JavaScriptのリント
 yarn eslint "**/*.js"
 
 # 6. テストを実行
-bin/rspec
-
-# すべてを一度に実行するワンライナー:
-bin/rails sorbet:update && bin/rails zeitwerk:check && bin/srb tc && bin/standardrb --fix && yarn eslint "**/*.js" && bin/rspec
+op run --env-file=".env.local" -- bin/rspec
 ```
 
 ## Pull Requestのガイドライン
