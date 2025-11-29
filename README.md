@@ -6,7 +6,7 @@
 [![Rails CI](https://github.com/annict/annict/actions/workflows/rails-ci.yml/badge.svg)](https://github.com/annict/annict/actions/workflows/rails-ci.yml)
 [![Discord](https://img.shields.io/discord/371121195619450881?label=Discord&color=5865F2)](https://discord.gg/PVJRUKP)
 
-[Annict](https://annict.com) は、見たアニメを記録したり友達に共有したりできるアニメ視聴記録サービスです。
+[Annict](https://annict.com/) は、見たアニメを記録したり友達に共有したりできるアニメ視聴記録サービスです。
 
 - [コミュニティ](https://wikino.app/s/annict/pages/51)
 - [コントリビューションについて](./CONTRIBUTING.md)
