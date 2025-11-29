@@ -1,0 +1,20 @@
+package password_reset
+
+// JaHTML は日本語版のパスワードリセットメール（HTML形式）です
+templ JaHTML(resetURL string) {
+	<!DOCTYPE html>
+	<html lang="ja">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<title>パスワードリセットのご案内</title>
+		</head>
+		<body style="font-family: sans-serif; line-height: 1.6; color: #333; padding: 20px;">
+			<p>パスワードリセットのリクエストを受け付けました。</p>
+			<p>以下のリンクをクリックして、新しいパスワードを設定してください：</p>
+			<p><a href={ resetURL }>{ resetURL }</a></p>
+			<p>このリンクは1時間有効です。</p>
+			<p>このメールに心当たりがない場合は、無視してください。</p>
+		</body>
+	</html>
+}

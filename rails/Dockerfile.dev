@@ -1,0 +1,66 @@
+FROM ruby:3.3.5-slim-bookworm
+
+ARG USER_ID=1000
+ARG GROUP_ID=1000
+ARG USERNAME=developer
+
+RUN \
+  apt update && \
+  apt dist-upgrade -yq && \
+  apt install -y --no-install-recommends \
+  build-essential \
+  curl \
+  # Shrineによる画像アップロードに必要
+  file \
+  git \
+  # PostgreSQLやNode.jsのインストールに必要
+  gnupg \
+  # Shrineによる画像アップロードに必要
+  imagemagick \
+  lsb-release \
+  sudo \
+  zsh && \
+  rm -rf /var/lib/apt/lists/*
+
+# PostgreSQLのセットアップ
+RUN \
+  curl -sS https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
+  echo "deb https://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
+  apt update && \
+  apt install -y --no-install-recommends \
+  libpq-dev \
+  postgresql-client-17
+
+# Node.jsのセットアップ
+RUN \
+  # https://github.com/nodesource/distributions/wiki/How-to-select-the-Node.js-version-to-install
+  curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
+  apt install -y --no-install-recommends \
+  nodejs=22.17.0-1nodesource1
+
+RUN \
+  groupadd -g ${GROUP_ID} ${USERNAME} && \
+  useradd -u ${USER_ID} -g ${GROUP_ID} -m -s /bin/bash ${USERNAME} && \
+  echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+WORKDIR /workspace
+
+USER ${USERNAME}
+
+# npmのグローバルインストール先を一般ユーザーのホームディレクトリに設定
+ENV NPM_CONFIG_PREFIX=/home/${USERNAME}/.npm-global
+ENV PATH=$NPM_CONFIG_PREFIX/bin:$PATH
+
+COPY --from=1password/op:2 /usr/local/bin/op /usr/local/bin/op
+
+RUN npm install --global yarn@1.22.22
+
+RUN gem install bundler -v 2.3.12
+
+# zshをデフォルトシェルに設定
+SHELL ["/bin/zsh", "-c"]
+ENV SHELL=/bin/zsh
+
+RUN touch /home/${USERNAME}/.zshrc
+
+CMD ["/bin/zsh"]

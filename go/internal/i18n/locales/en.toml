@@ -1,0 +1,587 @@
+# English translation file
+# English messages for Annict Go project
+
+# Default meta information
+[default_title]
+description = "Default page title"
+other = "Annict"
+
+[default_description]
+description = "Default page description"
+other = "Track what you watch, share what you love. Annict helps you manage your anime journey and connect with fellow fans."
+
+# Page titles
+[popular_anime]
+description = "Page title for popular anime"
+other = "Popular Anime"
+
+# Work related
+[title_undetermined]
+description = "Placeholder text for works without a title"
+other = "Title TBD"
+
+[cast_label]
+description = "Cast label"
+other = "Cast"
+
+[staff_label]
+description = "Staff label"
+other = "Staff"
+
+# Watchers count (plural support)
+[watchers_count]
+description = "Number of watchers for an anime"
+one = "{{.Count}} watcher"
+other = "{{.Count}} watchers"
+
+# Season names
+[season_winter]
+description = "Winter season"
+other = "Winter"
+
+[season_spring]
+description = "Spring season"
+other = "Spring"
+
+[season_summer]
+description = "Summer season"
+other = "Summer"
+
+[season_autumn]
+description = "Autumn/Fall season"
+other = "Fall"
+
+# Year and season format
+[year_season]
+description = "Year and season format"
+other = "{{.Season}} {{.Year}}"
+
+# Sign in related
+[sign_in_title]
+description = "Sign in page title"
+other = "Sign In"
+
+[sign_in_description]
+description = "Sign in page description"
+other = "Sign in to Annict to manage your anime watching history."
+
+[sign_in_heading]
+description = "Sign in page heading"
+other = "Sign in to Annict"
+
+[sign_in_no_account]
+description = "No account message"
+other = "Don't have an account?"
+
+[sign_in_sign_up]
+description = "Sign up link"
+other = "Sign up"
+
+[sign_in_email_label]
+description = "Email label"
+other = "Email"
+
+[sign_in_password_label]
+description = "Password label"
+other = "Password"
+
+[sign_in_next_button]
+description = "Next button"
+other = "Next"
+
+[sign_in_remember_me]
+description = "Remember me checkbox"
+other = "Remember me"
+
+[sign_in_forgot_password]
+description = "Forgot password link"
+other = "Forgot your password?"
+
+[sign_in_submit]
+description = "Sign in button"
+other = "Sign In"
+
+[sign_in_password_login_as]
+description = "Email display on password login page"
+other = "Sign in as {{.Email}}"
+
+[sign_in_password_switch_account]
+description = "Link to sign in with a different account"
+other = "Sign in with a different account"
+
+# Sign in error messages
+[sign_in_error_parse_form]
+description = "Form parse error"
+other = "Failed to process the request"
+
+[sign_in_email_required]
+description = "Email required error"
+other = "Please enter your email address"
+
+[sign_in_user_not_found]
+description = "User not found error"
+other = "This email address is not registered"
+
+[sign_in_error_password_required]
+description = "Password required error"
+other = "Please enter your password"
+
+[sign_in_error_invalid_credentials]
+description = "Invalid credentials error"
+other = "Invalid email/username or password"
+
+[sign_in_error_server]
+description = "Server error"
+other = "A server error occurred. Please try again later"
+
+[sign_in_error_create_session]
+description = "Session creation error"
+other = "Failed to sign in"
+
+[sign_in_success]
+description = "Sign in success message"
+other = "You have successfully signed in"
+
+# 6-digit code input related
+[sign_in_code_title]
+description = "6-digit code input page title"
+other = "Enter Code"
+
+[sign_in_code_description]
+description = "6-digit code input page description"
+other = "Enter the 6-digit code to sign in."
+
+[sign_in_code_heading]
+description = "6-digit code input page heading"
+other = "Sign in to Annict"
+
+[sign_in_code_instruction]
+description = "6-digit code input instruction"
+other = "Please enter the 6-digit sign-in verification code sent to your email"
+
+[sign_in_code_sent_to]
+description = "Code sent to email address"
+other = "We sent a code to {{.Email}}."
+
+[sign_in_code_label]
+description = "6-digit code label"
+other = "Sign-In Verification Code"
+
+[sign_in_code_submit]
+description = "6-digit code submit button"
+other = "Sign In"
+
+[sign_in_code_not_received]
+description = "Code not received message"
+other = "If you don't receive the code:"
+
+[sign_in_code_resend]
+description = "Resend code button"
+other = "Resend Code"
+
+[sign_in_code_resend_success]
+description = "Code resend success message"
+other = "Code has been resent. Please check your email."
+
+[sign_in_code_back]
+description = "Back link"
+other = "Back to Sign In"
+
+# Sign up code input related
+[sign_up_code_title]
+description = "Sign up code input page title"
+other = "Enter Verification Code"
+
+[sign_up_code_description]
+description = "Sign up code input page description"
+other = "Enter the 6-digit code to complete your registration."
+
+[sign_up_code_heading]
+description = "Sign up code input page heading"
+other = "Sign Up for Annict"
+
+[sign_up_code_instruction]
+description = "Sign up code input instruction"
+other = "Please enter the 6-digit verification code sent to your email"
+
+[sign_up_code_label]
+description = "Sign up code label"
+other = "Verification Code"
+
+[sign_up_code_submit]
+description = "Sign up code submit button"
+other = "Next"
+
+[sign_up_code_not_received]
+description = "Code not received message"
+other = "If you don't receive the code:"
+
+[sign_up_code_resend]
+description = "Resend code button"
+other = "Resend Code"
+
+[sign_up_code_resend_success]
+description = "Code resend success message"
+other = "Code has been resent. Please check your email."
+
+[sign_up_code_back]
+description = "Back link"
+other = "Back to Sign Up"
+
+# Navigation related
+[nav_sign_out]
+description = "Sign out link"
+other = "Sign Out"
+
+[nav_sign_in]
+description = "Sign in link"
+other = "Sign In"
+
+# Password reset related
+# Reset request form
+[password_reset_title]
+description = "Password reset page title"
+other = "Password Reset"
+
+[password_reset_heading]
+description = "Password reset page heading"
+other = "Password Reset"
+
+[password_reset_description]
+description = "Password reset page description"
+other = "Enter your registered email address.<br>We will send you a link to reset your password."
+
+[password_reset_errors_heading]
+description = "Errors heading"
+other = "There are errors"
+
+[password_reset_email_label]
+description = "Email address label"
+other = "Email Address"
+
+[password_reset_submit]
+description = "Password reset request button"
+other = "Send"
+
+[password_reset_back_to_sign_in]
+description = "Back to sign in link"
+other = "Back to Sign In"
+
+# Email sent page
+[password_reset_sent_title]
+description = "Email sent page title"
+other = "Password Reset Email Sent"
+
+[password_reset_sent_heading]
+description = "Email sent page heading"
+other = "Email Sent"
+
+[password_reset_sent_message]
+description = "Email sent message"
+other = "Please check your email."
+
+[password_reset_sent_instructions]
+description = "Password reset instructions"
+other = "We have sent you a password reset link. Please click the link in the email to set a new password.<br>This link is valid for 1 hour."
+
+[password_reset_email_not_received_heading]
+description = "Email not received heading"
+other = "If you don't receive the email"
+
+[password_reset_email_not_received_help]
+description = "Email not received help"
+other = "Please check your spam folder.<br>If you still don't receive the email after a few minutes, please <a href=\"/password/reset\" class=\"underline hover:text-blue-800\">try again</a>."
+
+# New password form
+[password_edit_title]
+description = "New password page title"
+other = "Set New Password"
+
+[password_edit_heading]
+description = "New password page heading"
+other = "Set New Password"
+
+[password_edit_description]
+description = "New password page description"
+other = "Please set a strong password to protect your account."
+
+[password_edit_password_label]
+description = "New password label"
+other = "New Password"
+
+[password_edit_password_confirmation_label]
+description = "New password confirmation label"
+other = "Confirm New Password"
+
+[password_edit_password_requirements]
+description = "Password requirements"
+other = "Must be at least 8 characters and no more than 128 characters. We recommend using a password manager."
+
+[password_edit_submit]
+description = "Change password button"
+other = "Change Password"
+
+# Password reset - Validation errors
+[password_reset_email_required]
+description = "Password reset - Email required error"
+other = "Please enter your email address"
+
+[password_reset_token_invalid]
+description = "Password reset - Token invalid error (page title)"
+other = "Invalid Link"
+
+[password_reset_token_invalid_message]
+description = "Password reset - Token invalid error detailed message"
+other = "This link is invalid. It may have expired or been already used."
+
+[password_reset_password_required]
+description = "Password reset - Password required error"
+other = "Please enter your new password"
+
+[password_reset_password_confirmation_required]
+description = "Password reset - Password confirmation required error"
+other = "Please confirm your new password"
+
+[password_reset_password_mismatch]
+description = "Password reset - Password mismatch error"
+other = "Passwords do not match"
+
+# Password strength validation (NIST SP 800-63B-4 compliant)
+[password_strength_min_length]
+description = "Password strength - Minimum length error"
+other = "Password must be at least 8 characters long"
+
+[password_strength_max_length]
+description = "Password strength - Maximum length error"
+other = "Password must be no more than 128 characters long"
+
+[password_strength_invalid_chars]
+description = "Password strength - Invalid characters error"
+other = "Password can only use alphanumeric characters and symbols"
+
+# Rate Limiting
+[rate_limit_exceeded]
+description = "Rate Limiting - Too many requests error"
+other = "Too many requests. Please try again later."
+
+# Password reset email
+[password_reset_email_subject]
+description = "Password reset email subject"
+other = "Annict - Password Reset Request"
+
+# Sign in code email
+[sign_in_code_email_subject]
+description = "Sign in code email subject"
+other = "Annict - Your Login Code"
+
+# Sign up related
+[sign_up_title]
+description = "Sign up page title"
+other = "Sign Up"
+
+[sign_up_description]
+description = "Sign up page description"
+other = "Sign up for Annict to start tracking your anime watching history."
+
+[sign_up_heading]
+description = "Sign up page heading"
+other = "Sign up for Annict"
+
+[sign_up_email_instruction]
+description = "Sign up form email instruction"
+other = "We will send a verification code\nto the email address you enter"
+
+[sign_up_have_account]
+description = "Have account message"
+other = "Already have an account?"
+
+[sign_up_sign_in]
+description = "Sign in link"
+other = "Sign in"
+
+[sign_up_email_label]
+description = "Email label"
+other = "Email"
+
+[sign_up_next_button]
+description = "Send button"
+other = "Send"
+
+[sign_up_terms_agreement_notice]
+description = "Terms agreement notice (Sign-in-wrap style)"
+other = "By signing up, you agree to our <a href=\"/terms\" class=\"link\" target=\"_blank\">Terms of Service</a> and <a href=\"/privacy\" class=\"link\" target=\"_blank\">Privacy Policy</a>."
+
+[sign_up_email_required]
+description = "Email required error"
+other = "Please enter your email address"
+
+[sign_up_email_invalid]
+description = "Email format error"
+other = "Please enter a valid email address"
+
+[sign_up_email_already_exists]
+description = "Email already exists error"
+other = "This email address is not available"
+
+[sign_up_error_server]
+description = "Server error"
+other = "A server error occurred. Please try again later"
+
+[sign_up_code_sent_to]
+description = "Code sent success message"
+other = "We sent a verification code to {{.Email}}."
+
+# Sign up verification code email
+[sign_up_code_email_subject]
+description = "Sign up verification code email subject"
+other = "Annict - Sign-Up Verification Code"
+
+# Password reset success message
+[password_reset_success]
+description = "Password reset success message"
+other = "Your password has been reset successfully.\nPlease sign in with your new password."
+
+# Flash messages related
+[flash_dismiss]
+description = "Dismiss flash message button"
+other = "Dismiss"
+
+# 6-digit code verification
+[sign_in_code_error_parse_form]
+description = "Form parse error"
+other = "Failed to parse the form. Please try again."
+
+[sign_in_code_error_server]
+description = "Server error"
+other = "A server error occurred. Please try again."
+
+[sign_in_code_error_session_expired]
+description = "Session expired"
+other = "Your session has expired. Please start over."
+
+[sign_in_code_error_code_required]
+description = "Code is required"
+other = "Please enter the code"
+
+[sign_in_code_error_code_invalid_format]
+description = "Invalid code format"
+other = "Please enter a 6-digit code"
+
+[sign_in_code_error_code_not_found]
+description = "Code not found or expired"
+other = "Code not found or has expired"
+
+[sign_in_code_error_code_invalid]
+description = "Invalid code"
+other = "The code is incorrect"
+
+[sign_in_code_error_attempts_exceeded]
+description = "Attempts exceeded"
+other = "You have exceeded the maximum number of attempts. Please request a new code."
+
+[sign_in_code_error_user_not_found]
+description = "User not found"
+other = "User not found"
+
+[sign_in_code_error_create_session]
+description = "Session creation error"
+other = "Failed to create session. Please try again."
+
+# Sign up code verification related
+[sign_up_code_error_parse_form]
+description = "Form parse error"
+other = "Failed to parse the form. Please try again."
+
+[sign_up_code_error_server]
+description = "Server error"
+other = "A server error occurred. Please try again."
+
+[sign_up_code_error_session_expired]
+description = "Session expired"
+other = "Your session has expired. Please start over."
+
+[sign_up_code_error_code_required]
+description = "Code is required"
+other = "Please enter the code"
+
+[sign_up_code_error_code_invalid_format]
+description = "Invalid code format"
+other = "Please enter a 6-digit code"
+
+[sign_up_code_error_code_not_found]
+description = "Code not found or expired"
+other = "Code not found or has expired"
+
+[sign_up_code_error_code_invalid]
+description = "Invalid code"
+other = "The code is incorrect"
+
+[sign_up_code_error_attempts_exceeded]
+description = "Attempts exceeded"
+other = "You have exceeded the maximum number of attempts. Please request a new code."
+
+[sign_up_code_error_invalid]
+description = "Code verification failed (unified message to prevent information leakage)"
+other = "Invalid code"
+
+# Turnstile (Bot protection) related
+[turnstile_verification_failed]
+description = "Turnstile verification failed error"
+other = "Bot verification failed. Please try again."
+
+# Username setup related
+[sign_up_username_heading]
+description = "Username setup page title"
+other = "Set Username"
+
+[sign_up_username_email_label]
+description = "Email label"
+other = "Email"
+
+[sign_up_username_description]
+description = "Username setup page description"
+other = "Please set your username for Annict."
+
+[sign_up_username_username_label]
+description = "Username label"
+other = "Username"
+
+[sign_up_username_username_help]
+description = "Username input help"
+other = "Up to 20 characters, alphanumeric and underscores only"
+
+[sign_up_username_submit]
+description = "Sign up button"
+other = "Sign Up"
+
+[sign_up_username_error_parse_form]
+description = "Form parse error"
+other = "Failed to parse the form. Please try again."
+
+[sign_up_username_error_server]
+description = "Server error"
+other = "A server error occurred. Please try again."
+
+[sign_up_username_error_token_missing]
+description = "Token is missing"
+other = "Token is missing. Please start over."
+
+[sign_up_username_error_token_invalid]
+description = "Token is invalid or expired"
+other = "Token is invalid or has expired. Please start over."
+
+[sign_up_username_error_username_required]
+description = "Username is required"
+other = "Please enter your username"
+
+[sign_up_username_error_username_format]
+description = "Invalid username format"
+other = "Username must be up to 20 characters, alphanumeric and underscores only"
+
+[sign_up_username_error_username_taken]
+description = "Username is already taken"
+other = "This username is not available"
+
+[sign_up_username_success]
+description = "User registration success message"
+other = "Your account has been created successfully. Welcome to Annict!"

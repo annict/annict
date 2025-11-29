@@ -1,0 +1,161 @@
+package works
+
+import (
+	"context"
+	"github.com/annict/annict/internal/templates"
+	"github.com/annict/annict/internal/viewmodel"
+	"strconv"
+)
+
+// Popular は人気作品ページのコンテンツを表示します
+templ Popular(ctx context.Context, works []viewmodel.Work) {
+	<div>
+		<h2 class="text-3xl font-bold mb-8">
+			{ templates.T(ctx, "popular_anime") }
+		</h2>
+		<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+			for _, work := range works {
+				<div class="card bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+					if work.ImageURL != "" {
+						<div class="aspect-[3/4] bg-gray-100">
+							<picture>
+								<source srcset={ work.GetSrcSet(280, "webp") } type="image/webp"/>
+								<source srcset={ work.GetSrcSet(280, "jpg") } type="image/jpeg"/>
+								<img
+									src={ work.ImageURL }
+									alt={ getWorkTitle(ctx, work) }
+									width="280"
+									height="210"
+									loading="lazy"
+									class="w-full h-full object-cover"
+								/>
+							</picture>
+						</div>
+					} else {
+						<div class="aspect-[3/4] bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+							<span class="text-white text-5xl">📺</span>
+						</div>
+					}
+					<div class="p-4">
+						<h3 class="font-semibold text-sm mb-2 line-clamp-2">
+							<a
+								href={ templ.URL("/works/" + strconv.FormatInt(work.ID, 10)) }
+								class="text-gray-900 hover:text-primary transition-colors"
+							>
+								{ getWorkTitle(ctx, work) }
+							</a>
+						</h3>
+						<div class="flex items-center gap-1 text-gray-600 text-xs">
+							<span>👥</span>
+							<span>
+								{ templates.T(ctx, "watchers_count", map[string]any{"Count": work.WatchersCount}) }
+							</span>
+						</div>
+						if work.SeasonYear != nil {
+							<div class="mt-2 text-gray-500 text-xs">
+								{ formatSeasonInfo(ctx, work) }
+							</div>
+						}
+						if len(work.Casts) > 0 {
+							<div class="mt-2 text-xs">
+								<div class="text-gray-600 font-semibold mb-1">{ templates.T(ctx, "cast_label") }:</div>
+								<div class="text-gray-500 line-clamp-2">
+									{ formatCasts(work.Casts) }
+								</div>
+							</div>
+						}
+						if len(work.Staffs) > 0 {
+							<div class="mt-2 text-xs">
+								<div class="text-gray-600 font-semibold mb-1">{ templates.T(ctx, "staff_label") }:</div>
+								<div class="text-gray-500 line-clamp-2">
+									{ formatStaffs(work.Staffs) }
+								</div>
+							</div>
+						}
+					</div>
+				</div>
+			}
+		</div>
+	</div>
+}
+
+// getWorkTitle は現在のロケールに応じた作品タイトルを返します
+func getWorkTitle(ctx context.Context, work viewmodel.Work) string {
+	locale := templates.Locale(ctx)
+	if locale == "en" && work.TitleEn != "" {
+		return work.TitleEn
+	}
+	if work.Title == "" {
+		return templates.T(ctx, "title_undetermined")
+	}
+	return work.Title
+}
+
+// formatSeasonInfo はシーズン情報をフォーマットします
+func formatSeasonInfo(ctx context.Context, work viewmodel.Work) string {
+	if work.SeasonYear == nil {
+		return ""
+	}
+
+	year := *work.SeasonYear
+	if work.SeasonNumber == nil {
+		return strconv.Itoa(int(year)) + "年"
+	}
+
+	seasonNum := *work.SeasonNumber
+	var seasonKey string
+	switch seasonNum {
+	case 0:
+		seasonKey = "season_winter"
+	case 1:
+		seasonKey = "season_spring"
+	case 2:
+		seasonKey = "season_summer"
+	case 3:
+		seasonKey = "season_autumn"
+	default:
+		return strconv.Itoa(int(year)) + "年"
+	}
+
+	season := templates.T(ctx, seasonKey)
+	return templates.T(ctx, "year_season", map[string]any{
+		"Year":   year,
+		"Season": season,
+	})
+}
+
+// formatCasts はキャスト情報をカンマ区切りでフォーマットします
+func formatCasts(casts []viewmodel.Cast) string {
+	if len(casts) == 0 {
+		return ""
+	}
+
+	result := ""
+	for i, cast := range casts {
+		if i > 0 {
+			result += ", "
+		}
+		if cast.CharacterName != "" {
+			result += cast.CharacterName
+		} else {
+			result += cast.Name
+		}
+	}
+	return result
+}
+
+// formatStaffs はスタッフ情報をカンマ区切りでフォーマットします
+func formatStaffs(staffs []viewmodel.Staff) string {
+	if len(staffs) == 0 {
+		return ""
+	}
+
+	result := ""
+	for i, staff := range staffs {
+		if i > 0 {
+			result += ", "
+		}
+		result += staff.Name
+	}
+	return result
+}

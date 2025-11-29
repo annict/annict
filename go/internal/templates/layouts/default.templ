@@ -1,0 +1,62 @@
+package layouts
+
+import (
+	"context"
+	"github.com/annict/annict/internal/templates"
+	"github.com/annict/annict/internal/templates/components"
+	"github.com/annict/annict/internal/session"
+	"github.com/annict/annict/internal/viewmodel"
+	repository "github.com/annict/annict/internal/query"
+)
+
+// Default はデフォルトレイアウトです
+// ヘッダー、ナビゲーション、メインコンテンツ、フッターを含みます
+templ Default(ctx context.Context, meta viewmodel.PageMeta, user *repository.GetUserByIDRow, flash *session.Flash, assetVersion string, content templ.Component) {
+	<!DOCTYPE html>
+	<html lang={ templates.Locale(ctx) }>
+		<head>
+			@components.Head(meta, assetVersion)
+		</head>
+		<body class="min-h-screen flex flex-col bg-gray-50">
+			<header class="bg-white shadow-sm">
+				<nav class="container mx-auto px-4">
+					<div class="flex justify-between items-center h-16">
+						<h1 class="text-2xl font-bold">
+							<a href="/" class="text-primary hover:text-primary-600">Annict</a>
+						</h1>
+						<ul class="flex gap-6 items-center">
+							<li>
+								<a href="/works/popular" class="text-gray-600 hover:text-gray-900 transition-colors">
+									{ templates.T(ctx, "popular_anime") }
+								</a>
+							</li>
+							if user != nil {
+								<li class="text-gray-600">{ user.Username }</li>
+								<li>
+									<a href="/sign_out" class="text-gray-600 hover:text-gray-900 transition-colors">
+										{ templates.T(ctx, "nav_sign_out") }
+									</a>
+								</li>
+							} else {
+								<li>
+									<a href="/sign_in" class="text-gray-600 hover:text-gray-900 transition-colors">
+										{ templates.T(ctx, "nav_sign_in") }
+									</a>
+								</li>
+							}
+						</ul>
+					</div>
+				</nav>
+			</header>
+			<main class="flex-1 container mx-auto px-4 py-8">
+				@components.Flash(ctx, flash)
+				@content
+			</main>
+			<footer class="bg-gray-100 mt-auto">
+				<div class="container mx-auto px-4 py-8 text-center text-gray-600">
+					<p>&copy; 2024 Annict (Go Version)</p>
+				</div>
+			</footer>
+		</body>
+	</html>
+}

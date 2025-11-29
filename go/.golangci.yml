@@ -1,0 +1,263 @@
+# golangci-lint v2 の設定ファイル
+# https://golangci-lint.run/usage/configuration/
+
+version: "2"
+
+run:
+  # タイムアウト（デフォルト: 1m）
+  timeout: 5m
+  # テストファイルを含める
+  tests: true
+  # ビルドタグ
+  build-tags: []
+
+linters:
+  # 有効化するリンター
+  enable:
+    - govet         # Go標準静的解析
+    - staticcheck   # 高度な静的解析
+    - gosec         # セキュリティチェック
+    - depguard      # 依存関係のルール強制
+    - errcheck      # エラーチェック漏れ
+    - ineffassign   # 無駄な代入
+    - unused        # 未使用コード
+
+  # リンター除外ルール（v2形式）
+  exclusions:
+    rules:
+      # テストファイルでは gosec と depguard を無効化
+      - path: '(.+)_test\.go'
+        linters:
+          - gosec
+          - depguard
+      # templ 自動生成ファイルは一部のリンターから除外（depguard は有効化）
+      - path: '(.+)_templ\.go'
+        linters:
+          - govet
+          - staticcheck
+          - gosec
+          - errcheck
+          - ineffassign
+          - unused
+      # シード関連ファイルはすべてのリンターから除外（開発/テスト用ユーティリティのため）
+      - path: 'internal/usecase/seed/.+\.go'
+        linters:
+          - govet
+          - staticcheck
+          - gosec
+          - depguard
+          - errcheck
+          - ineffassign
+          - unused
+      - path: 'cmd/seed/.+\.go'
+        linters:
+          - govet
+          - staticcheck
+          - gosec
+          - depguard
+          - errcheck
+          - ineffassign
+          - unused
+      - path: 'internal/seed/.+\.go'
+        linters:
+          - govet
+          - staticcheck
+          - gosec
+          - depguard
+          - errcheck
+          - ineffassign
+          - unused
+    # 除外するディレクトリ
+    paths:
+      - bin/.*
+      - vendor/.*
+      - static/.*
+      - node_modules/.*
+
+  # リンター固有の設定（v2形式）
+  settings:
+    # gosec の設定
+    gosec:
+      # 除外する脆弱性ルール（必要に応じて調整）
+      excludes: []
+      # セキュリティの重要度（low, medium, high）
+      severity: medium
+      confidence: medium
+
+    # depguard の設定
+    depguard:
+      rules:
+        # Templates層のルール: ViewModelを通じてデータを表示
+        # 直接のデータアクセスとビジネスロジックに依存しない
+        templates-layer:
+          files:
+            - "**/internal/templates/**/*.go"
+          deny:
+            - pkg: github.com/annict/annict/internal/query
+              desc: "TemplatesはQueryに依存できません。"
+            - pkg: github.com/annict/annict/internal/repository
+              desc: "TemplatesはRepositoryに依存できません。"
+            - pkg: github.com/annict/annict/internal/model
+              desc: "TemplatesはModelに直接依存できません。ViewModelを経由してください。"
+            - pkg: github.com/annict/annict/internal/usecase
+              desc: "TemplatesはUseCaseに依存できません。"
+            - pkg: github.com/annict/annict/internal/handler
+              desc: "TemplatesはHandlerに依存できません。"
+            - pkg: github.com/annict/annict/internal/middleware
+              desc: "TemplatesはMiddlewareに依存できません。"
+
+        # ViewModel層のルール: データ変換のみ
+        # 他のPresentation層パッケージに依存しない
+        viewmodel-layer:
+          files:
+            - "**/internal/viewmodel/**/*.go"
+          deny:
+            - pkg: github.com/annict/annict/internal/query
+              desc: "ViewModelはQueryに依存できません。"
+            - pkg: github.com/annict/annict/internal/repository
+              desc: "ViewModelはRepositoryに依存できません。ModelからViewModelへの変換を行ってください。"
+            - pkg: github.com/annict/annict/internal/handler
+              desc: "ViewModelはHandlerに依存できません。"
+            - pkg: github.com/annict/annict/internal/middleware
+              desc: "ViewModelはMiddlewareに依存できません。"
+            - pkg: github.com/annict/annict/internal/templates
+              desc: "ViewModelはTemplatesに依存できません。"
+
+        # Handler層のルール: HTTPリクエスト処理
+        # QueryへのアクセスはRepositoryを経由
+        handler-layer:
+          files:
+            - "**/internal/handler/**/*.go"
+          deny:
+            - pkg: github.com/annict/annict/internal/query
+              desc: "HandlerはQueryに直接依存できません。Repositoryを経由してください。"
+
+        # Middleware層のルール: 共通処理のみ
+        # 他のPresentation層パッケージ、Application層、Domain/Infrastructure層に依存しない
+        middleware-layer:
+          files:
+            - "**/internal/middleware/**/*.go"
+          deny:
+            - pkg: github.com/annict/annict/internal/query
+              desc: "MiddlewareはQueryに依存できません。"
+            - pkg: github.com/annict/annict/internal/repository
+              desc: "MiddlewareはRepositoryに依存できません。"
+            - pkg: github.com/annict/annict/internal/usecase
+              desc: "MiddlewareはUseCaseに依存できません。"
+            - pkg: github.com/annict/annict/internal/handler
+              desc: "MiddlewareはHandlerに依存できません。"
+            - pkg: github.com/annict/annict/internal/viewmodel
+              desc: "MiddlewareはViewModelに依存できません。"
+            - pkg: github.com/annict/annict/internal/templates
+              desc: "MiddlewareはTemplatesに依存できません。"
+
+        # Application層のルール（UseCase）
+        # Presentation層に依存しない
+        application-layer:
+          files:
+            - "**/internal/usecase/**/*.go"
+          deny:
+            - pkg: github.com/annict/annict/internal/query
+              desc: "Application層はQueryに直接依存できません。Repositoryを経由してください。"
+            - pkg: github.com/annict/annict/internal/handler
+              desc: "Application層はPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/internal/middleware
+              desc: "Application層はPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/internal/viewmodel
+              desc: "Application層はPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/internal/templates
+              desc: "Application層はPresentation層に依存できません。"
+
+        # Model層のルール: 純粋なドメインエンティティ
+        # データアクセス層、上位層に依存しない
+        model-layer:
+          files:
+            - "**/internal/model/**/*.go"
+          deny:
+            - pkg: github.com/annict/annict/internal/query
+              desc: "ModelはQueryに依存できません。"
+            - pkg: github.com/annict/annict/internal/repository
+              desc: "ModelはRepositoryに依存できません。"
+            - pkg: github.com/annict/annict/internal/usecase
+              desc: "ModelはApplication層に依存できません。"
+            - pkg: github.com/annict/annict/internal/handler
+              desc: "ModelはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/internal/middleware
+              desc: "ModelはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/internal/viewmodel
+              desc: "ModelはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/internal/templates
+              desc: "ModelはPresentation層に依存できません。"
+
+        # Repository層のルール: データアクセス層
+        # 上位層に依存しない
+        repository-layer:
+          files:
+            - "**/internal/repository/**/*.go"
+          deny:
+            - pkg: github.com/annict/annict/internal/usecase
+              desc: "RepositoryはApplication層に依存できません。"
+            - pkg: github.com/annict/annict/internal/handler
+              desc: "RepositoryはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/internal/middleware
+              desc: "RepositoryはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/internal/viewmodel
+              desc: "RepositoryはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/internal/templates
+              desc: "RepositoryはPresentation層に依存できません。"
+
+        # Query層のルール: sqlc生成コード
+        # 上位層に依存しない
+        query-layer:
+          files:
+            - "**/internal/query/**/*.go"
+          deny:
+            - pkg: github.com/annict/annict/internal/repository
+              desc: "QueryはRepositoryに依存できません。"
+            - pkg: github.com/annict/annict/internal/model
+              desc: "QueryはModelに依存できません。"
+            - pkg: github.com/annict/annict/internal/usecase
+              desc: "QueryはApplication層に依存できません。"
+            - pkg: github.com/annict/annict/internal/handler
+              desc: "QueryはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/internal/middleware
+              desc: "QueryはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/internal/viewmodel
+              desc: "QueryはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/internal/templates
+              desc: "QueryはPresentation層に依存できません。"
+
+    # staticcheck の設定
+    staticcheck:
+      # 有効化するチェック（デフォルトですべて有効）
+      checks: ["all", "-ST1003"] # ST1003: パッケージ名のアンダースコア警告を除外（ディレクトリ構造に由来）
+
+# フォーマッター固有の設定（v2形式）
+formatters:
+  # 有効化するフォーマッター
+  enable:
+    - gofmt         # Go標準フォーマッター
+    - goimports     # import文の整理
+
+  # フォーマッター除外パス
+  exclusions:
+    paths:
+      - bin/.*
+      - vendor/.*
+      - static/.*
+      - node_modules/.*
+      - '(.+)_templ\.go'  # templ 自動生成ファイル
+
+  settings:
+    # goimports の設定
+    goimports:
+      # ローカルパッケージのプレフィックス
+      local-prefixes:
+        - github.com/annict/annict/go
+
+# 出力設定（v2形式）
+output:
+  formats:
+    text:
+      path: stdout
+      colors: true

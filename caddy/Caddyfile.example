@@ -1,0 +1,6 @@
+:8080 {
+  basicauth {
+    user xxxxx/xxxxx
+  }
+  reverse_proxy app:8080
+}

@@ -1,0 +1,89 @@
+package sign_up
+
+import (
+	"context"
+	"github.com/annict/annict/internal/session"
+	"github.com/annict/annict/internal/templates"
+	"github.com/annict/annict/internal/templates/components"
+)
+
+// New は新規登録フォームのコンテンツを表示します
+templ New(ctx context.Context, formErrors *session.FormErrors, csrfToken string, turnstileSiteKey string) {
+	<div class="flex flex-col gap-6 min-w-full md:min-w-md px-4">
+		<div class="text-center">
+			<a href="/" class="inline-block">
+				<img
+					alt="Annict"
+					src="/static/images/logo-mizuho.png"
+					width="50"
+				/>
+			</a>
+		</div>
+
+		<div class="flex flex-col gap-2">
+			<h1 class="text-center text-3xl font-bold antialiased">
+				{ templates.T(ctx, "sign_up_heading") }
+			</h1>
+
+			<p class="text-center text-sm text-muted-foreground whitespace-pre-line">
+				{ templates.T(ctx, "sign_up_email_instruction") }
+			</p>
+		</div>
+
+		@components.FormErrors(formErrors)
+
+		<form
+			action="/sign_up"
+			class="form grid gap-6"
+			data-on:submit__passive="$isSubmitting = true"
+			method="POST"
+		>
+			<input type="hidden" name="csrf_token" value={ csrfToken }/>
+
+			<div class="grid gap-2">
+				<label for="email">
+					{ templates.T(ctx, "sign_up_email_label") }
+				</label>
+
+				<input
+					if formErrors != nil && formErrors.Fields["email"] != nil {
+						aria-invalid="true"
+					} else {
+						aria-invalid="false"
+					}
+					autocomplete="email"
+					autofocus
+					id="email"
+					name="email"
+					required
+					type="email"
+				/>
+
+				if formErrors != nil && formErrors.Fields["email"] != nil {
+					for _, errorMsg := range formErrors.Fields["email"] {
+						<p class="text-sm text-red-600">{ errorMsg }</p>
+					}
+				}
+			</div>
+
+			@components.Turnstile(turnstileSiteKey)
+
+			<button
+				class="btn rounded-full w-fit"
+				data-attr:disabled="$isSubmitting == true"
+				type="submit"
+			>
+				@templates.Icon("paper-plane-tilt")
+				{ templates.T(ctx, "sign_up_next_button") }
+			</button>
+		</form>
+
+		<div class="text-center text-muted-foreground">
+			{ templates.T(ctx, "sign_up_have_account") }
+			{ " " }
+			<a href="/sign_in" class="link">
+				{ templates.T(ctx, "sign_up_sign_in") }
+			</a>
+		</div>
+	</div>
+}
