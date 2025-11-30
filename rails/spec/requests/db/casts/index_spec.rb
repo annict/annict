@@ -77,11 +77,16 @@ RSpec.describe "GET /db/works/:work_id/casts", type: :request do
 
   it "複数の削除済みキャストと通常のキャストが混在するとき、削除済みキャストは表示されないこと" do
     work = FactoryBot.create(:work)
-    cast1 = FactoryBot.create(:cast, work:, sort_number: 1)
-    deleted_cast1 = FactoryBot.create(:cast, work:, sort_number: 2, deleted_at: Time.current)
-    cast2 = FactoryBot.create(:cast, work:, sort_number: 3)
-    deleted_cast2 = FactoryBot.create(:cast, work:, sort_number: 4, deleted_at: Time.current)
-    cast3 = FactoryBot.create(:cast, work:, sort_number: 5)
+    character1 = FactoryBot.create(:character, name: "通常キャラ壱号")
+    character2 = FactoryBot.create(:character, name: "通常キャラ弐号")
+    character3 = FactoryBot.create(:character, name: "通常キャラ参号")
+    deleted_character1 = FactoryBot.create(:character, name: "削除済キャラ壱号")
+    deleted_character2 = FactoryBot.create(:character, name: "削除済キャラ弐号")
+    cast1 = FactoryBot.create(:cast, work:, character: character1, sort_number: 1)
+    deleted_cast1 = FactoryBot.create(:cast, work:, character: deleted_character1, sort_number: 2, deleted_at: Time.current)
+    cast2 = FactoryBot.create(:cast, work:, character: character2, sort_number: 3)
+    deleted_cast2 = FactoryBot.create(:cast, work:, character: deleted_character2, sort_number: 4, deleted_at: Time.current)
+    cast3 = FactoryBot.create(:cast, work:, character: character3, sort_number: 5)
 
     get "/db/works/#{work.id}/casts"
 
