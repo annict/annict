@@ -131,6 +131,9 @@ docker compose logs -f app
 
 ### コンテナ内で実行するコマンド (Claude Codeが実行できるコマンド)
 
+環境変数の読み込みが必要なコマンドは **Makefile** でラップされています。
+`make help` で利用可能なコマンド一覧を確認できます。
+
 ```sh
 # 依存関係のインストール
 bundle install
@@ -141,32 +144,31 @@ yarn install
 bin/dev
 
 # Railsサーバーのみ起動
-bin/rails server
+make server
 
 # コンソール起動
-bin/rails console
+make console
 
 # テスト実行
-bundle exec rspec
+make test
 # 特定のテストを実行
-bundle exec rspec spec/models/work_spec.rb
+make test-file FILE=spec/models/work_spec.rb
 # E2Eテストを実行（Playwright）
-bundle exec rspec spec/system/
+make test-file FILE=spec/system/
 
 # コードフォーマット
-bundle exec rubocop -A             # Ruby（自動修正）
+make fmt                           # Ruby（自動修正）
 yarn prettier --write "**/*.js"    # JavaScript
 
 # リント
-bundle exec rubocop                # Ruby
-bundle exec erblint --lint-all     # ERB
+make lint                          # Ruby
 yarn eslint "**/*.js"              # JavaScript
 
 # Sorbet型チェック
-bundle exec srb tc
+make sorbet
 
 # Zeitwerk（オートロード）チェック
-bundle exec rails zeitwerk:check
+make zeitwerk
 
 # PostgreSQL（開発環境）に接続
 psql -h host.docker.internal -p 15432 -U postgres -d annict_development
@@ -175,18 +177,18 @@ psql -h host.docker.internal -p 15432 -U postgres -d annict_development
 psql -h host.docker.internal -p 15432 -U postgres -d annict_test
 
 # データベースマイグレーション
-bin/rails db:migrate
-bin/rails db:rollback              # 最後のマイグレーションをロールバック
+make db-migrate
+make db-rollback    # 最後のマイグレーションをロールバック
 
 # データベースのセットアップ
-bin/rails db:setup                 # DBの作成、スキーマ読み込み、シード実行
+make db-setup       # DBの作成、スキーマ読み込み、シード実行
 
 # フロントエンドアセットのビルド
 yarn build       # JavaScript（本番用、minify有効）
 yarn build:css   # CSS（本番用）
 
 # GraphQL APIスキーマのダンプ
-bundle exec rake graphql:dump_schema
+make graphql-dump
 ```
 
 ### コミット前に実行するコマンド
@@ -194,26 +196,26 @@ bundle exec rake graphql:dump_schema
 **重要**: コードをコミットする前に、以下のコマンドを実行してCIが通ることを確認してください：
 
 ```sh
-# 1. Zeitwerk（オートロード）チェック
-bundle exec rails zeitwerk:check
+# 1. 型の更新
+make sorbet-update
 
-# 2. Sorbet型チェック
-bundle exec srb tc
+# 2. Zeitwerk（オートロード）チェック
+make zeitwerk
 
-# 3. Rubyコードのリント・フォーマット
-bundle exec rubocop -A
+# 3. Sorbet型チェック
+make sorbet
 
-# 4. ERBテンプレートのリント
-bundle exec erblint --lint-all
+# 4. Rubyコードのリント・フォーマット
+make fmt
 
 # 5. JavaScriptのリント
 yarn eslint "**/*.js"
 
 # 6. テストを実行
-bundle exec rspec
+make test
 
 # すべてを一度に実行するワンライナー:
-bundle exec rails zeitwerk:check && bundle exec srb tc && bundle exec rubocop -A && bundle exec erblint --lint-all && yarn eslint "**/*.js" && bundle exec rspec
+make sorbet-update && make zeitwerk && make sorbet && make fmt && yarn eslint "**/*.js" && make test
 ```
 
 ## Pull Requestのガイドライン
@@ -233,7 +235,7 @@ Pull Requestのガイドラインは [/CLAUDE.md](../CLAUDE.md#pull-requestの�
 
 - **インデント**: 2スペースを使用（Ruby標準）
 - **スタイルガイド**: Standard（RuboCop）に従う
-- **自動フォーマット**: `bundle exec rubocop -A`を使用
+- **自動フォーマット**: `make fmt`を使用
 - **コメント**: 日本語で記述（複雑なロジックの説明）
 - **型注釈**: Sorbetの型注釈を可能な限り追加
 
@@ -427,13 +429,13 @@ Webアプリケーションのセキュリティは**最優先事項**です。
 bin/rails generate migration CreateWorks
 
 # マイグレーションを実行
-bin/rails db:migrate
+make db-migrate
 
 # マイグレーションをロールバック
-bin/rails db:rollback
+make db-rollback
 
 # スキーマをダンプ（structure.sql）
-bin/rails db:migrate
+make db-migrate
 ```
 
 ### スキーマ管理
@@ -454,7 +456,7 @@ bin/rails db:migrate
 ### スキーマのダンプ
 
 ```sh
-bundle exec rake graphql:dump_schema
+make graphql-dump
 ```
 
 ## 関連ドキュメント

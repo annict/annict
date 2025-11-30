@@ -87,8 +87,6 @@ ignore:
       - Style/SuperWithArgsParentheses
   - app/components/deprecated/headers/work_header_component.rb:
       - Style/SuperWithArgsParentheses
-  - app/components/deprecated/inputs/recaptcha_input_component.rb:
-      - Style/SuperWithArgsParentheses
   - app/components/deprecated/label_groups/work_record_rating_label_group_component.rb:
       - Style/SuperWithArgsParentheses
   - app/components/deprecated/labels/rating_label_component.rb:
@@ -435,8 +433,6 @@ ignore:
       - Rails/PluckId
   - app/models/program.rb:
       - Rails/CompactBlank
-  - app/models/recaptcha.rb:
-      - Rails/EnvironmentVariableAccess
   - app/models/season.rb:
       - Rails/TimeZone
       - Rails/EnvironmentVariableAccess

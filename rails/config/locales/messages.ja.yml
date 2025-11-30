@@ -201,32 +201,16 @@ ja:
     providers:
       removed: 連携解除しました
       you_can_not_disconnect: 連携解除できません
-    recaptcha:
-      not_verified: reCAPTCHAの認証に失敗しました。時間を置いて再度お試しください
     records:
       show:
         record_by_name: "%{name}の記録"
       view_record_body: "感想を見る"
-    registrations:
-      new:
-        expired_html: アカウント作成用リンクの有効期限が切れました。<br>再度<a href="/sign_up">サインアップページ</a>でメールアドレスを入力してください。
-        password_hint: 8文字以上入力してください。
-        sign_in_link_html: 作成済みですか？ %{link}
-        start_with_facebook: Facebookでログイン
-        username_hint: 半角英数字とアンダースコア (_) が利用できます。
-      create:
-        welcome: アカウント作成が完了しました。Annictにようこそ！
     reviews:
       n_people_changed_status_to_wanna_watch: "%{count}人がこのレビューを見て視聴ステータスを「見たい」にしました"
     sayonara:
       are_you_sure_really: 後戻りできませんがよろしいですか？
       delete_account: アカウントを削除する
       description: アカウント情報や見たアニメの記録、ステータス変更など、あなたに紐付くデータが全て削除されます。
-    sessions:
-      new:
-        remember_me: 保存する
-        sign_in_with_facebook: Facebookでログイン
-        sign_in_with_twitter: Twitterでログイン
     settings:
       apps:
         disconnected: 接続解除しました
@@ -241,21 +225,6 @@ ja:
         make_sure_to_copy: 作成した個人用トークンをコピーしてください。この文字列は再表示できません。
         new: 新規作成
         no_tokens: 作成されていません
-    sign_in:
-      create:
-        mail_has_sent: ログインのためのメールを送信しました
-      new:
-        description_html: 入力したメールアドレス宛てに<br>ログイン用のリンクをお送りします。
-        sign_up_link_html: アカウント持ってない？ %{link}
-    sign_in_callback:
-      show:
-        expired_html: ログイン用リンクの有効期限が切れました。<br>再度やり直してください。
-        signed_in: ログインしました
-    sign_up:
-      create:
-        mail_has_sent: アカウント作成のためのメールを送信しました
-      new:
-        description_html: 入力したメールアドレス宛てに<br>アカウント作成用のリンクをお送りします。
     supporters:
       gumroad_subscriber_not_found: Gumroadからメンバーシップ情報が取得できませんでした。
     tracks:

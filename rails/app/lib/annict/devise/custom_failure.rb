@@ -5,6 +5,6 @@
 
 class Annict::Devise::CustomFailure < Devise::FailureApp
   def redirect_url
-    sign_in_url
+    "/sign_in"
   end
 end
