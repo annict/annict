@@ -201,21 +201,10 @@ en:
     providers:
       removed: Removed.
       you_can_not_disconnect: You can not disconnect.
-    recaptcha:
-      not_verified: reCAPTCHA verification failed. Please try again later.
     records:
       show:
         record_by_name: "%{name}'s Record"
       view_record_body: "View Comment"
-    registrations:
-      new:
-        expired_html: Your sign up link has expired.<br>Please reenter your email on the <a href="/sign_up">sign up page</a>.
-        password_hint: At least 8 characters.
-        sign_in_link_html: Already have an account? %{link}
-        start_with_facebook: Sign In with Facebook
-        username_hint: Only letters, numbers, and underscores.
-      create:
-        welcome: Your account has been created. Welcome to Annict!
     reviews:
       n_people_changed_status_to_wanna_watch: "%{count} people changed their status to 'Plan to Watch'."
       view_review_with_words_count: View Review
@@ -223,11 +212,6 @@ en:
       are_you_sure_really: Are you sure? Really??
       delete_account: Delete Account
       description: Clicking "Delete Account" will delete all your data.
-    sessions:
-      new:
-        remember_me: Remember me
-        sign_in_with_facebook: Sign in with Facebook
-        sign_in_with_twitter: Sign in with Twitter
     settings:
       apps:
         disconnected: Application has been disconnected
@@ -242,21 +226,6 @@ en:
         make_sure_to_copy: Make sure to copy your new personal access token now. You won’t be able to see it again.
         new: Generate new token
         no_tokens: No tokens
-    sign_in:
-      create:
-        mail_has_sent: An email has been sent to sign in.
-      new:
-        description_html: We'll send a link for sign in to the email you input.
-        sign_up_link_html: Don't have an account? %{link}
-    sign_in_callback:
-      show:
-        expired_html: Sign in link has expired. Please try again later.
-        signed_in: Welcome back!
-    sign_up:
-      create:
-        mail_has_sent: An email has been sent to create your account.
-      new:
-        description_html: We'll send a link for sign up to the email you input.
     supporters:
       gumroad_subscriber_not_found: Could not get membership information from Gumroad.
     tracks:
