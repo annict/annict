@@ -11,8 +11,6 @@ Rails.application.routes.draw do
 
   devise_scope :user do
     # standard:disable Layout/ExtraSpacing, Rails/MatchRoute
-    match "/legacy/sign_in",      via: :get,    as: :legacy_sign_in,      to: "legacy/sessions#new"
-    match "/legacy/sign_in",      via: :post,   as: :user_session,        to: "legacy/sessions#create"
     match "/sign_out",            via: :delete, as: :sign_out,            to: "devise/sessions#destroy"
     # standard:enable Layout/ExtraSpacing, Rails/MatchRoute
   end
