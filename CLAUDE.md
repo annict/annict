@@ -157,9 +157,9 @@ docker compose up -d
 
 各サブプロジェクトで実装を行った場合は、コミット前に以下を確認してください：
 
-- コードフォーマット（Go: `make fmt`、Rails: `bundle exec rubocop -A`）
-- リント（Go: `make lint`、Rails: `bundle exec rubocop`）
-- テスト（Go: `ANNICT_ENV=test make test`、Rails: `bundle exec rspec`）
+- コードフォーマット（Go/Rails: `make fmt`）
+- リント（Go/Rails: `make lint`）
+- テスト（Go/Rails: `make test`）
 
 ### コメントのガイドライン
 

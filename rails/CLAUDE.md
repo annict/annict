@@ -235,7 +235,7 @@ Pull Requestのガイドラインは [/CLAUDE.md](../CLAUDE.md#pull-requestの�
 
 - **インデント**: 2スペースを使用（Ruby標準）
 - **スタイルガイド**: Standard（RuboCop）に従う
-- **自動フォーマット**: `bundle exec rubocop -A`を使用
+- **自動フォーマット**: `make fmt`を使用
 - **コメント**: 日本語で記述（複雑なロジックの説明）
 - **型注釈**: Sorbetの型注釈を可能な限り追加
 
