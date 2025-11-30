@@ -3,6 +3,6 @@
 
 class FaqsController < ApplicationV6Controller
   def show
-    redirect_to "https://github.com/annict/annict/blob/main/docs/faq.md"
+    redirect_to "https://github.com/annict/annict/blob/main/rails/docs/faq.md"
   end
 end
