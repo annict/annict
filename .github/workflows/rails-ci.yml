@@ -1,16 +1,6 @@
 name: Rails CI
 
-on:
-  push:
-    branches:
-      - main
-    paths:
-      - "rails/**"
-      - ".github/workflows/rails-ci.yml"
-  pull_request:
-    paths:
-      - "rails/**"
-      - ".github/workflows/rails-ci.yml"
+on: push
 
 jobs:
   zeitwerk:
