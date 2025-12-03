@@ -71,20 +71,6 @@ RSpec.describe "DELETE /db/trailers/:id", type: :request do
     expect(flash[:notice]).to eq("削除しました")
   end
 
-  it "管理者権限を持つユーザーがログインしているとき、destroy_in_batchesメソッドが呼ばれること" do
-    user = FactoryBot.create(:registered_user, :with_admin_role)
-    trailer = FactoryBot.create(:trailer, :not_deleted)
-    login_as(user, scope: :user)
-
-    # destroy_in_batchesメソッドが呼ばれることを確認
-    allow_any_instance_of(Trailer).to receive(:destroy_in_batches)
-
-    delete "/db/trailers/#{trailer.id}"
-
-    expect(response.status).to eq(302)
-    expect(flash[:notice]).to eq("削除しました")
-  end
-
   it "存在しないトレイラーIDを指定したとき、404エラーが返ること" do
     user = FactoryBot.create(:registered_user, :with_admin_role)
     login_as(user, scope: :user)
