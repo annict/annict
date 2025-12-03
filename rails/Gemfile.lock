@@ -817,7 +817,7 @@ DEPENDENCIES
   wilson_score
 
 RUBY VERSION
-   ruby 3.3.5p100
+   ruby 3.3.10p183
 
 BUNDLED WITH
    2.3.12

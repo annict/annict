@@ -18,7 +18,7 @@ jobs:
       - name: Setup Ruby and install gems
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.3.5
+          ruby-version: 3.3.10
           bundler-cache: true
           working-directory: rails
       - run: bin/rails zeitwerk:check
@@ -36,7 +36,7 @@ jobs:
       - name: Setup Ruby and install gems
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.3.5
+          ruby-version: 3.3.10
           bundler-cache: true
           working-directory: rails
       - run: bin/rails sorbet:update
@@ -68,7 +68,7 @@ jobs:
       - name: Setup Ruby and install gems
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.3.5
+          ruby-version: 3.3.10
           bundler-cache: true
           working-directory: rails
 
@@ -85,7 +85,7 @@ jobs:
       - name: Setup Ruby and install gems
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.3.5
+          ruby-version: 3.3.10
           bundler-cache: true
           working-directory: rails
       - run: bin/erb_lint --lint-all
@@ -158,7 +158,7 @@ jobs:
       - name: Setup Ruby and install gems
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.3.5
+          ruby-version: 3.3.10
           bundler-cache: true
           working-directory: rails
 

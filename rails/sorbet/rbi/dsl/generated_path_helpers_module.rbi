@@ -487,9 +487,6 @@ module GeneratedPathHelpersModule
   def legacy_record_redirect_2_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }
-  def legacy_sign_in_path(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
   def legal_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }
@@ -689,9 +686,6 @@ module GeneratedPathHelpersModule
 
   sig { params(args: T.untyped).returns(String) }
   def user_ics_path(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
-  def user_session_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }
   def userland_edit_project_path(*args); end

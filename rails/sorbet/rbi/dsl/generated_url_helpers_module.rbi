@@ -487,9 +487,6 @@ module GeneratedUrlHelpersModule
   def legacy_record_redirect_2_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }
-  def legacy_sign_in_url(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
   def legal_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }
@@ -689,9 +686,6 @@ module GeneratedUrlHelpersModule
 
   sig { params(args: T.untyped).returns(String) }
   def user_ics_url(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
-  def user_session_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }
   def userland_edit_project_url(*args); end
