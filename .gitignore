@@ -4,4 +4,5 @@
 /.devcontainer
 /.vscode
 /docker-compose.override.yml
+/docs
 /start.sh
