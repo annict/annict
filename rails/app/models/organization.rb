@@ -41,6 +41,14 @@ class Organization < ApplicationRecord
     data.delete_if { |_, v| v.blank? }
   end
 
+  def self.ransackable_attributes(auth_object = nil)
+    %w[name name_en name_kana]
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    []
+  end
+
   private
 
   def touch_children

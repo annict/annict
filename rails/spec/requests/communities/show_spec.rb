@@ -2,10 +2,15 @@
 # frozen_string_literal: true
 
 RSpec.describe "GET /community", type: :request do
+  around do |example|
+    original_value = ENV["ANNICT_COMMUNITY_URL"]
+    example.run
+    ENV["ANNICT_COMMUNITY_URL"] = original_value
+  end
+
   it "環境変数ANNICT_COMMUNITY_URLが設定されているとき、コミュニティURLにリダイレクトされること" do
     community_url = "https://discord.gg/annict"
-    allow(ENV).to receive(:fetch).and_call_original
-    allow(ENV).to receive(:fetch).with("ANNICT_COMMUNITY_URL").and_return(community_url)
+    ENV["ANNICT_COMMUNITY_URL"] = community_url
 
     get "/community"
 
@@ -14,8 +19,7 @@ RSpec.describe "GET /community", type: :request do
   end
 
   it "環境変数ANNICT_COMMUNITY_URLが設定されていないとき、KeyErrorが発生すること" do
-    allow(ENV).to receive(:fetch).and_call_original
-    allow(ENV).to receive(:fetch).with("ANNICT_COMMUNITY_URL").and_raise(KeyError)
+    ENV.delete("ANNICT_COMMUNITY_URL")
 
     expect { get "/community" }.to raise_error(KeyError)
   end

@@ -51,10 +51,10 @@ RSpec.describe "GET /search", type: :request do
   end
 
   it "デフォルトでアニメの検索結果が表示されること" do
-    work = FactoryBot.create(:work, title: "テストアニメ")
-    character = FactoryBot.create(:character, name: "テストキャラ")
+    work = FactoryBot.create(:work, title: "デフォルト検索アニメ")
+    character = FactoryBot.create(:character, name: "デフォルト検索キャラ")
 
-    get "/search", params: {q: "テスト"}
+    get "/search", params: {q: "デフォルト検索"}
 
     expect(response.status).to eq(200)
     expect(response.body).to include(work.title)
@@ -62,16 +62,16 @@ RSpec.describe "GET /search", type: :request do
   end
 
   it "リソースタイプを指定して検索できること" do
-    work = FactoryBot.create(:work, title: "テストアニメ")
-    character = FactoryBot.create(:character, name: "テストキャラ")
+    work = FactoryBot.create(:work, title: "リソース検索アニメ")
+    character = FactoryBot.create(:character, name: "リソース検索キャラ")
 
     # アニメを検索
-    get "/search", params: {q: "テスト", resource: "work"}
+    get "/search", params: {q: "リソース検索", resource: "work"}
     expect(response.status).to eq(200)
     expect(response.body).to include(work.title)
 
     # キャラクターを検索
-    get "/search", params: {q: "テスト", resource: "character"}
+    get "/search", params: {q: "リソース検索", resource: "character"}
     expect(response.status).to eq(200)
     expect(response.body).to include(character.name)
   end
