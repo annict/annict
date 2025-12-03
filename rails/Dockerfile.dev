@@ -1,4 +1,4 @@
-FROM ruby:3.3.5-slim-bookworm
+FROM ruby:3.3.10-slim-bookworm
 
 ARG USER_ID=1000
 ARG GROUP_ID=1000
