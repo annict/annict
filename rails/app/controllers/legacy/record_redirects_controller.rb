@@ -13,7 +13,7 @@ module Legacy
         root_path
       end
 
-      redirect_to url, status: 301
+      redirect_to url, status: 301, allow_other_host: true
     end
   end
 end

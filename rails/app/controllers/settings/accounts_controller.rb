@@ -27,7 +27,7 @@ module Settings
       end
 
       flash[:notice] = t "messages._common.updated"
-      redirect_to "#{url}#{settings_account_path}"
+      redirect_to "#{url}#{settings_account_path}", allow_other_host: true
     end
 
     private

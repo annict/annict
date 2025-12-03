@@ -55,7 +55,7 @@ RSpec.describe "GET /settings/email_notification", type: :request do
     expect(response.status).to eq(200)
     # フォーム要素の存在を確認
     expect(response.body).to include("<form")
-    expect(response.body).to include('action="/settings/email_notification"')
+    expect(response.body).to match(%r{action="/settings/email_notification})
     expect(response.body).to include('method="post"')
     expect(response.body).to include('name="email_notification[event_followed_user]"')
     expect(response.body).to include('name="email_notification[event_liked_episode_record]"')

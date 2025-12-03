@@ -26,6 +26,14 @@ class Character < ApplicationRecord
   validates :description, presence_pair: :description_source
   validates :description_en, presence_pair: :description_source_en
 
+  def self.ransackable_attributes(auth_object = nil)
+    %w[name name_kana name_en]
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    []
+  end
+
   def favorites
     character_favorites
   end

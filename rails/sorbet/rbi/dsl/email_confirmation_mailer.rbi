@@ -14,12 +14,6 @@ class EmailConfirmationMailer
     def local_url(locale: T.unsafe(nil)); end
 
     sig { params(email_confirmation_id: T.untyped, locale: T.untyped).returns(::ActionMailer::MessageDelivery) }
-    def sign_in_confirmation(email_confirmation_id, locale); end
-
-    sig { params(email_confirmation_id: T.untyped, locale: T.untyped).returns(::ActionMailer::MessageDelivery) }
-    def sign_up_confirmation(email_confirmation_id, locale); end
-
-    sig { params(email_confirmation_id: T.untyped, locale: T.untyped).returns(::ActionMailer::MessageDelivery) }
     def update_email_confirmation(email_confirmation_id, locale); end
   end
 end
