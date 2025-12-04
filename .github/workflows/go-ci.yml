@@ -112,48 +112,9 @@ jobs:
           make db-setup-test
 
       - name: Run tests
-        shell: bash
         env:
           CI: true
-        run: |
-          # テスト実行（実データベースを使用）
-          echo "🧪 テストを実行中（CI環境: 短時間テストのみ）..."
-          echo ""
-
-          # エラーでスクリプトを停止しない
-          set +e
-          make test 2>&1 | tee test-output.log
-          test_exit_code=$?
-          set -e
-
-          # テスト結果のサマリーを表示
-          echo ""
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "📊 テスト結果サマリー"
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-
-          if [ $test_exit_code -ne 0 ]; then
-            echo "❌ テストが失敗しました"
-            echo ""
-
-            # 失敗したパッケージを表示
-            echo "📦 失敗したパッケージ:"
-            grep "^FAIL" test-output.log | sed 's/^/  /' || echo "  (失敗したパッケージが見つかりません)"
-
-            echo ""
-            echo "🔍 失敗したテストの詳細:"
-            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-
-            # 失敗したテストの詳細を抽出（--- FAIL: で始まる行とエラーメッセージ）
-            grep -A 2 -- "--- FAIL:" test-output.log | grep -E -- "(--- FAIL:|\.go:[0-9]+:)" || echo "  (失敗したテストの詳細が見つかりません)"
-
-            exit $test_exit_code
-          else
-            echo "✅ すべてのテストが成功しました"
-            # 成功したパッケージ数を表示
-            ok_count=$(grep -c "^ok" test-output.log || echo "0")
-            echo "   合計 ${ok_count} パッケージのテストが成功"
-          fi
+        run: make test
 
   build:
     name: Build

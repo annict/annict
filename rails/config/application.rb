@@ -74,6 +74,14 @@ module Annict
       r301 /.*/, "https://#{ENV.fetch('ANNICT_HOST')}$&", if: proc { |rack_env|
         rack_env["SERVER_NAME"].in?(["www.#{ENV.fetch('ANNICT_HOST')}", "ja.annict.com", "jp.annict.com"])
       }
+      # Redirect: api.annict.com/sign_in -> annict.com/sign_in
+      r301 %r{\A/sign_in(\?.*)?}, "https://#{ENV.fetch('ANNICT_DOMAIN')}/sign_in$1", if: proc { |rack_env|
+        rack_env["SERVER_NAME"] == ENV.fetch("ANNICT_API_DOMAIN", "")
+      }
+      # Redirect: api.annict.com/oauth/authorize -> annict.com/oauth/authorize
+      r301 %r{\A/oauth/authorize(\?.*)?}, "https://#{ENV.fetch('ANNICT_DOMAIN')}/oauth/authorize$1", if: proc { |rack_env|
+        rack_env["SERVER_NAME"] == ENV.fetch("ANNICT_API_DOMAIN", "")
+      }
       r301 %r{\A/about}, "/"
       r301 %r{\A/activities}, "/"
       r301 %r{\A/programs}, "/track"
