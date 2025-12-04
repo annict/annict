@@ -37,9 +37,13 @@ RSpec.describe "GET /db/works/:work_id/casts", type: :request do
 
   it "キャストがソート番号順に表示されること" do
     work = FactoryBot.create(:work)
-    cast1 = FactoryBot.create(:cast, work:, sort_number: 2)
-    cast2 = FactoryBot.create(:cast, work:, sort_number: 1)
-    cast3 = FactoryBot.create(:cast, work:, sort_number: 3)
+    # 一意な名前を使用して部分一致の問題を回避
+    character1 = FactoryBot.create(:character, name: "キャラクター_ソート2番目")
+    character2 = FactoryBot.create(:character, name: "キャラクター_ソート1番目")
+    character3 = FactoryBot.create(:character, name: "キャラクター_ソート3番目")
+    cast1 = FactoryBot.create(:cast, work:, character: character1, sort_number: 2)
+    cast2 = FactoryBot.create(:cast, work:, character: character2, sort_number: 1)
+    cast3 = FactoryBot.create(:cast, work:, character: character3, sort_number: 3)
 
     get "/db/works/#{work.id}/casts"
 
