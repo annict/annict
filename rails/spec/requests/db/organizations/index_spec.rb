@@ -23,8 +23,8 @@ RSpec.describe "GET /db/organizations", type: :request do
   end
 
   it "削除された組織は表示されない" do
-    organization = FactoryBot.create(:organization)
-    deleted_organization = FactoryBot.create(:organization, deleted_at: Time.current)
+    organization = FactoryBot.create(:organization, name: "通常組織_表示テスト")
+    deleted_organization = FactoryBot.create(:organization, name: "削除済組織_非表示テスト", deleted_at: Time.current)
 
     get "/db/organizations"
 
