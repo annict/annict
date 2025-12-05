@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import $ from "jquery";
-import axios from "axios";
 import { Controller } from "@hotwired/stimulus";
 
 import { EventDispatcher } from "../utils/event-dispatcher";
+import fetcher from "../utils/fetcher";
 
 export default class extends Controller {
   static classes = ["loading"];
@@ -48,7 +48,7 @@ export default class extends Controller {
 
     this.startLoading();
 
-    axios
+    fetcher
       .post("/api/internal/multiple_episode_records", {
         episode_ids: targetEpisodeIds,
       })
