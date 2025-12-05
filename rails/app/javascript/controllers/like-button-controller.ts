@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import $ from "jquery";
-import axios from "axios";
 import { Controller } from "@hotwired/stimulus";
+import fetcher from "../utils/fetcher";
 
 export default class extends Controller {
   static targets = ["count"];
@@ -64,7 +64,7 @@ export default class extends Controller {
     this.isLoading = true;
 
     if (this.isLiked) {
-      axios
+      fetcher
         .post("/api/internal/unlikes", {
           recipient_type: this.resourceName,
           recipient_id: this.resourceId,
@@ -76,7 +76,7 @@ export default class extends Controller {
           this.render();
         });
     } else {
-      axios
+      fetcher
         .post("/api/internal/likes", {
           recipient_type: this.resourceName,
           recipient_id: this.resourceId,
