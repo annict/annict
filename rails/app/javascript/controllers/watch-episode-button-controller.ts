@@ -1,5 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
+import Modal from "bootstrap/js/dist/modal";
 import { Controller } from "@hotwired/stimulus";
 
 import { EventDispatcher } from "../utils/event-dispatcher";
@@ -50,7 +51,7 @@ export default class extends Controller {
         this.reloadList();
       })
       .catch(() => {
-        ($(".c-sign-up-modal") as any).modal("show");
+        new Modal(".c-sign-up-modal").show();
       });
   }
 }

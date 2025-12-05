@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-import $ from "jquery";
+import Modal from "bootstrap/js/dist/modal";
 import { Controller } from "@hotwired/stimulus";
 import fetcher from "../utils/fetcher";
 
@@ -87,7 +85,7 @@ export default class extends Controller {
           this.isLiked = true;
         })
         .catch(() => {
-          ($(".c-sign-up-modal") as any).modal("show");
+          new Modal(".c-sign-up-modal").show();
         })
         .then(() => {
           this.isLoading = false;
