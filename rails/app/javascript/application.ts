@@ -8,7 +8,6 @@ import "dayjs/locale/ja";
 
 import { Application } from "@hotwired/stimulus";
 import * as Turbo from "@hotwired/turbo";
-import axios from "axios";
 import ujs from "@rails/ujs";
 import dayjs from "dayjs";
 import Cookies from "js-cookie";
@@ -69,10 +68,6 @@ document.addEventListener("turbo:load", (_event) => {
     domain: `.${annConfig.domain}`,
     secure: annConfig.rails.env === "production",
   });
-
-  axios.defaults.headers.common["X-CSRF-Token"] = document
-    .querySelector('meta[name="csrf-token"]')
-    ?.getAttribute("content");
 
   const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
   const popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
