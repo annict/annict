@@ -204,7 +204,7 @@ GEM
     dotenv-rails (2.8.1)
       dotenv (= 2.8.1)
       railties (>= 3.2)
-    down (5.3.1)
+    down (5.4.2)
       addressable (~> 2.8)
     drb (2.2.3)
     dry-configurable (0.12.1)
@@ -450,7 +450,7 @@ GEM
     psych (5.2.6)
       date
       stringio
-    public_suffix (5.0.0)
+    public_suffix (5.1.1)
     puma (6.5.0)
       nio4r (~> 2.0)
     pundit (2.2.0)
