@@ -25,8 +25,10 @@ RSpec.describe "GET /db/works/:work_id/casts", type: :request do
   end
 
   it "削除済みのキャストは表示されないこと" do
-    cast = FactoryBot.create(:cast)
-    deleted_cast = FactoryBot.create(:cast, work: cast.work, deleted_at: Time.current)
+    character = FactoryBot.create(:character, name: "表示されるキャラクター")
+    deleted_character = FactoryBot.create(:character, name: "削除済みキャラクター_非表示")
+    cast = FactoryBot.create(:cast, character: character, name: "表示されるキャスト名")
+    deleted_cast = FactoryBot.create(:cast, work: cast.work, character: deleted_character, name: "削除済みキャスト名_非表示", deleted_at: Time.current)
 
     get "/db/works/#{cast.work_id}/casts"
 
@@ -37,9 +39,12 @@ RSpec.describe "GET /db/works/:work_id/casts", type: :request do
 
   it "キャストがソート番号順に表示されること" do
     work = FactoryBot.create(:work)
-    cast1 = FactoryBot.create(:cast, work:, sort_number: 2)
-    cast2 = FactoryBot.create(:cast, work:, sort_number: 1)
-    cast3 = FactoryBot.create(:cast, work:, sort_number: 3)
+    character1 = FactoryBot.create(:character, name: "キャラクター_ソート2番目")
+    character2 = FactoryBot.create(:character, name: "キャラクター_ソート1番目")
+    character3 = FactoryBot.create(:character, name: "キャラクター_ソート3番目")
+    cast1 = FactoryBot.create(:cast, work:, character: character1, sort_number: 2)
+    cast2 = FactoryBot.create(:cast, work:, character: character2, sort_number: 1)
+    cast3 = FactoryBot.create(:cast, work:, character: character3, sort_number: 3)
 
     get "/db/works/#{work.id}/casts"
 
@@ -77,11 +82,16 @@ RSpec.describe "GET /db/works/:work_id/casts", type: :request do
 
   it "複数の削除済みキャストと通常のキャストが混在するとき、削除済みキャストは表示されないこと" do
     work = FactoryBot.create(:work)
-    cast1 = FactoryBot.create(:cast, work:, sort_number: 1)
-    deleted_cast1 = FactoryBot.create(:cast, work:, sort_number: 2, deleted_at: Time.current)
-    cast2 = FactoryBot.create(:cast, work:, sort_number: 3)
-    deleted_cast2 = FactoryBot.create(:cast, work:, sort_number: 4, deleted_at: Time.current)
-    cast3 = FactoryBot.create(:cast, work:, sort_number: 5)
+    character1 = FactoryBot.create(:character, name: "通常キャラ壱号")
+    character2 = FactoryBot.create(:character, name: "通常キャラ弐号")
+    character3 = FactoryBot.create(:character, name: "通常キャラ参号")
+    deleted_character1 = FactoryBot.create(:character, name: "削除済キャラ壱号")
+    deleted_character2 = FactoryBot.create(:character, name: "削除済キャラ弐号")
+    cast1 = FactoryBot.create(:cast, work:, character: character1, sort_number: 1)
+    deleted_cast1 = FactoryBot.create(:cast, work:, character: deleted_character1, sort_number: 2, deleted_at: Time.current)
+    cast2 = FactoryBot.create(:cast, work:, character: character2, sort_number: 3)
+    deleted_cast2 = FactoryBot.create(:cast, work:, character: deleted_character2, sort_number: 4, deleted_at: Time.current)
+    cast3 = FactoryBot.create(:cast, work:, character: character3, sort_number: 5)
 
     get "/db/works/#{work.id}/casts"
 

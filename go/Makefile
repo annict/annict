@@ -35,26 +35,29 @@ build: templ-generate ## バイナリをビルド（templ-generateがgoimports�
 
 .PHONY: test
 test: db-setup-test ## テストを実行
+	@which tparse > /dev/null || (echo "Installing tparse from go.mod..." && go install github.com/mfridman/tparse@latest)
 	@if [ "$$CI" = "true" ]; then \
 		echo "CI環境: 短時間テストのみ実行 (-short)"; \
-		go test -v -race -short ./...; \
+		bash -c 'set -o pipefail && go test -json -race -short ./... | tparse -all'; \
 	else \
 		echo "ローカル環境: 全テストを実行"; \
-		APP_ENV=test op run --env-file=".env" -- go test -v -race ./...; \
+		bash -c 'set -o pipefail && APP_ENV=test op run --env-file=".env" -- go test -json -race ./... | tparse -all'; \
 	fi
 
 .PHONY: test-pkg
 test-pkg: db-setup-test ## 特定のパッケージのテストを実行（使用例: make test-pkg PKG=internal/handler/password_reset）
+	@which tparse > /dev/null || (echo "Installing tparse from go.mod..." && go install github.com/mfridman/tparse@latest)
 	@if [ -z "$(PKG)" ]; then \
 		echo "エラー: PKG変数を指定してください"; \
 		echo "使用例: make test-pkg PKG=internal/handler/password_reset"; \
 		exit 1; \
 	fi
 	@echo "パッケージ $(PKG) のテストを実行"
-	@APP_ENV=test op run --env-file=".env" -- go test -v -race ./$(PKG)
+	@bash -c 'set -o pipefail && APP_ENV=test op run --env-file=".env" -- go test -json -race ./$(PKG) | tparse -all'
 
 .PHONY: test-run
 test-run: db-setup-test ## 特定のテストを実行（使用例: make test-run PKG=internal/handler/password_reset RUN=TestCreate_TurnstileVerification）
+	@which tparse > /dev/null || (echo "Installing tparse from go.mod..." && go install github.com/mfridman/tparse@latest)
 	@if [ -z "$(PKG)" ]; then \
 		echo "エラー: PKG変数を指定してください"; \
 		echo "使用例: make test-run PKG=internal/handler/password_reset RUN=TestCreate_TurnstileVerification"; \
@@ -66,7 +69,7 @@ test-run: db-setup-test ## 特定のテストを実行（使用例: make test-ru
 		exit 1; \
 	fi
 	@echo "パッケージ $(PKG) のテスト $(RUN) を実行"
-	@APP_ENV=test op run --env-file=".env" -- go test -v -race ./$(PKG) -run $(RUN)
+	@bash -c 'set -o pipefail && APP_ENV=test op run --env-file=".env" -- go test -json -race ./$(PKG) -run $(RUN) | tparse -all'
 
 .PHONY: test-verbose
 test-verbose: db-setup-test ## 詳細ログ付きで全テストを実行（デバッグ用）

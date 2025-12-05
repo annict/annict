@@ -355,4 +355,12 @@ class Work < ApplicationRecord
     decrement!(:watchers_count) if is_prev_positive
     increment!(:watchers_count) if is_next_positive
   end
+
+  def self.ransackable_attributes(auth_object = nil)
+    %w[title title_en title_kana title_alter title_alter_en]
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    []
+  end
 end

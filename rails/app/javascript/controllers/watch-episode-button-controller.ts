@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
-
-import axios from "axios";
+import Modal from "bootstrap/js/dist/modal";
 import { Controller } from "@hotwired/stimulus";
 
 import { EventDispatcher } from "../utils/event-dispatcher";
+import fetcher from "../utils/fetcher";
 
 export default class extends Controller {
   static classes = ["loading"];
@@ -40,17 +39,17 @@ export default class extends Controller {
 
     this.startLoading();
 
-    axios
+    fetcher
       .post("/api/internal/episode_records", {
         episode_id: this.episodeIdValue,
         page_category: this.pageCategoryValue,
       })
-      .then((res: any) => {
+      .then(() => {
         this.endLoading();
         this.reloadList();
       })
       .catch(() => {
-        ($(".c-sign-up-modal") as any).modal("show");
+        new Modal(".c-sign-up-modal").show();
       });
   }
 }

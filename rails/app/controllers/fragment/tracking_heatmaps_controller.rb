@@ -11,10 +11,10 @@ module Fragment
         .after(date_from)
         .group_by_day(:watched_at, time_zone: time_zone)
         .count
-        .map { |date, count| [date.to_s(:ymd), count] }
+        .map { |date, count| [date.to_fs(:ymd), count] }
         .to_h
       @tracking_data = (date_from..(Date.today)).each_with_object({}) do |date, hash|
-        formatted_date = date.to_s(:ymd)
+        formatted_date = date.to_fs(:ymd)
         count = count_data[formatted_date]
         hash[formatted_date] = {
           count: count,

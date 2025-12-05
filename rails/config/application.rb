@@ -4,12 +4,18 @@
 require_relative "boot"
 
 require "rails"
+# Pick the frameworks you want:
 require "active_model/railtie"
 require "active_job/railtie"
 require "active_record/railtie"
+# require "active_storage/engine"
 require "action_controller/railtie"
 require "action_mailer/railtie"
+# require "action_mailbox/engine"
+# require "action_text/engine"
 require "action_view/railtie"
+# require "action_cable/engine"
+# require "rails/test_unit/railtie"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -18,7 +24,12 @@ Bundler.require(*Rails.groups)
 module Annict
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 6.1
+    config.load_defaults 7.1
+
+    # Please, add to the `ignore` list any other `lib` subdirectories that do
+    # not contain `.rb` files, or that should not be reloaded or eager loaded.
+    # Common ones are `templates`, `generators`, or `middleware`, for example.
+    config.autoload_lib(ignore: %w[assets tasks])
 
     # Configuration for the application, engines, and railties goes here.
     #
@@ -63,6 +74,14 @@ module Annict
       r301 /.*/, "https://#{ENV.fetch('ANNICT_HOST')}$&", if: proc { |rack_env|
         rack_env["SERVER_NAME"].in?(["www.#{ENV.fetch('ANNICT_HOST')}", "ja.annict.com", "jp.annict.com"])
       }
+      # Redirect: api.annict.com/sign_in -> annict.com/sign_in
+      r301 %r{\A/sign_in(\?.*)?}, "https://#{ENV.fetch('ANNICT_DOMAIN')}/sign_in$1", if: proc { |rack_env|
+        rack_env["SERVER_NAME"] == ENV.fetch("ANNICT_API_DOMAIN", "")
+      }
+      # Redirect: api.annict.com/oauth/authorize -> annict.com/oauth/authorize
+      r301 %r{\A/oauth/authorize(\?.*)?}, "https://#{ENV.fetch('ANNICT_DOMAIN')}/oauth/authorize$1", if: proc { |rack_env|
+        rack_env["SERVER_NAME"] == ENV.fetch("ANNICT_API_DOMAIN", "")
+      }
       r301 %r{\A/about}, "/"
       r301 %r{\A/activities}, "/"
       r301 %r{\A/programs}, "/track"
@@ -97,22 +116,6 @@ module Annict
     # Gzip all the things
     # https://schneems.com/2017/11/08/80-smaller-rails-footprint-with-rack-deflate/
     config.middleware.insert_after ActionDispatch::Static, Rack::Deflater
-
-    Sentry.init do |config|
-      config.dsn = ENV.fetch("SENTRY_DSN")
-      config.breadcrumbs_logger = %i[active_support_logger http_logger]
-
-      # Set tracesSampleRate to 1.0 to capture 100%
-      # of transactions for performance monitoring.
-      # We recommend adjusting this value in production
-      config.traces_sample_rate = 0.5
-
-      filter = ActiveSupport::ParameterFilter.new(Rails.application.config.filter_parameters)
-      config.before_send = lambda do |event, hint|
-        # Use Rails' parameter filter to sanitize the event
-        filter.filter(event.to_hash)
-      end
-    end
 
     ActiveRecord::SessionStore::Session.serializer = :null
   end

@@ -2,6 +2,24 @@
 # frozen_string_literal: true
 
 module ApplicationHelper
+  def sign_in_path(params = {})
+    query = params.to_query
+    query.empty? ? "/sign_in" : "/sign_in?#{query}"
+  end
+
+  def sign_in_url(params = {})
+    "#{request.base_url}#{sign_in_path(params)}"
+  end
+
+  def sign_up_path(params = {})
+    query = params.to_query
+    query.empty? ? "/sign_up" : "/sign_up?#{query}"
+  end
+
+  def sign_up_url(params = {})
+    "#{request.base_url}#{sign_up_path(params)}"
+  end
+
   def body_classes
     controller_name = controller.controller_path.tr("/", "-")
     basic_body_classes = [
