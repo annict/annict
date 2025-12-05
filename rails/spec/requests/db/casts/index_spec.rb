@@ -25,8 +25,10 @@ RSpec.describe "GET /db/works/:work_id/casts", type: :request do
   end
 
   it "削除済みのキャストは表示されないこと" do
-    cast = FactoryBot.create(:cast)
-    deleted_cast = FactoryBot.create(:cast, work: cast.work, deleted_at: Time.current)
+    character = FactoryBot.create(:character, name: "表示されるキャラクター")
+    deleted_character = FactoryBot.create(:character, name: "削除済みキャラクター_非表示")
+    cast = FactoryBot.create(:cast, character: character, name: "表示されるキャスト名")
+    deleted_cast = FactoryBot.create(:cast, work: cast.work, character: deleted_character, name: "削除済みキャスト名_非表示", deleted_at: Time.current)
 
     get "/db/works/#{cast.work_id}/casts"
 
