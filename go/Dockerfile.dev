@@ -4,33 +4,31 @@ ARG USER_ID=1000
 ARG GROUP_ID=1000
 ARG USERNAME=developer
 
-RUN \
-    apt update && \
-    apt dist-upgrade -yq && \
-    apt install -y --no-install-recommends \
-    build-essential \
-    curl \
-    # Claude Codeで使用
-    fzf \
-    git \
-    # Claude Codeで使用
-    jq \
-    # Claude Codeで使用
-    nano \
-    # Redis の GPG キーと apt リポジトリに必要
-    gnupg \
-    # Redis の GPG キーと apt リポジトリに必要
-    lsb-release \
-    postgresql-client-17 \
-    # Claude Codeで使用
-    ripgrep \
-    sudo \
-    # Claude Codeで使用
-    tree \
-    # Claude Codeで使用
-    vim \
-    zsh \
-    && rm -rf /var/lib/apt/lists/*
+RUN <<EOF
+apt update
+apt dist-upgrade -yq
+
+PACKAGES=$(cat <<'PKGLIST' | sed 's/#.*//'
+  build-essential
+  curl
+  fzf                     # Claude Codeで使用
+  git
+  jq                      # Claude Codeで使用
+  nano                    # Claude Codeで使用
+  gnupg                   # Redis の GPG キーと apt リポジトリに必要
+  lsb-release             # Redis の GPG キーと apt リポジトリに必要
+  postgresql-client-17
+  ripgrep                 # Claude Codeで使用
+  sudo
+  tree                    # Claude Codeで使用
+  vim                     # Claude Codeで使用
+  zsh
+PKGLIST
+)
+
+apt install -y --no-install-recommends $PACKAGES
+rm -rf /var/lib/apt/lists/*
+EOF
 
 # Redis 7.4系のクライアントをインストール（Rails側と同じバージョン）
 RUN curl -fsSL https://packages.redis.io/gpg | gpg --dearmor -o /usr/share/keyrings/redis-archive-keyring.gpg \
