@@ -33,7 +33,7 @@ RSpec.configure do |config|
   config.include ActiveSupport::Testing::TimeHelpers
   config.include ActiveJob::TestHelper
 
-  config.before(:each) do
+  config.before do
     ActiveJob::Base.queue_adapter = :test
   end
 
