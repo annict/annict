@@ -4,11 +4,11 @@ import (
 	"database/sql"
 	"testing"
 
-	"github.com/annict/annict/internal/config"
-	"github.com/annict/annict/internal/image"
-	"github.com/annict/annict/internal/query"
-	"github.com/annict/annict/internal/repository"
-	"github.com/annict/annict/internal/session"
+	"github.com/annict/annict/go/internal/config"
+	"github.com/annict/annict/go/internal/image"
+	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/repository"
+	"github.com/annict/annict/go/internal/session"
 )
 
 // NewTestSessionManager はテスト用のセッションマネージャーを作成します

@@ -5,8 +5,9 @@ import (
 	"context"
 	"errors"
 
-	"github.com/annict/annict/internal/i18n"
 	"golang.org/x/crypto/bcrypt"
+
+	"github.com/annict/annict/go/internal/i18n"
 )
 
 // CheckPassword bcryptでハッシュ化されたパスワードと平文パスワードを比較する

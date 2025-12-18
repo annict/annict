@@ -8,9 +8,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/annict/annict/internal/query"
-	"github.com/annict/annict/internal/repository"
-	"github.com/annict/annict/internal/testutil"
+	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/repository"
+	"github.com/annict/annict/go/internal/testutil"
 )
 
 // TestTouchSession_Success はセッションのupdated_atが更新されることをテスト

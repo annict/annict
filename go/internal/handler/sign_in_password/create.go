@@ -5,11 +5,11 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/annict/annict/internal/auth"
-	"github.com/annict/annict/internal/i18n"
-	"github.com/annict/annict/internal/redirect"
-	"github.com/annict/annict/internal/session"
-	"github.com/annict/annict/internal/validator"
+	"github.com/annict/annict/go/internal/auth"
+	"github.com/annict/annict/go/internal/i18n"
+	"github.com/annict/annict/go/internal/redirect"
+	"github.com/annict/annict/go/internal/session"
+	"github.com/annict/annict/go/internal/validator"
 )
 
 // Create POST /sign_in/password - パスワードログイン処理

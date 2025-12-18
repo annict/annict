@@ -8,7 +8,8 @@ package components
 import (
 	"github.com/a-h/templ"
 	templruntime "github.com/a-h/templ/runtime"
-	"github.com/annict/annict/internal/session"
+
+	"github.com/annict/annict/go/internal/session"
 )
 
 // FormErrors はフォームのグローバルエラーを表示します

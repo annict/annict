@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/annict/annict/internal/clientip"
-	"github.com/annict/annict/internal/i18n"
-	"github.com/annict/annict/internal/session"
+	"github.com/annict/annict/go/internal/clientip"
+	"github.com/annict/annict/go/internal/i18n"
+	"github.com/annict/annict/go/internal/session"
 )
 
 // Update PATCH /sign_up/code - 新規登録確認コード再送信処理

@@ -31,8 +31,8 @@ package handler
 
 import (
     "context"
-    "github.com/annict/annict/internal/i18n"
-    "github.com/annict/annict/internal/session"
+    "github.com/annict/annict/go/internal/i18n"
+    "github.com/annict/annict/go/internal/session"
 )
 
 type SignInRequest struct {
@@ -67,8 +67,8 @@ package handler
 
 import (
     "context"
-    "github.com/annict/annict/internal/i18n"
-    "github.com/annict/annict/internal/session"
+    "github.com/annict/annict/go/internal/i18n"
+    "github.com/annict/annict/go/internal/session"
     "regexp"
 )
 
@@ -112,8 +112,8 @@ package handler
 
 import (
     "context"
-    "github.com/annict/annict/internal/i18n"
-    "github.com/annict/annict/internal/session"
+    "github.com/annict/annict/go/internal/i18n"
+    "github.com/annict/annict/go/internal/session"
 )
 
 type UpdatePasswordRequest struct {

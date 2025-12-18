@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/annict/annict/internal/query"
-	"github.com/annict/annict/internal/testutil"
+	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/testutil"
 )
 
 // TestCreatePasswordResetTokenUsecase_Execute はトークン生成が正常に動作することをテストします

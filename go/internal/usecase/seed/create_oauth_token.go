@@ -8,8 +8,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/annict/annict/internal/query"
 	"github.com/schollz/progressbar/v3"
+
+	"github.com/annict/annict/go/internal/query"
 )
 
 // CreateOAuthTokenParams OAuth トークン生成のパラメータ

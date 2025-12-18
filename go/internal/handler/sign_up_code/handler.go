@@ -4,11 +4,12 @@ package sign_up_code
 import (
 	"database/sql"
 
-	"github.com/annict/annict/internal/config"
-	"github.com/annict/annict/internal/ratelimit"
-	"github.com/annict/annict/internal/session"
-	"github.com/annict/annict/internal/usecase"
 	"github.com/redis/go-redis/v9"
+
+	"github.com/annict/annict/go/internal/config"
+	"github.com/annict/annict/go/internal/ratelimit"
+	"github.com/annict/annict/go/internal/session"
+	"github.com/annict/annict/go/internal/usecase"
 )
 
 // Handler 新規登録確認コード関連のHTTPハンドラーです

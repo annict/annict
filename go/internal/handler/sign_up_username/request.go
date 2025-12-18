@@ -4,8 +4,8 @@ import (
 	"context"
 	"regexp"
 
-	"github.com/annict/annict/internal/i18n"
-	"github.com/annict/annict/internal/session"
+	"github.com/annict/annict/go/internal/i18n"
+	"github.com/annict/annict/go/internal/session"
 )
 
 // usernameRegex ユーザー名の形式（1～20文字の半角英数字とアンダースコア）

@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/annict/annict/internal/session"
+	"github.com/annict/annict/go/internal/session"
 )
 
 func TestFormErrors(t *testing.T) {

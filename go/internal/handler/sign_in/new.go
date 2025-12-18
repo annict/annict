@@ -4,11 +4,11 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/annict/annict/internal/i18n"
-	"github.com/annict/annict/internal/middleware"
-	"github.com/annict/annict/internal/templates/layouts"
-	"github.com/annict/annict/internal/templates/pages/sign_in"
-	"github.com/annict/annict/internal/viewmodel"
+	"github.com/annict/annict/go/internal/i18n"
+	"github.com/annict/annict/go/internal/middleware"
+	"github.com/annict/annict/go/internal/templates/layouts"
+	"github.com/annict/annict/go/internal/templates/pages/sign_in"
+	"github.com/annict/annict/go/internal/viewmodel"
 )
 
 // New はメールアドレス入力フォームを表示します (GET /sign_in)

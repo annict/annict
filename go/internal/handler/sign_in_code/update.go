@@ -8,10 +8,10 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/annict/annict/internal/clientip"
-	"github.com/annict/annict/internal/i18n"
-	"github.com/annict/annict/internal/redirect"
-	"github.com/annict/annict/internal/session"
+	"github.com/annict/annict/go/internal/clientip"
+	"github.com/annict/annict/go/internal/i18n"
+	"github.com/annict/annict/go/internal/redirect"
+	"github.com/annict/annict/go/internal/session"
 )
 
 // Update PATCH /sign_in/code - 6桁コード再送信処理

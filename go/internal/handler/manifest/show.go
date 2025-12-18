@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/annict/annict/internal/i18n"
+	"github.com/annict/annict/go/internal/i18n"
 )
 
 // Show はWeb App Manifestを返します (GET /manifest.json)

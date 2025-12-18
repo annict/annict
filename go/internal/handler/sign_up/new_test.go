@@ -5,13 +5,13 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/annict/annict/internal/config"
-	"github.com/annict/annict/internal/handler/sign_up"
-	"github.com/annict/annict/internal/repository"
-	"github.com/annict/annict/internal/session"
-	"github.com/annict/annict/internal/testutil"
-	"github.com/annict/annict/internal/turnstile"
-	"github.com/annict/annict/internal/usecase"
+	"github.com/annict/annict/go/internal/config"
+	"github.com/annict/annict/go/internal/handler/sign_up"
+	"github.com/annict/annict/go/internal/repository"
+	"github.com/annict/annict/go/internal/session"
+	"github.com/annict/annict/go/internal/testutil"
+	"github.com/annict/annict/go/internal/turnstile"
+	"github.com/annict/annict/go/internal/usecase"
 )
 
 // TestNew は新規登録フォーム表示のテスト

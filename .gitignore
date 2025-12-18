@@ -3,6 +3,6 @@
 /.claude
 /.devcontainer
 /.vscode
+/compose-up.sh
 /docker-compose.override.yml
 /docs
-/start.sh

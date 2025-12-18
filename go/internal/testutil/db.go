@@ -8,8 +8,9 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/annict/annict/internal/query"
 	_ "github.com/lib/pq"
+
+	"github.com/annict/annict/go/internal/query"
 )
 
 var (

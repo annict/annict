@@ -11,8 +11,9 @@ import (
 
 	"github.com/a-h/templ"
 	templruntime "github.com/a-h/templ/runtime"
-	"github.com/annict/annict/internal/templates"
-	"github.com/annict/annict/internal/viewmodel"
+
+	"github.com/annict/annict/go/internal/templates"
+	"github.com/annict/annict/go/internal/viewmodel"
 )
 
 // Popular は人気作品ページのコンテンツを表示します

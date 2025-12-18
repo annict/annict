@@ -3,8 +3,8 @@ package repository
 import (
 	"context"
 
-	"github.com/annict/annict/internal/model"
-	"github.com/annict/annict/internal/query"
+	"github.com/annict/annict/go/internal/model"
+	"github.com/annict/annict/go/internal/query"
 )
 
 // WorkRepository はWork関連のデータアクセスを担当します

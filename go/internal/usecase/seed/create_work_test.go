@@ -7,8 +7,8 @@ import (
 	"math/rand"
 	"testing"
 
-	"github.com/annict/annict/internal/seed"
-	"github.com/annict/annict/internal/testutil"
+	"github.com/annict/annict/go/internal/seed"
+	"github.com/annict/annict/go/internal/testutil"
 )
 
 // TestCreateWorkUsecase_ExecuteBatch はExecuteBatchメソッドのテスト

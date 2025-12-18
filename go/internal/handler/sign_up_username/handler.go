@@ -2,10 +2,11 @@
 package sign_up_username
 
 import (
-	"github.com/annict/annict/internal/config"
-	"github.com/annict/annict/internal/session"
-	"github.com/annict/annict/internal/usecase"
 	"github.com/redis/go-redis/v9"
+
+	"github.com/annict/annict/go/internal/config"
+	"github.com/annict/annict/go/internal/session"
+	"github.com/annict/annict/go/internal/usecase"
 )
 
 // Handler ユーザー名設定とユーザー登録のHTTPハンドラーです

@@ -1,8 +1,8 @@
 package viewmodel
 
 import (
-	"github.com/annict/annict/internal/image"
-	"github.com/annict/annict/internal/model"
+	"github.com/annict/annict/go/internal/image"
+	"github.com/annict/annict/go/internal/model"
 )
 
 // Work はテンプレート表示用の作品データです

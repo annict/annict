@@ -5,10 +5,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/annict/annict/internal/query"
-	"github.com/annict/annict/internal/testutil"
 	"github.com/riverqueue/river"
 	"golang.org/x/crypto/bcrypt"
+
+	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/testutil"
 )
 
 func TestCleanupExpiredSignInCodesWorker(t *testing.T) {

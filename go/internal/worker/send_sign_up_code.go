@@ -6,11 +6,12 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/annict/annict/internal/config"
-	"github.com/annict/annict/internal/i18n"
-	"github.com/annict/annict/internal/mail"
-	sign_up "github.com/annict/annict/internal/templates/emails/sign_up"
 	"github.com/riverqueue/river"
+
+	"github.com/annict/annict/go/internal/config"
+	"github.com/annict/annict/go/internal/i18n"
+	"github.com/annict/annict/go/internal/mail"
+	sign_up "github.com/annict/annict/go/internal/templates/emails/sign_up"
 )
 
 // SendSignUpCodeArgs は新規登録確認コード送信ジョブの引数です

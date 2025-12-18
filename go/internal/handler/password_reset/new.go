@@ -4,10 +4,10 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/annict/annict/internal/middleware"
-	"github.com/annict/annict/internal/templates/layouts"
-	passwordpages "github.com/annict/annict/internal/templates/pages/password"
-	"github.com/annict/annict/internal/viewmodel"
+	"github.com/annict/annict/go/internal/middleware"
+	"github.com/annict/annict/go/internal/templates/layouts"
+	passwordpages "github.com/annict/annict/go/internal/templates/pages/password"
+	"github.com/annict/annict/go/internal/viewmodel"
 )
 
 // New はパスワードリセット申請フォームを表示します (GET /password/reset)

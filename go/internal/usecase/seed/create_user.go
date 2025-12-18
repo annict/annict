@@ -8,11 +8,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/annict/annict/internal/auth"
-	"github.com/annict/annict/internal/query"
 	"github.com/google/uuid"
 	"github.com/lib/pq"
 	"github.com/schollz/progressbar/v3"
+
+	"github.com/annict/annict/go/internal/auth"
+	"github.com/annict/annict/go/internal/query"
 )
 
 // CreateUserParams ユーザー作成のパラメータ

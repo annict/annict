@@ -4,10 +4,10 @@ import (
 	"log/slog"
 	"net/http"
 
-	authMiddleware "github.com/annict/annict/internal/middleware"
-	"github.com/annict/annict/internal/templates/layouts"
-	"github.com/annict/annict/internal/templates/pages/works"
-	"github.com/annict/annict/internal/viewmodel"
+	authMiddleware "github.com/annict/annict/go/internal/middleware"
+	"github.com/annict/annict/go/internal/templates/layouts"
+	"github.com/annict/annict/go/internal/templates/pages/works"
+	"github.com/annict/annict/go/internal/viewmodel"
 )
 
 // Index GET /works/popular - 人気作品一覧を表示

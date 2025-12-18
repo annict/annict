@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/annict/annict/internal/i18n"
+	"github.com/annict/annict/go/internal/i18n"
 )
 
 // ApplyI18nMiddleware はテスト用にI18nミドルウェアを適用するヘルパー関数

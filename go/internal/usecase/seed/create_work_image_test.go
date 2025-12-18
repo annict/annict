@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/annict/annict/internal/query"
-	"github.com/annict/annict/internal/seed"
-	"github.com/annict/annict/internal/testutil"
+	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/seed"
+	"github.com/annict/annict/go/internal/testutil"
 )
 
 // TestCreateWorkImageUsecase_ExecuteBatchWithTx はExecuteBatchWithTxメソッドのテスト（トランザクションあり、シーケンシャル処理）

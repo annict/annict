@@ -6,13 +6,14 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/annict/annict/internal/config"
-	"github.com/annict/annict/internal/mail"
-	"github.com/annict/annict/internal/query"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/riverqueue/river"
 	"github.com/riverqueue/river/riverdriver/riverpgxv5"
+
+	"github.com/annict/annict/go/internal/config"
+	"github.com/annict/annict/go/internal/mail"
+	"github.com/annict/annict/go/internal/query"
 )
 
 // Client は River クライアントのラッパー

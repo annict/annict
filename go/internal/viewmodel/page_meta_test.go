@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/annict/annict/internal/config"
-	"github.com/annict/annict/internal/i18n"
+	"github.com/annict/annict/go/internal/config"
+	"github.com/annict/annict/go/internal/i18n"
 )
 
 // TestDefaultPageMeta はDefaultPageMeta関数のテスト

@@ -245,7 +245,7 @@ Model (独立、他に依存しない)
 package viewmodel
 
 import (
-    "github.com/annict/annict/internal/repository"
+    "github.com/annict/annict/go/internal/repository"
 )
 
 // Work はテンプレートで表示する作品データ
@@ -296,9 +296,9 @@ func generateImageURL(cfg *config.Config, imageData *string) string {
 package handler
 
 import (
-    "github.com/annict/annict/internal/templates/layouts"
-    "github.com/annict/annict/internal/templates/pages/works"
-    "github.com/annict/annict/internal/viewmodel"
+    "github.com/annict/annict/go/internal/templates/layouts"
+    "github.com/annict/annict/go/internal/templates/pages/works"
+    "github.com/annict/annict/go/internal/viewmodel"
 )
 
 func (h *Handler) PopularWorks(w http.ResponseWriter, r *http.Request) {
@@ -406,7 +406,7 @@ package usecase
 
 import (
     "context"
-    "github.com/annict/annict/internal/repository"
+    "github.com/annict/annict/go/internal/repository"
 )
 
 type CreateSessionUsecase struct {
@@ -453,7 +453,7 @@ import (
     "database/sql"
     "fmt"
     "time"
-    "github.com/annict/annict/internal/repository"
+    "github.com/annict/annict/go/internal/repository"
 )
 
 type CreatePasswordResetTokenUsecase struct {
@@ -524,7 +524,7 @@ func (uc *CreatePasswordResetTokenUsecase) Execute(ctx context.Context, userID i
 package handler
 
 import (
-    "github.com/annict/annict/internal/usecase"
+    "github.com/annict/annict/go/internal/usecase"
 )
 
 func (h *Handler) ProcessPasswordReset(w http.ResponseWriter, r *http.Request) {
