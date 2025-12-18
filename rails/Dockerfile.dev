@@ -75,4 +75,7 @@ ENV SHELL=/bin/zsh
 
 RUN touch /home/${USERNAME}/.zshrc
 
+RUN git config --global user.email "me@shimba.co" && \
+    git config --global user.name "Koji Shimba"
+
 CMD ["/bin/zsh"]
