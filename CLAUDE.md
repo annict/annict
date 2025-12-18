@@ -176,12 +176,12 @@ docker compose up -d
 **良い例**:
 
 ```
-Rails 7.1から7.2へアップデート
+パスワードリセット機能を実装
 
-- Gemfileを更新してRails 7.2.0を使用
-- Dockerfile.devにlibyaml-devを追加（psych gemに必要）
-- 各環境設定ファイルをRails 7.2のデフォルトに更新
-- new_framework_defaults_7_2.rbを追加して段階的移行を実現
+- internal/handler/password_reset/にハンドラーを追加
+- internal/usecase/reset_password.goにビジネスロジックを実装
+- Resend APIを使用したメール送信機能を追加
+- Cloudflare TurnstileによるBot対策を実装
 ```
 
 ```
@@ -193,7 +193,7 @@ Rails 7.1から7.2へアップデート
 
 **悪い例**:
 
-- ❌ `Update Rails` （英語、内容が不明確）
+- ❌ `Update handler` （英語、内容が不明確）
 - ❌ `fix` （何を修正したか不明）
 - ❌ `WIP` （作業中のコミットは避ける）
 
