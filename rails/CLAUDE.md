@@ -467,34 +467,6 @@ make db-migrate
 make graphql-dump
 ```
 
-## Railsアップグレードガイド
-
-Railsのメジャー/マイナーバージョンをアップグレードする際は、以下の手順に従ってください。
-
-### アップグレード手順
-
-1. **Gemfileの更新**: `rails`のバージョンを更新し、`bundle update rails`を実行
-2. **framework defaultsの生成**: `bin/rails app:update`を実行し、新しい`config/initializers/new_framework_defaults_X_X.rb`を生成
-3. **依存gemの更新**: 互換性のないgemを更新（下記の「よくある問題と解決方法」を参照）
-4. **Zeitwerkチェック**: `make zeitwerk`でオートロードのエラーがないか確認
-5. **Sorbetの更新**: `make sorbet-update`でRBIファイルを再生成
-6. **テスト実行**: `make test`で全テストが通ることを確認
-
-### よくある問題と解決方法
-
-#### Rails 7.1 → 7.2
-
-| 問題 | 原因 | 解決方法 |
-|------|------|----------|
-| `undefined method 'preview_path='` | `rspec-rails`が古い | `bundle update rspec-rails`で8.0以上にアップグレード |
-
-**背景**: Rails 7.2で`config.action_mailer.preview_path`が削除され、`config.action_mailer.preview_paths`（複数形）に変更されました。`rspec-rails 6.x`は古い`preview_path=`メソッドを使用しているため、Zeitwerkチェックやアプリケーション起動時にエラーが発生します。
-
-### 参考リンク
-
-- [Ruby on Rails Upgrading Guide](https://guides.rubyonrails.org/upgrading_ruby_on_rails.html)
-- [Rails 7.2 Release Notes](https://guides.rubyonrails.org/7_2_release_notes.html)
-
 ## 関連ドキュメント
 
 - **プロジェクト全体のガイド**: [/CLAUDE.md](../CLAUDE.md) - モノレポ構造、共通インフラ、RailsからGoへの移行について
