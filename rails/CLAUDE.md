@@ -218,6 +218,14 @@ make test
 make sorbet-update && make zeitwerk && make sorbet && make fmt && yarn eslint "**/*.js" && make test
 ```
 
+### 修正後のコミット
+
+**重要**: バグ修正や機能実装を行った場合は、必ずコミットまで完了させてください。
+
+- 修正が完了したら、上記の「コミット前に実行するコマンド」を実行してCIが通ることを確認
+- 確認後、変更内容をコミット
+- コミットメッセージは[コミットメッセージのガイドライン](../CLAUDE.md#コミットメッセージのガイドライン)に従って日本語で記述
+
 ## Pull Requestのガイドライン
 
 Pull Requestのガイドラインは [/CLAUDE.md](../CLAUDE.md#pull-requestのガイドライン) を参照してください。
