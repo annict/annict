@@ -4,35 +4,33 @@ ARG USER_ID=1000
 ARG GROUP_ID=1000
 ARG USERNAME=developer
 
-RUN \
-  apt update && \
-  apt dist-upgrade -yq && \
-  apt install -y --no-install-recommends \
-  build-essential \
-  curl \
-  # Claude Codeで使用
-  fzf \
-  # Shrineによる画像アップロードに必要
-  file \
-  git \
-  # Claude Codeで使用
-  jq \
-  # Claude Codeで使用
-  nano \
-  # PostgreSQLやNode.jsのインストールに必要
-  gnupg \
-  # Shrineによる画像アップロードに必要
-  imagemagick \
-  # Claude Codeで使用
-  ripgrep \
-  lsb-release \
-  sudo \
-  # Claude Codeで使用
-  tree \
-  # Claude Codeで使用
-  vim \
-  zsh && \
-  rm -rf /var/lib/apt/lists/*
+RUN <<EOF
+apt update
+apt dist-upgrade -yq
+
+PACKAGES=$(cat <<'PKGLIST' | sed 's/#.*//'
+  build-essential
+  curl
+  file           # Shrineによる画像アップロードに必要
+  fzf            # Claude Codeで使用
+  git
+  gnupg          # PostgreSQLやNode.jsのインストールに必要
+  imagemagick    # Shrineによる画像アップロードに必要
+  jq             # Claude Codeで使用
+  libyaml-dev    # psych gemのインストールに必要
+  lsb-release
+  nano           # Claude Codeで使用
+  ripgrep        # Claude Codeで使用
+  sudo
+  tree           # Claude Codeで使用
+  vim            # Claude Codeで使用
+  zsh
+PKGLIST
+)
+
+apt install -y --no-install-recommends $PACKAGES
+rm -rf /var/lib/apt/lists/*
+EOF
 
 # PostgreSQLのセットアップ
 RUN \
