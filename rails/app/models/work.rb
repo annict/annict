@@ -72,7 +72,7 @@ class Work < ApplicationRecord
 
     season_pairs = season_slugs.map { |slug|
       season = Season.find_by_slug(slug)
-      [season.year, season.name]
+      [season.year, season.name_value]
     }
     season_year, season_name = season_pairs.shift
 

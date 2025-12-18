@@ -31,6 +31,11 @@ end
 RSpec.configure do |config|
   config.include SignInPathHelper
   config.include ActiveSupport::Testing::TimeHelpers
+  config.include ActiveJob::TestHelper
+
+  config.before(:each) do
+    ActiveJob::Base.queue_adapter = :test
+  end
 
   config.expect_with :rspec do |c|
     c.syntax = :expect
