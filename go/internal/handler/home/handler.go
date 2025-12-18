@@ -2,7 +2,7 @@
 package home
 
 import (
-	"github.com/annict/annict/internal/config"
+	"github.com/annict/annict/go/internal/config"
 )
 
 // Handler はホームページ関連のHTTPハンドラーです

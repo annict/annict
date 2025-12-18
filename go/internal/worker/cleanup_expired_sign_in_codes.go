@@ -5,8 +5,9 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/annict/annict/internal/query"
 	"github.com/riverqueue/river"
+
+	"github.com/annict/annict/go/internal/query"
 )
 
 // CleanupExpiredSignInCodesArgs は期限切れログインコードのクリーンアップジョブの引数です

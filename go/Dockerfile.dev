@@ -8,15 +8,27 @@ RUN \
     apt update && \
     apt dist-upgrade -yq && \
     apt install -y --no-install-recommends \
-    git \
-    curl \
     build-essential \
+    curl \
+    # Claude Codeで使用
+    fzf \
+    git \
+    # Claude Codeで使用
+    jq \
+    # Claude Codeで使用
+    nano \
     # Redis の GPG キーと apt リポジトリに必要
     gnupg \
     # Redis の GPG キーと apt リポジトリに必要
     lsb-release \
     postgresql-client-17 \
+    # Claude Codeで使用
+    ripgrep \
     sudo \
+    # Claude Codeで使用
+    tree \
+    # Claude Codeで使用
+    vim \
     zsh \
     && rm -rf /var/lib/apt/lists/*
 
@@ -58,6 +70,8 @@ ENV PATH=$NPM_CONFIG_PREFIX/bin:$PATH
 COPY --from=1password/op:2 /usr/local/bin/op /usr/local/bin/op
 
 RUN npm install -g pnpm@10.17.1
+RUN npm install -g @anthropic-ai/claude-code@latest
+RUN npm install -g @modelcontextprotocol/server-filesystem
 
 RUN go install github.com/sqlc-dev/sqlc/cmd/sqlc@v1.27.0
 RUN go install github.com/air-verse/air@latest

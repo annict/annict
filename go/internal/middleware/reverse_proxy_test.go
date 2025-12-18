@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/annict/annict/internal/clientip"
-	"github.com/annict/annict/internal/config"
+	"github.com/annict/annict/go/internal/clientip"
+	"github.com/annict/annict/go/internal/config"
 )
 
 func TestReverseProxyMiddleware_GoHandledPaths(t *testing.T) {

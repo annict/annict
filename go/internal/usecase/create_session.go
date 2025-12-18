@@ -9,8 +9,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/annict/annict/internal/query"
-	"github.com/annict/annict/internal/session"
+	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/session"
 )
 
 // SessionResult セッション作成の結果

@@ -5,10 +5,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/annict/annict/internal/password_reset"
-	"github.com/annict/annict/internal/query"
-	"github.com/annict/annict/internal/testutil"
 	"github.com/riverqueue/river"
+
+	"github.com/annict/annict/go/internal/password_reset"
+	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/testutil"
 )
 
 func TestCleanupExpiredTokensWorker(t *testing.T) {

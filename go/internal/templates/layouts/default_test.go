@@ -10,11 +10,12 @@ import (
 	"testing"
 
 	"github.com/a-h/templ"
-	"github.com/annict/annict/internal/config"
-	"github.com/annict/annict/internal/i18n"
-	"github.com/annict/annict/internal/query"
-	"github.com/annict/annict/internal/session"
-	"github.com/annict/annict/internal/viewmodel"
+
+	"github.com/annict/annict/go/internal/config"
+	"github.com/annict/annict/go/internal/i18n"
+	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/session"
+	"github.com/annict/annict/go/internal/viewmodel"
 )
 
 // TestDefault_Rendering Defaultレイアウトが正常にレンダリングされることを確認

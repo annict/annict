@@ -7,10 +7,11 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/annict/annict/internal/i18n"
-	"github.com/annict/annict/internal/query"
 	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
+
+	"github.com/annict/annict/go/internal/i18n"
+	"github.com/annict/annict/go/internal/query"
 )
 
 // CompleteSignUpUsecase はユーザー登録を完了するユースケース

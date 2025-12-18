@@ -5,8 +5,8 @@ import (
 	"net/mail"
 	"strings"
 
-	"github.com/annict/annict/internal/i18n"
-	"github.com/annict/annict/internal/session"
+	"github.com/annict/annict/go/internal/i18n"
+	"github.com/annict/annict/go/internal/session"
 )
 
 // CreateRequest は新規登録フォームのリクエストを表します

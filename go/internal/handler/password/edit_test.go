@@ -6,13 +6,13 @@ import (
 	"testing"
 	"time"
 
-	"github.com/annict/annict/internal/config"
-	"github.com/annict/annict/internal/password_reset"
-	"github.com/annict/annict/internal/query"
-	"github.com/annict/annict/internal/repository"
-	"github.com/annict/annict/internal/session"
-	"github.com/annict/annict/internal/testutil"
-	"github.com/annict/annict/internal/usecase"
+	"github.com/annict/annict/go/internal/config"
+	"github.com/annict/annict/go/internal/password_reset"
+	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/repository"
+	"github.com/annict/annict/go/internal/session"
+	"github.com/annict/annict/go/internal/testutil"
+	"github.com/annict/annict/go/internal/usecase"
 )
 
 func TestEdit_ValidToken(t *testing.T) {

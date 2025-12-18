@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/annict/annict/internal/auth"
-	"github.com/annict/annict/internal/query"
+	"github.com/annict/annict/go/internal/auth"
+	"github.com/annict/annict/go/internal/query"
 )
 
 // VerifySignInCodeUsecase は6桁のログインコードを検証するユースケースです

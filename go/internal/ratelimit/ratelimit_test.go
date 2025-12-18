@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/annict/annict/internal/testutil"
+	"github.com/annict/annict/go/internal/testutil"
 )
 
 func TestLimiter_Check(t *testing.T) {

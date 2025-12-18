@@ -63,7 +63,7 @@ package pages
 // インポート
 import (
     "context"
-    "github.com/annict/annict/internal/templates"
+    "github.com/annict/annict/go/internal/templates"
 )
 
 // テンプレートコンポーネントの定義
@@ -144,9 +144,9 @@ package layouts
 import (
     "context"
     "github.com/a-h/templ"
-    "github.com/annict/annict/internal/repository"
-    "github.com/annict/annict/internal/templates/components"
-    "github.com/annict/annict/internal/viewmodel"
+    "github.com/annict/annict/go/internal/repository"
+    "github.com/annict/annict/go/internal/templates/components"
+    "github.com/annict/annict/go/internal/viewmodel"
 )
 
 templ Default(ctx context.Context, meta viewmodel.PageMeta, user *repository.GetUserByIDRow, content templ.Component) {
@@ -183,7 +183,7 @@ package pages
 
 import (
     "context"
-    "github.com/annict/annict/internal/templates"
+    "github.com/annict/annict/go/internal/templates"
 )
 
 templ SignIn(ctx context.Context, csrfToken string) {
@@ -229,8 +229,8 @@ package components
 
 import (
     "context"
-    "github.com/annict/annict/internal/session"
-    "github.com/annict/annict/internal/templates"
+    "github.com/annict/annict/go/internal/session"
+    "github.com/annict/annict/go/internal/templates"
 )
 
 templ FormErrors(ctx context.Context, formErrors *session.FormErrors) {
@@ -255,8 +255,8 @@ package pages
 
 import (
     "context"
-    "github.com/annict/annict/internal/session"
-    "github.com/annict/annict/internal/templates/components"
+    "github.com/annict/annict/go/internal/session"
+    "github.com/annict/annict/go/internal/templates/components"
 )
 
 templ SignIn(ctx context.Context, formErrors *session.FormErrors) {

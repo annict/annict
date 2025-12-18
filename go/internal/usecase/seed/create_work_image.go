@@ -6,9 +6,10 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/annict/annict/internal/query"
-	"github.com/annict/annict/internal/seed"
 	"github.com/schollz/progressbar/v3"
+
+	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/seed"
 )
 
 // CreateWorkImageParams 作品画像作成のパラメータ

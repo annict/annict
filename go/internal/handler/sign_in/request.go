@@ -4,8 +4,8 @@ import (
 	"context"
 	"strings"
 
-	"github.com/annict/annict/internal/i18n"
-	"github.com/annict/annict/internal/session"
+	"github.com/annict/annict/go/internal/i18n"
+	"github.com/annict/annict/go/internal/session"
 )
 
 // CreateRequest はメールアドレス送信フォームのリクエストを表します

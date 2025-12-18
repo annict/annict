@@ -7,10 +7,11 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/annict/annict/internal/auth"
-	"github.com/annict/annict/internal/query"
-	"github.com/annict/annict/internal/worker"
 	"github.com/riverqueue/river"
+
+	"github.com/annict/annict/go/internal/auth"
+	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/worker"
 )
 
 // SendSignUpCodeUsecase は新規登録確認コードを生成・送信するユースケースです

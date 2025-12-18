@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/annict/annict/internal/viewmodel"
+	"github.com/annict/annict/go/internal/viewmodel"
 )
 
 func TestHead(t *testing.T) {

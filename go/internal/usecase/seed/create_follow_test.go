@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"testing"
 
-	"github.com/annict/annict/internal/testutil"
+	"github.com/annict/annict/go/internal/testutil"
 )
 
 // TestCreateFollowUsecase_ExecuteBatch はExecuteBatchメソッドのテスト

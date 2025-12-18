@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/annict/annict/internal/clientip"
-	"github.com/annict/annict/internal/config"
+	"github.com/annict/annict/go/internal/clientip"
+	"github.com/annict/annict/go/internal/config"
 )
 
 // ReverseProxyMiddleware はRails版へのリバースプロキシミドルウェア

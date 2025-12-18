@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/annict/annict/internal/query"
-	"github.com/annict/annict/internal/testutil"
+	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/testutil"
 )
 
 // TestCreateSignUpCode はSignUpCodeの作成をテスト

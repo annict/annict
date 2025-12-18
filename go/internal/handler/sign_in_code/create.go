@@ -9,11 +9,11 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/annict/annict/internal/clientip"
-	"github.com/annict/annict/internal/i18n"
-	"github.com/annict/annict/internal/redirect"
-	"github.com/annict/annict/internal/session"
-	"github.com/annict/annict/internal/usecase"
+	"github.com/annict/annict/go/internal/clientip"
+	"github.com/annict/annict/go/internal/i18n"
+	"github.com/annict/annict/go/internal/redirect"
+	"github.com/annict/annict/go/internal/session"
+	"github.com/annict/annict/go/internal/usecase"
 )
 
 // Create POST /sign_in/code - 6桁コード検証処理

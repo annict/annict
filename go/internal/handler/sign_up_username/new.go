@@ -5,12 +5,12 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/annict/annict/internal/i18n"
-	"github.com/annict/annict/internal/middleware"
-	"github.com/annict/annict/internal/session"
-	"github.com/annict/annict/internal/templates/layouts"
-	"github.com/annict/annict/internal/templates/pages/sign_up_username"
-	"github.com/annict/annict/internal/viewmodel"
+	"github.com/annict/annict/go/internal/i18n"
+	"github.com/annict/annict/go/internal/middleware"
+	"github.com/annict/annict/go/internal/session"
+	"github.com/annict/annict/go/internal/templates/layouts"
+	"github.com/annict/annict/go/internal/templates/pages/sign_up_username"
+	"github.com/annict/annict/go/internal/viewmodel"
 )
 
 // New GET /sign_up/username - ユーザー名設定フォーム表示

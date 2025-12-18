@@ -7,11 +7,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/annict/annict/internal/config"
-	"github.com/annict/annict/internal/repository"
-	"github.com/annict/annict/internal/session"
-	"github.com/annict/annict/internal/testutil"
-	"github.com/annict/annict/internal/usecase"
+	"github.com/annict/annict/go/internal/config"
+	"github.com/annict/annict/go/internal/repository"
+	"github.com/annict/annict/go/internal/session"
+	"github.com/annict/annict/go/internal/testutil"
+	"github.com/annict/annict/go/internal/usecase"
 )
 
 // TestShow GET /sign_in/codeのテスト（正常系）

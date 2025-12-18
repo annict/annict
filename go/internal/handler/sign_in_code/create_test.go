@@ -10,13 +10,13 @@ import (
 	"testing"
 	"time"
 
-	"github.com/annict/annict/internal/auth"
-	"github.com/annict/annict/internal/config"
-	"github.com/annict/annict/internal/query"
-	"github.com/annict/annict/internal/repository"
-	"github.com/annict/annict/internal/session"
-	"github.com/annict/annict/internal/testutil"
-	"github.com/annict/annict/internal/usecase"
+	"github.com/annict/annict/go/internal/auth"
+	"github.com/annict/annict/go/internal/config"
+	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/repository"
+	"github.com/annict/annict/go/internal/session"
+	"github.com/annict/annict/go/internal/testutil"
+	"github.com/annict/annict/go/internal/usecase"
 )
 
 // TestCreate_Success ログイン成功のテスト

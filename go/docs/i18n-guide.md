@@ -26,7 +26,7 @@ package pages
 
 import (
     "context"
-    "github.com/annict/annict/internal/templates"
+    "github.com/annict/annict/go/internal/templates"
 )
 
 templ SignIn(ctx context.Context, csrfToken string) {
@@ -52,7 +52,7 @@ templ SignIn(ctx context.Context, csrfToken string) {
 package handler
 
 import (
-    "github.com/annict/annict/internal/i18n"
+    "github.com/annict/annict/go/internal/i18n"
 )
 
 func (h *Handler) ProcessSignIn(w http.ResponseWriter, r *http.Request) {

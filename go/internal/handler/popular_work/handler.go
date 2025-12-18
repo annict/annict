@@ -2,10 +2,10 @@
 package popular_work
 
 import (
-	"github.com/annict/annict/internal/config"
-	"github.com/annict/annict/internal/image"
-	"github.com/annict/annict/internal/repository"
-	"github.com/annict/annict/internal/session"
+	"github.com/annict/annict/go/internal/config"
+	"github.com/annict/annict/go/internal/image"
+	"github.com/annict/annict/go/internal/repository"
+	"github.com/annict/annict/go/internal/session"
 )
 
 // Handler は人気作品関連のHTTPハンドラーです

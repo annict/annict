@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/annict/annict/internal/testutil"
+	"github.com/annict/annict/go/internal/testutil"
 )
 
 // TestCreateOAuthTokenUsecase_Execute は Execute メソッドのテスト

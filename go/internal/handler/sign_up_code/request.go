@@ -4,8 +4,8 @@ import (
 	"context"
 	"regexp"
 
-	"github.com/annict/annict/internal/i18n"
-	"github.com/annict/annict/internal/session"
+	"github.com/annict/annict/go/internal/i18n"
+	"github.com/annict/annict/go/internal/session"
 )
 
 // CreateRequest は新規登録確認コード検証リクエストを表します

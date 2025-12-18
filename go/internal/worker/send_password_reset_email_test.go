@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/annict/annict/internal/testutil"
+	"github.com/annict/annict/go/internal/testutil"
 )
 
 // TestRenderEmailTemplate はメールテンプレートのレンダリングをテストします

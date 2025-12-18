@@ -7,9 +7,10 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/annict/annict/internal/query"
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/schollz/progressbar/v3"
+
+	"github.com/annict/annict/go/internal/query"
 )
 
 // CreateHeavyUserParams ヘビーユーザー作成のパラメータ

@@ -10,9 +10,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/annict/annict/internal/config"
-	"github.com/annict/annict/internal/query"
-	"github.com/annict/annict/internal/repository"
+	"github.com/annict/annict/go/internal/config"
+	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/repository"
 )
 
 // SessionKey はRailsのセッションクッキー名

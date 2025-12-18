@@ -8,9 +8,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/annict/annict/internal/clientip"
-	"github.com/annict/annict/internal/i18n"
-	"github.com/annict/annict/internal/session"
+	"github.com/annict/annict/go/internal/clientip"
+	"github.com/annict/annict/go/internal/i18n"
+	"github.com/annict/annict/go/internal/session"
 )
 
 // Create はメールアドレス送信処理と確認コード送信を行います (POST /sign_up)

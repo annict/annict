@@ -2,7 +2,7 @@
 package manifest
 
 import (
-	"github.com/annict/annict/internal/config"
+	"github.com/annict/annict/go/internal/config"
 )
 
 // Handler はWeb App Manifest関連のHTTPハンドラーです

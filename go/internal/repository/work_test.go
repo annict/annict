@@ -5,9 +5,9 @@ import (
 	"database/sql"
 	"testing"
 
-	"github.com/annict/annict/internal/query"
-	"github.com/annict/annict/internal/repository"
-	"github.com/annict/annict/internal/testutil"
+	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/repository"
+	"github.com/annict/annict/go/internal/testutil"
 )
 
 // TestGetPopularWorksWithDetails_Success は人気作品をキャスト・スタッフ情報と共に取得できることをテスト

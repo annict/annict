@@ -7,8 +7,9 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/annict/annict/internal/seed"
 	"github.com/schollz/progressbar/v3"
+
+	"github.com/annict/annict/go/internal/seed"
 )
 
 // CreateWorkParams 作品作成のパラメータ

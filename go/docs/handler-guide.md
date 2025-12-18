@@ -194,8 +194,8 @@ internal/handler/
 package popular_work
 
 import (
-    "github.com/annict/annict/internal/config"
-    repository "github.com/annict/annict/internal/repository/sqlc"
+    "github.com/annict/annict/go/internal/config"
+    repository "github.com/annict/annict/go/internal/repository/sqlc"
 )
 
 // Handler は人気作品関連のHTTPハンドラーです
@@ -370,7 +370,7 @@ r.Post("/sign_in", signInHandler.Create)
 package health
 
 import (
-    "github.com/annict/annict/internal/config"
+    "github.com/annict/annict/go/internal/config"
 )
 
 // Handler はヘルスチェック関連のHTTPハンドラーです
@@ -409,9 +409,9 @@ package password_reset
 
 import (
     "database/sql"
-    "github.com/annict/annict/internal/config"
-    repository "github.com/annict/annict/internal/repository/sqlc"
-    "github.com/annict/annict/internal/session"
+    "github.com/annict/annict/go/internal/config"
+    repository "github.com/annict/annict/go/internal/repository/sqlc"
+    "github.com/annict/annict/go/internal/session"
     "github.com/annict/annict/pkg/ratelimit"
     "github.com/riverqueue/river"
 )
@@ -452,7 +452,7 @@ package password_reset
 
 import (
     "net/http"
-    "github.com/annict/annict/internal/templates/pages/password_reset"
+    "github.com/annict/annict/go/internal/templates/pages/password_reset"
 )
 
 // New GET /password/reset - パスワードリセット申請フォーム

@@ -5,12 +5,13 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/annict/annict/internal/seed"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 	"github.com/schollz/progressbar/v3"
+
+	"github.com/annict/annict/go/internal/seed"
 )
 
 // CleanupProfileImagesUsecase プロフィール画像クリーンアップUsecase（シード専用）

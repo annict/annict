@@ -10,9 +10,9 @@ import (
 
 	"github.com/a-h/templ"
 	templruntime "github.com/a-h/templ/runtime"
-	"github.com/annict/annict/internal/session"
-	"github.com/annict/annict/internal/templates"
-	"github.com/annict/annict/internal/templates/components"
+	"github.com/annict/annict/go/internal/session"
+	"github.com/annict/annict/go/internal/templates"
+	"github.com/annict/annict/go/internal/templates/components"
 )
 
 // SignInPasswordShow はパスワードログインページのコンテンツを表示します

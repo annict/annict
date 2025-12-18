@@ -2,8 +2,8 @@
 package health
 
 import (
-	"github.com/annict/annict/internal/config"
-	"github.com/annict/annict/internal/repository"
+	"github.com/annict/annict/go/internal/config"
+	"github.com/annict/annict/go/internal/repository"
 )
 
 // Handler はヘルスチェック関連のHTTPハンドラーです

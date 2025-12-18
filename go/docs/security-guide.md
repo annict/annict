@@ -43,7 +43,7 @@ templ SignIn(ctx context.Context, csrfToken string) {
 package handler
 
 import (
-    "github.com/annict/annict/internal/middleware"
+    "github.com/annict/annict/go/internal/middleware"
 )
 
 func (h *Handler) SignIn(w http.ResponseWriter, r *http.Request) {

@@ -1,4 +1,4 @@
-module github.com/annict/annict
+module github.com/annict/annict/go
 
 go 1.25.1
 

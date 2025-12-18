@@ -4,9 +4,9 @@ import (
 	"context"
 	"testing"
 
-	"github.com/annict/annict/internal/auth"
-	"github.com/annict/annict/internal/query"
-	"github.com/annict/annict/internal/testutil"
+	"github.com/annict/annict/go/internal/auth"
+	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/testutil"
 )
 
 // TestCreateSessionUsecase_Execute は正常系のテストです

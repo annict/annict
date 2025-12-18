@@ -6,12 +6,13 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/annict/annict/internal/config"
-	"github.com/annict/annict/internal/i18n"
-	"github.com/annict/annict/internal/mail"
-	"github.com/annict/annict/internal/query"
-	sign_in "github.com/annict/annict/internal/templates/emails/sign_in"
 	"github.com/riverqueue/river"
+
+	"github.com/annict/annict/go/internal/config"
+	"github.com/annict/annict/go/internal/i18n"
+	"github.com/annict/annict/go/internal/mail"
+	"github.com/annict/annict/go/internal/query"
+	sign_in "github.com/annict/annict/go/internal/templates/emails/sign_in"
 )
 
 // SendSignInCodeArgs はログインコード送信ジョブの引数です
