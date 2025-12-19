@@ -102,9 +102,6 @@ Rails.application.configure do
     Bullet.rails_logger = true
   end
 
-  # https://github.com/charliesome/better_errors#security
-  BetterErrors::Middleware.allow_ip!("0.0.0.0/0")
-
   # https://github.com/ruckus/active-record-query-trace
   ActiveRecordQueryTrace.enabled = true
 

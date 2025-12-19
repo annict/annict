@@ -124,10 +124,6 @@ GEM
     base64 (0.3.0)
     bcrypt (3.1.20)
     benchmark (0.5.0)
-    better_errors (2.9.1)
-      coderay (>= 1.0.0)
-      erubi (>= 1.0.0)
-      rack (>= 0.9.0)
     better_html (2.0.1)
       actionview (>= 6.0)
       activesupport (>= 6.0)
@@ -136,8 +132,6 @@ GEM
       parser (>= 2.4)
       smart_properties
     bigdecimal (4.0.1)
-    binding_of_caller (1.0.0)
-      debug_inspector (>= 0.0.1)
     browser (5.3.1)
     builder (3.3.0)
     bullet (8.1.0)
@@ -175,7 +169,6 @@ GEM
     cssbundling-rails (1.1.1)
       railties (>= 6.0.0)
     date (3.5.1)
-    debug_inspector (1.1.0)
     delayed_job (4.1.10)
       activesupport (>= 3.0, < 8.0)
     delayed_job_active_record (4.1.7)
@@ -718,8 +711,6 @@ DEPENDENCIES
   addressable
   awesome_print
   aws-sdk-s3
-  better_errors
-  binding_of_caller
   browser
   bullet
   by_star
