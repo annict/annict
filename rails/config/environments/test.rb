@@ -65,9 +65,7 @@ Rails.application.configure do
   # config.action_view.annotate_rendered_view_with_filenames = true
 
   # Raise error when a before_action's only/except options reference missing actions.
-  # 親コントローラで定義されたbefore_actionのonly/exceptオプションが
-  # 子コントローラに存在しないアクションを参照している場合があるため無効化
-  config.action_controller.raise_on_missing_callback_actions = false
+  config.action_controller.raise_on_missing_callback_actions = true
 
   # =========================================================================
   # 独自の設定
