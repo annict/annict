@@ -77,7 +77,7 @@ RSpec.describe "GET /works/:work_id/related_works", type: :request do
 
   it "削除されたシリーズは表示されないこと" do
     work = create(:work)
-    series = create(:series, deleted_at: Time.current)
+    series = create(:series, name: "削除テスト用シリーズ", deleted_at: Time.current)
     create(:series_work, series: series, work: work)
 
     get "/works/#{work.id}/related_works"
