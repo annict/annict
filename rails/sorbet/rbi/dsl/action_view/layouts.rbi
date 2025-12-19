@@ -21,5 +21,8 @@ module ActionView::Layouts
     def _layout_conditions?; end
   end
 
-  module GeneratedInstanceMethods; end
+  module GeneratedInstanceMethods
+    def _layout_conditions; end
+    def _layout_conditions?; end
+  end
 end

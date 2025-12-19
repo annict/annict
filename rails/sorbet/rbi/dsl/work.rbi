@@ -677,6 +677,9 @@ class Work
     def annotate(*args, &blk); end
 
     sig { params(args: T.untyped, blk: T.untyped).returns(PrivateAssociationRelation) }
+    def arel_columns(*args, &blk); end
+
+    sig { params(args: T.untyped, blk: T.untyped).returns(PrivateAssociationRelation) }
     def by_season(*args, &blk); end
 
     sig { params(args: T.untyped, blk: T.untyped).returns(PrivateAssociationRelation) }
@@ -723,40 +726,6 @@ class Work
 
     sig { params(args: T.untyped, blk: T.untyped).returns(PrivateAssociationRelation) }
     def includes(*args, &blk); end
-
-    sig do
-      params(
-        attributes: Hash,
-        returning: T.nilable(T.any(T::Array[Symbol], FalseClass)),
-        unique_by: T.nilable(T.any(T::Array[Symbol], Symbol))
-      ).returns(ActiveRecord::Result)
-    end
-    def insert(attributes, returning: nil, unique_by: nil); end
-
-    sig do
-      params(
-        attributes: Hash,
-        returning: T.nilable(T.any(T::Array[Symbol], FalseClass))
-      ).returns(ActiveRecord::Result)
-    end
-    def insert!(attributes, returning: nil); end
-
-    sig do
-      params(
-        attributes: T::Array[Hash],
-        returning: T.nilable(T.any(T::Array[Symbol], FalseClass)),
-        unique_by: T.nilable(T.any(T::Array[Symbol], Symbol))
-      ).returns(ActiveRecord::Result)
-    end
-    def insert_all(attributes, returning: nil, unique_by: nil); end
-
-    sig do
-      params(
-        attributes: T::Array[Hash],
-        returning: T.nilable(T.any(T::Array[Symbol], FalseClass))
-      ).returns(ActiveRecord::Result)
-    end
-    def insert_all!(attributes, returning: nil); end
 
     sig { params(args: T.untyped, blk: T.untyped).returns(PrivateAssociationRelation) }
     def invert_where(*args, &blk); end
@@ -863,24 +832,6 @@ class Work
     sig { params(args: T.untyped, blk: T.untyped).returns(PrivateAssociationRelation) }
     def until_current_season(*args, &blk); end
 
-    sig do
-      params(
-        attributes: Hash,
-        returning: T.nilable(T.any(T::Array[Symbol], FalseClass)),
-        unique_by: T.nilable(T.any(T::Array[Symbol], Symbol))
-      ).returns(ActiveRecord::Result)
-    end
-    def upsert(attributes, returning: nil, unique_by: nil); end
-
-    sig do
-      params(
-        attributes: T::Array[Hash],
-        returning: T.nilable(T.any(T::Array[Symbol], FalseClass)),
-        unique_by: T.nilable(T.any(T::Array[Symbol], Symbol))
-      ).returns(ActiveRecord::Result)
-    end
-    def upsert_all(attributes, returning: nil, unique_by: nil); end
-
     sig { params(args: T.untyped, blk: T.untyped).returns(PrivateAssociationRelationWhereChain) }
     def where(*args, &blk); end
 
@@ -898,6 +849,9 @@ class Work
 
     sig { params(args: T.untyped, blk: T.untyped).returns(PrivateAssociationRelation) }
     def with_no_slots(*args, &blk); end
+
+    sig { params(args: T.untyped, blk: T.untyped).returns(PrivateAssociationRelation) }
+    def with_recursive(*args, &blk); end
 
     sig { params(args: T.untyped, blk: T.untyped).returns(PrivateAssociationRelation) }
     def without(*args, &blk); end
@@ -1422,16 +1376,16 @@ class Work
     sig { void }
     def manual_episodes_count_will_change!; end
 
-    sig { returns(T.untyped) }
+    sig { returns(::Integer) }
     def media; end
 
-    sig { params(value: T.untyped).returns(T.untyped) }
+    sig { params(value: ::Integer).returns(::Integer) }
     def media=(value); end
 
     sig { returns(T::Boolean) }
     def media?; end
 
-    sig { returns(T.untyped) }
+    sig { returns(T.nilable(::Integer)) }
     def media_before_last_save; end
 
     sig { returns(T.untyped) }
@@ -1440,28 +1394,28 @@ class Work
     sig { returns(T::Boolean) }
     def media_came_from_user?; end
 
-    sig { returns(T.nilable([T.untyped, T.untyped])) }
+    sig { returns(T.nilable([::Integer, ::Integer])) }
     def media_change; end
 
-    sig { returns(T.nilable([T.untyped, T.untyped])) }
+    sig { returns(T.nilable([::Integer, ::Integer])) }
     def media_change_to_be_saved; end
 
-    sig { params(from: T.untyped, to: T.untyped).returns(T::Boolean) }
+    sig { params(from: ::Integer, to: ::Integer).returns(T::Boolean) }
     def media_changed?(from: T.unsafe(nil), to: T.unsafe(nil)); end
 
-    sig { returns(T.untyped) }
+    sig { returns(T.nilable(::Integer)) }
     def media_in_database; end
 
-    sig { returns(T.nilable([T.untyped, T.untyped])) }
+    sig { returns(T.nilable([::Integer, ::Integer])) }
     def media_previous_change; end
 
-    sig { params(from: T.untyped, to: T.untyped).returns(T::Boolean) }
+    sig { params(from: ::Integer, to: ::Integer).returns(T::Boolean) }
     def media_previously_changed?(from: T.unsafe(nil), to: T.unsafe(nil)); end
 
-    sig { returns(T.untyped) }
+    sig { returns(T.nilable(::Integer)) }
     def media_previously_was; end
 
-    sig { returns(T.untyped) }
+    sig { returns(T.nilable(::Integer)) }
     def media_was; end
 
     sig { void }
@@ -2130,7 +2084,7 @@ class Work
     sig { returns(T::Boolean) }
     def saved_change_to_manual_episodes_count?; end
 
-    sig { returns(T.nilable([T.untyped, T.untyped])) }
+    sig { returns(T.nilable([::Integer, ::Integer])) }
     def saved_change_to_media; end
 
     sig { returns(T::Boolean) }
@@ -2214,7 +2168,7 @@ class Work
     sig { returns(T::Boolean) }
     def saved_change_to_season_id?; end
 
-    sig { returns(T.nilable([T.untyped, T.untyped])) }
+    sig { returns(T.nilable([T.nilable(::Integer), T.nilable(::Integer)])) }
     def saved_change_to_season_name; end
 
     sig { returns(T::Boolean) }
@@ -2493,16 +2447,16 @@ class Work
     sig { void }
     def season_id_will_change!; end
 
-    sig { returns(T.untyped) }
+    sig { returns(T.nilable(::Integer)) }
     def season_name; end
 
-    sig { params(value: T.untyped).returns(T.untyped) }
+    sig { params(value: T.nilable(::Integer)).returns(T.nilable(::Integer)) }
     def season_name=(value); end
 
     sig { returns(T::Boolean) }
     def season_name?; end
 
-    sig { returns(T.untyped) }
+    sig { returns(T.nilable(::Integer)) }
     def season_name_before_last_save; end
 
     sig { returns(T.untyped) }
@@ -2511,28 +2465,28 @@ class Work
     sig { returns(T::Boolean) }
     def season_name_came_from_user?; end
 
-    sig { returns(T.nilable([T.untyped, T.untyped])) }
+    sig { returns(T.nilable([T.nilable(::Integer), T.nilable(::Integer)])) }
     def season_name_change; end
 
-    sig { returns(T.nilable([T.untyped, T.untyped])) }
+    sig { returns(T.nilable([T.nilable(::Integer), T.nilable(::Integer)])) }
     def season_name_change_to_be_saved; end
 
-    sig { params(from: T.untyped, to: T.untyped).returns(T::Boolean) }
+    sig { params(from: T.nilable(::Integer), to: T.nilable(::Integer)).returns(T::Boolean) }
     def season_name_changed?(from: T.unsafe(nil), to: T.unsafe(nil)); end
 
-    sig { returns(T.untyped) }
+    sig { returns(T.nilable(::Integer)) }
     def season_name_in_database; end
 
-    sig { returns(T.nilable([T.untyped, T.untyped])) }
+    sig { returns(T.nilable([T.nilable(::Integer), T.nilable(::Integer)])) }
     def season_name_previous_change; end
 
-    sig { params(from: T.untyped, to: T.untyped).returns(T::Boolean) }
+    sig { params(from: T.nilable(::Integer), to: T.nilable(::Integer)).returns(T::Boolean) }
     def season_name_previously_changed?(from: T.unsafe(nil), to: T.unsafe(nil)); end
 
-    sig { returns(T.untyped) }
+    sig { returns(T.nilable(::Integer)) }
     def season_name_previously_was; end
 
-    sig { returns(T.untyped) }
+    sig { returns(T.nilable(::Integer)) }
     def season_name_was; end
 
     sig { void }
@@ -3752,6 +3706,9 @@ class Work
     def annotate(*args, &blk); end
 
     sig { params(args: T.untyped, blk: T.untyped).returns(PrivateRelation) }
+    def arel_columns(*args, &blk); end
+
+    sig { params(args: T.untyped, blk: T.untyped).returns(PrivateRelation) }
     def by_season(*args, &blk); end
 
     sig { params(args: T.untyped, blk: T.untyped).returns(PrivateRelation) }
@@ -3923,6 +3880,9 @@ class Work
     def with_no_slots(*args, &blk); end
 
     sig { params(args: T.untyped, blk: T.untyped).returns(PrivateRelation) }
+    def with_recursive(*args, &blk); end
+
+    sig { params(args: T.untyped, blk: T.untyped).returns(PrivateRelation) }
     def without(*args, &blk); end
 
     sig { params(args: T.untyped, blk: T.untyped).returns(PrivateRelation) }
@@ -4019,20 +3979,6 @@ class Work
       ).returns(PrivateCollectionProxy)
     end
     def concat(*records); end
-
-    sig do
-      params(
-        records: T.any(::Work, Integer, String, T::Enumerable[T.any(::Work, Integer, String, T::Enumerable[::Work])])
-      ).returns(T::Array[::Work])
-    end
-    def delete(*records); end
-
-    sig do
-      params(
-        records: T.any(::Work, Integer, String, T::Enumerable[T.any(::Work, Integer, String, T::Enumerable[::Work])])
-      ).returns(T::Array[::Work])
-    end
-    def destroy(*records); end
 
     sig { returns(T::Array[::Work]) }
     def load_target; end
