@@ -5,9 +5,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/annict/annict/internal/auth"
-	"github.com/annict/annict/internal/query"
-	"github.com/annict/annict/internal/testutil"
+	"github.com/annict/annict/go/internal/auth"
+	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/testutil"
 )
 
 func TestSendSignInCodeUsecase_Execute(t *testing.T) {

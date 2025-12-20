@@ -4,11 +4,11 @@ package sign_in_code
 import (
 	"database/sql"
 
-	"github.com/annict/annict/internal/config"
-	"github.com/annict/annict/internal/ratelimit"
-	"github.com/annict/annict/internal/repository"
-	"github.com/annict/annict/internal/session"
-	"github.com/annict/annict/internal/usecase"
+	"github.com/annict/annict/go/internal/config"
+	"github.com/annict/annict/go/internal/ratelimit"
+	"github.com/annict/annict/go/internal/repository"
+	"github.com/annict/annict/go/internal/session"
+	"github.com/annict/annict/go/internal/usecase"
 )
 
 // Handler 6桁コード入力関連のHTTPハンドラーです

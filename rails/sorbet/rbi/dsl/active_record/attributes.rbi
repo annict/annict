@@ -6,15 +6,5 @@
 
 
 module ActiveRecord::Attributes
-  include GeneratedInstanceMethods
-
-  mixes_in_class_methods GeneratedClassMethods
-
-  module GeneratedClassMethods
-    def attributes_to_define_after_schema_loads; end
-    def attributes_to_define_after_schema_loads=(value); end
-    def attributes_to_define_after_schema_loads?; end
-  end
-
-  module GeneratedInstanceMethods; end
+  mixes_in_class_methods ::ActiveModel::AttributeRegistration::ClassMethods
 end

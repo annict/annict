@@ -4,7 +4,7 @@ package repository
 import (
 	"context"
 
-	"github.com/annict/annict/internal/query"
+	"github.com/annict/annict/go/internal/query"
 )
 
 // PasswordResetTokenRepository はPasswordResetToken関連のデータアクセスを担当します

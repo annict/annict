@@ -3,9 +3,9 @@ package viewmodel
 import (
 	"testing"
 
-	"github.com/annict/annict/internal/config"
-	"github.com/annict/annict/internal/image"
-	"github.com/annict/annict/internal/model"
+	"github.com/annict/annict/go/internal/config"
+	"github.com/annict/annict/go/internal/image"
+	"github.com/annict/annict/go/internal/model"
 )
 
 func TestNewWorkFromModelDetail(t *testing.T) {

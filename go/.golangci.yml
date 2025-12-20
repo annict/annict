@@ -93,17 +93,17 @@ linters:
           files:
             - "**/internal/templates/**/*.go"
           deny:
-            - pkg: github.com/annict/annict/internal/query
+            - pkg: github.com/annict/annict/go/internal/query
               desc: "TemplatesはQueryに依存できません。"
-            - pkg: github.com/annict/annict/internal/repository
+            - pkg: github.com/annict/annict/go/internal/repository
               desc: "TemplatesはRepositoryに依存できません。"
-            - pkg: github.com/annict/annict/internal/model
+            - pkg: github.com/annict/annict/go/internal/model
               desc: "TemplatesはModelに直接依存できません。ViewModelを経由してください。"
-            - pkg: github.com/annict/annict/internal/usecase
+            - pkg: github.com/annict/annict/go/internal/usecase
               desc: "TemplatesはUseCaseに依存できません。"
-            - pkg: github.com/annict/annict/internal/handler
+            - pkg: github.com/annict/annict/go/internal/handler
               desc: "TemplatesはHandlerに依存できません。"
-            - pkg: github.com/annict/annict/internal/middleware
+            - pkg: github.com/annict/annict/go/internal/middleware
               desc: "TemplatesはMiddlewareに依存できません。"
 
         # ViewModel層のルール: データ変換のみ
@@ -112,15 +112,15 @@ linters:
           files:
             - "**/internal/viewmodel/**/*.go"
           deny:
-            - pkg: github.com/annict/annict/internal/query
+            - pkg: github.com/annict/annict/go/internal/query
               desc: "ViewModelはQueryに依存できません。"
-            - pkg: github.com/annict/annict/internal/repository
+            - pkg: github.com/annict/annict/go/internal/repository
               desc: "ViewModelはRepositoryに依存できません。ModelからViewModelへの変換を行ってください。"
-            - pkg: github.com/annict/annict/internal/handler
+            - pkg: github.com/annict/annict/go/internal/handler
               desc: "ViewModelはHandlerに依存できません。"
-            - pkg: github.com/annict/annict/internal/middleware
+            - pkg: github.com/annict/annict/go/internal/middleware
               desc: "ViewModelはMiddlewareに依存できません。"
-            - pkg: github.com/annict/annict/internal/templates
+            - pkg: github.com/annict/annict/go/internal/templates
               desc: "ViewModelはTemplatesに依存できません。"
 
         # Handler層のルール: HTTPリクエスト処理
@@ -129,7 +129,7 @@ linters:
           files:
             - "**/internal/handler/**/*.go"
           deny:
-            - pkg: github.com/annict/annict/internal/query
+            - pkg: github.com/annict/annict/go/internal/query
               desc: "HandlerはQueryに直接依存できません。Repositoryを経由してください。"
 
         # Middleware層のルール: 共通処理のみ
@@ -138,17 +138,17 @@ linters:
           files:
             - "**/internal/middleware/**/*.go"
           deny:
-            - pkg: github.com/annict/annict/internal/query
+            - pkg: github.com/annict/annict/go/internal/query
               desc: "MiddlewareはQueryに依存できません。"
-            - pkg: github.com/annict/annict/internal/repository
+            - pkg: github.com/annict/annict/go/internal/repository
               desc: "MiddlewareはRepositoryに依存できません。"
-            - pkg: github.com/annict/annict/internal/usecase
+            - pkg: github.com/annict/annict/go/internal/usecase
               desc: "MiddlewareはUseCaseに依存できません。"
-            - pkg: github.com/annict/annict/internal/handler
+            - pkg: github.com/annict/annict/go/internal/handler
               desc: "MiddlewareはHandlerに依存できません。"
-            - pkg: github.com/annict/annict/internal/viewmodel
+            - pkg: github.com/annict/annict/go/internal/viewmodel
               desc: "MiddlewareはViewModelに依存できません。"
-            - pkg: github.com/annict/annict/internal/templates
+            - pkg: github.com/annict/annict/go/internal/templates
               desc: "MiddlewareはTemplatesに依存できません。"
 
         # Application層のルール（UseCase）
@@ -157,15 +157,15 @@ linters:
           files:
             - "**/internal/usecase/**/*.go"
           deny:
-            - pkg: github.com/annict/annict/internal/query
+            - pkg: github.com/annict/annict/go/internal/query
               desc: "Application層はQueryに直接依存できません。Repositoryを経由してください。"
-            - pkg: github.com/annict/annict/internal/handler
+            - pkg: github.com/annict/annict/go/internal/handler
               desc: "Application層はPresentation層に依存できません。"
-            - pkg: github.com/annict/annict/internal/middleware
+            - pkg: github.com/annict/annict/go/internal/middleware
               desc: "Application層はPresentation層に依存できません。"
-            - pkg: github.com/annict/annict/internal/viewmodel
+            - pkg: github.com/annict/annict/go/internal/viewmodel
               desc: "Application層はPresentation層に依存できません。"
-            - pkg: github.com/annict/annict/internal/templates
+            - pkg: github.com/annict/annict/go/internal/templates
               desc: "Application層はPresentation層に依存できません。"
 
         # Model層のルール: 純粋なドメインエンティティ
@@ -174,19 +174,19 @@ linters:
           files:
             - "**/internal/model/**/*.go"
           deny:
-            - pkg: github.com/annict/annict/internal/query
+            - pkg: github.com/annict/annict/go/internal/query
               desc: "ModelはQueryに依存できません。"
-            - pkg: github.com/annict/annict/internal/repository
+            - pkg: github.com/annict/annict/go/internal/repository
               desc: "ModelはRepositoryに依存できません。"
-            - pkg: github.com/annict/annict/internal/usecase
+            - pkg: github.com/annict/annict/go/internal/usecase
               desc: "ModelはApplication層に依存できません。"
-            - pkg: github.com/annict/annict/internal/handler
+            - pkg: github.com/annict/annict/go/internal/handler
               desc: "ModelはPresentation層に依存できません。"
-            - pkg: github.com/annict/annict/internal/middleware
+            - pkg: github.com/annict/annict/go/internal/middleware
               desc: "ModelはPresentation層に依存できません。"
-            - pkg: github.com/annict/annict/internal/viewmodel
+            - pkg: github.com/annict/annict/go/internal/viewmodel
               desc: "ModelはPresentation層に依存できません。"
-            - pkg: github.com/annict/annict/internal/templates
+            - pkg: github.com/annict/annict/go/internal/templates
               desc: "ModelはPresentation層に依存できません。"
 
         # Repository層のルール: データアクセス層
@@ -195,15 +195,15 @@ linters:
           files:
             - "**/internal/repository/**/*.go"
           deny:
-            - pkg: github.com/annict/annict/internal/usecase
+            - pkg: github.com/annict/annict/go/internal/usecase
               desc: "RepositoryはApplication層に依存できません。"
-            - pkg: github.com/annict/annict/internal/handler
+            - pkg: github.com/annict/annict/go/internal/handler
               desc: "RepositoryはPresentation層に依存できません。"
-            - pkg: github.com/annict/annict/internal/middleware
+            - pkg: github.com/annict/annict/go/internal/middleware
               desc: "RepositoryはPresentation層に依存できません。"
-            - pkg: github.com/annict/annict/internal/viewmodel
+            - pkg: github.com/annict/annict/go/internal/viewmodel
               desc: "RepositoryはPresentation層に依存できません。"
-            - pkg: github.com/annict/annict/internal/templates
+            - pkg: github.com/annict/annict/go/internal/templates
               desc: "RepositoryはPresentation層に依存できません。"
 
         # Query層のルール: sqlc生成コード
@@ -212,19 +212,19 @@ linters:
           files:
             - "**/internal/query/**/*.go"
           deny:
-            - pkg: github.com/annict/annict/internal/repository
+            - pkg: github.com/annict/annict/go/internal/repository
               desc: "QueryはRepositoryに依存できません。"
-            - pkg: github.com/annict/annict/internal/model
+            - pkg: github.com/annict/annict/go/internal/model
               desc: "QueryはModelに依存できません。"
-            - pkg: github.com/annict/annict/internal/usecase
+            - pkg: github.com/annict/annict/go/internal/usecase
               desc: "QueryはApplication層に依存できません。"
-            - pkg: github.com/annict/annict/internal/handler
+            - pkg: github.com/annict/annict/go/internal/handler
               desc: "QueryはPresentation層に依存できません。"
-            - pkg: github.com/annict/annict/internal/middleware
+            - pkg: github.com/annict/annict/go/internal/middleware
               desc: "QueryはPresentation層に依存できません。"
-            - pkg: github.com/annict/annict/internal/viewmodel
+            - pkg: github.com/annict/annict/go/internal/viewmodel
               desc: "QueryはPresentation層に依存できません。"
-            - pkg: github.com/annict/annict/internal/templates
+            - pkg: github.com/annict/annict/go/internal/templates
               desc: "QueryはPresentation層に依存できません。"
 
     # staticcheck の設定

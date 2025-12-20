@@ -5,9 +5,10 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/annict/annict/internal/query"
-	"github.com/annict/annict/internal/seed"
 	"github.com/schollz/progressbar/v3"
+
+	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/seed"
 )
 
 // CreateProfileImageParams プロフィール画像作成のパラメータ

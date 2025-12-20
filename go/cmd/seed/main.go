@@ -9,13 +9,14 @@ import (
 	"os"
 	"time"
 
-	"github.com/annict/annict/internal/config"
-	"github.com/annict/annict/internal/query"
-	"github.com/annict/annict/internal/seed"
-	seedusecase "github.com/annict/annict/internal/usecase/seed"
 	"github.com/brianvoe/gofakeit/v6"
 	_ "github.com/lib/pq"
 	"github.com/schollz/progressbar/v3"
+
+	"github.com/annict/annict/go/internal/config"
+	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/seed"
+	seedusecase "github.com/annict/annict/go/internal/usecase/seed"
 )
 
 func main() {

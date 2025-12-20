@@ -7,12 +7,12 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/annict/annict/internal/clientip"
-	"github.com/annict/annict/internal/i18n"
-	"github.com/annict/annict/internal/session"
-	"github.com/annict/annict/internal/templates/layouts"
-	passwordpages "github.com/annict/annict/internal/templates/pages/password"
-	"github.com/annict/annict/internal/viewmodel"
+	"github.com/annict/annict/go/internal/clientip"
+	"github.com/annict/annict/go/internal/i18n"
+	"github.com/annict/annict/go/internal/session"
+	"github.com/annict/annict/go/internal/templates/layouts"
+	passwordpages "github.com/annict/annict/go/internal/templates/pages/password"
+	"github.com/annict/annict/go/internal/viewmodel"
 )
 
 // Create はパスワードリセット申請を処理します (POST /password/reset)

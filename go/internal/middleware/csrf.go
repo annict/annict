@@ -4,7 +4,7 @@ package middleware
 import (
 	"net/http"
 
-	"github.com/annict/annict/internal/session"
+	"github.com/annict/annict/go/internal/session"
 )
 
 // CSRFMiddleware はCSRF保護ミドルウェア

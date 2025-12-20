@@ -9,7 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/annict/annict/internal/config"
+	"github.com/annict/annict/go/internal/config"
 )
 
 // ImageData はwork_imagesテーブルのimage_dataカラムの構造

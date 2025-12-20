@@ -6,9 +6,9 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/annict/annict/internal/config"
-	"github.com/annict/annict/internal/repository"
-	"github.com/annict/annict/internal/testutil"
+	"github.com/annict/annict/go/internal/config"
+	"github.com/annict/annict/go/internal/repository"
+	"github.com/annict/annict/go/internal/testutil"
 )
 
 func TestShow(t *testing.T) {

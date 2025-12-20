@@ -7,7 +7,7 @@ import (
 	"encoding/hex"
 	"fmt"
 
-	"github.com/annict/annict/internal/query"
+	"github.com/annict/annict/go/internal/query"
 )
 
 // SessionRepository はSession関連のデータアクセスを担当します

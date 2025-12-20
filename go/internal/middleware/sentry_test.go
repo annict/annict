@@ -6,9 +6,10 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/annict/annict/internal/middleware"
-	"github.com/annict/annict/internal/query"
 	"github.com/getsentry/sentry-go"
+
+	"github.com/annict/annict/go/internal/middleware"
+	"github.com/annict/annict/go/internal/query"
 )
 
 func TestSentryUserContextMiddleware_WithAuthenticatedUser(t *testing.T) {

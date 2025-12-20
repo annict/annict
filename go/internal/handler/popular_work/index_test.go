@@ -9,11 +9,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/annict/annict/internal/config"
-	"github.com/annict/annict/internal/query"
-	"github.com/annict/annict/internal/repository"
-	"github.com/annict/annict/internal/session"
-	"github.com/annict/annict/internal/testutil"
+	"github.com/annict/annict/go/internal/config"
+	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/repository"
+	"github.com/annict/annict/go/internal/session"
+	"github.com/annict/annict/go/internal/testutil"
 )
 
 // contextKey はcontext.WithValueで使用するキーの型

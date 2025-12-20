@@ -7,10 +7,11 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/annict/annict/internal/password_reset"
-	"github.com/annict/annict/internal/query"
-	"github.com/annict/annict/internal/worker"
 	"github.com/riverqueue/river"
+
+	"github.com/annict/annict/go/internal/password_reset"
+	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/worker"
 )
 
 // CreatePasswordResetTokenUsecase はパスワードリセットトークンを生成するユースケースです

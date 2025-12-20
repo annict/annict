@@ -7,10 +7,11 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/annict/annict/internal/auth"
-	"github.com/annict/annict/internal/query"
-	"github.com/annict/annict/internal/worker"
 	"github.com/riverqueue/river"
+
+	"github.com/annict/annict/go/internal/auth"
+	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/worker"
 )
 
 // SendSignInCodeUsecase は6桁のログインコードを生成・送信するユースケースです

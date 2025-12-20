@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/annict/annict/internal/config"
+	"github.com/annict/annict/go/internal/config"
 )
 
 // テスト用のダミーハンドラー（200 OK を返す）

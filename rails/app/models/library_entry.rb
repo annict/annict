@@ -23,7 +23,7 @@ class LibraryEntry < ApplicationRecord
   scope :has_next_episode, -> { where.not(next_episode_id: nil) }
   scope :has_no_next_episode, -> { where(next_episode_id: nil) }
   scope :has_no_next_slot, -> { where.not(program_id: nil).where(next_slot_id: nil) }
-  scope :with_status, ->(*status_kinds) { joins(:status).where(statuses: {kind: status_kinds}) }
+  scope :with_status, ->(*status_kinds) { joins(:status).merge(Status.with_kind(*status_kinds.flatten)) }
   scope :with_not_deleted_work, -> { joins(:work).merge(Work.only_kept) }
 
   def self.count_on(status_kind)

@@ -12,10 +12,8 @@ module Api
       attr_reader :current_user
 
       before_action :set_sentry_context
-      before_action -> { doorkeeper_authorize! :read }, only: %i[index show]
-      before_action only: %i[create update destroy] do
-        doorkeeper_authorize! :write
-      end
+      before_action :authorize_read_scope, if: -> { action_name.in?(%w[index show]) }
+      before_action :authorize_write_scope, if: -> { action_name.in?(%w[create update destroy]) }
       before_action :logging_request
       skip_before_action :verify_authenticity_token
 
@@ -35,6 +33,14 @@ module Api
       end
 
       private
+
+      def authorize_read_scope
+        doorkeeper_authorize! :read
+      end
+
+      def authorize_write_scope
+        doorkeeper_authorize! :write
+      end
 
       def current_user
         return nil if doorkeeper_token.blank?

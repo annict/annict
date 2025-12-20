@@ -7,10 +7,10 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/annict/annict/internal/auth"
-	"github.com/annict/annict/internal/password_reset"
-	"github.com/annict/annict/internal/query"
-	"github.com/annict/annict/internal/validator"
+	"github.com/annict/annict/go/internal/auth"
+	"github.com/annict/annict/go/internal/password_reset"
+	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/validator"
 )
 
 // UpdatePasswordResetUsecase はパスワードリセットによるパスワード更新を行うユースケースです

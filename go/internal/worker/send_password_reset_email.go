@@ -6,12 +6,13 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/annict/annict/internal/config"
-	"github.com/annict/annict/internal/i18n"
-	"github.com/annict/annict/internal/mail"
-	"github.com/annict/annict/internal/query"
-	password_reset "github.com/annict/annict/internal/templates/emails/password_reset"
 	"github.com/riverqueue/river"
+
+	"github.com/annict/annict/go/internal/config"
+	"github.com/annict/annict/go/internal/i18n"
+	"github.com/annict/annict/go/internal/mail"
+	"github.com/annict/annict/go/internal/query"
+	password_reset "github.com/annict/annict/go/internal/templates/emails/password_reset"
 )
 
 // SendPasswordResetEmailArgs はパスワードリセットメール送信ジョブの引数です

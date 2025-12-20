@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/annict/annict/internal/testutil"
+	"github.com/annict/annict/go/internal/testutil"
 )
 
 // TestCreateEpisodeRecordUsecase_ExecuteBatch はExecuteBatchメソッドのテスト

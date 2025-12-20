@@ -7,14 +7,14 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/annict/annict/internal/clientip"
-	"github.com/annict/annict/internal/i18n"
-	"github.com/annict/annict/internal/middleware"
-	"github.com/annict/annict/internal/password_reset"
-	"github.com/annict/annict/internal/templates/layouts"
-	errorpages "github.com/annict/annict/internal/templates/pages/errors"
-	passwordpages "github.com/annict/annict/internal/templates/pages/password"
-	"github.com/annict/annict/internal/viewmodel"
+	"github.com/annict/annict/go/internal/clientip"
+	"github.com/annict/annict/go/internal/i18n"
+	"github.com/annict/annict/go/internal/middleware"
+	"github.com/annict/annict/go/internal/password_reset"
+	"github.com/annict/annict/go/internal/templates/layouts"
+	errorpages "github.com/annict/annict/go/internal/templates/pages/errors"
+	passwordpages "github.com/annict/annict/go/internal/templates/pages/password"
+	"github.com/annict/annict/go/internal/viewmodel"
 )
 
 // Edit は新しいパスワード入力フォームを表示します (GET /password/edit)

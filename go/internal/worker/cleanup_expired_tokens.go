@@ -5,8 +5,9 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/annict/annict/internal/query"
 	"github.com/riverqueue/river"
+
+	"github.com/annict/annict/go/internal/query"
 )
 
 // CleanupExpiredTokensArgs はトークンクリーンアップジョブの引数です

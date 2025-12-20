@@ -5,7 +5,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/annict/annict/internal/config"
+	"github.com/annict/annict/go/internal/config"
 )
 
 func TestShow(t *testing.T) {

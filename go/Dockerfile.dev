@@ -4,21 +4,31 @@ ARG USER_ID=1000
 ARG GROUP_ID=1000
 ARG USERNAME=developer
 
-RUN \
-    apt update && \
-    apt dist-upgrade -yq && \
-    apt install -y --no-install-recommends \
-    git \
-    curl \
-    build-essential \
-    # Redis の GPG キーと apt リポジトリに必要
-    gnupg \
-    # Redis の GPG キーと apt リポジトリに必要
-    lsb-release \
-    postgresql-client-17 \
-    sudo \
-    zsh \
-    && rm -rf /var/lib/apt/lists/*
+RUN <<EOF
+apt update
+apt dist-upgrade -yq
+
+PACKAGES=$(cat <<'PKGLIST' | sed 's/#.*//'
+  build-essential
+  curl
+  fzf                     # Claude Codeで使用
+  git
+  jq                      # Claude Codeで使用
+  nano                    # Claude Codeで使用
+  gnupg                   # Redis の GPG キーと apt リポジトリに必要
+  lsb-release             # Redis の GPG キーと apt リポジトリに必要
+  postgresql-client-17
+  ripgrep                 # Claude Codeで使用
+  sudo
+  tree                    # Claude Codeで使用
+  vim                     # Claude Codeで使用
+  zsh
+PKGLIST
+)
+
+apt install -y --no-install-recommends $PACKAGES
+rm -rf /var/lib/apt/lists/*
+EOF
 
 # Redis 7.4系のクライアントをインストール（Rails側と同じバージョン）
 RUN curl -fsSL https://packages.redis.io/gpg | gpg --dearmor -o /usr/share/keyrings/redis-archive-keyring.gpg \
@@ -58,6 +68,8 @@ ENV PATH=$NPM_CONFIG_PREFIX/bin:$PATH
 COPY --from=1password/op:2 /usr/local/bin/op /usr/local/bin/op
 
 RUN npm install -g pnpm@10.17.1
+RUN npm install -g @anthropic-ai/claude-code@latest
+RUN npm install -g @modelcontextprotocol/server-filesystem
 
 RUN go install github.com/sqlc-dev/sqlc/cmd/sqlc@v1.27.0
 RUN go install github.com/air-verse/air@latest
@@ -72,5 +84,8 @@ SHELL ["/bin/zsh", "-c"]
 ENV SHELL=/bin/zsh
 
 RUN touch /home/${USERNAME}/.zshrc
+
+RUN git config --global user.email "me@shimba.co" && \
+    git config --global user.name "Koji Shimba"
 
 CMD ["/bin/zsh"]

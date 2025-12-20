@@ -17,6 +17,9 @@ console: ## Railsコンソールを起動
 server: ## Railsサーバーを起動
 	$(OP_RUN) bin/rails server
 
+worker: ## Railsワーカーを起動
+	$(OP_RUN) bin/rails jobs:work
+
 ## リント・フォーマット
 lint: ## Rubyコードのリントを実行
 	$(OP_RUN) bin/standardrb

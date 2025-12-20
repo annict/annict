@@ -7,12 +7,13 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/annict/annict/internal/config"
-	"github.com/annict/annict/internal/repository"
-	"github.com/annict/annict/internal/session"
-	"github.com/annict/annict/internal/testutil"
-	"github.com/annict/annict/internal/usecase"
 	"golang.org/x/crypto/bcrypt"
+
+	"github.com/annict/annict/go/internal/config"
+	"github.com/annict/annict/go/internal/repository"
+	"github.com/annict/annict/go/internal/session"
+	"github.com/annict/annict/go/internal/testutil"
+	"github.com/annict/annict/go/internal/usecase"
 )
 
 // TestCreate_Success ログイン成功のテスト

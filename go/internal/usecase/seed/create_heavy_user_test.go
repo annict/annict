@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/annict/annict/internal/query"
-	"github.com/annict/annict/internal/seed"
-	"github.com/annict/annict/internal/testutil"
+	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/seed"
+	"github.com/annict/annict/go/internal/testutil"
 )
 
 func ptr32(v int32) *int32 {

@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/annict/annict/internal/testutil"
+	"github.com/annict/annict/go/internal/testutil"
 )
 
 func TestCompleteSignUpUsecase_Execute(t *testing.T) {

@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/annict/annict/internal/i18n"
+	"github.com/annict/annict/go/internal/i18n"
 )
 
 func TestRequestValidate(t *testing.T) {

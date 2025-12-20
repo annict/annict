@@ -3,9 +3,9 @@ package middleware
 import (
 	"net/http"
 
-	"github.com/annict/annict/internal/clientip"
-	"github.com/annict/annict/internal/config"
-	"github.com/annict/annict/internal/templates/pages/maintenance"
+	"github.com/annict/annict/go/internal/clientip"
+	"github.com/annict/annict/go/internal/config"
+	"github.com/annict/annict/go/internal/templates/pages/maintenance"
 )
 
 // MaintenanceMiddleware はメンテナンスモード時にアクセスを制限するミドルウェア
