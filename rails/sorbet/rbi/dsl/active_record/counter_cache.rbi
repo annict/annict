@@ -14,7 +14,13 @@ module ActiveRecord::CounterCache
     def _counter_cache_columns; end
     def _counter_cache_columns=(value); end
     def _counter_cache_columns?; end
+    def counter_cached_association_names; end
+    def counter_cached_association_names=(value); end
+    def counter_cached_association_names?; end
   end
 
-  module GeneratedInstanceMethods; end
+  module GeneratedInstanceMethods
+    def counter_cached_association_names; end
+    def counter_cached_association_names?; end
+  end
 end

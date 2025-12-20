@@ -14,6 +14,9 @@ module ActiveRecord::Core
     def _destroy_association_async_job; end
     def _destroy_association_async_job=(value); end
     def _destroy_association_async_job?; end
+    def attributes_for_inspect; end
+    def attributes_for_inspect=(value); end
+    def attributes_for_inspect?; end
     def belongs_to_required_by_default; end
     def belongs_to_required_by_default=(value); end
     def belongs_to_required_by_default?; end

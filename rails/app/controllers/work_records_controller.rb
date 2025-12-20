@@ -5,7 +5,7 @@ class WorkRecordsController < ApplicationV6Controller
   include WorkRecordListSettable
   include WorkHeaderLoadable
 
-  before_action :authenticate_user!, only: %i[edit update destroy]
+  before_action :authenticate_user!, only: %i[edit update]
 
   def index
     set_page_category PageCategory::WORK_RECORD_LIST

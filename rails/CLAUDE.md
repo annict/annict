@@ -21,7 +21,7 @@ Rails版は既存の本番システムであり、以下の方針で開発・保
 ### バックエンド
 
 - Ruby 3.3.10
-- Rails 7.1.6
+- Rails 7.2.3
 - PostgreSQL 17.3
 - Redis
 - **認証**: Devise
