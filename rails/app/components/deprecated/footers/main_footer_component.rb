@@ -98,7 +98,7 @@ module Deprecated::Footers
                 h.tag :div, class: "col-6 text-end" do
                   h.tag :div, class: "c-footer__copyright small" do
                     h.tag :i, class: "fa-solid fa-copyright me-1"
-                    h.text "2014-2024 Annict"
+                    h.text "2014-2026 Annict"
                   end
                 end
               end
