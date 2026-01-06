@@ -19,16 +19,10 @@
       <div class="card-body">
         <dl class="row">
           <dt class="col-sm-3">
-            サービス名
+            販売事業者
           </dt>
           <dd class="col-sm-9 mb-3">
-            Annict (アニクト)
-          </dd>
-          <dt class="col-sm-3">
-            サービスURL
-          </dt>
-          <dd class="col-sm-9 mb-3">
-            https://annict.com
+            榛葉 光二
           </dd>
           <dt class="col-sm-3">
             運営責任者
@@ -40,7 +34,13 @@
             住所
           </dt>
           <dd class="col-sm-9 mb-3">
-            <%= image_tag "address.jpg", width: 230 %>
+            請求があった場合には速やかに開示いたします
+          </dd>
+          <dt class="col-sm-3">
+            電話番号
+          </dt>
+          <dd class="col-sm-9 mb-3">
+            請求があった場合には速やかに開示いたします
           </dd>
           <dt class="col-sm-3">
             メールアドレス
@@ -49,55 +49,49 @@
             hello@annict.com
           </dd>
           <dt class="col-sm-3">
-            お支払い方法
-          </dt>
-          <dd class="col-sm-9 mb-3">
-            決済サービス「Gumroad」を利用したクレジットカードまたはPayPal決済
-          </dd>
-          <dt class="col-sm-3">
             販売価格
           </dt>
           <dd class="col-sm-9 mb-3">
             月額290円または年額2,900円
-            <br>
-            <small>
-              支払いは最新の為替レートに基づき米ドルで行われます。
-            </small>
           </dd>
           <dt class="col-sm-3">
             商品代金以外の必要料金
           </dt>
           <dd class="col-sm-9 mb-3">
-            ありません。
+            ありません
+          </dd>
+          <dt class="col-sm-3">
+            お支払い方法
+          </dt>
+          <dd class="col-sm-9 mb-3">
+            決済サービス「Stripe」または「Gumroad」を利用したクレジットカード決済
+          </dd>
+          <dt class="col-sm-3">
+            支払時期
+          </dt>
+          <dd class="col-sm-9 mb-3">
+            申込日に初回決済を行い、以降は毎月同日に自動更新となります
           </dd>
           <dt class="col-sm-3">
             サービス提供時期
           </dt>
           <dd class="col-sm-9 mb-3">
-            お支払い手続きが完了し次第、すぐにご利用いただけます。
+            お支払い手続きが完了し次第、すぐにご利用いただけます
           </dd>
           <dt class="col-sm-3">
             返品・キャンセルについて
           </dt>
           <dd class="col-sm-9 mb-3">
-            デジタルコンテンツの性質上、返品またはキャンセルはできません。
+            デジタルコンテンツの性質上、返品またはキャンセルはできません<br>
+            サブスクリプションはいつでも解約可能で、解約後は次回更新日から課金を停止いたします
           </dd>
           <dt class="col-sm-3">
             動作環境
           </dt>
           <dd class="col-sm-9 mb-3">
-            <a href="<%= faq_path %>">よくある質問</a>の対応ブラウザの項目をご確認下さい。
+            <a href="<%= faq_path %>">よくある質問</a>の対応ブラウザの項目をご確認下さい
           </dd>
         </dl>
-
-        <ul class="list-unstyled small">
-          <li>
-            ※ 住所はバーチャルオフィスの住所になります
-          </li>
-          <li>
-            ※ 電話番号は利用者からの請求により遅滞なく提供します
-          </li>
-        </ul>
       </div>
     </div>
   </div>
