@@ -58,26 +58,29 @@ RSpec.describe "GET /fragment/@:username/tracking_heatmap", type: :request do
   end
 
   it "150日以上前の記録は含まれないこと" do
-    user = FactoryBot.create(:registered_user)
-    work = FactoryBot.create(:work)
+    # テストの日付を固定して、日付依存の問題を回避
+    travel_to Time.zone.local(2025, 7, 21, 12, 0, 0) do
+      user = FactoryBot.create(:registered_user)
+      work = FactoryBot.create(:work)
 
-    # コントローラーで使用される基準日
-    date_from = (Time.zone.today - 150.days).beginning_of_week(:sunday)
+      # コントローラーで使用される基準日
+      date_from = (Time.zone.today - 150.days).beginning_of_week(:sunday)
 
-    # 基準日の記録（含まれるはず）
-    FactoryBot.create(:record, user: user, work: work, watched_at: date_from)
+      # 基準日の記録（含まれるはず）
+      FactoryBot.create(:record, user: user, work: work, watched_at: date_from)
 
-    # 基準日の1日前の記録（含まれないはず）
-    date_before = date_from - 1.day
-    FactoryBot.create(:record, user: user, work: work, watched_at: date_before)
+      # 基準日の1日前の記録（含まれないはず）
+      date_before = date_from - 1.day
+      FactoryBot.create(:record, user: user, work: work, watched_at: date_before)
 
-    get "/fragment/@#{user.username}/tracking_heatmap"
+      get "/fragment/@#{user.username}/tracking_heatmap"
 
-    expect(response).to have_http_status(:ok)
-    # ヒートマップには基準日が含まれる
-    expect(response.body).to include(date_from.strftime("%Y-%m-%d"))
-    # 基準日より前は含まれない
-    expect(response.body).not_to include(date_before.strftime("%Y-%m-%d"))
+      expect(response).to have_http_status(:ok)
+      # ヒートマップには基準日が含まれる
+      expect(response.body).to include(date_from.strftime("%Y-%m-%d"))
+      # 基準日より前は含まれない
+      expect(response.body).not_to include(date_before.strftime("%Y-%m-%d"))
+    end
   end
 
   it "別のユーザーのヒートマップにアクセスした場合でも表示されること" do
@@ -104,24 +107,27 @@ RSpec.describe "GET /fragment/@:username/tracking_heatmap", type: :request do
   end
 
   it "タイムゾーンがクッキーに設定されている場合、その値が使用されること" do
-    user = FactoryBot.create(:registered_user)
-    work = FactoryBot.create(:work)
+    # テストの日付を固定して、日付依存の問題を回避
+    travel_to Time.zone.local(2025, 7, 21, 12, 0, 0) do
+      user = FactoryBot.create(:registered_user)
+      work = FactoryBot.create(:work)
 
-    # 日付の境界をテストするため、日本時間の翌日0時の記録を作成
-    # UTC時間では前日の15時
-    watched_at_jst = Time.zone.parse("2025-07-21 00:00:00 JST")
-    watched_at_utc = watched_at_jst.utc
-    FactoryBot.create(:record, user: user, work: work, watched_at: watched_at_utc)
+      # 日付の境界をテストするため、日本時間の翌日0時の記録を作成
+      # UTC時間では前日の15時
+      watched_at_jst = Time.zone.parse("2025-07-21 00:00:00 JST")
+      watched_at_utc = watched_at_jst.utc
+      FactoryBot.create(:record, user: user, work: work, watched_at: watched_at_utc)
 
-    # ヨーロッパ/ロンドンのタイムゾーンを設定（UTC+1時間）
-    # この場合、UTC 2025-07-20 15:00は、ロンドン時間で2025-07-20 16:00となる
-    get "/fragment/@#{user.username}/tracking_heatmap", headers: {
-      "Cookie" => "ann_time_zone=Europe/London"
-    }
+      # ヨーロッパ/ロンドンのタイムゾーンを設定（UTC+1時間）
+      # この場合、UTC 2025-07-20 15:00は、ロンドン時間で2025-07-20 16:00となる
+      get "/fragment/@#{user.username}/tracking_heatmap", headers: {
+        "Cookie" => "ann_time_zone=Europe/London"
+      }
 
-    expect(response).to have_http_status(:ok)
-    # ロンドン時間では7月20日として表示される
-    expect(response.body).to include("2025-07-20")
+      expect(response).to have_http_status(:ok)
+      # ロンドン時間では7月20日として表示される
+      expect(response.body).to include("2025-07-20")
+    end
   end
 
   it "ログインユーザーのタイムゾーンが優先されること" do
