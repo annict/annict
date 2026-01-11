@@ -5,6 +5,7 @@ import (
 	"github.com/annict/annict/go/internal/config"
 	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/session"
+	annictStripe "github.com/annict/annict/go/internal/stripe"
 )
 
 // Handler はサポーター関連のHTTPハンドラーです
@@ -13,6 +14,7 @@ type Handler struct {
 	sessionManager        *session.Manager
 	stripeSubscriberRepo  *repository.StripeSubscriberRepository
 	gumroadSubscriberRepo *repository.GumroadSubscriberRepository
+	stripeCfg             *annictStripe.Config
 }
 
 // NewHandler は新しいHandlerを作成します
@@ -21,11 +23,13 @@ func NewHandler(
 	sessionManager *session.Manager,
 	stripeSubscriberRepo *repository.StripeSubscriberRepository,
 	gumroadSubscriberRepo *repository.GumroadSubscriberRepository,
+	stripeCfg *annictStripe.Config,
 ) *Handler {
 	return &Handler{
 		cfg:                   cfg,
 		sessionManager:        sessionManager,
 		stripeSubscriberRepo:  stripeSubscriberRepo,
 		gumroadSubscriberRepo: gumroadSubscriberRepo,
+		stripeCfg:             stripeCfg,
 	}
 }

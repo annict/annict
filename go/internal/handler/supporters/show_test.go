@@ -14,6 +14,7 @@ import (
 	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/session"
+	annictStripe "github.com/annict/annict/go/internal/stripe"
 	"github.com/annict/annict/go/internal/testutil"
 )
 
@@ -31,7 +32,10 @@ func setupTestHandler(t *testing.T, tx *sql.Tx, db *sql.DB) *Handler {
 	stripeSubscriberRepo := repository.NewStripeSubscriberRepository(queries)
 	gumroadSubscriberRepo := repository.NewGumroadSubscriberRepository(queries)
 
-	return NewHandler(cfg, sessionManager, stripeSubscriberRepo, gumroadSubscriberRepo)
+	// テスト用のStripe設定（テストではStripe APIを呼び出さないため空でOK）
+	stripeCfg := &annictStripe.Config{}
+
+	return NewHandler(cfg, sessionManager, stripeSubscriberRepo, gumroadSubscriberRepo, stripeCfg)
 }
 
 // createUserWithStripeSubscriber はStripeサブスクライバーを持つユーザーを作成します

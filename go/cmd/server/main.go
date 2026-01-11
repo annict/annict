@@ -41,6 +41,7 @@ import (
 	"github.com/annict/annict/go/internal/repository"
 	annictSentry "github.com/annict/annict/go/internal/sentry"
 	"github.com/annict/annict/go/internal/session"
+	annictStripe "github.com/annict/annict/go/internal/stripe"
 	"github.com/annict/annict/go/internal/turnstile"
 	"github.com/annict/annict/go/internal/usecase"
 	"github.com/annict/annict/go/internal/worker"
@@ -325,7 +326,14 @@ func main() {
 	// サポーターページハンドラーの初期化
 	stripeSubscriberRepo := repository.NewStripeSubscriberRepository(queries)
 	gumroadSubscriberRepo := repository.NewGumroadSubscriberRepository(queries)
-	supportersHandler := supporters.NewHandler(cfg, sessionManager, stripeSubscriberRepo, gumroadSubscriberRepo)
+	annictStripeCfg := &annictStripe.Config{
+		SecretKey:      cfg.StripeSecretKey,
+		PublishableKey: cfg.StripePublishableKey,
+		WebhookSecret:  cfg.StripeWebhookSecret,
+		PriceMonthlyID: cfg.StripePriceMonthlyID,
+		PriceYearlyID:  cfg.StripePriceYearlyID,
+	}
+	supportersHandler := supporters.NewHandler(cfg, sessionManager, stripeSubscriberRepo, gumroadSubscriberRepo, annictStripeCfg)
 
 	// Stripe Webhookハンドラーの初期化
 	stripeWebhookEventRepo := repository.NewStripeWebhookEventRepository(queries)
@@ -368,6 +376,7 @@ func main() {
 
 	// サポーターページ
 	r.Get("/supporters", supportersHandler.Show)
+	r.Post("/supporters/checkout", supportersHandler.Create)
 
 	// Stripe Webhook
 	r.Post("/webhooks/stripe", stripeWebhookHandler.Create)

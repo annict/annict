@@ -726,3 +726,16 @@ other = "Cancellation Date"
 [supporters_manage_button]
 description = "Manage button"
 other = "Manage Subscription"
+
+# Supporter Checkout
+[supporters_checkout_invalid_plan]
+description = "Invalid plan selection error"
+other = "Invalid plan selected"
+
+[supporters_checkout_already_active]
+description = "Already active subscription error"
+other = "You are already a supporter"
+
+[supporters_checkout_error]
+description = "Checkout processing error"
+other = "An error occurred during checkout. Please try again later."
