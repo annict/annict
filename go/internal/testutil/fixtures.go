@@ -628,3 +628,108 @@ func CreateTestStripeSubscriberWithStatus(t *testing.T, tx *sql.Tx, status strin
 	t.Helper()
 	return NewStripeSubscriberBuilder(t, tx).WithStripeStatus(status).Build()
 }
+
+// StripeWebhookEventBuilder はStripe Webhookイベントテストデータのビルダー
+type StripeWebhookEventBuilder struct {
+	tx              *sql.Tx
+	t               *testing.T
+	stripeEventID   string
+	stripeEventType string
+	stripePayload   string
+	status          string
+	receivedAt      time.Time
+}
+
+// NewStripeWebhookEventBuilder は新しいStripeWebhookEventBuilderを作成します
+func NewStripeWebhookEventBuilder(t *testing.T, tx *sql.Tx) *StripeWebhookEventBuilder {
+	uniqueID := uuid.New().String()[:8]
+
+	return &StripeWebhookEventBuilder{
+		tx:              tx,
+		t:               t,
+		stripeEventID:   fmt.Sprintf("evt_test_%s", uniqueID),
+		stripeEventType: "customer.subscription.created",
+		stripePayload:   `{"id": "evt_test", "type": "customer.subscription.created"}`,
+		status:          "pending",
+		receivedAt:      time.Now(),
+	}
+}
+
+// WithStripeEventID はStripeイベントIDを設定します
+func (b *StripeWebhookEventBuilder) WithStripeEventID(id string) *StripeWebhookEventBuilder {
+	b.stripeEventID = id
+	return b
+}
+
+// WithStripeEventType はStripeイベントタイプを設定します
+func (b *StripeWebhookEventBuilder) WithStripeEventType(eventType string) *StripeWebhookEventBuilder {
+	b.stripeEventType = eventType
+	return b
+}
+
+// WithStripePayload はStripeペイロードを設定します
+func (b *StripeWebhookEventBuilder) WithStripePayload(payload string) *StripeWebhookEventBuilder {
+	b.stripePayload = payload
+	return b
+}
+
+// WithStatus はステータスを設定します
+func (b *StripeWebhookEventBuilder) WithStatus(status string) *StripeWebhookEventBuilder {
+	b.status = status
+	return b
+}
+
+// WithReceivedAt は受信日時を設定します
+func (b *StripeWebhookEventBuilder) WithReceivedAt(receivedAt time.Time) *StripeWebhookEventBuilder {
+	b.receivedAt = receivedAt
+	return b
+}
+
+// Build はテスト用のStripe Webhookイベントデータをデータベースに作成します
+func (b *StripeWebhookEventBuilder) Build() int64 {
+	b.t.Helper()
+
+	query := `
+		INSERT INTO stripe_webhook_events (
+			stripe_event_id,
+			stripe_event_type,
+			stripe_payload,
+			status,
+			received_at,
+			created_at,
+			updated_at
+		) VALUES (
+			$1, $2, $3, $4, $5, $6, $7
+		) RETURNING id
+	`
+
+	var id int64
+	err := b.tx.QueryRow(
+		query,
+		b.stripeEventID,
+		b.stripeEventType,
+		b.stripePayload,
+		b.status,
+		b.receivedAt,
+		time.Now(),
+		time.Now(),
+	).Scan(&id)
+
+	if err != nil {
+		b.t.Fatalf("Stripe Webhookイベントデータの作成に失敗しました: %v", err)
+	}
+
+	return id
+}
+
+// CreateTestStripeWebhookEvent は簡単にテスト用Stripe Webhookイベントを作成するヘルパー関数
+func CreateTestStripeWebhookEvent(t *testing.T, tx *sql.Tx) int64 {
+	t.Helper()
+	return NewStripeWebhookEventBuilder(t, tx).Build()
+}
+
+// CreateTestStripeWebhookEventWithStatus は指定ステータスでテスト用Stripe Webhookイベントを作成するヘルパー関数
+func CreateTestStripeWebhookEventWithStatus(t *testing.T, tx *sql.Tx, status string) int64 {
+	t.Helper()
+	return NewStripeWebhookEventBuilder(t, tx).WithStatus(status).Build()
+}
