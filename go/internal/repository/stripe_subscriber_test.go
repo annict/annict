@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/testutil"
@@ -203,37 +204,37 @@ func TestStripeSubscriberRepository_IsActive(t *testing.T) {
 
 	testCases := []struct {
 		name     string
-		status   string
+		status   model.StripeSubscriptionStatus
 		expected bool
 	}{
 		{
 			name:     "active状態はアクティブ",
-			status:   "active",
+			status:   model.StripeSubscriptionStatusActive,
 			expected: true,
 		},
 		{
 			name:     "past_due状態はアクティブ（猶予期間）",
-			status:   "past_due",
+			status:   model.StripeSubscriptionStatusPastDue,
 			expected: true,
 		},
 		{
 			name:     "canceled状態は非アクティブ",
-			status:   "canceled",
+			status:   model.StripeSubscriptionStatusCanceled,
 			expected: false,
 		},
 		{
 			name:     "unpaid状態は非アクティブ",
-			status:   "unpaid",
+			status:   model.StripeSubscriptionStatusUnpaid,
 			expected: false,
 		},
 		{
 			name:     "trialing状態は非アクティブ",
-			status:   "trialing",
+			status:   model.StripeSubscriptionStatusTrialing,
 			expected: false,
 		},
 		{
 			name:     "incomplete状態は非アクティブ",
-			status:   "incomplete",
+			status:   model.StripeSubscriptionStatusIncomplete,
 			expected: false,
 		},
 	}
@@ -241,7 +242,7 @@ func TestStripeSubscriberRepository_IsActive(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			subscriber := &query.StripeSubscriber{
-				StripeStatus: tc.status,
+				StripeStatus: tc.status.String(),
 			}
 			result := repo.IsActive(subscriber)
 			if result != tc.expected {

@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
 )
 
@@ -50,5 +51,6 @@ func (r *StripeSubscriberRepository) UpdateStatus(ctx context.Context, params qu
 // active または past_due 状態をアクティブとして扱います
 // past_due は支払い遅延中だが、Stripeがリトライ中のため猶予期間として利用可能
 func (r *StripeSubscriberRepository) IsActive(subscriber *query.StripeSubscriber) bool {
-	return subscriber.StripeStatus == "active" || subscriber.StripeStatus == "past_due"
+	status := model.StripeSubscriptionStatus(subscriber.StripeStatus)
+	return status.IsActive()
 }
