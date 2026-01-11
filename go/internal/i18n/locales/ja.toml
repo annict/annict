@@ -726,3 +726,16 @@ other = "終了予定日"
 [supporters_manage_button]
 description = "管理ボタン"
 other = "サブスクリプションを管理"
+
+# サポーターCheckout関連
+[supporters_checkout_invalid_plan]
+description = "無効なプラン選択エラー"
+other = "無効なプランが選択されました"
+
+[supporters_checkout_already_active]
+description = "既にアクティブなサブスクリプションが存在するエラー"
+other = "既にサポーター登録済みです"
+
+[supporters_checkout_error]
+description = "Checkout処理エラー"
+other = "決済処理中にエラーが発生しました。しばらくしてから再度お試しください。"
