@@ -196,8 +196,8 @@ func Load() (*Config, error) {
 	cfg.StripeSecretKey = os.Getenv("ANNICT_STRIPE_SECRET_KEY")
 	cfg.StripePublishableKey = os.Getenv("ANNICT_STRIPE_PUBLISHABLE_KEY")
 	cfg.StripeWebhookSecret = os.Getenv("ANNICT_STRIPE_WEBHOOK_SECRET")
-	cfg.StripePriceMonthlyID = os.Getenv("ANNICT_STRIPE_PRICE_MONTHLY")
-	cfg.StripePriceYearlyID = os.Getenv("ANNICT_STRIPE_PRICE_YEARLY")
+	cfg.StripePriceMonthlyID = os.Getenv("ANNICT_STRIPE_PRICE_MONTHLY_ID")
+	cfg.StripePriceYearlyID = os.Getenv("ANNICT_STRIPE_PRICE_YEARLY_ID")
 
 	// アセットバージョン（Gitコミットハッシュ）を設定
 	cfg.AssetVersion = getGitCommitHash()
