@@ -16,6 +16,7 @@ import (
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/repository"
 	annictSentry "github.com/annict/annict/go/internal/sentry"
+	annictstripe "github.com/annict/annict/go/internal/stripe"
 	"github.com/annict/annict/go/internal/usecase"
 )
 
@@ -268,8 +269,8 @@ func (h *Handler) handleCustomerSubscriptionUpdated(ctx context.Context, event *
 		StripeStatus:             string(subscription.Status),
 		StripeCurrentPeriodStart: time.Unix(item.CurrentPeriodStart, 0),
 		StripeCurrentPeriodEnd:   time.Unix(item.CurrentPeriodEnd, 0),
-		StripeCancelAt:           nullTimeFromUnix(subscription.CancelAt),
-		StripeCanceledAt:         nullTimeFromUnix(subscription.CanceledAt),
+		StripeCancelAt:           annictstripe.NullTimeFromUnix(subscription.CancelAt),
+		StripeCanceledAt:         annictstripe.NullTimeFromUnix(subscription.CanceledAt),
 	}
 
 	result, err := h.updateStripeSubscriberUC.Execute(ctx, input)
@@ -351,16 +352,4 @@ func (h *Handler) handleCustomerSubscriptionDeleted(ctx context.Context, event *
 	}
 
 	return nil
-}
-
-// nullTimeFromUnix はUnixタイムスタンプからsql.NullTimeを作成します
-// 値が0の場合はValidがfalseになります
-func nullTimeFromUnix(ts int64) sql.NullTime {
-	if ts == 0 {
-		return sql.NullTime{}
-	}
-	return sql.NullTime{
-		Time:  time.Unix(ts, 0),
-		Valid: true,
-	}
 }
