@@ -23,6 +23,7 @@ type Querier interface {
 	CreateSignInCode(ctx context.Context, arg CreateSignInCodeParams) (SignInCode, error)
 	CreateSignUpCode(ctx context.Context, arg CreateSignUpCodeParams) (SignUpCode, error)
 	CreateStripeSubscriber(ctx context.Context, arg CreateStripeSubscriberParams) (StripeSubscriber, error)
+	CreateStripeWebhookEvent(ctx context.Context, arg CreateStripeWebhookEventParams) (StripeWebhookEvent, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (CreateUserRow, error)
 	CreateWorkImage(ctx context.Context, arg CreateWorkImageParams) (int64, error)
 	DeleteExpiredPasswordResetTokens(ctx context.Context, expiresAt time.Time) error
@@ -47,6 +48,7 @@ type Querier interface {
 	GetStripeSubscriberByID(ctx context.Context, id int64) (StripeSubscriber, error)
 	GetStripeSubscriberByStripeCustomerID(ctx context.Context, stripeCustomerID string) (StripeSubscriber, error)
 	GetStripeSubscriberByStripeSubscriptionID(ctx context.Context, stripeSubscriptionID string) (StripeSubscriber, error)
+	GetStripeWebhookEventByStripeEventID(ctx context.Context, stripeEventID string) (StripeWebhookEvent, error)
 	GetUserByEmail(ctx context.Context, lower string) (GetUserByEmailRow, error)
 	GetUserByEmailForSignIn(ctx context.Context, lower string) (GetUserByEmailForSignInRow, error)
 	GetUserByEmailOrUsername(ctx context.Context, lower string) (GetUserByEmailOrUsernameRow, error)
@@ -69,6 +71,7 @@ type Querier interface {
 	UpdateSession(ctx context.Context, arg UpdateSessionParams) error
 	UpdateStripeSubscriber(ctx context.Context, arg UpdateStripeSubscriberParams) error
 	UpdateStripeSubscriberStatus(ctx context.Context, arg UpdateStripeSubscriberStatusParams) error
+	UpdateStripeWebhookEventStatus(ctx context.Context, arg UpdateStripeWebhookEventStatusParams) error
 	UpdateUserPassword(ctx context.Context, arg UpdateUserPasswordParams) error
 }
 

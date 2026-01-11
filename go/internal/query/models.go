@@ -973,6 +973,19 @@ type StripeSubscriber struct {
 	UpdatedAt                time.Time    `db:"updated_at"`
 }
 
+type StripeWebhookEvent struct {
+	ID              int64           `db:"id"`
+	StripeEventID   string          `db:"stripe_event_id"`
+	StripeEventType string          `db:"stripe_event_type"`
+	StripePayload   json.RawMessage `db:"stripe_payload"`
+	Status          string          `db:"status"`
+	ErrorMessage    sql.NullString  `db:"error_message"`
+	ReceivedAt      time.Time       `db:"received_at"`
+	ProcessedAt     sql.NullTime    `db:"processed_at"`
+	CreatedAt       time.Time       `db:"created_at"`
+	UpdatedAt       time.Time       `db:"updated_at"`
+}
+
 type SyobocalAlert struct {
 	ID            int64          `db:"id"`
 	WorkID        sql.NullInt64  `db:"work_id"`
