@@ -497,3 +497,134 @@ func CreateTestEpisode(t *testing.T, tx *sql.Tx, workID int64, number string) in
 	t.Helper()
 	return NewEpisodeBuilder(t, tx, workID).WithNumber(number).Build()
 }
+
+// StripeSubscriberBuilder はStripeサブスクライバーテストデータのビルダー
+type StripeSubscriberBuilder struct {
+	tx                       *sql.Tx
+	t                        *testing.T
+	stripeCustomerID         string
+	stripeSubscriptionID     string
+	stripePriceID            string
+	stripeStatus             string
+	stripeCurrentPeriodStart time.Time
+	stripeCurrentPeriodEnd   time.Time
+	stripeCancelAt           sql.NullTime
+	stripeCanceledAt         sql.NullTime
+}
+
+// NewStripeSubscriberBuilder は新しいStripeSubscriberBuilderを作成します
+func NewStripeSubscriberBuilder(t *testing.T, tx *sql.Tx) *StripeSubscriberBuilder {
+	uniqueID := uuid.New().String()[:8]
+	now := time.Now()
+
+	return &StripeSubscriberBuilder{
+		tx:                       tx,
+		t:                        t,
+		stripeCustomerID:         fmt.Sprintf("cus_test_%s", uniqueID),
+		stripeSubscriptionID:     fmt.Sprintf("sub_test_%s", uniqueID),
+		stripePriceID:            "price_monthly_test",
+		stripeStatus:             "active",
+		stripeCurrentPeriodStart: now,
+		stripeCurrentPeriodEnd:   now.AddDate(0, 1, 0),
+		stripeCancelAt:           sql.NullTime{},
+		stripeCanceledAt:         sql.NullTime{},
+	}
+}
+
+// WithStripeCustomerID はStripe顧客IDを設定します
+func (b *StripeSubscriberBuilder) WithStripeCustomerID(id string) *StripeSubscriberBuilder {
+	b.stripeCustomerID = id
+	return b
+}
+
+// WithStripeSubscriptionID はStripeサブスクリプションIDを設定します
+func (b *StripeSubscriberBuilder) WithStripeSubscriptionID(id string) *StripeSubscriberBuilder {
+	b.stripeSubscriptionID = id
+	return b
+}
+
+// WithStripePriceID はStripe価格IDを設定します
+func (b *StripeSubscriberBuilder) WithStripePriceID(id string) *StripeSubscriberBuilder {
+	b.stripePriceID = id
+	return b
+}
+
+// WithStripeStatus はStripeサブスクリプションステータスを設定します
+func (b *StripeSubscriberBuilder) WithStripeStatus(status string) *StripeSubscriberBuilder {
+	b.stripeStatus = status
+	return b
+}
+
+// WithCurrentPeriod は現在の請求期間を設定します
+func (b *StripeSubscriberBuilder) WithCurrentPeriod(start, end time.Time) *StripeSubscriberBuilder {
+	b.stripeCurrentPeriodStart = start
+	b.stripeCurrentPeriodEnd = end
+	return b
+}
+
+// WithCancelAt はキャンセル予定日時を設定します
+func (b *StripeSubscriberBuilder) WithCancelAt(cancelAt time.Time) *StripeSubscriberBuilder {
+	b.stripeCancelAt = sql.NullTime{Time: cancelAt, Valid: true}
+	return b
+}
+
+// WithCanceledAt は実際にキャンセルされた日時を設定します
+func (b *StripeSubscriberBuilder) WithCanceledAt(canceledAt time.Time) *StripeSubscriberBuilder {
+	b.stripeCanceledAt = sql.NullTime{Time: canceledAt, Valid: true}
+	return b
+}
+
+// Build はテスト用のStripeサブスクライバーデータをデータベースに作成します
+func (b *StripeSubscriberBuilder) Build() int64 {
+	b.t.Helper()
+
+	query := `
+		INSERT INTO stripe_subscribers (
+			stripe_customer_id,
+			stripe_subscription_id,
+			stripe_price_id,
+			stripe_status,
+			stripe_current_period_start,
+			stripe_current_period_end,
+			stripe_cancel_at,
+			stripe_canceled_at,
+			created_at,
+			updated_at
+		) VALUES (
+			$1, $2, $3, $4, $5, $6, $7, $8, $9, $10
+		) RETURNING id
+	`
+
+	var id int64
+	err := b.tx.QueryRow(
+		query,
+		b.stripeCustomerID,
+		b.stripeSubscriptionID,
+		b.stripePriceID,
+		b.stripeStatus,
+		b.stripeCurrentPeriodStart,
+		b.stripeCurrentPeriodEnd,
+		b.stripeCancelAt,
+		b.stripeCanceledAt,
+		time.Now(),
+		time.Now(),
+	).Scan(&id)
+
+	if err != nil {
+		b.t.Fatalf("Stripeサブスクライバーデータの作成に失敗しました: %v", err)
+	}
+
+	return id
+}
+
+// CreateTestStripeSubscriber は簡単にテスト用Stripeサブスクライバーを作成するヘルパー関数
+func CreateTestStripeSubscriber(t *testing.T, tx *sql.Tx) int64 {
+	t.Helper()
+	return NewStripeSubscriberBuilder(t, tx).Build()
+}
+
+// CreateTestStripeSubscriberWithStatus は指定ステータスでテスト用Stripeサブスクライバーを作成するヘルパー関数
+func CreateTestStripeSubscriberWithStatus(t *testing.T, tx *sql.Tx, status string) int64 {
+	t.Helper()
+	return NewStripeSubscriberBuilder(t, tx).WithStripeStatus(status).Build()
+}
