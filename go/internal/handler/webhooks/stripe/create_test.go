@@ -15,6 +15,7 @@ import (
 	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/testutil"
+	"github.com/annict/annict/go/internal/usecase"
 )
 
 // generateStripeSignature はテスト用のStripe Webhook署名を生成します
@@ -30,7 +31,7 @@ func TestCreate_SignatureValidation(t *testing.T) {
 	t.Parallel()
 
 	// テストDBをセットアップ
-	_, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTestDB(t)
 	queries := query.New(tx)
 
 	// テスト用の設定
@@ -44,8 +45,11 @@ func TestCreate_SignatureValidation(t *testing.T) {
 	stripeSubscriberRepo := repository.NewStripeSubscriberRepository(queries)
 	userRepo := repository.NewUserRepository(queries)
 
+	// UseCaseの作成
+	createStripeSubscriberUC := usecase.NewCreateStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo)
+
 	// ハンドラーの作成
-	handler := NewHandler(cfg, stripeWebhookEventRepo, stripeSubscriberRepo, userRepo)
+	handler := NewHandler(cfg, stripeWebhookEventRepo, stripeSubscriberRepo, userRepo, createStripeSubscriberUC)
 
 	tests := []struct {
 		name           string
@@ -126,7 +130,7 @@ func TestCreate_Idempotency(t *testing.T) {
 	t.Parallel()
 
 	// テストDBをセットアップ
-	_, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTestDB(t)
 	queries := query.New(tx)
 
 	// テスト用の設定
@@ -140,8 +144,11 @@ func TestCreate_Idempotency(t *testing.T) {
 	stripeSubscriberRepo := repository.NewStripeSubscriberRepository(queries)
 	userRepo := repository.NewUserRepository(queries)
 
+	// UseCaseの作成
+	createStripeSubscriberUC := usecase.NewCreateStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo)
+
 	// ハンドラーの作成
-	handler := NewHandler(cfg, stripeWebhookEventRepo, stripeSubscriberRepo, userRepo)
+	handler := NewHandler(cfg, stripeWebhookEventRepo, stripeSubscriberRepo, userRepo, createStripeSubscriberUC)
 
 	// 既にイベントを登録
 	existingEventID := "evt_existing_event_123"
@@ -184,7 +191,7 @@ func TestCreate_EventProcessing(t *testing.T) {
 	t.Parallel()
 
 	// テストDBをセットアップ
-	_, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTestDB(t)
 	queries := query.New(tx)
 
 	// テスト用の設定
@@ -198,8 +205,11 @@ func TestCreate_EventProcessing(t *testing.T) {
 	stripeSubscriberRepo := repository.NewStripeSubscriberRepository(queries)
 	userRepo := repository.NewUserRepository(queries)
 
+	// UseCaseの作成
+	createStripeSubscriberUC := usecase.NewCreateStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo)
+
 	// ハンドラーの作成
-	handler := NewHandler(cfg, stripeWebhookEventRepo, stripeSubscriberRepo, userRepo)
+	handler := NewHandler(cfg, stripeWebhookEventRepo, stripeSubscriberRepo, userRepo, createStripeSubscriberUC)
 
 	tests := []struct {
 		name           string

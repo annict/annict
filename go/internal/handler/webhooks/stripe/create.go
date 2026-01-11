@@ -15,6 +15,7 @@ import (
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/repository"
 	annictSentry "github.com/annict/annict/go/internal/sentry"
+	"github.com/annict/annict/go/internal/usecase"
 )
 
 // 処理対象のイベントタイプ
@@ -178,19 +179,55 @@ func (h *Handler) processEvent(ctx context.Context, event *stripe.Event, webhook
 }
 
 // handleCheckoutSessionCompleted はcheckout.session.completedイベントを処理します
-// タスク3-2で実装予定
 func (h *Handler) handleCheckoutSessionCompleted(ctx context.Context, event *stripe.Event, webhookEventID int64) error {
-	slog.InfoContext(ctx, "checkout.session.completedイベントを受信（未実装）",
+	slog.InfoContext(ctx, "checkout.session.completedイベントを受信",
 		"stripe_event_id", event.ID,
 	)
 
-	// TODO: タスク3-2で実装
-	// - Checkoutセッションからサブスクリプション情報を取得
-	// - StripeSubscriberレコードを作成
-	// - Userとの紐付け
+	// イベントデータからチェックアウトセッションを取得
+	var session stripe.CheckoutSession
+	if err := json.Unmarshal(event.Data.Raw, &session); err != nil {
+		return fmt.Errorf("チェックアウトセッションのパースに失敗: %w", err)
+	}
 
-	if err := h.stripeWebhookEventRepo.MarkAsSkipped(ctx, webhookEventID); err != nil {
-		return fmt.Errorf("イベントスキップのマークに失敗: %w", err)
+	// サブスクリプションIDがない場合はスキップ（一回限りの支払いなど）
+	if session.Subscription == nil {
+		slog.InfoContext(ctx, "サブスクリプションIDがないためスキップ",
+			"stripe_event_id", event.ID,
+		)
+		if err := h.stripeWebhookEventRepo.MarkAsSkipped(ctx, webhookEventID); err != nil {
+			return fmt.Errorf("イベントスキップのマークに失敗: %w", err)
+		}
+		return nil
+	}
+
+	// metadataからユーザーIDを取得
+	userID, err := usecase.ParseUserIDFromMetadata(session.Metadata)
+	if err != nil {
+		return fmt.Errorf("ユーザーID取得に失敗: %w", err)
+	}
+
+	// StripeSubscriberを作成してUserと紐付け
+	input := usecase.CreateStripeSubscriberInput{
+		StripeCustomerID:     session.Customer.ID,
+		StripeSubscriptionID: session.Subscription.ID,
+		UserID:               userID,
+	}
+
+	result, err := h.createStripeSubscriberUC.Execute(ctx, input)
+	if err != nil {
+		return fmt.Errorf("StripeSubscriber作成に失敗: %w", err)
+	}
+
+	slog.InfoContext(ctx, "StripeSubscriberを作成しました",
+		"stripe_event_id", event.ID,
+		"stripe_subscriber_id", result.StripeSubscriber.ID,
+		"user_id", userID,
+	)
+
+	// 処理完了としてマーク
+	if err := h.stripeWebhookEventRepo.MarkAsProcessed(ctx, webhookEventID); err != nil {
+		return fmt.Errorf("イベント処理完了のマークに失敗: %w", err)
 	}
 
 	return nil
