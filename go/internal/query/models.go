@@ -977,7 +977,7 @@ type StripeWebhookEvent struct {
 	ID              int64           `db:"id"`
 	StripeEventID   string          `db:"stripe_event_id"`
 	StripeEventType string          `db:"stripe_event_type"`
-	Payload         json.RawMessage `db:"payload"`
+	StripePayload   json.RawMessage `db:"stripe_payload"`
 	Status          string          `db:"status"`
 	ErrorMessage    sql.NullString  `db:"error_message"`
 	ReceivedAt      time.Time       `db:"received_at"`

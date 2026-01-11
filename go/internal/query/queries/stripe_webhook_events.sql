@@ -2,7 +2,7 @@
 INSERT INTO stripe_webhook_events (
     stripe_event_id,
     stripe_event_type,
-    payload,
+    stripe_payload,
     status,
     received_at
 ) VALUES (

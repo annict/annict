@@ -3,7 +3,7 @@ CREATE TABLE stripe_webhook_events (
     id BIGSERIAL PRIMARY KEY,
     stripe_event_id VARCHAR(255) NOT NULL,
     stripe_event_type VARCHAR(255) NOT NULL,
-    payload JSONB NOT NULL,
+    stripe_payload JSONB NOT NULL,
     status VARCHAR(50) NOT NULL DEFAULT 'pending',
     error_message TEXT,
     received_at TIMESTAMP WITH TIME ZONE NOT NULL,

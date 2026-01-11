@@ -2503,7 +2503,7 @@ CREATE TABLE public.stripe_webhook_events (
     id bigint NOT NULL,
     stripe_event_id character varying(255) NOT NULL,
     stripe_event_type character varying(255) NOT NULL,
-    payload jsonb NOT NULL,
+    stripe_payload jsonb NOT NULL,
     status character varying(50) DEFAULT 'pending'::character varying NOT NULL,
     error_message text,
     received_at timestamp with time zone NOT NULL,
