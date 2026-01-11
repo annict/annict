@@ -2869,7 +2869,8 @@ CREATE TABLE public.users (
     on_hold_works_count integer DEFAULT 0 NOT NULL,
     dropped_works_count integer DEFAULT 0 NOT NULL,
     following_count integer DEFAULT 0 NOT NULL,
-    followers_count integer DEFAULT 0 NOT NULL
+    followers_count integer DEFAULT 0 NOT NULL,
+    stripe_subscriber_id bigint
 );
 
 
@@ -4675,6 +4676,13 @@ CREATE UNIQUE INDEX idx_stripe_webhook_events_stripe_event_id ON public.stripe_w
 --
 
 CREATE INDEX idx_stripe_webhook_events_stripe_event_type ON public.stripe_webhook_events USING btree (stripe_event_type);
+
+
+--
+-- Name: idx_users_stripe_subscriber_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_users_stripe_subscriber_id ON public.users USING btree (stripe_subscriber_id);
 
 
 --
@@ -7274,6 +7282,14 @@ ALTER TABLE ONLY public.episode_records
 
 
 --
+-- Name: users fk_users_stripe_subscriber; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT fk_users_stripe_subscriber FOREIGN KEY (stripe_subscriber_id) REFERENCES public.stripe_subscribers(id);
+
+
+--
 -- Name: follows follows_following_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -7721,4 +7737,5 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20251112061948'),
     ('20251113173140'),
     ('20260111083416'),
-    ('20260111084224');
+    ('20260111084224'),
+    ('20260111101233');

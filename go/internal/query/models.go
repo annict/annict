@@ -1087,6 +1087,7 @@ type User struct {
 	DroppedWorksCount          int32          `db:"dropped_works_count"`
 	FollowingCount             int32          `db:"following_count"`
 	FollowersCount             int32          `db:"followers_count"`
+	StripeSubscriberID         sql.NullInt64  `db:"stripe_subscriber_id"`
 }
 
 type UserlandCategory struct {

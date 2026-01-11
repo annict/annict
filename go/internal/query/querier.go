@@ -6,6 +6,7 @@ package query
 
 import (
 	"context"
+	"database/sql"
 	"time"
 )
 
@@ -53,6 +54,7 @@ type Querier interface {
 	GetUserByEmailForSignIn(ctx context.Context, lower string) (GetUserByEmailForSignInRow, error)
 	GetUserByEmailOrUsername(ctx context.Context, lower string) (GetUserByEmailOrUsernameRow, error)
 	GetUserByID(ctx context.Context, id int64) (GetUserByIDRow, error)
+	GetUserByStripeSubscriberID(ctx context.Context, stripeSubscriberID sql.NullInt64) (GetUserByStripeSubscriberIDRow, error)
 	GetUserByUsername(ctx context.Context, lower string) (GetUserByUsernameRow, error)
 	GetValidSignInCode(ctx context.Context, userID int64) (SignInCode, error)
 	GetValidSignUpCode(ctx context.Context, email string) (SignUpCode, error)
@@ -73,6 +75,7 @@ type Querier interface {
 	UpdateStripeSubscriberStatus(ctx context.Context, arg UpdateStripeSubscriberStatusParams) error
 	UpdateStripeWebhookEventStatus(ctx context.Context, arg UpdateStripeWebhookEventStatusParams) error
 	UpdateUserPassword(ctx context.Context, arg UpdateUserPasswordParams) error
+	UpdateUserStripeSubscriberID(ctx context.Context, arg UpdateUserStripeSubscriberIDParams) error
 }
 
 var _ Querier = (*Queries)(nil)

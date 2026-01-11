@@ -169,6 +169,38 @@ func (q *Queries) GetUserByID(ctx context.Context, id int64) (GetUserByIDRow, er
 	return i, err
 }
 
+const getUserByStripeSubscriberID = `-- name: GetUserByStripeSubscriberID :one
+SELECT id, username, email, role, stripe_subscriber_id, created_at, updated_at
+FROM users
+WHERE stripe_subscriber_id = $1
+LIMIT 1
+`
+
+type GetUserByStripeSubscriberIDRow struct {
+	ID                 int64         `db:"id"`
+	Username           string        `db:"username"`
+	Email              string        `db:"email"`
+	Role               int32         `db:"role"`
+	StripeSubscriberID sql.NullInt64 `db:"stripe_subscriber_id"`
+	CreatedAt          sql.NullTime  `db:"created_at"`
+	UpdatedAt          sql.NullTime  `db:"updated_at"`
+}
+
+func (q *Queries) GetUserByStripeSubscriberID(ctx context.Context, stripeSubscriberID sql.NullInt64) (GetUserByStripeSubscriberIDRow, error) {
+	row := q.db.QueryRowContext(ctx, getUserByStripeSubscriberID, stripeSubscriberID)
+	var i GetUserByStripeSubscriberIDRow
+	err := row.Scan(
+		&i.ID,
+		&i.Username,
+		&i.Email,
+		&i.Role,
+		&i.StripeSubscriberID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
 const getUserByUsername = `-- name: GetUserByUsername :one
 SELECT id, username, email, role, created_at, updated_at
 FROM users
@@ -212,5 +244,21 @@ type UpdateUserPasswordParams struct {
 
 func (q *Queries) UpdateUserPassword(ctx context.Context, arg UpdateUserPasswordParams) error {
 	_, err := q.db.ExecContext(ctx, updateUserPassword, arg.ID, arg.EncryptedPassword)
+	return err
+}
+
+const updateUserStripeSubscriberID = `-- name: UpdateUserStripeSubscriberID :exec
+UPDATE users
+SET stripe_subscriber_id = $2, updated_at = NOW()
+WHERE id = $1
+`
+
+type UpdateUserStripeSubscriberIDParams struct {
+	ID                 int64         `db:"id"`
+	StripeSubscriberID sql.NullInt64 `db:"stripe_subscriber_id"`
+}
+
+func (q *Queries) UpdateUserStripeSubscriberID(ctx context.Context, arg UpdateUserStripeSubscriberIDParams) error {
+	_, err := q.db.ExecContext(ctx, updateUserStripeSubscriberID, arg.ID, arg.StripeSubscriberID)
 	return err
 }

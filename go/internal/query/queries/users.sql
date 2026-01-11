@@ -37,3 +37,14 @@ LIMIT 1;
 INSERT INTO users (username, email, encrypted_password, locale, role, time_zone, created_at, updated_at)
 VALUES ($1, $2, $3, $4, 0, 'Asia/Tokyo', NOW(), NOW())
 RETURNING id, username, email, role, locale, created_at, updated_at;
+
+-- name: UpdateUserStripeSubscriberID :exec
+UPDATE users
+SET stripe_subscriber_id = $2, updated_at = NOW()
+WHERE id = $1;
+
+-- name: GetUserByStripeSubscriberID :one
+SELECT id, username, email, role, stripe_subscriber_id, created_at, updated_at
+FROM users
+WHERE stripe_subscriber_id = $1
+LIMIT 1;
