@@ -15,6 +15,7 @@ type Handler struct {
 	userRepo                 *repository.UserRepository
 	createStripeSubscriberUC *usecase.CreateStripeSubscriberUsecase
 	updateStripeSubscriberUC *usecase.UpdateStripeSubscriberUsecase
+	deleteStripeSubscriberUC *usecase.DeleteStripeSubscriberUsecase
 }
 
 // NewHandler は新しいHandlerを作成します
@@ -25,6 +26,7 @@ func NewHandler(
 	userRepo *repository.UserRepository,
 	createStripeSubscriberUC *usecase.CreateStripeSubscriberUsecase,
 	updateStripeSubscriberUC *usecase.UpdateStripeSubscriberUsecase,
+	deleteStripeSubscriberUC *usecase.DeleteStripeSubscriberUsecase,
 ) *Handler {
 	return &Handler{
 		cfg:                      cfg,
@@ -33,5 +35,6 @@ func NewHandler(
 		userRepo:                 userRepo,
 		createStripeSubscriberUC: createStripeSubscriberUC,
 		updateStripeSubscriberUC: updateStripeSubscriberUC,
+		deleteStripeSubscriberUC: deleteStripeSubscriberUC,
 	}
 }

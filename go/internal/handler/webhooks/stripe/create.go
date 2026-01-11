@@ -321,7 +321,7 @@ func (h *Handler) handleCustomerSubscriptionDeleted(ctx context.Context, event *
 		StripeCanceledAt:     time.Unix(subscription.CanceledAt, 0),
 	}
 
-	result, err := h.updateStripeSubscriberUC.ExecuteDelete(ctx, input)
+	result, err := h.deleteStripeSubscriberUC.Execute(ctx, input)
 	if err != nil {
 		// サブスクリプションが見つからない場合はスキップ
 		if err == sql.ErrNoRows {
