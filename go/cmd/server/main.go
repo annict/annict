@@ -32,6 +32,7 @@ import (
 	"github.com/annict/annict/go/internal/handler/sign_up_code"
 	"github.com/annict/annict/go/internal/handler/sign_up_username"
 	"github.com/annict/annict/go/internal/handler/supporters"
+	stripewebhook "github.com/annict/annict/go/internal/handler/webhooks/stripe"
 	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/image"
 	authMiddleware "github.com/annict/annict/go/internal/middleware"
@@ -326,6 +327,10 @@ func main() {
 	gumroadSubscriberRepo := repository.NewGumroadSubscriberRepository(queries)
 	supportersHandler := supporters.NewHandler(cfg, sessionManager, stripeSubscriberRepo, gumroadSubscriberRepo)
 
+	// Stripe Webhookハンドラーの初期化
+	stripeWebhookEventRepo := repository.NewStripeWebhookEventRepository(queries)
+	stripeWebhookHandler := stripewebhook.NewHandler(cfg, stripeWebhookEventRepo, stripeSubscriberRepo, userRepo)
+
 	// 静的ファイルの配信 (Tailwind CLI + esbuild のビルド結果)
 	fileServer := http.FileServer(http.Dir("./static"))
 	r.Handle("/static/*", http.StripPrefix("/static", fileServer))
@@ -360,6 +365,9 @@ func main() {
 
 	// サポーターページ
 	r.Get("/supporters", supportersHandler.Show)
+
+	// Stripe Webhook
+	r.Post("/webhooks/stripe", stripeWebhookHandler.Create)
 
 	// サーバー起動
 	// Dockerコンテナ内で動かす場合、0.0.0.0でリッスンする必要がある

@@ -34,6 +34,7 @@ var goHandledPaths = []string{
 	"/password/edit",    // パスワードリセット実行
 	"/password",         // パスワード更新
 	"/supporters",       // サポーターページ
+	"/webhooks/stripe",  // Stripe Webhook受信
 }
 
 // NewReverseProxyMiddleware は新しいReverseProxyMiddlewareを作成
