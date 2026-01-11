@@ -1,8 +1,7 @@
 .DS_Store
 
 /.claude
-/.devcontainer
-/.vscode
+/.env.op
 /compose-up.sh
 /docker-compose.override.yml
 /docs
