@@ -1,7 +1,7 @@
 -- name: CreateStripeWebhookEvent :one
 INSERT INTO stripe_webhook_events (
     stripe_event_id,
-    event_type,
+    stripe_event_type,
     payload,
     status,
     received_at

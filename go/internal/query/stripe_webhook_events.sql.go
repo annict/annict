@@ -15,27 +15,27 @@ import (
 const createStripeWebhookEvent = `-- name: CreateStripeWebhookEvent :one
 INSERT INTO stripe_webhook_events (
     stripe_event_id,
-    event_type,
+    stripe_event_type,
     payload,
     status,
     received_at
 ) VALUES (
     $1, $2, $3, $4, $5
-) RETURNING id, stripe_event_id, event_type, payload, status, error_message, received_at, processed_at, created_at, updated_at
+) RETURNING id, stripe_event_id, stripe_event_type, payload, status, error_message, received_at, processed_at, created_at, updated_at
 `
 
 type CreateStripeWebhookEventParams struct {
-	StripeEventID string          `db:"stripe_event_id"`
-	EventType     string          `db:"event_type"`
-	Payload       json.RawMessage `db:"payload"`
-	Status        string          `db:"status"`
-	ReceivedAt    time.Time       `db:"received_at"`
+	StripeEventID   string          `db:"stripe_event_id"`
+	StripeEventType string          `db:"stripe_event_type"`
+	Payload         json.RawMessage `db:"payload"`
+	Status          string          `db:"status"`
+	ReceivedAt      time.Time       `db:"received_at"`
 }
 
 func (q *Queries) CreateStripeWebhookEvent(ctx context.Context, arg CreateStripeWebhookEventParams) (StripeWebhookEvent, error) {
 	row := q.db.QueryRowContext(ctx, createStripeWebhookEvent,
 		arg.StripeEventID,
-		arg.EventType,
+		arg.StripeEventType,
 		arg.Payload,
 		arg.Status,
 		arg.ReceivedAt,
@@ -44,7 +44,7 @@ func (q *Queries) CreateStripeWebhookEvent(ctx context.Context, arg CreateStripe
 	err := row.Scan(
 		&i.ID,
 		&i.StripeEventID,
-		&i.EventType,
+		&i.StripeEventType,
 		&i.Payload,
 		&i.Status,
 		&i.ErrorMessage,
@@ -57,7 +57,7 @@ func (q *Queries) CreateStripeWebhookEvent(ctx context.Context, arg CreateStripe
 }
 
 const getStripeWebhookEventByStripeEventID = `-- name: GetStripeWebhookEventByStripeEventID :one
-SELECT id, stripe_event_id, event_type, payload, status, error_message, received_at, processed_at, created_at, updated_at FROM stripe_webhook_events
+SELECT id, stripe_event_id, stripe_event_type, payload, status, error_message, received_at, processed_at, created_at, updated_at FROM stripe_webhook_events
 WHERE stripe_event_id = $1
 LIMIT 1
 `
@@ -68,7 +68,7 @@ func (q *Queries) GetStripeWebhookEventByStripeEventID(ctx context.Context, stri
 	err := row.Scan(
 		&i.ID,
 		&i.StripeEventID,
-		&i.EventType,
+		&i.StripeEventType,
 		&i.Payload,
 		&i.Status,
 		&i.ErrorMessage,

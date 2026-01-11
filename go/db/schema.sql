@@ -2502,7 +2502,7 @@ ALTER SEQUENCE public.stripe_subscribers_id_seq OWNED BY public.stripe_subscribe
 CREATE TABLE public.stripe_webhook_events (
     id bigint NOT NULL,
     stripe_event_id character varying(255) NOT NULL,
-    event_type character varying(255) NOT NULL,
+    stripe_event_type character varying(255) NOT NULL,
     payload jsonb NOT NULL,
     status character varying(50) DEFAULT 'pending'::character varying NOT NULL,
     error_message text,
@@ -4650,13 +4650,6 @@ CREATE UNIQUE INDEX idx_stripe_subscribers_stripe_subscription_id ON public.stri
 
 
 --
--- Name: idx_stripe_webhook_events_event_type; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX idx_stripe_webhook_events_event_type ON public.stripe_webhook_events USING btree (event_type);
-
-
---
 -- Name: idx_stripe_webhook_events_received_at; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4675,6 +4668,13 @@ CREATE INDEX idx_stripe_webhook_events_status ON public.stripe_webhook_events US
 --
 
 CREATE UNIQUE INDEX idx_stripe_webhook_events_stripe_event_id ON public.stripe_webhook_events USING btree (stripe_event_id);
+
+
+--
+-- Name: idx_stripe_webhook_events_stripe_event_type; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_stripe_webhook_events_stripe_event_type ON public.stripe_webhook_events USING btree (stripe_event_type);
 
 
 --
