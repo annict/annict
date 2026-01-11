@@ -8,6 +8,10 @@ import (
 	"github.com/annict/annict/go/internal/query"
 )
 
+// User はユーザーの型エイリアスです
+// ハンドラーがqueryパッケージを直接参照しないようにするため、repositoryで公開します
+type User = query.GetUserByIDRow
+
 // UserRepository はUser関連のデータアクセスを担当します
 type UserRepository struct {
 	queries               *query.Queries
