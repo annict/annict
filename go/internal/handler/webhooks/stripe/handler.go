@@ -14,6 +14,7 @@ type Handler struct {
 	stripeSubscriberRepo     *repository.StripeSubscriberRepository
 	userRepo                 *repository.UserRepository
 	createStripeSubscriberUC *usecase.CreateStripeSubscriberUsecase
+	updateStripeSubscriberUC *usecase.UpdateStripeSubscriberUsecase
 }
 
 // NewHandler は新しいHandlerを作成します
@@ -23,6 +24,7 @@ func NewHandler(
 	stripeSubscriberRepo *repository.StripeSubscriberRepository,
 	userRepo *repository.UserRepository,
 	createStripeSubscriberUC *usecase.CreateStripeSubscriberUsecase,
+	updateStripeSubscriberUC *usecase.UpdateStripeSubscriberUsecase,
 ) *Handler {
 	return &Handler{
 		cfg:                      cfg,
@@ -30,5 +32,6 @@ func NewHandler(
 		stripeSubscriberRepo:     stripeSubscriberRepo,
 		userRepo:                 userRepo,
 		createStripeSubscriberUC: createStripeSubscriberUC,
+		updateStripeSubscriberUC: updateStripeSubscriberUC,
 	}
 }
