@@ -170,12 +170,13 @@ func (b *EpisodeBuilder) Build() int64 {
 
 // UserBuilder はユーザーテストデータのビルダー
 type UserBuilder struct {
-	tx                *sql.Tx
-	t                 *testing.T
-	username          string
-	email             string
-	encryptedPassword string
-	locale            string
+	tx                 *sql.Tx
+	t                  *testing.T
+	username           string
+	email              string
+	encryptedPassword  string
+	locale             string
+	stripeSubscriberID *int64
 }
 
 // NewUserBuilder は新しいUserBuilderを作成します
@@ -216,6 +217,12 @@ func (b *UserBuilder) WithEncryptedPassword(password string) *UserBuilder {
 // WithLocale はロケールを設定します
 func (b *UserBuilder) WithLocale(locale string) *UserBuilder {
 	b.locale = locale
+	return b
+}
+
+// WithStripeSubscriberID はStripeサブスクライバーIDを設定します
+func (b *UserBuilder) WithStripeSubscriberID(id *int64) *UserBuilder {
+	b.stripeSubscriberID = id
 	return b
 }
 
@@ -315,7 +322,41 @@ func (b *UserBuilder) Build() int64 {
 		b.t.Fatalf("メール通知設定データの作成に失敗しました: %v", err)
 	}
 
+	// StripeSubscriberIDが設定されている場合は更新
+	if b.stripeSubscriberID != nil {
+		_, err = b.tx.Exec(`UPDATE users SET stripe_subscriber_id = $1 WHERE id = $2`, *b.stripeSubscriberID, id)
+		if err != nil {
+			b.t.Fatalf("ユーザーのStripeSubscriberID更新に失敗しました: %v", err)
+		}
+	}
+
 	return id
+}
+
+// UserResult はテスト用のユーザー結果
+type UserResult struct {
+	ID                 int64
+	Username           string
+	Email              string
+	StripeSubscriberID sql.NullInt64
+}
+
+// BuildWithResult はテスト用のユーザーデータをデータベースに作成し、結果を返します
+func (b *UserBuilder) BuildWithResult() UserResult {
+	b.t.Helper()
+	id := b.Build()
+
+	var stripeSubID sql.NullInt64
+	if b.stripeSubscriberID != nil {
+		stripeSubID = sql.NullInt64{Int64: *b.stripeSubscriberID, Valid: true}
+	}
+
+	return UserResult{
+		ID:                 id,
+		Username:           b.username,
+		Email:              b.email,
+		StripeSubscriberID: stripeSubID,
+	}
 }
 
 // WorkImageBuilder は作品画像テストデータのビルダー
@@ -574,11 +615,18 @@ func (b *StripeSubscriberBuilder) WithCanceledAt(canceledAt time.Time) *StripeSu
 	return b
 }
 
-// Build はテスト用のStripeサブスクライバーデータをデータベースに作成します
+// Build はテスト用のStripeサブスクライバーデータをデータベースに作成し、IDを返します
 func (b *StripeSubscriberBuilder) Build() int64 {
 	b.t.Helper()
+	result := b.BuildWithResult()
+	return result.ID
+}
 
-	query := `
+// BuildWithResult はテスト用のStripeサブスクライバーデータをデータベースに作成し、全フィールドを返します
+func (b *StripeSubscriberBuilder) BuildWithResult() StripeSubscriberResult {
+	b.t.Helper()
+
+	q := `
 		INSERT INTO stripe_subscribers (
 			stripe_customer_id,
 			stripe_subscription_id,
@@ -592,12 +640,15 @@ func (b *StripeSubscriberBuilder) Build() int64 {
 			updated_at
 		) VALUES (
 			$1, $2, $3, $4, $5, $6, $7, $8, $9, $10
-		) RETURNING id
+		) RETURNING id, stripe_customer_id, stripe_subscription_id, stripe_price_id, stripe_status,
+		            stripe_current_period_start, stripe_current_period_end, stripe_cancel_at, stripe_canceled_at,
+		            created_at, updated_at
 	`
 
-	var id int64
+	now := time.Now()
+	var result StripeSubscriberResult
 	err := b.tx.QueryRow(
-		query,
+		q,
 		b.stripeCustomerID,
 		b.stripeSubscriptionID,
 		b.stripePriceID,
@@ -606,15 +657,42 @@ func (b *StripeSubscriberBuilder) Build() int64 {
 		b.stripeCurrentPeriodEnd,
 		b.stripeCancelAt,
 		b.stripeCanceledAt,
-		time.Now(),
-		time.Now(),
-	).Scan(&id)
+		now,
+		now,
+	).Scan(
+		&result.ID,
+		&result.StripeCustomerID,
+		&result.StripeSubscriptionID,
+		&result.StripePriceID,
+		&result.StripeStatus,
+		&result.StripeCurrentPeriodStart,
+		&result.StripeCurrentPeriodEnd,
+		&result.StripeCancelAt,
+		&result.StripeCanceledAt,
+		&result.CreatedAt,
+		&result.UpdatedAt,
+	)
 
 	if err != nil {
 		b.t.Fatalf("Stripeサブスクライバーデータの作成に失敗しました: %v", err)
 	}
 
-	return id
+	return result
+}
+
+// StripeSubscriberResult はテスト用のStripeサブスクライバー結果
+type StripeSubscriberResult struct {
+	ID                       int64
+	StripeCustomerID         string
+	StripeSubscriptionID     string
+	StripePriceID            string
+	StripeStatus             string
+	StripeCurrentPeriodStart time.Time
+	StripeCurrentPeriodEnd   time.Time
+	StripeCancelAt           sql.NullTime
+	StripeCanceledAt         sql.NullTime
+	CreatedAt                time.Time
+	UpdatedAt                time.Time
 }
 
 // CreateTestStripeSubscriber は簡単にテスト用Stripeサブスクライバーを作成するヘルパー関数

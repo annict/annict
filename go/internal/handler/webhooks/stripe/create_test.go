@@ -47,9 +47,11 @@ func TestCreate_SignatureValidation(t *testing.T) {
 
 	// UseCaseの作成
 	createStripeSubscriberUC := usecase.NewCreateStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo)
+	updateStripeSubscriberUC := usecase.NewUpdateStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo)
+	deleteStripeSubscriberUC := usecase.NewDeleteStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo)
 
 	// ハンドラーの作成
-	handler := NewHandler(cfg, stripeWebhookEventRepo, stripeSubscriberRepo, userRepo, createStripeSubscriberUC)
+	handler := NewHandler(cfg, stripeWebhookEventRepo, stripeSubscriberRepo, userRepo, createStripeSubscriberUC, updateStripeSubscriberUC, deleteStripeSubscriberUC)
 
 	tests := []struct {
 		name           string
@@ -146,9 +148,11 @@ func TestCreate_Idempotency(t *testing.T) {
 
 	// UseCaseの作成
 	createStripeSubscriberUC := usecase.NewCreateStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo)
+	updateStripeSubscriberUC := usecase.NewUpdateStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo)
+	deleteStripeSubscriberUC := usecase.NewDeleteStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo)
 
 	// ハンドラーの作成
-	handler := NewHandler(cfg, stripeWebhookEventRepo, stripeSubscriberRepo, userRepo, createStripeSubscriberUC)
+	handler := NewHandler(cfg, stripeWebhookEventRepo, stripeSubscriberRepo, userRepo, createStripeSubscriberUC, updateStripeSubscriberUC, deleteStripeSubscriberUC)
 
 	// 既にイベントを登録
 	existingEventID := "evt_existing_event_123"
@@ -207,9 +211,11 @@ func TestCreate_EventProcessing(t *testing.T) {
 
 	// UseCaseの作成
 	createStripeSubscriberUC := usecase.NewCreateStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo)
+	updateStripeSubscriberUC := usecase.NewUpdateStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo)
+	deleteStripeSubscriberUC := usecase.NewDeleteStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo)
 
 	// ハンドラーの作成
-	handler := NewHandler(cfg, stripeWebhookEventRepo, stripeSubscriberRepo, userRepo, createStripeSubscriberUC)
+	handler := NewHandler(cfg, stripeWebhookEventRepo, stripeSubscriberRepo, userRepo, createStripeSubscriberUC, updateStripeSubscriberUC, deleteStripeSubscriberUC)
 
 	tests := []struct {
 		name           string

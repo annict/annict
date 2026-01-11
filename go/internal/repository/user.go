@@ -61,6 +61,19 @@ func (r *UserRepository) GetByStripeSubscriberID(ctx context.Context, stripeSubs
 	return r.queries.GetUserByStripeSubscriberID(ctx, sql.NullInt64{Int64: stripeSubscriberID, Valid: true})
 }
 
+// FindUserIDByStripeSubscriberID はStripeサブスクライバーIDからユーザーIDを検索します
+// ユーザーが見つからない場合はnilを返します（sql.ErrNoRowsの場合）
+func (r *UserRepository) FindUserIDByStripeSubscriberID(ctx context.Context, stripeSubscriberID int64) (*int64, error) {
+	user, err := r.queries.GetUserByStripeSubscriberID(ctx, sql.NullInt64{Int64: stripeSubscriberID, Valid: true})
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &user.ID, nil
+}
+
 // WithStripeSubscriberRepo はStripeSubscriberRepositoryを設定します
 func (r *UserRepository) WithStripeSubscriberRepo(repo *StripeSubscriberRepository) *UserRepository {
 	r.stripeSubscriberRepo = repo

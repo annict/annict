@@ -14,6 +14,7 @@ import (
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/repository"
+	annictstripe "github.com/annict/annict/go/internal/stripe"
 )
 
 // CreateStripeSubscriberUsecase はcheckout.session.completedイベント処理のユースケース
@@ -92,8 +93,8 @@ func (uc *CreateStripeSubscriberUsecase) Execute(
 		StripeStatus:             string(sub.Status),
 		StripeCurrentPeriodStart: time.Unix(item.CurrentPeriodStart, 0),
 		StripeCurrentPeriodEnd:   time.Unix(item.CurrentPeriodEnd, 0),
-		StripeCancelAt:           nullTimeFromUnix(sub.CancelAt),
-		StripeCanceledAt:         nullTimeFromUnix(sub.CanceledAt),
+		StripeCancelAt:           annictstripe.NullTimeFromUnix(sub.CancelAt),
+		StripeCanceledAt:         annictstripe.NullTimeFromUnix(sub.CanceledAt),
 	})
 	if err != nil {
 		return nil, fmt.Errorf("StripeSubscriber作成に失敗: %w", err)
@@ -113,18 +114,6 @@ func (uc *CreateStripeSubscriberUsecase) Execute(
 	return &CreateStripeSubscriberResult{
 		StripeSubscriber: stripeSubscriber,
 	}, nil
-}
-
-// nullTimeFromUnix はUnixタイムスタンプからsql.NullTimeを作成します
-// 値が0の場合はValidがfalseになります
-func nullTimeFromUnix(ts int64) sql.NullTime {
-	if ts == 0 {
-		return sql.NullTime{}
-	}
-	return sql.NullTime{
-		Time:  time.Unix(ts, 0),
-		Valid: true,
-	}
 }
 
 // ParseUserIDFromMetadata はCheckoutセッションのmetadataからユーザーIDを取得します

@@ -2,6 +2,7 @@ package stripe
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -15,6 +16,7 @@ import (
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/repository"
 	annictSentry "github.com/annict/annict/go/internal/sentry"
+	annictstripe "github.com/annict/annict/go/internal/stripe"
 	"github.com/annict/annict/go/internal/usecase"
 )
 
@@ -234,35 +236,119 @@ func (h *Handler) handleCheckoutSessionCompleted(ctx context.Context, event *str
 }
 
 // handleCustomerSubscriptionUpdated はcustomer.subscription.updatedイベントを処理します
-// タスク3-3で実装予定
 func (h *Handler) handleCustomerSubscriptionUpdated(ctx context.Context, event *stripe.Event, webhookEventID int64) error {
-	slog.InfoContext(ctx, "customer.subscription.updatedイベントを受信（未実装）",
+	slog.InfoContext(ctx, "customer.subscription.updatedイベントを受信",
 		"stripe_event_id", event.ID,
 	)
 
-	// TODO: タスク3-3で実装
-	// - サブスクリプション状態の更新
+	// イベントデータからサブスクリプションを取得
+	var subscription stripe.Subscription
+	if err := json.Unmarshal(event.Data.Raw, &subscription); err != nil {
+		return fmt.Errorf("サブスクリプションのパースに失敗: %w", err)
+	}
 
-	if err := h.stripeWebhookEventRepo.MarkAsSkipped(ctx, webhookEventID); err != nil {
-		return fmt.Errorf("イベントスキップのマークに失敗: %w", err)
+	// サブスクリプションにアイテムが含まれていない場合はスキップ
+	if subscription.Items == nil || len(subscription.Items.Data) == 0 {
+		slog.InfoContext(ctx, "サブスクリプションにアイテムが含まれていないためスキップ",
+			"stripe_event_id", event.ID,
+			"subscription_id", subscription.ID,
+		)
+		if err := h.stripeWebhookEventRepo.MarkAsSkipped(ctx, webhookEventID); err != nil {
+			return fmt.Errorf("イベントスキップのマークに失敗: %w", err)
+		}
+		return nil
+	}
+
+	// 価格IDと請求期間を取得（最初のアイテムから）
+	item := subscription.Items.Data[0]
+
+	// StripeSubscriberを更新
+	input := usecase.UpdateStripeSubscriberInput{
+		StripeSubscriptionID:     subscription.ID,
+		StripePriceID:            item.Price.ID,
+		StripeStatus:             string(subscription.Status),
+		StripeCurrentPeriodStart: time.Unix(item.CurrentPeriodStart, 0),
+		StripeCurrentPeriodEnd:   time.Unix(item.CurrentPeriodEnd, 0),
+		StripeCancelAt:           annictstripe.NullTimeFromUnix(subscription.CancelAt),
+		StripeCanceledAt:         annictstripe.NullTimeFromUnix(subscription.CanceledAt),
+	}
+
+	result, err := h.updateStripeSubscriberUC.Execute(ctx, input)
+	if err != nil {
+		// サブスクリプションが見つからない場合はスキップ
+		if err == sql.ErrNoRows {
+			slog.WarnContext(ctx, "対応するStripeSubscriberが見つからないためスキップ",
+				"stripe_event_id", event.ID,
+				"subscription_id", subscription.ID,
+			)
+			if markErr := h.stripeWebhookEventRepo.MarkAsSkipped(ctx, webhookEventID); markErr != nil {
+				return fmt.Errorf("イベントスキップのマークに失敗: %w", markErr)
+			}
+			return nil
+		}
+		return fmt.Errorf("StripeSubscriber更新に失敗: %w", err)
+	}
+
+	slog.InfoContext(ctx, "StripeSubscriberを更新しました",
+		"stripe_event_id", event.ID,
+		"stripe_subscriber_id", result.StripeSubscriber.ID,
+		"new_status", subscription.Status,
+	)
+
+	// 処理完了としてマーク
+	if err := h.stripeWebhookEventRepo.MarkAsProcessed(ctx, webhookEventID); err != nil {
+		return fmt.Errorf("イベント処理完了のマークに失敗: %w", err)
 	}
 
 	return nil
 }
 
 // handleCustomerSubscriptionDeleted はcustomer.subscription.deletedイベントを処理します
-// タスク3-3で実装予定
 func (h *Handler) handleCustomerSubscriptionDeleted(ctx context.Context, event *stripe.Event, webhookEventID int64) error {
-	slog.InfoContext(ctx, "customer.subscription.deletedイベントを受信（未実装）",
+	slog.InfoContext(ctx, "customer.subscription.deletedイベントを受信",
 		"stripe_event_id", event.ID,
 	)
 
-	// TODO: タスク3-3で実装
-	// - サブスクリプションの終了処理
-	// - Userとの紐付け解除
+	// イベントデータからサブスクリプションを取得
+	var subscription stripe.Subscription
+	if err := json.Unmarshal(event.Data.Raw, &subscription); err != nil {
+		return fmt.Errorf("サブスクリプションのパースに失敗: %w", err)
+	}
 
-	if err := h.stripeWebhookEventRepo.MarkAsSkipped(ctx, webhookEventID); err != nil {
-		return fmt.Errorf("イベントスキップのマークに失敗: %w", err)
+	// StripeSubscriberを削除（ステータス更新＋ユーザー紐付け解除）
+	input := usecase.DeleteStripeSubscriberInput{
+		StripeSubscriptionID: subscription.ID,
+		StripeCanceledAt:     time.Unix(subscription.CanceledAt, 0),
+	}
+
+	result, err := h.deleteStripeSubscriberUC.Execute(ctx, input)
+	if err != nil {
+		// サブスクリプションが見つからない場合はスキップ
+		if err == sql.ErrNoRows {
+			slog.WarnContext(ctx, "対応するStripeSubscriberが見つからないためスキップ",
+				"stripe_event_id", event.ID,
+				"subscription_id", subscription.ID,
+			)
+			if markErr := h.stripeWebhookEventRepo.MarkAsSkipped(ctx, webhookEventID); markErr != nil {
+				return fmt.Errorf("イベントスキップのマークに失敗: %w", markErr)
+			}
+			return nil
+		}
+		return fmt.Errorf("StripeSubscriber削除処理に失敗: %w", err)
+	}
+
+	logFields := []any{
+		"stripe_event_id", event.ID,
+		"stripe_subscriber_id", result.StripeSubscriber.ID,
+	}
+	if result.UserID != nil {
+		logFields = append(logFields, "unlinked_user_id", *result.UserID)
+	}
+	slog.InfoContext(ctx, "StripeSubscriberを削除しました", logFields...)
+
+	// 処理完了としてマーク
+	if err := h.stripeWebhookEventRepo.MarkAsProcessed(ctx, webhookEventID); err != nil {
+		return fmt.Errorf("イベント処理完了のマークに失敗: %w", err)
 	}
 
 	return nil
