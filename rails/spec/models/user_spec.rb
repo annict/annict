@@ -2,6 +2,71 @@
 # frozen_string_literal: true
 
 describe User, type: :model do
+  describe "#supporter?" do
+    context "Stripeサブスクリプションがアクティブな場合" do
+      let(:stripe_subscriber) { create(:stripe_subscriber, :active) }
+      let(:user) { create(:user, stripe_subscriber: stripe_subscriber) }
+
+      it "trueを返す" do
+        expect(user.supporter?).to eq true
+      end
+    end
+
+    context "StripeサブスクリプションがPast Dueの場合" do
+      let(:stripe_subscriber) { create(:stripe_subscriber, :past_due) }
+      let(:user) { create(:user, stripe_subscriber: stripe_subscriber) }
+
+      it "trueを返す（支払い遅延中も猶予期間として利用可能）" do
+        expect(user.supporter?).to eq true
+      end
+    end
+
+    context "Stripeサブスクリプションがキャンセル済みの場合" do
+      let(:stripe_subscriber) { create(:stripe_subscriber, :canceled) }
+      let(:user) { create(:user, stripe_subscriber: stripe_subscriber) }
+
+      it "falseを返す" do
+        expect(user.supporter?).to eq false
+      end
+    end
+
+    context "Gumroadサブスクリプションがアクティブな場合" do
+      let(:gumroad_subscriber) { create(:gumroad_subscriber) }
+      let(:user) { create(:user, gumroad_subscriber: gumroad_subscriber) }
+
+      it "trueを返す" do
+        expect(user.supporter?).to eq true
+      end
+    end
+
+    context "Gumroadサブスクリプションがキャンセル済みの場合" do
+      let(:gumroad_subscriber) { create(:gumroad_subscriber, gumroad_cancelled_at: 1.day.ago) }
+      let(:user) { create(:user, gumroad_subscriber: gumroad_subscriber) }
+
+      it "falseを返す" do
+        expect(user.supporter?).to eq false
+      end
+    end
+
+    context "StripeとGumroad両方がアクティブな場合" do
+      let(:stripe_subscriber) { create(:stripe_subscriber, :active) }
+      let(:gumroad_subscriber) { create(:gumroad_subscriber) }
+      let(:user) { create(:user, stripe_subscriber: stripe_subscriber, gumroad_subscriber: gumroad_subscriber) }
+
+      it "trueを返す" do
+        expect(user.supporter?).to eq true
+      end
+    end
+
+    context "どちらのサブスクリプションもない場合" do
+      let(:user) { create(:user) }
+
+      it "falseを返す" do
+        expect(user.supporter?).to eq false
+      end
+    end
+  end
+
   describe "#create_or_last_activity_group!" do
     context "when itemable is Status object" do
       let(:user) { create :user }
