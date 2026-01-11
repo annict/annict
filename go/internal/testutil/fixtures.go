@@ -733,3 +733,105 @@ func CreateTestStripeWebhookEventWithStatus(t *testing.T, tx *sql.Tx, status str
 	t.Helper()
 	return NewStripeWebhookEventBuilder(t, tx).WithStatus(status).Build()
 }
+
+// GumroadSubscriberBuilder はGumroadサブスクライバーテストデータのビルダー
+type GumroadSubscriberBuilder struct {
+	tx                 *sql.Tx
+	t                  *testing.T
+	gumroadID          string
+	gumroadProductID   string
+	gumroadProductName string
+	gumroadUserID      sql.NullString
+	gumroadUserEmail   sql.NullString
+	gumroadCreatedAt   time.Time
+	gumroadCancelledAt sql.NullTime
+	gumroadEndedAt     sql.NullTime
+}
+
+// NewGumroadSubscriberBuilder は新しいGumroadSubscriberBuilderを作成します
+func NewGumroadSubscriberBuilder(t *testing.T, tx *sql.Tx) *GumroadSubscriberBuilder {
+	uniqueID := uuid.New().String()[:8]
+	now := time.Now()
+
+	return &GumroadSubscriberBuilder{
+		tx:                 tx,
+		t:                  t,
+		gumroadID:          fmt.Sprintf("gum_test_%s", uniqueID),
+		gumroadProductID:   "product_test_123",
+		gumroadProductName: "Annict Supporters",
+		gumroadUserID:      sql.NullString{String: fmt.Sprintf("user_%s", uniqueID), Valid: true},
+		gumroadUserEmail:   sql.NullString{String: fmt.Sprintf("test_%s@example.com", uniqueID), Valid: true},
+		gumroadCreatedAt:   now.AddDate(-1, 0, 0),
+		gumroadCancelledAt: sql.NullTime{},
+		gumroadEndedAt:     sql.NullTime{},
+	}
+}
+
+// WithGumroadID はGumroad IDを設定します
+func (b *GumroadSubscriberBuilder) WithGumroadID(id string) *GumroadSubscriberBuilder {
+	b.gumroadID = id
+	return b
+}
+
+// WithGumroadCancelledAt はキャンセル日時を設定します
+func (b *GumroadSubscriberBuilder) WithGumroadCancelledAt(cancelledAt time.Time) *GumroadSubscriberBuilder {
+	b.gumroadCancelledAt = sql.NullTime{Time: cancelledAt, Valid: true}
+	return b
+}
+
+// WithGumroadEndedAt は終了日時を設定します
+func (b *GumroadSubscriberBuilder) WithGumroadEndedAt(endedAt time.Time) *GumroadSubscriberBuilder {
+	b.gumroadEndedAt = sql.NullTime{Time: endedAt, Valid: true}
+	return b
+}
+
+// Build はテスト用のGumroadサブスクライバーデータをデータベースに作成します
+func (b *GumroadSubscriberBuilder) Build() int64 {
+	b.t.Helper()
+
+	query := `
+		INSERT INTO gumroad_subscribers (
+			gumroad_id,
+			gumroad_product_id,
+			gumroad_product_name,
+			gumroad_user_id,
+			gumroad_user_email,
+			gumroad_purchase_ids,
+			gumroad_created_at,
+			gumroad_cancelled_at,
+			gumroad_ended_at,
+			created_at,
+			updated_at
+		) VALUES (
+			$1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11
+		) RETURNING id
+	`
+
+	var id int64
+	err := b.tx.QueryRow(
+		query,
+		b.gumroadID,
+		b.gumroadProductID,
+		b.gumroadProductName,
+		b.gumroadUserID,
+		b.gumroadUserEmail,
+		pq.Array([]string{}),
+		b.gumroadCreatedAt,
+		b.gumroadCancelledAt,
+		b.gumroadEndedAt,
+		time.Now(),
+		time.Now(),
+	).Scan(&id)
+
+	if err != nil {
+		b.t.Fatalf("Gumroadサブスクライバーデータの作成に失敗しました: %v", err)
+	}
+
+	return id
+}
+
+// CreateTestGumroadSubscriber は簡単にテスト用Gumroadサブスクライバーを作成するヘルパー関数
+func CreateTestGumroadSubscriber(t *testing.T, tx *sql.Tx) int64 {
+	t.Helper()
+	return NewGumroadSubscriberBuilder(t, tx).Build()
+}
