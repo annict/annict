@@ -1,5 +1,5 @@
 
--- Dumped from database version 17.3 (Debian 17.3-3.pgdg120+1)
+-- Dumped from database version 17.5 (Debian 17.5-1.pgdg130+1)
 -- Dumped by pg_dump version 17.6 (Debian 17.6-0+deb13u1)
 
 SET statement_timeout = 0;
@@ -2458,6 +2458,44 @@ CREATE TABLE public.statuses (
 
 
 --
+-- Name: stripe_subscribers; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.stripe_subscribers (
+    id bigint NOT NULL,
+    stripe_customer_id character varying(255) NOT NULL,
+    stripe_subscription_id character varying(255) NOT NULL,
+    stripe_price_id character varying(255) NOT NULL,
+    stripe_status character varying(50) NOT NULL,
+    stripe_current_period_start timestamp with time zone NOT NULL,
+    stripe_current_period_end timestamp with time zone NOT NULL,
+    stripe_cancel_at timestamp with time zone,
+    stripe_canceled_at timestamp with time zone,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: stripe_subscribers_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.stripe_subscribers_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: stripe_subscribers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.stripe_subscribers_id_seq OWNED BY public.stripe_subscribers.id;
+
+
+--
 -- Name: syobocal_alerts; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -3470,6 +3508,13 @@ ALTER TABLE ONLY public.sign_up_codes ALTER COLUMN id SET DEFAULT nextval('publi
 
 
 --
+-- Name: stripe_subscribers id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.stripe_subscribers ALTER COLUMN id SET DEFAULT nextval('public.stripe_subscribers_id_seq'::regclass);
+
+
+--
 -- Name: syobocal_alerts id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -4200,6 +4245,14 @@ ALTER TABLE ONLY public.statuses
 
 
 --
+-- Name: stripe_subscribers stripe_subscribers_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.stripe_subscribers
+    ADD CONSTRAINT stripe_subscribers_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: syobocal_alerts syobocal_alerts_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4521,6 +4574,27 @@ CREATE INDEX idx_sign_up_codes_email ON public.sign_up_codes USING btree (email)
 --
 
 CREATE INDEX idx_sign_up_codes_expires_at ON public.sign_up_codes USING btree (expires_at);
+
+
+--
+-- Name: idx_stripe_subscribers_stripe_customer_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX idx_stripe_subscribers_stripe_customer_id ON public.stripe_subscribers USING btree (stripe_customer_id);
+
+
+--
+-- Name: idx_stripe_subscribers_stripe_status; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_stripe_subscribers_stripe_status ON public.stripe_subscribers USING btree (stripe_status);
+
+
+--
+-- Name: idx_stripe_subscribers_stripe_subscription_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX idx_stripe_subscribers_stripe_subscription_id ON public.stripe_subscribers USING btree (stripe_subscription_id);
 
 
 --
@@ -7565,4 +7639,5 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20251021153929'),
     ('20251109101724'),
     ('20251112061948'),
-    ('20251113173140');
+    ('20251113173140'),
+    ('20260111083416');

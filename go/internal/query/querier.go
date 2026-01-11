@@ -22,6 +22,7 @@ type Querier interface {
 	CreateSetting(ctx context.Context, userID int64) (CreateSettingRow, error)
 	CreateSignInCode(ctx context.Context, arg CreateSignInCodeParams) (SignInCode, error)
 	CreateSignUpCode(ctx context.Context, arg CreateSignUpCodeParams) (SignUpCode, error)
+	CreateStripeSubscriber(ctx context.Context, arg CreateStripeSubscriberParams) (StripeSubscriber, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (CreateUserRow, error)
 	CreateWorkImage(ctx context.Context, arg CreateWorkImageParams) (int64, error)
 	DeleteExpiredPasswordResetTokens(ctx context.Context, expiresAt time.Time) error
@@ -43,6 +44,9 @@ type Querier interface {
 	GetSessionByID(ctx context.Context, sessionID string) (Session, error)
 	GetSettingByUserID(ctx context.Context, userID int64) (GetSettingByUserIDRow, error)
 	GetStaffsByWorkIDs(ctx context.Context, dollar_1 []int64) ([]GetStaffsByWorkIDsRow, error)
+	GetStripeSubscriberByID(ctx context.Context, id int64) (StripeSubscriber, error)
+	GetStripeSubscriberByStripeCustomerID(ctx context.Context, stripeCustomerID string) (StripeSubscriber, error)
+	GetStripeSubscriberByStripeSubscriptionID(ctx context.Context, stripeSubscriptionID string) (StripeSubscriber, error)
 	GetUserByEmail(ctx context.Context, lower string) (GetUserByEmailRow, error)
 	GetUserByEmailForSignIn(ctx context.Context, lower string) (GetUserByEmailForSignInRow, error)
 	GetUserByEmailOrUsername(ctx context.Context, lower string) (GetUserByEmailOrUsernameRow, error)
@@ -63,6 +67,8 @@ type Querier interface {
 	TouchSession(ctx context.Context, sessionID string) error
 	UpdateProfileImageData(ctx context.Context, arg UpdateProfileImageDataParams) error
 	UpdateSession(ctx context.Context, arg UpdateSessionParams) error
+	UpdateStripeSubscriber(ctx context.Context, arg UpdateStripeSubscriberParams) error
+	UpdateStripeSubscriberStatus(ctx context.Context, arg UpdateStripeSubscriberStatusParams) error
 	UpdateUserPassword(ctx context.Context, arg UpdateUserPasswordParams) error
 }
 
