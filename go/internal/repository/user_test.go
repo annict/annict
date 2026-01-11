@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"testing"
+	"time"
 
 	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/repository"
@@ -130,5 +131,247 @@ func TestUserRepository_GetByStripeSubscriberID_NotFound(t *testing.T) {
 	}
 	if err != sql.ErrNoRows {
 		t.Errorf("期待するエラーではありません: got %v, want %v", err, sql.ErrNoRows)
+	}
+}
+
+// TestUserRepository_IsSupporter_StripeActive はStripeサポーター（アクティブ）の場合trueを返すことをテスト
+func TestUserRepository_IsSupporter_StripeActive(t *testing.T) {
+	db, tx := testutil.SetupTestDB(t)
+	queries := query.New(db).WithTx(tx)
+
+	stripeRepo := repository.NewStripeSubscriberRepository(queries)
+	gumroadRepo := repository.NewGumroadSubscriberRepository(queries)
+	userRepo := repository.NewUserRepository(queries).
+		WithStripeSubscriberRepo(stripeRepo).
+		WithGumroadSubscriberRepo(gumroadRepo)
+
+	// アクティブなStripeサブスクライバーを作成
+	subscriberID := testutil.NewStripeSubscriberBuilder(t, tx).
+		WithStripeStatus("active").
+		Build()
+
+	// ユーザーをquery.User型で構築
+	user := &query.User{
+		StripeSubscriberID:  sql.NullInt64{Int64: subscriberID, Valid: true},
+		GumroadSubscriberID: sql.NullInt64{},
+	}
+
+	isSupporter, err := userRepo.IsSupporter(context.Background(), user)
+	if err != nil {
+		t.Fatalf("IsSupporterの実行に失敗: %v", err)
+	}
+
+	if !isSupporter {
+		t.Error("アクティブなStripeサポーターはtrueを返すべきです")
+	}
+}
+
+// TestUserRepository_IsSupporter_StripePastDue はStripeサポーター（past_due）の場合trueを返すことをテスト
+func TestUserRepository_IsSupporter_StripePastDue(t *testing.T) {
+	db, tx := testutil.SetupTestDB(t)
+	queries := query.New(db).WithTx(tx)
+
+	stripeRepo := repository.NewStripeSubscriberRepository(queries)
+	gumroadRepo := repository.NewGumroadSubscriberRepository(queries)
+	userRepo := repository.NewUserRepository(queries).
+		WithStripeSubscriberRepo(stripeRepo).
+		WithGumroadSubscriberRepo(gumroadRepo)
+
+	// past_due状態のStripeサブスクライバーを作成
+	subscriberID := testutil.NewStripeSubscriberBuilder(t, tx).
+		WithStripeStatus("past_due").
+		Build()
+
+	user := &query.User{
+		StripeSubscriberID:  sql.NullInt64{Int64: subscriberID, Valid: true},
+		GumroadSubscriberID: sql.NullInt64{},
+	}
+
+	isSupporter, err := userRepo.IsSupporter(context.Background(), user)
+	if err != nil {
+		t.Fatalf("IsSupporterの実行に失敗: %v", err)
+	}
+
+	if !isSupporter {
+		t.Error("past_due状態のStripeサポーターはtrueを返すべきです（猶予期間）")
+	}
+}
+
+// TestUserRepository_IsSupporter_StripeCanceled はStripeサポーター（キャンセル済み）の場合falseを返すことをテスト
+func TestUserRepository_IsSupporter_StripeCanceled(t *testing.T) {
+	db, tx := testutil.SetupTestDB(t)
+	queries := query.New(db).WithTx(tx)
+
+	stripeRepo := repository.NewStripeSubscriberRepository(queries)
+	gumroadRepo := repository.NewGumroadSubscriberRepository(queries)
+	userRepo := repository.NewUserRepository(queries).
+		WithStripeSubscriberRepo(stripeRepo).
+		WithGumroadSubscriberRepo(gumroadRepo)
+
+	// キャンセル済みのStripeサブスクライバーを作成
+	subscriberID := testutil.NewStripeSubscriberBuilder(t, tx).
+		WithStripeStatus("canceled").
+		Build()
+
+	user := &query.User{
+		StripeSubscriberID:  sql.NullInt64{Int64: subscriberID, Valid: true},
+		GumroadSubscriberID: sql.NullInt64{},
+	}
+
+	isSupporter, err := userRepo.IsSupporter(context.Background(), user)
+	if err != nil {
+		t.Fatalf("IsSupporterの実行に失敗: %v", err)
+	}
+
+	if isSupporter {
+		t.Error("キャンセル済みのStripeサポーターはfalseを返すべきです")
+	}
+}
+
+// TestUserRepository_IsSupporter_GumroadActive はGumroadサポーター（アクティブ）の場合trueを返すことをテスト
+func TestUserRepository_IsSupporter_GumroadActive(t *testing.T) {
+	db, tx := testutil.SetupTestDB(t)
+	queries := query.New(db).WithTx(tx)
+
+	stripeRepo := repository.NewStripeSubscriberRepository(queries)
+	gumroadRepo := repository.NewGumroadSubscriberRepository(queries)
+	userRepo := repository.NewUserRepository(queries).
+		WithStripeSubscriberRepo(stripeRepo).
+		WithGumroadSubscriberRepo(gumroadRepo)
+
+	// アクティブなGumroadサブスクライバーを作成（cancelled_atとended_atがnull）
+	subscriberID := testutil.NewGumroadSubscriberBuilder(t, tx).Build()
+
+	user := &query.User{
+		StripeSubscriberID:  sql.NullInt64{},
+		GumroadSubscriberID: sql.NullInt64{Int64: subscriberID, Valid: true},
+	}
+
+	isSupporter, err := userRepo.IsSupporter(context.Background(), user)
+	if err != nil {
+		t.Fatalf("IsSupporterの実行に失敗: %v", err)
+	}
+
+	if !isSupporter {
+		t.Error("アクティブなGumroadサポーターはtrueを返すべきです")
+	}
+}
+
+// TestUserRepository_IsSupporter_GumroadEnded はGumroadサポーター（終了済み）の場合falseを返すことをテスト
+func TestUserRepository_IsSupporter_GumroadEnded(t *testing.T) {
+	db, tx := testutil.SetupTestDB(t)
+	queries := query.New(db).WithTx(tx)
+
+	stripeRepo := repository.NewStripeSubscriberRepository(queries)
+	gumroadRepo := repository.NewGumroadSubscriberRepository(queries)
+	userRepo := repository.NewUserRepository(queries).
+		WithStripeSubscriberRepo(stripeRepo).
+		WithGumroadSubscriberRepo(gumroadRepo)
+
+	// 終了済みのGumroadサブスクライバーを作成
+	pastTime := time.Now().AddDate(0, 0, -1)
+	subscriberID := testutil.NewGumroadSubscriberBuilder(t, tx).
+		WithGumroadEndedAt(pastTime).
+		Build()
+
+	user := &query.User{
+		StripeSubscriberID:  sql.NullInt64{},
+		GumroadSubscriberID: sql.NullInt64{Int64: subscriberID, Valid: true},
+	}
+
+	isSupporter, err := userRepo.IsSupporter(context.Background(), user)
+	if err != nil {
+		t.Fatalf("IsSupporterの実行に失敗: %v", err)
+	}
+
+	if isSupporter {
+		t.Error("終了済みのGumroadサポーターはfalseを返すべきです")
+	}
+}
+
+// TestUserRepository_IsSupporter_BothActive はStripeとGumroad両方アクティブの場合trueを返すことをテスト
+func TestUserRepository_IsSupporter_BothActive(t *testing.T) {
+	db, tx := testutil.SetupTestDB(t)
+	queries := query.New(db).WithTx(tx)
+
+	stripeRepo := repository.NewStripeSubscriberRepository(queries)
+	gumroadRepo := repository.NewGumroadSubscriberRepository(queries)
+	userRepo := repository.NewUserRepository(queries).
+		WithStripeSubscriberRepo(stripeRepo).
+		WithGumroadSubscriberRepo(gumroadRepo)
+
+	// 両方のサブスクライバーを作成
+	stripeSubscriberID := testutil.NewStripeSubscriberBuilder(t, tx).
+		WithStripeStatus("active").
+		Build()
+	gumroadSubscriberID := testutil.NewGumroadSubscriberBuilder(t, tx).Build()
+
+	user := &query.User{
+		StripeSubscriberID:  sql.NullInt64{Int64: stripeSubscriberID, Valid: true},
+		GumroadSubscriberID: sql.NullInt64{Int64: gumroadSubscriberID, Valid: true},
+	}
+
+	isSupporter, err := userRepo.IsSupporter(context.Background(), user)
+	if err != nil {
+		t.Fatalf("IsSupporterの実行に失敗: %v", err)
+	}
+
+	if !isSupporter {
+		t.Error("両方アクティブなサポーターはtrueを返すべきです")
+	}
+}
+
+// TestUserRepository_IsSupporter_NoSubscription は非サポーターの場合falseを返すことをテスト
+func TestUserRepository_IsSupporter_NoSubscription(t *testing.T) {
+	db, tx := testutil.SetupTestDB(t)
+	queries := query.New(db).WithTx(tx)
+
+	stripeRepo := repository.NewStripeSubscriberRepository(queries)
+	gumroadRepo := repository.NewGumroadSubscriberRepository(queries)
+	userRepo := repository.NewUserRepository(queries).
+		WithStripeSubscriberRepo(stripeRepo).
+		WithGumroadSubscriberRepo(gumroadRepo)
+
+	// サブスクリプションを持たないユーザー
+	user := &query.User{
+		StripeSubscriberID:  sql.NullInt64{},
+		GumroadSubscriberID: sql.NullInt64{},
+	}
+
+	isSupporter, err := userRepo.IsSupporter(context.Background(), user)
+	if err != nil {
+		t.Fatalf("IsSupporterの実行に失敗: %v", err)
+	}
+
+	if isSupporter {
+		t.Error("サブスクリプションを持たないユーザーはfalseを返すべきです")
+	}
+}
+
+// TestUserRepository_IsSupporter_NoDependencies はリポジトリ依存がない場合falseを返すことをテスト
+func TestUserRepository_IsSupporter_NoDependencies(t *testing.T) {
+	db, tx := testutil.SetupTestDB(t)
+	queries := query.New(db).WithTx(tx)
+
+	// 依存を設定しないUserRepository
+	userRepo := repository.NewUserRepository(queries)
+
+	// サブスクライバーを作成
+	subscriberID := testutil.NewStripeSubscriberBuilder(t, tx).
+		WithStripeStatus("active").
+		Build()
+
+	user := &query.User{
+		StripeSubscriberID:  sql.NullInt64{Int64: subscriberID, Valid: true},
+		GumroadSubscriberID: sql.NullInt64{},
+	}
+
+	isSupporter, err := userRepo.IsSupporter(context.Background(), user)
+	if err != nil {
+		t.Fatalf("IsSupporterの実行に失敗: %v", err)
+	}
+
+	if isSupporter {
+		t.Error("リポジトリ依存がない場合はfalseを返すべきです")
 	}
 }

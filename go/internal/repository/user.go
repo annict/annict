@@ -10,7 +10,9 @@ import (
 
 // UserRepository はUser関連のデータアクセスを担当します
 type UserRepository struct {
-	queries *query.Queries
+	queries               *query.Queries
+	stripeSubscriberRepo  *StripeSubscriberRepository
+	gumroadSubscriberRepo *GumroadSubscriberRepository
 }
 
 // NewUserRepository はUserRepositoryを作成します
@@ -53,4 +55,38 @@ func (r *UserRepository) UpdateStripeSubscriberID(ctx context.Context, userID in
 // GetByStripeSubscriberID はStripeサブスクライバーIDでユーザーを検索します
 func (r *UserRepository) GetByStripeSubscriberID(ctx context.Context, stripeSubscriberID int64) (query.GetUserByStripeSubscriberIDRow, error) {
 	return r.queries.GetUserByStripeSubscriberID(ctx, sql.NullInt64{Int64: stripeSubscriberID, Valid: true})
+}
+
+// WithStripeSubscriberRepo はStripeSubscriberRepositoryを設定します
+func (r *UserRepository) WithStripeSubscriberRepo(repo *StripeSubscriberRepository) *UserRepository {
+	r.stripeSubscriberRepo = repo
+	return r
+}
+
+// WithGumroadSubscriberRepo はGumroadSubscriberRepositoryを設定します
+func (r *UserRepository) WithGumroadSubscriberRepo(repo *GumroadSubscriberRepository) *UserRepository {
+	r.gumroadSubscriberRepo = repo
+	return r
+}
+
+// IsSupporter はユーザーがサポーターかどうかを判定します
+// Stripeサブスクリプションまたは（移行期間中は）Gumroadサブスクリプションがアクティブな場合にtrueを返します
+func (r *UserRepository) IsSupporter(ctx context.Context, user *query.User) (bool, error) {
+	// Stripeサブスクリプションをチェック
+	if user.StripeSubscriberID.Valid && r.stripeSubscriberRepo != nil {
+		stripeSubscriber, err := r.stripeSubscriberRepo.GetByID(ctx, user.StripeSubscriberID.Int64)
+		if err == nil && r.stripeSubscriberRepo.IsActive(&stripeSubscriber) {
+			return true, nil
+		}
+	}
+
+	// Gumroadサブスクリプションをチェック（移行期間中）
+	if user.GumroadSubscriberID.Valid && r.gumroadSubscriberRepo != nil {
+		gumroadSubscriber, err := r.gumroadSubscriberRepo.GetByID(ctx, user.GumroadSubscriberID.Int64)
+		if err == nil && r.gumroadSubscriberRepo.IsActive(&gumroadSubscriber) {
+			return true, nil
+		}
+	}
+
+	return false, nil
 }
