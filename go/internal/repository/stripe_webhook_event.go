@@ -3,11 +3,24 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"time"
 
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
 )
+
+// StripeWebhookEvent はWebhookイベントの型エイリアスです
+type StripeWebhookEvent = query.StripeWebhookEvent
+
+// CreateStripeWebhookEventParams はWebhookイベント作成時のパラメータです
+type CreateStripeWebhookEventParams struct {
+	StripeEventID   string
+	StripeEventType string
+	StripePayload   json.RawMessage
+	Status          string
+	ReceivedAt      time.Time
+}
 
 // StripeWebhookEventRepository はStripe Webhookイベントのリポジトリです
 type StripeWebhookEventRepository struct {
@@ -20,8 +33,14 @@ func NewStripeWebhookEventRepository(queries *query.Queries) *StripeWebhookEvent
 }
 
 // Create は新しいWebhookイベントを作成します
-func (r *StripeWebhookEventRepository) Create(ctx context.Context, params query.CreateStripeWebhookEventParams) (query.StripeWebhookEvent, error) {
-	return r.queries.CreateStripeWebhookEvent(ctx, params)
+func (r *StripeWebhookEventRepository) Create(ctx context.Context, params CreateStripeWebhookEventParams) (StripeWebhookEvent, error) {
+	return r.queries.CreateStripeWebhookEvent(ctx, query.CreateStripeWebhookEventParams{
+		StripeEventID:   params.StripeEventID,
+		StripeEventType: params.StripeEventType,
+		StripePayload:   params.StripePayload,
+		Status:          params.Status,
+		ReceivedAt:      params.ReceivedAt,
+	})
 }
 
 // GetByStripeEventID はStripe Event IDでWebhookイベントを取得します

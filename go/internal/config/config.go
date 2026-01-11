@@ -69,6 +69,13 @@ type Config struct {
 	SentryEnvironment      string
 	SentryTracesSampleRate float64
 	SentryDebug            bool
+
+	// Stripe（決済）
+	StripeSecretKey      string
+	StripePublishableKey string
+	StripeWebhookSecret  string
+	StripePriceMonthlyID string
+	StripePriceYearlyID  string
 }
 
 // Load は環境変数から設定を読み込みます
@@ -184,6 +191,13 @@ func Load() (*Config, error) {
 	}
 	cfg.SentryTracesSampleRate = parseSentryTracesSampleRate(os.Getenv("ANNICT_SENTRY_TRACES_SAMPLE_RATE"))
 	cfg.SentryDebug = os.Getenv("ANNICT_SENTRY_DEBUG") == "true"
+
+	// Stripe（オプショナル - サポーター決済）
+	cfg.StripeSecretKey = os.Getenv("ANNICT_STRIPE_SECRET_KEY")
+	cfg.StripePublishableKey = os.Getenv("ANNICT_STRIPE_PUBLISHABLE_KEY")
+	cfg.StripeWebhookSecret = os.Getenv("ANNICT_STRIPE_WEBHOOK_SECRET")
+	cfg.StripePriceMonthlyID = os.Getenv("ANNICT_STRIPE_PRICE_MONTHLY")
+	cfg.StripePriceYearlyID = os.Getenv("ANNICT_STRIPE_PRICE_YEARLY")
 
 	// アセットバージョン（Gitコミットハッシュ）を設定
 	cfg.AssetVersion = getGitCommitHash()

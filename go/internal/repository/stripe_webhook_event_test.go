@@ -20,7 +20,7 @@ func TestStripeWebhookEventRepository_Create(t *testing.T) {
 	repo := repository.NewStripeWebhookEventRepository(queries)
 
 	now := time.Now()
-	params := query.CreateStripeWebhookEventParams{
+	params := repository.CreateStripeWebhookEventParams{
 		StripeEventID:   "evt_test_create",
 		StripeEventType: "customer.subscription.created",
 		StripePayload:   json.RawMessage(`{"id": "evt_test_create", "type": "customer.subscription.created"}`),
