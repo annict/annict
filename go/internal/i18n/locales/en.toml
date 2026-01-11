@@ -739,3 +739,12 @@ other = "You are already a supporter"
 [supporters_checkout_error]
 description = "Checkout processing error"
 other = "An error occurred during checkout. Please try again later."
+
+# Supporter portal related
+[supporters_portal_error]
+description = "Portal session creation error"
+other = "Failed to access the portal. Please try again later."
+
+[supporters_portal_not_supporter]
+description = "Non-supporter user tried to access the portal"
+other = "Only active supporters can access this page"

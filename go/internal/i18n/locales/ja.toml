@@ -739,3 +739,12 @@ other = "既にサポーター登録済みです"
 [supporters_checkout_error]
 description = "Checkout処理エラー"
 other = "決済処理中にエラーが発生しました。しばらくしてから再度お試しください。"
+
+# サポーターポータル関連
+[supporters_portal_error]
+description = "ポータルセッション作成エラー"
+other = "ポータルへのアクセスに失敗しました。しばらくしてから再度お試しください。"
+
+[supporters_portal_not_supporter]
+description = "サポーターでないユーザーがポータルにアクセスしようとした"
+other = "サポーター登録中のユーザーのみアクセスできます"

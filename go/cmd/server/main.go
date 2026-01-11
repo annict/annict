@@ -377,6 +377,7 @@ func main() {
 	// サポーターページ
 	r.Get("/supporters", supportersHandler.Show)
 	r.Post("/supporters/checkout", supportersHandler.Create)
+	r.Post("/supporters/portal", supportersHandler.Portal)
 
 	// Stripe Webhook
 	r.Post("/webhooks/stripe", stripeWebhookHandler.Create)
