@@ -33,7 +33,7 @@ var goHandledPaths = []string{
 	"/password/reset",   // パスワードリセット申請
 	"/password/edit",    // パスワードリセット実行
 	"/password",         // パスワード更新
-	// 将来追加: "/works/popular"（人気アニメページ）など
+	"/supporters",       // サポーターページ
 }
 
 // NewReverseProxyMiddleware は新しいReverseProxyMiddlewareを作成

@@ -7,6 +7,10 @@ import (
 	"github.com/annict/annict/go/internal/query"
 )
 
+// StripeSubscriber はStripeサブスクライバーの型エイリアスです
+// ハンドラーがqueryパッケージを直接参照しないようにするため、repositoryで公開します
+type StripeSubscriber = query.StripeSubscriber
+
 // StripeSubscriberRepository はStripeサブスクライバー関連のデータアクセスを担当します
 type StripeSubscriberRepository struct {
 	queries *query.Queries

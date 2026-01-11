@@ -1,0 +1,229 @@
+package supporters
+
+import (
+	"context"
+	"time"
+
+	"github.com/annict/annict/go/internal/templates"
+	"github.com/annict/annict/go/internal/viewmodel"
+)
+
+// Show はサポーターページのコンテンツを表示します
+templ Show(ctx context.Context, data viewmodel.SupporterPageData) {
+	<div class="max-w-3xl mx-auto">
+		// Checkout完了/キャンセル時のメッセージ
+		if data.ShowSuccessMessage {
+			<div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+				<p class="text-green-800 font-medium">
+					{ templates.T(ctx, "supporters_success_message") }
+				</p>
+			</div>
+		}
+		if data.ShowCanceledMessage {
+			<div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+				<p class="text-yellow-800 font-medium">
+					{ templates.T(ctx, "supporters_canceled_message") }
+				</p>
+			</div>
+		}
+
+		// ページタイトル
+		<h1 class="text-3xl font-bold mb-8">
+			{ templates.T(ctx, "supporters_heading") }
+		</h1>
+
+		// サポーター特典説明
+		<div class="mb-8">
+			<h2 class="text-xl font-semibold mb-4">
+				{ templates.T(ctx, "supporters_benefits_title") }
+			</h2>
+			<ul class="space-y-3">
+				<li class="flex items-start gap-3">
+					<span class="text-primary text-xl">✨</span>
+					<div>
+						<p class="font-medium">{ templates.T(ctx, "supporters_benefit_1_title") }</p>
+						<p class="text-gray-600 text-sm">{ templates.T(ctx, "supporters_benefit_1_desc") }</p>
+					</div>
+				</li>
+				<li class="flex items-start gap-3">
+					<span class="text-primary text-xl">🎖️</span>
+					<div>
+						<p class="font-medium">{ templates.T(ctx, "supporters_benefit_2_title") }</p>
+						<p class="text-gray-600 text-sm">{ templates.T(ctx, "supporters_benefit_2_desc") }</p>
+					</div>
+				</li>
+				<li class="flex items-start gap-3">
+					<span class="text-primary text-xl">🕐</span>
+					<div>
+						<p class="font-medium">{ templates.T(ctx, "supporters_benefit_3_title") }</p>
+						<p class="text-gray-600 text-sm">{ templates.T(ctx, "supporters_benefit_3_desc") }</p>
+					</div>
+				</li>
+			</ul>
+		</div>
+
+		// ユーザー状態に応じた表示
+		if !data.IsLoggedIn {
+			// 未ログイン: ログイン促進
+			@notLoggedInSection(ctx)
+		} else {
+			switch data.Status {
+			case viewmodel.SupporterStatusNone:
+				// 非サポーター: Stripe決済ボタン
+				@checkoutSection(ctx)
+			case viewmodel.SupporterStatusGumroad:
+				// Gumroadサポーター: 移行案内メッセージ
+				@gumroadSection(ctx, data.GumroadSubscriber)
+			case viewmodel.SupporterStatusStripe:
+				// Stripeサポーター: サブスクリプション情報
+				@stripeSection(ctx, data.StripeSubscriber)
+			case viewmodel.SupporterStatusBoth:
+				// 両方アクティブ: Stripeを優先表示
+				@stripeSection(ctx, data.StripeSubscriber)
+			}
+		}
+	</div>
+}
+
+// notLoggedInSection は未ログインユーザー向けセクション
+templ notLoggedInSection(ctx context.Context) {
+	<div class="bg-gray-50 rounded-lg p-6">
+		<h2 class="text-xl font-semibold mb-4">
+			{ templates.T(ctx, "supporters_login_prompt_title") }
+		</h2>
+		<p class="text-gray-600 mb-4">
+			{ templates.T(ctx, "supporters_login_prompt_desc") }
+		</p>
+		<a href="/sign_in?back=/supporters" class="btn btn-primary">
+			{ templates.T(ctx, "supporters_login_button") }
+		</a>
+	</div>
+}
+
+// checkoutSection は非サポーター向けのStripe決済セクション
+templ checkoutSection(ctx context.Context) {
+	<div class="bg-gray-50 rounded-lg p-6">
+		<h2 class="text-xl font-semibold mb-4">
+			{ templates.T(ctx, "supporters_checkout_title") }
+		</h2>
+		<div class="grid sm:grid-cols-2 gap-4 mb-6">
+			// 月額プラン
+			<div class="bg-white border border-gray-200 rounded-lg p-4">
+				<h3 class="font-semibold text-lg mb-2">
+					{ templates.T(ctx, "supporters_plan_monthly") }
+				</h3>
+				<p class="text-3xl font-bold mb-2">
+					¥290<span class="text-sm font-normal text-gray-500">/{ templates.T(ctx, "supporters_month") }</span>
+				</p>
+				<form action="/supporters/checkout" method="POST">
+					<input type="hidden" name="plan" value="monthly"/>
+					<button type="submit" class="btn btn-primary w-full">
+						{ templates.T(ctx, "supporters_subscribe_button") }
+					</button>
+				</form>
+			</div>
+			// 年額プラン
+			<div class="bg-white border-2 border-primary rounded-lg p-4 relative">
+				<span class="absolute -top-3 left-4 bg-primary text-white text-xs px-2 py-1 rounded">
+					{ templates.T(ctx, "supporters_recommended") }
+				</span>
+				<h3 class="font-semibold text-lg mb-2">
+					{ templates.T(ctx, "supporters_plan_yearly") }
+				</h3>
+				<p class="text-3xl font-bold mb-2">
+					¥2,900<span class="text-sm font-normal text-gray-500">/{ templates.T(ctx, "supporters_year") }</span>
+				</p>
+				<p class="text-sm text-gray-600 mb-4">
+					{ templates.T(ctx, "supporters_yearly_savings") }
+				</p>
+				<form action="/supporters/checkout" method="POST">
+					<input type="hidden" name="plan" value="yearly"/>
+					<button type="submit" class="btn btn-primary w-full">
+						{ templates.T(ctx, "supporters_subscribe_button") }
+					</button>
+				</form>
+			</div>
+		</div>
+		<p class="text-sm text-gray-500">
+			{ templates.T(ctx, "supporters_payment_method") }
+		</p>
+	</div>
+}
+
+// gumroadSection はGumroadサポーター向けセクション
+templ gumroadSection(ctx context.Context, subscriber *viewmodel.GumroadSubscriberView) {
+	<div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
+		<h2 class="text-xl font-semibold mb-4 text-blue-800">
+			{ templates.T(ctx, "supporters_gumroad_title") }
+		</h2>
+		<p class="text-blue-700 mb-4">
+			{ templates.T(ctx, "supporters_gumroad_message") }
+		</p>
+		if subscriber != nil {
+			<div class="bg-white rounded p-4 mb-4">
+				<dl class="space-y-2">
+					<div class="flex justify-between">
+						<dt class="text-gray-600">{ templates.T(ctx, "supporters_registered_date") }</dt>
+						<dd class="font-medium">{ formatDate(subscriber.CreatedAt) }</dd>
+					</div>
+					if subscriber.EndedAt != nil {
+						<div class="flex justify-between">
+							<dt class="text-gray-600">{ templates.T(ctx, "supporters_end_date") }</dt>
+							<dd class="font-medium">{ formatDate(*subscriber.EndedAt) }</dd>
+						</div>
+					}
+				</dl>
+			</div>
+		}
+	</div>
+}
+
+// stripeSection はStripeサポーター向けセクション
+templ stripeSection(ctx context.Context, subscriber *viewmodel.StripeSubscriberView) {
+	<div class="bg-green-50 border border-green-200 rounded-lg p-6">
+		<h2 class="text-xl font-semibold mb-4 text-green-800">
+			{ templates.T(ctx, "supporters_active_title") }
+		</h2>
+		<p class="text-green-700 mb-4">
+			{ templates.T(ctx, "supporters_active_message") }
+		</p>
+		if subscriber != nil {
+			<div class="bg-white rounded p-4 mb-4">
+				<dl class="space-y-2">
+					<div class="flex justify-between">
+						<dt class="text-gray-600">{ templates.T(ctx, "supporters_status") }</dt>
+						<dd class="font-medium">
+							if subscriber.Status == "active" {
+								<span class="text-green-600">{ templates.T(ctx, "supporters_status_active") }</span>
+							} else if subscriber.Status == "past_due" {
+								<span class="text-yellow-600">{ templates.T(ctx, "supporters_status_past_due") }</span>
+							} else {
+								{ subscriber.Status }
+							}
+						</dd>
+					</div>
+					<div class="flex justify-between">
+						<dt class="text-gray-600">{ templates.T(ctx, "supporters_next_billing_date") }</dt>
+						<dd class="font-medium">{ formatDate(subscriber.CurrentPeriodEnd) }</dd>
+					</div>
+					if subscriber.CancelAt != nil {
+						<div class="flex justify-between">
+							<dt class="text-gray-600">{ templates.T(ctx, "supporters_cancel_at") }</dt>
+							<dd class="font-medium text-red-600">{ formatDate(*subscriber.CancelAt) }</dd>
+						</div>
+					}
+				</dl>
+			</div>
+		}
+		<form action="/supporters/portal" method="POST">
+			<button type="submit" class="btn btn-outline">
+				{ templates.T(ctx, "supporters_manage_button") }
+			</button>
+		</form>
+	</div>
+}
+
+// formatDate は日付をフォーマットします
+func formatDate(t time.Time) string {
+	return t.Format("2006/01/02")
+}

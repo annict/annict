@@ -31,6 +31,7 @@ import (
 	"github.com/annict/annict/go/internal/handler/sign_up"
 	"github.com/annict/annict/go/internal/handler/sign_up_code"
 	"github.com/annict/annict/go/internal/handler/sign_up_username"
+	"github.com/annict/annict/go/internal/handler/supporters"
 	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/image"
 	authMiddleware "github.com/annict/annict/go/internal/middleware"
@@ -320,6 +321,11 @@ func main() {
 	// Web App Manifestハンドラーの初期化
 	manifestHandler := manifest.NewHandler(cfg)
 
+	// サポーターページハンドラーの初期化
+	stripeSubscriberRepo := repository.NewStripeSubscriberRepository(queries)
+	gumroadSubscriberRepo := repository.NewGumroadSubscriberRepository(queries)
+	supportersHandler := supporters.NewHandler(cfg, sessionManager, stripeSubscriberRepo, gumroadSubscriberRepo)
+
 	// 静的ファイルの配信 (Tailwind CLI + esbuild のビルド結果)
 	fileServer := http.FileServer(http.Dir("./static"))
 	r.Handle("/static/*", http.StripPrefix("/static", fileServer))
@@ -351,6 +357,9 @@ func main() {
 	// パスワード編集・更新
 	r.Get("/password/edit", passwordHandler.Edit)
 	r.Patch("/password", passwordHandler.Update) // HTMLフォームからは_methodパラメータでPATCHを送信
+
+	// サポーターページ
+	r.Get("/supporters", supportersHandler.Show)
 
 	// サーバー起動
 	// Dockerコンテナ内で動かす場合、0.0.0.0でリッスンする必要がある

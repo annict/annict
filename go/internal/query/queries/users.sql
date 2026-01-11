@@ -1,5 +1,5 @@
 -- name: GetUserByID :one
-SELECT id, username, email, role, encrypted_password, locale, created_at, updated_at
+SELECT id, username, email, role, encrypted_password, locale, stripe_subscriber_id, gumroad_subscriber_id, created_at, updated_at
 FROM users
 WHERE id = $1
 LIMIT 1;

@@ -585,3 +585,144 @@ other = "This username is not available"
 [sign_up_username_success]
 description = "User registration success message"
 other = "Your account has been created successfully. Welcome to Annict!"
+
+# Supporters related
+[supporters_title]
+description = "Supporters page title"
+other = "Annict Supporters"
+
+[supporters_heading]
+description = "Supporters page heading"
+other = "Annict Supporters"
+
+[supporters_success_message]
+description = "Checkout completed message"
+other = "Thank you for becoming a supporter!"
+
+[supporters_canceled_message]
+description = "Checkout canceled message"
+other = "Payment was canceled"
+
+[supporters_benefits_title]
+description = "Benefits section title"
+other = "Supporter Benefits"
+
+[supporters_benefit_1_title]
+description = "Benefit 1 title"
+other = "Ad-free Experience"
+
+[supporters_benefit_1_desc]
+description = "Benefit 1 description"
+other = "Enjoy Annict without any ads for a smoother experience"
+
+[supporters_benefit_2_title]
+description = "Benefit 2 title"
+other = "Supporter Badge"
+
+[supporters_benefit_2_desc]
+description = "Benefit 2 description"
+other = "Display a supporter badge on your profile"
+
+[supporters_benefit_3_title]
+description = "Benefit 3 title"
+other = "Watch Date Input"
+
+[supporters_benefit_3_desc]
+description = "Benefit 3 description"
+other = "Specify exact watch dates and times when recording"
+
+[supporters_login_prompt_title]
+description = "Login prompt title"
+other = "Sign in to become a supporter"
+
+[supporters_login_prompt_desc]
+description = "Login prompt description"
+other = "Sign in or create an account to become an Annict supporter"
+
+[supporters_login_button]
+description = "Login button"
+other = "Sign In / Sign Up"
+
+[supporters_checkout_title]
+description = "Checkout section title"
+other = "Choose a Plan"
+
+[supporters_plan_monthly]
+description = "Monthly plan name"
+other = "Monthly Plan"
+
+[supporters_plan_yearly]
+description = "Yearly plan name"
+other = "Yearly Plan"
+
+[supporters_month]
+description = "Month"
+other = "month"
+
+[supporters_year]
+description = "Year"
+other = "year"
+
+[supporters_recommended]
+description = "Recommended label"
+other = "Recommended"
+
+[supporters_yearly_savings]
+description = "Yearly plan savings"
+other = "Save 2 months!"
+
+[supporters_subscribe_button]
+description = "Subscribe button"
+other = "Subscribe"
+
+[supporters_payment_method]
+description = "Payment method description"
+other = "Pay with credit card (powered by Stripe)"
+
+[supporters_gumroad_title]
+description = "Gumroad supporter section title"
+other = "Registered via Gumroad"
+
+[supporters_gumroad_message]
+description = "Gumroad migration message"
+other = "You are currently registered as a supporter via Gumroad. You don't need to register with Stripe until your subscription ends. If you wish to continue, please register with Stripe after your Gumroad subscription ends."
+
+[supporters_registered_date]
+description = "Registration date label"
+other = "Registered"
+
+[supporters_end_date]
+description = "End date label"
+other = "End Date"
+
+[supporters_active_title]
+description = "Active supporter section title"
+other = "Active Supporter"
+
+[supporters_active_message]
+description = "Active supporter message"
+other = "Thank you for being an Annict supporter!"
+
+[supporters_status]
+description = "Status label"
+other = "Status"
+
+[supporters_status_active]
+description = "Active status"
+other = "Active"
+
+[supporters_status_past_due]
+description = "Past due status"
+other = "Past Due"
+
+[supporters_next_billing_date]
+description = "Next billing date label"
+other = "Next Billing Date"
+
+[supporters_cancel_at]
+description = "Cancel at label"
+other = "Cancellation Date"
+
+[supporters_manage_button]
+description = "Manage button"
+other = "Manage Subscription"

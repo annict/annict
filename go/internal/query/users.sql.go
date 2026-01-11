@@ -136,21 +136,23 @@ func (q *Queries) GetUserByEmailOrUsername(ctx context.Context, lower string) (G
 }
 
 const getUserByID = `-- name: GetUserByID :one
-SELECT id, username, email, role, encrypted_password, locale, created_at, updated_at
+SELECT id, username, email, role, encrypted_password, locale, stripe_subscriber_id, gumroad_subscriber_id, created_at, updated_at
 FROM users
 WHERE id = $1
 LIMIT 1
 `
 
 type GetUserByIDRow struct {
-	ID                int64        `db:"id"`
-	Username          string       `db:"username"`
-	Email             string       `db:"email"`
-	Role              int32        `db:"role"`
-	EncryptedPassword string       `db:"encrypted_password"`
-	Locale            string       `db:"locale"`
-	CreatedAt         sql.NullTime `db:"created_at"`
-	UpdatedAt         sql.NullTime `db:"updated_at"`
+	ID                  int64         `db:"id"`
+	Username            string        `db:"username"`
+	Email               string        `db:"email"`
+	Role                int32         `db:"role"`
+	EncryptedPassword   string        `db:"encrypted_password"`
+	Locale              string        `db:"locale"`
+	StripeSubscriberID  sql.NullInt64 `db:"stripe_subscriber_id"`
+	GumroadSubscriberID sql.NullInt64 `db:"gumroad_subscriber_id"`
+	CreatedAt           sql.NullTime  `db:"created_at"`
+	UpdatedAt           sql.NullTime  `db:"updated_at"`
 }
 
 func (q *Queries) GetUserByID(ctx context.Context, id int64) (GetUserByIDRow, error) {
@@ -163,6 +165,8 @@ func (q *Queries) GetUserByID(ctx context.Context, id int64) (GetUserByIDRow, er
 		&i.Role,
 		&i.EncryptedPassword,
 		&i.Locale,
+		&i.StripeSubscriberID,
+		&i.GumroadSubscriberID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)

@@ -7,6 +7,10 @@ import (
 	"github.com/annict/annict/go/internal/query"
 )
 
+// GumroadSubscriber はGumroadサブスクライバーの型エイリアスです
+// ハンドラーがqueryパッケージを直接参照しないようにするため、repositoryで公開します
+type GumroadSubscriber = query.GumroadSubscriber
+
 // GumroadSubscriberRepository はGumroadサブスクライバー関連のデータアクセスを担当します
 type GumroadSubscriberRepository struct {
 	queries *query.Queries
