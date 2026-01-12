@@ -265,7 +265,6 @@ Rails.application.routes.draw do
   match "/settings/tokens/:token_id/edit",                      via: :get,    as: :settings_edit_token,                        to: "settings/tokens#edit"
   match "/settings/tokens/new",                                 via: :get,    as: :settings_new_token,                         to: "settings/tokens#new"
   match "/settings/user",                                       via: :delete, as: :settings_user,                              to: "settings/users#destroy"
-  match "/supporters",                                          via: :get,    as: :supporters,                                 to: "supporters#show"
   match "/terms",                                               via: :get,    as: :terms,                                      to: "pages#terms"
   match "/track",                                               via: :get,    as: :track,                                      to: "tracks#show"
   match "/userland",                                            via: :get,    as: :userland,                                   to: "userland/home#show"

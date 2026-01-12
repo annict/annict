@@ -69,9 +69,9 @@ class CallbacksController < Devise::OmniauthCallbacksController
       form = Forms::SupporterRegistrationForm.new(auth: auth)
 
       if form.subscriber.nil?
-        return redirect_to(supporters_path, alert: t("messages.supporters.gumroad_subscriber_not_found"))
+        return redirect_to("/supporters", alert: t("messages._common.not_found"))
       elsif form.invalid?
-        return redirect_to(supporters_path, alert: form.errors.full_messages.first)
+        return redirect_to("/supporters", alert: form.errors.full_messages.first)
       end
 
       Creators::SupporterRegistrationCreator.new(
