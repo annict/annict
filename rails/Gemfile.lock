@@ -401,9 +401,6 @@ GEM
       rack (>= 1.6.2, < 3)
     omniauth-facebook (8.0.0)
       omniauth-oauth2 (~> 1.2)
-    omniauth-gumroad (1.0.1)
-      omniauth (~> 1.0)
-      omniauth-oauth2 (~> 1.1)
     omniauth-oauth2 (1.7.1)
       oauth2 (~> 1.4)
       omniauth (>= 1.9, < 3)
@@ -762,7 +759,6 @@ DEPENDENCIES
   moji
   nokogiri
   omniauth-facebook
-  omniauth-gumroad
   omniauth-rails_csrf_protection
   pg
   prelude-batch-loader
