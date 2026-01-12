@@ -54,12 +54,13 @@
 
 :root {
   /* Basecoatの変数上書き */
-  --background: #f5f5f4;
+  --background: var(--color-stone-100);
   --foreground: var(--color-stone-950);
   --primary: var(--color-mizuho-600);
   --primary-foreground: var(--color-white);
   --secondary: var(--color-stone-300);
   --secondary-foreground: var(--color-stone-950);
+  --sidebar: var(--color-neutral-50);
 
   /* 独自の変数 */
   --success: var(--color-green-600);
@@ -74,12 +75,13 @@
 
 .dark {
   /* Basecoatの変数上書き */
-  --background: #212529;
+  --background: var(--color-stone-900);
   --foreground: var(--color-stone-300);
   --primary: var(--color-mizuho-600);
   --primary-foreground: var(--color-white);
   --secondary: var(--color-stone-600);
   --secondary-foreground: var(--color-stone-50);
+  --sidebar: var(--color-stone-800);
 
   /* 独自の変数 */
   --success: var(--color-green-400);

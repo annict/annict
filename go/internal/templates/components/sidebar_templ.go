@@ -37,7 +37,7 @@ func Sidebar(ctx context.Context, user *repository.GetUserByIDRow) templ.Compone
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<aside class=\"sidebar\" data-side=\"left\" aria-hidden=\"true\"><nav aria-label=\"Sidebar navigation\"><section class=\"scrollbar\"><!-- ロゴ --><div class=\"p-4 mb-2\"><a href=\"/\" class=\"flex items-center justify-center\"><img alt=\"Annict\" height=\"30\" loading=\"lazy\" src=\"/static/images/logos/color-white.png\" width=\"25\" class=\"dark:invert\"></a></div><!-- ユーザー情報 / サインイン --><div class=\"px-4 mb-4\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<aside class=\"sidebar\" data-side=\"left\" aria-hidden=\"false\"><nav aria-label=\"Sidebar navigation\"><section class=\"scrollbar\"><!-- ロゴ --><div class=\"p-4 mb-2\"><a href=\"/\" class=\"flex items-center justify-center\"><img alt=\"Annict\" height=\"30\" loading=\"lazy\" src=\"/static/images/logos/color-white.png\" width=\"25\" class=\"dark:invert\"></a></div><!-- ユーザー情報 / サインイン --><div class=\"px-4 mb-4\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

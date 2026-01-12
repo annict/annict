@@ -9,7 +9,7 @@ import (
 
 // Sidebar はサイドバーコンポーネントです
 templ Sidebar(ctx context.Context, user *repository.GetUserByIDRow) {
-	<aside class="sidebar" data-side="left" aria-hidden="true">
+	<aside class="sidebar" data-side="left" aria-hidden="false">
 		<nav aria-label="Sidebar navigation">
 			<section class="scrollbar">
 				<!-- ロゴ -->
