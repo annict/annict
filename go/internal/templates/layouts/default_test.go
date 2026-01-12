@@ -99,9 +99,8 @@ func TestDefault_WithUser(t *testing.T) {
 
 	// テストユーザー（viewmodel.User）
 	user := &viewmodel.User{
-		ID:        1,
-		Username:  "testuser",
-		AvatarURL: "",
+		ID:       1,
+		Username: "testuser",
 	}
 
 	content := templ.ComponentFunc(func(ctx context.Context, w io.Writer) error {

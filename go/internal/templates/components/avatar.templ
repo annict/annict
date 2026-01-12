@@ -1,54 +1,22 @@
 package components
 
-// AvatarSize はアバターのサイズバリエーションを表します
-type AvatarSize string
+import "github.com/annict/annict/go/internal/viewmodel"
 
-const (
-	// AvatarSizeSm は小サイズ（32px）
-	AvatarSizeSm AvatarSize = "sm"
-	// AvatarSizeMd は中サイズ（40px）- サイドバーで使用
-	AvatarSizeMd AvatarSize = "md"
-	// AvatarSizeLg は大サイズ（48px）
-	AvatarSizeLg AvatarSize = "lg"
-)
-
-// avatarSizeClasses はサイズに対応するCSSクラスを返します
-func avatarSizeClasses(size AvatarSize) string {
-	switch size {
-	case AvatarSizeSm:
-		return "w-8 h-8"
-	case AvatarSizeLg:
-		return "w-12 h-12"
-	default:
-		return "w-10 h-10"
-	}
-}
-
-// avatarTextSizeClasses はサイズに対応するテキストのCSSクラスを返します
-func avatarTextSizeClasses(size AvatarSize) string {
-	switch size {
-	case AvatarSizeSm:
-		return "text-xs"
-	case AvatarSizeLg:
-		return "text-base"
-	default:
-		return "text-sm"
-	}
-}
-
-// Avatar はアバター画像を表示するコンポーネントです
-// avatarURL が空の場合は、ユーザー名の頭文字をフォールバック表示します
-templ Avatar(avatarURL string, username string, size AvatarSize) {
-	if avatarURL != "" {
-		<img
-			src={ avatarURL }
-			alt={ "@" + username }
-			class={ "rounded-full object-cover", avatarSizeClasses(size) }
-			loading="lazy"
-		/>
-	} else {
-		<div class={ "rounded-full bg-muted flex items-center justify-center", avatarSizeClasses(size) }>
-			<span class={ "font-medium", avatarTextSizeClasses(size) }>{ string(username[0]) }</span>
-		</div>
+// Avatar はアバター画像を表示するコンポーネントです（50px固定）
+// アバターURLが空の場合は、ユーザー名の頭文字をフォールバック表示します
+templ Avatar(user *viewmodel.User) {
+	if user != nil {
+		if user.AvatarURL != "" {
+			<img
+				src={ user.AvatarURL }
+				alt={ "@" + user.Username }
+				class="w-[50px] h-[50px] rounded-full object-cover"
+				loading="lazy"
+			/>
+		} else {
+			<div class="w-[50px] h-[50px] rounded-full bg-muted flex items-center justify-center">
+				<span class="text-sm font-medium">{ string(user.Username[0]) }</span>
+			</div>
+		}
 	}
 }

@@ -2,29 +2,28 @@ package viewmodel
 
 import (
 	"github.com/annict/annict/go/internal/image"
-	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/repository"
 )
 
-// SidebarAvatarWidth はサイドバー用のアバター画像の幅（ピクセル）
-const SidebarAvatarWidth = 40
+// サイドバー用アバター画像サイズ（Retina対応で表示サイズの2倍）
+const sidebarAvatarImageSize = 100 // 50px × 2
 
 // User はテンプレート表示用のユーザーデータです
 type User struct {
 	ID        int64
 	Username  string
-	AvatarURL string // 事前計算済みアバター画像URL（imgproxy経由）
+	AvatarURL string // サイドバー用アバター画像URL（50px表示、100px画像）
 }
 
 // NewUserForSidebar はサイドバー表示用の viewmodel.User を作成します
-// サイドバー用のアバター画像URL（40px, webp）を事前計算します
-func NewUserForSidebar(row *query.GetUserByIDRow, helper *image.Helper) *User {
+func NewUserForSidebar(row *repository.User, helper *image.Helper) *User {
 	if row == nil {
 		return nil
 	}
 
 	var avatarURL string
 	if row.ProfileImageData.Valid && helper != nil {
-		avatarURL = helper.GetAvatarImageURL(row.ProfileImageData.String, SidebarAvatarWidth, "webp")
+		avatarURL = helper.GetAvatarImageURL(row.ProfileImageData.String, sidebarAvatarImageSize, "webp")
 	}
 
 	return &User{
