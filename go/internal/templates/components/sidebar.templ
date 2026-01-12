@@ -8,7 +8,8 @@ import (
 )
 
 // Sidebar はサイドバーコンポーネントです
-templ Sidebar(ctx context.Context, user *repository.GetUserByIDRow) {
+// avatarURL: ログインユーザーのアバター画像URL（imgproxy経由）。空文字の場合はフォールバック表示
+templ Sidebar(ctx context.Context, user *repository.GetUserByIDRow, avatarURL string) {
 	<aside class="sidebar" data-side="left" aria-hidden="false">
 		<nav aria-label="Sidebar navigation">
 			<section class="scrollbar">
@@ -27,9 +28,18 @@ templ Sidebar(ctx context.Context, user *repository.GetUserByIDRow) {
         <div class="px-4 mb-4">
 					if user != nil {
 						<a href={ templ.SafeURL("/@" + user.Username) } class="flex items-center gap-3 p-2 rounded-lg hover:bg-accent transition-colors">
-							<div class="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
-								<span class="text-sm font-medium">{ string(user.Username[0]) }</span>
-							</div>
+							if avatarURL != "" {
+								<img
+									src={ avatarURL }
+									alt={ "@" + user.Username }
+									class="w-10 h-10 rounded-full object-cover"
+									loading="lazy"
+								/>
+							} else {
+								<div class="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
+									<span class="text-sm font-medium">{ string(user.Username[0]) }</span>
+								</div>
+							}
 							<div class="flex-1 min-w-0">
 								<div class="font-medium text-sm truncate">{ user.Username }</div>
 								<div class="text-xs text-muted-foreground truncate">{ "@" + user.Username }</div>

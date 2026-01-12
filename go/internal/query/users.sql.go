@@ -136,23 +136,36 @@ func (q *Queries) GetUserByEmailOrUsername(ctx context.Context, lower string) (G
 }
 
 const getUserByID = `-- name: GetUserByID :one
-SELECT id, username, email, role, encrypted_password, locale, stripe_subscriber_id, gumroad_subscriber_id, created_at, updated_at
-FROM users
-WHERE id = $1
+SELECT
+    u.id,
+    u.username,
+    u.email,
+    u.role,
+    u.encrypted_password,
+    u.locale,
+    u.stripe_subscriber_id,
+    u.gumroad_subscriber_id,
+    u.created_at,
+    u.updated_at,
+    p.image_data AS profile_image_data
+FROM users u
+LEFT JOIN profiles p ON p.user_id = u.id
+WHERE u.id = $1
 LIMIT 1
 `
 
 type GetUserByIDRow struct {
-	ID                  int64         `db:"id"`
-	Username            string        `db:"username"`
-	Email               string        `db:"email"`
-	Role                int32         `db:"role"`
-	EncryptedPassword   string        `db:"encrypted_password"`
-	Locale              string        `db:"locale"`
-	StripeSubscriberID  sql.NullInt64 `db:"stripe_subscriber_id"`
-	GumroadSubscriberID sql.NullInt64 `db:"gumroad_subscriber_id"`
-	CreatedAt           sql.NullTime  `db:"created_at"`
-	UpdatedAt           sql.NullTime  `db:"updated_at"`
+	ID                  int64          `db:"id"`
+	Username            string         `db:"username"`
+	Email               string         `db:"email"`
+	Role                int32          `db:"role"`
+	EncryptedPassword   string         `db:"encrypted_password"`
+	Locale              string         `db:"locale"`
+	StripeSubscriberID  sql.NullInt64  `db:"stripe_subscriber_id"`
+	GumroadSubscriberID sql.NullInt64  `db:"gumroad_subscriber_id"`
+	CreatedAt           sql.NullTime   `db:"created_at"`
+	UpdatedAt           sql.NullTime   `db:"updated_at"`
+	ProfileImageData    sql.NullString `db:"profile_image_data"`
 }
 
 func (q *Queries) GetUserByID(ctx context.Context, id int64) (GetUserByIDRow, error) {
@@ -169,6 +182,7 @@ func (q *Queries) GetUserByID(ctx context.Context, id int64) (GetUserByIDRow, er
 		&i.GumroadSubscriberID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.ProfileImageData,
 	)
 	return i, err
 }

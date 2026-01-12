@@ -31,6 +31,12 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 	// フラッシュメッセージを取得
 	flash, _ := h.sessionManager.GetFlash(ctx, r)
 
+	// アバター画像URLを生成
+	var avatarURL string
+	if user != nil && user.ProfileImageData.Valid {
+		avatarURL = h.imageHelper.GetAvatarImageURL(user.ProfileImageData.String, 40, "webp")
+	}
+
 	// ページメタ情報を準備
 	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)
 	meta.SetTitle(ctx, "popular_anime") // "人気アニメ | Annict" / "Popular Anime | Annict"
@@ -43,6 +49,7 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 		user,
 		flash,
 		h.cfg.GetAssetVersion(),
+		avatarURL,
 		works.Popular(ctx, viewWorks),
 	)
 	if err := component.Render(ctx, w); err != nil {

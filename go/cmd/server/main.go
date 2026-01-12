@@ -333,7 +333,7 @@ func main() {
 		PriceMonthlyID: cfg.StripePriceMonthlyID,
 		PriceYearlyID:  cfg.StripePriceYearlyID,
 	}
-	supportersHandler := supporters.NewHandler(cfg, sessionManager, stripeSubscriberRepo, gumroadSubscriberRepo, annictStripeCfg)
+	supportersHandler := supporters.NewHandler(cfg, sessionManager, imageHelper, stripeSubscriberRepo, gumroadSubscriberRepo, annictStripeCfg)
 
 	// Stripe Webhookハンドラーの初期化
 	stripeWebhookEventRepo := repository.NewStripeWebhookEventRepository(queries)

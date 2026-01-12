@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/annict/annict/go/internal/config"
+	"github.com/annict/annict/go/internal/image"
 	"github.com/annict/annict/go/internal/middleware"
 	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/repository"
@@ -30,10 +31,11 @@ func setupCheckoutTestHandler(t *testing.T, tx *sql.Tx, db *sql.DB, stripeCfg *a
 
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionManager := session.NewManager(sessionRepo, cfg)
+	imageHelper := image.NewHelper(cfg)
 	stripeSubscriberRepo := repository.NewStripeSubscriberRepository(queries)
 	gumroadSubscriberRepo := repository.NewGumroadSubscriberRepository(queries)
 
-	return NewHandler(cfg, sessionManager, stripeSubscriberRepo, gumroadSubscriberRepo, stripeCfg)
+	return NewHandler(cfg, sessionManager, imageHelper, stripeSubscriberRepo, gumroadSubscriberRepo, stripeCfg)
 }
 
 // TestCreate_NotLoggedIn は未ログインユーザーがアクセスした場合のテスト
