@@ -4,12 +4,12 @@ import (
 	"context"
 
 	"github.com/annict/annict/go/internal/templates"
-	repository "github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/viewmodel"
 )
 
 // Sidebar はサイドバーコンポーネントです
-// avatarURL: ログインユーザーのアバター画像URL（imgproxy経由）。空文字の場合はフォールバック表示
-templ Sidebar(ctx context.Context, user *repository.GetUserByIDRow, avatarURL string) {
+// user: ログインユーザー情報（viewmodel.User）。nilの場合は未ログイン状態
+templ Sidebar(ctx context.Context, user *viewmodel.User) {
 	<aside class="sidebar" data-side="left" aria-hidden="false">
 		<nav aria-label="Sidebar navigation">
 			<section class="scrollbar">
@@ -28,18 +28,7 @@ templ Sidebar(ctx context.Context, user *repository.GetUserByIDRow, avatarURL st
         <div class="px-4 mb-4">
 					if user != nil {
 						<a href={ templ.SafeURL("/@" + user.Username) } class="flex items-center gap-3 p-2 rounded-lg hover:bg-accent transition-colors">
-							if avatarURL != "" {
-								<img
-									src={ avatarURL }
-									alt={ "@" + user.Username }
-									class="w-10 h-10 rounded-full object-cover"
-									loading="lazy"
-								/>
-							} else {
-								<div class="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
-									<span class="text-sm font-medium">{ string(user.Username[0]) }</span>
-								</div>
-							}
+							@Avatar(user.AvatarURL, user.Username, AvatarSizeMd)
 							<div class="flex-1 min-w-0">
 								<div class="font-medium text-sm truncate">{ user.Username }</div>
 								<div class="text-xs text-muted-foreground truncate">{ "@" + user.Username }</div>
@@ -273,7 +262,7 @@ templ Sidebar(ctx context.Context, user *repository.GetUserByIDRow, avatarURL st
 }
 
 // sidebarLibraryItem はライブラリセクションの各項目を生成します
-templ sidebarLibraryItem(ctx context.Context, user *repository.GetUserByIDRow, statusKind string, labelKey string) {
+templ sidebarLibraryItem(ctx context.Context, user *viewmodel.User, statusKind string, labelKey string) {
 	<li>
 		if user != nil {
 			<a href={ templ.SafeURL("/@" + user.Username + "/library/" + statusKind) } class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-accent transition-colors">

@@ -13,7 +13,6 @@ import (
 
 	"github.com/annict/annict/go/internal/config"
 	"github.com/annict/annict/go/internal/i18n"
-	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/viewmodel"
 )
@@ -48,7 +47,7 @@ func TestDefault_Rendering(t *testing.T) {
 
 	// レンダリング
 	var buf bytes.Buffer
-	err := Default(ctx, meta, nil, nil, "v1.0.0", "", content).Render(ctx, &buf)
+	err := Default(ctx, meta, nil, nil, "v1.0.0", content).Render(ctx, &buf)
 	if err != nil {
 		t.Fatalf("レンダリングエラー: %v", err)
 	}
@@ -98,11 +97,11 @@ func TestDefault_WithUser(t *testing.T) {
 
 	meta := viewmodel.DefaultPageMeta(ctx, cfg)
 
-	// テストユーザー
-	user := &query.GetUserByIDRow{
-		ID:       1,
-		Username: "testuser",
-		Email:    "test@example.com",
+	// テストユーザー（viewmodel.User）
+	user := &viewmodel.User{
+		ID:        1,
+		Username:  "testuser",
+		AvatarURL: "",
 	}
 
 	content := templ.ComponentFunc(func(ctx context.Context, w io.Writer) error {
@@ -111,7 +110,7 @@ func TestDefault_WithUser(t *testing.T) {
 	})
 
 	var buf bytes.Buffer
-	err := Default(ctx, meta, user, nil, "v1.0.0", "", content).Render(ctx, &buf)
+	err := Default(ctx, meta, user, nil, "v1.0.0", content).Render(ctx, &buf)
 	if err != nil {
 		t.Fatalf("レンダリングエラー: %v", err)
 	}
@@ -161,7 +160,7 @@ func TestDefault_WithoutUser(t *testing.T) {
 	})
 
 	var buf bytes.Buffer
-	err := Default(ctx, meta, nil, nil, "v1.0.0", "", content).Render(ctx, &buf)
+	err := Default(ctx, meta, nil, nil, "v1.0.0", content).Render(ctx, &buf)
 	if err != nil {
 		t.Fatalf("レンダリングエラー: %v", err)
 	}
@@ -211,7 +210,7 @@ func TestDefault_WithFlash(t *testing.T) {
 	})
 
 	var buf bytes.Buffer
-	err := Default(ctx, meta, nil, flash, "v1.0.0", "", content).Render(ctx, &buf)
+	err := Default(ctx, meta, nil, flash, "v1.0.0", content).Render(ctx, &buf)
 	if err != nil {
 		t.Fatalf("レンダリングエラー: %v", err)
 	}
@@ -262,7 +261,7 @@ func TestDefault_I18n(t *testing.T) {
 			})
 
 			var buf bytes.Buffer
-			err := Default(ctx, meta, nil, nil, "v1.0.0", "", content).Render(ctx, &buf)
+			err := Default(ctx, meta, nil, nil, "v1.0.0", content).Render(ctx, &buf)
 			if err != nil {
 				t.Fatalf("レンダリングエラー: %v", err)
 			}

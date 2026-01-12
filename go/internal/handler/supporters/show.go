@@ -18,15 +18,11 @@ func (h *Handler) Show(w http.ResponseWriter, r *http.Request) {
 
 	// コンテキストからユーザー情報を取得
 	user := authMiddleware.GetUserFromContext(ctx)
+	// サイドバー用のviewmodelに変換
+	viewUser := viewmodel.NewUserForSidebar(user, h.imageHelper)
 
 	// フラッシュメッセージを取得
 	flash, _ := h.sessionManager.GetFlash(ctx, r)
-
-	// アバター画像URLを生成
-	var avatarURL string
-	if user != nil && user.ProfileImageData.Valid {
-		avatarURL = h.imageHelper.GetAvatarImageURL(user.ProfileImageData.String, 40, "webp")
-	}
 
 	// クエリパラメータからメッセージ表示フラグを取得
 	showSuccessMessage := r.URL.Query().Get("success") == "true"
@@ -53,10 +49,9 @@ func (h *Handler) Show(w http.ResponseWriter, r *http.Request) {
 	component := layouts.Default(
 		ctx,
 		meta,
-		user,
+		viewUser,
 		flash,
 		h.cfg.GetAssetVersion(),
-		avatarURL,
 		supportersTemplate.Show(ctx, pageData),
 	)
 	if err := component.Render(ctx, w); err != nil {

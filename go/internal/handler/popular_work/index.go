@@ -25,17 +25,12 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 	// 2. ModelをViewModelに変換（Presentation層内の変換）
 	viewWorks := viewmodel.NewWorksFromModelDetails(modelWorks, h.imageHelper)
 
-	// コンテキストからユーザー情報を取得
+	// コンテキストからユーザー情報を取得してviewmodelに変換
 	user := authMiddleware.GetUserFromContext(ctx)
+	viewUser := viewmodel.NewUserForSidebar(user, h.imageHelper)
 
 	// フラッシュメッセージを取得
 	flash, _ := h.sessionManager.GetFlash(ctx, r)
-
-	// アバター画像URLを生成
-	var avatarURL string
-	if user != nil && user.ProfileImageData.Valid {
-		avatarURL = h.imageHelper.GetAvatarImageURL(user.ProfileImageData.String, 40, "webp")
-	}
 
 	// ページメタ情報を準備
 	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)
@@ -46,10 +41,9 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 	component := layouts.Default(
 		ctx,
 		meta,
-		user,
+		viewUser,
 		flash,
 		h.cfg.GetAssetVersion(),
-		avatarURL,
 		works.Popular(ctx, viewWorks),
 	)
 	if err := component.Render(ctx, w); err != nil {
