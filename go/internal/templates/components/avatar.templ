@@ -9,13 +9,14 @@ templ Avatar(user *viewmodel.User) {
 		if user.AvatarURL != "" {
 			<img
 				src={ user.AvatarURL }
-				alt={ "@" + user.Username }
 				class="w-[50px] h-[50px] rounded-full object-cover"
 				loading="lazy"
 			/>
 		} else {
 			<div class="w-[50px] h-[50px] rounded-full bg-muted flex items-center justify-center">
-				<span class="text-sm font-medium">{ string(user.Username[0]) }</span>
+				<span class="text-sm font-medium">
+				  { string(user.Username[0]) }
+				</span>
 			</div>
 		}
 	}

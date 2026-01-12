@@ -61,6 +61,7 @@
   --secondary: var(--color-stone-300);
   --secondary-foreground: var(--color-stone-950);
   --sidebar: var(--color-neutral-50);
+  --sidebar-accent: --alpha(var(--color-stone-200) / 50%);
 
   /* 独自の変数 */
   --success: var(--color-green-600);
@@ -82,6 +83,7 @@
   --secondary: var(--color-stone-600);
   --secondary-foreground: var(--color-stone-50);
   --sidebar: var(--color-stone-800);
+  --sidebar-accent: --alpha(var(--color-stone-600) / 50%);
 
   /* 独自の変数 */
   --success: var(--color-green-400);

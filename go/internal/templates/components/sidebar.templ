@@ -25,10 +25,14 @@ templ Sidebar(ctx context.Context, user *viewmodel.User) {
    			  </a>
 				</div>
 
-        <div class="px-4 mb-4">
+        <div class="px-2">
 					if user != nil {
-						<a href={ templ.SafeURL("/@" + user.Username) } class="flex items-center gap-3 p-2 rounded-lg hover:bg-accent transition-colors">
+						<a
+						  class="flex items-center gap-2 p-2 rounded-lg hover:bg-sidebar-accent transition-colors"
+						  href={ templ.SafeURL("/@" + user.Username) }
+						>
 							@Avatar(user)
+
 							<div class="flex-1 min-w-0">
 								<div class="font-medium text-sm truncate">{ user.Username }</div>
 								<div class="text-xs text-muted-foreground truncate">{ "@" + user.Username }</div>
