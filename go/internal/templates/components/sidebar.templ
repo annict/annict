@@ -12,14 +12,19 @@ templ Sidebar(ctx context.Context, user *repository.GetUserByIDRow) {
 	<aside class="sidebar" data-side="left" aria-hidden="false">
 		<nav aria-label="Sidebar navigation">
 			<section class="scrollbar">
-				<!-- ロゴ -->
-				<div class="p-4 mb-2">
-					<a href="/" class="flex items-center justify-center">
-						<img alt="Annict" height="30" loading="lazy" src="/static/images/logos/color-white.png" width="25" class="dark:invert"/>
-					</a>
+			  <div>
+					<a href="/" class="flex items-center justify-center bg-(--color-mizuho-600) h-[52px]">
+    				<img
+     					height="30"
+     					loading="lazy"
+     					src="/static/images/logo-white.png"
+     					width="25"
+    				  alt="Annict"
+    				/>
+   			  </a>
 				</div>
-				<!-- ユーザー情報 / サインイン -->
-				<div class="px-4 mb-4">
+
+        <div class="px-4 mb-4">
 					if user != nil {
 						<a href={ templ.SafeURL("/@" + user.Username) } class="flex items-center gap-3 p-2 rounded-lg hover:bg-accent transition-colors">
 							<div class="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
