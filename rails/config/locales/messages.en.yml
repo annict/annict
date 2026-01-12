@@ -226,8 +226,6 @@ en:
         make_sure_to_copy: Make sure to copy your new personal access token now. You won’t be able to see it again.
         new: Generate new token
         no_tokens: No tokens
-    supporters:
-      gumroad_subscriber_not_found: Could not get membership information from Gumroad.
     tracks:
       episodes_you_have_watched: "Watched"
       no_trackable_episodes: No trackable episodes

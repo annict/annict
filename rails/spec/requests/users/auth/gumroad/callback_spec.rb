@@ -98,8 +98,8 @@ RSpec.describe "GET|POST /users/auth/gumroad/callback", type: :request do
     get "/users/auth/gumroad/callback"
 
     expect(response).to have_http_status(:found)
-    expect(response).to redirect_to(supporters_path)
-    expect(request.flash[:alert]).to eq(I18n.t("messages.supporters.gumroad_subscriber_not_found"))
+    expect(response).to redirect_to("/supporters")
+    expect(request.flash[:alert]).to eq(I18n.t("messages._common.not_found"))
 
     OmniAuth.config.test_mode = false
     OmniAuth.config.mock_auth[:gumroad] = nil
@@ -142,7 +142,7 @@ RSpec.describe "GET|POST /users/auth/gumroad/callback", type: :request do
     get "/users/auth/gumroad/callback"
 
     expect(response).to have_http_status(:found)
-    expect(response).to redirect_to(supporters_path)
+    expect(response).to redirect_to("/supporters")
     expect(request.flash[:alert]).to eq("エラーメッセージ")
 
     OmniAuth.config.test_mode = false

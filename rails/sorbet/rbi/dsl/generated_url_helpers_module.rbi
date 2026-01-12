@@ -655,9 +655,6 @@ module GeneratedUrlHelpersModule
   def staff_list_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }
-  def supporters_url(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
   def terms_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }
