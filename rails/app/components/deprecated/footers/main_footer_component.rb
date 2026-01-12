@@ -116,7 +116,7 @@ module Deprecated::Footers
         [view_context.forum_path, t("noun.annict_forum")],
         [view_context.db_root_path, t("noun.annict_db")],
         ["https://developers.annict.com", t("noun.annict_developers")],
-        [view_context.supporters_path, t("noun.annict_supporters")]
+        ["/supporters", t("noun.annict_supporters")]
       ]
     end
 

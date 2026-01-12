@@ -655,9 +655,6 @@ module GeneratedPathHelpersModule
   def staff_list_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }
-  def supporters_path(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
   def terms_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }

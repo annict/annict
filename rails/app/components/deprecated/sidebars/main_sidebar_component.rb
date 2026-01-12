@@ -198,7 +198,7 @@ module Deprecated::Sidebars
                 [view_context.userland_path, "tower-cell", t("noun.annict_userland")],
                 [view_context.forum_path, "comments", t("noun.annict_forum")],
                 [view_context.db_root_path, "database", t("noun.annict_db")],
-                [view_context.supporters_path, "asterisk", t("noun.annict_supporters")]
+                ["/supporters", "asterisk", t("noun.annict_supporters")]
               ].each do |link_path, icon_name, link_text|
                 h.tag :li do
                   h.tag :a, href: link_path, class: "d-flex justify-content-between py-2" do
