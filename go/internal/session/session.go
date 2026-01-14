@@ -467,6 +467,54 @@ func (m *Manager) EnsureCSRFToken(ctx context.Context, w http.ResponseWriter, r 
 	return csrfToken, nil
 }
 
+// DestroySession はセッションを削除します
+// DBからセッションレコードを削除し、Cookieをクリアしてログアウトさせます
+func (m *Manager) DestroySession(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
+	// セッションIDをCookieから取得
+	sessionID, err := m.GetSessionID(r)
+	if err != nil {
+		return fmt.Errorf("セッションIDの取得に失敗しました: %w", err)
+	}
+
+	// セッションがない場合は何もしない
+	if sessionID == "" {
+		return nil
+	}
+
+	// DBからセッションレコードを削除
+	err = m.sessionRepo.DeleteSession(ctx, sessionID)
+	if err != nil {
+		return fmt.Errorf("セッションの削除に失敗しました: %w", err)
+	}
+
+	// セッションCookieを削除
+	m.deleteSessionCookie(w, r)
+
+	return nil
+}
+
+// deleteSessionCookie はセッションCookieを削除します
+// MaxAge=-1を設定することでブラウザにCookieを削除させます
+func (m *Manager) deleteSessionCookie(w http.ResponseWriter, r *http.Request) {
+	secure := m.cfg.SessionSecure == "true"
+	// リバースプロキシ経由のHTTPS接続を検出
+	if r.Header.Get("X-Forwarded-Proto") == "https" {
+		secure = true
+	}
+
+	cookie := &http.Cookie{
+		Name:     SessionKey,
+		Value:    "",
+		Path:     "/",
+		Domain:   m.cfg.CookieDomain,
+		Secure:   secure,
+		HttpOnly: m.cfg.SessionHTTPOnly == "true",
+		SameSite: http.SameSiteLaxMode,
+		MaxAge:   -1, // Cookieを削除
+	}
+	http.SetCookie(w, cookie)
+}
+
 // generatePublicID ランダムなpublic IDを生成
 func generatePublicID() (string, error) {
 	// 32バイトのランダムデータを生成
