@@ -3,6 +3,7 @@ package middleware
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/annict/annict/go/internal/session"
 )
@@ -10,12 +11,17 @@ import (
 // CSRFMiddleware はCSRF保護ミドルウェア
 type CSRFMiddleware struct {
 	sessionManager *session.Manager
+	skipPaths      []string
 }
 
 // NewCSRFMiddleware は新しいCSRFミドルウェアを作成
 func NewCSRFMiddleware(sessionManager *session.Manager) *CSRFMiddleware {
 	return &CSRFMiddleware{
 		sessionManager: sessionManager,
+		skipPaths: []string{
+			"/webhooks/stripe", // Stripeは独自の署名検証を使用
+			"/sign_out",        // Rails版からのリクエスト対応のためCSRFを適用しない
+		},
 	}
 }
 
@@ -28,6 +34,14 @@ func (m *CSRFMiddleware) Middleware(next http.Handler) http.Handler {
 		if r.Method == "GET" || r.Method == "HEAD" || r.Method == "OPTIONS" {
 			next.ServeHTTP(w, r)
 			return
+		}
+
+		// スキップパスに一致する場合はCSRFチェックをスキップ
+		for _, path := range m.skipPaths {
+			if strings.HasPrefix(r.URL.Path, path) {
+				next.ServeHTTP(w, r)
+				return
+			}
 		}
 
 		// セッションIDを取得

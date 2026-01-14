@@ -28,6 +28,7 @@ import (
 	"github.com/annict/annict/go/internal/handler/sign_in"
 	"github.com/annict/annict/go/internal/handler/sign_in_code"
 	"github.com/annict/annict/go/internal/handler/sign_in_password"
+	"github.com/annict/annict/go/internal/handler/sign_out"
 	"github.com/annict/annict/go/internal/handler/sign_up"
 	"github.com/annict/annict/go/internal/handler/sign_up_code"
 	"github.com/annict/annict/go/internal/handler/sign_up_username"
@@ -311,6 +312,9 @@ func main() {
 	// パスワードログインハンドラーの初期化
 	signInPasswordHandler := sign_in_password.NewHandler(cfg, userRepo, sessionManager, createSessionUC)
 
+	// ログアウトハンドラーの初期化
+	signOutHandler := sign_out.NewHandler(sessionManager)
+
 	// パスワードリセット申請ハンドラーの初期化
 	createPasswordResetTokenUC := usecase.NewCreatePasswordResetTokenUsecase(db, queries, riverClient)
 	passwordResetHandler := password_reset.NewHandler(cfg, userRepo, sessionManager, limiter, turnstileClient, createPasswordResetTokenUC)
@@ -358,6 +362,8 @@ func main() {
 	r.Patch("/sign_in/code", signInCodeHandler.Update)
 	r.Get("/sign_in/password", signInPasswordHandler.New)
 	r.Post("/sign_in/password", signInPasswordHandler.Create)
+	r.Delete("/sign_out", signOutHandler.Delete) // Rails UJSからのDELETEリクエスト
+	r.Post("/sign_out", signOutHandler.Delete)   // Go版HTMLフォームからのPOST + _method=DELETE
 	r.Get("/sign_up", signUpHandler.New)
 	r.Post("/sign_up", signUpHandler.Create)
 	r.Get("/sign_up/code", signUpCodeHandler.New)
