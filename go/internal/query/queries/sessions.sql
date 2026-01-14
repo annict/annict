@@ -18,3 +18,7 @@ WHERE session_id = $1;
 UPDATE sessions
 SET updated_at = CLOCK_TIMESTAMP()
 WHERE session_id = $1;
+
+-- name: DeleteSession :exec
+DELETE FROM sessions
+WHERE session_id = $1;
