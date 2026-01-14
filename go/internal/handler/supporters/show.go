@@ -21,6 +21,9 @@ func (h *Handler) Show(w http.ResponseWriter, r *http.Request) {
 	// サイドバー用のviewmodelに変換
 	viewUser := viewmodel.NewUserForSidebar(user, h.imageHelper)
 
+	// 季節情報を取得
+	seasons := viewmodel.NewSeasons(h.cfg)
+
 	// フラッシュメッセージを取得
 	flash, _ := h.sessionManager.GetFlash(ctx, r)
 
@@ -50,6 +53,7 @@ func (h *Handler) Show(w http.ResponseWriter, r *http.Request) {
 		ctx,
 		meta,
 		viewUser,
+		seasons,
 		flash,
 		h.cfg.GetAssetVersion(),
 		supportersTemplate.Show(ctx, pageData),

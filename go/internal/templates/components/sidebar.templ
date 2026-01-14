@@ -9,10 +9,11 @@ import (
 
 // Sidebar はサイドバーコンポーネントです
 // user: ログインユーザー情報（viewmodel.User）。nilの場合は未ログイン状態
-templ Sidebar(ctx context.Context, user *viewmodel.User) {
+// seasons: 季節情報（前・現在・次）
+templ Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Seasons) {
 	<aside class="sidebar" data-side="left" aria-hidden="false">
 		<nav aria-label="Sidebar navigation">
-			<section class="scrollbar">
+			<section class="scrollbar gap-4">
 			  <div>
 					<a href="/" class="flex items-center justify-center bg-(--color-mizuho-600) h-[52px]">
     				<img
@@ -25,30 +26,31 @@ templ Sidebar(ctx context.Context, user *viewmodel.User) {
    			  </a>
 				</div>
 
-        <div class="px-2">
+				<div role="group" class="py-0">
 					if user != nil {
 						<a
-						  class="flex items-center gap-2 p-2 rounded-lg hover:bg-sidebar-accent transition-colors"
+						  class="flex items-center gap-4 p-2 rounded-lg hover:bg-sidebar-accent transition-colors"
 						  href={ templ.SafeURL("/@" + user.Username) }
 						>
 							@Avatar(user)
 
 							<div class="flex-1 min-w-0">
-								<div class="font-medium text-sm truncate">{ user.Username }</div>
-								<div class="text-xs text-muted-foreground truncate">{ "@" + user.Username }</div>
+								<div class="font-bold text-sm truncate">
+								  { user.Username }
+								</div>
+
+								<div class="text-xs text-muted-foreground truncate">
+								  { "@" + user.Username }
+								</div>
 							</div>
 						</a>
 					} else {
-						<a href="/sign_in" class="flex items-center gap-3 p-2 rounded-lg hover:bg-accent transition-colors">
-							<div class="w-5 h-5 text-muted-foreground">
-								@templates.Icon("info")
-							</div>
-							<span class="text-sm">{ templates.T(ctx, "nav_sign_in") }</span>
-						</a>
+					  @sidebarMenuItem(ctx, "/sign_in", "nav_sign_in", "sign-in")
 					}
 				</div>
+
 				<!-- 検索フォーム -->
-				<div class="px-4 mb-4">
+				<div class="px-4">
 					<form method="get" action="/search" autocomplete="off">
 						<input
 							type="text"
@@ -58,95 +60,60 @@ templ Sidebar(ctx context.Context, user *viewmodel.User) {
 						/>
 					</form>
 				</div>
+
 				<!-- メインメニュー -->
-				<div role="group" class="px-2 mb-4">
+				<div role="group" class="py-0">
 					<ul class="space-y-1">
-						<li>
-							<a href="/" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-accent transition-colors">
-								<div class="w-5 h-5 text-muted-foreground">
-									@templates.Icon("info")
-								</div>
-								<span class="text-sm">{ templates.T(ctx, "sidebar_home") }</span>
-							</a>
-						</li>
-						<li>
-							if user != nil {
-								<a href={ templ.SafeURL("/@" + user.Username) } class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-accent transition-colors">
-									<div class="w-5 h-5 text-muted-foreground">
-										@templates.Icon("info")
-									</div>
-									<span class="text-sm">{ templates.T(ctx, "sidebar_profile") }</span>
-								</a>
-							} else {
-								<a href="/sign_in" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-accent transition-colors">
-									<div class="w-5 h-5 text-muted-foreground">
-										@templates.Icon("info")
-									</div>
-									<span class="text-sm">{ templates.T(ctx, "sidebar_profile") }</span>
-								</a>
-							}
-						</li>
-						<li>
-							<a href="/notifications" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-accent transition-colors">
-								<div class="w-5 h-5 text-muted-foreground">
-									@templates.Icon("info")
-								</div>
-								<span class="text-sm">{ templates.T(ctx, "sidebar_notifications") }</span>
-							</a>
-						</li>
-						<li>
-							<a href="/track" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-accent transition-colors">
-								<div class="w-5 h-5 text-muted-foreground">
-									@templates.Icon("info")
-								</div>
-								<span class="text-sm">{ templates.T(ctx, "sidebar_track") }</span>
-							</a>
-						</li>
+						@sidebarMenuItem(ctx, "/", "sidebar_home", "house-regular")
+						if user != nil {
+							@sidebarMenuItem(ctx, "/@"+user.Username, "sidebar_profile", "user-regular")
+						} else {
+							@sidebarMenuItem(ctx, "/sign_in", "sidebar_profile", "user-regular")
+						}
+						@sidebarMenuItem(ctx, "/notifications", "sidebar_notifications", "bell-regular")
+						@sidebarMenuItem(ctx, "/track", "sidebar_track", "list-checks-regular")
 					</ul>
 				</div>
+
 				<!-- ライブラリ -->
-				<div role="group" aria-labelledby="sidebar-library" class="px-2 mb-4">
-					<h3 id="sidebar-library" class="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+				<div role="group" aria-labelledby="sidebar-library" class="py-0">
+					<h3
+						id="sidebar-library"
+						class="font-bold tracking-wider"
+					>
 						{ templates.T(ctx, "sidebar_library") }
 					</h3>
+
 					<ul class="space-y-1">
-						@sidebarLibraryItem(ctx, user, "watching", "sidebar_watching")
-						@sidebarLibraryItem(ctx, user, "wanna_watch", "sidebar_plan_to_watch")
-						@sidebarLibraryItem(ctx, user, "watched", "sidebar_completed")
-						@sidebarLibraryItem(ctx, user, "on_hold", "sidebar_on_hold")
-						@sidebarLibraryItem(ctx, user, "stop_watching", "sidebar_dropped")
+						if user != nil {
+							@sidebarMenuItem(ctx, libraryPath(user, "watching"), "sidebar_watching", "play-regular")
+							@sidebarMenuItem(ctx, libraryPath(user, "wanna_watch"), "sidebar_plan_to_watch", "record-regular")
+							@sidebarMenuItem(ctx, libraryPath(user, "watched"), "sidebar_completed", "check-regular")
+							@sidebarMenuItem(ctx, libraryPath(user, "on_hold"), "sidebar_on_hold", "pause-regular")
+							@sidebarMenuItem(ctx, libraryPath(user, "stop_watching"), "sidebar_dropped", "stop-regular")
+						} else {
+							@sidebarMenuItem(ctx, "/sign_in", "sidebar_watching", "play-regular")
+							@sidebarMenuItem(ctx, "/sign_in", "sidebar_plan_to_watch", "record-regular")
+							@sidebarMenuItem(ctx, "/sign_in", "sidebar_completed", "check-regular")
+							@sidebarMenuItem(ctx, "/sign_in", "sidebar_on_hold", "pause-regular")
+							@sidebarMenuItem(ctx, "/sign_in", "sidebar_dropped", "stop-regular")
+						}
 					</ul>
 				</div>
-				<!-- 探索 -->
-				<div role="group" aria-labelledby="sidebar-explore" class="px-2 mb-4">
-					<h3 id="sidebar-explore" class="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+
+				<!-- 見つける -->
+				<div role="group" aria-labelledby="sidebar-explore" class="py-0">
+					<h3
+					  id="sidebar-explore"
+						class="font-bold tracking-wider"
+					>
 						{ templates.T(ctx, "sidebar_explore") }
 					</h3>
+
 					<ul class="space-y-1">
-						<li>
-							<a href="/works/current" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-accent transition-colors">
-								<div class="w-5 h-5 text-muted-foreground">
-									@templates.Icon("info")
-								</div>
-								<span class="text-sm">{ templates.T(ctx, "sidebar_current_season") }</span>
-							</a>
-						</li>
-						<li>
-							<a href="/works/next" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-accent transition-colors">
-								<div class="w-5 h-5 text-muted-foreground">
-									@templates.Icon("info")
-								</div>
-								<span class="text-sm">{ templates.T(ctx, "sidebar_next_season") }</span>
-							</a>
-						</li>
-						<li>
-							<a href="/works/previous" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-accent transition-colors">
-								<div class="w-5 h-5 text-muted-foreground">
-									@templates.Icon("info")
-								</div>
-								<span class="text-sm">{ templates.T(ctx, "sidebar_previous_season") }</span>
-							</a>
-						</li>
+			      @sidebarMenuItem(ctx, seasons.Current.Path(), "sidebar_current_season", seasons.Current.Icon())
+					  @sidebarMenuItem(ctx, seasons.Next.Path(), "sidebar_next_season", seasons.Next.Icon())
+					  @sidebarMenuItem(ctx, seasons.Previous.Path(), "sidebar_previous_season", seasons.Previous.Icon())
 						<li>
 							<a href="/works/popular" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-accent transition-colors">
 								<div class="w-5 h-5 text-muted-foreground">
@@ -265,23 +232,22 @@ templ Sidebar(ctx context.Context, user *viewmodel.User) {
 	</aside>
 }
 
-// sidebarLibraryItem はライブラリセクションの各項目を生成します
-templ sidebarLibraryItem(ctx context.Context, user *viewmodel.User, statusKind string, labelKey string) {
+// libraryPath はライブラリページのパスを生成します
+func libraryPath(user *viewmodel.User, statusKind string) string {
+	return "/@" + user.Username + "/library/" + statusKind
+}
+
+// sidebarMenuItem はサイドバーのメニュー項目を生成します
+templ sidebarMenuItem(ctx context.Context, path string, labelKey string, iconName string) {
 	<li>
-		if user != nil {
-			<a href={ templ.SafeURL("/@" + user.Username + "/library/" + statusKind) } class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-accent transition-colors">
-				<div class="w-5 h-5 text-muted-foreground">
-					@templates.Icon("info")
-				</div>
-				<span class="text-sm">{ templates.T(ctx, labelKey) }</span>
-			</a>
-		} else {
-			<a href="/sign_in" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-accent transition-colors">
-				<div class="w-5 h-5 text-muted-foreground">
-					@templates.Icon("info")
-				</div>
-				<span class="text-sm">{ templates.T(ctx, labelKey) }</span>
-			</a>
-		}
+		<a
+			href={ templ.SafeURL(path) }
+			class="flex items-center gap-3 p-2 rounded-lg hover:bg-accent transition-colors"
+		>
+			@templates.Icon(iconName, "w-[18px] h-[18px] fill-(--muted-foreground)")
+			<span class="text-base leading-none">
+				{ templates.T(ctx, labelKey) }
+			</span>
+		</a>
 	</li>
 }

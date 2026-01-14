@@ -763,8 +763,8 @@ description = "サイドバー - 通知"
 other = "通知"
 
 [sidebar_track]
-description = "サイドバー - トラック"
-other = "トラック"
+description = "サイドバー - 記録する"
+other = "記録する"
 
 [sidebar_library]
 description = "サイドバー - ライブラリ"
@@ -772,39 +772,39 @@ other = "ライブラリ"
 
 [sidebar_watching]
 description = "サイドバー - 視聴中"
-other = "視聴中"
+other = "見てるアニメ"
 
 [sidebar_plan_to_watch]
 description = "サイドバー - 見たい"
-other = "見たい"
+other = "見たいアニメ"
 
 [sidebar_completed]
 description = "サイドバー - 見た"
-other = "見た"
+other = "見たアニメ"
 
 [sidebar_on_hold]
 description = "サイドバー - 保留中"
-other = "保留中"
+other = "一時中断してるアニメ"
 
 [sidebar_dropped]
 description = "サイドバー - 中止"
-other = "中止"
+other = "視聴中止したアニメ"
 
 [sidebar_explore]
 description = "サイドバー - 探索"
-other = "探索"
+other = "見つける"
 
 [sidebar_current_season]
 description = "サイドバー - 今期"
-other = "今期"
+other = "今期のアニメ"
 
 [sidebar_next_season]
 description = "サイドバー - 来期"
-other = "来期"
+other = "来期のアニメ"
 
 [sidebar_previous_season]
 description = "サイドバー - 前期"
-other = "前期"
+other = "前期のアニメ"
 
 [sidebar_popular]
 description = "サイドバー - 人気"
@@ -856,4 +856,4 @@ other = "Annict Developers"
 
 [sidebar_search_placeholder]
 description = "サイドバー - 検索プレースホルダー"
-other = "キーワードで検索"
+other = "作品名や人物名などで検索..."

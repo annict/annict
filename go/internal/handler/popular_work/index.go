@@ -29,6 +29,9 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 	user := authMiddleware.GetUserFromContext(ctx)
 	viewUser := viewmodel.NewUserForSidebar(user, h.imageHelper)
 
+	// 季節情報を取得
+	seasons := viewmodel.NewSeasons(h.cfg)
+
 	// フラッシュメッセージを取得
 	flash, _ := h.sessionManager.GetFlash(ctx, r)
 
@@ -42,6 +45,7 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 		ctx,
 		meta,
 		viewUser,
+		seasons,
 		flash,
 		h.cfg.GetAssetVersion(),
 		works.Popular(ctx, viewWorks),
