@@ -808,11 +808,11 @@ other = "前期のアニメ"
 
 [sidebar_popular]
 description = "サイドバー - 人気"
-other = "人気"
+other = "人気アニメ"
 
 [sidebar_newest]
 description = "サイドバー - 新着"
-other = "新着"
+other = "新規登録アニメ"
 
 [sidebar_misc]
 description = "サイドバー - その他"
@@ -828,7 +828,7 @@ other = "設定"
 
 [sidebar_faq]
 description = "サイドバー - FAQ"
-other = "FAQ"
+other = "よくある質問"
 
 [sidebar_services]
 description = "サイドバー - サービス"

@@ -171,7 +171,7 @@ module Deprecated::Sidebars
             h.tag :ul, class: "list-unstyled px-3" do
               [
                 # [view_context.friend_list_path, "search", t("head.title.friends.index")],
-                [view_context.channel_list_path, "tv", t("head.title.channels.index")],
+                [view_context.channel_list_path, "tv", t("noun.channel_list")],
                 [view_context.settings_profile_path, "cog", t("noun.settings")],
                 [view_context.faq_path, "question-circle", t("noun.faq")]
               ].each do |link_path, icon_name, link_text|
