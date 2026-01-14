@@ -47,7 +47,7 @@ func TestDefault_Rendering(t *testing.T) {
 
 	// レンダリング
 	var buf bytes.Buffer
-	err := Default(ctx, meta, nil, nil, "v1.0.0", content).Render(ctx, &buf)
+	err := Default(ctx, meta, nil, viewmodel.Seasons{}, nil, "v1.0.0", content).Render(ctx, &buf)
 	if err != nil {
 		t.Fatalf("レンダリングエラー: %v", err)
 	}
@@ -109,7 +109,7 @@ func TestDefault_WithUser(t *testing.T) {
 	})
 
 	var buf bytes.Buffer
-	err := Default(ctx, meta, user, nil, "v1.0.0", content).Render(ctx, &buf)
+	err := Default(ctx, meta, user, viewmodel.Seasons{}, nil, "v1.0.0", content).Render(ctx, &buf)
 	if err != nil {
 		t.Fatalf("レンダリングエラー: %v", err)
 	}
@@ -159,7 +159,7 @@ func TestDefault_WithoutUser(t *testing.T) {
 	})
 
 	var buf bytes.Buffer
-	err := Default(ctx, meta, nil, nil, "v1.0.0", content).Render(ctx, &buf)
+	err := Default(ctx, meta, nil, viewmodel.Seasons{}, nil, "v1.0.0", content).Render(ctx, &buf)
 	if err != nil {
 		t.Fatalf("レンダリングエラー: %v", err)
 	}
@@ -209,7 +209,7 @@ func TestDefault_WithFlash(t *testing.T) {
 	})
 
 	var buf bytes.Buffer
-	err := Default(ctx, meta, nil, flash, "v1.0.0", content).Render(ctx, &buf)
+	err := Default(ctx, meta, nil, viewmodel.Seasons{}, flash, "v1.0.0", content).Render(ctx, &buf)
 	if err != nil {
 		t.Fatalf("レンダリングエラー: %v", err)
 	}
@@ -260,7 +260,7 @@ func TestDefault_I18n(t *testing.T) {
 			})
 
 			var buf bytes.Buffer
-			err := Default(ctx, meta, nil, nil, "v1.0.0", content).Render(ctx, &buf)
+			err := Default(ctx, meta, nil, viewmodel.Seasons{}, nil, "v1.0.0", content).Render(ctx, &buf)
 			if err != nil {
 				t.Fatalf("レンダリングエラー: %v", err)
 			}
