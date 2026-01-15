@@ -163,7 +163,7 @@ templ Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Seaso
 								class="flex items-center gap-3 p-2 rounded-lg hover:bg-sidebar-accent transition-colors w-full cursor-pointer"
 								{ templ.Attributes{"onclick": "return confirm('" + templates.T(ctx, "nav_sign_out_confirm") + "')"}... }
 							>
-								@templates.Icon("sign-out", "w-[18px] h-[18px] fill-(--muted-foreground)")
+								@templates.Icon("sign-out-regular", "w-[18px] h-[18px] fill-(--muted-foreground)")
 
 								<span class="text-base leading-none">
 									{ templates.T(ctx, "nav_sign_out") }
