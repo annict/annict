@@ -232,7 +232,7 @@ module Deprecated::Sidebars
               h.tag :ul, class: "list-unstyled px-3" do
                 h.tag :li do
                   h.tag :a,
-                    href: view_context.sign_out_path,
+                    href: "/sign_out",
                     class: "d-flex justify-content-between py-2",
                     data_confirm: t("messages._common.are_you_sure"),
                     data_method: :delete do

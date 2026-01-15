@@ -9,12 +9,6 @@ Rails.application.routes.draw do
     controllers: {omniauth_callbacks: "callbacks"},
     skip: %i[passwords registrations sessions]
 
-  devise_scope :user do
-    # standard:disable Layout/ExtraSpacing, Rails/MatchRoute
-    match "/sign_out",            via: :delete, as: :sign_out,            to: "devise/sessions#destroy"
-    # standard:enable Layout/ExtraSpacing, Rails/MatchRoute
-  end
-
   use_doorkeeper do
     controllers(
       applications: "oauth/applications",
