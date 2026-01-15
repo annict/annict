@@ -1,7 +1,19 @@
 -- name: GetUserByID :one
-SELECT id, username, email, role, encrypted_password, locale, stripe_subscriber_id, gumroad_subscriber_id, created_at, updated_at
-FROM users
-WHERE id = $1
+SELECT
+    u.id,
+    u.username,
+    u.email,
+    u.role,
+    u.encrypted_password,
+    u.locale,
+    u.stripe_subscriber_id,
+    u.gumroad_subscriber_id,
+    u.created_at,
+    u.updated_at,
+    p.image_data AS profile_image_data
+FROM users u
+LEFT JOIN profiles p ON p.user_id = u.id
+WHERE u.id = $1
 LIMIT 1;
 
 -- name: GetUserByEmailOrUsername :one

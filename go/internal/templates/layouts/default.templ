@@ -2,61 +2,78 @@ package layouts
 
 import (
 	"context"
+
+	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/templates"
 	"github.com/annict/annict/go/internal/templates/components"
-	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/viewmodel"
-	repository "github.com/annict/annict/go/internal/query"
 )
 
 // Default はデフォルトレイアウトです
-// ヘッダー、ナビゲーション、メインコンテンツ、フッターを含みます
-templ Default(ctx context.Context, meta viewmodel.PageMeta, user *repository.GetUserByIDRow, flash *session.Flash, assetVersion string, content templ.Component) {
+// サイドバー、ヘッダー、メインコンテンツ、フッターを含みます
+templ Default(ctx context.Context, meta viewmodel.PageMeta, user *viewmodel.User, seasons viewmodel.Seasons, flash *session.Flash, assetVersion string, content templ.Component) {
 	<!DOCTYPE html>
 	<html lang={ templates.Locale(ctx) }>
 		<head>
 			@components.Head(meta, assetVersion)
+			<script src="https://cdn.jsdelivr.net/npm/basecoat-css@0.3.10-beta.2/dist/js/basecoat.min.js" defer></script>
+			<script src="https://cdn.jsdelivr.net/npm/basecoat-css@0.3.10-beta.2/dist/js/sidebar.min.js" defer></script>
 		</head>
-		<body class="min-h-screen flex flex-col bg-gray-50">
-			<header class="bg-white shadow-sm">
-				<nav class="container mx-auto px-4">
-					<div class="flex justify-between items-center h-16">
-						<h1 class="text-2xl font-bold">
-							<a href="/" class="text-primary hover:text-primary-600">Annict</a>
-						</h1>
-						<ul class="flex gap-6 items-center">
-							<li>
-								<a href="/works/popular" class="text-gray-600 hover:text-gray-900 transition-colors">
-									{ templates.T(ctx, "popular_anime") }
-								</a>
-							</li>
-							if user != nil {
-								<li class="text-gray-600">{ user.Username }</li>
+		<body class="min-h-screen flex bg-background">
+			<!-- サイドバー -->
+			@components.Sidebar(ctx, user, seasons)
+			<!-- メインエリア -->
+			<div class="flex-1 flex flex-col min-h-screen">
+				<header class="bg-card shadow-sm border-b border-border">
+					<nav class="container mx-auto px-4">
+						<div class="flex justify-between items-center h-16">
+							<!-- サイドバートグルボタン -->
+							<button
+								type="button"
+								class="p-2 rounded-lg hover:bg-accent transition-colors md:hidden"
+								onclick="document.dispatchEvent(new CustomEvent('basecoat:sidebar'))"
+							>
+								<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 256 256">
+									<path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z"></path>
+								</svg>
+							</button>
+							<h1 class="text-2xl font-bold">
+								<a href="/" class="text-primary hover:text-primary/80">Annict</a>
+							</h1>
+							<ul class="flex gap-6 items-center">
 								<li>
-									<a href="/sign_out" class="text-gray-600 hover:text-gray-900 transition-colors">
-										{ templates.T(ctx, "nav_sign_out") }
+									<a href="/works/popular" class="text-muted-foreground hover:text-foreground transition-colors">
+										{ templates.T(ctx, "popular_anime") }
 									</a>
 								</li>
-							} else {
-								<li>
-									<a href="/sign_in" class="text-gray-600 hover:text-gray-900 transition-colors">
-										{ templates.T(ctx, "nav_sign_in") }
-									</a>
-								</li>
-							}
-						</ul>
+								if user != nil {
+									<li class="text-muted-foreground">{ user.Username }</li>
+									<li>
+										<a href="/sign_out" class="text-muted-foreground hover:text-foreground transition-colors">
+											{ templates.T(ctx, "nav_sign_out") }
+										</a>
+									</li>
+								} else {
+									<li>
+										<a href="/sign_in" class="text-muted-foreground hover:text-foreground transition-colors">
+											{ templates.T(ctx, "nav_sign_in") }
+										</a>
+									</li>
+								}
+							</ul>
+						</div>
+					</nav>
+				</header>
+				<main class="flex-1 container mx-auto px-4 py-8">
+					@components.Flash(ctx, flash)
+					@content
+				</main>
+				<footer class="bg-muted mt-auto border-t border-border">
+					<div class="container mx-auto px-4 py-8 text-center text-muted-foreground">
+						<p>&copy; 2024 Annict (Go Version)</p>
 					</div>
-				</nav>
-			</header>
-			<main class="flex-1 container mx-auto px-4 py-8">
-				@components.Flash(ctx, flash)
-				@content
-			</main>
-			<footer class="bg-gray-100 mt-auto">
-				<div class="container mx-auto px-4 py-8 text-center text-gray-600">
-					<p>&copy; 2024 Annict (Go Version)</p>
-				</div>
-			</footer>
+				</footer>
+			</div>
 		</body>
 	</html>
 }

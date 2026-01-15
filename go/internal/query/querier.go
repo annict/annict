@@ -29,6 +29,7 @@ type Querier interface {
 	CreateWorkImage(ctx context.Context, arg CreateWorkImageParams) (int64, error)
 	DeleteExpiredPasswordResetTokens(ctx context.Context, expiresAt time.Time) error
 	DeleteExpiredSignInCodes(ctx context.Context, expiresAt time.Time) error
+	DeleteSession(ctx context.Context, sessionID string) error
 	DeleteUnusedPasswordResetTokensByUserID(ctx context.Context, userID int64) error
 	GetActivityByID(ctx context.Context, id int64) (GetActivityByIDRow, error)
 	GetActivityGroupByID(ctx context.Context, id int64) (ActivityGroup, error)

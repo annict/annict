@@ -233,6 +233,10 @@ other = "Back to Sign Up"
 description = "Sign out link"
 other = "Sign Out"
 
+[nav_sign_out_confirm]
+description = "Sign out confirmation dialog"
+other = "Are you sure you want to sign out?"
+
 [nav_sign_in]
 description = "Sign in link"
 other = "Sign In"
@@ -748,3 +752,112 @@ other = "Failed to access the portal. Please try again later."
 [supporters_portal_not_supporter]
 description = "Non-supporter user tried to access the portal"
 other = "Only active supporters can access this page"
+
+# Sidebar related
+[sidebar_home]
+description = "Sidebar - Home"
+other = "Home"
+
+[sidebar_profile]
+description = "Sidebar - Profile"
+other = "Profile"
+
+[sidebar_notifications]
+description = "Sidebar - Notifications"
+other = "Notifications"
+
+[sidebar_track]
+description = "Sidebar - Track"
+other = "Track"
+
+[sidebar_library]
+description = "Sidebar - Library"
+other = "Library"
+
+[sidebar_watching]
+description = "Sidebar - Watching"
+other = "Watching"
+
+[sidebar_plan_to_watch]
+description = "Sidebar - Plan to Watch"
+other = "Plan to Watch"
+
+[sidebar_completed]
+description = "Sidebar - Completed"
+other = "Completed"
+
+[sidebar_on_hold]
+description = "Sidebar - On Hold"
+other = "On Hold"
+
+[sidebar_dropped]
+description = "Sidebar - Dropped"
+other = "Dropped"
+
+[sidebar_explore]
+description = "Sidebar - Explore"
+other = "Explore"
+
+[sidebar_current_season]
+description = "Sidebar - Current Season"
+other = "Current Season"
+
+[sidebar_next_season]
+description = "Sidebar - Next Season"
+other = "Next Season"
+
+[sidebar_previous_season]
+description = "Sidebar - Previous Season"
+other = "Previous Season"
+
+[sidebar_popular]
+description = "Sidebar - Popular"
+other = "Popular"
+
+[sidebar_newest]
+description = "Sidebar - Newest"
+other = "Newest"
+
+[sidebar_misc]
+description = "Sidebar - Misc"
+other = "Misc"
+
+[sidebar_channels]
+description = "Sidebar - Channels"
+other = "Channels"
+
+[sidebar_settings]
+description = "Sidebar - Settings"
+other = "Settings"
+
+[sidebar_faq]
+description = "Sidebar - FAQ"
+other = "FAQ"
+
+[sidebar_services]
+description = "Sidebar - Services"
+other = "Services"
+
+[sidebar_userland]
+description = "Sidebar - Userland"
+other = "Annict Userland"
+
+[sidebar_forum]
+description = "Sidebar - Forum"
+other = "Annict Forum"
+
+[sidebar_db]
+description = "Sidebar - DB"
+other = "Annict DB"
+
+[sidebar_supporters]
+description = "Sidebar - Supporters"
+other = "Annict Supporters"
+
+[sidebar_developers]
+description = "Sidebar - Developers"
+other = "Annict Developers"
+
+[sidebar_search_placeholder]
+description = "Sidebar - Search placeholder"
+other = "Search by anime title..."

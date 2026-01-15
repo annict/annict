@@ -76,6 +76,11 @@ type Config struct {
 	StripeWebhookSecret  string
 	StripePriceMonthlyID string
 	StripePriceYearlyID  string
+
+	// 季節設定（サイドバー表示用）
+	SeasonPrevious string
+	SeasonCurrent  string
+	SeasonNext     string
 }
 
 // Load は環境変数から設定を読み込みます
@@ -201,6 +206,11 @@ func Load() (*Config, error) {
 
 	// アセットバージョン（Gitコミットハッシュ）を設定
 	cfg.AssetVersion = getGitCommitHash()
+
+	// 季節設定（オプショナル - サイドバー表示用）
+	cfg.SeasonPrevious = os.Getenv("ANNICT_SEASON_PREVIOUS")
+	cfg.SeasonCurrent = os.Getenv("ANNICT_SEASON_CURRENT")
+	cfg.SeasonNext = os.Getenv("ANNICT_SEASON_NEXT")
 
 	return cfg, nil
 }

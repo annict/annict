@@ -66,6 +66,12 @@ func (r *SessionRepository) CreateSession(ctx context.Context, sessionID string,
 	})
 }
 
+// DeleteSession はセッションを削除します
+func (r *SessionRepository) DeleteSession(ctx context.Context, sessionID string) error {
+	privateID := r.generatePrivateID(sessionID)
+	return r.queries.DeleteSession(ctx, privateID)
+}
+
 // generatePrivateID はpublic IDからprivate IDを生成
 // Rails/Rackの実装と互換性のある形式: "2::" + SHA256(publicID)
 func (r *SessionRepository) generatePrivateID(publicID string) string {

@@ -3,6 +3,7 @@ package supporters
 
 import (
 	"github.com/annict/annict/go/internal/config"
+	"github.com/annict/annict/go/internal/image"
 	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/session"
 	annictStripe "github.com/annict/annict/go/internal/stripe"
@@ -12,6 +13,7 @@ import (
 type Handler struct {
 	cfg                   *config.Config
 	sessionManager        *session.Manager
+	imageHelper           *image.Helper
 	stripeSubscriberRepo  *repository.StripeSubscriberRepository
 	gumroadSubscriberRepo *repository.GumroadSubscriberRepository
 	stripeCfg             *annictStripe.Config
@@ -21,6 +23,7 @@ type Handler struct {
 func NewHandler(
 	cfg *config.Config,
 	sessionManager *session.Manager,
+	imageHelper *image.Helper,
 	stripeSubscriberRepo *repository.StripeSubscriberRepository,
 	gumroadSubscriberRepo *repository.GumroadSubscriberRepository,
 	stripeCfg *annictStripe.Config,
@@ -28,6 +31,7 @@ func NewHandler(
 	return &Handler{
 		cfg:                   cfg,
 		sessionManager:        sessionManager,
+		imageHelper:           imageHelper,
 		stripeSubscriberRepo:  stripeSubscriberRepo,
 		gumroadSubscriberRepo: gumroadSubscriberRepo,
 		stripeCfg:             stripeCfg,

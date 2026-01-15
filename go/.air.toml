@@ -14,7 +14,7 @@ tmp_dir = "tmp"
   follow_symlink = false
   full_bin = "APP_ENV=dev op run --env-file=.env -- ./tmp/main"
   include_dir = []
-  include_ext = ["go", "html", "sql", "templ"]
+  include_ext = ["go", "html", "sql", "templ", "toml"]
   include_file = []
   kill_delay = "0s"
   log = "build-errors.log"

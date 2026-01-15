@@ -308,3 +308,50 @@ func TestCreateSession_Success(t *testing.T) {
 		t.Errorf("DBのセッションIDが一致しません: got %v, want %v", fetchedSession.SessionID, privateID)
 	}
 }
+
+// TestDeleteSession_Success はセッションを正常に削除できることをテスト
+func TestDeleteSession_Success(t *testing.T) {
+	db, tx := testutil.SetupTestDB(t)
+	queries := query.New(db).WithTx(tx)
+	repo := repository.NewSessionRepository(queries)
+
+	// テスト用セッションを作成
+	publicID := testutil.NewSessionBuilder(t, tx).
+		WithSessionID("test_delete_session_id").
+		WithUserID(1).
+		Build()
+
+	// セッションが存在することを確認
+	privateID := generatePrivateID(publicID)
+	_, err := queries.GetSessionByID(context.Background(), privateID)
+	if err != nil {
+		t.Fatalf("セッションの取得に失敗: %v", err)
+	}
+
+	// DeleteSessionを実行
+	err = repo.DeleteSession(context.Background(), publicID)
+	if err != nil {
+		t.Fatalf("DeleteSessionに失敗: %v", err)
+	}
+
+	// セッションが削除されたことを確認
+	_, err = queries.GetSessionByID(context.Background(), privateID)
+	if err == nil {
+		t.Error("削除したセッションがまだ存在しています")
+	}
+}
+
+// TestDeleteSession_NonExistent は存在しないセッションIDでもエラーが発生しないことをテスト
+func TestDeleteSession_NonExistent(t *testing.T) {
+	db, tx := testutil.SetupTestDB(t)
+	queries := query.New(db).WithTx(tx)
+	repo := repository.NewSessionRepository(queries)
+
+	// 存在しないセッションIDでDeleteSessionを実行
+	err := repo.DeleteSession(context.Background(), "non_existent_session_id")
+
+	// エラーが発生しないことを確認（DELETEは0行削除でもエラーにならない）
+	if err != nil {
+		t.Errorf("存在しないセッションIDでエラーが発生しました: %v", err)
+	}
+}
