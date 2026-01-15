@@ -160,11 +160,14 @@ templ Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Seaso
 							<input type="hidden" name="_method" value="DELETE"/>
 							<button
 								type="submit"
-								class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-accent transition-colors w-full text-left cursor-pointer"
+								class="flex items-center gap-3 p-2 rounded-lg hover:bg-sidebar-accent transition-colors w-full cursor-pointer"
 								{ templ.Attributes{"onclick": "return confirm('" + templates.T(ctx, "nav_sign_out_confirm") + "')"}... }
 							>
 								@templates.Icon("sign-out", "w-[18px] h-[18px] fill-(--muted-foreground)")
-								<span class="text-sm">{ templates.T(ctx, "nav_sign_out") }</span>
+
+								<span class="text-base leading-none">
+									{ templates.T(ctx, "nav_sign_out") }
+								</span>
 							</button>
 						</form>
 					</div>
@@ -187,6 +190,7 @@ templ sidebarMenuItem(ctx context.Context, path string, labelKey string, iconNam
 			class="flex items-center gap-3 p-2 rounded-lg hover:bg-sidebar-accent transition-colors"
 		>
 			@templates.Icon(iconName, "w-[18px] h-[18px] fill-(--muted-foreground)")
+
 			<span class="text-base leading-none">
 				{ templates.T(ctx, labelKey) }
 			</span>
