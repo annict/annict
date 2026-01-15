@@ -1258,3 +1258,282 @@ func TestEnsureCSRFToken_CookieAttributes(t *testing.T) {
 		t.Errorf("MaxAge = %v, want %v", sessionCookie.MaxAge, expectedMaxAge)
 	}
 }
+
+// TestDestroySession セッションを正常に削除できることをテスト
+func TestDestroySession(t *testing.T) {
+	// テストDBとトランザクションをセットアップ
+	_, tx, sessionRepo := setupTestDB(t)
+
+	// テスト用のConfig
+	cfg := &config.Config{
+		CookieDomain:    ".test.example.com",
+		SessionSecure:   "false",
+		SessionHTTPOnly: "true",
+	}
+
+	// セッションマネージャーを作成
+	manager := NewManager(sessionRepo, cfg)
+
+	ctx := context.Background()
+
+	// テスト用のユーザーを作成
+	var userID int64
+	err := tx.QueryRow(`
+		INSERT INTO users (email, username, role, encrypted_password, time_zone, locale, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
+		RETURNING id
+	`, "test@example.com", "testuser", 0, "", "UTC", "ja").Scan(&userID)
+	if err != nil {
+		t.Fatalf("ユーザー作成エラー: %v", err)
+	}
+
+	// セッションを作成
+	w1 := httptest.NewRecorder()
+	r1 := httptest.NewRequest("POST", "/sign_in", nil)
+	if err := manager.CreateSession(ctx, w1, r1, userID); err != nil {
+		t.Fatalf("CreateSession() error = %v", err)
+	}
+
+	// セッションCookieを取得
+	cookies := w1.Result().Cookies()
+	var sessionCookie *http.Cookie
+	for _, cookie := range cookies {
+		if cookie.Name == SessionKey {
+			sessionCookie = cookie
+			break
+		}
+	}
+	if sessionCookie == nil {
+		t.Fatal("セッションCookieが見つかりません")
+	}
+	sessionID := sessionCookie.Value
+
+	// セッションが存在することを確認
+	_, err = sessionRepo.GetSessionByID(ctx, sessionID)
+	if err != nil {
+		t.Fatalf("セッションが存在しません: %v", err)
+	}
+
+	// セッションを削除
+	w2 := httptest.NewRecorder()
+	r2 := httptest.NewRequest("DELETE", "/sign_out", nil)
+	r2.AddCookie(sessionCookie)
+
+	if err := manager.DestroySession(ctx, w2, r2); err != nil {
+		t.Fatalf("DestroySession() error = %v", err)
+	}
+
+	// DBからセッションが削除されたことを確認
+	_, err = sessionRepo.GetSessionByID(ctx, sessionID)
+	if err == nil {
+		t.Error("セッションが削除されていません")
+	}
+
+	// 削除用のCookieが設定されていることを確認
+	deleteCookies := w2.Result().Cookies()
+	var deleteCookie *http.Cookie
+	for _, cookie := range deleteCookies {
+		if cookie.Name == SessionKey {
+			deleteCookie = cookie
+			break
+		}
+	}
+
+	if deleteCookie == nil {
+		t.Fatal("削除用Cookieが設定されていません")
+	}
+
+	// MaxAge=-1で削除されることを確認
+	if deleteCookie.MaxAge != -1 {
+		t.Errorf("Cookie MaxAge = %d, want -1", deleteCookie.MaxAge)
+	}
+
+	// Cookie値が空であることを確認
+	if deleteCookie.Value != "" {
+		t.Errorf("Cookie Value = %v, want empty string", deleteCookie.Value)
+	}
+}
+
+// TestDestroySession_NoSession セッションがない場合はエラーなく終了することをテスト
+func TestDestroySession_NoSession(t *testing.T) {
+	// テストDBとトランザクションをセットアップ
+	_, _, sessionRepo := setupTestDB(t)
+
+	// テスト用のConfig
+	cfg := &config.Config{
+		CookieDomain:    ".test.example.com",
+		SessionSecure:   "false",
+		SessionHTTPOnly: "true",
+	}
+
+	// セッションマネージャーを作成
+	manager := NewManager(sessionRepo, cfg)
+
+	ctx := context.Background()
+
+	// セッションCookieなしでリクエスト
+	w := httptest.NewRecorder()
+	r := httptest.NewRequest("DELETE", "/sign_out", nil)
+
+	// エラーなく終了するべき
+	if err := manager.DestroySession(ctx, w, r); err != nil {
+		t.Fatalf("DestroySession() error = %v, want nil", err)
+	}
+
+	// Cookieが設定されていないことを確認
+	cookies := w.Result().Cookies()
+	for _, cookie := range cookies {
+		if cookie.Name == SessionKey {
+			t.Error("セッションCookieが設定されているべきではありません")
+		}
+	}
+}
+
+// TestDeleteSessionCookie_CookieAttributes deleteSessionCookieのCookie属性をテスト
+func TestDeleteSessionCookie_CookieAttributes(t *testing.T) {
+	t.Parallel()
+
+	cfg := &config.Config{
+		CookieDomain:    ".test.example.com",
+		SessionSecure:   "true",
+		SessionHTTPOnly: "true",
+	}
+
+	manager := &Manager{
+		cfg: cfg,
+	}
+
+	w := httptest.NewRecorder()
+	r := httptest.NewRequest("DELETE", "/sign_out", nil)
+
+	manager.deleteSessionCookie(w, r)
+
+	cookies := w.Result().Cookies()
+	if len(cookies) == 0 {
+		t.Fatal("Cookieが設定されていません")
+	}
+
+	var sessionCookie *http.Cookie
+	for _, cookie := range cookies {
+		if cookie.Name == SessionKey {
+			sessionCookie = cookie
+			break
+		}
+	}
+
+	if sessionCookie == nil {
+		t.Fatal("セッションCookieが見つかりません")
+	}
+
+	// Cookie属性の確認
+	if sessionCookie.Value != "" {
+		t.Errorf("Cookie Value = %v, want empty string", sessionCookie.Value)
+	}
+
+	if sessionCookie.MaxAge != -1 {
+		t.Errorf("MaxAge = %d, want -1", sessionCookie.MaxAge)
+	}
+
+	if sessionCookie.Path != "/" {
+		t.Errorf("Path = %v, want /", sessionCookie.Path)
+	}
+
+	expectedDomain := "test.example.com"
+	if sessionCookie.Domain != expectedDomain {
+		t.Errorf("Domain = %v, want %v", sessionCookie.Domain, expectedDomain)
+	}
+
+	if !sessionCookie.Secure {
+		t.Error("Secure = false, want true")
+	}
+
+	if !sessionCookie.HttpOnly {
+		t.Error("HttpOnly = false, want true")
+	}
+
+	if sessionCookie.SameSite != http.SameSiteLaxMode {
+		t.Errorf("SameSite = %v, want %v", sessionCookie.SameSite, http.SameSiteLaxMode)
+	}
+}
+
+// TestDeleteSessionCookie_SecureAttribute はdeleteSessionCookieのSecure属性の判定をテストする
+func TestDeleteSessionCookie_SecureAttribute(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name            string
+		sessionSecure   string
+		xForwardedProto string
+		expectedSecure  bool
+	}{
+		{
+			name:            "SessionSecure=true、X-Forwarded-Protoなし",
+			sessionSecure:   "true",
+			xForwardedProto: "",
+			expectedSecure:  true,
+		},
+		{
+			name:            "SessionSecure=false、X-Forwarded-Protoなし",
+			sessionSecure:   "false",
+			xForwardedProto: "",
+			expectedSecure:  false,
+		},
+		{
+			name:            "SessionSecure=false、X-Forwarded-Proto=https",
+			sessionSecure:   "false",
+			xForwardedProto: "https",
+			expectedSecure:  true,
+		},
+		{
+			name:            "SessionSecure=false、X-Forwarded-Proto=http",
+			sessionSecure:   "false",
+			xForwardedProto: "http",
+			expectedSecure:  false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			cfg := &config.Config{
+				CookieDomain:    ".example.com",
+				SessionSecure:   tt.sessionSecure,
+				SessionHTTPOnly: "true",
+			}
+
+			manager := &Manager{
+				cfg: cfg,
+			}
+
+			w := httptest.NewRecorder()
+			r := httptest.NewRequest("DELETE", "/sign_out", nil)
+			if tt.xForwardedProto != "" {
+				r.Header.Set("X-Forwarded-Proto", tt.xForwardedProto)
+			}
+
+			manager.deleteSessionCookie(w, r)
+
+			cookies := w.Result().Cookies()
+			if len(cookies) == 0 {
+				t.Fatal("Cookieが設定されていません")
+			}
+
+			var sessionCookie *http.Cookie
+			for _, cookie := range cookies {
+				if cookie.Name == SessionKey {
+					sessionCookie = cookie
+					break
+				}
+			}
+
+			if sessionCookie == nil {
+				t.Fatal("セッションCookieが見つかりません")
+			}
+
+			if sessionCookie.Secure != tt.expectedSecure {
+				t.Errorf("Secure = %v, want %v", sessionCookie.Secure, tt.expectedSecure)
+			}
+		})
+	}
+}

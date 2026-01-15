@@ -649,9 +649,6 @@ module GeneratedPathHelpersModule
   def settings_user_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }
-  def sign_out_path(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
   def staff_list_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }
