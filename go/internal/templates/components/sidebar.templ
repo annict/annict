@@ -156,16 +156,17 @@ templ Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Seaso
 				<!-- ログアウト -->
 				if user != nil {
 					<div class="px-2 mb-4 border-t border-border pt-4">
-						<ul class="space-y-1">
-							<li>
-								<a href="/sign_out" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-accent transition-colors" data-confirm={ templates.T(ctx, "flash_dismiss") }>
-									<div class="w-5 h-5 text-muted-foreground">
-										@templates.Icon("info")
-									</div>
-									<span class="text-sm">{ templates.T(ctx, "nav_sign_out") }</span>
-								</a>
-							</li>
-						</ul>
+						<form method="POST" action="/sign_out">
+							<input type="hidden" name="_method" value="DELETE"/>
+							<button
+								type="submit"
+								class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-accent transition-colors w-full text-left cursor-pointer"
+								{ templ.Attributes{"onclick": "return confirm('" + templates.T(ctx, "nav_sign_out_confirm") + "')"}... }
+							>
+								@templates.Icon("sign-out", "w-[18px] h-[18px] fill-(--muted-foreground)")
+								<span class="text-sm">{ templates.T(ctx, "nav_sign_out") }</span>
+							</button>
+						</form>
 					</div>
 				}
 			</section>

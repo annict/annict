@@ -233,6 +233,10 @@ other = "新規登録ページに戻る"
 description = "ログアウトリンク"
 other = "ログアウト"
 
+[nav_sign_out_confirm]
+description = "ログアウト確認ダイアログ"
+other = "ログアウトしますか？"
+
 [nav_sign_in]
 description = "ログインリンク"
 other = "ログイン"
