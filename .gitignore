@@ -2,6 +2,7 @@
 
 /.claude
 /.env.op
+/.pnpm-store
 /compose-up.sh
 /docker-compose.override.yml
 /docs

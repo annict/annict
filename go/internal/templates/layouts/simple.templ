@@ -16,6 +16,7 @@ templ Simple(ctx context.Context, meta viewmodel.PageMeta, flash *session.Flash,
 		<head>
 			@components.Head(meta, assetVersion)
 		</head>
+
 		<body class="min-h-screen flex items-center justify-center">
 			@components.Flash(ctx, flash)
 			@content
