@@ -32,7 +32,7 @@ func Footer() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<footer class=\"bg-muted mt-auto border-t border-border pb-(--bottom-nav-max-height) md:pb-0\"><div class=\"container mx-auto px-4 py-8 text-center text-muted-foreground\"><p>&copy; 2024 Annict (Go Version)</p></div></footer>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<footer class=\"mt-auto container px-4 pt-[3rem] pb-[calc(var(--bottom-nav-max-height)+3rem)] md:pb-[3rem] text-center\"><div class=\"flex flex-col gap-4\"><ul class=\"flex flex-wrap items-center justify-center text-sm gap-4\"><li><a class=\"link-muted\" href=\"/community\">コミュニティ</a></li><li><a class=\"link-muted\" href=\"/faq\">よくある質問</a></li><li><a class=\"link-muted\" href=\"/terms\">利用規約</a></li><li><a class=\"link-muted\" href=\"/privacy\">プライバシーポリシー</a></li><li><a class=\"link-muted\" href=\"/legal\">特商法表記</a></li></ul><p class=\"text-muted-foreground\">&copy; 2014-2026 Annict</p></div></footer>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
