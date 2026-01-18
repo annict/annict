@@ -753,6 +753,35 @@ other = "Failed to access the portal. Please try again later."
 description = "Non-supporter user tried to access the portal"
 other = "Only active supporters can access this page"
 
+# Bottom navigation related
+[bottom_nav_menu]
+description = "Bottom navigation - Menu"
+other = "Menu"
+
+[bottom_nav_home]
+description = "Bottom navigation - Home"
+other = "Home"
+
+[bottom_nav_track]
+description = "Bottom navigation - Track"
+other = "Track"
+
+[bottom_nav_current_season]
+description = "Bottom navigation - Current Season"
+other = "Airing"
+
+[bottom_nav_library]
+description = "Bottom navigation - Library"
+other = "Library"
+
+[bottom_nav_sign_up]
+description = "Bottom navigation - Sign Up"
+other = "Sign Up"
+
+[bottom_nav_sign_in]
+description = "Bottom navigation - Sign In"
+other = "Sign In"
+
 # Sidebar related
 [sidebar_home]
 description = "Sidebar - Home"

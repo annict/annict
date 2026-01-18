@@ -95,7 +95,7 @@ func Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Season
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = sidebarMenuItem(ctx, "/sign_in", "nav_sign_in", "sign-in").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = sidebarMenuItem(ctx, "/sign_in", "nav_sign_in", "sign-in-regular").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

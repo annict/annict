@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "tailwindcss-safe-area";
 @import "basecoat-css";
 
 @theme {
@@ -13,6 +14,10 @@
   --color-mizuho-800: #9d143b;
   --color-mizuho-900: #861539;
   --color-mizuho-950: #4b061a;
+
+  --color-bottom-nav: var(--color-sidebar);
+  --color-bottom-nav-foreground: var(--color-sidebar-foreground);
+  --color-bottom-nav-border: var(--color-sidebar-border);
 }
 
 /* タッチデバイスかどうかを判別するためのカスタムバリアント */
@@ -72,6 +77,11 @@
   --warning-foreground: var(--color-black);
   --info: var(--color-blue-600);
   --info-foreground: var(--color-white);
+
+  --z-index-sidebar: 40; /* https://github.com/hunvreus/basecoat/blob/0.3.7/src/css/basecoat.css#L1005 */
+  --z-index-button-nav: 30;
+
+  --bottom-nav-max-height: 54px;
 }
 
 .dark {
