@@ -62,7 +62,7 @@ func TestDefault_Rendering(t *testing.T) {
 		"<body>",
 		`<aside class="sidebar"`,
 		"<main>",
-		"<footer class=\"bg-muted mt-auto border-t border-border\">",
+		"<footer class=\"bg-muted mt-auto border-t border-border pb-(--bottom-nav-max-height) md:pb-0\">",
 		"Test Content",
 		"&copy; 2024 Annict (Go Version)",
 	}
