@@ -890,3 +890,24 @@ other = "Annict Developers"
 [sidebar_search_placeholder]
 description = "サイドバー - 検索プレースホルダー"
 other = "作品名や人物名などで検索..."
+
+# フッター関連
+[footer_community]
+description = "フッター - コミュニティ"
+other = "コミュニティ"
+
+[footer_faq]
+description = "フッター - よくある質問"
+other = "よくある質問"
+
+[footer_terms]
+description = "フッター - 利用規約"
+other = "利用規約"
+
+[footer_privacy]
+description = "フッター - プライバシーポリシー"
+other = "プライバシーポリシー"
+
+[footer_legal]
+description = "フッター - 特商法表記"
+other = "特商法表記"

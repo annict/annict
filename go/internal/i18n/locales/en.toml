@@ -890,3 +890,24 @@ other = "Annict Developers"
 [sidebar_search_placeholder]
 description = "Sidebar - Search placeholder"
 other = "Search by anime title..."
+
+# Footer related
+[footer_community]
+description = "Footer - Community"
+other = "Community"
+
+[footer_faq]
+description = "Footer - FAQ"
+other = "FAQ"
+
+[footer_terms]
+description = "Footer - Terms"
+other = "Terms of Service"
+
+[footer_privacy]
+description = "Footer - Privacy"
+other = "Privacy Policy"
+
+[footer_legal]
+description = "Footer - Legal"
+other = "Legal Notice"
