@@ -113,11 +113,11 @@ func Show(ctx context.Context, data viewmodel.SupporterPageData) templ.Component
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = benefitItem(ctx, "🎖️", "supporters_benefit_2_title", "supporters_benefit_2_desc").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = benefitItem(ctx, "🕐", "supporters_benefit_3_title", "supporters_benefit_3_desc").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = benefitItem(ctx, "🕐", "supporters_benefit_3_title", "supporters_benefit_3_desc").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = benefitItem(ctx, "🎖️", "supporters_benefit_2_title", "supporters_benefit_2_desc").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
