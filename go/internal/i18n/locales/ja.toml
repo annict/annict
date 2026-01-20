@@ -607,6 +607,26 @@ other = "サポーター登録ありがとうございます！"
 description = "Checkoutキャンセルメッセージ"
 other = "決済がキャンセルされました"
 
+[supporters_what_is_title]
+description = "サポーターとは何かのタイトル"
+other = "Annictサポーターとは？"
+
+[supporters_what_is_desc_1]
+description = "サポーターとは何かの説明1"
+other = "「Annictサポーター」は、Annictファンのためのサブスクリプションプログラムです。"
+
+[supporters_what_is_desc_2]
+description = "サポーターとは何かの説明2"
+other = "毎月または毎年お支払いいただくことで加入でき、Annictの運営をサポートいただけます。"
+
+[supporters_what_is_desc_3]
+description = "サポーターとは何かの説明3"
+other = "(サーバー費用など、運営に必要なサービスの使用料の支払いに使われます)"
+
+[supporters_what_is_desc_4]
+description = "サポーターとは何かの説明4"
+other = "サポーターになると以下の特典が得られます。"
+
 [supporters_benefits_title]
 description = "特典セクションタイトル"
 other = "サポーター特典"

@@ -39,15 +39,15 @@ templ Show(ctx context.Context, data viewmodel.SupporterPageData) {
 			// サポーター特典説明
 			<div class="card px-4">
 				<h2 class="text-xl font-bold antialiased">
-					Annictサポーターとは？
+					{ templates.T(ctx, "supporters_what_is_title") }
 				</h2>
 
 				<p>
-				 「Annictサポーター」は、Annictファンのためのサブスクリプションプログラムです。<br>
-					毎月または毎年お支払いいただくことで加入でき、Annictの運営をサポートいただけます。<br>
-					(サーバー費用など、運営に必要なサービスの使用料の支払いに使われます)<br>
-					<br>
-					サポーターになると以下の特典が得られます。
+					{ templates.T(ctx, "supporters_what_is_desc_1") }<br/>
+					{ templates.T(ctx, "supporters_what_is_desc_2") }<br/>
+					{ templates.T(ctx, "supporters_what_is_desc_3") }<br/>
+					<br/>
+					{ templates.T(ctx, "supporters_what_is_desc_4") }
 				</p>
 
 				<h2 class="text-xl font-bold antialiased">

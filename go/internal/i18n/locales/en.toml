@@ -607,6 +607,26 @@ other = "Thank you for becoming a supporter!"
 description = "Checkout canceled message"
 other = "Payment was canceled"
 
+[supporters_what_is_title]
+description = "What is supporter title"
+other = "What is Annict Supporter?"
+
+[supporters_what_is_desc_1]
+description = "What is supporter description 1"
+other = "\"Annict Supporters\" is a subscription program for Annict fans."
+
+[supporters_what_is_desc_2]
+description = "What is supporter description 2"
+other = "By paying monthly or yearly, you can join and support the operation of Annict."
+
+[supporters_what_is_desc_3]
+description = "What is supporter description 3"
+other = "(Used for server costs and other services required for operation)"
+
+[supporters_what_is_desc_4]
+description = "What is supporter description 4"
+other = "Supporters receive the following benefits."
+
 [supporters_benefits_title]
 description = "Benefits section title"
 other = "Supporter Benefits"
