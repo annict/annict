@@ -687,10 +687,6 @@ other = "月"
 description = "年"
 other = "年"
 
-[supporters_recommended]
-description = "おすすめラベル"
-other = "おすすめ"
-
 [supporters_yearly_savings]
 description = "年額プランの節約額"
 other = "2ヶ月分お得！"
@@ -701,7 +697,7 @@ other = "登録する"
 
 [supporters_payment_method]
 description = "支払い方法説明"
-other = "クレジットカードでお支払いいただけます（Stripe決済）"
+other = "クレジットカードでお支払いいただけます (Stripe決済)"
 
 [supporters_gumroad_title]
 description = "Gumroadサポーターセクションタイトル"

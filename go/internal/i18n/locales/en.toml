@@ -687,10 +687,6 @@ other = "month"
 description = "Year"
 other = "year"
 
-[supporters_recommended]
-description = "Recommended label"
-other = "Recommended"
-
 [supporters_yearly_savings]
 description = "Yearly plan savings"
 other = "Save 2 months!"

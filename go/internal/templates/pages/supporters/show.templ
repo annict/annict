@@ -105,19 +105,24 @@ templ notLoggedInSection(ctx context.Context) {
 
 // checkoutSection は非サポーター向けのStripe決済セクション
 templ checkoutSection(ctx context.Context) {
-	<div class="bg-gray-50 rounded-lg p-6">
-		<h2 class="text-xl font-semibold mb-4">
+	<div class="card px-4">
+		<h2 class="text-xl font-bold antialiased">
 			{ templates.T(ctx, "supporters_checkout_title") }
 		</h2>
-		<div class="grid sm:grid-cols-2 gap-4 mb-6">
+
+		<div class="grid sm:grid-cols-2 gap-4">
 			// 月額プラン
-			<div class="bg-white border border-gray-200 rounded-lg p-4">
-				<h3 class="font-semibold text-lg mb-2">
-					{ templates.T(ctx, "supporters_plan_monthly") }
-				</h3>
-				<p class="text-3xl font-bold mb-2">
-					¥290<span class="text-sm font-normal text-gray-500">/{ templates.T(ctx, "supporters_month") }</span>
-				</p>
+			<div class="border rounded-lg p-4 flex flex-col justify-between gap-4">
+				<div class="flex flex-col gap-2">
+					<h3 class="text-lg font-bold antialiased">
+						{ templates.T(ctx, "supporters_plan_monthly") }
+					</h3>
+
+					<p class="text-3xl font-bold">
+						¥290<span class="text-sm text-muted-foreground">/{ templates.T(ctx, "supporters_month") }</span>
+					</p>
+				</div>
+
 				<form action="/supporters/checkout" method="POST">
 					<input type="hidden" name="plan" value="monthly"/>
 					<button type="submit" class="btn btn-primary w-full">
@@ -125,20 +130,20 @@ templ checkoutSection(ctx context.Context) {
 					</button>
 				</form>
 			</div>
+
 			// 年額プラン
-			<div class="bg-white border-2 border-primary rounded-lg p-4 relative">
-				<span class="absolute -top-3 left-4 bg-primary text-white text-xs px-2 py-1 rounded">
-					{ templates.T(ctx, "supporters_recommended") }
-				</span>
-				<h3 class="font-semibold text-lg mb-2">
-					{ templates.T(ctx, "supporters_plan_yearly") }
-				</h3>
-				<p class="text-3xl font-bold mb-2">
-					¥2,900<span class="text-sm font-normal text-gray-500">/{ templates.T(ctx, "supporters_year") }</span>
-				</p>
-				<p class="text-sm text-gray-600 mb-4">
-					{ templates.T(ctx, "supporters_yearly_savings") }
-				</p>
+			<div class="border rounded-lg p-4 flex flex-col justify-between gap-4">
+				<div class="flex flex-col gap-2">
+					<h3 class="text-lg font-bold antialiased">
+						{ templates.T(ctx, "supporters_plan_yearly") }
+					</h3>
+
+					<p class="text-3xl font-bold">
+						¥2,900<span class="text-sm text-muted-foreground">/{ templates.T(ctx, "supporters_year") }</span>
+						<span class="text-sm ml-2">{ templates.T(ctx, "supporters_yearly_savings") }</span>
+					</p>
+				</div>
+
 				<form action="/supporters/checkout" method="POST">
 					<input type="hidden" name="plan" value="yearly"/>
 					<button type="submit" class="btn btn-primary w-full">
@@ -147,7 +152,8 @@ templ checkoutSection(ctx context.Context) {
 				</form>
 			</div>
 		</div>
-		<p class="text-sm text-gray-500">
+
+		<p class="text-sm text-muted-foreground">
 			{ templates.T(ctx, "supporters_payment_method") }
 		</p>
 	</div>
@@ -228,7 +234,7 @@ templ stripeSection(ctx context.Context, subscriber *viewmodel.StripeSubscriberV
 
 // benefitItem はサポーター特典のアイテムを表示するコンポーネント
 templ benefitItem(ctx context.Context, emoji string, titleKey string, descKey string) {
-	<li class="flex items-start gap-2">
+	<li class="flex items-start gap-3">
 		<span class="text-2xl">
 			{ emoji }
 		</span>
