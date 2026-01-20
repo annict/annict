@@ -55,37 +55,9 @@ templ Show(ctx context.Context, data viewmodel.SupporterPageData) {
 				</h2>
 
 				<ul class="flex flex-col gap-4">
-					<li class="flex items-start gap-2">
-						<span class="text-2xl">
-							✨
-						</span>
-
-						<div>
-							<p class="font-bold">
-								{ templates.T(ctx, "supporters_benefit_1_title") }
-							</p>
-
-							<p class="text-muted-foreground text-sm">
-								{ templates.T(ctx, "supporters_benefit_1_desc") }
-							</p>
-						</div>
-					</li>
-
-					<li class="flex items-start gap-3">
-						<span class="text-primary text-xl">🎖️</span>
-						<div>
-							<p class="font-medium">{ templates.T(ctx, "supporters_benefit_2_title") }</p>
-							<p class="text-gray-600 text-sm">{ templates.T(ctx, "supporters_benefit_2_desc") }</p>
-						</div>
-					</li>
-
-					<li class="flex items-start gap-3">
-						<span class="text-primary text-xl">🕐</span>
-						<div>
-							<p class="font-medium">{ templates.T(ctx, "supporters_benefit_3_title") }</p>
-							<p class="text-gray-600 text-sm">{ templates.T(ctx, "supporters_benefit_3_desc") }</p>
-						</div>
-					</li>
+					@benefitItem(ctx, "✨", "supporters_benefit_1_title", "supporters_benefit_1_desc")
+					@benefitItem(ctx, "🎖️", "supporters_benefit_2_title", "supporters_benefit_2_desc")
+					@benefitItem(ctx, "🕐", "supporters_benefit_3_title", "supporters_benefit_3_desc")
 				</ul>
 			</div>
 
@@ -249,6 +221,25 @@ templ stripeSection(ctx context.Context, subscriber *viewmodel.StripeSubscriberV
 			</button>
 		</form>
 	</div>
+}
+
+// benefitItem はサポーター特典のアイテムを表示するコンポーネント
+templ benefitItem(ctx context.Context, emoji string, titleKey string, descKey string) {
+	<li class="flex items-start gap-2">
+		<span class="text-2xl">
+			{ emoji }
+		</span>
+
+		<div>
+			<p class="font-bold">
+				{ templates.T(ctx, titleKey) }
+			</p>
+
+			<p class="text-muted-foreground text-sm">
+				{ templates.T(ctx, descKey) }
+			</p>
+		</div>
+	</li>
 }
 
 // formatDate は日付をフォーマットします
