@@ -661,11 +661,11 @@ other = "Sign in to become a supporter"
 
 [supporters_login_prompt_desc]
 description = "Login prompt description"
-other = "Sign in or create an account to become an Annict supporter"
+other = "Sign in to become an Annict supporter"
 
 [supporters_login_button]
 description = "Login button"
-other = "Sign In / Sign Up"
+other = "Sign In"
 
 [supporters_checkout_title]
 description = "Checkout section title"

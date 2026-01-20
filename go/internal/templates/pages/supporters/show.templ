@@ -87,14 +87,17 @@ templ Show(ctx context.Context, data viewmodel.SupporterPageData) {
 
 // notLoggedInSection は未ログインユーザー向けセクション
 templ notLoggedInSection(ctx context.Context) {
-	<div class="bg-gray-50 rounded-lg p-6">
-		<h2 class="text-xl font-semibold mb-4">
+	<div class="card px-4">
+		<h2 class="text-xl font-bold antialiased">
 			{ templates.T(ctx, "supporters_login_prompt_title") }
 		</h2>
-		<p class="text-gray-600 mb-4">
+
+		<p>
 			{ templates.T(ctx, "supporters_login_prompt_desc") }
 		</p>
-		<a href="/sign_in?back=/supporters" class="btn btn-primary">
+
+		<a href="/sign_in?back=/supporters" class="btn btn-primary rounded-full w-fit">
+			@templates.Icon("sign-in-regular")
 			{ templates.T(ctx, "supporters_login_button") }
 		</a>
 	</div>

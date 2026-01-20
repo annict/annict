@@ -661,11 +661,11 @@ other = "サポーターになるにはログインしてください"
 
 [supporters_login_prompt_desc]
 description = "ログイン促進説明"
-other = "Annictにログインまたは新規登録して、サポーターに登録しましょう"
+other = "Annictにログインして、サポーターに登録しましょう"
 
 [supporters_login_button]
 description = "ログインボタン"
-other = "ログイン / 新規登録"
+other = "ログインする"
 
 [supporters_checkout_title]
 description = "Checkoutセクションタイトル"
