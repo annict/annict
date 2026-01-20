@@ -61,6 +61,8 @@
   /* Basecoatの変数上書き */
   --background: var(--color-stone-100);
   --foreground: var(--color-stone-950);
+  --card: var(--color-neutral-50);
+  --card-foreground: var(--color-stone-950);
   --primary: var(--color-mizuho-600);
   --primary-foreground: var(--color-white);
   --secondary: var(--color-stone-300);
@@ -88,6 +90,8 @@
   /* Basecoatの変数上書き */
   --background: var(--color-stone-900);
   --foreground: var(--color-stone-300);
+  --card: var(--color-stone-800);
+  --card-foreground: var(--color-stone-200);
   --primary: var(--color-mizuho-600);
   --primary-foreground: var(--color-white);
   --secondary: var(--color-stone-600);
