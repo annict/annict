@@ -28,11 +28,7 @@ templ Default(ctx context.Context, meta viewmodel.PageMeta, user *viewmodel.User
 						@content
 					</main>
 
-					<footer class="bg-muted mt-auto border-t border-border pb-(--bottom-nav-max-height) md:pb-0">
-						<div class="container mx-auto px-4 py-8 text-center text-muted-foreground">
-							<p>&copy; 2024 Annict (Go Version)</p>
-						</div>
-					</footer>
+					@components.Footer(ctx)
 				</div>
 			</div>
 

@@ -863,6 +863,10 @@ other = "設定"
 description = "サイドバー - FAQ"
 other = "よくある質問"
 
+[sidebar_community]
+description = "サイドバー - コミュニティ"
+other = "コミュニティ"
+
 [sidebar_services]
 description = "サイドバー - サービス"
 other = "サービス"
@@ -890,3 +894,16 @@ other = "Annict Developers"
 [sidebar_search_placeholder]
 description = "サイドバー - 検索プレースホルダー"
 other = "作品名や人物名などで検索..."
+
+# フッター関連
+[footer_terms]
+description = "フッター - 利用規約"
+other = "利用規約"
+
+[footer_privacy]
+description = "フッター - プライバシーポリシー"
+other = "プライバシーポリシー"
+
+[footer_legal]
+description = "フッター - 特商法表記"
+other = "特商法表記"
