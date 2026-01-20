@@ -863,6 +863,10 @@ other = "Settings"
 description = "Sidebar - FAQ"
 other = "FAQ"
 
+[sidebar_community]
+description = "Sidebar - Community"
+other = "Community"
+
 [sidebar_services]
 description = "Sidebar - Services"
 other = "Services"
@@ -892,14 +896,6 @@ description = "Sidebar - Search placeholder"
 other = "Search by anime title..."
 
 # Footer related
-[footer_community]
-description = "Footer - Community"
-other = "Community"
-
-[footer_faq]
-description = "Footer - FAQ"
-other = "FAQ"
-
 [footer_terms]
 description = "Footer - Terms"
 other = "Terms of Service"
