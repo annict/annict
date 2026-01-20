@@ -625,7 +625,7 @@ other = "サポーターバッジ"
 
 [supporters_benefit_2_desc]
 description = "特典2説明"
-other = "プロフィールにサポーターバッジが表示されます"
+other = "プロフィールにサポーターであることを示すバッジが表示されます。オプションで非表示にすることもできます"
 
 [supporters_benefit_3_title]
 description = "特典3タイトル"
@@ -633,7 +633,7 @@ other = "視聴日時入力機能"
 
 [supporters_benefit_3_desc]
 description = "特典3説明"
-other = "記録時に視聴日時を細かく指定できます"
+other = "記録時に視聴日時を細かく指定できます。例えば昔見たアニメを記録するとき当時の日にちを入力することで、より正確に記録することができるようになります"
 
 [supporters_login_prompt_title]
 description = "ログイン促進タイトル"

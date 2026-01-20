@@ -625,7 +625,7 @@ other = "Supporter Badge"
 
 [supporters_benefit_2_desc]
 description = "Benefit 2 description"
-other = "Display a supporter badge on your profile"
+other = "A supporter badge will be displayed on your profile. You can optionally hide it."
 
 [supporters_benefit_3_title]
 description = "Benefit 3 title"
@@ -633,7 +633,7 @@ other = "Watch Date Input"
 
 [supporters_benefit_3_desc]
 description = "Benefit 3 description"
-other = "Specify exact watch dates and times when recording"
+other = "Specify detailed watch dates and times when recording. For example, when recording anime you watched in the past, you can enter the exact date to keep more accurate records."
 
 [supporters_login_prompt_title]
 description = "Login prompt title"
