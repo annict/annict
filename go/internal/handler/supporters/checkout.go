@@ -7,7 +7,6 @@ import (
 	"strconv"
 
 	"github.com/stripe/stripe-go/v84"
-	"github.com/stripe/stripe-go/v84/checkout/session"
 
 	"github.com/annict/annict/go/internal/i18n"
 	authMiddleware "github.com/annict/annict/go/internal/middleware"
@@ -88,9 +87,9 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	successURL := h.cfg.AppURL() + "/supporters?success=true"
 	cancelURL := h.cfg.AppURL() + "/supporters?canceled=true"
 
-	params := &stripe.CheckoutSessionParams{
+	params := &stripe.CheckoutSessionCreateParams{
 		Mode: stripe.String(string(stripe.CheckoutSessionModeSubscription)),
-		LineItems: []*stripe.CheckoutSessionLineItemParams{
+		LineItems: []*stripe.CheckoutSessionCreateLineItemParams{
 			{
 				Price:    stripe.String(priceID),
 				Quantity: stripe.Int64(1),
@@ -111,7 +110,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		params.Locale = stripe.String("en")
 	}
 
-	checkoutSession, err := session.New(params)
+	checkoutSession, err := h.stripeClient.V1CheckoutSessions.Create(ctx, params)
 	if err != nil {
 		slog.ErrorContext(ctx, "Stripe Checkoutセッションの作成に失敗しました", "error", err, "user_id", user.ID)
 		h.redirectWithError(w, r, ctx, "supporters_checkout_error")

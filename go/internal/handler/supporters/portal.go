@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/stripe/stripe-go/v84"
-	portalsession "github.com/stripe/stripe-go/v84/billingportal/session"
 
 	"github.com/annict/annict/go/internal/i18n"
 	authMiddleware "github.com/annict/annict/go/internal/middleware"
@@ -46,7 +45,7 @@ func (h *Handler) Portal(w http.ResponseWriter, r *http.Request) {
 	// Stripe Customer Portal セッションを作成
 	returnURL := h.cfg.AppURL() + "/supporters"
 
-	params := &stripe.BillingPortalSessionParams{
+	params := &stripe.BillingPortalSessionCreateParams{
 		Customer:  stripe.String(stripeSubscriber.StripeCustomerID),
 		ReturnURL: stripe.String(returnURL),
 	}
@@ -59,7 +58,7 @@ func (h *Handler) Portal(w http.ResponseWriter, r *http.Request) {
 		params.Locale = stripe.String("en")
 	}
 
-	portalSession, err := portalsession.New(params)
+	portalSession, err := h.stripeClient.V1BillingPortalSessions.Create(ctx, params)
 	if err != nil {
 		slog.ErrorContext(ctx, "Stripe Customer Portalセッションの作成に失敗しました", "error", err, "user_id", user.ID)
 		h.redirectWithError(w, r, ctx, "supporters_portal_error")
