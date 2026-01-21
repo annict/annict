@@ -10,9 +10,10 @@ const sidebarAvatarImageSize = 100 // 50px × 2
 
 // User はテンプレート表示用のユーザーデータです
 type User struct {
-	ID        int64
-	Username  string
-	AvatarURL string // サイドバー用アバター画像URL（50px表示、100px画像）
+	ID                 int64
+	Username           string
+	AvatarURL          string // サイドバー用アバター画像URL（50px表示、100px画像）
+	NotificationsCount int32  // 未読通知数
 }
 
 // NewUserForSidebar はサイドバー表示用の viewmodel.User を作成します
@@ -27,8 +28,9 @@ func NewUserForSidebar(row *repository.User, helper *image.Helper) *User {
 	}
 
 	return &User{
-		ID:        row.ID,
-		Username:  row.Username,
-		AvatarURL: avatarURL,
+		ID:                 row.ID,
+		Username:           row.Username,
+		AvatarURL:          avatarURL,
+		NotificationsCount: row.NotificationsCount,
 	}
 }

@@ -109,6 +109,7 @@ func (h *Handler) buildSupporterPageData(ctx context.Context, user *repository.U
 // convertStripeSubscriberToView はStripeサブスクライバーをビューモデルに変換します
 func convertStripeSubscriberToView(s *repository.StripeSubscriber) *viewmodel.StripeSubscriberView {
 	view := &viewmodel.StripeSubscriberView{
+		CustomerID:       s.StripeCustomerID,
 		Status:           s.StripeStatus,
 		CurrentPeriodEnd: s.StripeCurrentPeriodEnd,
 	}
@@ -121,6 +122,7 @@ func convertStripeSubscriberToView(s *repository.StripeSubscriber) *viewmodel.St
 // convertGumroadSubscriberToView はGumroadサブスクライバーをビューモデルに変換します
 func convertGumroadSubscriberToView(s *repository.GumroadSubscriber) *viewmodel.GumroadSubscriberView {
 	view := &viewmodel.GumroadSubscriberView{
+		GumroadID: s.GumroadID,
 		CreatedAt: s.GumroadCreatedAt,
 	}
 	if s.GumroadEndedAt.Valid {

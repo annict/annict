@@ -607,6 +607,26 @@ other = "サポーター登録ありがとうございます！"
 description = "Checkoutキャンセルメッセージ"
 other = "決済がキャンセルされました"
 
+[supporters_what_is_title]
+description = "サポーターとは何かのタイトル"
+other = "Annictサポーターとは？"
+
+[supporters_what_is_desc_1]
+description = "サポーターとは何かの説明1"
+other = "「Annictサポーター」は、Annictファンのためのサブスクリプションプログラムです。"
+
+[supporters_what_is_desc_2]
+description = "サポーターとは何かの説明2"
+other = "毎月または毎年お支払いいただくことで加入でき、Annictの運営をサポートいただけます。"
+
+[supporters_what_is_desc_3]
+description = "サポーターとは何かの説明3"
+other = "(サーバー費用など、運営に必要なサービスの使用料の支払いに使われます)"
+
+[supporters_what_is_desc_4]
+description = "サポーターとは何かの説明4"
+other = "サポーターになると以下の特典が得られます。"
+
 [supporters_benefits_title]
 description = "特典セクションタイトル"
 other = "サポーター特典"
@@ -625,7 +645,7 @@ other = "サポーターバッジ"
 
 [supporters_benefit_2_desc]
 description = "特典2説明"
-other = "プロフィールにサポーターバッジが表示されます"
+other = "プロフィールにサポーターであることを示すバッジが表示されます。オプションで非表示にすることもできます"
 
 [supporters_benefit_3_title]
 description = "特典3タイトル"
@@ -633,7 +653,7 @@ other = "視聴日時入力機能"
 
 [supporters_benefit_3_desc]
 description = "特典3説明"
-other = "記録時に視聴日時を細かく指定できます"
+other = "記録時に視聴日時を細かく指定できます。例えば昔見たアニメを記録するとき当時の日にちを入力することで、より正確に記録することができるようになります"
 
 [supporters_login_prompt_title]
 description = "ログイン促進タイトル"
@@ -641,11 +661,11 @@ other = "サポーターになるにはログインしてください"
 
 [supporters_login_prompt_desc]
 description = "ログイン促進説明"
-other = "Annictにログインまたは新規登録して、サポーターに登録しましょう"
+other = "Annictにログインして、サポーターに登録しましょう"
 
 [supporters_login_button]
 description = "ログインボタン"
-other = "ログイン / 新規登録"
+other = "ログインする"
 
 [supporters_checkout_title]
 description = "Checkoutセクションタイトル"
@@ -667,10 +687,6 @@ other = "月"
 description = "年"
 other = "年"
 
-[supporters_recommended]
-description = "おすすめラベル"
-other = "おすすめ"
-
 [supporters_yearly_savings]
 description = "年額プランの節約額"
 other = "2ヶ月分お得！"
@@ -681,23 +697,27 @@ other = "登録する"
 
 [supporters_payment_method]
 description = "支払い方法説明"
-other = "クレジットカードでお支払いいただけます（Stripe決済）"
+other = "クレジットカードでお支払いいただけます (Stripe決済)"
 
 [supporters_gumroad_title]
 description = "Gumroadサポーターセクションタイトル"
 other = "Gumroad経由でサポーター登録中"
 
-[supporters_gumroad_message]
-description = "Gumroad移行案内メッセージ"
-other = "現在Gumroad経由でサポーター登録中です。サブスクリプション終了までStripeで登録する必要はありません。継続される場合は、Gumroadのサブスクリプション終了後にStripeでご登録ください。"
+[supporters_gumroad_message_1]
+description = "Gumroad移行案内メッセージ1"
+other = "サポータープログラムへのご参加ありがとうございます！現在Gumroad経由でサポーターに登録しています。"
+
+[supporters_gumroad_message_2]
+description = "Gumroad移行案内メッセージ2"
+other = "サブスクリプションの契約が終了するまでStripeで登録する必要はありません。継続される場合は、Gumroadのサブスクリプション契約終了後にStripeでご登録ください。"
 
 [supporters_registered_date]
 description = "登録日ラベル"
-other = "登録日"
+other = "参加日時"
 
 [supporters_end_date]
 description = "終了日ラベル"
-other = "終了日"
+other = "契約終了日時"
 
 [supporters_active_title]
 description = "アクティブサポーターセクションタイトル"
@@ -705,7 +725,11 @@ other = "サポーター登録中"
 
 [supporters_active_message]
 description = "アクティブサポーターメッセージ"
-other = "Annictサポーターにご登録いただきありがとうございます！"
+other = "サポータープログラムへのご参加ありがとうございます！現在サポーターとしてAnnictにログインしています。"
+
+[supporters_customer_id]
+description = "カスタマーIDラベル"
+other = "カスタマーID"
 
 [supporters_status]
 description = "ステータスラベル"

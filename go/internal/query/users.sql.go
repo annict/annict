@@ -145,6 +145,7 @@ SELECT
     u.locale,
     u.stripe_subscriber_id,
     u.gumroad_subscriber_id,
+    u.notifications_count,
     u.created_at,
     u.updated_at,
     p.image_data AS profile_image_data
@@ -163,6 +164,7 @@ type GetUserByIDRow struct {
 	Locale              string         `db:"locale"`
 	StripeSubscriberID  sql.NullInt64  `db:"stripe_subscriber_id"`
 	GumroadSubscriberID sql.NullInt64  `db:"gumroad_subscriber_id"`
+	NotificationsCount  int32          `db:"notifications_count"`
 	CreatedAt           sql.NullTime   `db:"created_at"`
 	UpdatedAt           sql.NullTime   `db:"updated_at"`
 	ProfileImageData    sql.NullString `db:"profile_image_data"`
@@ -180,6 +182,7 @@ func (q *Queries) GetUserByID(ctx context.Context, id int64) (GetUserByIDRow, er
 		&i.Locale,
 		&i.StripeSubscriberID,
 		&i.GumroadSubscriberID,
+		&i.NotificationsCount,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.ProfileImageData,

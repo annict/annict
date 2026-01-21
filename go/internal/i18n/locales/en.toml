@@ -607,6 +607,26 @@ other = "Thank you for becoming a supporter!"
 description = "Checkout canceled message"
 other = "Payment was canceled"
 
+[supporters_what_is_title]
+description = "What is supporter title"
+other = "What is Annict Supporter?"
+
+[supporters_what_is_desc_1]
+description = "What is supporter description 1"
+other = "\"Annict Supporters\" is a subscription program for Annict fans."
+
+[supporters_what_is_desc_2]
+description = "What is supporter description 2"
+other = "By paying monthly or yearly, you can join and support the operation of Annict."
+
+[supporters_what_is_desc_3]
+description = "What is supporter description 3"
+other = "(Used for server costs and other services required for operation)"
+
+[supporters_what_is_desc_4]
+description = "What is supporter description 4"
+other = "Supporters receive the following benefits."
+
 [supporters_benefits_title]
 description = "Benefits section title"
 other = "Supporter Benefits"
@@ -625,7 +645,7 @@ other = "Supporter Badge"
 
 [supporters_benefit_2_desc]
 description = "Benefit 2 description"
-other = "Display a supporter badge on your profile"
+other = "A supporter badge will be displayed on your profile. You can optionally hide it."
 
 [supporters_benefit_3_title]
 description = "Benefit 3 title"
@@ -633,7 +653,7 @@ other = "Watch Date Input"
 
 [supporters_benefit_3_desc]
 description = "Benefit 3 description"
-other = "Specify exact watch dates and times when recording"
+other = "Specify detailed watch dates and times when recording. For example, when recording anime you watched in the past, you can enter the exact date to keep more accurate records."
 
 [supporters_login_prompt_title]
 description = "Login prompt title"
@@ -641,11 +661,11 @@ other = "Sign in to become a supporter"
 
 [supporters_login_prompt_desc]
 description = "Login prompt description"
-other = "Sign in or create an account to become an Annict supporter"
+other = "Sign in to become an Annict supporter"
 
 [supporters_login_button]
 description = "Login button"
-other = "Sign In / Sign Up"
+other = "Sign In"
 
 [supporters_checkout_title]
 description = "Checkout section title"
@@ -667,10 +687,6 @@ other = "month"
 description = "Year"
 other = "year"
 
-[supporters_recommended]
-description = "Recommended label"
-other = "Recommended"
-
 [supporters_yearly_savings]
 description = "Yearly plan savings"
 other = "Save 2 months!"
@@ -687,17 +703,21 @@ other = "Pay with credit card (powered by Stripe)"
 description = "Gumroad supporter section title"
 other = "Registered via Gumroad"
 
-[supporters_gumroad_message]
-description = "Gumroad migration message"
-other = "You are currently registered as a supporter via Gumroad. You don't need to register with Stripe until your subscription ends. If you wish to continue, please register with Stripe after your Gumroad subscription ends."
+[supporters_gumroad_message_1]
+description = "Gumroad migration message 1"
+other = "Thank you for joining the supporter program! You are currently registered as a supporter via Gumroad."
+
+[supporters_gumroad_message_2]
+description = "Gumroad migration message 2"
+other = "You don't need to register with Stripe until your subscription ends. If you wish to continue, please register with Stripe after your Gumroad subscription ends."
 
 [supporters_registered_date]
 description = "Registration date label"
-other = "Registered"
+other = "Registration Date"
 
 [supporters_end_date]
 description = "End date label"
-other = "End Date"
+other = "Subscription End Date"
 
 [supporters_active_title]
 description = "Active supporter section title"
@@ -706,6 +726,10 @@ other = "Active Supporter"
 [supporters_active_message]
 description = "Active supporter message"
 other = "Thank you for being an Annict supporter!"
+
+[supporters_customer_id]
+description = "Customer ID label"
+other = "Customer ID"
 
 [supporters_status]
 description = "Status label"
