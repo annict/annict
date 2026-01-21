@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/stripe/stripe-go/v84"
-	"github.com/stripe/stripe-go/v84/subscription"
 
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
@@ -63,8 +62,13 @@ func (uc *CreateStripeSubscriberUsecase) Execute(
 	ctx context.Context,
 	input CreateStripeSubscriberInput,
 ) (*CreateStripeSubscriberResult, error) {
+	// Stripeクライアントがnilの場合はエラー
+	if uc.stripeClient == nil {
+		return nil, fmt.Errorf("Stripeクライアントが設定されていません")
+	}
+
 	// Stripe APIからサブスクリプション詳細を取得
-	sub, err := subscription.Get(input.StripeSubscriptionID, nil)
+	sub, err := uc.stripeClient.V1Subscriptions.Retrieve(ctx, input.StripeSubscriptionID, nil)
 	if err != nil {
 		return nil, fmt.Errorf("サブスクリプション取得に失敗: %w", err)
 	}
