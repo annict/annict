@@ -2,10 +2,16 @@ package components
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/annict/annict/go/internal/templates"
 	"github.com/annict/annict/go/internal/viewmodel"
 )
+
+// formatNotificationCount は通知数を文字列に変換します
+func formatNotificationCount(count int32) string {
+	return strconv.FormatInt(int64(count), 10)
+}
 
 // Sidebar はサイドバーコンポーネントです
 // user: ログインユーザー情報（viewmodel.User）。nilの場合は未ログイン状態
@@ -70,7 +76,7 @@ templ Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Seaso
 						} else {
 							@sidebarMenuItem(ctx, "/sign_in", "sidebar_profile", "user-regular")
 						}
-						@sidebarMenuItem(ctx, "/notifications", "sidebar_notifications", "bell-regular")
+						@sidebarNotificationMenuItem(ctx, user)
 						@sidebarMenuItem(ctx, "/track", "sidebar_track", "list-checks-regular")
 					</ul>
 				</div>
@@ -195,6 +201,30 @@ templ sidebarMenuItem(ctx context.Context, path string, labelKey string, iconNam
 			<span class="text-base leading-none">
 				{ templates.T(ctx, labelKey) }
 			</span>
+		</a>
+	</li>
+}
+
+// sidebarNotificationMenuItem は通知メニュー項目を生成します（未読バッジ付き）
+templ sidebarNotificationMenuItem(ctx context.Context, user *viewmodel.User) {
+	<li>
+		<a
+			href="/notifications"
+			class="flex items-center justify-between p-2 rounded-lg hover:bg-sidebar-accent transition-colors"
+		>
+			<div class="flex items-center gap-3">
+				@templates.Icon("bell-regular", "w-[18px] h-[18px] fill-(--muted-foreground)")
+
+				<span class="text-base leading-none">
+					{ templates.T(ctx, "sidebar_notifications") }
+				</span>
+			</div>
+
+			if user != nil && user.NotificationsCount > 0 {
+				<span class="badge-destructive font-bold">
+					{ formatNotificationCount(user.NotificationsCount) }
+				</span>
+			}
 		</a>
 	</li>
 }

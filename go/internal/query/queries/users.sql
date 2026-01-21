@@ -8,6 +8,7 @@ SELECT
     u.locale,
     u.stripe_subscriber_id,
     u.gumroad_subscriber_id,
+    u.notifications_count,
     u.created_at,
     u.updated_at,
     p.image_data AS profile_image_data
