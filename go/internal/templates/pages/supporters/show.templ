@@ -70,16 +70,16 @@ templ Show(ctx context.Context, data viewmodel.SupporterPageData) {
 				switch data.Status {
 				case viewmodel.SupporterStatusNone:
 					// 非サポーター: Stripe決済ボタン
-					@checkoutSection(ctx)
+					@checkoutSection(ctx, data.CSRFToken)
 				case viewmodel.SupporterStatusGumroad:
 					// Gumroadサポーター: 移行案内メッセージ
 					@gumroadSection(ctx, data.GumroadSubscriber)
 				case viewmodel.SupporterStatusStripe:
 					// Stripeサポーター: サブスクリプション情報
-					@stripeSection(ctx, data.StripeSubscriber)
+					@stripeSection(ctx, data.StripeSubscriber, data.CSRFToken)
 				case viewmodel.SupporterStatusBoth:
 					// 両方アクティブ: Stripeを優先表示
-					@stripeSection(ctx, data.StripeSubscriber)
+					@stripeSection(ctx, data.StripeSubscriber, data.CSRFToken)
 				}
 			}
 		</div>
@@ -105,7 +105,7 @@ templ notLoggedInSection(ctx context.Context) {
 }
 
 // checkoutSection は非サポーター向けのStripe決済セクション
-templ checkoutSection(ctx context.Context) {
+templ checkoutSection(ctx context.Context, csrfToken string) {
 	<div class="card px-4">
 		<h2 class="text-xl font-bold antialiased">
 			{ templates.T(ctx, "supporters_checkout_title") }
@@ -125,6 +125,7 @@ templ checkoutSection(ctx context.Context) {
 				</div>
 
 				<form action="/supporters/checkout" method="POST">
+					<input type="hidden" name="csrf_token" value={ csrfToken }/>
 					<input type="hidden" name="plan" value="monthly"/>
 					<button type="submit" class="btn btn-primary w-full">
 						{ templates.T(ctx, "supporters_subscribe_button") }
@@ -146,6 +147,7 @@ templ checkoutSection(ctx context.Context) {
 				</div>
 
 				<form action="/supporters/checkout" method="POST">
+					<input type="hidden" name="csrf_token" value={ csrfToken }/>
 					<input type="hidden" name="plan" value="yearly"/>
 					<button type="submit" class="btn btn-primary w-full">
 						{ templates.T(ctx, "supporters_subscribe_button") }
@@ -220,7 +222,7 @@ templ gumroadSection(ctx context.Context, subscriber *viewmodel.GumroadSubscribe
 }
 
 // stripeSection はStripeサポーター向けセクション
-templ stripeSection(ctx context.Context, subscriber *viewmodel.StripeSubscriberView) {
+templ stripeSection(ctx context.Context, subscriber *viewmodel.StripeSubscriberView, csrfToken string) {
 	<div class="card bg-green-50 dark:bg-green-950 px-4">
 		<div class="flex items-center gap-2">
 			@templates.Icon("check-circle-regular", "w-[32px] h-[32px] fill-success")
@@ -289,6 +291,7 @@ templ stripeSection(ctx context.Context, subscriber *viewmodel.StripeSubscriberV
 		}
 
 		<form action="/supporters/portal" method="POST">
+			<input type="hidden" name="csrf_token" value={ csrfToken }/>
 			<button type="submit" class="btn-outline">
 				{ templates.T(ctx, "supporters_manage_button") }
 			</button>

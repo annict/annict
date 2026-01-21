@@ -31,12 +31,19 @@ func (h *Handler) Show(w http.ResponseWriter, r *http.Request) {
 	showSuccessMessage := r.URL.Query().Get("success") == "true"
 	showCanceledMessage := r.URL.Query().Get("canceled") == "true"
 
+	// CSRFトークンを取得（ログイン済みユーザーのみフォームが表示されるため）
+	csrfToken := ""
+	if user != nil {
+		csrfToken = authMiddleware.GetOrCreateCSRFToken(w, r, h.sessionManager)
+	}
+
 	// サポーターページのビューモデルを作成
 	pageData := viewmodel.SupporterPageData{
 		IsLoggedIn:          user != nil,
 		Status:              viewmodel.SupporterStatusNone,
 		ShowSuccessMessage:  showSuccessMessage,
 		ShowCanceledMessage: showCanceledMessage,
+		CSRFToken:           csrfToken,
 	}
 
 	if user != nil {
