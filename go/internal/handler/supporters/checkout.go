@@ -110,6 +110,13 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		params.Locale = stripe.String("en")
 	}
 
+	// Stripeクライアントが設定されていない場合はエラー
+	if h.stripeClient == nil {
+		slog.ErrorContext(ctx, "Stripeクライアントが設定されていません", "user_id", user.ID)
+		h.redirectWithError(w, r, ctx, "supporters_checkout_error")
+		return
+	}
+
 	checkoutSession, err := h.stripeClient.V1CheckoutSessions.Create(ctx, params)
 	if err != nil {
 		slog.ErrorContext(ctx, "Stripe Checkoutセッションの作成に失敗しました", "error", err, "user_id", user.ID)
