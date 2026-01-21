@@ -2,6 +2,8 @@
 package supporters
 
 import (
+	"github.com/stripe/stripe-go/v84"
+
 	"github.com/annict/annict/go/internal/config"
 	"github.com/annict/annict/go/internal/image"
 	"github.com/annict/annict/go/internal/repository"
@@ -17,6 +19,7 @@ type Handler struct {
 	stripeSubscriberRepo  *repository.StripeSubscriberRepository
 	gumroadSubscriberRepo *repository.GumroadSubscriberRepository
 	stripeCfg             *annictStripe.Config
+	stripeClient          *stripe.Client
 }
 
 // NewHandler は新しいHandlerを作成します
@@ -27,6 +30,7 @@ func NewHandler(
 	stripeSubscriberRepo *repository.StripeSubscriberRepository,
 	gumroadSubscriberRepo *repository.GumroadSubscriberRepository,
 	stripeCfg *annictStripe.Config,
+	stripeClient *stripe.Client,
 ) *Handler {
 	return &Handler{
 		cfg:                   cfg,
@@ -35,5 +39,6 @@ func NewHandler(
 		stripeSubscriberRepo:  stripeSubscriberRepo,
 		gumroadSubscriberRepo: gumroadSubscriberRepo,
 		stripeCfg:             stripeCfg,
+		stripeClient:          stripeClient,
 	}
 }

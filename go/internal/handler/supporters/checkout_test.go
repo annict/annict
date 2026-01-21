@@ -35,7 +35,8 @@ func setupCheckoutTestHandler(t *testing.T, tx *sql.Tx, db *sql.DB, stripeCfg *a
 	stripeSubscriberRepo := repository.NewStripeSubscriberRepository(queries)
 	gumroadSubscriberRepo := repository.NewGumroadSubscriberRepository(queries)
 
-	return NewHandler(cfg, sessionManager, imageHelper, stripeSubscriberRepo, gumroadSubscriberRepo, stripeCfg)
+	// テスト用には nil を渡す（テストでは Stripe API を呼び出さない）
+	return NewHandler(cfg, sessionManager, imageHelper, stripeSubscriberRepo, gumroadSubscriberRepo, stripeCfg, nil)
 }
 
 // TestCreate_NotLoggedIn は未ログインユーザーがアクセスした場合のテスト

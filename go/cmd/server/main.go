@@ -337,11 +337,12 @@ func main() {
 		PriceMonthlyID: cfg.StripePriceMonthlyID,
 		PriceYearlyID:  cfg.StripePriceYearlyID,
 	}
-	supportersHandler := supporters.NewHandler(cfg, sessionManager, imageHelper, stripeSubscriberRepo, gumroadSubscriberRepo, annictStripeCfg)
+	stripeClient := annictStripe.NewClient(cfg.StripeSecretKey)
+	supportersHandler := supporters.NewHandler(cfg, sessionManager, imageHelper, stripeSubscriberRepo, gumroadSubscriberRepo, annictStripeCfg, stripeClient)
 
 	// Stripe Webhookハンドラーの初期化
 	stripeWebhookEventRepo := repository.NewStripeWebhookEventRepository(queries)
-	createStripeSubscriberUC := usecase.NewCreateStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo)
+	createStripeSubscriberUC := usecase.NewCreateStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo, stripeClient)
 	updateStripeSubscriberUC := usecase.NewUpdateStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo)
 	deleteStripeSubscriberUC := usecase.NewDeleteStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo)
 	stripeWebhookHandler := stripewebhook.NewHandler(cfg, stripeWebhookEventRepo, stripeSubscriberRepo, userRepo, createStripeSubscriberUC, updateStripeSubscriberUC, deleteStripeSubscriberUC)
