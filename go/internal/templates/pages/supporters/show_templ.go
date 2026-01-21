@@ -51,7 +51,7 @@ func Show(ctx context.Context, data viewmodel.SupporterPageData) templ.Component
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</h1><hr><div class=\"max-w-3xl w-full mx-auto flex flex-col gap-4\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</h1><hr><div class=\"max-w-3xl w-full mx-auto flex flex-col gap-4 px-2 md:px-0\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
