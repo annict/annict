@@ -36,7 +36,8 @@ func setupPortalTestHandler(t *testing.T, tx *sql.Tx, db *sql.DB) *Handler {
 	// テスト用のStripe設定（テストではStripe APIを呼び出さないため空でOK）
 	stripeCfg := &annictStripe.Config{}
 
-	return NewHandler(cfg, sessionManager, imageHelper, stripeSubscriberRepo, gumroadSubscriberRepo, stripeCfg)
+	// テスト用には nil を渡す（テストでは Stripe API を呼び出さない）
+	return NewHandler(cfg, sessionManager, imageHelper, stripeSubscriberRepo, gumroadSubscriberRepo, stripeCfg, nil)
 }
 
 // TestPortal_NotLoggedIn は未ログインユーザーがアクセスした場合のテスト

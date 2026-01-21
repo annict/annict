@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/stripe/stripe-go/v84"
 	"github.com/stripe/stripe-go/v84/subscription"
 
 	"github.com/annict/annict/go/internal/model"
@@ -22,6 +23,7 @@ type CreateStripeSubscriberUsecase struct {
 	db                   *sql.DB
 	stripeSubscriberRepo *repository.StripeSubscriberRepository
 	userRepo             *repository.UserRepository
+	stripeClient         *stripe.Client
 }
 
 // NewCreateStripeSubscriberUsecase はCreateStripeSubscriberUsecaseを作成します
@@ -29,11 +31,13 @@ func NewCreateStripeSubscriberUsecase(
 	db *sql.DB,
 	stripeSubscriberRepo *repository.StripeSubscriberRepository,
 	userRepo *repository.UserRepository,
+	stripeClient *stripe.Client,
 ) *CreateStripeSubscriberUsecase {
 	return &CreateStripeSubscriberUsecase{
 		db:                   db,
 		stripeSubscriberRepo: stripeSubscriberRepo,
 		userRepo:             userRepo,
+		stripeClient:         stripeClient,
 	}
 }
 

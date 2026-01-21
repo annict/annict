@@ -14,9 +14,7 @@ type Config struct {
 	PriceYearlyID  string // 年額プランの価格ID (price_xxx)
 }
 
-// Init はStripe APIクライアントを初期化します
-// Stripe SDKはグローバルにAPIキーを設定する方式を採用しているため、
-// この関数を呼び出すことでパッケージ全体でStripe APIが利用可能になります
-func Init(cfg *Config) {
-	stripe.Key = cfg.SecretKey
+// NewClient はStripe APIクライアントを作成します
+func NewClient(secretKey string) *stripe.Client {
+	return stripe.NewClient(secretKey)
 }
