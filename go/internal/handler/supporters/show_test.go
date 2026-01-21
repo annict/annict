@@ -238,9 +238,9 @@ func TestShow_GumroadSupporter(t *testing.T) {
 	body := rr.Body.String()
 
 	// Gumroadサポーターセクションが表示されることを確認
-	// （移行案内メッセージが含まれる青いセクション）
-	if !strings.Contains(body, "bg-blue-50") {
-		t.Error("response doesn't contain Gumroad supporter section (blue background)")
+	// （移行案内メッセージが含まれる緑のセクション）
+	if !strings.Contains(body, "bg-green-50") {
+		t.Error("response doesn't contain Gumroad supporter section (green background)")
 	}
 
 	// 非サポーター向けのCheckoutセクションが表示されないことを確認

@@ -703,17 +703,21 @@ other = "Pay with credit card (powered by Stripe)"
 description = "Gumroad supporter section title"
 other = "Registered via Gumroad"
 
-[supporters_gumroad_message]
-description = "Gumroad migration message"
-other = "You are currently registered as a supporter via Gumroad. You don't need to register with Stripe until your subscription ends. If you wish to continue, please register with Stripe after your Gumroad subscription ends."
+[supporters_gumroad_message_1]
+description = "Gumroad migration message 1"
+other = "Thank you for joining the supporter program! You are currently registered as a supporter via Gumroad."
+
+[supporters_gumroad_message_2]
+description = "Gumroad migration message 2"
+other = "You don't need to register with Stripe until your subscription ends. If you wish to continue, please register with Stripe after your Gumroad subscription ends."
 
 [supporters_registered_date]
 description = "Registration date label"
-other = "Registered"
+other = "Registration Date"
 
 [supporters_end_date]
 description = "End date label"
-other = "End Date"
+other = "Subscription End Date"
 
 [supporters_active_title]
 description = "Active supporter section title"
@@ -722,6 +726,10 @@ other = "Active Supporter"
 [supporters_active_message]
 description = "Active supporter message"
 other = "Thank you for being an Annict supporter!"
+
+[supporters_customer_id]
+description = "Customer ID label"
+other = "Customer ID"
 
 [supporters_status]
 description = "Status label"

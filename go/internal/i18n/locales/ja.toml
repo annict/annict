@@ -703,17 +703,21 @@ other = "クレジットカードでお支払いいただけます (Stripe決済
 description = "Gumroadサポーターセクションタイトル"
 other = "Gumroad経由でサポーター登録中"
 
-[supporters_gumroad_message]
-description = "Gumroad移行案内メッセージ"
-other = "現在Gumroad経由でサポーター登録中です。サブスクリプション終了までStripeで登録する必要はありません。継続される場合は、Gumroadのサブスクリプション終了後にStripeでご登録ください。"
+[supporters_gumroad_message_1]
+description = "Gumroad移行案内メッセージ1"
+other = "サポータープログラムへのご参加ありがとうございます！現在Gumroad経由でサポーターに登録しています。"
+
+[supporters_gumroad_message_2]
+description = "Gumroad移行案内メッセージ2"
+other = "サブスクリプションの契約が終了するまでStripeで登録する必要はありません。継続される場合は、Gumroadのサブスクリプション契約終了後にStripeでご登録ください。"
 
 [supporters_registered_date]
 description = "登録日ラベル"
-other = "登録日"
+other = "参加日時"
 
 [supporters_end_date]
 description = "終了日ラベル"
-other = "終了日"
+other = "契約終了日時"
 
 [supporters_active_title]
 description = "アクティブサポーターセクションタイトル"
@@ -721,7 +725,11 @@ other = "サポーター登録中"
 
 [supporters_active_message]
 description = "アクティブサポーターメッセージ"
-other = "Annictサポーターにご登録いただきありがとうございます！"
+other = "サポータープログラムへのご参加ありがとうございます！現在サポーターとしてAnnictにログインしています。"
+
+[supporters_customer_id]
+description = "カスタマーIDラベル"
+other = "カスタマーID"
 
 [supporters_status]
 description = "ステータスラベル"

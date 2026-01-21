@@ -18,6 +18,7 @@ const (
 
 // StripeSubscriberView はStripeサブスクライバーのビューモデルです
 type StripeSubscriberView struct {
+	CustomerID       string
 	Status           string
 	CurrentPeriodEnd time.Time
 	CancelAt         *time.Time
@@ -25,6 +26,7 @@ type StripeSubscriberView struct {
 
 // GumroadSubscriberView はGumroadサブスクライバーのビューモデルです
 type GumroadSubscriberView struct {
+	GumroadID string
 	CreatedAt time.Time
 	EndedAt   *time.Time
 }
