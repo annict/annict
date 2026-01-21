@@ -39,4 +39,5 @@ type SupporterPageData struct {
 	GumroadSubscriber   *GumroadSubscriberView
 	ShowSuccessMessage  bool
 	ShowCanceledMessage bool
+	CSRFToken           string
 }
