@@ -16,6 +16,9 @@
   --color-mizuho-950: #4b061a;
 
   --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
 
   --color-bottom-nav: var(--color-sidebar);
   --color-bottom-nav-foreground: var(--color-sidebar-foreground);

@@ -601,7 +601,7 @@ other = "Annict Supporters"
 
 [supporters_success_message]
 description = "Checkout completed message"
-other = "Thank you for becoming a supporter!"
+other = "Your payment has been completed"
 
 [supporters_canceled_message]
 description = "Checkout canceled message"
@@ -723,9 +723,13 @@ other = "Subscription End Date"
 description = "Active supporter section title"
 other = "Active Supporter"
 
-[supporters_active_message]
-description = "Active supporter message"
-other = "Thank you for being an Annict supporter!"
+[supporters_active_message_1]
+description = "Active supporter message 1"
+other = "Thank you for joining the supporter program!"
+
+[supporters_active_message_2]
+description = "Active supporter message 2"
+other = "You are currently logged in to Annict as a supporter."
 
 [supporters_customer_id]
 description = "Customer ID label"
@@ -754,6 +758,10 @@ other = "Cancellation Date"
 [supporters_manage_button]
 description = "Manage button"
 other = "Manage Subscription"
+
+[supporters_customer_id_help]
+description = "Customer ID help text"
+other = "Please provide your Customer ID when contacting support."
 
 # Supporter Checkout
 [supporters_checkout_invalid_plan]
