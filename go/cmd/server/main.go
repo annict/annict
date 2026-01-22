@@ -34,6 +34,7 @@ import (
 	"github.com/annict/annict/go/internal/handler/sign_up_username"
 	"github.com/annict/annict/go/internal/handler/supporters"
 	"github.com/annict/annict/go/internal/handler/supporters_checkout"
+	"github.com/annict/annict/go/internal/handler/supporters_portal"
 	stripewebhook "github.com/annict/annict/go/internal/handler/webhooks/stripe"
 	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/image"
@@ -343,6 +344,9 @@ func main() {
 	// Stripe Checkoutハンドラーの初期化
 	supportersCheckoutHandler := supporters_checkout.NewHandler(cfg, sessionManager, stripeSubscriberRepo, annictStripeCfg, stripeClient)
 
+	// Stripe Customer Portalハンドラーの初期化
+	supportersPortalHandler := supporters_portal.NewHandler(cfg, sessionManager, stripeSubscriberRepo, stripeClient)
+
 	// Stripe Webhookハンドラーの初期化
 	stripeWebhookEventRepo := repository.NewStripeWebhookEventRepository(queries)
 	createStripeSubscriberUC := usecase.NewCreateStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo, stripeClient)
@@ -387,7 +391,7 @@ func main() {
 	// サポーターページ
 	r.Get("/supporters", supportersHandler.Show)
 	r.Post("/supporters/checkout", supportersCheckoutHandler.Create)
-	r.Post("/supporters/portal", supportersHandler.Portal)
+	r.Post("/supporters/portal", supportersPortalHandler.Create)
 
 	// Stripe Webhook
 	r.Post("/webhooks/stripe", stripeWebhookHandler.Create)

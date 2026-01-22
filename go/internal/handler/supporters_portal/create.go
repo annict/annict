@@ -1,4 +1,4 @@
-package supporters
+package supporters_portal
 
 import (
 	"context"
@@ -11,8 +11,8 @@ import (
 	authMiddleware "github.com/annict/annict/go/internal/middleware"
 )
 
-// Portal POST /supporters/portal - Stripe Customer Portalへリダイレクト
-func (h *Handler) Portal(w http.ResponseWriter, r *http.Request) {
+// Create POST /supporters/portal - Stripe Customer Portalへリダイレクト
+func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	// ログインユーザーの取得（認証必須）
