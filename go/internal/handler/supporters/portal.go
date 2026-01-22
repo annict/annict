@@ -1,6 +1,7 @@
 package supporters
 
 import (
+	"context"
 	"log/slog"
 	"net/http"
 
@@ -76,4 +77,11 @@ func (h *Handler) Portal(w http.ResponseWriter, r *http.Request) {
 
 	// Stripe Customer Portalページへリダイレクト
 	http.Redirect(w, r, portalSession.URL, http.StatusSeeOther)
+}
+
+// redirectWithError はエラーメッセージをフラッシュに設定してリダイレクトします
+func (h *Handler) redirectWithError(w http.ResponseWriter, r *http.Request, ctx context.Context, messageKey string) {
+	// フラッシュメッセージを設定（"error"タイプ）
+	_ = h.sessionManager.SetFlash(ctx, w, r, "error", i18n.T(ctx, messageKey))
+	http.Redirect(w, r, "/supporters", http.StatusSeeOther)
 }
