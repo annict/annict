@@ -5,18 +5,29 @@ import (
 	"testing"
 	"time"
 
+	"github.com/google/uuid"
+
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/testutil"
 )
 
+// randomString はテスト用のランダムな文字列を生成します
+func randomString(n int) string {
+	id := uuid.New().String()
+	if n > len(id) {
+		n = len(id)
+	}
+	return id[:n]
+}
+
 func TestDeleteStripeSubscriberUsecase_Execute(t *testing.T) {
 	t.Parallel()
 
-	// テストDBをセットアップ
-	db, tx := testutil.SetupTestDB(t)
-	queries := query.New(tx)
+	// テストDBを取得（トランザクションを使わない統合テスト）
+	db := testutil.GetTestDB(t)
+	queries := query.New(db)
 
 	// リポジトリの作成
 	stripeSubscriberRepo := repository.NewStripeSubscriberRepository(queries)
@@ -26,17 +37,34 @@ func TestDeleteStripeSubscriberUsecase_Execute(t *testing.T) {
 	uc := NewDeleteStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo)
 
 	t.Run("サブスクリプションを削除できる", func(t *testing.T) {
-		// テスト用のStripeSubscriberを作成
-		subscriber := testutil.NewStripeSubscriberBuilder(t, tx).
-			WithStripeSubscriptionID("sub_test_delete_1").
-			WithStripeStatus("active").
-			BuildWithResult()
+		t.Parallel()
+
+		// 一意のIDを生成
+		subscriptionID := "sub_test_delete_" + randomString(8)
+
+		// テスト用のStripeSubscriberを作成（コミットされる）
+		subscriber, err := stripeSubscriberRepo.Create(context.Background(), query.CreateStripeSubscriberParams{
+			StripeCustomerID:         "cus_test_" + randomString(8),
+			StripeSubscriptionID:     subscriptionID,
+			StripePriceID:            "price_test",
+			StripeStatus:             "active",
+			StripeCurrentPeriodStart: time.Now(),
+			StripeCurrentPeriodEnd:   time.Now().Add(30 * 24 * time.Hour),
+		})
+		if err != nil {
+			t.Fatalf("テストデータの作成に失敗: %v", err)
+		}
+
+		// クリーンアップ
+		t.Cleanup(func() {
+			_, _ = db.Exec("DELETE FROM stripe_subscribers WHERE id = $1", subscriber.ID)
+		})
 
 		ctx := context.Background()
 		canceledAt := time.Now()
 
 		input := DeleteStripeSubscriberInput{
-			StripeSubscriptionID: subscriber.StripeSubscriptionID,
+			StripeSubscriptionID: subscriptionID,
 			StripeCanceledAt:     canceledAt,
 		}
 
@@ -58,21 +86,56 @@ func TestDeleteStripeSubscriberUsecase_Execute(t *testing.T) {
 	})
 
 	t.Run("ユーザーとの紐付けが解除される", func(t *testing.T) {
+		t.Parallel()
+
+		// 一意のIDを生成
+		subscriptionID := "sub_test_delete_user_" + randomString(8)
+		customerID := "cus_test_" + randomString(8)
+		email := "test_delete_" + randomString(8) + "@example.com"
+		username := "testdel" + randomString(6)
+
 		// テスト用のStripeSubscriberを作成
-		subscriber := testutil.NewStripeSubscriberBuilder(t, tx).
-			WithStripeSubscriptionID("sub_test_delete_user_link").
-			WithStripeStatus("active").
-			BuildWithResult()
+		subscriber, err := stripeSubscriberRepo.Create(context.Background(), query.CreateStripeSubscriberParams{
+			StripeCustomerID:         customerID,
+			StripeSubscriptionID:     subscriptionID,
+			StripePriceID:            "price_test",
+			StripeStatus:             "active",
+			StripeCurrentPeriodStart: time.Now(),
+			StripeCurrentPeriodEnd:   time.Now().Add(30 * 24 * time.Hour),
+		})
+		if err != nil {
+			t.Fatalf("StripeSubscriberの作成に失敗: %v", err)
+		}
 
 		// テスト用のユーザーを作成してStripeSubscriberと紐付け
-		user := testutil.NewUserBuilder(t, tx).
-			WithStripeSubscriberID(&subscriber.ID).
-			BuildWithResult()
+		var userID int64
+		err = db.QueryRow(`
+			INSERT INTO users (
+				username, email, role, locale,
+				created_at, updated_at,
+				encrypted_password, sign_in_count,
+				time_zone, allowed_locales, stripe_subscriber_id
+			) VALUES (
+				$1, $2, 0, 'ja',
+				NOW(), NOW(),
+				'encrypted_test_password', 0,
+				'Asia/Tokyo', ARRAY[]::varchar[], $3
+			) RETURNING id
+		`, username, email, subscriber.ID).Scan(&userID)
+		if err != nil {
+			t.Fatalf("ユーザーの作成に失敗: %v", err)
+		}
+
+		// クリーンアップ
+		t.Cleanup(func() {
+			_, _ = db.Exec("DELETE FROM users WHERE id = $1", userID)
+			_, _ = db.Exec("DELETE FROM stripe_subscribers WHERE id = $1", subscriber.ID)
+		})
 
 		ctx := context.Background()
 
 		input := DeleteStripeSubscriberInput{
-			StripeSubscriptionID: subscriber.StripeSubscriptionID,
+			StripeSubscriptionID: subscriptionID,
 			StripeCanceledAt:     time.Now(),
 		}
 
@@ -87,12 +150,12 @@ func TestDeleteStripeSubscriberUsecase_Execute(t *testing.T) {
 			t.Error("UserID: nilが返されましたが、ユーザーIDが期待されました")
 			return
 		}
-		if *result.UserID != user.ID {
-			t.Errorf("UserID: got %d, want %d", *result.UserID, user.ID)
+		if *result.UserID != userID {
+			t.Errorf("UserID: got %d, want %d", *result.UserID, userID)
 		}
 
 		// ユーザーの紐付けが解除されていることを確認
-		updatedUser, err := userRepo.GetByID(ctx, user.ID)
+		updatedUser, err := userRepo.GetByID(ctx, userID)
 		if err != nil {
 			t.Errorf("ユーザー取得エラー: %v", err)
 			return
@@ -103,10 +166,12 @@ func TestDeleteStripeSubscriberUsecase_Execute(t *testing.T) {
 	})
 
 	t.Run("存在しないサブスクリプションIDはエラー", func(t *testing.T) {
+		t.Parallel()
+
 		ctx := context.Background()
 
 		input := DeleteStripeSubscriberInput{
-			StripeSubscriptionID: "sub_nonexistent_delete",
+			StripeSubscriptionID: "sub_nonexistent_" + randomString(8),
 			StripeCanceledAt:     time.Now(),
 		}
 

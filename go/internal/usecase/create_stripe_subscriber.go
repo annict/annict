@@ -93,8 +93,12 @@ func (uc *CreateStripeSubscriberUsecase) Execute(
 	}
 	defer func() { _ = tx.Rollback() }()
 
+	// トランザクションを使用するRepositoryを取得
+	stripeSubscriberRepoTx := uc.stripeSubscriberRepo.WithTx(tx)
+	userRepoTx := uc.userRepo.WithTx(tx)
+
 	// StripeSubscriberレコードを作成
-	stripeSubscriber, err := uc.stripeSubscriberRepo.Create(ctx, query.CreateStripeSubscriberParams{
+	stripeSubscriber, err := stripeSubscriberRepoTx.Create(ctx, query.CreateStripeSubscriberParams{
 		StripeCustomerID:         input.StripeCustomerID,
 		StripeSubscriptionID:     input.StripeSubscriptionID,
 		StripePriceID:            priceID,
@@ -109,7 +113,7 @@ func (uc *CreateStripeSubscriberUsecase) Execute(
 	}
 
 	// ユーザーとの紐付け
-	err = uc.userRepo.UpdateStripeSubscriberID(ctx, input.UserID, &stripeSubscriber.ID)
+	err = userRepoTx.UpdateStripeSubscriberID(ctx, input.UserID, &stripeSubscriber.ID)
 	if err != nil {
 		return nil, fmt.Errorf("ユーザー紐付けに失敗: %w", err)
 	}
