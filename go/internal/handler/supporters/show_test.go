@@ -314,8 +314,8 @@ func TestShow_SuccessQueryParam(t *testing.T) {
 	body := rr.Body.String()
 
 	// 成功メッセージが表示されることを確認
-	if !strings.Contains(body, "bg-green-50") {
-		t.Error("response doesn't contain success message (green background)")
+	if !strings.Contains(body, "bg-success") {
+		t.Error("response doesn't contain success message (success background)")
 	}
 }
 
@@ -336,8 +336,8 @@ func TestShow_CanceledQueryParam(t *testing.T) {
 	body := rr.Body.String()
 
 	// キャンセルメッセージが表示されることを確認
-	if !strings.Contains(body, "bg-yellow-50") {
-		t.Error("response doesn't contain canceled message (yellow background)")
+	if !strings.Contains(body, "bg-warning") {
+		t.Error("response doesn't contain canceled message (warning background)")
 	}
 }
 
