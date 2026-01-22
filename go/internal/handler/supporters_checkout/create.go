@@ -1,4 +1,4 @@
-package supporters
+package supporters_checkout
 
 import (
 	"context"
@@ -11,20 +11,6 @@ import (
 	"github.com/annict/annict/go/internal/i18n"
 	authMiddleware "github.com/annict/annict/go/internal/middleware"
 )
-
-// CheckoutRequest はCheckoutセッション作成のリクエストパラメータ
-type CheckoutRequest struct {
-	Plan string
-}
-
-// Validate はリクエストパラメータのバリデーションを行います
-func (r *CheckoutRequest) Validate() map[string]string {
-	errors := make(map[string]string)
-	if r.Plan != "monthly" && r.Plan != "yearly" {
-		errors["plan"] = "invalid_plan"
-	}
-	return errors
-}
 
 // Create POST /supporters/checkout - Stripe Checkoutセッションを作成
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
@@ -44,7 +30,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	req := &CheckoutRequest{
+	req := &CreateRequest{
 		Plan: r.FormValue("plan"),
 	}
 

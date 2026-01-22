@@ -1,4 +1,4 @@
-package supporters
+package supporters_checkout
 
 import (
 	"context"
@@ -10,7 +10,6 @@ import (
 	"testing"
 
 	"github.com/annict/annict/go/internal/config"
-	"github.com/annict/annict/go/internal/image"
 	"github.com/annict/annict/go/internal/middleware"
 	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/repository"
@@ -19,8 +18,8 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// setupCheckoutTestHandler はテスト用のハンドラーをセットアップします
-func setupCheckoutTestHandler(t *testing.T, tx *sql.Tx, db *sql.DB, stripeCfg *annictStripe.Config) *Handler {
+// setupTestHandler はテスト用のハンドラーをセットアップします
+func setupTestHandler(t *testing.T, tx *sql.Tx, db *sql.DB, stripeCfg *annictStripe.Config) *Handler {
 	t.Helper()
 
 	queries := query.New(db).WithTx(tx)
@@ -31,12 +30,51 @@ func setupCheckoutTestHandler(t *testing.T, tx *sql.Tx, db *sql.DB, stripeCfg *a
 
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionManager := session.NewManager(sessionRepo, cfg)
-	imageHelper := image.NewHelper(cfg)
 	stripeSubscriberRepo := repository.NewStripeSubscriberRepository(queries)
-	gumroadSubscriberRepo := repository.NewGumroadSubscriberRepository(queries)
 
 	// テスト用には nil を渡す（テストでは Stripe API を呼び出さない）
-	return NewHandler(cfg, sessionManager, imageHelper, stripeSubscriberRepo, gumroadSubscriberRepo, stripeCfg, nil)
+	return NewHandler(cfg, sessionManager, stripeSubscriberRepo, stripeCfg, nil)
+}
+
+// createUserWithStripeSubscriber はStripeサブスクライバーを持つユーザーを作成します
+func createUserWithStripeSubscriber(t *testing.T, tx *sql.Tx, stripeStatus string) (int64, int64) {
+	t.Helper()
+
+	userID := testutil.NewUserBuilder(t, tx).Build()
+	subscriberID := testutil.NewStripeSubscriberBuilder(t, tx).
+		WithStripeStatus(stripeStatus).
+		Build()
+
+	// ユーザーにStripeサブスクライバーIDを関連付け
+	_, err := tx.Exec(`UPDATE users SET stripe_subscriber_id = $1 WHERE id = $2`, subscriberID, userID)
+	if err != nil {
+		t.Fatalf("Stripeサブスクライバーの関連付けに失敗しました: %v", err)
+	}
+
+	return userID, subscriberID
+}
+
+// getUserByID はユーザーIDからユーザー情報を取得します（テスト用）
+func getUserByID(t *testing.T, tx *sql.Tx, userID int64) *query.GetUserByIDRow {
+	t.Helper()
+
+	var user query.GetUserByIDRow
+	err := tx.QueryRow(`
+		SELECT id, username, email, role, encrypted_password, locale,
+			   stripe_subscriber_id, gumroad_subscriber_id,
+			   created_at, updated_at
+		FROM users WHERE id = $1
+	`, userID).Scan(
+		&user.ID, &user.Username, &user.Email, &user.Role,
+		&user.EncryptedPassword, &user.Locale,
+		&user.StripeSubscriberID, &user.GumroadSubscriberID,
+		&user.CreatedAt, &user.UpdatedAt,
+	)
+	if err != nil {
+		t.Fatalf("ユーザー情報の取得に失敗しました: %v", err)
+	}
+
+	return &user
 }
 
 // TestCreate_NotLoggedIn は未ログインユーザーがアクセスした場合のテスト
@@ -47,7 +85,7 @@ func TestCreate_NotLoggedIn(t *testing.T) {
 		PriceMonthlyID: "price_monthly_test",
 		PriceYearlyID:  "price_yearly_test",
 	}
-	handler := setupCheckoutTestHandler(t, tx, db, stripeCfg)
+	handler := setupTestHandler(t, tx, db, stripeCfg)
 
 	form := url.Values{}
 	form.Set("plan", "monthly")
@@ -77,7 +115,7 @@ func TestCreate_InvalidPlan(t *testing.T) {
 		PriceMonthlyID: "price_monthly_test",
 		PriceYearlyID:  "price_yearly_test",
 	}
-	handler := setupCheckoutTestHandler(t, tx, db, stripeCfg)
+	handler := setupTestHandler(t, tx, db, stripeCfg)
 
 	// ユーザーを作成
 	userID := testutil.NewUserBuilder(t, tx).Build()
@@ -126,7 +164,7 @@ func TestCreate_AlreadyActiveSubscription(t *testing.T) {
 		PriceMonthlyID: "price_monthly_test",
 		PriceYearlyID:  "price_yearly_test",
 	}
-	handler := setupCheckoutTestHandler(t, tx, db, stripeCfg)
+	handler := setupTestHandler(t, tx, db, stripeCfg)
 
 	// アクティブなStripeサポーターを作成
 	userID, _ := createUserWithStripeSubscriber(t, tx, "active")
@@ -154,7 +192,7 @@ func TestCreate_AlreadyActiveSubscription(t *testing.T) {
 	}
 }
 
-// TestCreate_PastDueSubscriptionAllowsCheckout は支払い遅延中のサブスクリプションがあってもCheckoutを許可する
+// TestCreate_PastDueSubscriptionBlocksCheckout は支払い遅延中のサブスクリプションがある場合のテスト
 func TestCreate_PastDueSubscriptionBlocksCheckout(t *testing.T) {
 	db, tx := testutil.SetupTestDB(t)
 
@@ -162,7 +200,7 @@ func TestCreate_PastDueSubscriptionBlocksCheckout(t *testing.T) {
 		PriceMonthlyID: "price_monthly_test",
 		PriceYearlyID:  "price_yearly_test",
 	}
-	handler := setupCheckoutTestHandler(t, tx, db, stripeCfg)
+	handler := setupTestHandler(t, tx, db, stripeCfg)
 
 	// past_dueステータスのStripeサポーターを作成
 	userID, _ := createUserWithStripeSubscriber(t, tx, "past_due")
@@ -198,7 +236,7 @@ func TestCreate_CanceledSubscriptionAllowsCheckout(t *testing.T) {
 		PriceMonthlyID: "price_monthly_test",
 		PriceYearlyID:  "price_yearly_test",
 	}
-	handler := setupCheckoutTestHandler(t, tx, db, stripeCfg)
+	handler := setupTestHandler(t, tx, db, stripeCfg)
 
 	// canceledステータスのStripeサポーターを作成
 	userID, _ := createUserWithStripeSubscriber(t, tx, "canceled")
@@ -230,7 +268,7 @@ func TestCreate_NoSubscriptionAtAll(t *testing.T) {
 		PriceMonthlyID: "price_monthly_test",
 		PriceYearlyID:  "price_yearly_test",
 	}
-	handler := setupCheckoutTestHandler(t, tx, db, stripeCfg)
+	handler := setupTestHandler(t, tx, db, stripeCfg)
 
 	// サブスクリプションを持たないユーザーを作成
 	userID := testutil.NewUserBuilder(t, tx).Build()
@@ -254,35 +292,6 @@ func TestCreate_NoSubscriptionAtAll(t *testing.T) {
 	}
 }
 
-// TestCheckoutRequest_Validate はリクエストバリデーションのテスト
-func TestCheckoutRequest_Validate(t *testing.T) {
-	testCases := []struct {
-		name        string
-		plan        string
-		expectError bool
-	}{
-		{"monthly plan", "monthly", false},
-		{"yearly plan", "yearly", false},
-		{"empty plan", "", true},
-		{"invalid plan", "weekly", true},
-		{"uppercase plan", "MONTHLY", true},
-	}
-
-	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
-			req := &CheckoutRequest{Plan: tc.plan}
-			errors := req.Validate()
-
-			if tc.expectError && len(errors) == 0 {
-				t.Error("expected validation error but got none")
-			}
-			if !tc.expectError && len(errors) > 0 {
-				t.Errorf("expected no validation error but got: %v", errors)
-			}
-		})
-	}
-}
-
 // TestCreate_MissingPriceID は価格IDが設定されていない場合のテスト
 func TestCreate_MissingPriceID(t *testing.T) {
 	db, tx := testutil.SetupTestDB(t)
@@ -292,7 +301,7 @@ func TestCreate_MissingPriceID(t *testing.T) {
 		PriceMonthlyID: "",
 		PriceYearlyID:  "",
 	}
-	handler := setupCheckoutTestHandler(t, tx, db, stripeCfg)
+	handler := setupTestHandler(t, tx, db, stripeCfg)
 
 	// ユーザーを作成
 	userID := testutil.NewUserBuilder(t, tx).Build()
