@@ -66,8 +66,12 @@ func (uc *DeleteStripeSubscriberUsecase) Execute(
 	}
 	defer func() { _ = tx.Rollback() }()
 
+	// トランザクションを使用するRepositoryを取得
+	stripeSubscriberRepoTx := uc.stripeSubscriberRepo.WithTx(tx)
+	userRepoTx := uc.userRepo.WithTx(tx)
+
 	// ステータスをcanceledに更新
-	err = uc.stripeSubscriberRepo.Update(ctx, query.UpdateStripeSubscriberParams{
+	err = stripeSubscriberRepoTx.Update(ctx, query.UpdateStripeSubscriberParams{
 		ID:                       subscriber.ID,
 		StripePriceID:            subscriber.StripePriceID,
 		StripeStatus:             string(model.StripeSubscriptionStatusCanceled),
@@ -85,14 +89,14 @@ func (uc *DeleteStripeSubscriberUsecase) Execute(
 
 	// Userとの紐付けを解除
 	// StripeSubscriberIDが一致するユーザーを探してnilに設定
-	userID, err := uc.userRepo.FindUserIDByStripeSubscriberID(ctx, subscriber.ID)
+	userID, err := userRepoTx.FindUserIDByStripeSubscriberID(ctx, subscriber.ID)
 	if err != nil {
 		return nil, fmt.Errorf("ユーザー検索に失敗: %w", err)
 	}
 
 	if userID != nil {
 		// 紐付けを解除
-		err = uc.userRepo.UpdateStripeSubscriberID(ctx, *userID, nil)
+		err = userRepoTx.UpdateStripeSubscriberID(ctx, *userID, nil)
 		if err != nil {
 			return nil, fmt.Errorf("ユーザー紐付け解除に失敗: %w", err)
 		}
