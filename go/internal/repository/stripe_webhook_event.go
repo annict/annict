@@ -32,6 +32,11 @@ func NewStripeWebhookEventRepository(queries *query.Queries) *StripeWebhookEvent
 	return &StripeWebhookEventRepository{queries: queries}
 }
 
+// WithTx はトランザクションを使用する新しいRepositoryを返します
+func (r *StripeWebhookEventRepository) WithTx(tx *sql.Tx) *StripeWebhookEventRepository {
+	return &StripeWebhookEventRepository{queries: r.queries.WithTx(tx)}
+}
+
 // Create は新しいWebhookイベントを作成します
 func (r *StripeWebhookEventRepository) Create(ctx context.Context, params CreateStripeWebhookEventParams) (StripeWebhookEvent, error) {
 	return r.queries.CreateStripeWebhookEvent(ctx, query.CreateStripeWebhookEventParams{

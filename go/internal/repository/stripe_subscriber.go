@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"database/sql"
 
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
@@ -19,6 +20,11 @@ type StripeSubscriberRepository struct {
 // NewStripeSubscriberRepository はStripeSubscriberRepositoryを作成します
 func NewStripeSubscriberRepository(queries *query.Queries) *StripeSubscriberRepository {
 	return &StripeSubscriberRepository{queries: queries}
+}
+
+// WithTx はトランザクションを使用する新しいRepositoryを返します
+func (r *StripeSubscriberRepository) WithTx(tx *sql.Tx) *StripeSubscriberRepository {
+	return &StripeSubscriberRepository{queries: r.queries.WithTx(tx)}
 }
 
 // Create は新しいStripeサブスクライバーを作成します
