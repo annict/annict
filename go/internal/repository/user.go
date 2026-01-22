@@ -24,6 +24,11 @@ func NewUserRepository(queries *query.Queries) *UserRepository {
 	return &UserRepository{queries: queries}
 }
 
+// WithTx はトランザクションを使用する新しいRepositoryを返します
+func (r *UserRepository) WithTx(tx *sql.Tx) *UserRepository {
+	return &UserRepository{queries: r.queries.WithTx(tx)}
+}
+
 // GetByEmailForSignIn はメールアドレスでユーザーを検索します（サインイン用）
 func (r *UserRepository) GetByEmailForSignIn(ctx context.Context, email string) (query.GetUserByEmailForSignInRow, error) {
 	return r.queries.GetUserByEmailForSignIn(ctx, email)
