@@ -1,4 +1,4 @@
-package supporters
+package supporters_portal
 
 import (
 	"context"
@@ -6,19 +6,18 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/annict/annict/go/internal/config"
-	"github.com/annict/annict/go/internal/image"
 	"github.com/annict/annict/go/internal/middleware"
 	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/session"
-	annictStripe "github.com/annict/annict/go/internal/stripe"
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// setupPortalTestHandler はテスト用のハンドラーをセットアップします
-func setupPortalTestHandler(t *testing.T, tx *sql.Tx, db *sql.DB) *Handler {
+// setupTestHandler はテスト用のハンドラーをセットアップします
+func setupTestHandler(t *testing.T, tx *sql.Tx, db *sql.DB) *Handler {
 	t.Helper()
 
 	queries := query.New(db).WithTx(tx)
@@ -29,26 +28,84 @@ func setupPortalTestHandler(t *testing.T, tx *sql.Tx, db *sql.DB) *Handler {
 
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionManager := session.NewManager(sessionRepo, cfg)
-	imageHelper := image.NewHelper(cfg)
 	stripeSubscriberRepo := repository.NewStripeSubscriberRepository(queries)
-	gumroadSubscriberRepo := repository.NewGumroadSubscriberRepository(queries)
-
-	// テスト用のStripe設定（テストではStripe APIを呼び出さないため空でOK）
-	stripeCfg := &annictStripe.Config{}
 
 	// テスト用には nil を渡す（テストでは Stripe API を呼び出さない）
-	return NewHandler(cfg, sessionManager, imageHelper, stripeSubscriberRepo, gumroadSubscriberRepo, stripeCfg, nil)
+	return NewHandler(cfg, sessionManager, stripeSubscriberRepo, nil)
 }
 
-// TestPortal_NotLoggedIn は未ログインユーザーがアクセスした場合のテスト
-func TestPortal_NotLoggedIn(t *testing.T) {
+// createUserWithStripeSubscriber はStripeサブスクライバーを持つユーザーを作成します
+func createUserWithStripeSubscriber(t *testing.T, tx *sql.Tx, stripeStatus string) (int64, int64) {
+	t.Helper()
+
+	userID := testutil.NewUserBuilder(t, tx).Build()
+	subscriberID := testutil.NewStripeSubscriberBuilder(t, tx).
+		WithStripeStatus(stripeStatus).
+		Build()
+
+	// ユーザーにStripeサブスクライバーIDを関連付け
+	_, err := tx.Exec(`UPDATE users SET stripe_subscriber_id = $1 WHERE id = $2`, subscriberID, userID)
+	if err != nil {
+		t.Fatalf("Stripeサブスクライバーの関連付けに失敗しました: %v", err)
+	}
+
+	return userID, subscriberID
+}
+
+// createUserWithGumroadSubscriber はGumroadサブスクライバーを持つユーザーを作成します
+func createUserWithGumroadSubscriber(t *testing.T, tx *sql.Tx, ended bool) (int64, int64) {
+	t.Helper()
+
+	userID := testutil.NewUserBuilder(t, tx).Build()
+
+	builder := testutil.NewGumroadSubscriberBuilder(t, tx)
+	if ended {
+		// 過去の日時を設定（終了済み）
+		builder = builder.WithGumroadEndedAt(time.Now().AddDate(-1, 0, 0))
+	}
+	subscriberID := builder.Build()
+
+	// ユーザーにGumroadサブスクライバーIDを関連付け
+	_, err := tx.Exec(`UPDATE users SET gumroad_subscriber_id = $1 WHERE id = $2`, subscriberID, userID)
+	if err != nil {
+		t.Fatalf("Gumroadサブスクライバーの関連付けに失敗しました: %v", err)
+	}
+
+	return userID, subscriberID
+}
+
+// getUserByID はユーザーIDからユーザー情報を取得します（テスト用）
+func getUserByID(t *testing.T, tx *sql.Tx, userID int64) *query.GetUserByIDRow {
+	t.Helper()
+
+	var user query.GetUserByIDRow
+	err := tx.QueryRow(`
+		SELECT id, username, email, role, encrypted_password, locale,
+			   stripe_subscriber_id, gumroad_subscriber_id,
+			   created_at, updated_at
+		FROM users WHERE id = $1
+	`, userID).Scan(
+		&user.ID, &user.Username, &user.Email, &user.Role,
+		&user.EncryptedPassword, &user.Locale,
+		&user.StripeSubscriberID, &user.GumroadSubscriberID,
+		&user.CreatedAt, &user.UpdatedAt,
+	)
+	if err != nil {
+		t.Fatalf("ユーザー情報の取得に失敗しました: %v", err)
+	}
+
+	return &user
+}
+
+// TestCreate_NotLoggedIn は未ログインユーザーがアクセスした場合のテスト
+func TestCreate_NotLoggedIn(t *testing.T) {
 	db, tx := testutil.SetupTestDB(t)
-	handler := setupPortalTestHandler(t, tx, db)
+	handler := setupTestHandler(t, tx, db)
 
 	req := httptest.NewRequest("POST", "/supporters/portal", nil)
 	rr := httptest.NewRecorder()
 
-	handler.Portal(rr, req)
+	handler.Create(rr, req)
 
 	// ログインページへリダイレクトされることを確認
 	if rr.Code != http.StatusSeeOther {
@@ -61,10 +118,10 @@ func TestPortal_NotLoggedIn(t *testing.T) {
 	}
 }
 
-// TestPortal_NotSupporter は非サポーターユーザーがアクセスした場合のテスト
-func TestPortal_NotSupporter(t *testing.T) {
+// TestCreate_NotSupporter は非サポーターユーザーがアクセスした場合のテスト
+func TestCreate_NotSupporter(t *testing.T) {
 	db, tx := testutil.SetupTestDB(t)
-	handler := setupPortalTestHandler(t, tx, db)
+	handler := setupTestHandler(t, tx, db)
 
 	// サブスクリプションを持たないユーザーを作成
 	userID := testutil.NewUserBuilder(t, tx).Build()
@@ -75,7 +132,7 @@ func TestPortal_NotSupporter(t *testing.T) {
 	req = req.WithContext(ctx)
 	rr := httptest.NewRecorder()
 
-	handler.Portal(rr, req)
+	handler.Create(rr, req)
 
 	// サポーターページへリダイレクトされることを確認
 	if rr.Code != http.StatusSeeOther {
@@ -88,10 +145,10 @@ func TestPortal_NotSupporter(t *testing.T) {
 	}
 }
 
-// TestPortal_CanceledSubscription はキャンセル済みサブスクリプションの場合のテスト
-func TestPortal_CanceledSubscription(t *testing.T) {
+// TestCreate_CanceledSubscription はキャンセル済みサブスクリプションの場合のテスト
+func TestCreate_CanceledSubscription(t *testing.T) {
 	db, tx := testutil.SetupTestDB(t)
-	handler := setupPortalTestHandler(t, tx, db)
+	handler := setupTestHandler(t, tx, db)
 
 	// canceledステータスのStripeサポーターを作成
 	userID, _ := createUserWithStripeSubscriber(t, tx, "canceled")
@@ -102,7 +159,7 @@ func TestPortal_CanceledSubscription(t *testing.T) {
 	req = req.WithContext(ctx)
 	rr := httptest.NewRecorder()
 
-	handler.Portal(rr, req)
+	handler.Create(rr, req)
 
 	// 非アクティブなのでサポーターページへリダイレクト
 	if rr.Code != http.StatusSeeOther {
@@ -115,10 +172,10 @@ func TestPortal_CanceledSubscription(t *testing.T) {
 	}
 }
 
-// TestPortal_UnpaidSubscription はunpaidステータスの場合のテスト
-func TestPortal_UnpaidSubscription(t *testing.T) {
+// TestCreate_UnpaidSubscription はunpaidステータスの場合のテスト
+func TestCreate_UnpaidSubscription(t *testing.T) {
 	db, tx := testutil.SetupTestDB(t)
-	handler := setupPortalTestHandler(t, tx, db)
+	handler := setupTestHandler(t, tx, db)
 
 	// unpaidステータスのStripeサポーターを作成
 	userID, _ := createUserWithStripeSubscriber(t, tx, "unpaid")
@@ -129,7 +186,7 @@ func TestPortal_UnpaidSubscription(t *testing.T) {
 	req = req.WithContext(ctx)
 	rr := httptest.NewRecorder()
 
-	handler.Portal(rr, req)
+	handler.Create(rr, req)
 
 	// 非アクティブなのでサポーターページへリダイレクト
 	if rr.Code != http.StatusSeeOther {
@@ -142,11 +199,11 @@ func TestPortal_UnpaidSubscription(t *testing.T) {
 	}
 }
 
-// TestPortal_ActiveSubscription_StripeAPIError はアクティブなサブスクリプションでStripe API呼び出しがエラーの場合のテスト
+// TestCreate_ActiveSubscription_StripeAPIError はアクティブなサブスクリプションでStripe API呼び出しがエラーの場合のテスト
 // 注: テスト環境ではStripe APIが設定されていないため、エラーが発生してリダイレクトされる
-func TestPortal_ActiveSubscription_StripeAPIError(t *testing.T) {
+func TestCreate_ActiveSubscription_StripeAPIError(t *testing.T) {
 	db, tx := testutil.SetupTestDB(t)
-	handler := setupPortalTestHandler(t, tx, db)
+	handler := setupTestHandler(t, tx, db)
 
 	// アクティブなStripeサポーターを作成
 	userID, _ := createUserWithStripeSubscriber(t, tx, "active")
@@ -157,7 +214,7 @@ func TestPortal_ActiveSubscription_StripeAPIError(t *testing.T) {
 	req = req.WithContext(ctx)
 	rr := httptest.NewRecorder()
 
-	handler.Portal(rr, req)
+	handler.Create(rr, req)
 
 	// Stripe APIがテスト環境で設定されていないためエラーになり、リダイレクトされる
 	if rr.Code != http.StatusSeeOther {
@@ -170,11 +227,11 @@ func TestPortal_ActiveSubscription_StripeAPIError(t *testing.T) {
 	}
 }
 
-// TestPortal_PastDueSubscription_StripeAPIError は支払い遅延中のサブスクリプションの場合のテスト
+// TestCreate_PastDueSubscription_StripeAPIError は支払い遅延中のサブスクリプションの場合のテスト
 // past_dueはアクティブとして扱われるため、Stripe APIを呼び出す
-func TestPortal_PastDueSubscription_StripeAPIError(t *testing.T) {
+func TestCreate_PastDueSubscription_StripeAPIError(t *testing.T) {
 	db, tx := testutil.SetupTestDB(t)
-	handler := setupPortalTestHandler(t, tx, db)
+	handler := setupTestHandler(t, tx, db)
 
 	// past_dueステータスのStripeサポーターを作成
 	userID, _ := createUserWithStripeSubscriber(t, tx, "past_due")
@@ -185,7 +242,7 @@ func TestPortal_PastDueSubscription_StripeAPIError(t *testing.T) {
 	req = req.WithContext(ctx)
 	rr := httptest.NewRecorder()
 
-	handler.Portal(rr, req)
+	handler.Create(rr, req)
 
 	// past_dueはアクティブなのでStripe APIを呼び出すが、テスト環境ではエラーになる
 	if rr.Code != http.StatusSeeOther {
@@ -198,10 +255,10 @@ func TestPortal_PastDueSubscription_StripeAPIError(t *testing.T) {
 	}
 }
 
-// TestPortal_GumroadSubscriber はGumroadサポーターがアクセスした場合のテスト
-func TestPortal_GumroadSubscriber(t *testing.T) {
+// TestCreate_GumroadSubscriber はGumroadサポーターがアクセスした場合のテスト
+func TestCreate_GumroadSubscriber(t *testing.T) {
 	db, tx := testutil.SetupTestDB(t)
-	handler := setupPortalTestHandler(t, tx, db)
+	handler := setupTestHandler(t, tx, db)
 
 	// アクティブなGumroadサポーターを作成（Stripeサブスクリプションなし）
 	userID, _ := createUserWithGumroadSubscriber(t, tx, false)
@@ -212,7 +269,7 @@ func TestPortal_GumroadSubscriber(t *testing.T) {
 	req = req.WithContext(ctx)
 	rr := httptest.NewRecorder()
 
-	handler.Portal(rr, req)
+	handler.Create(rr, req)
 
 	// Stripeサポーターではないのでサポーターページへリダイレクト
 	if rr.Code != http.StatusSeeOther {
