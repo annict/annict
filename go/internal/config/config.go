@@ -72,7 +72,6 @@ type Config struct {
 
 	// Stripe（決済）
 	StripeSecretKey      string
-	StripePublishableKey string
 	StripeWebhookSecret  string
 	StripePriceMonthlyID string
 	StripePriceYearlyID  string
@@ -199,7 +198,6 @@ func Load() (*Config, error) {
 
 	// Stripe（オプショナル - サポーター決済）
 	cfg.StripeSecretKey = os.Getenv("ANNICT_STRIPE_SECRET_KEY")
-	cfg.StripePublishableKey = os.Getenv("ANNICT_STRIPE_PUBLISHABLE_KEY")
 	cfg.StripeWebhookSecret = os.Getenv("ANNICT_STRIPE_WEBHOOK_SECRET")
 	cfg.StripePriceMonthlyID = os.Getenv("ANNICT_STRIPE_PRICE_MONTHLY_ID")
 	cfg.StripePriceYearlyID = os.Getenv("ANNICT_STRIPE_PRICE_YEARLY_ID")

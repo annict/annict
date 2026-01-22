@@ -332,7 +332,6 @@ func main() {
 	gumroadSubscriberRepo := repository.NewGumroadSubscriberRepository(queries)
 	annictStripeCfg := &annictStripe.Config{
 		SecretKey:      cfg.StripeSecretKey,
-		PublishableKey: cfg.StripePublishableKey,
 		WebhookSecret:  cfg.StripeWebhookSecret,
 		PriceMonthlyID: cfg.StripePriceMonthlyID,
 		PriceYearlyID:  cfg.StripePriceYearlyID,
