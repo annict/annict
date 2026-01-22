@@ -62,58 +62,73 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		"event_type", event.Type,
 	)
 
-	// 冪等性チェック: 既に処理済みのイベントかどうか確認
-	exists, err := h.stripeWebhookEventRepo.Exists(ctx, event.ID)
-	if err != nil {
-		slog.ErrorContext(ctx, "Webhookイベント存在チェックに失敗",
+	// 冪等性チェック: 既存のイベントを確認し、ステータスに応じて処理を分岐
+	var webhookEventID int64
+	existingEvent, err := h.stripeWebhookEventRepo.GetByStripeEventID(ctx, event.ID)
+	if err != nil && err != sql.ErrNoRows {
+		slog.ErrorContext(ctx, "Webhookイベント取得に失敗",
 			"error", err,
 			"stripe_event_id", event.ID,
 		)
-		annictSentry.CaptureError(ctx, fmt.Errorf("webhookイベント存在チェックに失敗: %w", err))
-		// 内部エラーでも200を返す（Stripeのリトライを防ぐため）
+		annictSentry.CaptureError(ctx, fmt.Errorf("webhookイベント取得に失敗: %w", err))
 		w.WriteHeader(http.StatusOK)
 		return
 	}
 
-	if exists {
-		slog.InfoContext(ctx, "既に処理済みのイベントのためスキップ",
-			"stripe_event_id", event.ID,
-		)
-		w.WriteHeader(http.StatusOK)
-		return
-	}
+	if err == nil {
+		// 既存のイベントが見つかった場合
+		status := model.WebhookEventStatus(existingEvent.Status)
 
-	// イベントをDBに保存（status=pending）
-	payloadJSON, err := json.Marshal(event)
-	if err != nil {
-		slog.ErrorContext(ctx, "イベントペイロードのJSON変換に失敗",
-			"error", err,
-			"stripe_event_id", event.ID,
-		)
-		annictSentry.CaptureError(ctx, fmt.Errorf("イベントペイロードのJSON変換に失敗: %w", err))
-		w.WriteHeader(http.StatusOK)
-		return
-	}
+		// processed または skipped の場合はスキップ
+		if status == model.WebhookEventStatusProcessed || status == model.WebhookEventStatusSkipped {
+			slog.InfoContext(ctx, "既に処理済みのイベントのためスキップ",
+				"stripe_event_id", event.ID,
+				"status", existingEvent.Status,
+			)
+			w.WriteHeader(http.StatusOK)
+			return
+		}
 
-	webhookEvent, err := h.stripeWebhookEventRepo.Create(ctx, repository.CreateStripeWebhookEventParams{
-		StripeEventID:   event.ID,
-		StripeEventType: string(event.Type),
-		StripePayload:   payloadJSON,
-		Status:          model.WebhookEventStatusPending.String(),
-		ReceivedAt:      time.Now(),
-	})
-	if err != nil {
-		slog.ErrorContext(ctx, "Webhookイベントの保存に失敗",
-			"error", err,
+		// pending または failed の場合は再処理を試みる
+		slog.InfoContext(ctx, "未完了のイベントを再処理します",
 			"stripe_event_id", event.ID,
+			"status", existingEvent.Status,
 		)
-		annictSentry.CaptureError(ctx, fmt.Errorf("webhookイベントの保存に失敗: %w", err))
-		w.WriteHeader(http.StatusOK)
-		return
+		webhookEventID = existingEvent.ID
+	} else {
+		// 新規イベントの場合はDBに保存（status=pending）
+		payloadJSON, err := json.Marshal(event)
+		if err != nil {
+			slog.ErrorContext(ctx, "イベントペイロードのJSON変換に失敗",
+				"error", err,
+				"stripe_event_id", event.ID,
+			)
+			annictSentry.CaptureError(ctx, fmt.Errorf("イベントペイロードのJSON変換に失敗: %w", err))
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		webhookEvent, err := h.stripeWebhookEventRepo.Create(ctx, repository.CreateStripeWebhookEventParams{
+			StripeEventID:   event.ID,
+			StripeEventType: string(event.Type),
+			StripePayload:   payloadJSON,
+			Status:          model.WebhookEventStatusPending.String(),
+			ReceivedAt:      time.Now(),
+		})
+		if err != nil {
+			slog.ErrorContext(ctx, "Webhookイベントの保存に失敗",
+				"error", err,
+				"stripe_event_id", event.ID,
+			)
+			annictSentry.CaptureError(ctx, fmt.Errorf("webhookイベントの保存に失敗: %w", err))
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+		webhookEventID = webhookEvent.ID
 	}
 
 	// イベントタイプに応じた処理を実行
-	if err := h.processEvent(ctx, &event, webhookEvent.ID); err != nil {
+	if err := h.processEvent(ctx, &event, webhookEventID); err != nil {
 		slog.ErrorContext(ctx, "Webhookイベント処理に失敗",
 			"error", err,
 			"stripe_event_id", event.ID,
@@ -123,7 +138,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 			event.Type, event.ID, err))
 
 		// 処理失敗としてマーク
-		if markErr := h.stripeWebhookEventRepo.MarkAsFailed(ctx, webhookEvent.ID, err.Error()); markErr != nil {
+		if markErr := h.stripeWebhookEventRepo.MarkAsFailed(ctx, webhookEventID, err.Error()); markErr != nil {
 			slog.ErrorContext(ctx, "Webhookイベントの失敗マークに失敗",
 				"error", markErr,
 				"stripe_event_id", event.ID,

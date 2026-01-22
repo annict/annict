@@ -191,6 +191,213 @@ func TestCreate_Idempotency(t *testing.T) {
 	}
 }
 
+func TestCreate_Idempotency_SkippedEvent(t *testing.T) {
+	t.Parallel()
+
+	// テストDBをセットアップ
+	db, tx := testutil.SetupTestDB(t)
+	queries := query.New(tx)
+
+	// テスト用の設定
+	webhookSecret := "whsec_test_secret_12345"
+	cfg := &config.Config{
+		StripeWebhookSecret: webhookSecret,
+	}
+
+	// リポジトリの作成
+	stripeWebhookEventRepo := repository.NewStripeWebhookEventRepository(queries)
+	stripeSubscriberRepo := repository.NewStripeSubscriberRepository(queries)
+	userRepo := repository.NewUserRepository(queries)
+
+	// UseCaseの作成
+	createStripeSubscriberUC := usecase.NewCreateStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo, nil)
+	updateStripeSubscriberUC := usecase.NewUpdateStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo)
+	deleteStripeSubscriberUC := usecase.NewDeleteStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo)
+
+	// ハンドラーの作成
+	handler := NewHandler(cfg, stripeWebhookEventRepo, stripeSubscriberRepo, userRepo, createStripeSubscriberUC, updateStripeSubscriberUC, deleteStripeSubscriberUC)
+
+	// status=skipped のイベントを登録
+	existingEventID := "evt_skipped_event_123"
+	testutil.NewStripeWebhookEventBuilder(t, tx).
+		WithStripeEventID(existingEventID).
+		WithStripeEventType("product.created").
+		WithStatus("skipped").
+		Build()
+
+	// 同じイベントIDで再度リクエストを送信
+	payload := fmt.Sprintf(`{
+		"id": "%s",
+		"object": "event",
+		"type": "product.created",
+		"data": {"object": {}},
+		"livemode": false,
+		"api_version": "2025-12-15.clover",
+		"created": 1234567890,
+		"pending_webhooks": 0,
+		"request": {"id": null, "idempotency_key": null}
+	}`, existingEventID)
+
+	timestamp := time.Now().Unix()
+	signature := generateStripeSignature([]byte(payload), webhookSecret, timestamp)
+
+	req := httptest.NewRequest(http.MethodPost, "/webhooks/stripe", strings.NewReader(payload))
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Stripe-Signature", signature)
+
+	rr := httptest.NewRecorder()
+	handler.Create(rr, req)
+
+	// 200を返す（status=skipped はスキップ）
+	if rr.Code != http.StatusOK {
+		t.Errorf("冪等性チェック後のステータスコード: got %d, want %d", rr.Code, http.StatusOK)
+	}
+}
+
+func TestCreate_Idempotency_ReprocessPendingEvent(t *testing.T) {
+	t.Parallel()
+
+	// テストDBをセットアップ
+	db, tx := testutil.SetupTestDB(t)
+	queries := query.New(tx)
+
+	// テスト用の設定
+	webhookSecret := "whsec_test_secret_12345"
+	cfg := &config.Config{
+		StripeWebhookSecret: webhookSecret,
+	}
+
+	// リポジトリの作成
+	stripeWebhookEventRepo := repository.NewStripeWebhookEventRepository(queries)
+	stripeSubscriberRepo := repository.NewStripeSubscriberRepository(queries)
+	userRepo := repository.NewUserRepository(queries)
+
+	// UseCaseの作成
+	createStripeSubscriberUC := usecase.NewCreateStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo, nil)
+	updateStripeSubscriberUC := usecase.NewUpdateStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo)
+	deleteStripeSubscriberUC := usecase.NewDeleteStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo)
+
+	// ハンドラーの作成
+	handler := NewHandler(cfg, stripeWebhookEventRepo, stripeSubscriberRepo, userRepo, createStripeSubscriberUC, updateStripeSubscriberUC, deleteStripeSubscriberUC)
+
+	// status=pending のイベントを登録（処理途中でクラッシュしたシナリオ）
+	existingEventID := "evt_pending_event_123"
+	testutil.NewStripeWebhookEventBuilder(t, tx).
+		WithStripeEventID(existingEventID).
+		WithStripeEventType("invoice.payment_succeeded").
+		WithStatus("pending").
+		Build()
+
+	// 同じイベントIDで再度リクエストを送信（Stripeからの再送）
+	payload := fmt.Sprintf(`{
+		"id": "%s",
+		"object": "event",
+		"type": "invoice.payment_succeeded",
+		"data": {"object": {}},
+		"livemode": false,
+		"api_version": "2025-12-15.clover",
+		"created": 1234567890,
+		"pending_webhooks": 0,
+		"request": {"id": null, "idempotency_key": null}
+	}`, existingEventID)
+
+	timestamp := time.Now().Unix()
+	signature := generateStripeSignature([]byte(payload), webhookSecret, timestamp)
+
+	req := httptest.NewRequest(http.MethodPost, "/webhooks/stripe", strings.NewReader(payload))
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Stripe-Signature", signature)
+
+	rr := httptest.NewRecorder()
+	handler.Create(rr, req)
+
+	// 200を返す（再処理成功）
+	if rr.Code != http.StatusOK {
+		t.Errorf("再処理後のステータスコード: got %d, want %d", rr.Code, http.StatusOK)
+	}
+
+	// イベントのステータスがprocessedに更新されていることを確認
+	updatedEvent, err := stripeWebhookEventRepo.GetByStripeEventID(req.Context(), existingEventID)
+	if err != nil {
+		t.Fatalf("イベント取得に失敗: %v", err)
+	}
+	if updatedEvent.Status != "processed" {
+		t.Errorf("イベントステータス: got %s, want %s", updatedEvent.Status, "processed")
+	}
+}
+
+func TestCreate_Idempotency_ReprocessFailedEvent(t *testing.T) {
+	t.Parallel()
+
+	// テストDBをセットアップ
+	db, tx := testutil.SetupTestDB(t)
+	queries := query.New(tx)
+
+	// テスト用の設定
+	webhookSecret := "whsec_test_secret_12345"
+	cfg := &config.Config{
+		StripeWebhookSecret: webhookSecret,
+	}
+
+	// リポジトリの作成
+	stripeWebhookEventRepo := repository.NewStripeWebhookEventRepository(queries)
+	stripeSubscriberRepo := repository.NewStripeSubscriberRepository(queries)
+	userRepo := repository.NewUserRepository(queries)
+
+	// UseCaseの作成
+	createStripeSubscriberUC := usecase.NewCreateStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo, nil)
+	updateStripeSubscriberUC := usecase.NewUpdateStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo)
+	deleteStripeSubscriberUC := usecase.NewDeleteStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo)
+
+	// ハンドラーの作成
+	handler := NewHandler(cfg, stripeWebhookEventRepo, stripeSubscriberRepo, userRepo, createStripeSubscriberUC, updateStripeSubscriberUC, deleteStripeSubscriberUC)
+
+	// status=failed のイベントを登録（前回の処理が失敗したシナリオ）
+	existingEventID := "evt_failed_event_123"
+	testutil.NewStripeWebhookEventBuilder(t, tx).
+		WithStripeEventID(existingEventID).
+		WithStripeEventType("invoice.payment_failed").
+		WithStatus("failed").
+		Build()
+
+	// 同じイベントIDで再度リクエストを送信（Stripeからの再送）
+	payload := fmt.Sprintf(`{
+		"id": "%s",
+		"object": "event",
+		"type": "invoice.payment_failed",
+		"data": {"object": {}},
+		"livemode": false,
+		"api_version": "2025-12-15.clover",
+		"created": 1234567890,
+		"pending_webhooks": 0,
+		"request": {"id": null, "idempotency_key": null}
+	}`, existingEventID)
+
+	timestamp := time.Now().Unix()
+	signature := generateStripeSignature([]byte(payload), webhookSecret, timestamp)
+
+	req := httptest.NewRequest(http.MethodPost, "/webhooks/stripe", strings.NewReader(payload))
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Stripe-Signature", signature)
+
+	rr := httptest.NewRecorder()
+	handler.Create(rr, req)
+
+	// 200を返す（再処理成功）
+	if rr.Code != http.StatusOK {
+		t.Errorf("再処理後のステータスコード: got %d, want %d", rr.Code, http.StatusOK)
+	}
+
+	// イベントのステータスがprocessedに更新されていることを確認
+	updatedEvent, err := stripeWebhookEventRepo.GetByStripeEventID(req.Context(), existingEventID)
+	if err != nil {
+		t.Fatalf("イベント取得に失敗: %v", err)
+	}
+	if updatedEvent.Status != "processed" {
+		t.Errorf("イベントステータス: got %s, want %s", updatedEvent.Status, "processed")
+	}
+}
+
 func TestCreate_EventProcessing(t *testing.T) {
 	t.Parallel()
 
