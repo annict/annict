@@ -17,7 +17,7 @@ module Updaters
         gs.gumroad_user_email = @form.gumroad_user_email
         gs.gumroad_purchase_ids = @form.gumroad_purchase_ids
         gs.gumroad_created_at = @form.gumroad_created_at
-        gs.gumroad_cancelled_at = @form.gumroad_cancelled_at
+        gs.gumroad_cancelled_at = @form.gumroad_cancelled_at.presence || @form.gumroad_failed_at
         gs.gumroad_user_requested_cancellation_at = @form.gumroad_user_requested_cancellation_at
         gs.gumroad_charge_occurrence_count = @form.gumroad_charge_occurrence_count
         gs.gumroad_ended_at = @form.gumroad_ended_at
