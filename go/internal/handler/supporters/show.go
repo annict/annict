@@ -4,6 +4,7 @@ import (
 	"context"
 	"log/slog"
 	"net/http"
+	"time"
 
 	authMiddleware "github.com/annict/annict/go/internal/middleware"
 	"github.com/annict/annict/go/internal/repository"
@@ -37,6 +38,14 @@ func (h *Handler) Show(w http.ResponseWriter, r *http.Request) {
 		csrfToken = authMiddleware.GetOrCreateCSRFToken(w, r, h.sessionManager)
 	}
 
+	// ユーザーのタイムゾーンをロード（未ログイン時はAsia/Tokyo）
+	userLocation := time.FixedZone("Asia/Tokyo", 9*60*60)
+	if user != nil && user.TimeZone != "" {
+		if loc, err := time.LoadLocation(user.TimeZone); err == nil {
+			userLocation = loc
+		}
+	}
+
 	// サポーターページのビューモデルを作成
 	pageData := viewmodel.SupporterPageData{
 		IsLoggedIn:          user != nil,
@@ -44,6 +53,7 @@ func (h *Handler) Show(w http.ResponseWriter, r *http.Request) {
 		ShowSuccessMessage:  showSuccessMessage,
 		ShowCanceledMessage: showCanceledMessage,
 		CSRFToken:           csrfToken,
+		Location:            userLocation,
 	}
 
 	if user != nil {
@@ -131,6 +141,9 @@ func convertGumroadSubscriberToView(s *repository.GumroadSubscriber) *viewmodel.
 	view := &viewmodel.GumroadSubscriberView{
 		GumroadID: s.GumroadID,
 		CreatedAt: s.GumroadCreatedAt,
+	}
+	if s.GumroadCancelledAt.Valid {
+		view.CancelledAt = &s.GumroadCancelledAt.Time
 	}
 	if s.GumroadEndedAt.Valid {
 		view.EndedAt = &s.GumroadEndedAt.Time

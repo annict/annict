@@ -704,20 +704,32 @@ description = "Gumroadサポーターセクションタイトル"
 other = "Gumroad経由でサポーター登録中"
 
 [supporters_gumroad_message_1]
-description = "Gumroad移行案内メッセージ1"
-other = "サポータープログラムへのご参加ありがとうございます！現在Gumroad経由でサポーターに登録しています"
+description = "Gumroad移行案内メッセージ1 - 感謝"
+other = "サポータープログラムへのご参加ありがとうございます！"
 
 [supporters_gumroad_message_2]
-description = "Gumroad移行案内メッセージ2"
-other = "サブスクリプションの契約が終了するまでStripeで登録する必要はありません。継続される場合は、Gumroadのサブスクリプション契約終了後にStripeでご登録ください"
+description = "Gumroad移行案内メッセージ2 - 現在の登録状況"
+other = "現在のサポーター登録はGumroad経由で行われています"
+
+[supporters_gumroad_message_3]
+description = "Gumroad移行案内メッセージ3 - Stripeへの移行説明"
+other = "Gumroadでの新規登録は終了しており、現在はStripe (決済サービス) での登録に移行しています"
+
+[supporters_gumroad_message_4]
+description = "Gumroad移行案内メッセージ4 - 契約期間と継続方法"
+other = "現在の契約期間中は引き続きサポーター特典をご利用いただけます。契約終了後も継続される場合は、Gumroadでの契約終了後にこのページからStripeでご登録ください"
+
+[supporters_gumroad_message_5]
+description = "Gumroad移行案内メッセージ5 - Stripeボタン表示の補足"
+other = "(Gumroadでの契約終了後、このページにStripeで登録するためのボタンが表示されるようになります)"
 
 [supporters_registered_date]
 description = "登録日ラベル"
-other = "参加日時"
+other = "参加日"
 
 [supporters_end_date]
 description = "終了日ラベル"
-other = "契約終了日時"
+other = "契約終了日"
 
 [supporters_active_title]
 description = "アクティブサポーターセクションタイトル"

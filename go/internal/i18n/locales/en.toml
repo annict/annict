@@ -704,20 +704,32 @@ description = "Gumroad supporter section title"
 other = "Registered via Gumroad"
 
 [supporters_gumroad_message_1]
-description = "Gumroad migration message 1"
-other = "Thank you for joining the supporter program! You are currently registered as a supporter via Gumroad."
+description = "Gumroad migration message 1 - Thanks"
+other = "Thank you for joining the supporter program!"
 
 [supporters_gumroad_message_2]
-description = "Gumroad migration message 2"
-other = "You don't need to register with Stripe until your subscription ends. If you wish to continue, please register with Stripe after your Gumroad subscription ends."
+description = "Gumroad migration message 2 - Current registration status"
+other = "Your current registration is through Gumroad"
+
+[supporters_gumroad_message_3]
+description = "Gumroad migration message 3 - Stripe transition"
+other = "New registrations via Gumroad have ended, and we have transitioned to Stripe (payment service) for new subscriptions"
+
+[supporters_gumroad_message_4]
+description = "Gumroad migration message 4 - Subscription period and continuation"
+other = "You can continue to enjoy supporter benefits during your current subscription period. If you wish to continue after your subscription ends, please register with Stripe from this page after your Gumroad subscription ends"
+
+[supporters_gumroad_message_5]
+description = "Gumroad migration message 5 - Stripe button note"
+other = "(After your Gumroad subscription ends, a button to register with Stripe will appear on this page)"
 
 [supporters_registered_date]
 description = "Registration date label"
-other = "Registration Date"
+other = "Joined"
 
 [supporters_end_date]
 description = "End date label"
-other = "Subscription End Date"
+other = "Subscription End"
 
 [supporters_active_title]
 description = "Active supporter section title"

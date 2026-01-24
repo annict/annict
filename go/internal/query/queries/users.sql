@@ -6,6 +6,7 @@ SELECT
     u.role,
     u.encrypted_password,
     u.locale,
+    u.time_zone,
     u.stripe_subscriber_id,
     u.gumroad_subscriber_id,
     u.notifications_count,
