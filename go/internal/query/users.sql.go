@@ -143,6 +143,7 @@ SELECT
     u.role,
     u.encrypted_password,
     u.locale,
+    u.time_zone,
     u.stripe_subscriber_id,
     u.gumroad_subscriber_id,
     u.notifications_count,
@@ -162,6 +163,7 @@ type GetUserByIDRow struct {
 	Role                int32          `db:"role"`
 	EncryptedPassword   string         `db:"encrypted_password"`
 	Locale              string         `db:"locale"`
+	TimeZone            string         `db:"time_zone"`
 	StripeSubscriberID  sql.NullInt64  `db:"stripe_subscriber_id"`
 	GumroadSubscriberID sql.NullInt64  `db:"gumroad_subscriber_id"`
 	NotificationsCount  int32          `db:"notifications_count"`
@@ -180,6 +182,7 @@ func (q *Queries) GetUserByID(ctx context.Context, id int64) (GetUserByIDRow, er
 		&i.Role,
 		&i.EncryptedPassword,
 		&i.Locale,
+		&i.TimeZone,
 		&i.StripeSubscriberID,
 		&i.GumroadSubscriberID,
 		&i.NotificationsCount,

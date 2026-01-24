@@ -26,9 +26,10 @@ type StripeSubscriberView struct {
 
 // GumroadSubscriberView はGumroadサブスクライバーのビューモデルです
 type GumroadSubscriberView struct {
-	GumroadID string
-	CreatedAt time.Time
-	EndedAt   *time.Time
+	GumroadID   string
+	CreatedAt   time.Time
+	CancelledAt *time.Time // 契約終了予定日（gumroad_cancelled_at）
+	EndedAt     *time.Time // 実際の終了日（gumroad_ended_at）
 }
 
 // SupporterPageData はサポーターページのビューモデルです
@@ -40,4 +41,5 @@ type SupporterPageData struct {
 	ShowSuccessMessage  bool
 	ShowCanceledMessage bool
 	CSRFToken           string
+	Location            *time.Location
 }

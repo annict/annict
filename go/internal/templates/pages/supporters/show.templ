@@ -2,7 +2,6 @@ package supporters
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/annict/annict/go/internal/templates"
@@ -73,13 +72,13 @@ templ Show(ctx context.Context, data viewmodel.SupporterPageData) {
 					@checkoutSection(ctx, data.CSRFToken)
 				case viewmodel.SupporterStatusGumroad:
 					// Gumroadサポーター: 移行案内メッセージ
-					@gumroadSection(ctx, data.GumroadSubscriber)
+					@gumroadSection(ctx, data.GumroadSubscriber, data.Location)
 				case viewmodel.SupporterStatusStripe:
 					// Stripeサポーター: サブスクリプション情報
-					@stripeSection(ctx, data.StripeSubscriber, data.CSRFToken)
+					@stripeSection(ctx, data.StripeSubscriber, data.CSRFToken, data.Location)
 				case viewmodel.SupporterStatusBoth:
 					// 両方アクティブ: Stripeを優先表示
-					@stripeSection(ctx, data.StripeSubscriber, data.CSRFToken)
+					@stripeSection(ctx, data.StripeSubscriber, data.CSRFToken, data.Location)
 				}
 			}
 		</div>
@@ -163,7 +162,7 @@ templ checkoutSection(ctx context.Context, csrfToken string) {
 }
 
 // gumroadSection はGumroadサポーター向けセクション
-templ gumroadSection(ctx context.Context, subscriber *viewmodel.GumroadSubscriberView) {
+templ gumroadSection(ctx context.Context, subscriber *viewmodel.GumroadSubscriberView, loc *time.Location) {
 	<div class="card bg-green-50 dark:bg-green-950 px-4">
 		<div class="flex items-center gap-2">
 			@templates.Icon("check-circle-regular", "w-[32px] h-[32px] fill-success")
@@ -175,10 +174,16 @@ templ gumroadSection(ctx context.Context, subscriber *viewmodel.GumroadSubscribe
 
 		<p>
 			{ templates.T(ctx, "supporters_gumroad_message_1") }
+			<br/>
+			{ templates.T(ctx, "supporters_gumroad_message_2") }
 		</p>
 
 		<p>
-			{ templates.T(ctx, "supporters_gumroad_message_2") }
+			{ templates.T(ctx, "supporters_gumroad_message_3") }
+			<br/>
+			{ templates.T(ctx, "supporters_gumroad_message_4") }
+			<br/>
+			{ templates.T(ctx, "supporters_gumroad_message_5") }
 		</p>
 
 		if subscriber != nil {
@@ -200,18 +205,18 @@ templ gumroadSection(ctx context.Context, subscriber *viewmodel.GumroadSubscribe
 						</dt>
 
 						<dd>
-							{ formatDateTime(subscriber.CreatedAt) }
+							{ formatDate(subscriber.CreatedAt, loc) }
 						</dd>
 					</div>
 
-					if subscriber.EndedAt != nil {
+					if subscriber.CancelledAt != nil {
 						<div class="flex justify-between">
 							<dt>
 								{ templates.T(ctx, "supporters_end_date") }
 							</dt>
 
 							<dd>
-								{ formatDateTime(*subscriber.EndedAt) }
+								{ formatDate(*subscriber.CancelledAt, loc) }
 							</dd>
 						</div>
 					}
@@ -222,7 +227,7 @@ templ gumroadSection(ctx context.Context, subscriber *viewmodel.GumroadSubscribe
 }
 
 // stripeSection はStripeサポーター向けセクション
-templ stripeSection(ctx context.Context, subscriber *viewmodel.StripeSubscriberView, csrfToken string) {
+templ stripeSection(ctx context.Context, subscriber *viewmodel.StripeSubscriberView, csrfToken string, loc *time.Location) {
 	<div class="card bg-green-50 dark:bg-green-950 px-4">
 		<div class="flex items-center gap-2">
 			@templates.Icon("check-circle-regular", "w-[32px] h-[32px] fill-success")
@@ -275,7 +280,7 @@ templ stripeSection(ctx context.Context, subscriber *viewmodel.StripeSubscriberV
 							</dt>
 
 							<dd>
-								{ formatDate(*subscriber.CancelAt) }
+								{ formatDate(*subscriber.CancelAt, loc) }
 							</dd>
 						</div>
 					} else {
@@ -286,7 +291,7 @@ templ stripeSection(ctx context.Context, subscriber *viewmodel.StripeSubscriberV
 							</dt>
 
 							<dd>
-								{ formatDate(subscriber.CurrentPeriodEnd) }
+								{ formatDate(subscriber.CurrentPeriodEnd, loc) }
 							</dd>
 						</div>
 					}
@@ -326,13 +331,10 @@ templ benefitItem(ctx context.Context, emoji string, titleKey string, descKey st
 	</li>
 }
 
-// formatDate は日付をフォーマットします
-func formatDate(t time.Time) string {
-	return t.Format("2006/01/02")
-}
-
-// formatDateTime は日時をフォーマットします（時刻も含む）
-// 例: 2026/01/22 0:00
-func formatDateTime(t time.Time) string {
-	return fmt.Sprintf("%s %d:%02d", t.Format("2006/01/02"), t.Hour(), t.Minute())
+// formatDate は日付をユーザーのタイムゾーンでフォーマットします
+func formatDate(t time.Time, loc *time.Location) string {
+	if loc == nil {
+		loc = time.FixedZone("Asia/Tokyo", 9*60*60)
+	}
+	return t.In(loc).Format("2006/01/02")
 }
