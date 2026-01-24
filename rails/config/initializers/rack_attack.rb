@@ -5,7 +5,7 @@ Rack::Attack.enabled = !Rails.env.test?
 Rack::Attack.cache.store = ActiveSupport::Cache::MemoryStore.new
 
 def remote_ip(req)
-  @remote_ip ||= (req.env["HTTP_CF_CONNECTING_IP"] || req.env["action_dispatch.remote_ip"] || req.ip).to_s
+  (req.env["HTTP_CF_CONNECTING_IP"] || req.env["action_dispatch.remote_ip"] || req.ip).to_s
 end
 
 Rack::Attack.throttle("requests by ip", limit: 4, period: 1.second) do |req|
