@@ -613,15 +613,15 @@ other = "What is Annict Supporter?"
 
 [supporters_what_is_desc_1]
 description = "What is supporter description 1"
-other = "\"Annict Supporters\" is a subscription program for Annict fans."
+other = "\"Annict Supporters\" is a paid subscription plan for Annict fans"
 
 [supporters_what_is_desc_2]
 description = "What is supporter description 2"
-other = "By paying monthly or yearly, you can join and support the operation of Annict."
+other = "By paying monthly or yearly, you can support the operation of Annict"
 
 [supporters_what_is_desc_3]
 description = "What is supporter description 3"
-other = "(Used for server costs and other services required for operation)"
+other = "(Used for server costs and other expenses required for operation)"
 
 [supporters_what_is_desc_4]
 description = "What is supporter description 4"
