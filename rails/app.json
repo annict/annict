@@ -39,10 +39,6 @@
     {
       "command": "bundle exec rails email_notification:send_related_works_added_email",
       "schedule": "0 2 * * 1"
-    },
-    {
-      "command": "bundle exec rails supporters:sync_with_gumroad",
-      "schedule": "0 12 * * *"
     }
   ]
 }
