@@ -171,6 +171,7 @@ GEM
     crass (1.0.6)
     cssbundling-rails (1.1.1)
       railties (>= 6.0.0)
+    csv (3.3.5)
     date (3.5.1)
     delayed_job (4.1.10)
       activesupport (>= 3.0, < 8.0)
@@ -281,7 +282,8 @@ GEM
     highline (2.0.3)
     hiredis (0.6.3)
     http_accept_language (2.1.1)
-    httparty (0.21.0)
+    httparty (0.24.0)
+      csv
       mini_mime (>= 1.0.0)
       multi_xml (>= 0.5.2)
     i18n (1.14.7)
@@ -371,7 +373,8 @@ GEM
     mjml-rails (4.8.0)
     moji (1.6)
     multi_json (1.15.0)
-    multi_xml (0.6.0)
+    multi_xml (0.8.1)
+      bigdecimal (>= 3.1, < 5)
     multipart-post (2.2.3)
     net-imap (0.6.2)
       date
