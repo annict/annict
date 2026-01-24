@@ -233,6 +233,10 @@ other = "新規登録ページに戻る"
 description = "ログアウトリンク"
 other = "ログアウト"
 
+[nav_sign_out_confirm]
+description = "ログアウト確認ダイアログ"
+other = "ログアウトしますか？"
+
 [nav_sign_in]
 description = "ログインリンク"
 other = "ログイン"
@@ -585,3 +589,365 @@ other = "このユーザー名は使用できません"
 [sign_up_username_success]
 description = "ユーザー登録成功メッセージ"
 other = "ユーザー登録が完了しました。Annictへようこそ！"
+
+# サポーター関連
+[supporters_title]
+description = "サポーターページのタイトル"
+other = "Annictサポーター"
+
+[supporters_heading]
+description = "サポーターページの見出し"
+other = "Annictサポーター"
+
+[supporters_success_message]
+description = "Checkout完了メッセージ"
+other = "お支払いが完了しました"
+
+[supporters_canceled_message]
+description = "Checkoutキャンセルメッセージ"
+other = "決済がキャンセルされました"
+
+[supporters_what_is_title]
+description = "サポーターとは何かのタイトル"
+other = "Annictサポーターとは？"
+
+[supporters_what_is_desc_1]
+description = "サポーターとは何かの説明1"
+other = "「Annictサポーター」は、Annictファンのための有料プラン (サブスクリプション) です"
+
+[supporters_what_is_desc_2]
+description = "サポーターとは何かの説明2"
+other = "毎月または毎年お支払いいただくことで、Annictの運営をサポートできます"
+
+[supporters_what_is_desc_3]
+description = "サポーターとは何かの説明3"
+other = "(サーバー費用など、運営に必要なサービスの使用料に充てられます)"
+
+[supporters_what_is_desc_4]
+description = "サポーターとは何かの説明4"
+other = "サポーターになると以下の特典が得られます"
+
+[supporters_benefits_title]
+description = "特典セクションタイトル"
+other = "サポーター特典"
+
+[supporters_benefit_1_title]
+description = "特典1タイトル"
+other = "広告非表示"
+
+[supporters_benefit_1_desc]
+description = "特典1説明"
+other = "サイト内の広告が非表示になり、より快適にご利用いただけます"
+
+[supporters_benefit_2_title]
+description = "特典2タイトル"
+other = "サポーターバッジ"
+
+[supporters_benefit_2_desc]
+description = "特典2説明"
+other = "プロフィールにサポーターであることを示すバッジが表示されます。オプションで非表示にすることもできます"
+
+[supporters_benefit_3_title]
+description = "特典3タイトル"
+other = "視聴日時入力機能"
+
+[supporters_benefit_3_desc]
+description = "特典3説明"
+other = "記録時に視聴日時を細かく指定できます。例えば昔見たアニメを記録するとき当時の日にちを入力することで、より正確に記録することができるようになります"
+
+[supporters_login_prompt_title]
+description = "ログイン促進タイトル"
+other = "サポーターになるにはログインしてください"
+
+[supporters_login_prompt_desc]
+description = "ログイン促進説明"
+other = "Annictにログインして、サポーターに登録しましょう"
+
+[supporters_login_button]
+description = "ログインボタン"
+other = "ログインする"
+
+[supporters_checkout_title]
+description = "Checkoutセクションタイトル"
+other = "プランを選択"
+
+[supporters_plan_monthly]
+description = "月額プラン名"
+other = "月額プラン"
+
+[supporters_plan_yearly]
+description = "年額プラン名"
+other = "年額プラン"
+
+[supporters_month]
+description = "月"
+other = "月"
+
+[supporters_year]
+description = "年"
+other = "年"
+
+[supporters_yearly_savings]
+description = "年額プランの節約額"
+other = "2ヶ月分お得！"
+
+[supporters_subscribe_button]
+description = "登録ボタン"
+other = "登録する"
+
+[supporters_payment_method]
+description = "支払い方法説明"
+other = "クレジットカードでお支払いいただけます (Stripe決済)"
+
+[supporters_gumroad_title]
+description = "Gumroadサポーターセクションタイトル"
+other = "Gumroad経由でサポーター登録中"
+
+[supporters_gumroad_message_1]
+description = "Gumroad移行案内メッセージ1 - 感謝"
+other = "サポータープログラムへのご参加ありがとうございます！"
+
+[supporters_gumroad_message_2]
+description = "Gumroad移行案内メッセージ2 - 現在の登録状況"
+other = "現在のサポーター登録はGumroad経由で行われています"
+
+[supporters_gumroad_message_3]
+description = "Gumroad移行案内メッセージ3 - Stripeへの移行説明"
+other = "Gumroadでの新規登録は終了しており、現在はStripe (決済サービス) での登録に移行しています"
+
+[supporters_gumroad_message_4]
+description = "Gumroad移行案内メッセージ4 - 契約期間と継続方法"
+other = "現在の契約期間中は引き続きサポーター特典をご利用いただけます。契約終了後も継続される場合は、Gumroadでの契約終了後にこのページからStripeでご登録ください"
+
+[supporters_gumroad_message_5]
+description = "Gumroad移行案内メッセージ5 - Stripeボタン表示の補足"
+other = "(Gumroadでの契約終了後、このページにStripeで登録するためのボタンが表示されるようになります)"
+
+[supporters_registered_date]
+description = "登録日ラベル"
+other = "参加日"
+
+[supporters_end_date]
+description = "終了日ラベル"
+other = "契約終了日"
+
+[supporters_active_title]
+description = "アクティブサポーターセクションタイトル"
+other = "サポーター登録中"
+
+[supporters_active_message_1]
+description = "アクティブサポーターメッセージ1"
+other = "サポータープログラムへのご参加ありがとうございます！"
+
+[supporters_active_message_2]
+description = "アクティブサポーターメッセージ2"
+other = "現在サポーターとしてAnnictにログインしています"
+
+[supporters_customer_id]
+description = "カスタマーIDラベル"
+other = "カスタマーID"
+
+[supporters_status]
+description = "ステータスラベル"
+other = "ステータス"
+
+[supporters_status_active]
+description = "アクティブステータス"
+other = "有効"
+
+[supporters_status_past_due]
+description = "支払い遅延ステータス"
+other = "支払い遅延中"
+
+[supporters_next_billing_date]
+description = "次回請求日ラベル"
+other = "次回請求日"
+
+[supporters_cancel_at]
+description = "キャンセル予定日ラベル"
+other = "終了予定日"
+
+[supporters_manage_button]
+description = "管理ボタン"
+other = "サブスクリプションを管理"
+
+[supporters_customer_id_help]
+description = "カスタマーIDの用途説明"
+other = "お問い合わせの際は、カスタマーIDをお知らせください"
+
+# サポーターCheckout関連
+[supporters_checkout_invalid_plan]
+description = "無効なプラン選択エラー"
+other = "無効なプランが選択されました"
+
+[supporters_checkout_already_active]
+description = "既にアクティブなサブスクリプションが存在するエラー"
+other = "既にサポーター登録済みです"
+
+[supporters_checkout_error]
+description = "Checkout処理エラー"
+other = "決済処理中にエラーが発生しました。しばらくしてから再度お試しください"
+
+# サポーターポータル関連
+[supporters_portal_error]
+description = "ポータルセッション作成エラー"
+other = "ポータルへのアクセスに失敗しました。しばらくしてから再度お試しください"
+
+[supporters_portal_not_supporter]
+description = "サポーターでないユーザーがポータルにアクセスしようとした"
+other = "サポーター登録中のユーザーのみアクセスできます"
+
+# ボトムナビゲーション関連
+[bottom_nav_menu]
+description = "ボトムナビゲーション - メニュー"
+other = "メニュー"
+
+[bottom_nav_home]
+description = "ボトムナビゲーション - ホーム"
+other = "ホーム"
+
+[bottom_nav_track]
+description = "ボトムナビゲーション - 記録する"
+other = "記録する"
+
+[bottom_nav_current_season]
+description = "ボトムナビゲーション - 今期アニメ"
+other = "今期アニメ"
+
+[bottom_nav_library]
+description = "ボトムナビゲーション - ライブラリ"
+other = "ライブラリ"
+
+[bottom_nav_sign_up]
+description = "ボトムナビゲーション - ユーザ登録"
+other = "登録"
+
+[bottom_nav_sign_in]
+description = "ボトムナビゲーション - ログイン"
+other = "ログイン"
+
+# サイドバー関連
+[sidebar_home]
+description = "サイドバー - ホーム"
+other = "ホーム"
+
+[sidebar_profile]
+description = "サイドバー - プロフィール"
+other = "プロフィール"
+
+[sidebar_notifications]
+description = "サイドバー - 通知"
+other = "通知"
+
+[sidebar_track]
+description = "サイドバー - 記録する"
+other = "記録する"
+
+[sidebar_library]
+description = "サイドバー - ライブラリ"
+other = "ライブラリ"
+
+[sidebar_watching]
+description = "サイドバー - 視聴中"
+other = "見てるアニメ"
+
+[sidebar_plan_to_watch]
+description = "サイドバー - 見たい"
+other = "見たいアニメ"
+
+[sidebar_completed]
+description = "サイドバー - 見た"
+other = "見たアニメ"
+
+[sidebar_on_hold]
+description = "サイドバー - 保留中"
+other = "一時中断してるアニメ"
+
+[sidebar_dropped]
+description = "サイドバー - 中止"
+other = "視聴中止したアニメ"
+
+[sidebar_explore]
+description = "サイドバー - 探索"
+other = "見つける"
+
+[sidebar_current_season]
+description = "サイドバー - 今期"
+other = "今期のアニメ"
+
+[sidebar_next_season]
+description = "サイドバー - 来期"
+other = "来期のアニメ"
+
+[sidebar_previous_season]
+description = "サイドバー - 前期"
+other = "前期のアニメ"
+
+[sidebar_popular]
+description = "サイドバー - 人気"
+other = "人気アニメ"
+
+[sidebar_newest]
+description = "サイドバー - 新着"
+other = "新規登録アニメ"
+
+[sidebar_misc]
+description = "サイドバー - その他"
+other = "その他"
+
+[sidebar_channels]
+description = "サイドバー - チャンネル"
+other = "チャンネル"
+
+[sidebar_settings]
+description = "サイドバー - 設定"
+other = "設定"
+
+[sidebar_faq]
+description = "サイドバー - FAQ"
+other = "よくある質問"
+
+[sidebar_community]
+description = "サイドバー - コミュニティ"
+other = "コミュニティ"
+
+[sidebar_services]
+description = "サイドバー - サービス"
+other = "サービス"
+
+[sidebar_userland]
+description = "サイドバー - Userland"
+other = "Annict Userland"
+
+[sidebar_forum]
+description = "サイドバー - Forum"
+other = "Annict Forum"
+
+[sidebar_db]
+description = "サイドバー - DB"
+other = "Annict DB"
+
+[sidebar_supporters]
+description = "サイドバー - Supporters"
+other = "Annict Supporters"
+
+[sidebar_developers]
+description = "サイドバー - Developers"
+other = "Annict Developers"
+
+[sidebar_search_placeholder]
+description = "サイドバー - 検索プレースホルダー"
+other = "作品名や人物名などで検索..."
+
+# フッター関連
+[footer_terms]
+description = "フッター - 利用規約"
+other = "利用規約"
+
+[footer_privacy]
+description = "フッター - プライバシーポリシー"
+other = "プライバシーポリシー"
+
+[footer_legal]
+description = "フッター - 特商法表記"
+other = "特商法表記"

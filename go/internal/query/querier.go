@@ -6,6 +6,7 @@ package query
 
 import (
 	"context"
+	"database/sql"
 	"time"
 )
 
@@ -22,10 +23,13 @@ type Querier interface {
 	CreateSetting(ctx context.Context, userID int64) (CreateSettingRow, error)
 	CreateSignInCode(ctx context.Context, arg CreateSignInCodeParams) (SignInCode, error)
 	CreateSignUpCode(ctx context.Context, arg CreateSignUpCodeParams) (SignUpCode, error)
+	CreateStripeSubscriber(ctx context.Context, arg CreateStripeSubscriberParams) (StripeSubscriber, error)
+	CreateStripeWebhookEvent(ctx context.Context, arg CreateStripeWebhookEventParams) (StripeWebhookEvent, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (CreateUserRow, error)
 	CreateWorkImage(ctx context.Context, arg CreateWorkImageParams) (int64, error)
 	DeleteExpiredPasswordResetTokens(ctx context.Context, expiresAt time.Time) error
 	DeleteExpiredSignInCodes(ctx context.Context, expiresAt time.Time) error
+	DeleteSession(ctx context.Context, sessionID string) error
 	DeleteUnusedPasswordResetTokensByUserID(ctx context.Context, userID int64) error
 	GetActivityByID(ctx context.Context, id int64) (GetActivityByIDRow, error)
 	GetActivityGroupByID(ctx context.Context, id int64) (ActivityGroup, error)
@@ -33,6 +37,7 @@ type Querier interface {
 	GetCastsByWorkIDs(ctx context.Context, dollar_1 []int64) ([]GetCastsByWorkIDsRow, error)
 	GetEmailNotificationByUserID(ctx context.Context, userID int64) (GetEmailNotificationByUserIDRow, error)
 	GetEpisodeRecordByID(ctx context.Context, id int64) (GetEpisodeRecordByIDRow, error)
+	GetGumroadSubscriberByID(ctx context.Context, id int64) (GumroadSubscriber, error)
 	GetOAuthApplicationByUID(ctx context.Context, uid string) (GetOAuthApplicationByUIDRow, error)
 	GetPasswordResetTokenByDigest(ctx context.Context, tokenDigest string) (PasswordResetToken, error)
 	GetPasswordResetTokensByUserID(ctx context.Context, userID int64) ([]PasswordResetToken, error)
@@ -43,10 +48,15 @@ type Querier interface {
 	GetSessionByID(ctx context.Context, sessionID string) (Session, error)
 	GetSettingByUserID(ctx context.Context, userID int64) (GetSettingByUserIDRow, error)
 	GetStaffsByWorkIDs(ctx context.Context, dollar_1 []int64) ([]GetStaffsByWorkIDsRow, error)
+	GetStripeSubscriberByID(ctx context.Context, id int64) (StripeSubscriber, error)
+	GetStripeSubscriberByStripeCustomerID(ctx context.Context, stripeCustomerID string) (StripeSubscriber, error)
+	GetStripeSubscriberByStripeSubscriptionID(ctx context.Context, stripeSubscriptionID string) (StripeSubscriber, error)
+	GetStripeWebhookEventByStripeEventID(ctx context.Context, stripeEventID string) (StripeWebhookEvent, error)
 	GetUserByEmail(ctx context.Context, lower string) (GetUserByEmailRow, error)
 	GetUserByEmailForSignIn(ctx context.Context, lower string) (GetUserByEmailForSignInRow, error)
 	GetUserByEmailOrUsername(ctx context.Context, lower string) (GetUserByEmailOrUsernameRow, error)
 	GetUserByID(ctx context.Context, id int64) (GetUserByIDRow, error)
+	GetUserByStripeSubscriberID(ctx context.Context, stripeSubscriberID sql.NullInt64) (GetUserByStripeSubscriberIDRow, error)
 	GetUserByUsername(ctx context.Context, lower string) (GetUserByUsernameRow, error)
 	GetValidSignInCode(ctx context.Context, userID int64) (SignInCode, error)
 	GetValidSignUpCode(ctx context.Context, email string) (SignUpCode, error)
@@ -63,7 +73,11 @@ type Querier interface {
 	TouchSession(ctx context.Context, sessionID string) error
 	UpdateProfileImageData(ctx context.Context, arg UpdateProfileImageDataParams) error
 	UpdateSession(ctx context.Context, arg UpdateSessionParams) error
+	UpdateStripeSubscriber(ctx context.Context, arg UpdateStripeSubscriberParams) error
+	UpdateStripeSubscriberStatus(ctx context.Context, arg UpdateStripeSubscriberStatusParams) error
+	UpdateStripeWebhookEventStatus(ctx context.Context, arg UpdateStripeWebhookEventStatusParams) error
 	UpdateUserPassword(ctx context.Context, arg UpdateUserPasswordParams) error
+	UpdateUserStripeSubscriberID(ctx context.Context, arg UpdateUserStripeSubscriberIDParams) error
 }
 
 var _ Querier = (*Queries)(nil)

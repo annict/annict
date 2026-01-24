@@ -233,6 +233,10 @@ other = "Back to Sign Up"
 description = "Sign out link"
 other = "Sign Out"
 
+[nav_sign_out_confirm]
+description = "Sign out confirmation dialog"
+other = "Are you sure you want to sign out?"
+
 [nav_sign_in]
 description = "Sign in link"
 other = "Sign In"
@@ -585,3 +589,365 @@ other = "This username is not available"
 [sign_up_username_success]
 description = "User registration success message"
 other = "Your account has been created successfully. Welcome to Annict!"
+
+# Supporters related
+[supporters_title]
+description = "Supporters page title"
+other = "Annict Supporters"
+
+[supporters_heading]
+description = "Supporters page heading"
+other = "Annict Supporters"
+
+[supporters_success_message]
+description = "Checkout completed message"
+other = "Your payment has been completed"
+
+[supporters_canceled_message]
+description = "Checkout canceled message"
+other = "Payment was canceled"
+
+[supporters_what_is_title]
+description = "What is supporter title"
+other = "What is Annict Supporter?"
+
+[supporters_what_is_desc_1]
+description = "What is supporter description 1"
+other = "\"Annict Supporters\" is a paid subscription plan for Annict fans"
+
+[supporters_what_is_desc_2]
+description = "What is supporter description 2"
+other = "By paying monthly or yearly, you can support the operation of Annict"
+
+[supporters_what_is_desc_3]
+description = "What is supporter description 3"
+other = "(Used for server costs and other expenses required for operation)"
+
+[supporters_what_is_desc_4]
+description = "What is supporter description 4"
+other = "Supporters receive the following benefits."
+
+[supporters_benefits_title]
+description = "Benefits section title"
+other = "Supporter Benefits"
+
+[supporters_benefit_1_title]
+description = "Benefit 1 title"
+other = "Ad-free Experience"
+
+[supporters_benefit_1_desc]
+description = "Benefit 1 description"
+other = "Enjoy Annict without any ads for a smoother experience"
+
+[supporters_benefit_2_title]
+description = "Benefit 2 title"
+other = "Supporter Badge"
+
+[supporters_benefit_2_desc]
+description = "Benefit 2 description"
+other = "A supporter badge will be displayed on your profile. You can optionally hide it."
+
+[supporters_benefit_3_title]
+description = "Benefit 3 title"
+other = "Watch Date Input"
+
+[supporters_benefit_3_desc]
+description = "Benefit 3 description"
+other = "Specify detailed watch dates and times when recording. For example, when recording anime you watched in the past, you can enter the exact date to keep more accurate records."
+
+[supporters_login_prompt_title]
+description = "Login prompt title"
+other = "Sign in to become a supporter"
+
+[supporters_login_prompt_desc]
+description = "Login prompt description"
+other = "Sign in to become an Annict supporter"
+
+[supporters_login_button]
+description = "Login button"
+other = "Sign In"
+
+[supporters_checkout_title]
+description = "Checkout section title"
+other = "Choose a Plan"
+
+[supporters_plan_monthly]
+description = "Monthly plan name"
+other = "Monthly Plan"
+
+[supporters_plan_yearly]
+description = "Yearly plan name"
+other = "Yearly Plan"
+
+[supporters_month]
+description = "Month"
+other = "month"
+
+[supporters_year]
+description = "Year"
+other = "year"
+
+[supporters_yearly_savings]
+description = "Yearly plan savings"
+other = "Save 2 months!"
+
+[supporters_subscribe_button]
+description = "Subscribe button"
+other = "Subscribe"
+
+[supporters_payment_method]
+description = "Payment method description"
+other = "Pay with credit card (powered by Stripe)"
+
+[supporters_gumroad_title]
+description = "Gumroad supporter section title"
+other = "Registered via Gumroad"
+
+[supporters_gumroad_message_1]
+description = "Gumroad migration message 1 - Thanks"
+other = "Thank you for joining the supporter program!"
+
+[supporters_gumroad_message_2]
+description = "Gumroad migration message 2 - Current registration status"
+other = "Your current registration is through Gumroad"
+
+[supporters_gumroad_message_3]
+description = "Gumroad migration message 3 - Stripe transition"
+other = "New registrations via Gumroad have ended, and we have transitioned to Stripe (payment service) for new subscriptions"
+
+[supporters_gumroad_message_4]
+description = "Gumroad migration message 4 - Subscription period and continuation"
+other = "You can continue to enjoy supporter benefits during your current subscription period. If you wish to continue after your subscription ends, please register with Stripe from this page after your Gumroad subscription ends"
+
+[supporters_gumroad_message_5]
+description = "Gumroad migration message 5 - Stripe button note"
+other = "(After your Gumroad subscription ends, a button to register with Stripe will appear on this page)"
+
+[supporters_registered_date]
+description = "Registration date label"
+other = "Joined"
+
+[supporters_end_date]
+description = "End date label"
+other = "Subscription End"
+
+[supporters_active_title]
+description = "Active supporter section title"
+other = "Active Supporter"
+
+[supporters_active_message_1]
+description = "Active supporter message 1"
+other = "Thank you for joining the supporter program!"
+
+[supporters_active_message_2]
+description = "Active supporter message 2"
+other = "You are currently logged in to Annict as a supporter."
+
+[supporters_customer_id]
+description = "Customer ID label"
+other = "Customer ID"
+
+[supporters_status]
+description = "Status label"
+other = "Status"
+
+[supporters_status_active]
+description = "Active status"
+other = "Active"
+
+[supporters_status_past_due]
+description = "Past due status"
+other = "Past Due"
+
+[supporters_next_billing_date]
+description = "Next billing date label"
+other = "Next Billing Date"
+
+[supporters_cancel_at]
+description = "Cancel at label"
+other = "Cancellation Date"
+
+[supporters_manage_button]
+description = "Manage button"
+other = "Manage Subscription"
+
+[supporters_customer_id_help]
+description = "Customer ID help text"
+other = "Please provide your Customer ID when contacting support."
+
+# Supporter Checkout
+[supporters_checkout_invalid_plan]
+description = "Invalid plan selection error"
+other = "Invalid plan selected"
+
+[supporters_checkout_already_active]
+description = "Already active subscription error"
+other = "You are already a supporter"
+
+[supporters_checkout_error]
+description = "Checkout processing error"
+other = "An error occurred during checkout. Please try again later."
+
+# Supporter portal related
+[supporters_portal_error]
+description = "Portal session creation error"
+other = "Failed to access the portal. Please try again later."
+
+[supporters_portal_not_supporter]
+description = "Non-supporter user tried to access the portal"
+other = "Only active supporters can access this page"
+
+# Bottom navigation related
+[bottom_nav_menu]
+description = "Bottom navigation - Menu"
+other = "Menu"
+
+[bottom_nav_home]
+description = "Bottom navigation - Home"
+other = "Home"
+
+[bottom_nav_track]
+description = "Bottom navigation - Track"
+other = "Track"
+
+[bottom_nav_current_season]
+description = "Bottom navigation - Current Season"
+other = "Airing"
+
+[bottom_nav_library]
+description = "Bottom navigation - Library"
+other = "Library"
+
+[bottom_nav_sign_up]
+description = "Bottom navigation - Sign Up"
+other = "Sign Up"
+
+[bottom_nav_sign_in]
+description = "Bottom navigation - Sign In"
+other = "Sign In"
+
+# Sidebar related
+[sidebar_home]
+description = "Sidebar - Home"
+other = "Home"
+
+[sidebar_profile]
+description = "Sidebar - Profile"
+other = "Profile"
+
+[sidebar_notifications]
+description = "Sidebar - Notifications"
+other = "Notifications"
+
+[sidebar_track]
+description = "Sidebar - Track"
+other = "Track"
+
+[sidebar_library]
+description = "Sidebar - Library"
+other = "Library"
+
+[sidebar_watching]
+description = "Sidebar - Watching"
+other = "Watching"
+
+[sidebar_plan_to_watch]
+description = "Sidebar - Plan to Watch"
+other = "Plan to Watch"
+
+[sidebar_completed]
+description = "Sidebar - Completed"
+other = "Completed"
+
+[sidebar_on_hold]
+description = "Sidebar - On Hold"
+other = "On Hold"
+
+[sidebar_dropped]
+description = "Sidebar - Dropped"
+other = "Dropped"
+
+[sidebar_explore]
+description = "Sidebar - Explore"
+other = "Explore"
+
+[sidebar_current_season]
+description = "Sidebar - Current Season"
+other = "Current Season"
+
+[sidebar_next_season]
+description = "Sidebar - Next Season"
+other = "Next Season"
+
+[sidebar_previous_season]
+description = "Sidebar - Previous Season"
+other = "Previous Season"
+
+[sidebar_popular]
+description = "Sidebar - Popular"
+other = "Popular"
+
+[sidebar_newest]
+description = "Sidebar - Newest"
+other = "Newest"
+
+[sidebar_misc]
+description = "Sidebar - Misc"
+other = "Misc"
+
+[sidebar_channels]
+description = "Sidebar - Channels"
+other = "Channels"
+
+[sidebar_settings]
+description = "Sidebar - Settings"
+other = "Settings"
+
+[sidebar_faq]
+description = "Sidebar - FAQ"
+other = "FAQ"
+
+[sidebar_community]
+description = "Sidebar - Community"
+other = "Community"
+
+[sidebar_services]
+description = "Sidebar - Services"
+other = "Services"
+
+[sidebar_userland]
+description = "Sidebar - Userland"
+other = "Annict Userland"
+
+[sidebar_forum]
+description = "Sidebar - Forum"
+other = "Annict Forum"
+
+[sidebar_db]
+description = "Sidebar - DB"
+other = "Annict DB"
+
+[sidebar_supporters]
+description = "Sidebar - Supporters"
+other = "Annict Supporters"
+
+[sidebar_developers]
+description = "Sidebar - Developers"
+other = "Annict Developers"
+
+[sidebar_search_placeholder]
+description = "Sidebar - Search placeholder"
+other = "Search by anime title..."
+
+# Footer related
+[footer_terms]
+description = "Footer - Terms"
+other = "Terms of Service"
+
+[footer_privacy]
+description = "Footer - Privacy"
+other = "Privacy Policy"
+
+[footer_legal]
+description = "Footer - Legal"
+other = "Legal Notice"

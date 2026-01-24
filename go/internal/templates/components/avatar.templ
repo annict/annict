@@ -1,0 +1,23 @@
+package components
+
+import "github.com/annict/annict/go/internal/viewmodel"
+
+// Avatar はアバター画像を表示するコンポーネントです（50px固定）
+// アバターURLが空の場合は、ユーザー名の頭文字をフォールバック表示します
+templ Avatar(user *viewmodel.User) {
+	if user != nil {
+		if user.AvatarURL != "" {
+			<img
+				src={ user.AvatarURL }
+				class="w-[50px] h-[50px] rounded-full object-cover"
+				loading="lazy"
+			/>
+		} else {
+			<div class="w-[50px] h-[50px] rounded-full bg-muted flex items-center justify-center">
+				<span class="text-sm font-medium">
+				  { string(user.Username[0]) }
+				</span>
+			</div>
+		}
+	}
+}

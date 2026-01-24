@@ -25,8 +25,12 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 	// 2. ModelをViewModelに変換（Presentation層内の変換）
 	viewWorks := viewmodel.NewWorksFromModelDetails(modelWorks, h.imageHelper)
 
-	// コンテキストからユーザー情報を取得
+	// コンテキストからユーザー情報を取得してviewmodelに変換
 	user := authMiddleware.GetUserFromContext(ctx)
+	viewUser := viewmodel.NewUserForSidebar(user, h.imageHelper)
+
+	// 季節情報を取得
+	seasons := viewmodel.NewSeasons(h.cfg)
 
 	// フラッシュメッセージを取得
 	flash, _ := h.sessionManager.GetFlash(ctx, r)
@@ -40,7 +44,8 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 	component := layouts.Default(
 		ctx,
 		meta,
-		user,
+		viewUser,
+		seasons,
 		flash,
 		h.cfg.GetAssetVersion(),
 		works.Popular(ctx, viewWorks),

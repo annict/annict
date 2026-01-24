@@ -959,6 +959,33 @@ type Status struct {
 	OauthApplicationID sql.NullInt64 `db:"oauth_application_id"`
 }
 
+type StripeSubscriber struct {
+	ID                       int64        `db:"id"`
+	StripeCustomerID         string       `db:"stripe_customer_id"`
+	StripeSubscriptionID     string       `db:"stripe_subscription_id"`
+	StripePriceID            string       `db:"stripe_price_id"`
+	StripeStatus             string       `db:"stripe_status"`
+	StripeCurrentPeriodStart time.Time    `db:"stripe_current_period_start"`
+	StripeCurrentPeriodEnd   time.Time    `db:"stripe_current_period_end"`
+	StripeCancelAt           sql.NullTime `db:"stripe_cancel_at"`
+	StripeCanceledAt         sql.NullTime `db:"stripe_canceled_at"`
+	CreatedAt                time.Time    `db:"created_at"`
+	UpdatedAt                time.Time    `db:"updated_at"`
+}
+
+type StripeWebhookEvent struct {
+	ID              int64           `db:"id"`
+	StripeEventID   string          `db:"stripe_event_id"`
+	StripeEventType string          `db:"stripe_event_type"`
+	StripePayload   json.RawMessage `db:"stripe_payload"`
+	Status          string          `db:"status"`
+	ErrorMessage    sql.NullString  `db:"error_message"`
+	ReceivedAt      time.Time       `db:"received_at"`
+	ProcessedAt     sql.NullTime    `db:"processed_at"`
+	CreatedAt       time.Time       `db:"created_at"`
+	UpdatedAt       time.Time       `db:"updated_at"`
+}
+
 type SyobocalAlert struct {
 	ID            int64          `db:"id"`
 	WorkID        sql.NullInt64  `db:"work_id"`
@@ -1060,6 +1087,7 @@ type User struct {
 	DroppedWorksCount          int32          `db:"dropped_works_count"`
 	FollowingCount             int32          `db:"following_count"`
 	FollowersCount             int32          `db:"followers_count"`
+	StripeSubscriberID         sql.NullInt64  `db:"stripe_subscriber_id"`
 }
 
 type UserlandCategory struct {

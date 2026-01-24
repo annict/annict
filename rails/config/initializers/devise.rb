@@ -8,11 +8,6 @@ Devise.setup do |config|
     ENV.fetch("FACEBOOK_APP_ID"), ENV.fetch("FACEBOOK_SECRET_KEY"),
     scope: "email,public_profile"
 
-  config.omniauth :gumroad,
-    ENV.fetch("GUMROAD_APPLICATION_ID"), ENV.fetch("GUMROAD_APP_SECRET"),
-    redirect_uri: "#{ENV.fetch("ANNICT_URL")}/users/auth/gumroad/callback",
-    scope: "view_profile"
-
   # The secret key used by Devise. Devise uses this key to generate
   # random tokens. Changing this key will render invalid all existing
   # confirmation, reset password and unlock tokens in the database.

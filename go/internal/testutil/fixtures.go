@@ -170,12 +170,13 @@ func (b *EpisodeBuilder) Build() int64 {
 
 // UserBuilder はユーザーテストデータのビルダー
 type UserBuilder struct {
-	tx                *sql.Tx
-	t                 *testing.T
-	username          string
-	email             string
-	encryptedPassword string
-	locale            string
+	tx                 *sql.Tx
+	t                  *testing.T
+	username           string
+	email              string
+	encryptedPassword  string
+	locale             string
+	stripeSubscriberID *int64
 }
 
 // NewUserBuilder は新しいUserBuilderを作成します
@@ -216,6 +217,12 @@ func (b *UserBuilder) WithEncryptedPassword(password string) *UserBuilder {
 // WithLocale はロケールを設定します
 func (b *UserBuilder) WithLocale(locale string) *UserBuilder {
 	b.locale = locale
+	return b
+}
+
+// WithStripeSubscriberID はStripeサブスクライバーIDを設定します
+func (b *UserBuilder) WithStripeSubscriberID(id *int64) *UserBuilder {
+	b.stripeSubscriberID = id
 	return b
 }
 
@@ -315,7 +322,41 @@ func (b *UserBuilder) Build() int64 {
 		b.t.Fatalf("メール通知設定データの作成に失敗しました: %v", err)
 	}
 
+	// StripeSubscriberIDが設定されている場合は更新
+	if b.stripeSubscriberID != nil {
+		_, err = b.tx.Exec(`UPDATE users SET stripe_subscriber_id = $1 WHERE id = $2`, *b.stripeSubscriberID, id)
+		if err != nil {
+			b.t.Fatalf("ユーザーのStripeSubscriberID更新に失敗しました: %v", err)
+		}
+	}
+
 	return id
+}
+
+// UserResult はテスト用のユーザー結果
+type UserResult struct {
+	ID                 int64
+	Username           string
+	Email              string
+	StripeSubscriberID sql.NullInt64
+}
+
+// BuildWithResult はテスト用のユーザーデータをデータベースに作成し、結果を返します
+func (b *UserBuilder) BuildWithResult() UserResult {
+	b.t.Helper()
+	id := b.Build()
+
+	var stripeSubID sql.NullInt64
+	if b.stripeSubscriberID != nil {
+		stripeSubID = sql.NullInt64{Int64: *b.stripeSubscriberID, Valid: true}
+	}
+
+	return UserResult{
+		ID:                 id,
+		Username:           b.username,
+		Email:              b.email,
+		StripeSubscriberID: stripeSubID,
+	}
 }
 
 // WorkImageBuilder は作品画像テストデータのビルダー
@@ -496,4 +537,379 @@ func CreateTestUser(t *testing.T, tx *sql.Tx, username string) int64 {
 func CreateTestEpisode(t *testing.T, tx *sql.Tx, workID int64, number string) int64 {
 	t.Helper()
 	return NewEpisodeBuilder(t, tx, workID).WithNumber(number).Build()
+}
+
+// StripeSubscriberBuilder はStripeサブスクライバーテストデータのビルダー
+type StripeSubscriberBuilder struct {
+	tx                       *sql.Tx
+	t                        *testing.T
+	stripeCustomerID         string
+	stripeSubscriptionID     string
+	stripePriceID            string
+	stripeStatus             string
+	stripeCurrentPeriodStart time.Time
+	stripeCurrentPeriodEnd   time.Time
+	stripeCancelAt           sql.NullTime
+	stripeCanceledAt         sql.NullTime
+}
+
+// NewStripeSubscriberBuilder は新しいStripeSubscriberBuilderを作成します
+func NewStripeSubscriberBuilder(t *testing.T, tx *sql.Tx) *StripeSubscriberBuilder {
+	uniqueID := uuid.New().String()[:8]
+	now := time.Now()
+
+	return &StripeSubscriberBuilder{
+		tx:                       tx,
+		t:                        t,
+		stripeCustomerID:         fmt.Sprintf("cus_test_%s", uniqueID),
+		stripeSubscriptionID:     fmt.Sprintf("sub_test_%s", uniqueID),
+		stripePriceID:            "price_monthly_test",
+		stripeStatus:             "active",
+		stripeCurrentPeriodStart: now,
+		stripeCurrentPeriodEnd:   now.AddDate(0, 1, 0),
+		stripeCancelAt:           sql.NullTime{},
+		stripeCanceledAt:         sql.NullTime{},
+	}
+}
+
+// WithStripeCustomerID はStripe顧客IDを設定します
+func (b *StripeSubscriberBuilder) WithStripeCustomerID(id string) *StripeSubscriberBuilder {
+	b.stripeCustomerID = id
+	return b
+}
+
+// WithStripeSubscriptionID はStripeサブスクリプションIDを設定します
+func (b *StripeSubscriberBuilder) WithStripeSubscriptionID(id string) *StripeSubscriberBuilder {
+	b.stripeSubscriptionID = id
+	return b
+}
+
+// WithStripePriceID はStripe価格IDを設定します
+func (b *StripeSubscriberBuilder) WithStripePriceID(id string) *StripeSubscriberBuilder {
+	b.stripePriceID = id
+	return b
+}
+
+// WithStripeStatus はStripeサブスクリプションステータスを設定します
+func (b *StripeSubscriberBuilder) WithStripeStatus(status string) *StripeSubscriberBuilder {
+	b.stripeStatus = status
+	return b
+}
+
+// WithCurrentPeriod は現在の請求期間を設定します
+func (b *StripeSubscriberBuilder) WithCurrentPeriod(start, end time.Time) *StripeSubscriberBuilder {
+	b.stripeCurrentPeriodStart = start
+	b.stripeCurrentPeriodEnd = end
+	return b
+}
+
+// WithCancelAt はキャンセル予定日時を設定します
+func (b *StripeSubscriberBuilder) WithCancelAt(cancelAt time.Time) *StripeSubscriberBuilder {
+	b.stripeCancelAt = sql.NullTime{Time: cancelAt, Valid: true}
+	return b
+}
+
+// WithCanceledAt は実際にキャンセルされた日時を設定します
+func (b *StripeSubscriberBuilder) WithCanceledAt(canceledAt time.Time) *StripeSubscriberBuilder {
+	b.stripeCanceledAt = sql.NullTime{Time: canceledAt, Valid: true}
+	return b
+}
+
+// Build はテスト用のStripeサブスクライバーデータをデータベースに作成し、IDを返します
+func (b *StripeSubscriberBuilder) Build() int64 {
+	b.t.Helper()
+	result := b.BuildWithResult()
+	return result.ID
+}
+
+// BuildWithResult はテスト用のStripeサブスクライバーデータをデータベースに作成し、全フィールドを返します
+func (b *StripeSubscriberBuilder) BuildWithResult() StripeSubscriberResult {
+	b.t.Helper()
+
+	q := `
+		INSERT INTO stripe_subscribers (
+			stripe_customer_id,
+			stripe_subscription_id,
+			stripe_price_id,
+			stripe_status,
+			stripe_current_period_start,
+			stripe_current_period_end,
+			stripe_cancel_at,
+			stripe_canceled_at,
+			created_at,
+			updated_at
+		) VALUES (
+			$1, $2, $3, $4, $5, $6, $7, $8, $9, $10
+		) RETURNING id, stripe_customer_id, stripe_subscription_id, stripe_price_id, stripe_status,
+		            stripe_current_period_start, stripe_current_period_end, stripe_cancel_at, stripe_canceled_at,
+		            created_at, updated_at
+	`
+
+	now := time.Now()
+	var result StripeSubscriberResult
+	err := b.tx.QueryRow(
+		q,
+		b.stripeCustomerID,
+		b.stripeSubscriptionID,
+		b.stripePriceID,
+		b.stripeStatus,
+		b.stripeCurrentPeriodStart,
+		b.stripeCurrentPeriodEnd,
+		b.stripeCancelAt,
+		b.stripeCanceledAt,
+		now,
+		now,
+	).Scan(
+		&result.ID,
+		&result.StripeCustomerID,
+		&result.StripeSubscriptionID,
+		&result.StripePriceID,
+		&result.StripeStatus,
+		&result.StripeCurrentPeriodStart,
+		&result.StripeCurrentPeriodEnd,
+		&result.StripeCancelAt,
+		&result.StripeCanceledAt,
+		&result.CreatedAt,
+		&result.UpdatedAt,
+	)
+
+	if err != nil {
+		b.t.Fatalf("Stripeサブスクライバーデータの作成に失敗しました: %v", err)
+	}
+
+	return result
+}
+
+// StripeSubscriberResult はテスト用のStripeサブスクライバー結果
+type StripeSubscriberResult struct {
+	ID                       int64
+	StripeCustomerID         string
+	StripeSubscriptionID     string
+	StripePriceID            string
+	StripeStatus             string
+	StripeCurrentPeriodStart time.Time
+	StripeCurrentPeriodEnd   time.Time
+	StripeCancelAt           sql.NullTime
+	StripeCanceledAt         sql.NullTime
+	CreatedAt                time.Time
+	UpdatedAt                time.Time
+}
+
+// CreateTestStripeSubscriber は簡単にテスト用Stripeサブスクライバーを作成するヘルパー関数
+func CreateTestStripeSubscriber(t *testing.T, tx *sql.Tx) int64 {
+	t.Helper()
+	return NewStripeSubscriberBuilder(t, tx).Build()
+}
+
+// CreateTestStripeSubscriberWithStatus は指定ステータスでテスト用Stripeサブスクライバーを作成するヘルパー関数
+func CreateTestStripeSubscriberWithStatus(t *testing.T, tx *sql.Tx, status string) int64 {
+	t.Helper()
+	return NewStripeSubscriberBuilder(t, tx).WithStripeStatus(status).Build()
+}
+
+// StripeWebhookEventBuilder はStripe Webhookイベントテストデータのビルダー
+type StripeWebhookEventBuilder struct {
+	tx              *sql.Tx
+	t               *testing.T
+	stripeEventID   string
+	stripeEventType string
+	stripePayload   string
+	status          string
+	receivedAt      time.Time
+}
+
+// NewStripeWebhookEventBuilder は新しいStripeWebhookEventBuilderを作成します
+func NewStripeWebhookEventBuilder(t *testing.T, tx *sql.Tx) *StripeWebhookEventBuilder {
+	uniqueID := uuid.New().String()[:8]
+
+	return &StripeWebhookEventBuilder{
+		tx:              tx,
+		t:               t,
+		stripeEventID:   fmt.Sprintf("evt_test_%s", uniqueID),
+		stripeEventType: "customer.subscription.created",
+		stripePayload:   `{"id": "evt_test", "type": "customer.subscription.created"}`,
+		status:          "pending",
+		receivedAt:      time.Now(),
+	}
+}
+
+// WithStripeEventID はStripeイベントIDを設定します
+func (b *StripeWebhookEventBuilder) WithStripeEventID(id string) *StripeWebhookEventBuilder {
+	b.stripeEventID = id
+	return b
+}
+
+// WithStripeEventType はStripeイベントタイプを設定します
+func (b *StripeWebhookEventBuilder) WithStripeEventType(eventType string) *StripeWebhookEventBuilder {
+	b.stripeEventType = eventType
+	return b
+}
+
+// WithStripePayload はStripeペイロードを設定します
+func (b *StripeWebhookEventBuilder) WithStripePayload(payload string) *StripeWebhookEventBuilder {
+	b.stripePayload = payload
+	return b
+}
+
+// WithStatus はステータスを設定します
+func (b *StripeWebhookEventBuilder) WithStatus(status string) *StripeWebhookEventBuilder {
+	b.status = status
+	return b
+}
+
+// WithReceivedAt は受信日時を設定します
+func (b *StripeWebhookEventBuilder) WithReceivedAt(receivedAt time.Time) *StripeWebhookEventBuilder {
+	b.receivedAt = receivedAt
+	return b
+}
+
+// Build はテスト用のStripe Webhookイベントデータをデータベースに作成します
+func (b *StripeWebhookEventBuilder) Build() int64 {
+	b.t.Helper()
+
+	query := `
+		INSERT INTO stripe_webhook_events (
+			stripe_event_id,
+			stripe_event_type,
+			stripe_payload,
+			status,
+			received_at,
+			created_at,
+			updated_at
+		) VALUES (
+			$1, $2, $3, $4, $5, $6, $7
+		) RETURNING id
+	`
+
+	var id int64
+	err := b.tx.QueryRow(
+		query,
+		b.stripeEventID,
+		b.stripeEventType,
+		b.stripePayload,
+		b.status,
+		b.receivedAt,
+		time.Now(),
+		time.Now(),
+	).Scan(&id)
+
+	if err != nil {
+		b.t.Fatalf("Stripe Webhookイベントデータの作成に失敗しました: %v", err)
+	}
+
+	return id
+}
+
+// CreateTestStripeWebhookEvent は簡単にテスト用Stripe Webhookイベントを作成するヘルパー関数
+func CreateTestStripeWebhookEvent(t *testing.T, tx *sql.Tx) int64 {
+	t.Helper()
+	return NewStripeWebhookEventBuilder(t, tx).Build()
+}
+
+// CreateTestStripeWebhookEventWithStatus は指定ステータスでテスト用Stripe Webhookイベントを作成するヘルパー関数
+func CreateTestStripeWebhookEventWithStatus(t *testing.T, tx *sql.Tx, status string) int64 {
+	t.Helper()
+	return NewStripeWebhookEventBuilder(t, tx).WithStatus(status).Build()
+}
+
+// GumroadSubscriberBuilder はGumroadサブスクライバーテストデータのビルダー
+type GumroadSubscriberBuilder struct {
+	tx                 *sql.Tx
+	t                  *testing.T
+	gumroadID          string
+	gumroadProductID   string
+	gumroadProductName string
+	gumroadUserID      sql.NullString
+	gumroadUserEmail   sql.NullString
+	gumroadCreatedAt   time.Time
+	gumroadCancelledAt sql.NullTime
+	gumroadEndedAt     sql.NullTime
+}
+
+// NewGumroadSubscriberBuilder は新しいGumroadSubscriberBuilderを作成します
+func NewGumroadSubscriberBuilder(t *testing.T, tx *sql.Tx) *GumroadSubscriberBuilder {
+	uniqueID := uuid.New().String()[:8]
+	now := time.Now()
+
+	return &GumroadSubscriberBuilder{
+		tx:                 tx,
+		t:                  t,
+		gumroadID:          fmt.Sprintf("gum_test_%s", uniqueID),
+		gumroadProductID:   "product_test_123",
+		gumroadProductName: "Annict Supporters",
+		gumroadUserID:      sql.NullString{String: fmt.Sprintf("user_%s", uniqueID), Valid: true},
+		gumroadUserEmail:   sql.NullString{String: fmt.Sprintf("test_%s@example.com", uniqueID), Valid: true},
+		gumroadCreatedAt:   now.AddDate(-1, 0, 0),
+		gumroadCancelledAt: sql.NullTime{},
+		gumroadEndedAt:     sql.NullTime{},
+	}
+}
+
+// WithGumroadID はGumroad IDを設定します
+func (b *GumroadSubscriberBuilder) WithGumroadID(id string) *GumroadSubscriberBuilder {
+	b.gumroadID = id
+	return b
+}
+
+// WithGumroadCancelledAt はキャンセル日時を設定します
+func (b *GumroadSubscriberBuilder) WithGumroadCancelledAt(cancelledAt time.Time) *GumroadSubscriberBuilder {
+	b.gumroadCancelledAt = sql.NullTime{Time: cancelledAt, Valid: true}
+	return b
+}
+
+// WithGumroadEndedAt は終了日時を設定します
+func (b *GumroadSubscriberBuilder) WithGumroadEndedAt(endedAt time.Time) *GumroadSubscriberBuilder {
+	b.gumroadEndedAt = sql.NullTime{Time: endedAt, Valid: true}
+	return b
+}
+
+// Build はテスト用のGumroadサブスクライバーデータをデータベースに作成します
+func (b *GumroadSubscriberBuilder) Build() int64 {
+	b.t.Helper()
+
+	query := `
+		INSERT INTO gumroad_subscribers (
+			gumroad_id,
+			gumroad_product_id,
+			gumroad_product_name,
+			gumroad_user_id,
+			gumroad_user_email,
+			gumroad_purchase_ids,
+			gumroad_created_at,
+			gumroad_cancelled_at,
+			gumroad_ended_at,
+			created_at,
+			updated_at
+		) VALUES (
+			$1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11
+		) RETURNING id
+	`
+
+	var id int64
+	err := b.tx.QueryRow(
+		query,
+		b.gumroadID,
+		b.gumroadProductID,
+		b.gumroadProductName,
+		b.gumroadUserID,
+		b.gumroadUserEmail,
+		pq.Array([]string{}),
+		b.gumroadCreatedAt,
+		b.gumroadCancelledAt,
+		b.gumroadEndedAt,
+		time.Now(),
+		time.Now(),
+	).Scan(&id)
+
+	if err != nil {
+		b.t.Fatalf("Gumroadサブスクライバーデータの作成に失敗しました: %v", err)
+	}
+
+	return id
+}
+
+// CreateTestGumroadSubscriber は簡単にテスト用Gumroadサブスクライバーを作成するヘルパー関数
+func CreateTestGumroadSubscriber(t *testing.T, tx *sql.Tx) int64 {
+	t.Helper()
+	return NewGumroadSubscriberBuilder(t, tx).Build()
 }

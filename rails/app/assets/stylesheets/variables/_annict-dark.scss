@@ -4,7 +4,7 @@
   // -------------------------------------------------------------------
 
   --ann-work-color: #{$ann-work-color};
-  --ann-color-sidebar-bg: #{tint-color($ann-scheme-dark-color, 5%)};
+  --ann-color-sidebar-bg: #292524; /* stone-800 */
   --ann-color-spoiler-guard-body: #{rgba($gray-200, 0.5)};
   --ann-color-tracking-heatmap-bg: #{tint-color($gray-900, 15%)};
   --ann-mizuho-color: #{$ann-mizuho-color};
@@ -57,10 +57,10 @@
 
   // Forms
 
-  --ann-input-bg: #{$gray-900};
+  --ann-input-bg: #322e2d;
   --ann-input-disabled-bg: #{$gray-500};
   --ann-input-color: var(--ann-body-color);
-  --ann-input-border-color: #{$gray-700};
+  --ann-input-border-color: #504d4c;
   --ann-input-focus-bg: var(--ann-input-bg);
   --ann-input-focus-color: var(--ann-input-color);
   --ann-form-select-color: var(--ann-input-color);
@@ -78,6 +78,6 @@
 
   // Cards
 
-  --ann-card-bg: #{tint-color($ann-scheme-dark-color, 8%)};
-  --ann-card-bg-rgb: #{hexToRGBString(tint-color($ann-scheme-dark-color, 8%))};
+  --ann-card-bg: #292524; /* stone-800 */
+  --ann-card-bg-rgb: #292524; /* stone-800 */
 }

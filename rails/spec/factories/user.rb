@@ -43,9 +43,14 @@ FactoryBot.define do
       role { :admin }
     end
 
-    # Annictサポーター
+    # Annictサポーター（Gumroad経由）
     trait :with_supporter do
       gumroad_subscriber
+    end
+
+    # Annictサポーター（Stripe経由）
+    trait :with_stripe_supporter do
+      stripe_subscriber
     end
 
     factory :registered_user, traits: %i[with_profile with_provider with_setting with_email_notification] do

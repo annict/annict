@@ -1,0 +1,340 @@
+package supporters
+
+import (
+	"context"
+	"time"
+
+	"github.com/annict/annict/go/internal/templates"
+	"github.com/annict/annict/go/internal/viewmodel"
+)
+
+// Show はサポーターページのコンテンツを表示します
+templ Show(ctx context.Context, data viewmodel.SupporterPageData) {
+	<div class="flex flex-col gap-4 py-4">
+		<h1 class="text-2xl font-bold antialiased px-4">
+			{ templates.T(ctx, "supporters_heading") }
+		</h1>
+
+		<hr>
+
+		<div class="max-w-3xl w-full mx-auto flex flex-col gap-4 px-2 md:px-0">
+			// Checkout完了時のメッセージ
+			if data.ShowSuccessMessage {
+				<div class="alert bg-success text-success-foreground">
+					<h2>
+						{ templates.T(ctx, "supporters_success_message") }
+					</h2>
+				</div>
+			}
+
+			// Checkoutキャンセル時のメッセージ
+			if data.ShowCanceledMessage {
+				<div class="alert bg-warning text-warning-foreground">
+					<h2>
+						{ templates.T(ctx, "supporters_canceled_message") }
+					</h2>
+				</div>
+			}
+
+			// サポーター特典説明
+			<div class="card px-4">
+				<h2 class="text-xl font-bold antialiased">
+					{ templates.T(ctx, "supporters_what_is_title") }
+				</h2>
+
+				<p>
+					{ templates.T(ctx, "supporters_what_is_desc_1") }<br/>
+					{ templates.T(ctx, "supporters_what_is_desc_2") }<br/>
+					{ templates.T(ctx, "supporters_what_is_desc_3") }<br/>
+					<br/>
+					{ templates.T(ctx, "supporters_what_is_desc_4") }
+				</p>
+
+				<h2 class="text-xl font-bold antialiased">
+					{ templates.T(ctx, "supporters_benefits_title") }
+				</h2>
+
+				<ul class="flex flex-col gap-4">
+					@benefitItem(ctx, "✨", "supporters_benefit_1_title", "supporters_benefit_1_desc")
+					@benefitItem(ctx, "🕐", "supporters_benefit_3_title", "supporters_benefit_3_desc")
+					@benefitItem(ctx, "🎖️", "supporters_benefit_2_title", "supporters_benefit_2_desc")
+				</ul>
+			</div>
+
+			// ユーザー状態に応じた表示
+			if !data.IsLoggedIn {
+				// 未ログイン: ログイン促進
+				@notLoggedInSection(ctx)
+			} else {
+				switch data.Status {
+				case viewmodel.SupporterStatusNone:
+					// 非サポーター: Stripe決済ボタン
+					@checkoutSection(ctx, data.CSRFToken)
+				case viewmodel.SupporterStatusGumroad:
+					// Gumroadサポーター: 移行案内メッセージ
+					@gumroadSection(ctx, data.GumroadSubscriber, data.Location)
+				case viewmodel.SupporterStatusStripe:
+					// Stripeサポーター: サブスクリプション情報
+					@stripeSection(ctx, data.StripeSubscriber, data.CSRFToken, data.Location)
+				case viewmodel.SupporterStatusBoth:
+					// 両方アクティブ: Stripeを優先表示
+					@stripeSection(ctx, data.StripeSubscriber, data.CSRFToken, data.Location)
+				}
+			}
+		</div>
+	</div>
+}
+
+// notLoggedInSection は未ログインユーザー向けセクション
+templ notLoggedInSection(ctx context.Context) {
+	<div class="card px-4">
+		<h2 class="text-xl font-bold antialiased">
+			{ templates.T(ctx, "supporters_login_prompt_title") }
+		</h2>
+
+		<p>
+			{ templates.T(ctx, "supporters_login_prompt_desc") }
+		</p>
+
+		<a href="/sign_in?back=/supporters" class="btn btn-primary rounded-full w-fit">
+			@templates.Icon("sign-in-regular")
+			{ templates.T(ctx, "supporters_login_button") }
+		</a>
+	</div>
+}
+
+// checkoutSection は非サポーター向けのStripe決済セクション
+templ checkoutSection(ctx context.Context, csrfToken string) {
+	<div class="card px-4">
+		<h2 class="text-xl font-bold antialiased">
+			{ templates.T(ctx, "supporters_checkout_title") }
+		</h2>
+
+		<div class="grid sm:grid-cols-2 gap-4">
+			// 月額プラン
+			<div class="border rounded-lg p-4 flex flex-col justify-between gap-4">
+				<div class="flex flex-col gap-2">
+					<h3 class="text-lg font-bold antialiased">
+						{ templates.T(ctx, "supporters_plan_monthly") }
+					</h3>
+
+					<p class="text-3xl font-bold">
+						¥290<span class="text-sm text-muted-foreground">/{ templates.T(ctx, "supporters_month") }</span>
+					</p>
+				</div>
+
+				<form action="/supporters/checkout" method="POST">
+					<input type="hidden" name="csrf_token" value={ csrfToken }/>
+					<input type="hidden" name="plan" value="monthly"/>
+					<button type="submit" class="btn btn-primary w-full">
+						{ templates.T(ctx, "supporters_subscribe_button") }
+					</button>
+				</form>
+			</div>
+
+			// 年額プラン
+			<div class="border rounded-lg p-4 flex flex-col justify-between gap-4">
+				<div class="flex flex-col gap-2">
+					<h3 class="text-lg font-bold antialiased">
+						{ templates.T(ctx, "supporters_plan_yearly") }
+					</h3>
+
+					<p class="text-3xl font-bold">
+						¥2,900<span class="text-sm text-muted-foreground">/{ templates.T(ctx, "supporters_year") }</span>
+						<span class="text-sm ml-2">{ templates.T(ctx, "supporters_yearly_savings") }</span>
+					</p>
+				</div>
+
+				<form action="/supporters/checkout" method="POST">
+					<input type="hidden" name="csrf_token" value={ csrfToken }/>
+					<input type="hidden" name="plan" value="yearly"/>
+					<button type="submit" class="btn btn-primary w-full">
+						{ templates.T(ctx, "supporters_subscribe_button") }
+					</button>
+				</form>
+			</div>
+		</div>
+
+		<p class="text-sm text-muted-foreground">
+			{ templates.T(ctx, "supporters_payment_method") }
+		</p>
+	</div>
+}
+
+// gumroadSection はGumroadサポーター向けセクション
+templ gumroadSection(ctx context.Context, subscriber *viewmodel.GumroadSubscriberView, loc *time.Location) {
+	<div class="card bg-green-50 dark:bg-green-950 px-4">
+		<div class="flex items-center gap-2">
+			@templates.Icon("check-circle-regular", "w-[32px] h-[32px] fill-success")
+
+			<h2 class="text-xl font-bold antialiased">
+				{ templates.T(ctx, "supporters_gumroad_title") }
+			</h2>
+		</div>
+
+		<p>
+			{ templates.T(ctx, "supporters_gumroad_message_1") }
+			<br/>
+			{ templates.T(ctx, "supporters_gumroad_message_2") }
+		</p>
+
+		<p>
+			{ templates.T(ctx, "supporters_gumroad_message_3") }
+			<br/>
+			{ templates.T(ctx, "supporters_gumroad_message_4") }
+			<br/>
+			{ templates.T(ctx, "supporters_gumroad_message_5") }
+		</p>
+
+		if subscriber != nil {
+			<div class="border rounded-lg p-4">
+				<dl class="flex flex-col gap-2">
+					<div class="flex justify-between">
+						<dt>
+							Gumroad ID
+						</dt>
+
+						<dd>
+							{ subscriber.GumroadID }
+						</dd>
+					</div>
+
+					<div class="flex justify-between">
+						<dt>
+							{ templates.T(ctx, "supporters_registered_date") }
+						</dt>
+
+						<dd>
+							{ formatDate(subscriber.CreatedAt, loc) }
+						</dd>
+					</div>
+
+					if subscriber.CancelledAt != nil {
+						<div class="flex justify-between">
+							<dt>
+								{ templates.T(ctx, "supporters_end_date") }
+							</dt>
+
+							<dd>
+								{ formatDate(*subscriber.CancelledAt, loc) }
+							</dd>
+						</div>
+					}
+				</dl>
+			</div>
+		}
+	</div>
+}
+
+// stripeSection はStripeサポーター向けセクション
+templ stripeSection(ctx context.Context, subscriber *viewmodel.StripeSubscriberView, csrfToken string, loc *time.Location) {
+	<div class="card bg-green-50 dark:bg-green-950 px-4">
+		<div class="flex items-center gap-2">
+			@templates.Icon("check-circle-regular", "w-[32px] h-[32px] fill-success")
+
+			<h2 class="text-xl font-bold antialiased">
+				{ templates.T(ctx, "supporters_active_title") }
+			</h2>
+		</div>
+
+		<p>
+			{ templates.T(ctx, "supporters_active_message_1") }
+			<br/>
+			{ templates.T(ctx, "supporters_active_message_2") }
+		</p>
+
+		if subscriber != nil {
+			<div class="border rounded-lg p-4">
+				<dl class="flex flex-col gap-2">
+					<div class="flex justify-between">
+						<dt>
+							{ templates.T(ctx, "supporters_customer_id") }
+						</dt>
+
+						<dd>
+							{ subscriber.CustomerID }
+						</dd>
+					</div>
+
+					<div class="flex justify-between">
+						<dt>
+							{ templates.T(ctx, "supporters_status") }
+						</dt>
+
+						<dd>
+							if subscriber.Status == "active" {
+								{ templates.T(ctx, "supporters_status_active") }
+							} else if subscriber.Status == "past_due" {
+								{ templates.T(ctx, "supporters_status_past_due") }
+							} else {
+								{ subscriber.Status }
+							}
+						</dd>
+					</div>
+
+					if subscriber.CancelAt != nil {
+						// キャンセル予定の場合は終了予定日のみ表示
+						<div class="flex justify-between">
+							<dt>
+								{ templates.T(ctx, "supporters_cancel_at") }
+							</dt>
+
+							<dd>
+								{ formatDate(*subscriber.CancelAt, loc) }
+							</dd>
+						</div>
+					} else {
+						// 通常のアクティブ状態では次回請求日を表示
+						<div class="flex justify-between">
+							<dt>
+								{ templates.T(ctx, "supporters_next_billing_date") }
+							</dt>
+
+							<dd>
+								{ formatDate(subscriber.CurrentPeriodEnd, loc) }
+							</dd>
+						</div>
+					}
+				</dl>
+			</div>
+		}
+
+		<form action="/supporters/portal" method="POST">
+			<input type="hidden" name="csrf_token" value={ csrfToken }/>
+			<button type="submit" class="btn-outline">
+				{ templates.T(ctx, "supporters_manage_button") }
+			</button>
+		</form>
+
+		<p class="text-sm text-muted-foreground">
+			{ templates.T(ctx, "supporters_customer_id_help") }
+		</p>
+	</div>
+}
+
+// benefitItem はサポーター特典のアイテムを表示するコンポーネント
+templ benefitItem(ctx context.Context, emoji string, titleKey string, descKey string) {
+	<li class="flex items-start gap-3">
+		<span class="text-2xl">
+			{ emoji }
+		</span>
+
+		<div>
+			<p class="font-bold">
+				{ templates.T(ctx, titleKey) }
+			</p>
+
+			<p class="text-muted-foreground text-sm">
+				{ templates.T(ctx, descKey) }
+			</p>
+		</div>
+	</li>
+}
+
+// formatDate は日付をユーザーのタイムゾーンでフォーマットします
+func formatDate(t time.Time, loc *time.Location) string {
+	if loc == nil {
+		loc = time.FixedZone("Asia/Tokyo", 9*60*60)
+	}
+	return t.In(loc).Format("2006/01/02")
+}

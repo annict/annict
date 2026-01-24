@@ -181,7 +181,7 @@ func TestIcon(t *testing.T) {
 		},
 		{
 			name:    "sign-inアイコン",
-			icon:    "sign-in",
+			icon:    "sign-in-regular",
 			wantSVG: `M141.66,133.66`,
 		},
 		{

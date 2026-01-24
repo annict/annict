@@ -2195,6 +2195,37 @@ CREATE TABLE public.statuses (
 
 
 --
+-- Name: stripe_subscribers_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.stripe_subscribers_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: stripe_subscribers; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.stripe_subscribers (
+    id bigint DEFAULT nextval('public.stripe_subscribers_id_seq'::regclass) NOT NULL,
+    stripe_customer_id character varying(255) NOT NULL,
+    stripe_subscription_id character varying(255) NOT NULL,
+    stripe_price_id character varying(255) NOT NULL,
+    stripe_status character varying(50) NOT NULL,
+    stripe_current_period_start timestamp with time zone NOT NULL,
+    stripe_current_period_end timestamp with time zone NOT NULL,
+    stripe_cancel_at timestamp with time zone,
+    stripe_canceled_at timestamp with time zone,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+--
 -- Name: syobocal_alerts; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -2531,7 +2562,8 @@ CREATE TABLE public.users (
     on_hold_works_count integer DEFAULT 0 NOT NULL,
     dropped_works_count integer DEFAULT 0 NOT NULL,
     following_count integer DEFAULT 0 NOT NULL,
-    followers_count integer DEFAULT 0 NOT NULL
+    followers_count integer DEFAULT 0 NOT NULL,
+    stripe_subscriber_id bigint
 );
 
 
@@ -3834,6 +3866,14 @@ ALTER TABLE ONLY public.staffs
 
 ALTER TABLE ONLY public.statuses
     ADD CONSTRAINT statuses_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: stripe_subscribers stripe_subscribers_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.stripe_subscribers
+    ADD CONSTRAINT stripe_subscribers_pkey PRIMARY KEY (id);
 
 
 --
@@ -5812,6 +5852,34 @@ CREATE INDEX statuses_work_id_idx ON public.statuses USING btree (work_id);
 
 
 --
+-- Name: idx_stripe_subscribers_stripe_customer_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX idx_stripe_subscribers_stripe_customer_id ON public.stripe_subscribers USING btree (stripe_customer_id);
+
+
+--
+-- Name: idx_stripe_subscribers_stripe_status; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_stripe_subscribers_stripe_status ON public.stripe_subscribers USING btree (stripe_status);
+
+
+--
+-- Name: idx_stripe_subscribers_stripe_subscription_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX idx_stripe_subscribers_stripe_subscription_id ON public.stripe_subscribers USING btree (stripe_subscription_id);
+
+
+--
+-- Name: idx_users_stripe_subscriber_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_users_stripe_subscriber_id ON public.users USING btree (stripe_subscriber_id);
+
+
+--
 -- Name: works_season_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -6272,6 +6340,14 @@ ALTER TABLE ONLY public.characters
 
 ALTER TABLE ONLY public.users
     ADD CONSTRAINT fk_rails_878aeec0fd FOREIGN KEY (gumroad_subscriber_id) REFERENCES public.gumroad_subscribers(id);
+
+
+--
+-- Name: users fk_users_stripe_subscriber; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT fk_users_stripe_subscriber FOREIGN KEY (stripe_subscriber_id) REFERENCES public.stripe_subscribers(id);
 
 
 --

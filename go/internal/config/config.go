@@ -69,6 +69,17 @@ type Config struct {
 	SentryEnvironment      string
 	SentryTracesSampleRate float64
 	SentryDebug            bool
+
+	// Stripe（決済）
+	StripeSecretKey      string
+	StripeWebhookSecret  string
+	StripePriceMonthlyID string
+	StripePriceYearlyID  string
+
+	// 季節設定（サイドバー表示用）
+	SeasonPrevious string
+	SeasonCurrent  string
+	SeasonNext     string
 }
 
 // Load は環境変数から設定を読み込みます
@@ -185,8 +196,19 @@ func Load() (*Config, error) {
 	cfg.SentryTracesSampleRate = parseSentryTracesSampleRate(os.Getenv("ANNICT_SENTRY_TRACES_SAMPLE_RATE"))
 	cfg.SentryDebug = os.Getenv("ANNICT_SENTRY_DEBUG") == "true"
 
+	// Stripe（オプショナル - サポーター決済）
+	cfg.StripeSecretKey = os.Getenv("ANNICT_STRIPE_SECRET_KEY")
+	cfg.StripeWebhookSecret = os.Getenv("ANNICT_STRIPE_WEBHOOK_SECRET")
+	cfg.StripePriceMonthlyID = os.Getenv("ANNICT_STRIPE_PRICE_MONTHLY_ID")
+	cfg.StripePriceYearlyID = os.Getenv("ANNICT_STRIPE_PRICE_YEARLY_ID")
+
 	// アセットバージョン（Gitコミットハッシュ）を設定
 	cfg.AssetVersion = getGitCommitHash()
+
+	// 季節設定（オプショナル - サイドバー表示用）
+	cfg.SeasonPrevious = os.Getenv("ANNICT_SEASON_PREVIOUS")
+	cfg.SeasonCurrent = os.Getenv("ANNICT_SEASON_CURRENT")
+	cfg.SeasonNext = os.Getenv("ANNICT_SEASON_NEXT")
 
 	return cfg, nil
 }
