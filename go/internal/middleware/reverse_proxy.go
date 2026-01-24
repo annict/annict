@@ -29,11 +29,13 @@ var goHandledPaths = []string{
 	"/sign_in/password", // パスワードログインページ・処理
 	"/sign_in/code",     // 6桁コード入力・検証・再送信
 	"/sign_in",          // メールアドレス入力・ログイン方法自動判定
+	"/sign_out",         // ログアウト処理
 	"/sign_up",          // 新規登録（メールアドレス入力・確認コード送信）
 	"/password/reset",   // パスワードリセット申請
 	"/password/edit",    // パスワードリセット実行
 	"/password",         // パスワード更新
-	// 将来追加: "/works/popular"（人気アニメページ）など
+	"/supporters",       // サポーターページ
+	"/webhooks/stripe",  // Stripe Webhook受信
 }
 
 // NewReverseProxyMiddleware は新しいReverseProxyMiddlewareを作成

@@ -649,13 +649,7 @@ module GeneratedUrlHelpersModule
   def settings_user_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }
-  def sign_out_url(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
   def staff_list_url(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
-  def supporters_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }
   def terms_url(*args); end
@@ -674,12 +668,6 @@ module GeneratedUrlHelpersModule
 
   sig { params(args: T.untyped).returns(String) }
   def user_facebook_omniauth_callback_url(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
-  def user_gumroad_omniauth_authorize_url(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
-  def user_gumroad_omniauth_callback_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }
   def user_ics_alt_url(*args); end

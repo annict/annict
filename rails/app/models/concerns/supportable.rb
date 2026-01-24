@@ -55,6 +55,10 @@ module Supportable
       subscriber&.dig("ended_at")
     end
 
+    def gumroad_failed_at
+      subscriber&.dig("failed_at")
+    end
+
     private
 
     def gumroad_client

@@ -225,8 +225,6 @@ ja:
         make_sure_to_copy: 作成した個人用トークンをコピーしてください。この文字列は再表示できません。
         new: 新規作成
         no_tokens: 作成されていません
-    supporters:
-      gumroad_subscriber_not_found: Gumroadからメンバーシップ情報が取得できませんでした。
     tracks:
       episodes_you_have_watched: 視聴エピソード
       no_trackable_episodes: 未視聴エピソードはありません

@@ -780,6 +780,27 @@ Go 版 Annict では、関心の分離を意識したアーキテクチャを採
 - **配置**: `internal/usecase` （フラット構造）
 - **責務**: トランザクション管理、複数リポジトリを跨ぐ処理
 - **命名**: ファイル名 `{action}_{entity}.go`、構造体名 `{Action}{Entity}Usecase`
+- **単一責任**: 各 Usecase は **`Execute` メソッドのみ** を公開する（1 Usecase = 1 操作）
+
+**重要**: 1 つの Usecase に複数の公開メソッド（`Execute`, `ExecuteDelete` など）を持たせないでください。異なる操作が必要な場合は、別の Usecase として分離します。
+
+```go
+// ✅ 良い例: 各Usecaseが単一のExecuteメソッドを持つ
+type CreateStripeSubscriberUsecase struct { ... }
+func (uc *CreateStripeSubscriberUsecase) Execute(ctx, input) (*Result, error)
+
+type UpdateStripeSubscriberUsecase struct { ... }
+func (uc *UpdateStripeSubscriberUsecase) Execute(ctx, input) (*Result, error)
+
+type DeleteStripeSubscriberUsecase struct { ... }
+func (uc *DeleteStripeSubscriberUsecase) Execute(ctx, input) (*Result, error)
+
+// ❌ 悪い例: 1つのUsecaseに複数の公開メソッド
+type StripeSubscriberUsecase struct { ... }
+func (uc *StripeSubscriberUsecase) Create(ctx, input) (*Result, error)
+func (uc *StripeSubscriberUsecase) Update(ctx, input) (*Result, error)
+func (uc *StripeSubscriberUsecase) Delete(ctx, input) (*Result, error)
+```
 
 #### 詳細ドキュメント
 

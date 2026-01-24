@@ -1,5 +1,5 @@
 
--- Dumped from database version 17.3 (Debian 17.3-3.pgdg120+1)
+-- Dumped from database version 17.5 (Debian 17.5-1.pgdg130+1)
 -- Dumped by pg_dump version 17.6 (Debian 17.6-0+deb13u1)
 
 SET statement_timeout = 0;
@@ -2458,6 +2458,81 @@ CREATE TABLE public.statuses (
 
 
 --
+-- Name: stripe_subscribers; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.stripe_subscribers (
+    id bigint NOT NULL,
+    stripe_customer_id character varying(255) NOT NULL,
+    stripe_subscription_id character varying(255) NOT NULL,
+    stripe_price_id character varying(255) NOT NULL,
+    stripe_status character varying(50) NOT NULL,
+    stripe_current_period_start timestamp with time zone NOT NULL,
+    stripe_current_period_end timestamp with time zone NOT NULL,
+    stripe_cancel_at timestamp with time zone,
+    stripe_canceled_at timestamp with time zone,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: stripe_subscribers_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.stripe_subscribers_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: stripe_subscribers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.stripe_subscribers_id_seq OWNED BY public.stripe_subscribers.id;
+
+
+--
+-- Name: stripe_webhook_events; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.stripe_webhook_events (
+    id bigint NOT NULL,
+    stripe_event_id character varying(255) NOT NULL,
+    stripe_event_type character varying(255) NOT NULL,
+    stripe_payload jsonb NOT NULL,
+    status character varying(50) DEFAULT 'pending'::character varying NOT NULL,
+    error_message text,
+    received_at timestamp with time zone NOT NULL,
+    processed_at timestamp with time zone,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: stripe_webhook_events_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.stripe_webhook_events_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: stripe_webhook_events_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.stripe_webhook_events_id_seq OWNED BY public.stripe_webhook_events.id;
+
+
+--
 -- Name: syobocal_alerts; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -2794,7 +2869,8 @@ CREATE TABLE public.users (
     on_hold_works_count integer DEFAULT 0 NOT NULL,
     dropped_works_count integer DEFAULT 0 NOT NULL,
     following_count integer DEFAULT 0 NOT NULL,
-    followers_count integer DEFAULT 0 NOT NULL
+    followers_count integer DEFAULT 0 NOT NULL,
+    stripe_subscriber_id bigint
 );
 
 
@@ -3467,6 +3543,20 @@ ALTER TABLE ONLY public.sign_in_codes ALTER COLUMN id SET DEFAULT nextval('publi
 --
 
 ALTER TABLE ONLY public.sign_up_codes ALTER COLUMN id SET DEFAULT nextval('public.sign_up_codes_id_seq'::regclass);
+
+
+--
+-- Name: stripe_subscribers id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.stripe_subscribers ALTER COLUMN id SET DEFAULT nextval('public.stripe_subscribers_id_seq'::regclass);
+
+
+--
+-- Name: stripe_webhook_events id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.stripe_webhook_events ALTER COLUMN id SET DEFAULT nextval('public.stripe_webhook_events_id_seq'::regclass);
 
 
 --
@@ -4200,6 +4290,22 @@ ALTER TABLE ONLY public.statuses
 
 
 --
+-- Name: stripe_subscribers stripe_subscribers_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.stripe_subscribers
+    ADD CONSTRAINT stripe_subscribers_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: stripe_webhook_events stripe_webhook_events_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.stripe_webhook_events
+    ADD CONSTRAINT stripe_webhook_events_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: syobocal_alerts syobocal_alerts_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4521,6 +4627,62 @@ CREATE INDEX idx_sign_up_codes_email ON public.sign_up_codes USING btree (email)
 --
 
 CREATE INDEX idx_sign_up_codes_expires_at ON public.sign_up_codes USING btree (expires_at);
+
+
+--
+-- Name: idx_stripe_subscribers_stripe_customer_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX idx_stripe_subscribers_stripe_customer_id ON public.stripe_subscribers USING btree (stripe_customer_id);
+
+
+--
+-- Name: idx_stripe_subscribers_stripe_status; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_stripe_subscribers_stripe_status ON public.stripe_subscribers USING btree (stripe_status);
+
+
+--
+-- Name: idx_stripe_subscribers_stripe_subscription_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX idx_stripe_subscribers_stripe_subscription_id ON public.stripe_subscribers USING btree (stripe_subscription_id);
+
+
+--
+-- Name: idx_stripe_webhook_events_received_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_stripe_webhook_events_received_at ON public.stripe_webhook_events USING btree (received_at);
+
+
+--
+-- Name: idx_stripe_webhook_events_status; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_stripe_webhook_events_status ON public.stripe_webhook_events USING btree (status);
+
+
+--
+-- Name: idx_stripe_webhook_events_stripe_event_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX idx_stripe_webhook_events_stripe_event_id ON public.stripe_webhook_events USING btree (stripe_event_id);
+
+
+--
+-- Name: idx_stripe_webhook_events_stripe_event_type; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_stripe_webhook_events_stripe_event_type ON public.stripe_webhook_events USING btree (stripe_event_type);
+
+
+--
+-- Name: idx_users_stripe_subscriber_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_users_stripe_subscriber_id ON public.users USING btree (stripe_subscriber_id);
 
 
 --
@@ -7120,6 +7282,14 @@ ALTER TABLE ONLY public.episode_records
 
 
 --
+-- Name: users fk_users_stripe_subscriber; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT fk_users_stripe_subscriber FOREIGN KEY (stripe_subscriber_id) REFERENCES public.stripe_subscribers(id);
+
+
+--
 -- Name: follows follows_following_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -7565,4 +7735,7 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20251021153929'),
     ('20251109101724'),
     ('20251112061948'),
-    ('20251113173140');
+    ('20251113173140'),
+    ('20260111083416'),
+    ('20260111084224'),
+    ('20260111101233');

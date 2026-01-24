@@ -28,9 +28,14 @@ import (
 	"github.com/annict/annict/go/internal/handler/sign_in"
 	"github.com/annict/annict/go/internal/handler/sign_in_code"
 	"github.com/annict/annict/go/internal/handler/sign_in_password"
+	"github.com/annict/annict/go/internal/handler/sign_out"
 	"github.com/annict/annict/go/internal/handler/sign_up"
 	"github.com/annict/annict/go/internal/handler/sign_up_code"
 	"github.com/annict/annict/go/internal/handler/sign_up_username"
+	"github.com/annict/annict/go/internal/handler/supporters"
+	"github.com/annict/annict/go/internal/handler/supporters_checkout"
+	"github.com/annict/annict/go/internal/handler/supporters_portal"
+	stripewebhook "github.com/annict/annict/go/internal/handler/webhooks/stripe"
 	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/image"
 	authMiddleware "github.com/annict/annict/go/internal/middleware"
@@ -39,6 +44,7 @@ import (
 	"github.com/annict/annict/go/internal/repository"
 	annictSentry "github.com/annict/annict/go/internal/sentry"
 	"github.com/annict/annict/go/internal/session"
+	annictStripe "github.com/annict/annict/go/internal/stripe"
 	"github.com/annict/annict/go/internal/turnstile"
 	"github.com/annict/annict/go/internal/usecase"
 	"github.com/annict/annict/go/internal/worker"
@@ -308,6 +314,9 @@ func main() {
 	// パスワードログインハンドラーの初期化
 	signInPasswordHandler := sign_in_password.NewHandler(cfg, userRepo, sessionManager, createSessionUC)
 
+	// ログアウトハンドラーの初期化
+	signOutHandler := sign_out.NewHandler(sessionManager)
+
 	// パスワードリセット申請ハンドラーの初期化
 	createPasswordResetTokenUC := usecase.NewCreatePasswordResetTokenUsecase(db, queries, riverClient)
 	passwordResetHandler := password_reset.NewHandler(cfg, userRepo, sessionManager, limiter, turnstileClient, createPasswordResetTokenUC)
@@ -319,6 +328,31 @@ func main() {
 
 	// Web App Manifestハンドラーの初期化
 	manifestHandler := manifest.NewHandler(cfg)
+
+	// サポーターページハンドラーの初期化
+	stripeSubscriberRepo := repository.NewStripeSubscriberRepository(queries)
+	gumroadSubscriberRepo := repository.NewGumroadSubscriberRepository(queries)
+	annictStripeCfg := &annictStripe.Config{
+		SecretKey:      cfg.StripeSecretKey,
+		WebhookSecret:  cfg.StripeWebhookSecret,
+		PriceMonthlyID: cfg.StripePriceMonthlyID,
+		PriceYearlyID:  cfg.StripePriceYearlyID,
+	}
+	stripeClient := annictStripe.NewClient(cfg.StripeSecretKey)
+	supportersHandler := supporters.NewHandler(cfg, sessionManager, imageHelper, stripeSubscriberRepo, gumroadSubscriberRepo, annictStripeCfg, stripeClient)
+
+	// Stripe Checkoutハンドラーの初期化
+	supportersCheckoutHandler := supporters_checkout.NewHandler(cfg, sessionManager, stripeSubscriberRepo, annictStripeCfg, stripeClient)
+
+	// Stripe Customer Portalハンドラーの初期化
+	supportersPortalHandler := supporters_portal.NewHandler(cfg, sessionManager, stripeSubscriberRepo, stripeClient)
+
+	// Stripe Webhookハンドラーの初期化
+	stripeWebhookEventRepo := repository.NewStripeWebhookEventRepository(queries)
+	createStripeSubscriberUC := usecase.NewCreateStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo, stripeClient)
+	updateStripeSubscriberUC := usecase.NewUpdateStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo)
+	deleteStripeSubscriberUC := usecase.NewDeleteStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo)
+	stripeWebhookHandler := stripewebhook.NewHandler(cfg, stripeWebhookEventRepo, stripeSubscriberRepo, userRepo, createStripeSubscriberUC, updateStripeSubscriberUC, deleteStripeSubscriberUC)
 
 	// 静的ファイルの配信 (Tailwind CLI + esbuild のビルド結果)
 	fileServer := http.FileServer(http.Dir("./static"))
@@ -336,6 +370,8 @@ func main() {
 	r.Patch("/sign_in/code", signInCodeHandler.Update)
 	r.Get("/sign_in/password", signInPasswordHandler.New)
 	r.Post("/sign_in/password", signInPasswordHandler.Create)
+	r.Delete("/sign_out", signOutHandler.Delete) // Rails UJSからのDELETEリクエスト
+	r.Post("/sign_out", signOutHandler.Delete)   // Go版HTMLフォームからのPOST + _method=DELETE
 	r.Get("/sign_up", signUpHandler.New)
 	r.Post("/sign_up", signUpHandler.Create)
 	r.Get("/sign_up/code", signUpCodeHandler.New)
@@ -351,6 +387,14 @@ func main() {
 	// パスワード編集・更新
 	r.Get("/password/edit", passwordHandler.Edit)
 	r.Patch("/password", passwordHandler.Update) // HTMLフォームからは_methodパラメータでPATCHを送信
+
+	// サポーターページ
+	r.Get("/supporters", supportersHandler.Show)
+	r.Post("/supporters/checkout", supportersCheckoutHandler.Create)
+	r.Post("/supporters/portal", supportersPortalHandler.Create)
+
+	// Stripe Webhook
+	r.Post("/webhooks/stripe", stripeWebhookHandler.Create)
 
 	// サーバー起動
 	// Dockerコンテナ内で動かす場合、0.0.0.0でリッスンする必要がある

@@ -1,0 +1,230 @@
+package components
+
+import (
+	"context"
+	"strconv"
+
+	"github.com/annict/annict/go/internal/templates"
+	"github.com/annict/annict/go/internal/viewmodel"
+)
+
+// formatNotificationCount は通知数を文字列に変換します
+func formatNotificationCount(count int32) string {
+	return strconv.FormatInt(int64(count), 10)
+}
+
+// Sidebar はサイドバーコンポーネントです
+// user: ログインユーザー情報（viewmodel.User）。nilの場合は未ログイン状態
+// seasons: 季節情報（前・現在・次）
+templ Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Seasons) {
+	<aside class="sidebar" data-side="left" aria-hidden="false">
+		<nav aria-label="Sidebar navigation">
+			<section class="scrollbar gap-4">
+			  <div>
+					<a href="/" class="flex items-center justify-center bg-(--color-mizuho-600) h-[52px]">
+    				<img
+     					height="30"
+     					loading="lazy"
+     					src="/static/images/logo-white.png"
+     					width="25"
+    				  alt="Annict"
+    				/>
+   			  </a>
+				</div>
+
+				<div role="group" class="py-0">
+					if user != nil {
+						<a
+						  class="flex items-center gap-4 p-2 rounded-lg hover:bg-sidebar-accent transition-colors"
+						  href={ templ.SafeURL("/@" + user.Username) }
+						>
+							@Avatar(user)
+
+							<div class="flex-1 min-w-0">
+								<div class="font-bold text-sm truncate">
+								  { user.Username }
+								</div>
+
+								<div class="text-xs text-muted-foreground truncate">
+								  { "@" + user.Username }
+								</div>
+							</div>
+						</a>
+					} else {
+					  @sidebarMenuItem(ctx, "/sign_in", "nav_sign_in", "sign-in-regular")
+					}
+				</div>
+
+				<!-- 検索フォーム -->
+				<div class="px-4">
+					<form method="get" action="/search" autocomplete="off">
+						<input
+							type="text"
+							name="q"
+							class="input w-full rounded-full text-sm"
+							placeholder={ templates.T(ctx, "sidebar_search_placeholder") }
+						/>
+					</form>
+				</div>
+
+				<!-- メインメニュー -->
+				<div role="group" class="py-0">
+					<ul class="space-y-1">
+						@sidebarMenuItem(ctx, "/", "sidebar_home", "house-regular")
+						if user != nil {
+							@sidebarMenuItem(ctx, "/@"+user.Username, "sidebar_profile", "user-regular")
+						} else {
+							@sidebarMenuItem(ctx, "/sign_in", "sidebar_profile", "user-regular")
+						}
+						@sidebarNotificationMenuItem(ctx, user)
+						@sidebarMenuItem(ctx, "/track", "sidebar_track", "list-checks-regular")
+					</ul>
+				</div>
+
+				<!-- ライブラリ -->
+				<div role="group" aria-labelledby="sidebar-library" class="py-0">
+					<h3
+						id="sidebar-library"
+						class="font-bold tracking-wider"
+					>
+						{ templates.T(ctx, "sidebar_library") }
+					</h3>
+
+					<ul class="space-y-1">
+						if user != nil {
+							@sidebarMenuItem(ctx, libraryPath(user, "watching"), "sidebar_watching", "play-regular")
+							@sidebarMenuItem(ctx, libraryPath(user, "wanna_watch"), "sidebar_plan_to_watch", "record-regular")
+							@sidebarMenuItem(ctx, libraryPath(user, "watched"), "sidebar_completed", "check-regular")
+							@sidebarMenuItem(ctx, libraryPath(user, "on_hold"), "sidebar_on_hold", "pause-regular")
+							@sidebarMenuItem(ctx, libraryPath(user, "stop_watching"), "sidebar_dropped", "stop-regular")
+						} else {
+							@sidebarMenuItem(ctx, "/sign_in", "sidebar_watching", "play-regular")
+							@sidebarMenuItem(ctx, "/sign_in", "sidebar_plan_to_watch", "record-regular")
+							@sidebarMenuItem(ctx, "/sign_in", "sidebar_completed", "check-regular")
+							@sidebarMenuItem(ctx, "/sign_in", "sidebar_on_hold", "pause-regular")
+							@sidebarMenuItem(ctx, "/sign_in", "sidebar_dropped", "stop-regular")
+						}
+					</ul>
+				</div>
+
+				<!-- 見つける -->
+				<div role="group" aria-labelledby="sidebar-explore" class="py-0">
+					<h3
+					  id="sidebar-explore"
+						class="font-bold tracking-wider"
+					>
+						{ templates.T(ctx, "sidebar_explore") }
+					</h3>
+
+					<ul class="space-y-1">
+			      @sidebarMenuItem(ctx, seasons.Current.Path(), "sidebar_current_season", seasons.Current.Icon())
+					  @sidebarMenuItem(ctx, seasons.Next.Path(), "sidebar_next_season", seasons.Next.Icon())
+					  @sidebarMenuItem(ctx, seasons.Previous.Path(), "sidebar_previous_season", seasons.Previous.Icon())
+					  @sidebarMenuItem(ctx, "/works/popular", "sidebar_popular", "fire-regular")
+					  @sidebarMenuItem(ctx, "/works/newest", "sidebar_newest", "lightning-regular")
+					</ul>
+				</div>
+
+				<!-- その他 -->
+				<div role="group" aria-labelledby="sidebar-misc" class="py-0">
+					<h3
+					  id="sidebar-misc"
+						class="font-bold tracking-wider"
+					>
+						{ templates.T(ctx, "sidebar_misc") }
+					</h3>
+
+					<ul class="space-y-1">
+					  @sidebarMenuItem(ctx, "/channels", "sidebar_channels", "television-regular")
+	          @sidebarMenuItem(ctx, "/settings/profile", "sidebar_settings", "gear-regular")
+			      @sidebarMenuItem(ctx, "/faq", "sidebar_faq", "question-regular")
+		        @sidebarMenuItem(ctx, "/community", "sidebar_community", "users-three-regular")
+					</ul>
+				</div>
+
+				<!-- サービス -->
+				<div role="group" aria-labelledby="sidebar-services" class="py-0">
+					<h3
+					  id="sidebar-services"
+						class="font-bold tracking-wider"
+					>
+						{ templates.T(ctx, "sidebar_services") }
+					</h3>
+
+					<ul class="space-y-1">
+					  @sidebarMenuItem(ctx, "/userland", "sidebar_userland", "megaphone-regular")
+	          @sidebarMenuItem(ctx, "/forum", "sidebar_forum", "chats-circle-regular")
+			      @sidebarMenuItem(ctx, "/db", "sidebar_db", "database-regular")
+			      @sidebarMenuItem(ctx, "/supporters", "sidebar_supporters", "sparkle-regular")
+			      @sidebarMenuItem(ctx, "https://developers.annict.com/", "sidebar_developers", "code-regular")
+					</ul>
+				</div>
+
+				<!-- ログアウト -->
+				if user != nil {
+					<div class="px-2 mb-4 border-t border-border pt-4">
+						<form method="POST" action="/sign_out">
+							<input type="hidden" name="_method" value="DELETE"/>
+							<button
+								type="submit"
+								class="flex items-center gap-3 p-2 rounded-lg hover:bg-sidebar-accent transition-colors w-full cursor-pointer"
+								{ templ.Attributes{"onclick": "return confirm('" + templates.T(ctx, "nav_sign_out_confirm") + "')"}... }
+							>
+								@templates.Icon("sign-out-regular", "w-[18px] h-[18px] fill-(--muted-foreground)")
+
+								<span class="text-base leading-none">
+									{ templates.T(ctx, "nav_sign_out") }
+								</span>
+							</button>
+						</form>
+					</div>
+				}
+			</section>
+		</nav>
+	</aside>
+}
+
+// libraryPath はライブラリページのパスを生成します
+func libraryPath(user *viewmodel.User, statusKind string) string {
+	return "/@" + user.Username + "/library/" + statusKind
+}
+
+// sidebarMenuItem はサイドバーのメニュー項目を生成します
+templ sidebarMenuItem(ctx context.Context, path string, labelKey string, iconName string) {
+	<li>
+		<a
+			href={ templ.SafeURL(path) }
+			class="flex items-center gap-3 p-2 rounded-lg hover:bg-sidebar-accent transition-colors"
+		>
+			@templates.Icon(iconName, "w-[18px] h-[18px] fill-(--muted-foreground)")
+
+			<span class="text-base leading-none">
+				{ templates.T(ctx, labelKey) }
+			</span>
+		</a>
+	</li>
+}
+
+// sidebarNotificationMenuItem は通知メニュー項目を生成します（未読バッジ付き）
+templ sidebarNotificationMenuItem(ctx context.Context, user *viewmodel.User) {
+	<li>
+		<a
+			href="/notifications"
+			class="flex items-center justify-between p-2 rounded-lg hover:bg-sidebar-accent transition-colors"
+		>
+			<div class="flex items-center gap-3">
+				@templates.Icon("bell-regular", "w-[18px] h-[18px] fill-(--muted-foreground)")
+
+				<span class="text-base leading-none">
+					{ templates.T(ctx, "sidebar_notifications") }
+				</span>
+			</div>
+
+			if user != nil && user.NotificationsCount > 0 {
+				<span class="badge-destructive font-bold">
+					{ formatNotificationCount(user.NotificationsCount) }
+				</span>
+			}
+		</a>
+	</li>
+}

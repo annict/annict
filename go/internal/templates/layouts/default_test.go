@@ -13,7 +13,6 @@ import (
 
 	"github.com/annict/annict/go/internal/config"
 	"github.com/annict/annict/go/internal/i18n"
-	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/viewmodel"
 )
@@ -48,7 +47,7 @@ func TestDefault_Rendering(t *testing.T) {
 
 	// レンダリング
 	var buf bytes.Buffer
-	err := Default(ctx, meta, nil, nil, "v1.0.0", content).Render(ctx, &buf)
+	err := Default(ctx, meta, nil, viewmodel.Seasons{}, nil, "v1.0.0", content).Render(ctx, &buf)
 	if err != nil {
 		t.Fatalf("レンダリングエラー: %v", err)
 	}
@@ -60,14 +59,12 @@ func TestDefault_Rendering(t *testing.T) {
 		"<!doctype html>",
 		"<html lang=\"ja\">",
 		"<head>",
-		"<body class=\"min-h-screen flex flex-col bg-gray-50\">",
-		"<header class=\"bg-white shadow-sm\">",
-		"<nav class=\"container mx-auto px-4\">",
-		"Annict</a>",
-		"<main class=\"flex-1 container mx-auto px-4 py-8\">",
-		"<footer class=\"bg-gray-100 mt-auto\">",
+		"<body>",
+		`<aside class="sidebar"`,
+		"<main>",
+		"<footer",
 		"Test Content",
-		"&copy; 2024 Annict (Go Version)",
+		"&copy; 2014-2026 Annict",
 	}
 
 	for _, expected := range checks {
@@ -98,11 +95,10 @@ func TestDefault_WithUser(t *testing.T) {
 
 	meta := viewmodel.DefaultPageMeta(ctx, cfg)
 
-	// テストユーザー
-	user := &query.GetUserByIDRow{
+	// テストユーザー（viewmodel.User）
+	user := &viewmodel.User{
 		ID:       1,
 		Username: "testuser",
-		Email:    "test@example.com",
 	}
 
 	content := templ.ComponentFunc(func(ctx context.Context, w io.Writer) error {
@@ -111,7 +107,7 @@ func TestDefault_WithUser(t *testing.T) {
 	})
 
 	var buf bytes.Buffer
-	err := Default(ctx, meta, user, nil, "v1.0.0", content).Render(ctx, &buf)
+	err := Default(ctx, meta, user, viewmodel.Seasons{}, nil, "v1.0.0", content).Render(ctx, &buf)
 	if err != nil {
 		t.Fatalf("レンダリングエラー: %v", err)
 	}
@@ -161,7 +157,7 @@ func TestDefault_WithoutUser(t *testing.T) {
 	})
 
 	var buf bytes.Buffer
-	err := Default(ctx, meta, nil, nil, "v1.0.0", content).Render(ctx, &buf)
+	err := Default(ctx, meta, nil, viewmodel.Seasons{}, nil, "v1.0.0", content).Render(ctx, &buf)
 	if err != nil {
 		t.Fatalf("レンダリングエラー: %v", err)
 	}
@@ -211,7 +207,7 @@ func TestDefault_WithFlash(t *testing.T) {
 	})
 
 	var buf bytes.Buffer
-	err := Default(ctx, meta, nil, flash, "v1.0.0", content).Render(ctx, &buf)
+	err := Default(ctx, meta, nil, viewmodel.Seasons{}, flash, "v1.0.0", content).Render(ctx, &buf)
 	if err != nil {
 		t.Fatalf("レンダリングエラー: %v", err)
 	}
@@ -262,7 +258,7 @@ func TestDefault_I18n(t *testing.T) {
 			})
 
 			var buf bytes.Buffer
-			err := Default(ctx, meta, nil, nil, "v1.0.0", content).Render(ctx, &buf)
+			err := Default(ctx, meta, nil, viewmodel.Seasons{}, nil, "v1.0.0", content).Render(ctx, &buf)
 			if err != nil {
 				t.Fatalf("レンダリングエラー: %v", err)
 			}

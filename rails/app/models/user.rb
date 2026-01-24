@@ -19,7 +19,7 @@ class User < ApplicationRecord
   # :confirmable, :lockable, :timeoutable
   devise :database_authenticatable, :omniauthable, :registerable, :trackable,
     :rememberable, :recoverable,
-    omniauth_providers: %i[facebook gumroad],
+    omniauth_providers: %i[facebook],
     authentication_keys: %i[email_username]
 
   enumerize :allowed_locales, in: ApplicationRecord::LOCALES, multiple: true, default: ApplicationRecord::LOCALES
@@ -27,6 +27,7 @@ class User < ApplicationRecord
   enumerize :role, in: {user: 0, admin: 1, editor: 2}, default: :user, scope: true
 
   belongs_to :gumroad_subscriber, optional: true
+  belongs_to :stripe_subscriber, optional: true
   has_many :activity_groups, dependent: :destroy
   has_many :activities, dependent: :destroy
   has_many :work_records, dependent: :destroy
@@ -205,10 +206,6 @@ class User < ApplicationRecord
     providers.where(name: "facebook").first
   end
 
-  def gumroad
-    providers.where(name: "gumroad").first
-  end
-
   def hide_episode_record_body?(episode)
     setting.hide_record_body? &&
       works.desiring_to_watch.include?(episode.work) &&
@@ -295,7 +292,7 @@ class User < ApplicationRecord
   end
 
   def supporter?
-    gumroad_subscriber&.active? == true
+    stripe_subscriber&.active? == true || gumroad_subscriber&.active? == true
   end
 
   def weeks

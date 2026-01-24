@@ -134,3 +134,48 @@ func (h *Helper) ExtractImageURL(imageDataJSON string) string {
 	}
 	return ""
 }
+
+// GetAvatarImageURL はアバター画像のURLを生成します（1:1比率）
+func (h *Helper) GetAvatarImageURL(imageDataJSON string, width int, format string) string {
+	// image_dataから元画像URLを取得
+	originalURL := h.ExtractImageURL(imageDataJSON)
+	if originalURL == "" {
+		return ""
+	}
+
+	return h.generateSquareImgproxyURL(originalURL, width, format)
+}
+
+// generateSquareImgproxyURL は正方形（1:1）の画像URL生成します
+func (h *Helper) generateSquareImgproxyURL(originalURL string, width int, format string) string {
+	if originalURL == "" {
+		return ""
+	}
+
+	// 1:1比率なので高さ＝幅
+	height := width
+
+	// Processing options（fill-downでアスペクト比を維持しつつ指定サイズに収める）
+	processingOptions := fmt.Sprintf("resize:fill-down:%d:%d:0/gravity:ce", width, height)
+	if format != "jpg" {
+		processingOptions = fmt.Sprintf("%s/format:%s", processingOptions, format)
+	}
+
+	// URLをエンコード
+	encodedURL := base64.RawURLEncoding.EncodeToString([]byte(originalURL))
+
+	// パスを構築
+	path := fmt.Sprintf("/%s/%s.%s", processingOptions, encodedURL, format)
+
+	// 署名を生成
+	key, _ := hex.DecodeString(h.config.ImgproxyKey)
+	salt, _ := hex.DecodeString(h.config.ImgproxySalt)
+
+	mac := hmac.New(sha256.New, key)
+	mac.Write(salt)
+	mac.Write([]byte(path))
+	signature := base64.RawURLEncoding.EncodeToString(mac.Sum(nil))
+
+	// 署名付きURLを構築
+	return fmt.Sprintf("%s/%s%s", h.config.ImgproxyEndpoint, signature, path)
+}

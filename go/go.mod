@@ -27,6 +27,7 @@ require (
 	github.com/riverqueue/river v0.28.0
 	github.com/riverqueue/river/riverdriver/riverpgxv5 v0.28.0
 	github.com/schollz/progressbar/v3 v3.18.0
+	github.com/stripe/stripe-go/v84 v84.1.0
 	golang.org/x/tools v0.40.0
 )
 

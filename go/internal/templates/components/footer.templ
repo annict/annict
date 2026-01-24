@@ -1,0 +1,36 @@
+package components
+
+import (
+	"context"
+
+	"github.com/annict/annict/go/internal/templates"
+)
+
+// Footer はページフッターを表示します
+// 法的情報と著作権表示のみを含む最小限のフッター
+templ Footer(ctx context.Context) {
+	<footer
+		class="mt-auto px-4 pt-[3rem] pb-[calc(var(--bottom-nav-max-height)+3rem)] md:pb-[3rem] text-center
+			flex items-center justify-center flex-wrap gap-4
+		"
+	>
+		<ul class="flex items-center justify-center gap-4 basis-full md:basis-auto">
+			@footerLink(ctx, "/terms", "footer_terms")
+			@footerLink(ctx, "/privacy", "footer_privacy")
+			@footerLink(ctx, "/legal", "footer_legal")
+		</ul>
+
+		<div class="text-sm text-muted-foreground order-last md:order-first">
+			&copy; 2014-2026 Annict
+		</div>
+	</footer>
+}
+
+// footerLink はフッターのリンク項目を生成します
+templ footerLink(ctx context.Context, path string, labelKey string) {
+	<li>
+		<a class="link-muted text-sm" href={ templ.SafeURL(path) }>
+			{ templates.T(ctx, labelKey) }
+		</a>
+	</li>
+}

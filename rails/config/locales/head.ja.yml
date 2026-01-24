@@ -250,8 +250,6 @@ ja:
         new: アカウント作成
       staffs:
         index: アニメ「%{title}」のスタッフ
-      supporters:
-        show: Annict Supporters
       tracks:
         show: 記録する
       userland:

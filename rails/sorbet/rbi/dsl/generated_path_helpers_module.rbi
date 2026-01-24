@@ -649,13 +649,7 @@ module GeneratedPathHelpersModule
   def settings_user_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }
-  def sign_out_path(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
   def staff_list_path(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
-  def supporters_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }
   def terms_path(*args); end
@@ -674,12 +668,6 @@ module GeneratedPathHelpersModule
 
   sig { params(args: T.untyped).returns(String) }
   def user_facebook_omniauth_callback_path(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
-  def user_gumroad_omniauth_authorize_path(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
-  def user_gumroad_omniauth_callback_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }
   def user_ics_alt_path(*args); end

@@ -252,8 +252,6 @@ en:
         new: Sign Up
       staffs:
         index: Staffs of %{title}
-      supporters:
-        show: Annict Supporters
       tracks:
         show: Track
       userland:

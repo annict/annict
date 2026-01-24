@@ -312,6 +312,9 @@ class User
     sig { params(args: T.untyped, blk: T.untyped).returns(::Setting) }
     def build_setting(*args, &blk); end
 
+    sig { params(args: T.untyped, blk: T.untyped).returns(::StripeSubscriber) }
+    def build_stripe_subscriber(*args, &blk); end
+
     sig { returns(T::Array[T.untyped]) }
     def channel_ids; end
 
@@ -405,6 +408,12 @@ class User
 
     sig { params(args: T.untyped, blk: T.untyped).returns(::Setting) }
     def create_setting!(*args, &blk); end
+
+    sig { params(args: T.untyped, blk: T.untyped).returns(::StripeSubscriber) }
+    def create_stripe_subscriber(*args, &blk); end
+
+    sig { params(args: T.untyped, blk: T.untyped).returns(::StripeSubscriber) }
+    def create_stripe_subscriber!(*args, &blk); end
 
     # This method is created by ActiveRecord on the `User` class because it declared `has_many :db_activities`.
     # 🔗 [Rails guide for `has_many` association](https://guides.rubyonrails.org/association_basics.html#the-has-many-association)
@@ -828,6 +837,9 @@ class User
     sig { returns(T.nilable(::Setting)) }
     def reload_setting; end
 
+    sig { returns(T.nilable(::StripeSubscriber)) }
+    def reload_stripe_subscriber; end
+
     sig { void }
     def reset_email_notification; end
 
@@ -839,6 +851,9 @@ class User
 
     sig { void }
     def reset_setting; end
+
+    sig { void }
+    def reset_stripe_subscriber; end
 
     sig { returns(T.nilable(::Setting)) }
     def setting; end
@@ -859,6 +874,12 @@ class User
 
     sig { params(value: T::Enumerable[::Status]).void }
     def statuses=(value); end
+
+    sig { returns(T.nilable(::StripeSubscriber)) }
+    def stripe_subscriber; end
+
+    sig { params(value: T.nilable(::StripeSubscriber)).void }
+    def stripe_subscriber=(value); end
 
     sig { returns(T::Array[T.untyped]) }
     def userland_project_ids; end
@@ -2790,6 +2811,9 @@ class User
     def restore_status_cache_expired_at!; end
 
     sig { void }
+    def restore_stripe_subscriber_id!; end
+
+    sig { void }
     def restore_time_zone!; end
 
     sig { void }
@@ -3071,6 +3095,12 @@ class User
     sig { returns(T::Boolean) }
     def saved_change_to_status_cache_expired_at?; end
 
+    sig { returns(T.nilable([T.nilable(::Integer), T.nilable(::Integer)])) }
+    def saved_change_to_stripe_subscriber_id; end
+
+    sig { returns(T::Boolean) }
+    def saved_change_to_stripe_subscriber_id?; end
+
     sig { returns(T.nilable([::String, ::String])) }
     def saved_change_to_time_zone; end
 
@@ -3212,6 +3242,51 @@ class User
 
     sig { void }
     def status_cache_expired_at_will_change!; end
+
+    sig { returns(T.nilable(::Integer)) }
+    def stripe_subscriber_id; end
+
+    sig { params(value: T.nilable(::Integer)).returns(T.nilable(::Integer)) }
+    def stripe_subscriber_id=(value); end
+
+    sig { returns(T::Boolean) }
+    def stripe_subscriber_id?; end
+
+    sig { returns(T.nilable(::Integer)) }
+    def stripe_subscriber_id_before_last_save; end
+
+    sig { returns(T.untyped) }
+    def stripe_subscriber_id_before_type_cast; end
+
+    sig { returns(T::Boolean) }
+    def stripe_subscriber_id_came_from_user?; end
+
+    sig { returns(T.nilable([T.nilable(::Integer), T.nilable(::Integer)])) }
+    def stripe_subscriber_id_change; end
+
+    sig { returns(T.nilable([T.nilable(::Integer), T.nilable(::Integer)])) }
+    def stripe_subscriber_id_change_to_be_saved; end
+
+    sig { params(from: T.nilable(::Integer), to: T.nilable(::Integer)).returns(T::Boolean) }
+    def stripe_subscriber_id_changed?(from: T.unsafe(nil), to: T.unsafe(nil)); end
+
+    sig { returns(T.nilable(::Integer)) }
+    def stripe_subscriber_id_in_database; end
+
+    sig { returns(T.nilable([T.nilable(::Integer), T.nilable(::Integer)])) }
+    def stripe_subscriber_id_previous_change; end
+
+    sig { params(from: T.nilable(::Integer), to: T.nilable(::Integer)).returns(T::Boolean) }
+    def stripe_subscriber_id_previously_changed?(from: T.unsafe(nil), to: T.unsafe(nil)); end
+
+    sig { returns(T.nilable(::Integer)) }
+    def stripe_subscriber_id_previously_was; end
+
+    sig { returns(T.nilable(::Integer)) }
+    def stripe_subscriber_id_was; end
+
+    sig { void }
+    def stripe_subscriber_id_will_change!; end
 
     sig { returns(::String) }
     def time_zone; end
@@ -3555,6 +3630,9 @@ class User
 
     sig { returns(T::Boolean) }
     def will_save_change_to_status_cache_expired_at?; end
+
+    sig { returns(T::Boolean) }
+    def will_save_change_to_stripe_subscriber_id?; end
 
     sig { returns(T::Boolean) }
     def will_save_change_to_time_zone?; end

@@ -136,21 +136,40 @@ func (q *Queries) GetUserByEmailOrUsername(ctx context.Context, lower string) (G
 }
 
 const getUserByID = `-- name: GetUserByID :one
-SELECT id, username, email, role, encrypted_password, locale, created_at, updated_at
-FROM users
-WHERE id = $1
+SELECT
+    u.id,
+    u.username,
+    u.email,
+    u.role,
+    u.encrypted_password,
+    u.locale,
+    u.time_zone,
+    u.stripe_subscriber_id,
+    u.gumroad_subscriber_id,
+    u.notifications_count,
+    u.created_at,
+    u.updated_at,
+    p.image_data AS profile_image_data
+FROM users u
+LEFT JOIN profiles p ON p.user_id = u.id
+WHERE u.id = $1
 LIMIT 1
 `
 
 type GetUserByIDRow struct {
-	ID                int64        `db:"id"`
-	Username          string       `db:"username"`
-	Email             string       `db:"email"`
-	Role              int32        `db:"role"`
-	EncryptedPassword string       `db:"encrypted_password"`
-	Locale            string       `db:"locale"`
-	CreatedAt         sql.NullTime `db:"created_at"`
-	UpdatedAt         sql.NullTime `db:"updated_at"`
+	ID                  int64          `db:"id"`
+	Username            string         `db:"username"`
+	Email               string         `db:"email"`
+	Role                int32          `db:"role"`
+	EncryptedPassword   string         `db:"encrypted_password"`
+	Locale              string         `db:"locale"`
+	TimeZone            string         `db:"time_zone"`
+	StripeSubscriberID  sql.NullInt64  `db:"stripe_subscriber_id"`
+	GumroadSubscriberID sql.NullInt64  `db:"gumroad_subscriber_id"`
+	NotificationsCount  int32          `db:"notifications_count"`
+	CreatedAt           sql.NullTime   `db:"created_at"`
+	UpdatedAt           sql.NullTime   `db:"updated_at"`
+	ProfileImageData    sql.NullString `db:"profile_image_data"`
 }
 
 func (q *Queries) GetUserByID(ctx context.Context, id int64) (GetUserByIDRow, error) {
@@ -163,6 +182,43 @@ func (q *Queries) GetUserByID(ctx context.Context, id int64) (GetUserByIDRow, er
 		&i.Role,
 		&i.EncryptedPassword,
 		&i.Locale,
+		&i.TimeZone,
+		&i.StripeSubscriberID,
+		&i.GumroadSubscriberID,
+		&i.NotificationsCount,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.ProfileImageData,
+	)
+	return i, err
+}
+
+const getUserByStripeSubscriberID = `-- name: GetUserByStripeSubscriberID :one
+SELECT id, username, email, role, stripe_subscriber_id, created_at, updated_at
+FROM users
+WHERE stripe_subscriber_id = $1
+LIMIT 1
+`
+
+type GetUserByStripeSubscriberIDRow struct {
+	ID                 int64         `db:"id"`
+	Username           string        `db:"username"`
+	Email              string        `db:"email"`
+	Role               int32         `db:"role"`
+	StripeSubscriberID sql.NullInt64 `db:"stripe_subscriber_id"`
+	CreatedAt          sql.NullTime  `db:"created_at"`
+	UpdatedAt          sql.NullTime  `db:"updated_at"`
+}
+
+func (q *Queries) GetUserByStripeSubscriberID(ctx context.Context, stripeSubscriberID sql.NullInt64) (GetUserByStripeSubscriberIDRow, error) {
+	row := q.db.QueryRowContext(ctx, getUserByStripeSubscriberID, stripeSubscriberID)
+	var i GetUserByStripeSubscriberIDRow
+	err := row.Scan(
+		&i.ID,
+		&i.Username,
+		&i.Email,
+		&i.Role,
+		&i.StripeSubscriberID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -212,5 +268,21 @@ type UpdateUserPasswordParams struct {
 
 func (q *Queries) UpdateUserPassword(ctx context.Context, arg UpdateUserPasswordParams) error {
 	_, err := q.db.ExecContext(ctx, updateUserPassword, arg.ID, arg.EncryptedPassword)
+	return err
+}
+
+const updateUserStripeSubscriberID = `-- name: UpdateUserStripeSubscriberID :exec
+UPDATE users
+SET stripe_subscriber_id = $2, updated_at = NOW()
+WHERE id = $1
+`
+
+type UpdateUserStripeSubscriberIDParams struct {
+	ID                 int64         `db:"id"`
+	StripeSubscriberID sql.NullInt64 `db:"stripe_subscriber_id"`
+}
+
+func (q *Queries) UpdateUserStripeSubscriberID(ctx context.Context, arg UpdateUserStripeSubscriberIDParams) error {
+	_, err := q.db.ExecContext(ctx, updateUserStripeSubscriberID, arg.ID, arg.StripeSubscriberID)
 	return err
 }
