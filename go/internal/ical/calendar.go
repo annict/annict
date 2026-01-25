@@ -83,17 +83,25 @@ func (c *Calendar) generateVTimezone() string {
 func (c *Calendar) generateVEvent(event Event) string {
 	var b strings.Builder
 
+	// カレンダーのタイムゾーンを読み込み
+	loc, err := time.LoadLocation(c.TimeZone)
+	if err != nil {
+		loc = time.UTC
+	}
+
 	b.WriteString("BEGIN:VEVENT\r\n")
 	b.WriteString(fmt.Sprintf("UID:%s\r\n", event.UID))
 
 	if event.AllDay {
 		// 終日イベント（Date形式）
-		b.WriteString(fmt.Sprintf("DTSTART;VALUE=DATE:%s\r\n", formatDate(event.Start)))
-		b.WriteString(fmt.Sprintf("DTEND;VALUE=DATE:%s\r\n", formatDate(event.End)))
+		// 終日イベントもタイムゾーン変換してから日付を取得
+		b.WriteString(fmt.Sprintf("DTSTART;VALUE=DATE:%s\r\n", formatDate(event.Start.In(loc))))
+		b.WriteString(fmt.Sprintf("DTEND;VALUE=DATE:%s\r\n", formatDate(event.End.In(loc))))
 	} else {
 		// 時刻指定イベント（DateTime形式）
-		b.WriteString(fmt.Sprintf("DTSTART;TZID=%s:%s\r\n", c.TimeZone, formatDateTime(event.Start)))
-		b.WriteString(fmt.Sprintf("DTEND;TZID=%s:%s\r\n", c.TimeZone, formatDateTime(event.End)))
+		// UTCで渡された時刻をカレンダーのタイムゾーンに変換してからフォーマット
+		b.WriteString(fmt.Sprintf("DTSTART;TZID=%s:%s\r\n", c.TimeZone, formatDateTime(event.Start.In(loc))))
+		b.WriteString(fmt.Sprintf("DTEND;TZID=%s:%s\r\n", c.TimeZone, formatDateTime(event.End.In(loc))))
 	}
 
 	b.WriteString(fmt.Sprintf("SUMMARY:%s\r\n", escapeText(event.Summary)))
