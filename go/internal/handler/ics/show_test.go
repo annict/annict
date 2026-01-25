@@ -5,6 +5,7 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 
@@ -189,5 +190,92 @@ func TestShow_QueryParamSuccess(t *testing.T) {
 	contentType := rr.Header().Get("Content-Type")
 	if contentType != "text/calendar; charset=utf-8" {
 		t.Errorf("Content-Type: expected %q, got %q", "text/calendar; charset=utf-8", contentType)
+	}
+}
+
+// TestShow_EpisodeNumberFormatting エピソード番号がそのまま出力されるテスト
+func TestShow_EpisodeNumberFormatting(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTestDB(t)
+	queries := testutil.NewQueriesWithTx(db, tx)
+
+	// テストユーザーを作成
+	userID := testutil.NewUserBuilder(t, tx).
+		WithUsername("ics_episode_test").
+		WithEmail("ics_episode@example.com").
+		Build()
+
+	// 作品を作成
+	workID := testutil.NewWorkBuilder(t, tx).
+		WithTitle("テストアニメ").
+		Build()
+
+	// チャンネルを作成（チャンネルグループは自動作成）
+	channelID := testutil.NewChannelBuilder(t, tx).
+		WithName("TOKYO MX").
+		Build()
+
+	// プログラムを作成
+	programID := testutil.NewProgramBuilder(t, tx).
+		WithChannelID(channelID).
+		WithWorkID(workID).
+		Build()
+
+	// エピソードを作成（#付きの番号）
+	episodeID := testutil.NewEpisodeBuilder(t, tx, workID).
+		WithNumber("#4").
+		WithTitle("サブタイトル").
+		Build()
+
+	// 放送枠を作成（現在時刻から1時間後に放送開始）
+	slotStartTime := time.Now().Add(1 * time.Hour)
+	testutil.NewSlotBuilder(t, tx).
+		WithWorkID(workID).
+		WithEpisodeID(episodeID).
+		WithChannelID(channelID).
+		WithProgramID(programID).
+		WithStartedAt(slotStartTime).
+		Build()
+
+	// ライブラリエントリを作成（視聴中）
+	testutil.NewLibraryEntryBuilder(t, tx).
+		WithUserID(userID).
+		WithWorkID(workID).
+		WithProgramID(programID).
+		WithStatus("watching").
+		Build()
+
+	cfg := &config.Config{
+		Domain: "annict.com",
+	}
+
+	userCalendarRepo := repository.NewUserCalendarRepository(queries)
+	handler := NewHandler(cfg, userCalendarRepo)
+
+	// chiルーターを作成
+	r := chi.NewRouter()
+	r.Get("/@{username}/ics", handler.Show)
+
+	req := httptest.NewRequest("GET", "/@ics_episode_test/ics", nil)
+	rr := httptest.NewRecorder()
+
+	r.ServeHTTP(rr, req)
+
+	// ステータスコードの確認
+	if rr.Code != http.StatusOK {
+		t.Errorf("ステータスコード: expected %d, got %d", http.StatusOK, rr.Code)
+	}
+
+	body := rr.Body.String()
+
+	// エピソード番号がそのまま出力されていることを確認
+	if !strings.Contains(body, "#4") {
+		t.Error("レスポンスにエピソード番号(#4)が含まれていない")
+	}
+
+	// ##4（二重ハッシュ）が含まれていないことを確認
+	if strings.Contains(body, "##4") {
+		t.Error("レスポンスに二重ハッシュ(##4)が含まれている")
 	}
 }

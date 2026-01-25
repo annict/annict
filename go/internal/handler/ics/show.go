@@ -60,10 +60,10 @@ func (h *Handler) Show(w http.ResponseWriter, r *http.Request) {
 	for _, slot := range userCalendar.Slots {
 		workTitle := selectTitle(slot.WorkTitle, slot.WorkTitleEn)
 
-		// サマリーを構築: "作品タイトル #話数 サブタイトル (チャンネル名)"
+		// サマリーを構築: "作品タイトル 話数 サブタイトル (チャンネル名)"
 		summary := workTitle
 		if slot.EpisodeNumber != "" {
-			summary = fmt.Sprintf("%s #%s", summary, slot.EpisodeNumber)
+			summary = fmt.Sprintf("%s %s", summary, slot.EpisodeNumber)
 		}
 		if slot.EpisodeTitle != "" {
 			summary = fmt.Sprintf("%s %s", summary, slot.EpisodeTitle)
@@ -72,10 +72,10 @@ func (h *Handler) Show(w http.ResponseWriter, r *http.Request) {
 			summary = fmt.Sprintf("%s (%s)", summary, slot.ChannelName)
 		}
 
-		// 説明を構築: "作品タイトル #話数 サブタイトル\nエピソードURL"
+		// 説明を構築: "作品タイトル 話数 サブタイトル\nエピソードURL"
 		description := workTitle
 		if slot.EpisodeNumber != "" {
-			description = fmt.Sprintf("%s #%s", description, slot.EpisodeNumber)
+			description = fmt.Sprintf("%s %s", description, slot.EpisodeNumber)
 		}
 		if slot.EpisodeTitle != "" {
 			description = fmt.Sprintf("%s %s", description, slot.EpisodeTitle)

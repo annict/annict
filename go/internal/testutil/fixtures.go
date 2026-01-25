@@ -913,3 +913,369 @@ func CreateTestGumroadSubscriber(t *testing.T, tx *sql.Tx) int64 {
 	t.Helper()
 	return NewGumroadSubscriberBuilder(t, tx).Build()
 }
+
+// ChannelBuilder はチャンネルテストデータのビルダー
+type ChannelBuilder struct {
+	tx             *sql.Tx
+	t              *testing.T
+	name           string
+	channelGroupID int64
+}
+
+// NewChannelBuilder は新しいChannelBuilderを作成します
+func NewChannelBuilder(t *testing.T, tx *sql.Tx) *ChannelBuilder {
+	uniqueID := uuid.New().String()[:8]
+	return &ChannelBuilder{
+		tx:   tx,
+		t:    t,
+		name: fmt.Sprintf("Channel_%s", uniqueID),
+	}
+}
+
+// WithName はチャンネル名を設定します
+func (b *ChannelBuilder) WithName(name string) *ChannelBuilder {
+	b.name = name
+	return b
+}
+
+// WithChannelGroupID はチャンネルグループIDを設定します
+func (b *ChannelBuilder) WithChannelGroupID(channelGroupID int64) *ChannelBuilder {
+	b.channelGroupID = channelGroupID
+	return b
+}
+
+// Build はテスト用のチャンネルデータをデータベースに作成します
+func (b *ChannelBuilder) Build() int64 {
+	b.t.Helper()
+
+	// channel_group_idが設定されていない場合は作成
+	channelGroupID := b.channelGroupID
+	if channelGroupID == 0 {
+		channelGroupID = NewChannelGroupBuilder(b.t, b.tx).Build()
+	}
+
+	query := `
+		INSERT INTO channels (
+			channel_group_id, name, aasm_state, vod, created_at, updated_at
+		) VALUES (
+			$1, $2, $3, $4, $5, $6
+		) RETURNING id
+	`
+
+	var id int64
+	err := b.tx.QueryRow(
+		query,
+		channelGroupID,
+		b.name,
+		"published",
+		false,
+		time.Now(),
+		time.Now(),
+	).Scan(&id)
+
+	if err != nil {
+		b.t.Fatalf("チャンネルデータの作成に失敗しました: %v", err)
+	}
+
+	return id
+}
+
+// ChannelGroupBuilder はチャンネルグループテストデータのビルダー
+type ChannelGroupBuilder struct {
+	tx   *sql.Tx
+	t    *testing.T
+	name string
+}
+
+// NewChannelGroupBuilder は新しいChannelGroupBuilderを作成します
+func NewChannelGroupBuilder(t *testing.T, tx *sql.Tx) *ChannelGroupBuilder {
+	uniqueID := uuid.New().String()[:8]
+	return &ChannelGroupBuilder{
+		tx:   tx,
+		t:    t,
+		name: fmt.Sprintf("ChannelGroup_%s", uniqueID),
+	}
+}
+
+// WithName はチャンネルグループ名を設定します
+func (b *ChannelGroupBuilder) WithName(name string) *ChannelGroupBuilder {
+	b.name = name
+	return b
+}
+
+// Build はテスト用のチャンネルグループデータをデータベースに作成します
+func (b *ChannelGroupBuilder) Build() int64 {
+	b.t.Helper()
+
+	query := `
+		INSERT INTO channel_groups (
+			name, sort_number, created_at, updated_at
+		) VALUES (
+			$1, $2, $3, $4
+		) RETURNING id
+	`
+
+	var id int64
+	err := b.tx.QueryRow(
+		query,
+		b.name,
+		1,
+		time.Now(),
+		time.Now(),
+	).Scan(&id)
+
+	if err != nil {
+		b.t.Fatalf("チャンネルグループデータの作成に失敗しました: %v", err)
+	}
+
+	return id
+}
+
+// ProgramBuilder はプログラムテストデータのビルダー
+type ProgramBuilder struct {
+	tx        *sql.Tx
+	t         *testing.T
+	channelID int64
+	workID    int64
+}
+
+// NewProgramBuilder は新しいProgramBuilderを作成します
+func NewProgramBuilder(t *testing.T, tx *sql.Tx) *ProgramBuilder {
+	return &ProgramBuilder{
+		tx: tx,
+		t:  t,
+	}
+}
+
+// WithChannelID はチャンネルIDを設定します
+func (b *ProgramBuilder) WithChannelID(channelID int64) *ProgramBuilder {
+	b.channelID = channelID
+	return b
+}
+
+// WithWorkID は作品IDを設定します
+func (b *ProgramBuilder) WithWorkID(workID int64) *ProgramBuilder {
+	b.workID = workID
+	return b
+}
+
+// Build はテスト用のプログラムデータをデータベースに作成します
+func (b *ProgramBuilder) Build() int64 {
+	b.t.Helper()
+
+	query := `
+		INSERT INTO programs (
+			channel_id, work_id, aasm_state, created_at, updated_at
+		) VALUES (
+			$1, $2, $3, $4, $5
+		) RETURNING id
+	`
+
+	var id int64
+	err := b.tx.QueryRow(
+		query,
+		b.channelID,
+		b.workID,
+		"published",
+		time.Now(),
+		time.Now(),
+	).Scan(&id)
+
+	if err != nil {
+		b.t.Fatalf("プログラムデータの作成に失敗しました: %v", err)
+	}
+
+	return id
+}
+
+// SlotBuilder は放送枠テストデータのビルダー
+type SlotBuilder struct {
+	tx        *sql.Tx
+	t         *testing.T
+	workID    int64
+	episodeID int64
+	channelID int64
+	programID int64
+	startedAt time.Time
+}
+
+// NewSlotBuilder は新しいSlotBuilderを作成します
+func NewSlotBuilder(t *testing.T, tx *sql.Tx) *SlotBuilder {
+	return &SlotBuilder{
+		tx:        tx,
+		t:         t,
+		startedAt: time.Now().Add(1 * time.Hour),
+	}
+}
+
+// WithWorkID は作品IDを設定します
+func (b *SlotBuilder) WithWorkID(workID int64) *SlotBuilder {
+	b.workID = workID
+	return b
+}
+
+// WithEpisodeID はエピソードIDを設定します
+func (b *SlotBuilder) WithEpisodeID(episodeID int64) *SlotBuilder {
+	b.episodeID = episodeID
+	return b
+}
+
+// WithChannelID はチャンネルIDを設定します
+func (b *SlotBuilder) WithChannelID(channelID int64) *SlotBuilder {
+	b.channelID = channelID
+	return b
+}
+
+// WithProgramID はプログラムIDを設定します
+func (b *SlotBuilder) WithProgramID(programID int64) *SlotBuilder {
+	b.programID = programID
+	return b
+}
+
+// WithStartedAt は放送開始時刻を設定します
+func (b *SlotBuilder) WithStartedAt(startedAt time.Time) *SlotBuilder {
+	b.startedAt = startedAt
+	return b
+}
+
+// Build はテスト用の放送枠データをデータベースに作成します
+func (b *SlotBuilder) Build() int64 {
+	b.t.Helper()
+
+	query := `
+		INSERT INTO slots (
+			work_id, episode_id, channel_id, program_id, started_at, created_at, updated_at
+		) VALUES (
+			$1, $2, $3, $4, $5, $6, $7
+		) RETURNING id
+	`
+
+	var id int64
+	err := b.tx.QueryRow(
+		query,
+		b.workID,
+		b.episodeID,
+		b.channelID,
+		b.programID,
+		b.startedAt,
+		time.Now(),
+		time.Now(),
+	).Scan(&id)
+
+	if err != nil {
+		b.t.Fatalf("放送枠データの作成に失敗しました: %v", err)
+	}
+
+	return id
+}
+
+// LibraryEntryBuilder はライブラリエントリテストデータのビルダー
+type LibraryEntryBuilder struct {
+	tx        *sql.Tx
+	t         *testing.T
+	userID    int64
+	workID    int64
+	programID int64
+	status    string
+}
+
+// NewLibraryEntryBuilder は新しいLibraryEntryBuilderを作成します
+func NewLibraryEntryBuilder(t *testing.T, tx *sql.Tx) *LibraryEntryBuilder {
+	return &LibraryEntryBuilder{
+		tx:     tx,
+		t:      t,
+		status: "watching",
+	}
+}
+
+// WithUserID はユーザーIDを設定します
+func (b *LibraryEntryBuilder) WithUserID(userID int64) *LibraryEntryBuilder {
+	b.userID = userID
+	return b
+}
+
+// WithWorkID は作品IDを設定します
+func (b *LibraryEntryBuilder) WithWorkID(workID int64) *LibraryEntryBuilder {
+	b.workID = workID
+	return b
+}
+
+// WithProgramID はプログラムIDを設定します
+func (b *LibraryEntryBuilder) WithProgramID(programID int64) *LibraryEntryBuilder {
+	b.programID = programID
+	return b
+}
+
+// WithStatus はステータスを設定します（watching, wanna_watch など）
+func (b *LibraryEntryBuilder) WithStatus(status string) *LibraryEntryBuilder {
+	b.status = status
+	return b
+}
+
+// Build はテスト用のライブラリエントリデータをデータベースに作成します
+func (b *LibraryEntryBuilder) Build() int64 {
+	b.t.Helper()
+
+	// ステータスをRails enumの数値に変換（kindカラム）
+	kind := 0
+	switch b.status {
+	case "wanna_watch":
+		kind = 1
+	case "watching":
+		kind = 2
+	case "watched":
+		kind = 3
+	case "on_hold":
+		kind = 4
+	case "stop_watching":
+		kind = 5
+	}
+
+	// まずstatusesテーブルにレコードを作成
+	statusQuery := `
+		INSERT INTO statuses (
+			user_id, work_id, kind, created_at, updated_at
+		) VALUES (
+			$1, $2, $3, $4, $5
+		) RETURNING id
+	`
+	var statusID int64
+	err := b.tx.QueryRow(
+		statusQuery,
+		b.userID,
+		b.workID,
+		kind,
+		time.Now(),
+		time.Now(),
+	).Scan(&statusID)
+	if err != nil {
+		b.t.Fatalf("ステータスデータの作成に失敗しました: %v", err)
+	}
+
+	// ライブラリエントリを作成（status_idを設定）
+	query := `
+		INSERT INTO library_entries (
+			user_id, work_id, program_id, kind, status_id, created_at, updated_at
+		) VALUES (
+			$1, $2, $3, $4, $5, $6, $7
+		) RETURNING id
+	`
+
+	var id int64
+	err = b.tx.QueryRow(
+		query,
+		b.userID,
+		b.workID,
+		b.programID,
+		kind,
+		statusID,
+		time.Now(),
+		time.Now(),
+	).Scan(&id)
+
+	if err != nil {
+		b.t.Fatalf("ライブラリエントリデータの作成に失敗しました: %v", err)
+	}
+
+	return id
+}
