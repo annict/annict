@@ -36,6 +36,7 @@ var goHandledPaths = []string{
 	"/password",         // パスワード更新
 	"/supporters",       // サポーターページ
 	"/webhooks/stripe",  // Stripe Webhook受信
+	"/ics",              // iCalendar配信（Apple カレンダー互換パス）
 }
 
 // NewReverseProxyMiddleware は新しいReverseProxyMiddlewareを作成
@@ -185,6 +186,12 @@ func (m *ReverseProxyMiddleware) isGoHandledPath(path string) bool {
 			return true
 		}
 	}
+
+	// /@{username}/ics パターンの判定
+	if strings.HasPrefix(path, "/@") && strings.HasSuffix(path, "/ics") {
+		return true
+	}
+
 	return false
 }
 
