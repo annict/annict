@@ -206,8 +206,6 @@ ignore:
       - Rails/Date
   - app/controllers/friends_controller.rb:
       - Rails/PluckId
-  - app/controllers/ics_controller.rb:
-      - Rails/Date
   - app/controllers/libraries_controller.rb:
       - Rails/PluckId
       - Rails/DynamicFindBy
