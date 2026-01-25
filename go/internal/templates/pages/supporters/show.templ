@@ -123,10 +123,18 @@ templ checkoutSection(ctx context.Context, csrfToken string) {
 					</p>
 				</div>
 
-				<form action="/supporters/checkout" method="POST">
+				<form
+					action="/supporters/checkout"
+					data-on:submit__passive="$isSubmitting = true"
+					method="POST"
+				>
 					<input type="hidden" name="csrf_token" value={ csrfToken }/>
 					<input type="hidden" name="plan" value="monthly"/>
-					<button type="submit" class="btn btn-primary w-full">
+					<button
+						class="btn btn-primary w-full"
+						data-attr:disabled="$isSubmitting == true"
+						type="submit"
+					>
 						{ templates.T(ctx, "supporters_subscribe_button") }
 					</button>
 				</form>
@@ -145,10 +153,18 @@ templ checkoutSection(ctx context.Context, csrfToken string) {
 					</p>
 				</div>
 
-				<form action="/supporters/checkout" method="POST">
+				<form
+					action="/supporters/checkout"
+					data-on:submit__passive="$isSubmitting = true"
+					method="POST"
+				>
 					<input type="hidden" name="csrf_token" value={ csrfToken }/>
 					<input type="hidden" name="plan" value="yearly"/>
-					<button type="submit" class="btn btn-primary w-full">
+					<button
+						class="btn btn-primary w-full"
+						data-attr:disabled="$isSubmitting == true"
+						type="submit"
+					>
 						{ templates.T(ctx, "supporters_subscribe_button") }
 					</button>
 				</form>
