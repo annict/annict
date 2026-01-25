@@ -21,6 +21,7 @@ import (
 	"github.com/annict/annict/go/internal/config"
 	"github.com/annict/annict/go/internal/handler/health"
 	"github.com/annict/annict/go/internal/handler/home"
+	"github.com/annict/annict/go/internal/handler/ics"
 	"github.com/annict/annict/go/internal/handler/manifest"
 	"github.com/annict/annict/go/internal/handler/password"
 	"github.com/annict/annict/go/internal/handler/password_reset"
@@ -267,6 +268,7 @@ func main() {
 
 	// リポジトリの初期化
 	workRepo := repository.NewWorkRepository(queries)
+	userCalendarRepo := repository.NewUserCalendarRepository(queries)
 
 	// ヘルスチェックハンドラーの初期化
 	healthHandler := health.NewHandler(cfg, workRepo)
@@ -277,6 +279,9 @@ func main() {
 	// 人気作品ハンドラーの初期化
 	imageHelper := image.NewHelper(cfg)
 	popularWorkHandler := popular_work.NewHandler(cfg, workRepo, imageHelper, sessionManager)
+
+	// iCalendar配信ハンドラーの初期化
+	icsHandler := ics.NewHandler(cfg, userCalendarRepo)
 
 	// ユーザーリポジトリの初期化
 	userRepo := repository.NewUserRepository(queries)
@@ -395,6 +400,10 @@ func main() {
 
 	// Stripe Webhook
 	r.Post("/webhooks/stripe", stripeWebhookHandler.Create)
+
+	// iCalendar配信
+	r.Get("/@{username}/ics", icsHandler.Show) // メインのエンドポイント
+	r.Get("/ics", icsHandler.Show)             // Apple カレンダー互換の代替パス（クエリパラメータで username を指定）
 
 	// サーバー起動
 	// Dockerコンテナ内で動かす場合、0.0.0.0でリッスンする必要がある
