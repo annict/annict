@@ -189,6 +189,87 @@ func TestUserCalendarRepository_GetByUsername_PastSlots(t *testing.T) {
 	})
 }
 
+// TestUserCalendarRepository_GetByUsername_LateNightSlots は深夜帯の放送枠に関するテストです
+// Rails版の不具合: Date.today.beginning_of_dayを使用していたため、日本時間の午前0時を過ぎると
+// 当日の深夜帯（例: 25時放送 = 翌日01:00）の放送枠が消えてしまっていた
+// Go版では現在時刻を基準にフィルタリングすることで修正
+func TestUserCalendarRepository_GetByUsername_LateNightSlots(t *testing.T) {
+	db, tx := testutil.SetupTestDB(t)
+	queries := query.New(db).WithTx(tx)
+	repo := repository.NewUserCalendarRepository(queries)
+
+	// テストユーザーを作成
+	userID := testutil.NewUserBuilder(t, tx).
+		WithUsername("testlatenight").
+		Build()
+
+	// 作品を作成
+	workID := createTestWorkWithStartedOn(t, tx, "深夜アニメ", "Late Night Anime", time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC))
+
+	// エピソードを作成
+	episodeID := testutil.NewEpisodeBuilder(t, tx, workID).
+		WithNumber("1").
+		WithTitle("第1話").
+		Build()
+
+	// チャンネルを作成
+	channelGroupID := createTestChannelGroup(t, tx, "関東深夜")
+	channelID := createTestChannel(t, tx, channelGroupID, "TOKYO MX深夜")
+
+	// プログラムを作成
+	programID := createTestProgram(t, tx, channelID, workID)
+
+	// 深夜帯のスロットを作成（日本時間 2025年1月16日 01:00 = UTC 2025年1月15日 16:00）
+	slotStartTime := time.Date(2025, 1, 15, 16, 0, 0, 0, time.UTC)
+	createTestSlot(t, tx, channelID, workID, episodeID, programID, slotStartTime)
+
+	// ステータスとライブラリエントリを作成
+	statusID := createTestStatus(t, tx, userID, workID, 2)
+	createTestLibraryEntry(t, tx, userID, workID, statusID, programID, []int64{})
+
+	ctx := context.Background()
+
+	t.Run("正常系: 午前0時を過ぎても深夜帯のスロットが表示される", func(t *testing.T) {
+		// 現在時刻を日本時間 0:30 に設定（まだ放送開始前）= UTC 15:30
+		// Rails版の不具合では、Date.today.beginning_of_dayを使用していたため、
+		// 日付が変わった瞬間に基準が「今日の00:00」になり、前日からのコンテキストが失われていた
+		// Go版では現在時刻を基準にするため、深夜1:00の放送枠は正しく表示される
+		now := time.Date(2025, 1, 15, 15, 30, 0, 0, time.UTC)
+
+		calendar, err := repo.GetByUsername(ctx, "testlatenight", now)
+		if err != nil {
+			t.Fatalf("GetByUsername failed: %v", err)
+		}
+
+		// 深夜帯のスロット（まだ放送開始前）が含まれているべき
+		if len(calendar.Slots) != 1 {
+			t.Errorf("len(Slots) = %d, want 1 (深夜帯のスロットが含まれていない)", len(calendar.Slots))
+		}
+
+		if len(calendar.Slots) > 0 {
+			slot := calendar.Slots[0]
+			if slot.EpisodeID != episodeID {
+				t.Errorf("Slot.EpisodeID = %d, want %d", slot.EpisodeID, episodeID)
+			}
+		}
+	})
+
+	t.Run("正常系: 放送開始後はスロットが表示されない", func(t *testing.T) {
+		// 現在時刻を日本時間 1:30 に設定（放送開始後）= UTC 16:30
+		now := time.Date(2025, 1, 15, 16, 30, 0, 0, time.UTC)
+
+		calendar, err := repo.GetByUsername(ctx, "testlatenight", now)
+		if err != nil {
+			t.Fatalf("GetByUsername failed: %v", err)
+		}
+
+		// 放送開始後のスロットは表示されないべき
+		if len(calendar.Slots) != 0 {
+			t.Errorf("len(Slots) = %d, want 0 (放送開始後のスロットは表示されないべき)", len(calendar.Slots))
+		}
+	})
+}
+
 // createTestWorkWithStartedOn はstarted_onを設定した作品を作成します
 func createTestWorkWithStartedOn(t *testing.T, tx *sql.Tx, title, titleEn string, startedOn time.Time) int64 {
 	t.Helper()
