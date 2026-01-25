@@ -106,6 +106,13 @@ cat /workspace/rails/app/models/work.rb
 - **ModelとRepositoryは1:1の関係**: 各ドメインエンティティに対応するRepositoryを作成
 - **Domain/Infrastructure層の統合**: データベース変更はほぼ起こらないため、シンプルさを優先
 
+### UsecaseとRepositoryの使い分け
+
+- **Usecase**: トランザクションを伴う永続化処理（作成・更新・削除）、複数Repositoryを跨ぐ操作
+- **Repository**: 読み取り専用の処理、単一エンティティの操作、トランザクション不要な処理
+
+**判断基準**: 読み取り専用の処理はRepositoryで完結させ、Usecaseを作成しない。
+
 📖 **詳細なアーキテクチャについては [@go/docs/architecture-guide.md](docs/architecture-guide.md) を参照してください。**
 
 ## 開発環境のセットアップ
