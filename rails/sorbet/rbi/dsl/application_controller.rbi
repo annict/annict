@@ -21,7 +21,6 @@ class ApplicationController
     include ::EpisodesHelper
     include ::GaHelper
     include ::HeadHelper
-    include ::IcalendarHelper
     include ::IconHelper
     include ::ImageHelper
     include ::LocalHelper
