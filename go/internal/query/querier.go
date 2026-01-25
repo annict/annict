@@ -34,10 +34,17 @@ type Querier interface {
 	GetActivityByID(ctx context.Context, id int64) (GetActivityByIDRow, error)
 	GetActivityGroupByID(ctx context.Context, id int64) (ActivityGroup, error)
 	GetActivityGroupByUserAndType(ctx context.Context, arg GetActivityGroupByUserAndTypeParams) (ActivityGroup, error)
+	// カレンダー用の放送枠を取得します
+	// 現在時刻から7日後までの未視聴エピソードを対象とします
+	GetCalendarSlots(ctx context.Context, arg GetCalendarSlotsParams) ([]GetCalendarSlotsRow, error)
+	// カレンダー用の作品（放送開始日）を取得します
+	GetCalendarWorks(ctx context.Context, userID int64) ([]GetCalendarWorksRow, error)
 	GetCastsByWorkIDs(ctx context.Context, dollar_1 []int64) ([]GetCastsByWorkIDsRow, error)
 	GetEmailNotificationByUserID(ctx context.Context, userID int64) (GetEmailNotificationByUserIDRow, error)
 	GetEpisodeRecordByID(ctx context.Context, id int64) (GetEpisodeRecordByIDRow, error)
 	GetGumroadSubscriberByID(ctx context.Context, id int64) (GumroadSubscriber, error)
+	// ユーザーの視聴リスト（見たい・見てる）からprogram_idを取得します
+	GetLibraryEntryProgramIDs(ctx context.Context, userID int64) ([]GetLibraryEntryProgramIDsRow, error)
 	GetOAuthApplicationByUID(ctx context.Context, uid string) (GetOAuthApplicationByUIDRow, error)
 	GetPasswordResetTokenByDigest(ctx context.Context, tokenDigest string) (PasswordResetToken, error)
 	GetPasswordResetTokensByUserID(ctx context.Context, userID int64) ([]PasswordResetToken, error)
@@ -58,6 +65,8 @@ type Querier interface {
 	GetUserByID(ctx context.Context, id int64) (GetUserByIDRow, error)
 	GetUserByStripeSubscriberID(ctx context.Context, stripeSubscriberID sql.NullInt64) (GetUserByStripeSubscriberIDRow, error)
 	GetUserByUsername(ctx context.Context, lower string) (GetUserByUsernameRow, error)
+	// ユーザーのカレンダー情報を取得します
+	GetUserCalendarInfo(ctx context.Context, username string) (GetUserCalendarInfoRow, error)
 	GetValidSignInCode(ctx context.Context, userID int64) (SignInCode, error)
 	GetValidSignUpCode(ctx context.Context, email string) (SignUpCode, error)
 	GetWorkByID(ctx context.Context, id int64) (GetWorkByIDRow, error)
