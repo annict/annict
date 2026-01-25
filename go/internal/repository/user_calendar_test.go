@@ -432,3 +432,306 @@ func createTestLibraryEntry(t *testing.T, tx *sql.Tx, userID, workID, statusID, 
 		t.Fatalf("ライブラリエントリデータの作成に失敗しました: %v", err)
 	}
 }
+
+// TestUserCalendarRepository_GetByUsername_DeletedUser は削除されたユーザーのテストです
+func TestUserCalendarRepository_GetByUsername_DeletedUser(t *testing.T) {
+	db, tx := testutil.SetupTestDB(t)
+	queries := query.New(db).WithTx(tx)
+	repo := repository.NewUserCalendarRepository(queries)
+
+	// 削除されたユーザーを作成
+	userID := testutil.NewUserBuilder(t, tx).
+		WithUsername("deleteduser").
+		Build()
+
+	// ユーザーを削除（deleted_atを設定）
+	_, err := tx.Exec(`UPDATE users SET deleted_at = NOW() WHERE id = $1`, userID)
+	if err != nil {
+		t.Fatalf("ユーザーの削除に失敗しました: %v", err)
+	}
+
+	ctx := context.Background()
+
+	t.Run("削除されたユーザーにアクセスした場合、sql.ErrNoRowsを返す", func(t *testing.T) {
+		_, err := repo.GetByUsername(ctx, "deleteduser", time.Now())
+		if err != sql.ErrNoRows {
+			t.Errorf("expected sql.ErrNoRows, got %v", err)
+		}
+	})
+}
+
+// TestUserCalendarRepository_GetByUsername_EmptyLibrary は視聴リストが空の場合のテストです
+func TestUserCalendarRepository_GetByUsername_EmptyLibrary(t *testing.T) {
+	db, tx := testutil.SetupTestDB(t)
+	queries := query.New(db).WithTx(tx)
+	repo := repository.NewUserCalendarRepository(queries)
+
+	// ユーザーを作成（ライブラリエントリなし）
+	testutil.NewUserBuilder(t, tx).
+		WithUsername("emptyuser").
+		Build()
+
+	ctx := context.Background()
+	now := time.Now()
+
+	t.Run("視聴リストに追加済みのアニメがない場合、空のカレンダーを返す", func(t *testing.T) {
+		calendar, err := repo.GetByUsername(ctx, "emptyuser", now)
+		if err != nil {
+			t.Fatalf("GetByUsername failed: %v", err)
+		}
+
+		if len(calendar.Slots) != 0 {
+			t.Errorf("len(Slots) = %d, want 0", len(calendar.Slots))
+		}
+		if len(calendar.Works) != 0 {
+			t.Errorf("len(Works) = %d, want 0", len(calendar.Works))
+		}
+	})
+}
+
+// TestUserCalendarRepository_GetByUsername_SlotsAfter7Days は8日以降のスロットが除外されることをテストします
+func TestUserCalendarRepository_GetByUsername_SlotsAfter7Days(t *testing.T) {
+	db, tx := testutil.SetupTestDB(t)
+	queries := query.New(db).WithTx(tx)
+	repo := repository.NewUserCalendarRepository(queries)
+
+	// テストユーザーを作成
+	userID := testutil.NewUserBuilder(t, tx).
+		WithUsername("test7days").
+		Build()
+
+	// 作品を作成
+	workID := createTestWorkWithStartedOn(t, tx, "7日テストアニメ", "7 Days Test Anime", time.Date(2025, 4, 1, 0, 0, 0, 0, time.UTC))
+
+	// エピソードを作成
+	episodeID := testutil.NewEpisodeBuilder(t, tx, workID).
+		WithNumber("1").
+		Build()
+
+	// チャンネルとプログラムを作成
+	channelGroupID := createTestChannelGroup(t, tx, "テストグループ7日")
+	channelID := createTestChannel(t, tx, channelGroupID, "テストチャンネル7日")
+	programID := createTestProgram(t, tx, channelID, workID)
+
+	now := time.Now()
+
+	// 8日後のスロットを作成（除外されるべき）
+	after8Days := now.AddDate(0, 0, 8)
+	createTestSlot(t, tx, channelID, workID, episodeID, programID, after8Days)
+
+	// ステータスとライブラリエントリを作成
+	statusID := createTestStatus(t, tx, userID, workID, 2)
+	createTestLibraryEntry(t, tx, userID, workID, statusID, programID, []int64{})
+
+	ctx := context.Background()
+
+	t.Run("8日以降の放送枠は含まれない", func(t *testing.T) {
+		calendar, err := repo.GetByUsername(ctx, "test7days", now)
+		if err != nil {
+			t.Fatalf("GetByUsername failed: %v", err)
+		}
+
+		if len(calendar.Slots) != 0 {
+			t.Errorf("len(Slots) = %d, want 0 (8日以降のスロットは除外されるべき)", len(calendar.Slots))
+		}
+	})
+}
+
+// TestUserCalendarRepository_GetByUsername_NoProgramID は番組が設定されていないライブラリエントリのテストです
+func TestUserCalendarRepository_GetByUsername_NoProgramID(t *testing.T) {
+	db, tx := testutil.SetupTestDB(t)
+	queries := query.New(db).WithTx(tx)
+	repo := repository.NewUserCalendarRepository(queries)
+
+	// テストユーザーを作成
+	userID := testutil.NewUserBuilder(t, tx).
+		WithUsername("testnoprog").
+		Build()
+
+	// 作品を作成（started_on設定あり）
+	workID := createTestWorkWithStartedOn(t, tx, "番組なしアニメ", "No Program Anime", time.Date(2025, 4, 1, 0, 0, 0, 0, time.UTC))
+
+	// ステータスを作成（kind=2: watching）
+	statusID := createTestStatus(t, tx, userID, workID, 2)
+
+	// program_idがNULLのライブラリエントリを作成
+	query := `
+		INSERT INTO library_entries (user_id, work_id, status_id, program_id, watched_episode_ids, created_at, updated_at)
+		VALUES ($1, $2, $3, NULL, '{}', $4, $5)
+	`
+	_, err := tx.Exec(query, userID, workID, statusID, time.Now(), time.Now())
+	if err != nil {
+		t.Fatalf("ライブラリエントリデータの作成に失敗しました: %v", err)
+	}
+
+	ctx := context.Background()
+	now := time.Now()
+
+	t.Run("番組が設定されていないライブラリエントリは無視される", func(t *testing.T) {
+		calendar, err := repo.GetByUsername(ctx, "testnoprog", now)
+		if err != nil {
+			t.Fatalf("GetByUsername failed: %v", err)
+		}
+
+		// スロットは0件であるべき（program_idがないため）
+		if len(calendar.Slots) != 0 {
+			t.Errorf("len(Slots) = %d, want 0 (program_idがないライブラリエントリは無視されるべき)", len(calendar.Slots))
+		}
+
+		// ただし、作品イベント（started_on）は含まれる
+		if len(calendar.Works) != 1 {
+			t.Errorf("len(Works) = %d, want 1 (started_onが設定された作品は含まれるべき)", len(calendar.Works))
+		}
+	})
+}
+
+// TestUserCalendarRepository_GetByUsername_DeletedSlot は削除済みスロットが除外されることをテストします
+func TestUserCalendarRepository_GetByUsername_DeletedSlot(t *testing.T) {
+	db, tx := testutil.SetupTestDB(t)
+	queries := query.New(db).WithTx(tx)
+	repo := repository.NewUserCalendarRepository(queries)
+
+	// テストユーザーを作成
+	userID := testutil.NewUserBuilder(t, tx).
+		WithUsername("testdeletedslot").
+		Build()
+
+	// 作品を作成
+	workID := createTestWorkWithStartedOn(t, tx, "削除スロットアニメ", "Deleted Slot Anime", time.Date(2025, 4, 1, 0, 0, 0, 0, time.UTC))
+
+	// エピソードを作成
+	episodeID := testutil.NewEpisodeBuilder(t, tx, workID).
+		WithNumber("1").
+		Build()
+
+	// チャンネルとプログラムを作成
+	channelGroupID := createTestChannelGroup(t, tx, "削除テストグループ")
+	channelID := createTestChannel(t, tx, channelGroupID, "削除テストチャンネル")
+	programID := createTestProgram(t, tx, channelID, workID)
+
+	now := time.Now()
+
+	// 未来のスロットを作成
+	slotID := createTestSlot(t, tx, channelID, workID, episodeID, programID, now.Add(1*time.Hour))
+
+	// スロットを削除（deleted_atを設定）
+	_, err := tx.Exec(`UPDATE slots SET deleted_at = NOW() WHERE id = $1`, slotID)
+	if err != nil {
+		t.Fatalf("スロットの削除に失敗しました: %v", err)
+	}
+
+	// ステータスとライブラリエントリを作成
+	statusID := createTestStatus(t, tx, userID, workID, 2)
+	createTestLibraryEntry(t, tx, userID, workID, statusID, programID, []int64{})
+
+	ctx := context.Background()
+
+	t.Run("削除済みの放送枠は含まれない", func(t *testing.T) {
+		calendar, err := repo.GetByUsername(ctx, "testdeletedslot", now)
+		if err != nil {
+			t.Fatalf("GetByUsername failed: %v", err)
+		}
+
+		if len(calendar.Slots) != 0 {
+			t.Errorf("len(Slots) = %d, want 0 (削除済みスロットは除外されるべき)", len(calendar.Slots))
+		}
+	})
+}
+
+// TestUserCalendarRepository_GetByUsername_WannaWatchStatus はwanna_watchステータスのテストです
+func TestUserCalendarRepository_GetByUsername_WannaWatchStatus(t *testing.T) {
+	db, tx := testutil.SetupTestDB(t)
+	queries := query.New(db).WithTx(tx)
+	repo := repository.NewUserCalendarRepository(queries)
+
+	// テストユーザーを作成
+	userID := testutil.NewUserBuilder(t, tx).
+		WithUsername("testwannawatch").
+		Build()
+
+	// 作品を作成
+	workID := createTestWorkWithStartedOn(t, tx, "見たいアニメ", "Wanna Watch Anime", time.Date(2025, 4, 1, 0, 0, 0, 0, time.UTC))
+
+	// エピソードを作成
+	episodeID := testutil.NewEpisodeBuilder(t, tx, workID).
+		WithNumber("1").
+		Build()
+
+	// チャンネルとプログラムを作成
+	channelGroupID := createTestChannelGroup(t, tx, "見たいテストグループ")
+	channelID := createTestChannel(t, tx, channelGroupID, "見たいテストチャンネル")
+	programID := createTestProgram(t, tx, channelID, workID)
+
+	now := time.Now()
+
+	// 未来のスロットを作成
+	createTestSlot(t, tx, channelID, workID, episodeID, programID, now.Add(1*time.Hour))
+
+	// ステータスを作成（kind=1: wanna_watch）
+	statusID := createTestStatus(t, tx, userID, workID, 1)
+	createTestLibraryEntry(t, tx, userID, workID, statusID, programID, []int64{})
+
+	ctx := context.Background()
+
+	t.Run("wanna_watchステータスの作品がカレンダーに含まれる", func(t *testing.T) {
+		calendar, err := repo.GetByUsername(ctx, "testwannawatch", now)
+		if err != nil {
+			t.Fatalf("GetByUsername failed: %v", err)
+		}
+
+		if len(calendar.Slots) != 1 {
+			t.Errorf("len(Slots) = %d, want 1 (wanna_watchの作品のスロットは含まれるべき)", len(calendar.Slots))
+		}
+	})
+}
+
+// TestUserCalendarRepository_GetByUsername_WorkStartedOnEvent は作品の放送開始日イベントのテストです
+func TestUserCalendarRepository_GetByUsername_WorkStartedOnEvent(t *testing.T) {
+	db, tx := testutil.SetupTestDB(t)
+	queries := query.New(db).WithTx(tx)
+	repo := repository.NewUserCalendarRepository(queries)
+
+	// テストユーザーを作成
+	userID := testutil.NewUserBuilder(t, tx).
+		WithUsername("teststartedon").
+		Build()
+
+	// started_onが設定された作品を作成
+	workID := createTestWorkWithStartedOn(t, tx, "開始日テストアニメ", "Started On Test Anime", time.Date(2025, 4, 1, 0, 0, 0, 0, time.UTC))
+
+	// ステータスを作成（kind=2: watching）
+	statusID := createTestStatus(t, tx, userID, workID, 2)
+
+	// ライブラリエントリを作成（program_idはNULL）
+	query := `
+		INSERT INTO library_entries (user_id, work_id, status_id, program_id, watched_episode_ids, created_at, updated_at)
+		VALUES ($1, $2, $3, NULL, '{}', $4, $5)
+	`
+	_, err := tx.Exec(query, userID, workID, statusID, time.Now(), time.Now())
+	if err != nil {
+		t.Fatalf("ライブラリエントリデータの作成に失敗しました: %v", err)
+	}
+
+	ctx := context.Background()
+	now := time.Now()
+
+	t.Run("開始日（started_on）が設定されているアニメがイベントとして含まれる", func(t *testing.T) {
+		calendar, err := repo.GetByUsername(ctx, "teststartedon", now)
+		if err != nil {
+			t.Fatalf("GetByUsername failed: %v", err)
+		}
+
+		if len(calendar.Works) != 1 {
+			t.Errorf("len(Works) = %d, want 1", len(calendar.Works))
+		} else {
+			work := calendar.Works[0]
+			if work.ID != workID {
+				t.Errorf("Work.ID = %d, want %d", work.ID, workID)
+			}
+			expectedStartedOn := time.Date(2025, 4, 1, 0, 0, 0, 0, time.UTC)
+			if !work.StartedOn.Equal(expectedStartedOn) {
+				t.Errorf("Work.StartedOn = %v, want %v", work.StartedOn, expectedStartedOn)
+			}
+		}
+	})
+}
