@@ -463,3 +463,128 @@ func TestCalendar_ToICS_EmptyEvents(t *testing.T) {
 		t.Error("ToICS() should not contain VEVENT when no events")
 	}
 }
+
+func TestCalendar_ToICS_UTCToTimezoneConversion(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name          string
+		timezone      string
+		startUTC      time.Time
+		endUTC        time.Time
+		allDay        bool
+		wantStartTime string
+		wantEndTime   string
+	}{
+		{
+			name:     "UTC時刻がAsia/Tokyoに変換される（時刻指定イベント）",
+			timezone: "Asia/Tokyo",
+			// UTC 2025-01-20 15:30 = JST 2025-01-21 00:30
+			startUTC:      time.Date(2025, 1, 20, 15, 30, 0, 0, time.UTC),
+			endUTC:        time.Date(2025, 1, 20, 16, 0, 0, 0, time.UTC),
+			allDay:        false,
+			wantStartTime: "DTSTART;TZID=Asia/Tokyo:20250121T003000\r\n",
+			wantEndTime:   "DTEND;TZID=Asia/Tokyo:20250121T010000\r\n",
+		},
+		{
+			name:     "UTC時刻がAsia/Tokyoに変換される（深夜帯）",
+			timezone: "Asia/Tokyo",
+			// UTC 2025-01-20 16:00 = JST 2025-01-21 01:00（深夜帯）
+			startUTC:      time.Date(2025, 1, 20, 16, 0, 0, 0, time.UTC),
+			endUTC:        time.Date(2025, 1, 20, 16, 30, 0, 0, time.UTC),
+			allDay:        false,
+			wantStartTime: "DTSTART;TZID=Asia/Tokyo:20250121T010000\r\n",
+			wantEndTime:   "DTEND;TZID=Asia/Tokyo:20250121T013000\r\n",
+		},
+		{
+			name:     "UTC時刻がAmerica/New_Yorkに変換される",
+			timezone: "America/New_York",
+			// UTC 2025-01-20 15:30 = EST 2025-01-20 10:30
+			startUTC:      time.Date(2025, 1, 20, 15, 30, 0, 0, time.UTC),
+			endUTC:        time.Date(2025, 1, 20, 16, 0, 0, 0, time.UTC),
+			allDay:        false,
+			wantStartTime: "DTSTART;TZID=America/New_York:20250120T103000\r\n",
+			wantEndTime:   "DTEND;TZID=America/New_York:20250120T110000\r\n",
+		},
+		{
+			name:     "UTC時刻が終日イベントでも正しく変換される",
+			timezone: "Asia/Tokyo",
+			// UTC 2025-03-31 15:00 = JST 2025-04-01 00:00
+			startUTC:      time.Date(2025, 3, 31, 15, 0, 0, 0, time.UTC),
+			endUTC:        time.Date(2025, 4, 1, 15, 0, 0, 0, time.UTC),
+			allDay:        true,
+			wantStartTime: "DTSTART;VALUE=DATE:20250401\r\n",
+			wantEndTime:   "DTEND;VALUE=DATE:20250402\r\n",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			cal := Calendar{
+				TimeZone: tt.timezone,
+				CalName:  "Test",
+				Events: []Event{
+					{
+						UID:     "test-event@annict.com",
+						Summary: "テストイベント",
+						Start:   tt.startUTC,
+						End:     tt.endUTC,
+						AllDay:  tt.allDay,
+					},
+				},
+			}
+
+			got := cal.ToICS()
+
+			if !strings.Contains(got, tt.wantStartTime) {
+				t.Errorf("ToICS() does not contain expected start time\nwant: %q\ngot:\n%s", tt.wantStartTime, got)
+			}
+			if !strings.Contains(got, tt.wantEndTime) {
+				t.Errorf("ToICS() does not contain expected end time\nwant: %q\ngot:\n%s", tt.wantEndTime, got)
+			}
+		})
+	}
+}
+
+func TestCalendar_ToICS_AlreadyInTargetTimezone(t *testing.T) {
+	t.Parallel()
+
+	// 既にJSTで渡された時刻が二重変換されないことを確認
+	jst, err := time.LoadLocation("Asia/Tokyo")
+	if err != nil {
+		t.Fatalf("failed to load timezone: %v", err)
+	}
+
+	// JST 2025-01-21 00:30 として作成
+	startJST := time.Date(2025, 1, 21, 0, 30, 0, 0, jst)
+	endJST := time.Date(2025, 1, 21, 1, 0, 0, 0, jst)
+
+	cal := Calendar{
+		TimeZone: "Asia/Tokyo",
+		CalName:  "Test",
+		Events: []Event{
+			{
+				UID:     "test-event@annict.com",
+				Summary: "テストイベント",
+				Start:   startJST,
+				End:     endJST,
+				AllDay:  false,
+			},
+		},
+	}
+
+	got := cal.ToICS()
+
+	// JSTで渡された時刻がそのままJSTとして出力される
+	wantStart := "DTSTART;TZID=Asia/Tokyo:20250121T003000\r\n"
+	wantEnd := "DTEND;TZID=Asia/Tokyo:20250121T010000\r\n"
+
+	if !strings.Contains(got, wantStart) {
+		t.Errorf("ToICS() does not contain expected start time\nwant: %q\ngot:\n%s", wantStart, got)
+	}
+	if !strings.Contains(got, wantEnd) {
+		t.Errorf("ToICS() does not contain expected end time\nwant: %q\ngot:\n%s", wantEnd, got)
+	}
+}
