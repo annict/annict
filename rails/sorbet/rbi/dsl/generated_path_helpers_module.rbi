@@ -400,9 +400,6 @@ module GeneratedPathHelpersModule
   def fragment_work_record_list_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }
-  def friend_list_path(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
   def graphql_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }

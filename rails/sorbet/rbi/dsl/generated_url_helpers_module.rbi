@@ -400,9 +400,6 @@ module GeneratedUrlHelpersModule
   def fragment_work_record_list_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }
-  def friend_list_url(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
   def graphql_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }
