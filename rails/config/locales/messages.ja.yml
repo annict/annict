@@ -145,9 +145,6 @@ ja:
         new:
           disabled_form_hint1: 選択可能なコレクションはありません。
           disabled_form_hint2_html: コレクションは<a data-turbo-frame="_top" href="/@%{username}/collections">こちら</a>から作成することができます。
-    friends:
-      no_sns_friends: 友達はいません
-      no_users: 利用者はいません
     home:
       index:
         there_are_no_activities: アクティビティはありません

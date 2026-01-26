@@ -6,7 +6,6 @@ Rails.application.routes.draw do
   draw :local_api
 
   devise_for :users,
-    controllers: {omniauth_callbacks: "callbacks"},
     skip: %i[passwords registrations sessions]
 
   use_doorkeeper do
@@ -220,7 +219,6 @@ Rails.application.routes.draw do
   match "/fragment/trackable_works/:work_id",                   via: :get,    as: :fragment_trackable_work,                    to: "fragment/trackable_works#show"
   match "/fragment/trackable_episodes",                         via: :get,    as: :fragment_trackable_episode_list,            to: "fragment/trackable_episodes#index"
   match "/fragment/trackable_episodes/:episode_id",             via: :get,    as: :fragment_trackable_episode,                 to: "fragment/trackable_episodes#show"
-  match "/friends",                                             via: :get,    as: :friend_list,                                to: "friends#index"
   match "/legal",                                               via: :get,    as: :legal,                                      to: "pages#legal"
   match "/manifest",                                            via: :get,    as: :manifest,                                   to: "manifests/show#call"
   match "/notifications",                                       via: :get,    as: :notification_list,                          to: "notifications#index"

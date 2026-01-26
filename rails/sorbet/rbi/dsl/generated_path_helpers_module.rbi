@@ -400,9 +400,6 @@ module GeneratedPathHelpersModule
   def fragment_work_record_list_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }
-  def friend_list_path(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
   def graphql_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }
@@ -662,12 +659,6 @@ module GeneratedPathHelpersModule
 
   sig { params(args: T.untyped).returns(String) }
   def user_collection_path(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
-  def user_facebook_omniauth_authorize_path(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
-  def user_facebook_omniauth_callback_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }
   def userland_edit_project_path(*args); end
