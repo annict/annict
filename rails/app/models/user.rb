@@ -17,9 +17,8 @@ class User < ApplicationRecord
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable
-  devise :database_authenticatable, :omniauthable, :registerable, :trackable,
+  devise :database_authenticatable, :registerable, :trackable,
     :rememberable, :recoverable,
-    omniauth_providers: %i[facebook],
     authentication_keys: %i[email_username]
 
   enumerize :allowed_locales, in: ApplicationRecord::LOCALES, multiple: true, default: ApplicationRecord::LOCALES
@@ -143,10 +142,6 @@ class User < ApplicationRecord
     person_favorites.with_staff
   end
 
-  def social_friends
-    @social_friends ||= Deprecated::UserSocialFriendsQuery.new(self)
-  end
-
   def build_relations(oauth = nil)
     if oauth.present?
       providers.build do |p|
@@ -200,10 +195,6 @@ class User < ApplicationRecord
     records = providers
     records = records.token_available if shareable
     records.pluck(:name).include?(provider_name.to_s)
-  end
-
-  def facebook
-    providers.where(name: "facebook").first
   end
 
   def hide_episode_record_body?(episode)
@@ -400,7 +391,6 @@ class User < ApplicationRecord
   def get_large_avatar_image(provider, image_url)
     case provider
     when "twitter" then image_url.sub("_normal", "")
-    when "facebook" then "#{image_url.sub("http://", "https://")}?type=large"
     end
   end
 end

@@ -8,8 +8,11 @@ module ::Spring; end
 module ActionDispatch::Assertions::RoutingAssertions::ClassMethods; end
 module ActiveModel::AttributeRegistration::ClassMethods; end
 module BulkCreateEpisodeRecordsJob::EpisodeRecordCreator; end
+module Deprecated::FacebookService::Koala::Facebook::API; end
 module Deprecated::SearchService::Moji; end
+module FriendsController::Koala::Facebook::AuthenticationError; end
 module GitHub::Markups::MARKUP_MARKDOWN; end
+module OmniauthMock::OmniAuth; end
 module PageCategory::CAST_LIST; end
 module PageCategory::CHARACTER_FAN_LIST; end
 module PageCategory::COLLECTION; end

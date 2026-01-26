@@ -664,12 +664,6 @@ module GeneratedUrlHelpersModule
   def user_collection_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }
-  def user_facebook_omniauth_authorize_url(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
-  def user_facebook_omniauth_callback_url(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
   def userland_edit_project_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }
