@@ -142,33 +142,6 @@ class User < ApplicationRecord
     person_favorites.with_staff
   end
 
-  def build_relations(oauth = nil)
-    if oauth.present?
-      providers.build do |p|
-        p.name = oauth["provider"]
-        p.uid = oauth["uid"]
-        p.token = oauth["credentials"]["token"]
-        p.token_expires_at = oauth["credentials"]["expires_at"]
-        p.token_secret = oauth["credentials"]["secret"]
-      end
-
-      build_profile do |p|
-        p.name = oauth["info"]["name"].presence || oauth["info"]["nickname"]
-        p.description = oauth["info"]["description"]
-        image_url = get_large_avatar_image(oauth["provider"], oauth["info"]["image"])
-        p.image = Down.open(image_url)
-      end
-    else
-      build_profile(name: username)
-    end
-
-    build_setting
-    unsubscription_key = "#{SecureRandom.uuid}-#{SecureRandom.uuid}"
-    build_email_notification(unsubscription_key: unsubscription_key)
-
-    self
-  end
-
   def read_notifications!
     transaction do
       unread_count = notifications.unread.update_all(read: true)
@@ -383,14 +356,6 @@ class User < ApplicationRecord
       record_id = record_entity.database_id
 
       !user_id.in?(muted_user_ids) && !record_id.in?(record_ids)
-    end
-  end
-
-  private
-
-  def get_large_avatar_image(provider, image_url)
-    case provider
-    when "twitter" then image_url.sub("_normal", "")
     end
   end
 end
