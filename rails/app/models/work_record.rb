@@ -68,20 +68,6 @@ class WorkRecord < ApplicationRecord
     "#{user.preferred_annict_url}/@#{user.username}/records/#{record.id}"
   end
 
-  def facebook_share_title
-    work.local_title
-  end
-
-  def facebook_share_body
-    return body if body.present?
-
-    if user.locale == "ja"
-      "見ました。"
-    else
-      "Watched."
-    end
-  end
-
   def needs_single_activity_group?
     body.present?
   end

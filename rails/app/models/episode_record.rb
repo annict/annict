@@ -103,20 +103,6 @@ class EpisodeRecord < ApplicationRecord
     end
   end
 
-  def facebook_share_title
-    "#{work.title} #{episode.title_with_number}"
-  end
-
-  def facebook_share_body
-    return body if body.present?
-
-    if user.locale == "ja"
-      "見ました。"
-    else
-      "Watched."
-    end
-  end
-
   def needs_single_activity_group?
     body.present?
   end
