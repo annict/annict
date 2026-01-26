@@ -433,7 +433,7 @@ GEM
     psych (5.3.1)
       date
       stringio
-    public_suffix (5.0.0)
+    public_suffix (5.1.1)
     puma (6.5.0)
       nio4r (~> 2.0)
     pundit (2.2.0)
@@ -591,7 +591,7 @@ GEM
     sentry-ruby (6.2.0)
       bigdecimal
       concurrent-ruby (~> 1.0, >= 1.0.2)
-    shrine (3.4.0)
+    shrine (3.6.0)
       content_disposition (~> 1.0)
       down (~> 5.1)
     simplecov (0.21.2)
