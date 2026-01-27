@@ -53,14 +53,4 @@ RSpec.describe "DELETE /settings/user", type: :request do
     expect(user.email).not_to eq("test@example.com")
     expect(user.email).to end_with("@example.com")
   end
-
-  it "アカウント削除時にプロバイダー情報が削除されること" do
-    user = create(:registered_user)
-    create(:provider, user: user)
-    login_as(user, scope: :user)
-
-    expect {
-      delete "/settings/user"
-    }.to change { user.providers.count }.to(0)
-  end
 end

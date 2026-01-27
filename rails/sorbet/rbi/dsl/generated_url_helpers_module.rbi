@@ -628,9 +628,6 @@ module GeneratedUrlHelpersModule
   def settings_provider_list_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }
-  def settings_provider_url(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
   def settings_revoke_app_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }

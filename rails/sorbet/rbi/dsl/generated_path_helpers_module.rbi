@@ -628,9 +628,6 @@ module GeneratedPathHelpersModule
   def settings_provider_list_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }
-  def settings_provider_path(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
   def settings_revoke_app_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }

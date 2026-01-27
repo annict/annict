@@ -195,9 +195,6 @@ ja:
       new_slots_csv_by_program: 放送情報をもとに放送予定CSVを生成する
       no_slots: 放送予定はありません
       please_set_channels_html: "%{channels_link}でチャンネルを設定して下さい"
-    providers:
-      removed: 連携解除しました
-      you_can_not_disconnect: 連携解除できません
     records:
       show:
         record_by_name: "%{name}の記録"
