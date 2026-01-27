@@ -248,7 +248,6 @@ Rails.application.routes.draw do
   match "/settings/profile",                                    via: :get,    as: :settings_profile,                           to: "settings/profiles#show"
   match "/settings/profile",                                    via: :patch,                                                   to: "settings/profiles#update"
   match "/settings/providers",                                  via: :get,    as: :settings_provider_list,                     to: "settings/providers#index"
-  match "/settings/providers/:provider_id",                     via: :delete, as: :settings_provider,                          to: "settings/providers#destroy"
   match "/settings/tokens",                                     via: :post,   as: :settings_token_list,                        to: "settings/tokens#create"
   match "/settings/tokens/:token_id",                           via: :delete, as: :settings_token,                             to: "settings/tokens#destroy"
   match "/settings/tokens/:token_id",                           via: :patch,                                                   to: "settings/tokens#update"

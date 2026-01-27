@@ -17,8 +17,6 @@ module Settings
         username = SecureRandom.uuid.underscore
         current_user.update_columns(username: username, email: "#{username}@example.com", deleted_at: Time.zone.now)
 
-        current_user.providers.delete_all
-
         DestroyUserJob.perform_later(current_user.id)
       end
 

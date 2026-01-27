@@ -195,9 +195,6 @@ en:
       new_slots_csv_by_program: New slots by slot detail
       no_slots: No slots
       please_set_channels_html: Please set channels on %{channels_link} page.
-    providers:
-      removed: Removed.
-      you_can_not_disconnect: You can not disconnect.
     records:
       show:
         record_by_name: "%{name}'s Record"
