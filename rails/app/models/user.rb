@@ -164,12 +164,6 @@ class User < ApplicationRecord
     library_entry.save!
   end
 
-  def authorized_to?(provider_name, shareable: false)
-    records = providers
-    records = records.token_available if shareable
-    records.pluck(:name).include?(provider_name.to_s)
-  end
-
   def hide_episode_record_body?(episode)
     setting.hide_record_body? &&
       works.desiring_to_watch.include?(episode.work) &&
