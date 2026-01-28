@@ -143,13 +143,13 @@ end
   - **想定ファイル数**: 約 123 ファイル（実装 123 + テスト 0）
   - **想定行数**: 約 3,000 行削除（実装 3,000 行 + テスト 0 行）
 
-- [ ] **2-3**: テストファイルの削除
+- [x] **2-3**: テストファイルの削除
   - `spec/requests/api/canary/` ディレクトリを削除
   - `spec/graphql/canary/` ディレクトリを削除
   - **想定ファイル数**: 約 7 ファイル（実装 0 + テスト 7）
   - **想定行数**: 約 500 行削除（実装 0 行 + テスト 500 行）
 
-- [ ] **2-4**: 関連ファイルの修正・削除
+- [x] **2-4**: 関連ファイルの修正・削除
   - `app/models/concerns/graphql_resolvable.rb` を削除（`#global_id` は使用されていない）
   - `app/models/episode.rb` から `include GraphqlResolvable` を削除
   - `spec/graphql/beta/mutations/update_record_spec.rb` から Canary 参照を削除

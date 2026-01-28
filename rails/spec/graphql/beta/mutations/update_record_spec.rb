@@ -9,7 +9,7 @@ describe Beta::Mutations::UpdateRecord do
   let!(:episode_record) { create(:episode_record, user: user, record: record, work: work, episode: episode, rating: nil) }
   let!(:token) { create(:oauth_access_token) }
   let!(:context) { {viewer: user, doorkeeper_token: token, writable: true} }
-  let!(:episode_record_id) { Canary::AnnictSchema.id_from_object(episode_record, episode_record.class) }
+  let!(:episode_record_id) { Beta::AnnictSchema.id_from_object(episode_record, episode_record.class) }
 
   context "正常系" do
     let(:query) do
