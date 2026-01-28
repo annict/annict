@@ -18,20 +18,20 @@
 - 2-3段落程度で簡潔に
 -->
 
-作品（Work）とエピソード（Episode）を統一的に管理する `animes` テーブルを導入し、作品とエピソードの相互変換を容易にする。
+作品（Work）とエピソード（Episode）を統一的に識別する `animes` テーブルを導入し、作品とエピソードの相互変換を容易にする。
 
 現在、`works` テーブルと `episodes` テーブルは別々に存在し、それぞれの ID が多数のテーブルから参照されている。このため、エピソードを単独作品に変換したり、逆に作品をエピソード化する際に、関連するすべてのテーブルを更新する必要があり、非常に複雑な処理が必要となっている。
 
 **目的**:
 
 - Annict DB でのデータ整理を効率化する（エピソードを作品に、作品をエピソードに変換）
-- 作品とエピソードを統一モデルで管理することで、将来的なデータ構造の柔軟性を確保する
+- 関連テーブルが `anime_id` を参照することで、変換時の更新対象を最小化する
 
 **背景**:
 
 - 現状の `works.id` は約 25 テーブルから参照されており、変換時にすべて更新が必要
 - エピソードとして登録したものを単独の作品にしてシリーズで紐付けるといった運用ニーズがある
-- `animes` テーブル導入により、変換は `parent_id` の更新だけで済むようになる
+- `animes` テーブル導入により、関連テーブルは `anime_id` を参照するようになり、変換時の影響範囲が大幅に縮小される
 
 ## 要件
 
@@ -48,13 +48,13 @@
 箇条書きで簡潔に
 -->
 
-- システムは `animes` テーブルで作品とエピソードを統一的に管理できる
-  - 作品: `parent_id` が NULL の `animes` レコード
-  - エピソード: `parent_id` に親作品の `animes.id` が設定された `animes` レコード
-- 管理者は Annict DB で作品をエピソードに変換できる（`parent_id` を設定）
-- 管理者は Annict DB でエピソードを作品に変換できる（`parent_id` を NULL に設定）
+- システムは `animes` テーブルで作品とエピソードを統一的に識別できる
+  - 作品: `parent_id` が NULL の `animes` レコード（詳細情報は `works` テーブルに格納）
+  - エピソード: `parent_id` に親作品の `animes.id` が設定された `animes` レコード（詳細情報は `episodes` テーブルに格納）
+- 管理者は Annict DB で作品をエピソードに変換できる（`parent_id` を設定 + `episodes` レコードを作成）
+- 管理者は Annict DB でエピソードを作品に変換できる（`parent_id` を NULL に設定 + `works` レコードを作成）
 - システムは階層を 2 段階に制限する（作品 → エピソードのみ、エピソードの子は不可）
-- 既存の `works` テーブルと `episodes` テーブルは段階的に廃止する
+- 既存の `works` テーブルと `episodes` テーブルは存続し、それぞれ作品固有・エピソード固有の情報を保持する
 
 ### 非機能要件
 
@@ -92,9 +92,30 @@
 不要な場合はこのセクション全体を削除してください。
 -->
 
+### 設計方針: 分離設計
+
+本設計では「分離設計」を採用する。`animes` テーブルは共通カラムのみを持ち、作品固有・エピソード固有の情報は既存の `works`・`episodes` テーブルに保持する。
+
+```
+animes テーブル（共通情報）
+├── works テーブル（作品固有情報）: animes has_one works
+└── episodes テーブル（エピソード固有情報）: animes has_one episodes
+```
+
+**この設計を採用した理由**:
+
+1. **カラムの責務が明確**: 作品固有/エピソード固有/共通が分離されており、将来の開発者にもわかりやすい
+2. **既存テーブル構造の変更が最小限**: `works` と `episodes` は存続するため、既存コードへの影響が比較的小さい
+3. **NULL カラムの削減**: `animes` テーブルに作品/エピソード両方のカラムを持たせる必要がない
+
+**トレードオフ**:
+
+- 変換時は `parent_id` の変更に加えて、`works` または `episodes` レコードの作成が必要
+- 作品情報の取得時は `animes JOIN works`、エピソード情報の取得時は `animes JOIN episodes` が必要
+
 ### データベース設計
 
-#### animes テーブル定義
+#### animes テーブル定義（共通情報のみ）
 
 ```sql
 CREATE TABLE public.animes (
@@ -109,66 +130,10 @@ CREATE TABLE public.animes (
     title_alter character varying DEFAULT ''::character varying NOT NULL,
     title_alter_en character varying DEFAULT ''::character varying NOT NULL,
 
-    -- エピソード用属性（作品の場合は NULL）
-    number character varying(510),           -- 話数表示用（"1", "OVA" など）
-    sort_number integer DEFAULT 0 NOT NULL,  -- 並び順用
-    raw_number double precision,             -- 計算用の数値
-
-    -- 作品用属性（エピソードの場合は NULL）
-    season_year integer,
-    season_name integer,
-    media integer,
-    official_site_url character varying(510) DEFAULT ''::character varying NOT NULL,
-    official_site_url_en character varying DEFAULT ''::character varying NOT NULL,
-    wikipedia_url character varying(510) DEFAULT ''::character varying NOT NULL,
-    wikipedia_url_en character varying DEFAULT ''::character varying NOT NULL,
-    twitter_username character varying(510),
-    twitter_hashtag character varying(510),
-    synopsis text DEFAULT ''::text NOT NULL,
-    synopsis_en text DEFAULT ''::text NOT NULL,
-    synopsis_source character varying DEFAULT ''::character varying NOT NULL,
-    synopsis_source_en character varying DEFAULT ''::character varying NOT NULL,
-    released_at date,
-    released_at_about character varying,
-    started_on date,
-    ended_on date,
-    mal_anime_id integer,
-    sc_tid integer,                          -- しょぼいカレンダー TID
-    no_episodes boolean DEFAULT false NOT NULL,
-    start_episode_raw_number double precision DEFAULT 1.0 NOT NULL,
-
-    -- エピソード用属性（作品の場合は NULL）
-    sc_count integer,                        -- しょぼいカレンダー count
-    fetch_syobocal boolean DEFAULT false NOT NULL,
-
-    -- 集計カラム
-    episodes_count integer DEFAULT 0 NOT NULL,
-    manual_episodes_count integer,
-    watchers_count integer DEFAULT 0 NOT NULL,
-    records_count integer DEFAULT 0 NOT NULL,
-    episode_records_count integer DEFAULT 0 NOT NULL,
-    episode_record_bodies_count integer DEFAULT 0 NOT NULL,
-    work_records_count integer DEFAULT 0 NOT NULL,
-    work_records_with_body_count integer DEFAULT 0 NOT NULL,
-    ratings_count integer DEFAULT 0 NOT NULL,
-    score double precision,
-    satisfaction_rate double precision,
-
-    -- 画像関連
-    facebook_og_image_url character varying DEFAULT ''::character varying NOT NULL,
-    twitter_image_url character varying DEFAULT ''::character varying NOT NULL,
-    recommended_image_url character varying DEFAULT ''::character varying NOT NULL,
-    key_pv_id bigint,
-    number_format_id bigint,
-
     -- 状態管理
     aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
     deleted_at timestamp without time zone,
     unpublished_at timestamp without time zone,
-
-    -- 旧テーブルとの紐付け（移行期間中のみ使用）
-    legacy_work_id bigint,
-    legacy_episode_id bigint,
 
     -- タイムスタンプ
     created_at timestamp with time zone,
@@ -184,24 +149,51 @@ CREATE TABLE public.animes (
 
 -- インデックス
 CREATE INDEX index_animes_on_parent_id ON public.animes(parent_id);
-CREATE INDEX index_animes_on_season_year_and_season_name ON public.animes(season_year, season_name);
 CREATE INDEX index_animes_on_title ON public.animes(title);
 CREATE INDEX index_animes_on_aasm_state ON public.animes(aasm_state);
-CREATE UNIQUE INDEX index_animes_on_legacy_work_id ON public.animes(legacy_work_id) WHERE legacy_work_id IS NOT NULL;
-CREATE UNIQUE INDEX index_animes_on_legacy_episode_id ON public.animes(legacy_episode_id) WHERE legacy_episode_id IS NOT NULL;
 ```
 
 #### 既存テーブルへの変更
 
 ```sql
--- works テーブルに anime_id を追加
+-- works テーブルに anime_id を追加（作品固有情報は既存カラムに保持）
 ALTER TABLE public.works ADD COLUMN anime_id bigint REFERENCES public.animes(id);
-CREATE INDEX index_works_on_anime_id ON public.works(anime_id);
+CREATE UNIQUE INDEX index_works_on_anime_id ON public.works(anime_id) WHERE anime_id IS NOT NULL;
 
--- episodes テーブルに anime_id を追加
+-- episodes テーブルに anime_id を追加（エピソード固有情報は既存カラムに保持）
 ALTER TABLE public.episodes ADD COLUMN anime_id bigint REFERENCES public.animes(id);
-CREATE INDEX index_episodes_on_anime_id ON public.episodes(anime_id);
+CREATE UNIQUE INDEX index_episodes_on_anime_id ON public.episodes(anime_id) WHERE anime_id IS NOT NULL;
 ```
+
+#### カラムの分類
+
+**共通カラム（animes テーブル）**:
+
+- `title`, `title_kana`, `title_ro`, `title_en`, `title_alter`, `title_alter_en`
+- `aasm_state`, `deleted_at`, `unpublished_at`
+- `created_at`, `updated_at`
+
+**作品固有カラム（works テーブルに保持）**:
+
+- `season_id`, `season_year`, `season_name`, `media`
+- `sc_tid`, `mal_anime_id`
+- `official_site_url`, `official_site_url_en`
+- `wikipedia_url`, `wikipedia_url_en`
+- `synopsis`, `synopsis_en`, `synopsis_source`, `synopsis_source_en`
+- `released_at`, `released_at_about`, `started_on`, `ended_on`
+- `twitter_username`, `twitter_hashtag`
+- `number_format_id`, `key_pv_id`
+- `no_episodes`, `start_episode_raw_number`
+- `facebook_og_image_url`, `twitter_image_url`, `recommended_image_url`
+- 集計カラム: `episodes_count`, `watchers_count`, `manual_episodes_count`, `work_records_count`, `work_records_with_body_count`, `score`, `ratings_count`, `satisfaction_rate`, `records_count`
+
+**エピソード固有カラム（episodes テーブルに保持）**:
+
+- `work_id`（既存の親作品への参照、移行期間中は維持）
+- `number`, `number_en`, `sort_number`, `raw_number`
+- `sc_count`, `fetch_syobocal`
+- `prev_episode_id`
+- 集計カラム: `episode_records_count`, `episode_record_bodies_count`, `score`, `ratings_count`, `satisfaction_rate`
 
 #### series_animes テーブル（既存 series_works の後継）
 
@@ -232,10 +224,11 @@ CREATE INDEX index_series_animes_on_anime_id ON public.series_animes(anime_id);
 
 #### フェーズ 1: animes テーブル作成とデータ同期
 
-1. `animes` テーブルを作成
-2. 既存の `works` と `episodes` から `animes` にデータをコピー
-3. `works.anime_id` と `episodes.anime_id` を設定
-4. 作品・エピソードの CRUD 時に `animes` も同期更新するトリガーまたはアプリケーションコードを追加
+1. `animes` テーブルを作成（共通カラムのみ）
+2. 既存の `works` から `animes` に共通カラムをコピー（作品として）
+3. 既存の `episodes` から `animes` に共通カラムをコピー（エピソードとして、`parent_id` に親作品の `anime_id` を設定）
+4. `works.anime_id` と `episodes.anime_id` を設定
+5. 作品・エピソードの CRUD 時に `animes` も同期更新するトリガーまたはアプリケーションコードを追加
 
 #### フェーズ 2: 関連テーブルへの anime_id 追加
 
@@ -269,11 +262,10 @@ CREATE INDEX index_series_animes_on_anime_id ON public.series_animes(anime_id);
 2. Rails 版で `animes` テーブルを参照するように変更
 3. 古い `work_id` / `episode_id` カラムを非推奨化
 
-#### フェーズ 4: 旧テーブルの廃止（将来）
+#### フェーズ 4: 旧カラムの廃止（将来）
 
-1. `works` テーブルと `episodes` テーブルを廃止
-2. 関連テーブルの `work_id` / `episode_id` カラムを削除
-3. `animes` テーブルの `legacy_work_id` / `legacy_episode_id` カラムを削除
+1. 関連テーブルの `work_id` / `episode_id` カラムを削除
+2. `works` と `episodes` テーブルは存続（作品固有・エピソード固有の情報を保持）
 
 ### 階層制限の実装
 
@@ -304,7 +296,7 @@ func (r *AnimeRepository) validateParentID(ctx context.Context, parentID *int64)
 
 ```go
 // エピソードを作品に変換
-func (u *ConvertAnimeUsecase) ConvertEpisodeToWork(ctx context.Context, animeID int64) error {
+func (u *ConvertAnimeUsecase) ConvertEpisodeToWork(ctx context.Context, animeID int64, workInput WorkInput) error {
     return u.db.WithTx(ctx, func(tx *sql.Tx) error {
         anime, err := u.animeRepo.FindByID(ctx, tx, animeID)
         if err != nil {
@@ -315,16 +307,27 @@ func (u *ConvertAnimeUsecase) ConvertEpisodeToWork(ctx context.Context, animeID 
             return errors.New("既に作品です")
         }
 
-        // parent_id を NULL に設定
+        // 1. parent_id を NULL に設定
         anime.ParentID = nil
-        // 必要に応じて作品固有の属性を設定（UI から入力）
+        if err := u.animeRepo.Update(ctx, tx, anime); err != nil {
+            return err
+        }
 
-        return u.animeRepo.Update(ctx, tx, anime)
+        // 2. works レコードを作成（作品固有情報を保存）
+        work := &Work{
+            AnimeID:    animeID,
+            SeasonYear: workInput.SeasonYear,
+            Media:      workInput.Media,
+            // ... その他の作品固有カラム
+        }
+        return u.workRepo.Create(ctx, tx, work)
+
+        // 注: 既存の episodes レコードは残しておく（参照されなくなるだけ）
     })
 }
 
 // 作品をエピソードに変換
-func (u *ConvertAnimeUsecase) ConvertWorkToEpisode(ctx context.Context, animeID, parentID int64) error {
+func (u *ConvertAnimeUsecase) ConvertWorkToEpisode(ctx context.Context, animeID, parentID int64, episodeInput EpisodeInput) error {
     return u.db.WithTx(ctx, func(tx *sql.Tx) error {
         anime, err := u.animeRepo.FindByID(ctx, tx, animeID)
         if err != nil {
@@ -335,11 +338,49 @@ func (u *ConvertAnimeUsecase) ConvertWorkToEpisode(ctx context.Context, animeID,
             return errors.New("既にエピソードです")
         }
 
-        // parent_id を設定
+        // 1. parent_id を設定
         anime.ParentID = &parentID
+        if err := u.animeRepo.Update(ctx, tx, anime); err != nil {
+            return err
+        }
 
-        return u.animeRepo.Update(ctx, tx, anime)
+        // 2. episodes レコードを作成（エピソード固有情報を保存）
+        episode := &Episode{
+            AnimeID:    animeID,
+            Number:     episodeInput.Number,
+            SortNumber: episodeInput.SortNumber,
+            // ... その他のエピソード固有カラム
+        }
+        return u.episodeRepo.Create(ctx, tx, episode)
+
+        // 注: 既存の works レコードは残しておく（参照されなくなるだけ）
     })
+}
+```
+
+### データ取得パターン
+
+```go
+// 作品情報を取得（animes JOIN works）
+func (r *AnimeRepository) FindWorkByID(ctx context.Context, animeID int64) (*AnimeWithWork, error) {
+    query := `
+        SELECT a.*, w.*
+        FROM animes a
+        JOIN works w ON w.anime_id = a.id
+        WHERE a.id = $1 AND a.parent_id IS NULL
+    `
+    // ...
+}
+
+// エピソード情報を取得（animes JOIN episodes）
+func (r *AnimeRepository) FindEpisodeByID(ctx context.Context, animeID int64) (*AnimeWithEpisode, error) {
+    query := `
+        SELECT a.*, e.*
+        FROM animes a
+        JOIN episodes e ON e.anime_id = a.id
+        WHERE a.id = $1 AND a.parent_id IS NOT NULL
+    `
+    // ...
 }
 ```
 
@@ -375,20 +416,27 @@ func (u *ConvertAnimeUsecase) ConvertWorkToEpisode(ctx context.Context, animeID,
 
 - [ ] **1-1**: animes テーブルのマイグレーション作成
 
-  - マイグレーションファイルの作成
+  - マイグレーションファイルの作成（共通カラムのみ）
   - インデックスの作成
+  - **想定ファイル数**: 約 2 ファイル（実装 1 + テスト 1）
+  - **想定行数**: 約 100 行（実装 70 行 + テスト 30 行）
+
+- [ ] **1-2**: works/episodes テーブルへの anime_id カラム追加
+
+  - マイグレーションファイルの作成
+  - ユニークインデックスの作成
+  - **想定ファイル数**: 約 2 ファイル（実装 1 + テスト 1）
+  - **想定行数**: 約 50 行（実装 30 行 + テスト 20 行）
+
+- [ ] **1-3**: 既存データの animes テーブルへの移行スクリプト作成
+
+  - works → animes の共通カラムコピー
+  - episodes → animes の共通カラムコピー（parent_id 設定含む）
+  - works.anime_id, episodes.anime_id の設定
   - **想定ファイル数**: 約 2 ファイル（実装 1 + テスト 1）
   - **想定行数**: 約 200 行（実装 150 行 + テスト 50 行）
 
-- [ ] **1-2**: 既存データの animes テーブルへの移行スクリプト作成
-
-  - works → animes のデータコピー
-  - episodes → animes のデータコピー
-  - works.anime_id, episodes.anime_id の設定
-  - **想定ファイル数**: 約 2 ファイル（実装 1 + テスト 1）
-  - **想定行数**: 約 250 行（実装 200 行 + テスト 50 行）
-
-- [ ] **1-3**: Go 版 Anime リポジトリの実装
+- [ ] **1-4**: Go 版 Anime リポジトリの実装
 
   - sqlc クエリの定義
   - リポジトリ層の実装
@@ -396,7 +444,7 @@ func (u *ConvertAnimeUsecase) ConvertWorkToEpisode(ctx context.Context, animeID,
   - **想定ファイル数**: 約 6 ファイル（実装 3 + テスト 3）
   - **想定行数**: 約 400 行（実装 200 行 + テスト 200 行）
 
-- [ ] **1-4**: Go 版 Work/Episode 作成時の animes 同期処理
+- [ ] **1-5**: Go 版 Work/Episode 作成時の animes 同期処理
 
   - Work 作成時に animes レコードも作成
   - Episode 作成時に animes レコードも作成
@@ -404,7 +452,7 @@ func (u *ConvertAnimeUsecase) ConvertWorkToEpisode(ctx context.Context, animeID,
   - **想定ファイル数**: 約 4 ファイル（実装 2 + テスト 2）
   - **想定行数**: 約 300 行（実装 150 行 + テスト 150 行）
 
-- [ ] **1-5**: Rails 版 Work/Episode 作成時の animes 同期処理
+- [ ] **1-6**: Rails 版 Work/Episode 作成時の animes 同期処理
 
   - Work モデルのコールバック追加
   - Episode モデルのコールバック追加
@@ -473,14 +521,14 @@ func (u *ConvertAnimeUsecase) ConvertWorkToEpisode(ctx context.Context, animeID,
 
 - [ ] **3-1**: Go 版作品ページの animes テーブル参照への切り替え
 
-  - ハンドラーの修正
+  - ハンドラーの修正（animes JOIN works）
   - テンプレートの修正
   - **想定ファイル数**: 約 6 ファイル（実装 3 + テスト 3）
   - **想定行数**: 約 300 行（実装 150 行 + テスト 150 行）
 
 - [ ] **3-2**: Go 版エピソードページの animes テーブル参照への切り替え
 
-  - ハンドラーの修正
+  - ハンドラーの修正（animes JOIN episodes）
   - テンプレートの修正
   - **想定ファイル数**: 約 6 ファイル（実装 3 + テスト 3）
   - **想定行数**: 約 300 行（実装 150 行 + テスト 150 行）
@@ -500,9 +548,80 @@ func (u *ConvertAnimeUsecase) ConvertWorkToEpisode(ctx context.Context, animeID,
 
 以下の機能は今回の実装では**実装しません**：
 
-- **works テーブルと episodes テーブルの廃止**: フェーズ 4 として将来的に実施
+- **works テーブルと episodes テーブルの廃止**: 分離設計を採用したため、これらのテーブルは存続する
 - **GraphQL API の animes 対応**: 既存 API の互換性を維持するため、当面は works/episodes を返す
 - **3 階層以上のネスト対応**: 現時点では作品 → エピソードの 2 階層のみをサポート
+- **古い works/episodes レコードのクリーンアップ**: 変換後に残る古いレコードの削除は将来的に検討
+
+## ボツ案: 統合設計
+
+<!--
+検討したが採用しなかった設計案を記録
+-->
+
+以下の「統合設計」は検討したが、最終的に採用しなかった。
+
+### 概要
+
+`animes` テーブルに作品・エピソード両方のカラムを統合し、`works` と `episodes` テーブルを将来的に廃止する設計。
+
+### テーブル定義
+
+```sql
+CREATE TABLE public.animes (
+    id bigint NOT NULL PRIMARY KEY,
+    parent_id bigint REFERENCES public.animes(id),
+
+    -- 共通属性
+    title character varying(510) NOT NULL,
+    title_kana character varying DEFAULT ''::character varying NOT NULL,
+    title_ro character varying DEFAULT ''::character varying NOT NULL,
+    title_en character varying DEFAULT ''::character varying NOT NULL,
+    title_alter character varying DEFAULT ''::character varying NOT NULL,
+    title_alter_en character varying DEFAULT ''::character varying NOT NULL,
+
+    -- エピソード用属性（作品の場合は NULL）
+    number character varying(510),
+    sort_number integer DEFAULT 0 NOT NULL,
+    raw_number double precision,
+
+    -- 作品用属性（エピソードの場合は NULL）
+    season_year integer,
+    season_name integer,
+    media integer,
+    official_site_url character varying(510) DEFAULT ''::character varying NOT NULL,
+    -- ... その他の作品固有カラム
+
+    -- 集計カラム
+    episodes_count integer DEFAULT 0 NOT NULL,
+    -- ... その他の集計カラム
+
+    -- 状態管理
+    aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
+    deleted_at timestamp without time zone,
+    unpublished_at timestamp without time zone,
+
+    -- 旧テーブルとの紐付け（移行期間中のみ使用）
+    legacy_work_id bigint,
+    legacy_episode_id bigint,
+
+    -- タイムスタンプ
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone
+);
+```
+
+### メリット
+
+1. **変換処理が最もシンプル**: `parent_id` の変更だけで完結
+2. **JOINが不要**: 単一テーブルで完結するためクエリがシンプル
+3. **将来的に works/episodes テーブルを廃止可能**
+
+### 採用しなかった理由
+
+1. **カラムの責務が不明確**: 作品用カラムとエピソード用カラムが混在し、どのカラムがどちらで使われるか判別が困難
+2. **NULL カラムが多い**: 作品レコードにはエピソード用カラムが NULL、エピソードレコードには作品用カラムが NULL になる
+3. **既存コードへの影響が大きい**: すべてのカラムを `animes` に移行するため、変更範囲が広い
 
 ## 参考資料
 
@@ -510,6 +629,6 @@ func (u *ConvertAnimeUsecase) ConvertWorkToEpisode(ctx context.Context, animeID,
 参考にしたドキュメント、記事、OSSプロジェクトなど
 -->
 
-- [現在の works テーブル定義](/workspace/go/db/schema.sql:3105)
+- [現在の works テーブル定義](/workspace/go/db/schema.sql:3181)
 - [現在の episodes テーブル定義](/workspace/go/db/schema.sql:805)
 - [現在の series_works テーブル定義](/workspace/go/db/schema.sql:2149)
