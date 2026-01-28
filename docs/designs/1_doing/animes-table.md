@@ -125,15 +125,11 @@ CREATE TABLE public.animes (
     -- 共通属性
     title character varying(510) NOT NULL,
     title_kana character varying DEFAULT ''::character varying NOT NULL,
-    title_ro character varying DEFAULT ''::character varying NOT NULL,
-    title_en character varying DEFAULT ''::character varying NOT NULL,
     title_alter character varying DEFAULT ''::character varying NOT NULL,
-    title_alter_en character varying DEFAULT ''::character varying NOT NULL,
 
     -- 状態管理
-    aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
     deleted_at timestamp without time zone,
-    unpublished_at timestamp without time zone,
+    hidden_at timestamp without time zone,  -- 非公開日時（旧 unpublished_at）
 
     -- タイムスタンプ
     created_at timestamp with time zone,
@@ -150,7 +146,6 @@ CREATE TABLE public.animes (
 -- インデックス
 CREATE INDEX index_animes_on_parent_id ON public.animes(parent_id);
 CREATE INDEX index_animes_on_title ON public.animes(title);
-CREATE INDEX index_animes_on_aasm_state ON public.animes(aasm_state);
 ```
 
 #### 既存テーブルへの変更
@@ -169,8 +164,8 @@ CREATE UNIQUE INDEX index_episodes_on_anime_id ON public.episodes(anime_id) WHER
 
 **共通カラム（animes テーブル）**:
 
-- `title`, `title_kana`, `title_ro`, `title_en`, `title_alter`, `title_alter_en`
-- `aasm_state`, `deleted_at`, `unpublished_at`
+- `title`, `title_kana`, `title_alter`
+- `deleted_at`, `hidden_at`（旧 `unpublished_at`）
 - `created_at`, `updated_at`
 
 **作品固有カラム（works テーブルに保持）**:
@@ -204,11 +199,10 @@ CREATE TABLE public.series_animes (
     anime_id bigint NOT NULL REFERENCES public.animes(id),
     summary character varying DEFAULT ''::character varying NOT NULL,
     summary_en character varying DEFAULT ''::character varying NOT NULL,
-    aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     deleted_at timestamp without time zone,
-    unpublished_at timestamp without time zone,
+    hidden_at timestamp without time zone,
     CONSTRAINT series_animes_anime_must_be_work CHECK (
         NOT EXISTS (
             SELECT 1 FROM animes WHERE animes.id = series_animes.anime_id AND animes.parent_id IS NOT NULL
