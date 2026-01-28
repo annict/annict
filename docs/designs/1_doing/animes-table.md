@@ -124,8 +124,8 @@ CREATE TABLE public.animes (
 
     -- 共通属性
     title character varying(510) NOT NULL,
-    title_kana character varying DEFAULT ''::character varying NOT NULL,
-    title_alter character varying DEFAULT ''::character varying NOT NULL,
+    title_kana character varying,   -- NULL許容（未設定を表現）
+    title_alter character varying,  -- NULL許容（未設定を表現）
 
     -- 状態管理
     deleted_at timestamp without time zone,
