@@ -27,21 +27,21 @@ PACKAGES=$(cat <<'PKGLIST' | sed 's/#.*//'
   zsh
   # Playwright用のシステム依存ライブラリ
   # ブラウザ本体は初回テスト実行時に `make test-setup` でインストール
-  libasound2
-  libatk-bridge2.0-0
-  libatk1.0-0
-  libcairo2
-  libcups2
-  libdrm2
-  libgbm1
-  libnspr4
-  libnss3
-  libpango-1.0-0
-  libxcomposite1
-  libxdamage1
-  libxfixes3
-  libxkbcommon0
-  libxrandr2
+  libasound2         # Playwright: ALSA音声ライブラリ
+  libatk-bridge2.0-0 # Playwright: ATKブリッジ（アクセシビリティ）
+  libatk1.0-0        # Playwright: ATK（アクセシビリティツールキット）
+  libcairo2          # Playwright: 2Dグラフィックスライブラリ
+  libcups2           # Playwright: 印刷システムライブラリ
+  libdrm2            # Playwright: Direct Rendering Manager
+  libgbm1            # Playwright: Generic Buffer Management（GPU）
+  libnspr4           # Playwright: Netscape Portable Runtime
+  libnss3            # Playwright: Network Security Services
+  libpango-1.0-0     # Playwright: テキストレンダリング
+  libxcomposite1     # Playwright: X11 Composite拡張
+  libxdamage1        # Playwright: X11 Damage拡張
+  libxfixes3         # Playwright: X11 Fixes拡張
+  libxkbcommon0      # Playwright: XKBキーボード処理
+  libxrandr2         # Playwright: X11 RandR拡張（ディスプレイ設定）
 PKGLIST
 )
 
