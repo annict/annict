@@ -25,6 +25,23 @@ PACKAGES=$(cat <<'PKGLIST' | sed 's/#.*//'
   tree           # Claude Codeで使用
   vim            # Claude Codeで使用
   zsh
+  # Playwright用のシステム依存ライブラリ
+  # ブラウザ本体は初回テスト実行時に `make test-setup` でインストール
+  libasound2
+  libatk-bridge2.0-0
+  libatk1.0-0
+  libcairo2
+  libcups2
+  libdrm2
+  libgbm1
+  libnspr4
+  libnss3
+  libpango-1.0-0
+  libxcomposite1
+  libxdamage1
+  libxfixes3
+  libxkbcommon0
+  libxrandr2
 PKGLIST
 )
 
