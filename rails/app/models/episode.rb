@@ -4,7 +4,6 @@
 class Episode < ApplicationRecord
   include DbActivityMethods
   include Unpublishable
-  include GraphqlResolvable
 
   DIFF_FIELDS = %i[
     number sort_number sc_count title prev_episode_id fetch_syobocal raw_number title_en

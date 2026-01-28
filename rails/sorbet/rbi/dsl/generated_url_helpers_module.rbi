@@ -22,12 +22,6 @@ module GeneratedUrlHelpersModule
   def api_internal_stars_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }
-  def api_local_graphql_url(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
-  def canary_graphql_url(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
   def cast_list_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }

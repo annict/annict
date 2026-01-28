@@ -50,5 +50,4 @@ module Shrine::Storage::S3; end
 module TrailerImageUploader::Attachment; end
 module User::OrderProperty; end
 module UserlandProjectImageUploader::Attachment; end
-module V4::AddReactionService; end
 module WorkImageUploader::Attachment; end
