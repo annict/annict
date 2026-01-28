@@ -145,7 +145,6 @@ CREATE TABLE public.animes (
 
 -- インデックス
 CREATE INDEX index_animes_on_parent_id ON public.animes(parent_id);
-CREATE INDEX index_animes_on_title ON public.animes(title);
 ```
 
 #### 既存テーブルへの変更
