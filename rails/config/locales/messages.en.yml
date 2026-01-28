@@ -174,9 +174,6 @@ en:
         authorize_account_html: Authorize <b>%{client_name}</b> to use your account?
         cancel: Cancel
         this_application_will_be_able_to: "This application will be able to:"
-    oauth_users:
-      new:
-        sign_up_with_oauth: Sign Up with %{provider_name}
     options:
       hide_supporter_badge: Hide Annict Supporters badges
       hide_supporter_badge_detail: Hide supporter badges on profiles page and so on.
