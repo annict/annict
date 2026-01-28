@@ -11,19 +11,34 @@ apt dist-upgrade -yq
 PACKAGES=$(cat <<'PKGLIST' | sed 's/#.*//'
   build-essential
   curl
-  file           # Shrineによる画像アップロードに必要
-  fzf            # Claude Codeで使用
+  file               # Shrineによる画像アップロードに必要
+  fzf                # Claude Codeで使用
   git
-  gnupg          # PostgreSQLやNode.jsのインストールに必要
-  imagemagick    # Shrineによる画像アップロードに必要
-  jq             # Claude Codeで使用
-  libyaml-dev    # psych gemのインストールに必要
+  gnupg              # PostgreSQLやNode.jsのインストールに必要
+  imagemagick        # Shrineによる画像アップロードに必要
+  jq                 # Claude Codeで使用
+  libasound2         # Playwright: ALSA音声ライブラリ
+  libatk-bridge2.0-0 # Playwright: ATKブリッジ（アクセシビリティ）
+  libatk1.0-0        # Playwright: ATK（アクセシビリティツールキット）
+  libcairo2          # Playwright: 2Dグラフィックスライブラリ
+  libcups2           # Playwright: 印刷システムライブラリ
+  libdrm2            # Playwright: Direct Rendering Manager
+  libgbm1            # Playwright: Generic Buffer Management（GPU）
+  libnspr4           # Playwright: Netscape Portable Runtime
+  libnss3            # Playwright: Network Security Services
+  libpango-1.0-0     # Playwright: テキストレンダリング
+  libxcomposite1     # Playwright: X11 Composite拡張
+  libxdamage1        # Playwright: X11 Damage拡張
+  libxfixes3         # Playwright: X11 Fixes拡張
+  libxkbcommon0      # Playwright: XKBキーボード処理
+  libxrandr2         # Playwright: X11 RandR拡張（ディスプレイ設定）
+  libyaml-dev        # psych gemのインストールに必要
   lsb-release
-  nano           # Claude Codeで使用
-  ripgrep        # Claude Codeで使用
+  nano               # Claude Codeで使用
+  ripgrep            # Claude Codeで使用
   sudo
-  tree           # Claude Codeで使用
-  vim            # Claude Codeで使用
+  tree               # Claude Codeで使用
+  vim                # Claude Codeで使用
   zsh
 PKGLIST
 )

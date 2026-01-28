@@ -174,9 +174,6 @@ ja:
         authorize_account_html: "<b>%{client_name}</b> からのアクセスをを承認しますか？"
         cancel: キャンセル
         this_application_will_be_able_to: "このアプリができること:"
-    oauth_users:
-      new:
-        sign_up_with_oauth: "%{provider_name}で始める"
     options:
       hide_supporter_badge: Annictサポーターのバッジを非表示にする
       hide_supporter_badge_detail: プロフィールページなどに表示されるAnnictサポーターを示すバッジを非表示にします。
