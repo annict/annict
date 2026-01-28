@@ -130,7 +130,7 @@ end
 
 ### フェーズ 2: Canary GraphQL API の削除
 
-- [ ] **2-1**: ルーティングとコントローラーの削除
+- [x] **2-1**: ルーティングとコントローラーの削除
   - `config/routes/api.rb` から Canary エンドポイントを削除
   - `config/routes/local_api.rb` を削除
   - `app/controllers/api/canary/graphql_controller.rb` を削除

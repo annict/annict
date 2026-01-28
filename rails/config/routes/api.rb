@@ -5,10 +5,6 @@ scope module: :api do
   constraints(subdomain: "api") do
     post :graphql, to: "graphql#execute"
 
-    namespace :canary do
-      post :graphql, to: "graphql#execute"
-    end
-
     namespace :v1 do
       resources :activities, only: %i[index]
       resources :casts, only: %i[index]

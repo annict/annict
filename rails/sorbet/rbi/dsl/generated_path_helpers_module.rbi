@@ -22,12 +22,6 @@ module GeneratedPathHelpersModule
   def api_internal_stars_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }
-  def api_local_graphql_path(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
-  def canary_graphql_path(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
   def cast_list_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }

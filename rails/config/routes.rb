@@ -3,7 +3,6 @@
 
 Rails.application.routes.draw do
   draw :api
-  draw :local_api
 
   devise_for :users,
     skip: %i[passwords registrations sessions]
