@@ -32,7 +32,8 @@ Canary GraphQL API (`Canary::AnnictSchema`) を削除する。
 - Canary GraphQL API のエンドポイント (`api.annict.com/canary/graphql`) を削除する
 - Canary GraphQL API 関連のすべてのコードを削除する
 - ローカル開発用 API (`/api/local/graphql`) も Canary を使用しているため削除する
-- `GraphqlResolvable` concern の `global_id` メソッドを Beta 版を使用するように変更する
+- `GraphqlResolvable` concern を削除する（`#global_id` メソッドは実際には使用されていないため）
+- `Episode` モデルから `include GraphqlResolvable` を削除する
 - 関連するテストコードを削除する
 
 ### 非機能要件
@@ -69,37 +70,22 @@ Canary GraphQL API (`Canary::AnnictSchema`) を削除する。
   - `spec/graphql/canary/mutations/update_episode_record_spec.rb`
   - `spec/graphql/canary/mutations/update_work_record_spec.rb`
 
-#### 5. 関連ファイル修正 (3 ファイル)
+#### 5. 関連ファイル修正・削除 (4 ファイル)
 
-- `app/models/concerns/graphql_resolvable.rb` - Beta 版を使用するように変更
+- `app/models/concerns/graphql_resolvable.rb` - 削除（`#global_id` メソッドは使用されていない）
+- `app/models/episode.rb` - `include GraphqlResolvable` を削除
 - `spec/graphql/beta/mutations/update_record_spec.rb` - Canary 参照の削除
 - `spec/graphql/beta/mutations/update_review_spec.rb` - Canary 参照の削除
 
 ### 修正内容
 
-#### GraphqlResolvable の修正
+#### GraphqlResolvable の削除
 
-**変更前**:
-```ruby
-module GraphqlResolvable
-  extend ActiveSupport::Concern
+`GraphqlResolvable` concern は `Episode` モデルでのみ include されているが、`#global_id` メソッドは実際には呼び出されていない。そのため、concern ファイルごと削除し、`Episode` モデルからも `include` を削除する。
 
-  def global_id
-    Canary::AnnictSchema.id_from_object(self, self.class)
-  end
-end
-```
-
-**変更後**:
-```ruby
-module GraphqlResolvable
-  extend ActiveSupport::Concern
-
-  def global_id
-    Beta::AnnictSchema.id_from_object(self, self.class)
-  end
-end
-```
+**削除対象**:
+- `app/models/concerns/graphql_resolvable.rb` - ファイル削除
+- `app/models/episode.rb` - `include GraphqlResolvable` 行を削除
 
 #### ルーティングの修正 (`config/routes/api.rb`)
 
@@ -163,12 +149,13 @@ end
   - **想定ファイル数**: 約 7 ファイル（実装 0 + テスト 7）
   - **想定行数**: 約 500 行削除（実装 0 行 + テスト 500 行）
 
-- [ ] **2-4**: 関連ファイルの修正
-  - `app/models/concerns/graphql_resolvable.rb` を修正（Beta 版を使用）
+- [ ] **2-4**: 関連ファイルの修正・削除
+  - `app/models/concerns/graphql_resolvable.rb` を削除（`#global_id` は使用されていない）
+  - `app/models/episode.rb` から `include GraphqlResolvable` を削除
   - `spec/graphql/beta/mutations/update_record_spec.rb` から Canary 参照を削除
   - `spec/graphql/beta/mutations/update_review_spec.rb` から Canary 参照を削除
-  - **想定ファイル数**: 約 3 ファイル（実装 1 + テスト 2）
-  - **想定行数**: 約 10 行（実装 2 行 + テスト 8 行）
+  - **想定ファイル数**: 約 4 ファイル（実装 2 + テスト 2）
+  - **想定行数**: 約 15 行削除（実装 11 行 + テスト 4 行）
 
 ### フェーズ 3: 検証
 
