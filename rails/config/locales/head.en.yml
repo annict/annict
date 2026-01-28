@@ -177,8 +177,6 @@ en:
           edit: "Edit Post"
           new: "New Post"
           show: "%{title}"
-      friends:
-        index: Find Friends
       home:
         show: Annict
       legacy_sign_in:

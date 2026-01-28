@@ -44,9 +44,6 @@ ignore:
       - Style/SuperWithArgsParentheses
   - app/components/deprecated/buttons/receive_channel_button_component.rb:
       - Style/SuperWithArgsParentheses
-  - app/components/deprecated/buttons/share_to_facebook_button_component.rb:
-      - Style/SuperWithArgsParentheses
-      - Rails/EnvironmentVariableAccess
   - app/components/deprecated/buttons/share_to_twitter_button_component.rb:
       - Style/SuperWithArgsParentheses
   - app/components/deprecated/buttons/skip_episode_button_component.rb:

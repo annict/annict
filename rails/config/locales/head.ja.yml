@@ -173,8 +173,6 @@ ja:
           edit: "投稿編集"
           new: "新規投稿"
           show: "%{title}"
-      friends:
-        index: 友達を探す
       home:
         show: Annict
       legacy_sign_in:

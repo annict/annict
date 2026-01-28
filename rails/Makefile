@@ -1,14 +1,21 @@
-.PHONY: test test-file console server lint lint-fix fmt zeitwerk sorbet sorbet-update db-migrate db-rollback db-setup graphql-dump help
+.PHONY: test test-file test-setup console server lint lint-fix fmt zeitwerk sorbet sorbet-update db-migrate db-rollback db-setup graphql-dump help
 
 # 1Password CLI経由で環境変数を読み込んでコマンドを実行
 OP_RUN := op run --env-file=".env.local" --
 
 ## テスト
 test: ## 全テストを実行
-	$(OP_RUN) bin/rspec
+	RAILS_ENV=test bin/rspec
 
 test-file: ## 特定のテストファイルを実行 (例: make test-file FILE=spec/models/user_spec.rb)
-	$(OP_RUN) bin/rspec $(FILE)
+	RAILS_ENV=test bin/rspec $(FILE)
+
+test-setup: ## テスト環境をセットアップ（シード投入、Playwrightインストール）
+	@echo "==> テストDBにシードデータを投入..."
+	RAILS_ENV=test bin/rails db:seed
+	@echo "==> Playwrightブラウザをインストール..."
+	yarn playwright install
+	@echo "==> テスト環境のセットアップが完了しました"
 
 ## 開発サーバー
 console: ## Railsコンソールを起動

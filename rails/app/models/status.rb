@@ -84,22 +84,6 @@ class Status < ApplicationRecord
     "#{user.preferred_annict_url}/@#{user.username}/#{kind}"
   end
 
-  def facebook_share_title
-    work.local_title
-  end
-
-  def facebook_share_body
-    work_title = work.local_title
-
-    base_body = if user.locale == "ja"
-      "アニメ「%s」の視聴ステータスを「#{kind_text}」にしました。"
-    else
-      "Changed %s's status to \"#{kind_text}\"."
-    end
-
-    base_body % work_title
-  end
-
   def needs_single_activity_group?
     false
   end
