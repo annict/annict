@@ -307,7 +307,7 @@ GEM
       pp (>= 0.6.0)
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
-    jb (0.8.0)
+    jb (0.8.2)
     jmespath (1.6.2)
     jsbundling-rails (1.0.3)
       railties (>= 6.0.0)
