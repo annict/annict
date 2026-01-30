@@ -107,6 +107,7 @@ animes テーブル（共通情報）
 1. **カラムの責務が明確**: 作品固有/エピソード固有/共通が分離されており、仕様を忘れてしまっても理解しやすい
 2. **既存テーブル構造の変更が最小限**: `works` と `episodes` は存続するため、既存コードへの影響が比較的小さい
 3. **NULL カラムの削減**: `animes` テーブルに作品/エピソード両方のカラムを持たせる必要がない
+4. **エピソード間の関係を維持**: `episodes` テーブルに `prev_anime_id` が残るため、`Episode#prev_episode` / `Episode#next_episode` のような既存のエピソード間参照ロジックをそのまま維持できる（統合設計だと `Anime#prev_anime` / `Anime#next_anime` のような不自然な API になる）
 
 **トレードオフ**:
 
@@ -126,6 +127,11 @@ CREATE TABLE public.animes (
     title character varying(510) NOT NULL,
     title_kana character varying,   -- NULL許容（未設定を表現）
     title_alter character varying,  -- NULL許容（未設定を表現）
+
+    -- 集計・評価カラム
+    ratings_count integer DEFAULT 0 NOT NULL,        -- 評価数（スコア計算の信頼性補正用）
+    satisfaction_rate numeric(5,2),                  -- 満足度（0.00-100.00、評価の加重平均）
+    score numeric(5,2),                              -- 計算されたスコア（信頼性補正済み）
 
     -- 状態管理
     deleted_at timestamp without time zone,
@@ -157,6 +163,11 @@ CREATE UNIQUE INDEX index_works_on_anime_id ON public.works(anime_id) WHERE anim
 -- episodes テーブルに anime_id を追加（エピソード固有情報は既存カラムに保持）
 ALTER TABLE public.episodes ADD COLUMN anime_id bigint REFERENCES public.animes(id);
 CREATE UNIQUE INDEX index_episodes_on_anime_id ON public.episodes(anime_id) WHERE anime_id IS NOT NULL;
+
+-- episodes テーブルの prev_episode_id を prev_anime_id に変更（animes.id を参照）
+ALTER TABLE public.episodes ADD COLUMN prev_anime_id bigint REFERENCES public.animes(id);
+CREATE INDEX index_episodes_on_prev_anime_id ON public.episodes(prev_anime_id);
+-- 移行後に prev_episode_id カラムは削除予定
 ```
 
 #### カラムの分類
@@ -164,6 +175,7 @@ CREATE UNIQUE INDEX index_episodes_on_anime_id ON public.episodes(anime_id) WHER
 **共通カラム（animes テーブル）**:
 
 - `title`, `title_kana`, `title_alter`
+- `ratings_count`（評価数）, `satisfaction_rate`（満足度）, `score`（スコア）
 - `deleted_at`, `hidden_at`（旧 `unpublished_at`）
 - `created_at`, `updated_at`
 
@@ -186,31 +198,29 @@ CREATE UNIQUE INDEX index_episodes_on_anime_id ON public.episodes(anime_id) WHER
 - `work_id`（既存の親作品への参照、移行期間中は維持）
 - `number`, `number_en`, `sort_number`, `raw_number`
 - `sc_count`, `fetch_syobocal`
-- `prev_episode_id`
+- `prev_anime_id`（前のエピソードの `animes.id` を参照、旧 `prev_episode_id`）
 - 集計カラム: `episode_records_count`, `episode_record_bodies_count`, `score`, `ratings_count`, `satisfaction_rate`
 
-#### series_animes テーブル（既存 series_works の後継）
+#### series_works テーブルへの anime_id 追加
 
 ```sql
-CREATE TABLE public.series_animes (
-    id bigint NOT NULL PRIMARY KEY,
-    series_id bigint NOT NULL REFERENCES public.series(id),
-    anime_id bigint NOT NULL REFERENCES public.animes(id),
-    summary character varying DEFAULT ''::character varying NOT NULL,
-    summary_en character varying DEFAULT ''::character varying NOT NULL,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    deleted_at timestamp without time zone,
-    hidden_at timestamp without time zone,
-    CONSTRAINT series_animes_anime_must_be_work CHECK (
-        NOT EXISTS (
-            SELECT 1 FROM animes WHERE animes.id = series_animes.anime_id AND animes.parent_id IS NOT NULL
-        )
-    )
-);
+-- series_works テーブルに anime_id を追加
+ALTER TABLE public.series_works ADD COLUMN anime_id bigint REFERENCES public.animes(id);
+CREATE INDEX index_series_works_on_anime_id ON public.series_works(anime_id);
+-- 注: エピソードへの参照も許容する（作品→エピソード変換時にレコードを削除しなくて済む）
+-- 表示時に作品のみフィルタリングする方針
+```
 
-CREATE UNIQUE INDEX index_series_animes_on_series_id_and_anime_id ON public.series_animes(series_id, anime_id);
-CREATE INDEX index_series_animes_on_anime_id ON public.series_animes(anime_id);
+**シリーズの関連作品を取得する際のクエリ例**:
+
+```sql
+-- 作品のみを取得（エピソードに変換されたものは除外）
+SELECT sw.*, a.title, w.season_year
+FROM series_works sw
+JOIN animes a ON a.id = sw.anime_id
+JOIN works w ON w.anime_id = a.id
+WHERE sw.series_id = $1
+  AND a.parent_id IS NULL;  -- 作品のみ
 ```
 
 ### 移行方針
@@ -247,7 +257,7 @@ CREATE INDEX index_series_animes_on_anime_id ON public.series_animes(anime_id);
 - `work_images` (work_id → anime_id)
 - `work_records` (work_id → anime_id)
 - `work_taggings` (work_id → anime_id)
-- `series_works` → `series_animes` に移行
+- `series_works` (work_id → anime_id)
 
 #### フェーズ 3: アプリケーションコードの移行
 
@@ -377,6 +387,155 @@ func (r *AnimeRepository) FindEpisodeByID(ctx context.Context, animeID int64) (*
 }
 ```
 
+### 変換時の挙動
+
+作品とエピソードを相互変換した際、関連テーブルのデータは基本的に**そのまま保持**される。`anime_id` は変わらないため、変換後も同じデータが参照され続ける。
+
+#### 変換時の各テーブルの挙動
+
+| テーブル | 作品→エピソード | エピソード→作品 | 備考 |
+|---------|---------------|---------------|------|
+| `library_entries` | エピソードとして表示 | 作品として表示 | ユーザーの視聴意図は変わらないため許容 |
+| `records` | そのまま表示 | そのまま表示 | 変換前の記録も含めて表示 |
+| `series_animes` | 表示時にフィルタ（作品のみ） | 自動的に表示対象に | テーブル上はレコードが残る |
+| `slots` | - | 表示しない | 放送予定はエピソードのみ対象 |
+
+#### ライブラリ（library_entries）のクエリ例
+
+作品とエピソード両方を1回のクエリで取得できる：
+
+```sql
+-- 「見てる」ステータスの作品・エピソードを取得
+SELECT
+    le.*,
+    a.id AS anime_id,
+    a.title,
+    a.parent_id,
+    -- 作品の場合は works から詳細を取得
+    w.season_year,
+    w.media,
+    -- エピソードの場合は episodes から詳細を取得
+    e.number,
+    e.sort_number
+FROM library_entries le
+JOIN animes a ON a.id = le.anime_id
+LEFT JOIN works w ON w.anime_id = a.id
+LEFT JOIN episodes e ON e.anime_id = a.id
+WHERE le.user_id = $1
+  AND le.status = 'watching';
+```
+
+`parent_id IS NULL` なら作品、`parent_id IS NOT NULL` ならエピソードと判別できる。UI側で「（エピソード）」などのラベルを付けて区別する。
+
+#### 放送予定（slots）のクエリ例
+
+エピソード→作品に変換された場合、放送予定は表示しない：
+
+```sql
+-- 作品の放送予定（エピソードのみ表示）
+SELECT s.*, a.title AS episode_title, e.number
+FROM slots s
+JOIN animes a ON a.id = s.episode_anime_id
+JOIN episodes e ON e.anime_id = a.id
+WHERE s.anime_id = $1
+  AND a.parent_id IS NOT NULL;  -- エピソードのみ
+```
+
+#### records テーブルの将来計画
+
+現在 `work_records` と `episode_records` は別テーブルだが、将来的に `records` テーブルに統合する計画がある。統合後は `anime_id` のみを持つ形になり、変換後も同じ `anime_id` を参照し続けるためシンプルになる。
+
+### URL 設計
+
+#### 設計方針
+
+- **Web URL はフラット**: `/anime/:anime_id` で作品もエピソードも同じ形式
+- **API URL は階層的**: 親子関係を明確にする RESTful 設計
+- **単数形を採用**: 英語として自然な `/anime` を使用（`/animes` ではない）
+- **既存 URL からのリダイレクト**: `/works/:work_id` → `/anime/:anime_id` に 301 リダイレクト
+
+#### Web URL
+
+```
+GET /anime/:anime_id                # 作品詳細またはエピソード詳細
+```
+
+- 作品かエピソードかは `parent_id` で判別し、適切なテンプレートを表示
+- **変換に強い**: 作品↔エピソード変換しても URL が変わらない
+
+#### REST API V2
+
+```
+GET /api/v2/anime/works             # 作品一覧
+GET /api/v2/anime/:anime_id         # anime詳細（作品でもエピソードでも）
+GET /api/v2/anime/:anime_id/episodes  # 特定作品のエピソード一覧
+```
+
+#### 設計方針
+
+- **公開する ID は `animes.id` のみ**: `works.id` と `episodes.id` は内部的な ID として扱い、Web・API ともに公開しない
+- **内部的なフィールドは公開しない**: `parent_id` などは API レスポンスに含めない
+- **関連リソースは展開して返す**: エピソードの親作品は `work` フィールド、前後のエピソードは `prev_episode` / `next_episode` フィールドで表現
+
+#### API レスポンス例
+
+**作品の場合**:
+
+```json
+{
+  "id": 123,
+  "type": "work",
+  "title": "作品タイトル",
+  "title_kana": "サクヒンタイトル",
+  "work": {
+    "season_year": 2024,
+    "media": "tv",
+    "official_site_url": "https://example.com"
+  }
+}
+```
+
+**エピソードの場合**:
+
+```json
+{
+  "id": 456,
+  "type": "episode",
+  "title": "第2話 出会い",
+  "episode": {
+    "number": "2",
+    "sort_number": 2
+  },
+  "work": {
+    "id": 123,
+    "type": "work",
+    "title": "作品タイトル"
+  },
+  "prev_episode": {
+    "id": 455,
+    "title": "第1話 はじまり"
+  },
+  "next_episode": {
+    "id": 457,
+    "title": "第3話 冒険"
+  }
+}
+```
+
+- `prev_episode` / `next_episode` の `id` は `animes.id` を返す
+- 前後のエピソードが存在しない場合は `null` を返す
+
+#### 既存 URL からの移行
+
+移行期間中は既存の URL から新しい URL へ 301 リダイレクトする：
+
+```
+/works/:work_id                     → /anime/:anime_id
+/works/:work_id/episodes/:episode_id → /anime/:episode_anime_id
+```
+
+リダイレクトには `works.anime_id` と `episodes.anime_id` のマッピングを使用する。
+
 ## タスクリスト
 
 <!--
@@ -426,6 +585,9 @@ func (r *AnimeRepository) FindEpisodeByID(ctx context.Context, animeID int64) (*
   - works → animes の共通カラムコピー
   - episodes → animes の共通カラムコピー（parent_id 設定含む）
   - works.anime_id, episodes.anime_id の設定
+  - episodes.prev_episode_id → episodes.prev_anime_id への変換
+  - ratings_count, satisfaction_rate の集計・設定（既存の works/episodes から移行）
+  - score は別設計書で定義する計算式に基づき設定
   - **想定ファイル数**: 約 2 ファイル（実装 1 + テスト 1）
   - **想定行数**: 約 200 行（実装 150 行 + テスト 50 行）
 
@@ -503,12 +665,12 @@ func (r *AnimeRepository) FindEpisodeByID(ctx context.Context, animeID int64) (*
   - **想定ファイル数**: 約 2 ファイル（実装 1 + テスト 1）
   - **想定行数**: 約 150 行（実装 100 行 + テスト 50 行）
 
-- [ ] **2-8**: series_animes テーブルの作成と series_works からの移行
+- [ ] **2-8**: series_works への anime_id 追加
 
-  - series_animes テーブルのマイグレーション
-  - series_works からのデータ移行
+  - マイグレーションの作成
+  - データ移行スクリプト
   - **想定ファイル数**: 約 2 ファイル（実装 1 + テスト 1）
-  - **想定行数**: 約 150 行（実装 100 行 + テスト 50 行）
+  - **想定行数**: 約 100 行（実装 60 行 + テスト 40 行）
 
 ### フェーズ 3: アプリケーションコードの移行
 
