@@ -440,6 +440,43 @@ make sqlc-generate
   - これにより、常にクリーンな状態でテストが実行されます
 - PostgreSQL 17.6 の `\restrict` コマンド対策として、自動的にクリーンアップ処理が実行されます
   - 参照: https://github.com/amacneil/dbmate/issues/678
+- **マイグレーション単体のテストは不要**: マイグレーションが正しく適用されているかは、リポジトリやユースケースのテストで間接的に検証されます。テーブルが正しく作成されていなければ、それらのテストが失敗するためです。
+
+#### カラム定義のガイドライン
+
+新しいテーブルやカラムを作成する際は、以下のルールに従ってください。
+
+**文字列型**:
+
+- ✅ **`VARCHAR`（長さ指定なし）を使用**: 長さ制限はアプリケーションコードでバリデーションする
+- ❌ **`VARCHAR(n)` は使用しない**: 既存テーブルとの互換性が必要な場合を除く
+
+```sql
+-- ✅ 良い例
+title VARCHAR NOT NULL,
+description VARCHAR,
+
+-- ❌ 悪い例
+title VARCHAR(510) NOT NULL,
+```
+
+**タイムスタンプ型**:
+
+- ✅ **`TIMESTAMP WITH TIME ZONE` を使用**: すべての時刻はUTCで保存される
+- ❌ **`TIMESTAMP WITHOUT TIME ZONE` は使用しない**: タイムゾーン情報が失われる
+
+```sql
+-- ✅ 良い例
+created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+deleted_at TIMESTAMP WITH TIME ZONE,
+
+-- ❌ 悪い例
+deleted_at TIMESTAMP WITHOUT TIME ZONE,
+```
+
+**既存テーブルとの違い**:
+
+既存の Rails 版で作成されたテーブルには `VARCHAR(n)` や `TIMESTAMP WITHOUT TIME ZONE` が使用されている場合がありますが、新規作成するテーブルでは上記のガイドラインに従ってください。
 
 ## Pull Request のガイドライン
 
