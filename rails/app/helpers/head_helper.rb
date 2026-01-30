@@ -18,9 +18,6 @@ module HeadHelper
         image: "#{ENV.fetch("ANNICT_URL")}/images/og_image.png",
         locale: (I18n.locale == :ja ? "ja_JP" : "en_US")
       },
-      fb: {
-        app_id: ENV.fetch("FACEBOOK_APP_ID")
-      },
       twitter: {
         card: "summary",
         site: twitter_username,

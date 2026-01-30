@@ -145,9 +145,6 @@ en:
         new:
           disabled_form_hint1: No selectable collections.
           disabled_form_hint2_html: You can create collections on <a data-turbo-frame="_top" href="/@%{username}/collections">here</a>.
-    friends:
-      no_sns_friends: No SNS Friends
-      no_users: No users
     home:
       index:
         there_are_no_activities: There are no activities
@@ -177,9 +174,6 @@ en:
         authorize_account_html: Authorize <b>%{client_name}</b> to use your account?
         cancel: Cancel
         this_application_will_be_able_to: "This application will be able to:"
-    oauth_users:
-      new:
-        sign_up_with_oauth: Sign Up with %{provider_name}
     options:
       hide_supporter_badge: Hide Annict Supporters badges
       hide_supporter_badge_detail: Hide supporter badges on profiles page and so on.
@@ -198,9 +192,6 @@ en:
       new_slots_csv_by_program: New slots by slot detail
       no_slots: No slots
       please_set_channels_html: Please set channels on %{channels_link} page.
-    providers:
-      removed: Removed.
-      you_can_not_disconnect: You can not disconnect.
     records:
       show:
         record_by_name: "%{name}'s Record"

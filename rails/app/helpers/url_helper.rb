@@ -15,4 +15,12 @@ module UrlHelper
   def current_path_with_query
     [request.path, request.query_string].select(&:present?).join("?")
   end
+
+  def ics_calendar_url(username)
+    "#{annict_url(:root_url)}@#{username}/ics"
+  end
+
+  def ics_calendar_alt_url(username)
+    "#{annict_url(:root_url)}ics?username=#{username}"
+  end
 end

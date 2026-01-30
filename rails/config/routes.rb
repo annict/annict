@@ -3,10 +3,8 @@
 
 Rails.application.routes.draw do
   draw :api
-  draw :local_api
 
   devise_for :users,
-    controllers: {omniauth_callbacks: "callbacks"},
     skip: %i[passwords registrations sessions]
 
   use_doorkeeper do
@@ -29,7 +27,6 @@ Rails.application.routes.draw do
   match "/@:username/favorite_people",                          via: :get,    as: :favorite_person_list,                       to: "favorite_people#index",                               username: ROUTING_USERNAME_FORMAT
   match "/@:username/followers",                                via: :get,    as: :follower_list,                              to: "followers#index",                                     username: ROUTING_USERNAME_FORMAT
   match "/@:username/following",                                via: :get,    as: :followee_list,                              to: "followees#index",                                     username: ROUTING_USERNAME_FORMAT
-  match "/@:username/ics",                                      via: :get,    as: :user_ics,                                   to: "ics#show",                                            username: ROUTING_USERNAME_FORMAT
   match "/@:username/records",                                  via: :get,    as: :record_list,                                to: "records#index",                                       username: ROUTING_USERNAME_FORMAT
   match "/@:username/records/:record_id",                       via: :delete,  as: :record,                                    to: "records#destroy",                                     username: ROUTING_USERNAME_FORMAT
   match "/@:username/records/:record_id",                       via: :get,                                                     to: "records#show",                                        username: ROUTING_USERNAME_FORMAT
@@ -221,8 +218,6 @@ Rails.application.routes.draw do
   match "/fragment/trackable_works/:work_id",                   via: :get,    as: :fragment_trackable_work,                    to: "fragment/trackable_works#show"
   match "/fragment/trackable_episodes",                         via: :get,    as: :fragment_trackable_episode_list,            to: "fragment/trackable_episodes#index"
   match "/fragment/trackable_episodes/:episode_id",             via: :get,    as: :fragment_trackable_episode,                 to: "fragment/trackable_episodes#show"
-  match "/friends",                                             via: :get,    as: :friend_list,                                to: "friends#index"
-  match "/ics",                                                 via: :get,    as: :user_ics_alt,                               to: "ics#show" # NOTE: `/@:username/ics` だとAppleのカレンダーで `@` がエンコードされて404になるため、別のパスを用意している
   match "/legal",                                               via: :get,    as: :legal,                                      to: "pages#legal"
   match "/manifest",                                            via: :get,    as: :manifest,                                   to: "manifests/show#call"
   match "/notifications",                                       via: :get,    as: :notification_list,                          to: "notifications#index"
@@ -252,7 +247,6 @@ Rails.application.routes.draw do
   match "/settings/profile",                                    via: :get,    as: :settings_profile,                           to: "settings/profiles#show"
   match "/settings/profile",                                    via: :patch,                                                   to: "settings/profiles#update"
   match "/settings/providers",                                  via: :get,    as: :settings_provider_list,                     to: "settings/providers#index"
-  match "/settings/providers/:provider_id",                     via: :delete, as: :settings_provider,                          to: "settings/providers#destroy"
   match "/settings/tokens",                                     via: :post,   as: :settings_token_list,                        to: "settings/tokens#create"
   match "/settings/tokens/:token_id",                           via: :delete, as: :settings_token,                             to: "settings/tokens#destroy"
   match "/settings/tokens/:token_id",                           via: :patch,                                                   to: "settings/tokens#update"

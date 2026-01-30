@@ -22,12 +22,6 @@ module GeneratedPathHelpersModule
   def api_internal_stars_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }
-  def api_local_graphql_path(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
-  def canary_graphql_path(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
   def cast_list_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }
@@ -400,9 +394,6 @@ module GeneratedPathHelpersModule
   def fragment_work_record_list_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }
-  def friend_list_path(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
   def graphql_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }
@@ -631,9 +622,6 @@ module GeneratedPathHelpersModule
   def settings_provider_list_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }
-  def settings_provider_path(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
   def settings_revoke_app_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }
@@ -662,18 +650,6 @@ module GeneratedPathHelpersModule
 
   sig { params(args: T.untyped).returns(String) }
   def user_collection_path(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
-  def user_facebook_omniauth_authorize_path(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
-  def user_facebook_omniauth_callback_path(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
-  def user_ics_alt_path(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
-  def user_ics_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }
   def userland_edit_project_path(*args); end

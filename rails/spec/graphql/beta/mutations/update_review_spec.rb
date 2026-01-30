@@ -7,7 +7,7 @@ describe Beta::Mutations::UpdateReview do
   let!(:work_record) { create(:work_record, user: user, record: record) }
   let(:token) { create(:oauth_access_token) }
   let(:context) { {viewer: user, doorkeeper_token: token, writable: true} }
-  let(:work_record_id) { Canary::AnnictSchema.id_from_object(work_record, work_record.class) }
+  let(:work_record_id) { Beta::AnnictSchema.id_from_object(work_record, work_record.class) }
 
   context "正常系" do
     let(:query) do

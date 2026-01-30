@@ -1,0 +1,3 @@
+- 1Password の利用を前提とする
+- やはり dev, test の環境変数の管理を分けたほうが良い気がしてきた
+  - https://developer.1password.com/docs/cli/secrets-environment-variables#step-3-differentiate-between-environments

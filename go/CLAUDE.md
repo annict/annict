@@ -106,6 +106,13 @@ cat /workspace/rails/app/models/work.rb
 - **ModelとRepositoryは1:1の関係**: 各ドメインエンティティに対応するRepositoryを作成
 - **Domain/Infrastructure層の統合**: データベース変更はほぼ起こらないため、シンプルさを優先
 
+### UsecaseとRepositoryの使い分け
+
+- **Usecase**: トランザクションを伴う永続化処理（作成・更新・削除）、複数Repositoryを跨ぐ操作
+- **Repository**: 読み取り専用の処理、単一エンティティの操作、トランザクション不要な処理
+
+**判断基準**: 読み取り専用の処理はRepositoryで完結させ、Usecaseを作成しない。
+
 📖 **詳細なアーキテクチャについては [@go/docs/architecture-guide.md](docs/architecture-guide.md) を参照してください。**
 
 ## 開発環境のセットアップ
@@ -660,6 +667,53 @@ Go 版では、型安全なテンプレートエンジン [templ](https://templ.
 - **型安全性**: コンパイル時に型チェックとエラー検出
 - **コンポーネント化**: `@componentName()` で他のコンポーネントを呼び出し
 - **国際化対応**: `templates.T(ctx, "message_id")` で翻訳を取得
+
+#### テンプレート関数の引数パターン
+
+テンプレート関数の引数は**構造体ベースのパターン**を使用します。
+
+**基本ルール**:
+
+- ✅ **構造体を使用**: テンプレートに渡すデータは専用の構造体にまとめる
+- ❌ **`context.Context` を明示的に渡さない**: templ は `ctx` を暗黙的に提供するため不要
+- ❌ **複数の引数を個別に渡さない**: 引数が増えるたびにシグネチャ変更が必要になる
+
+**良い例**:
+
+```templ
+// ページデータ構造体を定義
+type NewPageData struct {
+    CSRFToken        string
+    TurnstileSiteKey string
+    FormErrors       *session.FormErrors
+    Email            string
+}
+
+// 構造体のみを引数に取る（ctxはtemplが暗黙的に提供）
+templ New(data NewPageData) {
+    <form>
+        <input type="hidden" name="csrf_token" value={ data.CSRFToken }/>
+        // templates.T(ctx, "key") で翻訳を取得（ctxは暗黙的に利用可能）
+        <label>{ templates.T(ctx, "email_label") }</label>
+    </form>
+}
+```
+
+**悪い例**:
+
+```templ
+// ❌ context.Contextを明示的に渡している
+// ❌ 複数の引数を個別に渡している
+templ New(ctx context.Context, formErrors *session.FormErrors, csrfToken string, turnstileSiteKey string) {
+    // ...
+}
+```
+
+**メリット**:
+
+- **拡張性**: 新しいフィールドを追加してもシグネチャが変わらない
+- **可読性**: 呼び出し側でフィールド名が明確になる
+- **Go の慣習**: 引数が多い関数には構造体を使用するのが Go の標準的なパターン
 
 #### 詳細ドキュメント
 
