@@ -863,7 +863,9 @@ CREATE TABLE public.episodes (
     satisfaction_rate double precision,
     number_en character varying DEFAULT ''::character varying NOT NULL,
     deleted_at timestamp without time zone,
-    unpublished_at timestamp without time zone
+    unpublished_at timestamp without time zone,
+    anime_id bigint,
+    prev_anime_id bigint
 );
 
 
@@ -3265,7 +3267,8 @@ CREATE TABLE public.works (
     deleted_at timestamp without time zone,
     title_alter character varying DEFAULT ''::character varying NOT NULL,
     title_alter_en character varying DEFAULT ''::character varying NOT NULL,
-    unpublished_at timestamp without time zone
+    unpublished_at timestamp without time zone,
+    anime_id bigint
 );
 
 
@@ -5188,10 +5191,24 @@ CREATE INDEX index_episodes_on_aasm_state ON public.episodes USING btree (aasm_s
 
 
 --
+-- Name: index_episodes_on_anime_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_episodes_on_anime_id ON public.episodes USING btree (anime_id) WHERE (anime_id IS NOT NULL);
+
+
+--
 -- Name: index_episodes_on_deleted_at; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_episodes_on_deleted_at ON public.episodes USING btree (deleted_at);
+
+
+--
+-- Name: index_episodes_on_prev_anime_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_episodes_on_prev_anime_id ON public.episodes USING btree (prev_anime_id) WHERE (prev_anime_id IS NOT NULL);
 
 
 --
@@ -6308,6 +6325,13 @@ CREATE INDEX index_works_on_aasm_state ON public.works USING btree (aasm_state);
 
 
 --
+-- Name: index_works_on_anime_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_works_on_anime_id ON public.works USING btree (anime_id) WHERE (anime_id IS NOT NULL);
+
+
+--
 -- Name: index_works_on_deleted_at; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -6596,6 +6620,22 @@ ALTER TABLE ONLY public.comments
 
 ALTER TABLE ONLY public.comments
     ADD CONSTRAINT comments_user_id_fk FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: episodes episodes_anime_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.episodes
+    ADD CONSTRAINT episodes_anime_id_fkey FOREIGN KEY (anime_id) REFERENCES public.animes(id);
+
+
+--
+-- Name: episodes episodes_prev_anime_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.episodes
+    ADD CONSTRAINT episodes_prev_anime_id_fkey FOREIGN KEY (prev_anime_id) REFERENCES public.animes(id);
 
 
 --
@@ -7503,6 +7543,14 @@ ALTER TABLE ONLY public.syobocal_alerts
 
 
 --
+-- Name: works works_anime_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.works
+    ADD CONSTRAINT works_anime_id_fkey FOREIGN KEY (anime_id) REFERENCES public.animes(id);
+
+
+--
 -- Name: works works_season_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -7808,4 +7856,5 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20260111083416'),
     ('20260111084224'),
     ('20260111101233'),
-    ('20260130104842');
+    ('20260130104842'),
+    ('20260130182403');
