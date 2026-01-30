@@ -204,215 +204,329 @@ end
 - この番号はブランチ名の一部として使用されます（例: feature-1-1, feature-2-0）
 -->
 
+### フェーズ 0: AnimeIdSettable concern の作成
+
+- [ ] **0-1**: (Rails) AnimeIdSettable concern の作成
+
+  - `app/models/concerns/anime_id_settable.rb` の作成
+  - 新規レコード作成時に `work_id` / `episode_id` から `anime_id` を自動設定するコールバック
+  - **想定ファイル数**: 約 2 ファイル（実装 1 + テスト 1）
+  - **想定行数**: 約 50 行（実装 20 行 + テスト 30 行）
+
 ### フェーズ 1: activities への anime_id 追加
 
-- [ ] **1-1**: activities への anime_id 追加
+- [ ] **1-1**: (Go) activities テーブルへの anime_id カラム追加
 
   - マイグレーションの作成（anime_id カラム追加 + インデックス）
-  - データ移行スクリプト（work_id/episode_id から anime_id を設定）
-  - Rails モデルへのコールバック追加（新規レコード作成時の anime_id 自動設定）
-  - **想定ファイル数**: 約 3 ファイル（実装 2 + テスト 1）
-  - **想定行数**: 約 80 行（実装 50 行 + テスト 30 行）
+  - データ移行（work_id/episode_id から anime_id を設定）
+  - **想定ファイル数**: 約 1 ファイル（実装 1）
+  - **想定行数**: 約 30 行
+
+- [ ] **1-2**: (Rails) Activity モデルへのコールバック追加
+
+  - AnimeIdSettable concern の include
+  - **想定ファイル数**: 約 2 ファイル（実装 1 + テスト 1）
+  - **想定行数**: 約 30 行（実装 5 行 + テスト 25 行）
 
 ### フェーズ 2: casts への anime_id 追加
 
-- [ ] **2-1**: casts への anime_id 追加
+- [ ] **2-1**: (Go) casts テーブルへの anime_id カラム追加
 
   - マイグレーションの作成（anime_id カラム追加 + インデックス）
-  - データ移行スクリプト（work_id から anime_id を設定）
-  - Rails モデルへのコールバック追加（新規レコード作成時の anime_id 自動設定）
-  - **想定ファイル数**: 約 3 ファイル（実装 2 + テスト 1）
-  - **想定行数**: 約 80 行（実装 50 行 + テスト 30 行）
+  - データ移行（work_id から anime_id を設定）
+  - **想定ファイル数**: 約 1 ファイル（実装 1）
+  - **想定行数**: 約 30 行
+
+- [ ] **2-2**: (Rails) Cast モデルへのコールバック追加
+
+  - AnimeIdSettable concern の include
+  - **想定ファイル数**: 約 2 ファイル（実装 1 + テスト 1）
+  - **想定行数**: 約 30 行（実装 5 行 + テスト 25 行）
 
 ### フェーズ 3: channel_works への anime_id 追加
 
-- [ ] **3-1**: channel_works への anime_id 追加
+- [ ] **3-1**: (Go) channel_works テーブルへの anime_id カラム追加
 
   - マイグレーションの作成（anime_id カラム追加 + インデックス）
-  - データ移行スクリプト（work_id から anime_id を設定）
-  - Rails モデルへのコールバック追加（新規レコード作成時の anime_id 自動設定）
-  - **想定ファイル数**: 約 3 ファイル（実装 2 + テスト 1）
-  - **想定行数**: 約 80 行（実装 50 行 + テスト 30 行）
+  - データ移行（work_id から anime_id を設定）
+  - **想定ファイル数**: 約 1 ファイル（実装 1）
+  - **想定行数**: 約 30 行
+
+- [ ] **3-2**: (Rails) ChannelWork モデルへのコールバック追加
+
+  - AnimeIdSettable concern の include
+  - **想定ファイル数**: 約 2 ファイル（実装 1 + テスト 1）
+  - **想定行数**: 約 30 行（実装 5 行 + テスト 25 行）
 
 ### フェーズ 4: collection_items への anime_id 追加
 
-- [ ] **4-1**: collection_items への anime_id 追加
+- [ ] **4-1**: (Go) collection_items テーブルへの anime_id カラム追加
 
   - マイグレーションの作成（anime_id カラム追加 + インデックス）
-  - データ移行スクリプト（work_id から anime_id を設定）
-  - Rails モデルへのコールバック追加（新規レコード作成時の anime_id 自動設定）
-  - **想定ファイル数**: 約 3 ファイル（実装 2 + テスト 1）
-  - **想定行数**: 約 80 行（実装 50 行 + テスト 30 行）
+  - データ移行（work_id から anime_id を設定）
+  - **想定ファイル数**: 約 1 ファイル（実装 1）
+  - **想定行数**: 約 30 行
+
+- [ ] **4-2**: (Rails) CollectionItem モデルへのコールバック追加
+
+  - AnimeIdSettable concern の include
+  - **想定ファイル数**: 約 2 ファイル（実装 1 + テスト 1）
+  - **想定行数**: 約 30 行（実装 5 行 + テスト 25 行）
 
 ### フェーズ 5: comments への anime_id 追加
 
-- [ ] **5-1**: comments への anime_id 追加
+- [ ] **5-1**: (Go) comments テーブルへの anime_id カラム追加
 
   - マイグレーションの作成（anime_id カラム追加 + インデックス）
-  - データ移行スクリプト（work_id から anime_id を設定）
-  - Rails モデルへのコールバック追加（新規レコード作成時の anime_id 自動設定）
-  - **想定ファイル数**: 約 3 ファイル（実装 2 + テスト 1）
-  - **想定行数**: 約 80 行（実装 50 行 + テスト 30 行）
+  - データ移行（work_id から anime_id を設定）
+  - **想定ファイル数**: 約 1 ファイル（実装 1）
+  - **想定行数**: 約 30 行
+
+- [ ] **5-2**: (Rails) Comment モデルへのコールバック追加
+
+  - AnimeIdSettable concern の include
+  - **想定ファイル数**: 約 2 ファイル（実装 1 + テスト 1）
+  - **想定行数**: 約 30 行（実装 5 行 + テスト 25 行）
 
 ### フェーズ 6: episode_records への anime_id 追加
 
-- [ ] **6-1**: episode_records への anime_id 追加
+- [ ] **6-1**: (Go) episode_records テーブルへの anime_id カラム追加
 
   - マイグレーションの作成（anime_id, parent_anime_id カラム追加 + インデックス）
-  - データ移行スクリプト（work_id/episode_id から anime_id/parent_anime_id を設定）
-  - Rails モデルへのコールバック追加（新規レコード作成時の anime_id/parent_anime_id 自動設定）
-  - **想定ファイル数**: 約 3 ファイル（実装 2 + テスト 1）
-  - **想定行数**: 約 100 行（実装 70 行 + テスト 30 行）
+  - データ移行（work_id/episode_id から anime_id/parent_anime_id を設定）
+  - **想定ファイル数**: 約 1 ファイル（実装 1）
+  - **想定行数**: 約 40 行
+
+- [ ] **6-2**: (Rails) EpisodeRecord モデルへのコールバック追加
+
+  - anime_id と parent_anime_id の自動設定コールバック
+  - **想定ファイル数**: 約 2 ファイル（実装 1 + テスト 1）
+  - **想定行数**: 約 50 行（実装 15 行 + テスト 35 行）
 
 ### フェーズ 7: library_entries への anime_id 追加
 
-- [ ] **7-1**: library_entries への anime_id 追加
+- [ ] **7-1**: (Go) library_entries テーブルへの anime_id カラム追加
 
   - マイグレーションの作成（anime_id, next_anime_id カラム追加 + インデックス）
-  - データ移行スクリプト（work_id/next_episode_id から anime_id/next_anime_id を設定）
-  - Rails モデルへのコールバック追加（新規レコード作成時の anime_id/next_anime_id 自動設定）
-  - **想定ファイル数**: 約 3 ファイル（実装 2 + テスト 1）
-  - **想定行数**: 約 100 行（実装 70 行 + テスト 30 行）
+  - データ移行（work_id/next_episode_id から anime_id/next_anime_id を設定）
+  - **想定ファイル数**: 約 1 ファイル（実装 1）
+  - **想定行数**: 約 40 行
+
+- [ ] **7-2**: (Rails) LibraryEntry モデルへのコールバック追加
+
+  - anime_id と next_anime_id の自動設定コールバック
+  - **想定ファイル数**: 約 2 ファイル（実装 1 + テスト 1）
+  - **想定行数**: 約 50 行（実装 15 行 + テスト 35 行）
 
 ### フェーズ 8: multiple_episode_records への anime_id 追加
 
-- [ ] **8-1**: multiple_episode_records への anime_id 追加
+- [ ] **8-1**: (Go) multiple_episode_records テーブルへの anime_id カラム追加
 
   - マイグレーションの作成（anime_id カラム追加 + インデックス）
-  - データ移行スクリプト（work_id から anime_id を設定）
-  - Rails モデルへのコールバック追加（新規レコード作成時の anime_id 自動設定）
-  - **想定ファイル数**: 約 3 ファイル（実装 2 + テスト 1）
-  - **想定行数**: 約 80 行（実装 50 行 + テスト 30 行）
+  - データ移行（work_id から anime_id を設定）
+  - **想定ファイル数**: 約 1 ファイル（実装 1）
+  - **想定行数**: 約 30 行
+
+- [ ] **8-2**: (Rails) MultipleEpisodeRecord モデルへのコールバック追加
+
+  - AnimeIdSettable concern の include
+  - **想定ファイル数**: 約 2 ファイル（実装 1 + テスト 1）
+  - **想定行数**: 約 30 行（実装 5 行 + テスト 25 行）
 
 ### フェーズ 9: programs への anime_id 追加
 
-- [ ] **9-1**: programs への anime_id 追加
+- [ ] **9-1**: (Go) programs テーブルへの anime_id カラム追加
 
   - マイグレーションの作成（anime_id カラム追加 + インデックス）
-  - データ移行スクリプト（work_id から anime_id を設定）
-  - Rails モデルへのコールバック追加（新規レコード作成時の anime_id 自動設定）
-  - **想定ファイル数**: 約 3 ファイル（実装 2 + テスト 1）
-  - **想定行数**: 約 80 行（実装 50 行 + テスト 30 行）
+  - データ移行（work_id から anime_id を設定）
+  - **想定ファイル数**: 約 1 ファイル（実装 1）
+  - **想定行数**: 約 30 行
+
+- [ ] **9-2**: (Rails) Program モデルへのコールバック追加
+
+  - AnimeIdSettable concern の include
+  - **想定ファイル数**: 約 2 ファイル（実装 1 + テスト 1）
+  - **想定行数**: 約 30 行（実装 5 行 + テスト 25 行）
 
 ### フェーズ 10: records への anime_id 追加
 
-- [ ] **10-1**: records への anime_id 追加
+- [ ] **10-1**: (Go) records テーブルへの anime_id カラム追加
 
   - マイグレーションの作成（anime_id カラム追加 + インデックス）
-  - データ移行スクリプト（work_id から anime_id を設定）
-  - Rails モデルへのコールバック追加（新規レコード作成時の anime_id 自動設定）
-  - **想定ファイル数**: 約 3 ファイル（実装 2 + テスト 1）
-  - **想定行数**: 約 80 行（実装 50 行 + テスト 30 行）
+  - データ移行（work_id から anime_id を設定）
+  - **想定ファイル数**: 約 1 ファイル（実装 1）
+  - **想定行数**: 約 30 行
+
+- [ ] **10-2**: (Rails) Record モデルへのコールバック追加
+
+  - AnimeIdSettable concern の include
+  - **想定ファイル数**: 約 2 ファイル（実装 1 + テスト 1）
+  - **想定行数**: 約 30 行（実装 5 行 + テスト 25 行）
 
 ### フェーズ 11: slots への anime_id 追加
 
-- [ ] **11-1**: slots への anime_id 追加
+- [ ] **11-1**: (Go) slots テーブルへの anime_id カラム追加
 
   - マイグレーションの作成（anime_id カラム追加 + インデックス）
-  - データ移行スクリプト（work_id/episode_id から anime_id を設定）
-  - Rails モデルへのコールバック追加（新規レコード作成時の anime_id 自動設定）
-  - **想定ファイル数**: 約 3 ファイル（実装 2 + テスト 1）
-  - **想定行数**: 約 80 行（実装 50 行 + テスト 30 行）
+  - データ移行（work_id/episode_id から anime_id を設定）
+  - **想定ファイル数**: 約 1 ファイル（実装 1）
+  - **想定行数**: 約 30 行
+
+- [ ] **11-2**: (Rails) Slot モデルへのコールバック追加
+
+  - anime_id の自動設定コールバック（episode_id または work_id から設定）
+  - **想定ファイル数**: 約 2 ファイル（実装 1 + テスト 1）
+  - **想定行数**: 約 40 行（実装 10 行 + テスト 30 行）
 
 ### フェーズ 12: staffs への anime_id 追加
 
-- [ ] **12-1**: staffs への anime_id 追加
+- [ ] **12-1**: (Go) staffs テーブルへの anime_id カラム追加
 
   - マイグレーションの作成（anime_id カラム追加 + インデックス）
-  - データ移行スクリプト（work_id から anime_id を設定）
-  - Rails モデルへのコールバック追加（新規レコード作成時の anime_id 自動設定）
-  - **想定ファイル数**: 約 3 ファイル（実装 2 + テスト 1）
-  - **想定行数**: 約 80 行（実装 50 行 + テスト 30 行）
+  - データ移行（work_id から anime_id を設定）
+  - **想定ファイル数**: 約 1 ファイル（実装 1）
+  - **想定行数**: 約 30 行
+
+- [ ] **12-2**: (Rails) Staff モデルへのコールバック追加
+
+  - AnimeIdSettable concern の include
+  - **想定ファイル数**: 約 2 ファイル（実装 1 + テスト 1）
+  - **想定行数**: 約 30 行（実装 5 行 + テスト 25 行）
 
 ### フェーズ 13: statuses への anime_id 追加
 
-- [ ] **13-1**: statuses への anime_id 追加
+- [ ] **13-1**: (Go) statuses テーブルへの anime_id カラム追加
 
   - マイグレーションの作成（anime_id カラム追加 + インデックス）
-  - データ移行スクリプト（work_id から anime_id を設定）
-  - Rails モデルへのコールバック追加（新規レコード作成時の anime_id 自動設定）
-  - **想定ファイル数**: 約 3 ファイル（実装 2 + テスト 1）
-  - **想定行数**: 約 80 行（実装 50 行 + テスト 30 行）
+  - データ移行（work_id から anime_id を設定）
+  - **想定ファイル数**: 約 1 ファイル（実装 1）
+  - **想定行数**: 約 30 行
+
+- [ ] **13-2**: (Rails) Status モデルへのコールバック追加
+
+  - AnimeIdSettable concern の include
+  - **想定ファイル数**: 約 2 ファイル（実装 1 + テスト 1）
+  - **想定行数**: 約 30 行（実装 5 行 + テスト 25 行）
 
 ### フェーズ 14: syobocal_alerts への anime_id 追加
 
-- [ ] **14-1**: syobocal_alerts への anime_id 追加
+- [ ] **14-1**: (Go) syobocal_alerts テーブルへの anime_id カラム追加
 
   - マイグレーションの作成（anime_id カラム追加 + インデックス）
-  - データ移行スクリプト（work_id から anime_id を設定）
-  - Rails モデルへのコールバック追加（新規レコード作成時の anime_id 自動設定）
-  - **想定ファイル数**: 約 3 ファイル（実装 2 + テスト 1）
-  - **想定行数**: 約 80 行（実装 50 行 + テスト 30 行）
+  - データ移行（work_id から anime_id を設定）
+  - **想定ファイル数**: 約 1 ファイル（実装 1）
+  - **想定行数**: 約 30 行
+
+- [ ] **14-2**: (Rails) SyobocalAlert モデルへのコールバック追加
+
+  - AnimeIdSettable concern の include
+  - **想定ファイル数**: 約 2 ファイル（実装 1 + テスト 1）
+  - **想定行数**: 約 30 行（実装 5 行 + テスト 25 行）
 
 ### フェーズ 15: trailers への anime_id 追加
 
-- [ ] **15-1**: trailers への anime_id 追加
+- [ ] **15-1**: (Go) trailers テーブルへの anime_id カラム追加
 
   - マイグレーションの作成（anime_id カラム追加 + インデックス）
-  - データ移行スクリプト（work_id から anime_id を設定）
-  - Rails モデルへのコールバック追加（新規レコード作成時の anime_id 自動設定）
-  - **想定ファイル数**: 約 3 ファイル（実装 2 + テスト 1）
-  - **想定行数**: 約 80 行（実装 50 行 + テスト 30 行）
+  - データ移行（work_id から anime_id を設定）
+  - **想定ファイル数**: 約 1 ファイル（実装 1）
+  - **想定行数**: 約 30 行
+
+- [ ] **15-2**: (Rails) Trailer モデルへのコールバック追加
+
+  - AnimeIdSettable concern の include
+  - **想定ファイル数**: 約 2 ファイル（実装 1 + テスト 1）
+  - **想定行数**: 約 30 行（実装 5 行 + テスト 25 行）
 
 ### フェーズ 16: vod_titles への anime_id 追加
 
-- [ ] **16-1**: vod_titles への anime_id 追加
+- [ ] **16-1**: (Go) vod_titles テーブルへの anime_id カラム追加
 
   - マイグレーションの作成（anime_id カラム追加 + インデックス）
-  - データ移行スクリプト（work_id から anime_id を設定）
-  - Rails モデルへのコールバック追加（新規レコード作成時の anime_id 自動設定）
-  - **想定ファイル数**: 約 3 ファイル（実装 2 + テスト 1）
-  - **想定行数**: 約 80 行（実装 50 行 + テスト 30 行）
+  - データ移行（work_id から anime_id を設定）
+  - **想定ファイル数**: 約 1 ファイル（実装 1）
+  - **想定行数**: 約 30 行
+
+- [ ] **16-2**: (Rails) VodTitle モデルへのコールバック追加
+
+  - AnimeIdSettable concern の include
+  - **想定ファイル数**: 約 2 ファイル（実装 1 + テスト 1）
+  - **想定行数**: 約 30 行（実装 5 行 + テスト 25 行）
 
 ### フェーズ 17: work_comments への anime_id 追加
 
-- [ ] **17-1**: work_comments への anime_id 追加
+- [ ] **17-1**: (Go) work_comments テーブルへの anime_id カラム追加
 
   - マイグレーションの作成（anime_id カラム追加 + インデックス）
-  - データ移行スクリプト（work_id から anime_id を設定）
-  - Rails モデルへのコールバック追加（新規レコード作成時の anime_id 自動設定）
-  - **想定ファイル数**: 約 3 ファイル（実装 2 + テスト 1）
-  - **想定行数**: 約 80 行（実装 50 行 + テスト 30 行）
+  - データ移行（work_id から anime_id を設定）
+  - **想定ファイル数**: 約 1 ファイル（実装 1）
+  - **想定行数**: 約 30 行
+
+- [ ] **17-2**: (Rails) WorkComment モデルへのコールバック追加
+
+  - AnimeIdSettable concern の include
+  - **想定ファイル数**: 約 2 ファイル（実装 1 + テスト 1）
+  - **想定行数**: 約 30 行（実装 5 行 + テスト 25 行）
 
 ### フェーズ 18: work_images への anime_id 追加
 
-- [ ] **18-1**: work_images への anime_id 追加
+- [ ] **18-1**: (Go) work_images テーブルへの anime_id カラム追加
 
   - マイグレーションの作成（anime_id カラム追加 + インデックス）
-  - データ移行スクリプト（work_id から anime_id を設定）
-  - Rails モデルへのコールバック追加（新規レコード作成時の anime_id 自動設定）
-  - **想定ファイル数**: 約 3 ファイル（実装 2 + テスト 1）
-  - **想定行数**: 約 80 行（実装 50 行 + テスト 30 行）
+  - データ移行（work_id から anime_id を設定）
+  - **想定ファイル数**: 約 1 ファイル（実装 1）
+  - **想定行数**: 約 30 行
+
+- [ ] **18-2**: (Rails) WorkImage モデルへのコールバック追加
+
+  - AnimeIdSettable concern の include
+  - **想定ファイル数**: 約 2 ファイル（実装 1 + テスト 1）
+  - **想定行数**: 約 30 行（実装 5 行 + テスト 25 行）
 
 ### フェーズ 19: work_records への anime_id 追加
 
-- [ ] **19-1**: work_records への anime_id 追加
+- [ ] **19-1**: (Go) work_records テーブルへの anime_id カラム追加
 
   - マイグレーションの作成（anime_id カラム追加 + インデックス）
-  - データ移行スクリプト（work_id から anime_id を設定）
-  - Rails モデルへのコールバック追加（新規レコード作成時の anime_id 自動設定）
-  - **想定ファイル数**: 約 3 ファイル（実装 2 + テスト 1）
-  - **想定行数**: 約 80 行（実装 50 行 + テスト 30 行）
+  - データ移行（work_id から anime_id を設定）
+  - **想定ファイル数**: 約 1 ファイル（実装 1）
+  - **想定行数**: 約 30 行
+
+- [ ] **19-2**: (Rails) WorkRecord モデルへのコールバック追加
+
+  - AnimeIdSettable concern の include
+  - **想定ファイル数**: 約 2 ファイル（実装 1 + テスト 1）
+  - **想定行数**: 約 30 行（実装 5 行 + テスト 25 行）
 
 ### フェーズ 20: work_taggings への anime_id 追加
 
-- [ ] **20-1**: work_taggings への anime_id 追加
+- [ ] **20-1**: (Go) work_taggings テーブルへの anime_id カラム追加
 
   - マイグレーションの作成（anime_id カラム追加 + インデックス）
-  - データ移行スクリプト（work_id から anime_id を設定）
-  - Rails モデルへのコールバック追加（新規レコード作成時の anime_id 自動設定）
-  - **想定ファイル数**: 約 3 ファイル（実装 2 + テスト 1）
-  - **想定行数**: 約 80 行（実装 50 行 + テスト 30 行）
+  - データ移行（work_id から anime_id を設定）
+  - **想定ファイル数**: 約 1 ファイル（実装 1）
+  - **想定行数**: 約 30 行
+
+- [ ] **20-2**: (Rails) WorkTagging モデルへのコールバック追加
+
+  - AnimeIdSettable concern の include
+  - **想定ファイル数**: 約 2 ファイル（実装 1 + テスト 1）
+  - **想定行数**: 約 30 行（実装 5 行 + テスト 25 行）
 
 ### フェーズ 21: series_works への anime_id 追加
 
-- [ ] **21-1**: series_works への anime_id 追加
+- [ ] **21-1**: (Go) series_works テーブルへの anime_id カラム追加
 
   - マイグレーションの作成（anime_id カラム追加 + インデックス）
-  - データ移行スクリプト（work_id から anime_id を設定）
-  - Rails モデルへのコールバック追加（新規レコード作成時の anime_id 自動設定）
-  - **想定ファイル数**: 約 3 ファイル（実装 2 + テスト 1）
-  - **想定行数**: 約 80 行（実装 50 行 + テスト 30 行）
+  - データ移行（work_id から anime_id を設定）
+  - **想定ファイル数**: 約 1 ファイル（実装 1）
+  - **想定行数**: 約 30 行
+
+- [ ] **21-2**: (Rails) SeriesWork モデルへのコールバック追加
+
+  - AnimeIdSettable concern の include
+  - **想定ファイル数**: 約 2 ファイル（実装 1 + テスト 1）
+  - **想定行数**: 約 30 行（実装 5 行 + テスト 25 行）
 
 ### 実装しない機能（スコープ外）
 
@@ -423,7 +537,6 @@ end
 以下の機能は今回の実装では**実装しません**：
 
 - **work_id / episode_id カラムの削除**: 移行期間中は両方のカラムを保持する
-- **Go 版のコード修正**: Rails 版のモデル修正のみを行う
 
 ## 参考資料
 
