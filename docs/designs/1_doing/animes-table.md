@@ -55,6 +55,7 @@
 - 管理者は Annict DB でエピソードを作品に変換できる（`parent_id` を NULL に設定 + `works` レコードを作成）
 - システムは階層を 2 段階に制限する（作品 → エピソードのみ、エピソードの子は不可）
 - 既存の `works` テーブルと `episodes` テーブルは存続し、それぞれ作品固有・エピソード固有の情報を保持する
+- システムは映画などエピソードがない作品も放送予定（slots）として登録・表示できる
 
 ### 非機能要件
 
@@ -247,7 +248,7 @@ WHERE sw.series_id = $1
 - `multiple_episode_records` (work_id → anime_id)
 - `programs` (work_id → anime_id)
 - `records` (work_id → anime_id)
-- `slots` (work_id, episode_id → anime_id, episode_anime_id)
+- `slots` (work_id, episode_id → anime_id)
 - `staffs` (work_id → anime_id)
 - `statuses` (work_id → anime_id)
 - `syobocal_alerts` (work_id → anime_id)
@@ -398,7 +399,7 @@ func (r *AnimeRepository) FindEpisodeByID(ctx context.Context, animeID int64) (*
 | `library_entries` | エピソードとして表示 | 作品として表示 | ユーザーの視聴意図は変わらないため許容 |
 | `records` | そのまま表示 | そのまま表示 | 変換前の記録も含めて表示 |
 | `series_animes` | 表示時にフィルタ（作品のみ） | 自動的に表示対象に | テーブル上はレコードが残る |
-| `slots` | - | 表示しない | 放送予定はエピソードのみ対象 |
+| `slots` | エピソードとして表示 | 作品として表示 | 作品・エピソード両方の放送予定を表示可能 |
 
 #### ライブラリ（library_entries）のクエリ例
 
@@ -429,17 +430,21 @@ WHERE le.user_id = $1
 
 #### 放送予定（slots）のクエリ例
 
-エピソード→作品に変換された場合、放送予定は表示しない：
+作品（映画など）とエピソード両方の放送予定を取得できる：
 
 ```sql
--- 作品の放送予定（エピソードのみ表示）
-SELECT s.*, a.title AS episode_title, e.number
+-- 特定の作品の放送予定一覧（作品自体 + その作品のエピソード）
+SELECT s.*, a.title, e.number,
+       CASE WHEN a.parent_id IS NULL THEN 'work' ELSE 'episode' END AS anime_type
 FROM slots s
-JOIN animes a ON a.id = s.episode_anime_id
-JOIN episodes e ON e.anime_id = a.id
-WHERE s.anime_id = $1
-  AND a.parent_id IS NOT NULL;  -- エピソードのみ
+JOIN animes a ON a.id = s.anime_id
+LEFT JOIN episodes e ON e.anime_id = a.id
+WHERE a.id = $1           -- 作品自体の放送予定（映画など）
+   OR a.parent_id = $1;   -- エピソードの放送予定
 ```
+
+- `anime_type = 'work'`: 映画などエピソードがない作品の放送予定
+- `anime_type = 'episode'`: エピソードの放送予定（`e.number` でエピソード番号を表示）
 
 #### records テーブルの将来計画
 
@@ -507,22 +512,23 @@ GET /api/v2/anime/:anime_id/episodes  # 特定作品のエピソード一覧
     "sort_number": 2
   },
   "work": {
-    "id": 123,
+    "anime_id": 123,
     "type": "work",
     "title": "作品タイトル"
   },
   "prev_episode": {
-    "id": 455,
+    "anime_id": 455,
     "title": "第1話 はじまり"
   },
   "next_episode": {
-    "id": 457,
+    "anime_id": 457,
     "title": "第3話 冒険"
   }
 }
 ```
 
-- `prev_episode` / `next_episode` の `id` は `animes.id` を返す
+- トップレベルの `id` は anime リソースなので `anime_id` であることが自明
+- ネストされたリソース（`work`, `prev_episode`, `next_episode`）は `anime_id` で明示し、`work_id` や `episode_id` と混同しないようにする
 - 前後のエピソードが存在しない場合は `null` を返す
 
 #### 既存 URL からの移行
@@ -599,21 +605,6 @@ GET /api/v2/anime/:anime_id/episodes  # 特定作品のエピソード一覧
   - **想定ファイル数**: 約 6 ファイル（実装 3 + テスト 3）
   - **想定行数**: 約 400 行（実装 200 行 + テスト 200 行）
 
-- [ ] **1-5**: Go 版 Work/Episode 作成時の animes 同期処理
-
-  - Work 作成時に animes レコードも作成
-  - Episode 作成時に animes レコードも作成
-  - 更新・削除時の同期処理
-  - **想定ファイル数**: 約 4 ファイル（実装 2 + テスト 2）
-  - **想定行数**: 約 300 行（実装 150 行 + テスト 150 行）
-
-- [ ] **1-6**: Rails 版 Work/Episode 作成時の animes 同期処理
-
-  - Work モデルのコールバック追加
-  - Episode モデルのコールバック追加
-  - **想定ファイル数**: 約 4 ファイル（実装 2 + テスト 2）
-  - **想定行数**: 約 250 行（実装 100 行 + テスト 150 行）
-
 ### フェーズ 2: 関連テーブルへの anime_id 追加
 
 - [ ] **2-1**: activities, casts, channel_works への anime_id 追加
@@ -672,28 +663,366 @@ GET /api/v2/anime/:anime_id/episodes  # 特定作品のエピソード一覧
   - **想定ファイル数**: 約 2 ファイル（実装 1 + テスト 1）
   - **想定行数**: 約 100 行（実装 60 行 + テスト 40 行）
 
-### フェーズ 3: アプリケーションコードの移行
+### フェーズ 3: Annict DB - DbActivity の準備
 
-- [ ] **3-1**: Go 版作品ページの animes テーブル参照への切り替え
+- [ ] **3-1**: Go 版 DbActivity リポジトリの実装
 
-  - ハンドラーの修正（animes JOIN works）
-  - テンプレートの修正
+  - sqlc クエリの定義（作成、取得）
+  - リポジトリ層の実装
+  - **想定ファイル数**: 約 4 ファイル（実装 2 + テスト 2）
+  - **想定行数**: 約 200 行（実装 100 行 + テスト 100 行）
+  - **参考**: Rails 版 `app/models/db_activity.rb`
+
+- [ ] **3-2**: Go 版 DbActivity 作成ユースケースの実装
+
+  - 差分検出ロジックの実装（DIFF_FIELDS 相当）
+  - 活動履歴作成のユースケース実装
+  - **想定ファイル数**: 約 4 ファイル（実装 2 + テスト 2）
+  - **想定行数**: 約 250 行（実装 150 行 + テスト 100 行）
+  - **参考**: Rails 版 `app/models/concerns/db_activity_methods.rb`
+
+### フェーズ 4: Annict DB - 作品作成機能の実装
+
+- [ ] **4-1**: Go 版 Work リポジトリの実装
+
+  - sqlc クエリの定義（作成、取得、タイトル重複チェック）
+  - リポジトリ層の実装
+  - **想定ファイル数**: 約 4 ファイル（実装 2 + テスト 2）
+  - **想定行数**: 約 200 行（実装 100 行 + テスト 100 行）
+
+- [ ] **4-2**: Go 版 Work 作成ユースケースの実装
+
+  - Work 作成ユースケースの実装
+    - animes レコードの同時作成
+    - DbActivity による活動履歴作成
+  - バリデーション: title 必須・ユニーク、media 必須、URL 形式チェック
+  - **想定ファイル数**: 約 4 ファイル（実装 2 + テスト 2）
+  - **想定行数**: 約 300 行（実装 150 行 + テスト 150 行）
+
+- [ ] **4-3**: Go 版 Work 作成ハンドラーの実装
+
+  - Work 作成ハンドラーの実装（`/db/works/new` GET, `/db/works` POST）
+  - テンプレートの実装
+  - 認可: committer ロールのチェック
+  - **想定ファイル数**: 約 6 ファイル（実装 3 + テスト 3）
+  - **想定行数**: 約 300 行（実装 150 行 + テスト 150 行）
+  - **参考**: Rails 版 `app/controllers/db/works_controller.rb`
+
+- [ ] **4-4**: Rails 版 Work 作成機能の削除
+
+  - コントローラーの削除（`db/works#new`, `db/works#create`）
+  - ビューの削除
+  - ルーティングの削除
+  - **想定ファイル数**: 約 3 ファイル
+  - **想定行数**: 約 100 行（削除）
+
+### フェーズ 5: Annict DB - 作品編集機能の実装
+
+- [ ] **5-1**: Go 版 Work 更新ユースケースの実装
+
+  - Work 更新ユースケースの実装（animes 同期更新含む）
+  - DbActivity による活動履歴作成（差分追跡）
+  - **想定ファイル数**: 約 4 ファイル（実装 2 + テスト 2）
+  - **想定行数**: 約 300 行（実装 150 行 + テスト 150 行）
+
+- [ ] **5-2**: Go 版 Work 編集ハンドラーの実装
+
+  - Work 編集ハンドラーの実装（`/db/works/:id/edit` GET, `/db/works/:id` PATCH）
+  - テンプレートの実装
+  - 認可: committer ロールのチェック
+  - **想定ファイル数**: 約 6 ファイル（実装 3 + テスト 3）
+  - **想定行数**: 約 300 行（実装 150 行 + テスト 150 行）
+  - **参考**: Rails 版 `app/controllers/db/works_controller.rb`
+
+- [ ] **5-3**: Rails 版 Work 編集機能の削除
+
+  - コントローラーの削除（`db/works#edit`, `db/works#update`）
+  - ビューの削除
+  - ルーティングの削除
+  - **想定ファイル数**: 約 3 ファイル
+  - **想定行数**: 約 100 行（削除）
+
+### フェーズ 6: Annict DB - 作品非公開機能の実装
+
+- [ ] **6-1**: Go 版 Work 非公開ユースケースの実装
+
+  - Work 非公開ユースケースの実装（animes.hidden_at 同期更新含む）
+  - DbActivity による活動履歴作成
+  - **想定ファイル数**: 約 4 ファイル（実装 2 + テスト 2）
+  - **想定行数**: 約 200 行（実装 100 行 + テスト 100 行）
+  - **参考**: Rails 版 `app/models/concerns/unpublishable.rb`
+
+- [ ] **6-2**: Go 版 Work 非公開ハンドラーの実装
+
+  - Work 非公開ハンドラーの実装（`/db/works/:id/hide` POST）
+  - 認可: admin ロールのチェック
+  - **想定ファイル数**: 約 4 ファイル（実装 2 + テスト 2）
+  - **想定行数**: 約 150 行（実装 80 行 + テスト 70 行）
+
+- [ ] **6-3**: Rails 版 Work 非公開機能の削除
+
+  - コントローラーの削除
+  - ルーティングの削除
+  - **想定ファイル数**: 約 2 ファイル
+  - **想定行数**: 約 50 行（削除）
+
+### フェーズ 7: Annict DB - 作品削除機能の実装
+
+- [ ] **7-1**: Go 版 Work 削除ユースケースの実装
+
+  - Work ソフト削除ユースケースの実装（animes.deleted_at 同期更新含む）
+  - DbActivity による活動履歴作成
+  - **想定ファイル数**: 約 4 ファイル（実装 2 + テスト 2）
+  - **想定行数**: 約 200 行（実装 100 行 + テスト 100 行）
+
+- [ ] **7-2**: Go 版 Work 削除ハンドラーの実装
+
+  - Work 削除ハンドラーの実装（`/db/works/:id` DELETE）
+  - 認可: admin ロールのチェック
+  - **想定ファイル数**: 約 4 ファイル（実装 2 + テスト 2）
+  - **想定行数**: 約 150 行（実装 80 行 + テスト 70 行）
+
+- [ ] **7-3**: Rails 版 Work 削除機能の削除
+
+  - コントローラーの削除（`db/works#destroy`）
+  - ルーティングの削除
+  - **想定ファイル数**: 約 2 ファイル
+  - **想定行数**: 約 50 行（削除）
+
+### フェーズ 8: Annict DB - エピソード作成機能の実装
+
+- [ ] **8-1**: Go 版 Episode リポジトリの実装
+
+  - sqlc クエリの定義（作成、取得、カウント）
+  - リポジトリ層の実装
+  - **想定ファイル数**: 約 4 ファイル（実装 2 + テスト 2）
+  - **想定行数**: 約 200 行（実装 100 行 + テスト 100 行）
+
+- [ ] **8-2**: Go 版 Episode 作成ユースケースの実装
+
+  - Episode 作成ユースケースの実装
+    - animes レコードの同時作成（parent_id 設定）
+    - sort_number 自動採番（既存数 × 100 + 100）
+    - prev_anime_id 自動設定
+    - Work.episodes_count の更新
+    - DbActivity による活動履歴作成
+  - **想定ファイル数**: 約 4 ファイル（実装 2 + テスト 2）
+  - **想定行数**: 約 350 行（実装 200 行 + テスト 150 行）
+
+- [ ] **8-3**: Go 版 Episode 作成ハンドラーの実装
+
+  - Episode 作成ハンドラーの実装（`/db/works/:work_id/episodes/new` GET, `/db/works/:work_id/episodes` POST）
+  - CSV 形式での複数エピソード一括作成対応
+  - テンプレートの実装
+  - 認可: committer ロールのチェック
+  - **想定ファイル数**: 約 6 ファイル（実装 3 + テスト 3）
+  - **想定行数**: 約 350 行（実装 200 行 + テスト 150 行）
+  - **参考**: Rails 版 `app/controllers/db/episodes_controller.rb`, `app/forms/deprecated/db/episode_rows_form.rb`
+
+- [ ] **8-4**: Rails 版 Episode 作成機能の削除
+
+  - コントローラーの削除（`db/episodes#new`, `db/episodes#create`）
+  - フォームオブジェクトの削除（`EpisodeRowsForm`）
+  - ビューの削除
+  - ルーティングの削除
+  - **想定ファイル数**: 約 4 ファイル
+  - **想定行数**: 約 150 行（削除）
+
+### フェーズ 9: Annict DB - エピソード編集機能の実装
+
+- [ ] **9-1**: Go 版 Episode 更新ユースケースの実装
+
+  - Episode 更新ユースケースの実装（animes 同期更新含む）
+  - DbActivity による活動履歴作成（差分追跡）
+  - **想定ファイル数**: 約 4 ファイル（実装 2 + テスト 2）
+  - **想定行数**: 約 300 行（実装 150 行 + テスト 150 行）
+
+- [ ] **9-2**: Go 版 Episode 編集ハンドラーの実装
+
+  - Episode 編集ハンドラーの実装（`/db/episodes/:id/edit` GET, `/db/episodes/:id` PATCH）
+  - テンプレートの実装
+  - 認可: committer ロールのチェック
+  - **想定ファイル数**: 約 6 ファイル（実装 3 + テスト 3）
+  - **想定行数**: 約 300 行（実装 150 行 + テスト 150 行）
+  - **参考**: Rails 版 `app/controllers/db/episodes_controller.rb`
+
+- [ ] **9-3**: Rails 版 Episode 編集機能の削除
+
+  - コントローラーの削除（`db/episodes#edit`, `db/episodes#update`）
+  - ビューの削除
+  - ルーティングの削除
+  - **想定ファイル数**: 約 3 ファイル
+  - **想定行数**: 約 100 行（削除）
+
+### フェーズ 10: Annict DB - エピソード非公開機能の実装
+
+- [ ] **10-1**: Go 版 Episode 非公開ユースケースの実装
+
+  - Episode 非公開ユースケースの実装（animes.hidden_at 同期更新含む）
+  - DbActivity による活動履歴作成
+  - **想定ファイル数**: 約 4 ファイル（実装 2 + テスト 2）
+  - **想定行数**: 約 200 行（実装 100 行 + テスト 100 行）
+
+- [ ] **10-2**: Go 版 Episode 非公開ハンドラーの実装
+
+  - Episode 非公開ハンドラーの実装（`/db/episodes/:id/hide` POST）
+  - 認可: admin ロールのチェック
+  - **想定ファイル数**: 約 4 ファイル（実装 2 + テスト 2）
+  - **想定行数**: 約 150 行（実装 80 行 + テスト 70 行）
+
+- [ ] **10-3**: Rails 版 Episode 非公開機能の削除
+
+  - コントローラーの削除
+  - ルーティングの削除
+  - **想定ファイル数**: 約 2 ファイル
+  - **想定行数**: 約 50 行（削除）
+
+### フェーズ 11: Annict DB - エピソード削除機能の実装
+
+- [ ] **11-1**: Go 版 Episode 削除ユースケースの実装
+
+  - Episode ソフト削除ユースケースの実装（animes.deleted_at 同期更新含む）
+  - 後続エピソードの prev_anime_id 更新
+  - Work.episodes_count の更新
+  - DbActivity による活動履歴作成
+  - **想定ファイル数**: 約 4 ファイル（実装 2 + テスト 2）
+  - **想定行数**: 約 250 行（実装 150 行 + テスト 100 行）
+
+- [ ] **11-2**: Go 版 Episode 削除ハンドラーの実装
+
+  - Episode 削除ハンドラーの実装（`/db/episodes/:id` DELETE）
+  - 認可: admin ロールのチェック
+  - **想定ファイル数**: 約 4 ファイル（実装 2 + テスト 2）
+  - **想定行数**: 約 150 行（実装 80 行 + テスト 70 行）
+
+- [ ] **11-3**: Rails 版 Episode 削除機能の削除
+
+  - コントローラーの削除（`db/episodes#destroy`）
+  - ルーティングの削除
+  - **想定ファイル数**: 約 2 ファイル
+  - **想定行数**: 約 50 行（削除）
+
+### フェーズ 12: 定期実行タスクの Go 移行
+
+<!--
+Rails版の定期実行タスク（app.json）の中で作品・エピソードを作成・変更しているものをGo版に移行する。
+スコア計算（episode:update_score, work:update_score）は別設計書で扱う。
+-->
+
+- [ ] **12-1**: Go 版エピソード自動生成タスクの実装
+
+  - Syobocal からのエピソード情報取得機能
+  - Slot に対応する Episode の自動作成（animes 同期作成含む）
+  - LibraryEntry の next_episode_id 更新
+  - **想定ファイル数**: 約 6 ファイル（実装 3 + テスト 3）
+  - **想定行数**: 約 400 行（実装 250 行 + テスト 150 行）
+  - **参考**: Rails 版 `app/services/deprecated/episode_generator_service.rb`, `app/services/deprecated/syobocal_episode_data_fetcher_service.rb`
+
+- [ ] **12-2**: Rails 版エピソード自動生成タスクの削除
+
+  - Rake タスクの削除（`episode:generate`）
+  - 関連サービスの削除
+  - **想定ファイル数**: 約 3 ファイル
+  - **想定行数**: 約 200 行（削除）
+
+### フェーズ 13: Annict DB - アクティビティページの Go 移行
+
+<!--
+Annict DBのアクティビティページをGoに移行し、
+DbActivityのAnime型対応を行う。
+-->
+
+- [ ] **13-1**: Go 版 DbActivity の Anime 型対応
+
+  - `trackable_type = "Anime"` での DbActivity 作成に対応
+  - `root_resource_type = "Anime"` での DbActivity 作成に対応
+  - Work/Episode 作成時は `"Anime"` 型で DbActivity を作成するように変更
+  - 既存の `"Work"`/`"Episode"` 型のレコードは移行しない（読み取り時に両方対応）
+  - **想定ファイル数**: 約 4 ファイル（実装 2 + テスト 2）
+  - **想定行数**: 約 200 行（実装 100 行 + テスト 100 行）
+
+- [ ] **13-2**: Go 版アクティビティページの実装
+
+  - アクティビティ一覧ページの実装（`/db/activities`）
+  - `"Work"`/`"Episode"`/`"Anime"` すべての型を表示できるようにする
   - **想定ファイル数**: 約 6 ファイル（実装 3 + テスト 3）
   - **想定行数**: 約 300 行（実装 150 行 + テスト 150 行）
 
-- [ ] **3-2**: Go 版エピソードページの animes テーブル参照への切り替え
+- [ ] **13-3**: Rails 版アクティビティページの削除
 
-  - ハンドラーの修正（animes JOIN episodes）
-  - テンプレートの修正
-  - **想定ファイル数**: 約 6 ファイル（実装 3 + テスト 3）
-  - **想定行数**: 約 300 行（実装 150 行 + テスト 150 行）
+  - コントローラーの削除
+  - ビューの削除
+  - ルーティングの削除
+  - **想定ファイル数**: 約 3 ファイル
+  - **想定行数**: 約 100 行（削除）
 
-- [ ] **3-3**: Annict DB 変換機能の実装（Go 版）
+### フェーズ 14: ポリモーフィック定義の確認と対応
 
-  - 変換ユースケースの実装
+<!--
+Work/Episode を参照しているポリモーフィックアソシエーションの定義場所を記録し、
+今後の対応時にチェックできるようにする。
+-->
+
+- [ ] **14-1**: ポリモーフィック定義場所の確認
+
+  以下の定義場所を確認し、Anime 型への対応が必要かどうかをチェックする。
+
+  **Work/Episode を直接参照しているポリモーフィック（要対応）**:
+
+  | モデル | カラム | ファイルパス:行番号 | 対応状況 |
+  |--------|--------|---------------------|----------|
+  | DbActivity | trackable_id/type | `app/models/db_activity.rb:9` | フェーズ13で対応 |
+  | DbActivity | root_resource_id/type | `app/models/db_activity.rb:8` | フェーズ13で対応 |
+  | DbComment | resource_id/type | `app/models/db_comment.rb:8` | 未使用のため対応不要 |
+
+  **Work/Episode を参照していないポリモーフィック（対応不要）**:
+
+  | モデル | カラム | ファイルパス:行番号 | 参照先 |
+  |--------|--------|---------------------|--------|
+  | Activity | trackable_id/type (itemable) | `app/models/activity.rb:26` | EpisodeRecord, WorkRecord 等のレコード型 |
+  | Staff | resource_id/type | `app/models/staff.rb:33` | Person, Organization |
+  | Like | recipient_id/type | `app/models/like.rb:7` | EpisodeRecord, WorkRecord 等のレコード型 |
+  | Notification | trackable_id/type | `app/models/notification.rb:7` | Like, Comment, EpisodeRecord 等 |
+
+  - **想定ファイル数**: 0 ファイル（確認タスク）
+  - **想定行数**: 0 行
+
+### フェーズ 15: 作品・エピソード変換機能の実装
+
+<!--
+animesテーブルとポリモーフィック対応が完了した後に、
+作品↔エピソードの変換機能を実装する。
+-->
+
+- [ ] **15-1**: Go 版エピソード→作品変換ユースケースの実装
+
+  - エピソード→作品変換ユースケースの実装
+    - `animes.parent_id` を NULL に設定
+    - `works` レコードを作成（作品固有情報を保存）
+    - DbActivity による活動履歴作成
+  - バリデーション: 既に作品でないことの確認
+  - **想定ファイル数**: 約 4 ファイル（実装 2 + テスト 2）
+  - **想定行数**: 約 250 行（実装 150 行 + テスト 100 行）
+
+- [ ] **15-2**: Go 版作品→エピソード変換ユースケースの実装
+
+  - 作品→エピソード変換ユースケースの実装
+    - `animes.parent_id` に親作品の `anime_id` を設定
+    - `episodes` レコードを作成（エピソード固有情報を保存）
+    - DbActivity による活動履歴作成
+  - バリデーション: 既にエピソードでないことの確認、親作品の存在確認
+  - **想定ファイル数**: 約 4 ファイル（実装 2 + テスト 2）
+  - **想定行数**: 約 250 行（実装 150 行 + テスト 100 行）
+
+- [ ] **15-3**: Go 版変換機能ハンドラーの実装
+
+  - 変換ハンドラーの実装
+    - エピソード→作品: `/db/anime/:id/convert_to_work` POST
+    - 作品→エピソード: `/db/anime/:id/convert_to_episode` POST
   - 管理画面 UI の実装
-  - **想定ファイル数**: 約 8 ファイル（実装 4 + テスト 4）
-  - **想定行数**: 約 400 行（実装 200 行 + テスト 200 行）
+  - 認可: admin ロールのチェック
+  - **想定ファイル数**: 約 6 ファイル（実装 3 + テスト 3）
+  - **想定行数**: 約 300 行（実装 150 行 + テスト 150 行）
 
 ### 実装しない機能（スコープ外）
 
@@ -707,6 +1036,11 @@ GET /api/v2/anime/:anime_id/episodes  # 特定作品のエピソード一覧
 - **GraphQL API の animes 対応**: 既存 API の互換性を維持するため、当面は works/episodes を返す
 - **3 階層以上のネスト対応**: 現時点では作品 → エピソードの 2 階層のみをサポート
 - **古い works/episodes レコードのクリーンアップ**: 変換後に残る古いレコードの削除は将来的に検討
+- **Go 版作品・エピソード詳細ページ**: 現時点では Go 版に作品・エピソードページがないため、対応は別途検討
+- **スコア計算タスクの Go 移行**: `episode:update_score`, `work:update_score` の Go 移行は別設計書（スコア計算機能）で扱う
+- **SNS 画像取得タスクの Go 移行**: `work_image:save_sns_image` は作品固有情報（`facebook_og_image_url`, `twitter_image_url`）の更新のみで、animes テーブルとの同期は不要なため別途検討
+- **staffs テーブルのポリモーフィック対応**: `staffs.resource` は Person/Organization のみを参照しており、Work/Episode は参照していないため対応不要
+- **DbComment の Anime 型対応**: 現在 DbComment 機能を使用していないため対応不要
 
 ## ボツ案: 統合設計
 
@@ -777,6 +1111,45 @@ CREATE TABLE public.animes (
 1. **カラムの責務が不明確**: 作品用カラムとエピソード用カラムが混在し、どのカラムがどちらで使われるか判別が困難
 2. **NULL カラムが多い**: 作品レコードにはエピソード用カラムが NULL、エピソードレコードには作品用カラムが NULL になる
 3. **既存コードへの影響が大きい**: すべてのカラムを `animes` に移行するため、変更範囲が広い
+
+## ボツ案: エピソードなし作品でもエピソードを1つ作る
+
+### 概要
+
+`Work#no_episodes?` が真（映画など、エピソードが1つのみの作品）でも、エピソードを必ず1つ作るようにする設計。
+
+### 採用しなかった理由
+
+1. **記録対象の重複**: 映画作品などの場合、記録する対象が Work と Episode の2つになり、どちらに感想を書けば良いか迷いが生じる
+2. **変換処理が簡単にならない**: 作品からエピソードへの変換時に、LibraryEntry に紐付く作品を変換先の作品に置き換えるなどの処理が必要になり、期待したほどシンプルにならない
+
+## ボツ案: Work/Episode の親モデルとして Anime を定義
+
+### 概要
+
+`Anime` を `Work` と `Episode` の親モデル（STI または抽象モデル）として定義し、共通の振る舞いを持たせる設計。
+
+### 採用しなかった理由
+
+相互変換がそれほど楽にならないため、採用しなかった。
+
+## ボツ案: URL設計（階層的なエピソードURL）
+
+### 概要
+
+エピソード詳細ページの URL を階層的に設計する案。
+
+```
+GET /anime/:anime_id/episodes/:anime_id  # エピソード詳細 (Web)
+GET /api/v2/anime?kind=work              # 作品一覧 (API)
+GET /api/v2/anime?kind=episode           # エピソード一覧 (API)
+```
+
+### 採用しなかった理由
+
+1. **変換時にURLが変わる**: 作品↔エピソード変換時にURLが変わってしまう
+2. **フラットな設計の方がシンプル**: `/anime/:anime_id` で作品もエピソードも表現できる方が一貫性がある
+3. **API設計が複雑**: `kind` パラメータでの絞り込みよりも `/api/v2/anime/works` のようなパスの方が RESTful
 
 ## 参考資料
 
