@@ -1,6 +1,6 @@
 
 -- Dumped from database version 17.5 (Debian 17.5-1.pgdg130+1)
--- Dumped by pg_dump version 17.6 (Debian 17.6-0+deb13u1)
+-- Dumped by pg_dump version 17.7 (Debian 17.7-0+deb13u1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -174,6 +174,45 @@ CREATE SEQUENCE public.activity_groups_id_seq
 --
 
 ALTER SEQUENCE public.activity_groups_id_seq OWNED BY public.activity_groups.id;
+
+
+--
+-- Name: animes; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.animes (
+    id bigint NOT NULL,
+    parent_id bigint,
+    title character varying NOT NULL,
+    title_kana character varying,
+    title_alter character varying,
+    ratings_count integer DEFAULT 0 NOT NULL,
+    satisfaction_rate numeric(5,2),
+    score numeric(5,2),
+    deleted_at timestamp with time zone,
+    hidden_at timestamp with time zone,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: animes_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.animes_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: animes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.animes_id_seq OWNED BY public.animes.id;
 
 
 --
@@ -3238,6 +3277,13 @@ ALTER TABLE ONLY public.activity_groups ALTER COLUMN id SET DEFAULT nextval('pub
 
 
 --
+-- Name: animes id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.animes ALTER COLUMN id SET DEFAULT nextval('public.animes_id_seq'::regclass);
+
+
+--
 -- Name: casts id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -3679,6 +3725,14 @@ ALTER TABLE ONLY public.activities
 
 ALTER TABLE ONLY public.activity_groups
     ADD CONSTRAINT activity_groups_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: animes animes_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.animes
+    ADD CONSTRAINT animes_pkey PRIMARY KEY (id);
 
 
 --
@@ -4767,6 +4821,13 @@ CREATE INDEX index_activity_groups_on_created_at ON public.activity_groups USING
 --
 
 CREATE INDEX index_activity_groups_on_user_id ON public.activity_groups USING btree (user_id);
+
+
+--
+-- Name: index_animes_on_parent_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_animes_on_parent_id ON public.animes USING btree (parent_id);
 
 
 --
@@ -6458,6 +6519,14 @@ ALTER TABLE ONLY public.activities
 
 
 --
+-- Name: animes animes_parent_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.animes
+    ADD CONSTRAINT animes_parent_id_fkey FOREIGN KEY (parent_id) REFERENCES public.animes(id);
+
+
+--
 -- Name: channel_works channel_works_channel_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -7738,4 +7807,5 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20251113173140'),
     ('20260111083416'),
     ('20260111084224'),
-    ('20260111101233');
+    ('20260111101233'),
+    ('20260130104842');
