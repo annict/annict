@@ -111,7 +111,7 @@
 
 - **データ整合性**: アーカイブされたデータは変更されない（イミュータブル）
 - **統計・ランキング**: アーカイブされた作品・エピソードのデータも統計・ランキングに含める
-- **可逆性**: `archived_at` を NULL にすればアーカイブを解除できる
+- **可逆性**: `status` を `published` に戻せばアーカイブを解除できる
 
 ## 設計
 
@@ -140,7 +140,7 @@
 
 1. **移行コストが低い**: 約25テーブルの参照を更新する必要がない
 2. **データを壊すリスクが低い**: 既存データは変更されないため、問題が発生しにくい
-3. **ロールバックが容易**: `archived_at` を NULL にすれば元に戻せる
+3. **ロールバックが容易**: `status` を `published` に戻せば元に戻せる
 4. **利用者の記録を維持**: 既存の `work_records`, `episode_records`, `library_entries` などはそのまま残る
 
 **トレードオフ**:
@@ -151,47 +151,71 @@
 
 ### データベース設計
 
+#### status enum 型の作成
+
+```sql
+-- 作品・エピソードの状態を表す enum 型を作成
+CREATE TYPE public.work_status AS ENUM ('published', 'archived', 'deleted');
+CREATE TYPE public.episode_status AS ENUM ('published', 'archived', 'deleted');
+```
+
 #### works テーブルへの変更
 
 ```sql
--- works テーブルに archived_at と archive_message カラムを追加
-ALTER TABLE public.works ADD COLUMN archived_at TIMESTAMP WITH TIME ZONE;
+-- works テーブルに status と archive_message カラムを追加
+ALTER TABLE public.works ADD COLUMN status public.work_status NOT NULL DEFAULT 'published';
 ALTER TABLE public.works ADD COLUMN archive_message VARCHAR;
 
--- インデックス（アーカイブされていない作品の検索用）
-CREATE INDEX index_works_on_archived_at ON public.works(archived_at) WHERE archived_at IS NULL;
+-- インデックス（公開中の作品の検索用）
+CREATE INDEX index_works_on_status ON public.works(status) WHERE status = 'published';
+
+-- 既存の unpublished_at カラムからデータを移行
+UPDATE public.works SET status = 'archived' WHERE unpublished_at IS NOT NULL;
+UPDATE public.works SET status = 'deleted' WHERE deleted_at IS NOT NULL;
+
+-- 移行後、unpublished_at カラムは将来的に削除
 ```
 
 #### episodes テーブルへの変更
 
 ```sql
--- episodes テーブルに archived_at と archive_message カラムを追加
-ALTER TABLE public.episodes ADD COLUMN archived_at TIMESTAMP WITH TIME ZONE;
+-- episodes テーブルに status と archive_message カラムを追加
+ALTER TABLE public.episodes ADD COLUMN status public.episode_status NOT NULL DEFAULT 'published';
 ALTER TABLE public.episodes ADD COLUMN archive_message VARCHAR;
 
--- インデックス（アーカイブされていないエピソードの検索用）
-CREATE INDEX index_episodes_on_archived_at ON public.episodes(archived_at) WHERE archived_at IS NULL;
+-- インデックス（公開中のエピソードの検索用）
+CREATE INDEX index_episodes_on_status ON public.episodes(status) WHERE status = 'published';
+
+-- 既存の unpublished_at カラムからデータを移行
+UPDATE public.episodes SET status = 'archived' WHERE unpublished_at IS NOT NULL;
+UPDATE public.episodes SET status = 'deleted' WHERE deleted_at IS NOT NULL;
+
+-- 移行後、unpublished_at カラムは将来的に削除
 ```
 
 ### 状態の分類
 
 作品・エピソードには以下の状態が存在する：
 
-| 状態 | カラム | 表示 | 操作 | 用途 |
-|-----|--------|------|------|------|
-| 公開 | - | 表示 | 可能 | 通常の状態 |
-| アーカイブ | `archived_at` | 表示 | 不可 | 統合・分離後の旧データ |
-| 非公開 | `unpublished_at` | 管理者のみ | 不可 | 公開前のデータ |
-| 削除 | `deleted_at` | 非表示 | 不可 | 削除されたデータ |
+| 状態 | `status` の値 | 表示 | 操作 | 用途 |
+|-----|--------------|------|------|------|
+| 公開 | `published` | 表示 | 可能 | 通常の状態 |
+| アーカイブ | `archived` | 表示 | 不可 | 統合・分離後の旧データ、編集者が誤って登録したデータ |
+| 削除 | `deleted` | 非表示 | 不可 | 削除されたデータ |
+
+**既存カラムとの関係**:
+
+- `unpublished_at`: アーカイブ機能に統合。既存データは `status = 'archived'` に移行後、カラムを将来的に削除
+- `deleted_at`: 引き続き使用（削除日時の記録用）。`status = 'deleted'` と併用
 
 ### 作品を別の作品のエピソードに統合する操作
 
 例: 作品A「エヴァンゲリオン:DEATH (TRUE)²」を作品B「新世紀エヴァンゲリオン」のエピソードに統合する
 
 ```
-1. 作品Aのエピソードをすべてアーカイブ
+1. 作品Aのエピソードをすべてアーカイブ（status = 'archived'）
 2. 作品Bに新しいエピソードを作成（作品Aの情報を元に）
-3. 作品Aをアーカイブ（archive_message に「新世紀エヴァンゲリオンに統合されました」などを設定）
+3. 作品Aをアーカイブ（status = 'archived', archive_message に「新世紀エヴァンゲリオンに統合されました」などを設定）
 ```
 
 **結果**:
@@ -207,7 +231,7 @@ CREATE INDEX index_episodes_on_archived_at ON public.episodes(archived_at) WHERE
 ```
 1. 作品Bを新規作成
 2. 作品Bにエピソード（本編）を作成
-3. 元のエピソードをアーカイブ（archive_message に「笹の葉ラプソディ（作品）に分離されました」などを設定）
+3. 元のエピソードをアーカイブ（status = 'archived', archive_message に「笹の葉ラプソディ（作品）に分離されました」などを設定）
 ```
 
 **結果**:
@@ -305,19 +329,32 @@ CREATE INDEX index_episodes_on_archived_at ON public.episodes(archived_at) WHERE
 Go版/Rails版の両方を修正する場合は別タスクに分けてください
 -->
 
-- [ ] **1-1**: [Go] works テーブルに archived_at, archive_message カラムを追加
+- [ ] **1-1**: [Go] status enum 型の作成と works テーブルへの追加
 
-  - マイグレーションファイルの作成
+  - `work_status` enum 型の作成
+  - `works.status` カラムの追加（デフォルト: `published`）
+  - `works.archive_message` カラムの追加
   - インデックスの作成
+  - 既存の `unpublished_at` データを `status = 'archived'` に移行
   - **想定ファイル数**: 約 1 ファイル（実装 1）
-  - **想定行数**: 約 20 行
+  - **想定行数**: 約 30 行
 
-- [ ] **1-2**: [Go] episodes テーブルに archived_at, archive_message カラムを追加
+- [ ] **1-2**: [Go] episode_status enum 型の作成と episodes テーブルへの追加
 
-  - マイグレーションファイルの作成
+  - `episode_status` enum 型の作成
+  - `episodes.status` カラムの追加（デフォルト: `published`）
+  - `episodes.archive_message` カラムの追加
   - インデックスの作成
+  - 既存の `unpublished_at` データを `status = 'archived'` に移行
   - **想定ファイル数**: 約 1 ファイル（実装 1）
-  - **想定行数**: 約 20 行
+  - **想定行数**: 約 30 行
+
+- [ ] **1-3**: [Rails] Work, Episode モデルに status enum を追加
+
+  - `enumerize` で status を定義
+  - 既存の `unpublished?` メソッドを `archived?` に置き換え
+  - **想定ファイル数**: 約 4 ファイル（実装 2 + テスト 2）
+  - **想定行数**: 約 60 行（実装 30 行 + テスト 30 行）
 
 ### フェーズ 2: Annict DB でのアーカイブ機能
 
@@ -341,7 +378,7 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
 
 - [ ] **3-1**: [Rails] アーカイブされた作品の表示・操作制限
 
-  - Work モデルにアーカイブ判定メソッドを追加
+  - `work.archived?` メソッドを使用した判定
   - 作品ページでのアーカイブメッセージ表示
   - ステータス変更、記録追加の禁止
   - **想定ファイル数**: 約 8 ファイル（実装 5 + テスト 3）
@@ -349,7 +386,7 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
 
 - [ ] **3-2**: [Rails] アーカイブされたエピソードの表示・操作制限
 
-  - Episode モデルにアーカイブ判定メソッドを追加
+  - `episode.archived?` メソッドを使用した判定
   - エピソードページでのアーカイブメッセージ表示
   - 記録追加の禁止
   - **想定ファイル数**: 約 8 ファイル（実装 5 + テスト 3）
@@ -378,9 +415,9 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
 - [ ] **5-1**: [Go] 作品を別の作品のエピソードに統合する機能
 
   - 統合ユースケースの実装
-    - 作品Aのエピソードをすべてアーカイブ
+    - 作品Aのエピソードをすべてアーカイブ（`status = 'archived'`）
     - 作品Bに新しいエピソードを作成
-    - 作品Aをアーカイブ
+    - 作品Aをアーカイブ（`status = 'archived'`）
   - Annict DB のハンドラー・UI 実装
   - **想定ファイル数**: 約 8 ファイル（実装 5 + テスト 3）
   - **想定行数**: 約 300 行（実装 180 行 + テスト 120 行）
@@ -390,7 +427,7 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
   - 分離ユースケースの実装
     - 作品Bを新規作成
     - 作品Bにエピソードを作成
-    - 元のエピソードをアーカイブ
+    - 元のエピソードをアーカイブ（`status = 'archived'`）
   - Annict DB のハンドラー・UI 実装
   - **想定ファイル数**: 約 8 ファイル（実装 5 + テスト 3）
   - **想定行数**: 約 300 行（実装 180 行 + テスト 120 行）
@@ -414,7 +451,7 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
 
 `animes` テーブルを導入し、作品（Work）とエピソード（Episode）を統一的に識別する案。`animes.parent_id` が NULL なら作品、NULL でなければエピソードとして扱う。
 
-詳細は [animes テーブル導入 設計書](../1_doing/animes-table.md) を参照。
+詳細は [animes テーブル導入 設計書](../4_wont_do/animes-table.md) を参照。
 
 ### メリット
 
@@ -444,7 +481,7 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
 
 | 観点 | animes テーブル案 | アーカイブ機能案（採用） |
 |------|------------------|------------------------|
-| 移行コスト | 高い（約25テーブル） | 低い（2テーブル2カラム） |
+| 移行コスト | 高い（約25テーブル） | 低い（2テーブルに status enum + archive_message） |
 | データ構造の理解しやすさ | 複雑（3テーブルの関係） | シンプル（既存構造を維持） |
 | API の使いやすさ | 判別ロジックが必要 | Work/Episode が明確 |
 | 変換後の URL | 維持される | 変わる |
@@ -457,6 +494,6 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
 参考にしたドキュメント、記事、OSSプロジェクトなど
 -->
 
-- [animes テーブル導入 設計書](../1_doing/animes-table.md) - 比較検討した別案
+- [animes テーブル導入 設計書](../4_wont_do/animes-table.md) - 比較検討した別案
 - [現在の works テーブル定義](/workspace/go/db/schema.sql)
 - [現在の episodes テーブル定義](/workspace/go/db/schema.sql)
