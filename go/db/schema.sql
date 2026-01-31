@@ -1,6 +1,6 @@
 
 -- Dumped from database version 17.5 (Debian 17.5-1.pgdg130+1)
--- Dumped by pg_dump version 17.7 (Debian 17.7-0+deb13u1)
+-- Dumped by pg_dump version 17.6 (Debian 17.6-0+deb13u1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -174,45 +174,6 @@ CREATE SEQUENCE public.activity_groups_id_seq
 --
 
 ALTER SEQUENCE public.activity_groups_id_seq OWNED BY public.activity_groups.id;
-
-
---
--- Name: animes; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.animes (
-    id bigint NOT NULL,
-    parent_id bigint,
-    title character varying NOT NULL,
-    title_kana character varying,
-    title_alter character varying,
-    ratings_count integer DEFAULT 0 NOT NULL,
-    satisfaction_rate numeric(5,2),
-    score numeric(5,2),
-    deleted_at timestamp with time zone,
-    hidden_at timestamp with time zone,
-    created_at timestamp with time zone DEFAULT now() NOT NULL,
-    updated_at timestamp with time zone DEFAULT now() NOT NULL
-);
-
-
---
--- Name: animes_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.animes_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: animes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.animes_id_seq OWNED BY public.animes.id;
 
 
 --
@@ -863,9 +824,7 @@ CREATE TABLE public.episodes (
     satisfaction_rate double precision,
     number_en character varying DEFAULT ''::character varying NOT NULL,
     deleted_at timestamp without time zone,
-    unpublished_at timestamp without time zone,
-    anime_id bigint,
-    prev_anime_id bigint
+    unpublished_at timestamp without time zone
 );
 
 
@@ -3267,8 +3226,7 @@ CREATE TABLE public.works (
     deleted_at timestamp without time zone,
     title_alter character varying DEFAULT ''::character varying NOT NULL,
     title_alter_en character varying DEFAULT ''::character varying NOT NULL,
-    unpublished_at timestamp without time zone,
-    anime_id bigint
+    unpublished_at timestamp without time zone
 );
 
 
@@ -3277,13 +3235,6 @@ CREATE TABLE public.works (
 --
 
 ALTER TABLE ONLY public.activity_groups ALTER COLUMN id SET DEFAULT nextval('public.activity_groups_id_seq'::regclass);
-
-
---
--- Name: animes id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.animes ALTER COLUMN id SET DEFAULT nextval('public.animes_id_seq'::regclass);
 
 
 --
@@ -3728,14 +3679,6 @@ ALTER TABLE ONLY public.activities
 
 ALTER TABLE ONLY public.activity_groups
     ADD CONSTRAINT activity_groups_pkey PRIMARY KEY (id);
-
-
---
--- Name: animes animes_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.animes
-    ADD CONSTRAINT animes_pkey PRIMARY KEY (id);
 
 
 --
@@ -4827,13 +4770,6 @@ CREATE INDEX index_activity_groups_on_user_id ON public.activity_groups USING bt
 
 
 --
--- Name: index_animes_on_parent_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_animes_on_parent_id ON public.animes USING btree (parent_id);
-
-
---
 -- Name: index_casts_on_aasm_state; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -5191,24 +5127,10 @@ CREATE INDEX index_episodes_on_aasm_state ON public.episodes USING btree (aasm_s
 
 
 --
--- Name: index_episodes_on_anime_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_episodes_on_anime_id ON public.episodes USING btree (anime_id) WHERE (anime_id IS NOT NULL);
-
-
---
 -- Name: index_episodes_on_deleted_at; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_episodes_on_deleted_at ON public.episodes USING btree (deleted_at);
-
-
---
--- Name: index_episodes_on_prev_anime_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_episodes_on_prev_anime_id ON public.episodes USING btree (prev_anime_id) WHERE (prev_anime_id IS NOT NULL);
 
 
 --
@@ -6325,13 +6247,6 @@ CREATE INDEX index_works_on_aasm_state ON public.works USING btree (aasm_state);
 
 
 --
--- Name: index_works_on_anime_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_works_on_anime_id ON public.works USING btree (anime_id) WHERE (anime_id IS NOT NULL);
-
-
---
 -- Name: index_works_on_deleted_at; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -6543,14 +6458,6 @@ ALTER TABLE ONLY public.activities
 
 
 --
--- Name: animes animes_parent_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.animes
-    ADD CONSTRAINT animes_parent_id_fkey FOREIGN KEY (parent_id) REFERENCES public.animes(id);
-
-
---
 -- Name: channel_works channel_works_channel_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -6620,22 +6527,6 @@ ALTER TABLE ONLY public.comments
 
 ALTER TABLE ONLY public.comments
     ADD CONSTRAINT comments_user_id_fk FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
-
-
---
--- Name: episodes episodes_anime_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.episodes
-    ADD CONSTRAINT episodes_anime_id_fkey FOREIGN KEY (anime_id) REFERENCES public.animes(id);
-
-
---
--- Name: episodes episodes_prev_anime_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.episodes
-    ADD CONSTRAINT episodes_prev_anime_id_fkey FOREIGN KEY (prev_anime_id) REFERENCES public.animes(id);
 
 
 --
@@ -7543,14 +7434,6 @@ ALTER TABLE ONLY public.syobocal_alerts
 
 
 --
--- Name: works works_anime_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.works
-    ADD CONSTRAINT works_anime_id_fkey FOREIGN KEY (anime_id) REFERENCES public.animes(id);
-
-
---
 -- Name: works works_season_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -7855,6 +7738,4 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20251113173140'),
     ('20260111083416'),
     ('20260111084224'),
-    ('20260111101233'),
-    ('20260130104842'),
-    ('20260130182403');
+    ('20260111101233');
