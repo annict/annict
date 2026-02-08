@@ -1,14 +1,26 @@
 package mail
 
 import (
+	"bytes"
 	"context"
+	"io"
 	"testing"
+
+	"github.com/a-h/templ"
 )
 
-func TestNoopSender_ImplementsMailSender(t *testing.T) {
+// testComponent はテスト用のtempl.Componentを作成します
+func testComponent(content string) templ.Component {
+	return templ.ComponentFunc(func(_ context.Context, w io.Writer) error {
+		_, err := io.WriteString(w, content)
+		return err
+	})
+}
+
+func TestNoopSender_ImplementsSender(t *testing.T) {
 	t.Parallel()
 
-	var _ MailSender = (*NoopSender)(nil)
+	var _ Sender = (*NoopSender)(nil)
 }
 
 func TestNewNoopSender(t *testing.T) {
@@ -25,15 +37,23 @@ func TestNewNoopSender(t *testing.T) {
 	}
 }
 
-func TestNoopSender_SendMultipartEmail(t *testing.T) {
+func TestNoopSender_Send(t *testing.T) {
 	t.Parallel()
 
 	sender := NewNoopSender()
 	ctx := context.Background()
 
-	err := sender.SendMultipartEmail(ctx, "test@example.com", "件名", "テキスト本文", "<p>HTML本文</p>")
+	htmlBody := testComponent("<p>HTML本文</p>")
+	textBody := testComponent("テキスト本文")
+
+	err := sender.Send(ctx, SendInput{
+		To:       "test@example.com",
+		Subject:  "件名",
+		HTMLBody: htmlBody,
+		TextBody: textBody,
+	})
 	if err != nil {
-		t.Fatalf("SendMultipartEmail() error = %v", err)
+		t.Fatalf("Send() error = %v", err)
 	}
 
 	if len(sender.SentEmails) != 1 {
@@ -47,24 +67,61 @@ func TestNoopSender_SendMultipartEmail(t *testing.T) {
 	if email.Subject != "件名" {
 		t.Errorf("Subject = %q, want %q", email.Subject, "件名")
 	}
-	if email.Text != "テキスト本文" {
-		t.Errorf("Text = %q, want %q", email.Text, "テキスト本文")
+
+	// templ.Componentをレンダリングして内容を検証
+	var htmlBuf bytes.Buffer
+	if err := email.HTMLBody.Render(ctx, &htmlBuf); err != nil {
+		t.Fatalf("HTMLBody.Render() error = %v", err)
 	}
-	if email.HTML != "<p>HTML本文</p>" {
-		t.Errorf("HTML = %q, want %q", email.HTML, "<p>HTML本文</p>")
+	if htmlBuf.String() != "<p>HTML本文</p>" {
+		t.Errorf("HTMLBody = %q, want %q", htmlBuf.String(), "<p>HTML本文</p>")
+	}
+
+	var textBuf bytes.Buffer
+	if err := email.TextBody.Render(ctx, &textBuf); err != nil {
+		t.Fatalf("TextBody.Render() error = %v", err)
+	}
+	if textBuf.String() != "テキスト本文" {
+		t.Errorf("TextBody = %q, want %q", textBuf.String(), "テキスト本文")
 	}
 }
 
-func TestNoopSender_SendMultipartEmail_Multiple(t *testing.T) {
+func TestNoopSender_Send_HTMLOnly(t *testing.T) {
+	t.Parallel()
+
+	sender := NewNoopSender()
+	ctx := context.Background()
+
+	err := sender.Send(ctx, SendInput{
+		To:       "test@example.com",
+		Subject:  "件名",
+		HTMLBody: testComponent("<p>HTML</p>"),
+	})
+	if err != nil {
+		t.Fatalf("Send() error = %v", err)
+	}
+
+	email := sender.SentEmails[0]
+	if email.TextBody != nil {
+		t.Error("TextBody should be nil")
+	}
+}
+
+func TestNoopSender_Send_Multiple(t *testing.T) {
 	t.Parallel()
 
 	sender := NewNoopSender()
 	ctx := context.Background()
 
 	for i := range 3 {
-		err := sender.SendMultipartEmail(ctx, "test@example.com", "件名", "本文", "<p>本文</p>")
+		err := sender.Send(ctx, SendInput{
+			To:       "test@example.com",
+			Subject:  "件名",
+			HTMLBody: testComponent("<p>本文</p>"),
+			TextBody: testComponent("本文"),
+		})
 		if err != nil {
-			t.Fatalf("SendMultipartEmail() call %d error = %v", i, err)
+			t.Fatalf("Send() call %d error = %v", i, err)
 		}
 	}
 
@@ -79,8 +136,16 @@ func TestNoopSender_Reset(t *testing.T) {
 	sender := NewNoopSender()
 	ctx := context.Background()
 
-	_ = sender.SendMultipartEmail(ctx, "test@example.com", "件名", "本文", "<p>本文</p>")
-	_ = sender.SendMultipartEmail(ctx, "test2@example.com", "件名2", "本文2", "<p>本文2</p>")
+	_ = sender.Send(ctx, SendInput{
+		To:       "test@example.com",
+		Subject:  "件名",
+		HTMLBody: testComponent("<p>本文</p>"),
+	})
+	_ = sender.Send(ctx, SendInput{
+		To:       "test2@example.com",
+		Subject:  "件名2",
+		HTMLBody: testComponent("<p>本文2</p>"),
+	})
 
 	if len(sender.SentEmails) != 2 {
 		t.Fatalf("SentEmails length = %d, want 2", len(sender.SentEmails))

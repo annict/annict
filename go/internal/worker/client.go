@@ -42,9 +42,9 @@ func NewClient(ctx context.Context, databaseURL string, queries *query.Queries, 
 	}
 
 	// メールクライアントの作成（メール送信用）
-	var mailClient mail.MailSender
+	var mailSender mail.Sender
 	if cfg.ResendAPIKey != "" {
-		mailClient = mail.NewResendClient(cfg.ResendAPIKey, cfg.ResendFromEmail, "Annict")
+		mailSender = mail.NewResendClient(cfg.ResendAPIKey, cfg.ResendFromEmail, "Annict")
 		slog.InfoContext(ctx, "Resend クライアントを初期化しました")
 	} else {
 		slog.WarnContext(ctx, "Resend API キーが設定されていません。メール送信機能は利用できません")
@@ -54,16 +54,16 @@ func NewClient(ctx context.Context, databaseURL string, queries *query.Queries, 
 	workers := river.NewWorkers()
 
 	// パスワードリセットメール送信ワーカーを登録
-	if mailClient != nil {
-		river.AddWorker(workers, NewSendPasswordResetEmailWorker(queries, mailClient, cfg))
+	if mailSender != nil {
+		river.AddWorker(workers, NewSendPasswordResetEmailWorker(queries, mailSender, cfg))
 		slog.InfoContext(ctx, "SendPasswordResetEmailWorker を登録しました")
 
 		// ログインコード送信ワーカーを登録
-		river.AddWorker(workers, NewSendSignInCodeWorker(queries, mailClient, cfg))
+		river.AddWorker(workers, NewSendSignInCodeWorker(queries, mailSender, cfg))
 		slog.InfoContext(ctx, "SendSignInCodeWorker を登録しました")
 
 		// 新規登録確認コード送信ワーカーを登録
-		river.AddWorker(workers, NewSendSignUpCodeWorker(mailClient, cfg))
+		river.AddWorker(workers, NewSendSignUpCodeWorker(mailSender, cfg))
 		slog.InfoContext(ctx, "SendSignUpCodeWorker を登録しました")
 	}
 

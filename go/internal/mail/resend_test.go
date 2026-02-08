@@ -76,9 +76,8 @@ func TestNewResendClient(t *testing.T) {
 	}
 }
 
-func TestResendClient_ImplementsMailSender(t *testing.T) {
+func TestResendClient_ImplementsSender(t *testing.T) {
 	t.Parallel()
 
-	// ResendClientがMailSenderインターフェースを実装していることを確認
-	var _ MailSender = (*ResendClient)(nil)
+	var _ Sender = (*ResendClient)(nil)
 }

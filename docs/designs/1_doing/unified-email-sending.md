@@ -506,7 +506,7 @@ func (w *SendEmailWorker) Work(ctx context.Context, job *river.Job[SendEmailArgs
   - **想定ファイル数**: 約 3 ファイル（実装 1 + テスト 2）
   - **想定行数**: 約 60 行（実装 20 行 + テスト 40 行）
 
-- [ ] **2-2**: [Go] インターフェース名の統一
+- [x] **2-2**: [Go] インターフェース名の統一
 
   - `MailSender`を`Sender`にリネーム
   - `SendMultipartEmail`を`Send`にリネーム
