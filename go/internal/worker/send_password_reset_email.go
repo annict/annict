@@ -1,11 +1,11 @@
 package worker
 
 import (
-	"bytes"
 	"context"
 	"fmt"
 	"log/slog"
 
+	"github.com/a-h/templ"
 	"github.com/riverqueue/river"
 
 	"github.com/annict/annict/go/internal/config"
@@ -30,48 +30,27 @@ func (SendPasswordResetEmailArgs) Kind() string {
 type SendPasswordResetEmailWorker struct {
 	river.WorkerDefaults[SendPasswordResetEmailArgs]
 	queries    *query.Queries
-	mailClient mail.MailSender
+	mailSender mail.Sender
 	cfg        *config.Config
 }
 
 // NewSendPasswordResetEmailWorker は新しいSendPasswordResetEmailWorkerを作成します
-func NewSendPasswordResetEmailWorker(queries *query.Queries, mailClient mail.MailSender, cfg *config.Config) *SendPasswordResetEmailWorker {
+func NewSendPasswordResetEmailWorker(queries *query.Queries, mailSender mail.Sender, cfg *config.Config) *SendPasswordResetEmailWorker {
 	return &SendPasswordResetEmailWorker{
 		queries:    queries,
-		mailClient: mailClient,
+		mailSender: mailSender,
 		cfg:        cfg,
 	}
 }
 
-// renderEmailTemplate はtemplコンポーネントを使ってメールをレンダリングします
-func renderEmailTemplate(ctx context.Context, locale, format, resetURL string) (string, error) {
-	var buf bytes.Buffer
-	var err error
-
-	// ロケールとフォーマットに応じてtemplコンポーネントを選択
-	switch {
-	case locale == "ja" && format == "text":
-		err = password_reset.JaText(resetURL).Render(ctx, &buf)
-	case locale == "ja" && format == "html":
-		err = password_reset.JaHTML(resetURL).Render(ctx, &buf)
-	case locale == "en" && format == "text":
-		err = password_reset.EnText(resetURL).Render(ctx, &buf)
-	case locale == "en" && format == "html":
-		err = password_reset.EnHTML(resetURL).Render(ctx, &buf)
+// passwordResetTemplates はロケールに応じたメールテンプレートを返します
+func passwordResetTemplates(locale, resetURL string) (htmlBody, textBody templ.Component) {
+	switch locale {
+	case "en":
+		return password_reset.EnHTML(resetURL), password_reset.EnText(resetURL)
 	default:
-		// デフォルトは日本語
-		if format == "html" {
-			err = password_reset.JaHTML(resetURL).Render(ctx, &buf)
-		} else {
-			err = password_reset.JaText(resetURL).Render(ctx, &buf)
-		}
+		return password_reset.JaHTML(resetURL), password_reset.JaText(resetURL)
 	}
-
-	if err != nil {
-		return "", fmt.Errorf("テンプレートのレンダリングに失敗: %w", err)
-	}
-
-	return buf.String(), nil
 }
 
 // Work はパスワードリセットメールを送信します
@@ -112,33 +91,19 @@ func (w *SendPasswordResetEmailWorker) Work(ctx context.Context, job *river.Job[
 	// リセットURLを生成
 	resetURL := fmt.Sprintf("%s/password/edit?token=%s", w.cfg.AppURL(), job.Args.Token)
 
-	// テキストメール本文をレンダリング
-	textBody, err := renderEmailTemplate(ctx, locale, "text", resetURL)
-	if err != nil {
-		slog.ErrorContext(ctx, "テキストメールのレンダリングに失敗しました",
-			"user_id", job.Args.UserID,
-			"locale", locale,
-			"error", err,
-		)
-		return fmt.Errorf("テキストメールのレンダリングに失敗: %w", err)
-	}
-
-	// HTMLメール本文をレンダリング
-	htmlBody, err := renderEmailTemplate(ctx, locale, "html", resetURL)
-	if err != nil {
-		slog.ErrorContext(ctx, "HTMLメールのレンダリングに失敗しました",
-			"user_id", job.Args.UserID,
-			"locale", locale,
-			"error", err,
-		)
-		return fmt.Errorf("HTMLメールのレンダリングに失敗: %w", err)
-	}
+	// テンプレートを選択
+	htmlBody, textBody := passwordResetTemplates(locale, resetURL)
 
 	// 件名を取得（i18n使用）
 	subject := i18n.T(ctx, "password_reset_email_subject")
 
 	// メール送信
-	err = w.mailClient.SendMultipartEmail(ctx, email, subject, textBody, htmlBody)
+	err = w.mailSender.Send(ctx, mail.SendInput{
+		To:       email,
+		Subject:  subject,
+		HTMLBody: htmlBody,
+		TextBody: textBody,
+	})
 	if err != nil {
 		slog.ErrorContext(ctx, "メール送信に失敗しました",
 			"user_id", job.Args.UserID,

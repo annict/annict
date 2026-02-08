@@ -1,11 +1,11 @@
 package worker
 
 import (
-	"bytes"
 	"context"
 	"fmt"
 	"log/slog"
 
+	"github.com/a-h/templ"
 	"github.com/riverqueue/river"
 
 	"github.com/annict/annict/go/internal/config"
@@ -30,48 +30,27 @@ func (SendSignInCodeArgs) Kind() string {
 type SendSignInCodeWorker struct {
 	river.WorkerDefaults[SendSignInCodeArgs]
 	queries    *query.Queries
-	mailClient mail.MailSender
+	mailSender mail.Sender
 	cfg        *config.Config
 }
 
 // NewSendSignInCodeWorker は新しいSendSignInCodeWorkerを作成します
-func NewSendSignInCodeWorker(queries *query.Queries, mailClient mail.MailSender, cfg *config.Config) *SendSignInCodeWorker {
+func NewSendSignInCodeWorker(queries *query.Queries, mailSender mail.Sender, cfg *config.Config) *SendSignInCodeWorker {
 	return &SendSignInCodeWorker{
 		queries:    queries,
-		mailClient: mailClient,
+		mailSender: mailSender,
 		cfg:        cfg,
 	}
 }
 
-// renderSignInTemplate はtemplコンポーネントを使ってメールをレンダリングします
-func renderSignInTemplate(ctx context.Context, locale, format, code string) (string, error) {
-	var buf bytes.Buffer
-	var err error
-
-	// ロケールとフォーマットに応じてtemplコンポーネントを選択
-	switch {
-	case locale == "ja" && format == "text":
-		err = sign_in.JaText(code).Render(ctx, &buf)
-	case locale == "ja" && format == "html":
-		err = sign_in.JaHTML(code).Render(ctx, &buf)
-	case locale == "en" && format == "text":
-		err = sign_in.EnText(code).Render(ctx, &buf)
-	case locale == "en" && format == "html":
-		err = sign_in.EnHTML(code).Render(ctx, &buf)
+// signInCodeTemplates はロケールに応じたメールテンプレートを返します
+func signInCodeTemplates(locale, code string) (htmlBody, textBody templ.Component) {
+	switch locale {
+	case "en":
+		return sign_in.EnHTML(code), sign_in.EnText(code)
 	default:
-		// デフォルトは日本語
-		if format == "html" {
-			err = sign_in.JaHTML(code).Render(ctx, &buf)
-		} else {
-			err = sign_in.JaText(code).Render(ctx, &buf)
-		}
+		return sign_in.JaHTML(code), sign_in.JaText(code)
 	}
-
-	if err != nil {
-		return "", fmt.Errorf("テンプレートのレンダリングに失敗: %w", err)
-	}
-
-	return buf.String(), nil
 }
 
 // Work はログインコードを送信します
@@ -109,33 +88,19 @@ func (w *SendSignInCodeWorker) Work(ctx context.Context, job *river.Job[SendSign
 		locale = "ja"
 	}
 
-	// テキストメール本文をレンダリング
-	textBody, err := renderSignInTemplate(ctx, locale, "text", job.Args.Code)
-	if err != nil {
-		slog.ErrorContext(ctx, "テキストメールのレンダリングに失敗しました",
-			"user_id", job.Args.UserID,
-			"locale", locale,
-			"error", err,
-		)
-		return fmt.Errorf("テキストメールのレンダリングに失敗: %w", err)
-	}
-
-	// HTMLメール本文をレンダリング
-	htmlBody, err := renderSignInTemplate(ctx, locale, "html", job.Args.Code)
-	if err != nil {
-		slog.ErrorContext(ctx, "HTMLメールのレンダリングに失敗しました",
-			"user_id", job.Args.UserID,
-			"locale", locale,
-			"error", err,
-		)
-		return fmt.Errorf("HTMLメールのレンダリングに失敗: %w", err)
-	}
+	// テンプレートを選択
+	htmlBody, textBody := signInCodeTemplates(locale, job.Args.Code)
 
 	// 件名を取得（i18n使用）
 	subject := i18n.T(ctx, "sign_in_code_email_subject")
 
 	// メール送信
-	err = w.mailClient.SendMultipartEmail(ctx, email, subject, textBody, htmlBody)
+	err = w.mailSender.Send(ctx, mail.SendInput{
+		To:       email,
+		Subject:  subject,
+		HTMLBody: htmlBody,
+		TextBody: textBody,
+	})
 	if err != nil {
 		slog.ErrorContext(ctx, "メール送信に失敗しました",
 			"user_id", job.Args.UserID,

@@ -1,61 +1,54 @@
 package worker
 
 import (
+	"bytes"
 	"context"
+	"strings"
 	"testing"
 
+	"github.com/riverqueue/river"
+
+	"github.com/annict/annict/go/internal/config"
+	"github.com/annict/annict/go/internal/mail"
+	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// TestRenderEmailTemplate はメールテンプレートのレンダリングをテストします
-func TestRenderEmailTemplate(t *testing.T) {
+// TestPasswordResetTemplates はパスワードリセットメールテンプレートの選択とレンダリングをテストします
+func TestPasswordResetTemplates(t *testing.T) {
 	tests := []struct {
-		name     string
-		locale   string
-		format   string
-		resetURL string
-		contains []string
+		name         string
+		locale       string
+		resetURL     string
+		htmlContains []string
+		textContains []string
 	}{
 		{
-			name:     "日本語テキストメール",
+			name:     "日本語メール",
 			locale:   "ja",
-			format:   "text",
 			resetURL: "https://example.com/reset?token=abc123",
-			contains: []string{
+			htmlContains: []string{
+				"パスワードリセットのご案内",
+				"https://example.com/reset?token=abc123",
+				"このリンクは1時間有効です",
+			},
+			textContains: []string{
 				"パスワードリセットのリクエストを受け付けました",
 				"https://example.com/reset?token=abc123",
 				"このリンクは1時間有効です",
 			},
 		},
 		{
-			name:     "日本語HTMLメール",
-			locale:   "ja",
-			format:   "html",
-			resetURL: "https://example.com/reset?token=abc123",
-			contains: []string{
-				"パスワードリセットのご案内",
-				"https://example.com/reset?token=abc123",
-				"このリンクは1時間有効です",
-			},
-		},
-		{
-			name:     "英語テキストメール",
+			name:     "英語メール",
 			locale:   "en",
-			format:   "text",
 			resetURL: "https://example.com/reset?token=xyz789",
-			contains: []string{
-				"We have received a request to reset your password",
+			htmlContains: []string{
+				"Password Reset Request",
 				"https://example.com/reset?token=xyz789",
 				"This link is valid for 1 hour",
 			},
-		},
-		{
-			name:     "英語HTMLメール",
-			locale:   "en",
-			format:   "html",
-			resetURL: "https://example.com/reset?token=xyz789",
-			contains: []string{
-				"Password Reset Request",
+			textContains: []string{
+				"We have received a request to reset your password",
 				"https://example.com/reset?token=xyz789",
 				"This link is valid for 1 hour",
 			},
@@ -64,17 +57,28 @@ func TestRenderEmailTemplate(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// テンプレートをレンダリング
 			ctx := context.Background()
-			result, err := renderEmailTemplate(ctx, tt.locale, tt.format, tt.resetURL)
-			if err != nil {
-				t.Fatalf("テンプレートのレンダリングに失敗: %v", err)
+			htmlBody, textBody := passwordResetTemplates(tt.locale, tt.resetURL)
+
+			// HTMLテンプレートをレンダリング
+			var htmlBuf bytes.Buffer
+			if err := htmlBody.Render(ctx, &htmlBuf); err != nil {
+				t.Fatalf("HTMLテンプレートのレンダリングに失敗: %v", err)
+			}
+			for _, expected := range tt.htmlContains {
+				if !strings.Contains(htmlBuf.String(), expected) {
+					t.Errorf("HTMLに期待される文字列が見つかりません: %q\nレンダリング結果:\n%s", expected, htmlBuf.String())
+				}
 			}
 
-			// 期待される文字列が含まれているか確認
-			for _, expected := range tt.contains {
-				if !contains(result, expected) {
-					t.Errorf("期待される文字列が見つかりません: %q\nレンダリング結果:\n%s", expected, result)
+			// テキストテンプレートをレンダリング
+			var textBuf bytes.Buffer
+			if err := textBody.Render(ctx, &textBuf); err != nil {
+				t.Fatalf("テキストテンプレートのレンダリングに失敗: %v", err)
+			}
+			for _, expected := range tt.textContains {
+				if !strings.Contains(textBuf.String(), expected) {
+					t.Errorf("テキストに期待される文字列が見つかりません: %q\nレンダリング結果:\n%s", expected, textBuf.String())
 				}
 			}
 		})
@@ -83,39 +87,81 @@ func TestRenderEmailTemplate(t *testing.T) {
 
 // TestSendPasswordResetEmailWorker_Work はメール送信ワーカーの動作をテストします
 func TestSendPasswordResetEmailWorker_Work(t *testing.T) {
-	// テスト用DBをセットアップ
-	_, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTestDB(t)
+	queries := query.New(db).WithTx(tx)
+	ctx := context.Background()
 
-	// 日本語ロケールのユーザーを作成
-	_ = testutil.NewUserBuilder(t, tx).
-		WithUsername("ja_user_worker_test").
-		WithEmail("ja_user_worker@example.com").
-		WithLocale("ja").
-		Build()
-
-	// 英語ロケールのユーザーを作成
-	_ = testutil.NewUserBuilder(t, tx).
-		WithUsername("en_user_worker_test").
-		WithEmail("en_user_worker@example.com").
-		WithLocale("en").
-		Build()
-
-	// 実際のメール送信はResend APIを使用するため、
-	// ここでは基本的なテンプレートレンダリングの動作を確認済み
-	t.Log("メール送信ワーカーの基本的な動作を確認しました")
-}
-
-// contains は文字列に部分文字列が含まれているかチェックします
-func contains(s, substr string) bool {
-	return len(s) >= len(substr) && (s == substr || len(substr) == 0 || anyIndex(s, substr) >= 0)
-}
-
-// anyIndex は文字列内で部分文字列が最初に現れるインデックスを返します
-func anyIndex(s, substr string) int {
-	for i := 0; i <= len(s)-len(substr); i++ {
-		if s[i:i+len(substr)] == substr {
-			return i
-		}
+	cfg := &config.Config{
+		Domain: "example.com",
 	}
-	return -1
+
+	tests := []struct {
+		name         string
+		locale       string
+		username     string
+		email        string
+		htmlContains string
+	}{
+		{
+			name:         "日本語ロケールのユーザー",
+			locale:       "ja",
+			username:     "ja_user_pw_reset_work",
+			email:        "ja_pw_reset_work@example.com",
+			htmlContains: "パスワードリセットのご案内",
+		},
+		{
+			name:         "英語ロケールのユーザー",
+			locale:       "en",
+			username:     "en_user_pw_reset_work",
+			email:        "en_pw_reset_work@example.com",
+			htmlContains: "Password Reset Request",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mailSender := mail.NewNoopSender()
+
+			userID := testutil.NewUserBuilder(t, tx).
+				WithUsername(tt.username).
+				WithEmail(tt.email).
+				WithLocale(tt.locale).
+				Build()
+
+			worker := NewSendPasswordResetEmailWorker(queries, mailSender, cfg)
+
+			job := &river.Job[SendPasswordResetEmailArgs]{
+				Args: SendPasswordResetEmailArgs{
+					UserID: userID,
+					Token:  "test-token-123",
+				},
+			}
+
+			err := worker.Work(ctx, job)
+			if err != nil {
+				t.Fatalf("Work() error = %v", err)
+			}
+
+			if len(mailSender.SentEmails) != 1 {
+				t.Fatalf("SentEmails length = %d, want 1", len(mailSender.SentEmails))
+			}
+
+			sentEmail := mailSender.SentEmails[0]
+			if sentEmail.To != tt.email {
+				t.Errorf("To = %q, want %q", sentEmail.To, tt.email)
+			}
+
+			// HTMLテンプレートの内容を検証
+			var htmlBuf bytes.Buffer
+			if err := sentEmail.HTMLBody.Render(ctx, &htmlBuf); err != nil {
+				t.Fatalf("HTMLBody.Render() error = %v", err)
+			}
+			if !strings.Contains(htmlBuf.String(), tt.htmlContains) {
+				t.Errorf("HTMLにロケールに応じた文字列が見つかりません: %q", tt.htmlContains)
+			}
+			if !strings.Contains(htmlBuf.String(), "test-token-123") {
+				t.Error("HTMLにリセットトークンが含まれていません")
+			}
+		})
+	}
 }
