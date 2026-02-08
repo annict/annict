@@ -102,7 +102,7 @@ Rails標準のMVCアーキテクチャに加え、サービス層やコンポー
 
 - Dev Containerを使って開発します
 - Claude Codeはコンテナ内で実行されているため、ホスト側のコマンドの実行は不要です
-- 共通インフラ（PostgreSQL、Redis、imgproxy）は `/docker-compose.yml` で管理されており、ホスト側で起動済みのはずです
+- 共通インフラ（PostgreSQL、Redis、imgproxy）は `/workspace/docker-compose.yml` で管理されており、ホスト側で起動済みのはずです
 
 ### 環境変数の設定
 
@@ -116,11 +116,10 @@ Rails標準のMVCアーキテクチャに加え、サービス層やコンポー
 
 ```sh
 # コンテナ起動
-cd /workspace/rails
-docker compose up -d
+docker compose up
 
 # コンテナ内に入る
-docker compose exec app bash
+docker compose exec app zsh
 
 # イメージを再構築
 docker compose build app --no-cache
@@ -171,10 +170,10 @@ make sorbet
 make zeitwerk
 
 # PostgreSQL（開発環境）に接続
-psql -h host.docker.internal -p 15432 -U postgres -d annict_development
+psql -h postgresql -p 5432 -U postgres -d annict_development
 
 # PostgreSQL（テスト環境）に接続
-psql -h host.docker.internal -p 15432 -U postgres -d annict_test
+psql -h postgresql -p 5432 -U postgres -d annict_test
 
 # データベースマイグレーション
 make db-migrate
