@@ -498,7 +498,7 @@ func (w *SendEmailWorker) Work(ctx context.Context, job *river.Job[SendEmailArgs
 
 ### フェーズ 2: Annictの改善
 
-- [ ] **2-1**: [Go] NoopSenderの追加
+- [x] **2-1**: [Go] NoopSenderの追加
 
   - `email.NoopSender`構造体を追加
   - `SentEmails`スライスで送信内容を記録
