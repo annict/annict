@@ -385,7 +385,7 @@ Annict・mewst・wikino の3プロジェクト間で、CLAUDE.md およびガイ
   - **想定ファイル数**: 約 2 ファイル（実装 2 + テスト 0）
   - **想定行数**: 約 50 行（実装 50 行 + テスト 0 行）
 
-- [ ] **1-6**: rails/CLAUDE.md コーディング規約・原則の追加
+- [x] **1-6**: rails/CLAUDE.md コーディング規約・原則の追加
   - 差分17: RSpec コーディング規約追加（Mewst/Wikino を参考）
   - 差分18: ActiveRecord `includes` 禁止規約追加（Wikino を参考）
   - 差分21: Ruby 細かいコーディング規約追加（Wikino を参考）
