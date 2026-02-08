@@ -8,16 +8,16 @@ import (
 	"github.com/annict/annict/go/internal/session"
 )
 
-// CreateRequest はメールアドレス送信フォームのリクエストを表します
-type CreateRequest struct {
+// CreateValidator はメールアドレス送信フォームのバリデーションを行います
+type CreateValidator struct {
 	Email string
 }
 
 // Validate はフォームの形式バリデーションを行います
-func (req *CreateRequest) Validate(ctx context.Context) *session.FormErrors {
+func (v *CreateValidator) Validate(ctx context.Context) *session.FormErrors {
 	errors := &session.FormErrors{}
 
-	if strings.TrimSpace(req.Email) == "" {
+	if strings.TrimSpace(v.Email) == "" {
 		errors.AddFieldError("email", i18n.T(ctx, "sign_in_email_required"))
 	}
 

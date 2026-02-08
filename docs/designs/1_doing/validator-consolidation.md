@@ -382,7 +382,7 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
 
 ### フェーズ 3: Annict リファクタリング
 
-- [ ] **3-1**: [Go/Annict] sign_in の request.go を validator.go にリネーム
+- [x] **3-1**: [Go/Annict] sign_in の request.go を validator.go にリネーム
 
   - `request.go` を `validator.go` にリネーム
   - `CreateRequest` → `CreateValidator` に変更

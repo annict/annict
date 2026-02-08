@@ -25,8 +25,8 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	// backパラメータを取得（ログイン後のリダイレクト先）
 	backURL := r.FormValue("back")
 
-	// リクエストDTOを作成
-	req := &CreateRequest{
+	// バリデーターを作成
+	validator := &CreateValidator{
 		Email: r.FormValue("email"),
 	}
 
@@ -39,7 +39,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// フォームバリデーション
-	if formErrors := req.Validate(ctx); formErrors != nil {
+	if formErrors := validator.Validate(ctx); formErrors != nil {
 		flashManager := session.NewFlashManager(h.sessionMgr)
 		if err := flashManager.SetFormErrors(w, r, formErrors); err != nil {
 			slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
@@ -77,7 +77,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	slog.InfoContext(ctx, "Turnstile検証成功")
 
 	// メールアドレスでユーザーを検索
-	user, err := h.userRepo.GetByEmailForSignIn(ctx, req.Email)
+	user, err := h.userRepo.GetByEmailForSignIn(ctx, validator.Email)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			// ユーザーが見つからない場合はエラーを表示

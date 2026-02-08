@@ -7,7 +7,7 @@ import (
 	"github.com/annict/annict/go/internal/i18n"
 )
 
-func TestCreateRequestValidate(t *testing.T) {
+func TestCreateValidatorValidate(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
@@ -80,12 +80,12 @@ func TestCreateRequestValidate(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			req := &CreateRequest{
+			v := &CreateValidator{
 				Email: tt.email,
 			}
 
 			ctx := context.Background()
-			errors := req.Validate(ctx)
+			errors := v.Validate(ctx)
 
 			if tt.wantErrors {
 				if errors == nil {
@@ -125,18 +125,18 @@ func TestCreateRequestValidate(t *testing.T) {
 	}
 }
 
-// TestCreateRequest_ValidateI18nMessages I18nメッセージの内容を検証するテスト
-func TestCreateRequest_ValidateI18nMessages(t *testing.T) {
+// TestCreateValidator_ValidateI18nMessages I18nメッセージの内容を検証するテスト
+func TestCreateValidator_ValidateI18nMessages(t *testing.T) {
 	t.Parallel()
 
 	ctx := context.Background()
 
 	t.Run("email必須エラーメッセージ", func(t *testing.T) {
 		t.Parallel()
-		req := &CreateRequest{
+		v := &CreateValidator{
 			Email: "",
 		}
-		errors := req.Validate(ctx)
+		errors := v.Validate(ctx)
 		if errors == nil {
 			t.Fatal("エラーが期待されましたが、nilが返されました")
 		}
