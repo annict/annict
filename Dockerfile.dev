@@ -1,0 +1,167 @@
+FROM debian:trixie
+
+ARG USER_ID=1000
+ARG GROUP_ID=1000
+ARG USERNAME=developer
+
+# --- システムパッケージ ---
+RUN <<EOF
+apt update
+apt dist-upgrade -yq
+
+PACKAGES=$(cat <<'PKGLIST' | sed 's/#.*//'
+  build-essential
+  ca-certificates
+  curl
+  file               # Shrineによる画像アップロードに必要 (Rails)
+  fzf                # Claude Codeで使用
+  git
+  gnupg
+  imagemagick        # Shrineによる画像アップロードに必要 (Rails)
+  jq                 # Claude Codeで使用
+  libasound2         # Playwright: ALSA音声ライブラリ
+  libatk-bridge2.0-0 # Playwright: ATKブリッジ
+  libatk1.0-0        # Playwright: ATK
+  libcairo2          # Playwright: 2Dグラフィックス
+  libcups2           # Playwright: 印刷システム
+  libdrm2            # Playwright: Direct Rendering Manager
+  libffi-dev         # Ruby拡張のビルドに必要
+  libgbm1            # Playwright: Generic Buffer Management
+  libnspr4           # Playwright: Netscape Portable Runtime
+  libnss3            # Playwright: Network Security Services
+  libpango-1.0-0     # Playwright: テキストレンダリング
+  libreadline-dev    # Rubyのreadline拡張に必要
+  libssl-dev         # SSL関連のビルドに必要
+  libxcomposite1     # Playwright: X11 Composite拡張
+  libxdamage1        # Playwright: X11 Damage拡張
+  libxfixes3         # Playwright: X11 Fixes拡張
+  libxkbcommon0      # Playwright: XKBキーボード処理
+  libxrandr2         # Playwright: X11 RandR拡張
+  libyaml-dev        # psych gemのインストールに必要 (Rails)
+  lsb-release
+  nano               # Claude Codeで使用
+  ripgrep            # Claude Codeで使用
+  sudo
+  tree               # Claude Codeで使用
+  unzip
+  vim                # Claude Codeで使用
+  zlib1g-dev         # Rubyのzlib拡張に必要
+  zsh
+PKGLIST
+)
+
+apt install -y --no-install-recommends $PACKAGES
+rm -rf /var/lib/apt/lists/*
+EOF
+
+# --- PostgreSQL クライアント ---
+RUN curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc \
+      | gpg --dearmor -o /etc/apt/trusted.gpg.d/postgresql.gpg && \
+    echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" \
+      > /etc/apt/sources.list.d/pgdg.list && \
+    apt update && apt install -y libpq-dev postgresql-client-17 && \
+    rm -rf /var/lib/apt/lists/*
+
+# --- Redis Tools ---
+RUN curl -fsSL https://packages.redis.io/gpg \
+      | gpg --dearmor -o /usr/share/keyrings/redis-archive-keyring.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb $(lsb_release -cs) main" \
+      | tee /etc/apt/sources.list.d/redis.list && \
+    apt-get update && \
+    apt-get install -y redis-tools=6:7.4.* && \
+    rm -rf /var/lib/apt/lists/*
+
+# --- Stripe CLI ---
+RUN curl -s https://packages.stripe.dev/api/security/keypair/stripe-cli-gpg/public \
+      | gpg --dearmor -o /usr/share/keyrings/stripe.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/stripe.gpg] https://packages.stripe.dev/stripe-cli-debian-local stable main" \
+      | tee /etc/apt/sources.list.d/stripe.list && \
+    apt update && apt install -y stripe && \
+    rm -rf /var/lib/apt/lists/*
+
+# --- mise (開発ツールバージョンマネージャー) ---
+ENV MISE_DATA_DIR="/mise"
+ENV MISE_CONFIG_DIR="/mise"
+ENV MISE_CACHE_DIR="/mise/cache"
+ENV MISE_INSTALL_PATH="/usr/local/bin/mise"
+ENV PATH="/mise/shims:${PATH}"
+RUN curl https://mise.run | sh
+
+# Go、Ruby、Node.js、pnpmをmise経由でインストール
+RUN mise install go@1.25.1 && \
+    mise install ruby@3.3.10 && \
+    mise install node@22.20.0 && \
+    mise install node@22.17.0 && \
+    mise install pnpm@10.17.1
+
+# グローバルデフォルトを設定
+RUN mise use --global go@1.25.1 && \
+    mise use --global ruby@3.3.10 && \
+    mise use --global node@22.20.0 && \
+    mise use --global pnpm@10.17.1
+
+# --- dbmate ---
+RUN curl -fsSL -o /usr/local/bin/dbmate \
+      https://github.com/amacneil/dbmate/releases/latest/download/dbmate-linux-amd64 && \
+    chmod +x /usr/local/bin/dbmate
+
+# --- golangci-lint ---
+RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh \
+      | sh -s -- -b /usr/local/bin v2.6.2
+
+# --- ユーザー作成 ---
+RUN groupadd -g ${GROUP_ID} ${USERNAME} && \
+    useradd -u ${USER_ID} -g ${GROUP_ID} -m -s /bin/zsh ${USERNAME} && \
+    echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+# --- Go キャッシュディレクトリ ---
+RUN mkdir -p /go/.cache/go-build /go/pkg /go/bin && \
+    chown -R ${USER_ID}:${GROUP_ID} /go
+
+# --- mise のデータディレクトリの権限設定 ---
+RUN chown -R ${USER_ID}:${GROUP_ID} /mise
+
+WORKDIR /workspace
+USER ${USERNAME}
+
+# --- mise シェル設定 ---
+RUN mise reshim
+
+# --- 1Password CLI ---
+COPY --from=1password/op:2 /usr/local/bin/op /usr/local/bin/op
+
+# --- npmグローバルインストール先を一般ユーザーのホームディレクトリに設定 ---
+ENV NPM_CONFIG_PREFIX=/home/${USERNAME}/.npm-global
+ENV PATH=$NPM_CONFIG_PREFIX/bin:$PATH
+
+# --- Claude Code ---
+RUN curl -fsSL https://claude.ai/install.sh | bash
+
+# --- Yarn (Rails版で使用) ---
+RUN npm install --global yarn@1.22.22
+
+# --- Go ツール ---
+ENV GOCACHE=/go/.cache/go-build
+ENV GOMODCACHE=/go/pkg/mod
+ENV GOPATH=/go
+ENV GOBIN=/go/bin
+ENV PATH="${GOPATH}/bin:${PATH}"
+RUN go install github.com/sqlc-dev/sqlc/cmd/sqlc@v1.27.0 && \
+    go install github.com/air-verse/air@latest
+
+# --- Ruby ツール ---
+RUN gem install bundler -v 2.3.12
+
+# --- シェル設定 ---
+SHELL ["/bin/zsh", "-c"]
+ENV SHELL=/bin/zsh
+
+RUN touch /home/${USERNAME}/.zshrc
+
+# --- Git設定 ---
+RUN git config --global user.email "me@shimba.co" && \
+    git config --global user.name "Koji Shimba"
+
+EXPOSE 8080 3000
+
+CMD ["/bin/zsh"]

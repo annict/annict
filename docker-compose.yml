@@ -1,7 +1,7 @@
 services:
-  go-app:
+  app:
     build:
-      context: ./go
+      context: .
       dockerfile: ./Dockerfile.dev
     depends_on:
       - caddy
@@ -13,32 +13,16 @@ services:
       - op-config:/home/developer/.config/op
       - go-mod-cache:/go/pkg/mod
       - go-build-cache:/go/.cache/go-build
+      - app-gems-data:/mise/installs/ruby/3.3.10/lib/ruby/gems/3.3.0
     ports:
-      - "4004:8080"
+      - "4004:8080" # Go
+      - "4000:3000" # Rails
     stdin_open: true
     tty: true
     working_dir: /workspace
-    environment:
-      - OP_SERVICE_ACCOUNT_TOKEN=${OP_SERVICE_ACCOUNT_TOKEN:-}
-
-  rails-app:
-    build:
-      context: ./rails
-      dockerfile: ./Dockerfile.dev
-    depends_on:
-      - go-app
-    volumes:
-      - .:/workspace
-      - op-config:/home/developer/.config/op
-      - app_gems_data:/usr/local/bundle
     environment:
       - BINDING=0.0.0.0
       - OP_SERVICE_ACCOUNT_TOKEN=${OP_SERVICE_ACCOUNT_TOKEN:-}
-    ports:
-      - "4000:3000"
-    stdin_open: true
-    tty: true
-    working_dir: /workspace
 
   caddy:
     image: caddy:2-alpine
@@ -74,8 +58,8 @@ services:
       - ./imgproxy/.env
 
 volumes:
-  op-config:
-  app_gems_data:
+  app-gems-data:
   go-build-cache:
   go-mod-cache:
+  op-config:
   postgresql17_data:
