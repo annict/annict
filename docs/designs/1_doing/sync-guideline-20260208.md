@@ -379,7 +379,7 @@ Annict・mewst・wikino の3プロジェクト間で、CLAUDE.md およびガイ
   - **想定ファイル数**: 約 1 ファイル（実装 1 + テスト 0）
   - **想定行数**: 約 100 行（実装 100 行 + テスト 0 行）
 
-- [ ] **1-5**: go/docs/architecture-guide.md, templ-guide.md の更新
+- [x] **1-5**: go/docs/architecture-guide.md, templ-guide.md の更新
   - 差分11: architecture-guide.md に WithTx パターンセクション追加（Wikino を参考）
   - 差分14: templ-guide.md の Flash コンポーネント引数から ctx を削除（Wikino を参考）
   - **想定ファイル数**: 約 2 ファイル（実装 2 + テスト 0）

@@ -504,7 +504,7 @@ templ WorkCard(ctx context.Context, work viewmodel.Work, showCast bool) {
 // ✅ Good: 共通のUIパターンはコンポーネントとして切り出す
 @components.Button(ctx, "sign_in_submit", "/sign_in")
 @components.FormErrors(ctx, formErrors)
-@components.Flash(ctx, flash)
+@components.Flash(flash)
 ```
 
 ### 国際化を徹底
