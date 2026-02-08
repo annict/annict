@@ -385,81 +385,81 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
 - [x] **3-1**: [Go/Annict] sign_in の request.go を validator.go にリネーム
 
   - `request.go` を `validator.go` にリネーム
-  - `CreateRequest` → `CreateValidator` に変更
-  - `request_test.go` を `validator_test.go` にリネーム
+  - `CreateRequest` → `CreateValidator` + `CreateValidatorInput` + `CreateValidatorResult` に変更（Input/Result パターン）
+  - `request_test.go` を `validator_test.go` にリネームし、Input/Result パターンに合わせて更新
   - Handler での参照を更新
   - **想定ファイル数**: 約 4 ファイル（実装 2 + テスト 2）
-  - **想定行数**: 約 50 行（実装 25 行 + テスト 25 行）
+  - **想定行数**: 約 80 行（実装 40 行 + テスト 40 行）
 
 - [ ] **3-2**: [Go/Annict] sign_in_code の request.go を validator.go にリネーム
 
   - `request.go` を `validator.go` にリネーム
-  - 構造体名を `{Action}Validator` に変更
-  - テストファイルもリネーム
+  - `{Action}Request` → `{Action}Validator` + `{Action}ValidatorInput` + `{Action}ValidatorResult` に変更（Input/Result パターン）
+  - テストファイルもリネームし、Input/Result パターンに合わせて更新
   - Handler での参照を更新
   - **想定ファイル数**: 約 4 ファイル（実装 2 + テスト 2）
-  - **想定行数**: 約 50 行（実装 25 行 + テスト 25 行）
+  - **想定行数**: 約 80 行（実装 40 行 + テスト 40 行）
 
 - [ ] **3-3**: [Go/Annict] sign_in_password の request.go を validator.go にリネーム
 
   - `request.go` を `validator.go` にリネーム
-  - 構造体名を `{Action}Validator` に変更
-  - テストファイルもリネーム
+  - `{Action}Request` → `{Action}Validator` + `{Action}ValidatorInput` + `{Action}ValidatorResult` に変更（Input/Result パターン）
+  - テストファイルもリネームし、Input/Result パターンに合わせて更新
   - Handler での参照を更新
   - **想定ファイル数**: 約 4 ファイル（実装 2 + テスト 2）
-  - **想定行数**: 約 50 行（実装 25 行 + テスト 25 行）
+  - **想定行数**: 約 80 行（実装 40 行 + テスト 40 行）
 
 - [ ] **3-4**: [Go/Annict] sign_up の request.go を validator.go にリネーム
 
   - `request.go` を `validator.go` にリネーム
-  - 構造体名を `{Action}Validator` に変更
-  - テストファイルもリネーム
+  - `{Action}Request` → `{Action}Validator` + `{Action}ValidatorInput` + `{Action}ValidatorResult` に変更（Input/Result パターン）
+  - テストファイルもリネームし、Input/Result パターンに合わせて更新
   - Handler での参照を更新
   - **想定ファイル数**: 約 4 ファイル（実装 2 + テスト 2）
-  - **想定行数**: 約 50 行（実装 25 行 + テスト 25 行）
+  - **想定行数**: 約 80 行（実装 40 行 + テスト 40 行）
 
 - [ ] **3-5**: [Go/Annict] sign_up_code の request.go を validator.go にリネーム
 
   - `request.go` を `validator.go` にリネーム
-  - 構造体名を `{Action}Validator` に変更
+  - `{Action}Request` → `{Action}Validator` + `{Action}ValidatorInput` + `{Action}ValidatorResult` に変更（Input/Result パターン）
   - Handler での参照を更新
   - **想定ファイル数**: 約 2 ファイル（実装 2 + テスト 0）
-  - **想定行数**: 約 30 行（実装 30 行 + テスト 0 行）
+  - **想定行数**: 約 50 行（実装 50 行 + テスト 0 行）
 
 - [ ] **3-6**: [Go/Annict] sign_up_username の request.go を validator.go にリネーム
 
   - `request.go` を `validator.go` にリネーム
-  - 構造体名を `{Action}Validator` に変更
+  - `{Action}Request` → `{Action}Validator` + `{Action}ValidatorInput` + `{Action}ValidatorResult` に変更（Input/Result パターン）
   - Handler での参照を更新
   - **想定ファイル数**: 約 2 ファイル（実装 2 + テスト 0）
-  - **想定行数**: 約 30 行（実装 30 行 + テスト 0 行）
+  - **想定行数**: 約 50 行（実装 50 行 + テスト 0 行）
 
 - [ ] **3-7**: [Go/Annict] password の request.go を validator.go にリネーム
 
   - `request.go` を `validator.go` にリネーム
-  - 構造体名を `{Action}Validator` に変更
-  - テストファイルもリネーム
+  - `{Action}Request` → `{Action}Validator` + `{Action}ValidatorInput` + `{Action}ValidatorResult` に変更（Input/Result パターン）
+  - テストファイルもリネームし、Input/Result パターンに合わせて更新
   - Handler での参照を更新
   - **想定ファイル数**: 約 4 ファイル（実装 2 + テスト 2）
-  - **想定行数**: 約 50 行（実装 25 行 + テスト 25 行）
+  - **想定行数**: 約 80 行（実装 40 行 + テスト 40 行）
 
 - [ ] **3-8**: [Go/Annict] password_reset の request.go を validator.go にリネーム
 
   - `request.go` を `validator.go` にリネーム
-  - 構造体名を `{Action}Validator` に変更
-  - テストファイルもリネーム
+  - `{Action}Request` → `{Action}Validator` + `{Action}ValidatorInput` + `{Action}ValidatorResult` に変更（Input/Result パターン）
+  - テストファイルもリネームし、Input/Result パターンに合わせて更新
   - Handler での参照を更新
   - **想定ファイル数**: 約 4 ファイル（実装 2 + テスト 2）
-  - **想定行数**: 約 50 行（実装 25 行 + テスト 25 行）
+  - **想定行数**: 約 80 行（実装 40 行 + テスト 40 行）
 
 - [ ] **3-9**: [Go/Annict] supporters_checkout の request.go を validator.go にリネーム
 
   - `request.go` を `validator.go` にリネーム
-  - 構造体名を `{Action}Validator` に変更
-  - テストファイルもリネーム
+  - `{Action}Request` → `{Action}Validator` + `{Action}ValidatorInput` + `{Action}ValidatorResult` に変更（Input/Result パターン）
+  - テストファイルもリネームし、Input/Result パターンに合わせて更新
   - Handler での参照を更新
   - **想定ファイル数**: 約 4 ファイル（実装 2 + テスト 2）
-  - **想定行数**: 約 50 行（実装 25 行 + テスト 25 行）
+  - **想定行数**: 約 80 行（実装 40 行 + テスト 40 行）
 
 ### フェーズ 4: Mewst リファクタリング
 

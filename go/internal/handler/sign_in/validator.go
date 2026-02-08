@@ -8,21 +8,34 @@ import (
 	"github.com/annict/annict/go/internal/session"
 )
 
-// CreateValidator はメールアドレス送信フォームのバリデーションを行います
-type CreateValidator struct {
+// CreateValidator はメールアドレス送信フォームのバリデーションを行う
+type CreateValidator struct{}
+
+// NewCreateValidator は CreateValidator を生成する
+func NewCreateValidator() *CreateValidator {
+	return &CreateValidator{}
+}
+
+// CreateValidatorInput はバリデーションの入力パラメータ
+type CreateValidatorInput struct {
 	Email string
 }
 
-// Validate はフォームの形式バリデーションを行います
-func (v *CreateValidator) Validate(ctx context.Context) *session.FormErrors {
-	errors := &session.FormErrors{}
+// CreateValidatorResult はバリデーションの結果
+type CreateValidatorResult struct {
+	FormErrors *session.FormErrors
+}
 
-	if strings.TrimSpace(v.Email) == "" {
-		errors.AddFieldError("email", i18n.T(ctx, "sign_in_email_required"))
+// Validate はフォームの形式バリデーションを行う
+func (v *CreateValidator) Validate(ctx context.Context, input CreateValidatorInput) *CreateValidatorResult {
+	formErrors := &session.FormErrors{}
+
+	if strings.TrimSpace(input.Email) == "" {
+		formErrors.AddFieldError("email", i18n.T(ctx, "sign_in_email_required"))
 	}
 
-	if errors.HasErrors() {
-		return errors
+	if formErrors.HasErrors() {
+		return &CreateValidatorResult{FormErrors: formErrors}
 	}
-	return nil
+	return &CreateValidatorResult{}
 }

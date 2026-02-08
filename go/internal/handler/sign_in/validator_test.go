@@ -12,7 +12,7 @@ func TestCreateValidatorValidate(t *testing.T) {
 
 	tests := []struct {
 		name              string
-		email             string
+		input             CreateValidatorInput
 		wantErrors        bool
 		wantFields        []string
 		wantErrorMessages map[string]string
@@ -20,13 +20,13 @@ func TestCreateValidatorValidate(t *testing.T) {
 	}{
 		{
 			name:        "正常系",
-			email:       "user@example.com",
+			input:       CreateValidatorInput{Email: "user@example.com"},
 			wantErrors:  false,
 			description: "有効なメールアドレスの場合、エラーなし",
 		},
 		{
 			name:       "メールアドレスが空文字列",
-			email:      "",
+			input:      CreateValidatorInput{Email: ""},
 			wantErrors: true,
 			wantFields: []string{"email"},
 			wantErrorMessages: map[string]string{
@@ -36,7 +36,7 @@ func TestCreateValidatorValidate(t *testing.T) {
 		},
 		{
 			name:       "メールアドレスがwhitespaceのみ",
-			email:      "   ",
+			input:      CreateValidatorInput{Email: "   "},
 			wantErrors: true,
 			wantFields: []string{"email"},
 			wantErrorMessages: map[string]string{
@@ -46,7 +46,7 @@ func TestCreateValidatorValidate(t *testing.T) {
 		},
 		{
 			name:       "メールアドレスがタブのみ",
-			email:      "\t\t",
+			input:      CreateValidatorInput{Email: "\t\t"},
 			wantErrors: true,
 			wantFields: []string{"email"},
 			wantErrorMessages: map[string]string{
@@ -56,7 +56,7 @@ func TestCreateValidatorValidate(t *testing.T) {
 		},
 		{
 			name:       "メールアドレスが改行のみ",
-			email:      "\n\n",
+			input:      CreateValidatorInput{Email: "\n\n"},
 			wantErrors: true,
 			wantFields: []string{"email"},
 			wantErrorMessages: map[string]string{
@@ -66,7 +66,7 @@ func TestCreateValidatorValidate(t *testing.T) {
 		},
 		{
 			name:       "メールアドレスが混合whitespace",
-			email:      " \t\n ",
+			input:      CreateValidatorInput{Email: " \t\n "},
 			wantErrors: true,
 			wantFields: []string{"email"},
 			wantErrorMessages: map[string]string{
@@ -76,32 +76,30 @@ func TestCreateValidatorValidate(t *testing.T) {
 		},
 	}
 
+	validator := NewCreateValidator()
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			v := &CreateValidator{
-				Email: tt.email,
-			}
-
 			ctx := context.Background()
-			errors := v.Validate(ctx)
+			result := validator.Validate(ctx, tt.input)
 
 			if tt.wantErrors {
-				if errors == nil {
-					t.Error("エラーが期待されましたが、nilが返されました")
+				if result.FormErrors == nil || !result.FormErrors.HasErrors() {
+					t.Error("エラーが期待されましたが、エラーがありませんでした")
 					return
 				}
 
 				for _, field := range tt.wantFields {
-					if _, exists := errors.Fields[field]; !exists {
+					if _, exists := result.FormErrors.Fields[field]; !exists {
 						t.Errorf("フィールド %s のエラーが期待されましたが、見つかりませんでした", field)
 					}
 				}
 
 				if tt.wantErrorMessages != nil {
 					for field, expectedMsg := range tt.wantErrorMessages {
-						actualMsgs, exists := errors.Fields[field]
+						actualMsgs, exists := result.FormErrors.Fields[field]
 						if !exists {
 							t.Errorf("フィールド %s のエラーメッセージが見つかりませんでした", field)
 							continue
@@ -117,8 +115,8 @@ func TestCreateValidatorValidate(t *testing.T) {
 					}
 				}
 			} else {
-				if errors != nil {
-					t.Errorf("エラーは期待されていませんでしたが、返されました: %+v", errors)
+				if result.FormErrors != nil && result.FormErrors.HasErrors() {
+					t.Errorf("エラーは期待されていませんでしたが、返されました: %+v", result.FormErrors)
 				}
 			}
 		})
@@ -130,19 +128,20 @@ func TestCreateValidator_ValidateI18nMessages(t *testing.T) {
 	t.Parallel()
 
 	ctx := context.Background()
+	validator := NewCreateValidator()
 
 	t.Run("email必須エラーメッセージ", func(t *testing.T) {
 		t.Parallel()
-		v := &CreateValidator{
-			Email: "",
-		}
-		errors := v.Validate(ctx)
-		if errors == nil {
-			t.Fatal("エラーが期待されましたが、nilが返されました")
+
+		input := CreateValidatorInput{Email: ""}
+		result := validator.Validate(ctx, input)
+
+		if result.FormErrors == nil || !result.FormErrors.HasErrors() {
+			t.Fatal("エラーが期待されましたが、エラーがありませんでした")
 		}
 
 		expectedMsg := i18n.T(ctx, "sign_in_email_required")
-		actualMsgs, exists := errors.Fields["email"]
+		actualMsgs, exists := result.FormErrors.Fields["email"]
 		if !exists {
 			t.Fatal("emailフィールドのエラーが見つかりませんでした")
 		}
