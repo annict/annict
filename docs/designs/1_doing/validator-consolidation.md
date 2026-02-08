@@ -391,7 +391,7 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
   - **想定ファイル数**: 約 4 ファイル（実装 2 + テスト 2）
   - **想定行数**: 約 80 行（実装 40 行 + テスト 40 行）
 
-- [ ] **3-2**: [Go/Annict] sign_in_code の request.go を validator.go にリネーム
+- [x] **3-2**: [Go/Annict] sign_in_code の request.go を validator.go にリネーム
 
   - `request.go` を `validator.go` にリネーム
   - `{Action}Request` → `{Action}Validator` + `{Action}ValidatorInput` + `{Action}ValidatorResult` に変更（Input/Result パターン）

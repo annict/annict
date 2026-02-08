@@ -30,14 +30,15 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// リクエストを構築
-	req := &CreateRequest{
+	// バリデーション
+	input := CreateValidatorInput{
 		Code: r.FormValue("code"),
 	}
 
-	// バリデーション
-	if formErrors := req.Validate(ctx); formErrors != nil {
-		if err := h.sessionMgr.SetFormErrors(ctx, w, r, *formErrors); err != nil {
+	validator := NewCreateValidator()
+	result := validator.Validate(ctx, input)
+	if result.FormErrors != nil && result.FormErrors.HasErrors() {
+		if err := h.sessionMgr.SetFormErrors(ctx, w, r, *result.FormErrors); err != nil {
 			slog.Error("フォームエラーの設定に失敗", "error", err)
 		}
 		http.Redirect(w, r, "/sign_in/code", http.StatusSeeOther)
@@ -111,7 +112,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// ユースケース呼び出し: 6桁コード検証
-	err = h.verifySignInCodeUC.Execute(ctx, userID, req.Code)
+	err = h.verifySignInCodeUC.Execute(ctx, userID, input.Code)
 	if err != nil {
 		// エラーの種類によって異なるメッセージを表示
 		if errors.Is(err, usecase.ErrCodeNotFound) {
