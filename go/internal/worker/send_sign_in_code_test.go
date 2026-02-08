@@ -6,6 +6,11 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/riverqueue/river"
+
+	"github.com/annict/annict/go/internal/config"
+	"github.com/annict/annict/go/internal/mail"
+	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/testutil"
 )
 
@@ -82,24 +87,81 @@ func TestSignInCodeTemplates(t *testing.T) {
 
 // TestSendSignInCodeWorker_Work はメール送信ワーカーの動作をテストします
 func TestSendSignInCodeWorker_Work(t *testing.T) {
-	// テスト用DBをセットアップ
-	_, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTestDB(t)
+	queries := query.New(db).WithTx(tx)
+	ctx := context.Background()
 
-	// 日本語ロケールのユーザーを作成
-	_ = testutil.NewUserBuilder(t, tx).
-		WithUsername("ja_user_sign_in_code_test").
-		WithEmail("ja_user_sign_in_code@example.com").
-		WithLocale("ja").
-		Build()
+	cfg := &config.Config{
+		Domain: "example.com",
+	}
 
-	// 英語ロケールのユーザーを作成
-	_ = testutil.NewUserBuilder(t, tx).
-		WithUsername("en_user_sign_in_code_test").
-		WithEmail("en_user_sign_in_code@example.com").
-		WithLocale("en").
-		Build()
+	tests := []struct {
+		name         string
+		locale       string
+		username     string
+		email        string
+		htmlContains string
+	}{
+		{
+			name:         "日本語ロケールのユーザー",
+			locale:       "ja",
+			username:     "ja_user_sign_in_work",
+			email:        "ja_sign_in_work@example.com",
+			htmlContains: "ログインコードのご案内",
+		},
+		{
+			name:         "英語ロケールのユーザー",
+			locale:       "en",
+			username:     "en_user_sign_in_work",
+			email:        "en_sign_in_work@example.com",
+			htmlContains: "Your Login Code",
+		},
+	}
 
-	// 実際のメール送信はResend APIを使用するため、
-	// ここでは基本的なテンプレートレンダリングの動作を確認済み
-	t.Log("ログインコード送信ワーカーの基本的な動作を確認しました")
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mailSender := mail.NewNoopSender()
+
+			userID := testutil.NewUserBuilder(t, tx).
+				WithUsername(tt.username).
+				WithEmail(tt.email).
+				WithLocale(tt.locale).
+				Build()
+
+			worker := NewSendSignInCodeWorker(queries, mailSender, cfg)
+
+			job := &river.Job[SendSignInCodeArgs]{
+				Args: SendSignInCodeArgs{
+					UserID: userID,
+					Code:   "123456",
+				},
+			}
+
+			err := worker.Work(ctx, job)
+			if err != nil {
+				t.Fatalf("Work() error = %v", err)
+			}
+
+			if len(mailSender.SentEmails) != 1 {
+				t.Fatalf("SentEmails length = %d, want 1", len(mailSender.SentEmails))
+			}
+
+			sentEmail := mailSender.SentEmails[0]
+			if sentEmail.To != tt.email {
+				t.Errorf("To = %q, want %q", sentEmail.To, tt.email)
+			}
+
+			// HTMLテンプレートの内容を検証
+			var htmlBuf bytes.Buffer
+			if err := sentEmail.HTMLBody.Render(ctx, &htmlBuf); err != nil {
+				t.Fatalf("HTMLBody.Render() error = %v", err)
+			}
+			if !strings.Contains(htmlBuf.String(), tt.htmlContains) {
+				t.Errorf("HTMLにロケールに応じた文字列が見つかりません: %q", tt.htmlContains)
+			}
+			if !strings.Contains(htmlBuf.String(), "123456") {
+				t.Error("HTMLにログインコードが含まれていません")
+			}
+		})
+	}
 }
