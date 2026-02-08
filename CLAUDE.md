@@ -148,15 +148,94 @@ docker compose up -d
 - **Go 版**: @go/CLAUDE.md - Go 版の技術スタック、プロジェクト構造、コーディング規約、テスト戦略など
 - **Rails 版**: @rails/CLAUDE.md - Rails 版の技術スタック、プロジェクト構造、コーディング規約、テスト戦略など
 
+## レビュー時に参照するガイドライン
+
+コードレビュー時に参照するガイドラインドキュメントの一覧です。変更されたファイルの種類に応じて、該当するガイドラインをチェックしてください。
+
+### 共通ガイドライン
+
+- [@CLAUDE.md](/workspace/CLAUDE.md) - プロジェクト全体のガイド
+  - コミットメッセージのガイドライン
+  - コメントのガイドライン
+  - Pull Requestのガイドライン
+
+### Go版ガイドライン
+
+- [@go/CLAUDE.md](/workspace/go/CLAUDE.md) - Go版の開発ガイド
+  - コーディング規約（インデント、フォーマット、コメント）
+  - ログ出力（log/slog）
+  - HTTPハンドラー（標準ファイル名、メソッド名）
+  - templテンプレート（引数パターン）
+  - バリデーション方針
+  - HTTPメソッドとルーティング
+  - 国際化（I18n）
+  - ビューモデル・ユースケース
+  - セキュリティガイドライン
+  - テスト戦略
+- [@go/docs/architecture-guide.md](/workspace/go/docs/architecture-guide.md) - アーキテクチャガイド
+  - 3層アーキテクチャの依存関係ルール
+  - Usecase、Repositoryの使い分け
+- [@go/docs/handler-guide.md](/workspace/go/docs/handler-guide.md) - HTTPハンドラーガイドライン
+  - ディレクトリ構造
+  - 標準ファイル名（8種類のみ）
+  - 依存性注入
+- [@go/docs/validation-guide.md](/workspace/go/docs/validation-guide.md) - バリデーションガイド
+  - バリデーションの分類
+  - 状態バリデーションの配置基準
+- [@go/docs/i18n-guide.md](/workspace/go/docs/i18n-guide.md) - 国際化ガイド
+  - 翻訳ファイルの追加手順
+  - 命名規則
+- [@go/docs/security-guide.md](/workspace/go/docs/security-guide.md) - セキュリティガイドライン
+  - CSRF対策
+  - XSS対策
+  - SQLインジェクション対策
+  - 認証・認可
+- [@go/docs/templ-guide.md](/workspace/go/docs/templ-guide.md) - templテンプレートガイド
+  - ファイル配置
+  - 命名規則
+  - コンポーネント化
+
+### Rails版ガイドライン
+
+- [@rails/CLAUDE.md](/workspace/rails/CLAUDE.md) - Rails版の開発ガイド
+  - プロジェクト構造（app/ディレクトリの構成と責務）
+  - コーディング規約（Ruby、テンプレート、JavaScript/TypeScript）
+  - アーキテクチャパターン（ViewComponent、サービスオブジェクト、Pundit）
+  - 国際化（I18n）
+  - セキュリティガイドライン
+  - テスト戦略
+
 ## 開発ワークフロー
+
+### 実装時のガイドライン
+
+**既存コードとの一貫性**:
+
+実装を行う前に、コードベース内に類似の処理がないか確認してください。
+類似処理が存在する場合は、そのパターンに従って実装することで、コードベース全体の一貫性を保ちます。
+
+- **確認すべき点**:
+  - 同様の機能を持つハンドラー、ユースケース、リポジトリの実装パターン
+  - エラーハンドリングの方法
+  - ログ出力のフォーマット
+  - バリデーションの実装方法
+  - テストの書き方
+
+- **類似処理が見つかった場合**: そのパターンを踏襲して実装する
+- **類似処理が見つからない場合**: 各サブプロジェクトのガイドラインに従って新しいパターンを作成する
 
 ### コミット前のチェック
 
 各サブプロジェクトで実装を行った場合は、コミット前に以下を確認してください：
 
-- コードフォーマット（Go/Rails: `make fmt`）
-- リント（Go/Rails: `make lint`）
-- テスト（Go/Rails: `make test`）
+- コードフォーマット
+- リント
+- テスト
+
+具体的なコマンドは各サブプロジェクトの CLAUDE.md を参照してください：
+
+- Go 版: `go/CLAUDE.md` の「コミット前に実行するコマンド」セクション
+- Rails 版: `rails/CLAUDE.md` の「コミット前に実行するコマンド」セクション
 
 ### 修正後のコミット
 

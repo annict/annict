@@ -10,7 +10,7 @@
 - [メソッド命名規則](#メソッド命名規則)
 - [Handler構造体の定義](#handler構造体の定義)
 - [依存性注入のガイドライン](#依存性注入のガイドライン)
-- [Request DTOの配置](#request-dtoの配置)
+- [バリデーターの配置](#バリデーターの配置)
 - [ルーティング登録](#ルーティング登録)
 - [実装例](#実装例)
 
@@ -41,26 +41,26 @@ internal/handler/
 │   ├── index.go         # Index メソッド (GET /works/popular)
 │   └── index_test.go    # Index のテスト
 ├── password_reset/
-│   ├── handler.go       # Handler構造体と依存性
-│   ├── new.go           # New (GET /password/reset) - リセット申請フォーム
-│   ├── new_test.go      # New のテスト
-│   ├── create.go        # Create (POST /password/reset)
-│   ├── create_test.go   # Create のテスト
-│   └── request.go       # Request構造体
+│   ├── handler.go              # Handler構造体と依存性
+│   ├── new.go                  # New (GET /password/reset) - リセット申請フォーム
+│   ├── create.go               # Create (POST /password/reset)
+│   ├── validator.go            # バリデーション（形式チェック + DBを使った検証）
+│   ├── validator_test.go       # バリデーションのテスト
+│   └── handler_test.go         # ハンドラーのテスト（New, Createなど各アクションのテストを含む）
 ├── password/
-│   ├── handler.go       # Handler構造体と依存性
-│   ├── edit.go          # Edit (GET /password/edit)
-│   ├── edit_test.go     # Edit のテスト
-│   ├── update.go        # Update (PATCH /password)
-│   ├── update_test.go   # Update のテスト
-│   └── request.go       # Request構造体
+│   ├── handler.go              # Handler構造体と依存性
+│   ├── edit.go                 # Edit (GET /password/edit)
+│   ├── update.go               # Update (PATCH /password)
+│   ├── validator.go            # バリデーション
+│   ├── validator_test.go       # バリデーションのテスト
+│   └── handler_test.go         # ハンドラーのテスト（New, Createなど各アクションのテストを含む）
 ├── sign_in/
-│   ├── handler.go       # Handler構造体と依存性
-│   ├── new.go           # New (GET /sign_in) - サインインフォーム
-│   ├── new_test.go      # New のテスト
-│   ├── create.go        # Create (POST /sign_in)
-│   ├── create_test.go   # Create のテスト
-│   └── request.go       # Request構造体
+│   ├── handler.go              # Handler構造体と依存性
+│   ├── new.go                  # New (GET /sign_in) - サインインフォーム
+│   ├── create.go               # Create (POST /sign_in)
+│   ├── validator.go            # バリデーション（形式チェック + ユーザー検索、パスワード照合）
+│   ├── validator_test.go       # バリデーションのテスト
+│   └── handler_test.go         # ハンドラーのテスト（New, Createなど各アクションのテストを含む）
 ├── health/
 │   ├── handler.go       # Handler構造体と依存性
 │   ├── show.go          # Show (GET /health) - ヘルスチェック
@@ -100,11 +100,13 @@ internal/handler/
 
 ## ファイル命名規則
 
-### 標準ファイル名（8種類のみ）
+### 標準ファイル名（9 種類のみ）
 
 リソースディレクトリ内には、以下の標準的なファイル名**のみ**を使用します：
 
-- `handler.go` - Handler構造体と依存性の定義
+**ハンドラー関連**:
+
+- `handler.go` - Handler 構造体と依存性の定義
 - `index.go` - 一覧ページ表示 (GET /resources)
 - `show.go` - 個別ページ表示 (GET /resources/:id)
 - `new.go` - 新規作成フォーム表示 (GET /resources/new)
@@ -113,16 +115,21 @@ internal/handler/
 - `update.go` - 更新処理 (PATCH /resources/:id)
 - `delete.go` - 削除処理 (DELETE /resources/:id)
 
+**バリデーション関連**:
+
+- `validator.go` - バリデーション（形式チェック + DB を使った検証を統合）
+
 ### 重要な原則
 
-- 上記8種類以外のファイル名は**使用しない**
+- 上記 9 種類以外のファイル名は**使用しない**
 - 複雑な名前（`show_reset_form.go`, `process_reset.go` など）が必要な場合は、**新しいリソースディレクトリを作成する**
 - 例: `password/show_reset_form.go` ではなく、`password_reset/new.go` を使用
 
-### テストファイルとRequest DTO
+### テストファイル
 
-- **テストファイル**: 対応するハンドラーファイルと同じ名前に `_test.go` を付ける（例: `index_test.go`, `show_test.go`, `new_test.go`）
-- **Request DTO**: `request.go` と `request_test.go`（1リソース1リクエスト構造体）
+- **ハンドラーテスト**: `handler_test.go`（ハンドラー全体の統合テスト）
+- **バリデーションテスト**: `validator_test.go`（形式バリデーション + 状態バリデーション）
+- **個別ハンドラーテスト**: `{action}_test.go`（例: `index_test.go`, `show_test.go`）も許可
 
 ## メソッド命名規則
 
@@ -295,14 +302,16 @@ password_reset/
 └── create.go
 ```
 
-## Request DTOの配置
+## バリデーターの配置
 
-Request DTO（リクエストバリデーション用の構造体）は、各リソースディレクトリに配置します。
+バリデーション用のファイルは、各リソースディレクトリに `validator.go` として配置します。
 
-### 命名規則
+### バリデーター（validator.go）
 
-- **1リソース1リクエスト構造体**: 各リソースディレクトリには `request.go` と `request_test.go` のみを配置
-- 複数のリクエスト構造体が必要な場合は、**新しいリソースディレクトリを作成する**
+形式チェック（必須チェック、メール形式、文字数制限など）と DB を使った検証（ユーザー存在チェック、パスワード照合など）を 1 つのファイルに統合します。
+
+- **構造体名**: `{Action}Validator`（例: `CreateValidator`, `UpdateValidator`）
+- **メソッド**: `Validate(ctx context.Context, input {Action}ValidatorInput) *{Action}ValidatorResult`
 
 ### 配置例
 
@@ -312,23 +321,26 @@ internal/handler/
 │   ├── handler.go
 │   ├── new.go
 │   ├── create.go
-│   ├── request.go          # Request 構造体（サインイン用）
-│   └── request_test.go     # Request のテスト
+│   ├── validator.go            # バリデーション（形式チェック + ユーザー検索、パスワード照合）
+│   ├── validator_test.go       # バリデーションのテスト
+│   └── handler_test.go         # ハンドラーのテスト（New, Createなど各アクションのテストを含む）
 ├── password_reset/
 │   ├── handler.go
 │   ├── new.go
 │   ├── create.go
-│   ├── request.go          # Request 構造体（パスワードリセット用）
-│   └── request_test.go     # Request のテスト
+│   ├── validator.go            # バリデーション（形式チェックのみの場合もあり）
+│   ├── validator_test.go       # バリデーションのテスト
+│   └── handler_test.go         # ハンドラーのテスト（New, Createなど各アクションのテストを含む）
 ├── password/
 │   ├── handler.go
 │   ├── edit.go
 │   ├── update.go
-│   ├── request.go          # Request 構造体（パスワード更新用）
-│   └── request_test.go     # Request のテスト
+│   ├── validator.go            # バリデーション
+│   ├── validator_test.go       # バリデーションのテスト
+│   └── handler_test.go         # ハンドラーのテスト（New, Createなど各アクションのテストを含む）
 ```
 
-**重要**: `reset_request.go` や `update_request.go` のような複雑な名前は使用しません。常に `request.go` を使用します。
+**注**: すべてのリソースに `validator.go` が必要なわけではありません。バリデーションが必要な場合のみ作成します。
 
 詳細なバリデーション実装については、[@go/docs/validation-guide.md](validation-guide.md) を参照してください。
 
@@ -476,17 +488,51 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 ```
 
 ```go
-// internal/handler/password_reset/request.go
+// internal/handler/password_reset/validator.go
 package password_reset
 
-// Request はパスワードリセット申請のリクエストデータです
-type Request struct {
-    Email string `form:"email"`
+import (
+    "context"
+    "regexp"
+
+    "github.com/annict/annict/go/internal/session"
+    "github.com/annict/annict/go/internal/templates"
+)
+
+var emailRegex = regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
+
+// CreateValidator はパスワードリセット申請のバリデーションを行う
+type CreateValidator struct{}
+
+// NewCreateValidator は CreateValidator を生成する
+func NewCreateValidator() *CreateValidator {
+    return &CreateValidator{}
 }
 
-// Validate はリクエストデータのバリデーションを行います
-func (req *Request) Validate() error {
-    // バリデーション実装
+// CreateValidatorInput はバリデーションの入力パラメータ
+type CreateValidatorInput struct {
+    Email string
+}
+
+// CreateValidatorResult はバリデーションの結果
+type CreateValidatorResult struct {
+    FormErrors *session.FormErrors
+}
+
+// Validate はバリデーションを行う
+func (v *CreateValidator) Validate(ctx context.Context, input CreateValidatorInput) *CreateValidatorResult {
+    formErrors := session.NewFormErrors()
+
+    if input.Email == "" {
+        formErrors.AddFieldError("email", templates.T(ctx, "error_required"))
+        return &CreateValidatorResult{FormErrors: formErrors}
+    }
+
+    if !emailRegex.MatchString(input.Email) {
+        formErrors.AddFieldError("email", templates.T(ctx, "error_invalid_email_format"))
+    }
+
+    return &CreateValidatorResult{FormErrors: formErrors}
 }
 ```
 
@@ -505,10 +551,12 @@ func (req *Request) Validate() error {
 HTTPハンドラーを実装する際は、以下のポイントを守ってください：
 
 1. **すべてのエンドポイントをディレクトリ化**: 例外なく、リソースディレクトリを作成
-2. **標準的なファイル名を使用**: 8種類のファイル名のみを使用（`index.go`, `show.go`, `new.go`, `create.go`, `edit.go`, `update.go`, `delete.go`, `handler.go`）
+2. **標準的なファイル名を使用**: 9 種類のファイル名のみを使用
+   - ハンドラー関連: `handler.go`, `index.go`, `show.go`, `new.go`, `create.go`, `edit.go`, `update.go`, `delete.go`
+   - バリデーション関連: `validator.go`
 3. **ファイル名とメソッド名を一致させる**: 可読性と保守性を向上
-4. **依存性注入を適切に管理**: 8個以下のフィールドを目安に、必要に応じてリソースを分割
-5. **Request DTOは1リソース1ファイル**: 常に `request.go` を使用
+4. **依存性注入を適切に管理**: 8 個以下のフィールドを目安に、必要に応じてリソースを分割
+5. **バリデーションは `validator.go` に統合**: 形式バリデーションと状態バリデーションを 1 ファイルで管理
 
 これらの規則を守ることで、以下のメリットが得られます：
 

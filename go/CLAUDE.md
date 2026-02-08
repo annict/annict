@@ -133,6 +133,7 @@ cat /workspace/rails/app/models/work.rb
   - ✅ `ANNICT_PORT`, `ANNICT_DOMAIN`, `ANNICT_RAILS_APP_URL`
   - ❌ `PORT`, `DOMAIN`, `RAILS_APP_URL`
 - 外部ライブラリが要求する環境変数はそのまま使用（例: `DATABASE_URL`, `REDIS_URL`）
+- **例外**: `APP_ENV` は他プロジェクトでも使われている名前のため、`ANNICT_` プレフィックスなしで使用する
 
 環境変数の設定には 2 つの方法があります：
 
@@ -281,6 +282,7 @@ make run
 make build
 
 # テスト実行（テスト用DBのセットアップも自動実行されます）
+# tparse を使用してテスト結果を整形表示します（失敗テストの強調、パッケージサマリーテーブル）
 make test
 
 # 特定のパッケージのテストを実行（1Password CLI経由で環境変数を自動設定）
@@ -290,6 +292,7 @@ make test-pkg PKG=internal/handler/password_reset
 make test-run PKG=internal/handler/password_reset RUN=TestCreate_TurnstileVerification
 
 # 詳細ログ付きで全テストを実行（デバッグ用）
+# tparse -all オプションで合格テストも含めて表示します
 make test-verbose
 
 # テスト用DBのセットアップのみ実行
@@ -645,9 +648,11 @@ HTTP リクエストを処理するハンドラーは、統一された規則に
 - **統一された命名規則**: ファイル名とメソッド名に一貫性を持たせる
 - **例外なくディレクトリ化**: 単独のエンドポイントでも必ずディレクトリを作成（例: `health/`, `home/`）
 
-#### 標準ファイル名（8 種類のみ）
+#### 標準ファイル名（9 種類のみ）
 
 リソースディレクトリ内には、以下の標準的なファイル名**のみ**を使用します：
+
+**ハンドラー関連**:
 
 - `handler.go` - Handler 構造体と依存性の定義
 - `index.go` - 一覧ページ表示 (GET /resources)
@@ -657,6 +662,10 @@ HTTP リクエストを処理するハンドラーは、統一された規則に
 - `edit.go` - 編集フォーム表示（更新前のフォーム） (GET /resources/:id/edit)
 - `update.go` - 更新処理（既存リソースの永続化） (PATCH /resources/:id)
 - `delete.go` - 削除処理 (DELETE /resources/:id)
+
+**バリデーション関連**:
+
+- `validator.go` - バリデーション（形式チェック + DB を使った検証を統合）
 
 **重要な区別**:
 
@@ -758,40 +767,29 @@ templ New(ctx context.Context, formErrors *session.FormErrors, csrfToken string,
 
 📖 **[@go/docs/templ-guide.md](docs/templ-guide.md)** - templ テンプレートガイド
 
-### バリデーション方針
+### バリデーション
 
-バリデーションは以下の 3 つのカテゴリに分類し、それぞれ適切な場所で実行します。
+フォームからの入力値の検証は、**1 つのバリデーター**（`validator.go`）で実装します。形式バリデーション（入力値の形式チェック）と状態バリデーション（DB を使った検証）を同じファイルに配置することで、「どこに書くべきか」の判断コストを削減します。
+
+#### バリデーターの構成
+
+- **ファイル**: `validator.go`（形式チェック + DB を使った検証を統合）
+- **命名規則**: `{Action}Validator`（例: `CreateValidator`, `UpdateValidator`）
+- **入力**: `{Action}ValidatorInput` 構造体
+- **出力**: `{Action}ValidatorResult` 構造体
 
 #### バリデーションの分類
 
-| カテゴリ | 責務 | 配置場所 | 例 | DB アクセス |
-|----------|------|----------|-----|------------|
-| **形式バリデーション** | 入力値の形式チェック | `format_validator.go` | 必須チェック、メール形式、文字数制限 | 不要 |
-| **状態バリデーション** | DB の状態を使った検証 | `state_validator.go` または UseCase | ユーザー存在チェック、コード一致チェック | 必要 |
-| **システムエラー** | 永続化処理中の予期せぬエラー | UseCase、Repository | DB 接続エラー、トランザクション失敗 | - |
+バリデーションは以下の 2 種類に分類されますが、同じファイル（`validator.go`）に実装します：
 
-#### 状態バリデーションの配置基準
-
-状態バリデーションを `state_validator.go`（Handler 層）と UseCase のどちらに配置するかは、**「検証失敗時に DB を更新する必要があるか？」** で判断します。
-
-| 検証失敗時の DB 更新 | 配置場所 | 理由 |
-|---------------------|----------|------|
-| 不要 | `state_validator.go` | UseCase をシンプルに保つため |
-| 必要 | UseCase | トランザクション内で検証と更新を行う必要があるため |
-
-#### Annict での UseCase 内バリデーション
-
-以下の UseCase は、検証失敗時に DB 更新（試行回数インクリメント等）が必要なため、UseCase 内でバリデーションを行っています。
-
-| UseCase | 検証内容 | 失敗時の処理 |
-|---------|----------|-------------|
-| `verify_sign_in_code.go` | ログインコード検証 | 試行回数インクリメント |
-| `verify_sign_up_code.go` | 新規登録確認コード検証 | 試行回数インクリメント |
-| `update_password_reset.go` | パスワードリセットトークン検証 | トークン使用済みマーク |
+| 種類               | 責務                  | 特徴            |
+| ------------------ | --------------------- | --------------- |
+| 形式バリデーション | 入力値の形式チェック  | DB アクセス不要 |
+| 状態バリデーション | DB の状態を使った検証 | DB アクセス必要 |
 
 #### 詳細ドキュメント
 
-バリデーションの詳しい実装方法、ファイル構成、テストの書き方については以下を参照してください：
+バリデーションの詳しい実装方法、配置場所の判断基準、テストの書き方については以下を参照してください：
 
 📖 **[@go/docs/validation-guide.md](docs/validation-guide.md)** - バリデーションガイド
 
@@ -892,25 +890,58 @@ Go 版 Annict では、関心の分離を意識したアーキテクチャを採
 - **責務**: トランザクション管理、複数リポジトリを跨ぐ処理
 - **命名**: ファイル名 `{action}_{entity}.go`、構造体名 `{Action}{Entity}Usecase`
 - **単一責任**: 各 Usecase は **`Execute` メソッドのみ** を公開する（1 Usecase = 1 操作）
+- **トランザクション管理**: Repository の `WithTx` メソッドを使用してトランザクション内で操作する
 
 **重要**: 1 つの Usecase に複数の公開メソッド（`Execute`, `ExecuteDelete` など）を持たせないでください。異なる操作が必要な場合は、別の Usecase として分離します。
 
+**トランザクション管理**: Usecase でトランザクションを使用する場合、Repository をコンストラクタで受け取り、Execute 内で `WithTx(tx)` を呼び出します：
+
+```go
+// ✅ 良い例: Repository の WithTx パターン
+type CreateAccountUsecase struct {
+    db       *sql.DB
+    userRepo *repository.UserRepository
+}
+
+func NewCreateAccountUsecase(db *sql.DB, userRepo *repository.UserRepository) *CreateAccountUsecase {
+    return &CreateAccountUsecase{db: db, userRepo: userRepo}
+}
+
+func (uc *CreateAccountUsecase) Execute(ctx context.Context, input CreateAccountInput) (*CreateAccountOutput, error) {
+    tx, err := uc.db.BeginTx(ctx, nil)
+    if err != nil {
+        return nil, err
+    }
+    defer func() { _ = tx.Rollback() }()
+
+    // トランザクション内で操作するためのリポジトリを取得
+    userRepo := uc.userRepo.WithTx(tx)
+
+    // userRepo を使用して操作...
+
+    if err := tx.Commit(); err != nil {
+        return nil, err
+    }
+    return &CreateAccountOutput{}, nil
+}
+```
+
 ```go
 // ✅ 良い例: 各Usecaseが単一のExecuteメソッドを持つ
-type CreateStripeSubscriberUsecase struct { ... }
-func (uc *CreateStripeSubscriberUsecase) Execute(ctx, input) (*Result, error)
+type CreateUserUsecase struct { ... }
+func (uc *CreateUserUsecase) Execute(ctx, input) (*Result, error)
 
-type UpdateStripeSubscriberUsecase struct { ... }
-func (uc *UpdateStripeSubscriberUsecase) Execute(ctx, input) (*Result, error)
+type UpdateUserUsecase struct { ... }
+func (uc *UpdateUserUsecase) Execute(ctx, input) (*Result, error)
 
-type DeleteStripeSubscriberUsecase struct { ... }
-func (uc *DeleteStripeSubscriberUsecase) Execute(ctx, input) (*Result, error)
+type DeleteUserUsecase struct { ... }
+func (uc *DeleteUserUsecase) Execute(ctx, input) (*Result, error)
 
 // ❌ 悪い例: 1つのUsecaseに複数の公開メソッド
-type StripeSubscriberUsecase struct { ... }
-func (uc *StripeSubscriberUsecase) Create(ctx, input) (*Result, error)
-func (uc *StripeSubscriberUsecase) Update(ctx, input) (*Result, error)
-func (uc *StripeSubscriberUsecase) Delete(ctx, input) (*Result, error)
+type UserUsecase struct { ... }
+func (uc *UserUsecase) Create(ctx, input) (*Result, error)
+func (uc *UserUsecase) Update(ctx, input) (*Result, error)
+func (uc *UserUsecase) Delete(ctx, input) (*Result, error)
 ```
 
 #### 詳細ドキュメント
@@ -1010,6 +1041,85 @@ func TestPopularWorks(t *testing.T) {
     // テスト終了時にトランザクションは自動的にロールバックされる
 }
 ```
+
+### テーブル駆動テストの書き方
+
+複数のテストケースを効率的に実行するために、テーブル駆動テストを使用します。
+
+**基本パターン**:
+
+```go
+func TestCreateAccount(t *testing.T) {
+    t.Parallel()
+
+    db, tx := testutil.SetupTestDB(t)
+    ctx := context.Background()
+
+    // テスト対象のセットアップ（共通部分）
+    userRepo := repository.NewUserRepository(db).WithTx(tx)
+    profileRepo := repository.NewProfileRepository(db).WithTx(tx)
+    uc := usecase.NewCreateAccountUsecase(db, userRepo, profileRepo)
+
+    // テストケースの定義
+    tests := []struct {
+        name    string
+        input   usecase.CreateAccountInput
+        wantErr bool
+    }{
+        {
+            name: "正常系: 有効な入力でアカウントを作成できる",
+            input: usecase.CreateAccountInput{
+                Email:    "test@example.com",
+                Atname:   "testuser",
+                Password: "password123",
+            },
+            wantErr: false,
+        },
+        {
+            name: "正常系: 日本語パスワードでアカウントを作成できる",
+            input: usecase.CreateAccountInput{
+                Email:    "japanese@example.com",
+                Atname:   "japaneseuser",
+                Password: "パスワード123",
+            },
+            wantErr: false,
+        },
+    }
+
+    for _, tt := range tests {
+        t.Run(tt.name, func(t *testing.T) {
+            result, err := uc.Execute(ctx, tt.input)
+
+            if tt.wantErr {
+                if err == nil {
+                    t.Error("expected error but got nil")
+                }
+                return
+            }
+
+            if err != nil {
+                t.Fatalf("unexpected error: %v", err)
+            }
+
+            if result == nil {
+                t.Fatal("result should not be nil")
+            }
+        })
+    }
+}
+```
+
+**テーブル駆動テストを使用する場面**:
+
+- 同じロジックに対して複数の入力パターンをテストする場合
+- 正常系と異常系を網羅的にテストする場合
+- バリデーションルールを複数テストする場合
+
+**テーブル駆動テストを使用しない場面**:
+
+- テストケースごとに異なるセットアップが必要な場合
+- 各テストの検証ロジックが大きく異なる場合
+- 単一のシンプルなテストケースの場合
 
 ### テストヘルパーの使用
 

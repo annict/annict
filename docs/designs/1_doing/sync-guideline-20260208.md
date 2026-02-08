@@ -353,14 +353,14 @@ Annict・mewst・wikino の3プロジェクト間で、CLAUDE.md およびガイ
 
 ### フェーズ 1: Annict (自プロジェクト)
 
-- [ ] **1-1**: トップレベル CLAUDE.md の更新
+- [x] **1-1**: トップレベル CLAUDE.md の更新
   - 差分2: 「実装時のガイドライン」セクション追加（Wikino を参考）
   - 差分3: 「レビュー時に参照するガイドライン」セクション追加（Wikino を参考）
   - 差分4: コミット前チェックの記述を抽象化（Mewst/Wikino 方式: 具体的なコマンドはサブプロジェクトの CLAUDE.md に委譲）
   - **想定ファイル数**: 約 1 ファイル（実装 1 + テスト 0）
   - **想定行数**: 約 50 行（実装 50 行 + テスト 0 行）
 
-- [ ] **1-2**: go/CLAUDE.md の更新
+- [x] **1-2**: go/CLAUDE.md の更新
   - 差分1: バリデーション方針セクションを Validator パターンに更新、標準ファイル名を9種類に変更
   - 差分7: tparse の記載追加（Mewst/Wikino を参考）
   - 差分9: APP_ENV 例外規則追加（Wikino を参考）
@@ -369,12 +369,12 @@ Annict・mewst・wikino の3プロジェクト間で、CLAUDE.md およびガイ
   - **想定ファイル数**: 約 1 ファイル（実装 1 + テスト 0）
   - **想定行数**: 約 100 行（実装 100 行 + テスト 0 行）
 
-- [ ] **1-3**: go/docs/validation-guide.md の全面更新
+- [x] **1-3**: go/docs/validation-guide.md の全面更新
   - 差分1: Request DTO パターンから Validator パターンへ書き換え（Mewst/Wikino を参考）
   - **想定ファイル数**: 約 1 ファイル（実装 1 + テスト 0）
   - **想定行数**: 約 200 行（実装 200 行 + テスト 0 行）
 
-- [ ] **1-4**: go/docs/handler-guide.md の更新
+- [x] **1-4**: go/docs/handler-guide.md の更新
   - 差分1: request.go → validator.go へ更新、テストファイル構成の変更（Mewst/Wikino を参考）
   - **想定ファイル数**: 約 1 ファイル（実装 1 + テスト 0）
   - **想定行数**: 約 100 行（実装 100 行 + テスト 0 行）
