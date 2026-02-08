@@ -75,7 +75,7 @@ func (r *ResendClient) Send(ctx context.Context, input SendInput) error {
 		params.Text = textBuf.String()
 	}
 
-	_, err := r.client.Emails.Send(params)
+	_, err := r.client.Emails.SendWithContext(ctx, params)
 	if err != nil {
 		return fmt.Errorf("メール送信に失敗: %w", err)
 	}
