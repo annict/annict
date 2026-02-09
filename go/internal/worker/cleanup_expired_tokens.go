@@ -18,6 +18,14 @@ func (CleanupExpiredTokensArgs) Kind() string {
 	return "cleanup_expired_tokens"
 }
 
+// InsertOpts はジョブ挿入時のデフォルトオプションを返します
+func (CleanupExpiredTokensArgs) InsertOpts() river.InsertOpts {
+	return river.InsertOpts{
+		Queue:       river.QueueDefault,
+		MaxAttempts: 3,
+	}
+}
+
 // CleanupExpiredTokensWorker はトークンクリーンアップワーカーです
 type CleanupExpiredTokensWorker struct {
 	river.WorkerDefaults[CleanupExpiredTokensArgs]

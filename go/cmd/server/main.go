@@ -323,7 +323,7 @@ func main() {
 	signOutHandler := sign_out.NewHandler(sessionManager)
 
 	// パスワードリセット申請ハンドラーの初期化
-	createPasswordResetTokenUC := usecase.NewCreatePasswordResetTokenUsecase(db, queries, riverClient)
+	createPasswordResetTokenUC := usecase.NewCreatePasswordResetTokenUsecase(db, queries, cfg, riverClient)
 	passwordResetHandler := password_reset.NewHandler(cfg, userRepo, sessionManager, limiter, turnstileClient, createPasswordResetTokenUC)
 
 	// パスワード編集・更新ハンドラーの初期化
