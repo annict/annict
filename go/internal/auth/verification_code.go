@@ -24,7 +24,7 @@ func GenerateVerificationCode() (string, error) {
 // データベースに保存する際は、このハッシュ化された値を使用します
 // 新規登録とログインの両方で共通して使用します
 func HashCode(code string) (string, error) {
-	hashedBytes, err := bcrypt.GenerateFromPassword([]byte(code), bcrypt.DefaultCost)
+	hashedBytes, err := bcrypt.GenerateFromPassword([]byte(code), bcryptCost)
 	if err != nil {
 		return "", err
 	}

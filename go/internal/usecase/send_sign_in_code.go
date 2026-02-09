@@ -7,8 +7,6 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/riverqueue/river"
-
 	"github.com/annict/annict/go/internal/auth"
 	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/worker"
@@ -86,22 +84,32 @@ func (uc *SendSignInCodeUsecase) Execute(ctx context.Context, userID int64) (*Se
 
 	// メール送信ジョブをエンキュー
 	if uc.riverClient != nil {
-		_, err := uc.riverClient.Client().Insert(ctx, worker.SendSignInCodeArgs{
-			UserID: userID,
-			Code:   code,
-		}, &river.InsertOpts{
-			Queue: river.QueueDefault,
-		})
+		user, err := uc.queries.GetUserByID(ctx, userID)
 		if err != nil {
-			// ジョブエンキューに失敗してもコードは有効なので、エラーログを出力して続行
-			slog.ErrorContext(ctx, "ログインコード送信ジョブのエンキューに失敗しました",
+			slog.ErrorContext(ctx, "ユーザー情報の取得に失敗しました",
 				"user_id", userID,
 				"error", err,
 			)
 		} else {
-			slog.InfoContext(ctx, "ログインコード送信ジョブをエンキューしました",
-				"user_id", userID,
-			)
+			args, err := worker.BuildSignInCodeEmail(ctx, user.Email, code, user.Locale)
+			if err != nil {
+				slog.ErrorContext(ctx, "ログインコードメールの構築に失敗しました",
+					"user_id", userID,
+					"error", err,
+				)
+			} else {
+				_, err = uc.riverClient.Client().Insert(ctx, *args, nil)
+				if err != nil {
+					slog.ErrorContext(ctx, "ログインコード送信ジョブのエンキューに失敗しました",
+						"user_id", userID,
+						"error", err,
+					)
+				} else {
+					slog.InfoContext(ctx, "ログインコード送信ジョブをエンキューしました",
+						"user_id", userID,
+					)
+				}
+			}
 		}
 	} else {
 		slog.WarnContext(ctx, "River クライアントが設定されていないため、メール送信ジョブをエンキューできませんでした",

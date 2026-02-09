@@ -7,8 +7,7 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/riverqueue/river"
-
+	"github.com/annict/annict/go/internal/config"
 	"github.com/annict/annict/go/internal/password_reset"
 	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/worker"
@@ -18,14 +17,16 @@ import (
 type CreatePasswordResetTokenUsecase struct {
 	db          *sql.DB
 	queries     *query.Queries
+	cfg         *config.Config
 	riverClient *worker.Client
 }
 
 // NewCreatePasswordResetTokenUsecase は新しいCreatePasswordResetTokenUsecaseを作成します
-func NewCreatePasswordResetTokenUsecase(db *sql.DB, queries *query.Queries, riverClient *worker.Client) *CreatePasswordResetTokenUsecase {
+func NewCreatePasswordResetTokenUsecase(db *sql.DB, queries *query.Queries, cfg *config.Config, riverClient *worker.Client) *CreatePasswordResetTokenUsecase {
 	return &CreatePasswordResetTokenUsecase{
 		db:          db,
 		queries:     queries,
+		cfg:         cfg,
 		riverClient: riverClient,
 	}
 }
@@ -85,22 +86,33 @@ func (uc *CreatePasswordResetTokenUsecase) Execute(ctx context.Context, userID i
 	// 注: トランザクション外でエンキューするため、トークン保存とジョブエンキューの一貫性は完全ではありません
 	// ただし、トークンは保存されているため、ジョブエンキューに失敗してもユーザーはリセットリンクを使用できます
 	if uc.riverClient != nil {
-		_, err := uc.riverClient.Client().Insert(ctx, worker.SendPasswordResetEmailArgs{
-			UserID: userID,
-			Token:  token,
-		}, &river.InsertOpts{
-			Queue: river.QueueDefault,
-		})
+		user, err := uc.queries.GetUserByID(ctx, userID)
 		if err != nil {
-			// ジョブエンキューに失敗してもトークンは有効なので、エラーログを出力して続行
-			slog.ErrorContext(ctx, "パスワードリセットメール送信ジョブのエンキューに失敗しました",
+			slog.ErrorContext(ctx, "ユーザー情報の取得に失敗しました",
 				"user_id", userID,
 				"error", err,
 			)
 		} else {
-			slog.InfoContext(ctx, "パスワードリセットメール送信ジョブをエンキューしました",
-				"user_id", userID,
-			)
+			resetURL := fmt.Sprintf("%s/password/edit?token=%s", uc.cfg.AppURL(), token)
+			args, err := worker.BuildPasswordResetEmail(ctx, user.Email, resetURL, user.Locale)
+			if err != nil {
+				slog.ErrorContext(ctx, "パスワードリセットメールの構築に失敗しました",
+					"user_id", userID,
+					"error", err,
+				)
+			} else {
+				_, err = uc.riverClient.Client().Insert(ctx, *args, nil)
+				if err != nil {
+					slog.ErrorContext(ctx, "パスワードリセットメール送信ジョブのエンキューに失敗しました",
+						"user_id", userID,
+						"error", err,
+					)
+				} else {
+					slog.InfoContext(ctx, "パスワードリセットメール送信ジョブをエンキューしました",
+						"user_id", userID,
+					)
+				}
+			}
 		}
 	} else {
 		slog.WarnContext(ctx, "River クライアントが設定されていないため、メール送信ジョブをエンキューできませんでした",

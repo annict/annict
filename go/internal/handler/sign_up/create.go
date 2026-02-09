@@ -24,15 +24,16 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// リクエストDTOを作成
-	req := &CreateRequest{
+	// バリデーション
+	input := CreateValidatorInput{
 		Email: r.FormValue("email"),
 	}
 
-	// フォームバリデーション
-	if formErrors := req.Validate(ctx); formErrors != nil {
+	v := NewCreateValidator()
+	result := v.Validate(ctx, input)
+	if result.FormErrors != nil && result.FormErrors.HasErrors() {
 		flashManager := session.NewFlashManager(h.sessionMgr)
-		if err := flashManager.SetFormErrors(w, r, formErrors); err != nil {
+		if err := flashManager.SetFormErrors(w, r, result.FormErrors); err != nil {
 			slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
 		}
 		http.Redirect(w, r, "/sign_up", http.StatusSeeOther)
@@ -75,7 +76,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 			slog.Error("Rate Limitingチェックが失敗しました", "error", err)
 		} else if !allowed {
 			slog.WarnContext(ctx, "新規登録申請がRate Limitingにより制限されました（IP単位）",
-				"email", req.Email,
+				"email", input.Email,
 				"ip_address", clientip.GetClientIP(r),
 			)
 			formErrors := &session.FormErrors{}
@@ -91,13 +92,13 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	// Rate Limiting チェック: メールアドレス単位（3回/時間）
 	if h.limiter != nil && !h.cfg.DisableRateLimit {
-		emailKey := fmt.Sprintf("sign_up:email:%s", req.Email)
+		emailKey := fmt.Sprintf("sign_up:email:%s", input.Email)
 		allowed, err := h.limiter.Check(ctx, emailKey, 3, 1*time.Hour)
 		if err != nil {
 			slog.Error("Rate Limitingチェックが失敗しました", "error", err)
 		} else if !allowed {
 			slog.WarnContext(ctx, "新規登録申請がRate Limitingにより制限されました（メールアドレス単位）",
-				"email", req.Email,
+				"email", input.Email,
 				"ip_address", clientip.GetClientIP(r),
 			)
 			formErrors := &session.FormErrors{}
@@ -112,7 +113,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// メールアドレスの重複チェック
-	_, err = h.userRepo.GetByEmail(ctx, req.Email)
+	_, err = h.userRepo.GetByEmail(ctx, input.Email)
 	if err == nil {
 		// ユーザーが存在する場合はエラーを表示
 		formErrors := &session.FormErrors{}
@@ -135,10 +136,10 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	locale := i18n.GetLocale(ctx)
 
 	// 新規登録確認コードを生成・送信
-	_, err = h.sendSignUpCodeUC.Execute(ctx, req.Email, locale)
+	_, err = h.sendSignUpCodeUC.Execute(ctx, input.Email, locale)
 	if err != nil {
 		slog.ErrorContext(ctx, "新規登録確認コードの送信に失敗しました",
-			"email", req.Email,
+			"email", input.Email,
 			"error", err,
 		)
 		http.Error(w, i18n.T(ctx, "sign_up_error_server"), http.StatusInternalServerError)
@@ -146,11 +147,11 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	slog.InfoContext(ctx, "新規登録確認コードを送信しました",
-		"email", req.Email,
+		"email", input.Email,
 	)
 
 	// セッションにメールアドレスを保存
-	if err := h.sessionMgr.SetValue(ctx, w, r, "sign_up_email", req.Email); err != nil {
+	if err := h.sessionMgr.SetValue(ctx, w, r, "sign_up_email", input.Email); err != nil {
 		slog.Error("セッションへのメールアドレス保存エラー", "error", err)
 		http.Error(w, i18n.T(ctx, "sign_up_error_server"), http.StatusInternalServerError)
 		return
@@ -158,7 +159,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	// フラッシュメッセージを設定
 	flashManager := session.NewFlashManager(h.sessionMgr)
-	message := i18n.T(ctx, "sign_up_code_sent_to", map[string]any{"Email": req.Email})
+	message := i18n.T(ctx, "sign_up_code_sent_to", map[string]any{"Email": input.Email})
 	if err := flashManager.SetFlash(w, r, session.FlashSuccess, message); err != nil {
 		slog.ErrorContext(ctx, "フラッシュメッセージの設定に失敗しました", "error", err)
 	}

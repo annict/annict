@@ -40,14 +40,15 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// リクエストを構築
-	req := &Request{
+	// バリデーション
+	input := CreateValidatorInput{
 		Password: r.FormValue("password"),
 	}
 
-	// バリデーション
-	if formErrors := req.Validate(ctx); formErrors != nil {
-		if err := h.sessionMgr.SetFormErrors(ctx, w, r, *formErrors); err != nil {
+	v := NewCreateValidator()
+	result := v.Validate(ctx, input)
+	if result.FormErrors != nil && result.FormErrors.HasErrors() {
+		if err := h.sessionMgr.SetFormErrors(ctx, w, r, *result.FormErrors); err != nil {
 			slog.Error("フォームエラーの設定に失敗", "error", err)
 		}
 		http.Redirect(w, r, "/sign_in/password", http.StatusSeeOther)
@@ -92,7 +93,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// パスワードを検証
-	if err := auth.CheckPassword(user.EncryptedPassword, req.Password); err != nil {
+	if err := auth.CheckPassword(user.EncryptedPassword, input.Password); err != nil {
 		slog.Info("パスワードが一致しません", "email", email)
 		formErrors := session.FormErrors{}
 		formErrors.AddGlobalError(i18n.T(ctx, "sign_in_error_invalid_credentials"))

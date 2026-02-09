@@ -18,6 +18,14 @@ func (CleanupExpiredSignInCodesArgs) Kind() string {
 	return "cleanup_expired_sign_in_codes"
 }
 
+// InsertOpts はジョブ挿入時のデフォルトオプションを返します
+func (CleanupExpiredSignInCodesArgs) InsertOpts() river.InsertOpts {
+	return river.InsertOpts{
+		Queue:       river.QueueDefault,
+		MaxAttempts: 3,
+	}
+}
+
 // CleanupExpiredSignInCodesWorker は期限切れログインコードのクリーンアップワーカーです
 type CleanupExpiredSignInCodesWorker struct {
 	river.WorkerDefaults[CleanupExpiredSignInCodesArgs]

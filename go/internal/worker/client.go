@@ -53,18 +53,10 @@ func NewClient(ctx context.Context, databaseURL string, queries *query.Queries, 
 	// River ワーカーの登録
 	workers := river.NewWorkers()
 
-	// パスワードリセットメール送信ワーカーを登録
+	// メール送信ワーカーを登録
 	if mailSender != nil {
-		river.AddWorker(workers, NewSendPasswordResetEmailWorker(queries, mailSender, cfg))
-		slog.InfoContext(ctx, "SendPasswordResetEmailWorker を登録しました")
-
-		// ログインコード送信ワーカーを登録
-		river.AddWorker(workers, NewSendSignInCodeWorker(queries, mailSender, cfg))
-		slog.InfoContext(ctx, "SendSignInCodeWorker を登録しました")
-
-		// 新規登録確認コード送信ワーカーを登録
-		river.AddWorker(workers, NewSendSignUpCodeWorker(mailSender, cfg))
-		slog.InfoContext(ctx, "SendSignUpCodeWorker を登録しました")
+		river.AddWorker(workers, NewSendEmailWorker(mailSender))
+		slog.InfoContext(ctx, "SendEmailWorker を登録しました")
 	}
 
 	// トークンクリーンアップワーカーを登録

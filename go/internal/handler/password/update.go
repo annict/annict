@@ -21,37 +21,38 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// リクエストDTOを作成
-	req := &Request{
+	// バリデーション
+	input := UpdateValidatorInput{
 		Token:                r.FormValue("token"),
 		Password:             r.FormValue("password"),
 		PasswordConfirmation: r.FormValue("password_confirmation"),
 	}
 
-	// フォームバリデーション
-	if formErrors := req.Validate(ctx); formErrors != nil {
+	v := NewUpdateValidator()
+	result := v.Validate(ctx, input)
+	if result.FormErrors != nil && result.FormErrors.HasErrors() {
 		flashManager := session.NewFlashManager(h.sessionManager)
-		if err := flashManager.SetFormErrors(w, r, formErrors); err != nil {
+		if err := flashManager.SetFormErrors(w, r, result.FormErrors); err != nil {
 			slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
 		}
-		http.Redirect(w, r, "/password/edit?token="+req.Token, http.StatusSeeOther)
+		http.Redirect(w, r, "/password/edit?token="+input.Token, http.StatusSeeOther)
 		return
 	}
 
 	// パスワード強度チェック
-	if err := auth.ValidatePasswordStrength(ctx, req.Password); err != nil {
+	if err := auth.ValidatePasswordStrength(ctx, input.Password); err != nil {
 		flashManager := session.NewFlashManager(h.sessionManager)
-		formErrors := &session.FormErrors{}
-		formErrors.AddFieldError("password", err.Error())
-		if err := flashManager.SetFormErrors(w, r, formErrors); err != nil {
+		strengthErrors := &session.FormErrors{}
+		strengthErrors.AddFieldError("password", err.Error())
+		if err := flashManager.SetFormErrors(w, r, strengthErrors); err != nil {
 			slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
 		}
-		http.Redirect(w, r, "/password/edit?token="+req.Token, http.StatusSeeOther)
+		http.Redirect(w, r, "/password/edit?token="+input.Token, http.StatusSeeOther)
 		return
 	}
 
 	// UseCaseを使ってパスワードを更新
-	result, err := h.updatePasswordUseCase.Execute(ctx, req.Token, req.Password)
+	ucResult, err := h.updatePasswordUseCase.Execute(ctx, input.Token, input.Password)
 	if err != nil {
 		// トークンが無効な場合
 		if err.Error() == "invalid token" {
@@ -70,7 +71,7 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 
 	// 監査ログ
 	slog.InfoContext(ctx, "パスワード更新が完了しました",
-		"user_id", result.UserID,
+		"user_id", ucResult.UserID,
 		"ip_address", clientip.GetClientIP(r),
 	)
 

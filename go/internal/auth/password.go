@@ -10,6 +10,15 @@ import (
 	"github.com/annict/annict/go/internal/i18n"
 )
 
+// bcryptCost はbcryptのコスト値。テスト時はSetBcryptCostForTestで変更可能
+var bcryptCost = bcrypt.DefaultCost
+
+// SetBcryptCostForTest はテスト用にbcryptコストを変更する
+// テスト以外からの呼び出しは想定していない
+func SetBcryptCostForTest(cost int) {
+	bcryptCost = cost
+}
+
 // CheckPassword bcryptでハッシュ化されたパスワードと平文パスワードを比較する
 // Deviseのencrypted_passwordカラムとの互換性を保つ
 func CheckPassword(hashedPassword, plainPassword string) error {
@@ -19,7 +28,7 @@ func CheckPassword(hashedPassword, plainPassword string) error {
 // HashPassword 平文パスワードをbcryptでハッシュ化する
 // Deviseのencrypted_passwordカラムとの互換性を保つ
 func HashPassword(plainPassword string) (string, error) {
-	hashedBytes, err := bcrypt.GenerateFromPassword([]byte(plainPassword), bcrypt.DefaultCost)
+	hashedBytes, err := bcrypt.GenerateFromPassword([]byte(plainPassword), bcryptCost)
 	if err != nil {
 		return "", err
 	}

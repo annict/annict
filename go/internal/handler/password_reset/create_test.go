@@ -47,7 +47,7 @@ func TestCreate_RateLimiting_IP(t *testing.T) {
 
 	// モック Turnstile クライアント（常に成功）
 	mockClient := &mockTurnstileClient{shouldSucceed: true}
-	createPasswordResetTokenUC := usecase.NewCreatePasswordResetTokenUsecase(db, queries, nil)
+	createPasswordResetTokenUC := usecase.NewCreatePasswordResetTokenUsecase(db, queries, nil, nil)
 	handler := NewHandler(cfg, userRepo, sessionManager, limiter, mockClient, createPasswordResetTokenUC)
 
 	for i := 0; i < 5; i++ {
@@ -117,7 +117,7 @@ func TestCreate_RateLimiting_Email(t *testing.T) {
 
 	// モック Turnstile クライアント（常に成功）
 	mockClient := &mockTurnstileClient{shouldSucceed: true}
-	createPasswordResetTokenUC := usecase.NewCreatePasswordResetTokenUsecase(db, queries, nil)
+	createPasswordResetTokenUC := usecase.NewCreatePasswordResetTokenUsecase(db, queries, nil, nil)
 	handler := NewHandler(cfg, userRepo, sessionManager, limiter, mockClient, createPasswordResetTokenUC)
 
 	for i := 0; i < 3; i++ {
@@ -200,7 +200,7 @@ func TestPasswordResetSentPage_UXMessages(t *testing.T) {
 
 	// モック Turnstile クライアント（常に成功）
 	mockClient := &mockTurnstileClient{shouldSucceed: true}
-	createPasswordResetTokenUC := usecase.NewCreatePasswordResetTokenUsecase(db, queries, nil)
+	createPasswordResetTokenUC := usecase.NewCreatePasswordResetTokenUsecase(db, queries, nil, nil)
 	handler := NewHandler(cfg, userRepo, sessionManager, nil, mockClient, createPasswordResetTokenUC)
 
 	tests := []struct {
@@ -300,7 +300,7 @@ func TestPasswordResetFlow_Integration(t *testing.T) {
 
 	// モック Turnstile クライアント（常に成功）
 	mockClient := &mockTurnstileClient{shouldSucceed: true}
-	createPasswordResetTokenUC := usecase.NewCreatePasswordResetTokenUsecase(db, queries, nil)
+	createPasswordResetTokenUC := usecase.NewCreatePasswordResetTokenUsecase(db, queries, nil, nil)
 	handler := NewHandler(cfg, userRepo, sessionManager, nil, mockClient, createPasswordResetTokenUC)
 
 	ctx := context.Background()
@@ -346,7 +346,7 @@ func TestCreate_TurnstileVerification_Success(t *testing.T) {
 
 	// モック Turnstile クライアント（常に成功）
 	mockClient := &mockTurnstileClient{shouldSucceed: true}
-	createPasswordResetTokenUC := usecase.NewCreatePasswordResetTokenUsecase(db, queries, nil)
+	createPasswordResetTokenUC := usecase.NewCreatePasswordResetTokenUsecase(db, queries, nil, nil)
 	handler := NewHandler(cfg, userRepo, sessionManager, nil, mockClient, createPasswordResetTokenUC)
 
 	form := url.Values{}
@@ -379,7 +379,7 @@ func TestCreate_TurnstileVerification_Failed(t *testing.T) {
 
 	// モック Turnstile クライアント（常に失敗）
 	mockClient := &mockTurnstileClient{shouldSucceed: false}
-	createPasswordResetTokenUC := usecase.NewCreatePasswordResetTokenUsecase(db, queries, nil)
+	createPasswordResetTokenUC := usecase.NewCreatePasswordResetTokenUsecase(db, queries, nil, nil)
 	handler := NewHandler(cfg, userRepo, sessionManager, nil, mockClient, createPasswordResetTokenUC)
 
 	form := url.Values{}
@@ -417,7 +417,7 @@ func TestCreate_TurnstileVerification_MissingToken(t *testing.T) {
 
 	// モック Turnstile クライアント（常に失敗）
 	mockClient := &mockTurnstileClient{shouldSucceed: false}
-	createPasswordResetTokenUC := usecase.NewCreatePasswordResetTokenUsecase(db, queries, nil)
+	createPasswordResetTokenUC := usecase.NewCreatePasswordResetTokenUsecase(db, queries, nil, nil)
 	handler := NewHandler(cfg, userRepo, sessionManager, nil, mockClient, createPasswordResetTokenUC)
 
 	form := url.Values{}
