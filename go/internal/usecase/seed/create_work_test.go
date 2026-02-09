@@ -275,11 +275,6 @@ func TestCreateWorkUsecase_MediaTypeConversion(t *testing.T) {
 
 // TestCreateWorkUsecase_LargeBatch は大量の作品作成のテスト
 func TestCreateWorkUsecase_LargeBatch(t *testing.T) {
-	// -short フラグが指定されている場合はスキップ（CI用）
-	if testing.Short() {
-		t.Skip("長時間テストのため -short フラグでスキップします")
-	}
-
 	// テストDBとトランザクションをセットアップ
 	db, tx := testutil.SetupTestDB(t)
 	defer tx.Rollback()
@@ -289,8 +284,8 @@ func TestCreateWorkUsecase_LargeBatch(t *testing.T) {
 
 	ctx := context.Background()
 
-	// 2500の作品を作成（バッチサイズ1000を超えるケース）
-	workCount := 2500
+	// 250の作品を作成（100件チャンク×3回でマルチチャンク処理を検証）
+	workCount := 250
 	works := make([]CreateWorkParams, workCount)
 	seasonYear := int32(2024)
 	seasonSpring := seed.SeasonSpring

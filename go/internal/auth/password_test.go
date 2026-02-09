@@ -5,8 +5,58 @@ import (
 	"strings"
 	"testing"
 
+	"golang.org/x/crypto/bcrypt"
+
 	"github.com/annict/annict/go/internal/i18n"
 )
+
+func TestSetBcryptCostForTest(t *testing.T) {
+	// テスト前のデフォルト値を保存して、テスト後に復元
+	originalCost := bcryptCost
+	t.Cleanup(func() {
+		bcryptCost = originalCost
+	})
+
+	t.Run("MinCostに変更してHashPasswordが動作する", func(t *testing.T) {
+		SetBcryptCostForTest(bcrypt.MinCost)
+
+		hashed, err := HashPassword("testpassword")
+		if err != nil {
+			t.Fatalf("HashPassword() error = %v", err)
+		}
+
+		// ハッシュ化されたパスワードが検証できることを確認
+		if err := CheckPassword(hashed, "testpassword"); err != nil {
+			t.Errorf("CheckPassword() error = %v", err)
+		}
+
+		// bcryptのコストがMinCostであることを確認
+		cost, err := bcrypt.Cost([]byte(hashed))
+		if err != nil {
+			t.Fatalf("bcrypt.Cost() error = %v", err)
+		}
+		if cost != bcrypt.MinCost {
+			t.Errorf("bcrypt cost = %d, want %d", cost, bcrypt.MinCost)
+		}
+	})
+
+	t.Run("DefaultCostに戻してHashPasswordが動作する", func(t *testing.T) {
+		SetBcryptCostForTest(bcrypt.DefaultCost)
+
+		hashed, err := HashPassword("testpassword")
+		if err != nil {
+			t.Fatalf("HashPassword() error = %v", err)
+		}
+
+		cost, err := bcrypt.Cost([]byte(hashed))
+		if err != nil {
+			t.Fatalf("bcrypt.Cost() error = %v", err)
+		}
+		if cost != bcrypt.DefaultCost {
+			t.Errorf("bcrypt cost = %d, want %d", cost, bcrypt.DefaultCost)
+		}
+	})
+}
 
 func TestValidatePasswordStrength(t *testing.T) {
 	tests := []struct {
