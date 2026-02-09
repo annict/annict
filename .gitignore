@@ -1,7 +1,8 @@
 .DS_Store
 
-/.claude
+/.claude/*.local.json
 /.env.op
 /.pnpm-store
 /compose-up.sh
 /docker-compose.override.yml
+/tmp

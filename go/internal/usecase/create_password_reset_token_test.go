@@ -32,7 +32,7 @@ func TestCreatePasswordResetTokenUsecase_Execute(t *testing.T) {
 	queries := query.New(db)
 
 	// UseCase を作成（riverClient は nil で OK - ジョブエンキューはテストしない）
-	uc := NewCreatePasswordResetTokenUsecase(db, queries, nil)
+	uc := NewCreatePasswordResetTokenUsecase(db, queries, nil, nil)
 
 	// トークンを生成
 	ctx := context.Background()
@@ -86,7 +86,7 @@ func TestCreatePasswordResetTokenUsecase_Execute_InvalidatesOldTokens(t *testing
 	queries := query.New(db)
 
 	// UseCase を作成
-	uc := NewCreatePasswordResetTokenUsecase(db, queries, nil)
+	uc := NewCreatePasswordResetTokenUsecase(db, queries, nil, nil)
 
 	ctx := context.Background()
 
@@ -130,7 +130,7 @@ func TestCreatePasswordResetTokenUsecase_Execute_WithNonExistentUser(t *testing.
 	queries := query.New(db)
 
 	// UseCase を作成
-	uc := NewCreatePasswordResetTokenUsecase(db, queries, nil)
+	uc := NewCreatePasswordResetTokenUsecase(db, queries, nil, nil)
 
 	// 存在しないユーザーIDでトークン生成を試みる
 	ctx := context.Background()
@@ -167,7 +167,7 @@ func TestCreatePasswordResetTokenUsecase_Execute_TransactionRollback(t *testing.
 	queries := query.New(db)
 
 	// UseCase を作成
-	uc := NewCreatePasswordResetTokenUsecase(db, queries, nil)
+	uc := NewCreatePasswordResetTokenUsecase(db, queries, nil, nil)
 
 	ctx := context.Background()
 
@@ -235,7 +235,7 @@ func TestCreatePasswordResetTokenUsecase_Execute_ConcurrentRequests(t *testing.T
 	queries := query.New(db)
 
 	// UseCase を作成
-	uc := NewCreatePasswordResetTokenUsecase(db, queries, nil)
+	uc := NewCreatePasswordResetTokenUsecase(db, queries, nil, nil)
 
 	ctx := context.Background()
 

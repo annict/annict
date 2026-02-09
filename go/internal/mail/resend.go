@@ -20,9 +20,18 @@ type SendInput struct {
 	TextBody templ.Component // メール本文（テキスト形式、nilの場合はHTMLのみ）
 }
 
+// SendRawInput はレンダリング済みメール送信の入力
+type SendRawInput struct {
+	To       string // 送信先メールアドレス
+	Subject  string // 件名
+	HTMLBody string // メール本文（HTML形式、レンダリング済み）
+	TextBody string // メール本文（テキスト形式、レンダリング済み、空の場合はHTMLのみ）
+}
+
 // Sender はメール送信のインターフェース
 type Sender interface {
 	Send(ctx context.Context, input SendInput) error
+	SendRaw(ctx context.Context, input SendRawInput) error
 }
 
 // ResendClient はResend APIを使用したメール送信クライアント
@@ -73,6 +82,27 @@ func (r *ResendClient) Send(ctx context.Context, input SendInput) error {
 			return fmt.Errorf("テキストテンプレートのレンダリングに失敗: %w", err)
 		}
 		params.Text = textBuf.String()
+	}
+
+	_, err := r.client.Emails.SendWithContext(ctx, params)
+	if err != nil {
+		return fmt.Errorf("メール送信に失敗: %w", err)
+	}
+
+	return nil
+}
+
+// SendRaw はレンダリング済みの文字列でメールを送信します
+func (r *ResendClient) SendRaw(ctx context.Context, input SendRawInput) error {
+	params := &resend.SendEmailRequest{
+		From:    r.from(),
+		To:      []string{input.To},
+		Subject: input.Subject,
+		Html:    input.HTMLBody,
+	}
+
+	if input.TextBody != "" {
+		params.Text = input.TextBody
 	}
 
 	_, err := r.client.Emails.SendWithContext(ctx, params)

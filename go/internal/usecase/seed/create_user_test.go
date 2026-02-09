@@ -264,11 +264,6 @@ func TestCreateUserUsecase_PasswordHashing(t *testing.T) {
 
 // TestCreateUserUsecase_LargeBatch は大量のユーザー作成のテスト
 func TestCreateUserUsecase_LargeBatch(t *testing.T) {
-	// -short フラグが指定されている場合はスキップ（CI用）
-	if testing.Short() {
-		t.Skip("長時間テストのため -short フラグでスキップします")
-	}
-
 	// テストDBとトランザクションをセットアップ
 	db, tx := testutil.SetupTestDB(t)
 	defer tx.Rollback()
@@ -279,8 +274,8 @@ func TestCreateUserUsecase_LargeBatch(t *testing.T) {
 
 	ctx := context.Background()
 
-	// 2500人のユーザーを作成（バッチサイズ1000を超えるケース）
-	userCount := 2500
+	// 250人のユーザーを作成（100件チャンク×3回でマルチチャンク処理を検証）
+	userCount := 250
 	users := make([]CreateUserParams, userCount)
 	for i := 0; i < userCount; i++ {
 		users[i] = CreateUserParams{

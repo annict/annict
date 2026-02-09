@@ -29,14 +29,15 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// リクエストを構築
-	req := &CreateRequest{
+	// バリデーション
+	input := CreateValidatorInput{
 		Code: r.FormValue("code"),
 	}
 
-	// バリデーション
-	if formErrors := req.Validate(ctx); formErrors != nil {
-		if err := h.sessionMgr.SetFormErrors(ctx, w, r, *formErrors); err != nil {
+	v := NewCreateValidator()
+	result := v.Validate(ctx, input)
+	if result.FormErrors != nil && result.FormErrors.HasErrors() {
+		if err := h.sessionMgr.SetFormErrors(ctx, w, r, *result.FormErrors); err != nil {
 			slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
 		}
 		http.Redirect(w, r, "/sign_up/code", http.StatusSeeOther)
@@ -82,7 +83,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// ユースケース呼び出し: 確認コード検証
-	err = h.verifySignUpCodeUC.Execute(ctx, email, req.Code)
+	err = h.verifySignUpCodeUC.Execute(ctx, email, input.Code)
 	if err != nil {
 		// セキュリティのため、すべてのエラーで同じメッセージを表示（情報漏洩対策）
 		if errors.Is(err, usecase.ErrCodeNotFound) {

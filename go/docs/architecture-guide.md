@@ -645,6 +645,91 @@ func (h *Handler) ProcessPasswordReset(w http.ResponseWriter, r *http.Request) {
 }
 ```
 
+### Repository の WithTx パターン
+
+Usecase でトランザクションを使用する場合、**Repository の `WithTx` メソッド**を使用してトランザクション内で操作するリポジトリを取得します。
+
+#### なぜ WithTx パターンを使うのか
+
+**メリット**:
+
+- **依存性注入**: Repository をコンストラクタで受け取るため、テストでモックに差し替えやすい
+- **意図が明確**: `WithTx(tx)` の呼び出しで「このリポジトリはトランザクション内で操作する」という意図が明確
+- **一貫性**: すべての Usecase で同じパターンを使用することで、コードの読みやすさが向上
+
+#### Repository に WithTx を実装する
+
+各 Repository には `WithTx` メソッドを実装します：
+
+```go
+// internal/repository/user_repository.go
+
+// WithTx はトランザクションを使用する新しいRepositoryを返す
+func (r *UserRepository) WithTx(tx *sql.Tx) *UserRepository {
+    return &UserRepository{q: r.q.WithTx(tx)}
+}
+```
+
+#### Usecase で WithTx を使用する
+
+```go
+// internal/usecase/create_account.go
+
+type CreateAccountUsecase struct {
+    db                    *sql.DB
+    emailConfirmationRepo *repository.EmailConfirmationRepository
+    userRepo              *repository.UserRepository
+    userPasswordRepo      *repository.UserPasswordRepository
+}
+
+func NewCreateAccountUsecase(
+    db *sql.DB,
+    emailConfirmationRepo *repository.EmailConfirmationRepository,
+    userRepo *repository.UserRepository,
+    userPasswordRepo *repository.UserPasswordRepository,
+) *CreateAccountUsecase {
+    return &CreateAccountUsecase{
+        db:                    db,
+        emailConfirmationRepo: emailConfirmationRepo,
+        userRepo:              userRepo,
+        userPasswordRepo:      userPasswordRepo,
+    }
+}
+
+func (uc *CreateAccountUsecase) Execute(ctx context.Context, input CreateAccountInput) (*CreateAccountOutput, error) {
+    // トランザクションを開始
+    tx, err := uc.db.BeginTx(ctx, nil)
+    if err != nil {
+        return nil, fmt.Errorf("トランザクションの開始に失敗しました: %w", err)
+    }
+    defer func() {
+        _ = tx.Rollback()
+    }()
+
+    // トランザクション内で操作するためのリポジトリを取得
+    emailConfirmationRepo := uc.emailConfirmationRepo.WithTx(tx)
+    userRepo := uc.userRepo.WithTx(tx)
+    userPasswordRepo := uc.userPasswordRepo.WithTx(tx)
+
+    // 以降の処理はトランザクション内のリポジトリを使用
+    // ...
+
+    // トランザクションをコミット
+    if err := tx.Commit(); err != nil {
+        return nil, fmt.Errorf("トランザクションのコミットに失敗しました: %w", err)
+    }
+
+    return &CreateAccountOutput{UserID: user.ID}, nil
+}
+```
+
+#### 重要なポイント
+
+1. **Repository はコンストラクタで受け取る**: `NewXxxUsecase` で Repository を引数として受け取る
+2. **Execute 内で WithTx を呼び出す**: トランザクションを開始した後、各 Repository の `WithTx(tx)` を呼び出す
+3. **元の Repository は変更しない**: `WithTx` は新しい Repository インスタンスを返すため、元の Repository には影響しない
+4. **すべての Repository で WithTx を使う**: トランザクション内で使用するすべての Repository に対して `WithTx` を呼び出す
+
 ### テスト
 
 ```go
