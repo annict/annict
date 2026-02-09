@@ -18,7 +18,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/credentials v1.19.7
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.96.0
 	github.com/brianvoe/gofakeit/v6 v6.28.0
-	github.com/getsentry/sentry-go v0.40.0
+	github.com/getsentry/sentry-go v0.42.0
 	github.com/google/uuid v1.6.0
 	github.com/jackc/pgx/v5 v5.8.0
 	github.com/mfridman/tparse v0.18.0
