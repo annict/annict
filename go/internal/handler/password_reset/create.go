@@ -26,15 +26,16 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// リクエストDTOを作成
-	req := &Request{
+	// バリデーション
+	input := CreateValidatorInput{
 		Email: r.FormValue("email"),
 	}
 
-	// フォームバリデーション
-	if formErrors := req.Validate(ctx); formErrors != nil {
+	v := NewCreateValidator()
+	result := v.Validate(ctx, input)
+	if result.FormErrors != nil && result.FormErrors.HasErrors() {
 		flashManager := session.NewFlashManager(h.sessionManager)
-		if err := flashManager.SetFormErrors(w, r, formErrors); err != nil {
+		if err := flashManager.SetFormErrors(w, r, result.FormErrors); err != nil {
 			slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
 		}
 		http.Redirect(w, r, "/password/reset", http.StatusSeeOther)
@@ -87,13 +88,13 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	// Rate Limiting: メールアドレス単位の制限（3回/時間）
 	if h.limiter != nil && !h.cfg.DisableRateLimit {
-		emailKey := fmt.Sprintf("password_reset:email:%s", req.Email)
+		emailKey := fmt.Sprintf("password_reset:email:%s", input.Email)
 		allowed, err := h.limiter.Check(ctx, emailKey, 3, 1*time.Hour)
 		if err != nil {
 			slog.ErrorContext(ctx, "Rate Limitingチェックが失敗しました", "error", err)
 		} else if !allowed {
 			slog.WarnContext(ctx, "パスワードリセット申請がRate Limitingにより制限されました（メールアドレス単位）",
-				"email", req.Email,
+				"email", input.Email,
 				"ip_address", clientip.GetClientIP(r),
 			)
 			http.Error(w, i18n.T(ctx, "rate_limit_exceeded"), http.StatusTooManyRequests)
@@ -102,7 +103,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// ユーザーを検索（存在しない場合もエラーを返さない - セキュリティ対策）
-	user, err := h.userRepo.GetByEmail(ctx, req.Email)
+	user, err := h.userRepo.GetByEmail(ctx, input.Email)
 	if err != nil && err != sql.ErrNoRows {
 		slog.ErrorContext(ctx, "ユーザーの検索エラー", "error", err)
 	}

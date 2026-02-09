@@ -30,13 +30,15 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	req := &CreateRequest{
+	input := CreateValidatorInput{
 		Plan: r.FormValue("plan"),
 	}
 
 	// バリデーション
-	if errs := req.Validate(); len(errs) > 0 {
-		slog.WarnContext(ctx, "バリデーションエラー", "errors", errs, "user_id", user.ID)
+	v := NewCreateValidator()
+	result := v.Validate(ctx, input)
+	if result.FormErrors != nil && result.FormErrors.HasErrors() {
+		slog.WarnContext(ctx, "バリデーションエラー", "errors", result.FormErrors, "user_id", user.ID)
 		h.redirectWithError(w, r, ctx, "supporters_checkout_invalid_plan")
 		return
 	}
@@ -56,7 +58,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	// 価格IDの決定
 	var priceID string
-	switch req.Plan {
+	switch input.Plan {
 	case "monthly":
 		priceID = h.stripeCfg.PriceMonthlyID
 	case "yearly":
@@ -64,7 +66,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if priceID == "" {
-		slog.ErrorContext(ctx, "Stripe価格IDが設定されていません", "plan", req.Plan)
+		slog.ErrorContext(ctx, "Stripe価格IDが設定されていません", "plan", input.Plan)
 		h.redirectWithError(w, r, ctx, "supporters_checkout_error")
 		return
 	}
@@ -110,7 +112,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	slog.InfoContext(ctx, "Stripe Checkoutセッションを作成しました", "session_id", checkoutSession.ID, "user_id", user.ID, "plan", req.Plan)
+	slog.InfoContext(ctx, "Stripe Checkoutセッションを作成しました", "session_id", checkoutSession.ID, "user_id", user.ID, "plan", input.Plan)
 
 	// Stripe Checkoutページへリダイレクト
 	http.Redirect(w, r, checkoutSession.URL, http.StatusSeeOther)
