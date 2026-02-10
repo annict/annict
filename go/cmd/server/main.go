@@ -402,9 +402,9 @@ func main() {
 	// Stripe Webhook
 	r.Post("/webhooks/stripe", stripeWebhookHandler.Create)
 
-	// DB管理画面（RequireCommitter: 管理者または編集者のみ）
+	// DB管理画面
 	dbWorkHandler := db_work.NewHandler(cfg, workRepo, sessionManager)
-	r.With(authMiddleware.RequireCommitter).Get("/db/works", dbWorkHandler.Index)
+	r.Get("/db/works", dbWorkHandler.Index)
 
 	// iCalendar配信
 	r.Get("/@{username}/ics", icsHandler.Show) // メインのエンドポイント
