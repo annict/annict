@@ -1,6 +1,6 @@
 
 -- Dumped from database version 17.5 (Debian 17.5-1.pgdg130+1)
--- Dumped by pg_dump version 17.6 (Debian 17.6-0+deb13u1)
+-- Dumped by pg_dump version 17.7 (Debian 17.7-3.pgdg13+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -50,6 +50,17 @@ COMMENT ON EXTENSION pg_stat_statements IS 'track execution statistics of all SQ
 
 
 --
+-- Name: episode_status; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.episode_status AS ENUM (
+    'published',
+    'archived',
+    'deleted'
+);
+
+
+--
 -- Name: river_job_state; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -62,6 +73,17 @@ CREATE TYPE public.river_job_state AS ENUM (
     'retryable',
     'running',
     'scheduled'
+);
+
+
+--
+-- Name: work_status; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.work_status AS ENUM (
+    'published',
+    'archived',
+    'deleted'
 );
 
 
@@ -824,7 +846,9 @@ CREATE TABLE public.episodes (
     satisfaction_rate double precision,
     number_en character varying DEFAULT ''::character varying NOT NULL,
     deleted_at timestamp without time zone,
-    unpublished_at timestamp without time zone
+    unpublished_at timestamp without time zone,
+    status public.episode_status DEFAULT 'published'::public.episode_status NOT NULL,
+    archive_message character varying
 );
 
 
@@ -3226,7 +3250,9 @@ CREATE TABLE public.works (
     deleted_at timestamp without time zone,
     title_alter character varying DEFAULT ''::character varying NOT NULL,
     title_alter_en character varying DEFAULT ''::character varying NOT NULL,
-    unpublished_at timestamp without time zone
+    unpublished_at timestamp without time zone,
+    status public.work_status DEFAULT 'published'::public.work_status NOT NULL,
+    archive_message character varying
 );
 
 
@@ -5169,6 +5195,13 @@ CREATE INDEX index_episodes_on_score ON public.episodes USING btree (score);
 
 
 --
+-- Name: index_episodes_on_status; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_episodes_on_status ON public.episodes USING btree (status) WHERE (status = 'published'::public.episode_status);
+
+
+--
 -- Name: index_episodes_on_unpublished_at; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -6307,6 +6340,13 @@ CREATE INDEX index_works_on_season_year ON public.works USING btree (season_year
 --
 
 CREATE INDEX index_works_on_season_year_and_season_name ON public.works USING btree (season_year, season_name);
+
+
+--
+-- Name: index_works_on_status; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_works_on_status ON public.works USING btree (status) WHERE (status = 'published'::public.work_status);
 
 
 --
@@ -7738,4 +7778,6 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20251113173140'),
     ('20260111083416'),
     ('20260111084224'),
-    ('20260111101233');
+    ('20260111101233'),
+    ('20260210055715'),
+    ('20260210081156');
