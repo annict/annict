@@ -939,6 +939,126 @@ other = "Annict Developers"
 description = "Sidebar - Search placeholder"
 other = "Search by anime title..."
 
+# DB Sidebar related
+[db_sidebar_search_placeholder]
+description = "DB Sidebar - Search placeholder"
+other = "Search by title, person name..."
+
+[db_sidebar_activities]
+description = "DB Sidebar - Activities"
+other = "Activities"
+
+[db_sidebar_series]
+description = "DB Sidebar - Series"
+other = "Series"
+
+[db_sidebar_works]
+description = "DB Sidebar - Works"
+other = "Works"
+
+[db_sidebar_people]
+description = "DB Sidebar - People"
+other = "People"
+
+[db_sidebar_organizations]
+description = "DB Sidebar - Organizations"
+other = "Organizations"
+
+[db_sidebar_characters]
+description = "DB Sidebar - Characters"
+other = "Characters"
+
+[db_sidebar_channel_groups]
+description = "DB Sidebar - Channel Groups"
+other = "Channel Groups"
+
+[db_sidebar_channels]
+description = "DB Sidebar - Channels"
+other = "Channels"
+
+[db_sidebar_back_to_annict]
+description = "DB Sidebar - Back to Annict"
+other = "Back to Annict"
+
+# Pagination related
+[pagination_label]
+description = "Pagination - aria-label"
+other = "Pagination"
+
+[pagination_prev]
+description = "Pagination - Previous"
+other = "Previous"
+
+[pagination_next]
+description = "Pagination - Next"
+other = "Next"
+
+# Status label related
+[status_published]
+description = "Status - Published"
+other = "Published"
+
+[status_archived]
+description = "Status - Archived"
+other = "Archived"
+
+[status_deleted]
+description = "Status - Deleted"
+other = "Deleted"
+
+# DB works list related
+[db_works_title]
+description = "DB works list page title"
+other = "Works"
+
+[db_works_new]
+description = "New button"
+other = "New"
+
+[db_works_filter_no_episodes]
+description = "No episodes filter"
+other = "No episodes"
+
+[db_works_filter_no_image]
+description = "No image filter"
+other = "No image"
+
+[db_works_filter_no_season]
+description = "No season filter"
+other = "No season"
+
+[db_works_filter_submit]
+description = "Filter submit button"
+other = "Search"
+
+[db_works_table_id]
+description = "Table header - ID"
+other = "ID"
+
+[db_works_table_title]
+description = "Table header - Title"
+other = "Title"
+
+[db_works_table_season]
+description = "Table header - Season"
+other = "Season"
+
+[db_works_table_watchers]
+description = "Table header - Watchers"
+other = "Watchers"
+
+[db_works_table_status]
+description = "Table header - Status"
+other = "Status"
+
+[db_works_table_image]
+description = "Table header - Image"
+other = "Image"
+
+[db_works_empty]
+description = "No works message"
+other = "No works found"
+
 # Footer related
 [footer_terms]
 description = "Footer - Terms"

@@ -939,6 +939,126 @@ other = "Annict Developers"
 description = "サイドバー - 検索プレースホルダー"
 other = "作品名や人物名などで検索..."
 
+# DB サイドバー関連
+[db_sidebar_search_placeholder]
+description = "DB サイドバー - 検索プレースホルダー"
+other = "作品名や人物名などで検索..."
+
+[db_sidebar_activities]
+description = "DB サイドバー - アクティビティ"
+other = "アクティビティ"
+
+[db_sidebar_series]
+description = "DB サイドバー - シリーズ"
+other = "シリーズ"
+
+[db_sidebar_works]
+description = "DB サイドバー - 作品"
+other = "作品"
+
+[db_sidebar_people]
+description = "DB サイドバー - 人物"
+other = "人物"
+
+[db_sidebar_organizations]
+description = "DB サイドバー - 団体"
+other = "団体"
+
+[db_sidebar_characters]
+description = "DB サイドバー - キャラクター"
+other = "キャラクター"
+
+[db_sidebar_channel_groups]
+description = "DB サイドバー - チャンネルグループ"
+other = "チャンネルグループ"
+
+[db_sidebar_channels]
+description = "DB サイドバー - チャンネル"
+other = "チャンネル"
+
+[db_sidebar_back_to_annict]
+description = "DB サイドバー - Annictに戻る"
+other = "Annictに戻る"
+
+# ページネーション関連
+[pagination_label]
+description = "ページネーション - aria-label"
+other = "ページネーション"
+
+[pagination_prev]
+description = "ページネーション - 前へ"
+other = "前へ"
+
+[pagination_next]
+description = "ページネーション - 次へ"
+other = "次へ"
+
+# 公開状態ラベル関連
+[status_published]
+description = "公開状態 - 公開"
+other = "公開"
+
+[status_archived]
+description = "公開状態 - アーカイブ"
+other = "アーカイブ"
+
+[status_deleted]
+description = "公開状態 - 削除"
+other = "削除"
+
+# DB作品一覧関連
+[db_works_title]
+description = "DB作品一覧ページのタイトル"
+other = "作品"
+
+[db_works_new]
+description = "新規作成ボタン"
+other = "新規作成"
+
+[db_works_filter_no_episodes]
+description = "エピソード未登録フィルタ"
+other = "エピソード未登録"
+
+[db_works_filter_no_image]
+description = "画像未設定フィルタ"
+other = "画像未設定"
+
+[db_works_filter_no_season]
+description = "シーズン未設定フィルタ"
+other = "シーズン未設定"
+
+[db_works_filter_submit]
+description = "フィルタ検索ボタン"
+other = "検索"
+
+[db_works_table_id]
+description = "テーブルヘッダー - ID"
+other = "ID"
+
+[db_works_table_title]
+description = "テーブルヘッダー - タイトル"
+other = "タイトル"
+
+[db_works_table_season]
+description = "テーブルヘッダー - シーズン"
+other = "シーズン"
+
+[db_works_table_watchers]
+description = "テーブルヘッダー - ウォッチ数"
+other = "ウォッチ数"
+
+[db_works_table_status]
+description = "テーブルヘッダー - ステータス"
+other = "ステータス"
+
+[db_works_table_image]
+description = "テーブルヘッダー - 画像"
+other = "画像"
+
+[db_works_empty]
+description = "作品なしメッセージ"
+other = "作品が見つかりませんでした"
+
 # フッター関連
 [footer_terms]
 description = "フッター - 利用規約"
