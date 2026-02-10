@@ -19,6 +19,7 @@ import (
 	"github.com/riverqueue/river"
 
 	"github.com/annict/annict/go/internal/config"
+	"github.com/annict/annict/go/internal/handler/db_work"
 	"github.com/annict/annict/go/internal/handler/health"
 	"github.com/annict/annict/go/internal/handler/home"
 	"github.com/annict/annict/go/internal/handler/ics"
@@ -400,6 +401,10 @@ func main() {
 
 	// Stripe Webhook
 	r.Post("/webhooks/stripe", stripeWebhookHandler.Create)
+
+	// DB管理画面（RequireCommitter: 管理者または編集者のみ）
+	dbWorkHandler := db_work.NewHandler(cfg, workRepo, sessionManager)
+	r.With(authMiddleware.RequireCommitter).Get("/db/works", dbWorkHandler.Index)
 
 	// iCalendar配信
 	r.Get("/@{username}/ics", icsHandler.Show) // メインのエンドポイント

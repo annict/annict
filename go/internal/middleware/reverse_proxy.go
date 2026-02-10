@@ -37,6 +37,7 @@ var goHandledPaths = []string{
 	"/supporters",       // サポーターページ
 	"/webhooks/stripe",  // Stripe Webhook受信
 	"/ics",              // iCalendar配信（Apple カレンダー互換パス）
+	"/db/works",         // DB管理画面 - 作品
 }
 
 // NewReverseProxyMiddleware は新しいReverseProxyMiddlewareを作成
