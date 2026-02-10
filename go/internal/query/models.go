@@ -14,6 +14,49 @@ import (
 	"github.com/sqlc-dev/pqtype"
 )
 
+type EpisodeStatus string
+
+const (
+	EpisodeStatusPublished EpisodeStatus = "published"
+	EpisodeStatusArchived  EpisodeStatus = "archived"
+	EpisodeStatusDeleted   EpisodeStatus = "deleted"
+)
+
+func (e *EpisodeStatus) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = EpisodeStatus(s)
+	case string:
+		*e = EpisodeStatus(s)
+	default:
+		return fmt.Errorf("unsupported scan type for EpisodeStatus: %T", src)
+	}
+	return nil
+}
+
+type NullEpisodeStatus struct {
+	EpisodeStatus EpisodeStatus
+	Valid         bool // Valid is true if EpisodeStatus is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullEpisodeStatus) Scan(value interface{}) error {
+	if value == nil {
+		ns.EpisodeStatus, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.EpisodeStatus.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullEpisodeStatus) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.EpisodeStatus), nil
+}
+
 type RiverJobState string
 
 const (
@@ -60,6 +103,49 @@ func (ns NullRiverJobState) Value() (driver.Value, error) {
 		return nil, nil
 	}
 	return string(ns.RiverJobState), nil
+}
+
+type WorkStatus string
+
+const (
+	WorkStatusPublished WorkStatus = "published"
+	WorkStatusArchived  WorkStatus = "archived"
+	WorkStatusDeleted   WorkStatus = "deleted"
+)
+
+func (e *WorkStatus) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = WorkStatus(s)
+	case string:
+		*e = WorkStatus(s)
+	default:
+		return fmt.Errorf("unsupported scan type for WorkStatus: %T", src)
+	}
+	return nil
+}
+
+type NullWorkStatus struct {
+	WorkStatus WorkStatus
+	Valid      bool // Valid is true if WorkStatus is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullWorkStatus) Scan(value interface{}) error {
+	if value == nil {
+		ns.WorkStatus, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.WorkStatus.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullWorkStatus) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.WorkStatus), nil
 }
 
 type Activity struct {
@@ -332,6 +418,8 @@ type Episode struct {
 	NumberEn                 string          `db:"number_en"`
 	DeletedAt                sql.NullTime    `db:"deleted_at"`
 	UnpublishedAt            sql.NullTime    `db:"unpublished_at"`
+	Status                   EpisodeStatus   `db:"status"`
+	ArchiveMessage           sql.NullString  `db:"archive_message"`
 }
 
 type EpisodeRecord struct {
@@ -1199,6 +1287,8 @@ type Work struct {
 	TitleAlter               string          `db:"title_alter"`
 	TitleAlterEn             string          `db:"title_alter_en"`
 	UnpublishedAt            sql.NullTime    `db:"unpublished_at"`
+	Status                   WorkStatus      `db:"status"`
+	ArchiveMessage           sql.NullString  `db:"archive_message"`
 }
 
 type WorkComment struct {

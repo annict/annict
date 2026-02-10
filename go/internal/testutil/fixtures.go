@@ -28,6 +28,9 @@ type WorkBuilder struct {
 	title      string
 	seasonName int32 // enum値 (1:winter, 2:spring, 3:summer, 4:autumn)
 	seasonYear int32
+	noSeason   bool   // trueの場合、season_year/season_nameをNULLにする
+	noEpisodes bool   // no_episodesカラムの値
+	status     string // work_status enum: published, archived, deleted
 }
 
 // NewWorkBuilder は新しいWorkBuilderを作成します
@@ -39,6 +42,7 @@ func NewWorkBuilder(t *testing.T, tx *sql.Tx) *WorkBuilder {
 		title:      "テストアニメ",
 		seasonName: SeasonSpring,
 		seasonYear: 2024,
+		status:     "published",
 	}
 }
 
@@ -59,6 +63,25 @@ func (b *WorkBuilder) WithTitle(title string) *WorkBuilder {
 func (b *WorkBuilder) WithSeason(year int32, seasonName int32) *WorkBuilder {
 	b.seasonName = seasonName
 	b.seasonYear = year
+	b.noSeason = false
+	return b
+}
+
+// WithNoSeason はシーズン情報なしに設定します
+func (b *WorkBuilder) WithNoSeason() *WorkBuilder {
+	b.noSeason = true
+	return b
+}
+
+// WithNoEpisodes はno_episodesフラグを設定します
+func (b *WorkBuilder) WithNoEpisodes(noEpisodes bool) *WorkBuilder {
+	b.noEpisodes = noEpisodes
+	return b
+}
+
+// WithStatus はステータスを設定します（published, archived, deleted）
+func (b *WorkBuilder) WithStatus(status string) *WorkBuilder {
+	b.status = status
 	return b
 }
 
@@ -66,34 +89,45 @@ func (b *WorkBuilder) WithSeason(year int32, seasonName int32) *WorkBuilder {
 func (b *WorkBuilder) Build() int64 {
 	b.t.Helper()
 
-	query := `
+	q := `
 		INSERT INTO works (
 			title, title_kana, media, official_site_url,
 			wikipedia_url, season_year, season_name,
-			watchers_count, episodes_count,
-			created_at, updated_at
+			watchers_count, episodes_count, no_episodes,
+			status, created_at, updated_at
 		) VALUES (
 			$1, $2, $3, $4,
 			$5, $6, $7,
-			$8, $9,
-			$10, $11
+			$8, $9, $10,
+			$11, $12, $13
 		) RETURNING id
 	`
 
+	var seasonYear, seasonName interface{}
+	if b.noSeason {
+		seasonYear = nil
+		seasonName = nil
+	} else {
+		seasonYear = b.seasonYear
+		seasonName = b.seasonName
+	}
+
 	var id int64
 	err := b.tx.QueryRow(
-		query,
+		q,
 		b.title,      // $1
 		"",           // $2 title_kana (NOT NULL制約あり)
 		0,            // $3 media (0 = tv in Rails enum)
 		"",           // $4 official_site_url
 		"",           // $5 wikipedia_url
-		b.seasonYear, // $6 season_year (int32)
-		b.seasonName, // $7 season_name (int32, enum値)
+		seasonYear,   // $6 season_year
+		seasonName,   // $7 season_name
 		100,          // $8 watchers_count
 		12,           // $9 episodes_count
-		time.Now(),   // $10 created_at
-		time.Now(),   // $11 updated_at
+		b.noEpisodes, // $10 no_episodes
+		b.status,     // $11 status
+		time.Now(),   // $12 created_at
+		time.Now(),   // $13 updated_at
 	).Scan(&id)
 
 	if err != nil {
@@ -176,6 +210,7 @@ type UserBuilder struct {
 	email              string
 	encryptedPassword  string
 	locale             string
+	role               int32
 	stripeSubscriberID *int64
 }
 
@@ -220,6 +255,12 @@ func (b *UserBuilder) WithLocale(locale string) *UserBuilder {
 	return b
 }
 
+// WithRole はユーザーの権限を設定します（0: user, 1: admin, 2: editor）
+func (b *UserBuilder) WithRole(role int32) *UserBuilder {
+	b.role = role
+	return b
+}
+
 // WithStripeSubscriberID はStripeサブスクライバーIDを設定します
 func (b *UserBuilder) WithStripeSubscriberID(id *int64) *UserBuilder {
 	b.stripeSubscriberID = id
@@ -249,7 +290,7 @@ func (b *UserBuilder) Build() int64 {
 		query,
 		b.username,
 		b.email,
-		0,        // role (0 = user, 1 = admin, 2 = editor)
+		b.role,   // role (0 = user, 1 = admin, 2 = editor)
 		b.locale, // locale
 		time.Now(),
 		time.Now(),

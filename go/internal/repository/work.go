@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"database/sql"
 
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
@@ -147,6 +148,77 @@ func (r *WorkRepository) staffsFromRows(rows []query.GetStaffsByWorkIDsRow) []mo
 		}
 	}
 	return staffs
+}
+
+// WithTx はトランザクションを使用する新しいRepositoryを返します
+func (r *WorkRepository) WithTx(tx *sql.Tx) *WorkRepository {
+	return &WorkRepository{queries: r.queries.WithTx(tx)}
+}
+
+// DBWorkListParams はDB管理画面の作品一覧取得パラメータです
+type DBWorkListParams struct {
+	FilterNoEpisodes bool
+	FilterNoImage    bool
+	FilterNoSeason   bool
+	SeasonYear       *int32
+	SeasonName       *int32
+	Page             int32
+	PerPage          int32
+}
+
+// ListForDB はDB管理画面用の作品一覧を取得します
+func (r *WorkRepository) ListForDB(ctx context.Context, params DBWorkListParams) ([]model.DBWorkListItem, error) {
+	offset := (params.Page - 1) * params.PerPage
+
+	rows, err := r.queries.ListDBWorks(ctx, query.ListDBWorksParams{
+		FilterNoEpisodes: sql.NullBool{Bool: params.FilterNoEpisodes, Valid: params.FilterNoEpisodes},
+		FilterNoImage:    sql.NullBool{Bool: params.FilterNoImage, Valid: params.FilterNoImage},
+		FilterNoSeason:   sql.NullBool{Bool: params.FilterNoSeason, Valid: params.FilterNoSeason},
+		SeasonYear:       nullInt32FromPtr(params.SeasonYear),
+		SeasonName:       nullInt32FromPtr(params.SeasonName),
+		PerPage:          params.PerPage,
+		PageOffset:       offset,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	items := make([]model.DBWorkListItem, len(rows))
+	for i, row := range rows {
+		items[i] = model.DBWorkListItem{
+			ID:            row.ID,
+			Title:         row.Title,
+			WatchersCount: row.WatchersCount,
+			Status:        string(row.Status),
+			HasImage:      row.HasImage,
+		}
+		if row.SeasonYear.Valid {
+			items[i].SeasonYear = &row.SeasonYear.Int32
+		}
+		if row.SeasonName.Valid {
+			items[i].SeasonName = &row.SeasonName.Int32
+		}
+	}
+	return items, nil
+}
+
+// CountForDB はDB管理画面用の作品総数を取得します
+func (r *WorkRepository) CountForDB(ctx context.Context, params DBWorkListParams) (int64, error) {
+	return r.queries.CountDBWorks(ctx, query.CountDBWorksParams{
+		FilterNoEpisodes: sql.NullBool{Bool: params.FilterNoEpisodes, Valid: params.FilterNoEpisodes},
+		FilterNoImage:    sql.NullBool{Bool: params.FilterNoImage, Valid: params.FilterNoImage},
+		FilterNoSeason:   sql.NullBool{Bool: params.FilterNoSeason, Valid: params.FilterNoSeason},
+		SeasonYear:       nullInt32FromPtr(params.SeasonYear),
+		SeasonName:       nullInt32FromPtr(params.SeasonName),
+	})
+}
+
+// nullInt32FromPtr は *int32 を sql.NullInt32 に変換します
+func nullInt32FromPtr(v *int32) sql.NullInt32 {
+	if v == nil {
+		return sql.NullInt32{}
+	}
+	return sql.NullInt32{Int32: *v, Valid: true}
 }
 
 // combineWorkData は作品データとキャスト・スタッフデータを組み合わせます

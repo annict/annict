@@ -12,6 +12,43 @@ import (
 	"github.com/lib/pq"
 )
 
+const countDBWorks = `-- name: CountDBWorks :one
+SELECT COUNT(*)
+FROM works w
+LEFT JOIN work_images wi ON w.id = wi.work_id
+WHERE w.status != 'deleted'
+    AND ($1::boolean IS NOT TRUE OR (
+        w.no_episodes = false AND NOT EXISTS (
+            SELECT 1 FROM episodes e WHERE e.work_id = w.id AND e.status = 'published'
+        )
+    ))
+    AND ($2::boolean IS NOT TRUE OR wi.id IS NULL)
+    AND ($3::boolean IS NOT TRUE OR (w.season_year IS NULL AND w.season_name IS NULL))
+    AND ($4::int IS NULL OR w.season_year = $4)
+    AND ($5::int IS NULL OR w.season_name = $5)
+`
+
+type CountDBWorksParams struct {
+	FilterNoEpisodes sql.NullBool  `db:"filter_no_episodes"`
+	FilterNoImage    sql.NullBool  `db:"filter_no_image"`
+	FilterNoSeason   sql.NullBool  `db:"filter_no_season"`
+	SeasonYear       sql.NullInt32 `db:"season_year"`
+	SeasonName       sql.NullInt32 `db:"season_name"`
+}
+
+func (q *Queries) CountDBWorks(ctx context.Context, arg CountDBWorksParams) (int64, error) {
+	row := q.db.QueryRowContext(ctx, countDBWorks,
+		arg.FilterNoEpisodes,
+		arg.FilterNoImage,
+		arg.FilterNoSeason,
+		arg.SeasonYear,
+		arg.SeasonName,
+	)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const getCastsByWorkIDs = `-- name: GetCastsByWorkIDs :many
 SELECT
     c.id,
@@ -257,4 +294,89 @@ func (q *Queries) GetWorkByID(ctx context.Context, id int64) (GetWorkByIDRow, er
 		&i.UpdatedAt,
 	)
 	return i, err
+}
+
+const listDBWorks = `-- name: ListDBWorks :many
+SELECT
+    w.id,
+    w.title,
+    w.season_year,
+    w.season_name,
+    w.watchers_count,
+    w.status,
+    CASE WHEN wi.id IS NOT NULL THEN true ELSE false END AS has_image
+FROM works w
+LEFT JOIN work_images wi ON w.id = wi.work_id
+WHERE w.status != 'deleted'
+    AND ($1::boolean IS NOT TRUE OR (
+        w.no_episodes = false AND NOT EXISTS (
+            SELECT 1 FROM episodes e WHERE e.work_id = w.id AND e.status = 'published'
+        )
+    ))
+    AND ($2::boolean IS NOT TRUE OR wi.id IS NULL)
+    AND ($3::boolean IS NOT TRUE OR (w.season_year IS NULL AND w.season_name IS NULL))
+    AND ($4::int IS NULL OR w.season_year = $4)
+    AND ($5::int IS NULL OR w.season_name = $5)
+ORDER BY w.id DESC
+LIMIT $7
+OFFSET $6
+`
+
+type ListDBWorksParams struct {
+	FilterNoEpisodes sql.NullBool  `db:"filter_no_episodes"`
+	FilterNoImage    sql.NullBool  `db:"filter_no_image"`
+	FilterNoSeason   sql.NullBool  `db:"filter_no_season"`
+	SeasonYear       sql.NullInt32 `db:"season_year"`
+	SeasonName       sql.NullInt32 `db:"season_name"`
+	PageOffset       int32         `db:"page_offset"`
+	PerPage          int32         `db:"per_page"`
+}
+
+type ListDBWorksRow struct {
+	ID            int64         `db:"id"`
+	Title         string        `db:"title"`
+	SeasonYear    sql.NullInt32 `db:"season_year"`
+	SeasonName    sql.NullInt32 `db:"season_name"`
+	WatchersCount int32         `db:"watchers_count"`
+	Status        WorkStatus    `db:"status"`
+	HasImage      bool          `db:"has_image"`
+}
+
+func (q *Queries) ListDBWorks(ctx context.Context, arg ListDBWorksParams) ([]ListDBWorksRow, error) {
+	rows, err := q.db.QueryContext(ctx, listDBWorks,
+		arg.FilterNoEpisodes,
+		arg.FilterNoImage,
+		arg.FilterNoSeason,
+		arg.SeasonYear,
+		arg.SeasonName,
+		arg.PageOffset,
+		arg.PerPage,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []ListDBWorksRow{}
+	for rows.Next() {
+		var i ListDBWorksRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Title,
+			&i.SeasonYear,
+			&i.SeasonName,
+			&i.WatchersCount,
+			&i.Status,
+			&i.HasImage,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }

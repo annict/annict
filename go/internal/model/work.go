@@ -23,3 +23,14 @@ type WorkWithDetails struct {
 	Casts  []Cast
 	Staffs []Staff
 }
+
+// DBWorkListItem はDB管理画面の作品一覧用のデータ構造です
+type DBWorkListItem struct {
+	ID            int64
+	Title         string
+	SeasonYear    *int32
+	SeasonName    *int32
+	WatchersCount int32
+	Status        string
+	HasImage      bool
+}
