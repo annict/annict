@@ -1,6 +1,16 @@
 {
   "printWidth": 120,
   "semi": true,
+  "singleQuote": false,
+  "tabWidth": 2,
   "trailingComma": "all",
-  "singleQuote": false
+  "plugins": ["prettier-plugin-tailwindcss", "@ttskch/prettier-plugin-tailwindcss-anywhere"],
+  "overrides": [
+    {
+      "files": "*.html.erb",
+      "options": {
+        "parser": "anywhere"
+      }
+    }
+  ]
 }
