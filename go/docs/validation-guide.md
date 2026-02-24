@@ -450,7 +450,7 @@ func TestCreateValidator_Validate(t *testing.T) {
     // 状態バリデーションのテスト（DB必要）
     t.Run("状態バリデーション", func(t *testing.T) {
         // テストDBとトランザクションをセットアップ
-        db, tx := testutil.SetupTestDB(t)
+        db, tx := testutil.SetupTx(t)
 
         // テストユーザーを作成
         testutil.NewUserBuilder(t, tx).
