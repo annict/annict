@@ -19,6 +19,8 @@ PACKAGES=$(cat <<'PKGLIST' | sed 's/#.*//'
   gnupg
   imagemagick        # Shrineによる画像アップロードに必要 (Rails)
   jq                 # Claude Codeで使用
+  libglib2.0-0       # libvipsの依存パッケージ (Rails)
+  libvips42          # 画像処理ライブラリ (Rails)
   libasound2         # Playwright: ALSA音声ライブラリ
   libatk-bridge2.0-0 # Playwright: ATKブリッジ
   libatk1.0-0        # Playwright: ATK
@@ -87,12 +89,13 @@ ENV MISE_INSTALL_PATH="/usr/local/bin/mise"
 ENV PATH="/mise/shims:${PATH}"
 RUN curl https://mise.run | sh
 
-# Go、Ruby、Node.js、pnpmをmise経由でインストール
+# Go、Ruby、Node.js、pnpm、Yarnをmise経由でインストール
 RUN mise install go@1.25.1 && \
     mise install ruby@3.3.10 && \
     mise install node@22.20.0 && \
     mise install node@22.17.0 && \
-    mise install pnpm@10.17.1
+    mise install pnpm@10.17.1 && \
+    mise install yarn@1.22.22
 
 # グローバルデフォルトを設定
 RUN mise use --global go@1.25.1 && \
@@ -107,7 +110,7 @@ RUN curl -fsSL -o /usr/local/bin/dbmate \
 
 # --- golangci-lint ---
 RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh \
-      | sh -s -- -b /usr/local/bin v2.6.2
+      | sh -s -- -b /usr/local/bin v2.7.2
 
 # --- ユーザー作成 ---
 RUN groupadd -g ${GROUP_ID} ${USERNAME} && \
@@ -115,7 +118,7 @@ RUN groupadd -g ${GROUP_ID} ${USERNAME} && \
     echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 # --- Go キャッシュディレクトリ ---
-RUN mkdir -p /go/.cache/go-build /go/pkg /go/bin && \
+RUN mkdir -p /go/.cache/go-build /go/pkg && \
     chown -R ${USER_ID}:${GROUP_ID} /go
 
 # --- mise のデータディレクトリの権限設定 ---
@@ -130,23 +133,15 @@ RUN mise reshim
 # --- 1Password CLI ---
 COPY --from=1password/op:2 /usr/local/bin/op /usr/local/bin/op
 
-# --- npmグローバルインストール先を一般ユーザーのホームディレクトリに設定 ---
-ENV NPM_CONFIG_PREFIX=/home/${USERNAME}/.npm-global
-ENV PATH=$NPM_CONFIG_PREFIX/bin:$PATH
-
 # --- Claude Code ---
 RUN curl -fsSL https://claude.ai/install.sh | bash
-
-# --- Yarn (Rails版で使用) ---
-RUN npm install --global yarn@1.22.22
 
 # --- Go ツール ---
 ENV GOCACHE=/go/.cache/go-build
 ENV GOMODCACHE=/go/pkg/mod
 ENV GOPATH=/go
-ENV GOBIN=/go/bin
 ENV PATH="${GOPATH}/bin:${PATH}"
-RUN go install github.com/sqlc-dev/sqlc/cmd/sqlc@v1.27.0 && \
+RUN go install github.com/sqlc-dev/sqlc/cmd/sqlc@v1.30.0 && \
     go install github.com/air-verse/air@latest
 
 # --- Ruby ツール ---
