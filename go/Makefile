@@ -67,8 +67,9 @@ test-run: db-setup-test ## 特定のテストを実行（使用例: make test-ru
 
 .PHONY: test-verbose
 test-verbose: db-setup-test ## 詳細ログ付きで全テストを実行（デバッグ用）
+	@which tparse > /dev/null || (echo "Installing tparse from go.mod..." && go install github.com/mfridman/tparse@latest)
 	@echo "ローカル環境: 詳細ログ付きで全テストを実行"
-	@APP_ENV=test op run --env-file=".env" -- go test -v -race -count=1 ./...
+	@bash -c 'set -o pipefail && APP_ENV=test op run --env-file=".env" -- go test -json -race -count=1 ./... | tparse -all'
 
 .PHONY: fmt
 fmt: ## コードをフォーマット
@@ -92,7 +93,7 @@ clean: ## ビルド成果物をクリーン
 .PHONY: db-migrate
 db-migrate: ## データベースマイグレーションを実行
 	APP_ENV=dev op run --env-file=".env" -- dbmate up
-	# PostgreSQL 17.6のpg_dumpが生成するランダムな\restrict行を削除
+	# PostgreSQL 17.6以降のpg_dumpが生成するランダムな\restrict行を削除
 	# https://github.com/amacneil/dbmate/issues/678
 	@sed -i '/^\\restrict /d;/^\\unrestrict /d' db/schema.sql
 
@@ -124,7 +125,7 @@ db-new: ## 新しいマイグレーションファイルを作成（使用法: m
 .PHONY: db-dump
 db-dump: ## データベーススキーマをdb/schema.sqlにダンプ
 	APP_ENV=dev op run --env-file=".env" -- dbmate dump
-	# PostgreSQL 17.6のpg_dumpが生成するランダムな\restrict行を削除
+	# PostgreSQL 17.6以降のpg_dumpが生成するランダムな\restrict行を削除
 	# https://github.com/amacneil/dbmate/issues/678
 	@sed -i '/^\\restrict /d;/^\\unrestrict /d' db/schema.sql
 
