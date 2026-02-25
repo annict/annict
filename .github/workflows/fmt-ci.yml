@@ -1,10 +1,25 @@
-name: Formatter
+name: Formatter CI
 
 on:
   push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+    paths:
+      - "**/*.js"
+      - "**/*.jsx"
+      - "**/*.ts"
+      - "**/*.tsx"
+      - "**/*.mjs"
+      - "**/*.cjs"
+      - "**/*.css"
+      - "**/*.scss"
+      - "**/*.json"
+      - "**/*.yaml"
+      - "**/*.yml"
+      - "**/*.toml"
+      - "**/*.md"
+      - "**/*.mdx"
+      - "**/*.html"
+      - "**/*.graphql"
+      - "**/*.gql"
 
 jobs:
   oxfmt:
