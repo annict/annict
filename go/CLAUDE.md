@@ -441,7 +441,7 @@ make sqlc-generate
   - テスト用 DB (`annict_test`) を完全にリセット（`DROP SCHEMA public CASCADE`）
   - `db/schema.sql` を適用して最新のスキーマを再作成
   - これにより、常にクリーンな状態でテストが実行されます
-- PostgreSQL 17.6 の `\restrict` コマンド対策として、自動的にクリーンアップ処理が実行されます
+- PostgreSQL 17.6 以降の `\restrict` コマンド対策として、自動的にクリーンアップ処理が実行されます
   - 参照: https://github.com/amacneil/dbmate/issues/678
 - **マイグレーション単体のテストは不要**: マイグレーションが正しく適用されているかは、リポジトリやユースケースのテストで間接的に検証されます。テーブルが正しく作成されていなければ、それらのテストが失敗するためです。
 
@@ -580,14 +580,14 @@ func generateTemplFiles() error {
 
 **使用する関数**:
 
-| 関数 | 用途 |
-|------|------|
-| `slog.Info(msg, key, value, ...)` | 通常の情報ログ（コンテキストなし） |
-| `slog.Warn(msg, key, value, ...)` | 警告ログ（コンテキストなし） |
-| `slog.Error(msg, key, value, ...)` | エラーログ（コンテキストなし） |
-| `slog.InfoContext(ctx, msg, key, value, ...)` | 通常の情報ログ（コンテキストあり） |
-| `slog.WarnContext(ctx, msg, key, value, ...)` | 警告ログ（コンテキストあり） |
-| `slog.ErrorContext(ctx, msg, key, value, ...)` | エラーログ（コンテキストあり） |
+| 関数                                           | 用途                               |
+| ---------------------------------------------- | ---------------------------------- |
+| `slog.Info(msg, key, value, ...)`              | 通常の情報ログ（コンテキストなし） |
+| `slog.Warn(msg, key, value, ...)`              | 警告ログ（コンテキストなし）       |
+| `slog.Error(msg, key, value, ...)`             | エラーログ（コンテキストなし）     |
+| `slog.InfoContext(ctx, msg, key, value, ...)`  | 通常の情報ログ（コンテキストあり） |
+| `slog.WarnContext(ctx, msg, key, value, ...)`  | 警告ログ（コンテキストあり）       |
+| `slog.ErrorContext(ctx, msg, key, value, ...)` | エラーログ（コンテキストあり）     |
 
 **コンテキストの使い分け**:
 
@@ -596,12 +596,12 @@ func generateTemplFiles() error {
 
 **ログレベルの選択基準**:
 
-| レベル | 用途 | 例 |
-|--------|------|-----|
-| `slog.Debug` | デバッグ情報（通常は出力しない） | 変数の値、処理の詳細 |
-| `slog.Info` | 通常の情報（サーバー起動、処理完了など） | サーバー起動、DB接続成功 |
-| `slog.Warn` | 警告（処理は継続するが注意が必要） | 非推奨機能の使用、リトライ |
-| `slog.Error` | エラー（処理が失敗した場合） | DB接続失敗、API呼び出し失敗 |
+| レベル       | 用途                                     | 例                          |
+| ------------ | ---------------------------------------- | --------------------------- |
+| `slog.Debug` | デバッグ情報（通常は出力しない）         | 変数の値、処理の詳細        |
+| `slog.Info`  | 通常の情報（サーバー起動、処理完了など） | サーバー起動、DB接続成功    |
+| `slog.Warn`  | 警告（処理は継続するが注意が必要）       | 非推奨機能の使用、リトライ  |
+| `slog.Error` | エラー（処理が失敗した場合）             | DB接続失敗、API呼び出し失敗 |
 
 **良い例**:
 
@@ -1212,12 +1212,17 @@ func TestCreateAccount(t *testing.T) {
 
 `internal/testutil` パッケージには以下のヘルパーが用意されています：
 
-- **`SetupTestMain(m)`**: TestMainでのDB接続確立とbcryptコスト設定
-- **`SetupTx(t)`**: テスト用トランザクションのセットアップ（TestMainで確立したDB接続を使用）
-- **`GetTestDB()`**: TestMainで確立したDB接続を取得（Usecaseなどトランザクション管理を自前で行うテスト用）
+**DB接続・トランザクション**:
+
+- **`SetupTestMain(m)`**: `TestMain` 内で呼び出し、パッケージ共有のDB接続を初期化。bcryptコストの低減も行う
+- **`SetupTx(t)`**: 共有DB接続プールからトランザクションを取得。テスト終了時に自動ロールバック
+- **`GetTestDB()`**: 共有DB接続プールへの参照を取得。Usecaseなどトランザクション管理を自前で行うテストで使用
+
+**テストデータビルダー**:
+
+- **`NewUserBuilder(t, tx)`**: ユーザーデータのビルダー
 - **`NewWorkBuilder(t, tx)`**: 作品データのビルダー
 - **`NewEpisodeBuilder(t, tx, workID)`**: エピソードデータのビルダー
-- **`NewUserBuilder(t, tx)`**: ユーザーデータのビルダー
 - **`NewWorkImageBuilder(t, tx, workID)`**: 作品画像データのビルダー
 - **`CreateTestWork(t, tx, title)`**: 簡易的な作品作成ヘルパー
 
@@ -1290,6 +1295,21 @@ make test-pkg PKG=internal/handler/password_reset
 - **環境変数の自動設定**: 1Password CLI を経由して自動的に環境変数が設定される
 - **DB セットアップの自動化**: テスト実行前に自動的にテスト用 DB がセットアップされる
 - **エラーハンドリング**: PKG や RUN 変数が指定されていない場合、使用例を表示
+
+### 新規テスト作成時のガイドライン
+
+新しいテストパッケージを作成する際は、以下の手順に従ってください：
+
+1. **`main_test.go` を作成**: パッケージに `main_test.go` を追加し、`testutil.SetupTestMain(m)` を呼び出す
+2. **`SetupTx(t)` を使用**: トランザクション内で実行するテストでは `testutil.SetupTx(t)` を使用
+3. **`GetTestDB()` を使用**: Usecaseなどトランザクション管理を自前で行うテストでは `testutil.GetTestDB()` を使用
+
+**`SetupTx` と `GetTestDB` の使い分け**:
+
+| ヘルパー      | 用途                                          | トランザクション                   |
+| ------------- | --------------------------------------------- | ---------------------------------- |
+| `SetupTx(t)`  | Handler、Repository、Validatorのテスト        | 自動（テスト終了時にロールバック） |
+| `GetTestDB()` | Usecaseのテスト（自前でトランザクション管理） | 手動（Usecase内で管理）            |
 
 ### テンプレートレンダリングのテスト
 

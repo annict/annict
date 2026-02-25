@@ -14,13 +14,13 @@ run:
 linters:
   # 有効化するリンター
   enable:
-    - govet         # Go標準静的解析
-    - staticcheck   # 高度な静的解析
-    - gosec         # セキュリティチェック
-    - depguard      # 依存関係のルール強制
-    - errcheck      # エラーチェック漏れ
-    - ineffassign   # 無駄な代入
-    - unused        # 未使用コード
+    - govet # Go標準静的解析
+    - staticcheck # 高度な静的解析
+    - gosec # セキュリティチェック
+    - depguard # 依存関係のルール強制
+    - errcheck # エラーチェック漏れ
+    - ineffassign # 無駄な代入
+    - unused # 未使用コード
 
   # リンター除外ルール（v2形式）
   exclusions:
@@ -143,8 +143,8 @@ linters:
             - pkg: github.com/annict/annict/go/internal/usecase
               desc: "ValidatorはUseCaseに依存できません。"
 
-        # Middleware層のルール: 共通処理のみ
-        # 他のPresentation層パッケージ、Application層、Domain/Infrastructure層に依存しない
+        # Middleware層のルール
+        # エラーページ・メンテナンスページ等のレンダリングのためTemplatesへの依存は許可
         middleware-layer:
           files:
             - "**/internal/middleware/**"
@@ -159,8 +159,6 @@ linters:
               desc: "MiddlewareはHandlerに依存できません。"
             - pkg: github.com/annict/annict/go/internal/viewmodel
               desc: "MiddlewareはViewModelに依存できません。"
-            - pkg: github.com/annict/annict/go/internal/templates
-              desc: "MiddlewareはTemplatesに依存できません。"
 
         # Application層のルール（UseCase）
         # Presentation層に依存しない
@@ -266,8 +264,8 @@ linters:
 formatters:
   # 有効化するフォーマッター
   enable:
-    - gofmt         # Go標準フォーマッター
-    - goimports     # import文の整理
+    - gofmt # Go標準フォーマッター
+    - goimports # import文の整理
 
   # フォーマッター除外パス
   exclusions:
@@ -276,7 +274,7 @@ formatters:
       - vendor/.*
       - static/.*
       - node_modules/.*
-      - '(.+)_templ\.go'  # templ 自動生成ファイル
+      - '(.+)_templ\.go' # templ 自動生成ファイル
 
   settings:
     # goimports の設定

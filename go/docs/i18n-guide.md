@@ -181,6 +181,7 @@ return fmt.Errorf("セッションの作成に失敗: %w", err)
 命名規則: `{機能名}_{種別}_{詳細}` の形式
 
 例:
+
 - `password_reset_email_required`
 - `sign_in_heading`
 - `popular_anime_title`
@@ -240,6 +241,7 @@ errors.AddFieldError("email", i18n.T(ctx, "password_reset_email_required"))
 **形式**: `{page_name}_title`
 
 例:
+
 - `password_reset_title` - パスワードリセット
 - `sign_in_title` - ログイン
 - `popular_anime_title` - 人気アニメ
@@ -249,6 +251,7 @@ errors.AddFieldError("email", i18n.T(ctx, "password_reset_email_required"))
 **形式**: `{page_name}_heading`
 
 例:
+
 - `sign_in_heading` - ログイン
 - `password_reset_heading` - パスワードリセット
 
@@ -257,6 +260,7 @@ errors.AddFieldError("email", i18n.T(ctx, "password_reset_email_required"))
 **形式**: `{page_name}_{field_name}_label`
 
 例:
+
 - `sign_in_email_username_label` - メールアドレスまたはユーザー名
 - `password_reset_email_label` - メールアドレス
 
@@ -265,6 +269,7 @@ errors.AddFieldError("email", i18n.T(ctx, "password_reset_email_required"))
 **形式**: `{page_name}_submit`
 
 例:
+
 - `password_reset_submit` - 送信
 - `sign_in_submit` - ログイン
 
@@ -273,6 +278,7 @@ errors.AddFieldError("email", i18n.T(ctx, "password_reset_email_required"))
 **形式**: `{page_name}_error_{detail}`
 
 例:
+
 - `password_reset_email_required` - メールアドレスを入力してください
 - `password_reset_email_invalid` - メールアドレスの形式が正しくありません
 - `sign_in_error_invalid_credentials` - メールアドレスまたはパスワードが正しくありません
@@ -282,6 +288,7 @@ errors.AddFieldError("email", i18n.T(ctx, "password_reset_email_required"))
 **形式**: `{page_name}_success`
 
 例:
+
 - `password_reset_success` - パスワードリセットメールを送信しました
 - `sign_in_success` - ログインしました
 
@@ -290,6 +297,7 @@ errors.AddFieldError("email", i18n.T(ctx, "password_reset_email_required"))
 **形式**: `{page_name}_{detail}_help`
 
 例:
+
 - `password_reset_email_not_received_help` - メールが届かない場合は迷惑メールフォルダをご確認ください
 
 ## バリデーションエラーメッセージの国際化

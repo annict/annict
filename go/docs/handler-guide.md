@@ -90,10 +90,10 @@ internal/handler/
 
 **命名例**:
 
-| URL パターン    | リソース名（推奨）    | 理由                         |
-| --------------- | --------------------- | ---------------------------- |
+| URL パターン    | リソース名（推奨）   | 理由                         |
+| --------------- | -------------------- | ---------------------------- |
 | /works/popular  | `popular_work/` ⭕️   | 形容詞+名詞の自然な語順      |
-| /works/popular  | `work_popular/` ❌    | 「作品\_人気」は不自然       |
+| /works/popular  | `work_popular/` ❌   | 「作品\_人気」は不自然       |
 | /password/reset | `password_reset/` ⭕️ | 名詞として成立               |
 | /users/me       | `current_user/` ⭕️   | 「現在のユーザー」という名詞 |
 | /search         | `search/` ⭕️         | 「検索」という名詞           |
