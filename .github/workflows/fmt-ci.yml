@@ -4,11 +4,8 @@ on:
   push:
     paths:
       - "**/*.js"
-      - "**/*.jsx"
       - "**/*.ts"
-      - "**/*.tsx"
       - "**/*.mjs"
-      - "**/*.cjs"
       - "**/*.css"
       - "**/*.scss"
       - "**/*.json"
@@ -16,10 +13,8 @@ on:
       - "**/*.yml"
       - "**/*.toml"
       - "**/*.md"
-      - "**/*.mdx"
       - "**/*.html"
       - "**/*.graphql"
-      - "**/*.gql"
 
 jobs:
   oxfmt:
