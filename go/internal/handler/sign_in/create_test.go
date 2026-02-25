@@ -141,7 +141,7 @@ func TestHandler_Create(t *testing.T) {
 			userRepo := repository.NewUserRepository(queries)
 
 			// ログインコード送信ユースケースを作成（riverClient は nil でメール送信をスキップ）
-			sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, queries, nil)
+			sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), repository.NewUserRepository(queries), nil)
 
 			// Turnstile クライアントを作成（テスト環境用: 空のSecretKeyで検証をスキップ）
 			turnstileClient := turnstile.NewClient("", "")

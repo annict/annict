@@ -422,11 +422,13 @@ http.SetCookie(w, cookie)
 **症状**: フォーム送信時に "Invalid CSRF Token" エラー
 
 **原因**:
+
 1. フォームに CSRF トークンが含まれていない
 2. ミドルウェアが正しく設定されていない
 3. セッションが切れている
 
 **解決方法**:
+
 ```templ
 // CSRFトークンを必ず含める
 <input type="hidden" name="csrf_token" value={ csrfToken } />
@@ -437,10 +439,12 @@ http.SetCookie(w, cookie)
 **症状**: 403 Forbidden が表示される
 
 **原因**:
+
 1. 認可チェックのロジックが間違っている
 2. ユーザー情報が正しく取得できていない
 
 **解決方法**:
+
 ```go
 // デバッグログを追加
 slog.InfoContext(ctx, "認可チェック",

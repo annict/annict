@@ -11,6 +11,88 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
+// TestUserRepository_Create はユーザーを正常に作成できることをテスト
+func TestUserRepository_Create(t *testing.T) {
+	db, tx := testutil.SetupTestDB(t)
+	queries := query.New(db).WithTx(tx)
+	repo := repository.NewUserRepository(queries)
+
+	user, err := repo.Create(context.Background(), repository.UserCreateParams{
+		Username:          "newuser",
+		Email:             "newuser@example.com",
+		EncryptedPassword: "",
+		Locale:            "ja",
+	})
+	if err != nil {
+		t.Fatalf("Createに失敗: %v", err)
+	}
+
+	if user.ID == 0 {
+		t.Error("IDが0です")
+	}
+	if user.Username != "newuser" {
+		t.Errorf("Usernameが一致しません: got %v, want %v", user.Username, "newuser")
+	}
+	if user.Email != "newuser@example.com" {
+		t.Errorf("Emailが一致しません: got %v, want %v", user.Email, "newuser@example.com")
+	}
+	if user.Locale != "ja" {
+		t.Errorf("Localeが一致しません: got %v, want %v", user.Locale, "ja")
+	}
+	if user.Role != 0 {
+		t.Errorf("Roleが一致しません: got %v, want %v", user.Role, 0)
+	}
+}
+
+// TestUserRepository_GetByUsername_Exists はユーザー名が存在する場合にnilを返すことをテスト
+func TestUserRepository_GetByUsername_Exists(t *testing.T) {
+	db, tx := testutil.SetupTestDB(t)
+	queries := query.New(db).WithTx(tx)
+	repo := repository.NewUserRepository(queries)
+
+	testutil.NewUserBuilder(t, tx).
+		WithUsername("existinguser").
+		WithEmail("existing@example.com").
+		Build()
+
+	err := repo.GetByUsername(context.Background(), "existinguser")
+	if err != nil {
+		t.Errorf("存在するユーザー名でエラーが返されました: %v", err)
+	}
+}
+
+// TestUserRepository_GetByUsername_NotFound はユーザー名が存在しない場合にエラーを返すことをテスト
+func TestUserRepository_GetByUsername_NotFound(t *testing.T) {
+	db, tx := testutil.SetupTestDB(t)
+	queries := query.New(db).WithTx(tx)
+	repo := repository.NewUserRepository(queries)
+
+	err := repo.GetByUsername(context.Background(), "nonexistentuser")
+	if err == nil {
+		t.Error("存在しないユーザー名でエラーが返されるべきです")
+	}
+	if err != sql.ErrNoRows {
+		t.Errorf("期待するエラーではありません: got %v, want %v", err, sql.ErrNoRows)
+	}
+}
+
+// TestUserRepository_GetByUsername_CaseInsensitive はユーザー名の大文字小文字を区別しないことをテスト
+func TestUserRepository_GetByUsername_CaseInsensitive(t *testing.T) {
+	db, tx := testutil.SetupTestDB(t)
+	queries := query.New(db).WithTx(tx)
+	repo := repository.NewUserRepository(queries)
+
+	testutil.NewUserBuilder(t, tx).
+		WithUsername("TestUser").
+		WithEmail("testcase@example.com").
+		Build()
+
+	err := repo.GetByUsername(context.Background(), "testuser")
+	if err != nil {
+		t.Errorf("大文字小文字を区別しない検索でエラーが返されました: %v", err)
+	}
+}
+
 // TestUserRepository_UpdateStripeSubscriberID_Set はStripeサブスクライバーIDを設定できることをテスト
 func TestUserRepository_UpdateStripeSubscriberID_Set(t *testing.T) {
 	db, tx := testutil.SetupTestDB(t)

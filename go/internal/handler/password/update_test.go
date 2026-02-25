@@ -61,7 +61,7 @@ func TestUpdate_Success(t *testing.T) {
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionManager := session.NewManager(sessionRepo, cfg)
 	passwordResetTokenRepo := repository.NewPasswordResetTokenRepository(queries)
-	updatePasswordUseCase := usecase.NewUpdatePasswordResetUsecase(db, queries)
+	updatePasswordUseCase := usecase.NewUpdatePasswordResetUsecase(db, repository.NewPasswordResetTokenRepository(queries), repository.NewUserRepository(queries), sessionRepo)
 
 	handler := NewHandler(cfg, db, passwordResetTokenRepo, sessionManager, nil, updatePasswordUseCase)
 
@@ -174,7 +174,7 @@ func TestUpdate_PasswordMismatch(t *testing.T) {
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionManager := session.NewManager(sessionRepo, cfg)
 	passwordResetTokenRepo := repository.NewPasswordResetTokenRepository(queries)
-	updatePasswordUseCase := usecase.NewUpdatePasswordResetUsecase(db, queries)
+	updatePasswordUseCase := usecase.NewUpdatePasswordResetUsecase(db, repository.NewPasswordResetTokenRepository(queries), repository.NewUserRepository(queries), sessionRepo)
 
 	handler := NewHandler(cfg, db, passwordResetTokenRepo, sessionManager, nil, updatePasswordUseCase)
 
@@ -242,7 +242,7 @@ func TestUpdate_InvalidToken(t *testing.T) {
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionManager := session.NewManager(sessionRepo, cfg)
 	passwordResetTokenRepo := repository.NewPasswordResetTokenRepository(queries)
-	updatePasswordUseCase := usecase.NewUpdatePasswordResetUsecase(db, queries)
+	updatePasswordUseCase := usecase.NewUpdatePasswordResetUsecase(db, repository.NewPasswordResetTokenRepository(queries), repository.NewUserRepository(queries), sessionRepo)
 
 	handler := NewHandler(cfg, db, passwordResetTokenRepo, sessionManager, nil, updatePasswordUseCase)
 

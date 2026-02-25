@@ -46,21 +46,21 @@ internal/handler/
 │   ├── create.go               # Create (POST /password/reset)
 │   ├── validator.go            # バリデーション（形式チェック + DBを使った検証）
 │   ├── validator_test.go       # バリデーションのテスト
-│   └── handler_test.go         # ハンドラーのテスト（New, Createなど各アクションのテストを含む）
+│   └── handler_test.go         # ハンドラーの統合テスト
 ├── password/
 │   ├── handler.go              # Handler構造体と依存性
 │   ├── edit.go                 # Edit (GET /password/edit)
 │   ├── update.go               # Update (PATCH /password)
 │   ├── validator.go            # バリデーション
 │   ├── validator_test.go       # バリデーションのテスト
-│   └── handler_test.go         # ハンドラーのテスト（New, Createなど各アクションのテストを含む）
+│   └── handler_test.go         # ハンドラーの統合テスト
 ├── sign_in/
 │   ├── handler.go              # Handler構造体と依存性
 │   ├── new.go                  # New (GET /sign_in) - サインインフォーム
 │   ├── create.go               # Create (POST /sign_in)
 │   ├── validator.go            # バリデーション（形式チェック + ユーザー検索、パスワード照合）
 │   ├── validator_test.go       # バリデーションのテスト
-│   └── handler_test.go         # ハンドラーのテスト（New, Createなど各アクションのテストを含む）
+│   └── handler_test.go         # ハンドラーの統合テスト
 ├── health/
 │   ├── handler.go       # Handler構造体と依存性
 │   ├── show.go          # Show (GET /health) - ヘルスチェック
@@ -90,10 +90,10 @@ internal/handler/
 
 **命名例**:
 
-| URL パターン    | リソース名（推奨）    | 理由                         |
-| --------------- | --------------------- | ---------------------------- |
+| URL パターン    | リソース名（推奨）   | 理由                         |
+| --------------- | -------------------- | ---------------------------- |
 | /works/popular  | `popular_work/` ⭕️   | 形容詞+名詞の自然な語順      |
-| /works/popular  | `work_popular/` ❌    | 「作品\_人気」は不自然       |
+| /works/popular  | `work_popular/` ❌   | 「作品\_人気」は不自然       |
 | /password/reset | `password_reset/` ⭕️ | 名詞として成立               |
 | /users/me       | `current_user/` ⭕️   | 「現在のユーザー」という名詞 |
 | /search         | `search/` ⭕️         | 「検索」という名詞           |
@@ -323,21 +323,21 @@ internal/handler/
 │   ├── create.go
 │   ├── validator.go            # バリデーション（形式チェック + ユーザー検索、パスワード照合）
 │   ├── validator_test.go       # バリデーションのテスト
-│   └── handler_test.go         # ハンドラーのテスト（New, Createなど各アクションのテストを含む）
+│   └── handler_test.go         # ハンドラーの統合テスト
 ├── password_reset/
 │   ├── handler.go
 │   ├── new.go
 │   ├── create.go
 │   ├── validator.go            # バリデーション（形式チェックのみの場合もあり）
 │   ├── validator_test.go       # バリデーションのテスト
-│   └── handler_test.go         # ハンドラーのテスト（New, Createなど各アクションのテストを含む）
+│   └── handler_test.go         # ハンドラーの統合テスト
 ├── password/
 │   ├── handler.go
 │   ├── edit.go
 │   ├── update.go
 │   ├── validator.go            # バリデーション
 │   ├── validator_test.go       # バリデーションのテスト
-│   └── handler_test.go         # ハンドラーのテスト（New, Createなど各アクションのテストを含む）
+│   └── handler_test.go         # ハンドラーの統合テスト
 ```
 
 **注**: すべてのリソースに `validator.go` が必要なわけではありません。バリデーションが必要な場合のみ作成します。

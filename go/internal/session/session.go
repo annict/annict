@@ -11,7 +11,7 @@ import (
 	"net/http"
 
 	"github.com/annict/annict/go/internal/config"
-	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/repository"
 )
 
@@ -105,8 +105,13 @@ func (m *Manager) GetSession(ctx context.Context, sessionID string) (*SessionDat
 	return sessionData, nil
 }
 
+// TouchSession はセッションのupdated_atを更新する
+func (m *Manager) TouchSession(ctx context.Context, sessionID string) error {
+	return m.sessionRepo.TouchSession(ctx, sessionID)
+}
+
 // GetCurrentUser は現在のログインユーザーを取得
-func (m *Manager) GetCurrentUser(ctx context.Context, r *http.Request) (*query.GetUserByIDRow, error) {
+func (m *Manager) GetCurrentUser(ctx context.Context, r *http.Request) (*model.User, error) {
 	sessionID, err := m.GetSessionID(r)
 	if err != nil {
 		return nil, err

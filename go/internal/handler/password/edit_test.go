@@ -50,7 +50,7 @@ func TestEdit_ValidToken(t *testing.T) {
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionManager := session.NewManager(sessionRepo, cfg)
 	passwordResetTokenRepo := repository.NewPasswordResetTokenRepository(queries)
-	updatePasswordUseCase := usecase.NewUpdatePasswordResetUsecase(db, queries)
+	updatePasswordUseCase := usecase.NewUpdatePasswordResetUsecase(db, repository.NewPasswordResetTokenRepository(queries), repository.NewUserRepository(queries), sessionRepo)
 
 	handler := NewHandler(cfg, db, passwordResetTokenRepo, sessionManager, nil, updatePasswordUseCase)
 
@@ -110,7 +110,7 @@ func TestEdit_InvalidToken(t *testing.T) {
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionManager := session.NewManager(sessionRepo, cfg)
 	passwordResetTokenRepo := repository.NewPasswordResetTokenRepository(queries)
-	updatePasswordUseCase := usecase.NewUpdatePasswordResetUsecase(db, queries)
+	updatePasswordUseCase := usecase.NewUpdatePasswordResetUsecase(db, repository.NewPasswordResetTokenRepository(queries), repository.NewUserRepository(queries), sessionRepo)
 
 	handler := NewHandler(cfg, db, passwordResetTokenRepo, sessionManager, nil, updatePasswordUseCase)
 
@@ -162,7 +162,7 @@ func TestEdit_ExpiredToken(t *testing.T) {
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionManager := session.NewManager(sessionRepo, cfg)
 	passwordResetTokenRepo := repository.NewPasswordResetTokenRepository(queries)
-	updatePasswordUseCase := usecase.NewUpdatePasswordResetUsecase(db, queries)
+	updatePasswordUseCase := usecase.NewUpdatePasswordResetUsecase(db, repository.NewPasswordResetTokenRepository(queries), repository.NewUserRepository(queries), sessionRepo)
 
 	handler := NewHandler(cfg, db, passwordResetTokenRepo, sessionManager, nil, updatePasswordUseCase)
 

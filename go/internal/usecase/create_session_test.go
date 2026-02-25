@@ -6,6 +6,7 @@ import (
 
 	"github.com/annict/annict/go/internal/auth"
 	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/testutil"
 )
 
@@ -34,7 +35,8 @@ func TestCreateSessionUsecase_Execute(t *testing.T) {
 	}
 
 	// UseCase を作成
-	uc := NewCreateSessionUsecase(queries)
+	sessionRepo := repository.NewSessionRepository(queries)
+	uc := NewCreateSessionUsecase(sessionRepo)
 
 	// セッションを作成
 	ctx := context.Background()
@@ -52,14 +54,12 @@ func TestCreateSessionUsecase_Execute(t *testing.T) {
 	}
 
 	// セッションがデータベースに保存されているか確認
-	// Private IDを生成して確認
-	privateID := generatePrivateID(result.PublicID)
-	session, err := queries.GetSessionByID(ctx, privateID)
+	session, err := repository.NewSessionRepository(queries).GetSessionByID(ctx, result.PublicID)
 	if err != nil {
 		t.Fatalf("セッションの取得に失敗: %v", err)
 	}
-	if session.SessionID != privateID {
-		t.Errorf("セッションIDが一致しません: got %s, want %s", session.SessionID, privateID)
+	if session == nil {
+		t.Fatal("セッションがnilです")
 	}
 }
 
@@ -88,7 +88,8 @@ func TestCreateSessionUsecase_Execute_WithFlashMessage(t *testing.T) {
 	}
 
 	// UseCase を作成
-	uc := NewCreateSessionUsecase(queries)
+	sessionRepo := repository.NewSessionRepository(queries)
+	uc := NewCreateSessionUsecase(sessionRepo)
 
 	// flashメッセージ付きでセッションを作成
 	ctx := context.Background()
@@ -114,7 +115,8 @@ func TestCreateSessionUsecase_Execute_WithInvalidUserID(t *testing.T) {
 	db, tx := testutil.SetupTestDB(t)
 
 	queries := query.New(db).WithTx(tx)
-	uc := NewCreateSessionUsecase(queries)
+	sessionRepo := repository.NewSessionRepository(queries)
+	uc := NewCreateSessionUsecase(sessionRepo)
 
 	// 存在しないユーザーIDでセッション作成を試みる
 	ctx := context.Background()
@@ -156,7 +158,8 @@ func TestCreateSessionUsecase_Execute_WithEmptyEncryptedPassword(t *testing.T) {
 		Build()
 
 	queries := query.New(db).WithTx(tx)
-	uc := NewCreateSessionUsecase(queries)
+	sessionRepo := repository.NewSessionRepository(queries)
+	uc := NewCreateSessionUsecase(sessionRepo)
 
 	// 空のencrypted_passwordでセッション作成を試みる
 	ctx := context.Background()
@@ -195,7 +198,8 @@ func TestCreateSessionUsecase_Execute_WithShortEncryptedPassword(t *testing.T) {
 		Build()
 
 	queries := query.New(db).WithTx(tx)
-	uc := NewCreateSessionUsecase(queries)
+	sessionRepo := repository.NewSessionRepository(queries)
+	uc := NewCreateSessionUsecase(sessionRepo)
 
 	// 29文字未満のencrypted_passwordでセッション作成を試みる
 	ctx := context.Background()
@@ -253,7 +257,8 @@ func TestCreateSessionUsecase_Execute_WithoutTransaction(t *testing.T) {
 
 	// UseCase を作成（トランザクションなしのqueries）
 	queriesWithoutTx := query.New(db)
-	uc := NewCreateSessionUsecase(queriesWithoutTx)
+	sessionRepo := repository.NewSessionRepository(queriesWithoutTx)
+	uc := NewCreateSessionUsecase(sessionRepo)
 
 	// トランザクションなしでセッションを作成
 	ctx := context.Background()
@@ -296,7 +301,8 @@ func TestCreateSessionUsecase_Execute_DuplicateSessionID(t *testing.T) {
 	}
 
 	// UseCase を作成
-	uc := NewCreateSessionUsecase(queries)
+	sessionRepo := repository.NewSessionRepository(queries)
+	uc := NewCreateSessionUsecase(sessionRepo)
 
 	// 最初のセッションを作成
 	ctx := context.Background()
@@ -317,15 +323,12 @@ func TestCreateSessionUsecase_Execute_DuplicateSessionID(t *testing.T) {
 	}
 
 	// 両方のセッションがデータベースに保存されていることを確認
-	privateID1 := generatePrivateID(result1.PublicID)
-	privateID2 := generatePrivateID(result2.PublicID)
-
-	_, err = queries.GetSessionByID(ctx, privateID1)
+	_, err = repository.NewSessionRepository(queries).GetSessionByID(ctx, result1.PublicID)
 	if err != nil {
 		t.Errorf("最初のセッションが取得できません: %v", err)
 	}
 
-	_, err = queries.GetSessionByID(ctx, privateID2)
+	_, err = repository.NewSessionRepository(queries).GetSessionByID(ctx, result2.PublicID)
 	if err != nil {
 		t.Errorf("2番目のセッションが取得できません: %v", err)
 	}

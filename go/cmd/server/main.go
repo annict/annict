@@ -207,7 +207,7 @@ func main() {
 	sessionManager := session.NewManager(sessionRepo, cfg)
 
 	// 認証ミドルウェアの初期化
-	authMW := authMiddleware.NewAuthMiddleware(sessionManager, sessionRepo)
+	authMW := authMiddleware.NewAuthMiddleware(sessionManager)
 
 	// リバースプロキシミドルウェアの初期化
 	var reverseProxyMW *authMiddleware.ReverseProxyMiddleware
@@ -287,11 +287,17 @@ func main() {
 	// ユーザーリポジトリの初期化
 	userRepo := repository.NewUserRepository(queries)
 
+	// サインインコードリポジトリの初期化
+	signInCodeRepo := repository.NewSignInCodeRepository(queries)
+
 	// 6桁コード送信ユースケースの初期化
-	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, queries, riverClient)
+	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, signInCodeRepo, userRepo, riverClient)
+
+	// サインアップコードリポジトリの初期化
+	signUpCodeRepo := repository.NewSignUpCodeRepository(queries)
 
 	// 新規登録確認コード送信ユースケースの初期化
-	sendSignUpCodeUC := usecase.NewSendSignUpCodeUsecase(db, queries, riverClient)
+	sendSignUpCodeUC := usecase.NewSendSignUpCodeUsecase(db, signUpCodeRepo, riverClient)
 
 	// Turnstileクライアントの初期化
 	turnstileClient := turnstile.NewClient(cfg.TurnstileSiteKey, cfg.TurnstileSecretKey)
@@ -303,18 +309,21 @@ func main() {
 	signUpHandler := sign_up.NewHandler(cfg, sessionManager, userRepo, limiter, sendSignUpCodeUC, turnstileClient)
 
 	// 新規登録確認コード検証ユースケースの初期化
-	verifySignUpCodeUC := usecase.NewVerifySignUpCodeUsecase(db, queries)
+	verifySignUpCodeUC := usecase.NewVerifySignUpCodeUsecase(db, signUpCodeRepo)
 
 	// 新規登録確認コード入力ハンドラーの初期化
 	signUpCodeHandler := sign_up_code.NewHandler(cfg, sessionManager, db, limiter, redisClient, sendSignUpCodeUC, verifySignUpCodeUC)
 
 	// ユーザー名設定とユーザー登録ハンドラーの初期化
-	completeSignUpUC := usecase.NewCompleteSignUpUsecase(db, queries, redisClient)
+	profileRepo := repository.NewProfileRepository(queries)
+	settingRepo := repository.NewSettingRepository(queries)
+	emailNotificationRepo := repository.NewEmailNotificationRepository(queries)
+	completeSignUpUC := usecase.NewCompleteSignUpUsecase(db, userRepo, profileRepo, settingRepo, emailNotificationRepo, sessionRepo, redisClient)
 	signUpUsernameHandler := sign_up_username.NewHandler(cfg, sessionManager, redisClient, completeSignUpUC)
 
 	// 6桁コード入力ハンドラーの初期化
-	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, queries)
-	createSessionUC := usecase.NewCreateSessionUsecase(queries)
+	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo)
+	createSessionUC := usecase.NewCreateSessionUsecase(sessionRepo)
 	signInCodeHandler := sign_in_code.NewHandler(cfg, sessionManager, userRepo, db, limiter, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
 
 	// パスワードログインハンドラーの初期化
@@ -324,12 +333,12 @@ func main() {
 	signOutHandler := sign_out.NewHandler(sessionManager)
 
 	// パスワードリセット申請ハンドラーの初期化
-	createPasswordResetTokenUC := usecase.NewCreatePasswordResetTokenUsecase(db, queries, cfg, riverClient)
+	passwordResetTokenRepo := repository.NewPasswordResetTokenRepository(queries)
+	createPasswordResetTokenUC := usecase.NewCreatePasswordResetTokenUsecase(db, userRepo, passwordResetTokenRepo, cfg, riverClient)
 	passwordResetHandler := password_reset.NewHandler(cfg, userRepo, sessionManager, limiter, turnstileClient, createPasswordResetTokenUC)
 
 	// パスワード編集・更新ハンドラーの初期化
-	passwordResetTokenRepo := repository.NewPasswordResetTokenRepository(queries)
-	updatePasswordUC := usecase.NewUpdatePasswordResetUsecase(db, queries)
+	updatePasswordUC := usecase.NewUpdatePasswordResetUsecase(db, passwordResetTokenRepo, userRepo, sessionRepo)
 	passwordHandler := password.NewHandler(cfg, db, passwordResetTokenRepo, sessionManager, limiter, updatePasswordUC)
 
 	// Web App Manifestハンドラーの初期化

@@ -40,8 +40,9 @@ func TestCreate_ErrorMessageUnification(t *testing.T) {
 
 	// usecaseの初期化
 	queries := testutil.NewQueriesWithTx(db, tx)
-	sendSignUpCodeUC := usecase.NewSendSignUpCodeUsecase(db, queries, nil)
-	verifySignUpCodeUC := usecase.NewVerifySignUpCodeUsecase(db, queries)
+	sendSignUpCodeUC := usecase.NewSendSignUpCodeUsecase(db, repository.NewSignUpCodeRepository(queries), nil)
+	signUpCodeRepo := repository.NewSignUpCodeRepository(queries)
+	verifySignUpCodeUC := usecase.NewVerifySignUpCodeUsecase(db, signUpCodeRepo)
 
 	// セッションマネージャーの初期化
 	sessionRepo := repository.NewSessionRepository(queries)

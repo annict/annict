@@ -9,21 +9,25 @@ import (
 
 	"github.com/annict/annict/go/internal/auth"
 	"github.com/annict/annict/go/internal/password_reset"
-	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/validator"
 )
 
 // UpdatePasswordResetUsecase はパスワードリセットによるパスワード更新を行うユースケースです
 type UpdatePasswordResetUsecase struct {
-	db      *sql.DB
-	queries *query.Queries
+	db                     *sql.DB
+	passwordResetTokenRepo *repository.PasswordResetTokenRepository
+	userRepo               *repository.UserRepository
+	sessionRepo            *repository.SessionRepository
 }
 
 // NewUpdatePasswordResetUsecase は新しいUpdatePasswordResetUsecaseを作成します
-func NewUpdatePasswordResetUsecase(db *sql.DB, queries *query.Queries) *UpdatePasswordResetUsecase {
+func NewUpdatePasswordResetUsecase(db *sql.DB, passwordResetTokenRepo *repository.PasswordResetTokenRepository, userRepo *repository.UserRepository, sessionRepo *repository.SessionRepository) *UpdatePasswordResetUsecase {
 	return &UpdatePasswordResetUsecase{
-		db:      db,
-		queries: queries,
+		db:                     db,
+		passwordResetTokenRepo: passwordResetTokenRepo,
+		userRepo:               userRepo,
+		sessionRepo:            sessionRepo,
 	}
 }
 
@@ -37,7 +41,7 @@ type UpdatePasswordResetResult struct {
 func (uc *UpdatePasswordResetUsecase) Execute(ctx context.Context, token, newPassword string) (*UpdatePasswordResetResult, error) {
 	// トークンをハッシュ化してデータベースから検索
 	tokenDigest := password_reset.HashToken(token)
-	resetToken, err := uc.queries.GetPasswordResetTokenByDigest(ctx, tokenDigest)
+	resetToken, err := uc.passwordResetTokenRepo.GetByDigest(ctx, tokenDigest)
 	if err == sql.ErrNoRows {
 		slog.WarnContext(ctx, "無効なパスワードリセットトークン",
 			"token_digest", tokenDigest,
@@ -72,7 +76,8 @@ func (uc *UpdatePasswordResetUsecase) Execute(ctx context.Context, token, newPas
 	}
 	defer func() { _ = tx.Rollback() }()
 
-	queriesWithTx := uc.queries.WithTx(tx)
+	passwordResetTokenRepoTx := uc.passwordResetTokenRepo.WithTx(tx)
+	userRepoTx := uc.userRepo.WithTx(tx)
 
 	// パスワードをハッシュ化
 	hashedPassword, err := auth.HashPassword(newPassword)
@@ -81,23 +86,21 @@ func (uc *UpdatePasswordResetUsecase) Execute(ctx context.Context, token, newPas
 	}
 
 	// パスワードを更新
-	params := query.UpdateUserPasswordParams{
+	if err := userRepoTx.UpdatePassword(ctx, repository.UpdateUserPasswordParams{
 		ID:                resetToken.UserID,
 		EncryptedPassword: hashedPassword,
-	}
-
-	if err := queriesWithTx.UpdateUserPassword(ctx, params); err != nil {
+	}); err != nil {
 		return nil, fmt.Errorf("パスワードの更新に失敗: %w", err)
 	}
 
 	// トークンを使用済みにマーク
-	if err := queriesWithTx.MarkPasswordResetTokenAsUsed(ctx, resetToken.ID); err != nil {
+	if err := passwordResetTokenRepoTx.MarkAsUsed(ctx, resetToken.ID); err != nil {
 		return nil, fmt.Errorf("トークンの使用済みマークに失敗: %w", err)
 	}
 
 	// 新しいセッションを作成
 	// まずユーザー情報を取得（encrypted_passwordが必要）
-	user, err := queriesWithTx.GetUserByID(ctx, resetToken.UserID)
+	user, err := userRepoTx.GetByID(ctx, resetToken.UserID)
 	if err != nil {
 		return nil, fmt.Errorf("ユーザー情報の取得に失敗: %w", err)
 	}
@@ -123,7 +126,7 @@ func (uc *UpdatePasswordResetUsecase) Execute(ctx context.Context, token, newPas
 	}
 
 	// CreateSessionUsecaseを使用してセッションを作成
-	createSessionUC := NewCreateSessionUsecase(uc.queries)
+	createSessionUC := NewCreateSessionUsecase(uc.sessionRepo)
 	sessionResult, err := createSessionUC.Execute(ctx, tx, user.ID, user.EncryptedPassword, "")
 	if err != nil {
 		return nil, fmt.Errorf("セッションの作成に失敗: %w", err)

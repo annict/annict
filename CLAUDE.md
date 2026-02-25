@@ -177,7 +177,7 @@ docker compose up -d
   - Usecase、Repositoryの使い分け
 - [@go/docs/handler-guide.md](/workspace/go/docs/handler-guide.md) - HTTPハンドラーガイドライン
   - ディレクトリ構造
-  - 標準ファイル名（8種類のみ）
+  - 標準ファイル名（9種類のみ）
   - 依存性注入
 - [@go/docs/validation-guide.md](/workspace/go/docs/validation-guide.md) - バリデーションガイド
   - バリデーションの分類

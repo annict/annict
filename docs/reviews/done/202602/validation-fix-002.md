@@ -2,15 +2,15 @@
 
 ## レビュー情報
 
-| 項目                   | 内容                                                   |
-| ---------------------- | ------------------------------------------------------ |
-| レビュー日             | 2026-02-09                                             |
-| 対象ブランチ           | validation-fix                                         |
-| ベースブランチ         | validation                                             |
-| 設計書（指定があれば） | docs/designs/1_doing/worker-unification.md              |
-| 変更ファイル数         | 50 ファイル                                            |
-| 変更行数（実装）       | +723 / -694 行                                         |
-| 変更行数（テスト）     | +805 / -939 行                                         |
+| 項目                   | 内容                                       |
+| ---------------------- | ------------------------------------------ |
+| レビュー日             | 2026-02-09                                 |
+| 対象ブランチ           | validation-fix                             |
+| ベースブランチ         | validation                                 |
+| 設計書（指定があれば） | docs/designs/1_doing/worker-unification.md |
+| 変更ファイル数         | 50 ファイル                                |
+| 変更行数（実装）       | +723 / -694 行                             |
+| 変更行数（テスト）     | +805 / -939 行                             |
 
 ## 参照するガイドライン
 
@@ -118,29 +118,29 @@
 
 設計書 `validator-consolidation.md` の要件との適合性を確認しました：
 
-| 要件 | 適合 | 備考 |
-|------|------|------|
-| `request.go` → `validator.go` にリネーム | ✅ | 7ファイルすべて対応済み |
-| `{Action}Validator` 命名規則 | ✅ | 全バリデーターが準拠 |
-| `{Action}ValidatorInput` 入力構造体 | ✅ | 全バリデーターが準拠 |
-| `{Action}ValidatorResult` 結果構造体 | ✅ | 全バリデーターが準拠 |
-| `New{Action}Validator` コンストラクタ | ✅ | 全バリデーターが準拠 |
-| i18n対応 | ✅ | 全エラーメッセージが `i18n.T()` を使用 |
-| 正規表現のパッケージレベル定義 | ✅ | `sign_up_code`, `sign_up_username` で準拠 |
-| ハンドラーの呼び出しパターン統一 | ✅ | 全ハンドラーが統一パターンを使用 |
+| 要件                                     | 適合 | 備考                                      |
+| ---------------------------------------- | ---- | ----------------------------------------- |
+| `request.go` → `validator.go` にリネーム | ✅   | 7ファイルすべて対応済み                   |
+| `{Action}Validator` 命名規則             | ✅   | 全バリデーターが準拠                      |
+| `{Action}ValidatorInput` 入力構造体      | ✅   | 全バリデーターが準拠                      |
+| `{Action}ValidatorResult` 結果構造体     | ✅   | 全バリデーターが準拠                      |
+| `New{Action}Validator` コンストラクタ    | ✅   | 全バリデーターが準拠                      |
+| i18n対応                                 | ✅   | 全エラーメッセージが `i18n.T()` を使用    |
+| 正規表現のパッケージレベル定義           | ✅   | `sign_up_code`, `sign_up_username` で準拠 |
+| ハンドラーの呼び出しパターン統一         | ✅   | 全ハンドラーが統一パターンを使用          |
 
 ### Worker実装統一（設計書: worker-unification.md）
 
-| 要件 | 適合 | 備考 |
-|------|------|------|
-| タスク 2-1: InsertOptsメソッド追加 | ✅ | `SendEmailArgs`, `CleanupExpiredTokensArgs`, `CleanupExpiredSignInCodesArgs` に追加 |
-| タスク 2-2: 事前レンダリング方式に変更 | ✅ | `BuildXxxEmail` 関数でテンプレートを事前レンダリング |
-| 統一されたSendEmailArgs | ✅ | `To`, `Subject`, `HTMLBody`, `TextBody` フィールドの統一構造体 |
-| ログ出力（開始・完了・エラー） | ✅ | `slog.InfoContext` / `slog.ErrorContext` を使用 |
-| DBドライバー: pgx/v5 + riverpgxv5 | ✅ | 既存のclient.goで対応済み |
-| ワーカー登録: client.go内部 | ✅ | client.goで`SendEmailWorker`を登録 |
-| コネクションプール設定 | ✅ | 既存のclient.goで対応済み |
-| `mail.SendRaw` インターフェース | ✅ | `Sender` インターフェースに `SendRaw` メソッドを追加 |
+| 要件                                   | 適合 | 備考                                                                                |
+| -------------------------------------- | ---- | ----------------------------------------------------------------------------------- |
+| タスク 2-1: InsertOptsメソッド追加     | ✅   | `SendEmailArgs`, `CleanupExpiredTokensArgs`, `CleanupExpiredSignInCodesArgs` に追加 |
+| タスク 2-2: 事前レンダリング方式に変更 | ✅   | `BuildXxxEmail` 関数でテンプレートを事前レンダリング                                |
+| 統一されたSendEmailArgs                | ✅   | `To`, `Subject`, `HTMLBody`, `TextBody` フィールドの統一構造体                      |
+| ログ出力（開始・完了・エラー）         | ✅   | `slog.InfoContext` / `slog.ErrorContext` を使用                                     |
+| DBドライバー: pgx/v5 + riverpgxv5      | ✅   | 既存のclient.goで対応済み                                                           |
+| ワーカー登録: client.go内部            | ✅   | client.goで`SendEmailWorker`を登録                                                  |
+| コネクションプール設定                 | ✅   | 既存のclient.goで対応済み                                                           |
+| `mail.SendRaw` インターフェース        | ✅   | `Sender` インターフェースに `SendRaw` メソッドを追加                                |
 
 ## 総合評価
 

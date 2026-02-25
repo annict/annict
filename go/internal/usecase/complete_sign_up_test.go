@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/testutil"
 )
 
@@ -15,6 +16,10 @@ func TestCompleteSignUpUsecase_Execute(t *testing.T) {
 	ctx := context.Background()
 
 	queries := testutil.NewQueriesWithTx(db, tx)
+	userRepo := repository.NewUserRepository(queries).WithTx(tx)
+	profileRepo := repository.NewProfileRepository(queries).WithTx(tx)
+	settingRepo := repository.NewSettingRepository(queries).WithTx(tx)
+	emailNotificationRepo := repository.NewEmailNotificationRepository(queries).WithTx(tx)
 
 	tests := []struct {
 		name      string
@@ -97,7 +102,7 @@ func TestCompleteSignUpUsecase_Execute(t *testing.T) {
 			}
 
 			// ユースケースを実行
-			uc := NewCompleteSignUpUsecase(db, queries, rdb)
+			uc := NewCompleteSignUpUsecase(db, userRepo, profileRepo, settingRepo, emailNotificationRepo, repository.NewSessionRepository(queries), rdb)
 			result, err := uc.Execute(ctx, tt.token, tt.username, tt.locale)
 
 			// エラーチェック
@@ -178,6 +183,10 @@ func TestCompleteSignUpUsecase_Execute_Integration(t *testing.T) {
 	ctx := context.Background()
 
 	queries := testutil.NewQueriesWithTx(db, tx)
+	userRepo := repository.NewUserRepository(queries).WithTx(tx)
+	profileRepo := repository.NewProfileRepository(queries).WithTx(tx)
+	settingRepo := repository.NewSettingRepository(queries).WithTx(tx)
+	emailNotificationRepo := repository.NewEmailNotificationRepository(queries).WithTx(tx)
 
 	// 一時トークンをRedisに保存
 	token := "valid-token-integration"
@@ -188,7 +197,7 @@ func TestCompleteSignUpUsecase_Execute_Integration(t *testing.T) {
 	}
 
 	// ユースケースを作成（Redisあり）
-	uc := NewCompleteSignUpUsecase(db, queries, rdb)
+	uc := NewCompleteSignUpUsecase(db, userRepo, profileRepo, settingRepo, emailNotificationRepo, repository.NewSessionRepository(queries), rdb)
 
 	// ユーザー登録を実行
 	result, err := uc.Execute(ctx, token, "testuser_noredis", "ja")

@@ -8,6 +8,7 @@ import (
 
 	"github.com/annict/annict/go/internal/auth"
 	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/testutil"
 )
 
@@ -53,7 +54,8 @@ func TestVerifySignInCodeUsecase_Execute_Success(t *testing.T) {
 	}
 
 	// ユースケースを作成
-	uc := NewVerifySignInCodeUsecase(db, queries)
+	signInCodeRepo := repository.NewSignInCodeRepository(queries)
+	uc := NewVerifySignInCodeUsecase(db, signInCodeRepo)
 
 	// Execute を実行（正しいコード）
 	err = uc.Execute(ctx, userID, code)
@@ -92,7 +94,8 @@ func TestVerifySignInCodeUsecase_Execute_CodeNotFound(t *testing.T) {
 	}
 
 	// ユースケースを作成
-	uc := NewVerifySignInCodeUsecase(db, queries)
+	signInCodeRepo := repository.NewSignInCodeRepository(queries)
+	uc := NewVerifySignInCodeUsecase(db, signInCodeRepo)
 
 	ctx := context.Background()
 
@@ -149,7 +152,8 @@ func TestVerifySignInCodeUsecase_Execute_CodeExpired(t *testing.T) {
 	}
 
 	// ユースケースを作成
-	uc := NewVerifySignInCodeUsecase(db, queries)
+	signInCodeRepo := repository.NewSignInCodeRepository(queries)
+	uc := NewVerifySignInCodeUsecase(db, signInCodeRepo)
 
 	// Execute を実行（有効期限切れ）
 	err = uc.Execute(ctx, userID, code)
@@ -205,7 +209,8 @@ func TestVerifySignInCodeUsecase_Execute_InvalidCode(t *testing.T) {
 	}
 
 	// ユースケースを作成
-	uc := NewVerifySignInCodeUsecase(db, queries)
+	signInCodeRepo := repository.NewSignInCodeRepository(queries)
+	uc := NewVerifySignInCodeUsecase(db, signInCodeRepo)
 
 	// Execute を実行（間違ったコード）
 	err = uc.Execute(ctx, userID, "999999")
@@ -271,7 +276,8 @@ func TestVerifySignInCodeUsecase_Execute_AttemptsExceeded(t *testing.T) {
 	}
 
 	// ユースケースを作成
-	uc := NewVerifySignInCodeUsecase(db, queries)
+	signInCodeRepo := repository.NewSignInCodeRepository(queries)
+	uc := NewVerifySignInCodeUsecase(db, signInCodeRepo)
 
 	// 5回間違ったコードを入力
 	for i := 0; i < 5; i++ {
@@ -365,7 +371,8 @@ func TestVerifySignInCodeUsecase_Execute_CodeUsedOnce(t *testing.T) {
 	}
 
 	// ユースケースを作成
-	uc := NewVerifySignInCodeUsecase(db, queries)
+	signInCodeRepo := repository.NewSignInCodeRepository(queries)
+	uc := NewVerifySignInCodeUsecase(db, signInCodeRepo)
 
 	// 1回目：正しいコードで成功
 	err = uc.Execute(ctx, userID, code)

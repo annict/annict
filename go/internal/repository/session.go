@@ -4,9 +4,11 @@ package repository
 import (
 	"context"
 	"crypto/sha256"
+	"database/sql"
 	"encoding/hex"
 	"fmt"
 
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
 )
 
@@ -18,6 +20,11 @@ type SessionRepository struct {
 // NewSessionRepository はSessionRepositoryを作成します
 func NewSessionRepository(queries *query.Queries) *SessionRepository {
 	return &SessionRepository{queries: queries}
+}
+
+// WithTx はトランザクションを使用する新しいRepositoryを返します
+func (r *SessionRepository) WithTx(tx *sql.Tx) *SessionRepository {
+	return &SessionRepository{queries: r.queries.WithTx(tx)}
 }
 
 // TouchSession はセッションのupdated_atを更新します
@@ -40,12 +47,26 @@ func (r *SessionRepository) GetSessionByID(ctx context.Context, sessionID string
 }
 
 // GetUserByID はユーザーIDからユーザー情報を取得します
-func (r *SessionRepository) GetUserByID(ctx context.Context, userID int64) (*query.GetUserByIDRow, error) {
-	user, err := r.queries.GetUserByID(ctx, userID)
+func (r *SessionRepository) GetUserByID(ctx context.Context, userID int64) (*model.User, error) {
+	row, err := r.queries.GetUserByID(ctx, userID)
 	if err != nil {
 		return nil, err
 	}
-	return &user, nil
+	return &model.User{
+		ID:                  row.ID,
+		Username:            row.Username,
+		Email:               row.Email,
+		Role:                row.Role,
+		EncryptedPassword:   row.EncryptedPassword,
+		Locale:              row.Locale,
+		TimeZone:            row.TimeZone,
+		StripeSubscriberID:  row.StripeSubscriberID,
+		GumroadSubscriberID: row.GumroadSubscriberID,
+		NotificationsCount:  row.NotificationsCount,
+		CreatedAt:           row.CreatedAt,
+		UpdatedAt:           row.UpdatedAt,
+		ProfileImageData:    row.ProfileImageData,
+	}, nil
 }
 
 // UpdateSession はセッションを更新します

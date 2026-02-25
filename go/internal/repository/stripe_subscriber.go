@@ -9,8 +9,14 @@ import (
 )
 
 // StripeSubscriber はStripeサブスクライバーの型エイリアスです
-// ハンドラーがqueryパッケージを直接参照しないようにするため、repositoryで公開します
+// ハンドラーやUsecaseがqueryパッケージを直接参照しないようにするため、repositoryで公開します
 type StripeSubscriber = query.StripeSubscriber
+
+// CreateStripeSubscriberParams はStripeサブスクライバー作成のパラメータの型エイリアスです
+type CreateStripeSubscriberParams = query.CreateStripeSubscriberParams
+
+// UpdateStripeSubscriberParams はStripeサブスクライバー更新のパラメータの型エイリアスです
+type UpdateStripeSubscriberParams = query.UpdateStripeSubscriberParams
 
 // StripeSubscriberRepository はStripeサブスクライバー関連のデータアクセスを担当します
 type StripeSubscriberRepository struct {

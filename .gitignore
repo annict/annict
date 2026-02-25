@@ -5,4 +5,5 @@
 /.pnpm-store
 /compose-up.sh
 /docker-compose.override.yml
+/node_modules
 /tmp

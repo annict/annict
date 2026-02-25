@@ -12,7 +12,6 @@ import (
 	"github.com/stripe/stripe-go/v84"
 
 	"github.com/annict/annict/go/internal/model"
-	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/repository"
 	annictstripe "github.com/annict/annict/go/internal/stripe"
 )
@@ -49,7 +48,7 @@ type CreateStripeSubscriberInput struct {
 
 // CreateStripeSubscriberResult はcheckout.session.completedイベント処理の結果
 type CreateStripeSubscriberResult struct {
-	StripeSubscriber query.StripeSubscriber
+	StripeSubscriber repository.StripeSubscriber
 }
 
 // Execute はcheckout.session.completedイベントを処理します
@@ -98,7 +97,7 @@ func (uc *CreateStripeSubscriberUsecase) Execute(
 	userRepoTx := uc.userRepo.WithTx(tx)
 
 	// StripeSubscriberレコードを作成
-	stripeSubscriber, err := stripeSubscriberRepoTx.Create(ctx, query.CreateStripeSubscriberParams{
+	stripeSubscriber, err := stripeSubscriberRepoTx.Create(ctx, repository.CreateStripeSubscriberParams{
 		StripeCustomerID:         input.StripeCustomerID,
 		StripeSubscriptionID:     input.StripeSubscriptionID,
 		StripePriceID:            priceID,

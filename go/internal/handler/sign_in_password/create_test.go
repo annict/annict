@@ -46,7 +46,7 @@ func TestCreate_Success(t *testing.T) {
 
 	// UserRepositoryとCreateSessionUsecaseを作成
 	userRepo := repository.NewUserRepository(queries)
-	createSessionUC := usecase.NewCreateSessionUsecase(queries)
+	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
 	handler := NewHandler(cfg, userRepo, sessionMgr, createSessionUC)
 
@@ -142,7 +142,7 @@ func TestCreate_InvalidCredentials(t *testing.T) {
 
 	// UserRepositoryとCreateSessionUsecaseを作成
 	userRepo := repository.NewUserRepository(queries)
-	createSessionUC := usecase.NewCreateSessionUsecase(queries)
+	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
 	handler := NewHandler(cfg, userRepo, sessionMgr, createSessionUC)
 
@@ -199,7 +199,7 @@ func TestCreate_WithBackParam(t *testing.T) {
 	sessionMgr := session.NewManager(sessionRepo, cfg)
 
 	userRepo := repository.NewUserRepository(queries)
-	createSessionUC := usecase.NewCreateSessionUsecase(queries)
+	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
 	handler := NewHandler(cfg, userRepo, sessionMgr, createSessionUC)
 
@@ -256,7 +256,7 @@ func TestCreate_WithInvalidBackParam(t *testing.T) {
 	sessionMgr := session.NewManager(sessionRepo, cfg)
 
 	userRepo := repository.NewUserRepository(queries)
-	createSessionUC := usecase.NewCreateSessionUsecase(queries)
+	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
 	handler := NewHandler(cfg, userRepo, sessionMgr, createSessionUC)
 
@@ -313,7 +313,7 @@ func TestCreate_WithProtocolRelativeBackParam(t *testing.T) {
 	sessionMgr := session.NewManager(sessionRepo, cfg)
 
 	userRepo := repository.NewUserRepository(queries)
-	createSessionUC := usecase.NewCreateSessionUsecase(queries)
+	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
 	handler := NewHandler(cfg, userRepo, sessionMgr, createSessionUC)
 
@@ -372,7 +372,7 @@ func TestCreate_GlobalError(t *testing.T) {
 
 	// UserRepositoryとCreateSessionUsecaseを作成
 	userRepo := repository.NewUserRepository(queries)
-	createSessionUC := usecase.NewCreateSessionUsecase(queries)
+	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
 	handler := NewHandler(cfg, userRepo, sessionMgr, createSessionUC)
 
@@ -447,7 +447,7 @@ func TestCreate_WithoutSessionEmail(t *testing.T) {
 	sessionMgr := session.NewManager(sessionRepo, cfg)
 
 	userRepo := repository.NewUserRepository(queries)
-	createSessionUC := usecase.NewCreateSessionUsecase(queries)
+	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
 	handler := NewHandler(cfg, userRepo, sessionMgr, createSessionUC)
 

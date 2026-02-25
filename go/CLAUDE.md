@@ -231,21 +231,21 @@ go install github.com/新しいツール/cmd/ツール名
 
 #### 例: golangci-lint の追加
 
-golangci-lint v2.6.2 を追加する例：
+golangci-lint v2.7.2 を追加する例：
 
 ```sh
 # 1. tools.go に追加（既に追加済み）
 # _ "github.com/golangci/golangci-lint/v2/cmd/golangci-lint"
 
 # 2. 特定のバージョンを取得
-go get github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.6.2
+go get github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.7.2
 
 # 3. インストール
 go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint
 
 # 4. バージョン確認
 golangci-lint version
-# => golangci-lint has version 2.6.2 built with go1.25.1 ...
+# => golangci-lint has version 2.7.2 built with go1.25.1 ...
 ```
 
 ### ホスト側で実行するコマンド (Claude Code による実行は不要)
@@ -441,7 +441,7 @@ make sqlc-generate
   - テスト用 DB (`annict_test`) を完全にリセット（`DROP SCHEMA public CASCADE`）
   - `db/schema.sql` を適用して最新のスキーマを再作成
   - これにより、常にクリーンな状態でテストが実行されます
-- PostgreSQL 17.6 の `\restrict` コマンド対策として、自動的にクリーンアップ処理が実行されます
+- PostgreSQL 17.6 以降の `\restrict` コマンド対策として、自動的にクリーンアップ処理が実行されます
   - 参照: https://github.com/amacneil/dbmate/issues/678
 - **マイグレーション単体のテストは不要**: マイグレーションが正しく適用されているかは、リポジトリやユースケースのテストで間接的に検証されます。テーブルが正しく作成されていなければ、それらのテストが失敗するためです。
 
@@ -580,14 +580,14 @@ func generateTemplFiles() error {
 
 **使用する関数**:
 
-| 関数 | 用途 |
-|------|------|
-| `slog.Info(msg, key, value, ...)` | 通常の情報ログ（コンテキストなし） |
-| `slog.Warn(msg, key, value, ...)` | 警告ログ（コンテキストなし） |
-| `slog.Error(msg, key, value, ...)` | エラーログ（コンテキストなし） |
-| `slog.InfoContext(ctx, msg, key, value, ...)` | 通常の情報ログ（コンテキストあり） |
-| `slog.WarnContext(ctx, msg, key, value, ...)` | 警告ログ（コンテキストあり） |
-| `slog.ErrorContext(ctx, msg, key, value, ...)` | エラーログ（コンテキストあり） |
+| 関数                                           | 用途                               |
+| ---------------------------------------------- | ---------------------------------- |
+| `slog.Info(msg, key, value, ...)`              | 通常の情報ログ（コンテキストなし） |
+| `slog.Warn(msg, key, value, ...)`              | 警告ログ（コンテキストなし）       |
+| `slog.Error(msg, key, value, ...)`             | エラーログ（コンテキストなし）     |
+| `slog.InfoContext(ctx, msg, key, value, ...)`  | 通常の情報ログ（コンテキストあり） |
+| `slog.WarnContext(ctx, msg, key, value, ...)`  | 警告ログ（コンテキストあり）       |
+| `slog.ErrorContext(ctx, msg, key, value, ...)` | エラーログ（コンテキストあり）     |
 
 **コンテキストの使い分け**:
 
@@ -596,12 +596,12 @@ func generateTemplFiles() error {
 
 **ログレベルの選択基準**:
 
-| レベル | 用途 | 例 |
-|--------|------|-----|
-| `slog.Debug` | デバッグ情報（通常は出力しない） | 変数の値、処理の詳細 |
-| `slog.Info` | 通常の情報（サーバー起動、処理完了など） | サーバー起動、DB接続成功 |
-| `slog.Warn` | 警告（処理は継続するが注意が必要） | 非推奨機能の使用、リトライ |
-| `slog.Error` | エラー（処理が失敗した場合） | DB接続失敗、API呼び出し失敗 |
+| レベル       | 用途                                     | 例                          |
+| ------------ | ---------------------------------------- | --------------------------- |
+| `slog.Debug` | デバッグ情報（通常は出力しない）         | 変数の値、処理の詳細        |
+| `slog.Info`  | 通常の情報（サーバー起動、処理完了など） | サーバー起動、DB接続成功    |
+| `slog.Warn`  | 警告（処理は継続するが注意が必要）       | 非推奨機能の使用、リトライ  |
+| `slog.Error` | エラー（処理が失敗した場合）             | DB接続失敗、API呼び出し失敗 |
 
 **良い例**:
 
@@ -760,6 +760,46 @@ templ New(ctx context.Context, formErrors *session.FormErrors, csrfToken string,
 - **拡張性**: 新しいフィールドを追加してもシグネチャが変わらない
 - **可読性**: 呼び出し側でフィールド名が明確になる
 - **Go の慣習**: 引数が多い関数には構造体を使用するのが Go の標準的なパターン
+
+#### テンプレートデータ構造体と ViewModel の関係
+
+テンプレートに渡すデータ構造体（`EditPageData` など）では、モデルのフィールドを個別のプリミティブ値として展開せず、ViewModel を構成要素として使用する。
+
+- ✅ **ViewModel を構成要素にする**: `User viewmodel.User`
+- ❌ **モデルのフィールドを個別に並べない**: `Name string`, `Email string`
+
+モデルからテンプレート表示用データへの変換ロジック（フォールバック、デフォルト値の決定など）は ViewModel のコンストラクタに配置し、ハンドラーには書かない。派生的な判定（例: タイトルが空ならオートフォーカス）は ViewModel のメソッドとして提供する。
+
+**良い例**:
+
+```go
+// テンプレートデータ構造体にViewModelを使用
+type EditProfileData struct {
+    CSRFToken string
+    User      viewmodel.User
+}
+
+// ハンドラーではViewModelのコンストラクタを呼ぶだけ
+userVM := viewmodel.NewUserForEdit(user)
+```
+
+**悪い例**:
+
+```go
+// ❌ モデルのフィールドを個別に展開している
+type EditProfileData struct {
+    CSRFToken string
+    Name      string
+    Email     string
+    Bio       string
+}
+
+// ❌ ハンドラーで変換・判定ロジックを書いている
+var name string
+if user.Name != nil {
+    name = *user.Name
+}
+```
 
 #### 詳細ドキュメント
 
@@ -986,7 +1026,9 @@ Web アプリケーションのセキュリティは**最優先事項**です。
 ### 基本方針
 
 - **実データベースを使用**: 基本的にデータベースをモックせず、実際の PostgreSQL データベースを使用してテストを実行
+- **DB接続プールの共有**: `TestMain` パターンでパッケージ単位でDB接続を1回だけ確立し、全テストで共有
 - **トランザクションでの分離**: 各テストはトランザクション内で実行し、テスト終了時に自動ロールバックすることでデータをクリーンアップ
+- **テスト用bcryptコストの低減**: テスト時はbcryptコストを最小値（4）に設定し、パスワードハッシュの計算を高速化
 - **テストヘルパーの活用**: `internal/testutil` パッケージのヘルパー関数とビルダーパターンを使用してテストデータを作成
 - **自動スキーマセットアップ**: `make test` を実行すると、テスト用データベースが自動的にリセットされ、`db/schema.sql` が適用されます（常にクリーンな状態でテストが実行される）
 
@@ -996,10 +1038,61 @@ Web アプリケーションのセキュリティは**最優先事項**です。
 - **テスト関数**: `Test` で始まる名前（例: `TestPopularWorks`）
 - **ベンチマーク関数**: `Benchmark` で始まる名前（例: `BenchmarkPopularWorks`）
 
+### DB接続の共有化（TestMainパターン）
+
+各テストパッケージでは `TestMain` を使用し、DB接続を1回だけ確立してパッケージ内の全テストで共有します。
+
+**セットアップの流れ**:
+
+```
+TestMain: sql.Open → Ping → bcryptコスト設定
+テスト1: Begin → テスト実行 → Rollback
+テスト2: Begin → テスト実行 → Rollback
+TestMain: Close
+```
+
+**新規テストパッケージの作成手順**:
+
+1. `main_test.go` を作成し、`TestMain` で `testutil.SetupTestMain` を呼び出す
+2. 各テスト関数では `testutil.SetupTx(t)` でトランザクションを取得
+3. Usecaseなどトランザクション管理を自前で行うテストでは `testutil.GetTestDB()` を使用
+
+```go
+// main_test.go
+package handler_test
+
+import (
+    "os"
+    "testing"
+
+    "github.com/annict/annict/go/internal/testutil"
+)
+
+func TestMain(m *testing.M) {
+    os.Exit(testutil.SetupTestMain(m))
+}
+```
+
+```go
+// create_test.go
+func TestCreate_Success(t *testing.T) {
+    t.Parallel()
+
+    db, tx := testutil.SetupTx(t)
+    // 以降は既存のテストコードと同じ
+}
+```
+
+**`SetupTestMain` が行う初期化**:
+
+- テスト用にbcryptコストを下げる（DefaultCost 10 → MinCost 4 で約64倍高速化）
+- DB接続プールを1回だけ確立し、パッケージ内の全テストで共有
+
 ### テストのベストプラクティス
 
 - **実データベースを使用**: モックではなく実際の PostgreSQL データベースでテスト
-- **トランザクション分離**: `testutil.SetupTestDB(t)` でテスト用 DB とトランザクションをセットアップ
+- **TestMainパターン**: 各テストパッケージに `main_test.go` を作成し、`testutil.SetupTestMain(m)` でDB接続を共有
+- **トランザクション分離**: `testutil.SetupTx(t)` でテスト用トランザクションをセットアップ
 - **テーブル駆動テスト**: 複数のテストケースを効率的に実行
 - **並行テスト**: `t.Parallel()` で並行実行可能なテストを高速化（トランザクション分離により安全）
 - **テストヘルパー**: 共通のセットアップコードをヘルパー関数に抽出
@@ -1008,34 +1101,28 @@ Web アプリケーションのセキュリティは**最優先事項**です。
 ### 実データベーステストの例
 
 ```go
-func TestPopularWorks(t *testing.T) {
+func TestCreate_Success(t *testing.T) {
+    t.Parallel()
+
     // テストDBとトランザクションをセットアップ
-    db, tx := testutil.SetupTestDB(t)
+    db, tx := testutil.SetupTx(t)
 
     // テストデータを作成（ビルダーパターン）
-    workID := testutil.NewWorkBuilder(t, tx).
-        WithTitle("テストアニメ").
-        WithSeason(2024, testutil.SeasonSpring).
+    userID := testutil.NewUserBuilder(t, tx).
+        WithEmail("test@example.com").
         Build()
 
-    // sqlcリポジトリを作成（トランザクションを使用）
-    queries := repository.New(db).WithTx(tx)
+    // リポジトリを作成（トランザクションを使用）
+    userRepo := repository.NewUserRepository(db).WithTx(tx)
 
-    // ハンドラーを作成してテスト実行
-    handler := &Handler{
-        queries: queries,
-        cfg:     cfg,
-        templates: templates,
+    // テスト実行
+    user, err := userRepo.FindByID(context.Background(), userID)
+    if err != nil {
+        t.Fatalf("unexpected error: %v", err)
     }
 
-    // HTTPリクエストとレスポンスのテスト
-    req := httptest.NewRequest("GET", "/works/popular", nil)
-    rr := httptest.NewRecorder()
-    handler.PopularWorks(rr, req)
-
-    // アサーション
-    if rr.Code != http.StatusOK {
-        t.Errorf("wrong status code: got %v want %v", rr.Code, http.StatusOK)
+    if user.Email != "test@example.com" {
+        t.Errorf("wrong email: got %v want %v", user.Email, "test@example.com")
     }
 
     // テスト終了時にトランザクションは自動的にロールバックされる
@@ -1052,7 +1139,7 @@ func TestPopularWorks(t *testing.T) {
 func TestCreateAccount(t *testing.T) {
     t.Parallel()
 
-    db, tx := testutil.SetupTestDB(t)
+    db, tx := testutil.SetupTx(t)
     ctx := context.Background()
 
     // テスト対象のセットアップ（共通部分）
@@ -1125,10 +1212,17 @@ func TestCreateAccount(t *testing.T) {
 
 `internal/testutil` パッケージには以下のヘルパーが用意されています：
 
-- **`SetupTestDB(t)`**: テスト用データベース接続とトランザクションのセットアップ
+**DB接続・トランザクション**:
+
+- **`SetupTestMain(m)`**: `TestMain` 内で呼び出し、パッケージ共有のDB接続を初期化。bcryptコストの低減も行う
+- **`SetupTx(t)`**: 共有DB接続プールからトランザクションを取得。テスト終了時に自動ロールバック
+- **`GetTestDB()`**: 共有DB接続プールへの参照を取得。Usecaseなどトランザクション管理を自前で行うテストで使用
+
+**テストデータビルダー**:
+
+- **`NewUserBuilder(t, tx)`**: ユーザーデータのビルダー
 - **`NewWorkBuilder(t, tx)`**: 作品データのビルダー
 - **`NewEpisodeBuilder(t, tx, workID)`**: エピソードデータのビルダー
-- **`NewUserBuilder(t, tx)`**: ユーザーデータのビルダー
 - **`NewWorkImageBuilder(t, tx, workID)`**: 作品画像データのビルダー
 - **`CreateTestWork(t, tx, title)`**: 簡易的な作品作成ヘルパー
 
@@ -1201,6 +1295,21 @@ make test-pkg PKG=internal/handler/password_reset
 - **環境変数の自動設定**: 1Password CLI を経由して自動的に環境変数が設定される
 - **DB セットアップの自動化**: テスト実行前に自動的にテスト用 DB がセットアップされる
 - **エラーハンドリング**: PKG や RUN 変数が指定されていない場合、使用例を表示
+
+### 新規テスト作成時のガイドライン
+
+新しいテストパッケージを作成する際は、以下の手順に従ってください：
+
+1. **`main_test.go` を作成**: パッケージに `main_test.go` を追加し、`testutil.SetupTestMain(m)` を呼び出す
+2. **`SetupTx(t)` を使用**: トランザクション内で実行するテストでは `testutil.SetupTx(t)` を使用
+3. **`GetTestDB()` を使用**: Usecaseなどトランザクション管理を自前で行うテストでは `testutil.GetTestDB()` を使用
+
+**`SetupTx` と `GetTestDB` の使い分け**:
+
+| ヘルパー      | 用途                                          | トランザクション                   |
+| ------------- | --------------------------------------------- | ---------------------------------- |
+| `SetupTx(t)`  | Handler、Repository、Validatorのテスト        | 自動（テスト終了時にロールバック） |
+| `GetTestDB()` | Usecaseのテスト（自前でトランザクション管理） | 手動（Usecase内で管理）            |
 
 ### テンプレートレンダリングのテスト
 

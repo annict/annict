@@ -3,31 +3,30 @@ package middleware
 import (
 	"net/http"
 
-	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/model"
 )
 
-// ユーザーの権限を表す定数
-// Rails版の User#role enum と対応: user: 0, admin: 1, editor: 2
+// ロール定数はmodel.Userに定義されているものを再エクスポート
 const (
-	RoleUser   int32 = 0
-	RoleAdmin  int32 = 1
-	RoleEditor int32 = 2
+	RoleUser   = model.RoleUser
+	RoleAdmin  = model.RoleAdmin
+	RoleEditor = model.RoleEditor
 )
 
 // IsAdmin はユーザーが管理者かどうかを判定します
-func IsAdmin(user *query.GetUserByIDRow) bool {
-	return user != nil && user.Role == RoleAdmin
+func IsAdmin(user *model.User) bool {
+	return user != nil && user.IsAdmin()
 }
 
 // IsEditor はユーザーが編集者かどうかを判定します
-func IsEditor(user *query.GetUserByIDRow) bool {
-	return user != nil && user.Role == RoleEditor
+func IsEditor(user *model.User) bool {
+	return user != nil && user.IsEditor()
 }
 
 // IsCommitter はユーザーが管理者または編集者かどうかを判定します
 // Rails版の User#committer? に対応
-func IsCommitter(user *query.GetUserByIDRow) bool {
-	return IsAdmin(user) || IsEditor(user)
+func IsCommitter(user *model.User) bool {
+	return user != nil && user.IsCommitter()
 }
 
 // RequireCommitter は管理者または編集者のみアクセスを許可するミドルウェアです

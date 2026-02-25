@@ -82,9 +82,10 @@ func TestCreate_Success(t *testing.T) {
 	userRepo := repository.NewUserRepository(queries)
 
 	// ユースケースを作成
-	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, queries, nil)
-	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, queries)
-	createSessionUC := usecase.NewCreateSessionUsecase(queries)
+	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), repository.NewUserRepository(queries), nil)
+	signInCodeRepo := repository.NewSignInCodeRepository(queries)
+	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo)
+	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
 	handler := NewHandler(cfg, sessionMgr, userRepo, db, nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
 
@@ -222,9 +223,10 @@ func TestCreate_InvalidCode(t *testing.T) {
 	userRepo := repository.NewUserRepository(queries)
 
 	// ユースケースを作成
-	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, queries, nil)
-	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, queries)
-	createSessionUC := usecase.NewCreateSessionUsecase(queries)
+	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), repository.NewUserRepository(queries), nil)
+	signInCodeRepo := repository.NewSignInCodeRepository(queries)
+	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo)
+	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
 	handler := NewHandler(cfg, sessionMgr, userRepo, db, nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
 
@@ -313,9 +315,10 @@ func TestCreate_SessionExpired(t *testing.T) {
 	userRepo := repository.NewUserRepository(queries)
 
 	// ユースケースを作成
-	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, queries, nil)
-	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, queries)
-	createSessionUC := usecase.NewCreateSessionUsecase(queries)
+	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), repository.NewUserRepository(queries), nil)
+	signInCodeRepo := repository.NewSignInCodeRepository(queries)
+	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo)
+	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
 	handler := NewHandler(cfg, sessionMgr, userRepo, db, nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
 
@@ -391,9 +394,10 @@ func TestCreate_CodeExpired(t *testing.T) {
 	userRepo := repository.NewUserRepository(queries)
 
 	// ユースケースを作成
-	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, queries, nil)
-	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, queries)
-	createSessionUC := usecase.NewCreateSessionUsecase(queries)
+	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), repository.NewUserRepository(queries), nil)
+	signInCodeRepo := repository.NewSignInCodeRepository(queries)
+	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo)
+	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
 	handler := NewHandler(cfg, sessionMgr, userRepo, db, nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
 
@@ -481,9 +485,10 @@ func TestCreate_ValidationError(t *testing.T) {
 	userRepo := repository.NewUserRepository(queries)
 
 	// ユースケースを作成
-	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, queries, nil)
-	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, queries)
-	createSessionUC := usecase.NewCreateSessionUsecase(queries)
+	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), repository.NewUserRepository(queries), nil)
+	signInCodeRepo := repository.NewSignInCodeRepository(queries)
+	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo)
+	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
 	handler := NewHandler(cfg, sessionMgr, userRepo, db, nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
 
@@ -560,9 +565,10 @@ func TestCreate_UserNotFound(t *testing.T) {
 	userRepo := repository.NewUserRepository(queries)
 
 	// ユースケースを作成
-	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, queries, nil)
-	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, queries)
-	createSessionUC := usecase.NewCreateSessionUsecase(queries)
+	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), repository.NewUserRepository(queries), nil)
+	signInCodeRepo := repository.NewSignInCodeRepository(queries)
+	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo)
+	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
 	handler := NewHandler(cfg, sessionMgr, userRepo, db, nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
 
@@ -667,9 +673,10 @@ func TestCreate_GetUserError(t *testing.T) {
 	userRepo := repository.NewUserRepository(queries)
 
 	// ユースケースを作成
-	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, queries, nil)
-	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, queries)
-	createSessionUC := usecase.NewCreateSessionUsecase(queries)
+	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), repository.NewUserRepository(queries), nil)
+	signInCodeRepo := repository.NewSignInCodeRepository(queries)
+	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo)
+	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
 	handler := NewHandler(cfg, sessionMgr, userRepo, db, nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
 

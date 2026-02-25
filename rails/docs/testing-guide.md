@@ -604,6 +604,7 @@ end
 **原因**: 不要なデータを大量に作成している
 
 **解決方法**:
+
 - `let` を使って遅延評価
 - `build` や `build_stubbed` を活用（DBに保存しない）
 - 並列実行を検討（`parallel_tests` gem）
@@ -613,6 +614,7 @@ end
 **原因**: テスト間でデータが共有されている
 
 **解決方法**:
+
 - DatabaseCleanerの設定を確認
 - `let!` の使用を見直す
 - Timecopの後始末を確認
@@ -622,6 +624,7 @@ end
 **原因**: JavaScriptの非同期処理を待っていない
 
 **解決方法**:
+
 ```ruby
 # ❌ Bad
 click_button '送信'

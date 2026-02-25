@@ -26,22 +26,22 @@ jobs:
 
       - name: Check templ generate
         run: |
-          # templファイルからGoコードを生成し、コミット忘れがないかチェック
           make templ-generate
-          make goimports
           git diff --exit-code internal/templates/
+
+      - name: Check goimports
+        run: |
+          make goimports-check
 
       - name: Check go mod tidy
         run: |
-          # 依存関係の整合性チェック: 不要なモジュールを削除し、必要なモジュールを追加
           go mod tidy
-          # go.mod/go.sumが変更されていないことを確認（tidyし忘れを検出）
           git diff --exit-code go.mod go.sum
 
       - name: Run golangci-lint
         uses: golangci/golangci-lint-action@v9.2.0
         with:
-          version: v2.6.2
+          version: v2.7.2
           working-directory: go
           args: --config=.golangci.yml ./...
 
@@ -102,13 +102,10 @@ jobs:
 
       - name: Get dependencies
         run: |
-          # プロジェクトの依存パッケージをダウンロード
           go mod download
 
       - name: Setup test database
         run: |
-          # テスト用データベースに完全なスキーマを適用（ローカル環境と同じ方法）
-          # 注: db/schema.sqlは最新の完全なスキーマを含む（make db-dumpで生成）
           make db-setup-test
 
       - name: Run tests
@@ -132,12 +129,10 @@ jobs:
 
       - name: Build
         run: |
-          # バイナリをビルド（templ generateも自動実行される）
           make build
 
       - name: Check binary exists
         run: |
-          # ビルドが成功してバイナリが生成されたことを確認
           if [ ! -f bin/server ]; then
             echo "Build failed: binary not found"
             exit 1

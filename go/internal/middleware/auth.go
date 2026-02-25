@@ -7,8 +7,7 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/annict/annict/go/internal/query"
-	"github.com/annict/annict/go/internal/repository"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/session"
 )
 
@@ -22,14 +21,12 @@ const (
 // AuthMiddleware は認証を行うミドルウェア
 type AuthMiddleware struct {
 	sessionManager *session.Manager
-	sessionRepo    *repository.SessionRepository
 }
 
 // NewAuthMiddleware は新しいAuthMiddlewareを作成
-func NewAuthMiddleware(sessionManager *session.Manager, sessionRepo *repository.SessionRepository) *AuthMiddleware {
+func NewAuthMiddleware(sessionManager *session.Manager) *AuthMiddleware {
 	return &AuthMiddleware{
 		sessionManager: sessionManager,
-		sessionRepo:    sessionRepo,
 	}
 }
 
@@ -76,7 +73,7 @@ func (a *AuthMiddleware) RequireAuth(next http.Handler) http.Handler {
 
 		// セッションのupdated_atを更新
 		// エラーが発生してもログに記録するだけで処理を継続
-		if err := a.sessionRepo.TouchSession(ctx, sessionID); err != nil {
+		if err := a.sessionManager.TouchSession(ctx, sessionID); err != nil {
 			slog.WarnContext(ctx, "セッション更新エラー", "error", err)
 		}
 
@@ -85,8 +82,8 @@ func (a *AuthMiddleware) RequireAuth(next http.Handler) http.Handler {
 }
 
 // GetUserFromContext はコンテキストからユーザー情報を取得
-func GetUserFromContext(ctx context.Context) *query.GetUserByIDRow {
-	if user, ok := ctx.Value(UserContextKey).(*query.GetUserByIDRow); ok {
+func GetUserFromContext(ctx context.Context) *model.User {
+	if user, ok := ctx.Value(UserContextKey).(*model.User); ok {
 		return user
 	}
 	return nil

@@ -11,32 +11,45 @@ import (
 	"github.com/redis/go-redis/v9"
 
 	"github.com/annict/annict/go/internal/i18n"
-	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/model"
+	"github.com/annict/annict/go/internal/repository"
 )
 
 // CompleteSignUpUsecase はユーザー登録を完了するユースケース
 type CompleteSignUpUsecase struct {
-	db          *sql.DB
-	queries     *query.Queries
-	redisClient *redis.Client
+	db                    *sql.DB
+	userRepo              *repository.UserRepository
+	profileRepo           *repository.ProfileRepository
+	settingRepo           *repository.SettingRepository
+	emailNotificationRepo *repository.EmailNotificationRepository
+	sessionRepo           *repository.SessionRepository
+	redisClient           *redis.Client
 }
 
 // NewCompleteSignUpUsecase はCompleteSignUpUsecaseを作成します
 func NewCompleteSignUpUsecase(
 	db *sql.DB,
-	queries *query.Queries,
+	userRepo *repository.UserRepository,
+	profileRepo *repository.ProfileRepository,
+	settingRepo *repository.SettingRepository,
+	emailNotificationRepo *repository.EmailNotificationRepository,
+	sessionRepo *repository.SessionRepository,
 	redisClient *redis.Client,
 ) *CompleteSignUpUsecase {
 	return &CompleteSignUpUsecase{
-		db:          db,
-		queries:     queries,
-		redisClient: redisClient,
+		db:                    db,
+		userRepo:              userRepo,
+		profileRepo:           profileRepo,
+		settingRepo:           settingRepo,
+		emailNotificationRepo: emailNotificationRepo,
+		sessionRepo:           sessionRepo,
+		redisClient:           redisClient,
 	}
 }
 
 // CompleteSignUpResult はユーザー登録完了の結果
 type CompleteSignUpResult struct {
-	User            query.CreateUserRow
+	User            *model.User
 	SessionPublicID string
 }
 
@@ -66,7 +79,7 @@ func (uc *CompleteSignUpUsecase) Execute(
 	}
 
 	// ユーザー名の一意性チェック
-	_, err = uc.queries.GetUserByUsername(ctx, username)
+	err = uc.userRepo.GetByUsername(ctx, username)
 	if err == nil {
 		return nil, &UsernameAlreadyExistsError{Username: username}
 	} else if !errors.Is(err, sql.ErrNoRows) {
@@ -80,10 +93,14 @@ func (uc *CompleteSignUpUsecase) Execute(
 	}
 	defer func() { _ = tx.Rollback() }()
 
-	queriesWithTx := uc.queries.WithTx(tx)
+	// トランザクション内で操作するためのリポジトリを取得
+	userRepo := uc.userRepo.WithTx(tx)
+	profileRepo := uc.profileRepo.WithTx(tx)
+	settingRepo := uc.settingRepo.WithTx(tx)
+	emailNotificationRepo := uc.emailNotificationRepo.WithTx(tx)
 
 	// ユーザーを作成
-	user, err := queriesWithTx.CreateUser(ctx, query.CreateUserParams{
+	user, err := userRepo.Create(ctx, repository.UserCreateParams{
 		Username:          username,
 		Email:             email,
 		EncryptedPassword: "", // パスワードレス登録
@@ -94,32 +111,23 @@ func (uc *CompleteSignUpUsecase) Execute(
 	}
 
 	// プロフィールを作成（name: ユーザー名、description: 空文字列）
-	_, err = queriesWithTx.CreateProfile(ctx, query.CreateProfileParams{
-		UserID: user.ID,
-		Name:   username,
-	})
-	if err != nil {
+	if err := profileRepo.Create(ctx, user.ID, username); err != nil {
 		return nil, fmt.Errorf("プロフィール作成に失敗: %w", err)
 	}
 
 	// 設定を作成（privacy_policy_agreed: true、その他はデフォルト値）
-	_, err = queriesWithTx.CreateSetting(ctx, user.ID)
-	if err != nil {
+	if err := settingRepo.Create(ctx, user.ID); err != nil {
 		return nil, fmt.Errorf("設定作成に失敗: %w", err)
 	}
 
 	// メール通知設定を作成（unsubscription_key: UUID）
 	unsubscriptionKey := fmt.Sprintf("%s-%s", uuid.New().String(), uuid.New().String())
-	_, err = queriesWithTx.CreateEmailNotification(ctx, query.CreateEmailNotificationParams{
-		UserID:            user.ID,
-		UnsubscriptionKey: unsubscriptionKey,
-	})
-	if err != nil {
+	if err := emailNotificationRepo.Create(ctx, user.ID, unsubscriptionKey); err != nil {
 		return nil, fmt.Errorf("メール通知設定作成に失敗: %w", err)
 	}
 
 	// セッションを作成
-	createSessionUC := NewCreateSessionUsecase(uc.queries)
+	createSessionUC := NewCreateSessionUsecase(uc.sessionRepo)
 	sessionResult, err := createSessionUC.Execute(ctx, tx, user.ID, "", "")
 	if err != nil {
 		return nil, fmt.Errorf("セッション作成に失敗: %w", err)
