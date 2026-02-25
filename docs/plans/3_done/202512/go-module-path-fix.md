@@ -50,14 +50,14 @@ module github.com/annict/annict/go
 
 影響範囲の調査結果：
 
-| カテゴリ            | ファイル数 | 変更箇所数 |
-| ------------------- | ---------- | ---------- |
-| `go.mod`            | 1          | 1          |
-| `.golangci.yml`     | 1          | 43         |
-| `cmd/`              | 2          | 28         |
-| `internal/`         | 約 177     | 約 560     |
-| `docs/`             | 6          | 約 11      |
-| **合計**            | **187**    | **約 643** |
+| カテゴリ        | ファイル数 | 変更箇所数 |
+| --------------- | ---------- | ---------- |
+| `go.mod`        | 1          | 1          |
+| `.golangci.yml` | 1          | 43         |
+| `cmd/`          | 2          | 28         |
+| `internal/`     | 約 177     | 約 560     |
+| `docs/`         | 6          | 約 11      |
+| **合計**        | **187**    | **約 643** |
 
 ### 変更方法
 
@@ -93,7 +93,6 @@ find /workspace/go/docs -name "*.md" -exec sed -i 's|github.com/annict/annict/in
 ### フェーズ 1: モジュールパスの修正
 
 - [x] **1-1**: Go ソースファイルの import 文を一括置換
-
   - `.go` ファイルの import 文を `github.com/annict/annict/internal` から `github.com/annict/annict/go/internal` に変更
   - `.templ` ファイルの import 文も同様に変更
   - `go.mod` のモジュールパスを変更
@@ -102,7 +101,6 @@ find /workspace/go/docs -name "*.md" -exec sed -i 's|github.com/annict/annict/in
   - **備考**: 一括置換のため、実質的な作業は sed コマンドの実行のみ
 
 - [x] **1-2**: 設定ファイルとドキュメントの更新
-
   - `.golangci.yml` の depguard 設定を更新
   - `docs/` 配下の Markdown ファイルを更新
   - **想定ファイル数**: 約 7 ファイル（実装 7 + テスト 0）

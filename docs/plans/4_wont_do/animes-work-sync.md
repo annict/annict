@@ -223,7 +223,6 @@ func (u *CreateWorkUsecase) Execute(ctx context.Context, input CreateWorkInput) 
 -->
 
 - [ ] **1-1**: [Go] 既存 works データの animes テーブルへの移行スクリプト作成
-
   - works → animes の共通カラムコピー
   - works.anime_id の設定
   - ratings_count, satisfaction_rate の集計・設定（既存の works から移行）
@@ -234,21 +233,18 @@ func (u *CreateWorkUsecase) Execute(ctx context.Context, input CreateWorkInput) 
 ### フェーズ 2: Annict DB - 作品作成機能の実装
 
 - [ ] **2-1**: [Go] Anime リポジトリの実装
-
   - sqlc クエリの定義（作成、取得）
   - リポジトリ層の実装
   - **想定ファイル数**: 約 4 ファイル（実装 2 + テスト 2）
   - **想定行数**: 約 200 行（実装 100 行 + テスト 100 行）
 
 - [ ] **2-2**: [Go] Work リポジトリの実装
-
   - sqlc クエリの定義（作成、取得、タイトル重複チェック）
   - リポジトリ層の実装
   - **想定ファイル数**: 約 4 ファイル（実装 2 + テスト 2）
   - **想定行数**: 約 200 行（実装 100 行 + テスト 100 行）
 
 - [ ] **2-3**: [Go] Work 作成ユースケースの実装
-
   - Work 作成ユースケースの実装
     - animes レコードの同時作成
   - バリデーション: title 必須・ユニーク、media 必須、URL 形式チェック
@@ -256,7 +252,6 @@ func (u *CreateWorkUsecase) Execute(ctx context.Context, input CreateWorkInput) 
   - **想定行数**: 約 300 行（実装 150 行 + テスト 150 行）
 
 - [ ] **2-4**: [Go] Work 作成ハンドラーの実装
-
   - Work 作成ハンドラーの実装（`/db/works/new` GET, `/db/works` POST）
   - テンプレートの実装
   - 認可: committer ロールのチェック
@@ -265,7 +260,6 @@ func (u *CreateWorkUsecase) Execute(ctx context.Context, input CreateWorkInput) 
   - **参考**: Rails 版 `app/controllers/db/works_controller.rb`
 
 - [ ] **2-5**: [Rails] Work 作成機能の削除
-
   - コントローラーの削除（`db/works#new`, `db/works#create`）
   - ビューの削除
   - ルーティングの削除
@@ -275,13 +269,11 @@ func (u *CreateWorkUsecase) Execute(ctx context.Context, input CreateWorkInput) 
 ### フェーズ 3: Annict DB - 作品編集機能の実装
 
 - [ ] **3-1**: [Go] Work 更新ユースケースの実装
-
   - Work 更新ユースケースの実装（animes 同期更新含む）
   - **想定ファイル数**: 約 4 ファイル（実装 2 + テスト 2）
   - **想定行数**: 約 300 行（実装 150 行 + テスト 150 行）
 
 - [ ] **3-2**: [Go] Work 編集ハンドラーの実装
-
   - Work 編集ハンドラーの実装（`/db/works/:id/edit` GET, `/db/works/:id` PATCH）
   - テンプレートの実装
   - 認可: committer ロールのチェック
@@ -290,7 +282,6 @@ func (u *CreateWorkUsecase) Execute(ctx context.Context, input CreateWorkInput) 
   - **参考**: Rails 版 `app/controllers/db/works_controller.rb`
 
 - [ ] **3-3**: [Rails] Work 編集機能の削除
-
   - コントローラーの削除（`db/works#edit`, `db/works#update`）
   - ビューの削除
   - ルーティングの削除
@@ -300,21 +291,18 @@ func (u *CreateWorkUsecase) Execute(ctx context.Context, input CreateWorkInput) 
 ### フェーズ 4: Annict DB - 作品非公開機能の実装
 
 - [ ] **4-1**: [Go] Work 非公開ユースケースの実装
-
   - Work 非公開ユースケースの実装（animes.hidden_at 同期更新含む）
   - **想定ファイル数**: 約 4 ファイル（実装 2 + テスト 2）
   - **想定行数**: 約 200 行（実装 100 行 + テスト 100 行）
   - **参考**: Rails 版 `app/models/concerns/unpublishable.rb`
 
 - [ ] **4-2**: [Go] Work 非公開ハンドラーの実装
-
   - Work 非公開ハンドラーの実装（`/db/works/:id/hide` POST）
   - 認可: admin ロールのチェック
   - **想定ファイル数**: 約 4 ファイル（実装 2 + テスト 2）
   - **想定行数**: 約 150 行（実装 80 行 + テスト 70 行）
 
 - [ ] **4-3**: [Rails] Work 非公開機能の削除
-
   - コントローラーの削除
   - ルーティングの削除
   - **想定ファイル数**: 約 2 ファイル
@@ -323,20 +311,17 @@ func (u *CreateWorkUsecase) Execute(ctx context.Context, input CreateWorkInput) 
 ### フェーズ 5: Annict DB - 作品削除機能の実装
 
 - [ ] **5-1**: [Go] Work 削除ユースケースの実装
-
   - Work ソフト削除ユースケースの実装（animes.deleted_at 同期更新含む）
   - **想定ファイル数**: 約 4 ファイル（実装 2 + テスト 2）
   - **想定行数**: 約 200 行（実装 100 行 + テスト 100 行）
 
 - [ ] **5-2**: [Go] Work 削除ハンドラーの実装
-
   - Work 削除ハンドラーの実装（`/db/works/:id` DELETE）
   - 認可: admin ロールのチェック
   - **想定ファイル数**: 約 4 ファイル（実装 2 + テスト 2）
   - **想定行数**: 約 150 行（実装 80 行 + テスト 70 行）
 
 - [ ] **5-3**: [Rails] Work 削除機能の削除
-
   - コントローラーの削除（`db/works#destroy`）
   - ルーティングの削除
   - **想定ファイル数**: 約 2 ファイル

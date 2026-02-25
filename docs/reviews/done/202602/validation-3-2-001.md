@@ -2,15 +2,15 @@
 
 ## レビュー情報
 
-| 項目                   | 内容                                                           |
-| ---------------------- | -------------------------------------------------------------- |
-| レビュー日             | 2026-02-08                                                     |
-| 対象ブランチ           | validation-3-2                                                 |
-| ベースブランチ         | validation                                                     |
-| 設計書（指定があれば） | docs/designs/1_doing/validator-consolidation.md                 |
-| 変更ファイル数         | 6 ファイル                                                     |
-| 変更行数（実装）       | +61 / -47 行                                                   |
-| 変更行数（テスト）     | +179 / -168 行                                                 |
+| 項目                   | 内容                                            |
+| ---------------------- | ----------------------------------------------- |
+| レビュー日             | 2026-02-08                                      |
+| 対象ブランチ           | validation-3-2                                  |
+| ベースブランチ         | validation                                      |
+| 設計書（指定があれば） | docs/designs/1_doing/validator-consolidation.md |
+| 変更ファイル数         | 6 ファイル                                      |
+| 変更行数（実装）       | +61 / -47 行                                    |
+| 変更行数（テスト）     | +179 / -168 行                                  |
 
 ## 参照するガイドライン
 
@@ -50,11 +50,13 @@
 **`go/internal/handler/sign_in_code/validator.go`**:
 
 チェックしたガイドライン:
+
 - [@go/docs/validation-guide.md](/workspace/go/docs/validation-guide.md) - バリデーターの構成
 - [@go/docs/handler-guide.md](/workspace/go/docs/handler-guide.md) - 標準ファイル名
 - [@go/CLAUDE.md](/workspace/go/CLAUDE.md) - コーディング規約
 
 確認結果:
+
 - ファイル名 `validator.go` は標準ファイル名9種に含まれている ✅
 - 構造体名 `CreateValidator` は `{Action}Validator` パターンに準拠 ✅
 - `CreateValidatorInput` / `CreateValidatorResult` のInput/Resultパターンに準拠 ✅
@@ -68,10 +70,12 @@
 **`go/internal/handler/sign_in_code/create.go`**:
 
 チェックしたガイドライン:
+
 - [@go/docs/handler-guide.md](/workspace/go/docs/handler-guide.md) - ハンドラーの実装
 - [@go/docs/validation-guide.md](/workspace/go/docs/validation-guide.md) - ハンドラーでの使用
 
 確認結果:
+
 - `CreateRequest` → `CreateValidatorInput` への参照更新が正しく行われている ✅
 - `req.Validate(ctx)` → `validator.Validate(ctx, input)` への呼び出し変更が正しい ✅
 - `result.FormErrors != nil && result.FormErrors.HasErrors()` のチェックパターンがガイドラインと一致 ✅
@@ -81,10 +85,12 @@
 **`go/internal/handler/sign_in_code/validator_test.go`**:
 
 チェックしたガイドライン:
+
 - [@go/CLAUDE.md](/workspace/go/CLAUDE.md) - テスト戦略
 - [@go/docs/validation-guide.md](/workspace/go/docs/validation-guide.md) - テスト
 
 確認結果:
+
 - テーブル駆動テストを使用しており、ガイドラインに準拠 ✅
 - `t.Parallel()` で並行テストを実施 ✅
 - 正常系・異常系の両方をテスト ✅
@@ -97,16 +103,16 @@
 
 設計書（`docs/designs/1_doing/validator-consolidation.md`）のタスク3-2の要件と実装を照合しました。
 
-| 要件 | 実装状況 |
-|------|----------|
-| `request.go` を `validator.go` にリネーム | ✅ `request.go` 削除、`validator.go` 新規作成 |
-| `{Action}Request` → `{Action}Validator` に変更 | ✅ `CreateRequest` → `CreateValidator` |
-| `{Action}ValidatorInput` 構造体の追加 | ✅ `CreateValidatorInput` |
-| `{Action}ValidatorResult` 構造体の追加 | ✅ `CreateValidatorResult` |
-| テストファイルのリネーム | ✅ `request_test.go` 削除、`validator_test.go` 新規作成 |
-| テストのInput/Resultパターンへの更新 | ✅ テストが新しいAPIに合わせて更新済み |
-| Handlerでの参照を更新 | ✅ `create.go` の参照が更新済み |
-| 設計書のチェックボックスを更新 | ✅ タスク3-2を `[x]` に変更 |
+| 要件                                           | 実装状況                                                |
+| ---------------------------------------------- | ------------------------------------------------------- |
+| `request.go` を `validator.go` にリネーム      | ✅ `request.go` 削除、`validator.go` 新規作成           |
+| `{Action}Request` → `{Action}Validator` に変更 | ✅ `CreateRequest` → `CreateValidator`                  |
+| `{Action}ValidatorInput` 構造体の追加          | ✅ `CreateValidatorInput`                               |
+| `{Action}ValidatorResult` 構造体の追加         | ✅ `CreateValidatorResult`                              |
+| テストファイルのリネーム                       | ✅ `request_test.go` 削除、`validator_test.go` 新規作成 |
+| テストのInput/Resultパターンへの更新           | ✅ テストが新しいAPIに合わせて更新済み                  |
+| Handlerでの参照を更新                          | ✅ `create.go` の参照が更新済み                         |
+| 設計書のチェックボックスを更新                 | ✅ タスク3-2を `[x]` に変更                             |
 
 タスク3-1（sign_in）の実装パターンとの一貫性も確認しました。`sign_in/validator.go` と `sign_in_code/validator.go` は同じInput/Resultパターンを採用しており、一貫性が保たれています。
 
@@ -119,6 +125,7 @@
 設計書のタスク3-2の要件がすべて正しく実装されています。`request.go` から `validator.go` へのリネームに加えて、Input/Resultパターンへの移行が適切に行われており、タスク3-1（sign_in）の実装パターンとも一貫性があります。
 
 良かった点：
+
 - 正規表現のパッケージレベル事前コンパイル化（`regexp.MustCompile` の使用）により、旧実装から性能が改善されている
 - テストが充実しており、旧テストのカバレッジを維持しつつ、I18nキーの整合性テストが追加されている
 - コメントがガイドライン（日本語、意図の説明）に準拠している

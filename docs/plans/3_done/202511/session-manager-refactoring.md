@@ -334,7 +334,6 @@ sessionManager := session.NewManager(sessionRepo, cfg)
 -->
 
 - [x] **1-1**: SessionRepositoryのメソッド追加
-
   - `GetSessionByID()`, `GetUserByID()`, `UpdateSession()`, `CreateSession()`メソッドを実装
   - `generatePrivateID()`メソッドを追加（`internal/session/session.go`から移動）
   - 単体テストを追加
@@ -344,7 +343,6 @@ sessionManager := session.NewManager(sessionRepo, cfg)
 ### フェーズ 2: session.Managerのリファクタリング
 
 - [x] **2-1**: session.Managerの依存関係変更
-
   - `Manager`構造体の`repo`フィールドを`sessionRepo`に変更
   - `NewManager()`の引数を`*query.Queries`から`*repository.SessionRepository`に変更
   - 各メソッドで`m.repo.*`を`m.sessionRepo.*`に変更
@@ -356,7 +354,6 @@ sessionManager := session.NewManager(sessionRepo, cfg)
 ### フェーズ 3: 初期化コードの修正
 
 - [x] **3-1**: cmd/server/main.goの修正
-
   - SessionRepositoryを作成してManagerに渡す
   - 既存のテストを実行して動作確認
   - **想定ファイル数**: 約 1 ファイル（実装 1）

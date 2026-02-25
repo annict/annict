@@ -236,7 +236,6 @@ Shrine JSON 形式:
 ### フェーズ 1: 画像生成ロジックの変更
 
 - [x] **1-1**: `internal/seed/image.go`の修正
-
   - `WorkImageWidth`, `WorkImageHeight`, `ProfileImageWidth`, `ProfileImageHeight`定数を追加
   - `GenerateRandomWorkImage(workID)`関数を追加（600x800px）
   - `GenerateRandomProfileImage(profileID)`関数を追加（400x400px）
@@ -248,7 +247,6 @@ Shrine JSON 形式:
 ### フェーズ 2: 日本語感想文生成ロジックの追加
 
 - [x] **2-1**: `internal/seed/data.go`の修正
-
   - `GenerateJapaneseEpisodeRecordBody(rnd *rand.Rand) string`関数を追加
   - 感想文テンプレート（20〜30 パターン）を定義
   - プレースホルダー置換ロジックを実装
@@ -259,7 +257,6 @@ Shrine JSON 形式:
 ### フェーズ 3: プロフィール画像生成 Usecase の実装
 
 - [x] **3-1**: `internal/usecase/seed/create_profile_image.go`の追加
-
   - `CreateProfileImageUsecase`構造体を定義
   - `ExecuteBatch`メソッドを実装（作品画像と同様のパターン）
   - Worker Pool パターンで並列処理
@@ -268,7 +265,6 @@ Shrine JSON 形式:
   - **想定行数**: 約 300 行（実装 200 行 + テスト 100 行）
 
 - [x] **3-2**: sqlc クエリの追加（`internal/query/queries/profiles.sql`）
-
   - `UpdateProfileImageData`クエリを追加
   - sqlc コード生成（`make sqlc-generate`）
   - **想定ファイル数**: 約 2 ファイル（SQL クエリ 1 + 生成コード 1）
@@ -277,7 +273,6 @@ Shrine JSON 形式:
 ### フェーズ 4: シードスクリプトの修正
 
 - [x] **4-1**: `cmd/seed/main.go`の修正
-
   - `generateEpisodeRecords`関数を修正
     - `gofakeit.Sentence(10)`を`seed.GenerateJapaneseEpisodeRecordBody(rnd)`に変更
   - `generateProfileImages`関数を追加（新規フェーズとして）
@@ -288,7 +283,6 @@ Shrine JSON 形式:
   - **想定行数**: 約 150 行（実装 150 行）
 
 - [x] **4-2**: `internal/usecase/seed/create_work_image.go`の修正
-
   - `GenerateRandomImage`の呼び出しを`GenerateRandomWorkImage`に変更
   - **想定ファイル数**: 約 1 ファイル（実装のみ）
   - **想定行数**: 約 5 行（実装 5 行）
@@ -296,7 +290,6 @@ Shrine JSON 形式:
 ### フェーズ 5: 動作確認とクリーンアップ
 
 - [x] **5-1**: シードデータ生成の動作確認
-
   - `make db-migrate`でマイグレーション実行
   - `go run cmd/seed/main.go`でシードデータ生成
   - 生成時間を計測（現状と比較）
@@ -308,7 +301,6 @@ Shrine JSON 形式:
   - **想定行数**: 約 0 行（確認作業のみ）
 
 - [x] **5-2**: 既存テストの修正とクリーンアップ
-
   - 既存のテストで`GenerateRandomImage`を使用している箇所を確認
   - 必要に応じて新しい関数に移行
   - 非推奨警告のドキュメント追加
@@ -318,7 +310,6 @@ Shrine JSON 形式:
 ### フェーズ 6: パフォーマンス最適化
 
 - [x] **6-1**: プロフィール画像生成の高速化（単色画像の使用）
-
   - `internal/seed/image.go`の`generateImage`関数を修正
   - グラデーション計算を削除し、ランダムな単色で塗りつぶす
   - ドット模様（`addRandomPattern`）の削除
@@ -328,7 +319,6 @@ Shrine JSON 形式:
   - **想定行数**: 約 50 行（実装 30 行 + テスト 20 行）
 
 - [x] **6-2**: パフォーマンス計測と比較
-
   - 最適化前後の画像生成時間を計測
   - 30,000 件のプロフィール画像生成時間を比較
   - ブラウザで表示確認（単色画像でも問題ないことを確認）

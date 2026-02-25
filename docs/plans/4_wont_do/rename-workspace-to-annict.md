@@ -41,44 +41,44 @@
 
 **設定ファイル（1ファイル）**:
 
-| ファイル | 変更箇所 |
-|---------|---------|
+| ファイル             | 変更箇所                                                                                  |
+| -------------------- | ----------------------------------------------------------------------------------------- |
 | `docker-compose.yml` | `.:/workspace` → `.:/annict`、`working_dir: /workspace` → `working_dir: /annict`（2箇所） |
 
 **ドキュメント（7ファイル）**:
 
-| ファイル | 参照箇所数 |
-|---------|-----------|
-| `CLAUDE.md` | 4箇所 |
-| `go/CLAUDE.md` | 7箇所 |
-| `rails/CLAUDE.md` | 2箇所 |
-| `docs/designs/template.md` | 11箇所 |
-| `docs/reviews/template.md` | 14箇所 |
-| `go/docs/templ-guide.md` | 1箇所 |
-| `.claude/commands/sync-guideline.md` | 1箇所 |
+| ファイル                             | 参照箇所数 |
+| ------------------------------------ | ---------- |
+| `CLAUDE.md`                          | 4箇所      |
+| `go/CLAUDE.md`                       | 7箇所      |
+| `rails/CLAUDE.md`                    | 2箇所      |
+| `docs/designs/template.md`           | 11箇所     |
+| `docs/reviews/template.md`           | 14箇所     |
+| `go/docs/templ-guide.md`             | 1箇所      |
+| `.claude/commands/sync-guideline.md` | 1箇所      |
 
 #### mewst（`/workspace/` → `/mewst/`）
 
 **設定ファイル（1ファイル）**:
 
-| ファイル | 変更箇所 |
-|---------|---------|
+| ファイル             | 変更箇所                                                                                |
+| -------------------- | --------------------------------------------------------------------------------------- |
 | `docker-compose.yml` | `.:/workspace` → `.:/mewst`、`working_dir: /workspace` → `working_dir: /mewst`（4箇所） |
 
 **ドキュメント（19ファイルが `/workspace/` を参照）**:
 
 更新対象（テンプレート・ガイドライン・進行中の設計書）:
 
-| ファイル | 種別 |
-|---------|------|
-| `CLAUDE.md` | ガイドライン |
-| `go/CLAUDE.md` | ガイドライン |
-| `rails/CLAUDE.md` | ガイドライン |
-| `docs/designs/template.md` | テンプレート |
-| `docs/reviews/template.md` | テンプレート |
-| `go/docs/templ-guide.md` | ガイドライン |
+| ファイル                    | 種別           |
+| --------------------------- | -------------- |
+| `CLAUDE.md`                 | ガイドライン   |
+| `go/CLAUDE.md`              | ガイドライン   |
+| `rails/CLAUDE.md`           | ガイドライン   |
+| `docs/designs/template.md`  | テンプレート   |
+| `docs/reviews/template.md`  | テンプレート   |
+| `go/docs/templ-guide.md`    | ガイドライン   |
 | `docs/designs/1_doing/*.md` | 進行中の設計書 |
-| `docs/designs/2_todo/*.md` | 未着手の設計書 |
+| `docs/designs/2_todo/*.md`  | 未着手の設計書 |
 
 更新しない（完了済みの設計書・レビュー記録は履歴として残す）:
 
@@ -89,8 +89,8 @@
 
 **設定ファイル（1ファイル）**:
 
-| ファイル | 変更箇所 |
-|---------|---------|
+| ファイル             | 変更箇所                                                                                  |
+| -------------------- | ----------------------------------------------------------------------------------------- |
 | `docker-compose.yml` | `.:/workspace` → `.:/wikino`、`working_dir: /workspace` → `working_dir: /wikino`（2箇所） |
 
 **ドキュメント（24ファイルが `/workspace/` を参照）**:
@@ -105,8 +105,8 @@ mewst と同様の方針で更新対象を選定する。
 
 **設定ファイル（1ファイル）**:
 
-| ファイル | 変更箇所 |
-|---------|---------|
+| ファイル             | 変更箇所                                                                                  |
+| -------------------- | ----------------------------------------------------------------------------------------- |
 | `docker-compose.yml` | `.:/workspace` → `.:/groobb`、`working_dir: /workspace` → `working_dir: /groobb`（2箇所） |
 
 **ドキュメント**: `/workspace/` を参照するドキュメントなし。設定ファイルの変更のみ。

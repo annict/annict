@@ -55,21 +55,21 @@ PostgreSQL の sessions テーブルでセッション管理を行う。
 ```html
 <!-- internal/templates/auth/sign_in.html -->
 <form method="POST" action="/sign_in">
-    <input type="hidden" name="csrf_token" value="{{.CSRFToken}}" />
+  <input type="hidden" name="csrf_token" value="{{.CSRFToken}}" />
 
-    <div>
-        <label for="email_username">{{call .T "sign_in_email_username_label"}}</label>
-        <input type="text" id="email_username" name="email_username" required />
-    </div>
+  <div>
+    <label for="email_username">{{call .T "sign_in_email_username_label"}}</label>
+    <input type="text" id="email_username" name="email_username" required />
+  </div>
 
-    <div>
-        <label for="password">{{call .T "sign_in_password_label"}}</label>
-        <input type="password" id="password" name="password" required />
-    </div>
+  <div>
+    <label for="password">{{call .T "sign_in_password_label"}}</label>
+    <input type="password" id="password" name="password" required />
+  </div>
 
-    <button type="submit">{{call .T "sign_in_submit"}}</button>
+  <button type="submit">{{call .T "sign_in_submit"}}</button>
 
-    <a href="/password/reset">{{call .T "sign_in_forgot_password"}}</a>
+  <a href="/password/reset">{{call .T "sign_in_forgot_password"}}</a>
 </form>
 ```
 

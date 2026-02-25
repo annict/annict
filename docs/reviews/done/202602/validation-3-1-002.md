@@ -2,14 +2,14 @@
 
 ## レビュー情報
 
-| 項目                   | 内容                                                      |
-| ---------------------- | --------------------------------------------------------- |
-| レビュー日             | 2026-02-08                                                |
-| 対象ブランチ           | validation-3-1                                            |
-| ベースブランチ         | validation                                                |
-| 設計書（指定があれば） | docs/designs/1_doing/validator-consolidation.md            |
-| 変更ファイル数         | 6 ファイル                                                |
-| 変更行数（実装）       | +48 / -33 行                                              |
+| 項目                   | 内容                                                         |
+| ---------------------- | ------------------------------------------------------------ |
+| レビュー日             | 2026-02-08                                                   |
+| 対象ブランチ           | validation-3-1                                               |
+| ベースブランチ         | validation                                                   |
+| 設計書（指定があれば） | docs/designs/1_doing/validator-consolidation.md              |
+| 変更ファイル数         | 6 ファイル                                                   |
+| 変更行数（実装）       | +48 / -33 行                                                 |
 | 変更行数（テスト）     | +156 / -0 行（request_test.go → validator_test.go リネーム） |
 
 ## 参照するガイドライン
@@ -50,12 +50,12 @@
 
 設計書タスク **3-1** の要件：
 
-| 要件                                                                         | 状態 |
-| ---------------------------------------------------------------------------- | ---- |
-| `request.go` を `validator.go` にリネーム                                    | ✅    |
-| `CreateRequest` → `CreateValidator` + `CreateValidatorInput` + `CreateValidatorResult` に変更 | ✅    |
-| `request_test.go` を `validator_test.go` にリネームし、Input/Result パターンに合わせて更新    | ✅    |
-| Handler での参照を更新                                                       | ✅    |
+| 要件                                                                                          | 状態 |
+| --------------------------------------------------------------------------------------------- | ---- |
+| `request.go` を `validator.go` にリネーム                                                     | ✅   |
+| `CreateRequest` → `CreateValidator` + `CreateValidatorInput` + `CreateValidatorResult` に変更 | ✅   |
+| `request_test.go` を `validator_test.go` にリネームし、Input/Result パターンに合わせて更新    | ✅   |
+| Handler での参照を更新                                                                        | ✅   |
 
 すべての要件が正しく実装されています。
 

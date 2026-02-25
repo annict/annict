@@ -32,14 +32,14 @@ Rails版フロントエンドで使用しているHTTPクライアント `axios`
 
 **axiosを使用しているファイル:**
 
-| ファイル | 使用パターン | 移行方針 |
-|---------|-------------|---------|
-| `application.ts` | CSRFトークンのデフォルトヘッダー設定 | 削除（fetcherが自動設定するため不要） |
-| `like-button-controller.ts` | `axios.post()` | `fetcher.post()` に置換 |
-| `skip-episode-button-controller.ts` | `axios.post()` | `fetcher.post()` に置換 |
-| `watch-episode-button-controller.ts` | `axios.post()` | `fetcher.post()` に置換 |
-| `bulk-watch-episodes-button-controller.ts` | `axios.post()` | `fetcher.post()` に置換 |
-| `program-select-radio-controller.ts` | importのみ（未使用） | import文を削除 |
+| ファイル                                   | 使用パターン                         | 移行方針                              |
+| ------------------------------------------ | ------------------------------------ | ------------------------------------- |
+| `application.ts`                           | CSRFトークンのデフォルトヘッダー設定 | 削除（fetcherが自動設定するため不要） |
+| `like-button-controller.ts`                | `axios.post()`                       | `fetcher.post()` に置換               |
+| `skip-episode-button-controller.ts`        | `axios.post()`                       | `fetcher.post()` に置換               |
+| `watch-episode-button-controller.ts`       | `axios.post()`                       | `fetcher.post()` に置換               |
+| `bulk-watch-episodes-button-controller.ts` | `axios.post()`                       | `fetcher.post()` に置換               |
+| `program-select-radio-controller.ts`       | importのみ（未使用）                 | import文を削除                        |
 
 **既存の fetcher.ts の機能:**
 
@@ -60,6 +60,7 @@ Rails版フロントエンドで使用しているHTTPクライアント `axios`
 ### コード変更例
 
 **Before (axios使用):**
+
 ```typescript
 import axios from "axios";
 
@@ -77,6 +78,7 @@ axios
 ```
 
 **After (fetcher使用):**
+
 ```typescript
 import fetcher from "../utils/fetcher";
 
@@ -98,35 +100,30 @@ fetcher
 ### フェーズ 1: コントローラーの移行
 
 - [x] **1-1**: like-button-controller.ts の移行
-
   - axiosのimportを削除し、fetcherをimport
   - `axios.post()` を `fetcher.post()` に置換（2箇所）
   - **想定ファイル数**: 約 1 ファイル（実装 1 + テスト 0）
   - **想定行数**: 約 10 行（実装 10 行 + テスト 0 行）
 
 - [x] **1-2**: skip-episode-button-controller.ts の移行
-
   - axiosのimportを削除し、fetcherをimport
   - `axios.post()` を `fetcher.post()` に置換
   - **想定ファイル数**: 約 1 ファイル（実装 1 + テスト 0）
   - **想定行数**: 約 6 行（実装 6 行 + テスト 0 行）
 
 - [x] **1-3**: watch-episode-button-controller.ts の移行
-
   - axiosのimportを削除し、fetcherをimport
   - `axios.post()` を `fetcher.post()` に置換
   - **想定ファイル数**: 約 1 ファイル（実装 1 + テスト 0）
   - **想定行数**: 約 6 行（実装 6 行 + テスト 0 行）
 
 - [x] **1-4**: bulk-watch-episodes-button-controller.ts の移行
-
   - axiosのimportを削除し、fetcherをimport
   - `axios.post()` を `fetcher.post()` に置換
   - **想定ファイル数**: 約 1 ファイル（実装 1 + テスト 0）
   - **想定行数**: 約 6 行（実装 6 行 + テスト 0 行）
 
 - [x] **1-5**: program-select-radio-controller.ts のクリーンアップ
-
   - 未使用のaxios importを削除
   - **想定ファイル数**: 約 1 ファイル（実装 1 + テスト 0）
   - **想定行数**: 約 2 行（実装 2 行 + テスト 0 行）
@@ -134,14 +131,12 @@ fetcher
 ### フェーズ 2: application.ts のクリーンアップと依存関係の削除
 
 - [x] **2-1**: application.ts からaxios関連コードを削除
-
   - `import axios from "axios";` を削除
   - `axios.defaults.headers.common["X-CSRF-Token"]` の設定コードを削除
   - **想定ファイル数**: 約 1 ファイル（実装 1 + テスト 0）
   - **想定行数**: 約 6 行（実装 6 行 + テスト 0 行）
 
 - [x] **2-2**: package.json から axios 依存関係を削除
-
   - `"axios": "^1.1.2"` を削除
   - `yarn install` を実行して yarn.lock を更新
   - **想定ファイル数**: 約 2 ファイル（実装 2 + テスト 0）
@@ -150,7 +145,6 @@ fetcher
 ### フェーズ 3: 動作確認
 
 - [ ] **3-1**: 手動テストによる動作確認
-
   - いいねボタンの動作確認（いいね追加/解除）
   - エピソードスキップボタンの動作確認
   - エピソード視聴記録ボタンの動作確認

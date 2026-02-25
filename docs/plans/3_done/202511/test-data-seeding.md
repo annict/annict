@@ -234,7 +234,6 @@ func (uc *CreateEpisodeRecordUsecase) ExecuteBatch(ctx context.Context, records 
 ### フェーズ 1: 基盤整備
 
 - [x] **seedコマンドの基盤実装**
-
   - `cmd/seed/main.go` を作成（エントリポイント）
   - `make seed` コマンドをMakefileに追加
   - データベース接続、トランザクション管理
@@ -244,7 +243,6 @@ func (uc *CreateEpisodeRecordUsecase) ExecuteBatch(ctx context.Context, records 
   - **想定行数**: 約 150 行（実装 120 行 + Makefile 30 行）
 
 - [x] **リアルなデータソースの準備**
-
   - `internal/seed/data.go` を作成
   - アニメタイトルのリスト（100〜200件程度を用意し、ランダムに組み合わせて10,000件生成）
   - シーズン情報（2020年〜2025年、春夏秋冬）
@@ -263,7 +261,6 @@ func (uc *CreateEpisodeRecordUsecase) ExecuteBatch(ctx context.Context, records 
 ### フェーズ 2: 基本データ生成Usecase実装
 
 - [x] **ユーザー生成Usecaseの実装**
-
   - `internal/usecase/seed/create_user.go` を作成
   - bcryptでパスワードハッシュ化（Rails互換）
   - users + profiles の同時生成
@@ -272,7 +269,6 @@ func (uc *CreateEpisodeRecordUsecase) ExecuteBatch(ctx context.Context, records 
   - **想定行数**: 約 200 行（実装 150 行 + テスト 50 行）
 
 - [x] **作品生成Usecaseの実装**
-
   - `internal/usecase/seed/create_work.go` を作成
   - リアルなタイトル、シーズン情報の設定
   - season_year, season_name, media, official_site_url などを設定
@@ -281,7 +277,6 @@ func (uc *CreateEpisodeRecordUsecase) ExecuteBatch(ctx context.Context, records 
   - **想定行数**: 約 200 行（実装 150 行 + テスト 50 行）
 
 - [x] **エピソード生成Usecaseの実装**
-
   - `internal/usecase/seed/create_episode.go` を作成
   - 1作品あたり12話（平均）を生成
   - number, title, sort_number などを設定
@@ -303,7 +298,6 @@ func (uc *CreateEpisodeRecordUsecase) ExecuteBatch(ctx context.Context, records 
 ### フェーズ 3: 高度な機能（画像、ヘビーユーザー、OAuth）
 
 - [x] **ランダム画像生成機能の実装**
-
   - `internal/seed/image.go` を作成
   - Goの`image`パッケージで800x600pxのPNG画像を生成
   - ランダムな色のグラデーションやパターンを描画
@@ -312,7 +306,6 @@ func (uc *CreateEpisodeRecordUsecase) ExecuteBatch(ctx context.Context, records 
   - **想定行数**: 約 200 行（実装 150 行 + テスト 50 行）
 
 - [x] **作品画像のクリーンアップUsecaseの実装**
-
   - `internal/usecase/seed/cleanup_work_images.go` を作成
   - Cloudflare R2 上の `shrine/workimage/` プレフィックス配下のすべての画像を削除
   - データベース上の `work_images` テーブルも削除（既に `cmd/seed/main.go` で実装済み）
@@ -323,7 +316,6 @@ func (uc *CreateEpisodeRecordUsecase) ExecuteBatch(ctx context.Context, records 
   - **想定行数**: 約 150 行（実装 100 行 + テスト 50 行）
 
 - [x] **作品画像生成Usecaseの実装**
-
   - `internal/usecase/seed/create_work_image.go` を作成
   - ランダム画像を生成してCloudflare R2にアップロード
   - Shrine形式のimage_dataカラムを生成
@@ -333,7 +325,6 @@ func (uc *CreateEpisodeRecordUsecase) ExecuteBatch(ctx context.Context, records 
   - **想定行数**: 約 200 行（実装 150 行 + テスト 50 行）
 
 - [x] **フォロー関係生成Usecaseの実装**
-
   - `internal/usecase/seed/create_follow.go` を作成
   - ランダムなユーザー間でフォロー関係を作成
   - カウンター更新（User#followers_count, User#following_count）
@@ -342,7 +333,6 @@ func (uc *CreateEpisodeRecordUsecase) ExecuteBatch(ctx context.Context, records 
   - **想定行数**: 約 150 行（実装 100 行 + テスト 50 行）
 
 - [x] **ヘビーユーザー生成Usecaseの実装**
-
   - `internal/usecase/seed/create_heavy_user.go` を作成
   - ユーザー名: `heavy_user`、パスワード: `password`（ログインしやすいように）
   - 視聴記録: 10,000件
@@ -363,7 +353,6 @@ func (uc *CreateEpisodeRecordUsecase) ExecuteBatch(ctx context.Context, records 
 ### フェーズ 4: 統合・検証・最適化
 
 - [x] **seedコマンドの統合とテスト**
-
   - すべてのUsecaseを`cmd/seed/main.go`で統合
   - 生成順序の最適化（外部キー制約を考慮）
   - エラーハンドリングの改善
@@ -372,7 +361,6 @@ func (uc *CreateEpisodeRecordUsecase) ExecuteBatch(ctx context.Context, records 
   - **想定行数**: 約 150 行（実装 100 行 + テスト 50 行）
 
 - [x] **作品画像のimage_data構造の修正**
-
   - 現状のimage_data構造が実際のShrineの仕様と異なる
   - 実際の構造では、トップレベルに `"master"` キーがあり、その中にバージョン情報が格納される
   - 修正内容:
@@ -385,7 +373,6 @@ func (uc *CreateEpisodeRecordUsecase) ExecuteBatch(ctx context.Context, records 
   - **想定行数**: 約 50 行（構造体とJSON生成ロジックの修正 + テスト修正）
 
 - [ ] **Rails版互換性の検証**
-
   - seedコマンド実行後、Rails版で以下を確認:
     - 作品一覧ページが表示される
     - ユーザーページが表示される

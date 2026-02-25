@@ -114,11 +114,13 @@
 ### アーキテクチャ
 
 **変更前**:
+
 ```
 sqlc → Handler → ViewModel → Template
 ```
 
 **変更後（3層アーキテクチャ）**:
+
 ```
 Query → Repository → Model → Handler → ViewModel → Template
   ↑         ↑          ↑        ↑          ↑
@@ -127,6 +129,7 @@ Query → Repository → Model → Handler → ViewModel → Template
 ```
 
 **3層アーキテクチャの構成**:
+
 ```
 ┌─────────────────────────────────────┐
 │ Presentation層                       │
@@ -153,12 +156,14 @@ Query → Repository → Model → Handler → ViewModel → Template
 **重要**: Domain/Infrastructure層はPresentation層に**依存してはいけない**
 
 **Domain/Infrastructure層を統合する理由**:
+
 - データベース変更（PostgreSQL → MySQLなど）は実際にはほぼ起こらない
 - 層をまたぐ変換コストを削減し、シンプルさを保つ
 - RepositoryとModelを同じ層として扱うことで、依存関係が自然になる
 - 必要になったら分ければ良い（YAGNI原則）
 
 **データの流れ**:
+
 1. **Query** (Domain/Infrastructure層): SQLクエリを実行し、クエリ結果（`query.GetPopularWorksRow`など）を返す
 2. **Repository** (Domain/Infrastructure層): Query結果をModelに変換し、複数のクエリを組み合わせる
 3. **Model** (Domain/Infrastructure層): ページに依存しない汎用的なドメインエンティティ（`model.Work`など）
@@ -167,6 +172,7 @@ Query → Repository → Model → Handler → ViewModel → Template
 6. **Template** (Presentation層): ViewModelを受け取ってHTMLを生成
 
 **ModelとRepositoryの1:1関係**（同じ層なので依存できる）:
+
 - `model.Work` ↔ `repository.WorkRepository`
 - `model.User` ↔ `repository.UserRepository`
 - `model.Episode` ↔ `repository.EpisodeRepository`
@@ -174,6 +180,7 @@ Query → Repository → Model → Handler → ViewModel → Template
 ### ディレクトリ構造
 
 **変更前**:
+
 ```
 internal/
 ├── repository/
@@ -195,6 +202,7 @@ internal/
 ```
 
 **変更後**:
+
 ```
 internal/
 ├── query/               # sqlc生成コード（旧 repository/sqlc）
@@ -224,6 +232,7 @@ internal/
 **注**: 上記はリファクタリング対象のディレクトリのみを表示しています。実際の`internal/`配下には、他にも以下のようなパッケージが存在します：
 
 **Presentation層のヘルパー**:
+
 - `image/` - 画像URL生成（imgproxy署名付きURL）
 - `i18n/` - 国際化（翻訳取得、言語切り替え）
 - `session/` - セッション管理（フラッシュメッセージ、ユーザー情報）
@@ -231,14 +240,17 @@ internal/
 - `templates/` - templテンプレート
 
 **Application層**:
+
 - `usecase/` - ユースケース（既存）
 
 **その他**:
+
 - `config/` - 設定管理
 - `auth/` - 認証ロジック
 - `turnstile/` - Cloudflare Turnstile連携
 
 **物理的な構造と論理的な構造**:
+
 - **物理的な構造**: `internal/`配下はフラット（機能別にパッケージを分ける）
 - **論理的な構造**: ドキュメントでレイヤーごとにパッケージを分類し、依存関係を明示
 
@@ -270,6 +282,7 @@ internal/
 ```
 
 **ルール**:
+
 - HandlerはQuery/Modelに**直接依存しない**
 - HandlerはRepositoryまたはUseCaseを経由してデータを取得
 - ViewModelはPresentation層のヘルパー（image, i18n, session）に依存できる
@@ -289,6 +302,7 @@ internal/
 ```
 
 **ルール**:
+
 - UseCaseはQuery/ViewModelに**直接依存しない**
 - UseCaseはRepositoryを経由してデータアクセス
 - UseCaseはModelを受け取り、Modelを返す
@@ -309,6 +323,7 @@ internal/
 ```
 
 **ルール**:
+
 - **RepositoryのみがQueryに依存**（最重要）
 - RepositoryはQuery結果をModelに変換
 - ModelはPresentation層に**依存しない**
@@ -347,28 +362,28 @@ internal/
 
 #### 許可される依存
 
-| 依存元 | 依存先 | 理由 |
-|--------|--------|------|
-| Handler | Repository | データ取得の標準的な方法 |
-| Handler | UseCase | 複雑なビジネスフローの実行 |
-| Handler | ViewModel | Presentation層内の変換 |
-| UseCase | Repository | データアクセスの標準的な方法 |
-| UseCase | Model | ビジネスロジックで使用 |
-| Repository | Query | データベースクエリの実行 |
-| Repository | Model | Query結果の変換 |
-| ViewModel | Model | 表示用データへの変換 |
-| ViewModel | image.Helper, i18n, session | Presentation層のヘルパー |
+| 依存元     | 依存先                      | 理由                         |
+| ---------- | --------------------------- | ---------------------------- |
+| Handler    | Repository                  | データ取得の標準的な方法     |
+| Handler    | UseCase                     | 複雑なビジネスフローの実行   |
+| Handler    | ViewModel                   | Presentation層内の変換       |
+| UseCase    | Repository                  | データアクセスの標準的な方法 |
+| UseCase    | Model                       | ビジネスロジックで使用       |
+| Repository | Query                       | データベースクエリの実行     |
+| Repository | Model                       | Query結果の変換              |
+| ViewModel  | Model                       | 表示用データへの変換         |
+| ViewModel  | image.Helper, i18n, session | Presentation層のヘルパー     |
 
 #### 禁止される依存
 
-| 依存元 | 依存先 | 理由 |
-|--------|--------|------|
-| Handler | Query | データアクセスロジックの散在を避ける |
-| Handler | Model | Repositoryを経由すべき |
-| UseCase | Query | データアクセスロジックの散在を避ける |
-| UseCase | ViewModel | 上位層への依存（逆方向） |
-| Repository | ViewModel | 上位層への依存（逆方向） |
-| Model | image.Helper, i18n, session | Presentation層への依存（逆方向） |
+| 依存元     | 依存先                      | 理由                                 |
+| ---------- | --------------------------- | ------------------------------------ |
+| Handler    | Query                       | データアクセスロジックの散在を避ける |
+| Handler    | Model                       | Repositoryを経由すべき               |
+| UseCase    | Query                       | データアクセスロジックの散在を避ける |
+| UseCase    | ViewModel                   | 上位層への依存（逆方向）             |
+| Repository | ViewModel                   | 上位層への依存（逆方向）             |
+| Model      | image.Helper, i18n, session | Presentation層への依存（逆方向）     |
 
 #### 重要なルール
 
@@ -380,12 +395,14 @@ internal/
 #### なぜRepositoryのみがQueryに依存すべきか
 
 **メリット**:
+
 - ✅ **保守性**: データアクセスロジックがRepositoryに集約される
 - ✅ **拡張性**: キャッシュ層の追加、データソース変更がRepositoryのみで完結
 - ✅ **一貫性**: 「データ取得 = Repositoryを使う」というルールが明確
 - ✅ **テスト容易性**: Repositoryをモックすれば、Handler/UseCaseのテストが容易
 
 **デメリットを回避**:
+
 - ❌ データアクセスロジックの散在（Handler/UseCaseに直接Queryを書く）
 - ❌ 変更の波及（データアクセス方法の変更がHandler/UseCaseに影響）
 - ❌ ルールの曖昧さ（「このケースはQueryを直接使って良い？」という混乱）
@@ -393,12 +410,14 @@ internal/
 ### パッケージの責務
 
 #### `internal/query/`（Domain/Infrastructure層）
+
 - sqlcで自動生成されるコード
 - 単一のSQLクエリを実行する責務のみ
 - 手動編集禁止
 - **例**: `query.GetPopularWorksRow`、`query.GetCastsByWorkIDsRow`
 
 #### `internal/model/`（Domain/Infrastructure層）
+
 - ページに依存しない汎用的なドメインエンティティ
 - 作品、キャスト、スタッフなどのビジネスエンティティを表現
 - **Presentation層に依存しない**（`image.Helper`などに依存しない）
@@ -407,6 +426,7 @@ internal/
 - **ModelとRepositoryは1:1の関係**
 
 #### `internal/repository/`（Domain/Infrastructure層）
+
 - Query結果をModelに変換する
 - 複数のクエリを組み合わせてModelを構築
 - トランザクション内でのクエリ実行（トランザクションのライフサイクル管理はUseCaseが担当）
@@ -416,6 +436,7 @@ internal/
 - **ModelとRepositoryは1:1の関係**
 
 #### `internal/viewmodel/`（Presentation層）
+
 - Modelをテンプレート表示用のデータ構造に変換
 - 国際化対応（言語切り替え）
 - 画像URL生成などの表示ロジック
@@ -423,6 +444,7 @@ internal/
 - **例**: `viewmodel.NewWorksFromModelDetails(models, imageHelper)`
 
 #### `internal/handler/`（Presentation層）
+
 - HTTPリクエスト処理
 - RepositoryからModelを取得（単純な取得の場合）
 - **UseCaseを呼び出す**（複雑なビジネスフローの場合）
@@ -443,6 +465,7 @@ internal/
   - `CompleteSignUpUsecase`: サインアップ完了処理
 
 **今回のリファクタリングでの扱い**:
+
 - 既存のUseCaseはそのまま維持
 - 新しく追加するModel/Repository層はUseCaseからも呼び出せる
 - Repositoryにトランザクション（`tx`）を渡して、トランザクション内でクエリを実行させる
@@ -792,6 +815,7 @@ func NewWorkFromModelDetail(detail model.WorkWithDetails, helper *image.Helper) 
 #### Handlerの簡素化例
 
 **変更前** (`internal/handler/popular_work/index.go`):
+
 ```go
 func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
     ctx := r.Context()
@@ -850,6 +874,7 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 ```
 
 **変更後**:
+
 ```go
 func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
     ctx := r.Context()
@@ -871,6 +896,7 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 ```
 
 **ポイント**:
+
 - HandlerがModel→ViewModel変換を行う（Presentation層内の変換）
 - RepositoryはViewModelに依存しない（Domain/Infrastructure層がPresentation層に依存しない）
 - RepositoryとModelは同じ層（Domain/Infrastructure層）なので、相互に依存できる
@@ -934,7 +960,6 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 -->
 
 - [x] **1-1**: sqlcの出力先を`internal/query/`に変更
-
   - `sqlc.yaml`の`gen.go.out`を`internal/query`に変更
   - `sqlc generate`を実行して`internal/query/`配下にコード生成
   - 既存の`internal/repository/sqlc/`は一旦残しておく（後で削除）
@@ -942,7 +967,6 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
   - **想定行数**: 約 10 行（実装 10 行 + テスト 0 行）
 
 - [x] **1-2**: import文を`internal/query`に変更
-
   - 全ファイルのimport文を`internal/repository/sqlc`から`internal/query`に変更
   - `go mod tidy`を実行
   - 既存のテストがすべてパスすることを確認
@@ -950,7 +974,6 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
   - **想定行数**: 約 30 行（実装 30 行 + テスト 0 行）※import文のみの変更
 
 - [x] **1-3**: 旧`internal/repository/sqlc/`ディレクトリの削除
-
   - `internal/repository/sqlc/`ディレクトリを削除
   - `internal/repository/queries/`を`internal/query/queries/`に移動
   - `internal/repository/`配下の既存テストファイルを適切な場所に移動
@@ -960,7 +983,6 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 ### フェーズ 2: Model層とRepository層の導入（Work関連）
 
 - [x] **2-1**: Model層の実装
-
   - `internal/model/work.go`を作成（`Work`、`WorkWithDetails`構造体）
   - `internal/model/cast.go`を作成（`Cast`構造体）
   - `internal/model/staff.go`を作成（`Staff`構造体）
@@ -969,7 +991,6 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
   - **想定行数**: 約 60 行（実装 60 行 + テスト 0 行）※データ構造のみ
 
 - [x] **2-2**: WorkRepositoryの実装
-
   - `internal/repository/work.go`を作成
   - `WorkRepository`構造体と`NewWorkRepository`関数を実装
   - `GetPopularWorksWithDetails`メソッドを実装（Query→Model変換）
@@ -978,7 +999,6 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
   - **想定行数**: 約 300 行（実装 150 行 + テスト 150 行）
 
 - [x] **2-3**: ViewModelのリファクタリング
-
   - `viewmodel.NewWorksFromModelDetails`関数を追加（Model→ViewModel変換）
   - `viewmodel.NewWorkFromModelDetail`関数を追加
   - ViewModelは`image.Helper`に依存できる（Presentation層なので問題ない）
@@ -988,7 +1008,6 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
   - **想定行数**: 約 200 行（実装 100 行 + テスト 100 行）
 
 - [x] **2-4**: popular_work HandlerでWorkRepositoryを使用
-
   - `Handler`構造体に`workRepo`フィールドを追加
   - `Index`メソッドを修正：
     1. `workRepo.GetPopularWorksWithDetails()`でModelを取得
@@ -1002,7 +1021,6 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 ### フェーズ 3: ドキュメント更新と旧コードのクリーンアップ
 
 - [x] **3-1**: ドキュメントの更新
-
   - `go/CLAUDE.md`の「プロジェクト構造」セクションを更新
     - **レイヤーごとにパッケージを分類**（Presentation層、Application層、Domain/Infrastructure層）
     - **Presentation層のヘルパー一覧を追加**（`image`, `i18n`, `session`など）
@@ -1019,7 +1037,6 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
   - **想定行数**: 約 400 行（実装 400 行 + テスト 0 行）※依存関係図とルールを追加
 
 - [x] **3-2**: 旧コードのクリーンアップ
-
   - `viewmodel`パッケージから不要な関数を削除
   - 未使用のimport文を削除
   - `go mod tidy`を実行
@@ -1042,6 +1059,7 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 - **キャッシュ戦略の追加**: Repository層の導入後、必要に応じて検討
 
 **将来的な拡張**:
+
 - データベース変更が本当に必要になったら、その時にDomain層とInfrastructure層を分離
 
 ## 参考資料

@@ -115,12 +115,14 @@ import (
 既存のテストコマンドを変更し、tparseを使用するように修正します：
 
 **変更前**:
+
 ```makefile
 test: db-setup-test
 	go test -v -race ./...
 ```
 
 **変更後**:
+
 ```makefile
 test: db-setup-test
 	@which tparse > /dev/null || (echo "Installing tparse from go.mod..." && go install github.com/mfridman/tparse@latest)
@@ -128,6 +130,7 @@ test: db-setup-test
 ```
 
 主な変更点：
+
 - `go test`に`-json`フラグを追加（tparseの入力形式）
 - パイプでtparseに出力を渡す
 - `-all`オプションでスキップされたテストも表示
@@ -135,11 +138,11 @@ test: db-setup-test
 
 #### 3. 各テストターゲットの変更
 
-| ターゲット | 変更内容 |
-|-----------|---------|
-| `test` | tparse形式に変更 |
-| `test-pkg` | tparse形式に変更 |
-| `test-run` | tparse形式に変更 |
+| ターゲット     | 変更内容                                       |
+| -------------- | ---------------------------------------------- |
+| `test`         | tparse形式に変更                               |
+| `test-pkg`     | tparse形式に変更                               |
+| `test-run`     | tparse形式に変更                               |
 | `test-verbose` | 従来の`-v`形式を維持（詳細ログが必要な場合用） |
 
 #### 4. CI環境での対応
@@ -160,12 +163,12 @@ test: db-setup-test
 
 ### tparseの主要オプション
 
-| オプション | 説明 |
-|-----------|------|
-| `-all` | スキップされたテストも含めて表示 |
-| `-pass` | 合格テストの詳細情報を表示（経過時間順にソート） |
-| `-follow` | 元の`go test`出力も表示 |
-| `-smallscreen` | 狭い画面向けに長いテスト名を改行表示 |
+| オプション     | 説明                                             |
+| -------------- | ------------------------------------------------ |
+| `-all`         | スキップされたテストも含めて表示                 |
+| `-pass`        | 合格テストの詳細情報を表示（経過時間順にソート） |
+| `-follow`      | 元の`go test`出力も表示                          |
+| `-smallscreen` | 狭い画面向けに長いテスト名を改行表示             |
 
 デフォルトでは`-all`のみを使用し、失敗・パニック・スキップされたテストとパッケージサマリーを表示します。
 
@@ -200,7 +203,6 @@ test: db-setup-test
 -->
 
 - [x] **1-1**: tparseの依存追加とMakefile更新
-
   - `tools.go`にtparseを追加
   - `go.mod`/`go.sum`の更新（`go get`で追加）
   - `Makefile`の`test`、`test-pkg`、`test-run`ターゲットをtparse形式に変更

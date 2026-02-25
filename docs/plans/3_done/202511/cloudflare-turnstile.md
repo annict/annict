@@ -319,7 +319,6 @@ func (c *Client) Verify(ctx context.Context, token string) (bool, error)
 -->
 
 - [x] **1-1**: Cloudflare Turnstile アカウント設定とドメイン登録
-
   - Cloudflare ダッシュボードで Turnstile を有効化
   - ドメイン（`annict.com`, `example.dev`）を登録
   - Site Key と Secret Key を取得
@@ -329,7 +328,6 @@ func (c *Client) Verify(ctx context.Context, token string) (bool, error)
   - **想定行数**: 約 20 行（実装 20 行 + テスト 0 行）
 
 - [x] **1-2**: 環境変数とConfigの追加
-
   - `internal/config/config.go` に Turnstile 設定を追加
   - 環境変数（`ANNICT_TURNSTILE_SITE_KEY`, `ANNICT_TURNSTILE_SECRET_KEY`）を読み込む
   - テスト環境用のモック設定を追加
@@ -339,7 +337,6 @@ func (c *Client) Verify(ctx context.Context, token string) (bool, error)
 ### フェーズ 2: Turnstile API クライアント実装
 
 - [x] **2-1**: Turnstile API クライアントの実装
-
   - `internal/turnstile/verify.go` を作成
   - `Client` 構造体を定義
   - `Verify()` メソッドを実装（Cloudflare Siteverify API を呼び出し）
@@ -351,7 +348,6 @@ func (c *Client) Verify(ctx context.Context, token string) (bool, error)
 ### フェーズ 3: フロントエンド実装（ログインフォーム）
 
 - [x] **3-1**: Turnstile ウィジェットコンポーネントの作成
-
   - `internal/templates/components/turnstile.templ` を作成
   - Turnstile JavaScript の読み込み（非同期）
   - ウィジェットの表示（invisible mode）
@@ -360,7 +356,6 @@ func (c *Client) Verify(ctx context.Context, token string) (bool, error)
   - **想定行数**: 約 80 行（実装 40 行 + テスト 40 行）
 
 - [x] **3-1-1**: ログインハンドラーとテンプレートをRESTful命名に統一
-
   - `internal/handler/sign_in/show.go` → `internal/handler/sign_in/new.go` にリネーム
   - メソッド名 `Show` → `New` に変更
   - `internal/templates/pages/sign_in.templ` → `internal/templates/pages/sign_in/new.templ` に移動
@@ -374,7 +369,6 @@ func (c *Client) Verify(ctx context.Context, token string) (bool, error)
   - **Note**: 既存ファイルの移動とリネーム、importパス変更が主な作業
 
 - [x] **3-2**: ログインフォームに Turnstile ウィジェットを追加
-
   - `internal/templates/pages/sign_in/new.templ` を更新
   - Turnstile コンポーネントを追加
   - テンプレートテストを更新
@@ -384,7 +378,6 @@ func (c *Client) Verify(ctx context.Context, token string) (bool, error)
 ### フェーズ 4: バックエンド実装（ログインフォーム）
 
 - [x] **4-1**: ログインハンドラーに Turnstile 検証を追加
-
   - `internal/handler/sign_in/create.go` を更新
   - フォームから `cf-turnstile-response` トークンを取得
   - `turnstile.Client.Verify()` を呼び出し
@@ -394,7 +387,6 @@ func (c *Client) Verify(ctx context.Context, token string) (bool, error)
   - **想定行数**: 約 120 行（実装 60 行 + テスト 60 行）
 
 - [x] **4-2**: エラーメッセージの国際化対応
-
   - `internal/i18n/locales/ja.toml` と `en.toml` に Turnstile エラーメッセージを追加
   - エラーメッセージキー: `errors.turnstile_verification_failed`
   - 日本語: "Bot対策の検証に失敗しました。もう一度お試しください。"
@@ -405,7 +397,6 @@ func (c *Client) Verify(ctx context.Context, token string) (bool, error)
 ### フェーズ 5: パスワードリセット申請フォームへの展開
 
 - [x] **5-1**: パスワードリセット申請フォームに Turnstile ウィジェットを追加
-
   - `internal/templates/pages/password/reset.templ` を更新
   - Turnstile コンポーネントを追加
   - `internal/handler/password_reset/new.go` を更新して `h.cfg.TurnstileSiteKey` を渡す
@@ -414,7 +405,6 @@ func (c *Client) Verify(ctx context.Context, token string) (bool, error)
   - **想定行数**: 約 30 行（実装 30 行）
 
 - [x] **5-2**: パスワードリセット申請ハンドラーに Turnstile 検証を追加
-
   - `internal/handler/password_reset/create.go` を更新
   - フォームから `cf-turnstile-response` トークンを取得
   - `turnstile.Client.Verify()` を呼び出し
@@ -427,7 +417,6 @@ func (c *Client) Verify(ctx context.Context, token string) (bool, error)
 ### フェーズ 6: ドキュメントと動作確認
 
 - [ ] **6-1**: ドキュメント更新と動作確認
-
   - `go/docs/security-guide.md` に Turnstile の説明を追加
   - 開発環境での動作確認手順をドキュメント化
   - 本番環境へのデプロイ前のチェックリストを作成

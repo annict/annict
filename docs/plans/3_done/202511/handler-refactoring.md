@@ -430,7 +430,6 @@ handler/
 -->
 
 - [x] **0-1**: 既存のPUTエンドポイントをPATCHに変更
-
   - `cmd/server/main.go` のルーティング定義を `r.Put("/password", ...)` から `r.Patch("/password", ...)` に変更
   - `internal/handler/password_reset.go` のコメントを `PUT /password` から `PATCH /password` に変更
   - `internal/handler/password_reset_integration_test.go` のテストコードを `PUT` から `PATCH` に変更
@@ -451,7 +450,6 @@ handler/
 -->
 
 - [x] **1-1**: ハンドラー命名規則のドキュメント作成
-
   - `.claude/designs/1_doing/handler-refactoring.md` の作成（完了）
   - PATCHで統一する方針を明記（完了）
   - **想定ファイル数**: 約 1 ファイル（ドキュメントのみ）
@@ -460,7 +458,6 @@ handler/
 ### フェーズ 2: 単独エンドポイントの移行
 
 - [x] **2-1**: `health/` と `home/` ディレクトリの作成
-
   - `handler/health/` ディレクトリを作成
   - `handler/health/handler.go` を作成（Handler 構造体）
   - `handler/health/show.go` を作成（Show メソッド）
@@ -477,7 +474,6 @@ handler/
 ### フェーズ 3: popular_work リソースの移行
 
 - [x] **3-1**: `popular_work/` ディレクトリの作成と `PopularWorks` の移行
-
   - `handler/popular_work/` ディレクトリを作成
   - `handler/popular_work/handler.go` を作成（Handler 構造体）
   - `handler/popular_work/index.go` を作成（Index メソッド）
@@ -490,7 +486,6 @@ handler/
 ### フェーズ 4: sign_in リソースの移行
 
 - [x] **4-1**: `sign_in/` ディレクトリへの移行
-
   - `handler/sign_in/` ディレクトリを作成
   - `handler/sign_in/handler.go` を作成（既存の SignInHandler を移動）
   - `handler/sign_in/new.go` を作成（ShowSignIn → New に改名）
@@ -507,7 +502,6 @@ handler/
 ### フェーズ 5: password_reset と password リソースの移行
 
 - [x] **5-1**: `password_reset/` ディレクトリへの移行
-
   - `handler/password_reset/` ディレクトリを作成
   - `handler/password_reset/handler.go` を作成（Handler 構造体）
   - `handler/password_reset/new.go` を作成（ShowResetForm → New に改名）
@@ -521,7 +515,6 @@ handler/
   - **想定行数**: 約 300 行（実装 150 行 + テスト 150 行）
 
 - [x] **5-2**: `password/` ディレクトリへの移行
-
   - `handler/password/` ディレクトリを作成
   - `handler/password/handler.go` を作成（Handler 構造体）
   - `handler/password/edit.go` を作成（ShowEditForm → Edit に改名）
@@ -538,7 +531,6 @@ handler/
 ### フェーズ 6: 残りのファイルの整理
 
 - [x] **6-1**: `handler.go` の削除と最終確認
-
   - `handler.go` の削除（すべてのメソッドが移行済み）
   - `handler_test.go` の削除または必要に応じて分割
   - `error_502/` ディレクトリの作成と移行
@@ -605,7 +597,6 @@ handler/
 ### ファイル名の決め方（フローチャート）
 
 1. **リソース名を決める**
-
    - エンドポイントの URL（例: `/works/popular`）から名詞を抽出
    - リソースディレクトリ名を決定（例: `popular_work/`）
    - 単独エンドポイントでもディレクトリを作成（例: `/health` → `health/`）
@@ -648,10 +639,10 @@ RESTful 設計の標準に沿った、以下の対応関係を採用していま
 
 ### リソース名の命名例
 
-| URL パターン    | リソース名（推奨）    | 理由                         |
-| --------------- | --------------------- | ---------------------------- |
+| URL パターン    | リソース名（推奨）   | 理由                         |
+| --------------- | -------------------- | ---------------------------- |
 | /works/popular  | `popular_work/` ⭕️   | 形容詞+名詞の自然な語順      |
-| /works/popular  | `work_popular/` ❌    | 「作品\_人気」は不自然       |
+| /works/popular  | `work_popular/` ❌   | 「作品\_人気」は不自然       |
 | /password/reset | `password_reset/` ⭕️ | 名詞として成立               |
 | /users/me       | `current_user/` ⭕️   | 「現在のユーザー」という名詞 |
 | /search         | `search/` ⭕️         | 「検索」という名詞           |

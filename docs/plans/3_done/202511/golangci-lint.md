@@ -401,7 +401,6 @@ lint: lint-golangci
 -->
 
 - [x] **1-1**: golangci-lint の設定ファイル作成と CI への統合
-
   - `.golangci.yml` 設定ファイルを作成
   - GitHub Actions の Lint ジョブを golangci-lint に置き換え
   - Makefile に `lint-golangci` ターゲットを追加
@@ -416,7 +415,6 @@ lint: lint-golangci
 ### フェーズ 2: 検出された問題の修正
 
 - [x] **2-1**: gosec で検出されたセキュリティ問題の修正
-
   - golangci-lint を実行し、gosec で検出された問題を確認
   - 重大なセキュリティ問題を修正
   - 必要に応じて除外ルールを追加（誤検出の場合）
@@ -425,7 +423,6 @@ lint: lint-golangci
   - **依存**: タスク 1-1 完了後
 
 - [x] **2-2**: depguard で検出されたアーキテクチャ違反の修正
-
   - ✅ Presentation 層が Query に直接依存する問題を修正
   - ✅ PasswordResetTokenRepository を新規作成
   - ✅ UserRepository に`GetByID`メソッドを追加
@@ -437,7 +434,6 @@ lint: lint-golangci
   - **依存**: タスク 1-1 完了後
 
 - [x] **2-2-1**: golangci-lint を go.mod と tools.go から削除
-
   - golangci-lint の公式ドキュメント（https://golangci-lint.run/docs/welcome/install/）によると、`go install` でのインストールは非推奨
   - バイナリを curl でインストールする方法が推奨されているため、Go の依存関係から削除する
   - `go/go.mod` から `github.com/golangci/golangci-lint/v2` を削除
@@ -452,7 +448,6 @@ lint: lint-golangci
   - **依存**: タスク 2-2 完了後
 
 - [x] **2-3**: その他のリンター（errcheck, ineffassign, unused）で検出された問題の修正
-
   - ✅ errcheck, ineffassign, unused で検出された問題を確認
   - ✅ golangci-lint を実行した結果、0 件の問題が検出された
   - ✅ コードベースは既にクリーンな状態であることを確認
@@ -461,7 +456,6 @@ lint: lint-golangci
   - **依存**: タスク 1-1 完了後
 
 - [x] **2-4**: depguard のパッケージ間依存関係の細かい設定
-
   - 現在の depguard 設定は粒度が粗く、望ましくない依存関係が許可されている
   - 例: `templates` から `repository` を import できてしまう
   - ブラックリスト方式で、各パッケージごとに細かく依存禁止ルールを設定
@@ -488,7 +482,6 @@ lint: lint-golangci
   - **依存**: タスク 2-2 完了後
 
 - [x] **2-4-1**: `.golangci.yml` の depguard 設定の修正（templ 自動生成ファイルと templates-layer の依存関係）
-
   - **問題点1**: `*_templ.go` ファイルが depguard から除外されているため、templates-layer の依存性チェックが無効になっている
   - **問題点2**: templates-layer で viewmodel を deny しているが、実際には Template から ViewModel は参照できないといけない
   - **修正内容**:
@@ -506,7 +499,6 @@ lint: lint-golangci
 ### フェーズ 3: ドキュメント更新
 
 - [x] **3-1**: CLAUDE.md の更新
-
   - `go/CLAUDE.md` の「コミット前に実行するコマンド」セクションを更新
   - golangci-lint の使い方を追加
   - **想定ファイル数**: 約 1 ファイル（実装 1 + テスト 0）

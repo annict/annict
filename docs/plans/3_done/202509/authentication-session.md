@@ -138,12 +138,12 @@ func RequireAuth(next http.Handler) http.Handler {
 ```html
 <!-- layouts/base.html -->
 <header>
-    {{if .CurrentUser}}
-        <span>{{.CurrentUser.Username}}</span>
-        <a href="/sign_out">ログアウト</a>
-    {{else}}
-        <a href="/sign_in">ログイン</a>
-    {{end}}
+  {{if .CurrentUser}}
+  <span>{{.CurrentUser.Username}}</span>
+  <a href="/sign_out">ログアウト</a>
+  {{else}}
+  <a href="/sign_in">ログイン</a>
+  {{end}}
 </header>
 ```
 

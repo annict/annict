@@ -536,7 +536,6 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
 -->
 
 - [x] **1-1**: 統合 Dockerfile.dev を作成
-
   - ルートに `Dockerfile.dev` を新規作成（上記設計に基づく）
   - `mise.toml`（ルート）、`go/mise.toml`、`rails/mise.toml` を作成
   - `docker-compose.yml` を更新（`go-app` + `rails-app` → `app` に統合）
@@ -547,7 +546,6 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
 ### フェーズ 2: Go版の動作確認と調整
 
 - [x] **2-1**: [Go] 統合コンテナでのGo版動作確認と調整
-
   - `cd /workspace/go && make test` が通ることを確認
   - `cd /workspace/go && make lint` が通ることを確認
   - `cd /workspace/go && make fmt` が動作することを確認
@@ -559,7 +557,6 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
 ### フェーズ 3: Rails版の動作確認と調整
 
 - [x] **3-1**: [Rails] 統合コンテナでのRails版動作確認と調整
-
   - `cd /workspace/rails && make test` が通ることを確認
   - `cd /workspace/rails && make lint` が通ることを確認
   - Node.js/Yarn関連のコマンド（`yarn install`, `yarn build`）が正しいバージョンで動作することを確認
@@ -572,7 +569,6 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
 ### フェーズ 4: クリーンアップ
 
 - [x] **4-1**: 旧Dockerfileの削除とドキュメント更新
-
   - `go/Dockerfile.dev` を削除
   - `rails/Dockerfile.dev` を削除
   - `CLAUDE.md` のDocker関連セクションを更新

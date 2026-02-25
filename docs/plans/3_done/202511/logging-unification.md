@@ -90,13 +90,13 @@ Go 版 Annict のログ出力方法を `log/slog` パッケージに統一する
 
 ### 変換ルール
 
-| 変換前 | 変換後 | 備考 |
-|--------|--------|------|
-| `log.Printf("メッセージ: %v", val)` | `slog.Info("メッセージ", "key", val)` | 通常の情報ログ |
-| `log.Println("メッセージ")` | `slog.Info("メッセージ")` | 引数なしの情報ログ |
-| `log.Fatalf("エラー: %v", err)` | `slog.Error("エラー", "error", err); os.Exit(1)` | 致命的エラー |
-| `log.Printf("警告: %v", msg)` | `slog.Warn("警告", "message", msg)` | 警告ログ |
-| `log.Printf("エラー: %v", err)` | `slog.Error("エラー", "error", err)` | エラーログ |
+| 変換前                              | 変換後                                           | 備考               |
+| ----------------------------------- | ------------------------------------------------ | ------------------ |
+| `log.Printf("メッセージ: %v", val)` | `slog.Info("メッセージ", "key", val)`            | 通常の情報ログ     |
+| `log.Println("メッセージ")`         | `slog.Info("メッセージ")`                        | 引数なしの情報ログ |
+| `log.Fatalf("エラー: %v", err)`     | `slog.Error("エラー", "error", err); os.Exit(1)` | 致命的エラー       |
+| `log.Printf("警告: %v", msg)`       | `slog.Warn("警告", "message", msg)`              | 警告ログ           |
+| `log.Printf("エラー: %v", err)`     | `slog.Error("エラー", "error", err)`             | エラーログ         |
 
 ### コンテキストの扱い
 
@@ -105,12 +105,12 @@ Go 版 Annict のログ出力方法を `log/slog` パッケージに統一する
 
 ### ログレベルの選択基準
 
-| レベル | 用途 |
-|--------|------|
-| `slog.Debug` | デバッグ情報（通常は出力しない） |
-| `slog.Info` | 通常の情報（サーバー起動、処理完了など） |
-| `slog.Warn` | 警告（処理は継続するが注意が必要） |
-| `slog.Error` | エラー（処理が失敗した場合） |
+| レベル       | 用途                                     |
+| ------------ | ---------------------------------------- |
+| `slog.Debug` | デバッグ情報（通常は出力しない）         |
+| `slog.Info`  | 通常の情報（サーバー起動、処理完了など） |
+| `slog.Warn`  | 警告（処理は継続するが注意が必要）       |
+| `slog.Error` | エラー（処理が失敗した場合）             |
 
 ### 対象ファイル
 
@@ -118,7 +118,7 @@ Go 版 Annict のログ出力方法を `log/slog` パッケージに統一する
 
 1. **cmd/server/main.go** - サーバー起動時のログ（約25箇所）
 2. **cmd/seed/main.go** - シードデータ生成時のログ（約50箇所）
-3. **internal/usecase/seed/*.go** - シード関連ユースケース（約20箇所）
+3. **internal/usecase/seed/\*.go** - シード関連ユースケース（約20箇所）
 4. **internal/handler/password_reset/create.go** - エラーログ（約5箇所）
 5. **internal/handler/password/edit.go, update.go** - エラーログ（約5箇所）
 6. **internal/handler/sign_in/create.go** - エラーログ（約3箇所）
@@ -157,7 +157,6 @@ Go 版 Annict のログ出力方法を `log/slog` パッケージに統一する
 -->
 
 - [x] **1-1**: password_reset, password ハンドラーのログ統一
-
   - `internal/handler/password_reset/create.go` の `log.Printf` を `slog` に変換
   - `internal/handler/password/edit.go` の `log.Printf` を `slog` に変換
   - `internal/handler/password/update.go` の `log.Printf` を `slog` に変換
@@ -165,14 +164,12 @@ Go 版 Annict のログ出力方法を `log/slog` パッケージに統一する
   - **想定行数**: 約 30 行（実装 30 行 + テスト 0 行）
 
 - [x] **1-2**: sign_in, sign_up ハンドラーのログ統一
-
   - `internal/handler/sign_in/create.go` の `log.Printf` を `slog` に変換
   - `internal/handler/sign_up/create.go` の `log.Printf` を `slog` に変換
   - **想定ファイル数**: 約 2 ファイル（実装 2 + テスト 0）
   - **想定行数**: 約 20 行（実装 20 行 + テスト 0 行）
 
 - [x] **1-3**: health, popular_work ハンドラーのログ統一
-
   - `internal/handler/health/show.go` の `log.Printf` を `slog` に変換
   - `internal/handler/popular_work/index.go` の `log.Printf` を `slog` に変換
   - **想定ファイル数**: 約 2 ファイル（実装 2 + テスト 0）
@@ -181,14 +178,12 @@ Go 版 Annict のログ出力方法を `log/slog` パッケージに統一する
 ### フェーズ 2: cmd 層のログ統一
 
 - [x] **2-1**: cmd/server/main.go のログ統一
-
   - サーバー起動時のログを `slog` に変換
   - 致命的エラー（`log.Fatalf`）は `slog.Error` + `os.Exit(1)` に変換
   - **想定ファイル数**: 約 1 ファイル（実装 1 + テスト 0）
   - **想定行数**: 約 80 行（実装 80 行 + テスト 0 行）
 
 - [x] **2-2**: cmd/seed/main.go のログ統一
-
   - シードデータ生成時のログを `slog` に変換
   - 致命的エラー（`log.Fatalf`）は `slog.Error` + `os.Exit(1)` に変換
   - **想定ファイル数**: 約 1 ファイル（実装 1 + テスト 0）
@@ -196,8 +191,7 @@ Go 版 Annict のログ出力方法を `log/slog` パッケージに統一する
 
 ### フェーズ 3: usecase 層のログ統一
 
-- [x] **3-1**: internal/usecase/seed/*.go のログ統一
-
+- [x] **3-1**: internal/usecase/seed/\*.go のログ統一
   - `cleanup_work_images.go` の `log.Printf` を `slog` に変換
   - `cleanup_profile_images.go` の `log.Printf` を `slog` に変換
   - **想定ファイル数**: 約 2 ファイル（実装 2 + テスト 0）
@@ -206,7 +200,6 @@ Go 版 Annict のログ出力方法を `log/slog` パッケージに統一する
 ### フェーズ 4: ドキュメント更新
 
 - [x] **4-1**: CLAUDE.md のログガイドライン追加
-
   - ログ出力方法のガイドラインを CLAUDE.md に追加
   - `log` パッケージの使用を禁止する旨を明記
   - **想定ファイル数**: 約 1 ファイル（実装 1 + テスト 0）

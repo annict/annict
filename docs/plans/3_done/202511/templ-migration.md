@@ -248,7 +248,6 @@ func Icon(name string, class ...string) templ.Component {
 ### フェーズ 1: 環境構築とプロトタイプ
 
 - [x] **1-1**: templのインストールとセットアップ
-
   - `go get github.com/a-h/templ`
   - `go install github.com/a-h/templ/cmd/templ@latest`
   - `go.mod`と`go.sum`の更新
@@ -256,7 +255,6 @@ func Icon(name string, class ...string) templ.Component {
   - **想定行数**: 約10行（実装10行）
 
 - [x] **1-2**: Makefileへのtempl generateタスク追加
-
   - `make templ-generate`タスクを追加
   - `make build`に`templ generate`を統合
   - `make clean`に生成ファイルのクリーンアップを追加
@@ -264,14 +262,12 @@ func Icon(name string, class ...string) templ.Component {
   - **想定行数**: 約15行（実装15行）
 
 - [x] **1-3**: airの設定更新（ホットリロード）
-
   - `.air.toml`に`.templ`ファイルの監視を追加
   - `templ generate`を自動実行するように設定
   - **想定ファイル数**: 約1ファイル（実装1）
   - **想定行数**: 約10行（実装10行）
 
 - [x] **1-4**: プロトタイプの作成（1ページ分）
-
   - シンプルなページ（例: 502エラーページ）をtemplで実装
   - レンダリングが正常に動作することを確認
   - ハンドラーからの呼び出しを確認
@@ -281,7 +277,6 @@ func Icon(name string, class ...string) templ.Component {
 ### フェーズ 2: コアコンポーネントの移行
 
 - [x] **2-1**: テンプレートヘルパーの移行
-
   - `internal/templates/helper.go`を更新
   - `T()`, `Locale()`, `Deref()`関数をtempl対応に変更
   - `Icon()`関数を`templ.Component`として実装
@@ -290,7 +285,6 @@ func Icon(name string, class ...string) templ.Component {
   - **想定行数**: 約150行（実装80行 + テスト70行）
 
 - [x] **2-2**: パーシャルコンポーネントの移行
-
   - `components/head.templ`を作成
   - `components/flash.templ`を作成
   - `components/form_errors.templ`を作成
@@ -299,7 +293,6 @@ func Icon(name string, class ...string) templ.Component {
   - **想定行数**: 約200行（実装120行 + テスト80行）
 
 - [x] **2-3**: レイアウトテンプレートの移行
-
   - `layouts/default.templ`を作成
   - `layouts/simple.templ`を作成
   - レイアウトのテストを追加
@@ -309,7 +302,6 @@ func Icon(name string, class ...string) templ.Component {
 ### フェーズ 3: ページテンプレートの移行
 
 - [x] **3-1**: エラーページの移行
-
   - `pages/errors/502.templ`を作成
   - ハンドラーを更新
   - テストを追加
@@ -317,7 +309,6 @@ func Icon(name string, class ...string) templ.Component {
   - **想定行数**: 約80行（実装50行 + テスト30行）
 
 - [x] **3-2**: ログインページの移行
-
   - `pages/sign_in.templ`を作成
   - `SignInHandler`を更新
   - テストを追加
@@ -325,7 +316,6 @@ func Icon(name string, class ...string) templ.Component {
   - **想定行数**: 約150行（実装90行 + テスト60行）
 
 - [x] **3-3**: パスワードリセットページの移行
-
   - `pages/password/reset.templ`を作成
   - `pages/password/edit.templ`を作成
   - `pages/password/reset_sent.templ`を作成
@@ -335,7 +325,6 @@ func Icon(name string, class ...string) templ.Component {
   - **想定行数**: 約300行（実装180行 + テスト120行）
 
 - [x] **3-4**: 人気作品ページの移行
-
   - `pages/works/popular.templ`を作成
   - `PopularWorks`ハンドラーを更新
   - テストを追加
@@ -345,7 +334,6 @@ func Icon(name string, class ...string) templ.Component {
 ### フェーズ 4: メールテンプレートの移行
 
 - [x] **4-1**: パスワードリセットメールの移行
-
   - `emails/password_reset/ja_html.templ`を作成
   - `emails/password_reset/en_html.templ`を作成
   - `emails/password_reset/ja_text.templ`を作成
@@ -358,7 +346,6 @@ func Icon(name string, class ...string) templ.Component {
 ### フェーズ 5: クリーンアップとドキュメント更新
 
 - [x] **5-1**: 旧テンプレートファイルの削除
-
   - `internal/templates/*.html`を削除
   - `internal/handler/template_loader.go`を削除
   - 旧テンプレート関連のコードをクリーンアップ
@@ -366,7 +353,6 @@ func Icon(name string, class ...string) templ.Component {
   - **想定行数**: 約-1000行（実装-1000行）
 
 - [x] **5-2**: CLAUDE.mdの更新
-
   - テンプレートセクションをtempl用に更新
   - コーディング規約を更新
   - テストガイドを更新
@@ -374,7 +360,6 @@ func Icon(name string, class ...string) templ.Component {
   - **想定行数**: 約100行（実装100行）
 
 - [x] **5-3**: CIの更新
-
   - `.github/workflows/go-ci.yml`に`templ generate`を追加
   - ビルドステップを更新
   - **想定ファイル数**: 約1ファイル（実装1）

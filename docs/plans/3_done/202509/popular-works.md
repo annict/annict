@@ -56,12 +56,14 @@
 ## 技術スタック
 
 ### バックエンド
+
 - **sqlc**: SQL クエリから Go コードを生成
 - **html/template**: Go 標準テンプレートエンジン
 - **go-i18n**: 国際化ライブラリ
 - **imgproxy**: 画像リサイズ・最適化プロキシ
 
 ### フロントエンド
+
 - **Vite**: 高速フロントエンドビルドツール
 - **TypeScript**: 型安全な JavaScript
 - **Tailwind CSS**: ユーティリティファースト CSS

@@ -104,6 +104,7 @@ Go プロジェクト内に `ANNICT_ENV` と `APP_ENV` という2つの環境変
 #### `ANNICT_ENV` の使用箇所
 
 1. **`go/internal/config/config.go`**: 環境識別のために使用（`.env` ファイルは環境に関係なく単一のファイルのみ読み込む）
+
    ```go
    // ANNICT_ENVの値を取得（デフォルト: development）
    env := os.Getenv("ANNICT_ENV")
@@ -116,6 +117,7 @@ Go プロジェクト内に `ANNICT_ENV` と `APP_ENV` という2つの環境変
    ```
 
 2. **`go/internal/config/config_test.go`**: テストで環境を指定するために使用
+
    ```go
    os.Setenv("ANNICT_ENV", "development")
    // または
@@ -131,12 +133,14 @@ Go プロジェクト内に `ANNICT_ENV` と `APP_ENV` という2つの環境変
 #### `APP_ENV` の使用箇所
 
 1. **`go/.air.toml`**: 開発サーバー（air）でのビルド時に `op run` コマンドに渡される
+
    ```toml
    cmd = "make templ-generate && make goimports && APP_ENV=dev op run --env-file=.env -- go build -o ./tmp/main ./cmd/server"
    full_bin = "APP_ENV=dev op run --env-file=.env -- ./tmp/main"
    ```
 
 2. **`go/Makefile`**: `op run` コマンドに渡される
+
    ```makefile
    run: ## サーバーを起動
        APP_ENV=dev op run --env-file=".env" -- go run cmd/server/main.go
@@ -244,6 +248,7 @@ defer os.Unsetenv("APP_ENV")
 ```
 
 また、`.env`ファイルの読み込みに関連するテストを削除：
+
 - `TestLoad_PresetEnvironmentVariables` テストは削除（`.env`読み込み処理がなくなるため不要）
 
 #### 4. `.github/workflows/go-ci.yml`
@@ -252,7 +257,7 @@ GitHub Actions の環境変数を `ANNICT_ENV` → `APP_ENV` に更新：
 
 ```yaml
 env:
-  APP_ENV: test  # ANNICT_ENV から変更
+  APP_ENV: test # ANNICT_ENV から変更
   DATABASE_URL: postgres://postgres@localhost:5432/annict_test?sslmode=disable
   # ... その他の環境変数
 ```
@@ -336,7 +341,6 @@ APP_ENV=test go test -v ./internal/handler -run TestPopularWorksWithRealDB
 -->
 
 - [x] **1-1**: `ANNICT_ENV` を `APP_ENV` に統合
-
   - `internal/config/config.go` の変更:
     - `ANNICT_ENV` → `APP_ENV` に変更
     - デフォルト値を `"development"` → `"dev"` に変更
@@ -387,6 +391,7 @@ APP_ENV=test go test -v ./internal/handler -run TestPopularWorksWithRealDB
 ### `ANNICT_ENV` の使用状況と役割
 
 1. **`go/internal/config/config.go`** (go/internal/config/config.go:69-78):
+
    ```go
    // ANNICT_ENVの値を取得（デフォルト: development）
    env := os.Getenv("ANNICT_ENV")

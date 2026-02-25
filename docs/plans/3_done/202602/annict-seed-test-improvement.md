@@ -94,6 +94,7 @@ Annict Go版のシードデータ生成テスト（`TestCreateUserUsecase_LargeB
 `auth.HashPassword` にテスト用の低コストオプションを導入する。
 
 **現状**:
+
 ```go
 // auth/password.go
 func HashPassword(plainPassword string) (string, error) {
@@ -103,6 +104,7 @@ func HashPassword(plainPassword string) (string, error) {
 ```
 
 **改善後**:
+
 ```go
 // auth/password.go
 
@@ -122,6 +124,7 @@ func HashPassword(plainPassword string) (string, error) {
 ```
 
 **テスト側**:
+
 ```go
 // TestMainまたはテスト内でコストを最小に設定
 func TestMain(m *testing.M) {
@@ -131,6 +134,7 @@ func TestMain(m *testing.M) {
 ```
 
 **速度改善効果**:
+
 - bcryptコスト10 → 4 で約64倍高速化（2^(10-4) = 64）
 - 2500ユーザー × 50ms → 2500ユーザー × 0.78ms ≈ 約2秒（並列化前）
 - 並列化により更に高速化（CPUコア数に応じて）
@@ -143,16 +147,17 @@ func TestMain(m *testing.M) {
 **改善後**: 250件（100件チャンク × 3回）
 
 250件にする理由:
+
 - 100件チャンクが複数回（3回: 100 + 100 + 50）実行されることを検証できる
 - 最後のチャンクが端数（50件）になるケースもカバー
 - 2500件と比較して約10倍のINSERT高速化
 
 #### 期待される改善効果
 
-| テスト | 現状 | 改善後 | 高速化 |
-| --- | --- | --- | --- |
+| テスト                   | 現状         | 改善後                            | 高速化      |
+| ------------------------ | ------------ | --------------------------------- | ----------- |
 | User LargeBatch (2500件) | 数十秒〜数分 | 数秒以内（250件 + bcryptコスト4） | 約100倍以上 |
-| Work LargeBatch (2500件) | 数秒〜十数秒 | 1秒以内（250件） | 約10倍 |
+| Work LargeBatch (2500件) | 数秒〜十数秒 | 1秒以内（250件）                  | 約10倍      |
 
 ### 関連設計書
 
@@ -165,7 +170,6 @@ func TestMain(m *testing.M) {
 ### フェーズ 1: bcryptコスト削減とテスト高速化
 
 - [x] **1-1**: [Go] テスト用bcryptコスト設定の導入
-
   - `auth/password.go` にパッケージ変数 `bcryptCost` と `SetBcryptCostForTest` 関数を追加
   - `HashPassword` 関数がパッケージ変数 `bcryptCost` を使用するように変更
   - `auth/password_test.go` に `SetBcryptCostForTest` のテストを追加
@@ -173,7 +177,6 @@ func TestMain(m *testing.M) {
   - **想定行数**: 約 40 行（実装 15 行 + テスト 25 行）
 
 - [x] **1-2**: [Go] シードテストのTestMainでbcryptコスト設定
-
   - `usecase/seed/` パッケージに `TestMain` を追加し、`auth.SetBcryptCostForTest(bcrypt.MinCost)` を呼び出す
   - 既存の `TestCreateUserUsecase_PasswordHashing` テストがbcrypt検証として引き続き動作することを確認
   - **想定ファイル数**: 約 1 ファイル（実装 1 + テスト 0）
@@ -182,7 +185,6 @@ func TestMain(m *testing.M) {
 ### フェーズ 2: LargeBatchテストの常時実行化
 
 - [x] **2-1**: [Go] LargeBatchテストのバッチサイズ削減と`testing.Short()`除去
-
   - `TestCreateUserUsecase_LargeBatch` のバッチサイズを2500→250に変更
   - `TestCreateWorkUsecase_LargeBatch` のバッチサイズを2500→250に変更
   - 両テストから `testing.Short()` によるスキップを削除

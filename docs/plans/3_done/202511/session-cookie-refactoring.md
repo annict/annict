@@ -39,21 +39,21 @@
 
 #### 1. Cookie設定箇所の散在
 
-| ファイル | 行 | 用途 |
-|---------|---|------|
-| `internal/session/session.go` | 176-186 | `CreateSession()` |
-| `internal/session/session.go` | 239-249 | `SetValue()` 新規セッション作成時 |
-| `internal/handler/sign_in_password/create.go` | 124-134 | パスワードログイン |
-| `internal/handler/sign_in_code/create.go` | 203-213 | メールコードログイン |
-| `internal/handler/sign_up_username/create.go` | 80-89 | ユーザー登録 |
+| ファイル                                      | 行      | 用途                              |
+| --------------------------------------------- | ------- | --------------------------------- |
+| `internal/session/session.go`                 | 176-186 | `CreateSession()`                 |
+| `internal/session/session.go`                 | 239-249 | `SetValue()` 新規セッション作成時 |
+| `internal/handler/sign_in_password/create.go` | 124-134 | パスワードログイン                |
+| `internal/handler/sign_in_code/create.go`     | 203-213 | メールコードログイン              |
+| `internal/handler/sign_up_username/create.go` | 80-89   | ユーザー登録                      |
 
 #### 2. 設定値の不統一
 
-| 属性 | session.go | sign_in_password | sign_in_code | sign_up_username |
-|------|-----------|-----------------|--------------|------------------|
+| 属性   | session.go                    | sign_in_password          | sign_in_code              | sign_up_username                                |
+| ------ | ----------------------------- | ------------------------- | ------------------------- | ----------------------------------------------- |
 | Secure | `cfg.SessionSecure == "true"` | X-Forwarded-Proto対応あり | X-Forwarded-Proto対応あり | `cfg.SessionSecure != "false"` ← **逆ロジック** |
-| Domain | `cfg.CookieDomain` | `cfg.CookieDomain` | `cfg.CookieDomain` | `cfg.Domain` ← **異なるフィールド** |
-| MaxAge | 30日 | **なし** | **なし** | **なし** |
+| Domain | `cfg.CookieDomain`            | `cfg.CookieDomain`        | `cfg.CookieDomain`        | `cfg.Domain` ← **異なるフィールド**             |
+| MaxAge | 30日                          | **なし**                  | **なし**                  | **なし**                                        |
 
 #### 3. 不要なコード
 
@@ -91,6 +91,7 @@ func (m *Manager) setSessionCookie(w http.ResponseWriter, r *http.Request, publi
 usecase層とsession.Managerの責務を明確に分離する方針を採用する。
 
 **責務の分離:**
+
 - **usecase層**: ビジネスロジック（セッションDB保存、flashメッセージ設定など）を担当し、`PublicID` を返す
 - **session.Manager**: Cookie設定ロジックを集約し、統一されたCookie属性で設定する
 - **ハンドラー**: usecaseを呼び出した後、session.ManagerでCookieを設定
@@ -129,6 +130,7 @@ h.sessionMgr.SetSessionCookieByPublicID(w, r, sessionResult.PublicID)
 ```
 
 **メリット:**
+
 - Cookie設定ロジックが `session.Manager` に完全に集約される
 - ハンドラーは1行でCookie設定が完了
 - Cookie属性（Domain, Secure, HttpOnly, SameSite, MaxAge）が統一される
@@ -149,6 +151,7 @@ func (m *Manager) EnsureCSRFToken(ctx context.Context, w http.ResponseWriter, r 
 ### ディレクトリ構成（変更なし）
 
 変更対象ファイル:
+
 - `internal/session/session.go` - Cookie設定ロジックの集約
 - `internal/middleware/csrf.go` - `GetOrCreateCSRFToken` の改善
 - `internal/handler/sign_in_password/create.go` - `http.SetCookie()` の削除
@@ -160,7 +163,6 @@ func (m *Manager) EnsureCSRFToken(ctx context.Context, w http.ResponseWriter, r 
 ### フェーズ 1: session.Manager の改善
 
 - [x] **1-1**: `setSessionCookie()` 内部ヘルパーメソッドの追加
-
   - `session.Manager` に `setSessionCookie(w, r, publicID)` メソッドを追加
   - X-Forwarded-Proto ヘッダーによる Secure 属性の判定を含める
   - 既存の `CreateSession()` と `SetValue()` 内のCookie設定をこのメソッドに統一
@@ -169,7 +171,6 @@ func (m *Manager) EnsureCSRFToken(ctx context.Context, w http.ResponseWriter, r 
   - **想定行数**: 約 80 行（実装 40 行 + テスト 40 行）
 
 - [x] **1-2**: `SetSessionCookieByPublicID()` 公開メソッドの追加
-
   - `session.Manager` に `SetSessionCookieByPublicID(w, r, publicID)` 公開メソッドを追加
   - 内部ヘルパー `setSessionCookie()` のラッパーとして実装
   - ハンドラーからusecase呼び出し後にCookieを設定するために使用
@@ -178,7 +179,6 @@ func (m *Manager) EnsureCSRFToken(ctx context.Context, w http.ResponseWriter, r 
   - **想定行数**: 約 30 行（実装 10 行 + テスト 20 行）
 
 - [x] **1-3**: `EnsureCSRFToken()` メソッドの追加
-
   - CSRFトークンを取得または生成する専用メソッドを追加
   - セッションが存在しない場合は新規作成してCookieを設定
   - `_csrf_initialized` ダミーキーの使用を廃止
@@ -189,7 +189,6 @@ func (m *Manager) EnsureCSRFToken(ctx context.Context, w http.ResponseWriter, r 
 ### フェーズ 2: ハンドラーの修正
 
 - [x] **2-1**: sign_in_password ハンドラーの修正
-
   - `http.SetCookie()` の直接呼び出しを削除
   - `sessionMgr.SetSessionCookieByPublicID(w, r, sessionResult.PublicID)` を使用
   - Cookie設定ロジック（Secure属性判定など）の重複コードを削除
@@ -198,7 +197,6 @@ func (m *Manager) EnsureCSRFToken(ctx context.Context, w http.ResponseWriter, r 
   - **想定行数**: 約 -15 行（削除が多い）
 
 - [x] **2-2**: sign_in_code ハンドラーの修正
-
   - `http.SetCookie()` の直接呼び出しを削除
   - `sessionMgr.SetSessionCookieByPublicID(w, r, sessionResult.PublicID)` を使用
   - Cookie設定ロジック（Secure属性判定など）の重複コードを削除
@@ -207,7 +205,6 @@ func (m *Manager) EnsureCSRFToken(ctx context.Context, w http.ResponseWriter, r 
   - **想定行数**: 約 -15 行（削除が多い）
 
 - [x] **2-3**: sign_up_username ハンドラーの修正
-
   - `http.SetCookie()` の直接呼び出しを削除
   - `sessionMgr.SetSessionCookieByPublicID(w, r, sessionResult.PublicID)` を使用
   - `h.cfg.Domain` → `h.cfg.CookieDomain` の修正が自動的に解決される
@@ -218,7 +215,6 @@ func (m *Manager) EnsureCSRFToken(ctx context.Context, w http.ResponseWriter, r 
 ### フェーズ 3: CSRF ミドルウェアの修正
 
 - [x] **3-1**: `GetOrCreateCSRFToken()` の改善
-
   - `_csrf_initialized` ダミーキーの使用を廃止
   - `session.Manager.EnsureCSRFToken()` を使用するように変更
   - 既存テストが通ることを確認

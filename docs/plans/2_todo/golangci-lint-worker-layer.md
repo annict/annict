@@ -125,7 +125,6 @@ worker-layer:
 ### フェーズ 1: depguard 設定の改善
 
 - [ ] **1-1**: [Go] Worker 層の depguard ルールを追加し、glob パターンを修正
-
   - `.golangci.yml` に worker-layer ルールを追加
   - viewmodel, middleware, model, repository, query の glob パターンを `*.go` に変更
   - `make lint` を実行して既存コードが違反していないことを確認

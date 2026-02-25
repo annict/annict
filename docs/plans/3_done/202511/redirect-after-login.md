@@ -43,11 +43,13 @@
 現在のログインには2つのフローがあり、両方で `back` パラメータを引き継ぐ必要がある：
 
 **フロー1: メール認証コードログイン（パスワードなしユーザー）**
+
 ```
 GET /sign_in → POST /sign_in → GET /sign_in/code → POST /sign_in/code
 ```
 
 **フロー2: パスワードログイン（パスワードありユーザー）**
+
 ```
 GET /sign_in → POST /sign_in → GET /sign_in/password → POST /sign_in/password
 ```
@@ -94,14 +96,14 @@ GET /sign_in → POST /sign_in → GET /sign_in/password → POST /sign_in/passw
 
 ### back パラメータの引き継ぎ
 
-| ステップ | 入力 | 出力 |
-|----------|------|------|
-| GET /sign_in | URLパラメータ `?back=...` | hidden フィールド `<input name="back">` |
-| POST /sign_in | フォーム `back` | リダイレクト先 `/sign_in/code?back=...` または `/sign_in/password?back=...` |
-| GET /sign_in/code | URLパラメータ `?back=...` | hidden フィールド `<input name="back">` |
-| POST /sign_in/code | フォーム `back` | リダイレクト先 `back` の値 |
-| GET /sign_in/password | URLパラメータ `?back=...` | hidden フィールド `<input name="back">` |
-| POST /sign_in/password | フォーム `back` | リダイレクト先 `back` の値 |
+| ステップ               | 入力                      | 出力                                                                        |
+| ---------------------- | ------------------------- | --------------------------------------------------------------------------- |
+| GET /sign_in           | URLパラメータ `?back=...` | hidden フィールド `<input name="back">`                                     |
+| POST /sign_in          | フォーム `back`           | リダイレクト先 `/sign_in/code?back=...` または `/sign_in/password?back=...` |
+| GET /sign_in/code      | URLパラメータ `?back=...` | hidden フィールド `<input name="back">`                                     |
+| POST /sign_in/code     | フォーム `back`           | リダイレクト先 `back` の値                                                  |
+| GET /sign_in/password  | URLパラメータ `?back=...` | hidden フィールド `<input name="back">`                                     |
+| POST /sign_in/password | フォーム `back`           | リダイレクト先 `back` の値                                                  |
 
 ### コード設計
 
@@ -172,25 +174,31 @@ func (m *AuthMiddleware) RequireAuth(next http.Handler) http.Handler {
 以下のハンドラーを修正する：
 
 **sign_in/new.go（ログインページ表示）**:
+
 - `back` パラメータを取得してテンプレートに渡す
 
 **sign_in/create.go（認証方式の分岐）**:
+
 - フォームから `back` パラメータを取得
 - `/sign_in/code?back=...` または `/sign_in/password?back=...` にリダイレクトする際に `back` パラメータを引き継ぐ
 
 **sign_in_code/show.go（認証コード入力ページ表示）**:
+
 - `back` パラメータを取得してテンプレートに渡す
 
 **sign_in_code/create.go（認証コード検証＆ログイン）**:
+
 - フォームから `back` パラメータを取得
 - `redirect.GetSafeRedirectURL()` でバリデーション
 - ログイン成功後、安全なリダイレクト先にリダイレクト
 - **既存の `redirect_to` パラメータを `back` に変更**
 
 **sign_in_password/new.go（パスワード入力ページ表示）**:
+
 - `back` パラメータを取得してテンプレートに渡す
 
 **sign_in_password/create.go（パスワード検証＆ログイン）**:
+
 - フォームから `back` パラメータを取得
 - `redirect.GetSafeRedirectURL()` でバリデーション
 - ログイン成功後、安全なリダイレクト先にリダイレクト
@@ -201,18 +209,21 @@ func (m *AuthMiddleware) RequireAuth(next http.Handler) http.Handler {
 以下のテンプレートを修正し、`back` パラメータを hidden フィールドに保持する。
 
 **sign_in/new.templ**:
+
 ```html
-<input type="hidden" name="back" value={ backURL } />
+<input type="hidden" name="back" value="{" backURL } />
 ```
 
 **sign_in_code/show.templ**:
+
 ```html
-<input type="hidden" name="back" value={ backURL } />
+<input type="hidden" name="back" value="{" backURL } />
 ```
 
 **sign_in_password/show.templ**:
+
 ```html
-<input type="hidden" name="back" value={ backURL } />
+<input type="hidden" name="back" value="{" backURL } />
 ```
 
 ### 既存コードとの互換性
@@ -220,6 +231,7 @@ func (m *AuthMiddleware) RequireAuth(next http.Handler) http.Handler {
 既存の `sign_in_code/create.go` と `sign_in_password/create.go` では `redirect_to` パラメータを使用しているが、Rails版との互換性のため `back` パラメータに変更する。
 
 変更箇所：
+
 ```go
 // Before
 redirectTo := r.FormValue("redirect_to")
@@ -263,7 +275,6 @@ internal/
 ### フェーズ 1: リダイレクトURLバリデーション
 
 - [x] **1-1**: リダイレクトURLバリデーション関数の実装
-
   - `internal/redirect/redirect.go` を新規作成
   - `ValidateBackURL()` 関数の実装
   - `GetSafeRedirectURL()` 関数の実装
@@ -274,7 +285,6 @@ internal/
 ### フェーズ 2: ログインページの修正（sign_in）
 
 - [x] **2-1**: sign_in ハンドラーとテンプレートの修正
-
   - `internal/handler/sign_in/new.go` の修正（back パラメータをテンプレートに渡す）
   - `internal/handler/sign_in/create.go` の修正（2箇所のリダイレクトで back を引き継ぐ: /sign_in/code と /sign_in/password）
   - `internal/templates/pages/sign_in/new.templ` の修正（hidden フィールド追加）
@@ -285,7 +295,6 @@ internal/
 ### フェーズ 3: 認証コード入力ページの修正（sign_in_code）
 
 - [x] **3-1**: sign_in_code ハンドラーとテンプレートの修正
-
   - `internal/handler/sign_in_code/show.go` の修正（back パラメータをテンプレートに渡す）
   - `internal/handler/sign_in_code/create.go` の修正（redirect_to → back に変更、バリデーション追加）
   - `internal/templates/pages/sign_in_code/show.templ` の修正（hidden フィールド追加）
@@ -296,7 +305,6 @@ internal/
 ### フェーズ 4: パスワード入力ページの修正（sign_in_password）
 
 - [x] **4-1**: sign_in_password ハンドラーとテンプレートの修正
-
   - `internal/handler/sign_in_password/new.go` の修正（back パラメータをテンプレートに渡す）
   - `internal/handler/sign_in_password/create.go` の修正（redirect_to → back に変更、バリデーション追加）
   - `internal/templates/pages/sign_in_password/show.templ` の修正（hidden フィールド追加）
@@ -307,7 +315,6 @@ internal/
 ### フェーズ 5: 認証ミドルウェアの修正
 
 - [x] **5-1**: 認証ミドルウェアで back パラメータを付与
-
   - `internal/middleware/auth.go` の修正（RequireAuth で back パラメータを付与）
   - 統合テストの追加
   - **想定ファイル数**: 約 2 ファイル（実装 1 + テスト 1）

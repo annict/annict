@@ -51,10 +51,10 @@ Go 版 Annict にメンテナンスモード機能を実装します。Rails 版
 
 #### 環境変数
 
-| 環境変数 | 説明 | 例 |
-|----------|------|-----|
-| `ANNICT_MAINTENANCE_MODE` | メンテナンスモードの有効/無効 | `"on"` で有効 |
-| `ANNICT_ADMIN_IP` | 管理者 IP アドレス（カンマ区切りで複数指定可） | `"192.168.1.1"` または `"192.168.1.1,10.0.0.1"` |
+| 環境変数                  | 説明                                           | 例                                              |
+| ------------------------- | ---------------------------------------------- | ----------------------------------------------- |
+| `ANNICT_MAINTENANCE_MODE` | メンテナンスモードの有効/無効                  | `"on"` で有効                                   |
+| `ANNICT_ADMIN_IP`         | 管理者 IP アドレス（カンマ区切りで複数指定可） | `"192.168.1.1"` または `"192.168.1.1,10.0.0.1"` |
 
 #### パッケージ構成
 
@@ -89,6 +89,7 @@ func isAdminIP(r *http.Request, adminIPs []string) bool
 
 `internal/clientip/clientip.go` の `GetClientIP()` 関数を使用します。
 優先順位:
+
 1. `CF-Connecting-IP`（Cloudflare が設定する実際のクライアント IP）
 2. `X-Forwarded-For`（プロキシチェーンの最初の IP）
 3. `X-Real-IP`
@@ -108,14 +109,12 @@ func isAdminIP(r *http.Request, adminIPs []string) bool
 ### フェーズ 1: 基盤実装
 
 - [x] **1-1**: Config への環境変数追加
-
   - `internal/config/config.go` に `MaintenanceMode` と `AdminIPs` を追加
   - 環境変数 `ANNICT_MAINTENANCE_MODE` と `ANNICT_ADMIN_IP` を読み込む
   - **想定ファイル数**: 約 2 ファイル（実装 1 + テスト 1）
   - **想定行数**: 約 50 行（実装 30 行 + テスト 20 行）
 
 - [x] **1-2**: メンテナンスページテンプレート作成
-
   - `internal/templates/pages/maintenance/maintenance.templ` を作成
   - Rails 版と同じデザインを実装
   - **想定ファイル数**: 約 1 ファイル（実装 1）
@@ -124,7 +123,6 @@ func isAdminIP(r *http.Request, adminIPs []string) bool
 ### フェーズ 2: ミドルウェア実装
 
 - [x] **2-1**: メンテナンスミドルウェア実装
-
   - `internal/middleware/maintenance.go` を作成
   - IP アドレス取得ロジック実装
   - 管理者 IP チェックロジック実装
@@ -135,7 +133,6 @@ func isAdminIP(r *http.Request, adminIPs []string) bool
 ### フェーズ 3: 統合
 
 - [x] **3-1**: ルーターへのミドルウェア適用
-
   - `cmd/server/main.go` でミドルウェアを適用
   - `.env.example` に環境変数を追加
   - **想定ファイル数**: 約 2 ファイル（実装 2）

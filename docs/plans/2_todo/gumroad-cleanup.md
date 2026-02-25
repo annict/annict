@@ -73,25 +73,25 @@ WHERE (gumroad_cancelled_at IS NULL OR gumroad_cancelled_at > NOW())
 
 ### 削除対象ファイル（Rails版）
 
-| 種別 | ファイル | 説明 |
-|-----|---------|------|
-| Model | `app/models/gumroad_subscriber.rb` | サブスクリプションモデル |
-| Model | `app/models/gumroad_client.rb` | Gumroad APIクライアント |
-| Concern | `app/models/concerns/supportable.rb` | 共通ロジック（Gumroad部分のみ削除） |
-| Form | `app/models/forms/supporter_registration_form.rb` | 登録フォーム |
-| Creator | `app/models/creators/supporter_registration_creator.rb` | 登録処理 |
-| Updater | `app/models/updaters/supporter_updater.rb` | 更新処理 |
-| Controller | `app/controllers/callbacks_controller.rb` | OAuthコールバック（Gumroad部分のみ削除） |
-| Rake | `lib/tasks/supporters.rake` | 同期タスク |
-| Config | `config/initializers/omniauth.rb` | OmniAuth設定（Gumroad部分のみ削除） |
+| 種別       | ファイル                                                | 説明                                     |
+| ---------- | ------------------------------------------------------- | ---------------------------------------- |
+| Model      | `app/models/gumroad_subscriber.rb`                      | サブスクリプションモデル                 |
+| Model      | `app/models/gumroad_client.rb`                          | Gumroad APIクライアント                  |
+| Concern    | `app/models/concerns/supportable.rb`                    | 共通ロジック（Gumroad部分のみ削除）      |
+| Form       | `app/models/forms/supporter_registration_form.rb`       | 登録フォーム                             |
+| Creator    | `app/models/creators/supporter_registration_creator.rb` | 登録処理                                 |
+| Updater    | `app/models/updaters/supporter_updater.rb`              | 更新処理                                 |
+| Controller | `app/controllers/callbacks_controller.rb`               | OAuthコールバック（Gumroad部分のみ削除） |
+| Rake       | `lib/tasks/supporters.rake`                             | 同期タスク                               |
+| Config     | `config/initializers/omniauth.rb`                       | OmniAuth設定（Gumroad部分のみ削除）      |
 
 ### 削除対象ファイル（Go版）
 
-| 種別 | ファイル | 説明 |
-|-----|---------|------|
+| 種別       | ファイル                                    | 説明                              |
+| ---------- | ------------------------------------------- | --------------------------------- |
 | Repository | `internal/repository/gumroad_subscriber.go` | Gumroadサブスクライバーリポジトリ |
-| Query | `internal/query/gumroad_subscriber.sql` | sqlcクエリファイル |
-| Template | `internal/templates/pages/supporters/` | Gumroad関連表示部分 |
+| Query      | `internal/query/gumroad_subscriber.sql`     | sqlcクエリファイル                |
+| Template   | `internal/templates/pages/supporters/`      | Gumroad関連表示部分               |
 
 ### データベース変更
 
@@ -108,7 +108,6 @@ ALTER TABLE users DROP COLUMN IF EXISTS gumroad_subscriber_id;
 ### フェーズ 1: 事前確認
 
 - [ ] **1-1**: Gumroadサブスクリプション終了確認
-
   - 全Gumroadサブスクリプションが期限切れであることを確認
   - 確認用SQLクエリの実行
   - **想定作業時間**: 約 10 分
@@ -116,7 +115,6 @@ ALTER TABLE users DROP COLUMN IF EXISTS gumroad_subscriber_id;
 ### フェーズ 2: 同期タスク停止
 
 - [ ] **2-1**: Gumroad同期タスクの停止
-
   - 定期実行設定の削除
   - 動作確認
   - **想定作業時間**: 約 15 分
@@ -124,7 +122,6 @@ ALTER TABLE users DROP COLUMN IF EXISTS gumroad_subscriber_id;
 ### フェーズ 3: Rails側クリーンアップ
 
 - [ ] **3-1**: Gumroad OmniAuth連携の削除
-
   - OmniAuthプロバイダー設定からGumroadを削除
   - CallbacksControllerからGumroad処理を削除
   - 関連ルーティングの削除
@@ -132,7 +129,6 @@ ALTER TABLE users DROP COLUMN IF EXISTS gumroad_subscriber_id;
   - **想定行数**: 約 80 行（実装 80 行 + テスト 0 行）
 
 - [ ] **3-2**: Gumroad関連モデル・サービスの削除
-
   - `GumroadSubscriber`モデルの削除
   - `GumroadClient`の削除
   - 関連フォーム・クリエイター・アップデーターの削除
@@ -140,7 +136,6 @@ ALTER TABLE users DROP COLUMN IF EXISTS gumroad_subscriber_id;
   - **想定行数**: 約 200 行（実装 200 行 + テスト 0 行）
 
 - [ ] **3-3**: User#supporter?からGumroad判定を削除
-
   - `Supportable` concernからGumroad判定ロジックを削除
   - Stripe判定のみに簡略化
   - テストの更新
@@ -148,7 +143,6 @@ ALTER TABLE users DROP COLUMN IF EXISTS gumroad_subscriber_id;
   - **想定行数**: 約 60 行（実装 30 行 + テスト 30 行）
 
 - [ ] **3-4**: Gumroad同期タスクの削除
-
   - `lib/tasks/supporters.rake`の削除
   - **想定ファイル数**: 約 1 ファイル（実装 1 + テスト 0）
   - **想定行数**: 約 50 行（実装 50 行 + テスト 0 行）
@@ -156,14 +150,12 @@ ALTER TABLE users DROP COLUMN IF EXISTS gumroad_subscriber_id;
 ### フェーズ 4: Go版クリーンアップ
 
 - [ ] **4-1**: GumroadSubscriberRepositoryの削除
-
   - `internal/repository/gumroad_subscriber.go`の削除
   - 関連sqlcクエリの削除
   - **想定ファイル数**: 約 3 ファイル（実装 2 + テスト 1）
   - **想定行数**: 約 120 行（実装 50 行 + テスト 70 行）
 
 - [ ] **4-2**: サポーター判定ロジックの簡略化
-
   - `UserRepository.IsSupporter()`からGumroad判定を削除
   - Stripe判定のみに簡略化
   - テストの更新
@@ -171,7 +163,6 @@ ALTER TABLE users DROP COLUMN IF EXISTS gumroad_subscriber_id;
   - **想定行数**: 約 40 行（実装 20 行 + テスト 20 行）
 
 - [ ] **4-3**: サポーターページのGumroad関連表示削除
-
   - Gumroad移行案内メッセージの削除
   - Gumroadサポーター向け表示分岐の削除
   - **想定ファイル数**: 約 3 ファイル（実装 2 + テスト 1）
@@ -180,13 +171,11 @@ ALTER TABLE users DROP COLUMN IF EXISTS gumroad_subscriber_id;
 ### フェーズ 5: データベースクリーンアップ
 
 - [ ] **5-1**: usersテーブルからgumroad_subscriber_idカラムを削除
-
   - マイグレーションファイルの作成
   - **想定ファイル数**: 約 1 ファイル（実装 1 + テスト 0）
   - **想定行数**: 約 15 行（実装 15 行 + テスト 0 行）
 
 - [ ] **5-2**: gumroad_subscribersテーブルの削除（オプション）
-
   - 履歴として残す場合はスキップ
   - 削除する場合はマイグレーションファイルを作成
   - **想定ファイル数**: 約 1 ファイル（実装 1 + テスト 0）

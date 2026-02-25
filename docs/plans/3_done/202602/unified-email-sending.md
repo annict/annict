@@ -52,13 +52,13 @@
 
 現在、3つのプロジェクトでメール送信処理が異なる実装になっている：
 
-| 項目 | Annict | Wikino | Mewst |
-|------|--------|--------|-------|
-| インターフェース | `MailSender` | なし | `Sender` |
-| テスト用Noop | なし | なし | あり |
-| 非同期処理 | Worker (river) | Worker (river) | なし（同期） |
-| HTML+テキスト | 両方 | HTMLのみ | 両方 |
-| 送信者名 | サポート | なし | なし |
+| 項目             | Annict         | Wikino         | Mewst        |
+| ---------------- | -------------- | -------------- | ------------ |
+| インターフェース | `MailSender`   | なし           | `Sender`     |
+| テスト用Noop     | なし           | なし           | あり         |
+| 非同期処理       | Worker (river) | Worker (river) | なし（同期） |
+| HTML+テキスト    | 両方           | HTMLのみ       | 両方         |
+| 送信者名         | サポート       | なし           | なし         |
 
 これらを統一することで、コードの一貫性と品質を向上させる。
 
@@ -85,16 +85,16 @@
 
 各プロジェクトの良いところを取り入れた統一設計：
 
-| 採用元 | 採用する設計要素 |
-|--------|-----------------|
-| Mewst | インターフェースベース設計（`Sender`インターフェース） |
-| Mewst | NoopSenderによるテスト可能性 |
-| Mewst | templ.Componentを引数に取る設計 |
-| Mewst | 言語×形式でテンプレートファイル分離 |
-| Annict | 送信者名（fromName）のサポート |
-| Annict | カスタムHTTPクライアント（タイムアウト設定） |
-| Annict/Wikino/Mewst | Worker（river）を使った非同期メール送信 |
-| Annict | 機能別テンプレートディレクトリ構成 |
+| 採用元              | 採用する設計要素                                       |
+| ------------------- | ------------------------------------------------------ |
+| Mewst               | インターフェースベース設計（`Sender`インターフェース） |
+| Mewst               | NoopSenderによるテスト可能性                           |
+| Mewst               | templ.Componentを引数に取る設計                        |
+| Mewst               | 言語×形式でテンプレートファイル分離                    |
+| Annict              | 送信者名（fromName）のサポート                         |
+| Annict              | カスタムHTTPクライアント（タイムアウト設定）           |
+| Annict/Wikino/Mewst | Worker（river）を使った非同期メール送信                |
+| Annict              | 機能別テンプレートディレクトリ構成                     |
 
 ### パッケージ構成
 
@@ -433,6 +433,7 @@ func (w *SendEmailWorker) Work(ctx context.Context, job *river.Job[SendEmailArgs
 
 **現状**: インターフェースベース設計、NoopSender、同期処理
 **変更点**:
+
 - 送信者名（fromName）のサポートを追加
 - HTTPクライアントのタイムアウト設定を追加
 - インターフェースメソッド名を`SendEmailConfirmation`から`Send`に変更（汎用化）
@@ -442,6 +443,7 @@ func (w *SendEmailWorker) Work(ctx context.Context, job *river.Job[SendEmailArgs
 
 **現状**: MailSenderインターフェース、Worker非同期処理、fromNameサポート
 **変更点**:
+
 - NoopSenderを追加（テスト可能性向上）
 - インターフェースを`Sender`に統一
 - `SendMultipartEmail`を`Send`に変更（templ.Componentを引数に）
@@ -450,6 +452,7 @@ func (w *SendEmailWorker) Work(ctx context.Context, job *river.Job[SendEmailArgs
 
 **現状**: 2層構造（Client + ConfirmationSender）、Worker非同期処理、HTMLのみ
 **変更点**:
+
 - `Sender`インターフェースを導入
 - NoopSenderを追加
 - テキスト形式のサポートを追加
@@ -461,7 +464,6 @@ func (w *SendEmailWorker) Work(ctx context.Context, job *river.Job[SendEmailArgs
 ### フェーズ 1: Mewstの改善
 
 - [x] **1-1**: [Go] 送信者名（fromName）サポートの追加
-
   - `email.ResendSender`に`fromName`フィールドを追加
   - `from()`メソッドで「名前 <メール>」形式を生成
   - 環境変数`MEWST_EMAIL_FROM_NAME`を追加
@@ -470,14 +472,12 @@ func (w *SendEmailWorker) Work(ctx context.Context, job *river.Job[SendEmailArgs
   - **想定行数**: 約 50 行（実装 30 行 + テスト 20 行）
 
 - [x] **1-2**: [Go] HTTPクライアントのタイムアウト設定追加
-
   - `NewResendSender`でカスタムHTTPクライアントを使用
   - タイムアウトを30秒に設定
   - **想定ファイル数**: 約 2 ファイル（実装 1 + テスト 1）
   - **想定行数**: 約 30 行（実装 15 行 + テスト 15 行）
 
 - [x] **1-3**: [Go] インターフェースメソッド名の汎用化
-
   - `SendEmailConfirmation`を`Send`にリネーム
   - `SendEmailConfirmationInput`を`SendInput`にリネーム
   - 呼び出し元の更新
@@ -485,7 +485,6 @@ func (w *SendEmailWorker) Work(ctx context.Context, job *river.Job[SendEmailArgs
   - **想定行数**: 約 80 行（実装 50 行 + テスト 30 行）
 
 - [x] **1-4**: [Go] Worker（river）を使った非同期メール送信のサポート追加
-
   - riverパッケージの導入（go.mod更新）
   - `internal/worker/`ディレクトリの作成
   - `internal/worker/client.go`: Workerクライアントの初期化
@@ -499,7 +498,6 @@ func (w *SendEmailWorker) Work(ctx context.Context, job *river.Job[SendEmailArgs
 ### フェーズ 2: Annictの改善
 
 - [x] **2-1**: [Go] NoopSenderの追加
-
   - `email.NoopSender`構造体を追加
   - `SentEmails`スライスで送信内容を記録
   - テストでの使用例を追加
@@ -507,7 +505,6 @@ func (w *SendEmailWorker) Work(ctx context.Context, job *river.Job[SendEmailArgs
   - **想定行数**: 約 60 行（実装 20 行 + テスト 40 行）
 
 - [x] **2-2**: [Go] インターフェース名の統一
-
   - `MailSender`を`Sender`にリネーム
   - `SendMultipartEmail`を`Send`にリネーム
   - templ.Componentを引数に取るように変更
@@ -518,7 +515,6 @@ func (w *SendEmailWorker) Work(ctx context.Context, job *river.Job[SendEmailArgs
 ### フェーズ 3: Wikinoの改善
 
 - [x] **3-1**: [Go] Senderインターフェースの導入
-
   - `email.Sender`インターフェースを追加
   - `Client`を`ResendSender`にリネーム
   - `ConfirmationSender`を削除（Senderに統合）
@@ -526,27 +522,23 @@ func (w *SendEmailWorker) Work(ctx context.Context, job *river.Job[SendEmailArgs
   - **想定行数**: 約 100 行（実装 60 行 + テスト 40 行）
 
 - [x] **3-2**: [Go] NoopSenderの追加
-
   - `email.NoopSender`構造体を追加
   - テストでの使用例を追加
   - **想定ファイル数**: 約 3 ファイル（実装 1 + テスト 2）
   - **想定行数**: 約 60 行（実装 20 行 + テスト 40 行）
 
 - [x] **3-3**: [Go] テキスト形式のサポート追加
-
   - `SendInput`に`TextBody`フィールドを追加
   - テンプレートにテキスト版を追加（ja_text, en_text）
   - **想定ファイル数**: 約 5 ファイル（実装 4 + テスト 1）
   - **想定行数**: 約 80 行（実装 60 行 + テスト 20 行）
 
 - [x] **3-4**: [Go] 送信者名（fromName）サポートの追加
-
   - Mewstと同じ実装
   - **想定ファイル数**: 約 4 ファイル（実装 3 + テスト 1）
   - **想定行数**: 約 50 行（実装 30 行 + テスト 20 行）
 
 - [x] **3-5**: [Go] テンプレートの言語×形式分離
-
   - 単一ファイルから4ファイル構成に変更
   - `IsJapanese`フラグをロケール文字列に変更
   - **想定ファイル数**: 約 6 ファイル（実装 5 + テスト 1）

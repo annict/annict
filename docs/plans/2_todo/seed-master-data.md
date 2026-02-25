@@ -21,6 +21,7 @@
 Go 版の `make seed` コマンドで、Rails 版の `db/seeds.rb` で生成していたマスターデータ（チャンネルグループ、チャンネル、エピソード番号フォーマット、都道府県）も生成できるようにする。
 
 開発環境とテスト環境で異なるシードデータを生成できるようにする：
+
 - **開発環境**: 既存の大量データ（ユーザー、作品、エピソード、視聴記録など）＋ マスターデータ
 - **テスト環境**: マスターデータのみ
 
@@ -178,54 +179,54 @@ func main() {
 
 #### channel_groups テーブル
 
-| カラム | 型 | 説明 |
-|--------|-----|------|
-| id | bigint | 主キー |
-| sc_chgid | varchar(510) | しょぼいカレンダーのチャンネルグループID |
-| name | varchar(510) | 名前 |
-| sort_number | integer | ソート順 |
-| created_at | timestamp with time zone | 作成日時 |
-| updated_at | timestamp with time zone | 更新日時 |
-| deleted_at | timestamp without time zone | 削除日時 |
-| unpublished_at | timestamp without time zone | 非公開日時 |
+| カラム         | 型                          | 説明                                     |
+| -------------- | --------------------------- | ---------------------------------------- |
+| id             | bigint                      | 主キー                                   |
+| sc_chgid       | varchar(510)                | しょぼいカレンダーのチャンネルグループID |
+| name           | varchar(510)                | 名前                                     |
+| sort_number    | integer                     | ソート順                                 |
+| created_at     | timestamp with time zone    | 作成日時                                 |
+| updated_at     | timestamp with time zone    | 更新日時                                 |
+| deleted_at     | timestamp without time zone | 削除日時                                 |
+| unpublished_at | timestamp without time zone | 非公開日時                               |
 
 #### channels テーブル
 
-| カラム | 型 | 説明 |
-|--------|-----|------|
-| id | bigint | 主キー |
-| channel_group_id | bigint | チャンネルグループID（外部キー） |
-| sc_chid | integer | しょぼいカレンダーのチャンネルID |
-| name | varchar | 名前 |
-| created_at | timestamp with time zone | 作成日時 |
-| updated_at | timestamp with time zone | 更新日時 |
-| vod | boolean | VOD（ビデオオンデマンド）かどうか |
-| aasm_state | varchar | 状態（published など） |
-| sort_number | integer | ソート順 |
-| deleted_at | timestamp without time zone | 削除日時 |
-| name_alter | varchar | 別名 |
-| unpublished_at | timestamp without time zone | 非公開日時 |
+| カラム           | 型                          | 説明                              |
+| ---------------- | --------------------------- | --------------------------------- |
+| id               | bigint                      | 主キー                            |
+| channel_group_id | bigint                      | チャンネルグループID（外部キー）  |
+| sc_chid          | integer                     | しょぼいカレンダーのチャンネルID  |
+| name             | varchar                     | 名前                              |
+| created_at       | timestamp with time zone    | 作成日時                          |
+| updated_at       | timestamp with time zone    | 更新日時                          |
+| vod              | boolean                     | VOD（ビデオオンデマンド）かどうか |
+| aasm_state       | varchar                     | 状態（published など）            |
+| sort_number      | integer                     | ソート順                          |
+| deleted_at       | timestamp without time zone | 削除日時                          |
+| name_alter       | varchar                     | 別名                              |
+| unpublished_at   | timestamp without time zone | 非公開日時                        |
 
 #### number_formats テーブル
 
-| カラム | 型 | 説明 |
-|--------|-----|------|
-| id | bigint | 主キー |
-| name | varchar | 名前（例: "第1話"） |
-| data | varchar[] | エピソード番号のリスト（配列） |
-| sort_number | integer | ソート順 |
-| created_at | timestamp without time zone | 作成日時 |
-| updated_at | timestamp without time zone | 更新日時 |
-| format | varchar | フォーマット文字列（例: "第%d話"） |
+| カラム      | 型                          | 説明                               |
+| ----------- | --------------------------- | ---------------------------------- |
+| id          | bigint                      | 主キー                             |
+| name        | varchar                     | 名前（例: "第1話"）                |
+| data        | varchar[]                   | エピソード番号のリスト（配列）     |
+| sort_number | integer                     | ソート順                           |
+| created_at  | timestamp without time zone | 作成日時                           |
+| updated_at  | timestamp without time zone | 更新日時                           |
+| format      | varchar                     | フォーマット文字列（例: "第%d話"） |
 
 #### prefectures テーブル
 
-| カラム | 型 | 説明 |
-|--------|-----|------|
-| id | bigint | 主キー |
-| name | varchar | 都道府県名 |
-| created_at | timestamp without time zone | 作成日時 |
-| updated_at | timestamp without time zone | 更新日時 |
+| カラム     | 型                          | 説明       |
+| ---------- | --------------------------- | ---------- |
+| id         | bigint                      | 主キー     |
+| name       | varchar                     | 都道府県名 |
+| created_at | timestamp without time zone | 作成日時   |
+| updated_at | timestamp without time zone | 更新日時   |
 
 ## タスクリスト
 
@@ -258,7 +259,6 @@ func main() {
 -->
 
 - [ ] **1-1**: 都道府県（prefectures）のシード機能を実装
-
   - `internal/seed/master/prefecture.go` の作成
   - CSV ファイルの読み込み処理
   - UPSERT による都道府県データの投入
@@ -268,7 +268,6 @@ func main() {
   - **想定行数**: 約 200 行（実装 100 行 + テスト 100 行）
 
 - [ ] **1-2**: エピソード番号フォーマット（number_formats）のシード機能を実装
-
   - `internal/seed/master/number_format.go` の作成
   - CSV ファイルの読み込み処理（JSON 配列のパース含む）
   - UPSERT によるデータ投入
@@ -278,7 +277,6 @@ func main() {
   - **想定行数**: 約 250 行（実装 130 行 + テスト 120 行）
 
 - [ ] **1-3**: チャンネルグループ（channel_groups）のシード機能を実装
-
   - `internal/seed/master/channel_group.go` の作成
   - CSV ファイルの読み込み処理
   - UPSERT によるデータ投入
@@ -288,7 +286,6 @@ func main() {
   - **想定行数**: 約 220 行（実装 110 行 + テスト 110 行）
 
 - [ ] **1-4**: チャンネル（channels）のシード機能を実装
-
   - `internal/seed/master/channel.go` の作成
   - CSV ファイルの読み込み処理
   - UPSERT によるデータ投入
@@ -300,7 +297,6 @@ func main() {
 ### フェーズ 2: エントリポイントの統合と Makefile の更新
 
 - [ ] **2-1**: マスターデータシードのエントリポイントを実装
-
   - `internal/seed/master/master.go` の作成（SeedMasterData 関数）
   - 各シード関数の呼び出し順序の制御（外部キー制約を考慮）
   - 進捗表示の追加
@@ -308,7 +304,6 @@ func main() {
   - **想定行数**: 約 80 行（実装 80 行）
 
 - [ ] **2-2**: cmd/seed/main.go の更新と Makefile の変更
-
   - `--master-only` フラグの追加
   - 既存シード処理後にマスターデータシードを呼び出す
   - Makefile に `seed-test` ターゲットを追加

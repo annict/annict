@@ -85,12 +85,10 @@ Annict::Application.config.session_store :active_record_store,
 #### 問題の発生フロー
 
 1. **Go 版のページ（例: `/sign_in`）にアクセス**
-
    - Go 版が nosurf を使って CSRF トークンを **Cookie** に保存
    - **セッションには CSRF トークンが保存されない**
 
 2. **Rails 版の画像アップロードフォームを表示**
-
    - Rails 版がセッションから CSRF トークンを読み取ろうとする
    - しかし、**セッションに CSRF トークンがない**
    - Rails 版が新しい CSRF トークンを生成してフォームに埋め込む
@@ -387,13 +385,11 @@ LIMIT 3;
 #### Go 版で実装すべき内容（まとめ）
 
 1. **CSRF トークン生成関数**:
-
    - `crypto/rand`で 32 バイトのランダムデータを生成
    - `encoding/base64.StdEncoding.EncodeToString()`で Base64 エンコード
    - Rails 版の`SecureRandom.base64(32)`と同等の処理
 
 2. **セッション保存**:
-
    - セッション作成時に`_csrf_token`キーで JSONB データに保存
    - キー名は文字列の`"_csrf_token"`を使用
 
@@ -522,19 +518,16 @@ func generatePublicID() (string, error) {
 #### Go 版で実装すべき内容（まとめ）
 
 1. **CSRF トークン生成関数** (`internal/session/csrf.go` を新規作成):
-
    - `crypto/rand`で 32 バイトのランダムデータを生成
    - `encoding/base64.StdEncoding.EncodeToString()`で Base64 エンコード
    - Rails 版の`SecureRandom.base64(32)`と同等の処理
 
 2. **セッション作成時の CSRF トークン保存** (`internal/session/session.go`):
-
    - 新規セッション作成時に自動的に CSRF トークンを生成・保存
    - `SetValue()`メソッドを活用するか、専用のロジックを追加
    - キー名は文字列の`"_csrf_token"`を使用
 
 3. **CSRF 保護ミドルウェアの書き換え** (`internal/middleware/csrf.go`):
-
    - `justinas/nosurf`を削除
    - セッションから CSRF トークンを読み取り、フォームのトークンと比較
    - GET リクエストは CSRF チェックをスキップ
@@ -550,7 +543,6 @@ func generatePublicID() (string, error) {
 ### フェーズ 1: 調査
 
 - [x] **1-1**: Rails 版の CSRF トークン生成・検証ロジックを調査（Rails 版コンテナ）
-
   - Rails 版のソースコード（`ActionController::RequestForgeryProtection`）を確認
   - CSRF トークンの形式（Base64 エンコード、長さ）を確認
   - セッションへの保存方法（`_csrf_token` キー）を確認
@@ -568,7 +560,6 @@ func generatePublicID() (string, error) {
 ### フェーズ 2: Go 版の実装
 
 - [x] **2-1**: CSRF トークン生成関数の実装（Go 版コンテナ）
-
   - `internal/session/csrf.go` を新規作成
   - `GenerateCSRFToken()` 関数を実装（Rails 互換）
   - 単体テストを作成
@@ -576,7 +567,6 @@ func generatePublicID() (string, error) {
   - **想定行数**: 約 100 行（実装 30 行 + テスト 70 行）
 
 - [x] **2-2**: セッション作成時の CSRF トークン保存処理を実装（Go 版コンテナ）
-
   - `internal/session/session.go` の `CreateSession()` メソッドを新規作成または修正
   - セッション作成時に `_csrf_token` をセッションに保存
   - 既存の `SetValue()` メソッドも必要に応じて修正
@@ -585,7 +575,6 @@ func generatePublicID() (string, error) {
   - **想定行数**: 約 150 行（実装 80 行 + テスト 70 行）
 
 - [x] **2-3**: CSRF 保護ミドルウェアの実装（Go 版コンテナ）
-
   - `internal/middleware/csrf.go` を書き換え
   - `justinas/nosurf` を削除し、独自の CSRF 保護ミドルウェアを実装
   - セッションから CSRF トークンを読み取り、フォームのトークンと比較
@@ -603,7 +592,6 @@ func generatePublicID() (string, error) {
 ### フェーズ 3: テストと検証
 
 - [x] **3-1**: Go 版の統合テストを実装（Go 版コンテナ）
-
   - セッション作成 → CSRF トークンが保存されることをテスト
   - フォーム送信 → CSRF 検証が正常に動作することをテスト
   - 不正なトークン → 403 エラーが返されることをテスト
@@ -611,7 +599,6 @@ func generatePublicID() (string, error) {
   - **想定行数**: 約 150 行（実装 0 行 + テスト 150 行）
 
 - [x] **3-2**: 初回アクセス時の CSRF トークン生成バグを修正（Go 版コンテナ）
-
   - **問題**: 初めてログインページにアクセスしたユーザーはセッションが存在せず、CSRF トークンが空のままフォーム送信されて 403 エラーが発生
   - **修正内容**:
     - `internal/middleware/csrf.go` に `GetOrCreateCSRFToken()` 関数を追加

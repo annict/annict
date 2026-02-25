@@ -136,6 +136,7 @@ internal/
 #### 主要な関数・構造体
 
 **internal/sentry/sentry.go**:
+
 ```go
 // Config はSentryの設定を保持する
 type Config struct {
@@ -153,6 +154,7 @@ func CaptureError(ctx context.Context, err error)
 ```
 
 **internal/middleware/sentry.go**:
+
 ```go
 // SentryUserContext はユーザーコンテキストをSentryに設定するミドルウェア
 func SentryUserContext(next http.Handler) http.Handler
@@ -160,12 +162,12 @@ func SentryUserContext(next http.Handler) http.Handler
 
 #### 環境変数
 
-| 環境変数 | 説明 | 必須 | デフォルト |
-|---------|------|------|----------|
-| `ANNICT_SENTRY_DSN` | Sentry DSN | Yes (本番) | - |
-| `ANNICT_SENTRY_ENVIRONMENT` | 環境名 | No | `APP_ENV` の値 |
-| `ANNICT_SENTRY_TRACES_SAMPLE_RATE` | トレースサンプリングレート | No | `0.5` |
-| `ANNICT_SENTRY_DEBUG` | デバッグモード | No | `false` |
+| 環境変数                           | 説明                       | 必須       | デフォルト     |
+| ---------------------------------- | -------------------------- | ---------- | -------------- |
+| `ANNICT_SENTRY_DSN`                | Sentry DSN                 | Yes (本番) | -              |
+| `ANNICT_SENTRY_ENVIRONMENT`        | 環境名                     | No         | `APP_ENV` の値 |
+| `ANNICT_SENTRY_TRACES_SAMPLE_RATE` | トレースサンプリングレート | No         | `0.5`          |
+| `ANNICT_SENTRY_DEBUG`              | デバッグモード             | No         | `false`        |
 
 ### セキュリティ設計
 
@@ -214,7 +216,6 @@ func SentryUserContext(next http.Handler) http.Handler
 -->
 
 - [x] **1-1**: Sentry Go SDKの導入と初期化
-
   - `github.com/getsentry/sentry-go` を `go.mod` に追加
   - `internal/sentry/sentry.go` を作成（初期化ロジック）
   - `internal/config/config.go` にSentry設定を追加
@@ -226,7 +227,6 @@ func SentryUserContext(next http.Handler) http.Handler
 ### フェーズ 2: ミドルウェア統合
 
 - [x] **2-1**: sentryhttp ミドルウェアの導入
-
   - `github.com/getsentry/sentry-go/http` を使用
   - `cmd/server/main.go` のミドルウェアチェーンに追加
   - 既存の `middleware.Recoverer` を `sentryhttp` に置き換え
@@ -235,7 +235,6 @@ func SentryUserContext(next http.Handler) http.Handler
   - **想定行数**: 約 50 行（実装 50 行 + テスト 0 行）
 
 - [x] **2-2**: ユーザーコンテキスト設定ミドルウェア
-
   - `internal/middleware/sentry.go` を作成
   - 認証済みユーザーのIDをSentryコンテキストに設定
   - 既存の認証ミドルウェアと連携
@@ -245,7 +244,6 @@ func SentryUserContext(next http.Handler) http.Handler
 ### フェーズ 3: セキュリティ・最適化
 
 - [x] **3-1**: センシティブデータのフィルタリング
-
   - `BeforeSend` フックでセンシティブデータをマスク
   - パスワード、トークン、Cookieなどを除外
   - テストケースの追加

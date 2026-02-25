@@ -215,7 +215,6 @@ type Work struct {
 -->
 
 - [x] **1-1**: viewmodel.User の作成と Avatar コンポーネントの実装
-
   - `internal/viewmodel/user.go` を作成
   - `internal/templates/components/avatar.templ` を作成
   - `sidebar.templ` を Avatar コンポーネントを使用するようにリファクタリング
@@ -227,7 +226,6 @@ type Work struct {
 ### フェーズ 2: viewmodel.Work のリファクタリング
 
 - [ ] **2-1**: viewmodel.Work から動的URL生成を削除
-
   - `ImageDataJSON` フィールドを削除
   - `imageHelper` フィールドを削除
   - `GetImageURL` メソッドを削除

@@ -102,38 +102,46 @@ Go 版のコードベース内で `login` と書かれている箇所を `sign_i
 変更が必要な箇所（洗い出し結果）：
 
 #### 1. データベース関連
+
 - `db/migrations/20251109101724_create_email_login_codes.sql` → 新しいマイグレーション作成でリネーム
 - `db/schema.sql` → dbmate による自動更新
 
 #### 2. SQL クエリファイル
+
 - `internal/repository/queries/email_login_codes.sql` → `sign_in_codes.sql`
 
 #### 3. リポジトリ層（sqlc 生成コード）
+
 - `internal/repository/sqlc/email_login_codes.sql.go` → `sign_in_codes.sql.go` (sqlc 自動生成)
 - `internal/repository/email_login_codes_test.go` → `sign_in_codes_test.go`
 
 #### 4. usecase 層
+
 - `internal/usecase/send_email_login_code.go` → `send_sign_in_code.go`
 - `internal/usecase/send_email_login_code_test.go` → `send_sign_in_code_test.go`
 - `internal/usecase/verify_email_login_code.go` → `verify_sign_in_code.go`
 - `internal/usecase/verify_email_login_code_test.go` → `verify_sign_in_code_test.go`
 
 #### 5. worker 層
+
 - `internal/worker/send_email_login_code.go` → `send_sign_in_code.go`
 - `internal/worker/send_email_login_code_test.go` → `send_sign_in_code_test.go`
 - `internal/worker/cleanup_expired_email_login_codes.go` → `cleanup_expired_sign_in_codes.go`
 - `internal/worker/cleanup_expired_email_login_codes_test.go` → `cleanup_expired_sign_in_codes_test.go`
 
 #### 6. テンプレート（メール）
+
 - `internal/templates/emails/email_login/` ディレクトリ → `sign_in/`
   - `ja_text.templ`, `ja_html.templ`, `en_text.templ`, `en_html.templ`
 
 #### 7. handler 層
+
 - `internal/handler/sign_in/*.go` → import 文の更新
 - `internal/handler/sign_in_code/*.go` → import 文の更新
 - `cmd/server/main.go` → 変数名、import 文の更新
 
 #### 8. 国際化ファイル
+
 - `internal/i18n/locales/ja.toml` → `email_login_code_*` → `sign_in_code_*`
 - `internal/i18n/locales/en.toml` → `email_login_code_*` → `sign_in_code_*`
 
@@ -174,7 +182,6 @@ Go 版のコードベース内で `login` と書かれている箇所を `sign_i
 -->
 
 - [x] **1-1**: データベーステーブルとインデックスのリネーム
-
   - 新しいマイグレーションファイルを作成（`rename_email_login_codes_to_sign_in_codes.sql`）
   - テーブル名を `email_login_codes` から `sign_in_codes` にリネーム
   - すべてのインデックスをリネーム（`idx_email_login_codes_*` → `idx_sign_in_codes_*`）
@@ -186,7 +193,6 @@ Go 版のコードベース内で `login` と書かれている箇所を `sign_i
   - **想定行数**: 約 30 行（実装 30 行 + テスト 0 行）
 
 - [x] **1-2**: SQL クエリファイルとリポジトリ層の更新
-
   - `internal/repository/queries/email_login_codes.sql` → `sign_in_codes.sql` にリネーム
   - SQL ファイル内のテーブル名を `sign_in_codes` に更新
   - sqlc で Go コードを再生成（`sqlc generate`）
@@ -204,7 +210,6 @@ Go 版のコードベース内で `login` と書かれている箇所を `sign_i
 ### フェーズ 2: ビジネスロジック層の変更
 
 - [x] **2-1**: usecase 層のリネームと更新
-
   - `send_email_login_code.go` → `send_sign_in_code.go` にリネーム
   - `send_email_login_code_test.go` → `send_sign_in_code_test.go` にリネーム
   - `verify_email_login_code.go` → `verify_sign_in_code.go` にリネーム
@@ -219,7 +224,6 @@ Go 版のコードベース内で `login` と書かれている箇所を `sign_i
   - **想定行数**: 約 250 行（実装 120 行 + テスト 130 行）
 
 - [x] **2-2**: worker 層のリネームと更新
-
   - `send_email_login_code.go` → `send_sign_in_code.go` にリネーム
   - `send_email_login_code_test.go` → `send_sign_in_code_test.go` にリネーム
   - `cleanup_expired_email_login_codes.go` → `cleanup_expired_sign_in_codes.go` にリネーム
@@ -238,7 +242,6 @@ Go 版のコードベース内で `login` と書かれている箇所を `sign_i
 ### フェーズ 3: プレゼンテーション層の変更
 
 - [x] **3-1**: メールテンプレートのリネームと更新
-
   - `internal/templates/emails/email_login/` → `sign_in/` にディレクトリをリネーム
   - `ja_text.templ`, `ja_html.templ`, `en_text.templ`, `en_html.templ` を更新
   - パッケージ名を `email_login` → `sign_in` に変更
@@ -253,7 +256,6 @@ Go 版のコードベース内で `login` と書かれている箇所を `sign_i
   - **想定行数**: 約 80 行（実装 80 行 + テスト 0 行）
 
 - [x] **3-2**: handler 層と main.go の更新
-
   - `internal/handler/sign_in/*.go` の import 文を更新
   - `internal/handler/sign_in_code/*.go` の import 文と変数名を更新
   - `cmd/server/main.go` の変数名、import 文、periodic job 名を更新
@@ -265,7 +267,6 @@ Go 版のコードベース内で `login` と書かれている箇所を `sign_i
   - **想定行数**: 約 80 行（実装 80 行 + テスト 0 行）
 
 - [x] **3-3**: 国際化ファイルの更新
-
   - `internal/i18n/locales/ja.toml` 内の `email_login_code_*` キーを `sign_in_code_*` に変更
   - `internal/i18n/locales/en.toml` 内の `email_login_code_*` キーを `sign_in_code_*` に変更
   - すべての国際化キーを使用している箇所を更新（handler, usecase, worker, template）
@@ -279,7 +280,6 @@ Go 版のコードベース内で `login` と書かれている箇所を `sign_i
 ### フェーズ 4: 統合とテスト
 
 - [ ] **4-1**: エンドツーエンドテストと動作確認
-
   - すべてのテストを実行（`make test`）
   - 開発サーバーを起動して手動で動作確認
     - サインインフォームでメールアドレスを入力

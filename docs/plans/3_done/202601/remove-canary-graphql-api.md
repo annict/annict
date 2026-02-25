@@ -84,12 +84,14 @@ Canary GraphQL API (`Canary::AnnictSchema`) を削除する。
 `GraphqlResolvable` concern は `Episode` モデルでのみ include されているが、`#global_id` メソッドは実際には呼び出されていない。そのため、concern ファイルごと削除し、`Episode` モデルからも `include` を削除する。
 
 **削除対象**:
+
 - `app/models/concerns/graphql_resolvable.rb` - ファイル削除
 - `app/models/episode.rb` - `include GraphqlResolvable` 行を削除
 
 #### ルーティングの修正 (`config/routes/api.rb`)
 
 **変更前**:
+
 ```ruby
 scope module: :api do
   constraints(subdomain: "api") do
@@ -107,6 +109,7 @@ end
 ```
 
 **変更後**:
+
 ```ruby
 scope module: :api do
   constraints(subdomain: "api") do

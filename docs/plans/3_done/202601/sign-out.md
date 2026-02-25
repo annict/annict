@@ -37,29 +37,34 @@ Go版Annictにおけるログアウト機能を実装します。ユーザーが
 
 ### API設計
 
-| メソッド | パス | 説明 |
-|----------|------|------|
-| DELETE | `/sign_out` | ログアウト処理（Rails UJSからのリクエスト） |
-| POST | `/sign_out` | ログアウト処理（Go版HTMLフォームからのリクエスト） |
+| メソッド | パス        | 説明                                               |
+| -------- | ----------- | -------------------------------------------------- |
+| DELETE   | `/sign_out` | ログアウト処理（Rails UJSからのリクエスト）        |
+| POST     | `/sign_out` | ログアウト処理（Go版HTMLフォームからのリクエスト） |
 
 **リクエスト（Go版サイドバー）**:
+
 - POSTメソッド + `_method=DELETE` パラメータ（HTMLフォームからの送信時）
 - MethodOverrideミドルウェアがDELETEに変換するが、Chiのルーティング順序によりPOSTとして登録が必要
 
 **リクエスト（Rails版サイドバー）**:
+
 - DELETEメソッド（Rails UJSが`data_method: :delete`を直接DELETEリクエストとして送信）
 
 **レスポンス**:
+
 - 成功時: 302リダイレクト → `/`
 - 未ログイン時: 302リダイレクト → `/`
 
 ### コード設計
 
 **新規ファイル**:
+
 - `internal/handler/sign_out/handler.go` - ハンドラー構造体
 - `internal/handler/sign_out/delete.go` - ログアウト処理
 
 **修正ファイル**:
+
 - `internal/query/queries/sessions.sql` - DeleteSessionクエリ追加
 - `internal/query/sessions.sql.go` - sqlc生成ファイル（自動生成）
 - `internal/repository/session.go` - DeleteSessionメソッド追加
@@ -72,6 +77,7 @@ Go版Annictにおけるログアウト機能を実装します。ユーザーが
 ### CSRFトークンについて
 
 ログアウト機能ではCSRFトークン検証を行いません。理由:
+
 - Rails版のサイドバーからもログアウトできる必要がある
 - Rails版のページにはGo版のCSRFトークンが含まれない
 - ログアウトは破壊的操作ではないためCSRF攻撃のリスクが低い
@@ -79,6 +85,7 @@ Go版Annictにおけるログアウト機能を実装します。ユーザーが
 ### セッション削除の流れ
 
 **Go版サイドバーからの場合**:
+
 1. ユーザーがログアウトボタンをクリック
 2. 確認ダイアログを表示（「ログアウトしますか？」）
 3. OKをクリックするとフォームが送信される（POST + `_method=DELETE`）
@@ -88,6 +95,7 @@ Go版Annictにおけるログアウト機能を実装します。ユーザーが
 7. ホームページにリダイレクト
 
 **Rails版サイドバーからの場合**:
+
 1. ユーザーがログアウトリンクをクリック
 2. Rails UJSが確認ダイアログを表示（既存の`data_confirm`）
 3. OKをクリックするとDELETEリクエストが送信される

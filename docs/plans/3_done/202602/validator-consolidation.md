@@ -117,18 +117,18 @@ Handler におけるバリデーション処理のファイル構成をシンプ
 
 #### ファイル構成
 
-| 変更前 | 変更後 |
-|--------|--------|
+| 変更前                                       | 変更後         |
+| -------------------------------------------- | -------------- |
 | `format_validator.go` + `state_validator.go` | `validator.go` |
-| `request.go` | `validator.go` |
+| `request.go`                                 | `validator.go` |
 
 #### 構造体命名規則
 
-| 変更前 | 変更後 |
-|--------|--------|
-| `{Action}FormatValidator` | `{Action}Validator` |
-| `{Action}StateValidator` | `{Action}Validator` に統合 |
-| `{Action}Request` | `{Action}Validator` |
+| 変更前                    | 変更後                     |
+| ------------------------- | -------------------------- |
+| `{Action}FormatValidator` | `{Action}Validator`        |
+| `{Action}StateValidator`  | `{Action}Validator` に統合 |
+| `{Action}Request`         | `{Action}Validator`        |
 
 #### validator.go の構成例
 
@@ -228,12 +228,12 @@ func isValidEmail(email string) bool {
 
 **現状**:
 
-| ハンドラー | 現在のファイル構成 |
-|------------|-------------------|
-| sign_in | format_validator.go, state_validator.go |
+| ハンドラー         | 現在のファイル構成                      |
+| ------------------ | --------------------------------------- |
+| sign_in            | format_validator.go, state_validator.go |
 | email_confirmation | format_validator.go, state_validator.go |
-| password | format_validator.go のみ |
-| password_reset | format_validator.go のみ |
+| password           | format_validator.go のみ                |
+| password_reset     | format_validator.go のみ                |
 
 **修正方針**:
 
@@ -246,13 +246,13 @@ func isValidEmail(email string) bool {
 
 **現状**:
 
-| ハンドラー | 現在のファイル構成 |
-|------------|-------------------|
-| sign_in | format_validator.go, state_validator.go |
-| sign_in_two_factor | format_validator.go, state_validator.go |
+| ハンドラー                  | 現在のファイル構成                      |
+| --------------------------- | --------------------------------------- |
+| sign_in                     | format_validator.go, state_validator.go |
+| sign_in_two_factor          | format_validator.go, state_validator.go |
 | sign_in_two_factor_recovery | format_validator.go, state_validator.go |
-| email_confirmation | format_validator.go, state_validator.go |
-| account | format_validator.go, state_validator.go |
+| email_confirmation          | format_validator.go, state_validator.go |
+| account                     | format_validator.go, state_validator.go |
 
 **修正方針**:
 
@@ -264,17 +264,17 @@ func isValidEmail(email string) bool {
 
 **現状**:
 
-| ハンドラー | 現在のファイル構成 |
-|------------|-------------------|
-| sign_in | request.go |
-| sign_in_code | request.go |
-| sign_in_password | request.go |
-| sign_up | request.go |
-| sign_up_code | request.go |
-| sign_up_username | request.go |
-| password | request.go |
-| password_reset | request.go |
-| supporters_checkout | request.go |
+| ハンドラー          | 現在のファイル構成 |
+| ------------------- | ------------------ |
+| sign_in             | request.go         |
+| sign_in_code        | request.go         |
+| sign_in_password    | request.go         |
+| sign_up             | request.go         |
+| sign_up_code        | request.go         |
+| sign_up_username    | request.go         |
+| password            | request.go         |
+| password_reset      | request.go         |
+| supporters_checkout | request.go         |
 
 **修正方針**:
 
@@ -325,7 +325,6 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
 -->
 
 - [x] **1-1**: [Go/Wikino] validation-guide.md と handler-guide.md の更新
-
   - バリデーション関連ファイルを `validator.go` に統一する方針に変更
   - 構造体名を `{Action}Validator` に統一
   - handler-guide.md の標準ファイル名を 10 種類から 9 種類に変更（`format_validator.go` と `state_validator.go` を `validator.go` に統合）
@@ -335,7 +334,6 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
 ### フェーズ 2: Wikino リファクタリング
 
 - [x] **2-1**: [Go/Wikino] sign_in の validator.go 統合
-
   - `format_validator.go` と `state_validator.go` を `validator.go` に統合
   - `CreateFormatValidator` + `CreateStateValidator` → `CreateValidator` に変更
   - `format_validator_test.go` と `state_validator_test.go` を `validator_test.go` に統合
@@ -344,7 +342,6 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
   - **想定行数**: 約 200 行（実装 100 行 + テスト 100 行）
 
 - [x] **2-2**: [Go/Wikino] sign_in_two_factor の validator.go 統合
-
   - `format_validator.go` と `state_validator.go` を `validator.go` に統合
   - `CreateFormatValidator` + `CreateStateValidator` → `CreateValidator` に変更
   - テストファイルも統合
@@ -353,7 +350,6 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
   - **想定行数**: 約 200 行（実装 100 行 + テスト 100 行）
 
 - [x] **2-3**: [Go/Wikino] sign_in_two_factor_recovery の validator.go 統合
-
   - `format_validator.go` と `state_validator.go` を `validator.go` に統合
   - `CreateFormatValidator` + `CreateStateValidator` → `CreateValidator` に変更
   - テストファイルも統合
@@ -362,7 +358,6 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
   - **想定行数**: 約 200 行（実装 100 行 + テスト 100 行）
 
 - [x] **2-4**: [Go/Wikino] email_confirmation の validator.go 統合
-
   - `format_validator.go` と `state_validator.go` を `validator.go` に統合
   - `CreateFormatValidator` + `CreateStateValidator` → `CreateValidator` に変更
   - `UpdateFormatValidator` + `UpdateStateValidator` → `UpdateValidator` に変更
@@ -372,7 +367,6 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
   - **想定行数**: 約 250 行（実装 120 行 + テスト 130 行）
 
 - [x] **2-5**: [Go/Wikino] account の validator.go 統合
-
   - `format_validator.go` と `state_validator.go` を `validator.go` に統合
   - `CreateFormatValidator` + `CreateStateValidator` → `CreateValidator` に変更
   - テストファイルも統合
@@ -383,7 +377,6 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
 ### フェーズ 3: Annict リファクタリング
 
 - [x] **3-1**: [Go/Annict] sign_in の request.go を validator.go にリネーム
-
   - `request.go` を `validator.go` にリネーム
   - `CreateRequest` → `CreateValidator` + `CreateValidatorInput` + `CreateValidatorResult` に変更（Input/Result パターン）
   - `request_test.go` を `validator_test.go` にリネームし、Input/Result パターンに合わせて更新
@@ -392,7 +385,6 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
   - **想定行数**: 約 80 行（実装 40 行 + テスト 40 行）
 
 - [x] **3-2**: [Go/Annict] sign_in_code の request.go を validator.go にリネーム
-
   - `request.go` を `validator.go` にリネーム
   - `{Action}Request` → `{Action}Validator` + `{Action}ValidatorInput` + `{Action}ValidatorResult` に変更（Input/Result パターン）
   - テストファイルもリネームし、Input/Result パターンに合わせて更新
@@ -401,7 +393,6 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
   - **想定行数**: 約 80 行（実装 40 行 + テスト 40 行）
 
 - [x] **3-3**: [Go/Annict] sign_in_password の request.go を validator.go にリネーム
-
   - `request.go` を `validator.go` にリネーム
   - `{Action}Request` → `{Action}Validator` + `{Action}ValidatorInput` + `{Action}ValidatorResult` に変更（Input/Result パターン）
   - テストファイルもリネームし、Input/Result パターンに合わせて更新
@@ -410,7 +401,6 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
   - **想定行数**: 約 80 行（実装 40 行 + テスト 40 行）
 
 - [x] **3-4**: [Go/Annict] sign_up の request.go を validator.go にリネーム
-
   - `request.go` を `validator.go` にリネーム
   - `{Action}Request` → `{Action}Validator` + `{Action}ValidatorInput` + `{Action}ValidatorResult` に変更（Input/Result パターン）
   - テストファイルもリネームし、Input/Result パターンに合わせて更新
@@ -419,7 +409,6 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
   - **想定行数**: 約 80 行（実装 40 行 + テスト 40 行）
 
 - [x] **3-5**: [Go/Annict] sign_up_code の request.go を validator.go にリネーム
-
   - `request.go` を `validator.go` にリネーム
   - `{Action}Request` → `{Action}Validator` + `{Action}ValidatorInput` + `{Action}ValidatorResult` に変更（Input/Result パターン）
   - Handler での参照を更新
@@ -427,7 +416,6 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
   - **想定行数**: 約 50 行（実装 50 行 + テスト 0 行）
 
 - [x] **3-6**: [Go/Annict] sign_up_username の request.go を validator.go にリネーム
-
   - `request.go` を `validator.go` にリネーム
   - `{Action}Request` → `{Action}Validator` + `{Action}ValidatorInput` + `{Action}ValidatorResult` に変更（Input/Result パターン）
   - Handler での参照を更新
@@ -435,7 +423,6 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
   - **想定行数**: 約 50 行（実装 50 行 + テスト 0 行）
 
 - [x] **3-7**: [Go/Annict] password の request.go を validator.go にリネーム
-
   - `request.go` を `validator.go` にリネーム
   - `{Action}Request` → `{Action}Validator` + `{Action}ValidatorInput` + `{Action}ValidatorResult` に変更（Input/Result パターン）
   - テストファイルもリネームし、Input/Result パターンに合わせて更新
@@ -444,7 +431,6 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
   - **想定行数**: 約 80 行（実装 40 行 + テスト 40 行）
 
 - [x] **3-8**: [Go/Annict] password_reset の request.go を validator.go にリネーム
-
   - `request.go` を `validator.go` にリネーム
   - `{Action}Request` → `{Action}Validator` + `{Action}ValidatorInput` + `{Action}ValidatorResult` に変更（Input/Result パターン）
   - テストファイルもリネームし、Input/Result パターンに合わせて更新
@@ -453,7 +439,6 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
   - **想定行数**: 約 80 行（実装 40 行 + テスト 40 行）
 
 - [x] **3-9**: [Go/Annict] supporters_checkout の request.go を validator.go にリネーム
-
   - `request.go` を `validator.go` にリネーム
   - `{Action}Request` → `{Action}Validator` + `{Action}ValidatorInput` + `{Action}ValidatorResult` に変更（Input/Result パターン）
   - テストファイルもリネームし、Input/Result パターンに合わせて更新
@@ -464,7 +449,6 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
 ### フェーズ 4: Mewst リファクタリング
 
 - [x] **4-1**: [Go/Mewst] sign_in の validator.go 統合
-
   - `format_validator.go` と `state_validator.go` を `validator.go` に統合
   - `CreateFormatValidator` + `CreateStateValidator` → `CreateValidator` に変更
   - `format_validator_test.go` と `state_validator_test.go` を `validator_test.go` に統合
@@ -473,7 +457,6 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
   - **想定行数**: 約 200 行（実装 100 行 + テスト 100 行）
 
 - [x] **4-2**: [Go/Mewst] email_confirmation の validator.go 統合
-
   - `format_validator.go` と `state_validator.go` を `validator.go` に統合
   - `CreateFormatValidator` + `CreateStateValidator` → `CreateValidator` に変更
   - テストファイルも統合
@@ -482,7 +465,6 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
   - **想定行数**: 約 200 行（実装 100 行 + テスト 100 行）
 
 - [x] **4-3**: [Go/Mewst] password の format_validator.go を validator.go にリネーム
-
   - `format_validator.go` を `validator.go` にリネーム
   - `UpdateFormatValidator` → `UpdateValidator` に変更
   - `format_validator_test.go` を `validator_test.go` にリネーム
@@ -491,7 +473,6 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
   - **想定行数**: 約 50 行（実装 25 行 + テスト 25 行）
 
 - [x] **4-4**: [Go/Mewst] password_reset の format_validator.go を validator.go にリネーム
-
   - `format_validator.go` を `validator.go` にリネーム
   - `CreateFormatValidator` → `CreateValidator` に変更
   - `format_validator_test.go` を `validator_test.go` にリネーム

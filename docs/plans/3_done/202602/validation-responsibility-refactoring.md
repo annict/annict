@@ -118,43 +118,43 @@ Handler、UseCase、Request DTO におけるバリデーション処理の責務
 
 #### 1. 形式バリデーション（format_validator.go）
 
-| 項目           | 内容                                                               |
-| -------------- | ------------------------------------------------------------------ |
-| **責務**       | 入力値の形式チェック                                               |
-| **場所**       | `internal/handler/{resource}/format_validator.go`                  |
-| **例**         | 必須チェック、メール形式、文字数制限、正規表現                     |
-| **特徴**       | DB アクセス不要                                                    |
-| **構造体名**   | `{Action}FormatValidator`（例: `CreateFormatValidator`, `UpdateFormatValidator`）|
-| **エラー表示** | フォーム内のフィールドエラー（`FormErrors.AddFieldError()`）       |
+| 項目           | 内容                                                                              |
+| -------------- | --------------------------------------------------------------------------------- |
+| **責務**       | 入力値の形式チェック                                                              |
+| **場所**       | `internal/handler/{resource}/format_validator.go`                                 |
+| **例**         | 必須チェック、メール形式、文字数制限、正規表現                                    |
+| **特徴**       | DB アクセス不要                                                                   |
+| **構造体名**   | `{Action}FormatValidator`（例: `CreateFormatValidator`, `UpdateFormatValidator`） |
+| **エラー表示** | フォーム内のフィールドエラー（`FormErrors.AddFieldError()`）                      |
 
 #### 2. 状態バリデーション（state_validator.go または UseCase）
 
-| 項目           | 内容                                                               |
-| -------------- | ------------------------------------------------------------------ |
-| **責務**       | DB の状態を使った検証                                              |
-| **場所**       | `internal/handler/{resource}/state_validator.go` または UseCase    |
-| **例**         | ユーザー存在チェック、メールアドレス重複、パスワード照合           |
-| **特徴**       | DB アクセス必要、Repository への依存あり                           |
-| **構造体名**   | `{Action}StateValidator`（例: `CreateStateValidator`）             |
-| **エラー表示** | グローバルエラー（`FormErrors.AddGlobalError()`）                  |
+| 項目           | 内容                                                            |
+| -------------- | --------------------------------------------------------------- |
+| **責務**       | DB の状態を使った検証                                           |
+| **場所**       | `internal/handler/{resource}/state_validator.go` または UseCase |
+| **例**         | ユーザー存在チェック、メールアドレス重複、パスワード照合        |
+| **特徴**       | DB アクセス必要、Repository への依存あり                        |
+| **構造体名**   | `{Action}StateValidator`（例: `CreateStateValidator`）          |
+| **エラー表示** | グローバルエラー（`FormErrors.AddGlobalError()`）               |
 
 **配置場所の判断基準**: **「検証失敗時に DB を更新する必要があるか？」**
 
-| 検証失敗時の DB 更新 | 配置場所          | 理由                                               |
-| -------------------- | ----------------- | -------------------------------------------------- |
-| 不要                 | state_validator   | UseCase をシンプルに保つため                       |
-| 必要                 | UseCase           | トランザクション内で検証と更新を行う必要があるため |
+| 検証失敗時の DB 更新 | 配置場所        | 理由                                               |
+| -------------------- | --------------- | -------------------------------------------------- |
+| 不要                 | state_validator | UseCase をシンプルに保つため                       |
+| 必要                 | UseCase         | トランザクション内で検証と更新を行う必要があるため |
 
 **state_validator.go で行うべき検証**:
 
-| 検証内容                   | 失敗時の動作       | 理由                   |
-| -------------------------- | ------------------ | ---------------------- |
-| ユーザー存在チェック       | エラーメッセージ   | DB 更新なし            |
-| メールアドレス重複チェック | エラーメッセージ   | DB 更新なし            |
-| アットネーム重複チェック   | エラーメッセージ   | DB 更新なし            |
-| メール確認完了チェック     | エラーメッセージ   | DB 更新なし            |
-| コード一致チェック         | エラーメッセージ   | DB 更新なし（※注参照） |
-| パスワード照合             | エラーメッセージ   | DB 更新なし            |
+| 検証内容                   | 失敗時の動作     | 理由                   |
+| -------------------------- | ---------------- | ---------------------- |
+| ユーザー存在チェック       | エラーメッセージ | DB 更新なし            |
+| メールアドレス重複チェック | エラーメッセージ | DB 更新なし            |
+| アットネーム重複チェック   | エラーメッセージ | DB 更新なし            |
+| メール確認完了チェック     | エラーメッセージ | DB 更新なし            |
+| コード一致チェック         | エラーメッセージ | DB 更新なし（※注参照） |
+| パスワード照合             | エラーメッセージ | DB 更新なし            |
 
 ※注: コード検証で「試行回数インクリメント」が必要な場合は UseCase で行う
 
@@ -168,22 +168,22 @@ Handler、UseCase、Request DTO におけるバリデーション処理の責務
 
 #### 3. システムエラー（全層）
 
-| 項目           | 内容                                     |
-| -------------- | ---------------------------------------- |
-| **責務**       | 永続化処理中の予期せぬエラー             |
-| **場所**       | UseCase、Repository                      |
-| **例**         | DB 接続エラー、トランザクション失敗      |
-| **特徴**       | ユーザーが対処困難                       |
+| 項目           | 内容                                                   |
+| -------------- | ------------------------------------------------------ |
+| **責務**       | 永続化処理中の予期せぬエラー                           |
+| **場所**       | UseCase、Repository                                    |
+| **例**         | DB 接続エラー、トランザクション失敗                    |
+| **特徴**       | ユーザーが対処困難                                     |
 | **エラー表示** | Flash メッセージまたはエラーページ、ログには詳細を記録 |
 
 ### エラー表示方法の使い分け
 
-| エラー種類           | 表示方法             | 使い分け                                       |
-| -------------------- | -------------------- | ---------------------------------------------- |
-| **フィールドエラー** | `FormErrors.Fields`  | 特定の入力フィールドに関連するエラー           |
-| **グローバルエラー** | `FormErrors.Global`  | フォーム全体に関連するエラー（同じページに留まる） |
-| **Flash メッセージ** | `session.Flash`      | リダイレクト後に表示するメッセージ（成功/エラー） |
-| **ログのみ**         | `slog.Error`         | 開発者向け情報（ユーザーには一般メッセージを表示） |
+| エラー種類           | 表示方法            | 使い分け                                           |
+| -------------------- | ------------------- | -------------------------------------------------- |
+| **フィールドエラー** | `FormErrors.Fields` | 特定の入力フィールドに関連するエラー               |
+| **グローバルエラー** | `FormErrors.Global` | フォーム全体に関連するエラー（同じページに留まる） |
+| **Flash メッセージ** | `session.Flash`     | リダイレクト後に表示するメッセージ（成功/エラー）  |
+| **ログのみ**         | `slog.Error`        | 開発者向け情報（ユーザーには一般メッセージを表示） |
 
 **判断フローチャート**:
 
@@ -203,11 +203,11 @@ Handler、UseCase、Request DTO におけるバリデーション処理の責務
 
 **現状**:
 
-| ファイル                           | 内容                                       | 問題点                           |
-| ---------------------------------- | ------------------------------------------ | -------------------------------- |
-| `confirm_email.go` (UseCase)       | コード検証ロジックが含まれている           | Handler で使われていない         |
-| `email_confirmation/create.go`     | Handler でコード検証、Repository を直接使用 | UseCase を使っていない           |
-| `update_password.go` (UseCase)     | 純粋な永続化のみ                           | 良い例                           |
+| ファイル                       | 内容                                        | 問題点                   |
+| ------------------------------ | ------------------------------------------- | ------------------------ |
+| `confirm_email.go` (UseCase)   | コード検証ロジックが含まれている            | Handler で使われていない |
+| `email_confirmation/create.go` | Handler でコード検証、Repository を直接使用 | UseCase を使っていない   |
+| `update_password.go` (UseCase) | 純粋な永続化のみ                            | 良い例                   |
 
 **修正方針**:
 
@@ -219,11 +219,11 @@ Handler、UseCase、Request DTO におけるバリデーション処理の責務
 
 **現状**:
 
-| ファイル                              | 内容                                         | 判定       |
-| ------------------------------------- | -------------------------------------------- | ---------- |
-| `verify_sign_in_code.go` (UseCase)    | コード検証、失敗時に試行回数インクリメント   | ✅ 妥当    |
-| `verify_sign_up_code.go` (UseCase)    | コード検証、失敗時に試行回数インクリメント   | ✅ 妥当    |
-| `update_password_reset.go` (UseCase)  | トークン検証、成功時に使用済みマーク         | ✅ 妥当    |
+| ファイル                             | 内容                                       | 判定    |
+| ------------------------------------ | ------------------------------------------ | ------- |
+| `verify_sign_in_code.go` (UseCase)   | コード検証、失敗時に試行回数インクリメント | ✅ 妥当 |
+| `verify_sign_up_code.go` (UseCase)   | コード検証、失敗時に試行回数インクリメント | ✅ 妥当 |
+| `update_password_reset.go` (UseCase) | トークン検証、成功時に使用済みマーク       | ✅ 妥当 |
 
 **分析**:
 Annict の UseCase は「検証失敗時に DB 更新が必要」なケースであり、現状の設計は妥当です。
@@ -237,10 +237,10 @@ Annict の UseCase は「検証失敗時に DB 更新が必要」なケースで
 
 **現状**:
 
-| ファイル                                 | 内容                                     | 判定                 |
-| ---------------------------------------- | ---------------------------------------- | -------------------- |
-| `verify_email_confirmation.go` (UseCase) | コード検証、有効期限チェック後に永続化   | ⚠️ Handler に移動可能 |
-| `verify_two_factor.go` (UseCase)         | TOTP 検証、リカバリーコード消費          | ✅ 妥当              |
+| ファイル                                 | 内容                                         | 判定                       |
+| ---------------------------------------- | -------------------------------------------- | -------------------------- |
+| `verify_email_confirmation.go` (UseCase) | コード検証、有効期限チェック後に永続化       | ⚠️ Handler に移動可能      |
+| `verify_two_factor.go` (UseCase)         | TOTP 検証、リカバリーコード消費              | ✅ 妥当                    |
 | `create_account.go` (UseCase)            | メール確認チェック、アットネーム重複チェック | ⚠️ 一部 Handler に移動可能 |
 
 **修正方針**:
@@ -389,7 +389,6 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
 -->
 
 - [x] **1-1**: [Go/Mewst] validation-guide.md と handler-guide.md の更新
-
   - バリデーションの 2 分類（形式バリデーション、状態バリデーション）に整理
   - ファイル名を `format_validator.go`（形式）と `state_validator.go`（状態）に変更
   - 構造体名を `{Action}FormatValidator` と `{Action}StateValidator` に変更
@@ -404,7 +403,6 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
 ### フェーズ 2: Mewst リファクタリング
 
 - [x] **2-1**: [Go/Mewst] email_confirmation の UseCase 統一
-
   - `internal/usecase/confirm_email.go` を `mark_email_as_confirmed.go` にリネーム
   - UseCase から検証ロジックを削除し、永続化（`MarkAsSucceeded`）のみに変更
   - `email_confirmation/create.go` で UseCase を使用するように修正
@@ -414,7 +412,6 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
   - **想定行数**: 約 80 行（実装 40 行 + テスト 40 行）
 
 - [x] **2-2**: [Go/Mewst] request.go を format_validator.go にリネーム
-
   - 各ハンドラーの `request.go` を `format_validator.go` にリネーム
   - 構造体名を `{Action}Request` から `{Action}FormatValidator` に変更
   - 対象ファイル:
@@ -429,7 +426,6 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
   - **想定行数**: 約 450 行（実装 50 行 + テスト 400 行）
 
 - [x] **2-3**: [Go/Mewst] state_validator.go の作成
-
   - ハンドラーのメソッド内にあるビジネスルール検証を `state_validator.go` に抽出
   - 対象ファイル:
     - `internal/handler/sign_in/state_validator.go`（ユーザー検索、パスワード照合）
@@ -440,7 +436,6 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
   - **想定行数**: 約 400 行（実装 150 行 + テスト 250 行）
 
 - [x] **2-4**: [Go/Mewst] golangci-lint に depguard ルールを追加
-
   - `.golangci.yml` にバリデーターの依存関係ルールを追加
   - **format_validator.go のルール**（DB アクセス禁止）:
     - query への依存を禁止
@@ -453,12 +448,12 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
   - 依存関係まとめ:
     | パッケージ | format_validator | state_validator |
     |------------|:----------------:|:---------------:|
-    | query      | ❌               | ❌              |
-    | repository | ❌               | ✅              |
-    | model      | ❌               | ✅              |
-    | usecase    | ❌               | ❌              |
-    | session    | ✅               | ✅              |
-    | templates  | ✅               | ✅              |
+    | query | ❌ | ❌ |
+    | repository | ❌ | ✅ |
+    | model | ❌ | ✅ |
+    | usecase | ❌ | ❌ |
+    | session | ✅ | ✅ |
+    | templates | ✅ | ✅ |
   - **前提**: タスク 2-2、2-3 が完了していること
   - **想定ファイル数**: 約 1 ファイル（実装 1 + テスト 0）
   - **想定行数**: 約 30 行（実装 30 行 + テスト 0 行）
@@ -466,7 +461,6 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
 ### フェーズ 3: Wikino リファクタリング
 
 - [x] **3-1**: [Go/Wikino] verify_email_confirmation.go のリファクタリング
-
   - Handler (`email_confirmation/update.go` または該当ファイル) で検証を行うように変更
   - UseCase は永続化（`MarkAsSucceeded`）のみに変更
   - UseCase 名を `mark_email_as_confirmed.go` などに変更することを検討
@@ -475,7 +469,6 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
   - **想定行数**: 約 100 行（実装 50 行 + テスト 50 行）
 
 - [x] **3-2**: [Go/Wikino] create_account.go のリファクタリング
-
   - アットネーム重複チェックを Handler (`account/create.go`) に移動
   - UseCase からアットネーム重複チェックを削除
   - テストの更新
@@ -483,7 +476,6 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
   - **想定行数**: 約 80 行（実装 40 行 + テスト 40 行）
 
 - [x] **3-2a**: [Go/Wikino] request.go を format_validator.go にリネーム
-
   - 各ハンドラーの `request.go` を `format_validator.go` にリネーム
   - 構造体名を `{Action}Request` から `{Action}FormatValidator` に変更
   - テストファイルも同様にリネーム（`request_test.go` → `format_validator_test.go`）
@@ -498,7 +490,6 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
   - **想定行数**: 約 100 行（実装 50 行 + テスト 50 行）
 
 - [x] **3-2b**: [Go/Wikino] sign_in の state_validator.go 作成
-
   - `create.go` の状態バリデーション（ユーザー検索、パスワード照合）を `state_validator.go` に抽出
   - `CreateStateValidator` 構造体を作成
   - Handler の依存性を更新（stateValidator を追加）
@@ -507,7 +498,6 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
   - **想定行数**: 約 200 行（実装 100 行 + テスト 100 行）
 
 - [x] **3-2c**: [Go/Wikino] email_confirmation の CreateStateValidator 追加
-
   - `create.go` のメールアドレス重複チェックを `state_validator.go` に追加
   - `CreateStateValidator` 構造体を作成（既存の `UpdateStateValidator` と同じファイル）
   - Handler の依存性を更新
@@ -516,7 +506,6 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
   - **想定行数**: 約 150 行（実装 70 行 + テスト 80 行）
 
 - [x] **3-2d**: [Go/Wikino] account の state_validator.go にメール確認チェック追加
-
   - `create.go` のメール確認情報取得・状態チェックを既存の `state_validator.go` に追加
   - `CreateStateValidator` の入力パラメータと検証内容を拡張
   - テストを追加
@@ -524,7 +513,6 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
   - **想定行数**: 約 150 行（実装 70 行 + テスト 80 行）
 
 - [x] **3-2e**: [Go/Wikino] sign_in_two_factor の state_validator.go 作成
-
   - TOTP 検証を UseCase から `state_validator.go` に移動（試行回数インクリメント不要のため）
   - `CreateStateValidator` 構造体を作成
   - UseCase の `VerifyTOTP` メソッドを削除または永続化処理のみに変更
@@ -534,7 +522,6 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
   - **想定行数**: 約 250 行（実装 120 行 + テスト 130 行）
 
 - [x] **3-2f**: [Go/Wikino] sign_in_two_factor_recovery の state_validator.go 作成
-
   - リカバリーコード検証を `state_validator.go` に移動
   - リカバリーコード消費処理は UseCase に残す（`ConsumeRecoveryCode` メソッドに分離）
   - `CreateStateValidator` 構造体を作成
@@ -544,7 +531,6 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
   - **想定行数**: 約 250 行（実装 120 行 + テスト 130 行）
 
 - [x] **3-3**: [Go/Wikino] golangci-lint に depguard ルールを追加
-
   - `.golangci.yml` にバリデーターの依存関係ルールを追加
   - **format_validator.go のルール**（DB アクセス禁止）:
     - query への依存を禁止
@@ -557,12 +543,12 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
   - 依存関係まとめ:
     | パッケージ | format_validator | state_validator |
     |------------|:----------------:|:---------------:|
-    | query      | ❌               | ❌              |
-    | repository | ❌               | ✅              |
-    | model      | ❌               | ✅              |
-    | usecase    | ❌               | ❌              |
-    | session    | ✅               | ✅              |
-    | templates  | ✅               | ✅              |
+    | query | ❌ | ❌ |
+    | repository | ❌ | ✅ |
+    | model | ❌ | ✅ |
+    | usecase | ❌ | ❌ |
+    | session | ✅ | ✅ |
+    | templates | ✅ | ✅ |
   - **前提**: タスク 3-2a 〜 3-2f が完了していること
   - **想定ファイル数**: 約 1 ファイル（実装 1 + テスト 0）
   - **想定行数**: 約 30 行（実装 30 行 + テスト 0 行）
@@ -570,7 +556,6 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
 ### フェーズ 4: Annict ドキュメント整備
 
 - [x] **4-1**: [Go/Annict] CLAUDE.md へのバリデーション方針追記
-
   - Annict の CLAUDE.md にバリデーション方針のセクションを追加
   - 「試行回数インクリメントが必要なため UseCase で検証」という設計判断を明記
   - Mewst の validation-guide.md へのリンクを追加

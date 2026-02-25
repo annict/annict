@@ -181,7 +181,6 @@ r.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(http.Dir("./s
 ### フェーズ 1: 依存関係とビルドスクリプトの更新
 
 - [x] 依存関係の整理
-
   - Vite 関連パッケージの削除（vite, @vitejs/plugin-legacy, typescript）
   - PostCSS 関連パッケージの削除（postcss, @tailwindcss/postcss, autoprefixer）
   - esbuild の追加
@@ -200,7 +199,6 @@ r.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(http.Dir("./s
 ### フェーズ 2: 設定ファイルとソースファイルの整理
 
 - [x] 設定ファイルの整理
-
   - vite.config.ts の削除
   - postcss.config.js の削除
   - tailwind.config.js は保持（変更なし）
