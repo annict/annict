@@ -413,11 +413,13 @@ bundle update
 **症状**: "Can't verify CSRF token authenticity"
 
 **原因**:
+
 1. フォームにCSRFトークンが含まれていない
 2. セッションが切れている
 3. AJAX リクエストにトークンが含まれていない
 
 **解決方法**:
+
 ```ruby
 # フォーム: form_withを使用
 <%= form_with model: @work do |f| %>
@@ -439,6 +441,7 @@ Rails.start()
 **原因**: Strong Parametersを使用していない
 
 **解決方法**:
+
 ```ruby
 # ✅ Good: Strong Parameters
 def work_params

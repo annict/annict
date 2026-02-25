@@ -128,6 +128,9 @@ WORKDIR /workspace
 USER ${USERNAME}
 
 # --- mise シェル設定 ---
+# Docker環境ではshims方式を使用（PATH="/mise/shims:..."で設定済み）
+# mise activateはshimsをバイパスしてグローバルデフォルトの直接パスをPATHに追加するため、
+# ディレクトリごとのバージョン切り替えが効かなくなる。shims方式では不要。
 RUN mise reshim
 
 # --- 1Password CLI ---
