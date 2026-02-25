@@ -102,6 +102,7 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version: 22.17.0
+          package-manager-cache: false
       - name: Install Yarn
         run: |
           npm install --global yarn@1.22.22
@@ -166,6 +167,7 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version: 22.17.0
+          package-manager-cache: false
 
       - name: Install Yarn
         run: |
