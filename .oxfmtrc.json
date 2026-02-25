@@ -1,0 +1,24 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "printWidth": 120,
+  "semi": true,
+  "singleQuote": false,
+  "tabWidth": 2,
+  "trailingComma": "all",
+  "sortTailwindcss": {},
+  "sortPackageJson": false,
+  "ignorePatterns": [
+    "**/node_modules/",
+    "**/vendor/",
+    "rails/db/",
+    "rails/app/docs/",
+    "rails/app/views/",
+    "rails/sorbet/",
+    "rails/tmp/",
+    "go/internal/query/*.go",
+    "go/internal/templates/*_templ.go",
+    "go/static/",
+    "rails/app/assets/builds/",
+    "rails/public/"
+  ]
+}

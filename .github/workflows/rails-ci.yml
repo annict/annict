@@ -90,28 +90,6 @@ jobs:
           working-directory: rails
       - run: bin/erb_lint --lint-all
 
-  prettier:
-    name: Prettier
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: rails
-    steps:
-      - uses: actions/checkout@v6
-      - name: Setup Node.js
-        uses: actions/setup-node@v5
-        with:
-          node-version: 22.17.0
-      - name: Install Yarn
-        run: |
-          npm install --global yarn@1.22.22
-      - name: Install npm packages
-        run: |
-          yarn install
-      - name: Prettier check
-        run: |
-          yarn prettier . --check
-
   eslint:
     name: ESLint
     runs-on: ubuntu-latest
