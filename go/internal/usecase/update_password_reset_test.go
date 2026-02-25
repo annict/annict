@@ -9,6 +9,7 @@ import (
 	"github.com/annict/annict/go/internal/auth"
 	"github.com/annict/annict/go/internal/password_reset"
 	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/testutil"
 )
 
@@ -60,7 +61,8 @@ func TestUpdatePasswordResetUsecase_Execute(t *testing.T) {
 
 	// UseCase を作成
 	queriesWithoutTx := query.New(db)
-	uc := NewUpdatePasswordResetUsecase(db, queriesWithoutTx)
+	sessionRepo := repository.NewSessionRepository(queriesWithoutTx)
+	uc := NewUpdatePasswordResetUsecase(db, repository.NewPasswordResetTokenRepository(queriesWithoutTx), repository.NewUserRepository(queriesWithoutTx), sessionRepo)
 
 	// パスワードを更新
 	ctx := context.Background()
@@ -113,7 +115,8 @@ func TestUpdatePasswordResetUsecase_Execute_WithInvalidToken(t *testing.T) {
 
 	// UseCase を作成
 	queries := query.New(db)
-	uc := NewUpdatePasswordResetUsecase(db, queries)
+	sessionRepo := repository.NewSessionRepository(queries)
+	uc := NewUpdatePasswordResetUsecase(db, repository.NewPasswordResetTokenRepository(queries), repository.NewUserRepository(queries), sessionRepo)
 
 	// 存在しないトークンでパスワード更新を試みる
 	ctx := context.Background()
@@ -185,7 +188,8 @@ func TestUpdatePasswordResetUsecase_Execute_WithUsedToken(t *testing.T) {
 
 	// UseCase を作成
 	queriesWithoutTx := query.New(db)
-	uc := NewUpdatePasswordResetUsecase(db, queriesWithoutTx)
+	sessionRepo := repository.NewSessionRepository(queriesWithoutTx)
+	uc := NewUpdatePasswordResetUsecase(db, repository.NewPasswordResetTokenRepository(queriesWithoutTx), repository.NewUserRepository(queriesWithoutTx), sessionRepo)
 
 	// 使用済みトークンでパスワード更新を試みる
 	ctx := context.Background()
@@ -251,7 +255,8 @@ func TestUpdatePasswordResetUsecase_Execute_WithExpiredToken(t *testing.T) {
 
 	// UseCase を作成
 	queriesWithoutTx := query.New(db)
-	uc := NewUpdatePasswordResetUsecase(db, queriesWithoutTx)
+	sessionRepo := repository.NewSessionRepository(queriesWithoutTx)
+	uc := NewUpdatePasswordResetUsecase(db, repository.NewPasswordResetTokenRepository(queriesWithoutTx), repository.NewUserRepository(queriesWithoutTx), sessionRepo)
 
 	// 期限切れトークンでパスワード更新を試みる
 	ctx := context.Background()
@@ -344,7 +349,8 @@ func TestUpdatePasswordResetUsecase_Execute_WithNonExistentUser(t *testing.T) {
 
 	// UseCase を作成
 	queriesWithoutTx := query.New(db)
-	uc := NewUpdatePasswordResetUsecase(db, queriesWithoutTx)
+	sessionRepo := repository.NewSessionRepository(queriesWithoutTx)
+	uc := NewUpdatePasswordResetUsecase(db, repository.NewPasswordResetTokenRepository(queriesWithoutTx), repository.NewUserRepository(queriesWithoutTx), sessionRepo)
 
 	// 削除されたユーザーのトークンでパスワード更新を試みる
 	ctx := context.Background()
@@ -417,7 +423,8 @@ func TestUpdatePasswordResetUsecase_Execute_WithNullUserData(t *testing.T) {
 
 	// UseCase を作成
 	queriesWithoutTx := query.New(db)
-	uc := NewUpdatePasswordResetUsecase(db, queriesWithoutTx)
+	sessionRepo := repository.NewSessionRepository(queriesWithoutTx)
+	uc := NewUpdatePasswordResetUsecase(db, repository.NewPasswordResetTokenRepository(queriesWithoutTx), repository.NewUserRepository(queriesWithoutTx), sessionRepo)
 
 	// パスワード更新を試みる
 	ctx := context.Background()
@@ -504,7 +511,8 @@ func TestUpdatePasswordResetUsecase_Execute_TransactionRollback(t *testing.T) {
 
 	// UseCase を作成
 	queriesWithoutTx := query.New(db)
-	uc := NewUpdatePasswordResetUsecase(db, queriesWithoutTx)
+	sessionRepo := repository.NewSessionRepository(queriesWithoutTx)
+	uc := NewUpdatePasswordResetUsecase(db, repository.NewPasswordResetTokenRepository(queriesWithoutTx), repository.NewUserRepository(queriesWithoutTx), sessionRepo)
 
 	// 無効なパスワード（空文字列）でパスワード更新を試みる
 	// bcryptはハッシュ化に失敗する可能性がある

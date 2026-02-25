@@ -8,23 +8,25 @@ import (
 	"time"
 
 	"github.com/annict/annict/go/internal/auth"
-	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/worker"
 )
 
 // SendSignInCodeUsecase は6桁のログインコードを生成・送信するユースケースです
 type SendSignInCodeUsecase struct {
-	db          *sql.DB
-	queries     *query.Queries
-	riverClient *worker.Client
+	db             *sql.DB
+	signInCodeRepo *repository.SignInCodeRepository
+	userRepo       *repository.UserRepository
+	riverClient    *worker.Client
 }
 
 // NewSendSignInCodeUsecase は新しいSendSignInCodeUsecaseを作成します
-func NewSendSignInCodeUsecase(db *sql.DB, queries *query.Queries, riverClient *worker.Client) *SendSignInCodeUsecase {
+func NewSendSignInCodeUsecase(db *sql.DB, signInCodeRepo *repository.SignInCodeRepository, userRepo *repository.UserRepository, riverClient *worker.Client) *SendSignInCodeUsecase {
 	return &SendSignInCodeUsecase{
-		db:          db,
-		queries:     queries,
-		riverClient: riverClient,
+		db:             db,
+		signInCodeRepo: signInCodeRepo,
+		userRepo:       userRepo,
+		riverClient:    riverClient,
 	}
 }
 
@@ -43,10 +45,10 @@ func (uc *SendSignInCodeUsecase) Execute(ctx context.Context, userID int64) (*Se
 	}
 	defer func() { _ = tx.Rollback() }()
 
-	queriesWithTx := uc.queries.WithTx(tx)
+	signInCodeRepoTx := uc.signInCodeRepo.WithTx(tx)
 
 	// 既存の未使用コードを無効化
-	if err := queriesWithTx.InvalidateUserSignInCodes(ctx, userID); err != nil {
+	if err := signInCodeRepoTx.InvalidateByUserID(ctx, userID); err != nil {
 		return nil, fmt.Errorf("古いコードの無効化に失敗: %w", err)
 	}
 
@@ -63,13 +65,11 @@ func (uc *SendSignInCodeUsecase) Execute(ctx context.Context, userID int64) (*Se
 	}
 
 	// コードをデータベースに保存（有効期限: 15分）
-	params := query.CreateSignInCodeParams{
+	if err := signInCodeRepoTx.Create(ctx, repository.SignInCodeCreateParams{
 		UserID:     userID,
 		CodeDigest: codeDigest,
 		ExpiresAt:  time.Now().Add(15 * time.Minute),
-	}
-
-	if _, err := queriesWithTx.CreateSignInCode(ctx, params); err != nil {
+	}); err != nil {
 		return nil, fmt.Errorf("ログインコードの作成に失敗: %w", err)
 	}
 
@@ -84,7 +84,7 @@ func (uc *SendSignInCodeUsecase) Execute(ctx context.Context, userID int64) (*Se
 
 	// メール送信ジョブをエンキュー
 	if uc.riverClient != nil {
-		user, err := uc.queries.GetUserByID(ctx, userID)
+		user, err := uc.userRepo.GetByID(ctx, userID)
 		if err != nil {
 			slog.ErrorContext(ctx, "ユーザー情報の取得に失敗しました",
 				"user_id", userID,

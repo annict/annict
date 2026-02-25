@@ -8,23 +8,23 @@ import (
 	"time"
 
 	"github.com/annict/annict/go/internal/auth"
-	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/worker"
 )
 
 // SendSignUpCodeUsecase は新規登録確認コードを生成・送信するユースケースです
 type SendSignUpCodeUsecase struct {
-	db          *sql.DB
-	queries     *query.Queries
-	riverClient *worker.Client
+	db             *sql.DB
+	signUpCodeRepo *repository.SignUpCodeRepository
+	riverClient    *worker.Client
 }
 
 // NewSendSignUpCodeUsecase は新しいSendSignUpCodeUsecaseを作成します
-func NewSendSignUpCodeUsecase(db *sql.DB, queries *query.Queries, riverClient *worker.Client) *SendSignUpCodeUsecase {
+func NewSendSignUpCodeUsecase(db *sql.DB, signUpCodeRepo *repository.SignUpCodeRepository, riverClient *worker.Client) *SendSignUpCodeUsecase {
 	return &SendSignUpCodeUsecase{
-		db:          db,
-		queries:     queries,
-		riverClient: riverClient,
+		db:             db,
+		signUpCodeRepo: signUpCodeRepo,
+		riverClient:    riverClient,
 	}
 }
 
@@ -43,10 +43,10 @@ func (uc *SendSignUpCodeUsecase) Execute(ctx context.Context, email string, loca
 	}
 	defer func() { _ = tx.Rollback() }()
 
-	queriesWithTx := uc.queries.WithTx(tx)
+	signUpCodeRepoTx := uc.signUpCodeRepo.WithTx(tx)
 
 	// 既存の未使用コードを無効化
-	if err := queriesWithTx.InvalidateSignUpCodesByEmail(ctx, email); err != nil {
+	if err := signUpCodeRepoTx.InvalidateByEmail(ctx, email); err != nil {
 		return nil, fmt.Errorf("古いコードの無効化に失敗: %w", err)
 	}
 
@@ -63,13 +63,11 @@ func (uc *SendSignUpCodeUsecase) Execute(ctx context.Context, email string, loca
 	}
 
 	// コードをデータベースに保存（有効期限: 15分）
-	params := query.CreateSignUpCodeParams{
+	if err := signUpCodeRepoTx.Create(ctx, repository.SignUpCodeCreateParams{
 		Email:      email,
 		CodeDigest: codeDigest,
 		ExpiresAt:  time.Now().Add(15 * time.Minute),
-	}
-
-	if _, err := queriesWithTx.CreateSignUpCode(ctx, params); err != nil {
+	}); err != nil {
 		return nil, fmt.Errorf("新規登録確認コードの作成に失敗: %w", err)
 	}
 

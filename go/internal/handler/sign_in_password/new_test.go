@@ -62,7 +62,7 @@ func TestNew(t *testing.T) {
 
 	// UserRepositoryとCreateSessionUsecaseを作成
 	userRepo := repository.NewUserRepository(queries)
-	createSessionUC := usecase.NewCreateSessionUsecase(queries)
+	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
 	handler := NewHandler(cfg, userRepo, sessionMgr, createSessionUC)
 
@@ -110,7 +110,7 @@ func TestNew_WithBackParam(t *testing.T) {
 	sessionMgr := session.NewManager(sessionRepo, cfg)
 
 	userRepo := repository.NewUserRepository(queries)
-	createSessionUC := usecase.NewCreateSessionUsecase(queries)
+	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
 	handler := NewHandler(cfg, userRepo, sessionMgr, createSessionUC)
 
@@ -153,7 +153,7 @@ func TestNew_WithoutSessionEmail(t *testing.T) {
 	sessionMgr := session.NewManager(sessionRepo, cfg)
 
 	userRepo := repository.NewUserRepository(queries)
-	createSessionUC := usecase.NewCreateSessionUsecase(queries)
+	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
 	handler := NewHandler(cfg, userRepo, sessionMgr, createSessionUC)
 

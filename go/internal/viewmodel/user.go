@@ -2,7 +2,7 @@ package viewmodel
 
 import (
 	"github.com/annict/annict/go/internal/image"
-	"github.com/annict/annict/go/internal/repository"
+	"github.com/annict/annict/go/internal/model"
 )
 
 // サイドバー用アバター画像サイズ（Retina対応で表示サイズの2倍）
@@ -17,7 +17,7 @@ type User struct {
 }
 
 // NewUserForSidebar はサイドバー表示用の viewmodel.User を作成します
-func NewUserForSidebar(row *repository.User, helper *image.Helper) *User {
+func NewUserForSidebar(row *model.User, helper *image.Helper) *User {
 	if row == nil {
 		return nil
 	}

@@ -30,7 +30,11 @@ func TestCreate(t *testing.T) {
 
 	// テスト用Redisクライアントをセットアップ
 	rdb := testutil.SetupTestRedis(t)
-	completeSignUpUC := usecase.NewCompleteSignUpUsecase(db, queries, rdb)
+	userRepo := repository.NewUserRepository(queries)
+	profileRepo := repository.NewProfileRepository(queries)
+	settingRepo := repository.NewSettingRepository(queries)
+	emailNotificationRepo := repository.NewEmailNotificationRepository(queries)
+	completeSignUpUC := usecase.NewCompleteSignUpUsecase(db, userRepo, profileRepo, settingRepo, emailNotificationRepo, repository.NewSessionRepository(queries), rdb)
 
 	handler := NewHandler(cfg, sessionMgr, rdb, completeSignUpUC)
 
@@ -148,7 +152,11 @@ func TestCreate_UsernameTaken(t *testing.T) {
 
 	// テスト用Redisクライアントをセットアップ
 	rdb := testutil.SetupTestRedis(t)
-	completeSignUpUC := usecase.NewCompleteSignUpUsecase(db, queries, rdb)
+	userRepo := repository.NewUserRepository(queries)
+	profileRepo := repository.NewProfileRepository(queries)
+	settingRepo := repository.NewSettingRepository(queries)
+	emailNotificationRepo := repository.NewEmailNotificationRepository(queries)
+	completeSignUpUC := usecase.NewCompleteSignUpUsecase(db, userRepo, profileRepo, settingRepo, emailNotificationRepo, repository.NewSessionRepository(queries), rdb)
 
 	handler := NewHandler(cfg, sessionMgr, rdb, completeSignUpUC)
 

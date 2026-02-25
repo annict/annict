@@ -234,7 +234,7 @@ func TestCreate_BackParameterRedirectToCode(t *testing.T) {
 	turnstileClient := turnstile.NewClient("", "")
 
 	// SendSignInCodeユースケース
-	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, queries, nil) // メール送信はnilでOK（テスト用）
+	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), repository.NewUserRepository(queries), nil) // メール送信はnilでOK（テスト用）
 
 	// ハンドラーを作成
 	h := NewHandler(cfg, sessionMgr, userRepo, sendSignInCodeUC, turnstileClient)

@@ -3,13 +3,12 @@ package usecase
 import (
 	"context"
 	"crypto/rand"
-	"crypto/sha256"
 	"database/sql"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
 
-	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/session"
 )
 
@@ -21,13 +20,13 @@ type SessionResult struct {
 
 // CreateSessionUsecase セッション作成のビジネスロジック
 type CreateSessionUsecase struct {
-	queries *query.Queries
+	sessionRepo *repository.SessionRepository
 }
 
 // NewCreateSessionUsecase 新しいCreateSessionUsecaseを作成
-func NewCreateSessionUsecase(queries *query.Queries) *CreateSessionUsecase {
+func NewCreateSessionUsecase(sessionRepo *repository.SessionRepository) *CreateSessionUsecase {
 	return &CreateSessionUsecase{
-		queries: queries,
+		sessionRepo: sessionRepo,
 	}
 }
 
@@ -41,9 +40,6 @@ func (uc *CreateSessionUsecase) Execute(ctx context.Context, tx *sql.Tx, userID 
 	if err != nil {
 		return nil, fmt.Errorf("public ID生成エラー: %w", err)
 	}
-
-	// Private ID（DB保存用）を生成
-	privateID := generatePrivateID(publicID)
 
 	// authenticatable_saltを生成（encrypted_passwordの最初の29文字）
 	// これはDeviseのセキュリティ機能で、パスワード変更時にセッションを無効化するために使用される
@@ -79,18 +75,15 @@ func (uc *CreateSessionUsecase) Execute(ctx context.Context, tx *sql.Tx, userID 
 	}
 
 	// トランザクションが渡された場合はそれを使用、なければ通常のクエリ実行
-	var queries *query.Queries
+	var sessionRepo *repository.SessionRepository
 	if tx != nil {
-		queries = uc.queries.WithTx(tx)
+		sessionRepo = uc.sessionRepo.WithTx(tx)
 	} else {
-		queries = uc.queries
+		sessionRepo = uc.sessionRepo
 	}
 
 	// DBにセッションを保存
-	_, err = queries.CreateSession(ctx, query.CreateSessionParams{
-		SessionID: privateID,
-		Data:      jsonData,
-	})
+	_, err = sessionRepo.CreateSession(ctx, publicID, jsonData)
 	if err != nil {
 		return nil, fmt.Errorf("セッション保存エラー: %w", err)
 	}
@@ -109,11 +102,4 @@ func generatePublicID() (string, error) {
 		return "", err
 	}
 	return hex.EncodeToString(randomBytes), nil
-}
-
-// generatePrivateID はpublic IDからprivate IDを生成
-// Rails/Rackの実装と互換性のある形式: "2::" + SHA256(publicID)
-func generatePrivateID(publicID string) string {
-	hash := sha256.Sum256([]byte(publicID))
-	return fmt.Sprintf("2::%s", hex.EncodeToString(hash[:]))
 }

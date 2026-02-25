@@ -7,11 +7,11 @@ import (
 	"testing"
 
 	"github.com/annict/annict/go/internal/middleware"
-	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/model"
 )
 
-func newUserWithRole(role int32) *query.GetUserByIDRow {
-	return &query.GetUserByIDRow{
+func newUserWithRole(role int32) *model.User {
+	return &model.User{
 		ID:       1,
 		Username: "testuser",
 		Email:    "test@example.com",
@@ -19,7 +19,7 @@ func newUserWithRole(role int32) *query.GetUserByIDRow {
 	}
 }
 
-func setUserContext(r *http.Request, user *query.GetUserByIDRow) *http.Request {
+func setUserContext(r *http.Request, user *model.User) *http.Request {
 	ctx := context.WithValue(r.Context(), middleware.UserContextKey, user)
 	return r.WithContext(ctx)
 }
@@ -29,7 +29,7 @@ func TestIsAdmin(t *testing.T) {
 
 	tests := []struct {
 		name string
-		user *query.GetUserByIDRow
+		user *model.User
 		want bool
 	}{
 		{
@@ -69,7 +69,7 @@ func TestIsEditor(t *testing.T) {
 
 	tests := []struct {
 		name string
-		user *query.GetUserByIDRow
+		user *model.User
 		want bool
 	}{
 		{
@@ -109,7 +109,7 @@ func TestIsCommitter(t *testing.T) {
 
 	tests := []struct {
 		name string
-		user *query.GetUserByIDRow
+		user *model.User
 		want bool
 	}{
 		{
@@ -154,7 +154,7 @@ func TestRequireCommitter(t *testing.T) {
 
 	tests := []struct {
 		name       string
-		user       *query.GetUserByIDRow
+		user       *model.User
 		wantStatus int
 	}{
 		{
@@ -215,7 +215,7 @@ func TestRequireAdmin(t *testing.T) {
 
 	tests := []struct {
 		name       string
-		user       *query.GetUserByIDRow
+		user       *model.User
 		wantStatus int
 	}{
 		{

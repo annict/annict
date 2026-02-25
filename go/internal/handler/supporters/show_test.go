@@ -12,6 +12,7 @@ import (
 	"github.com/annict/annict/go/internal/config"
 	"github.com/annict/annict/go/internal/image"
 	"github.com/annict/annict/go/internal/middleware"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/session"
@@ -82,10 +83,10 @@ func createUserWithGumroadSubscriber(t *testing.T, tx *sql.Tx, ended bool) (int6
 }
 
 // getUserByID はユーザーIDからユーザー情報を取得します（テスト用）
-func getUserByID(t *testing.T, tx *sql.Tx, userID int64) *query.GetUserByIDRow {
+func getUserByID(t *testing.T, tx *sql.Tx, userID int64) *model.User {
 	t.Helper()
 
-	var user query.GetUserByIDRow
+	var user model.User
 	err := tx.QueryRow(`
 		SELECT id, username, email, role, encrypted_password, locale,
 			   stripe_subscriber_id, gumroad_subscriber_id,

@@ -9,25 +9,27 @@ import (
 
 	"github.com/annict/annict/go/internal/config"
 	"github.com/annict/annict/go/internal/password_reset"
-	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/worker"
 )
 
 // CreatePasswordResetTokenUsecase はパスワードリセットトークンを生成するユースケースです
 type CreatePasswordResetTokenUsecase struct {
-	db          *sql.DB
-	queries     *query.Queries
-	cfg         *config.Config
-	riverClient *worker.Client
+	db                     *sql.DB
+	userRepo               *repository.UserRepository
+	passwordResetTokenRepo *repository.PasswordResetTokenRepository
+	cfg                    *config.Config
+	riverClient            *worker.Client
 }
 
 // NewCreatePasswordResetTokenUsecase は新しいCreatePasswordResetTokenUsecaseを作成します
-func NewCreatePasswordResetTokenUsecase(db *sql.DB, queries *query.Queries, cfg *config.Config, riverClient *worker.Client) *CreatePasswordResetTokenUsecase {
+func NewCreatePasswordResetTokenUsecase(db *sql.DB, userRepo *repository.UserRepository, passwordResetTokenRepo *repository.PasswordResetTokenRepository, cfg *config.Config, riverClient *worker.Client) *CreatePasswordResetTokenUsecase {
 	return &CreatePasswordResetTokenUsecase{
-		db:          db,
-		queries:     queries,
-		cfg:         cfg,
-		riverClient: riverClient,
+		db:                     db,
+		userRepo:               userRepo,
+		passwordResetTokenRepo: passwordResetTokenRepo,
+		cfg:                    cfg,
+		riverClient:            riverClient,
 	}
 }
 
@@ -46,10 +48,10 @@ func (uc *CreatePasswordResetTokenUsecase) Execute(ctx context.Context, userID i
 	}
 	defer func() { _ = tx.Rollback() }()
 
-	queriesWithTx := uc.queries.WithTx(tx)
+	passwordResetTokenRepo := uc.passwordResetTokenRepo.WithTx(tx)
 
 	// 既存の未使用トークンを無効化（削除）
-	if err := queriesWithTx.DeleteUnusedPasswordResetTokensByUserID(ctx, userID); err != nil {
+	if err := passwordResetTokenRepo.DeleteUnusedByUserID(ctx, userID); err != nil {
 		return nil, fmt.Errorf("古いトークンの削除に失敗: %w", err)
 	}
 
@@ -63,13 +65,7 @@ func (uc *CreatePasswordResetTokenUsecase) Execute(ctx context.Context, userID i
 	tokenDigest := password_reset.HashToken(token)
 
 	// トークンをデータベースに保存（有効期限: 1時間）
-	params := query.CreatePasswordResetTokenParams{
-		UserID:      userID,
-		TokenDigest: tokenDigest,
-		ExpiresAt:   time.Now().Add(1 * time.Hour),
-	}
-
-	if _, err := queriesWithTx.CreatePasswordResetToken(ctx, params); err != nil {
+	if _, err := passwordResetTokenRepo.Create(ctx, userID, tokenDigest, time.Now().Add(1*time.Hour)); err != nil {
 		return nil, fmt.Errorf("パスワードリセットトークンの作成に失敗: %w", err)
 	}
 
@@ -86,7 +82,7 @@ func (uc *CreatePasswordResetTokenUsecase) Execute(ctx context.Context, userID i
 	// 注: トランザクション外でエンキューするため、トークン保存とジョブエンキューの一貫性は完全ではありません
 	// ただし、トークンは保存されているため、ジョブエンキューに失敗してもユーザーはリセットリンクを使用できます
 	if uc.riverClient != nil {
-		user, err := uc.queries.GetUserByID(ctx, userID)
+		user, err := uc.userRepo.GetByID(ctx, userID)
 		if err != nil {
 			slog.ErrorContext(ctx, "ユーザー情報の取得に失敗しました",
 				"user_id", userID,

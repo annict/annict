@@ -341,6 +341,40 @@ func TestDeleteSession_Success(t *testing.T) {
 	}
 }
 
+// TestSessionRepository_WithTx はWithTxで取得したRepositoryがトランザクション内で動作することをテスト
+func TestSessionRepository_WithTx(t *testing.T) {
+	db, tx := testutil.SetupTestDB(t)
+	queries := query.New(db)
+	repo := repository.NewSessionRepository(queries)
+
+	// WithTxでトランザクション内のRepositoryを取得
+	repoWithTx := repo.WithTx(tx)
+
+	// トランザクション内でセッションを作成
+	publicID := "test_withtx_session_id"
+	sessionData := []byte(`{"key": "value"}`)
+	session, err := repoWithTx.CreateSession(context.Background(), publicID, sessionData)
+	if err != nil {
+		t.Fatalf("WithTxで取得したRepositoryでCreateSessionに失敗: %v", err)
+	}
+
+	// セッションが作成されたことを確認
+	expectedPrivateID := generatePrivateID(publicID)
+	if session.SessionID != expectedPrivateID {
+		t.Errorf("セッションIDが一致しません: got %v, want %v", session.SessionID, expectedPrivateID)
+	}
+
+	// WithTxで取得したRepositoryからセッションを取得できることを確認
+	fetchedSession, err := repoWithTx.GetSessionByID(context.Background(), publicID)
+	if err != nil {
+		t.Fatalf("WithTxで取得したRepositoryでGetSessionByIDに失敗: %v", err)
+	}
+
+	if fetchedSession.SessionID != expectedPrivateID {
+		t.Errorf("取得したセッションIDが一致しません: got %v, want %v", fetchedSession.SessionID, expectedPrivateID)
+	}
+}
+
 // TestDeleteSession_NonExistent は存在しないセッションIDでもエラーが発生しないことをテスト
 func TestDeleteSession_NonExistent(t *testing.T) {
 	db, tx := testutil.SetupTestDB(t)

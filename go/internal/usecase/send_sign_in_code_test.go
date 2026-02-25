@@ -7,6 +7,7 @@ import (
 
 	"github.com/annict/annict/go/internal/auth"
 	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/testutil"
 )
 
@@ -34,7 +35,7 @@ func TestSendSignInCodeUsecase_Execute(t *testing.T) {
 	}
 
 	// ユースケースを作成（Riverクライアントはnil）
-	uc := NewSendSignInCodeUsecase(db, queries, nil)
+	uc := NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), repository.NewUserRepository(queries), nil)
 
 	ctx := context.Background()
 
@@ -112,7 +113,7 @@ func TestSendSignInCodeUsecase_Execute_InvalidatesOldCodes(t *testing.T) {
 	}
 
 	// ユースケースを作成
-	uc := NewSendSignInCodeUsecase(db, queries, nil)
+	uc := NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), repository.NewUserRepository(queries), nil)
 
 	ctx := context.Background()
 
@@ -148,7 +149,7 @@ func TestSendSignInCodeUsecase_Execute_NonExistentUser(t *testing.T) {
 	queries := query.New(db)
 
 	// ユースケースを作成
-	uc := NewSendSignInCodeUsecase(db, queries, nil)
+	uc := NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), repository.NewUserRepository(queries), nil)
 
 	ctx := context.Background()
 
