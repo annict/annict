@@ -1,5 +1,5 @@
 {
-  "name": "annict-root",
+  "name": "annict",
   "private": true,
   "scripts": {
     "fmt": "oxfmt --write",
