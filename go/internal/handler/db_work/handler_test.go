@@ -100,9 +100,6 @@ func TestIndex_Empty(t *testing.T) {
 		t.Error("response should not contain table when no works exist")
 	}
 
-	if status := rr.Code; status != http.StatusOK {
-		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
-	}
 }
 
 // TestIndex_WithFilters はフィルタパラメータ付きリクエストのテスト

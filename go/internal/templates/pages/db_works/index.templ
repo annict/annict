@@ -1,10 +1,8 @@
 package db_works
 
 import (
-	"context"
 	"fmt"
 
-	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/templates"
 	"github.com/annict/annict/go/internal/templates/components"
 	"github.com/annict/annict/go/internal/viewmodel"
@@ -12,7 +10,7 @@ import (
 
 // IndexPageData はDB作品一覧ページのデータ構造です
 type IndexPageData struct {
-	Works            []model.DBWorkListItem
+	Works            []viewmodel.DBWorkListItem
 	Pagination       viewmodel.Pagination
 	FilterNoEpisodes bool
 	FilterNoImage    bool
@@ -95,9 +93,7 @@ templ Index(data IndexPageData) {
 									</a>
 								</td>
 								<td>
-									if work.SeasonYear != nil && work.SeasonName != nil {
-										{ formatSeason(ctx, *work.SeasonYear, *work.SeasonName) }
-									}
+									{ work.Season }
 								</td>
 								<td class="text-right">{ fmt.Sprintf("%d", work.WatchersCount) }</td>
 								<td>
@@ -119,25 +115,4 @@ templ Index(data IndexPageData) {
 			</div>
 		}
 	</div>
-}
-
-// formatSeason はシーズン情報をフォーマットします
-func formatSeason(ctx context.Context, year int32, name int32) string {
-	seasonKey := ""
-	switch name {
-	case 0:
-		seasonKey = "season_winter"
-	case 1:
-		seasonKey = "season_spring"
-	case 2:
-		seasonKey = "season_summer"
-	case 3:
-		seasonKey = "season_autumn"
-	}
-
-	if seasonKey == "" {
-		return fmt.Sprintf("%d", year)
-	}
-
-	return fmt.Sprintf("%d %s", year, templates.T(ctx, seasonKey))
 }
