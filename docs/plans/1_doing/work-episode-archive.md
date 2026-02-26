@@ -569,6 +569,15 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
   - **想定ファイル数**: 約 6 ファイル（実装 4 + テスト 2）
   - **想定行数**: 約 200 行（実装 120 行 + テスト 80 行）
 
+### フェーズ 17a: Unpublishable concern の status ベース移行
+
+- [ ] **17a-1**: [Rails] Unpublishable concern のスコープ・メソッドを status カラムベースに移行
+  - `Work`, `Episode` モデルの `Unpublishable` concern が定義するスコープ（`published`, `unpublished`, `only_kept`）を `status` カラムベースに移行
+  - 操作メソッド（`publish`, `unpublish`）を `status` カラムベースに移行
+  - pending テスト（7件）を解消
+  - **想定ファイル数**: 約 6 ファイル（実装 2 + テスト 4）
+  - **想定行数**: 約 200 行（実装 80 行 + テスト 120 行）
+
 ### フェーズ 18: アーカイブされた作品の表示制限
 
 - [ ] **18-1**: [Rails] アーカイブされた作品の表示・操作制限
