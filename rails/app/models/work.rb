@@ -357,7 +357,7 @@ class Work < ApplicationRecord
     increment!(:watchers_count) if is_next_positive
   end
 
-  # status カラムベースの判定メソッド（Unpublishable の unpublished_at ベースをオーバーライド）
+  # status カラムの値で公開状態を判定する
   def published?
     status.to_s == "published"
   end
