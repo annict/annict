@@ -1058,6 +1058,142 @@ other = "画像"
 description = "作品なしメッセージ"
 other = "作品が見つかりませんでした"
 
+[db_works_new_title]
+description = "作品新規作成ページのタイトル"
+other = "作品を追加"
+
+[db_works_back_to_list]
+description = "一覧に戻るリンク"
+other = "一覧に戻る"
+
+[db_works_form_title]
+description = "フォームラベル - タイトル"
+other = "タイトル"
+
+[db_works_form_title_kana]
+description = "フォームラベル - タイトル（かな）"
+other = "タイトル（かな）"
+
+[db_works_form_title_alter]
+description = "フォームラベル - タイトル（別名）"
+other = "タイトル（別名）"
+
+[db_works_form_title_en]
+description = "フォームラベル - タイトル（英語）"
+other = "タイトル（英語）"
+
+[db_works_form_title_alter_en]
+description = "フォームラベル - タイトル（英語別名）"
+other = "タイトル（英語別名）"
+
+[db_works_form_media]
+description = "フォームラベル - メディア"
+other = "メディア"
+
+[db_works_form_season_year]
+description = "フォームラベル - シーズン年"
+other = "シーズン年"
+
+[db_works_form_season_name]
+description = "フォームラベル - シーズン名"
+other = "シーズン名"
+
+[db_works_form_started_on]
+description = "フォームラベル - 放送開始日"
+other = "放送開始日"
+
+[db_works_form_ended_on]
+description = "フォームラベル - 放送終了日"
+other = "放送終了日"
+
+[db_works_form_official_site_url]
+description = "フォームラベル - 公式サイトURL"
+other = "公式サイトURL"
+
+[db_works_form_official_site_url_en]
+description = "フォームラベル - 公式サイトURL（英語）"
+other = "公式サイトURL（英語）"
+
+[db_works_form_wikipedia_url]
+description = "フォームラベル - Wikipedia URL"
+other = "Wikipedia URL"
+
+[db_works_form_wikipedia_url_en]
+description = "フォームラベル - Wikipedia URL（英語）"
+other = "Wikipedia URL（英語）"
+
+[db_works_form_twitter_username]
+description = "フォームラベル - Twitterユーザー名"
+other = "Twitterユーザー名"
+
+[db_works_form_twitter_hashtag]
+description = "フォームラベル - Twitterハッシュタグ"
+other = "Twitterハッシュタグ"
+
+[db_works_form_sc_tid]
+description = "フォームラベル - しょぼいカレンダーTID"
+other = "しょぼいカレンダーTID"
+
+[db_works_form_mal_anime_id]
+description = "フォームラベル - MAL Anime ID"
+other = "MAL Anime ID"
+
+[db_works_form_synopsis]
+description = "フォームラベル - あらすじ"
+other = "あらすじ"
+
+[db_works_form_synopsis_source]
+description = "フォームラベル - あらすじ出典"
+other = "あらすじ出典"
+
+[db_works_form_synopsis_en]
+description = "フォームラベル - あらすじ（英語）"
+other = "あらすじ（英語）"
+
+[db_works_form_synopsis_source_en]
+description = "フォームラベル - あらすじ出典（英語）"
+other = "あらすじ出典（英語）"
+
+[db_works_form_manual_episodes_count]
+description = "フォームラベル - 手動エピソード数"
+other = "手動エピソード数"
+
+[db_works_form_start_episode_raw_number]
+description = "フォームラベル - 開始エピソード番号"
+other = "開始エピソード番号"
+
+[db_works_form_number_format]
+description = "フォームラベル - NumberFormat"
+other = "NumberFormat"
+
+[db_works_form_no_episodes]
+description = "フォームラベル - エピソードなし"
+other = "エピソードなし"
+
+[db_works_form_submit_create]
+description = "フォーム送信ボタン - 作成"
+other = "作品を作成"
+
+[media_tv]
+description = "メディア種別 - TV"
+other = "TV"
+
+[media_ova]
+description = "メディア種別 - OVA"
+other = "OVA"
+
+[media_movie]
+description = "メディア種別 - 映画"
+other = "映画"
+
+[media_web]
+description = "メディア種別 - Web"
+other = "Web"
+
+[media_other]
+description = "メディア種別 - その他"
+other = "その他"
+
 # フッター関連
 [footer_terms]
 description = "フッター - 利用規約"
