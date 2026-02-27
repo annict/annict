@@ -60,6 +60,9 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)
 	meta.SetTitle(ctx, "db_works_title")
 
+	// Model → ViewModel に変換
+	worksVM := viewmodel.NewDBWorkListItems(ctx, works)
+
 	// テンプレートをレンダリング
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	component := layouts.Db(
@@ -68,7 +71,7 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 		flash,
 		h.cfg.GetAssetVersion(),
 		db_works.Index(db_works.IndexPageData{
-			Works:            works,
+			Works:            worksVM,
 			Pagination:       pagination,
 			FilterNoEpisodes: filterNoEpisodes,
 			FilterNoImage:    filterNoImage,

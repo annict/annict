@@ -105,6 +105,55 @@ cat /workspace/rails/app/models/work.rb
 - **Queryへの依存はRepositoryのみ**: Handler/UseCaseがQueryに直接依存することは禁止
 - **ModelとRepositoryは1:1の関係**: 各ドメインエンティティに対応するRepositoryを作成
 - **Domain/Infrastructure層の統合**: データベース変更はほぼ起こらないため、シンプルさを優先
+- **ドメインID型の使用**: モデルのIDフィールドに `string` ではなく専用型を使用
+
+### ドメインID型
+
+モデルのIDフィールドには `string` ではなく、`internal/model/id.go` に定義された専用のドメインID型（`type WorkID string` 等）を使用します。これにより、異なるエンティティのIDを取り違える問題をコンパイル時に検出できます。
+
+**基本ルール**:
+
+- ✅ **モデルのIDフィールドには専用型を使用**: `ID WorkID`、`ID UserID` など
+- ✅ **外部キーにも専用型を使用**: `UserID model.UserID`、`WorkID model.WorkID` など
+- ✅ **新しいモデルを追加する場合は対応するID型も追加**: `id.go` に型と `String()` メソッドを定義
+- ❌ **IDフィールドに `string` を使用しない**
+
+**実装パターン**:
+
+```go
+// internal/model/id.go - 型定義
+type WorkID string
+func (id WorkID) String() string { return string(id) }
+
+// internal/model/work.go - モデルでの使用
+type Work struct {
+    ID    WorkID
+    Title string
+}
+
+// internal/repository/work.go - リポジトリでの変換（sqlcのstringから専用型へ）
+func toModel(row query.GetWorkRow) *model.Work {
+    return &model.Work{
+        ID:    model.WorkID(row.ID),
+        Title: row.Title,
+    }
+}
+
+// internal/testutil/work_builder.go - テストビルダーの戻り値
+func (b *WorkBuilder) Build() model.WorkID {
+    // ...
+    return model.WorkID(id)
+}
+```
+
+**スライス変換ヘルパー**:
+
+IDのスライスと `[]string` の相互変換が必要な場合（例: PostgreSQL の配列型との変換）は、`id.go` にヘルパー関数を定義します：
+
+```go
+func WorkIDsToStrings(ids []WorkID) []string { ... }
+func StringsToWorkIDs(ss []string) []WorkID { ... }
+```
 
 ### UsecaseとRepositoryの使い分け
 

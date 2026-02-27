@@ -2,6 +2,23 @@ name: Formatter CI
 
 on:
   push:
+    branches:
+      - main
+      - develop
+    paths:
+      - "**/*.js"
+      - "**/*.ts"
+      - "**/*.mjs"
+      - "**/*.css"
+      - "**/*.scss"
+      - "**/*.json"
+      - "**/*.yaml"
+      - "**/*.yml"
+      - "**/*.toml"
+      - "**/*.md"
+      - "**/*.html"
+      - "**/*.graphql"
+  pull_request:
     paths:
       - "**/*.js"
       - "**/*.ts"

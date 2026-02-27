@@ -2,6 +2,13 @@ name: Rails CI
 
 on:
   push:
+    branches:
+      - main
+      - develop
+    paths:
+      - "rails/**"
+      - ".github/workflows/rails-ci.yml"
+  pull_request:
     paths:
       - "rails/**"
       - ".github/workflows/rails-ci.yml"

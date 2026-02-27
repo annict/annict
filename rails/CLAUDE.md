@@ -434,12 +434,6 @@ it "xxxのとき、somethingすること" do
   # テスト実装
 end
 
-# ✅ FactoryBotで作成したレコードの変数名には_recordサフィックスを付ける
-user_record = FactoryBot.create(:user_record)
-space_record = FactoryBot.create(:space_record)
-
-# ❌ サフィックスなしの変数名は避ける
-user = FactoryBot.create(:user_record)
 ```
 
 #### システムテストの待機処理

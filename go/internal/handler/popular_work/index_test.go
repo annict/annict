@@ -86,7 +86,7 @@ func TestIndex(t *testing.T) {
 		"人気アニメ1",       // 作品タイトル1
 		"人気アニメ2",       // 作品タイトル2
 		"人気アニメ3",       // 作品タイトル3
-		"100 watchers", // デフォルトのwatchers数
+		"100人", // デフォルトのwatchers数（デフォルトロケールは日本語）
 		"2024",         // シーズン年
 		"👥",            // アイコン
 		`href="/works/` + strconv.FormatInt(workID1, 10) + `"`,

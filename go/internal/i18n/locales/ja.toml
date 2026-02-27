@@ -31,8 +31,7 @@ other = "スタッフ"
 # 視聴者数（複数形対応）
 [watchers_count]
 description = "アニメの視聴者数"
-one = "{{.Count}} watcher"
-other = "{{.Count}} watchers"
+other = "{{.Count}}人"
 
 # シーズン名
 [season_winter]
