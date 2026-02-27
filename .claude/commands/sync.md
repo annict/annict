@@ -67,6 +67,15 @@
 - `rails/.rspec`: require 対象の違い（プロジェクト固有の設定のため）
 - `Dockerfile.dev`: Bundler バージョンの違い（プロジェクト固有の依存のため）
 - `.github/workflows/rails-ci.yml`: RSpec runs-on の違い（プロジェクト固有の事情のため）
+- `.claude/commands/sync.md`: subagent_type と差分レポート形式の違い（Mewst のみ異なる。他プロジェクトの /sync で対応するため）
+- `docs/plans/template.md`: Rails 版ガイドライン参照の数（Mewst のみ少ない。他プロジェクトの /sync で対応するため）
+- `rails/eslint.config.mjs`: globals と除外パスの設定範囲（Annict がより広い設定。他プロジェクトの /sync で対応するため）
+- `.github/workflows/go-ci.yml`: トリガー条件の違い（Mewst のみ push のみ。他プロジェクトの /sync で対応するため）
+- `.github/workflows/rails-ci.yml`: DB セットアップ方式の違い（db:setup vs db:schema:load。プロジェクト固有の事情のため）
+- `rails/docs/architecture-guide.md`: Mewst に存在しない（Mewst 固有の事情のため）
+- `go/CLAUDE.md`: Worker パッケージの記述（Wikino 固有の機能のため）
+- `go/.golangci.yml`: 追加レイヤールール（policy-layer, markup-layer, worker-layer。Wikino 固有のアーキテクチャのため）
+- `go/docs/security-guide.md`: スペース ID によるクエリスコープ（Wikino 固有のドメイン要件のため）
 
 ## 手順
 
