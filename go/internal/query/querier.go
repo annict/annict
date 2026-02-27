@@ -78,6 +78,7 @@ type Querier interface {
 	InvalidateUserSignInCodes(ctx context.Context, userID int64) error
 	ListAllProfiles(ctx context.Context) ([]ListAllProfilesRow, error)
 	ListDBWorks(ctx context.Context, arg ListDBWorksParams) ([]ListDBWorksRow, error)
+	ListNumberFormats(ctx context.Context) ([]ListNumberFormatsRow, error)
 	MarkPasswordResetTokenAsUsed(ctx context.Context, id int64) error
 	MarkSignInCodeAsUsed(ctx context.Context, id int64) error
 	MarkSignUpCodeAsUsed(ctx context.Context, id int64) error
