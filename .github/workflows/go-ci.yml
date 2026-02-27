@@ -2,6 +2,13 @@ name: Go CI
 
 on:
   push:
+    branches:
+      - main
+      - develop
+    paths:
+      - "go/**"
+      - ".github/workflows/go-ci.yml"
+  pull_request:
     paths:
       - "go/**"
       - ".github/workflows/go-ci.yml"
