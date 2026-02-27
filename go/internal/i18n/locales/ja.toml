@@ -1174,6 +1174,38 @@ other = "エピソードなし"
 description = "フォーム送信ボタン - 作成"
 other = "作品を作成"
 
+[db_works_error_title_required]
+description = "タイトル必須エラー"
+other = "タイトルを入力してください"
+
+[db_works_error_media_required]
+description = "メディア必須エラー"
+other = "メディアを選択してください"
+
+[db_works_error_media_invalid]
+description = "メディア値不正エラー"
+other = "メディアの値が不正です"
+
+[db_works_error_url_invalid]
+description = "URL形式エラー"
+other = "URLの形式が正しくありません"
+
+[db_works_error_sc_tid_invalid]
+description = "しょぼいカレンダーTID数値エラー"
+other = "整数で入力してください"
+
+[db_works_error_mal_anime_id_invalid]
+description = "MAL Anime ID数値エラー"
+other = "整数で入力してください"
+
+[db_works_error_synopsis_source_required]
+description = "あらすじ出典必須エラー"
+other = "あらすじを入力した場合は出典も入力してください"
+
+[db_works_error_synopsis_source_en_required]
+description = "あらすじ出典（英語）必須エラー"
+other = "あらすじ（英語）を入力した場合は出典も入力してください"
+
 [media_tv]
 description = "メディア種別 - TV"
 other = "TV"
