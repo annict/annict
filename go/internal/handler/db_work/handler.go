@@ -9,16 +9,23 @@ import (
 
 // Handler はDB管理画面の作品関連のHTTPハンドラーです
 type Handler struct {
-	cfg            *config.Config
-	workRepo       *repository.WorkRepository
-	sessionManager *session.Manager
+	cfg              *config.Config
+	workRepo         *repository.WorkRepository
+	numberFormatRepo *repository.NumberFormatRepository
+	sessionManager   *session.Manager
 }
 
 // NewHandler は新しいHandlerを作成します
-func NewHandler(cfg *config.Config, workRepo *repository.WorkRepository, sessionManager *session.Manager) *Handler {
+func NewHandler(
+	cfg *config.Config,
+	workRepo *repository.WorkRepository,
+	numberFormatRepo *repository.NumberFormatRepository,
+	sessionManager *session.Manager,
+) *Handler {
 	return &Handler{
-		cfg:            cfg,
-		workRepo:       workRepo,
-		sessionManager: sessionManager,
+		cfg:              cfg,
+		workRepo:         workRepo,
+		numberFormatRepo: numberFormatRepo,
+		sessionManager:   sessionManager,
 	}
 }

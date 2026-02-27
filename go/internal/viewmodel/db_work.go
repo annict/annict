@@ -3,6 +3,7 @@ package viewmodel
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/model"
@@ -62,4 +63,75 @@ func formatSeason(ctx context.Context, year *int32, name *int32) string {
 	}
 
 	return fmt.Sprintf("%d %s", *year, i18n.T(ctx, seasonKey))
+}
+
+// SelectOption はセレクトボックスの選択肢です
+type SelectOption struct {
+	Value string
+	Label string
+}
+
+// DBWorkFormOptions は作品フォームのセレクトボックス用データです
+type DBWorkFormOptions struct {
+	MediaOptions        []SelectOption
+	SeasonYearOptions   []SelectOption
+	SeasonNameOptions   []SelectOption
+	NumberFormatOptions []SelectOption
+}
+
+// NewDBWorkFormOptions は作品フォームのセレクトボックス用データを作成します
+func NewDBWorkFormOptions(ctx context.Context, numberFormats []model.NumberFormat) DBWorkFormOptions {
+	return DBWorkFormOptions{
+		MediaOptions:        buildMediaOptions(ctx),
+		SeasonYearOptions:   buildSeasonYearOptions(),
+		SeasonNameOptions:   buildSeasonNameOptions(ctx),
+		NumberFormatOptions: buildNumberFormatOptions(numberFormats),
+	}
+}
+
+// buildMediaOptions はメディア種別の選択肢を作成します
+func buildMediaOptions(ctx context.Context) []SelectOption {
+	return []SelectOption{
+		{Value: "1", Label: i18n.T(ctx, "media_tv")},
+		{Value: "2", Label: i18n.T(ctx, "media_ova")},
+		{Value: "3", Label: i18n.T(ctx, "media_movie")},
+		{Value: "4", Label: i18n.T(ctx, "media_web")},
+		{Value: "0", Label: i18n.T(ctx, "media_other")},
+	}
+}
+
+// buildSeasonYearOptions はシーズン年の選択肢を作成します
+func buildSeasonYearOptions() []SelectOption {
+	currentYear := time.Now().Year() + 5
+	startYear := 1890
+	options := make([]SelectOption, 0, currentYear-startYear+1)
+	for y := currentYear; y >= startYear; y-- {
+		options = append(options, SelectOption{
+			Value: fmt.Sprintf("%d", y),
+			Label: fmt.Sprintf("%d", y),
+		})
+	}
+	return options
+}
+
+// buildSeasonNameOptions はシーズン名の選択肢を作成します
+func buildSeasonNameOptions(ctx context.Context) []SelectOption {
+	return []SelectOption{
+		{Value: "1", Label: i18n.T(ctx, "season_winter")},
+		{Value: "2", Label: i18n.T(ctx, "season_spring")},
+		{Value: "3", Label: i18n.T(ctx, "season_summer")},
+		{Value: "4", Label: i18n.T(ctx, "season_autumn")},
+	}
+}
+
+// buildNumberFormatOptions はNumberFormatの選択肢を作成します
+func buildNumberFormatOptions(formats []model.NumberFormat) []SelectOption {
+	options := make([]SelectOption, len(formats))
+	for i, f := range formats {
+		options[i] = SelectOption{
+			Value: fmt.Sprintf("%d", f.ID),
+			Label: f.Name,
+		}
+	}
+	return options
 }

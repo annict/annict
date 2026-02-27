@@ -412,8 +412,10 @@ func main() {
 	r.Post("/webhooks/stripe", stripeWebhookHandler.Create)
 
 	// DB管理画面
-	dbWorkHandler := db_work.NewHandler(cfg, workRepo, sessionManager)
+	numberFormatRepo := repository.NewNumberFormatRepository(queries)
+	dbWorkHandler := db_work.NewHandler(cfg, workRepo, numberFormatRepo, sessionManager)
 	r.Get("/db/works", dbWorkHandler.Index)
+	r.Get("/db/works/new", dbWorkHandler.New)
 
 	// iCalendar配信
 	r.Get("/@{username}/ics", icsHandler.Show) // メインのエンドポイント

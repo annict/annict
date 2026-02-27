@@ -35,8 +35,9 @@ func TestIndex(t *testing.T) {
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionManager := session.NewManager(sessionRepo, cfg)
 	workRepo := repository.NewWorkRepository(queries)
+	numberFormatRepo := repository.NewNumberFormatRepository(queries)
 
-	handler := NewHandler(cfg, workRepo, sessionManager)
+	handler := NewHandler(cfg, workRepo, numberFormatRepo, sessionManager)
 
 	req := httptest.NewRequest("GET", "/db/works", nil)
 	rr := httptest.NewRecorder()
@@ -81,8 +82,9 @@ func TestIndex_Empty(t *testing.T) {
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionManager := session.NewManager(sessionRepo, cfg)
 	workRepo := repository.NewWorkRepository(queries)
+	numberFormatRepo := repository.NewNumberFormatRepository(queries)
 
-	handler := NewHandler(cfg, workRepo, sessionManager)
+	handler := NewHandler(cfg, workRepo, numberFormatRepo, sessionManager)
 
 	req := httptest.NewRequest("GET", "/db/works", nil)
 	rr := httptest.NewRecorder()
@@ -113,8 +115,9 @@ func TestIndex_WithFilters(t *testing.T) {
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionManager := session.NewManager(sessionRepo, cfg)
 	workRepo := repository.NewWorkRepository(queries)
+	numberFormatRepo := repository.NewNumberFormatRepository(queries)
 
-	handler := NewHandler(cfg, workRepo, sessionManager)
+	handler := NewHandler(cfg, workRepo, numberFormatRepo, sessionManager)
 
 	req := httptest.NewRequest("GET", "/db/works?filter_no_episodes=1&filter_no_image=1&page=1", nil)
 	rr := httptest.NewRecorder()
@@ -130,5 +133,56 @@ func TestIndex_WithFilters(t *testing.T) {
 	// フィルタのチェックボックスがチェックされていることを確認
 	if !strings.Contains(body, `checked`) {
 		t.Error("response should contain checked checkboxes for active filters")
+	}
+}
+
+// TestNew はDB作品新規作成フォームのテスト
+func TestNew(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTestDB(t)
+
+	queries := query.New(db).WithTx(tx)
+	cfg := &config.Config{Env: "test"}
+	sessionRepo := repository.NewSessionRepository(queries)
+	sessionManager := session.NewManager(sessionRepo, cfg)
+	workRepo := repository.NewWorkRepository(queries)
+	numberFormatRepo := repository.NewNumberFormatRepository(queries)
+
+	handler := NewHandler(cfg, workRepo, numberFormatRepo, sessionManager)
+
+	req := httptest.NewRequest("GET", "/db/works/new", nil)
+	rr := httptest.NewRecorder()
+
+	handler.New(rr, req)
+
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
+	}
+
+	body := rr.Body.String()
+
+	expectedContents := []string{
+		"<form",
+		`action="/db/works"`,
+		`method="POST"`,
+		"csrf_token",
+		`name="title"`,
+		`name="media"`,
+		`name="season_year"`,
+		`name="season_name"`,
+		`name="number_format_id"`,
+		`name="no_episodes"`,
+	}
+
+	for _, expected := range expectedContents {
+		if !strings.Contains(body, expected) {
+			t.Errorf("response doesn't contain expected string: %q", expected)
+		}
+	}
+
+	expectedContentType := "text/html; charset=utf-8"
+	if ct := rr.Header().Get("Content-Type"); ct != expectedContentType {
+		t.Errorf("handler returned wrong content-type: got %v want %v", ct, expectedContentType)
 	}
 }

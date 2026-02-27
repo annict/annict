@@ -1,0 +1,265 @@
+package db_works
+
+import (
+	"github.com/annict/annict/go/internal/templates"
+	"github.com/annict/annict/go/internal/viewmodel"
+)
+
+// NewPageData はDB作品新規作成ページのデータ構造です
+type NewPageData struct {
+	CSRFToken   string
+	FormOptions viewmodel.DBWorkFormOptions
+}
+
+// New はDB管理画面の作品新規作成フォームを表示します
+templ New(data NewPageData) {
+	<div class="p-6">
+		<div class="flex items-center justify-between mb-6">
+			<h1 class="text-2xl font-bold">{ templates.T(ctx, "db_works_new_title") }</h1>
+			<a href="/db/works" class="btn btn-outline btn-sm">
+				{ templates.T(ctx, "db_works_back_to_list") }
+			</a>
+		</div>
+
+		<form method="POST" action="/db/works" class="max-w-2xl space-y-4">
+			<input type="hidden" name="csrf_token" value={ data.CSRFToken }/>
+
+			<!-- タイトル -->
+			<div>
+				<label for="title" class="label">
+					{ templates.T(ctx, "db_works_form_title") }
+					<span class="text-destructive">*</span>
+				</label>
+				<input type="text" id="title" name="title" class="input" required autofocus/>
+			</div>
+
+			<!-- タイトル（かな） -->
+			<div>
+				<label for="title_kana" class="label">
+					{ templates.T(ctx, "db_works_form_title_kana") }
+				</label>
+				<input type="text" id="title_kana" name="title_kana" class="input"/>
+			</div>
+
+			<!-- タイトル（別名） -->
+			<div>
+				<label for="title_alter" class="label">
+					{ templates.T(ctx, "db_works_form_title_alter") }
+				</label>
+				<input type="text" id="title_alter" name="title_alter" class="input"/>
+			</div>
+
+			<!-- タイトル（英語） -->
+			<div>
+				<label for="title_en" class="label">
+					{ templates.T(ctx, "db_works_form_title_en") }
+				</label>
+				<input type="text" id="title_en" name="title_en" class="input"/>
+			</div>
+
+			<!-- タイトル（英語別名） -->
+			<div>
+				<label for="title_alter_en" class="label">
+					{ templates.T(ctx, "db_works_form_title_alter_en") }
+				</label>
+				<input type="text" id="title_alter_en" name="title_alter_en" class="input"/>
+			</div>
+
+			<!-- メディア -->
+			<div>
+				<label for="media" class="label">
+					{ templates.T(ctx, "db_works_form_media") }
+					<span class="text-destructive">*</span>
+				</label>
+				<select id="media" name="media" class="select" required>
+					<option value=""></option>
+					for _, opt := range data.FormOptions.MediaOptions {
+						<option value={ opt.Value }>{ opt.Label }</option>
+					}
+				</select>
+			</div>
+
+			<!-- シーズン年 -->
+			<div>
+				<label for="season_year" class="label">
+					{ templates.T(ctx, "db_works_form_season_year") }
+				</label>
+				<select id="season_year" name="season_year" class="select">
+					<option value=""></option>
+					for _, opt := range data.FormOptions.SeasonYearOptions {
+						<option value={ opt.Value }>{ opt.Label }</option>
+					}
+				</select>
+			</div>
+
+			<!-- シーズン名 -->
+			<div>
+				<label for="season_name" class="label">
+					{ templates.T(ctx, "db_works_form_season_name") }
+				</label>
+				<select id="season_name" name="season_name" class="select">
+					<option value=""></option>
+					for _, opt := range data.FormOptions.SeasonNameOptions {
+						<option value={ opt.Value }>{ opt.Label }</option>
+					}
+				</select>
+			</div>
+
+			<!-- 放送開始日 -->
+			<div>
+				<label for="started_on" class="label">
+					{ templates.T(ctx, "db_works_form_started_on") }
+				</label>
+				<input type="date" id="started_on" name="started_on" class="input"/>
+			</div>
+
+			<!-- 放送終了日 -->
+			<div>
+				<label for="ended_on" class="label">
+					{ templates.T(ctx, "db_works_form_ended_on") }
+				</label>
+				<input type="date" id="ended_on" name="ended_on" class="input"/>
+			</div>
+
+			<!-- 公式サイトURL -->
+			<div>
+				<label for="official_site_url" class="label">
+					{ templates.T(ctx, "db_works_form_official_site_url") }
+				</label>
+				<input type="url" id="official_site_url" name="official_site_url" class="input"/>
+			</div>
+
+			<!-- 公式サイトURL（英語） -->
+			<div>
+				<label for="official_site_url_en" class="label">
+					{ templates.T(ctx, "db_works_form_official_site_url_en") }
+				</label>
+				<input type="url" id="official_site_url_en" name="official_site_url_en" class="input"/>
+			</div>
+
+			<!-- Wikipedia URL -->
+			<div>
+				<label for="wikipedia_url" class="label">
+					{ templates.T(ctx, "db_works_form_wikipedia_url") }
+				</label>
+				<input type="url" id="wikipedia_url" name="wikipedia_url" class="input"/>
+			</div>
+
+			<!-- Wikipedia URL（英語） -->
+			<div>
+				<label for="wikipedia_url_en" class="label">
+					{ templates.T(ctx, "db_works_form_wikipedia_url_en") }
+				</label>
+				<input type="url" id="wikipedia_url_en" name="wikipedia_url_en" class="input"/>
+			</div>
+
+			<!-- Twitterユーザー名 -->
+			<div>
+				<label for="twitter_username" class="label">
+					{ templates.T(ctx, "db_works_form_twitter_username") }
+				</label>
+				<input type="text" id="twitter_username" name="twitter_username" class="input" placeholder="@なし"/>
+			</div>
+
+			<!-- Twitterハッシュタグ -->
+			<div>
+				<label for="twitter_hashtag" class="label">
+					{ templates.T(ctx, "db_works_form_twitter_hashtag") }
+				</label>
+				<input type="text" id="twitter_hashtag" name="twitter_hashtag" class="input" placeholder="#なし"/>
+			</div>
+
+			<!-- しょぼいカレンダーTID -->
+			<div>
+				<label for="sc_tid" class="label">
+					{ templates.T(ctx, "db_works_form_sc_tid") }
+				</label>
+				<input type="text" id="sc_tid" name="sc_tid" class="input"/>
+			</div>
+
+			<!-- MAL Anime ID -->
+			<div>
+				<label for="mal_anime_id" class="label">
+					{ templates.T(ctx, "db_works_form_mal_anime_id") }
+				</label>
+				<input type="text" id="mal_anime_id" name="mal_anime_id" class="input"/>
+			</div>
+
+			<!-- あらすじ -->
+			<div>
+				<label for="synopsis" class="label">
+					{ templates.T(ctx, "db_works_form_synopsis") }
+				</label>
+				<textarea id="synopsis" name="synopsis" class="textarea" rows="5"></textarea>
+			</div>
+
+			<!-- あらすじ出典 -->
+			<div>
+				<label for="synopsis_source" class="label">
+					{ templates.T(ctx, "db_works_form_synopsis_source") }
+				</label>
+				<input type="text" id="synopsis_source" name="synopsis_source" class="input"/>
+			</div>
+
+			<!-- あらすじ（英語） -->
+			<div>
+				<label for="synopsis_en" class="label">
+					{ templates.T(ctx, "db_works_form_synopsis_en") }
+				</label>
+				<textarea id="synopsis_en" name="synopsis_en" class="textarea" rows="5"></textarea>
+			</div>
+
+			<!-- あらすじ出典（英語） -->
+			<div>
+				<label for="synopsis_source_en" class="label">
+					{ templates.T(ctx, "db_works_form_synopsis_source_en") }
+				</label>
+				<input type="text" id="synopsis_source_en" name="synopsis_source_en" class="input"/>
+			</div>
+
+			<!-- 手動エピソード数 -->
+			<div>
+				<label for="manual_episodes_count" class="label">
+					{ templates.T(ctx, "db_works_form_manual_episodes_count") }
+				</label>
+				<input type="number" id="manual_episodes_count" name="manual_episodes_count" class="input"/>
+			</div>
+
+			<!-- 開始エピソード番号 -->
+			<div>
+				<label for="start_episode_raw_number" class="label">
+					{ templates.T(ctx, "db_works_form_start_episode_raw_number") }
+				</label>
+				<input type="text" id="start_episode_raw_number" name="start_episode_raw_number" class="input"/>
+			</div>
+
+			<!-- NumberFormat -->
+			<div>
+				<label for="number_format_id" class="label">
+					{ templates.T(ctx, "db_works_form_number_format") }
+				</label>
+				<select id="number_format_id" name="number_format_id" class="select">
+					<option value=""></option>
+					for _, opt := range data.FormOptions.NumberFormatOptions {
+						<option value={ opt.Value }>{ opt.Label }</option>
+					}
+				</select>
+			</div>
+
+			<!-- エピソードなし -->
+			<div class="flex items-center gap-2">
+				<input type="checkbox" id="no_episodes" name="no_episodes" value="1" class="checkbox"/>
+				<label for="no_episodes" class="label">
+					{ templates.T(ctx, "db_works_form_no_episodes") }
+				</label>
+			</div>
+
+			<!-- 送信ボタン -->
+			<div class="pt-4">
+				<button type="submit" class="btn btn-primary">
+					{ templates.T(ctx, "db_works_form_submit_create") }
+				</button>
+			</div>
+		</form>
+	</div>
+}
