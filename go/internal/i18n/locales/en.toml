@@ -1175,6 +1175,38 @@ other = "No Episodes"
 description = "Form submit button - Create"
 other = "Create Work"
 
+[db_works_error_title_required]
+description = "Title required error"
+other = "Please enter a title"
+
+[db_works_error_media_required]
+description = "Media required error"
+other = "Please select a media type"
+
+[db_works_error_media_invalid]
+description = "Media value invalid error"
+other = "Invalid media type"
+
+[db_works_error_url_invalid]
+description = "URL format error"
+other = "URL format is invalid"
+
+[db_works_error_sc_tid_invalid]
+description = "Syoboi Calendar TID numeric error"
+other = "Please enter an integer"
+
+[db_works_error_mal_anime_id_invalid]
+description = "MAL Anime ID numeric error"
+other = "Please enter an integer"
+
+[db_works_error_synopsis_source_required]
+description = "Synopsis source required error"
+other = "Please enter a source when synopsis is provided"
+
+[db_works_error_synopsis_source_en_required]
+description = "Synopsis source (English) required error"
+other = "Please enter a source when English synopsis is provided"
+
 [media_tv]
 description = "Media type - TV"
 other = "TV"
