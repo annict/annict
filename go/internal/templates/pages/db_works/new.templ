@@ -1,14 +1,116 @@
 package db_works
 
 import (
+	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/templates"
+	"github.com/annict/annict/go/internal/templates/components"
 	"github.com/annict/annict/go/internal/viewmodel"
 )
+
+// FormValues はバリデーションエラー時にフォームの入力値を保持する構造体です
+type FormValues struct {
+	Title                 string
+	TitleKana             string
+	TitleAlter            string
+	TitleEn               string
+	TitleAlterEn          string
+	Media                 string
+	SeasonYear            string
+	SeasonName            string
+	StartedOn             string
+	EndedOn               string
+	OfficialSiteURL       string
+	OfficialSiteURLEn     string
+	WikipediaURL          string
+	WikipediaURLEn        string
+	TwitterUsername        string
+	TwitterHashtag        string
+	ScTid                 string
+	MalAnimeID            string
+	Synopsis              string
+	SynopsisSource        string
+	SynopsisEn            string
+	SynopsisSourceEn      string
+	ManualEpisodesCount   string
+	StartEpisodeRawNumber string
+	NumberFormatID        string
+	NoEpisodes            string
+}
 
 // NewPageData はDB作品新規作成ページのデータ構造です
 type NewPageData struct {
 	CSRFToken   string
 	FormOptions viewmodel.DBWorkFormOptions
+	FormErrors  *session.FormErrors
+	FormValues  *FormValues
+}
+
+// val はフォーム値を安全に取得するヘルパーです
+func (d NewPageData) val(field string) string {
+	if d.FormValues == nil {
+		return ""
+	}
+	switch field {
+	case "title":
+		return d.FormValues.Title
+	case "title_kana":
+		return d.FormValues.TitleKana
+	case "title_alter":
+		return d.FormValues.TitleAlter
+	case "title_en":
+		return d.FormValues.TitleEn
+	case "title_alter_en":
+		return d.FormValues.TitleAlterEn
+	case "media":
+		return d.FormValues.Media
+	case "season_year":
+		return d.FormValues.SeasonYear
+	case "season_name":
+		return d.FormValues.SeasonName
+	case "started_on":
+		return d.FormValues.StartedOn
+	case "ended_on":
+		return d.FormValues.EndedOn
+	case "official_site_url":
+		return d.FormValues.OfficialSiteURL
+	case "official_site_url_en":
+		return d.FormValues.OfficialSiteURLEn
+	case "wikipedia_url":
+		return d.FormValues.WikipediaURL
+	case "wikipedia_url_en":
+		return d.FormValues.WikipediaURLEn
+	case "twitter_username":
+		return d.FormValues.TwitterUsername
+	case "twitter_hashtag":
+		return d.FormValues.TwitterHashtag
+	case "sc_tid":
+		return d.FormValues.ScTid
+	case "mal_anime_id":
+		return d.FormValues.MalAnimeID
+	case "synopsis":
+		return d.FormValues.Synopsis
+	case "synopsis_source":
+		return d.FormValues.SynopsisSource
+	case "synopsis_en":
+		return d.FormValues.SynopsisEn
+	case "synopsis_source_en":
+		return d.FormValues.SynopsisSourceEn
+	case "manual_episodes_count":
+		return d.FormValues.ManualEpisodesCount
+	case "start_episode_raw_number":
+		return d.FormValues.StartEpisodeRawNumber
+	case "number_format_id":
+		return d.FormValues.NumberFormatID
+	case "no_episodes":
+		return d.FormValues.NoEpisodes
+	default:
+		return ""
+	}
+}
+
+// hasFieldError は指定フィールドにエラーがあるかチェックします
+func (d NewPageData) hasFieldError(field string) bool {
+	return d.FormErrors != nil && d.FormErrors.HasFieldError(field)
 }
 
 // New はDB管理画面の作品新規作成フォームを表示します
@@ -21,6 +123,8 @@ templ New(data NewPageData) {
 			</a>
 		</div>
 
+		@components.FormErrors(data.FormErrors)
+
 		<form method="POST" action="/db/works" class="max-w-2xl space-y-4">
 			<input type="hidden" name="csrf_token" value={ data.CSRFToken }/>
 
@@ -30,7 +134,22 @@ templ New(data NewPageData) {
 					{ templates.T(ctx, "db_works_form_title") }
 					<span class="text-destructive">*</span>
 				</label>
-				<input type="text" id="title" name="title" class="input" required autofocus/>
+				<input
+					type="text"
+					id="title"
+					name="title"
+					class="input"
+					required
+					if !data.hasFieldError("title") {
+						autofocus
+					}
+					value={ data.val("title") }
+				/>
+				if data.hasFieldError("title") {
+					for _, errorMsg := range data.FormErrors.Fields["title"] {
+						<p class="text-sm text-red-600">{ errorMsg }</p>
+					}
+				}
 			</div>
 
 			<!-- タイトル（かな） -->
@@ -38,7 +157,7 @@ templ New(data NewPageData) {
 				<label for="title_kana" class="label">
 					{ templates.T(ctx, "db_works_form_title_kana") }
 				</label>
-				<input type="text" id="title_kana" name="title_kana" class="input"/>
+				<input type="text" id="title_kana" name="title_kana" class="input" value={ data.val("title_kana") }/>
 			</div>
 
 			<!-- タイトル（別名） -->
@@ -46,7 +165,7 @@ templ New(data NewPageData) {
 				<label for="title_alter" class="label">
 					{ templates.T(ctx, "db_works_form_title_alter") }
 				</label>
-				<input type="text" id="title_alter" name="title_alter" class="input"/>
+				<input type="text" id="title_alter" name="title_alter" class="input" value={ data.val("title_alter") }/>
 			</div>
 
 			<!-- タイトル（英語） -->
@@ -54,7 +173,7 @@ templ New(data NewPageData) {
 				<label for="title_en" class="label">
 					{ templates.T(ctx, "db_works_form_title_en") }
 				</label>
-				<input type="text" id="title_en" name="title_en" class="input"/>
+				<input type="text" id="title_en" name="title_en" class="input" value={ data.val("title_en") }/>
 			</div>
 
 			<!-- タイトル（英語別名） -->
@@ -62,7 +181,7 @@ templ New(data NewPageData) {
 				<label for="title_alter_en" class="label">
 					{ templates.T(ctx, "db_works_form_title_alter_en") }
 				</label>
-				<input type="text" id="title_alter_en" name="title_alter_en" class="input"/>
+				<input type="text" id="title_alter_en" name="title_alter_en" class="input" value={ data.val("title_alter_en") }/>
 			</div>
 
 			<!-- メディア -->
@@ -74,9 +193,18 @@ templ New(data NewPageData) {
 				<select id="media" name="media" class="select" required>
 					<option value=""></option>
 					for _, opt := range data.FormOptions.MediaOptions {
-						<option value={ opt.Value }>{ opt.Label }</option>
+						if opt.Value == data.val("media") {
+							<option value={ opt.Value } selected>{ opt.Label }</option>
+						} else {
+							<option value={ opt.Value }>{ opt.Label }</option>
+						}
 					}
 				</select>
+				if data.hasFieldError("media") {
+					for _, errorMsg := range data.FormErrors.Fields["media"] {
+						<p class="text-sm text-red-600">{ errorMsg }</p>
+					}
+				}
 			</div>
 
 			<!-- シーズン年 -->
@@ -87,7 +215,11 @@ templ New(data NewPageData) {
 				<select id="season_year" name="season_year" class="select">
 					<option value=""></option>
 					for _, opt := range data.FormOptions.SeasonYearOptions {
-						<option value={ opt.Value }>{ opt.Label }</option>
+						if opt.Value == data.val("season_year") {
+							<option value={ opt.Value } selected>{ opt.Label }</option>
+						} else {
+							<option value={ opt.Value }>{ opt.Label }</option>
+						}
 					}
 				</select>
 			</div>
@@ -100,7 +232,11 @@ templ New(data NewPageData) {
 				<select id="season_name" name="season_name" class="select">
 					<option value=""></option>
 					for _, opt := range data.FormOptions.SeasonNameOptions {
-						<option value={ opt.Value }>{ opt.Label }</option>
+						if opt.Value == data.val("season_name") {
+							<option value={ opt.Value } selected>{ opt.Label }</option>
+						} else {
+							<option value={ opt.Value }>{ opt.Label }</option>
+						}
 					}
 				</select>
 			</div>
@@ -110,7 +246,7 @@ templ New(data NewPageData) {
 				<label for="started_on" class="label">
 					{ templates.T(ctx, "db_works_form_started_on") }
 				</label>
-				<input type="date" id="started_on" name="started_on" class="input"/>
+				<input type="date" id="started_on" name="started_on" class="input" value={ data.val("started_on") }/>
 			</div>
 
 			<!-- 放送終了日 -->
@@ -118,7 +254,7 @@ templ New(data NewPageData) {
 				<label for="ended_on" class="label">
 					{ templates.T(ctx, "db_works_form_ended_on") }
 				</label>
-				<input type="date" id="ended_on" name="ended_on" class="input"/>
+				<input type="date" id="ended_on" name="ended_on" class="input" value={ data.val("ended_on") }/>
 			</div>
 
 			<!-- 公式サイトURL -->
@@ -126,7 +262,12 @@ templ New(data NewPageData) {
 				<label for="official_site_url" class="label">
 					{ templates.T(ctx, "db_works_form_official_site_url") }
 				</label>
-				<input type="url" id="official_site_url" name="official_site_url" class="input"/>
+				<input type="url" id="official_site_url" name="official_site_url" class="input" value={ data.val("official_site_url") }/>
+				if data.hasFieldError("official_site_url") {
+					for _, errorMsg := range data.FormErrors.Fields["official_site_url"] {
+						<p class="text-sm text-red-600">{ errorMsg }</p>
+					}
+				}
 			</div>
 
 			<!-- 公式サイトURL（英語） -->
@@ -134,7 +275,12 @@ templ New(data NewPageData) {
 				<label for="official_site_url_en" class="label">
 					{ templates.T(ctx, "db_works_form_official_site_url_en") }
 				</label>
-				<input type="url" id="official_site_url_en" name="official_site_url_en" class="input"/>
+				<input type="url" id="official_site_url_en" name="official_site_url_en" class="input" value={ data.val("official_site_url_en") }/>
+				if data.hasFieldError("official_site_url_en") {
+					for _, errorMsg := range data.FormErrors.Fields["official_site_url_en"] {
+						<p class="text-sm text-red-600">{ errorMsg }</p>
+					}
+				}
 			</div>
 
 			<!-- Wikipedia URL -->
@@ -142,7 +288,12 @@ templ New(data NewPageData) {
 				<label for="wikipedia_url" class="label">
 					{ templates.T(ctx, "db_works_form_wikipedia_url") }
 				</label>
-				<input type="url" id="wikipedia_url" name="wikipedia_url" class="input"/>
+				<input type="url" id="wikipedia_url" name="wikipedia_url" class="input" value={ data.val("wikipedia_url") }/>
+				if data.hasFieldError("wikipedia_url") {
+					for _, errorMsg := range data.FormErrors.Fields["wikipedia_url"] {
+						<p class="text-sm text-red-600">{ errorMsg }</p>
+					}
+				}
 			</div>
 
 			<!-- Wikipedia URL（英語） -->
@@ -150,7 +301,12 @@ templ New(data NewPageData) {
 				<label for="wikipedia_url_en" class="label">
 					{ templates.T(ctx, "db_works_form_wikipedia_url_en") }
 				</label>
-				<input type="url" id="wikipedia_url_en" name="wikipedia_url_en" class="input"/>
+				<input type="url" id="wikipedia_url_en" name="wikipedia_url_en" class="input" value={ data.val("wikipedia_url_en") }/>
+				if data.hasFieldError("wikipedia_url_en") {
+					for _, errorMsg := range data.FormErrors.Fields["wikipedia_url_en"] {
+						<p class="text-sm text-red-600">{ errorMsg }</p>
+					}
+				}
 			</div>
 
 			<!-- Twitterユーザー名 -->
@@ -158,7 +314,7 @@ templ New(data NewPageData) {
 				<label for="twitter_username" class="label">
 					{ templates.T(ctx, "db_works_form_twitter_username") }
 				</label>
-				<input type="text" id="twitter_username" name="twitter_username" class="input" placeholder="@なし"/>
+				<input type="text" id="twitter_username" name="twitter_username" class="input" placeholder="@なし" value={ data.val("twitter_username") }/>
 			</div>
 
 			<!-- Twitterハッシュタグ -->
@@ -166,7 +322,7 @@ templ New(data NewPageData) {
 				<label for="twitter_hashtag" class="label">
 					{ templates.T(ctx, "db_works_form_twitter_hashtag") }
 				</label>
-				<input type="text" id="twitter_hashtag" name="twitter_hashtag" class="input" placeholder="#なし"/>
+				<input type="text" id="twitter_hashtag" name="twitter_hashtag" class="input" placeholder="#なし" value={ data.val("twitter_hashtag") }/>
 			</div>
 
 			<!-- しょぼいカレンダーTID -->
@@ -174,7 +330,7 @@ templ New(data NewPageData) {
 				<label for="sc_tid" class="label">
 					{ templates.T(ctx, "db_works_form_sc_tid") }
 				</label>
-				<input type="text" id="sc_tid" name="sc_tid" class="input"/>
+				<input type="text" id="sc_tid" name="sc_tid" class="input" value={ data.val("sc_tid") }/>
 			</div>
 
 			<!-- MAL Anime ID -->
@@ -182,7 +338,7 @@ templ New(data NewPageData) {
 				<label for="mal_anime_id" class="label">
 					{ templates.T(ctx, "db_works_form_mal_anime_id") }
 				</label>
-				<input type="text" id="mal_anime_id" name="mal_anime_id" class="input"/>
+				<input type="text" id="mal_anime_id" name="mal_anime_id" class="input" value={ data.val("mal_anime_id") }/>
 			</div>
 
 			<!-- あらすじ -->
@@ -190,7 +346,7 @@ templ New(data NewPageData) {
 				<label for="synopsis" class="label">
 					{ templates.T(ctx, "db_works_form_synopsis") }
 				</label>
-				<textarea id="synopsis" name="synopsis" class="textarea" rows="5"></textarea>
+				<textarea id="synopsis" name="synopsis" class="textarea" rows="5">{ data.val("synopsis") }</textarea>
 			</div>
 
 			<!-- あらすじ出典 -->
@@ -198,7 +354,7 @@ templ New(data NewPageData) {
 				<label for="synopsis_source" class="label">
 					{ templates.T(ctx, "db_works_form_synopsis_source") }
 				</label>
-				<input type="text" id="synopsis_source" name="synopsis_source" class="input"/>
+				<input type="text" id="synopsis_source" name="synopsis_source" class="input" value={ data.val("synopsis_source") }/>
 			</div>
 
 			<!-- あらすじ（英語） -->
@@ -206,7 +362,7 @@ templ New(data NewPageData) {
 				<label for="synopsis_en" class="label">
 					{ templates.T(ctx, "db_works_form_synopsis_en") }
 				</label>
-				<textarea id="synopsis_en" name="synopsis_en" class="textarea" rows="5"></textarea>
+				<textarea id="synopsis_en" name="synopsis_en" class="textarea" rows="5">{ data.val("synopsis_en") }</textarea>
 			</div>
 
 			<!-- あらすじ出典（英語） -->
@@ -214,7 +370,7 @@ templ New(data NewPageData) {
 				<label for="synopsis_source_en" class="label">
 					{ templates.T(ctx, "db_works_form_synopsis_source_en") }
 				</label>
-				<input type="text" id="synopsis_source_en" name="synopsis_source_en" class="input"/>
+				<input type="text" id="synopsis_source_en" name="synopsis_source_en" class="input" value={ data.val("synopsis_source_en") }/>
 			</div>
 
 			<!-- 手動エピソード数 -->
@@ -222,7 +378,7 @@ templ New(data NewPageData) {
 				<label for="manual_episodes_count" class="label">
 					{ templates.T(ctx, "db_works_form_manual_episodes_count") }
 				</label>
-				<input type="number" id="manual_episodes_count" name="manual_episodes_count" class="input"/>
+				<input type="number" id="manual_episodes_count" name="manual_episodes_count" class="input" value={ data.val("manual_episodes_count") }/>
 			</div>
 
 			<!-- 開始エピソード番号 -->
@@ -230,7 +386,7 @@ templ New(data NewPageData) {
 				<label for="start_episode_raw_number" class="label">
 					{ templates.T(ctx, "db_works_form_start_episode_raw_number") }
 				</label>
-				<input type="text" id="start_episode_raw_number" name="start_episode_raw_number" class="input"/>
+				<input type="text" id="start_episode_raw_number" name="start_episode_raw_number" class="input" value={ data.val("start_episode_raw_number") }/>
 			</div>
 
 			<!-- NumberFormat -->
@@ -241,14 +397,22 @@ templ New(data NewPageData) {
 				<select id="number_format_id" name="number_format_id" class="select">
 					<option value=""></option>
 					for _, opt := range data.FormOptions.NumberFormatOptions {
-						<option value={ opt.Value }>{ opt.Label }</option>
+						if opt.Value == data.val("number_format_id") {
+							<option value={ opt.Value } selected>{ opt.Label }</option>
+						} else {
+							<option value={ opt.Value }>{ opt.Label }</option>
+						}
 					}
 				</select>
 			</div>
 
 			<!-- エピソードなし -->
 			<div class="flex items-center gap-2">
-				<input type="checkbox" id="no_episodes" name="no_episodes" value="1" class="checkbox"/>
+				if data.val("no_episodes") == "1" {
+					<input type="checkbox" id="no_episodes" name="no_episodes" value="1" class="checkbox" checked/>
+				} else {
+					<input type="checkbox" id="no_episodes" name="no_episodes" value="1" class="checkbox"/>
+				}
 				<label for="no_episodes" class="label">
 					{ templates.T(ctx, "db_works_form_no_episodes") }
 				</label>

@@ -37,7 +37,7 @@ func TestIndex(t *testing.T) {
 	workRepo := repository.NewWorkRepository(queries)
 	numberFormatRepo := repository.NewNumberFormatRepository(queries)
 
-	handler := NewHandler(cfg, workRepo, numberFormatRepo, sessionManager)
+	handler := NewHandler(cfg, db, workRepo, numberFormatRepo, sessionManager)
 
 	req := httptest.NewRequest("GET", "/db/works", nil)
 	rr := httptest.NewRecorder()
@@ -84,7 +84,7 @@ func TestIndex_Empty(t *testing.T) {
 	workRepo := repository.NewWorkRepository(queries)
 	numberFormatRepo := repository.NewNumberFormatRepository(queries)
 
-	handler := NewHandler(cfg, workRepo, numberFormatRepo, sessionManager)
+	handler := NewHandler(cfg, db, workRepo, numberFormatRepo, sessionManager)
 
 	req := httptest.NewRequest("GET", "/db/works", nil)
 	rr := httptest.NewRecorder()
@@ -117,7 +117,7 @@ func TestIndex_WithFilters(t *testing.T) {
 	workRepo := repository.NewWorkRepository(queries)
 	numberFormatRepo := repository.NewNumberFormatRepository(queries)
 
-	handler := NewHandler(cfg, workRepo, numberFormatRepo, sessionManager)
+	handler := NewHandler(cfg, db, workRepo, numberFormatRepo, sessionManager)
 
 	req := httptest.NewRequest("GET", "/db/works?filter_no_episodes=1&filter_no_image=1&page=1", nil)
 	rr := httptest.NewRecorder()
@@ -149,7 +149,7 @@ func TestNew(t *testing.T) {
 	workRepo := repository.NewWorkRepository(queries)
 	numberFormatRepo := repository.NewNumberFormatRepository(queries)
 
-	handler := NewHandler(cfg, workRepo, numberFormatRepo, sessionManager)
+	handler := NewHandler(cfg, db, workRepo, numberFormatRepo, sessionManager)
 
 	req := httptest.NewRequest("GET", "/db/works/new", nil)
 	rr := httptest.NewRecorder()
