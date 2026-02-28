@@ -213,6 +213,68 @@ func (r *WorkRepository) CountForDB(ctx context.Context, params DBWorkListParams
 	})
 }
 
+// CreateWorkParams は作品作成のパラメータです
+type CreateWorkParams struct {
+	Title                 string
+	TitleKana             string
+	TitleAlter            string
+	TitleEn               string
+	TitleAlterEn          string
+	Media                 int32
+	SeasonYear            sql.NullInt32
+	SeasonName            sql.NullInt32
+	StartedOn             sql.NullTime
+	EndedOn               sql.NullTime
+	OfficialSiteURL       string
+	OfficialSiteURLEn     string
+	WikipediaURL          string
+	WikipediaURLEn        string
+	TwitterUsername       sql.NullString
+	TwitterHashtag        sql.NullString
+	ScTid                 sql.NullInt32
+	MalAnimeID            sql.NullInt32
+	Synopsis              string
+	SynopsisSource        string
+	SynopsisEn            string
+	SynopsisSourceEn      string
+	ManualEpisodesCount   sql.NullInt32
+	StartEpisodeRawNumber float64
+	NumberFormatID        sql.NullInt64
+	NoEpisodes            bool
+}
+
+// Create は作品を新規作成し、作成された作品のIDを返します
+func (r *WorkRepository) Create(ctx context.Context, params CreateWorkParams) (int64, error) {
+	return r.queries.CreateWork(ctx, query.CreateWorkParams{
+		Title:                 params.Title,
+		TitleKana:             params.TitleKana,
+		TitleAlter:            params.TitleAlter,
+		TitleEn:               params.TitleEn,
+		TitleAlterEn:          params.TitleAlterEn,
+		Media:                 params.Media,
+		SeasonYear:            params.SeasonYear,
+		SeasonName:            params.SeasonName,
+		StartedOn:             params.StartedOn,
+		EndedOn:               params.EndedOn,
+		OfficialSiteUrl:       params.OfficialSiteURL,
+		OfficialSiteUrlEn:     params.OfficialSiteURLEn,
+		WikipediaUrl:          params.WikipediaURL,
+		WikipediaUrlEn:        params.WikipediaURLEn,
+		TwitterUsername:       params.TwitterUsername,
+		TwitterHashtag:        params.TwitterHashtag,
+		ScTid:                 params.ScTid,
+		MalAnimeID:            params.MalAnimeID,
+		Synopsis:              params.Synopsis,
+		SynopsisSource:        params.SynopsisSource,
+		SynopsisEn:            params.SynopsisEn,
+		SynopsisSourceEn:      params.SynopsisSourceEn,
+		ManualEpisodesCount:   params.ManualEpisodesCount,
+		StartEpisodeRawNumber: params.StartEpisodeRawNumber,
+		NumberFormatID:        params.NumberFormatID,
+		NoEpisodes:            params.NoEpisodes,
+	})
+}
+
 // nullInt32FromPtr は *int32 を sql.NullInt32 に変換します
 func nullInt32FromPtr(v *int32) sql.NullInt32 {
 	if v == nil {

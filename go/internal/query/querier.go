@@ -27,6 +27,7 @@ type Querier interface {
 	CreateStripeSubscriber(ctx context.Context, arg CreateStripeSubscriberParams) (StripeSubscriber, error)
 	CreateStripeWebhookEvent(ctx context.Context, arg CreateStripeWebhookEventParams) (StripeWebhookEvent, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (CreateUserRow, error)
+	CreateWork(ctx context.Context, arg CreateWorkParams) (int64, error)
 	CreateWorkImage(ctx context.Context, arg CreateWorkImageParams) (int64, error)
 	DeleteExpiredPasswordResetTokens(ctx context.Context, expiresAt time.Time) error
 	DeleteExpiredSignInCodes(ctx context.Context, expiresAt time.Time) error

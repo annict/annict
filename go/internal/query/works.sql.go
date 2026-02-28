@@ -49,6 +49,120 @@ func (q *Queries) CountDBWorks(ctx context.Context, arg CountDBWorksParams) (int
 	return count, err
 }
 
+const createWork = `-- name: CreateWork :one
+INSERT INTO works (
+    title,
+    title_kana,
+    title_alter,
+    title_en,
+    title_alter_en,
+    media,
+    season_year,
+    season_name,
+    started_on,
+    ended_on,
+    official_site_url,
+    official_site_url_en,
+    wikipedia_url,
+    wikipedia_url_en,
+    twitter_username,
+    twitter_hashtag,
+    sc_tid,
+    mal_anime_id,
+    synopsis,
+    synopsis_source,
+    synopsis_en,
+    synopsis_source_en,
+    manual_episodes_count,
+    start_episode_raw_number,
+    number_format_id,
+    no_episodes,
+    created_at,
+    updated_at
+) VALUES (
+    $1, $2, $3, $4, $5, $6,
+    $17,
+    $18,
+    $19,
+    $20,
+    $7, $8, $9, $10,
+    $21,
+    $22,
+    $23,
+    $24,
+    $11, $12, $13, $14,
+    $25,
+    $15,
+    $26,
+    $16,
+    NOW(),
+    NOW()
+) RETURNING id
+`
+
+type CreateWorkParams struct {
+	Title                 string         `db:"title"`
+	TitleKana             string         `db:"title_kana"`
+	TitleAlter            string         `db:"title_alter"`
+	TitleEn               string         `db:"title_en"`
+	TitleAlterEn          string         `db:"title_alter_en"`
+	Media                 int32          `db:"media"`
+	OfficialSiteUrl       string         `db:"official_site_url"`
+	OfficialSiteUrlEn     string         `db:"official_site_url_en"`
+	WikipediaUrl          string         `db:"wikipedia_url"`
+	WikipediaUrlEn        string         `db:"wikipedia_url_en"`
+	Synopsis              string         `db:"synopsis"`
+	SynopsisSource        string         `db:"synopsis_source"`
+	SynopsisEn            string         `db:"synopsis_en"`
+	SynopsisSourceEn      string         `db:"synopsis_source_en"`
+	StartEpisodeRawNumber float64        `db:"start_episode_raw_number"`
+	NoEpisodes            bool           `db:"no_episodes"`
+	SeasonYear            sql.NullInt32  `db:"season_year"`
+	SeasonName            sql.NullInt32  `db:"season_name"`
+	StartedOn             sql.NullTime   `db:"started_on"`
+	EndedOn               sql.NullTime   `db:"ended_on"`
+	TwitterUsername       sql.NullString `db:"twitter_username"`
+	TwitterHashtag        sql.NullString `db:"twitter_hashtag"`
+	ScTid                 sql.NullInt32  `db:"sc_tid"`
+	MalAnimeID            sql.NullInt32  `db:"mal_anime_id"`
+	ManualEpisodesCount   sql.NullInt32  `db:"manual_episodes_count"`
+	NumberFormatID        sql.NullInt64  `db:"number_format_id"`
+}
+
+func (q *Queries) CreateWork(ctx context.Context, arg CreateWorkParams) (int64, error) {
+	row := q.db.QueryRowContext(ctx, createWork,
+		arg.Title,
+		arg.TitleKana,
+		arg.TitleAlter,
+		arg.TitleEn,
+		arg.TitleAlterEn,
+		arg.Media,
+		arg.OfficialSiteUrl,
+		arg.OfficialSiteUrlEn,
+		arg.WikipediaUrl,
+		arg.WikipediaUrlEn,
+		arg.Synopsis,
+		arg.SynopsisSource,
+		arg.SynopsisEn,
+		arg.SynopsisSourceEn,
+		arg.StartEpisodeRawNumber,
+		arg.NoEpisodes,
+		arg.SeasonYear,
+		arg.SeasonName,
+		arg.StartedOn,
+		arg.EndedOn,
+		arg.TwitterUsername,
+		arg.TwitterHashtag,
+		arg.ScTid,
+		arg.MalAnimeID,
+		arg.ManualEpisodesCount,
+		arg.NumberFormatID,
+	)
+	var id int64
+	err := row.Scan(&id)
+	return id, err
+}
+
 const getCastsByWorkIDs = `-- name: GetCastsByWorkIDs :many
 SELECT
     c.id,
