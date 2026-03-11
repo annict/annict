@@ -141,6 +141,25 @@ docker compose up -d
 
 各サブプロジェクトで`.env`ファイルを作成し、必要な環境変数を設定します。詳細は各サブプロジェクトの CLAUDE.md を参照してください。
 
+### 開発サーバーの起動
+
+プロジェクトルートで以下のコマンドを実行すると、Go 版・Rails 版の全サービスを一括で起動できます：
+
+```sh
+make dev
+```
+
+このコマンドは [hivemind](https://github.com/DarthSim/hivemind) を使用して `Procfile.dev` に定義された以下のプロセスを並行起動します：
+
+| プロセス       | 内容                                        |
+| -------------- | ------------------------------------------- |
+| `go-server`    | Go 版サーバー（air によるホットリロード）   |
+| `go-frontend`  | Go 版フロントエンドアセットの監視・再ビルド |
+| `rails-server` | Rails 版サーバー                            |
+| `rails-css`    | Rails 版 CSS の監視・再ビルド               |
+| `rails-js`     | Rails 版 JavaScript の監視・再ビルド        |
+| `rails-worker` | Rails 版バックグラウンドワーカー            |
+
 ## ドキュメント
 
 ### 仕様書
