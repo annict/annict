@@ -1,6 +1,8 @@
 package db_work
 
 import (
+	"context"
+	"database/sql"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -75,7 +77,23 @@ func TestIndex(t *testing.T) {
 func TestIndex_Empty(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, _ := testutil.SetupTestDB(t)
+
+	// REPEATABLE READで並行テストがコミットしたデータを見えなくする
+	tx, err := db.BeginTx(context.Background(), &sql.TxOptions{
+		Isolation: sql.LevelRepeatableRead,
+	})
+	if err != nil {
+		t.Fatalf("トランザクションの開始に失敗しました: %v", err)
+	}
+	t.Cleanup(func() {
+		_ = tx.Rollback()
+	})
+
+	// トランザクション開始時点で存在する作品を削除
+	if _, err := tx.Exec("DELETE FROM works"); err != nil {
+		t.Fatalf("worksの削除に失敗しました: %v", err)
+	}
 
 	queries := query.New(db).WithTx(tx)
 	cfg := &config.Config{Env: "test"}
@@ -101,7 +119,6 @@ func TestIndex_Empty(t *testing.T) {
 	if strings.Contains(body, "<table") {
 		t.Error("response should not contain table when no works exist")
 	}
-
 }
 
 // TestIndex_WithFilters はフィルタパラメータ付きリクエストのテスト
