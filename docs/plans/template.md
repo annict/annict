@@ -105,8 +105,8 @@
 以下のガイドラインに従って設計・実装を行ってください：
 
 - [@rails/CLAUDE.md](/workspace/rails/CLAUDE.md) - 全体的なコーディング規約
-- [@rails/docs/architecture-guide.md](/workspace/rails/docs/architecture-guide.md) - アーキテクチャガイド
-- [@rails/docs/testing-guide.md](/workspace/rails/docs/testing-guide.md) - テスト戦略ガイド
+- [@rails/docs/architecture-guide.md](/workspace/rails/docs/architecture-guide.md) - アーキテクチャガイド（クラス設計と依存関係、サービスクラスのルール）
+- [@rails/docs/testing-guide.md](/workspace/rails/docs/testing-guide.md) - テストガイド（RSpec のコーディング規約）
 - [@rails/docs/security-guide.md](/workspace/rails/docs/security-guide.md) - セキュリティガイドライン
 
 ## 設計
