@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -127,13 +128,22 @@ func TestCreate_Success(t *testing.T) {
 
 	handler.Create(rr, req)
 
+	// ユースケースが独自のトランザクションでコミットするため、作成された作品を即座に削除する。
+	// 並行テストへの影響を最小化するため、アサーション前に同期的にクリーンアップする。
+	location := rr.Header().Get("Location")
+	workIDStr := strings.TrimPrefix(location, "/db/works?highlight=")
+	if workIDStr != "" && workIDStr != location {
+		if workID, err := strconv.ParseInt(workIDStr, 10, 64); err == nil {
+			_, _ = db.Exec("DELETE FROM works WHERE id = $1", workID)
+		}
+	}
+
 	// 303 See Otherでリダイレクトされることを確認
 	if status := rr.Code; status != http.StatusSeeOther {
 		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusSeeOther)
 	}
 
 	// リダイレクト先が /db/works?highlight=XXX であることを確認
-	location := rr.Header().Get("Location")
 	if !strings.HasPrefix(location, "/db/works?highlight=") {
 		t.Errorf("handler returned wrong redirect location: got %v", location)
 	}
