@@ -76,6 +76,37 @@ Model と Repository のファイル名・構造体名は統一します：
 - **構造体名**: パスカルケース（`UserCalendar`, `UserCalendarRepository`）
 - **Model と Repository は同じ名前**: `model/user_calendar.go` ↔ `repository/user_calendar.go`
 
+#### モデルの重複を避ける
+
+クエリの結果や状態ごとに新しいモデルを作らず、既存のモデルを再利用します。関連エンティティのデータが必要な場合は、ポインタ型のフィールドでモデル間の参照を表現します。
+
+```go
+// ✅ 良い例: 既存の Work モデルに User への参照を持たせる
+type Work struct {
+    ID    WorkID
+    User  *User  // 関連エンティティへのポインタ参照
+    Title string
+}
+
+// ❌ 悪い例: クエリ結果に合わせた専用モデルを作る
+type JoinedWork struct {
+    WorkID    WorkID
+    WorkTitle string
+    UserID    UserID
+    UserName  string
+}
+```
+
+Repositoryではクエリ結果ごとに変換メソッドを用意し、同じモデルに変換します：
+
+```go
+// 単純なクエリ結果 → Work（User は ID のみ）
+func (r *WorkRepository) toModel(row query.Work) *model.Work { ... }
+
+// JOINクエリ結果 → Work（User のフィールドをより多く設定）
+func (r *WorkRepository) toWorksFromJoinedRows(rows []query.ListJoinedWorksByUserRow) []*model.Work { ... }
+```
+
 #### Queryファイルの命名
 
 Queryファイルは用途に応じて2つのパターンがあります：
