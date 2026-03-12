@@ -35,14 +35,14 @@ func DbSidebar(ctx context.Context) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<aside class=\"sidebar\" data-side=\"left\" aria-hidden=\"false\"><nav aria-label=\"Annict DB navigation\"><section class=\"scrollbar gap-4\"><div><a href=\"/db\" class=\"flex items-center justify-center gap-2 bg-(--color-mizuho-600) h-[52px]\"><span class=\"text-white font-bold text-lg\">Annict</span> <span class=\"text-white/80 font-bold text-lg\">DB</span></a></div><!-- 検索フォーム --><div class=\"px-4\"><form method=\"get\" action=\"/db/search\" autocomplete=\"off\"><input type=\"text\" name=\"q\" class=\"input w-full rounded-full text-sm\" placeholder=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<aside class=\"sidebar\" data-side=\"left\" aria-hidden=\"false\"><nav aria-label=\"Annict DB navigation\"><section class=\"scrollbar gap-4\"><div><a href=\"/db\" class=\"flex items-center justify-center gap-2 bg-primary h-[52px] relative\"><img height=\"30\" loading=\"lazy\" src=\"/static/images/logo-white.png\" width=\"25\" alt=\"Annict\"> <span class=\"text-white font-bold text-lg absolute right-[90px]\">DB</span></a></div><!-- 検索フォーム --><div class=\"px-4\"><form method=\"get\" action=\"/db/search\" autocomplete=\"off\"><input type=\"text\" name=\"q\" class=\"input w-full rounded-full text-sm\" placeholder=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "db_sidebar_search_placeholder"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/db_sidebar.templ`, Line: 28, Col: 70}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/db_sidebar.templ`, Line: 37, Col: 70}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -84,14 +84,14 @@ func DbSidebar(ctx context.Context) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</ul></div><!-- Annictに戻る --><div class=\"px-2 mb-4 border-t border-border pt-4\"><a href=\"/\" class=\"flex items-center justify-center gap-2 p-2 rounded-lg hover:bg-sidebar-accent transition-colors\"><img height=\"20\" loading=\"lazy\" src=\"/static/images/logo-white.png\" width=\"17\" alt=\"Annict\"> <span class=\"text-sm text-muted-foreground\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</ul></div><!-- Annictに戻る --><div class=\"px-2 mb-4 border-t border-border pt-4\"><a href=\"/\" class=\"flex items-center justify-center gap-2 p-2 rounded-lg hover:bg-sidebar-accent transition-colors\"><span class=\"text-sm text-muted-foreground\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "db_sidebar_back_to_annict"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/db_sidebar.templ`, Line: 61, Col: 54}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/db_sidebar.templ`, Line: 63, Col: 54}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -134,7 +134,7 @@ func dbSidebarMenuItem(ctx context.Context, path string, labelKey string) templ.
 		var templ_7745c5c3_Var5 templ.SafeURL
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(path))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/db_sidebar.templ`, Line: 74, Col: 29}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/db_sidebar.templ`, Line: 76, Col: 29}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -147,7 +147,7 @@ func dbSidebarMenuItem(ctx context.Context, path string, labelKey string) templ.
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, labelKey))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/db_sidebar.templ`, Line: 78, Col: 32}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/db_sidebar.templ`, Line: 80, Col: 32}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {

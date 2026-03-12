@@ -12,9 +12,18 @@ templ DbSidebar(ctx context.Context) {
 		<nav aria-label="Annict DB navigation">
 			<section class="scrollbar gap-4">
 				<div>
-					<a href="/db" class="flex items-center justify-center gap-2 bg-(--color-mizuho-600) h-[52px]">
-						<span class="text-white font-bold text-lg">Annict</span>
-						<span class="text-white/80 font-bold text-lg">DB</span>
+					<a href="/db" class="flex items-center justify-center gap-2 bg-primary h-[52px] relative">
+						<img
+							height="30"
+							loading="lazy"
+							src="/static/images/logo-white.png"
+							width="25"
+							alt="Annict"
+						/>
+
+						<span class="text-white font-bold text-lg absolute right-[90px]">
+							DB
+						</span>
 					</a>
 				</div>
 
@@ -50,13 +59,6 @@ templ DbSidebar(ctx context.Context) {
 						href="/"
 						class="flex items-center justify-center gap-2 p-2 rounded-lg hover:bg-sidebar-accent transition-colors"
 					>
-						<img
-							height="20"
-							loading="lazy"
-							src="/static/images/logo-white.png"
-							width="17"
-							alt="Annict"
-						/>
 						<span class="text-sm text-muted-foreground">
 							{ templates.T(ctx, "db_sidebar_back_to_annict") }
 						</span>
