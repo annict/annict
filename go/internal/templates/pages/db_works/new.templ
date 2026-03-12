@@ -118,14 +118,14 @@ templ New(data NewPageData) {
 	<div class="p-6">
 		<div class="flex items-center justify-between mb-6">
 			<h1 class="text-2xl font-bold">{ templates.T(ctx, "db_works_new_title") }</h1>
-			<a href="/db/works" class="btn btn-outline btn-sm">
+			<a href={ templates.DBWorksPath().SafeURL() } class="btn btn-outline btn-sm">
 				{ templates.T(ctx, "db_works_back_to_list") }
 			</a>
 		</div>
 
 		@components.FormErrors(data.FormErrors)
 
-		<form method="POST" action="/db/works" class="max-w-2xl space-y-4">
+		<form method="POST" action={ templates.DBWorksPath().SafeURL() } class="max-w-2xl space-y-4">
 			<input type="hidden" name="csrf_token" value={ data.CSRFToken }/>
 
 			<!-- タイトル -->

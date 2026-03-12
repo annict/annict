@@ -25,7 +25,7 @@ templ Index(data IndexPageData) {
 				{ templates.T(ctx, "db_works_title") }
 			</h1>
 
-			<a href="/db/works/new" class="btn-primary rounded-full">
+			<a href={ templates.DBWorksNewPath().SafeURL() } class="btn-primary rounded-full">
 				{ templates.T(ctx, "db_works_new") }
 			</a>
 		</div>
@@ -33,7 +33,7 @@ templ Index(data IndexPageData) {
 		<hr>
 
 		<!-- フィルタフォーム -->
-		<form method="get" action="/db/works" class="mb-6 flex items-center gap-4 flex-wrap">
+		<form method="get" action={ templates.DBWorksPath().SafeURL() } class="mb-6 flex items-center gap-4 flex-wrap">
 			<label class="flex items-center gap-1.5 text-sm">
 				<input
 					type="checkbox"
@@ -93,7 +93,7 @@ templ Index(data IndexPageData) {
 							<tr>
 								<td>{ fmt.Sprintf("%d", work.ID) }</td>
 								<td>
-									<a href={ templ.SafeURL(fmt.Sprintf("/db/works/%d", work.ID)) } class="text-primary hover:underline">
+									<a href={ templates.DBWorkPath(work.ID).SafeURL() } class="text-primary hover:underline">
 										{ work.Title }
 									</a>
 								</td>
