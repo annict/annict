@@ -304,19 +304,13 @@ type ReverseProxyMiddleware struct {
     proxy          *httputil.ReverseProxy
     cfg            *config.Config
     featureFlagRepo featureFlagChecker  // nil許容（テスト時やフラグ機能不要時）
-    sessionMgr      sessionUserResolver // nil許容
+    sessionMgr      *session.Manager    // nil許容（テスト時やセッション不要時）
 }
 ```
 
-セッションからuser_idを解決するためのインターフェース:
-
-```go
-// sessionUserResolver はセッションCookieからユーザーIDを解決するインターフェース
-type sessionUserResolver interface {
-    GetSessionID(r *http.Request) (string, error)
-    GetSession(ctx context.Context, sessionID string) (*session.SessionData, error)
-}
-```
+セッションからuser_idの解決には、既存の `*session.Manager` を直接使用する。
+`session.Manager` は `GetSessionID(r)` と `GetSession(ctx, sessionID)` メソッドを持ち、
+ミドルウェア（Presentation層）からの依存として適切であるため、専用インターフェースは不要。
 
 `Middleware` メソッドの処理フロー:
 
@@ -487,11 +481,10 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
 
 ### フェーズ 2: ミドルウェア統合
 
-- [ ] **2-1**: [Go] リバースプロキシミドルウェアへのフィーチャーフラグ判定の統合
+- [x] **2-1**: [Go] リバースプロキシミドルウェアへのフィーチャーフラグ判定の統合
   - `internal/session/token.go` に `GenerateSecureToken()` 関数を追加
   - `internal/middleware/reverse_proxy.go` を変更:
     - `featureFlagChecker` インターフェースを定義
-    - `sessionUserResolver` インターフェースを定義
     - `featureFlaggedPattern` 構造体と空の `featureFlaggedPatterns` スライスを定義
     - `DeviceTokenCookieName` 定数を定義
     - `ReverseProxyMiddleware` 構造体に `featureFlagRepo` と `sessionMgr` フィールドを追加
@@ -508,6 +501,7 @@ Go版/Rails版の両方を修正する場合は別タスクに分けてくださ
     - フィーチャーフラグ無効時にRails版にプロキシされるテスト
     - エラー時のフォールバックテスト
     - `featureFlagRepo` が nil の場合のテスト
+  - **設計変更**: `sessionUserResolver` インターフェースは不要とし、`*session.Manager` を直接使用
   - **想定ファイル数**: 約 4 ファイル（実装 3 + テスト 1）
   - **想定行数**: 約 300 行（実装 130 行 + テスト 170 行）
 
