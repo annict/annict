@@ -14,6 +14,8 @@ type FeatureFlag struct {
 // フラグ名の定数
 // Go版への移行で使用するフラグには go_ プレフィックスを付ける
 const (
-// 今後のGo移行タスクで追加される
-// 例: FeatureFlagGoPageEdit FeatureFlagName = "go_page_edit"
+	// constブロックに常に1つ以上の定数を維持するためのダミー定数
+	// 実際のフラグがすべて削除されてもコンパイルエラーにならないようにする
+	FeatureFlagExample    FeatureFlagName = "go_example"
+	FeatureFlagGoAnnictDB FeatureFlagName = "go_annict_db"
 )

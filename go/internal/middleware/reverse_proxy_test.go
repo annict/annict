@@ -1138,6 +1138,83 @@ func TestReverseProxyMiddleware_FeatureFlagRouting(t *testing.T) {
 	})
 }
 
+func TestReverseProxyMiddleware_AnnictDBFeatureFlag(t *testing.T) {
+	// モックRailsサーバー
+	railsServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("Rails response"))
+	}))
+	defer railsServer.Close()
+
+	cfg := &config.Config{
+		Domain: "annict-test.page",
+	}
+
+	// Go版のハンドラー
+	goHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("Go response"))
+	})
+
+	t.Run("フラグ有効: /db/配下のパスはGo版で処理される", func(t *testing.T) {
+		checker := &mockFeatureFlagChecker{enabled: true}
+		proxyMiddleware, err := NewReverseProxyMiddleware(railsServer.URL, cfg, checker, nil)
+		if err != nil {
+			t.Fatalf("ミドルウェアの作成に失敗: %v", err)
+		}
+
+		handler := proxyMiddleware.Middleware(goHandler)
+
+		paths := []string{
+			"/db/works",
+			"/db/works/123/edit",
+			"/db/works/123/episodes",
+			"/db/works/new",
+		}
+
+		for _, path := range paths {
+			t.Run(path, func(t *testing.T) {
+				req := httptest.NewRequest("GET", path, nil)
+				rr := httptest.NewRecorder()
+				handler.ServeHTTP(rr, req)
+
+				if !strings.Contains(rr.Body.String(), "Go response") {
+					t.Errorf("フラグ有効時、%s はGo版で処理されるべき: got %q", path, rr.Body.String())
+				}
+			})
+		}
+	})
+
+	t.Run("フラグ無効: /db/配下のパスはRails版にプロキシされる", func(t *testing.T) {
+		checker := &mockFeatureFlagChecker{enabled: false}
+		proxyMiddleware, err := NewReverseProxyMiddleware(railsServer.URL, cfg, checker, nil)
+		if err != nil {
+			t.Fatalf("ミドルウェアの作成に失敗: %v", err)
+		}
+
+		handler := proxyMiddleware.Middleware(goHandler)
+
+		paths := []string{
+			"/db/works",
+			"/db/works/123/edit",
+			"/db/works/123/episodes",
+			"/db/works/new",
+		}
+
+		for _, path := range paths {
+			t.Run(path, func(t *testing.T) {
+				req := httptest.NewRequest("GET", path, nil)
+				rr := httptest.NewRecorder()
+				handler.ServeHTTP(rr, req)
+
+				if !strings.Contains(rr.Body.String(), "Rails response") {
+					t.Errorf("フラグ無効時、%s はRails版にプロキシされるべき: got %q", path, rr.Body.String())
+				}
+			})
+		}
+	})
+}
+
 func TestReverseProxyMiddleware_DeviceTokenCookieSetOnRequest(t *testing.T) {
 	railsServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
