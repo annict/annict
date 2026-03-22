@@ -209,11 +209,14 @@ func main() {
 	// 認証ミドルウェアの初期化
 	authMW := authMiddleware.NewAuthMiddleware(sessionManager)
 
+	// フィーチャーフラグリポジトリの初期化
+	featureFlagRepo := repository.NewFeatureFlagRepository(queries)
+
 	// リバースプロキシミドルウェアの初期化
 	var reverseProxyMW *authMiddleware.ReverseProxyMiddleware
 	if cfg.RailsAppURL != "" {
 		var err error
-		reverseProxyMW, err = authMiddleware.NewReverseProxyMiddleware(cfg.RailsAppURL, cfg)
+		reverseProxyMW, err = authMiddleware.NewReverseProxyMiddleware(cfg.RailsAppURL, cfg, featureFlagRepo, sessionManager)
 		if err != nil {
 			slog.Error("リバースプロキシミドルウェアの初期化に失敗しました", "error", err)
 			os.Exit(1)
