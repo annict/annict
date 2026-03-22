@@ -413,9 +413,10 @@ func main() {
 
 	// DB管理画面
 	numberFormatRepo := repository.NewNumberFormatRepository(queries)
-	dbWorkHandler := db_work.NewHandler(cfg, workRepo, numberFormatRepo, sessionManager)
+	dbWorkHandler := db_work.NewHandler(cfg, db, workRepo, numberFormatRepo, sessionManager)
 	r.Get("/db/works", dbWorkHandler.Index)
 	r.Get("/db/works/new", dbWorkHandler.New)
+	r.Post("/db/works", dbWorkHandler.Create)
 
 	// iCalendar配信
 	r.Get("/@{username}/ics", icsHandler.Show) // メインのエンドポイント

@@ -1,3 +1,7 @@
+.PHONY: dev
+dev: ## 全サービスの開発サーバーを起動
+	hivemind Procfile.dev
+
 .PHONY: fmt
 fmt: ## コードをフォーマット（Oxfmt）
 	pnpm run fmt

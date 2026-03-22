@@ -1175,6 +1175,10 @@ other = "No Episodes"
 description = "Form submit button - Create"
 other = "Create Work"
 
+[db_works_created]
+description = "Work creation success message"
+other = "Work has been created successfully"
+
 [db_works_error_title_required]
 description = "Title required error"
 other = "Please enter a title"

@@ -106,3 +106,53 @@ WHERE w.status != 'deleted'
     AND (sqlc.narg('filter_no_season')::boolean IS NOT TRUE OR (w.season_year IS NULL AND w.season_name IS NULL))
     AND (sqlc.narg('season_year')::int IS NULL OR w.season_year = sqlc.narg('season_year'))
     AND (sqlc.narg('season_name')::int IS NULL OR w.season_name = sqlc.narg('season_name'));
+
+-- name: CreateWork :one
+INSERT INTO works (
+    title,
+    title_kana,
+    title_alter,
+    title_en,
+    title_alter_en,
+    media,
+    season_year,
+    season_name,
+    started_on,
+    ended_on,
+    official_site_url,
+    official_site_url_en,
+    wikipedia_url,
+    wikipedia_url_en,
+    twitter_username,
+    twitter_hashtag,
+    sc_tid,
+    mal_anime_id,
+    synopsis,
+    synopsis_source,
+    synopsis_en,
+    synopsis_source_en,
+    manual_episodes_count,
+    start_episode_raw_number,
+    number_format_id,
+    no_episodes,
+    created_at,
+    updated_at
+) VALUES (
+    $1, $2, $3, $4, $5, $6,
+    sqlc.narg('season_year'),
+    sqlc.narg('season_name'),
+    sqlc.narg('started_on'),
+    sqlc.narg('ended_on'),
+    $7, $8, $9, $10,
+    sqlc.narg('twitter_username'),
+    sqlc.narg('twitter_hashtag'),
+    sqlc.narg('sc_tid'),
+    sqlc.narg('mal_anime_id'),
+    $11, $12, $13, $14,
+    sqlc.narg('manual_episodes_count'),
+    $15,
+    sqlc.narg('number_format_id'),
+    $16,
+    NOW(),
+    NOW()
+) RETURNING id;

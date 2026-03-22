@@ -108,6 +108,13 @@ RUN curl -fsSL -o /usr/local/bin/dbmate \
       https://github.com/amacneil/dbmate/releases/latest/download/dbmate-linux-amd64 && \
     chmod +x /usr/local/bin/dbmate
 
+# --- hivemind ---
+RUN curl -fsSL -L -o /tmp/hivemind.gz \
+      https://github.com/DarthSim/hivemind/releases/download/v1.1.0/hivemind-v1.1.0-linux-amd64.gz && \
+    gunzip /tmp/hivemind.gz && \
+    mv /tmp/hivemind /usr/local/bin/hivemind && \
+    chmod +x /usr/local/bin/hivemind
+
 # --- golangci-lint ---
 RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh \
       | sh -s -- -b /usr/local/bin v2.7.2

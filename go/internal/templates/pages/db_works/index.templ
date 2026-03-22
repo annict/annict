@@ -19,16 +19,28 @@ type IndexPageData struct {
 
 // Index はDB管理画面の作品一覧ページを表示します
 templ Index(data IndexPageData) {
-	<div class="p-6">
-		<div class="flex items-center justify-between mb-6">
-			<h1 class="text-2xl font-bold">{ templates.T(ctx, "db_works_title") }</h1>
-			<a href="/db/works/new" class="btn btn-primary btn-sm">
+	<div class="flex flex-col gap-4 py-4">
+		<div class="flex items-center justify-between px-4">
+			<h1 class="text-2xl font-bold antialiased">
+				{ templates.T(ctx, "db_works_title") }
+			</h1>
+
+			<a
+				class="btn-primary rounded-full"
+				href={ templates.DBWorksNewPath().SafeURL() }
+			>
 				{ templates.T(ctx, "db_works_new") }
 			</a>
 		</div>
 
+		<hr>
+
 		<!-- フィルタフォーム -->
-		<form method="get" action="/db/works" class="mb-6 flex items-center gap-4 flex-wrap">
+		<form
+			action={ templates.DBWorksPath().SafeURL() }
+			class="flex items-center gap-4 flex-wrap"
+			method="get"
+		>
 			<label class="flex items-center gap-1.5 text-sm">
 				<input
 					type="checkbox"
@@ -88,7 +100,7 @@ templ Index(data IndexPageData) {
 							<tr>
 								<td>{ fmt.Sprintf("%d", work.ID) }</td>
 								<td>
-									<a href={ templ.SafeURL(fmt.Sprintf("/db/works/%d", work.ID)) } class="text-primary hover:underline">
+									<a href={ templates.DBWorkPath(work.ID).SafeURL() } class="text-primary hover:underline">
 										{ work.Title }
 									</a>
 								</td>
