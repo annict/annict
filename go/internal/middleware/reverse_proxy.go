@@ -32,8 +32,9 @@ type featureFlaggedPattern struct {
 }
 
 // フィーチャーフラグで制御するURLパターンのリスト
-// 具体的なパターンは各Go移行タスクで追加される
-var featureFlaggedPatterns []featureFlaggedPattern
+var featureFlaggedPatterns = []featureFlaggedPattern{
+	{pattern: regexp.MustCompile(`^/db/`), flag: model.FeatureFlagGoAnnictDB},
+}
 
 // ReverseProxyMiddleware はRails版へのリバースプロキシミドルウェア
 type ReverseProxyMiddleware struct {
@@ -61,7 +62,6 @@ var goHandledPaths = []string{
 	"/supporters",       // サポーターページ
 	"/webhooks/stripe",  // Stripe Webhook受信
 	"/ics",              // iCalendar配信（Apple カレンダー互換パス）
-	"/db/works",         // DB管理画面 - 作品
 }
 
 // NewReverseProxyMiddleware は新しいReverseProxyMiddlewareを作成
