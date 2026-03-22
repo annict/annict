@@ -925,6 +925,39 @@ ALTER SEQUENCE public.faq_contents_id_seq OWNED BY public.faq_contents.id;
 
 
 --
+-- Name: feature_flags; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.feature_flags (
+    id bigint NOT NULL,
+    device_token character varying,
+    user_id bigint,
+    name character varying NOT NULL,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    CONSTRAINT feature_flags_check CHECK (((device_token IS NOT NULL) OR (user_id IS NOT NULL)))
+);
+
+
+--
+-- Name: feature_flags_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.feature_flags_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: feature_flags_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.feature_flags_id_seq OWNED BY public.feature_flags.id;
+
+
+--
 -- Name: finished_tips; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -3355,6 +3388,13 @@ ALTER TABLE ONLY public.faq_contents ALTER COLUMN id SET DEFAULT nextval('public
 
 
 --
+-- Name: feature_flags id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.feature_flags ALTER COLUMN id SET DEFAULT nextval('public.feature_flags_id_seq'::regclass);
+
+
+--
 -- Name: finished_tips id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -3913,6 +3953,30 @@ ALTER TABLE ONLY public.faq_categories
 
 ALTER TABLE ONLY public.faq_contents
     ADD CONSTRAINT faq_contents_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: feature_flags feature_flags_device_token_name_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.feature_flags
+    ADD CONSTRAINT feature_flags_device_token_name_key UNIQUE (device_token, name);
+
+
+--
+-- Name: feature_flags feature_flags_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.feature_flags
+    ADD CONSTRAINT feature_flags_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: feature_flags feature_flags_user_id_name_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.feature_flags
+    ADD CONSTRAINT feature_flags_user_id_name_key UNIQUE (user_id, name);
 
 
 --
@@ -6578,6 +6642,14 @@ ALTER TABLE ONLY public.episodes
 
 
 --
+-- Name: feature_flags feature_flags_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.feature_flags
+    ADD CONSTRAINT feature_flags_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
 -- Name: finished_tips finished_tips_tip_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -7780,4 +7852,5 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20260111084224'),
     ('20260111101233'),
     ('20260210055715'),
-    ('20260210081156');
+    ('20260210081156'),
+    ('20260322083140');

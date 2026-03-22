@@ -77,6 +77,7 @@ type Querier interface {
 	InvalidateSignUpCodesByEmail(ctx context.Context, email string) error
 	InvalidateUserPasswordResetTokens(ctx context.Context, userID int64) error
 	InvalidateUserSignInCodes(ctx context.Context, userID int64) error
+	IsFeatureFlagEnabled(ctx context.Context, arg IsFeatureFlagEnabledParams) (bool, error)
 	ListAllProfiles(ctx context.Context) ([]ListAllProfilesRow, error)
 	ListDBWorks(ctx context.Context, arg ListDBWorksParams) ([]ListDBWorksRow, error)
 	ListNumberFormats(ctx context.Context) ([]ListNumberFormatsRow, error)

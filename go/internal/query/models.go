@@ -474,6 +474,14 @@ type FaqContent struct {
 	DeletedAt     sql.NullTime `db:"deleted_at"`
 }
 
+type FeatureFlag struct {
+	ID          int64          `db:"id"`
+	DeviceToken sql.NullString `db:"device_token"`
+	UserID      sql.NullInt64  `db:"user_id"`
+	Name        string         `db:"name"`
+	CreatedAt   time.Time      `db:"created_at"`
+}
+
 type FinishedTip struct {
 	ID        int64     `db:"id"`
 	UserID    int64     `db:"user_id"`
