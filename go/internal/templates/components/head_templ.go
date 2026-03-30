@@ -189,20 +189,33 @@ func Head(meta viewmodel.PageMeta, assetVersion string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\"><script type=\"module\" src=\"https://cdn.jsdelivr.net/gh/starfederation/datastar@1.0.0-RC.6/bundles/datastar.js\"></script><script>\n\t\t(() => {\n\t\t\ttry {\n\t\t\t\tif (matchMedia(\"(prefers-color-scheme: dark)\").matches) {\n\t\t\t\t\tdocument.documentElement.classList.add(\"dark\");\n\t\t\t\t}\n\t\t\t} catch (_) {}\n\t\t})();\n\t</script><script type=\"module\" src=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\"><script defer src=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var14 string
-		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs("/static/js/main.js?v=" + assetVersion)
+		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs("/static/js/vendor/htmx-4.0.0-alpha8.min.js")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/head.templ`, Line: 45, Col: 67}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/head.templ`, Line: 35, Col: 65}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "\"></script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "\"></script><script>\n\t\t(() => {\n\t\t\ttry {\n\t\t\t\tif (matchMedia(\"(prefers-color-scheme: dark)\").matches) {\n\t\t\t\t\tdocument.documentElement.classList.add(\"dark\");\n\t\t\t\t}\n\t\t\t} catch (_) {}\n\t\t})();\n\t</script><script type=\"module\" src=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var15 string
+		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs("/static/js/main.js?v=" + assetVersion)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/head.templ`, Line: 45, Col: 67}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "\"></script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
