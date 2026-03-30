@@ -31,7 +31,7 @@ templ New(ctx context.Context, formErrors *session.FormErrors, csrfToken string,
 		<form
 			action="/sign_in"
 			class="form grid gap-6"
-			data-on:submit__passive="$isSubmitting = true"
+			hx-on:submit="disableSubmitButtons(this)"
 			method="POST"
 		>
 			<input type="hidden" name="csrf_token" value={ csrfToken }/>
@@ -70,7 +70,6 @@ templ New(ctx context.Context, formErrors *session.FormErrors, csrfToken string,
 				class="btn rounded-full w-fit"
 				tabindex="2"
 				type="submit"
-				data-attr:disabled="$isSubmitting == true"
 			>
 				@templates.Icon("arrow-right")
 				{ templates.T(ctx, "sign_in_next_button") }

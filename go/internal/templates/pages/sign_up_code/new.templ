@@ -35,7 +35,7 @@ templ SignUpCodeNew(ctx context.Context, email string, formErrors *session.FormE
 		<form
 			action="/sign_up/code"
 			class="form grid gap-6"
-			data-on:submit__passive="$isSubmitting = true"
+			hx-on:submit="disableSubmitButtons(this)"
 			method="POST"
 		>
 			<input type="hidden" name="csrf_token" value={ csrfToken }/>
@@ -73,7 +73,6 @@ templ SignUpCodeNew(ctx context.Context, email string, formErrors *session.FormE
 
 			<button
 				class="btn rounded-full w-fit"
-				data-attr:disabled="$isSubmitting == true"
 				tabindex="2"
 				type="submit"
 			>
@@ -89,7 +88,7 @@ templ SignUpCodeNew(ctx context.Context, email string, formErrors *session.FormE
 
 			<form
 				action="/sign_up/code"
-				data-on:submit__passive="$isSubmitting = true"
+				hx-on:submit="disableSubmitButtons(this)"
 				method="POST"
 			>
 				<input type="hidden" name="_method" value="PATCH"/>
@@ -97,7 +96,6 @@ templ SignUpCodeNew(ctx context.Context, email string, formErrors *session.FormE
 
 				<button
 					class="btn-sm-secondary rounded-full w-fit"
-					data-attr:disabled="$isSubmitting == true"
 					tabindex="3"
 					type="submit"
 				>
