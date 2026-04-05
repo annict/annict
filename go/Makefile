@@ -1,6 +1,11 @@
 # op run ラッパー: 1Password CLI 経由で .env の環境変数を解決してコマンドを実行する
+# CI環境ではopコマンドが利用できないため、環境変数はGitHub Actionsで直接設定する
 OP_RUN_DEV = APP_ENV=dev op run --env-file=".env" --
+ifeq ($(CI),true)
+OP_RUN_TEST = APP_ENV=test
+else
 OP_RUN_TEST = APP_ENV=test op run --env-file=".env" --
+endif
 
 .PHONY: help
 help: ## ヘルプを表示
