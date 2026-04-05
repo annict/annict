@@ -13,6 +13,7 @@ import (
 	"github.com/annict/annict/go/internal/config"
 	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/testutil"
+	"github.com/annict/annict/go/internal/usecase"
 )
 
 // TestShow_UserNotFound ユーザーが見つからない場合は404を返すテスト
@@ -27,7 +28,8 @@ func TestShow_UserNotFound(t *testing.T) {
 	}
 
 	userCalendarRepo := repository.NewUserCalendarRepository(queries)
-	handler := NewHandler(cfg, userCalendarRepo)
+	getUserCalendarUC := usecase.NewGetUserCalendarUsecase(userCalendarRepo)
+	handler := NewHandler(cfg, getUserCalendarUC)
 
 	// chiルーターを作成
 	r := chi.NewRouter()
@@ -56,7 +58,8 @@ func TestShow_EmptyUsername(t *testing.T) {
 	}
 
 	userCalendarRepo := repository.NewUserCalendarRepository(queries)
-	handler := NewHandler(cfg, userCalendarRepo)
+	getUserCalendarUC := usecase.NewGetUserCalendarUsecase(userCalendarRepo)
+	handler := NewHandler(cfg, getUserCalendarUC)
 
 	// /ics エンドポイントでusernameパラメータなしでリクエスト
 	req := httptest.NewRequest("GET", "/ics", nil)
@@ -81,7 +84,8 @@ func TestShow_QueryParam(t *testing.T) {
 	}
 
 	userCalendarRepo := repository.NewUserCalendarRepository(queries)
-	handler := NewHandler(cfg, userCalendarRepo)
+	getUserCalendarUC := usecase.NewGetUserCalendarUsecase(userCalendarRepo)
+	handler := NewHandler(cfg, getUserCalendarUC)
 
 	// /ics?username=nonexistent でリクエスト（存在しないユーザー）
 	req := httptest.NewRequest("GET", "/ics?username=nonexistent_user", nil)
@@ -112,7 +116,8 @@ func TestShow_Success(t *testing.T) {
 	}
 
 	userCalendarRepo := repository.NewUserCalendarRepository(queries)
-	handler := NewHandler(cfg, userCalendarRepo)
+	getUserCalendarUC := usecase.NewGetUserCalendarUsecase(userCalendarRepo)
+	handler := NewHandler(cfg, getUserCalendarUC)
 
 	// chiルーターを作成
 	r := chi.NewRouter()
@@ -171,7 +176,8 @@ func TestShow_QueryParamSuccess(t *testing.T) {
 	}
 
 	userCalendarRepo := repository.NewUserCalendarRepository(queries)
-	handler := NewHandler(cfg, userCalendarRepo)
+	getUserCalendarUC := usecase.NewGetUserCalendarUsecase(userCalendarRepo)
+	handler := NewHandler(cfg, getUserCalendarUC)
 
 	// chiルーターを作成（/icsエンドポイント用）
 	r := chi.NewRouter()
@@ -252,7 +258,8 @@ func TestShow_EpisodeNumberFormatting(t *testing.T) {
 	}
 
 	userCalendarRepo := repository.NewUserCalendarRepository(queries)
-	handler := NewHandler(cfg, userCalendarRepo)
+	getUserCalendarUC := usecase.NewGetUserCalendarUsecase(userCalendarRepo)
+	handler := NewHandler(cfg, getUserCalendarUC)
 
 	// chiルーターを作成
 	r := chi.NewRouter()
@@ -305,7 +312,8 @@ func TestShow_DeletedUser(t *testing.T) {
 	}
 
 	userCalendarRepo := repository.NewUserCalendarRepository(queries)
-	handler := NewHandler(cfg, userCalendarRepo)
+	getUserCalendarUC := usecase.NewGetUserCalendarUsecase(userCalendarRepo)
+	handler := NewHandler(cfg, getUserCalendarUC)
 
 	// chiルーターを作成
 	r := chi.NewRouter()
@@ -339,7 +347,8 @@ func TestShow_EmptyCalendar(t *testing.T) {
 	}
 
 	userCalendarRepo := repository.NewUserCalendarRepository(queries)
-	handler := NewHandler(cfg, userCalendarRepo)
+	getUserCalendarUC := usecase.NewGetUserCalendarUsecase(userCalendarRepo)
+	handler := NewHandler(cfg, getUserCalendarUC)
 
 	// chiルーターを作成
 	r := chi.NewRouter()
@@ -405,7 +414,8 @@ func TestShow_WorkStartedOnEvent(t *testing.T) {
 	}
 
 	userCalendarRepo := repository.NewUserCalendarRepository(queries)
-	handler := NewHandler(cfg, userCalendarRepo)
+	getUserCalendarUC := usecase.NewGetUserCalendarUsecase(userCalendarRepo)
+	handler := NewHandler(cfg, getUserCalendarUC)
 
 	// chiルーターを作成
 	r := chi.NewRouter()
@@ -494,7 +504,8 @@ func TestShow_WannaWatchStatus(t *testing.T) {
 	}
 
 	userCalendarRepo := repository.NewUserCalendarRepository(queries)
-	handler := NewHandler(cfg, userCalendarRepo)
+	getUserCalendarUC := usecase.NewGetUserCalendarUsecase(userCalendarRepo)
+	handler := NewHandler(cfg, getUserCalendarUC)
 
 	// chiルーターを作成
 	r := chi.NewRouter()

@@ -13,7 +13,6 @@ import (
 
 	"github.com/annict/annict/go/internal/config"
 	"github.com/annict/annict/go/internal/mail"
-	"github.com/annict/annict/go/internal/query"
 )
 
 // Client は River クライアントのラッパー
@@ -22,8 +21,14 @@ type Client struct {
 	pool        *pgxpool.Pool
 }
 
+// NewClientParams は NewClient に渡すパラメータです
+type NewClientParams struct {
+	CleanupExpiredTokens      ExpiredTokenCleaner
+	CleanupExpiredSignInCodes ExpiredSignInCodeCleaner
+}
+
 // NewClient は新しい River クライアントを作成します
-func NewClient(ctx context.Context, databaseURL string, queries *query.Queries, cfg *config.Config) (*Client, error) {
+func NewClient(ctx context.Context, databaseURL string, params NewClientParams, cfg *config.Config) (*Client, error) {
 	// pgxpool の作成
 	poolConfig, err := pgxpool.ParseConfig(databaseURL)
 	if err != nil {
@@ -60,11 +65,11 @@ func NewClient(ctx context.Context, databaseURL string, queries *query.Queries, 
 	}
 
 	// トークンクリーンアップワーカーを登録
-	river.AddWorker(workers, NewCleanupExpiredTokensWorker(queries))
+	river.AddWorker(workers, NewCleanupExpiredTokensWorker(params.CleanupExpiredTokens))
 	slog.InfoContext(ctx, "CleanupExpiredTokensWorker を登録しました")
 
 	// ログインコードクリーンアップワーカーを登録
-	river.AddWorker(workers, NewCleanupExpiredSignInCodesWorker(queries))
+	river.AddWorker(workers, NewCleanupExpiredSignInCodesWorker(params.CleanupExpiredSignInCodes))
 	slog.InfoContext(ctx, "CleanupExpiredSignInCodesWorker を登録しました")
 
 	// River クライアントの作成

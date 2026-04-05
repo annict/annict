@@ -1,7 +1,6 @@
 package password_reset
 
 import (
-	"database/sql"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -12,6 +11,7 @@ import (
 	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/templates/layouts"
 	passwordpages "github.com/annict/annict/go/internal/templates/pages/password"
+	"github.com/annict/annict/go/internal/usecase"
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
@@ -26,21 +26,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// バリデーション
-	input := CreateValidatorInput{
-		Email: r.FormValue("email"),
-	}
-
-	v := NewCreateValidator()
-	result := v.Validate(ctx, input)
-	if result.FormErrors != nil && result.FormErrors.HasErrors() {
-		flashManager := session.NewFlashManager(h.sessionManager)
-		if err := flashManager.SetFormErrors(w, r, result.FormErrors); err != nil {
-			slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
-		}
-		http.Redirect(w, r, "/password/reset", http.StatusSeeOther)
-		return
-	}
+	email := r.FormValue("email")
 
 	// Turnstile検証
 	turnstileToken := r.FormValue("cf-turnstile-response")
@@ -61,8 +47,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		// エラーレスポンスを返す
 		formErrors := &session.FormErrors{}
 		formErrors.AddFieldError("email", i18n.T(ctx, "turnstile_verification_failed"))
-		flashManager := session.NewFlashManager(h.sessionManager)
-		if err := flashManager.SetFormErrors(w, r, formErrors); err != nil {
+		if err := h.sessionManager.SetFormErrors(ctx, w, r, *formErrors); err != nil {
 			slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
 		}
 		http.Redirect(w, r, "/password/reset", http.StatusSeeOther)
@@ -88,13 +73,13 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	// Rate Limiting: メールアドレス単位の制限（3回/時間）
 	if h.limiter != nil && !h.cfg.DisableRateLimit {
-		emailKey := fmt.Sprintf("password_reset:email:%s", input.Email)
+		emailKey := fmt.Sprintf("password_reset:email:%s", email)
 		allowed, err := h.limiter.Check(ctx, emailKey, 3, 1*time.Hour)
 		if err != nil {
 			slog.ErrorContext(ctx, "Rate Limitingチェックが失敗しました", "error", err)
 		} else if !allowed {
 			slog.WarnContext(ctx, "パスワードリセット申請がRate Limitingにより制限されました（メールアドレス単位）",
-				"email", input.Email,
+				"email", email,
 				"ip_address", clientip.GetClientIP(r),
 			)
 			http.Error(w, i18n.T(ctx, "rate_limit_exceeded"), http.StatusTooManyRequests)
@@ -102,24 +87,26 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// ユーザーを検索（存在しない場合もエラーを返さない - セキュリティ対策）
-	user, err := h.userRepo.GetByEmail(ctx, input.Email)
-	if err != nil && err != sql.ErrNoRows {
-		slog.ErrorContext(ctx, "ユーザーの検索エラー", "error", err)
+	// UseCaseを呼び出し（バリデーション + ユーザー検索 + トークン生成）
+	result, err := h.createTokenUseCase.Execute(ctx, usecase.CreatePasswordResetTokenInput{
+		Email: email,
+	})
+	if err != nil {
+		slog.ErrorContext(ctx, "パスワードリセットトークンの生成エラー", "error", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+	if result.FormErrors != nil && result.FormErrors.HasErrors() {
+		if err := h.sessionManager.SetFormErrors(ctx, w, r, *result.FormErrors); err != nil {
+			slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
+		}
+		http.Redirect(w, r, "/password/reset", http.StatusSeeOther)
+		return
 	}
 
-	// ユーザーが存在する場合のみトークンを生成
-	if err == nil && user.ID > 0 {
-		result, err := h.createTokenUseCase.Execute(ctx, user.ID)
-		if err != nil {
-			slog.ErrorContext(ctx, "パスワードリセットトークンの生成エラー", "error", err)
-			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-			return
-		}
-
+	if result.UserID > 0 {
 		slog.InfoContext(ctx, "パスワードリセット申請を受け付けました",
 			"user_id", result.UserID,
-			"email", user.Email,
 			"ip_address", clientip.GetClientIP(r),
 		)
 	}

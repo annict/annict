@@ -1,13 +1,14 @@
 package password
 
 import (
+	"errors"
 	"log/slog"
 	"net/http"
 
-	"github.com/annict/annict/go/internal/auth"
 	"github.com/annict/annict/go/internal/clientip"
 	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/session"
+	"github.com/annict/annict/go/internal/usecase"
 )
 
 // Update はパスワードを更新します (PATCH /password)
@@ -21,41 +22,17 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// バリデーション
-	input := UpdateValidatorInput{
-		Token:                r.FormValue("token"),
+	token := r.FormValue("token")
+
+	// UseCaseを使ってバリデーション・パスワード更新を実行
+	result, err := h.updatePasswordResetUC.Execute(ctx, usecase.UpdatePasswordResetInput{
+		Token:                token,
 		Password:             r.FormValue("password"),
 		PasswordConfirmation: r.FormValue("password_confirmation"),
-	}
-
-	v := NewUpdateValidator()
-	result := v.Validate(ctx, input)
-	if result.FormErrors != nil && result.FormErrors.HasErrors() {
-		flashManager := session.NewFlashManager(h.sessionManager)
-		if err := flashManager.SetFormErrors(w, r, result.FormErrors); err != nil {
-			slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
-		}
-		http.Redirect(w, r, "/password/edit?token="+input.Token, http.StatusSeeOther)
-		return
-	}
-
-	// パスワード強度チェック
-	if err := auth.ValidatePasswordStrength(ctx, input.Password); err != nil {
-		flashManager := session.NewFlashManager(h.sessionManager)
-		strengthErrors := &session.FormErrors{}
-		strengthErrors.AddFieldError("password", err.Error())
-		if err := flashManager.SetFormErrors(w, r, strengthErrors); err != nil {
-			slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
-		}
-		http.Redirect(w, r, "/password/edit?token="+input.Token, http.StatusSeeOther)
-		return
-	}
-
-	// UseCaseを使ってパスワードを更新
-	ucResult, err := h.updatePasswordUseCase.Execute(ctx, input.Token, input.Password)
+	})
 	if err != nil {
 		// トークンが無効な場合
-		if err.Error() == "invalid token" {
+		if errors.Is(err, usecase.ErrInvalidPasswordResetToken) {
 			slog.WarnContext(ctx, "パスワード更新時に無効なリセットトークン",
 				"ip_address", clientip.GetClientIP(r),
 			)
@@ -69,18 +46,23 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// バリデーションエラーの場合
+	if result.FormErrors != nil && result.FormErrors.HasErrors() {
+		if err := h.sessionManager.SetFormErrors(ctx, w, r, *result.FormErrors); err != nil {
+			slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
+		}
+		http.Redirect(w, r, "/password/edit?token="+token, http.StatusSeeOther)
+		return
+	}
+
 	// 監査ログ
 	slog.InfoContext(ctx, "パスワード更新が完了しました",
-		"user_id", ucResult.UserID,
+		"user_id", result.UserID,
 		"ip_address", clientip.GetClientIP(r),
 	)
 
 	// フラッシュメッセージを設定
-	flashManager := session.NewFlashManager(h.sessionManager)
-	if err := flashManager.SetFlash(w, r, session.FlashSuccess, i18n.T(ctx, "password_reset_success")); err != nil {
-		slog.ErrorContext(ctx, "フラッシュメッセージの設定エラー", "error", err)
-		// エラーでも続行（ユーザー体験を損ねない）
-	}
+	h.sessionManager.SetFlash(w, session.FlashSuccess, i18n.T(ctx, "password_reset_success"))
 
 	// ログインページにリダイレクト
 	http.Redirect(w, r, "/sign_in", http.StatusSeeOther)

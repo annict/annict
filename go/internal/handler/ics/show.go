@@ -2,6 +2,7 @@ package ics
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -10,6 +11,7 @@ import (
 	"github.com/go-chi/chi/v5"
 
 	"github.com/annict/annict/go/internal/ical"
+	"github.com/annict/annict/go/internal/usecase"
 )
 
 // Show はiCalendar形式のカレンダーを返します
@@ -30,9 +32,12 @@ func (h *Handler) Show(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// カレンダーデータを取得
-	userCalendar, err := h.userCalendarRepo.GetByUsername(ctx, username, time.Now())
+	result, err := h.getUserCalendarUC.Execute(ctx, usecase.GetUserCalendarInput{
+		Username: username,
+		Now:      time.Now(),
+	})
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
 			http.Error(w, "Not Found", http.StatusNotFound)
 			return
 		}
@@ -40,6 +45,8 @@ func (h *Handler) Show(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
+
+	userCalendar := result.UserCalendar
 
 	// ユーザーのロケールに基づいて作品タイトルを選択する関数
 	selectTitle := func(title, titleEn string) string {

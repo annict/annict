@@ -4,45 +4,52 @@
 
 ## 概要
 
-フォームからの入力値の検証は、**1 つのバリデーター**（`validator.go`）で実装します。形式バリデーション（入力値の形式チェック）と状態バリデーション（DB を使った検証）を同じファイルに配置することで、「どこに書くべきか」の判断コストを削減します。
+フォームからの入力値の検証は、`internal/validator/` パッケージ（Application 層）に配置し、UseCase から呼び出します。形式バリデーション（入力値の形式チェック）と状態バリデーション（DB を使った検証）を同じファイルに実装します。
 
 ### ファイル構成
 
 ```
-internal/handler/sign_in/
-├── handler.go         # Handler構造体と依存性
-├── validator.go       # バリデーション（形式チェック + DBを使った検証）
-├── validator_test.go  # バリデーションのテスト
-├── new.go             # フォーム表示
-└── create.go          # 作成処理
+internal/validator/
+├── sign_in.go               # サインインのバリデーション
+├── sign_in_test.go          # サインインのバリデーションテスト
+├── sign_in_password.go      # パスワードサインインのバリデーション
+├── sign_in_password_test.go # パスワードサインインのバリデーションテスト
+├── password_reset.go        # パスワードリセットのバリデーション
+├── password_reset_test.go   # パスワードリセットのバリデーションテスト
+├── password.go              # パスワード更新のバリデーション
+└── password_test.go         # パスワード更新のバリデーションテスト
 ```
 
 ### バリデーションの分類
 
-バリデーションは以下の 2 種類に分類されますが、同じファイル（`validator.go`）に実装します：
+バリデーションは以下の 2 種類に分類されますが、同じファイルに実装します：
 
 | 種類               | 責務                  | 特徴            |
 | ------------------ | --------------------- | --------------- |
 | 形式バリデーション | 入力値の形式チェック  | DB アクセス不要 |
 | 状態バリデーション | DB の状態を使った検証 | DB アクセス必要 |
 
-### 構造体の命名規則
+### 命名規則
 
-- **命名規則**: `{Action}Validator`（例: `CreateValidator`, `UpdateValidator`）
-- **1 つの構造体で両方のバリデーションを担当**: 形式バリデーションと状態バリデーションを `Validate` メソッド内で順次実行
+- **配置**: `internal/validator/`（Application 層）
+- **ファイル名**: リソース名と対応（例: `sign_in.go`, `password_reset.go`）
+- **構造体名**: `{Action}{Resource}Validator`（例: `CreateSignInValidator`, `UpdatePasswordValidator`）
+- **入力構造体**: `{Action}{Resource}ValidatorInput`
+- **結果構造体**: `{Action}{Resource}ValidatorResult`
+- **呼び出し元**: UseCase（Handler から直接呼び出さない）
 
 ### 状態バリデーションの配置場所
 
-状態バリデーションは `validator.go` または UseCase のどちらかに配置します。
+状態バリデーションは `validator` パッケージまたは UseCase のどちらかに配置します。
 
 **判断基準**: **「検証失敗時に DB を更新する必要があるか？」**
 
-| 検証失敗時の DB 更新 | 配置場所     | 理由                                               |
-| -------------------- | ------------ | -------------------------------------------------- |
-| 不要                 | validator.go | UseCase をシンプルに保つため                       |
-| 必要                 | UseCase      | トランザクション内で検証と更新を行う必要があるため |
+| 検証失敗時の DB 更新 | 配置場所  | 理由                                               |
+| -------------------- | --------- | -------------------------------------------------- |
+| 不要                 | validator | UseCase をシンプルに保つため                       |
+| 必要                 | UseCase   | トランザクション内で検証と更新を行う必要があるため |
 
-**validator.go で行うべき検証**:
+**validator で行うべき検証**:
 
 | 検証内容                   | 失敗時の動作     | 理由                   |
 | -------------------------- | ---------------- | ---------------------- |
@@ -61,7 +68,7 @@ internal/handler/sign_in/
 | ------------------ | ---------------------- | ---------------------- |
 | ログインコード検証 | 試行回数インクリメント | 失敗時に DB 更新が必要 |
 
-※注: 「リカバリーコード消費」や「トークン使用済みマーク」は検証成功後の処理であり、バリデーションではなく UseCase の永続化処理として扱う。検証自体は validator.go で行い、成功後に UseCase を呼び出す。
+※注: 「リカバリーコード消費」や「トークン使用済みマーク」は検証成功後の処理であり、バリデーションではなく UseCase の永続化処理として扱う。検証自体は validator で行い、成功後に UseCase を呼び出す。
 
 ### エラー表示方法の使い分け
 
@@ -86,282 +93,276 @@ internal/handler/sign_in/
 
 ### メッセージの国際化
 
-バリデーションメッセージは必ず `templates.T(ctx, "message_id")` を使用します。
+バリデーションメッセージは必ず `i18n.T(ctx, "message_id")` を使用します。
 
 ## 実装例
 
-### 基本的なバリデーター（validator.go）
+### 基本的なバリデーター（形式バリデーションのみ）
 
 ```go
-// internal/handler/sign_in/validator.go
-package sign_in
+// internal/validator/password_reset.go
+package validator
+
+import (
+    "context"
+    "strings"
+
+    "github.com/annict/annict/go/internal/i18n"
+    "github.com/annict/annict/go/internal/session"
+)
+
+// CreatePasswordResetValidator はパスワードリセット申請フォームのバリデーションを行う
+type CreatePasswordResetValidator struct{}
+
+// NewCreatePasswordResetValidator は CreatePasswordResetValidator を生成する
+func NewCreatePasswordResetValidator() *CreatePasswordResetValidator {
+    return &CreatePasswordResetValidator{}
+}
+
+// CreatePasswordResetValidatorInput はバリデーションの入力パラメータ
+type CreatePasswordResetValidatorInput struct {
+    Email string
+}
+
+// CreatePasswordResetValidatorResult はバリデーションの結果
+type CreatePasswordResetValidatorResult struct {
+    FormErrors *session.FormErrors
+}
+
+// Validate はバリデーションを行う
+func (v *CreatePasswordResetValidator) Validate(ctx context.Context, input CreatePasswordResetValidatorInput) *CreatePasswordResetValidatorResult {
+    formErrors := &session.FormErrors{}
+
+    if strings.TrimSpace(input.Email) == "" {
+        formErrors.AddFieldError("email", i18n.T(ctx, "password_reset_email_required"))
+    }
+
+    if formErrors.HasErrors() {
+        return &CreatePasswordResetValidatorResult{FormErrors: formErrors}
+    }
+
+    return &CreatePasswordResetValidatorResult{}
+}
+```
+
+### 状態バリデーションを含むバリデーター
+
+DB を使った検証が必要な場合は、Repository を依存として注入します。
+
+```go
+// internal/validator/sign_in_password.go
+package validator
 
 import (
     "context"
     "errors"
-    "net/mail"
+    "strings"
 
     "github.com/annict/annict/go/internal/auth"
+    "github.com/annict/annict/go/internal/i18n"
     "github.com/annict/annict/go/internal/model"
     "github.com/annict/annict/go/internal/repository"
     "github.com/annict/annict/go/internal/session"
-    "github.com/annict/annict/go/internal/templates"
 )
 
-// バリデーションのエラー定義
 var (
     ErrUserNotFound    = errors.New("ユーザーが見つかりません")
     ErrInvalidPassword = errors.New("パスワードが正しくありません")
 )
 
-// CreateValidator はサインインのバリデーションを行う
-type CreateValidator struct {
+// CreateSignInPasswordValidator はパスワードサインインのバリデーションを行う
+type CreateSignInPasswordValidator struct {
     userRepo *repository.UserRepository
 }
 
-// NewCreateValidator は CreateValidator を生成する
-func NewCreateValidator(userRepo *repository.UserRepository) *CreateValidator {
-    return &CreateValidator{
+// NewCreateSignInPasswordValidator は CreateSignInPasswordValidator を生成する
+func NewCreateSignInPasswordValidator(userRepo *repository.UserRepository) *CreateSignInPasswordValidator {
+    return &CreateSignInPasswordValidator{
         userRepo: userRepo,
     }
 }
 
-// CreateValidatorInput はバリデーションの入力パラメータ
-type CreateValidatorInput struct {
-    Email    string
-    Password string
+// CreateSignInPasswordValidatorInput はバリデーションの入力パラメータ
+type CreateSignInPasswordValidatorInput struct {
+    EmailOrUsername string
+    Password       string
 }
 
-// CreateValidatorResult はバリデーションの結果
-type CreateValidatorResult struct {
+// CreateSignInPasswordValidatorResult はバリデーションの結果
+type CreateSignInPasswordValidatorResult struct {
     User       *model.User
     FormErrors *session.FormErrors
     Err        error
 }
 
 // Validate はバリデーションを行う
-func (v *CreateValidator) Validate(ctx context.Context, input CreateValidatorInput) *CreateValidatorResult {
+func (v *CreateSignInPasswordValidator) Validate(ctx context.Context, input CreateSignInPasswordValidatorInput) *CreateSignInPasswordValidatorResult {
     // 1. 形式バリデーション
-    formErrors := session.NewFormErrors()
+    formErrors := &session.FormErrors{}
 
-    if input.Email == "" {
-        formErrors.AddFieldError("email", templates.T(ctx, "error_required"))
-    } else if !isValidEmail(input.Email) {
-        formErrors.AddFieldError("email", templates.T(ctx, "error_invalid_email_format"))
+    if strings.TrimSpace(input.EmailOrUsername) == "" {
+        formErrors.AddFieldError("email_or_username", i18n.T(ctx, "error_required"))
     }
 
     if input.Password == "" {
-        formErrors.AddFieldError("password", templates.T(ctx, "error_required"))
+        formErrors.AddFieldError("password", i18n.T(ctx, "error_required"))
     }
 
     if formErrors.HasErrors() {
-        return &CreateValidatorResult{FormErrors: formErrors}
+        return &CreateSignInPasswordValidatorResult{FormErrors: formErrors}
     }
 
     // 2. 状態バリデーション（DB検証）
-    user, err := v.userRepo.GetByEmailForSignIn(ctx, input.Email)
+    user, err := v.userRepo.GetByEmailOrUsername(ctx, input.EmailOrUsername)
     if err != nil {
-        if err == repository.ErrNotFound {
-            formErrors.AddGlobalError(templates.T(ctx, "error_invalid_credentials"))
-            return &CreateValidatorResult{FormErrors: formErrors, Err: ErrUserNotFound}
-        }
-        return &CreateValidatorResult{Err: err}
+        formErrors.AddGlobalError(i18n.T(ctx, "error_invalid_credentials"))
+        return &CreateSignInPasswordValidatorResult{FormErrors: formErrors, Err: ErrUserNotFound}
     }
 
     // パスワード検証
-    if err := auth.CheckPassword(user.PasswordDigest, input.Password); err != nil {
-        formErrors.AddGlobalError(templates.T(ctx, "error_invalid_credentials"))
-        return &CreateValidatorResult{FormErrors: formErrors, Err: ErrInvalidPassword}
+    if err := auth.CheckPassword(user.EncryptedPassword, input.Password); err != nil {
+        formErrors.AddGlobalError(i18n.T(ctx, "error_invalid_credentials"))
+        return &CreateSignInPasswordValidatorResult{FormErrors: formErrors, Err: ErrInvalidPassword}
     }
 
-    return &CreateValidatorResult{User: user}
-}
-
-func isValidEmail(email string) bool {
-    _, err := mail.ParseAddress(email)
-    return err == nil
-}
-```
-
-### 形式バリデーションのみのバリデーター
-
-DB を使った検証が不要な場合は、形式バリデーションのみを実装します。
-
-```go
-// internal/handler/password_reset/validator.go
-package password_reset
-
-import (
-    "context"
-    "regexp"
-
-    "github.com/annict/annict/go/internal/session"
-    "github.com/annict/annict/go/internal/templates"
-)
-
-var emailRegex = regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
-
-// CreateValidator はパスワードリセット申請のバリデーションを行う
-type CreateValidator struct{}
-
-// NewCreateValidator は CreateValidator を生成する
-func NewCreateValidator() *CreateValidator {
-    return &CreateValidator{}
-}
-
-// CreateValidatorInput はバリデーションの入力パラメータ
-type CreateValidatorInput struct {
-    Email string
-}
-
-// CreateValidatorResult はバリデーションの結果
-type CreateValidatorResult struct {
-    FormErrors *session.FormErrors
-}
-
-// Validate はバリデーションを行う
-func (v *CreateValidator) Validate(ctx context.Context, input CreateValidatorInput) *CreateValidatorResult {
-    formErrors := session.NewFormErrors()
-
-    // 必須チェック
-    if input.Email == "" {
-        formErrors.AddFieldError("email", templates.T(ctx, "error_required"))
-        return &CreateValidatorResult{FormErrors: formErrors}
-    }
-
-    // フォーマットチェック
-    if !emailRegex.MatchString(input.Email) {
-        formErrors.AddFieldError("email", templates.T(ctx, "error_invalid_email_format"))
-    }
-
-    // 文字数制限
-    if len(input.Email) > 255 {
-        formErrors.AddFieldError("email", templates.T(ctx, "error_email_too_long"))
-    }
-
-    return &CreateValidatorResult{FormErrors: formErrors}
+    return &CreateSignInPasswordValidatorResult{User: user}
 }
 ```
 
 ### 複数フィールドのバリデーター
 
 ```go
-// internal/handler/password/validator.go
-package password
+// internal/validator/password.go
+package validator
 
 import (
     "context"
+    "strings"
 
+    "github.com/annict/annict/go/internal/i18n"
     "github.com/annict/annict/go/internal/session"
-    "github.com/annict/annict/go/internal/templates"
 )
 
-// UpdateValidator はパスワード更新のバリデーションを行う
-type UpdateValidator struct{}
+// UpdatePasswordValidator はパスワード更新のバリデーションを行う
+type UpdatePasswordValidator struct{}
 
-// NewUpdateValidator は UpdateValidator を生成する
-func NewUpdateValidator() *UpdateValidator {
-    return &UpdateValidator{}
+// NewUpdatePasswordValidator は UpdatePasswordValidator を生成する
+func NewUpdatePasswordValidator() *UpdatePasswordValidator {
+    return &UpdatePasswordValidator{}
 }
 
-// UpdateValidatorInput はバリデーションの入力パラメータ
-type UpdateValidatorInput struct {
+// UpdatePasswordValidatorInput はバリデーションの入力パラメータ
+type UpdatePasswordValidatorInput struct {
     Password             string
     PasswordConfirmation string
 }
 
-// UpdateValidatorResult はバリデーションの結果
-type UpdateValidatorResult struct {
+// UpdatePasswordValidatorResult はバリデーションの結果
+type UpdatePasswordValidatorResult struct {
     FormErrors *session.FormErrors
 }
 
 // Validate はバリデーションを行う
-func (v *UpdateValidator) Validate(ctx context.Context, input UpdateValidatorInput) *UpdateValidatorResult {
-    formErrors := session.NewFormErrors()
+func (v *UpdatePasswordValidator) Validate(ctx context.Context, input UpdatePasswordValidatorInput) *UpdatePasswordValidatorResult {
+    formErrors := &session.FormErrors{}
 
-    // 必須チェック
-    if input.Password == "" {
-        formErrors.AddFieldError("password", templates.T(ctx, "error_required"))
+    if strings.TrimSpace(input.Password) == "" {
+        formErrors.AddFieldError("password", i18n.T(ctx, "error_required"))
     }
 
-    if input.PasswordConfirmation == "" {
-        formErrors.AddFieldError("password_confirmation", templates.T(ctx, "error_required"))
+    if strings.TrimSpace(input.PasswordConfirmation) == "" {
+        formErrors.AddFieldError("password_confirmation", i18n.T(ctx, "error_required"))
     }
 
-    // 文字数チェック
     if len(input.Password) > 0 && len(input.Password) < 8 {
-        formErrors.AddFieldError("password", templates.T(ctx, "error_password_too_short"))
+        formErrors.AddFieldError("password", i18n.T(ctx, "error_password_too_short"))
     }
 
-    // パスワード一致チェック
     if input.Password != "" && input.PasswordConfirmation != "" && input.Password != input.PasswordConfirmation {
-        formErrors.AddFieldError("password_confirmation", templates.T(ctx, "error_password_mismatch"))
+        formErrors.AddFieldError("password_confirmation", i18n.T(ctx, "error_password_mismatch"))
     }
 
-    return &UpdateValidatorResult{FormErrors: formErrors}
+    return &UpdatePasswordValidatorResult{FormErrors: formErrors}
 }
 ```
 
-## ハンドラーでの使用
+## UseCase からの呼び出し
 
-### 基本パターン
+Validator は UseCase から呼び出します。Handler から直接呼び出しません。
+
+### UseCase での使用パターン
 
 ```go
-// internal/handler/sign_in/create.go
+// internal/usecase/create_password_reset_token.go
+package usecase
+
+import (
+    "context"
+    "database/sql"
+
+    "github.com/annict/annict/go/internal/repository"
+    "github.com/annict/annict/go/internal/session"
+    "github.com/annict/annict/go/internal/validator"
+)
+
+type CreatePasswordResetTokenUsecase struct {
+    db        *sql.DB
+    userRepo  *repository.UserRepository
+    validator *validator.CreatePasswordResetValidator
+    // ...
+}
+
+type CreatePasswordResetTokenInput struct {
+    Email string
+}
+
+type CreatePasswordResetTokenResult struct {
+    FormErrors *session.FormErrors
+}
+
+func (uc *CreatePasswordResetTokenUsecase) Execute(ctx context.Context, input CreatePasswordResetTokenInput) (*CreatePasswordResetTokenResult, error) {
+    // 1. バリデーション（Validator を呼び出し）
+    valResult := uc.validator.Validate(ctx, validator.CreatePasswordResetValidatorInput{
+        Email: input.Email,
+    })
+    if valResult.FormErrors != nil && valResult.FormErrors.HasErrors() {
+        return &CreatePasswordResetTokenResult{FormErrors: valResult.FormErrors}, nil
+    }
+
+    // 2. ビジネスロジック + 永続化
+    // ...
+
+    return &CreatePasswordResetTokenResult{}, nil
+}
+```
+
+### Handler での使用パターン
+
+Handler は UseCase を呼び出し、結果のバリデーションエラーに基づいてレスポンスを返します。
+
+```go
+// internal/handler/password_reset/create.go
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
     ctx := r.Context()
 
-    // 入力データを作成
-    input := CreateValidatorInput{
-        Email:    r.FormValue("email"),
-        Password: r.FormValue("password"),
-    }
-
-    // バリデーション実行
-    result := h.validator.Validate(ctx, input)
-    if result.FormErrors != nil && result.FormErrors.HasErrors() {
-        h.renderForm(w, ctx, csrfToken, input.Email, result.FormErrors)
-        return
-    }
-    if result.Err != nil {
+    // UseCaseを呼び出し（バリデーション + ビジネスロジック）
+    result, err := h.createPasswordResetTokenUC.Execute(ctx, usecase.CreatePasswordResetTokenInput{
+        Email: r.FormValue("email"),
+    })
+    if err != nil {
         // システムエラー
-        slog.ErrorContext(ctx, "バリデーションでエラーが発生", "error", result.Err)
+        slog.ErrorContext(ctx, "パスワードリセット処理でエラーが発生", "error", err)
         http.Error(w, "Internal Server Error", http.StatusInternalServerError)
         return
     }
-
-    // 認証成功後の処理（UseCase）
-    ucResult, err := h.createSessionUC.Execute(ctx, usecase.CreateSessionInput{
-        ActorID: result.User.ActorID,
+    if result.FormErrors != nil && result.FormErrors.HasErrors() {
+        // バリデーションエラー → フォーム再表示
         // ...
-    })
-    // ...
-}
-```
-
-### Handler の依存性
-
-```go
-// internal/handler/sign_in/handler.go
-type Handler struct {
-    cfg             *config.Config
-    sessionMgr      *session.Manager
-    validator       *CreateValidator  // バリデーター
-    createSessionUC *usecase.CreateSessionUsecase
-}
-
-func NewHandler(
-    cfg *config.Config,
-    sessionMgr *session.Manager,
-    userRepo *repository.UserRepository,
-    createSessionUC *usecase.CreateSessionUsecase,
-) *Handler {
-    return &Handler{
-        cfg:             cfg,
-        sessionMgr:      sessionMgr,
-        validator:       NewCreateValidator(userRepo),
-        createSessionUC: createSessionUC,
+        return
     }
+
+    // 成功 → リダイレクト
+    http.Redirect(w, r, "/password/reset/sent", http.StatusSeeOther)
 }
 ```
 
@@ -369,131 +370,116 @@ func NewHandler(
 
 ### テスト方針
 
-バリデーションのテストは `validator_test.go` に統合して実装します。
+バリデーションのテストは `internal/validator/` パッケージ内の `*_test.go` ファイルに実装します。
 
-| テスト対象           | ファイル            | 特徴                                   |
-| -------------------- | ------------------- | -------------------------------------- |
-| バリデーション全体   | `validator_test.go` | 形式・状態バリデーションを統合テスト   |
-| ハンドラーの振る舞い | `handler_test.go`   | E2E テスト、正常系・代表的な異常系のみ |
-
-**理由**:
-
-- **シンプルな構成**: 1 つのファイルにすべてのバリデーションテストを集約
-- **問題の特定**: テスト失敗時にどの検証の問題か即座に分かる
-- **保守性向上**: テストファイルの管理が容易
+| テスト対象                    | ファイル                       | 特徴                                 |
+| ----------------------------- | ------------------------------ | ------------------------------------ |
+| バリデーション                | `validator/*_test.go`          | 形式・状態バリデーションを統合テスト |
+| UseCase（バリデーション含む） | `usecase/*_test.go`            | UseCase 経由のバリデーションテスト   |
+| Handler の振る舞い            | `handler/{resource}/*_test.go` | E2E テスト、正常系・代表的な異常系   |
 
 ### バリデーションのテスト
 
 ```go
-// internal/handler/sign_in/validator_test.go
-func TestCreateValidator_Validate(t *testing.T) {
-    // 形式バリデーションのテスト
-    t.Run("形式バリデーション", func(t *testing.T) {
-        tests := []struct {
-            name          string
-            input         CreateValidatorInput
-            wantErrors    bool
-            expectedField string
-        }{
-            {
-                name: "有効な入力",
-                input: CreateValidatorInput{
-                    Email:    "user@example.com",
-                    Password: "password123",
-                },
-                wantErrors: false,
-            },
-            {
-                name: "メールアドレスが空",
-                input: CreateValidatorInput{
-                    Email:    "",
-                    Password: "password123",
-                },
-                wantErrors:    true,
-                expectedField: "email",
-            },
-            {
-                name: "パスワードが空",
-                input: CreateValidatorInput{
-                    Email:    "user@example.com",
-                    Password: "",
-                },
-                wantErrors:    true,
-                expectedField: "password",
-            },
-        }
+// internal/validator/sign_in_test.go
+func TestCreateSignInValidator_Validate(t *testing.T) {
+    t.Parallel()
 
-        // DBアクセスなしでテスト（形式バリデーションのみ）
-        validator := NewCreateValidator(nil)
+    validator := NewCreateSignInValidator()
 
-        for _, tt := range tests {
-            t.Run(tt.name, func(t *testing.T) {
-                ctx := context.Background()
-                ctx = templates.WithLocale(ctx, "ja")
+    tests := []struct {
+        name       string
+        input      CreateSignInValidatorInput
+        wantErrors bool
+        wantField  string
+    }{
+        {
+            name:       "有効な入力",
+            input:      CreateSignInValidatorInput{Email: "user@example.com"},
+            wantErrors: false,
+        },
+        {
+            name:       "メールアドレスが空",
+            input:      CreateSignInValidatorInput{Email: ""},
+            wantErrors: true,
+            wantField:  "email",
+        },
+        {
+            name:       "スペースのみ",
+            input:      CreateSignInValidatorInput{Email: "   "},
+            wantErrors: true,
+            wantField:  "email",
+        },
+    }
 
-                result := validator.Validate(ctx, tt.input)
+    for _, tt := range tests {
+        t.Run(tt.name, func(t *testing.T) {
+            ctx := context.Background()
+            result := validator.Validate(ctx, tt.input)
 
-                if tt.wantErrors {
-                    if result.FormErrors == nil || !result.FormErrors.HasErrors() {
-                        t.Error("expected errors, got none")
-                    }
-                    if tt.expectedField != "" && !result.FormErrors.HasFieldError(tt.expectedField) {
-                        t.Errorf("expected field error for %q", tt.expectedField)
-                    }
-                } else if tt.input.Email != "" && tt.input.Password != "" {
-                    // 形式バリデーションのみの場合、DBアクセスでエラーになるのでスキップ
+            if tt.wantErrors {
+                if result.FormErrors == nil || !result.FormErrors.HasErrors() {
+                    t.Error("expected errors, got none")
                 }
-            })
+                if tt.wantField != "" && !result.FormErrors.HasFieldError(tt.wantField) {
+                    t.Errorf("expected field error for %q", tt.wantField)
+                }
+            } else {
+                if result.FormErrors != nil && result.FormErrors.HasErrors() {
+                    t.Errorf("unexpected errors: %v", result.FormErrors)
+                }
+            }
+        })
+    }
+}
+```
+
+### 状態バリデーションのテスト（DB 必要）
+
+```go
+// internal/validator/sign_in_password_test.go
+func TestCreateSignInPasswordValidator_Validate(t *testing.T) {
+    t.Parallel()
+
+    db, tx := testutil.SetupTestDB(t)
+
+    // テストユーザーを作成
+    testutil.NewUserBuilder(t, tx).
+        WithEmail("test@example.com").
+        WithPassword("password123").
+        Build()
+
+    userRepo := repository.NewUserRepository(db).WithTx(tx)
+    validator := NewCreateSignInPasswordValidator(userRepo)
+
+    t.Run("有効な認証情報", func(t *testing.T) {
+        ctx := context.Background()
+        result := validator.Validate(ctx, CreateSignInPasswordValidatorInput{
+            EmailOrUsername: "test@example.com",
+            Password:       "password123",
+        })
+
+        if result.FormErrors != nil && result.FormErrors.HasErrors() {
+            t.Errorf("unexpected form errors: %v", result.FormErrors)
+        }
+        if result.User == nil {
+            t.Error("expected user, got nil")
         }
     })
 
-    // 状態バリデーションのテスト（DB必要）
-    t.Run("状態バリデーション", func(t *testing.T) {
-        // テストDBとトランザクションをセットアップ
-        db, tx := testutil.SetupTx(t)
-
-        // テストユーザーを作成
-        testutil.NewUserBuilder(t, tx).
-            WithEmail("test@example.com").
-            WithPassword("password123").
-            Build()
-
-        userRepo := repository.NewUserRepository(db).WithTx(tx)
-        validator := NewCreateValidator(userRepo)
-
-        t.Run("有効な認証情報", func(t *testing.T) {
-            ctx := context.Background()
-            input := CreateValidatorInput{
-                Email:    "test@example.com",
-                Password: "password123",
-            }
-
-            result := validator.Validate(ctx, input)
-
-            if result.FormErrors != nil && result.FormErrors.HasErrors() {
-                t.Errorf("unexpected form errors: %v", result.FormErrors)
-            }
-            if result.User == nil {
-                t.Error("expected user, got nil")
-            }
+    t.Run("無効なパスワード", func(t *testing.T) {
+        ctx := context.Background()
+        result := validator.Validate(ctx, CreateSignInPasswordValidatorInput{
+            EmailOrUsername: "test@example.com",
+            Password:       "wrongpassword",
         })
 
-        t.Run("無効なパスワード", func(t *testing.T) {
-            ctx := context.Background()
-            input := CreateValidatorInput{
-                Email:    "test@example.com",
-                Password: "wrongpassword",
-            }
-
-            result := validator.Validate(ctx, input)
-
-            if result.User != nil {
-                t.Error("expected nil user")
-            }
-            if result.FormErrors == nil || !result.FormErrors.HasErrors() {
-                t.Error("expected form errors")
-            }
-        })
+        if result.User != nil {
+            t.Error("expected nil user")
+        }
+        if result.FormErrors == nil || !result.FormErrors.HasErrors() {
+            t.Error("expected form errors")
+        }
     })
 }
 ```
@@ -528,22 +514,32 @@ func TestEmailRegex(t *testing.T) {
 
 ## ベストプラクティス
 
-### 1. バリデーションは 1 ファイルに統合
+### 1. Validator は Application 層に配置し、UseCase から呼び出す
 
 ```go
-// ✅ Good: 1つのファイル（validator.go）に統合
-// internal/handler/sign_in/validator.go
-type CreateValidator struct {
-    userRepo *repository.UserRepository
+// ✅ Good: internal/validator/ に配置し、UseCase から呼び出す
+// internal/validator/sign_in.go
+package validator
+
+type CreateSignInValidator struct{}
+
+// internal/usecase/send_sign_in_code.go
+type SendSignInCodeUsecase struct {
+    validator *validator.CreateSignInValidator
 }
 
-func (v *CreateValidator) Validate(ctx context.Context, input CreateValidatorInput) *CreateValidatorResult {
-    // 1. 形式バリデーション（DB不要）
-    formErrors := session.NewFormErrors()
+func (uc *SendSignInCodeUsecase) Execute(ctx context.Context, input SendSignInCodeInput) (*SendSignInCodeResult, error) {
+    valResult := uc.validator.Validate(ctx, validator.CreateSignInValidatorInput{
+        Email: input.Email,
+    })
     // ...
+}
+```
 
-    // 2. 状態バリデーション（DB必要）
-    user, err := v.userRepo.GetByEmailForSignIn(ctx, input.Email)
+```go
+// ❌ Bad: Handler から直接 Validator を呼び出す
+func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
+    result := h.validator.Validate(ctx, input) // Handler が直接呼び出している
     // ...
 }
 ```
@@ -555,15 +551,15 @@ func (v *CreateValidator) Validate(ctx context.Context, input CreateValidatorInp
 formErrors.AddFieldError("email", "メールアドレスを入力してください")
 
 // ✅ Good: 国際化された翻訳
-formErrors.AddFieldError("email", templates.T(ctx, "error_required"))
+formErrors.AddFieldError("email", i18n.T(ctx, "error_required"))
 ```
 
 ### 3. 早期リターンでネストを減らす
 
 ```go
 // ❌ Bad: ネストが深い
-func (v *CreateValidator) Validate(ctx context.Context, input CreateValidatorInput) *CreateValidatorResult {
-    formErrors := session.NewFormErrors()
+func (v *CreatePasswordResetValidator) Validate(ctx context.Context, input CreatePasswordResetValidatorInput) *CreatePasswordResetValidatorResult {
+    formErrors := &session.FormErrors{}
     if input.Email != "" {
         if emailRegex.MatchString(input.Email) {
             // OK
@@ -573,23 +569,19 @@ func (v *CreateValidator) Validate(ctx context.Context, input CreateValidatorInp
     } else {
         formErrors.AddFieldError("email", "...")
     }
-    return &CreateValidatorResult{FormErrors: formErrors}
+    return &CreatePasswordResetValidatorResult{FormErrors: formErrors}
 }
 
 // ✅ Good: 早期リターンでシンプル
-func (v *CreateValidator) Validate(ctx context.Context, input CreateValidatorInput) *CreateValidatorResult {
-    formErrors := session.NewFormErrors()
+func (v *CreatePasswordResetValidator) Validate(ctx context.Context, input CreatePasswordResetValidatorInput) *CreatePasswordResetValidatorResult {
+    formErrors := &session.FormErrors{}
 
-    if input.Email == "" {
-        formErrors.AddFieldError("email", templates.T(ctx, "error_required"))
-        return &CreateValidatorResult{FormErrors: formErrors}
+    if strings.TrimSpace(input.Email) == "" {
+        formErrors.AddFieldError("email", i18n.T(ctx, "error_required"))
+        return &CreatePasswordResetValidatorResult{FormErrors: formErrors}
     }
 
-    if !emailRegex.MatchString(input.Email) {
-        formErrors.AddFieldError("email", templates.T(ctx, "error_invalid_email_format"))
-    }
-
-    return &CreateValidatorResult{FormErrors: formErrors}
+    return &CreatePasswordResetValidatorResult{}
 }
 ```
 
@@ -599,7 +591,7 @@ func (v *CreateValidator) Validate(ctx context.Context, input CreateValidatorInp
 // ✅ Good: 正規表現のコンパイルを1回だけ実行
 var emailRegex = regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
 
-func (v *CreateValidator) Validate(ctx context.Context, input CreateValidatorInput) *CreateValidatorResult {
+func (v *CreatePasswordResetValidator) Validate(ctx context.Context, input CreatePasswordResetValidatorInput) *CreatePasswordResetValidatorResult {
     // emailRegexを使用
 }
 ```
@@ -608,22 +600,22 @@ func (v *CreateValidator) Validate(ctx context.Context, input CreateValidatorInp
 
 ```go
 // ✅ Good: 結果を構造体で返す
-type CreateValidatorResult struct {
+type CreateSignInPasswordValidatorResult struct {
     User       *model.User        // 成功時のデータ
     FormErrors *session.FormErrors // フォームエラー
     Err        error               // システムエラー
 }
 
-func (v *CreateValidator) Validate(ctx context.Context, input CreateValidatorInput) *CreateValidatorResult {
+func (v *CreateSignInPasswordValidator) Validate(ctx context.Context, input CreateSignInPasswordValidatorInput) *CreateSignInPasswordValidatorResult {
     // ...
-    return &CreateValidatorResult{User: user}
+    return &CreateSignInPasswordValidatorResult{User: user}
 }
 ```
 
 ## 利点
 
-1. **シンプルな構成**: バリデーションロジックが 1 ファイルに集約される
-2. **判断コストの削減**: 「どこに書くべきか」を迷わない
-3. **依存が明確**: バリデーターの依存関係が一目でわかる
-4. **テストしやすい**: 1 つのテストファイルでバリデーション全体をテストできる
-5. **再利用可能**: 同じバリデーターを複数のハンドラーで使用可能
+1. **関心の分離**: バリデーションが Application 層に配置され、UseCase から統括的に呼び出される
+2. **再利用可能**: 同じバリデーターを複数の UseCase から利用できる
+3. **テストしやすい**: Validator を独立してテストでき、UseCase テストではバリデーション込みの統合テストが可能
+4. **依存が明確**: バリデーターの依存関係が一目でわかる
+5. **Handler がシンプル**: Handler は HTTP の入出力変換のみに専念できる

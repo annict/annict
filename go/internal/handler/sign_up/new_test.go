@@ -12,6 +12,7 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 	"github.com/annict/annict/go/internal/turnstile"
 	"github.com/annict/annict/go/internal/usecase"
+	"github.com/annict/annict/go/internal/validator"
 )
 
 // TestNew は新規登録フォーム表示のテスト
@@ -28,20 +29,18 @@ func TestNew(t *testing.T) {
 
 	// usecaseの初期化
 	queries := testutil.NewQueriesWithTx(db, tx)
-	sendSignUpCodeUC := usecase.NewSendSignUpCodeUsecase(db, repository.NewSignUpCodeRepository(queries), nil)
+	v := validator.NewCreateSignUpValidator()
+	sendSignUpCodeUC := usecase.NewSendSignUpCodeUsecase(db, repository.NewSignUpCodeRepository(queries), repository.NewUserRepository(queries), nil, v)
 
 	// セッションマネージャーの初期化
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionMgr := session.NewManager(sessionRepo, cfg)
 
-	// UserRepositoryの初期化
-	userRepo := repository.NewUserRepository(queries)
-
 	// Turnstileクライアントの初期化（テスト用）
 	turnstileClient := turnstile.NewClient("test-site-key", "test-secret-key")
 
 	// ハンドラーの初期化
-	handler := sign_up.NewHandler(cfg, sessionMgr, userRepo, nil, sendSignUpCodeUC, turnstileClient)
+	handler := sign_up.NewHandler(cfg, sessionMgr, nil, sendSignUpCodeUC, turnstileClient)
 
 	// リクエストを作成
 	req := httptest.NewRequest("GET", "/sign_up", nil)

@@ -43,7 +43,7 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 	backURL := r.URL.Query().Get("back")
 
 	// Flashメッセージを取得
-	flash, _ := h.sessionMgr.GetFlash(ctx, r)
+	flash := h.sessionMgr.GetFlash(w, r)
 	formErrors, _ := h.sessionMgr.GetFormErrors(ctx, r)
 
 	// メタ情報を設定

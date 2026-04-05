@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/testutil"
@@ -57,12 +58,12 @@ func TestGumroadSubscriberRepository_IsActive(t *testing.T) {
 
 	testCases := []struct {
 		name       string
-		subscriber *query.GumroadSubscriber
+		subscriber *model.GumroadSubscriber
 		expected   bool
 	}{
 		{
 			name: "キャンセルなし、終了なしはアクティブ",
-			subscriber: &query.GumroadSubscriber{
+			subscriber: &model.GumroadSubscriber{
 				GumroadCancelledAt: sql.NullTime{},
 				GumroadEndedAt:     sql.NullTime{},
 			},
@@ -70,7 +71,7 @@ func TestGumroadSubscriberRepository_IsActive(t *testing.T) {
 		},
 		{
 			name: "キャンセル日時が未来はアクティブ",
-			subscriber: &query.GumroadSubscriber{
+			subscriber: &model.GumroadSubscriber{
 				GumroadCancelledAt: sql.NullTime{Time: future, Valid: true},
 				GumroadEndedAt:     sql.NullTime{},
 			},
@@ -78,7 +79,7 @@ func TestGumroadSubscriberRepository_IsActive(t *testing.T) {
 		},
 		{
 			name: "終了日時が未来はアクティブ",
-			subscriber: &query.GumroadSubscriber{
+			subscriber: &model.GumroadSubscriber{
 				GumroadCancelledAt: sql.NullTime{},
 				GumroadEndedAt:     sql.NullTime{Time: future, Valid: true},
 			},
@@ -86,7 +87,7 @@ func TestGumroadSubscriberRepository_IsActive(t *testing.T) {
 		},
 		{
 			name: "キャンセル日時が過去は非アクティブ",
-			subscriber: &query.GumroadSubscriber{
+			subscriber: &model.GumroadSubscriber{
 				GumroadCancelledAt: sql.NullTime{Time: past, Valid: true},
 				GumroadEndedAt:     sql.NullTime{},
 			},
@@ -94,7 +95,7 @@ func TestGumroadSubscriberRepository_IsActive(t *testing.T) {
 		},
 		{
 			name: "終了日時が過去は非アクティブ",
-			subscriber: &query.GumroadSubscriber{
+			subscriber: &model.GumroadSubscriber{
 				GumroadCancelledAt: sql.NullTime{},
 				GumroadEndedAt:     sql.NullTime{Time: past, Valid: true},
 			},
@@ -102,7 +103,7 @@ func TestGumroadSubscriberRepository_IsActive(t *testing.T) {
 		},
 		{
 			name: "キャンセル日時が過去、終了日時が未来は非アクティブ",
-			subscriber: &query.GumroadSubscriber{
+			subscriber: &model.GumroadSubscriber{
 				GumroadCancelledAt: sql.NullTime{Time: past, Valid: true},
 				GumroadEndedAt:     sql.NullTime{Time: future, Valid: true},
 			},
@@ -110,7 +111,7 @@ func TestGumroadSubscriberRepository_IsActive(t *testing.T) {
 		},
 		{
 			name: "キャンセル日時が未来、終了日時が過去は非アクティブ",
-			subscriber: &query.GumroadSubscriber{
+			subscriber: &model.GumroadSubscriber{
 				GumroadCancelledAt: sql.NullTime{Time: future, Valid: true},
 				GumroadEndedAt:     sql.NullTime{Time: past, Valid: true},
 			},

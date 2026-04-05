@@ -30,7 +30,7 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Flashメッセージを取得
-	flash, _ := h.sessionMgr.GetFlash(ctx, r)
+	flash := h.sessionMgr.GetFlash(w, r)
 	formErrors, _ := h.sessionMgr.GetFormErrors(ctx, r)
 
 	// メタ情報を設定

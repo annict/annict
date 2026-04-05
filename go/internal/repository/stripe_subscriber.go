@@ -8,10 +8,6 @@ import (
 	"github.com/annict/annict/go/internal/query"
 )
 
-// StripeSubscriber はStripeサブスクライバーの型エイリアスです
-// ハンドラーやUsecaseがqueryパッケージを直接参照しないようにするため、repositoryで公開します
-type StripeSubscriber = query.StripeSubscriber
-
 // CreateStripeSubscriberParams はStripeサブスクライバー作成のパラメータの型エイリアスです
 type CreateStripeSubscriberParams = query.CreateStripeSubscriberParams
 
@@ -34,13 +30,21 @@ func (r *StripeSubscriberRepository) WithTx(tx *sql.Tx) *StripeSubscriberReposit
 }
 
 // Create は新しいStripeサブスクライバーを作成します
-func (r *StripeSubscriberRepository) Create(ctx context.Context, params query.CreateStripeSubscriberParams) (query.StripeSubscriber, error) {
-	return r.queries.CreateStripeSubscriber(ctx, params)
+func (r *StripeSubscriberRepository) Create(ctx context.Context, params query.CreateStripeSubscriberParams) (model.StripeSubscriber, error) {
+	row, err := r.queries.CreateStripeSubscriber(ctx, params)
+	if err != nil {
+		return model.StripeSubscriber{}, err
+	}
+	return toStripeSubscriberModel(row), nil
 }
 
 // GetByID はIDでStripeサブスクライバーを検索します
-func (r *StripeSubscriberRepository) GetByID(ctx context.Context, id int64) (query.StripeSubscriber, error) {
-	return r.queries.GetStripeSubscriberByID(ctx, id)
+func (r *StripeSubscriberRepository) GetByID(ctx context.Context, id int64) (model.StripeSubscriber, error) {
+	row, err := r.queries.GetStripeSubscriberByID(ctx, id)
+	if err != nil {
+		return model.StripeSubscriber{}, err
+	}
+	return toStripeSubscriberModel(row), nil
 }
 
 // GetByStripeCustomerID はStripe顧客IDでStripeサブスクライバーを検索します
@@ -66,7 +70,24 @@ func (r *StripeSubscriberRepository) UpdateStatus(ctx context.Context, params qu
 // IsActive はサブスクリプションがアクティブかどうかを判定します
 // active または past_due 状態をアクティブとして扱います
 // past_due は支払い遅延中だが、Stripeがリトライ中のため猶予期間として利用可能
-func (r *StripeSubscriberRepository) IsActive(subscriber *query.StripeSubscriber) bool {
+func (r *StripeSubscriberRepository) IsActive(subscriber *model.StripeSubscriber) bool {
 	status := model.StripeSubscriptionStatus(subscriber.StripeStatus)
 	return status.IsActive()
+}
+
+// toStripeSubscriberModel はqueryの結果をモデルに変換します
+func toStripeSubscriberModel(row query.StripeSubscriber) model.StripeSubscriber {
+	return model.StripeSubscriber{
+		ID:                       row.ID,
+		StripeCustomerID:         row.StripeCustomerID,
+		StripeSubscriptionID:     row.StripeSubscriptionID,
+		StripePriceID:            row.StripePriceID,
+		StripeStatus:             row.StripeStatus,
+		StripeCurrentPeriodStart: row.StripeCurrentPeriodStart,
+		StripeCurrentPeriodEnd:   row.StripeCurrentPeriodEnd,
+		StripeCancelAt:           row.StripeCancelAt,
+		StripeCanceledAt:         row.StripeCanceledAt,
+		CreatedAt:                row.CreatedAt,
+		UpdatedAt:                row.UpdatedAt,
+	}
 }

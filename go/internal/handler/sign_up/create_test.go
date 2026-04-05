@@ -14,6 +14,7 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 	"github.com/annict/annict/go/internal/turnstile"
 	"github.com/annict/annict/go/internal/usecase"
+	"github.com/annict/annict/go/internal/validator"
 )
 
 // TestCreate_Success は正常系のテスト
@@ -33,7 +34,8 @@ func TestCreate_Success(t *testing.T) {
 
 	// usecaseの初期化
 	queries := testutil.NewQueriesWithTx(db, tx)
-	sendSignUpCodeUC := usecase.NewSendSignUpCodeUsecase(db, repository.NewSignUpCodeRepository(queries), nil) // Riverクライアントは不要
+	v := validator.NewCreateSignUpValidator()
+	sendSignUpCodeUC := usecase.NewSendSignUpCodeUsecase(db, repository.NewSignUpCodeRepository(queries), repository.NewUserRepository(queries), nil, v)
 
 	// セッションマネージャーの初期化
 	sessionRepo := repository.NewSessionRepository(queries)
@@ -43,10 +45,7 @@ func TestCreate_Success(t *testing.T) {
 	turnstileClient := turnstile.NewClient("test-site-key", "test-secret-key")
 
 	// ハンドラーの初期化
-	userRepo := repository.NewUserRepository(queries)
-
-	// ハンドラーの初期化
-	handler := sign_up.NewHandler(cfg, sessionMgr, userRepo, nil, sendSignUpCodeUC, turnstileClient)
+	handler := sign_up.NewHandler(cfg, sessionMgr, nil, sendSignUpCodeUC, turnstileClient)
 
 	// リクエストパラメータを作成
 	formData := url.Values{}
@@ -90,7 +89,8 @@ func TestCreate_EmailRequired(t *testing.T) {
 
 	// usecaseの初期化
 	queries := testutil.NewQueriesWithTx(db, tx)
-	sendSignUpCodeUC := usecase.NewSendSignUpCodeUsecase(db, repository.NewSignUpCodeRepository(queries), nil)
+	v := validator.NewCreateSignUpValidator()
+	sendSignUpCodeUC := usecase.NewSendSignUpCodeUsecase(db, repository.NewSignUpCodeRepository(queries), repository.NewUserRepository(queries), nil, v)
 
 	// セッションマネージャーの初期化
 	sessionRepo := repository.NewSessionRepository(queries)
@@ -100,10 +100,7 @@ func TestCreate_EmailRequired(t *testing.T) {
 	turnstileClient := turnstile.NewClient("test-site-key", "test-secret-key")
 
 	// ハンドラーの初期化
-	userRepo := repository.NewUserRepository(queries)
-
-	// ハンドラーの初期化
-	handler := sign_up.NewHandler(cfg, sessionMgr, userRepo, nil, sendSignUpCodeUC, turnstileClient)
+	handler := sign_up.NewHandler(cfg, sessionMgr, nil, sendSignUpCodeUC, turnstileClient)
 
 	// リクエストパラメータを作成（emailを空にする）
 	formData := url.Values{}

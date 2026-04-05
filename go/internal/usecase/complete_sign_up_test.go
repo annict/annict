@@ -8,6 +8,7 @@ import (
 
 	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/testutil"
+	"github.com/annict/annict/go/internal/validator"
 )
 
 func TestCompleteSignUpUsecase_Execute(t *testing.T) {
@@ -102,8 +103,13 @@ func TestCompleteSignUpUsecase_Execute(t *testing.T) {
 			}
 
 			// ユースケースを実行
-			uc := NewCompleteSignUpUsecase(db, userRepo, profileRepo, settingRepo, emailNotificationRepo, repository.NewSessionRepository(queries), rdb)
-			result, err := uc.Execute(ctx, tt.token, tt.username, tt.locale)
+			v := validator.NewCreateSignUpUsernameValidator()
+			uc := NewCompleteSignUpUsecase(db, userRepo, profileRepo, settingRepo, emailNotificationRepo, repository.NewSessionRepository(queries), rdb, v)
+			result, err := uc.Execute(ctx, CompleteSignUpInput{
+				Token:    tt.token,
+				Username: tt.username,
+				Locale:   tt.locale,
+			})
 
 			// エラーチェック
 			if (err != nil) != tt.wantErr {
@@ -197,10 +203,15 @@ func TestCompleteSignUpUsecase_Execute_Integration(t *testing.T) {
 	}
 
 	// ユースケースを作成（Redisあり）
-	uc := NewCompleteSignUpUsecase(db, userRepo, profileRepo, settingRepo, emailNotificationRepo, repository.NewSessionRepository(queries), rdb)
+	v := validator.NewCreateSignUpUsernameValidator()
+	uc := NewCompleteSignUpUsecase(db, userRepo, profileRepo, settingRepo, emailNotificationRepo, repository.NewSessionRepository(queries), rdb, v)
 
 	// ユーザー登録を実行
-	result, err := uc.Execute(ctx, token, "testuser_noredis", "ja")
+	result, err := uc.Execute(ctx, CompleteSignUpInput{
+		Token:    token,
+		Username: "testuser_noredis",
+		Locale:   "ja",
+	})
 	if err != nil {
 		t.Fatalf("Execute() error = %v", err)
 	}

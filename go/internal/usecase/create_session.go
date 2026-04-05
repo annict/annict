@@ -12,6 +12,16 @@ import (
 	"github.com/annict/annict/go/internal/session"
 )
 
+// generatePublicID ランダムなpublic IDを生成
+func generatePublicID() (string, error) {
+	// 32バイトのランダムデータを生成
+	randomBytes := make([]byte, 32)
+	if _, err := rand.Read(randomBytes); err != nil {
+		return "", err
+	}
+	return hex.EncodeToString(randomBytes), nil
+}
+
 // SessionResult セッション作成の結果
 type SessionResult struct {
 	PublicID string // Cookie値として使用するID
@@ -32,9 +42,8 @@ func NewCreateSessionUsecase(sessionRepo *repository.SessionRepository) *CreateS
 
 // Execute セッションを作成する
 // tx: オプションでトランザクションを渡せる（nilの場合は通常のクエリ実行）
-// flashMessage: オプションでflashメッセージを設定可能（空の場合は設定しない）
 // encryptedPassword: ユーザーのencrypted_password（authenticatable_salt生成に必要）
-func (uc *CreateSessionUsecase) Execute(ctx context.Context, tx *sql.Tx, userID int64, encryptedPassword string, flashMessage string) (*SessionResult, error) {
+func (uc *CreateSessionUsecase) Execute(ctx context.Context, tx *sql.Tx, userID int64, encryptedPassword string) (*SessionResult, error) {
 	// Public ID（Cookie値）を生成
 	publicID, err := generatePublicID()
 	if err != nil {
@@ -63,11 +72,6 @@ func (uc *CreateSessionUsecase) Execute(ctx context.Context, tx *sql.Tx, userID 
 		"_csrf_token": csrfToken,
 	}
 
-	// flashメッセージを追加（ログイン成功時など）
-	if flashMessage != "" {
-		sessionData["flash"] = flashMessage
-	}
-
 	// JSONにエンコード
 	jsonData, err := json.Marshal(sessionData)
 	if err != nil {
@@ -92,14 +96,4 @@ func (uc *CreateSessionUsecase) Execute(ctx context.Context, tx *sql.Tx, userID 
 		PublicID: publicID,
 		UserID:   userID,
 	}, nil
-}
-
-// generatePublicID ランダムなpublic IDを生成
-func generatePublicID() (string, error) {
-	// 32バイトのランダムデータを生成
-	randomBytes := make([]byte, 32)
-	if _, err := rand.Read(randomBytes); err != nil {
-		return "", err
-	}
-	return hex.EncodeToString(randomBytes), nil
 }

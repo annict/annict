@@ -3,7 +3,6 @@ package sign_up
 import (
 	"github.com/annict/annict/go/internal/config"
 	"github.com/annict/annict/go/internal/ratelimit"
-	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/turnstile"
 	"github.com/annict/annict/go/internal/usecase"
@@ -13,7 +12,6 @@ import (
 type Handler struct {
 	cfg              *config.Config
 	sessionMgr       *session.Manager
-	userRepo         *repository.UserRepository
 	limiter          *ratelimit.Limiter
 	sendSignUpCodeUC *usecase.SendSignUpCodeUsecase
 	turnstileClient  *turnstile.Client
@@ -23,7 +21,6 @@ type Handler struct {
 func NewHandler(
 	cfg *config.Config,
 	sessionMgr *session.Manager,
-	userRepo *repository.UserRepository,
 	limiter *ratelimit.Limiter,
 	sendSignUpCodeUC *usecase.SendSignUpCodeUsecase,
 	turnstileClient *turnstile.Client,
@@ -31,7 +28,6 @@ func NewHandler(
 	return &Handler{
 		cfg:              cfg,
 		sessionMgr:       sessionMgr,
-		userRepo:         userRepo,
 		limiter:          limiter,
 		sendSignUpCodeUC: sendSignUpCodeUC,
 		turnstileClient:  turnstileClient,

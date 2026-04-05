@@ -1,7 +1,6 @@
 package password
 
 import (
-	"database/sql"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -10,10 +9,10 @@ import (
 	"github.com/annict/annict/go/internal/clientip"
 	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/middleware"
-	"github.com/annict/annict/go/internal/password_reset"
 	"github.com/annict/annict/go/internal/templates/layouts"
 	errorpages "github.com/annict/annict/go/internal/templates/pages/errors"
 	passwordpages "github.com/annict/annict/go/internal/templates/pages/password"
+	"github.com/annict/annict/go/internal/usecase"
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
@@ -44,41 +43,18 @@ func (h *Handler) Edit(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// トークンをハッシュ化してデータベースから検索
-	tokenDigest := password_reset.HashToken(token)
-	resetToken, err := h.passwordResetTokenRepository.GetByDigest(ctx, tokenDigest)
-	if err == sql.ErrNoRows {
-		// トークンが見つからない（セキュアなメッセージ）
-		slog.WarnContext(ctx, "無効なパスワードリセットトークン",
-			"token_digest", tokenDigest,
-			"reason", "not_found",
-			"ip_address", clientip.GetClientIP(r),
-		)
-		h.renderInvalidTokenError(w, r)
-		return
-	} else if err != nil {
-		slog.ErrorContext(ctx, "パスワードリセットトークンのクエリエラー", "error", err)
+	// UseCaseでトークンの有効性を検証
+	result, err := h.getPasswordResetTokenUC.Execute(ctx, usecase.GetPasswordResetTokenInput{
+		Token: token,
+	})
+	if err != nil {
+		slog.ErrorContext(ctx, "パスワードリセットトークンの検証エラー", "error", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
-	// トークンの有効性をチェック
-	if resetToken.UsedAt.Valid {
-		// 使用済み
-		slog.WarnContext(ctx, "無効なパスワードリセットトークン",
-			"token_digest", tokenDigest,
-			"reason", "used",
-			"ip_address", clientip.GetClientIP(r),
-		)
-		h.renderInvalidTokenError(w, r)
-		return
-	}
-
-	if time.Now().After(resetToken.ExpiresAt) {
-		// 有効期限切れ
-		slog.WarnContext(ctx, "無効なパスワードリセットトークン",
-			"token_digest", tokenDigest,
-			"reason", "expired",
+	if !result.Valid {
+		slog.WarnContext(ctx, "無効なパスワードリセットトークンによるアクセス",
 			"ip_address", clientip.GetClientIP(r),
 		)
 		h.renderInvalidTokenError(w, r)
@@ -86,7 +62,7 @@ func (h *Handler) Edit(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// セッションからフラッシュメッセージとフォームエラーを取得
-	flash, _ := h.sessionManager.GetFlash(ctx, r)
+	flash := h.sessionManager.GetFlash(w, r)
 	formErrors, _ := h.sessionManager.GetFormErrors(ctx, r)
 
 	// メタ情報を設定

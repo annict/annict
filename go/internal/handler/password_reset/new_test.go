@@ -29,9 +29,8 @@ func TestNew_PageMeta(t *testing.T) {
 	}
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionManager := session.NewManager(sessionRepo, cfg)
-	userRepo := repository.NewUserRepository(queries)
 
-	handler := NewHandler(cfg, userRepo, sessionManager, nil, nil, nil)
+	handler := NewHandler(cfg, sessionManager, nil, nil, nil)
 
 	tests := []struct {
 		name           string

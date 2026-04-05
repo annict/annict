@@ -14,8 +14,8 @@ import (
 func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	// 1. RepositoryからModelを取得（Domain/Infrastructure層）
-	modelWorks, err := h.workRepo.GetPopularWorksWithDetails(ctx)
+	// 1. UseCaseを呼び出してModelを取得
+	result, err := h.getPopularWorksUC.Execute(ctx)
 	if err != nil {
 		slog.ErrorContext(ctx, "人気作品の取得エラー", "error", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -23,7 +23,7 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 2. ModelをViewModelに変換（Presentation層内の変換）
-	viewWorks := viewmodel.NewWorksFromModelDetails(modelWorks, h.imageHelper)
+	viewWorks := viewmodel.NewWorksFromModelDetails(result.Works, h.imageHelper)
 
 	// コンテキストからユーザー情報を取得してviewmodelに変換
 	user := authMiddleware.GetUserFromContext(ctx)
@@ -33,7 +33,7 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 	seasons := viewmodel.NewSeasons(h.cfg)
 
 	// フラッシュメッセージを取得
-	flash, _ := h.sessionManager.GetFlash(ctx, r)
+	flash := h.sessionManager.GetFlash(w, r)
 
 	// ページメタ情報を準備
 	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)

@@ -2,12 +2,8 @@ package worker
 
 import (
 	"context"
-	"log/slog"
-	"time"
 
 	"github.com/riverqueue/river"
-
-	"github.com/annict/annict/go/internal/query"
 )
 
 // CleanupExpiredSignInCodesArgs は期限切れログインコードのクリーンアップジョブの引数です
@@ -26,38 +22,25 @@ func (CleanupExpiredSignInCodesArgs) InsertOpts() river.InsertOpts {
 	}
 }
 
+// ExpiredSignInCodeCleaner は期限切れログインコードのクリーンアップを実行するインターフェースです
+type ExpiredSignInCodeCleaner interface {
+	Execute(ctx context.Context) error
+}
+
 // CleanupExpiredSignInCodesWorker は期限切れログインコードのクリーンアップワーカーです
 type CleanupExpiredSignInCodesWorker struct {
 	river.WorkerDefaults[CleanupExpiredSignInCodesArgs]
-	queries *query.Queries
+	cleaner ExpiredSignInCodeCleaner
 }
 
 // NewCleanupExpiredSignInCodesWorker は新しいCleanupExpiredSignInCodesWorkerを作成します
-func NewCleanupExpiredSignInCodesWorker(queries *query.Queries) *CleanupExpiredSignInCodesWorker {
+func NewCleanupExpiredSignInCodesWorker(cleaner ExpiredSignInCodeCleaner) *CleanupExpiredSignInCodesWorker {
 	return &CleanupExpiredSignInCodesWorker{
-		queries: queries,
+		cleaner: cleaner,
 	}
 }
 
 // Work は有効期限切れおよび使用済みのログインコードを削除します
 func (w *CleanupExpiredSignInCodesWorker) Work(ctx context.Context, job *river.Job[CleanupExpiredSignInCodesArgs]) error {
-	slog.InfoContext(ctx, "ログインコードクリーンアップジョブを開始します")
-
-	// 24時間以上前に期限切れまたは使用済みになったコードを削除
-	cutoff := time.Now().Add(-24 * time.Hour)
-
-	err := w.queries.DeleteExpiredSignInCodes(ctx, cutoff)
-	if err != nil {
-		slog.ErrorContext(ctx, "ログインコードの削除に失敗しました",
-			"cutoff", cutoff,
-			"error", err,
-		)
-		return err
-	}
-
-	slog.InfoContext(ctx, "ログインコードクリーンアップジョブが完了しました",
-		"cutoff", cutoff,
-	)
-
-	return nil
+	return w.cleaner.Execute(ctx)
 }

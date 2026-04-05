@@ -1,7 +1,6 @@
 package sign_in
 
 import (
-	"database/sql"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -9,6 +8,7 @@ import (
 
 	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/session"
+	"github.com/annict/annict/go/internal/usecase"
 )
 
 // Create はメールアドレス送信処理とログイン方法自動判定を行います (POST /sign_in)
@@ -25,11 +25,6 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	// backパラメータを取得（ログイン後のリダイレクト先）
 	backURL := r.FormValue("back")
 
-	// 入力パラメータを作成
-	input := CreateValidatorInput{
-		Email: r.FormValue("email"),
-	}
-
 	// backパラメータ付きのリダイレクトURL生成ヘルパー
 	signInRedirectURL := func() string {
 		if backURL != "" {
@@ -38,23 +33,10 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		return "/sign_in"
 	}
 
-	// フォームバリデーション
-	validator := NewCreateValidator()
-	result := validator.Validate(ctx, input)
-	if result.FormErrors != nil && result.FormErrors.HasErrors() {
-		flashManager := session.NewFlashManager(h.sessionMgr)
-		if err := flashManager.SetFormErrors(w, r, result.FormErrors); err != nil {
-			slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
-		}
-		http.Redirect(w, r, signInRedirectURL(), http.StatusSeeOther)
-		return
-	}
-
 	// Turnstile検証
 	turnstileToken := r.FormValue("cf-turnstile-response")
 	isValid, err := h.turnstileClient.Verify(ctx, turnstileToken)
 	if err != nil || !isValid {
-		// ログ記録（エラーの詳細度に応じてログレベルを分ける）
 		if err != nil {
 			slog.ErrorContext(ctx, "Turnstile検証エラー",
 				"error", err,
@@ -66,11 +48,9 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 			)
 		}
 
-		// エラーレスポンスを返す
 		formErrors := &session.FormErrors{}
 		formErrors.AddFieldError("email", i18n.T(ctx, "turnstile_verification_failed"))
-		flashManager := session.NewFlashManager(h.sessionMgr)
-		if err := flashManager.SetFormErrors(w, r, formErrors); err != nil {
+		if err := h.sessionMgr.SetFormErrors(ctx, w, r, *formErrors); err != nil {
 			slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
 		}
 		http.Redirect(w, r, signInRedirectURL(), http.StatusSeeOther)
@@ -78,83 +58,54 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 	slog.InfoContext(ctx, "Turnstile検証成功")
 
-	// メールアドレスでユーザーを検索
-	user, err := h.userRepo.GetByEmailForSignIn(ctx, input.Email)
+	// UseCaseを呼び出し（バリデーション + ユーザー検索 + コード送信）
+	result, err := h.sendSignInCodeUC.Execute(ctx, usecase.SendSignInCodeInput{
+		Email: r.FormValue("email"),
+	})
 	if err != nil {
-		if err == sql.ErrNoRows {
-			// ユーザーが見つからない場合はエラーを表示
-			formErrors := &session.FormErrors{}
-			formErrors.AddFieldError("email", i18n.T(ctx, "sign_in_user_not_found"))
-			flashManager := session.NewFlashManager(h.sessionMgr)
-			if err := flashManager.SetFormErrors(w, r, formErrors); err != nil {
-				slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
-			}
-			http.Redirect(w, r, signInRedirectURL(), http.StatusSeeOther)
-			return
-		}
-		// その他のエラー
-		slog.Error("ユーザーの検索エラー", "error", err)
+		slog.ErrorContext(ctx, "サインイン処理でエラーが発生しました", "error", err)
 		http.Error(w, i18n.T(ctx, "sign_in_error_server"), http.StatusInternalServerError)
+		return
+	}
+	if result.FormErrors != nil && result.FormErrors.HasErrors() {
+		if err := h.sessionMgr.SetFormErrors(ctx, w, r, *result.FormErrors); err != nil {
+			slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
+		}
+		http.Redirect(w, r, signInRedirectURL(), http.StatusSeeOther)
 		return
 	}
 
 	// セッションにメールアドレスとユーザーIDを保存
-	if err := h.sessionMgr.SetValue(ctx, w, r, "sign_in_email", user.Email); err != nil {
+	if err := h.sessionMgr.SetValue(ctx, w, r, "sign_in_email", result.Email); err != nil {
 		slog.Error("セッションへのメールアドレス保存エラー", "error", err)
 		http.Error(w, i18n.T(ctx, "sign_in_error_server"), http.StatusInternalServerError)
 		return
 	}
 
-	// ユーザーIDは文字列に変換して保存
-	userIDStr := fmt.Sprintf("%d", user.ID)
+	userIDStr := fmt.Sprintf("%d", result.UserID)
 	if err := h.sessionMgr.SetValue(ctx, w, r, "sign_in_user_id", userIDStr); err != nil {
 		slog.Error("セッションへのユーザーID保存エラー", "error", err)
 		http.Error(w, i18n.T(ctx, "sign_in_error_server"), http.StatusInternalServerError)
 		return
 	}
 
-	// encrypted_passwordの有無を確認して自動的に分岐
-	if user.EncryptedPassword != "" {
+	if result.HasPassword {
 		// パスワードが存在する場合 → パスワードログイン画面へリダイレクト
-		slog.InfoContext(ctx, "ユーザーはパスワードログインを使用します",
-			"user_id", user.ID,
-			"email", user.Email,
-		)
 		redirectURL := "/sign_in/password"
 		if backURL != "" {
 			redirectURL = "/sign_in/password?back=" + url.QueryEscape(backURL)
 		}
 		http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 	} else {
-		// パスワードが存在しない場合 → 6桁コードを送信 → 6桁コード入力画面へリダイレクト
-		slog.InfoContext(ctx, "ユーザーはメールログインを使用します",
-			"user_id", user.ID,
-			"email", user.Email,
-		)
-
-		// 6桁コードを生成・送信
-		_, err := h.sendSignInCodeUC.Execute(ctx, user.ID)
-		if err != nil {
-			slog.ErrorContext(ctx, "6桁コードの送信に失敗しました",
-				"user_id", user.ID,
-				"email", user.Email,
-				"error", err,
-			)
-			http.Error(w, i18n.T(ctx, "sign_in_error_server"), http.StatusInternalServerError)
-			return
-		}
-
+		// パスワードが存在しない場合 → 6桁コード入力画面へリダイレクト
 		slog.InfoContext(ctx, "6桁コードを送信しました",
-			"user_id", user.ID,
-			"email", user.Email,
+			"user_id", result.UserID,
+			"email", result.Email,
 		)
 
 		// フラッシュメッセージを設定
-		flashManager := session.NewFlashManager(h.sessionMgr)
-		message := i18n.T(ctx, "sign_in_code_sent_to", map[string]any{"Email": user.Email})
-		if err := flashManager.SetFlash(w, r, session.FlashSuccess, message); err != nil {
-			slog.ErrorContext(ctx, "フラッシュメッセージの設定に失敗しました", "error", err)
-		}
+		message := i18n.T(ctx, "sign_in_code_sent_to", map[string]any{"Email": result.Email})
+		h.sessionMgr.SetFlash(w, session.FlashSuccess, message)
 
 		redirectURL := "/sign_in/code"
 		if backURL != "" {

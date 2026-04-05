@@ -14,15 +14,6 @@ type Flash struct {
 	Message string `json:"message"` // 表示するメッセージ
 }
 
-// ToJSON FlashをJSON文字列に変換
-func (f *Flash) ToJSON() (string, error) {
-	data, err := json.Marshal(f)
-	if err != nil {
-		return "", fmt.Errorf("failed to marshal flash: %w", err)
-	}
-	return string(data), nil
-}
-
 // FormErrors フォームバリデーションエラー
 type FormErrors struct {
 	Global []string            `json:"global,omitempty"` // フィールド横断のグローバルエラー
@@ -39,38 +30,17 @@ const (
 
 // セッションキー
 const (
-	sessionKeyFlash      = "flash"
 	sessionKeyFormErrors = "form_errors"
 )
 
-// SetFlash 一般的なフラッシュメッセージを設定
-func (m *Manager) SetFlash(ctx context.Context, w http.ResponseWriter, r *http.Request, flashType, message string) error {
-	flash := Flash{
-		Type:    flashType,
-		Message: message,
-	}
-
-	data, err := json.Marshal(flash)
-	if err != nil {
-		return fmt.Errorf("failed to marshal flash: %w", err)
-	}
-
-	return m.SetValue(ctx, w, r, sessionKeyFlash, string(data))
+// SetFlash はフラッシュメッセージをCookieに設定する（FlashManagerに委譲）
+func (m *Manager) SetFlash(w http.ResponseWriter, flashType, message string) {
+	m.flashMgr.setFlash(w, flashType, message)
 }
 
-// GetFlash フラッシュメッセージを取得して削除（1回限りの表示）
-func (m *Manager) GetFlash(ctx context.Context, r *http.Request) (*Flash, error) {
-	value, err := m.getAndDeleteSessionValue(ctx, r, sessionKeyFlash)
-	if err != nil || value == "" {
-		return nil, err
-	}
-
-	var flash Flash
-	if err := json.Unmarshal([]byte(value), &flash); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal flash: %w", err)
-	}
-
-	return &flash, nil
+// GetFlash はフラッシュメッセージをCookieから取得して削除する（FlashManagerに委譲）
+func (m *Manager) GetFlash(w http.ResponseWriter, r *http.Request) *Flash {
+	return m.flashMgr.GetFlash(w, r)
 }
 
 // SetFormErrors フォームバリデーションエラーを設定
@@ -141,40 +111,6 @@ func (fe *FormErrors) FieldErrors() []FieldError {
 				Message: message,
 			})
 		}
-	}
-	return errors
-}
-
-// FlashManager はフラッシュメッセージを管理するヘルパー
-type FlashManager struct {
-	manager *Manager
-}
-
-// NewFlashManager は新しいFlashManagerを作成します
-func NewFlashManager(manager *Manager) *FlashManager {
-	return &FlashManager{manager: manager}
-}
-
-// SetFlash フラッシュメッセージを設定します
-func (fm *FlashManager) SetFlash(w http.ResponseWriter, r *http.Request, flashType, message string) error {
-	return fm.manager.SetFlash(r.Context(), w, r, flashType, message)
-}
-
-// GetFlash フラッシュメッセージを取得します
-func (fm *FlashManager) GetFlash(r *http.Request) (*Flash, error) {
-	return fm.manager.GetFlash(r.Context(), r)
-}
-
-// SetFormErrors フォームエラーを設定します
-func (fm *FlashManager) SetFormErrors(w http.ResponseWriter, r *http.Request, errors *FormErrors) error {
-	return fm.manager.SetFormErrors(r.Context(), w, r, *errors)
-}
-
-// GetFormErrors フォームエラーを取得します
-func (fm *FlashManager) GetFormErrors(w http.ResponseWriter, r *http.Request) *FormErrors {
-	errors, err := fm.manager.GetFormErrors(r.Context(), r)
-	if err != nil || errors == nil {
-		return nil
 	}
 	return errors
 }

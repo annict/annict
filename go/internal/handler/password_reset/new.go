@@ -15,7 +15,7 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	// セッションからフラッシュメッセージとフォームエラーを取得
-	flash, _ := h.sessionManager.GetFlash(ctx, r)
+	flash := h.sessionManager.GetFlash(w, r)
 	formErrors, _ := h.sessionManager.GetFormErrors(ctx, r)
 
 	// メタ情報を設定

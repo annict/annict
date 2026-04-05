@@ -17,6 +17,7 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 	"github.com/annict/annict/go/internal/turnstile"
 	"github.com/annict/annict/go/internal/usecase"
+	"github.com/annict/annict/go/internal/validator"
 )
 
 func TestHandler_Create(t *testing.T) {
@@ -137,17 +138,15 @@ func TestHandler_Create(t *testing.T) {
 			sessionRepo := repository.NewSessionRepository(queries)
 			sessionMgr := session.NewManager(sessionRepo, cfg)
 
-			// UserRepositoryを作成
-			userRepo := repository.NewUserRepository(queries)
-
-			// ログインコード送信ユースケースを作成（riverClient は nil でメール送信をスキップ）
-			sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), repository.NewUserRepository(queries), nil)
+			// ログインコード送信ユースケースを作成（Dispatcher は nil でメール送信をスキップ）
+			v := validator.NewCreateSignInValidator()
+			sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), repository.NewUserRepository(queries), nil, v)
 
 			// Turnstile クライアントを作成（テスト環境用: 空のSecretKeyで検証をスキップ）
 			turnstileClient := turnstile.NewClient("", "")
 
 			// ハンドラーを作成
-			handler := NewHandler(cfg, sessionMgr, userRepo, sendSignInCodeUC, turnstileClient)
+			handler := NewHandler(cfg, sessionMgr, sendSignInCodeUC, turnstileClient)
 
 			// テスト用HTTPリクエストを作成
 			form := url.Values{}

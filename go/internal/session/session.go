@@ -22,14 +22,17 @@ const SessionKey = "_annict_session_v201904"
 type Manager struct {
 	sessionRepo *repository.SessionRepository
 	cfg         *config.Config
+	flashMgr    *FlashManager
 	CookieName  string
 }
 
 // NewManager は新しいManagerを作成
 func NewManager(sessionRepo *repository.SessionRepository, cfg *config.Config) *Manager {
+	secure := cfg.SessionSecure == "true"
 	return &Manager{
 		sessionRepo: sessionRepo,
 		cfg:         cfg,
+		flashMgr:    NewFlashManager(cfg.CookieDomain, secure),
 		CookieName:  SessionKey,
 	}
 }

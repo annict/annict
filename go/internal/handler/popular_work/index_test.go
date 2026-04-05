@@ -14,6 +14,7 @@ import (
 	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/testutil"
+	"github.com/annict/annict/go/internal/usecase"
 )
 
 // contextKey はcontext.WithValueで使用するキーの型
@@ -54,11 +55,12 @@ func TestIndex(t *testing.T) {
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionManager := session.NewManager(sessionRepo, cfg)
 
-	// WorkRepositoryを作成
+	// WorkRepositoryとUseCaseを作成
 	workRepo := repository.NewWorkRepository(queries)
+	getPopularWorksUC := usecase.NewGetPopularWorksUsecase(workRepo)
 
 	// ハンドラーを作成（templ対応版）
-	handler := NewHandler(cfg, workRepo, testutil.NewTestImageHelper(), sessionManager)
+	handler := NewHandler(cfg, getPopularWorksUC, testutil.NewTestImageHelper(), sessionManager)
 
 	// HTTPリクエストとレスポンスレコーダーを作成
 	req, err := http.NewRequest("GET", "/works/popular", nil)
@@ -126,11 +128,12 @@ func TestIndexEmptyResult(t *testing.T) {
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionManager := session.NewManager(sessionRepo, cfg)
 
-	// WorkRepositoryを作成
+	// WorkRepositoryとUseCaseを作成
 	workRepo := repository.NewWorkRepository(queries)
+	getPopularWorksUC := usecase.NewGetPopularWorksUsecase(workRepo)
 
 	// ハンドラーを作成（templ対応版）
-	handler := NewHandler(cfg, workRepo, testutil.NewTestImageHelper(), sessionManager)
+	handler := NewHandler(cfg, getPopularWorksUC, testutil.NewTestImageHelper(), sessionManager)
 
 	// HTTPリクエストとレスポンスレコーダーを作成
 	req, err := http.NewRequest("GET", "/works/popular", nil)
@@ -194,14 +197,15 @@ func BenchmarkIndex(b *testing.B) {
 		Env: "test",
 	}
 
-	// WorkRepositoryを作成
+	// WorkRepositoryとUseCaseを作成
 	workRepo := repository.NewWorkRepository(queries)
+	getPopularWorksUC := usecase.NewGetPopularWorksUsecase(workRepo)
 
 	// sessionManagerを作成
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionManager := session.NewManager(sessionRepo, cfg)
 
-	handler := NewHandler(cfg, workRepo, testutil.NewTestImageHelper(), sessionManager)
+	handler := NewHandler(cfg, getPopularWorksUC, testutil.NewTestImageHelper(), sessionManager)
 
 	b.ResetTimer()
 	b.ReportAllocs()

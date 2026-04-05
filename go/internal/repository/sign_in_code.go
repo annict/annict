@@ -62,3 +62,8 @@ func (r *SignInCodeRepository) MarkAsUsed(ctx context.Context, id int64) error {
 func (r *SignInCodeRepository) IncrementAttempts(ctx context.Context, id int64) error {
 	return r.queries.IncrementSignInCodeAttempts(ctx, id)
 }
+
+// DeleteExpired は指定日時より前に期限切れまたは使用済みになったコードを削除します
+func (r *SignInCodeRepository) DeleteExpired(ctx context.Context, cutoff time.Time) error {
+	return r.queries.DeleteExpiredSignInCodes(ctx, cutoff)
+}

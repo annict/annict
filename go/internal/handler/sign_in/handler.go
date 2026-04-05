@@ -3,7 +3,6 @@ package sign_in
 
 import (
 	"github.com/annict/annict/go/internal/config"
-	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/turnstile"
 	"github.com/annict/annict/go/internal/usecase"
@@ -13,7 +12,6 @@ import (
 type Handler struct {
 	cfg              *config.Config
 	sessionMgr       *session.Manager
-	userRepo         *repository.UserRepository
 	sendSignInCodeUC *usecase.SendSignInCodeUsecase
 	turnstileClient  *turnstile.Client
 }
@@ -22,14 +20,12 @@ type Handler struct {
 func NewHandler(
 	cfg *config.Config,
 	sessionMgr *session.Manager,
-	userRepo *repository.UserRepository,
 	sendSignInCodeUC *usecase.SendSignInCodeUsecase,
 	turnstileClient *turnstile.Client,
 ) *Handler {
 	return &Handler{
 		cfg:              cfg,
 		sessionMgr:       sessionMgr,
-		userRepo:         userRepo,
 		sendSignInCodeUC: sendSignInCodeUC,
 		turnstileClient:  turnstileClient,
 	}

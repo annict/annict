@@ -21,9 +21,7 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 	token := r.URL.Query().Get("token")
 	if token == "" {
 		slog.Warn("トークンが指定されていません")
-		if err := h.sessionMgr.SetFlash(ctx, w, r, session.FlashError, i18n.T(ctx, "sign_up_username_error_token_missing")); err != nil {
-			slog.ErrorContext(ctx, "フラッシュメッセージの設定に失敗しました", "error", err)
-		}
+		h.sessionMgr.SetFlash(w, session.FlashError, i18n.T(ctx, "sign_up_username_error_token_missing"))
 		http.Redirect(w, r, "/sign_up", http.StatusSeeOther)
 		return
 	}
@@ -35,9 +33,7 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 		result, err := h.redisClient.Get(ctx, tokenKey).Result()
 		if err != nil {
 			slog.Warn("トークンが無効か期限切れです", "error", err)
-			if err := h.sessionMgr.SetFlash(ctx, w, r, session.FlashError, i18n.T(ctx, "sign_up_username_error_token_invalid")); err != nil {
-				slog.ErrorContext(ctx, "フラッシュメッセージの設定に失敗しました", "error", err)
-			}
+			h.sessionMgr.SetFlash(w, session.FlashError, i18n.T(ctx, "sign_up_username_error_token_invalid"))
 			http.Redirect(w, r, "/sign_up", http.StatusSeeOther)
 			return
 		}
@@ -47,7 +43,7 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Flashメッセージを取得
-	flash, _ := h.sessionMgr.GetFlash(ctx, r)
+	flash := h.sessionMgr.GetFlash(w, r)
 	formErrors, _ := h.sessionMgr.GetFormErrors(ctx, r)
 
 	// メタ情報を設定

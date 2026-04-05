@@ -18,34 +18,23 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	// フォームデータを取得
 	if err := r.ParseForm(); err != nil {
 		slog.Error("フォームパースエラー", "error", err)
-		if err := h.sessionMgr.SetFlash(ctx, w, r, session.FlashError, i18n.T(ctx, "sign_up_username_error_parse_form")); err != nil {
-			slog.ErrorContext(ctx, "フラッシュメッセージの設定に失敗しました", "error", err)
-		}
+		h.sessionMgr.SetFlash(w, session.FlashError, i18n.T(ctx, "sign_up_username_error_parse_form"))
 		http.Redirect(w, r, "/sign_up", http.StatusSeeOther)
 		return
 	}
 
-	// バリデーション
-	input := CreateValidatorInput{
-		Token:    r.FormValue("token"),
-		Username: r.FormValue("username"),
-	}
-
-	v := NewCreateValidator()
-	result := v.Validate(ctx, input)
-	if result.FormErrors != nil && result.FormErrors.HasErrors() {
-		if err := h.sessionMgr.SetFormErrors(ctx, w, r, *result.FormErrors); err != nil {
-			slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
-		}
-		http.Redirect(w, r, fmt.Sprintf("/sign_up/username?token=%s", input.Token), http.StatusSeeOther)
-		return
-	}
+	token := r.FormValue("token")
+	username := r.FormValue("username")
 
 	// ロケールを取得（セッションまたはデフォルト）
 	locale := i18n.GetLocale(ctx)
 
-	// ユースケースを実行
-	ucResult, err := h.completeSignUpUC.Execute(ctx, input.Token, input.Username, locale)
+	// ユースケースを実行（バリデーション + ビジネスロジック）
+	ucResult, err := h.completeSignUpUC.Execute(ctx, usecase.CompleteSignUpInput{
+		Token:    token,
+		Username: username,
+		Locale:   locale,
+	})
 	if err != nil {
 		// エラーの種類に応じてメッセージを切り替え
 		formErrors := session.FormErrors{}
@@ -54,7 +43,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 			if err := h.sessionMgr.SetFormErrors(ctx, w, r, formErrors); err != nil {
 				slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
 			}
-			http.Redirect(w, r, fmt.Sprintf("/sign_up/username?token=%s", input.Token), http.StatusSeeOther)
+			http.Redirect(w, r, fmt.Sprintf("/sign_up/username?token=%s", token), http.StatusSeeOther)
 			return
 		} else if usecase.IsTokenInvalidError(err) {
 			formErrors.AddFieldError("token", i18n.T(ctx, "sign_up_username_error_token_invalid"))
@@ -66,14 +55,21 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		}
 
 		slog.ErrorContext(ctx, "ユーザー登録失敗",
-			"username", input.Username,
+			"username", username,
 			"ip_address", clientip.GetClientIP(r),
 			"error", err,
 		)
-		if err := h.sessionMgr.SetFlash(ctx, w, r, session.FlashError, i18n.T(ctx, "sign_up_username_error_server")); err != nil {
-			slog.ErrorContext(ctx, "フラッシュメッセージの設定に失敗しました", "error", err)
+		h.sessionMgr.SetFlash(w, session.FlashError, i18n.T(ctx, "sign_up_username_error_server"))
+		http.Redirect(w, r, fmt.Sprintf("/sign_up/username?token=%s", token), http.StatusSeeOther)
+		return
+	}
+
+	// バリデーションエラーの場合
+	if ucResult.FormErrors != nil && ucResult.FormErrors.HasErrors() {
+		if err := h.sessionMgr.SetFormErrors(ctx, w, r, *ucResult.FormErrors); err != nil {
+			slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
 		}
-		http.Redirect(w, r, fmt.Sprintf("/sign_up/username?token=%s", input.Token), http.StatusSeeOther)
+		http.Redirect(w, r, fmt.Sprintf("/sign_up/username?token=%s", token), http.StatusSeeOther)
 		return
 	}
 
@@ -93,8 +89,6 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	)
 
 	// 成功メッセージを設定してホームページにリダイレクト
-	if err := h.sessionMgr.SetFlash(ctx, w, r, session.FlashSuccess, i18n.T(ctx, "sign_up_username_success")); err != nil {
-		slog.ErrorContext(ctx, "フラッシュメッセージの設定に失敗しました", "error", err)
-	}
+	h.sessionMgr.SetFlash(w, session.FlashSuccess, i18n.T(ctx, "sign_up_username_success"))
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

@@ -14,6 +14,7 @@ import (
 	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/testutil"
 	"github.com/annict/annict/go/internal/usecase"
+	"github.com/annict/annict/go/internal/validator"
 )
 
 // TestUpdate_Success 6桁コード再送信成功のテスト
@@ -46,11 +47,12 @@ func TestUpdate_Success(t *testing.T) {
 	userRepo := repository.NewUserRepository(queries)
 
 	// ハンドラーを作成
-	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), repository.NewUserRepository(queries), nil)
+	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), userRepo, nil, validator.NewCreateSignInValidator())
 	signInCodeRepo := repository.NewSignInCodeRepository(queries)
-	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo)
+	signInCodeValidator := validator.NewCreateSignInCodeValidator()
+	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, signInCodeValidator)
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
-	handler := NewHandler(cfg, sessionMgr, userRepo, db, nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
+	handler := NewHandler(cfg, sessionMgr, nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
 
 	// リクエストを作成
 	form := url.Values{}
@@ -143,11 +145,12 @@ func TestUpdate_AlreadyLoggedIn(t *testing.T) {
 	userRepo := repository.NewUserRepository(queries)
 
 	// ハンドラーを作成
-	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), repository.NewUserRepository(queries), nil)
+	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), userRepo, nil, validator.NewCreateSignInValidator())
 	signInCodeRepo := repository.NewSignInCodeRepository(queries)
-	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo)
+	signInCodeValidator := validator.NewCreateSignInCodeValidator()
+	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, signInCodeValidator)
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
-	handler := NewHandler(cfg, sessionMgr, userRepo, db, nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
+	handler := NewHandler(cfg, sessionMgr, nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
 
 	// リクエストを作成
 	form := url.Values{}
@@ -161,7 +164,7 @@ func TestUpdate_AlreadyLoggedIn(t *testing.T) {
 		t.Fatalf("ユーザー取得エラー: %v", err)
 	}
 
-	sessionResult, err := createSessionUC.Execute(ctx, tx, userID, user.EncryptedPassword, "")
+	sessionResult, err := createSessionUC.Execute(ctx, tx, userID, user.EncryptedPassword)
 	if err != nil {
 		t.Fatalf("セッション作成エラー: %v", err)
 	}
@@ -214,11 +217,12 @@ func TestUpdate_NoEmailInSession(t *testing.T) {
 	userRepo := repository.NewUserRepository(queries)
 
 	// ハンドラーを作成
-	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), repository.NewUserRepository(queries), nil)
+	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), userRepo, nil, validator.NewCreateSignInValidator())
 	signInCodeRepo := repository.NewSignInCodeRepository(queries)
-	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo)
+	signInCodeValidator := validator.NewCreateSignInCodeValidator()
+	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, signInCodeValidator)
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
-	handler := NewHandler(cfg, sessionMgr, userRepo, db, nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
+	handler := NewHandler(cfg, sessionMgr, nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
 
 	// リクエストを作成
 	form := url.Values{}
@@ -266,11 +270,12 @@ func TestUpdate_NoUserIDInSession(t *testing.T) {
 	userRepo := repository.NewUserRepository(queries)
 
 	// ハンドラーを作成
-	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), repository.NewUserRepository(queries), nil)
+	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), userRepo, nil, validator.NewCreateSignInValidator())
 	signInCodeRepo := repository.NewSignInCodeRepository(queries)
-	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo)
+	signInCodeValidator := validator.NewCreateSignInCodeValidator()
+	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, signInCodeValidator)
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
-	handler := NewHandler(cfg, sessionMgr, userRepo, db, nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
+	handler := NewHandler(cfg, sessionMgr, nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
 
 	// リクエストを作成
 	form := url.Values{}

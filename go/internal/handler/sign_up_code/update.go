@@ -9,6 +9,7 @@ import (
 	"github.com/annict/annict/go/internal/clientip"
 	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/session"
+	"github.com/annict/annict/go/internal/usecase"
 )
 
 // Update PATCH /sign_up/code - 新規登録確認コード再送信処理
@@ -19,17 +20,13 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 	email, err := h.sessionMgr.GetValue(ctx, r, "sign_up_email")
 	if err != nil {
 		slog.Error("セッション値の取得エラー", "key", "sign_up_email", "error", err)
-		if err := h.sessionMgr.SetFlash(ctx, w, r, session.FlashError, i18n.T(ctx, "sign_up_code_error_server")); err != nil {
-			slog.ErrorContext(ctx, "フラッシュメッセージの設定に失敗しました", "error", err)
-		}
+		h.sessionMgr.SetFlash(w, session.FlashError, i18n.T(ctx, "sign_up_code_error_server"))
 		http.Redirect(w, r, "/sign_up", http.StatusSeeOther)
 		return
 	}
 	if email == "" {
 		slog.Warn("セッションにメールアドレスが存在しません")
-		if err := h.sessionMgr.SetFlash(ctx, w, r, session.FlashError, i18n.T(ctx, "sign_up_code_error_session_expired")); err != nil {
-			slog.ErrorContext(ctx, "フラッシュメッセージの設定に失敗しました", "error", err)
-		}
+		h.sessionMgr.SetFlash(w, session.FlashError, i18n.T(ctx, "sign_up_code_error_session_expired"))
 		http.Redirect(w, r, "/sign_up", http.StatusSeeOther)
 		return
 	}
@@ -45,9 +42,7 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 				"email", email,
 				"ip_address", clientip.GetClientIP(r),
 			)
-			if err := h.sessionMgr.SetFlash(ctx, w, r, session.FlashError, i18n.T(ctx, "rate_limit_exceeded")); err != nil {
-				slog.ErrorContext(ctx, "フラッシュメッセージの設定に失敗しました", "error", err)
-			}
+			h.sessionMgr.SetFlash(w, session.FlashError, i18n.T(ctx, "rate_limit_exceeded"))
 			http.Redirect(w, r, "/sign_up/code", http.StatusSeeOther)
 			return
 		}
@@ -57,12 +52,19 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 	locale := i18n.GetLocale(ctx)
 
 	// ユースケース呼び出し: 確認コードを再送信
-	_, err = h.sendSignUpCodeUC.Execute(ctx, email, locale)
+	result, err := h.sendSignUpCodeUC.Execute(ctx, usecase.SendSignUpCodeInput{
+		Email:  email,
+		Locale: locale,
+	})
 	if err != nil {
 		slog.Error("確認コードの再送信に失敗しました", "email", email, "error", err)
-		if err := h.sessionMgr.SetFlash(ctx, w, r, session.FlashError, i18n.T(ctx, "sign_up_code_error_server")); err != nil {
-			slog.ErrorContext(ctx, "フラッシュメッセージの設定に失敗しました", "error", err)
-		}
+		h.sessionMgr.SetFlash(w, session.FlashError, i18n.T(ctx, "sign_up_code_error_server"))
+		http.Redirect(w, r, "/sign_up/code", http.StatusSeeOther)
+		return
+	}
+	if result.FormErrors != nil && result.FormErrors.HasErrors() {
+		slog.WarnContext(ctx, "確認コード再送信のバリデーションエラー", "email", email)
+		h.sessionMgr.SetFlash(w, session.FlashError, i18n.T(ctx, "sign_up_code_error_server"))
 		http.Redirect(w, r, "/sign_up/code", http.StatusSeeOther)
 		return
 	}
@@ -70,9 +72,7 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 	slog.Info("確認コードを再送信しました", "email", email)
 
 	// フラッシュメッセージを設定
-	if err := h.sessionMgr.SetFlash(ctx, w, r, session.FlashSuccess, i18n.T(ctx, "sign_up_code_resend_success")); err != nil {
-		slog.ErrorContext(ctx, "フラッシュメッセージの設定に失敗しました", "error", err)
-	}
+	h.sessionMgr.SetFlash(w, session.FlashSuccess, i18n.T(ctx, "sign_up_code_resend_success"))
 
 	// /sign_up/code にリダイレクト
 	http.Redirect(w, r, "/sign_up/code", http.StatusSeeOther)

@@ -10,13 +10,14 @@ import (
 	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/testutil"
+	"github.com/annict/annict/go/internal/validator"
 )
 
 func TestVerifySignInCodeUsecase_Execute_Success(t *testing.T) {
 	t.Parallel()
 
 	// テスト用DBをセットアップ
-	db, _ := testutil.SetupTestDB(t)
+	db := testutil.GetTestDB(t)
 	queries := query.New(db)
 
 	// テストユーザーを作成
@@ -55,12 +56,26 @@ func TestVerifySignInCodeUsecase_Execute_Success(t *testing.T) {
 
 	// ユースケースを作成
 	signInCodeRepo := repository.NewSignInCodeRepository(queries)
-	uc := NewVerifySignInCodeUsecase(db, signInCodeRepo)
+	userRepo := repository.NewUserRepository(queries)
+	v := validator.NewCreateSignInCodeValidator()
+	uc := NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, v)
 
 	// Execute を実行（正しいコード）
-	err = uc.Execute(ctx, userID, code)
+	result, err := uc.Execute(ctx, VerifySignInCodeInput{UserID: userID, Code: code})
 	if err != nil {
 		t.Fatalf("Execute failed: %v", err)
+	}
+
+	if result == nil {
+		t.Fatal("result should not be nil")
+	}
+
+	if result.FormErrors != nil && result.FormErrors.HasErrors() {
+		t.Errorf("unexpected form errors: %+v", result.FormErrors)
+	}
+
+	if result.Username != "verify_code_success_user" {
+		t.Errorf("Username: got %q, want %q", result.Username, "verify_code_success_user")
 	}
 
 	// コードが使用済みになっていることを確認
@@ -70,11 +85,70 @@ func TestVerifySignInCodeUsecase_Execute_Success(t *testing.T) {
 	}
 }
 
+func TestVerifySignInCodeUsecase_Execute_ValidationError(t *testing.T) {
+	t.Parallel()
+
+	// テスト用DBをセットアップ
+	db := testutil.GetTestDB(t)
+	queries := query.New(db)
+
+	// テストユーザーを作成
+	setupTx, err := db.Begin()
+	if err != nil {
+		t.Fatalf("Begin transaction failed: %v", err)
+	}
+	defer func() { _ = setupTx.Rollback() }()
+
+	userID := testutil.NewUserBuilder(t, setupTx).
+		WithUsername("verify_code_val_error_user").
+		WithEmail("verify_code_val_error@example.com").
+		Build()
+
+	if err := setupTx.Commit(); err != nil {
+		t.Fatalf("Commit failed: %v", err)
+	}
+
+	// ユースケースを作成
+	signInCodeRepo := repository.NewSignInCodeRepository(queries)
+	userRepo := repository.NewUserRepository(queries)
+	v := validator.NewCreateSignInCodeValidator()
+	uc := NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, v)
+
+	ctx := context.Background()
+
+	tests := []struct {
+		name string
+		code string
+	}{
+		{"空のコード", ""},
+		{"5桁の数字", "12345"},
+		{"7桁の数字", "1234567"},
+		{"英字を含む", "12345a"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result, err := uc.Execute(ctx, VerifySignInCodeInput{UserID: userID, Code: tt.code})
+			if err != nil {
+				t.Fatalf("Execute should not return error for validation failure: %v", err)
+			}
+
+			if result == nil {
+				t.Fatal("result should not be nil")
+			}
+
+			if result.FormErrors == nil || !result.FormErrors.HasErrors() {
+				t.Error("expected form errors but got none")
+			}
+		})
+	}
+}
+
 func TestVerifySignInCodeUsecase_Execute_CodeNotFound(t *testing.T) {
 	t.Parallel()
 
 	// テスト用DBをセットアップ
-	db, _ := testutil.SetupTestDB(t)
+	db := testutil.GetTestDB(t)
 	queries := query.New(db)
 
 	// テストユーザーを作成
@@ -95,12 +169,14 @@ func TestVerifySignInCodeUsecase_Execute_CodeNotFound(t *testing.T) {
 
 	// ユースケースを作成
 	signInCodeRepo := repository.NewSignInCodeRepository(queries)
-	uc := NewVerifySignInCodeUsecase(db, signInCodeRepo)
+	userRepo := repository.NewUserRepository(queries)
+	v := validator.NewCreateSignInCodeValidator()
+	uc := NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, v)
 
 	ctx := context.Background()
 
 	// Execute を実行（コードが存在しない）
-	err = uc.Execute(ctx, userID, "123456")
+	_, err = uc.Execute(ctx, VerifySignInCodeInput{UserID: userID, Code: "123456"})
 	if err == nil {
 		t.Fatal("Execute should fail when code not found")
 	}
@@ -114,7 +190,7 @@ func TestVerifySignInCodeUsecase_Execute_CodeExpired(t *testing.T) {
 	t.Parallel()
 
 	// テスト用DBをセットアップ
-	db, _ := testutil.SetupTestDB(t)
+	db := testutil.GetTestDB(t)
 	queries := query.New(db)
 
 	// テストユーザーを作成
@@ -153,10 +229,12 @@ func TestVerifySignInCodeUsecase_Execute_CodeExpired(t *testing.T) {
 
 	// ユースケースを作成
 	signInCodeRepo := repository.NewSignInCodeRepository(queries)
-	uc := NewVerifySignInCodeUsecase(db, signInCodeRepo)
+	userRepo := repository.NewUserRepository(queries)
+	v := validator.NewCreateSignInCodeValidator()
+	uc := NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, v)
 
 	// Execute を実行（有効期限切れ）
-	err = uc.Execute(ctx, userID, code)
+	_, err = uc.Execute(ctx, VerifySignInCodeInput{UserID: userID, Code: code})
 	if err == nil {
 		t.Fatal("Execute should fail when code is expired")
 	}
@@ -170,7 +248,7 @@ func TestVerifySignInCodeUsecase_Execute_InvalidCode(t *testing.T) {
 	t.Parallel()
 
 	// テスト用DBをセットアップ
-	db, _ := testutil.SetupTestDB(t)
+	db := testutil.GetTestDB(t)
 	queries := query.New(db)
 
 	// テストユーザーを作成
@@ -210,10 +288,12 @@ func TestVerifySignInCodeUsecase_Execute_InvalidCode(t *testing.T) {
 
 	// ユースケースを作成
 	signInCodeRepo := repository.NewSignInCodeRepository(queries)
-	uc := NewVerifySignInCodeUsecase(db, signInCodeRepo)
+	userRepo := repository.NewUserRepository(queries)
+	v := validator.NewCreateSignInCodeValidator()
+	uc := NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, v)
 
 	// Execute を実行（間違ったコード）
-	err = uc.Execute(ctx, userID, "999999")
+	_, err = uc.Execute(ctx, VerifySignInCodeInput{UserID: userID, Code: "999999"})
 	if err == nil {
 		t.Fatal("Execute should fail when code is invalid")
 	}
@@ -237,7 +317,7 @@ func TestVerifySignInCodeUsecase_Execute_AttemptsExceeded(t *testing.T) {
 	t.Parallel()
 
 	// テスト用DBをセットアップ
-	db, _ := testutil.SetupTestDB(t)
+	db := testutil.GetTestDB(t)
 	queries := query.New(db)
 
 	// テストユーザーを作成
@@ -277,11 +357,13 @@ func TestVerifySignInCodeUsecase_Execute_AttemptsExceeded(t *testing.T) {
 
 	// ユースケースを作成
 	signInCodeRepo := repository.NewSignInCodeRepository(queries)
-	uc := NewVerifySignInCodeUsecase(db, signInCodeRepo)
+	userRepo := repository.NewUserRepository(queries)
+	v := validator.NewCreateSignInCodeValidator()
+	uc := NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, v)
 
 	// 5回間違ったコードを入力
 	for i := 0; i < 5; i++ {
-		err := uc.Execute(ctx, userID, "999999")
+		_, err := uc.Execute(ctx, VerifySignInCodeInput{UserID: userID, Code: "999999"})
 		if err == nil {
 			t.Fatalf("Execute #%d should fail", i+1)
 		}
@@ -292,7 +374,7 @@ func TestVerifySignInCodeUsecase_Execute_AttemptsExceeded(t *testing.T) {
 	}
 
 	// 6回目は試行回数超過エラーになる
-	err = uc.Execute(ctx, userID, code)
+	_, err = uc.Execute(ctx, VerifySignInCodeInput{UserID: userID, Code: code})
 	if err == nil {
 		t.Fatal("Execute should fail when attempts exceeded")
 	}
@@ -333,7 +415,7 @@ func TestVerifySignInCodeUsecase_Execute_CodeUsedOnce(t *testing.T) {
 	t.Parallel()
 
 	// テスト用DBをセットアップ
-	db, _ := testutil.SetupTestDB(t)
+	db := testutil.GetTestDB(t)
 	queries := query.New(db)
 
 	// テストユーザーを作成
@@ -372,16 +454,22 @@ func TestVerifySignInCodeUsecase_Execute_CodeUsedOnce(t *testing.T) {
 
 	// ユースケースを作成
 	signInCodeRepo := repository.NewSignInCodeRepository(queries)
-	uc := NewVerifySignInCodeUsecase(db, signInCodeRepo)
+	userRepo := repository.NewUserRepository(queries)
+	v := validator.NewCreateSignInCodeValidator()
+	uc := NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, v)
 
 	// 1回目：正しいコードで成功
-	err = uc.Execute(ctx, userID, code)
+	result, err := uc.Execute(ctx, VerifySignInCodeInput{UserID: userID, Code: code})
 	if err != nil {
 		t.Fatalf("First Execute failed: %v", err)
 	}
 
+	if result == nil {
+		t.Fatal("result should not be nil")
+	}
+
 	// 2回目：同じコードは使用済みなのでエラー
-	err = uc.Execute(ctx, userID, code)
+	_, err = uc.Execute(ctx, VerifySignInCodeInput{UserID: userID, Code: code})
 	if err == nil {
 		t.Fatal("Second Execute should fail when code is already used")
 	}

@@ -38,7 +38,7 @@ type DeleteStripeSubscriberInput struct {
 
 // DeleteStripeSubscriberResult はcustomer.subscription.deletedイベント処理の結果
 type DeleteStripeSubscriberResult struct {
-	StripeSubscriber repository.StripeSubscriber
+	StripeSubscriber model.StripeSubscriber
 	UserID           *int64 // 紐付け解除されたユーザーID（存在する場合）
 }
 

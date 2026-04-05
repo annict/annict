@@ -19,6 +19,7 @@ import (
 	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/testutil"
 	"github.com/annict/annict/go/internal/usecase"
+	"github.com/annict/annict/go/internal/validator"
 )
 
 // TestCreate_ErrorMessageUnification は、コード検証失敗時にリダイレクトされることを確認します
@@ -40,9 +41,11 @@ func TestCreate_ErrorMessageUnification(t *testing.T) {
 
 	// usecaseの初期化
 	queries := testutil.NewQueriesWithTx(db, tx)
-	sendSignUpCodeUC := usecase.NewSendSignUpCodeUsecase(db, repository.NewSignUpCodeRepository(queries), nil)
+	v := validator.NewCreateSignUpValidator()
+	sendSignUpCodeUC := usecase.NewSendSignUpCodeUsecase(db, repository.NewSignUpCodeRepository(queries), repository.NewUserRepository(queries), nil, v)
 	signUpCodeRepo := repository.NewSignUpCodeRepository(queries)
-	verifySignUpCodeUC := usecase.NewVerifySignUpCodeUsecase(db, signUpCodeRepo)
+	signUpCodeValidator := validator.NewCreateSignUpCodeValidator()
+	verifySignUpCodeUC := usecase.NewVerifySignUpCodeUsecase(db, signUpCodeRepo, signUpCodeValidator)
 
 	// セッションマネージャーの初期化
 	sessionRepo := repository.NewSessionRepository(queries)

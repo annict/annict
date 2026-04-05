@@ -13,6 +13,7 @@ import (
 	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/testutil"
 	"github.com/annict/annict/go/internal/usecase"
+	"github.com/annict/annict/go/internal/validator"
 )
 
 func TestEdit_ValidToken(t *testing.T) {
@@ -50,9 +51,11 @@ func TestEdit_ValidToken(t *testing.T) {
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionManager := session.NewManager(sessionRepo, cfg)
 	passwordResetTokenRepo := repository.NewPasswordResetTokenRepository(queries)
-	updatePasswordUseCase := usecase.NewUpdatePasswordResetUsecase(db, repository.NewPasswordResetTokenRepository(queries), repository.NewUserRepository(queries), sessionRepo)
+	getPasswordResetTokenUC := usecase.NewGetPasswordResetTokenUsecase(passwordResetTokenRepo)
+	updatePasswordValidator := validator.NewUpdatePasswordValidator()
+	updatePasswordUC := usecase.NewUpdatePasswordResetUsecase(db, passwordResetTokenRepo, repository.NewUserRepository(queries), sessionRepo, updatePasswordValidator)
 
-	handler := NewHandler(cfg, db, passwordResetTokenRepo, sessionManager, nil, updatePasswordUseCase)
+	handler := NewHandler(cfg, sessionManager, nil, getPasswordResetTokenUC, updatePasswordUC)
 
 	// トークンを手動で作成
 	plainToken, tokenDigest, err := createTestToken()
@@ -110,9 +113,11 @@ func TestEdit_InvalidToken(t *testing.T) {
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionManager := session.NewManager(sessionRepo, cfg)
 	passwordResetTokenRepo := repository.NewPasswordResetTokenRepository(queries)
-	updatePasswordUseCase := usecase.NewUpdatePasswordResetUsecase(db, repository.NewPasswordResetTokenRepository(queries), repository.NewUserRepository(queries), sessionRepo)
+	getPasswordResetTokenUC := usecase.NewGetPasswordResetTokenUsecase(passwordResetTokenRepo)
+	updatePasswordValidator := validator.NewUpdatePasswordValidator()
+	updatePasswordUC := usecase.NewUpdatePasswordResetUsecase(db, passwordResetTokenRepo, repository.NewUserRepository(queries), sessionRepo, updatePasswordValidator)
 
-	handler := NewHandler(cfg, db, passwordResetTokenRepo, sessionManager, nil, updatePasswordUseCase)
+	handler := NewHandler(cfg, sessionManager, nil, getPasswordResetTokenUC, updatePasswordUC)
 
 	// 無効なトークンでリクエスト
 	req := httptest.NewRequest("GET", "/password/edit?token=invalid_token", nil)
@@ -162,9 +167,11 @@ func TestEdit_ExpiredToken(t *testing.T) {
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionManager := session.NewManager(sessionRepo, cfg)
 	passwordResetTokenRepo := repository.NewPasswordResetTokenRepository(queries)
-	updatePasswordUseCase := usecase.NewUpdatePasswordResetUsecase(db, repository.NewPasswordResetTokenRepository(queries), repository.NewUserRepository(queries), sessionRepo)
+	getPasswordResetTokenUC := usecase.NewGetPasswordResetTokenUsecase(passwordResetTokenRepo)
+	updatePasswordValidator := validator.NewUpdatePasswordValidator()
+	updatePasswordUC := usecase.NewUpdatePasswordResetUsecase(db, passwordResetTokenRepo, repository.NewUserRepository(queries), sessionRepo, updatePasswordValidator)
 
-	handler := NewHandler(cfg, db, passwordResetTokenRepo, sessionManager, nil, updatePasswordUseCase)
+	handler := NewHandler(cfg, sessionManager, nil, getPasswordResetTokenUC, updatePasswordUC)
 
 	// トークンを手動で作成
 	plainToken, tokenDigest, err := createTestToken()

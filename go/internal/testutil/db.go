@@ -105,6 +105,9 @@ func GetTestDB(t *testing.T) *sql.DB {
 	// - ローカル開発/テスト: op run --env-file=".env" が処理済み
 	// - CI環境: GitHub Actionsが設定済み
 	testDBOnce.Do(func() {
+		// テスト用にbcryptコストを下げる
+		auth.SetBcryptCostForTest(bcrypt.MinCost)
+
 		// テスト用データベースの接続情報
 		// Dev Container内: docker-compose.ymlのpostgresqlサービス（postgresql:5432）
 		// CI: GitHub Actionsのpostgresqlサービス（localhost:5432）
