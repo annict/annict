@@ -11,6 +11,7 @@ import (
 	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/testutil"
 	"github.com/annict/annict/go/internal/usecase"
+	"github.com/annict/annict/go/internal/validator"
 )
 
 // setupSessionWithEmail はセッションにメールアドレスを設定し、セッションCookieを返します
@@ -39,6 +40,15 @@ func setupSessionWithEmail(t *testing.T, sessionMgr *session.Manager, email stri
 	return nil
 }
 
+// newTestHandler はテスト用のHandlerを作成します
+func newTestHandler(t *testing.T, cfg *config.Config, sessionMgr *session.Manager, userRepo *repository.UserRepository, createSessionUC *usecase.CreateSessionUsecase) *Handler {
+	t.Helper()
+
+	signInPasswordValidator := validator.NewCreateSignInPasswordValidator()
+	authenticateByPasswordUC := usecase.NewAuthenticateByPasswordUsecase(userRepo, createSessionUC, signInPasswordValidator)
+	return NewHandler(cfg, sessionMgr, authenticateByPasswordUC)
+}
+
 // TestNew GET /sign_in/passwordのテスト
 func TestNew(t *testing.T) {
 	t.Parallel()
@@ -60,11 +70,10 @@ func TestNew(t *testing.T) {
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionMgr := session.NewManager(sessionRepo, cfg)
 
-	// UserRepositoryとCreateSessionUsecaseを作成
 	userRepo := repository.NewUserRepository(queries)
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
-	handler := NewHandler(cfg, userRepo, sessionMgr, createSessionUC)
+	handler := newTestHandler(t, cfg, sessionMgr, userRepo, createSessionUC)
 
 	// セッションにメールアドレスを設定
 	sessionCookie := setupSessionWithEmail(t, sessionMgr, "signin_new@example.com")
@@ -112,7 +121,7 @@ func TestNew_WithBackParam(t *testing.T) {
 	userRepo := repository.NewUserRepository(queries)
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
-	handler := NewHandler(cfg, userRepo, sessionMgr, createSessionUC)
+	handler := newTestHandler(t, cfg, sessionMgr, userRepo, createSessionUC)
 
 	// セッションにメールアドレスを設定
 	sessionCookie := setupSessionWithEmail(t, sessionMgr, "signin_back_param@example.com")
@@ -155,7 +164,7 @@ func TestNew_WithoutSessionEmail(t *testing.T) {
 	userRepo := repository.NewUserRepository(queries)
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
-	handler := NewHandler(cfg, userRepo, sessionMgr, createSessionUC)
+	handler := newTestHandler(t, cfg, sessionMgr, userRepo, createSessionUC)
 
 	// セッションなしでリクエストを作成
 	req := httptest.NewRequest("GET", "/sign_in/password", nil)

@@ -16,6 +16,7 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 	"github.com/annict/annict/go/internal/turnstile"
 	"github.com/annict/annict/go/internal/usecase"
+	"github.com/annict/annict/go/internal/validator"
 )
 
 // TestCreate_RateLimiting_IP はIP単位のRate Limitingテスト
@@ -36,7 +37,8 @@ func TestCreate_RateLimiting_IP(t *testing.T) {
 
 	// usecaseの初期化
 	queries := testutil.NewQueriesWithTx(db, tx)
-	sendSignUpCodeUC := usecase.NewSendSignUpCodeUsecase(db, repository.NewSignUpCodeRepository(queries), nil)
+	v := validator.NewCreateSignUpValidator()
+	sendSignUpCodeUC := usecase.NewSendSignUpCodeUsecase(db, repository.NewSignUpCodeRepository(queries), repository.NewUserRepository(queries), nil, v)
 
 	// セッションマネージャーの初期化
 	sessionRepo := repository.NewSessionRepository(queries)
@@ -49,8 +51,7 @@ func TestCreate_RateLimiting_IP(t *testing.T) {
 	limiter := ratelimit.NewLimiter(rdb)
 
 	// ハンドラーの初期化
-	userRepo := repository.NewUserRepository(queries)
-	handler := sign_up.NewHandler(cfg, sessionMgr, userRepo, limiter, sendSignUpCodeUC, turnstileClient)
+	handler := sign_up.NewHandler(cfg, sessionMgr, limiter, sendSignUpCodeUC, turnstileClient)
 
 	// 同一IPから6回アクセス（制限: 5回/時間）
 	clientIP := "203.0.113.1"
@@ -108,7 +109,8 @@ func TestCreate_RateLimiting_Email(t *testing.T) {
 
 	// usecaseの初期化
 	queries := testutil.NewQueriesWithTx(db, tx)
-	sendSignUpCodeUC := usecase.NewSendSignUpCodeUsecase(db, repository.NewSignUpCodeRepository(queries), nil)
+	v := validator.NewCreateSignUpValidator()
+	sendSignUpCodeUC := usecase.NewSendSignUpCodeUsecase(db, repository.NewSignUpCodeRepository(queries), repository.NewUserRepository(queries), nil, v)
 
 	// セッションマネージャーの初期化
 	sessionRepo := repository.NewSessionRepository(queries)
@@ -121,8 +123,7 @@ func TestCreate_RateLimiting_Email(t *testing.T) {
 	limiter := ratelimit.NewLimiter(rdb)
 
 	// ハンドラーの初期化
-	userRepo := repository.NewUserRepository(queries)
-	handler := sign_up.NewHandler(cfg, sessionMgr, userRepo, limiter, sendSignUpCodeUC, turnstileClient)
+	handler := sign_up.NewHandler(cfg, sessionMgr, limiter, sendSignUpCodeUC, turnstileClient)
 
 	// 同一メールアドレスで4回アクセス（制限: 3回/時間）
 	email := "test@example.com"

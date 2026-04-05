@@ -1,4 +1,4 @@
-package sign_in_code
+package validator
 
 import (
 	"context"
@@ -7,24 +7,24 @@ import (
 	"github.com/annict/annict/go/internal/i18n"
 )
 
-func TestCreateValidatorValidate(t *testing.T) {
+func TestCreateSignInCodeValidatorValidate(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
 		name              string
-		input             CreateValidatorInput
+		input             CreateSignInCodeValidatorInput
 		wantErrors        bool
 		wantFields        []string
 		wantErrorMessages map[string]string
 	}{
 		{
 			name:       "正常: 6桁の数字",
-			input:      CreateValidatorInput{Code: "123456"},
+			input:      CreateSignInCodeValidatorInput{Code: "123456"},
 			wantErrors: false,
 		},
 		{
 			name:       "エラー: コードが空",
-			input:      CreateValidatorInput{Code: ""},
+			input:      CreateSignInCodeValidatorInput{Code: ""},
 			wantErrors: true,
 			wantFields: []string{"code"},
 			wantErrorMessages: map[string]string{
@@ -33,7 +33,7 @@ func TestCreateValidatorValidate(t *testing.T) {
 		},
 		{
 			name:       "エラー: 5桁の数字",
-			input:      CreateValidatorInput{Code: "12345"},
+			input:      CreateSignInCodeValidatorInput{Code: "12345"},
 			wantErrors: true,
 			wantFields: []string{"code"},
 			wantErrorMessages: map[string]string{
@@ -42,7 +42,7 @@ func TestCreateValidatorValidate(t *testing.T) {
 		},
 		{
 			name:       "エラー: 7桁の数字",
-			input:      CreateValidatorInput{Code: "1234567"},
+			input:      CreateSignInCodeValidatorInput{Code: "1234567"},
 			wantErrors: true,
 			wantFields: []string{"code"},
 			wantErrorMessages: map[string]string{
@@ -51,7 +51,7 @@ func TestCreateValidatorValidate(t *testing.T) {
 		},
 		{
 			name:       "エラー: 6桁の英数字",
-			input:      CreateValidatorInput{Code: "12345a"},
+			input:      CreateSignInCodeValidatorInput{Code: "12345a"},
 			wantErrors: true,
 			wantFields: []string{"code"},
 			wantErrorMessages: map[string]string{
@@ -60,7 +60,7 @@ func TestCreateValidatorValidate(t *testing.T) {
 		},
 		{
 			name:       "エラー: 6桁のアルファベット",
-			input:      CreateValidatorInput{Code: "abcdef"},
+			input:      CreateSignInCodeValidatorInput{Code: "abcdef"},
 			wantErrors: true,
 			wantFields: []string{"code"},
 			wantErrorMessages: map[string]string{
@@ -69,7 +69,7 @@ func TestCreateValidatorValidate(t *testing.T) {
 		},
 		{
 			name:       "エラー: スペースを含む",
-			input:      CreateValidatorInput{Code: "123 456"},
+			input:      CreateSignInCodeValidatorInput{Code: "123 456"},
 			wantErrors: true,
 			wantFields: []string{"code"},
 			wantErrorMessages: map[string]string{
@@ -78,14 +78,14 @@ func TestCreateValidatorValidate(t *testing.T) {
 		},
 	}
 
-	validator := NewCreateValidator()
+	v := NewCreateSignInCodeValidator()
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
 			ctx := context.Background()
-			result := validator.Validate(ctx, tt.input)
+			result := v.Validate(ctx, tt.input)
 
 			if tt.wantErrors {
 				if result.FormErrors == nil || !result.FormErrors.HasErrors() {
@@ -124,18 +124,18 @@ func TestCreateValidatorValidate(t *testing.T) {
 	}
 }
 
-// TestCreateValidator_ValidateI18nMessages I18nメッセージの内容を検証するテスト
-func TestCreateValidator_ValidateI18nMessages(t *testing.T) {
+// TestCreateSignInCodeValidator_ValidateI18nMessages I18nメッセージの内容を検証するテスト
+func TestCreateSignInCodeValidator_ValidateI18nMessages(t *testing.T) {
 	t.Parallel()
 
 	ctx := context.Background()
-	validator := NewCreateValidator()
+	v := NewCreateSignInCodeValidator()
 
 	t.Run("code必須エラーメッセージ", func(t *testing.T) {
 		t.Parallel()
 
-		input := CreateValidatorInput{Code: ""}
-		result := validator.Validate(ctx, input)
+		input := CreateSignInCodeValidatorInput{Code: ""}
+		result := v.Validate(ctx, input)
 
 		if result.FormErrors == nil || !result.FormErrors.HasErrors() {
 			t.Fatal("エラーが期待されましたが、エラーがありませんでした")
@@ -157,8 +157,8 @@ func TestCreateValidator_ValidateI18nMessages(t *testing.T) {
 	t.Run("codeフォーマットエラーメッセージ", func(t *testing.T) {
 		t.Parallel()
 
-		input := CreateValidatorInput{Code: "12345"}
-		result := validator.Validate(ctx, input)
+		input := CreateSignInCodeValidatorInput{Code: "12345"}
+		result := v.Validate(ctx, input)
 
 		if result.FormErrors == nil || !result.FormErrors.HasErrors() {
 			t.Fatal("エラーが期待されましたが、エラーがありませんでした")

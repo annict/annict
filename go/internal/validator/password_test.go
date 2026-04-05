@@ -1,4 +1,4 @@
-package password
+package validator
 
 import (
 	"context"
@@ -7,19 +7,19 @@ import (
 	"github.com/annict/annict/go/internal/i18n"
 )
 
-func TestUpdateValidatorValidate(t *testing.T) {
+func TestUpdatePasswordValidatorValidate(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
 		name              string
-		input             UpdateValidatorInput
+		input             UpdatePasswordValidatorInput
 		wantErrors        bool
 		wantFields        []string
 		wantErrorMessages map[string]string
 	}{
 		{
 			name: "正常系",
-			input: UpdateValidatorInput{
+			input: UpdatePasswordValidatorInput{
 				Token:                "valid_token_123",
 				Password:             "newpassword123",
 				PasswordConfirmation: "newpassword123",
@@ -28,7 +28,7 @@ func TestUpdateValidatorValidate(t *testing.T) {
 		},
 		{
 			name: "トークンが空文字列",
-			input: UpdateValidatorInput{
+			input: UpdatePasswordValidatorInput{
 				Token:                "",
 				Password:             "newpassword123",
 				PasswordConfirmation: "newpassword123",
@@ -41,7 +41,7 @@ func TestUpdateValidatorValidate(t *testing.T) {
 		},
 		{
 			name: "トークンがwhitespaceのみ",
-			input: UpdateValidatorInput{
+			input: UpdatePasswordValidatorInput{
 				Token:                "   ",
 				Password:             "newpassword123",
 				PasswordConfirmation: "newpassword123",
@@ -54,7 +54,7 @@ func TestUpdateValidatorValidate(t *testing.T) {
 		},
 		{
 			name: "パスワードが空文字列",
-			input: UpdateValidatorInput{
+			input: UpdatePasswordValidatorInput{
 				Token:                "valid_token_123",
 				Password:             "",
 				PasswordConfirmation: "newpassword123",
@@ -67,7 +67,7 @@ func TestUpdateValidatorValidate(t *testing.T) {
 		},
 		{
 			name: "パスワードがwhitespaceのみ",
-			input: UpdateValidatorInput{
+			input: UpdatePasswordValidatorInput{
 				Token:                "valid_token_123",
 				Password:             "   ",
 				PasswordConfirmation: "newpassword123",
@@ -80,7 +80,7 @@ func TestUpdateValidatorValidate(t *testing.T) {
 		},
 		{
 			name: "パスワード確認が空文字列",
-			input: UpdateValidatorInput{
+			input: UpdatePasswordValidatorInput{
 				Token:                "valid_token_123",
 				Password:             "newpassword123",
 				PasswordConfirmation: "",
@@ -93,7 +93,7 @@ func TestUpdateValidatorValidate(t *testing.T) {
 		},
 		{
 			name: "パスワード確認がwhitespaceのみ",
-			input: UpdateValidatorInput{
+			input: UpdatePasswordValidatorInput{
 				Token:                "valid_token_123",
 				Password:             "newpassword123",
 				PasswordConfirmation: "   ",
@@ -106,7 +106,7 @@ func TestUpdateValidatorValidate(t *testing.T) {
 		},
 		{
 			name: "パスワードが一致しない",
-			input: UpdateValidatorInput{
+			input: UpdatePasswordValidatorInput{
 				Token:                "valid_token_123",
 				Password:             "newpassword123",
 				PasswordConfirmation: "differentpassword",
@@ -119,7 +119,7 @@ func TestUpdateValidatorValidate(t *testing.T) {
 		},
 		{
 			name: "すべてのフィールドが空",
-			input: UpdateValidatorInput{
+			input: UpdatePasswordValidatorInput{
 				Token:                "",
 				Password:             "",
 				PasswordConfirmation: "",
@@ -129,7 +129,7 @@ func TestUpdateValidatorValidate(t *testing.T) {
 		},
 		{
 			name: "すべてのフィールドがwhitespace",
-			input: UpdateValidatorInput{
+			input: UpdatePasswordValidatorInput{
 				Token:                "   ",
 				Password:             "   ",
 				PasswordConfirmation: "   ",
@@ -139,7 +139,7 @@ func TestUpdateValidatorValidate(t *testing.T) {
 		},
 		{
 			name: "トークンがタブのみ",
-			input: UpdateValidatorInput{
+			input: UpdatePasswordValidatorInput{
 				Token:                "\t\t",
 				Password:             "newpassword123",
 				PasswordConfirmation: "newpassword123",
@@ -149,7 +149,7 @@ func TestUpdateValidatorValidate(t *testing.T) {
 		},
 		{
 			name: "パスワードが改行のみ",
-			input: UpdateValidatorInput{
+			input: UpdatePasswordValidatorInput{
 				Token:                "valid_token_123",
 				Password:             "\n\n",
 				PasswordConfirmation: "newpassword123",
@@ -159,14 +159,14 @@ func TestUpdateValidatorValidate(t *testing.T) {
 		},
 	}
 
-	validator := NewUpdateValidator()
+	v := NewUpdatePasswordValidator()
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
 			ctx := context.Background()
-			result := validator.Validate(ctx, tt.input)
+			result := v.Validate(ctx, tt.input)
 
 			if tt.wantErrors {
 				if result.FormErrors == nil || !result.FormErrors.HasErrors() {
@@ -205,22 +205,22 @@ func TestUpdateValidatorValidate(t *testing.T) {
 	}
 }
 
-// TestUpdateValidator_ValidateI18nMessages I18nメッセージの内容を検証するテスト
-func TestUpdateValidator_ValidateI18nMessages(t *testing.T) {
+// TestUpdatePasswordValidator_ValidateI18nMessages I18nメッセージの内容を検証するテスト
+func TestUpdatePasswordValidator_ValidateI18nMessages(t *testing.T) {
 	t.Parallel()
 
 	ctx := context.Background()
-	validator := NewUpdateValidator()
+	v := NewUpdatePasswordValidator()
 
 	t.Run("token必須エラーメッセージ", func(t *testing.T) {
 		t.Parallel()
 
-		input := UpdateValidatorInput{
+		input := UpdatePasswordValidatorInput{
 			Token:                "",
 			Password:             "newpassword123",
 			PasswordConfirmation: "newpassword123",
 		}
-		result := validator.Validate(ctx, input)
+		result := v.Validate(ctx, input)
 
 		if result.FormErrors == nil || !result.FormErrors.HasErrors() {
 			t.Fatal("エラーが期待されましたが、エラーがありませんでした")
@@ -242,12 +242,12 @@ func TestUpdateValidator_ValidateI18nMessages(t *testing.T) {
 	t.Run("password必須エラーメッセージ", func(t *testing.T) {
 		t.Parallel()
 
-		input := UpdateValidatorInput{
+		input := UpdatePasswordValidatorInput{
 			Token:                "valid_token",
 			Password:             "",
 			PasswordConfirmation: "newpassword123",
 		}
-		result := validator.Validate(ctx, input)
+		result := v.Validate(ctx, input)
 
 		if result.FormErrors == nil || !result.FormErrors.HasErrors() {
 			t.Fatal("エラーが期待されましたが、エラーがありませんでした")
@@ -269,12 +269,12 @@ func TestUpdateValidator_ValidateI18nMessages(t *testing.T) {
 	t.Run("password_confirmation必須エラーメッセージ", func(t *testing.T) {
 		t.Parallel()
 
-		input := UpdateValidatorInput{
+		input := UpdatePasswordValidatorInput{
 			Token:                "valid_token",
 			Password:             "newpassword123",
 			PasswordConfirmation: "",
 		}
-		result := validator.Validate(ctx, input)
+		result := v.Validate(ctx, input)
 
 		if result.FormErrors == nil || !result.FormErrors.HasErrors() {
 			t.Fatal("エラーが期待されましたが、エラーがありませんでした")
@@ -296,12 +296,12 @@ func TestUpdateValidator_ValidateI18nMessages(t *testing.T) {
 	t.Run("password不一致エラーメッセージ", func(t *testing.T) {
 		t.Parallel()
 
-		input := UpdateValidatorInput{
+		input := UpdatePasswordValidatorInput{
 			Token:                "valid_token",
 			Password:             "newpassword123",
 			PasswordConfirmation: "differentpassword",
 		}
-		result := validator.Validate(ctx, input)
+		result := v.Validate(ctx, input)
 
 		if result.FormErrors == nil || !result.FormErrors.HasErrors() {
 			t.Fatal("エラーが期待されましたが、エラーがありませんでした")

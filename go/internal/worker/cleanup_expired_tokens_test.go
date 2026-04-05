@@ -1,4 +1,4 @@
-package worker
+package worker_test
 
 import (
 	"context"
@@ -9,8 +9,17 @@ import (
 
 	"github.com/annict/annict/go/internal/password_reset"
 	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/testutil"
+	"github.com/annict/annict/go/internal/usecase"
+	"github.com/annict/annict/go/internal/worker"
 )
+
+func newCleanupExpiredTokensTestWorker(queries *query.Queries) *worker.CleanupExpiredTokensWorker {
+	repo := repository.NewPasswordResetTokenRepository(queries)
+	uc := usecase.NewCleanupExpiredTokensUsecase(repo)
+	return worker.NewCleanupExpiredTokensWorker(uc)
+}
 
 func TestCleanupExpiredTokensWorker(t *testing.T) {
 	db, tx := testutil.SetupTestDB(t)
@@ -70,15 +79,15 @@ func TestCleanupExpiredTokensWorker(t *testing.T) {
 		t.Fatalf("トークン3の作成に失敗: %v", err)
 	}
 
-	// ワーカーを作成
-	worker := NewCleanupExpiredTokensWorker(queries)
+	// ワーカーを作成（UseCase 経由）
+	w := newCleanupExpiredTokensTestWorker(queries)
 
 	// ジョブを実行
-	job := &river.Job[CleanupExpiredTokensArgs]{
-		Args: CleanupExpiredTokensArgs{},
+	job := &river.Job[worker.CleanupExpiredTokensArgs]{
+		Args: worker.CleanupExpiredTokensArgs{},
 	}
 
-	err = worker.Work(ctx, job)
+	err = w.Work(ctx, job)
 	if err != nil {
 		t.Fatalf("ワーカーの実行に失敗: %v", err)
 	}
@@ -105,15 +114,15 @@ func TestCleanupExpiredTokensWorker_NoTokens(t *testing.T) {
 
 	ctx := context.Background()
 
-	// ワーカーを作成
-	worker := NewCleanupExpiredTokensWorker(queries)
+	// ワーカーを作成（UseCase 経由）
+	w := newCleanupExpiredTokensTestWorker(queries)
 
 	// ジョブを実行（トークンが存在しない状態）
-	job := &river.Job[CleanupExpiredTokensArgs]{
-		Args: CleanupExpiredTokensArgs{},
+	job := &river.Job[worker.CleanupExpiredTokensArgs]{
+		Args: worker.CleanupExpiredTokensArgs{},
 	}
 
-	err := worker.Work(ctx, job)
+	err := w.Work(ctx, job)
 	if err != nil {
 		t.Fatalf("ワーカーの実行に失敗: %v", err)
 	}
@@ -160,15 +169,15 @@ func TestCleanupExpiredTokensWorker_RecentlyExpired(t *testing.T) {
 		t.Fatalf("トークン2の作成に失敗: %v", err)
 	}
 
-	// ワーカーを作成
-	worker := NewCleanupExpiredTokensWorker(queries)
+	// ワーカーを作成（UseCase 経由）
+	w := newCleanupExpiredTokensTestWorker(queries)
 
 	// ジョブを実行
-	job := &river.Job[CleanupExpiredTokensArgs]{
-		Args: CleanupExpiredTokensArgs{},
+	job := &river.Job[worker.CleanupExpiredTokensArgs]{
+		Args: worker.CleanupExpiredTokensArgs{},
 	}
 
-	err = worker.Work(ctx, job)
+	err = w.Work(ctx, job)
 	if err != nil {
 		t.Fatalf("ワーカーの実行に失敗: %v", err)
 	}

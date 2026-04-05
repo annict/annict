@@ -9,26 +9,61 @@ import (
 
 	"github.com/annict/annict/go/internal/auth"
 	"github.com/annict/annict/go/internal/repository"
+	"github.com/annict/annict/go/internal/session"
+	"github.com/annict/annict/go/internal/validator"
 )
 
 // VerifySignUpCodeUsecase は6桁の新規登録確認コードを検証するユースケースです
 type VerifySignUpCodeUsecase struct {
 	db             *sql.DB
 	signUpCodeRepo *repository.SignUpCodeRepository
+	v              *validator.CreateSignUpCodeValidator
 }
 
 // NewVerifySignUpCodeUsecase は新しいVerifySignUpCodeUsecaseを作成します
-func NewVerifySignUpCodeUsecase(db *sql.DB, signUpCodeRepo *repository.SignUpCodeRepository) *VerifySignUpCodeUsecase {
+func NewVerifySignUpCodeUsecase(
+	db *sql.DB,
+	signUpCodeRepo *repository.SignUpCodeRepository,
+	v *validator.CreateSignUpCodeValidator,
+) *VerifySignUpCodeUsecase {
 	return &VerifySignUpCodeUsecase{
 		db:             db,
 		signUpCodeRepo: signUpCodeRepo,
+		v:              v,
 	}
 }
 
+// VerifySignUpCodeInput はユースケースの入力パラメータです
+type VerifySignUpCodeInput struct {
+	Email string
+	Code  string
+}
+
+// VerifySignUpCodeResult はユースケースの結果を表します
+type VerifySignUpCodeResult struct {
+	FormErrors *session.FormErrors // バリデーションエラー（nilなら成功）
+}
+
 // Execute は6桁の新規登録確認コードを検証します
-// コードが正しい場合はnilを返し、コードを使用済みにします
-// コードが間違っている場合は試行回数をインクリメントし、エラーを返します
-func (uc *VerifySignUpCodeUsecase) Execute(ctx context.Context, email string, code string) error {
+func (uc *VerifySignUpCodeUsecase) Execute(ctx context.Context, input VerifySignUpCodeInput) (*VerifySignUpCodeResult, error) {
+	// 1. バリデーション
+	valResult := uc.v.Validate(ctx, validator.CreateSignUpCodeValidatorInput{
+		Code: input.Code,
+	})
+	if valResult.FormErrors != nil && valResult.FormErrors.HasErrors() {
+		return &VerifySignUpCodeResult{FormErrors: valResult.FormErrors}, nil
+	}
+
+	// 2. コード検証
+	if err := uc.verifyCode(ctx, input.Email, input.Code); err != nil {
+		return nil, err
+	}
+
+	return &VerifySignUpCodeResult{}, nil
+}
+
+// verifyCode は6桁の新規登録確認コードを検証します
+func (uc *VerifySignUpCodeUsecase) verifyCode(ctx context.Context, email string, code string) error {
 	// トランザクション開始
 	tx, err := uc.db.BeginTx(ctx, nil)
 	if err != nil {

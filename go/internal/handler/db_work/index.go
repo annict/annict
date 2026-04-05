@@ -6,9 +6,9 @@ import (
 	"net/url"
 	"strconv"
 
-	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/templates/layouts"
 	"github.com/annict/annict/go/internal/templates/pages/db_works"
+	"github.com/annict/annict/go/internal/usecase"
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
@@ -24,25 +24,16 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 	filterNoImage := r.URL.Query().Get("filter_no_image") == "1"
 	filterNoSeason := r.URL.Query().Get("filter_no_season") == "1"
 
-	params := repository.DBWorkListParams{
+	// ユースケースを実行
+	result, err := h.listDbWorksUC.Execute(ctx, usecase.ListDbWorksInput{
 		FilterNoEpisodes: filterNoEpisodes,
 		FilterNoImage:    filterNoImage,
 		FilterNoSeason:   filterNoSeason,
 		Page:             page,
 		PerPage:          perPage,
-	}
-
-	// 作品一覧と総数を取得
-	works, err := h.workRepo.ListForDB(ctx, params)
+	})
 	if err != nil {
 		slog.ErrorContext(ctx, "DB作品一覧の取得エラー", "error", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
-	}
-
-	totalCount, err := h.workRepo.CountForDB(ctx, params)
-	if err != nil {
-		slog.ErrorContext(ctx, "DB作品総数の取得エラー", "error", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
@@ -51,17 +42,17 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 	basePath := buildBasePath(r.URL)
 
 	// ページネーション情報を作成
-	pagination := viewmodel.NewPagination(int(page), int(totalCount), int(perPage), basePath)
+	pagination := viewmodel.NewPagination(int(page), int(result.TotalCount), int(perPage), basePath)
 
 	// フラッシュメッセージを取得
-	flash, _ := h.sessionManager.GetFlash(ctx, r)
+	flash := h.sessionManager.GetFlash(w, r)
 
 	// ページメタ情報を準備
 	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)
 	meta.SetTitle(ctx, "db_works_title")
 
 	// Model → ViewModel に変換
-	worksVM := viewmodel.NewDBWorkListItems(ctx, works)
+	worksVM := viewmodel.NewDBWorkListItems(ctx, result.Works)
 
 	// テンプレートをレンダリング
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")

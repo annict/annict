@@ -8,10 +8,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/annict/annict/go/internal/config"
-	"github.com/annict/annict/go/internal/query"
-	"github.com/annict/annict/go/internal/repository"
-	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/testutil"
 )
 
@@ -21,14 +17,7 @@ func TestCreate_ValidationError(t *testing.T) {
 
 	db, tx := testutil.SetupTestDB(t)
 
-	queries := query.New(db).WithTx(tx)
-	cfg := &config.Config{Env: "test"}
-	sessionRepo := repository.NewSessionRepository(queries)
-	sessionManager := session.NewManager(sessionRepo, cfg)
-	workRepo := repository.NewWorkRepository(queries)
-	numberFormatRepo := repository.NewNumberFormatRepository(queries)
-
-	handler := NewHandler(cfg, db, workRepo, numberFormatRepo, sessionManager)
+	handler := newTestHandler(t, db, tx)
 
 	// タイトルとメディアが空のリクエスト
 	form := url.Values{}
@@ -68,14 +57,7 @@ func TestCreate_ValidationError_PreservesFormValues(t *testing.T) {
 
 	db, tx := testutil.SetupTestDB(t)
 
-	queries := query.New(db).WithTx(tx)
-	cfg := &config.Config{Env: "test"}
-	sessionRepo := repository.NewSessionRepository(queries)
-	sessionManager := session.NewManager(sessionRepo, cfg)
-	workRepo := repository.NewWorkRepository(queries)
-	numberFormatRepo := repository.NewNumberFormatRepository(queries)
-
-	handler := NewHandler(cfg, db, workRepo, numberFormatRepo, sessionManager)
+	handler := newTestHandler(t, db, tx)
 
 	// タイトルはあるがメディアが空のリクエスト
 	form := url.Values{}
@@ -109,14 +91,7 @@ func TestCreate_Success(t *testing.T) {
 
 	db, tx := testutil.SetupTestDB(t)
 
-	queries := query.New(db).WithTx(tx)
-	cfg := &config.Config{Env: "test"}
-	sessionRepo := repository.NewSessionRepository(queries)
-	sessionManager := session.NewManager(sessionRepo, cfg)
-	workRepo := repository.NewWorkRepository(queries)
-	numberFormatRepo := repository.NewNumberFormatRepository(queries)
-
-	handler := NewHandler(cfg, db, workRepo, numberFormatRepo, sessionManager)
+	handler := newTestHandler(t, db, tx)
 
 	// 有効なフォームデータ
 	form := url.Values{}

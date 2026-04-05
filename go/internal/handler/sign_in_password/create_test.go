@@ -44,16 +44,15 @@ func TestCreate_Success(t *testing.T) {
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionMgr := session.NewManager(sessionRepo, cfg)
 
-	// UserRepositoryとCreateSessionUsecaseを作成
 	userRepo := repository.NewUserRepository(queries)
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
-	handler := NewHandler(cfg, userRepo, sessionMgr, createSessionUC)
+	handler := newTestHandler(t, cfg, sessionMgr, userRepo, createSessionUC)
 
 	// セッションにメールアドレスを設定
 	sessionCookie := setupSessionWithEmail(t, sessionMgr, "signin_success@example.com")
 
-	// フォームデータを作成（email_usernameフィールドはもう必要なし）
+	// フォームデータを作成
 	form := url.Values{}
 	form.Set("password", "password123")
 
@@ -140,11 +139,10 @@ func TestCreate_InvalidCredentials(t *testing.T) {
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionMgr := session.NewManager(sessionRepo, cfg)
 
-	// UserRepositoryとCreateSessionUsecaseを作成
 	userRepo := repository.NewUserRepository(queries)
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
-	handler := NewHandler(cfg, userRepo, sessionMgr, createSessionUC)
+	handler := newTestHandler(t, cfg, sessionMgr, userRepo, createSessionUC)
 
 	// セッションにメールアドレスを設定
 	sessionCookie := setupSessionWithEmail(t, sessionMgr, "signin_invalid@example.com")
@@ -201,7 +199,7 @@ func TestCreate_WithBackParam(t *testing.T) {
 	userRepo := repository.NewUserRepository(queries)
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
-	handler := NewHandler(cfg, userRepo, sessionMgr, createSessionUC)
+	handler := newTestHandler(t, cfg, sessionMgr, userRepo, createSessionUC)
 
 	// セッションにメールアドレスを設定
 	sessionCookie := setupSessionWithEmail(t, sessionMgr, "signin_back@example.com")
@@ -258,7 +256,7 @@ func TestCreate_WithInvalidBackParam(t *testing.T) {
 	userRepo := repository.NewUserRepository(queries)
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
-	handler := NewHandler(cfg, userRepo, sessionMgr, createSessionUC)
+	handler := newTestHandler(t, cfg, sessionMgr, userRepo, createSessionUC)
 
 	// セッションにメールアドレスを設定
 	sessionCookie := setupSessionWithEmail(t, sessionMgr, "signin_invalid_back@example.com")
@@ -315,7 +313,7 @@ func TestCreate_WithProtocolRelativeBackParam(t *testing.T) {
 	userRepo := repository.NewUserRepository(queries)
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
-	handler := NewHandler(cfg, userRepo, sessionMgr, createSessionUC)
+	handler := newTestHandler(t, cfg, sessionMgr, userRepo, createSessionUC)
 
 	// セッションにメールアドレスを設定
 	sessionCookie := setupSessionWithEmail(t, sessionMgr, "signin_proto_rel@example.com")
@@ -370,11 +368,10 @@ func TestCreate_GlobalError(t *testing.T) {
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionMgr := session.NewManager(sessionRepo, cfg)
 
-	// UserRepositoryとCreateSessionUsecaseを作成
 	userRepo := repository.NewUserRepository(queries)
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
-	handler := NewHandler(cfg, userRepo, sessionMgr, createSessionUC)
+	handler := newTestHandler(t, cfg, sessionMgr, userRepo, createSessionUC)
 
 	// セッションにメールアドレスを設定
 	sessionCookie := setupSessionWithEmail(t, sessionMgr, "signin_global_error@example.com")
@@ -449,7 +446,7 @@ func TestCreate_WithoutSessionEmail(t *testing.T) {
 	userRepo := repository.NewUserRepository(queries)
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
-	handler := NewHandler(cfg, userRepo, sessionMgr, createSessionUC)
+	handler := newTestHandler(t, cfg, sessionMgr, userRepo, createSessionUC)
 
 	// セッションなしでリクエストを作成
 	form := url.Values{}

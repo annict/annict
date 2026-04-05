@@ -19,6 +19,7 @@ import (
 	"github.com/riverqueue/river"
 
 	"github.com/annict/annict/go/internal/config"
+	"github.com/annict/annict/go/internal/dispatcher"
 	"github.com/annict/annict/go/internal/handler/db_work"
 	"github.com/annict/annict/go/internal/handler/health"
 	"github.com/annict/annict/go/internal/handler/home"
@@ -49,6 +50,7 @@ import (
 	annictStripe "github.com/annict/annict/go/internal/stripe"
 	"github.com/annict/annict/go/internal/turnstile"
 	"github.com/annict/annict/go/internal/usecase"
+	"github.com/annict/annict/go/internal/validator"
 	"github.com/annict/annict/go/internal/worker"
 )
 
@@ -155,9 +157,18 @@ func main() {
 		slog.Warn("Redis URL が設定されていません（Rate Limiting は無効化されます）")
 	}
 
+	// クリーンアップ UseCase の作成（Worker 用）
+	cleanupTokenRepo := repository.NewPasswordResetTokenRepository(queries)
+	cleanupCodeRepo := repository.NewSignInCodeRepository(queries)
+	cleanupExpiredTokensUC := usecase.NewCleanupExpiredTokensUsecase(cleanupTokenRepo)
+	cleanupExpiredSignInCodesUC := usecase.NewCleanupExpiredSignInCodesUsecase(cleanupCodeRepo)
+
 	// River クライアントの初期化
 	ctx := context.Background()
-	riverClient, err := worker.NewClient(ctx, cfg.DatabaseDSN(), queries, cfg)
+	riverClient, err := worker.NewClient(ctx, cfg.DatabaseDSN(), worker.NewClientParams{
+		CleanupExpiredTokens:      cleanupExpiredTokensUC,
+		CleanupExpiredSignInCodes: cleanupExpiredSignInCodesUC,
+	}, cfg)
 	if err != nil {
 		slog.Error("River クライアントの初期化に失敗しました", "error", err)
 		os.Exit(1)
@@ -275,17 +286,20 @@ func main() {
 	userCalendarRepo := repository.NewUserCalendarRepository(queries)
 
 	// ヘルスチェックハンドラーの初期化
-	healthHandler := health.NewHandler(cfg, workRepo)
+	checkHealthUC := usecase.NewCheckHealthUsecase(workRepo)
+	healthHandler := health.NewHandler(cfg, checkHealthUC)
 
 	// ホームページハンドラーの初期化
 	homeHandler := home.NewHandler(cfg)
 
 	// 人気作品ハンドラーの初期化
 	imageHelper := image.NewHelper(cfg)
-	popularWorkHandler := popular_work.NewHandler(cfg, workRepo, imageHelper, sessionManager)
+	getPopularWorksUC := usecase.NewGetPopularWorksUsecase(workRepo)
+	popularWorkHandler := popular_work.NewHandler(cfg, getPopularWorksUC, imageHelper, sessionManager)
 
 	// iCalendar配信ハンドラーの初期化
-	icsHandler := ics.NewHandler(cfg, userCalendarRepo)
+	getUserCalendarUC := usecase.NewGetUserCalendarUsecase(userCalendarRepo)
+	icsHandler := ics.NewHandler(cfg, getUserCalendarUC)
 
 	// ユーザーリポジトリの初期化
 	userRepo := repository.NewUserRepository(queries)
@@ -293,26 +307,32 @@ func main() {
 	// サインインコードリポジトリの初期化
 	signInCodeRepo := repository.NewSignInCodeRepository(queries)
 
+	// Dispatcher の初期化
+	d := dispatcher.NewDispatcher(riverClient.Client())
+
 	// 6桁コード送信ユースケースの初期化
-	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, signInCodeRepo, userRepo, riverClient)
+	signInValidator := validator.NewCreateSignInValidator()
+	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, signInCodeRepo, userRepo, d, signInValidator)
 
 	// サインアップコードリポジトリの初期化
 	signUpCodeRepo := repository.NewSignUpCodeRepository(queries)
 
 	// 新規登録確認コード送信ユースケースの初期化
-	sendSignUpCodeUC := usecase.NewSendSignUpCodeUsecase(db, signUpCodeRepo, riverClient)
+	signUpValidator := validator.NewCreateSignUpValidator()
+	sendSignUpCodeUC := usecase.NewSendSignUpCodeUsecase(db, signUpCodeRepo, userRepo, d, signUpValidator)
 
 	// Turnstileクライアントの初期化
 	turnstileClient := turnstile.NewClient(cfg.TurnstileSiteKey, cfg.TurnstileSecretKey)
 
 	// サインインハンドラーの初期化
-	signInHandler := sign_in.NewHandler(cfg, sessionManager, userRepo, sendSignInCodeUC, turnstileClient)
+	signInHandler := sign_in.NewHandler(cfg, sessionManager, sendSignInCodeUC, turnstileClient)
 
 	// 新規登録ハンドラーの初期化
-	signUpHandler := sign_up.NewHandler(cfg, sessionManager, userRepo, limiter, sendSignUpCodeUC, turnstileClient)
+	signUpHandler := sign_up.NewHandler(cfg, sessionManager, limiter, sendSignUpCodeUC, turnstileClient)
 
 	// 新規登録確認コード検証ユースケースの初期化
-	verifySignUpCodeUC := usecase.NewVerifySignUpCodeUsecase(db, signUpCodeRepo)
+	signUpCodeValidator := validator.NewCreateSignUpCodeValidator()
+	verifySignUpCodeUC := usecase.NewVerifySignUpCodeUsecase(db, signUpCodeRepo, signUpCodeValidator)
 
 	// 新規登録確認コード入力ハンドラーの初期化
 	signUpCodeHandler := sign_up_code.NewHandler(cfg, sessionManager, db, limiter, redisClient, sendSignUpCodeUC, verifySignUpCodeUC)
@@ -321,28 +341,35 @@ func main() {
 	profileRepo := repository.NewProfileRepository(queries)
 	settingRepo := repository.NewSettingRepository(queries)
 	emailNotificationRepo := repository.NewEmailNotificationRepository(queries)
-	completeSignUpUC := usecase.NewCompleteSignUpUsecase(db, userRepo, profileRepo, settingRepo, emailNotificationRepo, sessionRepo, redisClient)
+	signUpUsernameValidator := validator.NewCreateSignUpUsernameValidator()
+	completeSignUpUC := usecase.NewCompleteSignUpUsecase(db, userRepo, profileRepo, settingRepo, emailNotificationRepo, sessionRepo, redisClient, signUpUsernameValidator)
 	signUpUsernameHandler := sign_up_username.NewHandler(cfg, sessionManager, redisClient, completeSignUpUC)
 
 	// 6桁コード入力ハンドラーの初期化
-	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo)
+	signInCodeValidator := validator.NewCreateSignInCodeValidator()
+	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, signInCodeValidator)
 	createSessionUC := usecase.NewCreateSessionUsecase(sessionRepo)
-	signInCodeHandler := sign_in_code.NewHandler(cfg, sessionManager, userRepo, db, limiter, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
+	signInCodeHandler := sign_in_code.NewHandler(cfg, sessionManager, limiter, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
 
 	// パスワードログインハンドラーの初期化
-	signInPasswordHandler := sign_in_password.NewHandler(cfg, userRepo, sessionManager, createSessionUC)
+	signInPasswordValidator := validator.NewCreateSignInPasswordValidator()
+	authenticateByPasswordUC := usecase.NewAuthenticateByPasswordUsecase(userRepo, createSessionUC, signInPasswordValidator)
+	signInPasswordHandler := sign_in_password.NewHandler(cfg, sessionManager, authenticateByPasswordUC)
 
 	// ログアウトハンドラーの初期化
 	signOutHandler := sign_out.NewHandler(sessionManager)
 
 	// パスワードリセット申請ハンドラーの初期化
 	passwordResetTokenRepo := repository.NewPasswordResetTokenRepository(queries)
-	createPasswordResetTokenUC := usecase.NewCreatePasswordResetTokenUsecase(db, userRepo, passwordResetTokenRepo, cfg, riverClient)
-	passwordResetHandler := password_reset.NewHandler(cfg, userRepo, sessionManager, limiter, turnstileClient, createPasswordResetTokenUC)
+	passwordResetValidator := validator.NewCreatePasswordResetValidator()
+	createPasswordResetTokenUC := usecase.NewCreatePasswordResetTokenUsecase(db, userRepo, passwordResetTokenRepo, cfg, d, passwordResetValidator)
+	passwordResetHandler := password_reset.NewHandler(cfg, sessionManager, limiter, turnstileClient, createPasswordResetTokenUC)
 
 	// パスワード編集・更新ハンドラーの初期化
-	updatePasswordUC := usecase.NewUpdatePasswordResetUsecase(db, passwordResetTokenRepo, userRepo, sessionRepo)
-	passwordHandler := password.NewHandler(cfg, db, passwordResetTokenRepo, sessionManager, limiter, updatePasswordUC)
+	updatePasswordValidator := validator.NewUpdatePasswordValidator()
+	getPasswordResetTokenUC := usecase.NewGetPasswordResetTokenUsecase(passwordResetTokenRepo)
+	updatePasswordUC := usecase.NewUpdatePasswordResetUsecase(db, passwordResetTokenRepo, userRepo, sessionRepo, updatePasswordValidator)
+	passwordHandler := password.NewHandler(cfg, sessionManager, limiter, getPasswordResetTokenUC, updatePasswordUC)
 
 	// Web App Manifestハンドラーの初期化
 	manifestHandler := manifest.NewHandler(cfg)
@@ -357,20 +384,25 @@ func main() {
 		PriceYearlyID:  cfg.StripePriceYearlyID,
 	}
 	stripeClient := annictStripe.NewClient(cfg.StripeSecretKey)
-	supportersHandler := supporters.NewHandler(cfg, sessionManager, imageHelper, stripeSubscriberRepo, gumroadSubscriberRepo, annictStripeCfg, stripeClient)
+	getSupporterStatusUC := usecase.NewGetSupporterStatusUsecase(stripeSubscriberRepo, gumroadSubscriberRepo)
+	supportersHandler := supporters.NewHandler(cfg, sessionManager, imageHelper, getSupporterStatusUC, annictStripeCfg, stripeClient)
 
 	// Stripe Checkoutハンドラーの初期化
-	supportersCheckoutHandler := supporters_checkout.NewHandler(cfg, sessionManager, stripeSubscriberRepo, annictStripeCfg, stripeClient)
+	createSupportersCheckoutValidator := validator.NewCreateSupportersCheckoutValidator()
+	createCheckoutSessionUC := usecase.NewCreateCheckoutSessionUsecase(cfg, stripeSubscriberRepo, annictStripeCfg, stripeClient, createSupportersCheckoutValidator)
+	supportersCheckoutHandler := supporters_checkout.NewHandler(sessionManager, createCheckoutSessionUC)
 
 	// Stripe Customer Portalハンドラーの初期化
-	supportersPortalHandler := supporters_portal.NewHandler(cfg, sessionManager, stripeSubscriberRepo, stripeClient)
+	createPortalSessionUC := usecase.NewCreatePortalSessionUsecase(cfg, stripeSubscriberRepo, stripeClient)
+	supportersPortalHandler := supporters_portal.NewHandler(sessionManager, createPortalSessionUC)
 
 	// Stripe Webhookハンドラーの初期化
 	stripeWebhookEventRepo := repository.NewStripeWebhookEventRepository(queries)
 	createStripeSubscriberUC := usecase.NewCreateStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo, stripeClient)
 	updateStripeSubscriberUC := usecase.NewUpdateStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo)
 	deleteStripeSubscriberUC := usecase.NewDeleteStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo)
-	stripeWebhookHandler := stripewebhook.NewHandler(cfg, stripeWebhookEventRepo, stripeSubscriberRepo, userRepo, createStripeSubscriberUC, updateStripeSubscriberUC, deleteStripeSubscriberUC)
+	processStripeWebhookUC := usecase.NewProcessStripeWebhookUsecase(stripeWebhookEventRepo, createStripeSubscriberUC, updateStripeSubscriberUC, deleteStripeSubscriberUC)
+	stripeWebhookHandler := stripewebhook.NewHandler(cfg, processStripeWebhookUC)
 
 	// 静的ファイルの配信 (Tailwind CLI + esbuild のビルド結果)
 	fileServer := http.FileServer(http.Dir("./static"))
@@ -416,7 +448,10 @@ func main() {
 
 	// DB管理画面
 	numberFormatRepo := repository.NewNumberFormatRepository(queries)
-	dbWorkHandler := db_work.NewHandler(cfg, db, workRepo, numberFormatRepo, sessionManager)
+	listDbWorksUC := usecase.NewListDbWorksUsecase(workRepo)
+	getDbWorkFormOptionsUC := usecase.NewGetDbWorkFormOptionsUsecase(numberFormatRepo)
+	createWorkUC := usecase.NewCreateWorkUsecase(db, workRepo, validator.NewCreateDbWorkValidator())
+	dbWorkHandler := db_work.NewHandler(cfg, sessionManager, listDbWorksUC, getDbWorkFormOptionsUC, createWorkUC)
 	r.Get("/db/works", dbWorkHandler.Index)
 	r.Get("/db/works/new", dbWorkHandler.New)
 	r.Post("/db/works", dbWorkHandler.Create)

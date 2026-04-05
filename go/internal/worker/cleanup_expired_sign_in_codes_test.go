@@ -1,4 +1,4 @@
-package worker
+package worker_test
 
 import (
 	"context"
@@ -9,8 +9,17 @@ import (
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/testutil"
+	"github.com/annict/annict/go/internal/usecase"
+	"github.com/annict/annict/go/internal/worker"
 )
+
+func newCleanupExpiredSignInCodesTestWorker(queries *query.Queries) *worker.CleanupExpiredSignInCodesWorker {
+	repo := repository.NewSignInCodeRepository(queries)
+	uc := usecase.NewCleanupExpiredSignInCodesUsecase(repo)
+	return worker.NewCleanupExpiredSignInCodesWorker(uc)
+}
 
 func TestCleanupExpiredSignInCodesWorker(t *testing.T) {
 	db, tx := testutil.SetupTestDB(t)
@@ -70,15 +79,15 @@ func TestCleanupExpiredSignInCodesWorker(t *testing.T) {
 		t.Fatalf("コード3の作成に失敗: %v", err)
 	}
 
-	// ワーカーを作成
-	worker := NewCleanupExpiredSignInCodesWorker(queries)
+	// ワーカーを作成（UseCase 経由）
+	w := newCleanupExpiredSignInCodesTestWorker(queries)
 
 	// ジョブを実行
-	job := &river.Job[CleanupExpiredSignInCodesArgs]{
-		Args: CleanupExpiredSignInCodesArgs{},
+	job := &river.Job[worker.CleanupExpiredSignInCodesArgs]{
+		Args: worker.CleanupExpiredSignInCodesArgs{},
 	}
 
-	err = worker.Work(ctx, job)
+	err = w.Work(ctx, job)
 	if err != nil {
 		t.Fatalf("ワーカーの実行に失敗: %v", err)
 	}
@@ -115,15 +124,15 @@ func TestCleanupExpiredSignInCodesWorker_NoCodes(t *testing.T) {
 
 	ctx := context.Background()
 
-	// ワーカーを作成
-	worker := NewCleanupExpiredSignInCodesWorker(queries)
+	// ワーカーを作成（UseCase 経由）
+	w := newCleanupExpiredSignInCodesTestWorker(queries)
 
 	// ジョブを実行（コードが存在しない状態）
-	job := &river.Job[CleanupExpiredSignInCodesArgs]{
-		Args: CleanupExpiredSignInCodesArgs{},
+	job := &river.Job[worker.CleanupExpiredSignInCodesArgs]{
+		Args: worker.CleanupExpiredSignInCodesArgs{},
 	}
 
-	err := worker.Work(ctx, job)
+	err := w.Work(ctx, job)
 	if err != nil {
 		t.Fatalf("ワーカーの実行に失敗: %v", err)
 	}
@@ -170,15 +179,15 @@ func TestCleanupExpiredSignInCodesWorker_RecentlyExpired(t *testing.T) {
 		t.Fatalf("コード2の作成に失敗: %v", err)
 	}
 
-	// ワーカーを作成
-	worker := NewCleanupExpiredSignInCodesWorker(queries)
+	// ワーカーを作成（UseCase 経由）
+	w := newCleanupExpiredSignInCodesTestWorker(queries)
 
 	// ジョブを実行
-	job := &river.Job[CleanupExpiredSignInCodesArgs]{
-		Args: CleanupExpiredSignInCodesArgs{},
+	job := &river.Job[worker.CleanupExpiredSignInCodesArgs]{
+		Args: worker.CleanupExpiredSignInCodesArgs{},
 	}
 
-	err = worker.Work(ctx, job)
+	err = w.Work(ctx, job)
 	if err != nil {
 		t.Fatalf("ワーカーの実行に失敗: %v", err)
 	}

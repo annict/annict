@@ -15,6 +15,7 @@ import (
 	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/testutil"
 	"github.com/annict/annict/go/internal/usecase"
+	"github.com/annict/annict/go/internal/validator"
 )
 
 func TestCreate(t *testing.T) {
@@ -34,7 +35,8 @@ func TestCreate(t *testing.T) {
 	profileRepo := repository.NewProfileRepository(queries)
 	settingRepo := repository.NewSettingRepository(queries)
 	emailNotificationRepo := repository.NewEmailNotificationRepository(queries)
-	completeSignUpUC := usecase.NewCompleteSignUpUsecase(db, userRepo, profileRepo, settingRepo, emailNotificationRepo, repository.NewSessionRepository(queries), rdb)
+	signUpUsernameValidator := validator.NewCreateSignUpUsernameValidator()
+	completeSignUpUC := usecase.NewCompleteSignUpUsecase(db, userRepo, profileRepo, settingRepo, emailNotificationRepo, repository.NewSessionRepository(queries), rdb, signUpUsernameValidator)
 
 	handler := NewHandler(cfg, sessionMgr, rdb, completeSignUpUC)
 
@@ -156,7 +158,8 @@ func TestCreate_UsernameTaken(t *testing.T) {
 	profileRepo := repository.NewProfileRepository(queries)
 	settingRepo := repository.NewSettingRepository(queries)
 	emailNotificationRepo := repository.NewEmailNotificationRepository(queries)
-	completeSignUpUC := usecase.NewCompleteSignUpUsecase(db, userRepo, profileRepo, settingRepo, emailNotificationRepo, repository.NewSessionRepository(queries), rdb)
+	signUpUsernameValidator := validator.NewCreateSignUpUsernameValidator()
+	completeSignUpUC := usecase.NewCompleteSignUpUsecase(db, userRepo, profileRepo, settingRepo, emailNotificationRepo, repository.NewSessionRepository(queries), rdb, signUpUsernameValidator)
 
 	handler := NewHandler(cfg, sessionMgr, rdb, completeSignUpUC)
 

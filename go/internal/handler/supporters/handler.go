@@ -6,20 +6,19 @@ import (
 
 	"github.com/annict/annict/go/internal/config"
 	"github.com/annict/annict/go/internal/image"
-	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/session"
 	annictStripe "github.com/annict/annict/go/internal/stripe"
+	"github.com/annict/annict/go/internal/usecase"
 )
 
 // Handler はサポーター関連のHTTPハンドラーです
 type Handler struct {
-	cfg                   *config.Config
-	sessionManager        *session.Manager
-	imageHelper           *image.Helper
-	stripeSubscriberRepo  *repository.StripeSubscriberRepository
-	gumroadSubscriberRepo *repository.GumroadSubscriberRepository
-	stripeCfg             *annictStripe.Config
-	stripeClient          *stripe.Client
+	cfg                  *config.Config
+	sessionManager       *session.Manager
+	imageHelper          *image.Helper
+	getSupporterStatusUC *usecase.GetSupporterStatusUsecase
+	stripeCfg            *annictStripe.Config
+	stripeClient         *stripe.Client
 }
 
 // NewHandler は新しいHandlerを作成します
@@ -27,18 +26,16 @@ func NewHandler(
 	cfg *config.Config,
 	sessionManager *session.Manager,
 	imageHelper *image.Helper,
-	stripeSubscriberRepo *repository.StripeSubscriberRepository,
-	gumroadSubscriberRepo *repository.GumroadSubscriberRepository,
+	getSupporterStatusUC *usecase.GetSupporterStatusUsecase,
 	stripeCfg *annictStripe.Config,
 	stripeClient *stripe.Client,
 ) *Handler {
 	return &Handler{
-		cfg:                   cfg,
-		sessionManager:        sessionManager,
-		imageHelper:           imageHelper,
-		stripeSubscriberRepo:  stripeSubscriberRepo,
-		gumroadSubscriberRepo: gumroadSubscriberRepo,
-		stripeCfg:             stripeCfg,
-		stripeClient:          stripeClient,
+		cfg:                  cfg,
+		sessionManager:       sessionManager,
+		imageHelper:          imageHelper,
+		getSupporterStatusUC: getSupporterStatusUC,
+		stripeCfg:            stripeCfg,
+		stripeClient:         stripeClient,
 	}
 }

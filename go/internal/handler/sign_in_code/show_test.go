@@ -12,6 +12,7 @@ import (
 	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/testutil"
 	"github.com/annict/annict/go/internal/usecase"
+	"github.com/annict/annict/go/internal/validator"
 )
 
 // TestShow GET /sign_in/codeのテスト（正常系）
@@ -32,12 +33,13 @@ func TestShow(t *testing.T) {
 	userRepo := repository.NewUserRepository(queries)
 
 	// ユースケースを作成
-	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), repository.NewUserRepository(queries), nil)
+	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), userRepo, nil, validator.NewCreateSignInValidator())
 	signInCodeRepo := repository.NewSignInCodeRepository(queries)
-	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo)
+	signInCodeValidator := validator.NewCreateSignInCodeValidator()
+	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, signInCodeValidator)
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
-	handler := NewHandler(cfg, sessionMgr, userRepo, db, nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
+	handler := NewHandler(cfg, sessionMgr, nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
 
 	// リクエストを作成
 	req := httptest.NewRequest("GET", "/sign_in/code", nil)
@@ -114,12 +116,13 @@ func TestShow_NoEmailInSession(t *testing.T) {
 	userRepo := repository.NewUserRepository(queries)
 
 	// ユースケースを作成
-	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), repository.NewUserRepository(queries), nil)
+	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), userRepo, nil, validator.NewCreateSignInValidator())
 	signInCodeRepo := repository.NewSignInCodeRepository(queries)
-	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo)
+	signInCodeValidator := validator.NewCreateSignInCodeValidator()
+	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, signInCodeValidator)
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
-	handler := NewHandler(cfg, sessionMgr, userRepo, db, nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
+	handler := NewHandler(cfg, sessionMgr, nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
 
 	// リクエストを作成（セッションにメールアドレスを設定しない）
 	req := httptest.NewRequest("GET", "/sign_in/code", nil)

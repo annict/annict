@@ -1,4 +1,4 @@
-package sign_up_username
+package validator
 
 import (
 	"context"
@@ -11,27 +11,27 @@ import (
 // usernameRegex ユーザー名の形式（1～20文字の半角英数字とアンダースコア）
 var usernameRegex = regexp.MustCompile(`^[a-zA-Z0-9_]{1,20}$`)
 
-// CreateValidator はユーザー登録のバリデーションを行う
-type CreateValidator struct{}
+// CreateSignUpUsernameValidator はユーザー登録（ユーザー名設定）のバリデーションを行う
+type CreateSignUpUsernameValidator struct{}
 
-// NewCreateValidator は CreateValidator を生成する
-func NewCreateValidator() *CreateValidator {
-	return &CreateValidator{}
+// NewCreateSignUpUsernameValidator は CreateSignUpUsernameValidator を生成する
+func NewCreateSignUpUsernameValidator() *CreateSignUpUsernameValidator {
+	return &CreateSignUpUsernameValidator{}
 }
 
-// CreateValidatorInput はバリデーションの入力パラメータ
-type CreateValidatorInput struct {
+// CreateSignUpUsernameValidatorInput はバリデーションの入力パラメータ
+type CreateSignUpUsernameValidatorInput struct {
 	Token    string
 	Username string
 }
 
-// CreateValidatorResult はバリデーションの結果
-type CreateValidatorResult struct {
+// CreateSignUpUsernameValidatorResult はバリデーションの結果
+type CreateSignUpUsernameValidatorResult struct {
 	FormErrors *session.FormErrors
 }
 
 // Validate はバリデーションを行う
-func (v *CreateValidator) Validate(ctx context.Context, input CreateValidatorInput) *CreateValidatorResult {
+func (v *CreateSignUpUsernameValidator) Validate(ctx context.Context, input CreateSignUpUsernameValidatorInput) *CreateSignUpUsernameValidatorResult {
 	formErrors := &session.FormErrors{}
 
 	// トークン必須チェック
@@ -47,8 +47,8 @@ func (v *CreateValidator) Validate(ctx context.Context, input CreateValidatorInp
 	}
 
 	if formErrors.HasErrors() {
-		return &CreateValidatorResult{FormErrors: formErrors}
+		return &CreateSignUpUsernameValidatorResult{FormErrors: formErrors}
 	}
 
-	return &CreateValidatorResult{}
+	return &CreateSignUpUsernameValidatorResult{}
 }

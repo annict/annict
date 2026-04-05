@@ -44,7 +44,7 @@ type UpdateStripeSubscriberInput struct {
 
 // UpdateStripeSubscriberResult はcustomer.subscription.updatedイベント処理の結果
 type UpdateStripeSubscriberResult struct {
-	StripeSubscriber repository.StripeSubscriber
+	StripeSubscriber model.StripeSubscriber
 }
 
 // Execute はcustomer.subscription.updatedイベントを処理します

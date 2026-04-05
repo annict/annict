@@ -241,7 +241,7 @@ func TestStripeSubscriberRepository_IsActive(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			subscriber := &query.StripeSubscriber{
+			subscriber := &model.StripeSubscriber{
 				StripeStatus: tc.status.String(),
 			}
 			result := repo.IsActive(subscriber)

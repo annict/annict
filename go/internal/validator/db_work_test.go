@@ -1,22 +1,22 @@
-package db_work
+package validator
 
 import (
 	"context"
 	"testing"
 )
 
-func TestCreateValidatorValidate(t *testing.T) {
+func TestCreateDbWorkValidatorValidate(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
 		name       string
-		input      CreateValidatorInput
+		input      CreateDbWorkValidatorInput
 		wantErrors bool
 		wantFields []string
 	}{
 		{
 			name: "正常系: 必須フィールドのみ",
-			input: CreateValidatorInput{
+			input: CreateDbWorkValidatorInput{
 				Title: "テストアニメ",
 				Media: "1",
 			},
@@ -24,7 +24,7 @@ func TestCreateValidatorValidate(t *testing.T) {
 		},
 		{
 			name: "正常系: 全フィールド入力",
-			input: CreateValidatorInput{
+			input: CreateDbWorkValidatorInput{
 				Title:                 "テストアニメ",
 				TitleKana:             "てすとあにめ",
 				TitleAlter:            "別名",
@@ -56,7 +56,7 @@ func TestCreateValidatorValidate(t *testing.T) {
 		},
 		{
 			name: "異常系: タイトルが空",
-			input: CreateValidatorInput{
+			input: CreateDbWorkValidatorInput{
 				Title: "",
 				Media: "1",
 			},
@@ -65,7 +65,7 @@ func TestCreateValidatorValidate(t *testing.T) {
 		},
 		{
 			name: "異常系: タイトルがwhitespaceのみ",
-			input: CreateValidatorInput{
+			input: CreateDbWorkValidatorInput{
 				Title: "   ",
 				Media: "1",
 			},
@@ -74,7 +74,7 @@ func TestCreateValidatorValidate(t *testing.T) {
 		},
 		{
 			name: "異常系: メディアが空",
-			input: CreateValidatorInput{
+			input: CreateDbWorkValidatorInput{
 				Title: "テストアニメ",
 				Media: "",
 			},
@@ -83,7 +83,7 @@ func TestCreateValidatorValidate(t *testing.T) {
 		},
 		{
 			name: "異常系: メディアが不正な値",
-			input: CreateValidatorInput{
+			input: CreateDbWorkValidatorInput{
 				Title: "テストアニメ",
 				Media: "99",
 			},
@@ -92,7 +92,7 @@ func TestCreateValidatorValidate(t *testing.T) {
 		},
 		{
 			name: "異常系: タイトルとメディアの両方が空",
-			input: CreateValidatorInput{
+			input: CreateDbWorkValidatorInput{
 				Title: "",
 				Media: "",
 			},
@@ -101,7 +101,7 @@ func TestCreateValidatorValidate(t *testing.T) {
 		},
 		{
 			name: "正常系: メディアが0（その他）",
-			input: CreateValidatorInput{
+			input: CreateDbWorkValidatorInput{
 				Title: "テストアニメ",
 				Media: "0",
 			},
@@ -109,7 +109,7 @@ func TestCreateValidatorValidate(t *testing.T) {
 		},
 	}
 
-	validator := NewCreateValidator()
+	validator := NewCreateDbWorkValidator()
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -138,18 +138,18 @@ func TestCreateValidatorValidate(t *testing.T) {
 	}
 }
 
-func TestCreateValidatorValidate_URL(t *testing.T) {
+func TestCreateDbWorkValidatorValidate_URL(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
 		name       string
-		input      CreateValidatorInput
+		input      CreateDbWorkValidatorInput
 		wantErrors bool
 		wantFields []string
 	}{
 		{
 			name: "正常系: URLが空（スキップ）",
-			input: CreateValidatorInput{
+			input: CreateDbWorkValidatorInput{
 				Title:           "テストアニメ",
 				Media:           "1",
 				OfficialSiteURL: "",
@@ -158,7 +158,7 @@ func TestCreateValidatorValidate_URL(t *testing.T) {
 		},
 		{
 			name: "正常系: 有効なhttps URL",
-			input: CreateValidatorInput{
+			input: CreateDbWorkValidatorInput{
 				Title:           "テストアニメ",
 				Media:           "1",
 				OfficialSiteURL: "https://example.com",
@@ -167,7 +167,7 @@ func TestCreateValidatorValidate_URL(t *testing.T) {
 		},
 		{
 			name: "正常系: 有効なhttp URL",
-			input: CreateValidatorInput{
+			input: CreateDbWorkValidatorInput{
 				Title:           "テストアニメ",
 				Media:           "1",
 				OfficialSiteURL: "http://example.com",
@@ -176,7 +176,7 @@ func TestCreateValidatorValidate_URL(t *testing.T) {
 		},
 		{
 			name: "異常系: スキームなしのURL",
-			input: CreateValidatorInput{
+			input: CreateDbWorkValidatorInput{
 				Title:           "テストアニメ",
 				Media:           "1",
 				OfficialSiteURL: "example.com",
@@ -186,7 +186,7 @@ func TestCreateValidatorValidate_URL(t *testing.T) {
 		},
 		{
 			name: "異常系: 不正なURL",
-			input: CreateValidatorInput{
+			input: CreateDbWorkValidatorInput{
 				Title:           "テストアニメ",
 				Media:           "1",
 				OfficialSiteURL: "not-a-url",
@@ -196,7 +196,7 @@ func TestCreateValidatorValidate_URL(t *testing.T) {
 		},
 		{
 			name: "異常系: ftpスキーム",
-			input: CreateValidatorInput{
+			input: CreateDbWorkValidatorInput{
 				Title:           "テストアニメ",
 				Media:           "1",
 				OfficialSiteURL: "ftp://example.com/file",
@@ -206,7 +206,7 @@ func TestCreateValidatorValidate_URL(t *testing.T) {
 		},
 		{
 			name: "異常系: 複数のURL項目でエラー",
-			input: CreateValidatorInput{
+			input: CreateDbWorkValidatorInput{
 				Title:             "テストアニメ",
 				Media:             "1",
 				OfficialSiteURL:   "invalid",
@@ -219,7 +219,7 @@ func TestCreateValidatorValidate_URL(t *testing.T) {
 		},
 	}
 
-	validator := NewCreateValidator()
+	validator := NewCreateDbWorkValidator()
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -248,18 +248,18 @@ func TestCreateValidatorValidate_URL(t *testing.T) {
 	}
 }
 
-func TestCreateValidatorValidate_NumericFields(t *testing.T) {
+func TestCreateDbWorkValidatorValidate_NumericFields(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
 		name       string
-		input      CreateValidatorInput
+		input      CreateDbWorkValidatorInput
 		wantErrors bool
 		wantFields []string
 	}{
 		{
 			name: "正常系: sc_tidが空（スキップ）",
-			input: CreateValidatorInput{
+			input: CreateDbWorkValidatorInput{
 				Title: "テストアニメ",
 				Media: "1",
 				ScTid: "",
@@ -268,7 +268,7 @@ func TestCreateValidatorValidate_NumericFields(t *testing.T) {
 		},
 		{
 			name: "正常系: sc_tidが有効な整数",
-			input: CreateValidatorInput{
+			input: CreateDbWorkValidatorInput{
 				Title: "テストアニメ",
 				Media: "1",
 				ScTid: "12345",
@@ -277,7 +277,7 @@ func TestCreateValidatorValidate_NumericFields(t *testing.T) {
 		},
 		{
 			name: "異常系: sc_tidが整数でない",
-			input: CreateValidatorInput{
+			input: CreateDbWorkValidatorInput{
 				Title: "テストアニメ",
 				Media: "1",
 				ScTid: "abc",
@@ -287,7 +287,7 @@ func TestCreateValidatorValidate_NumericFields(t *testing.T) {
 		},
 		{
 			name: "異常系: sc_tidが小数",
-			input: CreateValidatorInput{
+			input: CreateDbWorkValidatorInput{
 				Title: "テストアニメ",
 				Media: "1",
 				ScTid: "12.5",
@@ -297,7 +297,7 @@ func TestCreateValidatorValidate_NumericFields(t *testing.T) {
 		},
 		{
 			name: "正常系: mal_anime_idが有効な整数",
-			input: CreateValidatorInput{
+			input: CreateDbWorkValidatorInput{
 				Title:      "テストアニメ",
 				Media:      "1",
 				MalAnimeID: "54321",
@@ -306,7 +306,7 @@ func TestCreateValidatorValidate_NumericFields(t *testing.T) {
 		},
 		{
 			name: "異常系: mal_anime_idが整数でない",
-			input: CreateValidatorInput{
+			input: CreateDbWorkValidatorInput{
 				Title:      "テストアニメ",
 				Media:      "1",
 				MalAnimeID: "xyz",
@@ -316,7 +316,7 @@ func TestCreateValidatorValidate_NumericFields(t *testing.T) {
 		},
 	}
 
-	validator := NewCreateValidator()
+	validator := NewCreateDbWorkValidator()
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -345,18 +345,18 @@ func TestCreateValidatorValidate_NumericFields(t *testing.T) {
 	}
 }
 
-func TestCreateValidatorValidate_PresencePair(t *testing.T) {
+func TestCreateDbWorkValidatorValidate_PresencePair(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
 		name       string
-		input      CreateValidatorInput
+		input      CreateDbWorkValidatorInput
 		wantErrors bool
 		wantFields []string
 	}{
 		{
 			name: "正常系: あらすじと出典の両方が空",
-			input: CreateValidatorInput{
+			input: CreateDbWorkValidatorInput{
 				Title:    "テストアニメ",
 				Media:    "1",
 				Synopsis: "",
@@ -365,7 +365,7 @@ func TestCreateValidatorValidate_PresencePair(t *testing.T) {
 		},
 		{
 			name: "正常系: あらすじと出典の両方がある",
-			input: CreateValidatorInput{
+			input: CreateDbWorkValidatorInput{
 				Title:          "テストアニメ",
 				Media:          "1",
 				Synopsis:       "テストのあらすじ",
@@ -375,7 +375,7 @@ func TestCreateValidatorValidate_PresencePair(t *testing.T) {
 		},
 		{
 			name: "異常系: あらすじのみで出典がない",
-			input: CreateValidatorInput{
+			input: CreateDbWorkValidatorInput{
 				Title:          "テストアニメ",
 				Media:          "1",
 				Synopsis:       "テストのあらすじ",
@@ -386,7 +386,7 @@ func TestCreateValidatorValidate_PresencePair(t *testing.T) {
 		},
 		{
 			name: "正常系: 出典のみ（あらすじなし）は許可",
-			input: CreateValidatorInput{
+			input: CreateDbWorkValidatorInput{
 				Title:          "テストアニメ",
 				Media:          "1",
 				Synopsis:       "",
@@ -396,7 +396,7 @@ func TestCreateValidatorValidate_PresencePair(t *testing.T) {
 		},
 		{
 			name: "正常系: 英語あらすじと出典の両方がある",
-			input: CreateValidatorInput{
+			input: CreateDbWorkValidatorInput{
 				Title:            "テストアニメ",
 				Media:            "1",
 				SynopsisEn:       "Test synopsis",
@@ -406,7 +406,7 @@ func TestCreateValidatorValidate_PresencePair(t *testing.T) {
 		},
 		{
 			name: "異常系: 英語あらすじのみで出典がない",
-			input: CreateValidatorInput{
+			input: CreateDbWorkValidatorInput{
 				Title:            "テストアニメ",
 				Media:            "1",
 				SynopsisEn:       "Test synopsis",
@@ -417,7 +417,7 @@ func TestCreateValidatorValidate_PresencePair(t *testing.T) {
 		},
 		{
 			name: "異常系: 日英両方のあらすじに出典がない",
-			input: CreateValidatorInput{
+			input: CreateDbWorkValidatorInput{
 				Title:      "テストアニメ",
 				Media:      "1",
 				Synopsis:   "テストのあらすじ",
@@ -428,7 +428,7 @@ func TestCreateValidatorValidate_PresencePair(t *testing.T) {
 		},
 	}
 
-	validator := NewCreateValidator()
+	validator := NewCreateDbWorkValidator()
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

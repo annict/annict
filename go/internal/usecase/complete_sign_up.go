@@ -13,6 +13,8 @@ import (
 	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/repository"
+	"github.com/annict/annict/go/internal/session"
+	"github.com/annict/annict/go/internal/validator"
 )
 
 // CompleteSignUpUsecase はユーザー登録を完了するユースケース
@@ -24,6 +26,7 @@ type CompleteSignUpUsecase struct {
 	emailNotificationRepo *repository.EmailNotificationRepository
 	sessionRepo           *repository.SessionRepository
 	redisClient           *redis.Client
+	v                     *validator.CreateSignUpUsernameValidator
 }
 
 // NewCompleteSignUpUsecase はCompleteSignUpUsecaseを作成します
@@ -35,6 +38,7 @@ func NewCompleteSignUpUsecase(
 	emailNotificationRepo *repository.EmailNotificationRepository,
 	sessionRepo *repository.SessionRepository,
 	redisClient *redis.Client,
+	v *validator.CreateSignUpUsernameValidator,
 ) *CompleteSignUpUsecase {
 	return &CompleteSignUpUsecase{
 		db:                    db,
@@ -44,44 +48,61 @@ func NewCompleteSignUpUsecase(
 		emailNotificationRepo: emailNotificationRepo,
 		sessionRepo:           sessionRepo,
 		redisClient:           redisClient,
+		v:                     v,
 	}
+}
+
+// CompleteSignUpInput はユースケースの入力パラメータ
+type CompleteSignUpInput struct {
+	Token    string
+	Username string
+	Locale   string
 }
 
 // CompleteSignUpResult はユーザー登録完了の結果
 type CompleteSignUpResult struct {
 	User            *model.User
 	SessionPublicID string
+	FormErrors      *session.FormErrors // バリデーションエラー（nilなら成功）
 }
 
 // Execute はユーザー登録を完了します
 //
 // 処理フロー:
-// 1. Redisから一時トークンを検証してメールアドレスを取得
-// 2. ユーザー名の一意性チェック
-// 3. トランザクション開始
-// 4. ユーザーを作成
-// 5. プロフィールを作成（name: ユーザー名、description: 空文字列）
-// 6. 設定を作成（privacy_policy_agreed: true、その他はデフォルト値）
-// 7. メール通知設定を作成（unsubscription_key: UUID）
-// 8. セッションを作成
-// 9. トランザクションコミット
-// 10. 一時トークンを削除
+// 1. バリデーション
+// 2. Redisから一時トークンを検証してメールアドレスを取得
+// 3. ユーザー名の一意性チェック
+// 4. トランザクション開始
+// 5. ユーザーを作成
+// 6. プロフィールを作成（name: ユーザー名、description: 空文字列）
+// 7. 設定を作成（privacy_policy_agreed: true、その他はデフォルト値）
+// 8. メール通知設定を作成（unsubscription_key: UUID）
+// 9. セッションを作成
+// 10. トランザクションコミット
+// 11. 一時トークンを削除
 func (uc *CompleteSignUpUsecase) Execute(
 	ctx context.Context,
-	token string,
-	username string,
-	locale string,
+	input CompleteSignUpInput,
 ) (*CompleteSignUpResult, error) {
+	// 1. バリデーション
+	valResult := uc.v.Validate(ctx, validator.CreateSignUpUsernameValidatorInput{
+		Token:    input.Token,
+		Username: input.Username,
+	})
+	if valResult.FormErrors != nil && valResult.FormErrors.HasErrors() {
+		return &CompleteSignUpResult{FormErrors: valResult.FormErrors}, nil
+	}
+
 	// Redisから一時トークンを検証してメールアドレスを取得
-	email, err := uc.verifyToken(ctx, token)
+	email, err := uc.verifyToken(ctx, input.Token)
 	if err != nil {
 		return nil, fmt.Errorf("トークン検証に失敗: %w", err)
 	}
 
 	// ユーザー名の一意性チェック
-	err = uc.userRepo.GetByUsername(ctx, username)
+	err = uc.userRepo.GetByUsername(ctx, input.Username)
 	if err == nil {
-		return nil, &UsernameAlreadyExistsError{Username: username}
+		return nil, &UsernameAlreadyExistsError{Username: input.Username}
 	} else if !errors.Is(err, sql.ErrNoRows) {
 		return nil, fmt.Errorf("ユーザー名一意性チェックに失敗: %w", err)
 	}
@@ -101,17 +122,17 @@ func (uc *CompleteSignUpUsecase) Execute(
 
 	// ユーザーを作成
 	user, err := userRepo.Create(ctx, repository.UserCreateParams{
-		Username:          username,
+		Username:          input.Username,
 		Email:             email,
 		EncryptedPassword: "", // パスワードレス登録
-		Locale:            locale,
+		Locale:            input.Locale,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("ユーザー作成に失敗: %w", err)
 	}
 
 	// プロフィールを作成（name: ユーザー名、description: 空文字列）
-	if err := profileRepo.Create(ctx, user.ID, username); err != nil {
+	if err := profileRepo.Create(ctx, user.ID, input.Username); err != nil {
 		return nil, fmt.Errorf("プロフィール作成に失敗: %w", err)
 	}
 
@@ -128,7 +149,7 @@ func (uc *CompleteSignUpUsecase) Execute(
 
 	// セッションを作成
 	createSessionUC := NewCreateSessionUsecase(uc.sessionRepo)
-	sessionResult, err := createSessionUC.Execute(ctx, tx, user.ID, "", "")
+	sessionResult, err := createSessionUC.Execute(ctx, tx, user.ID, "")
 	if err != nil {
 		return nil, fmt.Errorf("セッション作成に失敗: %w", err)
 	}
@@ -139,7 +160,7 @@ func (uc *CompleteSignUpUsecase) Execute(
 	}
 
 	// 一時トークンを削除
-	if err := uc.deleteToken(ctx, token); err != nil {
+	if err := uc.deleteToken(ctx, input.Token); err != nil {
 		// 削除失敗はログのみ（処理は続行）
 		return nil, fmt.Errorf("トークン削除に失敗: %w", err)
 	}

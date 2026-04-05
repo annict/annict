@@ -1,24 +1,35 @@
 package health
 
 import (
-	"database/sql"
 	"encoding/json"
-	"fmt"
 	"log/slog"
 	"net/http"
 )
 
 // Show GET /health - ヘルスチェック
 func (h *Handler) Show(w http.ResponseWriter, r *http.Request) {
-	// データベース接続確認
-	var dbStatus string
 	ctx := r.Context()
-	_, err := h.workRepo.GetByID(ctx, 1)
-	if err != nil && err != sql.ErrNoRows {
-		dbStatus = fmt.Sprintf("unhealthy: %v", err)
+
+	result, err := h.checkHealthUC.Execute(ctx)
+	if err != nil {
+		slog.ErrorContext(ctx, "ヘルスチェックの実行に失敗", "error", err)
+		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusServiceUnavailable)
-	} else {
+		if encErr := json.NewEncoder(w).Encode(map[string]any{
+			"status":   "ok",
+			"database": "unhealthy: internal error",
+			"env":      h.cfg.Env,
+		}); encErr != nil {
+			slog.ErrorContext(ctx, "ヘルスチェックレスポンスのエンコードに失敗", "error", encErr)
+		}
+		return
+	}
+
+	var dbStatus string
+	if result.DBHealthy {
 		dbStatus = "healthy"
+	} else {
+		dbStatus = result.DBError
 	}
 
 	health := map[string]any{
@@ -28,7 +39,7 @@ func (h *Handler) Show(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	if dbStatus != "healthy" {
+	if !result.DBHealthy {
 		w.WriteHeader(http.StatusServiceUnavailable)
 	} else {
 		w.WriteHeader(http.StatusOK)

@@ -1,4 +1,4 @@
-package sign_in_password
+package validator
 
 import (
 	"context"
@@ -7,24 +7,24 @@ import (
 	"github.com/annict/annict/go/internal/i18n"
 )
 
-func TestCreateValidatorValidate(t *testing.T) {
+func TestCreateSignInPasswordValidatorValidate(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
 		name              string
-		input             CreateValidatorInput
+		input             CreateSignInPasswordValidatorInput
 		wantErrors        bool
 		wantFieldErrors   []string
 		wantErrorMessages map[string]string
 	}{
 		{
 			name:       "正常系",
-			input:      CreateValidatorInput{Password: "password123"},
+			input:      CreateSignInPasswordValidatorInput{Password: "password123"},
 			wantErrors: false,
 		},
 		{
 			name:            "パスワードが空",
-			input:           CreateValidatorInput{Password: ""},
+			input:           CreateSignInPasswordValidatorInput{Password: ""},
 			wantErrors:      true,
 			wantFieldErrors: []string{"password"},
 			wantErrorMessages: map[string]string{
@@ -33,7 +33,7 @@ func TestCreateValidatorValidate(t *testing.T) {
 		},
 		{
 			name:            "パスワードがwhitespaceのみ",
-			input:           CreateValidatorInput{Password: "   "},
+			input:           CreateSignInPasswordValidatorInput{Password: "   "},
 			wantErrors:      true,
 			wantFieldErrors: []string{"password"},
 			wantErrorMessages: map[string]string{
@@ -42,7 +42,7 @@ func TestCreateValidatorValidate(t *testing.T) {
 		},
 		{
 			name:            "パスワードがタブとスペース",
-			input:           CreateValidatorInput{Password: " \t "},
+			input:           CreateSignInPasswordValidatorInput{Password: " \t "},
 			wantErrors:      true,
 			wantFieldErrors: []string{"password"},
 			wantErrorMessages: map[string]string{
@@ -51,14 +51,14 @@ func TestCreateValidatorValidate(t *testing.T) {
 		},
 	}
 
-	validator := NewCreateValidator()
+	v := NewCreateSignInPasswordValidator()
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
 			ctx := context.Background()
-			result := validator.Validate(ctx, tt.input)
+			result := v.Validate(ctx, tt.input)
 
 			if tt.wantErrors {
 				if result.FormErrors == nil || !result.FormErrors.HasErrors() {
@@ -97,18 +97,18 @@ func TestCreateValidatorValidate(t *testing.T) {
 	}
 }
 
-// TestCreateValidator_ValidateI18nMessages I18nメッセージの内容を検証するテスト
-func TestCreateValidator_ValidateI18nMessages(t *testing.T) {
+// TestCreateSignInPasswordValidator_ValidateI18nMessages I18nメッセージの内容を検証するテスト
+func TestCreateSignInPasswordValidator_ValidateI18nMessages(t *testing.T) {
 	t.Parallel()
 
 	ctx := context.Background()
-	validator := NewCreateValidator()
+	v := NewCreateSignInPasswordValidator()
 
 	t.Run("password必須エラーメッセージ", func(t *testing.T) {
 		t.Parallel()
 
-		input := CreateValidatorInput{Password: ""}
-		result := validator.Validate(ctx, input)
+		input := CreateSignInPasswordValidatorInput{Password: ""}
+		result := v.Validate(ctx, input)
 
 		if result.FormErrors == nil || !result.FormErrors.HasErrors() {
 			t.Fatal("エラーが期待されましたが、エラーがありませんでした")

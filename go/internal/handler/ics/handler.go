@@ -3,19 +3,19 @@ package ics
 
 import (
 	"github.com/annict/annict/go/internal/config"
-	"github.com/annict/annict/go/internal/repository"
+	"github.com/annict/annict/go/internal/usecase"
 )
 
 // Handler はiCalendar配信関連のHTTPハンドラーです
 type Handler struct {
-	cfg              *config.Config
-	userCalendarRepo *repository.UserCalendarRepository
+	cfg               *config.Config
+	getUserCalendarUC *usecase.GetUserCalendarUsecase
 }
 
 // NewHandler は新しいHandlerを作成します
-func NewHandler(cfg *config.Config, userCalendarRepo *repository.UserCalendarRepository) *Handler {
+func NewHandler(cfg *config.Config, getUserCalendarUC *usecase.GetUserCalendarUsecase) *Handler {
 	return &Handler{
-		cfg:              cfg,
-		userCalendarRepo: userCalendarRepo,
+		cfg:               cfg,
+		getUserCalendarUC: getUserCalendarUC,
 	}
 }

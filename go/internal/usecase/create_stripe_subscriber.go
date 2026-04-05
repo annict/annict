@@ -48,7 +48,7 @@ type CreateStripeSubscriberInput struct {
 
 // CreateStripeSubscriberResult はcheckout.session.completedイベント処理の結果
 type CreateStripeSubscriberResult struct {
-	StripeSubscriber repository.StripeSubscriber
+	StripeSubscriber model.StripeSubscriber
 }
 
 // Execute はcheckout.session.completedイベントを処理します

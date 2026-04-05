@@ -1,7 +1,6 @@
 package sign_in_code
 
 import (
-	"database/sql"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -23,24 +22,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	// フォームデータを取得
 	if err := r.ParseForm(); err != nil {
 		slog.Error("フォームパースエラー", "error", err)
-		if err := h.sessionMgr.SetFlash(ctx, w, r, session.FlashError, i18n.T(ctx, "sign_in_code_error_parse_form")); err != nil {
-			slog.Error("フラッシュメッセージの設定に失敗", "error", err)
-		}
-		http.Redirect(w, r, "/sign_in/code", http.StatusSeeOther)
-		return
-	}
-
-	// バリデーション
-	input := CreateValidatorInput{
-		Code: r.FormValue("code"),
-	}
-
-	validator := NewCreateValidator()
-	result := validator.Validate(ctx, input)
-	if result.FormErrors != nil && result.FormErrors.HasErrors() {
-		if err := h.sessionMgr.SetFormErrors(ctx, w, r, *result.FormErrors); err != nil {
-			slog.Error("フォームエラーの設定に失敗", "error", err)
-		}
+		h.sessionMgr.SetFlash(w, session.FlashError, i18n.T(ctx, "sign_in_code_error_parse_form"))
 		http.Redirect(w, r, "/sign_in/code", http.StatusSeeOther)
 		return
 	}
@@ -49,17 +31,13 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	email, err := h.sessionMgr.GetValue(ctx, r, "sign_in_email")
 	if err != nil {
 		slog.Error("セッション値の取得エラー", "key", "sign_in_email", "error", err)
-		if err := h.sessionMgr.SetFlash(ctx, w, r, session.FlashError, i18n.T(ctx, "sign_in_code_error_server")); err != nil {
-			slog.Error("フラッシュメッセージの設定に失敗", "error", err)
-		}
+		h.sessionMgr.SetFlash(w, session.FlashError, i18n.T(ctx, "sign_in_code_error_server"))
 		http.Redirect(w, r, "/sign_in", http.StatusSeeOther)
 		return
 	}
 	if email == "" {
 		slog.Warn("セッションにメールアドレスが存在しません")
-		if err := h.sessionMgr.SetFlash(ctx, w, r, session.FlashError, i18n.T(ctx, "sign_in_code_error_session_expired")); err != nil {
-			slog.Error("フラッシュメッセージの設定に失敗", "error", err)
-		}
+		h.sessionMgr.SetFlash(w, session.FlashError, i18n.T(ctx, "sign_in_code_error_session_expired"))
 		http.Redirect(w, r, "/sign_in", http.StatusSeeOther)
 		return
 	}
@@ -67,17 +45,13 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	userIDStr, err := h.sessionMgr.GetValue(ctx, r, "sign_in_user_id")
 	if err != nil {
 		slog.Error("セッション値の取得エラー", "key", "sign_in_user_id", "error", err)
-		if err := h.sessionMgr.SetFlash(ctx, w, r, session.FlashError, i18n.T(ctx, "sign_in_code_error_server")); err != nil {
-			slog.Error("フラッシュメッセージの設定に失敗", "error", err)
-		}
+		h.sessionMgr.SetFlash(w, session.FlashError, i18n.T(ctx, "sign_in_code_error_server"))
 		http.Redirect(w, r, "/sign_in", http.StatusSeeOther)
 		return
 	}
 	if userIDStr == "" {
 		slog.Warn("セッションにユーザーIDが存在しません")
-		if err := h.sessionMgr.SetFlash(ctx, w, r, session.FlashError, i18n.T(ctx, "sign_in_code_error_session_expired")); err != nil {
-			slog.Error("フラッシュメッセージの設定に失敗", "error", err)
-		}
+		h.sessionMgr.SetFlash(w, session.FlashError, i18n.T(ctx, "sign_in_code_error_session_expired"))
 		http.Redirect(w, r, "/sign_in", http.StatusSeeOther)
 		return
 	}
@@ -85,9 +59,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	userID, err := strconv.ParseInt(userIDStr, 10, 64)
 	if err != nil {
 		slog.Error("ユーザーIDのパースエラー", "user_id_str", userIDStr, "error", err)
-		if err := h.sessionMgr.SetFlash(ctx, w, r, session.FlashError, i18n.T(ctx, "sign_in_code_error_server")); err != nil {
-			slog.Error("フラッシュメッセージの設定に失敗", "error", err)
-		}
+		h.sessionMgr.SetFlash(w, session.FlashError, i18n.T(ctx, "sign_in_code_error_server"))
 		http.Redirect(w, r, "/sign_in", http.StatusSeeOther)
 		return
 	}
@@ -103,16 +75,17 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 				"email", email,
 				"ip_address", clientip.GetClientIP(r),
 			)
-			if err := h.sessionMgr.SetFlash(ctx, w, r, session.FlashError, i18n.T(ctx, "rate_limit_exceeded")); err != nil {
-				slog.Error("フラッシュメッセージの設定に失敗", "error", err)
-			}
+			h.sessionMgr.SetFlash(w, session.FlashError, i18n.T(ctx, "rate_limit_exceeded"))
 			http.Redirect(w, r, "/sign_in/code", http.StatusSeeOther)
 			return
 		}
 	}
 
-	// ユースケース呼び出し: 6桁コード検証
-	err = h.verifySignInCodeUC.Execute(ctx, userID, input.Code)
+	// ユースケース呼び出し: バリデーション + 6桁コード検証 + ユーザー情報取得
+	result, err := h.verifySignInCodeUC.Execute(ctx, usecase.VerifySignInCodeInput{
+		UserID: userID,
+		Code:   r.FormValue("code"),
+	})
 	if err != nil {
 		// エラーの種類によって異なるメッセージを表示
 		if errors.Is(err, usecase.ErrCodeNotFound) {
@@ -144,58 +117,36 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 			return
 		} else {
 			slog.Error("コード検証エラー", "error", err)
-			if err := h.sessionMgr.SetFlash(ctx, w, r, session.FlashError, i18n.T(ctx, "sign_in_code_error_server")); err != nil {
-				slog.Error("フラッシュメッセージの設定に失敗", "error", err)
-			}
+			h.sessionMgr.SetFlash(w, session.FlashError, i18n.T(ctx, "sign_in_code_error_server"))
 			http.Redirect(w, r, "/sign_in/code", http.StatusSeeOther)
 			return
 		}
 	}
 
-	// ユーザー情報を取得（encrypted_passwordを取得するため）
-	user, err := h.userRepo.GetByID(ctx, userID)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			slog.Warn("ユーザーが見つかりません", "user_id", userID)
-			if err := h.sessionMgr.SetFlash(ctx, w, r, session.FlashError, i18n.T(ctx, "sign_in_code_error_user_not_found")); err != nil {
-				slog.Error("フラッシュメッセージの設定に失敗", "error", err)
-			}
-			http.Redirect(w, r, "/sign_in", http.StatusSeeOther)
-			return
+	// バリデーションエラーの場合
+	if result.FormErrors != nil && result.FormErrors.HasErrors() {
+		if err := h.sessionMgr.SetFormErrors(ctx, w, r, *result.FormErrors); err != nil {
+			slog.Error("フォームエラーの設定に失敗", "error", err)
 		}
-		slog.Error("ユーザー取得エラー", "error", err)
-		if err := h.sessionMgr.SetFlash(ctx, w, r, session.FlashError, i18n.T(ctx, "sign_in_code_error_server")); err != nil {
-			slog.Error("フラッシュメッセージの設定に失敗", "error", err)
-		}
-		http.Redirect(w, r, "/sign_in", http.StatusSeeOther)
+		http.Redirect(w, r, "/sign_in/code", http.StatusSeeOther)
 		return
 	}
 
-	// flashメッセージをJSON形式で作成（Railsと互換性のある形式）
-	flashMsg := session.Flash{
-		Type:    session.FlashSuccess,
-		Message: i18n.T(ctx, "sign_in_success"),
-	}
-	flashJSON, err := flashMsg.ToJSON()
-	if err != nil {
-		slog.Error("flashメッセージのエンコードエラー", "error", err)
-		flashJSON = "" // エラー時は空文字列
-	}
-
-	// セッションを作成（usecase層、flashメッセージを含める）
+	// セッションを作成（usecase層）
 	// トランザクション不要なのでnilを渡す
-	sessionResult, err := h.createSessionUC.Execute(ctx, nil, userID, user.EncryptedPassword, flashJSON)
+	sessionResult, err := h.createSessionUC.Execute(ctx, nil, userID, result.EncryptedPassword)
 	if err != nil {
 		slog.Error("セッション作成エラー", "error", err)
-		if err := h.sessionMgr.SetFlash(ctx, w, r, session.FlashError, i18n.T(ctx, "sign_in_code_error_create_session")); err != nil {
-			slog.Error("フラッシュメッセージの設定に失敗", "error", err)
-		}
+		h.sessionMgr.SetFlash(w, session.FlashError, i18n.T(ctx, "sign_in_code_error_create_session"))
 		http.Redirect(w, r, "/sign_in/code", http.StatusSeeOther)
 		return
 	}
 
 	// Cookie設定（session.Managerに委譲）
 	h.sessionMgr.SetSessionCookieByPublicID(w, r, sessionResult.PublicID)
+
+	// ログイン成功のフラッシュメッセージを設定
+	h.sessionMgr.SetFlash(w, session.FlashSuccess, i18n.T(ctx, "sign_in_success"))
 
 	// 一時セッション値を削除（sign_in_email と sign_in_user_id）
 	if err := h.sessionMgr.DeleteValue(ctx, r, "sign_in_email"); err != nil {
@@ -205,7 +156,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		slog.Warn("一時セッション値の削除に失敗しました", "key", "sign_in_user_id", "error", err)
 	}
 
-	slog.Info("ログイン成功（メールログイン）", "user_id", userID, "username", user.Username)
+	slog.Info("ログイン成功（メールログイン）", "user_id", userID, "username", result.Username)
 
 	// ログイン後のリダイレクト先を取得（バリデーション付き）
 	backURL := r.FormValue("back")

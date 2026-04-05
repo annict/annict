@@ -40,7 +40,7 @@ func TestCreateSessionUsecase_Execute(t *testing.T) {
 
 	// セッションを作成
 	ctx := context.Background()
-	result, err := uc.Execute(ctx, tx, userID, user.EncryptedPassword, "")
+	result, err := uc.Execute(ctx, tx, userID, user.EncryptedPassword)
 	if err != nil {
 		t.Fatalf("セッション作成に失敗: %v", err)
 	}
@@ -63,8 +63,8 @@ func TestCreateSessionUsecase_Execute(t *testing.T) {
 	}
 }
 
-// TestCreateSessionUsecase_Execute_WithFlashMessage はflashメッセージ付きのセッション作成をテストします
-func TestCreateSessionUsecase_Execute_WithFlashMessage(t *testing.T) {
+// TestCreateSessionUsecase_Execute_WithMultipleUsers は複数ユーザーでのセッション作成をテストします
+func TestCreateSessionUsecase_Execute_WithMultipleUsers(t *testing.T) {
 	db, tx := testutil.SetupTestDB(t)
 
 	// パスワードをハッシュ化
@@ -91,10 +91,9 @@ func TestCreateSessionUsecase_Execute_WithFlashMessage(t *testing.T) {
 	sessionRepo := repository.NewSessionRepository(queries)
 	uc := NewCreateSessionUsecase(sessionRepo)
 
-	// flashメッセージ付きでセッションを作成
+	// セッションを作成
 	ctx := context.Background()
-	flashMessage := "ログインに成功しました"
-	result, err := uc.Execute(ctx, tx, userID, user.EncryptedPassword, flashMessage)
+	result, err := uc.Execute(ctx, tx, userID, user.EncryptedPassword)
 	if err != nil {
 		t.Fatalf("セッション作成に失敗: %v", err)
 	}
@@ -121,7 +120,7 @@ func TestCreateSessionUsecase_Execute_WithInvalidUserID(t *testing.T) {
 	// 存在しないユーザーIDでセッション作成を試みる
 	ctx := context.Background()
 	invalidUserID := int64(999999999)
-	result, err := uc.Execute(ctx, tx, invalidUserID, "dummy_encrypted_password", "")
+	result, err := uc.Execute(ctx, tx, invalidUserID, "dummy_encrypted_password")
 
 	// 現在の実装では、sessionsテーブルにuser_idカラムがないため、エラーにならない
 	if err != nil {
@@ -163,7 +162,7 @@ func TestCreateSessionUsecase_Execute_WithEmptyEncryptedPassword(t *testing.T) {
 
 	// 空のencrypted_passwordでセッション作成を試みる
 	ctx := context.Background()
-	result, err := uc.Execute(ctx, tx, userID, "", "")
+	result, err := uc.Execute(ctx, tx, userID, "")
 
 	// エラーは発生しないが、authenticatable_saltが空になることを確認
 	// これは仕様上許容されているが、セキュリティ的には問題がある
@@ -204,7 +203,7 @@ func TestCreateSessionUsecase_Execute_WithShortEncryptedPassword(t *testing.T) {
 	// 29文字未満のencrypted_passwordでセッション作成を試みる
 	ctx := context.Background()
 	shortPassword := "tooshort" // 8文字
-	result, err := uc.Execute(ctx, tx, userID, shortPassword, "")
+	result, err := uc.Execute(ctx, tx, userID, shortPassword)
 
 	// エラーは発生しないが、authenticatable_saltが短くなることを確認
 	if err != nil {
@@ -262,7 +261,7 @@ func TestCreateSessionUsecase_Execute_WithoutTransaction(t *testing.T) {
 
 	// トランザクションなしでセッションを作成
 	ctx := context.Background()
-	result, err := uc.Execute(ctx, nil, userID, user.EncryptedPassword, "")
+	result, err := uc.Execute(ctx, nil, userID, user.EncryptedPassword)
 	if err != nil {
 		t.Fatalf("セッション作成に失敗: %v", err)
 	}
@@ -306,13 +305,13 @@ func TestCreateSessionUsecase_Execute_DuplicateSessionID(t *testing.T) {
 
 	// 最初のセッションを作成
 	ctx := context.Background()
-	result1, err := uc.Execute(ctx, tx, userID, user.EncryptedPassword, "")
+	result1, err := uc.Execute(ctx, tx, userID, user.EncryptedPassword)
 	if err != nil {
 		t.Fatalf("最初のセッション作成に失敗: %v", err)
 	}
 
 	// 2番目のセッションを作成（異なるpublicIDが生成されるはず）
-	result2, err := uc.Execute(ctx, tx, userID, user.EncryptedPassword, "")
+	result2, err := uc.Execute(ctx, tx, userID, user.EncryptedPassword)
 	if err != nil {
 		t.Fatalf("2番目のセッション作成に失敗: %v", err)
 	}

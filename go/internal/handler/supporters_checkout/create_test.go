@@ -17,6 +17,8 @@ import (
 	"github.com/annict/annict/go/internal/session"
 	annictStripe "github.com/annict/annict/go/internal/stripe"
 	"github.com/annict/annict/go/internal/testutil"
+	"github.com/annict/annict/go/internal/usecase"
+	"github.com/annict/annict/go/internal/validator"
 )
 
 // setupTestHandler はテスト用のハンドラーをセットアップします
@@ -32,9 +34,12 @@ func setupTestHandler(t *testing.T, tx *sql.Tx, db *sql.DB, stripeCfg *annictStr
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionManager := session.NewManager(sessionRepo, cfg)
 	stripeSubscriberRepo := repository.NewStripeSubscriberRepository(queries)
+	v := validator.NewCreateSupportersCheckoutValidator()
 
 	// テスト用には nil を渡す（テストでは Stripe API を呼び出さない）
-	return NewHandler(cfg, sessionManager, stripeSubscriberRepo, stripeCfg, nil)
+	createCheckoutSessionUC := usecase.NewCreateCheckoutSessionUsecase(cfg, stripeSubscriberRepo, stripeCfg, nil, v)
+
+	return NewHandler(sessionManager, createCheckoutSessionUC)
 }
 
 // createUserWithStripeSubscriber はStripeサブスクライバーを持つユーザーを作成します

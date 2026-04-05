@@ -69,17 +69,17 @@ cat /workspace/rails/app/models/work.rb
 ```
 ┌─────────────────────────────────────────────────────────┐
 │ Presentation層                                          │
-│ - Handler, ViewModel, Template, Middleware            │
+│ - Handler, Worker, ViewModel, Template, Middleware    │
 └─────────────────────────────────────────────────────────┘
          ↓ 依存
 ┌─────────────────────────────────────────────────────────┐
 │ Application層                                           │
-│ - UseCase（ビジネスフロー、トランザクション管理）           │
+│ - UseCase, Validator                                  │
 └─────────────────────────────────────────────────────────┘
          ↓ 依存
 ┌─────────────────────────────────────────────────────────┐
 │ Domain/Infrastructure層（統合）                          │
-│ - Query (sqlc), Repository, Model                     │
+│ - Query (sqlc), Repository, Model, Dispatcher         │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -87,13 +87,16 @@ cat /workspace/rails/app/models/work.rb
 
 - **cmd/server/main.go**: エントリポイント
 - **internal/handler**: HTTPリクエストハンドラー（Presentation層）
+- **internal/worker**: バックグラウンドジョブワーカー（Presentation層）
 - **internal/middleware**: HTTPミドルウェア（Presentation層）
 - **internal/templates**: templテンプレート（Presentation層）
 - **internal/viewmodel**: プレゼンテーション層のデータ変換（Presentation層）
 - **internal/usecase**: ビジネスロジック層（Application層）
+- **internal/validator**: バリデーション（Application層）
 - **internal/query**: sqlc生成コード（Domain/Infrastructure層）
 - **internal/repository**: Repository層（Domain/Infrastructure層）
 - **internal/model**: ドメインモデル（Domain/Infrastructure層）
+- **internal/dispatcher**: ジョブキューへの投入（Domain/Infrastructure層）
 - **internal/config**: 設定管理
 - **internal/i18n**: 国際化
 - **internal/image**: 画像URL生成
@@ -102,6 +105,11 @@ cat /workspace/rails/app/models/work.rb
 ### 重要な設計原則
 
 - **依存の方向**: Presentation層 → Application層 → Domain/Infrastructure層
+- **Handler / Worker は薄い Adapter**: HTTP やジョブの入出力変換のみを担当し、ビジネスロジックやバリデーションは UseCase に委譲する
+- **Handler → Repository の直接依存は禁止**: Handler のすべてのデータアクセスは UseCase を経由する
+- **UseCase はオーケストレーター**: 書き込み UseCase はバリデーション・ビジネスロジック・永続化を統括する。読み取り UseCase はデータ取得を担当する
+- **Validator は Application 層**: すべてのバリデーションは `internal/validator/` に配置し、UseCase から呼び出す
+- **Dispatcher は Domain/Infrastructure 層**: ジョブキューへの投入は `internal/dispatcher/` に配置し、UseCase から呼び出す
 - **Queryへの依存はRepositoryのみ**: Handler/UseCaseがQueryに直接依存することは禁止
 - **ModelとRepositoryは1:1の関係**: 各ドメインエンティティに対応するRepositoryを作成
 - **Domain/Infrastructure層の統合**: データベース変更はほぼ起こらないため、シンプルさを優先
@@ -157,10 +165,12 @@ func StringsToWorkIDs(ss []string) []WorkID { ... }
 
 ### UsecaseとRepositoryの使い分け
 
-- **Usecase**: トランザクションを伴う永続化処理（作成・更新・削除）、複数Repositoryを跨ぐ操作
-- **Repository**: 読み取り専用の処理、単一エンティティの操作、トランザクション不要な処理
+Handler のすべてのデータアクセスは UseCase を経由します。UseCase はオーケストレーターとして、読み取り・書き込みの両方を担当します。
 
-**判断基準**: 読み取り専用の処理はRepositoryで完結させ、Usecaseを作成しない。
+- **書き込み Usecase**: バリデーション（Validator 呼び出し）、ビジネスロジック、トランザクション管理、複数 Repository を跨ぐ永続化処理
+- **読み取り Usecase**: Repository 経由でデータを取得して返却する
+
+**判断基準**: Handler から Repository を直接呼び出さない。読み取り専用の処理にも UseCase を作成し、Handler → UseCase → Repository の流れに統一する。
 
 📖 **詳細なアーキテクチャについては [@go/docs/architecture-guide.md](docs/architecture-guide.md) を参照してください。**
 
@@ -344,6 +354,10 @@ make test-run PKG=internal/handler/password_reset RUN=TestCreate_TurnstileVerifi
 # tparse -all オプションで合格テストも含めて表示します
 make test-verbose
 
+# 重要: テスト実行には必ず make コマンドを使用してください
+# `go test` を直接実行すると、1Password CLI 経由の環境変数が設定されず、
+# DATABASE_URL などの必須環境変数が不足してテストが失敗します。
+
 # テスト用DBのセットアップのみ実行
 make db-setup-test
 
@@ -418,10 +432,10 @@ make lint
 go build ./...
 
 # 5. テストを実行
-APP_ENV=test make test
+make test
 
 # すべてを一度に実行するワンライナー:
-make templ-generate && go mod tidy && make fmt && make lint && go build ./... && APP_ENV=test make test
+make templ-generate && go mod tidy && make fmt && make lint && go build ./... && make test
 ```
 
 #### golangci-lint の使い方
@@ -697,11 +711,9 @@ HTTP リクエストを処理するハンドラーは、統一された規則に
 - **統一された命名規則**: ファイル名とメソッド名に一貫性を持たせる
 - **例外なくディレクトリ化**: 単独のエンドポイントでも必ずディレクトリを作成（例: `health/`, `home/`）
 
-#### 標準ファイル名（9 種類のみ）
+#### 標準ファイル名（8 種類のみ）
 
 リソースディレクトリ内には、以下の標準的なファイル名**のみ**を使用します：
-
-**ハンドラー関連**:
 
 - `handler.go` - Handler 構造体と依存性の定義
 - `index.go` - 一覧ページ表示 (GET /resources)
@@ -711,10 +723,6 @@ HTTP リクエストを処理するハンドラーは、統一された規則に
 - `edit.go` - 編集フォーム表示（更新前のフォーム） (GET /resources/:id/edit)
 - `update.go` - 更新処理（既存リソースの永続化） (PATCH /resources/:id)
 - `delete.go` - 削除処理 (DELETE /resources/:id)
-
-**バリデーション関連**:
-
-- `validator.go` - バリデーション（形式チェック + DB を使った検証を統合）
 
 **重要な区別**:
 
@@ -858,18 +866,20 @@ if user.Name != nil {
 
 ### バリデーション
 
-フォームからの入力値の検証は、**1 つのバリデーター**（`validator.go`）で実装します。形式バリデーション（入力値の形式チェック）と状態バリデーション（DB を使った検証）を同じファイルに配置することで、「どこに書くべきか」の判断コストを削減します。
+フォームからの入力値の検証は、`internal/validator/` パッケージ（Application 層）に配置し、UseCase から呼び出します。形式バリデーション（入力値の形式チェック）と状態バリデーション（DB を使った検証）を同じファイルに実装します。
 
 #### バリデーターの構成
 
-- **ファイル**: `validator.go`（形式チェック + DB を使った検証を統合）
-- **命名規則**: `{Action}Validator`（例: `CreateValidator`, `UpdateValidator`）
-- **入力**: `{Action}ValidatorInput` 構造体
-- **出力**: `{Action}ValidatorResult` 構造体
+- **配置**: `internal/validator/`（Application 層）
+- **ファイル名**: リソース名と対応（例: `sign_in.go`, `password_reset.go`）
+- **命名規則**: `{Action}{Resource}Validator`（例: `CreateSignInValidator`, `UpdatePasswordValidator`）
+- **入力**: `{Action}{Resource}ValidatorInput` 構造体
+- **出力**: `{Action}{Resource}ValidatorResult` 構造体
+- **呼び出し元**: UseCase（Handler から直接呼び出さない）
 
 #### バリデーションの分類
 
-バリデーションは以下の 2 種類に分類されますが、同じファイル（`validator.go`）に実装します：
+バリデーションは以下の 2 種類に分類されますが、同じファイルに実装します：
 
 | 種類               | 責務                  | 特徴            |
 | ------------------ | --------------------- | --------------- |
@@ -973,10 +983,10 @@ Go 版 Annict では、関心の分離を意識したアーキテクチャを採
 
 #### ユースケース（Use Case）
 
-ビジネスロジックとトランザクション管理を担当します。
+Handler のすべてのデータアクセスのオーケストレーターとして、読み取り・書き込みの両方を担当します。
 
 - **配置**: `internal/usecase` （フラット構造）
-- **責務**: トランザクション管理、複数リポジトリを跨ぐ処理
+- **責務**: バリデーション（Validator 呼び出し）、ビジネスロジック、トランザクション管理、データ取得
 - **命名**: ファイル名 `{action}_{entity}.go`、構造体名 `{Action}{Entity}Usecase`
 - **単一責任**: 各 Usecase は **`Execute` メソッドのみ** を公開する（1 Usecase = 1 操作）
 - **トランザクション管理**: Repository の `WithTx` メソッドを使用してトランザクション内で操作する
@@ -1089,50 +1099,39 @@ Web アプリケーションのセキュリティは**最優先事項**です。
 
 ### DB接続の共有化（TestMainパターン）
 
-各テストパッケージでは `TestMain` を使用し、DB接続を1回だけ確立してパッケージ内の全テストで共有します。
+DB接続は `sync.Once` で1回だけ確立し、パッケージ内の全テストで共有します。
 
 **セットアップの流れ**:
 
 ```
-TestMain: sql.Open → Ping → bcryptコスト設定
+初回のSetupTestDB/GetTestDB呼び出し: sql.Open → Ping → bcryptコスト設定
 テスト1: Begin → テスト実行 → Rollback
 テスト2: Begin → テスト実行 → Rollback
-TestMain: Close
 ```
 
-**新規テストパッケージの作成手順**:
-
-1. `main_test.go` を作成し、`TestMain` で `testutil.SetupTestMain` を呼び出す
-2. 各テスト関数では `testutil.SetupTx(t)` でトランザクションを取得
-3. Usecaseなどトランザクション管理を自前で行うテストでは `testutil.GetTestDB()` を使用
+**テスト関数の例**:
 
 ```go
-// main_test.go
-package handler_test
-
-import (
-    "os"
-    "testing"
-
-    "github.com/annict/annict/go/internal/testutil"
-)
-
-func TestMain(m *testing.M) {
-    os.Exit(testutil.SetupTestMain(m))
-}
-```
-
-```go
-// create_test.go
+// トランザクション分離が必要なテスト（Handler、Repository、Validatorなど）
 func TestCreate_Success(t *testing.T) {
     t.Parallel()
 
-    db, tx := testutil.SetupTx(t)
-    // 以降は既存のテストコードと同じ
+    db, tx := testutil.SetupTestDB(t)
+    // tx内でテストデータ作成・検証（テスト終了時に自動ロールバック）
 }
 ```
 
-**`SetupTestMain` が行う初期化**:
+```go
+// 自前でトランザクション管理するテスト（Usecaseなど）
+func TestCreateAccount_Success(t *testing.T) {
+    t.Parallel()
+
+    db := testutil.GetTestDB(t)
+    // db.BeginTx() でトランザクション開始、Usecase内で管理
+}
+```
+
+**`SetupTestDB` / `GetTestDB` が行う初期化（初回のみ）**:
 
 - テスト用にbcryptコストを下げる（DefaultCost 10 → MinCost 4 で約64倍高速化）
 - DB接続プールを1回だけ確立し、パッケージ内の全テストで共有
@@ -1140,8 +1139,7 @@ func TestCreate_Success(t *testing.T) {
 ### テストのベストプラクティス
 
 - **実データベースを使用**: モックではなく実際の PostgreSQL データベースでテスト
-- **TestMainパターン**: 各テストパッケージに `main_test.go` を作成し、`testutil.SetupTestMain(m)` でDB接続を共有
-- **トランザクション分離**: `testutil.SetupTx(t)` でテスト用トランザクションをセットアップ
+- **トランザクション分離**: `testutil.SetupTestDB(t)` でテスト用トランザクションをセットアップ
 - **テーブル駆動テスト**: 複数のテストケースを効率的に実行
 - **並行テスト**: `t.Parallel()` で並行実行可能なテストを高速化（トランザクション分離により安全）
 - **テストヘルパー**: 共通のセットアップコードをヘルパー関数に抽出
@@ -1154,7 +1152,7 @@ func TestCreate_Success(t *testing.T) {
     t.Parallel()
 
     // テストDBとトランザクションをセットアップ
-    db, tx := testutil.SetupTx(t)
+    db, tx := testutil.SetupTestDB(t)
 
     // テストデータを作成（ビルダーパターン）
     userID := testutil.NewUserBuilder(t, tx).
@@ -1188,7 +1186,7 @@ func TestCreate_Success(t *testing.T) {
 func TestCreateAccount(t *testing.T) {
     t.Parallel()
 
-    db, tx := testutil.SetupTx(t)
+    db, tx := testutil.SetupTestDB(t)
     ctx := context.Background()
 
     // テスト対象のセットアップ（共通部分）
@@ -1263,9 +1261,8 @@ func TestCreateAccount(t *testing.T) {
 
 **DB接続・トランザクション**:
 
-- **`SetupTestMain(m)`**: `TestMain` 内で呼び出し、パッケージ共有のDB接続を初期化。bcryptコストの低減も行う
-- **`SetupTx(t)`**: 共有DB接続プールからトランザクションを取得。テスト終了時に自動ロールバック
-- **`GetTestDB()`**: 共有DB接続プールへの参照を取得。Usecaseなどトランザクション管理を自前で行うテストで使用
+- **`SetupTestDB(t)`**: 共有DB接続プールからトランザクションを取得。テスト終了時に自動ロールバック。初回呼び出し時にDB接続とbcryptコスト低減を初期化
+- **`GetTestDB(t)`**: 共有DB接続プールへの参照を取得。Usecaseなどトランザクション管理を自前で行うテストで使用。初回呼び出し時にDB接続とbcryptコスト低減を初期化
 
 **テストデータビルダー**:
 
@@ -1347,18 +1344,29 @@ make test-pkg PKG=internal/handler/password_reset
 
 ### 新規テスト作成時のガイドライン
 
-新しいテストパッケージを作成する際は、以下の手順に従ってください：
+テスト用ヘルパーは用途に応じて使い分けてください：
 
-1. **`main_test.go` を作成**: パッケージに `main_test.go` を追加し、`testutil.SetupTestMain(m)` を呼び出す
-2. **`SetupTx(t)` を使用**: トランザクション内で実行するテストでは `testutil.SetupTx(t)` を使用
-3. **`GetTestDB()` を使用**: Usecaseなどトランザクション管理を自前で行うテストでは `testutil.GetTestDB()` を使用
+**`SetupTestDB` と `GetTestDB` の使い分け**:
 
-**`SetupTx` と `GetTestDB` の使い分け**:
+| ヘルパー         | 用途                                                                 | トランザクション                   |
+| ---------------- | -------------------------------------------------------------------- | ---------------------------------- |
+| `SetupTestDB(t)` | Handler、Repository、Validatorなどトランザクション分離が必要なテスト | 自動（テスト終了時にロールバック） |
+| `GetTestDB(t)`   | Usecaseなど自前でトランザクション管理するテスト                      | 手動（Usecase内で管理）            |
 
-| ヘルパー      | 用途                                          | トランザクション                   |
-| ------------- | --------------------------------------------- | ---------------------------------- |
-| `SetupTx(t)`  | Handler、Repository、Validatorのテスト        | 自動（テスト終了時にロールバック） |
-| `GetTestDB()` | Usecaseのテスト（自前でトランザクション管理） | 手動（Usecase内で管理）            |
+**重要: `SetupTestDB` のトランザクションを捨てない**:
+
+`SetupTestDB(t)` は内部で `db.Begin()` を呼びトランザクションを開始します。返されたトランザクションを使わない場合でも、テスト終了までコネクションプールの1枠を占有します。`t.Parallel()` で多数のテストが同時実行されると、コネクションプールが枯渇してデッドロックが発生します。
+
+```go
+// ❌ 悪い例: トランザクションを捨てると、コネクションプールを無駄に消費する
+db, _ := testutil.SetupTestDB(t)
+
+// ✅ 良い例: トランザクションが不要な場合は GetTestDB を使う
+db := testutil.GetTestDB(t)
+
+// ✅ 良い例: トランザクションを使う場合は SetupTestDB を使う
+db, tx := testutil.SetupTestDB(t)
+```
 
 ### テンプレートレンダリングのテスト
 

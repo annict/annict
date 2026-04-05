@@ -14,16 +14,15 @@ import (
 func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	// NumberFormatの選択肢を取得
-	numberFormats, err := h.numberFormatRepo.ListAll(ctx)
+	// フォーム用の選択肢を取得
+	optionsResult, err := h.getDbWorkFormOptionsUC.Execute(ctx)
 	if err != nil {
 		slog.ErrorContext(ctx, "NumberFormatの取得エラー", "error", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
-	// フォーム用の選択肢を作成
-	formOptions := viewmodel.NewDBWorkFormOptions(ctx, numberFormats)
+	formOptions := viewmodel.NewDBWorkFormOptions(ctx, optionsResult.NumberFormats)
 
 	// CSRFトークンを取得
 	csrfToken := middleware.GetCSRFToken(r, h.sessionManager)
@@ -33,7 +32,7 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 	meta.SetTitle(ctx, "db_works_new_title")
 
 	// フラッシュメッセージを取得
-	flash, _ := h.sessionManager.GetFlash(ctx, r)
+	flash := h.sessionManager.GetFlash(w, r)
 
 	// テンプレートをレンダリング
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")

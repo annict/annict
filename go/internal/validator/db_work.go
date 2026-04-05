@@ -1,4 +1,4 @@
-package db_work
+package validator
 
 import (
 	"context"
@@ -19,16 +19,16 @@ var allowedMediaValues = map[string]bool{
 	"4": true, // web
 }
 
-// CreateValidator は作品作成フォームのバリデーションを行う
-type CreateValidator struct{}
+// CreateDbWorkValidator は作品作成フォームのバリデーションを行う
+type CreateDbWorkValidator struct{}
 
-// NewCreateValidator は CreateValidator を生成する
-func NewCreateValidator() *CreateValidator {
-	return &CreateValidator{}
+// NewCreateDbWorkValidator は CreateDbWorkValidator を生成する
+func NewCreateDbWorkValidator() *CreateDbWorkValidator {
+	return &CreateDbWorkValidator{}
 }
 
-// CreateValidatorInput はバリデーションの入力パラメータ
-type CreateValidatorInput struct {
+// CreateDbWorkValidatorInput はバリデーションの入力パラメータ
+type CreateDbWorkValidatorInput struct {
 	Title                 string
 	TitleKana             string
 	TitleAlter            string
@@ -57,13 +57,13 @@ type CreateValidatorInput struct {
 	NoEpisodes            string
 }
 
-// CreateValidatorResult はバリデーションの結果
-type CreateValidatorResult struct {
+// CreateDbWorkValidatorResult はバリデーションの結果
+type CreateDbWorkValidatorResult struct {
 	FormErrors *session.FormErrors
 }
 
 // Validate はバリデーションを行う
-func (v *CreateValidator) Validate(ctx context.Context, input CreateValidatorInput) *CreateValidatorResult {
+func (v *CreateDbWorkValidator) Validate(ctx context.Context, input CreateDbWorkValidatorInput) *CreateDbWorkValidatorResult {
 	formErrors := &session.FormErrors{}
 
 	// タイトル: 必須
@@ -103,10 +103,10 @@ func (v *CreateValidator) Validate(ctx context.Context, input CreateValidatorInp
 	validatePresencePair(ctx, formErrors, "synopsis_source_en", input.SynopsisEn, input.SynopsisSourceEn, "db_works_error_synopsis_source_en_required")
 
 	if formErrors.HasErrors() {
-		return &CreateValidatorResult{FormErrors: formErrors}
+		return &CreateDbWorkValidatorResult{FormErrors: formErrors}
 	}
 
-	return &CreateValidatorResult{}
+	return &CreateDbWorkValidatorResult{}
 }
 
 // validateOptionalURL はURLが空でない場合にURL形式をチェックする

@@ -1,57 +1,57 @@
-package supporters_checkout
+package validator
 
 import (
 	"context"
 	"testing"
 )
 
-func TestCreateValidatorValidate(t *testing.T) {
+func TestCreateSupportersCheckoutValidatorValidate(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
 		name       string
-		input      CreateValidatorInput
+		input      CreateSupportersCheckoutValidatorInput
 		wantErrors bool
 		wantFields []string
 	}{
 		{
 			name:       "monthly plan",
-			input:      CreateValidatorInput{Plan: "monthly"},
+			input:      CreateSupportersCheckoutValidatorInput{Plan: "monthly"},
 			wantErrors: false,
 		},
 		{
 			name:       "yearly plan",
-			input:      CreateValidatorInput{Plan: "yearly"},
+			input:      CreateSupportersCheckoutValidatorInput{Plan: "yearly"},
 			wantErrors: false,
 		},
 		{
 			name:       "empty plan",
-			input:      CreateValidatorInput{Plan: ""},
+			input:      CreateSupportersCheckoutValidatorInput{Plan: ""},
 			wantErrors: true,
 			wantFields: []string{"plan"},
 		},
 		{
 			name:       "invalid plan",
-			input:      CreateValidatorInput{Plan: "weekly"},
+			input:      CreateSupportersCheckoutValidatorInput{Plan: "weekly"},
 			wantErrors: true,
 			wantFields: []string{"plan"},
 		},
 		{
 			name:       "uppercase plan",
-			input:      CreateValidatorInput{Plan: "MONTHLY"},
+			input:      CreateSupportersCheckoutValidatorInput{Plan: "MONTHLY"},
 			wantErrors: true,
 			wantFields: []string{"plan"},
 		},
 	}
 
-	validator := NewCreateValidator()
+	v := NewCreateSupportersCheckoutValidator()
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
 			ctx := context.Background()
-			result := validator.Validate(ctx, tt.input)
+			result := v.Validate(ctx, tt.input)
 
 			if tt.wantErrors {
 				if result.FormErrors == nil || !result.FormErrors.HasErrors() {

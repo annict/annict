@@ -13,7 +13,26 @@ import (
 	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/testutil"
+	"github.com/annict/annict/go/internal/usecase"
+	"github.com/annict/annict/go/internal/validator"
 )
+
+func newTestHandler(t *testing.T, db *sql.DB, tx *sql.Tx) *Handler {
+	t.Helper()
+
+	queries := query.New(db).WithTx(tx)
+	cfg := &config.Config{Env: "test"}
+	sessionRepo := repository.NewSessionRepository(queries)
+	sessionManager := session.NewManager(sessionRepo, cfg)
+	workRepo := repository.NewWorkRepository(queries)
+	numberFormatRepo := repository.NewNumberFormatRepository(queries)
+
+	listDbWorksUC := usecase.NewListDbWorksUsecase(workRepo)
+	getDbWorkFormOptionsUC := usecase.NewGetDbWorkFormOptionsUsecase(numberFormatRepo)
+	createWorkUC := usecase.NewCreateWorkUsecase(db, workRepo, validator.NewCreateDbWorkValidator())
+
+	return NewHandler(cfg, sessionManager, listDbWorksUC, getDbWorkFormOptionsUC, createWorkUC)
+}
 
 // TestIndex はDB作品一覧ページのテスト
 func TestIndex(t *testing.T) {
@@ -32,14 +51,7 @@ func TestIndex(t *testing.T) {
 		WithSeason(2024, testutil.SeasonSummer).
 		Build()
 
-	queries := query.New(db).WithTx(tx)
-	cfg := &config.Config{Env: "test"}
-	sessionRepo := repository.NewSessionRepository(queries)
-	sessionManager := session.NewManager(sessionRepo, cfg)
-	workRepo := repository.NewWorkRepository(queries)
-	numberFormatRepo := repository.NewNumberFormatRepository(queries)
-
-	handler := NewHandler(cfg, db, workRepo, numberFormatRepo, sessionManager)
+	handler := newTestHandler(t, db, tx)
 
 	req := httptest.NewRequest("GET", "/db/works", nil)
 	rr := httptest.NewRecorder()
@@ -95,14 +107,7 @@ func TestIndex_Empty(t *testing.T) {
 		t.Fatalf("worksの削除に失敗しました: %v", err)
 	}
 
-	queries := query.New(db).WithTx(tx)
-	cfg := &config.Config{Env: "test"}
-	sessionRepo := repository.NewSessionRepository(queries)
-	sessionManager := session.NewManager(sessionRepo, cfg)
-	workRepo := repository.NewWorkRepository(queries)
-	numberFormatRepo := repository.NewNumberFormatRepository(queries)
-
-	handler := NewHandler(cfg, db, workRepo, numberFormatRepo, sessionManager)
+	handler := newTestHandler(t, db, tx)
 
 	req := httptest.NewRequest("GET", "/db/works", nil)
 	rr := httptest.NewRecorder()
@@ -127,14 +132,7 @@ func TestIndex_WithFilters(t *testing.T) {
 
 	db, tx := testutil.SetupTestDB(t)
 
-	queries := query.New(db).WithTx(tx)
-	cfg := &config.Config{Env: "test"}
-	sessionRepo := repository.NewSessionRepository(queries)
-	sessionManager := session.NewManager(sessionRepo, cfg)
-	workRepo := repository.NewWorkRepository(queries)
-	numberFormatRepo := repository.NewNumberFormatRepository(queries)
-
-	handler := NewHandler(cfg, db, workRepo, numberFormatRepo, sessionManager)
+	handler := newTestHandler(t, db, tx)
 
 	req := httptest.NewRequest("GET", "/db/works?filter_no_episodes=1&filter_no_image=1&page=1", nil)
 	rr := httptest.NewRecorder()
@@ -159,14 +157,7 @@ func TestNew(t *testing.T) {
 
 	db, tx := testutil.SetupTestDB(t)
 
-	queries := query.New(db).WithTx(tx)
-	cfg := &config.Config{Env: "test"}
-	sessionRepo := repository.NewSessionRepository(queries)
-	sessionManager := session.NewManager(sessionRepo, cfg)
-	workRepo := repository.NewWorkRepository(queries)
-	numberFormatRepo := repository.NewNumberFormatRepository(queries)
-
-	handler := NewHandler(cfg, db, workRepo, numberFormatRepo, sessionManager)
+	handler := newTestHandler(t, db, tx)
 
 	req := httptest.NewRequest("GET", "/db/works/new", nil)
 	rr := httptest.NewRecorder()
