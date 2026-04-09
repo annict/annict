@@ -23,6 +23,7 @@ services:
     environment:
       - BINDING=0.0.0.0
       - OP_SERVICE_ACCOUNT_TOKEN=${OP_SERVICE_ACCOUNT_TOKEN:-}
+      - GITHUB_TOKEN=${GITHUB_TOKEN:-}
 
   caddy:
     image: caddy:2-alpine
