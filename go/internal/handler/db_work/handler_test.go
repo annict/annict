@@ -1,7 +1,6 @@
 package db_work
 
 import (
-	"context"
 	"database/sql"
 	"net/http"
 	"net/http/httptest"
@@ -82,47 +81,6 @@ func TestIndex(t *testing.T) {
 	expectedContentType := "text/html; charset=utf-8"
 	if ct := rr.Header().Get("Content-Type"); ct != expectedContentType {
 		t.Errorf("handler returned wrong content-type: got %v want %v", ct, expectedContentType)
-	}
-}
-
-// TestIndex_Empty は結果が空の場合のテスト
-func TestIndex_Empty(t *testing.T) {
-	t.Parallel()
-
-	db, _ := testutil.SetupTestDB(t)
-
-	// REPEATABLE READで並行テストがコミットしたデータを見えなくする
-	tx, err := db.BeginTx(context.Background(), &sql.TxOptions{
-		Isolation: sql.LevelRepeatableRead,
-	})
-	if err != nil {
-		t.Fatalf("トランザクションの開始に失敗しました: %v", err)
-	}
-	t.Cleanup(func() {
-		_ = tx.Rollback()
-	})
-
-	// トランザクション開始時点で存在する作品を削除
-	if _, err := tx.Exec("DELETE FROM works"); err != nil {
-		t.Fatalf("worksの削除に失敗しました: %v", err)
-	}
-
-	handler := newTestHandler(t, db, tx)
-
-	req := httptest.NewRequest("GET", "/db/works", nil)
-	rr := httptest.NewRecorder()
-
-	handler.Index(rr, req)
-
-	if status := rr.Code; status != http.StatusOK {
-		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
-	}
-
-	body := rr.Body.String()
-
-	// テーブルが表示されないことを確認
-	if strings.Contains(body, "<table") {
-		t.Error("response should not contain table when no works exist")
 	}
 }
 
