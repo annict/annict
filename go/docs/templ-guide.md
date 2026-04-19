@@ -348,6 +348,93 @@ templates.Deref(work.SeasonYear)  // *int32 -> int32
 templates.Icon("check", "icon-sm")
 ```
 
+## テンプレート関数の引数パターン
+
+テンプレート関数の引数は**構造体ベースのパターン**を使用します。
+
+**基本ルール**:
+
+- ✅ **構造体を使用**: テンプレートに渡すデータは専用の構造体にまとめる
+- ❌ **`context.Context` を明示的に渡さない**: templ は `ctx` を暗黙的に提供するため不要
+- ❌ **複数の引数を個別に渡さない**: 引数が増えるたびにシグネチャ変更が必要になる
+
+**良い例**:
+
+```templ
+// ページデータ構造体を定義
+type NewPageData struct {
+    CSRFToken        string
+    TurnstileSiteKey string
+    FormErrors       *model.ValidationError
+    Email            string
+}
+
+// 構造体のみを引数に取る（ctxはtemplが暗黙的に提供）
+templ New(data NewPageData) {
+    <form>
+        <input type="hidden" name="csrf_token" value={ data.CSRFToken }/>
+        // templates.T(ctx, "key") で翻訳を取得（ctxは暗黙的に利用可能）
+        <label>{ templates.T(ctx, "email_label") }</label>
+    </form>
+}
+```
+
+**悪い例**:
+
+```templ
+// ❌ context.Contextを明示的に渡している
+// ❌ 複数の引数を個別に渡している
+templ New(ctx context.Context, formErrors *model.ValidationError, csrfToken string, turnstileSiteKey string) {
+    // ...
+}
+```
+
+**メリット**:
+
+- **拡張性**: 新しいフィールドを追加してもシグネチャが変わらない
+- **可読性**: 呼び出し側でフィールド名が明確になる
+- **Go の慣習**: 引数が多い関数には構造体を使用するのが Go の標準的なパターン
+
+## テンプレートデータ構造体と ViewModel の関係
+
+テンプレートに渡すデータ構造体（`EditPageData` など）では、モデルのフィールドを個別のプリミティブ値として展開せず、ViewModel を構成要素として使用する。
+
+- ✅ **ViewModel を構成要素にする**: `User viewmodel.User`
+- ❌ **モデルのフィールドを個別に並べない**: `Name string`, `Email string`
+
+モデルからテンプレート表示用データへの変換ロジック（フォールバック、デフォルト値の決定など）は ViewModel のコンストラクタに配置し、ハンドラーには書かない。派生的な判定（例: タイトルが空ならオートフォーカス）は ViewModel のメソッドとして提供する。
+
+**良い例**:
+
+```go
+// テンプレートデータ構造体にViewModelを使用
+type EditProfileData struct {
+    CSRFToken string
+    User      viewmodel.User
+}
+
+// ハンドラーではViewModelのコンストラクタを呼ぶだけ
+userVM := viewmodel.NewUserForEdit(user)
+```
+
+**悪い例**:
+
+```go
+// ❌ モデルのフィールドを個別に展開している
+type EditProfileData struct {
+    CSRFToken string
+    Name      string
+    Email     string
+    Bio       string
+}
+
+// ❌ ハンドラーで変換・判定ロジックを書いている
+var name string
+if user.Name != nil {
+    name = *user.Name
+}
+```
+
 ## コード生成
 
 templファイルを編集したら、以下のコマンドでGoコードを生成します。
