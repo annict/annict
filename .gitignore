@@ -6,8 +6,7 @@
 /.pnpm-store
 /compose-up.sh
 /docker-compose.override.yml
+/docs/private
 /docs/README.md
-/docs/plans
-/docs/reviews
 /node_modules
 /tmp
