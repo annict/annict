@@ -1,4 +1,4 @@
-name: Formatter CI
+name: Formatter
 
 on:
   push:
@@ -8,6 +8,7 @@ on:
     paths:
       - "**/*.js"
       - "**/*.ts"
+      - "**/*.tsx"
       - "**/*.mjs"
       - "**/*.css"
       - "**/*.scss"
@@ -22,6 +23,7 @@ on:
     paths:
       - "**/*.js"
       - "**/*.ts"
+      - "**/*.tsx"
       - "**/*.mjs"
       - "**/*.css"
       - "**/*.scss"
@@ -39,10 +41,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v5
       - uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: pnpm
       - run: pnpm install
-      - run: pnpm run fmt:check
+      - run: pnpm fmt:check
