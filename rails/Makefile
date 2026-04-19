@@ -53,13 +53,13 @@ sorbet-update: ## Sorbet型定義を更新
 	$(OP_RUN) bin/rails sorbet:update
 
 ## データベース
-db-migrate: ## マイグレーションを実行
+db-migrate: ## マイグレーションを実行 (例: APP_ENV=test make db-migrate)
 	$(OP_RUN) bin/rails db:migrate
 
-db-rollback: ## 最後のマイグレーションをロールバック
+db-rollback: ## 最後のマイグレーションをロールバック (例: APP_ENV=test make db-rollback)
 	$(OP_RUN) bin/rails db:rollback
 
-db-setup: ## データベースのセットアップ
+db-setup: ## データベースのセットアップ (例: APP_ENV=test make db-setup)
 	$(OP_RUN) bin/rails db:setup
 
 ## GraphQL
