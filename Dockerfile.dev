@@ -42,6 +42,8 @@ PACKAGES=$(cat <<'PKGLIST' | sed 's/#.*//'
   libyaml-dev        # psych gemのインストールに必要 (Rails)
   lsb-release
   nano               # Claude Codeで使用
+  net-tools          # Claude Codeで使用 netstat (ネットワークデバッグ用)
+  psmisc             # Claude Codeで使用 fuser (プロセス特定用)
   ripgrep            # Claude Codeで使用
   sudo
   tree               # Claude Codeで使用
