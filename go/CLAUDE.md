@@ -55,6 +55,8 @@ cat /workspace/rails/app/models/work.rb
   - templ: 型安全な HTML テンプレートエンジン
   - resend-go/v2: メール送信ライブラリ（Resend API）
 - PostgreSQL 17.3
+- htmx 4: ハイパーメディアフレームワーク（HTML フラグメント返却によるサーバードリブン UI）
+  - htmx の実装時は `/htmx4` スキルを使用すること
 - Cloudflare Turnstile: Bot 対策サービス（ログイン・サインアップフォームなど）
 - pnpm
   - @tailwindcss/cli: Tailwind CSS v4 CLI ツール
