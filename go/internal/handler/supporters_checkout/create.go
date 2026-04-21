@@ -7,6 +7,7 @@ import (
 
 	"github.com/annict/annict/go/internal/i18n"
 	authMiddleware "github.com/annict/annict/go/internal/middleware"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/usecase"
 )
@@ -30,15 +31,22 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// UseCaseの実行
-	result, err := h.createCheckoutSessionUC.Execute(ctx, usecase.CreateCheckoutSessionInput{
+	output, err := h.createCheckoutSessionUC.Execute(ctx, usecase.CreateCheckoutSessionInput{
 		User:   user,
 		Plan:   r.FormValue("plan"),
 		Locale: i18n.GetLocale(ctx),
 	})
 	if err != nil {
-		if usecase.IsAlreadyActiveSubscriptionError(err) {
+		if ve := model.AsValidationError(err); ve != nil {
+			slog.WarnContext(ctx, "バリデーションエラー", "errors", ve, "user_id", user.ID)
+			h.redirectWithError(w, r, ctx, "supporters_checkout_invalid_plan")
+			return
+		}
+
+		if ae := model.AsAppError(err); ae != nil && ae.Code == model.AppErrCodeConflict {
 			slog.InfoContext(ctx, "既にアクティブなサブスクリプションが存在します", "user_id", user.ID)
-			h.redirectWithError(w, r, ctx, "supporters_checkout_already_active")
+			h.sessionManager.SetFlash(w, session.FlashError, ae.UserMsg)
+			http.Redirect(w, r, "/supporters", http.StatusSeeOther)
 			return
 		}
 
@@ -47,17 +55,10 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// バリデーションエラー
-	if result.FormErrors != nil && result.FormErrors.HasErrors() {
-		slog.WarnContext(ctx, "バリデーションエラー", "errors", result.FormErrors, "user_id", user.ID)
-		h.redirectWithError(w, r, ctx, "supporters_checkout_invalid_plan")
-		return
-	}
-
 	slog.InfoContext(ctx, "Stripe Checkoutセッションを作成しました", "user_id", user.ID, "plan", r.FormValue("plan"))
 
 	// Stripe Checkoutページへリダイレクト
-	http.Redirect(w, r, result.CheckoutURL, http.StatusSeeOther)
+	http.Redirect(w, r, output.CheckoutURL, http.StatusSeeOther)
 }
 
 // redirectWithError はエラーメッセージをフラッシュに設定してリダイレクトします

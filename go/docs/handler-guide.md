@@ -418,7 +418,10 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 package password_reset
 
 import (
+    "log/slog"
     "net/http"
+
+    "github.com/annict/annict/go/internal/model"
     "github.com/annict/annict/go/internal/usecase"
 )
 
@@ -427,19 +430,27 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
     ctx := r.Context()
 
     // UseCaseを呼び出し（バリデーション + トークン生成 + メール送信）
-    result, err := h.createPasswordResetTokenUC.Execute(ctx, usecase.CreatePasswordResetTokenInput{
+    _, err := h.createPasswordResetTokenUC.Execute(ctx, usecase.CreatePasswordResetTokenInput{
         Email: r.FormValue("email"),
     })
     if err != nil {
+        // エラー型に応じたレスポンス
+        if formErrors := model.AsValidationError(err); formErrors != nil {
+            // バリデーションエラー → フォーム再表示（セッションに保存してリダイレクト）
+            if err := h.sessionMgr.SetValidationError(ctx, w, r, *formErrors); err != nil {
+                slog.ErrorContext(ctx, "フォームエラーの設定に失敗", "error", err)
+            }
+            http.Redirect(w, r, "/password/reset", http.StatusSeeOther)
+            return
+        }
         // システムエラー
-        return
-    }
-    if result.FormErrors != nil && result.FormErrors.HasErrors() {
-        // フォームエラー → フォーム再表示
+        slog.ErrorContext(ctx, "パスワードリセット処理に失敗", "error", err)
+        http.Error(w, "Internal Server Error", http.StatusInternalServerError)
         return
     }
 
     // 成功 → リダイレクト
+    http.Redirect(w, r, "/password/reset/sent", http.StatusSeeOther)
 }
 ```
 

@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/testutil"
@@ -34,7 +35,7 @@ func TestCreatePasswordResetTokenUsecase_Execute(t *testing.T) {
 	queries := query.New(db)
 
 	// UseCase を作成（dispatcher は nil で OK - ジョブエンキューはテストしない）
-	v := validator.NewCreatePasswordResetValidator()
+	v := validator.NewPasswordResetCreateValidator()
 	uc := NewCreatePasswordResetTokenUsecase(db, repository.NewUserRepository(queries), repository.NewPasswordResetTokenRepository(queries), nil, nil, v)
 
 	// トークンを生成
@@ -44,11 +45,6 @@ func TestCreatePasswordResetTokenUsecase_Execute(t *testing.T) {
 	})
 	if err != nil {
 		t.Fatalf("トークン生成に失敗: %v", err)
-	}
-
-	// バリデーションエラーがないことを確認
-	if result.FormErrors != nil && result.FormErrors.HasErrors() {
-		t.Fatalf("バリデーションエラーが発生: %+v", result.FormErrors)
 	}
 
 	// 結果を検証
@@ -94,7 +90,7 @@ func TestCreatePasswordResetTokenUsecase_Execute_InvalidatesOldTokens(t *testing
 	queries := query.New(db)
 
 	// UseCase を作成
-	v := validator.NewCreatePasswordResetValidator()
+	v := validator.NewPasswordResetCreateValidator()
 	uc := NewCreatePasswordResetTokenUsecase(db, repository.NewUserRepository(queries), repository.NewPasswordResetTokenRepository(queries), nil, nil, v)
 
 	ctx := context.Background()
@@ -142,7 +138,7 @@ func TestCreatePasswordResetTokenUsecase_Execute_WithNonExistentUser(t *testing.
 	queries := query.New(db)
 
 	// UseCase を作成
-	v := validator.NewCreatePasswordResetValidator()
+	v := validator.NewPasswordResetCreateValidator()
 	uc := NewCreatePasswordResetTokenUsecase(db, repository.NewUserRepository(queries), repository.NewPasswordResetTokenRepository(queries), nil, nil, v)
 
 	// 存在しないメールアドレスでトークン生成を試みる（セキュリティ対策でエラーにならない）
@@ -156,12 +152,9 @@ func TestCreatePasswordResetTokenUsecase_Execute_WithNonExistentUser(t *testing.
 		t.Errorf("存在しないユーザーでエラーが返されました: %v", err)
 	}
 
-	// トークンは生成されない
-	if result.Token != "" {
-		t.Error("存在しないユーザーなのにトークンが生成されました")
-	}
-	if result.UserID != 0 {
-		t.Errorf("存在しないユーザーなのにUserIDが設定されています: %d", result.UserID)
+	// ユーザーが存在しない場合は nil を返す
+	if result != nil {
+		t.Errorf("存在しないユーザーなのに result が返されました: %+v", result)
 	}
 }
 
@@ -177,21 +170,18 @@ func TestCreatePasswordResetTokenUsecase_Execute_ValidationError(t *testing.T) {
 	queries := query.New(db)
 
 	// UseCase を作成
-	v := validator.NewCreatePasswordResetValidator()
+	v := validator.NewPasswordResetCreateValidator()
 	uc := NewCreatePasswordResetTokenUsecase(db, repository.NewUserRepository(queries), repository.NewPasswordResetTokenRepository(queries), nil, nil, v)
 
 	// 空のメールアドレスでバリデーションエラーを発生させる
 	ctx := context.Background()
-	result, err := uc.Execute(ctx, CreatePasswordResetTokenInput{
+	_, err := uc.Execute(ctx, CreatePasswordResetTokenInput{
 		Email: "",
 	})
+	ve := model.AsValidationError(err)
 
-	if err != nil {
-		t.Fatalf("システムエラーが返されました: %v", err)
-	}
-
-	if result.FormErrors == nil || !result.FormErrors.HasErrors() {
-		t.Error("バリデーションエラーが期待されましたが、発生しませんでした")
+	if ve == nil {
+		t.Fatalf("バリデーションエラーが期待されましたが、発生しませんでした: %v", err)
 	}
 }
 
@@ -219,7 +209,7 @@ func TestCreatePasswordResetTokenUsecase_Execute_TransactionRollback(t *testing.
 	queries := query.New(db)
 
 	// UseCase を作成
-	v := validator.NewCreatePasswordResetValidator()
+	v := validator.NewPasswordResetCreateValidator()
 	uc := NewCreatePasswordResetTokenUsecase(db, repository.NewUserRepository(queries), repository.NewPasswordResetTokenRepository(queries), nil, nil, v)
 
 	ctx := context.Background()
@@ -282,7 +272,7 @@ func TestCreatePasswordResetTokenUsecase_Execute_ConcurrentRequests(t *testing.T
 	queries := query.New(db)
 
 	// UseCase を作成
-	v := validator.NewCreatePasswordResetValidator()
+	v := validator.NewPasswordResetCreateValidator()
 	uc := NewCreatePasswordResetTokenUsecase(db, repository.NewUserRepository(queries), repository.NewPasswordResetTokenRepository(queries), nil, nil, v)
 
 	ctx := context.Background()
@@ -292,7 +282,7 @@ func TestCreatePasswordResetTokenUsecase_Execute_ConcurrentRequests(t *testing.T
 
 	// 複数回並行してトークン生成を実行
 	const concurrentRequests = 5
-	results := make(chan *CreatePasswordResetTokenResult, concurrentRequests)
+	results := make(chan *CreatePasswordResetTokenOutput, concurrentRequests)
 	errors := make(chan error, concurrentRequests)
 
 	for i := 0; i < concurrentRequests; i++ {

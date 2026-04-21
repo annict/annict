@@ -34,7 +34,7 @@ func setupTestHandler(t *testing.T, tx *sql.Tx, db *sql.DB, stripeCfg *annictStr
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionManager := session.NewManager(sessionRepo, cfg)
 	stripeSubscriberRepo := repository.NewStripeSubscriberRepository(queries)
-	v := validator.NewCreateSupportersCheckoutValidator()
+	v := validator.NewSupportersCheckoutCreateValidator()
 
 	// テスト用には nil を渡す（テストでは Stripe API を呼び出さない）
 	createCheckoutSessionUC := usecase.NewCreateCheckoutSessionUsecase(cfg, stripeSubscriberRepo, stripeCfg, nil, v)

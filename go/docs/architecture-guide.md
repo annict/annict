@@ -467,18 +467,17 @@ Handler のすべてのデータアクセスのオーケストレーターとし
 ```go
 // 例: バリデーション + 永続化を統括する書き込み UseCase
 type SendSignInCodeUsecase struct {
-    validator *validator.CreateSignInValidator
+    validator *validator.SignInCreateValidator
     userRepo  *repository.UserRepository
     // ...
 }
 
 func (uc *SendSignInCodeUsecase) Execute(ctx context.Context, input SendSignInCodeInput) (*SendSignInCodeOutput, error) {
     // 1. バリデーション
-    valResult := uc.validator.Validate(ctx, validator.CreateSignInValidatorInput{
+    if err := uc.validator.Validate(ctx, validator.SignInCreateValidatorInput{
         Email: input.Email,
-    })
-    if valResult.FormErrors.HasErrors() {
-        return &SendSignInCodeOutput{FormErrors: valResult.FormErrors}, nil
+    }); err != nil {
+        return nil, err // *model.ValidationError か素の error がそのまま上がる
     }
 
     // 2. ビジネスロジック + 永続化
@@ -669,51 +668,41 @@ func (uc *CreatePasswordResetTokenUsecase) Execute(ctx context.Context, userID i
 ### ハンドラーでの使用
 
 ```go
-// internal/handler/password_reset.go
-package handler
+// internal/handler/password_reset/create.go
+package password_reset
 
 import (
+    "log/slog"
+    "net/http"
+
+    "github.com/annict/annict/go/internal/model"
     "github.com/annict/annict/go/internal/usecase"
 )
 
-func (h *Handler) ProcessPasswordReset(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
     ctx := r.Context()
 
-    // リクエストバリデーション
-    req := &PasswordResetRequest{
+    // ユースケースを実行（バリデーション + トークン生成 + メール送信）
+    _, err := h.createPasswordResetTokenUC.Execute(ctx, usecase.CreatePasswordResetTokenInput{
         Email: r.FormValue("email"),
-    }
-    if formErrors := req.Validate(ctx); formErrors != nil {
-        // エラー処理
-        return
-    }
-
-    // ユーザーを検索
-    user, err := h.queries.GetUserByEmail(ctx, req.Email)
+    })
     if err != nil {
-        // ユーザーが見つからない場合の処理
-        return
-    }
-
-    // ユースケースを実行
-    uc := usecase.NewCreatePasswordResetTokenUsecase(h.db, h.queries)
-    result, err := uc.Execute(ctx, user.ID)
-    if err != nil {
-        slog.ErrorContext(ctx, "トークンの作成に失敗", "error", err)
-        http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-        return
-    }
-
-    // メール送信
-    err = h.sendPasswordResetEmail(ctx, user.Email, result.Token)
-    if err != nil {
-        slog.ErrorContext(ctx, "メール送信に失敗", "error", err)
+        // エラー型に応じたレスポンス
+        if formErrors := model.AsValidationError(err); formErrors != nil {
+            // バリデーションエラー → フォーム再表示
+            if err := h.sessionMgr.SetValidationError(ctx, w, r, *formErrors); err != nil {
+                slog.ErrorContext(ctx, "フォームエラーの設定に失敗", "error", err)
+            }
+            http.Redirect(w, r, "/password/reset", http.StatusSeeOther)
+            return
+        }
+        slog.ErrorContext(ctx, "パスワードリセット処理に失敗", "error", err)
         http.Error(w, "Internal Server Error", http.StatusInternalServerError)
         return
     }
 
     // 成功レスポンス
-    http.Redirect(w, r, "/password/reset_sent", http.StatusSeeOther)
+    http.Redirect(w, r, "/password/reset/sent", http.StatusSeeOther)
 }
 ```
 
@@ -807,8 +796,8 @@ func (uc *CreateAccountUsecase) Execute(ctx context.Context, input CreateAccount
 ```go
 func TestCreatePasswordResetTokenUsecase_Execute(t *testing.T) {
     // テストDBとトランザクションをセットアップ
-    db, tx := testutil.SetupTx(t)
-    queries := repository.New(db).WithTx(tx)
+    db, tx := testutil.SetupTestDB(t)
+    queries := query.New(db)
 
     // テストユーザーを作成
     userID := testutil.NewUserBuilder(t, tx).
@@ -940,26 +929,25 @@ func (h *Handler) CreateWork(w http.ResponseWriter, r *http.Request) {
 
 ```go
 // ✅ Good: ハンドラーの責務は明確
-func (h *Handler) ProcessPasswordReset(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
     ctx := r.Context()
 
-    // 1. リクエストバリデーション（Request DTO）
-    req := &PasswordResetRequest{Email: r.FormValue("email")}
-    if formErrors := req.Validate(ctx); formErrors != nil {
-        // エラーレスポンス
-        return
-    }
-
-    // 2. ビジネスロジック（UseCase）
-    uc := usecase.NewCreatePasswordResetTokenUsecase(h.db, h.queries)
-    result, err := uc.Execute(ctx, userID)
+    // 1. UseCaseを呼び出し（バリデーションも UseCase 内で実行）
+    _, err := h.createPasswordResetTokenUC.Execute(ctx, usecase.CreatePasswordResetTokenInput{
+        Email: r.FormValue("email"),
+    })
     if err != nil {
-        // エラーレスポンス
+        // 2. エラー型に応じたレスポンス
+        if formErrors := model.AsValidationError(err); formErrors != nil {
+            // バリデーションエラー → フォーム再表示
+            return
+        }
+        // システムエラー → 500
         return
     }
 
-    // 3. レスポンス
-    http.Redirect(w, r, "/password/reset_sent", http.StatusSeeOther)
+    // 3. 成功レスポンス
+    http.Redirect(w, r, "/password/reset/sent", http.StatusSeeOther)
 }
 ```
 

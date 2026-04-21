@@ -8,7 +8,7 @@ import (
 
 	"github.com/annict/annict/go/internal/clientip"
 	"github.com/annict/annict/go/internal/i18n"
-	"github.com/annict/annict/go/internal/session"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/templates/layouts"
 	passwordpages "github.com/annict/annict/go/internal/templates/pages/password"
 	"github.com/annict/annict/go/internal/usecase"
@@ -45,9 +45,9 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// エラーレスポンスを返す
-		formErrors := &session.FormErrors{}
-		formErrors.AddFieldError("email", i18n.T(ctx, "turnstile_verification_failed"))
-		if err := h.sessionManager.SetFormErrors(ctx, w, r, *formErrors); err != nil {
+		ve := model.NewValidationError()
+		ve.AddField("email", i18n.T(ctx, "turnstile_verification_failed"))
+		if err := h.sessionManager.SetValidationError(ctx, w, r, *ve); err != nil {
 			slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
 		}
 		http.Redirect(w, r, "/password/reset", http.StatusSeeOther)
@@ -88,25 +88,25 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// UseCaseを呼び出し（バリデーション + ユーザー検索 + トークン生成）
-	result, err := h.createTokenUseCase.Execute(ctx, usecase.CreatePasswordResetTokenInput{
+	output, err := h.createTokenUseCase.Execute(ctx, usecase.CreatePasswordResetTokenInput{
 		Email: email,
 	})
 	if err != nil {
+		if ve := model.AsValidationError(err); ve != nil {
+			if err := h.sessionManager.SetValidationError(ctx, w, r, *ve); err != nil {
+				slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
+			}
+			http.Redirect(w, r, "/password/reset", http.StatusSeeOther)
+			return
+		}
 		slog.ErrorContext(ctx, "パスワードリセットトークンの生成エラー", "error", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
-	if result.FormErrors != nil && result.FormErrors.HasErrors() {
-		if err := h.sessionManager.SetFormErrors(ctx, w, r, *result.FormErrors); err != nil {
-			slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
-		}
-		http.Redirect(w, r, "/password/reset", http.StatusSeeOther)
-		return
-	}
 
-	if result.UserID > 0 {
+	if output != nil {
 		slog.InfoContext(ctx, "パスワードリセット申請を受け付けました",
-			"user_id", result.UserID,
+			"user_id", output.UserID,
 			"ip_address", clientip.GetClientIP(r),
 		)
 	}
@@ -119,7 +119,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	component := layouts.Simple(ctx, meta, nil, h.cfg.GetAssetVersion(), passwordpages.ResetSent(ctx))
 	if err = component.Render(ctx, w); err != nil {
-		slog.Error("テンプレート実行エラー", "error", err)
+		slog.ErrorContext(ctx, "テンプレート実行エラー", "error", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}

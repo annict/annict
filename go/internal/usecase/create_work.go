@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/annict/annict/go/internal/repository"
-	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/validator"
 )
 
@@ -17,19 +16,19 @@ import (
 type CreateWorkUsecase struct {
 	db        *sql.DB
 	workRepo  *repository.WorkRepository
-	validator *validator.CreateDbWorkValidator
+	validator *validator.DbWorkCreateValidator
 }
 
 // NewCreateWorkUsecase はCreateWorkUsecaseを作成します
 func NewCreateWorkUsecase(
 	db *sql.DB,
 	workRepo *repository.WorkRepository,
-	v *validator.CreateDbWorkValidator,
+	validator *validator.DbWorkCreateValidator,
 ) *CreateWorkUsecase {
 	return &CreateWorkUsecase{
 		db:        db,
 		workRepo:  workRepo,
-		validator: v,
+		validator: validator,
 	}
 }
 
@@ -63,16 +62,15 @@ type CreateWorkInput struct {
 	NoEpisodes            string
 }
 
-// CreateWorkResult は作品作成の結果
-type CreateWorkResult struct {
-	WorkID     int64
-	FormErrors *session.FormErrors
+// CreateWorkOutput は作品作成の結果
+type CreateWorkOutput struct {
+	WorkID int64
 }
 
 // Execute はバリデーション・型変換・作品作成を行います
-func (uc *CreateWorkUsecase) Execute(ctx context.Context, input CreateWorkInput) (*CreateWorkResult, error) {
+func (uc *CreateWorkUsecase) Execute(ctx context.Context, input CreateWorkInput) (*CreateWorkOutput, error) {
 	// 1. バリデーション
-	valResult := uc.validator.Validate(ctx, validator.CreateDbWorkValidatorInput{
+	if err := uc.validator.Validate(ctx, validator.DbWorkCreateValidatorInput{
 		Title:                 input.Title,
 		TitleKana:             input.TitleKana,
 		TitleAlter:            input.TitleAlter,
@@ -99,9 +97,8 @@ func (uc *CreateWorkUsecase) Execute(ctx context.Context, input CreateWorkInput)
 		StartEpisodeRawNumber: input.StartEpisodeRawNumber,
 		NumberFormatID:        input.NumberFormatID,
 		NoEpisodes:            input.NoEpisodes,
-	})
-	if valResult.FormErrors != nil && valResult.FormErrors.HasErrors() {
-		return &CreateWorkResult{FormErrors: valResult.FormErrors}, nil
+	}); err != nil {
+		return nil, err
 	}
 
 	// 2. フォーム値を型変換
@@ -128,7 +125,7 @@ func (uc *CreateWorkUsecase) Execute(ctx context.Context, input CreateWorkInput)
 		return nil, fmt.Errorf("トランザクションのコミットに失敗しました: %w", err)
 	}
 
-	return &CreateWorkResult{WorkID: workID}, nil
+	return &CreateWorkOutput{WorkID: workID}, nil
 }
 
 // buildCreateWorkParams はフォーム入力値をリポジトリのパラメータに変換します

@@ -33,7 +33,7 @@ func TestNew(t *testing.T) {
 	sessionMgr := session.NewManager(sessionRepo, cfg)
 
 	// ログインコード送信ユースケースを作成（Dispatcher は nil でメール送信をスキップ）
-	v := validator.NewCreateSignInValidator()
+	v := validator.NewSignInCreateValidator()
 	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), repository.NewUserRepository(queries), nil, v)
 
 	// Turnstile クライアントを作成（テスト環境用: 空のSecretKeyで検証をスキップ）

@@ -11,9 +11,21 @@ import (
 
 	"github.com/annict/annict/go/internal/clientip"
 	"github.com/annict/annict/go/internal/i18n"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/usecase"
 )
+
+// codeErrorMap は usecase のコード検証エラーの対応表。
+// ログの理由は err.Error() を使用するため重複を定義しない。
+// ユーザー向けメッセージはセキュリティのため全ケースで共通化している（情報漏洩対策）。
+var codeErrorMap = []struct {
+	usecaseErr error
+}{
+	{usecase.ErrCodeNotFound},
+	{usecase.ErrCodeInvalid},
+	{usecase.ErrCodeAttemptsExceeded},
+}
 
 // Create POST /sign_up/code - 新規登録確認コード検証処理
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
@@ -60,28 +72,35 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// ユースケース呼び出し: バリデーション + 確認コード検証
-	result, err := h.verifySignUpCodeUC.Execute(ctx, usecase.VerifySignUpCodeInput{
+	_, err = h.verifySignUpCodeUC.Execute(ctx, usecase.VerifySignUpCodeInput{
 		Email: email,
 		Code:  r.FormValue("code"),
 	})
 	if err != nil {
-		// セキュリティのため、すべてのエラーで同じメッセージを表示（情報漏洩対策）
-		if errors.Is(err, usecase.ErrCodeNotFound) {
-			slog.WarnContext(ctx, "確認コード検証失敗: コードが見つからないか、有効期限が切れています",
-				"email", email,
-				"ip_address", clientip.GetClientIP(r),
-			)
-		} else if errors.Is(err, usecase.ErrCodeInvalid) {
-			slog.WarnContext(ctx, "確認コード検証失敗: コードが正しくありません",
-				"email", email,
-				"ip_address", clientip.GetClientIP(r),
-			)
-		} else if errors.Is(err, usecase.ErrCodeAttemptsExceeded) {
-			slog.WarnContext(ctx, "確認コード検証失敗: 試行回数が上限に達しました",
-				"email", email,
-				"ip_address", clientip.GetClientIP(r),
-			)
-		} else {
+		// バリデーションエラー
+		if ve := model.AsValidationError(err); ve != nil {
+			if err := h.sessionMgr.SetValidationError(ctx, w, r, *ve); err != nil {
+				slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
+			}
+			http.Redirect(w, r, "/sign_up/code", http.StatusSeeOther)
+			return
+		}
+
+		// セキュリティのため、すべての既知エラーで同じメッセージを表示（情報漏洩対策）
+		// errors.Is で排他的にマッチするため、順序は意味を持たない
+		matched := false
+		for _, ce := range codeErrorMap {
+			if errors.Is(err, ce.usecaseErr) {
+				slog.WarnContext(ctx, "確認コード検証失敗",
+					"reason", ce.usecaseErr.Error(),
+					"email", email,
+					"ip_address", clientip.GetClientIP(r),
+				)
+				matched = true
+				break
+			}
+		}
+		if !matched {
 			slog.ErrorContext(ctx, "コード検証エラー",
 				"email", email,
 				"ip_address", clientip.GetClientIP(r),
@@ -92,19 +111,10 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		// すべてのコード検証失敗で同じメッセージを表示
-		formErrors := session.FormErrors{}
-		formErrors.AddFieldError("code", i18n.T(ctx, "sign_up_code_error_invalid"))
-		if err := h.sessionMgr.SetFormErrors(ctx, w, r, formErrors); err != nil {
-			slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
-		}
-		http.Redirect(w, r, "/sign_up/code", http.StatusSeeOther)
-		return
-	}
-
-	// バリデーションエラーの場合
-	if result.FormErrors != nil && result.FormErrors.HasErrors() {
-		if err := h.sessionMgr.SetFormErrors(ctx, w, r, *result.FormErrors); err != nil {
+		// すべての既知エラーで同じメッセージを表示（情報漏洩対策）
+		codeErr := model.NewValidationError()
+		codeErr.AddField("code", i18n.T(ctx, "sign_up_code_error_invalid"))
+		if err := h.sessionMgr.SetValidationError(ctx, w, r, *codeErr); err != nil {
 			slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
 		}
 		http.Redirect(w, r, "/sign_up/code", http.StatusSeeOther)

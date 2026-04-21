@@ -7,6 +7,7 @@ import (
 
 	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/middleware"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/templates/layouts"
 	"github.com/annict/annict/go/internal/templates/pages/db_works"
@@ -48,14 +49,14 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// ユースケース実行（バリデーション + 作品作成）
-	result, err := h.createWorkUC.Execute(ctx, input)
+	output, err := h.createWorkUC.Execute(ctx, input)
 	if err != nil {
+		if ve := model.AsValidationError(err); ve != nil {
+			h.renderNewWithErrors(w, r, input, ve)
+			return
+		}
 		slog.ErrorContext(ctx, "作品の作成に失敗しました", "error", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
-	}
-	if result.FormErrors != nil && result.FormErrors.HasErrors() {
-		h.renderNewWithErrors(w, r, input, result.FormErrors)
 		return
 	}
 
@@ -63,11 +64,11 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	h.sessionManager.SetFlash(w, session.FlashSuccess, i18n.T(ctx, "db_works_created"))
 
 	// 作品一覧ページにリダイレクト（将来的に編集ページにリダイレクトを変更予定）
-	http.Redirect(w, r, fmt.Sprintf("/db/works?highlight=%d", result.WorkID), http.StatusSeeOther)
+	http.Redirect(w, r, fmt.Sprintf("/db/works?highlight=%d", output.WorkID), http.StatusSeeOther)
 }
 
 // renderNewWithErrors はバリデーションエラー時にフォームを再表示します
-func (h *Handler) renderNewWithErrors(w http.ResponseWriter, r *http.Request, input usecase.CreateWorkInput, formErrors *session.FormErrors) {
+func (h *Handler) renderNewWithErrors(w http.ResponseWriter, r *http.Request, input usecase.CreateWorkInput, formErrors *model.ValidationError) {
 	ctx := r.Context()
 
 	optionsResult, err := h.getDbWorkFormOptionsUC.Execute(ctx)

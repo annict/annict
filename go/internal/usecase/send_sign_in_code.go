@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"log/slog"
 	"time"
@@ -10,8 +11,8 @@ import (
 	"github.com/annict/annict/go/internal/auth"
 	"github.com/annict/annict/go/internal/dispatcher"
 	"github.com/annict/annict/go/internal/i18n"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/repository"
-	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/validator"
 )
 
@@ -21,7 +22,7 @@ type SendSignInCodeUsecase struct {
 	signInCodeRepo *repository.SignInCodeRepository
 	userRepo       *repository.UserRepository
 	dispatcher     *dispatcher.Dispatcher
-	validator      *validator.CreateSignInValidator
+	validator      *validator.SignInCreateValidator
 }
 
 // NewSendSignInCodeUsecase は新しいSendSignInCodeUsecaseを作成します
@@ -30,7 +31,7 @@ func NewSendSignInCodeUsecase(
 	signInCodeRepo *repository.SignInCodeRepository,
 	userRepo *repository.UserRepository,
 	dispatcher *dispatcher.Dispatcher,
-	validator *validator.CreateSignInValidator,
+	validator *validator.SignInCreateValidator,
 ) *SendSignInCodeUsecase {
 	return &SendSignInCodeUsecase{
 		db:             db,
@@ -46,32 +47,30 @@ type SendSignInCodeInput struct {
 	Email string
 }
 
-// SendSignInCodeResult はユースケースの結果を表します
-type SendSignInCodeResult struct {
-	FormErrors  *session.FormErrors // バリデーションエラー（nilなら成功）
-	UserID      int64               // ユーザーID
-	Email       string              // メールアドレス
-	HasPassword bool                // パスワードログインを使用するかどうか
-	Code        string              // 平文コード（テスト用、コードログインの場合のみ）
+// SendSignInCodeOutput はユースケースの結果を表します
+type SendSignInCodeOutput struct {
+	UserID      int64  // ユーザーID
+	Email       string // メールアドレス
+	HasPassword bool   // パスワードログインを使用するかどうか
+	Code        string // 平文コード（テスト用、コードログインの場合のみ）
 }
 
 // Execute はサインインの入力検証・ユーザー検索を行い、パスワードなしユーザーの場合はコードを生成・送信します
-func (uc *SendSignInCodeUsecase) Execute(ctx context.Context, input SendSignInCodeInput) (*SendSignInCodeResult, error) {
+func (uc *SendSignInCodeUsecase) Execute(ctx context.Context, input SendSignInCodeInput) (*SendSignInCodeOutput, error) {
 	// 1. バリデーション
-	valResult := uc.validator.Validate(ctx, validator.CreateSignInValidatorInput{
+	if err := uc.validator.Validate(ctx, validator.SignInCreateValidatorInput{
 		Email: input.Email,
-	})
-	if valResult.FormErrors != nil && valResult.FormErrors.HasErrors() {
-		return &SendSignInCodeResult{FormErrors: valResult.FormErrors}, nil
+	}); err != nil {
+		return nil, err
 	}
 
 	// 2. ユーザー検索
 	user, err := uc.userRepo.GetByEmailForSignIn(ctx, input.Email)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			formErrors := &session.FormErrors{}
-			formErrors.AddFieldError("email", i18n.T(ctx, "sign_in_user_not_found"))
-			return &SendSignInCodeResult{FormErrors: formErrors}, nil
+		if errors.Is(err, sql.ErrNoRows) {
+			ve := model.NewValidationError()
+			ve.AddField("email", i18n.T(ctx, "sign_in_user_not_found"))
+			return nil, ve
 		}
 		return nil, fmt.Errorf("ユーザーの検索に失敗: %w", err)
 	}
@@ -82,7 +81,7 @@ func (uc *SendSignInCodeUsecase) Execute(ctx context.Context, input SendSignInCo
 			"user_id", user.ID,
 			"email", user.Email,
 		)
-		return &SendSignInCodeResult{
+		return &SendSignInCodeOutput{
 			UserID:      user.ID,
 			Email:       user.Email,
 			HasPassword: true,
@@ -100,7 +99,7 @@ func (uc *SendSignInCodeUsecase) Execute(ctx context.Context, input SendSignInCo
 		return nil, err
 	}
 
-	return &SendSignInCodeResult{
+	return &SendSignInCodeOutput{
 		UserID:      user.ID,
 		Email:       user.Email,
 		HasPassword: false,

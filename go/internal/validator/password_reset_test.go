@@ -5,28 +5,29 @@ import (
 	"testing"
 
 	"github.com/annict/annict/go/internal/i18n"
+	"github.com/annict/annict/go/internal/model"
 )
 
-func TestCreatePasswordResetValidatorValidate(t *testing.T) {
+func TestPasswordResetCreateValidatorValidate(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
 		name              string
-		input             CreatePasswordResetValidatorInput
+		input             PasswordResetCreateValidatorInput
 		wantErrors        bool
 		wantFields        []string
 		wantErrorMessages map[string]string
 	}{
 		{
 			name: "正常系",
-			input: CreatePasswordResetValidatorInput{
+			input: PasswordResetCreateValidatorInput{
 				Email: "user@example.com",
 			},
 			wantErrors: false,
 		},
 		{
 			name: "メールアドレスが空文字列",
-			input: CreatePasswordResetValidatorInput{
+			input: PasswordResetCreateValidatorInput{
 				Email: "",
 			},
 			wantErrors: true,
@@ -37,7 +38,7 @@ func TestCreatePasswordResetValidatorValidate(t *testing.T) {
 		},
 		{
 			name: "メールアドレスがwhitespaceのみ",
-			input: CreatePasswordResetValidatorInput{
+			input: PasswordResetCreateValidatorInput{
 				Email: "   ",
 			},
 			wantErrors: true,
@@ -48,7 +49,7 @@ func TestCreatePasswordResetValidatorValidate(t *testing.T) {
 		},
 		{
 			name: "メールアドレスがタブのみ",
-			input: CreatePasswordResetValidatorInput{
+			input: PasswordResetCreateValidatorInput{
 				Email: "\t\t",
 			},
 			wantErrors: true,
@@ -59,7 +60,7 @@ func TestCreatePasswordResetValidatorValidate(t *testing.T) {
 		},
 		{
 			name: "メールアドレスが改行のみ",
-			input: CreatePasswordResetValidatorInput{
+			input: PasswordResetCreateValidatorInput{
 				Email: "\n\n",
 			},
 			wantErrors: true,
@@ -70,7 +71,7 @@ func TestCreatePasswordResetValidatorValidate(t *testing.T) {
 		},
 		{
 			name: "メールアドレスが混合whitespace",
-			input: CreatePasswordResetValidatorInput{
+			input: PasswordResetCreateValidatorInput{
 				Email: " \t\n ",
 			},
 			wantErrors: true,
@@ -81,30 +82,31 @@ func TestCreatePasswordResetValidatorValidate(t *testing.T) {
 		},
 	}
 
-	v := NewCreatePasswordResetValidator()
+	v := NewPasswordResetCreateValidator()
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
 			ctx := context.Background()
-			result := v.Validate(ctx, tt.input)
+			err := v.Validate(ctx, tt.input)
+			ve := model.AsValidationError(err)
 
 			if tt.wantErrors {
-				if result.FormErrors == nil || !result.FormErrors.HasErrors() {
+				if ve == nil {
 					t.Error("エラーが期待されましたが、エラーがありませんでした")
 					return
 				}
 
 				for _, field := range tt.wantFields {
-					if _, exists := result.FormErrors.Fields[field]; !exists {
+					if _, exists := ve.Fields[field]; !exists {
 						t.Errorf("フィールド %s のエラーが期待されましたが、見つかりませんでした", field)
 					}
 				}
 
 				if tt.wantErrorMessages != nil {
 					for field, expectedMsg := range tt.wantErrorMessages {
-						actualMsgs, exists := result.FormErrors.Fields[field]
+						actualMsgs, exists := ve.Fields[field]
 						if !exists {
 							t.Errorf("フィールド %s のエラーメッセージが見つかりませんでした", field)
 							continue
@@ -119,35 +121,36 @@ func TestCreatePasswordResetValidatorValidate(t *testing.T) {
 					}
 				}
 			} else {
-				if result.FormErrors != nil && result.FormErrors.HasErrors() {
-					t.Errorf("エラーは期待されていませんでしたが、返されました: %+v", result.FormErrors)
+				if ve != nil {
+					t.Errorf("エラーは期待されていませんでしたが、返されました: %+v", ve)
 				}
 			}
 		})
 	}
 }
 
-// TestCreatePasswordResetValidator_ValidateI18nMessages はI18nメッセージの内容を検証するテスト
-func TestCreatePasswordResetValidator_ValidateI18nMessages(t *testing.T) {
+// TestPasswordResetCreateValidator_ValidateI18nMessages はI18nメッセージの内容を検証するテスト
+func TestPasswordResetCreateValidator_ValidateI18nMessages(t *testing.T) {
 	t.Parallel()
 
 	ctx := context.Background()
-	v := NewCreatePasswordResetValidator()
+	v := NewPasswordResetCreateValidator()
 
 	t.Run("email必須エラーメッセージ", func(t *testing.T) {
 		t.Parallel()
 
-		input := CreatePasswordResetValidatorInput{
+		input := PasswordResetCreateValidatorInput{
 			Email: "",
 		}
-		result := v.Validate(ctx, input)
+		err := v.Validate(ctx, input)
+		ve := model.AsValidationError(err)
 
-		if result.FormErrors == nil || !result.FormErrors.HasErrors() {
+		if ve == nil {
 			t.Fatal("エラーが期待されましたが、エラーがありませんでした")
 		}
 
 		expectedMsg := i18n.T(ctx, "password_reset_email_required")
-		actualMsgs, exists := result.FormErrors.Fields["email"]
+		actualMsgs, exists := ve.Fields["email"]
 		if !exists {
 			t.Fatal("emailフィールドのエラーが見つかりませんでした")
 		}

@@ -7,6 +7,7 @@ import (
 
 	"github.com/annict/annict/go/internal/clientip"
 	"github.com/annict/annict/go/internal/i18n"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/usecase"
 )
@@ -30,27 +31,23 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	locale := i18n.GetLocale(ctx)
 
 	// ユースケースを実行（バリデーション + ビジネスロジック）
-	ucResult, err := h.completeSignUpUC.Execute(ctx, usecase.CompleteSignUpInput{
+	output, err := h.completeSignUpUC.Execute(ctx, usecase.CompleteSignUpInput{
 		Token:    token,
 		Username: username,
 		Locale:   locale,
 	})
 	if err != nil {
-		// エラーの種類に応じてメッセージを切り替え
-		formErrors := session.FormErrors{}
-		if usecase.IsUsernameAlreadyExistsError(err) {
-			formErrors.AddFieldError("username", i18n.T(ctx, "sign_up_username_error_username_taken"))
-			if err := h.sessionMgr.SetFormErrors(ctx, w, r, formErrors); err != nil {
+		// バリデーションエラー
+		if ve := model.AsValidationError(err); ve != nil {
+			if err := h.sessionMgr.SetValidationError(ctx, w, r, *ve); err != nil {
 				slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
+			}
+			// トークンが無効な場合は /sign_up に戻す（token を再発行する必要があるため）
+			if ve.HasFieldError("token") {
+				http.Redirect(w, r, "/sign_up", http.StatusSeeOther)
+				return
 			}
 			http.Redirect(w, r, fmt.Sprintf("/sign_up/username?token=%s", token), http.StatusSeeOther)
-			return
-		} else if usecase.IsTokenInvalidError(err) {
-			formErrors.AddFieldError("token", i18n.T(ctx, "sign_up_username_error_token_invalid"))
-			if err := h.sessionMgr.SetFormErrors(ctx, w, r, formErrors); err != nil {
-				slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
-			}
-			http.Redirect(w, r, "/sign_up", http.StatusSeeOther)
 			return
 		}
 
@@ -64,17 +61,8 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// バリデーションエラーの場合
-	if ucResult.FormErrors != nil && ucResult.FormErrors.HasErrors() {
-		if err := h.sessionMgr.SetFormErrors(ctx, w, r, *ucResult.FormErrors); err != nil {
-			slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
-		}
-		http.Redirect(w, r, fmt.Sprintf("/sign_up/username?token=%s", token), http.StatusSeeOther)
-		return
-	}
-
 	// セッションCookieを設定（session.Managerに委譲）
-	h.sessionMgr.SetSessionCookieByPublicID(w, r, ucResult.SessionPublicID)
+	h.sessionMgr.SetSessionCookieByPublicID(w, r, output.SessionPublicID)
 
 	// セッションから sign_up_email を削除
 	if err := h.sessionMgr.DeleteValue(ctx, r, "sign_up_email"); err != nil {
@@ -82,9 +70,9 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	slog.InfoContext(ctx, "ユーザー登録成功",
-		"user_id", ucResult.User.ID,
-		"username", ucResult.User.Username,
-		"email", ucResult.User.Email,
+		"user_id", output.User.ID,
+		"username", output.User.Username,
+		"email", output.User.Email,
 		"ip_address", clientip.GetClientIP(r),
 	)
 

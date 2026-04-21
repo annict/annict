@@ -9,7 +9,6 @@ import (
 
 	"github.com/annict/annict/go/internal/auth"
 	"github.com/annict/annict/go/internal/repository"
-	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/validator"
 )
 
@@ -17,19 +16,19 @@ import (
 type VerifySignUpCodeUsecase struct {
 	db             *sql.DB
 	signUpCodeRepo *repository.SignUpCodeRepository
-	v              *validator.CreateSignUpCodeValidator
+	validator      *validator.SignUpCodeCreateValidator
 }
 
 // NewVerifySignUpCodeUsecase は新しいVerifySignUpCodeUsecaseを作成します
 func NewVerifySignUpCodeUsecase(
 	db *sql.DB,
 	signUpCodeRepo *repository.SignUpCodeRepository,
-	v *validator.CreateSignUpCodeValidator,
+	validator *validator.SignUpCodeCreateValidator,
 ) *VerifySignUpCodeUsecase {
 	return &VerifySignUpCodeUsecase{
 		db:             db,
 		signUpCodeRepo: signUpCodeRepo,
-		v:              v,
+		validator:      validator,
 	}
 }
 
@@ -39,19 +38,16 @@ type VerifySignUpCodeInput struct {
 	Code  string
 }
 
-// VerifySignUpCodeResult はユースケースの結果を表します
-type VerifySignUpCodeResult struct {
-	FormErrors *session.FormErrors // バリデーションエラー（nilなら成功）
-}
+// VerifySignUpCodeOutput はユースケースの結果を表します
+type VerifySignUpCodeOutput struct{}
 
 // Execute は6桁の新規登録確認コードを検証します
-func (uc *VerifySignUpCodeUsecase) Execute(ctx context.Context, input VerifySignUpCodeInput) (*VerifySignUpCodeResult, error) {
+func (uc *VerifySignUpCodeUsecase) Execute(ctx context.Context, input VerifySignUpCodeInput) (*VerifySignUpCodeOutput, error) {
 	// 1. バリデーション
-	valResult := uc.v.Validate(ctx, validator.CreateSignUpCodeValidatorInput{
+	if err := uc.validator.Validate(ctx, validator.SignUpCodeCreateValidatorInput{
 		Code: input.Code,
-	})
-	if valResult.FormErrors != nil && valResult.FormErrors.HasErrors() {
-		return &VerifySignUpCodeResult{FormErrors: valResult.FormErrors}, nil
+	}); err != nil {
+		return nil, err
 	}
 
 	// 2. コード検証
@@ -59,7 +55,7 @@ func (uc *VerifySignUpCodeUsecase) Execute(ctx context.Context, input VerifySign
 		return nil, err
 	}
 
-	return &VerifySignUpCodeResult{}, nil
+	return &VerifySignUpCodeOutput{}, nil
 }
 
 // verifyCode は6桁の新規登録確認コードを検証します

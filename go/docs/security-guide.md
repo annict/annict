@@ -94,20 +94,28 @@ templは自動でエスケープ処理を行うため、基本的に安全です
 すべてのユーザー入力は信頼しない前提で処理します。
 
 ```go
-// ✅ Good: バリデーションを実施
-func (req *CommentRequest) Validate(ctx context.Context) *session.FormErrors {
-    errors := &session.FormErrors{}
+// ✅ Good: バリデーションを実施（internal/validator/ に配置）
+// internal/validator/comment.go
+type CommentCreateValidatorInput struct {
+    Comment string
+}
 
-    if req.Comment == "" {
-        errors.AddFieldError("comment", i18n.T(ctx, "comment_required"))
+func (v *CommentCreateValidator) Validate(ctx context.Context, input CommentCreateValidatorInput) error {
+    ve := model.NewValidationError()
+
+    if input.Comment == "" {
+        ve.AddField("comment", i18n.T(ctx, "comment_required"))
     }
 
     // 文字数制限
-    if len(req.Comment) > 1000 {
-        errors.AddFieldError("comment", i18n.T(ctx, "comment_too_long"))
+    if len(input.Comment) > 1000 {
+        ve.AddField("comment", i18n.T(ctx, "comment_too_long"))
     }
 
-    return errors
+    if ve.HasErrors() {
+        return ve
+    }
+    return nil
 }
 ```
 
@@ -193,19 +201,27 @@ slog.InfoContext(ctx, "ユーザーログイン試行", "email", email)
 ```
 
 ```go
-// バックエンド: Request DTOでバリデーション
-func (req *SignUpRequest) Validate(ctx context.Context) *session.FormErrors {
-    errors := &session.FormErrors{}
+// バックエンド: internal/validator/ でバリデーション
+// internal/validator/sign_up.go
+type SignUpCreateValidatorInput struct {
+    Email string
+}
 
-    if req.Email == "" {
-        errors.AddFieldError("email", i18n.T(ctx, "email_required"))
+func (v *SignUpCreateValidator) Validate(ctx context.Context, input SignUpCreateValidatorInput) error {
+    ve := model.NewValidationError()
+
+    if input.Email == "" {
+        ve.AddField("email", i18n.T(ctx, "email_required"))
     }
 
-    if !emailRegex.MatchString(req.Email) {
-        errors.AddFieldError("email", i18n.T(ctx, "email_invalid"))
+    if !emailRegex.MatchString(input.Email) {
+        ve.AddField("email", i18n.T(ctx, "email_invalid"))
     }
 
-    return errors
+    if ve.HasErrors() {
+        return ve
+    }
+    return nil
 }
 ```
 
@@ -215,6 +231,7 @@ func (req *SignUpRequest) Validate(ctx context.Context) *session.FormErrors {
 
 ```go
 // ✅ Good: ホワイトリスト方式
+// internal/validator/work.go
 var allowedSeasons = map[string]bool{
     "spring": true,
     "summer": true,
@@ -222,14 +239,21 @@ var allowedSeasons = map[string]bool{
     "winter": true,
 }
 
-func (req *CreateWorkRequest) Validate(ctx context.Context) *session.FormErrors {
-    errors := &session.FormErrors{}
+type WorkCreateValidatorInput struct {
+    Season string
+}
 
-    if req.Season != "" && !allowedSeasons[req.Season] {
-        errors.AddFieldError("season", i18n.T(ctx, "season_invalid"))
+func (v *WorkCreateValidator) Validate(ctx context.Context, input WorkCreateValidatorInput) error {
+    ve := model.NewValidationError()
+
+    if input.Season != "" && !allowedSeasons[input.Season] {
+        ve.AddField("season", i18n.T(ctx, "season_invalid"))
     }
 
-    return errors
+    if ve.HasErrors() {
+        return ve
+    }
+    return nil
 }
 ```
 

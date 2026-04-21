@@ -113,7 +113,7 @@ other = "別のアカウントでログイン"
 description = "フォームパースエラー"
 other = "リクエストの処理に失敗しました"
 
-[sign_in_email_required]
+[sign_in_error_email_required]
 description = "メールアドレス必須エラー"
 other = "メールアドレスを入力してください"
 
@@ -414,15 +414,15 @@ other = "送信する"
 description = "利用規約同意メッセージ（Sign-in-wrap方式）"
 other = "登録することで、<a href=\"/terms\" class=\"link\" target=\"_blank\">利用規約</a>と<a href=\"/privacy\" class=\"link\" target=\"_blank\">プライバシーポリシー</a>に同意したものとみなされます"
 
-[sign_up_email_required]
+[sign_up_error_email_required]
 description = "メールアドレス必須エラー"
 other = "メールアドレスを入力してください"
 
-[sign_up_email_invalid]
+[sign_up_error_email_invalid]
 description = "メールアドレス形式エラー"
 other = "メールアドレスの形式が正しくありません"
 
-[sign_up_email_already_exists]
+[sign_up_error_email_already_exists]
 description = "メールアドレス重複エラー"
 other = "このメールアドレスは使用できません"
 

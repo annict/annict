@@ -5,26 +5,27 @@ import (
 	"testing"
 
 	"github.com/annict/annict/go/internal/i18n"
+	"github.com/annict/annict/go/internal/model"
 )
 
-func TestCreateSignInCodeValidatorValidate(t *testing.T) {
+func TestSignInCodeCreateValidatorValidate(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
 		name              string
-		input             CreateSignInCodeValidatorInput
+		input             SignInCodeCreateValidatorInput
 		wantErrors        bool
 		wantFields        []string
 		wantErrorMessages map[string]string
 	}{
 		{
 			name:       "正常: 6桁の数字",
-			input:      CreateSignInCodeValidatorInput{Code: "123456"},
+			input:      SignInCodeCreateValidatorInput{Code: "123456"},
 			wantErrors: false,
 		},
 		{
 			name:       "エラー: コードが空",
-			input:      CreateSignInCodeValidatorInput{Code: ""},
+			input:      SignInCodeCreateValidatorInput{Code: ""},
 			wantErrors: true,
 			wantFields: []string{"code"},
 			wantErrorMessages: map[string]string{
@@ -33,7 +34,7 @@ func TestCreateSignInCodeValidatorValidate(t *testing.T) {
 		},
 		{
 			name:       "エラー: 5桁の数字",
-			input:      CreateSignInCodeValidatorInput{Code: "12345"},
+			input:      SignInCodeCreateValidatorInput{Code: "12345"},
 			wantErrors: true,
 			wantFields: []string{"code"},
 			wantErrorMessages: map[string]string{
@@ -42,7 +43,7 @@ func TestCreateSignInCodeValidatorValidate(t *testing.T) {
 		},
 		{
 			name:       "エラー: 7桁の数字",
-			input:      CreateSignInCodeValidatorInput{Code: "1234567"},
+			input:      SignInCodeCreateValidatorInput{Code: "1234567"},
 			wantErrors: true,
 			wantFields: []string{"code"},
 			wantErrorMessages: map[string]string{
@@ -51,7 +52,7 @@ func TestCreateSignInCodeValidatorValidate(t *testing.T) {
 		},
 		{
 			name:       "エラー: 6桁の英数字",
-			input:      CreateSignInCodeValidatorInput{Code: "12345a"},
+			input:      SignInCodeCreateValidatorInput{Code: "12345a"},
 			wantErrors: true,
 			wantFields: []string{"code"},
 			wantErrorMessages: map[string]string{
@@ -60,7 +61,7 @@ func TestCreateSignInCodeValidatorValidate(t *testing.T) {
 		},
 		{
 			name:       "エラー: 6桁のアルファベット",
-			input:      CreateSignInCodeValidatorInput{Code: "abcdef"},
+			input:      SignInCodeCreateValidatorInput{Code: "abcdef"},
 			wantErrors: true,
 			wantFields: []string{"code"},
 			wantErrorMessages: map[string]string{
@@ -69,7 +70,7 @@ func TestCreateSignInCodeValidatorValidate(t *testing.T) {
 		},
 		{
 			name:       "エラー: スペースを含む",
-			input:      CreateSignInCodeValidatorInput{Code: "123 456"},
+			input:      SignInCodeCreateValidatorInput{Code: "123 456"},
 			wantErrors: true,
 			wantFields: []string{"code"},
 			wantErrorMessages: map[string]string{
@@ -78,30 +79,31 @@ func TestCreateSignInCodeValidatorValidate(t *testing.T) {
 		},
 	}
 
-	v := NewCreateSignInCodeValidator()
+	v := NewSignInCodeCreateValidator()
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
 			ctx := context.Background()
-			result := v.Validate(ctx, tt.input)
+			err := v.Validate(ctx, tt.input)
+			ve := model.AsValidationError(err)
 
 			if tt.wantErrors {
-				if result.FormErrors == nil || !result.FormErrors.HasErrors() {
+				if ve == nil {
 					t.Error("エラーが期待されましたが、エラーがありませんでした")
 					return
 				}
 
 				for _, field := range tt.wantFields {
-					if _, exists := result.FormErrors.Fields[field]; !exists {
+					if _, exists := ve.Fields[field]; !exists {
 						t.Errorf("フィールド %s のエラーが期待されましたが、見つかりませんでした", field)
 					}
 				}
 
 				if tt.wantErrorMessages != nil {
 					for field, expectedMsg := range tt.wantErrorMessages {
-						actualMsgs, exists := result.FormErrors.Fields[field]
+						actualMsgs, exists := ve.Fields[field]
 						if !exists {
 							t.Errorf("フィールド %s のエラーメッセージが見つかりませんでした", field)
 							continue
@@ -116,33 +118,34 @@ func TestCreateSignInCodeValidatorValidate(t *testing.T) {
 					}
 				}
 			} else {
-				if result.FormErrors != nil && result.FormErrors.HasErrors() {
-					t.Errorf("エラーは期待されていませんでしたが、返されました: %+v", result.FormErrors)
+				if ve != nil {
+					t.Errorf("エラーは期待されていませんでしたが、返されました: %+v", ve)
 				}
 			}
 		})
 	}
 }
 
-// TestCreateSignInCodeValidator_ValidateI18nMessages I18nメッセージの内容を検証するテスト
-func TestCreateSignInCodeValidator_ValidateI18nMessages(t *testing.T) {
+// TestSignInCodeCreateValidator_ValidateI18nMessages I18nメッセージの内容を検証するテスト
+func TestSignInCodeCreateValidator_ValidateI18nMessages(t *testing.T) {
 	t.Parallel()
 
 	ctx := context.Background()
-	v := NewCreateSignInCodeValidator()
+	v := NewSignInCodeCreateValidator()
 
 	t.Run("code必須エラーメッセージ", func(t *testing.T) {
 		t.Parallel()
 
-		input := CreateSignInCodeValidatorInput{Code: ""}
-		result := v.Validate(ctx, input)
+		input := SignInCodeCreateValidatorInput{Code: ""}
+		err := v.Validate(ctx, input)
+		ve := model.AsValidationError(err)
 
-		if result.FormErrors == nil || !result.FormErrors.HasErrors() {
+		if ve == nil {
 			t.Fatal("エラーが期待されましたが、エラーがありませんでした")
 		}
 
 		expectedMsg := i18n.T(ctx, "sign_in_code_error_code_required")
-		actualMsgs, exists := result.FormErrors.Fields["code"]
+		actualMsgs, exists := ve.Fields["code"]
 		if !exists {
 			t.Fatal("codeフィールドのエラーが見つかりませんでした")
 		}
@@ -157,15 +160,16 @@ func TestCreateSignInCodeValidator_ValidateI18nMessages(t *testing.T) {
 	t.Run("codeフォーマットエラーメッセージ", func(t *testing.T) {
 		t.Parallel()
 
-		input := CreateSignInCodeValidatorInput{Code: "12345"}
-		result := v.Validate(ctx, input)
+		input := SignInCodeCreateValidatorInput{Code: "12345"}
+		err := v.Validate(ctx, input)
+		ve := model.AsValidationError(err)
 
-		if result.FormErrors == nil || !result.FormErrors.HasErrors() {
+		if ve == nil {
 			t.Fatal("エラーが期待されましたが、エラーがありませんでした")
 		}
 
 		expectedMsg := i18n.T(ctx, "sign_in_code_error_code_invalid_format")
-		actualMsgs, exists := result.FormErrors.Fields["code"]
+		actualMsgs, exists := ve.Fields["code"]
 		if !exists {
 			t.Fatal("codeフィールドのエラーが見つかりませんでした")
 		}

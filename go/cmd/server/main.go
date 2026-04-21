@@ -311,14 +311,14 @@ func main() {
 	d := dispatcher.NewDispatcher(riverClient.Client())
 
 	// 6桁コード送信ユースケースの初期化
-	signInValidator := validator.NewCreateSignInValidator()
+	signInValidator := validator.NewSignInCreateValidator()
 	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, signInCodeRepo, userRepo, d, signInValidator)
 
 	// サインアップコードリポジトリの初期化
 	signUpCodeRepo := repository.NewSignUpCodeRepository(queries)
 
 	// 新規登録確認コード送信ユースケースの初期化
-	signUpValidator := validator.NewCreateSignUpValidator()
+	signUpValidator := validator.NewSignUpCreateValidator()
 	sendSignUpCodeUC := usecase.NewSendSignUpCodeUsecase(db, signUpCodeRepo, userRepo, d, signUpValidator)
 
 	// Turnstileクライアントの初期化
@@ -331,7 +331,7 @@ func main() {
 	signUpHandler := sign_up.NewHandler(cfg, sessionManager, limiter, sendSignUpCodeUC, turnstileClient)
 
 	// 新規登録確認コード検証ユースケースの初期化
-	signUpCodeValidator := validator.NewCreateSignUpCodeValidator()
+	signUpCodeValidator := validator.NewSignUpCodeCreateValidator()
 	verifySignUpCodeUC := usecase.NewVerifySignUpCodeUsecase(db, signUpCodeRepo, signUpCodeValidator)
 
 	// 新規登録確認コード入力ハンドラーの初期化
@@ -341,19 +341,19 @@ func main() {
 	profileRepo := repository.NewProfileRepository(queries)
 	settingRepo := repository.NewSettingRepository(queries)
 	emailNotificationRepo := repository.NewEmailNotificationRepository(queries)
-	signUpUsernameValidator := validator.NewCreateSignUpUsernameValidator()
+	signUpUsernameValidator := validator.NewSignUpUsernameCreateValidator()
 	completeSignUpUC := usecase.NewCompleteSignUpUsecase(db, userRepo, profileRepo, settingRepo, emailNotificationRepo, sessionRepo, redisClient, signUpUsernameValidator)
 	signUpUsernameHandler := sign_up_username.NewHandler(cfg, sessionManager, redisClient, completeSignUpUC)
 
 	// 6桁コード入力ハンドラーの初期化
-	signInCodeValidator := validator.NewCreateSignInCodeValidator()
+	signInCodeValidator := validator.NewSignInCodeCreateValidator()
 	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, signInCodeValidator)
 	createSessionUC := usecase.NewCreateSessionUsecase(sessionRepo)
 	signInCodeHandler := sign_in_code.NewHandler(cfg, sessionManager, limiter, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
 
 	// パスワードログインハンドラーの初期化
-	signInPasswordValidator := validator.NewCreateSignInPasswordValidator()
-	authenticateByPasswordUC := usecase.NewAuthenticateByPasswordUsecase(userRepo, createSessionUC, signInPasswordValidator)
+	signInPasswordValidator := validator.NewSignInPasswordCreateValidator(userRepo)
+	authenticateByPasswordUC := usecase.NewAuthenticateByPasswordUsecase(createSessionUC, signInPasswordValidator)
 	signInPasswordHandler := sign_in_password.NewHandler(cfg, sessionManager, authenticateByPasswordUC)
 
 	// ログアウトハンドラーの初期化
@@ -361,12 +361,12 @@ func main() {
 
 	// パスワードリセット申請ハンドラーの初期化
 	passwordResetTokenRepo := repository.NewPasswordResetTokenRepository(queries)
-	passwordResetValidator := validator.NewCreatePasswordResetValidator()
+	passwordResetValidator := validator.NewPasswordResetCreateValidator()
 	createPasswordResetTokenUC := usecase.NewCreatePasswordResetTokenUsecase(db, userRepo, passwordResetTokenRepo, cfg, d, passwordResetValidator)
 	passwordResetHandler := password_reset.NewHandler(cfg, sessionManager, limiter, turnstileClient, createPasswordResetTokenUC)
 
 	// パスワード編集・更新ハンドラーの初期化
-	updatePasswordValidator := validator.NewUpdatePasswordValidator()
+	updatePasswordValidator := validator.NewPasswordUpdateValidator()
 	getPasswordResetTokenUC := usecase.NewGetPasswordResetTokenUsecase(passwordResetTokenRepo)
 	updatePasswordUC := usecase.NewUpdatePasswordResetUsecase(db, passwordResetTokenRepo, userRepo, sessionRepo, updatePasswordValidator)
 	passwordHandler := password.NewHandler(cfg, sessionManager, limiter, getPasswordResetTokenUC, updatePasswordUC)
@@ -388,7 +388,7 @@ func main() {
 	supportersHandler := supporters.NewHandler(cfg, sessionManager, imageHelper, getSupporterStatusUC, annictStripeCfg, stripeClient)
 
 	// Stripe Checkoutハンドラーの初期化
-	createSupportersCheckoutValidator := validator.NewCreateSupportersCheckoutValidator()
+	createSupportersCheckoutValidator := validator.NewSupportersCheckoutCreateValidator()
 	createCheckoutSessionUC := usecase.NewCreateCheckoutSessionUsecase(cfg, stripeSubscriberRepo, annictStripeCfg, stripeClient, createSupportersCheckoutValidator)
 	supportersCheckoutHandler := supporters_checkout.NewHandler(sessionManager, createCheckoutSessionUC)
 
@@ -450,7 +450,7 @@ func main() {
 	numberFormatRepo := repository.NewNumberFormatRepository(queries)
 	listDbWorksUC := usecase.NewListDbWorksUsecase(workRepo)
 	getDbWorkFormOptionsUC := usecase.NewGetDbWorkFormOptionsUsecase(numberFormatRepo)
-	createWorkUC := usecase.NewCreateWorkUsecase(db, workRepo, validator.NewCreateDbWorkValidator())
+	createWorkUC := usecase.NewCreateWorkUsecase(db, workRepo, validator.NewDbWorkCreateValidator())
 	dbWorkHandler := db_work.NewHandler(cfg, sessionManager, listDbWorksUC, getDbWorkFormOptionsUC, createWorkUC)
 	r.Get("/db/works", dbWorkHandler.Index)
 	r.Get("/db/works/new", dbWorkHandler.New)

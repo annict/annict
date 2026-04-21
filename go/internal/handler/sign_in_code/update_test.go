@@ -47,9 +47,9 @@ func TestUpdate_Success(t *testing.T) {
 	userRepo := repository.NewUserRepository(queries)
 
 	// ハンドラーを作成
-	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), userRepo, nil, validator.NewCreateSignInValidator())
+	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), userRepo, nil, validator.NewSignInCreateValidator())
 	signInCodeRepo := repository.NewSignInCodeRepository(queries)
-	signInCodeValidator := validator.NewCreateSignInCodeValidator()
+	signInCodeValidator := validator.NewSignInCodeCreateValidator()
 	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, signInCodeValidator)
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 	handler := NewHandler(cfg, sessionMgr, nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
@@ -145,9 +145,9 @@ func TestUpdate_AlreadyLoggedIn(t *testing.T) {
 	userRepo := repository.NewUserRepository(queries)
 
 	// ハンドラーを作成
-	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), userRepo, nil, validator.NewCreateSignInValidator())
+	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), userRepo, nil, validator.NewSignInCreateValidator())
 	signInCodeRepo := repository.NewSignInCodeRepository(queries)
-	signInCodeValidator := validator.NewCreateSignInCodeValidator()
+	signInCodeValidator := validator.NewSignInCodeCreateValidator()
 	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, signInCodeValidator)
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 	handler := NewHandler(cfg, sessionMgr, nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
@@ -217,9 +217,9 @@ func TestUpdate_NoEmailInSession(t *testing.T) {
 	userRepo := repository.NewUserRepository(queries)
 
 	// ハンドラーを作成
-	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), userRepo, nil, validator.NewCreateSignInValidator())
+	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), userRepo, nil, validator.NewSignInCreateValidator())
 	signInCodeRepo := repository.NewSignInCodeRepository(queries)
-	signInCodeValidator := validator.NewCreateSignInCodeValidator()
+	signInCodeValidator := validator.NewSignInCodeCreateValidator()
 	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, signInCodeValidator)
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 	handler := NewHandler(cfg, sessionMgr, nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
@@ -270,9 +270,9 @@ func TestUpdate_NoUserIDInSession(t *testing.T) {
 	userRepo := repository.NewUserRepository(queries)
 
 	// ハンドラーを作成
-	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), userRepo, nil, validator.NewCreateSignInValidator())
+	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), userRepo, nil, validator.NewSignInCreateValidator())
 	signInCodeRepo := repository.NewSignInCodeRepository(queries)
-	signInCodeValidator := validator.NewCreateSignInCodeValidator()
+	signInCodeValidator := validator.NewSignInCodeCreateValidator()
 	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, signInCodeValidator)
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 	handler := NewHandler(cfg, sessionMgr, nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)

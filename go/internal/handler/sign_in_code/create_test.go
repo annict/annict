@@ -83,9 +83,9 @@ func TestCreate_Success(t *testing.T) {
 	userRepo := repository.NewUserRepository(queries)
 
 	// ユースケースを作成
-	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), userRepo, nil, validator.NewCreateSignInValidator())
+	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), userRepo, nil, validator.NewSignInCreateValidator())
 	signInCodeRepo := repository.NewSignInCodeRepository(queries)
-	signInCodeValidator := validator.NewCreateSignInCodeValidator()
+	signInCodeValidator := validator.NewSignInCodeCreateValidator()
 	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, signInCodeValidator)
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
@@ -225,9 +225,9 @@ func TestCreate_InvalidCode(t *testing.T) {
 	userRepo := repository.NewUserRepository(queries)
 
 	// ユースケースを作成
-	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), userRepo, nil, validator.NewCreateSignInValidator())
+	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), userRepo, nil, validator.NewSignInCreateValidator())
 	signInCodeRepo := repository.NewSignInCodeRepository(queries)
-	signInCodeValidator := validator.NewCreateSignInCodeValidator()
+	signInCodeValidator := validator.NewSignInCodeCreateValidator()
 	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, signInCodeValidator)
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
@@ -318,9 +318,9 @@ func TestCreate_SessionExpired(t *testing.T) {
 	userRepo := repository.NewUserRepository(queries)
 
 	// ユースケースを作成
-	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), userRepo, nil, validator.NewCreateSignInValidator())
+	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), userRepo, nil, validator.NewSignInCreateValidator())
 	signInCodeRepo := repository.NewSignInCodeRepository(queries)
-	signInCodeValidator := validator.NewCreateSignInCodeValidator()
+	signInCodeValidator := validator.NewSignInCodeCreateValidator()
 	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, signInCodeValidator)
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
@@ -398,9 +398,9 @@ func TestCreate_CodeExpired(t *testing.T) {
 	userRepo := repository.NewUserRepository(queries)
 
 	// ユースケースを作成
-	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), userRepo, nil, validator.NewCreateSignInValidator())
+	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), userRepo, nil, validator.NewSignInCreateValidator())
 	signInCodeRepo := repository.NewSignInCodeRepository(queries)
-	signInCodeValidator := validator.NewCreateSignInCodeValidator()
+	signInCodeValidator := validator.NewSignInCodeCreateValidator()
 	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, signInCodeValidator)
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
@@ -490,9 +490,9 @@ func TestCreate_ValidationError(t *testing.T) {
 	userRepo := repository.NewUserRepository(queries)
 
 	// ユースケースを作成
-	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), userRepo, nil, validator.NewCreateSignInValidator())
+	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), userRepo, nil, validator.NewSignInCreateValidator())
 	signInCodeRepo := repository.NewSignInCodeRepository(queries)
-	signInCodeValidator := validator.NewCreateSignInCodeValidator()
+	signInCodeValidator := validator.NewSignInCodeCreateValidator()
 	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, signInCodeValidator)
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
@@ -571,9 +571,9 @@ func TestCreate_UserNotFound(t *testing.T) {
 	userRepo := repository.NewUserRepository(queries)
 
 	// ユースケースを作成
-	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), userRepo, nil, validator.NewCreateSignInValidator())
+	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), userRepo, nil, validator.NewSignInCreateValidator())
 	signInCodeRepo := repository.NewSignInCodeRepository(queries)
-	signInCodeValidator := validator.NewCreateSignInCodeValidator()
+	signInCodeValidator := validator.NewSignInCodeCreateValidator()
 	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, signInCodeValidator)
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 

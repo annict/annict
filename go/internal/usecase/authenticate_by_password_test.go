@@ -6,6 +6,7 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/testutil"
@@ -44,8 +45,8 @@ func TestAuthenticateByPasswordUsecase_Execute_Success(t *testing.T) {
 	userRepo := repository.NewUserRepository(queries)
 	sessionRepo := repository.NewSessionRepository(queries)
 	createSessionUC := NewCreateSessionUsecase(sessionRepo)
-	v := validator.NewCreateSignInPasswordValidator()
-	uc := NewAuthenticateByPasswordUsecase(userRepo, createSessionUC, v)
+	v := validator.NewSignInPasswordCreateValidator(userRepo)
+	uc := NewAuthenticateByPasswordUsecase(createSessionUC, v)
 
 	ctx := context.Background()
 
@@ -55,10 +56,6 @@ func TestAuthenticateByPasswordUsecase_Execute_Success(t *testing.T) {
 	})
 	if err != nil {
 		t.Fatalf("Execute failed: %v", err)
-	}
-
-	if result.FormErrors != nil && result.FormErrors.HasErrors() {
-		t.Fatalf("unexpected form errors: %+v", result.FormErrors)
 	}
 
 	if result.PublicID == "" {
@@ -101,8 +98,8 @@ func TestAuthenticateByPasswordUsecase_Execute_InvalidPassword(t *testing.T) {
 	userRepo := repository.NewUserRepository(queries)
 	sessionRepo := repository.NewSessionRepository(queries)
 	createSessionUC := NewCreateSessionUsecase(sessionRepo)
-	v := validator.NewCreateSignInPasswordValidator()
-	uc := NewAuthenticateByPasswordUsecase(userRepo, createSessionUC, v)
+	v := validator.NewSignInPasswordCreateValidator(userRepo)
+	uc := NewAuthenticateByPasswordUsecase(createSessionUC, v)
 
 	ctx := context.Background()
 
@@ -110,16 +107,13 @@ func TestAuthenticateByPasswordUsecase_Execute_InvalidPassword(t *testing.T) {
 		Email:    "auth_pw_invalid@example.com",
 		Password: "wrongpassword",
 	})
-	if err != nil {
-		t.Fatalf("Execute should not return system error: %v", err)
+	ve := model.AsValidationError(err)
+	if ve == nil {
+		t.Fatalf("expected validation error for invalid password, got: %v", err)
 	}
 
-	if result.FormErrors == nil || !result.FormErrors.HasErrors() {
-		t.Error("expected form errors for invalid password")
-	}
-
-	if result.PublicID != "" {
-		t.Error("PublicID should be empty on failure")
+	if result != nil {
+		t.Error("result should be nil on failure")
 	}
 }
 
@@ -132,21 +126,18 @@ func TestAuthenticateByPasswordUsecase_Execute_UserNotFound(t *testing.T) {
 	userRepo := repository.NewUserRepository(queries)
 	sessionRepo := repository.NewSessionRepository(queries)
 	createSessionUC := NewCreateSessionUsecase(sessionRepo)
-	v := validator.NewCreateSignInPasswordValidator()
-	uc := NewAuthenticateByPasswordUsecase(userRepo, createSessionUC, v)
+	v := validator.NewSignInPasswordCreateValidator(userRepo)
+	uc := NewAuthenticateByPasswordUsecase(createSessionUC, v)
 
 	ctx := context.Background()
 
-	result, err := uc.Execute(ctx, AuthenticateByPasswordInput{
+	_, err := uc.Execute(ctx, AuthenticateByPasswordInput{
 		Email:    "nonexistent@example.com",
 		Password: "password123",
 	})
-	if err != nil {
-		t.Fatalf("Execute should not return system error: %v", err)
-	}
-
-	if result.FormErrors == nil || !result.FormErrors.HasErrors() {
-		t.Error("expected form errors for non-existent user")
+	ve := model.AsValidationError(err)
+	if ve == nil {
+		t.Fatalf("expected validation error for non-existent user, got: %v", err)
 	}
 }
 
@@ -159,25 +150,22 @@ func TestAuthenticateByPasswordUsecase_Execute_ValidationError(t *testing.T) {
 	userRepo := repository.NewUserRepository(queries)
 	sessionRepo := repository.NewSessionRepository(queries)
 	createSessionUC := NewCreateSessionUsecase(sessionRepo)
-	v := validator.NewCreateSignInPasswordValidator()
-	uc := NewAuthenticateByPasswordUsecase(userRepo, createSessionUC, v)
+	v := validator.NewSignInPasswordCreateValidator(userRepo)
+	uc := NewAuthenticateByPasswordUsecase(createSessionUC, v)
 
 	ctx := context.Background()
 
 	// 空のパスワードでバリデーションエラー
-	result, err := uc.Execute(ctx, AuthenticateByPasswordInput{
+	_, err := uc.Execute(ctx, AuthenticateByPasswordInput{
 		Email:    "test@example.com",
 		Password: "",
 	})
-	if err != nil {
-		t.Fatalf("Execute should not return system error: %v", err)
+	ve := model.AsValidationError(err)
+	if ve == nil {
+		t.Fatalf("expected validation error for empty password, got: %v", err)
 	}
 
-	if result.FormErrors == nil || !result.FormErrors.HasErrors() {
-		t.Error("expected form errors for empty password")
-	}
-
-	if !result.FormErrors.HasFieldError("password") {
+	if !ve.HasFieldError("password") {
 		t.Error("expected password field error")
 	}
 }
@@ -191,25 +179,22 @@ func TestAuthenticateByPasswordUsecase_Execute_WhitespacePassword(t *testing.T) 
 	userRepo := repository.NewUserRepository(queries)
 	sessionRepo := repository.NewSessionRepository(queries)
 	createSessionUC := NewCreateSessionUsecase(sessionRepo)
-	v := validator.NewCreateSignInPasswordValidator()
-	uc := NewAuthenticateByPasswordUsecase(userRepo, createSessionUC, v)
+	v := validator.NewSignInPasswordCreateValidator(userRepo)
+	uc := NewAuthenticateByPasswordUsecase(createSessionUC, v)
 
 	ctx := context.Background()
 
 	// スペースのみのパスワードでバリデーションエラー
-	result, err := uc.Execute(ctx, AuthenticateByPasswordInput{
+	_, err := uc.Execute(ctx, AuthenticateByPasswordInput{
 		Email:    "test@example.com",
 		Password: "   ",
 	})
-	if err != nil {
-		t.Fatalf("Execute should not return system error: %v", err)
+	ve := model.AsValidationError(err)
+	if ve == nil {
+		t.Fatalf("expected validation error for whitespace-only password, got: %v", err)
 	}
 
-	if result.FormErrors == nil || !result.FormErrors.HasErrors() {
-		t.Error("expected form errors for whitespace-only password")
-	}
-
-	if !result.FormErrors.HasFieldError("password") {
+	if !ve.HasFieldError("password") {
 		t.Error("expected password field error")
 	}
 }

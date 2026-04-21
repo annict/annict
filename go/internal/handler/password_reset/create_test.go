@@ -47,7 +47,7 @@ func TestCreate_RateLimiting_IP(t *testing.T) {
 
 	// モック Turnstile クライアント（常に成功）
 	mockClient := &mockTurnstileClient{shouldSucceed: true}
-	v := validator.NewCreatePasswordResetValidator()
+	v := validator.NewPasswordResetCreateValidator()
 	createPasswordResetTokenUC := usecase.NewCreatePasswordResetTokenUsecase(db, repository.NewUserRepository(queries), repository.NewPasswordResetTokenRepository(queries), nil, nil, v)
 	handler := NewHandler(cfg, sessionManager, limiter, mockClient, createPasswordResetTokenUC)
 
@@ -117,7 +117,7 @@ func TestCreate_RateLimiting_Email(t *testing.T) {
 
 	// モック Turnstile クライアント（常に成功）
 	mockClient := &mockTurnstileClient{shouldSucceed: true}
-	v := validator.NewCreatePasswordResetValidator()
+	v := validator.NewPasswordResetCreateValidator()
 	createPasswordResetTokenUC := usecase.NewCreatePasswordResetTokenUsecase(db, repository.NewUserRepository(queries), repository.NewPasswordResetTokenRepository(queries), nil, nil, v)
 	handler := NewHandler(cfg, sessionManager, limiter, mockClient, createPasswordResetTokenUC)
 
@@ -199,7 +199,7 @@ func TestPasswordResetSentPage_UXMessages(t *testing.T) {
 	sessionManager := session.NewManager(sessionRepo, cfg)
 	// モック Turnstile クライアント（常に成功）
 	mockClient := &mockTurnstileClient{shouldSucceed: true}
-	v := validator.NewCreatePasswordResetValidator()
+	v := validator.NewPasswordResetCreateValidator()
 	createPasswordResetTokenUC := usecase.NewCreatePasswordResetTokenUsecase(db, repository.NewUserRepository(queries), repository.NewPasswordResetTokenRepository(queries), nil, nil, v)
 	handler := NewHandler(cfg, sessionManager, nil, mockClient, createPasswordResetTokenUC)
 
@@ -298,7 +298,7 @@ func TestPasswordResetFlow_Integration(t *testing.T) {
 	sessionManager := session.NewManager(sessionRepo, cfg)
 	// モック Turnstile クライアント（常に成功）
 	mockClient := &mockTurnstileClient{shouldSucceed: true}
-	v := validator.NewCreatePasswordResetValidator()
+	v := validator.NewPasswordResetCreateValidator()
 	createPasswordResetTokenUC := usecase.NewCreatePasswordResetTokenUsecase(db, repository.NewUserRepository(queries), repository.NewPasswordResetTokenRepository(queries), nil, nil, v)
 	handler := NewHandler(cfg, sessionManager, nil, mockClient, createPasswordResetTokenUC)
 
@@ -343,7 +343,7 @@ func TestCreate_TurnstileVerification_Success(t *testing.T) {
 	sessionManager := session.NewManager(sessionRepo, cfg)
 	// モック Turnstile クライアント（常に成功）
 	mockClient := &mockTurnstileClient{shouldSucceed: true}
-	v := validator.NewCreatePasswordResetValidator()
+	v := validator.NewPasswordResetCreateValidator()
 	createPasswordResetTokenUC := usecase.NewCreatePasswordResetTokenUsecase(db, repository.NewUserRepository(queries), repository.NewPasswordResetTokenRepository(queries), nil, nil, v)
 	handler := NewHandler(cfg, sessionManager, nil, mockClient, createPasswordResetTokenUC)
 
@@ -375,7 +375,7 @@ func TestCreate_TurnstileVerification_Failed(t *testing.T) {
 	sessionManager := session.NewManager(sessionRepo, cfg)
 	// モック Turnstile クライアント（常に失敗）
 	mockClient := &mockTurnstileClient{shouldSucceed: false}
-	v := validator.NewCreatePasswordResetValidator()
+	v := validator.NewPasswordResetCreateValidator()
 	createPasswordResetTokenUC := usecase.NewCreatePasswordResetTokenUsecase(db, repository.NewUserRepository(queries), repository.NewPasswordResetTokenRepository(queries), nil, nil, v)
 	handler := NewHandler(cfg, sessionManager, nil, mockClient, createPasswordResetTokenUC)
 
@@ -412,7 +412,7 @@ func TestCreate_TurnstileVerification_MissingToken(t *testing.T) {
 	sessionManager := session.NewManager(sessionRepo, cfg)
 	// モック Turnstile クライアント（常に失敗）
 	mockClient := &mockTurnstileClient{shouldSucceed: false}
-	v := validator.NewCreatePasswordResetValidator()
+	v := validator.NewPasswordResetCreateValidator()
 	createPasswordResetTokenUC := usecase.NewCreatePasswordResetTokenUsecase(db, repository.NewUserRepository(queries), repository.NewPasswordResetTokenRepository(queries), nil, nil, v)
 	handler := NewHandler(cfg, sessionManager, nil, mockClient, createPasswordResetTokenUC)
 

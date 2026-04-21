@@ -122,7 +122,7 @@ func TestCreate_BackParameterRedirect(t *testing.T) {
 	turnstileClient := turnstile.NewClient("", "")
 
 	// ユースケースを作成
-	v := validator.NewCreateSignInValidator()
+	v := validator.NewSignInCreateValidator()
 	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), repository.NewUserRepository(queries), nil, v)
 
 	// ハンドラーを作成
@@ -227,7 +227,7 @@ func TestCreate_BackParameterRedirectToCode(t *testing.T) {
 	turnstileClient := turnstile.NewClient("", "")
 
 	// SendSignInCodeユースケース
-	v := validator.NewCreateSignInValidator()
+	v := validator.NewSignInCreateValidator()
 	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), repository.NewUserRepository(queries), nil, v)
 
 	// ハンドラーを作成
@@ -279,7 +279,7 @@ func TestCreate_ValidationErrorPreservesBackParameter(t *testing.T) {
 	turnstileClient := turnstile.NewClient("", "")
 
 	// ユースケースを作成（バリデーションエラーのためDBアクセスは発生しない）
-	v := validator.NewCreateSignInValidator()
+	v := validator.NewSignInCreateValidator()
 	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), repository.NewUserRepository(queries), nil, v)
 
 	// ハンドラーを作成

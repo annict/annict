@@ -44,8 +44,8 @@ func setupSessionWithEmail(t *testing.T, sessionMgr *session.Manager, email stri
 func newTestHandler(t *testing.T, cfg *config.Config, sessionMgr *session.Manager, userRepo *repository.UserRepository, createSessionUC *usecase.CreateSessionUsecase) *Handler {
 	t.Helper()
 
-	signInPasswordValidator := validator.NewCreateSignInPasswordValidator()
-	authenticateByPasswordUC := usecase.NewAuthenticateByPasswordUsecase(userRepo, createSessionUC, signInPasswordValidator)
+	signInPasswordValidator := validator.NewSignInPasswordCreateValidator(userRepo)
+	authenticateByPasswordUC := usecase.NewAuthenticateByPasswordUsecase(createSessionUC, signInPasswordValidator)
 	return NewHandler(cfg, sessionMgr, authenticateByPasswordUC)
 }
 

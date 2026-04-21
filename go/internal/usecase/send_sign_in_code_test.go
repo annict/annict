@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/annict/annict/go/internal/auth"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/testutil"
@@ -38,7 +39,7 @@ func TestSendSignInCodeUsecase_Execute(t *testing.T) {
 	}
 
 	// ユースケースを作成（Dispatcherはnil）
-	v := validator.NewCreateSignInValidator()
+	v := validator.NewSignInCreateValidator()
 	uc := NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), repository.NewUserRepository(queries), nil, v)
 
 	ctx := context.Background()
@@ -47,11 +48,6 @@ func TestSendSignInCodeUsecase_Execute(t *testing.T) {
 	result, err := uc.Execute(ctx, SendSignInCodeInput{Email: testEmail})
 	if err != nil {
 		t.Fatalf("Execute failed: %v", err)
-	}
-
-	// バリデーションエラーがないことを確認
-	if result.FormErrors != nil && result.FormErrors.HasErrors() {
-		t.Fatalf("unexpected form errors: %+v", result.FormErrors)
 	}
 
 	// パスワードなしユーザーなのでHasPasswordはfalse
@@ -129,7 +125,7 @@ func TestSendSignInCodeUsecase_Execute_InvalidatesOldCodes(t *testing.T) {
 	}
 
 	// ユースケースを作成
-	v := validator.NewCreateSignInValidator()
+	v := validator.NewSignInCreateValidator()
 	uc := NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), repository.NewUserRepository(queries), nil, v)
 
 	ctx := context.Background()
@@ -166,20 +162,16 @@ func TestSendSignInCodeUsecase_Execute_UserNotFound(t *testing.T) {
 	queries := query.New(db)
 
 	// ユースケースを作成
-	v := validator.NewCreateSignInValidator()
+	v := validator.NewSignInCreateValidator()
 	uc := NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), repository.NewUserRepository(queries), nil, v)
 
 	ctx := context.Background()
 
 	// 存在しないメールアドレスでExecuteを実行
-	result, err := uc.Execute(ctx, SendSignInCodeInput{Email: "nonexistent@example.com"})
-	if err != nil {
-		t.Fatalf("Execute should not return system error: %v", err)
-	}
-
-	// FormErrorsが返されることを確認
-	if result.FormErrors == nil || !result.FormErrors.HasErrors() {
-		t.Error("expected form errors for non-existent user")
+	_, err := uc.Execute(ctx, SendSignInCodeInput{Email: "nonexistent@example.com"})
+	ve := model.AsValidationError(err)
+	if ve == nil {
+		t.Fatalf("expected validation error for non-existent user, got: %v", err)
 	}
 }
 
@@ -191,23 +183,19 @@ func TestSendSignInCodeUsecase_Execute_ValidationError(t *testing.T) {
 	queries := query.New(db)
 
 	// ユースケースを作成
-	v := validator.NewCreateSignInValidator()
+	v := validator.NewSignInCreateValidator()
 	uc := NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), repository.NewUserRepository(queries), nil, v)
 
 	ctx := context.Background()
 
 	// 空のメールアドレスでExecuteを実行
-	result, err := uc.Execute(ctx, SendSignInCodeInput{Email: ""})
-	if err != nil {
-		t.Fatalf("Execute should not return system error: %v", err)
+	_, err := uc.Execute(ctx, SendSignInCodeInput{Email: ""})
+	ve := model.AsValidationError(err)
+	if ve == nil {
+		t.Fatalf("expected validation error for empty email, got: %v", err)
 	}
 
-	// FormErrorsが返されることを確認
-	if result.FormErrors == nil || !result.FormErrors.HasErrors() {
-		t.Error("expected form errors for empty email")
-	}
-
-	if !result.FormErrors.HasFieldError("email") {
+	if !ve.HasFieldError("email") {
 		t.Error("expected email field error")
 	}
 }
@@ -238,7 +226,7 @@ func TestSendSignInCodeUsecase_Execute_UserWithPassword(t *testing.T) {
 	}
 
 	// ユースケースを作成
-	v := validator.NewCreateSignInValidator()
+	v := validator.NewSignInCreateValidator()
 	uc := NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), repository.NewUserRepository(queries), nil, v)
 
 	ctx := context.Background()
@@ -247,11 +235,6 @@ func TestSendSignInCodeUsecase_Execute_UserWithPassword(t *testing.T) {
 	result, err := uc.Execute(ctx, SendSignInCodeInput{Email: testEmail})
 	if err != nil {
 		t.Fatalf("Execute failed: %v", err)
-	}
-
-	// バリデーションエラーがないことを確認
-	if result.FormErrors != nil && result.FormErrors.HasErrors() {
-		t.Fatalf("unexpected form errors: %+v", result.FormErrors)
 	}
 
 	// HasPasswordがtrueであることを確認

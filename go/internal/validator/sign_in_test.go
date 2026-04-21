@@ -5,14 +5,15 @@ import (
 	"testing"
 
 	"github.com/annict/annict/go/internal/i18n"
+	"github.com/annict/annict/go/internal/model"
 )
 
-func TestCreateSignInValidatorValidate(t *testing.T) {
+func TestSignInCreateValidatorValidate(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
 		name              string
-		input             CreateSignInValidatorInput
+		input             SignInCreateValidatorInput
 		wantErrors        bool
 		wantFields        []string
 		wantErrorMessages map[string]string
@@ -20,13 +21,13 @@ func TestCreateSignInValidatorValidate(t *testing.T) {
 	}{
 		{
 			name:        "正常系",
-			input:       CreateSignInValidatorInput{Email: "user@example.com"},
+			input:       SignInCreateValidatorInput{Email: "user@example.com"},
 			wantErrors:  false,
 			description: "有効なメールアドレスの場合、エラーなし",
 		},
 		{
 			name:       "メールアドレスが空文字列",
-			input:      CreateSignInValidatorInput{Email: ""},
+			input:      SignInCreateValidatorInput{Email: ""},
 			wantErrors: true,
 			wantFields: []string{"email"},
 			wantErrorMessages: map[string]string{
@@ -36,7 +37,7 @@ func TestCreateSignInValidatorValidate(t *testing.T) {
 		},
 		{
 			name:       "メールアドレスがwhitespaceのみ",
-			input:      CreateSignInValidatorInput{Email: "   "},
+			input:      SignInCreateValidatorInput{Email: "   "},
 			wantErrors: true,
 			wantFields: []string{"email"},
 			wantErrorMessages: map[string]string{
@@ -46,7 +47,7 @@ func TestCreateSignInValidatorValidate(t *testing.T) {
 		},
 		{
 			name:       "メールアドレスがタブのみ",
-			input:      CreateSignInValidatorInput{Email: "\t\t"},
+			input:      SignInCreateValidatorInput{Email: "\t\t"},
 			wantErrors: true,
 			wantFields: []string{"email"},
 			wantErrorMessages: map[string]string{
@@ -56,7 +57,7 @@ func TestCreateSignInValidatorValidate(t *testing.T) {
 		},
 		{
 			name:       "メールアドレスが改行のみ",
-			input:      CreateSignInValidatorInput{Email: "\n\n"},
+			input:      SignInCreateValidatorInput{Email: "\n\n"},
 			wantErrors: true,
 			wantFields: []string{"email"},
 			wantErrorMessages: map[string]string{
@@ -66,7 +67,7 @@ func TestCreateSignInValidatorValidate(t *testing.T) {
 		},
 		{
 			name:       "メールアドレスが混合whitespace",
-			input:      CreateSignInValidatorInput{Email: " \t\n "},
+			input:      SignInCreateValidatorInput{Email: " \t\n "},
 			wantErrors: true,
 			wantFields: []string{"email"},
 			wantErrorMessages: map[string]string{
@@ -76,30 +77,31 @@ func TestCreateSignInValidatorValidate(t *testing.T) {
 		},
 	}
 
-	validator := NewCreateSignInValidator()
+	v := NewSignInCreateValidator()
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
 			ctx := context.Background()
-			result := validator.Validate(ctx, tt.input)
+			err := v.Validate(ctx, tt.input)
+			ve := model.AsValidationError(err)
 
 			if tt.wantErrors {
-				if result.FormErrors == nil || !result.FormErrors.HasErrors() {
+				if ve == nil {
 					t.Error("エラーが期待されましたが、エラーがありませんでした")
 					return
 				}
 
 				for _, field := range tt.wantFields {
-					if _, exists := result.FormErrors.Fields[field]; !exists {
+					if _, exists := ve.Fields[field]; !exists {
 						t.Errorf("フィールド %s のエラーが期待されましたが、見つかりませんでした", field)
 					}
 				}
 
 				if tt.wantErrorMessages != nil {
 					for field, expectedMsg := range tt.wantErrorMessages {
-						actualMsgs, exists := result.FormErrors.Fields[field]
+						actualMsgs, exists := ve.Fields[field]
 						if !exists {
 							t.Errorf("フィールド %s のエラーメッセージが見つかりませんでした", field)
 							continue
@@ -115,33 +117,34 @@ func TestCreateSignInValidatorValidate(t *testing.T) {
 					}
 				}
 			} else {
-				if result.FormErrors != nil && result.FormErrors.HasErrors() {
-					t.Errorf("エラーは期待されていませんでしたが、返されました: %+v", result.FormErrors)
+				if ve != nil {
+					t.Errorf("エラーは期待されていませんでしたが、返されました: %+v", ve)
 				}
 			}
 		})
 	}
 }
 
-// TestCreateSignInValidator_ValidateI18nMessages I18nメッセージの内容を検証するテスト
-func TestCreateSignInValidator_ValidateI18nMessages(t *testing.T) {
+// TestSignInCreateValidator_ValidateI18nMessages I18nメッセージの内容を検証するテスト
+func TestSignInCreateValidator_ValidateI18nMessages(t *testing.T) {
 	t.Parallel()
 
 	ctx := context.Background()
-	validator := NewCreateSignInValidator()
+	v := NewSignInCreateValidator()
 
 	t.Run("email必須エラーメッセージ", func(t *testing.T) {
 		t.Parallel()
 
-		input := CreateSignInValidatorInput{Email: ""}
-		result := validator.Validate(ctx, input)
+		input := SignInCreateValidatorInput{Email: ""}
+		err := v.Validate(ctx, input)
+		ve := model.AsValidationError(err)
 
-		if result.FormErrors == nil || !result.FormErrors.HasErrors() {
+		if ve == nil {
 			t.Fatal("エラーが期待されましたが、エラーがありませんでした")
 		}
 
-		expectedMsg := i18n.T(ctx, "sign_in_email_required")
-		actualMsgs, exists := result.FormErrors.Fields["email"]
+		expectedMsg := i18n.T(ctx, "sign_in_error_email_required")
+		actualMsgs, exists := ve.Fields["email"]
 		if !exists {
 			t.Fatal("emailフィールドのエラーが見つかりませんでした")
 		}

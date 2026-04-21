@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/annict/annict/go/internal/i18n"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/redirect"
 	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/usecase"
@@ -37,22 +38,20 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// UseCase を実行
-	result, err := h.authenticateByPasswordUC.Execute(ctx, usecase.AuthenticateByPasswordInput{
+	output, err := h.authenticateByPasswordUC.Execute(ctx, usecase.AuthenticateByPasswordInput{
 		Email:    email,
 		Password: r.FormValue("password"),
 	})
 	if err != nil {
+		if ve := model.AsValidationError(err); ve != nil {
+			if err := h.sessionMgr.SetValidationError(ctx, w, r, *ve); err != nil {
+				slog.ErrorContext(ctx, "フォームエラーの設定に失敗", "error", err)
+			}
+			http.Redirect(w, r, "/sign_in/password", http.StatusSeeOther)
+			return
+		}
 		slog.ErrorContext(ctx, "パスワード認証に失敗しました", "error", err)
 		h.sessionMgr.SetFlash(w, session.FlashError, i18n.T(ctx, "sign_in_error_server"))
-		http.Redirect(w, r, "/sign_in/password", http.StatusSeeOther)
-		return
-	}
-
-	// バリデーションエラーがある場合はフォームを再表示
-	if result.FormErrors != nil && result.FormErrors.HasErrors() {
-		if err := h.sessionMgr.SetFormErrors(ctx, w, r, *result.FormErrors); err != nil {
-			slog.ErrorContext(ctx, "フォームエラーの設定に失敗", "error", err)
-		}
 		http.Redirect(w, r, "/sign_in/password", http.StatusSeeOther)
 		return
 	}
@@ -66,7 +65,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Cookieを設定
-	h.sessionMgr.SetSessionCookieByPublicID(w, r, result.PublicID)
+	h.sessionMgr.SetSessionCookieByPublicID(w, r, output.PublicID)
 
 	// ログイン成功のフラッシュメッセージを設定
 	h.sessionMgr.SetFlash(w, session.FlashSuccess, i18n.T(ctx, "sign_in_success"))

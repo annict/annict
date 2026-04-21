@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/annict/annict/go/internal/auth"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/password_reset"
 	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/repository"
@@ -65,7 +66,7 @@ func TestUpdatePasswordResetUsecase_Execute(t *testing.T) {
 	// UseCase を作成
 	queriesWithoutTx := query.New(db)
 	sessionRepo := repository.NewSessionRepository(queriesWithoutTx)
-	v := validator.NewUpdatePasswordValidator()
+	v := validator.NewPasswordUpdateValidator()
 	uc := NewUpdatePasswordResetUsecase(db, repository.NewPasswordResetTokenRepository(queriesWithoutTx), repository.NewUserRepository(queriesWithoutTx), sessionRepo, v)
 
 	// パスワードを更新
@@ -78,11 +79,6 @@ func TestUpdatePasswordResetUsecase_Execute(t *testing.T) {
 	})
 	if err != nil {
 		t.Fatalf("パスワード更新に失敗: %v", err)
-	}
-
-	// バリデーションエラーがないことを確認
-	if result.FormErrors != nil && result.FormErrors.HasErrors() {
-		t.Fatalf("バリデーションエラーが発生しました: %+v", result.FormErrors)
 	}
 
 	// 結果を検証
@@ -126,23 +122,21 @@ func TestUpdatePasswordResetUsecase_Execute_ValidationError(t *testing.T) {
 	// UseCase を作成
 	queries := query.New(db)
 	sessionRepo := repository.NewSessionRepository(queries)
-	v := validator.NewUpdatePasswordValidator()
+	v := validator.NewPasswordUpdateValidator()
 	uc := NewUpdatePasswordResetUsecase(db, repository.NewPasswordResetTokenRepository(queries), repository.NewUserRepository(queries), sessionRepo, v)
 
 	// パスワードが一致しない入力
 	ctx := context.Background()
-	result, err := uc.Execute(ctx, UpdatePasswordResetInput{
+	_, err := uc.Execute(ctx, UpdatePasswordResetInput{
 		Token:                "some_token",
 		Password:             "password123",
 		PasswordConfirmation: "different_password",
 	})
-	if err != nil {
-		t.Fatalf("予期しないエラー: %v", err)
-	}
+	ve := model.AsValidationError(err)
 
 	// バリデーションエラーが返されることを確認
-	if result.FormErrors == nil || !result.FormErrors.HasErrors() {
-		t.Error("バリデーションエラーが期待されましたが、返されませんでした")
+	if ve == nil {
+		t.Fatalf("バリデーションエラーが期待されましたが、返されませんでした: %v", err)
 	}
 }
 
@@ -158,7 +152,7 @@ func TestUpdatePasswordResetUsecase_Execute_WithInvalidToken(t *testing.T) {
 	// UseCase を作成
 	queries := query.New(db)
 	sessionRepo := repository.NewSessionRepository(queries)
-	v := validator.NewUpdatePasswordValidator()
+	v := validator.NewPasswordUpdateValidator()
 	uc := NewUpdatePasswordResetUsecase(db, repository.NewPasswordResetTokenRepository(queries), repository.NewUserRepository(queries), sessionRepo, v)
 
 	// 存在しないトークンでパスワード更新を試みる
@@ -235,7 +229,7 @@ func TestUpdatePasswordResetUsecase_Execute_WithUsedToken(t *testing.T) {
 	// UseCase を作成
 	queriesWithoutTx := query.New(db)
 	sessionRepo := repository.NewSessionRepository(queriesWithoutTx)
-	v := validator.NewUpdatePasswordValidator()
+	v := validator.NewPasswordUpdateValidator()
 	uc := NewUpdatePasswordResetUsecase(db, repository.NewPasswordResetTokenRepository(queriesWithoutTx), repository.NewUserRepository(queriesWithoutTx), sessionRepo, v)
 
 	// 使用済みトークンでパスワード更新を試みる
@@ -306,7 +300,7 @@ func TestUpdatePasswordResetUsecase_Execute_WithExpiredToken(t *testing.T) {
 	// UseCase を作成
 	queriesWithoutTx := query.New(db)
 	sessionRepo := repository.NewSessionRepository(queriesWithoutTx)
-	v := validator.NewUpdatePasswordValidator()
+	v := validator.NewPasswordUpdateValidator()
 	uc := NewUpdatePasswordResetUsecase(db, repository.NewPasswordResetTokenRepository(queriesWithoutTx), repository.NewUserRepository(queriesWithoutTx), sessionRepo, v)
 
 	// 期限切れトークンでパスワード更新を試みる
@@ -401,7 +395,7 @@ func TestUpdatePasswordResetUsecase_Execute_WithNonExistentUser(t *testing.T) {
 	// UseCase を作成
 	queriesWithoutTx := query.New(db)
 	sessionRepo := repository.NewSessionRepository(queriesWithoutTx)
-	v := validator.NewUpdatePasswordValidator()
+	v := validator.NewPasswordUpdateValidator()
 	uc := NewUpdatePasswordResetUsecase(db, repository.NewPasswordResetTokenRepository(queriesWithoutTx), repository.NewUserRepository(queriesWithoutTx), sessionRepo, v)
 
 	// 削除されたユーザーのトークンでパスワード更新を試みる
@@ -479,7 +473,7 @@ func TestUpdatePasswordResetUsecase_Execute_WithNullUserData(t *testing.T) {
 	// UseCase を作成
 	queriesWithoutTx := query.New(db)
 	sessionRepo := repository.NewSessionRepository(queriesWithoutTx)
-	v := validator.NewUpdatePasswordValidator()
+	v := validator.NewPasswordUpdateValidator()
 	uc := NewUpdatePasswordResetUsecase(db, repository.NewPasswordResetTokenRepository(queriesWithoutTx), repository.NewUserRepository(queriesWithoutTx), sessionRepo, v)
 
 	// パスワード更新を試みる
@@ -558,24 +552,22 @@ func TestUpdatePasswordResetUsecase_Execute_TransactionRollback(t *testing.T) {
 	// UseCase を作成
 	queriesWithoutTx := query.New(db)
 	sessionRepo := repository.NewSessionRepository(queriesWithoutTx)
-	v := validator.NewUpdatePasswordValidator()
+	v := validator.NewPasswordUpdateValidator()
 	uc := NewUpdatePasswordResetUsecase(db, repository.NewPasswordResetTokenRepository(queriesWithoutTx), repository.NewUserRepository(queriesWithoutTx), sessionRepo, v)
 
 	// 無効なパスワード（空文字列）でパスワード更新を試みる
 	ctx := context.Background()
 	invalidPassword := "" // 空のパスワード
-	result, err := uc.Execute(ctx, UpdatePasswordResetInput{
+	_, err = uc.Execute(ctx, UpdatePasswordResetInput{
 		Token:                token,
 		Password:             invalidPassword,
 		PasswordConfirmation: invalidPassword,
 	})
+	ve := model.AsValidationError(err)
 
 	// バリデーションエラーが返されることを確認（空パスワードは形式バリデーションで弾かれる）
-	if err != nil {
-		t.Fatalf("予期しないエラー: %v", err)
-	}
-	if result.FormErrors == nil || !result.FormErrors.HasErrors() {
-		t.Error("バリデーションエラーが期待されましたが、返されませんでした")
+	if ve == nil {
+		t.Fatalf("バリデーションエラーが期待されましたが、返されませんでした: %v", err)
 	}
 
 	// パスワードが更新されていないことを確認

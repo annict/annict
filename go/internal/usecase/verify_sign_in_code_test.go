@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/annict/annict/go/internal/auth"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/testutil"
@@ -57,7 +58,7 @@ func TestVerifySignInCodeUsecase_Execute_Success(t *testing.T) {
 	// ユースケースを作成
 	signInCodeRepo := repository.NewSignInCodeRepository(queries)
 	userRepo := repository.NewUserRepository(queries)
-	v := validator.NewCreateSignInCodeValidator()
+	v := validator.NewSignInCodeCreateValidator()
 	uc := NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, v)
 
 	// Execute を実行（正しいコード）
@@ -68,10 +69,6 @@ func TestVerifySignInCodeUsecase_Execute_Success(t *testing.T) {
 
 	if result == nil {
 		t.Fatal("result should not be nil")
-	}
-
-	if result.FormErrors != nil && result.FormErrors.HasErrors() {
-		t.Errorf("unexpected form errors: %+v", result.FormErrors)
 	}
 
 	if result.Username != "verify_code_success_user" {
@@ -111,7 +108,7 @@ func TestVerifySignInCodeUsecase_Execute_ValidationError(t *testing.T) {
 	// ユースケースを作成
 	signInCodeRepo := repository.NewSignInCodeRepository(queries)
 	userRepo := repository.NewUserRepository(queries)
-	v := validator.NewCreateSignInCodeValidator()
+	v := validator.NewSignInCodeCreateValidator()
 	uc := NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, v)
 
 	ctx := context.Background()
@@ -128,17 +125,10 @@ func TestVerifySignInCodeUsecase_Execute_ValidationError(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result, err := uc.Execute(ctx, VerifySignInCodeInput{UserID: userID, Code: tt.code})
-			if err != nil {
-				t.Fatalf("Execute should not return error for validation failure: %v", err)
-			}
-
-			if result == nil {
-				t.Fatal("result should not be nil")
-			}
-
-			if result.FormErrors == nil || !result.FormErrors.HasErrors() {
-				t.Error("expected form errors but got none")
+			_, err := uc.Execute(ctx, VerifySignInCodeInput{UserID: userID, Code: tt.code})
+			ve := model.AsValidationError(err)
+			if ve == nil {
+				t.Fatalf("expected validation error but got: %v", err)
 			}
 		})
 	}
@@ -170,7 +160,7 @@ func TestVerifySignInCodeUsecase_Execute_CodeNotFound(t *testing.T) {
 	// ユースケースを作成
 	signInCodeRepo := repository.NewSignInCodeRepository(queries)
 	userRepo := repository.NewUserRepository(queries)
-	v := validator.NewCreateSignInCodeValidator()
+	v := validator.NewSignInCodeCreateValidator()
 	uc := NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, v)
 
 	ctx := context.Background()
@@ -230,7 +220,7 @@ func TestVerifySignInCodeUsecase_Execute_CodeExpired(t *testing.T) {
 	// ユースケースを作成
 	signInCodeRepo := repository.NewSignInCodeRepository(queries)
 	userRepo := repository.NewUserRepository(queries)
-	v := validator.NewCreateSignInCodeValidator()
+	v := validator.NewSignInCodeCreateValidator()
 	uc := NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, v)
 
 	// Execute を実行（有効期限切れ）
@@ -289,7 +279,7 @@ func TestVerifySignInCodeUsecase_Execute_InvalidCode(t *testing.T) {
 	// ユースケースを作成
 	signInCodeRepo := repository.NewSignInCodeRepository(queries)
 	userRepo := repository.NewUserRepository(queries)
-	v := validator.NewCreateSignInCodeValidator()
+	v := validator.NewSignInCodeCreateValidator()
 	uc := NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, v)
 
 	// Execute を実行（間違ったコード）
@@ -358,7 +348,7 @@ func TestVerifySignInCodeUsecase_Execute_AttemptsExceeded(t *testing.T) {
 	// ユースケースを作成
 	signInCodeRepo := repository.NewSignInCodeRepository(queries)
 	userRepo := repository.NewUserRepository(queries)
-	v := validator.NewCreateSignInCodeValidator()
+	v := validator.NewSignInCodeCreateValidator()
 	uc := NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, v)
 
 	// 5回間違ったコードを入力
@@ -455,7 +445,7 @@ func TestVerifySignInCodeUsecase_Execute_CodeUsedOnce(t *testing.T) {
 	// ユースケースを作成
 	signInCodeRepo := repository.NewSignInCodeRepository(queries)
 	userRepo := repository.NewUserRepository(queries)
-	v := validator.NewCreateSignInCodeValidator()
+	v := validator.NewSignInCodeCreateValidator()
 	uc := NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, v)
 
 	// 1回目：正しいコードで成功

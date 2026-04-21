@@ -6,58 +6,53 @@ import (
 
 	"github.com/annict/annict/go/internal/auth"
 	"github.com/annict/annict/go/internal/i18n"
-	"github.com/annict/annict/go/internal/session"
+	"github.com/annict/annict/go/internal/model"
 )
 
-// UpdatePasswordValidator はパスワード更新フォームのバリデーションを行う
-type UpdatePasswordValidator struct{}
+// PasswordUpdateValidator はパスワード更新フォームのバリデーションを行う
+type PasswordUpdateValidator struct{}
 
-// NewUpdatePasswordValidator は UpdatePasswordValidator を生成する
-func NewUpdatePasswordValidator() *UpdatePasswordValidator {
-	return &UpdatePasswordValidator{}
+// NewPasswordUpdateValidator は PasswordUpdateValidator を生成する
+func NewPasswordUpdateValidator() *PasswordUpdateValidator {
+	return &PasswordUpdateValidator{}
 }
 
-// UpdatePasswordValidatorInput はバリデーションの入力パラメータ
-type UpdatePasswordValidatorInput struct {
+// PasswordUpdateValidatorInput はバリデーションの入力パラメータ
+type PasswordUpdateValidatorInput struct {
 	Token                string
 	Password             string
 	PasswordConfirmation string
 }
 
-// UpdatePasswordValidatorResult はバリデーションの結果
-type UpdatePasswordValidatorResult struct {
-	FormErrors *session.FormErrors
-}
-
 // Validate はバリデーションを行う
-func (v *UpdatePasswordValidator) Validate(ctx context.Context, input UpdatePasswordValidatorInput) *UpdatePasswordValidatorResult {
-	formErrors := &session.FormErrors{}
+func (v *PasswordUpdateValidator) Validate(ctx context.Context, input PasswordUpdateValidatorInput) error {
+	ve := model.NewValidationError()
 
 	if strings.TrimSpace(input.Token) == "" {
-		formErrors.AddFieldError("token", i18n.T(ctx, "password_reset_token_invalid"))
+		ve.AddField("token", i18n.T(ctx, "password_reset_token_invalid"))
 	}
 
 	if strings.TrimSpace(input.Password) == "" {
-		formErrors.AddFieldError("password", i18n.T(ctx, "password_reset_password_required"))
+		ve.AddField("password", i18n.T(ctx, "password_reset_password_required"))
 	}
 
 	if strings.TrimSpace(input.PasswordConfirmation) == "" {
-		formErrors.AddFieldError("password_confirmation", i18n.T(ctx, "password_reset_password_confirmation_required"))
+		ve.AddField("password_confirmation", i18n.T(ctx, "password_reset_password_confirmation_required"))
 	}
 
 	if strings.TrimSpace(input.Password) != "" && strings.TrimSpace(input.PasswordConfirmation) != "" && input.Password != input.PasswordConfirmation {
-		formErrors.AddFieldError("password_confirmation", i18n.T(ctx, "password_reset_password_mismatch"))
+		ve.AddField("password_confirmation", i18n.T(ctx, "password_reset_password_mismatch"))
 	}
 
-	if formErrors.HasErrors() {
-		return &UpdatePasswordValidatorResult{FormErrors: formErrors}
+	if ve.HasErrors() {
+		return ve
 	}
 
 	// パスワード強度チェック
 	if err := auth.ValidatePasswordStrength(ctx, input.Password); err != nil {
-		formErrors.AddFieldError("password", err.Error())
-		return &UpdatePasswordValidatorResult{FormErrors: formErrors}
+		ve.AddField("password", err.Error())
+		return ve
 	}
 
-	return &UpdatePasswordValidatorResult{}
+	return nil
 }

@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"log/slog"
 	"time"
@@ -11,7 +12,6 @@ import (
 	"github.com/annict/annict/go/internal/dispatcher"
 	"github.com/annict/annict/go/internal/password_reset"
 	"github.com/annict/annict/go/internal/repository"
-	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/validator"
 )
 
@@ -22,18 +22,18 @@ type CreatePasswordResetTokenUsecase struct {
 	passwordResetTokenRepo *repository.PasswordResetTokenRepository
 	cfg                    *config.Config
 	dispatcher             *dispatcher.Dispatcher
-	validator              *validator.CreatePasswordResetValidator
+	validator              *validator.PasswordResetCreateValidator
 }
 
 // NewCreatePasswordResetTokenUsecase は新しいCreatePasswordResetTokenUsecaseを作成します
-func NewCreatePasswordResetTokenUsecase(db *sql.DB, userRepo *repository.UserRepository, passwordResetTokenRepo *repository.PasswordResetTokenRepository, cfg *config.Config, dispatcher *dispatcher.Dispatcher, v *validator.CreatePasswordResetValidator) *CreatePasswordResetTokenUsecase {
+func NewCreatePasswordResetTokenUsecase(db *sql.DB, userRepo *repository.UserRepository, passwordResetTokenRepo *repository.PasswordResetTokenRepository, cfg *config.Config, dispatcher *dispatcher.Dispatcher, validator *validator.PasswordResetCreateValidator) *CreatePasswordResetTokenUsecase {
 	return &CreatePasswordResetTokenUsecase{
 		db:                     db,
 		userRepo:               userRepo,
 		passwordResetTokenRepo: passwordResetTokenRepo,
 		cfg:                    cfg,
 		dispatcher:             dispatcher,
-		validator:              v,
+		validator:              validator,
 	}
 }
 
@@ -42,44 +42,37 @@ type CreatePasswordResetTokenInput struct {
 	Email string
 }
 
-// CreatePasswordResetTokenResult はトークン生成の結果を表します
-type CreatePasswordResetTokenResult struct {
-	FormErrors *session.FormErrors // バリデーションエラー（nilなら成功）
-	Token      string              // 平文トークン（メール送信用）
-	UserID     int64               // ユーザーID
+// CreatePasswordResetTokenOutput はトークン生成の結果を表します
+type CreatePasswordResetTokenOutput struct {
+	Token  string // 平文トークン（メール送信用）
+	UserID int64  // ユーザーID
 }
 
-// Execute はバリデーション・ユーザー検索・パスワードリセットトークン生成を行います
-func (uc *CreatePasswordResetTokenUsecase) Execute(ctx context.Context, input CreatePasswordResetTokenInput) (*CreatePasswordResetTokenResult, error) {
+// Execute はバリデーション・ユーザー検索・パスワードリセットトークン生成を行います。
+// ユーザーが存在しない場合は nil を返す（セキュリティ対策: ユーザーの存在を明かさない）。
+func (uc *CreatePasswordResetTokenUsecase) Execute(ctx context.Context, input CreatePasswordResetTokenInput) (*CreatePasswordResetTokenOutput, error) {
 	// 1. バリデーション
-	valResult := uc.validator.Validate(ctx, validator.CreatePasswordResetValidatorInput{
+	if err := uc.validator.Validate(ctx, validator.PasswordResetCreateValidatorInput{
 		Email: input.Email,
-	})
-	if valResult.FormErrors != nil && valResult.FormErrors.HasErrors() {
-		return &CreatePasswordResetTokenResult{FormErrors: valResult.FormErrors}, nil
+	}); err != nil {
+		return nil, err
 	}
 
 	// 2. ユーザー検索（存在しない場合もエラーを返さない - セキュリティ対策）
 	user, err := uc.userRepo.GetByEmail(ctx, input.Email)
-	if err != nil && err != sql.ErrNoRows {
-		slog.ErrorContext(ctx, "ユーザーの検索エラー", "error", err)
-	}
-
-	// 3. ユーザーが存在する場合のみトークンを生成
-	if err == nil && user.ID > 0 {
-		result, err := uc.createToken(ctx, user.ID)
-		if err != nil {
-			return nil, err
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
 		}
-		return result, nil
+		return nil, fmt.Errorf("ユーザーの検索に失敗: %w", err)
 	}
 
-	// ユーザーが存在しない場合も成功を返す（ユーザーの存在を明かさない）
-	return &CreatePasswordResetTokenResult{}, nil
+	// 3. トークンを生成
+	return uc.createToken(ctx, user.ID)
 }
 
 // createToken はパスワードリセットトークンを生成します
-func (uc *CreatePasswordResetTokenUsecase) createToken(ctx context.Context, userID int64) (*CreatePasswordResetTokenResult, error) {
+func (uc *CreatePasswordResetTokenUsecase) createToken(ctx context.Context, userID int64) (*CreatePasswordResetTokenOutput, error) {
 	// トランザクション開始
 	tx, err := uc.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -144,7 +137,7 @@ func (uc *CreatePasswordResetTokenUsecase) createToken(ctx context.Context, user
 		)
 	}
 
-	return &CreatePasswordResetTokenResult{
+	return &CreatePasswordResetTokenOutput{
 		Token:  token,
 		UserID: userID,
 	}, nil

@@ -790,7 +790,7 @@ Go 版では、型安全なテンプレートエンジン [templ](https://templ.
 type NewPageData struct {
     CSRFToken        string
     TurnstileSiteKey string
-    FormErrors       *session.FormErrors
+    FormErrors       *model.ValidationError
     Email            string
 }
 
@@ -809,7 +809,7 @@ templ New(data NewPageData) {
 ```templ
 // ❌ context.Contextを明示的に渡している
 // ❌ 複数の引数を個別に渡している
-templ New(ctx context.Context, formErrors *session.FormErrors, csrfToken string, turnstileSiteKey string) {
+templ New(ctx context.Context, formErrors *model.ValidationError, csrfToken string, turnstileSiteKey string) {
     // ...
 }
 ```
@@ -874,9 +874,9 @@ if user.Name != nil {
 
 - **配置**: `internal/validator/`（Application 層）
 - **ファイル名**: リソース名と対応（例: `sign_in.go`, `password_reset.go`）
-- **命名規則**: `{Action}{Resource}Validator`（例: `CreateSignInValidator`, `UpdatePasswordValidator`）
-- **入力**: `{Action}{Resource}ValidatorInput` 構造体
-- **出力**: `{Action}{Resource}ValidatorResult` 構造体
+- **命名規則**: `{Resource}{Action}Validator`（例: `SignInCreateValidator`, `PasswordUpdateValidator`）
+- **入力**: `{Resource}{Action}ValidatorInput` 構造体
+- **戻り値**: `error`（バリデーション失敗時は `*model.ValidationError` を返す、成功時は `nil`）
 - **呼び出し元**: UseCase（Handler から直接呼び出さない）
 
 #### バリデーションの分類

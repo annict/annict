@@ -2,16 +2,15 @@ package usecase
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"strconv"
 
 	"github.com/stripe/stripe-go/v84"
 
 	"github.com/annict/annict/go/internal/config"
+	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/repository"
-	"github.com/annict/annict/go/internal/session"
 	annictStripe "github.com/annict/annict/go/internal/stripe"
 	"github.com/annict/annict/go/internal/validator"
 )
@@ -22,7 +21,7 @@ type CreateCheckoutSessionUsecase struct {
 	stripeSubscriberRepo *repository.StripeSubscriberRepository
 	stripeCfg            *annictStripe.Config
 	stripeClient         *stripe.Client
-	validator            *validator.CreateSupportersCheckoutValidator
+	validator            *validator.SupportersCheckoutCreateValidator
 }
 
 // NewCreateCheckoutSessionUsecase は新しいCreateCheckoutSessionUsecaseを作成します
@@ -31,14 +30,14 @@ func NewCreateCheckoutSessionUsecase(
 	stripeSubscriberRepo *repository.StripeSubscriberRepository,
 	stripeCfg *annictStripe.Config,
 	stripeClient *stripe.Client,
-	v *validator.CreateSupportersCheckoutValidator,
+	validator *validator.SupportersCheckoutCreateValidator,
 ) *CreateCheckoutSessionUsecase {
 	return &CreateCheckoutSessionUsecase{
 		cfg:                  cfg,
 		stripeSubscriberRepo: stripeSubscriberRepo,
 		stripeCfg:            stripeCfg,
 		stripeClient:         stripeClient,
-		validator:            v,
+		validator:            validator,
 	}
 }
 
@@ -52,30 +51,15 @@ type CreateCheckoutSessionInput struct {
 // CreateCheckoutSessionOutput はユースケースの出力です
 type CreateCheckoutSessionOutput struct {
 	CheckoutURL string
-	FormErrors  *session.FormErrors
-}
-
-// AlreadyActiveSubscriptionError はアクティブなサブスクリプションが既に存在する場合のエラーです
-type AlreadyActiveSubscriptionError struct{}
-
-func (e *AlreadyActiveSubscriptionError) Error() string {
-	return "既にアクティブなサブスクリプションが存在します"
-}
-
-// IsAlreadyActiveSubscriptionError はAlreadyActiveSubscriptionErrorかどうかを判定します
-func IsAlreadyActiveSubscriptionError(err error) bool {
-	var e *AlreadyActiveSubscriptionError
-	return errors.As(err, &e)
 }
 
 // Execute はStripe Checkoutセッションを作成します
 func (uc *CreateCheckoutSessionUsecase) Execute(ctx context.Context, input CreateCheckoutSessionInput) (*CreateCheckoutSessionOutput, error) {
 	// 1. バリデーション
-	valResult := uc.validator.Validate(ctx, validator.CreateSupportersCheckoutValidatorInput{
+	if err := uc.validator.Validate(ctx, validator.SupportersCheckoutCreateValidatorInput{
 		Plan: input.Plan,
-	})
-	if valResult.FormErrors != nil && valResult.FormErrors.HasErrors() {
-		return &CreateCheckoutSessionOutput{FormErrors: valResult.FormErrors}, nil
+	}); err != nil {
+		return nil, err
 	}
 
 	// 2. 重複サブスクリプションチェック
@@ -84,7 +68,11 @@ func (uc *CreateCheckoutSessionUsecase) Execute(ctx context.Context, input Creat
 		stripeSubscriber, err := uc.stripeSubscriberRepo.GetByID(ctx, user.StripeSubscriberID.Int64)
 		if err == nil {
 			if uc.stripeSubscriberRepo.IsActive(&stripeSubscriber) {
-				return nil, &AlreadyActiveSubscriptionError{}
+				return nil, model.NewAppError(
+					model.AppErrCodeConflict,
+					i18n.T(ctx, "supporters_checkout_already_active"),
+					nil,
+				)
 			}
 		}
 	}

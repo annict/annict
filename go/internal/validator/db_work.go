@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/annict/annict/go/internal/i18n"
-	"github.com/annict/annict/go/internal/session"
+	"github.com/annict/annict/go/internal/model"
 )
 
 // 許可されたメディア種別の値
@@ -19,16 +19,16 @@ var allowedMediaValues = map[string]bool{
 	"4": true, // web
 }
 
-// CreateDbWorkValidator は作品作成フォームのバリデーションを行う
-type CreateDbWorkValidator struct{}
+// DbWorkCreateValidator は作品作成フォームのバリデーションを行う
+type DbWorkCreateValidator struct{}
 
-// NewCreateDbWorkValidator は CreateDbWorkValidator を生成する
-func NewCreateDbWorkValidator() *CreateDbWorkValidator {
-	return &CreateDbWorkValidator{}
+// NewDbWorkCreateValidator は DbWorkCreateValidator を生成する
+func NewDbWorkCreateValidator() *DbWorkCreateValidator {
+	return &DbWorkCreateValidator{}
 }
 
-// CreateDbWorkValidatorInput はバリデーションの入力パラメータ
-type CreateDbWorkValidatorInput struct {
+// DbWorkCreateValidatorInput はバリデーションの入力パラメータ
+type DbWorkCreateValidatorInput struct {
 	Title                 string
 	TitleKana             string
 	TitleAlter            string
@@ -57,72 +57,66 @@ type CreateDbWorkValidatorInput struct {
 	NoEpisodes            string
 }
 
-// CreateDbWorkValidatorResult はバリデーションの結果
-type CreateDbWorkValidatorResult struct {
-	FormErrors *session.FormErrors
-}
-
 // Validate はバリデーションを行う
-func (v *CreateDbWorkValidator) Validate(ctx context.Context, input CreateDbWorkValidatorInput) *CreateDbWorkValidatorResult {
-	formErrors := &session.FormErrors{}
+func (v *DbWorkCreateValidator) Validate(ctx context.Context, input DbWorkCreateValidatorInput) error {
+	ve := model.NewValidationError()
 
 	// タイトル: 必須
 	if strings.TrimSpace(input.Title) == "" {
-		formErrors.AddFieldError("title", i18n.T(ctx, "db_works_error_title_required"))
+		ve.AddField("title", i18n.T(ctx, "db_works_error_title_required"))
 	}
 
 	// メディア: 必須 + 許可された値
 	if strings.TrimSpace(input.Media) == "" {
-		formErrors.AddFieldError("media", i18n.T(ctx, "db_works_error_media_required"))
+		ve.AddField("media", i18n.T(ctx, "db_works_error_media_required"))
 	} else if !allowedMediaValues[input.Media] {
-		formErrors.AddFieldError("media", i18n.T(ctx, "db_works_error_media_invalid"))
+		ve.AddField("media", i18n.T(ctx, "db_works_error_media_invalid"))
 	}
 
 	// URL形式チェック（空の場合はスキップ）
-	validateOptionalURL(ctx, formErrors, "official_site_url", input.OfficialSiteURL)
-	validateOptionalURL(ctx, formErrors, "official_site_url_en", input.OfficialSiteURLEn)
-	validateOptionalURL(ctx, formErrors, "wikipedia_url", input.WikipediaURL)
-	validateOptionalURL(ctx, formErrors, "wikipedia_url_en", input.WikipediaURLEn)
+	validateOptionalURL(ctx, ve, "official_site_url", input.OfficialSiteURL)
+	validateOptionalURL(ctx, ve, "official_site_url_en", input.OfficialSiteURLEn)
+	validateOptionalURL(ctx, ve, "wikipedia_url", input.WikipediaURL)
+	validateOptionalURL(ctx, ve, "wikipedia_url_en", input.WikipediaURLEn)
 
 	// sc_tid: 整数（空の場合はスキップ）
 	if input.ScTid != "" {
 		if _, err := strconv.Atoi(input.ScTid); err != nil {
-			formErrors.AddFieldError("sc_tid", i18n.T(ctx, "db_works_error_sc_tid_invalid"))
+			ve.AddField("sc_tid", i18n.T(ctx, "db_works_error_sc_tid_invalid"))
 		}
 	}
 
 	// mal_anime_id: 整数（空の場合はスキップ）
 	if input.MalAnimeID != "" {
 		if _, err := strconv.Atoi(input.MalAnimeID); err != nil {
-			formErrors.AddFieldError("mal_anime_id", i18n.T(ctx, "db_works_error_mal_anime_id_invalid"))
+			ve.AddField("mal_anime_id", i18n.T(ctx, "db_works_error_mal_anime_id_invalid"))
 		}
 	}
 
 	// あらすじと出典のペアチェック
-	validatePresencePair(ctx, formErrors, "synopsis_source", input.Synopsis, input.SynopsisSource, "db_works_error_synopsis_source_required")
-	validatePresencePair(ctx, formErrors, "synopsis_source_en", input.SynopsisEn, input.SynopsisSourceEn, "db_works_error_synopsis_source_en_required")
+	validatePresencePair(ctx, ve, "synopsis_source", input.Synopsis, input.SynopsisSource, "db_works_error_synopsis_source_required")
+	validatePresencePair(ctx, ve, "synopsis_source_en", input.SynopsisEn, input.SynopsisSourceEn, "db_works_error_synopsis_source_en_required")
 
-	if formErrors.HasErrors() {
-		return &CreateDbWorkValidatorResult{FormErrors: formErrors}
+	if ve.HasErrors() {
+		return ve
 	}
-
-	return &CreateDbWorkValidatorResult{}
+	return nil
 }
 
 // validateOptionalURL はURLが空でない場合にURL形式をチェックする
-func validateOptionalURL(ctx context.Context, formErrors *session.FormErrors, field, value string) {
+func validateOptionalURL(ctx context.Context, ve *model.ValidationError, field, value string) {
 	if value == "" {
 		return
 	}
 	u, err := url.ParseRequestURI(value)
 	if err != nil || (u.Scheme != "http" && u.Scheme != "https") || u.Host == "" {
-		formErrors.AddFieldError(field, i18n.T(ctx, "db_works_error_url_invalid"))
+		ve.AddField(field, i18n.T(ctx, "db_works_error_url_invalid"))
 	}
 }
 
 // validatePresencePair はペアの片方がある場合に、もう片方も必須にする
-func validatePresencePair(ctx context.Context, formErrors *session.FormErrors, sourceField, content, source, errKey string) {
+func validatePresencePair(ctx context.Context, ve *model.ValidationError, sourceField, content, source, errKey string) {
 	if strings.TrimSpace(content) != "" && strings.TrimSpace(source) == "" {
-		formErrors.AddFieldError(sourceField, i18n.T(ctx, errKey))
+		ve.AddField(sourceField, i18n.T(ctx, errKey))
 	}
 }
