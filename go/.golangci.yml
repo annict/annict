@@ -287,6 +287,51 @@ linters:
             - pkg: github.com/annict/annict/go/internal/templates
               desc: "RateLimitはPresentation層に依存できません。"
 
+        # Auth層のルール: Domain/Infrastructure層の横断的な技術ユーティリティ
+        # authパッケージは認証に必要な低レベル処理（パスワードハッシュ化、CSRFトークン生成、
+        # セキュアトークン生成、検証コード生成、パスワード強度検証）を提供する。
+        # プロジェクト内部パッケージへの依存を禁止し、標準ライブラリおよび外部ライブラリ
+        # （golang.org/x/crypto/bcrypt, crypto/rand など）のみに依存できる。
+        # i18nへの依存禁止は、ValidatePasswordStrengthをsentinel error方式に変更した
+        # 4-1の方針（エラー種別はsentinel errorで返し、翻訳は呼び出し元で解決する）を
+        # 将来の退行から守るためのルール。
+        auth-layer:
+          files:
+            - "**/internal/auth/**"
+          deny:
+            - pkg: github.com/annict/annict/go/internal/query
+              desc: "authは横断的な技術ユーティリティのため、Queryに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/repository
+              desc: "authは横断的な技術ユーティリティのため、Repositoryに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/model
+              desc: "authは横断的な技術ユーティリティのため、Modelに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/usecase
+              desc: "authは横断的な技術ユーティリティのため、UseCase(Application層)に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/validator
+              desc: "authは横断的な技術ユーティリティのため、Validator(Application層)に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/handler
+              desc: "authは横断的な技術ユーティリティのため、Handler(Presentation層)に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/middleware
+              desc: "authは横断的な技術ユーティリティのため、Middleware(Presentation層)に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/viewmodel
+              desc: "authは横断的な技術ユーティリティのため、ViewModel(Presentation層)に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/templates
+              desc: "authは横断的な技術ユーティリティのため、Templates(Presentation層)に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/worker
+              desc: "authは横断的な技術ユーティリティのため、Worker(Presentation層)に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/session
+              desc: "authは横断的な技術ユーティリティのため、Session(Presentation層ヘルパー)に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/i18n
+              desc: "authはi18nに依存できません。エラー種別はsentinel errorで返し、翻訳は呼び出し元で解決してください(4-1の方針)。"
+            - pkg: github.com/annict/annict/go/internal/dispatcher
+              desc: "authは横断的な技術ユーティリティのため、Dispatcherに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/email
+              desc: "authは横断的な技術ユーティリティのため、emailパッケージに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/turnstile
+              desc: "authは横断的な技術ユーティリティのため、turnstileに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/ratelimit
+              desc: "authは横断的な技術ユーティリティのため、ratelimitに依存できません。"
+
         # Repository層のルール: データアクセス層
         # 上位層に依存しない
         repository-layer:
