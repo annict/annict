@@ -8,7 +8,6 @@ import (
 
 	"github.com/annict/annict/go/internal/auth"
 	"github.com/annict/annict/go/internal/repository"
-	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/validator"
 )
 
@@ -22,17 +21,17 @@ type UpdatePasswordResetUsecase struct {
 	passwordResetTokenRepo *repository.PasswordResetTokenRepository
 	userRepo               *repository.UserRepository
 	sessionRepo            *repository.SessionRepository
-	validator              *validator.UpdatePasswordValidator
+	validator              *validator.PasswordUpdateValidator
 }
 
 // NewUpdatePasswordResetUsecase は新しいUpdatePasswordResetUsecaseを作成します
-func NewUpdatePasswordResetUsecase(db *sql.DB, passwordResetTokenRepo *repository.PasswordResetTokenRepository, userRepo *repository.UserRepository, sessionRepo *repository.SessionRepository, v *validator.UpdatePasswordValidator) *UpdatePasswordResetUsecase {
+func NewUpdatePasswordResetUsecase(db *sql.DB, passwordResetTokenRepo *repository.PasswordResetTokenRepository, userRepo *repository.UserRepository, sessionRepo *repository.SessionRepository, validator *validator.PasswordUpdateValidator) *UpdatePasswordResetUsecase {
 	return &UpdatePasswordResetUsecase{
 		db:                     db,
 		passwordResetTokenRepo: passwordResetTokenRepo,
 		userRepo:               userRepo,
 		sessionRepo:            sessionRepo,
-		validator:              v,
+		validator:              validator,
 	}
 }
 
@@ -43,23 +42,21 @@ type UpdatePasswordResetInput struct {
 	PasswordConfirmation string
 }
 
-// UpdatePasswordResetResult はパスワード更新の結果を表します
-type UpdatePasswordResetResult struct {
-	FormErrors *session.FormErrors // バリデーションエラー（nilなら成功）
-	UserID     int64
-	SessionID  string // 新しいセッションID
+// UpdatePasswordResetOutput はパスワード更新の結果を表します
+type UpdatePasswordResetOutput struct {
+	UserID    int64
+	SessionID string // 新しいセッションID
 }
 
 // Execute はバリデーション・パスワード更新・セッション作成を行います
-func (uc *UpdatePasswordResetUsecase) Execute(ctx context.Context, input UpdatePasswordResetInput) (*UpdatePasswordResetResult, error) {
+func (uc *UpdatePasswordResetUsecase) Execute(ctx context.Context, input UpdatePasswordResetInput) (*UpdatePasswordResetOutput, error) {
 	// 1. バリデーション
-	valResult := uc.validator.Validate(ctx, validator.UpdatePasswordValidatorInput{
+	if err := uc.validator.Validate(ctx, validator.PasswordUpdateValidatorInput{
 		Token:                input.Token,
 		Password:             input.Password,
 		PasswordConfirmation: input.PasswordConfirmation,
-	})
-	if valResult.FormErrors != nil && valResult.FormErrors.HasErrors() {
-		return &UpdatePasswordResetResult{FormErrors: valResult.FormErrors}, nil
+	}); err != nil {
+		return nil, err
 	}
 
 	// 2. トークンの有効性を検証
@@ -140,7 +137,7 @@ func (uc *UpdatePasswordResetUsecase) Execute(ctx context.Context, input UpdateP
 		"user_id", resetToken.UserID,
 	)
 
-	return &UpdatePasswordResetResult{
+	return &UpdatePasswordResetOutput{
 		UserID:    resetToken.UserID,
 		SessionID: sessionID,
 	}, nil

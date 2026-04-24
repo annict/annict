@@ -31,7 +31,7 @@ func TestNew(t *testing.T) {
 	profileRepo := repository.NewProfileRepository(queries)
 	settingRepo := repository.NewSettingRepository(queries)
 	emailNotificationRepo := repository.NewEmailNotificationRepository(queries)
-	signUpUsernameValidator := validator.NewCreateSignUpUsernameValidator()
+	signUpUsernameValidator := validator.NewSignUpUsernameCreateValidator()
 	completeSignUpUC := usecase.NewCompleteSignUpUsecase(db, userRepo, profileRepo, settingRepo, emailNotificationRepo, repository.NewSessionRepository(queries), rdb, signUpUsernameValidator)
 
 	handler := NewHandler(cfg, sessionMgr, rdb, completeSignUpUC)

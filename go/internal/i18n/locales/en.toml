@@ -114,7 +114,7 @@ other = "Sign in with a different account"
 description = "Form parse error"
 other = "Failed to process the request"
 
-[sign_in_email_required]
+[sign_in_error_email_required]
 description = "Email required error"
 other = "Please enter your email address"
 
@@ -353,11 +353,11 @@ other = "Passwords do not match"
 # Password strength validation (NIST SP 800-63B-4 compliant)
 [password_strength_min_length]
 description = "Password strength - Minimum length error"
-other = "Password must be at least 8 characters long"
+other = "Password must be at least {{.MinLength}} characters long"
 
 [password_strength_max_length]
 description = "Password strength - Maximum length error"
-other = "Password must be no more than 128 characters long"
+other = "Password must be no more than {{.MaxLength}} characters long"
 
 [password_strength_invalid_chars]
 description = "Password strength - Invalid characters error"
@@ -415,15 +415,15 @@ other = "Send"
 description = "Terms agreement notice (Sign-in-wrap style)"
 other = "By signing up, you agree to our <a href=\"/terms\" class=\"link\" target=\"_blank\">Terms of Service</a> and <a href=\"/privacy\" class=\"link\" target=\"_blank\">Privacy Policy</a>."
 
-[sign_up_email_required]
+[sign_up_error_email_required]
 description = "Email required error"
 other = "Please enter your email address"
 
-[sign_up_email_invalid]
+[sign_up_error_email_invalid]
 description = "Email format error"
 other = "Please enter a valid email address"
 
-[sign_up_email_already_exists]
+[sign_up_error_email_already_exists]
 description = "Email already exists error"
 other = "This email address is not available"
 

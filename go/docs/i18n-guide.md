@@ -164,8 +164,9 @@ return fmt.Errorf("トークンのハッシュ化に失敗: %w", err)
 // ❌ NG: ユーザー向けメッセージなのに日本語ハードコード
 http.Error(w, "メールアドレスを入力してください", http.StatusBadRequest)
 
-// ✅ OK: ユーザー向けメッセージは国際化
-errors.AddFieldError("email", i18n.T(ctx, "password_reset_email_required"))
+// ✅ OK: ユーザー向けメッセージは国際化（ve は *model.ValidationError）
+ve := model.NewValidationError()
+ve.AddField("email", i18n.T(ctx, "password_reset_email_required"))
 
 // ✅ OK: ログメッセージは日本語でOK（開発者向け）
 slog.InfoContext(ctx, "パスワードリセットトークンを生成しました", "user_id", userID)
@@ -230,8 +231,9 @@ other = "Email address format is invalid"
 ```
 
 ```go
-// Goコード
-errors.AddFieldError("email", i18n.T(ctx, "password_reset_email_required"))
+// Goコード（ve は *model.ValidationError）
+ve := model.NewValidationError()
+ve.AddField("email", i18n.T(ctx, "password_reset_email_required"))
 ```
 
 ## 翻訳の命名規則
@@ -307,11 +309,13 @@ Request DTOのバリデーションメッセージも必ず国際化します。
 ### 例
 
 ```go
+// ve は *model.ValidationError（事前に model.NewValidationError() で生成）
+
 // ❌ NG: ハードコードされた日本語メッセージ
-errors.AddFieldError("email", "メールアドレスを入力してください")
+ve.AddField("email", "メールアドレスを入力してください")
 
 // ✅ OK: I18n経由で翻訳されたメッセージ
-errors.AddFieldError("email", i18n.T(ctx, "password_reset_email_required"))
+ve.AddField("email", i18n.T(ctx, "password_reset_email_required"))
 ```
 
 ## ロケールの取得と設定

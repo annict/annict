@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/testutil"
 	"github.com/annict/annict/go/internal/validator"
@@ -59,8 +60,13 @@ func TestCompleteSignUpUsecase_Execute(t *testing.T) {
 			},
 			wantErr: true,
 			checkErr: func(t *testing.T, err error) {
-				if !IsTokenInvalidError(err) {
-					t.Errorf("expected TokenInvalidError, got %v", err)
+				ve := model.AsValidationError(err)
+				if ve == nil {
+					t.Errorf("expected *model.ValidationError, got %v", err)
+					return
+				}
+				if !ve.HasFieldError("token") {
+					t.Errorf("expected token field error, got %+v", ve)
 				}
 			},
 		},
@@ -87,8 +93,13 @@ func TestCompleteSignUpUsecase_Execute(t *testing.T) {
 			},
 			wantErr: true,
 			checkErr: func(t *testing.T, err error) {
-				if !IsUsernameAlreadyExistsError(err) {
-					t.Errorf("expected UsernameAlreadyExistsError, got %v", err)
+				ve := model.AsValidationError(err)
+				if ve == nil {
+					t.Errorf("expected *model.ValidationError, got %v", err)
+					return
+				}
+				if !ve.HasFieldError("username") {
+					t.Errorf("expected username field error, got %+v", ve)
 				}
 			},
 		},
@@ -103,7 +114,7 @@ func TestCompleteSignUpUsecase_Execute(t *testing.T) {
 			}
 
 			// ユースケースを実行
-			v := validator.NewCreateSignUpUsernameValidator()
+			v := validator.NewSignUpUsernameCreateValidator()
 			uc := NewCompleteSignUpUsecase(db, userRepo, profileRepo, settingRepo, emailNotificationRepo, repository.NewSessionRepository(queries), rdb, v)
 			result, err := uc.Execute(ctx, CompleteSignUpInput{
 				Token:    tt.token,
@@ -203,7 +214,7 @@ func TestCompleteSignUpUsecase_Execute_Integration(t *testing.T) {
 	}
 
 	// ユースケースを作成（Redisあり）
-	v := validator.NewCreateSignUpUsernameValidator()
+	v := validator.NewSignUpUsernameCreateValidator()
 	uc := NewCompleteSignUpUsecase(db, userRepo, profileRepo, settingRepo, emailNotificationRepo, repository.NewSessionRepository(queries), rdb, v)
 
 	// ユーザー登録を実行

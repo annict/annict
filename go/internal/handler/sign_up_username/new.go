@@ -44,7 +44,10 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 
 	// Flashメッセージを取得
 	flash := h.sessionMgr.GetFlash(w, r)
-	formErrors, _ := h.sessionMgr.GetFormErrors(ctx, r)
+	formErrors, err := h.sessionMgr.GetValidationError(ctx, r)
+	if err != nil {
+		slog.WarnContext(ctx, "バリデーションエラーの取得に失敗", "error", err)
+	}
 
 	// メタ情報を設定
 	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)

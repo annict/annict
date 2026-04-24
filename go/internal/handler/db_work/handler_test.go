@@ -28,7 +28,7 @@ func newTestHandler(t *testing.T, db *sql.DB, tx *sql.Tx) *Handler {
 
 	listDbWorksUC := usecase.NewListDbWorksUsecase(workRepo)
 	getDbWorkFormOptionsUC := usecase.NewGetDbWorkFormOptionsUsecase(numberFormatRepo)
-	createWorkUC := usecase.NewCreateWorkUsecase(db, workRepo, validator.NewCreateDbWorkValidator())
+	createWorkUC := usecase.NewCreateWorkUsecase(db, workRepo, validator.NewDbWorkCreateValidator())
 
 	return NewHandler(cfg, sessionManager, listDbWorksUC, getDbWorkFormOptionsUC, createWorkUC)
 }

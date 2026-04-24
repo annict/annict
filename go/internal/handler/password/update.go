@@ -7,6 +7,7 @@ import (
 
 	"github.com/annict/annict/go/internal/clientip"
 	"github.com/annict/annict/go/internal/i18n"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/usecase"
 )
@@ -25,12 +26,21 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 	token := r.FormValue("token")
 
 	// UseCaseを使ってバリデーション・パスワード更新を実行
-	result, err := h.updatePasswordResetUC.Execute(ctx, usecase.UpdatePasswordResetInput{
+	output, err := h.updatePasswordResetUC.Execute(ctx, usecase.UpdatePasswordResetInput{
 		Token:                token,
 		Password:             r.FormValue("password"),
 		PasswordConfirmation: r.FormValue("password_confirmation"),
 	})
 	if err != nil {
+		// バリデーションエラー
+		if ve := model.AsValidationError(err); ve != nil {
+			if err := h.sessionManager.SetValidationError(ctx, w, r, *ve); err != nil {
+				slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
+			}
+			http.Redirect(w, r, "/password/edit?token="+token, http.StatusSeeOther)
+			return
+		}
+
 		// トークンが無効な場合
 		if errors.Is(err, usecase.ErrInvalidPasswordResetToken) {
 			slog.WarnContext(ctx, "パスワード更新時に無効なリセットトークン",
@@ -46,18 +56,9 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// バリデーションエラーの場合
-	if result.FormErrors != nil && result.FormErrors.HasErrors() {
-		if err := h.sessionManager.SetFormErrors(ctx, w, r, *result.FormErrors); err != nil {
-			slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
-		}
-		http.Redirect(w, r, "/password/edit?token="+token, http.StatusSeeOther)
-		return
-	}
-
 	// 監査ログ
 	slog.InfoContext(ctx, "パスワード更新が完了しました",
-		"user_id", result.UserID,
+		"user_id", output.UserID,
 		"ip_address", clientip.GetClientIP(r),
 	)
 

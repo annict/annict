@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/annict/annict/go/internal/session"
+	"github.com/annict/annict/go/internal/model"
 )
 
 func TestFormErrors(t *testing.T) {
@@ -13,13 +13,13 @@ func TestFormErrors(t *testing.T) {
 
 	tests := []struct {
 		name          string
-		formErrors    *session.FormErrors
+		formErrors    *model.ValidationError
 		wantContains  []string
 		wantNotRender bool
 	}{
 		{
 			name: "グローバルエラーが1つ",
-			formErrors: &session.FormErrors{
+			formErrors: &model.ValidationError{
 				Global: []string{"ログインに失敗しました"},
 			},
 			wantContains: []string{
@@ -29,7 +29,7 @@ func TestFormErrors(t *testing.T) {
 		},
 		{
 			name: "グローバルエラーが複数",
-			formErrors: &session.FormErrors{
+			formErrors: &model.ValidationError{
 				Global: []string{
 					"エラー1",
 					"エラー2",
@@ -44,7 +44,7 @@ func TestFormErrors(t *testing.T) {
 		},
 		{
 			name: "フィールドエラーのみ（グローバルエラーなし）",
-			formErrors: &session.FormErrors{
+			formErrors: &model.ValidationError{
 				Fields: map[string][]string{
 					"email": {"メールアドレスが不正です"},
 				},
@@ -58,7 +58,7 @@ func TestFormErrors(t *testing.T) {
 		},
 		{
 			name: "formErrorsが空の場合は何も表示しない",
-			formErrors: &session.FormErrors{
+			formErrors: &model.ValidationError{
 				Global: []string{},
 			},
 			wantNotRender: true,
@@ -102,7 +102,7 @@ func TestFormErrors(t *testing.T) {
 func TestFormErrors_HTMLStructure(t *testing.T) {
 	t.Parallel()
 
-	formErrors := &session.FormErrors{
+	formErrors := &model.ValidationError{
 		Global: []string{"エラーメッセージ"},
 	}
 

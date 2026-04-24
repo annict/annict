@@ -9,6 +9,7 @@ import (
 
 	"github.com/annict/annict/go/internal/clientip"
 	"github.com/annict/annict/go/internal/i18n"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/usecase"
 )
@@ -43,9 +44,9 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// エラーレスポンスを返す
-		formErrors := &session.FormErrors{}
-		formErrors.AddFieldError("email", i18n.T(ctx, "turnstile_verification_failed"))
-		if err := h.sessionMgr.SetFormErrors(ctx, w, r, *formErrors); err != nil {
+		ve := model.NewValidationError()
+		ve.AddField("email", i18n.T(ctx, "turnstile_verification_failed"))
+		if err := h.sessionMgr.SetValidationError(ctx, w, r, *ve); err != nil {
 			slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
 		}
 		http.Redirect(w, r, "/sign_up", http.StatusSeeOther)
@@ -64,9 +65,9 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 				"email", email,
 				"ip_address", clientip.GetClientIP(r),
 			)
-			formErrors := &session.FormErrors{}
-			formErrors.AddFieldError("email", i18n.T(ctx, "rate_limit_exceeded"))
-			if err := h.sessionMgr.SetFormErrors(ctx, w, r, *formErrors); err != nil {
+			ve := model.NewValidationError()
+			ve.AddField("email", i18n.T(ctx, "rate_limit_exceeded"))
+			if err := h.sessionMgr.SetValidationError(ctx, w, r, *ve); err != nil {
 				slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
 			}
 			http.Redirect(w, r, "/sign_up", http.StatusSeeOther)
@@ -81,13 +82,13 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			slog.Error("Rate Limitingチェックが失敗しました", "error", err)
 		} else if !allowed {
-			slog.WarnContext(ctx, "新規登録申請がRate Limitingにより制限されました（メールアドレス単位）",
+			slog.WarnContext(ctx, "新規登録申請がRate Limitingにより制限されました(メールアドレス単位)",
 				"email", email,
 				"ip_address", clientip.GetClientIP(r),
 			)
-			formErrors := &session.FormErrors{}
-			formErrors.AddFieldError("email", i18n.T(ctx, "rate_limit_exceeded"))
-			if err := h.sessionMgr.SetFormErrors(ctx, w, r, *formErrors); err != nil {
+			ve := model.NewValidationError()
+			ve.AddField("email", i18n.T(ctx, "rate_limit_exceeded"))
+			if err := h.sessionMgr.SetValidationError(ctx, w, r, *ve); err != nil {
 				slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
 			}
 			http.Redirect(w, r, "/sign_up", http.StatusSeeOther)
@@ -99,23 +100,23 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	locale := i18n.GetLocale(ctx)
 
 	// UseCaseを呼び出し（バリデーション + メールアドレス重複チェック + 確認コード生成・送信）
-	result, err := h.sendSignUpCodeUC.Execute(ctx, usecase.SendSignUpCodeInput{
+	_, err = h.sendSignUpCodeUC.Execute(ctx, usecase.SendSignUpCodeInput{
 		Email:  email,
 		Locale: locale,
 	})
 	if err != nil {
+		if ve := model.AsValidationError(err); ve != nil {
+			if err := h.sessionMgr.SetValidationError(ctx, w, r, *ve); err != nil {
+				slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
+			}
+			http.Redirect(w, r, "/sign_up", http.StatusSeeOther)
+			return
+		}
 		slog.ErrorContext(ctx, "新規登録確認コードの送信に失敗しました",
 			"email", email,
 			"error", err,
 		)
 		http.Error(w, i18n.T(ctx, "sign_up_error_server"), http.StatusInternalServerError)
-		return
-	}
-	if result.FormErrors != nil && result.FormErrors.HasErrors() {
-		if err := h.sessionMgr.SetFormErrors(ctx, w, r, *result.FormErrors); err != nil {
-			slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
-		}
-		http.Redirect(w, r, "/sign_up", http.StatusSeeOther)
 		return
 	}
 

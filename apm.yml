@@ -1,0 +1,7 @@
+name: annict
+version: 1.0.0
+author: shimbaco
+target: claude
+dependencies:
+  apm:
+    - github.com/korylus/guidelines#v1.0.0

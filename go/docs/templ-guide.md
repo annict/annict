@@ -89,7 +89,7 @@ templ SignIn(ctx context.Context, csrfToken string) {
 ### 条件分岐
 
 ```templ
-templ SignIn(ctx context.Context, formErrors *session.FormErrors) {
+templ SignIn(formErrors *model.ValidationError) {
     <div>
         // if文
         if formErrors != nil && formErrors.HasErrors() {
@@ -228,18 +228,17 @@ func (h *Handler) SignIn(w http.ResponseWriter, r *http.Request) {
 package components
 
 import (
-    "context"
-    "github.com/annict/annict/go/internal/session"
+    "github.com/annict/annict/go/internal/model"
     "github.com/annict/annict/go/internal/templates"
 )
 
-templ FormErrors(ctx context.Context, formErrors *session.FormErrors) {
+templ FormErrors(formErrors *model.ValidationError) {
     if formErrors != nil && formErrors.HasErrors() {
         <div class="alert alert-danger">
             <p><strong>{ templates.T(ctx, "form_errors_found") }</strong></p>
             <ul>
-                for _, err := range formErrors.GetFieldErrors() {
-                    <li>{ err }</li>
+                for _, err := range formErrors.FieldErrors() {
+                    <li>{ err.Message }</li>
                 }
             </ul>
         </div>
@@ -254,15 +253,14 @@ templ FormErrors(ctx context.Context, formErrors *session.FormErrors) {
 package pages
 
 import (
-    "context"
-    "github.com/annict/annict/go/internal/session"
+    "github.com/annict/annict/go/internal/model"
     "github.com/annict/annict/go/internal/templates/components"
 )
 
-templ SignIn(ctx context.Context, formErrors *session.FormErrors) {
+templ SignIn(formErrors *model.ValidationError) {
     <div>
         // コンポーネントを呼び出し
-        @components.FormErrors(ctx, formErrors)
+        @components.FormErrors(formErrors)
 
         // フォーム
         <form method="POST" action="/sign_in">
@@ -455,7 +453,7 @@ templ generate
 ```go
 func TestSignInPage(t *testing.T) {
     // テストDBとトランザクションをセットアップ
-    db, tx := testutil.SetupTx(t)
+    db, tx := testutil.SetupTestDB(t)
     queries := repository.New(db).WithTx(tx)
 
     // 設定とハンドラーを作成
@@ -504,13 +502,13 @@ func TestFormErrorsComponent(t *testing.T) {
     ctx := context.Background()
     ctx = i18n.WithLocale(ctx, "ja")
 
-    // エラーを含むFormErrorsを作成
-    formErrors := &session.FormErrors{}
-    formErrors.AddFieldError("email", "メールアドレスを入力してください")
+    // エラーを含むValidationErrorを作成
+    formErrors := model.NewValidationError()
+    formErrors.AddField("email", "メールアドレスを入力してください")
 
     // コンポーネントをレンダリング
     var buf bytes.Buffer
-    err := components.FormErrors(ctx, formErrors).Render(ctx, &buf)
+    err := components.FormErrors(formErrors).Render(ctx, &buf)
     if err != nil {
         t.Fatalf("failed to render: %v", err)
     }
@@ -549,7 +547,7 @@ func TestSignInPageMultipleLocales(t *testing.T) {
 
     for _, tt := range tests {
         t.Run(tt.name, func(t *testing.T) {
-            db, tx := testutil.SetupTx(t)
+            db, tx := testutil.SetupTestDB(t)
             queries := repository.New(db).WithTx(tx)
 
             cfg := &config.Config{Domain: "localhost"}
@@ -589,8 +587,8 @@ templ WorkCard(ctx context.Context, work viewmodel.Work, showCast bool) {
 
 ```templ
 // ✅ Good: 共通のUIパターンはコンポーネントとして切り出す
-@components.Button(ctx, "sign_in_submit", "/sign_in")
-@components.FormErrors(ctx, formErrors)
+@components.Button("sign_in_submit", "/sign_in")
+@components.FormErrors(formErrors)
 @components.Flash(flash)
 ```
 

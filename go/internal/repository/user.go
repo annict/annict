@@ -19,6 +19,9 @@ type UpdateUserPasswordParams = query.UpdateUserPasswordParams
 // GetUserByIDRow はユーザーID検索結果の型エイリアスです
 type GetUserByIDRow = query.GetUserByIDRow
 
+// GetUserByEmailOrUsernameRow はメールアドレス/ユーザー名検索結果の型エイリアスです
+type GetUserByEmailOrUsernameRow = query.GetUserByEmailOrUsernameRow
+
 // UserRepository はUser関連のデータアクセスを担当します
 type UserRepository struct {
 	queries               *query.Queries

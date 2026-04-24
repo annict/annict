@@ -52,7 +52,7 @@ func TestEdit_ValidToken(t *testing.T) {
 	sessionManager := session.NewManager(sessionRepo, cfg)
 	passwordResetTokenRepo := repository.NewPasswordResetTokenRepository(queries)
 	getPasswordResetTokenUC := usecase.NewGetPasswordResetTokenUsecase(passwordResetTokenRepo)
-	updatePasswordValidator := validator.NewUpdatePasswordValidator()
+	updatePasswordValidator := validator.NewPasswordUpdateValidator()
 	updatePasswordUC := usecase.NewUpdatePasswordResetUsecase(db, passwordResetTokenRepo, repository.NewUserRepository(queries), sessionRepo, updatePasswordValidator)
 
 	handler := NewHandler(cfg, sessionManager, nil, getPasswordResetTokenUC, updatePasswordUC)
@@ -114,7 +114,7 @@ func TestEdit_InvalidToken(t *testing.T) {
 	sessionManager := session.NewManager(sessionRepo, cfg)
 	passwordResetTokenRepo := repository.NewPasswordResetTokenRepository(queries)
 	getPasswordResetTokenUC := usecase.NewGetPasswordResetTokenUsecase(passwordResetTokenRepo)
-	updatePasswordValidator := validator.NewUpdatePasswordValidator()
+	updatePasswordValidator := validator.NewPasswordUpdateValidator()
 	updatePasswordUC := usecase.NewUpdatePasswordResetUsecase(db, passwordResetTokenRepo, repository.NewUserRepository(queries), sessionRepo, updatePasswordValidator)
 
 	handler := NewHandler(cfg, sessionManager, nil, getPasswordResetTokenUC, updatePasswordUC)
@@ -168,7 +168,7 @@ func TestEdit_ExpiredToken(t *testing.T) {
 	sessionManager := session.NewManager(sessionRepo, cfg)
 	passwordResetTokenRepo := repository.NewPasswordResetTokenRepository(queries)
 	getPasswordResetTokenUC := usecase.NewGetPasswordResetTokenUsecase(passwordResetTokenRepo)
-	updatePasswordValidator := validator.NewUpdatePasswordValidator()
+	updatePasswordValidator := validator.NewPasswordUpdateValidator()
 	updatePasswordUC := usecase.NewUpdatePasswordResetUsecase(db, passwordResetTokenRepo, repository.NewUserRepository(queries), sessionRepo, updatePasswordValidator)
 
 	handler := NewHandler(cfg, sessionManager, nil, getPasswordResetTokenUC, updatePasswordUC)

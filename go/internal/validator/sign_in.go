@@ -5,37 +5,32 @@ import (
 	"strings"
 
 	"github.com/annict/annict/go/internal/i18n"
-	"github.com/annict/annict/go/internal/session"
+	"github.com/annict/annict/go/internal/model"
 )
 
-// CreateSignInValidator はサインインフォームのバリデーションを行う
-type CreateSignInValidator struct{}
+// SignInCreateValidator はサインインフォームのバリデーションを行う
+type SignInCreateValidator struct{}
 
-// NewCreateSignInValidator は CreateSignInValidator を生成する
-func NewCreateSignInValidator() *CreateSignInValidator {
-	return &CreateSignInValidator{}
+// NewSignInCreateValidator は SignInCreateValidator を生成する
+func NewSignInCreateValidator() *SignInCreateValidator {
+	return &SignInCreateValidator{}
 }
 
-// CreateSignInValidatorInput はバリデーションの入力パラメータ
-type CreateSignInValidatorInput struct {
+// SignInCreateValidatorInput はバリデーションの入力パラメータ
+type SignInCreateValidatorInput struct {
 	Email string
 }
 
-// CreateSignInValidatorResult はバリデーションの結果
-type CreateSignInValidatorResult struct {
-	FormErrors *session.FormErrors
-}
-
 // Validate はフォームの形式バリデーションを行う
-func (v *CreateSignInValidator) Validate(ctx context.Context, input CreateSignInValidatorInput) *CreateSignInValidatorResult {
-	formErrors := &session.FormErrors{}
+func (v *SignInCreateValidator) Validate(ctx context.Context, input SignInCreateValidatorInput) error {
+	ve := model.NewValidationError()
 
 	if strings.TrimSpace(input.Email) == "" {
-		formErrors.AddFieldError("email", i18n.T(ctx, "sign_in_email_required"))
+		ve.AddField("email", i18n.T(ctx, "sign_in_error_email_required"))
 	}
 
-	if formErrors.HasErrors() {
-		return &CreateSignInValidatorResult{FormErrors: formErrors}
+	if ve.HasErrors() {
+		return ve
 	}
-	return &CreateSignInValidatorResult{}
+	return nil
 }

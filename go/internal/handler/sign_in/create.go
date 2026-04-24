@@ -7,6 +7,7 @@ import (
 	"net/url"
 
 	"github.com/annict/annict/go/internal/i18n"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/usecase"
 )
@@ -48,9 +49,9 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 			)
 		}
 
-		formErrors := &session.FormErrors{}
-		formErrors.AddFieldError("email", i18n.T(ctx, "turnstile_verification_failed"))
-		if err := h.sessionMgr.SetFormErrors(ctx, w, r, *formErrors); err != nil {
+		ve := model.NewValidationError()
+		ve.AddField("email", i18n.T(ctx, "turnstile_verification_failed"))
+		if err := h.sessionMgr.SetValidationError(ctx, w, r, *ve); err != nil {
 			slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
 		}
 		http.Redirect(w, r, signInRedirectURL(), http.StatusSeeOther)
@@ -59,37 +60,37 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	slog.InfoContext(ctx, "Turnstile検証成功")
 
 	// UseCaseを呼び出し（バリデーション + ユーザー検索 + コード送信）
-	result, err := h.sendSignInCodeUC.Execute(ctx, usecase.SendSignInCodeInput{
+	output, err := h.sendSignInCodeUC.Execute(ctx, usecase.SendSignInCodeInput{
 		Email: r.FormValue("email"),
 	})
 	if err != nil {
+		if ve := model.AsValidationError(err); ve != nil {
+			if err := h.sessionMgr.SetValidationError(ctx, w, r, *ve); err != nil {
+				slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
+			}
+			http.Redirect(w, r, signInRedirectURL(), http.StatusSeeOther)
+			return
+		}
 		slog.ErrorContext(ctx, "サインイン処理でエラーが発生しました", "error", err)
 		http.Error(w, i18n.T(ctx, "sign_in_error_server"), http.StatusInternalServerError)
 		return
 	}
-	if result.FormErrors != nil && result.FormErrors.HasErrors() {
-		if err := h.sessionMgr.SetFormErrors(ctx, w, r, *result.FormErrors); err != nil {
-			slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
-		}
-		http.Redirect(w, r, signInRedirectURL(), http.StatusSeeOther)
-		return
-	}
 
 	// セッションにメールアドレスとユーザーIDを保存
-	if err := h.sessionMgr.SetValue(ctx, w, r, "sign_in_email", result.Email); err != nil {
-		slog.Error("セッションへのメールアドレス保存エラー", "error", err)
+	if err := h.sessionMgr.SetValue(ctx, w, r, "sign_in_email", output.Email); err != nil {
+		slog.ErrorContext(ctx, "セッションへのメールアドレス保存エラー", "error", err)
 		http.Error(w, i18n.T(ctx, "sign_in_error_server"), http.StatusInternalServerError)
 		return
 	}
 
-	userIDStr := fmt.Sprintf("%d", result.UserID)
+	userIDStr := fmt.Sprintf("%d", output.UserID)
 	if err := h.sessionMgr.SetValue(ctx, w, r, "sign_in_user_id", userIDStr); err != nil {
-		slog.Error("セッションへのユーザーID保存エラー", "error", err)
+		slog.ErrorContext(ctx, "セッションへのユーザーID保存エラー", "error", err)
 		http.Error(w, i18n.T(ctx, "sign_in_error_server"), http.StatusInternalServerError)
 		return
 	}
 
-	if result.HasPassword {
+	if output.HasPassword {
 		// パスワードが存在する場合 → パスワードログイン画面へリダイレクト
 		redirectURL := "/sign_in/password"
 		if backURL != "" {
@@ -99,12 +100,12 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	} else {
 		// パスワードが存在しない場合 → 6桁コード入力画面へリダイレクト
 		slog.InfoContext(ctx, "6桁コードを送信しました",
-			"user_id", result.UserID,
-			"email", result.Email,
+			"user_id", output.UserID,
+			"email", output.Email,
 		)
 
 		// フラッシュメッセージを設定
-		message := i18n.T(ctx, "sign_in_code_sent_to", map[string]any{"Email": result.Email})
+		message := i18n.T(ctx, "sign_in_code_sent_to", map[string]any{"Email": output.Email})
 		h.sessionMgr.SetFlash(w, session.FlashSuccess, message)
 
 		redirectURL := "/sign_in/code"

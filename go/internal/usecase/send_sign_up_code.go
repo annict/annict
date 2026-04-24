@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"log/slog"
 	"time"
@@ -10,8 +11,8 @@ import (
 	"github.com/annict/annict/go/internal/auth"
 	"github.com/annict/annict/go/internal/dispatcher"
 	"github.com/annict/annict/go/internal/i18n"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/repository"
-	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/validator"
 )
 
@@ -21,7 +22,7 @@ type SendSignUpCodeUsecase struct {
 	signUpCodeRepo *repository.SignUpCodeRepository
 	userRepo       *repository.UserRepository
 	dispatcher     *dispatcher.Dispatcher
-	validator      *validator.CreateSignUpValidator
+	validator      *validator.SignUpCreateValidator
 }
 
 // NewSendSignUpCodeUsecase は新しいSendSignUpCodeUsecaseを作成します
@@ -30,7 +31,7 @@ func NewSendSignUpCodeUsecase(
 	signUpCodeRepo *repository.SignUpCodeRepository,
 	userRepo *repository.UserRepository,
 	dispatcher *dispatcher.Dispatcher,
-	validator *validator.CreateSignUpValidator,
+	validator *validator.SignUpCreateValidator,
 ) *SendSignUpCodeUsecase {
 	return &SendSignUpCodeUsecase{
 		db:             db,
@@ -47,31 +48,29 @@ type SendSignUpCodeInput struct {
 	Locale string
 }
 
-// SendSignUpCodeResult はコード送信の結果を表します
-type SendSignUpCodeResult struct {
-	FormErrors *session.FormErrors // バリデーションエラー（nilなら成功）
-	Code       string              // 平文コード（テスト用）
-	Email      string              // メールアドレス
+// SendSignUpCodeOutput はコード送信の結果を表します
+type SendSignUpCodeOutput struct {
+	Code  string // 平文コード（テスト用）
+	Email string // メールアドレス
 }
 
 // Execute は新規登録確認コードを生成し、メール送信ジョブをエンキューします
-func (uc *SendSignUpCodeUsecase) Execute(ctx context.Context, input SendSignUpCodeInput) (*SendSignUpCodeResult, error) {
+func (uc *SendSignUpCodeUsecase) Execute(ctx context.Context, input SendSignUpCodeInput) (*SendSignUpCodeOutput, error) {
 	// 1. バリデーション
-	valResult := uc.validator.Validate(ctx, validator.CreateSignUpValidatorInput{
+	if err := uc.validator.Validate(ctx, validator.SignUpCreateValidatorInput{
 		Email: input.Email,
-	})
-	if valResult.FormErrors != nil && valResult.FormErrors.HasErrors() {
-		return &SendSignUpCodeResult{FormErrors: valResult.FormErrors}, nil
+	}); err != nil {
+		return nil, err
 	}
 
 	// 2. メールアドレスの重複チェック
 	_, err := uc.userRepo.GetByEmail(ctx, input.Email)
 	if err == nil {
-		formErrors := &session.FormErrors{}
-		formErrors.AddFieldError("email", i18n.T(ctx, "sign_up_email_already_exists"))
-		return &SendSignUpCodeResult{FormErrors: formErrors}, nil
+		ve := model.NewValidationError()
+		ve.AddField("email", i18n.T(ctx, "sign_up_error_email_already_exists"))
+		return nil, ve
 	}
-	if err != sql.ErrNoRows {
+	if !errors.Is(err, sql.ErrNoRows) {
 		return nil, fmt.Errorf("ユーザーの検索に失敗: %w", err)
 	}
 
@@ -121,7 +120,7 @@ func (uc *SendSignUpCodeUsecase) Execute(ctx context.Context, input SendSignUpCo
 
 	// メール送信ジョブをエンキュー
 	if uc.dispatcher != nil {
-		if err := uc.dispatcher.InsertSignUpCodeEmail(ctx, input.Email, code, input.Locale); err != nil {
+		if err := uc.dispatcher.EnqueueSignUpCodeEmail(ctx, input.Email, code, input.Locale); err != nil {
 			slog.ErrorContext(ctx, "新規登録確認コード送信ジョブのエンキューに失敗しました",
 				"email", input.Email,
 				"error", err,
@@ -137,7 +136,7 @@ func (uc *SendSignUpCodeUsecase) Execute(ctx context.Context, input SendSignUpCo
 		)
 	}
 
-	return &SendSignUpCodeResult{
+	return &SendSignUpCodeOutput{
 		Code:  code,
 		Email: input.Email,
 	}, nil

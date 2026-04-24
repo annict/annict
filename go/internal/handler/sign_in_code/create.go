@@ -10,10 +10,23 @@ import (
 
 	"github.com/annict/annict/go/internal/clientip"
 	"github.com/annict/annict/go/internal/i18n"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/redirect"
 	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/usecase"
 )
+
+// codeErrorMap は usecase のコード検証エラーと i18n メッセージキーの対応表。
+// ログメッセージは err.Error() を使用するため重複を定義しない。
+// errors.Is で排他的にマッチするため、順序は意味を持たない。
+var codeErrorMap = []struct {
+	usecaseErr error
+	msgKey     string
+}{
+	{usecase.ErrCodeNotFound, "sign_in_code_error_code_not_found"},
+	{usecase.ErrCodeInvalid, "sign_in_code_error_code_invalid"},
+	{usecase.ErrCodeAttemptsExceeded, "sign_in_code_error_attempts_exceeded"},
+}
 
 // Create POST /sign_in/code - 6桁コード検証処理
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
@@ -82,59 +95,47 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// ユースケース呼び出し: バリデーション + 6桁コード検証 + ユーザー情報取得
-	result, err := h.verifySignInCodeUC.Execute(ctx, usecase.VerifySignInCodeInput{
+	output, err := h.verifySignInCodeUC.Execute(ctx, usecase.VerifySignInCodeInput{
 		UserID: userID,
 		Code:   r.FormValue("code"),
 	})
 	if err != nil {
-		// エラーの種類によって異なるメッセージを表示
-		if errors.Is(err, usecase.ErrCodeNotFound) {
-			slog.Warn("コードが見つからないか、有効期限が切れています", "email", email, "user_id", userID)
-			formErrors := session.FormErrors{}
-			formErrors.AddFieldError("code", i18n.T(ctx, "sign_in_code_error_code_not_found"))
-			if err := h.sessionMgr.SetFormErrors(ctx, w, r, formErrors); err != nil {
+		// バリデーションエラー
+		if ve := model.AsValidationError(err); ve != nil {
+			if err := h.sessionMgr.SetValidationError(ctx, w, r, *ve); err != nil {
 				slog.Error("フォームエラーの設定に失敗", "error", err)
 			}
-			http.Redirect(w, r, "/sign_in/code", http.StatusSeeOther)
-			return
-		} else if errors.Is(err, usecase.ErrCodeInvalid) {
-			slog.Warn("コードが正しくありません", "email", email, "user_id", userID)
-			formErrors := session.FormErrors{}
-			formErrors.AddFieldError("code", i18n.T(ctx, "sign_in_code_error_code_invalid"))
-			if err := h.sessionMgr.SetFormErrors(ctx, w, r, formErrors); err != nil {
-				slog.Error("フォームエラーの設定に失敗", "error", err)
-			}
-			http.Redirect(w, r, "/sign_in/code", http.StatusSeeOther)
-			return
-		} else if errors.Is(err, usecase.ErrCodeAttemptsExceeded) {
-			slog.Warn("試行回数が上限に達しました", "email", email, "user_id", userID)
-			formErrors := session.FormErrors{}
-			formErrors.AddFieldError("code", i18n.T(ctx, "sign_in_code_error_attempts_exceeded"))
-			if err := h.sessionMgr.SetFormErrors(ctx, w, r, formErrors); err != nil {
-				slog.Error("フォームエラーの設定に失敗", "error", err)
-			}
-			http.Redirect(w, r, "/sign_in/code", http.StatusSeeOther)
-			return
-		} else {
-			slog.Error("コード検証エラー", "error", err)
-			h.sessionMgr.SetFlash(w, session.FlashError, i18n.T(ctx, "sign_in_code_error_server"))
 			http.Redirect(w, r, "/sign_in/code", http.StatusSeeOther)
 			return
 		}
-	}
 
-	// バリデーションエラーの場合
-	if result.FormErrors != nil && result.FormErrors.HasErrors() {
-		if err := h.sessionMgr.SetFormErrors(ctx, w, r, *result.FormErrors); err != nil {
-			slog.Error("フォームエラーの設定に失敗", "error", err)
+		// エラーの種類によって異なるメッセージを表示
+		for _, ce := range codeErrorMap {
+			if errors.Is(err, ce.usecaseErr) {
+				slog.WarnContext(ctx, "ログインコード検証失敗",
+					"reason", ce.usecaseErr.Error(),
+					"email", email,
+					"user_id", userID,
+				)
+				codeErr := model.NewValidationError()
+				codeErr.AddField("code", i18n.T(ctx, ce.msgKey))
+				if err := h.sessionMgr.SetValidationError(ctx, w, r, *codeErr); err != nil {
+					slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
+				}
+				http.Redirect(w, r, "/sign_in/code", http.StatusSeeOther)
+				return
+			}
 		}
+
+		slog.Error("コード検証エラー", "error", err)
+		h.sessionMgr.SetFlash(w, session.FlashError, i18n.T(ctx, "sign_in_code_error_server"))
 		http.Redirect(w, r, "/sign_in/code", http.StatusSeeOther)
 		return
 	}
 
 	// セッションを作成（usecase層）
 	// トランザクション不要なのでnilを渡す
-	sessionResult, err := h.createSessionUC.Execute(ctx, nil, userID, result.EncryptedPassword)
+	sessionResult, err := h.createSessionUC.Execute(ctx, nil, userID, output.EncryptedPassword)
 	if err != nil {
 		slog.Error("セッション作成エラー", "error", err)
 		h.sessionMgr.SetFlash(w, session.FlashError, i18n.T(ctx, "sign_in_code_error_create_session"))
@@ -156,7 +157,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		slog.Warn("一時セッション値の削除に失敗しました", "key", "sign_in_user_id", "error", err)
 	}
 
-	slog.Info("ログイン成功（メールログイン）", "user_id", userID, "username", result.Username)
+	slog.Info("ログイン成功（メールログイン）", "user_id", userID, "username", output.Username)
 
 	// ログイン後のリダイレクト先を取得（バリデーション付き）
 	backURL := r.FormValue("back")

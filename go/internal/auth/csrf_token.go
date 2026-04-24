@@ -1,4 +1,4 @@
-package session
+package auth
 
 import (
 	"crypto/rand"

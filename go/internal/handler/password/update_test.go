@@ -63,7 +63,7 @@ func TestUpdate_Success(t *testing.T) {
 	sessionManager := session.NewManager(sessionRepo, cfg)
 	passwordResetTokenRepo := repository.NewPasswordResetTokenRepository(queries)
 	getPasswordResetTokenUC := usecase.NewGetPasswordResetTokenUsecase(passwordResetTokenRepo)
-	updatePasswordValidator := validator.NewUpdatePasswordValidator()
+	updatePasswordValidator := validator.NewPasswordUpdateValidator()
 	updatePasswordUC := usecase.NewUpdatePasswordResetUsecase(db, passwordResetTokenRepo, repository.NewUserRepository(queries), sessionRepo, updatePasswordValidator)
 
 	handler := NewHandler(cfg, sessionManager, nil, getPasswordResetTokenUC, updatePasswordUC)
@@ -178,7 +178,7 @@ func TestUpdate_PasswordMismatch(t *testing.T) {
 	sessionManager := session.NewManager(sessionRepo, cfg)
 	passwordResetTokenRepo := repository.NewPasswordResetTokenRepository(queries)
 	getPasswordResetTokenUC := usecase.NewGetPasswordResetTokenUsecase(passwordResetTokenRepo)
-	updatePasswordValidator := validator.NewUpdatePasswordValidator()
+	updatePasswordValidator := validator.NewPasswordUpdateValidator()
 	updatePasswordUC := usecase.NewUpdatePasswordResetUsecase(db, passwordResetTokenRepo, repository.NewUserRepository(queries), sessionRepo, updatePasswordValidator)
 
 	handler := NewHandler(cfg, sessionManager, nil, getPasswordResetTokenUC, updatePasswordUC)
@@ -248,7 +248,7 @@ func TestUpdate_InvalidToken(t *testing.T) {
 	sessionManager := session.NewManager(sessionRepo, cfg)
 	passwordResetTokenRepo := repository.NewPasswordResetTokenRepository(queries)
 	getPasswordResetTokenUC := usecase.NewGetPasswordResetTokenUsecase(passwordResetTokenRepo)
-	updatePasswordValidator := validator.NewUpdatePasswordValidator()
+	updatePasswordValidator := validator.NewPasswordUpdateValidator()
 	updatePasswordUC := usecase.NewUpdatePasswordResetUsecase(db, passwordResetTokenRepo, repository.NewUserRepository(queries), sessionRepo, updatePasswordValidator)
 
 	handler := NewHandler(cfg, sessionManager, nil, getPasswordResetTokenUC, updatePasswordUC)

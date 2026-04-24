@@ -1,12 +1,11 @@
 .DS_Store
+apm_modules/
 
 /.claude/*.local.json
-/.claude/skills
 /.env.op
 /.pnpm-store
 /compose-up.sh
 /docker-compose.override.yml
 /docs/private
-/docs/README.md
 /node_modules
 /tmp

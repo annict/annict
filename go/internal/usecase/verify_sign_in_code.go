@@ -9,7 +9,6 @@ import (
 
 	"github.com/annict/annict/go/internal/auth"
 	"github.com/annict/annict/go/internal/repository"
-	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/validator"
 )
 
@@ -18,7 +17,7 @@ type VerifySignInCodeUsecase struct {
 	db             *sql.DB
 	signInCodeRepo *repository.SignInCodeRepository
 	userRepo       *repository.UserRepository
-	v              *validator.CreateSignInCodeValidator
+	validator      *validator.SignInCodeCreateValidator
 }
 
 // NewVerifySignInCodeUsecase は新しいVerifySignInCodeUsecaseを作成します
@@ -26,13 +25,13 @@ func NewVerifySignInCodeUsecase(
 	db *sql.DB,
 	signInCodeRepo *repository.SignInCodeRepository,
 	userRepo *repository.UserRepository,
-	v *validator.CreateSignInCodeValidator,
+	validator *validator.SignInCodeCreateValidator,
 ) *VerifySignInCodeUsecase {
 	return &VerifySignInCodeUsecase{
 		db:             db,
 		signInCodeRepo: signInCodeRepo,
 		userRepo:       userRepo,
-		v:              v,
+		validator:      validator,
 	}
 }
 
@@ -42,11 +41,10 @@ type VerifySignInCodeInput struct {
 	Code   string
 }
 
-// VerifySignInCodeResult はユースケースの結果を表します
-type VerifySignInCodeResult struct {
-	FormErrors        *session.FormErrors // バリデーションエラー（nilなら成功）
-	EncryptedPassword string              // ユーザーのパスワードハッシュ（セッション作成用）
-	Username          string              // ユーザー名（ログ用）
+// VerifySignInCodeOutput はユースケースの結果を表します
+type VerifySignInCodeOutput struct {
+	EncryptedPassword string // ユーザーのパスワードハッシュ（セッション作成用）
+	Username          string // ユーザー名（ログ用）
 }
 
 var (
@@ -59,13 +57,12 @@ var (
 )
 
 // Execute は6桁のログインコードを検証し、成功時にユーザー情報を返します
-func (uc *VerifySignInCodeUsecase) Execute(ctx context.Context, input VerifySignInCodeInput) (*VerifySignInCodeResult, error) {
+func (uc *VerifySignInCodeUsecase) Execute(ctx context.Context, input VerifySignInCodeInput) (*VerifySignInCodeOutput, error) {
 	// 1. バリデーション
-	valResult := uc.v.Validate(ctx, validator.CreateSignInCodeValidatorInput{
+	if err := uc.validator.Validate(ctx, validator.SignInCodeCreateValidatorInput{
 		Code: input.Code,
-	})
-	if valResult.FormErrors != nil && valResult.FormErrors.HasErrors() {
-		return &VerifySignInCodeResult{FormErrors: valResult.FormErrors}, nil
+	}); err != nil {
+		return nil, err
 	}
 
 	// 2. コード検証
@@ -76,13 +73,13 @@ func (uc *VerifySignInCodeUsecase) Execute(ctx context.Context, input VerifySign
 	// 3. ユーザー情報を取得
 	user, err := uc.userRepo.GetByID(ctx, input.UserID)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
 			return nil, fmt.Errorf("ユーザーが見つかりません (user_id=%d): %w", input.UserID, err)
 		}
 		return nil, fmt.Errorf("ユーザー情報の取得に失敗: %w", err)
 	}
 
-	return &VerifySignInCodeResult{
+	return &VerifySignInCodeOutput{
 		EncryptedPassword: user.EncryptedPassword,
 		Username:          user.Username,
 	}, nil

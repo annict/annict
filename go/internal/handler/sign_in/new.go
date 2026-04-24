@@ -18,7 +18,7 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 	// すでにログイン済みの場合はホームにリダイレクト
 	currentUser, err := h.sessionMgr.GetCurrentUser(ctx, r)
 	if err != nil {
-		slog.Error("セッション取得エラー", "error", err)
+		slog.ErrorContext(ctx, "セッション取得エラー", "error", err)
 	}
 	if currentUser != nil {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
@@ -30,7 +30,10 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 
 	// Flashメッセージを取得
 	flash := h.sessionMgr.GetFlash(w, r)
-	formErrors, _ := h.sessionMgr.GetFormErrors(ctx, r)
+	formErrors, err := h.sessionMgr.GetValidationError(ctx, r)
+	if err != nil {
+		slog.WarnContext(ctx, "バリデーションエラーの取得に失敗", "error", err)
+	}
 
 	// メタ情報を設定
 	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)
@@ -45,7 +48,7 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	component := layouts.Simple(ctx, meta, flash, h.cfg.GetAssetVersion(), sign_in.New(ctx, formErrors, csrfToken, h.cfg.TurnstileSiteKey, backURL))
 	if err := component.Render(ctx, w); err != nil {
-		slog.Error("テンプレート実行エラー", "error", err)
+		slog.ErrorContext(ctx, "テンプレート実行エラー", "error", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}

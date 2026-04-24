@@ -37,7 +37,7 @@ func TestCreate_RateLimiting_IP(t *testing.T) {
 
 	// usecaseの初期化
 	queries := testutil.NewQueriesWithTx(db, tx)
-	v := validator.NewCreateSignUpValidator()
+	v := validator.NewSignUpCreateValidator()
 	sendSignUpCodeUC := usecase.NewSendSignUpCodeUsecase(db, repository.NewSignUpCodeRepository(queries), repository.NewUserRepository(queries), nil, v)
 
 	// セッションマネージャーの初期化
@@ -109,7 +109,7 @@ func TestCreate_RateLimiting_Email(t *testing.T) {
 
 	// usecaseの初期化
 	queries := testutil.NewQueriesWithTx(db, tx)
-	v := validator.NewCreateSignUpValidator()
+	v := validator.NewSignUpCreateValidator()
 	sendSignUpCodeUC := usecase.NewSendSignUpCodeUsecase(db, repository.NewSignUpCodeRepository(queries), repository.NewUserRepository(queries), nil, v)
 
 	// セッションマネージャーの初期化

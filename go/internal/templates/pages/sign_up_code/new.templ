@@ -2,13 +2,13 @@ package sign_up_code
 
 import (
 	"context"
-	"github.com/annict/annict/go/internal/session"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/templates"
 	"github.com/annict/annict/go/internal/templates/components"
 )
 
 // SignUpCodeNew は新規登録確認コード入力ページのコンテンツを表示します
-templ SignUpCodeNew(ctx context.Context, email string, formErrors *session.FormErrors, csrfToken string) {
+templ SignUpCodeNew(ctx context.Context, email string, formErrors *model.ValidationError, csrfToken string) {
 	<div class="flex flex-col gap-6 min-w-full md:min-w-md px-4">
 		<div class="text-center">
 			<a href="/" class="inline-block">

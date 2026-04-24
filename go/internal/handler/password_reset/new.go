@@ -14,9 +14,12 @@ import (
 func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	// セッションからフラッシュメッセージとフォームエラーを取得
+	// セッションからフラッシュメッセージとバリデーションエラーを取得
 	flash := h.sessionManager.GetFlash(w, r)
-	formErrors, _ := h.sessionManager.GetFormErrors(ctx, r)
+	formErrors, err := h.sessionManager.GetValidationError(ctx, r)
+	if err != nil {
+		slog.WarnContext(ctx, "バリデーションエラーの取得に失敗", "error", err)
+	}
 
 	// メタ情報を設定
 	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)

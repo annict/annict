@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"log/slog"
 
 	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
@@ -13,7 +14,6 @@ import (
 	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/repository"
-	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/validator"
 )
 
@@ -26,7 +26,7 @@ type CompleteSignUpUsecase struct {
 	emailNotificationRepo *repository.EmailNotificationRepository
 	sessionRepo           *repository.SessionRepository
 	redisClient           *redis.Client
-	v                     *validator.CreateSignUpUsernameValidator
+	validator             *validator.SignUpUsernameCreateValidator
 }
 
 // NewCompleteSignUpUsecase はCompleteSignUpUsecaseを作成します
@@ -38,7 +38,7 @@ func NewCompleteSignUpUsecase(
 	emailNotificationRepo *repository.EmailNotificationRepository,
 	sessionRepo *repository.SessionRepository,
 	redisClient *redis.Client,
-	v *validator.CreateSignUpUsernameValidator,
+	validator *validator.SignUpUsernameCreateValidator,
 ) *CompleteSignUpUsecase {
 	return &CompleteSignUpUsecase{
 		db:                    db,
@@ -48,7 +48,7 @@ func NewCompleteSignUpUsecase(
 		emailNotificationRepo: emailNotificationRepo,
 		sessionRepo:           sessionRepo,
 		redisClient:           redisClient,
-		v:                     v,
+		validator:             validator,
 	}
 }
 
@@ -59,11 +59,10 @@ type CompleteSignUpInput struct {
 	Locale   string
 }
 
-// CompleteSignUpResult はユーザー登録完了の結果
-type CompleteSignUpResult struct {
+// CompleteSignUpOutput はユーザー登録完了の結果
+type CompleteSignUpOutput struct {
 	User            *model.User
 	SessionPublicID string
-	FormErrors      *session.FormErrors // バリデーションエラー（nilなら成功）
 }
 
 // Execute はユーザー登録を完了します
@@ -83,26 +82,27 @@ type CompleteSignUpResult struct {
 func (uc *CompleteSignUpUsecase) Execute(
 	ctx context.Context,
 	input CompleteSignUpInput,
-) (*CompleteSignUpResult, error) {
+) (*CompleteSignUpOutput, error) {
 	// 1. バリデーション
-	valResult := uc.v.Validate(ctx, validator.CreateSignUpUsernameValidatorInput{
+	if err := uc.validator.Validate(ctx, validator.SignUpUsernameCreateValidatorInput{
 		Token:    input.Token,
 		Username: input.Username,
-	})
-	if valResult.FormErrors != nil && valResult.FormErrors.HasErrors() {
-		return &CompleteSignUpResult{FormErrors: valResult.FormErrors}, nil
+	}); err != nil {
+		return nil, err
 	}
 
 	// Redisから一時トークンを検証してメールアドレスを取得
 	email, err := uc.verifyToken(ctx, input.Token)
 	if err != nil {
-		return nil, fmt.Errorf("トークン検証に失敗: %w", err)
+		return nil, err
 	}
 
 	// ユーザー名の一意性チェック
 	err = uc.userRepo.GetByUsername(ctx, input.Username)
 	if err == nil {
-		return nil, &UsernameAlreadyExistsError{Username: input.Username}
+		ve := model.NewValidationError()
+		ve.AddField("username", i18n.T(ctx, "sign_up_username_error_username_taken"))
+		return nil, ve
 	} else if !errors.Is(err, sql.ErrNoRows) {
 		return nil, fmt.Errorf("ユーザー名一意性チェックに失敗: %w", err)
 	}
@@ -159,19 +159,23 @@ func (uc *CompleteSignUpUsecase) Execute(
 		return nil, fmt.Errorf("トランザクションコミットに失敗: %w", err)
 	}
 
-	// 一時トークンを削除
+	// 一時トークンを削除（失敗してもユーザー作成は成功しているため、ログのみ出して続行する。
+	// トークンは Redis 側で 15 分後に自動失効する）
 	if err := uc.deleteToken(ctx, input.Token); err != nil {
-		// 削除失敗はログのみ（処理は続行）
-		return nil, fmt.Errorf("トークン削除に失敗: %w", err)
+		slog.WarnContext(ctx, "一時トークンの削除に失敗しました（ユーザー作成は成功）",
+			"error", err,
+			"user_id", user.ID,
+		)
 	}
 
-	return &CompleteSignUpResult{
+	return &CompleteSignUpOutput{
 		User:            user,
 		SessionPublicID: sessionResult.PublicID,
 	}, nil
 }
 
-// verifyToken はRedisから一時トークンを検証してメールアドレスを取得します
+// verifyToken はRedisから一時トークンを検証してメールアドレスを取得します。
+// トークンが無効な場合は `token` フィールドに error を持つ *model.ValidationError を返します。
 func (uc *CompleteSignUpUsecase) verifyToken(ctx context.Context, token string) (string, error) {
 	if uc.redisClient == nil {
 		// テスト環境ではRedisがない場合があるため、ダミーメールを返す
@@ -181,7 +185,9 @@ func (uc *CompleteSignUpUsecase) verifyToken(ctx context.Context, token string) 
 	tokenKey := fmt.Sprintf("sign_up_token:%s", token)
 	email, err := uc.redisClient.Get(ctx, tokenKey).Result()
 	if err != nil {
-		return "", &TokenInvalidError{Token: token}
+		ve := model.NewValidationError()
+		ve.AddField("token", i18n.T(ctx, "sign_up_username_error_token_invalid"))
+		return "", ve
 	}
 
 	return email, nil
@@ -195,45 +201,4 @@ func (uc *CompleteSignUpUsecase) deleteToken(ctx context.Context, token string) 
 
 	tokenKey := fmt.Sprintf("sign_up_token:%s", token)
 	return uc.redisClient.Del(ctx, tokenKey).Err()
-}
-
-// UsernameAlreadyExistsError はユーザー名が既に存在することを示すエラー
-type UsernameAlreadyExistsError struct {
-	Username string
-}
-
-func (e *UsernameAlreadyExistsError) Error() string {
-	return fmt.Sprintf("username already exists: %s", e.Username)
-}
-
-// IsUsernameAlreadyExistsError はエラーがUsernameAlreadyExistsErrorかどうかを判定します
-func IsUsernameAlreadyExistsError(err error) bool {
-	var e *UsernameAlreadyExistsError
-	return errors.As(err, &e)
-}
-
-// TokenInvalidError はトークンが無効であることを示すエラー
-type TokenInvalidError struct {
-	Token string
-}
-
-func (e *TokenInvalidError) Error() string {
-	return fmt.Sprintf("token invalid: %s", e.Token)
-}
-
-// IsTokenInvalidError はエラーがTokenInvalidErrorかどうかを判定します
-func IsTokenInvalidError(err error) bool {
-	var e *TokenInvalidError
-	return errors.As(err, &e)
-}
-
-// LocalizeCompleteSignUpError はCompleteSignUpUsecaseのエラーを国際化します
-func LocalizeCompleteSignUpError(ctx context.Context, err error) string {
-	if IsUsernameAlreadyExistsError(err) {
-		return i18n.T(ctx, "sign_up_username_error_username_taken")
-	}
-	if IsTokenInvalidError(err) {
-		return i18n.T(ctx, "sign_up_username_error_token_invalid")
-	}
-	return i18n.T(ctx, "sign_up_username_error_server")
 }

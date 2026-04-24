@@ -3,20 +3,22 @@ package validator
 import (
 	"context"
 	"testing"
+
+	"github.com/annict/annict/go/internal/model"
 )
 
-func TestCreateDbWorkValidatorValidate(t *testing.T) {
+func TestDbWorkCreateValidatorValidate(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
 		name       string
-		input      CreateDbWorkValidatorInput
+		input      DbWorkCreateValidatorInput
 		wantErrors bool
 		wantFields []string
 	}{
 		{
 			name: "正常系: 必須フィールドのみ",
-			input: CreateDbWorkValidatorInput{
+			input: DbWorkCreateValidatorInput{
 				Title: "テストアニメ",
 				Media: "1",
 			},
@@ -24,7 +26,7 @@ func TestCreateDbWorkValidatorValidate(t *testing.T) {
 		},
 		{
 			name: "正常系: 全フィールド入力",
-			input: CreateDbWorkValidatorInput{
+			input: DbWorkCreateValidatorInput{
 				Title:                 "テストアニメ",
 				TitleKana:             "てすとあにめ",
 				TitleAlter:            "別名",
@@ -56,7 +58,7 @@ func TestCreateDbWorkValidatorValidate(t *testing.T) {
 		},
 		{
 			name: "異常系: タイトルが空",
-			input: CreateDbWorkValidatorInput{
+			input: DbWorkCreateValidatorInput{
 				Title: "",
 				Media: "1",
 			},
@@ -65,7 +67,7 @@ func TestCreateDbWorkValidatorValidate(t *testing.T) {
 		},
 		{
 			name: "異常系: タイトルがwhitespaceのみ",
-			input: CreateDbWorkValidatorInput{
+			input: DbWorkCreateValidatorInput{
 				Title: "   ",
 				Media: "1",
 			},
@@ -74,7 +76,7 @@ func TestCreateDbWorkValidatorValidate(t *testing.T) {
 		},
 		{
 			name: "異常系: メディアが空",
-			input: CreateDbWorkValidatorInput{
+			input: DbWorkCreateValidatorInput{
 				Title: "テストアニメ",
 				Media: "",
 			},
@@ -83,7 +85,7 @@ func TestCreateDbWorkValidatorValidate(t *testing.T) {
 		},
 		{
 			name: "異常系: メディアが不正な値",
-			input: CreateDbWorkValidatorInput{
+			input: DbWorkCreateValidatorInput{
 				Title: "テストアニメ",
 				Media: "99",
 			},
@@ -92,7 +94,7 @@ func TestCreateDbWorkValidatorValidate(t *testing.T) {
 		},
 		{
 			name: "異常系: タイトルとメディアの両方が空",
-			input: CreateDbWorkValidatorInput{
+			input: DbWorkCreateValidatorInput{
 				Title: "",
 				Media: "",
 			},
@@ -101,7 +103,7 @@ func TestCreateDbWorkValidatorValidate(t *testing.T) {
 		},
 		{
 			name: "正常系: メディアが0（その他）",
-			input: CreateDbWorkValidatorInput{
+			input: DbWorkCreateValidatorInput{
 				Title: "テストアニメ",
 				Media: "0",
 			},
@@ -109,47 +111,48 @@ func TestCreateDbWorkValidatorValidate(t *testing.T) {
 		},
 	}
 
-	validator := NewCreateDbWorkValidator()
+	v := NewDbWorkCreateValidator()
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
 			ctx := context.Background()
-			result := validator.Validate(ctx, tt.input)
+			err := v.Validate(ctx, tt.input)
+			ve := model.AsValidationError(err)
 
 			if tt.wantErrors {
-				if result.FormErrors == nil || !result.FormErrors.HasErrors() {
+				if ve == nil {
 					t.Error("エラーが期待されましたが、エラーがありませんでした")
 					return
 				}
 
 				for _, field := range tt.wantFields {
-					if !result.FormErrors.HasFieldError(field) {
+					if !ve.HasFieldError(field) {
 						t.Errorf("フィールド %s のエラーが期待されましたが、見つかりませんでした", field)
 					}
 				}
 			} else {
-				if result.FormErrors != nil && result.FormErrors.HasErrors() {
-					t.Errorf("エラーは期待されていませんでしたが、返されました: %+v", result.FormErrors)
+				if ve != nil {
+					t.Errorf("エラーは期待されていませんでしたが、返されました: %+v", ve)
 				}
 			}
 		})
 	}
 }
 
-func TestCreateDbWorkValidatorValidate_URL(t *testing.T) {
+func TestDbWorkCreateValidatorValidate_URL(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
 		name       string
-		input      CreateDbWorkValidatorInput
+		input      DbWorkCreateValidatorInput
 		wantErrors bool
 		wantFields []string
 	}{
 		{
 			name: "正常系: URLが空（スキップ）",
-			input: CreateDbWorkValidatorInput{
+			input: DbWorkCreateValidatorInput{
 				Title:           "テストアニメ",
 				Media:           "1",
 				OfficialSiteURL: "",
@@ -158,7 +161,7 @@ func TestCreateDbWorkValidatorValidate_URL(t *testing.T) {
 		},
 		{
 			name: "正常系: 有効なhttps URL",
-			input: CreateDbWorkValidatorInput{
+			input: DbWorkCreateValidatorInput{
 				Title:           "テストアニメ",
 				Media:           "1",
 				OfficialSiteURL: "https://example.com",
@@ -167,7 +170,7 @@ func TestCreateDbWorkValidatorValidate_URL(t *testing.T) {
 		},
 		{
 			name: "正常系: 有効なhttp URL",
-			input: CreateDbWorkValidatorInput{
+			input: DbWorkCreateValidatorInput{
 				Title:           "テストアニメ",
 				Media:           "1",
 				OfficialSiteURL: "http://example.com",
@@ -176,7 +179,7 @@ func TestCreateDbWorkValidatorValidate_URL(t *testing.T) {
 		},
 		{
 			name: "異常系: スキームなしのURL",
-			input: CreateDbWorkValidatorInput{
+			input: DbWorkCreateValidatorInput{
 				Title:           "テストアニメ",
 				Media:           "1",
 				OfficialSiteURL: "example.com",
@@ -186,7 +189,7 @@ func TestCreateDbWorkValidatorValidate_URL(t *testing.T) {
 		},
 		{
 			name: "異常系: 不正なURL",
-			input: CreateDbWorkValidatorInput{
+			input: DbWorkCreateValidatorInput{
 				Title:           "テストアニメ",
 				Media:           "1",
 				OfficialSiteURL: "not-a-url",
@@ -196,7 +199,7 @@ func TestCreateDbWorkValidatorValidate_URL(t *testing.T) {
 		},
 		{
 			name: "異常系: ftpスキーム",
-			input: CreateDbWorkValidatorInput{
+			input: DbWorkCreateValidatorInput{
 				Title:           "テストアニメ",
 				Media:           "1",
 				OfficialSiteURL: "ftp://example.com/file",
@@ -206,7 +209,7 @@ func TestCreateDbWorkValidatorValidate_URL(t *testing.T) {
 		},
 		{
 			name: "異常系: 複数のURL項目でエラー",
-			input: CreateDbWorkValidatorInput{
+			input: DbWorkCreateValidatorInput{
 				Title:             "テストアニメ",
 				Media:             "1",
 				OfficialSiteURL:   "invalid",
@@ -219,47 +222,48 @@ func TestCreateDbWorkValidatorValidate_URL(t *testing.T) {
 		},
 	}
 
-	validator := NewCreateDbWorkValidator()
+	v := NewDbWorkCreateValidator()
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
 			ctx := context.Background()
-			result := validator.Validate(ctx, tt.input)
+			err := v.Validate(ctx, tt.input)
+			ve := model.AsValidationError(err)
 
 			if tt.wantErrors {
-				if result.FormErrors == nil || !result.FormErrors.HasErrors() {
+				if ve == nil {
 					t.Error("エラーが期待されましたが、エラーがありませんでした")
 					return
 				}
 
 				for _, field := range tt.wantFields {
-					if !result.FormErrors.HasFieldError(field) {
+					if !ve.HasFieldError(field) {
 						t.Errorf("フィールド %s のエラーが期待されましたが、見つかりませんでした", field)
 					}
 				}
 			} else {
-				if result.FormErrors != nil && result.FormErrors.HasErrors() {
-					t.Errorf("エラーは期待されていませんでしたが、返されました: %+v", result.FormErrors)
+				if ve != nil {
+					t.Errorf("エラーは期待されていませんでしたが、返されました: %+v", ve)
 				}
 			}
 		})
 	}
 }
 
-func TestCreateDbWorkValidatorValidate_NumericFields(t *testing.T) {
+func TestDbWorkCreateValidatorValidate_NumericFields(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
 		name       string
-		input      CreateDbWorkValidatorInput
+		input      DbWorkCreateValidatorInput
 		wantErrors bool
 		wantFields []string
 	}{
 		{
 			name: "正常系: sc_tidが空（スキップ）",
-			input: CreateDbWorkValidatorInput{
+			input: DbWorkCreateValidatorInput{
 				Title: "テストアニメ",
 				Media: "1",
 				ScTid: "",
@@ -268,7 +272,7 @@ func TestCreateDbWorkValidatorValidate_NumericFields(t *testing.T) {
 		},
 		{
 			name: "正常系: sc_tidが有効な整数",
-			input: CreateDbWorkValidatorInput{
+			input: DbWorkCreateValidatorInput{
 				Title: "テストアニメ",
 				Media: "1",
 				ScTid: "12345",
@@ -277,7 +281,7 @@ func TestCreateDbWorkValidatorValidate_NumericFields(t *testing.T) {
 		},
 		{
 			name: "異常系: sc_tidが整数でない",
-			input: CreateDbWorkValidatorInput{
+			input: DbWorkCreateValidatorInput{
 				Title: "テストアニメ",
 				Media: "1",
 				ScTid: "abc",
@@ -287,7 +291,7 @@ func TestCreateDbWorkValidatorValidate_NumericFields(t *testing.T) {
 		},
 		{
 			name: "異常系: sc_tidが小数",
-			input: CreateDbWorkValidatorInput{
+			input: DbWorkCreateValidatorInput{
 				Title: "テストアニメ",
 				Media: "1",
 				ScTid: "12.5",
@@ -297,7 +301,7 @@ func TestCreateDbWorkValidatorValidate_NumericFields(t *testing.T) {
 		},
 		{
 			name: "正常系: mal_anime_idが有効な整数",
-			input: CreateDbWorkValidatorInput{
+			input: DbWorkCreateValidatorInput{
 				Title:      "テストアニメ",
 				Media:      "1",
 				MalAnimeID: "54321",
@@ -306,7 +310,7 @@ func TestCreateDbWorkValidatorValidate_NumericFields(t *testing.T) {
 		},
 		{
 			name: "異常系: mal_anime_idが整数でない",
-			input: CreateDbWorkValidatorInput{
+			input: DbWorkCreateValidatorInput{
 				Title:      "テストアニメ",
 				Media:      "1",
 				MalAnimeID: "xyz",
@@ -316,47 +320,48 @@ func TestCreateDbWorkValidatorValidate_NumericFields(t *testing.T) {
 		},
 	}
 
-	validator := NewCreateDbWorkValidator()
+	v := NewDbWorkCreateValidator()
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
 			ctx := context.Background()
-			result := validator.Validate(ctx, tt.input)
+			err := v.Validate(ctx, tt.input)
+			ve := model.AsValidationError(err)
 
 			if tt.wantErrors {
-				if result.FormErrors == nil || !result.FormErrors.HasErrors() {
+				if ve == nil {
 					t.Error("エラーが期待されましたが、エラーがありませんでした")
 					return
 				}
 
 				for _, field := range tt.wantFields {
-					if !result.FormErrors.HasFieldError(field) {
+					if !ve.HasFieldError(field) {
 						t.Errorf("フィールド %s のエラーが期待されましたが、見つかりませんでした", field)
 					}
 				}
 			} else {
-				if result.FormErrors != nil && result.FormErrors.HasErrors() {
-					t.Errorf("エラーは期待されていませんでしたが、返されました: %+v", result.FormErrors)
+				if ve != nil {
+					t.Errorf("エラーは期待されていませんでしたが、返されました: %+v", ve)
 				}
 			}
 		})
 	}
 }
 
-func TestCreateDbWorkValidatorValidate_PresencePair(t *testing.T) {
+func TestDbWorkCreateValidatorValidate_PresencePair(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
 		name       string
-		input      CreateDbWorkValidatorInput
+		input      DbWorkCreateValidatorInput
 		wantErrors bool
 		wantFields []string
 	}{
 		{
 			name: "正常系: あらすじと出典の両方が空",
-			input: CreateDbWorkValidatorInput{
+			input: DbWorkCreateValidatorInput{
 				Title:    "テストアニメ",
 				Media:    "1",
 				Synopsis: "",
@@ -365,7 +370,7 @@ func TestCreateDbWorkValidatorValidate_PresencePair(t *testing.T) {
 		},
 		{
 			name: "正常系: あらすじと出典の両方がある",
-			input: CreateDbWorkValidatorInput{
+			input: DbWorkCreateValidatorInput{
 				Title:          "テストアニメ",
 				Media:          "1",
 				Synopsis:       "テストのあらすじ",
@@ -375,7 +380,7 @@ func TestCreateDbWorkValidatorValidate_PresencePair(t *testing.T) {
 		},
 		{
 			name: "異常系: あらすじのみで出典がない",
-			input: CreateDbWorkValidatorInput{
+			input: DbWorkCreateValidatorInput{
 				Title:          "テストアニメ",
 				Media:          "1",
 				Synopsis:       "テストのあらすじ",
@@ -386,7 +391,7 @@ func TestCreateDbWorkValidatorValidate_PresencePair(t *testing.T) {
 		},
 		{
 			name: "正常系: 出典のみ（あらすじなし）は許可",
-			input: CreateDbWorkValidatorInput{
+			input: DbWorkCreateValidatorInput{
 				Title:          "テストアニメ",
 				Media:          "1",
 				Synopsis:       "",
@@ -396,7 +401,7 @@ func TestCreateDbWorkValidatorValidate_PresencePair(t *testing.T) {
 		},
 		{
 			name: "正常系: 英語あらすじと出典の両方がある",
-			input: CreateDbWorkValidatorInput{
+			input: DbWorkCreateValidatorInput{
 				Title:            "テストアニメ",
 				Media:            "1",
 				SynopsisEn:       "Test synopsis",
@@ -406,7 +411,7 @@ func TestCreateDbWorkValidatorValidate_PresencePair(t *testing.T) {
 		},
 		{
 			name: "異常系: 英語あらすじのみで出典がない",
-			input: CreateDbWorkValidatorInput{
+			input: DbWorkCreateValidatorInput{
 				Title:            "テストアニメ",
 				Media:            "1",
 				SynopsisEn:       "Test synopsis",
@@ -417,7 +422,7 @@ func TestCreateDbWorkValidatorValidate_PresencePair(t *testing.T) {
 		},
 		{
 			name: "異常系: 日英両方のあらすじに出典がない",
-			input: CreateDbWorkValidatorInput{
+			input: DbWorkCreateValidatorInput{
 				Title:      "テストアニメ",
 				Media:      "1",
 				Synopsis:   "テストのあらすじ",
@@ -428,29 +433,30 @@ func TestCreateDbWorkValidatorValidate_PresencePair(t *testing.T) {
 		},
 	}
 
-	validator := NewCreateDbWorkValidator()
+	v := NewDbWorkCreateValidator()
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
 			ctx := context.Background()
-			result := validator.Validate(ctx, tt.input)
+			err := v.Validate(ctx, tt.input)
+			ve := model.AsValidationError(err)
 
 			if tt.wantErrors {
-				if result.FormErrors == nil || !result.FormErrors.HasErrors() {
+				if ve == nil {
 					t.Error("エラーが期待されましたが、エラーがありませんでした")
 					return
 				}
 
 				for _, field := range tt.wantFields {
-					if !result.FormErrors.HasFieldError(field) {
+					if !ve.HasFieldError(field) {
 						t.Errorf("フィールド %s のエラーが期待されましたが、見つかりませんでした", field)
 					}
 				}
 			} else {
-				if result.FormErrors != nil && result.FormErrors.HasErrors() {
-					t.Errorf("エラーは期待されていませんでしたが、返されました: %+v", result.FormErrors)
+				if ve != nil {
+					t.Errorf("エラーは期待されていませんでしたが、返されました: %+v", ve)
 				}
 			}
 		})

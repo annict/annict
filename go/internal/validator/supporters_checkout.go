@@ -4,38 +4,32 @@ import (
 	"context"
 
 	"github.com/annict/annict/go/internal/i18n"
-	"github.com/annict/annict/go/internal/session"
+	"github.com/annict/annict/go/internal/model"
 )
 
-// CreateSupportersCheckoutValidator はCheckoutセッション作成のバリデーションを行う
-type CreateSupportersCheckoutValidator struct{}
+// SupportersCheckoutCreateValidator はCheckoutセッション作成のバリデーションを行う
+type SupportersCheckoutCreateValidator struct{}
 
-// NewCreateSupportersCheckoutValidator は CreateSupportersCheckoutValidator を生成する
-func NewCreateSupportersCheckoutValidator() *CreateSupportersCheckoutValidator {
-	return &CreateSupportersCheckoutValidator{}
+// NewSupportersCheckoutCreateValidator は SupportersCheckoutCreateValidator を生成する
+func NewSupportersCheckoutCreateValidator() *SupportersCheckoutCreateValidator {
+	return &SupportersCheckoutCreateValidator{}
 }
 
-// CreateSupportersCheckoutValidatorInput はバリデーションの入力パラメータ
-type CreateSupportersCheckoutValidatorInput struct {
+// SupportersCheckoutCreateValidatorInput はバリデーションの入力パラメータ
+type SupportersCheckoutCreateValidatorInput struct {
 	Plan string
 }
 
-// CreateSupportersCheckoutValidatorResult はバリデーションの結果
-type CreateSupportersCheckoutValidatorResult struct {
-	FormErrors *session.FormErrors
-}
-
 // Validate はバリデーションを行う
-func (v *CreateSupportersCheckoutValidator) Validate(ctx context.Context, input CreateSupportersCheckoutValidatorInput) *CreateSupportersCheckoutValidatorResult {
-	formErrors := &session.FormErrors{}
+func (v *SupportersCheckoutCreateValidator) Validate(ctx context.Context, input SupportersCheckoutCreateValidatorInput) error {
+	ve := model.NewValidationError()
 
 	if input.Plan != "monthly" && input.Plan != "yearly" {
-		formErrors.AddFieldError("plan", i18n.T(ctx, "supporters_checkout_invalid_plan"))
+		ve.AddField("plan", i18n.T(ctx, "supporters_checkout_invalid_plan"))
 	}
 
-	if formErrors.HasErrors() {
-		return &CreateSupportersCheckoutValidatorResult{FormErrors: formErrors}
+	if ve.HasErrors() {
+		return ve
 	}
-
-	return &CreateSupportersCheckoutValidatorResult{}
+	return nil
 }

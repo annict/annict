@@ -15,12 +15,6 @@ func TestArgsInsertOpts(t *testing.T) {
 		wantMaxAttempts int
 	}{
 		{
-			name:            "SendEmailArgs",
-			opts:            SendEmailArgs{}.InsertOpts(),
-			wantQueue:       river.QueueDefault,
-			wantMaxAttempts: 5,
-		},
-		{
 			name:            "CleanupExpiredTokensArgs",
 			opts:            CleanupExpiredTokensArgs{}.InsertOpts(),
 			wantQueue:       river.QueueDefault,

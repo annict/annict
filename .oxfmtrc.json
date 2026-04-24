@@ -6,26 +6,28 @@
   "tabWidth": 2,
   "trailingComma": "all",
   "sortPackageJson": false,
-  "ignorePatterns": [
-    "**/node_modules/",
-    "**/vendor/",
-    "rails/db/",
-    "rails/app/docs/",
-    "rails/app/views/",
-    "rails/sorbet/",
-    "rails/tmp/",
-    "go/internal/query/*.go",
-    "go/internal/templates/*_templ.go",
-    "go/static/",
-    "rails/app/assets/builds/",
-    "rails/public/"
-  ],
   "overrides": [
     {
-      "files": "go/**",
+      "files": ["go/**"],
       "options": {
         "sortTailwindcss": {}
       }
     }
+  ],
+  "ignorePatterns": [
+    "**/node_modules/",
+    "**/vendor/",
+    "apm.lock.yaml",
+    "apm_modules/",
+    "go/internal/query/*.go",
+    "go/internal/templates/*_templ.go",
+    "go/static/",
+    "rails/app/assets/builds/",
+    "rails/app/docs/",
+    "rails/app/views/",
+    "rails/db/",
+    "rails/public/",
+    "rails/sorbet/",
+    "rails/tmp/"
   ]
 }

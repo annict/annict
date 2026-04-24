@@ -8,6 +8,7 @@ import (
 
 	"github.com/annict/annict/go/internal/clientip"
 	"github.com/annict/annict/go/internal/i18n"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/usecase"
 )
@@ -52,18 +53,20 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 	locale := i18n.GetLocale(ctx)
 
 	// ユースケース呼び出し: 確認コードを再送信
-	result, err := h.sendSignUpCodeUC.Execute(ctx, usecase.SendSignUpCodeInput{
+	_, err = h.sendSignUpCodeUC.Execute(ctx, usecase.SendSignUpCodeInput{
 		Email:  email,
 		Locale: locale,
 	})
 	if err != nil {
+		if ve := model.AsValidationError(err); ve != nil {
+			slog.WarnContext(ctx, "確認コード再送信のバリデーションエラー", "email", email)
+			if err := h.sessionMgr.SetValidationError(ctx, w, r, *ve); err != nil {
+				slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
+			}
+			http.Redirect(w, r, "/sign_up/code", http.StatusSeeOther)
+			return
+		}
 		slog.Error("確認コードの再送信に失敗しました", "email", email, "error", err)
-		h.sessionMgr.SetFlash(w, session.FlashError, i18n.T(ctx, "sign_up_code_error_server"))
-		http.Redirect(w, r, "/sign_up/code", http.StatusSeeOther)
-		return
-	}
-	if result.FormErrors != nil && result.FormErrors.HasErrors() {
-		slog.WarnContext(ctx, "確認コード再送信のバリデーションエラー", "email", email)
 		h.sessionMgr.SetFlash(w, session.FlashError, i18n.T(ctx, "sign_up_code_error_server"))
 		http.Redirect(w, r, "/sign_up/code", http.StatusSeeOther)
 		return

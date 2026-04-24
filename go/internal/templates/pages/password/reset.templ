@@ -2,13 +2,13 @@ package password
 
 import (
 	"context"
-	"github.com/annict/annict/go/internal/session"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/templates"
 	"github.com/annict/annict/go/internal/templates/components"
 )
 
 // Reset はパスワードリセット申請フォームを表示します
-templ Reset(ctx context.Context, formErrors *session.FormErrors, csrfToken string, email string, turnstileSiteKey string) {
+templ Reset(ctx context.Context, formErrors *model.ValidationError, csrfToken string, email string, turnstileSiteKey string) {
 	<div class="flex flex-col gap-6 min-w-full md:min-w-md px-4">
 		<div class="text-center">
 			<a href="/" class="inline-block">

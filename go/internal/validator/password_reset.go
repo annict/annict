@@ -5,38 +5,32 @@ import (
 	"strings"
 
 	"github.com/annict/annict/go/internal/i18n"
-	"github.com/annict/annict/go/internal/session"
+	"github.com/annict/annict/go/internal/model"
 )
 
-// CreatePasswordResetValidator はパスワードリセット申請フォームのバリデーションを行う
-type CreatePasswordResetValidator struct{}
+// PasswordResetCreateValidator はパスワードリセット申請フォームのバリデーションを行う
+type PasswordResetCreateValidator struct{}
 
-// NewCreatePasswordResetValidator は CreatePasswordResetValidator を生成する
-func NewCreatePasswordResetValidator() *CreatePasswordResetValidator {
-	return &CreatePasswordResetValidator{}
+// NewPasswordResetCreateValidator は PasswordResetCreateValidator を生成する
+func NewPasswordResetCreateValidator() *PasswordResetCreateValidator {
+	return &PasswordResetCreateValidator{}
 }
 
-// CreatePasswordResetValidatorInput はバリデーションの入力パラメータ
-type CreatePasswordResetValidatorInput struct {
+// PasswordResetCreateValidatorInput はバリデーションの入力パラメータ
+type PasswordResetCreateValidatorInput struct {
 	Email string
 }
 
-// CreatePasswordResetValidatorResult はバリデーションの結果
-type CreatePasswordResetValidatorResult struct {
-	FormErrors *session.FormErrors
-}
-
 // Validate はバリデーションを行う
-func (v *CreatePasswordResetValidator) Validate(ctx context.Context, input CreatePasswordResetValidatorInput) *CreatePasswordResetValidatorResult {
-	formErrors := &session.FormErrors{}
+func (v *PasswordResetCreateValidator) Validate(ctx context.Context, input PasswordResetCreateValidatorInput) error {
+	ve := model.NewValidationError()
 
 	if strings.TrimSpace(input.Email) == "" {
-		formErrors.AddFieldError("email", i18n.T(ctx, "password_reset_email_required"))
+		ve.AddField("email", i18n.T(ctx, "password_reset_email_required"))
 	}
 
-	if formErrors.HasErrors() {
-		return &CreatePasswordResetValidatorResult{FormErrors: formErrors}
+	if ve.HasErrors() {
+		return ve
 	}
-
-	return &CreatePasswordResetValidatorResult{}
+	return nil
 }
