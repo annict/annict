@@ -353,11 +353,11 @@ other = "Passwords do not match"
 # Password strength validation (NIST SP 800-63B-4 compliant)
 [password_strength_min_length]
 description = "Password strength - Minimum length error"
-other = "Password must be at least 8 characters long"
+other = "Password must be at least {{.MinLength}} characters long"
 
 [password_strength_max_length]
 description = "Password strength - Maximum length error"
-other = "Password must be no more than 128 characters long"
+other = "Password must be no more than {{.MaxLength}} characters long"
 
 [password_strength_invalid_chars]
 description = "Password strength - Invalid characters error"

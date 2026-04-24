@@ -2,6 +2,8 @@ package validator
 
 import (
 	"context"
+	"errors"
+	"log/slog"
 	"strings"
 
 	"github.com/annict/annict/go/internal/auth"
@@ -48,9 +50,23 @@ func (v *PasswordUpdateValidator) Validate(ctx context.Context, input PasswordUp
 		return ve
 	}
 
-	// パスワード強度チェック
-	if err := auth.ValidatePasswordStrength(ctx, input.Password); err != nil {
-		ve.AddField("password", err.Error())
+	// パスワード強度チェック（sentinel error から i18n 翻訳を解決）
+	if err := auth.ValidatePasswordStrength(input.Password); err != nil {
+		switch {
+		case errors.Is(err, auth.ErrPasswordTooShort):
+			ve.AddField("password", i18n.T(ctx, "password_strength_min_length", map[string]any{
+				"MinLength": auth.MinPasswordLength,
+			}))
+		case errors.Is(err, auth.ErrPasswordTooLong):
+			ve.AddField("password", i18n.T(ctx, "password_strength_max_length", map[string]any{
+				"MaxLength": auth.MaxPasswordLength,
+			}))
+		case errors.Is(err, auth.ErrPasswordInvalidChars):
+			ve.AddField("password", i18n.T(ctx, "password_strength_invalid_chars"))
+		default:
+			slog.ErrorContext(ctx, "auth.ValidatePasswordStrength から未知の sentinel error が返りました。validator 側に switch case の追加が必要です", "error", err)
+			return err
+		}
 		return ve
 	}
 

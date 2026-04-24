@@ -352,11 +352,11 @@ other = "パスワードが一致しません"
 # パスワード強度バリデーション（NIST SP 800-63B-4 準拠）
 [password_strength_min_length]
 description = "パスワード強度 - 最小文字数エラー"
-other = "パスワードは8文字以上である必要があります"
+other = "パスワードは{{.MinLength}}文字以上である必要があります"
 
 [password_strength_max_length]
 description = "パスワード強度 - 最大文字数エラー"
-other = "パスワードは128文字以内である必要があります"
+other = "パスワードは{{.MaxLength}}文字以内である必要があります"
 
 [password_strength_invalid_chars]
 description = "パスワード強度 - 無効な文字エラー"
