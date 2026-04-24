@@ -156,6 +156,9 @@ RUN mise reshim
 # --- 1Password CLI ---
 COPY --from=1password/op:2 /usr/local/bin/op /usr/local/bin/op
 
+# --- APM ---
+RUN curl -sSL https://aka.ms/apm-unix | sh
+
 # --- Claude Code ---
 RUN curl -fsSL https://claude.ai/install.sh | bash
 
