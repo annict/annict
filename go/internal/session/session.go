@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/annict/annict/go/internal/auth"
 	"github.com/annict/annict/go/internal/config"
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/repository"
@@ -155,7 +156,7 @@ func (m *Manager) CreateSession(ctx context.Context, w http.ResponseWriter, r *h
 	}
 
 	// 2. CSRFトークンを生成
-	csrfToken, err := GenerateCSRFToken()
+	csrfToken, err := auth.GenerateCSRFToken()
 	if err != nil {
 		return fmt.Errorf("CSRFトークンの生成に失敗しました: %w", err)
 	}
@@ -227,7 +228,7 @@ func (m *Manager) SetValue(ctx context.Context, w http.ResponseWriter, r *http.R
 		sessionExists = false
 
 		// 新規セッション作成時にCSRFトークンを自動生成
-		csrfToken, err := GenerateCSRFToken()
+		csrfToken, err := auth.GenerateCSRFToken()
 		if err != nil {
 			return fmt.Errorf("CSRFトークンの生成に失敗しました: %w", err)
 		}
@@ -447,7 +448,7 @@ func (m *Manager) EnsureCSRFToken(ctx context.Context, w http.ResponseWriter, r 
 	}
 
 	// CSRFトークンを生成
-	csrfToken, err := GenerateCSRFToken()
+	csrfToken, err := auth.GenerateCSRFToken()
 	if err != nil {
 		return "", fmt.Errorf("CSRFトークンの生成に失敗しました: %w", err)
 	}

@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/annict/annict/go/internal/auth"
 	"github.com/annict/annict/go/internal/clientip"
 	"github.com/annict/annict/go/internal/config"
 	"github.com/annict/annict/go/internal/model"
@@ -222,7 +223,7 @@ func (m *ReverseProxyMiddleware) ensureDeviceToken(w http.ResponseWriter, r *htt
 		return c.Value
 	}
 
-	token, err := session.GenerateSecureToken()
+	token, err := auth.GenerateSecureToken()
 	if err != nil {
 		slog.ErrorContext(r.Context(), "デバイストークンの生成に失敗", "error", err)
 		return ""

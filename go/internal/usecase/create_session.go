@@ -8,8 +8,8 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/annict/annict/go/internal/auth"
 	"github.com/annict/annict/go/internal/repository"
-	"github.com/annict/annict/go/internal/session"
 )
 
 // generatePublicID ランダムなpublic IDを生成
@@ -58,7 +58,7 @@ func (uc *CreateSessionUsecase) Execute(ctx context.Context, tx *sql.Tx, userID 
 	}
 
 	// Rails互換のCSRFトークンを生成
-	csrfToken, err := session.GenerateCSRFToken()
+	csrfToken, err := auth.GenerateCSRFToken()
 	if err != nil {
 		return nil, fmt.Errorf("CSRFトークン生成エラー: %w", err)
 	}
