@@ -12,7 +12,8 @@ import (
 	"github.com/riverqueue/river/riverdriver/riverpgxv5"
 
 	"github.com/annict/annict/go/internal/config"
-	"github.com/annict/annict/go/internal/mail"
+	"github.com/annict/annict/go/internal/email"
+	"github.com/annict/annict/go/internal/usecase"
 )
 
 // Client は River クライアントのラッパー
@@ -46,10 +47,10 @@ func NewClient(ctx context.Context, databaseURL string, params NewClientParams, 
 		return nil, err
 	}
 
-	// メールクライアントの作成（メール送信用）
-	var mailSender mail.Sender
+	// メール送信クライアントの作成
+	var emailSender email.Sender
 	if cfg.ResendAPIKey != "" {
-		mailSender = mail.NewResendClient(cfg.ResendAPIKey, cfg.ResendFromEmail, "Annict")
+		emailSender = email.NewResendSender(cfg.ResendAPIKey, cfg.ResendFromEmail, cfg.ResendFromName)
 		slog.InfoContext(ctx, "Resend クライアントを初期化しました")
 	} else {
 		slog.WarnContext(ctx, "Resend API キーが設定されていません。メール送信機能は利用できません")
@@ -59,9 +60,21 @@ func NewClient(ctx context.Context, databaseURL string, params NewClientParams, 
 	workers := river.NewWorkers()
 
 	// メール送信ワーカーを登録
-	if mailSender != nil {
-		river.AddWorker(workers, NewSendEmailWorker(mailSender))
-		slog.InfoContext(ctx, "SendEmailWorker を登録しました")
+	if emailSender != nil {
+		signInCodeSender := email.NewSignInCodeSender(emailSender)
+		sendSignInCodeEmailUC := usecase.NewSendSignInCodeEmailUsecase(signInCodeSender)
+		river.AddWorker(workers, NewSendSignInCodeEmailWorker(sendSignInCodeEmailUC))
+		slog.InfoContext(ctx, "SendSignInCodeEmailWorker を登録しました")
+
+		signUpCodeSender := email.NewSignUpCodeSender(emailSender)
+		sendSignUpCodeEmailUC := usecase.NewSendSignUpCodeEmailUsecase(signUpCodeSender)
+		river.AddWorker(workers, NewSendSignUpCodeEmailWorker(sendSignUpCodeEmailUC))
+		slog.InfoContext(ctx, "SendSignUpCodeEmailWorker を登録しました")
+
+		passwordResetSender := email.NewPasswordResetSender(emailSender)
+		sendPasswordResetEmailUC := usecase.NewSendPasswordResetEmailUsecase(passwordResetSender)
+		river.AddWorker(workers, NewSendPasswordResetEmailWorker(sendPasswordResetEmailUC))
+		slog.InfoContext(ctx, "SendPasswordResetEmailWorker を登録しました")
 	}
 
 	// トークンクリーンアップワーカーを登録

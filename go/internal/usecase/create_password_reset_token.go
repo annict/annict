@@ -120,7 +120,7 @@ func (uc *CreatePasswordResetTokenUsecase) createToken(ctx context.Context, user
 			)
 		} else {
 			resetURL := fmt.Sprintf("%s/password/edit?token=%s", uc.cfg.AppURL(), token)
-			if err := uc.dispatcher.InsertPasswordResetEmail(ctx, user.Email, resetURL, user.Locale); err != nil {
+			if err := uc.dispatcher.EnqueuePasswordResetEmail(ctx, user.Email, resetURL, user.Locale); err != nil {
 				slog.ErrorContext(ctx, "パスワードリセットメール送信ジョブのエンキューに失敗しました",
 					"user_id", userID,
 					"error", err,

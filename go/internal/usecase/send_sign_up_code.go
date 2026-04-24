@@ -120,7 +120,7 @@ func (uc *SendSignUpCodeUsecase) Execute(ctx context.Context, input SendSignUpCo
 
 	// メール送信ジョブをエンキュー
 	if uc.dispatcher != nil {
-		if err := uc.dispatcher.InsertSignUpCodeEmail(ctx, input.Email, code, input.Locale); err != nil {
+		if err := uc.dispatcher.EnqueueSignUpCodeEmail(ctx, input.Email, code, input.Locale); err != nil {
 			slog.ErrorContext(ctx, "新規登録確認コード送信ジョブのエンキューに失敗しました",
 				"email", input.Email,
 				"error", err,

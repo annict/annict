@@ -162,7 +162,7 @@ func (uc *SendSignInCodeUsecase) generateAndSendCode(ctx context.Context, userID
 				"error", err,
 			)
 		} else {
-			if err := uc.dispatcher.InsertSignInCodeEmail(ctx, user.Email, code, user.Locale); err != nil {
+			if err := uc.dispatcher.EnqueueSignInCodeEmail(ctx, user.Email, code, user.Locale); err != nil {
 				slog.ErrorContext(ctx, "ログインコード送信ジョブのエンキューに失敗しました",
 					"user_id", userID,
 					"error", err,
