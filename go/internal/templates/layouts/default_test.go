@@ -14,6 +14,7 @@ import (
 	"github.com/annict/annict/go/internal/config"
 	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/session"
+	"github.com/annict/annict/go/internal/testutil"
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
@@ -47,7 +48,7 @@ func TestDefault_Rendering(t *testing.T) {
 
 	// レンダリング
 	var buf bytes.Buffer
-	err := Default(ctx, meta, nil, viewmodel.Seasons{}, nil, "v1.0.0", content).Render(ctx, &buf)
+	err := Default(ctx, meta, nil, viewmodel.Seasons{}, "v1.0.0", content).Render(ctx, &buf)
 	if err != nil {
 		t.Fatalf("レンダリングエラー: %v", err)
 	}
@@ -107,7 +108,7 @@ func TestDefault_WithUser(t *testing.T) {
 	})
 
 	var buf bytes.Buffer
-	err := Default(ctx, meta, user, viewmodel.Seasons{}, nil, "v1.0.0", content).Render(ctx, &buf)
+	err := Default(ctx, meta, user, viewmodel.Seasons{}, "v1.0.0", content).Render(ctx, &buf)
 	if err != nil {
 		t.Fatalf("レンダリングエラー: %v", err)
 	}
@@ -157,7 +158,7 @@ func TestDefault_WithoutUser(t *testing.T) {
 	})
 
 	var buf bytes.Buffer
-	err := Default(ctx, meta, nil, viewmodel.Seasons{}, nil, "v1.0.0", content).Render(ctx, &buf)
+	err := Default(ctx, meta, nil, viewmodel.Seasons{}, "v1.0.0", content).Render(ctx, &buf)
 	if err != nil {
 		t.Fatalf("レンダリングエラー: %v", err)
 	}
@@ -196,10 +197,7 @@ func TestDefault_WithFlash(t *testing.T) {
 
 	meta := viewmodel.DefaultPageMeta(ctx, cfg)
 
-	flash := &session.Flash{
-		Type:    session.FlashSuccess,
-		Message: "操作が成功しました",
-	}
+	ctx = testutil.ContextWithFlash(ctx, session.FlashSuccess, "操作が成功しました")
 
 	content := templ.ComponentFunc(func(ctx context.Context, w io.Writer) error {
 		_, err := w.Write([]byte("<div>Content</div>"))
@@ -207,7 +205,7 @@ func TestDefault_WithFlash(t *testing.T) {
 	})
 
 	var buf bytes.Buffer
-	err := Default(ctx, meta, nil, viewmodel.Seasons{}, flash, "v1.0.0", content).Render(ctx, &buf)
+	err := Default(ctx, meta, nil, viewmodel.Seasons{}, "v1.0.0", content).Render(ctx, &buf)
 	if err != nil {
 		t.Fatalf("レンダリングエラー: %v", err)
 	}
@@ -258,7 +256,7 @@ func TestDefault_I18n(t *testing.T) {
 			})
 
 			var buf bytes.Buffer
-			err := Default(ctx, meta, nil, viewmodel.Seasons{}, nil, "v1.0.0", content).Render(ctx, &buf)
+			err := Default(ctx, meta, nil, viewmodel.Seasons{}, "v1.0.0", content).Render(ctx, &buf)
 			if err != nil {
 				t.Fatalf("レンダリングエラー: %v", err)
 			}

@@ -31,7 +31,7 @@ func (m *mockTurnstileClient) Verify(ctx context.Context, token string) (bool, e
 
 // TestCreate_RateLimiting_IP はIPアドレス単位のRate Limitingをテストします
 func TestCreate_RateLimiting_IP(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	rdb := testutil.SetupTestRedis(t)
 	queries := query.New(db).WithTx(tx)
 	limiter := ratelimit.NewLimiter(rdb)
@@ -79,8 +79,8 @@ func TestCreate_RateLimiting_IP(t *testing.T) {
 
 	testutil.ApplyI18nMiddleware(t, handler.Create)(rr, req)
 
-	if rr.Code != http.StatusTooManyRequests {
-		t.Errorf("6th attempt should be rate limited by IP, got status %d", rr.Code)
+	if rr.Code != http.StatusUnprocessableEntity {
+		t.Errorf("6th attempt should be rate limited by IP (422), got status %d", rr.Code)
 	}
 
 	form = url.Values{}
@@ -101,7 +101,7 @@ func TestCreate_RateLimiting_IP(t *testing.T) {
 
 // TestCreate_RateLimiting_Email はメールアドレス単位のRate Limitingをテストします
 func TestCreate_RateLimiting_Email(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	rdb := testutil.SetupTestRedis(t)
 	queries := query.New(db).WithTx(tx)
 	limiter := ratelimit.NewLimiter(rdb)
@@ -149,8 +149,8 @@ func TestCreate_RateLimiting_Email(t *testing.T) {
 
 	testutil.ApplyI18nMiddleware(t, handler.Create)(rr, req)
 
-	if rr.Code != http.StatusTooManyRequests {
-		t.Errorf("4th attempt should be rate limited by email, got status %d", rr.Code)
+	if rr.Code != http.StatusUnprocessableEntity {
+		t.Errorf("4th attempt should be rate limited by email (422), got status %d", rr.Code)
 	}
 
 	form = url.Values{}
@@ -171,7 +171,9 @@ func TestCreate_RateLimiting_Email(t *testing.T) {
 
 // TestPasswordResetSentPage_UXMessages はメール送信完了ページのUXメッセージをテストします
 func TestPasswordResetSentPage_UXMessages(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 
 	encryptedPassword, _ := auth.HashPassword("Password123!")
 	userID := testutil.NewUserBuilder(t, tx).
@@ -265,7 +267,9 @@ func TestPasswordResetSentPage_UXMessages(t *testing.T) {
 
 // TestPasswordResetFlow_Integration はパスワードリセット申請のフローをテストします
 func TestPasswordResetFlow_Integration(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 
 	oldPassword := "OldPassword123!"
 	encryptedPassword, err := auth.HashPassword(oldPassword)
@@ -318,7 +322,7 @@ func TestPasswordResetFlow_Integration(t *testing.T) {
 		t.Fatalf("パスワードリセット申請が失敗しました: status=%d", rr.Code)
 	}
 
-	tokens, err := queries.GetPasswordResetTokensByUserID(ctx, userID)
+	tokens, err := repository.NewPasswordResetTokenRepository(queries).GetByUserID(ctx, userID)
 	if err != nil {
 		t.Fatalf("トークンの取得に失敗: %v", err)
 	}
@@ -332,7 +336,9 @@ func TestPasswordResetFlow_Integration(t *testing.T) {
 
 // TestCreate_TurnstileVerification_Success はTurnstile検証が成功した場合のテストです
 func TestCreate_TurnstileVerification_Success(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 
 	cfg, err := config.Load()
@@ -364,7 +370,9 @@ func TestCreate_TurnstileVerification_Success(t *testing.T) {
 
 // TestCreate_TurnstileVerification_Failed はTurnstile検証が失敗した場合のテストです
 func TestCreate_TurnstileVerification_Failed(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 
 	cfg, err := config.Load()
@@ -389,19 +397,16 @@ func TestCreate_TurnstileVerification_Failed(t *testing.T) {
 
 	testutil.ApplyI18nMiddleware(t, handler.Create)(rr, req)
 
-	if rr.Code != http.StatusSeeOther {
-		t.Errorf("Turnstile検証が失敗したはずですが、ステータスコードが正しくありません: got=%d, want=%d", rr.Code, http.StatusSeeOther)
-	}
-
-	location := rr.Header().Get("Location")
-	if location != "/password/reset" {
-		t.Errorf("Turnstile検証失敗時のリダイレクト先が正しくありません: got=%s, want=%s", location, "/password/reset")
+	if rr.Code != http.StatusUnprocessableEntity {
+		t.Errorf("Turnstile検証が失敗したはずですが、ステータスコードが正しくありません: got=%d, want=%d", rr.Code, http.StatusUnprocessableEntity)
 	}
 }
 
 // TestCreate_TurnstileVerification_MissingToken はTurnstileトークンが欠落している場合のテストです
 func TestCreate_TurnstileVerification_MissingToken(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 
 	cfg, err := config.Load()
@@ -426,12 +431,7 @@ func TestCreate_TurnstileVerification_MissingToken(t *testing.T) {
 
 	testutil.ApplyI18nMiddleware(t, handler.Create)(rr, req)
 
-	if rr.Code != http.StatusSeeOther {
-		t.Errorf("Turnstileトークンが欠落している場合、ステータスコードが正しくありません: got=%d, want=%d", rr.Code, http.StatusSeeOther)
-	}
-
-	location := rr.Header().Get("Location")
-	if location != "/password/reset" {
-		t.Errorf("Turnstileトークン欠落時のリダイレクト先が正しくありません: got=%s, want=%s", location, "/password/reset")
+	if rr.Code != http.StatusUnprocessableEntity {
+		t.Errorf("Turnstileトークンが欠落している場合、ステータスコードが正しくありません: got=%d, want=%d", rr.Code, http.StatusUnprocessableEntity)
 	}
 }

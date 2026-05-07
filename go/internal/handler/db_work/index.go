@@ -44,9 +44,6 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 	// ページネーション情報を作成
 	pagination := viewmodel.NewPagination(int(page), int(result.TotalCount), int(perPage), basePath)
 
-	// フラッシュメッセージを取得
-	flash := h.sessionManager.GetFlash(w, r)
-
 	// ページメタ情報を準備
 	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)
 	meta.SetTitle(ctx, "db_works_title")
@@ -59,7 +56,6 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 	component := layouts.Db(
 		ctx,
 		meta,
-		flash,
 		h.cfg.GetAssetVersion(),
 		db_works.Index(db_works.IndexPageData{
 			Works:            worksVM,

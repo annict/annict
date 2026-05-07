@@ -101,7 +101,7 @@ func (uc *SendSignUpCodeUsecase) Execute(ctx context.Context, input SendSignUpCo
 	}
 
 	// コードをデータベースに保存（有効期限: 15分）
-	if err := signUpCodeRepoTx.Create(ctx, repository.SignUpCodeCreateParams{
+	if _, err := signUpCodeRepoTx.Create(ctx, repository.SignUpCodeCreateParams{
 		Email:      input.Email,
 		CodeDigest: codeDigest,
 		ExpiresAt:  time.Now().Add(15 * time.Minute),

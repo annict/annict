@@ -8,7 +8,7 @@ import (
 	"github.com/annict/annict/go/internal/model"
 )
 
-func TestNewWorkFromModelDetail(t *testing.T) {
+func TestNewWorkFromModel(t *testing.T) {
 	t.Parallel()
 
 	// テスト用の設定とimage.Helperを作成
@@ -25,17 +25,15 @@ func TestNewWorkFromModelDetail(t *testing.T) {
 		seasonYear := int32(2024)
 		seasonName := int32(1) // 春
 
-		detail := model.WorkWithDetails{
-			Work: model.Work{
-				ID:            123,
-				Title:         "テストアニメ",
-				TitleEn:       "Test Anime",
-				ImageData:     `{"id":"test123","storage":"store","metadata":{"filename":"test.jpg","size":12345,"mime_type":"image/jpeg"}}`,
-				WatchersCount: 100,
-				SeasonYear:    &seasonYear,
-				SeasonName:    &seasonName,
-			},
-			Casts: []model.Cast{
+		m := &model.Work{
+			ID:            123,
+			Title:         "テストアニメ",
+			TitleEn:       "Test Anime",
+			ImageData:     `{"id":"test123","storage":"store","metadata":{"filename":"test.jpg","size":12345,"mime_type":"image/jpeg"}}`,
+			WatchersCount: 100,
+			SeasonYear:    &seasonYear,
+			SeasonName:    &seasonName,
+			Casts: []*model.Cast{
 				{
 					ID:              1,
 					WorkID:          123,
@@ -47,7 +45,7 @@ func TestNewWorkFromModelDetail(t *testing.T) {
 					PersonNameEn:    "Voice Actor",
 				},
 			},
-			Staffs: []model.Staff{
+			Staffs: []*model.Staff{
 				{
 					ID:          2,
 					WorkID:      123,
@@ -60,7 +58,7 @@ func TestNewWorkFromModelDetail(t *testing.T) {
 			},
 		}
 
-		work := NewWorkFromModelDetail(detail, helper)
+		work := NewWorkFromModel(m, helper)
 
 		// 基本フィールドの検証
 		if work.ID != 123 {
@@ -77,8 +75,8 @@ func TestNewWorkFromModelDetail(t *testing.T) {
 		}
 
 		// ImageDataJSONが正しく設定されていることを確認
-		if work.ImageDataJSON != detail.Work.ImageData {
-			t.Errorf("ImageDataJSON: got %s, want %s", work.ImageDataJSON, detail.Work.ImageData)
+		if work.ImageDataJSON != m.ImageData {
+			t.Errorf("ImageDataJSON: got %s, want %s", work.ImageDataJSON, m.ImageData)
 		}
 
 		// imageHelperが設定されていることを確認
@@ -123,15 +121,13 @@ func TestNewWorkFromModelDetail(t *testing.T) {
 	t.Run("タイトルのフォールバック", func(t *testing.T) {
 		t.Parallel()
 
-		detail := model.WorkWithDetails{
-			Work: model.Work{
-				ID:      123,
-				Title:   "", // 日本語タイトルが空
-				TitleEn: "Fallback Title",
-			},
+		m := &model.Work{
+			ID:      123,
+			Title:   "", // 日本語タイトルが空
+			TitleEn: "Fallback Title",
 		}
 
-		work := NewWorkFromModelDetail(detail, helper)
+		work := NewWorkFromModel(m, helper)
 
 		// 英語タイトルがフォールバックされることを確認
 		if work.Title != "Fallback Title" {
@@ -142,16 +138,14 @@ func TestNewWorkFromModelDetail(t *testing.T) {
 	t.Run("シーズン情報が nil の場合", func(t *testing.T) {
 		t.Parallel()
 
-		detail := model.WorkWithDetails{
-			Work: model.Work{
-				ID:         123,
-				Title:      "テストアニメ",
-				SeasonYear: nil,
-				SeasonName: nil,
-			},
+		m := &model.Work{
+			ID:         123,
+			Title:      "テストアニメ",
+			SeasonYear: nil,
+			SeasonName: nil,
 		}
 
-		work := NewWorkFromModelDetail(detail, helper)
+		work := NewWorkFromModel(m, helper)
 
 		if work.SeasonYear != nil {
 			t.Errorf("SeasonYear should be nil: got %v", work.SeasonYear)
@@ -167,16 +161,14 @@ func TestNewWorkFromModelDetail(t *testing.T) {
 	t.Run("キャストとスタッフが空の場合", func(t *testing.T) {
 		t.Parallel()
 
-		detail := model.WorkWithDetails{
-			Work: model.Work{
-				ID:    123,
-				Title: "テストアニメ",
-			},
-			Casts:  []model.Cast{},
-			Staffs: []model.Staff{},
+		m := &model.Work{
+			ID:     123,
+			Title:  "テストアニメ",
+			Casts:  []*model.Cast{},
+			Staffs: []*model.Staff{},
 		}
 
-		work := NewWorkFromModelDetail(detail, helper)
+		work := NewWorkFromModel(m, helper)
 
 		if len(work.Casts) != 0 {
 			t.Errorf("Casts should be empty: got %d", len(work.Casts))
@@ -189,15 +181,13 @@ func TestNewWorkFromModelDetail(t *testing.T) {
 	t.Run("image.Helper が nil の場合", func(t *testing.T) {
 		t.Parallel()
 
-		detail := model.WorkWithDetails{
-			Work: model.Work{
-				ID:        123,
-				Title:     "テストアニメ",
-				ImageData: `{"id":"test123"}`,
-			},
+		m := &model.Work{
+			ID:        123,
+			Title:     "テストアニメ",
+			ImageData: `{"id":"test123"}`,
 		}
 
-		work := NewWorkFromModelDetail(detail, nil)
+		work := NewWorkFromModel(m, nil)
 
 		// ImageURLが空になることを確認
 		if work.ImageURL != "" {
@@ -220,15 +210,13 @@ func TestNewWorkFromModelDetail(t *testing.T) {
 
 		for _, tc := range testCases {
 			seasonName := tc.seasonNumber
-			detail := model.WorkWithDetails{
-				Work: model.Work{
-					ID:         123,
-					Title:      "テストアニメ",
-					SeasonName: &seasonName,
-				},
+			m := &model.Work{
+				ID:         123,
+				Title:      "テストアニメ",
+				SeasonName: &seasonName,
 			}
 
-			work := NewWorkFromModelDetail(detail, helper)
+			work := NewWorkFromModel(m, helper)
 
 			if work.SeasonName == nil || *work.SeasonName != tc.expectedName {
 				t.Errorf("SeasonNumber %d: got %v, want %s", tc.seasonNumber, work.SeasonName, tc.expectedName)
@@ -237,7 +225,7 @@ func TestNewWorkFromModelDetail(t *testing.T) {
 	})
 }
 
-func TestNewWorksFromModelDetails(t *testing.T) {
+func TestNewWorksFromModels(t *testing.T) {
 	t.Parallel()
 
 	// テスト用の設定とimage.Helperを作成
@@ -256,56 +244,52 @@ func TestNewWorksFromModelDetails(t *testing.T) {
 		seasonYear2 := int32(2023)
 		seasonName2 := int32(3)
 
-		details := []model.WorkWithDetails{
+		works := []*model.Work{
 			{
-				Work: model.Work{
-					ID:         1,
-					Title:      "アニメ1",
-					SeasonYear: &seasonYear1,
-					SeasonName: &seasonName1,
-				},
+				ID:         1,
+				Title:      "アニメ1",
+				SeasonYear: &seasonYear1,
+				SeasonName: &seasonName1,
 			},
 			{
-				Work: model.Work{
-					ID:         2,
-					Title:      "アニメ2",
-					SeasonYear: &seasonYear2,
-					SeasonName: &seasonName2,
-				},
+				ID:         2,
+				Title:      "アニメ2",
+				SeasonYear: &seasonYear2,
+				SeasonName: &seasonName2,
 			},
 		}
 
-		works := NewWorksFromModelDetails(details, helper)
+		result := NewWorksFromModels(works, helper)
 
-		if len(works) != 2 {
-			t.Fatalf("works length: got %d, want 2", len(works))
+		if len(result) != 2 {
+			t.Fatalf("works length: got %d, want 2", len(result))
 		}
 
 		// 1つ目の作品の検証
-		if works[0].ID != 1 {
-			t.Errorf("works[0].ID: got %d, want 1", works[0].ID)
+		if result[0].ID != 1 {
+			t.Errorf("works[0].ID: got %d, want 1", result[0].ID)
 		}
-		if works[0].Title != "アニメ1" {
-			t.Errorf("works[0].Title: got %s, want アニメ1", works[0].Title)
+		if result[0].Title != "アニメ1" {
+			t.Errorf("works[0].Title: got %s, want アニメ1", result[0].Title)
 		}
 
 		// 2つ目の作品の検証
-		if works[1].ID != 2 {
-			t.Errorf("works[1].ID: got %d, want 2", works[1].ID)
+		if result[1].ID != 2 {
+			t.Errorf("works[1].ID: got %d, want 2", result[1].ID)
 		}
-		if works[1].Title != "アニメ2" {
-			t.Errorf("works[1].Title: got %s, want アニメ2", works[1].Title)
+		if result[1].Title != "アニメ2" {
+			t.Errorf("works[1].Title: got %s, want アニメ2", result[1].Title)
 		}
 	})
 
 	t.Run("空のスライス", func(t *testing.T) {
 		t.Parallel()
 
-		details := []model.WorkWithDetails{}
-		works := NewWorksFromModelDetails(details, helper)
+		works := []*model.Work{}
+		result := NewWorksFromModels(works, helper)
 
-		if len(works) != 0 {
-			t.Errorf("works should be empty: got %d", len(works))
+		if len(result) != 0 {
+			t.Errorf("works should be empty: got %d", len(result))
 		}
 	})
 }

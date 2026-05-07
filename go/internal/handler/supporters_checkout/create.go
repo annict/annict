@@ -8,7 +8,6 @@ import (
 	"github.com/annict/annict/go/internal/i18n"
 	authMiddleware "github.com/annict/annict/go/internal/middleware"
 	"github.com/annict/annict/go/internal/model"
-	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/usecase"
 )
 
@@ -45,7 +44,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 		if ae := model.AsAppError(err); ae != nil && ae.Code == model.AppErrCodeConflict {
 			slog.InfoContext(ctx, "既にアクティブなサブスクリプションが存在します", "user_id", user.ID)
-			h.sessionManager.SetFlash(w, session.FlashError, ae.UserMsg)
+			h.flashMgr.SetError(w, ae.UserMsg)
 			http.Redirect(w, r, "/supporters", http.StatusSeeOther)
 			return
 		}
@@ -63,6 +62,6 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 // redirectWithError はエラーメッセージをフラッシュに設定してリダイレクトします
 func (h *Handler) redirectWithError(w http.ResponseWriter, r *http.Request, ctx context.Context, messageKey string) {
-	h.sessionManager.SetFlash(w, session.FlashError, i18n.T(ctx, messageKey))
+	h.flashMgr.SetError(w, i18n.T(ctx, messageKey))
 	http.Redirect(w, r, "/supporters", http.StatusSeeOther)
 }

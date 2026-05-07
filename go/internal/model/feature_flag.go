@@ -6,7 +6,7 @@ import "time"
 type FeatureFlag struct {
 	ID          FeatureFlagID
 	DeviceToken *string
-	UserID      *int64
+	UserID      *UserID
 	Name        FeatureFlagName
 	CreatedAt   time.Time
 }

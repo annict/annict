@@ -9,37 +9,55 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// TestEmailNotificationRepository_Create はメール通知設定を正常に作成できることをテスト
+// TestEmailNotificationRepository_Create はメール通知設定を正常に作成し、Modelとして返却されることをテスト
 func TestEmailNotificationRepository_Create(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewEmailNotificationRepository(queries)
 
 	userID := createUserWithoutRelations(t, queries, "emailnotif-create@example.com", "emailnotifcreateuser")
 
 	unsubscriptionKey := "test-unsub-key-123"
-	err := repo.Create(context.Background(), userID, unsubscriptionKey)
+	notification, err := repo.Create(context.Background(), userID, unsubscriptionKey)
 	if err != nil {
 		t.Fatalf("Createに失敗: %v", err)
 	}
 
-	// 作成されたメール通知設定を確認
-	notification, err := queries.GetEmailNotificationByUserID(context.Background(), userID)
-	if err != nil {
-		t.Fatalf("メール通知設定の取得に失敗: %v", err)
+	if notification == nil {
+		t.Fatal("notificationがnilです")
 	}
-
+	if notification.ID == 0 {
+		t.Error("EmailNotificationIDがゼロ値です")
+	}
 	if notification.UserID != userID {
 		t.Errorf("UserIDが一致しません: got %v, want %v", notification.UserID, userID)
 	}
 	if notification.UnsubscriptionKey != unsubscriptionKey {
 		t.Errorf("UnsubscriptionKeyが一致しません: got %v, want %v", notification.UnsubscriptionKey, unsubscriptionKey)
 	}
+	// CreateクエリでINSERT時に明示的に true を指定している
+	if !notification.EventFollowedUser {
+		t.Error("EventFollowedUserがtrueではありません")
+	}
+	// CreateクエリでINSERT時に明示的に true を指定している
+	if !notification.EventLikedEpisodeRecord {
+		t.Error("EventLikedEpisodeRecordがtrueではありません")
+	}
+	if notification.CreatedAt.IsZero() {
+		t.Error("CreatedAtがゼロ値です")
+	}
+	if notification.UpdatedAt.IsZero() {
+		t.Error("UpdatedAtがゼロ値です")
+	}
 }
 
 // TestEmailNotificationRepository_WithTx はWithTxで取得したRepositoryがトランザクション内で動作することをテスト
 func TestEmailNotificationRepository_WithTx(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db)
 	repo := repository.NewEmailNotificationRepository(queries)
 
@@ -49,15 +67,9 @@ func TestEmailNotificationRepository_WithTx(t *testing.T) {
 	userID := createUserWithoutRelations(t, queriesWithTx, "emailnotif-withtx@example.com", "emailnotifwithtxuser")
 
 	unsubscriptionKey := "withtx-unsub-key-456"
-	err := repoWithTx.Create(context.Background(), userID, unsubscriptionKey)
+	notification, err := repoWithTx.Create(context.Background(), userID, unsubscriptionKey)
 	if err != nil {
 		t.Fatalf("WithTxで取得したRepositoryでCreateに失敗: %v", err)
-	}
-
-	// トランザクション内で取得できることを確認
-	notification, err := queriesWithTx.GetEmailNotificationByUserID(context.Background(), userID)
-	if err != nil {
-		t.Fatalf("トランザクション内でメール通知設定の取得に失敗: %v", err)
 	}
 
 	if notification.UnsubscriptionKey != unsubscriptionKey {

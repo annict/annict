@@ -19,7 +19,9 @@ import (
 
 // TestUpdatePasswordResetUsecase_Execute は正常系のテストです
 func TestUpdatePasswordResetUsecase_Execute(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 
 	// パスワードをハッシュ化
 	hashedPassword, err := auth.HashPassword("oldpassword123")
@@ -42,12 +44,8 @@ func TestUpdatePasswordResetUsecase_Execute(t *testing.T) {
 	tokenDigest := password_reset.HashToken(token)
 
 	queries := query.New(db).WithTx(tx)
-	_, err = queries.CreatePasswordResetToken(context.Background(), query.CreatePasswordResetTokenParams{
-		UserID:      userID,
-		TokenDigest: tokenDigest,
-		ExpiresAt:   time.Now().Add(1 * time.Hour),
-	})
-	if err != nil {
+	tokenRepo := repository.NewPasswordResetTokenRepository(queries)
+	if _, err := tokenRepo.Create(context.Background(), userID, tokenDigest, time.Now().Add(1*time.Hour)); err != nil {
 		t.Fatalf("トークンの保存に失敗: %v", err)
 	}
 
@@ -90,7 +88,7 @@ func TestUpdatePasswordResetUsecase_Execute(t *testing.T) {
 	}
 
 	// パスワードが更新されているか確認
-	user, err := queriesWithoutTx.GetUserByID(ctx, userID)
+	user, err := queriesWithoutTx.GetUserByID(ctx, int64(userID))
 	if err != nil {
 		t.Fatalf("ユーザー情報の取得に失敗: %v", err)
 	}
@@ -112,7 +110,9 @@ func TestUpdatePasswordResetUsecase_Execute(t *testing.T) {
 
 // TestUpdatePasswordResetUsecase_Execute_ValidationError はバリデーションエラーのテストです
 func TestUpdatePasswordResetUsecase_Execute_ValidationError(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 
 	// トランザクションをコミット
 	if err := tx.Commit(); err != nil {
@@ -142,7 +142,9 @@ func TestUpdatePasswordResetUsecase_Execute_ValidationError(t *testing.T) {
 
 // TestUpdatePasswordResetUsecase_Execute_WithInvalidToken はfail-fastケース：無効なトークンでのパスワード更新をテストします
 func TestUpdatePasswordResetUsecase_Execute_WithInvalidToken(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 
 	// トランザクションをコミット
 	if err := tx.Commit(); err != nil {
@@ -178,7 +180,9 @@ func TestUpdatePasswordResetUsecase_Execute_WithInvalidToken(t *testing.T) {
 
 // TestUpdatePasswordResetUsecase_Execute_WithUsedToken はfail-fastケース：使用済みトークンでのパスワード更新をテストします
 func TestUpdatePasswordResetUsecase_Execute_WithUsedToken(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 
 	// パスワードをハッシュ化
 	hashedPassword, err := auth.HashPassword("password123")
@@ -201,17 +205,14 @@ func TestUpdatePasswordResetUsecase_Execute_WithUsedToken(t *testing.T) {
 	tokenDigest := password_reset.HashToken(token)
 
 	queries := query.New(db).WithTx(tx)
-	resetToken, err := queries.CreatePasswordResetToken(context.Background(), query.CreatePasswordResetTokenParams{
-		UserID:      userID,
-		TokenDigest: tokenDigest,
-		ExpiresAt:   time.Now().Add(1 * time.Hour),
-	})
+	tokenRepo := repository.NewPasswordResetTokenRepository(queries)
+	resetToken, err := tokenRepo.Create(context.Background(), userID, tokenDigest, time.Now().Add(1*time.Hour))
 	if err != nil {
 		t.Fatalf("トークンの保存に失敗: %v", err)
 	}
 
 	// トークンを使用済みにマーク
-	if err := queries.MarkPasswordResetTokenAsUsed(context.Background(), resetToken.ID); err != nil {
+	if err := tokenRepo.MarkAsUsed(context.Background(), resetToken.ID); err != nil {
 		t.Fatalf("トークンの使用済みマークに失敗: %v", err)
 	}
 
@@ -254,7 +255,9 @@ func TestUpdatePasswordResetUsecase_Execute_WithUsedToken(t *testing.T) {
 
 // TestUpdatePasswordResetUsecase_Execute_WithExpiredToken はfail-fastケース：期限切れトークンでのパスワード更新をテストします
 func TestUpdatePasswordResetUsecase_Execute_WithExpiredToken(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 
 	// パスワードをハッシュ化
 	hashedPassword, err := auth.HashPassword("password123")
@@ -277,12 +280,8 @@ func TestUpdatePasswordResetUsecase_Execute_WithExpiredToken(t *testing.T) {
 	tokenDigest := password_reset.HashToken(token)
 
 	queries := query.New(db).WithTx(tx)
-	_, err = queries.CreatePasswordResetToken(context.Background(), query.CreatePasswordResetTokenParams{
-		UserID:      userID,
-		TokenDigest: tokenDigest,
-		ExpiresAt:   time.Now().Add(-1 * time.Hour), // 1時間前に期限切れ
-	})
-	if err != nil {
+	tokenRepo := repository.NewPasswordResetTokenRepository(queries)
+	if _, err := tokenRepo.Create(context.Background(), userID, tokenDigest, time.Now().Add(-1*time.Hour)); err != nil { // 1時間前に期限切れ
 		t.Fatalf("トークンの保存に失敗: %v", err)
 	}
 
@@ -325,7 +324,9 @@ func TestUpdatePasswordResetUsecase_Execute_WithExpiredToken(t *testing.T) {
 
 // TestUpdatePasswordResetUsecase_Execute_WithNonExistentUser はfail-fastケース：存在しないユーザーのトークンでのパスワード更新をテストします
 func TestUpdatePasswordResetUsecase_Execute_WithNonExistentUser(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 
 	// トークンを生成してデータベースに保存（存在しないユーザーIDを使用）
 	token, err := password_reset.GenerateToken()
@@ -350,12 +351,8 @@ func TestUpdatePasswordResetUsecase_Execute_WithNonExistentUser(t *testing.T) {
 		Build()
 
 	// トークンを作成
-	_, err = queries.CreatePasswordResetToken(context.Background(), query.CreatePasswordResetTokenParams{
-		UserID:      tempUserID,
-		TokenDigest: tokenDigest,
-		ExpiresAt:   time.Now().Add(1 * time.Hour),
-	})
-	if err != nil {
+	tokenRepo := repository.NewPasswordResetTokenRepository(queries)
+	if _, err := tokenRepo.Create(context.Background(), tempUserID, tokenDigest, time.Now().Add(1*time.Hour)); err != nil {
 		t.Fatalf("トークンの保存に失敗: %v", err)
 	}
 
@@ -415,7 +412,9 @@ func TestUpdatePasswordResetUsecase_Execute_WithNonExistentUser(t *testing.T) {
 
 // TestUpdatePasswordResetUsecase_Execute_WithNullUserData はfail-fastケース：ユーザーデータにNULL値がある場合のテストです
 func TestUpdatePasswordResetUsecase_Execute_WithNullUserData(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 
 	// パスワードをハッシュ化
 	hashedPassword, err := auth.HashPassword("password123")
@@ -438,12 +437,8 @@ func TestUpdatePasswordResetUsecase_Execute_WithNullUserData(t *testing.T) {
 	tokenDigest := password_reset.HashToken(token)
 
 	queries := query.New(db).WithTx(tx)
-	_, err = queries.CreatePasswordResetToken(context.Background(), query.CreatePasswordResetTokenParams{
-		UserID:      userID,
-		TokenDigest: tokenDigest,
-		ExpiresAt:   time.Now().Add(1 * time.Hour),
-	})
-	if err != nil {
+	tokenRepo := repository.NewPasswordResetTokenRepository(queries)
+	if _, err := tokenRepo.Create(context.Background(), userID, tokenDigest, time.Now().Add(1*time.Hour)); err != nil {
 		t.Fatalf("トークンの保存に失敗: %v", err)
 	}
 
@@ -498,7 +493,9 @@ func TestUpdatePasswordResetUsecase_Execute_WithNullUserData(t *testing.T) {
 
 // TestUpdatePasswordResetUsecase_Execute_TransactionRollback はfail-fastケース：トランザクションロールバックのテストです
 func TestUpdatePasswordResetUsecase_Execute_TransactionRollback(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 
 	// パスワードをハッシュ化
 	hashedPassword, err := auth.HashPassword("password123")
@@ -521,17 +518,13 @@ func TestUpdatePasswordResetUsecase_Execute_TransactionRollback(t *testing.T) {
 	tokenDigest := password_reset.HashToken(token)
 
 	queries := query.New(db).WithTx(tx)
-	_, err = queries.CreatePasswordResetToken(context.Background(), query.CreatePasswordResetTokenParams{
-		UserID:      userID,
-		TokenDigest: tokenDigest,
-		ExpiresAt:   time.Now().Add(1 * time.Hour),
-	})
-	if err != nil {
+	tokenRepo := repository.NewPasswordResetTokenRepository(queries)
+	if _, err := tokenRepo.Create(context.Background(), userID, tokenDigest, time.Now().Add(1*time.Hour)); err != nil {
 		t.Fatalf("トークンの保存に失敗: %v", err)
 	}
 
 	// 元のパスワードハッシュを取得
-	user, err := queries.GetUserByID(context.Background(), userID)
+	user, err := queries.GetUserByID(context.Background(), int64(userID))
 	if err != nil {
 		t.Fatalf("ユーザー情報の取得に失敗: %v", err)
 	}
@@ -571,7 +564,7 @@ func TestUpdatePasswordResetUsecase_Execute_TransactionRollback(t *testing.T) {
 	}
 
 	// パスワードが更新されていないことを確認
-	user2, err := queriesWithoutTx.GetUserByID(ctx, userID)
+	user2, err := queriesWithoutTx.GetUserByID(ctx, int64(userID))
 	if err != nil {
 		t.Fatalf("ユーザー情報の取得に失敗: %v", err)
 	}

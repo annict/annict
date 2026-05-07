@@ -46,14 +46,14 @@ func newTestHandler(t *testing.T, cfg *config.Config, sessionMgr *session.Manage
 
 	signInPasswordValidator := validator.NewSignInPasswordCreateValidator(userRepo)
 	authenticateByPasswordUC := usecase.NewAuthenticateByPasswordUsecase(createSessionUC, signInPasswordValidator)
-	return NewHandler(cfg, sessionMgr, authenticateByPasswordUC)
+	return NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), authenticateByPasswordUC)
 }
 
 // TestNew GET /sign_in/passwordのテスト
 func TestNew(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := testutil.NewQueriesWithTx(db, tx)
 
 	// テストユーザーを作成
@@ -102,7 +102,7 @@ func TestNew(t *testing.T) {
 func TestNew_WithBackParam(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := testutil.NewQueriesWithTx(db, tx)
 
 	// テストユーザーを作成
@@ -151,7 +151,7 @@ func TestNew_WithBackParam(t *testing.T) {
 func TestNew_WithoutSessionEmail(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := testutil.NewQueriesWithTx(db, tx)
 
 	cfg := &config.Config{

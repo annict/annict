@@ -17,7 +17,9 @@ import (
 )
 
 func TestEdit_ValidToken(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 
 	// テストユーザーを作成
 	userID := testutil.NewUserBuilder(t, tx).
@@ -55,7 +57,7 @@ func TestEdit_ValidToken(t *testing.T) {
 	updatePasswordValidator := validator.NewPasswordUpdateValidator()
 	updatePasswordUC := usecase.NewUpdatePasswordResetUsecase(db, passwordResetTokenRepo, repository.NewUserRepository(queries), sessionRepo, updatePasswordValidator)
 
-	handler := NewHandler(cfg, sessionManager, nil, getPasswordResetTokenUC, updatePasswordUC)
+	handler := NewHandler(cfg, sessionManager, testutil.NewTestFlashManager(), nil, getPasswordResetTokenUC, updatePasswordUC)
 
 	// トークンを手動で作成
 	plainToken, tokenDigest, err := createTestToken()
@@ -91,7 +93,9 @@ func TestEdit_ValidToken(t *testing.T) {
 }
 
 func TestEdit_InvalidToken(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 
 	// トランザクションをコミット
 	if err := tx.Commit(); err != nil {
@@ -117,7 +121,7 @@ func TestEdit_InvalidToken(t *testing.T) {
 	updatePasswordValidator := validator.NewPasswordUpdateValidator()
 	updatePasswordUC := usecase.NewUpdatePasswordResetUsecase(db, passwordResetTokenRepo, repository.NewUserRepository(queries), sessionRepo, updatePasswordValidator)
 
-	handler := NewHandler(cfg, sessionManager, nil, getPasswordResetTokenUC, updatePasswordUC)
+	handler := NewHandler(cfg, sessionManager, testutil.NewTestFlashManager(), nil, getPasswordResetTokenUC, updatePasswordUC)
 
 	// 無効なトークンでリクエスト
 	req := httptest.NewRequest("GET", "/password/edit?token=invalid_token", nil)
@@ -133,7 +137,9 @@ func TestEdit_InvalidToken(t *testing.T) {
 }
 
 func TestEdit_ExpiredToken(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 
 	// テストユーザーを作成
 	userID := testutil.NewUserBuilder(t, tx).
@@ -171,7 +177,7 @@ func TestEdit_ExpiredToken(t *testing.T) {
 	updatePasswordValidator := validator.NewPasswordUpdateValidator()
 	updatePasswordUC := usecase.NewUpdatePasswordResetUsecase(db, passwordResetTokenRepo, repository.NewUserRepository(queries), sessionRepo, updatePasswordValidator)
 
-	handler := NewHandler(cfg, sessionManager, nil, getPasswordResetTokenUC, updatePasswordUC)
+	handler := NewHandler(cfg, sessionManager, testutil.NewTestFlashManager(), nil, getPasswordResetTokenUC, updatePasswordUC)
 
 	// トークンを手動で作成
 	plainToken, tokenDigest, err := createTestToken()

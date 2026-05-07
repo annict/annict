@@ -5,7 +5,7 @@ import "time"
 // Work は作品のドメインエンティティです（ページに依存しない汎用的な構造）
 // Domain/Infrastructure層に属し、Presentation層に依存しない
 type Work struct {
-	ID                  int64
+	ID                  WorkID
 	Title               string
 	TitleEn             string
 	TitleKana           *string
@@ -15,18 +15,15 @@ type Work struct {
 	SeasonYear          *int32
 	SeasonName          *int32 // シーズン番号（1=冬、2=春、3=夏、4=秋）
 	CreatedAt           time.Time
-}
 
-// WorkWithDetails は作品の詳細情報を含むデータ構造です
-type WorkWithDetails struct {
-	Work   Work
-	Casts  []Cast
-	Staffs []Staff
+	// 関連エンティティ（必要な場合のみセットされる。通常は nil）
+	Casts  []*Cast
+	Staffs []*Staff
 }
 
 // DBWorkListItem はDB管理画面の作品一覧用のデータ構造です
 type DBWorkListItem struct {
-	ID            int64
+	ID            WorkID
 	Title         string
 	SeasonYear    *int32
 	SeasonName    *int32

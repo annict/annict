@@ -12,17 +12,17 @@ import (
 // Handler はパスワードリセット申請機能のハンドラーです
 type Handler struct {
 	cfg                *config.Config
-	sessionManager     *session.Manager
+	sessionMgr         *session.Manager
 	limiter            *ratelimit.Limiter
 	turnstileClient    turnstile.Verifier
 	createTokenUseCase *usecase.CreatePasswordResetTokenUsecase
 }
 
 // NewHandler は新しいHandlerを作成します
-func NewHandler(cfg *config.Config, sessionManager *session.Manager, limiter *ratelimit.Limiter, turnstileClient turnstile.Verifier, createTokenUseCase *usecase.CreatePasswordResetTokenUsecase) *Handler {
+func NewHandler(cfg *config.Config, sessionMgr *session.Manager, limiter *ratelimit.Limiter, turnstileClient turnstile.Verifier, createTokenUseCase *usecase.CreatePasswordResetTokenUsecase) *Handler {
 	return &Handler{
 		cfg:                cfg,
-		sessionManager:     sessionManager,
+		sessionMgr:         sessionMgr,
 		limiter:            limiter,
 		turnstileClient:    turnstileClient,
 		createTokenUseCase: createTokenUseCase,

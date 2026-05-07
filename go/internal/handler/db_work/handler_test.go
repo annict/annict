@@ -30,14 +30,14 @@ func newTestHandler(t *testing.T, db *sql.DB, tx *sql.Tx) *Handler {
 	getDbWorkFormOptionsUC := usecase.NewGetDbWorkFormOptionsUsecase(numberFormatRepo)
 	createWorkUC := usecase.NewCreateWorkUsecase(db, workRepo, validator.NewDbWorkCreateValidator())
 
-	return NewHandler(cfg, sessionManager, listDbWorksUC, getDbWorkFormOptionsUC, createWorkUC)
+	return NewHandler(cfg, sessionManager, testutil.NewTestFlashManager(), listDbWorksUC, getDbWorkFormOptionsUC, createWorkUC)
 }
 
 // TestIndex はDB作品一覧ページのテスト
 func TestIndex(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 
 	// テストデータを作成
 	testutil.NewWorkBuilder(t, tx).
@@ -88,7 +88,7 @@ func TestIndex(t *testing.T) {
 func TestIndex_WithFilters(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 
 	handler := newTestHandler(t, db, tx)
 
@@ -113,7 +113,7 @@ func TestIndex_WithFilters(t *testing.T) {
 func TestNew(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 
 	handler := newTestHandler(t, db, tx)
 

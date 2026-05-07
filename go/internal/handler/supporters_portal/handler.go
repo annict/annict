@@ -8,17 +8,17 @@ import (
 
 // Handler はサポーターCustomer Portal関連のHTTPハンドラーです
 type Handler struct {
-	sessionManager        *session.Manager
+	flashMgr              *session.FlashManager
 	createPortalSessionUC *usecase.CreatePortalSessionUsecase
 }
 
 // NewHandler は新しいHandlerを作成します
 func NewHandler(
-	sessionManager *session.Manager,
+	flashMgr *session.FlashManager,
 	createPortalSessionUC *usecase.CreatePortalSessionUsecase,
 ) *Handler {
 	return &Handler{
-		sessionManager:        sessionManager,
+		flashMgr:              flashMgr,
 		createPortalSessionUC: createPortalSessionUC,
 	}
 }

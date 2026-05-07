@@ -31,7 +31,7 @@ func TestCreate_SignatureValidation(t *testing.T) {
 	t.Parallel()
 
 	// テストDBをセットアップ
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(tx)
 
 	// テスト用の設定
@@ -139,7 +139,7 @@ func TestCreate_Idempotency(t *testing.T) {
 	t.Parallel()
 
 	// テストDBをセットアップ
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(tx)
 
 	// テスト用の設定
@@ -209,7 +209,7 @@ func TestCreate_Idempotency_SkippedEvent(t *testing.T) {
 	t.Parallel()
 
 	// テストDBをセットアップ
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(tx)
 
 	// テスト用の設定
@@ -279,7 +279,7 @@ func TestCreate_Idempotency_ReprocessPendingEvent(t *testing.T) {
 	t.Parallel()
 
 	// テストDBをセットアップ
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(tx)
 
 	// テスト用の設定
@@ -358,7 +358,7 @@ func TestCreate_Idempotency_ReprocessFailedEvent(t *testing.T) {
 	t.Parallel()
 
 	// テストDBをセットアップ
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(tx)
 
 	// テスト用の設定
@@ -437,7 +437,7 @@ func TestCreate_EventProcessing(t *testing.T) {
 	t.Parallel()
 
 	// テストDBをセットアップ
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(tx)
 
 	// テスト用の設定

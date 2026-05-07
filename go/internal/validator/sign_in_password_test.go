@@ -16,7 +16,7 @@ import (
 func TestSignInPasswordCreateValidatorValidate_FormatErrors(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	userRepo := repository.NewUserRepository(query.New(db)).WithTx(tx)
 
 	tests := []struct {
@@ -99,7 +99,7 @@ func TestSignInPasswordCreateValidatorValidate_FormatErrors(t *testing.T) {
 func TestSignInPasswordCreateValidatorValidate_StateErrors(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	userRepo := repository.NewUserRepository(query.New(db)).WithTx(tx)
 
 	// テストユーザーを作成
@@ -191,13 +191,15 @@ func TestSignInPasswordCreateValidatorValidate_StateErrors(t *testing.T) {
 func TestSignInPasswordCreateValidator_ValidateI18nMessages(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	userRepo := repository.NewUserRepository(query.New(db)).WithTx(tx)
 
 	ctx := context.Background()
 	v := NewSignInPasswordCreateValidator(userRepo)
 
 	t.Run("password必須エラーメッセージ", func(t *testing.T) {
+		t.Parallel()
+
 		input := SignInPasswordCreateValidatorInput{EmailOrUsername: "user@example.com", Password: ""}
 		output, err := v.Validate(ctx, input)
 		ve := model.AsValidationError(err)

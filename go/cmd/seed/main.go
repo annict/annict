@@ -14,6 +14,7 @@ import (
 	"github.com/schollz/progressbar/v3"
 
 	"github.com/annict/annict/go/internal/config"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/seed"
 	seedusecase "github.com/annict/annict/go/internal/usecase/seed"
@@ -227,7 +228,7 @@ func cleanupExistingData(ctx context.Context, db *sql.DB) error {
 }
 
 // generateUsers はユーザーを生成します
-func generateUsers(ctx context.Context, db *sql.DB, rnd *rand.Rand, count int) ([]int64, error) {
+func generateUsers(ctx context.Context, db *sql.DB, rnd *rand.Rand, count int) ([]model.UserID, error) {
 	slog.Info("フェーズ1: ユーザー生成", "count", count)
 
 	queries := query.New(db)
@@ -268,7 +269,7 @@ func generateUsers(ctx context.Context, db *sql.DB, rnd *rand.Rand, count int) (
 	slog.Info("ユーザー生成完了", "count", len(results))
 
 	// UserIDのリストを返す
-	userIDs := make([]int64, len(results))
+	userIDs := make([]model.UserID, len(results))
 	for i, result := range results {
 		userIDs[i] = result.UserID
 	}
@@ -277,7 +278,7 @@ func generateUsers(ctx context.Context, db *sql.DB, rnd *rand.Rand, count int) (
 }
 
 // generateWorks は作品を生成します
-func generateWorks(ctx context.Context, db *sql.DB, rnd *rand.Rand, count int) ([]int64, error) {
+func generateWorks(ctx context.Context, db *sql.DB, rnd *rand.Rand, count int) ([]model.WorkID, error) {
 	slog.Info("フェーズ2: 作品生成", "count", count)
 
 	uc := seedusecase.NewCreateWorkUsecase(db)
@@ -312,7 +313,7 @@ func generateWorks(ctx context.Context, db *sql.DB, rnd *rand.Rand, count int) (
 	slog.Info("作品生成完了", "count", len(results))
 
 	// WorkIDのリストを返す
-	workIDs := make([]int64, len(results))
+	workIDs := make([]model.WorkID, len(results))
 	for i, result := range results {
 		workIDs[i] = result.WorkID
 	}
@@ -321,7 +322,7 @@ func generateWorks(ctx context.Context, db *sql.DB, rnd *rand.Rand, count int) (
 }
 
 // generateEpisodes はエピソードを生成します（作品あたり平均12話）
-func generateEpisodes(ctx context.Context, db *sql.DB, rnd *rand.Rand, workIDs []int64) (map[int64][]int64, error) {
+func generateEpisodes(ctx context.Context, db *sql.DB, rnd *rand.Rand, workIDs []model.WorkID) (map[model.WorkID][]model.EpisodeID, error) {
 	slog.Info("フェーズ3: エピソード生成", "workCount", len(workIDs), "avgEpisodes", 12)
 
 	uc := seedusecase.NewCreateEpisodeUsecase(db)
@@ -361,7 +362,7 @@ func generateEpisodes(ctx context.Context, db *sql.DB, rnd *rand.Rand, workIDs [
 	slog.Info("エピソード生成完了", "count", len(results))
 
 	// Work ID -> Episode IDs のマップを作成
-	episodesByWork := make(map[int64][]int64)
+	episodesByWork := make(map[model.WorkID][]model.EpisodeID)
 	for i, result := range results {
 		workID := allEpisodes[i].WorkID
 		episodesByWork[workID] = append(episodesByWork[workID], result.EpisodeID)
@@ -371,7 +372,7 @@ func generateEpisodes(ctx context.Context, db *sql.DB, rnd *rand.Rand, workIDs [
 }
 
 // generateEpisodeRecords は視聴記録を生成します
-func generateEpisodeRecords(ctx context.Context, db *sql.DB, rnd *rand.Rand, userIDs []int64, episodesByWork map[int64][]int64, workIDs []int64, count int) error {
+func generateEpisodeRecords(ctx context.Context, db *sql.DB, rnd *rand.Rand, userIDs []model.UserID, episodesByWork map[model.WorkID][]model.EpisodeID, workIDs []model.WorkID, count int) error {
 	slog.Info("フェーズ4: 視聴記録生成", "count", count)
 
 	uc := seedusecase.NewCreateEpisodeRecordUsecase(db)
@@ -466,7 +467,7 @@ func cleanupWorkImages(ctx context.Context, cfg *config.Config) error {
 }
 
 // generateWorkImages は作品画像を生成します
-func generateWorkImages(ctx context.Context, db *sql.DB, cfg *config.Config, workIDs []int64, userIDs []int64, rnd *rand.Rand) error {
+func generateWorkImages(ctx context.Context, db *sql.DB, cfg *config.Config, workIDs []model.WorkID, userIDs []model.UserID, rnd *rand.Rand) error {
 	slog.Info("フェーズ5-2: 作品画像生成", "count", len(workIDs))
 
 	queries := query.New(db)
@@ -518,7 +519,7 @@ func generateWorkImages(ctx context.Context, db *sql.DB, cfg *config.Config, wor
 }
 
 // generateFollows はフォロー関係を生成します
-func generateFollows(ctx context.Context, db *sql.DB, rnd *rand.Rand, userIDs []int64, count int) error {
+func generateFollows(ctx context.Context, db *sql.DB, rnd *rand.Rand, userIDs []model.UserID, count int) error {
 	slog.Info("フェーズ6: フォロー関係生成", "count", count)
 
 	uc := seedusecase.NewCreateFollowUsecase(db)
@@ -576,14 +577,14 @@ func generateFollows(ctx context.Context, db *sql.DB, rnd *rand.Rand, userIDs []
 }
 
 // generateOAuthTokens はOAuthトークンを生成します
-func generateOAuthTokens(ctx context.Context, db *sql.DB, userIDs []int64, count int) error {
+func generateOAuthTokens(ctx context.Context, db *sql.DB, userIDs []model.UserID, count int) error {
 	slog.Info("フェーズ7: OAuthトークン生成", "count", count)
 
 	queries := query.New(db)
 	uc := seedusecase.NewCreateOAuthTokenUsecase(db, queries)
 
 	// トークンを付与するユーザーをランダムに選択
-	selectedUserIDs := make([]int64, count)
+	selectedUserIDs := make([]model.UserID, count)
 	for i := 0; i < count; i++ {
 		selectedUserIDs[i] = userIDs[i%len(userIDs)]
 	}
@@ -677,7 +678,7 @@ func cleanupProfileImages(ctx context.Context, cfg *config.Config) error {
 }
 
 // generateProfileImages はプロフィール画像を生成します
-func generateProfileImages(ctx context.Context, db *sql.DB, cfg *config.Config, userIDs []int64) error {
+func generateProfileImages(ctx context.Context, db *sql.DB, cfg *config.Config, userIDs []model.UserID) error {
 	slog.Info("プロフィール画像生成", "count", len(userIDs))
 
 	queries := query.New(db)
@@ -705,7 +706,7 @@ func generateProfileImages(ctx context.Context, db *sql.DB, cfg *config.Config, 
 	for i, profile := range profiles {
 		params[i] = seedusecase.CreateProfileImageParams{
 			ProfileID: profile.ID,
-			UserID:    profile.UserID,
+			UserID:    model.UserID(profile.UserID),
 		}
 	}
 

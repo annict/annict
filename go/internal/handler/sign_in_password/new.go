@@ -6,6 +6,7 @@ import (
 
 	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/middleware"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/templates/layouts"
 	signInPasswordPage "github.com/annict/annict/go/internal/templates/pages/sign_in_password"
 	"github.com/annict/annict/go/internal/viewmodel"
@@ -18,7 +19,7 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 	// すでにログイン済みの場合はホームにリダイレクト
 	currentUser, err := h.sessionMgr.GetCurrentUser(ctx, r)
 	if err != nil {
-		slog.Error("セッション取得エラー", "error", err)
+		slog.ErrorContext(ctx, "セッション取得エラー", "error", err)
 	}
 	if currentUser != nil {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
@@ -42,28 +43,33 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 	// backパラメータを取得（ログイン後のリダイレクト先）
 	backURL := r.URL.Query().Get("back")
 
-	// Flashメッセージを取得
-	flash := h.sessionMgr.GetFlash(w, r)
-	formErrors, err := h.sessionMgr.GetValidationError(ctx, r)
-	if err != nil {
-		slog.WarnContext(ctx, "バリデーションエラーの取得に失敗", "error", err)
-	}
+	h.renderNewForm(w, r, http.StatusOK, nil, email, backURL)
+}
 
-	// メタ情報を設定
+// renderNewForm はパスワードログインフォームをレンダリングします。
+// バリデーションエラーが存在する場合は status に http.StatusUnprocessableEntity を渡してください。
+func (h *Handler) renderNewForm(w http.ResponseWriter, r *http.Request, status int, formErrors *model.ValidationError, email string, backURL string) {
+	ctx := r.Context()
+
 	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)
 	meta.SetTitle(ctx, "sign_in_title")
 	meta.Description = i18n.T(ctx, "sign_in_description")
 	meta.OGURL = h.cfg.AppURL() + "/sign_in/password"
 
-	// CSRFトークンを取得
-	csrfToken := middleware.GetCSRFToken(r, h.sessionMgr)
+	csrfToken := middleware.GetOrCreateCSRFToken(w, r, h.sessionMgr)
 
-	// テンプレートをレンダリング
+	data := signInPasswordPage.NewPageData{
+		CSRFToken:  csrfToken,
+		FormErrors: formErrors,
+		Email:      email,
+		BackURL:    backURL,
+	}
+
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	component := layouts.Simple(ctx, meta, flash, h.cfg.GetAssetVersion(), signInPasswordPage.SignInPasswordShow(ctx, email, formErrors, csrfToken, backURL))
+	w.WriteHeader(status)
+
+	component := layouts.Simple(ctx, meta, h.cfg.GetAssetVersion(), signInPasswordPage.New(data))
 	if err := component.Render(ctx, w); err != nil {
-		slog.Error("テンプレート実行エラー", "error", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
+		slog.ErrorContext(ctx, "テンプレート実行エラー", "error", err)
 	}
 }

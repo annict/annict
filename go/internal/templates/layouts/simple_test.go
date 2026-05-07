@@ -14,6 +14,7 @@ import (
 	"github.com/annict/annict/go/internal/config"
 	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/session"
+	"github.com/annict/annict/go/internal/testutil"
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
@@ -47,7 +48,7 @@ func TestSimple_Rendering(t *testing.T) {
 
 	// レンダリング
 	var buf bytes.Buffer
-	err := Simple(ctx, meta, nil, "v1.0.0", content).Render(ctx, &buf)
+	err := Simple(ctx, meta, "v1.0.0", content).Render(ctx, &buf)
 	if err != nil {
 		t.Fatalf("レンダリングエラー: %v", err)
 	}
@@ -104,10 +105,7 @@ func TestSimple_WithFlash(t *testing.T) {
 
 	meta := viewmodel.DefaultPageMeta(ctx, cfg)
 
-	flash := &session.Flash{
-		Type:    session.FlashError,
-		Message: "エラーが発生しました",
-	}
+	ctx = testutil.ContextWithFlash(ctx, session.FlashError, "エラーが発生しました")
 
 	content := templ.ComponentFunc(func(ctx context.Context, w io.Writer) error {
 		_, err := w.Write([]byte("<div>Content</div>"))
@@ -115,7 +113,7 @@ func TestSimple_WithFlash(t *testing.T) {
 	})
 
 	var buf bytes.Buffer
-	err := Simple(ctx, meta, flash, "v1.0.0", content).Render(ctx, &buf)
+	err := Simple(ctx, meta, "v1.0.0", content).Render(ctx, &buf)
 	if err != nil {
 		t.Fatalf("レンダリングエラー: %v", err)
 	}
@@ -160,7 +158,7 @@ func TestSimple_WithoutFlash(t *testing.T) {
 	})
 
 	var buf bytes.Buffer
-	err := Simple(ctx, meta, nil, "v1.0.0", content).Render(ctx, &buf)
+	err := Simple(ctx, meta, "v1.0.0", content).Render(ctx, &buf)
 	if err != nil {
 		t.Fatalf("レンダリングエラー: %v", err)
 	}
@@ -211,7 +209,7 @@ func TestSimple_I18n(t *testing.T) {
 			})
 
 			var buf bytes.Buffer
-			err := Simple(ctx, meta, nil, "v1.0.0", content).Render(ctx, &buf)
+			err := Simple(ctx, meta, "v1.0.0", content).Render(ctx, &buf)
 			if err != nil {
 				t.Fatalf("レンダリングエラー: %v", err)
 			}
@@ -255,7 +253,7 @@ func TestSimple_AssetVersion(t *testing.T) {
 	assetVersion := "v1.2.3"
 
 	var buf bytes.Buffer
-	err := Simple(ctx, meta, nil, assetVersion, content).Render(ctx, &buf)
+	err := Simple(ctx, meta, assetVersion, content).Render(ctx, &buf)
 	if err != nil {
 		t.Fatalf("レンダリングエラー: %v", err)
 	}

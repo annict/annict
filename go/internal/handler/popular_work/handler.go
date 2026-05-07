@@ -4,7 +4,6 @@ package popular_work
 import (
 	"github.com/annict/annict/go/internal/config"
 	"github.com/annict/annict/go/internal/image"
-	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/usecase"
 )
 
@@ -13,15 +12,13 @@ type Handler struct {
 	cfg               *config.Config
 	getPopularWorksUC *usecase.GetPopularWorksUsecase
 	imageHelper       *image.Helper
-	sessionManager    *session.Manager
 }
 
 // NewHandler は新しいHandlerを作成します
-func NewHandler(cfg *config.Config, getPopularWorksUC *usecase.GetPopularWorksUsecase, imageHelper *image.Helper, sessionManager *session.Manager) *Handler {
+func NewHandler(cfg *config.Config, getPopularWorksUC *usecase.GetPopularWorksUsecase, imageHelper *image.Helper) *Handler {
 	return &Handler{
 		cfg:               cfg,
 		getPopularWorksUC: getPopularWorksUC,
 		imageHelper:       imageHelper,
-		sessionManager:    sessionManager,
 	}
 }

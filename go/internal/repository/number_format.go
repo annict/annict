@@ -27,7 +27,7 @@ func (r *NumberFormatRepository) ListAll(ctx context.Context) ([]model.NumberFor
 	result := make([]model.NumberFormat, len(rows))
 	for i, row := range rows {
 		result[i] = model.NumberFormat{
-			ID:         row.ID,
+			ID:         model.NumberFormatID(row.ID),
 			Name:       row.Name,
 			SortNumber: row.SortNumber,
 		}

@@ -39,7 +39,7 @@ templ Popular(ctx context.Context, works []viewmodel.Work) {
 					<div class="p-4">
 						<h3 class="font-semibold text-sm mb-2 line-clamp-2">
 							<a
-								href={ templ.URL("/works/" + strconv.FormatInt(work.ID, 10)) }
+								href={ templ.URL("/works/" + work.ID.String()) }
 								class="text-gray-900 hover:text-primary transition-colors"
 							>
 								{ getWorkTitle(ctx, work) }

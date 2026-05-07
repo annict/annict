@@ -31,15 +31,11 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)
 	meta.SetTitle(ctx, "db_works_new_title")
 
-	// フラッシュメッセージを取得
-	flash := h.sessionManager.GetFlash(w, r)
-
 	// テンプレートをレンダリング
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	component := layouts.Db(
 		ctx,
 		meta,
-		flash,
 		h.cfg.GetAssetVersion(),
 		db_works.New(db_works.NewPageData{
 			CSRFToken:   csrfToken,

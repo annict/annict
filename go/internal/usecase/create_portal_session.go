@@ -61,11 +61,11 @@ func (uc *CreatePortalSessionUsecase) Execute(ctx context.Context, input CreateP
 	user := input.User
 
 	// 1. Stripeサポーターのチェック
-	if !user.StripeSubscriberID.Valid {
+	if user.StripeSubscriberID == nil {
 		return nil, &NotStripeSubscriberError{}
 	}
 
-	stripeSubscriber, err := uc.stripeSubscriberRepo.GetByID(ctx, user.StripeSubscriberID.Int64)
+	stripeSubscriber, err := uc.stripeSubscriberRepo.GetByID(ctx, *user.StripeSubscriberID)
 	if err != nil {
 		return nil, fmt.Errorf("stripeサブスクライバーの取得に失敗しました: %w", err)
 	}

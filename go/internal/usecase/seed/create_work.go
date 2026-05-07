@@ -9,6 +9,7 @@ import (
 
 	"github.com/schollz/progressbar/v3"
 
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/seed"
 )
 
@@ -24,7 +25,7 @@ type CreateWorkParams struct {
 
 // CreateWorkResult 作品作成の結果
 type CreateWorkResult struct {
-	WorkID int64
+	WorkID model.WorkID
 }
 
 // CreateWorkUsecase 作品生成Usecase（シード専用、バルクインサート対応）
@@ -223,7 +224,7 @@ func (uc *CreateWorkUsecase) createMultipleWorks(ctx context.Context, tx *sql.Tx
 		if err := rows.Scan(&workID); err != nil {
 			return nil, fmt.Errorf("RETURNING id のスキャンエラー: %w", err)
 		}
-		results = append(results, CreateWorkResult{WorkID: workID})
+		results = append(results, CreateWorkResult{WorkID: model.WorkID(workID)})
 	}
 
 	if err := rows.Err(); err != nil {
@@ -257,7 +258,7 @@ func (uc *CreateWorkUsecase) createSingleWork(ctx context.Context, tx *sql.Tx, p
 	}
 
 	return &CreateWorkResult{
-		WorkID: workID,
+		WorkID: model.WorkID(workID),
 	}, nil
 }
 

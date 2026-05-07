@@ -7,13 +7,14 @@ import (
 	"testing"
 	"time"
 
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/testutil"
 )
 
 // TestCreateEpisodeRecordUsecase_ExecuteBatch はExecuteBatchメソッドのテスト
 func TestCreateEpisodeRecordUsecase_ExecuteBatch(t *testing.T) {
 	// テストDBをセットアップ
-	db, _ := testutil.SetupTestDB(t)
+	db, _ := testutil.SetupTx(t)
 
 	// Usecaseを作成
 	uc := NewCreateEpisodeRecordUsecase(db)
@@ -21,14 +22,14 @@ func TestCreateEpisodeRecordUsecase_ExecuteBatch(t *testing.T) {
 	// テストケース
 	tests := []struct {
 		name          string
-		setupFunc     func(t *testing.T, tx *sql.Tx) ([]CreateEpisodeRecordParams, int64, int64, int64, int64) // ユーザーID、作品ID、エピソードID1、エピソードID2を返す
+		setupFunc     func(t *testing.T, tx *sql.Tx) ([]CreateEpisodeRecordParams, model.UserID, model.WorkID, model.EpisodeID, model.EpisodeID) // ユーザーID、作品ID、エピソードID1、エピソードID2を返す
 		wantCount     int
 		wantErr       bool
 		checkCounters bool
 	}{
 		{
 			name: "正常系: 1件の視聴記録を作成",
-			setupFunc: func(t *testing.T, tx *sql.Tx) ([]CreateEpisodeRecordParams, int64, int64, int64, int64) {
+			setupFunc: func(t *testing.T, tx *sql.Tx) ([]CreateEpisodeRecordParams, model.UserID, model.WorkID, model.EpisodeID, model.EpisodeID) {
 				// ユーザーを作成
 				userID := testutil.NewUserBuilder(t, tx).
 					WithUsername("test_user_single").
@@ -60,7 +61,7 @@ func TestCreateEpisodeRecordUsecase_ExecuteBatch(t *testing.T) {
 					},
 				}
 
-				return records, userID, workID, episodeID1, 0
+				return records, userID, workID, episodeID1, model.EpisodeID(0)
 			},
 			wantCount:     1,
 			wantErr:       false,
@@ -68,7 +69,7 @@ func TestCreateEpisodeRecordUsecase_ExecuteBatch(t *testing.T) {
 		},
 		{
 			name: "正常系: 複数の視聴記録を作成",
-			setupFunc: func(t *testing.T, tx *sql.Tx) ([]CreateEpisodeRecordParams, int64, int64, int64, int64) {
+			setupFunc: func(t *testing.T, tx *sql.Tx) ([]CreateEpisodeRecordParams, model.UserID, model.WorkID, model.EpisodeID, model.EpisodeID) {
 				// ユーザーを作成
 				userID := testutil.NewUserBuilder(t, tx).
 					WithUsername("test_user_multi").
@@ -123,7 +124,7 @@ func TestCreateEpisodeRecordUsecase_ExecuteBatch(t *testing.T) {
 		},
 		{
 			name: "正常系: 評価なし・コメントなし",
-			setupFunc: func(t *testing.T, tx *sql.Tx) ([]CreateEpisodeRecordParams, int64, int64, int64, int64) {
+			setupFunc: func(t *testing.T, tx *sql.Tx) ([]CreateEpisodeRecordParams, model.UserID, model.WorkID, model.EpisodeID, model.EpisodeID) {
 				// ユーザーを作成
 				userID := testutil.NewUserBuilder(t, tx).
 					WithUsername("test_user_no_rating").
@@ -153,7 +154,7 @@ func TestCreateEpisodeRecordUsecase_ExecuteBatch(t *testing.T) {
 					},
 				}
 
-				return records, userID, workID, episodeID1, 0
+				return records, userID, workID, episodeID1, model.EpisodeID(0)
 			},
 			wantCount:     1,
 			wantErr:       false,
@@ -164,8 +165,7 @@ func TestCreateEpisodeRecordUsecase_ExecuteBatch(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// 各サブテストで新しいトランザクションを作成
-			_, tx := testutil.SetupTestDB(t)
-			defer tx.Rollback()
+			_, tx := testutil.SetupTx(t)
 
 			ctx := context.Background()
 
@@ -207,7 +207,7 @@ func TestCreateEpisodeRecordUsecase_ExecuteBatch(t *testing.T) {
 			if tt.checkCounters {
 				// users.episode_records_countをチェック
 				var episodeRecordsCount int32
-				err = tx.QueryRowContext(ctx, "SELECT episode_records_count FROM users WHERE id = $1", userID).Scan(&episodeRecordsCount)
+				err = tx.QueryRowContext(ctx, "SELECT episode_records_count FROM users WHERE id = $1", int64(userID)).Scan(&episodeRecordsCount)
 				if err != nil {
 					t.Errorf("Failed to get episode_records_count: %v", err)
 				}
@@ -217,7 +217,7 @@ func TestCreateEpisodeRecordUsecase_ExecuteBatch(t *testing.T) {
 
 				// works.records_countをチェック
 				var recordsCount int32
-				err = tx.QueryRowContext(ctx, "SELECT records_count FROM works WHERE id = $1", workID).Scan(&recordsCount)
+				err = tx.QueryRowContext(ctx, "SELECT records_count FROM works WHERE id = $1", int64(workID)).Scan(&recordsCount)
 				if err != nil {
 					t.Errorf("Failed to get records_count: %v", err)
 				}
@@ -228,7 +228,7 @@ func TestCreateEpisodeRecordUsecase_ExecuteBatch(t *testing.T) {
 
 				// episodes.episode_records_countをチェック
 				var episode1RecordsCount int32
-				err = tx.QueryRowContext(ctx, "SELECT episode_records_count FROM episodes WHERE id = $1", episodeID1).Scan(&episode1RecordsCount)
+				err = tx.QueryRowContext(ctx, "SELECT episode_records_count FROM episodes WHERE id = $1", int64(episodeID1)).Scan(&episode1RecordsCount)
 				if err != nil {
 					t.Errorf("Failed to get episode_records_count: %v", err)
 				}
@@ -240,7 +240,7 @@ func TestCreateEpisodeRecordUsecase_ExecuteBatch(t *testing.T) {
 				// 2件目のエピソードがある場合はそちらもチェック
 				if episodeID2 != 0 {
 					var episode2RecordsCount int32
-					err = tx.QueryRowContext(ctx, "SELECT episode_records_count FROM episodes WHERE id = $1", episodeID2).Scan(&episode2RecordsCount)
+					err = tx.QueryRowContext(ctx, "SELECT episode_records_count FROM episodes WHERE id = $1", int64(episodeID2)).Scan(&episode2RecordsCount)
 					if err != nil {
 						t.Errorf("Failed to get episode_records_count for episode2: %v", err)
 					}
@@ -256,7 +256,7 @@ func TestCreateEpisodeRecordUsecase_ExecuteBatch(t *testing.T) {
 					WHERE user_id = $1 AND itemable_type = 'EpisodeRecord' AND single = false
 					ORDER BY created_at DESC
 					LIMIT 1
-				`, userID).Scan(&activitiesCount)
+				`, int64(userID)).Scan(&activitiesCount)
 				if err != nil {
 					t.Errorf("Failed to get activities_count: %v", err)
 				}
@@ -271,7 +271,7 @@ func TestCreateEpisodeRecordUsecase_ExecuteBatch(t *testing.T) {
 // TestCreateEpisodeRecordUsecase_RatingState は rating_state の設定をテスト
 func TestCreateEpisodeRecordUsecase_RatingState(t *testing.T) {
 	// テストDBをセットアップ
-	db, _ := testutil.SetupTestDB(t)
+	db, _ := testutil.SetupTx(t)
 
 	// Usecaseを作成
 	uc := NewCreateEpisodeRecordUsecase(db)
@@ -312,8 +312,7 @@ func TestCreateEpisodeRecordUsecase_RatingState(t *testing.T) {
 	for i, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// 各サブテストで新しいトランザクションを作成
-			_, tx := testutil.SetupTestDB(t)
-			defer tx.Rollback()
+			_, tx := testutil.SetupTx(t)
 
 			ctx := context.Background()
 

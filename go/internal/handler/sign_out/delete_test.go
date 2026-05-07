@@ -7,13 +7,14 @@ import (
 	"testing"
 
 	"github.com/annict/annict/go/internal/config"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/testutil"
 )
 
 // setupSession はログイン状態をシミュレートするためのセッションを作成し、セッションCookieを返します
-func setupSession(t *testing.T, sessionMgr *session.Manager, userID int64) *http.Cookie {
+func setupSession(t *testing.T, sessionMgr *session.Manager, userID model.UserID) *http.Cookie {
 	t.Helper()
 
 	// ダミーリクエストとレスポンスを作成
@@ -42,7 +43,7 @@ func setupSession(t *testing.T, sessionMgr *session.Manager, userID int64) *http
 func TestDelete_WithSession(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := testutil.NewQueriesWithTx(db, tx)
 
 	// テストユーザーを作成
@@ -116,7 +117,7 @@ func TestDelete_WithSession(t *testing.T) {
 func TestDelete_WithoutSession(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := testutil.NewQueriesWithTx(db, tx)
 
 	// 設定とセッションマネージャーを作成
@@ -153,7 +154,7 @@ func TestDelete_WithoutSession(t *testing.T) {
 func TestDelete_POSTMethod(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := testutil.NewQueriesWithTx(db, tx)
 
 	// テストユーザーを作成

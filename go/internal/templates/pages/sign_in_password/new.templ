@@ -1,14 +1,21 @@
-package pages
+package sign_in_password
 
 import (
-	"context"
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/templates"
 	"github.com/annict/annict/go/internal/templates/components"
 )
 
-// SignInPasswordShow はパスワードログインページのコンテンツを表示します
-templ SignInPasswordShow(ctx context.Context, email string, formErrors *model.ValidationError, csrfToken string, backURL string) {
+// NewPageData はパスワードログインページに渡すデータ構造体です
+type NewPageData struct {
+	CSRFToken  string
+	FormErrors *model.ValidationError
+	Email      string
+	BackURL    string
+}
+
+// New はパスワードログインページのコンテンツを表示します
+templ New(data NewPageData) {
 	<div class="flex flex-col gap-6 min-w-full md:min-w-md px-4">
 		<div class="text-center">
 			<a href="/" class="inline-block">
@@ -26,11 +33,11 @@ templ SignInPasswordShow(ctx context.Context, email string, formErrors *model.Va
 			</h1>
 
 			<p class="text-center text-sm text-muted-foreground">
-				{ templates.T(ctx, "sign_in_password_login_as", map[string]any{"Email": email}) }
+				{ templates.T(ctx, "sign_in_password_login_as", map[string]any{"Email": data.Email}) }
 			</p>
 		</div>
 
-		@components.FormErrors(formErrors)
+		@components.FormErrors(data.FormErrors)
 
 		<form
 			action="/sign_in/password"
@@ -38,8 +45,8 @@ templ SignInPasswordShow(ctx context.Context, email string, formErrors *model.Va
 			hx-on:submit="disableSubmitButtons(this)"
 			method="POST"
 		>
-			<input type="hidden" name="csrf_token" value={ csrfToken }/>
-			<input type="hidden" name="back" value={ backURL }/>
+			<input type="hidden" name="csrf_token" value={ data.CSRFToken }/>
+			<input type="hidden" name="back" value={ data.BackURL }/>
 
 			<div class="grid gap-2">
 				<div class="flex items-center gap-2">
@@ -51,7 +58,7 @@ templ SignInPasswordShow(ctx context.Context, email string, formErrors *model.Va
 					</a>
 				</div>
 				<input
-					if formErrors != nil && formErrors.Fields["password"] != nil {
+					if data.FormErrors != nil && data.FormErrors.HasFieldError("password") {
 						aria-invalid="true"
 					} else {
 						aria-invalid="false"
@@ -64,8 +71,8 @@ templ SignInPasswordShow(ctx context.Context, email string, formErrors *model.Va
 					tabindex="1"
 					type="password"
 				/>
-				if formErrors != nil && formErrors.Fields["password"] != nil {
-					for _, errorMsg := range formErrors.Fields["password"] {
+				if data.FormErrors != nil && data.FormErrors.HasFieldError("password") {
+					for _, errorMsg := range data.FormErrors.GetFieldErrors("password") {
 						<p class="text-sm text-red-600">{ errorMsg }</p>
 					}
 				}

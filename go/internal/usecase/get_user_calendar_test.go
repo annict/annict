@@ -11,10 +11,12 @@ import (
 )
 
 func TestGetUserCalendarUsecase_Execute(t *testing.T) {
+	t.Parallel()
+
 	t.Run("正常系: ユーザーのカレンダーデータを取得できる", func(t *testing.T) {
 		t.Parallel()
 
-		db, tx := testutil.SetupTestDB(t)
+		db, tx := testutil.SetupTx(t)
 		queries := query.New(db).WithTx(tx)
 
 		testutil.NewUserBuilder(t, tx).
@@ -49,7 +51,7 @@ func TestGetUserCalendarUsecase_Execute(t *testing.T) {
 	t.Run("異常系: 存在しないユーザーの場合はエラーを返す", func(t *testing.T) {
 		t.Parallel()
 
-		db, tx := testutil.SetupTestDB(t)
+		db, tx := testutil.SetupTx(t)
 		queries := query.New(db).WithTx(tx)
 
 		userCalendarRepo := repository.NewUserCalendarRepository(queries)

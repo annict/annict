@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/annict/annict/go/internal/auth"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/testutil"
@@ -12,7 +13,9 @@ import (
 
 // TestCreateSessionUsecase_Execute は正常系のテストです
 func TestCreateSessionUsecase_Execute(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 
 	// パスワードをハッシュ化
 	hashedPassword, err := auth.HashPassword("password123")
@@ -29,7 +32,7 @@ func TestCreateSessionUsecase_Execute(t *testing.T) {
 
 	// ユーザー情報を取得（encrypted_passwordが必要）
 	queries := query.New(db).WithTx(tx)
-	user, err := queries.GetUserByID(context.Background(), userID)
+	user, err := queries.GetUserByID(context.Background(), int64(userID))
 	if err != nil {
 		t.Fatalf("ユーザー情報の取得に失敗: %v", err)
 	}
@@ -65,7 +68,9 @@ func TestCreateSessionUsecase_Execute(t *testing.T) {
 
 // TestCreateSessionUsecase_Execute_WithMultipleUsers は複数ユーザーでのセッション作成をテストします
 func TestCreateSessionUsecase_Execute_WithMultipleUsers(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 
 	// パスワードをハッシュ化
 	hashedPassword, err := auth.HashPassword("password123")
@@ -82,7 +87,7 @@ func TestCreateSessionUsecase_Execute_WithMultipleUsers(t *testing.T) {
 
 	// ユーザー情報を取得
 	queries := query.New(db).WithTx(tx)
-	user, err := queries.GetUserByID(context.Background(), userID)
+	user, err := queries.GetUserByID(context.Background(), int64(userID))
 	if err != nil {
 		t.Fatalf("ユーザー情報の取得に失敗: %v", err)
 	}
@@ -111,7 +116,9 @@ func TestCreateSessionUsecase_Execute_WithMultipleUsers(t *testing.T) {
 // 注: sessionsテーブルにはuser_idカラムがなく、外部キー制約もないため、存在しないユーザーIDでもセッション作成は成功します
 // このテストは、将来的にuser_id外部キー制約が追加された場合のための参考として残します
 func TestCreateSessionUsecase_Execute_WithInvalidUserID(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 
 	queries := query.New(db).WithTx(tx)
 	sessionRepo := repository.NewSessionRepository(queries)
@@ -119,7 +126,7 @@ func TestCreateSessionUsecase_Execute_WithInvalidUserID(t *testing.T) {
 
 	// 存在しないユーザーIDでセッション作成を試みる
 	ctx := context.Background()
-	invalidUserID := int64(999999999)
+	invalidUserID := model.UserID(999999999)
 	result, err := uc.Execute(ctx, tx, invalidUserID, "dummy_encrypted_password")
 
 	// 現在の実装では、sessionsテーブルにuser_idカラムがないため、エラーにならない
@@ -141,7 +148,9 @@ func TestCreateSessionUsecase_Execute_WithInvalidUserID(t *testing.T) {
 
 // TestCreateSessionUsecase_Execute_WithEmptyEncryptedPassword はfail-fastケース：encrypted_passwordが空の場合のテストです
 func TestCreateSessionUsecase_Execute_WithEmptyEncryptedPassword(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 
 	// パスワードをハッシュ化
 	hashedPassword, err := auth.HashPassword("password123")
@@ -181,7 +190,9 @@ func TestCreateSessionUsecase_Execute_WithEmptyEncryptedPassword(t *testing.T) {
 
 // TestCreateSessionUsecase_Execute_WithShortEncryptedPassword はfail-fastケース：encrypted_passwordが29文字未満の場合のテストです
 func TestCreateSessionUsecase_Execute_WithShortEncryptedPassword(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 
 	// パスワードをハッシュ化
 	hashedPassword, err := auth.HashPassword("password123")
@@ -221,7 +232,9 @@ func TestCreateSessionUsecase_Execute_WithShortEncryptedPassword(t *testing.T) {
 
 // TestCreateSessionUsecase_Execute_WithoutTransaction はトランザクションなしでのセッション作成をテストします
 func TestCreateSessionUsecase_Execute_WithoutTransaction(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 
 	// パスワードをハッシュ化
 	hashedPassword, err := auth.HashPassword("password123")
@@ -238,7 +251,7 @@ func TestCreateSessionUsecase_Execute_WithoutTransaction(t *testing.T) {
 
 	// ユーザー情報を取得
 	queries := query.New(db).WithTx(tx)
-	user, err := queries.GetUserByID(context.Background(), userID)
+	user, err := queries.GetUserByID(context.Background(), int64(userID))
 	if err != nil {
 		t.Fatalf("ユーザー情報の取得に失敗: %v", err)
 	}
@@ -277,7 +290,9 @@ func TestCreateSessionUsecase_Execute_WithoutTransaction(t *testing.T) {
 
 // TestCreateSessionUsecase_Execute_DuplicateSessionID はfail-fastケース：セッションID重複時のテストです
 func TestCreateSessionUsecase_Execute_DuplicateSessionID(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 
 	// パスワードをハッシュ化
 	hashedPassword, err := auth.HashPassword("password123")
@@ -294,7 +309,7 @@ func TestCreateSessionUsecase_Execute_DuplicateSessionID(t *testing.T) {
 
 	// ユーザー情報を取得
 	queries := query.New(db).WithTx(tx)
-	user, err := queries.GetUserByID(context.Background(), userID)
+	user, err := queries.GetUserByID(context.Background(), int64(userID))
 	if err != nil {
 		t.Fatalf("ユーザー情報の取得に失敗: %v", err)
 	}

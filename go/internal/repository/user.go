@@ -55,8 +55,8 @@ func (r *UserRepository) GetByEmail(ctx context.Context, email string) (query.Ge
 }
 
 // GetByID はユーザーIDでユーザーを検索します
-func (r *UserRepository) GetByID(ctx context.Context, id int64) (query.GetUserByIDRow, error) {
-	return r.queries.GetUserByID(ctx, id)
+func (r *UserRepository) GetByID(ctx context.Context, id model.UserID) (query.GetUserByIDRow, error) {
+	return r.queries.GetUserByID(ctx, int64(id))
 }
 
 // UserCreateParams はユーザー作成のパラメータ
@@ -80,7 +80,7 @@ func (r *UserRepository) Create(ctx context.Context, params UserCreateParams) (*
 	}
 
 	return &model.User{
-		ID:        row.ID,
+		ID:        model.UserID(row.ID),
 		Username:  row.Username,
 		Email:     row.Email,
 		Role:      row.Role,
@@ -98,33 +98,34 @@ func (r *UserRepository) GetByUsername(ctx context.Context, username string) err
 }
 
 // UpdateStripeSubscriberID はユーザーのStripeサブスクライバーIDを更新します
-func (r *UserRepository) UpdateStripeSubscriberID(ctx context.Context, userID int64, stripeSubscriberID *int64) error {
+func (r *UserRepository) UpdateStripeSubscriberID(ctx context.Context, userID model.UserID, stripeSubscriberID *model.StripeSubscriberID) error {
 	var nullableID sql.NullInt64
 	if stripeSubscriberID != nil {
-		nullableID = sql.NullInt64{Int64: *stripeSubscriberID, Valid: true}
+		nullableID = sql.NullInt64{Int64: int64(*stripeSubscriberID), Valid: true}
 	}
 	return r.queries.UpdateUserStripeSubscriberID(ctx, query.UpdateUserStripeSubscriberIDParams{
-		ID:                 userID,
+		ID:                 int64(userID),
 		StripeSubscriberID: nullableID,
 	})
 }
 
 // GetByStripeSubscriberID はStripeサブスクライバーIDでユーザーを検索します
-func (r *UserRepository) GetByStripeSubscriberID(ctx context.Context, stripeSubscriberID int64) (query.GetUserByStripeSubscriberIDRow, error) {
-	return r.queries.GetUserByStripeSubscriberID(ctx, sql.NullInt64{Int64: stripeSubscriberID, Valid: true})
+func (r *UserRepository) GetByStripeSubscriberID(ctx context.Context, stripeSubscriberID model.StripeSubscriberID) (query.GetUserByStripeSubscriberIDRow, error) {
+	return r.queries.GetUserByStripeSubscriberID(ctx, sql.NullInt64{Int64: int64(stripeSubscriberID), Valid: true})
 }
 
 // FindUserIDByStripeSubscriberID はStripeサブスクライバーIDからユーザーIDを検索します
 // ユーザーが見つからない場合はnilを返します（sql.ErrNoRowsの場合）
-func (r *UserRepository) FindUserIDByStripeSubscriberID(ctx context.Context, stripeSubscriberID int64) (*int64, error) {
-	user, err := r.queries.GetUserByStripeSubscriberID(ctx, sql.NullInt64{Int64: stripeSubscriberID, Valid: true})
+func (r *UserRepository) FindUserIDByStripeSubscriberID(ctx context.Context, stripeSubscriberID model.StripeSubscriberID) (*model.UserID, error) {
+	user, err := r.queries.GetUserByStripeSubscriberID(ctx, sql.NullInt64{Int64: int64(stripeSubscriberID), Valid: true})
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 		return nil, err
 	}
-	return &user.ID, nil
+	userID := model.UserID(user.ID)
+	return &userID, nil
 }
 
 // WithStripeSubscriberRepo はStripeSubscriberRepositoryを設定します
@@ -146,18 +147,18 @@ func (r *UserRepository) UpdatePassword(ctx context.Context, params query.Update
 
 // IsSupporter はユーザーがサポーターかどうかを判定します
 // Stripeサブスクリプションまたは（移行期間中は）Gumroadサブスクリプションがアクティブな場合にtrueを返します
-func (r *UserRepository) IsSupporter(ctx context.Context, user *query.User) (bool, error) {
+func (r *UserRepository) IsSupporter(ctx context.Context, user *model.User) (bool, error) {
 	// Stripeサブスクリプションをチェック
-	if user.StripeSubscriberID.Valid && r.stripeSubscriberRepo != nil {
-		stripeSubscriber, err := r.stripeSubscriberRepo.GetByID(ctx, user.StripeSubscriberID.Int64)
+	if user.StripeSubscriberID != nil && r.stripeSubscriberRepo != nil {
+		stripeSubscriber, err := r.stripeSubscriberRepo.GetByID(ctx, *user.StripeSubscriberID)
 		if err == nil && r.stripeSubscriberRepo.IsActive(&stripeSubscriber) {
 			return true, nil
 		}
 	}
 
 	// Gumroadサブスクリプションをチェック（移行期間中）
-	if user.GumroadSubscriberID.Valid && r.gumroadSubscriberRepo != nil {
-		gumroadSubscriber, err := r.gumroadSubscriberRepo.GetByID(ctx, user.GumroadSubscriberID.Int64)
+	if user.GumroadSubscriberID != nil && r.gumroadSubscriberRepo != nil {
+		gumroadSubscriber, err := r.gumroadSubscriberRepo.GetByID(ctx, *user.GumroadSubscriberID)
 		if err == nil && r.gumroadSubscriberRepo.IsActive(&gumroadSubscriber) {
 			return true, nil
 		}

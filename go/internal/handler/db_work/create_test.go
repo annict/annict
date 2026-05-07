@@ -15,7 +15,7 @@ import (
 func TestCreate_ValidationError(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 
 	handler := newTestHandler(t, db, tx)
 
@@ -55,7 +55,7 @@ func TestCreate_ValidationError(t *testing.T) {
 func TestCreate_ValidationError_PreservesFormValues(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 
 	handler := newTestHandler(t, db, tx)
 
@@ -89,7 +89,7 @@ func TestCreate_ValidationError_PreservesFormValues(t *testing.T) {
 func TestCreate_Success(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 
 	handler := newTestHandler(t, db, tx)
 

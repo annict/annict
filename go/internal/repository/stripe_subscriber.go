@@ -39,8 +39,8 @@ func (r *StripeSubscriberRepository) Create(ctx context.Context, params query.Cr
 }
 
 // GetByID はIDでStripeサブスクライバーを検索します
-func (r *StripeSubscriberRepository) GetByID(ctx context.Context, id int64) (model.StripeSubscriber, error) {
-	row, err := r.queries.GetStripeSubscriberByID(ctx, id)
+func (r *StripeSubscriberRepository) GetByID(ctx context.Context, id model.StripeSubscriberID) (model.StripeSubscriber, error) {
+	row, err := r.queries.GetStripeSubscriberByID(ctx, int64(id))
 	if err != nil {
 		return model.StripeSubscriber{}, err
 	}
@@ -78,7 +78,7 @@ func (r *StripeSubscriberRepository) IsActive(subscriber *model.StripeSubscriber
 // toStripeSubscriberModel はqueryの結果をモデルに変換します
 func toStripeSubscriberModel(row query.StripeSubscriber) model.StripeSubscriber {
 	return model.StripeSubscriber{
-		ID:                       row.ID,
+		ID:                       model.StripeSubscriberID(row.ID),
 		StripeCustomerID:         row.StripeCustomerID,
 		StripeSubscriptionID:     row.StripeSubscriptionID,
 		StripePriceID:            row.StripePriceID,

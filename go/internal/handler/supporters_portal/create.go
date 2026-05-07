@@ -7,7 +7,6 @@ import (
 
 	"github.com/annict/annict/go/internal/i18n"
 	authMiddleware "github.com/annict/annict/go/internal/middleware"
-	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/usecase"
 )
 
@@ -47,7 +46,6 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 // redirectWithError はエラーメッセージをフラッシュに設定してリダイレクトします
 func (h *Handler) redirectWithError(w http.ResponseWriter, r *http.Request, ctx context.Context, messageKey string) {
-	// フラッシュメッセージを設定（"error"タイプ）
-	h.sessionManager.SetFlash(w, session.FlashError, i18n.T(ctx, messageKey))
+	h.flashMgr.SetError(w, i18n.T(ctx, messageKey))
 	http.Redirect(w, r, "/supporters", http.StatusSeeOther)
 }

@@ -1,14 +1,20 @@
 package sign_up_code
 
 import (
-	"context"
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/templates"
 	"github.com/annict/annict/go/internal/templates/components"
 )
 
-// SignUpCodeNew は新規登録確認コード入力ページのコンテンツを表示します
-templ SignUpCodeNew(ctx context.Context, email string, formErrors *model.ValidationError, csrfToken string) {
+// NewPageData は新規登録確認コード入力ページに渡すデータ構造体です
+type NewPageData struct {
+	CSRFToken  string
+	FormErrors *model.ValidationError
+	Email      string
+}
+
+// New は新規登録確認コード入力ページのコンテンツを表示します
+templ New(data NewPageData) {
 	<div class="flex flex-col gap-6 min-w-full md:min-w-md px-4">
 		<div class="text-center">
 			<a href="/" class="inline-block">
@@ -30,7 +36,7 @@ templ SignUpCodeNew(ctx context.Context, email string, formErrors *model.Validat
 			</p>
 		</div>
 
-		@components.FormErrors(formErrors)
+		@components.FormErrors(data.FormErrors)
 
 		<form
 			action="/sign_up/code"
@@ -38,7 +44,7 @@ templ SignUpCodeNew(ctx context.Context, email string, formErrors *model.Validat
 			hx-on:submit="disableSubmitButtons(this)"
 			method="POST"
 		>
-			<input type="hidden" name="csrf_token" value={ csrfToken }/>
+			<input type="hidden" name="csrf_token" value={ data.CSRFToken }/>
 
 			<div class="grid gap-2">
 				<label for="code">
@@ -46,7 +52,7 @@ templ SignUpCodeNew(ctx context.Context, email string, formErrors *model.Validat
 				</label>
 
 				<input
-					if formErrors != nil && formErrors.Fields["code"] != nil {
+					if data.FormErrors != nil && data.FormErrors.HasFieldError("code") {
 						aria-invalid="true"
 					} else {
 						aria-invalid="false"
@@ -64,8 +70,8 @@ templ SignUpCodeNew(ctx context.Context, email string, formErrors *model.Validat
 					type="text"
 				/>
 
-				if formErrors != nil && formErrors.Fields["code"] != nil {
-					for _, errorMsg := range formErrors.Fields["code"] {
+				if data.FormErrors != nil && data.FormErrors.HasFieldError("code") {
+					for _, errorMsg := range data.FormErrors.GetFieldErrors("code") {
 						<p class="text-sm text-red-600">{ errorMsg }</p>
 					}
 				}
@@ -92,7 +98,7 @@ templ SignUpCodeNew(ctx context.Context, email string, formErrors *model.Validat
 				method="POST"
 			>
 				<input type="hidden" name="_method" value="PATCH"/>
-				<input type="hidden" name="csrf_token" value={ csrfToken }/>
+				<input type="hidden" name="csrf_token" value={ data.CSRFToken }/>
 
 				<button
 					class="btn-sm-secondary rounded-full w-fit"

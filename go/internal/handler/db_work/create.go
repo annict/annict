@@ -8,7 +8,6 @@ import (
 	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/middleware"
 	"github.com/annict/annict/go/internal/model"
-	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/templates/layouts"
 	"github.com/annict/annict/go/internal/templates/pages/db_works"
 	"github.com/annict/annict/go/internal/usecase"
@@ -61,7 +60,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 成功フラッシュメッセージを設定
-	h.sessionManager.SetFlash(w, session.FlashSuccess, i18n.T(ctx, "db_works_created"))
+	h.flashMgr.SetSuccess(w, i18n.T(ctx, "db_works_created"))
 
 	// 作品一覧ページにリダイレクト（将来的に編集ページにリダイレクトを変更予定）
 	http.Redirect(w, r, fmt.Sprintf("/db/works?highlight=%d", output.WorkID), http.StatusSeeOther)
@@ -89,7 +88,6 @@ func (h *Handler) renderNewWithErrors(w http.ResponseWriter, r *http.Request, in
 	component := layouts.Db(
 		ctx,
 		meta,
-		nil,
 		h.cfg.GetAssetVersion(),
 		db_works.New(db_works.NewPageData{
 			CSRFToken:   csrfToken,

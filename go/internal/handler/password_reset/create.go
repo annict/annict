@@ -19,7 +19,6 @@ import (
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	// フォームをパース
 	if err := r.ParseForm(); err != nil {
 		slog.ErrorContext(ctx, "フォームのパースエラー", "error", err)
 		http.Error(w, "Bad Request", http.StatusBadRequest)
@@ -32,7 +31,6 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	turnstileToken := r.FormValue("cf-turnstile-response")
 	isValid, err := h.turnstileClient.Verify(ctx, turnstileToken)
 	if err != nil || !isValid {
-		// ログ記録（エラーの詳細度に応じてログレベルを分ける）
 		if err != nil {
 			slog.ErrorContext(ctx, "Turnstile検証エラー",
 				"error", err,
@@ -44,47 +42,21 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 			)
 		}
 
-		// エラーレスポンスを返す
 		ve := model.NewValidationError()
-		ve.AddField("email", i18n.T(ctx, "turnstile_verification_failed"))
-		if err := h.sessionManager.SetValidationError(ctx, w, r, *ve); err != nil {
-			slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
-		}
-		http.Redirect(w, r, "/password/reset", http.StatusSeeOther)
+		ve.AddGlobal(i18n.T(ctx, "turnstile_verification_failed"))
+		h.renderNewForm(w, r, http.StatusUnprocessableEntity, ve, email)
 		return
 	}
 	slog.InfoContext(ctx, "Turnstile検証成功")
 
 	// Rate Limiting: IPアドレス単位の制限（5回/時間）
-	if h.limiter != nil && !h.cfg.DisableRateLimit {
-		ip := clientip.GetClientIP(r)
-		ipKey := fmt.Sprintf("password_reset:ip:%s", ip)
-		allowed, err := h.limiter.Check(ctx, ipKey, 5, 1*time.Hour)
-		if err != nil {
-			slog.ErrorContext(ctx, "Rate Limitingチェックが失敗しました", "error", err)
-		} else if !allowed {
-			slog.WarnContext(ctx, "パスワードリセット申請がRate Limitingにより制限されました（IPアドレス単位）",
-				"ip_address", ip,
-			)
-			http.Error(w, i18n.T(ctx, "rate_limit_exceeded"), http.StatusTooManyRequests)
-			return
-		}
+	if h.handleRateLimit(w, r, email, fmt.Sprintf("password_reset:ip:%s", clientip.GetClientIP(r)), "ip", 5) {
+		return
 	}
 
 	// Rate Limiting: メールアドレス単位の制限（3回/時間）
-	if h.limiter != nil && !h.cfg.DisableRateLimit {
-		emailKey := fmt.Sprintf("password_reset:email:%s", email)
-		allowed, err := h.limiter.Check(ctx, emailKey, 3, 1*time.Hour)
-		if err != nil {
-			slog.ErrorContext(ctx, "Rate Limitingチェックが失敗しました", "error", err)
-		} else if !allowed {
-			slog.WarnContext(ctx, "パスワードリセット申請がRate Limitingにより制限されました（メールアドレス単位）",
-				"email", email,
-				"ip_address", clientip.GetClientIP(r),
-			)
-			http.Error(w, i18n.T(ctx, "rate_limit_exceeded"), http.StatusTooManyRequests)
-			return
-		}
+	if h.handleRateLimit(w, r, email, fmt.Sprintf("password_reset:email:%s", email), "email", 3) {
+		return
 	}
 
 	// UseCaseを呼び出し（バリデーション + ユーザー検索 + トークン生成）
@@ -93,10 +65,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	})
 	if err != nil {
 		if ve := model.AsValidationError(err); ve != nil {
-			if err := h.sessionManager.SetValidationError(ctx, w, r, *ve); err != nil {
-				slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
-			}
-			http.Redirect(w, r, "/password/reset", http.StatusSeeOther)
+			h.renderNewForm(w, r, http.StatusUnprocessableEntity, ve, email)
 			return
 		}
 		slog.ErrorContext(ctx, "パスワードリセットトークンの生成エラー", "error", err)
@@ -117,10 +86,38 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	meta.OGURL = h.cfg.AppURL() + "/password/reset"
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	component := layouts.Simple(ctx, meta, nil, h.cfg.GetAssetVersion(), passwordpages.ResetSent(ctx))
+	component := layouts.Simple(ctx, meta, h.cfg.GetAssetVersion(), passwordpages.ResetSent(ctx))
 	if err = component.Render(ctx, w); err != nil {
 		slog.ErrorContext(ctx, "テンプレート実行エラー", "error", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
+}
+
+// handleRateLimit は Rate Limit を判定し、超過時は 422 + フォーム再描画を行う。
+// 戻り値が true の場合、呼び出し側は処理を中断する。
+func (h *Handler) handleRateLimit(w http.ResponseWriter, r *http.Request, email, key, scope string, limit int) bool {
+	if h.limiter == nil || h.cfg.DisableRateLimit {
+		return false
+	}
+
+	ctx := r.Context()
+	allowed, err := h.limiter.Check(ctx, key, limit, 1*time.Hour)
+	if err != nil {
+		slog.ErrorContext(ctx, "Rate Limitingチェックが失敗しました", "error", err)
+		return false
+	}
+	if allowed {
+		return false
+	}
+
+	slog.WarnContext(ctx, "パスワードリセット申請がRate Limitingにより制限されました",
+		"scope", scope,
+		"ip_address", clientip.GetClientIP(r),
+		"email", email,
+	)
+	ve := model.NewValidationError()
+	ve.AddGlobal(i18n.T(ctx, "rate_limit_exceeded"))
+	h.renderNewForm(w, r, http.StatusUnprocessableEntity, ve, email)
+	return true
 }

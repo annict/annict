@@ -7,7 +7,7 @@ import (
 
 // Work はテンプレート表示用の作品データです
 type Work struct {
-	ID            int64
+	ID            WorkID
 	Title         string
 	TitleEn       string // 英語タイトルも保持
 	ImageURL      string // デフォルトの画像URL (280px, jpg)
@@ -40,7 +40,7 @@ func (w *Work) GetSrcSet(width int, format string) string {
 
 // Cast はキャスト情報を表します
 type Cast struct {
-	ID              int64
+	ID              CastID
 	Name            string
 	NameEn          string
 	CharacterName   string
@@ -51,7 +51,7 @@ type Cast struct {
 
 // Staff はスタッフ情報を表します
 type Staff struct {
-	ID          int64
+	ID          StaffID
 	Name        string
 	NameEn      string
 	Role        string
@@ -59,60 +59,60 @@ type Staff struct {
 	RoleOtherEn string
 }
 
-// NewWorksFromModelDetails は model.WorkWithDetails から viewmodel.Work に変換します
-func NewWorksFromModelDetails(details []model.WorkWithDetails, helper *image.Helper) []Work {
-	works := make([]Work, len(details))
-	for i, detail := range details {
-		works[i] = NewWorkFromModelDetail(detail, helper)
+// NewWorksFromModels は []*model.Work から []viewmodel.Work に変換します
+func NewWorksFromModels(works []*model.Work, helper *image.Helper) []Work {
+	result := make([]Work, len(works))
+	for i, w := range works {
+		result[i] = NewWorkFromModel(w, helper)
 	}
-	return works
+	return result
 }
 
-// NewWorkFromModelDetail は model.WorkWithDetails から viewmodel.Work に変換します
-func NewWorkFromModelDetail(detail model.WorkWithDetails, helper *image.Helper) Work {
+// NewWorkFromModel は *model.Work から viewmodel.Work に変換します
+func NewWorkFromModel(m *model.Work, helper *image.Helper) Work {
 	// imgproxy用の画像URL生成（280pxサイズ、jpg形式）
 	imageURL := ""
 	if helper != nil {
-		imageURL = helper.GetWorkImageURL(detail.Work.ImageData, 280, "jpg")
+		imageURL = helper.GetWorkImageURL(m.ImageData, 280, "jpg")
 	}
 
 	work := Work{
-		ID:            detail.Work.ID,
-		Title:         detail.Work.Title,
-		TitleEn:       detail.Work.TitleEn,
+		ID:            WorkID(m.ID),
+		Title:         m.Title,
+		TitleEn:       m.TitleEn,
 		ImageURL:      imageURL,
-		ImageDataJSON: detail.Work.ImageData,
-		WatchersCount: detail.Work.WatchersCount,
+		ImageDataJSON: m.ImageData,
+		WatchersCount: m.WatchersCount,
 		imageHelper:   helper,
 	}
 
 	// タイトルのフォールバック処理
-	if work.Title == "" && detail.Work.TitleEn != "" {
-		work.Title = detail.Work.TitleEn
+	if work.Title == "" && m.TitleEn != "" {
+		work.Title = m.TitleEn
 	}
 
 	// シーズン情報の変換
-	if detail.Work.SeasonYear != nil {
-		work.SeasonYear = detail.Work.SeasonYear
+	if m.SeasonYear != nil {
+		work.SeasonYear = m.SeasonYear
 	}
 
-	if detail.Work.SeasonName != nil {
-		work.SeasonNumber = detail.Work.SeasonName
+	if m.SeasonName != nil {
+		work.SeasonNumber = m.SeasonName
 		// 日本語のシーズン名に変換
 		seasonNames := []string{"冬", "春", "夏", "秋"}
 		// seasonNamesは固定長（4要素）のため、int32への変換は安全
 		seasonNamesLen := int32(len(seasonNames)) // #nosec G115
-		if *detail.Work.SeasonName >= 0 && *detail.Work.SeasonName < seasonNamesLen {
-			seasonStr := seasonNames[*detail.Work.SeasonName]
+		if *m.SeasonName >= 0 && *m.SeasonName < seasonNamesLen {
+			seasonStr := seasonNames[*m.SeasonName]
 			work.SeasonName = &seasonStr
 		}
 	}
 
 	// キャストとスタッフの変換
-	work.Casts = make([]Cast, len(detail.Casts))
-	for i, cast := range detail.Casts {
+	work.Casts = make([]Cast, len(m.Casts))
+	for i, cast := range m.Casts {
 		work.Casts[i] = Cast{
-			ID:              cast.ID,
+			ID:              CastID(cast.ID),
 			Name:            cast.Name,
 			NameEn:          cast.NameEn,
 			CharacterName:   cast.CharacterName,
@@ -122,10 +122,10 @@ func NewWorkFromModelDetail(detail model.WorkWithDetails, helper *image.Helper) 
 		}
 	}
 
-	work.Staffs = make([]Staff, len(detail.Staffs))
-	for i, staff := range detail.Staffs {
+	work.Staffs = make([]Staff, len(m.Staffs))
+	for i, staff := range m.Staffs {
 		work.Staffs[i] = Staff{
-			ID:          staff.ID,
+			ID:          StaffID(staff.ID),
 			Name:        staff.Name,
 			NameEn:      staff.NameEn,
 			Role:        staff.Role,

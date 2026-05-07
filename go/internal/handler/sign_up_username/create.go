@@ -1,14 +1,12 @@
 package sign_up_username
 
 import (
-	"fmt"
 	"log/slog"
 	"net/http"
 
 	"github.com/annict/annict/go/internal/clientip"
 	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/model"
-	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/usecase"
 )
 
@@ -18,9 +16,8 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	// フォームデータを取得
 	if err := r.ParseForm(); err != nil {
-		slog.Error("フォームパースエラー", "error", err)
-		h.sessionMgr.SetFlash(w, session.FlashError, i18n.T(ctx, "sign_up_username_error_parse_form"))
-		http.Redirect(w, r, "/sign_up", http.StatusSeeOther)
+		slog.ErrorContext(ctx, "フォームパースエラー", "error", err)
+		http.Error(w, "Bad Request", http.StatusBadRequest)
 		return
 	}
 
@@ -39,15 +36,15 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		// バリデーションエラー
 		if ve := model.AsValidationError(err); ve != nil {
-			if err := h.sessionMgr.SetValidationError(ctx, w, r, *ve); err != nil {
-				slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
-			}
 			// トークンが無効な場合は /sign_up に戻す（token を再発行する必要があるため）
 			if ve.HasFieldError("token") {
+				h.flashMgr.SetError(w, i18n.T(ctx, "sign_up_username_error_token_invalid"))
 				http.Redirect(w, r, "/sign_up", http.StatusSeeOther)
 				return
 			}
-			http.Redirect(w, r, fmt.Sprintf("/sign_up/username?token=%s", token), http.StatusSeeOther)
+			// メールアドレスは Redis のトークン経由でしか取得できないため、再描画では空にする。
+			// Email 表示は無効化されるが、token と username の入力でフォーム再送信できる。
+			h.renderNewForm(w, r, http.StatusUnprocessableEntity, ve, token, "", username)
 			return
 		}
 
@@ -56,8 +53,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 			"ip_address", clientip.GetClientIP(r),
 			"error", err,
 		)
-		h.sessionMgr.SetFlash(w, session.FlashError, i18n.T(ctx, "sign_up_username_error_server"))
-		http.Redirect(w, r, fmt.Sprintf("/sign_up/username?token=%s", token), http.StatusSeeOther)
+		http.Error(w, i18n.T(ctx, "sign_up_username_error_server"), http.StatusInternalServerError)
 		return
 	}
 
@@ -66,7 +62,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	// セッションから sign_up_email を削除
 	if err := h.sessionMgr.DeleteValue(ctx, r, "sign_up_email"); err != nil {
-		slog.Warn("セッションから sign_up_email の削除に失敗しました（処理は続行）", "error", err)
+		slog.WarnContext(ctx, "セッションから sign_up_email の削除に失敗しました（処理は続行）", "error", err)
 	}
 
 	slog.InfoContext(ctx, "ユーザー登録成功",
@@ -77,6 +73,6 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	)
 
 	// 成功メッセージを設定してホームページにリダイレクト
-	h.sessionMgr.SetFlash(w, session.FlashSuccess, i18n.T(ctx, "sign_up_username_success"))
+	h.flashMgr.SetSuccess(w, i18n.T(ctx, "sign_up_username_success"))
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

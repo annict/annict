@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/annict/annict/go/internal/middleware"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/templates/layouts"
 	passwordpages "github.com/annict/annict/go/internal/templates/pages/password"
 	"github.com/annict/annict/go/internal/viewmodel"
@@ -12,31 +13,32 @@ import (
 
 // New はパスワードリセット申請フォームを表示します (GET /password/reset)
 func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
+	h.renderNewForm(w, r, http.StatusOK, nil, "")
+}
+
+// renderNewForm はパスワードリセット申請フォームをレンダリングします。
+// バリデーションエラーが存在する場合は status に http.StatusUnprocessableEntity を渡してください。
+func (h *Handler) renderNewForm(w http.ResponseWriter, r *http.Request, status int, formErrors *model.ValidationError, email string) {
 	ctx := r.Context()
 
-	// セッションからフラッシュメッセージとバリデーションエラーを取得
-	flash := h.sessionManager.GetFlash(w, r)
-	formErrors, err := h.sessionManager.GetValidationError(ctx, r)
-	if err != nil {
-		slog.WarnContext(ctx, "バリデーションエラーの取得に失敗", "error", err)
-	}
-
-	// メタ情報を設定
 	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)
 	meta.SetTitle(ctx, "password_reset_title")
 	meta.OGURL = h.cfg.AppURL() + "/password/reset"
 
-	// CSRFトークンを取得（セッションが存在しない場合は新規作成）
-	csrfToken := middleware.GetOrCreateCSRFToken(w, r, h.sessionManager)
+	csrfToken := middleware.GetOrCreateCSRFToken(w, r, h.sessionMgr)
 
-	// テンプレートをレンダリング
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	component := layouts.Simple(ctx, meta, flash, h.cfg.GetAssetVersion(), passwordpages.Reset(ctx, formErrors, csrfToken, "", h.cfg.TurnstileSiteKey))
-	if err := component.Render(ctx, w); err != nil {
-		slog.Error("テンプレート実行エラー", "error", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
+	data := passwordpages.ResetPageData{
+		CSRFToken:        csrfToken,
+		TurnstileSiteKey: h.cfg.TurnstileSiteKey,
+		FormErrors:       formErrors,
+		Email:            email,
 	}
 
-	slog.InfoContext(ctx, "パスワードリセット申請フォームを表示しました")
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.WriteHeader(status)
+
+	component := layouts.Simple(ctx, meta, h.cfg.GetAssetVersion(), passwordpages.Reset(data))
+	if err := component.Render(ctx, w); err != nil {
+		slog.ErrorContext(ctx, "テンプレート実行エラー", "error", err)
+	}
 }

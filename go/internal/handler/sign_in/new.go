@@ -6,6 +6,7 @@ import (
 
 	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/middleware"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/templates/layouts"
 	"github.com/annict/annict/go/internal/templates/pages/sign_in"
 	"github.com/annict/annict/go/internal/viewmodel"
@@ -25,31 +26,36 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// backパラメータを取得（ログイン後のリダイレクト先）
 	backURL := r.URL.Query().Get("back")
 
-	// Flashメッセージを取得
-	flash := h.sessionMgr.GetFlash(w, r)
-	formErrors, err := h.sessionMgr.GetValidationError(ctx, r)
-	if err != nil {
-		slog.WarnContext(ctx, "バリデーションエラーの取得に失敗", "error", err)
-	}
+	h.renderNewForm(w, r, http.StatusOK, nil, "", backURL)
+}
 
-	// メタ情報を設定
+// renderNewForm はメールアドレス入力フォームをレンダリングします。
+// バリデーションエラーが存在する場合は status に http.StatusUnprocessableEntity を渡してください。
+func (h *Handler) renderNewForm(w http.ResponseWriter, r *http.Request, status int, formErrors *model.ValidationError, email string, backURL string) {
+	ctx := r.Context()
+
 	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)
 	meta.SetTitle(ctx, "sign_in_title")
 	meta.Description = i18n.T(ctx, "sign_in_description")
 	meta.OGURL = h.cfg.AppURL() + "/sign_in"
 
-	// CSRFトークンを取得（セッションが存在しない場合は新規作成）
 	csrfToken := middleware.GetOrCreateCSRFToken(w, r, h.sessionMgr)
 
-	// テンプレートをレンダリング
+	data := sign_in.NewPageData{
+		CSRFToken:        csrfToken,
+		TurnstileSiteKey: h.cfg.TurnstileSiteKey,
+		FormErrors:       formErrors,
+		Email:            email,
+		BackURL:          backURL,
+	}
+
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	component := layouts.Simple(ctx, meta, flash, h.cfg.GetAssetVersion(), sign_in.New(ctx, formErrors, csrfToken, h.cfg.TurnstileSiteKey, backURL))
+	w.WriteHeader(status)
+
+	component := layouts.Simple(ctx, meta, h.cfg.GetAssetVersion(), sign_in.New(data))
 	if err := component.Render(ctx, w); err != nil {
 		slog.ErrorContext(ctx, "テンプレート実行エラー", "error", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
 	}
 }

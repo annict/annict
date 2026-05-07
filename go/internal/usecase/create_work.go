@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/validator"
 )
@@ -64,7 +65,7 @@ type CreateWorkInput struct {
 
 // CreateWorkOutput は作品作成の結果
 type CreateWorkOutput struct {
-	WorkID int64
+	WorkID model.WorkID
 }
 
 // Execute はバリデーション・型変換・作品作成を行います

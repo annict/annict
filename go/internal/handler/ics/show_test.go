@@ -11,6 +11,7 @@ import (
 	"github.com/go-chi/chi/v5"
 
 	"github.com/annict/annict/go/internal/config"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/testutil"
 	"github.com/annict/annict/go/internal/usecase"
@@ -20,7 +21,7 @@ import (
 func TestShow_UserNotFound(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := testutil.NewQueriesWithTx(db, tx)
 
 	cfg := &config.Config{
@@ -50,7 +51,7 @@ func TestShow_UserNotFound(t *testing.T) {
 func TestShow_EmptyUsername(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := testutil.NewQueriesWithTx(db, tx)
 
 	cfg := &config.Config{
@@ -76,7 +77,7 @@ func TestShow_EmptyUsername(t *testing.T) {
 func TestShow_QueryParam(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := testutil.NewQueriesWithTx(db, tx)
 
 	cfg := &config.Config{
@@ -102,7 +103,7 @@ func TestShow_QueryParam(t *testing.T) {
 func TestShow_Success(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := testutil.NewQueriesWithTx(db, tx)
 
 	// テストユーザーを作成
@@ -162,7 +163,7 @@ func TestShow_Success(t *testing.T) {
 func TestShow_QueryParamSuccess(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := testutil.NewQueriesWithTx(db, tx)
 
 	// テストユーザーを作成
@@ -204,7 +205,7 @@ func TestShow_QueryParamSuccess(t *testing.T) {
 func TestShow_EpisodeNumberFormatting(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := testutil.NewQueriesWithTx(db, tx)
 
 	// テストユーザーを作成
@@ -292,7 +293,7 @@ func TestShow_EpisodeNumberFormatting(t *testing.T) {
 func TestShow_DeletedUser(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := testutil.NewQueriesWithTx(db, tx)
 
 	// ユーザーを作成
@@ -333,7 +334,7 @@ func TestShow_DeletedUser(t *testing.T) {
 func TestShow_EmptyCalendar(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := testutil.NewQueriesWithTx(db, tx)
 
 	// ユーザーを作成（ライブラリエントリなし）
@@ -384,7 +385,7 @@ func TestShow_EmptyCalendar(t *testing.T) {
 func TestShow_WorkStartedOnEvent(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := testutil.NewQueriesWithTx(db, tx)
 
 	// ユーザーを作成
@@ -404,7 +405,7 @@ func TestShow_WorkStartedOnEvent(t *testing.T) {
 	_, err := tx.Exec(`
 		INSERT INTO library_entries (user_id, work_id, status_id, program_id, watched_episode_ids, created_at, updated_at)
 		VALUES ($1, $2, $3, NULL, '{}', NOW(), NOW())
-	`, userID, workID, statusID)
+	`, int64(userID), int64(workID), statusID)
 	if err != nil {
 		t.Fatalf("ライブラリエントリの作成に失敗しました: %v", err)
 	}
@@ -450,7 +451,7 @@ func TestShow_WorkStartedOnEvent(t *testing.T) {
 func TestShow_WannaWatchStatus(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := testutil.NewQueriesWithTx(db, tx)
 
 	// ユーザーを作成
@@ -533,7 +534,7 @@ func TestShow_WannaWatchStatus(t *testing.T) {
 }
 
 // createWorkWithStartedOn はstarted_onを設定した作品を作成するヘルパー
-func createWorkWithStartedOn(t *testing.T, tx *sql.Tx, title string, startedOn time.Time) int64 {
+func createWorkWithStartedOn(t *testing.T, tx *sql.Tx, title string, startedOn time.Time) model.WorkID {
 	t.Helper()
 
 	query := `
@@ -553,11 +554,11 @@ func createWorkWithStartedOn(t *testing.T, tx *sql.Tx, title string, startedOn t
 		t.Fatalf("作品データの作成に失敗しました: %v", err)
 	}
 
-	return id
+	return model.WorkID(id)
 }
 
 // createStatus はテスト用ステータスを作成するヘルパー
-func createStatus(t *testing.T, tx *sql.Tx, userID, workID int64, kind int) int64 {
+func createStatus(t *testing.T, tx *sql.Tx, userID model.UserID, workID model.WorkID, kind int) int64 {
 	t.Helper()
 
 	query := `
@@ -567,7 +568,7 @@ func createStatus(t *testing.T, tx *sql.Tx, userID, workID int64, kind int) int6
 	`
 
 	var id int64
-	err := tx.QueryRow(query, userID, workID, kind).Scan(&id)
+	err := tx.QueryRow(query, int64(userID), int64(workID), kind).Scan(&id)
 	if err != nil {
 		t.Fatalf("ステータスデータの作成に失敗しました: %v", err)
 	}

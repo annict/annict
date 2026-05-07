@@ -10,6 +10,7 @@ import (
 
 	"github.com/schollz/progressbar/v3"
 
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
 )
 
@@ -25,7 +26,7 @@ type CreateOAuthTokenParams struct {
 	TokenCount int
 
 	// トークンを付与するユーザーIDのリスト
-	UserIDs []int64
+	UserIDs []model.UserID
 }
 
 // CreateOAuthTokenResult OAuth トークン生成の結果
@@ -182,7 +183,7 @@ func (uc *CreateOAuthTokenUsecase) createOAuthApplication(ctx context.Context, t
 }
 
 // createOAuthAccessTokensBatch 複数の OAuth アクセストークンをバッチで作成します
-func (uc *CreateOAuthTokenUsecase) createOAuthAccessTokensBatch(ctx context.Context, tx *sql.Tx, applicationID int64, userIDs []int64, progressBar *progressbar.ProgressBar) ([]int64, error) {
+func (uc *CreateOAuthTokenUsecase) createOAuthAccessTokensBatch(ctx context.Context, tx *sql.Tx, applicationID int64, userIDs []model.UserID, progressBar *progressbar.ProgressBar) ([]int64, error) {
 	if len(userIDs) == 0 {
 		return []int64{}, nil
 	}
@@ -215,7 +216,7 @@ func (uc *CreateOAuthTokenUsecase) createOAuthAccessTokensBatch(ctx context.Cont
 }
 
 // createMultipleOAuthAccessTokens 複数の OAuth アクセストークンをマルチ行INSERTで作成します
-func (uc *CreateOAuthTokenUsecase) createMultipleOAuthAccessTokens(ctx context.Context, tx *sql.Tx, applicationID int64, userIDs []int64) ([]int64, error) {
+func (uc *CreateOAuthTokenUsecase) createMultipleOAuthAccessTokens(ctx context.Context, tx *sql.Tx, applicationID int64, userIDs []model.UserID) ([]int64, error) {
 	if len(userIDs) == 0 {
 		return []int64{}, nil
 	}

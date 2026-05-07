@@ -10,8 +10,10 @@ import (
 )
 
 func TestCheckHealthUsecase_Execute(t *testing.T) {
+	t.Parallel()
+
 	t.Run("正常系: DBが正常な場合はhealthyを返す", func(t *testing.T) {
-		db, tx := testutil.SetupTestDB(t)
+		db, tx := testutil.SetupTx(t)
 		queries := query.New(db).WithTx(tx)
 
 		workRepo := repository.NewWorkRepository(queries)

@@ -5,15 +5,15 @@ import "database/sql"
 // User は認証済みユーザーのドメインエンティティ
 // Rails版の User#role enum と対応: user: 0, admin: 1, editor: 2
 type User struct {
-	ID                  int64
+	ID                  UserID
 	Username            string
 	Email               string
 	Role                int32
 	EncryptedPassword   string
 	Locale              string
 	TimeZone            string
-	StripeSubscriberID  sql.NullInt64
-	GumroadSubscriberID sql.NullInt64
+	StripeSubscriberID  *StripeSubscriberID
+	GumroadSubscriberID *GumroadSubscriberID
 	NotificationsCount  int32
 	CreatedAt           sql.NullTime
 	UpdatedAt           sql.NullTime

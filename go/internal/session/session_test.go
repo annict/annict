@@ -14,6 +14,7 @@ import (
 	_ "github.com/lib/pq"
 
 	"github.com/annict/annict/go/internal/config"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/repository"
 )
@@ -396,7 +397,7 @@ func TestCreateSession(t *testing.T) {
 	r := httptest.NewRequest("POST", "/test", nil)
 
 	// CreateSessionを実行
-	if err := manager.CreateSession(ctx, w, r, userID); err != nil {
+	if err := manager.CreateSession(ctx, w, r, model.UserID(userID)); err != nil {
 		t.Fatalf("CreateSession() error = %v", err)
 	}
 
@@ -693,7 +694,7 @@ func TestGetSession_WithCSRFToken(t *testing.T) {
 	// セッションを作成
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest("POST", "/test", nil)
-	if err := manager.CreateSession(ctx, w, r, userID); err != nil {
+	if err := manager.CreateSession(ctx, w, r, model.UserID(userID)); err != nil {
 		t.Fatalf("CreateSession() error = %v", err)
 	}
 
@@ -723,7 +724,7 @@ func TestGetSession_WithCSRFToken(t *testing.T) {
 	if sessionData.UserID == nil {
 		t.Fatal("ユーザーIDがnilです")
 	}
-	if *sessionData.UserID != userID {
+	if int64(*sessionData.UserID) != userID {
 		t.Errorf("ユーザーID = %d, want %d", *sessionData.UserID, userID)
 	}
 
@@ -1147,7 +1148,7 @@ func TestEnsureCSRFToken_ExistingSession(t *testing.T) {
 	// 既存のセッションを作成
 	w1 := httptest.NewRecorder()
 	r1 := httptest.NewRequest("POST", "/test", nil)
-	if err := manager.CreateSession(ctx, w1, r1, userID); err != nil {
+	if err := manager.CreateSession(ctx, w1, r1, model.UserID(userID)); err != nil {
 		t.Fatalf("CreateSession() error = %v", err)
 	}
 
@@ -1290,7 +1291,7 @@ func TestDestroySession(t *testing.T) {
 	// セッションを作成
 	w1 := httptest.NewRecorder()
 	r1 := httptest.NewRequest("POST", "/sign_in", nil)
-	if err := manager.CreateSession(ctx, w1, r1, userID); err != nil {
+	if err := manager.CreateSession(ctx, w1, r1, model.UserID(userID)); err != nil {
 		t.Fatalf("CreateSession() error = %v", err)
 	}
 

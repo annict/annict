@@ -8,17 +8,17 @@ import (
 
 // Handler はサポーター登録Checkout関連のHTTPハンドラーです
 type Handler struct {
-	sessionManager          *session.Manager
+	flashMgr                *session.FlashManager
 	createCheckoutSessionUC *usecase.CreateCheckoutSessionUsecase
 }
 
 // NewHandler は新しいHandlerを作成します
 func NewHandler(
-	sessionManager *session.Manager,
+	flashMgr *session.FlashManager,
 	createCheckoutSessionUC *usecase.CreateCheckoutSessionUsecase,
 ) *Handler {
 	return &Handler{
-		sessionManager:          sessionManager,
+		flashMgr:                flashMgr,
 		createCheckoutSessionUC: createCheckoutSessionUC,
 	}
 }

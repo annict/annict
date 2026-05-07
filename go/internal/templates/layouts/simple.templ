@@ -2,23 +2,22 @@ package layouts
 
 import (
 	"context"
+	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/templates"
 	"github.com/annict/annict/go/internal/templates/components"
-	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
 // Simple はシンプルなレイアウトです
 // ヘッダー、フラッシュメッセージ、コンテンツのみを含みます
-templ Simple(ctx context.Context, meta viewmodel.PageMeta, flash *session.Flash, assetVersion string, content templ.Component) {
+templ Simple(ctx context.Context, meta viewmodel.PageMeta, assetVersion string, content templ.Component) {
 	<!DOCTYPE html>
 	<html lang={ templates.Locale(ctx) }>
 		<head>
 			@components.Head(meta, assetVersion)
 		</head>
-
 		<body class="min-h-screen flex items-center justify-center">
-			@components.Flash(ctx, flash)
+			@components.Flash(ctx, session.FlashFromContext(ctx))
 			@content
 		</body>
 	</html>

@@ -14,7 +14,7 @@ import (
 // TestCreateUserUsecase_ExecuteBatch はExecuteBatchメソッドのテスト
 func TestCreateUserUsecase_ExecuteBatch(t *testing.T) {
 	// テストDBをセットアップ（トランザクションは各サブテストで作成）
-	db, _ := testutil.SetupTestDB(t)
+	db, _ := testutil.SetupTx(t)
 
 	// Usecaseを作成
 	queries := query.New(db)
@@ -86,8 +86,7 @@ func TestCreateUserUsecase_ExecuteBatch(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// 各サブテストで新しいトランザクションを作成
-			_, tx := testutil.SetupTestDB(t)
-			defer tx.Rollback()
+			_, tx := testutil.SetupTx(t)
 
 			ctx := context.Background()
 
@@ -152,7 +151,7 @@ func TestCreateUserUsecase_ExecuteBatch(t *testing.T) {
 				}
 
 				// プロフィールのuser_idが正しいか確認
-				if profileUserID != result.UserID {
+				if profileUserID != int64(result.UserID) {
 					t.Errorf("profile.user_id = %v, want %v", profileUserID, result.UserID)
 				}
 
@@ -167,7 +166,7 @@ func TestCreateUserUsecase_ExecuteBatch(t *testing.T) {
 				}
 
 				// 設定のuser_idが正しいか確認
-				if settingUserID != result.UserID {
+				if settingUserID != int64(result.UserID) {
 					t.Errorf("setting.user_id = %v, want %v", settingUserID, result.UserID)
 				}
 
@@ -187,7 +186,7 @@ func TestCreateUserUsecase_ExecuteBatch(t *testing.T) {
 				}
 
 				// メール通知設定のuser_idが正しいか確認
-				if emailNotificationUserID != result.UserID {
+				if emailNotificationUserID != int64(result.UserID) {
 					t.Errorf("email_notification.user_id = %v, want %v", emailNotificationUserID, result.UserID)
 				}
 
@@ -203,8 +202,7 @@ func TestCreateUserUsecase_ExecuteBatch(t *testing.T) {
 // TestCreateUserUsecase_PasswordHashing はパスワードハッシュ化のテスト
 func TestCreateUserUsecase_PasswordHashing(t *testing.T) {
 	// テストDBとトランザクションをセットアップ
-	db, tx := testutil.SetupTestDB(t)
-	defer tx.Rollback()
+	db, tx := testutil.SetupTx(t)
 
 	// Usecaseを作成
 	queries := query.New(db)
@@ -265,8 +263,7 @@ func TestCreateUserUsecase_PasswordHashing(t *testing.T) {
 // TestCreateUserUsecase_LargeBatch は大量のユーザー作成のテスト
 func TestCreateUserUsecase_LargeBatch(t *testing.T) {
 	// テストDBとトランザクションをセットアップ
-	db, tx := testutil.SetupTestDB(t)
-	defer tx.Rollback()
+	db, tx := testutil.SetupTx(t)
 
 	// Usecaseを作成
 	queries := query.New(db)

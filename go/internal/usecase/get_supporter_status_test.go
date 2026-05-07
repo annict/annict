@@ -18,7 +18,7 @@ func TestGetSupporterStatusUsecase_Execute(t *testing.T) {
 	t.Run("正常系: サブスクリプションなしのユーザー", func(t *testing.T) {
 		t.Parallel()
 
-		db, tx := testutil.SetupTestDB(t)
+		db, tx := testutil.SetupTx(t)
 		queries := query.New(db).WithTx(tx)
 
 		stripeSubscriberRepo := repository.NewStripeSubscriberRepository(queries)
@@ -50,7 +50,7 @@ func TestGetSupporterStatusUsecase_Execute(t *testing.T) {
 	t.Run("正常系: アクティブなStripeサブスクリプション", func(t *testing.T) {
 		t.Parallel()
 
-		db, tx := testutil.SetupTestDB(t)
+		db, tx := testutil.SetupTx(t)
 		queries := query.New(db).WithTx(tx)
 
 		stripeSubscriberRepo := repository.NewStripeSubscriberRepository(queries)
@@ -61,7 +61,7 @@ func TestGetSupporterStatusUsecase_Execute(t *testing.T) {
 		subscriberID := testutil.NewStripeSubscriberBuilder(t, tx).
 			WithStripeStatus("active").
 			Build()
-		_, err := tx.Exec(`UPDATE users SET stripe_subscriber_id = $1 WHERE id = $2`, subscriberID, userID)
+		_, err := tx.Exec(`UPDATE users SET stripe_subscriber_id = $1 WHERE id = $2`, int64(subscriberID), int64(userID))
 		if err != nil {
 			t.Fatalf("Stripeサブスクライバーの関連付けに失敗: %v", err)
 		}
@@ -84,7 +84,7 @@ func TestGetSupporterStatusUsecase_Execute(t *testing.T) {
 	t.Run("正常系: アクティブなGumroadサブスクリプション", func(t *testing.T) {
 		t.Parallel()
 
-		db, tx := testutil.SetupTestDB(t)
+		db, tx := testutil.SetupTx(t)
 		queries := query.New(db).WithTx(tx)
 
 		stripeSubscriberRepo := repository.NewStripeSubscriberRepository(queries)
@@ -93,7 +93,7 @@ func TestGetSupporterStatusUsecase_Execute(t *testing.T) {
 
 		userID := testutil.NewUserBuilder(t, tx).Build()
 		subscriberID := testutil.NewGumroadSubscriberBuilder(t, tx).Build()
-		_, err := tx.Exec(`UPDATE users SET gumroad_subscriber_id = $1 WHERE id = $2`, subscriberID, userID)
+		_, err := tx.Exec(`UPDATE users SET gumroad_subscriber_id = $1 WHERE id = $2`, int64(subscriberID), int64(userID))
 		if err != nil {
 			t.Fatalf("Gumroadサブスクライバーの関連付けに失敗: %v", err)
 		}
@@ -116,7 +116,7 @@ func TestGetSupporterStatusUsecase_Execute(t *testing.T) {
 	t.Run("正常系: 両方アクティブ", func(t *testing.T) {
 		t.Parallel()
 
-		db, tx := testutil.SetupTestDB(t)
+		db, tx := testutil.SetupTx(t)
 		queries := query.New(db).WithTx(tx)
 
 		stripeSubscriberRepo := repository.NewStripeSubscriberRepository(queries)
@@ -129,7 +129,7 @@ func TestGetSupporterStatusUsecase_Execute(t *testing.T) {
 			Build()
 		gumroadSubscriberID := testutil.NewGumroadSubscriberBuilder(t, tx).Build()
 		_, err := tx.Exec(`UPDATE users SET stripe_subscriber_id = $1, gumroad_subscriber_id = $2 WHERE id = $3`,
-			stripeSubscriberID, gumroadSubscriberID, userID)
+			int64(stripeSubscriberID), int64(gumroadSubscriberID), int64(userID))
 		if err != nil {
 			t.Fatalf("サブスクライバーの関連付けに失敗: %v", err)
 		}
@@ -158,7 +158,7 @@ func TestGetSupporterStatusUsecase_Execute(t *testing.T) {
 	t.Run("正常系: キャンセル済みStripeは非アクティブ", func(t *testing.T) {
 		t.Parallel()
 
-		db, tx := testutil.SetupTestDB(t)
+		db, tx := testutil.SetupTx(t)
 		queries := query.New(db).WithTx(tx)
 
 		stripeSubscriberRepo := repository.NewStripeSubscriberRepository(queries)
@@ -169,7 +169,7 @@ func TestGetSupporterStatusUsecase_Execute(t *testing.T) {
 		subscriberID := testutil.NewStripeSubscriberBuilder(t, tx).
 			WithStripeStatus("canceled").
 			Build()
-		_, err := tx.Exec(`UPDATE users SET stripe_subscriber_id = $1 WHERE id = $2`, subscriberID, userID)
+		_, err := tx.Exec(`UPDATE users SET stripe_subscriber_id = $1 WHERE id = $2`, int64(subscriberID), int64(userID))
 		if err != nil {
 			t.Fatalf("Stripeサブスクライバーの関連付けに失敗: %v", err)
 		}
@@ -192,7 +192,7 @@ func TestGetSupporterStatusUsecase_Execute(t *testing.T) {
 	t.Run("正常系: 終了済みGumroadは非アクティブ", func(t *testing.T) {
 		t.Parallel()
 
-		db, tx := testutil.SetupTestDB(t)
+		db, tx := testutil.SetupTx(t)
 		queries := query.New(db).WithTx(tx)
 
 		stripeSubscriberRepo := repository.NewStripeSubscriberRepository(queries)
@@ -203,7 +203,7 @@ func TestGetSupporterStatusUsecase_Execute(t *testing.T) {
 		subscriberID := testutil.NewGumroadSubscriberBuilder(t, tx).
 			WithGumroadEndedAt(time.Now().AddDate(-1, 0, 0)).
 			Build()
-		_, err := tx.Exec(`UPDATE users SET gumroad_subscriber_id = $1 WHERE id = $2`, subscriberID, userID)
+		_, err := tx.Exec(`UPDATE users SET gumroad_subscriber_id = $1 WHERE id = $2`, int64(subscriberID), int64(userID))
 		if err != nil {
 			t.Fatalf("Gumroadサブスクライバーの関連付けに失敗: %v", err)
 		}
@@ -226,7 +226,7 @@ func TestGetSupporterStatusUsecase_Execute(t *testing.T) {
 	t.Run("異常系: nilユーザーはエラー", func(t *testing.T) {
 		t.Parallel()
 
-		db, tx := testutil.SetupTestDB(t)
+		db, tx := testutil.SetupTx(t)
 		queries := query.New(db).WithTx(tx)
 
 		stripeSubscriberRepo := repository.NewStripeSubscriberRepository(queries)
@@ -241,23 +241,32 @@ func TestGetSupporterStatusUsecase_Execute(t *testing.T) {
 }
 
 // getUserByIDForTest はユーザーIDからユーザー情報を取得します（テスト用）
-func getUserByIDForTest(t *testing.T, tx *sql.Tx, userID int64) *model.User {
+func getUserByIDForTest(t *testing.T, tx *sql.Tx, userID model.UserID) *model.User {
 	t.Helper()
 
 	var user model.User
+	var stripeSubID, gumroadSubID sql.NullInt64
 	err := tx.QueryRow(`
 		SELECT id, username, email, role, encrypted_password, locale,
 			   stripe_subscriber_id, gumroad_subscriber_id,
 			   created_at, updated_at
 		FROM users WHERE id = $1
-	`, userID).Scan(
+	`, int64(userID)).Scan(
 		&user.ID, &user.Username, &user.Email, &user.Role,
 		&user.EncryptedPassword, &user.Locale,
-		&user.StripeSubscriberID, &user.GumroadSubscriberID,
+		&stripeSubID, &gumroadSubID,
 		&user.CreatedAt, &user.UpdatedAt,
 	)
 	if err != nil {
 		t.Fatalf("ユーザー情報の取得に失敗しました: %v", err)
+	}
+	if stripeSubID.Valid {
+		id := model.StripeSubscriberID(stripeSubID.Int64)
+		user.StripeSubscriberID = &id
+	}
+	if gumroadSubID.Valid {
+		id := model.GumroadSubscriberID(gumroadSubID.Int64)
+		user.GumroadSubscriberID = &id
 	}
 
 	return &user

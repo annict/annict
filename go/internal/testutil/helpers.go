@@ -16,7 +16,7 @@ func NewTestSessionManager(t *testing.T) *session.Manager {
 	t.Helper()
 
 	// テスト用のDBセットアップ
-	db, _ := SetupTestDB(t)
+	db, _ := SetupTx(t)
 
 	// sqlcリポジトリを作成
 	queries := query.New(db)

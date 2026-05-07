@@ -9,6 +9,8 @@ import (
 )
 
 func TestShow(t *testing.T) {
+	t.Parallel()
+
 	// 設定を作成
 	cfg := &config.Config{
 		RailsAppURL: "https://annict.com",

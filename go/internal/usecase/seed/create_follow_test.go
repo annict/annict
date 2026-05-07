@@ -5,13 +5,14 @@ import (
 	"database/sql"
 	"testing"
 
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/testutil"
 )
 
 // TestCreateFollowUsecase_ExecuteBatch はExecuteBatchメソッドのテスト
 func TestCreateFollowUsecase_ExecuteBatch(t *testing.T) {
 	// テストDBをセットアップ（トランザクションは各サブテストで作成）
-	db, _ := testutil.SetupTestDB(t)
+	db, _ := testutil.SetupTx(t)
 
 	// Usecaseを作成
 	uc := NewCreateFollowUsecase(db)
@@ -19,18 +20,18 @@ func TestCreateFollowUsecase_ExecuteBatch(t *testing.T) {
 	// テストケース
 	tests := []struct {
 		name         string
-		setupUsers   func(t *testing.T, tx *sql.Tx) []int64 // テストユーザーを作成する関数
-		follows      func(userIDs []int64) []CreateFollowParams
+		setupUsers   func(t *testing.T, tx *sql.Tx) []model.UserID // テストユーザーを作成する関数
+		follows      func(userIDs []model.UserID) []CreateFollowParams
 		wantCount    int
 		wantErr      bool
-		validateFunc func(t *testing.T, tx *sql.Tx, userIDs []int64) // カスタム検証関数
+		validateFunc func(t *testing.T, tx *sql.Tx, userIDs []model.UserID) // カスタム検証関数
 	}{
 		{
 			name: "正常系: 3つのフォロー関係を作成",
-			setupUsers: func(t *testing.T, tx *sql.Tx) []int64 {
+			setupUsers: func(t *testing.T, tx *sql.Tx) []model.UserID {
 				return createTestUsers(t, tx, 4) // 4人のユーザーを作成
 			},
-			follows: func(userIDs []int64) []CreateFollowParams {
+			follows: func(userIDs []model.UserID) []CreateFollowParams {
 				return []CreateFollowParams{
 					{FollowerID: userIDs[0], FollowingID: userIDs[1]}, // user0がuser1をフォロー
 					{FollowerID: userIDs[0], FollowingID: userIDs[2]}, // user0がuser2をフォロー
@@ -39,7 +40,7 @@ func TestCreateFollowUsecase_ExecuteBatch(t *testing.T) {
 			},
 			wantCount: 3,
 			wantErr:   false,
-			validateFunc: func(t *testing.T, tx *sql.Tx, userIDs []int64) {
+			validateFunc: func(t *testing.T, tx *sql.Tx, userIDs []model.UserID) {
 				// user0: following_count=2, followers_count=0
 				assertUserCounts(t, tx, userIDs[0], 2, 0)
 				// user1: following_count=1, followers_count=1
@@ -52,17 +53,17 @@ func TestCreateFollowUsecase_ExecuteBatch(t *testing.T) {
 		},
 		{
 			name: "正常系: 1つのフォロー関係を作成",
-			setupUsers: func(t *testing.T, tx *sql.Tx) []int64 {
+			setupUsers: func(t *testing.T, tx *sql.Tx) []model.UserID {
 				return createTestUsers(t, tx, 2) // 2人のユーザーを作成
 			},
-			follows: func(userIDs []int64) []CreateFollowParams {
+			follows: func(userIDs []model.UserID) []CreateFollowParams {
 				return []CreateFollowParams{
 					{FollowerID: userIDs[0], FollowingID: userIDs[1]},
 				}
 			},
 			wantCount: 1,
 			wantErr:   false,
-			validateFunc: func(t *testing.T, tx *sql.Tx, userIDs []int64) {
+			validateFunc: func(t *testing.T, tx *sql.Tx, userIDs []model.UserID) {
 				// user0: following_count=1, followers_count=0
 				assertUserCounts(t, tx, userIDs[0], 1, 0)
 				// user1: following_count=0, followers_count=1
@@ -71,10 +72,10 @@ func TestCreateFollowUsecase_ExecuteBatch(t *testing.T) {
 		},
 		{
 			name: "正常系: 相互フォロー",
-			setupUsers: func(t *testing.T, tx *sql.Tx) []int64 {
+			setupUsers: func(t *testing.T, tx *sql.Tx) []model.UserID {
 				return createTestUsers(t, tx, 2)
 			},
-			follows: func(userIDs []int64) []CreateFollowParams {
+			follows: func(userIDs []model.UserID) []CreateFollowParams {
 				return []CreateFollowParams{
 					{FollowerID: userIDs[0], FollowingID: userIDs[1]}, // user0がuser1をフォロー
 					{FollowerID: userIDs[1], FollowingID: userIDs[0]}, // user1がuser0をフォロー
@@ -82,7 +83,7 @@ func TestCreateFollowUsecase_ExecuteBatch(t *testing.T) {
 			},
 			wantCount: 2,
 			wantErr:   false,
-			validateFunc: func(t *testing.T, tx *sql.Tx, userIDs []int64) {
+			validateFunc: func(t *testing.T, tx *sql.Tx, userIDs []model.UserID) {
 				// user0: following_count=1, followers_count=1
 				assertUserCounts(t, tx, userIDs[0], 1, 1)
 				// user1: following_count=1, followers_count=1
@@ -91,10 +92,10 @@ func TestCreateFollowUsecase_ExecuteBatch(t *testing.T) {
 		},
 		{
 			name: "正常系: 1人が複数人をフォロー",
-			setupUsers: func(t *testing.T, tx *sql.Tx) []int64 {
+			setupUsers: func(t *testing.T, tx *sql.Tx) []model.UserID {
 				return createTestUsers(t, tx, 5)
 			},
-			follows: func(userIDs []int64) []CreateFollowParams {
+			follows: func(userIDs []model.UserID) []CreateFollowParams {
 				return []CreateFollowParams{
 					{FollowerID: userIDs[0], FollowingID: userIDs[1]},
 					{FollowerID: userIDs[0], FollowingID: userIDs[2]},
@@ -104,7 +105,7 @@ func TestCreateFollowUsecase_ExecuteBatch(t *testing.T) {
 			},
 			wantCount: 4,
 			wantErr:   false,
-			validateFunc: func(t *testing.T, tx *sql.Tx, userIDs []int64) {
+			validateFunc: func(t *testing.T, tx *sql.Tx, userIDs []model.UserID) {
 				// user0: following_count=4, followers_count=0
 				assertUserCounts(t, tx, userIDs[0], 4, 0)
 				// user1-4: following_count=0, followers_count=1
@@ -115,10 +116,10 @@ func TestCreateFollowUsecase_ExecuteBatch(t *testing.T) {
 		},
 		{
 			name: "正常系: 1人が複数人からフォローされる",
-			setupUsers: func(t *testing.T, tx *sql.Tx) []int64 {
+			setupUsers: func(t *testing.T, tx *sql.Tx) []model.UserID {
 				return createTestUsers(t, tx, 5)
 			},
-			follows: func(userIDs []int64) []CreateFollowParams {
+			follows: func(userIDs []model.UserID) []CreateFollowParams {
 				return []CreateFollowParams{
 					{FollowerID: userIDs[1], FollowingID: userIDs[0]},
 					{FollowerID: userIDs[2], FollowingID: userIDs[0]},
@@ -128,7 +129,7 @@ func TestCreateFollowUsecase_ExecuteBatch(t *testing.T) {
 			},
 			wantCount: 4,
 			wantErr:   false,
-			validateFunc: func(t *testing.T, tx *sql.Tx, userIDs []int64) {
+			validateFunc: func(t *testing.T, tx *sql.Tx, userIDs []model.UserID) {
 				// user0: following_count=0, followers_count=4
 				assertUserCounts(t, tx, userIDs[0], 0, 4)
 				// user1-4: following_count=1, followers_count=0
@@ -142,8 +143,7 @@ func TestCreateFollowUsecase_ExecuteBatch(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// 各サブテストで新しいトランザクションを作成
-			_, tx := testutil.SetupTestDB(t)
-			defer tx.Rollback()
+			_, tx := testutil.SetupTx(t)
 
 			ctx := context.Background()
 
@@ -189,9 +189,9 @@ func TestCreateFollowUsecase_ExecuteBatch(t *testing.T) {
 }
 
 // createTestUsers テスト用のユーザーを作成するヘルパー関数
-func createTestUsers(t *testing.T, tx *sql.Tx, count int) []int64 {
+func createTestUsers(t *testing.T, tx *sql.Tx, count int) []model.UserID {
 	t.Helper()
-	userIDs := make([]int64, count)
+	userIDs := make([]model.UserID, count)
 	for i := 0; i < count; i++ {
 		userID := testutil.NewUserBuilder(t, tx).
 			WithUsername(t.Name() + "_user_" + string(rune('0'+i))).
@@ -203,7 +203,7 @@ func createTestUsers(t *testing.T, tx *sql.Tx, count int) []int64 {
 }
 
 // assertUserCounts ユーザーのフォロー/フォロワー数を検証するヘルパー関数
-func assertUserCounts(t *testing.T, tx *sql.Tx, userID int64, expectedFollowingCount, expectedFollowersCount int) {
+func assertUserCounts(t *testing.T, tx *sql.Tx, userID model.UserID, expectedFollowingCount, expectedFollowersCount int) {
 	t.Helper()
 
 	query := `SELECT following_count, followers_count FROM users WHERE id = $1`
@@ -222,7 +222,7 @@ func assertUserCounts(t *testing.T, tx *sql.Tx, userID int64, expectedFollowingC
 }
 
 // assertFollowExists フォロー関係がDBに存在することを検証するヘルパー関数
-func assertFollowExists(t *testing.T, tx *sql.Tx, followerID, followingID int64) {
+func assertFollowExists(t *testing.T, tx *sql.Tx, followerID, followingID model.UserID) {
 	t.Helper()
 
 	query := `SELECT COUNT(*) FROM follows WHERE user_id = $1 AND following_id = $2`

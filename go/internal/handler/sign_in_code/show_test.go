@@ -19,7 +19,7 @@ import (
 func TestShow(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := testutil.NewQueriesWithTx(db, tx)
 
 	// 設定とセッションマネージャーを作成
@@ -39,7 +39,7 @@ func TestShow(t *testing.T) {
 	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, signInCodeValidator)
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
-	handler := NewHandler(cfg, sessionMgr, nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
+	handler := NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
 
 	// リクエストを作成
 	req := httptest.NewRequest("GET", "/sign_in/code", nil)
@@ -102,7 +102,7 @@ func TestShow(t *testing.T) {
 func TestShow_NoEmailInSession(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := testutil.NewQueriesWithTx(db, tx)
 
 	// 設定とセッションマネージャーを作成
@@ -122,7 +122,7 @@ func TestShow_NoEmailInSession(t *testing.T) {
 	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, signInCodeValidator)
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
-	handler := NewHandler(cfg, sessionMgr, nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
+	handler := NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
 
 	// リクエストを作成（セッションにメールアドレスを設定しない）
 	req := httptest.NewRequest("GET", "/sign_in/code", nil)

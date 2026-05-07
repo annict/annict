@@ -69,7 +69,7 @@ func (uc *ProcessStripeWebhookUsecase) Execute(ctx context.Context, input Proces
 	event := input.Event
 
 	// 冪等性チェック: 既存のイベントを確認し、ステータスに応じて処理を分岐
-	var webhookEventID int64
+	var webhookEventID model.StripeWebhookEventID
 	existingEvent, err := uc.stripeWebhookEventRepo.GetByStripeEventID(ctx, event.ID)
 	if err != nil && err != sql.ErrNoRows {
 		slog.ErrorContext(ctx, "Webhookイベント取得に失敗",
@@ -98,7 +98,7 @@ func (uc *ProcessStripeWebhookUsecase) Execute(ctx context.Context, input Proces
 			"stripe_event_id", event.ID,
 			"status", existingEvent.Status,
 		)
-		webhookEventID = existingEvent.ID
+		webhookEventID = model.StripeWebhookEventID(existingEvent.ID)
 	} else {
 		// 新規イベントの場合はDBに保存（status=pending）
 		payloadJSON, err := json.Marshal(event)
@@ -126,7 +126,7 @@ func (uc *ProcessStripeWebhookUsecase) Execute(ctx context.Context, input Proces
 			annictSentry.CaptureError(ctx, fmt.Errorf("webhookイベントの保存に失敗: %w", err))
 			return &ProcessStripeWebhookOutput{}, nil
 		}
-		webhookEventID = webhookEvent.ID
+		webhookEventID = model.StripeWebhookEventID(webhookEvent.ID)
 	}
 
 	// イベントタイプに応じた処理を実行
@@ -152,7 +152,7 @@ func (uc *ProcessStripeWebhookUsecase) Execute(ctx context.Context, input Proces
 }
 
 // processEvent はイベントタイプに応じた処理を実行します
-func (uc *ProcessStripeWebhookUsecase) processEvent(ctx context.Context, event *stripe.Event, webhookEventID int64) error {
+func (uc *ProcessStripeWebhookUsecase) processEvent(ctx context.Context, event *stripe.Event, webhookEventID model.StripeWebhookEventID) error {
 	switch event.Type {
 	case EventCheckoutSessionCompleted:
 		return uc.handleCheckoutSessionCompleted(ctx, event, webhookEventID)
@@ -195,7 +195,7 @@ func (uc *ProcessStripeWebhookUsecase) processEvent(ctx context.Context, event *
 }
 
 // handleCheckoutSessionCompleted はcheckout.session.completedイベントを処理します
-func (uc *ProcessStripeWebhookUsecase) handleCheckoutSessionCompleted(ctx context.Context, event *stripe.Event, webhookEventID int64) error {
+func (uc *ProcessStripeWebhookUsecase) handleCheckoutSessionCompleted(ctx context.Context, event *stripe.Event, webhookEventID model.StripeWebhookEventID) error {
 	slog.InfoContext(ctx, "checkout.session.completedイベントを受信",
 		"stripe_event_id", event.ID,
 	)
@@ -246,7 +246,7 @@ func (uc *ProcessStripeWebhookUsecase) handleCheckoutSessionCompleted(ctx contex
 }
 
 // handleCustomerSubscriptionUpdated はcustomer.subscription.updatedイベントを処理します
-func (uc *ProcessStripeWebhookUsecase) handleCustomerSubscriptionUpdated(ctx context.Context, event *stripe.Event, webhookEventID int64) error {
+func (uc *ProcessStripeWebhookUsecase) handleCustomerSubscriptionUpdated(ctx context.Context, event *stripe.Event, webhookEventID model.StripeWebhookEventID) error {
 	slog.InfoContext(ctx, "customer.subscription.updatedイベントを受信",
 		"stripe_event_id", event.ID,
 	)
@@ -309,7 +309,7 @@ func (uc *ProcessStripeWebhookUsecase) handleCustomerSubscriptionUpdated(ctx con
 }
 
 // handleCustomerSubscriptionDeleted はcustomer.subscription.deletedイベントを処理します
-func (uc *ProcessStripeWebhookUsecase) handleCustomerSubscriptionDeleted(ctx context.Context, event *stripe.Event, webhookEventID int64) error {
+func (uc *ProcessStripeWebhookUsecase) handleCustomerSubscriptionDeleted(ctx context.Context, event *stripe.Event, webhookEventID model.StripeWebhookEventID) error {
 	slog.InfoContext(ctx, "customer.subscription.deletedイベントを受信",
 		"stripe_event_id", event.ID,
 	)

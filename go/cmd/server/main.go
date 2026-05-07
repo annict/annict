@@ -217,6 +217,9 @@ func main() {
 	// セッションマネージャーの初期化
 	sessionManager := session.NewManager(sessionRepo, cfg)
 
+	// フラッシュマネージャーの初期化
+	flashMgr := session.NewFlashManager(cfg.CookieDomain, cfg.SessionSecure == "true")
+
 	// 認証ミドルウェアの初期化
 	authMW := authMiddleware.NewAuthMiddleware(sessionManager)
 
@@ -281,8 +284,15 @@ func main() {
 	csrfMiddleware := authMiddleware.NewCSRFMiddleware(sessionManager)
 	r.Use(csrfMiddleware.Middleware)
 
+	// フラッシュミドルウェアは CSRF 検証後・全ハンドラー前に配置する。
+	// CSRF が失敗するリクエストでは flash Cookie を読み取らない（=クリアしない）ため、
+	// 次回リクエストでも flash が失われない。
+	r.Use(flashMgr.Middleware)
+
 	// リポジトリの初期化
 	workRepo := repository.NewWorkRepository(queries)
+	castRepo := repository.NewCastRepository(queries)
+	staffRepo := repository.NewStaffRepository(queries)
 	userCalendarRepo := repository.NewUserCalendarRepository(queries)
 
 	// ヘルスチェックハンドラーの初期化
@@ -294,8 +304,8 @@ func main() {
 
 	// 人気作品ハンドラーの初期化
 	imageHelper := image.NewHelper(cfg)
-	getPopularWorksUC := usecase.NewGetPopularWorksUsecase(workRepo)
-	popularWorkHandler := popular_work.NewHandler(cfg, getPopularWorksUC, imageHelper, sessionManager)
+	getPopularWorksUC := usecase.NewGetPopularWorksUsecase(workRepo, castRepo, staffRepo)
+	popularWorkHandler := popular_work.NewHandler(cfg, getPopularWorksUC, imageHelper)
 
 	// iCalendar配信ハンドラーの初期化
 	getUserCalendarUC := usecase.NewGetUserCalendarUsecase(userCalendarRepo)
@@ -325,17 +335,17 @@ func main() {
 	turnstileClient := turnstile.NewClient(cfg.TurnstileSiteKey, cfg.TurnstileSecretKey)
 
 	// サインインハンドラーの初期化
-	signInHandler := sign_in.NewHandler(cfg, sessionManager, sendSignInCodeUC, turnstileClient)
+	signInHandler := sign_in.NewHandler(cfg, sessionManager, flashMgr, sendSignInCodeUC, turnstileClient)
 
 	// 新規登録ハンドラーの初期化
-	signUpHandler := sign_up.NewHandler(cfg, sessionManager, limiter, sendSignUpCodeUC, turnstileClient)
+	signUpHandler := sign_up.NewHandler(cfg, sessionManager, flashMgr, limiter, sendSignUpCodeUC, turnstileClient)
 
 	// 新規登録確認コード検証ユースケースの初期化
 	signUpCodeValidator := validator.NewSignUpCodeCreateValidator()
 	verifySignUpCodeUC := usecase.NewVerifySignUpCodeUsecase(db, signUpCodeRepo, signUpCodeValidator)
 
 	// 新規登録確認コード入力ハンドラーの初期化
-	signUpCodeHandler := sign_up_code.NewHandler(cfg, sessionManager, db, limiter, redisClient, sendSignUpCodeUC, verifySignUpCodeUC)
+	signUpCodeHandler := sign_up_code.NewHandler(cfg, sessionManager, flashMgr, db, limiter, redisClient, sendSignUpCodeUC, verifySignUpCodeUC)
 
 	// ユーザー名設定とユーザー登録ハンドラーの初期化
 	profileRepo := repository.NewProfileRepository(queries)
@@ -343,18 +353,18 @@ func main() {
 	emailNotificationRepo := repository.NewEmailNotificationRepository(queries)
 	signUpUsernameValidator := validator.NewSignUpUsernameCreateValidator()
 	completeSignUpUC := usecase.NewCompleteSignUpUsecase(db, userRepo, profileRepo, settingRepo, emailNotificationRepo, sessionRepo, redisClient, signUpUsernameValidator)
-	signUpUsernameHandler := sign_up_username.NewHandler(cfg, sessionManager, redisClient, completeSignUpUC)
+	signUpUsernameHandler := sign_up_username.NewHandler(cfg, sessionManager, flashMgr, redisClient, completeSignUpUC)
 
 	// 6桁コード入力ハンドラーの初期化
 	signInCodeValidator := validator.NewSignInCodeCreateValidator()
 	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, signInCodeValidator)
 	createSessionUC := usecase.NewCreateSessionUsecase(sessionRepo)
-	signInCodeHandler := sign_in_code.NewHandler(cfg, sessionManager, limiter, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
+	signInCodeHandler := sign_in_code.NewHandler(cfg, sessionManager, flashMgr, limiter, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
 
 	// パスワードログインハンドラーの初期化
 	signInPasswordValidator := validator.NewSignInPasswordCreateValidator(userRepo)
 	authenticateByPasswordUC := usecase.NewAuthenticateByPasswordUsecase(createSessionUC, signInPasswordValidator)
-	signInPasswordHandler := sign_in_password.NewHandler(cfg, sessionManager, authenticateByPasswordUC)
+	signInPasswordHandler := sign_in_password.NewHandler(cfg, sessionManager, flashMgr, authenticateByPasswordUC)
 
 	// ログアウトハンドラーの初期化
 	signOutHandler := sign_out.NewHandler(sessionManager)
@@ -369,7 +379,7 @@ func main() {
 	updatePasswordValidator := validator.NewPasswordUpdateValidator()
 	getPasswordResetTokenUC := usecase.NewGetPasswordResetTokenUsecase(passwordResetTokenRepo)
 	updatePasswordUC := usecase.NewUpdatePasswordResetUsecase(db, passwordResetTokenRepo, userRepo, sessionRepo, updatePasswordValidator)
-	passwordHandler := password.NewHandler(cfg, sessionManager, limiter, getPasswordResetTokenUC, updatePasswordUC)
+	passwordHandler := password.NewHandler(cfg, sessionManager, flashMgr, limiter, getPasswordResetTokenUC, updatePasswordUC)
 
 	// Web App Manifestハンドラーの初期化
 	manifestHandler := manifest.NewHandler(cfg)
@@ -390,11 +400,11 @@ func main() {
 	// Stripe Checkoutハンドラーの初期化
 	createSupportersCheckoutValidator := validator.NewSupportersCheckoutCreateValidator()
 	createCheckoutSessionUC := usecase.NewCreateCheckoutSessionUsecase(cfg, stripeSubscriberRepo, annictStripeCfg, stripeClient, createSupportersCheckoutValidator)
-	supportersCheckoutHandler := supporters_checkout.NewHandler(sessionManager, createCheckoutSessionUC)
+	supportersCheckoutHandler := supporters_checkout.NewHandler(flashMgr, createCheckoutSessionUC)
 
 	// Stripe Customer Portalハンドラーの初期化
 	createPortalSessionUC := usecase.NewCreatePortalSessionUsecase(cfg, stripeSubscriberRepo, stripeClient)
-	supportersPortalHandler := supporters_portal.NewHandler(sessionManager, createPortalSessionUC)
+	supportersPortalHandler := supporters_portal.NewHandler(flashMgr, createPortalSessionUC)
 
 	// Stripe Webhookハンドラーの初期化
 	stripeWebhookEventRepo := repository.NewStripeWebhookEventRepository(queries)
@@ -451,7 +461,7 @@ func main() {
 	listDbWorksUC := usecase.NewListDbWorksUsecase(workRepo)
 	getDbWorkFormOptionsUC := usecase.NewGetDbWorkFormOptionsUsecase(numberFormatRepo)
 	createWorkUC := usecase.NewCreateWorkUsecase(db, workRepo, validator.NewDbWorkCreateValidator())
-	dbWorkHandler := db_work.NewHandler(cfg, sessionManager, listDbWorksUC, getDbWorkFormOptionsUC, createWorkUC)
+	dbWorkHandler := db_work.NewHandler(cfg, sessionManager, flashMgr, listDbWorksUC, getDbWorkFormOptionsUC, createWorkUC)
 	r.Get("/db/works", dbWorkHandler.Index)
 	r.Get("/db/works/new", dbWorkHandler.New)
 	r.Post("/db/works", dbWorkHandler.Create)

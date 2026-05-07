@@ -14,8 +14,10 @@ import (
 )
 
 func TestShow(t *testing.T) {
+	t.Parallel()
+
 	// テストDBとトランザクションをセットアップ
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 
 	// 設定を作成
 	cfg := &config.Config{

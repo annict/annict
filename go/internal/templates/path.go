@@ -4,6 +4,8 @@ import (
 	"fmt"
 
 	"github.com/a-h/templ"
+
+	"github.com/annict/annict/go/internal/viewmodel"
 )
 
 // Path はURLのパスを表す型です
@@ -30,6 +32,6 @@ func DBWorksNewPath() Path {
 }
 
 // DBWorkPath はDB管理画面の作品詳細のパスを生成します
-func DBWorkPath(id int64) Path {
-	return Path(fmt.Sprintf("/db/works/%d", id))
+func DBWorkPath(id viewmodel.WorkID) Path {
+	return Path(fmt.Sprintf("/db/works/%s", id))
 }

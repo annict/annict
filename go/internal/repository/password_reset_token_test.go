@@ -10,9 +10,11 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// TestPasswordResetTokenRepository_Create はトークンを正常に作成できることをテスト
+// TestPasswordResetTokenRepository_Create はトークンを正常に作成し、Modelとして返却されることをテスト
 func TestPasswordResetTokenRepository_Create(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewPasswordResetTokenRepository(queries)
 
@@ -28,22 +30,31 @@ func TestPasswordResetTokenRepository_Create(t *testing.T) {
 		t.Fatalf("Createに失敗: %v", err)
 	}
 
+	if token == nil {
+		t.Fatal("tokenがnilです")
+	}
+	if token.ID == 0 {
+		t.Error("PasswordResetTokenIDがゼロ値です")
+	}
 	if token.UserID != userID {
 		t.Errorf("UserIDが一致しません: got %v, want %v", token.UserID, userID)
 	}
-
 	if token.TokenDigest != tokenDigest {
 		t.Errorf("TokenDigestが一致しません: got %v, want %v", token.TokenDigest, tokenDigest)
 	}
-
-	if token.ID == 0 {
-		t.Error("IDが0です")
+	if token.UsedAt.Valid {
+		t.Error("UsedAtが有効値です（未使用のはず）")
+	}
+	if token.CreatedAt.IsZero() {
+		t.Error("CreatedAtがゼロ値です")
 	}
 }
 
 // TestPasswordResetTokenRepository_DeleteUnusedByUserID は未使用トークンが削除されることをテスト
 func TestPasswordResetTokenRepository_DeleteUnusedByUserID(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewPasswordResetTokenRepository(queries)
 
@@ -53,25 +64,22 @@ func TestPasswordResetTokenRepository_DeleteUnusedByUserID(t *testing.T) {
 
 	// 未使用トークンを2つ作成
 	expiresAt := time.Now().Add(1 * time.Hour)
-	_, err := repo.Create(context.Background(), userID, "digest1", expiresAt)
-	if err != nil {
+	if _, err := repo.Create(context.Background(), userID, "digest1", expiresAt); err != nil {
 		t.Fatalf("トークン1の作成に失敗: %v", err)
 	}
-	_, err = repo.Create(context.Background(), userID, "digest2", expiresAt)
-	if err != nil {
+	if _, err := repo.Create(context.Background(), userID, "digest2", expiresAt); err != nil {
 		t.Fatalf("トークン2の作成に失敗: %v", err)
 	}
 
 	// 未使用トークンを削除
-	err = repo.DeleteUnusedByUserID(context.Background(), userID)
-	if err != nil {
+	if err := repo.DeleteUnusedByUserID(context.Background(), userID); err != nil {
 		t.Fatalf("DeleteUnusedByUserIDに失敗: %v", err)
 	}
 
 	// トークンが削除されたことを確認
-	tokens, err := queries.GetPasswordResetTokensByUserID(context.Background(), userID)
+	tokens, err := repo.GetByUserID(context.Background(), userID)
 	if err != nil {
-		t.Fatalf("トークン一覧の取得に失敗: %v", err)
+		t.Fatalf("GetByUserIDに失敗: %v", err)
 	}
 
 	if len(tokens) != 0 {
@@ -81,7 +89,9 @@ func TestPasswordResetTokenRepository_DeleteUnusedByUserID(t *testing.T) {
 
 // TestPasswordResetTokenRepository_DeleteUnusedByUserID_KeepsUsedTokens は使用済みトークンが残ることをテスト
 func TestPasswordResetTokenRepository_DeleteUnusedByUserID_KeepsUsedTokens(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewPasswordResetTokenRepository(queries)
 
@@ -92,8 +102,7 @@ func TestPasswordResetTokenRepository_DeleteUnusedByUserID_KeepsUsedTokens(t *te
 	expiresAt := time.Now().Add(1 * time.Hour)
 
 	// 未使用トークンを作成
-	_, err := repo.Create(context.Background(), userID, "unused_digest", expiresAt)
-	if err != nil {
+	if _, err := repo.Create(context.Background(), userID, "unused_digest", expiresAt); err != nil {
 		t.Fatalf("未使用トークンの作成に失敗: %v", err)
 	}
 
@@ -102,21 +111,19 @@ func TestPasswordResetTokenRepository_DeleteUnusedByUserID_KeepsUsedTokens(t *te
 	if err != nil {
 		t.Fatalf("使用済みトークンの作成に失敗: %v", err)
 	}
-	err = queries.MarkPasswordResetTokenAsUsed(context.Background(), usedToken.ID)
-	if err != nil {
+	if err := repo.MarkAsUsed(context.Background(), usedToken.ID); err != nil {
 		t.Fatalf("トークンの使用済みマークに失敗: %v", err)
 	}
 
 	// 未使用トークンを削除
-	err = repo.DeleteUnusedByUserID(context.Background(), userID)
-	if err != nil {
+	if err := repo.DeleteUnusedByUserID(context.Background(), userID); err != nil {
 		t.Fatalf("DeleteUnusedByUserIDに失敗: %v", err)
 	}
 
 	// 使用済みトークンのみ残っていることを確認
-	tokens, err := queries.GetPasswordResetTokensByUserID(context.Background(), userID)
+	tokens, err := repo.GetByUserID(context.Background(), userID)
 	if err != nil {
-		t.Fatalf("トークン一覧の取得に失敗: %v", err)
+		t.Fatalf("GetByUserIDに失敗: %v", err)
 	}
 
 	if len(tokens) != 1 {
@@ -126,11 +133,16 @@ func TestPasswordResetTokenRepository_DeleteUnusedByUserID_KeepsUsedTokens(t *te
 	if tokens[0].TokenDigest != "used_digest" {
 		t.Errorf("残っているトークンが正しくありません: got %v, want used_digest", tokens[0].TokenDigest)
 	}
+	if !tokens[0].UsedAt.Valid {
+		t.Error("使用済みトークンの UsedAt が有効値ではありません")
+	}
 }
 
 // TestPasswordResetTokenRepository_WithTx はWithTxで取得したRepositoryがトランザクション内で動作することをテスト
 func TestPasswordResetTokenRepository_WithTx(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db)
 	repo := repository.NewPasswordResetTokenRepository(queries)
 

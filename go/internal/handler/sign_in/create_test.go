@@ -61,19 +61,17 @@ func TestHandler_Create(t *testing.T) {
 			name:          "異常系 - メールアドレスが空",
 			email:         "",
 			userExists:    false,
-			wantStatus:    http.StatusSeeOther,
-			wantLocation:  "/sign_in",
+			wantStatus:    http.StatusUnprocessableEntity,
 			wantFormError: true,
-			description:   "メールアドレスが空の場合、バリデーションエラーで /sign_in へリダイレクト",
+			description:   "メールアドレスが空の場合、422 でフォームを再描画する",
 		},
 		{
 			name:          "異常系 - ユーザーが存在しない",
 			email:         "notfound@example.com",
 			userExists:    false,
-			wantStatus:    http.StatusSeeOther,
-			wantLocation:  "/sign_in",
+			wantStatus:    http.StatusUnprocessableEntity,
 			wantFormError: true,
-			description:   "ユーザーが存在しない場合、エラーメッセージを表示して /sign_in へリダイレクト",
+			description:   "ユーザーが存在しない場合、422 でフォームを再描画する",
 		},
 	}
 
@@ -86,7 +84,7 @@ func TestHandler_Create(t *testing.T) {
 			}
 
 			// テスト用DBとトランザクションをセットアップ
-			db, tx := testutil.SetupTestDB(t)
+			db, tx := testutil.SetupTx(t)
 
 			// テスト用ユーザーを作成
 			var testEmail string
@@ -146,7 +144,7 @@ func TestHandler_Create(t *testing.T) {
 			turnstileClient := turnstile.NewClient("", "")
 
 			// ハンドラーを作成
-			handler := NewHandler(cfg, sessionMgr, sendSignInCodeUC, turnstileClient)
+			handler := NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), sendSignInCodeUC, turnstileClient)
 
 			// テスト用HTTPリクエストを作成
 			form := url.Values{}

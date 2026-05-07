@@ -7,7 +7,6 @@ import (
 	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/redirect"
-	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/usecase"
 )
 
@@ -32,10 +31,11 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	// フォームデータを取得
 	if err := r.ParseForm(); err != nil {
 		slog.ErrorContext(ctx, "フォームパースエラー", "error", err)
-		h.sessionMgr.SetFlash(w, session.FlashError, i18n.T(ctx, "sign_in_error_parse_form"))
-		http.Redirect(w, r, "/sign_in/password", http.StatusSeeOther)
+		http.Error(w, "Bad Request", http.StatusBadRequest)
 		return
 	}
+
+	backURL := r.FormValue("back")
 
 	// UseCase を実行
 	output, err := h.authenticateByPasswordUC.Execute(ctx, usecase.AuthenticateByPasswordInput{
@@ -44,15 +44,11 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	})
 	if err != nil {
 		if ve := model.AsValidationError(err); ve != nil {
-			if err := h.sessionMgr.SetValidationError(ctx, w, r, *ve); err != nil {
-				slog.ErrorContext(ctx, "フォームエラーの設定に失敗", "error", err)
-			}
-			http.Redirect(w, r, "/sign_in/password", http.StatusSeeOther)
+			h.renderNewForm(w, r, http.StatusUnprocessableEntity, ve, email, backURL)
 			return
 		}
 		slog.ErrorContext(ctx, "パスワード認証に失敗しました", "error", err)
-		h.sessionMgr.SetFlash(w, session.FlashError, i18n.T(ctx, "sign_in_error_server"))
-		http.Redirect(w, r, "/sign_in/password", http.StatusSeeOther)
+		http.Error(w, i18n.T(ctx, "sign_in_error_server"), http.StatusInternalServerError)
 		return
 	}
 
@@ -68,10 +64,9 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	h.sessionMgr.SetSessionCookieByPublicID(w, r, output.PublicID)
 
 	// ログイン成功のフラッシュメッセージを設定
-	h.sessionMgr.SetFlash(w, session.FlashSuccess, i18n.T(ctx, "sign_in_success"))
+	h.flashMgr.SetSuccess(w, i18n.T(ctx, "sign_in_success"))
 
 	// ログイン後のリダイレクト先を取得（バリデーション付き）
-	backURL := r.FormValue("back")
 	redirectTo := redirect.GetSafeRedirectURL(backURL)
 
 	http.Redirect(w, r, redirectTo, http.StatusSeeOther)

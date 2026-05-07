@@ -132,18 +132,18 @@ func (uc *CompleteSignUpUsecase) Execute(
 	}
 
 	// プロフィールを作成（name: ユーザー名、description: 空文字列）
-	if err := profileRepo.Create(ctx, user.ID, input.Username); err != nil {
+	if _, err := profileRepo.Create(ctx, user.ID, input.Username); err != nil {
 		return nil, fmt.Errorf("プロフィール作成に失敗: %w", err)
 	}
 
 	// 設定を作成（privacy_policy_agreed: true、その他はデフォルト値）
-	if err := settingRepo.Create(ctx, user.ID); err != nil {
+	if _, err := settingRepo.Create(ctx, user.ID); err != nil {
 		return nil, fmt.Errorf("設定作成に失敗: %w", err)
 	}
 
 	// メール通知設定を作成（unsubscription_key: UUID）
 	unsubscriptionKey := fmt.Sprintf("%s-%s", uuid.New().String(), uuid.New().String())
-	if err := emailNotificationRepo.Create(ctx, user.ID, unsubscriptionKey); err != nil {
+	if _, err := emailNotificationRepo.Create(ctx, user.ID, unsubscriptionKey); err != nil {
 		return nil, fmt.Errorf("メール通知設定作成に失敗: %w", err)
 	}
 

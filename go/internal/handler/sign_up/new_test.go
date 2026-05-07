@@ -17,9 +17,10 @@ import (
 
 // TestNew は新規登録フォーム表示のテスト
 func TestNew(t *testing.T) {
+	t.Parallel()
+
 	// テスト用DBとトランザクションをセットアップ
-	db, tx := testutil.SetupTestDB(t)
-	defer func() { _ = tx.Rollback() }()
+	db, tx := testutil.SetupTx(t)
 
 	// 設定を読み込む
 	cfg, err := config.Load()
@@ -40,7 +41,7 @@ func TestNew(t *testing.T) {
 	turnstileClient := turnstile.NewClient("test-site-key", "test-secret-key")
 
 	// ハンドラーの初期化
-	handler := sign_up.NewHandler(cfg, sessionMgr, nil, sendSignUpCodeUC, turnstileClient)
+	handler := sign_up.NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), nil, sendSignUpCodeUC, turnstileClient)
 
 	// リクエストを作成
 	req := httptest.NewRequest("GET", "/sign_up", nil)

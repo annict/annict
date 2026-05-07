@@ -15,7 +15,9 @@ import (
 
 // TestNew_PageMeta はパスワードリセット申請ページのPageMeta設定をテストします
 func TestNew_PageMeta(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 
 	if err := tx.Commit(); err != nil {
 		t.Fatalf("トランザクションのコミットに失敗: %v", err)

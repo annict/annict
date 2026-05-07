@@ -19,7 +19,9 @@ import (
 )
 
 func TestCreate(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := testutil.NewQueriesWithTx(db, tx)
 	cfg := &config.Config{
 		Env:           "test",
@@ -38,7 +40,7 @@ func TestCreate(t *testing.T) {
 	signUpUsernameValidator := validator.NewSignUpUsernameCreateValidator()
 	completeSignUpUC := usecase.NewCompleteSignUpUsecase(db, userRepo, profileRepo, settingRepo, emailNotificationRepo, repository.NewSessionRepository(queries), rdb, signUpUsernameValidator)
 
-	handler := NewHandler(cfg, sessionMgr, rdb, completeSignUpUC)
+	handler := NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), rdb, completeSignUpUC)
 
 	tests := []struct {
 		name           string
@@ -62,7 +64,7 @@ func TestCreate(t *testing.T) {
 			setupRedis: func() {
 				rdb.Set(context.Background(), "sign_up_token:valid_token", "test@example.com", 0)
 			},
-			expectedStatus: http.StatusSeeOther,
+			expectedStatus: http.StatusUnprocessableEntity,
 			checkUser:      false,
 		},
 		{
@@ -72,7 +74,7 @@ func TestCreate(t *testing.T) {
 			setupRedis: func() {
 				rdb.Set(context.Background(), "sign_up_token:valid_token2", "test2@example.com", 0)
 			},
-			expectedStatus: http.StatusSeeOther,
+			expectedStatus: http.StatusUnprocessableEntity,
 			checkUser:      false,
 		},
 		{
@@ -142,7 +144,9 @@ func TestCreate(t *testing.T) {
 }
 
 func TestCreate_UsernameTaken(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := testutil.NewQueriesWithTx(db, tx)
 	cfg := &config.Config{
 		Env:           "test",
@@ -161,7 +165,7 @@ func TestCreate_UsernameTaken(t *testing.T) {
 	signUpUsernameValidator := validator.NewSignUpUsernameCreateValidator()
 	completeSignUpUC := usecase.NewCompleteSignUpUsecase(db, userRepo, profileRepo, settingRepo, emailNotificationRepo, repository.NewSessionRepository(queries), rdb, signUpUsernameValidator)
 
-	handler := NewHandler(cfg, sessionMgr, rdb, completeSignUpUC)
+	handler := NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), rdb, completeSignUpUC)
 
 	// 既存ユーザーを作成
 	existingUser := testutil.NewUserBuilder(t, tx).
@@ -189,9 +193,9 @@ func TestCreate_UsernameTaken(t *testing.T) {
 
 	handler.Create(rr, req)
 
-	// リダイレクトされるべき
-	if rr.Code != http.StatusSeeOther {
-		t.Errorf("ステータスコードが一致しません: got %v want %v", rr.Code, http.StatusSeeOther)
+	// 重複ユーザー名はバリデーションエラー → 422 でフォーム再描画
+	if rr.Code != http.StatusUnprocessableEntity {
+		t.Errorf("ステータスコードが一致しません: got %v want %v", rr.Code, http.StatusUnprocessableEntity)
 	}
 
 	// 新しいユーザーは作成されていないはず

@@ -32,7 +32,7 @@ func TestNew_WithBackParameter(t *testing.T) {
 	t.Parallel()
 
 	// テスト用DBをセットアップ
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 
 	// テスト用の設定
@@ -42,7 +42,7 @@ func TestNew_WithBackParameter(t *testing.T) {
 	sessionMgr := setupTestSessionManager(t, queries)
 
 	// ハンドラーを作成（New()はUseCaseを使わないのでnilでOK）
-	h := NewHandler(cfg, sessionMgr, nil, nil)
+	h := NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), nil, nil)
 
 	tests := []struct {
 		name        string
@@ -101,7 +101,7 @@ func TestCreate_BackParameterRedirect(t *testing.T) {
 	t.Parallel()
 
 	// テスト用DBをセットアップ
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 
 	// パスワードありのユーザーを作成
@@ -126,7 +126,7 @@ func TestCreate_BackParameterRedirect(t *testing.T) {
 	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), repository.NewUserRepository(queries), nil, v)
 
 	// ハンドラーを作成
-	h := NewHandler(cfg, sessionMgr, sendSignInCodeUC, turnstileClient)
+	h := NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), sendSignInCodeUC, turnstileClient)
 
 	tests := []struct {
 		name             string
@@ -185,7 +185,7 @@ func TestCreate_BackParameterRedirectToCode(t *testing.T) {
 	// パスワードなしユーザーの場合、トランザクションをコミットするため並列実行を無効化
 
 	// テスト用DBをセットアップ
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 
 	// ユニークなメールアドレスとユーザー名を生成
 	uniqueID := time.Now().UnixNano()
@@ -231,7 +231,7 @@ func TestCreate_BackParameterRedirectToCode(t *testing.T) {
 	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), repository.NewUserRepository(queries), nil, v)
 
 	// ハンドラーを作成
-	h := NewHandler(cfg, sessionMgr, sendSignInCodeUC, turnstileClient)
+	h := NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), sendSignInCodeUC, turnstileClient)
 
 	// フォームデータを作成
 	backURL := "/oauth/authorize?client_id=xxx"
@@ -266,7 +266,7 @@ func TestCreate_ValidationErrorPreservesBackParameter(t *testing.T) {
 	t.Parallel()
 
 	// テスト用DBをセットアップ
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 
 	// テスト用の設定
@@ -283,7 +283,7 @@ func TestCreate_ValidationErrorPreservesBackParameter(t *testing.T) {
 	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), repository.NewUserRepository(queries), nil, v)
 
 	// ハンドラーを作成
-	h := NewHandler(cfg, sessionMgr, sendSignInCodeUC, turnstileClient)
+	h := NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), sendSignInCodeUC, turnstileClient)
 
 	// フォームデータを作成（メールアドレスが空）
 	backURL := "/oauth/authorize?client_id=xxx"
@@ -301,15 +301,15 @@ func TestCreate_ValidationErrorPreservesBackParameter(t *testing.T) {
 	// ハンドラーを実行
 	h.Create(rr, req)
 
-	// リダイレクトを確認
-	if rr.Code != http.StatusSeeOther {
-		t.Errorf("ステータスコード: got %d, want %d", rr.Code, http.StatusSeeOther)
+	// バリデーションエラー時は 422 でフォームを再描画する
+	if rr.Code != http.StatusUnprocessableEntity {
+		t.Errorf("ステータスコード: got %d, want %d", rr.Code, http.StatusUnprocessableEntity)
 	}
 
-	// backパラメータが保持されていることを確認
-	wantRedirectPath := "/sign_in?back=%2Foauth%2Fauthorize%3Fclient_id%3Dxxx"
-	location := rr.Header().Get("Location")
-	if location != wantRedirectPath {
-		t.Errorf("リダイレクト先が異なります\ngot: %s\nwant: %s", location, wantRedirectPath)
+	// 再描画されたフォームに back パラメータが保持されていることを確認
+	wantHidden := `name="back" value="/oauth/authorize?client_id=xxx"`
+	body := rr.Body.String()
+	if !strings.Contains(body, wantHidden) {
+		t.Errorf("再描画フォームに back パラメータが含まれていません\nwant: %s", wantHidden)
 	}
 }

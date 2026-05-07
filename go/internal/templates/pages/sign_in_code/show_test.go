@@ -43,7 +43,11 @@ func TestSignInCodeShow_BackURLHiddenField(t *testing.T) {
 
 			// テンプレートをレンダリング
 			var buf bytes.Buffer
-			component := SignInCodeShow(ctx, "test@example.com", nil, "test-csrf-token", tt.backURL)
+			component := Show(ShowPageData{
+				CSRFToken: "test-csrf-token",
+				Email:     "test@example.com",
+				BackURL:   tt.backURL,
+			})
 			err := component.Render(ctx, &buf)
 			if err != nil {
 				t.Fatalf("テンプレートレンダリングエラー: %v", err)
@@ -68,7 +72,11 @@ func TestSignInCodeShow_BackURLInResendForm(t *testing.T) {
 
 	// テンプレートをレンダリング
 	var buf bytes.Buffer
-	component := SignInCodeShow(ctx, "test@example.com", nil, "test-csrf-token", backURL)
+	component := Show(ShowPageData{
+		CSRFToken: "test-csrf-token",
+		Email:     "test@example.com",
+		BackURL:   backURL,
+	})
 	err := component.Render(ctx, &buf)
 	if err != nil {
 		t.Fatalf("テンプレートレンダリングエラー: %v", err)
