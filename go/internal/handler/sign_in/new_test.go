@@ -19,7 +19,7 @@ import (
 func TestNew(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := testutil.NewQueriesWithTx(db, tx)
 
 	// 設定とセッションマネージャーを作成
@@ -39,7 +39,7 @@ func TestNew(t *testing.T) {
 	// Turnstile クライアントを作成（テスト環境用: 空のSecretKeyで検証をスキップ）
 	turnstileClient := turnstile.NewClient("", "")
 
-	handler := NewHandler(cfg, sessionMgr, sendSignInCodeUC, turnstileClient)
+	handler := NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), sendSignInCodeUC, turnstileClient)
 
 	// リクエストを作成
 	req := httptest.NewRequest("GET", "/sign_in", nil)

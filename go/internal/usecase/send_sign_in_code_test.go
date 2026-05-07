@@ -17,7 +17,7 @@ func TestSendSignInCodeUsecase_Execute(t *testing.T) {
 	t.Parallel()
 
 	// テスト用DBをセットアップ
-	db := testutil.GetTestDB(t)
+	db := testutil.GetTestDB()
 	queries := query.New(db)
 
 	// 別のトランザクションでテストユーザーを作成してコミット
@@ -71,9 +71,10 @@ func TestSendSignInCodeUsecase_Execute(t *testing.T) {
 	}
 
 	// データベースに保存されたコードを取得
-	savedCode, err := queries.GetValidSignInCode(ctx, result.UserID)
+	signInCodeRepo := repository.NewSignInCodeRepository(queries)
+	savedCode, err := signInCodeRepo.GetValidByUserID(ctx, result.UserID)
 	if err != nil {
-		t.Fatalf("GetValidSignInCode failed: %v", err)
+		t.Fatalf("GetValidByUserID failed: %v", err)
 	}
 
 	// コードダイジェストが bcrypt でハッシュ化されていることを確認
@@ -103,7 +104,7 @@ func TestSendSignInCodeUsecase_Execute_InvalidatesOldCodes(t *testing.T) {
 	t.Parallel()
 
 	// テスト用DBをセットアップ
-	db := testutil.GetTestDB(t)
+	db := testutil.GetTestDB()
 	queries := query.New(db)
 
 	// 別のトランザクションでテストユーザーを作成してコミット
@@ -143,9 +144,10 @@ func TestSendSignInCodeUsecase_Execute_InvalidatesOldCodes(t *testing.T) {
 	}
 
 	// 最新のコードのみが有効であることを確認
-	savedCode, err := queries.GetValidSignInCode(ctx, result2.UserID)
+	signInCodeRepo := repository.NewSignInCodeRepository(queries)
+	savedCode, err := signInCodeRepo.GetValidByUserID(ctx, result2.UserID)
 	if err != nil {
-		t.Fatalf("GetValidSignInCode failed: %v", err)
+		t.Fatalf("GetValidByUserID failed: %v", err)
 	}
 
 	// 2回目のコードが保存されていることを確認
@@ -158,7 +160,7 @@ func TestSendSignInCodeUsecase_Execute_UserNotFound(t *testing.T) {
 	t.Parallel()
 
 	// テスト用DBとトランザクションをセットアップ
-	db := testutil.GetTestDB(t)
+	db := testutil.GetTestDB()
 	queries := query.New(db)
 
 	// ユースケースを作成
@@ -179,7 +181,7 @@ func TestSendSignInCodeUsecase_Execute_ValidationError(t *testing.T) {
 	t.Parallel()
 
 	// テスト用DBをセットアップ
-	db := testutil.GetTestDB(t)
+	db := testutil.GetTestDB()
 	queries := query.New(db)
 
 	// ユースケースを作成
@@ -204,7 +206,7 @@ func TestSendSignInCodeUsecase_Execute_UserWithPassword(t *testing.T) {
 	t.Parallel()
 
 	// テスト用DBをセットアップ
-	db := testutil.GetTestDB(t)
+	db := testutil.GetTestDB()
 	queries := query.New(db)
 
 	// パスワードありのユーザーを作成

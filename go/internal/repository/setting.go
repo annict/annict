@@ -5,6 +5,7 @@ import (
 	"context"
 	"database/sql"
 
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
 )
 
@@ -24,7 +25,18 @@ func (r *SettingRepository) WithTx(tx *sql.Tx) *SettingRepository {
 }
 
 // Create は設定を作成します
-func (r *SettingRepository) Create(ctx context.Context, userID int64) error {
-	_, err := r.queries.CreateSetting(ctx, userID)
-	return err
+func (r *SettingRepository) Create(ctx context.Context, userID model.UserID) (*model.Setting, error) {
+	row, err := r.queries.CreateSetting(ctx, int64(userID))
+	if err != nil {
+		return nil, err
+	}
+
+	return &model.Setting{
+		ID:                  model.SettingID(row.ID),
+		UserID:              model.UserID(row.UserID),
+		PrivacyPolicyAgreed: row.PrivacyPolicyAgreed,
+		HideRecordBody:      row.HideRecordBody,
+		CreatedAt:           row.CreatedAt,
+		UpdatedAt:           row.UpdatedAt,
+	}, nil
 }

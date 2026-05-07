@@ -16,7 +16,9 @@ import (
 )
 
 func TestNew(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := testutil.NewQueriesWithTx(db, tx)
 	cfg := &config.Config{
 		Env:    "test",
@@ -34,7 +36,7 @@ func TestNew(t *testing.T) {
 	signUpUsernameValidator := validator.NewSignUpUsernameCreateValidator()
 	completeSignUpUC := usecase.NewCompleteSignUpUsecase(db, userRepo, profileRepo, settingRepo, emailNotificationRepo, repository.NewSessionRepository(queries), rdb, signUpUsernameValidator)
 
-	handler := NewHandler(cfg, sessionMgr, rdb, completeSignUpUC)
+	handler := NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), rdb, completeSignUpUC)
 
 	tests := []struct {
 		name           string

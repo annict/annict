@@ -6,13 +6,14 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/testutil"
 )
 
 // TestCreateOAuthTokenUsecase_Execute は Execute メソッドのテスト
 func TestCreateOAuthTokenUsecase_Execute(t *testing.T) {
 	// テストDBをセットアップ
-	db, _ := testutil.SetupTestDB(t)
+	db, _ := testutil.SetupTx(t)
 
 	// Usecaseを作成
 	uc := NewCreateOAuthTokenUsecase(db, nil)
@@ -20,7 +21,7 @@ func TestCreateOAuthTokenUsecase_Execute(t *testing.T) {
 	// テストケース
 	tests := []struct {
 		name           string
-		setupUsers     func(t *testing.T, tx *sql.Tx) []int64 // テストユーザーを作成する関数
+		setupUsers     func(t *testing.T, tx *sql.Tx) []model.UserID // テストユーザーを作成する関数
 		params         CreateOAuthTokenParams
 		wantTokenCount int
 		wantErr        bool
@@ -28,7 +29,7 @@ func TestCreateOAuthTokenUsecase_Execute(t *testing.T) {
 	}{
 		{
 			name: "正常系: アプリケーション1件 + トークン3件を作成",
-			setupUsers: func(t *testing.T, tx *sql.Tx) []int64 {
+			setupUsers: func(t *testing.T, tx *sql.Tx) []model.UserID {
 				return createTestUsersForOAuth(t, tx, 3)
 			},
 			params: CreateOAuthTokenParams{
@@ -51,7 +52,7 @@ func TestCreateOAuthTokenUsecase_Execute(t *testing.T) {
 		},
 		{
 			name: "正常系: デフォルト値でアプリケーション作成",
-			setupUsers: func(t *testing.T, tx *sql.Tx) []int64 {
+			setupUsers: func(t *testing.T, tx *sql.Tx) []model.UserID {
 				return createTestUsersForOAuth(t, tx, 2)
 			},
 			params: CreateOAuthTokenParams{
@@ -77,7 +78,7 @@ func TestCreateOAuthTokenUsecase_Execute(t *testing.T) {
 		},
 		{
 			name: "正常系: 大量のトークンを作成（150件）",
-			setupUsers: func(t *testing.T, tx *sql.Tx) []int64 {
+			setupUsers: func(t *testing.T, tx *sql.Tx) []model.UserID {
 				return createTestUsersForOAuth(t, tx, 150)
 			},
 			params: CreateOAuthTokenParams{
@@ -103,7 +104,7 @@ func TestCreateOAuthTokenUsecase_Execute(t *testing.T) {
 		},
 		{
 			name: "正常系: トークン1件のみ作成",
-			setupUsers: func(t *testing.T, tx *sql.Tx) []int64 {
+			setupUsers: func(t *testing.T, tx *sql.Tx) []model.UserID {
 				return createTestUsersForOAuth(t, tx, 1)
 			},
 			params: CreateOAuthTokenParams{
@@ -125,8 +126,7 @@ func TestCreateOAuthTokenUsecase_Execute(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// 各サブテストで新しいトランザクションを作成
-			_, tx := testutil.SetupTestDB(t)
-			defer tx.Rollback()
+			_, tx := testutil.SetupTx(t)
 
 			ctx := context.Background()
 
@@ -176,9 +176,9 @@ func TestCreateOAuthTokenUsecase_Execute(t *testing.T) {
 }
 
 // createTestUsersForOAuth テスト用のユーザーを作成するヘルパー関数（OAuth専用）
-func createTestUsersForOAuth(t *testing.T, tx *sql.Tx, count int) []int64 {
+func createTestUsersForOAuth(t *testing.T, tx *sql.Tx, count int) []model.UserID {
 	t.Helper()
-	userIDs := make([]int64, count)
+	userIDs := make([]model.UserID, count)
 	for i := 0; i < count; i++ {
 		username := fmt.Sprintf("oauth_test_user_%s_%d", t.Name(), i)
 		email := fmt.Sprintf("oauth_test_%s_%d@example.com", t.Name(), i)

@@ -2,7 +2,7 @@ package model
 
 // NumberFormat はエピソード番号のフォーマット定義です
 type NumberFormat struct {
-	ID         int64
+	ID         NumberFormatID
 	Name       string
 	SortNumber int32
 }

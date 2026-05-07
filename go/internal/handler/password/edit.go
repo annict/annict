@@ -9,6 +9,7 @@ import (
 	"github.com/annict/annict/go/internal/clientip"
 	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/middleware"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/templates/layouts"
 	errorpages "github.com/annict/annict/go/internal/templates/pages/errors"
 	passwordpages "github.com/annict/annict/go/internal/templates/pages/password"
@@ -33,7 +34,6 @@ func (h *Handler) Edit(w http.ResponseWriter, r *http.Request) {
 		allowed, err := h.limiter.Check(ctx, tokenVerifyKey, 10, 1*time.Hour)
 		if err != nil {
 			slog.ErrorContext(ctx, "Rate Limitingチェックが失敗しました", "error", err)
-			// エラーでも続行
 		} else if !allowed {
 			slog.WarnContext(ctx, "トークン検証がRate Limitingにより制限されました",
 				"ip_address", ip,
@@ -61,28 +61,32 @@ func (h *Handler) Edit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// セッションからフラッシュメッセージとバリデーションエラーを取得
-	flash := h.sessionManager.GetFlash(w, r)
-	formErrors, err := h.sessionManager.GetValidationError(ctx, r)
-	if err != nil {
-		slog.WarnContext(ctx, "バリデーションエラーの取得に失敗", "error", err)
-	}
+	h.renderEditForm(w, r, http.StatusOK, nil, token)
+}
 
-	// メタ情報を設定
+// renderEditForm は新しいパスワード入力フォームをレンダリングします。
+// バリデーションエラーが存在する場合は status に http.StatusUnprocessableEntity を渡してください。
+func (h *Handler) renderEditForm(w http.ResponseWriter, r *http.Request, status int, formErrors *model.ValidationError, token string) {
+	ctx := r.Context()
+
 	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)
 	meta.SetTitle(ctx, "password_edit_title")
 	meta.OGURL = h.cfg.AppURL() + "/password/edit"
 
-	// CSRFトークンを取得
-	csrfToken := middleware.GetCSRFToken(r, h.sessionManager)
+	csrfToken := middleware.GetCSRFToken(r, h.sessionMgr)
 
-	// テンプレートをレンダリング
+	data := passwordpages.EditPageData{
+		CSRFToken:  csrfToken,
+		Token:      token,
+		FormErrors: formErrors,
+	}
+
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	component := layouts.Simple(ctx, meta, flash, h.cfg.GetAssetVersion(), passwordpages.Edit(ctx, formErrors, csrfToken, token))
-	if err = component.Render(ctx, w); err != nil {
-		slog.Error("テンプレート実行エラー", "error", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
+	w.WriteHeader(status)
+
+	component := layouts.Simple(ctx, meta, h.cfg.GetAssetVersion(), passwordpages.Edit(data))
+	if err := component.Render(ctx, w); err != nil {
+		slog.ErrorContext(ctx, "テンプレート実行エラー", "error", err)
 	}
 }
 
@@ -90,22 +94,19 @@ func (h *Handler) Edit(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) renderInvalidTokenError(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	// メタ情報を設定
 	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)
 	meta.Title = i18n.T(ctx, "password_reset_token_invalid")
 	meta.OGURL = h.cfg.AppURL() + "/password/reset"
 
-	// バックリンクを作成
 	backLink := &errorpages.BackLink{
 		URL:  "/password/reset",
 		Text: i18n.T(ctx, "password_reset_back_to_sign_in"),
 	}
 
-	// テンプレートをレンダリング
-	w.WriteHeader(http.StatusBadRequest)
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	component := layouts.Simple(ctx, meta, nil, h.cfg.GetAssetVersion(), errorpages.Error(ctx, i18n.T(ctx, "password_reset_token_invalid"), i18n.T(ctx, "password_reset_token_invalid_message"), backLink))
+	w.WriteHeader(http.StatusBadRequest)
+	component := layouts.Simple(ctx, meta, h.cfg.GetAssetVersion(), errorpages.Error(ctx, i18n.T(ctx, "password_reset_token_invalid"), i18n.T(ctx, "password_reset_token_invalid_message"), backLink))
 	if err := component.Render(ctx, w); err != nil {
-		slog.Error("テンプレート実行エラー", "error", err)
+		slog.ErrorContext(ctx, "テンプレート実行エラー", "error", err)
 	}
 }

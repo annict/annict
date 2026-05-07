@@ -19,9 +19,10 @@ import (
 
 // TestCreate_Success は正常系のテスト
 func TestCreate_Success(t *testing.T) {
+	t.Parallel()
+
 	// テスト用DBとトランザクションをセットアップ
-	db, tx := testutil.SetupTestDB(t)
-	defer func() { _ = tx.Rollback() }()
+	db, tx := testutil.SetupTx(t)
 
 	// テスト用Redisをセットアップ
 	rdb := testutil.SetupTestRedis(t)
@@ -45,7 +46,7 @@ func TestCreate_Success(t *testing.T) {
 	turnstileClient := turnstile.NewClient("test-site-key", "test-secret-key")
 
 	// ハンドラーの初期化
-	handler := sign_up.NewHandler(cfg, sessionMgr, nil, sendSignUpCodeUC, turnstileClient)
+	handler := sign_up.NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), nil, sendSignUpCodeUC, turnstileClient)
 
 	// リクエストパラメータを作成
 	formData := url.Values{}
@@ -66,9 +67,9 @@ func TestCreate_Success(t *testing.T) {
 	// 注: Turnstile検証は実際にAPIを呼び出すため、テスト環境ではスキップされる可能性があります
 	// そのため、このテストはTurnstile検証の実装に依存します
 
-	// ステータスコードが302（リダイレクト）または400（バリデーションエラー）であることを確認
-	if rr.Code != http.StatusSeeOther && rr.Code != http.StatusBadRequest {
-		t.Errorf("予期しないステータスコード: got %v want %v or %v", rr.Code, http.StatusSeeOther, http.StatusBadRequest)
+	// ステータスコードが303（成功時のリダイレクト）または422（Turnstile検証失敗時のフォーム再描画）であることを確認
+	if rr.Code != http.StatusSeeOther && rr.Code != http.StatusUnprocessableEntity {
+		t.Errorf("予期しないステータスコード: got %v want %v or %v", rr.Code, http.StatusSeeOther, http.StatusUnprocessableEntity)
 	}
 
 	// Redisをクリーンアップ
@@ -77,9 +78,10 @@ func TestCreate_Success(t *testing.T) {
 
 // TestCreate_EmailRequired はメールアドレス必須のバリデーションテスト
 func TestCreate_EmailRequired(t *testing.T) {
+	t.Parallel()
+
 	// テスト用DBとトランザクションをセットアップ
-	db, tx := testutil.SetupTestDB(t)
-	defer func() { _ = tx.Rollback() }()
+	db, tx := testutil.SetupTx(t)
 
 	// 設定を読み込む
 	cfg, err := config.Load()
@@ -100,7 +102,7 @@ func TestCreate_EmailRequired(t *testing.T) {
 	turnstileClient := turnstile.NewClient("test-site-key", "test-secret-key")
 
 	// ハンドラーの初期化
-	handler := sign_up.NewHandler(cfg, sessionMgr, nil, sendSignUpCodeUC, turnstileClient)
+	handler := sign_up.NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), nil, sendSignUpCodeUC, turnstileClient)
 
 	// リクエストパラメータを作成（emailを空にする）
 	formData := url.Values{}
@@ -117,8 +119,8 @@ func TestCreate_EmailRequired(t *testing.T) {
 	// ハンドラーを実行
 	handler.Create(rr, req)
 
-	// ステータスコードが303（リダイレクト）であることを確認
-	if rr.Code != http.StatusSeeOther {
-		t.Errorf("予期しないステータスコード: got %v want %v", rr.Code, http.StatusSeeOther)
+	// ステータスコードが422（バリデーションエラーでフォーム再描画）であることを確認
+	if rr.Code != http.StatusUnprocessableEntity {
+		t.Errorf("予期しないステータスコード: got %v want %v", rr.Code, http.StatusUnprocessableEntity)
 	}
 }

@@ -1,29 +1,25 @@
 package popular_work
 
 import (
-	"context"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"strconv"
 	"strings"
 	"testing"
 
 	"github.com/annict/annict/go/internal/config"
 	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/repository"
-	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/testutil"
 	"github.com/annict/annict/go/internal/usecase"
 )
 
-// contextKey はcontext.WithValueで使用するキーの型
-type contextKey string
-
 // TestIndex は人気作品ページのテスト（templ対応）
 func TestIndex(t *testing.T) {
+	t.Parallel()
+
 	// テストDBとトランザクションをセットアップ
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 
 	// テストデータを作成
 	workID1 := testutil.NewWorkBuilder(t, tx).
@@ -51,16 +47,14 @@ func TestIndex(t *testing.T) {
 		Env: "test",
 	}
 
-	// sessionManagerを作成（テスト用）
-	sessionRepo := repository.NewSessionRepository(queries)
-	sessionManager := session.NewManager(sessionRepo, cfg)
-
-	// WorkRepositoryとUseCaseを作成
+	// WorkRepository, CastRepository, StaffRepository とUseCaseを作成
 	workRepo := repository.NewWorkRepository(queries)
-	getPopularWorksUC := usecase.NewGetPopularWorksUsecase(workRepo)
+	castRepo := repository.NewCastRepository(queries)
+	staffRepo := repository.NewStaffRepository(queries)
+	getPopularWorksUC := usecase.NewGetPopularWorksUsecase(workRepo, castRepo, staffRepo)
 
 	// ハンドラーを作成（templ対応版）
-	handler := NewHandler(cfg, getPopularWorksUC, testutil.NewTestImageHelper(), sessionManager)
+	handler := NewHandler(cfg, getPopularWorksUC, testutil.NewTestImageHelper())
 
 	// HTTPリクエストとレスポンスレコーダーを作成
 	req, err := http.NewRequest("GET", "/works/popular", nil)
@@ -91,9 +85,9 @@ func TestIndex(t *testing.T) {
 		"100人",   // デフォルトのwatchers数（デフォルトロケールは日本語）
 		"2024",   // シーズン年
 		"👥",      // アイコン
-		`href="/works/` + strconv.FormatInt(workID1, 10) + `"`,
-		`href="/works/` + strconv.FormatInt(workID2, 10) + `"`,
-		`href="/works/` + strconv.FormatInt(workID3, 10) + `"`,
+		`href="/works/` + workID1.String() + `"`,
+		`href="/works/` + workID2.String() + `"`,
+		`href="/works/` + workID3.String() + `"`,
 	}
 
 	for _, expected := range expectedContents {
@@ -112,8 +106,10 @@ func TestIndex(t *testing.T) {
 
 // TestIndexEmptyResult は結果が空の場合のテスト（templ対応）
 func TestIndexEmptyResult(t *testing.T) {
+	t.Parallel()
+
 	// テストDBとトランザクションをセットアップ
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 
 	// データは作成しない（空の結果をテスト）
 
@@ -124,16 +120,14 @@ func TestIndexEmptyResult(t *testing.T) {
 		Env: "test",
 	}
 
-	// sessionManagerを作成（テスト用）
-	sessionRepo := repository.NewSessionRepository(queries)
-	sessionManager := session.NewManager(sessionRepo, cfg)
-
-	// WorkRepositoryとUseCaseを作成
+	// WorkRepository, CastRepository, StaffRepository とUseCaseを作成
 	workRepo := repository.NewWorkRepository(queries)
-	getPopularWorksUC := usecase.NewGetPopularWorksUsecase(workRepo)
+	castRepo := repository.NewCastRepository(queries)
+	staffRepo := repository.NewStaffRepository(queries)
+	getPopularWorksUC := usecase.NewGetPopularWorksUsecase(workRepo, castRepo, staffRepo)
 
 	// ハンドラーを作成（templ対応版）
-	handler := NewHandler(cfg, getPopularWorksUC, testutil.NewTestImageHelper(), sessionManager)
+	handler := NewHandler(cfg, getPopularWorksUC, testutil.NewTestImageHelper())
 
 	// HTTPリクエストとレスポンスレコーダーを作成
 	req, err := http.NewRequest("GET", "/works/popular", nil)
@@ -177,7 +171,7 @@ func TestIndexEmptyResult(t *testing.T) {
 // BenchmarkIndex は人気作品ページのベンチマーク
 func BenchmarkIndex(b *testing.B) {
 	// ベンチマーク用のDBセットアップ
-	db, tx := testutil.SetupTestDB(&testing.T{})
+	db, tx := testutil.SetupTx(&testing.T{})
 
 	// 100件のテストデータを作成
 	for i := 0; i < 100; i++ {
@@ -197,23 +191,19 @@ func BenchmarkIndex(b *testing.B) {
 		Env: "test",
 	}
 
-	// WorkRepositoryとUseCaseを作成
+	// WorkRepository, CastRepository, StaffRepository とUseCaseを作成
 	workRepo := repository.NewWorkRepository(queries)
-	getPopularWorksUC := usecase.NewGetPopularWorksUsecase(workRepo)
+	castRepo := repository.NewCastRepository(queries)
+	staffRepo := repository.NewStaffRepository(queries)
+	getPopularWorksUC := usecase.NewGetPopularWorksUsecase(workRepo, castRepo, staffRepo)
 
-	// sessionManagerを作成
-	sessionRepo := repository.NewSessionRepository(queries)
-	sessionManager := session.NewManager(sessionRepo, cfg)
-
-	handler := NewHandler(cfg, getPopularWorksUC, testutil.NewTestImageHelper(), sessionManager)
+	handler := NewHandler(cfg, getPopularWorksUC, testutil.NewTestImageHelper())
 
 	b.ResetTimer()
 	b.ReportAllocs()
 
 	for i := 0; i < b.N; i++ {
 		req, _ := http.NewRequest("GET", "/works/popular", nil)
-		ctx := context.WithValue(req.Context(), contextKey("tx"), tx)
-		req = req.WithContext(ctx)
 
 		rr := httptest.NewRecorder()
 		handler.Index(rr, req)

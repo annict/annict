@@ -9,6 +9,7 @@ import (
 	"fmt"
 
 	"github.com/annict/annict/go/internal/auth"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/repository"
 )
 
@@ -24,8 +25,8 @@ func generatePublicID() (string, error) {
 
 // SessionResult セッション作成の結果
 type SessionResult struct {
-	PublicID string // Cookie値として使用するID
-	UserID   int64  // ログインユーザーID
+	PublicID string       // Cookie値として使用するID
+	UserID   model.UserID // ログインユーザーID
 }
 
 // CreateSessionUsecase セッション作成のビジネスロジック
@@ -43,7 +44,7 @@ func NewCreateSessionUsecase(sessionRepo *repository.SessionRepository) *CreateS
 // Execute セッションを作成する
 // tx: オプションでトランザクションを渡せる（nilの場合は通常のクエリ実行）
 // encryptedPassword: ユーザーのencrypted_password（authenticatable_salt生成に必要）
-func (uc *CreateSessionUsecase) Execute(ctx context.Context, tx *sql.Tx, userID int64, encryptedPassword string) (*SessionResult, error) {
+func (uc *CreateSessionUsecase) Execute(ctx context.Context, tx *sql.Tx, userID model.UserID, encryptedPassword string) (*SessionResult, error) {
 	// Public ID（Cookie値）を生成
 	publicID, err := generatePublicID()
 	if err != nil {

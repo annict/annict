@@ -15,7 +15,9 @@ import (
 
 // TestStripeWebhookEventRepository_Create は新しいWebhookイベントを作成できることをテスト
 func TestStripeWebhookEventRepository_Create(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewStripeWebhookEventRepository(queries)
 
@@ -49,7 +51,9 @@ func TestStripeWebhookEventRepository_Create(t *testing.T) {
 
 // TestStripeWebhookEventRepository_GetByStripeEventID はStripeイベントIDで取得できることをテスト
 func TestStripeWebhookEventRepository_GetByStripeEventID(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewStripeWebhookEventRepository(queries)
 
@@ -71,7 +75,9 @@ func TestStripeWebhookEventRepository_GetByStripeEventID(t *testing.T) {
 
 // TestStripeWebhookEventRepository_GetByStripeEventID_NotFound は存在しないイベントIDの場合エラーが返ることをテスト
 func TestStripeWebhookEventRepository_GetByStripeEventID_NotFound(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewStripeWebhookEventRepository(queries)
 
@@ -86,7 +92,9 @@ func TestStripeWebhookEventRepository_GetByStripeEventID_NotFound(t *testing.T) 
 
 // TestStripeWebhookEventRepository_UpdateStatus はステータスを更新できることをテスト
 func TestStripeWebhookEventRepository_UpdateStatus(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewStripeWebhookEventRepository(queries)
 
@@ -99,7 +107,7 @@ func TestStripeWebhookEventRepository_UpdateStatus(t *testing.T) {
 	// ステータスを更新
 	now := time.Now()
 	err := repo.UpdateStatus(context.Background(), query.UpdateStripeWebhookEventStatusParams{
-		ID:           eventID,
+		ID:           int64(eventID),
 		Status:       model.WebhookEventStatusProcessed.String(),
 		ErrorMessage: sql.NullString{},
 		ProcessedAt:  sql.NullTime{Time: now, Valid: true},
@@ -124,7 +132,9 @@ func TestStripeWebhookEventRepository_UpdateStatus(t *testing.T) {
 
 // TestStripeWebhookEventRepository_MarkAsProcessed は処理完了としてマークできることをテスト
 func TestStripeWebhookEventRepository_MarkAsProcessed(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewStripeWebhookEventRepository(queries)
 
@@ -155,7 +165,9 @@ func TestStripeWebhookEventRepository_MarkAsProcessed(t *testing.T) {
 
 // TestStripeWebhookEventRepository_MarkAsFailed は処理失敗としてマークできることをテスト
 func TestStripeWebhookEventRepository_MarkAsFailed(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewStripeWebhookEventRepository(queries)
 
@@ -193,7 +205,9 @@ func TestStripeWebhookEventRepository_MarkAsFailed(t *testing.T) {
 
 // TestStripeWebhookEventRepository_MarkAsSkipped は処理スキップとしてマークできることをテスト
 func TestStripeWebhookEventRepository_MarkAsSkipped(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewStripeWebhookEventRepository(queries)
 
@@ -224,7 +238,9 @@ func TestStripeWebhookEventRepository_MarkAsSkipped(t *testing.T) {
 
 // TestStripeWebhookEventRepository_Exists はイベントの存在確認ができることをテスト
 func TestStripeWebhookEventRepository_Exists(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewStripeWebhookEventRepository(queries)
 

@@ -14,7 +14,9 @@ import (
 
 // TestGumroadSubscriberRepository_GetByID はIDでGumroadサブスクライバーを取得できることをテスト
 func TestGumroadSubscriberRepository_GetByID(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewGumroadSubscriberRepository(queries)
 
@@ -39,7 +41,9 @@ func TestGumroadSubscriberRepository_GetByID(t *testing.T) {
 
 // TestGumroadSubscriberRepository_GetByID_NotFound は存在しないIDの場合エラーが返ることをテスト
 func TestGumroadSubscriberRepository_GetByID_NotFound(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewGumroadSubscriberRepository(queries)
 
@@ -51,6 +55,8 @@ func TestGumroadSubscriberRepository_GetByID_NotFound(t *testing.T) {
 
 // TestGumroadSubscriberRepository_IsActive はアクティブ判定が正しく動作することをテスト
 func TestGumroadSubscriberRepository_IsActive(t *testing.T) {
+	t.Parallel()
+
 	repo := repository.NewGumroadSubscriberRepository(nil)
 	now := time.Now()
 	past := now.AddDate(0, 0, -1)

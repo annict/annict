@@ -11,6 +11,7 @@ import (
 type Handler struct {
 	cfg                    *config.Config
 	sessionManager         *session.Manager
+	flashMgr               *session.FlashManager
 	listDbWorksUC          *usecase.ListDbWorksUsecase
 	getDbWorkFormOptionsUC *usecase.GetDbWorkFormOptionsUsecase
 	createWorkUC           *usecase.CreateWorkUsecase
@@ -20,6 +21,7 @@ type Handler struct {
 func NewHandler(
 	cfg *config.Config,
 	sessionManager *session.Manager,
+	flashMgr *session.FlashManager,
 	listDbWorksUC *usecase.ListDbWorksUsecase,
 	getDbWorkFormOptionsUC *usecase.GetDbWorkFormOptionsUsecase,
 	createWorkUC *usecase.CreateWorkUsecase,
@@ -27,6 +29,7 @@ func NewHandler(
 	return &Handler{
 		cfg:                    cfg,
 		sessionManager:         sessionManager,
+		flashMgr:               flashMgr,
 		listDbWorksUC:          listDbWorksUC,
 		getDbWorkFormOptionsUC: getDbWorkFormOptionsUC,
 		createWorkUC:           createWorkUC,

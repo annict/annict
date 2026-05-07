@@ -10,6 +10,7 @@ import (
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/schollz/progressbar/v3"
 
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
 )
 
@@ -27,9 +28,9 @@ type CreateHeavyUserParams struct {
 
 // CreateHeavyUserResult ヘビーユーザー作成の結果
 type CreateHeavyUserResult struct {
-	HeavyUserID        int64
-	FollowerUserIDs    []int64
-	FollowingUserIDs   []int64
+	HeavyUserID        model.UserID
+	FollowerUserIDs    []model.UserID
+	FollowingUserIDs   []model.UserID
 	EpisodeRecordCount int
 	FollowCount        int
 }
@@ -135,7 +136,7 @@ func (uc *CreateHeavyUserUsecase) Execute(ctx context.Context, params CreateHeav
 }
 
 // createHeavyUser heavy_userを作成します
-func (uc *CreateHeavyUserUsecase) createHeavyUser(ctx context.Context, username, password string) (int64, error) {
+func (uc *CreateHeavyUserUsecase) createHeavyUser(ctx context.Context, username, password string) (model.UserID, error) {
 	createUserUC := NewCreateUserUsecase(uc.db, uc.queries)
 	email := fmt.Sprintf("%s@example.com", username)
 
@@ -157,7 +158,7 @@ func (uc *CreateHeavyUserUsecase) createHeavyUser(ctx context.Context, username,
 }
 
 // createFollowerUsers フォロワーユーザー（heavy_userをフォローする人）を作成します
-func (uc *CreateHeavyUserUsecase) createFollowerUsers(ctx context.Context, count int) ([]int64, error) {
+func (uc *CreateHeavyUserUsecase) createFollowerUsers(ctx context.Context, count int) ([]model.UserID, error) {
 	createUserUC := NewCreateUserUsecase(uc.db, uc.queries)
 
 	userParams := make([]CreateUserParams, count)
@@ -184,7 +185,7 @@ func (uc *CreateHeavyUserUsecase) createFollowerUsers(ctx context.Context, count
 		return nil, err
 	}
 
-	userIDs := make([]int64, len(results))
+	userIDs := make([]model.UserID, len(results))
 	for i, result := range results {
 		userIDs[i] = result.UserID
 	}
@@ -193,7 +194,7 @@ func (uc *CreateHeavyUserUsecase) createFollowerUsers(ctx context.Context, count
 }
 
 // createFollowingUsers フォローユーザー（heavy_userがフォローする人）を作成します
-func (uc *CreateHeavyUserUsecase) createFollowingUsers(ctx context.Context, count int) ([]int64, error) {
+func (uc *CreateHeavyUserUsecase) createFollowingUsers(ctx context.Context, count int) ([]model.UserID, error) {
 	createUserUC := NewCreateUserUsecase(uc.db, uc.queries)
 
 	userParams := make([]CreateUserParams, count)
@@ -220,7 +221,7 @@ func (uc *CreateHeavyUserUsecase) createFollowingUsers(ctx context.Context, coun
 		return nil, err
 	}
 
-	userIDs := make([]int64, len(results))
+	userIDs := make([]model.UserID, len(results))
 	for i, result := range results {
 		userIDs[i] = result.UserID
 	}
@@ -229,7 +230,7 @@ func (uc *CreateHeavyUserUsecase) createFollowingUsers(ctx context.Context, coun
 }
 
 // createHeavyUserRecords heavy_userの視聴記録を作成します
-func (uc *CreateHeavyUserUsecase) createHeavyUserRecords(ctx context.Context, userID int64, count int, ratingProbability, bodyProbability float64) (int, error) {
+func (uc *CreateHeavyUserUsecase) createHeavyUserRecords(ctx context.Context, userID model.UserID, count int, ratingProbability, bodyProbability float64) (int, error) {
 	// 既存のエピソードをランダムに取得
 	episodes, err := uc.getRandomEpisodes(ctx, count)
 	if err != nil {
@@ -266,7 +267,7 @@ func (uc *CreateHeavyUserUsecase) createHeavyUserRecords(ctx context.Context, us
 }
 
 // createFollowRelationships フォロー関係を作成します
-func (uc *CreateHeavyUserUsecase) createFollowRelationships(ctx context.Context, heavyUserID int64, followerUserIDs, followingUserIDs []int64) (int, error) {
+func (uc *CreateHeavyUserUsecase) createFollowRelationships(ctx context.Context, heavyUserID model.UserID, followerUserIDs, followingUserIDs []model.UserID) (int, error) {
 	createFollowUC := NewCreateFollowUsecase(uc.db)
 
 	// フォロワー → heavy_user のフォロー関係を作成
@@ -306,7 +307,7 @@ func (uc *CreateHeavyUserUsecase) createFollowRelationships(ctx context.Context,
 }
 
 // createFolloweeRecords フォロイー（フォロワー）の視聴記録を作成します
-func (uc *CreateHeavyUserUsecase) createFolloweeRecords(ctx context.Context, followerUserIDs []int64, recordsPerUser int, ratingProbability, bodyProbability float64) error {
+func (uc *CreateHeavyUserUsecase) createFolloweeRecords(ctx context.Context, followerUserIDs []model.UserID, recordsPerUser int, ratingProbability, bodyProbability float64) error {
 	createRecordUC := NewCreateEpisodeRecordUsecase(uc.db)
 
 	// 全フォロイーの視聴記録を一括で作成
@@ -352,8 +353,8 @@ func (uc *CreateHeavyUserUsecase) createFolloweeRecords(ctx context.Context, fol
 
 // episodeData エピソードデータの簡易構造体
 type episodeData struct {
-	ID     int64
-	WorkID int64
+	ID     model.EpisodeID
+	WorkID model.WorkID
 }
 
 // getRandomEpisodes ランダムなエピソードを取得します（重複あり）

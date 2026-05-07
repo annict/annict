@@ -49,10 +49,10 @@ type SendSignInCodeInput struct {
 
 // SendSignInCodeOutput はユースケースの結果を表します
 type SendSignInCodeOutput struct {
-	UserID      int64  // ユーザーID
-	Email       string // メールアドレス
-	HasPassword bool   // パスワードログインを使用するかどうか
-	Code        string // 平文コード（テスト用、コードログインの場合のみ）
+	UserID      model.UserID // ユーザーID
+	Email       string       // メールアドレス
+	HasPassword bool         // パスワードログインを使用するかどうか
+	Code        string       // 平文コード（テスト用、コードログインの場合のみ）
 }
 
 // Execute はサインインの入力検証・ユーザー検索を行い、パスワードなしユーザーの場合はコードを生成・送信します
@@ -82,7 +82,7 @@ func (uc *SendSignInCodeUsecase) Execute(ctx context.Context, input SendSignInCo
 			"email", user.Email,
 		)
 		return &SendSignInCodeOutput{
-			UserID:      user.ID,
+			UserID:      model.UserID(user.ID),
 			Email:       user.Email,
 			HasPassword: true,
 		}, nil
@@ -94,13 +94,13 @@ func (uc *SendSignInCodeUsecase) Execute(ctx context.Context, input SendSignInCo
 		"email", user.Email,
 	)
 
-	code, err := uc.generateAndSendCode(ctx, user.ID, user.Email)
+	code, err := uc.generateAndSendCode(ctx, model.UserID(user.ID), user.Email)
 	if err != nil {
 		return nil, err
 	}
 
 	return &SendSignInCodeOutput{
-		UserID:      user.ID,
+		UserID:      model.UserID(user.ID),
 		Email:       user.Email,
 		HasPassword: false,
 		Code:        code,
@@ -108,7 +108,7 @@ func (uc *SendSignInCodeUsecase) Execute(ctx context.Context, input SendSignInCo
 }
 
 // generateAndSendCode は6桁のログインコードを生成し、メール送信ジョブをエンキューします
-func (uc *SendSignInCodeUsecase) generateAndSendCode(ctx context.Context, userID int64, email string) (string, error) {
+func (uc *SendSignInCodeUsecase) generateAndSendCode(ctx context.Context, userID model.UserID, email string) (string, error) {
 	// トランザクション開始
 	tx, err := uc.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -136,7 +136,7 @@ func (uc *SendSignInCodeUsecase) generateAndSendCode(ctx context.Context, userID
 	}
 
 	// コードをデータベースに保存（有効期限: 15分）
-	if err := signInCodeRepoTx.Create(ctx, repository.SignInCodeCreateParams{
+	if _, err := signInCodeRepoTx.Create(ctx, repository.SignInCodeCreateParams{
 		UserID:     userID,
 		CodeDigest: codeDigest,
 		ExpiresAt:  time.Now().Add(15 * time.Minute),

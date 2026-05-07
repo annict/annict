@@ -2,7 +2,7 @@
 package sign_up
 
 import (
-	"fmt"
+	"context"
 	"log/slog"
 	"net/http"
 	"time"
@@ -10,7 +10,6 @@ import (
 	"github.com/annict/annict/go/internal/clientip"
 	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/model"
-	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/usecase"
 )
 
@@ -31,7 +30,6 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	turnstileToken := r.FormValue("cf-turnstile-response")
 	isValid, err := h.turnstileClient.Verify(ctx, turnstileToken)
 	if err != nil || !isValid {
-		// ログ記録（エラーの詳細度に応じてログレベルを分ける）
 		if err != nil {
 			slog.ErrorContext(ctx, "Turnstile検証エラー",
 				"error", err,
@@ -43,57 +41,19 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 			)
 		}
 
-		// エラーレスポンスを返す
 		ve := model.NewValidationError()
-		ve.AddField("email", i18n.T(ctx, "turnstile_verification_failed"))
-		if err := h.sessionMgr.SetValidationError(ctx, w, r, *ve); err != nil {
-			slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
-		}
-		http.Redirect(w, r, "/sign_up", http.StatusSeeOther)
+		ve.AddGlobal(i18n.T(ctx, "turnstile_verification_failed"))
+		h.renderNewForm(w, r, http.StatusUnprocessableEntity, ve, email)
 		return
 	}
-	slog.InfoContext(ctx, "Turnstile検証成功")
+	slog.DebugContext(ctx, "Turnstile検証成功")
 
-	// Rate Limiting チェック: IP単位（5回/時間）
-	if h.limiter != nil && !h.cfg.DisableRateLimit {
-		ipKey := fmt.Sprintf("sign_up:ip:%s", clientip.GetClientIP(r))
-		allowed, err := h.limiter.Check(ctx, ipKey, 5, 1*time.Hour)
-		if err != nil {
-			slog.Error("Rate Limitingチェックが失敗しました", "error", err)
-		} else if !allowed {
-			slog.WarnContext(ctx, "新規登録申請がRate Limitingにより制限されました（IP単位）",
-				"email", email,
-				"ip_address", clientip.GetClientIP(r),
-			)
-			ve := model.NewValidationError()
-			ve.AddField("email", i18n.T(ctx, "rate_limit_exceeded"))
-			if err := h.sessionMgr.SetValidationError(ctx, w, r, *ve); err != nil {
-				slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
-			}
-			http.Redirect(w, r, "/sign_up", http.StatusSeeOther)
-			return
-		}
+	// Rate Limiting チェック: IP単位（5回/時間）→ メールアドレス単位（3回/時間）
+	if blocked := h.enforceSignUpRateLimit(ctx, w, r, "sign_up:ip:"+clientip.GetClientIP(r), 5, "IP単位", email); blocked {
+		return
 	}
-
-	// Rate Limiting チェック: メールアドレス単位（3回/時間）
-	if h.limiter != nil && !h.cfg.DisableRateLimit {
-		emailKey := fmt.Sprintf("sign_up:email:%s", email)
-		allowed, err := h.limiter.Check(ctx, emailKey, 3, 1*time.Hour)
-		if err != nil {
-			slog.Error("Rate Limitingチェックが失敗しました", "error", err)
-		} else if !allowed {
-			slog.WarnContext(ctx, "新規登録申請がRate Limitingにより制限されました(メールアドレス単位)",
-				"email", email,
-				"ip_address", clientip.GetClientIP(r),
-			)
-			ve := model.NewValidationError()
-			ve.AddField("email", i18n.T(ctx, "rate_limit_exceeded"))
-			if err := h.sessionMgr.SetValidationError(ctx, w, r, *ve); err != nil {
-				slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
-			}
-			http.Redirect(w, r, "/sign_up", http.StatusSeeOther)
-			return
-		}
+	if blocked := h.enforceSignUpRateLimit(ctx, w, r, "sign_up:email:"+email, 3, "メールアドレス単位", email); blocked {
+		return
 	}
 
 	// ユーザーのロケールを取得（デフォルトは日本語）
@@ -106,10 +66,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	})
 	if err != nil {
 		if ve := model.AsValidationError(err); ve != nil {
-			if err := h.sessionMgr.SetValidationError(ctx, w, r, *ve); err != nil {
-				slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
-			}
-			http.Redirect(w, r, "/sign_up", http.StatusSeeOther)
+			h.renderNewForm(w, r, http.StatusUnprocessableEntity, ve, email)
 			return
 		}
 		slog.ErrorContext(ctx, "新規登録確認コードの送信に失敗しました",
@@ -126,15 +83,42 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	// セッションにメールアドレスを保存
 	if err := h.sessionMgr.SetValue(ctx, w, r, "sign_up_email", email); err != nil {
-		slog.Error("セッションへのメールアドレス保存エラー", "error", err)
+		slog.ErrorContext(ctx, "セッションへのメールアドレス保存エラー", "error", err)
 		http.Error(w, i18n.T(ctx, "sign_up_error_server"), http.StatusInternalServerError)
 		return
 	}
 
 	// フラッシュメッセージを設定
 	message := i18n.T(ctx, "sign_up_code_sent_to", map[string]any{"Email": email})
-	h.sessionMgr.SetFlash(w, session.FlashSuccess, message)
+	h.flashMgr.SetSuccess(w, message)
 
 	// 確認コード入力画面にリダイレクト
 	http.Redirect(w, r, "/sign_up/code", http.StatusSeeOther)
+}
+
+// enforceSignUpRateLimit は Rate Limit に引っかかった場合に 422 でフォームを再描画し true を返します。
+// チェックが無効化されている、またはチェック自体のエラー時はリクエストを通過させます（true は返しません）。
+func (h *Handler) enforceSignUpRateLimit(ctx context.Context, w http.ResponseWriter, r *http.Request, key string, limit int, scopeLabel string, email string) bool {
+	if h.limiter == nil || h.cfg.DisableRateLimit {
+		return false
+	}
+
+	allowed, err := h.limiter.Check(ctx, key, limit, 1*time.Hour)
+	if err != nil {
+		slog.ErrorContext(ctx, "Rate Limitingチェックが失敗しました", "error", err, "scope", scopeLabel)
+		return false
+	}
+	if allowed {
+		return false
+	}
+
+	slog.WarnContext(ctx, "新規登録申請がRate Limitingにより制限されました",
+		"scope", scopeLabel,
+		"email", email,
+		"ip_address", clientip.GetClientIP(r),
+	)
+	ve := model.NewValidationError()
+	ve.AddGlobal(i18n.T(ctx, "rate_limit_exceeded"))
+	h.renderNewForm(w, r, http.StatusUnprocessableEntity, ve, email)
+	return true
 }

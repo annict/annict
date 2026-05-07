@@ -18,7 +18,7 @@ import (
 
 // Db はAnnict DB用のレイアウトです
 // サイドバーとメインコンテンツのみで構成されます
-func Db(ctx context.Context, meta viewmodel.PageMeta, flash *session.Flash, assetVersion string, content templ.Component) templ.Component {
+func Db(ctx context.Context, meta viewmodel.PageMeta, assetVersion string, content templ.Component) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -64,7 +64,7 @@ func Db(ctx context.Context, meta viewmodel.PageMeta, flash *session.Flash, asse
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.Flash(ctx, flash).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.Flash(ctx, session.FlashFromContext(ctx)).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

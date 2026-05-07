@@ -3,6 +3,8 @@ package testutil
 import (
 	"database/sql"
 	"testing"
+
+	"github.com/annict/annict/go/internal/model"
 )
 
 // FeatureFlagBuilder はフィーチャーフラグのテストデータビルダー
@@ -10,7 +12,7 @@ type FeatureFlagBuilder struct {
 	t           *testing.T
 	tx          *sql.Tx
 	deviceToken *string
-	userID      *int64
+	userID      *model.UserID
 	name        string
 }
 
@@ -30,7 +32,7 @@ func (b *FeatureFlagBuilder) WithDeviceToken(token string) *FeatureFlagBuilder {
 }
 
 // WithUserID はユーザーIDを設定
-func (b *FeatureFlagBuilder) WithUserID(userID int64) *FeatureFlagBuilder {
+func (b *FeatureFlagBuilder) WithUserID(userID model.UserID) *FeatureFlagBuilder {
 	b.userID = &userID
 	return b
 }
@@ -42,19 +44,24 @@ func (b *FeatureFlagBuilder) WithName(name string) *FeatureFlagBuilder {
 }
 
 // Build はテスト用のフィーチャーフラグデータをデータベースに作成し、IDを返す
-func (b *FeatureFlagBuilder) Build() int64 {
+func (b *FeatureFlagBuilder) Build() model.FeatureFlagID {
 	b.t.Helper()
+
+	var userIDArg any
+	if b.userID != nil {
+		userIDArg = int64(*b.userID)
+	}
 
 	var id int64
 	err := b.tx.QueryRow(
 		`INSERT INTO feature_flags (device_token, user_id, name) VALUES ($1, $2, $3) RETURNING id`,
 		b.deviceToken,
-		b.userID,
+		userIDArg,
 		b.name,
 	).Scan(&id)
 	if err != nil {
 		b.t.Fatalf("フィーチャーフラグデータの作成に失敗しました: %v", err)
 	}
 
-	return id
+	return model.FeatureFlagID(id)
 }

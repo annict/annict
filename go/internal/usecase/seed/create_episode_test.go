@@ -7,11 +7,12 @@ import (
 	"testing"
 	"time"
 
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/testutil"
 )
 
 func TestCreateEpisodeUsecase_ExecuteBatchWithTx(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	ctx := context.Background()
 
 	// テスト用の作品を作成
@@ -134,7 +135,7 @@ func TestCreateEpisodeUsecase_ExecuteBatchWithTx(t *testing.T) {
 
 func TestGenerateEpisodeParamsForWork(t *testing.T) {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-	workID := int64(123)
+	workID := model.WorkID(123)
 	episodeCount := 12
 
 	episodes := GenerateEpisodeParamsForWork(r, workID, episodeCount)
@@ -177,7 +178,7 @@ func TestGenerateEpisodeParamsForWork(t *testing.T) {
 }
 
 func TestCreateEpisodeUsecase_SingleEpisode(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	ctx := context.Background()
 
 	// テスト用の作品を作成
@@ -232,7 +233,7 @@ func TestCreateEpisodeUsecase_SingleEpisode(t *testing.T) {
 	}
 
 	// 検証
-	if ep.WorkID != workID {
+	if model.WorkID(ep.WorkID) != workID {
 		t.Errorf("WorkIDが不正: got %d, want %d", ep.WorkID, workID)
 	}
 	if ep.Number != "1" {

@@ -10,6 +10,7 @@ import (
 
 	"github.com/annict/annict/go/internal/config"
 	"github.com/annict/annict/go/internal/dispatcher"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/password_reset"
 	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/validator"
@@ -44,8 +45,8 @@ type CreatePasswordResetTokenInput struct {
 
 // CreatePasswordResetTokenOutput はトークン生成の結果を表します
 type CreatePasswordResetTokenOutput struct {
-	Token  string // 平文トークン（メール送信用）
-	UserID int64  // ユーザーID
+	Token  string       // 平文トークン（メール送信用）
+	UserID model.UserID // ユーザーID
 }
 
 // Execute はバリデーション・ユーザー検索・パスワードリセットトークン生成を行います。
@@ -68,11 +69,11 @@ func (uc *CreatePasswordResetTokenUsecase) Execute(ctx context.Context, input Cr
 	}
 
 	// 3. トークンを生成
-	return uc.createToken(ctx, user.ID)
+	return uc.createToken(ctx, model.UserID(user.ID))
 }
 
 // createToken はパスワードリセットトークンを生成します
-func (uc *CreatePasswordResetTokenUsecase) createToken(ctx context.Context, userID int64) (*CreatePasswordResetTokenOutput, error) {
+func (uc *CreatePasswordResetTokenUsecase) createToken(ctx context.Context, userID model.UserID) (*CreatePasswordResetTokenOutput, error) {
 	// トランザクション開始
 	tx, err := uc.db.BeginTx(ctx, nil)
 	if err != nil {

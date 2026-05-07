@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/validator"
 )
 
@@ -33,9 +34,9 @@ type AuthenticateByPasswordInput struct {
 
 // AuthenticateByPasswordOutput はユースケースの結果を表します
 type AuthenticateByPasswordOutput struct {
-	PublicID string // セッションのPublicID
-	UserID   int64  // ユーザーID
-	Username string // ユーザー名
+	PublicID string       // セッションのPublicID
+	UserID   model.UserID // ユーザーID
+	Username string       // ユーザー名
 }
 
 // Execute はパスワード認証を行い、セッションを作成します
@@ -62,7 +63,7 @@ func (uc *AuthenticateByPasswordUsecase) Execute(ctx context.Context, input Auth
 	}
 
 	// 3. セッション作成
-	sessionResult, err := uc.createSessionUC.Execute(ctx, nil, user.ID, user.EncryptedPassword)
+	sessionResult, err := uc.createSessionUC.Execute(ctx, nil, model.UserID(user.ID), user.EncryptedPassword)
 	if err != nil {
 		return nil, fmt.Errorf("セッションの作成に失敗: %w", err)
 	}
@@ -71,7 +72,7 @@ func (uc *AuthenticateByPasswordUsecase) Execute(ctx context.Context, input Auth
 
 	return &AuthenticateByPasswordOutput{
 		PublicID: sessionResult.PublicID,
-		UserID:   user.ID,
+		UserID:   model.UserID(user.ID),
 		Username: user.Username,
 	}, nil
 }

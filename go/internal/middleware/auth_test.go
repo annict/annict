@@ -27,7 +27,7 @@ func generatePrivateID(publicID string) string {
 
 func TestRequireAuth_UpdatesSessionUpdatedAt(t *testing.T) {
 	// テストDBとトランザクションをセットアップ
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 
 	// ユーザーを作成
 	userID := testutil.NewUserBuilder(t, tx).
@@ -104,7 +104,7 @@ func TestRequireAuth_UpdatesSessionUpdatedAt(t *testing.T) {
 
 func TestRequireAuth_RedirectsWhenNotAuthenticated(t *testing.T) {
 	// テストDBとトランザクションをセットアップ
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 
 	// セッションマネージャーとリポジトリを作成
 	queries := query.New(db).WithTx(tx)
@@ -152,7 +152,7 @@ func TestRequireAuth_RedirectsWhenNotAuthenticated(t *testing.T) {
 
 func TestRequireAuth_RedirectsWhenSessionIDNotFound(t *testing.T) {
 	// テストDBとトランザクションをセットアップ
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 
 	// ユーザーを作成
 	userID := testutil.NewUserBuilder(t, tx).
@@ -209,7 +209,7 @@ func TestRequireAuth_RedirectsWhenSessionIDNotFound(t *testing.T) {
 
 func TestRequireAuth_RedirectsWithBackParam(t *testing.T) {
 	// テストDBとトランザクションをセットアップ
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 
 	// セッションマネージャーとリポジトリを作成
 	queries := query.New(db).WithTx(tx)

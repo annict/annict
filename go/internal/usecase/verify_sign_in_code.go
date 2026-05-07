@@ -8,6 +8,7 @@ import (
 	"log/slog"
 
 	"github.com/annict/annict/go/internal/auth"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/validator"
 )
@@ -37,7 +38,7 @@ func NewVerifySignInCodeUsecase(
 
 // VerifySignInCodeInput はユースケースの入力パラメータです
 type VerifySignInCodeInput struct {
-	UserID int64
+	UserID model.UserID
 	Code   string
 }
 
@@ -86,7 +87,7 @@ func (uc *VerifySignInCodeUsecase) Execute(ctx context.Context, input VerifySign
 }
 
 // verifyCode は6桁のログインコードを検証します
-func (uc *VerifySignInCodeUsecase) verifyCode(ctx context.Context, userID int64, code string) error {
+func (uc *VerifySignInCodeUsecase) verifyCode(ctx context.Context, userID model.UserID, code string) error {
 	// トランザクション開始
 	tx, err := uc.db.BeginTx(ctx, nil)
 	if err != nil {

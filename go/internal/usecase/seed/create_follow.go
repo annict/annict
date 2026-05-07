@@ -7,12 +7,14 @@ import (
 	"time"
 
 	"github.com/schollz/progressbar/v3"
+
+	"github.com/annict/annict/go/internal/model"
 )
 
 // CreateFollowParams フォロー関係作成のパラメータ
 type CreateFollowParams struct {
-	FollowerID  int64 // フォローする人（user_id）
-	FollowingID int64 // フォローされる人（following_id）
+	FollowerID  model.UserID // フォローする人（user_id）
+	FollowingID model.UserID // フォローされる人（following_id）
 }
 
 // CreateFollowResult フォロー関係作成の結果
@@ -197,8 +199,8 @@ func (uc *CreateFollowUsecase) createMultipleFollows(ctx context.Context, tx *sq
 // updateCounters users.followers_count と users.following_count を更新します
 func (uc *CreateFollowUsecase) updateCounters(ctx context.Context, tx *sql.Tx, follows []CreateFollowParams) error {
 	// フォロワー数とフォロー数をカウント
-	followerCounts := make(map[int64]int)  // following_id -> count (フォローされた回数)
-	followingCounts := make(map[int64]int) // follower_id -> count (フォローした回数)
+	followerCounts := make(map[model.UserID]int)  // following_id -> count (フォローされた回数)
+	followingCounts := make(map[model.UserID]int) // follower_id -> count (フォローした回数)
 
 	for _, follow := range follows {
 		followerCounts[follow.FollowingID]++

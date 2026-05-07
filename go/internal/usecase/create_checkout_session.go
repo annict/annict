@@ -3,7 +3,6 @@ package usecase
 import (
 	"context"
 	"fmt"
-	"strconv"
 
 	"github.com/stripe/stripe-go/v84"
 
@@ -64,8 +63,8 @@ func (uc *CreateCheckoutSessionUsecase) Execute(ctx context.Context, input Creat
 
 	// 2. 重複サブスクリプションチェック
 	user := input.User
-	if user.StripeSubscriberID.Valid && uc.stripeSubscriberRepo != nil {
-		stripeSubscriber, err := uc.stripeSubscriberRepo.GetByID(ctx, user.StripeSubscriberID.Int64)
+	if user.StripeSubscriberID != nil && uc.stripeSubscriberRepo != nil {
+		stripeSubscriber, err := uc.stripeSubscriberRepo.GetByID(ctx, *user.StripeSubscriberID)
 		if err == nil {
 			if uc.stripeSubscriberRepo.IsActive(&stripeSubscriber) {
 				return nil, model.NewAppError(
@@ -110,7 +109,7 @@ func (uc *CreateCheckoutSessionUsecase) Execute(ctx context.Context, input Creat
 		SuccessURL: stripe.String(successURL),
 		CancelURL:  stripe.String(cancelURL),
 		Metadata: map[string]string{
-			"user_id": strconv.FormatInt(user.ID, 10),
+			"user_id": user.ID.String(),
 		},
 	}
 

@@ -7,6 +7,7 @@ import (
 	"log/slog"
 
 	"github.com/annict/annict/go/internal/auth"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/validator"
 )
@@ -44,7 +45,7 @@ type UpdatePasswordResetInput struct {
 
 // UpdatePasswordResetOutput はパスワード更新の結果を表します
 type UpdatePasswordResetOutput struct {
-	UserID    int64
+	UserID    model.UserID
 	SessionID string // 新しいセッションID
 }
 
@@ -83,7 +84,7 @@ func (uc *UpdatePasswordResetUsecase) Execute(ctx context.Context, input UpdateP
 
 	// パスワードを更新
 	if err := userRepoTx.UpdatePassword(ctx, repository.UpdateUserPasswordParams{
-		ID:                resetToken.UserID,
+		ID:                int64(resetToken.UserID),
 		EncryptedPassword: hashedPassword,
 	}); err != nil {
 		return nil, fmt.Errorf("パスワードの更新に失敗: %w", err)
@@ -122,7 +123,7 @@ func (uc *UpdatePasswordResetUsecase) Execute(ctx context.Context, input UpdateP
 
 	// CreateSessionUsecaseを使用してセッションを作成
 	createSessionUC := NewCreateSessionUsecase(uc.sessionRepo)
-	sessionResult, err := createSessionUC.Execute(ctx, tx, user.ID, user.EncryptedPassword)
+	sessionResult, err := createSessionUC.Execute(ctx, tx, model.UserID(user.ID), user.EncryptedPassword)
 	if err != nil {
 		return nil, fmt.Errorf("セッションの作成に失敗: %w", err)
 	}

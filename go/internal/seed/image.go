@@ -14,6 +14,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/google/uuid"
+
+	"github.com/annict/annict/go/internal/model"
 )
 
 const (
@@ -67,7 +69,7 @@ type ShrineImageDataMetadata struct {
 
 // GenerateRandomWorkImage はランダムな単色画像を生成します（作品画像用: 600x800px）
 // workID: 作品ID（Shrineのpretty_locationプラグインの仕様に合わせるため）
-func GenerateRandomWorkImage(workID int64) (*RandomImage, error) {
+func GenerateRandomWorkImage(workID model.WorkID) (*RandomImage, error) {
 	// Shrineのpretty_locationプラグインの仕様に合わせたパスを生成
 	// 形式: shrine/workimage/{work_id}/image/master-{hash}.png
 	hash := uuid.New().String()

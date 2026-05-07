@@ -19,135 +19,80 @@ func NewWorkRepository(queries *query.Queries) *WorkRepository {
 }
 
 // GetByID は作品IDで作品を取得します
-func (r *WorkRepository) GetByID(ctx context.Context, id int64) (query.GetWorkByIDRow, error) {
-	return r.queries.GetWorkByID(ctx, id)
+func (r *WorkRepository) GetByID(ctx context.Context, id model.WorkID) (*model.Work, error) {
+	row, err := r.queries.GetWorkByID(ctx, int64(id))
+	if err != nil {
+		return nil, err
+	}
+	return workFromGetByIDRow(row), nil
 }
 
-// GetPopularWorksWithDetails は人気作品をキャスト・スタッフ情報と共に取得します
-func (r *WorkRepository) GetPopularWorksWithDetails(ctx context.Context) ([]model.WorkWithDetails, error) {
-	// 1. クエリ実行
-	worksRows, err := r.queries.GetPopularWorks(ctx)
-	if err != nil {
-		return nil, err
+// workFromGetByIDRow は query.GetWorkByIDRow を *model.Work に変換します
+func workFromGetByIDRow(row query.GetWorkByIDRow) *model.Work {
+	work := &model.Work{
+		ID:                  model.WorkID(row.ID),
+		Title:               row.Title,
+		TitleEn:             row.TitleEn,
+		RecommendedImageURL: row.RecommendedImageUrl,
+		WatchersCount:       row.WatchersCount,
 	}
-
-	if len(worksRows) == 0 {
-		return []model.WorkWithDetails{}, nil
+	if row.TitleKana != "" {
+		titleKana := row.TitleKana
+		work.TitleKana = &titleKana
 	}
-
-	// 2. query.GetPopularWorksRow → model.Work に変換
-	works := make([]model.Work, len(worksRows))
-	workIDs := make([]int64, len(worksRows))
-	for i, row := range worksRows {
-		works[i] = r.workFromPopularRow(row)
-		workIDs[i] = row.ID
-	}
-
-	// 3. キャストとスタッフを取得
-	castsRows, err := r.queries.GetCastsByWorkIDs(ctx, workIDs)
-	if err != nil {
-		return nil, err
-	}
-
-	staffsRows, err := r.queries.GetStaffsByWorkIDs(ctx, workIDs)
-	if err != nil {
-		return nil, err
-	}
-
-	// 4. query結果をmodelに変換
-	casts := r.castsFromRows(castsRows)
-	staffs := r.staffsFromRows(staffsRows)
-
-	// 5. 組み合わせる
-	return r.combineWorkData(works, casts, staffs), nil
+	applyNullableWorkFields(work, row.SeasonYear, row.SeasonName, row.CreatedAt)
+	return work
 }
 
-// workFromPopularRow は query.GetPopularWorksRow を model.Work に変換します
-func (r *WorkRepository) workFromPopularRow(row query.GetPopularWorksRow) model.Work {
-	work := model.Work{
-		ID:                  row.ID,
+// GetPopular は人気作品を取得します。
+// 戻り値の各 *model.Work は呼び出しごとに新規生成されるため、UseCase 側で
+// Casts/Staffs などの関連エンティティを後付けで代入する用法を許容します
+// （Repository でキャッシュやプール再利用を導入する場合はこの前提を見直すこと）。
+func (r *WorkRepository) GetPopular(ctx context.Context) ([]*model.Work, error) {
+	rows, err := r.queries.GetPopularWorks(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	works := make([]*model.Work, len(rows))
+	for i, row := range rows {
+		works[i] = workFromPopularRow(row)
+	}
+	return works, nil
+}
+
+// workFromPopularRow は query.GetPopularWorksRow を *model.Work に変換します
+func workFromPopularRow(row query.GetPopularWorksRow) *model.Work {
+	work := &model.Work{
+		ID:                  model.WorkID(row.ID),
 		Title:               row.Title,
 		TitleEn:             row.TitleEn,
 		RecommendedImageURL: row.RecommendedImageUrl,
 		WatchersCount:       row.WatchersCount,
 	}
 
-	// ImageDataを設定（NULLの場合は空文字列）
 	if row.ImageData.Valid {
 		work.ImageData = row.ImageData.String
 	}
-
-	// SeasonYearを設定
-	if row.SeasonYear.Valid {
-		work.SeasonYear = &row.SeasonYear.Int32
-	}
-
-	// SeasonNameを設定
-	if row.SeasonName.Valid {
-		work.SeasonName = &row.SeasonName.Int32
-	}
-
-	// CreatedAtを設定
-	if row.CreatedAt.Valid {
-		work.CreatedAt = row.CreatedAt.Time
-	}
-
+	applyNullableWorkFields(work, row.SeasonYear, row.SeasonName, row.CreatedAt)
 	return work
 }
 
-// castsFromRows は query結果を model.Cast に変換します
-func (r *WorkRepository) castsFromRows(rows []query.GetCastsByWorkIDsRow) []model.Cast {
-	casts := make([]model.Cast, len(rows))
-	for i, row := range rows {
-		casts[i] = model.Cast{
-			ID:     row.ID,
-			WorkID: row.WorkID,
-			Name:   row.Name,
-			NameEn: row.NameEn,
-		}
-
-		// CharacterNameを設定
-		if row.CharacterName.Valid {
-			casts[i].CharacterName = row.CharacterName.String
-		}
-
-		// CharacterNameEnを設定
-		if row.CharacterNameEn.Valid {
-			casts[i].CharacterNameEn = row.CharacterNameEn.String
-		}
-
-		// PersonNameを設定
-		if row.PersonName.Valid {
-			casts[i].PersonName = row.PersonName.String
-		}
-
-		// PersonNameEnを設定
-		if row.PersonNameEn.Valid {
-			casts[i].PersonNameEn = row.PersonNameEn.String
-		}
+// applyNullableWorkFields は sqlc 生成型の nullable フィールドを *model.Work にマッピングします。
+// 複数の row 型で共通する SeasonYear / SeasonName / CreatedAt の変換ロジックを 1 箇所に集約し、
+// マッピング漏れを防ぐためのヘルパーです。
+func applyNullableWorkFields(work *model.Work, seasonYear, seasonName sql.NullInt32, createdAt sql.NullTime) {
+	if seasonYear.Valid {
+		v := seasonYear.Int32
+		work.SeasonYear = &v
 	}
-	return casts
-}
-
-// staffsFromRows は query結果を model.Staff に変換します
-func (r *WorkRepository) staffsFromRows(rows []query.GetStaffsByWorkIDsRow) []model.Staff {
-	staffs := make([]model.Staff, len(rows))
-	for i, row := range rows {
-		staffs[i] = model.Staff{
-			ID:          row.ID,
-			WorkID:      row.WorkID,
-			Name:        row.Name,
-			NameEn:      row.NameEn,
-			Role:        row.Role,
-			RoleOtherEn: row.RoleOtherEn,
-		}
-
-		// RoleOtherを設定
-		if row.RoleOther.Valid {
-			staffs[i].RoleOther = row.RoleOther.String
-		}
+	if seasonName.Valid {
+		v := seasonName.Int32
+		work.SeasonName = &v
 	}
-	return staffs
+	if createdAt.Valid {
+		work.CreatedAt = createdAt.Time
+	}
 }
 
 // WithTx はトランザクションを使用する新しいRepositoryを返します
@@ -186,7 +131,7 @@ func (r *WorkRepository) ListForDB(ctx context.Context, params DBWorkListParams)
 	items := make([]model.DBWorkListItem, len(rows))
 	for i, row := range rows {
 		items[i] = model.DBWorkListItem{
-			ID:            row.ID,
+			ID:            model.WorkID(row.ID),
 			Title:         row.Title,
 			WatchersCount: row.WatchersCount,
 			Status:        string(row.Status),
@@ -244,8 +189,8 @@ type CreateWorkParams struct {
 }
 
 // Create は作品を新規作成し、作成された作品のIDを返します
-func (r *WorkRepository) Create(ctx context.Context, params CreateWorkParams) (int64, error) {
-	return r.queries.CreateWork(ctx, query.CreateWorkParams{
+func (r *WorkRepository) Create(ctx context.Context, params CreateWorkParams) (model.WorkID, error) {
+	id, err := r.queries.CreateWork(ctx, query.CreateWorkParams{
 		Title:                 params.Title,
 		TitleKana:             params.TitleKana,
 		TitleAlter:            params.TitleAlter,
@@ -273,6 +218,10 @@ func (r *WorkRepository) Create(ctx context.Context, params CreateWorkParams) (i
 		NumberFormatID:        params.NumberFormatID,
 		NoEpisodes:            params.NoEpisodes,
 	})
+	if err != nil {
+		return 0, err
+	}
+	return model.WorkID(id), nil
 }
 
 // nullInt32FromPtr は *int32 を sql.NullInt32 に変換します
@@ -281,34 +230,4 @@ func nullInt32FromPtr(v *int32) sql.NullInt32 {
 		return sql.NullInt32{}
 	}
 	return sql.NullInt32{Int32: *v, Valid: true}
-}
-
-// combineWorkData は作品データとキャスト・スタッフデータを組み合わせます
-func (r *WorkRepository) combineWorkData(
-	works []model.Work,
-	casts []model.Cast,
-	staffs []model.Staff,
-) []model.WorkWithDetails {
-	// キャストとスタッフをwork_idでマッピング
-	castsMap := make(map[int64][]model.Cast)
-	for _, cast := range casts {
-		castsMap[cast.WorkID] = append(castsMap[cast.WorkID], cast)
-	}
-
-	staffsMap := make(map[int64][]model.Staff)
-	for _, staff := range staffs {
-		staffsMap[staff.WorkID] = append(staffsMap[staff.WorkID], staff)
-	}
-
-	// WorkWithDetailsのスライスを作成
-	result := make([]model.WorkWithDetails, len(works))
-	for i, work := range works {
-		result[i] = model.WorkWithDetails{
-			Work:   work,
-			Casts:  castsMap[work.ID],
-			Staffs: staffsMap[work.ID],
-		}
-	}
-
-	return result
 }

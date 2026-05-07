@@ -16,7 +16,7 @@ const testFlagName model.FeatureFlagName = "go_test_feature"
 func TestFeatureFlagRepository_IsEnabledByDeviceOrUser_DeviceToken(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewFeatureFlagRepository(queries)
 
@@ -40,7 +40,7 @@ func TestFeatureFlagRepository_IsEnabledByDeviceOrUser_DeviceToken(t *testing.T)
 func TestFeatureFlagRepository_IsEnabledByDeviceOrUser_UserID(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewFeatureFlagRepository(queries)
 
@@ -67,7 +67,7 @@ func TestFeatureFlagRepository_IsEnabledByDeviceOrUser_UserID(t *testing.T) {
 func TestFeatureFlagRepository_IsEnabledByDeviceOrUser_BothMatch(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewFeatureFlagRepository(queries)
 
@@ -94,7 +94,7 @@ func TestFeatureFlagRepository_IsEnabledByDeviceOrUser_BothMatch(t *testing.T) {
 func TestFeatureFlagRepository_IsEnabledByDeviceOrUser_NotEnabled(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewFeatureFlagRepository(queries)
 
@@ -112,7 +112,7 @@ func TestFeatureFlagRepository_IsEnabledByDeviceOrUser_NotEnabled(t *testing.T) 
 func TestFeatureFlagRepository_IsEnabledByDeviceOrUser_DifferentFlag(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewFeatureFlagRepository(queries)
 
@@ -136,7 +136,7 @@ func TestFeatureFlagRepository_IsEnabledByDeviceOrUser_DifferentFlag(t *testing.
 func TestFeatureFlagRepository_IsEnabledByDeviceOrUser_EmptyParams(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewFeatureFlagRepository(queries)
 
@@ -160,7 +160,7 @@ func TestFeatureFlagRepository_IsEnabledByDeviceOrUser_EmptyParams(t *testing.T)
 func TestFeatureFlagRepository_IsEnabled(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewFeatureFlagRepository(queries)
 
@@ -196,7 +196,7 @@ func TestFeatureFlagRepository_IsEnabled(t *testing.T) {
 func TestFeatureFlagRepository_WithTx(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db)
 	repo := repository.NewFeatureFlagRepository(queries)
 

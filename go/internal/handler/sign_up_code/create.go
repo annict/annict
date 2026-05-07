@@ -12,19 +12,16 @@ import (
 	"github.com/annict/annict/go/internal/clientip"
 	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/model"
-	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/usecase"
 )
 
-// codeErrorMap は usecase のコード検証エラーの対応表。
-// ログの理由は err.Error() を使用するため重複を定義しない。
-// ユーザー向けメッセージはセキュリティのため全ケースで共通化している（情報漏洩対策）。
-var codeErrorMap = []struct {
-	usecaseErr error
-}{
-	{usecase.ErrCodeNotFound},
-	{usecase.ErrCodeInvalid},
-	{usecase.ErrCodeAttemptsExceeded},
+// codeErrors は usecase のコード検証で既知のエラー一覧。
+// ユーザー向けメッセージはセキュリティのため全ケースで共通化している（情報漏洩対策）ため、
+// メッセージキーを持たず単純なエラーのスライスとして定義する。
+var codeErrors = []error{
+	usecase.ErrCodeNotFound,
+	usecase.ErrCodeInvalid,
+	usecase.ErrCodeAttemptsExceeded,
 }
 
 // Create POST /sign_up/code - 新規登録確認コード検証処理
@@ -33,23 +30,22 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	// フォームデータを取得
 	if err := r.ParseForm(); err != nil {
-		slog.Error("フォームパースエラー", "error", err)
-		h.sessionMgr.SetFlash(w, session.FlashError, i18n.T(ctx, "sign_up_code_error_parse_form"))
-		http.Redirect(w, r, "/sign_up/code", http.StatusSeeOther)
+		slog.ErrorContext(ctx, "フォームパースエラー", "error", err)
+		http.Error(w, "Bad Request", http.StatusBadRequest)
 		return
 	}
 
 	// セッションからメールアドレスを取得
 	email, err := h.sessionMgr.GetValue(ctx, r, "sign_up_email")
 	if err != nil {
-		slog.Error("セッション値の取得エラー", "key", "sign_up_email", "error", err)
-		h.sessionMgr.SetFlash(w, session.FlashError, i18n.T(ctx, "sign_up_code_error_server"))
+		slog.ErrorContext(ctx, "セッション値の取得エラー", "key", "sign_up_email", "error", err)
+		h.flashMgr.SetError(w, i18n.T(ctx, "sign_up_code_error_server"))
 		http.Redirect(w, r, "/sign_up", http.StatusSeeOther)
 		return
 	}
 	if email == "" {
-		slog.Warn("セッションにメールアドレスが存在しません")
-		h.sessionMgr.SetFlash(w, session.FlashError, i18n.T(ctx, "sign_up_code_error_session_expired"))
+		slog.WarnContext(ctx, "セッションにメールアドレスが存在しません")
+		h.flashMgr.SetError(w, i18n.T(ctx, "sign_up_code_error_session_expired"))
 		http.Redirect(w, r, "/sign_up", http.StatusSeeOther)
 		return
 	}
@@ -59,14 +55,15 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		ipKey := fmt.Sprintf("sign_up:verify:%s", clientip.GetClientIP(r))
 		allowed, err := h.limiter.Check(ctx, ipKey, 10, 1*time.Hour)
 		if err != nil {
-			slog.Error("Rate Limitingチェックが失敗しました", "error", err)
+			slog.ErrorContext(ctx, "Rate Limitingチェックが失敗しました", "error", err)
 		} else if !allowed {
 			slog.WarnContext(ctx, "確認コード検証がRate Limitingにより制限されました",
 				"email", email,
 				"ip_address", clientip.GetClientIP(r),
 			)
-			h.sessionMgr.SetFlash(w, session.FlashError, i18n.T(ctx, "rate_limit_exceeded"))
-			http.Redirect(w, r, "/sign_up/code", http.StatusSeeOther)
+			ve := model.NewValidationError()
+			ve.AddGlobal(i18n.T(ctx, "rate_limit_exceeded"))
+			h.renderNewForm(w, r, http.StatusUnprocessableEntity, ve, email)
 			return
 		}
 	}
@@ -79,20 +76,17 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		// バリデーションエラー
 		if ve := model.AsValidationError(err); ve != nil {
-			if err := h.sessionMgr.SetValidationError(ctx, w, r, *ve); err != nil {
-				slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
-			}
-			http.Redirect(w, r, "/sign_up/code", http.StatusSeeOther)
+			h.renderNewForm(w, r, http.StatusUnprocessableEntity, ve, email)
 			return
 		}
 
 		// セキュリティのため、すべての既知エラーで同じメッセージを表示（情報漏洩対策）
 		// errors.Is で排他的にマッチするため、順序は意味を持たない
 		matched := false
-		for _, ce := range codeErrorMap {
-			if errors.Is(err, ce.usecaseErr) {
+		for _, ce := range codeErrors {
+			if errors.Is(err, ce) {
 				slog.WarnContext(ctx, "確認コード検証失敗",
-					"reason", ce.usecaseErr.Error(),
+					"reason", ce.Error(),
 					"email", email,
 					"ip_address", clientip.GetClientIP(r),
 				)
@@ -106,27 +100,22 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 				"ip_address", clientip.GetClientIP(r),
 				"error", err,
 			)
-			h.sessionMgr.SetFlash(w, session.FlashError, i18n.T(ctx, "sign_up_code_error_server"))
-			http.Redirect(w, r, "/sign_up/code", http.StatusSeeOther)
+			http.Error(w, i18n.T(ctx, "sign_up_code_error_server"), http.StatusInternalServerError)
 			return
 		}
 
 		// すべての既知エラーで同じメッセージを表示（情報漏洩対策）
 		codeErr := model.NewValidationError()
 		codeErr.AddField("code", i18n.T(ctx, "sign_up_code_error_invalid"))
-		if err := h.sessionMgr.SetValidationError(ctx, w, r, *codeErr); err != nil {
-			slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
-		}
-		http.Redirect(w, r, "/sign_up/code", http.StatusSeeOther)
+		h.renderNewForm(w, r, http.StatusUnprocessableEntity, codeErr, email)
 		return
 	}
 
 	// 一時トークンを生成してRedisに保存（次のステップで使用）
 	token, err := generateToken()
 	if err != nil {
-		slog.Error("一時トークンの生成に失敗しました", "error", err)
-		h.sessionMgr.SetFlash(w, session.FlashError, i18n.T(ctx, "sign_up_code_error_server"))
-		http.Redirect(w, r, "/sign_up/code", http.StatusSeeOther)
+		slog.ErrorContext(ctx, "一時トークンの生成に失敗しました", "error", err)
+		http.Error(w, i18n.T(ctx, "sign_up_code_error_server"), http.StatusInternalServerError)
 		return
 	}
 
@@ -135,17 +124,16 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		tokenKey := fmt.Sprintf("sign_up_token:%s", token)
 		err = h.redisClient.Set(ctx, tokenKey, email, 15*time.Minute).Err()
 		if err != nil {
-			slog.Error("一時トークンの保存に失敗しました", "error", err)
-			h.sessionMgr.SetFlash(w, session.FlashError, i18n.T(ctx, "sign_up_code_error_server"))
-			http.Redirect(w, r, "/sign_up/code", http.StatusSeeOther)
+			slog.ErrorContext(ctx, "一時トークンの保存に失敗しました", "error", err)
+			http.Error(w, i18n.T(ctx, "sign_up_code_error_server"), http.StatusInternalServerError)
 			return
 		}
 	} else {
-		slog.Warn("Redisクライアントが設定されていないため、一時トークンを保存できませんでした")
+		slog.WarnContext(ctx, "Redisクライアントが設定されていないため、一時トークンを保存できませんでした")
 		// テスト環境ではRedisがない場合があるため、警告のみ出力して続行
 	}
 
-	slog.Info("確認コード検証に成功しました", "email", email)
+	slog.InfoContext(ctx, "確認コード検証に成功しました", "email", email)
 
 	// ユーザー名設定画面にリダイレクト
 	http.Redirect(w, r, fmt.Sprintf("/sign_up/username?token=%s", token), http.StatusSeeOther)

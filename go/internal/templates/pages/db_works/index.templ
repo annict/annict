@@ -92,7 +92,7 @@ templ Index(data IndexPageData) {
 					<tbody>
 						for _, work := range data.Works {
 							<tr>
-								<td>{ fmt.Sprintf("%d", work.ID) }</td>
+								<td>{ work.ID.String() }</td>
 								<td>
 									<a href={ templates.DBWorkPath(work.ID).SafeURL() } class="text-primary hover:underline">
 										{ work.Title }

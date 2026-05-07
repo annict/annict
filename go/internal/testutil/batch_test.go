@@ -9,7 +9,7 @@ import (
 func TestBatchBuildWorks(t *testing.T) {
 	t.Parallel()
 
-	_, tx := SetupTestDB(t)
+	_, tx := SetupTx(t)
 
 	ctx := context.Background()
 
@@ -52,7 +52,7 @@ func TestBatchBuildWorks(t *testing.T) {
 	// 各作品が正しく作成されたことを確認
 	for _, id := range ids {
 		var title string
-		err = tx.QueryRowContext(ctx, "SELECT title FROM works WHERE id = $1", id).Scan(&title)
+		err = tx.QueryRowContext(ctx, "SELECT title FROM works WHERE id = $1", int64(id)).Scan(&title)
 		if err != nil {
 			t.Fatalf("failed to get work %d: %v", id, err)
 		}
@@ -66,7 +66,7 @@ func TestBatchBuildWorks(t *testing.T) {
 func TestBatchBuildUsers(t *testing.T) {
 	t.Parallel()
 
-	_, tx := SetupTestDB(t)
+	_, tx := SetupTx(t)
 
 	ctx := context.Background()
 
@@ -100,7 +100,7 @@ func TestBatchBuildUsers(t *testing.T) {
 func TestBatchBuildEpisodes(t *testing.T) {
 	t.Parallel()
 
-	_, tx := SetupTestDB(t)
+	_, tx := SetupTx(t)
 
 	ctx := context.Background()
 
@@ -121,7 +121,7 @@ func TestBatchBuildEpisodes(t *testing.T) {
 
 	// データベースに正しく作成されたことを確認
 	var actualCount int
-	err = tx.QueryRowContext(ctx, "SELECT COUNT(*) FROM episodes WHERE work_id = $1", workID).Scan(&actualCount)
+	err = tx.QueryRowContext(ctx, "SELECT COUNT(*) FROM episodes WHERE work_id = $1", int64(workID)).Scan(&actualCount)
 	if err != nil {
 		t.Fatalf("failed to count episodes: %v", err)
 	}
@@ -133,7 +133,7 @@ func TestBatchBuildEpisodes(t *testing.T) {
 func TestBatchBuildWithContext(t *testing.T) {
 	t.Parallel()
 
-	_, tx := SetupTestDB(t)
+	_, tx := SetupTx(t)
 
 	// コンテキストキャンセルのテスト
 	ctx, cancel := context.WithCancel(context.Background())

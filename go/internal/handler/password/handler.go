@@ -11,17 +11,19 @@ import (
 // Handler はパスワード編集・更新のHTTPハンドラーです
 type Handler struct {
 	cfg                     *config.Config
-	sessionManager          *session.Manager
+	sessionMgr              *session.Manager
+	flashMgr                *session.FlashManager
 	limiter                 *ratelimit.Limiter
 	getPasswordResetTokenUC *usecase.GetPasswordResetTokenUsecase
 	updatePasswordResetUC   *usecase.UpdatePasswordResetUsecase
 }
 
 // NewHandler は新しいHandlerを作成します
-func NewHandler(cfg *config.Config, sessionManager *session.Manager, limiter *ratelimit.Limiter, getPasswordResetTokenUC *usecase.GetPasswordResetTokenUsecase, updatePasswordResetUC *usecase.UpdatePasswordResetUsecase) *Handler {
+func NewHandler(cfg *config.Config, sessionMgr *session.Manager, flashMgr *session.FlashManager, limiter *ratelimit.Limiter, getPasswordResetTokenUC *usecase.GetPasswordResetTokenUsecase, updatePasswordResetUC *usecase.UpdatePasswordResetUsecase) *Handler {
 	return &Handler{
 		cfg:                     cfg,
-		sessionManager:          sessionManager,
+		sessionMgr:              sessionMgr,
+		flashMgr:                flashMgr,
 		limiter:                 limiter,
 		getPasswordResetTokenUC: getPasswordResetTokenUC,
 		updatePasswordResetUC:   updatePasswordResetUC,

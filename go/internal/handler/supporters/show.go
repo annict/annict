@@ -25,9 +25,6 @@ func (h *Handler) Show(w http.ResponseWriter, r *http.Request) {
 	// 季節情報を取得
 	seasons := viewmodel.NewSeasons(h.cfg)
 
-	// フラッシュメッセージを取得
-	flash := h.sessionManager.GetFlash(w, r)
-
 	// クエリパラメータからメッセージ表示フラグを取得
 	showSuccessMessage := r.URL.Query().Get("success") == "true"
 	showCanceledMessage := r.URL.Query().Get("canceled") == "true"
@@ -76,7 +73,6 @@ func (h *Handler) Show(w http.ResponseWriter, r *http.Request) {
 		meta,
 		viewUser,
 		seasons,
-		flash,
 		h.cfg.GetAssetVersion(),
 		supportersTemplate.Show(ctx, pageData),
 	)

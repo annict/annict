@@ -11,7 +11,7 @@ import (
 
 // DBWorkListItem はDB管理画面の作品一覧用の表示データです
 type DBWorkListItem struct {
-	ID            int64
+	ID            WorkID
 	Title         string
 	Season        string // フォーマット済みのシーズン表示文字列
 	WatchersCount int32
@@ -31,7 +31,7 @@ func NewDBWorkListItems(ctx context.Context, items []model.DBWorkListItem) []DBW
 // NewDBWorkListItem は model.DBWorkListItem を viewmodel.DBWorkListItem に変換します
 func NewDBWorkListItem(ctx context.Context, item model.DBWorkListItem) DBWorkListItem {
 	return DBWorkListItem{
-		ID:            item.ID,
+		ID:            WorkID(item.ID),
 		Title:         item.Title,
 		Season:        formatSeason(ctx, item.SeasonYear, item.SeasonName),
 		WatchersCount: item.WatchersCount,

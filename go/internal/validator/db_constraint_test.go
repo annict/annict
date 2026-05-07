@@ -8,6 +8,8 @@ import (
 )
 
 func TestValidateNotNullTime(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name      string
 		value     sql.NullTime
@@ -64,6 +66,8 @@ func TestValidateNotNullTime(t *testing.T) {
 }
 
 func TestValidateNotNullString(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name      string
 		value     sql.NullString
@@ -111,6 +115,8 @@ func TestValidateNotNullString(t *testing.T) {
 }
 
 func TestValidateNotNullInt32(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name      string
 		value     sql.NullInt32
@@ -158,6 +164,8 @@ func TestValidateNotNullInt32(t *testing.T) {
 }
 
 func TestValidateNotNullInt64(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name      string
 		value     sql.NullInt64

@@ -20,7 +20,7 @@ func ptrSeasonName(v seed.SeasonName) *seed.SeasonName {
 
 func TestCreateHeavyUserUsecase(t *testing.T) {
 	// テストDBをセットアップ（トランザクションは使用しない）
-	db, _ := testutil.SetupTestDB(t)
+	db, _ := testutil.SetupTx(t)
 
 	// 前回のテストの残骸をクリーンアップ
 	_, err := db.Exec("DELETE FROM users WHERE username LIKE 'test_%' OR username LIKE 'follower_%' OR username LIKE 'following_%'")

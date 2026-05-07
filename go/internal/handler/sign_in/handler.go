@@ -12,6 +12,7 @@ import (
 type Handler struct {
 	cfg              *config.Config
 	sessionMgr       *session.Manager
+	flashMgr         *session.FlashManager
 	sendSignInCodeUC *usecase.SendSignInCodeUsecase
 	turnstileClient  *turnstile.Client
 }
@@ -20,12 +21,14 @@ type Handler struct {
 func NewHandler(
 	cfg *config.Config,
 	sessionMgr *session.Manager,
+	flashMgr *session.FlashManager,
 	sendSignInCodeUC *usecase.SendSignInCodeUsecase,
 	turnstileClient *turnstile.Client,
 ) *Handler {
 	return &Handler{
 		cfg:              cfg,
 		sessionMgr:       sessionMgr,
+		flashMgr:         flashMgr,
 		sendSignInCodeUC: sendSignInCodeUC,
 		turnstileClient:  turnstileClient,
 	}

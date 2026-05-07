@@ -24,7 +24,7 @@ import (
 func TestCreate_Success(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := testutil.NewQueriesWithTx(db, tx)
 
 	// テストユーザーを作成（encrypted_passwordが空 = パスワードなし）
@@ -36,7 +36,7 @@ func TestCreate_Success(t *testing.T) {
 
 	// ユーザー情報を取得
 	ctx := context.Background()
-	user, err := queries.GetUserByID(ctx, userID)
+	user, err := queries.GetUserByID(ctx, int64(userID))
 	if err != nil {
 		t.Fatalf("ユーザー取得エラー: %v", err)
 	}
@@ -48,12 +48,12 @@ func TestCreate_Success(t *testing.T) {
 		t.Fatalf("コードのハッシュ化エラー: %v", err)
 	}
 
-	_, err = queries.CreateSignInCode(ctx, query.CreateSignInCodeParams{
+	signInCodeRepoSetup := repository.NewSignInCodeRepository(queries)
+	if _, err := signInCodeRepoSetup.Create(ctx, repository.SignInCodeCreateParams{
 		UserID:     userID,
 		CodeDigest: codeDigest,
 		ExpiresAt:  time.Now().Add(15 * time.Minute),
-	})
-	if err != nil {
+	}); err != nil {
 		t.Fatalf("メールログインコード作成エラー: %v", err)
 	}
 
@@ -89,7 +89,7 @@ func TestCreate_Success(t *testing.T) {
 	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, signInCodeValidator)
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
-	handler := NewHandler(cfg, sessionMgr, nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
+	handler := NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
 
 	// セッションにメールアドレスとユーザーIDを設定
 	req := httptest.NewRequest("POST", "/sign_in/code", nil)
@@ -181,7 +181,7 @@ func TestCreate_Success(t *testing.T) {
 func TestCreate_InvalidCode(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := testutil.NewQueriesWithTx(db, tx)
 
 	// テストユーザーを作成
@@ -193,7 +193,7 @@ func TestCreate_InvalidCode(t *testing.T) {
 
 	// ユーザー情報を取得
 	ctx := context.Background()
-	user, err := queries.GetUserByID(ctx, userID)
+	user, err := queries.GetUserByID(ctx, int64(userID))
 	if err != nil {
 		t.Fatalf("ユーザー取得エラー: %v", err)
 	}
@@ -205,12 +205,12 @@ func TestCreate_InvalidCode(t *testing.T) {
 		t.Fatalf("コードのハッシュ化エラー: %v", err)
 	}
 
-	_, err = queries.CreateSignInCode(ctx, query.CreateSignInCodeParams{
+	signInCodeRepoSetup := repository.NewSignInCodeRepository(queries)
+	if _, err := signInCodeRepoSetup.Create(ctx, repository.SignInCodeCreateParams{
 		UserID:     userID,
 		CodeDigest: codeDigest,
 		ExpiresAt:  time.Now().Add(15 * time.Minute),
-	})
-	if err != nil {
+	}); err != nil {
 		t.Fatalf("メールログインコード作成エラー: %v", err)
 	}
 
@@ -231,7 +231,7 @@ func TestCreate_InvalidCode(t *testing.T) {
 	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, signInCodeValidator)
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
-	handler := NewHandler(cfg, sessionMgr, nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
+	handler := NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
 
 	// セッションにメールアドレスとユーザーIDを設定
 	req := httptest.NewRequest("POST", "/sign_in/code", nil)
@@ -273,38 +273,17 @@ func TestCreate_InvalidCode(t *testing.T) {
 	// ハンドラーを実行
 	handler.Create(rr, req)
 
-	// ステータスコードを確認（リダイレクト）
-	if rr.Code != http.StatusSeeOther {
-		t.Errorf("ステータスコードが正しくない: got %v want %v", rr.Code, http.StatusSeeOther)
+	// 422 でフォーム再描画されることを確認
+	if rr.Code != http.StatusUnprocessableEntity {
+		t.Errorf("ステータスコードが正しくない: got %v want %v", rr.Code, http.StatusUnprocessableEntity)
 	}
-
-	// リダイレクト先を確認（エラー時は /sign_in/code にリダイレクト）
-	location := rr.Header().Get("Location")
-	if location != "/sign_in/code" {
-		t.Errorf("リダイレクト先が正しくない: got %v want %v", location, "/sign_in/code")
-	}
-
-	// セッションCookieが設定されていないことを確認（ログイン失敗）
-	resultCookies := rr.Result().Cookies()
-	var sessionCookie *http.Cookie
-	for _, cookie := range resultCookies {
-		if cookie.Name == session.SessionKey {
-			sessionCookie = cookie
-			break
-		}
-	}
-
-	// セッションCookieは設定されない（既存セッションのみが存在）
-	// 既存セッションが引き継がれているだけなので、ログインセッションではない
-	// sessionCookieの値はチェックしない
-	_ = sessionCookie
 }
 
 // TestCreate_SessionExpired セッションが切れている場合のテスト
 func TestCreate_SessionExpired(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := testutil.NewQueriesWithTx(db, tx)
 
 	// 設定とセッションマネージャーを作成
@@ -324,7 +303,7 @@ func TestCreate_SessionExpired(t *testing.T) {
 	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, signInCodeValidator)
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
-	handler := NewHandler(cfg, sessionMgr, nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
+	handler := NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
 
 	// フォームデータを作成
 	form := url.Values{}
@@ -354,7 +333,7 @@ func TestCreate_SessionExpired(t *testing.T) {
 func TestCreate_CodeExpired(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := testutil.NewQueriesWithTx(db, tx)
 
 	// テストユーザーを作成
@@ -366,7 +345,7 @@ func TestCreate_CodeExpired(t *testing.T) {
 
 	// ユーザー情報を取得
 	ctx := context.Background()
-	user, err := queries.GetUserByID(ctx, userID)
+	user, err := queries.GetUserByID(ctx, int64(userID))
 	if err != nil {
 		t.Fatalf("ユーザー取得エラー: %v", err)
 	}
@@ -378,12 +357,12 @@ func TestCreate_CodeExpired(t *testing.T) {
 		t.Fatalf("コードのハッシュ化エラー: %v", err)
 	}
 
-	_, err = queries.CreateSignInCode(ctx, query.CreateSignInCodeParams{
+	signInCodeRepoSetup := repository.NewSignInCodeRepository(queries)
+	if _, err := signInCodeRepoSetup.Create(ctx, repository.SignInCodeCreateParams{
 		UserID:     userID,
 		CodeDigest: codeDigest,
 		ExpiresAt:  time.Now().Add(-1 * time.Minute), // 有効期限切れ（1分前）
-	})
-	if err != nil {
+	}); err != nil {
 		t.Fatalf("メールログインコード作成エラー: %v", err)
 	}
 
@@ -404,7 +383,7 @@ func TestCreate_CodeExpired(t *testing.T) {
 	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, signInCodeValidator)
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
-	handler := NewHandler(cfg, sessionMgr, nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
+	handler := NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
 
 	// セッションにメールアドレスとユーザーIDを設定
 	req := httptest.NewRequest("POST", "/sign_in/code", nil)
@@ -446,15 +425,9 @@ func TestCreate_CodeExpired(t *testing.T) {
 	// ハンドラーを実行
 	handler.Create(rr, req)
 
-	// ステータスコードを確認（リダイレクト）
-	if rr.Code != http.StatusSeeOther {
-		t.Errorf("ステータスコードが正しくない: got %v want %v", rr.Code, http.StatusSeeOther)
-	}
-
-	// リダイレクト先を確認（エラー時は /sign_in/code にリダイレクト）
-	location := rr.Header().Get("Location")
-	if location != "/sign_in/code" {
-		t.Errorf("リダイレクト先が正しくない: got %v want %v", location, "/sign_in/code")
+	// 422 でフォーム再描画されることを確認
+	if rr.Code != http.StatusUnprocessableEntity {
+		t.Errorf("ステータスコードが正しくない: got %v want %v", rr.Code, http.StatusUnprocessableEntity)
 	}
 }
 
@@ -462,7 +435,7 @@ func TestCreate_CodeExpired(t *testing.T) {
 func TestCreate_ValidationError(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := testutil.NewQueriesWithTx(db, tx)
 
 	// テストユーザーを作成
@@ -474,7 +447,7 @@ func TestCreate_ValidationError(t *testing.T) {
 
 	// ユーザー情報を取得
 	ctx := context.Background()
-	user, err := queries.GetUserByID(ctx, userID)
+	user, err := queries.GetUserByID(ctx, int64(userID))
 	if err != nil {
 		t.Fatalf("ユーザー取得エラー: %v", err)
 	}
@@ -496,7 +469,7 @@ func TestCreate_ValidationError(t *testing.T) {
 	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, signInCodeValidator)
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
-	handler := NewHandler(cfg, sessionMgr, nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
+	handler := NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
 
 	// セッションにメールアドレスとユーザーIDを設定
 	req := httptest.NewRequest("POST", "/sign_in/code", nil)
@@ -538,15 +511,9 @@ func TestCreate_ValidationError(t *testing.T) {
 	// ハンドラーを実行
 	handler.Create(rr, req)
 
-	// ステータスコードを確認（リダイレクト）
-	if rr.Code != http.StatusSeeOther {
-		t.Errorf("ステータスコードが正しくない: got %v want %v", rr.Code, http.StatusSeeOther)
-	}
-
-	// リダイレクト先を確認（バリデーションエラー時は /sign_in/code にリダイレクト）
-	location := rr.Header().Get("Location")
-	if location != "/sign_in/code" {
-		t.Errorf("リダイレクト先が正しくない: got %v want %v", location, "/sign_in/code")
+	// 422 でフォーム再描画されることを確認
+	if rr.Code != http.StatusUnprocessableEntity {
+		t.Errorf("ステータスコードが正しくない: got %v want %v", rr.Code, http.StatusUnprocessableEntity)
 	}
 }
 
@@ -554,7 +521,7 @@ func TestCreate_ValidationError(t *testing.T) {
 func TestCreate_UserNotFound(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := testutil.NewQueriesWithTx(db, tx)
 
 	// 存在しないユーザーIDを使用
@@ -577,7 +544,7 @@ func TestCreate_UserNotFound(t *testing.T) {
 	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, signInCodeValidator)
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
-	handler := NewHandler(cfg, sessionMgr, nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
+	handler := NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
 
 	// セッションにメールアドレスとユーザーIDを設定（存在しないユーザー）
 	ctx := context.Background()
@@ -620,14 +587,8 @@ func TestCreate_UserNotFound(t *testing.T) {
 	// ハンドラーを実行
 	handler.Create(rr, req)
 
-	// ステータスコードを確認（リダイレクト）
-	if rr.Code != http.StatusSeeOther {
-		t.Errorf("ステータスコードが正しくない: got %v want %v", rr.Code, http.StatusSeeOther)
-	}
-
-	// リダイレクト先を確認（コードが見つからない場合は /sign_in/code にリダイレクト）
-	location := rr.Header().Get("Location")
-	if location != "/sign_in/code" {
-		t.Errorf("リダイレクト先が正しくない: got %v want %v", location, "/sign_in/code")
+	// 422 でフォーム再描画されることを確認
+	if rr.Code != http.StatusUnprocessableEntity {
+		t.Errorf("ステータスコードが正しくない: got %v want %v", rr.Code, http.StatusUnprocessableEntity)
 	}
 }

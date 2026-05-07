@@ -26,7 +26,7 @@ func (r *FeatureFlagRepository) WithTx(tx *sql.Tx) *FeatureFlagRepository {
 // IsEnabledByDeviceOrUser はデバイストークンまたはユーザーIDでフラグが有効かどうかを返す
 // deviceTokenが空文字列の場合はデバイストークンによるマッチはスキップされる
 // userIDが0の場合はユーザーIDによるマッチはスキップされる
-func (r *FeatureFlagRepository) IsEnabledByDeviceOrUser(ctx context.Context, deviceToken string, userID int64, name model.FeatureFlagName) (bool, error) {
+func (r *FeatureFlagRepository) IsEnabledByDeviceOrUser(ctx context.Context, deviceToken string, userID model.UserID, name model.FeatureFlagName) (bool, error) {
 	dtParam := sql.NullString{}
 	if deviceToken != "" {
 		dtParam = sql.NullString{String: deviceToken, Valid: true}
@@ -34,7 +34,7 @@ func (r *FeatureFlagRepository) IsEnabledByDeviceOrUser(ctx context.Context, dev
 
 	uidParam := sql.NullInt64{}
 	if userID != 0 {
-		uidParam = sql.NullInt64{Int64: userID, Valid: true}
+		uidParam = sql.NullInt64{Int64: int64(userID), Valid: true}
 	}
 
 	return r.queries.IsFeatureFlagEnabled(ctx, query.IsFeatureFlagEnabledParams{
@@ -45,6 +45,6 @@ func (r *FeatureFlagRepository) IsEnabledByDeviceOrUser(ctx context.Context, dev
 }
 
 // IsEnabled は指定ユーザーに対してフラグが有効かどうかを返す
-func (r *FeatureFlagRepository) IsEnabled(ctx context.Context, userID int64, name model.FeatureFlagName) (bool, error) {
+func (r *FeatureFlagRepository) IsEnabled(ctx context.Context, userID model.UserID, name model.FeatureFlagName) (bool, error) {
 	return r.IsEnabledByDeviceOrUser(ctx, "", userID, name)
 }

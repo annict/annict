@@ -7,7 +7,7 @@ import (
 
 // StripeSubscriber はStripeサブスクライバーのドメインエンティティ
 type StripeSubscriber struct {
-	ID                       int64
+	ID                       StripeSubscriberID
 	StripeCustomerID         string
 	StripeSubscriptionID     string
 	StripePriceID            string

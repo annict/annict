@@ -11,14 +11,16 @@ import (
 type Handler struct {
 	cfg                      *config.Config
 	sessionMgr               *session.Manager
+	flashMgr                 *session.FlashManager
 	authenticateByPasswordUC *usecase.AuthenticateByPasswordUsecase
 }
 
 // NewHandler 新しいHandlerを作成します
-func NewHandler(cfg *config.Config, sessionMgr *session.Manager, authenticateByPasswordUC *usecase.AuthenticateByPasswordUsecase) *Handler {
+func NewHandler(cfg *config.Config, sessionMgr *session.Manager, flashMgr *session.FlashManager, authenticateByPasswordUC *usecase.AuthenticateByPasswordUsecase) *Handler {
 	return &Handler{
 		cfg:                      cfg,
 		sessionMgr:               sessionMgr,
+		flashMgr:                 flashMgr,
 		authenticateByPasswordUC: authenticateByPasswordUC,
 	}
 }

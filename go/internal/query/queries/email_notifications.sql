@@ -23,7 +23,7 @@ VALUES (
     NOW(), -- created_at
     NOW()  -- updated_at
 )
-RETURNING id, user_id, unsubscription_key, created_at, updated_at;
+RETURNING id, user_id, unsubscription_key, event_followed_user, event_liked_episode_record, created_at, updated_at;
 
 -- name: GetEmailNotificationByUserID :one
 SELECT id, user_id, unsubscription_key, event_followed_user, event_liked_episode_record, created_at, updated_at

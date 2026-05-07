@@ -10,7 +10,7 @@ const sidebarAvatarImageSize = 100 // 50px × 2
 
 // User はテンプレート表示用のユーザーデータです
 type User struct {
-	ID                 int64
+	ID                 model.UserID
 	Username           string
 	AvatarURL          string // サイドバー用アバター画像URL（50px表示、100px画像）
 	NotificationsCount int32  // 未読通知数

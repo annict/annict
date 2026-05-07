@@ -48,8 +48,8 @@ func (uc *GetSupporterStatusUsecase) Execute(ctx context.Context, input GetSuppo
 	output := &GetSupporterStatusOutput{}
 
 	// Stripeサブスクリプションをチェック
-	if user.StripeSubscriberID.Valid && uc.stripeSubscriberRepo != nil {
-		stripeSubscriber, err := uc.stripeSubscriberRepo.GetByID(ctx, user.StripeSubscriberID.Int64)
+	if user.StripeSubscriberID != nil && uc.stripeSubscriberRepo != nil {
+		stripeSubscriber, err := uc.stripeSubscriberRepo.GetByID(ctx, *user.StripeSubscriberID)
 		if err == nil && uc.stripeSubscriberRepo.IsActive(&stripeSubscriber) {
 			output.IsStripeActive = true
 			output.StripeSubscriber = &stripeSubscriber
@@ -57,8 +57,8 @@ func (uc *GetSupporterStatusUsecase) Execute(ctx context.Context, input GetSuppo
 	}
 
 	// Gumroadサブスクリプションをチェック
-	if user.GumroadSubscriberID.Valid && uc.gumroadSubscriberRepo != nil {
-		gumroadSubscriber, err := uc.gumroadSubscriberRepo.GetByID(ctx, user.GumroadSubscriberID.Int64)
+	if user.GumroadSubscriberID != nil && uc.gumroadSubscriberRepo != nil {
+		gumroadSubscriber, err := uc.gumroadSubscriberRepo.GetByID(ctx, *user.GumroadSubscriberID)
 		if err == nil && uc.gumroadSubscriberRepo.IsActive(&gumroadSubscriber) {
 			output.IsGumroadActive = true
 			output.GumroadSubscriber = &gumroadSubscriber

@@ -15,7 +15,9 @@ import (
 
 // TestTouchSession_Success はセッションのupdated_atが更新されることをテスト
 func TestTouchSession_Success(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewSessionRepository(queries)
 
@@ -26,8 +28,7 @@ func TestTouchSession_Success(t *testing.T) {
 		Build()
 
 	// セッションの初期updated_atを取得
-	privateID := generatePrivateID(publicID)
-	initialSession, err := queries.GetSessionByID(context.Background(), privateID)
+	initialSession, err := repo.GetSessionByID(context.Background(), publicID)
 	if err != nil {
 		t.Fatalf("初期セッションの取得に失敗: %v", err)
 	}
@@ -42,7 +43,7 @@ func TestTouchSession_Success(t *testing.T) {
 	}
 
 	// セッションの更新後のupdated_atを取得
-	updatedSession, err := queries.GetSessionByID(context.Background(), privateID)
+	updatedSession, err := repo.GetSessionByID(context.Background(), publicID)
 	if err != nil {
 		t.Fatalf("更新後のセッションの取得に失敗: %v", err)
 	}
@@ -56,7 +57,9 @@ func TestTouchSession_Success(t *testing.T) {
 
 // TestTouchSession_NonExistentSession は存在しないセッションIDでもエラーが発生しないことをテスト
 func TestTouchSession_NonExistentSession(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewSessionRepository(queries)
 
@@ -71,6 +74,8 @@ func TestTouchSession_NonExistentSession(t *testing.T) {
 
 // TestGeneratePrivateID はprivate IDが正しいフォーマットで生成されることをテスト
 func TestGeneratePrivateID(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name     string
 		publicID string
@@ -105,6 +110,8 @@ func TestGeneratePrivateID(t *testing.T) {
 
 // TestGeneratePrivateID_Format はprivate IDが "2::" で始まることをテスト
 func TestGeneratePrivateID_Format(t *testing.T) {
+	t.Parallel()
+
 	tests := []string{
 		"test_id_1",
 		"test_id_2",
@@ -141,9 +148,11 @@ func generatePrivateID(publicID string) string {
 	return fmt.Sprintf("2::%s", hex.EncodeToString(hash[:]))
 }
 
-// TestGetSessionByID_Success はセッションを正常に取得できることをテスト
+// TestGetSessionByID_Success はセッションを正常に取得し、Modelとして返却されることをテスト
 func TestGetSessionByID_Success(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewSessionRepository(queries)
 
@@ -159,9 +168,8 @@ func TestGetSessionByID_Success(t *testing.T) {
 		t.Fatalf("GetSessionByIDに失敗: %v", err)
 	}
 
-	// セッションが取得できたことを確認
 	if session == nil {
-		t.Fatal("セッションがnilです")
+		t.Fatal("sessionがnilです")
 	}
 
 	// private IDが正しいことを確認
@@ -169,11 +177,22 @@ func TestGetSessionByID_Success(t *testing.T) {
 	if session.SessionID != expectedPrivateID {
 		t.Errorf("セッションIDが一致しません: got %v, want %v", session.SessionID, expectedPrivateID)
 	}
+	if session.ID == 0 {
+		t.Error("IDがゼロ値です")
+	}
+	if session.CreatedAt.IsZero() {
+		t.Error("CreatedAtがセットされていません")
+	}
+	if session.UpdatedAt.IsZero() {
+		t.Error("UpdatedAtがセットされていません")
+	}
 }
 
 // TestGetSessionByID_NonExistent は存在しないセッションIDでエラーが返ることをテスト
 func TestGetSessionByID_NonExistent(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewSessionRepository(queries)
 
@@ -193,7 +212,9 @@ func TestGetSessionByID_NonExistent(t *testing.T) {
 
 // TestGetUserByID_Success はユーザーを正常に取得できることをテスト
 func TestGetUserByID_Success(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewSessionRepository(queries)
 
@@ -222,7 +243,9 @@ func TestGetUserByID_Success(t *testing.T) {
 
 // TestGetUserByID_NonExistent は存在しないユーザーIDでエラーが返ることをテスト
 func TestGetUserByID_NonExistent(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewSessionRepository(queries)
 
@@ -242,7 +265,9 @@ func TestGetUserByID_NonExistent(t *testing.T) {
 
 // TestUpdateSession_Success はセッションを正常に更新できることをテスト
 func TestUpdateSession_Success(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewSessionRepository(queries)
 
@@ -259,9 +284,8 @@ func TestUpdateSession_Success(t *testing.T) {
 		t.Fatalf("UpdateSessionに失敗: %v", err)
 	}
 
-	// セッションが更新されたことを確認
-	privateID := generatePrivateID(publicID)
-	session, err := queries.GetSessionByID(context.Background(), privateID)
+	// セッションが更新されたことを確認（DB に永続化されたかを Repository 経由で確認）
+	session, err := repo.GetSessionByID(context.Background(), publicID)
 	if err != nil {
 		t.Fatalf("更新後のセッション取得に失敗: %v", err)
 	}
@@ -272,9 +296,11 @@ func TestUpdateSession_Success(t *testing.T) {
 	}
 }
 
-// TestCreateSession_Success はセッションを正常に作成できることをテスト
+// TestCreateSession_Success はセッションを正常に作成し、Modelとして返却されることをテスト
 func TestCreateSession_Success(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewSessionRepository(queries)
 
@@ -287,10 +313,17 @@ func TestCreateSession_Success(t *testing.T) {
 		t.Fatalf("CreateSessionに失敗: %v", err)
 	}
 
+	if session == nil {
+		t.Fatal("sessionがnilです")
+	}
+
 	// セッションが作成されたことを確認
-	privateID := generatePrivateID(publicID)
-	if session.SessionID != privateID {
-		t.Errorf("セッションIDが一致しません: got %v, want %v", session.SessionID, privateID)
+	expectedPrivateID := generatePrivateID(publicID)
+	if session.SessionID != expectedPrivateID {
+		t.Errorf("セッションIDが一致しません: got %v, want %v", session.SessionID, expectedPrivateID)
+	}
+	if session.ID == 0 {
+		t.Error("IDがゼロ値です")
 	}
 
 	// データが正しいことを確認
@@ -298,20 +331,19 @@ func TestCreateSession_Success(t *testing.T) {
 		t.Errorf("セッションデータが一致しません: got %v, want %v", string(session.Data), string(sessionData))
 	}
 
-	// DBから取得して確認
-	fetchedSession, err := queries.GetSessionByID(context.Background(), privateID)
-	if err != nil {
-		t.Fatalf("作成後のセッション取得に失敗: %v", err)
+	if session.CreatedAt.IsZero() {
+		t.Error("CreatedAtがセットされていません")
 	}
-
-	if fetchedSession.SessionID != privateID {
-		t.Errorf("DBのセッションIDが一致しません: got %v, want %v", fetchedSession.SessionID, privateID)
+	if session.UpdatedAt.IsZero() {
+		t.Error("UpdatedAtがセットされていません")
 	}
 }
 
 // TestDeleteSession_Success はセッションを正常に削除できることをテスト
 func TestDeleteSession_Success(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewSessionRepository(queries)
 
@@ -322,8 +354,7 @@ func TestDeleteSession_Success(t *testing.T) {
 		Build()
 
 	// セッションが存在することを確認
-	privateID := generatePrivateID(publicID)
-	_, err := queries.GetSessionByID(context.Background(), privateID)
+	_, err := repo.GetSessionByID(context.Background(), publicID)
 	if err != nil {
 		t.Fatalf("セッションの取得に失敗: %v", err)
 	}
@@ -335,7 +366,7 @@ func TestDeleteSession_Success(t *testing.T) {
 	}
 
 	// セッションが削除されたことを確認
-	_, err = queries.GetSessionByID(context.Background(), privateID)
+	_, err = repo.GetSessionByID(context.Background(), publicID)
 	if err == nil {
 		t.Error("削除したセッションがまだ存在しています")
 	}
@@ -343,7 +374,9 @@ func TestDeleteSession_Success(t *testing.T) {
 
 // TestSessionRepository_WithTx はWithTxで取得したRepositoryがトランザクション内で動作することをテスト
 func TestSessionRepository_WithTx(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db)
 	repo := repository.NewSessionRepository(queries)
 
@@ -377,7 +410,9 @@ func TestSessionRepository_WithTx(t *testing.T) {
 
 // TestDeleteSession_NonExistent は存在しないセッションIDでもエラーが発生しないことをテスト
 func TestDeleteSession_NonExistent(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewSessionRepository(queries)
 

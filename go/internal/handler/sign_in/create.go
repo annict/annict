@@ -1,14 +1,12 @@
 package sign_in
 
 import (
-	"fmt"
 	"log/slog"
 	"net/http"
 	"net/url"
 
 	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/model"
-	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/usecase"
 )
 
@@ -23,16 +21,8 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// backパラメータを取得（ログイン後のリダイレクト先）
+	email := r.FormValue("email")
 	backURL := r.FormValue("back")
-
-	// backパラメータ付きのリダイレクトURL生成ヘルパー
-	signInRedirectURL := func() string {
-		if backURL != "" {
-			return "/sign_in?back=" + url.QueryEscape(backURL)
-		}
-		return "/sign_in"
-	}
 
 	// Turnstile検証
 	turnstileToken := r.FormValue("cf-turnstile-response")
@@ -50,25 +40,19 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		}
 
 		ve := model.NewValidationError()
-		ve.AddField("email", i18n.T(ctx, "turnstile_verification_failed"))
-		if err := h.sessionMgr.SetValidationError(ctx, w, r, *ve); err != nil {
-			slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
-		}
-		http.Redirect(w, r, signInRedirectURL(), http.StatusSeeOther)
+		ve.AddGlobal(i18n.T(ctx, "turnstile_verification_failed"))
+		h.renderNewForm(w, r, http.StatusUnprocessableEntity, ve, email, backURL)
 		return
 	}
-	slog.InfoContext(ctx, "Turnstile検証成功")
+	slog.DebugContext(ctx, "Turnstile検証成功")
 
 	// UseCaseを呼び出し（バリデーション + ユーザー検索 + コード送信）
 	output, err := h.sendSignInCodeUC.Execute(ctx, usecase.SendSignInCodeInput{
-		Email: r.FormValue("email"),
+		Email: email,
 	})
 	if err != nil {
 		if ve := model.AsValidationError(err); ve != nil {
-			if err := h.sessionMgr.SetValidationError(ctx, w, r, *ve); err != nil {
-				slog.ErrorContext(ctx, "フォームエラーの設定に失敗しました", "error", err)
-			}
-			http.Redirect(w, r, signInRedirectURL(), http.StatusSeeOther)
+			h.renderNewForm(w, r, http.StatusUnprocessableEntity, ve, email, backURL)
 			return
 		}
 		slog.ErrorContext(ctx, "サインイン処理でエラーが発生しました", "error", err)
@@ -83,7 +67,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userIDStr := fmt.Sprintf("%d", output.UserID)
+	userIDStr := output.UserID.String()
 	if err := h.sessionMgr.SetValue(ctx, w, r, "sign_in_user_id", userIDStr); err != nil {
 		slog.ErrorContext(ctx, "セッションへのユーザーID保存エラー", "error", err)
 		http.Error(w, i18n.T(ctx, "sign_in_error_server"), http.StatusInternalServerError)
@@ -106,7 +90,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 		// フラッシュメッセージを設定
 		message := i18n.T(ctx, "sign_in_code_sent_to", map[string]any{"Email": output.Email})
-		h.sessionMgr.SetFlash(w, session.FlashSuccess, message)
+		h.flashMgr.SetSuccess(w, message)
 
 		redirectURL := "/sign_in/code"
 		if backURL != "" {

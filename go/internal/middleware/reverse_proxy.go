@@ -23,7 +23,7 @@ const DeviceTokenCookieName = "device_token"
 
 // featureFlagChecker はフィーチャーフラグの有効判定を行うインターフェース
 type featureFlagChecker interface {
-	IsEnabledByDeviceOrUser(ctx context.Context, deviceToken string, userID int64, name model.FeatureFlagName) (bool, error)
+	IsEnabledByDeviceOrUser(ctx context.Context, deviceToken string, userID model.UserID, name model.FeatureFlagName) (bool, error)
 }
 
 // featureFlaggedPattern はフィーチャーフラグで制御するURLパターンを定義
@@ -268,7 +268,7 @@ func (m *ReverseProxyMiddleware) isFeatureFlagEnabled(r *http.Request, deviceTok
 	ctx := r.Context()
 
 	// セッションからユーザーIDを取得
-	var userID int64
+	var userID model.UserID
 	if m.sessionMgr != nil {
 		sessionID, err := m.sessionMgr.GetSessionID(r)
 		if err == nil && sessionID != "" {

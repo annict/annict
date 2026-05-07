@@ -15,7 +15,7 @@ func TestUpdateStripeSubscriberUsecase_Execute(t *testing.T) {
 	t.Parallel()
 
 	// テストDBをセットアップ
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(tx)
 
 	// リポジトリの作成

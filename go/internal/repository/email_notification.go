@@ -5,6 +5,7 @@ import (
 	"context"
 	"database/sql"
 
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
 )
 
@@ -24,10 +25,22 @@ func (r *EmailNotificationRepository) WithTx(tx *sql.Tx) *EmailNotificationRepos
 }
 
 // Create はメール通知設定を作成します
-func (r *EmailNotificationRepository) Create(ctx context.Context, userID int64, unsubscriptionKey string) error {
-	_, err := r.queries.CreateEmailNotification(ctx, query.CreateEmailNotificationParams{
-		UserID:            userID,
+func (r *EmailNotificationRepository) Create(ctx context.Context, userID model.UserID, unsubscriptionKey string) (*model.EmailNotification, error) {
+	row, err := r.queries.CreateEmailNotification(ctx, query.CreateEmailNotificationParams{
+		UserID:            int64(userID),
 		UnsubscriptionKey: unsubscriptionKey,
 	})
-	return err
+	if err != nil {
+		return nil, err
+	}
+
+	return &model.EmailNotification{
+		ID:                      model.EmailNotificationID(row.ID),
+		UserID:                  model.UserID(row.UserID),
+		UnsubscriptionKey:       row.UnsubscriptionKey,
+		EventFollowedUser:       row.EventFollowedUser,
+		EventLikedEpisodeRecord: row.EventLikedEpisodeRecord,
+		CreatedAt:               row.CreatedAt,
+		UpdatedAt:               row.UpdatedAt,
+	}, nil
 }

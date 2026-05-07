@@ -859,7 +859,7 @@ type mockFeatureFlagChecker struct {
 	err     error
 }
 
-func (m *mockFeatureFlagChecker) IsEnabledByDeviceOrUser(_ context.Context, _ string, _ int64, _ model.FeatureFlagName) (bool, error) {
+func (m *mockFeatureFlagChecker) IsEnabledByDeviceOrUser(_ context.Context, _ string, _ model.UserID, _ model.FeatureFlagName) (bool, error) {
 	return m.enabled, m.err
 }
 

@@ -19,8 +19,8 @@ func NewGumroadSubscriberRepository(queries *query.Queries) *GumroadSubscriberRe
 }
 
 // GetByID はIDでGumroadサブスクライバーを検索します
-func (r *GumroadSubscriberRepository) GetByID(ctx context.Context, id int64) (model.GumroadSubscriber, error) {
-	row, err := r.queries.GetGumroadSubscriberByID(ctx, id)
+func (r *GumroadSubscriberRepository) GetByID(ctx context.Context, id model.GumroadSubscriberID) (model.GumroadSubscriber, error) {
+	row, err := r.queries.GetGumroadSubscriberByID(ctx, int64(id))
 	if err != nil {
 		return model.GumroadSubscriber{}, err
 	}
@@ -49,7 +49,7 @@ func (r *GumroadSubscriberRepository) IsActive(subscriber *model.GumroadSubscrib
 // toGumroadSubscriberModel はqueryの結果をモデルに変換します
 func toGumroadSubscriberModel(row query.GumroadSubscriber) model.GumroadSubscriber {
 	return model.GumroadSubscriber{
-		ID:                                 row.ID,
+		ID:                                 model.GumroadSubscriberID(row.ID),
 		GumroadID:                          row.GumroadID,
 		GumroadProductID:                   row.GumroadProductID,
 		GumroadProductName:                 row.GumroadProductName,

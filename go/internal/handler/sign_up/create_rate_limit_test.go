@@ -22,8 +22,7 @@ import (
 // TestCreate_RateLimiting_IP はIP単位のRate Limitingテスト
 func TestCreate_RateLimiting_IP(t *testing.T) {
 	// テスト用DBとトランザクションをセットアップ
-	db, tx := testutil.SetupTestDB(t)
-	defer func() { _ = tx.Rollback() }()
+	db, tx := testutil.SetupTx(t)
 
 	// テスト用Redisをセットアップ
 	rdb := testutil.SetupTestRedis(t)
@@ -51,7 +50,7 @@ func TestCreate_RateLimiting_IP(t *testing.T) {
 	limiter := ratelimit.NewLimiter(rdb)
 
 	// ハンドラーの初期化
-	handler := sign_up.NewHandler(cfg, sessionMgr, limiter, sendSignUpCodeUC, turnstileClient)
+	handler := sign_up.NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), limiter, sendSignUpCodeUC, turnstileClient)
 
 	// 同一IPから6回アクセス（制限: 5回/時間）
 	clientIP := "203.0.113.1"
@@ -75,14 +74,14 @@ func TestCreate_RateLimiting_IP(t *testing.T) {
 		handler.Create(rr, req)
 
 		if i < 5 {
-			// 最初の5回は成功（302または400）
-			if rr.Code != http.StatusSeeOther && rr.Code != http.StatusBadRequest {
+			// 最初の5回は成功（303）または検証失敗（422）
+			if rr.Code != http.StatusSeeOther && rr.Code != http.StatusUnprocessableEntity {
 				t.Errorf("リクエスト %d: 予期しないステータスコード: got %v", i+1, rr.Code)
 			}
 		} else {
-			// 6回目はRate Limitingで失敗（303リダイレクト）
-			if rr.Code != http.StatusSeeOther {
-				t.Errorf("リクエスト %d: Rate Limitingが発動していません: got %v want %v", i+1, rr.Code, http.StatusSeeOther)
+			// 6回目はRate Limitingで失敗（422でフォーム再描画）
+			if rr.Code != http.StatusUnprocessableEntity {
+				t.Errorf("リクエスト %d: Rate Limitingが発動していません: got %v want %v", i+1, rr.Code, http.StatusUnprocessableEntity)
 			}
 		}
 	}
@@ -94,8 +93,7 @@ func TestCreate_RateLimiting_IP(t *testing.T) {
 // TestCreate_RateLimiting_Email はメールアドレス単位のRate Limitingテスト
 func TestCreate_RateLimiting_Email(t *testing.T) {
 	// テスト用DBとトランザクションをセットアップ
-	db, tx := testutil.SetupTestDB(t)
-	defer func() { _ = tx.Rollback() }()
+	db, tx := testutil.SetupTx(t)
 
 	// テスト用Redisをセットアップ
 	rdb := testutil.SetupTestRedis(t)
@@ -123,7 +121,7 @@ func TestCreate_RateLimiting_Email(t *testing.T) {
 	limiter := ratelimit.NewLimiter(rdb)
 
 	// ハンドラーの初期化
-	handler := sign_up.NewHandler(cfg, sessionMgr, limiter, sendSignUpCodeUC, turnstileClient)
+	handler := sign_up.NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), limiter, sendSignUpCodeUC, turnstileClient)
 
 	// 同一メールアドレスで4回アクセス（制限: 3回/時間）
 	email := "test@example.com"
@@ -147,14 +145,14 @@ func TestCreate_RateLimiting_Email(t *testing.T) {
 		handler.Create(rr, req)
 
 		if i < 3 {
-			// 最初の3回は成功（302または400）
-			if rr.Code != http.StatusSeeOther && rr.Code != http.StatusBadRequest {
+			// 最初の3回は成功（303）または検証失敗（422）
+			if rr.Code != http.StatusSeeOther && rr.Code != http.StatusUnprocessableEntity {
 				t.Errorf("リクエスト %d: 予期しないステータスコード: got %v", i+1, rr.Code)
 			}
 		} else {
-			// 4回目はRate Limitingで失敗（303リダイレクト）
-			if rr.Code != http.StatusSeeOther {
-				t.Errorf("リクエスト %d: Rate Limitingが発動していません: got %v want %v", i+1, rr.Code, http.StatusSeeOther)
+			// 4回目はRate Limitingで失敗（422でフォーム再描画）
+			if rr.Code != http.StatusUnprocessableEntity {
+				t.Errorf("リクエスト %d: Rate Limitingが発動していません: got %v want %v", i+1, rr.Code, http.StatusUnprocessableEntity)
 			}
 		}
 	}

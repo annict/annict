@@ -12,7 +12,7 @@ import (
 // sqlcが生成したコードが実際のDBスキーマと正しく連携するかを確認する
 func TestGetWorkByID(t *testing.T) {
 	// テストDBとトランザクションをセットアップ
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 
 	// テストデータを作成
 	workID := testutil.NewWorkBuilder(t, tx).
@@ -35,7 +35,7 @@ func TestGetWorkByID(t *testing.T) {
 	queries := query.New(db).WithTx(tx)
 
 	// GetWorkByIDメソッドをテスト
-	work, err := queries.GetWorkByID(context.Background(), workID)
+	work, err := queries.GetWorkByID(context.Background(), int64(workID))
 	if err != nil {
 		t.Fatalf("Failed to get work by ID: %v", err)
 	}
@@ -56,14 +56,14 @@ func TestGetWorkByID(t *testing.T) {
 	}
 
 	// IDが正しく設定されているか確認
-	if work.ID != workID {
+	if work.ID != int64(workID) {
 		t.Errorf("Expected work ID %d, got %d", workID, work.ID)
 	}
 }
 
 // TestGetWorkByID_NotFound は存在しないIDでの取得テスト
 func TestGetWorkByID_NotFound(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 
 	// 存在しないIDで取得を試みる

@@ -7,7 +7,7 @@ import (
 
 // GumroadSubscriber はGumroadサブスクライバーのドメインエンティティ
 type GumroadSubscriber struct {
-	ID                                 int64
+	ID                                 GumroadSubscriberID
 	GumroadID                          string
 	GumroadProductID                   string
 	GumroadProductName                 string

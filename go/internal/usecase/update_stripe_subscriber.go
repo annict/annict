@@ -83,7 +83,7 @@ func (uc *UpdateStripeSubscriberUsecase) Execute(
 	}
 
 	// 更新後のレコードを取得
-	updated, err := uc.stripeSubscriberRepo.GetByID(ctx, subscriber.ID)
+	updated, err := uc.stripeSubscriberRepo.GetByID(ctx, model.StripeSubscriberID(subscriber.ID))
 	if err != nil {
 		return nil, fmt.Errorf("更新後のStripeSubscriber取得に失敗: %w", err)
 	}

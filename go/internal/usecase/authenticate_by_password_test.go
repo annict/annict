@@ -16,7 +16,7 @@ import (
 func TestAuthenticateByPasswordUsecase_Execute_Success(t *testing.T) {
 	t.Parallel()
 
-	db := testutil.GetTestDB(t)
+	db := testutil.GetTestDB()
 	queries := query.New(db)
 
 	// テストユーザーを作成してコミット
@@ -70,7 +70,7 @@ func TestAuthenticateByPasswordUsecase_Execute_Success(t *testing.T) {
 func TestAuthenticateByPasswordUsecase_Execute_InvalidPassword(t *testing.T) {
 	t.Parallel()
 
-	db := testutil.GetTestDB(t)
+	db := testutil.GetTestDB()
 	queries := query.New(db)
 
 	// テストユーザーを作成してコミット
@@ -120,7 +120,7 @@ func TestAuthenticateByPasswordUsecase_Execute_InvalidPassword(t *testing.T) {
 func TestAuthenticateByPasswordUsecase_Execute_UserNotFound(t *testing.T) {
 	t.Parallel()
 
-	db := testutil.GetTestDB(t)
+	db := testutil.GetTestDB()
 	queries := query.New(db)
 
 	userRepo := repository.NewUserRepository(queries)
@@ -144,7 +144,7 @@ func TestAuthenticateByPasswordUsecase_Execute_UserNotFound(t *testing.T) {
 func TestAuthenticateByPasswordUsecase_Execute_ValidationError(t *testing.T) {
 	t.Parallel()
 
-	db := testutil.GetTestDB(t)
+	db := testutil.GetTestDB()
 	queries := query.New(db)
 
 	userRepo := repository.NewUserRepository(queries)
@@ -173,7 +173,7 @@ func TestAuthenticateByPasswordUsecase_Execute_ValidationError(t *testing.T) {
 func TestAuthenticateByPasswordUsecase_Execute_WhitespacePassword(t *testing.T) {
 	t.Parallel()
 
-	db := testutil.GetTestDB(t)
+	db := testutil.GetTestDB()
 	queries := query.New(db)
 
 	userRepo := repository.NewUserRepository(queries)

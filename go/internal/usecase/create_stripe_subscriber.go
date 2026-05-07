@@ -41,9 +41,9 @@ func NewCreateStripeSubscriberUsecase(
 
 // CreateStripeSubscriberInput はcheckout.session.completedイベントの入力データ
 type CreateStripeSubscriberInput struct {
-	StripeCustomerID     string // Stripeの顧客ID (cus_xxx)
-	StripeSubscriptionID string // StripeのサブスクリプションID (sub_xxx)
-	UserID               int64  // AnnictのユーザーID（metadataから取得）
+	StripeCustomerID     string       // Stripeの顧客ID (cus_xxx)
+	StripeSubscriptionID string       // StripeのサブスクリプションID (sub_xxx)
+	UserID               model.UserID // AnnictのユーザーID（metadataから取得）
 }
 
 // CreateStripeSubscriberResult はcheckout.session.completedイベント処理の結果
@@ -128,7 +128,7 @@ func (uc *CreateStripeSubscriberUsecase) Execute(
 }
 
 // ParseUserIDFromMetadata はCheckoutセッションのmetadataからユーザーIDを取得します
-func ParseUserIDFromMetadata(metadata map[string]string) (int64, error) {
+func ParseUserIDFromMetadata(metadata map[string]string) (model.UserID, error) {
 	userIDStr, ok := metadata["user_id"]
 	if !ok {
 		return 0, &MetadataUserIDMissingError{}
@@ -139,7 +139,7 @@ func ParseUserIDFromMetadata(metadata map[string]string) (int64, error) {
 		return 0, &MetadataUserIDInvalidError{Value: userIDStr}
 	}
 
-	return userID, nil
+	return model.UserID(userID), nil
 }
 
 // InvalidSubscriptionStatusError は無効なサブスクリプションステータスを示すエラー
