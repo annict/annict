@@ -24,9 +24,6 @@ func TestCreate_Success(t *testing.T) {
 	// テスト用DBとトランザクションをセットアップ
 	db, tx := testutil.SetupTx(t)
 
-	// テスト用Redisをセットアップ
-	rdb := testutil.SetupTestRedis(t)
-
 	// 設定を読み込む
 	cfg, err := config.Load()
 	if err != nil {
@@ -71,9 +68,6 @@ func TestCreate_Success(t *testing.T) {
 	if rr.Code != http.StatusSeeOther && rr.Code != http.StatusUnprocessableEntity {
 		t.Errorf("予期しないステータスコード: got %v want %v or %v", rr.Code, http.StatusSeeOther, http.StatusUnprocessableEntity)
 	}
-
-	// Redisをクリーンアップ
-	rdb.FlushDB(req.Context())
 }
 
 // TestCreate_EmailRequired はメールアドレス必須のバリデーションテスト

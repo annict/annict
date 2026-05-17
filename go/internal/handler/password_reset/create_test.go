@@ -2,9 +2,11 @@ package password_reset
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -31,6 +33,8 @@ func (m *mockTurnstileClient) Verify(ctx context.Context, token string) (bool, e
 
 // TestCreate_RateLimiting_IP はIPアドレス単位のRate Limitingをテストします
 func TestCreate_RateLimiting_IP(t *testing.T) {
+	t.Parallel()
+
 	db, tx := testutil.SetupTx(t)
 	rdb := testutil.SetupTestRedis(t)
 	queries := query.New(db).WithTx(tx)
@@ -51,14 +55,35 @@ func TestCreate_RateLimiting_IP(t *testing.T) {
 	createPasswordResetTokenUC := usecase.NewCreatePasswordResetTokenUsecase(db, repository.NewUserRepository(queries), repository.NewPasswordResetTokenRepository(queries), nil, nil, v)
 	handler := NewHandler(cfg, sessionManager, limiter, mockClient, createPasswordResetTokenUC)
 
+	// Build per-test unique values so this test does not collide with
+	// other tests running in parallel against the shared Redis DB.
+	//
+	// [Ja] 共有 Redis DB に対する並列実行で他テストと衝突しないよう、
+	// 本テスト固有のキー構成値を組み立てる。
+	prefix := testutil.UniqueRateLimitPrefix(t)
+	primaryIP := prefix + "-ip1"
+	altIP := prefix + "-ip2"
+	emailFor := func(i int) string { return fmt.Sprintf("%s-%d@example.com", prefix, i) }
+
+	ctx := context.Background()
+	resetKeys := func() {
+		_ = limiter.Reset(ctx, "password_reset:ip:"+primaryIP)
+		_ = limiter.Reset(ctx, "password_reset:ip:"+altIP)
+		for i := 0; i < 7; i++ {
+			_ = limiter.Reset(ctx, "password_reset:email:"+emailFor(i))
+		}
+	}
+	resetKeys()
+	t.Cleanup(resetKeys)
+
 	for i := 0; i < 5; i++ {
 		form := url.Values{}
-		form.Add("email", "test"+string(rune(i+48))+"@example.com")
+		form.Add("email", emailFor(i))
 		form.Add("cf-turnstile-response", "valid-token")
 
 		req := httptest.NewRequest("POST", "/password/reset", strings.NewReader(form.Encode()))
 		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-		req.RemoteAddr = "192.168.1.1:12345"
+		req.RemoteAddr = primaryIP + ":12345"
 		rr := httptest.NewRecorder()
 
 		testutil.ApplyI18nMiddleware(t, handler.Create)(rr, req)
@@ -69,12 +94,12 @@ func TestCreate_RateLimiting_IP(t *testing.T) {
 	}
 
 	form := url.Values{}
-	form.Add("email", "test5@example.com")
+	form.Add("email", emailFor(5))
 	form.Add("cf-turnstile-response", "valid-token")
 
 	req := httptest.NewRequest("POST", "/password/reset", strings.NewReader(form.Encode()))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	req.RemoteAddr = "192.168.1.1:12345"
+	req.RemoteAddr = primaryIP + ":12345"
 	rr := httptest.NewRecorder()
 
 	testutil.ApplyI18nMiddleware(t, handler.Create)(rr, req)
@@ -84,12 +109,12 @@ func TestCreate_RateLimiting_IP(t *testing.T) {
 	}
 
 	form = url.Values{}
-	form.Add("email", "test6@example.com")
+	form.Add("email", emailFor(6))
 	form.Add("cf-turnstile-response", "valid-token")
 
 	req = httptest.NewRequest("POST", "/password/reset", strings.NewReader(form.Encode()))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	req.RemoteAddr = "192.168.1.2:12345"
+	req.RemoteAddr = altIP + ":12345"
 	rr = httptest.NewRecorder()
 
 	testutil.ApplyI18nMiddleware(t, handler.Create)(rr, req)
@@ -101,6 +126,8 @@ func TestCreate_RateLimiting_IP(t *testing.T) {
 
 // TestCreate_RateLimiting_Email はメールアドレス単位のRate Limitingをテストします
 func TestCreate_RateLimiting_Email(t *testing.T) {
+	t.Parallel()
+
 	db, tx := testutil.SetupTx(t)
 	rdb := testutil.SetupTestRedis(t)
 	queries := query.New(db).WithTx(tx)
@@ -121,14 +148,37 @@ func TestCreate_RateLimiting_Email(t *testing.T) {
 	createPasswordResetTokenUC := usecase.NewCreatePasswordResetTokenUsecase(db, repository.NewUserRepository(queries), repository.NewPasswordResetTokenRepository(queries), nil, nil, v)
 	handler := NewHandler(cfg, sessionManager, limiter, mockClient, createPasswordResetTokenUC)
 
+	// Build per-test unique values so this test does not collide with
+	// other tests running in parallel against the shared Redis DB.
+	//
+	// [Ja] 共有 Redis DB に対する並列実行で他テストと衝突しないよう、
+	// 本テスト固有のキー構成値を組み立てる。
+	prefix := testutil.UniqueRateLimitPrefix(t)
+	primaryEmail := prefix + "@example.com"
+	altEmail := prefix + "-alt@example.com"
+	ipFor := func(i int) string { return prefix + "-ip" + strconv.Itoa(i) }
+	altIP := prefix + "-ip-alt"
+
+	ctx := context.Background()
+	resetKeys := func() {
+		_ = limiter.Reset(ctx, "password_reset:email:"+primaryEmail)
+		_ = limiter.Reset(ctx, "password_reset:email:"+altEmail)
+		for i := 0; i < 3; i++ {
+			_ = limiter.Reset(ctx, "password_reset:ip:"+ipFor(i))
+		}
+		_ = limiter.Reset(ctx, "password_reset:ip:"+altIP)
+	}
+	resetKeys()
+	t.Cleanup(resetKeys)
+
 	for i := 0; i < 3; i++ {
 		form := url.Values{}
-		form.Add("email", "ratelimit@example.com")
+		form.Add("email", primaryEmail)
 		form.Add("cf-turnstile-response", "valid-token")
 
 		req := httptest.NewRequest("POST", "/password/reset", strings.NewReader(form.Encode()))
 		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-		req.RemoteAddr = "192.168.1." + string(rune(i+49)) + ":12345"
+		req.RemoteAddr = ipFor(i) + ":12345"
 		rr := httptest.NewRecorder()
 
 		testutil.ApplyI18nMiddleware(t, handler.Create)(rr, req)
@@ -139,12 +189,12 @@ func TestCreate_RateLimiting_Email(t *testing.T) {
 	}
 
 	form := url.Values{}
-	form.Add("email", "ratelimit@example.com")
+	form.Add("email", primaryEmail)
 	form.Add("cf-turnstile-response", "valid-token")
 
 	req := httptest.NewRequest("POST", "/password/reset", strings.NewReader(form.Encode()))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	req.RemoteAddr = "192.168.1.100:12345"
+	req.RemoteAddr = altIP + ":12345"
 	rr := httptest.NewRecorder()
 
 	testutil.ApplyI18nMiddleware(t, handler.Create)(rr, req)
@@ -154,12 +204,12 @@ func TestCreate_RateLimiting_Email(t *testing.T) {
 	}
 
 	form = url.Values{}
-	form.Add("email", "different@example.com")
+	form.Add("email", altEmail)
 	form.Add("cf-turnstile-response", "valid-token")
 
 	req = httptest.NewRequest("POST", "/password/reset", strings.NewReader(form.Encode()))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	req.RemoteAddr = "192.168.1.100:12345"
+	req.RemoteAddr = altIP + ":12345"
 	rr = httptest.NewRecorder()
 
 	testutil.ApplyI18nMiddleware(t, handler.Create)(rr, req)

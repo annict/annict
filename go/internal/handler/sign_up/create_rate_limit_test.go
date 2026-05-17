@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -21,6 +22,8 @@ import (
 
 // TestCreate_RateLimiting_IP はIP単位のRate Limitingテスト
 func TestCreate_RateLimiting_IP(t *testing.T) {
+	t.Parallel()
+
 	// テスト用DBとトランザクションをセットアップ
 	db, tx := testutil.SetupTx(t)
 
@@ -52,12 +55,26 @@ func TestCreate_RateLimiting_IP(t *testing.T) {
 	// ハンドラーの初期化
 	handler := sign_up.NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), limiter, sendSignUpCodeUC, turnstileClient)
 
+	// Build per-test unique values so this test does not collide with
+	// other tests running in parallel against the shared Redis DB.
+	//
+	// [Ja] 共有 Redis DB に対する並列実行で他テストと衝突しないよう、
+	// 本テスト固有のキー構成値を組み立てる。
+	prefix := testutil.UniqueRateLimitPrefix(t)
+	clientIP := prefix + "-ip"
+	email := prefix + "@example.com"
+	_ = limiter.Reset(ctx, "sign_up:ip:"+clientIP)
+	_ = limiter.Reset(ctx, "sign_up:email:"+email)
+	t.Cleanup(func() {
+		_ = limiter.Reset(ctx, "sign_up:ip:"+clientIP)
+		_ = limiter.Reset(ctx, "sign_up:email:"+email)
+	})
+
 	// 同一IPから6回アクセス（制限: 5回/時間）
-	clientIP := "203.0.113.1"
 	for i := 0; i < 6; i++ {
 		// リクエストパラメータを作成
 		formData := url.Values{}
-		formData.Set("email", "test@example.com")
+		formData.Set("email", email)
 		formData.Set("terms_agreed", "true")
 		formData.Set("csrf_token", "test-csrf-token")
 		formData.Set("cf-turnstile-response", "test-turnstile-token")
@@ -85,13 +102,12 @@ func TestCreate_RateLimiting_IP(t *testing.T) {
 			}
 		}
 	}
-
-	// Redisをクリーンアップ
-	rdb.FlushDB(ctx)
 }
 
 // TestCreate_RateLimiting_Email はメールアドレス単位のRate Limitingテスト
 func TestCreate_RateLimiting_Email(t *testing.T) {
+	t.Parallel()
+
 	// テスト用DBとトランザクションをセットアップ
 	db, tx := testutil.SetupTx(t)
 
@@ -123,8 +139,24 @@ func TestCreate_RateLimiting_Email(t *testing.T) {
 	// ハンドラーの初期化
 	handler := sign_up.NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), limiter, sendSignUpCodeUC, turnstileClient)
 
-	// 同一メールアドレスで4回アクセス（制限: 3回/時間）
-	email := "test@example.com"
+	// Build per-test unique values so this test does not collide with
+	// other tests running in parallel against the shared Redis DB.
+	//
+	// [Ja] 共有 Redis DB に対する並列実行で他テストと衝突しないよう、
+	// 本テスト固有のキー構成値を組み立てる。
+	prefix := testutil.UniqueRateLimitPrefix(t)
+	email := prefix + "@example.com"
+	ipFor := func(i int) string { return prefix + "-ip" + strconv.Itoa(i) }
+
+	resetKeys := func() {
+		_ = limiter.Reset(ctx, "sign_up:email:"+email)
+		for i := 0; i < 4; i++ {
+			_ = limiter.Reset(ctx, "sign_up:ip:"+ipFor(i))
+		}
+	}
+	resetKeys()
+	t.Cleanup(resetKeys)
+
 	for i := 0; i < 4; i++ {
 		// リクエストパラメータを作成
 		formData := url.Values{}
@@ -136,7 +168,7 @@ func TestCreate_RateLimiting_Email(t *testing.T) {
 		// リクエストを作成（異なるIPアドレスから）
 		req := httptest.NewRequest("POST", "/sign_up", strings.NewReader(formData.Encode()))
 		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-		req.RemoteAddr = "203.0.113." + string(rune(1+i)) + ":12345"
+		req.RemoteAddr = ipFor(i) + ":12345"
 
 		// レスポンスレコーダーを作成
 		rr := httptest.NewRecorder()
@@ -156,7 +188,4 @@ func TestCreate_RateLimiting_Email(t *testing.T) {
 			}
 		}
 	}
-
-	// Redisをクリーンアップ
-	rdb.FlushDB(ctx)
 }
