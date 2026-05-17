@@ -1,206 +1,92 @@
-# Annict 開発ガイドライン
+---
+last_synced: 2026-05-15
+---
 
-## プロジェクト概要
+# Annict Development Guide
 
-Annict はアニメ視聴記録サービスです。
-ユーザーは自分が見たアニメに対して「見てる」や「見たい」といったステータスを設定したり、見たアニメの感想を書いてあとから振り返ることができます。
+> English | [日本語](./CLAUDE.ja.md)
 
-## モノレポ構造
+This file provides guidance to Claude Code when working in this repository.
 
-このリポジトリは、Go 版と Rails 版の 2 つのサブプロジェクトをモノレポとして管理しています:
+## Overview
+
+Annict is an anime watch-tracking service.
+Users can set statuses such as "watching" or "want to watch" on the anime they have seen, and write reviews on watched anime to look back on later.
+
+## Project Structure
+
+This repository manages two subprojects—the Go version and the Rails version—as a monorepo.
 
 ```
 /workspace/
-├── go/                  # Go版の実装（段階的に機能を移行中）
-├── rails/               # Rails版の実装（既存の本番システム）
-├── caddy/               # リバースプロキシ設定（Caddy）
-├── imgproxy/            # imgproxy 設定
-├── docs/                # Annict固有のドキュメント（仕様書、作業計画書など）
-├── .claude/
-│   ├── rules/
-│   │   ├── korylus/     # Korylus 共通ガイドライン (korylus-guidelines をマウント)
-│   │   └── annict/      # Annict 固有ガイドライン (Git 管理)
-│   └── skills/
-│       ├── korylus/     # Korylus 共通スキル (korylus-guidelines をマウント)
-│       └── annict/      # Annict 固有スキル (Git 管理)
-├── .github/             # 共通のCI/CD設定
-├── Dockerfile.dev       # 統合開発コンテナの Dockerfile
-├── docker-compose.yml   # Docker Compose 設定
-├── Makefile             # 開発タスクのエントリポイント
-├── Procfile.dev         # hivemind による開発サーバープロセス定義
-├── mise.toml            # 開発ツールバージョン管理
-└── CLAUDE.md            # このファイル（プロジェクト全体のガイド）
+├── go/                  # Go version implementation (features being migrated gradually)
+├── rails/               # Rails version implementation (existing production system)
+├── caddy/               # Reverse proxy configuration (Caddy)
+├── imgproxy/            # imgproxy configuration
+├── docs/                # Annict-specific documentation (specs, work plans, etc.)
+├── .github/             # Shared CI/CD configuration
+├── Dockerfile.dev       # Dockerfile for the integrated development container
+├── docker-compose.yml   # Docker Compose configuration
+├── Makefile             # Entry point for development tasks
+├── Procfile.dev         # Development server process definitions for hivemind
+├── mise.toml            # Development tool version management
+└── CLAUDE.md            # This file (project-wide guide)
 ```
 
-## Rails から Go への移行について
+## Rails to Go Migration
 
-現在、既存の Rails 実装の Annict を Go で段階的に再実装するプロジェクトが進行中です。
+A project to gradually reimplement the existing Rails Annict in Go is currently underway.
 
-### 移行の基本方針
+### Migration Strategy
 
-- **既存 DB をそのまま使用**: Rails 側で管理されている PostgreSQL データベースを共有
-- **段階的移行**: Rails と Go が同一の DB とセッションストアを共有し、段階的に機能を移行
-- **データマイグレーション不要**: DB スキーマは既存のものを使用し、データ移行は行わない
-- **共通インフラの継続利用**: 画像配信 (Cloudflare R2 + imgproxy) などの共通インフラは Go 版移行後も継続して使用
-- **ルーティング振り分け**: Caddy と Go 側のリバースプロキシミドルウェアで、Go 版で未実装の機能は自動的に Rails 版にプロキシされる
+- **Use the existing DB as-is**: Share the PostgreSQL database managed on the Rails side
+- **Gradual migration**: Rails and Go share the same DB and session store, and features are migrated incrementally
+- **Data migration is executed on the Go side**: Use the migration mechanism (dbmate) prepared on the Go side
+- **Continued use of shared infrastructure**: Shared infrastructure such as PostgreSQL continues to be used after the Go version takes over
+- **Do not change the Rails source code**: When a change is needed, migrate to Go first
 
-### Rails 版の主要技術スタック
+When implementing the Go version, refer to the Rails code to understand the existing specifications.
 
-Rails 版で利用している主な gem と役割 (Go 版への移行対象を把握するための参考情報):
+## Feature Flag-Based Development
 
-- **認証**: Devise
-- **認可**: Pundit
-- **OAuth**: Doorkeeper
-- **GraphQL API**: graphql-ruby (`app/graphql/`)
-- **バックグラウンドジョブ**: Delayed Job
-- **画像アップロード**: Shrine + Cloudflare R2
-- **ビューコンポーネント**: ViewComponent
-- **テンプレート**: Slim / ERB
-- **E2E テスト**: RSpec + Capybara + Playwright (`spec/system/`)
+Annict uses **feature flags** rather than feature branches to control feature visibility. Pre-release features are developed with the flag off, and the flag is flipped to release them once they are ready for production.
 
-### Rails 側のソースコード
+## Development Workflow
 
-Rails 版のソースコードは `/workspace/rails/` 配下に格納されています:
+### Implementation Guidelines
 
-```
-/workspace/rails/
-├── app/controllers/     # コントローラー
-├── app/models/          # モデル
-├── app/views/           # ビューテンプレート
-├── config/routes.rb     # ルーティング定義
-└── db/structure.sql     # DB スキーマ
-```
+**Consistency with existing code**:
 
-Go 版を実装する際は、Rails 版のコードを参考にすることで既存の仕様を理解できます。
+Before implementing, check whether similar processing already exists in the codebase.
+If similar processing exists, follow that pattern to keep the codebase consistent as a whole.
 
-## 共通インフラ
+### Checks After Implementation
 
-### データベース (PostgreSQL)
+Before reporting that work is complete, always verify the following:
 
-- **バージョン**: PostgreSQL 17.x
-- **共有方針**: Rails 版と Go 版で同一のデータベースを共有
-- **開発環境**: Docker Compose で管理 (ホスト側ポート: 4001 / コンテナ内: 5432)
-- **データベース名**:
-  - 開発: `annict_development`
-  - テスト: `annict_test`
+- Code formatting
+- Lint
+- Tests
 
-### セッションストア (PostgreSQL)
+The commands to run are managed in `Makefile`.
+See [Makefile](./Makefile), [go/Makefile](./go/Makefile), and [rails/Makefile](./rails/Makefile).
 
-- **ストレージ**: PostgreSQL の `sessions` テーブルを使用
-- **Rails 版**: ActiveRecord SessionStore (セッション有効期限 30 日、`updated_at` を各リクエストで自動更新)
-- **Go 版**: 同じ `sessions` テーブルを共有し、認証ミドルウェアで `updated_at` を更新 (Rails 版と完全に互換)
-- **セッションクリーンアップ**: 毎日 19:00 に `rake session:sweep` タスクが実行され、30 日以上前のセッションを自動削除
-- **共有方針**: Rails 版と Go 版で同一のセッションストアを共有することで段階的移行を実現
+## Documentation
 
-### 画像配信 (Cloudflare R2 + imgproxy)
+Each feature's specification is managed under the `docs/specs/` directory. To understand the current state of the system, refer to the specifications first.
 
-作品画像の配信は Rails 版と Go 版で共通利用します。
+- [docs/specs/](./docs/specs/) - Specifications for each feature
 
-- **オブジェクトストレージ**: Cloudflare R2 (S3 互換)
-  - バケット: 開発 `annict-development` / 本番 `annict-production`
-  - 画像パスは `shrine/` プレフィックスで保存 (Rails Shrine の仕様)
-- **imgproxy**: 画像リサイズ・最適化プロキシ
-  - ポート: 18080 (開発環境)
-  - S3 プロトコル経由でストレージにアクセス (`s3://annict-{environment}/shrine/{path}`)
-  - 署名付き URL を生成してセキュアに配信 (KEY/SALT は環境変数で管理)
-  - Docker Compose で管理
-- **共有方針**: Go 版が本流になってもこの構成を継続利用する
+## Language and Writing Conventions
 
-## 開発環境のセットアップ
+- **Canonical version is English; authoring workflow is Japanese-first**: The English version is the official authoritative source. Author by writing Japanese first, then translate to English (Claude Code assists). After translation, also review the English version to catch meaning drift and unnatural wording. When a discrepancy arises, the English version takes precedence
+- **Code comments**: English block → blank line → Japanese block prefixed with `[Ja]`. Short comments can be one-line pairs like `# Returns ... / [Ja] ... を返す`
+- **Markdown documents**: Maintain `xxx.md` (English, canonical) and `xxx.ja.md` (Japanese translation) in parallel. Both files carry a `last_synced: YYYY-MM-DD` field in the YAML frontmatter; keep the dates aligned
+- **Commit messages**: English title + English body + blank line + Japanese body prefixed with `[Ja]`. Do not preserve a Japanese title (prioritize English scannability of `git log --oneline`)
+- **Identifiers**: Type, function, and variable names are English only
+- **Update both sides in the same commit**: Prevents translation drift
+- **Existing code**: Apply this rule to new writing. Migrate existing monolingual code to bilingual when editing it (no bulk migration required)
 
-### 前提条件
+## Coding Conventions
 
-- Docker および Docker Compose がインストール済み
-- Dev Container を使用した開発環境
-
-### セットアップ手順
-
-1. リポジトリをクローン
-2. VS Code や Claude Code でリポジトリを開くと、Dev Container が自動的に起動
-3. ホスト側で `docker compose up` を実行し、共通インフラ (PostgreSQL、imgproxy など) を起動
-
-Go / Rails 固有のセットアップ手順 (依存関係のインストール、マイグレーション、テスト用 DB の初期化など) は `.claude/rules/korylus/go-development.md` と `.claude/rules/korylus/rails-common.md` を参照してください。
-
-### 開発サーバーの起動
-
-プロジェクトルートで以下のコマンドを実行すると、Go 版・Rails 版の全サービスを一括で起動できます:
-
-```sh
-make dev
-```
-
-このコマンドは [hivemind](https://github.com/DarthSim/hivemind) を使用して `Procfile.dev` に定義された以下のプロセスを並行起動します:
-
-| プロセス       | 内容                                        |
-| -------------- | ------------------------------------------- |
-| `go-assets`    | Go 版フロントエンドアセットの監視・再ビルド |
-| `go-server`    | Go 版サーバー (air によるホットリロード)    |
-| `rails-css`    | Rails 版 CSS の監視・再ビルド               |
-| `rails-js`     | Rails 版 JavaScript の監視・再ビルド        |
-| `rails-server` | Rails 版サーバー                            |
-| `rails-worker` | Rails 版バックグラウンドワーカー            |
-
-## ドキュメント
-
-ドキュメントは `docs/` 配下で管理しており、ユーザーが直接体験する機能の仕様は `docs/specs/` に、ユーザーが直接体験しないシステム内部の仕組みは `docs/system/` に配置しています。配置先の判断基準やディレクトリ構成は [@docs/README.md](/workspace/docs/README.md) を参照してください。
-
-- [@docs/README.md](/workspace/docs/README.md) - ドキュメント全体のガイド
-- [@docs/specs/](/workspace/docs/specs/) - サービス仕様書 (ユーザーが直接体験する機能)
-- [@docs/system/](/workspace/docs/system/) - システム仕様書 (ユーザーが直接体験しないシステム内部の仕組み)
-
-## 参照するガイドライン
-
-Claude Code は `.claude/rules/` 配下のガイドラインを自動で読み込むため、通常は特に意識せず書いて OK。Korylus 共通ガイドラインの実体は `korylus-guidelines` リポジトリにあり、Docker Compose で `/korylus-guidelines/.claude/rules/korylus/` を `.claude/rules/korylus/` にマウントすることで参照しています (スキルも同様に `/korylus-guidelines/.claude/skills/korylus/` を `.claude/skills/korylus/` にマウント)。
-
-- **Korylus 共通**: `.claude/rules/korylus/common.md` / `.claude/rules/korylus/guidelines-authoring.md`
-- **Go 版**: `.claude/rules/korylus/go-*.md` (coding, architecture, handler, usecase, testing, validation, security, templ, i18n, development)
-- **Rails 版**: `.claude/rules/korylus/rails-*.md` (common, architecture, testing, security)
-
-`.claude/rules/korylus/` 配下のファイルを編集すると、マウント元である `korylus-guidelines` リポジトリのファイルが直接更新されます。共通ガイドラインの修正は `korylus-guidelines` 側でコミットしてください。
-
-## Annict 固有のガイドライン
-
-マウントされる共通ガイドライン (`.claude/rules/korylus/`) に加えて、Annict プロジェクト固有の規約を本セクションに記述する。Korylus の他プロダクトには適用されない、Annict 独自の規約を扱う。
-
-当面は本ファイルに直接記述し、記述量が増えてきたタイミングでトピックごとに `.claude/rules/annict/{topic}.md` に切り出す (Annict リポジトリで Git 管理)。切り出す際は YAML フロントマターの `paths:` で自動読み込みの対象範囲を指定する。
-
-### 環境変数の命名規則
-
-Annict では、自前で定義する環境変数のプレフィックスに **`ANNICT_`** を使用します。共通ガイドの `.claude/rules/korylus/go-development.md` では `WIKINO_` が例示されていますが、Annict では `ANNICT_` に読み替えてください。
-
-- 代表例: `ANNICT_PORT`, `ANNICT_DOMAIN`, `ANNICT_RAILS_APP_URL`
-- 例外: `APP_ENV` はプレフィックスなしで使用
-- 外部ライブラリが要求する環境変数 (例: `DATABASE_URL`) はそのまま使用する
-
-## 開発ワークフロー
-
-### フィーチャーフラグによる開発
-
-Korylus 共通の方針は [@.claude/rules/korylus/common.md](/workspace/.claude/rules/korylus/common.md) の「フィーチャーフラグによる開発」セクションを参照してください。
-
-Annict における具体的な仕組み (DB スキーマ、リバースプロキシの判定ロジックなど) は仕様書を参照:
-
-- [@docs/specs/feature-flag/overview.md](/workspace/docs/specs/feature-flag/overview.md) — フィーチャーフラグ 仕様書
-
-## CI/CD
-
-このモノレポの CI/CD 設定は `.github/workflows/` ディレクトリに配置されています:
-
-- `go-ci.yml`: Go 版の CI (lint、test、build)
-- `rails-ci.yml`: Rails 版の CI (zeitwerk、sorbet、standard、erb_lint、eslint、rspec)
-- `fmt-ci.yml`: フォーマットチェック (Oxfmt)
-
-各 CI は対応するファイルが変更されたときに実行されます (パスフィルタリング)。
-
-## トラブルシューティング
-
-### データベース接続エラー
-
-- PostgreSQL コンテナが起動しているか確認: `docker compose ps`
-- ポートが正しいか確認: ホスト側からは 4001、コンテナ内からは 5432
-
-### 画像が表示されない
-
-- imgproxy コンテナが起動しているか確認: `docker compose ps`
-- 環境変数 (R2 アクセスキー、imgproxy KEY/SALT) が正しく設定されているか確認
-- Cloudflare R2 バケットへのアクセス権限が正しく設定されているか確認
+- For environment variables defined by Annict, always prefix them with `ANNICT_` (except those required by external libraries)
