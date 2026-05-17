@@ -1,6 +1,6 @@
 
 -- Dumped from database version 17.5 (Debian 17.5-1.pgdg130+1)
--- Dumped by pg_dump version 17.6 (Debian 17.6-0+deb13u1)
+-- Dumped by pg_dump version 17.7 (Debian 17.7-3.pgdg13+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -50,6 +50,17 @@ COMMENT ON EXTENSION pg_stat_statements IS 'track execution statistics of all SQ
 
 
 --
+-- Name: episode_status; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.episode_status AS ENUM (
+    'published',
+    'archived',
+    'deleted'
+);
+
+
+--
 -- Name: river_job_state; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -62,6 +73,17 @@ CREATE TYPE public.river_job_state AS ENUM (
     'retryable',
     'running',
     'scheduled'
+);
+
+
+--
+-- Name: work_status; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.work_status AS ENUM (
+    'published',
+    'archived',
+    'deleted'
 );
 
 
@@ -824,7 +846,9 @@ CREATE TABLE public.episodes (
     satisfaction_rate double precision,
     number_en character varying DEFAULT ''::character varying NOT NULL,
     deleted_at timestamp without time zone,
-    unpublished_at timestamp without time zone
+    unpublished_at timestamp without time zone,
+    status public.episode_status DEFAULT 'published'::public.episode_status NOT NULL,
+    archive_message character varying
 );
 
 
@@ -898,6 +922,39 @@ CREATE SEQUENCE public.faq_contents_id_seq
 --
 
 ALTER SEQUENCE public.faq_contents_id_seq OWNED BY public.faq_contents.id;
+
+
+--
+-- Name: feature_flags; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.feature_flags (
+    id bigint NOT NULL,
+    device_token character varying,
+    user_id bigint,
+    name character varying NOT NULL,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    CONSTRAINT feature_flags_check CHECK (((device_token IS NOT NULL) OR (user_id IS NOT NULL)))
+);
+
+
+--
+-- Name: feature_flags_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.feature_flags_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: feature_flags_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.feature_flags_id_seq OWNED BY public.feature_flags.id;
 
 
 --
@@ -3226,7 +3283,9 @@ CREATE TABLE public.works (
     deleted_at timestamp without time zone,
     title_alter character varying DEFAULT ''::character varying NOT NULL,
     title_alter_en character varying DEFAULT ''::character varying NOT NULL,
-    unpublished_at timestamp without time zone
+    unpublished_at timestamp without time zone,
+    status public.work_status DEFAULT 'published'::public.work_status NOT NULL,
+    archive_message character varying
 );
 
 
@@ -3326,6 +3385,13 @@ ALTER TABLE ONLY public.faq_categories ALTER COLUMN id SET DEFAULT nextval('publ
 --
 
 ALTER TABLE ONLY public.faq_contents ALTER COLUMN id SET DEFAULT nextval('public.faq_contents_id_seq'::regclass);
+
+
+--
+-- Name: feature_flags id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.feature_flags ALTER COLUMN id SET DEFAULT nextval('public.feature_flags_id_seq'::regclass);
 
 
 --
@@ -3887,6 +3953,30 @@ ALTER TABLE ONLY public.faq_categories
 
 ALTER TABLE ONLY public.faq_contents
     ADD CONSTRAINT faq_contents_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: feature_flags feature_flags_device_token_name_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.feature_flags
+    ADD CONSTRAINT feature_flags_device_token_name_key UNIQUE (device_token, name);
+
+
+--
+-- Name: feature_flags feature_flags_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.feature_flags
+    ADD CONSTRAINT feature_flags_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: feature_flags feature_flags_user_id_name_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.feature_flags
+    ADD CONSTRAINT feature_flags_user_id_name_key UNIQUE (user_id, name);
 
 
 --
@@ -5169,6 +5259,13 @@ CREATE INDEX index_episodes_on_score ON public.episodes USING btree (score);
 
 
 --
+-- Name: index_episodes_on_status; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_episodes_on_status ON public.episodes USING btree (status) WHERE (status = 'published'::public.episode_status);
+
+
+--
 -- Name: index_episodes_on_unpublished_at; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -6310,6 +6407,13 @@ CREATE INDEX index_works_on_season_year_and_season_name ON public.works USING bt
 
 
 --
+-- Name: index_works_on_status; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_works_on_status ON public.works USING btree (status) WHERE (status = 'published'::public.work_status);
+
+
+--
 -- Name: index_works_on_unpublished_at; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -6535,6 +6639,14 @@ ALTER TABLE ONLY public.comments
 
 ALTER TABLE ONLY public.episodes
     ADD CONSTRAINT episodes_work_id_fk FOREIGN KEY (work_id) REFERENCES public.works(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: feature_flags feature_flags_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.feature_flags
+    ADD CONSTRAINT feature_flags_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
 --
@@ -7738,4 +7850,7 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20251113173140'),
     ('20260111083416'),
     ('20260111084224'),
-    ('20260111101233');
+    ('20260111101233'),
+    ('20260210055715'),
+    ('20260210081156'),
+    ('20260322083140');

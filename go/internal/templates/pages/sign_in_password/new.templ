@@ -1,0 +1,98 @@
+package sign_in_password
+
+import (
+	"github.com/annict/annict/go/internal/model"
+	"github.com/annict/annict/go/internal/templates"
+	"github.com/annict/annict/go/internal/templates/components"
+)
+
+// NewPageData はパスワードログインページに渡すデータ構造体です
+type NewPageData struct {
+	CSRFToken  string
+	FormErrors *model.ValidationError
+	Email      string
+	BackURL    string
+}
+
+// New はパスワードログインページのコンテンツを表示します
+templ New(data NewPageData) {
+	<div class="flex flex-col gap-6 min-w-full md:min-w-md px-4">
+		<div class="text-center">
+			<a href="/" class="inline-block">
+				<img
+					alt="Annict"
+					src="/static/images/logo-mizuho.png"
+					width="50"
+				/>
+			</a>
+		</div>
+
+		<div class="flex flex-col gap-2">
+			<h1 class="text-center text-3xl font-bold antialiased">
+				{ templates.T(ctx, "sign_in_heading") }
+			</h1>
+
+			<p class="text-center text-sm text-muted-foreground">
+				{ templates.T(ctx, "sign_in_password_login_as", map[string]any{"Email": data.Email}) }
+			</p>
+		</div>
+
+		@components.FormErrors(data.FormErrors)
+
+		<form
+			action="/sign_in/password"
+			class="form grid gap-6"
+			hx-on:submit="disableSubmitButtons(this)"
+			method="POST"
+		>
+			<input type="hidden" name="csrf_token" value={ data.CSRFToken }/>
+			<input type="hidden" name="back" value={ data.BackURL }/>
+
+			<div class="grid gap-2">
+				<div class="flex items-center gap-2">
+					<label for="password">
+						{ templates.T(ctx, "sign_in_password_label") }
+					</label>
+					<a href="/password/reset" class="link text-sm ml-auto" tabindex="3">
+						{ templates.T(ctx, "sign_in_forgot_password") }
+					</a>
+				</div>
+				<input
+					if data.FormErrors != nil && data.FormErrors.HasFieldError("password") {
+						aria-invalid="true"
+					} else {
+						aria-invalid="false"
+					}
+					autocomplete="current-password"
+					autofocus
+					id="password"
+					name="password"
+					required
+					tabindex="1"
+					type="password"
+				/>
+				if data.FormErrors != nil && data.FormErrors.HasFieldError("password") {
+					for _, errorMsg := range data.FormErrors.GetFieldErrors("password") {
+						<p class="text-sm text-red-600">{ errorMsg }</p>
+					}
+				}
+			</div>
+
+			<button
+				class="btn rounded-full w-fit"
+				tabindex="2"
+				type="submit"
+			>
+				@templates.Icon("sign-in-regular")
+				{ templates.T(ctx, "sign_in_submit") }
+			</button>
+		</form>
+
+		<div class="text-center">
+			<a href="/sign_in" class="link inline-flex items-center gap-2">
+				@templates.Icon("arrow-left", "w-[18px] h-[18px]")
+				{ templates.T(ctx, "sign_in_password_switch_account") }
+			</a>
+		</div>
+	</div>
+}

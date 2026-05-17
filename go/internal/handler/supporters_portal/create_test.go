@@ -10,10 +10,11 @@ import (
 
 	"github.com/annict/annict/go/internal/config"
 	"github.com/annict/annict/go/internal/middleware"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/repository"
-	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/testutil"
+	"github.com/annict/annict/go/internal/usecase"
 )
 
 // setupTestHandler はテスト用のハンドラーをセットアップします
@@ -26,16 +27,17 @@ func setupTestHandler(t *testing.T, tx *sql.Tx, db *sql.DB) *Handler {
 		Domain: "test.annict.com",
 	}
 
-	sessionRepo := repository.NewSessionRepository(queries)
-	sessionManager := session.NewManager(sessionRepo, cfg)
+	flashMgr := testutil.NewTestFlashManager()
 	stripeSubscriberRepo := repository.NewStripeSubscriberRepository(queries)
 
 	// テスト用には nil を渡す（テストでは Stripe API を呼び出さない）
-	return NewHandler(cfg, sessionManager, stripeSubscriberRepo, nil)
+	createPortalSessionUC := usecase.NewCreatePortalSessionUsecase(cfg, stripeSubscriberRepo, nil)
+
+	return NewHandler(flashMgr, createPortalSessionUC)
 }
 
 // createUserWithStripeSubscriber はStripeサブスクライバーを持つユーザーを作成します
-func createUserWithStripeSubscriber(t *testing.T, tx *sql.Tx, stripeStatus string) (int64, int64) {
+func createUserWithStripeSubscriber(t *testing.T, tx *sql.Tx, stripeStatus string) (model.UserID, model.StripeSubscriberID) {
 	t.Helper()
 
 	userID := testutil.NewUserBuilder(t, tx).Build()
@@ -44,7 +46,7 @@ func createUserWithStripeSubscriber(t *testing.T, tx *sql.Tx, stripeStatus strin
 		Build()
 
 	// ユーザーにStripeサブスクライバーIDを関連付け
-	_, err := tx.Exec(`UPDATE users SET stripe_subscriber_id = $1 WHERE id = $2`, subscriberID, userID)
+	_, err := tx.Exec(`UPDATE users SET stripe_subscriber_id = $1 WHERE id = $2`, int64(subscriberID), int64(userID))
 	if err != nil {
 		t.Fatalf("Stripeサブスクライバーの関連付けに失敗しました: %v", err)
 	}
@@ -53,7 +55,7 @@ func createUserWithStripeSubscriber(t *testing.T, tx *sql.Tx, stripeStatus strin
 }
 
 // createUserWithGumroadSubscriber はGumroadサブスクライバーを持つユーザーを作成します
-func createUserWithGumroadSubscriber(t *testing.T, tx *sql.Tx, ended bool) (int64, int64) {
+func createUserWithGumroadSubscriber(t *testing.T, tx *sql.Tx, ended bool) (model.UserID, model.GumroadSubscriberID) {
 	t.Helper()
 
 	userID := testutil.NewUserBuilder(t, tx).Build()
@@ -66,7 +68,7 @@ func createUserWithGumroadSubscriber(t *testing.T, tx *sql.Tx, ended bool) (int6
 	subscriberID := builder.Build()
 
 	// ユーザーにGumroadサブスクライバーIDを関連付け
-	_, err := tx.Exec(`UPDATE users SET gumroad_subscriber_id = $1 WHERE id = $2`, subscriberID, userID)
+	_, err := tx.Exec(`UPDATE users SET gumroad_subscriber_id = $1 WHERE id = $2`, int64(subscriberID), int64(userID))
 	if err != nil {
 		t.Fatalf("Gumroadサブスクライバーの関連付けに失敗しました: %v", err)
 	}
@@ -75,23 +77,32 @@ func createUserWithGumroadSubscriber(t *testing.T, tx *sql.Tx, ended bool) (int6
 }
 
 // getUserByID はユーザーIDからユーザー情報を取得します（テスト用）
-func getUserByID(t *testing.T, tx *sql.Tx, userID int64) *query.GetUserByIDRow {
+func getUserByID(t *testing.T, tx *sql.Tx, userID model.UserID) *model.User {
 	t.Helper()
 
-	var user query.GetUserByIDRow
+	var user model.User
+	var stripeSubID, gumroadSubID sql.NullInt64
 	err := tx.QueryRow(`
 		SELECT id, username, email, role, encrypted_password, locale,
 			   stripe_subscriber_id, gumroad_subscriber_id,
 			   created_at, updated_at
 		FROM users WHERE id = $1
-	`, userID).Scan(
+	`, int64(userID)).Scan(
 		&user.ID, &user.Username, &user.Email, &user.Role,
 		&user.EncryptedPassword, &user.Locale,
-		&user.StripeSubscriberID, &user.GumroadSubscriberID,
+		&stripeSubID, &gumroadSubID,
 		&user.CreatedAt, &user.UpdatedAt,
 	)
 	if err != nil {
 		t.Fatalf("ユーザー情報の取得に失敗しました: %v", err)
+	}
+	if stripeSubID.Valid {
+		id := model.StripeSubscriberID(stripeSubID.Int64)
+		user.StripeSubscriberID = &id
+	}
+	if gumroadSubID.Valid {
+		id := model.GumroadSubscriberID(gumroadSubID.Int64)
+		user.GumroadSubscriberID = &id
 	}
 
 	return &user
@@ -99,7 +110,9 @@ func getUserByID(t *testing.T, tx *sql.Tx, userID int64) *query.GetUserByIDRow {
 
 // TestCreate_NotLoggedIn は未ログインユーザーがアクセスした場合のテスト
 func TestCreate_NotLoggedIn(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	handler := setupTestHandler(t, tx, db)
 
 	req := httptest.NewRequest("POST", "/supporters/portal", nil)
@@ -120,7 +133,9 @@ func TestCreate_NotLoggedIn(t *testing.T) {
 
 // TestCreate_NotSupporter は非サポーターユーザーがアクセスした場合のテスト
 func TestCreate_NotSupporter(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	handler := setupTestHandler(t, tx, db)
 
 	// サブスクリプションを持たないユーザーを作成
@@ -147,7 +162,9 @@ func TestCreate_NotSupporter(t *testing.T) {
 
 // TestCreate_CanceledSubscription はキャンセル済みサブスクリプションの場合のテスト
 func TestCreate_CanceledSubscription(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	handler := setupTestHandler(t, tx, db)
 
 	// canceledステータスのStripeサポーターを作成
@@ -174,7 +191,9 @@ func TestCreate_CanceledSubscription(t *testing.T) {
 
 // TestCreate_UnpaidSubscription はunpaidステータスの場合のテスト
 func TestCreate_UnpaidSubscription(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	handler := setupTestHandler(t, tx, db)
 
 	// unpaidステータスのStripeサポーターを作成
@@ -202,7 +221,9 @@ func TestCreate_UnpaidSubscription(t *testing.T) {
 // TestCreate_ActiveSubscription_StripeAPIError はアクティブなサブスクリプションでStripe API呼び出しがエラーの場合のテスト
 // 注: テスト環境ではStripe APIが設定されていないため、エラーが発生してリダイレクトされる
 func TestCreate_ActiveSubscription_StripeAPIError(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	handler := setupTestHandler(t, tx, db)
 
 	// アクティブなStripeサポーターを作成
@@ -230,7 +251,9 @@ func TestCreate_ActiveSubscription_StripeAPIError(t *testing.T) {
 // TestCreate_PastDueSubscription_StripeAPIError は支払い遅延中のサブスクリプションの場合のテスト
 // past_dueはアクティブとして扱われるため、Stripe APIを呼び出す
 func TestCreate_PastDueSubscription_StripeAPIError(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	handler := setupTestHandler(t, tx, db)
 
 	// past_dueステータスのStripeサポーターを作成
@@ -257,7 +280,9 @@ func TestCreate_PastDueSubscription_StripeAPIError(t *testing.T) {
 
 // TestCreate_GumroadSubscriber はGumroadサポーターがアクセスした場合のテスト
 func TestCreate_GumroadSubscriber(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	handler := setupTestHandler(t, tx, db)
 
 	// アクティブなGumroadサポーターを作成（Stripeサブスクリプションなし）

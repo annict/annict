@@ -10,8 +10,9 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/annict/annict/go/internal/auth"
 	"github.com/annict/annict/go/internal/config"
-	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/repository"
 )
 
@@ -36,7 +37,7 @@ func NewManager(sessionRepo *repository.SessionRepository, cfg *config.Config) *
 
 // SessionData はセッションに保存されているデータ
 type SessionData struct {
-	UserID    *int64         `json:"warden.user.user.key"`
+	UserID    *model.UserID  `json:"warden.user.user.key"`
 	CSRFToken string         `json:"_csrf_token"`
 	ExtraData map[string]any `json:"-"`
 }
@@ -90,7 +91,7 @@ func (m *Manager) GetSession(ctx context.Context, sessionID string) (*SessionDat
 		if wardenArray, ok := wardenKey.([]any); ok && len(wardenArray) >= 1 {
 			if userArray, ok := wardenArray[0].([]any); ok && len(userArray) >= 1 {
 				if userIDFloat, ok := userArray[0].(float64); ok {
-					userID := int64(userIDFloat)
+					userID := model.UserID(userIDFloat)
 					sessionData.UserID = &userID
 				}
 			}
@@ -105,8 +106,13 @@ func (m *Manager) GetSession(ctx context.Context, sessionID string) (*SessionDat
 	return sessionData, nil
 }
 
+// TouchSession はセッションのupdated_atを更新する
+func (m *Manager) TouchSession(ctx context.Context, sessionID string) error {
+	return m.sessionRepo.TouchSession(ctx, sessionID)
+}
+
 // GetCurrentUser は現在のログインユーザーを取得
-func (m *Manager) GetCurrentUser(ctx context.Context, r *http.Request) (*query.GetUserByIDRow, error) {
+func (m *Manager) GetCurrentUser(ctx context.Context, r *http.Request) (*model.User, error) {
 	sessionID, err := m.GetSessionID(r)
 	if err != nil {
 		return nil, err
@@ -139,7 +145,7 @@ func (m *Manager) GetCurrentUser(ctx context.Context, r *http.Request) (*query.G
 
 // CreateSession は新規セッションを作成してユーザーIDとCSRFトークンを保存
 // Rails互換のセッションデータを作成し、Cookieを設定する
-func (m *Manager) CreateSession(ctx context.Context, w http.ResponseWriter, r *http.Request, userID int64) error {
+func (m *Manager) CreateSession(ctx context.Context, w http.ResponseWriter, r *http.Request, userID model.UserID) error {
 	// 1. Public IDを生成
 	publicID, err := generatePublicID()
 	if err != nil {
@@ -147,7 +153,7 @@ func (m *Manager) CreateSession(ctx context.Context, w http.ResponseWriter, r *h
 	}
 
 	// 2. CSRFトークンを生成
-	csrfToken, err := GenerateCSRFToken()
+	csrfToken, err := auth.GenerateCSRFToken()
 	if err != nil {
 		return fmt.Errorf("CSRFトークンの生成に失敗しました: %w", err)
 	}
@@ -219,7 +225,7 @@ func (m *Manager) SetValue(ctx context.Context, w http.ResponseWriter, r *http.R
 		sessionExists = false
 
 		// 新規セッション作成時にCSRFトークンを自動生成
-		csrfToken, err := GenerateCSRFToken()
+		csrfToken, err := auth.GenerateCSRFToken()
 		if err != nil {
 			return fmt.Errorf("CSRFトークンの生成に失敗しました: %w", err)
 		}
@@ -332,58 +338,6 @@ func (m *Manager) DeleteValue(ctx context.Context, r *http.Request, key string) 
 	return nil
 }
 
-// getAndDeleteSessionValue セッションから値を取得して削除（flashメッセージ用の内部メソッド）
-func (m *Manager) getAndDeleteSessionValue(ctx context.Context, r *http.Request, key string) (string, error) {
-	// セッションIDを取得
-	sessionID, err := m.GetSessionID(r)
-	if err != nil || sessionID == "" {
-		return "", err
-	}
-
-	// セッションを取得
-	session, err := m.sessionRepo.GetSessionByID(ctx, sessionID)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return "", nil
-		}
-		return "", fmt.Errorf("セッションの取得に失敗しました: %w", err)
-	}
-
-	// セッションデータをパース
-	var sessionData map[string]any
-	if err := json.Unmarshal(session.Data, &sessionData); err != nil {
-		return "", fmt.Errorf("セッションデータのパースに失敗しました: %w", err)
-	}
-
-	// 値を取得
-	value, exists := sessionData[key]
-	if !exists {
-		return "", nil
-	}
-
-	valueStr, ok := value.(string)
-	if !ok {
-		return "", fmt.Errorf("値が文字列ではありません")
-	}
-
-	// 値を削除
-	delete(sessionData, key)
-
-	// JSONにエンコード
-	jsonData, err := json.Marshal(sessionData)
-	if err != nil {
-		return "", fmt.Errorf("セッションデータのJSON化に失敗しました: %w", err)
-	}
-
-	// DBに保存
-	err = m.sessionRepo.UpdateSession(ctx, sessionID, jsonData)
-	if err != nil {
-		return "", fmt.Errorf("セッションの更新に失敗しました: %w", err)
-	}
-
-	return valueStr, nil
-}
-
 // SetSessionCookieByPublicID はセッションCookieを設定する
 // ハンドラーからusecase呼び出し後にCookieを設定するために使用
 func (m *Manager) SetSessionCookieByPublicID(w http.ResponseWriter, r *http.Request, publicID string) {
@@ -439,7 +393,7 @@ func (m *Manager) EnsureCSRFToken(ctx context.Context, w http.ResponseWriter, r 
 	}
 
 	// CSRFトークンを生成
-	csrfToken, err := GenerateCSRFToken()
+	csrfToken, err := auth.GenerateCSRFToken()
 	if err != nil {
 		return "", fmt.Errorf("CSRFトークンの生成に失敗しました: %w", err)
 	}

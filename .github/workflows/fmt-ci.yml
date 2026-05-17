@@ -1,0 +1,50 @@
+name: Formatter
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - "**/*.js"
+      - "**/*.ts"
+      - "**/*.tsx"
+      - "**/*.mjs"
+      - "**/*.css"
+      - "**/*.scss"
+      - "**/*.json"
+      - "**/*.yaml"
+      - "**/*.yml"
+      - "**/*.toml"
+      - "**/*.md"
+      - "**/*.html"
+      - "**/*.graphql"
+  pull_request:
+    paths:
+      - "**/*.js"
+      - "**/*.ts"
+      - "**/*.tsx"
+      - "**/*.mjs"
+      - "**/*.css"
+      - "**/*.scss"
+      - "**/*.json"
+      - "**/*.yaml"
+      - "**/*.yml"
+      - "**/*.toml"
+      - "**/*.md"
+      - "**/*.html"
+      - "**/*.graphql"
+
+jobs:
+  oxfmt:
+    name: Oxfmt
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install
+      - run: pnpm fmt:check

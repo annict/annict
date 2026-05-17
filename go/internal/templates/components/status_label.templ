@@ -1,0 +1,15 @@
+package components
+
+import "github.com/annict/annict/go/internal/templates"
+
+// StatusLabel は公開状態ラベルを表示します
+templ StatusLabel(status string) {
+	switch status {
+		case "published":
+			<span class="badge badge-success">{ templates.T(ctx, "status_published") }</span>
+		case "archived":
+			<span class="badge badge-warning">{ templates.T(ctx, "status_archived") }</span>
+		case "deleted":
+			<span class="badge badge-destructive">{ templates.T(ctx, "status_deleted") }</span>
+	}
+}

@@ -7,6 +7,7 @@ import (
 
 	"github.com/schollz/progressbar/v3"
 
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/seed"
 )
@@ -14,7 +15,7 @@ import (
 // CreateProfileImageParams プロフィール画像作成のパラメータ
 type CreateProfileImageParams struct {
 	ProfileID int64
-	UserID    int64
+	UserID    model.UserID
 }
 
 // CreateProfileImageResult プロフィール画像作成の結果

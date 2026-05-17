@@ -23,6 +23,7 @@ type Config struct {
 	// Resend（メール送信）
 	ResendAPIKey    string
 	ResendFromEmail string
+	ResendFromName  string
 
 	// サーバー
 	Port   string
@@ -166,6 +167,10 @@ func Load() (*Config, error) {
 	// Resend（オプショナル - パスワードリセット機能で使用）
 	cfg.ResendAPIKey = os.Getenv("ANNICT_RESEND_API_KEY")
 	cfg.ResendFromEmail = os.Getenv("ANNICT_RESEND_FROM_EMAIL")
+	cfg.ResendFromName = os.Getenv("ANNICT_RESEND_FROM_NAME")
+	if cfg.ResendFromName == "" {
+		cfg.ResendFromName = "Annict"
+	}
 
 	// Rate Limiting設定（オプショナル - 開発環境でRate Limitingを無効化）
 	cfg.DisableRateLimit = os.Getenv("ANNICT_DISABLE_RATE_LIMIT") == "true"

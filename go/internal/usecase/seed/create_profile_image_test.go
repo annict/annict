@@ -28,7 +28,7 @@ func TestCreateProfileImageUsecase_ExecuteBatchWithTx(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// 各サブテストで新しいトランザクションを作成
-			db, tx := testutil.SetupTestDB(t)
+			db, tx := testutil.SetupTx(t)
 			queries := query.New(db)
 
 			// Usecaseを作成（R2設定は空にしてアップロードをスキップ）
@@ -99,7 +99,7 @@ func TestCreateProfileImageUsecase_ExecuteBatchWithTx(t *testing.T) {
 				}
 
 				// user_idを確認
-				if userID != params[0].UserID {
+				if userID != int64(params[0].UserID) {
 					t.Errorf("user_idが期待値と異なります: got %d, want %d", userID, params[0].UserID)
 				}
 
@@ -154,7 +154,7 @@ func TestCreateProfileImageUsecase_ExecuteBatch(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// テストDBをセットアップ（トランザクションはコミット前に準備データを作成）
-			db, tx := testutil.SetupTestDB(t)
+			db, tx := testutil.SetupTx(t)
 			queries := query.New(db)
 
 			// Usecaseを作成（R2設定は空にしてアップロードをスキップ）
@@ -229,7 +229,7 @@ func TestCreateProfileImageUsecase_ExecuteBatch(t *testing.T) {
 				}
 
 				// user_idを確認
-				if userID != params[i].UserID {
+				if userID != int64(params[i].UserID) {
 					t.Errorf("results[%d]: user_idが期待値と異なります: got %d, want %d", i, userID, params[i].UserID)
 				}
 

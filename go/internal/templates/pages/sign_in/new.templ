@@ -1,14 +1,22 @@
 package sign_in
 
 import (
-	"context"
-	"github.com/annict/annict/go/internal/session"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/templates"
 	"github.com/annict/annict/go/internal/templates/components"
 )
 
+// NewPageData はメールアドレス入力ページに渡すデータ構造体です
+type NewPageData struct {
+	CSRFToken        string
+	TurnstileSiteKey string
+	FormErrors       *model.ValidationError
+	Email            string
+	BackURL          string
+}
+
 // New はメールアドレス入力ページのコンテンツを表示します
-templ New(ctx context.Context, formErrors *session.FormErrors, csrfToken string, turnstileSiteKey string, backURL string) {
+templ New(data NewPageData) {
 	<div class="flex flex-col gap-6 min-w-full md:min-w-md px-4">
 		<div class="text-center">
 			<a href="/" class="inline-block">
@@ -26,16 +34,16 @@ templ New(ctx context.Context, formErrors *session.FormErrors, csrfToken string,
 			</h1>
 		</div>
 
-		@components.FormErrors(formErrors)
+		@components.FormErrors(data.FormErrors)
 
 		<form
 			action="/sign_in"
 			class="form grid gap-6"
-			data-on:submit__passive="$isSubmitting = true"
+			hx-on:submit="disableSubmitButtons(this)"
 			method="POST"
 		>
-			<input type="hidden" name="csrf_token" value={ csrfToken }/>
-			<input type="hidden" name="back" value={ backURL }/>
+			<input type="hidden" name="csrf_token" value={ data.CSRFToken }/>
+			<input type="hidden" name="back" value={ data.BackURL }/>
 
 			<div class="grid gap-2">
 				<label for="email">
@@ -43,7 +51,7 @@ templ New(ctx context.Context, formErrors *session.FormErrors, csrfToken string,
 				</label>
 
 				<input
-					if formErrors != nil && formErrors.Fields["email"] != nil {
+					if data.FormErrors != nil && data.FormErrors.HasFieldError("email") {
 						aria-invalid="true"
 					} else {
 						aria-invalid="false"
@@ -55,22 +63,22 @@ templ New(ctx context.Context, formErrors *session.FormErrors, csrfToken string,
 					required
 					tabindex="1"
 					type="email"
+					value={ data.Email }
 				/>
 
-				if formErrors != nil && formErrors.Fields["email"] != nil {
-					for _, errorMsg := range formErrors.Fields["email"] {
+				if data.FormErrors != nil && data.FormErrors.HasFieldError("email") {
+					for _, errorMsg := range data.FormErrors.GetFieldErrors("email") {
 						<p class="text-sm text-red-600">{ errorMsg }</p>
 					}
 				}
 			</div>
 
-			@components.Turnstile(turnstileSiteKey)
+			@components.Turnstile(data.TurnstileSiteKey)
 
 			<button
 				class="btn rounded-full w-fit"
 				tabindex="2"
 				type="submit"
-				data-attr:disabled="$isSubmitting == true"
 			>
 				@templates.Icon("arrow-right")
 				{ templates.T(ctx, "sign_in_next_button") }

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/seed"
 	"github.com/annict/annict/go/internal/testutil"
@@ -28,7 +29,7 @@ func TestCreateWorkImageUsecase_ExecuteBatchWithTx(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// 各サブテストで新しいトランザクションを作成
-			db, tx := testutil.SetupTestDB(t)
+			db, tx := testutil.SetupTx(t)
 			queries := query.New(db)
 
 			// Usecaseを作成（R2設定は空にしてアップロードをスキップ）
@@ -94,10 +95,10 @@ func TestCreateWorkImageUsecase_ExecuteBatchWithTx(t *testing.T) {
 				}
 
 				// work_idとuser_idを確認
-				if workID != params[0].WorkID {
+				if model.WorkID(workID) != params[0].WorkID {
 					t.Errorf("work_idが期待値と異なります: got %d, want %d", workID, params[0].WorkID)
 				}
-				if userID != params[0].UserID {
+				if model.UserID(userID) != params[0].UserID {
 					t.Errorf("user_idが期待値と異なります: got %d, want %d", userID, params[0].UserID)
 				}
 
@@ -147,7 +148,7 @@ func TestCreateWorkImageUsecase_ExecuteBatch(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// テストDBをセットアップ（トランザクションはコミット前に準備データを作成）
-			db, tx := testutil.SetupTestDB(t)
+			db, tx := testutil.SetupTx(t)
 			queries := query.New(db)
 
 			// Usecaseを作成（R2設定は空にしてアップロードをスキップ）
@@ -217,10 +218,10 @@ func TestCreateWorkImageUsecase_ExecuteBatch(t *testing.T) {
 				}
 
 				// work_idとuser_idを確認
-				if workID != params[i].WorkID {
+				if model.WorkID(workID) != params[i].WorkID {
 					t.Errorf("results[%d]: work_idが期待値と異なります: got %d, want %d", i, workID, params[i].WorkID)
 				}
-				if userID != params[i].UserID {
+				if model.UserID(userID) != params[i].UserID {
 					t.Errorf("results[%d]: user_idが期待値と異なります: got %d, want %d", i, userID, params[i].UserID)
 				}
 

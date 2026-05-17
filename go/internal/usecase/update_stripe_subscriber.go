@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/annict/annict/go/internal/model"
-	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/repository"
 )
 
@@ -45,7 +44,7 @@ type UpdateStripeSubscriberInput struct {
 
 // UpdateStripeSubscriberResult はcustomer.subscription.updatedイベント処理の結果
 type UpdateStripeSubscriberResult struct {
-	StripeSubscriber query.StripeSubscriber
+	StripeSubscriber model.StripeSubscriber
 }
 
 // Execute はcustomer.subscription.updatedイベントを処理します
@@ -70,7 +69,7 @@ func (uc *UpdateStripeSubscriberUsecase) Execute(
 	}
 
 	// サブスクリプション情報を更新
-	err = uc.stripeSubscriberRepo.Update(ctx, query.UpdateStripeSubscriberParams{
+	err = uc.stripeSubscriberRepo.Update(ctx, repository.UpdateStripeSubscriberParams{
 		ID:                       subscriber.ID,
 		StripePriceID:            input.StripePriceID,
 		StripeStatus:             input.StripeStatus,
@@ -84,7 +83,7 @@ func (uc *UpdateStripeSubscriberUsecase) Execute(
 	}
 
 	// 更新後のレコードを取得
-	updated, err := uc.stripeSubscriberRepo.GetByID(ctx, subscriber.ID)
+	updated, err := uc.stripeSubscriberRepo.GetByID(ctx, model.StripeSubscriberID(subscriber.ID))
 	if err != nil {
 		return nil, fmt.Errorf("更新後のStripeSubscriber取得に失敗: %w", err)
 	}

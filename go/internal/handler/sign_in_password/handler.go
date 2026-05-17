@@ -3,25 +3,24 @@ package sign_in_password
 
 import (
 	"github.com/annict/annict/go/internal/config"
-	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/usecase"
 )
 
 // Handler サインイン関連のHTTPハンドラーです
 type Handler struct {
-	cfg             *config.Config
-	userRepo        *repository.UserRepository
-	sessionMgr      *session.Manager
-	createSessionUC *usecase.CreateSessionUsecase
+	cfg                      *config.Config
+	sessionMgr               *session.Manager
+	flashMgr                 *session.FlashManager
+	authenticateByPasswordUC *usecase.AuthenticateByPasswordUsecase
 }
 
 // NewHandler 新しいHandlerを作成します
-func NewHandler(cfg *config.Config, userRepo *repository.UserRepository, sessionMgr *session.Manager, createSessionUC *usecase.CreateSessionUsecase) *Handler {
+func NewHandler(cfg *config.Config, sessionMgr *session.Manager, flashMgr *session.FlashManager, authenticateByPasswordUC *usecase.AuthenticateByPasswordUsecase) *Handler {
 	return &Handler{
-		cfg:             cfg,
-		userRepo:        userRepo,
-		sessionMgr:      sessionMgr,
-		createSessionUC: createSessionUC,
+		cfg:                      cfg,
+		sessionMgr:               sessionMgr,
+		flashMgr:                 flashMgr,
+		authenticateByPasswordUC: authenticateByPasswordUC,
 	}
 }

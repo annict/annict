@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/annict/annict/go/internal/model"
-	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/repository"
 )
 
@@ -39,8 +38,8 @@ type DeleteStripeSubscriberInput struct {
 
 // DeleteStripeSubscriberResult はcustomer.subscription.deletedイベント処理の結果
 type DeleteStripeSubscriberResult struct {
-	StripeSubscriber query.StripeSubscriber
-	UserID           *int64 // 紐付け解除されたユーザーID（存在する場合）
+	StripeSubscriber model.StripeSubscriber
+	UserID           *model.UserID // 紐付け解除されたユーザーID（存在する場合）
 }
 
 // Execute はcustomer.subscription.deletedイベントを処理します
@@ -71,7 +70,7 @@ func (uc *DeleteStripeSubscriberUsecase) Execute(
 	userRepoTx := uc.userRepo.WithTx(tx)
 
 	// ステータスをcanceledに更新
-	err = stripeSubscriberRepoTx.Update(ctx, query.UpdateStripeSubscriberParams{
+	err = stripeSubscriberRepoTx.Update(ctx, repository.UpdateStripeSubscriberParams{
 		ID:                       subscriber.ID,
 		StripePriceID:            subscriber.StripePriceID,
 		StripeStatus:             string(model.StripeSubscriptionStatusCanceled),
@@ -89,7 +88,7 @@ func (uc *DeleteStripeSubscriberUsecase) Execute(
 
 	// Userとの紐付けを解除
 	// StripeSubscriberIDが一致するユーザーを探してnilに設定
-	userID, err := userRepoTx.FindUserIDByStripeSubscriberID(ctx, subscriber.ID)
+	userID, err := userRepoTx.FindUserIDByStripeSubscriberID(ctx, model.StripeSubscriberID(subscriber.ID))
 	if err != nil {
 		return nil, fmt.Errorf("ユーザー検索に失敗: %w", err)
 	}
@@ -108,7 +107,7 @@ func (uc *DeleteStripeSubscriberUsecase) Execute(
 	}
 
 	// 更新後のレコードを取得
-	updated, err := uc.stripeSubscriberRepo.GetByID(ctx, subscriber.ID)
+	updated, err := uc.stripeSubscriberRepo.GetByID(ctx, model.StripeSubscriberID(subscriber.ID))
 	if err != nil {
 		return nil, fmt.Errorf("更新後のStripeSubscriber取得に失敗: %w", err)
 	}

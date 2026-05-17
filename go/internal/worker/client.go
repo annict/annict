@@ -12,8 +12,8 @@ import (
 	"github.com/riverqueue/river/riverdriver/riverpgxv5"
 
 	"github.com/annict/annict/go/internal/config"
-	"github.com/annict/annict/go/internal/mail"
-	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/email"
+	"github.com/annict/annict/go/internal/usecase"
 )
 
 // Client は River クライアントのラッパー
@@ -22,8 +22,14 @@ type Client struct {
 	pool        *pgxpool.Pool
 }
 
+// NewClientParams は NewClient に渡すパラメータです
+type NewClientParams struct {
+	CleanupExpiredTokens      ExpiredTokenCleaner
+	CleanupExpiredSignInCodes ExpiredSignInCodeCleaner
+}
+
 // NewClient は新しい River クライアントを作成します
-func NewClient(ctx context.Context, databaseURL string, queries *query.Queries, cfg *config.Config) (*Client, error) {
+func NewClient(ctx context.Context, databaseURL string, params NewClientParams, cfg *config.Config) (*Client, error) {
 	// pgxpool の作成
 	poolConfig, err := pgxpool.ParseConfig(databaseURL)
 	if err != nil {
@@ -41,10 +47,10 @@ func NewClient(ctx context.Context, databaseURL string, queries *query.Queries, 
 		return nil, err
 	}
 
-	// メールクライアントの作成（メール送信用）
-	var mailSender mail.Sender
+	// メール送信クライアントの作成
+	var emailSender email.Sender
 	if cfg.ResendAPIKey != "" {
-		mailSender = mail.NewResendClient(cfg.ResendAPIKey, cfg.ResendFromEmail, "Annict")
+		emailSender = email.NewResendSender(cfg.ResendAPIKey, cfg.ResendFromEmail, cfg.ResendFromName)
 		slog.InfoContext(ctx, "Resend クライアントを初期化しました")
 	} else {
 		slog.WarnContext(ctx, "Resend API キーが設定されていません。メール送信機能は利用できません")
@@ -54,17 +60,29 @@ func NewClient(ctx context.Context, databaseURL string, queries *query.Queries, 
 	workers := river.NewWorkers()
 
 	// メール送信ワーカーを登録
-	if mailSender != nil {
-		river.AddWorker(workers, NewSendEmailWorker(mailSender))
-		slog.InfoContext(ctx, "SendEmailWorker を登録しました")
+	if emailSender != nil {
+		signInCodeSender := email.NewSignInCodeSender(emailSender)
+		sendSignInCodeEmailUC := usecase.NewSendSignInCodeEmailUsecase(signInCodeSender)
+		river.AddWorker(workers, NewSendSignInCodeEmailWorker(sendSignInCodeEmailUC))
+		slog.InfoContext(ctx, "SendSignInCodeEmailWorker を登録しました")
+
+		signUpCodeSender := email.NewSignUpCodeSender(emailSender)
+		sendSignUpCodeEmailUC := usecase.NewSendSignUpCodeEmailUsecase(signUpCodeSender)
+		river.AddWorker(workers, NewSendSignUpCodeEmailWorker(sendSignUpCodeEmailUC))
+		slog.InfoContext(ctx, "SendSignUpCodeEmailWorker を登録しました")
+
+		passwordResetSender := email.NewPasswordResetSender(emailSender)
+		sendPasswordResetEmailUC := usecase.NewSendPasswordResetEmailUsecase(passwordResetSender)
+		river.AddWorker(workers, NewSendPasswordResetEmailWorker(sendPasswordResetEmailUC))
+		slog.InfoContext(ctx, "SendPasswordResetEmailWorker を登録しました")
 	}
 
 	// トークンクリーンアップワーカーを登録
-	river.AddWorker(workers, NewCleanupExpiredTokensWorker(queries))
+	river.AddWorker(workers, NewCleanupExpiredTokensWorker(params.CleanupExpiredTokens))
 	slog.InfoContext(ctx, "CleanupExpiredTokensWorker を登録しました")
 
 	// ログインコードクリーンアップワーカーを登録
-	river.AddWorker(workers, NewCleanupExpiredSignInCodesWorker(queries))
+	river.AddWorker(workers, NewCleanupExpiredSignInCodesWorker(params.CleanupExpiredSignInCodes))
 	slog.InfoContext(ctx, "CleanupExpiredSignInCodesWorker を登録しました")
 
 	// River クライアントの作成

@@ -46,13 +46,13 @@ func (r *UserCalendarRepository) GetByUsername(ctx context.Context, username str
 
 	// 4. program_idと視聴済みエピソードIDを収集
 	var programIDs []int64
-	watchedEpisodeIDs := make(map[int64]bool)
+	watchedEpisodeIDs := make(map[model.EpisodeID]bool)
 	for _, entry := range libraryEntries {
 		if entry.ProgramID.Valid {
 			programIDs = append(programIDs, entry.ProgramID.Int64)
 		}
 		for _, epID := range entry.WatchedEpisodeIds {
-			watchedEpisodeIDs[epID] = true
+			watchedEpisodeIDs[model.EpisodeID(epID)] = true
 		}
 	}
 
@@ -72,18 +72,18 @@ func (r *UserCalendarRepository) GetByUsername(ctx context.Context, username str
 
 		// 視聴済みエピソードを除外してModelに変換
 		for _, row := range slotsRows {
-			if row.EpisodeID.Valid && !watchedEpisodeIDs[row.EpisodeID.Int64] {
+			if row.EpisodeID.Valid && !watchedEpisodeIDs[model.EpisodeID(row.EpisodeID.Int64)] {
 				slot := model.CalendarSlot{
-					ID:            row.ID,
+					ID:            model.SlotID(row.ID),
 					StartedAt:     row.StartedAt,
-					WorkID:        row.WorkID,
+					WorkID:        model.WorkID(row.WorkID),
 					WorkTitle:     row.WorkTitle,
 					WorkTitleEn:   row.WorkTitleEn,
 					EpisodeNumber: row.EpisodeNumber,
 					ChannelName:   row.ChannelName,
 				}
 				if row.EpisodeID.Valid {
-					slot.EpisodeID = row.EpisodeID.Int64
+					slot.EpisodeID = model.EpisodeID(row.EpisodeID.Int64)
 				}
 				if row.EpisodeTitle.Valid {
 					slot.EpisodeTitle = row.EpisodeTitle.String
@@ -103,7 +103,7 @@ func (r *UserCalendarRepository) GetByUsername(ctx context.Context, username str
 	for _, row := range worksRows {
 		if row.StartedOn.Valid {
 			works = append(works, model.CalendarWork{
-				ID:        row.ID,
+				ID:        model.WorkID(row.ID),
 				Title:     row.Title,
 				TitleEn:   row.TitleEn,
 				StartedOn: row.StartedOn.Time,

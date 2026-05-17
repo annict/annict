@@ -2,9 +2,11 @@ package password_reset
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -17,6 +19,7 @@ import (
 	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/testutil"
 	"github.com/annict/annict/go/internal/usecase"
+	"github.com/annict/annict/go/internal/validator"
 )
 
 // mockTurnstileClient はテスト用のモック Turnstile クライアントです
@@ -30,7 +33,9 @@ func (m *mockTurnstileClient) Verify(ctx context.Context, token string) (bool, e
 
 // TestCreate_RateLimiting_IP はIPアドレス単位のRate Limitingをテストします
 func TestCreate_RateLimiting_IP(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	rdb := testutil.SetupTestRedis(t)
 	queries := query.New(db).WithTx(tx)
 	limiter := ratelimit.NewLimiter(rdb)
@@ -41,23 +46,44 @@ func TestCreate_RateLimiting_IP(t *testing.T) {
 	}
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionManager := session.NewManager(sessionRepo, cfg)
-	userRepo := repository.NewUserRepository(queries)
 	// Rate Limitingのテストのため、明示的に有効化
 	cfg.DisableRateLimit = false
 
 	// モック Turnstile クライアント（常に成功）
 	mockClient := &mockTurnstileClient{shouldSucceed: true}
-	createPasswordResetTokenUC := usecase.NewCreatePasswordResetTokenUsecase(db, queries, nil, nil)
-	handler := NewHandler(cfg, userRepo, sessionManager, limiter, mockClient, createPasswordResetTokenUC)
+	v := validator.NewPasswordResetCreateValidator()
+	createPasswordResetTokenUC := usecase.NewCreatePasswordResetTokenUsecase(db, repository.NewUserRepository(queries), repository.NewPasswordResetTokenRepository(queries), nil, nil, v)
+	handler := NewHandler(cfg, sessionManager, limiter, mockClient, createPasswordResetTokenUC)
+
+	// Build per-test unique values so this test does not collide with
+	// other tests running in parallel against the shared Redis DB.
+	//
+	// [Ja] 共有 Redis DB に対する並列実行で他テストと衝突しないよう、
+	// 本テスト固有のキー構成値を組み立てる。
+	prefix := testutil.UniqueRateLimitPrefix(t)
+	primaryIP := prefix + "-ip1"
+	altIP := prefix + "-ip2"
+	emailFor := func(i int) string { return fmt.Sprintf("%s-%d@example.com", prefix, i) }
+
+	ctx := context.Background()
+	resetKeys := func() {
+		_ = limiter.Reset(ctx, "password_reset:ip:"+primaryIP)
+		_ = limiter.Reset(ctx, "password_reset:ip:"+altIP)
+		for i := 0; i < 7; i++ {
+			_ = limiter.Reset(ctx, "password_reset:email:"+emailFor(i))
+		}
+	}
+	resetKeys()
+	t.Cleanup(resetKeys)
 
 	for i := 0; i < 5; i++ {
 		form := url.Values{}
-		form.Add("email", "test"+string(rune(i+48))+"@example.com")
+		form.Add("email", emailFor(i))
 		form.Add("cf-turnstile-response", "valid-token")
 
 		req := httptest.NewRequest("POST", "/password/reset", strings.NewReader(form.Encode()))
 		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-		req.RemoteAddr = "192.168.1.1:12345"
+		req.RemoteAddr = primaryIP + ":12345"
 		rr := httptest.NewRecorder()
 
 		testutil.ApplyI18nMiddleware(t, handler.Create)(rr, req)
@@ -68,27 +94,27 @@ func TestCreate_RateLimiting_IP(t *testing.T) {
 	}
 
 	form := url.Values{}
-	form.Add("email", "test5@example.com")
+	form.Add("email", emailFor(5))
 	form.Add("cf-turnstile-response", "valid-token")
 
 	req := httptest.NewRequest("POST", "/password/reset", strings.NewReader(form.Encode()))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	req.RemoteAddr = "192.168.1.1:12345"
+	req.RemoteAddr = primaryIP + ":12345"
 	rr := httptest.NewRecorder()
 
 	testutil.ApplyI18nMiddleware(t, handler.Create)(rr, req)
 
-	if rr.Code != http.StatusTooManyRequests {
-		t.Errorf("6th attempt should be rate limited by IP, got status %d", rr.Code)
+	if rr.Code != http.StatusUnprocessableEntity {
+		t.Errorf("6th attempt should be rate limited by IP (422), got status %d", rr.Code)
 	}
 
 	form = url.Values{}
-	form.Add("email", "test6@example.com")
+	form.Add("email", emailFor(6))
 	form.Add("cf-turnstile-response", "valid-token")
 
 	req = httptest.NewRequest("POST", "/password/reset", strings.NewReader(form.Encode()))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	req.RemoteAddr = "192.168.1.2:12345"
+	req.RemoteAddr = altIP + ":12345"
 	rr = httptest.NewRecorder()
 
 	testutil.ApplyI18nMiddleware(t, handler.Create)(rr, req)
@@ -100,7 +126,9 @@ func TestCreate_RateLimiting_IP(t *testing.T) {
 
 // TestCreate_RateLimiting_Email はメールアドレス単位のRate Limitingをテストします
 func TestCreate_RateLimiting_Email(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	rdb := testutil.SetupTestRedis(t)
 	queries := query.New(db).WithTx(tx)
 	limiter := ratelimit.NewLimiter(rdb)
@@ -111,23 +139,46 @@ func TestCreate_RateLimiting_Email(t *testing.T) {
 	}
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionManager := session.NewManager(sessionRepo, cfg)
-	userRepo := repository.NewUserRepository(queries)
 	// Rate Limitingのテストのため、明示的に有効化
 	cfg.DisableRateLimit = false
 
 	// モック Turnstile クライアント（常に成功）
 	mockClient := &mockTurnstileClient{shouldSucceed: true}
-	createPasswordResetTokenUC := usecase.NewCreatePasswordResetTokenUsecase(db, queries, nil, nil)
-	handler := NewHandler(cfg, userRepo, sessionManager, limiter, mockClient, createPasswordResetTokenUC)
+	v := validator.NewPasswordResetCreateValidator()
+	createPasswordResetTokenUC := usecase.NewCreatePasswordResetTokenUsecase(db, repository.NewUserRepository(queries), repository.NewPasswordResetTokenRepository(queries), nil, nil, v)
+	handler := NewHandler(cfg, sessionManager, limiter, mockClient, createPasswordResetTokenUC)
+
+	// Build per-test unique values so this test does not collide with
+	// other tests running in parallel against the shared Redis DB.
+	//
+	// [Ja] 共有 Redis DB に対する並列実行で他テストと衝突しないよう、
+	// 本テスト固有のキー構成値を組み立てる。
+	prefix := testutil.UniqueRateLimitPrefix(t)
+	primaryEmail := prefix + "@example.com"
+	altEmail := prefix + "-alt@example.com"
+	ipFor := func(i int) string { return prefix + "-ip" + strconv.Itoa(i) }
+	altIP := prefix + "-ip-alt"
+
+	ctx := context.Background()
+	resetKeys := func() {
+		_ = limiter.Reset(ctx, "password_reset:email:"+primaryEmail)
+		_ = limiter.Reset(ctx, "password_reset:email:"+altEmail)
+		for i := 0; i < 3; i++ {
+			_ = limiter.Reset(ctx, "password_reset:ip:"+ipFor(i))
+		}
+		_ = limiter.Reset(ctx, "password_reset:ip:"+altIP)
+	}
+	resetKeys()
+	t.Cleanup(resetKeys)
 
 	for i := 0; i < 3; i++ {
 		form := url.Values{}
-		form.Add("email", "ratelimit@example.com")
+		form.Add("email", primaryEmail)
 		form.Add("cf-turnstile-response", "valid-token")
 
 		req := httptest.NewRequest("POST", "/password/reset", strings.NewReader(form.Encode()))
 		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-		req.RemoteAddr = "192.168.1." + string(rune(i+49)) + ":12345"
+		req.RemoteAddr = ipFor(i) + ":12345"
 		rr := httptest.NewRecorder()
 
 		testutil.ApplyI18nMiddleware(t, handler.Create)(rr, req)
@@ -138,27 +189,27 @@ func TestCreate_RateLimiting_Email(t *testing.T) {
 	}
 
 	form := url.Values{}
-	form.Add("email", "ratelimit@example.com")
+	form.Add("email", primaryEmail)
 	form.Add("cf-turnstile-response", "valid-token")
 
 	req := httptest.NewRequest("POST", "/password/reset", strings.NewReader(form.Encode()))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	req.RemoteAddr = "192.168.1.100:12345"
+	req.RemoteAddr = altIP + ":12345"
 	rr := httptest.NewRecorder()
 
 	testutil.ApplyI18nMiddleware(t, handler.Create)(rr, req)
 
-	if rr.Code != http.StatusTooManyRequests {
-		t.Errorf("4th attempt should be rate limited by email, got status %d", rr.Code)
+	if rr.Code != http.StatusUnprocessableEntity {
+		t.Errorf("4th attempt should be rate limited by email (422), got status %d", rr.Code)
 	}
 
 	form = url.Values{}
-	form.Add("email", "different@example.com")
+	form.Add("email", altEmail)
 	form.Add("cf-turnstile-response", "valid-token")
 
 	req = httptest.NewRequest("POST", "/password/reset", strings.NewReader(form.Encode()))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	req.RemoteAddr = "192.168.1.100:12345"
+	req.RemoteAddr = altIP + ":12345"
 	rr = httptest.NewRecorder()
 
 	testutil.ApplyI18nMiddleware(t, handler.Create)(rr, req)
@@ -170,7 +221,9 @@ func TestCreate_RateLimiting_Email(t *testing.T) {
 
 // TestPasswordResetSentPage_UXMessages はメール送信完了ページのUXメッセージをテストします
 func TestPasswordResetSentPage_UXMessages(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 
 	encryptedPassword, _ := auth.HashPassword("Password123!")
 	userID := testutil.NewUserBuilder(t, tx).
@@ -196,12 +249,11 @@ func TestPasswordResetSentPage_UXMessages(t *testing.T) {
 	}
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionManager := session.NewManager(sessionRepo, cfg)
-	userRepo := repository.NewUserRepository(queries)
-
 	// モック Turnstile クライアント（常に成功）
 	mockClient := &mockTurnstileClient{shouldSucceed: true}
-	createPasswordResetTokenUC := usecase.NewCreatePasswordResetTokenUsecase(db, queries, nil, nil)
-	handler := NewHandler(cfg, userRepo, sessionManager, nil, mockClient, createPasswordResetTokenUC)
+	v := validator.NewPasswordResetCreateValidator()
+	createPasswordResetTokenUC := usecase.NewCreatePasswordResetTokenUsecase(db, repository.NewUserRepository(queries), repository.NewPasswordResetTokenRepository(queries), nil, nil, v)
+	handler := NewHandler(cfg, sessionManager, nil, mockClient, createPasswordResetTokenUC)
 
 	tests := []struct {
 		name     string
@@ -265,7 +317,9 @@ func TestPasswordResetSentPage_UXMessages(t *testing.T) {
 
 // TestPasswordResetFlow_Integration はパスワードリセット申請のフローをテストします
 func TestPasswordResetFlow_Integration(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 
 	oldPassword := "OldPassword123!"
 	encryptedPassword, err := auth.HashPassword(oldPassword)
@@ -296,12 +350,11 @@ func TestPasswordResetFlow_Integration(t *testing.T) {
 	}
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionManager := session.NewManager(sessionRepo, cfg)
-	userRepo := repository.NewUserRepository(queries)
-
 	// モック Turnstile クライアント（常に成功）
 	mockClient := &mockTurnstileClient{shouldSucceed: true}
-	createPasswordResetTokenUC := usecase.NewCreatePasswordResetTokenUsecase(db, queries, nil, nil)
-	handler := NewHandler(cfg, userRepo, sessionManager, nil, mockClient, createPasswordResetTokenUC)
+	v := validator.NewPasswordResetCreateValidator()
+	createPasswordResetTokenUC := usecase.NewCreatePasswordResetTokenUsecase(db, repository.NewUserRepository(queries), repository.NewPasswordResetTokenRepository(queries), nil, nil, v)
+	handler := NewHandler(cfg, sessionManager, nil, mockClient, createPasswordResetTokenUC)
 
 	ctx := context.Background()
 
@@ -319,7 +372,7 @@ func TestPasswordResetFlow_Integration(t *testing.T) {
 		t.Fatalf("パスワードリセット申請が失敗しました: status=%d", rr.Code)
 	}
 
-	tokens, err := queries.GetPasswordResetTokensByUserID(ctx, userID)
+	tokens, err := repository.NewPasswordResetTokenRepository(queries).GetByUserID(ctx, userID)
 	if err != nil {
 		t.Fatalf("トークンの取得に失敗: %v", err)
 	}
@@ -333,7 +386,9 @@ func TestPasswordResetFlow_Integration(t *testing.T) {
 
 // TestCreate_TurnstileVerification_Success はTurnstile検証が成功した場合のテストです
 func TestCreate_TurnstileVerification_Success(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 
 	cfg, err := config.Load()
@@ -342,12 +397,11 @@ func TestCreate_TurnstileVerification_Success(t *testing.T) {
 	}
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionManager := session.NewManager(sessionRepo, cfg)
-	userRepo := repository.NewUserRepository(queries)
-
 	// モック Turnstile クライアント（常に成功）
 	mockClient := &mockTurnstileClient{shouldSucceed: true}
-	createPasswordResetTokenUC := usecase.NewCreatePasswordResetTokenUsecase(db, queries, nil, nil)
-	handler := NewHandler(cfg, userRepo, sessionManager, nil, mockClient, createPasswordResetTokenUC)
+	v := validator.NewPasswordResetCreateValidator()
+	createPasswordResetTokenUC := usecase.NewCreatePasswordResetTokenUsecase(db, repository.NewUserRepository(queries), repository.NewPasswordResetTokenRepository(queries), nil, nil, v)
+	handler := NewHandler(cfg, sessionManager, nil, mockClient, createPasswordResetTokenUC)
 
 	form := url.Values{}
 	form.Add("email", "test@example.com")
@@ -366,7 +420,9 @@ func TestCreate_TurnstileVerification_Success(t *testing.T) {
 
 // TestCreate_TurnstileVerification_Failed はTurnstile検証が失敗した場合のテストです
 func TestCreate_TurnstileVerification_Failed(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 
 	cfg, err := config.Load()
@@ -375,12 +431,11 @@ func TestCreate_TurnstileVerification_Failed(t *testing.T) {
 	}
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionManager := session.NewManager(sessionRepo, cfg)
-	userRepo := repository.NewUserRepository(queries)
-
 	// モック Turnstile クライアント（常に失敗）
 	mockClient := &mockTurnstileClient{shouldSucceed: false}
-	createPasswordResetTokenUC := usecase.NewCreatePasswordResetTokenUsecase(db, queries, nil, nil)
-	handler := NewHandler(cfg, userRepo, sessionManager, nil, mockClient, createPasswordResetTokenUC)
+	v := validator.NewPasswordResetCreateValidator()
+	createPasswordResetTokenUC := usecase.NewCreatePasswordResetTokenUsecase(db, repository.NewUserRepository(queries), repository.NewPasswordResetTokenRepository(queries), nil, nil, v)
+	handler := NewHandler(cfg, sessionManager, nil, mockClient, createPasswordResetTokenUC)
 
 	form := url.Values{}
 	form.Add("email", "test@example.com")
@@ -392,19 +447,16 @@ func TestCreate_TurnstileVerification_Failed(t *testing.T) {
 
 	testutil.ApplyI18nMiddleware(t, handler.Create)(rr, req)
 
-	if rr.Code != http.StatusSeeOther {
-		t.Errorf("Turnstile検証が失敗したはずですが、ステータスコードが正しくありません: got=%d, want=%d", rr.Code, http.StatusSeeOther)
-	}
-
-	location := rr.Header().Get("Location")
-	if location != "/password/reset" {
-		t.Errorf("Turnstile検証失敗時のリダイレクト先が正しくありません: got=%s, want=%s", location, "/password/reset")
+	if rr.Code != http.StatusUnprocessableEntity {
+		t.Errorf("Turnstile検証が失敗したはずですが、ステータスコードが正しくありません: got=%d, want=%d", rr.Code, http.StatusUnprocessableEntity)
 	}
 }
 
 // TestCreate_TurnstileVerification_MissingToken はTurnstileトークンが欠落している場合のテストです
 func TestCreate_TurnstileVerification_MissingToken(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 
 	cfg, err := config.Load()
@@ -413,12 +465,11 @@ func TestCreate_TurnstileVerification_MissingToken(t *testing.T) {
 	}
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionManager := session.NewManager(sessionRepo, cfg)
-	userRepo := repository.NewUserRepository(queries)
-
 	// モック Turnstile クライアント（常に失敗）
 	mockClient := &mockTurnstileClient{shouldSucceed: false}
-	createPasswordResetTokenUC := usecase.NewCreatePasswordResetTokenUsecase(db, queries, nil, nil)
-	handler := NewHandler(cfg, userRepo, sessionManager, nil, mockClient, createPasswordResetTokenUC)
+	v := validator.NewPasswordResetCreateValidator()
+	createPasswordResetTokenUC := usecase.NewCreatePasswordResetTokenUsecase(db, repository.NewUserRepository(queries), repository.NewPasswordResetTokenRepository(queries), nil, nil, v)
+	handler := NewHandler(cfg, sessionManager, nil, mockClient, createPasswordResetTokenUC)
 
 	form := url.Values{}
 	form.Add("email", "test@example.com")
@@ -430,12 +481,7 @@ func TestCreate_TurnstileVerification_MissingToken(t *testing.T) {
 
 	testutil.ApplyI18nMiddleware(t, handler.Create)(rr, req)
 
-	if rr.Code != http.StatusSeeOther {
-		t.Errorf("Turnstileトークンが欠落している場合、ステータスコードが正しくありません: got=%d, want=%d", rr.Code, http.StatusSeeOther)
-	}
-
-	location := rr.Header().Get("Location")
-	if location != "/password/reset" {
-		t.Errorf("Turnstileトークン欠落時のリダイレクト先が正しくありません: got=%s, want=%s", location, "/password/reset")
+	if rr.Code != http.StatusUnprocessableEntity {
+		t.Errorf("Turnstileトークンが欠落している場合、ステータスコードが正しくありません: got=%d, want=%d", rr.Code, http.StatusUnprocessableEntity)
 	}
 }

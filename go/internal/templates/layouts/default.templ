@@ -11,27 +11,23 @@ import (
 
 // Default はデフォルトレイアウトです
 // サイドバー、ヘッダー、メインコンテンツ、フッターを含みます
-templ Default(ctx context.Context, meta viewmodel.PageMeta, user *viewmodel.User, seasons viewmodel.Seasons, flash *session.Flash, assetVersion string, content templ.Component) {
+templ Default(ctx context.Context, meta viewmodel.PageMeta, user *viewmodel.User, seasons viewmodel.Seasons, assetVersion string, content templ.Component) {
 	<!DOCTYPE html>
 	<html lang={ templates.Locale(ctx) }>
 		<head>
 			@components.Head(meta, assetVersion)
 		</head>
-
 		<body>
 			<div class="flex bg-background">
-				@components.Flash(ctx, flash)
+				@components.Flash(ctx, session.FlashFromContext(ctx))
 				@components.Sidebar(ctx, user, seasons)
-
 				<div class="flex-1 flex flex-col min-h-screen">
 					<main>
 						@content
 					</main>
-
 					@components.Footer(ctx)
 				</div>
 			</div>
-
 			@components.BottomNav(ctx, user, seasons)
 		</body>
 	</html>

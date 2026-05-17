@@ -9,7 +9,7 @@ import (
 	"github.com/getsentry/sentry-go"
 
 	"github.com/annict/annict/go/internal/middleware"
-	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/model"
 )
 
 func TestSentryUserContextMiddleware_WithAuthenticatedUser(t *testing.T) {
@@ -40,7 +40,7 @@ func TestSentryUserContextMiddleware_WithAuthenticatedUser(t *testing.T) {
 	})
 
 	// 認証済みユーザー情報をコンテキストに設定
-	user := &query.GetUserByIDRow{
+	user := &model.User{
 		ID:       123,
 		Username: "testuser",
 	}
@@ -129,7 +129,7 @@ func TestSentryUserContextMiddleware_WithoutSentryHub(t *testing.T) {
 	})
 
 	// 認証済みユーザー情報をコンテキストに設定
-	user := &query.GetUserByIDRow{
+	user := &model.User{
 		ID:       456,
 		Username: "anotheruser",
 	}
@@ -184,7 +184,7 @@ func TestSentryUserContextMiddleware_SetsCorrectUserInfo(t *testing.T) {
 	})
 
 	// 認証済みユーザー情報をコンテキストに設定
-	user := &query.GetUserByIDRow{
+	user := &model.User{
 		ID:       789,
 		Username: "verifyuser",
 	}

@@ -2,6 +2,8 @@ package usecase
 
 import (
 	"testing"
+
+	"github.com/annict/annict/go/internal/model"
 )
 
 func TestParseUserIDFromMetadata(t *testing.T) {
@@ -10,7 +12,7 @@ func TestParseUserIDFromMetadata(t *testing.T) {
 	tests := []struct {
 		name      string
 		metadata  map[string]string
-		wantID    int64
+		wantID    model.UserID
 		wantError bool
 		errorType string
 	}{

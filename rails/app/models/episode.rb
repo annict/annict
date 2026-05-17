@@ -2,8 +2,12 @@
 # frozen_string_literal: true
 
 class Episode < ApplicationRecord
+  extend Enumerize
+
   include DbActivityMethods
   include Unpublishable
+
+  enumerize :status, in: %i[published archived deleted], default: :published, scope: true
 
   DIFF_FIELDS = %i[
     number sort_number sc_count title prev_episode_id fetch_syobocal raw_number title_en
@@ -118,9 +122,16 @@ class Episode < ApplicationRecord
     episode_record
   end
 
-  private
+  # status カラムの値で公開状態を判定する
+  def published?
+    status.to_s == "published"
+  end
 
-  def unset_prev_episode_id
+  def archived?
+    status.to_s == "archived"
+  end
+
+  private def unset_prev_episode_id
     return if next_episode.nil?
 
     # エピソードを削除するとき、次のエピソードの `prev_episode_id` に
@@ -128,7 +139,7 @@ class Episode < ApplicationRecord
     next_episode.update_column(:prev_episode_id, nil) if self == next_episode.prev_episode
   end
 
-  def update_prev_episode
+  private def update_prev_episode
     prev_episode = work.episodes.where.not(id: id).order(sort_number: :desc).first
     update_column(:prev_episode_id, prev_episode.id) if prev_episode
   end

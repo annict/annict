@@ -1,0 +1,40 @@
+package components
+
+import "github.com/a-h/templ"
+
+// MainTitleData はメインタイトルコンポーネントに渡すデータ構造体です
+type MainTitleData struct {
+	Title    string
+	Subtitle string
+	Content  templ.Component
+	Actions  templ.Component
+}
+
+// MainTitle はページのメインタイトルを表示します
+templ MainTitle(data MainTitleData) {
+	<div class="flex flex-col gap-4">
+		<div class="flex flex-wrap md:flex-nowrap items-center justify-between gap-2">
+			<div class="flex flex-col gap-2">
+				<h1 class="flex items-center gap-2 text-2xl font-bold antialiased">
+					{ data.Title }
+				</h1>
+
+				if data.Subtitle != "" {
+					<div class="text-sm text-gray-600">
+						{ data.Subtitle }
+					</div>
+				}
+
+				if data.Content != nil {
+					@data.Content
+				}
+			</div>
+
+			if data.Actions != nil {
+				<div class="flex w-full flex-none items-center justify-end gap-2 md:w-auto">
+					@data.Actions
+				</div>
+			}
+		</div>
+	</div>
+}

@@ -3,16 +3,20 @@ package repository_test
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"testing"
 	"time"
 
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/testutil"
 )
 
 func TestUserCalendarRepository_GetByUsername(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewUserCalendarRepository(queries)
 
@@ -47,7 +51,7 @@ func TestUserCalendarRepository_GetByUsername(t *testing.T) {
 	statusID := createTestStatus(t, tx, userID, workID, 2)
 
 	// ライブラリエントリを作成
-	createTestLibraryEntry(t, tx, userID, workID, statusID, programID, []int64{})
+	createTestLibraryEntry(t, tx, userID, workID, statusID, programID, []model.EpisodeID{})
 
 	ctx := context.Background()
 
@@ -119,7 +123,7 @@ func TestUserCalendarRepository_GetByUsername(t *testing.T) {
 		// 同じ作品に対してステータスとライブラリエントリを作成
 		statusID2 := createTestStatus(t, tx, userID2, workID, 2)
 		// 視聴済みエピソードIDを含める
-		createTestLibraryEntry(t, tx, userID2, workID, statusID2, programID, []int64{episodeID})
+		createTestLibraryEntry(t, tx, userID2, workID, statusID2, programID, []model.EpisodeID{episodeID})
 
 		calendar, err := repo.GetByUsername(ctx, "testcalendar2", now)
 		if err != nil {
@@ -141,7 +145,9 @@ func TestUserCalendarRepository_GetByUsername(t *testing.T) {
 }
 
 func TestUserCalendarRepository_GetByUsername_PastSlots(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewUserCalendarRepository(queries)
 
@@ -172,7 +178,7 @@ func TestUserCalendarRepository_GetByUsername_PastSlots(t *testing.T) {
 
 	// ステータスとライブラリエントリを作成
 	statusID := createTestStatus(t, tx, userID, workID, 2)
-	createTestLibraryEntry(t, tx, userID, workID, statusID, programID, []int64{})
+	createTestLibraryEntry(t, tx, userID, workID, statusID, programID, []model.EpisodeID{})
 
 	ctx := context.Background()
 
@@ -194,7 +200,9 @@ func TestUserCalendarRepository_GetByUsername_PastSlots(t *testing.T) {
 // 当日の深夜帯（例: 25時放送 = 翌日01:00）の放送枠が消えてしまっていた
 // Go版では現在時刻を基準にフィルタリングすることで修正
 func TestUserCalendarRepository_GetByUsername_LateNightSlots(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewUserCalendarRepository(queries)
 
@@ -225,7 +233,7 @@ func TestUserCalendarRepository_GetByUsername_LateNightSlots(t *testing.T) {
 
 	// ステータスとライブラリエントリを作成
 	statusID := createTestStatus(t, tx, userID, workID, 2)
-	createTestLibraryEntry(t, tx, userID, workID, statusID, programID, []int64{})
+	createTestLibraryEntry(t, tx, userID, workID, statusID, programID, []model.EpisodeID{})
 
 	ctx := context.Background()
 
@@ -271,7 +279,7 @@ func TestUserCalendarRepository_GetByUsername_LateNightSlots(t *testing.T) {
 }
 
 // createTestWorkWithStartedOn はstarted_onを設定した作品を作成します
-func createTestWorkWithStartedOn(t *testing.T, tx *sql.Tx, title, titleEn string, startedOn time.Time) int64 {
+func createTestWorkWithStartedOn(t *testing.T, tx *sql.Tx, title, titleEn string, startedOn time.Time) model.WorkID {
 	t.Helper()
 
 	query := `
@@ -310,7 +318,7 @@ func createTestWorkWithStartedOn(t *testing.T, tx *sql.Tx, title, titleEn string
 		t.Fatalf("作品データの作成に失敗しました: %v", err)
 	}
 
-	return id
+	return model.WorkID(id)
 }
 
 // createTestChannelGroup はテスト用チャンネルグループを作成します
@@ -352,7 +360,7 @@ func createTestChannel(t *testing.T, tx *sql.Tx, channelGroupID int64, name stri
 }
 
 // createTestProgram はテスト用プログラムを作成します
-func createTestProgram(t *testing.T, tx *sql.Tx, channelID, workID int64) int64 {
+func createTestProgram(t *testing.T, tx *sql.Tx, channelID int64, workID model.WorkID) int64 {
 	t.Helper()
 
 	query := `
@@ -362,7 +370,7 @@ func createTestProgram(t *testing.T, tx *sql.Tx, channelID, workID int64) int64 
 	`
 
 	var id int64
-	err := tx.QueryRow(query, channelID, workID, time.Now(), time.Now()).Scan(&id)
+	err := tx.QueryRow(query, channelID, int64(workID), time.Now(), time.Now()).Scan(&id)
 	if err != nil {
 		t.Fatalf("プログラムデータの作成に失敗しました: %v", err)
 	}
@@ -371,7 +379,7 @@ func createTestProgram(t *testing.T, tx *sql.Tx, channelID, workID int64) int64 
 }
 
 // createTestSlot はテスト用スロットを作成します
-func createTestSlot(t *testing.T, tx *sql.Tx, channelID, workID, episodeID, programID int64, startedAt time.Time) int64 {
+func createTestSlot(t *testing.T, tx *sql.Tx, channelID int64, workID model.WorkID, episodeID model.EpisodeID, programID int64, startedAt time.Time) model.SlotID {
 	t.Helper()
 
 	query := `
@@ -381,16 +389,16 @@ func createTestSlot(t *testing.T, tx *sql.Tx, channelID, workID, episodeID, prog
 	`
 
 	var id int64
-	err := tx.QueryRow(query, channelID, workID, episodeID, programID, startedAt, time.Now(), time.Now()).Scan(&id)
+	err := tx.QueryRow(query, channelID, int64(workID), int64(episodeID), programID, startedAt, time.Now(), time.Now()).Scan(&id)
 	if err != nil {
 		t.Fatalf("スロットデータの作成に失敗しました: %v", err)
 	}
 
-	return id
+	return model.SlotID(id)
 }
 
 // createTestStatus はテスト用ステータスを作成します
-func createTestStatus(t *testing.T, tx *sql.Tx, userID, workID int64, kind int) int64 {
+func createTestStatus(t *testing.T, tx *sql.Tx, userID model.UserID, workID model.WorkID, kind int) int64 {
 	t.Helper()
 
 	query := `
@@ -400,7 +408,7 @@ func createTestStatus(t *testing.T, tx *sql.Tx, userID, workID int64, kind int) 
 	`
 
 	var id int64
-	err := tx.QueryRow(query, userID, workID, kind, time.Now(), time.Now()).Scan(&id)
+	err := tx.QueryRow(query, int64(userID), int64(workID), kind, time.Now(), time.Now()).Scan(&id)
 	if err != nil {
 		t.Fatalf("ステータスデータの作成に失敗しました: %v", err)
 	}
@@ -409,7 +417,7 @@ func createTestStatus(t *testing.T, tx *sql.Tx, userID, workID int64, kind int) 
 }
 
 // createTestLibraryEntry はテスト用ライブラリエントリを作成します
-func createTestLibraryEntry(t *testing.T, tx *sql.Tx, userID, workID, statusID, programID int64, watchedEpisodeIDs []int64) {
+func createTestLibraryEntry(t *testing.T, tx *sql.Tx, userID model.UserID, workID model.WorkID, statusID, programID int64, watchedEpisodeIDs []model.EpisodeID) {
 	t.Helper()
 
 	// 配列をPostgreSQL形式に変換
@@ -418,7 +426,7 @@ func createTestLibraryEntry(t *testing.T, tx *sql.Tx, userID, workID, statusID, 
 		if i > 0 {
 			watchedIDsStr += ","
 		}
-		watchedIDsStr += string(rune('0' + id%10)) // 簡易的な変換
+		watchedIDsStr += fmt.Sprintf("%d", int64(id))
 	}
 	watchedIDsStr += "}"
 
@@ -427,7 +435,7 @@ func createTestLibraryEntry(t *testing.T, tx *sql.Tx, userID, workID, statusID, 
 		VALUES ($1, $2, $3, $4, $5::bigint[], $6, $7)
 	`
 
-	_, err := tx.Exec(query, userID, workID, statusID, programID, watchedIDsStr, time.Now(), time.Now())
+	_, err := tx.Exec(query, int64(userID), int64(workID), statusID, programID, watchedIDsStr, time.Now(), time.Now())
 	if err != nil {
 		t.Fatalf("ライブラリエントリデータの作成に失敗しました: %v", err)
 	}
@@ -435,7 +443,9 @@ func createTestLibraryEntry(t *testing.T, tx *sql.Tx, userID, workID, statusID, 
 
 // TestUserCalendarRepository_GetByUsername_DeletedUser は削除されたユーザーのテストです
 func TestUserCalendarRepository_GetByUsername_DeletedUser(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewUserCalendarRepository(queries)
 
@@ -462,7 +472,9 @@ func TestUserCalendarRepository_GetByUsername_DeletedUser(t *testing.T) {
 
 // TestUserCalendarRepository_GetByUsername_EmptyLibrary は視聴リストが空の場合のテストです
 func TestUserCalendarRepository_GetByUsername_EmptyLibrary(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewUserCalendarRepository(queries)
 
@@ -491,7 +503,9 @@ func TestUserCalendarRepository_GetByUsername_EmptyLibrary(t *testing.T) {
 
 // TestUserCalendarRepository_GetByUsername_SlotsAfter7Days は8日以降のスロットが除外されることをテストします
 func TestUserCalendarRepository_GetByUsername_SlotsAfter7Days(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewUserCalendarRepository(queries)
 
@@ -521,7 +535,7 @@ func TestUserCalendarRepository_GetByUsername_SlotsAfter7Days(t *testing.T) {
 
 	// ステータスとライブラリエントリを作成
 	statusID := createTestStatus(t, tx, userID, workID, 2)
-	createTestLibraryEntry(t, tx, userID, workID, statusID, programID, []int64{})
+	createTestLibraryEntry(t, tx, userID, workID, statusID, programID, []model.EpisodeID{})
 
 	ctx := context.Background()
 
@@ -539,7 +553,9 @@ func TestUserCalendarRepository_GetByUsername_SlotsAfter7Days(t *testing.T) {
 
 // TestUserCalendarRepository_GetByUsername_NoProgramID は番組が設定されていないライブラリエントリのテストです
 func TestUserCalendarRepository_GetByUsername_NoProgramID(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewUserCalendarRepository(queries)
 
@@ -587,7 +603,9 @@ func TestUserCalendarRepository_GetByUsername_NoProgramID(t *testing.T) {
 
 // TestUserCalendarRepository_GetByUsername_DeletedSlot は削除済みスロットが除外されることをテストします
 func TestUserCalendarRepository_GetByUsername_DeletedSlot(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewUserCalendarRepository(queries)
 
@@ -615,14 +633,14 @@ func TestUserCalendarRepository_GetByUsername_DeletedSlot(t *testing.T) {
 	slotID := createTestSlot(t, tx, channelID, workID, episodeID, programID, now.Add(1*time.Hour))
 
 	// スロットを削除（deleted_atを設定）
-	_, err := tx.Exec(`UPDATE slots SET deleted_at = NOW() WHERE id = $1`, slotID)
+	_, err := tx.Exec(`UPDATE slots SET deleted_at = NOW() WHERE id = $1`, int64(slotID))
 	if err != nil {
 		t.Fatalf("スロットの削除に失敗しました: %v", err)
 	}
 
 	// ステータスとライブラリエントリを作成
 	statusID := createTestStatus(t, tx, userID, workID, 2)
-	createTestLibraryEntry(t, tx, userID, workID, statusID, programID, []int64{})
+	createTestLibraryEntry(t, tx, userID, workID, statusID, programID, []model.EpisodeID{})
 
 	ctx := context.Background()
 
@@ -640,7 +658,9 @@ func TestUserCalendarRepository_GetByUsername_DeletedSlot(t *testing.T) {
 
 // TestUserCalendarRepository_GetByUsername_WannaWatchStatus はwanna_watchステータスのテストです
 func TestUserCalendarRepository_GetByUsername_WannaWatchStatus(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewUserCalendarRepository(queries)
 
@@ -669,7 +689,7 @@ func TestUserCalendarRepository_GetByUsername_WannaWatchStatus(t *testing.T) {
 
 	// ステータスを作成（kind=1: wanna_watch）
 	statusID := createTestStatus(t, tx, userID, workID, 1)
-	createTestLibraryEntry(t, tx, userID, workID, statusID, programID, []int64{})
+	createTestLibraryEntry(t, tx, userID, workID, statusID, programID, []model.EpisodeID{})
 
 	ctx := context.Background()
 
@@ -687,7 +707,9 @@ func TestUserCalendarRepository_GetByUsername_WannaWatchStatus(t *testing.T) {
 
 // TestUserCalendarRepository_GetByUsername_WorkStartedOnEvent は作品の放送開始日イベントのテストです
 func TestUserCalendarRepository_GetByUsername_WorkStartedOnEvent(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewUserCalendarRepository(queries)
 

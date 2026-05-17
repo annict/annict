@@ -1,7 +1,6 @@
 package password
 
 import (
-	"database/sql"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -10,10 +9,11 @@ import (
 	"github.com/annict/annict/go/internal/clientip"
 	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/middleware"
-	"github.com/annict/annict/go/internal/password_reset"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/templates/layouts"
 	errorpages "github.com/annict/annict/go/internal/templates/pages/errors"
 	passwordpages "github.com/annict/annict/go/internal/templates/pages/password"
+	"github.com/annict/annict/go/internal/usecase"
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
@@ -34,7 +34,6 @@ func (h *Handler) Edit(w http.ResponseWriter, r *http.Request) {
 		allowed, err := h.limiter.Check(ctx, tokenVerifyKey, 10, 1*time.Hour)
 		if err != nil {
 			slog.ErrorContext(ctx, "Rate Limitingチェックが失敗しました", "error", err)
-			// エラーでも続行
 		} else if !allowed {
 			slog.WarnContext(ctx, "トークン検証がRate Limitingにより制限されました",
 				"ip_address", ip,
@@ -44,66 +43,50 @@ func (h *Handler) Edit(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// トークンをハッシュ化してデータベースから検索
-	tokenDigest := password_reset.HashToken(token)
-	resetToken, err := h.passwordResetTokenRepository.GetByDigest(ctx, tokenDigest)
-	if err == sql.ErrNoRows {
-		// トークンが見つからない（セキュアなメッセージ）
-		slog.WarnContext(ctx, "無効なパスワードリセットトークン",
-			"token_digest", tokenDigest,
-			"reason", "not_found",
-			"ip_address", clientip.GetClientIP(r),
-		)
-		h.renderInvalidTokenError(w, r)
-		return
-	} else if err != nil {
-		slog.ErrorContext(ctx, "パスワードリセットトークンのクエリエラー", "error", err)
+	// UseCaseでトークンの有効性を検証
+	result, err := h.getPasswordResetTokenUC.Execute(ctx, usecase.GetPasswordResetTokenInput{
+		Token: token,
+	})
+	if err != nil {
+		slog.ErrorContext(ctx, "パスワードリセットトークンの検証エラー", "error", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
-	// トークンの有効性をチェック
-	if resetToken.UsedAt.Valid {
-		// 使用済み
-		slog.WarnContext(ctx, "無効なパスワードリセットトークン",
-			"token_digest", tokenDigest,
-			"reason", "used",
+	if !result.Valid {
+		slog.WarnContext(ctx, "無効なパスワードリセットトークンによるアクセス",
 			"ip_address", clientip.GetClientIP(r),
 		)
 		h.renderInvalidTokenError(w, r)
 		return
 	}
 
-	if time.Now().After(resetToken.ExpiresAt) {
-		// 有効期限切れ
-		slog.WarnContext(ctx, "無効なパスワードリセットトークン",
-			"token_digest", tokenDigest,
-			"reason", "expired",
-			"ip_address", clientip.GetClientIP(r),
-		)
-		h.renderInvalidTokenError(w, r)
-		return
-	}
+	h.renderEditForm(w, r, http.StatusOK, nil, token)
+}
 
-	// セッションからフラッシュメッセージとフォームエラーを取得
-	flash, _ := h.sessionManager.GetFlash(ctx, r)
-	formErrors, _ := h.sessionManager.GetFormErrors(ctx, r)
+// renderEditForm は新しいパスワード入力フォームをレンダリングします。
+// バリデーションエラーが存在する場合は status に http.StatusUnprocessableEntity を渡してください。
+func (h *Handler) renderEditForm(w http.ResponseWriter, r *http.Request, status int, formErrors *model.ValidationError, token string) {
+	ctx := r.Context()
 
-	// メタ情報を設定
 	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)
 	meta.SetTitle(ctx, "password_edit_title")
 	meta.OGURL = h.cfg.AppURL() + "/password/edit"
 
-	// CSRFトークンを取得
-	csrfToken := middleware.GetCSRFToken(r, h.sessionManager)
+	csrfToken := middleware.GetCSRFToken(r, h.sessionMgr)
 
-	// テンプレートをレンダリング
+	data := passwordpages.EditPageData{
+		CSRFToken:  csrfToken,
+		Token:      token,
+		FormErrors: formErrors,
+	}
+
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	component := layouts.Simple(ctx, meta, flash, h.cfg.GetAssetVersion(), passwordpages.Edit(ctx, formErrors, csrfToken, token))
-	if err = component.Render(ctx, w); err != nil {
-		slog.Error("テンプレート実行エラー", "error", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
+	w.WriteHeader(status)
+
+	component := layouts.Simple(ctx, meta, h.cfg.GetAssetVersion(), passwordpages.Edit(data))
+	if err := component.Render(ctx, w); err != nil {
+		slog.ErrorContext(ctx, "テンプレート実行エラー", "error", err)
 	}
 }
 
@@ -111,22 +94,19 @@ func (h *Handler) Edit(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) renderInvalidTokenError(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	// メタ情報を設定
 	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)
 	meta.Title = i18n.T(ctx, "password_reset_token_invalid")
 	meta.OGURL = h.cfg.AppURL() + "/password/reset"
 
-	// バックリンクを作成
 	backLink := &errorpages.BackLink{
 		URL:  "/password/reset",
 		Text: i18n.T(ctx, "password_reset_back_to_sign_in"),
 	}
 
-	// テンプレートをレンダリング
-	w.WriteHeader(http.StatusBadRequest)
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	component := layouts.Simple(ctx, meta, nil, h.cfg.GetAssetVersion(), errorpages.Error(ctx, i18n.T(ctx, "password_reset_token_invalid"), i18n.T(ctx, "password_reset_token_invalid_message"), backLink))
+	w.WriteHeader(http.StatusBadRequest)
+	component := layouts.Simple(ctx, meta, h.cfg.GetAssetVersion(), errorpages.Error(ctx, i18n.T(ctx, "password_reset_token_invalid"), i18n.T(ctx, "password_reset_token_invalid_message"), backLink))
 	if err := component.Render(ctx, w); err != nil {
-		slog.Error("テンプレート実行エラー", "error", err)
+		slog.ErrorContext(ctx, "テンプレート実行エラー", "error", err)
 	}
 }

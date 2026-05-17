@@ -3,50 +3,88 @@ package usecase
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"log/slog"
 	"time"
 
 	"github.com/annict/annict/go/internal/auth"
-	"github.com/annict/annict/go/internal/query"
-	"github.com/annict/annict/go/internal/worker"
+	"github.com/annict/annict/go/internal/dispatcher"
+	"github.com/annict/annict/go/internal/i18n"
+	"github.com/annict/annict/go/internal/model"
+	"github.com/annict/annict/go/internal/repository"
+	"github.com/annict/annict/go/internal/validator"
 )
 
 // SendSignUpCodeUsecase は新規登録確認コードを生成・送信するユースケースです
 type SendSignUpCodeUsecase struct {
-	db          *sql.DB
-	queries     *query.Queries
-	riverClient *worker.Client
+	db             *sql.DB
+	signUpCodeRepo *repository.SignUpCodeRepository
+	userRepo       *repository.UserRepository
+	dispatcher     *dispatcher.Dispatcher
+	validator      *validator.SignUpCreateValidator
 }
 
 // NewSendSignUpCodeUsecase は新しいSendSignUpCodeUsecaseを作成します
-func NewSendSignUpCodeUsecase(db *sql.DB, queries *query.Queries, riverClient *worker.Client) *SendSignUpCodeUsecase {
+func NewSendSignUpCodeUsecase(
+	db *sql.DB,
+	signUpCodeRepo *repository.SignUpCodeRepository,
+	userRepo *repository.UserRepository,
+	dispatcher *dispatcher.Dispatcher,
+	validator *validator.SignUpCreateValidator,
+) *SendSignUpCodeUsecase {
 	return &SendSignUpCodeUsecase{
-		db:          db,
-		queries:     queries,
-		riverClient: riverClient,
+		db:             db,
+		signUpCodeRepo: signUpCodeRepo,
+		userRepo:       userRepo,
+		dispatcher:     dispatcher,
+		validator:      validator,
 	}
 }
 
-// SendSignUpCodeResult はコード送信の結果を表します
-type SendSignUpCodeResult struct {
+// SendSignUpCodeInput はユースケースの入力パラメータです
+type SendSignUpCodeInput struct {
+	Email  string
+	Locale string
+}
+
+// SendSignUpCodeOutput はコード送信の結果を表します
+type SendSignUpCodeOutput struct {
 	Code  string // 平文コード（テスト用）
 	Email string // メールアドレス
 }
 
 // Execute は新規登録確認コードを生成し、メール送信ジョブをエンキューします
-func (uc *SendSignUpCodeUsecase) Execute(ctx context.Context, email string, locale string) (*SendSignUpCodeResult, error) {
-	// トランザクション開始
+func (uc *SendSignUpCodeUsecase) Execute(ctx context.Context, input SendSignUpCodeInput) (*SendSignUpCodeOutput, error) {
+	// 1. バリデーション
+	if err := uc.validator.Validate(ctx, validator.SignUpCreateValidatorInput{
+		Email: input.Email,
+	}); err != nil {
+		return nil, err
+	}
+
+	// 2. メールアドレスの重複チェック
+	_, err := uc.userRepo.GetByEmail(ctx, input.Email)
+	if err == nil {
+		ve := model.NewValidationError()
+		ve.AddField("email", i18n.T(ctx, "sign_up_error_email_already_exists"))
+		return nil, ve
+	}
+	if !errors.Is(err, sql.ErrNoRows) {
+		return nil, fmt.Errorf("ユーザーの検索に失敗: %w", err)
+	}
+
+	// 3. トランザクション開始
 	tx, err := uc.db.BeginTx(ctx, nil)
 	if err != nil {
 		return nil, fmt.Errorf("トランザクション開始に失敗: %w", err)
 	}
 	defer func() { _ = tx.Rollback() }()
 
-	queriesWithTx := uc.queries.WithTx(tx)
+	signUpCodeRepoTx := uc.signUpCodeRepo.WithTx(tx)
 
 	// 既存の未使用コードを無効化
-	if err := queriesWithTx.InvalidateSignUpCodesByEmail(ctx, email); err != nil {
+	if err := signUpCodeRepoTx.InvalidateByEmail(ctx, input.Email); err != nil {
 		return nil, fmt.Errorf("古いコードの無効化に失敗: %w", err)
 	}
 
@@ -63,13 +101,11 @@ func (uc *SendSignUpCodeUsecase) Execute(ctx context.Context, email string, loca
 	}
 
 	// コードをデータベースに保存（有効期限: 15分）
-	params := query.CreateSignUpCodeParams{
-		Email:      email,
+	if _, err := signUpCodeRepoTx.Create(ctx, repository.SignUpCodeCreateParams{
+		Email:      input.Email,
 		CodeDigest: codeDigest,
 		ExpiresAt:  time.Now().Add(15 * time.Minute),
-	}
-
-	if _, err := queriesWithTx.CreateSignUpCode(ctx, params); err != nil {
+	}); err != nil {
 		return nil, fmt.Errorf("新規登録確認コードの作成に失敗: %w", err)
 	}
 
@@ -79,38 +115,29 @@ func (uc *SendSignUpCodeUsecase) Execute(ctx context.Context, email string, loca
 	}
 
 	slog.InfoContext(ctx, "新規登録確認コードを作成しました",
-		"email", email,
+		"email", input.Email,
 	)
 
 	// メール送信ジョブをエンキュー
-	if uc.riverClient != nil {
-		args, err := worker.BuildSignUpCodeEmail(ctx, email, code, locale)
-		if err != nil {
-			slog.ErrorContext(ctx, "新規登録確認コードメールの構築に失敗しました",
-				"email", email,
+	if uc.dispatcher != nil {
+		if err := uc.dispatcher.EnqueueSignUpCodeEmail(ctx, input.Email, code, input.Locale); err != nil {
+			slog.ErrorContext(ctx, "新規登録確認コード送信ジョブのエンキューに失敗しました",
+				"email", input.Email,
 				"error", err,
 			)
 		} else {
-			_, err = uc.riverClient.Client().Insert(ctx, *args, nil)
-			if err != nil {
-				slog.ErrorContext(ctx, "新規登録確認コード送信ジョブのエンキューに失敗しました",
-					"email", email,
-					"error", err,
-				)
-			} else {
-				slog.InfoContext(ctx, "新規登録確認コード送信ジョブをエンキューしました",
-					"email", email,
-				)
-			}
+			slog.InfoContext(ctx, "新規登録確認コード送信ジョブをエンキューしました",
+				"email", input.Email,
+			)
 		}
 	} else {
-		slog.WarnContext(ctx, "River クライアントが設定されていないため、メール送信ジョブをエンキューできませんでした",
-			"email", email,
+		slog.WarnContext(ctx, "Dispatcher が設定されていないため、メール送信ジョブをエンキューできませんでした",
+			"email", input.Email,
 		)
 	}
 
-	return &SendSignUpCodeResult{
+	return &SendSignUpCodeOutput{
 		Code:  code,
-		Email: email,
+		Email: input.Email,
 	}, nil
 }

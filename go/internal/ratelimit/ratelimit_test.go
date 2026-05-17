@@ -9,9 +9,18 @@ import (
 )
 
 func TestLimiter_Check(t *testing.T) {
+	t.Parallel()
+
 	rdb := testutil.SetupTestRedis(t)
 	limiter := NewLimiter(rdb)
 	ctx := context.Background()
+
+	// Scope keys to this test so parallel tests sharing the same Redis DB
+	// do not interfere with each other.
+	//
+	// [Ja] 同じ Redis DB を共有する並列テストと干渉しないよう、本テストに
+	// スコープしたキーを使う。
+	prefix := testutil.UniqueRateLimitPrefix(t)
 
 	tests := []struct {
 		name        string
@@ -23,7 +32,7 @@ func TestLimiter_Check(t *testing.T) {
 	}{
 		{
 			name:        "5回制限で5回まで許可される",
-			key:         "test:limit5",
+			key:         prefix + ":limit5",
 			limit:       5,
 			window:      1 * time.Hour,
 			attempts:    6,
@@ -31,7 +40,7 @@ func TestLimiter_Check(t *testing.T) {
 		},
 		{
 			name:        "3回制限で3回まで許可される",
-			key:         "test:limit3",
+			key:         prefix + ":limit3",
 			limit:       3,
 			window:      1 * time.Hour,
 			attempts:    5,
@@ -39,7 +48,7 @@ func TestLimiter_Check(t *testing.T) {
 		},
 		{
 			name:        "1回制限で1回のみ許可される",
-			key:         "test:limit1",
+			key:         prefix + ":limit1",
 			limit:       1,
 			window:      1 * time.Hour,
 			attempts:    3,
@@ -49,6 +58,16 @@ func TestLimiter_Check(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			// Reset only this case's key so the counter starts at 0 even
+			// if a prior run left state on the shared Redis DB.
+			//
+			// [Ja] 共有 Redis に前回の状態が残っていてもカウンタを 0 から
+			// 始められるよう、本ケースのキーだけを Reset する。
+			if err := limiter.Reset(ctx, tt.key); err != nil {
+				t.Fatalf("reset failed: %v", err)
+			}
+			t.Cleanup(func() { _ = limiter.Reset(ctx, tt.key) })
+
 			for i := 0; i < tt.attempts; i++ {
 				allowed, err := limiter.Check(ctx, tt.key, tt.limit, tt.window)
 				if err != nil {
@@ -64,13 +83,30 @@ func TestLimiter_Check(t *testing.T) {
 }
 
 func TestLimiter_Reset(t *testing.T) {
+	t.Parallel()
+
 	rdb := testutil.SetupTestRedis(t)
 	limiter := NewLimiter(rdb)
 	ctx := context.Background()
 
-	key := "test:reset"
+	// Scope the key to this test so parallel tests sharing the same Redis
+	// DB do not interfere.
+	//
+	// [Ja] 同じ Redis DB を共有する並列テストと干渉しないよう、本テストに
+	// スコープしたキーを使う。
+	key := testutil.UniqueRateLimitPrefix(t) + ":reset"
 	limit := 3
 	window := 1 * time.Hour
+
+	// Reset only this test's key so the counter starts at 0 even if a
+	// prior run left state on the shared Redis DB.
+	//
+	// [Ja] 共有 Redis に前回の状態が残っていてもカウンタを 0 から始められる
+	// よう、このテストのキーだけを Reset する。
+	if err := limiter.Reset(ctx, key); err != nil {
+		t.Fatalf("reset failed: %v", err)
+	}
+	t.Cleanup(func() { _ = limiter.Reset(ctx, key) })
 
 	// 3回アクセスして制限に達する
 	for i := 0; i < 3; i++ {
@@ -108,13 +144,30 @@ func TestLimiter_Reset(t *testing.T) {
 }
 
 func TestLimiter_TTL(t *testing.T) {
+	t.Parallel()
+
 	rdb := testutil.SetupTestRedis(t)
 	limiter := NewLimiter(rdb)
 	ctx := context.Background()
 
-	key := "test:ttl"
+	// Scope the key to this test so parallel tests sharing the same Redis
+	// DB do not interfere.
+	//
+	// [Ja] 同じ Redis DB を共有する並列テストと干渉しないよう、本テストに
+	// スコープしたキーを使う。
+	key := testutil.UniqueRateLimitPrefix(t) + ":ttl"
 	limit := 5
 	window := 2 * time.Second // 短い時間窓でテスト
+
+	// Reset only this test's key so the counter starts at 0 even if a
+	// prior run left state on the shared Redis DB.
+	//
+	// [Ja] 共有 Redis に前回の状態が残っていてもカウンタを 0 から始められる
+	// よう、このテストのキーだけを Reset する。
+	if err := limiter.Reset(ctx, key); err != nil {
+		t.Fatalf("reset failed: %v", err)
+	}
+	t.Cleanup(func() { _ = limiter.Reset(ctx, key) })
 
 	// 1回アクセス
 	allowed, err := limiter.Check(ctx, key, limit, window)

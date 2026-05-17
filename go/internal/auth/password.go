@@ -2,12 +2,9 @@
 package auth
 
 import (
-	"context"
 	"errors"
 
 	"golang.org/x/crypto/bcrypt"
-
-	"github.com/annict/annict/go/internal/i18n"
 )
 
 // bcryptCost はbcryptのコスト値。テスト時はSetBcryptCostForTestで変更可能
@@ -35,29 +32,37 @@ func HashPassword(plainPassword string) (string, error) {
 	return string(hashedBytes), nil
 }
 
+// パスワード強度の要件（NIST SP 800-63B-4 準拠）
+const (
+	MinPasswordLength = 8
+	MaxPasswordLength = 128
+)
+
+// パスワード強度のバリデーションエラー（sentinel error）
+// auth パッケージは i18n に依存しないため、呼び出し元でエラー種別を判別して翻訳を解決する
+var (
+	ErrPasswordTooShort     = errors.New("password is too short")
+	ErrPasswordTooLong      = errors.New("password is too long")
+	ErrPasswordInvalidChars = errors.New("password contains invalid characters")
+)
+
 // ValidatePasswordStrength はパスワードの強度をチェックする
 // NIST SP 800-63B-4 準拠:
 // - 最小文字数: 8文字
 // - 最大文字数: 128文字
 // - 印字可能ASCII文字のみ許可（0x21～0x7E）
 // - 文字種の複雑性要件は廃止（大文字・小文字・数字・記号の組み合わせ要求なし）
-func ValidatePasswordStrength(ctx context.Context, password string) error {
-	// 最小文字数チェック
-	if len(password) < 8 {
-		return errors.New(i18n.T(ctx, "password_strength_min_length"))
+func ValidatePasswordStrength(password string) error {
+	if len(password) < MinPasswordLength {
+		return ErrPasswordTooShort
 	}
-
-	// 最大文字数チェック
-	if len(password) > 128 {
-		return errors.New(i18n.T(ctx, "password_strength_max_length"))
+	if len(password) > MaxPasswordLength {
+		return ErrPasswordTooLong
 	}
-
-	// 印字可能ASCII文字のみを許可（0x21～0x7E）
 	for _, char := range password {
 		if char < 0x21 || char > 0x7E {
-			return errors.New(i18n.T(ctx, "password_strength_invalid_chars"))
+			return ErrPasswordInvalidChars
 		}
 	}
-
 	return nil
 }

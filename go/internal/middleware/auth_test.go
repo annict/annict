@@ -12,6 +12,7 @@ import (
 
 	"github.com/annict/annict/go/internal/config"
 	"github.com/annict/annict/go/internal/middleware"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/session"
@@ -26,7 +27,7 @@ func generatePrivateID(publicID string) string {
 
 func TestRequireAuth_UpdatesSessionUpdatedAt(t *testing.T) {
 	// テストDBとトランザクションをセットアップ
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 
 	// ユーザーを作成
 	userID := testutil.NewUserBuilder(t, tx).
@@ -61,7 +62,7 @@ func TestRequireAuth_UpdatesSessionUpdatedAt(t *testing.T) {
 	time.Sleep(100 * time.Millisecond)
 
 	// 認証ミドルウェアを作成
-	authMW := middleware.NewAuthMiddleware(sessionManager, sessionRepo)
+	authMW := middleware.NewAuthMiddleware(sessionManager)
 
 	// テスト用のハンドラー（認証が必要）
 	testHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -103,7 +104,7 @@ func TestRequireAuth_UpdatesSessionUpdatedAt(t *testing.T) {
 
 func TestRequireAuth_RedirectsWhenNotAuthenticated(t *testing.T) {
 	// テストDBとトランザクションをセットアップ
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 
 	// セッションマネージャーとリポジトリを作成
 	queries := query.New(db).WithTx(tx)
@@ -119,7 +120,7 @@ func TestRequireAuth_RedirectsWhenNotAuthenticated(t *testing.T) {
 	sessionManager := session.NewManager(sessionRepo, cfg)
 
 	// 認証ミドルウェアを作成
-	authMW := middleware.NewAuthMiddleware(sessionManager, sessionRepo)
+	authMW := middleware.NewAuthMiddleware(sessionManager)
 
 	// テスト用のハンドラー（認証が必要）
 	testHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -151,7 +152,7 @@ func TestRequireAuth_RedirectsWhenNotAuthenticated(t *testing.T) {
 
 func TestRequireAuth_RedirectsWhenSessionIDNotFound(t *testing.T) {
 	// テストDBとトランザクションをセットアップ
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 
 	// ユーザーを作成
 	userID := testutil.NewUserBuilder(t, tx).
@@ -172,7 +173,7 @@ func TestRequireAuth_RedirectsWhenSessionIDNotFound(t *testing.T) {
 	sessionManager := session.NewManager(sessionRepo, cfg)
 
 	// 認証ミドルウェアを作成
-	authMW := middleware.NewAuthMiddleware(sessionManager, sessionRepo)
+	authMW := middleware.NewAuthMiddleware(sessionManager)
 
 	// テスト用のハンドラー（認証が必要）
 	testHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -182,7 +183,7 @@ func TestRequireAuth_RedirectsWhenSessionIDNotFound(t *testing.T) {
 
 	// リクエストを作成（セッションクッキーなし、ただしコンテキストにユーザー情報あり）
 	req := httptest.NewRequest("GET", "/test", nil)
-	req = req.WithContext(context.WithValue(req.Context(), middleware.UserContextKey, &query.GetUserByIDRow{
+	req = req.WithContext(context.WithValue(req.Context(), middleware.UserContextKey, &model.User{
 		ID:    userID,
 		Email: "test@example.com",
 	}))
@@ -208,7 +209,7 @@ func TestRequireAuth_RedirectsWhenSessionIDNotFound(t *testing.T) {
 
 func TestRequireAuth_RedirectsWithBackParam(t *testing.T) {
 	// テストDBとトランザクションをセットアップ
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 
 	// セッションマネージャーとリポジトリを作成
 	queries := query.New(db).WithTx(tx)
@@ -224,7 +225,7 @@ func TestRequireAuth_RedirectsWithBackParam(t *testing.T) {
 	sessionManager := session.NewManager(sessionRepo, cfg)
 
 	// 認証ミドルウェアを作成
-	authMW := middleware.NewAuthMiddleware(sessionManager, sessionRepo)
+	authMW := middleware.NewAuthMiddleware(sessionManager)
 
 	// テスト用のハンドラー（認証が必要）
 	testHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

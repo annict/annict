@@ -41,9 +41,12 @@ RSpec.describe "GET /works/:work_id/staffs", type: :request do
 
   it "複数のスタッフが存在する場合、sort_number順に表示されること" do
     work = FactoryBot.create(:work)
-    staff1 = FactoryBot.create(:staff, work:, sort_number: 20)
-    staff2 = FactoryBot.create(:staff, work:, sort_number: 10)
-    staff3 = FactoryBot.create(:staff, work:, sort_number: 30)
+    person1 = FactoryBot.create(:person, name: "テスト人物A")
+    person2 = FactoryBot.create(:person, name: "テスト人物B")
+    person3 = FactoryBot.create(:person, name: "テスト人物C")
+    staff1 = FactoryBot.create(:staff, work:, resource: person1, sort_number: 20)
+    staff2 = FactoryBot.create(:staff, work:, resource: person2, sort_number: 10)
+    staff3 = FactoryBot.create(:staff, work:, resource: person3, sort_number: 30)
 
     get "/works/#{work.id}/staffs"
 

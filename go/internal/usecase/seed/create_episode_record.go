@@ -7,13 +7,15 @@ import (
 	"time"
 
 	"github.com/schollz/progressbar/v3"
+
+	"github.com/annict/annict/go/internal/model"
 )
 
 // CreateEpisodeRecordParams 視聴記録作成のパラメータ
 type CreateEpisodeRecordParams struct {
-	UserID    int64
-	EpisodeID int64
-	WorkID    int64
+	UserID    model.UserID
+	EpisodeID model.EpisodeID
+	WorkID    model.WorkID
 	Rating    *float64 // nilの場合は評価なし
 	Body      *string  // nilの場合はコメントなし
 	WatchedAt time.Time
@@ -199,8 +201,8 @@ func (uc *CreateEpisodeRecordUsecase) createMultipleRecordsInDB(ctx context.Cont
 			offset+1, offset+2, offset+3, offset+4, offset+5, offset+6, offset+7)
 
 		values = append(values,
-			params.UserID,
-			params.WorkID,
+			int64(params.UserID),
+			int64(params.WorkID),
 			"published",      // aasm_state
 			0,                // impressions_count
 			now,              // created_at
@@ -276,9 +278,9 @@ func (uc *CreateEpisodeRecordUsecase) createMultipleEpisodeRecordsInDB(ctx conte
 		}
 
 		values = append(values,
-			params.UserID,
-			params.EpisodeID,
-			params.WorkID,
+			int64(params.UserID),
+			int64(params.EpisodeID),
+			int64(params.WorkID),
 			recordIDs[i],  // record_id
 			params.Body,   // body (nil可)
 			params.Rating, // rating (nil可)
@@ -323,14 +325,14 @@ func (uc *CreateEpisodeRecordUsecase) createMultipleEpisodeRecordsInDB(ctx conte
 
 // createActivityGroupsForUsers ユーザーごとにActivityGroupを作成します
 // 既存のActivityGroupがあればそれを返し、なければ新規作成します
-func (uc *CreateEpisodeRecordUsecase) createActivityGroupsForUsers(ctx context.Context, tx *sql.Tx, recordsList []CreateEpisodeRecordParams) (map[int64]int64, error) {
+func (uc *CreateEpisodeRecordUsecase) createActivityGroupsForUsers(ctx context.Context, tx *sql.Tx, recordsList []CreateEpisodeRecordParams) (map[model.UserID]int64, error) {
 	// ユニークなユーザーIDを抽出
-	userIDSet := make(map[int64]bool)
+	userIDSet := make(map[model.UserID]bool)
 	for _, params := range recordsList {
 		userIDSet[params.UserID] = true
 	}
 
-	activityGroupIDs := make(map[int64]int64)
+	activityGroupIDs := make(map[model.UserID]int64)
 	now := time.Now()
 
 	for userID := range userIDSet {
@@ -341,7 +343,7 @@ func (uc *CreateEpisodeRecordUsecase) createActivityGroupsForUsers(ctx context.C
 			WHERE user_id = $1 AND itemable_type = 'EpisodeRecord' AND single = false
 			ORDER BY created_at DESC
 			LIMIT 1
-		`, userID).Scan(&existingID)
+		`, int64(userID)).Scan(&existingID)
 
 		if err != nil && err != sql.ErrNoRows {
 			return nil, fmt.Errorf("activity_groupsの検索エラー: %w", err)
@@ -359,7 +361,7 @@ func (uc *CreateEpisodeRecordUsecase) createActivityGroupsForUsers(ctx context.C
 					created_at, updated_at
 				) VALUES ($1, $2, $3, $4, $5, $6)
 				RETURNING id
-			`, userID, "EpisodeRecord", false, 0, now, now).Scan(&activityGroupID)
+			`, int64(userID), "EpisodeRecord", false, 0, now, now).Scan(&activityGroupID)
 
 			if err != nil {
 				return nil, fmt.Errorf("activity_groupsテーブルへのINSERT エラー: %w", err)
@@ -372,7 +374,7 @@ func (uc *CreateEpisodeRecordUsecase) createActivityGroupsForUsers(ctx context.C
 }
 
 // createMultipleActivitiesInDB activitiesテーブルに複数のレコードをマルチ行INSERTで挿入します
-func (uc *CreateEpisodeRecordUsecase) createMultipleActivitiesInDB(ctx context.Context, tx *sql.Tx, recordsList []CreateEpisodeRecordParams, episodeRecordIDs []int64, activityGroupIDs map[int64]int64) ([]int64, error) {
+func (uc *CreateEpisodeRecordUsecase) createMultipleActivitiesInDB(ctx context.Context, tx *sql.Tx, recordsList []CreateEpisodeRecordParams, episodeRecordIDs []int64, activityGroupIDs map[model.UserID]int64) ([]int64, error) {
 	queryBuilder := `INSERT INTO activities (
 		user_id, trackable_id, trackable_type,
 		episode_record_id, work_id, episode_id,
@@ -393,12 +395,12 @@ func (uc *CreateEpisodeRecordUsecase) createMultipleActivitiesInDB(ctx context.C
 			offset+1, offset+2, offset+3, offset+4, offset+5, offset+6, offset+7, offset+8, offset+9, offset+10)
 
 		values = append(values,
-			params.UserID,
+			int64(params.UserID),
 			episodeRecordIDs[i],             // trackable_id
 			"EpisodeRecord",                 // trackable_type
 			episodeRecordIDs[i],             // episode_record_id
-			params.WorkID,                   // work_id
-			params.EpisodeID,                // episode_id
+			int64(params.WorkID),            // work_id
+			int64(params.EpisodeID),         // episode_id
 			activityGroupIDs[params.UserID], // activity_group_id
 			"create",                        // action
 			now,                             // created_at
@@ -437,19 +439,19 @@ func (uc *CreateEpisodeRecordUsecase) createMultipleActivitiesInDB(ctx context.C
 // - activity_groups.activities_count: アクティビティグループのアクティビティ数
 func (uc *CreateEpisodeRecordUsecase) updateCounters(ctx context.Context, tx *sql.Tx, recordsList []CreateEpisodeRecordParams) error {
 	// ユーザーごとの視聴記録数をカウント
-	userCounts := make(map[int64]int)
+	userCounts := make(map[model.UserID]int)
 	for _, params := range recordsList {
 		userCounts[params.UserID]++
 	}
 
 	// 作品ごとの視聴記録数をカウント
-	workCounts := make(map[int64]int)
+	workCounts := make(map[model.WorkID]int)
 	for _, params := range recordsList {
 		workCounts[params.WorkID]++
 	}
 
 	// エピソードごとの視聴記録数をカウント
-	episodeCounts := make(map[int64]int)
+	episodeCounts := make(map[model.EpisodeID]int)
 	for _, params := range recordsList {
 		episodeCounts[params.EpisodeID]++
 	}
@@ -460,7 +462,7 @@ func (uc *CreateEpisodeRecordUsecase) updateCounters(ctx context.Context, tx *sq
 			UPDATE users
 			SET episode_records_count = episode_records_count + $1
 			WHERE id = $2
-		`, count, userID)
+		`, count, int64(userID))
 		if err != nil {
 			return fmt.Errorf("users.episode_records_count更新エラー（user_id: %d）: %w", userID, err)
 		}
@@ -472,7 +474,7 @@ func (uc *CreateEpisodeRecordUsecase) updateCounters(ctx context.Context, tx *sq
 			UPDATE works
 			SET records_count = records_count + $1
 			WHERE id = $2
-		`, count, workID)
+		`, count, int64(workID))
 		if err != nil {
 			return fmt.Errorf("works.records_count更新エラー（work_id: %d）: %w", workID, err)
 		}
@@ -484,7 +486,7 @@ func (uc *CreateEpisodeRecordUsecase) updateCounters(ctx context.Context, tx *sq
 			UPDATE episodes
 			SET episode_records_count = episode_records_count + $1
 			WHERE id = $2
-		`, count, episodeID)
+		`, count, int64(episodeID))
 		if err != nil {
 			return fmt.Errorf("episodes.episode_records_count更新エラー（episode_id: %d）: %w", episodeID, err)
 		}
@@ -496,7 +498,7 @@ func (uc *CreateEpisodeRecordUsecase) updateCounters(ctx context.Context, tx *sq
 			UPDATE activity_groups
 			SET activities_count = activities_count + $1
 			WHERE user_id = $2 AND itemable_type = 'EpisodeRecord' AND single = false
-		`, count, userID)
+		`, count, int64(userID))
 		if err != nil {
 			return fmt.Errorf("activity_groups.activities_count更新エラー（user_id: %d）: %w", userID, err)
 		}

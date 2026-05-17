@@ -59,9 +59,9 @@ func (r *StripeWebhookEventRepository) UpdateStatus(ctx context.Context, params 
 }
 
 // MarkAsProcessed はWebhookイベントを処理完了としてマークします
-func (r *StripeWebhookEventRepository) MarkAsProcessed(ctx context.Context, id int64) error {
+func (r *StripeWebhookEventRepository) MarkAsProcessed(ctx context.Context, id model.StripeWebhookEventID) error {
 	return r.queries.UpdateStripeWebhookEventStatus(ctx, query.UpdateStripeWebhookEventStatusParams{
-		ID:           id,
+		ID:           int64(id),
 		Status:       model.WebhookEventStatusProcessed.String(),
 		ErrorMessage: sql.NullString{},
 		ProcessedAt:  sql.NullTime{Time: time.Now(), Valid: true},
@@ -69,9 +69,9 @@ func (r *StripeWebhookEventRepository) MarkAsProcessed(ctx context.Context, id i
 }
 
 // MarkAsFailed はWebhookイベントを処理失敗としてマークします
-func (r *StripeWebhookEventRepository) MarkAsFailed(ctx context.Context, id int64, errorMessage string) error {
+func (r *StripeWebhookEventRepository) MarkAsFailed(ctx context.Context, id model.StripeWebhookEventID, errorMessage string) error {
 	return r.queries.UpdateStripeWebhookEventStatus(ctx, query.UpdateStripeWebhookEventStatusParams{
-		ID:           id,
+		ID:           int64(id),
 		Status:       model.WebhookEventStatusFailed.String(),
 		ErrorMessage: sql.NullString{String: errorMessage, Valid: true},
 		ProcessedAt:  sql.NullTime{Time: time.Now(), Valid: true},
@@ -79,9 +79,9 @@ func (r *StripeWebhookEventRepository) MarkAsFailed(ctx context.Context, id int6
 }
 
 // MarkAsSkipped はWebhookイベントを処理スキップとしてマークします
-func (r *StripeWebhookEventRepository) MarkAsSkipped(ctx context.Context, id int64) error {
+func (r *StripeWebhookEventRepository) MarkAsSkipped(ctx context.Context, id model.StripeWebhookEventID) error {
 	return r.queries.UpdateStripeWebhookEventStatus(ctx, query.UpdateStripeWebhookEventStatusParams{
-		ID:           id,
+		ID:           int64(id),
 		Status:       model.WebhookEventStatusSkipped.String(),
 		ErrorMessage: sql.NullString{},
 		ProcessedAt:  sql.NullTime{Time: time.Now(), Valid: true},

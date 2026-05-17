@@ -2,6 +2,13 @@ name: Rails CI
 
 on:
   push:
+    branches:
+      - main
+      - develop
+    paths:
+      - "rails/**"
+      - ".github/workflows/rails-ci.yml"
+  pull_request:
     paths:
       - "rails/**"
       - ".github/workflows/rails-ci.yml"
@@ -99,9 +106,10 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 22.17.0
+          package-manager-cache: false
       - name: Install Yarn
         run: |
           npm install --global yarn@1.22.22
@@ -163,9 +171,10 @@ jobs:
           working-directory: rails
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 22.17.0
+          package-manager-cache: false
 
       - name: Install Yarn
         run: |
@@ -190,3 +199,10 @@ jobs:
       - name: Run tests
         run: |
           bin/rspec
+
+      - name: Upload Capybara screenshot
+        uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: capybara-screenshots
+          path: "rails/**/tmp/capybara/"

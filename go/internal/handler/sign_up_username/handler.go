@@ -13,6 +13,7 @@ import (
 type Handler struct {
 	cfg              *config.Config
 	sessionMgr       *session.Manager
+	flashMgr         *session.FlashManager
 	redisClient      *redis.Client
 	completeSignUpUC *usecase.CompleteSignUpUsecase
 }
@@ -21,12 +22,14 @@ type Handler struct {
 func NewHandler(
 	cfg *config.Config,
 	sessionMgr *session.Manager,
+	flashMgr *session.FlashManager,
 	redisClient *redis.Client,
 	completeSignUpUC *usecase.CompleteSignUpUsecase,
 ) *Handler {
 	return &Handler{
 		cfg:              cfg,
 		sessionMgr:       sessionMgr,
+		flashMgr:         flashMgr,
 		redisClient:      redisClient,
 		completeSignUpUC: completeSignUpUC,
 	}

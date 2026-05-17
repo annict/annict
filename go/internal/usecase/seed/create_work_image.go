@@ -8,14 +8,15 @@ import (
 
 	"github.com/schollz/progressbar/v3"
 
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/seed"
 )
 
 // CreateWorkImageParams 作品画像作成のパラメータ
 type CreateWorkImageParams struct {
-	WorkID int64
-	UserID int64
+	WorkID model.WorkID
+	UserID model.UserID
 }
 
 // CreateWorkImageResult 作品画像作成の結果
@@ -194,8 +195,8 @@ func (uc *CreateWorkImageUsecase) createSingleWorkImage(ctx context.Context, que
 	// 4. work_imagesテーブルにレコードを作成
 	now := time.Now()
 	workImageID, err := queries.CreateWorkImage(ctx, query.CreateWorkImageParams{
-		WorkID:    param.WorkID,
-		UserID:    param.UserID,
+		WorkID:    int64(param.WorkID),
+		UserID:    int64(param.UserID),
 		ImageData: imageData,
 		Copyright: "",            // デフォルト空文字
 		Asin:      "",            // デフォルト空文字

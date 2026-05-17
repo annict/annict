@@ -1,14 +1,21 @@
 package sign_in_code
 
 import (
-	"context"
-	"github.com/annict/annict/go/internal/session"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/templates"
 	"github.com/annict/annict/go/internal/templates/components"
 )
 
-// SignInCodeShow は6桁コード入力ページのコンテンツを表示します
-templ SignInCodeShow(ctx context.Context, email string, formErrors *session.FormErrors, csrfToken string, backURL string) {
+// ShowPageData は6桁コード入力ページに渡すデータ構造体です
+type ShowPageData struct {
+	CSRFToken  string
+	FormErrors *model.ValidationError
+	Email      string
+	BackURL    string
+}
+
+// Show は6桁コード入力ページのコンテンツを表示します
+templ Show(data ShowPageData) {
 	<div class="flex flex-col gap-6 min-w-full md:min-w-md px-4">
 		<div class="text-center">
 			<a href="/" class="inline-block">
@@ -30,16 +37,16 @@ templ SignInCodeShow(ctx context.Context, email string, formErrors *session.Form
 			</p>
 		</div>
 
-		@components.FormErrors(formErrors)
+		@components.FormErrors(data.FormErrors)
 
 		<form
 			action="/sign_in/code"
 			class="form grid gap-6"
-			data-on:submit__passive="$isSubmitting = true"
+			hx-on:submit="disableSubmitButtons(this)"
 			method="POST"
 		>
-			<input type="hidden" name="csrf_token" value={ csrfToken }/>
-			<input type="hidden" name="back" value={ backURL }/>
+			<input type="hidden" name="csrf_token" value={ data.CSRFToken }/>
+			<input type="hidden" name="back" value={ data.BackURL }/>
 
 			<div class="grid gap-2">
 				<label for="code">
@@ -47,7 +54,7 @@ templ SignInCodeShow(ctx context.Context, email string, formErrors *session.Form
 				</label>
 
 				<input
-					if formErrors != nil && formErrors.Fields["code"] != nil {
+					if data.FormErrors != nil && data.FormErrors.HasFieldError("code") {
 						aria-invalid="true"
 					} else {
 						aria-invalid="false"
@@ -65,8 +72,8 @@ templ SignInCodeShow(ctx context.Context, email string, formErrors *session.Form
 					type="text"
 				/>
 
-				if formErrors != nil && formErrors.Fields["code"] != nil {
-					for _, errorMsg := range formErrors.Fields["code"] {
+				if data.FormErrors != nil && data.FormErrors.HasFieldError("code") {
+					for _, errorMsg := range data.FormErrors.GetFieldErrors("code") {
 						<p class="text-sm text-red-600">{ errorMsg }</p>
 					}
 				}
@@ -74,7 +81,6 @@ templ SignInCodeShow(ctx context.Context, email string, formErrors *session.Form
 
 			<button
 				class="btn rounded-full w-fit"
-				data-attr:disabled="$isSubmitting == true"
 				tabindex="2"
 				type="submit"
 			>
@@ -90,16 +96,15 @@ templ SignInCodeShow(ctx context.Context, email string, formErrors *session.Form
 
 			<form
 				action="/sign_in/code"
-				data-on:submit__passive="$isSubmitting = true"
+				hx-on:submit="disableSubmitButtons(this)"
 				method="POST"
 			>
 				<input type="hidden" name="_method" value="PATCH"/>
-				<input type="hidden" name="csrf_token" value={ csrfToken }/>
-				<input type="hidden" name="back" value={ backURL }/>
+				<input type="hidden" name="csrf_token" value={ data.CSRFToken }/>
+				<input type="hidden" name="back" value={ data.BackURL }/>
 
 				<button
 					class="btn-sm-secondary rounded-full w-fit"
-					data-attr:disabled="$isSubmitting == true"
 					tabindex="3"
 					type="submit"
 				>

@@ -3,7 +3,6 @@ package middleware
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/getsentry/sentry-go"
 )
@@ -28,7 +27,7 @@ func (s *SentryUserContextMiddleware) Middleware(next http.Handler) http.Handler
 			// SentryのHubをコンテキストから取得
 			if hub := sentry.GetHubFromContext(ctx); hub != nil {
 				hub.Scope().SetUser(sentry.User{
-					ID:       strconv.FormatInt(user.ID, 10),
+					ID:       user.ID.String(),
 					Username: user.Username,
 				})
 			}

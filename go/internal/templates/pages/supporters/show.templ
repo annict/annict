@@ -125,14 +125,13 @@ templ checkoutSection(ctx context.Context, csrfToken string) {
 
 				<form
 					action="/supporters/checkout"
-					data-on:submit__passive="$isSubmitting = true"
+					hx-on:submit="disableSubmitButtons(this)"
 					method="POST"
 				>
 					<input type="hidden" name="csrf_token" value={ csrfToken }/>
 					<input type="hidden" name="plan" value="monthly"/>
 					<button
 						class="btn btn-primary w-full"
-						data-attr:disabled="$isSubmitting == true"
 						type="submit"
 					>
 						{ templates.T(ctx, "supporters_subscribe_button") }
@@ -155,14 +154,13 @@ templ checkoutSection(ctx context.Context, csrfToken string) {
 
 				<form
 					action="/supporters/checkout"
-					data-on:submit__passive="$isSubmitting = true"
+					hx-on:submit="disableSubmitButtons(this)"
 					method="POST"
 				>
 					<input type="hidden" name="csrf_token" value={ csrfToken }/>
 					<input type="hidden" name="plan" value="yearly"/>
 					<button
 						class="btn btn-primary w-full"
-						data-attr:disabled="$isSubmitting == true"
 						type="submit"
 					>
 						{ templates.T(ctx, "supporters_subscribe_button") }
@@ -317,13 +315,12 @@ templ stripeSection(ctx context.Context, subscriber *viewmodel.StripeSubscriberV
 
 		<form
 			action="/supporters/portal"
-			data-on:submit__passive="$isSubmitting = true"
+			hx-on:submit="disableSubmitButtons(this)"
 			method="POST"
 		>
 			<input type="hidden" name="csrf_token" value={ csrfToken }/>
 			<button
 				class="btn-outline"
-				data-attr:disabled="$isSubmitting == true"
 				type="submit"
 			>
 				{ templates.T(ctx, "supporters_manage_button") }

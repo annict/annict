@@ -14,7 +14,9 @@ import (
 
 // TestStripeSubscriberRepository_Create は新しいStripeサブスクライバーを作成できることをテスト
 func TestStripeSubscriberRepository_Create(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewStripeSubscriberRepository(queries)
 
@@ -48,7 +50,9 @@ func TestStripeSubscriberRepository_Create(t *testing.T) {
 
 // TestStripeSubscriberRepository_GetByID はIDでStripeサブスクライバーを取得できることをテスト
 func TestStripeSubscriberRepository_GetByID(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewStripeSubscriberRepository(queries)
 
@@ -74,7 +78,9 @@ func TestStripeSubscriberRepository_GetByID(t *testing.T) {
 
 // TestStripeSubscriberRepository_GetByID_NotFound は存在しないIDの場合エラーが返ることをテスト
 func TestStripeSubscriberRepository_GetByID_NotFound(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewStripeSubscriberRepository(queries)
 
@@ -86,7 +92,9 @@ func TestStripeSubscriberRepository_GetByID_NotFound(t *testing.T) {
 
 // TestStripeSubscriberRepository_GetByStripeCustomerID はStripe顧客IDで取得できることをテスト
 func TestStripeSubscriberRepository_GetByStripeCustomerID(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewStripeSubscriberRepository(queries)
 
@@ -108,7 +116,9 @@ func TestStripeSubscriberRepository_GetByStripeCustomerID(t *testing.T) {
 
 // TestStripeSubscriberRepository_GetByStripeSubscriptionID はStripeサブスクリプションIDで取得できることをテスト
 func TestStripeSubscriberRepository_GetByStripeSubscriptionID(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewStripeSubscriberRepository(queries)
 
@@ -130,7 +140,9 @@ func TestStripeSubscriberRepository_GetByStripeSubscriptionID(t *testing.T) {
 
 // TestStripeSubscriberRepository_Update はサブスクライバー情報を更新できることをテスト
 func TestStripeSubscriberRepository_Update(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewStripeSubscriberRepository(queries)
 
@@ -144,7 +156,7 @@ func TestStripeSubscriberRepository_Update(t *testing.T) {
 	now := time.Now()
 	newPeriodEnd := now.AddDate(1, 0, 0)
 	err := repo.Update(context.Background(), query.UpdateStripeSubscriberParams{
-		ID:                       subscriberID,
+		ID:                       int64(subscriberID),
 		StripePriceID:            "price_yearly",
 		StripeStatus:             "active",
 		StripeCurrentPeriodStart: now,
@@ -169,7 +181,9 @@ func TestStripeSubscriberRepository_Update(t *testing.T) {
 
 // TestStripeSubscriberRepository_UpdateStatus はステータスのみを更新できることをテスト
 func TestStripeSubscriberRepository_UpdateStatus(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewStripeSubscriberRepository(queries)
 
@@ -180,7 +194,7 @@ func TestStripeSubscriberRepository_UpdateStatus(t *testing.T) {
 
 	// ステータスを更新
 	err := repo.UpdateStatus(context.Background(), query.UpdateStripeSubscriberStatusParams{
-		ID:           subscriberID,
+		ID:           int64(subscriberID),
 		StripeStatus: "canceled",
 	})
 	if err != nil {
@@ -200,6 +214,8 @@ func TestStripeSubscriberRepository_UpdateStatus(t *testing.T) {
 
 // TestStripeSubscriberRepository_IsActive はアクティブ判定が正しく動作することをテスト
 func TestStripeSubscriberRepository_IsActive(t *testing.T) {
+	t.Parallel()
+
 	repo := repository.NewStripeSubscriberRepository(nil)
 
 	testCases := []struct {
@@ -241,7 +257,7 @@ func TestStripeSubscriberRepository_IsActive(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			subscriber := &query.StripeSubscriber{
+			subscriber := &model.StripeSubscriber{
 				StripeStatus: tc.status.String(),
 			}
 			result := repo.IsActive(subscriber)

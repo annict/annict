@@ -6,15 +6,18 @@ import (
 	"time"
 
 	"github.com/annict/annict/go/internal/auth"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/testutil"
+	"github.com/annict/annict/go/internal/validator"
 )
 
 func TestSendSignInCodeUsecase_Execute(t *testing.T) {
 	t.Parallel()
 
 	// テスト用DBをセットアップ
-	db, _ := testutil.SetupTestDB(t)
+	db := testutil.GetTestDB()
 	queries := query.New(db)
 
 	// 別のトランザクションでテストユーザーを作成してコミット
@@ -24,29 +27,37 @@ func TestSendSignInCodeUsecase_Execute(t *testing.T) {
 	}
 	defer func() { _ = setupTx.Rollback() }()
 
-	userID := testutil.NewUserBuilder(t, setupTx).
+	testEmail := "sign_in_code_test_1@example.com"
+	testutil.NewUserBuilder(t, setupTx).
 		WithUsername("sign_in_code_test_user_1").
-		WithEmail("sign_in_code_test_1@example.com").
+		WithEmail(testEmail).
+		WithEncryptedPassword(""). // パスワードなし（コードログイン）
 		Build()
 
 	if err := setupTx.Commit(); err != nil {
 		t.Fatalf("Commit failed: %v", err)
 	}
 
-	// ユースケースを作成（Riverクライアントはnil）
-	uc := NewSendSignInCodeUsecase(db, queries, nil)
+	// ユースケースを作成（Dispatcherはnil）
+	v := validator.NewSignInCreateValidator()
+	uc := NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), repository.NewUserRepository(queries), nil, v)
 
 	ctx := context.Background()
 
 	// Execute を実行
-	result, err := uc.Execute(ctx, userID)
+	result, err := uc.Execute(ctx, SendSignInCodeInput{Email: testEmail})
 	if err != nil {
 		t.Fatalf("Execute failed: %v", err)
 	}
 
+	// パスワードなしユーザーなのでHasPasswordはfalse
+	if result.HasPassword {
+		t.Error("HasPassword should be false for user without password")
+	}
+
 	// 結果の検証
-	if result.UserID != userID {
-		t.Errorf("UserID: got %d, want %d", result.UserID, userID)
+	if result.Email != testEmail {
+		t.Errorf("Email: got %q, want %q", result.Email, testEmail)
 	}
 
 	// コードが6桁の数字であることを確認
@@ -60,9 +71,10 @@ func TestSendSignInCodeUsecase_Execute(t *testing.T) {
 	}
 
 	// データベースに保存されたコードを取得
-	savedCode, err := queries.GetValidSignInCode(ctx, userID)
+	signInCodeRepo := repository.NewSignInCodeRepository(queries)
+	savedCode, err := signInCodeRepo.GetValidByUserID(ctx, result.UserID)
 	if err != nil {
-		t.Fatalf("GetValidSignInCode failed: %v", err)
+		t.Fatalf("GetValidByUserID failed: %v", err)
 	}
 
 	// コードダイジェストが bcrypt でハッシュ化されていることを確認
@@ -92,7 +104,7 @@ func TestSendSignInCodeUsecase_Execute_InvalidatesOldCodes(t *testing.T) {
 	t.Parallel()
 
 	// テスト用DBをセットアップ
-	db, _ := testutil.SetupTestDB(t)
+	db := testutil.GetTestDB()
 	queries := query.New(db)
 
 	// 別のトランザクションでテストユーザーを作成してコミット
@@ -102,9 +114,11 @@ func TestSendSignInCodeUsecase_Execute_InvalidatesOldCodes(t *testing.T) {
 	}
 	defer func() { _ = setupTx.Rollback() }()
 
-	userID := testutil.NewUserBuilder(t, setupTx).
+	testEmail := "sign_in_code_test_2@example.com"
+	testutil.NewUserBuilder(t, setupTx).
 		WithUsername("sign_in_code_test_user_2").
-		WithEmail("sign_in_code_test_2@example.com").
+		WithEmail(testEmail).
+		WithEncryptedPassword(""). // パスワードなし
 		Build()
 
 	if err := setupTx.Commit(); err != nil {
@@ -112,26 +126,28 @@ func TestSendSignInCodeUsecase_Execute_InvalidatesOldCodes(t *testing.T) {
 	}
 
 	// ユースケースを作成
-	uc := NewSendSignInCodeUsecase(db, queries, nil)
+	v := validator.NewSignInCreateValidator()
+	uc := NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), repository.NewUserRepository(queries), nil, v)
 
 	ctx := context.Background()
 
 	// 1回目のコード生成
-	_, err = uc.Execute(ctx, userID)
+	_, err = uc.Execute(ctx, SendSignInCodeInput{Email: testEmail})
 	if err != nil {
 		t.Fatalf("First Execute failed: %v", err)
 	}
 
 	// 2回目のコード生成（古いコードは無効化されるはず）
-	result2, err := uc.Execute(ctx, userID)
+	result2, err := uc.Execute(ctx, SendSignInCodeInput{Email: testEmail})
 	if err != nil {
 		t.Fatalf("Second Execute failed: %v", err)
 	}
 
 	// 最新のコードのみが有効であることを確認
-	savedCode, err := queries.GetValidSignInCode(ctx, userID)
+	signInCodeRepo := repository.NewSignInCodeRepository(queries)
+	savedCode, err := signInCodeRepo.GetValidByUserID(ctx, result2.UserID)
 	if err != nil {
-		t.Fatalf("GetValidSignInCode failed: %v", err)
+		t.Fatalf("GetValidByUserID failed: %v", err)
 	}
 
 	// 2回目のコードが保存されていることを確認
@@ -140,21 +156,101 @@ func TestSendSignInCodeUsecase_Execute_InvalidatesOldCodes(t *testing.T) {
 	}
 }
 
-func TestSendSignInCodeUsecase_Execute_NonExistentUser(t *testing.T) {
+func TestSendSignInCodeUsecase_Execute_UserNotFound(t *testing.T) {
 	t.Parallel()
 
 	// テスト用DBとトランザクションをセットアップ
-	db, _ := testutil.SetupTestDB(t)
+	db := testutil.GetTestDB()
 	queries := query.New(db)
 
 	// ユースケースを作成
-	uc := NewSendSignInCodeUsecase(db, queries, nil)
+	v := validator.NewSignInCreateValidator()
+	uc := NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), repository.NewUserRepository(queries), nil, v)
 
 	ctx := context.Background()
 
-	// 存在しないユーザーIDでExecuteを実行
-	_, err := uc.Execute(ctx, 999999)
-	if err == nil {
-		t.Error("Execute should fail for non-existent user")
+	// 存在しないメールアドレスでExecuteを実行
+	_, err := uc.Execute(ctx, SendSignInCodeInput{Email: "nonexistent@example.com"})
+	ve := model.AsValidationError(err)
+	if ve == nil {
+		t.Fatalf("expected validation error for non-existent user, got: %v", err)
+	}
+}
+
+func TestSendSignInCodeUsecase_Execute_ValidationError(t *testing.T) {
+	t.Parallel()
+
+	// テスト用DBをセットアップ
+	db := testutil.GetTestDB()
+	queries := query.New(db)
+
+	// ユースケースを作成
+	v := validator.NewSignInCreateValidator()
+	uc := NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), repository.NewUserRepository(queries), nil, v)
+
+	ctx := context.Background()
+
+	// 空のメールアドレスでExecuteを実行
+	_, err := uc.Execute(ctx, SendSignInCodeInput{Email: ""})
+	ve := model.AsValidationError(err)
+	if ve == nil {
+		t.Fatalf("expected validation error for empty email, got: %v", err)
+	}
+
+	if !ve.HasFieldError("email") {
+		t.Error("expected email field error")
+	}
+}
+
+func TestSendSignInCodeUsecase_Execute_UserWithPassword(t *testing.T) {
+	t.Parallel()
+
+	// テスト用DBをセットアップ
+	db := testutil.GetTestDB()
+	queries := query.New(db)
+
+	// パスワードありのユーザーを作成
+	setupTx, err := db.Begin()
+	if err != nil {
+		t.Fatalf("Begin transaction failed: %v", err)
+	}
+	defer func() { _ = setupTx.Rollback() }()
+
+	testEmail := "sign_in_password_user@example.com"
+	testutil.NewUserBuilder(t, setupTx).
+		WithUsername("sign_in_password_user").
+		WithEmail(testEmail).
+		WithEncryptedPassword("encrypted_password_hash").
+		Build()
+
+	if err := setupTx.Commit(); err != nil {
+		t.Fatalf("Commit failed: %v", err)
+	}
+
+	// ユースケースを作成
+	v := validator.NewSignInCreateValidator()
+	uc := NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), repository.NewUserRepository(queries), nil, v)
+
+	ctx := context.Background()
+
+	// パスワードありユーザーのメールアドレスでExecuteを実行
+	result, err := uc.Execute(ctx, SendSignInCodeInput{Email: testEmail})
+	if err != nil {
+		t.Fatalf("Execute failed: %v", err)
+	}
+
+	// HasPasswordがtrueであることを確認
+	if !result.HasPassword {
+		t.Error("HasPassword should be true for user with password")
+	}
+
+	// コードは送信されていないことを確認
+	if result.Code != "" {
+		t.Errorf("Code should be empty for user with password, got %q", result.Code)
+	}
+
+	// メールアドレスが正しいことを確認
+	if result.Email != testEmail {
+		t.Errorf("Email: got %q, want %q", result.Email, testEmail)
 	}
 }

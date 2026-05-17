@@ -1,23 +1,49 @@
 package middleware
 
 import (
+	"context"
 	"log/slog"
 	"net"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"regexp"
 	"strings"
 	"time"
 
+	"github.com/annict/annict/go/internal/auth"
 	"github.com/annict/annict/go/internal/clientip"
 	"github.com/annict/annict/go/internal/config"
+	"github.com/annict/annict/go/internal/model"
+	"github.com/annict/annict/go/internal/session"
 )
+
+// DeviceTokenCookieName はデバイス（ブラウザ）識別用のCookieキー名
+const DeviceTokenCookieName = "device_token"
+
+// featureFlagChecker はフィーチャーフラグの有効判定を行うインターフェース
+type featureFlagChecker interface {
+	IsEnabledByDeviceOrUser(ctx context.Context, deviceToken string, userID model.UserID, name model.FeatureFlagName) (bool, error)
+}
+
+// featureFlaggedPattern はフィーチャーフラグで制御するURLパターンを定義
+type featureFlaggedPattern struct {
+	pattern *regexp.Regexp
+	flag    model.FeatureFlagName
+}
+
+// フィーチャーフラグで制御するURLパターンのリスト
+var featureFlaggedPatterns = []featureFlaggedPattern{
+	{pattern: regexp.MustCompile(`^/db/`), flag: model.FeatureFlagGoAnnictDB},
+}
 
 // ReverseProxyMiddleware はRails版へのリバースプロキシミドルウェア
 type ReverseProxyMiddleware struct {
-	railsURL *url.URL
-	proxy    *httputil.ReverseProxy
-	cfg      *config.Config
+	railsURL        *url.URL
+	proxy           *httputil.ReverseProxy
+	cfg             *config.Config
+	featureFlagRepo featureFlagChecker // nil許容（フラグ機能不要時）
+	sessionMgr      *session.Manager   // nil許容（テスト時やセッション不要時）
 }
 
 // Go版で処理するパス（ホワイトリスト）
@@ -40,7 +66,7 @@ var goHandledPaths = []string{
 }
 
 // NewReverseProxyMiddleware は新しいReverseProxyMiddlewareを作成
-func NewReverseProxyMiddleware(railsURL string, cfg *config.Config) (*ReverseProxyMiddleware, error) {
+func NewReverseProxyMiddleware(railsURL string, cfg *config.Config, featureFlagRepo featureFlagChecker, sessionMgr *session.Manager) (*ReverseProxyMiddleware, error) {
 	parsedURL, err := url.Parse(railsURL)
 	if err != nil {
 		return nil, err
@@ -152,9 +178,11 @@ func NewReverseProxyMiddleware(railsURL string, cfg *config.Config) (*ReversePro
 	}
 
 	return &ReverseProxyMiddleware{
-		railsURL: parsedURL,
-		proxy:    proxy,
-		cfg:      cfg,
+		railsURL:        parsedURL,
+		proxy:           proxy,
+		cfg:             cfg,
+		featureFlagRepo: featureFlagRepo,
+		sessionMgr:      sessionMgr,
 	}, nil
 }
 
@@ -167,6 +195,9 @@ func (m *ReverseProxyMiddleware) Middleware(next http.Handler) http.Handler {
 			return
 		}
 
+		// デバイストークンCookieを確保（未設定の場合は生成してセット）
+		deviceToken := m.ensureDeviceToken(w, r)
+
 		// Go版で処理するパスかどうかをチェック
 		if m.isGoHandledPath(r.URL.Path) {
 			// Go版で処理する
@@ -174,9 +205,87 @@ func (m *ReverseProxyMiddleware) Middleware(next http.Handler) http.Handler {
 			return
 		}
 
+		// フィーチャーフラグで制御するパスかどうかをチェック
+		if m.isFeatureFlagEnabled(r, deviceToken) {
+			next.ServeHTTP(w, r)
+			return
+		}
+
 		// Rails版にプロキシ
 		m.proxy.ServeHTTP(w, r)
 	})
+}
+
+// ensureDeviceToken はリクエストからdevice_token Cookieを取得し、なければ生成してレスポンスに設定する
+// 戻り値はデバイストークンの文字列
+func (m *ReverseProxyMiddleware) ensureDeviceToken(w http.ResponseWriter, r *http.Request) string {
+	if c, err := r.Cookie(DeviceTokenCookieName); err == nil && c.Value != "" {
+		return c.Value
+	}
+
+	token, err := auth.GenerateSecureToken()
+	if err != nil {
+		slog.ErrorContext(r.Context(), "デバイストークンの生成に失敗", "error", err)
+		return ""
+	}
+
+	secure := m.cfg.Env != "development"
+	http.SetCookie(w, &http.Cookie{
+		Name:     DeviceTokenCookieName,
+		Value:    token,
+		Path:     "/",
+		MaxAge:   10 * 365 * 24 * 60 * 60, // 10年
+		HttpOnly: true,
+		Secure:   secure,
+		SameSite: http.SameSiteLaxMode,
+	})
+
+	return token
+}
+
+// isFeatureFlagEnabled はリクエストパスがフィーチャーフラグで有効化されているかを判定する
+// deviceTokenはensureDeviceTokenで確保済みのトークンを受け取る
+// featureFlagRepoがnilの場合やエラー発生時はfalseを返す（Rails版にフォールバック）
+func (m *ReverseProxyMiddleware) isFeatureFlagEnabled(r *http.Request, deviceToken string) bool {
+	if m.featureFlagRepo == nil {
+		return false
+	}
+
+	// パスにマッチするフィーチャーフラグを検索
+	var flagName model.FeatureFlagName
+	matched := false
+	for _, fp := range featureFlaggedPatterns {
+		if fp.pattern.MatchString(r.URL.Path) {
+			flagName = fp.flag
+			matched = true
+			break
+		}
+	}
+	if !matched {
+		return false
+	}
+
+	ctx := r.Context()
+
+	// セッションからユーザーIDを取得
+	var userID model.UserID
+	if m.sessionMgr != nil {
+		sessionID, err := m.sessionMgr.GetSessionID(r)
+		if err == nil && sessionID != "" {
+			sessionData, err := m.sessionMgr.GetSession(ctx, sessionID)
+			if err == nil && sessionData != nil && sessionData.UserID != nil {
+				userID = *sessionData.UserID
+			}
+		}
+	}
+
+	enabled, err := m.featureFlagRepo.IsEnabledByDeviceOrUser(ctx, deviceToken, userID, flagName)
+	if err != nil {
+		slog.ErrorContext(ctx, "フィーチャーフラグの判定に失敗", "error", err, "flag", flagName, "path", r.URL.Path)
+		return false
+	}
+
+	return enabled
 }
 
 // isGoHandledPath はGo版で処理するパスかどうかを判定

@@ -12,7 +12,6 @@ import (
 	"github.com/stripe/stripe-go/v84"
 
 	"github.com/annict/annict/go/internal/model"
-	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/repository"
 	annictstripe "github.com/annict/annict/go/internal/stripe"
 )
@@ -42,14 +41,14 @@ func NewCreateStripeSubscriberUsecase(
 
 // CreateStripeSubscriberInput はcheckout.session.completedイベントの入力データ
 type CreateStripeSubscriberInput struct {
-	StripeCustomerID     string // Stripeの顧客ID (cus_xxx)
-	StripeSubscriptionID string // StripeのサブスクリプションID (sub_xxx)
-	UserID               int64  // AnnictのユーザーID（metadataから取得）
+	StripeCustomerID     string       // Stripeの顧客ID (cus_xxx)
+	StripeSubscriptionID string       // StripeのサブスクリプションID (sub_xxx)
+	UserID               model.UserID // AnnictのユーザーID（metadataから取得）
 }
 
 // CreateStripeSubscriberResult はcheckout.session.completedイベント処理の結果
 type CreateStripeSubscriberResult struct {
-	StripeSubscriber query.StripeSubscriber
+	StripeSubscriber model.StripeSubscriber
 }
 
 // Execute はcheckout.session.completedイベントを処理します
@@ -98,7 +97,7 @@ func (uc *CreateStripeSubscriberUsecase) Execute(
 	userRepoTx := uc.userRepo.WithTx(tx)
 
 	// StripeSubscriberレコードを作成
-	stripeSubscriber, err := stripeSubscriberRepoTx.Create(ctx, query.CreateStripeSubscriberParams{
+	stripeSubscriber, err := stripeSubscriberRepoTx.Create(ctx, repository.CreateStripeSubscriberParams{
 		StripeCustomerID:         input.StripeCustomerID,
 		StripeSubscriptionID:     input.StripeSubscriptionID,
 		StripePriceID:            priceID,
@@ -129,7 +128,7 @@ func (uc *CreateStripeSubscriberUsecase) Execute(
 }
 
 // ParseUserIDFromMetadata はCheckoutセッションのmetadataからユーザーIDを取得します
-func ParseUserIDFromMetadata(metadata map[string]string) (int64, error) {
+func ParseUserIDFromMetadata(metadata map[string]string) (model.UserID, error) {
 	userIDStr, ok := metadata["user_id"]
 	if !ok {
 		return 0, &MetadataUserIDMissingError{}
@@ -140,7 +139,7 @@ func ParseUserIDFromMetadata(metadata map[string]string) (int64, error) {
 		return 0, &MetadataUserIDInvalidError{Value: userIDStr}
 	}
 
-	return userID, nil
+	return model.UserID(userID), nil
 }
 
 // InvalidSubscriptionStatusError は無効なサブスクリプションステータスを示すエラー
