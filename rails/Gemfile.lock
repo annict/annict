@@ -95,8 +95,8 @@ GEM
       tzinfo (~> 2.0, >= 2.0.5)
     acts_as_list (1.0.4)
       activerecord (>= 4.2)
-    addressable (2.8.1)
-      public_suffix (>= 2.0.2, < 6.0)
+    addressable (2.9.0)
+      public_suffix (>= 2.0.2, < 8.0)
     anyway_config (2.2.2)
       ruby-next-core (>= 0.11.0)
     ast (2.4.2)
@@ -408,7 +408,7 @@ GEM
     psych (5.3.1)
       date
       stringio
-    public_suffix (5.0.0)
+    public_suffix (7.0.5)
     puma (6.5.0)
       nio4r (~> 2.0)
     pundit (2.2.0)
