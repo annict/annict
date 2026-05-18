@@ -362,7 +362,7 @@ GEM
     multi_json (1.15.0)
     multi_xml (0.6.0)
     multipart-post (2.4.1)
-    net-imap (0.6.2)
+    net-imap (0.6.4)
       date
       net-protocol
     net-pop (0.1.2)
@@ -647,7 +647,7 @@ GEM
     thread_safe (0.3.6)
     tilt (2.0.11)
     timecop (0.9.5)
-    timeout (0.6.0)
+    timeout (0.6.1)
     traceroute (0.8.1)
       rails (>= 3.0.0)
     tsort (0.2.0)
