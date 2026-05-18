@@ -20,7 +20,7 @@ require (
 	github.com/brianvoe/gofakeit/v6 v6.28.0
 	github.com/getsentry/sentry-go v0.40.0
 	github.com/google/uuid v1.6.0
-	github.com/jackc/pgx/v5 v5.9.0
+	github.com/jackc/pgx/v5 v5.9.2
 	github.com/mfridman/tparse v0.18.0
 	github.com/redis/go-redis/v9 v9.17.3
 	github.com/resend/resend-go/v2 v2.28.0
