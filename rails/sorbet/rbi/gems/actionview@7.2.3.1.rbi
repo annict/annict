@@ -8512,10 +8512,10 @@ module ActionView::Helpers::TagHelper
   #   cdata_section("hello]]>world")
   #   # => <![CDATA[hello]]]]><![CDATA[>world]]>
   #
-  # pkg:gem/actionview#lib/action_view/helpers/tag_helper.rb:571
+  # pkg:gem/actionview#lib/action_view/helpers/tag_helper.rb:574
   def cdata_section(content); end
 
-  # pkg:gem/actionview#lib/action_view/helpers/tag_helper.rb:556
+  # pkg:gem/actionview#lib/action_view/helpers/tag_helper.rb:559
   def class_names(*args); end
 
   # Returns an HTML block tag of type +name+ surrounding the +content+. Add
@@ -8547,7 +8547,7 @@ module ActionView::Helpers::TagHelper
   #   <% end -%>
   #    # => <div class="strong">Hello world!</div>
   #
-  # pkg:gem/actionview#lib/action_view/helpers/tag_helper.rb:529
+  # pkg:gem/actionview#lib/action_view/helpers/tag_helper.rb:532
   def content_tag(name, content_or_options_with_block = T.unsafe(nil), options = T.unsafe(nil), escape = T.unsafe(nil), &block); end
 
   # Returns an escaped version of +html+ without affecting existing escaped entities.
@@ -8558,7 +8558,7 @@ module ActionView::Helpers::TagHelper
   #   escape_once("&lt;&lt; Accept & Checkout")
   #   # => "&lt;&lt; Accept &amp; Checkout"
   #
-  # pkg:gem/actionview#lib/action_view/helpers/tag_helper.rb:583
+  # pkg:gem/actionview#lib/action_view/helpers/tag_helper.rb:586
   def escape_once(html); end
 
   # Returns an HTML tag.
@@ -8708,7 +8708,7 @@ module ActionView::Helpers::TagHelper
   #   tag("div", class: { highlight: current_user.admin? })
   #   # => <div class="highlight" />
   #
-  # pkg:gem/actionview#lib/action_view/helpers/tag_helper.rb:492
+  # pkg:gem/actionview#lib/action_view/helpers/tag_helper.rb:495
   def tag(name = T.unsafe(nil), options = T.unsafe(nil), open = T.unsafe(nil), escape = T.unsafe(nil)); end
 
   # Returns a string of tokens built from +args+.
@@ -8723,25 +8723,25 @@ module ActionView::Helpers::TagHelper
   #   token_list(nil, false, 123, "", "foo", { bar: true })
   #    # => "123 foo bar"
   #
-  # pkg:gem/actionview#lib/action_view/helpers/tag_helper.rb:551
+  # pkg:gem/actionview#lib/action_view/helpers/tag_helper.rb:554
   def token_list(*args); end
 
   private
 
-  # pkg:gem/actionview#lib/action_view/helpers/tag_helper.rb:593
+  # pkg:gem/actionview#lib/action_view/helpers/tag_helper.rb:596
   def build_tag_values(*args); end
 
-  # pkg:gem/actionview#lib/action_view/helpers/tag_helper.rb:588
+  # pkg:gem/actionview#lib/action_view/helpers/tag_helper.rb:591
   def ensure_valid_html5_tag_name(name); end
 
-  # pkg:gem/actionview#lib/action_view/helpers/tag_helper.rb:613
+  # pkg:gem/actionview#lib/action_view/helpers/tag_helper.rb:616
   def tag_builder; end
 
   class << self
-    # pkg:gem/actionview#lib/action_view/helpers/tag_helper.rb:611
+    # pkg:gem/actionview#lib/action_view/helpers/tag_helper.rb:614
     def build_tag_values(*args); end
 
-    # pkg:gem/actionview#lib/action_view/helpers/tag_helper.rb:591
+    # pkg:gem/actionview#lib/action_view/helpers/tag_helper.rb:594
     def ensure_valid_html5_tag_name(name); end
   end
 end
@@ -8826,7 +8826,7 @@ class ActionView::Helpers::TagHelper::TagBuilder
   # pkg:gem/actionview#lib/action_view/helpers/tag_helper.rb:96
   def body(content = T.unsafe(nil), escape: T.unsafe(nil), **options, &block); end
 
-  # pkg:gem/actionview#lib/action_view/helpers/tag_helper.rb:303
+  # pkg:gem/actionview#lib/action_view/helpers/tag_helper.rb:306
   def boolean_tag_option(key); end
 
   # pkg:gem/actionview#lib/action_view/helpers/tag_helper.rb:96
@@ -9117,7 +9117,7 @@ class ActionView::Helpers::TagHelper::TagBuilder
   # pkg:gem/actionview#lib/action_view/helpers/tag_helper.rb:96
   def table(content = T.unsafe(nil), escape: T.unsafe(nil), **options, &block); end
 
-  # pkg:gem/actionview#lib/action_view/helpers/tag_helper.rb:307
+  # pkg:gem/actionview#lib/action_view/helpers/tag_helper.rb:310
   def tag_option(key, value, escape); end
 
   # pkg:gem/actionview#lib/action_view/helpers/tag_helper.rb:261
@@ -9182,13 +9182,13 @@ class ActionView::Helpers::TagHelper::TagBuilder
 
   private
 
-  # pkg:gem/actionview#lib/action_view/helpers/tag_helper.rb:337
+  # pkg:gem/actionview#lib/action_view/helpers/tag_helper.rb:340
   def method_missing(called, *args, escape: T.unsafe(nil), **options, &block); end
 
-  # pkg:gem/actionview#lib/action_view/helpers/tag_helper.rb:325
+  # pkg:gem/actionview#lib/action_view/helpers/tag_helper.rb:328
   def prefix_tag_option(prefix, key, value, escape); end
 
-  # pkg:gem/actionview#lib/action_view/helpers/tag_helper.rb:333
+  # pkg:gem/actionview#lib/action_view/helpers/tag_helper.rb:336
   def respond_to_missing?(*args); end
 
   class << self
@@ -14113,7 +14113,7 @@ ActionView::VERSION::MAJOR = T.let(T.unsafe(nil), Integer)
 ActionView::VERSION::MINOR = T.let(T.unsafe(nil), Integer)
 
 # pkg:gem/actionview#lib/action_view/gem_version.rb:13
-ActionView::VERSION::PRE = T.let(T.unsafe(nil), T.untyped)
+ActionView::VERSION::PRE = T.let(T.unsafe(nil), String)
 
 # pkg:gem/actionview#lib/action_view/gem_version.rb:15
 ActionView::VERSION::STRING = T.let(T.unsafe(nil), String)
