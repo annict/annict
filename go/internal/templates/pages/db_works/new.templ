@@ -119,7 +119,7 @@ templ New(data NewPageData) {
 		<div class="flex items-center justify-between mb-6">
 			<h1 class="text-2xl font-bold">{ templates.T(ctx, "db_works_new_title") }</h1>
 			<a href={ templates.DBWorksPath().SafeURL() } class="btn btn-outline btn-sm">
-				{ templates.T(ctx, "db_works_back_to_list") }
+				{ templates.T(ctx, "db_works_new_back_to_list_link") }
 			</a>
 		</div>
 
@@ -131,7 +131,7 @@ templ New(data NewPageData) {
 			<!-- タイトル -->
 			<div>
 				<label for="title" class="label">
-					{ templates.T(ctx, "db_works_form_title") }
+					{ templates.T(ctx, "db_works_new_title_label") }
 					<span class="text-destructive">*</span>
 				</label>
 				<input
@@ -155,7 +155,7 @@ templ New(data NewPageData) {
 			<!-- タイトル（かな） -->
 			<div>
 				<label for="title_kana" class="label">
-					{ templates.T(ctx, "db_works_form_title_kana") }
+					{ templates.T(ctx, "db_works_new_title_kana_label") }
 				</label>
 				<input type="text" id="title_kana" name="title_kana" class="input" value={ data.val("title_kana") }/>
 			</div>
@@ -163,7 +163,7 @@ templ New(data NewPageData) {
 			<!-- タイトル（別名） -->
 			<div>
 				<label for="title_alter" class="label">
-					{ templates.T(ctx, "db_works_form_title_alter") }
+					{ templates.T(ctx, "db_works_new_title_alter_label") }
 				</label>
 				<input type="text" id="title_alter" name="title_alter" class="input" value={ data.val("title_alter") }/>
 			</div>
@@ -171,7 +171,7 @@ templ New(data NewPageData) {
 			<!-- タイトル（英語） -->
 			<div>
 				<label for="title_en" class="label">
-					{ templates.T(ctx, "db_works_form_title_en") }
+					{ templates.T(ctx, "db_works_new_title_en_label") }
 				</label>
 				<input type="text" id="title_en" name="title_en" class="input" value={ data.val("title_en") }/>
 			</div>
@@ -179,7 +179,7 @@ templ New(data NewPageData) {
 			<!-- タイトル（英語別名） -->
 			<div>
 				<label for="title_alter_en" class="label">
-					{ templates.T(ctx, "db_works_form_title_alter_en") }
+					{ templates.T(ctx, "db_works_new_title_alter_en_label") }
 				</label>
 				<input type="text" id="title_alter_en" name="title_alter_en" class="input" value={ data.val("title_alter_en") }/>
 			</div>
@@ -187,7 +187,7 @@ templ New(data NewPageData) {
 			<!-- メディア -->
 			<div>
 				<label for="media" class="label">
-					{ templates.T(ctx, "db_works_form_media") }
+					{ templates.T(ctx, "db_works_new_media_label") }
 					<span class="text-destructive">*</span>
 				</label>
 				<select id="media" name="media" class="select" required>
@@ -210,7 +210,7 @@ templ New(data NewPageData) {
 			<!-- シーズン年 -->
 			<div>
 				<label for="season_year" class="label">
-					{ templates.T(ctx, "db_works_form_season_year") }
+					{ templates.T(ctx, "db_works_new_season_year_label") }
 				</label>
 				<select id="season_year" name="season_year" class="select">
 					<option value=""></option>
@@ -227,7 +227,7 @@ templ New(data NewPageData) {
 			<!-- シーズン名 -->
 			<div>
 				<label for="season_name" class="label">
-					{ templates.T(ctx, "db_works_form_season_name") }
+					{ templates.T(ctx, "db_works_new_season_name_label") }
 				</label>
 				<select id="season_name" name="season_name" class="select">
 					<option value=""></option>
@@ -244,7 +244,7 @@ templ New(data NewPageData) {
 			<!-- 放送開始日 -->
 			<div>
 				<label for="started_on" class="label">
-					{ templates.T(ctx, "db_works_form_started_on") }
+					{ templates.T(ctx, "db_works_new_started_on_label") }
 				</label>
 				<input type="date" id="started_on" name="started_on" class="input" value={ data.val("started_on") }/>
 			</div>
@@ -252,7 +252,7 @@ templ New(data NewPageData) {
 			<!-- 放送終了日 -->
 			<div>
 				<label for="ended_on" class="label">
-					{ templates.T(ctx, "db_works_form_ended_on") }
+					{ templates.T(ctx, "db_works_new_ended_on_label") }
 				</label>
 				<input type="date" id="ended_on" name="ended_on" class="input" value={ data.val("ended_on") }/>
 			</div>
@@ -260,7 +260,7 @@ templ New(data NewPageData) {
 			<!-- 公式サイトURL -->
 			<div>
 				<label for="official_site_url" class="label">
-					{ templates.T(ctx, "db_works_form_official_site_url") }
+					{ templates.T(ctx, "db_works_new_official_site_url_label") }
 				</label>
 				<input type="url" id="official_site_url" name="official_site_url" class="input" value={ data.val("official_site_url") }/>
 				if data.hasFieldError("official_site_url") {
@@ -273,7 +273,7 @@ templ New(data NewPageData) {
 			<!-- 公式サイトURL（英語） -->
 			<div>
 				<label for="official_site_url_en" class="label">
-					{ templates.T(ctx, "db_works_form_official_site_url_en") }
+					{ templates.T(ctx, "db_works_new_official_site_url_en_label") }
 				</label>
 				<input type="url" id="official_site_url_en" name="official_site_url_en" class="input" value={ data.val("official_site_url_en") }/>
 				if data.hasFieldError("official_site_url_en") {
@@ -286,7 +286,7 @@ templ New(data NewPageData) {
 			<!-- Wikipedia URL -->
 			<div>
 				<label for="wikipedia_url" class="label">
-					{ templates.T(ctx, "db_works_form_wikipedia_url") }
+					{ templates.T(ctx, "db_works_new_wikipedia_url_label") }
 				</label>
 				<input type="url" id="wikipedia_url" name="wikipedia_url" class="input" value={ data.val("wikipedia_url") }/>
 				if data.hasFieldError("wikipedia_url") {
@@ -299,7 +299,7 @@ templ New(data NewPageData) {
 			<!-- Wikipedia URL（英語） -->
 			<div>
 				<label for="wikipedia_url_en" class="label">
-					{ templates.T(ctx, "db_works_form_wikipedia_url_en") }
+					{ templates.T(ctx, "db_works_new_wikipedia_url_en_label") }
 				</label>
 				<input type="url" id="wikipedia_url_en" name="wikipedia_url_en" class="input" value={ data.val("wikipedia_url_en") }/>
 				if data.hasFieldError("wikipedia_url_en") {
@@ -312,7 +312,7 @@ templ New(data NewPageData) {
 			<!-- Twitterユーザー名 -->
 			<div>
 				<label for="twitter_username" class="label">
-					{ templates.T(ctx, "db_works_form_twitter_username") }
+					{ templates.T(ctx, "db_works_new_twitter_username_label") }
 				</label>
 				<input type="text" id="twitter_username" name="twitter_username" class="input" placeholder="@なし" value={ data.val("twitter_username") }/>
 			</div>
@@ -320,7 +320,7 @@ templ New(data NewPageData) {
 			<!-- Twitterハッシュタグ -->
 			<div>
 				<label for="twitter_hashtag" class="label">
-					{ templates.T(ctx, "db_works_form_twitter_hashtag") }
+					{ templates.T(ctx, "db_works_new_twitter_hashtag_label") }
 				</label>
 				<input type="text" id="twitter_hashtag" name="twitter_hashtag" class="input" placeholder="#なし" value={ data.val("twitter_hashtag") }/>
 			</div>
@@ -328,7 +328,7 @@ templ New(data NewPageData) {
 			<!-- しょぼいカレンダーTID -->
 			<div>
 				<label for="sc_tid" class="label">
-					{ templates.T(ctx, "db_works_form_sc_tid") }
+					{ templates.T(ctx, "db_works_new_sc_tid_label") }
 				</label>
 				<input type="text" id="sc_tid" name="sc_tid" class="input" value={ data.val("sc_tid") }/>
 			</div>
@@ -336,7 +336,7 @@ templ New(data NewPageData) {
 			<!-- MAL Anime ID -->
 			<div>
 				<label for="mal_anime_id" class="label">
-					{ templates.T(ctx, "db_works_form_mal_anime_id") }
+					{ templates.T(ctx, "db_works_new_mal_anime_id_label") }
 				</label>
 				<input type="text" id="mal_anime_id" name="mal_anime_id" class="input" value={ data.val("mal_anime_id") }/>
 			</div>
@@ -344,7 +344,7 @@ templ New(data NewPageData) {
 			<!-- あらすじ -->
 			<div>
 				<label for="synopsis" class="label">
-					{ templates.T(ctx, "db_works_form_synopsis") }
+					{ templates.T(ctx, "db_works_new_synopsis_label") }
 				</label>
 				<textarea id="synopsis" name="synopsis" class="textarea" rows="5">{ data.val("synopsis") }</textarea>
 			</div>
@@ -352,7 +352,7 @@ templ New(data NewPageData) {
 			<!-- あらすじ出典 -->
 			<div>
 				<label for="synopsis_source" class="label">
-					{ templates.T(ctx, "db_works_form_synopsis_source") }
+					{ templates.T(ctx, "db_works_new_synopsis_source_label") }
 				</label>
 				<input type="text" id="synopsis_source" name="synopsis_source" class="input" value={ data.val("synopsis_source") }/>
 			</div>
@@ -360,7 +360,7 @@ templ New(data NewPageData) {
 			<!-- あらすじ（英語） -->
 			<div>
 				<label for="synopsis_en" class="label">
-					{ templates.T(ctx, "db_works_form_synopsis_en") }
+					{ templates.T(ctx, "db_works_new_synopsis_en_label") }
 				</label>
 				<textarea id="synopsis_en" name="synopsis_en" class="textarea" rows="5">{ data.val("synopsis_en") }</textarea>
 			</div>
@@ -368,7 +368,7 @@ templ New(data NewPageData) {
 			<!-- あらすじ出典（英語） -->
 			<div>
 				<label for="synopsis_source_en" class="label">
-					{ templates.T(ctx, "db_works_form_synopsis_source_en") }
+					{ templates.T(ctx, "db_works_new_synopsis_source_en_label") }
 				</label>
 				<input type="text" id="synopsis_source_en" name="synopsis_source_en" class="input" value={ data.val("synopsis_source_en") }/>
 			</div>
@@ -376,7 +376,7 @@ templ New(data NewPageData) {
 			<!-- 手動エピソード数 -->
 			<div>
 				<label for="manual_episodes_count" class="label">
-					{ templates.T(ctx, "db_works_form_manual_episodes_count") }
+					{ templates.T(ctx, "db_works_new_manual_episodes_count_label") }
 				</label>
 				<input type="number" id="manual_episodes_count" name="manual_episodes_count" class="input" value={ data.val("manual_episodes_count") }/>
 			</div>
@@ -384,7 +384,7 @@ templ New(data NewPageData) {
 			<!-- 開始エピソード番号 -->
 			<div>
 				<label for="start_episode_raw_number" class="label">
-					{ templates.T(ctx, "db_works_form_start_episode_raw_number") }
+					{ templates.T(ctx, "db_works_new_start_episode_raw_number_label") }
 				</label>
 				<input type="text" id="start_episode_raw_number" name="start_episode_raw_number" class="input" value={ data.val("start_episode_raw_number") }/>
 			</div>
@@ -392,7 +392,7 @@ templ New(data NewPageData) {
 			<!-- NumberFormat -->
 			<div>
 				<label for="number_format_id" class="label">
-					{ templates.T(ctx, "db_works_form_number_format") }
+					{ templates.T(ctx, "db_works_new_number_format_label") }
 				</label>
 				<select id="number_format_id" name="number_format_id" class="select">
 					<option value=""></option>
@@ -414,14 +414,14 @@ templ New(data NewPageData) {
 					<input type="checkbox" id="no_episodes" name="no_episodes" value="1" class="checkbox"/>
 				}
 				<label for="no_episodes" class="label">
-					{ templates.T(ctx, "db_works_form_no_episodes") }
+					{ templates.T(ctx, "db_works_new_no_episodes_label") }
 				</label>
 			</div>
 
 			<!-- 送信ボタン -->
 			<div class="pt-4">
 				<button type="submit" class="btn btn-primary">
-					{ templates.T(ctx, "db_works_form_submit_create") }
+					{ templates.T(ctx, "db_works_new_submit") }
 				</button>
 			</div>
 		</form>

@@ -60,7 +60,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 成功フラッシュメッセージを設定
-	h.flashMgr.SetSuccess(w, i18n.T(ctx, "db_works_created"))
+	h.flashMgr.SetSuccess(w, i18n.T(ctx, "flash_db_work_created"))
 
 	// 作品一覧ページにリダイレクト（将来的に編集ページにリダイレクトを変更予定）
 	http.Redirect(w, r, fmt.Sprintf("/db/works?highlight=%d", output.WorkID), http.StatusSeeOther)
