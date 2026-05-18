@@ -22,7 +22,7 @@ templ Index(data IndexPageData) {
 	<div class="flex flex-col gap-4 py-4 max-w-7xl w-full mx-auto">
 		<div class="px-4">
 			@components.MainTitle(components.MainTitleData{
-				Title:   templates.T(ctx, "db_works_title"),
+				Title:   templates.T(ctx, "db_works_index_title"),
 				Actions: indexNewButton(),
 			})
 		</div>
@@ -43,7 +43,7 @@ templ Index(data IndexPageData) {
 							checked
 						}
 					/>
-					{ templates.T(ctx, "db_works_filter_no_episodes") }
+					{ templates.T(ctx, "db_works_index_filter_no_episodes_label") }
 				</label>
 				<label class="flex items-center gap-1.5 text-sm">
 					<input
@@ -54,7 +54,7 @@ templ Index(data IndexPageData) {
 							checked
 						}
 					/>
-					{ templates.T(ctx, "db_works_filter_no_image") }
+					{ templates.T(ctx, "db_works_index_filter_no_image_label") }
 				</label>
 				<label class="flex items-center gap-1.5 text-sm">
 					<input
@@ -65,28 +65,28 @@ templ Index(data IndexPageData) {
 							checked
 						}
 					/>
-					{ templates.T(ctx, "db_works_filter_no_season") }
+					{ templates.T(ctx, "db_works_index_filter_no_season_label") }
 				</label>
 				<button type="submit" class="btn btn-outline btn-sm">
-					{ templates.T(ctx, "db_works_filter_submit") }
+					{ templates.T(ctx, "db_works_index_submit") }
 				</button>
 			</form>
 		}
 
 		<!-- 作品一覧テーブル -->
 		if len(data.Works) == 0 {
-			<p class="text-muted-foreground">{ templates.T(ctx, "db_works_empty") }</p>
+			<p class="text-muted-foreground">{ templates.T(ctx, "db_works_index_empty") }</p>
 		} else {
 			<div class="border rounded-lg overflow-hidden">
 				<table class="table w-full">
 					<thead>
 						<tr>
-							<th class="text-left">{ templates.T(ctx, "db_works_table_id") }</th>
-							<th class="text-left">{ templates.T(ctx, "db_works_table_title") }</th>
-							<th class="text-left">{ templates.T(ctx, "db_works_table_season") }</th>
-							<th class="text-right">{ templates.T(ctx, "db_works_table_watchers") }</th>
-							<th class="text-left">{ templates.T(ctx, "db_works_table_status") }</th>
-							<th class="text-center">{ templates.T(ctx, "db_works_table_image") }</th>
+							<th class="text-left">{ templates.T(ctx, "db_works_index_table_id_label") }</th>
+							<th class="text-left">{ templates.T(ctx, "db_works_index_table_title_label") }</th>
+							<th class="text-left">{ templates.T(ctx, "db_works_index_table_season_label") }</th>
+							<th class="text-right">{ templates.T(ctx, "db_works_index_table_watchers_label") }</th>
+							<th class="text-left">{ templates.T(ctx, "db_works_index_table_status_label") }</th>
+							<th class="text-center">{ templates.T(ctx, "db_works_index_table_image_label") }</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -130,6 +130,6 @@ templ indexNewButton() {
 		href={ templates.DBWorksNewPath().SafeURL() }
 	>
 		@templates.Icon("plus-regular", "fill-primary-foreground")
-		{ templates.T(ctx, "db_works_new") }
+		{ templates.T(ctx, "db_works_index_new_link") }
 	</a>
 }

@@ -1006,209 +1006,204 @@ other = "Archived"
 description = "Status - Deleted"
 other = "Deleted"
 
-# DB works list related
-[db_works_title]
-description = "DB works list page title"
+# DB works index page
+[db_works_index_title]
+description = "DB works index page title"
 other = "Works"
 
-[db_works_new]
-description = "New button"
+[db_works_index_new_link]
+description = "Link from works index to new work page"
 other = "New"
 
-[db_works_filter_no_episodes]
-description = "No episodes filter"
+[db_works_index_filter_no_episodes_label]
+description = "Label for the no-episodes filter"
 other = "No episodes"
 
-[db_works_filter_no_image]
-description = "No image filter"
+[db_works_index_filter_no_image_label]
+description = "Label for the no-image filter"
 other = "No image"
 
-[db_works_filter_no_season]
-description = "No season filter"
+[db_works_index_filter_no_season_label]
+description = "Label for the no-season filter"
 other = "No season"
 
-[db_works_filter_submit]
-description = "Filter submit button"
+[db_works_index_submit]
+description = "Submit button on the DB works index page (filter search)"
 other = "Search"
 
-[db_works_table_id]
+[db_works_index_table_id_label]
 description = "Table header - ID"
 other = "ID"
 
-[db_works_table_title]
+[db_works_index_table_title_label]
 description = "Table header - Title"
 other = "Title"
 
-[db_works_table_season]
+[db_works_index_table_season_label]
 description = "Table header - Season"
 other = "Season"
 
-[db_works_table_watchers]
+[db_works_index_table_watchers_label]
 description = "Table header - Watchers"
 other = "Watchers"
 
-[db_works_table_status]
+[db_works_index_table_status_label]
 description = "Table header - Status"
 other = "Status"
 
-[db_works_table_image]
+[db_works_index_table_image_label]
 description = "Table header - Image"
 other = "Image"
 
-[db_works_empty]
+[db_works_index_empty]
 description = "No works message"
 other = "No works found"
 
+# DB works new page
 [db_works_new_title]
-description = "New work page title"
+description = "DB works new page title"
 other = "Add Work"
 
-[db_works_back_to_list]
-description = "Back to list link"
+[db_works_new_back_to_list_link]
+description = "Link from new work page back to the works index"
 other = "Back to List"
 
-[db_works_form_title]
+[db_works_new_title_label]
 description = "Form label - Title"
 other = "Title"
 
-[db_works_form_title_kana]
+[db_works_new_title_kana_label]
 description = "Form label - Title (Kana)"
 other = "Title (Kana)"
 
-[db_works_form_title_alter]
+[db_works_new_title_alter_label]
 description = "Form label - Title (Alternate)"
 other = "Title (Alternate)"
 
-[db_works_form_title_en]
+[db_works_new_title_en_label]
 description = "Form label - Title (English)"
 other = "Title (English)"
 
-[db_works_form_title_alter_en]
+[db_works_new_title_alter_en_label]
 description = "Form label - Title (English Alternate)"
 other = "Title (English Alternate)"
 
-[db_works_form_media]
+[db_works_new_media_label]
 description = "Form label - Media"
 other = "Media"
 
-[db_works_form_season_year]
+[db_works_new_season_year_label]
 description = "Form label - Season Year"
 other = "Season Year"
 
-[db_works_form_season_name]
+[db_works_new_season_name_label]
 description = "Form label - Season Name"
 other = "Season Name"
 
-[db_works_form_started_on]
+[db_works_new_started_on_label]
 description = "Form label - Started On"
 other = "Started On"
 
-[db_works_form_ended_on]
+[db_works_new_ended_on_label]
 description = "Form label - Ended On"
 other = "Ended On"
 
-[db_works_form_official_site_url]
+[db_works_new_official_site_url_label]
 description = "Form label - Official Site URL"
 other = "Official Site URL"
 
-[db_works_form_official_site_url_en]
+[db_works_new_official_site_url_en_label]
 description = "Form label - Official Site URL (English)"
 other = "Official Site URL (English)"
 
-[db_works_form_wikipedia_url]
+[db_works_new_wikipedia_url_label]
 description = "Form label - Wikipedia URL"
 other = "Wikipedia URL"
 
-[db_works_form_wikipedia_url_en]
+[db_works_new_wikipedia_url_en_label]
 description = "Form label - Wikipedia URL (English)"
 other = "Wikipedia URL (English)"
 
-[db_works_form_twitter_username]
+[db_works_new_twitter_username_label]
 description = "Form label - Twitter Username"
 other = "Twitter Username"
 
-[db_works_form_twitter_hashtag]
+[db_works_new_twitter_hashtag_label]
 description = "Form label - Twitter Hashtag"
 other = "Twitter Hashtag"
 
-[db_works_form_sc_tid]
+[db_works_new_sc_tid_label]
 description = "Form label - Syobocal TID"
 other = "Syobocal TID"
 
-[db_works_form_mal_anime_id]
+[db_works_new_mal_anime_id_label]
 description = "Form label - MAL Anime ID"
 other = "MAL Anime ID"
 
-[db_works_form_synopsis]
+[db_works_new_synopsis_label]
 description = "Form label - Synopsis"
 other = "Synopsis"
 
-[db_works_form_synopsis_source]
+[db_works_new_synopsis_source_label]
 description = "Form label - Synopsis Source"
 other = "Synopsis Source"
 
-[db_works_form_synopsis_en]
+[db_works_new_synopsis_en_label]
 description = "Form label - Synopsis (English)"
 other = "Synopsis (English)"
 
-[db_works_form_synopsis_source_en]
+[db_works_new_synopsis_source_en_label]
 description = "Form label - Synopsis Source (English)"
 other = "Synopsis Source (English)"
 
-[db_works_form_manual_episodes_count]
+[db_works_new_manual_episodes_count_label]
 description = "Form label - Manual Episodes Count"
 other = "Manual Episodes Count"
 
-[db_works_form_start_episode_raw_number]
+[db_works_new_start_episode_raw_number_label]
 description = "Form label - Start Episode Raw Number"
 other = "Start Episode Raw Number"
 
-[db_works_form_number_format]
+[db_works_new_number_format_label]
 description = "Form label - Number Format"
 other = "Number Format"
 
-[db_works_form_no_episodes]
+[db_works_new_no_episodes_label]
 description = "Form label - No Episodes"
 other = "No Episodes"
 
-[db_works_form_submit_create]
-description = "Form submit button - Create"
+[db_works_new_submit]
+description = "Submit button on the new work page"
 other = "Create Work"
 
-[db_works_created]
+# Flash messages - DB works related
+[flash_db_work_created]
 description = "Work creation success message"
 other = "Work has been created successfully"
 
-[db_works_error_title_required]
-description = "Title required error"
-other = "Please enter a title"
+# Validation common messages
+[validation_required]
+description = "Required field validation error"
+other = "is required"
 
-[db_works_error_media_required]
-description = "Media required error"
-other = "Please select a media type"
-
-[db_works_error_media_invalid]
-description = "Media value invalid error"
+[validation_media_invalid]
+description = "Media value is invalid"
 other = "Invalid media type"
 
-[db_works_error_url_invalid]
-description = "URL format error"
+[validation_url_invalid]
+description = "URL format is invalid"
 other = "URL format is invalid"
 
-[db_works_error_sc_tid_invalid]
-description = "Syoboi Calendar TID numeric error"
+[validation_integer_invalid]
+description = "Value is not a valid integer"
 other = "Please enter an integer"
 
-[db_works_error_mal_anime_id_invalid]
-description = "MAL Anime ID numeric error"
-other = "Please enter an integer"
-
-[db_works_error_synopsis_source_required]
-description = "Synopsis source required error"
+[validation_synopsis_source_required]
+description = "Synopsis source is required when synopsis is provided"
 other = "Please enter a source when synopsis is provided"
 
-[db_works_error_synopsis_source_en_required]
-description = "Synopsis source (English) required error"
+[validation_synopsis_source_en_required]
+description = "English synopsis source is required when English synopsis is provided"
 other = "Please enter a source when English synopsis is provided"
 
 [media_tv]

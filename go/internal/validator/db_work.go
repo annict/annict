@@ -63,14 +63,14 @@ func (v *DbWorkCreateValidator) Validate(ctx context.Context, input DbWorkCreate
 
 	// タイトル: 必須
 	if strings.TrimSpace(input.Title) == "" {
-		ve.AddField("title", i18n.T(ctx, "db_works_error_title_required"))
+		ve.AddField("title", i18n.T(ctx, "validation_required"))
 	}
 
 	// メディア: 必須 + 許可された値
 	if strings.TrimSpace(input.Media) == "" {
-		ve.AddField("media", i18n.T(ctx, "db_works_error_media_required"))
+		ve.AddField("media", i18n.T(ctx, "validation_required"))
 	} else if !allowedMediaValues[input.Media] {
-		ve.AddField("media", i18n.T(ctx, "db_works_error_media_invalid"))
+		ve.AddField("media", i18n.T(ctx, "validation_media_invalid"))
 	}
 
 	// URL形式チェック（空の場合はスキップ）
@@ -82,20 +82,20 @@ func (v *DbWorkCreateValidator) Validate(ctx context.Context, input DbWorkCreate
 	// sc_tid: 整数（空の場合はスキップ）
 	if input.ScTid != "" {
 		if _, err := strconv.Atoi(input.ScTid); err != nil {
-			ve.AddField("sc_tid", i18n.T(ctx, "db_works_error_sc_tid_invalid"))
+			ve.AddField("sc_tid", i18n.T(ctx, "validation_integer_invalid"))
 		}
 	}
 
 	// mal_anime_id: 整数（空の場合はスキップ）
 	if input.MalAnimeID != "" {
 		if _, err := strconv.Atoi(input.MalAnimeID); err != nil {
-			ve.AddField("mal_anime_id", i18n.T(ctx, "db_works_error_mal_anime_id_invalid"))
+			ve.AddField("mal_anime_id", i18n.T(ctx, "validation_integer_invalid"))
 		}
 	}
 
 	// あらすじと出典のペアチェック
-	validatePresencePair(ctx, ve, "synopsis_source", input.Synopsis, input.SynopsisSource, "db_works_error_synopsis_source_required")
-	validatePresencePair(ctx, ve, "synopsis_source_en", input.SynopsisEn, input.SynopsisSourceEn, "db_works_error_synopsis_source_en_required")
+	validatePresencePair(ctx, ve, "synopsis_source", input.Synopsis, input.SynopsisSource, "validation_synopsis_source_required")
+	validatePresencePair(ctx, ve, "synopsis_source_en", input.SynopsisEn, input.SynopsisSourceEn, "validation_synopsis_source_en_required")
 
 	if ve.HasErrors() {
 		return ve
@@ -110,7 +110,7 @@ func validateOptionalURL(ctx context.Context, ve *model.ValidationError, field, 
 	}
 	u, err := url.ParseRequestURI(value)
 	if err != nil || (u.Scheme != "http" && u.Scheme != "https") || u.Host == "" {
-		ve.AddField(field, i18n.T(ctx, "db_works_error_url_invalid"))
+		ve.AddField(field, i18n.T(ctx, "validation_url_invalid"))
 	}
 }
 

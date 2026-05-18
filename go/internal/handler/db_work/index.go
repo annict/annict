@@ -46,7 +46,7 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 
 	// ページメタ情報を準備
 	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)
-	meta.SetTitle(ctx, "db_works_title")
+	meta.SetTitle(ctx, "db_works_index_title")
 
 	// Model → ViewModel に変換
 	worksVM := viewmodel.NewDBWorkListItems(ctx, result.Works)

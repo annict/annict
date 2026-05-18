@@ -1005,209 +1005,204 @@ other = "アーカイブ"
 description = "公開状態 - 削除"
 other = "削除"
 
-# DB作品一覧関連
-[db_works_title]
+# DB作品一覧ページ
+[db_works_index_title]
 description = "DB作品一覧ページのタイトル"
 other = "作品"
 
-[db_works_new]
-description = "新規作成ボタン"
+[db_works_index_new_link]
+description = "作品一覧から新規作成ページへのリンク"
 other = "新規作成"
 
-[db_works_filter_no_episodes]
-description = "エピソード未登録フィルタ"
+[db_works_index_filter_no_episodes_label]
+description = "エピソード未登録フィルタのラベル"
 other = "エピソード未登録"
 
-[db_works_filter_no_image]
-description = "画像未設定フィルタ"
+[db_works_index_filter_no_image_label]
+description = "画像未設定フィルタのラベル"
 other = "画像未設定"
 
-[db_works_filter_no_season]
-description = "シーズン未設定フィルタ"
+[db_works_index_filter_no_season_label]
+description = "シーズン未設定フィルタのラベル"
 other = "シーズン未設定"
 
-[db_works_filter_submit]
-description = "フィルタ検索ボタン"
+[db_works_index_submit]
+description = "DB作品一覧ページの送信ボタン (フィルタ検索)"
 other = "検索"
 
-[db_works_table_id]
+[db_works_index_table_id_label]
 description = "テーブルヘッダー - ID"
 other = "ID"
 
-[db_works_table_title]
+[db_works_index_table_title_label]
 description = "テーブルヘッダー - タイトル"
 other = "タイトル"
 
-[db_works_table_season]
+[db_works_index_table_season_label]
 description = "テーブルヘッダー - シーズン"
 other = "シーズン"
 
-[db_works_table_watchers]
+[db_works_index_table_watchers_label]
 description = "テーブルヘッダー - ウォッチ数"
 other = "ウォッチ数"
 
-[db_works_table_status]
+[db_works_index_table_status_label]
 description = "テーブルヘッダー - ステータス"
 other = "ステータス"
 
-[db_works_table_image]
+[db_works_index_table_image_label]
 description = "テーブルヘッダー - 画像"
 other = "画像"
 
-[db_works_empty]
+[db_works_index_empty]
 description = "作品なしメッセージ"
 other = "作品が見つかりませんでした"
 
+# DB作品新規作成ページ
 [db_works_new_title]
 description = "作品新規作成ページのタイトル"
 other = "作品を追加"
 
-[db_works_back_to_list]
-description = "一覧に戻るリンク"
+[db_works_new_back_to_list_link]
+description = "新規作成ページから一覧ページへのリンク"
 other = "一覧に戻る"
 
-[db_works_form_title]
+[db_works_new_title_label]
 description = "フォームラベル - タイトル"
 other = "タイトル"
 
-[db_works_form_title_kana]
+[db_works_new_title_kana_label]
 description = "フォームラベル - タイトル（かな）"
 other = "タイトル（かな）"
 
-[db_works_form_title_alter]
+[db_works_new_title_alter_label]
 description = "フォームラベル - タイトル（別名）"
 other = "タイトル（別名）"
 
-[db_works_form_title_en]
+[db_works_new_title_en_label]
 description = "フォームラベル - タイトル（英語）"
 other = "タイトル（英語）"
 
-[db_works_form_title_alter_en]
+[db_works_new_title_alter_en_label]
 description = "フォームラベル - タイトル（英語別名）"
 other = "タイトル（英語別名）"
 
-[db_works_form_media]
+[db_works_new_media_label]
 description = "フォームラベル - メディア"
 other = "メディア"
 
-[db_works_form_season_year]
+[db_works_new_season_year_label]
 description = "フォームラベル - シーズン年"
 other = "シーズン年"
 
-[db_works_form_season_name]
+[db_works_new_season_name_label]
 description = "フォームラベル - シーズン名"
 other = "シーズン名"
 
-[db_works_form_started_on]
+[db_works_new_started_on_label]
 description = "フォームラベル - 放送開始日"
 other = "放送開始日"
 
-[db_works_form_ended_on]
+[db_works_new_ended_on_label]
 description = "フォームラベル - 放送終了日"
 other = "放送終了日"
 
-[db_works_form_official_site_url]
+[db_works_new_official_site_url_label]
 description = "フォームラベル - 公式サイトURL"
 other = "公式サイトURL"
 
-[db_works_form_official_site_url_en]
+[db_works_new_official_site_url_en_label]
 description = "フォームラベル - 公式サイトURL（英語）"
 other = "公式サイトURL（英語）"
 
-[db_works_form_wikipedia_url]
+[db_works_new_wikipedia_url_label]
 description = "フォームラベル - Wikipedia URL"
 other = "Wikipedia URL"
 
-[db_works_form_wikipedia_url_en]
+[db_works_new_wikipedia_url_en_label]
 description = "フォームラベル - Wikipedia URL（英語）"
 other = "Wikipedia URL（英語）"
 
-[db_works_form_twitter_username]
+[db_works_new_twitter_username_label]
 description = "フォームラベル - Twitterユーザー名"
 other = "Twitterユーザー名"
 
-[db_works_form_twitter_hashtag]
+[db_works_new_twitter_hashtag_label]
 description = "フォームラベル - Twitterハッシュタグ"
 other = "Twitterハッシュタグ"
 
-[db_works_form_sc_tid]
+[db_works_new_sc_tid_label]
 description = "フォームラベル - しょぼいカレンダーTID"
 other = "しょぼいカレンダーTID"
 
-[db_works_form_mal_anime_id]
+[db_works_new_mal_anime_id_label]
 description = "フォームラベル - MAL Anime ID"
 other = "MAL Anime ID"
 
-[db_works_form_synopsis]
+[db_works_new_synopsis_label]
 description = "フォームラベル - あらすじ"
 other = "あらすじ"
 
-[db_works_form_synopsis_source]
+[db_works_new_synopsis_source_label]
 description = "フォームラベル - あらすじ出典"
 other = "あらすじ出典"
 
-[db_works_form_synopsis_en]
+[db_works_new_synopsis_en_label]
 description = "フォームラベル - あらすじ（英語）"
 other = "あらすじ（英語）"
 
-[db_works_form_synopsis_source_en]
+[db_works_new_synopsis_source_en_label]
 description = "フォームラベル - あらすじ出典（英語）"
 other = "あらすじ出典（英語）"
 
-[db_works_form_manual_episodes_count]
+[db_works_new_manual_episodes_count_label]
 description = "フォームラベル - 手動エピソード数"
 other = "手動エピソード数"
 
-[db_works_form_start_episode_raw_number]
+[db_works_new_start_episode_raw_number_label]
 description = "フォームラベル - 開始エピソード番号"
 other = "開始エピソード番号"
 
-[db_works_form_number_format]
+[db_works_new_number_format_label]
 description = "フォームラベル - NumberFormat"
 other = "NumberFormat"
 
-[db_works_form_no_episodes]
+[db_works_new_no_episodes_label]
 description = "フォームラベル - エピソードなし"
 other = "エピソードなし"
 
-[db_works_form_submit_create]
-description = "フォーム送信ボタン - 作成"
+[db_works_new_submit]
+description = "作品新規作成ページの送信ボタン"
 other = "作品を作成"
 
-[db_works_created]
+# フラッシュメッセージ - DB作品関連
+[flash_db_work_created]
 description = "作品作成成功メッセージ"
 other = "作品を作成しました"
 
-[db_works_error_title_required]
-description = "タイトル必須エラー"
-other = "タイトルを入力してください"
+# バリデーション共通メッセージ
+[validation_required]
+description = "必須フィールドのバリデーションエラー"
+other = "入力してください"
 
-[db_works_error_media_required]
-description = "メディア必須エラー"
-other = "メディアを選択してください"
-
-[db_works_error_media_invalid]
-description = "メディア値不正エラー"
+[validation_media_invalid]
+description = "メディア種別の値が不正"
 other = "メディアの値が不正です"
 
-[db_works_error_url_invalid]
-description = "URL形式エラー"
+[validation_url_invalid]
+description = "URL形式が不正"
 other = "URLの形式が正しくありません"
 
-[db_works_error_sc_tid_invalid]
-description = "しょぼいカレンダーTID数値エラー"
+[validation_integer_invalid]
+description = "整数値ではない"
 other = "整数で入力してください"
 
-[db_works_error_mal_anime_id_invalid]
-description = "MAL Anime ID数値エラー"
-other = "整数で入力してください"
-
-[db_works_error_synopsis_source_required]
-description = "あらすじ出典必須エラー"
+[validation_synopsis_source_required]
+description = "あらすじを入力した場合は出典も必須"
 other = "あらすじを入力した場合は出典も入力してください"
 
-[db_works_error_synopsis_source_en_required]
-description = "あらすじ出典（英語）必須エラー"
+[validation_synopsis_source_en_required]
+description = "英語のあらすじを入力した場合は出典も必須"
 other = "あらすじ（英語）を入力した場合は出典も入力してください"
 
 [media_tv]
