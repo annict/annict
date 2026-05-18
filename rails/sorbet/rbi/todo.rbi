@@ -5,8 +5,6 @@
 # typed: false
 
 module ::Spring; end
-module ActionDispatch::Assertions::RoutingAssertions::ClassMethods; end
-module ActiveModel::AttributeRegistration::ClassMethods; end
 module BulkCreateEpisodeRecordsJob::EpisodeRecordCreator; end
 module Deprecated::SearchService::Moji; end
 module GitHub::Markups::MARKUP_MARKDOWN; end
