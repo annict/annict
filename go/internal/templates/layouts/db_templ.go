@@ -6,8 +6,6 @@ package layouts
 //lint:file-ignore SA4006 This context is only used if a nested component is present.
 
 import (
-	"context"
-
 	"github.com/a-h/templ"
 	templruntime "github.com/a-h/templ/runtime"
 	"github.com/annict/annict/go/internal/session"
@@ -16,9 +14,9 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// Db はAnnict DB用のレイアウトです
-// サイドバーとメインコンテンツのみで構成されます
-func Db(ctx context.Context, meta viewmodel.PageMeta, assetVersion string, content templ.Component) templ.Component {
+// Db is the layout for the Annict DB admin UI, composed only of a sidebar and the main content area.
+// [Ja] Db は Annict DB 管理画面用のレイアウト。サイドバーとメインコンテンツのみで構成される。
+func Db(meta viewmodel.PageMeta, assetVersion string, content templ.Component) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -46,7 +44,7 @@ func Db(ctx context.Context, meta viewmodel.PageMeta, assetVersion string, conte
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(templates.Locale(ctx))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/layouts/db.templ`, Line: 16, Col: 35}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/layouts/db.templ`, Line: 14, Col: 35}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -68,7 +66,7 @@ func Db(ctx context.Context, meta viewmodel.PageMeta, assetVersion string, conte
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.DbSidebar(ctx).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.DbSidebar().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

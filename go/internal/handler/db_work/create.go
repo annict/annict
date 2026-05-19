@@ -86,7 +86,6 @@ func (h *Handler) renderNewWithErrors(w http.ResponseWriter, r *http.Request, in
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusUnprocessableEntity)
 	component := layouts.Db(
-		ctx,
 		meta,
 		h.cfg.GetAssetVersion(),
 		db_works.New(db_works.NewPageData{
