@@ -10,24 +10,27 @@ import (
 	"github.com/annict/annict/go/internal/model"
 )
 
-// 許可されたメディア種別の値
+// allowedMediaValues lists the media type codes accepted by the create-work form.
+// The mapping mirrors the Rails enum on the works.media column.
+//
+// [Ja] allowedMediaValues は作品作成フォームで許可されるメディア種別コードの一覧。
+// Rails 版の works.media enum と対応している。
 var allowedMediaValues = map[string]bool{
-	"0": true, // other
-	"1": true, // tv
-	"2": true, // ova
-	"3": true, // movie
-	"4": true, // web
+	"0": true, // other. [Ja] その他
+	"1": true, // tv. [Ja] テレビ
+	"2": true, // ova. [Ja] OVA
+	"3": true, // movie. [Ja] 映画
+	"4": true, // web. [Ja] Web
 }
 
-// DbWorkCreateValidator は作品作成フォームのバリデーションを行う
+// DbWorkCreateValidator validates the create-work form on the Annict DB admin screen.
+// [Ja] DbWorkCreateValidator は Annict DB 管理画面の作品作成フォームを検証する。
 type DbWorkCreateValidator struct{}
 
-// NewDbWorkCreateValidator は DbWorkCreateValidator を生成する
 func NewDbWorkCreateValidator() *DbWorkCreateValidator {
 	return &DbWorkCreateValidator{}
 }
 
-// DbWorkCreateValidatorInput はバリデーションの入力パラメータ
 type DbWorkCreateValidatorInput struct {
 	Title                 string
 	TitleKana             string
@@ -57,43 +60,36 @@ type DbWorkCreateValidatorInput struct {
 	NoEpisodes            string
 }
 
-// Validate はバリデーションを行う
 func (v *DbWorkCreateValidator) Validate(ctx context.Context, input DbWorkCreateValidatorInput) error {
 	ve := model.NewValidationError()
 
-	// タイトル: 必須
 	if strings.TrimSpace(input.Title) == "" {
 		ve.AddField("title", i18n.T(ctx, "validation_required"))
 	}
 
-	// メディア: 必須 + 許可された値
 	if strings.TrimSpace(input.Media) == "" {
 		ve.AddField("media", i18n.T(ctx, "validation_required"))
 	} else if !allowedMediaValues[input.Media] {
 		ve.AddField("media", i18n.T(ctx, "validation_media_invalid"))
 	}
 
-	// URL形式チェック（空の場合はスキップ）
 	validateOptionalURL(ctx, ve, "official_site_url", input.OfficialSiteURL)
 	validateOptionalURL(ctx, ve, "official_site_url_en", input.OfficialSiteURLEn)
 	validateOptionalURL(ctx, ve, "wikipedia_url", input.WikipediaURL)
 	validateOptionalURL(ctx, ve, "wikipedia_url_en", input.WikipediaURLEn)
 
-	// sc_tid: 整数（空の場合はスキップ）
 	if input.ScTid != "" {
 		if _, err := strconv.Atoi(input.ScTid); err != nil {
 			ve.AddField("sc_tid", i18n.T(ctx, "validation_integer_invalid"))
 		}
 	}
 
-	// mal_anime_id: 整数（空の場合はスキップ）
 	if input.MalAnimeID != "" {
 		if _, err := strconv.Atoi(input.MalAnimeID); err != nil {
 			ve.AddField("mal_anime_id", i18n.T(ctx, "validation_integer_invalid"))
 		}
 	}
 
-	// あらすじと出典のペアチェック
 	validatePresencePair(ctx, ve, "synopsis_source", input.Synopsis, input.SynopsisSource, "validation_synopsis_source_required")
 	validatePresencePair(ctx, ve, "synopsis_source_en", input.SynopsisEn, input.SynopsisSourceEn, "validation_synopsis_source_en_required")
 
@@ -103,7 +99,6 @@ func (v *DbWorkCreateValidator) Validate(ctx context.Context, input DbWorkCreate
 	return nil
 }
 
-// validateOptionalURL はURLが空でない場合にURL形式をチェックする
 func validateOptionalURL(ctx context.Context, ve *model.ValidationError, field, value string) {
 	if value == "" {
 		return
@@ -114,7 +109,13 @@ func validateOptionalURL(ctx context.Context, ve *model.ValidationError, field, 
 	}
 }
 
-// validatePresencePair はペアの片方がある場合に、もう片方も必須にする
+// validatePresencePair requires the source field whenever the content field is filled in.
+// Used for paired inputs like a synopsis and its citation, where filling one half
+// without the other would leave a half-completed record.
+//
+// [Ja] validatePresencePair は対になる 2 フィールドのうち、content が入力されているときに
+// source も必須にする。あらすじと出典のように対で意味を持つ入力で使い、片方だけ埋まった
+// 中途半端なレコードを防ぐ。
 func validatePresencePair(ctx context.Context, ve *model.ValidationError, sourceField, content, source, errKey string) {
 	if strings.TrimSpace(content) != "" && strings.TrimSpace(source) == "" {
 		ve.AddField(sourceField, i18n.T(ctx, errKey))
