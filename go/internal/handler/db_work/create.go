@@ -14,7 +14,8 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// Create POST /db/works - DB管理画面の作品作成処理
+// Create processes the work creation request in the Annict DB admin UI (POST /db/works).
+// [Ja] Annict DB 管理画面の作品作成リクエスト (POST /db/works) を処理する。
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
@@ -47,7 +48,6 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		NoEpisodes:            r.FormValue("no_episodes"),
 	}
 
-	// ユースケース実行（バリデーション + 作品作成）
 	output, err := h.createWorkUC.Execute(ctx, input)
 	if err != nil {
 		if ve := model.AsValidationError(err); ve != nil {
@@ -59,14 +59,15 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 成功フラッシュメッセージを設定
 	h.flashMgr.SetSuccess(w, i18n.T(ctx, "flash_db_work_created"))
 
-	// 作品一覧ページにリダイレクト（将来的に編集ページにリダイレクトを変更予定）
+	// TODO: redirect to the edit page once it is implemented; for now redirect back to the index.
+	// [Ja] TODO: 編集ページ実装後は編集ページへリダイレクトする。現状は一覧ページへリダイレクトする。
 	http.Redirect(w, r, fmt.Sprintf("/db/works?highlight=%d", output.WorkID), http.StatusSeeOther)
 }
 
-// renderNewWithErrors はバリデーションエラー時にフォームを再表示します
+// renderNewWithErrors re-renders the new-work form with validation errors and the previously submitted values.
+// [Ja] バリデーションエラーと送信済みの入力値を保持したまま新規作成フォームを再描画する。
 func (h *Handler) renderNewWithErrors(w http.ResponseWriter, r *http.Request, input usecase.CreateWorkInput, formErrors *model.ValidationError) {
 	ctx := r.Context()
 
@@ -92,34 +93,7 @@ func (h *Handler) renderNewWithErrors(w http.ResponseWriter, r *http.Request, in
 			CSRFToken:   csrfToken,
 			FormOptions: formOptions,
 			FormErrors:  formErrors,
-			FormValues: &db_works.FormValues{
-				Title:                 input.Title,
-				TitleKana:             input.TitleKana,
-				TitleAlter:            input.TitleAlter,
-				TitleEn:               input.TitleEn,
-				TitleAlterEn:          input.TitleAlterEn,
-				Media:                 input.Media,
-				SeasonYear:            input.SeasonYear,
-				SeasonName:            input.SeasonName,
-				StartedOn:             input.StartedOn,
-				EndedOn:               input.EndedOn,
-				OfficialSiteURL:       input.OfficialSiteURL,
-				OfficialSiteURLEn:     input.OfficialSiteURLEn,
-				WikipediaURL:          input.WikipediaURL,
-				WikipediaURLEn:        input.WikipediaURLEn,
-				TwitterUsername:       input.TwitterUsername,
-				TwitterHashtag:        input.TwitterHashtag,
-				ScTid:                 input.ScTid,
-				MalAnimeID:            input.MalAnimeID,
-				Synopsis:              input.Synopsis,
-				SynopsisSource:        input.SynopsisSource,
-				SynopsisEn:            input.SynopsisEn,
-				SynopsisSourceEn:      input.SynopsisSourceEn,
-				ManualEpisodesCount:   input.ManualEpisodesCount,
-				StartEpisodeRawNumber: input.StartEpisodeRawNumber,
-				NumberFormatID:        input.NumberFormatID,
-				NoEpisodes:            input.NoEpisodes,
-			},
+			FormInput:   viewmodel.NewDBWorkFormInput(input),
 		}),
 	)
 	if err := component.Render(ctx, w); err != nil {
