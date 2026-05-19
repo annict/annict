@@ -357,7 +357,8 @@ class Work < ApplicationRecord
     increment!(:watchers_count) if is_next_positive
   end
 
-  # status カラムの値で公開状態を判定する
+  # Determine the publication state from the status column value.
+  # [Ja] status カラムの値で公開状態を判定する
   def published?
     status.to_s == "published"
   end
