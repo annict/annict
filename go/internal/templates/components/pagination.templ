@@ -6,7 +6,6 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// Pagination はページネーションを表示します
 templ Pagination(pagination viewmodel.Pagination) {
 	if pagination.ShouldShow() {
 		<nav class="flex items-center justify-center gap-1" aria-label={ templates.T(ctx, "pagination_label") }>

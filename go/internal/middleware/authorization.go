@@ -6,31 +6,33 @@ import (
 	"github.com/annict/annict/go/internal/model"
 )
 
-// ロール定数はmodel.Userに定義されているものを再エクスポート
+// Re-export role constants from model.User so that callers can reference roles without importing the model package.
+// [Ja] ロール定数を model.User から再エクスポートする。呼び出し側がロール値のためだけに model パッケージを import せずに済むようにする目的。
 const (
 	RoleUser   = model.RoleUser
 	RoleAdmin  = model.RoleAdmin
 	RoleEditor = model.RoleEditor
 )
 
-// IsAdmin はユーザーが管理者かどうかを判定します
 func IsAdmin(user *model.User) bool {
 	return user != nil && user.IsAdmin()
 }
 
-// IsEditor はユーザーが編集者かどうかを判定します
 func IsEditor(user *model.User) bool {
 	return user != nil && user.IsEditor()
 }
 
-// IsCommitter はユーザーが管理者または編集者かどうかを判定します
-// Rails版の User#committer? に対応
+// IsCommitter reports whether the user is either an admin or an editor. Corresponds to the Rails-side User#committer?.
+// [Ja] ユーザーが管理者または編集者かどうかを返す。Rails 版の User#committer? に対応する。
 func IsCommitter(user *model.User) bool {
 	return user != nil && user.IsCommitter()
 }
 
-// RequireCommitter は管理者または編集者のみアクセスを許可するミドルウェアです
-// 未認証の場合はログインページにリダイレクトし、権限不足の場合は403を返します
+// RequireCommitter only allows requests from admins or editors. Unauthenticated users are redirected to the sign-in page,
+// and users without sufficient permission receive a 403 response.
+//
+// [Ja] 管理者または編集者のみアクセスを許可するミドルウェア。未認証の場合はログインページにリダイレクトし、
+// 権限不足の場合は 403 を返す。
 func RequireCommitter(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		user := GetUserFromContext(r.Context())
@@ -48,8 +50,11 @@ func RequireCommitter(next http.Handler) http.Handler {
 	})
 }
 
-// RequireAdmin は管理者のみアクセスを許可するミドルウェアです
-// 未認証の場合はログインページにリダイレクトし、権限不足の場合は403を返します
+// RequireAdmin only allows requests from admins. Unauthenticated users are redirected to the sign-in page,
+// and users without admin permission receive a 403 response.
+//
+// [Ja] 管理者のみアクセスを許可するミドルウェア。未認証の場合はログインページにリダイレクトし、
+// 権限不足の場合は 403 を返す。
 func RequireAdmin(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		user := GetUserFromContext(r.Context())

@@ -1,13 +1,12 @@
 package components
 
 import (
-	"context"
-
 	"github.com/annict/annict/go/internal/templates"
 )
 
-// DbSidebar はAnnict DB用のサイドバーコンポーネントです
-templ DbSidebar(ctx context.Context) {
+// DbSidebar renders the sidebar component for the Annict DB admin UI.
+// [Ja] DbSidebar は Annict DB 管理画面用のサイドバーコンポーネントを描画する。
+templ DbSidebar() {
 	<aside class="sidebar" data-side="left" aria-hidden="false">
 		<nav aria-label="Annict DB navigation">
 			<section class="scrollbar gap-4">
@@ -27,7 +26,6 @@ templ DbSidebar(ctx context.Context) {
 					</a>
 				</div>
 
-				<!-- 検索フォーム -->
 				<div class="px-4">
 					<form method="get" action="/db/search" autocomplete="off">
 						<input
@@ -39,21 +37,19 @@ templ DbSidebar(ctx context.Context) {
 					</form>
 				</div>
 
-				<!-- ナビゲーション -->
 				<div role="group" class="py-0">
 					<ul class="space-y-1">
-						@dbSidebarMenuItem(ctx, "/db/activities", "db_sidebar_activities")
-						@dbSidebarMenuItem(ctx, "/db/series", "db_sidebar_series")
-						@dbSidebarMenuItem(ctx, "/db/works", "db_sidebar_works")
-						@dbSidebarMenuItem(ctx, "/db/people", "db_sidebar_people")
-						@dbSidebarMenuItem(ctx, "/db/organizations", "db_sidebar_organizations")
-						@dbSidebarMenuItem(ctx, "/db/characters", "db_sidebar_characters")
-						@dbSidebarMenuItem(ctx, "/db/channel_groups", "db_sidebar_channel_groups")
-						@dbSidebarMenuItem(ctx, "/db/channels", "db_sidebar_channels")
+						@dbSidebarMenuItem("/db/activities", "db_sidebar_activities")
+						@dbSidebarMenuItem("/db/series", "db_sidebar_series")
+						@dbSidebarMenuItem("/db/works", "db_sidebar_works")
+						@dbSidebarMenuItem("/db/people", "db_sidebar_people")
+						@dbSidebarMenuItem("/db/organizations", "db_sidebar_organizations")
+						@dbSidebarMenuItem("/db/characters", "db_sidebar_characters")
+						@dbSidebarMenuItem("/db/channel_groups", "db_sidebar_channel_groups")
+						@dbSidebarMenuItem("/db/channels", "db_sidebar_channels")
 					</ul>
 				</div>
 
-				<!-- Annictに戻る -->
 				<div class="px-2 mb-4 border-t border-border pt-4">
 					<a
 						href="/"
@@ -69,8 +65,7 @@ templ DbSidebar(ctx context.Context) {
 	</aside>
 }
 
-// dbSidebarMenuItem はDB サイドバーのメニュー項目を生成します
-templ dbSidebarMenuItem(ctx context.Context, path string, labelKey string) {
+templ dbSidebarMenuItem(path string, labelKey string) {
 	<li>
 		<a
 			href={ templ.SafeURL(path) }

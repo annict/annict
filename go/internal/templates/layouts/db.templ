@@ -1,17 +1,15 @@
 package layouts
 
 import (
-	"context"
-
 	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/templates"
 	"github.com/annict/annict/go/internal/templates/components"
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// Db はAnnict DB用のレイアウトです
-// サイドバーとメインコンテンツのみで構成されます
-templ Db(ctx context.Context, meta viewmodel.PageMeta, assetVersion string, content templ.Component) {
+// Db is the layout for the Annict DB admin UI, composed only of a sidebar and the main content area.
+// [Ja] Db は Annict DB 管理画面用のレイアウト。サイドバーとメインコンテンツのみで構成される。
+templ Db(meta viewmodel.PageMeta, assetVersion string, content templ.Component) {
 	<!DOCTYPE html>
 	<html lang={ templates.Locale(ctx) }>
 		<head>
@@ -20,7 +18,7 @@ templ Db(ctx context.Context, meta viewmodel.PageMeta, assetVersion string, cont
 		<body>
 			<div class="flex bg-background">
 				@components.Flash(ctx, session.FlashFromContext(ctx))
-				@components.DbSidebar(ctx)
+				@components.DbSidebar()
 				<div class="flex-1 flex flex-col min-h-screen">
 					<main>
 						@content

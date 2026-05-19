@@ -18,21 +18,23 @@ import (
 	"github.com/annict/annict/go/internal/session"
 )
 
-// DeviceTokenCookieName はデバイス（ブラウザ）識別用のCookieキー名
+// DeviceTokenCookieName is the cookie name used to identify a device (browser).
+// [Ja] デバイス (ブラウザ) を識別する Cookie のキー名。
 const DeviceTokenCookieName = "device_token"
 
-// featureFlagChecker はフィーチャーフラグの有効判定を行うインターフェース
+// featureFlagChecker abstracts the feature flag evaluator that the reverse proxy depends on.
+// [Ja] リバースプロキシが依存するフィーチャーフラグ判定の抽象化インターフェース。
 type featureFlagChecker interface {
 	IsEnabledByDeviceOrUser(ctx context.Context, deviceToken string, userID model.UserID, name model.FeatureFlagName) (bool, error)
 }
 
-// featureFlaggedPattern はフィーチャーフラグで制御するURLパターンを定義
+// featureFlaggedPattern pairs a URL pattern with the feature flag that gates routing for it.
+// [Ja] URL パターンと、その経路をゲートするフィーチャーフラグの対応を表す。
 type featureFlaggedPattern struct {
 	pattern *regexp.Regexp
 	flag    model.FeatureFlagName
 }
 
-// フィーチャーフラグで制御するURLパターンのリスト
 var featureFlaggedPatterns = []featureFlaggedPattern{
 	{pattern: regexp.MustCompile(`^/db/`), flag: model.FeatureFlagGoAnnictDB},
 }
@@ -42,8 +44,8 @@ type ReverseProxyMiddleware struct {
 	railsURL        *url.URL
 	proxy           *httputil.ReverseProxy
 	cfg             *config.Config
-	featureFlagRepo featureFlagChecker // nil許容（フラグ機能不要時）
-	sessionMgr      *session.Manager   // nil許容（テスト時やセッション不要時）
+	featureFlagRepo featureFlagChecker // optional; falls back to Rails when nil. [Ja] nil 許容。フラグ機能不要時は nil
+	sessionMgr      *session.Manager   // optional; nil during tests or when session is not needed. [Ja] nil 許容。テスト時やセッション不要時は nil
 }
 
 // Go版で処理するパス（ホワイトリスト）
@@ -195,7 +197,6 @@ func (m *ReverseProxyMiddleware) Middleware(next http.Handler) http.Handler {
 			return
 		}
 
-		// デバイストークンCookieを確保（未設定の場合は生成してセット）
 		deviceToken := m.ensureDeviceToken(w, r)
 
 		// Go版で処理するパスかどうかをチェック
@@ -205,7 +206,6 @@ func (m *ReverseProxyMiddleware) Middleware(next http.Handler) http.Handler {
 			return
 		}
 
-		// フィーチャーフラグで制御するパスかどうかをチェック
 		if m.isFeatureFlagEnabled(r, deviceToken) {
 			next.ServeHTTP(w, r)
 			return
@@ -216,8 +216,11 @@ func (m *ReverseProxyMiddleware) Middleware(next http.Handler) http.Handler {
 	})
 }
 
-// ensureDeviceToken はリクエストからdevice_token Cookieを取得し、なければ生成してレスポンスに設定する
-// 戻り値はデバイストークンの文字列
+// ensureDeviceToken returns the device_token cookie value from the request, generating and setting a new one on the
+// response when missing. An empty string is returned only when token generation itself fails.
+//
+// [Ja] リクエストから device_token Cookie を取得し、未設定の場合は新規生成してレスポンスにセットしたうえで返す。
+// トークン生成自体に失敗した場合のみ空文字列を返す。
 func (m *ReverseProxyMiddleware) ensureDeviceToken(w http.ResponseWriter, r *http.Request) string {
 	if c, err := r.Cookie(DeviceTokenCookieName); err == nil && c.Value != "" {
 		return c.Value
@@ -234,7 +237,7 @@ func (m *ReverseProxyMiddleware) ensureDeviceToken(w http.ResponseWriter, r *htt
 		Name:     DeviceTokenCookieName,
 		Value:    token,
 		Path:     "/",
-		MaxAge:   10 * 365 * 24 * 60 * 60, // 10年
+		MaxAge:   10 * 365 * 24 * 60 * 60, // 10 years. [Ja] 10 年
 		HttpOnly: true,
 		Secure:   secure,
 		SameSite: http.SameSiteLaxMode,
@@ -243,15 +246,18 @@ func (m *ReverseProxyMiddleware) ensureDeviceToken(w http.ResponseWriter, r *htt
 	return token
 }
 
-// isFeatureFlagEnabled はリクエストパスがフィーチャーフラグで有効化されているかを判定する
-// deviceTokenはensureDeviceTokenで確保済みのトークンを受け取る
-// featureFlagRepoがnilの場合やエラー発生時はfalseを返す（Rails版にフォールバック）
+// isFeatureFlagEnabled reports whether the request path is enabled by a feature flag. It receives the device token
+// returned by ensureDeviceToken. When featureFlagRepo is nil or evaluation fails, it returns false so the caller falls
+// back to the Rails proxy.
+//
+// [Ja] リクエストパスがフィーチャーフラグで有効化されているかを判定する。device token は ensureDeviceToken で
+// 確保済みのトークンを受け取る。featureFlagRepo が nil の場合や判定に失敗した場合は false を返し、呼び出し側に
+// Rails 版へのフォールバックを促す。
 func (m *ReverseProxyMiddleware) isFeatureFlagEnabled(r *http.Request, deviceToken string) bool {
 	if m.featureFlagRepo == nil {
 		return false
 	}
 
-	// パスにマッチするフィーチャーフラグを検索
 	var flagName model.FeatureFlagName
 	matched := false
 	for _, fp := range featureFlaggedPatterns {
@@ -267,7 +273,6 @@ func (m *ReverseProxyMiddleware) isFeatureFlagEnabled(r *http.Request, deviceTok
 
 	ctx := r.Context()
 
-	// セッションからユーザーIDを取得
 	var userID model.UserID
 	if m.sessionMgr != nil {
 		sessionID, err := m.sessionMgr.GetSessionID(r)

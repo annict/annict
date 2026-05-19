@@ -5,7 +5,6 @@ import (
 	"net/url"
 )
 
-// Pagination はページネーション情報を保持します
 type Pagination struct {
 	CurrentPage int
 	TotalPages  int
@@ -14,7 +13,6 @@ type Pagination struct {
 	BasePath    string
 }
 
-// NewPagination はPaginationを作成します
 func NewPagination(currentPage, totalCount, perPage int, basePath string) Pagination {
 	totalPages := 0
 	if perPage > 0 {
@@ -35,22 +33,18 @@ func NewPagination(currentPage, totalCount, perPage int, basePath string) Pagina
 	}
 }
 
-// ShouldShow はページネーションを表示すべきかどうかを返します
 func (p Pagination) ShouldShow() bool {
 	return p.TotalPages > 1
 }
 
-// HasPrev は前のページが存在するかどうかを返します
 func (p Pagination) HasPrev() bool {
 	return p.CurrentPage > 1
 }
 
-// HasNext は次のページが存在するかどうかを返します
 func (p Pagination) HasNext() bool {
 	return p.CurrentPage < p.TotalPages
 }
 
-// PrevPage は前のページ番号を返します
 func (p Pagination) PrevPage() int {
 	if p.HasPrev() {
 		return p.CurrentPage - 1
@@ -58,7 +52,6 @@ func (p Pagination) PrevPage() int {
 	return p.CurrentPage
 }
 
-// NextPage は次のページ番号を返します
 func (p Pagination) NextPage() int {
 	if p.HasNext() {
 		return p.CurrentPage + 1
@@ -66,7 +59,6 @@ func (p Pagination) NextPage() int {
 	return p.CurrentPage
 }
 
-// PageURL は指定されたページ番号のURLを返します
 func (p Pagination) PageURL(page int) string {
 	u, err := url.Parse(p.BasePath)
 	if err != nil {
@@ -82,8 +74,8 @@ func (p Pagination) PageURL(page int) string {
 	return u.String()
 }
 
-// Pages はページ番号のスライスを返します
-// 0は省略記号（…）を表します
+// Pages returns the slice of page numbers to render. A value of 0 marks an ellipsis (…).
+// [Ja] Pages はレンダリングするページ番号のスライスを返す。値 0 は省略記号 (…) を表す。
 func (p Pagination) Pages() []int {
 	if p.TotalPages <= 7 {
 		pages := make([]int, p.TotalPages)

@@ -13,14 +13,12 @@ import (
 	"github.com/annict/annict/go/internal/validator"
 )
 
-// CreateWorkUsecase は作品作成のユースケース
 type CreateWorkUsecase struct {
 	db        *sql.DB
 	workRepo  *repository.WorkRepository
 	validator *validator.DbWorkCreateValidator
 }
 
-// NewCreateWorkUsecase はCreateWorkUsecaseを作成します
 func NewCreateWorkUsecase(
 	db *sql.DB,
 	workRepo *repository.WorkRepository,
@@ -33,7 +31,12 @@ func NewCreateWorkUsecase(
 	}
 }
 
-// CreateWorkInput は作品作成の入力データ（フォームの文字列値）
+// CreateWorkInput carries the form values for creating a work. All fields are typed
+// as string because they come straight from the HTML form submission and are
+// type-converted later in buildCreateWorkParams.
+//
+// [Ja] CreateWorkInput は作品作成フォームの入力値を保持する。HTML フォーム由来のため
+// 全フィールドを文字列として持ち、後段の buildCreateWorkParams で型変換する。
 type CreateWorkInput struct {
 	Title                 string
 	TitleKana             string
@@ -63,14 +66,11 @@ type CreateWorkInput struct {
 	NoEpisodes            string
 }
 
-// CreateWorkOutput は作品作成の結果
 type CreateWorkOutput struct {
 	WorkID model.WorkID
 }
 
-// Execute はバリデーション・型変換・作品作成を行います
 func (uc *CreateWorkUsecase) Execute(ctx context.Context, input CreateWorkInput) (*CreateWorkOutput, error) {
-	// 1. バリデーション
 	if err := uc.validator.Validate(ctx, validator.DbWorkCreateValidatorInput{
 		Title:                 input.Title,
 		TitleKana:             input.TitleKana,
@@ -102,16 +102,14 @@ func (uc *CreateWorkUsecase) Execute(ctx context.Context, input CreateWorkInput)
 		return nil, err
 	}
 
-	// 2. フォーム値を型変換
 	params, err := buildCreateWorkParams(input)
 	if err != nil {
 		return nil, fmt.Errorf("入力値の変換に失敗: %w", err)
 	}
 
-	// 3. トランザクション内で作品を作成
 	tx, err := uc.db.BeginTx(ctx, nil)
 	if err != nil {
-		return nil, fmt.Errorf("トランザクションの開始に失敗しま���た: %w", err)
+		return nil, fmt.Errorf("トランザクションの開始に失敗しました: %w", err)
 	}
 	defer func() { _ = tx.Rollback() }()
 
@@ -129,7 +127,6 @@ func (uc *CreateWorkUsecase) Execute(ctx context.Context, input CreateWorkInput)
 	return &CreateWorkOutput{WorkID: workID}, nil
 }
 
-// buildCreateWorkParams はフォーム入力値をリポジトリのパラメータに変換します
 func buildCreateWorkParams(input CreateWorkInput) (repository.CreateWorkParams, error) {
 	media, err := strconv.ParseInt(input.Media, 10, 32)
 	if err != nil {

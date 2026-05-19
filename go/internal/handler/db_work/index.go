@@ -14,17 +14,16 @@ import (
 
 const perPage int32 = 30
 
-// Index GET /db/works - DB管理画面の作品一覧を表示
+// Index renders the work list page in the Annict DB admin UI (GET /db/works).
+// [Ja] Annict DB 管理画面の作品一覧ページ (GET /db/works) を描画する。
 func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	// クエリパラメータを取得
 	page := parseIntParam(r, "page", 1)
 	filterNoEpisodes := r.URL.Query().Get("filter_no_episodes") == "1"
 	filterNoImage := r.URL.Query().Get("filter_no_image") == "1"
 	filterNoSeason := r.URL.Query().Get("filter_no_season") == "1"
 
-	// ユースケースを実行
 	result, err := h.listDbWorksUC.Execute(ctx, usecase.ListDbWorksInput{
 		FilterNoEpisodes: filterNoEpisodes,
 		FilterNoImage:    filterNoImage,
@@ -38,23 +37,16 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// ページネーション用のBasePathを構築（フィルタパラメータを維持）
 	basePath := buildBasePath(r.URL)
-
-	// ページネーション情報を作成
 	pagination := viewmodel.NewPagination(int(page), int(result.TotalCount), int(perPage), basePath)
 
-	// ページメタ情報を準備
 	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)
 	meta.SetTitle(ctx, "db_works_index_title")
 
-	// Model → ViewModel に変換
 	worksVM := viewmodel.NewDBWorkListItems(ctx, result.Works)
 
-	// テンプレートをレンダリング
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	component := layouts.Db(
-		ctx,
 		meta,
 		h.cfg.GetAssetVersion(),
 		db_works.Index(db_works.IndexPageData{
@@ -72,7 +64,8 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// parseIntParam はクエリパラメータから整数値を取得します
+// parseIntParam reads a positive int32 query parameter and falls back to defaultValue when missing or invalid.
+// [Ja] 正の int32 のクエリパラメータを読み取り、欠落・無効な値のときは defaultValue を返す。
 func parseIntParam(r *http.Request, name string, defaultValue int32) int32 {
 	s := r.URL.Query().Get(name)
 	if s == "" {
@@ -85,8 +78,8 @@ func parseIntParam(r *http.Request, name string, defaultValue int32) int32 {
 	return int32(v)
 }
 
-// buildBasePath はページネーション用のBasePathを構築します
-// ページパラメータを除いた現在のURLを返します
+// buildBasePath returns the current URL with the `page` query parameter stripped, suitable as the base path for pagination links.
+// [Ja] ページネーションリンクの起点として使えるよう、現在の URL から `page` クエリパラメータだけを除いたパスを返す。
 func buildBasePath(u *url.URL) string {
 	q := u.Query()
 	q.Del("page")

@@ -7,19 +7,20 @@ import (
 
 	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/model"
+	"github.com/annict/annict/go/internal/usecase"
 )
 
-// DBWorkListItem はDB管理画面の作品一覧用の表示データです
+// DBWorkListItem is the per-row display data for the work list on the Annict DB admin screen.
+// [Ja] DBWorkListItem は Annict DB 管理画面の作品一覧で 1 行ごとに表示する整形済みデータ。
 type DBWorkListItem struct {
 	ID            WorkID
 	Title         string
-	Season        string // フォーマット済みのシーズン表示文字列
+	Season        string // Pre-formatted season display string. [Ja] フォーマット済みのシーズン表示文字列。
 	WatchersCount int32
 	Status        string
 	HasImage      bool
 }
 
-// NewDBWorkListItems は model.DBWorkListItem のスライスを viewmodel.DBWorkListItem のスライスに変換します
 func NewDBWorkListItems(ctx context.Context, items []model.DBWorkListItem) []DBWorkListItem {
 	result := make([]DBWorkListItem, len(items))
 	for i, item := range items {
@@ -28,7 +29,6 @@ func NewDBWorkListItems(ctx context.Context, items []model.DBWorkListItem) []DBW
 	return result
 }
 
-// NewDBWorkListItem は model.DBWorkListItem を viewmodel.DBWorkListItem に変換します
 func NewDBWorkListItem(ctx context.Context, item model.DBWorkListItem) DBWorkListItem {
 	return DBWorkListItem{
 		ID:            WorkID(item.ID),
@@ -40,7 +40,6 @@ func NewDBWorkListItem(ctx context.Context, item model.DBWorkListItem) DBWorkLis
 	}
 }
 
-// formatSeason はシーズン情報をフォーマットします
 func formatSeason(ctx context.Context, year *int32, name *int32) string {
 	if year == nil || name == nil {
 		return ""
@@ -65,13 +64,11 @@ func formatSeason(ctx context.Context, year *int32, name *int32) string {
 	return fmt.Sprintf("%d %s", *year, i18n.T(ctx, seasonKey))
 }
 
-// SelectOption はセレクトボックスの選択肢です
 type SelectOption struct {
 	Value string
 	Label string
 }
 
-// DBWorkFormOptions は作品フォームのセレクトボックス用データです
 type DBWorkFormOptions struct {
 	MediaOptions        []SelectOption
 	SeasonYearOptions   []SelectOption
@@ -79,7 +76,6 @@ type DBWorkFormOptions struct {
 	NumberFormatOptions []SelectOption
 }
 
-// NewDBWorkFormOptions は作品フォームのセレクトボックス用データを作成します
 func NewDBWorkFormOptions(ctx context.Context, numberFormats []model.NumberFormat) DBWorkFormOptions {
 	return DBWorkFormOptions{
 		MediaOptions:        buildMediaOptions(ctx),
@@ -89,7 +85,6 @@ func NewDBWorkFormOptions(ctx context.Context, numberFormats []model.NumberForma
 	}
 }
 
-// buildMediaOptions はメディア種別の選択肢を作成します
 func buildMediaOptions(ctx context.Context) []SelectOption {
 	return []SelectOption{
 		{Value: "1", Label: i18n.T(ctx, "media_tv")},
@@ -100,7 +95,6 @@ func buildMediaOptions(ctx context.Context) []SelectOption {
 	}
 }
 
-// buildSeasonYearOptions はシーズン年の選択肢を作成します
 func buildSeasonYearOptions() []SelectOption {
 	currentYear := time.Now().Year() + 5
 	startYear := 1890
@@ -114,7 +108,6 @@ func buildSeasonYearOptions() []SelectOption {
 	return options
 }
 
-// buildSeasonNameOptions はシーズン名の選択肢を作成します
 func buildSeasonNameOptions(ctx context.Context) []SelectOption {
 	return []SelectOption{
 		{Value: "1", Label: i18n.T(ctx, "season_winter")},
@@ -124,7 +117,6 @@ func buildSeasonNameOptions(ctx context.Context) []SelectOption {
 	}
 }
 
-// buildNumberFormatOptions はNumberFormatの選択肢を作成します
 func buildNumberFormatOptions(formats []model.NumberFormat) []SelectOption {
 	options := make([]SelectOption, len(formats))
 	for i, f := range formats {
@@ -134,4 +126,130 @@ func buildNumberFormatOptions(formats []model.NumberFormat) []SelectOption {
 		}
 	}
 	return options
+}
+
+// DBWorkFormInput holds the submitted form values so the work form can be re-rendered with the user's input after a validation error.
+// [Ja] DBWorkFormInput はバリデーションエラー時に作品フォームを再描画するために、送信された入力値を保持する。
+type DBWorkFormInput struct {
+	Title                 string
+	TitleKana             string
+	TitleAlter            string
+	TitleEn               string
+	TitleAlterEn          string
+	Media                 string
+	SeasonYear            string
+	SeasonName            string
+	StartedOn             string
+	EndedOn               string
+	OfficialSiteURL       string
+	OfficialSiteURLEn     string
+	WikipediaURL          string
+	WikipediaURLEn        string
+	TwitterUsername       string
+	TwitterHashtag        string
+	ScTid                 string
+	MalAnimeID            string
+	Synopsis              string
+	SynopsisSource        string
+	SynopsisEn            string
+	SynopsisSourceEn      string
+	ManualEpisodesCount   string
+	StartEpisodeRawNumber string
+	NumberFormatID        string
+	NoEpisodes            string
+}
+
+func NewDBWorkFormInput(input usecase.CreateWorkInput) *DBWorkFormInput {
+	return &DBWorkFormInput{
+		Title:                 input.Title,
+		TitleKana:             input.TitleKana,
+		TitleAlter:            input.TitleAlter,
+		TitleEn:               input.TitleEn,
+		TitleAlterEn:          input.TitleAlterEn,
+		Media:                 input.Media,
+		SeasonYear:            input.SeasonYear,
+		SeasonName:            input.SeasonName,
+		StartedOn:             input.StartedOn,
+		EndedOn:               input.EndedOn,
+		OfficialSiteURL:       input.OfficialSiteURL,
+		OfficialSiteURLEn:     input.OfficialSiteURLEn,
+		WikipediaURL:          input.WikipediaURL,
+		WikipediaURLEn:        input.WikipediaURLEn,
+		TwitterUsername:       input.TwitterUsername,
+		TwitterHashtag:        input.TwitterHashtag,
+		ScTid:                 input.ScTid,
+		MalAnimeID:            input.MalAnimeID,
+		Synopsis:              input.Synopsis,
+		SynopsisSource:        input.SynopsisSource,
+		SynopsisEn:            input.SynopsisEn,
+		SynopsisSourceEn:      input.SynopsisSourceEn,
+		ManualEpisodesCount:   input.ManualEpisodesCount,
+		StartEpisodeRawNumber: input.StartEpisodeRawNumber,
+		NumberFormatID:        input.NumberFormatID,
+		NoEpisodes:            input.NoEpisodes,
+	}
+}
+
+// Val returns the form value for the given field, or "" when the receiver is nil.
+// [Ja] Val は指定フィールドのフォーム値を返す。レシーバが nil のときは "" を返す。
+func (d *DBWorkFormInput) Val(field string) string {
+	if d == nil {
+		return ""
+	}
+	switch field {
+	case "title":
+		return d.Title
+	case "title_kana":
+		return d.TitleKana
+	case "title_alter":
+		return d.TitleAlter
+	case "title_en":
+		return d.TitleEn
+	case "title_alter_en":
+		return d.TitleAlterEn
+	case "media":
+		return d.Media
+	case "season_year":
+		return d.SeasonYear
+	case "season_name":
+		return d.SeasonName
+	case "started_on":
+		return d.StartedOn
+	case "ended_on":
+		return d.EndedOn
+	case "official_site_url":
+		return d.OfficialSiteURL
+	case "official_site_url_en":
+		return d.OfficialSiteURLEn
+	case "wikipedia_url":
+		return d.WikipediaURL
+	case "wikipedia_url_en":
+		return d.WikipediaURLEn
+	case "twitter_username":
+		return d.TwitterUsername
+	case "twitter_hashtag":
+		return d.TwitterHashtag
+	case "sc_tid":
+		return d.ScTid
+	case "mal_anime_id":
+		return d.MalAnimeID
+	case "synopsis":
+		return d.Synopsis
+	case "synopsis_source":
+		return d.SynopsisSource
+	case "synopsis_en":
+		return d.SynopsisEn
+	case "synopsis_source_en":
+		return d.SynopsisSourceEn
+	case "manual_episodes_count":
+		return d.ManualEpisodesCount
+	case "start_episode_raw_number":
+		return d.StartEpisodeRawNumber
+	case "number_format_id":
+		return d.NumberFormatID
+	case "no_episodes":
+		return d.NoEpisodes
+	default:
+		return ""
+	}
 }

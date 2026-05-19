@@ -8,17 +8,16 @@ import (
 	"github.com/annict/annict/go/internal/query"
 )
 
-// WorkRepository はWork関連のデータアクセスを担当します
+// WorkRepository handles data access for the works table and related joins.
+// [Ja] WorkRepository は works テーブルおよび関連 JOIN へのデータアクセスを担う。
 type WorkRepository struct {
 	queries *query.Queries
 }
 
-// NewWorkRepository はWorkRepositoryを作成します
 func NewWorkRepository(queries *query.Queries) *WorkRepository {
 	return &WorkRepository{queries: queries}
 }
 
-// GetByID は作品IDで作品を取得します
 func (r *WorkRepository) GetByID(ctx context.Context, id model.WorkID) (*model.Work, error) {
 	row, err := r.queries.GetWorkByID(ctx, int64(id))
 	if err != nil {
@@ -27,7 +26,6 @@ func (r *WorkRepository) GetByID(ctx context.Context, id model.WorkID) (*model.W
 	return workFromGetByIDRow(row), nil
 }
 
-// workFromGetByIDRow は query.GetWorkByIDRow を *model.Work に変換します
 func workFromGetByIDRow(row query.GetWorkByIDRow) *model.Work {
 	work := &model.Work{
 		ID:                  model.WorkID(row.ID),
@@ -44,10 +42,16 @@ func workFromGetByIDRow(row query.GetWorkByIDRow) *model.Work {
 	return work
 }
 
-// GetPopular は人気作品を取得します。
-// 戻り値の各 *model.Work は呼び出しごとに新規生成されるため、UseCase 側で
-// Casts/Staffs などの関連エンティティを後付けで代入する用法を許容します
-// （Repository でキャッシュやプール再利用を導入する場合はこの前提を見直すこと）。
+// GetPopular returns popular works. Each *model.Work in the returned slice is
+// freshly allocated on every call, so callers (typically UseCase code) are
+// free to attach related entities such as Casts / Staffs to the returned
+// pointers after the fact. Revisit this contract if the repository ever
+// starts caching or pooling these structs.
+//
+// [Ja] 人気作品を返す。戻り値の各 *model.Work は呼び出しごとに新規生成されるため、
+// 呼び出し側 (主に UseCase) が Casts / Staffs などの関連エンティティを後付けで
+// 代入する用法を許容している。Repository でキャッシュやプール再利用を導入する
+// 場合はこの前提を見直すこと。
 func (r *WorkRepository) GetPopular(ctx context.Context) ([]*model.Work, error) {
 	rows, err := r.queries.GetPopularWorks(ctx)
 	if err != nil {
@@ -61,7 +65,6 @@ func (r *WorkRepository) GetPopular(ctx context.Context) ([]*model.Work, error) 
 	return works, nil
 }
 
-// workFromPopularRow は query.GetPopularWorksRow を *model.Work に変換します
 func workFromPopularRow(row query.GetPopularWorksRow) *model.Work {
 	work := &model.Work{
 		ID:                  model.WorkID(row.ID),
@@ -78,9 +81,13 @@ func workFromPopularRow(row query.GetPopularWorksRow) *model.Work {
 	return work
 }
 
-// applyNullableWorkFields は sqlc 生成型の nullable フィールドを *model.Work にマッピングします。
-// 複数の row 型で共通する SeasonYear / SeasonName / CreatedAt の変換ロジックを 1 箇所に集約し、
-// マッピング漏れを防ぐためのヘルパーです。
+// applyNullableWorkFields maps sqlc's nullable columns onto *model.Work.
+// SeasonYear / SeasonName / CreatedAt show up on multiple row types, so the
+// conversion is centralised here to avoid drift between callers.
+//
+// [Ja] sqlc 生成型の nullable カラムを *model.Work にマッピングするヘルパー。
+// SeasonYear / SeasonName / CreatedAt は複数の row 型で共通するため、
+// 呼び出し元ごとに揺れないよう変換ロジックを 1 箇所に集約している。
 func applyNullableWorkFields(work *model.Work, seasonYear, seasonName sql.NullInt32, createdAt sql.NullTime) {
 	if seasonYear.Valid {
 		v := seasonYear.Int32
@@ -95,12 +102,10 @@ func applyNullableWorkFields(work *model.Work, seasonYear, seasonName sql.NullIn
 	}
 }
 
-// WithTx はトランザクションを使用する新しいRepositoryを返します
 func (r *WorkRepository) WithTx(tx *sql.Tx) *WorkRepository {
 	return &WorkRepository{queries: r.queries.WithTx(tx)}
 }
 
-// DBWorkListParams はDB管理画面の作品一覧取得パラメータです
 type DBWorkListParams struct {
 	FilterNoEpisodes bool
 	FilterNoImage    bool
@@ -111,7 +116,6 @@ type DBWorkListParams struct {
 	PerPage          int32
 }
 
-// ListForDB はDB管理画面用の作品一覧を取得します
 func (r *WorkRepository) ListForDB(ctx context.Context, params DBWorkListParams) ([]model.DBWorkListItem, error) {
 	offset := (params.Page - 1) * params.PerPage
 
@@ -147,7 +151,6 @@ func (r *WorkRepository) ListForDB(ctx context.Context, params DBWorkListParams)
 	return items, nil
 }
 
-// CountForDB はDB管理画面用の作品総数を取得します
 func (r *WorkRepository) CountForDB(ctx context.Context, params DBWorkListParams) (int64, error) {
 	return r.queries.CountDBWorks(ctx, query.CountDBWorksParams{
 		FilterNoEpisodes: sql.NullBool{Bool: params.FilterNoEpisodes, Valid: params.FilterNoEpisodes},
@@ -158,7 +161,6 @@ func (r *WorkRepository) CountForDB(ctx context.Context, params DBWorkListParams
 	})
 }
 
-// CreateWorkParams は作品作成のパラメータです
 type CreateWorkParams struct {
 	Title                 string
 	TitleKana             string
@@ -188,7 +190,6 @@ type CreateWorkParams struct {
 	NoEpisodes            bool
 }
 
-// Create は作品を新規作成し、作成された作品のIDを返します
 func (r *WorkRepository) Create(ctx context.Context, params CreateWorkParams) (model.WorkID, error) {
 	id, err := r.queries.CreateWork(ctx, query.CreateWorkParams{
 		Title:                 params.Title,
@@ -224,7 +225,6 @@ func (r *WorkRepository) Create(ctx context.Context, params CreateWorkParams) (m
 	return model.WorkID(id), nil
 }
 
-// nullInt32FromPtr は *int32 を sql.NullInt32 に変換します
 func nullInt32FromPtr(v *int32) sql.NullInt32 {
 	if v == nil {
 		return sql.NullInt32{}

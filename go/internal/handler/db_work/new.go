@@ -10,11 +10,11 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// New GET /db/works/new - DB管理画面の作品新規作成フォームを表示
+// New renders the new-work form page in the Annict DB admin UI (GET /db/works/new).
+// [Ja] Annict DB 管理画面の作品新規作成フォームページ (GET /db/works/new) を描画する。
 func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	// フォーム用の選択肢を取得
 	optionsResult, err := h.getDbWorkFormOptionsUC.Execute(ctx)
 	if err != nil {
 		slog.ErrorContext(ctx, "NumberFormatの取得エラー", "error", err)
@@ -24,17 +24,13 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 
 	formOptions := viewmodel.NewDBWorkFormOptions(ctx, optionsResult.NumberFormats)
 
-	// CSRFトークンを取得
 	csrfToken := middleware.GetCSRFToken(r, h.sessionManager)
 
-	// ページメタ情報を準備
 	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)
 	meta.SetTitle(ctx, "db_works_new_title")
 
-	// テンプレートをレンダリング
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	component := layouts.Db(
-		ctx,
 		meta,
 		h.cfg.GetAssetVersion(),
 		db_works.New(db_works.NewPageData{

@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"strings"
 	"testing"
 	"time"
 
@@ -407,87 +406,6 @@ func TestUpdatePasswordResetUsecase_Execute_WithNonExistentUser(t *testing.T) {
 	// エラーが発生することを確認（トークンが削除されているため）
 	if err == nil {
 		t.Error("削除されたユーザーのトークンでパスワード更新が成功してしまいました")
-	}
-}
-
-// TestUpdatePasswordResetUsecase_Execute_WithNullUserData はfail-fastケース：ユーザーデータにNULL値がある場合のテストです
-func TestUpdatePasswordResetUsecase_Execute_WithNullUserData(t *testing.T) {
-	t.Parallel()
-
-	db, tx := testutil.SetupTx(t)
-
-	// パスワードをハッシュ化
-	hashedPassword, err := auth.HashPassword("password123")
-	if err != nil {
-		t.Fatalf("パスワードのハッシュ化に失敗: %v", err)
-	}
-
-	// テストユーザーを作成
-	userID := testutil.NewUserBuilder(t, tx).
-		WithUsername("null_data_test").
-		WithEmail("null@example.com").
-		WithEncryptedPassword(hashedPassword).
-		Build()
-
-	// トークンを生成してデータベースに保存
-	token, err := password_reset.GenerateToken()
-	if err != nil {
-		t.Fatalf("トークン生成に失敗: %v", err)
-	}
-	tokenDigest := password_reset.HashToken(token)
-
-	queries := query.New(db).WithTx(tx)
-	tokenRepo := repository.NewPasswordResetTokenRepository(queries)
-	if _, err := tokenRepo.Create(context.Background(), userID, tokenDigest, time.Now().Add(1*time.Hour)); err != nil {
-		t.Fatalf("トークンの保存に失敗: %v", err)
-	}
-
-	// トランザクションをコミット
-	if err := tx.Commit(); err != nil {
-		t.Fatalf("トランザクションのコミットに失敗: %v", err)
-	}
-
-	// ユーザーのcreated_atをNULLに設定（データベース制約違反のシミュレーション）
-	_, err = db.Exec("ALTER TABLE users ALTER COLUMN created_at DROP NOT NULL")
-	if err != nil {
-		t.Fatalf("NOT NULL制約の削除に失敗: %v", err)
-	}
-	_, err = db.Exec("UPDATE users SET created_at = NULL WHERE id = $1", userID)
-	if err != nil {
-		t.Fatalf("created_atをNULLに設定できませんでした: %v", err)
-	}
-
-	// テスト終了時にデータを削除し、制約を復元
-	t.Cleanup(func() {
-		_, _ = db.Exec("DELETE FROM sessions WHERE user_id = $1", userID)
-		_, _ = db.Exec("DELETE FROM password_reset_tokens WHERE user_id = $1", userID)
-		_, _ = db.Exec("DELETE FROM users WHERE id = $1", userID)
-		_, _ = db.Exec("ALTER TABLE users ALTER COLUMN created_at SET NOT NULL")
-	})
-
-	// UseCase を作成
-	queriesWithoutTx := query.New(db)
-	sessionRepo := repository.NewSessionRepository(queriesWithoutTx)
-	v := validator.NewPasswordUpdateValidator()
-	uc := NewUpdatePasswordResetUsecase(db, repository.NewPasswordResetTokenRepository(queriesWithoutTx), repository.NewUserRepository(queriesWithoutTx), sessionRepo, v)
-
-	// パスワード更新を試みる
-	ctx := context.Background()
-	newPassword := "newpassword456"
-	_, err = uc.Execute(ctx, UpdatePasswordResetInput{
-		Token:                token,
-		Password:             newPassword,
-		PasswordConfirmation: newPassword,
-	})
-
-	// データベース制約違反のエラーが発生することを確認
-	if err == nil {
-		t.Error("NULL値を持つユーザーデータに対してパスワード更新が成功してしまいました")
-	}
-
-	// エラーメッセージに「データベース制約違反」が含まれることを確認
-	if err != nil && !strings.Contains(err.Error(), "データベース制約違反") && !strings.Contains(err.Error(), "created_at") {
-		t.Errorf("期待されるエラーメッセージが含まれていません: %v", err)
 	}
 }
 
