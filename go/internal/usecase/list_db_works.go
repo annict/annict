@@ -31,7 +31,7 @@ type ListDbWorksInput struct {
 
 // ListDbWorksOutput はユースケースの出力です
 type ListDbWorksOutput struct {
-	Works      []model.DBWorkListItem
+	Works      []*model.Work
 	TotalCount int64
 }
 

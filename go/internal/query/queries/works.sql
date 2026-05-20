@@ -43,7 +43,7 @@ SELECT
     w.season_name,
     w.watchers_count,
     w.status,
-    CASE WHEN wi.id IS NOT NULL THEN true ELSE false END AS has_image
+    wi.image_data
 FROM works w
 LEFT JOIN work_images wi ON w.id = wi.work_id
 WHERE w.status != 'deleted'

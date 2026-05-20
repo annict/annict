@@ -10,6 +10,20 @@ import (
 	"github.com/annict/annict/go/internal/usecase"
 )
 
+// WorkStatus wraps model.WorkStatus for use in the Presentation layer, since templates may not depend on the model package.
+// [Ja] WorkStatus は Presentation 層から扱える形に model.WorkStatus をラップした型 (templates は model に直接依存できないため)。
+type WorkStatus model.WorkStatus
+
+const (
+	WorkStatusPublished WorkStatus = WorkStatus(model.WorkStatusPublished)
+	WorkStatusArchived  WorkStatus = WorkStatus(model.WorkStatusArchived)
+	WorkStatusDeleted   WorkStatus = WorkStatus(model.WorkStatusDeleted)
+)
+
+// String returns the textual representation of the status.
+// [Ja] ステータスの文字列表現を返す。
+func (s WorkStatus) String() string { return string(s) }
+
 // DBWorkListItem is the per-row display data for the work list on the Annict DB admin screen.
 // [Ja] DBWorkListItem は Annict DB 管理画面の作品一覧で 1 行ごとに表示する整形済みデータ。
 type DBWorkListItem struct {
@@ -17,26 +31,26 @@ type DBWorkListItem struct {
 	Title         string
 	Season        string // Pre-formatted season display string. [Ja] フォーマット済みのシーズン表示文字列。
 	WatchersCount int32
-	Status        string
+	Status        WorkStatus
 	HasImage      bool
 }
 
-func NewDBWorkListItems(ctx context.Context, items []model.DBWorkListItem) []DBWorkListItem {
-	result := make([]DBWorkListItem, len(items))
-	for i, item := range items {
-		result[i] = NewDBWorkListItem(ctx, item)
+func NewDBWorkListItems(ctx context.Context, works []*model.Work) []DBWorkListItem {
+	result := make([]DBWorkListItem, len(works))
+	for i, work := range works {
+		result[i] = NewDBWorkListItem(ctx, work)
 	}
 	return result
 }
 
-func NewDBWorkListItem(ctx context.Context, item model.DBWorkListItem) DBWorkListItem {
+func NewDBWorkListItem(ctx context.Context, work *model.Work) DBWorkListItem {
 	return DBWorkListItem{
-		ID:            WorkID(item.ID),
-		Title:         item.Title,
-		Season:        formatSeason(ctx, item.SeasonYear, item.SeasonName),
-		WatchersCount: item.WatchersCount,
-		Status:        item.Status,
-		HasImage:      item.HasImage,
+		ID:            WorkID(work.ID),
+		Title:         work.Title,
+		Season:        formatSeason(ctx, work.SeasonYear, work.SeasonName),
+		WatchersCount: work.WatchersCount,
+		Status:        WorkStatus(work.Status),
+		HasImage:      work.ImageData != "",
 	}
 }
 

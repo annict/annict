@@ -48,7 +48,7 @@ func TestIndex_WithWorks(t *testing.T) {
 				Title:         "テストアニメ1",
 				Season:        "2024 春",
 				WatchersCount: 100,
-				Status:        "currently",
+				Status:        viewmodel.WorkStatusPublished,
 				HasImage:      true,
 			},
 			{
@@ -56,7 +56,7 @@ func TestIndex_WithWorks(t *testing.T) {
 				Title:         "テストアニメ2",
 				Season:        "2024 夏",
 				WatchersCount: 50,
-				Status:        "currently",
+				Status:        viewmodel.WorkStatusPublished,
 				HasImage:      false,
 			},
 		},

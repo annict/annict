@@ -1,8 +1,11 @@
 package viewmodel
 
 import (
+	"context"
 	"testing"
 
+	"github.com/annict/annict/go/internal/i18n"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/usecase"
 )
 
@@ -125,4 +128,118 @@ func TestDBWorkFormInput_Val(t *testing.T) {
 			}
 		}
 	})
+}
+
+func TestNewDBWorkListItem(t *testing.T) {
+	t.Parallel()
+
+	year := int32(2024)
+	season := int32(2)
+
+	tests := []struct {
+		name            string
+		work            *model.Work
+		wantID          WorkID
+		wantTitle       string
+		wantWatchers    int32
+		wantStatus      WorkStatus
+		wantHasImage    bool
+		wantSeasonHasJP string
+	}{
+		{
+			name: "正常系: ImageData が設定されていれば HasImage が true になる",
+			work: &model.Work{
+				ID:            1,
+				Title:         "画像あり作品",
+				WatchersCount: 100,
+				Status:        model.WorkStatusPublished,
+				ImageData:     `{"id":"work_images/abc.jpg"}`,
+				SeasonYear:    &year,
+				SeasonName:    &season,
+			},
+			wantID:          WorkID(1),
+			wantTitle:       "画像あり作品",
+			wantWatchers:    100,
+			wantStatus:      WorkStatusPublished,
+			wantHasImage:    true,
+			wantSeasonHasJP: "2024 春",
+		},
+		{
+			name: "正常系: ImageData が空文字列なら HasImage は false になる",
+			work: &model.Work{
+				ID:            2,
+				Title:         "画像なし作品",
+				WatchersCount: 0,
+				Status:        model.WorkStatusArchived,
+				ImageData:     "",
+			},
+			wantID:       WorkID(2),
+			wantTitle:    "画像なし作品",
+			wantWatchers: 0,
+			wantStatus:   WorkStatusArchived,
+			wantHasImage: false,
+		},
+		{
+			name: "正常系: シーズン未設定の場合 Season は空文字列になる",
+			work: &model.Work{
+				ID:     3,
+				Title:  "シーズンなし作品",
+				Status: model.WorkStatusPublished,
+			},
+			wantID:          WorkID(3),
+			wantTitle:       "シーズンなし作品",
+			wantStatus:      WorkStatusPublished,
+			wantHasImage:    false,
+			wantSeasonHasJP: "",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			ctx := i18n.SetLocale(context.Background(), "ja")
+			got := NewDBWorkListItem(ctx, tt.work)
+
+			if got.ID != tt.wantID {
+				t.Errorf("ID = %v, want %v", got.ID, tt.wantID)
+			}
+			if got.Title != tt.wantTitle {
+				t.Errorf("Title = %q, want %q", got.Title, tt.wantTitle)
+			}
+			if got.WatchersCount != tt.wantWatchers {
+				t.Errorf("WatchersCount = %d, want %d", got.WatchersCount, tt.wantWatchers)
+			}
+			if got.Status != tt.wantStatus {
+				t.Errorf("Status = %q, want %q", got.Status, tt.wantStatus)
+			}
+			if got.HasImage != tt.wantHasImage {
+				t.Errorf("HasImage = %v, want %v", got.HasImage, tt.wantHasImage)
+			}
+			if got.Season != tt.wantSeasonHasJP {
+				t.Errorf("Season = %q, want %q", got.Season, tt.wantSeasonHasJP)
+			}
+		})
+	}
+}
+
+func TestNewDBWorkListItems(t *testing.T) {
+	t.Parallel()
+
+	ctx := i18n.SetLocale(context.Background(), "ja")
+	works := []*model.Work{
+		{ID: 10, Title: "A", Status: model.WorkStatusPublished, ImageData: "{}"},
+		{ID: 11, Title: "B", Status: model.WorkStatusArchived, ImageData: ""},
+	}
+
+	got := NewDBWorkListItems(ctx, works)
+
+	if len(got) != 2 {
+		t.Fatalf("len(got) = %d, want 2", len(got))
+	}
+	if got[0].ID != WorkID(10) || !got[0].HasImage {
+		t.Errorf("got[0] = %+v, want ID=10 HasImage=true", got[0])
+	}
+	if got[1].ID != WorkID(11) || got[1].HasImage {
+		t.Errorf("got[1] = %+v, want ID=11 HasImage=false", got[1])
+	}
 }

@@ -73,21 +73,20 @@ func workFromPopularRow(row query.GetPopularWorksRow) *model.Work {
 		RecommendedImageURL: row.RecommendedImageUrl,
 		WatchersCount:       row.WatchersCount,
 	}
-
-	if row.ImageData.Valid {
-		work.ImageData = row.ImageData.String
-	}
+	applyImageData(work, row.ImageData)
 	applyNullableWorkFields(work, row.SeasonYear, row.SeasonName, row.CreatedAt)
 	return work
 }
 
 // applyNullableWorkFields maps sqlc's nullable columns onto *model.Work.
 // SeasonYear / SeasonName / CreatedAt show up on multiple row types, so the
-// conversion is centralised here to avoid drift between callers.
+// conversion is centralised here to avoid drift between callers. Callers that
+// do not load CreatedAt may pass sql.NullTime{} to skip it.
 //
 // [Ja] sqlc 生成型の nullable カラムを *model.Work にマッピングするヘルパー。
 // SeasonYear / SeasonName / CreatedAt は複数の row 型で共通するため、
 // 呼び出し元ごとに揺れないよう変換ロジックを 1 箇所に集約している。
+// CreatedAt をロードしない呼び出し元は sql.NullTime{} を渡すことでスキップできる。
 func applyNullableWorkFields(work *model.Work, seasonYear, seasonName sql.NullInt32, createdAt sql.NullTime) {
 	if seasonYear.Valid {
 		v := seasonYear.Int32
@@ -99,6 +98,19 @@ func applyNullableWorkFields(work *model.Work, seasonYear, seasonName sql.NullIn
 	}
 	if createdAt.Valid {
 		work.CreatedAt = createdAt.Time
+	}
+}
+
+// applyImageData maps the work_images.image_data column onto *model.Work.
+// A LEFT JOIN with no matching work_images row yields Valid=false, in which
+// case ImageData stays as the empty string.
+//
+// [Ja] work_images.image_data カラムを *model.Work にマッピングするヘルパー。
+// LEFT JOIN で work_images 行が一致しない場合は Valid=false となり、
+// ImageData は空文字列のままになる。
+func applyImageData(work *model.Work, imageData sql.NullString) {
+	if imageData.Valid {
+		work.ImageData = imageData.String
 	}
 }
 
@@ -116,7 +128,7 @@ type DBWorkListParams struct {
 	PerPage          int32
 }
 
-func (r *WorkRepository) ListForDB(ctx context.Context, params DBWorkListParams) ([]model.DBWorkListItem, error) {
+func (r *WorkRepository) ListForDB(ctx context.Context, params DBWorkListParams) ([]*model.Work, error) {
 	offset := (params.Page - 1) * params.PerPage
 
 	rows, err := r.queries.ListDBWorks(ctx, query.ListDBWorksParams{
@@ -132,23 +144,19 @@ func (r *WorkRepository) ListForDB(ctx context.Context, params DBWorkListParams)
 		return nil, err
 	}
 
-	items := make([]model.DBWorkListItem, len(rows))
+	works := make([]*model.Work, len(rows))
 	for i, row := range rows {
-		items[i] = model.DBWorkListItem{
+		work := &model.Work{
 			ID:            model.WorkID(row.ID),
 			Title:         row.Title,
 			WatchersCount: row.WatchersCount,
-			Status:        string(row.Status),
-			HasImage:      row.HasImage,
+			Status:        model.WorkStatus(row.Status),
 		}
-		if row.SeasonYear.Valid {
-			items[i].SeasonYear = &row.SeasonYear.Int32
-		}
-		if row.SeasonName.Valid {
-			items[i].SeasonName = &row.SeasonName.Int32
-		}
+		applyImageData(work, row.ImageData)
+		applyNullableWorkFields(work, row.SeasonYear, row.SeasonName, sql.NullTime{})
+		works[i] = work
 	}
-	return items, nil
+	return works, nil
 }
 
 func (r *WorkRepository) CountForDB(ctx context.Context, params DBWorkListParams) (int64, error) {
