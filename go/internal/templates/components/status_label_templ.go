@@ -9,9 +9,10 @@ import (
 	"github.com/a-h/templ"
 	templruntime "github.com/a-h/templ/runtime"
 	"github.com/annict/annict/go/internal/templates"
+	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-func StatusLabel(status string) templ.Component {
+func StatusLabel(status viewmodel.WorkStatus) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -33,7 +34,7 @@ func StatusLabel(status string) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		switch status {
-		case "published":
+		case viewmodel.WorkStatusPublished:
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<span class=\"badge badge-success\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -41,7 +42,7 @@ func StatusLabel(status string) templ.Component {
 			var templ_7745c5c3_Var2 string
 			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "status_published"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/status_label.templ`, Line: 8, Col: 75}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/status_label.templ`, Line: 11, Col: 75}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
@@ -51,7 +52,7 @@ func StatusLabel(status string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-		case "archived":
+		case viewmodel.WorkStatusArchived:
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<span class=\"badge badge-warning\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -59,7 +60,7 @@ func StatusLabel(status string) templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "status_archived"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/status_label.templ`, Line: 10, Col: 74}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/status_label.templ`, Line: 13, Col: 74}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -69,7 +70,7 @@ func StatusLabel(status string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-		case "deleted":
+		case viewmodel.WorkStatusDeleted:
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<span class=\"badge badge-destructive\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -77,7 +78,7 @@ func StatusLabel(status string) templ.Component {
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "status_deleted"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/status_label.templ`, Line: 12, Col: 77}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/status_label.templ`, Line: 15, Col: 77}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {

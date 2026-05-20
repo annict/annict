@@ -1,14 +1,17 @@
 package components
 
-import "github.com/annict/annict/go/internal/templates"
+import (
+	"github.com/annict/annict/go/internal/templates"
+	"github.com/annict/annict/go/internal/viewmodel"
+)
 
-templ StatusLabel(status string) {
+templ StatusLabel(status viewmodel.WorkStatus) {
 	switch status {
-		case "published":
+		case viewmodel.WorkStatusPublished:
 			<span class="badge badge-success">{ templates.T(ctx, "status_published") }</span>
-		case "archived":
+		case viewmodel.WorkStatusArchived:
 			<span class="badge badge-warning">{ templates.T(ctx, "status_archived") }</span>
-		case "deleted":
+		case viewmodel.WorkStatusDeleted:
 			<span class="badge badge-destructive">{ templates.T(ctx, "status_deleted") }</span>
 	}
 }

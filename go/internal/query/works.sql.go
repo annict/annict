@@ -294,7 +294,7 @@ SELECT
     w.season_name,
     w.watchers_count,
     w.status,
-    CASE WHEN wi.id IS NOT NULL THEN true ELSE false END AS has_image
+    wi.image_data
 FROM works w
 LEFT JOIN work_images wi ON w.id = wi.work_id
 WHERE w.status != 'deleted'
@@ -323,13 +323,13 @@ type ListDBWorksParams struct {
 }
 
 type ListDBWorksRow struct {
-	ID            int64         `db:"id"`
-	Title         string        `db:"title"`
-	SeasonYear    sql.NullInt32 `db:"season_year"`
-	SeasonName    sql.NullInt32 `db:"season_name"`
-	WatchersCount int32         `db:"watchers_count"`
-	Status        WorkStatus    `db:"status"`
-	HasImage      bool          `db:"has_image"`
+	ID            int64          `db:"id"`
+	Title         string         `db:"title"`
+	SeasonYear    sql.NullInt32  `db:"season_year"`
+	SeasonName    sql.NullInt32  `db:"season_name"`
+	WatchersCount int32          `db:"watchers_count"`
+	Status        WorkStatus     `db:"status"`
+	ImageData     sql.NullString `db:"image_data"`
 }
 
 func (q *Queries) ListDBWorks(ctx context.Context, arg ListDBWorksParams) ([]ListDBWorksRow, error) {
@@ -356,7 +356,7 @@ func (q *Queries) ListDBWorks(ctx context.Context, arg ListDBWorksParams) ([]Lis
 			&i.SeasonName,
 			&i.WatchersCount,
 			&i.Status,
-			&i.HasImage,
+			&i.ImageData,
 		); err != nil {
 			return nil, err
 		}
