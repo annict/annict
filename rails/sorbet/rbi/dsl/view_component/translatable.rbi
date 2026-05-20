@@ -11,11 +11,11 @@ module ViewComponent::Translatable
   mixes_in_class_methods GeneratedClassMethods
 
   module GeneratedClassMethods
-    def i18n_backend; end
-    def i18n_backend=(value); end
+    def __vc_i18n_backend; end
+    def __vc_i18n_backend=(value); end
   end
 
   module GeneratedInstanceMethods
-    def i18n_backend; end
+    def __vc_i18n_backend; end
   end
 end

@@ -31,7 +31,6 @@ class Fragment::ApplicationController
     include ::UrlHelper
     include ::VodHelper
     include ::WorksHelper
-    include ::PreviewHelper
     include ::Doorkeeper::DashboardHelper
     include ::DeviseHelper
 
