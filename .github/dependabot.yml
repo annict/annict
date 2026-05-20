@@ -10,24 +10,87 @@ updates:
     directory: "/go"
     schedule:
       interval: "daily"
+    # Grouped PRs intentionally exclude major version bumps: a major update
+    # can include breaking changes and we want to review each one in its
+    # own PR. Every group below pins update-types to patch / minor only.
+    #
+    # [Ja] グループ PR ではメジャー更新を意図的に除外している。
+    # メジャー更新は破壊的変更を含むことがあり個別 PR でレビューしたいため、
+    # 以下のすべてのグループで update-types を patch / minor のみに絞っている
+    groups:
+      river:
+        patterns:
+          - "github.com/riverqueue/*"
+        update-types:
+          - "patch"
+          - "minor"
+      golang-x:
+        patterns:
+          - "golang.org/x/*"
+        update-types:
+          - "patch"
+          - "minor"
+      jackc-pgx:
+        patterns:
+          - "github.com/jackc/*"
+        update-types:
+          - "patch"
+          - "minor"
+      aws-sdk-go-v2:
+        patterns:
+          - "github.com/aws/aws-sdk-go-v2"
+          - "github.com/aws/aws-sdk-go-v2/*"
+          - "github.com/aws/smithy-go"
+        update-types:
+          - "patch"
+          - "minor"
 
   # Go version npm dependencies (pnpm)
   - package-ecosystem: "npm"
     directory: "/go"
     schedule:
       interval: "daily"
+    # Grouped PRs intentionally exclude major version bumps: a major update
+    # can include breaking changes and we want to review each one in its
+    # own PR. Every group below pins update-types to patch / minor only.
+    #
+    # [Ja] グループ PR ではメジャー更新を意図的に除外している。
+    # メジャー更新は破壊的変更を含むことがあり個別 PR でレビューしたいため、
+    # 以下のすべてのグループで update-types を patch / minor のみに絞っている
+    groups:
+      tailwindcss:
+        patterns:
+          - "tailwindcss"
+          - "@tailwindcss/*"
+        update-types:
+          - "patch"
+          - "minor"
 
   # Rails version bundler dependencies
   - package-ecosystem: "bundler"
     directory: "/rails"
     schedule:
       interval: "daily"
+    # The Rails version is in maintenance mode; we only handle security
+    # updates driven by Dependabot alerts and do not create routine
+    # version-update PRs.
+    #
+    # [Ja] Rails 版はメンテナンスモードに入っており、Dependabot alerts に基づく
+    # セキュリティアップデートのみ対応する。通常の version update PR は作らない
+    open-pull-requests-limit: 0
 
   # Rails version npm dependencies
   - package-ecosystem: "npm"
     directory: "/rails"
     schedule:
       interval: "daily"
+    # The Rails version is in maintenance mode; we only handle security
+    # updates driven by Dependabot alerts and do not create routine
+    # version-update PRs.
+    #
+    # [Ja] Rails 版はメンテナンスモードに入っており、Dependabot alerts に基づく
+    # セキュリティアップデートのみ対応する。通常の version update PR は作らない
+    open-pull-requests-limit: 0
 
   # GitHub Actions
   - package-ecosystem: "github-actions"
