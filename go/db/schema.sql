@@ -1,6 +1,6 @@
 
 -- Dumped from database version 17.5 (Debian 17.5-1.pgdg130+1)
--- Dumped by pg_dump version 17.7 (Debian 17.7-3.pgdg13+1)
+-- Dumped by pg_dump version 17.9 (Debian 17.9-1.pgdg13+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -5812,6 +5812,13 @@ CREATE INDEX index_records_on_user_id ON public.records USING btree (user_id);
 
 
 --
+-- Name: index_records_on_user_id_and_watched_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_records_on_user_id_and_watched_at ON public.records USING btree (user_id, watched_at) WHERE (deleted_at IS NULL);
+
+
+--
 -- Name: index_records_on_watched_at; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -7853,4 +7860,5 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20260111101233'),
     ('20260210055715'),
     ('20260210081156'),
-    ('20260322083140');
+    ('20260322083140'),
+    ('20260521153415');
