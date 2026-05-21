@@ -11,6 +11,23 @@ import (
 )
 
 type Querier interface {
+	// Aggregates the number of records per day for the given user, after
+	// converting watched_at from UTC to the supplied time zone. The result
+	// only contains days that have at least one record; callers are expected
+	// to zero-fill missing days when building a contiguous range.
+	//
+	// watched_at is stored as a UTC timestamp (Rails convention) even though
+	// the column type is `timestamp without time zone`, so it is interpreted
+	// as UTC before being converted to the caller's time zone.
+	//
+	// [Ja] watched_at を UTC から指定タイムゾーンへ変換した上で、ユーザー単位の
+	// 日次レコード数を集計する。結果には記録のある日のみが含まれるため、連続した
+	// 日付範囲を作るときは呼び出し元で 0 埋めする前提とする。
+	//
+	// watched_at は `timestamp without time zone` 型だが Rails 規約に従って
+	// UTC で保存されているため、いったん UTC として解釈してから指定タイムゾーン
+	// に変換する。
+	AggregateDailyRecordCountsByUserID(ctx context.Context, arg AggregateDailyRecordCountsByUserIDParams) ([]AggregateDailyRecordCountsByUserIDRow, error)
 	CountActivitiesByUserID(ctx context.Context, userID int64) (int64, error)
 	CountDBWorks(ctx context.Context, arg CountDBWorksParams) (int64, error)
 	CountEpisodeRecordsByUserID(ctx context.Context, userID int64) (int64, error)
@@ -33,6 +50,14 @@ type Querier interface {
 	DeleteExpiredSignInCodes(ctx context.Context, expiresAt time.Time) error
 	DeleteSession(ctx context.Context, sessionID string) error
 	DeleteUnusedPasswordResetTokensByUserID(ctx context.Context, userID int64) error
+	// Looks up a user ID by username, excluding soft-deleted users.
+	// Used by features that should return 404 for deleted users (e.g. tracking
+	// heatmap fragment) without exposing other user attributes.
+	//
+	// [Ja] 論理削除されていないユーザーの ID を username で検索する。
+	// 削除済みユーザーに対して 404 を返すべき機能 (例: 視聴記録ヒートマップ
+	// フラグメント) で、他のユーザー属性を取得せずに利用する。
+	GetActiveUserIDByUsername(ctx context.Context, lower string) (int64, error)
 	GetActivityByID(ctx context.Context, id int64) (GetActivityByIDRow, error)
 	GetActivityGroupByID(ctx context.Context, id int64) (ActivityGroup, error)
 	GetActivityGroupByUserAndType(ctx context.Context, arg GetActivityGroupByUserAndTypeParams) (ActivityGroup, error)
