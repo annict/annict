@@ -306,6 +306,17 @@ func (m *ReverseProxyMiddleware) isGoHandledPath(path string) bool {
 		return true
 	}
 
+	// /fragment/@{username}/tracking_heatmap pattern. Only the tracking
+	// heatmap fragment endpoint moves to Go; other /fragment/... paths are
+	// still served by Rails until their Go versions land.
+	//
+	// [Ja] /fragment/@{username}/tracking_heatmap パターンの判定。
+	// /fragment/ 配下のうち、tracking_heatmap だけが Go 版に移行している段階で、
+	// 他の /fragment/... は Go 版実装が揃うまで Rails 版が処理する。
+	if strings.HasPrefix(path, "/fragment/@") && strings.HasSuffix(path, "/tracking_heatmap") {
+		return true
+	}
+
 	return false
 }
 
