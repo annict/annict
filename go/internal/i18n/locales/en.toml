@@ -1238,3 +1238,8 @@ other = "Privacy Policy"
 [footer_legal]
 description = "Footer - Legal"
 other = "Legal Notice"
+
+# Common error messages
+[error_user_not_found]
+description = "Message shown when a user is not found"
+other = "User not found"

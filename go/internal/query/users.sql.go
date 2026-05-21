@@ -53,6 +53,28 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateU
 	return i, err
 }
 
+const getActiveUserIDByUsername = `-- name: GetActiveUserIDByUsername :one
+SELECT id
+FROM users
+WHERE LOWER(username) = LOWER($1)
+  AND deleted_at IS NULL
+LIMIT 1
+`
+
+// Looks up a user ID by username, excluding soft-deleted users.
+// Used by features that should return 404 for deleted users (e.g. tracking
+// heatmap fragment) without exposing other user attributes.
+//
+// [Ja] 論理削除されていないユーザーの ID を username で検索する。
+// 削除済みユーザーに対して 404 を返すべき機能 (例: 視聴記録ヒートマップ
+// フラグメント) で、他のユーザー属性を取得せずに利用する。
+func (q *Queries) GetActiveUserIDByUsername(ctx context.Context, lower string) (int64, error) {
+	row := q.db.QueryRowContext(ctx, getActiveUserIDByUsername, lower)
+	var id int64
+	err := row.Scan(&id)
+	return id, err
+}
+
 const getUserByEmail = `-- name: GetUserByEmail :one
 SELECT id, username, email, role, created_at, updated_at
 FROM users

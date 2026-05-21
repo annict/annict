@@ -1237,3 +1237,8 @@ other = "プライバシーポリシー"
 [footer_legal]
 description = "フッター - 特商法表記"
 other = "特商法表記"
+
+# エラー共通メッセージ
+[error_user_not_found]
+description = "ユーザーが見つからない場合のエラーメッセージ"
+other = "ユーザーが見つかりませんでした"

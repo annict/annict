@@ -4,6 +4,7 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"errors"
 
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
@@ -95,6 +96,25 @@ func (r *UserRepository) Create(ctx context.Context, params UserCreateParams) (*
 func (r *UserRepository) GetByUsername(ctx context.Context, username string) error {
 	_, err := r.queries.GetUserByUsername(ctx, username)
 	return err
+}
+
+// FindActiveIDByUsername looks up a non-deleted user's ID by username.
+// Returns (nil, nil) when the username does not exist or the user is
+// soft-deleted (deleted_at IS NOT NULL).
+//
+// [Ja] 論理削除されていないユーザーの ID を username で取得する。
+// ユーザーが存在しない場合や削除済み (deleted_at IS NOT NULL) の場合は
+// (nil, nil) を返す。
+func (r *UserRepository) FindActiveIDByUsername(ctx context.Context, username string) (*model.UserID, error) {
+	id, err := r.queries.GetActiveUserIDByUsername(ctx, username)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	userID := model.UserID(id)
+	return &userID, nil
 }
 
 // UpdateStripeSubscriberID はユーザーのStripeサブスクライバーIDを更新します
