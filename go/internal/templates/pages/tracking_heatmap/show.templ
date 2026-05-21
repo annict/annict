@@ -1,0 +1,36 @@
+// Package tracking_heatmap renders the watch-record heatmap HTML fragment.
+// [Ja] tracking_heatmap パッケージは視聴記録ヒートマップの HTML フラグメントをレンダリングする。
+package tracking_heatmap
+
+import (
+	"strconv"
+
+	"github.com/annict/annict/go/internal/viewmodel"
+)
+
+// Show renders the heatmap fragment returned from GET
+// /fragment/@:username/tracking_heatmap. The output is wrapped in
+// <turbo-frame id="tracking-heatmap"> and matches the Rails ERB
+// (rails/app/views/fragment/tracking_heatmaps/show.html.erb) so the
+// Stimulus controller and SCSS on the profile page can render it
+// unmodified.
+//
+// [Ja] Show は GET /fragment/@:username/tracking_heatmap が返すヒートマップ
+// フラグメントをレンダリングする。出力は <turbo-frame id="tracking-heatmap">
+// でラップされ、Rails 版 ERB (rails/app/views/fragment/tracking_heatmaps/show.html.erb)
+// と一致する HTML を返すことで、プロフィールページの Stimulus controller と
+// SCSS を無改修で動かす。
+templ Show(cells []viewmodel.TrackingHeatmapCell) {
+	<turbo-frame id="tracking-heatmap">
+		<div class="c-tracking-heatmap">
+			for _, cell := range cells {
+				<div
+					class={ "c-tracking-heatmap__day", "c-tracking-heatmap__density-" + strconv.Itoa(cell.LeveledCount) }
+					data-bs-toggle="tooltip"
+					data-bs-placement="top"
+					title={ cell.Date + ": " + strconv.Itoa(cell.Count) }
+				></div>
+			}
+		</div>
+	</turbo-frame>
+}

@@ -38,6 +38,7 @@ import (
 	"github.com/annict/annict/go/internal/handler/supporters"
 	"github.com/annict/annict/go/internal/handler/supporters_checkout"
 	"github.com/annict/annict/go/internal/handler/supporters_portal"
+	"github.com/annict/annict/go/internal/handler/tracking_heatmap"
 	stripewebhook "github.com/annict/annict/go/internal/handler/webhooks/stripe"
 	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/image"
@@ -314,6 +315,12 @@ func main() {
 	// ユーザーリポジトリの初期化
 	userRepo := repository.NewUserRepository(queries)
 
+	// Initialize the tracking heatmap fragment handler.
+	// [Ja] 視聴記録ヒートマップフラグメントハンドラーの初期化。
+	recordRepo := repository.NewRecordRepository(queries)
+	getTrackingHeatmapUC := usecase.NewGetTrackingHeatmapUsecase(userRepo, recordRepo)
+	trackingHeatmapHandler := tracking_heatmap.NewHandler(getTrackingHeatmapUC)
+
 	// サインインコードリポジトリの初期化
 	signInCodeRepo := repository.NewSignInCodeRepository(queries)
 
@@ -469,6 +476,10 @@ func main() {
 	// iCalendar配信
 	r.Get("/@{username}/ics", icsHandler.Show) // メインのエンドポイント
 	r.Get("/ics", icsHandler.Show)             // Apple カレンダー互換の代替パス（クエリパラメータで username を指定）
+
+	// Tracking heatmap fragment.
+	// [Ja] 視聴記録ヒートマップフラグメント。
+	r.Get("/fragment/@{username}/tracking_heatmap", trackingHeatmapHandler.Show)
 
 	// サーバー起動
 	// Dockerコンテナ内で動かす場合、0.0.0.0でリッスンする必要がある
