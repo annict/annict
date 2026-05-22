@@ -388,9 +388,6 @@ module GeneratedPathHelpersModule
   def fragment_trackable_work_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }
-  def fragment_tracking_heatmap_path(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
   def fragment_work_record_list_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }

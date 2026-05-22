@@ -199,8 +199,6 @@ ignore:
       - Rails/TimeZone
   - app/controllers/forum/posts_controller.rb:
       - Rails/TimeZone
-  - app/controllers/fragment/tracking_heatmaps_controller.rb:
-      - Rails/Date
   - app/controllers/friends_controller.rb:
       - Rails/PluckId
   - app/controllers/libraries_controller.rb:

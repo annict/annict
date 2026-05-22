@@ -207,7 +207,6 @@ Rails.application.routes.draw do
   match "/fragment/@:username/records",                         via: :get,    as: :fragment_record_list,                       to: "fragment/records#index",                              username: ROUTING_USERNAME_FORMAT
   match "/fragment/@:username/records/:record_id",              via: :get,    as: :fragment_record,                            to: "fragment/records#show",                               username: ROUTING_USERNAME_FORMAT
   match "/fragment/@:username/records/:record_id/edit",         via: :get,    as: :fragment_edit_record,                       to: "fragment/records#edit",                               username: ROUTING_USERNAME_FORMAT
-  match "/fragment/@:username/tracking_heatmap",                via: :get,    as: :fragment_tracking_heatmap,                  to: "fragment/tracking_heatmaps#show",                     username: ROUTING_USERNAME_FORMAT
   match "/fragment/activity_groups/:activity_group_id/items",   via: :get,    as: :fragment_activity_item_list,                to: "fragment/activity_items#index"
   match "/fragment/episodes/:episode_id/records",               via: :get,    as: :fragment_episode_record_list,               to: "fragment/episode_records#index"
   match "/fragment/works/:work_id/collection_items",            via: :post,   as: :fragment_collection_item_list,              to: "fragment/collection_items#create"
