@@ -16,9 +16,6 @@
   ],
   "ignorePatterns": [
     "**/node_modules/",
-    "**/vendor/",
-    "apm.lock.yaml",
-    "apm_modules/",
     "go/internal/query/*.go",
     "go/internal/templates/*_templ.go",
     "go/static/",
