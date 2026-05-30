@@ -99,12 +99,21 @@ clean: ## ビルド成果物をクリーン
 	find . -name "*_templ.go" -type f -delete
 
 # データベースマイグレーションコマンド
+
+# Strip the random \restrict / \unrestrict lines that pg_dump >= 17.6 emits into
+# db/schema.sql, which dbmate writes on both up and dump. Shared by db-migrate
+# and db-dump so the workaround lives in one place.
+# https://github.com/amacneil/dbmate/issues/678
+#
+# [Ja] dbmate が up / dump の双方で db/schema.sql へ書き込む、pg_dump 17.6 以降が
+# 出力するランダムな \restrict / \unrestrict 行を削除する。db-migrate と db-dump で
+# 共有し、回避策を 1 箇所にまとめる。
+STRIP_SCHEMA_RESTRICT = sed -i '/^\\restrict /d;/^\\unrestrict /d' db/schema.sql
+
 .PHONY: db-migrate
 db-migrate: ## データベースマイグレーションを実行
 	$(OP_RUN_DEV) dbmate up
-	# PostgreSQL 17.6以降のpg_dumpが生成するランダムな\restrict行を削除
-	# https://github.com/amacneil/dbmate/issues/678
-	@sed -i '/^\\restrict /d;/^\\unrestrict /d' db/schema.sql
+	@$(STRIP_SCHEMA_RESTRICT)
 
 .PHONY: db-setup-test
 db-setup-test: ## テスト用データベースのスキーマをセットアップ
@@ -134,9 +143,7 @@ db-new: ## 新しいマイグレーションファイルを作成（使用法: m
 .PHONY: db-dump
 db-dump: ## データベーススキーマをdb/schema.sqlにダンプ
 	$(OP_RUN_DEV) dbmate dump
-	# PostgreSQL 17.6以降のpg_dumpが生成するランダムな\restrict行を削除
-	# https://github.com/amacneil/dbmate/issues/678
-	@sed -i '/^\\restrict /d;/^\\unrestrict /d' db/schema.sql
+	@$(STRIP_SCHEMA_RESTRICT)
 
 .PHONY: sqlc-generate
 sqlc-generate: ## SQLクエリからGoコードを生成
