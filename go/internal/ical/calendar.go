@@ -34,8 +34,8 @@ func (c *Calendar) ToICS() string {
 	b.WriteString("PRODID:-//Annict//Annict Calendar//EN\r\n")
 	b.WriteString("CALSCALE:GREGORIAN\r\n")
 	b.WriteString("METHOD:PUBLISH\r\n")
-	b.WriteString(fmt.Sprintf("X-WR-TIMEZONE:%s\r\n", c.TimeZone))
-	b.WriteString(fmt.Sprintf("X-WR-CALNAME:%s\r\n", c.CalName))
+	fmt.Fprintf(&b, "X-WR-TIMEZONE:%s\r\n", c.TimeZone)
+	fmt.Fprintf(&b, "X-WR-CALNAME:%s\r\n", c.CalName)
 
 	// タイムゾーン情報
 	b.WriteString(c.generateVTimezone())
@@ -67,11 +67,11 @@ func (c *Calendar) generateVTimezone() string {
 
 	var b strings.Builder
 	b.WriteString("BEGIN:VTIMEZONE\r\n")
-	b.WriteString(fmt.Sprintf("TZID:%s\r\n", c.TimeZone))
+	fmt.Fprintf(&b, "TZID:%s\r\n", c.TimeZone)
 	b.WriteString("BEGIN:STANDARD\r\n")
-	b.WriteString(fmt.Sprintf("TZOFFSETFROM:%s\r\n", offsetStr))
-	b.WriteString(fmt.Sprintf("TZOFFSETTO:%s\r\n", offsetStr))
-	b.WriteString(fmt.Sprintf("TZNAME:%s\r\n", tzName))
+	fmt.Fprintf(&b, "TZOFFSETFROM:%s\r\n", offsetStr)
+	fmt.Fprintf(&b, "TZOFFSETTO:%s\r\n", offsetStr)
+	fmt.Fprintf(&b, "TZNAME:%s\r\n", tzName)
 	b.WriteString("DTSTART:19700101T000000\r\n")
 	b.WriteString("END:STANDARD\r\n")
 	b.WriteString("END:VTIMEZONE\r\n")
@@ -90,22 +90,22 @@ func (c *Calendar) generateVEvent(event Event) string {
 	}
 
 	b.WriteString("BEGIN:VEVENT\r\n")
-	b.WriteString(fmt.Sprintf("UID:%s\r\n", event.UID))
+	fmt.Fprintf(&b, "UID:%s\r\n", event.UID)
 
 	if event.AllDay {
 		// 終日イベント（Date形式）
 		// 終日イベントもタイムゾーン変換してから日付を取得
-		b.WriteString(fmt.Sprintf("DTSTART;VALUE=DATE:%s\r\n", formatDate(event.Start.In(loc))))
-		b.WriteString(fmt.Sprintf("DTEND;VALUE=DATE:%s\r\n", formatDate(event.End.In(loc))))
+		fmt.Fprintf(&b, "DTSTART;VALUE=DATE:%s\r\n", formatDate(event.Start.In(loc)))
+		fmt.Fprintf(&b, "DTEND;VALUE=DATE:%s\r\n", formatDate(event.End.In(loc)))
 	} else {
 		// 時刻指定イベント（DateTime形式）
 		// UTCで渡された時刻をカレンダーのタイムゾーンに変換してからフォーマット
-		b.WriteString(fmt.Sprintf("DTSTART;TZID=%s:%s\r\n", c.TimeZone, formatDateTime(event.Start.In(loc))))
-		b.WriteString(fmt.Sprintf("DTEND;TZID=%s:%s\r\n", c.TimeZone, formatDateTime(event.End.In(loc))))
+		fmt.Fprintf(&b, "DTSTART;TZID=%s:%s\r\n", c.TimeZone, formatDateTime(event.Start.In(loc)))
+		fmt.Fprintf(&b, "DTEND;TZID=%s:%s\r\n", c.TimeZone, formatDateTime(event.End.In(loc)))
 	}
 
-	b.WriteString(fmt.Sprintf("SUMMARY:%s\r\n", escapeText(event.Summary)))
-	b.WriteString(fmt.Sprintf("DESCRIPTION:%s\r\n", escapeText(event.Description)))
+	fmt.Fprintf(&b, "SUMMARY:%s\r\n", escapeText(event.Summary))
+	fmt.Fprintf(&b, "DESCRIPTION:%s\r\n", escapeText(event.Description))
 	b.WriteString("END:VEVENT\r\n")
 
 	return b.String()
