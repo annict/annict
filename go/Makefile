@@ -90,8 +90,13 @@ lint-golangci: ## golangci-lintを実行
 	@echo "🔍 golangci-lintを実行中..."
 	@golangci-lint run --config=.golangci.yml ./...
 
+.PHONY: lint-comments
+lint-comments: ## コメントの英日併記をチェック ([Ja] マーカーの誤用) / Check bilingual comments ([Ja] marker misuse)
+	@echo "🔍 コメントの英日併記をチェック中..."
+	@go run ./cmd/commentlint .
+
 .PHONY: lint
-lint: lint-golangci ## リントを実行（golangci-lintを使用）
+lint: lint-golangci lint-comments ## リントを実行（golangci-lint + コメント併記チェック）
 
 .PHONY: clean
 clean: ## ビルド成果物をクリーン
