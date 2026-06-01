@@ -26,12 +26,17 @@ linters:
   exclusions:
     rules:
       # テストファイルでは gosec と depguard を無効化
-      - path: '(.+)_test\.go'
+      - path: "(.+)_test\\.go"
         linters:
           - gosec
           - depguard
+      # commentlint is a dev-only lint tool that reads scanned files via dynamic paths, so gosec is disabled for it.
+      # [Ja] commentlint は開発用のリントツールで、走査対象ファイルを動的なパスで読むため gosec を無効化
+      - path: "cmd/commentlint/.*"
+        linters:
+          - gosec
       # templ 自動生成ファイルは一部のリンターから除外（depguard は有効化）
-      - path: '(.+)_templ\.go'
+      - path: "(.+)_templ\\.go"
         linters:
           - govet
           - staticcheck
@@ -40,7 +45,7 @@ linters:
           - ineffassign
           - unused
       # シード関連ファイルはすべてのリンターから除外（開発/テスト用ユーティリティのため）
-      - path: 'internal/usecase/seed/.+\.go'
+      - path: "internal/usecase/seed/.+\\.go"
         linters:
           - govet
           - staticcheck
@@ -49,7 +54,7 @@ linters:
           - errcheck
           - ineffassign
           - unused
-      - path: 'cmd/seed/.+\.go'
+      - path: "cmd/seed/.+\\.go"
         linters:
           - govet
           - staticcheck
@@ -58,7 +63,7 @@ linters:
           - errcheck
           - ineffassign
           - unused
-      - path: 'internal/seed/.+\.go'
+      - path: "internal/seed/.+\\.go"
         linters:
           - govet
           - staticcheck
@@ -78,8 +83,23 @@ linters:
   settings:
     # gosec の設定
     gosec:
-      # 除外する脆弱性ルール（必要に応じて調整）
-      excludes: []
+      # 除外する脆弱性ルール
+      # G120: the unlimited-body-size warning on r.FormValue / r.ParseForm.
+      #   internal/middleware/request_body_limit.go applies a uniform body size cap to all
+      #   requests via RequestBodyLimitMiddleware (wired globally in main.go), so the actual
+      #   protection is already in place. gosec G120 detects this per-function, so even with the
+      #   middleware wrapping, every r.FormValue / r.ParseForm in handlers stays flagged. Excluding
+      #   it here is cheaper to manage than scattering per-line nolint over 20+ sites and makes the
+      #   protecting structure explicit.
+      #
+      # [Ja] G120: r.FormValue / r.ParseForm のボディサイズ未制限の指摘。
+      #   internal/middleware/request_body_limit.go の RequestBodyLimitMiddleware で全リクエストに
+      #   一律のボディサイズ上限を適用している (main.go でグローバルに組み込み済み) ため、実質的な
+      #   保護は達成している。gosec G120 は関数単位のヒューリスティックで検出するため、ミドルウェアで
+      #   ラップしてもハンドラー内の r.FormValue / r.ParseForm は検出対象として残る。20+ 箇所に
+      #   個別 nolint を散在させるより、ここで一括除外する方が管理コストが低く、保護している構造を明示できる。
+      excludes:
+        - G120
       # セキュリティの重要度（low, medium, high）
       severity: medium
       confidence: medium
@@ -408,7 +428,7 @@ formatters:
       - vendor/.*
       - static/.*
       - node_modules/.*
-      - '(.+)_templ\.go' # templ 自動生成ファイル
+      - "(.+)_templ\\.go" # templ 自動生成ファイル
 
   settings:
     # goimports の設定

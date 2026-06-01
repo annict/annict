@@ -1,165 +1,285 @@
+# syntax=docker/dockerfile:1.7
+
 FROM debian:trixie
 
 ARG USER_ID=1000
 ARG GROUP_ID=1000
 ARG USERNAME=developer
 
-# --- システムパッケージ ---
-RUN <<EOF
+# --- BuildKit apt cache configuration ---
+# [Ja] BuildKit の apt キャッシュ設定
+#
+# Disable apt's automatic cleanup so the .debs downloaded into the
+# BuildKit cache mount (/var/cache/apt + /var/lib/apt) survive across
+# layers and rebuilds, keeping the apt cache hot.
+#
+# [Ja] apt の自動クリーンを無効化し、/var/cache/apt と /var/lib/apt のキャッシュマウントに
+# 入った .deb がレイヤーや再ビルドをまたいで残るようにして、apt キャッシュを温存する。
+RUN rm -f /etc/apt/apt.conf.d/docker-clean && \
+    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' \
+      > /etc/apt/apt.conf.d/keep-cache
+
+# --- System packages ---
+# [Ja] システムパッケージ
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    <<EOF
+set -eu
 apt update
 apt dist-upgrade -yq
 
 PACKAGES=$(cat <<'PKGLIST' | sed 's/#.*//'
   build-essential
-  ca-certificates
+  ca-certificates           # Required for HTTPS connections [Ja] HTTPS 接続に必要
   curl
-  file               # Shrineによる画像アップロードに必要 (Rails)
-  fzf                # Claude Codeで使用
+  file                      # Required by Shrine for image uploads (Rails) [Ja] Shrine による画像アップロードに必要 (Rails)
+  fzf                       # Used by Claude Code [Ja] Claude Code で使用
   git
-  gnupg
-  imagemagick        # Shrineによる画像アップロードに必要 (Rails)
-  jq                 # Claude Codeで使用
-  libglib2.0-0       # libvipsの依存パッケージ (Rails)
-  libvips42          # 画像処理ライブラリ (Rails)
-  libasound2         # Playwright: ALSA音声ライブラリ
-  libatk-bridge2.0-0 # Playwright: ATKブリッジ
-  libatk1.0-0        # Playwright: ATK
-  libcairo2          # Playwright: 2Dグラフィックス
-  libcups2           # Playwright: 印刷システム
-  libdrm2            # Playwright: Direct Rendering Manager
-  libffi-dev         # Ruby拡張のビルドに必要
-  libgbm1            # Playwright: Generic Buffer Management
-  libnspr4           # Playwright: Netscape Portable Runtime
-  libnss3            # Playwright: Network Security Services
-  libpango-1.0-0     # Playwright: テキストレンダリング
-  libreadline-dev    # Rubyのreadline拡張に必要
-  libssl-dev         # SSL関連のビルドに必要
-  libxcomposite1     # Playwright: X11 Composite拡張
-  libxdamage1        # Playwright: X11 Damage拡張
-  libxfixes3         # Playwright: X11 Fixes拡張
-  libxkbcommon0      # Playwright: XKBキーボード処理
-  libxrandr2         # Playwright: X11 RandR拡張
-  libyaml-dev        # psych gemのインストールに必要 (Rails)
-  lsb-release
-  nano               # Claude Codeで使用
-  net-tools          # Claude Codeで使用 netstat (ネットワークデバッグ用)
-  psmisc             # Claude Codeで使用 fuser (プロセス特定用)
-  ripgrep            # Claude Codeで使用
+  gnupg                     # Required to dearmor the PostgreSQL/Redis/Stripe GPG keys [Ja] PostgreSQL/Redis/Stripe の GPG キーの dearmor に必要
+  imagemagick               # Required by Shrine for image uploads (Rails) [Ja] Shrine による画像アップロードに必要 (Rails)
+  jq                        # Used by Claude Code [Ja] Claude Code で使用
+  libasound2                # Playwright: ALSA audio library [Ja] Playwright: ALSA 音声ライブラリ
+  libatk-bridge2.0-0        # Playwright: ATK bridge [Ja] Playwright: ATK ブリッジ
+  libatk1.0-0               # Playwright: ATK [Ja] Playwright: ATK
+  libcairo2                 # Playwright: 2D graphics [Ja] Playwright: 2D グラフィックス
+  libcups2                  # Playwright: printing system [Ja] Playwright: 印刷システム
+  libdrm2                   # Playwright: Direct Rendering Manager [Ja] Playwright: Direct Rendering Manager
+  libffi-dev                # Required to build Ruby extensions [Ja] Ruby 拡張のビルドに必要
+  libgbm1                   # Playwright: Generic Buffer Management [Ja] Playwright: Generic Buffer Management
+  libglib2.0-0              # libvips dependency (Rails) [Ja] libvips の依存パッケージ (Rails)
+  libnspr4                  # Playwright: Netscape Portable Runtime [Ja] Playwright: Netscape Portable Runtime
+  libnss3                   # Playwright: Network Security Services [Ja] Playwright: Network Security Services
+  libpango-1.0-0            # Playwright: text rendering [Ja] Playwright: テキストレンダリング
+  libreadline-dev           # Required by the Ruby readline extension [Ja] Ruby の readline 拡張に必要
+  libssl-dev                # Required for SSL-related builds [Ja] SSL 関連のビルドに必要
+  libvips42                 # Image processing library (Rails) [Ja] 画像処理ライブラリ (Rails)
+  libxcomposite1            # Playwright: X11 Composite extension [Ja] Playwright: X11 Composite 拡張
+  libxdamage1               # Playwright: X11 Damage extension [Ja] Playwright: X11 Damage 拡張
+  libxfixes3                # Playwright: X11 Fixes extension [Ja] Playwright: X11 Fixes 拡張
+  libxkbcommon0             # Playwright: XKB keyboard handling [Ja] Playwright: XKB キーボード処理
+  libxrandr2                # Playwright: X11 RandR extension [Ja] Playwright: X11 RandR 拡張
+  libyaml-dev               # Required by the psych gem (Rails) [Ja] psych gem のインストールに必要 (Rails)
+  lsb-release               # Required to configure the PostgreSQL/Redis apt repositories [Ja] PostgreSQL/Redis の apt リポジトリ設定に必要
+  nano                      # Used by Claude Code [Ja] Claude Code で使用
+  net-tools                 # Used by Claude Code for netstat (network debugging) [Ja] Claude Code で使用 netstat (ネットワークデバッグ用)
+  psmisc                    # Used by Claude Code for fuser (process identification) [Ja] Claude Code で使用 fuser (プロセス特定用)
+  ripgrep                   # Used by Claude Code [Ja] Claude Code で使用
   sudo
-  tree               # Claude Codeで使用
+  tree                      # Used by Claude Code [Ja] Claude Code で使用
   unzip
-  vim                # Claude Codeで使用
-  zlib1g-dev         # Rubyのzlib拡張に必要
+  vim                       # Used by Claude Code [Ja] Claude Code で使用
+  zlib1g-dev                # Required by the Ruby zlib extension [Ja] Ruby の zlib 拡張に必要
   zsh
 PKGLIST
 )
 
 apt install -y --no-install-recommends $PACKAGES
-rm -rf /var/lib/apt/lists/*
 EOF
 
-# --- PostgreSQL クライアント ---
-RUN curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc \
-      | gpg --dearmor -o /etc/apt/trusted.gpg.d/postgresql.gpg && \
-    echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" \
+# --- PostgreSQL client ---
+# [Ja] PostgreSQL クライアント
+#
+# Place the apt repository key under /etc/apt/keyrings and reference it
+# via [signed-by=...]. The trusted.gpg.d/ approach is deprecated on
+# modern Debian releases.
+#
+# [Ja] apt リポジトリの鍵は /etc/apt/keyrings/ に置き、[signed-by=...] で参照する。
+# trusted.gpg.d/ 方式は現代の Debian では非推奨。
+#
+# Pin to postgresql-client-17 to match the shared Rails production
+# database (PostgreSQL 17); do not bump to 18.
+#
+# [Ja] 共有している Rails 本番 DB (PostgreSQL 17) に合わせて postgresql-client-17 に固定する。
+# 18 系には上げない。
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    install -d -m 0755 /etc/apt/keyrings && \
+    curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc \
+      | gpg --dearmor -o /etc/apt/keyrings/postgresql.gpg && \
+    chmod 0644 /etc/apt/keyrings/postgresql.gpg && \
+    echo "deb [signed-by=/etc/apt/keyrings/postgresql.gpg] http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" \
       > /etc/apt/sources.list.d/pgdg.list && \
-    apt update && apt install -y libpq-dev postgresql-client-17 && \
-    rm -rf /var/lib/apt/lists/*
+    apt update && \
+    apt install -y --no-install-recommends libpq-dev postgresql-client-17
 
 # --- Redis Tools ---
-RUN curl -fsSL https://packages.redis.io/gpg \
-      | gpg --dearmor -o /usr/share/keyrings/redis-archive-keyring.gpg && \
-    echo "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb $(lsb_release -cs) main" \
-      | tee /etc/apt/sources.list.d/redis.list && \
-    apt-get update && \
-    apt-get install -y redis-tools=6:7.4.* && \
-    rm -rf /var/lib/apt/lists/*
+# [Ja] Redis Tools
+#
+# Apt repository key is placed under /etc/apt/keyrings and referenced
+# via [signed-by=...] to match the other repositories above.
+#
+# [Ja] apt リポジトリの鍵は上記の他リポジトリに揃えて /etc/apt/keyrings/ に置き、
+# [signed-by=...] で参照する。
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    install -d -m 0755 /etc/apt/keyrings && \
+    curl -fsSL https://packages.redis.io/gpg \
+      | gpg --dearmor -o /etc/apt/keyrings/redis-archive-keyring.gpg && \
+    chmod 0644 /etc/apt/keyrings/redis-archive-keyring.gpg && \
+    echo "deb [signed-by=/etc/apt/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb $(lsb_release -cs) main" \
+      > /etc/apt/sources.list.d/redis.list && \
+    apt update && \
+    apt install -y --no-install-recommends redis-tools=6:7.4.*
 
 # --- Stripe CLI ---
-RUN curl -s https://packages.stripe.dev/api/security/keypair/stripe-cli-gpg/public \
-      | gpg --dearmor -o /usr/share/keyrings/stripe.gpg && \
-    echo "deb [signed-by=/usr/share/keyrings/stripe.gpg] https://packages.stripe.dev/stripe-cli-debian-local stable main" \
-      | tee /etc/apt/sources.list.d/stripe.list && \
-    apt update && apt install -y stripe && \
-    rm -rf /var/lib/apt/lists/*
+# [Ja] Stripe CLI
+#
+# Apt repository key is placed under /etc/apt/keyrings and referenced
+# via [signed-by=...] to match the other repositories above.
+#
+# [Ja] apt リポジトリの鍵は上記の他リポジトリに揃えて /etc/apt/keyrings/ に置き、
+# [signed-by=...] で参照する。
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    install -d -m 0755 /etc/apt/keyrings && \
+    curl -fsSL https://packages.stripe.dev/api/security/keypair/stripe-cli-gpg/public \
+      | gpg --dearmor -o /etc/apt/keyrings/stripe.gpg && \
+    chmod 0644 /etc/apt/keyrings/stripe.gpg && \
+    echo "deb [signed-by=/etc/apt/keyrings/stripe.gpg] https://packages.stripe.dev/stripe-cli-debian-local stable main" \
+      > /etc/apt/sources.list.d/stripe.list && \
+    apt update && \
+    apt install -y --no-install-recommends stripe
 
-# --- mise (開発ツールバージョンマネージャー) ---
+# --- mise (development tool version manager) ---
+# [Ja] mise (開発ツールバージョンマネージャー)
+#
+# Use the shims approach recommended for Docker (PATH includes
+# /mise/shims).
+#
+# [Ja] Docker 向けの推奨設定として shims 方式を使用する (PATH に /mise/shims を含める)。
 ENV MISE_DATA_DIR="/mise"
 ENV MISE_CONFIG_DIR="/mise"
 ENV MISE_CACHE_DIR="/mise/cache"
 ENV MISE_INSTALL_PATH="/usr/local/bin/mise"
 ENV PATH="/mise/shims:${PATH}"
-RUN curl https://mise.run | sh
+RUN curl -fsSL https://mise.run | sh
 
-# Go、Ruby、Node.js、pnpm、Yarnをmise経由でインストール
-RUN mise install go@1.25.1 && \
+# Install Go, Ruby, Node.js, pnpm, and Yarn via mise.
+# [Ja] Go、Ruby、Node.js、pnpm、Yarn を mise 経由でインストールする。
+RUN mise install go@1.26.2 && \
     mise install ruby@3.3.10 && \
     mise install node@22.20.0 && \
     mise install node@22.17.0 && \
     mise install pnpm@10.17.1 && \
     mise install yarn@1.22.22
 
-# グローバルデフォルトを設定
-RUN mise use --global go@1.25.1 && \
+# Set global defaults.
+# [Ja] グローバルデフォルトを設定する。
+RUN mise use --global go@1.26.2 && \
     mise use --global ruby@3.3.10 && \
     mise use --global node@22.20.0 && \
     mise use --global pnpm@10.17.1
 
 # --- dbmate ---
-RUN curl -fsSL -o /usr/local/bin/dbmate \
-      https://github.com/amacneil/dbmate/releases/latest/download/dbmate-linux-amd64 && \
+# [Ja] dbmate
+#
+# Install dbmate with SHA256 verification. Never use `releases/latest`
+# (a floating pointer) - pin both the version and the digest. DBMATE_VERSION
+# / DBMATE_SHA256 are intentionally duplicated in go/Dockerfile to keep each
+# Dockerfile self-contained; bump them together when upgrading dbmate.
+#
+# [Ja] dbmate を SHA256 検証付きでインストールする。浮動参照である
+# `releases/latest` は使わず、バージョンとハッシュを必ず固定する。
+# DBMATE_VERSION / DBMATE_SHA256 は go/Dockerfile と意図的に二重定義しており
+# (各 Dockerfile を自己完結に保つため)、更新時は両ファイルを揃えて変更する。
+ARG DBMATE_VERSION=v2.33.0
+ARG DBMATE_SHA256=dfd4027141b6e4357158099bdfe6c02b286af70f8e49057937744cf80b38ea1c
+RUN curl -fsSL -o /tmp/dbmate "https://github.com/amacneil/dbmate/releases/download/${DBMATE_VERSION}/dbmate-linux-amd64" && \
+    echo "${DBMATE_SHA256}  /tmp/dbmate" | sha256sum -c - && \
+    mv /tmp/dbmate /usr/local/bin/dbmate && \
     chmod +x /usr/local/bin/dbmate
 
 # --- hivemind ---
-RUN curl -fsSL -L -o /tmp/hivemind.gz \
-      https://github.com/DarthSim/hivemind/releases/download/v1.1.0/hivemind-v1.1.0-linux-amd64.gz && \
+# [Ja] hivemind
+ARG HIVEMIND_VERSION=v1.1.0
+ARG HIVEMIND_SHA256=809ca1c5fedbbfca8fdfb3a4b9bb9c41868b046f35f85a3e893ccf2583a3921a
+RUN curl -fsSL -L -o /tmp/hivemind.gz "https://github.com/DarthSim/hivemind/releases/download/${HIVEMIND_VERSION}/hivemind-${HIVEMIND_VERSION}-linux-amd64.gz" && \
+    echo "${HIVEMIND_SHA256}  /tmp/hivemind.gz" | sha256sum -c - && \
     gunzip /tmp/hivemind.gz && \
     mv /tmp/hivemind /usr/local/bin/hivemind && \
     chmod +x /usr/local/bin/hivemind
 
 # --- golangci-lint ---
-RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh \
-      | sh -s -- -b /usr/local/bin v2.7.2
+# [Ja] golangci-lint
+#
+# Fetch the release tarball directly and verify its SHA256 instead of
+# piping the upstream install.sh from HEAD (the script itself is not
+# pinned).
+#
+# [Ja] 公式 install.sh は HEAD の浮動 URL から取得され、スクリプト自体が固定されないため、
+# リリース tarball を直接取得して SHA256 検証する。
+ARG GOLANGCI_LINT_VERSION=v2.11.4
+ARG GOLANGCI_LINT_SHA256=200c5b7503f67b59a6743ccf32133026c174e272b930ee79aa2aa6f37aca7ef1
+RUN GOLANGCI_LINT_DIR="golangci-lint-${GOLANGCI_LINT_VERSION#v}-linux-amd64" && \
+    curl -fsSL -o /tmp/golangci-lint.tar.gz "https://github.com/golangci/golangci-lint/releases/download/${GOLANGCI_LINT_VERSION}/${GOLANGCI_LINT_DIR}.tar.gz" && \
+    echo "${GOLANGCI_LINT_SHA256}  /tmp/golangci-lint.tar.gz" | sha256sum -c - && \
+    tar -xzf /tmp/golangci-lint.tar.gz -C /tmp && \
+    mv "/tmp/${GOLANGCI_LINT_DIR}/golangci-lint" /usr/local/bin/golangci-lint && \
+    chmod +x /usr/local/bin/golangci-lint && \
+    rm -rf "/tmp/golangci-lint.tar.gz" "/tmp/${GOLANGCI_LINT_DIR}"
 
 # --- GitHub CLI ---
-RUN (type -p wget >/dev/null || (sudo apt update && sudo apt install wget -y)) \
-	&& sudo mkdir -p -m 755 /etc/apt/keyrings \
-	&& out=$(mktemp) && wget -nv -O$out https://cli.github.com/packages/githubcli-archive-keyring.gpg \
-	&& cat $out | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null \
-	&& sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg \
-	&& sudo mkdir -p -m 755 /etc/apt/sources.list.d \
-	&& echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
-	&& sudo apt update \
-	&& sudo apt install gh -y
+# [Ja] GitHub CLI
+#
+# Apt repository key is placed under /etc/apt/keyrings and referenced
+# via [signed-by=...]. The whole RUN block executes as root, so sudo is
+# unnecessary.
+#
+# [Ja] apt リポジトリの鍵は /etc/apt/keyrings/ に置き、[signed-by=...] で参照する。
+# RUN ブロック全体は root で実行されるため sudo は不要。
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    install -d -m 0755 /etc/apt/keyrings && \
+    curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
+      -o /etc/apt/keyrings/githubcli-archive-keyring.gpg && \
+    chmod 0644 /etc/apt/keyrings/githubcli-archive-keyring.gpg && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" \
+      > /etc/apt/sources.list.d/github-cli.list && \
+    apt update && \
+    apt install -y --no-install-recommends gh
 
-# --- ユーザー作成 ---
+# --- Create the developer user ---
+# [Ja] 開発者ユーザーを作成する
 RUN groupadd -g ${GROUP_ID} ${USERNAME} && \
     useradd -u ${USER_ID} -g ${GROUP_ID} -m -s /bin/zsh ${USERNAME} && \
     echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
-# --- Go キャッシュディレクトリ ---
+# --- Go cache directories ---
+# [Ja] Go キャッシュディレクトリ
 RUN mkdir -p /go/.cache/go-build /go/pkg && \
     chown -R ${USER_ID}:${GROUP_ID} /go
 
-# --- mise のデータディレクトリの権限設定 ---
+# --- mise data directory permissions ---
+# [Ja] mise のデータディレクトリの権限設定
 RUN chown -R ${USER_ID}:${GROUP_ID} /mise
 
 WORKDIR /workspace
 USER ${USERNAME}
 
-# --- mise シェル設定 ---
-# Docker環境ではshims方式を使用（PATH="/mise/shims:..."で設定済み）
-# mise activateはshimsをバイパスしてグローバルデフォルトの直接パスをPATHに追加するため、
-# ディレクトリごとのバージョン切り替えが効かなくなる。shims方式では不要。
+# --- mise shell setup ---
+# [Ja] mise のシェル設定
+#
+# In Docker we use the shims approach (PATH already includes
+# /mise/shims). `mise activate` would bypass the shims and insert direct
+# paths for the global defaults, which disables per-directory version
+# switching, so we do not activate it here.
+#
+# [Ja] Docker 環境では shims 方式を使用する (PATH に /mise/shims を含めている)。
+# mise activate は shims をバイパスしてグローバルデフォルトの直接パスを PATH に
+# 追加してしまい、ディレクトリごとのバージョン切り替えが効かなくなるため、
+# ここでは実行しない。
 RUN mise reshim
 
 # --- 1Password CLI ---
+# [Ja] 1Password CLI
 COPY --from=1password/op:2 /usr/local/bin/op /usr/local/bin/op
 
 # --- Claude Code ---
+# [Ja] Claude Code
 RUN curl -fsSL https://claude.ai/install.sh | bash
 
-# --- Go ツール ---
+# --- Go tools ---
+# [Ja] Go ツール
 ENV GOCACHE=/go/.cache/go-build
 ENV GOMODCACHE=/go/pkg/mod
 ENV GOPATH=/go
@@ -167,16 +287,19 @@ ENV PATH="${GOPATH}/bin:${PATH}"
 RUN go install github.com/sqlc-dev/sqlc/cmd/sqlc@v1.30.0 && \
     go install github.com/air-verse/air@latest
 
-# --- Ruby ツール ---
+# --- Ruby tools ---
+# [Ja] Ruby ツール
 RUN gem install bundler -v 2.3.12
 
-# --- シェル設定 ---
+# --- Shell setup ---
+# [Ja] シェル設定
 SHELL ["/bin/zsh", "-c"]
 ENV SHELL=/bin/zsh
 
 RUN touch /home/${USERNAME}/.zshrc
 
-# --- Git設定 ---
+# --- Git configuration ---
+# [Ja] Git 設定
 RUN git config --global user.email "me@shimba.co" && \
     git config --global user.name "Koji Shimba"
 
