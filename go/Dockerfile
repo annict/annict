@@ -60,8 +60,20 @@ RUN apk add --no-cache \
     curl \
     bash
 
-# dbmate のインストール（マイグレーション用）
-RUN curl -fsSL -o /usr/local/bin/dbmate https://github.com/amacneil/dbmate/releases/latest/download/dbmate-linux-amd64 && \
+# Install dbmate (used for migrations) with SHA256 verification. Never use
+# `releases/latest` (a floating pointer) - pin both the version and the digest.
+# DBMATE_VERSION / DBMATE_SHA256 are intentionally duplicated in Dockerfile.dev
+# to keep each Dockerfile self-contained; bump them together when upgrading dbmate.
+#
+# [Ja] dbmate を SHA256 検証付きでインストールする (マイグレーション用)。浮動参照である
+# `releases/latest` は使わず、バージョンとハッシュを必ず固定する。
+# DBMATE_VERSION / DBMATE_SHA256 は Dockerfile.dev と意図的に二重定義しており
+# (各 Dockerfile を自己完結に保つため)、更新時は両ファイルを揃えて変更する。
+ARG DBMATE_VERSION=v2.33.0
+ARG DBMATE_SHA256=dfd4027141b6e4357158099bdfe6c02b286af70f8e49057937744cf80b38ea1c
+RUN curl -fsSL -o /tmp/dbmate "https://github.com/amacneil/dbmate/releases/download/${DBMATE_VERSION}/dbmate-linux-amd64" && \
+    echo "${DBMATE_SHA256}  /tmp/dbmate" | sha256sum -c - && \
+    mv /tmp/dbmate /usr/local/bin/dbmate && \
     chmod +x /usr/local/bin/dbmate
 
 # ビルドステージから必要なファイルをコピー
