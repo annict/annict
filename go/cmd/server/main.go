@@ -49,6 +49,7 @@ import (
 	annictSentry "github.com/annict/annict/go/internal/sentry"
 	"github.com/annict/annict/go/internal/session"
 	annictStripe "github.com/annict/annict/go/internal/stripe"
+	"github.com/annict/annict/go/internal/templates"
 	"github.com/annict/annict/go/internal/turnstile"
 	"github.com/annict/annict/go/internal/usecase"
 	"github.com/annict/annict/go/internal/validator"
@@ -280,6 +281,9 @@ func main() {
 	r.Use(sentryUserContextMW.Middleware)
 
 	r.Use(i18n.Middleware) // I18nミドルウェアを追加（ユーザーのlocaleを考慮）
+
+	// 現在パスミドルウェアを追加（サイドバーの現在ページハイライト用に aria-current を付与）
+	r.Use(templates.CurrentPathMiddleware)
 
 	// CSRF保護ミドルウェアを追加
 	csrfMiddleware := authMiddleware.NewCSRFMiddleware(sessionManager)
