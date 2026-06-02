@@ -190,11 +190,16 @@ func libraryPath(user *viewmodel.User, statusKind string) string {
 }
 
 // sidebarMenuItem はサイドバーのメニュー項目を生成します
+// 現在ページと一致するリンクには aria-current="page" を付与してハイライトします
+// （スタイルは style.css の [aria-current=page] で定義）
 templ sidebarMenuItem(ctx context.Context, path string, labelKey string, iconName string) {
 	<li>
 		<a
 			href={ templ.SafeURL(path) }
 			class="flex items-center gap-3 p-2 rounded-lg hover:bg-sidebar-accent transition-colors"
+			if templates.IsCurrentPath(ctx, path) {
+				aria-current="page"
+			}
 		>
 			@templates.Icon(iconName, "w-[18px] h-[18px] fill-(--muted-foreground)")
 
@@ -211,6 +216,9 @@ templ sidebarNotificationMenuItem(ctx context.Context, user *viewmodel.User) {
 		<a
 			href="/notifications"
 			class="flex items-center justify-between p-2 rounded-lg hover:bg-sidebar-accent transition-colors"
+			if templates.IsCurrentPath(ctx, "/notifications") {
+				aria-current="page"
+			}
 		>
 			<div class="flex items-center gap-3">
 				@templates.Icon("bell-regular", "w-[18px] h-[18px] fill-(--muted-foreground)")

@@ -70,6 +70,9 @@ templ dbSidebarMenuItem(path string, labelKey string) {
 		<a
 			href={ templ.SafeURL(path) }
 			class="flex items-center gap-3 p-2 rounded-lg hover:bg-sidebar-accent transition-colors"
+			if templates.IsCurrentPath(ctx, path) {
+				aria-current="page"
+			}
 		>
 			<span class="text-base leading-none">
 				{ templates.T(ctx, labelKey) }
