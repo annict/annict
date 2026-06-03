@@ -91,9 +91,9 @@ lint-golangci: ## golangci-lintを実行
 	@golangci-lint run --config=.golangci.yml ./...
 
 .PHONY: lint-comments
-lint-comments: ## コメントの英日併記をチェック ([Ja] マーカーの誤用) / Check bilingual comments ([Ja] marker misuse)
+lint-comments: ## Check [Ja]-marker misuse in code comments (koryluslint). [Ja] コードコメントの [Ja] マーカー誤用をチェック (koryluslint)
 	@echo "🔍 コメントの英日併記をチェック中..."
-	@go run ./cmd/commentlint .
+	@go tool koryluslint comment
 
 .PHONY: lint
 lint: lint-golangci lint-comments ## リントを実行（golangci-lint + コメント併記チェック）
