@@ -68,7 +68,7 @@ jobs:
   # 指摘されない。したがって pull request 時のみ実行し、fetch-depth: 0 で差分に必要な
   # ベースブランチを取得する。
   prose:
-    name: Markdown prose (koryluslint md)
+    name: Markdown prose
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     steps:
