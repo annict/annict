@@ -41,9 +41,13 @@
 - 2-3段落程度で簡潔に
 -->
 
-フィーチャーフラグは、Rails から Go への段階的移行において、Go 版で再実装した機能を特定のユーザーやデバイスにだけ先行公開するための仕組みである。`feature_flags` テーブルで `device_token`（Cookie に保存されるデバイス識別子）または `user_id` と `name` の組み合わせによりフラグの有効/無効を管理する。レコードが存在すればフラグ有効、存在しなければフラグ無効という単純なモデルで動作する。
+フィーチャーフラグは、Rails から Go への段階的移行において、Go 版で再実装した機能を特定のユーザーやデバイスにだけ先行公開するための仕組みである。
+`feature_flags` テーブルで `device_token`（Cookie に保存されるデバイス識別子）または `user_id` と `name` の組み合わせによりフラグの有効/無効を管理する。
+レコードが存在すればフラグ有効、存在しなければフラグ無効という単純なモデルで動作する。
 
-リバースプロキシミドルウェアにフラグ判定機能が統合されており、URL パターンに応じて Go または Rails にルーティングする。フラグが有効なユーザー/デバイスは Go 版のハンドラーで処理され、フラグが無効な場合やフラグ判定でエラーが発生した場合は Rails 版にプロキシされる。未ログインユーザーに対しても `device_token` 経由でフラグの制御が可能である。
+リバースプロキシミドルウェアにフラグ判定機能が統合されており、URL パターンに応じて Go または Rails にルーティングする。
+フラグが有効なユーザー/デバイスは Go 版のハンドラーで処理され、フラグが無効な場合やフラグ判定でエラーが発生した場合は Rails 版にプロキシされる。
+未ログインユーザーに対しても `device_token` 経由でフラグの制御が可能である。
 
 **目的**:
 
@@ -195,7 +199,9 @@ type FeatureFlag struct {
 }
 ```
 
-フラグ名の定数は `feature_flag.go` に定義する。Go 版への移行で使用するフラグには `go_` プレフィックスを付ける（例: `FeatureFlagGoPageEdit FeatureFlagName = "go_page_edit"`）。現時点では具体的なフラグ名定数は未定義。
+フラグ名の定数は `feature_flag.go` に定義する。
+Go 版への移行で使用するフラグには `go_` プレフィックスを付ける（例: `FeatureFlagGoPageEdit FeatureFlagName = "go_page_edit"`）。
+現時点では具体的なフラグ名定数は未定義。
 
 #### リポジトリ
 
@@ -258,33 +264,40 @@ INSERT INTO feature_flags (user_id, name) VALUES (123, 'go_page_edit');
 
 ### セッション JOIN による 1 クエリでのフラグ判定（Wikino 方式）
 
-Wikino では `user_session_tokens` テーブルを `IsEnabledForDevice` のサブクエリで JOIN し、1 クエリで `device_token` と `user_id` の両方をチェックしている。Annict でも同様に sessions テーブルの JSONB データからサブクエリで `user_id` を抽出する方式を検討した。
+Wikino では `user_session_tokens` テーブルを `IsEnabledForDevice` のサブクエリで JOIN し、1 クエリで `device_token` と `user_id` の両方をチェックしている。
+Annict でも同様に sessions テーブルの JSONB データからサブクエリで `user_id` を抽出する方式を検討した。
 
-**不採用の理由**: Annict のセッションテーブルは JSONB の `data` カラムに warden 形式（`{"warden.user.user.key": [[user_id], "salt"]}`）で `user_id` を格納しており、SQL 内での JSONB パス抽出は Wikino の単純な `token -> user_id` マッピングに比べて脆弱性が高い。Go コードでセッションから `user_id` を解決してからシンプルな SQL で判定するほうが、保守性と可読性が優れる。パフォーマンスへの影響はフィーチャーフラグ付きパスのみで発生するため、実用上問題ない。
+**不採用の理由**: Annict のセッションテーブルは JSONB の `data` カラムに warden 形式（`{"warden.user.user.key": [[user_id], "salt"]}`）で `user_id` を格納しており、SQL 内での JSONB パス抽出は Wikino の単純な `token -> user_id` マッピングに比べて脆弱性が高い。
+Go コードでセッションから `user_id` を解決してからシンプルな SQL で判定するほうが、保守性と可読性が優れる。
+パフォーマンスへの影響はフィーチャーフラグ付きパスのみで発生するため、実用上問題ない。
 
 ### UUID 主キーの使用
 
 Wikino では `generate_ulid()` による UUID を主キーに使用している。
 
-**不採用の理由**: Annict の Go 版マイグレーションでは `BIGSERIAL` を主キーに使用する規約が確立されており（`password_reset_tokens`, `sign_up_codes` 等）、UUID 生成関数（`generate_ulid()`）はスキーマに存在しない。既存パターンとの一貫性を優先する。
+**不採用の理由**: Annict の Go 版マイグレーションでは `BIGSERIAL` を主キーに使用する規約が確立されており（`password_reset_tokens`, `sign_up_codes` 等）、UUID 生成関数（`generate_ulid()`）はスキーマに存在しない。
+既存パターンとの一貫性を優先する。
 
 ### sessionUserResolver インターフェースの導入
 
 セッションから `user_id` を解決するための専用インターフェースを定義し、ミドルウェアの依存を抽象化する方式を検討した。
 
-**不採用の理由**: `session.Manager` は `GetSessionID(r)` と `GetSession(ctx, sessionID)` メソッドを持ち、ミドルウェア（Presentation 層）からの依存として適切である。現時点で `session.Manager` の実装を差し替える必要がないため、専用インターフェースの導入は過剰な抽象化と判断した。
+**不採用の理由**: `session.Manager` は `GetSessionID(r)` と `GetSession(ctx, sessionID)` メソッドを持ち、ミドルウェア（Presentation 層）からの依存として適切である。
+現時点で `session.Manager` の実装を差し替える必要がないため、専用インターフェースの導入は過剰な抽象化と判断した。
 
 ### 管理 UI
 
 フラグの管理 UI を実装する方式を検討した。
 
-**不採用の理由**: 現時点ではフラグの変更頻度が低く（開発者が手動で設定する程度）、psql やマイグレーションで十分に管理できる。パフォーマンスが問題になった場合やフラグの数が増えた場合に追加を検討する。
+**不採用の理由**: 現時点ではフラグの変更頻度が低く（開発者が手動で設定する程度）、psql やマイグレーションで十分に管理できる。
+パフォーマンスが問題になった場合やフラグの数が増えた場合に追加を検討する。
 
 ### インメモリキャッシュ
 
 フラグ判定結果をインメモリキャッシュする方式を検討した。
 
-**不採用の理由**: フラグ判定はフィーチャーフラグ付きパスのみで実行されるため、単純な DB クエリで十分な性能が得られる。パフォーマンスが問題になった場合に追加する。
+**不採用の理由**: フラグ判定はフィーチャーフラグ付きパスのみで実行されるため、単純な DB クエリで十分な性能が得られる。
+パフォーマンスが問題になった場合に追加する。
 
 ## 参考資料
 
