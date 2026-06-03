@@ -255,13 +255,18 @@ func main() {
 		return sentryHandler.Handle(next)
 	})
 	r.Use(middleware.RequestID)
-	r.Use(middleware.RealIP)
 
 	// リクエストボディサイズ制限（10MB）
 	requestBodyLimitMW := authMiddleware.NewRequestBodyLimitMiddleware(10 * 1024 * 1024)
 	r.Use(requestBodyLimitMW.Middleware)
 
-	// メンテナンスミドルウェア（RealIPの後に配置し、クライアントIPを正しく取得）
+	// Maintenance middleware. It resolves the client IP via clientip.GetClientIP,
+	// which reads the proxy headers itself, so the order relative to other
+	// middleware does not affect IP resolution.
+	//
+	// [Ja] メンテナンスミドルウェア。クライアント IP は clientip.GetClientIP で
+	// 取得し、同関数がプロキシヘッダを自前で読むため、他のミドルウェアとの
+	// 登録順は IP 取得に影響しない。
 	maintenanceMW := authMiddleware.NewMaintenanceMiddleware(cfg)
 	r.Use(maintenanceMW.Middleware)
 
