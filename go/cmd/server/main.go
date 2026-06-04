@@ -81,10 +81,15 @@ func main() {
 	}
 	slog.Info("サーバーを起動します", "env", cfg.Env)
 
-	// Sentryの初期化
+	// Initialize Sentry. Release reuses AssetVersion (short Git commit hash) so
+	// that events can be distinguished per deploy.
+	//
+	// [Ja] Sentry の初期化。Release には AssetVersion (Git コミットハッシュ短縮版)
+	// を流用し、デプロイごとにイベントを区別できるようにする。
 	err = annictSentry.Init(annictSentry.Config{
 		DSN:              cfg.SentryDSN,
 		Environment:      cfg.SentryEnvironment,
+		Release:          cfg.AssetVersion,
 		TracesSampleRate: cfg.SentryTracesSampleRate,
 		Debug:            cfg.SentryDebug,
 	})
@@ -93,6 +98,20 @@ func main() {
 		os.Exit(1)
 	}
 	defer annictSentry.Flush(2 * time.Second)
+
+	// Route slog through Sentry: Error-level records become Sentry events while
+	// every level still reaches stderr through the underlying text handler.
+	// SetDefault must happen before any code path that can call slog.Error
+	// (DB connection, river client, etc.) so the Sentry handler covers
+	// startup failures too.
+	//
+	// [Ja] slog のデフォルトロガーを Sentry 連携付きハンドラーに差し替える。
+	// Error レベル以上は Sentry イベント化され、全レベルは引き続き標準エラー
+	// 出力にも届く。slog.Error を呼ぶ可能性のある処理 (DB 接続、river 起動など)
+	// より前に呼ぶことで、起動時のエラーも Sentry に届くようにする。
+	slog.SetDefault(slog.New(annictSentry.NewSlogHandler(
+		slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{Level: slog.LevelInfo}),
+	)))
 
 	// データベース接続
 	db, err := sql.Open("postgres", cfg.DatabaseDSN())
@@ -243,17 +262,8 @@ func main() {
 	// Chiルーターの設定
 	r := chi.NewRouter()
 
-	// Sentryミドルウェアの作成
-	// パニック発生時にSentryにエラーを送信し、リクエスト情報をキャプチャする
-	sentryHandler := sentryhttp.New(sentryhttp.Options{
-		Repanic: true, // パニックを再発生させて middleware.Logger でログ出力可能にする
-	})
-
 	// ミドルウェア
 	r.Use(middleware.Logger)
-	r.Use(func(next http.Handler) http.Handler {
-		return sentryHandler.Handle(next)
-	})
 	r.Use(middleware.RequestID)
 
 	// リクエストボディサイズ制限（10MB）
@@ -277,7 +287,47 @@ func main() {
 		r.Use(reverseProxyMW.Middleware)
 	}
 
-	// 以下はGo版で処理する場合のみ適用されるミドルウェア
+	// The middleware below applies only to requests handled by the Go app.
+	// Registering the Sentry chain inside the reverse proxy keeps requests
+	// proxied to the Rails app out of the Go app's Sentry transactions.
+	//
+	// [Ja] 以下は Go 版で処理する場合のみ適用されるミドルウェア。Sentry の
+	// チェーンをリバースプロキシの内側に置くことで、Rails 版へプロキシされる
+	// リクエストが Go 版の Sentry トランザクションに乗らないようにする。
+
+	// Recoverer must be registered before sentryhttp (= outer in the chain) so
+	// that the re-panic from sentryhttp (Repanic: true) is caught here and a
+	// 500 response is returned. The official sentryhttp README also says to
+	// place the recovery middleware on the outside of sentryhttp.
+	//
+	// [Ja] Recoverer は sentryhttp より前 (= 外側) に登録する。sentryhttp が
+	// Repanic: true で再 panic したものをここで握り潰して 500 を返すため。
+	// Sentry SDK 公式 README も「recovery middleware は sentryhttp より外側に
+	// 置く」と指示している。
+	r.Use(middleware.Recoverer)
+
+	// sentryhttp captures panics, sets a per-request Hub on the context, and
+	// starts a Sentry transaction per request. Repanic: true re-throws after
+	// capture so that Recoverer (outer) returns 500 to the client.
+	//
+	// [Ja] sentryhttp はリクエスト単位の Hub を context に積み、panic を捕捉して
+	// Sentry に送信し、リクエストごとの Sentry トランザクションを開始する。
+	// Repanic: true により捕捉後に再 panic することで、外側の Recoverer が
+	// クライアントに 500 を返せる。
+	sentryHandler := sentryhttp.New(sentryhttp.Options{Repanic: true})
+	r.Use(sentryHandler.Handle)
+
+	// SentryTransaction rewrites the transaction name with chi's route pattern.
+	// It must be registered after sentryhttp (= inside the wrapper) so that the
+	// LIFO defer order guarantees the rewrite happens before sentryhttp's
+	// transaction.Finish() / recoverWithSentry run.
+	//
+	// [Ja] SentryTransaction はトランザクション名を chi のルートパターンに
+	// 上書きするミドルウェア。sentryhttp の後 (= 内側) に登録することで、LIFO の
+	// defer 順序により sentryhttp の transaction.Finish() や recoverWithSentry
+	// より先に書き換えが走ることを保証する。
+	r.Use(authMiddleware.SentryTransaction)
+
 	r.Use(authMiddleware.MethodOverride) // Method Overrideミドルウェアを追加（HTMLフォームからPUT/PATCH/DELETEを使用可能に）
 	r.Use(authMW.Middleware)             // 認証ミドルウェアを追加（ユーザー情報をコンテキストに設定）
 

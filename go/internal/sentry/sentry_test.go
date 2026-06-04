@@ -3,6 +3,8 @@ package sentry
 import (
 	"context"
 	"errors"
+	"fmt"
+	"net/http"
 	"testing"
 
 	"github.com/getsentry/sentry-go"
@@ -35,6 +37,52 @@ func TestInit_InvalidDSN(t *testing.T) {
 	err := Init(cfg)
 	if err == nil {
 		t.Error("Init() with invalid DSN should return error")
+	}
+}
+
+func TestInit_SetsReleaseAndTracingOptions(t *testing.T) {
+	// Init must propagate Release to the client options and enable tracing
+	// (without EnableTracing, TracesSampleRate alone sends no traces).
+	// This test swaps the global Hub client, so it must not run in parallel.
+	//
+	// [Ja] Init が Release をクライアントオプションに伝搬し、トレースを有効化する
+	// ことを検証する (EnableTracing 無しでは TracesSampleRate を渡してもトレースが
+	// 送られない)。グローバル Hub のクライアントを差し替えるため並行実行しない。
+	cfg := Config{
+		DSN:              "https://public@o0.ingest.sentry.io/1",
+		Environment:      "test",
+		Release:          "abc1234",
+		TracesSampleRate: 0.5,
+		Debug:            false,
+	}
+
+	// Restore the clientless global Hub after the test so that subsequent
+	// tests do not capture events against the live client.
+	//
+	// [Ja] テスト後にグローバル Hub をクライアント無しの状態へ戻し、後続テストが
+	// live クライアントにイベントを送らないようにする。
+	t.Cleanup(func() {
+		sentry.CurrentHub().BindClient(nil)
+	})
+
+	if err := Init(cfg); err != nil {
+		t.Fatalf("Init() error = %v", err)
+	}
+
+	client := sentry.CurrentHub().Client()
+	if client == nil {
+		t.Fatal("Init() 後はクライアントが設定されているべき")
+	}
+
+	opts := client.Options()
+	if opts.Release != "abc1234" {
+		t.Errorf("Release = %q, want %q", opts.Release, "abc1234")
+	}
+	if !opts.EnableTracing {
+		t.Error("EnableTracing は true であるべき")
+	}
+	if len(opts.IgnoreErrors) == 0 {
+		t.Error("IgnoreErrors が設定されているべき")
 	}
 }
 
@@ -266,6 +314,101 @@ func TestBeforeSend_FiltersQueryString(t *testing.T) {
 	}
 }
 
+func TestBeforeSend_FiltersTags(t *testing.T) {
+	t.Parallel()
+
+	// Tags are populated from slog attributes via sentryslog, so PII logged as
+	// a structured attribute (e.g. "email") must be masked here.
+	//
+	// [Ja] タグには sentryslog 経由で slog 属性が乗るため、構造化属性として
+	// ログに載った PII (例: "email") がここでマスクされることを検証する。
+	tests := []struct {
+		name     string
+		tags     map[string]string
+		expected map[string]string
+	}{
+		{
+			name: "emailタグをマスク",
+			tags: map[string]string{
+				"email":   "user@example.com",
+				"user_id": "123",
+			},
+			expected: map[string]string{
+				"email":   "[FILTERED]",
+				"user_id": "123",
+			},
+		},
+		{
+			name: "部分一致でマスク",
+			tags: map[string]string{
+				"user_email": "user@example.com",
+			},
+			expected: map[string]string{
+				"user_email": "[FILTERED]",
+			},
+		},
+		{
+			name: "password/token/secretタグをマスク",
+			tags: map[string]string{
+				"password":      "raw-password",
+				"api_token":     "token-value",
+				"client_secret": "secret-value",
+			},
+			expected: map[string]string{
+				"password":      "[FILTERED]",
+				"api_token":     "[FILTERED]",
+				"client_secret": "[FILTERED]",
+			},
+		},
+		{
+			name: "大文字小文字を区別しない",
+			tags: map[string]string{
+				"Email": "user@example.com",
+			},
+			expected: map[string]string{
+				"Email": "[FILTERED]",
+			},
+		},
+		{
+			name: "センシティブでないタグは変更しない",
+			tags: map[string]string{
+				"user_id":       "123",
+				"annict_source": "other_subsystem",
+			},
+			expected: map[string]string{
+				"user_id":       "123",
+				"annict_source": "other_subsystem",
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			event := &sentry.Event{Tags: tt.tags}
+
+			result := beforeSend(event, nil)
+
+			for key, expectedValue := range tt.expected {
+				if result.Tags[key] != expectedValue {
+					t.Errorf("タグ %s: got %q, want %q", key, result.Tags[key], expectedValue)
+				}
+			}
+		})
+	}
+}
+
+func TestBeforeSend_HandlesNilTags(t *testing.T) {
+	t.Parallel()
+
+	event := &sentry.Event{Tags: nil}
+
+	if result := beforeSend(event, nil); result == nil {
+		t.Error("Tagsがnilでもイベントは保持されるべき")
+	}
+}
+
 func TestBeforeSend_HandlesNilRequest(t *testing.T) {
 	t.Parallel()
 
@@ -293,6 +436,94 @@ func TestBeforeSend_HandlesInvalidData(t *testing.T) {
 
 	if result.Request.Data != "[FILTERED]" {
 		t.Errorf("無効なデータは[FILTERED]であるべき: got %q", result.Request.Data)
+	}
+}
+
+func TestBeforeSend_DropsIgnorableErrors(t *testing.T) {
+	t.Parallel()
+
+	// Events whose original exception is a client-disconnect or runtime-abort
+	// error must be dropped (beforeSend returns nil).
+	//
+	// [Ja] クライアント切断・runtime 中断由来のエラーを持つイベントは破棄される
+	// (beforeSend が nil を返す) ことを検証する。
+	tests := []struct {
+		name string
+		err  error
+	}{
+		{
+			name: "context.Canceledは破棄",
+			err:  context.Canceled,
+		},
+		{
+			name: "context.Canceledのラップは破棄",
+			err:  fmt.Errorf("接続エラー: %w", context.Canceled),
+		},
+		{
+			name: "http.ErrAbortHandlerは破棄",
+			err:  http.ErrAbortHandler,
+		},
+		{
+			name: "http.ErrAbortHandlerのラップは破棄",
+			err:  fmt.Errorf("ハンドラー中断: %w", http.ErrAbortHandler),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			event := &sentry.Event{
+				Request: &sentry.Request{},
+			}
+			hint := &sentry.EventHint{OriginalException: tt.err}
+
+			if result := beforeSend(event, hint); result != nil {
+				t.Errorf("無視対象のエラーはイベントを nil にすべき: got %+v", result)
+			}
+		})
+	}
+}
+
+func TestBeforeSend_KeepsNonIgnorableErrors(t *testing.T) {
+	t.Parallel()
+
+	// Ordinary errors must still reach Sentry.
+	// [Ja] 通常のエラーは引き続き Sentry に届くことを検証する。
+	event := &sentry.Event{
+		Request: &sentry.Request{},
+	}
+	hint := &sentry.EventHint{OriginalException: errors.New("通常のエラー")}
+
+	if result := beforeSend(event, hint); result == nil {
+		t.Error("無視対象でないエラーはイベントを保持すべき")
+	}
+}
+
+func TestShouldDropError(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name string
+		err  error
+		want bool
+	}{
+		{name: "nilは破棄しない", err: nil, want: false},
+		{name: "context.Canceledは破棄", err: context.Canceled, want: true},
+		{name: "http.ErrAbortHandlerは破棄", err: http.ErrAbortHandler, want: true},
+		{name: "ラップされたcontext.Canceledは破棄", err: fmt.Errorf("wrap: %w", context.Canceled), want: true},
+		{name: "通常のエラーは破棄しない", err: errors.New("通常のエラー"), want: false},
+		{name: "context.DeadlineExceededは破棄しない", err: context.DeadlineExceeded, want: false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			if got := shouldDropError(tt.err); got != tt.want {
+				t.Errorf("shouldDropError(%v) = %v, want %v", tt.err, got, tt.want)
+			}
+		})
 	}
 }
 
