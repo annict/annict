@@ -1,5 +1,5 @@
 ---
-last_synced: 2026-05-15
+last_synced: 2026-06-04
 ---
 
 # Annict Development Guide
@@ -23,7 +23,6 @@ This repository manages two subprojects—the Go version and the Rails version�
 ├── rails/               # Rails version implementation (existing production system)
 ├── caddy/               # Reverse proxy configuration (Caddy)
 ├── imgproxy/            # imgproxy configuration
-├── docs/                # Annict-specific documentation (specs, work plans, etc.)
 ├── .github/             # Shared CI/CD configuration
 ├── Dockerfile.dev       # Dockerfile for the integrated development container
 ├── docker-compose.yml   # Docker Compose configuration
@@ -70,12 +69,6 @@ Before reporting that work is complete, always verify the following:
 
 The commands to run are managed in `Makefile`.
 See [Makefile](./Makefile), [go/Makefile](./go/Makefile), and [rails/Makefile](./rails/Makefile).
-
-## Documentation
-
-Each feature's specification is managed under the `docs/specs/` directory. To understand the current state of the system, refer to the specifications first.
-
-- [docs/specs/](./docs/specs/) - Specifications for each feature
 
 ## Language and Writing Conventions
 
