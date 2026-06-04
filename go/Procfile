@@ -1,2 +1,2 @@
 web: bin/server
-release: dbmate up
+release: dbmate --no-dump-schema up
