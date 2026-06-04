@@ -19,6 +19,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.97.3
 	github.com/brianvoe/gofakeit/v6 v6.28.0
 	github.com/getsentry/sentry-go v0.46.2
+	github.com/getsentry/sentry-go/slog v0.46.2
 	github.com/google/uuid v1.6.0
 	github.com/jackc/pgx/v5 v5.9.2
 	github.com/mfridman/tparse v0.18.0

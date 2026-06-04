@@ -284,8 +284,15 @@ ENV GOCACHE=/go/.cache/go-build
 ENV GOMODCACHE=/go/pkg/mod
 ENV GOPATH=/go
 ENV PATH="${GOPATH}/bin:${PATH}"
+# Pin tool versions (never `@latest`) so that image rebuilds are
+# reproducible. Unlike the curl-downloaded binaries above, no SHA256 ARG
+# is needed: the Go module checksum database verifies the downloads.
+#
+# [Ja] イメージの再ビルドを再現可能にするため、ツールのバージョンを固定する
+# (`@latest` は使わない)。curl で取得する上記のバイナリと異なり SHA256 の ARG は
+# 不要 (ダウンロードの改ざん検証は Go module checksum DB が担保するため)。
 RUN go install github.com/sqlc-dev/sqlc/cmd/sqlc@v1.30.0 && \
-    go install github.com/air-verse/air@latest
+    go install github.com/air-verse/air@v1.65.3
 
 # --- Ruby tools ---
 # [Ja] Ruby ツール

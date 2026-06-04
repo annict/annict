@@ -10,9 +10,11 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/riverqueue/river"
 	"github.com/riverqueue/river/riverdriver/riverpgxv5"
+	"github.com/riverqueue/river/rivertype"
 
 	"github.com/annict/annict/go/internal/config"
 	"github.com/annict/annict/go/internal/email"
+	annictSentry "github.com/annict/annict/go/internal/sentry"
 	"github.com/annict/annict/go/internal/usecase"
 )
 
@@ -86,12 +88,22 @@ func NewClient(ctx context.Context, databaseURL string, params NewClientParams, 
 	slog.InfoContext(ctx, "CleanupExpiredSignInCodesWorker を登録しました")
 
 	// River クライアントの作成
+	// Wire the Sentry middleware via Config.Middleware. The deprecated
+	// WorkerMiddleware field is avoided so future river upgrades that remove
+	// it will not require revisiting this site.
+	//
+	// [Ja] Sentry ミドルウェアは Config.Middleware に登録する。
+	// 将来 river のアップデートで削除される可能性のある WorkerMiddleware
+	// フィールドは使わないことで、削除時の再対応を不要にする。
 	riverClient, err := river.NewClient(riverpgxv5.New(pool), &river.Config{
 		Queues: map[string]river.QueueConfig{
 			river.QueueDefault: {MaxWorkers: 10},
 		},
 		Workers: workers,
-		Logger:  slog.Default(),
+		Middleware: []rivertype.Middleware{
+			annictSentry.RiverWorkerMiddleware(),
+		},
+		Logger: slog.Default(),
 	})
 	if err != nil {
 		pool.Close()
