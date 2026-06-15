@@ -23,7 +23,6 @@ type Subscription struct {
 }
 
 // SubscriptionItem is the domain-shaped view of a single subscription item.
-//
 // [Ja] SubscriptionItem はサブスクリプションアイテム 1 件のドメイン形ビュー。
 type SubscriptionItem struct {
 	PriceID            string
@@ -41,23 +40,19 @@ type CheckoutSessionParams struct {
 	SuccessURL string
 	CancelURL  string
 	// UserID is the value placed in metadata's user_id.
-	//
 	// [Ja] UserID は metadata の user_id に入れる値。
 	UserID string
 	// Locale is "ja" or "en".
-	//
 	// [Ja] Locale は "ja" または "en"。
 	Locale string
 }
 
 // PortalSessionParams holds the inputs needed to create a Billing Portal session.
-//
 // [Ja] PortalSessionParams は Billing Portal セッション作成に必要な入力を保持する。
 type PortalSessionParams struct {
 	CustomerID string
 	ReturnURL  string
 	// Locale is "ja" or "en".
-	//
 	// [Ja] Locale は "ja" または "en"。
 	Locale string
 }
@@ -78,7 +73,6 @@ type Adapter struct {
 }
 
 // NewAdapter creates an Adapter wrapping the given stripe-go client.
-//
 // [Ja] NewAdapter は渡された stripe-go クライアントをラップする Adapter を作成する。
 func NewAdapter(client *stripego.Client) *Adapter {
 	return &Adapter{client: client}
@@ -125,7 +119,6 @@ func newSubscriptionFromStripe(sub *stripego.Subscription) *Subscription {
 }
 
 // CreateCheckoutSession creates a Stripe Checkout session and returns its URL.
-//
 // [Ja] CreateCheckoutSession は Stripe Checkout セッションを作成し、その URL を返す。
 func (a *Adapter) CreateCheckoutSession(ctx context.Context, params CheckoutSessionParams) (string, error) {
 	stripeParams := &stripego.CheckoutSessionCreateParams{
@@ -152,7 +145,6 @@ func (a *Adapter) CreateCheckoutSession(ctx context.Context, params CheckoutSess
 }
 
 // CreatePortalSession creates a Stripe Billing Portal session and returns its URL.
-//
 // [Ja] CreatePortalSession は Stripe Billing Portal セッションを作成し、その URL を返す。
 func (a *Adapter) CreatePortalSession(ctx context.Context, params PortalSessionParams) (string, error) {
 	stripeParams := &stripego.BillingPortalSessionCreateParams{

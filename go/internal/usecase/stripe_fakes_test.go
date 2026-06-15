@@ -20,7 +20,6 @@ import (
 // fake が interface を満たすことのコンパイル時チェックのみを行う。
 
 // fakeSubscriptionRetriever is a test double for SubscriptionRetriever.
-//
 // [Ja] fakeSubscriptionRetriever は SubscriptionRetriever のテストダブル。
 type fakeSubscriptionRetriever struct {
 	subscription *annictstripe.Subscription
@@ -32,7 +31,6 @@ func (f *fakeSubscriptionRetriever) RetrieveSubscription(ctx context.Context, su
 }
 
 // fakeCheckoutSessionCreator is a test double for CheckoutSessionCreator.
-//
 // [Ja] fakeCheckoutSessionCreator は CheckoutSessionCreator のテストダブル。
 type fakeCheckoutSessionCreator struct {
 	url string
@@ -44,7 +42,6 @@ func (f *fakeCheckoutSessionCreator) CreateCheckoutSession(ctx context.Context, 
 }
 
 // fakePortalSessionCreator is a test double for PortalSessionCreator.
-//
 // [Ja] fakePortalSessionCreator は PortalSessionCreator のテストダブル。
 type fakePortalSessionCreator struct {
 	url string
@@ -56,7 +53,6 @@ func (f *fakePortalSessionCreator) CreatePortalSession(ctx context.Context, para
 }
 
 // Compile-time checks that each fake satisfies its caller-side interface.
-//
 // [Ja] 各 fake が呼び出し側 interface を満たすことのコンパイル時チェック。
 var (
 	_ SubscriptionRetriever  = (*fakeSubscriptionRetriever)(nil)
