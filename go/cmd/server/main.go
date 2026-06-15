@@ -460,21 +460,27 @@ func main() {
 		PriceYearlyID:  cfg.StripePriceYearlyID,
 	}
 	stripeClient := annictStripe.NewClient(cfg.StripeSecretKey)
+	// Wrap the stripe-go client in an adapter that implements the per-UseCase
+	// interfaces, so the UseCases depend on the seam rather than *stripe.Client.
+	//
+	// [Ja] stripe-go クライアントを、UseCase ごとの interface を実装する adapter で
+	// ラップする。これにより各 UseCase は *stripe.Client ではなく seam に依存する。
+	stripeAdapter := annictStripe.NewAdapter(stripeClient)
 	getSupporterStatusUC := usecase.NewGetSupporterStatusUsecase(stripeSubscriberRepo, gumroadSubscriberRepo)
 	supportersHandler := supporters.NewHandler(cfg, sessionManager, imageHelper, getSupporterStatusUC, annictStripeCfg, stripeClient)
 
 	// Stripe Checkoutハンドラーの初期化
 	createSupportersCheckoutValidator := validator.NewSupportersCheckoutCreateValidator()
-	createCheckoutSessionUC := usecase.NewCreateCheckoutSessionUsecase(cfg, stripeSubscriberRepo, annictStripeCfg, stripeClient, createSupportersCheckoutValidator)
+	createCheckoutSessionUC := usecase.NewCreateCheckoutSessionUsecase(cfg, stripeSubscriberRepo, annictStripeCfg, stripeAdapter, createSupportersCheckoutValidator)
 	supportersCheckoutHandler := supporters_checkout.NewHandler(flashMgr, createCheckoutSessionUC)
 
 	// Stripe Customer Portalハンドラーの初期化
-	createPortalSessionUC := usecase.NewCreatePortalSessionUsecase(cfg, stripeSubscriberRepo, stripeClient)
+	createPortalSessionUC := usecase.NewCreatePortalSessionUsecase(cfg, stripeSubscriberRepo, stripeAdapter)
 	supportersPortalHandler := supporters_portal.NewHandler(flashMgr, createPortalSessionUC)
 
 	// Stripe Webhookハンドラーの初期化
 	stripeWebhookEventRepo := repository.NewStripeWebhookEventRepository(queries)
-	createStripeSubscriberUC := usecase.NewCreateStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo, stripeClient)
+	createStripeSubscriberUC := usecase.NewCreateStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo, stripeAdapter)
 	updateStripeSubscriberUC := usecase.NewUpdateStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo)
 	deleteStripeSubscriberUC := usecase.NewDeleteStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo)
 	processStripeWebhookUC := usecase.NewProcessStripeWebhookUsecase(stripeWebhookEventRepo, createStripeSubscriberUC, updateStripeSubscriberUC, deleteStripeSubscriberUC)

@@ -57,6 +57,15 @@ func (uc *DeleteStripeSubscriberUsecase) Execute(
 	if err != nil {
 		return nil, fmt.Errorf("StripeSubscriber取得に失敗: %w", err)
 	}
+	// Not-found is reported as a sentinel so the webhook layer can skip it without
+	// depending on sql.ErrNoRows. Returning here also keeps us out of the
+	// transaction below for an event we cannot act on.
+	//
+	// [Ja] 未存在は sentinel で返し、Webhook 層が sql.ErrNoRows に依存せずスキップできるようにする。
+	// ここで return することで、処理できないイベントに対して下のトランザクションを開かずに済む。
+	if subscriber == nil {
+		return nil, ErrStripeSubscriberNotFound
+	}
 
 	// トランザクション開始
 	tx, err := uc.db.BeginTx(ctx, nil)
@@ -71,7 +80,7 @@ func (uc *DeleteStripeSubscriberUsecase) Execute(
 
 	// ステータスをcanceledに更新
 	err = stripeSubscriberRepoTx.Update(ctx, repository.UpdateStripeSubscriberParams{
-		ID:                       subscriber.ID,
+		ID:                       int64(subscriber.ID),
 		StripePriceID:            subscriber.StripePriceID,
 		StripeStatus:             string(model.StripeSubscriptionStatusCanceled),
 		StripeCurrentPeriodStart: subscriber.StripeCurrentPeriodStart,
@@ -88,7 +97,7 @@ func (uc *DeleteStripeSubscriberUsecase) Execute(
 
 	// Userとの紐付けを解除
 	// StripeSubscriberIDが一致するユーザーを探してnilに設定
-	userID, err := userRepoTx.FindUserIDByStripeSubscriberID(ctx, model.StripeSubscriberID(subscriber.ID))
+	userID, err := userRepoTx.FindUserIDByStripeSubscriberID(ctx, subscriber.ID)
 	if err != nil {
 		return nil, fmt.Errorf("ユーザー検索に失敗: %w", err)
 	}
@@ -107,13 +116,21 @@ func (uc *DeleteStripeSubscriberUsecase) Execute(
 	}
 
 	// 更新後のレコードを取得
-	updated, err := uc.stripeSubscriberRepo.GetByID(ctx, model.StripeSubscriberID(subscriber.ID))
+	updated, err := uc.stripeSubscriberRepo.GetByID(ctx, subscriber.ID)
 	if err != nil {
 		return nil, fmt.Errorf("更新後のStripeSubscriber取得に失敗: %w", err)
 	}
+	// The record was just updated above, so a nil here means an unexpected internal
+	// inconsistency rather than a normal not-found.
+	//
+	// [Ja] 直前に更新したレコードのため、ここでの nil は通常の未存在ではなく想定外の
+	// 内部不整合を意味する。
+	if updated == nil {
+		return nil, fmt.Errorf("更新後のStripeSubscriberが見つかりません")
+	}
 
 	return &DeleteStripeSubscriberResult{
-		StripeSubscriber: updated,
+		StripeSubscriber: *updated,
 		UserID:           userID,
 	}, nil
 }

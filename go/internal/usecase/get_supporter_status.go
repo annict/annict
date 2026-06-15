@@ -50,9 +50,9 @@ func (uc *GetSupporterStatusUsecase) Execute(ctx context.Context, input GetSuppo
 	// Stripeサブスクリプションをチェック
 	if user.StripeSubscriberID != nil && uc.stripeSubscriberRepo != nil {
 		stripeSubscriber, err := uc.stripeSubscriberRepo.GetByID(ctx, *user.StripeSubscriberID)
-		if err == nil && uc.stripeSubscriberRepo.IsActive(&stripeSubscriber) {
+		if err == nil && stripeSubscriber != nil && uc.stripeSubscriberRepo.IsActive(stripeSubscriber) {
 			output.IsStripeActive = true
-			output.StripeSubscriber = &stripeSubscriber
+			output.StripeSubscriber = stripeSubscriber
 		}
 	}
 

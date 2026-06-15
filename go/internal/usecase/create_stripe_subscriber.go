@@ -7,21 +7,29 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
-	"time"
-
-	"github.com/stripe/stripe-go/v84"
 
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/repository"
 	annictstripe "github.com/annict/annict/go/internal/stripe"
 )
 
+// SubscriptionRetriever abstracts retrieving a subscription from Stripe. It is
+// defined on the caller (UseCase) side so the UseCase depends on a small
+// interface rather than the concrete *stripe.Client, and tests can inject a fake.
+//
+// [Ja] SubscriptionRetriever は Stripe からのサブスクリプション取得を抽象化する。
+// 呼び出し側 (UseCase) で定義することで、UseCase は具象 *stripe.Client ではなく
+// 小さな interface に依存し、テストでは fake を注入できる。
+type SubscriptionRetriever interface {
+	RetrieveSubscription(ctx context.Context, subscriptionID string) (*annictstripe.Subscription, error)
+}
+
 // CreateStripeSubscriberUsecase はcheckout.session.completedイベント処理のユースケース
 type CreateStripeSubscriberUsecase struct {
-	db                   *sql.DB
-	stripeSubscriberRepo *repository.StripeSubscriberRepository
-	userRepo             *repository.UserRepository
-	stripeClient         *stripe.Client
+	db                    *sql.DB
+	stripeSubscriberRepo  *repository.StripeSubscriberRepository
+	userRepo              *repository.UserRepository
+	subscriptionRetriever SubscriptionRetriever
 }
 
 // NewCreateStripeSubscriberUsecase はCreateStripeSubscriberUsecaseを作成します
@@ -29,13 +37,13 @@ func NewCreateStripeSubscriberUsecase(
 	db *sql.DB,
 	stripeSubscriberRepo *repository.StripeSubscriberRepository,
 	userRepo *repository.UserRepository,
-	stripeClient *stripe.Client,
+	subscriptionRetriever SubscriptionRetriever,
 ) *CreateStripeSubscriberUsecase {
 	return &CreateStripeSubscriberUsecase{
-		db:                   db,
-		stripeSubscriberRepo: stripeSubscriberRepo,
-		userRepo:             userRepo,
-		stripeClient:         stripeClient,
+		db:                    db,
+		stripeSubscriberRepo:  stripeSubscriberRepo,
+		userRepo:              userRepo,
+		subscriptionRetriever: subscriptionRetriever,
 	}
 }
 
@@ -62,12 +70,12 @@ func (uc *CreateStripeSubscriberUsecase) Execute(
 	input CreateStripeSubscriberInput,
 ) (*CreateStripeSubscriberResult, error) {
 	// Stripeクライアントがnilの場合はエラー
-	if uc.stripeClient == nil {
+	if uc.subscriptionRetriever == nil {
 		return nil, fmt.Errorf("Stripeクライアントが設定されていません")
 	}
 
 	// Stripe APIからサブスクリプション詳細を取得
-	sub, err := uc.stripeClient.V1Subscriptions.Retrieve(ctx, input.StripeSubscriptionID, nil)
+	sub, err := uc.subscriptionRetriever.RetrieveSubscription(ctx, input.StripeSubscriptionID)
 	if err != nil {
 		return nil, fmt.Errorf("サブスクリプション取得に失敗: %w", err)
 	}
@@ -75,15 +83,15 @@ func (uc *CreateStripeSubscriberUsecase) Execute(
 	// ステータスを検証
 	status := model.StripeSubscriptionStatus(sub.Status)
 	if !status.IsValid() {
-		return nil, &InvalidSubscriptionStatusError{Status: string(sub.Status)}
+		return nil, &InvalidSubscriptionStatusError{Status: sub.Status}
 	}
 
 	// 価格IDと請求期間を取得（最初のアイテムから）
-	if len(sub.Items.Data) == 0 {
+	if len(sub.Items) == 0 {
 		return nil, fmt.Errorf("サブスクリプションにアイテムが含まれていません")
 	}
-	item := sub.Items.Data[0]
-	priceID := item.Price.ID
+	item := sub.Items[0]
+	priceID := item.PriceID
 
 	// トランザクション開始
 	tx, err := uc.db.BeginTx(ctx, nil)
@@ -101,11 +109,11 @@ func (uc *CreateStripeSubscriberUsecase) Execute(
 		StripeCustomerID:         input.StripeCustomerID,
 		StripeSubscriptionID:     input.StripeSubscriptionID,
 		StripePriceID:            priceID,
-		StripeStatus:             string(sub.Status),
-		StripeCurrentPeriodStart: time.Unix(item.CurrentPeriodStart, 0),
-		StripeCurrentPeriodEnd:   time.Unix(item.CurrentPeriodEnd, 0),
-		StripeCancelAt:           annictstripe.NullTimeFromUnix(sub.CancelAt),
-		StripeCanceledAt:         annictstripe.NullTimeFromUnix(sub.CanceledAt),
+		StripeStatus:             sub.Status,
+		StripeCurrentPeriodStart: item.CurrentPeriodStart,
+		StripeCurrentPeriodEnd:   item.CurrentPeriodEnd,
+		StripeCancelAt:           sub.CancelAt,
+		StripeCanceledAt:         sub.CanceledAt,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("StripeSubscriber作成に失敗: %w", err)
