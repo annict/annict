@@ -5,7 +5,7 @@ go 1.26.2
 require (
 	github.com/BurntSushi/toml v1.6.0
 	github.com/go-chi/chi/v5 v5.3.0
-	github.com/lib/pq v1.10.9
+	github.com/lib/pq v1.12.3
 	github.com/nicksnyder/go-i18n/v2 v2.6.1
 	github.com/sqlc-dev/pqtype v0.3.0
 	golang.org/x/crypto v0.53.0
