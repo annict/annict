@@ -116,6 +116,7 @@ func (uc *CreateCheckoutSessionUsecase) Execute(ctx context.Context, input Creat
 	cancelURL := uc.cfg.AppURL() + "/supporters?canceled=true"
 
 	// Default to English; only "ja" is rendered in Japanese.
+	//
 	// [Ja] デフォルトは英語。"ja" のときのみ日本語で表示する。
 	locale := "en"
 	if input.Locale == "ja" {
