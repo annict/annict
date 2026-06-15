@@ -4,22 +4,31 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/stripe/stripe-go/v84"
-
 	"github.com/annict/annict/go/internal/config"
 	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/repository"
-	annictStripe "github.com/annict/annict/go/internal/stripe"
+	annictstripe "github.com/annict/annict/go/internal/stripe"
 	"github.com/annict/annict/go/internal/validator"
 )
+
+// CheckoutSessionCreator abstracts creating a Stripe Checkout session. It is
+// defined on the caller (UseCase) side so the UseCase depends on a small
+// interface rather than the concrete *stripe.Client, and tests can inject a fake.
+//
+// [Ja] CheckoutSessionCreator は Stripe Checkout セッション作成を抽象化する。
+// 呼び出し側 (UseCase) で定義することで、UseCase は具象 *stripe.Client ではなく
+// 小さな interface に依存し、テストでは fake を注入できる。
+type CheckoutSessionCreator interface {
+	CreateCheckoutSession(ctx context.Context, params annictstripe.CheckoutSessionParams) (string, error)
+}
 
 // CreateCheckoutSessionUsecase はStripe Checkoutセッション作成のユースケースです
 type CreateCheckoutSessionUsecase struct {
 	cfg                  *config.Config
 	stripeSubscriberRepo *repository.StripeSubscriberRepository
-	stripeCfg            *annictStripe.Config
-	stripeClient         *stripe.Client
+	stripeCfg            *annictstripe.Config
+	checkoutCreator      CheckoutSessionCreator
 	validator            *validator.SupportersCheckoutCreateValidator
 }
 
@@ -27,15 +36,15 @@ type CreateCheckoutSessionUsecase struct {
 func NewCreateCheckoutSessionUsecase(
 	cfg *config.Config,
 	stripeSubscriberRepo *repository.StripeSubscriberRepository,
-	stripeCfg *annictStripe.Config,
-	stripeClient *stripe.Client,
+	stripeCfg *annictstripe.Config,
+	checkoutCreator CheckoutSessionCreator,
 	validator *validator.SupportersCheckoutCreateValidator,
 ) *CreateCheckoutSessionUsecase {
 	return &CreateCheckoutSessionUsecase{
 		cfg:                  cfg,
 		stripeSubscriberRepo: stripeSubscriberRepo,
 		stripeCfg:            stripeCfg,
-		stripeClient:         stripeClient,
+		checkoutCreator:      checkoutCreator,
 		validator:            validator,
 	}
 }
@@ -65,14 +74,22 @@ func (uc *CreateCheckoutSessionUsecase) Execute(ctx context.Context, input Creat
 	user := input.User
 	if user.StripeSubscriberID != nil && uc.stripeSubscriberRepo != nil {
 		stripeSubscriber, err := uc.stripeSubscriberRepo.GetByID(ctx, *user.StripeSubscriberID)
-		if err == nil {
-			if uc.stripeSubscriberRepo.IsActive(&stripeSubscriber) {
-				return nil, model.NewAppError(
-					model.AppErrCodeConflict,
-					i18n.T(ctx, "supporters_checkout_already_active"),
-					nil,
-				)
-			}
+		// A not-found subscriber (nil) is normal here (the referenced row may have
+		// been removed); only a real retrieval error must abort the checkout. The
+		// previous `if err == nil` swallowed every error and let checkout proceed.
+		//
+		// [Ja] 未存在 (nil) はここでは正常 (参照先の行が消えている可能性がある)。本物の
+		// 取得エラーのみ checkout を中断させる。以前の `if err == nil` は全エラーを握り潰し、
+		// checkout を続行させていた。
+		if err != nil {
+			return nil, fmt.Errorf("StripeSubscriber取得に失敗: %w", err)
+		}
+		if stripeSubscriber != nil && uc.stripeSubscriberRepo.IsActive(stripeSubscriber) {
+			return nil, model.NewAppError(
+				model.AppErrCodeConflict,
+				i18n.T(ctx, "supporters_checkout_already_active"),
+				nil,
+			)
 		}
 	}
 
@@ -90,7 +107,7 @@ func (uc *CreateCheckoutSessionUsecase) Execute(ctx context.Context, input Creat
 	}
 
 	// 4. Stripeクライアントのチェック
-	if uc.stripeClient == nil {
+	if uc.checkoutCreator == nil {
 		return nil, fmt.Errorf("Stripeクライアントが設定されていません")
 	}
 
@@ -98,32 +115,23 @@ func (uc *CreateCheckoutSessionUsecase) Execute(ctx context.Context, input Creat
 	successURL := uc.cfg.AppURL() + "/supporters?success=true"
 	cancelURL := uc.cfg.AppURL() + "/supporters?canceled=true"
 
-	params := &stripe.CheckoutSessionCreateParams{
-		Mode: stripe.String(string(stripe.CheckoutSessionModeSubscription)),
-		LineItems: []*stripe.CheckoutSessionCreateLineItemParams{
-			{
-				Price:    stripe.String(priceID),
-				Quantity: stripe.Int64(1),
-			},
-		},
-		SuccessURL: stripe.String(successURL),
-		CancelURL:  stripe.String(cancelURL),
-		Metadata: map[string]string{
-			"user_id": user.ID.String(),
-		},
-	}
-
-	// ロケールの設定
+	// Default to English; only "ja" is rendered in Japanese.
+	// [Ja] デフォルトは英語。"ja" のときのみ日本語で表示する。
+	locale := "en"
 	if input.Locale == "ja" {
-		params.Locale = stripe.String("ja")
-	} else {
-		params.Locale = stripe.String("en")
+		locale = "ja"
 	}
 
-	checkoutSession, err := uc.stripeClient.V1CheckoutSessions.Create(ctx, params)
+	checkoutURL, err := uc.checkoutCreator.CreateCheckoutSession(ctx, annictstripe.CheckoutSessionParams{
+		PriceID:    priceID,
+		SuccessURL: successURL,
+		CancelURL:  cancelURL,
+		UserID:     user.ID.String(),
+		Locale:     locale,
+	})
 	if err != nil {
 		return nil, fmt.Errorf("stripe Checkoutセッションの作成に失敗しました: %w", err)
 	}
 
-	return &CreateCheckoutSessionOutput{CheckoutURL: checkoutSession.URL}, nil
+	return &CreateCheckoutSessionOutput{CheckoutURL: checkoutURL}, nil
 }

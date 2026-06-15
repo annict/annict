@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log/slog"
 	"time"
@@ -282,7 +283,12 @@ func (uc *ProcessStripeWebhookUsecase) handleCustomerSubscriptionUpdated(ctx con
 
 	result, err := uc.updateStripeSubscriberUC.Execute(ctx, input)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		// The update usecase wraps repository errors, so the not-found case must be
+		// detected via errors.Is on the sentinel rather than == sql.ErrNoRows.
+		//
+		// [Ja] update ユースケースはリポジトリのエラーをラップするため、未存在判定は
+		// == sql.ErrNoRows ではなく sentinel に対する errors.Is で行う。
+		if errors.Is(err, ErrStripeSubscriberNotFound) {
 			slog.WarnContext(ctx, "対応するStripeSubscriberが見つからないためスキップ",
 				"stripe_event_id", event.ID,
 				"subscription_id", subscription.ID,
@@ -326,7 +332,12 @@ func (uc *ProcessStripeWebhookUsecase) handleCustomerSubscriptionDeleted(ctx con
 
 	result, err := uc.deleteStripeSubscriberUC.Execute(ctx, input)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		// The delete usecase wraps repository errors, so the not-found case must be
+		// detected via errors.Is on the sentinel rather than == sql.ErrNoRows.
+		//
+		// [Ja] delete ユースケースはリポジトリのエラーをラップするため、未存在判定は
+		// == sql.ErrNoRows ではなく sentinel に対する errors.Is で行う。
+		if errors.Is(err, ErrStripeSubscriberNotFound) {
 			slog.WarnContext(ctx, "対応するStripeSubscriberが見つからないためスキップ",
 				"stripe_event_id", event.ID,
 				"subscription_id", subscription.ID,

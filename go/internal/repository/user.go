@@ -171,7 +171,7 @@ func (r *UserRepository) IsSupporter(ctx context.Context, user *model.User) (boo
 	// Stripeサブスクリプションをチェック
 	if user.StripeSubscriberID != nil && r.stripeSubscriberRepo != nil {
 		stripeSubscriber, err := r.stripeSubscriberRepo.GetByID(ctx, *user.StripeSubscriberID)
-		if err == nil && r.stripeSubscriberRepo.IsActive(&stripeSubscriber) {
+		if err == nil && stripeSubscriber != nil && r.stripeSubscriberRepo.IsActive(stripeSubscriber) {
 			return true, nil
 		}
 	}
