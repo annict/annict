@@ -73,9 +73,9 @@ See [Makefile](./Makefile), [go/Makefile](./go/Makefile), and [rails/Makefile](.
 ## Language and Writing Conventions
 
 - **Canonical version is English; authoring workflow is Japanese-first**: The English version is the official authoritative source. Author by writing Japanese first, then translate to English (Claude Code assists). After translation, also review the English version to catch meaning drift and unnatural wording. When a discrepancy arises, the English version takes precedence
-- **Code comments**: English block → blank line → Japanese block prefixed with `[Ja]`. Short comments can be one-line pairs like `# Returns ... / [Ja] ... を返す`
+- **Code comments**: English block first, then a `[Ja]`-prefixed Japanese block (the English block carries no marker). Doc comments on exported types, functions, and methods begin with the symbol name per Go convention. Put one blank comment line between the English block and the Japanese block (for both single- and multi-line comments). Do not mix Japanese into the English block (the basis for mechanical malformation checks). Inline (end-of-line) bilingual comments are not used — write the two blocks on their own lines above the code. See `.claude/rules/korylus-lang.md` §2.1
 - **Markdown documents**: Maintain `xxx.md` (English, canonical) and `xxx.ja.md` (Japanese translation) in parallel. Both files carry a `last_synced: YYYY-MM-DD` field in the YAML frontmatter; keep the dates aligned
-- **Commit messages**: English title + English body + blank line + Japanese body prefixed with `[Ja]`. Do not preserve a Japanese title (prioritize English scannability of `git log --oneline`)
+- **Commit messages**: English title, then a blank line, then the body — an English block, a blank line, then a `[Ja]`-prefixed Japanese block. Do not preserve a Japanese title (prioritize English scannability of `git log --oneline`)
 - **Identifiers**: Type, function, and variable names are English only
 - **Update both sides in the same commit**: Prevents translation drift
 - **Existing code**: Apply this rule to new writing. Migrate existing monolingual code to bilingual when editing it (no bulk migration required)
