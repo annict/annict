@@ -31,27 +31,48 @@ func (f *fakeSubscriptionRetriever) RetrieveSubscription(ctx context.Context, su
 	return f.subscription, f.err
 }
 
-// fakeCheckoutSessionCreator is a test double for CheckoutSessionCreator.
+// fakeCheckoutSessionCreator is a test double for CheckoutSessionCreator. It
+// records whether it was called and the params it received, so tests can assert
+// the metadata/locale wiring and that validation or price errors short-circuit
+// before any Stripe call.
 //
 // [Ja] fakeCheckoutSessionCreator は CheckoutSessionCreator のテストダブル。
+// 呼び出しの有無と受け取った params を記録し、metadata / locale の受け渡しや、
+// バリデーション・価格エラーが Stripe 呼び出し前に短絡することをテストで検証できる。
 type fakeCheckoutSessionCreator struct {
 	url string
 	err error
+
+	called    bool
+	gotParams annictstripe.CheckoutSessionParams
 }
 
 func (f *fakeCheckoutSessionCreator) CreateCheckoutSession(ctx context.Context, params annictstripe.CheckoutSessionParams) (string, error) {
+	f.called = true
+	f.gotParams = params
 	return f.url, f.err
 }
 
-// fakePortalSessionCreator is a test double for PortalSessionCreator.
+// fakePortalSessionCreator is a test double for PortalSessionCreator. It records
+// whether it was called and the params it received, so tests can assert the
+// customer/return-URL/locale wiring and that non-supporter or inactive cases
+// short-circuit before any Stripe call.
 //
 // [Ja] fakePortalSessionCreator は PortalSessionCreator のテストダブル。
+// 呼び出しの有無と受け取った params を記録し、customer / return URL / locale の
+// 受け渡しや、非サポーター・非アクティブ時に Stripe 呼び出し前に短絡することを
+// テストで検証できる。
 type fakePortalSessionCreator struct {
 	url string
 	err error
+
+	called    bool
+	gotParams annictstripe.PortalSessionParams
 }
 
 func (f *fakePortalSessionCreator) CreatePortalSession(ctx context.Context, params annictstripe.PortalSessionParams) (string, error) {
+	f.called = true
+	f.gotParams = params
 	return f.url, f.err
 }
 
