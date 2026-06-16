@@ -128,6 +128,7 @@ func TestGetTrackingHeatmapUsecase_Execute(t *testing.T) {
 			dateID string
 		}
 		// today is 2026-04-01 (JST). Spread the records across recent days.
+		//
 		// [Ja] today は 2026-04-01 (JST)。直近日付に複数件配置する。
 		specs := []spec{
 			{date: time.Date(2026, 3, 25, 10, 0, 0, 0, jst), count: 1, level: 1, dateID: "2026-03-25"},

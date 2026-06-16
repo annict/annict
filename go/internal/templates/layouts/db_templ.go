@@ -15,6 +15,7 @@ import (
 )
 
 // Db is the layout for the Annict DB admin UI, composed only of a sidebar and the main content area.
+//
 // [Ja] Db は Annict DB 管理画面用のレイアウト。サイドバーとメインコンテンツのみで構成される。
 func Db(meta viewmodel.PageMeta, assetVersion string, content templ.Component) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -44,7 +45,7 @@ func Db(meta viewmodel.PageMeta, assetVersion string, content templ.Component) t
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.ResolveAttributeValue(templates.Locale(ctx))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/layouts/db.templ`, Line: 14, Col: 35}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/layouts/db.templ`, Line: 15, Col: 35}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var2)
 		if templ_7745c5c3_Err != nil {

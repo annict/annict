@@ -31,6 +31,7 @@ type GetTrackingHeatmapUsecase struct {
 }
 
 // NewGetTrackingHeatmapUsecase constructs the use case.
+//
 // [Ja] NewGetTrackingHeatmapUsecase は GetTrackingHeatmapUsecase を生成する。
 func NewGetTrackingHeatmapUsecase(
 	userRepo *repository.UserRepository,
@@ -43,9 +44,11 @@ func NewGetTrackingHeatmapUsecase(
 }
 
 // GetTrackingHeatmapInput is the use case input.
+//
 // [Ja] GetTrackingHeatmapInput は GetTrackingHeatmapUsecase の入力。
 type GetTrackingHeatmapInput struct {
 	// Username is the target profile owner.
+	//
 	// [Ja] 対象プロフィールオーナーの username。
 	Username string
 	// TimeZone is the IANA time zone name used to bucket records into days.
@@ -63,15 +66,19 @@ type GetTrackingHeatmapInput struct {
 }
 
 // TrackingHeatmapCell represents one day in the heatmap.
+//
 // [Ja] TrackingHeatmapCell はヒートマップ上の 1 日分のセル。
 type TrackingHeatmapCell struct {
 	// Date is the formatted day in the requested time zone (YYYY-MM-DD).
+	//
 	// [Ja] 指定タイムゾーン上の日付 (YYYY-MM-DD)。
 	Date string
 	// Count is the number of records on Date (0 for days without records).
+	//
 	// [Ja] Date の視聴記録数 (記録のない日は 0)。
 	Count int
 	// LeveledCount is the 0-4 density bucket used to pick a CSS class.
+	//
 	// [Ja] CSS クラス選択用の 0〜4 段階の密度レベル。
 	LeveledCount int
 }

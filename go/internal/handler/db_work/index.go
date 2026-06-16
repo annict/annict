@@ -15,6 +15,7 @@ import (
 const perPage int32 = 30
 
 // Index renders the work list page in the Annict DB admin UI (GET /db/works).
+//
 // [Ja] Annict DB 管理画面の作品一覧ページ (GET /db/works) を描画する。
 func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -65,6 +66,7 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 }
 
 // parseIntParam reads a positive int32 query parameter and falls back to defaultValue when missing or invalid.
+//
 // [Ja] 正の int32 のクエリパラメータを読み取り、欠落・無効な値のときは defaultValue を返す。
 func parseIntParam(r *http.Request, name string, defaultValue int32) int32 {
 	s := r.URL.Query().Get(name)
@@ -79,6 +81,7 @@ func parseIntParam(r *http.Request, name string, defaultValue int32) int32 {
 }
 
 // buildBasePath returns the current URL with the `page` query parameter stripped, suitable as the base path for pagination links.
+//
 // [Ja] ページネーションリンクの起点として使えるよう、現在の URL から `page` クエリパラメータだけを除いたパスを返す。
 func buildBasePath(u *url.URL) string {
 	q := u.Query()

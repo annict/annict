@@ -489,6 +489,7 @@ func TestBeforeSend_KeepsNonIgnorableErrors(t *testing.T) {
 	t.Parallel()
 
 	// Ordinary errors must still reach Sentry.
+	//
 	// [Ja] 通常のエラーは引き続き Sentry に届くことを検証する。
 	event := &sentry.Event{
 		Request: &sentry.Request{},

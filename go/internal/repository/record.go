@@ -26,12 +26,14 @@ type RecordRepository struct {
 }
 
 // NewRecordRepository constructs a RecordRepository.
+//
 // [Ja] NewRecordRepository は RecordRepository を生成する。
 func NewRecordRepository(queries *query.Queries) *RecordRepository {
 	return &RecordRepository{queries: queries}
 }
 
 // WithTx returns a new RecordRepository bound to the given transaction.
+//
 // [Ja] WithTx はトランザクションを使用する新しい RecordRepository を返す。
 func (r *RecordRepository) WithTx(tx *sql.Tx) *RecordRepository {
 	return &RecordRepository{queries: r.queries.WithTx(tx)}
@@ -54,6 +56,7 @@ type DailyRecordCount struct {
 	// を用いてフォーマットすること。
 	Day time.Time
 	// Count is the number of non-deleted records logged on Day.
+	//
 	// [Ja] Day に記録された論理削除されていないレコードの件数。
 	Count int64
 }

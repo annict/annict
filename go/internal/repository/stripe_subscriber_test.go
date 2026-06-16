@@ -13,6 +13,7 @@ import (
 )
 
 // TestStripeSubscriberRepository_Create verifies that a new StripeSubscriber can be created.
+//
 // [Ja] 新しい StripeSubscriber を作成できることをテストする。
 func TestStripeSubscriberRepository_Create(t *testing.T) {
 	t.Parallel()
@@ -50,6 +51,7 @@ func TestStripeSubscriberRepository_Create(t *testing.T) {
 }
 
 // TestStripeSubscriberRepository_GetByID verifies that a StripeSubscriber can be fetched by ID.
+//
 // [Ja] ID で StripeSubscriber を取得できることをテストする。
 func TestStripeSubscriberRepository_GetByID(t *testing.T) {
 	t.Parallel()
@@ -59,6 +61,7 @@ func TestStripeSubscriberRepository_GetByID(t *testing.T) {
 	repo := repository.NewStripeSubscriberRepository(queries)
 
 	// Create test data.
+	//
 	// [Ja] テストデータを作成する。
 	subscriberID := testutil.NewStripeSubscriberBuilder(t, tx).
 		WithStripeCustomerID("cus_test_getbyid").
@@ -66,6 +69,7 @@ func TestStripeSubscriberRepository_GetByID(t *testing.T) {
 		Build()
 
 	// Fetch by ID.
+	//
 	// [Ja] ID で取得する。
 	subscriber, err := repo.GetByID(context.Background(), subscriberID)
 	if err != nil {
@@ -84,6 +88,7 @@ func TestStripeSubscriberRepository_GetByID(t *testing.T) {
 }
 
 // TestStripeSubscriberRepository_GetByID_NotFound verifies that (nil, nil) is returned for a nonexistent ID.
+//
 // [Ja] 存在しない ID の場合に (nil, nil) が返ることをテストする。
 func TestStripeSubscriberRepository_GetByID_NotFound(t *testing.T) {
 	t.Parallel()
@@ -102,6 +107,7 @@ func TestStripeSubscriberRepository_GetByID_NotFound(t *testing.T) {
 }
 
 // TestStripeSubscriberRepository_GetByStripeCustomerID verifies that a StripeSubscriber can be fetched by Stripe customer ID.
+//
 // [Ja] Stripe 顧客 ID で StripeSubscriber を取得できることをテストする。
 func TestStripeSubscriberRepository_GetByStripeCustomerID(t *testing.T) {
 	t.Parallel()
@@ -111,12 +117,14 @@ func TestStripeSubscriberRepository_GetByStripeCustomerID(t *testing.T) {
 	repo := repository.NewStripeSubscriberRepository(queries)
 
 	// Create test data.
+	//
 	// [Ja] テストデータを作成する。
 	testutil.NewStripeSubscriberBuilder(t, tx).
 		WithStripeCustomerID("cus_unique_customer").
 		Build()
 
 	// Fetch by Stripe customer ID.
+	//
 	// [Ja] Stripe 顧客 ID で取得する。
 	subscriber, err := repo.GetByStripeCustomerID(context.Background(), "cus_unique_customer")
 	if err != nil {
@@ -132,6 +140,7 @@ func TestStripeSubscriberRepository_GetByStripeCustomerID(t *testing.T) {
 }
 
 // TestStripeSubscriberRepository_GetByStripeCustomerID_NotFound verifies that (nil, nil) is returned for a nonexistent customer ID.
+//
 // [Ja] 存在しない顧客 ID の場合に (nil, nil) が返ることをテストする。
 func TestStripeSubscriberRepository_GetByStripeCustomerID_NotFound(t *testing.T) {
 	t.Parallel()
@@ -150,6 +159,7 @@ func TestStripeSubscriberRepository_GetByStripeCustomerID_NotFound(t *testing.T)
 }
 
 // TestStripeSubscriberRepository_GetByStripeSubscriptionID verifies that a StripeSubscriber can be fetched by Stripe subscription ID.
+//
 // [Ja] Stripe サブスクリプション ID で StripeSubscriber を取得できることをテストする。
 func TestStripeSubscriberRepository_GetByStripeSubscriptionID(t *testing.T) {
 	t.Parallel()
@@ -159,12 +169,14 @@ func TestStripeSubscriberRepository_GetByStripeSubscriptionID(t *testing.T) {
 	repo := repository.NewStripeSubscriberRepository(queries)
 
 	// Create test data.
+	//
 	// [Ja] テストデータを作成する。
 	testutil.NewStripeSubscriberBuilder(t, tx).
 		WithStripeSubscriptionID("sub_unique_subscription").
 		Build()
 
 	// Fetch by Stripe subscription ID.
+	//
 	// [Ja] Stripe サブスクリプション ID で取得する。
 	subscriber, err := repo.GetByStripeSubscriptionID(context.Background(), "sub_unique_subscription")
 	if err != nil {
@@ -180,6 +192,7 @@ func TestStripeSubscriberRepository_GetByStripeSubscriptionID(t *testing.T) {
 }
 
 // TestStripeSubscriberRepository_GetByStripeSubscriptionID_NotFound verifies that (nil, nil) is returned for a nonexistent subscription ID.
+//
 // [Ja] 存在しないサブスクリプション ID の場合に (nil, nil) が返ることをテストする。
 func TestStripeSubscriberRepository_GetByStripeSubscriptionID_NotFound(t *testing.T) {
 	t.Parallel()
@@ -198,6 +211,7 @@ func TestStripeSubscriberRepository_GetByStripeSubscriptionID_NotFound(t *testin
 }
 
 // TestStripeSubscriberRepository_Update verifies that subscriber information can be updated.
+//
 // [Ja] サブスクライバー情報を更新できることをテストする。
 func TestStripeSubscriberRepository_Update(t *testing.T) {
 	t.Parallel()
@@ -207,6 +221,7 @@ func TestStripeSubscriberRepository_Update(t *testing.T) {
 	repo := repository.NewStripeSubscriberRepository(queries)
 
 	// Create test data.
+	//
 	// [Ja] テストデータを作成する。
 	subscriberID := testutil.NewStripeSubscriberBuilder(t, tx).
 		WithStripeStatus("active").
@@ -214,6 +229,7 @@ func TestStripeSubscriberRepository_Update(t *testing.T) {
 		Build()
 
 	// Update.
+	//
 	// [Ja] 更新する。
 	now := time.Now()
 	newPeriodEnd := now.AddDate(1, 0, 0)
@@ -231,6 +247,7 @@ func TestStripeSubscriberRepository_Update(t *testing.T) {
 	}
 
 	// Verify the data after the update.
+	//
 	// [Ja] 更新後のデータを確認する。
 	subscriber, err := repo.GetByID(context.Background(), subscriberID)
 	if err != nil {
@@ -246,6 +263,7 @@ func TestStripeSubscriberRepository_Update(t *testing.T) {
 }
 
 // TestStripeSubscriberRepository_UpdateStatus verifies that only the status can be updated.
+//
 // [Ja] ステータスのみを更新できることをテストする。
 func TestStripeSubscriberRepository_UpdateStatus(t *testing.T) {
 	t.Parallel()
@@ -255,12 +273,14 @@ func TestStripeSubscriberRepository_UpdateStatus(t *testing.T) {
 	repo := repository.NewStripeSubscriberRepository(queries)
 
 	// Create test data.
+	//
 	// [Ja] テストデータを作成する。
 	subscriberID := testutil.NewStripeSubscriberBuilder(t, tx).
 		WithStripeStatus("active").
 		Build()
 
 	// Update the status.
+	//
 	// [Ja] ステータスを更新する。
 	err := repo.UpdateStatus(context.Background(), query.UpdateStripeSubscriberStatusParams{
 		ID:           int64(subscriberID),
@@ -271,6 +291,7 @@ func TestStripeSubscriberRepository_UpdateStatus(t *testing.T) {
 	}
 
 	// Verify the data after the update.
+	//
 	// [Ja] 更新後のデータを確認する。
 	subscriber, err := repo.GetByID(context.Background(), subscriberID)
 	if err != nil {
@@ -286,6 +307,7 @@ func TestStripeSubscriberRepository_UpdateStatus(t *testing.T) {
 }
 
 // TestStripeSubscriberRepository_IsActive verifies that the active check works correctly.
+//
 // [Ja] アクティブ判定が正しく動作することをテストする。
 func TestStripeSubscriberRepository_IsActive(t *testing.T) {
 	t.Parallel()

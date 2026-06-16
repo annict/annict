@@ -49,6 +49,7 @@ const ReverseProxySource = "reverse_proxy"
 func NewSlogHandler(base slog.Handler) slog.Handler {
 	sentryHandler := sentryslog.Option{
 		// Capture exactly Error and Fatal as Sentry events.
+		//
 		// [Ja] Error と Fatal だけを Sentry イベント化する。
 		EventLevel: []slog.Level{slog.LevelError, sentryslog.LevelFatal},
 		// Disable the Sentry Logs API by passing an empty (non-nil) slice.

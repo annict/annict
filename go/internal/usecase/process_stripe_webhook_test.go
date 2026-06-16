@@ -109,6 +109,7 @@ func TestProcessStripeWebhookUsecase_SkipsWhenSubscriberNotFound(t *testing.T) {
 			ctx := context.Background()
 
 			// No StripeSubscriber row exists for this subscription ID.
+			//
 			// [Ja] 対応する StripeSubscriber が存在しないサブスクリプション ID。
 			subID := "sub_webhook_notfound_" + randomString(8)
 			eventID := "evt_webhook_notfound_" + randomString(8)

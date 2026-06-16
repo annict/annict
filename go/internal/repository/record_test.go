@@ -175,6 +175,7 @@ func TestRecordRepository_WithTx(t *testing.T) {
 }
 
 // insertTestRecord inserts a row into `records` for testing.
+//
 // [Ja] insertTestRecord はテスト用に records 行を 1 件挿入する。
 func insertTestRecord(
 	t *testing.T,

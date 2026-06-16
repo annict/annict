@@ -1,4 +1,5 @@
 // Package viewmodel exposes types prepared for the presentation layer.
+//
 // [Ja] viewmodel パッケージは Presentation 層向けに整形済みの型を提供する。
 package viewmodel
 
@@ -12,12 +13,15 @@ import (
 // [Ja] TrackingHeatmapCell は視聴記録ヒートマップフラグメントの 1 日分のセルに表示するデータ。
 type TrackingHeatmapCell struct {
 	// Date is the day formatted as "YYYY-MM-DD" in the requested time zone.
+	//
 	// [Ja] 指定タイムゾーン上の日付 (YYYY-MM-DD)。
 	Date string
 	// Count is the number of records on Date (0 included).
+	//
 	// [Ja] その日の視聴記録数 (0 を含む)。
 	Count int
 	// LeveledCount is the 0-4 density bucket that picks the CSS density class.
+	//
 	// [Ja] CSS クラス選択用の 0〜4 段階の密度レベル。
 	LeveledCount int
 }

@@ -55,6 +55,7 @@ func TestCreateCheckoutSessionUsecase_Execute_PropagatesNonNotFoundError(t *test
 	v := validator.NewSupportersCheckoutCreateValidator()
 
 	// nil Stripe client: the retrieval error must surface before any Stripe call.
+	//
 	// [Ja] Stripe クライアントは nil。取得エラーは Stripe 呼び出しより前に表面化するはず。
 	uc := NewCreateCheckoutSessionUsecase(cfg, stripeSubscriberRepo, stripeCfg, nil, v)
 

@@ -9,6 +9,7 @@ import (
 )
 
 // FeatureFlagRepository handles data access for the feature_flags table.
+//
 // [Ja] FeatureFlagRepository は feature_flags テーブルへのデータアクセスを担う。
 type FeatureFlagRepository struct {
 	queries *query.Queries

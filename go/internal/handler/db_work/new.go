@@ -11,6 +11,7 @@ import (
 )
 
 // New renders the new-work form page in the Annict DB admin UI (GET /db/works/new).
+//
 // [Ja] Annict DB 管理画面の作品新規作成フォームページ (GET /db/works/new) を描画する。
 func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()

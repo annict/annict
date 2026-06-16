@@ -9,6 +9,7 @@ import (
 )
 
 // WorkRepository handles data access for the works table and related joins.
+//
 // [Ja] WorkRepository は works テーブルおよび関連 JOIN へのデータアクセスを担う。
 type WorkRepository struct {
 	queries *query.Queries
