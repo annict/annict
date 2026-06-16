@@ -217,6 +217,23 @@ func (uc *ProcessStripeWebhookUsecase) handleCheckoutSessionCompleted(ctx contex
 		return nil
 	}
 
+	// Stripe may omit customer on a session, so guard before dereferencing
+	// session.Customer.ID below. A missing customer means we cannot link the
+	// subscription to a user, so skip the event safely instead of panicking.
+	//
+	// [Ja] Stripe はセッションで customer を欠落させて送ることがあるため、後段の
+	// session.Customer.ID 参照より前にガードする。customer が無いとサブスクリプションを
+	// ユーザーに紐付けられないため、panic させずイベントを安全にスキップする。
+	if session.Customer == nil {
+		slog.InfoContext(ctx, "顧客IDがないためスキップ",
+			"stripe_event_id", event.ID,
+		)
+		if err := uc.stripeWebhookEventRepo.MarkAsSkipped(ctx, webhookEventID); err != nil {
+			return fmt.Errorf("イベントスキップのマークに失敗: %w", err)
+		}
+		return nil
+	}
+
 	userID, err := ParseUserIDFromMetadata(session.Metadata)
 	if err != nil {
 		return fmt.Errorf("ユーザーID取得に失敗: %w", err)
