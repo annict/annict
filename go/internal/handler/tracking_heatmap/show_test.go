@@ -18,6 +18,7 @@ import (
 )
 
 // newTestHandler wires the dependency graph used by the handler tests.
+//
 // [Ja] newTestHandler はハンドラーテストで使う依存グラフを構築する。
 func newTestHandler(t *testing.T) *Handler {
 	t.Helper()

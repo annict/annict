@@ -14,6 +14,7 @@ import (
 )
 
 // Config holds the Sentry settings.
+//
 // [Ja] Sentry の設定を保持する。
 type Config struct {
 	DSN              string

@@ -15,6 +15,7 @@ import (
 )
 
 // Create processes the work creation request in the Annict DB admin UI (POST /db/works).
+//
 // [Ja] Annict DB 管理画面の作品作成リクエスト (POST /db/works) を処理する。
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -62,11 +63,13 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	h.flashMgr.SetSuccess(w, i18n.T(ctx, "flash_db_work_created"))
 
 	// TODO: redirect to the edit page once it is implemented; for now redirect back to the index.
+	//
 	// [Ja] TODO: 編集ページ実装後は編集ページへリダイレクトする。現状は一覧ページへリダイレクトする。
 	http.Redirect(w, r, fmt.Sprintf("/db/works?highlight=%d", output.WorkID), http.StatusSeeOther)
 }
 
 // renderNewWithErrors re-renders the new-work form with validation errors and the previously submitted values.
+//
 // [Ja] バリデーションエラーと送信済みの入力値を保持したまま新規作成フォームを再描画する。
 func (h *Handler) renderNewWithErrors(w http.ResponseWriter, r *http.Request, input usecase.CreateWorkInput, formErrors *model.ValidationError) {
 	ctx := r.Context()

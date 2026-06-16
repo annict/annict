@@ -281,11 +281,13 @@ func TestIsGoHandledPath(t *testing.T) {
 		{"/@username", false},
 		{"/fragment/@username/tracking_heatmap", true},
 		// "@user.name-with_dashes" exercises usernames that contain dots, hyphens, and underscores.
+		//
 		// [Ja] username にドット・ハイフン・アンダースコアが含まれるケースの検証。
 		{"/fragment/@user.name-with_dashes/tracking_heatmap", true},
 		{"/fragment/@username/records", false},
 		{"/fragment/records", false},
 		// Only an exact "/tracking_heatmap" suffix is allowed, so paths like "/tracking_heatmap/extra" must not match.
+		//
 		// [Ja] "/tracking_heatmap" の末尾完全一致のみを許可し、"/tracking_heatmap/extra" のような誤検知を避ける。
 		{"/fragment/@username/tracking_heatmap/extra", false},
 	}

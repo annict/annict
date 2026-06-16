@@ -113,6 +113,7 @@ func buildRouter(hub *sentry.Hub, register func(chi.Router)) *chi.Mux {
 }
 
 // findEvents filters events by type ("" matches error events).
+//
 // [Ja] イベントを種別で絞り込む ("" は error イベントにマッチ)。
 func findEvents(events []*sentry.Event, eventType string) []*sentry.Event {
 	var out []*sentry.Event
@@ -144,6 +145,7 @@ func TestSentryTransaction_PanicEventCarriesRoutePattern(t *testing.T) {
 	router.ServeHTTP(rr, req)
 
 	// chi's Recoverer must absorb the re-panicked error and return 500.
+	//
 	// [Ja] chi の Recoverer が再 panic を握り潰し、500 を返す経路を確認する。
 	if rr.Code != http.StatusInternalServerError {
 		t.Errorf("status = %d, want %d", rr.Code, http.StatusInternalServerError)

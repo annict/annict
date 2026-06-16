@@ -3,6 +3,7 @@ package model
 import "time"
 
 // FeatureFlag is the domain model that represents a single feature flag entry.
+//
 // [Ja] FeatureFlag はフィーチャーフラグを表すドメインモデル。
 type FeatureFlag struct {
 	ID          FeatureFlagID

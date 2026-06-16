@@ -3,6 +3,8 @@
 // templ: version: v0.3.1020
 // Package tracking_heatmap renders the watch-record heatmap HTML fragment.
 
+//
+
 // [Ja] tracking_heatmap パッケージは視聴記録ヒートマップの HTML フラグメントをレンダリングする。
 
 package tracking_heatmap
@@ -80,7 +82,7 @@ func Show(cells []viewmodel.TrackingHeatmapCell) templ.Component {
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue(cell.Date + ": " + strconv.Itoa(cell.Count))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/tracking_heatmap/show.templ`, Line: 31, Col: 56}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/tracking_heatmap/show.templ`, Line: 32, Col: 56}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4)
 			if templ_7745c5c3_Err != nil {

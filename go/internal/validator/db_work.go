@@ -11,19 +11,21 @@ import (
 )
 
 // allowedMediaValues lists the media type codes accepted by the create-work form.
-// The mapping mirrors the Rails enum on the works.media column.
+// The mapping mirrors the Rails enum on the works.media column
+// (0=other, 1=tv, 2=ova, 3=movie, 4=web).
 //
 // [Ja] allowedMediaValues は作品作成フォームで許可されるメディア種別コードの一覧。
-// Rails 版の works.media enum と対応している。
+// Rails 版の works.media enum と対応している (0=その他, 1=テレビ, 2=OVA, 3=映画, 4=Web)。
 var allowedMediaValues = map[string]bool{
-	"0": true, // other. [Ja] その他
-	"1": true, // tv. [Ja] テレビ
-	"2": true, // ova. [Ja] OVA
-	"3": true, // movie. [Ja] 映画
-	"4": true, // web. [Ja] Web
+	"0": true,
+	"1": true,
+	"2": true,
+	"3": true,
+	"4": true,
 }
 
 // DbWorkCreateValidator validates the create-work form on the Annict DB admin screen.
+//
 // [Ja] DbWorkCreateValidator は Annict DB 管理画面の作品作成フォームを検証する。
 type DbWorkCreateValidator struct{}
 

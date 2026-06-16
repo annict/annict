@@ -10,12 +10,14 @@ import (
 )
 
 // Handler bundles the dependencies the tracking heatmap fragment endpoint needs.
+//
 // [Ja] Handler は視聴記録ヒートマップフラグメントエンドポイントが必要とする依存をまとめる。
 type Handler struct {
 	getTrackingHeatmapUC *usecase.GetTrackingHeatmapUsecase
 }
 
 // NewHandler constructs the Handler.
+//
 // [Ja] NewHandler は Handler を生成する。
 func NewHandler(getTrackingHeatmapUC *usecase.GetTrackingHeatmapUsecase) *Handler {
 	return &Handler{

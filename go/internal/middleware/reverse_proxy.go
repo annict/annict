@@ -20,16 +20,19 @@ import (
 )
 
 // DeviceTokenCookieName is the cookie name used to identify a device (browser).
+//
 // [Ja] デバイス (ブラウザ) を識別する Cookie のキー名。
 const DeviceTokenCookieName = "device_token"
 
 // featureFlagChecker abstracts the feature flag evaluator that the reverse proxy depends on.
+//
 // [Ja] リバースプロキシが依存するフィーチャーフラグ判定の抽象化インターフェース。
 type featureFlagChecker interface {
 	IsEnabledByDeviceOrUser(ctx context.Context, deviceToken string, userID model.UserID, name model.FeatureFlagName) (bool, error)
 }
 
 // featureFlaggedPattern pairs a URL pattern with the feature flag that gates routing for it.
+//
 // [Ja] URL パターンと、その経路をゲートするフィーチャーフラグの対応を表す。
 type featureFlaggedPattern struct {
 	pattern *regexp.Regexp
@@ -42,11 +45,17 @@ var featureFlaggedPatterns = []featureFlaggedPattern{
 
 // ReverseProxyMiddleware はRails版へのリバースプロキシミドルウェア
 type ReverseProxyMiddleware struct {
-	railsURL        *url.URL
-	proxy           *httputil.ReverseProxy
-	cfg             *config.Config
-	featureFlagRepo featureFlagChecker // optional; falls back to Rails when nil. [Ja] nil 許容。フラグ機能不要時は nil
-	sessionMgr      *session.Manager   // optional; nil during tests or when session is not needed. [Ja] nil 許容。テスト時やセッション不要時は nil
+	railsURL *url.URL
+	proxy    *httputil.ReverseProxy
+	cfg      *config.Config
+	// optional; falls back to Rails when nil.
+	//
+	// [Ja] nil 許容。フラグ機能不要時は nil
+	featureFlagRepo featureFlagChecker
+	// optional; nil during tests or when session is not needed.
+	//
+	// [Ja] nil 許容。テスト時やセッション不要時は nil
+	sessionMgr *session.Manager
 }
 
 // Go版で処理するパス（ホワイトリスト）
@@ -113,22 +122,27 @@ func NewReverseProxyMiddleware(railsURL string, cfg *config.Config, featureFlagR
 		pr.Out.Host = pr.In.Host
 
 		// Get the client IP (priority: CF-Connecting-IP > first IP of X-Forwarded-For > RemoteAddr).
+		//
 		// [Ja] クライアント IP アドレスを取得 (優先順位: CF-Connecting-IP > X-Forwarded-For の最初の IP > RemoteAddr)
 		clientIP := clientip.GetClientIP(pr.In)
 
 		// Set X-Forwarded-For.
+		//
 		// [Ja] X-Forwarded-For の設定
 		if originalXForwardedFor := pr.In.Header.Get("X-Forwarded-For"); originalXForwardedFor != "" {
 			// Keep the existing value (preserve what Cloudflare etc. set).
+			//
 			// [Ja] 既存の値を維持 (Cloudflare などが設定した値を保持)
 			pr.Out.Header.Set("X-Forwarded-For", originalXForwardedFor)
 		} else {
 			// Set clientIP when there is no existing value.
+			//
 			// [Ja] 既存の値がない場合、clientIPを設定
 			pr.Out.Header.Set("X-Forwarded-For", clientIP)
 		}
 
 		// Set X-Real-IP (set clientIP only when there is no existing value).
+		//
 		// [Ja] X-Real-IP の設定 (既存の値がない場合のみ clientIP を設定)
 		if originalXRealIP := pr.In.Header.Get("X-Real-IP"); originalXRealIP != "" {
 			pr.Out.Header.Set("X-Real-IP", originalXRealIP)
@@ -137,14 +151,17 @@ func NewReverseProxyMiddleware(railsURL string, cfg *config.Config, featureFlagR
 		}
 
 		// Set X-Forwarded-Proto.
+		//
 		// [Ja] X-Forwarded-Proto の設定
 		pr.Out.Header.Set("X-Forwarded-Proto", "https")
 
 		// Set X-Forwarded-Host.
+		//
 		// [Ja] X-Forwarded-Host の設定
 		pr.Out.Header.Set("X-Forwarded-Host", cfg.Domain)
 
 		// Log output (for developers).
+		//
 		// [Ja] ログ出力 (開発者向け)
 		slog.Info("リバースプロキシでRails版にリクエストを転送",
 			"path", pr.In.URL.Path,
@@ -253,10 +270,13 @@ func (m *ReverseProxyMiddleware) ensureDeviceToken(w http.ResponseWriter, r *htt
 
 	secure := m.cfg.Env != "development"
 	http.SetCookie(w, &http.Cookie{
-		Name:     DeviceTokenCookieName,
-		Value:    token,
-		Path:     "/",
-		MaxAge:   10 * 365 * 24 * 60 * 60, // 10 years. [Ja] 10 年
+		Name:  DeviceTokenCookieName,
+		Value: token,
+		Path:  "/",
+		// 10 years.
+		//
+		// [Ja] 10 年
+		MaxAge:   10 * 365 * 24 * 60 * 60,
 		HttpOnly: true,
 		Secure:   secure,
 		SameSite: http.SameSiteLaxMode,

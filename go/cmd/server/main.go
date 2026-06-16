@@ -375,6 +375,7 @@ func main() {
 	userRepo := repository.NewUserRepository(queries)
 
 	// Initialize the tracking heatmap fragment handler.
+	//
 	// [Ja] 視聴記録ヒートマップフラグメントハンドラーの初期化。
 	recordRepo := repository.NewRecordRepository(queries)
 	getTrackingHeatmapUC := usecase.NewGetTrackingHeatmapUsecase(userRepo, recordRepo)
@@ -543,6 +544,7 @@ func main() {
 	r.Get("/ics", icsHandler.Show)             // Apple カレンダー互換の代替パス（クエリパラメータで username を指定）
 
 	// Tracking heatmap fragment.
+	//
 	// [Ja] 視聴記録ヒートマップフラグメント。
 	r.Get("/fragment/@{username}/tracking_heatmap", trackingHeatmapHandler.Show)
 

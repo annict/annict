@@ -7,6 +7,7 @@ import (
 )
 
 // Re-export role constants from model.User so that callers can reference roles without importing the model package.
+//
 // [Ja] ロール定数を model.User から再エクスポートする。呼び出し側がロール値のためだけに model パッケージを import せずに済むようにする目的。
 const (
 	RoleUser   = model.RoleUser
@@ -23,6 +24,7 @@ func IsEditor(user *model.User) bool {
 }
 
 // IsCommitter reports whether the user is either an admin or an editor. Corresponds to the Rails-side User#committer?.
+//
 // [Ja] ユーザーが管理者または編集者かどうかを返す。Rails 版の User#committer? に対応する。
 func IsCommitter(user *model.User) bool {
 	return user != nil && user.IsCommitter()

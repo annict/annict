@@ -64,6 +64,7 @@ func newRiverTestHub(t *testing.T) (*sentry.Hub, *riverCaptureTransport) {
 }
 
 // newJobRow builds a minimal JobRow with the fields the middleware reads.
+//
 // [Ja] ミドルウェアが参照するフィールドのみを埋めた最小限の JobRow を生成する。
 func newJobRow(kind string, attempt int) *rivertype.JobRow {
 	return &rivertype.JobRow{Kind: kind, Attempt: attempt}

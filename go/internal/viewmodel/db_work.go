@@ -11,6 +11,7 @@ import (
 )
 
 // WorkStatus wraps model.WorkStatus for use in the Presentation layer, since templates may not depend on the model package.
+//
 // [Ja] WorkStatus は Presentation 層から扱える形に model.WorkStatus をラップした型 (templates は model に直接依存できないため)。
 type WorkStatus model.WorkStatus
 
@@ -21,15 +22,20 @@ const (
 )
 
 // String returns the textual representation of the status.
+//
 // [Ja] ステータスの文字列表現を返す。
 func (s WorkStatus) String() string { return string(s) }
 
 // DBWorkListItem is the per-row display data for the work list on the Annict DB admin screen.
+//
 // [Ja] DBWorkListItem は Annict DB 管理画面の作品一覧で 1 行ごとに表示する整形済みデータ。
 type DBWorkListItem struct {
-	ID            WorkID
-	Title         string
-	Season        string // Pre-formatted season display string. [Ja] フォーマット済みのシーズン表示文字列。
+	ID    WorkID
+	Title string
+	// Pre-formatted season display string.
+	//
+	// [Ja] フォーマット済みのシーズン表示文字列。
+	Season        string
 	WatchersCount int32
 	Status        WorkStatus
 	HasImage      bool
@@ -143,6 +149,7 @@ func buildNumberFormatOptions(formats []model.NumberFormat) []SelectOption {
 }
 
 // DBWorkFormInput holds the submitted form values so the work form can be re-rendered with the user's input after a validation error.
+//
 // [Ja] DBWorkFormInput はバリデーションエラー時に作品フォームを再描画するために、送信された入力値を保持する。
 type DBWorkFormInput struct {
 	Title                 string
@@ -205,6 +212,7 @@ func NewDBWorkFormInput(input usecase.CreateWorkInput) *DBWorkFormInput {
 }
 
 // Val returns the form value for the given field, or "" when the receiver is nil.
+//
 // [Ja] Val は指定フィールドのフォーム値を返す。レシーバが nil のときは "" を返す。
 func (d *DBWorkFormInput) Val(field string) string {
 	if d == nil {

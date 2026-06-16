@@ -33,6 +33,7 @@ func CurrentPathMiddleware(next http.Handler) http.Handler {
 type currentPathContextKey struct{}
 
 // SetCurrentPath stores the current request path in the context.
+//
 // [Ja] SetCurrentPath は現在のリクエストパスをコンテキストに保存する。
 func SetCurrentPath(ctx context.Context, path string) context.Context {
 	return context.WithValue(ctx, currentPathContextKey{}, path)

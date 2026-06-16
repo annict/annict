@@ -75,6 +75,7 @@ func (p Pagination) PageURL(page int) string {
 }
 
 // Pages returns the slice of page numbers to render. A value of 0 marks an ellipsis (…).
+//
 // [Ja] Pages はレンダリングするページ番号のスライスを返す。値 0 は省略記号 (…) を表す。
 func (p Pagination) Pages() []int {
 	if p.TotalPages <= 7 {

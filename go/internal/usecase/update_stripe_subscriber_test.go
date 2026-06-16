@@ -34,10 +34,13 @@ func TestUpdateStripeSubscriberUsecase_Execute(t *testing.T) {
 	uc := NewUpdateStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo)
 
 	tests := []struct {
-		name         string
-		input        UpdateStripeSubscriberInput
-		wantError    bool
-		wantNotFound bool // asserts the error is ErrStripeSubscriberNotFound. [Ja] ErrStripeSubscriberNotFound であることを検証する
+		name      string
+		input     UpdateStripeSubscriberInput
+		wantError bool
+		// asserts the error is ErrStripeSubscriberNotFound.
+		//
+		// [Ja] ErrStripeSubscriberNotFound であることを検証する
+		wantNotFound bool
 	}{
 		{
 			name: "サブスクリプション状態を更新できる",
