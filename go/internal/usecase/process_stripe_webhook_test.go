@@ -415,6 +415,7 @@ func TestProcessStripeWebhookUsecase_HandleCustomerSubscriptionUpdated(t *testin
 		})
 
 		// The updated event carries a new price; the persisted record must reflect it.
+		//
 		// [Ja] updated イベントは新しい price を載せる。永続化レコードがそれを反映する必要がある。
 		event := marshalSubscriptionEvent(t, eventID, stripe.EventTypeCustomerSubscriptionUpdated, stripe.Subscription{
 			ID:     subscriptionID,
@@ -572,6 +573,7 @@ func TestProcessStripeWebhookUsecase_HandleCustomerSubscriptionDeleted(t *testin
 		}
 
 		// A user linked to the subscriber so we can assert the link is cleared.
+		//
 		// [Ja] subscriber に紐付くユーザーを作り、紐付けが解除されることを検証できるようにする。
 		userID := insertStripeTestUserLinkedTo(t, db, sql.NullInt64{Int64: int64(seeded.ID), Valid: true})
 		t.Cleanup(func() {
@@ -599,6 +601,7 @@ func TestProcessStripeWebhookUsecase_HandleCustomerSubscriptionDeleted(t *testin
 		}
 
 		// The subscriber status moves to canceled.
+		//
 		// [Ja] subscriber のステータスが canceled に更新される。
 		canceled, err := stripeSubscriberRepo.GetByStripeSubscriptionID(ctx, subscriptionID)
 		if err != nil {
@@ -612,6 +615,7 @@ func TestProcessStripeWebhookUsecase_HandleCustomerSubscriptionDeleted(t *testin
 		}
 
 		// The user is unlinked from the subscriber.
+		//
 		// [Ja] ユーザーの subscriber 紐付けが解除される。
 		unlinked, err := userRepo.GetByID(ctx, userID)
 		if err != nil {
