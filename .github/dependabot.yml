@@ -44,6 +44,13 @@ updates:
         update-types:
           - "patch"
           - "minor"
+      sentry:
+        patterns:
+          - "github.com/getsentry/sentry-go"
+          - "github.com/getsentry/sentry-go/*"
+        update-types:
+          - "patch"
+          - "minor"
 
   # Go version npm dependencies (pnpm)
   - package-ecosystem: "npm"
