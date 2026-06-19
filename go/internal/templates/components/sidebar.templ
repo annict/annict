@@ -8,14 +8,22 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// formatNotificationCount は通知数を文字列に変換します
+// formatNotificationCount converts the notification count to a string.
+//
+// [Ja] 通知数を文字列に変換する。
 func formatNotificationCount(count int32) string {
 	return strconv.FormatInt(int64(count), 10)
 }
 
-// Sidebar はサイドバーコンポーネントです
-// user: ログインユーザー情報（viewmodel.User）。nilの場合は未ログイン状態
-// seasons: 季節情報（前・現在・次）
+// Sidebar renders the sidebar component.
+//
+// user is the signed-in user (viewmodel.User); nil means the user is not
+// signed in. seasons holds the previous, current, and next season info.
+//
+// [Ja] サイドバーコンポーネントをレンダリングする。
+//
+// user はログインユーザー情報 ( viewmodel.User )。nil の場合は未ログイン状態。
+// seasons は季節情報 ( 前・現在・次 )。
 templ Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Seasons) {
 	<aside class="sidebar" data-side="left" aria-hidden="false">
 		<nav aria-label="Sidebar navigation">
@@ -55,7 +63,11 @@ templ Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Seaso
 					}
 				</div>
 
-				<!-- 検索フォーム -->
+				<!--
+				Search form
+
+				[Ja] 検索フォーム
+				-->
 				<div class="px-4">
 					<form method="get" action="/search" autocomplete="off">
 						<input
@@ -67,7 +79,11 @@ templ Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Seaso
 					</form>
 				</div>
 
-				<!-- メインメニュー -->
+				<!--
+				Main menu
+
+				[Ja] メインメニュー
+				-->
 				<div role="group" class="py-0">
 					<ul class="space-y-1">
 						@sidebarMenuItem(ctx, "/", "sidebar_home", "house-regular")
@@ -81,7 +97,11 @@ templ Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Seaso
 					</ul>
 				</div>
 
-				<!-- ライブラリ -->
+				<!--
+				Library
+
+				[Ja] ライブラリ
+				-->
 				<div role="group" aria-labelledby="sidebar-library" class="py-0">
 					<h3
 						id="sidebar-library"
@@ -107,7 +127,11 @@ templ Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Seaso
 					</ul>
 				</div>
 
-				<!-- 見つける -->
+				<!--
+				Explore
+
+				[Ja] 見つける
+				-->
 				<div role="group" aria-labelledby="sidebar-explore" class="py-0">
 					<h3
 					  id="sidebar-explore"
@@ -125,7 +149,11 @@ templ Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Seaso
 					</ul>
 				</div>
 
-				<!-- その他 -->
+				<!--
+				Misc
+
+				[Ja] その他
+				-->
 				<div role="group" aria-labelledby="sidebar-misc" class="py-0">
 					<h3
 					  id="sidebar-misc"
@@ -142,7 +170,11 @@ templ Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Seaso
 					</ul>
 				</div>
 
-				<!-- サービス -->
+				<!--
+				Services
+
+				[Ja] サービス
+				-->
 				<div role="group" aria-labelledby="sidebar-services" class="py-0">
 					<h3
 					  id="sidebar-services"
@@ -160,7 +192,11 @@ templ Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Seaso
 					</ul>
 				</div>
 
-				<!-- ログアウト -->
+				<!--
+				Sign out
+
+				[Ja] ログアウト
+				-->
 				if user != nil {
 					<div class="px-2 mb-4 border-t border-border pt-4">
 						<form method="POST" action="/sign_out">
@@ -184,14 +220,22 @@ templ Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Seaso
 	</aside>
 }
 
-// libraryPath はライブラリページのパスを生成します
+// libraryPath builds the path to a library page.
+//
+// [Ja] ライブラリページのパスを生成する。
 func libraryPath(user *viewmodel.User, statusKind string) string {
-	return "/@" + user.Username + "/library/" + statusKind
+	return "/@" + user.Username + "/" + statusKind
 }
 
-// sidebarMenuItem はサイドバーのメニュー項目を生成します
-// 現在ページと一致するリンクには aria-current="page" を付与してハイライトします
-// （スタイルは style.css の [aria-current=page] で定義）
+// sidebarMenuItem renders a sidebar menu item.
+//
+// A link matching the current page is given aria-current="page" so that it
+// is highlighted (the style is defined by [aria-current=page] in style.css).
+//
+// [Ja] サイドバーのメニュー項目をレンダリングする。
+//
+// 現在ページと一致するリンクには aria-current="page" を付与してハイライト
+// する ( スタイルは style.css の [aria-current=page] で定義 )。
 templ sidebarMenuItem(ctx context.Context, path string, labelKey string, iconName string) {
 	<li>
 		<a
@@ -210,7 +254,10 @@ templ sidebarMenuItem(ctx context.Context, path string, labelKey string, iconNam
 	</li>
 }
 
-// sidebarNotificationMenuItem は通知メニュー項目を生成します（未読バッジ付き）
+// sidebarNotificationMenuItem renders the notification menu item with an
+// unread badge.
+//
+// [Ja] 通知メニュー項目をレンダリングする ( 未読バッジ付き )。
 templ sidebarNotificationMenuItem(ctx context.Context, user *viewmodel.User) {
 	<li>
 		<a
