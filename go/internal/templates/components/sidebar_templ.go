@@ -15,14 +15,22 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// formatNotificationCount は通知数を文字列に変換します
+// formatNotificationCount converts the notification count to a string.
+//
+// [Ja] 通知数を文字列に変換する。
 func formatNotificationCount(count int32) string {
 	return strconv.FormatInt(int64(count), 10)
 }
 
-// Sidebar はサイドバーコンポーネントです
-// user: ログインユーザー情報（viewmodel.User）。nilの場合は未ログイン状態
-// seasons: 季節情報（前・現在・次）
+// Sidebar renders the sidebar component.
+//
+// user is the signed-in user (viewmodel.User); nil means the user is not
+// signed in. seasons holds the previous, current, and next season info.
+//
+// [Ja] サイドバーコンポーネントをレンダリングする。
+//
+// user はログインユーザー情報 ( viewmodel.User )。nil の場合は未ログイン状態。
+// seasons は季節情報 ( 前・現在・次 )。
 func Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Seasons) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -56,7 +64,7 @@ func Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Season
 			var templ_7745c5c3_Var2 templ.SafeURL
 			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL("/@" + user.Username))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/sidebar.templ`, Line: 39, Col: 50}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/sidebar.templ`, Line: 47, Col: 50}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
@@ -77,7 +85,7 @@ func Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Season
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(user.Username)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/sidebar.templ`, Line: 45, Col: 25}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/sidebar.templ`, Line: 53, Col: 25}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -90,7 +98,7 @@ func Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Season
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs("@" + user.Username)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/sidebar.templ`, Line: 49, Col: 31}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/sidebar.templ`, Line: 57, Col: 31}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -106,20 +114,20 @@ func Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Season
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div><!-- 検索フォーム --><div class=\"px-4\"><form method=\"get\" action=\"/search\" autocomplete=\"off\"><input type=\"text\" name=\"q\" class=\"input w-full rounded-full text-sm\" placeholder=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div><!--\n\t\t\t\tSearch form\n\n\t\t\t\t[Ja] 検索フォーム\n\t\t\t\t--><div class=\"px-4\"><form method=\"get\" action=\"/search\" autocomplete=\"off\"><input type=\"text\" name=\"q\" class=\"input w-full rounded-full text-sm\" placeholder=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.ResolveAttributeValue(templates.T(ctx, "sidebar_search_placeholder"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/sidebar.templ`, Line: 65, Col: 67}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/sidebar.templ`, Line: 77, Col: 67}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\"></form></div><!-- メインメニュー --><div role=\"group\" class=\"py-0\"><ul class=\"space-y-1\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\"></form></div><!--\n\t\t\t\tMain menu\n\n\t\t\t\t[Ja] メインメニュー\n\t\t\t\t--><div role=\"group\" class=\"py-0\"><ul class=\"space-y-1\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -146,14 +154,14 @@ func Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Season
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</ul></div><!-- ライブラリ --><div role=\"group\" aria-labelledby=\"sidebar-library\" class=\"py-0\"><h3 id=\"sidebar-library\" class=\"font-bold tracking-wider\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</ul></div><!--\n\t\t\t\tLibrary\n\n\t\t\t\t[Ja] ライブラリ\n\t\t\t\t--><div role=\"group\" aria-labelledby=\"sidebar-library\" class=\"py-0\"><h3 id=\"sidebar-library\" class=\"font-bold tracking-wider\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "sidebar_library"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/sidebar.templ`, Line: 90, Col: 43}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/sidebar.templ`, Line: 110, Col: 43}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
@@ -238,14 +246,14 @@ func Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Season
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</ul></div><!-- 見つける --><div role=\"group\" aria-labelledby=\"sidebar-explore\" class=\"py-0\"><h3 id=\"sidebar-explore\" class=\"font-bold tracking-wider\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</ul></div><!--\n\t\t\t\tExplore\n\n\t\t\t\t[Ja] 見つける\n\t\t\t\t--><div role=\"group\" aria-labelledby=\"sidebar-explore\" class=\"py-0\"><h3 id=\"sidebar-explore\" class=\"font-bold tracking-wider\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "sidebar_explore"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/sidebar.templ`, Line: 116, Col: 43}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/sidebar.templ`, Line: 140, Col: 43}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
@@ -275,14 +283,14 @@ func Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Season
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</ul></div><!-- その他 --><div role=\"group\" aria-labelledby=\"sidebar-misc\" class=\"py-0\"><h3 id=\"sidebar-misc\" class=\"font-bold tracking-wider\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</ul></div><!--\n\t\t\t\tMisc\n\n\t\t\t\t[Ja] その他\n\t\t\t\t--><div role=\"group\" aria-labelledby=\"sidebar-misc\" class=\"py-0\"><h3 id=\"sidebar-misc\" class=\"font-bold tracking-wider\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "sidebar_misc"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/sidebar.templ`, Line: 134, Col: 40}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/sidebar.templ`, Line: 162, Col: 40}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
@@ -308,14 +316,14 @@ func Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Season
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "</ul></div><!-- サービス --><div role=\"group\" aria-labelledby=\"sidebar-services\" class=\"py-0\"><h3 id=\"sidebar-services\" class=\"font-bold tracking-wider\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "</ul></div><!--\n\t\t\t\tServices\n\n\t\t\t\t[Ja] サービス\n\t\t\t\t--><div role=\"group\" aria-labelledby=\"sidebar-services\" class=\"py-0\"><h3 id=\"sidebar-services\" class=\"font-bold tracking-wider\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "sidebar_services"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/sidebar.templ`, Line: 151, Col: 44}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/sidebar.templ`, Line: 183, Col: 44}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
@@ -345,7 +353,7 @@ func Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Season
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "</ul></div><!-- ログアウト -->")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "</ul></div><!--\n\t\t\t\tSign out\n\n\t\t\t\t[Ja] ログアウト\n\t\t\t\t-->")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -373,7 +381,7 @@ func Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Season
 			var templ_7745c5c3_Var10 string
 			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "nav_sign_out"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/sidebar.templ`, Line: 176, Col: 43}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/sidebar.templ`, Line: 212, Col: 43}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 			if templ_7745c5c3_Err != nil {
@@ -392,14 +400,22 @@ func Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Season
 	})
 }
 
-// libraryPath はライブラリページのパスを生成します
+// libraryPath builds the path to a library page.
+//
+// [Ja] ライブラリページのパスを生成する。
 func libraryPath(user *viewmodel.User, statusKind string) string {
 	return "/@" + user.Username + "/library/" + statusKind
 }
 
-// sidebarMenuItem はサイドバーのメニュー項目を生成します
-// 現在ページと一致するリンクには aria-current="page" を付与してハイライトします
-// （スタイルは style.css の [aria-current=page] で定義）
+// sidebarMenuItem renders a sidebar menu item.
+//
+// A link matching the current page is given aria-current="page" so that it
+// is highlighted (the style is defined by [aria-current=page] in style.css).
+//
+// [Ja] サイドバーのメニュー項目をレンダリングする。
+//
+// 現在ページと一致するリンクには aria-current="page" を付与してハイライト
+// する ( スタイルは style.css の [aria-current=page] で定義 )。
 func sidebarMenuItem(ctx context.Context, path string, labelKey string, iconName string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -428,7 +444,7 @@ func sidebarMenuItem(ctx context.Context, path string, labelKey string, iconName
 		var templ_7745c5c3_Var12 templ.SafeURL
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(path))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/sidebar.templ`, Line: 198, Col: 29}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/sidebar.templ`, Line: 242, Col: 29}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
@@ -459,7 +475,7 @@ func sidebarMenuItem(ctx context.Context, path string, labelKey string, iconName
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, labelKey))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/sidebar.templ`, Line: 207, Col: 32}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/sidebar.templ`, Line: 251, Col: 32}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 		if templ_7745c5c3_Err != nil {
@@ -473,7 +489,10 @@ func sidebarMenuItem(ctx context.Context, path string, labelKey string, iconName
 	})
 }
 
-// sidebarNotificationMenuItem は通知メニュー項目を生成します（未読バッジ付き）
+// sidebarNotificationMenuItem renders the notification menu item with an
+// unread badge.
+//
+// [Ja] 通知メニュー項目をレンダリングする ( 未読バッジ付き )。
 func sidebarNotificationMenuItem(ctx context.Context, user *viewmodel.User) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -520,7 +539,7 @@ func sidebarNotificationMenuItem(ctx context.Context, user *viewmodel.User) temp
 		var templ_7745c5c3_Var15 string
 		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "sidebar_notifications"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/sidebar.templ`, Line: 227, Col: 48}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/sidebar.templ`, Line: 274, Col: 48}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 		if templ_7745c5c3_Err != nil {
@@ -538,7 +557,7 @@ func sidebarNotificationMenuItem(ctx context.Context, user *viewmodel.User) temp
 			var templ_7745c5c3_Var16 string
 			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(formatNotificationCount(user.NotificationsCount))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/sidebar.templ`, Line: 233, Col: 55}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/sidebar.templ`, Line: 280, Col: 55}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 			if templ_7745c5c3_Err != nil {
