@@ -404,7 +404,7 @@ func Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Season
 //
 // [Ja] ライブラリページのパスを生成する。
 func libraryPath(user *viewmodel.User, statusKind string) string {
-	return "/@" + user.Username + "/library/" + statusKind
+	return "/@" + user.Username + "/" + statusKind
 }
 
 // sidebarMenuItem renders a sidebar menu item.
