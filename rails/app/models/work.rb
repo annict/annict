@@ -22,6 +22,7 @@ class Work < ApplicationRecord
 
   enumerize :media, in: {tv: 1, ova: 2, movie: 3, web: 4, other: 0}
   enumerize :season_name, in: Season::NAME_HASH
+  enumerize :status, in: %i[published archived deleted], default: :published, scope: true
 
   belongs_to :number_format, optional: true
   belongs_to :season_model, class_name: "SeasonModel", foreign_key: :season_id, optional: true
@@ -354,6 +355,16 @@ class Work < ApplicationRecord
 
     decrement!(:watchers_count) if is_prev_positive
     increment!(:watchers_count) if is_next_positive
+  end
+
+  # Determine the publication state from the status column value.
+  # [Ja] status カラムの値で公開状態を判定する
+  def published?
+    status.to_s == "published"
+  end
+
+  def archived?
+    status.to_s == "archived"
   end
 
   def self.ransackable_attributes(auth_object = nil)

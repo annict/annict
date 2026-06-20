@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/annict/annict/go/internal/model"
-	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/repository"
 )
 
@@ -39,8 +38,8 @@ type DeleteStripeSubscriberInput struct {
 
 // DeleteStripeSubscriberResult はcustomer.subscription.deletedイベント処理の結果
 type DeleteStripeSubscriberResult struct {
-	StripeSubscriber query.StripeSubscriber
-	UserID           *int64 // 紐付け解除されたユーザーID（存在する場合）
+	StripeSubscriber model.StripeSubscriber
+	UserID           *model.UserID // 紐付け解除されたユーザーID（存在する場合）
 }
 
 // Execute はcustomer.subscription.deletedイベントを処理します
@@ -58,6 +57,15 @@ func (uc *DeleteStripeSubscriberUsecase) Execute(
 	if err != nil {
 		return nil, fmt.Errorf("StripeSubscriber取得に失敗: %w", err)
 	}
+	// Not-found is reported as a sentinel so the webhook layer can skip it without
+	// depending on sql.ErrNoRows. Returning here also keeps us out of the
+	// transaction below for an event we cannot act on.
+	//
+	// [Ja] 未存在は sentinel で返し、Webhook 層が sql.ErrNoRows に依存せずスキップできるようにする。
+	// ここで return することで、処理できないイベントに対して下のトランザクションを開かずに済む。
+	if subscriber == nil {
+		return nil, ErrStripeSubscriberNotFound
+	}
 
 	// トランザクション開始
 	tx, err := uc.db.BeginTx(ctx, nil)
@@ -71,8 +79,8 @@ func (uc *DeleteStripeSubscriberUsecase) Execute(
 	userRepoTx := uc.userRepo.WithTx(tx)
 
 	// ステータスをcanceledに更新
-	err = stripeSubscriberRepoTx.Update(ctx, query.UpdateStripeSubscriberParams{
-		ID:                       subscriber.ID,
+	err = stripeSubscriberRepoTx.Update(ctx, repository.UpdateStripeSubscriberParams{
+		ID:                       int64(subscriber.ID),
 		StripePriceID:            subscriber.StripePriceID,
 		StripeStatus:             string(model.StripeSubscriptionStatusCanceled),
 		StripeCurrentPeriodStart: subscriber.StripeCurrentPeriodStart,
@@ -112,9 +120,17 @@ func (uc *DeleteStripeSubscriberUsecase) Execute(
 	if err != nil {
 		return nil, fmt.Errorf("更新後のStripeSubscriber取得に失敗: %w", err)
 	}
+	// The record was just updated above, so a nil here means an unexpected internal
+	// inconsistency rather than a normal not-found.
+	//
+	// [Ja] 直前に更新したレコードのため、ここでの nil は通常の未存在ではなく想定外の
+	// 内部不整合を意味する。
+	if updated == nil {
+		return nil, fmt.Errorf("更新後のStripeSubscriberが見つかりません")
+	}
 
 	return &DeleteStripeSubscriberResult{
-		StripeSubscriber: updated,
+		StripeSubscriber: *updated,
 		UserID:           userID,
 	}, nil
 }

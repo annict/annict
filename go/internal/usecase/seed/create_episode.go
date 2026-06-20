@@ -8,20 +8,22 @@ import (
 	"time"
 
 	"github.com/schollz/progressbar/v3"
+
+	"github.com/annict/annict/go/internal/model"
 )
 
 // CreateEpisodeParams エピソード作成のパラメータ
 type CreateEpisodeParams struct {
-	WorkID        int64
+	WorkID        model.WorkID
 	Number        string
 	Title         string
 	SortNumber    int32
-	PrevEpisodeID *int64 // 前のエピソードのID（最初のエピソードはnil）
+	PrevEpisodeID *model.EpisodeID // 前のエピソードのID（最初のエピソードはnil）
 }
 
 // CreateEpisodeResult エピソード作成の結果
 type CreateEpisodeResult struct {
-	EpisodeID int64
+	EpisodeID model.EpisodeID
 }
 
 // CreateEpisodeUsecase エピソード生成Usecase（シード専用、バルクインサート対応）
@@ -56,7 +58,7 @@ func (uc *CreateEpisodeUsecase) executeBatchWithTx(ctx context.Context, existing
 	results := make([]CreateEpisodeResult, 0, len(episodes))
 
 	// work_idごとに前のエピソードIDを追跡するマップ
-	prevEpisodeIDMap := make(map[int64]int64)
+	prevEpisodeIDMap := make(map[model.WorkID]model.EpisodeID)
 
 	// 既存トランザクションがある場合は、バッチサイズを無視して全件処理
 	if existingTx != nil {
@@ -144,7 +146,7 @@ func (uc *CreateEpisodeUsecase) createSingleEpisode(ctx context.Context, tx *sql
 }
 
 // createEpisode episodesテーブルにレコードを作成します
-func (uc *CreateEpisodeUsecase) createEpisode(ctx context.Context, tx *sql.Tx, params CreateEpisodeParams) (int64, error) {
+func (uc *CreateEpisodeUsecase) createEpisode(ctx context.Context, tx *sql.Tx, params CreateEpisodeParams) (model.EpisodeID, error) {
 	query := `
 		INSERT INTO episodes (
 			work_id, number, title, sort_number, prev_episode_id,
@@ -163,32 +165,39 @@ func (uc *CreateEpisodeUsecase) createEpisode(ctx context.Context, tx *sql.Tx, p
 		) RETURNING id
 	`
 
+	// sqlc / 生 SQL の境界では int64 で渡す方針（id 型のキャストパターン統一）
+	var prevEpisodeID *int64
+	if params.PrevEpisodeID != nil {
+		v := int64(*params.PrevEpisodeID)
+		prevEpisodeID = &v
+	}
+
 	var episodeID int64
 	err := tx.QueryRowContext(
 		ctx,
 		query,
-		params.WorkID,
+		int64(params.WorkID),
 		params.Number,
 		params.Title,
 		params.SortNumber,
-		params.PrevEpisodeID, // nil可（最初のエピソード）
-		0,                    // episode_records_count (デフォルト0)
-		"published",          // aasm_state (デフォルト'published')
-		time.Now(),           // created_at
-		time.Now(),           // updated_at
-		"",                   // title_ro (デフォルト空文字)
-		"",                   // title_en (デフォルト空文字)
-		"",                   // number_en (デフォルト空文字)
-		0,                    // episode_record_bodies_count (デフォルト0)
-		0,                    // ratings_count (デフォルト0)
-		false,                // fetch_syobocal (デフォルトfalse)
+		prevEpisodeID, // nil可（最初のエピソード）
+		0,             // episode_records_count (デフォルト0)
+		"published",   // aasm_state (デフォルト'published')
+		time.Now(),    // created_at
+		time.Now(),    // updated_at
+		"",            // title_ro (デフォルト空文字)
+		"",            // title_en (デフォルト空文字)
+		"",            // number_en (デフォルト空文字)
+		0,             // episode_record_bodies_count (デフォルト0)
+		0,             // ratings_count (デフォルト0)
+		false,         // fetch_syobocal (デフォルトfalse)
 	).Scan(&episodeID)
 
 	if err != nil {
 		return 0, fmt.Errorf("episodesテーブルへの挿入エラー: %w", err)
 	}
 
-	return episodeID, nil
+	return model.EpisodeID(episodeID), nil
 }
 
 // GenerateEpisodeParamsForWork は指定された作品に対してランダムなエピソードパラメータを生成します
@@ -196,7 +205,7 @@ func (uc *CreateEpisodeUsecase) createEpisode(ctx context.Context, tx *sql.Tx, p
 //
 // 注意: PrevEpisodeIDはnilで生成されます。ExecuteBatch内でwork_idごとに自動的に設定されます。
 // エピソードは作品ごとにまとめて、かつ順番に並べてExecuteBatchに渡す必要があります。
-func GenerateEpisodeParamsForWork(r *rand.Rand, workID int64, episodeCount int) []CreateEpisodeParams {
+func GenerateEpisodeParamsForWork(r *rand.Rand, workID model.WorkID, episodeCount int) []CreateEpisodeParams {
 	episodes := make([]CreateEpisodeParams, 0, episodeCount)
 
 	for i := 1; i <= episodeCount; i++ {

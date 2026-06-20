@@ -1,0 +1,125 @@
+package db_work
+
+import (
+	"net/http"
+	"net/http/httptest"
+	"net/url"
+	"strconv"
+	"strings"
+	"testing"
+
+	"github.com/annict/annict/go/internal/testutil"
+)
+
+// TestCreate_ValidationError はバリデーションエラー時にフォームが再表示されることをテスト
+func TestCreate_ValidationError(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+
+	handler := newTestHandler(t, db, tx)
+
+	// タイトルとメディアが空のリクエスト
+	form := url.Values{}
+	form.Set("title", "")
+	form.Set("media", "")
+	req := httptest.NewRequest("POST", "/db/works", strings.NewReader(form.Encode()))
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	rr := httptest.NewRecorder()
+
+	handler.Create(rr, req)
+
+	// 422 Unprocessable Entityが返ることを確認
+	if status := rr.Code; status != http.StatusUnprocessableEntity {
+		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusUnprocessableEntity)
+	}
+
+	body := rr.Body.String()
+
+	// フォームが再表示されていることを確認
+	expectedContents := []string{
+		"<form",
+		`action="/db/works"`,
+		`method="POST"`,
+		"text-red-600", // エラーメッセージのスタイル
+	}
+
+	for _, expected := range expectedContents {
+		if !strings.Contains(body, expected) {
+			t.Errorf("response doesn't contain expected string: %q", expected)
+		}
+	}
+}
+
+// TestCreate_ValidationError_PreservesFormValues はバリデーションエラー時にフォーム値が保持されることをテスト
+func TestCreate_ValidationError_PreservesFormValues(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+
+	handler := newTestHandler(t, db, tx)
+
+	// タイトルはあるがメディアが空のリクエスト
+	form := url.Values{}
+	form.Set("title", "テスト作品")
+	form.Set("media", "")
+	form.Set("title_kana", "てすとさくひん")
+	req := httptest.NewRequest("POST", "/db/works", strings.NewReader(form.Encode()))
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	rr := httptest.NewRecorder()
+
+	handler.Create(rr, req)
+
+	if status := rr.Code; status != http.StatusUnprocessableEntity {
+		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusUnprocessableEntity)
+	}
+
+	body := rr.Body.String()
+
+	// 入力値が保持されていることを確認
+	if !strings.Contains(body, "テスト作品") {
+		t.Error("response doesn't preserve title value")
+	}
+	if !strings.Contains(body, "てすとさくひん") {
+		t.Error("response doesn't preserve title_kana value")
+	}
+}
+
+// TestCreate_Success は正常に作品が作成されることをテスト
+func TestCreate_Success(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+
+	handler := newTestHandler(t, db, tx)
+
+	// 有効なフォームデータ
+	form := url.Values{}
+	form.Set("title", "新しいアニメ作品")
+	form.Set("media", "1") // tv
+	req := httptest.NewRequest("POST", "/db/works", strings.NewReader(form.Encode()))
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	rr := httptest.NewRecorder()
+
+	handler.Create(rr, req)
+
+	// ユースケースが独自のトランザクションでコミットするため、作成された作品を即座に削除する。
+	// 並行テストへの影響を最小化するため、アサーション前に同期的にクリーンアップする。
+	location := rr.Header().Get("Location")
+	workIDStr := strings.TrimPrefix(location, "/db/works?highlight=")
+	if workIDStr != "" && workIDStr != location {
+		if workID, err := strconv.ParseInt(workIDStr, 10, 64); err == nil {
+			_, _ = db.Exec("DELETE FROM works WHERE id = $1", workID)
+		}
+	}
+
+	// 303 See Otherでリダイレクトされることを確認
+	if status := rr.Code; status != http.StatusSeeOther {
+		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusSeeOther)
+	}
+
+	// リダイレクト先が /db/works?highlight=XXX であることを確認
+	if !strings.HasPrefix(location, "/db/works?highlight=") {
+		t.Errorf("handler returned wrong redirect location: got %v", location)
+	}
+}

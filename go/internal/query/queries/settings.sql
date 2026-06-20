@@ -39,7 +39,7 @@ VALUES (
     NOW(),                   -- created_at
     NOW()                    -- updated_at
 )
-RETURNING id, user_id, privacy_policy_agreed, created_at, updated_at;
+RETURNING id, user_id, privacy_policy_agreed, hide_record_body, created_at, updated_at;
 
 -- name: GetSettingByUserID :one
 SELECT id, user_id, privacy_policy_agreed, hide_record_body, created_at, updated_at

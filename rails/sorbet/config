@@ -7,3 +7,4 @@
 --suppress-payload-superclass-redefinition-for=Net::IMAP::MessageSet
 --suppress-payload-superclass-redefinition-for=Net::IMAP::QuotedString
 --suppress-payload-superclass-redefinition-for=Net::IMAP::RawData
+--suppress-payload-superclass-redefinition-for=RDoc::Markup::Heading

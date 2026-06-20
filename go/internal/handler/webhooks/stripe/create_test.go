@@ -31,7 +31,7 @@ func TestCreate_SignatureValidation(t *testing.T) {
 	t.Parallel()
 
 	// テストDBをセットアップ
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(tx)
 
 	// テスト用の設定
@@ -50,8 +50,15 @@ func TestCreate_SignatureValidation(t *testing.T) {
 	updateStripeSubscriberUC := usecase.NewUpdateStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo)
 	deleteStripeSubscriberUC := usecase.NewDeleteStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo)
 
+	processStripeWebhookUC := usecase.NewProcessStripeWebhookUsecase(
+		stripeWebhookEventRepo,
+		createStripeSubscriberUC,
+		updateStripeSubscriberUC,
+		deleteStripeSubscriberUC,
+	)
+
 	// ハンドラーの作成
-	handler := NewHandler(cfg, stripeWebhookEventRepo, stripeSubscriberRepo, userRepo, createStripeSubscriberUC, updateStripeSubscriberUC, deleteStripeSubscriberUC)
+	handler := NewHandler(cfg, processStripeWebhookUC)
 
 	tests := []struct {
 		name           string
@@ -132,7 +139,7 @@ func TestCreate_Idempotency(t *testing.T) {
 	t.Parallel()
 
 	// テストDBをセットアップ
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(tx)
 
 	// テスト用の設定
@@ -151,8 +158,15 @@ func TestCreate_Idempotency(t *testing.T) {
 	updateStripeSubscriberUC := usecase.NewUpdateStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo)
 	deleteStripeSubscriberUC := usecase.NewDeleteStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo)
 
+	processStripeWebhookUC := usecase.NewProcessStripeWebhookUsecase(
+		stripeWebhookEventRepo,
+		createStripeSubscriberUC,
+		updateStripeSubscriberUC,
+		deleteStripeSubscriberUC,
+	)
+
 	// ハンドラーの作成
-	handler := NewHandler(cfg, stripeWebhookEventRepo, stripeSubscriberRepo, userRepo, createStripeSubscriberUC, updateStripeSubscriberUC, deleteStripeSubscriberUC)
+	handler := NewHandler(cfg, processStripeWebhookUC)
 
 	// 既にイベントを登録
 	existingEventID := "evt_existing_event_123"
@@ -195,7 +209,7 @@ func TestCreate_Idempotency_SkippedEvent(t *testing.T) {
 	t.Parallel()
 
 	// テストDBをセットアップ
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(tx)
 
 	// テスト用の設定
@@ -214,8 +228,15 @@ func TestCreate_Idempotency_SkippedEvent(t *testing.T) {
 	updateStripeSubscriberUC := usecase.NewUpdateStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo)
 	deleteStripeSubscriberUC := usecase.NewDeleteStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo)
 
+	processStripeWebhookUC := usecase.NewProcessStripeWebhookUsecase(
+		stripeWebhookEventRepo,
+		createStripeSubscriberUC,
+		updateStripeSubscriberUC,
+		deleteStripeSubscriberUC,
+	)
+
 	// ハンドラーの作成
-	handler := NewHandler(cfg, stripeWebhookEventRepo, stripeSubscriberRepo, userRepo, createStripeSubscriberUC, updateStripeSubscriberUC, deleteStripeSubscriberUC)
+	handler := NewHandler(cfg, processStripeWebhookUC)
 
 	// status=skipped のイベントを登録
 	existingEventID := "evt_skipped_event_123"
@@ -258,7 +279,7 @@ func TestCreate_Idempotency_ReprocessPendingEvent(t *testing.T) {
 	t.Parallel()
 
 	// テストDBをセットアップ
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(tx)
 
 	// テスト用の設定
@@ -277,8 +298,15 @@ func TestCreate_Idempotency_ReprocessPendingEvent(t *testing.T) {
 	updateStripeSubscriberUC := usecase.NewUpdateStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo)
 	deleteStripeSubscriberUC := usecase.NewDeleteStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo)
 
+	processStripeWebhookUC := usecase.NewProcessStripeWebhookUsecase(
+		stripeWebhookEventRepo,
+		createStripeSubscriberUC,
+		updateStripeSubscriberUC,
+		deleteStripeSubscriberUC,
+	)
+
 	// ハンドラーの作成
-	handler := NewHandler(cfg, stripeWebhookEventRepo, stripeSubscriberRepo, userRepo, createStripeSubscriberUC, updateStripeSubscriberUC, deleteStripeSubscriberUC)
+	handler := NewHandler(cfg, processStripeWebhookUC)
 
 	// status=pending のイベントを登録（処理途中でクラッシュしたシナリオ）
 	existingEventID := "evt_pending_event_123"
@@ -330,7 +358,7 @@ func TestCreate_Idempotency_ReprocessFailedEvent(t *testing.T) {
 	t.Parallel()
 
 	// テストDBをセットアップ
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(tx)
 
 	// テスト用の設定
@@ -349,8 +377,15 @@ func TestCreate_Idempotency_ReprocessFailedEvent(t *testing.T) {
 	updateStripeSubscriberUC := usecase.NewUpdateStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo)
 	deleteStripeSubscriberUC := usecase.NewDeleteStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo)
 
+	processStripeWebhookUC := usecase.NewProcessStripeWebhookUsecase(
+		stripeWebhookEventRepo,
+		createStripeSubscriberUC,
+		updateStripeSubscriberUC,
+		deleteStripeSubscriberUC,
+	)
+
 	// ハンドラーの作成
-	handler := NewHandler(cfg, stripeWebhookEventRepo, stripeSubscriberRepo, userRepo, createStripeSubscriberUC, updateStripeSubscriberUC, deleteStripeSubscriberUC)
+	handler := NewHandler(cfg, processStripeWebhookUC)
 
 	// status=failed のイベントを登録（前回の処理が失敗したシナリオ）
 	existingEventID := "evt_failed_event_123"
@@ -402,7 +437,7 @@ func TestCreate_EventProcessing(t *testing.T) {
 	t.Parallel()
 
 	// テストDBをセットアップ
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(tx)
 
 	// テスト用の設定
@@ -421,8 +456,15 @@ func TestCreate_EventProcessing(t *testing.T) {
 	updateStripeSubscriberUC := usecase.NewUpdateStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo)
 	deleteStripeSubscriberUC := usecase.NewDeleteStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo)
 
+	processStripeWebhookUC := usecase.NewProcessStripeWebhookUsecase(
+		stripeWebhookEventRepo,
+		createStripeSubscriberUC,
+		updateStripeSubscriberUC,
+		deleteStripeSubscriberUC,
+	)
+
 	// ハンドラーの作成
-	handler := NewHandler(cfg, stripeWebhookEventRepo, stripeSubscriberRepo, userRepo, createStripeSubscriberUC, updateStripeSubscriberUC, deleteStripeSubscriberUC)
+	handler := NewHandler(cfg, processStripeWebhookUC)
 
 	tests := []struct {
 		name           string

@@ -114,7 +114,7 @@ other = "Sign in with a different account"
 description = "Form parse error"
 other = "Failed to process the request"
 
-[sign_in_email_required]
+[sign_in_error_email_required]
 description = "Email required error"
 other = "Please enter your email address"
 
@@ -353,11 +353,11 @@ other = "Passwords do not match"
 # Password strength validation (NIST SP 800-63B-4 compliant)
 [password_strength_min_length]
 description = "Password strength - Minimum length error"
-other = "Password must be at least 8 characters long"
+other = "Password must be at least {{.MinLength}} characters long"
 
 [password_strength_max_length]
 description = "Password strength - Maximum length error"
-other = "Password must be no more than 128 characters long"
+other = "Password must be no more than {{.MaxLength}} characters long"
 
 [password_strength_invalid_chars]
 description = "Password strength - Invalid characters error"
@@ -415,15 +415,15 @@ other = "Send"
 description = "Terms agreement notice (Sign-in-wrap style)"
 other = "By signing up, you agree to our <a href=\"/terms\" class=\"link\" target=\"_blank\">Terms of Service</a> and <a href=\"/privacy\" class=\"link\" target=\"_blank\">Privacy Policy</a>."
 
-[sign_up_email_required]
+[sign_up_error_email_required]
 description = "Email required error"
 other = "Please enter your email address"
 
-[sign_up_email_invalid]
+[sign_up_error_email_invalid]
 description = "Email format error"
 other = "Please enter a valid email address"
 
-[sign_up_email_already_exists]
+[sign_up_error_email_already_exists]
 description = "Email already exists error"
 other = "This email address is not available"
 
@@ -939,6 +939,293 @@ other = "Annict Developers"
 description = "Sidebar - Search placeholder"
 other = "Search by anime title..."
 
+# DB Sidebar related
+[db_sidebar_search_placeholder]
+description = "DB Sidebar - Search placeholder"
+other = "Search by title, person name..."
+
+[db_sidebar_activities]
+description = "DB Sidebar - Activities"
+other = "Activities"
+
+[db_sidebar_series]
+description = "DB Sidebar - Series"
+other = "Series"
+
+[db_sidebar_works]
+description = "DB Sidebar - Works"
+other = "Works"
+
+[db_sidebar_people]
+description = "DB Sidebar - People"
+other = "People"
+
+[db_sidebar_organizations]
+description = "DB Sidebar - Organizations"
+other = "Organizations"
+
+[db_sidebar_characters]
+description = "DB Sidebar - Characters"
+other = "Characters"
+
+[db_sidebar_channel_groups]
+description = "DB Sidebar - Channel Groups"
+other = "Channel Groups"
+
+[db_sidebar_channels]
+description = "DB Sidebar - Channels"
+other = "Channels"
+
+[db_sidebar_back_to_annict]
+description = "DB Sidebar - Back to Annict"
+other = "Back to Annict"
+
+# Pagination related
+[pagination_label]
+description = "Pagination - aria-label"
+other = "Pagination"
+
+[pagination_prev]
+description = "Pagination - Previous"
+other = "Previous"
+
+[pagination_next]
+description = "Pagination - Next"
+other = "Next"
+
+# Status label related
+[status_published]
+description = "Status - Published"
+other = "Published"
+
+[status_archived]
+description = "Status - Archived"
+other = "Archived"
+
+[status_deleted]
+description = "Status - Deleted"
+other = "Deleted"
+
+# DB works index page
+[db_works_index_title]
+description = "DB works index page title"
+other = "Works"
+
+[db_works_index_new_link]
+description = "Link from works index to new work page"
+other = "New"
+
+[db_works_index_filter_no_episodes_label]
+description = "Label for the no-episodes filter"
+other = "No episodes"
+
+[db_works_index_filter_no_image_label]
+description = "Label for the no-image filter"
+other = "No image"
+
+[db_works_index_filter_no_season_label]
+description = "Label for the no-season filter"
+other = "No season"
+
+[db_works_index_submit]
+description = "Submit button on the DB works index page (filter search)"
+other = "Search"
+
+[db_works_index_table_id_label]
+description = "Table header - ID"
+other = "ID"
+
+[db_works_index_table_title_label]
+description = "Table header - Title"
+other = "Title"
+
+[db_works_index_table_season_label]
+description = "Table header - Season"
+other = "Season"
+
+[db_works_index_table_watchers_label]
+description = "Table header - Watchers"
+other = "Watchers"
+
+[db_works_index_table_status_label]
+description = "Table header - Status"
+other = "Status"
+
+[db_works_index_table_image_label]
+description = "Table header - Image"
+other = "Image"
+
+[db_works_index_empty]
+description = "No works message"
+other = "No works found"
+
+# DB works new page
+[db_works_new_title]
+description = "DB works new page title"
+other = "Add Work"
+
+[db_works_new_back_to_list_link]
+description = "Link from new work page back to the works index"
+other = "Back to List"
+
+[db_works_new_title_label]
+description = "Form label - Title"
+other = "Title"
+
+[db_works_new_title_kana_label]
+description = "Form label - Title (Kana)"
+other = "Title (Kana)"
+
+[db_works_new_title_alter_label]
+description = "Form label - Title (Alternate)"
+other = "Title (Alternate)"
+
+[db_works_new_title_en_label]
+description = "Form label - Title (English)"
+other = "Title (English)"
+
+[db_works_new_title_alter_en_label]
+description = "Form label - Title (English Alternate)"
+other = "Title (English Alternate)"
+
+[db_works_new_media_label]
+description = "Form label - Media"
+other = "Media"
+
+[db_works_new_season_year_label]
+description = "Form label - Season Year"
+other = "Season Year"
+
+[db_works_new_season_name_label]
+description = "Form label - Season Name"
+other = "Season Name"
+
+[db_works_new_started_on_label]
+description = "Form label - Started On"
+other = "Started On"
+
+[db_works_new_ended_on_label]
+description = "Form label - Ended On"
+other = "Ended On"
+
+[db_works_new_official_site_url_label]
+description = "Form label - Official Site URL"
+other = "Official Site URL"
+
+[db_works_new_official_site_url_en_label]
+description = "Form label - Official Site URL (English)"
+other = "Official Site URL (English)"
+
+[db_works_new_wikipedia_url_label]
+description = "Form label - Wikipedia URL"
+other = "Wikipedia URL"
+
+[db_works_new_wikipedia_url_en_label]
+description = "Form label - Wikipedia URL (English)"
+other = "Wikipedia URL (English)"
+
+[db_works_new_twitter_username_label]
+description = "Form label - Twitter Username"
+other = "Twitter Username"
+
+[db_works_new_twitter_hashtag_label]
+description = "Form label - Twitter Hashtag"
+other = "Twitter Hashtag"
+
+[db_works_new_sc_tid_label]
+description = "Form label - Syobocal TID"
+other = "Syobocal TID"
+
+[db_works_new_mal_anime_id_label]
+description = "Form label - MAL Anime ID"
+other = "MAL Anime ID"
+
+[db_works_new_synopsis_label]
+description = "Form label - Synopsis"
+other = "Synopsis"
+
+[db_works_new_synopsis_source_label]
+description = "Form label - Synopsis Source"
+other = "Synopsis Source"
+
+[db_works_new_synopsis_en_label]
+description = "Form label - Synopsis (English)"
+other = "Synopsis (English)"
+
+[db_works_new_synopsis_source_en_label]
+description = "Form label - Synopsis Source (English)"
+other = "Synopsis Source (English)"
+
+[db_works_new_manual_episodes_count_label]
+description = "Form label - Manual Episodes Count"
+other = "Manual Episodes Count"
+
+[db_works_new_start_episode_raw_number_label]
+description = "Form label - Start Episode Raw Number"
+other = "Start Episode Raw Number"
+
+[db_works_new_number_format_label]
+description = "Form label - Number Format"
+other = "Number Format"
+
+[db_works_new_no_episodes_label]
+description = "Form label - No Episodes"
+other = "No Episodes"
+
+[db_works_new_submit]
+description = "Submit button on the new work page"
+other = "Create Work"
+
+# Flash messages - DB works related
+[flash_db_work_created]
+description = "Work creation success message"
+other = "Work has been created successfully"
+
+# Validation common messages
+[validation_required]
+description = "Required field validation error"
+other = "is required"
+
+[validation_media_invalid]
+description = "Media value is invalid"
+other = "Invalid media type"
+
+[validation_url_invalid]
+description = "URL format is invalid"
+other = "URL format is invalid"
+
+[validation_integer_invalid]
+description = "Value is not a valid integer"
+other = "Please enter an integer"
+
+[validation_synopsis_source_required]
+description = "Synopsis source is required when synopsis is provided"
+other = "Please enter a source when synopsis is provided"
+
+[validation_synopsis_source_en_required]
+description = "English synopsis source is required when English synopsis is provided"
+other = "Please enter a source when English synopsis is provided"
+
+[media_tv]
+description = "Media type - TV"
+other = "TV"
+
+[media_ova]
+description = "Media type - OVA"
+other = "OVA"
+
+[media_movie]
+description = "Media type - Movie"
+other = "Movie"
+
+[media_web]
+description = "Media type - Web"
+other = "Web"
+
+[media_other]
+description = "Media type - Other"
+other = "Other"
+
 # Footer related
 [footer_terms]
 description = "Footer - Terms"
@@ -951,3 +1238,8 @@ other = "Privacy Policy"
 [footer_legal]
 description = "Footer - Legal"
 other = "Legal Notice"
+
+# Common error messages
+[error_user_not_found]
+description = "Message shown when a user is not found"
+other = "User not found"

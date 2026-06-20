@@ -4,24 +4,21 @@ package popular_work
 import (
 	"github.com/annict/annict/go/internal/config"
 	"github.com/annict/annict/go/internal/image"
-	"github.com/annict/annict/go/internal/repository"
-	"github.com/annict/annict/go/internal/session"
+	"github.com/annict/annict/go/internal/usecase"
 )
 
 // Handler は人気作品関連のHTTPハンドラーです
 type Handler struct {
-	cfg            *config.Config
-	workRepo       *repository.WorkRepository
-	imageHelper    *image.Helper
-	sessionManager *session.Manager
+	cfg               *config.Config
+	getPopularWorksUC *usecase.GetPopularWorksUsecase
+	imageHelper       *image.Helper
 }
 
 // NewHandler は新しいHandlerを作成します
-func NewHandler(cfg *config.Config, workRepo *repository.WorkRepository, imageHelper *image.Helper, sessionManager *session.Manager) *Handler {
+func NewHandler(cfg *config.Config, getPopularWorksUC *usecase.GetPopularWorksUsecase, imageHelper *image.Helper) *Handler {
 	return &Handler{
-		cfg:            cfg,
-		workRepo:       workRepo,
-		imageHelper:    imageHelper,
-		sessionManager: sessionManager,
+		cfg:               cfg,
+		getPopularWorksUC: getPopularWorksUC,
+		imageHelper:       imageHelper,
 	}
 }

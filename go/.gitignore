@@ -1,11 +1,13 @@
 /.env
 /.playwright-mcp
 /.pnpm-store
-/.vite
 /bin
+/e2e/node_modules
 /node_modules
 /server
 /static/css/*
+!/static/css/.gitkeep
 /static/js/*
+!/static/js/vendor/
 /tmp
 /web/dist

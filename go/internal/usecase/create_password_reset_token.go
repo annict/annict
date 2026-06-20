@@ -3,41 +3,77 @@ package usecase
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"log/slog"
 	"time"
 
-	"github.com/riverqueue/river"
-
+	"github.com/annict/annict/go/internal/config"
+	"github.com/annict/annict/go/internal/dispatcher"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/password_reset"
-	"github.com/annict/annict/go/internal/query"
-	"github.com/annict/annict/go/internal/worker"
+	"github.com/annict/annict/go/internal/repository"
+	"github.com/annict/annict/go/internal/validator"
 )
 
 // CreatePasswordResetTokenUsecase はパスワードリセットトークンを生成するユースケースです
 type CreatePasswordResetTokenUsecase struct {
-	db          *sql.DB
-	queries     *query.Queries
-	riverClient *worker.Client
+	db                     *sql.DB
+	userRepo               *repository.UserRepository
+	passwordResetTokenRepo *repository.PasswordResetTokenRepository
+	cfg                    *config.Config
+	dispatcher             *dispatcher.Dispatcher
+	validator              *validator.PasswordResetCreateValidator
 }
 
 // NewCreatePasswordResetTokenUsecase は新しいCreatePasswordResetTokenUsecaseを作成します
-func NewCreatePasswordResetTokenUsecase(db *sql.DB, queries *query.Queries, riverClient *worker.Client) *CreatePasswordResetTokenUsecase {
+func NewCreatePasswordResetTokenUsecase(db *sql.DB, userRepo *repository.UserRepository, passwordResetTokenRepo *repository.PasswordResetTokenRepository, cfg *config.Config, dispatcher *dispatcher.Dispatcher, validator *validator.PasswordResetCreateValidator) *CreatePasswordResetTokenUsecase {
 	return &CreatePasswordResetTokenUsecase{
-		db:          db,
-		queries:     queries,
-		riverClient: riverClient,
+		db:                     db,
+		userRepo:               userRepo,
+		passwordResetTokenRepo: passwordResetTokenRepo,
+		cfg:                    cfg,
+		dispatcher:             dispatcher,
+		validator:              validator,
 	}
 }
 
-// CreatePasswordResetTokenResult はトークン生成の結果を表します
-type CreatePasswordResetTokenResult struct {
-	Token  string // 平文トークン（メール送信用）
-	UserID int64  // ユーザーID
+// CreatePasswordResetTokenInput はユースケースの入力パラメータです
+type CreatePasswordResetTokenInput struct {
+	Email string
 }
 
-// Execute はパスワードリセットトークンを生成します
-func (uc *CreatePasswordResetTokenUsecase) Execute(ctx context.Context, userID int64) (*CreatePasswordResetTokenResult, error) {
+// CreatePasswordResetTokenOutput はトークン生成の結果を表します
+type CreatePasswordResetTokenOutput struct {
+	Token  string       // 平文トークン（メール送信用）
+	UserID model.UserID // ユーザーID
+}
+
+// Execute はバリデーション・ユーザー検索・パスワードリセットトークン生成を行います。
+// ユーザーが存在しない場合は nil を返す（セキュリティ対策: ユーザーの存在を明かさない）。
+func (uc *CreatePasswordResetTokenUsecase) Execute(ctx context.Context, input CreatePasswordResetTokenInput) (*CreatePasswordResetTokenOutput, error) {
+	// 1. バリデーション
+	if err := uc.validator.Validate(ctx, validator.PasswordResetCreateValidatorInput{
+		Email: input.Email,
+	}); err != nil {
+		return nil, err
+	}
+
+	// 2. ユーザー検索（存在しない場合もエラーを返さない - セキュリティ対策）
+	user, err := uc.userRepo.GetByEmail(ctx, input.Email)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("ユーザーの検索に失敗: %w", err)
+	}
+
+	// 3. トークンを生成
+	return uc.createToken(ctx, model.UserID(user.ID))
+}
+
+// createToken はパスワードリセットトークンを生成します
+func (uc *CreatePasswordResetTokenUsecase) createToken(ctx context.Context, userID model.UserID) (*CreatePasswordResetTokenOutput, error) {
 	// トランザクション開始
 	tx, err := uc.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -45,10 +81,10 @@ func (uc *CreatePasswordResetTokenUsecase) Execute(ctx context.Context, userID i
 	}
 	defer func() { _ = tx.Rollback() }()
 
-	queriesWithTx := uc.queries.WithTx(tx)
+	passwordResetTokenRepo := uc.passwordResetTokenRepo.WithTx(tx)
 
 	// 既存の未使用トークンを無効化（削除）
-	if err := queriesWithTx.DeleteUnusedPasswordResetTokensByUserID(ctx, userID); err != nil {
+	if err := passwordResetTokenRepo.DeleteUnusedByUserID(ctx, userID); err != nil {
 		return nil, fmt.Errorf("古いトークンの削除に失敗: %w", err)
 	}
 
@@ -62,13 +98,7 @@ func (uc *CreatePasswordResetTokenUsecase) Execute(ctx context.Context, userID i
 	tokenDigest := password_reset.HashToken(token)
 
 	// トークンをデータベースに保存（有効期限: 1時間）
-	params := query.CreatePasswordResetTokenParams{
-		UserID:      userID,
-		TokenDigest: tokenDigest,
-		ExpiresAt:   time.Now().Add(1 * time.Hour),
-	}
-
-	if _, err := queriesWithTx.CreatePasswordResetToken(ctx, params); err != nil {
+	if _, err := passwordResetTokenRepo.Create(ctx, userID, tokenDigest, time.Now().Add(1*time.Hour)); err != nil {
 		return nil, fmt.Errorf("パスワードリセットトークンの作成に失敗: %w", err)
 	}
 
@@ -82,33 +112,33 @@ func (uc *CreatePasswordResetTokenUsecase) Execute(ctx context.Context, userID i
 	)
 
 	// メール送信ジョブをエンキュー
-	// 注: トランザクション外でエンキューするため、トークン保存とジョブエンキューの一貫性は完全ではありません
-	// ただし、トークンは保存されているため、ジョブエンキューに失敗してもユーザーはリセットリンクを使用できます
-	if uc.riverClient != nil {
-		_, err := uc.riverClient.Client().Insert(ctx, worker.SendPasswordResetEmailArgs{
-			UserID: userID,
-			Token:  token,
-		}, &river.InsertOpts{
-			Queue: river.QueueDefault,
-		})
+	if uc.dispatcher != nil {
+		user, err := uc.userRepo.GetByID(ctx, userID)
 		if err != nil {
-			// ジョブエンキューに失敗してもトークンは有効なので、エラーログを出力して続行
-			slog.ErrorContext(ctx, "パスワードリセットメール送信ジョブのエンキューに失敗しました",
+			slog.ErrorContext(ctx, "ユーザー情報の取得に失敗しました",
 				"user_id", userID,
 				"error", err,
 			)
 		} else {
-			slog.InfoContext(ctx, "パスワードリセットメール送信ジョブをエンキューしました",
-				"user_id", userID,
-			)
+			resetURL := fmt.Sprintf("%s/password/edit?token=%s", uc.cfg.AppURL(), token)
+			if err := uc.dispatcher.EnqueuePasswordResetEmail(ctx, user.Email, resetURL, user.Locale); err != nil {
+				slog.ErrorContext(ctx, "パスワードリセットメール送信ジョブのエンキューに失敗しました",
+					"user_id", userID,
+					"error", err,
+				)
+			} else {
+				slog.InfoContext(ctx, "パスワードリセットメール送信ジョブをエンキューしました",
+					"user_id", userID,
+				)
+			}
 		}
 	} else {
-		slog.WarnContext(ctx, "River クライアントが設定されていないため、メール送信ジョブをエンキューできませんでした",
+		slog.WarnContext(ctx, "Dispatcher が設定されていないため、メール送信ジョブをエンキューできませんでした",
 			"user_id", userID,
 		)
 	}
 
-	return &CreatePasswordResetTokenResult{
+	return &CreatePasswordResetTokenOutput{
 		Token:  token,
 		UserID: userID,
 	}, nil

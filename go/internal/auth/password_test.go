@@ -1,223 +1,159 @@
 package auth
 
 import (
-	"context"
+	"errors"
 	"strings"
 	"testing"
 
-	"github.com/annict/annict/go/internal/i18n"
+	"golang.org/x/crypto/bcrypt"
 )
+
+func TestSetBcryptCostForTest(t *testing.T) {
+	// テスト前のデフォルト値を保存して、テスト後に復元
+	originalCost := bcryptCost
+	t.Cleanup(func() {
+		bcryptCost = originalCost
+	})
+
+	t.Run("MinCostに変更してHashPasswordが動作する", func(t *testing.T) {
+		SetBcryptCostForTest(bcrypt.MinCost)
+
+		hashed, err := HashPassword("testpassword")
+		if err != nil {
+			t.Fatalf("HashPassword() error = %v", err)
+		}
+
+		// ハッシュ化されたパスワードが検証できることを確認
+		if err := CheckPassword(hashed, "testpassword"); err != nil {
+			t.Errorf("CheckPassword() error = %v", err)
+		}
+
+		// bcryptのコストがMinCostであることを確認
+		cost, err := bcrypt.Cost([]byte(hashed))
+		if err != nil {
+			t.Fatalf("bcrypt.Cost() error = %v", err)
+		}
+		if cost != bcrypt.MinCost {
+			t.Errorf("bcrypt cost = %d, want %d", cost, bcrypt.MinCost)
+		}
+	})
+
+	t.Run("DefaultCostに戻してHashPasswordが動作する", func(t *testing.T) {
+		SetBcryptCostForTest(bcrypt.DefaultCost)
+
+		hashed, err := HashPassword("testpassword")
+		if err != nil {
+			t.Fatalf("HashPassword() error = %v", err)
+		}
+
+		cost, err := bcrypt.Cost([]byte(hashed))
+		if err != nil {
+			t.Fatalf("bcrypt.Cost() error = %v", err)
+		}
+		if cost != bcrypt.DefaultCost {
+			t.Errorf("bcrypt cost = %d, want %d", cost, bcrypt.DefaultCost)
+		}
+	})
+}
 
 func TestValidatePasswordStrength(t *testing.T) {
 	tests := []struct {
 		name     string
 		password string
-		wantErr  bool
-		errMsg   string
+		wantErr  error
 	}{
 		{
 			name:     "有効なパスワード: 8文字",
 			password: "abcd1234",
-			wantErr:  false,
+			wantErr:  nil,
 		},
 		{
 			name:     "有効なパスワード: 記号を含む",
 			password: "pass@word123!",
-			wantErr:  false,
+			wantErr:  nil,
 		},
 		{
 			name:     "有効なパスワード: 小文字のみ（文字種要件なし）",
 			password: "abcdefgh",
-			wantErr:  false,
+			wantErr:  nil,
 		},
 		{
 			name:     "有効なパスワード: 数字のみ（文字種要件なし）",
 			password: "12345678",
-			wantErr:  false,
+			wantErr:  nil,
 		},
 		{
 			name:     "有効なパスワード: 128文字（最大長）",
 			password: strings.Repeat("a", 128),
-			wantErr:  false,
+			wantErr:  nil,
 		},
 		{
 			name:     "有効なパスワード: 印字可能ASCII文字全種類",
 			password: "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~",
-			wantErr:  false,
+			wantErr:  nil,
 		},
 		{
 			name:     "無効: 7文字（最小長未満）",
 			password: "abcd123",
-			wantErr:  true,
-			errMsg:   "8文字以上",
+			wantErr:  ErrPasswordTooShort,
 		},
 		{
 			name:     "無効: 129文字（最大長超過）",
 			password: strings.Repeat("a", 129),
-			wantErr:  true,
-			errMsg:   "128文字以内",
+			wantErr:  ErrPasswordTooLong,
 		},
 		{
 			name:     "無効: 空文字",
 			password: "",
-			wantErr:  true,
-			errMsg:   "8文字以上",
+			wantErr:  ErrPasswordTooShort,
 		},
 		{
 			name:     "無効: スペースを含む",
 			password: "pass word123",
-			wantErr:  true,
-			errMsg:   "半角英数記号のみ",
+			wantErr:  ErrPasswordInvalidChars,
 		},
 		{
 			name:     "無効: タブ文字を含む",
 			password: "pass\tword123",
-			wantErr:  true,
-			errMsg:   "半角英数記号のみ",
+			wantErr:  ErrPasswordInvalidChars,
 		},
 		{
 			name:     "無効: 改行を含む",
 			password: "pass\nword123",
-			wantErr:  true,
-			errMsg:   "半角英数記号のみ",
+			wantErr:  ErrPasswordInvalidChars,
 		},
 		{
 			name:     "無効: Unicode文字を含む",
 			password: "パスワード12345",
-			wantErr:  true,
-			errMsg:   "半角英数記号のみ",
+			wantErr:  ErrPasswordInvalidChars,
 		},
 		{
 			name:     "無効: 絵文字を含む",
 			password: "password😀",
-			wantErr:  true,
-			errMsg:   "半角英数記号のみ",
+			wantErr:  ErrPasswordInvalidChars,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// デフォルトロケール（日本語）でテスト
-			ctx := context.Background()
-			err := ValidatePasswordStrength(ctx, tt.password)
-			if tt.wantErr {
-				if err == nil {
-					t.Errorf("ValidatePasswordStrength() error = nil, wantErr %v", tt.wantErr)
-					return
-				}
-				if tt.errMsg != "" && !strings.Contains(err.Error(), tt.errMsg) {
-					t.Errorf("ValidatePasswordStrength() error = %v, want error containing %q", err, tt.errMsg)
-				}
-			} else {
+			t.Parallel()
+
+			err := ValidatePasswordStrength(tt.password)
+
+			if tt.wantErr == nil {
 				if err != nil {
-					t.Errorf("ValidatePasswordStrength() error = %v, wantErr %v", err, tt.wantErr)
-				}
-			}
-		})
-	}
-}
-
-// TestValidatePasswordStrength_Japanese は日本語ロケールでのエラーメッセージをテストします
-func TestValidatePasswordStrength_Japanese(t *testing.T) {
-	tests := []struct {
-		name        string
-		password    string
-		wantErr     bool
-		expectedMsg string
-	}{
-		{
-			name:        "最小長エラー（日本語）",
-			password:    "short",
-			wantErr:     true,
-			expectedMsg: "パスワードは8文字以上である必要があります",
-		},
-		{
-			name:        "最大長エラー（日本語）",
-			password:    strings.Repeat("a", 129),
-			wantErr:     true,
-			expectedMsg: "パスワードは128文字以内である必要があります",
-		},
-		{
-			name:        "無効な文字エラー（日本語）",
-			password:    "password with space",
-			wantErr:     true,
-			expectedMsg: "パスワードは半角英数記号のみ使用できます",
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			// 日本語ロケールを設定
-			ctx := i18n.SetLocale(context.Background(), "ja")
-			err := ValidatePasswordStrength(ctx, tt.password)
-
-			if !tt.wantErr {
-				if err != nil {
-					t.Errorf("ValidatePasswordStrength() error = %v, wantErr %v", err, tt.wantErr)
+					t.Errorf("ValidatePasswordStrength() error = %v, want nil", err)
 				}
 				return
 			}
 
 			if err == nil {
-				t.Errorf("ValidatePasswordStrength() error = nil, wantErr %v", tt.wantErr)
+				t.Errorf("ValidatePasswordStrength() error = nil, want %v", tt.wantErr)
 				return
 			}
 
-			if err.Error() != tt.expectedMsg {
-				t.Errorf("ValidatePasswordStrength() error = %v, want %v", err.Error(), tt.expectedMsg)
-			}
-		})
-	}
-}
-
-// TestValidatePasswordStrength_English は英語ロケールでのエラーメッセージをテストします
-func TestValidatePasswordStrength_English(t *testing.T) {
-	tests := []struct {
-		name        string
-		password    string
-		wantErr     bool
-		expectedMsg string
-	}{
-		{
-			name:        "最小長エラー（英語）",
-			password:    "short",
-			wantErr:     true,
-			expectedMsg: "Password must be at least 8 characters long",
-		},
-		{
-			name:        "最大長エラー（英語）",
-			password:    strings.Repeat("a", 129),
-			wantErr:     true,
-			expectedMsg: "Password must be no more than 128 characters long",
-		},
-		{
-			name:        "無効な文字エラー（英語）",
-			password:    "password with space",
-			wantErr:     true,
-			expectedMsg: "Password can only use alphanumeric characters and symbols",
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			// 英語ロケールを設定
-			ctx := i18n.SetLocale(context.Background(), "en")
-			err := ValidatePasswordStrength(ctx, tt.password)
-
-			if !tt.wantErr {
-				if err != nil {
-					t.Errorf("ValidatePasswordStrength() error = %v, wantErr %v", err, tt.wantErr)
-				}
-				return
-			}
-
-			if err == nil {
-				t.Errorf("ValidatePasswordStrength() error = nil, wantErr %v", tt.wantErr)
-				return
-			}
-
-			if err.Error() != tt.expectedMsg {
-				t.Errorf("ValidatePasswordStrength() error = %v, want %v", err.Error(), tt.expectedMsg)
+			if !errors.Is(err, tt.wantErr) {
+				t.Errorf("ValidatePasswordStrength() error = %v, want errors.Is(_, %v)", err, tt.wantErr)
 			}
 		})
 	}

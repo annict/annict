@@ -5,10 +5,9 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/stripe/stripe-go/v84"
-
 	"github.com/annict/annict/go/internal/i18n"
 	authMiddleware "github.com/annict/annict/go/internal/middleware"
+	"github.com/annict/annict/go/internal/usecase"
 )
 
 // Create POST /supporters/portal - Stripe Customer Portalへリダイレクト
@@ -22,53 +21,19 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Stripeサポーターのみアクセス可能
-	if !user.StripeSubscriberID.Valid || h.stripeSubscriberRepo == nil {
-		slog.WarnContext(ctx, "Stripeサポーターではないユーザーがポータルにアクセスしようとしました", "user_id", user.ID)
-		h.redirectWithError(w, r, ctx, "supporters_portal_not_supporter")
-		return
-	}
-
-	stripeSubscriber, err := h.stripeSubscriberRepo.GetByID(ctx, user.StripeSubscriberID.Int64)
+	// UseCaseの実行
+	result, err := h.createPortalSessionUC.Execute(ctx, usecase.CreatePortalSessionInput{
+		User:   user,
+		Locale: i18n.GetLocale(ctx),
+	})
 	if err != nil {
-		slog.ErrorContext(ctx, "Stripeサブスクライバーの取得に失敗しました", "error", err, "user_id", user.ID)
-		h.redirectWithError(w, r, ctx, "supporters_portal_error")
-		return
-	}
+		if usecase.IsNotStripeSubscriberError(err) {
+			slog.WarnContext(ctx, "Stripeサポーターではないユーザーがポータルにアクセスしようとしました", "user_id", user.ID)
+			h.redirectWithError(w, r, ctx, "supporters_portal_not_supporter")
+			return
+		}
 
-	// アクティブなサブスクリプションのみ許可
-	if !h.stripeSubscriberRepo.IsActive(&stripeSubscriber) {
-		slog.WarnContext(ctx, "非アクティブなサブスクリプションでポータルにアクセスしようとしました", "user_id", user.ID, "status", stripeSubscriber.StripeStatus)
-		h.redirectWithError(w, r, ctx, "supporters_portal_not_supporter")
-		return
-	}
-
-	// Stripe Customer Portal セッションを作成
-	returnURL := h.cfg.AppURL() + "/supporters"
-
-	params := &stripe.BillingPortalSessionCreateParams{
-		Customer:  stripe.String(stripeSubscriber.StripeCustomerID),
-		ReturnURL: stripe.String(returnURL),
-	}
-
-	// ロケールの設定
-	locale := i18n.GetLocale(ctx)
-	if locale == "ja" {
-		params.Locale = stripe.String("ja")
-	} else {
-		params.Locale = stripe.String("en")
-	}
-
-	// Stripeクライアントが設定されていない場合はエラー
-	if h.stripeClient == nil {
-		slog.ErrorContext(ctx, "Stripeクライアントが設定されていません", "user_id", user.ID)
-		h.redirectWithError(w, r, ctx, "supporters_portal_error")
-		return
-	}
-
-	portalSession, err := h.stripeClient.V1BillingPortalSessions.Create(ctx, params)
-	if err != nil {
-		slog.ErrorContext(ctx, "Stripe Customer Portalセッションの作成に失敗しました", "error", err, "user_id", user.ID)
+		slog.ErrorContext(ctx, "Customer Portalセッションの作成に失敗しました", "error", err, "user_id", user.ID)
 		h.redirectWithError(w, r, ctx, "supporters_portal_error")
 		return
 	}
@@ -76,12 +41,11 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	slog.InfoContext(ctx, "Stripe Customer Portalセッションを作成しました", "user_id", user.ID)
 
 	// Stripe Customer Portalページへリダイレクト
-	http.Redirect(w, r, portalSession.URL, http.StatusSeeOther)
+	http.Redirect(w, r, result.PortalURL, http.StatusSeeOther)
 }
 
 // redirectWithError はエラーメッセージをフラッシュに設定してリダイレクトします
 func (h *Handler) redirectWithError(w http.ResponseWriter, r *http.Request, ctx context.Context, messageKey string) {
-	// フラッシュメッセージを設定（"error"タイプ）
-	_ = h.sessionManager.SetFlash(ctx, w, r, "error", i18n.T(ctx, messageKey))
+	h.flashMgr.SetError(w, i18n.T(ctx, messageKey))
 	http.Redirect(w, r, "/supporters", http.StatusSeeOther)
 }

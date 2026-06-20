@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"testing"
 	"time"
 
@@ -15,7 +16,7 @@ func TestUpdateStripeSubscriberUsecase_Execute(t *testing.T) {
 	t.Parallel()
 
 	// テストDBをセットアップ
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(tx)
 
 	// リポジトリの作成
@@ -36,6 +37,10 @@ func TestUpdateStripeSubscriberUsecase_Execute(t *testing.T) {
 		name      string
 		input     UpdateStripeSubscriberInput
 		wantError bool
+		// asserts the error is ErrStripeSubscriberNotFound.
+		//
+		// [Ja] ErrStripeSubscriberNotFound であることを検証する
+		wantNotFound bool
 	}{
 		{
 			name: "サブスクリプション状態を更新できる",
@@ -80,7 +85,7 @@ func TestUpdateStripeSubscriberUsecase_Execute(t *testing.T) {
 			wantError: false,
 		},
 		{
-			name: "存在しないサブスクリプションIDはエラー",
+			name: "存在しないサブスクリプションIDはErrStripeSubscriberNotFound",
 			input: UpdateStripeSubscriberInput{
 				StripeSubscriptionID:     "sub_nonexistent",
 				StripePriceID:            "price_monthly",
@@ -88,7 +93,8 @@ func TestUpdateStripeSubscriberUsecase_Execute(t *testing.T) {
 				StripeCurrentPeriodStart: time.Now(),
 				StripeCurrentPeriodEnd:   time.Now().AddDate(0, 1, 0),
 			},
-			wantError: true,
+			wantError:    true,
+			wantNotFound: true,
 		},
 		{
 			name: "無効なステータスはエラー",
@@ -112,6 +118,10 @@ func TestUpdateStripeSubscriberUsecase_Execute(t *testing.T) {
 			if tt.wantError {
 				if err == nil {
 					t.Errorf("エラーが期待されましたが、nilが返されました")
+					return
+				}
+				if tt.wantNotFound && !errors.Is(err, ErrStripeSubscriberNotFound) {
+					t.Errorf("ErrStripeSubscriberNotFound が期待されましたが、別のエラーが返されました: %v", err)
 				}
 				return
 			}

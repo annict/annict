@@ -10,6 +10,8 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/lib/pq"
+
+	"github.com/annict/annict/go/internal/model"
 )
 
 // シーズン名のenum値（Rails互換）
@@ -22,28 +24,34 @@ const (
 
 // WorkBuilder は作品テストデータのビルダー
 type WorkBuilder struct {
-	tx         *sql.Tx
-	t          *testing.T
-	id         int64
-	title      string
-	seasonName int32 // enum値 (1:winter, 2:spring, 3:summer, 4:autumn)
-	seasonYear int32
+	tx            *sql.Tx
+	t             *testing.T
+	id            model.WorkID
+	title         string
+	seasonName    int32 // enum値 (1:winter, 2:spring, 3:summer, 4:autumn)
+	seasonYear    int32
+	noSeason      bool   // trueの場合、season_year/season_nameをNULLにする
+	noEpisodes    bool   // no_episodesカラムの値
+	status        string // work_status enum: published, archived, deleted
+	watchersCount int32
 }
 
 // NewWorkBuilder は新しいWorkBuilderを作成します
 func NewWorkBuilder(t *testing.T, tx *sql.Tx) *WorkBuilder {
 	return &WorkBuilder{
-		tx:         tx,
-		t:          t,
-		id:         1,
-		title:      "テストアニメ",
-		seasonName: SeasonSpring,
-		seasonYear: 2024,
+		tx:            tx,
+		t:             t,
+		id:            1,
+		title:         "テストアニメ",
+		seasonName:    SeasonSpring,
+		seasonYear:    2024,
+		status:        "published",
+		watchersCount: 100,
 	}
 }
 
 // WithID は作品IDを設定します
-func (b *WorkBuilder) WithID(id int64) *WorkBuilder {
+func (b *WorkBuilder) WithID(id model.WorkID) *WorkBuilder {
 	b.id = id
 	return b
 }
@@ -59,61 +67,97 @@ func (b *WorkBuilder) WithTitle(title string) *WorkBuilder {
 func (b *WorkBuilder) WithSeason(year int32, seasonName int32) *WorkBuilder {
 	b.seasonName = seasonName
 	b.seasonYear = year
+	b.noSeason = false
+	return b
+}
+
+// WithNoSeason はシーズン情報なしに設定します
+func (b *WorkBuilder) WithNoSeason() *WorkBuilder {
+	b.noSeason = true
+	return b
+}
+
+// WithNoEpisodes はno_episodesフラグを設定します
+func (b *WorkBuilder) WithNoEpisodes(noEpisodes bool) *WorkBuilder {
+	b.noEpisodes = noEpisodes
+	return b
+}
+
+// WithStatus はステータスを設定します（published, archived, deleted）
+func (b *WorkBuilder) WithStatus(status string) *WorkBuilder {
+	b.status = status
+	return b
+}
+
+// WithWatchersCount はウォッチャー数を設定します
+func (b *WorkBuilder) WithWatchersCount(count int32) *WorkBuilder {
+	b.watchersCount = count
 	return b
 }
 
 // Build はテスト用の作品データをデータベースに作成します
-func (b *WorkBuilder) Build() int64 {
+func (b *WorkBuilder) Build() model.WorkID {
 	b.t.Helper()
 
-	query := `
+	q := `
 		INSERT INTO works (
 			title, title_kana, media, official_site_url,
 			wikipedia_url, season_year, season_name,
-			watchers_count, episodes_count,
-			created_at, updated_at
+			watchers_count, episodes_count, no_episodes,
+			status, created_at, updated_at
 		) VALUES (
 			$1, $2, $3, $4,
 			$5, $6, $7,
-			$8, $9,
-			$10, $11
+			$8, $9, $10,
+			$11, $12, $13
 		) RETURNING id
 	`
 
+	var seasonYear, seasonName interface{}
+	if b.noSeason {
+		seasonYear = nil
+		seasonName = nil
+	} else {
+		seasonYear = b.seasonYear
+		seasonName = b.seasonName
+	}
+
 	var id int64
 	err := b.tx.QueryRow(
-		query,
-		b.title,      // $1
-		"",           // $2 title_kana (NOT NULL制約あり)
-		0,            // $3 media (0 = tv in Rails enum)
-		"",           // $4 official_site_url
-		"",           // $5 wikipedia_url
-		b.seasonYear, // $6 season_year (int32)
-		b.seasonName, // $7 season_name (int32, enum値)
-		100,          // $8 watchers_count
-		12,           // $9 episodes_count
-		time.Now(),   // $10 created_at
-		time.Now(),   // $11 updated_at
+		q,
+		b.title,         // $1
+		"",              // $2 title_kana (NOT NULL制約あり)
+		0,               // $3 media (0 = tv in Rails enum)
+		"",              // $4 official_site_url
+		"",              // $5 wikipedia_url
+		seasonYear,      // $6 season_year
+		seasonName,      // $7 season_name
+		b.watchersCount, // $8 watchers_count
+		12,              // $9 episodes_count
+		b.noEpisodes,    // $10 no_episodes
+		b.status,        // $11 status
+		time.Now(),      // $12 created_at
+		time.Now(),      // $13 updated_at
 	).Scan(&id)
 
 	if err != nil {
 		b.t.Fatalf("作品データの作成に失敗しました: seasonYear=%v, seasonName=%v, error=%v", b.seasonYear, b.seasonName, err)
 	}
 
-	return id
+	return model.WorkID(id)
 }
 
 // EpisodeBuilder はエピソードテストデータのビルダー
 type EpisodeBuilder struct {
 	tx     *sql.Tx
 	t      *testing.T
-	workID int64
+	workID model.WorkID
 	number string
 	title  string
 }
 
 // NewEpisodeBuilder は新しいEpisodeBuilderを作成します
-func NewEpisodeBuilder(t *testing.T, tx *sql.Tx, workID int64) *EpisodeBuilder {
+func NewEpisodeBuilder(t *testing.T, tx *sql.Tx, workID model.WorkID) *EpisodeBuilder {
 	return &EpisodeBuilder{
 		tx:     tx,
 		t:      t,
@@ -136,7 +180,7 @@ func (b *EpisodeBuilder) WithTitle(title string) *EpisodeBuilder {
 }
 
 // Build はテスト用のエピソードデータをデータベースに作成します
-func (b *EpisodeBuilder) Build() int64 {
+func (b *EpisodeBuilder) Build() model.EpisodeID {
 	b.t.Helper()
 
 	query := `
@@ -153,7 +197,7 @@ func (b *EpisodeBuilder) Build() int64 {
 	sortNumber := 10 // デフォルトのソート番号
 	err := b.tx.QueryRow(
 		query,
-		b.workID,
+		int64(b.workID),
 		b.number,
 		sortNumber,
 		b.title,
@@ -165,7 +209,7 @@ func (b *EpisodeBuilder) Build() int64 {
 		b.t.Fatalf("エピソードデータの作成に失敗しました: %v", err)
 	}
 
-	return id
+	return model.EpisodeID(id)
 }
 
 // UserBuilder はユーザーテストデータのビルダー
@@ -176,7 +220,8 @@ type UserBuilder struct {
 	email              string
 	encryptedPassword  string
 	locale             string
-	stripeSubscriberID *int64
+	role               int32
+	stripeSubscriberID *model.StripeSubscriberID
 }
 
 // NewUserBuilder は新しいUserBuilderを作成します
@@ -220,14 +265,20 @@ func (b *UserBuilder) WithLocale(locale string) *UserBuilder {
 	return b
 }
 
+// WithRole はユーザーの権限を設定します（0: user, 1: admin, 2: editor）
+func (b *UserBuilder) WithRole(role int32) *UserBuilder {
+	b.role = role
+	return b
+}
+
 // WithStripeSubscriberID はStripeサブスクライバーIDを設定します
-func (b *UserBuilder) WithStripeSubscriberID(id *int64) *UserBuilder {
+func (b *UserBuilder) WithStripeSubscriberID(id *model.StripeSubscriberID) *UserBuilder {
 	b.stripeSubscriberID = id
 	return b
 }
 
 // Build はテスト用のユーザーデータをデータベースに作成します
-func (b *UserBuilder) Build() int64 {
+func (b *UserBuilder) Build() model.UserID {
 	b.t.Helper()
 
 	query := `
@@ -249,7 +300,7 @@ func (b *UserBuilder) Build() int64 {
 		query,
 		b.username,
 		b.email,
-		0,        // role (0 = user, 1 = admin, 2 = editor)
+		b.role,   // role (0 = user, 1 = admin, 2 = editor)
 		b.locale, // locale
 		time.Now(),
 		time.Now(),
@@ -324,21 +375,21 @@ func (b *UserBuilder) Build() int64 {
 
 	// StripeSubscriberIDが設定されている場合は更新
 	if b.stripeSubscriberID != nil {
-		_, err = b.tx.Exec(`UPDATE users SET stripe_subscriber_id = $1 WHERE id = $2`, *b.stripeSubscriberID, id)
+		_, err = b.tx.Exec(`UPDATE users SET stripe_subscriber_id = $1 WHERE id = $2`, int64(*b.stripeSubscriberID), id)
 		if err != nil {
 			b.t.Fatalf("ユーザーのStripeSubscriberID更新に失敗しました: %v", err)
 		}
 	}
 
-	return id
+	return model.UserID(id)
 }
 
 // UserResult はテスト用のユーザー結果
 type UserResult struct {
-	ID                 int64
+	ID                 model.UserID
 	Username           string
 	Email              string
-	StripeSubscriberID sql.NullInt64
+	StripeSubscriberID *model.StripeSubscriberID
 }
 
 // BuildWithResult はテスト用のユーザーデータをデータベースに作成し、結果を返します
@@ -346,16 +397,11 @@ func (b *UserBuilder) BuildWithResult() UserResult {
 	b.t.Helper()
 	id := b.Build()
 
-	var stripeSubID sql.NullInt64
-	if b.stripeSubscriberID != nil {
-		stripeSubID = sql.NullInt64{Int64: *b.stripeSubscriberID, Valid: true}
-	}
-
 	return UserResult{
 		ID:                 id,
 		Username:           b.username,
 		Email:              b.email,
-		StripeSubscriberID: stripeSubID,
+		StripeSubscriberID: b.stripeSubscriberID,
 	}
 }
 
@@ -363,13 +409,13 @@ func (b *UserBuilder) BuildWithResult() UserResult {
 type WorkImageBuilder struct {
 	tx        *sql.Tx
 	t         *testing.T
-	workID    int64
-	userID    int64
+	workID    model.WorkID
+	userID    model.UserID
 	imageData string
 }
 
 // NewWorkImageBuilder は新しいWorkImageBuilderを作成します
-func NewWorkImageBuilder(t *testing.T, tx *sql.Tx, workID int64) *WorkImageBuilder {
+func NewWorkImageBuilder(t *testing.T, tx *sql.Tx, workID model.WorkID) *WorkImageBuilder {
 	// テストユーザーを作成
 	userID := CreateTestUser(t, tx, fmt.Sprintf("image_uploader_%d", workID))
 
@@ -416,8 +462,8 @@ func (b *WorkImageBuilder) Build() int64 {
 	var id int64
 	err := b.tx.QueryRow(
 		query,
-		b.workID,
-		b.userID,
+		int64(b.workID),
+		int64(b.userID),
 		b.imageData,
 		"",            // copyright (NOT NULL制約あり)
 		"",            // asin (NOT NULL制約あり)
@@ -438,7 +484,7 @@ type SessionBuilder struct {
 	tx        *sql.Tx
 	t         *testing.T
 	sessionID string
-	userID    int64
+	userID    model.UserID
 	data      string
 }
 
@@ -460,7 +506,7 @@ func (b *SessionBuilder) WithSessionID(sessionID string) *SessionBuilder {
 }
 
 // WithUserID はユーザーIDを設定します
-func (b *SessionBuilder) WithUserID(userID int64) *SessionBuilder {
+func (b *SessionBuilder) WithUserID(userID model.UserID) *SessionBuilder {
 	b.userID = userID
 	// セッションデータにユーザーIDを含める（Rails/Rack互換フォーマット）
 	// "warden.user.user.key": [[userID], "authenticatable_salt"]
@@ -514,13 +560,13 @@ func (b *SessionBuilder) generatePrivateID(publicID string) string {
 }
 
 // CreateTestWork は簡単にテスト用作品を作成するヘルパー関数
-func CreateTestWork(t *testing.T, tx *sql.Tx, title string) int64 {
+func CreateTestWork(t *testing.T, tx *sql.Tx, title string) model.WorkID {
 	t.Helper()
 	return NewWorkBuilder(t, tx).WithTitle(title).Build()
 }
 
 // CreateTestWorkWithImage は画像付きの作品を作成するヘルパー関数
-func CreateTestWorkWithImage(t *testing.T, tx *sql.Tx, title string) (workID int64, imageID int64) {
+func CreateTestWorkWithImage(t *testing.T, tx *sql.Tx, title string) (workID model.WorkID, imageID int64) {
 	t.Helper()
 	workID = NewWorkBuilder(t, tx).WithTitle(title).Build()
 	imageID = NewWorkImageBuilder(t, tx, workID).Build()
@@ -528,13 +574,13 @@ func CreateTestWorkWithImage(t *testing.T, tx *sql.Tx, title string) (workID int
 }
 
 // CreateTestUser は簡単にテスト用ユーザーを作成するヘルパー関数
-func CreateTestUser(t *testing.T, tx *sql.Tx, username string) int64 {
+func CreateTestUser(t *testing.T, tx *sql.Tx, username string) model.UserID {
 	t.Helper()
 	return NewUserBuilder(t, tx).WithUsername(username).Build()
 }
 
 // CreateTestEpisode は簡単にテスト用エピソードを作成するヘルパー関数
-func CreateTestEpisode(t *testing.T, tx *sql.Tx, workID int64, number string) int64 {
+func CreateTestEpisode(t *testing.T, tx *sql.Tx, workID model.WorkID, number string) model.EpisodeID {
 	t.Helper()
 	return NewEpisodeBuilder(t, tx, workID).WithNumber(number).Build()
 }
@@ -616,7 +662,7 @@ func (b *StripeSubscriberBuilder) WithCanceledAt(canceledAt time.Time) *StripeSu
 }
 
 // Build はテスト用のStripeサブスクライバーデータをデータベースに作成し、IDを返します
-func (b *StripeSubscriberBuilder) Build() int64 {
+func (b *StripeSubscriberBuilder) Build() model.StripeSubscriberID {
 	b.t.Helper()
 	result := b.BuildWithResult()
 	return result.ID
@@ -647,6 +693,7 @@ func (b *StripeSubscriberBuilder) BuildWithResult() StripeSubscriberResult {
 
 	now := time.Now()
 	var result StripeSubscriberResult
+	var id int64
 	err := b.tx.QueryRow(
 		q,
 		b.stripeCustomerID,
@@ -660,7 +707,7 @@ func (b *StripeSubscriberBuilder) BuildWithResult() StripeSubscriberResult {
 		now,
 		now,
 	).Scan(
-		&result.ID,
+		&id,
 		&result.StripeCustomerID,
 		&result.StripeSubscriptionID,
 		&result.StripePriceID,
@@ -676,13 +723,14 @@ func (b *StripeSubscriberBuilder) BuildWithResult() StripeSubscriberResult {
 	if err != nil {
 		b.t.Fatalf("Stripeサブスクライバーデータの作成に失敗しました: %v", err)
 	}
+	result.ID = model.StripeSubscriberID(id)
 
 	return result
 }
 
 // StripeSubscriberResult はテスト用のStripeサブスクライバー結果
 type StripeSubscriberResult struct {
-	ID                       int64
+	ID                       model.StripeSubscriberID
 	StripeCustomerID         string
 	StripeSubscriptionID     string
 	StripePriceID            string
@@ -696,13 +744,13 @@ type StripeSubscriberResult struct {
 }
 
 // CreateTestStripeSubscriber は簡単にテスト用Stripeサブスクライバーを作成するヘルパー関数
-func CreateTestStripeSubscriber(t *testing.T, tx *sql.Tx) int64 {
+func CreateTestStripeSubscriber(t *testing.T, tx *sql.Tx) model.StripeSubscriberID {
 	t.Helper()
 	return NewStripeSubscriberBuilder(t, tx).Build()
 }
 
 // CreateTestStripeSubscriberWithStatus は指定ステータスでテスト用Stripeサブスクライバーを作成するヘルパー関数
-func CreateTestStripeSubscriberWithStatus(t *testing.T, tx *sql.Tx, status string) int64 {
+func CreateTestStripeSubscriberWithStatus(t *testing.T, tx *sql.Tx, status string) model.StripeSubscriberID {
 	t.Helper()
 	return NewStripeSubscriberBuilder(t, tx).WithStripeStatus(status).Build()
 }
@@ -764,7 +812,7 @@ func (b *StripeWebhookEventBuilder) WithReceivedAt(receivedAt time.Time) *Stripe
 }
 
 // Build はテスト用のStripe Webhookイベントデータをデータベースに作成します
-func (b *StripeWebhookEventBuilder) Build() int64 {
+func (b *StripeWebhookEventBuilder) Build() model.StripeWebhookEventID {
 	b.t.Helper()
 
 	query := `
@@ -797,17 +845,17 @@ func (b *StripeWebhookEventBuilder) Build() int64 {
 		b.t.Fatalf("Stripe Webhookイベントデータの作成に失敗しました: %v", err)
 	}
 
-	return id
+	return model.StripeWebhookEventID(id)
 }
 
 // CreateTestStripeWebhookEvent は簡単にテスト用Stripe Webhookイベントを作成するヘルパー関数
-func CreateTestStripeWebhookEvent(t *testing.T, tx *sql.Tx) int64 {
+func CreateTestStripeWebhookEvent(t *testing.T, tx *sql.Tx) model.StripeWebhookEventID {
 	t.Helper()
 	return NewStripeWebhookEventBuilder(t, tx).Build()
 }
 
 // CreateTestStripeWebhookEventWithStatus は指定ステータスでテスト用Stripe Webhookイベントを作成するヘルパー関数
-func CreateTestStripeWebhookEventWithStatus(t *testing.T, tx *sql.Tx, status string) int64 {
+func CreateTestStripeWebhookEventWithStatus(t *testing.T, tx *sql.Tx, status string) model.StripeWebhookEventID {
 	t.Helper()
 	return NewStripeWebhookEventBuilder(t, tx).WithStatus(status).Build()
 }
@@ -864,7 +912,7 @@ func (b *GumroadSubscriberBuilder) WithGumroadEndedAt(endedAt time.Time) *Gumroa
 }
 
 // Build はテスト用のGumroadサブスクライバーデータをデータベースに作成します
-func (b *GumroadSubscriberBuilder) Build() int64 {
+func (b *GumroadSubscriberBuilder) Build() model.GumroadSubscriberID {
 	b.t.Helper()
 
 	query := `
@@ -905,11 +953,11 @@ func (b *GumroadSubscriberBuilder) Build() int64 {
 		b.t.Fatalf("Gumroadサブスクライバーデータの作成に失敗しました: %v", err)
 	}
 
-	return id
+	return model.GumroadSubscriberID(id)
 }
 
 // CreateTestGumroadSubscriber は簡単にテスト用Gumroadサブスクライバーを作成するヘルパー関数
-func CreateTestGumroadSubscriber(t *testing.T, tx *sql.Tx) int64 {
+func CreateTestGumroadSubscriber(t *testing.T, tx *sql.Tx) model.GumroadSubscriberID {
 	t.Helper()
 	return NewGumroadSubscriberBuilder(t, tx).Build()
 }
@@ -1036,7 +1084,7 @@ type ProgramBuilder struct {
 	tx        *sql.Tx
 	t         *testing.T
 	channelID int64
-	workID    int64
+	workID    model.WorkID
 }
 
 // NewProgramBuilder は新しいProgramBuilderを作成します
@@ -1054,7 +1102,7 @@ func (b *ProgramBuilder) WithChannelID(channelID int64) *ProgramBuilder {
 }
 
 // WithWorkID は作品IDを設定します
-func (b *ProgramBuilder) WithWorkID(workID int64) *ProgramBuilder {
+func (b *ProgramBuilder) WithWorkID(workID model.WorkID) *ProgramBuilder {
 	b.workID = workID
 	return b
 }
@@ -1075,7 +1123,7 @@ func (b *ProgramBuilder) Build() int64 {
 	err := b.tx.QueryRow(
 		query,
 		b.channelID,
-		b.workID,
+		int64(b.workID),
 		"published",
 		time.Now(),
 		time.Now(),
@@ -1092,8 +1140,8 @@ func (b *ProgramBuilder) Build() int64 {
 type SlotBuilder struct {
 	tx        *sql.Tx
 	t         *testing.T
-	workID    int64
-	episodeID int64
+	workID    model.WorkID
+	episodeID model.EpisodeID
 	channelID int64
 	programID int64
 	startedAt time.Time
@@ -1109,13 +1157,13 @@ func NewSlotBuilder(t *testing.T, tx *sql.Tx) *SlotBuilder {
 }
 
 // WithWorkID は作品IDを設定します
-func (b *SlotBuilder) WithWorkID(workID int64) *SlotBuilder {
+func (b *SlotBuilder) WithWorkID(workID model.WorkID) *SlotBuilder {
 	b.workID = workID
 	return b
 }
 
 // WithEpisodeID はエピソードIDを設定します
-func (b *SlotBuilder) WithEpisodeID(episodeID int64) *SlotBuilder {
+func (b *SlotBuilder) WithEpisodeID(episodeID model.EpisodeID) *SlotBuilder {
 	b.episodeID = episodeID
 	return b
 }
@@ -1139,7 +1187,7 @@ func (b *SlotBuilder) WithStartedAt(startedAt time.Time) *SlotBuilder {
 }
 
 // Build はテスト用の放送枠データをデータベースに作成します
-func (b *SlotBuilder) Build() int64 {
+func (b *SlotBuilder) Build() model.SlotID {
 	b.t.Helper()
 
 	query := `
@@ -1153,8 +1201,8 @@ func (b *SlotBuilder) Build() int64 {
 	var id int64
 	err := b.tx.QueryRow(
 		query,
-		b.workID,
-		b.episodeID,
+		int64(b.workID),
+		int64(b.episodeID),
 		b.channelID,
 		b.programID,
 		b.startedAt,
@@ -1166,15 +1214,15 @@ func (b *SlotBuilder) Build() int64 {
 		b.t.Fatalf("放送枠データの作成に失敗しました: %v", err)
 	}
 
-	return id
+	return model.SlotID(id)
 }
 
 // LibraryEntryBuilder はライブラリエントリテストデータのビルダー
 type LibraryEntryBuilder struct {
 	tx        *sql.Tx
 	t         *testing.T
-	userID    int64
-	workID    int64
+	userID    model.UserID
+	workID    model.WorkID
 	programID int64
 	status    string
 }
@@ -1189,13 +1237,13 @@ func NewLibraryEntryBuilder(t *testing.T, tx *sql.Tx) *LibraryEntryBuilder {
 }
 
 // WithUserID はユーザーIDを設定します
-func (b *LibraryEntryBuilder) WithUserID(userID int64) *LibraryEntryBuilder {
+func (b *LibraryEntryBuilder) WithUserID(userID model.UserID) *LibraryEntryBuilder {
 	b.userID = userID
 	return b
 }
 
 // WithWorkID は作品IDを設定します
-func (b *LibraryEntryBuilder) WithWorkID(workID int64) *LibraryEntryBuilder {
+func (b *LibraryEntryBuilder) WithWorkID(workID model.WorkID) *LibraryEntryBuilder {
 	b.workID = workID
 	return b
 }
@@ -1242,8 +1290,8 @@ func (b *LibraryEntryBuilder) Build() int64 {
 	var statusID int64
 	err := b.tx.QueryRow(
 		statusQuery,
-		b.userID,
-		b.workID,
+		int64(b.userID),
+		int64(b.workID),
 		kind,
 		time.Now(),
 		time.Now(),
@@ -1264,8 +1312,8 @@ func (b *LibraryEntryBuilder) Build() int64 {
 	var id int64
 	err = b.tx.QueryRow(
 		query,
-		b.userID,
-		b.workID,
+		int64(b.userID),
+		int64(b.workID),
 		b.programID,
 		kind,
 		statusID,
@@ -1278,4 +1326,133 @@ func (b *LibraryEntryBuilder) Build() int64 {
 	}
 
 	return id
+}
+
+// CastBuilder はキャストテストデータのビルダー
+type CastBuilder struct {
+	tx            *sql.Tx
+	t             *testing.T
+	workID        model.WorkID
+	characterName string
+	personName    string
+}
+
+// NewCastBuilder は新しいCastBuilderを作成します
+func NewCastBuilder(t *testing.T, tx *sql.Tx, workID model.WorkID) *CastBuilder {
+	return &CastBuilder{
+		tx:            tx,
+		t:             t,
+		workID:        workID,
+		characterName: "テストキャラクター",
+		personName:    "テスト声優",
+	}
+}
+
+// WithCharacterName はキャラクター名を設定します
+func (b *CastBuilder) WithCharacterName(name string) *CastBuilder {
+	b.characterName = name
+	return b
+}
+
+// WithPersonName は人物名を設定します
+func (b *CastBuilder) WithPersonName(name string) *CastBuilder {
+	b.personName = name
+	return b
+}
+
+// Build はテスト用のキャストデータをデータベースに作成します
+func (b *CastBuilder) Build() model.CastID {
+	b.t.Helper()
+
+	var characterID int64
+	err := b.tx.QueryRow(`
+		INSERT INTO characters (name, name_en, name_kana, series_id, created_at, updated_at)
+		VALUES ($1, $2, '', NULL, NOW(), NOW())
+		RETURNING id
+	`, b.characterName, b.characterName).Scan(&characterID)
+	if err != nil {
+		b.t.Fatalf("キャラクターの作成に失敗: %v", err)
+	}
+
+	var personID int64
+	err = b.tx.QueryRow(`
+		INSERT INTO people (name, name_en, name_kana, created_at, updated_at)
+		VALUES ($1, $2, '', NOW(), NOW())
+		RETURNING id
+	`, b.personName, b.personName).Scan(&personID)
+	if err != nil {
+		b.t.Fatalf("人物の作成に失敗: %v", err)
+	}
+
+	displayName := b.characterName + " as " + b.personName
+	var castID int64
+	err = b.tx.QueryRow(`
+		INSERT INTO casts (work_id, character_id, person_id, name, name_en, sort_number, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
+		RETURNING id
+	`, int64(b.workID), characterID, personID, displayName, displayName, 1).Scan(&castID)
+	if err != nil {
+		b.t.Fatalf("キャストの作成に失敗: %v", err)
+	}
+
+	return model.CastID(castID)
+}
+
+// StaffBuilder はスタッフテストデータのビルダー
+type StaffBuilder struct {
+	tx     *sql.Tx
+	t      *testing.T
+	workID model.WorkID
+	name   string
+	role   string
+}
+
+// NewStaffBuilder は新しいStaffBuilderを作成します
+func NewStaffBuilder(t *testing.T, tx *sql.Tx, workID model.WorkID) *StaffBuilder {
+	return &StaffBuilder{
+		tx:     tx,
+		t:      t,
+		workID: workID,
+		name:   "テストスタッフ",
+		role:   "director",
+	}
+}
+
+// WithName はスタッフ名を設定します
+func (b *StaffBuilder) WithName(name string) *StaffBuilder {
+	b.name = name
+	return b
+}
+
+// WithRole はスタッフ役割を設定します（director, series_composition, other 等）
+func (b *StaffBuilder) WithRole(role string) *StaffBuilder {
+	b.role = role
+	return b
+}
+
+// Build はテスト用のスタッフデータをデータベースに作成します
+func (b *StaffBuilder) Build() model.StaffID {
+	b.t.Helper()
+
+	var personID int64
+	err := b.tx.QueryRow(`
+		INSERT INTO people (name, name_en, name_kana, created_at, updated_at)
+		VALUES ($1, $2, '', NOW(), NOW())
+		RETURNING id
+	`, b.name, b.name).Scan(&personID)
+	if err != nil {
+		b.t.Fatalf("人物の作成に失敗: %v", err)
+	}
+
+	var staffID int64
+	err = b.tx.QueryRow(`
+		INSERT INTO staffs (work_id, name, name_en, role, role_other, role_other_en, resource_id, resource_type, sort_number, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, '', '', $5, $6, 1, NOW(), NOW())
+		RETURNING id
+	`, int64(b.workID), b.name, b.name, b.role, personID, "Person").Scan(&staffID)
+	if err != nil {
+		b.t.Fatalf("スタッフの作成に失敗: %v", err)
+	}
+
+	return model.StaffID(staffID)
 }

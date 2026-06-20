@@ -5,99 +5,98 @@ import (
 	"database/sql"
 	"fmt"
 	"log/slog"
-	"time"
 
 	"github.com/annict/annict/go/internal/auth"
-	"github.com/annict/annict/go/internal/password_reset"
-	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/model"
+	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/validator"
 )
 
+// ErrInvalidPasswordResetToken はパスワードリセットトークンが無効であることを示すエラーです。
+// Handler はこのエラーを errors.Is で判定してトークン無効時の処理を行います。
+var ErrInvalidPasswordResetToken = repository.ErrInvalidPasswordResetToken
+
 // UpdatePasswordResetUsecase はパスワードリセットによるパスワード更新を行うユースケースです
 type UpdatePasswordResetUsecase struct {
-	db      *sql.DB
-	queries *query.Queries
+	db                     *sql.DB
+	passwordResetTokenRepo *repository.PasswordResetTokenRepository
+	userRepo               *repository.UserRepository
+	sessionRepo            *repository.SessionRepository
+	validator              *validator.PasswordUpdateValidator
 }
 
 // NewUpdatePasswordResetUsecase は新しいUpdatePasswordResetUsecaseを作成します
-func NewUpdatePasswordResetUsecase(db *sql.DB, queries *query.Queries) *UpdatePasswordResetUsecase {
+func NewUpdatePasswordResetUsecase(db *sql.DB, passwordResetTokenRepo *repository.PasswordResetTokenRepository, userRepo *repository.UserRepository, sessionRepo *repository.SessionRepository, validator *validator.PasswordUpdateValidator) *UpdatePasswordResetUsecase {
 	return &UpdatePasswordResetUsecase{
-		db:      db,
-		queries: queries,
+		db:                     db,
+		passwordResetTokenRepo: passwordResetTokenRepo,
+		userRepo:               userRepo,
+		sessionRepo:            sessionRepo,
+		validator:              validator,
 	}
 }
 
-// UpdatePasswordResetResult はパスワード更新の結果を表します
-type UpdatePasswordResetResult struct {
-	UserID    int64
+// UpdatePasswordResetInput はユースケースの入力パラメータです
+type UpdatePasswordResetInput struct {
+	Token                string
+	Password             string
+	PasswordConfirmation string
+}
+
+// UpdatePasswordResetOutput はパスワード更新の結果を表します
+type UpdatePasswordResetOutput struct {
+	UserID    model.UserID
 	SessionID string // 新しいセッションID
 }
 
-// Execute はパスワードを更新し、新しいセッションを作成します
-func (uc *UpdatePasswordResetUsecase) Execute(ctx context.Context, token, newPassword string) (*UpdatePasswordResetResult, error) {
-	// トークンをハッシュ化してデータベースから検索
-	tokenDigest := password_reset.HashToken(token)
-	resetToken, err := uc.queries.GetPasswordResetTokenByDigest(ctx, tokenDigest)
-	if err == sql.ErrNoRows {
-		slog.WarnContext(ctx, "無効なパスワードリセットトークン",
-			"token_digest", tokenDigest,
-			"reason", "not_found",
-		)
-		return nil, fmt.Errorf("invalid token")
-	} else if err != nil {
-		return nil, fmt.Errorf("パスワードリセットトークンの取得に失敗: %w", err)
+// Execute はバリデーション・パスワード更新・セッション作成を行います
+func (uc *UpdatePasswordResetUsecase) Execute(ctx context.Context, input UpdatePasswordResetInput) (*UpdatePasswordResetOutput, error) {
+	// 1. バリデーション
+	if err := uc.validator.Validate(ctx, validator.PasswordUpdateValidatorInput{
+		Token:                input.Token,
+		Password:             input.Password,
+		PasswordConfirmation: input.PasswordConfirmation,
+	}); err != nil {
+		return nil, err
 	}
 
-	// トークンの有効性をチェック
-	if resetToken.UsedAt.Valid {
-		slog.WarnContext(ctx, "無効なパスワードリセットトークン",
-			"token_digest", tokenDigest,
-			"reason", "used",
-		)
-		return nil, fmt.Errorf("invalid token")
+	// 2. トークンの有効性を検証
+	resetToken, err := uc.passwordResetTokenRepo.GetValidByToken(ctx, input.Token)
+	if err != nil {
+		return nil, err
 	}
 
-	if time.Now().After(resetToken.ExpiresAt) {
-		slog.WarnContext(ctx, "無効なパスワードリセットトークン",
-			"token_digest", tokenDigest,
-			"reason", "expired",
-		)
-		return nil, fmt.Errorf("invalid token")
-	}
-
-	// トランザクション開始
+	// 3. トランザクション開始
 	tx, err := uc.db.BeginTx(ctx, nil)
 	if err != nil {
 		return nil, fmt.Errorf("トランザクション開始に失敗: %w", err)
 	}
 	defer func() { _ = tx.Rollback() }()
 
-	queriesWithTx := uc.queries.WithTx(tx)
+	passwordResetTokenRepoTx := uc.passwordResetTokenRepo.WithTx(tx)
+	userRepoTx := uc.userRepo.WithTx(tx)
 
 	// パスワードをハッシュ化
-	hashedPassword, err := auth.HashPassword(newPassword)
+	hashedPassword, err := auth.HashPassword(input.Password)
 	if err != nil {
 		return nil, fmt.Errorf("パスワードのハッシュ化に失敗: %w", err)
 	}
 
 	// パスワードを更新
-	params := query.UpdateUserPasswordParams{
-		ID:                resetToken.UserID,
+	if err := userRepoTx.UpdatePassword(ctx, repository.UpdateUserPasswordParams{
+		ID:                int64(resetToken.UserID),
 		EncryptedPassword: hashedPassword,
-	}
-
-	if err := queriesWithTx.UpdateUserPassword(ctx, params); err != nil {
+	}); err != nil {
 		return nil, fmt.Errorf("パスワードの更新に失敗: %w", err)
 	}
 
 	// トークンを使用済みにマーク
-	if err := queriesWithTx.MarkPasswordResetTokenAsUsed(ctx, resetToken.ID); err != nil {
+	if err := passwordResetTokenRepoTx.MarkAsUsed(ctx, resetToken.ID); err != nil {
 		return nil, fmt.Errorf("トークンの使用済みマークに失敗: %w", err)
 	}
 
 	// 新しいセッションを作成
-	// まずユーザー情報を取得（encrypted_passwordが必要）
-	user, err := queriesWithTx.GetUserByID(ctx, resetToken.UserID)
+	user, err := userRepoTx.GetByID(ctx, resetToken.UserID)
 	if err != nil {
 		return nil, fmt.Errorf("ユーザー情報の取得に失敗: %w", err)
 	}
@@ -123,8 +122,8 @@ func (uc *UpdatePasswordResetUsecase) Execute(ctx context.Context, token, newPas
 	}
 
 	// CreateSessionUsecaseを使用してセッションを作成
-	createSessionUC := NewCreateSessionUsecase(uc.queries)
-	sessionResult, err := createSessionUC.Execute(ctx, tx, user.ID, user.EncryptedPassword, "")
+	createSessionUC := NewCreateSessionUsecase(uc.sessionRepo)
+	sessionResult, err := createSessionUC.Execute(ctx, tx, model.UserID(user.ID), user.EncryptedPassword)
 	if err != nil {
 		return nil, fmt.Errorf("セッションの作成に失敗: %w", err)
 	}
@@ -139,7 +138,7 @@ func (uc *UpdatePasswordResetUsecase) Execute(ctx context.Context, token, newPas
 		"user_id", resetToken.UserID,
 	)
 
-	return &UpdatePasswordResetResult{
+	return &UpdatePasswordResetOutput{
 		UserID:    resetToken.UserID,
 		SessionID: sessionID,
 	}, nil

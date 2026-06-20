@@ -1,0 +1,6 @@
+go-assets: cd go && pnpm watch
+go-server: cd go && air
+rails-css: cd rails && yarn build:css -- --watch
+rails-js: cd rails && yarn build -- --watch
+rails-server: PORT=3000 make -C rails server
+rails-worker: make -C rails worker

@@ -4,13 +4,25 @@ package usecase
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"time"
 
 	"github.com/annict/annict/go/internal/model"
-	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/repository"
 )
+
+// ErrStripeSubscriberNotFound is returned by the update / delete usecases when no
+// StripeSubscriber matches the given Stripe subscription ID. The webhook
+// orchestrator detects it with errors.Is and records the event as skipped instead
+// of failed, so a webhook for an unknown subscription does not generate Sentry
+// noise or endless retries.
+//
+// [Ja] 指定された Stripe サブスクリプション ID に対応する StripeSubscriber が存在しない
+// ときに update / delete ユースケースが返す。Webhook オーケストレーターは errors.Is で
+// これを検出し、イベントを failed ではなく skipped として記録する。これにより未知の
+// サブスクリプションに対する Webhook が Sentry ノイズや無限リトライを生まない。
+var ErrStripeSubscriberNotFound = errors.New("対応するStripeSubscriberが見つかりません")
 
 // UpdateStripeSubscriberUsecase はサブスクリプション更新イベント処理のユースケース
 type UpdateStripeSubscriberUsecase struct {
@@ -45,7 +57,7 @@ type UpdateStripeSubscriberInput struct {
 
 // UpdateStripeSubscriberResult はcustomer.subscription.updatedイベント処理の結果
 type UpdateStripeSubscriberResult struct {
-	StripeSubscriber query.StripeSubscriber
+	StripeSubscriber model.StripeSubscriber
 }
 
 // Execute はcustomer.subscription.updatedイベントを処理します
@@ -68,10 +80,17 @@ func (uc *UpdateStripeSubscriberUsecase) Execute(
 	if err != nil {
 		return nil, fmt.Errorf("StripeSubscriber取得に失敗: %w", err)
 	}
+	// Not-found is reported as a sentinel so the webhook layer can skip it without
+	// depending on sql.ErrNoRows.
+	//
+	// [Ja] 未存在は sentinel で返し、Webhook 層が sql.ErrNoRows に依存せずスキップできるようにする。
+	if subscriber == nil {
+		return nil, ErrStripeSubscriberNotFound
+	}
 
 	// サブスクリプション情報を更新
-	err = uc.stripeSubscriberRepo.Update(ctx, query.UpdateStripeSubscriberParams{
-		ID:                       subscriber.ID,
+	err = uc.stripeSubscriberRepo.Update(ctx, repository.UpdateStripeSubscriberParams{
+		ID:                       int64(subscriber.ID),
 		StripePriceID:            input.StripePriceID,
 		StripeStatus:             input.StripeStatus,
 		StripeCurrentPeriodStart: input.StripeCurrentPeriodStart,
@@ -88,8 +107,16 @@ func (uc *UpdateStripeSubscriberUsecase) Execute(
 	if err != nil {
 		return nil, fmt.Errorf("更新後のStripeSubscriber取得に失敗: %w", err)
 	}
+	// The record was just updated above, so a nil here means an unexpected internal
+	// inconsistency rather than a normal not-found.
+	//
+	// [Ja] 直前に更新したレコードのため、ここでの nil は通常の未存在ではなく想定外の
+	// 内部不整合を意味する。
+	if updated == nil {
+		return nil, fmt.Errorf("更新後のStripeSubscriberが見つかりません")
+	}
 
 	return &UpdateStripeSubscriberResult{
-		StripeSubscriber: updated,
+		StripeSubscriber: *updated,
 	}, nil
 }

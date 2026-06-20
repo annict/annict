@@ -11,11 +11,13 @@ import (
 
 	"github.com/annict/annict/go/internal/config"
 	"github.com/annict/annict/go/internal/middleware"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/repository"
-	"github.com/annict/annict/go/internal/session"
 	annictStripe "github.com/annict/annict/go/internal/stripe"
 	"github.com/annict/annict/go/internal/testutil"
+	"github.com/annict/annict/go/internal/usecase"
+	"github.com/annict/annict/go/internal/validator"
 )
 
 // setupTestHandler はテスト用のハンドラーをセットアップします
@@ -28,16 +30,18 @@ func setupTestHandler(t *testing.T, tx *sql.Tx, db *sql.DB, stripeCfg *annictStr
 		Domain: "test.annict.com",
 	}
 
-	sessionRepo := repository.NewSessionRepository(queries)
-	sessionManager := session.NewManager(sessionRepo, cfg)
+	flashMgr := testutil.NewTestFlashManager()
 	stripeSubscriberRepo := repository.NewStripeSubscriberRepository(queries)
+	v := validator.NewSupportersCheckoutCreateValidator()
 
 	// テスト用には nil を渡す（テストでは Stripe API を呼び出さない）
-	return NewHandler(cfg, sessionManager, stripeSubscriberRepo, stripeCfg, nil)
+	createCheckoutSessionUC := usecase.NewCreateCheckoutSessionUsecase(cfg, stripeSubscriberRepo, stripeCfg, nil, v)
+
+	return NewHandler(flashMgr, createCheckoutSessionUC)
 }
 
 // createUserWithStripeSubscriber はStripeサブスクライバーを持つユーザーを作成します
-func createUserWithStripeSubscriber(t *testing.T, tx *sql.Tx, stripeStatus string) (int64, int64) {
+func createUserWithStripeSubscriber(t *testing.T, tx *sql.Tx, stripeStatus string) (model.UserID, model.StripeSubscriberID) {
 	t.Helper()
 
 	userID := testutil.NewUserBuilder(t, tx).Build()
@@ -46,7 +50,7 @@ func createUserWithStripeSubscriber(t *testing.T, tx *sql.Tx, stripeStatus strin
 		Build()
 
 	// ユーザーにStripeサブスクライバーIDを関連付け
-	_, err := tx.Exec(`UPDATE users SET stripe_subscriber_id = $1 WHERE id = $2`, subscriberID, userID)
+	_, err := tx.Exec(`UPDATE users SET stripe_subscriber_id = $1 WHERE id = $2`, int64(subscriberID), int64(userID))
 	if err != nil {
 		t.Fatalf("Stripeサブスクライバーの関連付けに失敗しました: %v", err)
 	}
@@ -55,23 +59,32 @@ func createUserWithStripeSubscriber(t *testing.T, tx *sql.Tx, stripeStatus strin
 }
 
 // getUserByID はユーザーIDからユーザー情報を取得します（テスト用）
-func getUserByID(t *testing.T, tx *sql.Tx, userID int64) *query.GetUserByIDRow {
+func getUserByID(t *testing.T, tx *sql.Tx, userID model.UserID) *model.User {
 	t.Helper()
 
-	var user query.GetUserByIDRow
+	var user model.User
+	var stripeSubID, gumroadSubID sql.NullInt64
 	err := tx.QueryRow(`
 		SELECT id, username, email, role, encrypted_password, locale,
 			   stripe_subscriber_id, gumroad_subscriber_id,
 			   created_at, updated_at
 		FROM users WHERE id = $1
-	`, userID).Scan(
+	`, int64(userID)).Scan(
 		&user.ID, &user.Username, &user.Email, &user.Role,
 		&user.EncryptedPassword, &user.Locale,
-		&user.StripeSubscriberID, &user.GumroadSubscriberID,
+		&stripeSubID, &gumroadSubID,
 		&user.CreatedAt, &user.UpdatedAt,
 	)
 	if err != nil {
 		t.Fatalf("ユーザー情報の取得に失敗しました: %v", err)
+	}
+	if stripeSubID.Valid {
+		id := model.StripeSubscriberID(stripeSubID.Int64)
+		user.StripeSubscriberID = &id
+	}
+	if gumroadSubID.Valid {
+		id := model.GumroadSubscriberID(gumroadSubID.Int64)
+		user.GumroadSubscriberID = &id
 	}
 
 	return &user
@@ -79,7 +92,9 @@ func getUserByID(t *testing.T, tx *sql.Tx, userID int64) *query.GetUserByIDRow {
 
 // TestCreate_NotLoggedIn は未ログインユーザーがアクセスした場合のテスト
 func TestCreate_NotLoggedIn(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 
 	stripeCfg := &annictStripe.Config{
 		PriceMonthlyID: "price_monthly_test",
@@ -109,7 +124,9 @@ func TestCreate_NotLoggedIn(t *testing.T) {
 
 // TestCreate_InvalidPlan は無効なプランが選択された場合のテスト
 func TestCreate_InvalidPlan(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 
 	stripeCfg := &annictStripe.Config{
 		PriceMonthlyID: "price_monthly_test",
@@ -158,7 +175,9 @@ func TestCreate_InvalidPlan(t *testing.T) {
 
 // TestCreate_AlreadyActiveSubscription は既にアクティブなサブスクリプションがある場合のテスト
 func TestCreate_AlreadyActiveSubscription(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 
 	stripeCfg := &annictStripe.Config{
 		PriceMonthlyID: "price_monthly_test",
@@ -194,7 +213,9 @@ func TestCreate_AlreadyActiveSubscription(t *testing.T) {
 
 // TestCreate_PastDueSubscriptionBlocksCheckout は支払い遅延中のサブスクリプションがある場合のテスト
 func TestCreate_PastDueSubscriptionBlocksCheckout(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 
 	stripeCfg := &annictStripe.Config{
 		PriceMonthlyID: "price_monthly_test",
@@ -230,7 +251,9 @@ func TestCreate_PastDueSubscriptionBlocksCheckout(t *testing.T) {
 
 // TestCreate_CanceledSubscriptionAllowsCheckout はキャンセル済みサブスクリプションがある場合はCheckoutを許可する
 func TestCreate_CanceledSubscriptionAllowsCheckout(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 
 	stripeCfg := &annictStripe.Config{
 		PriceMonthlyID: "price_monthly_test",
@@ -262,7 +285,9 @@ func TestCreate_CanceledSubscriptionAllowsCheckout(t *testing.T) {
 
 // TestCreate_NoSubscriptionAtAll はサブスクリプションが全くない場合のテスト
 func TestCreate_NoSubscriptionAtAll(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 
 	stripeCfg := &annictStripe.Config{
 		PriceMonthlyID: "price_monthly_test",
@@ -294,7 +319,9 @@ func TestCreate_NoSubscriptionAtAll(t *testing.T) {
 
 // TestCreate_MissingPriceID は価格IDが設定されていない場合のテスト
 func TestCreate_MissingPriceID(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 
 	// 価格IDが設定されていない
 	stripeCfg := &annictStripe.Config{

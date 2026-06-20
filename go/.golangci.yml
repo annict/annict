@@ -14,24 +14,24 @@ run:
 linters:
   # 有効化するリンター
   enable:
-    - govet         # Go標準静的解析
-    - staticcheck   # 高度な静的解析
-    - gosec         # セキュリティチェック
-    - depguard      # 依存関係のルール強制
-    - errcheck      # エラーチェック漏れ
-    - ineffassign   # 無駄な代入
-    - unused        # 未使用コード
+    - govet # Go標準静的解析
+    - staticcheck # 高度な静的解析
+    - gosec # セキュリティチェック
+    - depguard # 依存関係のルール強制
+    - errcheck # エラーチェック漏れ
+    - ineffassign # 無駄な代入
+    - unused # 未使用コード
 
   # リンター除外ルール（v2形式）
   exclusions:
     rules:
       # テストファイルでは gosec と depguard を無効化
-      - path: '(.+)_test\.go'
+      - path: "(.+)_test\\.go"
         linters:
           - gosec
           - depguard
       # templ 自動生成ファイルは一部のリンターから除外（depguard は有効化）
-      - path: '(.+)_templ\.go'
+      - path: "(.+)_templ\\.go"
         linters:
           - govet
           - staticcheck
@@ -40,7 +40,7 @@ linters:
           - ineffassign
           - unused
       # シード関連ファイルはすべてのリンターから除外（開発/テスト用ユーティリティのため）
-      - path: 'internal/usecase/seed/.+\.go'
+      - path: "internal/usecase/seed/.+\\.go"
         linters:
           - govet
           - staticcheck
@@ -49,7 +49,7 @@ linters:
           - errcheck
           - ineffassign
           - unused
-      - path: 'cmd/seed/.+\.go'
+      - path: "cmd/seed/.+\\.go"
         linters:
           - govet
           - staticcheck
@@ -58,7 +58,7 @@ linters:
           - errcheck
           - ineffassign
           - unused
-      - path: 'internal/seed/.+\.go'
+      - path: "internal/seed/.+\\.go"
         linters:
           - govet
           - staticcheck
@@ -78,8 +78,23 @@ linters:
   settings:
     # gosec の設定
     gosec:
-      # 除外する脆弱性ルール（必要に応じて調整）
-      excludes: []
+      # 除外する脆弱性ルール
+      # G120: the unlimited-body-size warning on r.FormValue / r.ParseForm.
+      #   internal/middleware/request_body_limit.go applies a uniform body size cap to all
+      #   requests via RequestBodyLimitMiddleware (wired globally in main.go), so the actual
+      #   protection is already in place. gosec G120 detects this per-function, so even with the
+      #   middleware wrapping, every r.FormValue / r.ParseForm in handlers stays flagged. Excluding
+      #   it here is cheaper to manage than scattering per-line nolint over 20+ sites and makes the
+      #   protecting structure explicit.
+      #
+      # [Ja] G120: r.FormValue / r.ParseForm のボディサイズ未制限の指摘。
+      #   internal/middleware/request_body_limit.go の RequestBodyLimitMiddleware で全リクエストに
+      #   一律のボディサイズ上限を適用している (main.go でグローバルに組み込み済み) ため、実質的な
+      #   保護は達成している。gosec G120 は関数単位のヒューリスティックで検出するため、ミドルウェアで
+      #   ラップしてもハンドラー内の r.FormValue / r.ParseForm は検出対象として残る。20+ 箇所に
+      #   個別 nolint を散在させるより、ここで一括除外する方が管理コストが低く、保護している構造を明示できる。
+      excludes:
+        - G120
       # セキュリティの重要度（low, medium, high）
       severity: medium
       confidence: medium
@@ -91,7 +106,7 @@ linters:
         # 直接のデータアクセスとビジネスロジックに依存しない
         templates-layer:
           files:
-            - "**/internal/templates/**/*.go"
+            - "**/internal/templates/**"
           deny:
             - pkg: github.com/annict/annict/go/internal/query
               desc: "TemplatesはQueryに依存できません。"
@@ -110,7 +125,7 @@ linters:
         # 他のPresentation層パッケージに依存しない
         viewmodel-layer:
           files:
-            - "**/internal/viewmodel/**/*.go"
+            - "**/internal/viewmodel/**"
           deny:
             - pkg: github.com/annict/annict/go/internal/query
               desc: "ViewModelはQueryに依存できません。"
@@ -124,19 +139,69 @@ linters:
               desc: "ViewModelはTemplatesに依存できません。"
 
         # Handler層のルール: HTTPリクエスト処理
-        # QueryへのアクセスはRepositoryを経由
+        # データアクセスはUseCase経由で行い、Repository・Validator・Queryに直接依存しない
         handler-layer:
           files:
-            - "**/internal/handler/**/*.go"
+            - "**/internal/handler/**"
           deny:
             - pkg: github.com/annict/annict/go/internal/query
-              desc: "HandlerはQueryに直接依存できません。Repositoryを経由してください。"
+              desc: "HandlerはQueryに直接依存できません。UseCase経由でアクセスしてください。"
+            - pkg: github.com/annict/annict/go/internal/repository
+              desc: "HandlerはRepositoryに直接依存できません。UseCase経由でアクセスしてください。"
+            - pkg: github.com/annict/annict/go/internal/validator
+              desc: "HandlerはApplication層のValidatorに直接依存できません。UseCase経由でアクセスしてください。"
 
-        # Middleware層のルール: 共通処理のみ
-        # 他のPresentation層パッケージ、Application層、Domain/Infrastructure層に依存しない
+        # Validator層のルール（Application層）: UseCase から呼び出されるバリデーション
+        # Presentation層とQuery、UseCaseへの依存を禁止
+        validator-layer:
+          files:
+            - "**/internal/validator/**"
+          deny:
+            - pkg: github.com/annict/annict/go/internal/query
+              desc: "ValidatorはQueryに直接依存できません。Repositoryを経由してください。"
+            - pkg: github.com/annict/annict/go/internal/handler
+              desc: "ValidatorはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/middleware
+              desc: "ValidatorはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/viewmodel
+              desc: "ValidatorはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/templates
+              desc: "ValidatorはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/usecase
+              desc: "ValidatorはUseCaseに依存できません。"
+
+        # Dispatcher層のルール（Domain/Infrastructure層）: ジョブキューへの投入
+        # Presentation層とApplication層、Queryへの依存を禁止
+        dispatcher-layer:
+          files:
+            - "**/internal/dispatcher/**"
+          deny:
+            - pkg: github.com/annict/annict/go/internal/usecase
+              desc: "DispatcherはApplication層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/validator
+              desc: "DispatcherはApplication層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/worker
+              desc: "DispatcherはWorkerに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/handler
+              desc: "DispatcherはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/middleware
+              desc: "DispatcherはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/viewmodel
+              desc: "DispatcherはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/templates
+              desc: "DispatcherはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/query
+              desc: "DispatcherはQueryに直接依存できません。"
+            - pkg: github.com/annict/annict/go/internal/repository
+              desc: "DispatcherはRepositoryに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/model
+              desc: "DispatcherはModelに依存できません。"
+
+        # Middleware層のルール
+        # エラーページ・メンテナンスページ等のレンダリングのためTemplatesへの依存は許可
         middleware-layer:
           files:
-            - "**/internal/middleware/**/*.go"
+            - "**/internal/middleware/**"
           deny:
             - pkg: github.com/annict/annict/go/internal/query
               desc: "MiddlewareはQueryに依存できません。"
@@ -148,14 +213,12 @@ linters:
               desc: "MiddlewareはHandlerに依存できません。"
             - pkg: github.com/annict/annict/go/internal/viewmodel
               desc: "MiddlewareはViewModelに依存できません。"
-            - pkg: github.com/annict/annict/go/internal/templates
-              desc: "MiddlewareはTemplatesに依存できません。"
 
         # Application層のルール（UseCase）
         # Presentation層に依存しない
         application-layer:
           files:
-            - "**/internal/usecase/**/*.go"
+            - "**/internal/usecase/**"
           deny:
             - pkg: github.com/annict/annict/go/internal/query
               desc: "Application層はQueryに直接依存できません。Repositoryを経由してください。"
@@ -166,13 +229,44 @@ linters:
             - pkg: github.com/annict/annict/go/internal/viewmodel
               desc: "Application層はPresentation層に依存できません。"
             - pkg: github.com/annict/annict/go/internal/templates
-              desc: "Application層はPresentation層に依存できません。"
+              desc: "Application層はPresentation層に依存できません。テンプレートレンダリングはemailパッケージを使用してください。"
+            - pkg: github.com/annict/annict/go/internal/worker
+              desc: "Application層はWorker（Presentation層）に依存できません。Dispatcher経由でジョブを投入してください。"
+            - pkg: github.com/annict/annict/go/internal/session
+              desc: "Application層はPresentation層のヘルパーに依存できません。トークン生成はauthパッケージを使用してください。"
+
+        # Email層のルール: メール送信とテンプレートレンダリング
+        # 上位層（Handler, UseCase, Worker等）に依存しない
+        email-layer:
+          files:
+            - "**/internal/email/**"
+          deny:
+            - pkg: github.com/annict/annict/go/internal/query
+              desc: "emailパッケージはQueryに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/repository
+              desc: "emailパッケージはRepositoryに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/handler
+              desc: "emailパッケージはHandlerに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/middleware
+              desc: "emailパッケージはMiddlewareに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/viewmodel
+              desc: "emailパッケージはViewModelに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/usecase
+              desc: "emailパッケージはUseCaseに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/validator
+              desc: "emailパッケージはValidatorに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/worker
+              desc: "emailパッケージはWorkerに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/dispatcher
+              desc: "emailパッケージはDispatcherに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/session
+              desc: "emailパッケージはSessionに依存できません。"
 
         # Model層のルール: 純粋なドメインエンティティ
         # データアクセス層、上位層に依存しない
         model-layer:
           files:
-            - "**/internal/model/**/*.go"
+            - "**/internal/model/**"
           deny:
             - pkg: github.com/annict/annict/go/internal/query
               desc: "ModelはQueryに依存できません。"
@@ -189,11 +283,75 @@ linters:
             - pkg: github.com/annict/annict/go/internal/templates
               desc: "ModelはPresentation層に依存できません。"
 
+        # RateLimit層のルール: インフラストラクチャユーティリティ
+        # Queryに直接依存せず、Repositoryを経由する
+        ratelimit-layer:
+          files:
+            - "**/internal/ratelimit/*.go"
+          deny:
+            - pkg: github.com/annict/annict/go/internal/query
+              desc: "RateLimitはQueryに直接依存できません。Repositoryを経由してください。"
+            - pkg: github.com/annict/annict/go/internal/usecase
+              desc: "RateLimitはApplication層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/handler
+              desc: "RateLimitはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/middleware
+              desc: "RateLimitはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/viewmodel
+              desc: "RateLimitはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/templates
+              desc: "RateLimitはPresentation層に依存できません。"
+
+        # Auth層のルール: Domain/Infrastructure層の横断的な技術ユーティリティ
+        # authパッケージは認証に必要な低レベル処理（パスワードハッシュ化、CSRFトークン生成、
+        # セキュアトークン生成、検証コード生成、パスワード強度検証）を提供する。
+        # プロジェクト内部パッケージへの依存を禁止し、標準ライブラリおよび外部ライブラリ
+        # （golang.org/x/crypto/bcrypt, crypto/rand など）のみに依存できる。
+        # i18nへの依存禁止は、ValidatePasswordStrengthをsentinel error方式に変更した
+        # 4-1の方針（エラー種別はsentinel errorで返し、翻訳は呼び出し元で解決する）を
+        # 将来の退行から守るためのルール。
+        auth-layer:
+          files:
+            - "**/internal/auth/**"
+          deny:
+            - pkg: github.com/annict/annict/go/internal/query
+              desc: "authは横断的な技術ユーティリティのため、Queryに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/repository
+              desc: "authは横断的な技術ユーティリティのため、Repositoryに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/model
+              desc: "authは横断的な技術ユーティリティのため、Modelに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/usecase
+              desc: "authは横断的な技術ユーティリティのため、UseCase(Application層)に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/validator
+              desc: "authは横断的な技術ユーティリティのため、Validator(Application層)に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/handler
+              desc: "authは横断的な技術ユーティリティのため、Handler(Presentation層)に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/middleware
+              desc: "authは横断的な技術ユーティリティのため、Middleware(Presentation層)に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/viewmodel
+              desc: "authは横断的な技術ユーティリティのため、ViewModel(Presentation層)に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/templates
+              desc: "authは横断的な技術ユーティリティのため、Templates(Presentation層)に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/worker
+              desc: "authは横断的な技術ユーティリティのため、Worker(Presentation層)に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/session
+              desc: "authは横断的な技術ユーティリティのため、Session(Presentation層ヘルパー)に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/i18n
+              desc: "authはi18nに依存できません。エラー種別はsentinel errorで返し、翻訳は呼び出し元で解決してください(4-1の方針)。"
+            - pkg: github.com/annict/annict/go/internal/dispatcher
+              desc: "authは横断的な技術ユーティリティのため、Dispatcherに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/email
+              desc: "authは横断的な技術ユーティリティのため、emailパッケージに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/turnstile
+              desc: "authは横断的な技術ユーティリティのため、turnstileに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/ratelimit
+              desc: "authは横断的な技術ユーティリティのため、ratelimitに依存できません。"
+
         # Repository層のルール: データアクセス層
         # 上位層に依存しない
         repository-layer:
           files:
-            - "**/internal/repository/**/*.go"
+            - "**/internal/repository/**"
           deny:
             - pkg: github.com/annict/annict/go/internal/usecase
               desc: "RepositoryはApplication層に依存できません。"
@@ -206,11 +364,30 @@ linters:
             - pkg: github.com/annict/annict/go/internal/templates
               desc: "RepositoryはPresentation層に依存できません。"
 
+        # Worker層のルール: Presentation層の薄いAdapter
+        # UseCase経由でのみビジネスロジックにアクセスする
+        worker-layer:
+          files:
+            - "**/internal/worker/**"
+          deny:
+            - pkg: github.com/annict/annict/go/internal/query
+              desc: "WorkerはQueryに直接依存できません。UseCase経由でアクセスしてください。"
+            - pkg: github.com/annict/annict/go/internal/repository
+              desc: "WorkerはRepositoryに直接依存できません。UseCase経由でアクセスしてください。"
+            - pkg: github.com/annict/annict/go/internal/handler
+              desc: "WorkerはHandlerに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/middleware
+              desc: "WorkerはMiddlewareに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/viewmodel
+              desc: "WorkerはViewModelに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/templates
+              desc: "WorkerはPresentation層に依存できません。テンプレートレンダリングはemailパッケージを使用してください。"
+
         # Query層のルール: sqlc生成コード
         # 上位層に依存しない
         query-layer:
           files:
-            - "**/internal/query/**/*.go"
+            - "**/internal/query/**"
           deny:
             - pkg: github.com/annict/annict/go/internal/repository
               desc: "QueryはRepositoryに依存できません。"
@@ -236,8 +413,8 @@ linters:
 formatters:
   # 有効化するフォーマッター
   enable:
-    - gofmt         # Go標準フォーマッター
-    - goimports     # import文の整理
+    - gofmt # Go標準フォーマッター
+    - goimports # import文の整理
 
   # フォーマッター除外パス
   exclusions:
@@ -246,7 +423,7 @@ formatters:
       - vendor/.*
       - static/.*
       - node_modules/.*
-      - '(.+)_templ\.go'  # templ 自動生成ファイル
+      - "(.+)_templ\\.go" # templ 自動生成ファイル
 
   settings:
     # goimports の設定

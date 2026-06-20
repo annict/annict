@@ -1,0 +1,130 @@
+package db_works
+
+import (
+	"fmt"
+
+	"github.com/annict/annict/go/internal/templates"
+	"github.com/annict/annict/go/internal/templates/components"
+	"github.com/annict/annict/go/internal/viewmodel"
+)
+
+type IndexPageData struct {
+	Works            []viewmodel.DBWorkListItem
+	Pagination       viewmodel.Pagination
+	FilterNoEpisodes bool
+	FilterNoImage    bool
+	FilterNoSeason   bool
+}
+
+templ Index(data IndexPageData) {
+	<div class="flex flex-col gap-4 py-4 max-w-7xl w-full mx-auto">
+		<div class="px-4">
+			@components.MainTitle(components.MainTitleData{
+				Title:   templates.T(ctx, "db_works_index_title"),
+				Actions: indexNewButton(),
+			})
+		</div>
+
+		@components.ContentCard() {
+			<form
+				action={ templates.DBWorksPath().SafeURL() }
+				class="flex items-center gap-4 flex-wrap"
+				method="get"
+			>
+				<label class="flex items-center gap-1.5 text-sm">
+					<input
+						type="checkbox"
+						name="filter_no_episodes"
+						value="1"
+						if data.FilterNoEpisodes {
+							checked
+						}
+					/>
+					{ templates.T(ctx, "db_works_index_filter_no_episodes_label") }
+				</label>
+				<label class="flex items-center gap-1.5 text-sm">
+					<input
+						type="checkbox"
+						name="filter_no_image"
+						value="1"
+						if data.FilterNoImage {
+							checked
+						}
+					/>
+					{ templates.T(ctx, "db_works_index_filter_no_image_label") }
+				</label>
+				<label class="flex items-center gap-1.5 text-sm">
+					<input
+						type="checkbox"
+						name="filter_no_season"
+						value="1"
+						if data.FilterNoSeason {
+							checked
+						}
+					/>
+					{ templates.T(ctx, "db_works_index_filter_no_season_label") }
+				</label>
+				<button type="submit" class="btn btn-outline btn-sm">
+					{ templates.T(ctx, "db_works_index_submit") }
+				</button>
+			</form>
+		}
+
+		if len(data.Works) == 0 {
+			<p class="text-muted-foreground">{ templates.T(ctx, "db_works_index_empty") }</p>
+		} else {
+			<div class="border rounded-lg overflow-hidden">
+				<table class="table w-full">
+					<thead>
+						<tr>
+							<th class="text-left">{ templates.T(ctx, "db_works_index_table_id_label") }</th>
+							<th class="text-left">{ templates.T(ctx, "db_works_index_table_title_label") }</th>
+							<th class="text-left">{ templates.T(ctx, "db_works_index_table_season_label") }</th>
+							<th class="text-right">{ templates.T(ctx, "db_works_index_table_watchers_label") }</th>
+							<th class="text-left">{ templates.T(ctx, "db_works_index_table_status_label") }</th>
+							<th class="text-center">{ templates.T(ctx, "db_works_index_table_image_label") }</th>
+						</tr>
+					</thead>
+					<tbody>
+						for _, work := range data.Works {
+							<tr>
+								<td>{ work.ID.String() }</td>
+								<td>
+									<a href={ templates.DBWorkPath(work.ID).SafeURL() } class="text-primary hover:underline">
+										{ work.Title }
+									</a>
+								</td>
+								<td>
+									{ work.Season }
+								</td>
+								<td class="text-right">{ fmt.Sprintf("%d", work.WatchersCount) }</td>
+								<td>
+									@components.StatusLabel(work.Status)
+								</td>
+								<td class="text-center">
+									if work.HasImage {
+										<span>✓</span>
+									}
+								</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+
+			<div class="mt-6">
+				@components.Pagination(data.Pagination)
+			</div>
+		}
+	</div>
+}
+
+templ indexNewButton() {
+	<a
+		class="btn-primary rounded-full"
+		href={ templates.DBWorksNewPath().SafeURL() }
+	>
+		@templates.Icon("plus-regular", "fill-primary-foreground")
+		{ templates.T(ctx, "db_works_index_new_link") }
+	</a>
+}

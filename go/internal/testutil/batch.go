@@ -7,6 +7,8 @@ import (
 	"time"
 
 	"github.com/lib/pq"
+
+	"github.com/annict/annict/go/internal/model"
 )
 
 // ProgressCallback は進捗を通知するコールバック関数
@@ -15,8 +17,8 @@ type ProgressCallback func(current, total int)
 
 // BatchBuildWorks は複数の作品データをバッチで作成します
 // testing.T に依存しないため、seed コマンドからも使用可能です
-func BatchBuildWorks(ctx context.Context, tx *sql.Tx, count int, callback ProgressCallback) ([]int64, error) {
-	ids := make([]int64, count)
+func BatchBuildWorks(ctx context.Context, tx *sql.Tx, count int, callback ProgressCallback) ([]model.WorkID, error) {
+	ids := make([]model.WorkID, count)
 
 	query := `
 		INSERT INTO works (
@@ -54,7 +56,7 @@ func BatchBuildWorks(ctx context.Context, tx *sql.Tx, count int, callback Progre
 			return nil, fmt.Errorf("作品 %d の作成に失敗: %w", i+1, err)
 		}
 
-		ids[i] = id
+		ids[i] = model.WorkID(id)
 
 		// 進捗コールバックを呼び出し
 		if callback != nil {
@@ -118,8 +120,8 @@ func BatchBuildUsers(ctx context.Context, tx *sql.Tx, count int, callback Progre
 
 // BatchBuildEpisodes は複数のエピソードデータをバッチで作成します
 // testing.T に依存しないため、seed コマンドからも使用可能です
-func BatchBuildEpisodes(ctx context.Context, tx *sql.Tx, workID int64, count int, callback ProgressCallback) ([]int64, error) {
-	ids := make([]int64, count)
+func BatchBuildEpisodes(ctx context.Context, tx *sql.Tx, workID model.WorkID, count int, callback ProgressCallback) ([]model.EpisodeID, error) {
+	ids := make([]model.EpisodeID, count)
 
 	query := `
 		INSERT INTO episodes (
@@ -136,7 +138,7 @@ func BatchBuildEpisodes(ctx context.Context, tx *sql.Tx, workID int64, count int
 		err := tx.QueryRowContext(
 			ctx,
 			query,
-			workID,                   // work_id
+			int64(workID),            // work_id
 			fmt.Sprintf("%d", i+1),   // number
 			(i+1)*10,                 // sort_number
 			fmt.Sprintf("第%d話", i+1), // title
@@ -148,7 +150,7 @@ func BatchBuildEpisodes(ctx context.Context, tx *sql.Tx, workID int64, count int
 			return nil, fmt.Errorf("エピソード %d の作成に失敗: %w", i+1, err)
 		}
 
-		ids[i] = id
+		ids[i] = model.EpisodeID(id)
 
 		// 進捗コールバックを呼び出し
 		if callback != nil {

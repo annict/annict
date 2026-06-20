@@ -16,10 +16,13 @@ import (
 	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/testutil"
 	"github.com/annict/annict/go/internal/usecase"
+	"github.com/annict/annict/go/internal/validator"
 )
 
 func TestUpdate_Success(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 
 	// テストユーザーを作成
 	oldPassword := "OldPassword123!"
@@ -61,9 +64,11 @@ func TestUpdate_Success(t *testing.T) {
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionManager := session.NewManager(sessionRepo, cfg)
 	passwordResetTokenRepo := repository.NewPasswordResetTokenRepository(queries)
-	updatePasswordUseCase := usecase.NewUpdatePasswordResetUsecase(db, queries)
+	getPasswordResetTokenUC := usecase.NewGetPasswordResetTokenUsecase(passwordResetTokenRepo)
+	updatePasswordValidator := validator.NewPasswordUpdateValidator()
+	updatePasswordUC := usecase.NewUpdatePasswordResetUsecase(db, passwordResetTokenRepo, repository.NewUserRepository(queries), sessionRepo, updatePasswordValidator)
 
-	handler := NewHandler(cfg, db, passwordResetTokenRepo, sessionManager, nil, updatePasswordUseCase)
+	handler := NewHandler(cfg, sessionManager, testutil.NewTestFlashManager(), nil, getPasswordResetTokenUC, updatePasswordUC)
 
 	// トークンを手動で作成
 	plainToken, tokenDigest, err := createTestToken()
@@ -121,7 +126,7 @@ func TestUpdate_Success(t *testing.T) {
 
 	// 新しいパスワードでログインできることを確認
 	ctx := req.Context()
-	user, err := queries.GetUserByID(ctx, userID)
+	user, err := queries.GetUserByID(ctx, int64(userID))
 	if err != nil {
 		t.Fatalf("ユーザーの取得に失敗: %v", err)
 	}
@@ -139,7 +144,9 @@ func TestUpdate_Success(t *testing.T) {
 }
 
 func TestUpdate_PasswordMismatch(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 
 	// テストユーザーを作成
 	userID := testutil.NewUserBuilder(t, tx).
@@ -174,9 +181,11 @@ func TestUpdate_PasswordMismatch(t *testing.T) {
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionManager := session.NewManager(sessionRepo, cfg)
 	passwordResetTokenRepo := repository.NewPasswordResetTokenRepository(queries)
-	updatePasswordUseCase := usecase.NewUpdatePasswordResetUsecase(db, queries)
+	getPasswordResetTokenUC := usecase.NewGetPasswordResetTokenUsecase(passwordResetTokenRepo)
+	updatePasswordValidator := validator.NewPasswordUpdateValidator()
+	updatePasswordUC := usecase.NewUpdatePasswordResetUsecase(db, passwordResetTokenRepo, repository.NewUserRepository(queries), sessionRepo, updatePasswordValidator)
 
-	handler := NewHandler(cfg, db, passwordResetTokenRepo, sessionManager, nil, updatePasswordUseCase)
+	handler := NewHandler(cfg, sessionManager, testutil.NewTestFlashManager(), nil, getPasswordResetTokenUC, updatePasswordUC)
 
 	// トークンを手動で作成
 	plainToken, tokenDigest, err := createTestToken()
@@ -206,21 +215,25 @@ func TestUpdate_PasswordMismatch(t *testing.T) {
 	// I18nミドルウェアを適用
 	testutil.ApplyI18nMiddleware(t, handler.Update)(rr, req)
 
-	// リダイレクトされることを確認（バリデーションエラー）
-	if rr.Code != http.StatusSeeOther {
-		t.Errorf("ステータスコードが正しくありません: got=%d, want=%d", rr.Code, http.StatusSeeOther)
+	// バリデーションエラーは 422 + フォーム再描画
+	if rr.Code != http.StatusUnprocessableEntity {
+		t.Errorf("ステータスコードが正しくありません: got=%d, want=%d", rr.Code, http.StatusUnprocessableEntity)
 	}
 
-	// editページにリダイレクトされることを確認
-	location := rr.Header().Get("Location")
-	expectedRedirect := "/password/edit?token=" + plainToken
-	if location != expectedRedirect {
-		t.Errorf("リダイレクト先が正しくありません: got=%s, want=%s", location, expectedRedirect)
+	// 再描画されたフォームに hidden token と編集フォームが含まれることを確認
+	body := rr.Body.String()
+	if !strings.Contains(body, `name="token" value="`+plainToken+`"`) {
+		t.Errorf("再描画フォームに token hidden フィールドが含まれていません")
+	}
+	if !strings.Contains(body, `action="/password"`) {
+		t.Errorf("再描画フォームの action が正しくありません")
 	}
 }
 
 func TestUpdate_InvalidToken(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 
 	// トランザクションをコミット
 	if err := tx.Commit(); err != nil {
@@ -242,9 +255,11 @@ func TestUpdate_InvalidToken(t *testing.T) {
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionManager := session.NewManager(sessionRepo, cfg)
 	passwordResetTokenRepo := repository.NewPasswordResetTokenRepository(queries)
-	updatePasswordUseCase := usecase.NewUpdatePasswordResetUsecase(db, queries)
+	getPasswordResetTokenUC := usecase.NewGetPasswordResetTokenUsecase(passwordResetTokenRepo)
+	updatePasswordValidator := validator.NewPasswordUpdateValidator()
+	updatePasswordUC := usecase.NewUpdatePasswordResetUsecase(db, passwordResetTokenRepo, repository.NewUserRepository(queries), sessionRepo, updatePasswordValidator)
 
-	handler := NewHandler(cfg, db, passwordResetTokenRepo, sessionManager, nil, updatePasswordUseCase)
+	handler := NewHandler(cfg, sessionManager, testutil.NewTestFlashManager(), nil, getPasswordResetTokenUC, updatePasswordUC)
 
 	// 無効なトークンでリクエスト
 	form := url.Values{}

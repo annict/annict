@@ -12,10 +12,13 @@ import (
 	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/testutil"
 	"github.com/annict/annict/go/internal/usecase"
+	"github.com/annict/annict/go/internal/validator"
 )
 
 func TestNew(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	queries := testutil.NewQueriesWithTx(db, tx)
 	cfg := &config.Config{
 		Env:    "test",
@@ -26,9 +29,14 @@ func TestNew(t *testing.T) {
 
 	// テスト用Redisクライアントをセットアップ
 	rdb := testutil.SetupTestRedis(t)
-	completeSignUpUC := usecase.NewCompleteSignUpUsecase(db, queries, rdb)
+	userRepo := repository.NewUserRepository(queries)
+	profileRepo := repository.NewProfileRepository(queries)
+	settingRepo := repository.NewSettingRepository(queries)
+	emailNotificationRepo := repository.NewEmailNotificationRepository(queries)
+	signUpUsernameValidator := validator.NewSignUpUsernameCreateValidator()
+	completeSignUpUC := usecase.NewCompleteSignUpUsecase(db, userRepo, profileRepo, settingRepo, emailNotificationRepo, repository.NewSessionRepository(queries), rdb, signUpUsernameValidator)
 
-	handler := NewHandler(cfg, sessionMgr, rdb, completeSignUpUC)
+	handler := NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), rdb, completeSignUpUC)
 
 	tests := []struct {
 		name           string

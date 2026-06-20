@@ -32,7 +32,7 @@ templ Head(meta viewmodel.PageMeta, assetVersion string) {
 	<link rel="manifest" href="/manifest.json"/>
 	<link rel="stylesheet" href={ "/static/css/style.css?v=" + assetVersion }/>
 
-	<script type="module" src="https://cdn.jsdelivr.net/gh/starfederation/datastar@1.0.0-RC.6/bundles/datastar.js"></script>
+	<script defer src={ "/static/js/vendor/htmx-4.0.0-alpha8.min.js" }></script>
 	<script>
 		(() => {
 			try {

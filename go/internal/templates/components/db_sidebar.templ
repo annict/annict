@@ -1,0 +1,83 @@
+package components
+
+import (
+	"github.com/annict/annict/go/internal/templates"
+)
+
+// DbSidebar renders the sidebar component for the Annict DB admin UI.
+//
+// [Ja] DbSidebar は Annict DB 管理画面用のサイドバーコンポーネントを描画する。
+templ DbSidebar() {
+	<aside class="sidebar" data-side="left" aria-hidden="false">
+		<nav aria-label="Annict DB navigation">
+			<section class="scrollbar gap-4">
+				<div>
+					<a href="/db" class="flex items-center justify-center gap-2 bg-primary h-[52px] relative">
+						<img
+							height="30"
+							loading="lazy"
+							src="/static/images/logo-white.png"
+							width="25"
+							alt="Annict"
+						/>
+
+						<span class="text-white font-bold text-lg absolute right-[90px]">
+							DB
+						</span>
+					</a>
+				</div>
+
+				<div class="px-4">
+					<form method="get" action="/db/search" autocomplete="off">
+						<input
+							type="text"
+							name="q"
+							class="input w-full rounded-full text-sm"
+							placeholder={ templates.T(ctx, "db_sidebar_search_placeholder") }
+						/>
+					</form>
+				</div>
+
+				<div role="group" class="py-0">
+					<ul class="space-y-1">
+						@dbSidebarMenuItem("/db/activities", "db_sidebar_activities")
+						@dbSidebarMenuItem("/db/series", "db_sidebar_series")
+						@dbSidebarMenuItem("/db/works", "db_sidebar_works")
+						@dbSidebarMenuItem("/db/people", "db_sidebar_people")
+						@dbSidebarMenuItem("/db/organizations", "db_sidebar_organizations")
+						@dbSidebarMenuItem("/db/characters", "db_sidebar_characters")
+						@dbSidebarMenuItem("/db/channel_groups", "db_sidebar_channel_groups")
+						@dbSidebarMenuItem("/db/channels", "db_sidebar_channels")
+					</ul>
+				</div>
+
+				<div class="px-2 mb-4 border-t border-border pt-4">
+					<a
+						href="/"
+						class="flex items-center justify-center gap-2 p-2 rounded-lg hover:bg-sidebar-accent transition-colors"
+					>
+						<span class="text-sm text-muted-foreground">
+							{ templates.T(ctx, "db_sidebar_back_to_annict") }
+						</span>
+					</a>
+				</div>
+			</section>
+		</nav>
+	</aside>
+}
+
+templ dbSidebarMenuItem(path string, labelKey string) {
+	<li>
+		<a
+			href={ templ.SafeURL(path) }
+			class="flex items-center gap-3 p-2 rounded-lg hover:bg-sidebar-accent transition-colors"
+			if templates.IsCurrentPath(ctx, path) {
+				aria-current="page"
+			}
+		>
+			<span class="text-base leading-none">
+				{ templates.T(ctx, labelKey) }
+			</span>
+		</a>
+	</li>
+}

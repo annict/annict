@@ -28,7 +28,6 @@ class LibrariesController
     include ::UrlHelper
     include ::VodHelper
     include ::WorksHelper
-    include ::PreviewHelper
     include ::Doorkeeper::DashboardHelper
     include ::DeviseHelper
     include ::ApplicationV6Controller::HelperMethods

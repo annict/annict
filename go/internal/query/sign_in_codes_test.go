@@ -11,7 +11,7 @@ import (
 
 // TestCreateSignInCode はSignInCodeの作成をテスト
 func TestCreateSignInCode(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 
 	// テストユーザーを作成
@@ -23,7 +23,7 @@ func TestCreateSignInCode(t *testing.T) {
 	// SignInCodeを作成
 	expiresAt := time.Now().Add(15 * time.Minute)
 	params := query.CreateSignInCodeParams{
-		UserID:     userID,
+		UserID:     int64(userID),
 		CodeDigest: "test_digest_123",
 		ExpiresAt:  expiresAt,
 	}
@@ -34,7 +34,7 @@ func TestCreateSignInCode(t *testing.T) {
 	}
 
 	// 基本的なアサーション
-	if code.UserID != userID {
+	if code.UserID != int64(userID) {
 		t.Errorf("Expected user ID %d, got %d", userID, code.UserID)
 	}
 	if code.CodeDigest != "test_digest_123" {
@@ -50,7 +50,7 @@ func TestCreateSignInCode(t *testing.T) {
 
 // TestGetValidSignInCode は有効なSignInCodeの取得をテスト
 func TestGetValidSignInCode(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 
 	// テストユーザーを作成
@@ -62,7 +62,7 @@ func TestGetValidSignInCode(t *testing.T) {
 	// 有効なSignInCodeを作成
 	expiresAt := time.Now().Add(15 * time.Minute)
 	params := query.CreateSignInCodeParams{
-		UserID:     userID,
+		UserID:     int64(userID),
 		CodeDigest: "valid_code_digest",
 		ExpiresAt:  expiresAt,
 	}
@@ -72,7 +72,7 @@ func TestGetValidSignInCode(t *testing.T) {
 	}
 
 	// 有効なコードを取得
-	code, err := queries.GetValidSignInCode(context.Background(), userID)
+	code, err := queries.GetValidSignInCode(context.Background(), int64(userID))
 	if err != nil {
 		t.Fatalf("Failed to get valid sign in code: %v", err)
 	}
@@ -87,7 +87,7 @@ func TestGetValidSignInCode(t *testing.T) {
 
 // TestGetValidSignInCode_Expired は期限切れのコードが取得されないことをテスト
 func TestGetValidSignInCode_Expired(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 
 	// テストユーザーを作成
@@ -99,7 +99,7 @@ func TestGetValidSignInCode_Expired(t *testing.T) {
 	// 期限切れのSignInCodeを作成
 	expiresAt := time.Now().Add(-1 * time.Minute) // 1分前に期限切れ
 	params := query.CreateSignInCodeParams{
-		UserID:     userID,
+		UserID:     int64(userID),
 		CodeDigest: "expired_code_digest",
 		ExpiresAt:  expiresAt,
 	}
@@ -109,7 +109,7 @@ func TestGetValidSignInCode_Expired(t *testing.T) {
 	}
 
 	// 有効なコードの取得を試みる（失敗するべき）
-	_, err = queries.GetValidSignInCode(context.Background(), userID)
+	_, err = queries.GetValidSignInCode(context.Background(), int64(userID))
 	if err == nil {
 		t.Error("Expected error for expired code, but got nil")
 	}
@@ -117,7 +117,7 @@ func TestGetValidSignInCode_Expired(t *testing.T) {
 
 // TestGetValidSignInCode_Used は使用済みのコードが取得されないことをテスト
 func TestGetValidSignInCode_Used(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 
 	// テストユーザーを作成
@@ -129,7 +129,7 @@ func TestGetValidSignInCode_Used(t *testing.T) {
 	// SignInCodeを作成
 	expiresAt := time.Now().Add(15 * time.Minute)
 	params := query.CreateSignInCodeParams{
-		UserID:     userID,
+		UserID:     int64(userID),
 		CodeDigest: "used_code_digest",
 		ExpiresAt:  expiresAt,
 	}
@@ -145,7 +145,7 @@ func TestGetValidSignInCode_Used(t *testing.T) {
 	}
 
 	// 有効なコードの取得を試みる（失敗するべき）
-	_, err = queries.GetValidSignInCode(context.Background(), userID)
+	_, err = queries.GetValidSignInCode(context.Background(), int64(userID))
 	if err == nil {
 		t.Error("Expected error for used code, but got nil")
 	}
@@ -153,7 +153,7 @@ func TestGetValidSignInCode_Used(t *testing.T) {
 
 // TestIncrementSignInCodeAttempts は試行回数のインクリメントをテスト
 func TestIncrementSignInCodeAttempts(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 
 	// テストユーザーを作成
@@ -165,7 +165,7 @@ func TestIncrementSignInCodeAttempts(t *testing.T) {
 	// SignInCodeを作成
 	expiresAt := time.Now().Add(15 * time.Minute)
 	params := query.CreateSignInCodeParams{
-		UserID:     userID,
+		UserID:     int64(userID),
 		CodeDigest: "test_attempts",
 		ExpiresAt:  expiresAt,
 	}
@@ -181,7 +181,7 @@ func TestIncrementSignInCodeAttempts(t *testing.T) {
 	}
 
 	// コードを再取得して確認
-	updatedCode, err := queries.GetValidSignInCode(context.Background(), userID)
+	updatedCode, err := queries.GetValidSignInCode(context.Background(), int64(userID))
 	if err != nil {
 		t.Fatalf("Failed to get code after increment: %v", err)
 	}
@@ -196,7 +196,7 @@ func TestIncrementSignInCodeAttempts(t *testing.T) {
 		t.Fatalf("Failed to increment attempts again: %v", err)
 	}
 
-	updatedCode, err = queries.GetValidSignInCode(context.Background(), userID)
+	updatedCode, err = queries.GetValidSignInCode(context.Background(), int64(userID))
 	if err != nil {
 		t.Fatalf("Failed to get code after second increment: %v", err)
 	}
@@ -208,7 +208,7 @@ func TestIncrementSignInCodeAttempts(t *testing.T) {
 
 // TestMarkSignInCodeAsUsed はコードを使用済みにするテスト
 func TestMarkSignInCodeAsUsed(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 
 	// テストユーザーを作成
@@ -220,7 +220,7 @@ func TestMarkSignInCodeAsUsed(t *testing.T) {
 	// SignInCodeを作成
 	expiresAt := time.Now().Add(15 * time.Minute)
 	params := query.CreateSignInCodeParams{
-		UserID:     userID,
+		UserID:     int64(userID),
 		CodeDigest: "test_used",
 		ExpiresAt:  expiresAt,
 	}
@@ -236,7 +236,7 @@ func TestMarkSignInCodeAsUsed(t *testing.T) {
 	}
 
 	// 有効なコードの取得を試みる（失敗するべき）
-	_, err = queries.GetValidSignInCode(context.Background(), userID)
+	_, err = queries.GetValidSignInCode(context.Background(), int64(userID))
 	if err == nil {
 		t.Error("Expected error after marking code as used, but got nil")
 	}
@@ -244,7 +244,7 @@ func TestMarkSignInCodeAsUsed(t *testing.T) {
 
 // TestDeleteExpiredSignInCodes は期限切れコードの削除をテスト
 func TestDeleteExpiredSignInCodes(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 
 	// テストユーザーを作成
@@ -256,7 +256,7 @@ func TestDeleteExpiredSignInCodes(t *testing.T) {
 	// 期限切れのSignInCodeを作成
 	expiredTime := time.Now().Add(-2 * time.Hour)
 	params1 := query.CreateSignInCodeParams{
-		UserID:     userID,
+		UserID:     int64(userID),
 		CodeDigest: "expired_code_1",
 		ExpiresAt:  expiredTime,
 	}
@@ -268,7 +268,7 @@ func TestDeleteExpiredSignInCodes(t *testing.T) {
 	// 有効なSignInCodeを作成
 	validTime := time.Now().Add(15 * time.Minute)
 	params2 := query.CreateSignInCodeParams{
-		UserID:     userID,
+		UserID:     int64(userID),
 		CodeDigest: "valid_code",
 		ExpiresAt:  validTime,
 	}
@@ -285,7 +285,7 @@ func TestDeleteExpiredSignInCodes(t *testing.T) {
 	}
 
 	// 有効なコードが残っていることを確認
-	_, err = queries.GetValidSignInCode(context.Background(), userID)
+	_, err = queries.GetValidSignInCode(context.Background(), int64(userID))
 	if err != nil {
 		t.Error("Expected valid code to still exist after deletion of expired codes")
 	}
@@ -293,7 +293,7 @@ func TestDeleteExpiredSignInCodes(t *testing.T) {
 
 // TestInvalidateUserSignInCodes はユーザーの全コード無効化をテスト
 func TestInvalidateUserSignInCodes(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 
 	// テストユーザーを作成
@@ -306,7 +306,7 @@ func TestInvalidateUserSignInCodes(t *testing.T) {
 	expiresAt := time.Now().Add(15 * time.Minute)
 	for i := 0; i < 3; i++ {
 		params := query.CreateSignInCodeParams{
-			UserID:     userID,
+			UserID:     int64(userID),
 			CodeDigest: "code_" + string(rune('0'+i)),
 			ExpiresAt:  expiresAt,
 		}
@@ -317,13 +317,13 @@ func TestInvalidateUserSignInCodes(t *testing.T) {
 	}
 
 	// ユーザーのすべてのコードを無効化
-	err := queries.InvalidateUserSignInCodes(context.Background(), userID)
+	err := queries.InvalidateUserSignInCodes(context.Background(), int64(userID))
 	if err != nil {
 		t.Fatalf("Failed to invalidate user codes: %v", err)
 	}
 
 	// 有効なコードの取得を試みる（失敗するべき）
-	_, err = queries.GetValidSignInCode(context.Background(), userID)
+	_, err = queries.GetValidSignInCode(context.Background(), int64(userID))
 	if err == nil {
 		t.Error("Expected error after invalidating all user codes, but got nil")
 	}

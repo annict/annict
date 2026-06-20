@@ -12,13 +12,14 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 	"github.com/annict/annict/go/internal/turnstile"
 	"github.com/annict/annict/go/internal/usecase"
+	"github.com/annict/annict/go/internal/validator"
 )
 
 // TestNew GET /sign_inのテスト
 func TestNew(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := testutil.NewQueriesWithTx(db, tx)
 
 	// 設定とセッションマネージャーを作成
@@ -31,16 +32,14 @@ func TestNew(t *testing.T) {
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionMgr := session.NewManager(sessionRepo, cfg)
 
-	// UserRepositoryを作成
-	userRepo := repository.NewUserRepository(queries)
-
-	// ログインコード送信ユースケースを作成（riverClient は nil でメール送信をスキップ）
-	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, queries, nil)
+	// ログインコード送信ユースケースを作成（Dispatcher は nil でメール送信をスキップ）
+	v := validator.NewSignInCreateValidator()
+	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), repository.NewUserRepository(queries), nil, v)
 
 	// Turnstile クライアントを作成（テスト環境用: 空のSecretKeyで検証をスキップ）
 	turnstileClient := turnstile.NewClient("", "")
 
-	handler := NewHandler(cfg, sessionMgr, userRepo, sendSignInCodeUC, turnstileClient)
+	handler := NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), sendSignInCodeUC, turnstileClient)
 
 	// リクエストを作成
 	req := httptest.NewRequest("GET", "/sign_in", nil)

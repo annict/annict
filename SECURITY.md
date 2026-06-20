@@ -1,4 +1,8 @@
-# セキュリティに関する報告
+<!-- last_synced: 2026-05-17 -->
 
-`hello@annict.com` までメールをください。
-ソーシャルメディアなど、第三者が閲覧できる場所に投稿しないでもらえるとありがたいです。
+# Security Reporting
+
+> English | [日本語](./SECURITY.ja.md)
+
+Please send an email to `hello@annict.com`.
+We would appreciate it if you refrained from posting on social media or other places visible to third parties.

@@ -12,13 +12,14 @@ import (
 	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/testutil"
 	"github.com/annict/annict/go/internal/usecase"
+	"github.com/annict/annict/go/internal/validator"
 )
 
 // TestShow GET /sign_in/codeのテスト（正常系）
 func TestShow(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := testutil.NewQueriesWithTx(db, tx)
 
 	// 設定とセッションマネージャーを作成
@@ -32,11 +33,13 @@ func TestShow(t *testing.T) {
 	userRepo := repository.NewUserRepository(queries)
 
 	// ユースケースを作成
-	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, queries, nil)
-	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, queries)
-	createSessionUC := usecase.NewCreateSessionUsecase(queries)
+	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), userRepo, nil, validator.NewSignInCreateValidator())
+	signInCodeRepo := repository.NewSignInCodeRepository(queries)
+	signInCodeValidator := validator.NewSignInCodeCreateValidator()
+	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, signInCodeValidator)
+	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
-	handler := NewHandler(cfg, sessionMgr, userRepo, db, nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
+	handler := NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
 
 	// リクエストを作成
 	req := httptest.NewRequest("GET", "/sign_in/code", nil)
@@ -99,7 +102,7 @@ func TestShow(t *testing.T) {
 func TestShow_NoEmailInSession(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := testutil.NewQueriesWithTx(db, tx)
 
 	// 設定とセッションマネージャーを作成
@@ -113,11 +116,13 @@ func TestShow_NoEmailInSession(t *testing.T) {
 	userRepo := repository.NewUserRepository(queries)
 
 	// ユースケースを作成
-	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, queries, nil)
-	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, queries)
-	createSessionUC := usecase.NewCreateSessionUsecase(queries)
+	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), userRepo, nil, validator.NewSignInCreateValidator())
+	signInCodeRepo := repository.NewSignInCodeRepository(queries)
+	signInCodeValidator := validator.NewSignInCodeCreateValidator()
+	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, signInCodeValidator)
+	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
-	handler := NewHandler(cfg, sessionMgr, userRepo, db, nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
+	handler := NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
 
 	// リクエストを作成（セッションにメールアドレスを設定しない）
 	req := httptest.NewRequest("GET", "/sign_in/code", nil)

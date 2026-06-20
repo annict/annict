@@ -1,0 +1,12 @@
+{
+  "name": "annict",
+  "private": true,
+  "packageManager": "pnpm@10.17.1",
+  "scripts": {
+    "fmt": "oxfmt",
+    "fmt:check": "oxfmt --check"
+  },
+  "devDependencies": {
+    "oxfmt": "^0.35.0"
+  }
+}

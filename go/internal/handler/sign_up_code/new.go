@@ -6,6 +6,7 @@ import (
 
 	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/middleware"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/templates/layouts"
 	signUpCodePage "github.com/annict/annict/go/internal/templates/pages/sign_up_code"
 	"github.com/annict/annict/go/internal/viewmodel"
@@ -18,7 +19,7 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 	// セッションからメールアドレスを取得
 	email, err := h.sessionMgr.GetValue(ctx, r, "sign_up_email")
 	if err != nil {
-		slog.Error("セッション値取得エラー", "error", err, "key", "sign_up_email")
+		slog.ErrorContext(ctx, "セッション値取得エラー", "error", err, "key", "sign_up_email")
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
@@ -29,25 +30,32 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Flashメッセージを取得
-	flash, _ := h.sessionMgr.GetFlash(ctx, r)
-	formErrors, _ := h.sessionMgr.GetFormErrors(ctx, r)
+	h.renderNewForm(w, r, http.StatusOK, nil, email)
+}
 
-	// メタ情報を設定
+// renderNewForm は新規登録確認コード入力フォームをレンダリングします。
+// バリデーションエラーが存在する場合は status に http.StatusUnprocessableEntity を渡してください。
+func (h *Handler) renderNewForm(w http.ResponseWriter, r *http.Request, status int, formErrors *model.ValidationError, email string) {
+	ctx := r.Context()
+
 	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)
 	meta.SetTitle(ctx, "sign_up_code_title")
 	meta.Description = i18n.T(ctx, "sign_up_code_description")
 	meta.OGURL = h.cfg.AppURL() + "/sign_up/code"
 
-	// CSRFトークンを取得
-	csrfToken := middleware.GetCSRFToken(r, h.sessionMgr)
+	csrfToken := middleware.GetOrCreateCSRFToken(w, r, h.sessionMgr)
 
-	// テンプレートをレンダリング
+	data := signUpCodePage.NewPageData{
+		CSRFToken:  csrfToken,
+		FormErrors: formErrors,
+		Email:      email,
+	}
+
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	component := layouts.Simple(ctx, meta, flash, h.cfg.GetAssetVersion(), signUpCodePage.SignUpCodeNew(ctx, email, formErrors, csrfToken))
+	w.WriteHeader(status)
+
+	component := layouts.Simple(ctx, meta, h.cfg.GetAssetVersion(), signUpCodePage.New(data))
 	if err := component.Render(ctx, w); err != nil {
-		slog.Error("テンプレート実行エラー", "error", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
+		slog.ErrorContext(ctx, "テンプレート実行エラー", "error", err)
 	}
 }

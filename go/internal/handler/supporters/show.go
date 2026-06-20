@@ -1,15 +1,15 @@
 package supporters
 
 import (
-	"context"
 	"log/slog"
 	"net/http"
 	"time"
 
 	authMiddleware "github.com/annict/annict/go/internal/middleware"
-	"github.com/annict/annict/go/internal/repository"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/templates/layouts"
 	supportersTemplate "github.com/annict/annict/go/internal/templates/pages/supporters"
+	"github.com/annict/annict/go/internal/usecase"
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
@@ -24,9 +24,6 @@ func (h *Handler) Show(w http.ResponseWriter, r *http.Request) {
 
 	// 季節情報を取得
 	seasons := viewmodel.NewSeasons(h.cfg)
-
-	// フラッシュメッセージを取得
-	flash, _ := h.sessionManager.GetFlash(ctx, r)
 
 	// クエリパラメータからメッセージ表示フラグを取得
 	showSuccessMessage := r.URL.Query().Get("success") == "true"
@@ -57,7 +54,12 @@ func (h *Handler) Show(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if user != nil {
-		pageData = h.buildSupporterPageData(ctx, user, pageData)
+		result, err := h.getSupporterStatusUC.Execute(ctx, usecase.GetSupporterStatusInput{User: user})
+		if err != nil {
+			slog.ErrorContext(ctx, "サポーターステータスの取得に失敗", "error", err)
+		} else {
+			pageData = buildSupporterPageData(result, pageData)
+		}
 	}
 
 	// ページメタ情報を準備
@@ -71,7 +73,6 @@ func (h *Handler) Show(w http.ResponseWriter, r *http.Request) {
 		meta,
 		viewUser,
 		seasons,
-		flash,
 		h.cfg.GetAssetVersion(),
 		supportersTemplate.Show(ctx, pageData),
 	)
@@ -82,39 +83,22 @@ func (h *Handler) Show(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// buildSupporterPageData はユーザーのサポーター情報からビューモデルを構築します
-func (h *Handler) buildSupporterPageData(ctx context.Context, user *repository.User, data viewmodel.SupporterPageData) viewmodel.SupporterPageData {
-	var isStripeActive, isGumroadActive bool
-
-	// Stripeサブスクリプションをチェック
-	if user.StripeSubscriberID.Valid && h.stripeSubscriberRepo != nil {
-		stripeSubscriber, err := h.stripeSubscriberRepo.GetByID(ctx, user.StripeSubscriberID.Int64)
-		if err == nil {
-			if h.stripeSubscriberRepo.IsActive(&stripeSubscriber) {
-				isStripeActive = true
-				data.StripeSubscriber = convertStripeSubscriberToView(&stripeSubscriber)
-			}
-		}
+// buildSupporterPageData はUseCaseの出力からサポーターページのビューモデルを構築します
+func buildSupporterPageData(result *usecase.GetSupporterStatusOutput, data viewmodel.SupporterPageData) viewmodel.SupporterPageData {
+	if result.IsStripeActive && result.StripeSubscriber != nil {
+		data.StripeSubscriber = convertStripeSubscriberToView(result.StripeSubscriber)
 	}
 
-	// Gumroadサブスクリプションをチェック
-	if user.GumroadSubscriberID.Valid && h.gumroadSubscriberRepo != nil {
-		gumroadSubscriber, err := h.gumroadSubscriberRepo.GetByID(ctx, user.GumroadSubscriberID.Int64)
-		if err == nil {
-			if h.gumroadSubscriberRepo.IsActive(&gumroadSubscriber) {
-				isGumroadActive = true
-				data.GumroadSubscriber = convertGumroadSubscriberToView(&gumroadSubscriber)
-			}
-		}
+	if result.IsGumroadActive && result.GumroadSubscriber != nil {
+		data.GumroadSubscriber = convertGumroadSubscriberToView(result.GumroadSubscriber)
 	}
 
-	// サポーター状態を設定
 	switch {
-	case isStripeActive && isGumroadActive:
+	case result.IsStripeActive && result.IsGumroadActive:
 		data.Status = viewmodel.SupporterStatusBoth
-	case isStripeActive:
+	case result.IsStripeActive:
 		data.Status = viewmodel.SupporterStatusStripe
-	case isGumroadActive:
+	case result.IsGumroadActive:
 		data.Status = viewmodel.SupporterStatusGumroad
 	default:
 		data.Status = viewmodel.SupporterStatusNone
@@ -124,7 +108,7 @@ func (h *Handler) buildSupporterPageData(ctx context.Context, user *repository.U
 }
 
 // convertStripeSubscriberToView はStripeサブスクライバーをビューモデルに変換します
-func convertStripeSubscriberToView(s *repository.StripeSubscriber) *viewmodel.StripeSubscriberView {
+func convertStripeSubscriberToView(s *model.StripeSubscriber) *viewmodel.StripeSubscriberView {
 	view := &viewmodel.StripeSubscriberView{
 		CustomerID:       s.StripeCustomerID,
 		Status:           s.StripeStatus,
@@ -137,7 +121,7 @@ func convertStripeSubscriberToView(s *repository.StripeSubscriber) *viewmodel.St
 }
 
 // convertGumroadSubscriberToView はGumroadサブスクライバーをビューモデルに変換します
-func convertGumroadSubscriberToView(s *repository.GumroadSubscriber) *viewmodel.GumroadSubscriberView {
+func convertGumroadSubscriberToView(s *model.GumroadSubscriber) *viewmodel.GumroadSubscriberView {
 	view := &viewmodel.GumroadSubscriberView{
 		GumroadID: s.GumroadID,
 		CreatedAt: s.GumroadCreatedAt,

@@ -47,6 +47,20 @@ FROM users
 WHERE LOWER(username) = LOWER($1)
 LIMIT 1;
 
+-- name: GetActiveUserIDByUsername :one
+-- Looks up a user ID by username, excluding soft-deleted users.
+-- Used by features that should return 404 for deleted users (e.g. tracking
+-- heatmap fragment) without exposing other user attributes.
+--
+-- [Ja] 論理削除されていないユーザーの ID を username で検索する。
+-- 削除済みユーザーに対して 404 を返すべき機能 (例: 視聴記録ヒートマップ
+-- フラグメント) で、他のユーザー属性を取得せずに利用する。
+SELECT id
+FROM users
+WHERE LOWER(username) = LOWER($1)
+  AND deleted_at IS NULL
+LIMIT 1;
+
 -- name: CreateUser :one
 INSERT INTO users (username, email, encrypted_password, locale, role, time_zone, created_at, updated_at)
 VALUES ($1, $2, $3, $4, 0, 'Asia/Tokyo', NOW(), NOW())

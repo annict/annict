@@ -2,11 +2,8 @@
 package sign_in_code
 
 import (
-	"database/sql"
-
 	"github.com/annict/annict/go/internal/config"
 	"github.com/annict/annict/go/internal/ratelimit"
-	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/usecase"
 )
@@ -15,8 +12,7 @@ import (
 type Handler struct {
 	cfg                *config.Config
 	sessionMgr         *session.Manager
-	userRepo           *repository.UserRepository
-	db                 *sql.DB
+	flashMgr           *session.FlashManager
 	limiter            *ratelimit.Limiter
 	sendSignInCodeUC   *usecase.SendSignInCodeUsecase
 	verifySignInCodeUC *usecase.VerifySignInCodeUsecase
@@ -27,8 +23,7 @@ type Handler struct {
 func NewHandler(
 	cfg *config.Config,
 	sessionMgr *session.Manager,
-	userRepo *repository.UserRepository,
-	db *sql.DB,
+	flashMgr *session.FlashManager,
 	limiter *ratelimit.Limiter,
 	sendSignInCodeUC *usecase.SendSignInCodeUsecase,
 	verifySignInCodeUC *usecase.VerifySignInCodeUsecase,
@@ -37,8 +32,7 @@ func NewHandler(
 	return &Handler{
 		cfg:                cfg,
 		sessionMgr:         sessionMgr,
-		userRepo:           userRepo,
-		db:                 db,
+		flashMgr:           flashMgr,
 		limiter:            limiter,
 		sendSignInCodeUC:   sendSignInCodeUC,
 		verifySignInCodeUC: verifySignInCodeUC,

@@ -31,8 +31,7 @@ other = "スタッフ"
 # 視聴者数（複数形対応）
 [watchers_count]
 description = "アニメの視聴者数"
-one = "{{.Count}} watcher"
-other = "{{.Count}} watchers"
+other = "{{.Count}}人"
 
 # シーズン名
 [season_winter]
@@ -114,7 +113,7 @@ other = "別のアカウントでログイン"
 description = "フォームパースエラー"
 other = "リクエストの処理に失敗しました"
 
-[sign_in_email_required]
+[sign_in_error_email_required]
 description = "メールアドレス必須エラー"
 other = "メールアドレスを入力してください"
 
@@ -353,11 +352,11 @@ other = "パスワードが一致しません"
 # パスワード強度バリデーション（NIST SP 800-63B-4 準拠）
 [password_strength_min_length]
 description = "パスワード強度 - 最小文字数エラー"
-other = "パスワードは8文字以上である必要があります"
+other = "パスワードは{{.MinLength}}文字以上である必要があります"
 
 [password_strength_max_length]
 description = "パスワード強度 - 最大文字数エラー"
-other = "パスワードは128文字以内である必要があります"
+other = "パスワードは{{.MaxLength}}文字以内である必要があります"
 
 [password_strength_invalid_chars]
 description = "パスワード強度 - 無効な文字エラー"
@@ -415,15 +414,15 @@ other = "送信する"
 description = "利用規約同意メッセージ（Sign-in-wrap方式）"
 other = "登録することで、<a href=\"/terms\" class=\"link\" target=\"_blank\">利用規約</a>と<a href=\"/privacy\" class=\"link\" target=\"_blank\">プライバシーポリシー</a>に同意したものとみなされます"
 
-[sign_up_email_required]
+[sign_up_error_email_required]
 description = "メールアドレス必須エラー"
 other = "メールアドレスを入力してください"
 
-[sign_up_email_invalid]
+[sign_up_error_email_invalid]
 description = "メールアドレス形式エラー"
 other = "メールアドレスの形式が正しくありません"
 
-[sign_up_email_already_exists]
+[sign_up_error_email_already_exists]
 description = "メールアドレス重複エラー"
 other = "このメールアドレスは使用できません"
 
@@ -939,6 +938,293 @@ other = "Annict Developers"
 description = "サイドバー - 検索プレースホルダー"
 other = "作品名や人物名などで検索..."
 
+# DB サイドバー関連
+[db_sidebar_search_placeholder]
+description = "DB サイドバー - 検索プレースホルダー"
+other = "作品名や人物名などで検索..."
+
+[db_sidebar_activities]
+description = "DB サイドバー - アクティビティ"
+other = "アクティビティ"
+
+[db_sidebar_series]
+description = "DB サイドバー - シリーズ"
+other = "シリーズ"
+
+[db_sidebar_works]
+description = "DB サイドバー - 作品"
+other = "作品"
+
+[db_sidebar_people]
+description = "DB サイドバー - 人物"
+other = "人物"
+
+[db_sidebar_organizations]
+description = "DB サイドバー - 団体"
+other = "団体"
+
+[db_sidebar_characters]
+description = "DB サイドバー - キャラクター"
+other = "キャラクター"
+
+[db_sidebar_channel_groups]
+description = "DB サイドバー - チャンネルグループ"
+other = "チャンネルグループ"
+
+[db_sidebar_channels]
+description = "DB サイドバー - チャンネル"
+other = "チャンネル"
+
+[db_sidebar_back_to_annict]
+description = "DB サイドバー - Annictに戻る"
+other = "Annictに戻る"
+
+# ページネーション関連
+[pagination_label]
+description = "ページネーション - aria-label"
+other = "ページネーション"
+
+[pagination_prev]
+description = "ページネーション - 前へ"
+other = "前へ"
+
+[pagination_next]
+description = "ページネーション - 次へ"
+other = "次へ"
+
+# 公開状態ラベル関連
+[status_published]
+description = "公開状態 - 公開"
+other = "公開"
+
+[status_archived]
+description = "公開状態 - アーカイブ"
+other = "アーカイブ"
+
+[status_deleted]
+description = "公開状態 - 削除"
+other = "削除"
+
+# DB作品一覧ページ
+[db_works_index_title]
+description = "DB作品一覧ページのタイトル"
+other = "作品"
+
+[db_works_index_new_link]
+description = "作品一覧から新規作成ページへのリンク"
+other = "新規作成"
+
+[db_works_index_filter_no_episodes_label]
+description = "エピソード未登録フィルタのラベル"
+other = "エピソード未登録"
+
+[db_works_index_filter_no_image_label]
+description = "画像未設定フィルタのラベル"
+other = "画像未設定"
+
+[db_works_index_filter_no_season_label]
+description = "シーズン未設定フィルタのラベル"
+other = "シーズン未設定"
+
+[db_works_index_submit]
+description = "DB作品一覧ページの送信ボタン (フィルタ検索)"
+other = "検索"
+
+[db_works_index_table_id_label]
+description = "テーブルヘッダー - ID"
+other = "ID"
+
+[db_works_index_table_title_label]
+description = "テーブルヘッダー - タイトル"
+other = "タイトル"
+
+[db_works_index_table_season_label]
+description = "テーブルヘッダー - シーズン"
+other = "シーズン"
+
+[db_works_index_table_watchers_label]
+description = "テーブルヘッダー - ウォッチ数"
+other = "ウォッチ数"
+
+[db_works_index_table_status_label]
+description = "テーブルヘッダー - ステータス"
+other = "ステータス"
+
+[db_works_index_table_image_label]
+description = "テーブルヘッダー - 画像"
+other = "画像"
+
+[db_works_index_empty]
+description = "作品なしメッセージ"
+other = "作品が見つかりませんでした"
+
+# DB作品新規作成ページ
+[db_works_new_title]
+description = "作品新規作成ページのタイトル"
+other = "作品を追加"
+
+[db_works_new_back_to_list_link]
+description = "新規作成ページから一覧ページへのリンク"
+other = "一覧に戻る"
+
+[db_works_new_title_label]
+description = "フォームラベル - タイトル"
+other = "タイトル"
+
+[db_works_new_title_kana_label]
+description = "フォームラベル - タイトル（かな）"
+other = "タイトル（かな）"
+
+[db_works_new_title_alter_label]
+description = "フォームラベル - タイトル（別名）"
+other = "タイトル（別名）"
+
+[db_works_new_title_en_label]
+description = "フォームラベル - タイトル（英語）"
+other = "タイトル（英語）"
+
+[db_works_new_title_alter_en_label]
+description = "フォームラベル - タイトル（英語別名）"
+other = "タイトル（英語別名）"
+
+[db_works_new_media_label]
+description = "フォームラベル - メディア"
+other = "メディア"
+
+[db_works_new_season_year_label]
+description = "フォームラベル - シーズン年"
+other = "シーズン年"
+
+[db_works_new_season_name_label]
+description = "フォームラベル - シーズン名"
+other = "シーズン名"
+
+[db_works_new_started_on_label]
+description = "フォームラベル - 放送開始日"
+other = "放送開始日"
+
+[db_works_new_ended_on_label]
+description = "フォームラベル - 放送終了日"
+other = "放送終了日"
+
+[db_works_new_official_site_url_label]
+description = "フォームラベル - 公式サイトURL"
+other = "公式サイトURL"
+
+[db_works_new_official_site_url_en_label]
+description = "フォームラベル - 公式サイトURL（英語）"
+other = "公式サイトURL（英語）"
+
+[db_works_new_wikipedia_url_label]
+description = "フォームラベル - Wikipedia URL"
+other = "Wikipedia URL"
+
+[db_works_new_wikipedia_url_en_label]
+description = "フォームラベル - Wikipedia URL（英語）"
+other = "Wikipedia URL（英語）"
+
+[db_works_new_twitter_username_label]
+description = "フォームラベル - Twitterユーザー名"
+other = "Twitterユーザー名"
+
+[db_works_new_twitter_hashtag_label]
+description = "フォームラベル - Twitterハッシュタグ"
+other = "Twitterハッシュタグ"
+
+[db_works_new_sc_tid_label]
+description = "フォームラベル - しょぼいカレンダーTID"
+other = "しょぼいカレンダーTID"
+
+[db_works_new_mal_anime_id_label]
+description = "フォームラベル - MAL Anime ID"
+other = "MAL Anime ID"
+
+[db_works_new_synopsis_label]
+description = "フォームラベル - あらすじ"
+other = "あらすじ"
+
+[db_works_new_synopsis_source_label]
+description = "フォームラベル - あらすじ出典"
+other = "あらすじ出典"
+
+[db_works_new_synopsis_en_label]
+description = "フォームラベル - あらすじ（英語）"
+other = "あらすじ（英語）"
+
+[db_works_new_synopsis_source_en_label]
+description = "フォームラベル - あらすじ出典（英語）"
+other = "あらすじ出典（英語）"
+
+[db_works_new_manual_episodes_count_label]
+description = "フォームラベル - 手動エピソード数"
+other = "手動エピソード数"
+
+[db_works_new_start_episode_raw_number_label]
+description = "フォームラベル - 開始エピソード番号"
+other = "開始エピソード番号"
+
+[db_works_new_number_format_label]
+description = "フォームラベル - NumberFormat"
+other = "NumberFormat"
+
+[db_works_new_no_episodes_label]
+description = "フォームラベル - エピソードなし"
+other = "エピソードなし"
+
+[db_works_new_submit]
+description = "作品新規作成ページの送信ボタン"
+other = "作品を作成"
+
+# フラッシュメッセージ - DB作品関連
+[flash_db_work_created]
+description = "作品作成成功メッセージ"
+other = "作品を作成しました"
+
+# バリデーション共通メッセージ
+[validation_required]
+description = "必須フィールドのバリデーションエラー"
+other = "入力してください"
+
+[validation_media_invalid]
+description = "メディア種別の値が不正"
+other = "メディアの値が不正です"
+
+[validation_url_invalid]
+description = "URL形式が不正"
+other = "URLの形式が正しくありません"
+
+[validation_integer_invalid]
+description = "整数値ではない"
+other = "整数で入力してください"
+
+[validation_synopsis_source_required]
+description = "あらすじを入力した場合は出典も必須"
+other = "あらすじを入力した場合は出典も入力してください"
+
+[validation_synopsis_source_en_required]
+description = "英語のあらすじを入力した場合は出典も必須"
+other = "あらすじ（英語）を入力した場合は出典も入力してください"
+
+[media_tv]
+description = "メディア種別 - TV"
+other = "TV"
+
+[media_ova]
+description = "メディア種別 - OVA"
+other = "OVA"
+
+[media_movie]
+description = "メディア種別 - 映画"
+other = "映画"
+
+[media_web]
+description = "メディア種別 - Web"
+other = "Web"
+
+[media_other]
+description = "メディア種別 - その他"
+other = "その他"
+
 # フッター関連
 [footer_terms]
 description = "フッター - 利用規約"
@@ -951,3 +1237,8 @@ other = "プライバシーポリシー"
 [footer_legal]
 description = "フッター - 特商法表記"
 other = "特商法表記"
+
+# エラー共通メッセージ
+[error_user_not_found]
+description = "ユーザーが見つからない場合のエラーメッセージ"
+other = "ユーザーが見つかりませんでした"

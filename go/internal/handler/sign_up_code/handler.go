@@ -16,6 +16,7 @@ import (
 type Handler struct {
 	cfg                *config.Config
 	sessionMgr         *session.Manager
+	flashMgr           *session.FlashManager
 	db                 *sql.DB
 	limiter            *ratelimit.Limiter
 	redisClient        *redis.Client
@@ -27,6 +28,7 @@ type Handler struct {
 func NewHandler(
 	cfg *config.Config,
 	sessionMgr *session.Manager,
+	flashMgr *session.FlashManager,
 	db *sql.DB,
 	limiter *ratelimit.Limiter,
 	redisClient *redis.Client,
@@ -36,6 +38,7 @@ func NewHandler(
 	return &Handler{
 		cfg:                cfg,
 		sessionMgr:         sessionMgr,
+		flashMgr:           flashMgr,
 		db:                 db,
 		limiter:            limiter,
 		redisClient:        redisClient,

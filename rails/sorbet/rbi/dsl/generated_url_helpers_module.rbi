@@ -388,9 +388,6 @@ module GeneratedUrlHelpersModule
   def fragment_trackable_work_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }
-  def fragment_tracking_heatmap_url(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
   def fragment_work_record_list_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }

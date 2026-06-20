@@ -2,12 +2,8 @@ package worker
 
 import (
 	"context"
-	"log/slog"
-	"time"
 
 	"github.com/riverqueue/river"
-
-	"github.com/annict/annict/go/internal/query"
 )
 
 // CleanupExpiredTokensArgs はトークンクリーンアップジョブの引数です
@@ -18,38 +14,33 @@ func (CleanupExpiredTokensArgs) Kind() string {
 	return "cleanup_expired_tokens"
 }
 
+// InsertOpts はジョブ挿入時のデフォルトオプションを返します
+func (CleanupExpiredTokensArgs) InsertOpts() river.InsertOpts {
+	return river.InsertOpts{
+		Queue:       river.QueueDefault,
+		MaxAttempts: 3,
+	}
+}
+
+// ExpiredTokenCleaner は期限切れトークンのクリーンアップを実行するインターフェースです
+type ExpiredTokenCleaner interface {
+	Execute(ctx context.Context) error
+}
+
 // CleanupExpiredTokensWorker はトークンクリーンアップワーカーです
 type CleanupExpiredTokensWorker struct {
 	river.WorkerDefaults[CleanupExpiredTokensArgs]
-	queries *query.Queries
+	cleaner ExpiredTokenCleaner
 }
 
 // NewCleanupExpiredTokensWorker は新しいCleanupExpiredTokensWorkerを作成します
-func NewCleanupExpiredTokensWorker(queries *query.Queries) *CleanupExpiredTokensWorker {
+func NewCleanupExpiredTokensWorker(cleaner ExpiredTokenCleaner) *CleanupExpiredTokensWorker {
 	return &CleanupExpiredTokensWorker{
-		queries: queries,
+		cleaner: cleaner,
 	}
 }
 
 // Work は有効期限切れおよび使用済みトークンを削除します
 func (w *CleanupExpiredTokensWorker) Work(ctx context.Context, job *river.Job[CleanupExpiredTokensArgs]) error {
-	slog.InfoContext(ctx, "トークンクリーンアップジョブを開始します")
-
-	// 24時間以上前に期限切れまたは使用済みになったトークンを削除
-	cutoff := time.Now().Add(-24 * time.Hour)
-
-	err := w.queries.DeleteExpiredPasswordResetTokens(ctx, cutoff)
-	if err != nil {
-		slog.ErrorContext(ctx, "トークンの削除に失敗しました",
-			"cutoff", cutoff,
-			"error", err,
-		)
-		return err
-	}
-
-	slog.InfoContext(ctx, "トークンクリーンアップジョブが完了しました",
-		"cutoff", cutoff,
-	)
-
-	return nil
+	return w.cleaner.Execute(ctx)
 }

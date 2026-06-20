@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"image/png"
 	"testing"
+
+	"github.com/annict/annict/go/internal/model"
 )
 
 func TestGenerateShrineImageData(t *testing.T) {
@@ -62,7 +64,7 @@ func TestGenerateShrineImageData(t *testing.T) {
 }
 
 func TestGenerateRandomWorkImage(t *testing.T) {
-	testWorkID := int64(123)
+	testWorkID := model.WorkID(123)
 	img, err := GenerateRandomWorkImage(testWorkID)
 	if err != nil {
 		t.Fatalf("画像生成に失敗: %v", err)

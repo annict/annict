@@ -7,7 +7,7 @@ end
 [
   "bin/rails zeitwerk:check",
   "bin/rails sorbet:update",
-  "yarn prettier . --write",
+  "make -C /workspace fmt",
   "yarn eslint . --fix",
   "bin/erb_lint --lint-all",
   "bin/standardrb",

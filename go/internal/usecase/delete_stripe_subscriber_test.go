@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"errors"
 	"testing"
 	"time"
 
@@ -26,7 +27,7 @@ func TestDeleteStripeSubscriberUsecase_Execute(t *testing.T) {
 	t.Parallel()
 
 	// テストDBを取得（トランザクションを使わない統合テスト）
-	db := testutil.GetTestDB(t)
+	db := testutil.GetTestDB()
 	queries := query.New(db)
 
 	// リポジトリの作成
@@ -150,12 +151,12 @@ func TestDeleteStripeSubscriberUsecase_Execute(t *testing.T) {
 			t.Error("UserID: nilが返されましたが、ユーザーIDが期待されました")
 			return
 		}
-		if *result.UserID != userID {
+		if int64(*result.UserID) != userID {
 			t.Errorf("UserID: got %d, want %d", *result.UserID, userID)
 		}
 
 		// ユーザーの紐付けが解除されていることを確認
-		updatedUser, err := userRepo.GetByID(ctx, userID)
+		updatedUser, err := userRepo.GetByID(ctx, model.UserID(userID))
 		if err != nil {
 			t.Errorf("ユーザー取得エラー: %v", err)
 			return
@@ -165,7 +166,7 @@ func TestDeleteStripeSubscriberUsecase_Execute(t *testing.T) {
 		}
 	})
 
-	t.Run("存在しないサブスクリプションIDはエラー", func(t *testing.T) {
+	t.Run("存在しないサブスクリプションIDはErrStripeSubscriberNotFound", func(t *testing.T) {
 		t.Parallel()
 
 		ctx := context.Background()
@@ -177,7 +178,10 @@ func TestDeleteStripeSubscriberUsecase_Execute(t *testing.T) {
 
 		_, err := uc.Execute(ctx, input)
 		if err == nil {
-			t.Error("エラーが期待されましたが、nilが返されました")
+			t.Fatal("エラーが期待されましたが、nilが返されました")
+		}
+		if !errors.Is(err, ErrStripeSubscriberNotFound) {
+			t.Errorf("ErrStripeSubscriberNotFound が期待されましたが、別のエラーが返されました: %v", err)
 		}
 	})
 }

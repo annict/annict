@@ -7,13 +7,17 @@ import (
 	"testing"
 
 	"github.com/annict/annict/go/internal/config"
+	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/testutil"
+	"github.com/annict/annict/go/internal/usecase"
 )
 
 func TestShow(t *testing.T) {
+	t.Parallel()
+
 	// テストDBとトランザクションをセットアップ
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 
 	// 設定を作成
 	cfg := &config.Config{
@@ -21,9 +25,10 @@ func TestShow(t *testing.T) {
 	}
 
 	// ハンドラーを作成
-	queries := testutil.NewQueriesWithTx(db, tx)
+	queries := query.New(db).WithTx(tx)
 	workRepo := repository.NewWorkRepository(queries)
-	handler := NewHandler(cfg, workRepo)
+	checkHealthUC := usecase.NewCheckHealthUsecase(workRepo)
+	handler := NewHandler(cfg, checkHealthUC)
 
 	// HTTPリクエストを作成
 	req := httptest.NewRequest("GET", "/health", nil)

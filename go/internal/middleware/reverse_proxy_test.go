@@ -1,14 +1,18 @@
 package middleware
 
 import (
+	"context"
+	"errors"
 	"net/http"
 	"net/http/httptest"
+	"regexp"
 	"strings"
 	"testing"
 	"time"
 
 	"github.com/annict/annict/go/internal/clientip"
 	"github.com/annict/annict/go/internal/config"
+	"github.com/annict/annict/go/internal/model"
 )
 
 func TestReverseProxyMiddleware_GoHandledPaths(t *testing.T) {
@@ -25,7 +29,7 @@ func TestReverseProxyMiddleware_GoHandledPaths(t *testing.T) {
 	}
 
 	// リバースプロキシミドルウェアを作成
-	proxyMiddleware, err := NewReverseProxyMiddleware(railsServer.URL, cfg)
+	proxyMiddleware, err := NewReverseProxyMiddleware(railsServer.URL, cfg, nil, nil)
 	if err != nil {
 		t.Fatalf("ミドルウェアの作成に失敗: %v", err)
 	}
@@ -101,7 +105,7 @@ func TestReverseProxyMiddleware_RailsProxiedPaths(t *testing.T) {
 	}
 
 	// リバースプロキシミドルウェアを作成
-	proxyMiddleware, err := NewReverseProxyMiddleware(railsServer.URL, cfg)
+	proxyMiddleware, err := NewReverseProxyMiddleware(railsServer.URL, cfg, nil, nil)
 	if err != nil {
 		t.Fatalf("ミドルウェアの作成に失敗: %v", err)
 	}
@@ -177,7 +181,7 @@ func TestReverseProxyMiddleware_HeaderForwarding(t *testing.T) {
 	}
 
 	// リバースプロキシミドルウェアを作成
-	proxyMiddleware, err := NewReverseProxyMiddleware(railsServer.URL, cfg)
+	proxyMiddleware, err := NewReverseProxyMiddleware(railsServer.URL, cfg, nil, nil)
 	if err != nil {
 		t.Fatalf("ミドルウェアの作成に失敗: %v", err)
 	}
@@ -229,7 +233,7 @@ func TestReverseProxyMiddleware_ErrorHandling(t *testing.T) {
 	}
 
 	// リバースプロキシミドルウェアを作成
-	proxyMiddleware, err := NewReverseProxyMiddleware(railsServer.URL, cfg)
+	proxyMiddleware, err := NewReverseProxyMiddleware(railsServer.URL, cfg, nil, nil)
 	if err != nil {
 		t.Fatalf("ミドルウェアの作成に失敗: %v", err)
 	}
@@ -257,7 +261,7 @@ func TestReverseProxyMiddleware_ErrorHandling(t *testing.T) {
 
 func TestIsGoHandledPath(t *testing.T) {
 	cfg := &config.Config{Domain: "annict-test.page"}
-	proxyMiddleware, _ := NewReverseProxyMiddleware("http://localhost:3000", cfg)
+	proxyMiddleware, _ := NewReverseProxyMiddleware("http://localhost:3000", cfg, nil, nil)
 
 	testCases := []struct {
 		path     string
@@ -275,6 +279,17 @@ func TestIsGoHandledPath(t *testing.T) {
 		{"/works", false},
 		{"/", false},
 		{"/@username", false},
+		{"/fragment/@username/tracking_heatmap", true},
+		// "@user.name-with_dashes" exercises usernames that contain dots, hyphens, and underscores.
+		//
+		// [Ja] username にドット・ハイフン・アンダースコアが含まれるケースの検証。
+		{"/fragment/@user.name-with_dashes/tracking_heatmap", true},
+		{"/fragment/@username/records", false},
+		{"/fragment/records", false},
+		// Only an exact "/tracking_heatmap" suffix is allowed, so paths like "/tracking_heatmap/extra" must not match.
+		//
+		// [Ja] "/tracking_heatmap" の末尾完全一致のみを許可し、"/tracking_heatmap/extra" のような誤検知を避ける。
+		{"/fragment/@username/tracking_heatmap/extra", false},
 	}
 
 	for _, tc := range testCases {
@@ -289,7 +304,7 @@ func TestIsGoHandledPath(t *testing.T) {
 
 func TestIsAPISubdomain(t *testing.T) {
 	cfg := &config.Config{Domain: "annict-test.page"}
-	proxyMiddleware, _ := NewReverseProxyMiddleware("http://localhost:3000", cfg)
+	proxyMiddleware, _ := NewReverseProxyMiddleware("http://localhost:3000", cfg, nil, nil)
 
 	testCases := []struct {
 		host     string
@@ -327,7 +342,7 @@ func TestReverseProxyMiddleware_APISubdomain(t *testing.T) {
 	}
 
 	// リバースプロキシミドルウェアを作成
-	proxyMiddleware, err := NewReverseProxyMiddleware(railsServer.URL, cfg)
+	proxyMiddleware, err := NewReverseProxyMiddleware(railsServer.URL, cfg, nil, nil)
 	if err != nil {
 		t.Fatalf("ミドルウェアの作成に失敗: %v", err)
 	}
@@ -402,7 +417,7 @@ func TestReverseProxyMiddleware_PreserveExistingHeaders(t *testing.T) {
 	}
 
 	// リバースプロキシミドルウェアを作成
-	proxyMiddleware, err := NewReverseProxyMiddleware(railsServer.URL, cfg)
+	proxyMiddleware, err := NewReverseProxyMiddleware(railsServer.URL, cfg, nil, nil)
 	if err != nil {
 		t.Fatalf("ミドルウェアの作成に失敗: %v", err)
 	}
@@ -513,7 +528,7 @@ func TestReverseProxyMiddleware_CFConnectingIP(t *testing.T) {
 	}
 
 	// リバースプロキシミドルウェアを作成
-	proxyMiddleware, err := NewReverseProxyMiddleware(railsServer.URL, cfg)
+	proxyMiddleware, err := NewReverseProxyMiddleware(railsServer.URL, cfg, nil, nil)
 	if err != nil {
 		t.Fatalf("ミドルウェアの作成に失敗: %v", err)
 	}
@@ -555,7 +570,7 @@ func TestReverseProxyMiddleware_ResponseHeaderTimeout(t *testing.T) {
 	}
 
 	// リバースプロキシミドルウェアを作成
-	proxyMiddleware, err := NewReverseProxyMiddleware(railsServer.URL, cfg)
+	proxyMiddleware, err := NewReverseProxyMiddleware(railsServer.URL, cfg, nil, nil)
 	if err != nil {
 		t.Fatalf("ミドルウェアの作成に失敗: %v", err)
 	}
@@ -602,7 +617,7 @@ func TestReverseProxyMiddleware_HTTPMethods(t *testing.T) {
 	}
 
 	// リバースプロキシミドルウェアを作成
-	proxyMiddleware, err := NewReverseProxyMiddleware(railsServer.URL, cfg)
+	proxyMiddleware, err := NewReverseProxyMiddleware(railsServer.URL, cfg, nil, nil)
 	if err != nil {
 		t.Fatalf("ミドルウェアの作成に失敗: %v", err)
 	}
@@ -666,7 +681,7 @@ func TestReverseProxyMiddleware_RequestBodyForwarding(t *testing.T) {
 	}
 
 	// リバースプロキシミドルウェアを作成
-	proxyMiddleware, err := NewReverseProxyMiddleware(railsServer.URL, cfg)
+	proxyMiddleware, err := NewReverseProxyMiddleware(railsServer.URL, cfg, nil, nil)
 	if err != nil {
 		t.Fatalf("ミドルウェアの作成に失敗: %v", err)
 	}
@@ -712,7 +727,7 @@ func TestReverseProxyMiddleware_MultipleHostnames(t *testing.T) {
 	}
 
 	// リバースプロキシミドルウェアを作成
-	proxyMiddleware, err := NewReverseProxyMiddleware(railsServer.URL, cfg)
+	proxyMiddleware, err := NewReverseProxyMiddleware(railsServer.URL, cfg, nil, nil)
 	if err != nil {
 		t.Fatalf("ミドルウェアの作成に失敗: %v", err)
 	}
@@ -816,7 +831,7 @@ func TestReverseProxyMiddleware_LargeRequestBody(t *testing.T) {
 	}
 
 	// リバースプロキシミドルウェアを作成
-	proxyMiddleware, err := NewReverseProxyMiddleware(railsServer.URL, cfg)
+	proxyMiddleware, err := NewReverseProxyMiddleware(railsServer.URL, cfg, nil, nil)
 	if err != nil {
 		t.Fatalf("ミドルウェアの作成に失敗: %v", err)
 	}
@@ -846,5 +861,413 @@ func TestReverseProxyMiddleware_LargeRequestBody(t *testing.T) {
 	// レスポンスにサイズ情報が含まれていることを確認
 	if !strings.Contains(rr.Body.String(), "Received bytes:") {
 		t.Errorf("レスポンスが期待と異なる: got %q", rr.Body.String())
+	}
+}
+
+// mockFeatureFlagChecker はテスト用のフィーチャーフラグチェッカー
+type mockFeatureFlagChecker struct {
+	enabled bool
+	err     error
+}
+
+func (m *mockFeatureFlagChecker) IsEnabledByDeviceOrUser(_ context.Context, _ string, _ model.UserID, _ model.FeatureFlagName) (bool, error) {
+	return m.enabled, m.err
+}
+
+func TestEnsureDeviceToken_GeneratesNewToken(t *testing.T) {
+	cfg := &config.Config{
+		Domain: "annict-test.page",
+		Env:    "production",
+	}
+
+	mw := &ReverseProxyMiddleware{cfg: cfg}
+
+	req := httptest.NewRequest("GET", "/", nil)
+	rr := httptest.NewRecorder()
+
+	token := mw.ensureDeviceToken(rr, req)
+
+	// トークンが生成されていること
+	if token == "" {
+		t.Fatal("トークンが空です")
+	}
+
+	// Cookieがセットされていること
+	cookies := rr.Result().Cookies()
+	var deviceCookie *http.Cookie
+	for _, c := range cookies {
+		if c.Name == DeviceTokenCookieName {
+			deviceCookie = c
+			break
+		}
+	}
+
+	if deviceCookie == nil {
+		t.Fatal("device_token Cookieがセットされていません")
+	}
+
+	if deviceCookie.Value != token {
+		t.Errorf("Cookieの値が一致しない: got %q want %q", deviceCookie.Value, token)
+	}
+
+	if !deviceCookie.HttpOnly {
+		t.Error("HttpOnlyがtrueであるべき")
+	}
+
+	if !deviceCookie.Secure {
+		t.Error("Secure（本番環境）がtrueであるべき")
+	}
+
+	if deviceCookie.SameSite != http.SameSiteLaxMode {
+		t.Error("SameSiteがLaxであるべき")
+	}
+
+	if deviceCookie.MaxAge != 10*365*24*60*60 {
+		t.Errorf("MaxAgeが10年分であるべき: got %d", deviceCookie.MaxAge)
+	}
+}
+
+func TestEnsureDeviceToken_PreservesExistingToken(t *testing.T) {
+	cfg := &config.Config{
+		Domain: "annict-test.page",
+		Env:    "production",
+	}
+
+	mw := &ReverseProxyMiddleware{cfg: cfg}
+
+	req := httptest.NewRequest("GET", "/", nil)
+	req.AddCookie(&http.Cookie{Name: DeviceTokenCookieName, Value: "existing-token"})
+	rr := httptest.NewRecorder()
+
+	token := mw.ensureDeviceToken(rr, req)
+
+	if token != "existing-token" {
+		t.Errorf("既存のトークンが返されるべき: got %q want %q", token, "existing-token")
+	}
+
+	// 新しいCookieがセットされていないこと
+	cookies := rr.Result().Cookies()
+	for _, c := range cookies {
+		if c.Name == DeviceTokenCookieName {
+			t.Error("既存のトークンがある場合、新しいCookieはセットされないべき")
+		}
+	}
+}
+
+func TestEnsureDeviceToken_DevelopmentNotSecure(t *testing.T) {
+	cfg := &config.Config{
+		Domain: "annict-test.page",
+		Env:    "development",
+	}
+
+	mw := &ReverseProxyMiddleware{cfg: cfg}
+
+	req := httptest.NewRequest("GET", "/", nil)
+	rr := httptest.NewRecorder()
+
+	mw.ensureDeviceToken(rr, req)
+
+	cookies := rr.Result().Cookies()
+	for _, c := range cookies {
+		if c.Name == DeviceTokenCookieName {
+			if c.Secure {
+				t.Error("開発環境ではSecureがfalseであるべき")
+			}
+			return
+		}
+	}
+	t.Fatal("device_token Cookieがセットされていません")
+}
+
+func TestIsFeatureFlagEnabled_NilRepo(t *testing.T) {
+	mw := &ReverseProxyMiddleware{
+		featureFlagRepo: nil,
+	}
+
+	req := httptest.NewRequest("GET", "/some-path", nil)
+
+	if mw.isFeatureFlagEnabled(req, "some-token") {
+		t.Error("featureFlagRepoがnilの場合、falseを返すべき")
+	}
+}
+
+func TestIsFeatureFlagEnabled_NoMatchingPattern(t *testing.T) {
+	checker := &mockFeatureFlagChecker{enabled: true}
+	mw := &ReverseProxyMiddleware{
+		featureFlagRepo: checker,
+	}
+
+	// featureFlaggedPatternsが空なのでマッチしない
+	req := httptest.NewRequest("GET", "/some-path", nil)
+
+	if mw.isFeatureFlagEnabled(req, "some-token") {
+		t.Error("マッチするパターンがない場合、falseを返すべき")
+	}
+}
+
+func TestIsFeatureFlagEnabled_MatchingPatternEnabled(t *testing.T) {
+	checker := &mockFeatureFlagChecker{enabled: true}
+	mw := &ReverseProxyMiddleware{
+		featureFlagRepo: checker,
+	}
+
+	// テスト用にパターンを一時的に追加
+	original := featureFlaggedPatterns
+	featureFlaggedPatterns = []featureFlaggedPattern{
+		{pattern: regexp.MustCompile(`^/test-feature(/.*)?$`), flag: "test_feature"},
+	}
+	defer func() { featureFlaggedPatterns = original }()
+
+	req := httptest.NewRequest("GET", "/test-feature/page", nil)
+
+	if !mw.isFeatureFlagEnabled(req, "test-device-token") {
+		t.Error("フラグが有効な場合、trueを返すべき")
+	}
+}
+
+func TestIsFeatureFlagEnabled_MatchingPatternDisabled(t *testing.T) {
+	checker := &mockFeatureFlagChecker{enabled: false}
+	mw := &ReverseProxyMiddleware{
+		featureFlagRepo: checker,
+	}
+
+	original := featureFlaggedPatterns
+	featureFlaggedPatterns = []featureFlaggedPattern{
+		{pattern: regexp.MustCompile(`^/test-feature(/.*)?$`), flag: "test_feature"},
+	}
+	defer func() { featureFlaggedPatterns = original }()
+
+	req := httptest.NewRequest("GET", "/test-feature/page", nil)
+
+	if mw.isFeatureFlagEnabled(req, "test-device-token") {
+		t.Error("フラグが無効な場合、falseを返すべき")
+	}
+}
+
+func TestIsFeatureFlagEnabled_ErrorFallsBackToFalse(t *testing.T) {
+	checker := &mockFeatureFlagChecker{enabled: false, err: errors.New("db error")}
+	mw := &ReverseProxyMiddleware{
+		featureFlagRepo: checker,
+	}
+
+	original := featureFlaggedPatterns
+	featureFlaggedPatterns = []featureFlaggedPattern{
+		{pattern: regexp.MustCompile(`^/test-feature(/.*)?$`), flag: "test_feature"},
+	}
+	defer func() { featureFlaggedPatterns = original }()
+
+	req := httptest.NewRequest("GET", "/test-feature/page", nil)
+
+	if mw.isFeatureFlagEnabled(req, "test-device-token") {
+		t.Error("エラー時はfalseを返すべき（Rails版にフォールバック）")
+	}
+}
+
+func TestReverseProxyMiddleware_FeatureFlagRouting(t *testing.T) {
+	// モックRailsサーバー
+	railsServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("Rails response"))
+	}))
+	defer railsServer.Close()
+
+	cfg := &config.Config{
+		Domain: "annict-test.page",
+		Env:    "production",
+	}
+
+	// テスト用にパターンを一時的に追加
+	original := featureFlaggedPatterns
+	featureFlaggedPatterns = []featureFlaggedPattern{
+		{pattern: regexp.MustCompile(`^/test-feature(/.*)?$`), flag: "test_feature"},
+	}
+	defer func() { featureFlaggedPatterns = original }()
+
+	t.Run("フラグ有効: Go版で処理される", func(t *testing.T) {
+		checker := &mockFeatureFlagChecker{enabled: true}
+		proxyMiddleware, err := NewReverseProxyMiddleware(railsServer.URL, cfg, checker, nil)
+		if err != nil {
+			t.Fatalf("ミドルウェアの作成に失敗: %v", err)
+		}
+
+		goHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			_, _ = w.Write([]byte("Go response"))
+		})
+
+		handler := proxyMiddleware.Middleware(goHandler)
+		req := httptest.NewRequest("GET", "/test-feature/page", nil)
+		rr := httptest.NewRecorder()
+
+		handler.ServeHTTP(rr, req)
+
+		if !strings.Contains(rr.Body.String(), "Go response") {
+			t.Errorf("Go版で処理されるべき: got %q", rr.Body.String())
+		}
+	})
+
+	t.Run("フラグ無効: Rails版にプロキシされる", func(t *testing.T) {
+		checker := &mockFeatureFlagChecker{enabled: false}
+		proxyMiddleware, err := NewReverseProxyMiddleware(railsServer.URL, cfg, checker, nil)
+		if err != nil {
+			t.Fatalf("ミドルウェアの作成に失敗: %v", err)
+		}
+
+		goHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			_, _ = w.Write([]byte("Go response"))
+		})
+
+		handler := proxyMiddleware.Middleware(goHandler)
+		req := httptest.NewRequest("GET", "/test-feature/page", nil)
+		rr := httptest.NewRecorder()
+
+		handler.ServeHTTP(rr, req)
+
+		if !strings.Contains(rr.Body.String(), "Rails response") {
+			t.Errorf("Rails版にプロキシされるべき: got %q", rr.Body.String())
+		}
+	})
+
+	t.Run("featureFlagRepoがnil: Rails版にプロキシされる", func(t *testing.T) {
+		proxyMiddleware, err := NewReverseProxyMiddleware(railsServer.URL, cfg, nil, nil)
+		if err != nil {
+			t.Fatalf("ミドルウェアの作成に失敗: %v", err)
+		}
+
+		goHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			_, _ = w.Write([]byte("Go response"))
+		})
+
+		handler := proxyMiddleware.Middleware(goHandler)
+		req := httptest.NewRequest("GET", "/test-feature/page", nil)
+		rr := httptest.NewRecorder()
+
+		handler.ServeHTTP(rr, req)
+
+		if !strings.Contains(rr.Body.String(), "Rails response") {
+			t.Errorf("featureFlagRepoがnilの場合、Rails版にプロキシされるべき: got %q", rr.Body.String())
+		}
+	})
+}
+
+func TestReverseProxyMiddleware_AnnictDBFeatureFlag(t *testing.T) {
+	// モックRailsサーバー
+	railsServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("Rails response"))
+	}))
+	defer railsServer.Close()
+
+	cfg := &config.Config{
+		Domain: "annict-test.page",
+	}
+
+	// Go版のハンドラー
+	goHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("Go response"))
+	})
+
+	t.Run("フラグ有効: /db/配下のパスはGo版で処理される", func(t *testing.T) {
+		checker := &mockFeatureFlagChecker{enabled: true}
+		proxyMiddleware, err := NewReverseProxyMiddleware(railsServer.URL, cfg, checker, nil)
+		if err != nil {
+			t.Fatalf("ミドルウェアの作成に失敗: %v", err)
+		}
+
+		handler := proxyMiddleware.Middleware(goHandler)
+
+		paths := []string{
+			"/db/works",
+			"/db/works/123/edit",
+			"/db/works/123/episodes",
+			"/db/works/new",
+		}
+
+		for _, path := range paths {
+			t.Run(path, func(t *testing.T) {
+				req := httptest.NewRequest("GET", path, nil)
+				rr := httptest.NewRecorder()
+				handler.ServeHTTP(rr, req)
+
+				if !strings.Contains(rr.Body.String(), "Go response") {
+					t.Errorf("フラグ有効時、%s はGo版で処理されるべき: got %q", path, rr.Body.String())
+				}
+			})
+		}
+	})
+
+	t.Run("フラグ無効: /db/配下のパスはRails版にプロキシされる", func(t *testing.T) {
+		checker := &mockFeatureFlagChecker{enabled: false}
+		proxyMiddleware, err := NewReverseProxyMiddleware(railsServer.URL, cfg, checker, nil)
+		if err != nil {
+			t.Fatalf("ミドルウェアの作成に失敗: %v", err)
+		}
+
+		handler := proxyMiddleware.Middleware(goHandler)
+
+		paths := []string{
+			"/db/works",
+			"/db/works/123/edit",
+			"/db/works/123/episodes",
+			"/db/works/new",
+		}
+
+		for _, path := range paths {
+			t.Run(path, func(t *testing.T) {
+				req := httptest.NewRequest("GET", path, nil)
+				rr := httptest.NewRecorder()
+				handler.ServeHTTP(rr, req)
+
+				if !strings.Contains(rr.Body.String(), "Rails response") {
+					t.Errorf("フラグ無効時、%s はRails版にプロキシされるべき: got %q", path, rr.Body.String())
+				}
+			})
+		}
+	})
+}
+
+func TestReverseProxyMiddleware_DeviceTokenCookieSetOnRequest(t *testing.T) {
+	railsServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("Rails response"))
+	}))
+	defer railsServer.Close()
+
+	cfg := &config.Config{
+		Domain: "annict-test.page",
+		Env:    "production",
+	}
+
+	proxyMiddleware, err := NewReverseProxyMiddleware(railsServer.URL, cfg, nil, nil)
+	if err != nil {
+		t.Fatalf("ミドルウェアの作成に失敗: %v", err)
+	}
+
+	goHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		_, _ = w.Write([]byte("Go response"))
+	})
+
+	handler := proxyMiddleware.Middleware(goHandler)
+
+	// device_tokenがない状態でリクエスト
+	req := httptest.NewRequest("GET", "/works", nil)
+	rr := httptest.NewRecorder()
+
+	handler.ServeHTTP(rr, req)
+
+	// device_token Cookieがセットされていること
+	cookies := rr.Result().Cookies()
+	found := false
+	for _, c := range cookies {
+		if c.Name == DeviceTokenCookieName {
+			found = true
+			if c.Value == "" {
+				t.Error("device_tokenの値が空であるべきではない")
+			}
+			break
+		}
+	}
+	if !found {
+		t.Error("device_token Cookieがセットされるべき")
 	}
 }

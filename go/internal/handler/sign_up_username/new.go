@@ -7,7 +7,7 @@ import (
 
 	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/middleware"
-	"github.com/annict/annict/go/internal/session"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/templates/layouts"
 	"github.com/annict/annict/go/internal/templates/pages/sign_up_username"
 	"github.com/annict/annict/go/internal/viewmodel"
@@ -20,10 +20,8 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 	// クエリパラメータからトークンを取得
 	token := r.URL.Query().Get("token")
 	if token == "" {
-		slog.Warn("トークンが指定されていません")
-		if err := h.sessionMgr.SetFlash(ctx, w, r, session.FlashError, i18n.T(ctx, "sign_up_username_error_token_missing")); err != nil {
-			slog.ErrorContext(ctx, "フラッシュメッセージの設定に失敗しました", "error", err)
-		}
+		slog.WarnContext(ctx, "トークンが指定されていません")
+		h.flashMgr.SetError(w, i18n.T(ctx, "sign_up_username_error_token_missing"))
 		http.Redirect(w, r, "/sign_up", http.StatusSeeOther)
 		return
 	}
@@ -34,37 +32,44 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 		tokenKey := fmt.Sprintf("sign_up_token:%s", token)
 		result, err := h.redisClient.Get(ctx, tokenKey).Result()
 		if err != nil {
-			slog.Warn("トークンが無効か期限切れです", "error", err)
-			if err := h.sessionMgr.SetFlash(ctx, w, r, session.FlashError, i18n.T(ctx, "sign_up_username_error_token_invalid")); err != nil {
-				slog.ErrorContext(ctx, "フラッシュメッセージの設定に失敗しました", "error", err)
-			}
+			slog.WarnContext(ctx, "トークンが無効か期限切れです", "error", err)
+			h.flashMgr.SetError(w, i18n.T(ctx, "sign_up_username_error_token_invalid"))
 			http.Redirect(w, r, "/sign_up", http.StatusSeeOther)
 			return
 		}
 		email = result
 	} else {
-		slog.Warn("Redisクライアントが設定されていないため、トークン検証をスキップします")
+		slog.WarnContext(ctx, "Redisクライアントが設定されていないため、トークン検証をスキップします")
 	}
 
-	// Flashメッセージを取得
-	flash, _ := h.sessionMgr.GetFlash(ctx, r)
-	formErrors, _ := h.sessionMgr.GetFormErrors(ctx, r)
+	h.renderNewForm(w, r, http.StatusOK, nil, token, email, "")
+}
 
-	// メタ情報を設定
+// renderNewForm はユーザー名設定フォームをレンダリングします。
+// バリデーションエラーが存在する場合は status に http.StatusUnprocessableEntity を渡してください。
+func (h *Handler) renderNewForm(w http.ResponseWriter, r *http.Request, status int, formErrors *model.ValidationError, token string, email string, username string) {
+	ctx := r.Context()
+
 	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)
 	meta.SetTitle(ctx, "sign_up_username_heading")
 	meta.Description = i18n.T(ctx, "sign_up_username_description")
 	meta.OGURL = h.cfg.AppURL() + "/sign_up/username"
 
-	// CSRFトークンを取得
-	csrfToken := middleware.GetCSRFToken(r, h.sessionMgr)
+	csrfToken := middleware.GetOrCreateCSRFToken(w, r, h.sessionMgr)
 
-	// テンプレートをレンダリング
+	data := sign_up_username.NewPageData{
+		CSRFToken:  csrfToken,
+		FormErrors: formErrors,
+		Token:      token,
+		Email:      email,
+		Username:   username,
+	}
+
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	component := layouts.Simple(ctx, meta, flash, h.cfg.GetAssetVersion(), sign_up_username.New(ctx, token, email, csrfToken, formErrors))
+	w.WriteHeader(status)
+
+	component := layouts.Simple(ctx, meta, h.cfg.GetAssetVersion(), sign_up_username.New(data))
 	if err := component.Render(ctx, w); err != nil {
-		slog.Error("テンプレートのレンダリングエラー", "error", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
+		slog.ErrorContext(ctx, "テンプレートのレンダリングエラー", "error", err)
 	}
 }

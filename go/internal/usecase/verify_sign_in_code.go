@@ -8,21 +8,44 @@ import (
 	"log/slog"
 
 	"github.com/annict/annict/go/internal/auth"
-	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/model"
+	"github.com/annict/annict/go/internal/repository"
+	"github.com/annict/annict/go/internal/validator"
 )
 
 // VerifySignInCodeUsecase は6桁のログインコードを検証するユースケースです
 type VerifySignInCodeUsecase struct {
-	db      *sql.DB
-	queries *query.Queries
+	db             *sql.DB
+	signInCodeRepo *repository.SignInCodeRepository
+	userRepo       *repository.UserRepository
+	validator      *validator.SignInCodeCreateValidator
 }
 
 // NewVerifySignInCodeUsecase は新しいVerifySignInCodeUsecaseを作成します
-func NewVerifySignInCodeUsecase(db *sql.DB, queries *query.Queries) *VerifySignInCodeUsecase {
+func NewVerifySignInCodeUsecase(
+	db *sql.DB,
+	signInCodeRepo *repository.SignInCodeRepository,
+	userRepo *repository.UserRepository,
+	validator *validator.SignInCodeCreateValidator,
+) *VerifySignInCodeUsecase {
 	return &VerifySignInCodeUsecase{
-		db:      db,
-		queries: queries,
+		db:             db,
+		signInCodeRepo: signInCodeRepo,
+		userRepo:       userRepo,
+		validator:      validator,
 	}
+}
+
+// VerifySignInCodeInput はユースケースの入力パラメータです
+type VerifySignInCodeInput struct {
+	UserID model.UserID
+	Code   string
+}
+
+// VerifySignInCodeOutput はユースケースの結果を表します
+type VerifySignInCodeOutput struct {
+	EncryptedPassword string // ユーザーのパスワードハッシュ（セッション作成用）
+	Username          string // ユーザー名（ログ用）
 }
 
 var (
@@ -34,10 +57,37 @@ var (
 	ErrCodeAttemptsExceeded = errors.New("試行回数が上限に達しました。新しいコードを送信してください")
 )
 
-// Execute は6桁のログインコードを検証します
-// コードが正しい場合はnilを返し、コードを使用済みにします
-// コードが間違っている場合は試行回数をインクリメントし、エラーを返します
-func (uc *VerifySignInCodeUsecase) Execute(ctx context.Context, userID int64, code string) error {
+// Execute は6桁のログインコードを検証し、成功時にユーザー情報を返します
+func (uc *VerifySignInCodeUsecase) Execute(ctx context.Context, input VerifySignInCodeInput) (*VerifySignInCodeOutput, error) {
+	// 1. バリデーション
+	if err := uc.validator.Validate(ctx, validator.SignInCodeCreateValidatorInput{
+		Code: input.Code,
+	}); err != nil {
+		return nil, err
+	}
+
+	// 2. コード検証
+	if err := uc.verifyCode(ctx, input.UserID, input.Code); err != nil {
+		return nil, err
+	}
+
+	// 3. ユーザー情報を取得
+	user, err := uc.userRepo.GetByID(ctx, input.UserID)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, fmt.Errorf("ユーザーが見つかりません (user_id=%d): %w", input.UserID, err)
+		}
+		return nil, fmt.Errorf("ユーザー情報の取得に失敗: %w", err)
+	}
+
+	return &VerifySignInCodeOutput{
+		EncryptedPassword: user.EncryptedPassword,
+		Username:          user.Username,
+	}, nil
+}
+
+// verifyCode は6桁のログインコードを検証します
+func (uc *VerifySignInCodeUsecase) verifyCode(ctx context.Context, userID model.UserID, code string) error {
 	// トランザクション開始
 	tx, err := uc.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -45,10 +95,10 @@ func (uc *VerifySignInCodeUsecase) Execute(ctx context.Context, userID int64, co
 	}
 	defer func() { _ = tx.Rollback() }()
 
-	queriesWithTx := uc.queries.WithTx(tx)
+	signInCodeRepoTx := uc.signInCodeRepo.WithTx(tx)
 
 	// 有効なコードを取得（未使用 AND 有効期限内）
-	signInCode, err := queriesWithTx.GetValidSignInCode(ctx, userID)
+	signInCode, err := signInCodeRepoTx.GetValidByUserID(ctx, userID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return ErrCodeNotFound
@@ -59,7 +109,7 @@ func (uc *VerifySignInCodeUsecase) Execute(ctx context.Context, userID int64, co
 	// 試行回数チェック（5回まで）
 	if signInCode.Attempts >= 5 {
 		// 試行回数が上限に達している場合、コードを無効化
-		if err := queriesWithTx.MarkSignInCodeAsUsed(ctx, signInCode.ID); err != nil {
+		if err := signInCodeRepoTx.MarkAsUsed(ctx, signInCode.ID); err != nil {
 			return fmt.Errorf("コードの無効化に失敗: %w", err)
 		}
 
@@ -78,7 +128,7 @@ func (uc *VerifySignInCodeUsecase) Execute(ctx context.Context, userID int64, co
 	// コード検証（bcryptで比較）
 	if !auth.VerifyCode(code, signInCode.CodeDigest) {
 		// コードが間違っている場合、試行回数をインクリメント
-		if err := queriesWithTx.IncrementSignInCodeAttempts(ctx, signInCode.ID); err != nil {
+		if err := signInCodeRepoTx.IncrementAttempts(ctx, signInCode.ID); err != nil {
 			return fmt.Errorf("試行回数のインクリメントに失敗: %w", err)
 		}
 
@@ -96,7 +146,7 @@ func (uc *VerifySignInCodeUsecase) Execute(ctx context.Context, userID int64, co
 	}
 
 	// コードが正しい場合、使用済みにする
-	if err := queriesWithTx.MarkSignInCodeAsUsed(ctx, signInCode.ID); err != nil {
+	if err := signInCodeRepoTx.MarkAsUsed(ctx, signInCode.ID); err != nil {
 		return fmt.Errorf("コードの使用済み設定に失敗: %w", err)
 	}
 

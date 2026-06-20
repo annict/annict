@@ -29,7 +29,7 @@ func generatePrivateSessionID(publicID string) string {
 func TestCSRFMiddleware_GET(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 
 	cfg := &config.Config{
@@ -66,7 +66,7 @@ func TestCSRFMiddleware_GET(t *testing.T) {
 func TestCSRFMiddleware_POST_ValidToken(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 
 	cfg := &config.Config{
@@ -137,7 +137,7 @@ func TestCSRFMiddleware_POST_ValidToken(t *testing.T) {
 func TestCSRFMiddleware_POST_InvalidToken(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 
 	cfg := &config.Config{
@@ -203,7 +203,7 @@ func TestCSRFMiddleware_POST_InvalidToken(t *testing.T) {
 func TestCSRFMiddleware_POST_NoSession(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 
 	cfg := &config.Config{
@@ -241,7 +241,7 @@ func TestCSRFMiddleware_POST_NoSession(t *testing.T) {
 func TestCSRFMiddleware_POST_HeaderToken(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 
 	cfg := &config.Config{
@@ -308,7 +308,7 @@ func TestCSRFMiddleware_POST_HeaderToken(t *testing.T) {
 func TestGetCSRFToken(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 
 	cfg := &config.Config{
@@ -362,7 +362,7 @@ func TestGetCSRFToken(t *testing.T) {
 func TestGetCSRFToken_NoSession(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 
 	cfg := &config.Config{
@@ -388,7 +388,7 @@ func TestGetCSRFToken_NoSession(t *testing.T) {
 func TestGetOrCreateCSRFToken_NoSession(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 
 	cfg := &config.Config{
@@ -462,7 +462,7 @@ func TestGetOrCreateCSRFToken_NoSession(t *testing.T) {
 func TestGetOrCreateCSRFToken_ExistingSession(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 
 	cfg := &config.Config{
@@ -526,7 +526,7 @@ func TestGetOrCreateCSRFToken_ExistingSession(t *testing.T) {
 func TestCSRFIntegration_SessionCreationAndValidation(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 
 	cfg := &config.Config{
@@ -648,7 +648,7 @@ func TestCSRFIntegration_SessionCreationAndValidation(t *testing.T) {
 func TestCSRFIntegration_EmptyTokenReturns403(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 
 	cfg := &config.Config{
@@ -722,7 +722,7 @@ func TestCSRFIntegration_EmptyTokenReturns403(t *testing.T) {
 func TestCSRFIntegration_NoSessionCookieReturns403(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 
 	cfg := &config.Config{

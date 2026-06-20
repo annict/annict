@@ -1,321 +1,85 @@
-# Annict 開発ガイド
+---
+last_synced: 2026-06-04
+---
 
-このファイルは、Claude Code (claude.ai/code) がこのリポジトリで作業する際のガイダンスを提供します。
+# Annict Development Guide
 
-## プロジェクト概要
+> English | [日本語](./CLAUDE.ja.md)
 
-Annict はアニメ視聴記録サービスです。
-ユーザーは自分が見たアニメに対して「見てる」や「見たい」といったステータスが設定できたり、
-見たアニメの感想を書いてあとから振り返ることができます。
+This file provides guidance to Claude Code when working in this repository.
 
-## モノレポ構造
+## Overview
 
-このリポジトリは、Go 版と Rails 版の 2 つのサブプロジェクトをモノレポとして管理しています：
+Annict is an anime watch-tracking service.
+Users can set statuses such as "watching" or "want to watch" on the anime they have seen, and write reviews on watched anime to look back on later.
+
+## Project Structure
+
+This repository manages two subprojects—the Go version and the Rails version—as a monorepo.
 
 ```
 /workspace/
-├── go/          # Go版の実装（段階的に機能を移行中）
-├── rails/       # Rails版の実装（既存の本番システム）
-├── .github/     # 共通のCI/CD設定
-└── CLAUDE.md    # このファイル（プロジェクト全体のガイド）
+├── go/                  # Go version implementation (features being migrated gradually)
+├── rails/               # Rails version implementation (existing production system)
+├── caddy/               # Reverse proxy configuration (Caddy)
+├── imgproxy/            # imgproxy configuration
+├── .github/             # Shared CI/CD configuration
+├── Dockerfile.dev       # Dockerfile for the integrated development container
+├── docker-compose.yml   # Docker Compose configuration
+├── Makefile             # Entry point for development tasks
+├── Procfile.dev         # Development server process definitions for hivemind
+├── mise.toml            # Development tool version management
+└── CLAUDE.md            # This file (project-wide guide)
 ```
 
-各サブプロジェクトには独自の CLAUDE.md ファイルがあり、それぞれの技術スタック、開発環境、コーディング規約などが記載されています：
+## Rails to Go Migration
 
-- **Go 版**: `go/CLAUDE.md` - Go 版固有の開発ガイド
-- **Rails 版**: `rails/CLAUDE.md` - Rails 版固有の開発ガイド
+A project to gradually reimplement the existing Rails Annict in Go is currently underway.
 
-## Rails から Go への移行について
+### Migration Strategy
 
-現在、既存の Rails 実装の Annict を Go で段階的に再実装するプロジェクトが進行中です。
+- **Use the existing DB as-is**: Share the PostgreSQL database managed on the Rails side
+- **Gradual migration**: Rails and Go share the same DB and session store, and features are migrated incrementally
+- **Data migration is executed on the Go side**: Use the migration mechanism (dbmate) prepared on the Go side
+- **Continued use of shared infrastructure**: Shared infrastructure such as PostgreSQL continues to be used after the Go version takes over
+- **Do not change the Rails source code**: When a change is needed, migrate to Go first
 
-### 移行の基本方針
+When implementing the Go version, refer to the Rails code to understand the existing specifications.
 
-- **既存 DB をそのまま使用**: Rails 側で管理されている PostgreSQL データベースを共有
-- **段階的移行**: Rails と Go が同一の DB とセッションストアを共有し、段階的に機能を移行
-- **データマイグレーション不要**: DB スキーマは既存のものを使用し、データ移行は行わない
-- **共通インフラの継続利用**: 画像配信（Cloudflare R2 + imgproxy）などの共通インフラは Go 版移行後も継続して使用
+## Feature Flag-Based Development
 
-### Rails 側のソースコード
+Annict uses **feature flags** rather than feature branches to control feature visibility. Pre-release features are developed with the flag off, and the flag is flipped to release them once they are ready for production.
 
-Rails 版のソースコードは `/workspace/rails/` 配下に格納されています：
+## Development Workflow
 
-```
-/workspace/rails/
-├── app/controllers/     # コントローラー
-├── app/models/          # モデル
-├── app/views/           # ビューテンプレート
-├── config/routes.rb     # ルーティング定義
-└── db/structure.sql     # DBスキーマ
-```
+### Implementation Guidelines
 
-Go 版を実装する際は、Rails 版のコードを参考にすることで既存の仕様を理解できます。
+**Consistency with existing code**:
 
-## 共通インフラ
+Before implementing, check whether similar processing already exists in the codebase.
+If similar processing exists, follow that pattern to keep the codebase consistent as a whole.
 
-### データベース（PostgreSQL）
+### Checks After Implementation
 
-- **バージョン**: PostgreSQL 17.3
-- **共有方針**: Rails 版と Go 版で同一のデータベースを共有
-- **開発環境**: Docker Compose で管理
-  - Rails 版用: `host.docker.internal:15432`
-  - Go 版テスト用: `postgresql:5432`
+Before reporting that work is complete, always verify the following:
 
-### セッションストア（PostgreSQL）
+- Code formatting
+- Lint
+- Tests
 
-- **ストレージ**: PostgreSQL の `sessions` テーブルを使用
-- **Rails 版**: ActiveRecord SessionStore を使用
-  - 各リクエストで `updated_at` カラムを自動更新
-  - セッションの有効期限: 30 日
-- **Go 版**: 同じ `sessions` テーブルを共有
-  - 認証ミドルウェアで `updated_at` カラムを更新
-  - Rails 版と完全に互換性のあるセッション管理を実現
-- **セッションクリーンアップ**: 毎日 19:00 に `rake session:sweep` タスクが実行され、30 日以上前のセッションを自動削除
-- **共有方針**: Rails 版と Go 版で同一のセッションストアを共有（段階的移行を実現）
+The commands to run are managed in `Makefile`.
+See [Makefile](./Makefile), [go/Makefile](./go/Makefile), and [rails/Makefile](./rails/Makefile).
 
-### 画像配信アーキテクチャ
+## Language and Writing Conventions
 
-作品画像の配信には以下のシステムを使用しています（Rails 版と Go 版で共通利用）：
+- **Canonical version is English; authoring workflow is Japanese-first**: The English version is the official authoritative source. Author by writing Japanese first, then translate to English (Claude Code assists). After translation, also review the English version to catch meaning drift and unnatural wording. When a discrepancy arises, the English version takes precedence
+- **Code comments**: English block first, then a `[Ja]`-prefixed Japanese block (the English block carries no marker). Doc comments on exported types, functions, and methods begin with the symbol name per Go convention. Put one blank comment line between the English block and the Japanese block (for both single- and multi-line comments). Do not mix Japanese into the English block (the basis for mechanical malformation checks). Inline (end-of-line) bilingual comments are not used — write the two blocks on their own lines above the code. See `.claude/rules/korylus-lang.md` §2.1
+- **Markdown documents**: Maintain `xxx.md` (English, canonical) and `xxx.ja.md` (Japanese translation) in parallel. Both files carry a `last_synced: YYYY-MM-DD` field in the YAML frontmatter; keep the dates aligned
+- **Commit messages**: English title, then a blank line, then the body — an English block, a blank line, then a `[Ja]`-prefixed Japanese block. Do not preserve a Japanese title (prioritize English scannability of `git log --oneline`)
+- **Identifiers**: Type, function, and variable names are English only
+- **Update both sides in the same commit**: Prevents translation drift
+- **Existing code**: Apply this rule to new writing. Migrate existing monolingual code to bilingual when editing it (no bulk migration required)
 
-#### S3 互換オブジェクトストレージ（Cloudflare R2）
+## Coding Conventions
 
-- **開発環境**: Cloudflare R2（開発環境用アカウント）
-- **本番環境**: Cloudflare R2（本番環境用アカウント）
-- **バケット名**:
-  - 開発: `annict-development`
-  - 本番: `annict-production`
-- **画像パス**: `shrine/`プレフィックス付きで保存（Rails の Shrine ライブラリの仕様）
-- **アクセスキー**: `.env.development.local`（開発）、環境変数（本番）に設定
-
-#### imgproxy（画像リサイズ・最適化プロキシ）
-
-- **ポート**: 18080（開発環境）
-- **アクセス方法**: S3 プロトコル経由でストレージにアクセス（`s3://annict-{environment}/shrine/{path}`）
-- **セキュリティ**: 署名付き URL を生成してセキュアな画像配信を実現
-- **設定**: KEY/SALT は環境変数で管理
-- **管理**: Docker Compose（`/workspace/rails/docker-compose.yml`）で管理
-
-#### 画像 URL 生成の流れ
-
-1. `work_images`テーブルの`image_data`カラム（JSON）から画像パスを取得
-2. S3 プロトコルの URL を生成（例: `s3://annict-development/shrine/workimage/...`）
-3. imgproxy の署名付き URL を生成（HMAC による署名）
-4. ブラウザは imgproxy 経由で最適化された画像を取得
-
-**重要**: S3 互換ストレージと imgproxy は Rails 版と Go 版で共通利用するため、Go 版が本流になっても継続して使用します。
-
-## 開発環境のセットアップ
-
-### 前提条件
-
-- Docker 及び Docker Compose がインストール済み
-- Dev Container を使用した開発環境
-
-### セットアップ手順
-
-1. **リポジトリのクローン**
-
-```sh
-git clone <repository-url>
-cd annict
-```
-
-2. **Dev Container の起動**
-
-VS Code や Claude Code などでリポジトリを開くと、Dev Container が自動的に起動します。
-
-3. **共通インフラの起動（ホスト側で実行）**
-
-Rails 版の Docker Compose で共通インフラ（PostgreSQL、imgproxy）を起動します：
-
-```sh
-cd rails
-docker compose up -d
-```
-
-4. **各サブプロジェクトのセットアップ**
-
-各サブプロジェクトの詳細なセットアップ手順は、それぞれの CLAUDE.md ファイルを参照してください：
-
-- Go 版: `go/CLAUDE.md`の「開発環境のセットアップ」セクション
-- Rails 版: `rails/CLAUDE.md`の「開発環境のセットアップ」セクション
-
-### 環境変数の設定
-
-各サブプロジェクトで`.env`ファイルを作成し、必要な環境変数を設定します。詳細は各サブプロジェクトの CLAUDE.md を参照してください。
-
-## サブプロジェクトのドキュメント
-
-各サブプロジェクトの詳細なドキュメントは以下を参照してください：
-
-- **Go 版**: @go/CLAUDE.md - Go 版の技術スタック、プロジェクト構造、コーディング規約、テスト戦略など
-- **Rails 版**: @rails/CLAUDE.md - Rails 版の技術スタック、プロジェクト構造、コーディング規約、テスト戦略など
-
-## 開発ワークフロー
-
-### コミット前のチェック
-
-各サブプロジェクトで実装を行った場合は、コミット前に以下を確認してください：
-
-- コードフォーマット（Go/Rails: `make fmt`）
-- リント（Go/Rails: `make lint`）
-- テスト（Go/Rails: `make test`）
-
-### 修正後のコミット
-
-**重要**: バグ修正や機能実装を行った場合でも、Claude Code が自動的にコミットを作成しないでください。
-
-- 修正が完了したら、コミット前のチェック（フォーマット、リント、テスト）を実行して CI が通ることを確認
-- **コミットは `/commit` コマンドで行う**: ユーザーが差分を確認し、適切な粒度でコミットできるようにする
-- コミットメッセージは[コミットメッセージのガイドライン](#コミットメッセージのガイドライン)に従って日本語で記述
-
-### コミットメッセージのガイドライン
-
-コミットメッセージは**日本語**で記述してください。
-
-**フォーマット**:
-
-```
-<タイトル>（1行、簡潔に変更内容を要約）
-
-<本文>（任意、変更の詳細や理由を説明）
-```
-
-**良い例**:
-
-```
-パスワードリセット機能を実装
-
-- internal/handler/password_reset/にハンドラーを追加
-- internal/usecase/reset_password.goにビジネスロジックを実装
-- Resend APIを使用したメール送信機能を追加
-- Cloudflare TurnstileによるBot対策を実装
-```
-
-```
-ユーザー認証のバグを修正
-
-セッションタイムアウト後にリダイレクトが正しく動作しない
-問題を修正。
-```
-
-**悪い例**:
-
-- ❌ `Update handler` （英語、内容が不明確）
-- ❌ `fix` （何を修正したか不明）
-- ❌ `WIP` （作業中のコミットは避ける）
-
-**原則**:
-
-- タイトルは変更内容を簡潔に表現する
-- 必要に応じて本文で詳細を説明する
-- 関連する Issue やPR がある場合は参照を含める
-
-### コメントのガイドライン
-
-このガイドラインは Go 版と Rails 版の両方に適用されます。
-
-**良いコメント**：
-
-- コードの**意図や理由**を説明する（「なぜこうしたか」）
-- 将来の開発者が理解できる、文脈に依存しない内容
-- 複雑なロジックや、一見不自然に見える実装の背景を説明する
-
-**避けるべきコメント**：
-
-- ❌ **実装の変遷を説明するコメント**（「以前は〜だった」「〜は削除した」など）
-- ❌ **過去との比較**（「別途インストール不要になった」「〜を統合したため不要」など）
-- ❌ **自明なことの説明**（コードを読めばわかること）
-- ❌ **やり取りの文脈に依存するコメント**（PR レビューのコメントは PR に書く）
-
-**原則**：
-
-- **コメントはコードの「なぜ」を説明し、「何を」はコードに語らせる**
-- git の履歴に残る情報（過去の実装、変更の経緯）はコメントに書かない
-- レビューコメントや議論の文脈に依存する内容は書かない
-
-詳細な例については、各サブプロジェクトの CLAUDE.md を参照してください：
-
-- Go 版: `go/CLAUDE.md` の「コメントのガイドライン」セクション
-- Rails 版: `rails/CLAUDE.md` の「コメントのガイドライン」セクション
-
-### Pull Request のガイドライン
-
-Pull Request を作成する際は、以下のルールを遵守してください：
-
-#### サイズの制限
-
-- **変更ファイル数**: 20 ファイル以下
-- **実装コードの行数**: 300 行以下を目安（追加・削除行の合計）
-- **テストコードの行数**: 制限なし（必要な分だけ追加して OK）
-
-#### 実装とテストのセット化
-
-- **必須**: 実装コードとそのテストコードは同じ PR に含める
-- 新機能や修正を行う場合は、必ず対応するテストを追加・更新する
-- テストがない実装は原則としてマージしない
-- **テストは品質保証のために必要な分だけ書く**: 行数を気にせず、正常系・異常系・境界値などを網羅する
-
-#### PR を小さく保つ理由
-
-- レビュアーの負担を軽減し、レビューの質を向上させる
-- バグの混入リスクを最小化する
-- 問題が発生した場合のロールバックを容易にする
-- CI/CD パイプラインの実行時間を短縮する
-
-#### 大きな変更が必要な場合
-
-機能が大きくなる場合は、以下のように分割してください：
-
-1. **段階的な実装**: 機能を複数のステップに分割し、それぞれ独立した PR として作成
-2. **リファクタリングの分離**: リファクタリングと新機能追加を別々の PR に分ける
-
-#### 例外
-
-以下の場合は制限を超えることが許容されます：
-
-- 自動生成されたファイル（マイグレーション、スキーマなど）
-- 広範囲に影響する命名変更やリファクタリング
-- ただし、これらの場合でも可能な限り分割を検討してください
-
-#### 重要な原則
-
-**品質優先**: 上記の行数制限はあくまで**目安**です。以下の点を優先してください：
-
-- **テストの完全性**: 実装にはテストを必ず含める。行数制限のためにテストを省略しない
-- **コードの完全性**: 機能を中途半端な状態で分割しない。動作する最小単位で PR を作成する
-- **可読性**: 無理に行数を減らすためにコードの可読性を犠牲にしない
-
-行数制限を超えても、以下を満たしていれば問題ありません：
-
-- 実装コードとテストコードの両方が含まれている
-- コードレビューが可能な範囲（目安: 1 ファイルあたり 500 行以下）
-- PR の目的が明確で、1 つの機能や修正に集中している
-
-**判断基準**: 「行数を守ること」よりも「きちんと実装すること」を優先してください。
-
-## CI/CD
-
-このモノレポの CI/CD 設定は`.github/workflows/`ディレクトリに配置されています：
-
-- `go-ci.yml`: Go 版の CI（lint、test、build）
-- `rails-ci.yml`: Rails 版の CI（zeitwerk、sorbet、standard、erb_lint、eslint、rspec）
-
-各 CI は対応するファイルが変更されたときのみ実行されます（パスフィルタリング）。
-
-## トラブルシューティング
-
-### データベース接続エラー
-
-- PostgreSQL コンテナが起動しているか確認: `docker compose ps`
-- ポートが正しいか確認: Rails 版開発用は 15432、Go 版テスト用は 5432
-
-### 画像が表示されない
-
-- imgproxy コンテナが起動しているか確認
-- 環境変数（R2 アクセスキー、imgproxy KEY/SALT）が正しく設定されているか確認
-- Cloudflare R2 バケットへのアクセス権限が正しく設定されているか確認
-
-### その他の問題
-
-各サブプロジェクト固有の問題については、それぞれの CLAUDE.md の「トラブルシューティング」セクションを参照してください。
+- For environment variables defined by Annict, always prefix them with `ANNICT_` (except those required by external libraries)

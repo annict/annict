@@ -1,0 +1,54 @@
+package components
+
+import (
+	"fmt"
+	"github.com/annict/annict/go/internal/templates"
+	"github.com/annict/annict/go/internal/viewmodel"
+)
+
+templ Pagination(pagination viewmodel.Pagination) {
+	if pagination.ShouldShow() {
+		<nav class="flex items-center justify-center gap-1" aria-label={ templates.T(ctx, "pagination_label") }>
+			if pagination.HasPrev() {
+				<a
+					href={ templ.SafeURL(pagination.PageURL(pagination.PrevPage())) }
+					class="btn btn-outline btn-sm"
+				>
+					{ templates.T(ctx, "pagination_prev") }
+				</a>
+			} else {
+				<span class="btn btn-outline btn-sm opacity-50 pointer-events-none">
+					{ templates.T(ctx, "pagination_prev") }
+				</span>
+			}
+
+			for _, page := range pagination.Pages() {
+				if page == 0 {
+					<span class="px-2 text-muted-foreground">…</span>
+				} else if page == pagination.CurrentPage {
+					<span class="btn btn-sm btn-primary">{ fmt.Sprintf("%d", page) }</span>
+				} else {
+					<a
+						href={ templ.SafeURL(pagination.PageURL(page)) }
+						class="btn btn-outline btn-sm"
+					>
+						{ fmt.Sprintf("%d", page) }
+					</a>
+				}
+			}
+
+			if pagination.HasNext() {
+				<a
+					href={ templ.SafeURL(pagination.PageURL(pagination.NextPage())) }
+					class="btn btn-outline btn-sm"
+				>
+					{ templates.T(ctx, "pagination_next") }
+				</a>
+			} else {
+				<span class="btn btn-outline btn-sm opacity-50 pointer-events-none">
+					{ templates.T(ctx, "pagination_next") }
+				</span>
+			}
+		</nav>
+	}
+}

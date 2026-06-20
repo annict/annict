@@ -1,23 +1,61 @@
 package middleware
 
 import (
+	"context"
 	"log/slog"
 	"net"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"regexp"
 	"strings"
 	"time"
 
+	"github.com/annict/annict/go/internal/auth"
 	"github.com/annict/annict/go/internal/clientip"
 	"github.com/annict/annict/go/internal/config"
+	"github.com/annict/annict/go/internal/model"
+	annictSentry "github.com/annict/annict/go/internal/sentry"
+	"github.com/annict/annict/go/internal/session"
 )
+
+// DeviceTokenCookieName is the cookie name used to identify a device (browser).
+//
+// [Ja] デバイス (ブラウザ) を識別する Cookie のキー名。
+const DeviceTokenCookieName = "device_token"
+
+// featureFlagChecker abstracts the feature flag evaluator that the reverse proxy depends on.
+//
+// [Ja] リバースプロキシが依存するフィーチャーフラグ判定の抽象化インターフェース。
+type featureFlagChecker interface {
+	IsEnabledByDeviceOrUser(ctx context.Context, deviceToken string, userID model.UserID, name model.FeatureFlagName) (bool, error)
+}
+
+// featureFlaggedPattern pairs a URL pattern with the feature flag that gates routing for it.
+//
+// [Ja] URL パターンと、その経路をゲートするフィーチャーフラグの対応を表す。
+type featureFlaggedPattern struct {
+	pattern *regexp.Regexp
+	flag    model.FeatureFlagName
+}
+
+var featureFlaggedPatterns = []featureFlaggedPattern{
+	{pattern: regexp.MustCompile(`^/db/`), flag: model.FeatureFlagGoAnnictDB},
+}
 
 // ReverseProxyMiddleware はRails版へのリバースプロキシミドルウェア
 type ReverseProxyMiddleware struct {
 	railsURL *url.URL
 	proxy    *httputil.ReverseProxy
 	cfg      *config.Config
+	// optional; falls back to Rails when nil.
+	//
+	// [Ja] nil 許容。フラグ機能不要時は nil
+	featureFlagRepo featureFlagChecker
+	// optional; nil during tests or when session is not needed.
+	//
+	// [Ja] nil 許容。テスト時やセッション不要時は nil
+	sessionMgr *session.Manager
 }
 
 // Go版で処理するパス（ホワイトリスト）
@@ -40,14 +78,14 @@ var goHandledPaths = []string{
 }
 
 // NewReverseProxyMiddleware は新しいReverseProxyMiddlewareを作成
-func NewReverseProxyMiddleware(railsURL string, cfg *config.Config) (*ReverseProxyMiddleware, error) {
+func NewReverseProxyMiddleware(railsURL string, cfg *config.Config, featureFlagRepo featureFlagChecker, sessionMgr *session.Manager) (*ReverseProxyMiddleware, error) {
 	parsedURL, err := url.Parse(railsURL)
 	if err != nil {
 		return nil, err
 	}
 
 	// httputil.ReverseProxyを作成
-	proxy := httputil.NewSingleHostReverseProxy(parsedURL)
+	proxy := &httputil.ReverseProxy{}
 
 	// カスタムのHTTP Transportを設定（タイムアウトと接続プーリング）
 	proxy.Transport = &http.Transport{
@@ -66,50 +104,69 @@ func NewReverseProxyMiddleware(railsURL string, cfg *config.Config) (*ReversePro
 		ExpectContinueTimeout: 1 * time.Second,
 	}
 
-	// プロキシのディレクターをカスタマイズ（ヘッダー設定）
-	originalDirector := proxy.Director
-	proxy.Director = func(req *http.Request) {
-		// 既存のX-Forwarded-ForとX-Real-IPを保存
-		originalXForwardedFor := req.Header.Get("X-Forwarded-For")
-		originalXRealIP := req.Header.Get("X-Real-IP")
+	// Customize header rewriting via the proxy's Rewrite function. ReverseProxy strips Forwarded /
+	// X-Forwarded-For / X-Forwarded-Host / X-Forwarded-Proto from Out.Header before calling Rewrite,
+	// so read the original values from pr.In.Header when they need to be preserved.
+	//
+	// [Ja] プロキシの Rewrite 関数でヘッダー設定を行う。httputil.ReverseProxy は Rewrite 呼び出し前に
+	// Forwarded / X-Forwarded-For / X-Forwarded-Host / X-Forwarded-Proto を Out.Header から削除するため、
+	// 元の値を参照したい場合は pr.In.Header から取得する必要がある。
+	proxy.Rewrite = func(pr *httputil.ProxyRequest) {
+		// Rewrite the URL to the Rails host. SetURL sets Out.Host = "", so follow it with
+		// Out.Host = In.Host to keep forwarding the client's Host header to Rails unchanged.
+		//
+		// [Ja] URL を Rails 版のホストに書き換える。SetURL は Out.Host = "" をセットしてしまうため、
+		// 続けて Out.Host = In.Host を設定し、クライアントが送ってきた Host ヘッダをそのまま Rails 版に
+		// 転送する挙動を維持する。
+		pr.SetURL(parsedURL)
+		pr.Out.Host = pr.In.Host
 
-		// クライアントIPアドレスを取得（優先順位: CF-Connecting-IP > X-Forwarded-Forの最初のIP > RemoteAddr）
-		clientIP := clientip.GetClientIP(req)
+		// Get the client IP (priority: CF-Connecting-IP > first IP of X-Forwarded-For > RemoteAddr).
+		//
+		// [Ja] クライアント IP アドレスを取得 (優先順位: CF-Connecting-IP > X-Forwarded-For の最初の IP > RemoteAddr)
+		clientIP := clientip.GetClientIP(pr.In)
 
-		// originalDirectorを呼び出す
-		originalDirector(req)
-
-		// X-Forwarded-Forヘッダーの設定
-		// 注: httputil.ReverseProxyのServeHTTPメソッドは、Directorを呼び出した後に
-		// X-Forwarded-Forヘッダーが存在する場合、RemoteAddrを追加してしまう。
-		// これを防ぐために、ヘッダーマップから完全に削除してから再設定する。
-		delete(req.Header, "X-Forwarded-For")
-		if originalXForwardedFor != "" {
-			// 既存の値を維持（Cloudflareなどが設定した値を保持）
-			req.Header.Set("X-Forwarded-For", originalXForwardedFor)
+		// Set X-Forwarded-For.
+		//
+		// [Ja] X-Forwarded-For の設定
+		if originalXForwardedFor := pr.In.Header.Get("X-Forwarded-For"); originalXForwardedFor != "" {
+			// Keep the existing value (preserve what Cloudflare etc. set).
+			//
+			// [Ja] 既存の値を維持 (Cloudflare などが設定した値を保持)
+			pr.Out.Header.Set("X-Forwarded-For", originalXForwardedFor)
 		} else {
-			// 既存の値がない場合、clientIPを設定
-			req.Header.Set("X-Forwarded-For", clientIP)
+			// Set clientIP when there is no existing value.
+			//
+			// [Ja] 既存の値がない場合、clientIPを設定
+			pr.Out.Header.Set("X-Forwarded-For", clientIP)
 		}
 
-		// X-Real-IPヘッダーの設定（既存の値がない場合のみ）
-		if originalXRealIP != "" {
-			req.Header.Set("X-Real-IP", originalXRealIP)
+		// Set X-Real-IP (set clientIP only when there is no existing value).
+		//
+		// [Ja] X-Real-IP の設定 (既存の値がない場合のみ clientIP を設定)
+		if originalXRealIP := pr.In.Header.Get("X-Real-IP"); originalXRealIP != "" {
+			pr.Out.Header.Set("X-Real-IP", originalXRealIP)
 		} else {
-			req.Header.Set("X-Real-IP", clientIP)
+			pr.Out.Header.Set("X-Real-IP", clientIP)
 		}
 
-		// X-Forwarded-Protoの設定（本番環境: https、開発環境: https）
-		req.Header.Set("X-Forwarded-Proto", "https")
+		// Set X-Forwarded-Proto.
+		//
+		// [Ja] X-Forwarded-Proto の設定
+		pr.Out.Header.Set("X-Forwarded-Proto", "https")
 
-		// X-Forwarded-Hostの設定
-		req.Header.Set("X-Forwarded-Host", cfg.Domain)
+		// Set X-Forwarded-Host.
+		//
+		// [Ja] X-Forwarded-Host の設定
+		pr.Out.Header.Set("X-Forwarded-Host", cfg.Domain)
 
-		// ログ出力（開発者向け）
+		// Log output (for developers).
+		//
+		// [Ja] ログ出力 (開発者向け)
 		slog.Info("リバースプロキシでRails版にリクエストを転送",
-			"path", req.URL.Path,
-			"method", req.Method,
-			"target", parsedURL.String()+req.URL.Path,
+			"path", pr.In.URL.Path,
+			"method", pr.In.Method,
+			"target", parsedURL.String()+pr.In.URL.Path,
 			"client_ip", clientIP,
 		)
 	}
@@ -130,8 +187,15 @@ func NewReverseProxyMiddleware(railsURL string, cfg *config.Config) (*ReversePro
 	proxy.ErrorHandler = func(w http.ResponseWriter, r *http.Request, err error) {
 		ctx := r.Context()
 
-		// 詳細なエラーログを出力（開発者向け）
+		// Detailed error log for developers. The source attribute lets the
+		// Sentry beforeSend hook drop this event: Rails-side proxy failures
+		// belong to the Rails Sentry project, not the Go one.
+		//
+		// [Ja] 開発者向けの詳細エラーログ。source 属性を載せておくと
+		// Sentry の beforeSend で本イベントを破棄できる (Rails 側のプロキシ
+		// 失敗は Rails の Sentry プロジェクトで扱うべきため)。
 		slog.ErrorContext(ctx, "Rails版へのプロキシでエラーが発生",
+			annictSentry.SourceAttrKey, annictSentry.ReverseProxySource,
 			"error", err,
 			"path", r.URL.Path,
 			"method", r.Method,
@@ -152,9 +216,11 @@ func NewReverseProxyMiddleware(railsURL string, cfg *config.Config) (*ReversePro
 	}
 
 	return &ReverseProxyMiddleware{
-		railsURL: parsedURL,
-		proxy:    proxy,
-		cfg:      cfg,
+		railsURL:        parsedURL,
+		proxy:           proxy,
+		cfg:             cfg,
+		featureFlagRepo: featureFlagRepo,
+		sessionMgr:      sessionMgr,
 	}, nil
 }
 
@@ -167,6 +233,8 @@ func (m *ReverseProxyMiddleware) Middleware(next http.Handler) http.Handler {
 			return
 		}
 
+		deviceToken := m.ensureDeviceToken(w, r)
+
 		// Go版で処理するパスかどうかをチェック
 		if m.isGoHandledPath(r.URL.Path) {
 			// Go版で処理する
@@ -174,9 +242,94 @@ func (m *ReverseProxyMiddleware) Middleware(next http.Handler) http.Handler {
 			return
 		}
 
+		if m.isFeatureFlagEnabled(r, deviceToken) {
+			next.ServeHTTP(w, r)
+			return
+		}
+
 		// Rails版にプロキシ
 		m.proxy.ServeHTTP(w, r)
 	})
+}
+
+// ensureDeviceToken returns the device_token cookie value from the request, generating and setting a new one on the
+// response when missing. An empty string is returned only when token generation itself fails.
+//
+// [Ja] リクエストから device_token Cookie を取得し、未設定の場合は新規生成してレスポンスにセットしたうえで返す。
+// トークン生成自体に失敗した場合のみ空文字列を返す。
+func (m *ReverseProxyMiddleware) ensureDeviceToken(w http.ResponseWriter, r *http.Request) string {
+	if c, err := r.Cookie(DeviceTokenCookieName); err == nil && c.Value != "" {
+		return c.Value
+	}
+
+	token, err := auth.GenerateSecureToken()
+	if err != nil {
+		slog.ErrorContext(r.Context(), "デバイストークンの生成に失敗", "error", err)
+		return ""
+	}
+
+	secure := m.cfg.Env != "development"
+	http.SetCookie(w, &http.Cookie{
+		Name:  DeviceTokenCookieName,
+		Value: token,
+		Path:  "/",
+		// 10 years.
+		//
+		// [Ja] 10 年
+		MaxAge:   10 * 365 * 24 * 60 * 60,
+		HttpOnly: true,
+		Secure:   secure,
+		SameSite: http.SameSiteLaxMode,
+	})
+
+	return token
+}
+
+// isFeatureFlagEnabled reports whether the request path is enabled by a feature flag. It receives the device token
+// returned by ensureDeviceToken. When featureFlagRepo is nil or evaluation fails, it returns false so the caller falls
+// back to the Rails proxy.
+//
+// [Ja] リクエストパスがフィーチャーフラグで有効化されているかを判定する。device token は ensureDeviceToken で
+// 確保済みのトークンを受け取る。featureFlagRepo が nil の場合や判定に失敗した場合は false を返し、呼び出し側に
+// Rails 版へのフォールバックを促す。
+func (m *ReverseProxyMiddleware) isFeatureFlagEnabled(r *http.Request, deviceToken string) bool {
+	if m.featureFlagRepo == nil {
+		return false
+	}
+
+	var flagName model.FeatureFlagName
+	matched := false
+	for _, fp := range featureFlaggedPatterns {
+		if fp.pattern.MatchString(r.URL.Path) {
+			flagName = fp.flag
+			matched = true
+			break
+		}
+	}
+	if !matched {
+		return false
+	}
+
+	ctx := r.Context()
+
+	var userID model.UserID
+	if m.sessionMgr != nil {
+		sessionID, err := m.sessionMgr.GetSessionID(r)
+		if err == nil && sessionID != "" {
+			sessionData, err := m.sessionMgr.GetSession(ctx, sessionID)
+			if err == nil && sessionData != nil && sessionData.UserID != nil {
+				userID = *sessionData.UserID
+			}
+		}
+	}
+
+	enabled, err := m.featureFlagRepo.IsEnabledByDeviceOrUser(ctx, deviceToken, userID, flagName)
+	if err != nil {
+		slog.ErrorContext(ctx, "フィーチャーフラグの判定に失敗", "error", err, "flag", flagName, "path", r.URL.Path)
+		return false
+	}
+
+	return enabled
 }
 
 // isGoHandledPath はGo版で処理するパスかどうかを判定
@@ -189,6 +342,17 @@ func (m *ReverseProxyMiddleware) isGoHandledPath(path string) bool {
 
 	// /@{username}/ics パターンの判定
 	if strings.HasPrefix(path, "/@") && strings.HasSuffix(path, "/ics") {
+		return true
+	}
+
+	// /fragment/@{username}/tracking_heatmap pattern. Only the tracking
+	// heatmap fragment endpoint moves to Go; other /fragment/... paths are
+	// still served by Rails until their Go versions land.
+	//
+	// [Ja] /fragment/@{username}/tracking_heatmap パターンの判定。
+	// /fragment/ 配下のうち、tracking_heatmap だけが Go 版に移行している段階で、
+	// 他の /fragment/... は Go 版実装が揃うまで Rails 版が処理する。
+	if strings.HasPrefix(path, "/fragment/@") && strings.HasSuffix(path, "/tracking_heatmap") {
 		return true
 	}
 

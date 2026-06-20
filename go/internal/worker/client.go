@@ -10,10 +10,12 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/riverqueue/river"
 	"github.com/riverqueue/river/riverdriver/riverpgxv5"
+	"github.com/riverqueue/river/rivertype"
 
 	"github.com/annict/annict/go/internal/config"
-	"github.com/annict/annict/go/internal/mail"
-	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/email"
+	annictSentry "github.com/annict/annict/go/internal/sentry"
+	"github.com/annict/annict/go/internal/usecase"
 )
 
 // Client は River クライアントのラッパー
@@ -22,8 +24,14 @@ type Client struct {
 	pool        *pgxpool.Pool
 }
 
+// NewClientParams は NewClient に渡すパラメータです
+type NewClientParams struct {
+	CleanupExpiredTokens      ExpiredTokenCleaner
+	CleanupExpiredSignInCodes ExpiredSignInCodeCleaner
+}
+
 // NewClient は新しい River クライアントを作成します
-func NewClient(ctx context.Context, databaseURL string, queries *query.Queries, cfg *config.Config) (*Client, error) {
+func NewClient(ctx context.Context, databaseURL string, params NewClientParams, cfg *config.Config) (*Client, error) {
 	// pgxpool の作成
 	poolConfig, err := pgxpool.ParseConfig(databaseURL)
 	if err != nil {
@@ -41,10 +49,10 @@ func NewClient(ctx context.Context, databaseURL string, queries *query.Queries, 
 		return nil, err
 	}
 
-	// メールクライアントの作成（メール送信用）
-	var mailClient mail.MailSender
+	// メール送信クライアントの作成
+	var emailSender email.Sender
 	if cfg.ResendAPIKey != "" {
-		mailClient = mail.NewResendClient(cfg.ResendAPIKey, cfg.ResendFromEmail, "Annict")
+		emailSender = email.NewResendSender(cfg.ResendAPIKey, cfg.ResendFromEmail, cfg.ResendFromName)
 		slog.InfoContext(ctx, "Resend クライアントを初期化しました")
 	} else {
 		slog.WarnContext(ctx, "Resend API キーが設定されていません。メール送信機能は利用できません")
@@ -53,35 +61,49 @@ func NewClient(ctx context.Context, databaseURL string, queries *query.Queries, 
 	// River ワーカーの登録
 	workers := river.NewWorkers()
 
-	// パスワードリセットメール送信ワーカーを登録
-	if mailClient != nil {
-		river.AddWorker(workers, NewSendPasswordResetEmailWorker(queries, mailClient, cfg))
+	// メール送信ワーカーを登録
+	if emailSender != nil {
+		signInCodeSender := email.NewSignInCodeSender(emailSender)
+		sendSignInCodeEmailUC := usecase.NewSendSignInCodeEmailUsecase(signInCodeSender)
+		river.AddWorker(workers, NewSendSignInCodeEmailWorker(sendSignInCodeEmailUC))
+		slog.InfoContext(ctx, "SendSignInCodeEmailWorker を登録しました")
+
+		signUpCodeSender := email.NewSignUpCodeSender(emailSender)
+		sendSignUpCodeEmailUC := usecase.NewSendSignUpCodeEmailUsecase(signUpCodeSender)
+		river.AddWorker(workers, NewSendSignUpCodeEmailWorker(sendSignUpCodeEmailUC))
+		slog.InfoContext(ctx, "SendSignUpCodeEmailWorker を登録しました")
+
+		passwordResetSender := email.NewPasswordResetSender(emailSender)
+		sendPasswordResetEmailUC := usecase.NewSendPasswordResetEmailUsecase(passwordResetSender)
+		river.AddWorker(workers, NewSendPasswordResetEmailWorker(sendPasswordResetEmailUC))
 		slog.InfoContext(ctx, "SendPasswordResetEmailWorker を登録しました")
-
-		// ログインコード送信ワーカーを登録
-		river.AddWorker(workers, NewSendSignInCodeWorker(queries, mailClient, cfg))
-		slog.InfoContext(ctx, "SendSignInCodeWorker を登録しました")
-
-		// 新規登録確認コード送信ワーカーを登録
-		river.AddWorker(workers, NewSendSignUpCodeWorker(mailClient, cfg))
-		slog.InfoContext(ctx, "SendSignUpCodeWorker を登録しました")
 	}
 
 	// トークンクリーンアップワーカーを登録
-	river.AddWorker(workers, NewCleanupExpiredTokensWorker(queries))
+	river.AddWorker(workers, NewCleanupExpiredTokensWorker(params.CleanupExpiredTokens))
 	slog.InfoContext(ctx, "CleanupExpiredTokensWorker を登録しました")
 
 	// ログインコードクリーンアップワーカーを登録
-	river.AddWorker(workers, NewCleanupExpiredSignInCodesWorker(queries))
+	river.AddWorker(workers, NewCleanupExpiredSignInCodesWorker(params.CleanupExpiredSignInCodes))
 	slog.InfoContext(ctx, "CleanupExpiredSignInCodesWorker を登録しました")
 
 	// River クライアントの作成
+	// Wire the Sentry middleware via Config.Middleware. The deprecated
+	// WorkerMiddleware field is avoided so future river upgrades that remove
+	// it will not require revisiting this site.
+	//
+	// [Ja] Sentry ミドルウェアは Config.Middleware に登録する。
+	// 将来 river のアップデートで削除される可能性のある WorkerMiddleware
+	// フィールドは使わないことで、削除時の再対応を不要にする。
 	riverClient, err := river.NewClient(riverpgxv5.New(pool), &river.Config{
 		Queues: map[string]river.QueueConfig{
 			river.QueueDefault: {MaxWorkers: 10},
 		},
 		Workers: workers,
-		Logger:  slog.Default(),
+		Middleware: []rivertype.Middleware{
+			annictSentry.RiverWorkerMiddleware(),
+		},
+		Logger: slog.Default(),
 	})
 	if err != nil {
 		pool.Close()

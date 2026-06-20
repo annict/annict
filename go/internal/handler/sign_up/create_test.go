@@ -14,16 +14,15 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 	"github.com/annict/annict/go/internal/turnstile"
 	"github.com/annict/annict/go/internal/usecase"
+	"github.com/annict/annict/go/internal/validator"
 )
 
 // TestCreate_Success は正常系のテスト
 func TestCreate_Success(t *testing.T) {
-	// テスト用DBとトランザクションをセットアップ
-	db, tx := testutil.SetupTestDB(t)
-	defer func() { _ = tx.Rollback() }()
+	t.Parallel()
 
-	// テスト用Redisをセットアップ
-	rdb := testutil.SetupTestRedis(t)
+	// テスト用DBとトランザクションをセットアップ
+	db, tx := testutil.SetupTx(t)
 
 	// 設定を読み込む
 	cfg, err := config.Load()
@@ -33,7 +32,8 @@ func TestCreate_Success(t *testing.T) {
 
 	// usecaseの初期化
 	queries := testutil.NewQueriesWithTx(db, tx)
-	sendSignUpCodeUC := usecase.NewSendSignUpCodeUsecase(db, queries, nil) // Riverクライアントは不要
+	v := validator.NewSignUpCreateValidator()
+	sendSignUpCodeUC := usecase.NewSendSignUpCodeUsecase(db, repository.NewSignUpCodeRepository(queries), repository.NewUserRepository(queries), nil, v)
 
 	// セッションマネージャーの初期化
 	sessionRepo := repository.NewSessionRepository(queries)
@@ -43,10 +43,7 @@ func TestCreate_Success(t *testing.T) {
 	turnstileClient := turnstile.NewClient("test-site-key", "test-secret-key")
 
 	// ハンドラーの初期化
-	userRepo := repository.NewUserRepository(queries)
-
-	// ハンドラーの初期化
-	handler := sign_up.NewHandler(cfg, sessionMgr, userRepo, nil, sendSignUpCodeUC, turnstileClient)
+	handler := sign_up.NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), nil, sendSignUpCodeUC, turnstileClient)
 
 	// リクエストパラメータを作成
 	formData := url.Values{}
@@ -67,20 +64,18 @@ func TestCreate_Success(t *testing.T) {
 	// 注: Turnstile検証は実際にAPIを呼び出すため、テスト環境ではスキップされる可能性があります
 	// そのため、このテストはTurnstile検証の実装に依存します
 
-	// ステータスコードが302（リダイレクト）または400（バリデーションエラー）であることを確認
-	if rr.Code != http.StatusSeeOther && rr.Code != http.StatusBadRequest {
-		t.Errorf("予期しないステータスコード: got %v want %v or %v", rr.Code, http.StatusSeeOther, http.StatusBadRequest)
+	// ステータスコードが303（成功時のリダイレクト）または422（Turnstile検証失敗時のフォーム再描画）であることを確認
+	if rr.Code != http.StatusSeeOther && rr.Code != http.StatusUnprocessableEntity {
+		t.Errorf("予期しないステータスコード: got %v want %v or %v", rr.Code, http.StatusSeeOther, http.StatusUnprocessableEntity)
 	}
-
-	// Redisをクリーンアップ
-	rdb.FlushDB(req.Context())
 }
 
 // TestCreate_EmailRequired はメールアドレス必須のバリデーションテスト
 func TestCreate_EmailRequired(t *testing.T) {
+	t.Parallel()
+
 	// テスト用DBとトランザクションをセットアップ
-	db, tx := testutil.SetupTestDB(t)
-	defer func() { _ = tx.Rollback() }()
+	db, tx := testutil.SetupTx(t)
 
 	// 設定を読み込む
 	cfg, err := config.Load()
@@ -90,7 +85,8 @@ func TestCreate_EmailRequired(t *testing.T) {
 
 	// usecaseの初期化
 	queries := testutil.NewQueriesWithTx(db, tx)
-	sendSignUpCodeUC := usecase.NewSendSignUpCodeUsecase(db, queries, nil)
+	v := validator.NewSignUpCreateValidator()
+	sendSignUpCodeUC := usecase.NewSendSignUpCodeUsecase(db, repository.NewSignUpCodeRepository(queries), repository.NewUserRepository(queries), nil, v)
 
 	// セッションマネージャーの初期化
 	sessionRepo := repository.NewSessionRepository(queries)
@@ -100,10 +96,7 @@ func TestCreate_EmailRequired(t *testing.T) {
 	turnstileClient := turnstile.NewClient("test-site-key", "test-secret-key")
 
 	// ハンドラーの初期化
-	userRepo := repository.NewUserRepository(queries)
-
-	// ハンドラーの初期化
-	handler := sign_up.NewHandler(cfg, sessionMgr, userRepo, nil, sendSignUpCodeUC, turnstileClient)
+	handler := sign_up.NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), nil, sendSignUpCodeUC, turnstileClient)
 
 	// リクエストパラメータを作成（emailを空にする）
 	formData := url.Values{}
@@ -120,8 +113,8 @@ func TestCreate_EmailRequired(t *testing.T) {
 	// ハンドラーを実行
 	handler.Create(rr, req)
 
-	// ステータスコードが303（リダイレクト）であることを確認
-	if rr.Code != http.StatusSeeOther {
-		t.Errorf("予期しないステータスコード: got %v want %v", rr.Code, http.StatusSeeOther)
+	// ステータスコードが422（バリデーションエラーでフォーム再描画）であることを確認
+	if rr.Code != http.StatusUnprocessableEntity {
+		t.Errorf("予期しないステータスコード: got %v want %v", rr.Code, http.StatusUnprocessableEntity)
 	}
 }

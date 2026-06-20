@@ -13,6 +13,7 @@ import (
 	"github.com/schollz/progressbar/v3"
 
 	"github.com/annict/annict/go/internal/auth"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
 )
 
@@ -26,7 +27,7 @@ type CreateUserParams struct {
 
 // CreateUserResult ユーザー作成の結果
 type CreateUserResult struct {
-	UserID    int64
+	UserID    model.UserID
 	ProfileID int64
 }
 
@@ -204,7 +205,7 @@ func (uc *CreateUserUsecase) createMultipleUsers(ctx context.Context, tx *sql.Tx
 	results := make([]CreateUserResult, len(userIDs))
 	for i := range userIDs {
 		results[i] = CreateUserResult{
-			UserID:    userIDs[i],
+			UserID:    model.UserID(userIDs[i]),
 			ProfileID: profileIDs[i],
 		}
 	}
@@ -496,13 +497,13 @@ func (uc *CreateUserUsecase) createSingleUser(ctx context.Context, tx *sql.Tx, p
 	}
 
 	// プロフィールを作成
-	profileID, err := uc.createProfile(ctx, tx, userID)
+	profileID, err := uc.createProfile(ctx, tx, model.UserID(userID))
 	if err != nil {
 		return nil, fmt.Errorf("プロフィールレコード作成エラー: %w", err)
 	}
 
 	return &CreateUserResult{
-		UserID:    userID,
+		UserID:    model.UserID(userID),
 		ProfileID: profileID,
 	}, nil
 }
@@ -551,7 +552,7 @@ func (uc *CreateUserUsecase) createUser(ctx context.Context, tx *sql.Tx, usernam
 // createProfile profilesテーブルにレコードを作成します
 //
 //lint:ignore U1000 後方互換性のために保持
-func (uc *CreateUserUsecase) createProfile(ctx context.Context, tx *sql.Tx, userID int64) (int64, error) {
+func (uc *CreateUserUsecase) createProfile(ctx context.Context, tx *sql.Tx, userID model.UserID) (int64, error) {
 	query := `
 		INSERT INTO profiles (
 			user_id, name, description,
@@ -568,7 +569,7 @@ func (uc *CreateUserUsecase) createProfile(ctx context.Context, tx *sql.Tx, user
 	err := tx.QueryRowContext(
 		ctx,
 		query,
-		userID,
+		int64(userID),
 		"", // name (デフォルト空文字)
 		"", // description (デフォルト空文字)
 		time.Now(),

@@ -1,4 +1,4 @@
-package worker
+package worker_test
 
 import (
 	"context"
@@ -9,11 +9,20 @@ import (
 
 	"github.com/annict/annict/go/internal/password_reset"
 	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/testutil"
+	"github.com/annict/annict/go/internal/usecase"
+	"github.com/annict/annict/go/internal/worker"
 )
 
+func newCleanupExpiredTokensTestWorker(queries *query.Queries) *worker.CleanupExpiredTokensWorker {
+	repo := repository.NewPasswordResetTokenRepository(queries)
+	uc := usecase.NewCleanupExpiredTokensUsecase(repo)
+	return worker.NewCleanupExpiredTokensWorker(uc)
+}
+
 func TestCleanupExpiredTokensWorker(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 
 	// テストユーザーを作成
@@ -23,6 +32,7 @@ func TestCleanupExpiredTokensWorker(t *testing.T) {
 		Build()
 
 	ctx := context.Background()
+	tokenRepo := repository.NewPasswordResetTokenRepository(queries)
 
 	// テストトークンを生成
 	token1, _ := password_reset.GenerateToken()
@@ -35,56 +45,40 @@ func TestCleanupExpiredTokensWorker(t *testing.T) {
 	token3Digest := password_reset.HashToken(token3)
 
 	// トークン1: 48時間前に期限切れ（削除対象）
-	_, err := queries.CreatePasswordResetToken(ctx, query.CreatePasswordResetTokenParams{
-		UserID:      userID,
-		TokenDigest: token1Digest,
-		ExpiresAt:   time.Now().Add(-48 * time.Hour),
-	})
-	if err != nil {
+	if _, err := tokenRepo.Create(ctx, userID, token1Digest, time.Now().Add(-48*time.Hour)); err != nil {
 		t.Fatalf("トークン1の作成に失敗: %v", err)
 	}
 
 	// トークン2: 30時間前に使用済み（削除対象）
-	token2Row, err := queries.CreatePasswordResetToken(ctx, query.CreatePasswordResetTokenParams{
-		UserID:      userID,
-		TokenDigest: token2Digest,
-		ExpiresAt:   time.Now().Add(1 * time.Hour), // 有効期限は未来
-	})
+	token2Row, err := tokenRepo.Create(ctx, userID, token2Digest, time.Now().Add(1*time.Hour)) // 有効期限は未来
 	if err != nil {
 		t.Fatalf("トークン2の作成に失敗: %v", err)
 	}
 	// トークンを使用済みにする（30時間前）
-	_, err = tx.ExecContext(ctx, "UPDATE password_reset_tokens SET used_at = $1 WHERE id = $2",
-		time.Now().Add(-30*time.Hour), token2Row.ID)
-	if err != nil {
+	if _, err := tx.ExecContext(ctx, "UPDATE password_reset_tokens SET used_at = $1 WHERE id = $2",
+		time.Now().Add(-30*time.Hour), int64(token2Row.ID)); err != nil {
 		t.Fatalf("トークン2の使用済み設定に失敗: %v", err)
 	}
 
 	// トークン3: 有効なトークン（削除対象外）
-	_, err = queries.CreatePasswordResetToken(ctx, query.CreatePasswordResetTokenParams{
-		UserID:      userID,
-		TokenDigest: token3Digest,
-		ExpiresAt:   time.Now().Add(1 * time.Hour),
-	})
-	if err != nil {
+	if _, err := tokenRepo.Create(ctx, userID, token3Digest, time.Now().Add(1*time.Hour)); err != nil {
 		t.Fatalf("トークン3の作成に失敗: %v", err)
 	}
 
-	// ワーカーを作成
-	worker := NewCleanupExpiredTokensWorker(queries)
+	// ワーカーを作成（UseCase 経由）
+	w := newCleanupExpiredTokensTestWorker(queries)
 
 	// ジョブを実行
-	job := &river.Job[CleanupExpiredTokensArgs]{
-		Args: CleanupExpiredTokensArgs{},
+	job := &river.Job[worker.CleanupExpiredTokensArgs]{
+		Args: worker.CleanupExpiredTokensArgs{},
 	}
 
-	err = worker.Work(ctx, job)
-	if err != nil {
+	if err := w.Work(ctx, job); err != nil {
 		t.Fatalf("ワーカーの実行に失敗: %v", err)
 	}
 
 	// トークン1とトークン2が削除されていることを確認
-	tokens, err := queries.GetPasswordResetTokensByUserID(ctx, userID)
+	tokens, err := tokenRepo.GetByUserID(ctx, userID)
 	if err != nil {
 		t.Fatalf("トークンの取得に失敗: %v", err)
 	}
@@ -100,21 +94,20 @@ func TestCleanupExpiredTokensWorker(t *testing.T) {
 }
 
 func TestCleanupExpiredTokensWorker_NoTokens(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 
 	ctx := context.Background()
 
-	// ワーカーを作成
-	worker := NewCleanupExpiredTokensWorker(queries)
+	// ワーカーを作成（UseCase 経由）
+	w := newCleanupExpiredTokensTestWorker(queries)
 
 	// ジョブを実行（トークンが存在しない状態）
-	job := &river.Job[CleanupExpiredTokensArgs]{
-		Args: CleanupExpiredTokensArgs{},
+	job := &river.Job[worker.CleanupExpiredTokensArgs]{
+		Args: worker.CleanupExpiredTokensArgs{},
 	}
 
-	err := worker.Work(ctx, job)
-	if err != nil {
+	if err := w.Work(ctx, job); err != nil {
 		t.Fatalf("ワーカーの実行に失敗: %v", err)
 	}
 
@@ -122,7 +115,7 @@ func TestCleanupExpiredTokensWorker_NoTokens(t *testing.T) {
 }
 
 func TestCleanupExpiredTokensWorker_RecentlyExpired(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 
 	// テストユーザーを作成
@@ -132,6 +125,7 @@ func TestCleanupExpiredTokensWorker_RecentlyExpired(t *testing.T) {
 		Build()
 
 	ctx := context.Background()
+	tokenRepo := repository.NewPasswordResetTokenRepository(queries)
 
 	// テストトークンを生成
 	token1, _ := password_reset.GenerateToken()
@@ -141,40 +135,29 @@ func TestCleanupExpiredTokensWorker_RecentlyExpired(t *testing.T) {
 	token2Digest := password_reset.HashToken(token2)
 
 	// トークン1: 12時間前に期限切れ（削除対象外: 24時間以内）
-	_, err := queries.CreatePasswordResetToken(ctx, query.CreatePasswordResetTokenParams{
-		UserID:      userID,
-		TokenDigest: token1Digest,
-		ExpiresAt:   time.Now().Add(-12 * time.Hour),
-	})
-	if err != nil {
+	if _, err := tokenRepo.Create(ctx, userID, token1Digest, time.Now().Add(-12*time.Hour)); err != nil {
 		t.Fatalf("トークン1の作成に失敗: %v", err)
 	}
 
 	// トークン2: 30時間前に期限切れ（削除対象）
-	_, err = queries.CreatePasswordResetToken(ctx, query.CreatePasswordResetTokenParams{
-		UserID:      userID,
-		TokenDigest: token2Digest,
-		ExpiresAt:   time.Now().Add(-30 * time.Hour),
-	})
-	if err != nil {
+	if _, err := tokenRepo.Create(ctx, userID, token2Digest, time.Now().Add(-30*time.Hour)); err != nil {
 		t.Fatalf("トークン2の作成に失敗: %v", err)
 	}
 
-	// ワーカーを作成
-	worker := NewCleanupExpiredTokensWorker(queries)
+	// ワーカーを作成（UseCase 経由）
+	w := newCleanupExpiredTokensTestWorker(queries)
 
 	// ジョブを実行
-	job := &river.Job[CleanupExpiredTokensArgs]{
-		Args: CleanupExpiredTokensArgs{},
+	job := &river.Job[worker.CleanupExpiredTokensArgs]{
+		Args: worker.CleanupExpiredTokensArgs{},
 	}
 
-	err = worker.Work(ctx, job)
-	if err != nil {
+	if err := w.Work(ctx, job); err != nil {
 		t.Fatalf("ワーカーの実行に失敗: %v", err)
 	}
 
 	// トークン1のみが残っているはず
-	tokens, err := queries.GetPasswordResetTokensByUserID(ctx, userID)
+	tokens, err := tokenRepo.GetByUserID(ctx, userID)
 	if err != nil {
 		t.Fatalf("トークンの取得に失敗: %v", err)
 	}

@@ -11,7 +11,7 @@ import (
 
 // TestCreateSignUpCode はSignUpCodeの作成をテスト
 func TestCreateSignUpCode(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 
 	// SignUpCodeを作成
@@ -44,7 +44,7 @@ func TestCreateSignUpCode(t *testing.T) {
 
 // TestGetValidSignUpCode は有効なSignUpCodeの取得をテスト
 func TestGetValidSignUpCode(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 
 	email := "test_get_valid@example.com"
@@ -77,7 +77,7 @@ func TestGetValidSignUpCode(t *testing.T) {
 
 // TestGetValidSignUpCode_Expired は期限切れのコードが取得されないことをテスト
 func TestGetValidSignUpCode_Expired(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 
 	email := "test_expired@example.com"
@@ -103,7 +103,7 @@ func TestGetValidSignUpCode_Expired(t *testing.T) {
 
 // TestGetValidSignUpCode_Used は使用済みのコードが取得されないことをテスト
 func TestGetValidSignUpCode_Used(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 
 	email := "test_used@example.com"
@@ -135,7 +135,7 @@ func TestGetValidSignUpCode_Used(t *testing.T) {
 
 // TestGetValidSignUpCode_ExceedsAttempts は試行回数制限を超えたコードが取得されないことをテスト
 func TestGetValidSignUpCode_ExceedsAttempts(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 
 	email := "test_attempts@example.com"
@@ -169,7 +169,7 @@ func TestGetValidSignUpCode_ExceedsAttempts(t *testing.T) {
 
 // TestIncrementSignUpCodeAttempts は試行回数のインクリメントをテスト
 func TestIncrementSignUpCodeAttempts(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 
 	email := "test_increment@example.com"
@@ -220,7 +220,7 @@ func TestIncrementSignUpCodeAttempts(t *testing.T) {
 
 // TestMarkSignUpCodeAsUsed はコードを使用済みにするテスト
 func TestMarkSignUpCodeAsUsed(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 
 	email := "test_mark_used@example.com"
@@ -252,7 +252,7 @@ func TestMarkSignUpCodeAsUsed(t *testing.T) {
 
 // TestInvalidateSignUpCodesByEmail はメールアドレスの全コード無効化をテスト
 func TestInvalidateSignUpCodesByEmail(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 
 	email := "test_invalidate@example.com"

@@ -20,7 +20,7 @@ import (
 func TestCreate_Success(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := testutil.NewQueriesWithTx(db, tx)
 
 	// テストユーザーを作成（bcryptでハッシュ化したパスワード）
@@ -44,16 +44,15 @@ func TestCreate_Success(t *testing.T) {
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionMgr := session.NewManager(sessionRepo, cfg)
 
-	// UserRepositoryとCreateSessionUsecaseを作成
 	userRepo := repository.NewUserRepository(queries)
-	createSessionUC := usecase.NewCreateSessionUsecase(queries)
+	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
-	handler := NewHandler(cfg, userRepo, sessionMgr, createSessionUC)
+	handler := newTestHandler(t, cfg, sessionMgr, userRepo, createSessionUC)
 
 	// セッションにメールアドレスを設定
 	sessionCookie := setupSessionWithEmail(t, sessionMgr, "signin_success@example.com")
 
-	// フォームデータを作成（email_usernameフィールドはもう必要なし）
+	// フォームデータを作成
 	form := url.Values{}
 	form.Set("password", "password123")
 
@@ -118,7 +117,7 @@ func TestCreate_Success(t *testing.T) {
 func TestCreate_InvalidCredentials(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := testutil.NewQueriesWithTx(db, tx)
 
 	// テストユーザーを作成
@@ -140,11 +139,10 @@ func TestCreate_InvalidCredentials(t *testing.T) {
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionMgr := session.NewManager(sessionRepo, cfg)
 
-	// UserRepositoryとCreateSessionUsecaseを作成
 	userRepo := repository.NewUserRepository(queries)
-	createSessionUC := usecase.NewCreateSessionUsecase(queries)
+	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
-	handler := NewHandler(cfg, userRepo, sessionMgr, createSessionUC)
+	handler := newTestHandler(t, cfg, sessionMgr, userRepo, createSessionUC)
 
 	// セッションにメールアドレスを設定
 	sessionCookie := setupSessionWithEmail(t, sessionMgr, "signin_invalid@example.com")
@@ -158,17 +156,11 @@ func TestCreate_InvalidCredentials(t *testing.T) {
 	req.AddCookie(sessionCookie)
 	rr := httptest.NewRecorder()
 
-	handler.Create(rr, req)
+	testutil.ApplyI18nMiddleware(t, handler.Create)(rr, req)
 
-	// ステータスコードを確認（リダイレクト）
-	if rr.Code != http.StatusSeeOther {
-		t.Errorf("ステータスコードが正しくない: got %v want %v", rr.Code, http.StatusSeeOther)
-	}
-
-	// /sign_in/passwordにリダイレクトされているか確認（Flashメッセージ使用）
-	location := rr.Header().Get("Location")
-	if location != "/sign_in/password" {
-		t.Errorf("リダイレクト先が正しくない: got %v want %v", location, "/sign_in/password")
+	// 422 でフォーム再描画されるか確認
+	if rr.Code != http.StatusUnprocessableEntity {
+		t.Errorf("ステータスコードが正しくない: got %v want %v", rr.Code, http.StatusUnprocessableEntity)
 	}
 }
 
@@ -176,7 +168,7 @@ func TestCreate_InvalidCredentials(t *testing.T) {
 func TestCreate_WithBackParam(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := testutil.NewQueriesWithTx(db, tx)
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte("password123"), bcrypt.DefaultCost)
@@ -199,9 +191,9 @@ func TestCreate_WithBackParam(t *testing.T) {
 	sessionMgr := session.NewManager(sessionRepo, cfg)
 
 	userRepo := repository.NewUserRepository(queries)
-	createSessionUC := usecase.NewCreateSessionUsecase(queries)
+	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
-	handler := NewHandler(cfg, userRepo, sessionMgr, createSessionUC)
+	handler := newTestHandler(t, cfg, sessionMgr, userRepo, createSessionUC)
 
 	// セッションにメールアドレスを設定
 	sessionCookie := setupSessionWithEmail(t, sessionMgr, "signin_back@example.com")
@@ -233,7 +225,7 @@ func TestCreate_WithBackParam(t *testing.T) {
 func TestCreate_WithInvalidBackParam(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := testutil.NewQueriesWithTx(db, tx)
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte("password123"), bcrypt.DefaultCost)
@@ -256,9 +248,9 @@ func TestCreate_WithInvalidBackParam(t *testing.T) {
 	sessionMgr := session.NewManager(sessionRepo, cfg)
 
 	userRepo := repository.NewUserRepository(queries)
-	createSessionUC := usecase.NewCreateSessionUsecase(queries)
+	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
-	handler := NewHandler(cfg, userRepo, sessionMgr, createSessionUC)
+	handler := newTestHandler(t, cfg, sessionMgr, userRepo, createSessionUC)
 
 	// セッションにメールアドレスを設定
 	sessionCookie := setupSessionWithEmail(t, sessionMgr, "signin_invalid_back@example.com")
@@ -290,7 +282,7 @@ func TestCreate_WithInvalidBackParam(t *testing.T) {
 func TestCreate_WithProtocolRelativeBackParam(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := testutil.NewQueriesWithTx(db, tx)
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte("password123"), bcrypt.DefaultCost)
@@ -313,9 +305,9 @@ func TestCreate_WithProtocolRelativeBackParam(t *testing.T) {
 	sessionMgr := session.NewManager(sessionRepo, cfg)
 
 	userRepo := repository.NewUserRepository(queries)
-	createSessionUC := usecase.NewCreateSessionUsecase(queries)
+	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
-	handler := NewHandler(cfg, userRepo, sessionMgr, createSessionUC)
+	handler := newTestHandler(t, cfg, sessionMgr, userRepo, createSessionUC)
 
 	// セッションにメールアドレスを設定
 	sessionCookie := setupSessionWithEmail(t, sessionMgr, "signin_proto_rel@example.com")
@@ -348,7 +340,7 @@ func TestCreate_WithProtocolRelativeBackParam(t *testing.T) {
 func TestCreate_GlobalError(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := testutil.NewQueriesWithTx(db, tx)
 
 	// テストユーザーを作成（パスワードが間違っている場合のテスト）
@@ -370,16 +362,15 @@ func TestCreate_GlobalError(t *testing.T) {
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionMgr := session.NewManager(sessionRepo, cfg)
 
-	// UserRepositoryとCreateSessionUsecaseを作成
 	userRepo := repository.NewUserRepository(queries)
-	createSessionUC := usecase.NewCreateSessionUsecase(queries)
+	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
-	handler := NewHandler(cfg, userRepo, sessionMgr, createSessionUC)
+	handler := newTestHandler(t, cfg, sessionMgr, userRepo, createSessionUC)
 
 	// セッションにメールアドレスを設定
 	sessionCookie := setupSessionWithEmail(t, sessionMgr, "signin_global_error@example.com")
 
-	// Step 1: 間違ったパスワードでPOST（グローバルエラーを発生させる）
+	// 間違ったパスワードでPOST（グローバルエラーを発生させる）
 	form := url.Values{}
 	form.Set("password", "wrongpassword")
 
@@ -391,42 +382,19 @@ func TestCreate_GlobalError(t *testing.T) {
 	// I18nミドルウェアを適用
 	testutil.ApplyI18nMiddleware(t, handler.Create)(rrPost, reqPost)
 
-	// ステータスコードを確認（認証失敗の場合はリダイレクト）
-	if rrPost.Code != http.StatusSeeOther {
-		t.Errorf("ステータスコードが正しくない: got %v want %v", rrPost.Code, http.StatusSeeOther)
-	}
-
-	// リダイレクト先を確認
-	location := rrPost.Header().Get("Location")
-	if location != "/sign_in/password" {
-		t.Errorf("リダイレクト先が正しくない: got %v want %v", location, "/sign_in/password")
-	}
-
-	// Step 2: リダイレクト後のGETリクエストでグローバルエラーが表示されることを確認
-	// 既存のセッションが更新されるだけなので、元のセッションCookieを使用
-	reqGet := httptest.NewRequest("GET", "/sign_in/password", nil)
-	reqGet.AddCookie(sessionCookie)
-	rrGet := httptest.NewRecorder()
-
-	// I18nミドルウェアを適用
-	testutil.ApplyI18nMiddleware(t, handler.New)(rrGet, reqGet)
-
-	// ステータスコードを確認
-	if rrGet.Code != http.StatusOK {
-		t.Errorf("ステータスコードが正しくない: got %v want %v", rrGet.Code, http.StatusOK)
+	// 422 でフォーム再描画されることを確認
+	if rrPost.Code != http.StatusUnprocessableEntity {
+		t.Errorf("ステータスコードが正しくない: got %v want %v", rrPost.Code, http.StatusUnprocessableEntity)
 	}
 
 	// レスポンスボディを確認（form_errorsパーシャルが正しくレンダリングされているか）
-	body := rrGet.Body.String()
-
-	// form_errorsパーシャルが正しく機能していることを確認
-	// （グローバルエラーメッセージのスタイルクラスが含まれている）
+	body := rrPost.Body.String()
 	if !strings.Contains(body, "alert-destructive") {
 		t.Error("エラーメッセージのスタイルクラスが見つかりません（form_errorsパーシャルが読み込まれていない可能性があります）")
 	}
 
 	// Content-Typeを確認
-	contentType := rrGet.Header().Get("Content-Type")
+	contentType := rrPost.Header().Get("Content-Type")
 	if !strings.Contains(contentType, "text/html") {
 		t.Errorf("Content-Typeが正しくない: got %v", contentType)
 	}
@@ -436,7 +404,7 @@ func TestCreate_GlobalError(t *testing.T) {
 func TestCreate_WithoutSessionEmail(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTestDB(t)
+	db, tx := testutil.SetupTx(t)
 	queries := testutil.NewQueriesWithTx(db, tx)
 
 	cfg := &config.Config{
@@ -447,9 +415,9 @@ func TestCreate_WithoutSessionEmail(t *testing.T) {
 	sessionMgr := session.NewManager(sessionRepo, cfg)
 
 	userRepo := repository.NewUserRepository(queries)
-	createSessionUC := usecase.NewCreateSessionUsecase(queries)
+	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
-	handler := NewHandler(cfg, userRepo, sessionMgr, createSessionUC)
+	handler := newTestHandler(t, cfg, sessionMgr, userRepo, createSessionUC)
 
 	// セッションなしでリクエストを作成
 	form := url.Values{}

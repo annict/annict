@@ -14,7 +14,7 @@ import (
 // TestCreateWorkUsecase_ExecuteBatch はExecuteBatchメソッドのテスト
 func TestCreateWorkUsecase_ExecuteBatch(t *testing.T) {
 	// テストDBをセットアップ（トランザクションは各サブテストで作成）
-	db, _ := testutil.SetupTestDB(t)
+	db, _ := testutil.SetupTx(t)
 
 	// Usecaseを作成
 	uc := NewCreateWorkUsecase(db)
@@ -98,8 +98,7 @@ func TestCreateWorkUsecase_ExecuteBatch(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// 各サブテストで新しいトランザクションを作成
-			_, tx := testutil.SetupTestDB(t)
-			defer tx.Rollback()
+			_, tx := testutil.SetupTx(t)
 
 			ctx := context.Background()
 
@@ -216,8 +215,7 @@ func TestCreateWorkUsecase_ExecuteBatch(t *testing.T) {
 // TestCreateWorkUsecase_MediaTypeConversion はMediaType変換のテスト
 func TestCreateWorkUsecase_MediaTypeConversion(t *testing.T) {
 	// テストDBとトランザクションをセットアップ
-	db, tx := testutil.SetupTestDB(t)
-	defer tx.Rollback()
+	db, tx := testutil.SetupTx(t)
 
 	// Usecaseを作成
 	uc := NewCreateWorkUsecase(db)
@@ -275,22 +273,16 @@ func TestCreateWorkUsecase_MediaTypeConversion(t *testing.T) {
 
 // TestCreateWorkUsecase_LargeBatch は大量の作品作成のテスト
 func TestCreateWorkUsecase_LargeBatch(t *testing.T) {
-	// -short フラグが指定されている場合はスキップ（CI用）
-	if testing.Short() {
-		t.Skip("長時間テストのため -short フラグでスキップします")
-	}
-
 	// テストDBとトランザクションをセットアップ
-	db, tx := testutil.SetupTestDB(t)
-	defer tx.Rollback()
+	db, tx := testutil.SetupTx(t)
 
 	// Usecaseを作成
 	uc := NewCreateWorkUsecase(db)
 
 	ctx := context.Background()
 
-	// 2500の作品を作成（バッチサイズ1000を超えるケース）
-	workCount := 2500
+	// 250の作品を作成（100件チャンク×3回でマルチチャンク処理を検証）
+	workCount := 250
 	works := make([]CreateWorkParams, workCount)
 	seasonYear := int32(2024)
 	seasonSpring := seed.SeasonSpring

@@ -6,15 +6,24 @@ import (
 	"testing"
 	"time"
 
+	"github.com/annict/annict/go/internal/model"
+	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/testutil"
+	"github.com/annict/annict/go/internal/validator"
 )
 
 func TestCompleteSignUpUsecase_Execute(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	rdb := testutil.SetupTestRedis(t)
 	ctx := context.Background()
 
 	queries := testutil.NewQueriesWithTx(db, tx)
+	userRepo := repository.NewUserRepository(queries).WithTx(tx)
+	profileRepo := repository.NewProfileRepository(queries).WithTx(tx)
+	settingRepo := repository.NewSettingRepository(queries).WithTx(tx)
+	emailNotificationRepo := repository.NewEmailNotificationRepository(queries).WithTx(tx)
 
 	tests := []struct {
 		name      string
@@ -53,8 +62,13 @@ func TestCompleteSignUpUsecase_Execute(t *testing.T) {
 			},
 			wantErr: true,
 			checkErr: func(t *testing.T, err error) {
-				if !IsTokenInvalidError(err) {
-					t.Errorf("expected TokenInvalidError, got %v", err)
+				ve := model.AsValidationError(err)
+				if ve == nil {
+					t.Errorf("expected *model.ValidationError, got %v", err)
+					return
+				}
+				if !ve.HasFieldError("token") {
+					t.Errorf("expected token field error, got %+v", ve)
 				}
 			},
 		},
@@ -81,8 +95,13 @@ func TestCompleteSignUpUsecase_Execute(t *testing.T) {
 			},
 			wantErr: true,
 			checkErr: func(t *testing.T, err error) {
-				if !IsUsernameAlreadyExistsError(err) {
-					t.Errorf("expected UsernameAlreadyExistsError, got %v", err)
+				ve := model.AsValidationError(err)
+				if ve == nil {
+					t.Errorf("expected *model.ValidationError, got %v", err)
+					return
+				}
+				if !ve.HasFieldError("username") {
+					t.Errorf("expected username field error, got %+v", ve)
 				}
 			},
 		},
@@ -97,8 +116,13 @@ func TestCompleteSignUpUsecase_Execute(t *testing.T) {
 			}
 
 			// ユースケースを実行
-			uc := NewCompleteSignUpUsecase(db, queries, rdb)
-			result, err := uc.Execute(ctx, tt.token, tt.username, tt.locale)
+			v := validator.NewSignUpUsernameCreateValidator()
+			uc := NewCompleteSignUpUsecase(db, userRepo, profileRepo, settingRepo, emailNotificationRepo, repository.NewSessionRepository(queries), rdb, v)
+			result, err := uc.Execute(ctx, CompleteSignUpInput{
+				Token:    tt.token,
+				Username: tt.username,
+				Locale:   tt.locale,
+			})
 
 			// エラーチェック
 			if (err != nil) != tt.wantErr {
@@ -133,7 +157,7 @@ func TestCompleteSignUpUsecase_Execute(t *testing.T) {
 			}
 
 			// プロフィールが作成されているか確認
-			profile, err := queries.GetProfileByUserID(ctx, result.User.ID)
+			profile, err := queries.GetProfileByUserID(ctx, int64(result.User.ID))
 			if err != nil {
 				t.Fatalf("failed to get profile: %v", err)
 			}
@@ -145,7 +169,7 @@ func TestCompleteSignUpUsecase_Execute(t *testing.T) {
 			}
 
 			// 設定が作成されているか確認
-			setting, err := queries.GetSettingByUserID(ctx, result.User.ID)
+			setting, err := queries.GetSettingByUserID(ctx, int64(result.User.ID))
 			if err != nil {
 				t.Fatalf("failed to get setting: %v", err)
 			}
@@ -154,7 +178,7 @@ func TestCompleteSignUpUsecase_Execute(t *testing.T) {
 			}
 
 			// メール通知設定が作成されているか確認
-			emailNotification, err := queries.GetEmailNotificationByUserID(ctx, result.User.ID)
+			emailNotification, err := queries.GetEmailNotificationByUserID(ctx, int64(result.User.ID))
 			if err != nil {
 				t.Fatalf("failed to get email notification: %v", err)
 			}
@@ -173,11 +197,17 @@ func TestCompleteSignUpUsecase_Execute(t *testing.T) {
 }
 
 func TestCompleteSignUpUsecase_Execute_Integration(t *testing.T) {
-	db, tx := testutil.SetupTestDB(t)
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
 	rdb := testutil.SetupTestRedis(t)
 	ctx := context.Background()
 
 	queries := testutil.NewQueriesWithTx(db, tx)
+	userRepo := repository.NewUserRepository(queries).WithTx(tx)
+	profileRepo := repository.NewProfileRepository(queries).WithTx(tx)
+	settingRepo := repository.NewSettingRepository(queries).WithTx(tx)
+	emailNotificationRepo := repository.NewEmailNotificationRepository(queries).WithTx(tx)
 
 	// 一時トークンをRedisに保存
 	token := "valid-token-integration"
@@ -188,10 +218,15 @@ func TestCompleteSignUpUsecase_Execute_Integration(t *testing.T) {
 	}
 
 	// ユースケースを作成（Redisあり）
-	uc := NewCompleteSignUpUsecase(db, queries, rdb)
+	v := validator.NewSignUpUsernameCreateValidator()
+	uc := NewCompleteSignUpUsecase(db, userRepo, profileRepo, settingRepo, emailNotificationRepo, repository.NewSessionRepository(queries), rdb, v)
 
 	// ユーザー登録を実行
-	result, err := uc.Execute(ctx, token, "testuser_noredis", "ja")
+	result, err := uc.Execute(ctx, CompleteSignUpInput{
+		Token:    token,
+		Username: "testuser_noredis",
+		Locale:   "ja",
+	})
 	if err != nil {
 		t.Fatalf("Execute() error = %v", err)
 	}
@@ -206,7 +241,7 @@ func TestCompleteSignUpUsecase_Execute_Integration(t *testing.T) {
 	}
 
 	// プロフィールが作成されているか確認
-	profile, err := queries.GetProfileByUserID(ctx, result.User.ID)
+	profile, err := queries.GetProfileByUserID(ctx, int64(result.User.ID))
 	if err != nil {
 		t.Fatalf("failed to get profile: %v", err)
 	}
@@ -215,7 +250,7 @@ func TestCompleteSignUpUsecase_Execute_Integration(t *testing.T) {
 	}
 
 	// 設定が作成されているか確認
-	setting, err := queries.GetSettingByUserID(ctx, result.User.ID)
+	setting, err := queries.GetSettingByUserID(ctx, int64(result.User.ID))
 	if err != nil {
 		t.Fatalf("failed to get setting: %v", err)
 	}
@@ -224,7 +259,7 @@ func TestCompleteSignUpUsecase_Execute_Integration(t *testing.T) {
 	}
 
 	// メール通知設定が作成されているか確認
-	emailNotification, err := queries.GetEmailNotificationByUserID(ctx, result.User.ID)
+	emailNotification, err := queries.GetEmailNotificationByUserID(ctx, int64(result.User.ID))
 	if err != nil {
 		t.Fatalf("failed to get email notification: %v", err)
 	}
