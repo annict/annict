@@ -3,6 +3,7 @@ package sentry
 import (
 	"context"
 	"log/slog"
+	"os"
 
 	sentryslog "github.com/getsentry/sentry-go/slog"
 )
@@ -36,6 +37,30 @@ const SourceAttrKey = "annict_source"
 // Sentry プロジェクトで扱うべきなので、beforeSend で本タグの付いた
 // イベントを破棄する。
 const ReverseProxySource = "reverse_proxy"
+
+// NewBaseHandler returns the application's base slog handler: a text handler
+// that writes to stderr at LevelInfo. It is the single source of truth for the
+// log output format and level.
+//
+// The default logger wraps this base with NewSlogHandler so that Error and
+// Fatal records also fan out to Sentry. Background loggers that must NOT reach
+// Sentry use NewBaseHandler directly (e.g. River's internal logger, which logs
+// self-healing connection blips at Error level). Sharing one constructor keeps
+// their format and verbosity identical and prevents the two from drifting apart
+// if the level is ever changed.
+//
+// [Ja] アプリケーションの基底 slog ハンドラーを返す。標準エラー出力へ
+// LevelInfo で書き出すテキストハンドラーで、ログの出力形式とレベルの唯一の
+// 情報源となる。
+//
+// デフォルトロガーはこの基底を NewSlogHandler でラップし、Error と Fatal の
+// レコードを Sentry にもファンアウトさせる。Sentry に流してはならない
+// バックグラウンドロガーは NewBaseHandler を直接使う (例: 自己回復する接続の
+// 瞬断を Error レベルで出力する River の内部ロガー)。コンストラクタを共有する
+// ことで両者の形式と詳細度が一致し、将来レベルを変更してもドリフトしない。
+func NewBaseHandler() slog.Handler {
+	return slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{Level: slog.LevelInfo})
+}
 
 // NewSlogHandler wraps base in a fan-out handler that also forwards
 // slog.LevelError (and LevelFatal) records to Sentry as events. Other levels
