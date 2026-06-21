@@ -261,11 +261,13 @@ func (c *Config) AppURL() string {
 // 提供する変数なので ANNICT_ プレフィックスは付けない)。ローカルの git コマンドは
 // 開発用のフォールバックで、最後の手段が "dev"。
 func getGitCommitHash() string {
-	// Dokku provides the full deploy SHA here; shorten it to the 7-character
-	// form that the local `git rev-parse --short` path also produces.
+	// Dokku provides the full deploy SHA here; shorten it to 7 characters to
+	// keep the release/cache-busting identifier short and stable, mirroring the
+	// usual length of the local `git rev-parse --short` output.
 	//
-	// [Ja] Dokku はここに完全なデプロイ SHA を渡すので、ローカルの
-	// `git rev-parse --short` と同じ 7 文字の短縮形に揃える。
+	// [Ja] Dokku はここに完全なデプロイ SHA を渡すので、release / キャッシュ
+	// バスティング用の識別子を短く安定させるため 7 文字に短縮する。ローカルの
+	// `git rev-parse --short` の通常の出力長に概ね合わせている。
 	if rev := strings.TrimSpace(os.Getenv("GIT_REV")); rev != "" {
 		const shortHashLen = 7
 		if len(rev) > shortHashLen {
