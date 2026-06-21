@@ -119,7 +119,24 @@ func (h *Handler) Show(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Disposition", `attachment; filename="annict.ics"`)
 	w.WriteHeader(http.StatusOK)
 
+	// A failed write here means the response body could not be delivered to the
+	// client: the connection was closed or the write deadline was exceeded (e.g.
+	// a calendar importer that opened the request then stopped reading). Once the
+	// header is sent, a w.Write error always originates from the underlying
+	// net.Conn, so it is a client-side/transport failure, not a server error.
+	// Log it at warn level: the slog Sentry handler captures only Error and
+	// Fatal, so warn keeps this transport noise out of Sentry while still
+	// recording it in the local structured logs.
+	//
+	// [Ja] ここでの書き込み失敗は、レスポンスボディをクライアントに送り切れな
+	// かったことを意味する。接続が閉じられたか書き込みデッドラインを超過した
+	// ケース (例: リクエストを開いたまま読み取りをやめたカレンダーインポーター)
+	// である。ヘッダー送出後の w.Write エラーは常に背後の net.Conn に起因する
+	// ため、サーバーエラーではなくクライアント側・トランスポート由来の失敗で
+	// ある。このため warn レベルでログ出力する。slog の Sentry ハンドラーは
+	// Error と Fatal のみをイベント化するため、warn にすればローカルの構造化
+	// ログには残しつつ、このトランスポートノイズを Sentry に送らずに済む。
 	if _, err := w.Write([]byte(cal.ToICS())); err != nil {
-		slog.ErrorContext(ctx, "ICSデータの書き込みに失敗しました", "error", err)
+		slog.WarnContext(ctx, "ICSデータの書き込みに失敗しました", "error", err)
 	}
 }

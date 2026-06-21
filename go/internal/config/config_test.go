@@ -440,3 +440,49 @@ func TestLoad_MaintenanceMode(t *testing.T) {
 		})
 	}
 }
+
+// TestGetGitCommitHash verifies that the GIT_REV environment variable takes
+// precedence and is shortened to 7 characters.
+//
+// A Dokku deploy target has no .git directory, so the git command fails;
+// whether GIT_REV is usable therefore decides the Sentry release (avoiding a
+// fallback to "dev").
+//
+// [Ja] GIT_REV 環境変数が最優先され、7 文字に短縮されることを検証する。
+//
+// Dokku のデプロイ先には .git が無く git コマンドが失敗するため、GIT_REV を
+// 使えるかどうかが Sentry の release ("dev" 化の回避) を左右する。
+func TestGetGitCommitHash(t *testing.T) {
+	tests := []struct {
+		name   string
+		gitRev string
+		want   string
+	}{
+		{
+			name:   "フルSHAは7文字に短縮される",
+			gitRev: "1234567890abcdef1234567890abcdef12345678",
+			want:   "1234567",
+		},
+		{
+			name:   "7文字以下ならそのまま返す",
+			gitRev: "abc123",
+			want:   "abc123",
+		},
+		{
+			name:   "前後の空白は除去される",
+			gitRev: "  1234567890abcdef  ",
+			want:   "1234567",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Setenv("GIT_REV", tt.gitRev)
+
+			got := getGitCommitHash()
+			if got != tt.want {
+				t.Errorf("getGitCommitHash() = %q, want %q", got, tt.want)
+			}
+		})
+	}
+}

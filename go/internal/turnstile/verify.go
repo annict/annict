@@ -63,9 +63,20 @@ func (c *Client) Verify(ctx context.Context, token string) (bool, error) {
 		return true, nil
 	}
 
-	// トークンが空の場合はエラー
+	// An empty token means the user submitted the form without completing the
+	// Turnstile challenge (widget not solved, JavaScript blocked, or a bot
+	// posting directly). This is an expected verification failure, not a system
+	// error, so return (false, nil) and let callers log it at warn level.
+	// Returning a non-nil error here would surface every empty submission as a
+	// Sentry error event.
+	//
+	// [Ja] トークンが空なのは、ユーザーが Turnstile を完了せずにフォームを送信した
+	// ケース (ウィジェット未解決・JavaScript のブロック・Bot による直接 POST など)。
+	// これはシステムエラーではなく想定内の検証失敗なので、(false, nil) を返して
+	// 呼び出し側で warn レベルのログに寄せる。ここで error を返すと、空送信のたびに
+	// Sentry にエラーイベントとして送られてしまう。
 	if token == "" {
-		return false, fmt.Errorf("トークンが空です")
+		return false, nil
 	}
 
 	// リクエストボディを作成
