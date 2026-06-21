@@ -109,9 +109,7 @@ func main() {
 	// Error レベル以上は Sentry イベント化され、全レベルは引き続き標準エラー
 	// 出力にも届く。slog.Error を呼ぶ可能性のある処理 (DB 接続、river 起動など)
 	// より前に呼ぶことで、起動時のエラーも Sentry に届くようにする。
-	slog.SetDefault(slog.New(annictSentry.NewSlogHandler(
-		slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{Level: slog.LevelInfo}),
-	)))
+	slog.SetDefault(slog.New(annictSentry.NewSlogHandler(annictSentry.NewBaseHandler())))
 
 	// データベース接続
 	db, err := sql.Open("postgres", cfg.DatabaseDSN())

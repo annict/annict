@@ -87,6 +87,31 @@ func NewClient(ctx context.Context, databaseURL string, params NewClientParams, 
 	river.AddWorker(workers, NewCleanupExpiredSignInCodesWorker(params.CleanupExpiredSignInCodes))
 	slog.InfoContext(ctx, "CleanupExpiredSignInCodesWorker を登録しました")
 
+	// River must log through a plain stderr handler instead of slog.Default(),
+	// whose handler fans Error-level records out to Sentry. River's background
+	// services log transient connection failures at Error level and recover on
+	// their own: the producer retries a failed job fetch on the next poll, while
+	// the notifier (LISTEN/NOTIFY) and elector reconnect after a backoff (e.g.
+	// during a brief DB connection blip). Routing those through the default
+	// logger would turn self-healing noise into Sentry events. Genuine job
+	// failures are still captured deliberately by RiverWorkerMiddleware, so the
+	// stderr-only logger loses no actionable signal. It is built from the same
+	// sentry.NewBaseHandler that backs the default logger, so the format and
+	// verbosity stay identical; only the Sentry fan-out is dropped.
+	//
+	// [Ja] River には slog.Default() ではなく素の標準エラー出力ハンドラーで
+	// ログを取らせる。slog.Default() のハンドラーは Error レベルを Sentry へ
+	// ファンアウトする。River のバックグラウンドサービスは一時的な接続失敗を
+	// Error レベルで出力し自力で回復する。producer は次回ポーリングでジョブ取得を
+	// 再試行し、notifier (LISTEN/NOTIFY) や elector はバックオフ後に再接続する
+	// (例: DB 接続の瞬断時)。これらを default ロガー経由にすると自己回復する
+	// ノイズが Sentry イベント化されてしまう。本当のジョブ失敗は
+	// RiverWorkerMiddleware が意図的に捕捉するので、標準エラー出力のみのロガーに
+	// しても対処可能なシグナルは失われない。デフォルトロガーの基底でもある
+	// sentry.NewBaseHandler から生成するため、形式と詳細度は一致し、Sentry への
+	// ファンアウトだけを外している。
+	riverLogger := slog.New(annictSentry.NewBaseHandler())
+
 	// River クライアントの作成
 	// Wire the Sentry middleware via Config.Middleware. The deprecated
 	// WorkerMiddleware field is avoided so future river upgrades that remove
@@ -103,7 +128,7 @@ func NewClient(ctx context.Context, databaseURL string, params NewClientParams, 
 		Middleware: []rivertype.Middleware{
 			annictSentry.RiverWorkerMiddleware(),
 		},
-		Logger: slog.Default(),
+		Logger: riverLogger,
 	})
 	if err != nil {
 		pool.Close()
