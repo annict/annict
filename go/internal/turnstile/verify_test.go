@@ -123,15 +123,16 @@ func TestVerify_EmptyToken(t *testing.T) {
 	ctx := context.Background()
 	success, err := client.Verify(ctx, "")
 
-	// アサーション
-	if err == nil {
-		t.Error("Verify() error = nil, want error")
+	// An empty token is treated as a verification failure, not a system error,
+	// so Verify returns (false, nil) without contacting the siteverify API.
+	//
+	// [Ja] 空トークンはシステムエラーではなく検証失敗として扱うため、Verify は
+	// siteverify API を呼ばずに (false, nil) を返す。
+	if err != nil {
+		t.Errorf("Verify() error = %v, want nil", err)
 	}
 	if success {
 		t.Errorf("Verify() success = %v, want false", success)
-	}
-	if !strings.Contains(err.Error(), "トークンが空です") {
-		t.Errorf("Verify() error = %v, want error containing 'トークンが空です'", err)
 	}
 }
 
