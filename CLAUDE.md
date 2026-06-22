@@ -1,5 +1,5 @@
 ---
-last_synced: 2026-06-04
+last_synced: 2026-06-21
 ---
 
 # Annict Development Guide
@@ -42,7 +42,11 @@ A project to gradually reimplement the existing Rails Annict in Go is currently 
 - **Gradual migration**: Rails and Go share the same DB and session store, and features are migrated incrementally
 - **Data migration is executed on the Go side**: Use the migration mechanism (dbmate) prepared on the Go side
 - **Continued use of shared infrastructure**: Shared infrastructure such as PostgreSQL continues to be used after the Go version takes over
-- **Do not change the Rails source code**: When a change is needed, migrate to Go first
+- **Do not modify the Rails source code**: When a feature needs to be added or changed, migrate it to Go first rather than touching the Rails side
+  - The following cases fall outside this principle, and a minimal-diff fix on the Rails side is acceptable:
+    - Minimal maintenance changes required to follow up on a dependency's security fix (e.g., adapting to breaking changes from a gem major upgrade)
+    - When deleting Rails-side processing that has become unused after migrating the feature to Go
+    - Minimal fixes made in response to an error reported by production error monitoring (Sentry) (e.g., suppressing a 500 caused by an unhandled exception)
 
 When implementing the Go version, refer to the Rails code to understand the existing specifications.
 
