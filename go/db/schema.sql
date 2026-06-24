@@ -1,6 +1,6 @@
 
 -- Dumped from database version 17.5 (Debian 17.5-1.pgdg130+1)
--- Dumped by pg_dump version 17.9 (Debian 17.9-1.pgdg13+1)
+-- Dumped by pg_dump version 17.10 (Debian 17.10-1.pgdg13+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -50,6 +50,90 @@ COMMENT ON EXTENSION pg_stat_statements IS 'track execution statistics of all SQ
 
 
 --
+-- Name: anime_account_service; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.anime_account_service AS ENUM (
+    'bluesky',
+    'instagram',
+    'line',
+    'mastodon',
+    'mixi2',
+    'threads',
+    'tiktok',
+    'x',
+    'youtube'
+);
+
+
+--
+-- Name: anime_classification_kind; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.anime_classification_kind AS ENUM (
+    'work',
+    'episode'
+);
+
+
+--
+-- Name: anime_event_kind; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.anime_event_kind AS ENUM (
+    'broadcast',
+    'revival_screening',
+    'other'
+);
+
+
+--
+-- Name: anime_external_service; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.anime_external_service AS ENUM (
+    'syobocal',
+    'mal'
+);
+
+
+--
+-- Name: anime_link_kind; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.anime_link_kind AS ENUM (
+    'official_site',
+    'wikipedia',
+    'other'
+);
+
+
+--
+-- Name: anime_media; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.anime_media AS ENUM (
+    'tv',
+    'ova',
+    'movie',
+    'ona',
+    'other'
+);
+
+
+--
+-- Name: anime_status; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.anime_status AS ENUM (
+    'published',
+    'archived',
+    'merged',
+    'deleted'
+);
+
+
+--
 -- Name: episode_status; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -57,6 +141,28 @@ CREATE TYPE public.episode_status AS ENUM (
     'published',
     'archived',
     'deleted'
+);
+
+
+--
+-- Name: language; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.language AS ENUM (
+    'ja',
+    'en',
+    'other'
+);
+
+
+--
+-- Name: release_status; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.release_status AS ENUM (
+    'not_yet_released',
+    'released',
+    'cancelled'
 );
 
 
@@ -73,6 +179,18 @@ CREATE TYPE public.river_job_state AS ENUM (
     'retryable',
     'running',
     'scheduled'
+);
+
+
+--
+-- Name: season_name; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.season_name AS ENUM (
+    'winter',
+    'spring',
+    'summer',
+    'fall'
 );
 
 
@@ -196,6 +314,325 @@ CREATE SEQUENCE public.activity_groups_id_seq
 --
 
 ALTER SEQUENCE public.activity_groups_id_seq OWNED BY public.activity_groups.id;
+
+
+--
+-- Name: anime_classifications; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.anime_classifications (
+    id bigint NOT NULL,
+    anime_id bigint NOT NULL,
+    kind public.anime_classification_kind NOT NULL,
+    parent_anime_id bigint,
+    number numeric,
+    number_text character varying,
+    sort_number integer,
+    standalone boolean DEFAULT false NOT NULL,
+    number_format_id bigint,
+    episode_start_number numeric,
+    expected_episodes_count integer,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL,
+    CONSTRAINT anime_classifications_episode_start_number_check CHECK (((kind = 'work'::public.anime_classification_kind) OR (episode_start_number IS NULL))),
+    CONSTRAINT anime_classifications_expected_episodes_count_check CHECK (((kind = 'work'::public.anime_classification_kind) OR (expected_episodes_count IS NULL))),
+    CONSTRAINT anime_classifications_number_check CHECK (((kind = 'episode'::public.anime_classification_kind) OR (number IS NULL))),
+    CONSTRAINT anime_classifications_number_format_id_check CHECK (((kind = 'work'::public.anime_classification_kind) OR (number_format_id IS NULL))),
+    CONSTRAINT anime_classifications_number_text_check CHECK (((kind = 'episode'::public.anime_classification_kind) OR (number_text IS NULL))),
+    CONSTRAINT anime_classifications_parent_check CHECK (((kind = 'work'::public.anime_classification_kind) = (parent_anime_id IS NULL))),
+    CONSTRAINT anime_classifications_sort_number_check CHECK (((kind = 'episode'::public.anime_classification_kind) = (sort_number IS NOT NULL))),
+    CONSTRAINT anime_classifications_standalone_check CHECK (((kind = 'work'::public.anime_classification_kind) OR (NOT standalone)))
+);
+
+
+--
+-- Name: anime_classifications_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.anime_classifications_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: anime_classifications_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.anime_classifications_id_seq OWNED BY public.anime_classifications.id;
+
+
+--
+-- Name: anime_events; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.anime_events (
+    id bigint NOT NULL,
+    anime_id bigint NOT NULL,
+    kind public.anime_event_kind NOT NULL,
+    started_on date NOT NULL,
+    ended_on date,
+    title character varying,
+    title_en character varying,
+    description text,
+    description_en text,
+    sort_number integer DEFAULT 0 NOT NULL,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: anime_events_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.anime_events_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: anime_events_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.anime_events_id_seq OWNED BY public.anime_events.id;
+
+
+--
+-- Name: anime_external_ids; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.anime_external_ids (
+    id bigint NOT NULL,
+    anime_id bigint NOT NULL,
+    service public.anime_external_service NOT NULL,
+    external_id character varying NOT NULL,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: anime_external_ids_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.anime_external_ids_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: anime_external_ids_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.anime_external_ids_id_seq OWNED BY public.anime_external_ids.id;
+
+
+--
+-- Name: anime_hashtags; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.anime_hashtags (
+    id bigint NOT NULL,
+    anime_id bigint NOT NULL,
+    hashtag character varying NOT NULL,
+    sort_number integer DEFAULT 0 NOT NULL,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: anime_hashtags_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.anime_hashtags_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: anime_hashtags_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.anime_hashtags_id_seq OWNED BY public.anime_hashtags.id;
+
+
+--
+-- Name: anime_links; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.anime_links (
+    id bigint NOT NULL,
+    anime_id bigint NOT NULL,
+    kind public.anime_link_kind NOT NULL,
+    language public.language DEFAULT 'ja'::public.language NOT NULL,
+    url character varying NOT NULL,
+    label character varying,
+    label_en character varying,
+    sort_number integer DEFAULT 0 NOT NULL,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: anime_links_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.anime_links_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: anime_links_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.anime_links_id_seq OWNED BY public.anime_links.id;
+
+
+--
+-- Name: anime_official_accounts; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.anime_official_accounts (
+    id bigint NOT NULL,
+    anime_id bigint NOT NULL,
+    service public.anime_account_service NOT NULL,
+    account character varying NOT NULL,
+    label character varying,
+    label_en character varying,
+    sort_number integer DEFAULT 0 NOT NULL,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: anime_official_accounts_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.anime_official_accounts_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: anime_official_accounts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.anime_official_accounts_id_seq OWNED BY public.anime_official_accounts.id;
+
+
+--
+-- Name: anime_redirects; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.anime_redirects (
+    old_anime_id bigint NOT NULL,
+    canonical_anime_id bigint NOT NULL,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL,
+    CONSTRAINT anime_redirects_no_self_redirect_check CHECK ((old_anime_id <> canonical_anime_id))
+);
+
+
+--
+-- Name: anime_seasons; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.anime_seasons (
+    id bigint NOT NULL,
+    anime_id bigint NOT NULL,
+    year integer NOT NULL,
+    name public.season_name,
+    is_primary boolean DEFAULT false NOT NULL,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: anime_seasons_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.anime_seasons_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: anime_seasons_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.anime_seasons_id_seq OWNED BY public.anime_seasons.id;
+
+
+--
+-- Name: animes; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.animes (
+    id bigint NOT NULL,
+    title character varying,
+    title_kana character varying,
+    title_ro character varying,
+    title_en character varying,
+    title_alter character varying,
+    title_alter_ro character varying,
+    title_alter_en character varying,
+    title_alter_other character varying,
+    media public.anime_media,
+    release_status public.release_status,
+    synopsis text,
+    synopsis_en text,
+    synopsis_source character varying,
+    synopsis_source_en character varying,
+    status public.anime_status DEFAULT 'published'::public.anime_status NOT NULL,
+    archive_message character varying,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: animes_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.animes_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: animes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.animes_id_seq OWNED BY public.animes.id;
 
 
 --
@@ -3297,6 +3734,62 @@ ALTER TABLE ONLY public.activity_groups ALTER COLUMN id SET DEFAULT nextval('pub
 
 
 --
+-- Name: anime_classifications id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.anime_classifications ALTER COLUMN id SET DEFAULT nextval('public.anime_classifications_id_seq'::regclass);
+
+
+--
+-- Name: anime_events id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.anime_events ALTER COLUMN id SET DEFAULT nextval('public.anime_events_id_seq'::regclass);
+
+
+--
+-- Name: anime_external_ids id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.anime_external_ids ALTER COLUMN id SET DEFAULT nextval('public.anime_external_ids_id_seq'::regclass);
+
+
+--
+-- Name: anime_hashtags id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.anime_hashtags ALTER COLUMN id SET DEFAULT nextval('public.anime_hashtags_id_seq'::regclass);
+
+
+--
+-- Name: anime_links id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.anime_links ALTER COLUMN id SET DEFAULT nextval('public.anime_links_id_seq'::regclass);
+
+
+--
+-- Name: anime_official_accounts id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.anime_official_accounts ALTER COLUMN id SET DEFAULT nextval('public.anime_official_accounts_id_seq'::regclass);
+
+
+--
+-- Name: anime_seasons id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.anime_seasons ALTER COLUMN id SET DEFAULT nextval('public.anime_seasons_id_seq'::regclass);
+
+
+--
+-- Name: animes id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.animes ALTER COLUMN id SET DEFAULT nextval('public.animes_id_seq'::regclass);
+
+
+--
 -- Name: casts id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -3745,6 +4238,78 @@ ALTER TABLE ONLY public.activities
 
 ALTER TABLE ONLY public.activity_groups
     ADD CONSTRAINT activity_groups_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: anime_classifications anime_classifications_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.anime_classifications
+    ADD CONSTRAINT anime_classifications_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: anime_events anime_events_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.anime_events
+    ADD CONSTRAINT anime_events_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: anime_external_ids anime_external_ids_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.anime_external_ids
+    ADD CONSTRAINT anime_external_ids_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: anime_hashtags anime_hashtags_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.anime_hashtags
+    ADD CONSTRAINT anime_hashtags_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: anime_links anime_links_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.anime_links
+    ADD CONSTRAINT anime_links_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: anime_official_accounts anime_official_accounts_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.anime_official_accounts
+    ADD CONSTRAINT anime_official_accounts_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: anime_redirects anime_redirects_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.anime_redirects
+    ADD CONSTRAINT anime_redirects_pkey PRIMARY KEY (old_anime_id);
+
+
+--
+-- Name: anime_seasons anime_seasons_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.anime_seasons
+    ADD CONSTRAINT anime_seasons_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: animes animes_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.animes
+    ADD CONSTRAINT animes_pkey PRIMARY KEY (id);
 
 
 --
@@ -4857,6 +5422,97 @@ CREATE INDEX index_activity_groups_on_created_at ON public.activity_groups USING
 --
 
 CREATE INDEX index_activity_groups_on_user_id ON public.activity_groups USING btree (user_id);
+
+
+--
+-- Name: index_anime_classifications_on_anime_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_anime_classifications_on_anime_id ON public.anime_classifications USING btree (anime_id);
+
+
+--
+-- Name: index_anime_classifications_on_parent_anime_id_and_sort_number; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_anime_classifications_on_parent_anime_id_and_sort_number ON public.anime_classifications USING btree (parent_anime_id, sort_number) WHERE (parent_anime_id IS NOT NULL);
+
+
+--
+-- Name: index_anime_events_on_anime_id_and_kind; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_anime_events_on_anime_id_and_kind ON public.anime_events USING btree (anime_id, kind);
+
+
+--
+-- Name: index_anime_events_on_started_on; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_anime_events_on_started_on ON public.anime_events USING btree (started_on);
+
+
+--
+-- Name: index_anime_external_ids_on_anime_id_and_service; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_anime_external_ids_on_anime_id_and_service ON public.anime_external_ids USING btree (anime_id, service);
+
+
+--
+-- Name: index_anime_external_ids_on_service_and_external_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_anime_external_ids_on_service_and_external_id ON public.anime_external_ids USING btree (service, external_id);
+
+
+--
+-- Name: index_anime_hashtags_on_anime_id_and_hashtag; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_anime_hashtags_on_anime_id_and_hashtag ON public.anime_hashtags USING btree (anime_id, hashtag);
+
+
+--
+-- Name: index_anime_links_on_anime_id_and_kind; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_anime_links_on_anime_id_and_kind ON public.anime_links USING btree (anime_id, kind);
+
+
+--
+-- Name: index_anime_official_accounts_on_anime_id_and_service; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_anime_official_accounts_on_anime_id_and_service ON public.anime_official_accounts USING btree (anime_id, service);
+
+
+--
+-- Name: index_anime_redirects_on_canonical_anime_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_anime_redirects_on_canonical_anime_id ON public.anime_redirects USING btree (canonical_anime_id);
+
+
+--
+-- Name: index_anime_seasons_on_anime_id_and_year_and_name; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_anime_seasons_on_anime_id_and_year_and_name ON public.anime_seasons USING btree (anime_id, year, name) NULLS NOT DISTINCT;
+
+
+--
+-- Name: index_anime_seasons_on_anime_id_primary; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_anime_seasons_on_anime_id_primary ON public.anime_seasons USING btree (anime_id) WHERE is_primary;
+
+
+--
+-- Name: index_anime_seasons_on_year_and_name; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_anime_seasons_on_year_and_name ON public.anime_seasons USING btree (year, name);
 
 
 --
@@ -6569,6 +7225,94 @@ ALTER TABLE ONLY public.activities
 
 
 --
+-- Name: anime_classifications anime_classifications_anime_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.anime_classifications
+    ADD CONSTRAINT anime_classifications_anime_id_fkey FOREIGN KEY (anime_id) REFERENCES public.animes(id);
+
+
+--
+-- Name: anime_classifications anime_classifications_number_format_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.anime_classifications
+    ADD CONSTRAINT anime_classifications_number_format_id_fkey FOREIGN KEY (number_format_id) REFERENCES public.number_formats(id);
+
+
+--
+-- Name: anime_classifications anime_classifications_parent_anime_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.anime_classifications
+    ADD CONSTRAINT anime_classifications_parent_anime_id_fkey FOREIGN KEY (parent_anime_id) REFERENCES public.animes(id);
+
+
+--
+-- Name: anime_events anime_events_anime_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.anime_events
+    ADD CONSTRAINT anime_events_anime_id_fkey FOREIGN KEY (anime_id) REFERENCES public.animes(id);
+
+
+--
+-- Name: anime_external_ids anime_external_ids_anime_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.anime_external_ids
+    ADD CONSTRAINT anime_external_ids_anime_id_fkey FOREIGN KEY (anime_id) REFERENCES public.animes(id);
+
+
+--
+-- Name: anime_hashtags anime_hashtags_anime_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.anime_hashtags
+    ADD CONSTRAINT anime_hashtags_anime_id_fkey FOREIGN KEY (anime_id) REFERENCES public.animes(id);
+
+
+--
+-- Name: anime_links anime_links_anime_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.anime_links
+    ADD CONSTRAINT anime_links_anime_id_fkey FOREIGN KEY (anime_id) REFERENCES public.animes(id);
+
+
+--
+-- Name: anime_official_accounts anime_official_accounts_anime_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.anime_official_accounts
+    ADD CONSTRAINT anime_official_accounts_anime_id_fkey FOREIGN KEY (anime_id) REFERENCES public.animes(id);
+
+
+--
+-- Name: anime_redirects anime_redirects_canonical_anime_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.anime_redirects
+    ADD CONSTRAINT anime_redirects_canonical_anime_id_fkey FOREIGN KEY (canonical_anime_id) REFERENCES public.animes(id);
+
+
+--
+-- Name: anime_redirects anime_redirects_old_anime_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.anime_redirects
+    ADD CONSTRAINT anime_redirects_old_anime_id_fkey FOREIGN KEY (old_anime_id) REFERENCES public.animes(id);
+
+
+--
+-- Name: anime_seasons anime_seasons_anime_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.anime_seasons
+    ADD CONSTRAINT anime_seasons_anime_id_fkey FOREIGN KEY (anime_id) REFERENCES public.animes(id);
+
+
+--
 -- Name: channel_works channel_works_channel_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -7861,4 +8605,5 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20260210055715'),
     ('20260210081156'),
     ('20260322083140'),
-    ('20260521153415');
+    ('20260521153415'),
+    ('20260622084725');
