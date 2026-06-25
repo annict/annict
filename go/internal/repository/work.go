@@ -234,6 +234,98 @@ func (r *WorkRepository) Create(ctx context.Context, params CreateWorkParams) (m
 	return model.WorkID(id), nil
 }
 
+// ListForAnimeSyncByIDs loads the works with the given IDs, projecting the columns
+// the phase 2 reconciliation maps onto animes / anime_classifications (including the
+// works.anime_id mapping column). Rows are ordered by id; missing IDs are silently
+// skipped. An empty input returns an empty slice without querying.
+//
+// [Ja] ListForAnimeSyncByIDs は指定 ID の works を、フェーズ 2 のリコンシリエーションが
+// animes / anime_classifications に写像するカラム (works.anime_id のマッピングカラムを
+// 含む) を射影してロードする。行は id 昇順で、存在しない ID は黙って除外される。
+// 空入力ではクエリせず空スライスを返す。
+func (r *WorkRepository) ListForAnimeSyncByIDs(ctx context.Context, workIDs []model.WorkID) ([]*model.Work, error) {
+	if len(workIDs) == 0 {
+		return []*model.Work{}, nil
+	}
+
+	ids := make([]int64, len(workIDs))
+	for i, id := range workIDs {
+		ids[i] = int64(id)
+	}
+
+	rows, err := r.queries.ListWorksForAnimeSyncByIDs(ctx, ids)
+	if err != nil {
+		return nil, err
+	}
+
+	works := make([]*model.Work, len(rows))
+	for i, row := range rows {
+		works[i] = workFromAnimeSyncRow(row)
+	}
+	return works, nil
+}
+
+// UpdateAnimeID writes back the works.anime_id mapping column, marking the work as
+// synced to the given anime. updated_at is intentionally left untouched so the
+// bookkeeping write is not mistaken for a content change on the source-of-truth row.
+//
+// [Ja] UpdateAnimeID は works.anime_id マッピングカラムを書き戻し、作品を指定アニメへ
+// 同期済みとして印付ける。updated_at は意図的に触れず、正本側の行への記帳書き込みが
+// 内容変更と取り違えられないようにする。
+func (r *WorkRepository) UpdateAnimeID(ctx context.Context, workID model.WorkID, animeID model.AnimeID) error {
+	return r.queries.UpdateWorkAnimeID(ctx, query.UpdateWorkAnimeIDParams{
+		ID:      int64(workID),
+		AnimeID: sql.NullInt64{Int64: int64(animeID), Valid: true},
+	})
+}
+
+// workFromAnimeSyncRow converts an anime-sync query row into *model.Work. The works
+// text columns are NOT NULL DEFAULT ”, so the empty string is preserved here and
+// mapped to NULL later (in the sync usecase) where animes uses NULL for "absent".
+//
+// [Ja] workFromAnimeSyncRow は anime 同期の query 行を *model.Work に変換する。
+// works のテキストカラムは NOT NULL DEFAULT ” なのでここでは空文字列のまま保持し、
+// animes が「未設定」を NULL で表す都合に合わせて後段 (同期 UseCase) で NULL に写像する。
+func workFromAnimeSyncRow(row query.ListWorksForAnimeSyncByIDsRow) *model.Work {
+	work := &model.Work{
+		ID:                    model.WorkID(row.ID),
+		Title:                 row.Title,
+		TitleRo:               row.TitleRo,
+		TitleEn:               row.TitleEn,
+		TitleAlter:            row.TitleAlter,
+		TitleAlterEn:          row.TitleAlterEn,
+		Media:                 row.Media,
+		Synopsis:              row.Synopsis,
+		SynopsisEn:            row.SynopsisEn,
+		SynopsisSource:        row.SynopsisSource,
+		SynopsisSourceEn:      row.SynopsisSourceEn,
+		Status:                model.WorkStatus(row.Status),
+		NoEpisodes:            row.NoEpisodes,
+		StartEpisodeRawNumber: row.StartEpisodeRawNumber,
+	}
+	if row.TitleKana != "" {
+		titleKana := row.TitleKana
+		work.TitleKana = &titleKana
+	}
+	if row.ArchiveMessage.Valid {
+		archiveMessage := row.ArchiveMessage.String
+		work.ArchiveMessage = &archiveMessage
+	}
+	if row.ManualEpisodesCount.Valid {
+		manualEpisodesCount := row.ManualEpisodesCount.Int32
+		work.ManualEpisodesCount = &manualEpisodesCount
+	}
+	if row.NumberFormatID.Valid {
+		numberFormatID := model.NumberFormatID(row.NumberFormatID.Int64)
+		work.NumberFormatID = &numberFormatID
+	}
+	if row.AnimeID.Valid {
+		animeID := model.AnimeID(row.AnimeID.Int64)
+		work.AnimeID = &animeID
+	}
+	return work
+}
+
 func nullInt32FromPtr(v *int32) sql.NullInt32 {
 	if v == nil {
 		return sql.NullInt32{}
