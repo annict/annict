@@ -45,6 +45,31 @@ type Work struct {
 	Status    WorkStatus
 	CreatedAt time.Time
 
+	// Fields below are populated only by the anime-sync loader (ListForAnimeSyncByIDs),
+	// which projects the works columns mapped onto animes / anime_classifications during
+	// the phase 2 reconciliation. Other loaders leave them at their zero value.
+	// AnimeID is the works.anime_id mapping column: nil means the row is not yet
+	// synced to an anime.
+	//
+	// [Ja] 以下のフィールドは anime 同期ローダー (ListForAnimeSyncByIDs) でのみ値が入る。
+	// フェーズ 2 のリコンシリエーションで animes / anime_classifications に写像する
+	// works カラムを射影したもので、他のロード経路ではゼロ値のまま。
+	// AnimeID は works.anime_id のマッピングカラムで、nil は未同期 (anime 未作成) を表す。
+	TitleRo               string
+	TitleAlter            string
+	TitleAlterEn          string
+	Media                 int32
+	Synopsis              string
+	SynopsisEn            string
+	SynopsisSource        string
+	SynopsisSourceEn      string
+	ArchiveMessage        *string
+	NoEpisodes            bool
+	ManualEpisodesCount   *int32
+	StartEpisodeRawNumber float64
+	NumberFormatID        *NumberFormatID
+	AnimeID               *AnimeID
+
 	// Related entities. Set only when the caller has explicitly loaded them; nil by default.
 	//
 	// [Ja] 関連エンティティ。明示的にロードした場合のみセットされ、通常は nil。
