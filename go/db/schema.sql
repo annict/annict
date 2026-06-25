@@ -1285,7 +1285,8 @@ CREATE TABLE public.episodes (
     deleted_at timestamp without time zone,
     unpublished_at timestamp without time zone,
     status public.episode_status DEFAULT 'published'::public.episode_status NOT NULL,
-    archive_message character varying
+    archive_message character varying,
+    anime_id bigint
 );
 
 
@@ -3722,7 +3723,8 @@ CREATE TABLE public.works (
     title_alter_en character varying DEFAULT ''::character varying NOT NULL,
     unpublished_at timestamp without time zone,
     status public.work_status DEFAULT 'published'::public.work_status NOT NULL,
-    archive_message character varying
+    archive_message character varying,
+    anime_id bigint
 );
 
 
@@ -5873,6 +5875,13 @@ CREATE INDEX index_episodes_on_aasm_state ON public.episodes USING btree (aasm_s
 
 
 --
+-- Name: index_episodes_on_anime_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_episodes_on_anime_id ON public.episodes USING btree (anime_id) WHERE (anime_id IS NOT NULL);
+
+
+--
 -- Name: index_episodes_on_deleted_at; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -7007,6 +7016,13 @@ CREATE INDEX index_works_on_aasm_state ON public.works USING btree (aasm_state);
 
 
 --
+-- Name: index_works_on_anime_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_works_on_anime_id ON public.works USING btree (anime_id) WHERE (anime_id IS NOT NULL);
+
+
+--
 -- Name: index_works_on_deleted_at; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -7382,6 +7398,14 @@ ALTER TABLE ONLY public.comments
 
 ALTER TABLE ONLY public.comments
     ADD CONSTRAINT comments_user_id_fk FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: episodes episodes_anime_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.episodes
+    ADD CONSTRAINT episodes_anime_id_fkey FOREIGN KEY (anime_id) REFERENCES public.animes(id);
 
 
 --
@@ -8297,6 +8321,14 @@ ALTER TABLE ONLY public.syobocal_alerts
 
 
 --
+-- Name: works works_anime_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.works
+    ADD CONSTRAINT works_anime_id_fkey FOREIGN KEY (anime_id) REFERENCES public.animes(id);
+
+
+--
 -- Name: works works_season_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -8606,4 +8638,7 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20260210081156'),
     ('20260322083140'),
     ('20260521153415'),
-    ('20260622084725');
+    ('20260622084725'),
+    ('20260625014158'),
+    ('20260625020434'),
+    ('20260625020743');
