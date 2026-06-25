@@ -98,6 +98,27 @@ type SignUpCodeID int64
 // String は文字列表現を返す
 func (id SignUpCodeID) String() string { return strconv.FormatInt(int64(id), 10) }
 
+// AnimeID is the ID type for the content-identity table (animes).
+//
+// [Ja] AnimeID はコンテンツ同一性テーブル (animes) の ID 型。
+type AnimeID int64
+
+// String returns the textual representation of the ID.
+//
+// [Ja] String は ID の文字列表現を返す。
+func (id AnimeID) String() string { return strconv.FormatInt(int64(id), 10) }
+
+// AnimeClassificationID is the ID type for the catalog-classification table
+// (anime_classifications).
+//
+// [Ja] AnimeClassificationID はカタログ分類テーブル (anime_classifications) の ID 型。
+type AnimeClassificationID int64
+
+// String returns the textual representation of the ID.
+//
+// [Ja] String は ID の文字列表現を返す。
+func (id AnimeClassificationID) String() string { return strconv.FormatInt(int64(id), 10) }
+
 // FeatureFlagID はフィーチャーフラグのID型
 type FeatureFlagID int64
 

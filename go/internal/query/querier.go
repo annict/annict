@@ -32,6 +32,8 @@ type Querier interface {
 	CountDBWorks(ctx context.Context, arg CountDBWorksParams) (int64, error)
 	CountEpisodeRecordsByUserID(ctx context.Context, userID int64) (int64, error)
 	CountRecordsByUserID(ctx context.Context, userID int64) (int64, error)
+	CreateAnime(ctx context.Context, arg CreateAnimeParams) (Anime, error)
+	CreateAnimeClassification(ctx context.Context, arg CreateAnimeClassificationParams) (AnimeClassification, error)
 	CreateEmailNotification(ctx context.Context, arg CreateEmailNotificationParams) (CreateEmailNotificationRow, error)
 	CreateOAuthAccessToken(ctx context.Context, arg CreateOAuthAccessTokenParams) (int64, error)
 	CreateOAuthApplication(ctx context.Context, arg CreateOAuthApplicationParams) (int64, error)
@@ -61,6 +63,8 @@ type Querier interface {
 	GetActivityByID(ctx context.Context, id int64) (GetActivityByIDRow, error)
 	GetActivityGroupByID(ctx context.Context, id int64) (ActivityGroup, error)
 	GetActivityGroupByUserAndType(ctx context.Context, arg GetActivityGroupByUserAndTypeParams) (ActivityGroup, error)
+	GetAnimeByID(ctx context.Context, id int64) (Anime, error)
+	GetAnimeClassificationByAnimeID(ctx context.Context, animeID int64) (AnimeClassification, error)
 	// カレンダー用の放送枠を取得します
 	// 現在時刻から7日後までの未視聴エピソードを対象とします
 	GetCalendarSlots(ctx context.Context, arg GetCalendarSlotsParams) ([]GetCalendarSlotsRow, error)
@@ -104,12 +108,19 @@ type Querier interface {
 	InvalidateUserSignInCodes(ctx context.Context, userID int64) error
 	IsFeatureFlagEnabled(ctx context.Context, arg IsFeatureFlagEnabledParams) (bool, error)
 	ListAllProfiles(ctx context.Context) ([]ListAllProfilesRow, error)
+	ListAnimeClassificationsByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]AnimeClassification, error)
+	ListAnimesByIDs(ctx context.Context, dollar_1 []int64) ([]Anime, error)
 	ListDBWorks(ctx context.Context, arg ListDBWorksParams) ([]ListDBWorksRow, error)
+	ListEpisodesForAnimeSyncByIDs(ctx context.Context, dollar_1 []int64) ([]ListEpisodesForAnimeSyncByIDsRow, error)
 	ListNumberFormats(ctx context.Context) ([]ListNumberFormatsRow, error)
+	ListWorksForAnimeSyncByIDs(ctx context.Context, dollar_1 []int64) ([]ListWorksForAnimeSyncByIDsRow, error)
 	MarkPasswordResetTokenAsUsed(ctx context.Context, id int64) error
 	MarkSignInCodeAsUsed(ctx context.Context, id int64) error
 	MarkSignUpCodeAsUsed(ctx context.Context, id int64) error
 	TouchSession(ctx context.Context, sessionID string) error
+	UpdateAnime(ctx context.Context, arg UpdateAnimeParams) error
+	UpdateAnimeClassificationByAnimeID(ctx context.Context, arg UpdateAnimeClassificationByAnimeIDParams) error
+	UpdateEpisodeAnimeID(ctx context.Context, arg UpdateEpisodeAnimeIDParams) error
 	UpdateProfileImageData(ctx context.Context, arg UpdateProfileImageDataParams) error
 	UpdateSession(ctx context.Context, arg UpdateSessionParams) error
 	UpdateStripeSubscriber(ctx context.Context, arg UpdateStripeSubscriberParams) error
@@ -117,6 +128,7 @@ type Querier interface {
 	UpdateStripeWebhookEventStatus(ctx context.Context, arg UpdateStripeWebhookEventStatusParams) error
 	UpdateUserPassword(ctx context.Context, arg UpdateUserPasswordParams) error
 	UpdateUserStripeSubscriberID(ctx context.Context, arg UpdateUserStripeSubscriberIDParams) error
+	UpdateWorkAnimeID(ctx context.Context, arg UpdateWorkAnimeIDParams) error
 }
 
 var _ Querier = (*Queries)(nil)

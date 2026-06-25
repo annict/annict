@@ -75,6 +75,36 @@ WHERE w.status != 'deleted'
     AND (sqlc.narg('season_year')::int IS NULL OR w.season_year = sqlc.narg('season_year'))
     AND (sqlc.narg('season_name')::int IS NULL OR w.season_name = sqlc.narg('season_name'));
 
+-- name: ListWorksForAnimeSyncByIDs :many
+SELECT
+    id,
+    title,
+    title_kana,
+    title_ro,
+    title_en,
+    title_alter,
+    title_alter_en,
+    media,
+    synopsis,
+    synopsis_en,
+    synopsis_source,
+    synopsis_source_en,
+    status,
+    archive_message,
+    no_episodes,
+    manual_episodes_count,
+    start_episode_raw_number,
+    number_format_id,
+    anime_id
+FROM works
+WHERE id = ANY($1::bigint[])
+ORDER BY id;
+
+-- name: UpdateWorkAnimeID :exec
+UPDATE works
+SET anime_id = $2
+WHERE id = $1;
+
 -- name: CreateWork :one
 INSERT INTO works (
     title,

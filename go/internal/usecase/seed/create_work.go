@@ -158,19 +158,23 @@ func (uc *CreateWorkUsecase) createMultipleWorks(ctx context.Context, tx *sql.Tx
 		queryBuilder += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d)",
 			offset+1, offset+2, offset+3, offset+4, offset+5, offset+6, offset+7, offset+8, offset+9, offset+10, offset+11)
 
-		// MediaTypeをinteger値に変換（Rails enum互換）
+		// Convert the MediaType to the works.media integer, matching the Rails
+		// Work#media enum (tv=1, ova=2, movie=3, web=4, other=0).
+		//
+		// [Ja] MediaType を works.media の integer に変換する。Rails の Work#media enum
+		// (tv=1, ova=2, movie=3, web=4, other=0) に合わせる。
 		var mediaInt int
 		switch params.Media {
 		case seed.MediaTV:
-			mediaInt = 0
-		case seed.MediaOVA:
 			mediaInt = 1
-		case seed.MediaMovie:
+		case seed.MediaOVA:
 			mediaInt = 2
-		case seed.MediaWeb:
+		case seed.MediaMovie:
 			mediaInt = 3
+		case seed.MediaWeb:
+			mediaInt = 4
 		default:
-			mediaInt = 0 // デフォルトはTV
+			mediaInt = 0
 		}
 
 		// SeasonNameをinteger値に変換（Rails enum互換）
@@ -232,110 +236,6 @@ func (uc *CreateWorkUsecase) createMultipleWorks(ctx context.Context, tx *sql.Tx
 	}
 
 	return results, nil
-}
-
-// createSingleWork 単一の作品を作成します（トランザクション内）
-// 注意: この関数は後方互換性のために残していますが、
-// パフォーマンスのためにcreateMultipleWorksの使用を推奨します
-//
-//lint:ignore U1000 後方互換性のために保持
-func (uc *CreateWorkUsecase) createSingleWork(ctx context.Context, tx *sql.Tx, params CreateWorkParams) (*CreateWorkResult, error) {
-	// デフォルト値の設定
-	titleKana := params.TitleKana
-	if titleKana == "" {
-		titleKana = ""
-	}
-
-	officialSiteURL := params.OfficialSiteURL
-	if officialSiteURL == "" {
-		officialSiteURL = ""
-	}
-
-	// 作品を作成
-	workID, err := uc.createWork(ctx, tx, params)
-	if err != nil {
-		return nil, fmt.Errorf("作品レコード作成エラー: %w", err)
-	}
-
-	return &CreateWorkResult{
-		WorkID: model.WorkID(workID),
-	}, nil
-}
-
-// createWork worksテーブルにレコードを作成します
-//
-//lint:ignore U1000 後方互換性のために保持
-func (uc *CreateWorkUsecase) createWork(ctx context.Context, tx *sql.Tx, params CreateWorkParams) (int64, error) {
-	query := `
-		INSERT INTO works (
-			title, title_kana, media, official_site_url,
-			wikipedia_url, season_year, season_name,
-			watchers_count, episodes_count,
-			created_at, updated_at
-		) VALUES (
-			$1, $2, $3, $4,
-			$5, $6, $7,
-			$8, $9,
-			$10, $11
-		) RETURNING id
-	`
-
-	// MediaTypeをinteger値に変換（Rails enum互換）
-	var mediaInt int
-	switch params.Media {
-	case seed.MediaTV:
-		mediaInt = 0
-	case seed.MediaOVA:
-		mediaInt = 1
-	case seed.MediaMovie:
-		mediaInt = 2
-	case seed.MediaWeb:
-		mediaInt = 3
-	default:
-		mediaInt = 0 // デフォルトはTV
-	}
-
-	// SeasonNameをinteger値に変換（Rails enum互換）
-	var seasonNameInt interface{}
-	if params.SeasonName != nil {
-		switch *params.SeasonName {
-		case seed.SeasonWinter:
-			seasonNameInt = 1
-		case seed.SeasonSpring:
-			seasonNameInt = 2
-		case seed.SeasonSummer:
-			seasonNameInt = 3
-		case seed.SeasonAutumn:
-			seasonNameInt = 4
-		default:
-			seasonNameInt = nil
-		}
-	} else {
-		seasonNameInt = nil
-	}
-
-	var workID int64
-	err := tx.QueryRowContext(
-		ctx,
-		query,
-		params.Title,
-		params.TitleKana,
-		mediaInt,
-		params.OfficialSiteURL,
-		"", // wikipedia_url (デフォルト空文字)
-		params.SeasonYear,
-		seasonNameInt,
-		0,          // watchers_count (デフォルト0)
-		0,          // episodes_count (デフォルト0)
-		time.Now(), // created_at
-		time.Now(), // updated_at
-	).Scan(&workID)
-
-	if err != nil {
-		return 0, fmt.Errorf("worksテーブルへの挿入エラー: %w", err)
-	}
-
-	return workID, nil
 }
 
 // GenerateRandomWorkParams はランダムな作品パラメータを生成します
