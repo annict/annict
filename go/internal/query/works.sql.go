@@ -8,6 +8,8 @@ package query
 import (
 	"context"
 	"database/sql"
+
+	"github.com/lib/pq"
 )
 
 const countDBWorks = `-- name: CountDBWorks :one
@@ -369,4 +371,111 @@ func (q *Queries) ListDBWorks(ctx context.Context, arg ListDBWorksParams) ([]Lis
 		return nil, err
 	}
 	return items, nil
+}
+
+const listWorksForAnimeSyncByIDs = `-- name: ListWorksForAnimeSyncByIDs :many
+SELECT
+    id,
+    title,
+    title_kana,
+    title_ro,
+    title_en,
+    title_alter,
+    title_alter_en,
+    media,
+    synopsis,
+    synopsis_en,
+    synopsis_source,
+    synopsis_source_en,
+    status,
+    archive_message,
+    no_episodes,
+    manual_episodes_count,
+    start_episode_raw_number,
+    number_format_id,
+    anime_id
+FROM works
+WHERE id = ANY($1::bigint[])
+ORDER BY id
+`
+
+type ListWorksForAnimeSyncByIDsRow struct {
+	ID                    int64          `db:"id"`
+	Title                 string         `db:"title"`
+	TitleKana             string         `db:"title_kana"`
+	TitleRo               string         `db:"title_ro"`
+	TitleEn               string         `db:"title_en"`
+	TitleAlter            string         `db:"title_alter"`
+	TitleAlterEn          string         `db:"title_alter_en"`
+	Media                 int32          `db:"media"`
+	Synopsis              string         `db:"synopsis"`
+	SynopsisEn            string         `db:"synopsis_en"`
+	SynopsisSource        string         `db:"synopsis_source"`
+	SynopsisSourceEn      string         `db:"synopsis_source_en"`
+	Status                WorkStatus     `db:"status"`
+	ArchiveMessage        sql.NullString `db:"archive_message"`
+	NoEpisodes            bool           `db:"no_episodes"`
+	ManualEpisodesCount   sql.NullInt32  `db:"manual_episodes_count"`
+	StartEpisodeRawNumber float64        `db:"start_episode_raw_number"`
+	NumberFormatID        sql.NullInt64  `db:"number_format_id"`
+	AnimeID               sql.NullInt64  `db:"anime_id"`
+}
+
+func (q *Queries) ListWorksForAnimeSyncByIDs(ctx context.Context, dollar_1 []int64) ([]ListWorksForAnimeSyncByIDsRow, error) {
+	rows, err := q.db.QueryContext(ctx, listWorksForAnimeSyncByIDs, pq.Array(dollar_1))
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []ListWorksForAnimeSyncByIDsRow{}
+	for rows.Next() {
+		var i ListWorksForAnimeSyncByIDsRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Title,
+			&i.TitleKana,
+			&i.TitleRo,
+			&i.TitleEn,
+			&i.TitleAlter,
+			&i.TitleAlterEn,
+			&i.Media,
+			&i.Synopsis,
+			&i.SynopsisEn,
+			&i.SynopsisSource,
+			&i.SynopsisSourceEn,
+			&i.Status,
+			&i.ArchiveMessage,
+			&i.NoEpisodes,
+			&i.ManualEpisodesCount,
+			&i.StartEpisodeRawNumber,
+			&i.NumberFormatID,
+			&i.AnimeID,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const updateWorkAnimeID = `-- name: UpdateWorkAnimeID :exec
+UPDATE works
+SET anime_id = $2
+WHERE id = $1
+`
+
+type UpdateWorkAnimeIDParams struct {
+	ID      int64         `db:"id"`
+	AnimeID sql.NullInt64 `db:"anime_id"`
+}
+
+func (q *Queries) UpdateWorkAnimeID(ctx context.Context, arg UpdateWorkAnimeIDParams) error {
+	_, err := q.db.ExecContext(ctx, updateWorkAnimeID, arg.ID, arg.AnimeID)
+	return err
 }
