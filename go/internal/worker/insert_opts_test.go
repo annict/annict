@@ -26,6 +26,12 @@ func TestArgsInsertOpts(t *testing.T) {
 			wantQueue:       river.QueueDefault,
 			wantMaxAttempts: 3,
 		},
+		{
+			name:            "SyncAnimesArgs",
+			opts:            SyncAnimesArgs{}.InsertOpts(),
+			wantQueue:       river.QueueDefault,
+			wantMaxAttempts: 3,
+		},
 	}
 
 	for _, tt := range tests {
