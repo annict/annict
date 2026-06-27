@@ -5444,7 +5444,7 @@ CREATE INDEX index_anime_classifications_on_parent_anime_id_and_sort_number ON p
 -- Name: index_anime_events_on_anime_id_and_kind; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_anime_events_on_anime_id_and_kind ON public.anime_events USING btree (anime_id, kind);
+CREATE UNIQUE INDEX index_anime_events_on_anime_id_and_kind ON public.anime_events USING btree (anime_id, kind);
 
 
 --
@@ -5476,17 +5476,17 @@ CREATE UNIQUE INDEX index_anime_hashtags_on_anime_id_and_hashtag ON public.anime
 
 
 --
--- Name: index_anime_links_on_anime_id_and_kind; Type: INDEX; Schema: public; Owner: -
+-- Name: index_anime_links_on_anime_id_and_kind_and_language; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_anime_links_on_anime_id_and_kind ON public.anime_links USING btree (anime_id, kind);
+CREATE UNIQUE INDEX index_anime_links_on_anime_id_and_kind_and_language ON public.anime_links USING btree (anime_id, kind, language);
 
 
 --
 -- Name: index_anime_official_accounts_on_anime_id_and_service; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_anime_official_accounts_on_anime_id_and_service ON public.anime_official_accounts USING btree (anime_id, service);
+CREATE UNIQUE INDEX index_anime_official_accounts_on_anime_id_and_service ON public.anime_official_accounts USING btree (anime_id, service);
 
 
 --
@@ -8641,4 +8641,7 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20260622084725'),
     ('20260625014158'),
     ('20260625020434'),
-    ('20260625020743');
+    ('20260625020743'),
+    ('20260627101544'),
+    ('20260627103815'),
+    ('20260627190207');
