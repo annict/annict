@@ -500,6 +500,82 @@ func (q *Queries) ListWorksForAnimeSyncByIDs(ctx context.Context, dollar_1 []int
 	return items, nil
 }
 
+const listWorksForSatelliteSyncByIDs = `-- name: ListWorksForSatelliteSyncByIDs :many
+SELECT
+    id,
+    anime_id,
+    sc_tid,
+    mal_anime_id,
+    official_site_url,
+    official_site_url_en,
+    wikipedia_url,
+    wikipedia_url_en,
+    twitter_username,
+    twitter_hashtag,
+    season_year,
+    season_name,
+    started_on,
+    ended_on
+FROM works
+WHERE id = ANY($1::bigint[])
+ORDER BY id
+`
+
+type ListWorksForSatelliteSyncByIDsRow struct {
+	ID                int64          `db:"id"`
+	AnimeID           sql.NullInt64  `db:"anime_id"`
+	ScTid             sql.NullInt32  `db:"sc_tid"`
+	MalAnimeID        sql.NullInt32  `db:"mal_anime_id"`
+	OfficialSiteUrl   string         `db:"official_site_url"`
+	OfficialSiteUrlEn string         `db:"official_site_url_en"`
+	WikipediaUrl      string         `db:"wikipedia_url"`
+	WikipediaUrlEn    string         `db:"wikipedia_url_en"`
+	TwitterUsername   sql.NullString `db:"twitter_username"`
+	TwitterHashtag    sql.NullString `db:"twitter_hashtag"`
+	SeasonYear        sql.NullInt32  `db:"season_year"`
+	SeasonName        sql.NullInt32  `db:"season_name"`
+	StartedOn         sql.NullTime   `db:"started_on"`
+	EndedOn           sql.NullTime   `db:"ended_on"`
+}
+
+func (q *Queries) ListWorksForSatelliteSyncByIDs(ctx context.Context, dollar_1 []int64) ([]ListWorksForSatelliteSyncByIDsRow, error) {
+	rows, err := q.db.QueryContext(ctx, listWorksForSatelliteSyncByIDs, pq.Array(dollar_1))
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []ListWorksForSatelliteSyncByIDsRow{}
+	for rows.Next() {
+		var i ListWorksForSatelliteSyncByIDsRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.AnimeID,
+			&i.ScTid,
+			&i.MalAnimeID,
+			&i.OfficialSiteUrl,
+			&i.OfficialSiteUrlEn,
+			&i.WikipediaUrl,
+			&i.WikipediaUrlEn,
+			&i.TwitterUsername,
+			&i.TwitterHashtag,
+			&i.SeasonYear,
+			&i.SeasonName,
+			&i.StartedOn,
+			&i.EndedOn,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const updateWorkAnimeID = `-- name: UpdateWorkAnimeID :exec
 UPDATE works
 SET anime_id = $2

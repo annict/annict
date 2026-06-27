@@ -100,6 +100,26 @@ FROM works
 WHERE id = ANY($1::bigint[])
 ORDER BY id;
 
+-- name: ListWorksForSatelliteSyncByIDs :many
+SELECT
+    id,
+    anime_id,
+    sc_tid,
+    mal_anime_id,
+    official_site_url,
+    official_site_url_en,
+    wikipedia_url,
+    wikipedia_url_en,
+    twitter_username,
+    twitter_hashtag,
+    season_year,
+    season_name,
+    started_on,
+    ended_on
+FROM works
+WHERE id = ANY($1::bigint[])
+ORDER BY id;
+
 -- name: ListWorkIDsAfter :many
 SELECT id
 FROM works
