@@ -265,6 +265,38 @@ func (r *WorkRepository) ListForAnimeSyncByIDs(ctx context.Context, workIDs []mo
 	return works, nil
 }
 
+// ListForSatelliteSyncByIDs loads the works with the given IDs, projecting the
+// columns the phase 2 reconciliation maps onto the satellite tables (external IDs /
+// links / official accounts / hashtags / seasons / events) plus the works.anime_id
+// mapping column. Rows are ordered by id; missing IDs are silently skipped. An empty
+// input returns an empty slice without querying.
+//
+// [Ja] ListForSatelliteSyncByIDs は指定 ID の works を、フェーズ 2 のリコンシリエーションが
+// 別表 (外部 ID / リンク / 公式アカウント / ハッシュタグ / 季節 / イベント) に写像する
+// カラムと works.anime_id のマッピングカラムを射影してロードする。行は id 昇順で、存在
+// しない ID は黙って除外される。空入力ではクエリせず空スライスを返す。
+func (r *WorkRepository) ListForSatelliteSyncByIDs(ctx context.Context, workIDs []model.WorkID) ([]*model.Work, error) {
+	if len(workIDs) == 0 {
+		return []*model.Work{}, nil
+	}
+
+	ids := make([]int64, len(workIDs))
+	for i, id := range workIDs {
+		ids[i] = int64(id)
+	}
+
+	rows, err := r.queries.ListWorksForSatelliteSyncByIDs(ctx, ids)
+	if err != nil {
+		return nil, err
+	}
+
+	works := make([]*model.Work, len(rows))
+	for i, row := range rows {
+		works[i] = workFromSatelliteSyncRow(row)
+	}
+	return works, nil
+}
+
 // ListIDsAfter returns up to batchSize work IDs whose id is greater than afterID,
 // in ascending id order. It is the keyset-pagination primitive the phase 2 batch
 // job (task 2-4) uses to walk the whole works table page by page: pass afterID=0
@@ -355,6 +387,64 @@ func workFromAnimeSyncRow(row query.ListWorksForAnimeSyncByIDsRow) *model.Work {
 	if row.AnimeID.Valid {
 		animeID := model.AnimeID(row.AnimeID.Int64)
 		work.AnimeID = &animeID
+	}
+	return work
+}
+
+// workFromSatelliteSyncRow converts a satellite-sync query row into *model.Work. Only
+// the columns the satellite tables are sourced from (plus id / anime_id) are projected;
+// the rest of *model.Work stays at its zero value. The NOT NULL DEFAULT ” url columns
+// keep the empty string here and are mapped to "no row" later (in the reconcile helper),
+// mirroring how workFromAnimeSyncRow defers the empty-to-NULL mapping to the sync usecase.
+//
+// [Ja] workFromSatelliteSyncRow は別表同期の query 行を *model.Work に変換する。別表が
+// source とするカラム (と id / anime_id) だけを射影し、残りの *model.Work フィールドは
+// ゼロ値のまま。NOT NULL DEFAULT ” の url 列はここでは空文字列のまま保持し、後段
+// (リコンサイルヘルパー) で「行なし」に写像する。workFromAnimeSyncRow が空→NULL の写像を
+// 同期 UseCase に委ねるのと同じ扱い。
+func workFromSatelliteSyncRow(row query.ListWorksForSatelliteSyncByIDsRow) *model.Work {
+	work := &model.Work{
+		ID:                model.WorkID(row.ID),
+		OfficialSiteURL:   row.OfficialSiteUrl,
+		OfficialSiteURLEn: row.OfficialSiteUrlEn,
+		WikipediaURL:      row.WikipediaUrl,
+		WikipediaURLEn:    row.WikipediaUrlEn,
+	}
+	if row.AnimeID.Valid {
+		animeID := model.AnimeID(row.AnimeID.Int64)
+		work.AnimeID = &animeID
+	}
+	if row.ScTid.Valid {
+		scTid := row.ScTid.Int32
+		work.ScTid = &scTid
+	}
+	if row.MalAnimeID.Valid {
+		malAnimeID := row.MalAnimeID.Int32
+		work.MalAnimeID = &malAnimeID
+	}
+	if row.TwitterUsername.Valid {
+		twitterUsername := row.TwitterUsername.String
+		work.TwitterUsername = &twitterUsername
+	}
+	if row.TwitterHashtag.Valid {
+		twitterHashtag := row.TwitterHashtag.String
+		work.TwitterHashtag = &twitterHashtag
+	}
+	if row.SeasonYear.Valid {
+		seasonYear := row.SeasonYear.Int32
+		work.SeasonYear = &seasonYear
+	}
+	if row.SeasonName.Valid {
+		seasonName := row.SeasonName.Int32
+		work.SeasonName = &seasonName
+	}
+	if row.StartedOn.Valid {
+		startedOn := row.StartedOn.Time
+		work.StartedOn = &startedOn
+	}
+	if row.EndedOn.Valid {
+		endedOn := row.EndedOn.Time
+		work.EndedOn = &endedOn
 	}
 	return work
 }
