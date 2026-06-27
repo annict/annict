@@ -464,3 +464,96 @@ func TestWorkRepository_CountForDB(t *testing.T) {
 		}
 	})
 }
+
+// TestWorkRepository_ListIDsAfter verifies keyset pagination. Other tests commit
+// works to the shared test DB, so this test cannot assert an exact page content;
+// instead it asserts the keyset invariants that hold regardless of foreign rows:
+// the first id strictly greater than the cursor, ascending order, the limit, and
+// strict cursor advancement. id1-1 as a cursor pins the first row to id1 because
+// no row can have an id in the open interval (id1-1, id1).
+//
+// [Ja] TestWorkRepository_ListIDsAfter は keyset ページネーションを検証する。他テストが
+// 共有テスト DB に works をコミットするため、ページ内容の厳密一致は検証できない。代わりに
+// 他行の有無に依らず成立する keyset の不変条件 (カーソルより厳密に大きい最初の id・昇順・
+// LIMIT・カーソルの厳密前進) を検証する。カーソルに id1-1 を使うと、開区間 (id1-1, id1) に
+// id を持つ行は存在しえないため、最初の行が id1 に固定される。
+func TestWorkRepository_ListIDsAfter(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	repo := repository.NewWorkRepository(query.New(db).WithTx(tx))
+	ctx := context.Background()
+
+	// Three works in ascending id order (the sequence is monotonic). The middle
+	// row is unnamed; it only needs to exist so the first page (limit 2) is full
+	// and id3 stays ahead of the second-page cursor.
+	//
+	// [Ja] id 昇順の 3 件 (シーケンスは単調増加)。中間の行は名前を付けない。最初のページ
+	// (limit 2) が満杯になり、id3 が 2 ページ目のカーソルより先に残るために存在させるだけ。
+	id1 := testutil.NewWorkBuilder(t, tx).Build()
+	testutil.NewWorkBuilder(t, tx).Build()
+	id3 := testutil.NewWorkBuilder(t, tx).Build()
+
+	t.Run("カーソル直後の id を LIMIT どおり 1 件返す", func(t *testing.T) {
+		got, err := repo.ListIDsAfter(ctx, id1-1, 1)
+		if err != nil {
+			t.Fatalf("ListIDsAfter() error = %v", err)
+		}
+		if len(got) != 1 {
+			t.Fatalf("len = %d, want 1", len(got))
+		}
+		if got[0] != id1 {
+			t.Errorf("got[0] = %d, want %d", got[0], id1)
+		}
+	})
+
+	t.Run("昇順かつカーソルより大きい id だけを LIMIT 件数まで返す", func(t *testing.T) {
+		got, err := repo.ListIDsAfter(ctx, id1-1, 2)
+		if err != nil {
+			t.Fatalf("ListIDsAfter() error = %v", err)
+		}
+		if len(got) != 2 {
+			t.Fatalf("len = %d, want 2", len(got))
+		}
+		if got[0] != id1 {
+			t.Errorf("got[0] = %d, want %d", got[0], id1)
+		}
+		if got[0] >= got[1] {
+			t.Errorf("not ascending: %v", got)
+		}
+	})
+
+	t.Run("カーソルを進めると重複なく前進する", func(t *testing.T) {
+		page1, err := repo.ListIDsAfter(ctx, id1-1, 2)
+		if err != nil {
+			t.Fatalf("ListIDsAfter() error = %v", err)
+		}
+		cursor := page1[len(page1)-1]
+
+		page2, err := repo.ListIDsAfter(ctx, cursor, 2)
+		if err != nil {
+			t.Fatalf("ListIDsAfter() error = %v", err)
+		}
+		// id3 is still ahead of the cursor (the cursor is at most id2), so the next
+		// page is non-empty and every id is strictly greater than the cursor.
+		//
+		// [Ja] id3 はまだカーソルの先にある (カーソルは高々 id2) ため、次ページは空でなく、
+		// すべての id がカーソルより厳密に大きい。
+		if len(page2) == 0 {
+			t.Fatal("page2 is empty, want at least id3")
+		}
+		if page2[0] <= cursor {
+			t.Errorf("page2[0] = %d, want > cursor %d", page2[0], cursor)
+		}
+	})
+
+	t.Run("全 id より大きいカーソルでは空を返す", func(t *testing.T) {
+		got, err := repo.ListIDsAfter(ctx, id3+1_000_000_000, 10)
+		if err != nil {
+			t.Fatalf("ListIDsAfter() error = %v", err)
+		}
+		if len(got) != 0 {
+			t.Errorf("len = %d, want 0", len(got))
+		}
+	})
+}

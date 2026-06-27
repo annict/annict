@@ -373,6 +373,42 @@ func (q *Queries) ListDBWorks(ctx context.Context, arg ListDBWorksParams) ([]Lis
 	return items, nil
 }
 
+const listWorkIDsAfter = `-- name: ListWorkIDsAfter :many
+SELECT id
+FROM works
+WHERE id > $1
+ORDER BY id
+LIMIT $2
+`
+
+type ListWorkIDsAfterParams struct {
+	AfterID   int64 `db:"after_id"`
+	BatchSize int32 `db:"batch_size"`
+}
+
+func (q *Queries) ListWorkIDsAfter(ctx context.Context, arg ListWorkIDsAfterParams) ([]int64, error) {
+	rows, err := q.db.QueryContext(ctx, listWorkIDsAfter, arg.AfterID, arg.BatchSize)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []int64{}
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		items = append(items, id)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listWorksForAnimeSyncByIDs = `-- name: ListWorksForAnimeSyncByIDs :many
 SELECT
     id,

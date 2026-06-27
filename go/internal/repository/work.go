@@ -265,6 +265,39 @@ func (r *WorkRepository) ListForAnimeSyncByIDs(ctx context.Context, workIDs []mo
 	return works, nil
 }
 
+// ListIDsAfter returns up to batchSize work IDs whose id is greater than afterID,
+// in ascending id order. It is the keyset-pagination primitive the phase 2 batch
+// job (task 2-4) uses to walk the whole works table page by page: pass afterID=0
+// for the first page, then the last returned id as the cursor for the next page,
+// until an empty page signals the end. Keyset (id > cursor) is used over LIMIT/
+// OFFSET because the batch scans a large table and OFFSET re-reads all skipped rows
+// on every page, degrading to O(n^2) over a full scan.
+//
+// [Ja] ListIDsAfter は afterID より大きい work ID を昇順で最大 batchSize 件返す。
+// フェーズ 2 のバッチジョブ (タスク 2-4) が works テーブル全体をページ単位で走査する
+// ための keyset ページネーションの基本操作で、最初のページは afterID=0 を渡し、以降は
+// 直前に返った末尾の id をカーソルにして次ページを引き、空ページで終端を知る。
+// LIMIT/OFFSET ではなく keyset (id > カーソル) を使うのは、バッチが大テーブルを走査する
+// ため。OFFSET はページごとにスキップ分を読み直し、全件走査では O(n^2) に劣化する。
+func (r *WorkRepository) ListIDsAfter(ctx context.Context, afterID model.WorkID, batchSize int) ([]model.WorkID, error) {
+	rows, err := r.queries.ListWorkIDsAfter(ctx, query.ListWorkIDsAfterParams{
+		AfterID: int64(afterID),
+		// batchSize is a small bounded page size (default 1000), never near int32 max.
+		//
+		// [Ja] batchSize は小さく上限のあるページサイズ (既定 1000) で int32 上限には達しない。
+		BatchSize: int32(batchSize), // #nosec G115
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	ids := make([]model.WorkID, len(rows))
+	for i, id := range rows {
+		ids[i] = model.WorkID(id)
+	}
+	return ids, nil
+}
+
 // UpdateAnimeID writes back the works.anime_id mapping column, marking the work as
 // synced to the given anime. updated_at is intentionally left untouched so the
 // bookkeeping write is not mistaken for a content change on the source-of-truth row.

@@ -236,3 +236,89 @@ func TestEpisodeRepository_UpdateAnimeID(t *testing.T) {
 		t.Errorf("AnimeID = %v, want %d", episodes[0].AnimeID, episodeAnimeID)
 	}
 }
+
+// TestEpisodeRepository_ListIDsAfter verifies keyset pagination. As with the works
+// variant, other tests commit episodes to the shared test DB, so it asserts the
+// keyset invariants that hold regardless of foreign rows (first id strictly greater
+// than the cursor, ascending order, the limit, strict cursor advancement) rather
+// than exact page content.
+//
+// [Ja] TestEpisodeRepository_ListIDsAfter は keyset ページネーションを検証する。works 版と
+// 同様、他テストが共有テスト DB に episodes をコミットするため、ページ内容の厳密一致では
+// なく、他行の有無に依らず成立する keyset の不変条件 (カーソルより厳密に大きい最初の id・
+// 昇順・LIMIT・カーソルの厳密前進) を検証する。
+func TestEpisodeRepository_ListIDsAfter(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	repo := repository.NewEpisodeRepository(query.New(db).WithTx(tx))
+	ctx := context.Background()
+
+	workID := insertEpisodeSyncWork(t, tx, sql.NullInt64{})
+	// Three episodes in ascending id order; the middle one only needs to exist so
+	// the first page (limit 2) is full and id3 stays ahead of the second-page cursor.
+	//
+	// [Ja] id 昇順の 3 件。中間の 1 件は、最初のページ (limit 2) が満杯になり id3 が
+	// 2 ページ目のカーソルより先に残るために存在させるだけ。
+	id1 := insertEpisodeSyncEpisode(t, tx, episodeSyncRow{workID: workID, sortNumber: 1, status: "published"})
+	insertEpisodeSyncEpisode(t, tx, episodeSyncRow{workID: workID, sortNumber: 2, status: "published"})
+	id3 := insertEpisodeSyncEpisode(t, tx, episodeSyncRow{workID: workID, sortNumber: 3, status: "published"})
+
+	t.Run("カーソル直後の id を LIMIT どおり 1 件返す", func(t *testing.T) {
+		got, err := repo.ListIDsAfter(ctx, id1-1, 1)
+		if err != nil {
+			t.Fatalf("ListIDsAfter() error = %v", err)
+		}
+		if len(got) != 1 {
+			t.Fatalf("len = %d, want 1", len(got))
+		}
+		if got[0] != id1 {
+			t.Errorf("got[0] = %d, want %d", got[0], id1)
+		}
+	})
+
+	t.Run("昇順かつカーソルより大きい id だけを LIMIT 件数まで返す", func(t *testing.T) {
+		got, err := repo.ListIDsAfter(ctx, id1-1, 2)
+		if err != nil {
+			t.Fatalf("ListIDsAfter() error = %v", err)
+		}
+		if len(got) != 2 {
+			t.Fatalf("len = %d, want 2", len(got))
+		}
+		if got[0] != id1 {
+			t.Errorf("got[0] = %d, want %d", got[0], id1)
+		}
+		if got[0] >= got[1] {
+			t.Errorf("not ascending: %v", got)
+		}
+	})
+
+	t.Run("カーソルを進めると重複なく前進する", func(t *testing.T) {
+		page1, err := repo.ListIDsAfter(ctx, id1-1, 2)
+		if err != nil {
+			t.Fatalf("ListIDsAfter() error = %v", err)
+		}
+		cursor := page1[len(page1)-1]
+
+		page2, err := repo.ListIDsAfter(ctx, cursor, 2)
+		if err != nil {
+			t.Fatalf("ListIDsAfter() error = %v", err)
+		}
+		if len(page2) == 0 {
+			t.Fatal("page2 is empty, want at least id3")
+		}
+		if page2[0] <= cursor {
+			t.Errorf("page2[0] = %d, want > cursor %d", page2[0], cursor)
+		}
+	})
+
+	t.Run("全 id より大きいカーソルでは空を返す", func(t *testing.T) {
+		got, err := repo.ListIDsAfter(ctx, id3+1_000_000_000, 10)
+		if err != nil {
+			t.Fatalf("ListIDsAfter() error = %v", err)
+		}
+		if len(got) != 0 {
+			t.Errorf("len = %d, want 0", len(got))
+		}
+	})
+}
