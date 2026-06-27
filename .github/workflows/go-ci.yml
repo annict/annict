@@ -158,7 +158,7 @@ jobs:
 
       - name: Check binary exists
         run: |
-          if [ ! -f bin/server ]; then
+          if [ ! -f bin/annict ]; then
             echo "Build failed: binary not found"
             exit 1
           fi

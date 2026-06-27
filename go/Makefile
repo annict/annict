@@ -13,7 +13,11 @@ help: ## ヘルプを表示
 
 .PHONY: run
 run: ## サーバーを起動
-	$(OP_RUN_DEV) go run cmd/server/main.go
+	$(OP_RUN_DEV) go run ./cmd/annict serve
+
+.PHONY: sync-animes
+sync-animes: ## animes 同期バッチを 1 回実行 (works/episodes → animes)
+	$(OP_RUN_DEV) go run ./cmd/annict sync-animes
 
 .PHONY: templ-generate
 templ-generate: ## templファイルからGoコードを生成し、import文を整理
@@ -40,7 +44,7 @@ goimports-check: ## goimportsでimport文をチェック（差分があればエ
 
 .PHONY: build
 build: templ-generate ## バイナリをビルド（templ-generateがgoimportsも実行）
-	go build -o bin/server cmd/server/main.go
+	go build -o bin/annict ./cmd/annict
 
 .PHONY: test
 test: db-setup-test ## テストを実行
