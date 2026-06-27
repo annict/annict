@@ -17,6 +17,13 @@ JOIN works w ON e.work_id = w.id
 WHERE e.id = ANY($1::bigint[])
 ORDER BY e.id;
 
+-- name: ListEpisodeIDsAfter :many
+SELECT id
+FROM episodes
+WHERE id > sqlc.arg('after_id')
+ORDER BY id
+LIMIT sqlc.arg('batch_size');
+
 -- name: UpdateEpisodeAnimeID :exec
 UPDATE episodes
 SET anime_id = $2

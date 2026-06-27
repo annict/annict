@@ -100,6 +100,13 @@ FROM works
 WHERE id = ANY($1::bigint[])
 ORDER BY id;
 
+-- name: ListWorkIDsAfter :many
+SELECT id
+FROM works
+WHERE id > sqlc.arg('after_id')
+ORDER BY id
+LIMIT sqlc.arg('batch_size');
+
 -- name: UpdateWorkAnimeID :exec
 UPDATE works
 SET anime_id = $2

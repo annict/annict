@@ -28,6 +28,7 @@ type Client struct {
 type NewClientParams struct {
 	CleanupExpiredTokens      ExpiredTokenCleaner
 	CleanupExpiredSignInCodes ExpiredSignInCodeCleaner
+	SyncAnimes                AnimesSyncer
 }
 
 // NewClient は新しい River クライアントを作成します
@@ -86,6 +87,12 @@ func NewClient(ctx context.Context, databaseURL string, params NewClientParams, 
 	// ログインコードクリーンアップワーカーを登録
 	river.AddWorker(workers, NewCleanupExpiredSignInCodesWorker(params.CleanupExpiredSignInCodes))
 	slog.InfoContext(ctx, "CleanupExpiredSignInCodesWorker を登録しました")
+
+	// Register the animes reconciliation batch worker.
+	//
+	// [Ja] animes リコンサイルバッチワーカーを登録する。
+	river.AddWorker(workers, NewSyncAnimesWorker(params.SyncAnimes))
+	slog.InfoContext(ctx, "SyncAnimesWorker を登録しました")
 
 	// River must log through a plain stderr handler instead of slog.Default(),
 	// whose handler fans Error-level records out to Sentry. River's background

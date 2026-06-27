@@ -13,7 +13,11 @@ help: ## ヘルプを表示
 
 .PHONY: run
 run: ## サーバーを起動
-	$(OP_RUN_DEV) go run cmd/server/main.go
+	$(OP_RUN_DEV) go run ./cmd/annict serve
+
+.PHONY: sync-animes
+sync-animes: ## animes 同期バッチを 1 回実行 (works/episodes → animes)
+	$(OP_RUN_DEV) go run ./cmd/annict sync-animes
 
 .PHONY: templ-generate
 templ-generate: ## templファイルからGoコードを生成し、import文を整理
@@ -40,7 +44,7 @@ goimports-check: ## goimportsでimport文をチェック（差分があればエ
 
 .PHONY: build
 build: templ-generate ## バイナリをビルド（templ-generateがgoimportsも実行）
-	go build -o bin/server cmd/server/main.go
+	go build -o bin/annict ./cmd/annict
 
 .PHONY: test
 test: db-setup-test ## テストを実行
@@ -158,3 +162,26 @@ sqlc-generate: ## SQLクエリからGoコードを生成
 seed: ## 開発環境用のシードデータを生成
 	@echo "シードデータを生成しています..."
 	$(OP_RUN_DEV) go run cmd/seed/main.go
+
+# Production snapshot for local verification: download the production backup,
+# mask PII in an isolated database, and load the masked result locally; and copy
+# the production images into the development R2 bucket. load-snapshot runs both.
+#
+# [Ja] ローカル検証用の本番スナップショット: 本番バックアップを取得し、隔離 DB で
+# PII をマスクしてマスク結果をローカルに取り込み、本番画像を開発用 R2 バケットへ
+# コピーする。load-snapshot は両方を実行する。
+
+.PHONY: load-snapshot
+load-snapshot: load-snapshot-db load-snapshot-images ## Load the masked DB snapshot and copy production images in one shot. [Ja] マスク済み DB スナップショットの取り込みと本番画像のコピーを一括実行する
+
+.PHONY: load-snapshot-db
+load-snapshot-db: ## Load a masked production snapshot into the local DB. [Ja] マスク済み本番スナップショットをローカル DB に取り込む
+	$(OP_RUN_DEV) bash scripts/load_snapshot_db.sh
+
+.PHONY: restore-snapshot-db
+restore-snapshot-db: ## Re-restore the local DB from the masked dump in tmp/. [Ja] tmp/ のマスク済みダンプからローカル DB を再復元する
+	$(OP_RUN_DEV) bash scripts/load_snapshot_db.sh restore
+
+.PHONY: load-snapshot-images
+load-snapshot-images: ## Sync production work/profile images into the development R2 bucket. [Ja] 本番の作品・プロフィール画像を開発用 R2 バケットへ同期する
+	$(OP_RUN_DEV) bash scripts/load_snapshot_images.sh

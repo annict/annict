@@ -72,7 +72,27 @@ func (s dailyAt2AMSchedule) Next(current time.Time) time.Time {
 	return next
 }
 
-func main() {
+// hourlySchedule runs a job once an hour, on the hour.
+//
+// [Ja] hourlySchedule は 1 時間ごと、毎時 0 分にジョブを実行する。
+type hourlySchedule struct{}
+
+// Next returns the next top-of-the-hour after current.
+//
+// [Ja] Next は current の次の毎時 0 分を返す。
+func (s hourlySchedule) Next(current time.Time) time.Time {
+	return time.Date(current.Year(), current.Month(), current.Day(), current.Hour(), 0, 0, 0, current.Location()).
+		Add(time.Hour)
+}
+
+// runServe starts the HTTP server: it loads config, wires dependencies, registers
+// routes and periodic jobs, and blocks on ListenAndServe until shutdown. It is the
+// body of the `serve` subcommand.
+//
+// [Ja] runServe は HTTP サーバーを起動する。設定の読み込み・依存の組み立て・ルートと
+// 定期ジョブの登録を行い、シャットダウンまで ListenAndServe でブロックする。
+// `serve` サブコマンドの本体。
+func runServe() {
 	// 設定を読み込む
 	cfg, err := config.Load()
 	if err != nil {
@@ -182,11 +202,22 @@ func main() {
 	cleanupExpiredTokensUC := usecase.NewCleanupExpiredTokensUsecase(cleanupTokenRepo)
 	cleanupExpiredSignInCodesUC := usecase.NewCleanupExpiredSignInCodesUsecase(cleanupCodeRepo)
 
+	// Wire the phase 2 full-reconciliation batch usecase (for the Worker). It is
+	// invoked by the periodic job below to sync works / episodes into animes /
+	// anime_classifications. The wiring is shared with the `sync-animes` subcommand
+	// via newSyncAnimesUsecase.
+	//
+	// [Ja] フェーズ 2 のフル・リコンシリエーションバッチ UseCase を組み立てる (Worker 用)。
+	// works / episodes を animes / anime_classifications へ同期する下の定期ジョブから
+	// 呼ばれる。配線は newSyncAnimesUsecase 経由で `sync-animes` サブコマンドと共有する。
+	syncAnimesUC := newSyncAnimesUsecase(db, queries)
+
 	// River クライアントの初期化
 	ctx := context.Background()
 	riverClient, err := worker.NewClient(ctx, cfg.DatabaseDSN(), worker.NewClientParams{
 		CleanupExpiredTokens:      cleanupExpiredTokensUC,
 		CleanupExpiredSignInCodes: cleanupExpiredSignInCodesUC,
+		SyncAnimes:                syncAnimesUC,
 	}, cfg)
 	if err != nil {
 		slog.Error("River クライアントの初期化に失敗しました", "error", err)
@@ -212,7 +243,7 @@ func main() {
 		func() (river.JobArgs, *river.InsertOpts) {
 			return worker.CleanupExpiredTokensArgs{}, nil
 		},
-		nil, // オプションなし
+		nil,
 	)
 
 	riverClient.Client().PeriodicJobs().Add(periodicJobTokenCleanup)
@@ -224,11 +255,30 @@ func main() {
 		func() (river.JobArgs, *river.InsertOpts) {
 			return worker.CleanupExpiredSignInCodesArgs{}, nil
 		},
-		nil, // オプションなし
+		nil,
 	)
 
 	riverClient.Client().PeriodicJobs().Add(periodicJobSignInCodeCleanup)
 	slog.Info("定期実行ジョブを登録しました", "job", "ログインコードクリーンアップ", "schedule", "毎日深夜2時")
+
+	// Register the hourly animes reconciliation. During phase 2 there is no
+	// dual-write yet, so this batch is the only path that updates animes; running
+	// it hourly favors freshness and the cadence of the diff metric. The
+	// reconciliation is idempotent and converges to near-zero diffs in steady state.
+	//
+	// [Ja] animes リコンサイルを毎時登録する。フェーズ 2 ではまだ両書きが無く、本バッチが
+	// animes を更新する唯一の経路のため、毎時実行で鮮度と差分メトリクスの取得頻度を優先する。
+	// リコンサイルは冪等で、定常状態ではほぼ差分なしに収束する。
+	periodicJobSyncAnimes := river.NewPeriodicJob(
+		hourlySchedule{},
+		func() (river.JobArgs, *river.InsertOpts) {
+			return worker.SyncAnimesArgs{}, nil
+		},
+		nil,
+	)
+
+	riverClient.Client().PeriodicJobs().Add(periodicJobSyncAnimes)
+	slog.Info("定期実行ジョブを登録しました", "job", "animes 同期バッチ", "schedule", "毎時")
 
 	// セッションリポジトリの初期化
 	sessionRepo := repository.NewSessionRepository(queries)
