@@ -170,6 +170,17 @@ RUN GOLANGCI_LINT_DIR="golangci-lint-${GOLANGCI_LINT_VERSION#v}-linux-amd64" && 
     chmod +x /usr/local/bin/golangci-lint && \
     rm -rf "/tmp/golangci-lint.tar.gz" "/tmp/${GOLANGCI_LINT_DIR}"
 
+# --- rclone ---
+ARG RCLONE_VERSION=v1.74.3
+ARG RCLONE_SHA256=dbee7ccd7a5d617e4ed4cd4555c16669b511abfe8d31164f61be35ac9e999bd2
+RUN RCLONE_DIR="rclone-${RCLONE_VERSION}-linux-amd64" && \
+    curl -fsSL -o /tmp/rclone.zip "https://github.com/rclone/rclone/releases/download/${RCLONE_VERSION}/${RCLONE_DIR}.zip" && \
+    echo "${RCLONE_SHA256}  /tmp/rclone.zip" | sha256sum -c - && \
+    unzip -q /tmp/rclone.zip -d /tmp && \
+    mv "/tmp/${RCLONE_DIR}/rclone" /usr/local/bin/rclone && \
+    chmod +x /usr/local/bin/rclone && \
+    rm -rf "/tmp/rclone.zip" "/tmp/${RCLONE_DIR}"
+
 # --- GitHub CLI ---
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
