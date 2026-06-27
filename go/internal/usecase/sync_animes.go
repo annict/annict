@@ -58,6 +58,15 @@ type episodesToAnimesSyncer interface {
 	Execute(ctx context.Context, input SyncEpisodesToAnimesInput) (*SyncEpisodesToAnimesResult, error)
 }
 
+// workSatellitesSyncer reconciles one page of works into the satellite tables.
+// Implemented by *SyncWorkSatellitesUsecase.
+//
+// [Ja] workSatellitesSyncer は works の 1 ページを別表へリコンサイルする。
+// 実体は *SyncWorkSatellitesUsecase。
+type workSatellitesSyncer interface {
+	Execute(ctx context.Context, input SyncWorkSatellitesInput) (*SyncWorkSatellitesResult, error)
+}
+
 // SyncAnimesUsecase is the phase 2 full-reconciliation batch. It walks the whole
 // works table and then the whole episodes table page by page, handing each page to
 // the per-page sync usecases, and aggregates the diff-detection counts for logging.
@@ -68,6 +77,11 @@ type episodesToAnimesSyncer interface {
 // parent is still unmapped are deferred by the episode sync (SkippedNoParent) and
 // picked up on a later run; the reconciliation is idempotent.
 //
+// A third pass walks the works table again to reconcile the satellite tables (external
+// IDs / links / official accounts / hashtags / seasons / events). It runs last because
+// it depends on works.anime_id being written back by the works pass; works whose
+// anime_id is still unresolved are deferred (SkippedNoAnime).
+//
 // [Ja] SyncAnimesUsecase はフェーズ 2 のフル・リコンシリエーションバッチ。works テーブル
 // 全体、続いて episodes テーブル全体をページ単位で走査し、各ページをページ単位の同期
 // UseCase に渡して、差分検出件数を集計してログに出す。
@@ -76,12 +90,18 @@ type episodesToAnimesSyncer interface {
 // 必要とする (parent_anime_id が NOT NULL) ため、works の走査を先に終えると episodes の
 // 走査でほぼすべての親を解決できる。親が未マッピングのままの episode は episode 同期が
 // 繰り延べ (SkippedNoParent)、後続の実行で取り込む。リコンサイルは冪等。
+//
+// 第 3 のパスは works テーブルを再度走査し、別表 (外部 ID / リンク / 公式アカウント /
+// ハッシュタグ / 季節 / イベント) をリコンサイルする。works 同期パスが works.anime_id を
+// 書き戻すことに依存するため最後に走らせる。anime_id が未解決のままの work は繰り延べる
+// (SkippedNoAnime)。
 type SyncAnimesUsecase struct {
-	workIDPager    workIDPager
-	episodeIDPager episodeIDPager
-	worksSyncer    worksToAnimesSyncer
-	episodesSyncer episodesToAnimesSyncer
-	batchSize      int
+	workIDPager      workIDPager
+	episodeIDPager   episodeIDPager
+	worksSyncer      worksToAnimesSyncer
+	episodesSyncer   episodesToAnimesSyncer
+	satellitesSyncer workSatellitesSyncer
+	batchSize        int
 }
 
 // NewSyncAnimesUsecase constructs a SyncAnimesUsecase. A batchSize of zero or less
@@ -94,17 +114,19 @@ func NewSyncAnimesUsecase(
 	episodeIDPager episodeIDPager,
 	worksSyncer worksToAnimesSyncer,
 	episodesSyncer episodesToAnimesSyncer,
+	satellitesSyncer workSatellitesSyncer,
 	batchSize int,
 ) *SyncAnimesUsecase {
 	if batchSize <= 0 {
 		batchSize = DefaultSyncAnimesBatchSize
 	}
 	return &SyncAnimesUsecase{
-		workIDPager:    workIDPager,
-		episodeIDPager: episodeIDPager,
-		worksSyncer:    worksSyncer,
-		episodesSyncer: episodesSyncer,
-		batchSize:      batchSize,
+		workIDPager:      workIDPager,
+		episodeIDPager:   episodeIDPager,
+		worksSyncer:      worksSyncer,
+		episodesSyncer:   episodesSyncer,
+		satellitesSyncer: satellitesSyncer,
+		batchSize:        batchSize,
 	}
 }
 
@@ -117,13 +139,18 @@ func NewSyncAnimesUsecase(
 // 報告する。Created / Updated の合計が、正本切り替え判定が依拠する差分検出メトリクス。
 // 両方が 0 の実行は、新スキーマが既に works / episodes と一致していることを意味する。
 type SyncAnimesResult struct {
-	Works    SyncWorksToAnimesResult
-	Episodes SyncEpisodesToAnimesResult
+	Works      SyncWorksToAnimesResult
+	Episodes   SyncEpisodesToAnimesResult
+	Satellites SyncWorkSatellitesResult
 }
 
-// Execute runs the full reconciliation: all works first, then all episodes.
+// Execute runs the full reconciliation: all works first, then all episodes, then the
+// works satellites. Satellites run last because they depend on works.anime_id being
+// written back by the works pass.
 //
-// [Ja] Execute はフル・リコンシリエーションを実行する。まず全 works、続いて全 episodes。
+// [Ja] Execute はフル・リコンシリエーションを実行する。まず全 works、続いて全 episodes、
+// 最後に works の別表。別表は works パスが works.anime_id を書き戻すことに依存するため
+// 最後に走らせる。
 func (uc *SyncAnimesUsecase) Execute(ctx context.Context) (*SyncAnimesResult, error) {
 	slog.InfoContext(ctx, "animes 同期バッチを開始します", "batch_size", uc.batchSize)
 
@@ -137,7 +164,12 @@ func (uc *SyncAnimesUsecase) Execute(ctx context.Context) (*SyncAnimesResult, er
 		return nil, err
 	}
 
-	result := &SyncAnimesResult{Works: works, Episodes: episodes}
+	satellites, err := uc.syncAllWorkSatellites(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	result := &SyncAnimesResult{Works: works, Episodes: episodes, Satellites: satellites}
 
 	slog.InfoContext(ctx, "animes 同期バッチが完了しました",
 		"works_processed", result.Works.Processed,
@@ -149,6 +181,12 @@ func (uc *SyncAnimesUsecase) Execute(ctx context.Context) (*SyncAnimesResult, er
 		"episodes_updated", result.Episodes.Updated,
 		"episodes_unchanged", result.Episodes.Unchanged,
 		"episodes_skipped_no_parent", result.Episodes.SkippedNoParent,
+		"satellites_processed", result.Satellites.Processed,
+		"satellites_created", result.Satellites.Created,
+		"satellites_updated", result.Satellites.Updated,
+		"satellites_deleted", result.Satellites.Deleted,
+		"satellites_unchanged", result.Satellites.Unchanged,
+		"satellites_skipped_no_anime", result.Satellites.SkippedNoAnime,
 	)
 
 	return result, nil
@@ -218,6 +256,46 @@ func (uc *SyncAnimesUsecase) syncAllEpisodes(ctx context.Context) (SyncEpisodesT
 		total.Updated += res.Updated
 		total.Unchanged += res.Unchanged
 		total.SkippedNoParent += res.SkippedNoParent
+
+		afterID = ids[len(ids)-1]
+	}
+
+	return total, nil
+}
+
+// syncAllWorkSatellites walks the works table again by keyset pagination, reconciling
+// each page's satellite tables and accumulating the counts (including SkippedNoAnime).
+// It reuses the work ID pager because the satellite pass is anchored on the same works,
+// and runs after syncAllWorks so works.anime_id is resolved for most rows.
+//
+// [Ja] syncAllWorkSatellites は works テーブルを再度 keyset ページネーションで走査し、各
+// ページの別表をリコンサイルして件数 (SkippedNoAnime を含む) を積算する。別表パスは同じ
+// works に紐づくため work ID ページャを再利用し、works.anime_id が大半の行で解決済みに
+// なるよう syncAllWorks の後に走らせる。
+func (uc *SyncAnimesUsecase) syncAllWorkSatellites(ctx context.Context) (SyncWorkSatellitesResult, error) {
+	var total SyncWorkSatellitesResult
+	var afterID model.WorkID
+
+	for {
+		ids, err := uc.workIDPager.ListIDsAfter(ctx, afterID, uc.batchSize)
+		if err != nil {
+			return total, fmt.Errorf("別表同期の works ID ページの取得に失敗: %w", err)
+		}
+		if len(ids) == 0 {
+			break
+		}
+
+		res, err := uc.satellitesSyncer.Execute(ctx, SyncWorkSatellitesInput{WorkIDs: ids})
+		if err != nil {
+			return total, fmt.Errorf("別表同期ページの処理に失敗: %w", err)
+		}
+
+		total.Processed += res.Processed
+		total.Created += res.Created
+		total.Updated += res.Updated
+		total.Deleted += res.Deleted
+		total.Unchanged += res.Unchanged
+		total.SkippedNoAnime += res.SkippedNoAnime
 
 		afterID = ids[len(ids)-1]
 	}

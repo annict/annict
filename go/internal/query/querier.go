@@ -34,6 +34,12 @@ type Querier interface {
 	CountRecordsByUserID(ctx context.Context, userID int64) (int64, error)
 	CreateAnime(ctx context.Context, arg CreateAnimeParams) (Anime, error)
 	CreateAnimeClassification(ctx context.Context, arg CreateAnimeClassificationParams) (AnimeClassification, error)
+	CreateAnimeEvent(ctx context.Context, arg CreateAnimeEventParams) (AnimeEvent, error)
+	CreateAnimeExternalID(ctx context.Context, arg CreateAnimeExternalIDParams) (AnimeExternalID, error)
+	CreateAnimeHashtag(ctx context.Context, arg CreateAnimeHashtagParams) (AnimeHashtag, error)
+	CreateAnimeLink(ctx context.Context, arg CreateAnimeLinkParams) (AnimeLink, error)
+	CreateAnimeOfficialAccount(ctx context.Context, arg CreateAnimeOfficialAccountParams) (AnimeOfficialAccount, error)
+	CreateAnimeSeason(ctx context.Context, arg CreateAnimeSeasonParams) (AnimeSeason, error)
 	CreateEmailNotification(ctx context.Context, arg CreateEmailNotificationParams) (CreateEmailNotificationRow, error)
 	CreateOAuthAccessToken(ctx context.Context, arg CreateOAuthAccessTokenParams) (int64, error)
 	CreateOAuthApplication(ctx context.Context, arg CreateOAuthApplicationParams) (int64, error)
@@ -48,6 +54,12 @@ type Querier interface {
 	CreateUser(ctx context.Context, arg CreateUserParams) (CreateUserRow, error)
 	CreateWork(ctx context.Context, arg CreateWorkParams) (int64, error)
 	CreateWorkImage(ctx context.Context, arg CreateWorkImageParams) (int64, error)
+	DeleteAnimeEvent(ctx context.Context, id int64) error
+	DeleteAnimeExternalID(ctx context.Context, id int64) error
+	DeleteAnimeHashtag(ctx context.Context, id int64) error
+	DeleteAnimeLink(ctx context.Context, id int64) error
+	DeleteAnimeOfficialAccount(ctx context.Context, id int64) error
+	DeleteAnimeSeason(ctx context.Context, id int64) error
 	DeleteExpiredPasswordResetTokens(ctx context.Context, expiresAt time.Time) error
 	DeleteExpiredSignInCodes(ctx context.Context, expiresAt time.Time) error
 	DeleteSession(ctx context.Context, sessionID string) error
@@ -109,6 +121,12 @@ type Querier interface {
 	IsFeatureFlagEnabled(ctx context.Context, arg IsFeatureFlagEnabledParams) (bool, error)
 	ListAllProfiles(ctx context.Context) ([]ListAllProfilesRow, error)
 	ListAnimeClassificationsByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]AnimeClassification, error)
+	ListAnimeEventsByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]AnimeEvent, error)
+	ListAnimeExternalIDsByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]AnimeExternalID, error)
+	ListAnimeHashtagsByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]AnimeHashtag, error)
+	ListAnimeLinksByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]AnimeLink, error)
+	ListAnimeOfficialAccountsByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]AnimeOfficialAccount, error)
+	ListAnimeSeasonsByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]AnimeSeason, error)
 	ListAnimesByIDs(ctx context.Context, dollar_1 []int64) ([]Anime, error)
 	ListDBWorks(ctx context.Context, arg ListDBWorksParams) ([]ListDBWorksRow, error)
 	ListEpisodeIDsAfter(ctx context.Context, arg ListEpisodeIDsAfterParams) ([]int64, error)
@@ -116,12 +134,17 @@ type Querier interface {
 	ListNumberFormats(ctx context.Context) ([]ListNumberFormatsRow, error)
 	ListWorkIDsAfter(ctx context.Context, arg ListWorkIDsAfterParams) ([]int64, error)
 	ListWorksForAnimeSyncByIDs(ctx context.Context, dollar_1 []int64) ([]ListWorksForAnimeSyncByIDsRow, error)
+	ListWorksForSatelliteSyncByIDs(ctx context.Context, dollar_1 []int64) ([]ListWorksForSatelliteSyncByIDsRow, error)
 	MarkPasswordResetTokenAsUsed(ctx context.Context, id int64) error
 	MarkSignInCodeAsUsed(ctx context.Context, id int64) error
 	MarkSignUpCodeAsUsed(ctx context.Context, id int64) error
 	TouchSession(ctx context.Context, sessionID string) error
 	UpdateAnime(ctx context.Context, arg UpdateAnimeParams) error
 	UpdateAnimeClassificationByAnimeID(ctx context.Context, arg UpdateAnimeClassificationByAnimeIDParams) error
+	UpdateAnimeEvent(ctx context.Context, arg UpdateAnimeEventParams) error
+	UpdateAnimeExternalID(ctx context.Context, arg UpdateAnimeExternalIDParams) error
+	UpdateAnimeLink(ctx context.Context, arg UpdateAnimeLinkParams) error
+	UpdateAnimeOfficialAccount(ctx context.Context, arg UpdateAnimeOfficialAccountParams) error
 	UpdateEpisodeAnimeID(ctx context.Context, arg UpdateEpisodeAnimeIDParams) error
 	UpdateProfileImageData(ctx context.Context, arg UpdateProfileImageDataParams) error
 	UpdateSession(ctx context.Context, arg UpdateSessionParams) error

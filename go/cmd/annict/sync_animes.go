@@ -29,9 +29,29 @@ func newSyncAnimesUsecase(db *sql.DB, queries *query.Queries) *usecase.SyncAnime
 	episodeRepo := repository.NewEpisodeRepository(queries)
 	animeRepo := repository.NewAnimeRepository(queries)
 	animeClassificationRepo := repository.NewAnimeClassificationRepository(queries)
+	animeExternalIDRepo := repository.NewAnimeExternalIDRepository(queries)
+	animeLinkRepo := repository.NewAnimeLinkRepository(queries)
+	animeOfficialAccountRepo := repository.NewAnimeOfficialAccountRepository(queries)
+	animeHashtagRepo := repository.NewAnimeHashtagRepository(queries)
+	animeSeasonRepo := repository.NewAnimeSeasonRepository(queries)
+	animeEventRepo := repository.NewAnimeEventRepository(queries)
 	syncWorksToAnimesUC := usecase.NewSyncWorksToAnimesUsecase(db, workRepo, animeRepo, animeClassificationRepo)
 	syncEpisodesToAnimesUC := usecase.NewSyncEpisodesToAnimesUsecase(db, episodeRepo, animeRepo, animeClassificationRepo)
-	return usecase.NewSyncAnimesUsecase(workRepo, episodeRepo, syncWorksToAnimesUC, syncEpisodesToAnimesUC, usecase.DefaultSyncAnimesBatchSize)
+	// Satellite reconcilers are registered one per table (tasks 2-8 onward). Each
+	// runs in the third pass for works whose anime_id is already resolved; works
+	// still pending an anime are deferred to a later run.
+	//
+	// [Ja] 別表リコンサイラはテーブルごとに 1 つずつ登録する (タスク 2-8 以降)。各リコンサイラ
+	// は anime_id 解決済みの works について第 3 パスで走り、anime 未解決の work は後続の実行へ
+	// 繰り延べる。
+	syncAnimeExternalIDsReconciler := usecase.NewSyncAnimeExternalIDsUsecase(db, animeExternalIDRepo)
+	syncAnimeLinksReconciler := usecase.NewSyncAnimeLinksUsecase(db, animeLinkRepo)
+	syncAnimeOfficialAccountsReconciler := usecase.NewSyncAnimeOfficialAccountsUsecase(db, animeOfficialAccountRepo)
+	syncAnimeHashtagsReconciler := usecase.NewSyncAnimeHashtagsUsecase(db, animeHashtagRepo)
+	syncAnimeSeasonsReconciler := usecase.NewSyncAnimeSeasonsUsecase(db, animeSeasonRepo)
+	syncAnimeEventsReconciler := usecase.NewSyncAnimeEventsUsecase(db, animeEventRepo)
+	syncWorkSatellitesUC := usecase.NewSyncWorkSatellitesUsecase(workRepo, syncAnimeExternalIDsReconciler, syncAnimeLinksReconciler, syncAnimeOfficialAccountsReconciler, syncAnimeHashtagsReconciler, syncAnimeSeasonsReconciler, syncAnimeEventsReconciler)
+	return usecase.NewSyncAnimesUsecase(workRepo, episodeRepo, syncWorksToAnimesUC, syncEpisodesToAnimesUC, syncWorkSatellitesUC, usecase.DefaultSyncAnimesBatchSize)
 }
 
 // runSyncAnimes runs the phase 2 full-reconciliation batch once, synchronously, and

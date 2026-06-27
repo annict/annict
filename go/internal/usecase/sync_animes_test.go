@@ -117,6 +117,31 @@ func (s *fakeEpisodesSyncer) Execute(_ context.Context, input SyncEpisodesToAnim
 	return &r, nil
 }
 
+// fakeWorkSatellitesSyncer mirrors fakeWorksSyncer for the satellite pass. It also
+// records whether the works sync had already run, so the test can assert the
+// works-before-satellites ordering the pass depends on (anime_id must be written back
+// by the works pass first).
+//
+// [Ja] fakeWorkSatellitesSyncer は別表パス用に fakeWorksSyncer を写したもの。works 同期が
+// 既に走ったかも記録し、本パスが依存する works→別表 の順序 (anime_id は works パスが先に
+// 書き戻す必要がある) をテストで検証できるようにする。
+type fakeWorkSatellitesSyncer struct {
+	gotPages       [][]model.WorkID
+	result         SyncWorkSatellitesResult
+	worksDoneFirst func() bool
+	worksWereDone  bool
+}
+
+func (s *fakeWorkSatellitesSyncer) Execute(_ context.Context, input SyncWorkSatellitesInput) (*SyncWorkSatellitesResult, error) {
+	if s.worksDoneFirst != nil {
+		s.worksWereDone = s.worksDoneFirst()
+	}
+	s.gotPages = append(s.gotPages, input.WorkIDs)
+	r := s.result
+	r.Processed = len(input.WorkIDs)
+	return &r, nil
+}
+
 func TestSyncAnimesUsecase_Execute_PagesAndAggregates(t *testing.T) {
 	t.Parallel()
 
@@ -125,8 +150,10 @@ func TestSyncAnimesUsecase_Execute_PagesAndAggregates(t *testing.T) {
 	worksSyncer := &fakeWorksSyncer{result: SyncWorksToAnimesResult{Created: 1, Updated: 1}}
 	episodesSyncer := &fakeEpisodesSyncer{result: SyncEpisodesToAnimesResult{Created: 1, SkippedNoParent: 1}}
 	episodesSyncer.worksDoneFirst = func() bool { return len(worksSyncer.gotPages) > 0 }
+	satellitesSyncer := &fakeWorkSatellitesSyncer{result: SyncWorkSatellitesResult{Created: 1, Deleted: 1}}
+	satellitesSyncer.worksDoneFirst = func() bool { return len(worksSyncer.gotPages) > 0 }
 
-	uc := NewSyncAnimesUsecase(workPager, episodePager, worksSyncer, episodesSyncer, 2)
+	uc := NewSyncAnimesUsecase(workPager, episodePager, worksSyncer, episodesSyncer, satellitesSyncer, 2)
 
 	result, err := uc.Execute(context.Background())
 	if err != nil {
@@ -134,10 +161,12 @@ func TestSyncAnimesUsecase_Execute_PagesAndAggregates(t *testing.T) {
 	}
 
 	// Works: 5 IDs in pages of 2 -> [1,2] [3,4] [5]; the loop makes one more call
-	// (cursor 5) that returns empty and stops.
+	// (cursor 5) that returns empty and stops. The satellite pass walks the same
+	// works again, so it produces the same three pages.
 	//
 	// [Ja] works: 5 件を 2 件ずつ -> [1,2] [3,4] [5]。ループはもう 1 回 (カーソル 5)
-	// 呼び出して空ページを受け取り停止する。
+	// 呼び出して空ページを受け取り停止する。別表パスは同じ works を再走査するため、
+	// 同じ 3 ページになる。
 	wantWorkPages := [][]model.WorkID{{1, 2}, {3, 4}, {5}}
 	if len(worksSyncer.gotPages) != len(wantWorkPages) {
 		t.Fatalf("works pages = %d, want %d (%v)", len(worksSyncer.gotPages), len(wantWorkPages), worksSyncer.gotPages)
@@ -147,11 +176,21 @@ func TestSyncAnimesUsecase_Execute_PagesAndAggregates(t *testing.T) {
 			t.Errorf("works page %d = %v, want %v", i, worksSyncer.gotPages[i], want)
 		}
 	}
+	if len(satellitesSyncer.gotPages) != len(wantWorkPages) {
+		t.Fatalf("satellite pages = %d, want %d (%v)", len(satellitesSyncer.gotPages), len(wantWorkPages), satellitesSyncer.gotPages)
+	}
+	for i, want := range wantWorkPages {
+		if !equalWorkIDs(satellitesSyncer.gotPages[i], want) {
+			t.Errorf("satellite page %d = %v, want %v", i, satellitesSyncer.gotPages[i], want)
+		}
+	}
 
-	// The work pager cursor must strictly advance: 0, 2, 4, then 5 (empty page).
+	// The work pager is walked twice (works pass, then satellite pass); each walk's
+	// cursor strictly advances 0, 2, 4, then 5 (empty page).
 	//
-	// [Ja] work pager のカーソルは厳密に前進する必要がある: 0, 2, 4, 続いて 5 (空ページ)。
-	wantWorkCursors := []model.WorkID{0, 2, 4, 5}
+	// [Ja] work pager は 2 度走査される (works パス、続いて別表パス)。各走査のカーソルは
+	// 厳密に前進する: 0, 2, 4, 続いて 5 (空ページ)。
+	wantWorkCursors := []model.WorkID{0, 2, 4, 5, 0, 2, 4, 5}
 	if len(workPager.calls) != len(wantWorkCursors) {
 		t.Fatalf("work pager calls = %d, want %d", len(workPager.calls), len(wantWorkCursors))
 	}
@@ -165,10 +204,10 @@ func TestSyncAnimesUsecase_Execute_PagesAndAggregates(t *testing.T) {
 	}
 
 	// Aggregated counts: works synced 3 pages (created+1, updated+1 each), episodes
-	// 2 pages (created+1, skipped+1 each).
+	// 2 pages (created+1, skipped+1 each), satellites 3 pages (created+1, deleted+1 each).
 	//
 	// [Ja] 集計件数: works は 3 ページ (各 created+1, updated+1)、episodes は 2 ページ
-	// (各 created+1, skipped+1)。
+	// (各 created+1, skipped+1)、別表は 3 ページ (各 created+1, deleted+1)。
 	if result.Works.Processed != 5 {
 		t.Errorf("Works.Processed = %d, want 5", result.Works.Processed)
 	}
@@ -187,12 +226,25 @@ func TestSyncAnimesUsecase_Execute_PagesAndAggregates(t *testing.T) {
 	if result.Episodes.SkippedNoParent != 2 {
 		t.Errorf("Episodes.SkippedNoParent = %d, want 2", result.Episodes.SkippedNoParent)
 	}
+	if result.Satellites.Processed != 5 {
+		t.Errorf("Satellites.Processed = %d, want 5", result.Satellites.Processed)
+	}
+	if result.Satellites.Created != 3 {
+		t.Errorf("Satellites.Created = %d, want 3", result.Satellites.Created)
+	}
+	if result.Satellites.Deleted != 3 {
+		t.Errorf("Satellites.Deleted = %d, want 3", result.Satellites.Deleted)
+	}
 
-	// Ordering: every episodes page must have run after the works pass completed.
+	// Ordering: every episodes page and every satellite page must have run after the
+	// works pass completed.
 	//
-	// [Ja] 順序: episodes の各ページは works の走査完了後に実行される必要がある。
+	// [Ja] 順序: episodes の各ページと別表の各ページは works の走査完了後に実行される必要がある。
 	if !episodesSyncer.worksWereDone {
 		t.Error("episodes were synced before works; works must run first")
+	}
+	if !satellitesSyncer.worksWereDone {
+		t.Error("satellites were synced before works; works must run first")
 	}
 }
 
@@ -203,8 +255,9 @@ func TestSyncAnimesUsecase_Execute_EmptyTablesDoNotCallSyncers(t *testing.T) {
 	episodePager := &fakeEpisodeIDPager{}
 	worksSyncer := &fakeWorksSyncer{}
 	episodesSyncer := &fakeEpisodesSyncer{}
+	satellitesSyncer := &fakeWorkSatellitesSyncer{}
 
-	uc := NewSyncAnimesUsecase(workPager, episodePager, worksSyncer, episodesSyncer, 100)
+	uc := NewSyncAnimesUsecase(workPager, episodePager, worksSyncer, episodesSyncer, satellitesSyncer, 100)
 
 	result, err := uc.Execute(context.Background())
 	if err != nil {
@@ -217,8 +270,11 @@ func TestSyncAnimesUsecase_Execute_EmptyTablesDoNotCallSyncers(t *testing.T) {
 	if len(episodesSyncer.gotPages) != 0 {
 		t.Errorf("episodes syncer called %d times, want 0", len(episodesSyncer.gotPages))
 	}
-	if result.Works.Processed != 0 || result.Episodes.Processed != 0 {
-		t.Errorf("Processed counts = (%d, %d), want (0, 0)", result.Works.Processed, result.Episodes.Processed)
+	if len(satellitesSyncer.gotPages) != 0 {
+		t.Errorf("satellites syncer called %d times, want 0", len(satellitesSyncer.gotPages))
+	}
+	if result.Works.Processed != 0 || result.Episodes.Processed != 0 || result.Satellites.Processed != 0 {
+		t.Errorf("Processed counts = (%d, %d, %d), want (0, 0, 0)", result.Works.Processed, result.Episodes.Processed, result.Satellites.Processed)
 	}
 }
 
@@ -230,19 +286,24 @@ func TestSyncAnimesUsecase_Execute_PropagatesPagerError(t *testing.T) {
 	episodePager := &fakeEpisodeIDPager{}
 	worksSyncer := &fakeWorksSyncer{}
 	episodesSyncer := &fakeEpisodesSyncer{}
+	satellitesSyncer := &fakeWorkSatellitesSyncer{}
 
-	uc := NewSyncAnimesUsecase(workPager, episodePager, worksSyncer, episodesSyncer, 1)
+	uc := NewSyncAnimesUsecase(workPager, episodePager, worksSyncer, episodesSyncer, satellitesSyncer, 1)
 
 	_, err := uc.Execute(context.Background())
 	if !errors.Is(err, wantErr) {
 		t.Fatalf("Execute() error = %v, want wraps %v", err, wantErr)
 	}
 
-	// The error happened during the works pass, so episodes must never be touched.
+	// The error happened during the works pass, so neither episodes nor satellites
+	// must be touched.
 	//
-	// [Ja] エラーは works の走査中に発生したため、episodes には一切触れないこと。
+	// [Ja] エラーは works の走査中に発生したため、episodes も別表も一切触れないこと。
 	if len(episodesSyncer.gotPages) != 0 {
 		t.Errorf("episodes syncer called %d times after works error, want 0", len(episodesSyncer.gotPages))
+	}
+	if len(satellitesSyncer.gotPages) != 0 {
+		t.Errorf("satellites syncer called %d times after works error, want 0", len(satellitesSyncer.gotPages))
 	}
 }
 
@@ -253,13 +314,14 @@ func TestNewSyncAnimesUsecase_DefaultsBatchSize(t *testing.T) {
 	episodePager := &fakeEpisodeIDPager{}
 	worksSyncer := &fakeWorksSyncer{}
 	episodesSyncer := &fakeEpisodesSyncer{}
+	satellitesSyncer := &fakeWorkSatellitesSyncer{}
 
 	// A non-positive batch size must fall back to the default so the keyset loop
 	// always makes progress (a LIMIT 0 page would return empty and stall).
 	//
 	// [Ja] 非正の batch size は既定値にフォールバックし、keyset ループが必ず前進する
 	// こと (LIMIT 0 のページは空を返して停滞する)。
-	uc := NewSyncAnimesUsecase(workPager, episodePager, worksSyncer, episodesSyncer, 0)
+	uc := NewSyncAnimesUsecase(workPager, episodePager, worksSyncer, episodesSyncer, satellitesSyncer, 0)
 
 	if _, err := uc.Execute(context.Background()); err != nil {
 		t.Fatalf("Execute() error = %v", err)

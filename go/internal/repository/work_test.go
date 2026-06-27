@@ -557,3 +557,164 @@ func TestWorkRepository_ListIDsAfter(t *testing.T) {
 		}
 	})
 }
+
+func TestWorkRepository_ListForSatelliteSyncByIDs(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	queries := query.New(db).WithTx(tx)
+	repo := repository.NewWorkRepository(queries)
+	animeRepo := repository.NewAnimeRepository(queries)
+	ctx := context.Background()
+
+	animeID := createTestAnime(t, animeRepo, "別表同期アニメ")
+
+	// A fully populated work mapped to an anime, plus one with every nullable satellite
+	// column left empty and no anime_id, to check the projection round-trips both. The
+	// builder seeds the base row; the UPDATE sets the satellite columns deterministically.
+	//
+	// [Ja] anime に紐づくフル設定の work と、NULL 許容の別表列をすべて空にし anime_id も
+	// 持たない work を用意し、射影が双方を往復できるか検証する。ビルダーが土台の行を作り、
+	// UPDATE で別表列を決定論的に設定する。
+	full := testutil.NewWorkBuilder(t, tx).WithTitle("フル設定").Build()
+	if _, err := tx.Exec(`
+		UPDATE works SET
+			anime_id = $2,
+			sc_tid = 123,
+			mal_anime_id = 456,
+			official_site_url = 'https://example.dev/ja',
+			official_site_url_en = 'https://example.dev/en',
+			wikipedia_url = 'https://ja.wikipedia.example.dev',
+			wikipedia_url_en = 'https://en.wikipedia.example.dev',
+			twitter_username = 'anime_official',
+			twitter_hashtag = 'anime',
+			season_year = 2026,
+			season_name = 2,
+			started_on = '2026-01-05',
+			ended_on = '2026-03-30'
+		WHERE id = $1
+	`, int64(full), int64(animeID)); err != nil {
+		t.Fatalf("works の別表列の設定に失敗: %v", err)
+	}
+
+	empty := testutil.NewWorkBuilder(t, tx).WithTitle("別表列なし").WithNoSeason().Build()
+	if _, err := tx.Exec(`
+		UPDATE works SET
+			anime_id = NULL,
+			sc_tid = NULL,
+			mal_anime_id = NULL,
+			official_site_url = '',
+			official_site_url_en = '',
+			wikipedia_url = '',
+			wikipedia_url_en = '',
+			twitter_username = NULL,
+			twitter_hashtag = NULL,
+			season_year = NULL,
+			season_name = NULL,
+			started_on = NULL,
+			ended_on = NULL
+		WHERE id = $1
+	`, int64(empty)); err != nil {
+		t.Fatalf("works の別表列のクリアに失敗: %v", err)
+	}
+
+	t.Run("射影と anime_id 解決を id 昇順で返す", func(t *testing.T) {
+		// Input order is reversed to confirm the loader orders by id, not by input.
+		//
+		// [Ja] 入力順を逆にして、ローダーが入力順でなく id 昇順で返すことを確認する。
+		works, err := repo.ListForSatelliteSyncByIDs(ctx, []model.WorkID{empty, full})
+		if err != nil {
+			t.Fatalf("ListForSatelliteSyncByIDs() error = %v", err)
+		}
+		if len(works) != 2 {
+			t.Fatalf("len = %d, want 2", len(works))
+		}
+
+		got := works[0]
+		if got.ID != full {
+			t.Fatalf("works[0].ID = %d, want %d (id 昇順)", got.ID, full)
+		}
+		if got.AnimeID == nil || *got.AnimeID != animeID {
+			t.Errorf("AnimeID = %v, want %d", got.AnimeID, animeID)
+		}
+		if got.ScTid == nil || *got.ScTid != 123 {
+			t.Errorf("ScTid = %v, want 123", got.ScTid)
+		}
+		if got.MalAnimeID == nil || *got.MalAnimeID != 456 {
+			t.Errorf("MalAnimeID = %v, want 456", got.MalAnimeID)
+		}
+		if got.OfficialSiteURL != "https://example.dev/ja" {
+			t.Errorf("OfficialSiteURL = %q", got.OfficialSiteURL)
+		}
+		if got.OfficialSiteURLEn != "https://example.dev/en" {
+			t.Errorf("OfficialSiteURLEn = %q", got.OfficialSiteURLEn)
+		}
+		if got.WikipediaURL != "https://ja.wikipedia.example.dev" {
+			t.Errorf("WikipediaURL = %q", got.WikipediaURL)
+		}
+		if got.WikipediaURLEn != "https://en.wikipedia.example.dev" {
+			t.Errorf("WikipediaURLEn = %q", got.WikipediaURLEn)
+		}
+		if got.TwitterUsername == nil || *got.TwitterUsername != "anime_official" {
+			t.Errorf("TwitterUsername = %v, want anime_official", got.TwitterUsername)
+		}
+		if got.TwitterHashtag == nil || *got.TwitterHashtag != "anime" {
+			t.Errorf("TwitterHashtag = %v, want anime", got.TwitterHashtag)
+		}
+		if got.SeasonYear == nil || *got.SeasonYear != 2026 {
+			t.Errorf("SeasonYear = %v, want 2026", got.SeasonYear)
+		}
+		if got.SeasonName == nil || *got.SeasonName != 2 {
+			t.Errorf("SeasonName = %v, want 2", got.SeasonName)
+		}
+		if got.StartedOn == nil || got.StartedOn.Year() != 2026 || got.StartedOn.Month() != 1 || got.StartedOn.Day() != 5 {
+			t.Errorf("StartedOn = %v, want 2026-01-05", got.StartedOn)
+		}
+		if got.EndedOn == nil || got.EndedOn.Year() != 2026 || got.EndedOn.Month() != 3 || got.EndedOn.Day() != 30 {
+			t.Errorf("EndedOn = %v, want 2026-03-30", got.EndedOn)
+		}
+	})
+
+	t.Run("NULL / 空のソース列は nil・空文字列で返る", func(t *testing.T) {
+		works, err := repo.ListForSatelliteSyncByIDs(ctx, []model.WorkID{empty})
+		if err != nil {
+			t.Fatalf("ListForSatelliteSyncByIDs() error = %v", err)
+		}
+		if len(works) != 1 {
+			t.Fatalf("len = %d, want 1", len(works))
+		}
+
+		got := works[0]
+		if got.AnimeID != nil {
+			t.Errorf("AnimeID = %v, want nil", got.AnimeID)
+		}
+		if got.ScTid != nil || got.MalAnimeID != nil {
+			t.Errorf("ScTid / MalAnimeID = %v / %v, want nil / nil", got.ScTid, got.MalAnimeID)
+		}
+		if got.TwitterUsername != nil || got.TwitterHashtag != nil {
+			t.Errorf("TwitterUsername / TwitterHashtag = %v / %v, want nil / nil", got.TwitterUsername, got.TwitterHashtag)
+		}
+		if got.SeasonYear != nil || got.SeasonName != nil {
+			t.Errorf("SeasonYear / SeasonName = %v / %v, want nil / nil", got.SeasonYear, got.SeasonName)
+		}
+		if got.StartedOn != nil || got.EndedOn != nil {
+			t.Errorf("StartedOn / EndedOn = %v / %v, want nil / nil", got.StartedOn, got.EndedOn)
+		}
+		// NOT NULL DEFAULT '' url columns keep the empty string (mapped to "no row" later).
+		//
+		// [Ja] NOT NULL DEFAULT '' の url 列は空文字列のまま (後段で「行なし」に写像)。
+		if got.OfficialSiteURL != "" || got.WikipediaURL != "" || got.OfficialSiteURLEn != "" || got.WikipediaURLEn != "" {
+			t.Errorf("url 列が空文字列でない: %q / %q / %q / %q", got.OfficialSiteURL, got.WikipediaURL, got.OfficialSiteURLEn, got.WikipediaURLEn)
+		}
+	})
+
+	t.Run("空入力ではクエリせず空スライスを返す", func(t *testing.T) {
+		works, err := repo.ListForSatelliteSyncByIDs(ctx, nil)
+		if err != nil {
+			t.Fatalf("ListForSatelliteSyncByIDs() error = %v", err)
+		}
+		if len(works) != 0 {
+			t.Errorf("len = %d, want 0", len(works))
+		}
+	})
+}

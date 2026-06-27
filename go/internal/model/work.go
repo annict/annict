@@ -70,6 +70,35 @@ type Work struct {
 	NumberFormatID        *NumberFormatID
 	AnimeID               *AnimeID
 
+	// Fields below are populated only by the satellite-sync loader
+	// (ListForSatelliteSyncByIDs), which projects the works columns mapped onto the
+	// satellite tables (anime_external_ids / anime_links / anime_official_accounts /
+	// anime_hashtags / anime_seasons / anime_events) during the phase 2 reconciliation.
+	// AnimeID, SeasonYear and SeasonName above are reused by this loader too. Other
+	// loaders leave these at their zero value. NULL-able text columns (twitter_*) and
+	// integer columns (sc_tid / mal_anime_id) use pointers so "absent" is distinct
+	// from the empty string / zero, while the NOT NULL DEFAULT '' url columns keep the
+	// empty string and are mapped to "no row" later (in the reconcile helper).
+	//
+	// [Ja] 以下のフィールドは別表同期ローダー (ListForSatelliteSyncByIDs) でのみ値が入る。
+	// フェーズ 2 のリコンシリエーションで別表 (anime_external_ids / anime_links /
+	// anime_official_accounts / anime_hashtags / anime_seasons / anime_events) に写像する
+	// works カラムを射影したもの。上の AnimeID / SeasonYear / SeasonName も本ローダーで
+	// 再利用する。他のロード経路ではゼロ値のまま。NULL 許容のテキスト列 (twitter_*) と
+	// integer 列 (sc_tid / mal_anime_id) は「未設定」を空文字列・0 と区別するためポインタで
+	// 持ち、NOT NULL DEFAULT '' の url 列は空文字列のまま保持して後段 (リコンサイルヘルパー)
+	// で「行なし」に写像する。
+	ScTid             *int32
+	MalAnimeID        *int32
+	OfficialSiteURL   string
+	OfficialSiteURLEn string
+	WikipediaURL      string
+	WikipediaURLEn    string
+	TwitterUsername   *string
+	TwitterHashtag    *string
+	StartedOn         *time.Time
+	EndedOn           *time.Time
+
 	// Related entities. Set only when the caller has explicitly loaded them; nil by default.
 	//
 	// [Ja] 関連エンティティ。明示的にロードした場合のみセットされ、通常は nil。
