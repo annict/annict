@@ -12,8 +12,8 @@ importers:
         specifier: ^4.1.13
         version: 4.3.1
       basecoat-css:
-        specifier: ^0.3.2
-        version: 0.3.11
+        specifier: ^1.0.1
+        version: 1.0.1
       concurrently:
         specifier: ^10.0.3
         version: 10.0.3
@@ -380,8 +380,8 @@ packages:
     resolution: {integrity: sha512-4Dj6M28JB+oAH8kFkTLUo+a2jwOFkuqb3yucU0CANcRRUbxS0cP0nZYCGjcc3BNXwRIsUVmDGgzawme7zvJHvg==}
     engines: {node: '>=12'}
 
-  basecoat-css@0.3.11:
-    resolution: {integrity: sha512-cU91Egcg9AhKJ1HswpKFItHC//FWDt1T8AlL5Yk9Fh5I2WYe+QhN3MtiVJ2vemqFF4iAM1vfbikhhjc+vkr2zA==}
+  basecoat-css@1.0.1:
+    resolution: {integrity: sha512-iFwj7JzoThIMTP8WXhTg227aXgTmSiCghVDoJdLY8g5PMdtNdCyV2R1OynObxTfkO2hfFnasIyrSeoUvbMJdcQ==}
 
   braces@3.0.3:
     resolution: {integrity: sha512-yQbXgO/OSZVD2IsiLlro+7Hf6Q18EJrKSEsdoMzKePKXct3gvD8oLcOQdIzGupr5Fj+EDe8gO/lxc1BzfMpxvA==}
@@ -844,7 +844,7 @@ snapshots:
 
   ansi-styles@6.2.3: {}
 
-  basecoat-css@0.3.11: {}
+  basecoat-css@1.0.1: {}
 
   braces@3.0.3:
     dependencies:
