@@ -579,9 +579,11 @@ func runServe() {
 
 	// DB管理画面
 	numberFormatRepo := repository.NewNumberFormatRepository(queries)
+	animeRepo := repository.NewAnimeRepository(queries)
+	animeClassificationRepo := repository.NewAnimeClassificationRepository(queries)
 	listDbWorksUC := usecase.NewListDbWorksUsecase(workRepo)
 	getDbWorkFormOptionsUC := usecase.NewGetDbWorkFormOptionsUsecase(numberFormatRepo)
-	createWorkUC := usecase.NewCreateWorkUsecase(db, workRepo, validator.NewDbWorkCreateValidator())
+	createWorkUC := usecase.NewCreateWorkUsecase(db, workRepo, animeRepo, animeClassificationRepo, validator.NewDbWorkCreateValidator())
 	dbWorkHandler := db_work.NewHandler(cfg, sessionManager, flashMgr, listDbWorksUC, getDbWorkFormOptionsUC, createWorkUC)
 	r.Get("/db/works", dbWorkHandler.Index)
 	r.Get("/db/works/new", dbWorkHandler.New)
