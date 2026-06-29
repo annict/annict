@@ -3,6 +3,7 @@ package viewmodel
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/annict/annict/go/internal/i18n"
@@ -209,6 +210,81 @@ func NewDBWorkFormInput(input usecase.CreateWorkInput) *DBWorkFormInput {
 		NumberFormatID:        input.NumberFormatID,
 		NoEpisodes:            input.NoEpisodes,
 	}
+}
+
+// NewDBWorkFormInputFromWork projects an existing work onto the string form values
+// the work edit form renders. It is the inverse of buildCreateWorkParams's
+// string->typed conversion: pointers and sql-nullable values become "" when unset,
+// dates use the YYYY-MM-DD input format, and the no_episodes checkbox uses "1".
+//
+// [Ja] NewDBWorkFormInputFromWork は既存の work を、作品編集フォームが描画する
+// 文字列のフォーム値に射影する。buildCreateWorkParams の文字列→型変換の逆向きで、
+// ポインタや NULL 許容値は未設定なら "" に、日付は YYYY-MM-DD 形式に、no_episodes
+// チェックボックスは "1" にする。
+func NewDBWorkFormInputFromWork(work *model.Work) *DBWorkFormInput {
+	return &DBWorkFormInput{
+		Title:                 work.Title,
+		TitleKana:             derefString(work.TitleKana),
+		TitleAlter:            work.TitleAlter,
+		TitleEn:               work.TitleEn,
+		TitleAlterEn:          work.TitleAlterEn,
+		Media:                 strconv.FormatInt(int64(work.Media), 10),
+		SeasonYear:            formatNullableInt32(work.SeasonYear),
+		SeasonName:            formatNullableInt32(work.SeasonName),
+		StartedOn:             formatDateInput(work.StartedOn),
+		EndedOn:               formatDateInput(work.EndedOn),
+		OfficialSiteURL:       work.OfficialSiteURL,
+		OfficialSiteURLEn:     work.OfficialSiteURLEn,
+		WikipediaURL:          work.WikipediaURL,
+		WikipediaURLEn:        work.WikipediaURLEn,
+		TwitterUsername:       derefString(work.TwitterUsername),
+		TwitterHashtag:        derefString(work.TwitterHashtag),
+		ScTid:                 formatNullableInt32(work.ScTid),
+		MalAnimeID:            formatNullableInt32(work.MalAnimeID),
+		Synopsis:              work.Synopsis,
+		SynopsisSource:        work.SynopsisSource,
+		SynopsisEn:            work.SynopsisEn,
+		SynopsisSourceEn:      work.SynopsisSourceEn,
+		ManualEpisodesCount:   formatNullableInt32(work.ManualEpisodesCount),
+		StartEpisodeRawNumber: strconv.FormatFloat(work.StartEpisodeRawNumber, 'f', -1, 64),
+		NumberFormatID:        formatNumberFormatID(work.NumberFormatID),
+		NoEpisodes:            formatCheckbox(work.NoEpisodes),
+	}
+}
+
+func derefString(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
+}
+
+func formatNullableInt32(v *int32) string {
+	if v == nil {
+		return ""
+	}
+	return strconv.FormatInt(int64(*v), 10)
+}
+
+func formatNumberFormatID(id *model.NumberFormatID) string {
+	if id == nil {
+		return ""
+	}
+	return id.String()
+}
+
+func formatDateInput(t *time.Time) string {
+	if t == nil {
+		return ""
+	}
+	return t.Format("2006-01-02")
+}
+
+func formatCheckbox(checked bool) string {
+	if checked {
+		return "1"
+	}
+	return ""
 }
 
 // Val returns the form value for the given field, or "" when the receiver is nil.

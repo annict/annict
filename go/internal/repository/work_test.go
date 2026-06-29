@@ -718,3 +718,151 @@ func TestWorkRepository_ListForSatelliteSyncByIDs(t *testing.T) {
 		}
 	})
 }
+
+// TestWorkRepository_GetForEditByID verifies the edit-form loader reads every
+// column and returns (nil, nil) for a nonexistent ID.
+//
+// [Ja] TestWorkRepository_GetForEditByID は編集フォーム用ローダーが全カラムを読み込み、
+// 存在しないIDでは (nil, nil) を返すことを検証する。
+func TestWorkRepository_GetForEditByID(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	queries := query.New(db).WithTx(tx)
+	repo := repository.NewWorkRepository(queries)
+	ctx := context.Background()
+
+	workID := testutil.NewWorkBuilder(t, tx).
+		WithTitle("編集ロードテスト").
+		WithSeason(2024, testutil.SeasonAutumn).
+		Build()
+	if _, err := tx.Exec(`
+		UPDATE works SET
+			title_kana = 'へんしゅうろーどてすと',
+			title_alter = '別名',
+			title_en = 'Edit Load Test',
+			title_alter_en = 'Alt EN',
+			media = 1,
+			official_site_url = 'https://example.dev/ja',
+			official_site_url_en = 'https://example.dev/en',
+			wikipedia_url = 'https://ja.wikipedia.example.dev',
+			wikipedia_url_en = 'https://en.wikipedia.example.dev',
+			twitter_username = 'handle',
+			twitter_hashtag = 'tag',
+			sc_tid = 123,
+			mal_anime_id = 456,
+			synopsis = 'あらすじ',
+			synopsis_source = '出典',
+			synopsis_en = 'Synopsis',
+			synopsis_source_en = 'Source',
+			manual_episodes_count = 12,
+			start_episode_raw_number = 2.5,
+			no_episodes = true,
+			started_on = '2024-10-01',
+			ended_on = '2024-12-20'
+		WHERE id = $1
+	`, int64(workID)); err != nil {
+		t.Fatalf("works のフィールド設定に失敗: %v", err)
+	}
+
+	t.Run("全フィールドを読み込む", func(t *testing.T) {
+		work, err := repo.GetForEditByID(ctx, workID)
+		if err != nil {
+			t.Fatalf("GetForEditByID() error = %v", err)
+		}
+		if work == nil {
+			t.Fatal("work should not be nil")
+		}
+		if work.ID != workID {
+			t.Errorf("ID = %d, want %d", work.ID, workID)
+		}
+		if work.Title != "編集ロードテスト" {
+			t.Errorf("Title = %q", work.Title)
+		}
+		if work.TitleKana == nil || *work.TitleKana != "へんしゅうろーどてすと" {
+			t.Errorf("TitleKana = %v", work.TitleKana)
+		}
+		if work.TitleAlter != "別名" {
+			t.Errorf("TitleAlter = %q", work.TitleAlter)
+		}
+		if work.TitleEn != "Edit Load Test" {
+			t.Errorf("TitleEn = %q", work.TitleEn)
+		}
+		if work.TitleAlterEn != "Alt EN" {
+			t.Errorf("TitleAlterEn = %q", work.TitleAlterEn)
+		}
+		if work.Media != 1 {
+			t.Errorf("Media = %d, want 1", work.Media)
+		}
+		if work.OfficialSiteURL != "https://example.dev/ja" {
+			t.Errorf("OfficialSiteURL = %q", work.OfficialSiteURL)
+		}
+		if work.OfficialSiteURLEn != "https://example.dev/en" {
+			t.Errorf("OfficialSiteURLEn = %q", work.OfficialSiteURLEn)
+		}
+		if work.WikipediaURL != "https://ja.wikipedia.example.dev" {
+			t.Errorf("WikipediaURL = %q", work.WikipediaURL)
+		}
+		if work.WikipediaURLEn != "https://en.wikipedia.example.dev" {
+			t.Errorf("WikipediaURLEn = %q", work.WikipediaURLEn)
+		}
+		if work.TwitterUsername == nil || *work.TwitterUsername != "handle" {
+			t.Errorf("TwitterUsername = %v", work.TwitterUsername)
+		}
+		if work.TwitterHashtag == nil || *work.TwitterHashtag != "tag" {
+			t.Errorf("TwitterHashtag = %v", work.TwitterHashtag)
+		}
+		if work.ScTid == nil || *work.ScTid != 123 {
+			t.Errorf("ScTid = %v", work.ScTid)
+		}
+		if work.MalAnimeID == nil || *work.MalAnimeID != 456 {
+			t.Errorf("MalAnimeID = %v", work.MalAnimeID)
+		}
+		if work.Synopsis != "あらすじ" {
+			t.Errorf("Synopsis = %q", work.Synopsis)
+		}
+		if work.SynopsisSource != "出典" {
+			t.Errorf("SynopsisSource = %q", work.SynopsisSource)
+		}
+		if work.SynopsisEn != "Synopsis" {
+			t.Errorf("SynopsisEn = %q", work.SynopsisEn)
+		}
+		if work.SynopsisSourceEn != "Source" {
+			t.Errorf("SynopsisSourceEn = %q", work.SynopsisSourceEn)
+		}
+		if work.ManualEpisodesCount == nil || *work.ManualEpisodesCount != 12 {
+			t.Errorf("ManualEpisodesCount = %v", work.ManualEpisodesCount)
+		}
+		if work.StartEpisodeRawNumber != 2.5 {
+			t.Errorf("StartEpisodeRawNumber = %v, want 2.5", work.StartEpisodeRawNumber)
+		}
+		if !work.NoEpisodes {
+			t.Error("NoEpisodes = false, want true")
+		}
+		if work.SeasonYear == nil || *work.SeasonYear != 2024 {
+			t.Errorf("SeasonYear = %v, want 2024", work.SeasonYear)
+		}
+		if work.SeasonName == nil || *work.SeasonName != testutil.SeasonAutumn {
+			t.Errorf("SeasonName = %v, want %d", work.SeasonName, testutil.SeasonAutumn)
+		}
+		if work.StartedOn == nil || work.StartedOn.Year() != 2024 || work.StartedOn.Month() != 10 || work.StartedOn.Day() != 1 {
+			t.Errorf("StartedOn = %v, want 2024-10-01", work.StartedOn)
+		}
+		if work.EndedOn == nil || work.EndedOn.Year() != 2024 || work.EndedOn.Month() != 12 || work.EndedOn.Day() != 20 {
+			t.Errorf("EndedOn = %v, want 2024-12-20", work.EndedOn)
+		}
+		if work.NumberFormatID != nil {
+			t.Errorf("NumberFormatID = %v, want nil", work.NumberFormatID)
+		}
+	})
+
+	t.Run("存在しないIDは (nil, nil)", func(t *testing.T) {
+		work, err := repo.GetForEditByID(ctx, model.WorkID(999999999))
+		if err != nil {
+			t.Fatalf("GetForEditByID() error = %v", err)
+		}
+		if work != nil {
+			t.Errorf("work = %v, want nil", work)
+		}
+	})
+}

@@ -35,6 +35,38 @@ SELECT
 FROM works
 WHERE id = $1;
 
+-- name: GetWorkForEditByID :one
+SELECT
+    id,
+    title,
+    title_kana,
+    title_alter,
+    title_en,
+    title_alter_en,
+    media,
+    season_year,
+    season_name,
+    started_on,
+    ended_on,
+    official_site_url,
+    official_site_url_en,
+    wikipedia_url,
+    wikipedia_url_en,
+    twitter_username,
+    twitter_hashtag,
+    sc_tid,
+    mal_anime_id,
+    synopsis,
+    synopsis_source,
+    synopsis_en,
+    synopsis_source_en,
+    manual_episodes_count,
+    start_episode_raw_number,
+    number_format_id,
+    no_episodes
+FROM works
+WHERE id = $1;
+
 -- name: ListDBWorks :many
 SELECT
     w.id,

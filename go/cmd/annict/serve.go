@@ -583,11 +583,13 @@ func runServe() {
 	animeClassificationRepo := repository.NewAnimeClassificationRepository(queries)
 	listDbWorksUC := usecase.NewListDbWorksUsecase(workRepo)
 	getDbWorkFormOptionsUC := usecase.NewGetDbWorkFormOptionsUsecase(numberFormatRepo)
+	getDbWorkEditUC := usecase.NewGetDbWorkEditUsecase(workRepo, numberFormatRepo)
 	createWorkUC := usecase.NewCreateWorkUsecase(db, workRepo, animeRepo, animeClassificationRepo, validator.NewDbWorkCreateValidator())
-	dbWorkHandler := db_work.NewHandler(cfg, sessionManager, flashMgr, listDbWorksUC, getDbWorkFormOptionsUC, createWorkUC)
+	dbWorkHandler := db_work.NewHandler(cfg, sessionManager, flashMgr, listDbWorksUC, getDbWorkFormOptionsUC, getDbWorkEditUC, createWorkUC)
 	r.Get("/db/works", dbWorkHandler.Index)
 	r.Get("/db/works/new", dbWorkHandler.New)
 	r.Post("/db/works", dbWorkHandler.Create)
+	r.With(authMiddleware.RequireCommitter).Get("/db/works/{id}/edit", dbWorkHandler.Edit)
 
 	// iCalendar配信
 	r.Get("/@{username}/ics", icsHandler.Show) // メインのエンドポイント

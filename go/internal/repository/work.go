@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"errors"
 
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
@@ -40,6 +41,82 @@ func workFromGetByIDRow(row query.GetWorkByIDRow) *model.Work {
 		work.TitleKana = &titleKana
 	}
 	applyNullableWorkFields(work, row.SeasonYear, row.SeasonName, row.CreatedAt)
+	return work
+}
+
+// GetForEditByID loads every works column the Annict DB admin edit form needs to
+// pre-populate its fields, and returns (nil, nil) when no work matches the id.
+//
+// [Ja] GetForEditByID は Annict DB 管理画面の編集フォームが各フィールドを初期表示
+// するために必要な works の全カラムを読み込む。該当する work が無い場合は
+// (nil, nil) を返す。
+func (r *WorkRepository) GetForEditByID(ctx context.Context, id model.WorkID) (*model.Work, error) {
+	row, err := r.queries.GetWorkForEditByID(ctx, int64(id))
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return workFromGetForEditByIDRow(row), nil
+}
+
+func workFromGetForEditByIDRow(row query.GetWorkForEditByIDRow) *model.Work {
+	work := &model.Work{
+		ID:                    model.WorkID(row.ID),
+		Title:                 row.Title,
+		TitleAlter:            row.TitleAlter,
+		TitleEn:               row.TitleEn,
+		TitleAlterEn:          row.TitleAlterEn,
+		Media:                 row.Media,
+		OfficialSiteURL:       row.OfficialSiteUrl,
+		OfficialSiteURLEn:     row.OfficialSiteUrlEn,
+		WikipediaURL:          row.WikipediaUrl,
+		WikipediaURLEn:        row.WikipediaUrlEn,
+		Synopsis:              row.Synopsis,
+		SynopsisSource:        row.SynopsisSource,
+		SynopsisEn:            row.SynopsisEn,
+		SynopsisSourceEn:      row.SynopsisSourceEn,
+		StartEpisodeRawNumber: row.StartEpisodeRawNumber,
+		NoEpisodes:            row.NoEpisodes,
+	}
+	if row.TitleKana != "" {
+		titleKana := row.TitleKana
+		work.TitleKana = &titleKana
+	}
+	applyNullableWorkFields(work, row.SeasonYear, row.SeasonName, sql.NullTime{})
+	if row.StartedOn.Valid {
+		startedOn := row.StartedOn.Time
+		work.StartedOn = &startedOn
+	}
+	if row.EndedOn.Valid {
+		endedOn := row.EndedOn.Time
+		work.EndedOn = &endedOn
+	}
+	if row.TwitterUsername.Valid {
+		twitterUsername := row.TwitterUsername.String
+		work.TwitterUsername = &twitterUsername
+	}
+	if row.TwitterHashtag.Valid {
+		twitterHashtag := row.TwitterHashtag.String
+		work.TwitterHashtag = &twitterHashtag
+	}
+	if row.ScTid.Valid {
+		scTid := row.ScTid.Int32
+		work.ScTid = &scTid
+	}
+	if row.MalAnimeID.Valid {
+		malAnimeID := row.MalAnimeID.Int32
+		work.MalAnimeID = &malAnimeID
+	}
+	if row.ManualEpisodesCount.Valid {
+		manualEpisodesCount := row.ManualEpisodesCount.Int32
+		work.ManualEpisodesCount = &manualEpisodesCount
+	}
+	if row.NumberFormatID.Valid {
+		numberFormatID := model.NumberFormatID(row.NumberFormatID.Int64)
+		work.NumberFormatID = &numberFormatID
+	}
 	return work
 }
 
