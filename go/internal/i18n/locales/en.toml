@@ -1055,6 +1055,14 @@ other = "Status"
 description = "Table header - Image"
 other = "Image"
 
+[db_works_index_table_actions_label]
+description = "Table header - Actions"
+other = "Actions"
+
+[db_works_index_edit_link]
+description = "Link from work list to edit form"
+other = "Edit"
+
 [db_works_index_empty]
 description = "No works message"
 other = "No works found"
@@ -1128,9 +1136,17 @@ other = "Wikipedia URL (English)"
 description = "Form label - Twitter Username"
 other = "Twitter Username"
 
+[db_works_new_twitter_username_placeholder]
+description = "Form placeholder - Twitter Username (without @)"
+other = "without @"
+
 [db_works_new_twitter_hashtag_label]
 description = "Form label - Twitter Hashtag"
 other = "Twitter Hashtag"
+
+[db_works_new_twitter_hashtag_placeholder]
+description = "Form placeholder - Twitter Hashtag (without #)"
+other = "without #"
 
 [db_works_new_sc_tid_label]
 description = "Form label - Syobocal TID"
@@ -1175,6 +1191,130 @@ other = "No Episodes"
 [db_works_new_submit]
 description = "Submit button on the new work page"
 other = "Create Work"
+
+[db_works_edit_title]
+description = "DB works edit page title"
+other = "Edit Work"
+
+[db_works_edit_back_to_list_link]
+description = "Link from edit work page back to the works index"
+other = "Back to List"
+
+[db_works_edit_title_label]
+description = "Form label - Title"
+other = "Title"
+
+[db_works_edit_title_kana_label]
+description = "Form label - Title (Kana)"
+other = "Title (Kana)"
+
+[db_works_edit_title_alter_label]
+description = "Form label - Title (Alternate)"
+other = "Title (Alternate)"
+
+[db_works_edit_title_en_label]
+description = "Form label - Title (English)"
+other = "Title (English)"
+
+[db_works_edit_title_alter_en_label]
+description = "Form label - Title (English Alternate)"
+other = "Title (English Alternate)"
+
+[db_works_edit_media_label]
+description = "Form label - Media"
+other = "Media"
+
+[db_works_edit_season_year_label]
+description = "Form label - Season Year"
+other = "Season Year"
+
+[db_works_edit_season_name_label]
+description = "Form label - Season Name"
+other = "Season Name"
+
+[db_works_edit_started_on_label]
+description = "Form label - Started On"
+other = "Started On"
+
+[db_works_edit_ended_on_label]
+description = "Form label - Ended On"
+other = "Ended On"
+
+[db_works_edit_official_site_url_label]
+description = "Form label - Official Site URL"
+other = "Official Site URL"
+
+[db_works_edit_official_site_url_en_label]
+description = "Form label - Official Site URL (English)"
+other = "Official Site URL (English)"
+
+[db_works_edit_wikipedia_url_label]
+description = "Form label - Wikipedia URL"
+other = "Wikipedia URL"
+
+[db_works_edit_wikipedia_url_en_label]
+description = "Form label - Wikipedia URL (English)"
+other = "Wikipedia URL (English)"
+
+[db_works_edit_twitter_username_label]
+description = "Form label - Twitter Username"
+other = "Twitter Username"
+
+[db_works_edit_twitter_username_placeholder]
+description = "Form placeholder - Twitter Username (without @)"
+other = "without @"
+
+[db_works_edit_twitter_hashtag_label]
+description = "Form label - Twitter Hashtag"
+other = "Twitter Hashtag"
+
+[db_works_edit_twitter_hashtag_placeholder]
+description = "Form placeholder - Twitter Hashtag (without #)"
+other = "without #"
+
+[db_works_edit_sc_tid_label]
+description = "Form label - Syobocal TID"
+other = "Syobocal TID"
+
+[db_works_edit_mal_anime_id_label]
+description = "Form label - MAL Anime ID"
+other = "MAL Anime ID"
+
+[db_works_edit_synopsis_label]
+description = "Form label - Synopsis"
+other = "Synopsis"
+
+[db_works_edit_synopsis_source_label]
+description = "Form label - Synopsis Source"
+other = "Synopsis Source"
+
+[db_works_edit_synopsis_en_label]
+description = "Form label - Synopsis (English)"
+other = "Synopsis (English)"
+
+[db_works_edit_synopsis_source_en_label]
+description = "Form label - Synopsis Source (English)"
+other = "Synopsis Source (English)"
+
+[db_works_edit_manual_episodes_count_label]
+description = "Form label - Manual Episodes Count"
+other = "Manual Episodes Count"
+
+[db_works_edit_start_episode_raw_number_label]
+description = "Form label - Start Episode Raw Number"
+other = "Start Episode Raw Number"
+
+[db_works_edit_number_format_label]
+description = "Form label - Number Format"
+other = "Number Format"
+
+[db_works_edit_no_episodes_label]
+description = "Form label - No Episodes"
+other = "No Episodes"
+
+[db_works_edit_submit]
+description = "Submit button on the edit work page"
+other = "Update Work"
 
 # Flash messages - DB works related
 [flash_db_work_created]
@@ -1243,3 +1383,7 @@ other = "Legal Notice"
 [error_user_not_found]
 description = "Message shown when a user is not found"
 other = "User not found"
+
+[error_work_not_found]
+description = "Message shown when a work is not found"
+other = "Work not found"

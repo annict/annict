@@ -83,6 +83,7 @@ templ Index(data IndexPageData) {
 							<th class="text-right">{ templates.T(ctx, "db_works_index_table_watchers_label") }</th>
 							<th class="text-left">{ templates.T(ctx, "db_works_index_table_status_label") }</th>
 							<th class="text-center">{ templates.T(ctx, "db_works_index_table_image_label") }</th>
+							<th class="text-center">{ templates.T(ctx, "db_works_index_table_actions_label") }</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -105,6 +106,11 @@ templ Index(data IndexPageData) {
 									if work.HasImage {
 										<span>✓</span>
 									}
+								</td>
+								<td class="text-center">
+									<a href={ templates.DBWorkEditPath(work.ID).SafeURL() } class="text-primary hover:underline">
+										{ templates.T(ctx, "db_works_index_edit_link") }
+									</a>
 								</td>
 							</tr>
 						}

@@ -3,6 +3,7 @@ package viewmodel
 import (
 	"context"
 	"testing"
+	"time"
 
 	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/model"
@@ -242,4 +243,126 @@ func TestNewDBWorkListItems(t *testing.T) {
 	if got[1].ID != WorkID(11) || got[1].HasImage {
 		t.Errorf("got[1] = %+v, want ID=11 HasImage=false", got[1])
 	}
+}
+
+func TestNewDBWorkFormInputFromWork(t *testing.T) {
+	t.Parallel()
+
+	t.Run("全フィールドが埋まった work を文字列フォーム値に射影する", func(t *testing.T) {
+		titleKana := "てすとさくひん"
+		twitterUsername := "test_user"
+		twitterHashtag := "test_hashtag"
+		var scTid int32 = 100
+		var malAnimeID int32 = 200
+		var manualEpisodesCount int32 = 12
+		var seasonYear int32 = 2024
+		var seasonName int32 = 2
+		startedOn := time.Date(2024, 4, 1, 0, 0, 0, 0, time.UTC)
+		endedOn := time.Date(2024, 6, 30, 0, 0, 0, 0, time.UTC)
+		numberFormatID := model.NumberFormatID(3)
+
+		work := &model.Work{
+			ID:                    1,
+			Title:                 "テスト作品",
+			TitleKana:             &titleKana,
+			TitleAlter:            "別タイトル",
+			TitleEn:               "Test Work",
+			TitleAlterEn:          "Alt Test Work",
+			Media:                 1,
+			SeasonYear:            &seasonYear,
+			SeasonName:            &seasonName,
+			StartedOn:             &startedOn,
+			EndedOn:               &endedOn,
+			OfficialSiteURL:       "https://example.com",
+			OfficialSiteURLEn:     "https://example.com/en",
+			WikipediaURL:          "https://wikipedia.org/test",
+			WikipediaURLEn:        "https://en.wikipedia.org/test",
+			TwitterUsername:       &twitterUsername,
+			TwitterHashtag:        &twitterHashtag,
+			ScTid:                 &scTid,
+			MalAnimeID:            &malAnimeID,
+			Synopsis:              "あらすじ",
+			SynopsisSource:        "出典",
+			SynopsisEn:            "Synopsis",
+			SynopsisSourceEn:      "Source",
+			ManualEpisodesCount:   &manualEpisodesCount,
+			StartEpisodeRawNumber: 2.5,
+			NumberFormatID:        &numberFormatID,
+			NoEpisodes:            true,
+		}
+
+		got := NewDBWorkFormInputFromWork(work)
+		if got == nil {
+			t.Fatal("NewDBWorkFormInputFromWork returned nil")
+		}
+
+		tests := []struct {
+			field string
+			want  string
+		}{
+			{"title", "テスト作品"},
+			{"title_kana", "てすとさくひん"},
+			{"title_alter", "別タイトル"},
+			{"title_en", "Test Work"},
+			{"title_alter_en", "Alt Test Work"},
+			{"media", "1"},
+			{"season_year", "2024"},
+			{"season_name", "2"},
+			{"started_on", "2024-04-01"},
+			{"ended_on", "2024-06-30"},
+			{"official_site_url", "https://example.com"},
+			{"official_site_url_en", "https://example.com/en"},
+			{"wikipedia_url", "https://wikipedia.org/test"},
+			{"wikipedia_url_en", "https://en.wikipedia.org/test"},
+			{"twitter_username", "test_user"},
+			{"twitter_hashtag", "test_hashtag"},
+			{"sc_tid", "100"},
+			{"mal_anime_id", "200"},
+			{"synopsis", "あらすじ"},
+			{"synopsis_source", "出典"},
+			{"synopsis_en", "Synopsis"},
+			{"synopsis_source_en", "Source"},
+			{"manual_episodes_count", "12"},
+			{"start_episode_raw_number", "2.5"},
+			{"number_format_id", "3"},
+			{"no_episodes", "1"},
+		}
+		for _, tt := range tests {
+			if v := got.Val(tt.field); v != tt.want {
+				t.Errorf("Val(%q) = %q, want %q", tt.field, v, tt.want)
+			}
+		}
+	})
+
+	t.Run("nullable が未設定の work は空文字列で返す", func(t *testing.T) {
+		work := &model.Work{
+			ID:                    2,
+			Title:                 "最小作品",
+			Media:                 0,
+			StartEpisodeRawNumber: 1,
+			NoEpisodes:            false,
+		}
+
+		got := NewDBWorkFormInputFromWork(work)
+
+		emptyFields := []string{
+			"title_kana", "season_year", "season_name", "started_on", "ended_on",
+			"twitter_username", "twitter_hashtag", "sc_tid", "mal_anime_id",
+			"manual_episodes_count", "number_format_id", "no_episodes",
+		}
+		for _, field := range emptyFields {
+			if v := got.Val(field); v != "" {
+				t.Errorf("Val(%q) = %q, want empty string", field, v)
+			}
+		}
+		if v := got.Val("media"); v != "0" {
+			t.Errorf("Val(media) = %q, want 0", v)
+		}
+		if v := got.Val("start_episode_raw_number"); v != "1" {
+			t.Errorf("Val(start_episode_raw_number) = %q, want 1", v)
+		}
+		if v := got.Val("title"); v != "最小作品" {
+			t.Errorf("Val(title) = %q, want 最小作品", v)
+		}
+	})
 }

@@ -35,3 +35,10 @@ func DBWorksNewPath() Path {
 func DBWorkPath(id viewmodel.WorkID) Path {
 	return Path(fmt.Sprintf("/db/works/%s", id))
 }
+
+// DBWorkEditPath builds the path for the work edit page in the Annict DB admin UI.
+//
+// [Ja] DBWorkEditPath はDB管理画面の作品編集のパスを生成します。
+func DBWorkEditPath(id viewmodel.WorkID) Path {
+	return Path(fmt.Sprintf("/db/works/%s/edit", id))
+}

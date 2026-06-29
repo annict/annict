@@ -2,6 +2,7 @@ package db_work
 
 import (
 	"database/sql"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -25,12 +26,15 @@ func newTestHandler(t *testing.T, db *sql.DB, tx *sql.Tx) *Handler {
 	sessionManager := session.NewManager(sessionRepo, cfg)
 	workRepo := repository.NewWorkRepository(queries)
 	numberFormatRepo := repository.NewNumberFormatRepository(queries)
+	animeRepo := repository.NewAnimeRepository(queries)
+	animeClassificationRepo := repository.NewAnimeClassificationRepository(queries)
 
 	listDbWorksUC := usecase.NewListDbWorksUsecase(workRepo)
 	getDbWorkFormOptionsUC := usecase.NewGetDbWorkFormOptionsUsecase(numberFormatRepo)
-	createWorkUC := usecase.NewCreateWorkUsecase(db, workRepo, validator.NewDbWorkCreateValidator())
+	getDbWorkEditUC := usecase.NewGetDbWorkEditUsecase(workRepo, numberFormatRepo)
+	createWorkUC := usecase.NewCreateWorkUsecase(db, workRepo, animeRepo, animeClassificationRepo, validator.NewDbWorkCreateValidator())
 
-	return NewHandler(cfg, sessionManager, testutil.NewTestFlashManager(), listDbWorksUC, getDbWorkFormOptionsUC, createWorkUC)
+	return NewHandler(cfg, sessionManager, testutil.NewTestFlashManager(), listDbWorksUC, getDbWorkFormOptionsUC, getDbWorkEditUC, createWorkUC)
 }
 
 // TestIndex はDB作品一覧ページのテスト
@@ -40,7 +44,7 @@ func TestIndex(t *testing.T) {
 	db, tx := testutil.SetupTx(t)
 
 	// テストデータを作成
-	testutil.NewWorkBuilder(t, tx).
+	workID := testutil.NewWorkBuilder(t, tx).
 		WithTitle("テストアニメ1").
 		WithSeason(2024, testutil.SeasonSpring).
 		Build()
@@ -70,6 +74,10 @@ func TestIndex(t *testing.T) {
 		"<table",
 		"<thead",
 		"<tbody",
+		// Each row links to its edit form via DBWorkEditPath.
+		//
+		// [Ja] 各行が DBWorkEditPath 経由で編集フォームへリンクする。
+		fmt.Sprintf(`href="/db/works/%d/edit"`, int64(workID)),
 	}
 
 	for _, expected := range expectedContents {

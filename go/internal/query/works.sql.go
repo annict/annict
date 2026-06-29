@@ -288,6 +288,104 @@ func (q *Queries) GetWorkByID(ctx context.Context, id int64) (GetWorkByIDRow, er
 	return i, err
 }
 
+const getWorkForEditByID = `-- name: GetWorkForEditByID :one
+SELECT
+    id,
+    title,
+    title_kana,
+    title_alter,
+    title_en,
+    title_alter_en,
+    media,
+    season_year,
+    season_name,
+    started_on,
+    ended_on,
+    official_site_url,
+    official_site_url_en,
+    wikipedia_url,
+    wikipedia_url_en,
+    twitter_username,
+    twitter_hashtag,
+    sc_tid,
+    mal_anime_id,
+    synopsis,
+    synopsis_source,
+    synopsis_en,
+    synopsis_source_en,
+    manual_episodes_count,
+    start_episode_raw_number,
+    number_format_id,
+    no_episodes
+FROM works
+WHERE id = $1
+`
+
+type GetWorkForEditByIDRow struct {
+	ID                    int64          `db:"id"`
+	Title                 string         `db:"title"`
+	TitleKana             string         `db:"title_kana"`
+	TitleAlter            string         `db:"title_alter"`
+	TitleEn               string         `db:"title_en"`
+	TitleAlterEn          string         `db:"title_alter_en"`
+	Media                 int32          `db:"media"`
+	SeasonYear            sql.NullInt32  `db:"season_year"`
+	SeasonName            sql.NullInt32  `db:"season_name"`
+	StartedOn             sql.NullTime   `db:"started_on"`
+	EndedOn               sql.NullTime   `db:"ended_on"`
+	OfficialSiteUrl       string         `db:"official_site_url"`
+	OfficialSiteUrlEn     string         `db:"official_site_url_en"`
+	WikipediaUrl          string         `db:"wikipedia_url"`
+	WikipediaUrlEn        string         `db:"wikipedia_url_en"`
+	TwitterUsername       sql.NullString `db:"twitter_username"`
+	TwitterHashtag        sql.NullString `db:"twitter_hashtag"`
+	ScTid                 sql.NullInt32  `db:"sc_tid"`
+	MalAnimeID            sql.NullInt32  `db:"mal_anime_id"`
+	Synopsis              string         `db:"synopsis"`
+	SynopsisSource        string         `db:"synopsis_source"`
+	SynopsisEn            string         `db:"synopsis_en"`
+	SynopsisSourceEn      string         `db:"synopsis_source_en"`
+	ManualEpisodesCount   sql.NullInt32  `db:"manual_episodes_count"`
+	StartEpisodeRawNumber float64        `db:"start_episode_raw_number"`
+	NumberFormatID        sql.NullInt64  `db:"number_format_id"`
+	NoEpisodes            bool           `db:"no_episodes"`
+}
+
+func (q *Queries) GetWorkForEditByID(ctx context.Context, id int64) (GetWorkForEditByIDRow, error) {
+	row := q.db.QueryRowContext(ctx, getWorkForEditByID, id)
+	var i GetWorkForEditByIDRow
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.TitleKana,
+		&i.TitleAlter,
+		&i.TitleEn,
+		&i.TitleAlterEn,
+		&i.Media,
+		&i.SeasonYear,
+		&i.SeasonName,
+		&i.StartedOn,
+		&i.EndedOn,
+		&i.OfficialSiteUrl,
+		&i.OfficialSiteUrlEn,
+		&i.WikipediaUrl,
+		&i.WikipediaUrlEn,
+		&i.TwitterUsername,
+		&i.TwitterHashtag,
+		&i.ScTid,
+		&i.MalAnimeID,
+		&i.Synopsis,
+		&i.SynopsisSource,
+		&i.SynopsisEn,
+		&i.SynopsisSourceEn,
+		&i.ManualEpisodesCount,
+		&i.StartEpisodeRawNumber,
+		&i.NumberFormatID,
+		&i.NoEpisodes,
+	)
+	return i, err
+}
+
 const listDBWorks = `-- name: ListDBWorks :many
 SELECT
     w.id,

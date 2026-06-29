@@ -18,6 +18,7 @@ type Handler struct {
 	flashMgr               *session.FlashManager
 	listDbWorksUC          *usecase.ListDbWorksUsecase
 	getDbWorkFormOptionsUC *usecase.GetDbWorkFormOptionsUsecase
+	getDbWorkEditUC        *usecase.GetDbWorkEditUsecase
 	createWorkUC           *usecase.CreateWorkUsecase
 }
 
@@ -27,6 +28,7 @@ func NewHandler(
 	flashMgr *session.FlashManager,
 	listDbWorksUC *usecase.ListDbWorksUsecase,
 	getDbWorkFormOptionsUC *usecase.GetDbWorkFormOptionsUsecase,
+	getDbWorkEditUC *usecase.GetDbWorkEditUsecase,
 	createWorkUC *usecase.CreateWorkUsecase,
 ) *Handler {
 	return &Handler{
@@ -35,6 +37,7 @@ func NewHandler(
 		flashMgr:               flashMgr,
 		listDbWorksUC:          listDbWorksUC,
 		getDbWorkFormOptionsUC: getDbWorkFormOptionsUC,
+		getDbWorkEditUC:        getDbWorkEditUC,
 		createWorkUC:           createWorkUC,
 	}
 }

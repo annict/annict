@@ -113,6 +113,7 @@ type Querier interface {
 	GetValidSignInCode(ctx context.Context, userID int64) (SignInCode, error)
 	GetValidSignUpCode(ctx context.Context, email string) (SignUpCode, error)
 	GetWorkByID(ctx context.Context, id int64) (GetWorkByIDRow, error)
+	GetWorkForEditByID(ctx context.Context, id int64) (GetWorkForEditByIDRow, error)
 	IncrementSignInCodeAttempts(ctx context.Context, id int64) error
 	IncrementSignUpCodeAttempts(ctx context.Context, id int64) error
 	InvalidateSignUpCodesByEmail(ctx context.Context, email string) error
