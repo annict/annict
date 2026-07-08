@@ -10,9 +10,12 @@ import (
 	"testing"
 	"time"
 
+	"github.com/go-chi/chi/v5"
+
 	"github.com/annict/annict/go/internal/clientip"
 	"github.com/annict/annict/go/internal/config"
 	"github.com/annict/annict/go/internal/model"
+	"github.com/annict/annict/go/internal/session"
 )
 
 func TestReverseProxyMiddleware_GoHandledPaths(t *testing.T) {
@@ -1224,6 +1227,142 @@ func TestReverseProxyMiddleware_AnnictDBFeatureFlag(t *testing.T) {
 			})
 		}
 	})
+}
+
+// buildDBFallbackRouter wires the reverse proxy middleware the way serve.go does:
+// SetRouter + Use(Middleware) in front of an inner middleware chain (here the real
+// CSRF middleware, standing in for the Sentry / CSRF / ... chain that the flag-disabled
+// proxy path skips), then the /db/works routes the Go app registers. It lets the tests
+// verify that a flag-enabled /db/* request matching no Go route falls back to Rails from
+// the Middleware layer — before the inner chain — so a non-GET request is not rejected
+// by CSRF, matching the flag-disabled behavior.
+//
+// [Ja] buildDBFallbackRouter は serve.go と同じ順序でリバースプロキシミドルウェアを配線
+// する: SetRouter + Use(Middleware) を内側のミドルウェアチェーン (ここでは実 CSRF
+// ミドルウェア。フラグ無効時のプロキシ経路がスキップする Sentry / CSRF / ... のチェーンを
+// 代表する) の前に置き、その後に Go 版が登録する /db/works 系ルートを並べる。フラグ有効な
+// /db/* のうち Go ルートにマッチしないリクエストが、内側チェーンより前の Middleware
+// レイヤーで Rails へフォールバックすること (=非 GET が CSRF に弾かれず、フラグ無効時と
+// 同じ挙動になること) を検証するために用いる。
+func buildDBFallbackRouter(t *testing.T, railsURL string) *chi.Mux {
+	t.Helper()
+
+	cfg := &config.Config{Domain: "annict-test.page"}
+	checker := &mockFeatureFlagChecker{enabled: true}
+	mw, err := NewReverseProxyMiddleware(railsURL, cfg, checker, nil)
+	if err != nil {
+		t.Fatalf("ミドルウェアの作成に失敗: %v", err)
+	}
+
+	// The real CSRF middleware stands in for the inner chain the flag-disabled proxy
+	// path skips. Its session manager is never queried here: fallback requests bypass
+	// it, and a matched non-GET Go route is rejected at the missing-session-cookie
+	// check before any DB access, so a nil session repository is safe.
+	//
+	// [Ja] 実 CSRF ミドルウェアは、フラグ無効時のプロキシ経路がスキップする内側チェーンを
+	// 代表する。ここでは session manager は参照されない: フォールバックはこれをバイパスし、
+	// マッチした非 GET の Go ルートは DB アクセス前にセッションクッキー不在のチェックで
+	// 弾かれるため、nil の session repository で問題ない。
+	csrfMW := NewCSRFMiddleware(session.NewManager(nil, cfg))
+
+	goResponse := func(w http.ResponseWriter, _ *http.Request) {
+		_, _ = w.Write([]byte("Go response"))
+	}
+
+	r := chi.NewRouter()
+	mw.SetRouter(r)
+	r.Use(mw.Middleware)
+	r.Use(csrfMW.Middleware)
+	r.Get("/db/works", goResponse)
+	r.Get("/db/works/new", goResponse)
+	r.Get("/db/works/{id}/edit", goResponse)
+	r.Post("/db/works", goResponse)
+
+	return r
+}
+
+func TestReverseProxyMiddleware_DBFallback_ThroughMiddlewareChain(t *testing.T) {
+	t.Parallel()
+
+	railsServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("Rails response"))
+	}))
+	defer railsServer.Close()
+
+	r := buildDBFallbackRouter(t, railsServer.URL)
+
+	testCases := []struct {
+		name       string
+		method     string
+		path       string
+		wantStatus int
+		wantBody   string
+	}{
+		// Go 実装済みルートの挙動は変えない (GET)。
+		{"実装済み一覧はGo版が処理する", "GET", "/db/works", http.StatusOK, "Go response"},
+		{"実装済み新規フォームはGo版が処理する", "GET", "/db/works/new", http.StatusOK, "Go response"},
+		{"実装済み編集フォームはGo版が処理する", "GET", "/db/works/42/edit", http.StatusOK, "Go response"},
+
+		// Go 未実装の /db/* の GET は Rails 版へフォールバックする (ステータスも Rails 側を透過)。
+		{"未実装の/db直下はRails版へフォールバック", "GET", "/db/people", http.StatusOK, "Rails response"},
+		{"未実装のネストパスもRails版へフォールバック", "GET", "/db/works/123/episodes", http.StatusOK, "Rails response"},
+		{"未実装の作品詳細もRails版へフォールバック", "GET", "/db/works/123", http.StatusOK, "Rails response"},
+
+		// Go 未実装の /db/* の非 GET も、内側の CSRF に 403 で弾かれず Rails へフォールバックする。
+		// フォールバックが CSRF より前の Middleware レイヤーで起きること (影響 B の回帰防止) を担保する。
+		{"未実装POSTはCSRF403にならずRailsへフォールバック", "POST", "/db/people", http.StatusOK, "Rails response"},
+		{"未実装PATCH(作品詳細)もRailsへフォールバック", "PATCH", "/db/works/123", http.StatusOK, "Rails response"},
+
+		// 登録済みの /db/works へのメソッド不一致 (GET/POST は登録済みだが PATCH は未登録) も、
+		// 405 ではなく Rails へフォールバックする。no-route パスとは chi 内部の通過ブランチ
+		// (methodNotAllowed) が異なるため、実装判断ログが例示するこのケースを別途担保する。
+		{"実装済みパスへのメソッド不一致はRailsへフォールバック", "PATCH", "/db/works", http.StatusOK, "Rails response"},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			req := httptest.NewRequest(tc.method, tc.path, nil)
+			rr := httptest.NewRecorder()
+
+			r.ServeHTTP(rr, req)
+
+			if rr.Code != tc.wantStatus {
+				t.Errorf("%s %s: ステータスコードが期待と異なる: got %d want %d", tc.method, tc.path, rr.Code, tc.wantStatus)
+			}
+			if rr.Body.String() != tc.wantBody {
+				t.Errorf("%s %s: レスポンスボディが期待と異なる: got %q want %q", tc.method, tc.path, rr.Body.String(), tc.wantBody)
+			}
+		})
+	}
+}
+
+func TestReverseProxyMiddleware_DBFallback_MatchedGoRouteStillHitsInnerChain(t *testing.T) {
+	t.Parallel()
+
+	railsServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("Rails response"))
+	}))
+	defer railsServer.Close()
+
+	r := buildDBFallbackRouter(t, railsServer.URL)
+
+	// POST /db/works は実装済みの Go ルートなのでフォールバックせず Go チェーンへ入り、
+	// 内側の CSRF ミドルウェアがトークン無しの POST を 403 で弾く。フォールバックが
+	// 「Go 未実装の /db/*」だけに限定され、実装済みルートの内側チェーン (CSRF) を
+	// 素通しにしていないことを確認する。
+	req := httptest.NewRequest("POST", "/db/works", nil)
+	rr := httptest.NewRecorder()
+
+	r.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusForbidden {
+		t.Errorf("実装済み POST /db/works は CSRF で 403 になるべき (Rails へ流さない): got %d body=%q", rr.Code, rr.Body.String())
+	}
+	if strings.Contains(rr.Body.String(), "Rails response") {
+		t.Errorf("実装済み POST /db/works を Rails へフォールバックしてはいけない: got %q", rr.Body.String())
+	}
 }
 
 func TestReverseProxyMiddleware_DeviceTokenCookieSetOnRequest(t *testing.T) {

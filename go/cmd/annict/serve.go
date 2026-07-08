@@ -331,7 +331,17 @@ func runServe() {
 	// リバースプロキシミドルウェア
 	// Go版で処理するかRails版にプロキシするかを判定
 	// Rails版にプロキシする場合は後続のミドルウェアをスキップ
+	//
+	// Also inject the router so the middleware can fall back to Rails for flag-gated
+	// paths (e.g. /db/*) that match no Go route, proxying at this layer — before the
+	// Sentry / CSRF chain below — exactly as the flag-disabled path does.
+	//
+	// [Ja] あわせてルーターを注入し、フラグでゲートされたパス (例: /db/*) がどの Go
+	// ルートにもマッチしない場合に、ミドルウェアがこのレイヤー (下の Sentry / CSRF
+	// チェーンより前) で Rails へフォールバックできるようにする。フラグ無効時の経路と
+	// 同じレイヤーでプロキシする。
 	if reverseProxyMW != nil {
+		reverseProxyMW.SetRouter(r)
 		r.Use(reverseProxyMW.Middleware)
 	}
 
