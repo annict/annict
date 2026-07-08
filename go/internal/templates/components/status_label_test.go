@@ -14,53 +14,53 @@ func TestStatusLabel(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
-		name      string
-		status    viewmodel.WorkStatus
-		locale    string
-		wantText  string
-		wantClass string
+		name     string
+		status   viewmodel.WorkStatus
+		locale   string
+		wantText string
+		wantAttr string
 	}{
 		{
-			name:      "公開状態（日本語）",
-			status:    viewmodel.WorkStatusPublished,
-			locale:    "ja",
-			wantText:  "公開",
-			wantClass: "badge-success",
+			name:     "公開状態（日本語）",
+			status:   viewmodel.WorkStatusPublished,
+			locale:   "ja",
+			wantText: "公開",
+			wantAttr: `class="badge" data-variant="success"`,
 		},
 		{
-			name:      "アーカイブ状態（日本語）",
-			status:    viewmodel.WorkStatusArchived,
-			locale:    "ja",
-			wantText:  "アーカイブ",
-			wantClass: "badge-warning",
+			name:     "アーカイブ状態（日本語）",
+			status:   viewmodel.WorkStatusArchived,
+			locale:   "ja",
+			wantText: "アーカイブ",
+			wantAttr: `class="badge" data-variant="warning"`,
 		},
 		{
-			name:      "削除状態（日本語）",
-			status:    viewmodel.WorkStatusDeleted,
-			locale:    "ja",
-			wantText:  "削除",
-			wantClass: "badge-destructive",
+			name:     "削除状態（日本語）",
+			status:   viewmodel.WorkStatusDeleted,
+			locale:   "ja",
+			wantText: "削除",
+			wantAttr: `class="badge" data-variant="destructive"`,
 		},
 		{
-			name:      "公開状態（英語）",
-			status:    viewmodel.WorkStatusPublished,
-			locale:    "en",
-			wantText:  "Published",
-			wantClass: "badge-success",
+			name:     "公開状態（英語）",
+			status:   viewmodel.WorkStatusPublished,
+			locale:   "en",
+			wantText: "Published",
+			wantAttr: `class="badge" data-variant="success"`,
 		},
 		{
-			name:      "アーカイブ状態（英語）",
-			status:    viewmodel.WorkStatusArchived,
-			locale:    "en",
-			wantText:  "Archived",
-			wantClass: "badge-warning",
+			name:     "アーカイブ状態（英語）",
+			status:   viewmodel.WorkStatusArchived,
+			locale:   "en",
+			wantText: "Archived",
+			wantAttr: `class="badge" data-variant="warning"`,
 		},
 		{
-			name:      "削除状態（英語）",
-			status:    viewmodel.WorkStatusDeleted,
-			locale:    "en",
-			wantText:  "Deleted",
-			wantClass: "badge-destructive",
+			name:     "削除状態（英語）",
+			status:   viewmodel.WorkStatusDeleted,
+			locale:   "en",
+			wantText: "Deleted",
+			wantAttr: `class="badge" data-variant="destructive"`,
 		},
 	}
 
@@ -81,8 +81,8 @@ func TestStatusLabel(t *testing.T) {
 			if !strings.Contains(html, tt.wantText) {
 				t.Errorf("出力に %q が含まれていません: %s", tt.wantText, html)
 			}
-			if !strings.Contains(html, tt.wantClass) {
-				t.Errorf("出力に %q が含まれていません: %s", tt.wantClass, html)
+			if !strings.Contains(html, tt.wantAttr) {
+				t.Errorf("出力に %q が含まれていません: %s", tt.wantAttr, html)
 			}
 		})
 	}

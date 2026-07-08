@@ -12,12 +12,14 @@ templ Pagination(pagination viewmodel.Pagination) {
 			if pagination.HasPrev() {
 				<a
 					href={ templ.SafeURL(pagination.PageURL(pagination.PrevPage())) }
-					class="btn btn-outline btn-sm"
+					class="btn"
+					data-variant="outline"
+					data-size="sm"
 				>
 					{ templates.T(ctx, "pagination_prev") }
 				</a>
 			} else {
-				<span class="btn btn-outline btn-sm opacity-50 pointer-events-none">
+				<span class="btn opacity-50 pointer-events-none" data-variant="outline" data-size="sm">
 					{ templates.T(ctx, "pagination_prev") }
 				</span>
 			}
@@ -26,11 +28,13 @@ templ Pagination(pagination viewmodel.Pagination) {
 				if page == 0 {
 					<span class="px-2 text-muted-foreground">…</span>
 				} else if page == pagination.CurrentPage {
-					<span class="btn btn-sm btn-primary">{ fmt.Sprintf("%d", page) }</span>
+					<span class="btn" data-size="sm">{ fmt.Sprintf("%d", page) }</span>
 				} else {
 					<a
 						href={ templ.SafeURL(pagination.PageURL(page)) }
-						class="btn btn-outline btn-sm"
+						class="btn"
+						data-variant="outline"
+						data-size="sm"
 					>
 						{ fmt.Sprintf("%d", page) }
 					</a>
@@ -40,12 +44,14 @@ templ Pagination(pagination viewmodel.Pagination) {
 			if pagination.HasNext() {
 				<a
 					href={ templ.SafeURL(pagination.PageURL(pagination.NextPage())) }
-					class="btn btn-outline btn-sm"
+					class="btn"
+					data-variant="outline"
+					data-size="sm"
 				>
 					{ templates.T(ctx, "pagination_next") }
 				</a>
 			} else {
-				<span class="btn btn-outline btn-sm opacity-50 pointer-events-none">
+				<span class="btn opacity-50 pointer-events-none" data-variant="outline" data-size="sm">
 					{ templates.T(ctx, "pagination_next") }
 				</span>
 			}

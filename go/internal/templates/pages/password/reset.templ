@@ -37,13 +37,13 @@ templ Reset(data ResetPageData) {
 		@components.FormErrors(data.FormErrors)
 		<form
 			action="/password/reset"
-			class="form grid gap-6"
+			class="grid gap-6"
 			hx-on:submit="disableSubmitButtons(this)"
 			method="POST"
 		>
 			<input type="hidden" name="csrf_token" value={ data.CSRFToken }/>
 			<div class="grid gap-2">
-				<label for="email">
+				<label class="label" for="email">
 					{ templates.T(ctx, "password_reset_email_label") }
 				</label>
 				<input
@@ -54,6 +54,7 @@ templ Reset(data ResetPageData) {
 					}
 					autocomplete="email"
 					autofocus
+					class="input"
 					id="email"
 					name="email"
 					required

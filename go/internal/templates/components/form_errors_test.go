@@ -23,7 +23,7 @@ func TestFormErrors(t *testing.T) {
 				Global: []string{"ログインに失敗しました"},
 			},
 			wantContains: []string{
-				`<div class="alert-destructive">`,
+				`<div class="alert" data-variant="destructive">`,
 				`<h2>ログインに失敗しました</h2>`,
 			},
 		},
@@ -117,7 +117,7 @@ func TestFormErrors_HTMLStructure(t *testing.T) {
 
 	// 正しいHTML構造を持っているか確認
 	expectedStructure := []string{
-		`<div class="alert-destructive">`,
+		`<div class="alert" data-variant="destructive">`,
 		`<h2>`,
 		`</h2>`,
 		`</div>`,

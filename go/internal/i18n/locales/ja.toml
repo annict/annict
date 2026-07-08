@@ -979,6 +979,47 @@ other = "チャンネル"
 description = "DB サイドバー - Annictに戻る"
 other = "Annictに戻る"
 
+[db_sidebar_toggle_label]
+description = "DB サイドバー - 開閉トグルボタンの aria-label"
+other = "サイドバーの開閉"
+
+# DB 作品サブナビ関連
+[db_work_subnav_label]
+description = "DB 作品サブナビ - ナビゲーションの aria-label"
+other = "作品ナビゲーション"
+
+[db_work_subnav_work]
+description = "DB 作品サブナビ - 作品"
+other = "作品"
+
+[db_work_subnav_episodes]
+description = "DB 作品サブナビ - エピソード"
+other = "エピソード"
+
+[db_work_subnav_programs]
+description = "DB 作品サブナビ - 番組情報"
+other = "番組情報"
+
+[db_work_subnav_slots]
+description = "DB 作品サブナビ - 放送予定"
+other = "放送予定"
+
+[db_work_subnav_casts]
+description = "DB 作品サブナビ - キャスト"
+other = "キャスト"
+
+[db_work_subnav_staffs]
+description = "DB 作品サブナビ - スタッフ"
+other = "スタッフ"
+
+[db_work_subnav_work_image]
+description = "DB 作品サブナビ - 作品画像"
+other = "作品画像"
+
+[db_work_subnav_pv]
+description = "DB 作品サブナビ - PV"
+other = "PV"
+
 # ページネーション関連
 [pagination_label]
 description = "ページネーション - aria-label"
@@ -1014,17 +1055,25 @@ other = "作品"
 description = "作品一覧から新規作成ページへのリンク"
 other = "新規作成"
 
+[db_works_index_season_slugs_label]
+description = "リリース時期の複数選択フィルタのラベル"
+other = "リリース時期"
+
 [db_works_index_filter_no_episodes_label]
 description = "エピソード未登録フィルタのラベル"
 other = "エピソード未登録"
 
 [db_works_index_filter_no_image_label]
-description = "画像未設定フィルタのラベル"
-other = "画像未設定"
+description = "画像未登録フィルタのラベル"
+other = "画像未登録"
 
 [db_works_index_filter_no_season_label]
-description = "シーズン未設定フィルタのラベル"
-other = "シーズン未設定"
+description = "リリース時期未登録フィルタのラベル"
+other = "リリース時期未登録"
+
+[db_works_index_filter_no_slots_label]
+description = "放送予定未登録フィルタのラベル"
+other = "放送予定未登録"
 
 [db_works_index_submit]
 description = "DB作品一覧ページの送信ボタン (フィルタ検索)"
@@ -1038,9 +1087,25 @@ other = "ID"
 description = "テーブルヘッダー - タイトル"
 other = "タイトル"
 
+[db_works_index_table_media_label]
+description = "テーブルヘッダー - メディア"
+other = "メディア"
+
 [db_works_index_table_season_label]
 description = "テーブルヘッダー - シーズン"
 other = "シーズン"
+
+[db_works_index_table_external_services_label]
+description = "テーブルヘッダー - 外部サービス"
+other = "外部サービス"
+
+[db_works_index_syobocal_label]
+description = "外部サービス列 - しょぼいカレンダーのラベル"
+other = "しょぼかる"
+
+[db_works_index_mal_label]
+description = "外部サービス列 - MyAnimeList のラベル"
+other = "MyAnimeList"
 
 [db_works_index_table_watchers_label]
 description = "テーブルヘッダー - ウォッチ数"
@@ -1058,6 +1123,10 @@ other = "画像"
 description = "テーブルヘッダー - 操作"
 other = "操作"
 
+[db_works_index_id_link_aria_label]
+description = "作品 ID リンク (公開ページを新しいタブで開く) の aria-label"
+other = "作品 {{.ID}} を新しいタブで開く"
+
 [db_works_index_edit_link]
 description = "作品一覧から編集フォームへのリンク"
 other = "編集"
@@ -1065,6 +1134,11 @@ other = "編集"
 [db_works_index_empty]
 description = "作品なしメッセージ"
 other = "作品が見つかりませんでした"
+
+# DB作品フォーム共通 (新規・編集で共有)
+[db_works_form_external_link_label]
+description = "フォームのラベル横に表示する外部リンクアイコンのアクセシブルネーム (新規・編集共通)。Field はフィールド名"
+other = "{{.Field}} を新しいタブで開く"
 
 # DB作品新規作成ページ
 [db_works_new_title]
@@ -1132,19 +1206,19 @@ description = "フォームラベル - Wikipedia URL (英語)"
 other = "Wikipedia URL (英語)"
 
 [db_works_new_twitter_username_label]
-description = "フォームラベル - Twitterユーザー名"
-other = "Twitterユーザー名"
+description = "フォームラベル - Xユーザー名"
+other = "Xユーザー名"
 
 [db_works_new_twitter_username_placeholder]
-description = "フォームプレースホルダー - Twitterユーザー名 (@ は不要)"
+description = "フォームプレースホルダー - Xユーザー名 (@ は不要)"
 other = "@なし"
 
 [db_works_new_twitter_hashtag_label]
-description = "フォームラベル - Twitterハッシュタグ"
-other = "Twitterハッシュタグ"
+description = "フォームラベル - Xハッシュタグ"
+other = "Xハッシュタグ"
 
 [db_works_new_twitter_hashtag_placeholder]
-description = "フォームプレースホルダー - Twitterハッシュタグ (# は不要)"
+description = "フォームプレースホルダー - Xハッシュタグ (# は不要)"
 other = "#なし"
 
 [db_works_new_sc_tid_label]
@@ -1256,19 +1330,19 @@ description = "フォームラベル - Wikipedia URL (英語)"
 other = "Wikipedia URL (英語)"
 
 [db_works_edit_twitter_username_label]
-description = "フォームラベル - Twitterユーザー名"
-other = "Twitterユーザー名"
+description = "フォームラベル - Xユーザー名"
+other = "Xユーザー名"
 
 [db_works_edit_twitter_username_placeholder]
-description = "フォームプレースホルダー - Twitterユーザー名 (@ は不要)"
+description = "フォームプレースホルダー - Xユーザー名 (@ は不要)"
 other = "@なし"
 
 [db_works_edit_twitter_hashtag_label]
-description = "フォームラベル - Twitterハッシュタグ"
-other = "Twitterハッシュタグ"
+description = "フォームラベル - Xハッシュタグ"
+other = "Xハッシュタグ"
 
 [db_works_edit_twitter_hashtag_placeholder]
-description = "フォームプレースホルダー - Twitterハッシュタグ (# は不要)"
+description = "フォームプレースホルダー - Xハッシュタグ (# は不要)"
 other = "#なし"
 
 [db_works_edit_sc_tid_label]
@@ -1319,6 +1393,10 @@ other = "作品を更新"
 [flash_db_work_created]
 description = "作品作成成功メッセージ"
 other = "作品を作成しました"
+
+[flash_db_work_updated]
+description = "作品更新成功メッセージ"
+other = "作品を更新しました"
 
 # バリデーション共通メッセージ
 [validation_required]

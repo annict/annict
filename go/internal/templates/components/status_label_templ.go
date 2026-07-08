@@ -35,14 +35,14 @@ func StatusLabel(status viewmodel.WorkStatus) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		switch status {
 		case viewmodel.WorkStatusPublished:
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<span class=\"badge badge-success\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<span class=\"badge\" data-variant=\"success\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var2 string
 			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "status_published"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/status_label.templ`, Line: 11, Col: 75}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/status_label.templ`, Line: 11, Col: 84}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
@@ -53,14 +53,14 @@ func StatusLabel(status viewmodel.WorkStatus) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		case viewmodel.WorkStatusArchived:
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<span class=\"badge badge-warning\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<span class=\"badge\" data-variant=\"warning\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "status_archived"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/status_label.templ`, Line: 13, Col: 74}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/status_label.templ`, Line: 13, Col: 83}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -71,14 +71,14 @@ func StatusLabel(status viewmodel.WorkStatus) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		case viewmodel.WorkStatusDeleted:
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<span class=\"badge badge-destructive\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<span class=\"badge\" data-variant=\"destructive\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "status_deleted"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/status_label.templ`, Line: 15, Col: 77}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/status_label.templ`, Line: 15, Col: 86}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {

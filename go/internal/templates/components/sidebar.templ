@@ -25,7 +25,7 @@ func formatNotificationCount(count int32) string {
 // user はログインユーザー情報 ( viewmodel.User )。nil の場合は未ログイン状態。
 // seasons は季節情報 ( 前・現在・次 )。
 templ Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Seasons) {
-	<aside class="sidebar" data-side="left" aria-hidden="false">
+	<aside id="sidebar" class="sidebar" data-side="left" aria-hidden="false">
 		<nav aria-label="Sidebar navigation">
 			<section class="scrollbar gap-4">
 			  <div>
@@ -276,7 +276,7 @@ templ sidebarNotificationMenuItem(ctx context.Context, user *viewmodel.User) {
 			</div>
 
 			if user != nil && user.NotificationsCount > 0 {
-				<span class="badge-destructive font-bold">
+				<span class="badge font-bold" data-variant="destructive">
 					{ formatNotificationCount(user.NotificationsCount) }
 				</span>
 			}

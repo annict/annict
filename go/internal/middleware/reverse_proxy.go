@@ -11,6 +11,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/go-chi/chi/v5"
+
 	"github.com/annict/annict/go/internal/auth"
 	"github.com/annict/annict/go/internal/clientip"
 	"github.com/annict/annict/go/internal/config"
@@ -56,6 +58,13 @@ type ReverseProxyMiddleware struct {
 	//
 	// [Ja] nil 許容。テスト時やセッション不要時は nil
 	sessionMgr *session.Manager
+	// optional; set via SetRouter. Lets the middleware tell whether a flag-gated
+	// path matches a registered Go route. nil leaves flag-gated paths to the Go chain.
+	//
+	// [Ja] nil 許容。SetRouter で設定する。フラグでゲートされたパスが登録済みの
+	// Go ルートにマッチするかをミドルウェアが判定できるようにする。nil のときは
+	// フラグ対象パスを Go チェーンに委ねる。
+	router chi.Router
 }
 
 // Go版で処理するパス（ホワイトリスト）
@@ -243,13 +252,47 @@ func (m *ReverseProxyMiddleware) Middleware(next http.Handler) http.Handler {
 		}
 
 		if m.isFeatureFlagEnabled(r, deviceToken) {
-			next.ServeHTTP(w, r)
+			// The path is gated by an enabled migration flag. Hand it to the Go
+			// chain only when a Go route matches; otherwise the screen is not
+			// implemented in Go yet, so proxy to Rails here — the same layer as the
+			// flag-disabled path below — instead of letting it fall through to chi's
+			// NotFound handler, which runs inside the Sentry / CSRF middleware chain
+			// that Rails-bound requests must skip.
+			//
+			// [Ja] パスは有効な移行フラグでゲートされている。Go ルートにマッチするときだけ
+			// Go チェーンに渡し、マッチしない場合はその画面が Go 未実装のため、ここで
+			// Rails へプロキシする (下のフラグ無効時と同じレイヤー)。chi の NotFound
+			// ハンドラー (Rails 行きのリクエストがスキップすべき Sentry / CSRF
+			// ミドルウェアチェーンの内側で走る) へ流さないためにこうする。
+			if m.router == nil || m.router.Match(chi.NewRouteContext(), r.Method, r.URL.Path) {
+				next.ServeHTTP(w, r)
+				return
+			}
+			m.proxy.ServeHTTP(w, r)
 			return
 		}
 
 		// Rails版にプロキシ
 		m.proxy.ServeHTTP(w, r)
 	})
+}
+
+// SetRouter injects the chi router so the middleware can tell whether a flag-gated
+// path (e.g. /db/*) matches a registered Go route. Call it once during setup, after
+// the router is created and before it serves. When a flagged path matches no Go route
+// the screen is not implemented in Go yet, so Middleware proxies to Rails itself — at
+// the same layer as the flag-disabled path — rather than deferring to chi's NotFound
+// handler, which runs inside the Sentry / CSRF middleware chain that Rails-bound
+// requests must skip.
+//
+// [Ja] SetRouter は chi ルーターを注入し、フラグでゲートされたパス (例: /db/*) が
+// 登録済みの Go ルートにマッチするかをミドルウェアが判定できるようにする。ルーター生成後・
+// 配信開始前にセットアップで 1 回呼ぶ。フラグ対象パスがどの Go ルートにもマッチしない場合、
+// その画面は Go 未実装のため、Middleware は chi の NotFound ハンドラー (Rails 行きの
+// リクエストがスキップすべき Sentry / CSRF ミドルウェアチェーンの内側で走る) に委ねず、
+// 自身で Rails へプロキシする (フラグ無効時と同じレイヤー)。
+func (m *ReverseProxyMiddleware) SetRouter(router chi.Router) {
+	m.router = router
 }
 
 // ensureDeviceToken returns the device_token cookie value from the request, generating and setting a new one on the

@@ -22,7 +22,7 @@ templ New(data NewPageData) {
 	<div class="p-6">
 		<div class="flex items-center justify-between mb-6">
 			<h1 class="text-2xl font-bold">{ templates.T(ctx, "db_works_new_title") }</h1>
-			<a href={ templates.DBWorksPath().SafeURL() } class="btn btn-outline btn-sm">
+			<a href={ templates.DBWorksPath().SafeURL() } class="btn" data-variant="outline" data-size="sm">
 				{ templates.T(ctx, "db_works_new_back_to_list_link") }
 			</a>
 		</div>
@@ -152,9 +152,12 @@ templ New(data NewPageData) {
 			</div>
 
 			<div>
-				<label for="official_site_url" class="label">
-					{ templates.T(ctx, "db_works_new_official_site_url_label") }
-				</label>
+				<div class="flex items-center gap-2">
+					<label for="official_site_url" class="label">
+						{ templates.T(ctx, "db_works_new_official_site_url_label") }
+					</label>
+					@formLabelExternalLink(templates.T(ctx, "db_works_new_official_site_url_label"), data.FormInput.LabelLinkURL("official_site_url"))
+				</div>
 				<input type="url" id="official_site_url" name="official_site_url" class="input" value={ data.FormInput.Val("official_site_url") }/>
 				if data.hasFieldError("official_site_url") {
 					for _, errorMsg := range data.FormErrors.Fields["official_site_url"] {
@@ -164,9 +167,12 @@ templ New(data NewPageData) {
 			</div>
 
 			<div>
-				<label for="official_site_url_en" class="label">
-					{ templates.T(ctx, "db_works_new_official_site_url_en_label") }
-				</label>
+				<div class="flex items-center gap-2">
+					<label for="official_site_url_en" class="label">
+						{ templates.T(ctx, "db_works_new_official_site_url_en_label") }
+					</label>
+					@formLabelExternalLink(templates.T(ctx, "db_works_new_official_site_url_en_label"), data.FormInput.LabelLinkURL("official_site_url_en"))
+				</div>
 				<input type="url" id="official_site_url_en" name="official_site_url_en" class="input" value={ data.FormInput.Val("official_site_url_en") }/>
 				if data.hasFieldError("official_site_url_en") {
 					for _, errorMsg := range data.FormErrors.Fields["official_site_url_en"] {
@@ -176,9 +182,12 @@ templ New(data NewPageData) {
 			</div>
 
 			<div>
-				<label for="wikipedia_url" class="label">
-					{ templates.T(ctx, "db_works_new_wikipedia_url_label") }
-				</label>
+				<div class="flex items-center gap-2">
+					<label for="wikipedia_url" class="label">
+						{ templates.T(ctx, "db_works_new_wikipedia_url_label") }
+					</label>
+					@formLabelExternalLink(templates.T(ctx, "db_works_new_wikipedia_url_label"), data.FormInput.LabelLinkURL("wikipedia_url"))
+				</div>
 				<input type="url" id="wikipedia_url" name="wikipedia_url" class="input" value={ data.FormInput.Val("wikipedia_url") }/>
 				if data.hasFieldError("wikipedia_url") {
 					for _, errorMsg := range data.FormErrors.Fields["wikipedia_url"] {
@@ -188,9 +197,12 @@ templ New(data NewPageData) {
 			</div>
 
 			<div>
-				<label for="wikipedia_url_en" class="label">
-					{ templates.T(ctx, "db_works_new_wikipedia_url_en_label") }
-				</label>
+				<div class="flex items-center gap-2">
+					<label for="wikipedia_url_en" class="label">
+						{ templates.T(ctx, "db_works_new_wikipedia_url_en_label") }
+					</label>
+					@formLabelExternalLink(templates.T(ctx, "db_works_new_wikipedia_url_en_label"), data.FormInput.LabelLinkURL("wikipedia_url_en"))
+				</div>
 				<input type="url" id="wikipedia_url_en" name="wikipedia_url_en" class="input" value={ data.FormInput.Val("wikipedia_url_en") }/>
 				if data.hasFieldError("wikipedia_url_en") {
 					for _, errorMsg := range data.FormErrors.Fields["wikipedia_url_en"] {
@@ -200,30 +212,42 @@ templ New(data NewPageData) {
 			</div>
 
 			<div>
-				<label for="twitter_username" class="label">
-					{ templates.T(ctx, "db_works_new_twitter_username_label") }
-				</label>
+				<div class="flex items-center gap-2">
+					<label for="twitter_username" class="label">
+						{ templates.T(ctx, "db_works_new_twitter_username_label") }
+					</label>
+					@formLabelExternalLink(templates.T(ctx, "db_works_new_twitter_username_label"), data.FormInput.LabelLinkURL("twitter_username"))
+				</div>
 				<input type="text" id="twitter_username" name="twitter_username" class="input" placeholder={ templates.T(ctx, "db_works_new_twitter_username_placeholder") } value={ data.FormInput.Val("twitter_username") }/>
 			</div>
 
 			<div>
-				<label for="twitter_hashtag" class="label">
-					{ templates.T(ctx, "db_works_new_twitter_hashtag_label") }
-				</label>
+				<div class="flex items-center gap-2">
+					<label for="twitter_hashtag" class="label">
+						{ templates.T(ctx, "db_works_new_twitter_hashtag_label") }
+					</label>
+					@formLabelExternalLink(templates.T(ctx, "db_works_new_twitter_hashtag_label"), data.FormInput.LabelLinkURL("twitter_hashtag"))
+				</div>
 				<input type="text" id="twitter_hashtag" name="twitter_hashtag" class="input" placeholder={ templates.T(ctx, "db_works_new_twitter_hashtag_placeholder") } value={ data.FormInput.Val("twitter_hashtag") }/>
 			</div>
 
 			<div>
-				<label for="sc_tid" class="label">
-					{ templates.T(ctx, "db_works_new_sc_tid_label") }
-				</label>
+				<div class="flex items-center gap-2">
+					<label for="sc_tid" class="label">
+						{ templates.T(ctx, "db_works_new_sc_tid_label") }
+					</label>
+					@formLabelExternalLink(templates.T(ctx, "db_works_new_sc_tid_label"), data.FormInput.LabelLinkURL("sc_tid"))
+				</div>
 				<input type="text" id="sc_tid" name="sc_tid" class="input" value={ data.FormInput.Val("sc_tid") }/>
 			</div>
 
 			<div>
-				<label for="mal_anime_id" class="label">
-					{ templates.T(ctx, "db_works_new_mal_anime_id_label") }
-				</label>
+				<div class="flex items-center gap-2">
+					<label for="mal_anime_id" class="label">
+						{ templates.T(ctx, "db_works_new_mal_anime_id_label") }
+					</label>
+					@formLabelExternalLink(templates.T(ctx, "db_works_new_mal_anime_id_label"), data.FormInput.LabelLinkURL("mal_anime_id"))
+				</div>
 				<input type="text" id="mal_anime_id" name="mal_anime_id" class="input" value={ data.FormInput.Val("mal_anime_id") }/>
 			</div>
 
@@ -231,7 +255,7 @@ templ New(data NewPageData) {
 				<label for="synopsis" class="label">
 					{ templates.T(ctx, "db_works_new_synopsis_label") }
 				</label>
-				<textarea id="synopsis" name="synopsis" class="textarea" rows="5">{ data.FormInput.Val("synopsis") }</textarea>
+				<textarea id="synopsis" name="synopsis" class="textarea" rows="10">{ data.FormInput.Val("synopsis") }</textarea>
 			</div>
 
 			<div>
@@ -245,7 +269,7 @@ templ New(data NewPageData) {
 				<label for="synopsis_en" class="label">
 					{ templates.T(ctx, "db_works_new_synopsis_en_label") }
 				</label>
-				<textarea id="synopsis_en" name="synopsis_en" class="textarea" rows="5">{ data.FormInput.Val("synopsis_en") }</textarea>
+				<textarea id="synopsis_en" name="synopsis_en" class="textarea" rows="10">{ data.FormInput.Val("synopsis_en") }</textarea>
 			</div>
 
 			<div>
@@ -297,7 +321,7 @@ templ New(data NewPageData) {
 			</div>
 
 			<div class="pt-4">
-				<button type="submit" class="btn btn-primary">
+				<button type="submit" class="btn">
 					{ templates.T(ctx, "db_works_new_submit") }
 				</button>
 			</div>

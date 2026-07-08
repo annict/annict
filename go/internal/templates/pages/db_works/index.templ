@@ -3,17 +3,21 @@ package db_works
 import (
 	"fmt"
 
+	"github.com/a-h/templ"
+
 	"github.com/annict/annict/go/internal/templates"
 	"github.com/annict/annict/go/internal/templates/components"
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
 type IndexPageData struct {
-	Works            []viewmodel.DBWorkListItem
-	Pagination       viewmodel.Pagination
-	FilterNoEpisodes bool
-	FilterNoImage    bool
-	FilterNoSeason   bool
+	Works               []viewmodel.DBWorkListItem
+	Pagination          viewmodel.Pagination
+	FilterNoEpisodes    bool
+	FilterNoImage       bool
+	FilterNoSeason      bool
+	FilterNoSlots       bool
+	SeasonFilterOptions []viewmodel.SeasonFilterOption
 }
 
 templ Index(data IndexPageData) {
@@ -28,45 +32,80 @@ templ Index(data IndexPageData) {
 		@components.ContentCard() {
 			<form
 				action={ templates.DBWorksPath().SafeURL() }
-				class="flex items-center gap-4 flex-wrap"
+				class="flex flex-col gap-4"
 				method="get"
 			>
-				<label class="flex items-center gap-1.5 text-sm">
-					<input
-						type="checkbox"
-						name="filter_no_episodes"
-						value="1"
-						if data.FilterNoEpisodes {
-							checked
+				<div class="flex flex-col gap-1.5">
+					<label for="season_slugs" class="label">
+						{ templates.T(ctx, "db_works_index_season_slugs_label") }
+					</label>
+					<select
+						id="season_slugs"
+						name="season_slugs"
+						class="select"
+						multiple
+						size="6"
+					>
+						for _, opt := range data.SeasonFilterOptions {
+							if opt.Selected {
+								<option value={ opt.Slug } selected>{ opt.Label }</option>
+							} else {
+								<option value={ opt.Slug }>{ opt.Label }</option>
+							}
 						}
-					/>
-					{ templates.T(ctx, "db_works_index_filter_no_episodes_label") }
-				</label>
-				<label class="flex items-center gap-1.5 text-sm">
-					<input
-						type="checkbox"
-						name="filter_no_image"
-						value="1"
-						if data.FilterNoImage {
-							checked
-						}
-					/>
-					{ templates.T(ctx, "db_works_index_filter_no_image_label") }
-				</label>
-				<label class="flex items-center gap-1.5 text-sm">
-					<input
-						type="checkbox"
-						name="filter_no_season"
-						value="1"
-						if data.FilterNoSeason {
-							checked
-						}
-					/>
-					{ templates.T(ctx, "db_works_index_filter_no_season_label") }
-				</label>
-				<button type="submit" class="btn btn-outline btn-sm">
-					{ templates.T(ctx, "db_works_index_submit") }
-				</button>
+					</select>
+				</div>
+				<div class="flex items-center gap-4 flex-wrap">
+					<label class="flex items-center gap-1.5 text-sm">
+						<input
+							type="checkbox"
+							name="filter_no_episodes"
+							value="1"
+							if data.FilterNoEpisodes {
+								checked
+							}
+						/>
+						{ templates.T(ctx, "db_works_index_filter_no_episodes_label") }
+					</label>
+					<label class="flex items-center gap-1.5 text-sm">
+						<input
+							type="checkbox"
+							name="filter_no_image"
+							value="1"
+							if data.FilterNoImage {
+								checked
+							}
+						/>
+						{ templates.T(ctx, "db_works_index_filter_no_image_label") }
+					</label>
+					<label class="flex items-center gap-1.5 text-sm">
+						<input
+							type="checkbox"
+							name="filter_no_season"
+							value="1"
+							if data.FilterNoSeason {
+								checked
+							}
+						/>
+						{ templates.T(ctx, "db_works_index_filter_no_season_label") }
+					</label>
+					<label class="flex items-center gap-1.5 text-sm">
+						<input
+							type="checkbox"
+							name="filter_no_slots"
+							value="1"
+							if data.FilterNoSlots {
+								checked
+							}
+						/>
+						{ templates.T(ctx, "db_works_index_filter_no_slots_label") }
+					</label>
+				</div>
+				<div>
+					<button type="submit" class="btn" data-variant="outline" data-size="sm">
+						{ templates.T(ctx, "db_works_index_submit") }
+					</button>
+				</div>
 			</form>
 		}
 
@@ -77,35 +116,84 @@ templ Index(data IndexPageData) {
 				<table class="table w-full">
 					<thead>
 						<tr>
-							<th class="text-left">{ templates.T(ctx, "db_works_index_table_id_label") }</th>
-							<th class="text-left">{ templates.T(ctx, "db_works_index_table_title_label") }</th>
-							<th class="text-left">{ templates.T(ctx, "db_works_index_table_season_label") }</th>
-							<th class="text-right">{ templates.T(ctx, "db_works_index_table_watchers_label") }</th>
-							<th class="text-left">{ templates.T(ctx, "db_works_index_table_status_label") }</th>
-							<th class="text-center">{ templates.T(ctx, "db_works_index_table_image_label") }</th>
-							<th class="text-center">{ templates.T(ctx, "db_works_index_table_actions_label") }</th>
+							<th scope="col" class="text-left">{ templates.T(ctx, "db_works_index_table_id_label") }</th>
+							<th scope="col" class="text-left">{ templates.T(ctx, "db_works_index_table_image_label") }</th>
+							<th scope="col" class="text-left">{ templates.T(ctx, "db_works_index_table_title_label") }</th>
+							<th scope="col" class="text-left">{ templates.T(ctx, "db_works_index_table_media_label") }</th>
+							<th scope="col" class="text-left">{ templates.T(ctx, "db_works_index_table_season_label") }</th>
+							<th scope="col" class="text-left">{ templates.T(ctx, "db_works_index_table_external_services_label") }</th>
+							<th scope="col" class="text-right">{ templates.T(ctx, "db_works_index_table_watchers_label") }</th>
+							<th scope="col" class="text-left">{ templates.T(ctx, "db_works_index_table_status_label") }</th>
+							<th scope="col" class="text-center">{ templates.T(ctx, "db_works_index_table_actions_label") }</th>
 						</tr>
 					</thead>
 					<tbody>
 						for _, work := range data.Works {
 							<tr>
-								<td>{ work.ID.String() }</td>
 								<td>
-									<a href={ templates.DBWorkPath(work.ID).SafeURL() } class="text-primary hover:underline">
-										{ work.Title }
+									<a
+										href={ templates.WorkPath(work.ID).SafeURL() }
+										target="_blank"
+										rel="noopener"
+										aria-label={ templates.T(ctx, "db_works_index_id_link_aria_label", map[string]any{"ID": work.ID.String()}) }
+										class="text-primary hover:underline inline-flex items-center gap-1"
+									>
+										{ work.ID.String() }
+										<span aria-hidden="true">
+											@templates.Icon("arrow-square-out-regular", "w-[18px] h-[18px]")
+										</span>
 									</a>
 								</td>
 								<td>
+									if work.ImageURL != "" {
+										<picture>
+											<source srcset={ work.GetSrcSet(70, "webp") } type="image/webp"/>
+											<source srcset={ work.GetSrcSet(70, "jpg") } type="image/jpeg"/>
+											<img
+												src={ work.ImageURL }
+												alt={ work.Title }
+												width="70"
+												height="52"
+												loading="lazy"
+												class="rounded border object-cover"
+											/>
+										</picture>
+									} else {
+										<div class="bg-muted rounded border w-[70px] h-[52px]" aria-hidden="true"></div>
+									}
+								</td>
+								<td>
+									<div>{ work.Title }</div>
+									<div class="text-muted-foreground">
+										if work.TitleKana != "" {
+											{ work.TitleKana }
+										} else {
+											{ "-" }
+										}
+									</div>
+									<div class="text-muted-foreground">
+										if work.TitleEn != "" {
+											{ work.TitleEn }
+										} else {
+											{ "-" }
+										}
+									</div>
+								</td>
+								<td>{ work.Media }</td>
+								<td>
 									{ work.Season }
+								</td>
+								<td>
+									<dl class="grid grid-cols-[auto_1fr] gap-x-2 text-sm">
+										<dt class="text-muted-foreground">{ templates.T(ctx, "db_works_index_syobocal_label") }</dt>
+										<dd>@externalServiceLink(work.Syobocal)</dd>
+										<dt class="text-muted-foreground">{ templates.T(ctx, "db_works_index_mal_label") }</dt>
+										<dd>@externalServiceLink(work.MalAnime)</dd>
+									</dl>
 								</td>
 								<td class="text-right">{ fmt.Sprintf("%d", work.WatchersCount) }</td>
 								<td>
 									@components.StatusLabel(work.Status)
-								</td>
-								<td class="text-center">
-									if work.HasImage {
-										<span>✓</span>
-									}
 								</td>
 								<td class="text-center">
 									<a href={ templates.DBWorkEditPath(work.ID).SafeURL() } class="text-primary hover:underline">
@@ -125,9 +213,31 @@ templ Index(data IndexPageData) {
 	</div>
 }
 
+// externalServiceLink renders one external-service cell: a new-tab link to the
+// service (with rel="noopener" for tabnabbing protection) when the work has an id
+// for that service, or a "-" placeholder otherwise.
+//
+// [Ja] externalServiceLink は外部サービス列 1 セルを描画する。作品にその外部 ID があれば
+// サービスへの新規タブリンク (tabnabbing 対策の rel="noopener" 付き) を、無ければ "-" の
+// プレースホルダーを表示する。
+templ externalServiceLink(link viewmodel.ExternalServiceLink) {
+	if link.URL != "" {
+		<a
+			href={ templ.URL(link.URL) }
+			target="_blank"
+			rel="noopener"
+			class="text-primary hover:underline"
+		>
+			{ link.Label }
+		</a>
+	} else {
+		{ "-" }
+	}
+}
+
 templ indexNewButton() {
 	<a
-		class="btn-primary rounded-full"
+		class="btn rounded-full"
 		href={ templates.DBWorksNewPath().SafeURL() }
 	>
 		@templates.Icon("plus-regular", "fill-primary-foreground")

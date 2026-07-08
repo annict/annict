@@ -154,6 +154,7 @@ type Querier interface {
 	UpdateStripeWebhookEventStatus(ctx context.Context, arg UpdateStripeWebhookEventStatusParams) error
 	UpdateUserPassword(ctx context.Context, arg UpdateUserPasswordParams) error
 	UpdateUserStripeSubscriberID(ctx context.Context, arg UpdateUserStripeSubscriberIDParams) error
+	UpdateWork(ctx context.Context, arg UpdateWorkParams) error
 	UpdateWorkAnimeID(ctx context.Context, arg UpdateWorkAnimeIDParams) error
 }
 

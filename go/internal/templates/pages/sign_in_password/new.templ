@@ -41,7 +41,7 @@ templ New(data NewPageData) {
 
 		<form
 			action="/sign_in/password"
-			class="form grid gap-6"
+			class="grid gap-6"
 			hx-on:submit="disableSubmitButtons(this)"
 			method="POST"
 		>
@@ -50,7 +50,7 @@ templ New(data NewPageData) {
 
 			<div class="grid gap-2">
 				<div class="flex items-center gap-2">
-					<label for="password">
+					<label class="label" for="password">
 						{ templates.T(ctx, "sign_in_password_label") }
 					</label>
 					<a href="/password/reset" class="link text-sm ml-auto" tabindex="3">
@@ -65,6 +65,7 @@ templ New(data NewPageData) {
 					}
 					autocomplete="current-password"
 					autofocus
+					class="input"
 					id="password"
 					name="password"
 					required

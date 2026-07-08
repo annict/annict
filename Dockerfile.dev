@@ -33,6 +33,7 @@ PACKAGES=$(cat <<'PKGLIST' | sed 's/#.*//'
   ca-certificates           # Required for HTTPS connections [Ja] HTTPS 接続に必要
   curl
   file                      # Required by Shrine for image uploads (Rails) [Ja] Shrine による画像アップロードに必要 (Rails)
+  fonts-noto-cjk            # Japanese (CJK) font for headless chromium screenshots [Ja] headless chromium のスクショ用の日本語 (CJK) フォント
   fzf                       # Used by Claude Code [Ja] Claude Code で使用
   git
   gnupg                     # Required to dearmor the PostgreSQL/Redis/Stripe GPG keys [Ja] PostgreSQL/Redis/Stripe の GPG キーの dearmor に必要
@@ -62,6 +63,7 @@ PACKAGES=$(cat <<'PKGLIST' | sed 's/#.*//'
   lsb-release               # Required to configure the PostgreSQL/Redis apt repositories [Ja] PostgreSQL/Redis の apt リポジトリ設定に必要
   nano                      # Used by Claude Code [Ja] Claude Code で使用
   net-tools                 # Used by Claude Code for netstat (network debugging) [Ja] Claude Code で使用 netstat (ネットワークデバッグ用)
+  procps                    # Provides ps for playwright-cli kill-all [Ja] playwright-cli kill-all 用の ps を提供
   psmisc                    # Used by Claude Code for fuser (process identification) [Ja] Claude Code で使用 fuser (プロセス特定用)
   ripgrep                   # Used by Claude Code [Ja] Claude Code で使用
   sudo
@@ -232,6 +234,11 @@ COPY --from=1password/op:2 /usr/local/bin/op /usr/local/bin/op
 # --- Claude Code ---
 # [Ja] Claude Code
 RUN curl -fsSL https://claude.ai/install.sh | bash
+
+# --- Playwright CLI ---
+RUN npm install -g @playwright/cli@0.1.15 && \
+    mise reshim && \
+    playwright-cli install-browser chromium
 
 # --- Go tools ---
 # [Ja] Go ツール

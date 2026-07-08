@@ -24,16 +24,32 @@ WHERE w.status != 'deleted'
     ))
     AND ($2::boolean IS NOT TRUE OR wi.id IS NULL)
     AND ($3::boolean IS NOT TRUE OR (w.season_year IS NULL AND w.season_name IS NULL))
-    AND ($4::int IS NULL OR w.season_year = $4)
-    AND ($5::int IS NULL OR w.season_name = $5)
+    AND ($4::boolean IS NOT TRUE OR NOT EXISTS (
+        SELECT 1 FROM slots s
+        WHERE s.work_id = w.id AND s.deleted_at IS NULL AND s.unpublished_at IS NULL
+    ))
+    AND ($5::int IS NULL OR w.season_year = $5)
+    AND ($6::int IS NULL OR w.season_name = $6)
+    AND (
+        coalesce(cardinality($7::int[]), 0) = 0
+        OR EXISTS (
+            SELECT 1
+            FROM generate_subscripts($7::int[], 1) AS i
+            WHERE w.season_year = ($7::int[])[i]
+                AND w.season_name = ($8::int[])[i]
+        )
+    )
 `
 
 type CountDBWorksParams struct {
 	FilterNoEpisodes sql.NullBool  `db:"filter_no_episodes"`
 	FilterNoImage    sql.NullBool  `db:"filter_no_image"`
 	FilterNoSeason   sql.NullBool  `db:"filter_no_season"`
+	FilterNoSlots    sql.NullBool  `db:"filter_no_slots"`
 	SeasonYear       sql.NullInt32 `db:"season_year"`
 	SeasonName       sql.NullInt32 `db:"season_name"`
+	SeasonYears      []int32       `db:"season_years"`
+	SeasonNames      []int32       `db:"season_names"`
 }
 
 func (q *Queries) CountDBWorks(ctx context.Context, arg CountDBWorksParams) (int64, error) {
@@ -41,8 +57,11 @@ func (q *Queries) CountDBWorks(ctx context.Context, arg CountDBWorksParams) (int
 		arg.FilterNoEpisodes,
 		arg.FilterNoImage,
 		arg.FilterNoSeason,
+		arg.FilterNoSlots,
 		arg.SeasonYear,
 		arg.SeasonName,
+		pq.Array(arg.SeasonYears),
+		pq.Array(arg.SeasonNames),
 	)
 	var count int64
 	err := row.Scan(&count)
@@ -390,6 +409,11 @@ const listDBWorks = `-- name: ListDBWorks :many
 SELECT
     w.id,
     w.title,
+    w.title_kana,
+    w.title_en,
+    w.media,
+    w.sc_tid,
+    w.mal_anime_id,
     w.season_year,
     w.season_name,
     w.watchers_count,
@@ -405,19 +429,35 @@ WHERE w.status != 'deleted'
     ))
     AND ($2::boolean IS NOT TRUE OR wi.id IS NULL)
     AND ($3::boolean IS NOT TRUE OR (w.season_year IS NULL AND w.season_name IS NULL))
-    AND ($4::int IS NULL OR w.season_year = $4)
-    AND ($5::int IS NULL OR w.season_name = $5)
+    AND ($4::boolean IS NOT TRUE OR NOT EXISTS (
+        SELECT 1 FROM slots s
+        WHERE s.work_id = w.id AND s.deleted_at IS NULL AND s.unpublished_at IS NULL
+    ))
+    AND ($5::int IS NULL OR w.season_year = $5)
+    AND ($6::int IS NULL OR w.season_name = $6)
+    AND (
+        coalesce(cardinality($7::int[]), 0) = 0
+        OR EXISTS (
+            SELECT 1
+            FROM generate_subscripts($7::int[], 1) AS i
+            WHERE w.season_year = ($7::int[])[i]
+                AND w.season_name = ($8::int[])[i]
+        )
+    )
 ORDER BY w.id DESC
-LIMIT $7
-OFFSET $6
+LIMIT $10
+OFFSET $9
 `
 
 type ListDBWorksParams struct {
 	FilterNoEpisodes sql.NullBool  `db:"filter_no_episodes"`
 	FilterNoImage    sql.NullBool  `db:"filter_no_image"`
 	FilterNoSeason   sql.NullBool  `db:"filter_no_season"`
+	FilterNoSlots    sql.NullBool  `db:"filter_no_slots"`
 	SeasonYear       sql.NullInt32 `db:"season_year"`
 	SeasonName       sql.NullInt32 `db:"season_name"`
+	SeasonYears      []int32       `db:"season_years"`
+	SeasonNames      []int32       `db:"season_names"`
 	PageOffset       int32         `db:"page_offset"`
 	PerPage          int32         `db:"per_page"`
 }
@@ -425,6 +465,11 @@ type ListDBWorksParams struct {
 type ListDBWorksRow struct {
 	ID            int64          `db:"id"`
 	Title         string         `db:"title"`
+	TitleKana     string         `db:"title_kana"`
+	TitleEn       string         `db:"title_en"`
+	Media         int32          `db:"media"`
+	ScTid         sql.NullInt32  `db:"sc_tid"`
+	MalAnimeID    sql.NullInt32  `db:"mal_anime_id"`
 	SeasonYear    sql.NullInt32  `db:"season_year"`
 	SeasonName    sql.NullInt32  `db:"season_name"`
 	WatchersCount int32          `db:"watchers_count"`
@@ -437,8 +482,11 @@ func (q *Queries) ListDBWorks(ctx context.Context, arg ListDBWorksParams) ([]Lis
 		arg.FilterNoEpisodes,
 		arg.FilterNoImage,
 		arg.FilterNoSeason,
+		arg.FilterNoSlots,
 		arg.SeasonYear,
 		arg.SeasonName,
+		pq.Array(arg.SeasonYears),
+		pq.Array(arg.SeasonNames),
 		arg.PageOffset,
 		arg.PerPage,
 	)
@@ -452,6 +500,11 @@ func (q *Queries) ListDBWorks(ctx context.Context, arg ListDBWorksParams) ([]Lis
 		if err := rows.Scan(
 			&i.ID,
 			&i.Title,
+			&i.TitleKana,
+			&i.TitleEn,
+			&i.Media,
+			&i.ScTid,
+			&i.MalAnimeID,
 			&i.SeasonYear,
 			&i.SeasonName,
 			&i.WatchersCount,
@@ -672,6 +725,102 @@ func (q *Queries) ListWorksForSatelliteSyncByIDs(ctx context.Context, dollar_1 [
 		return nil, err
 	}
 	return items, nil
+}
+
+const updateWork = `-- name: UpdateWork :exec
+UPDATE works
+SET
+    title = $1,
+    title_kana = $2,
+    title_alter = $3,
+    title_en = $4,
+    title_alter_en = $5,
+    media = $6,
+    season_year = $7,
+    season_name = $8,
+    started_on = $9,
+    ended_on = $10,
+    official_site_url = $11,
+    official_site_url_en = $12,
+    wikipedia_url = $13,
+    wikipedia_url_en = $14,
+    twitter_username = $15,
+    twitter_hashtag = $16,
+    sc_tid = $17,
+    mal_anime_id = $18,
+    synopsis = $19,
+    synopsis_source = $20,
+    synopsis_en = $21,
+    synopsis_source_en = $22,
+    manual_episodes_count = $23,
+    start_episode_raw_number = $24,
+    number_format_id = $25,
+    no_episodes = $26,
+    updated_at = NOW()
+WHERE id = $27
+`
+
+type UpdateWorkParams struct {
+	Title                 string         `db:"title"`
+	TitleKana             string         `db:"title_kana"`
+	TitleAlter            string         `db:"title_alter"`
+	TitleEn               string         `db:"title_en"`
+	TitleAlterEn          string         `db:"title_alter_en"`
+	Media                 int32          `db:"media"`
+	SeasonYear            sql.NullInt32  `db:"season_year"`
+	SeasonName            sql.NullInt32  `db:"season_name"`
+	StartedOn             sql.NullTime   `db:"started_on"`
+	EndedOn               sql.NullTime   `db:"ended_on"`
+	OfficialSiteUrl       string         `db:"official_site_url"`
+	OfficialSiteUrlEn     string         `db:"official_site_url_en"`
+	WikipediaUrl          string         `db:"wikipedia_url"`
+	WikipediaUrlEn        string         `db:"wikipedia_url_en"`
+	TwitterUsername       sql.NullString `db:"twitter_username"`
+	TwitterHashtag        sql.NullString `db:"twitter_hashtag"`
+	ScTid                 sql.NullInt32  `db:"sc_tid"`
+	MalAnimeID            sql.NullInt32  `db:"mal_anime_id"`
+	Synopsis              string         `db:"synopsis"`
+	SynopsisSource        string         `db:"synopsis_source"`
+	SynopsisEn            string         `db:"synopsis_en"`
+	SynopsisSourceEn      string         `db:"synopsis_source_en"`
+	ManualEpisodesCount   sql.NullInt32  `db:"manual_episodes_count"`
+	StartEpisodeRawNumber float64        `db:"start_episode_raw_number"`
+	NumberFormatID        sql.NullInt64  `db:"number_format_id"`
+	NoEpisodes            bool           `db:"no_episodes"`
+	ID                    int64          `db:"id"`
+}
+
+func (q *Queries) UpdateWork(ctx context.Context, arg UpdateWorkParams) error {
+	_, err := q.db.ExecContext(ctx, updateWork,
+		arg.Title,
+		arg.TitleKana,
+		arg.TitleAlter,
+		arg.TitleEn,
+		arg.TitleAlterEn,
+		arg.Media,
+		arg.SeasonYear,
+		arg.SeasonName,
+		arg.StartedOn,
+		arg.EndedOn,
+		arg.OfficialSiteUrl,
+		arg.OfficialSiteUrlEn,
+		arg.WikipediaUrl,
+		arg.WikipediaUrlEn,
+		arg.TwitterUsername,
+		arg.TwitterHashtag,
+		arg.ScTid,
+		arg.MalAnimeID,
+		arg.Synopsis,
+		arg.SynopsisSource,
+		arg.SynopsisEn,
+		arg.SynopsisSourceEn,
+		arg.ManualEpisodesCount,
+		arg.StartEpisodeRawNumber,
+		arg.NumberFormatID,
+		arg.NoEpisodes,
+		arg.ID,
+	)
+	return err
 }
 
 const updateWorkAnimeID = `-- name: UpdateWorkAnimeID :exec

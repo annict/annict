@@ -4,11 +4,11 @@ import (
 	"github.com/annict/annict/go/internal/templates"
 )
 
-// DbSidebar renders the sidebar component for the Annict DB admin UI.
+// DBSidebar renders the sidebar component for the Annict DB admin UI.
 //
-// [Ja] DbSidebar は Annict DB 管理画面用のサイドバーコンポーネントを描画する。
-templ DbSidebar() {
-	<aside class="sidebar" data-side="left" aria-hidden="false">
+// [Ja] DBSidebar は Annict DB 管理画面用のサイドバーコンポーネントを描画する。
+templ DBSidebar() {
+	<aside id="db-sidebar" class="sidebar" data-side="left" aria-hidden="false">
 		<nav aria-label="Annict DB navigation">
 			<section class="scrollbar gap-4">
 				<div>

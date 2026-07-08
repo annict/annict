@@ -12,7 +12,10 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-const perPage int32 = 30
+// perPage matches the Rails Db::WorksController#index page size (.per(100)).
+//
+// [Ja] perPage は Rails の Db::WorksController#index のページ件数 (.per(100)) に合わせる。
+const perPage int32 = 100
 
 // Index renders the work list page in the Annict DB admin UI (GET /db/works).
 //
@@ -24,11 +27,17 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 	filterNoEpisodes := r.URL.Query().Get("filter_no_episodes") == "1"
 	filterNoImage := r.URL.Query().Get("filter_no_image") == "1"
 	filterNoSeason := r.URL.Query().Get("filter_no_season") == "1"
+	filterNoSlots := r.URL.Query().Get("filter_no_slots") == "1"
+	seasonSlugs := r.URL.Query()["season_slugs"]
+	seasonYears, seasonNames := viewmodel.ParseSeasonSlugs(seasonSlugs)
 
-	result, err := h.listDbWorksUC.Execute(ctx, usecase.ListDbWorksInput{
+	result, err := h.getDBWorksUC.Execute(ctx, usecase.GetDBWorksInput{
 		FilterNoEpisodes: filterNoEpisodes,
 		FilterNoImage:    filterNoImage,
 		FilterNoSeason:   filterNoSeason,
+		FilterNoSlots:    filterNoSlots,
+		SeasonYears:      seasonYears,
+		SeasonNames:      seasonNames,
 		Page:             page,
 		PerPage:          perPage,
 	})
@@ -44,18 +53,20 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)
 	meta.SetTitle(ctx, "db_works_index_title")
 
-	worksVM := viewmodel.NewDBWorkListItems(ctx, result.Works)
+	worksVM := viewmodel.NewDBWorkListItems(ctx, result.Works, h.imageHelper)
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	component := layouts.Db(
 		meta,
 		h.cfg.GetAssetVersion(),
 		db_works.Index(db_works.IndexPageData{
-			Works:            worksVM,
-			Pagination:       pagination,
-			FilterNoEpisodes: filterNoEpisodes,
-			FilterNoImage:    filterNoImage,
-			FilterNoSeason:   filterNoSeason,
+			Works:               worksVM,
+			Pagination:          pagination,
+			FilterNoEpisodes:    filterNoEpisodes,
+			FilterNoImage:       filterNoImage,
+			FilterNoSeason:      filterNoSeason,
+			FilterNoSlots:       filterNoSlots,
+			SeasonFilterOptions: viewmodel.NewSeasonFilterOptions(ctx, seasonSlugs),
 		}),
 	)
 	if err := component.Render(ctx, w); err != nil {

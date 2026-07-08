@@ -27,7 +27,7 @@ func (h *Handler) Edit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	output, err := h.getDbWorkEditUC.Execute(ctx, usecase.GetDbWorkEditInput{WorkID: model.WorkID(id)})
+	output, err := h.getDBWorkEditUC.Execute(ctx, usecase.GetDBWorkEditInput{WorkID: model.WorkID(id)})
 	if err != nil {
 		if ae := model.AsAppError(err); ae != nil && ae.Code == model.AppErrCodeResourceNotFound {
 			http.Error(w, "Not Found", http.StatusNotFound)

@@ -24,15 +24,26 @@ const (
 
 // WorkBuilder は作品テストデータのビルダー
 type WorkBuilder struct {
-	tx            *sql.Tx
-	t             *testing.T
-	id            model.WorkID
-	title         string
-	seasonName    int32 // enum値 (1:winter, 2:spring, 3:summer, 4:autumn)
-	seasonYear    int32
-	noSeason      bool   // trueの場合、season_year/season_nameをNULLにする
-	noEpisodes    bool   // no_episodesカラムの値
-	status        string // work_status enum: published, archived, deleted
+	tx        *sql.Tx
+	t         *testing.T
+	id        model.WorkID
+	title     string
+	titleKana string
+	titleEn   string
+	// Rails media enum: tv=1, ova=2, movie=3, web=4, other=0.
+	//
+	// [Ja] Rails の media enum: tv=1, ova=2, movie=3, web=4, other=0。
+	media      int32
+	seasonName int32 // enum値 (1:winter, 2:spring, 3:summer, 4:autumn)
+	seasonYear int32
+	noSeason   bool   // trueの場合、season_year/season_nameをNULLにする
+	noEpisodes bool   // no_episodesカラムの値
+	status     string // work_status enum: published, archived, deleted
+	// External-service ids (nullable). nil leaves the column NULL.
+	//
+	// [Ja] 外部サービスの ID (NULL 許容)。nil の場合はカラムを NULL のままにする。
+	scTid         *int32
+	malAnimeID    *int32
 	watchersCount int32
 }
 
@@ -59,6 +70,46 @@ func (b *WorkBuilder) WithID(id model.WorkID) *WorkBuilder {
 // WithTitle は作品タイトルを設定します
 func (b *WorkBuilder) WithTitle(title string) *WorkBuilder {
 	b.title = title
+	return b
+}
+
+// WithTitleKana sets the kana (furigana) title.
+//
+// [Ja] WithTitleKana はふりがなタイトルを設定します。
+func (b *WorkBuilder) WithTitleKana(titleKana string) *WorkBuilder {
+	b.titleKana = titleKana
+	return b
+}
+
+// WithTitleEn sets the English title.
+//
+// [Ja] WithTitleEn は英語タイトルを設定します。
+func (b *WorkBuilder) WithTitleEn(titleEn string) *WorkBuilder {
+	b.titleEn = titleEn
+	return b
+}
+
+// WithMedia sets the media kind (Rails enum: tv=1, ova=2, movie=3, web=4, other=0).
+//
+// [Ja] WithMedia はメディア種別を設定します (Rails enum: tv=1, ova=2, movie=3, web=4, other=0)。
+func (b *WorkBuilder) WithMedia(media int32) *WorkBuilder {
+	b.media = media
+	return b
+}
+
+// WithScTid sets the Syoboi Calendar program id (works.sc_tid).
+//
+// [Ja] WithScTid はしょぼいカレンダーの番組 ID (works.sc_tid) を設定します。
+func (b *WorkBuilder) WithScTid(scTid int32) *WorkBuilder {
+	b.scTid = &scTid
+	return b
+}
+
+// WithMalAnimeID sets the MyAnimeList anime id (works.mal_anime_id).
+//
+// [Ja] WithMalAnimeID は MyAnimeList のアニメ ID (works.mal_anime_id) を設定します。
+func (b *WorkBuilder) WithMalAnimeID(malAnimeID int32) *WorkBuilder {
+	b.malAnimeID = &malAnimeID
 	return b
 }
 
@@ -101,15 +152,15 @@ func (b *WorkBuilder) Build() model.WorkID {
 
 	q := `
 		INSERT INTO works (
-			title, title_kana, media, official_site_url,
+			title, title_kana, title_en, media, official_site_url,
 			wikipedia_url, season_year, season_name,
 			watchers_count, episodes_count, no_episodes,
-			status, created_at, updated_at
+			status, sc_tid, mal_anime_id, created_at, updated_at
 		) VALUES (
-			$1, $2, $3, $4,
-			$5, $6, $7,
-			$8, $9, $10,
-			$11, $12, $13
+			$1, $2, $3, $4, $5,
+			$6, $7, $8,
+			$9, $10, $11,
+			$12, $13, $14, $15, $16
 		) RETURNING id
 	`
 
@@ -122,22 +173,33 @@ func (b *WorkBuilder) Build() model.WorkID {
 		seasonName = b.seasonName
 	}
 
+	var scTid, malAnimeID interface{}
+	if b.scTid != nil {
+		scTid = *b.scTid
+	}
+	if b.malAnimeID != nil {
+		malAnimeID = *b.malAnimeID
+	}
+
 	var id int64
 	err := b.tx.QueryRow(
 		q,
 		b.title,         // $1
-		"",              // $2 title_kana (NOT NULL制約あり)
-		0,               // $3 media (0 = tv in Rails enum)
-		"",              // $4 official_site_url
-		"",              // $5 wikipedia_url
-		seasonYear,      // $6 season_year
-		seasonName,      // $7 season_name
-		b.watchersCount, // $8 watchers_count
-		12,              // $9 episodes_count
-		b.noEpisodes,    // $10 no_episodes
-		b.status,        // $11 status
-		time.Now(),      // $12 created_at
-		time.Now(),      // $13 updated_at
+		b.titleKana,     // $2 title_kana (NOT NULL制約あり)
+		b.titleEn,       // $3 title_en (NOT NULL制約あり)
+		b.media,         // $4 media (Rails: tv=1, ova=2, movie=3, web=4, other=0)
+		"",              // $5 official_site_url
+		"",              // $6 wikipedia_url
+		seasonYear,      // $7 season_year
+		seasonName,      // $8 season_name
+		b.watchersCount, // $9 watchers_count
+		12,              // $10 episodes_count
+		b.noEpisodes,    // $11 no_episodes
+		b.status,        // $12 status
+		scTid,           // $13 sc_tid (nullable)
+		malAnimeID,      // $14 mal_anime_id (nullable)
+		time.Now(),      // $15 created_at
+		time.Now(),      // $16 updated_at
 	).Scan(&id)
 
 	if err != nil {

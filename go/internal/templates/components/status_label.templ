@@ -8,10 +8,10 @@ import (
 templ StatusLabel(status viewmodel.WorkStatus) {
 	switch status {
 		case viewmodel.WorkStatusPublished:
-			<span class="badge badge-success">{ templates.T(ctx, "status_published") }</span>
+			<span class="badge" data-variant="success">{ templates.T(ctx, "status_published") }</span>
 		case viewmodel.WorkStatusArchived:
-			<span class="badge badge-warning">{ templates.T(ctx, "status_archived") }</span>
+			<span class="badge" data-variant="warning">{ templates.T(ctx, "status_archived") }</span>
 		case viewmodel.WorkStatusDeleted:
-			<span class="badge badge-destructive">{ templates.T(ctx, "status_deleted") }</span>
+			<span class="badge" data-variant="destructive">{ templates.T(ctx, "status_deleted") }</span>
 	}
 }

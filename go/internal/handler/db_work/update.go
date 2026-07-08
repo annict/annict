@@ -1,0 +1,91 @@
+package db_work
+
+import (
+	"fmt"
+	"log/slog"
+	"net/http"
+	"strconv"
+
+	"github.com/go-chi/chi/v5"
+
+	"github.com/annict/annict/go/internal/i18n"
+	"github.com/annict/annict/go/internal/middleware"
+	"github.com/annict/annict/go/internal/model"
+	"github.com/annict/annict/go/internal/templates/layouts"
+	"github.com/annict/annict/go/internal/templates/pages/db_works"
+	"github.com/annict/annict/go/internal/usecase"
+	"github.com/annict/annict/go/internal/viewmodel"
+)
+
+// Update processes the work update request in the Annict DB admin UI (PATCH /db/works/:id).
+//
+// [Ja] Annict DB 管理画面の作品更新リクエスト (PATCH /db/works/:id) を処理する。
+func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	id, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
+	if err != nil {
+		http.Error(w, "Not Found", http.StatusNotFound)
+		return
+	}
+
+	input := usecase.UpdateWorkInput{
+		WorkID:        model.WorkID(id),
+		WorkFormInput: parseWorkForm(r),
+	}
+
+	output, err := h.updateWorkUC.Execute(ctx, input)
+	if err != nil {
+		if ve := model.AsValidationError(err); ve != nil {
+			h.renderEditWithErrors(w, r, input, ve)
+			return
+		}
+		if ae := model.AsAppError(err); ae != nil && ae.Code == model.AppErrCodeResourceNotFound {
+			http.Error(w, "Not Found", http.StatusNotFound)
+			return
+		}
+		slog.ErrorContext(ctx, "作品の更新に失敗しました", "error", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	h.flashMgr.SetSuccess(w, i18n.T(ctx, "flash_db_work_updated"))
+	http.Redirect(w, r, fmt.Sprintf("/db/works/%d/edit", output.WorkID), http.StatusSeeOther)
+}
+
+// renderEditWithErrors re-renders the work edit form with validation errors and the previously submitted values.
+//
+// [Ja] バリデーションエラーと送信済みの入力値を保持したまま作品編集フォームを再描画する。
+func (h *Handler) renderEditWithErrors(w http.ResponseWriter, r *http.Request, input usecase.UpdateWorkInput, formErrors *model.ValidationError) {
+	ctx := r.Context()
+
+	optionsResult, err := h.getDBWorkFormOptionsUC.Execute(ctx)
+	if err != nil {
+		slog.ErrorContext(ctx, "NumberFormatの取得エラー", "error", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	formOptions := viewmodel.NewDBWorkFormOptions(ctx, optionsResult.NumberFormats)
+	csrfToken := middleware.GetCSRFToken(r, h.sessionManager)
+
+	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)
+	meta.SetTitle(ctx, "db_works_edit_title")
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.WriteHeader(http.StatusUnprocessableEntity)
+	component := layouts.Db(
+		meta,
+		h.cfg.GetAssetVersion(),
+		db_works.Edit(db_works.EditPageData{
+			CSRFToken:   csrfToken,
+			WorkID:      viewmodel.WorkID(input.WorkID),
+			FormOptions: formOptions,
+			FormErrors:  formErrors,
+			FormInput:   viewmodel.NewDBWorkFormInput(input.WorkFormInput),
+		}),
+	)
+	if err := component.Render(ctx, w); err != nil {
+		slog.ErrorContext(ctx, "テンプレートのレンダリングエラー", "error", err)
+	}
+}

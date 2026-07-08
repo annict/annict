@@ -16,7 +16,7 @@ import (
 func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	optionsResult, err := h.getDbWorkFormOptionsUC.Execute(ctx)
+	optionsResult, err := h.getDBWorkFormOptionsUC.Execute(ctx)
 	if err != nil {
 		slog.ErrorContext(ctx, "NumberFormatの取得エラー", "error", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
