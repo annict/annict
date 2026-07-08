@@ -15,6 +15,18 @@ help: ## ヘルプを表示
 run: ## サーバーを起動
 	$(OP_RUN_DEV) go run ./cmd/annict serve
 
+.PHONY: browse-login
+browse-login: ## dev サイトへブラウザでログイン (別ユーザーは make browse-login BROWSE_USER=2)
+	$(OP_RUN_DEV) bash scripts/browse.sh login $(BROWSE_USER)
+
+.PHONY: browse-shot
+browse-shot: ## ログイン済みセッションでページを開きスクショ (例: make browse-shot URL=/db)
+	bash scripts/browse.sh shot "$(URL)"
+
+.PHONY: browse-close
+browse-close: ## ブラウザセッションを閉じ一時ファイルを削除
+	bash scripts/browse.sh close
+
 .PHONY: sync-animes
 sync-animes: ## animes 同期バッチを 1 回実行 (works/episodes → animes)
 	$(OP_RUN_DEV) go run ./cmd/annict sync-animes

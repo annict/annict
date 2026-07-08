@@ -5,6 +5,7 @@
 /.claude/scheduled_tasks.lock
 /.claude/skills/korylus-*
 /.env.op
+/.playwright-cli
 /.pnpm-store
 /CLAUDE.local.md
 /compose-up.sh
