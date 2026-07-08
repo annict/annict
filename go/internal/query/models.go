@@ -1402,25 +1402,6 @@ type Record struct {
 	WatchedAt        time.Time    `db:"watched_at"`
 }
 
-type RiverClient struct {
-	ID        string          `db:"id"`
-	CreatedAt time.Time       `db:"created_at"`
-	Metadata  json.RawMessage `db:"metadata"`
-	PausedAt  sql.NullTime    `db:"paused_at"`
-	UpdatedAt time.Time       `db:"updated_at"`
-}
-
-type RiverClientQueue struct {
-	RiverClientID    string          `db:"river_client_id"`
-	Name             string          `db:"name"`
-	CreatedAt        time.Time       `db:"created_at"`
-	MaxWorkers       int64           `db:"max_workers"`
-	Metadata         json.RawMessage `db:"metadata"`
-	NumJobsCompleted int64           `db:"num_jobs_completed"`
-	NumJobsRunning   int64           `db:"num_jobs_running"`
-	UpdatedAt        time.Time       `db:"updated_at"`
-}
-
 type RiverJob struct {
 	ID           int64             `db:"id"`
 	State        RiverJobState     `db:"state"`
@@ -1447,6 +1428,19 @@ type RiverLeader struct {
 	ExpiresAt time.Time `db:"expires_at"`
 	LeaderID  string    `db:"leader_id"`
 	Name      string    `db:"name"`
+}
+
+type RiverMigration struct {
+	Line      string    `db:"line"`
+	Version   int64     `db:"version"`
+	CreatedAt time.Time `db:"created_at"`
+}
+
+type RiverNotification struct {
+	ID        int64     `db:"id"`
+	CreatedAt time.Time `db:"created_at"`
+	Payload   string    `db:"payload"`
+	Topic     string    `db:"topic"`
 }
 
 type RiverQueue struct {
