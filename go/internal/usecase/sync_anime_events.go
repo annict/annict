@@ -81,15 +81,27 @@ func NewSyncAnimeEventsUsecase(db *sql.DB, repo *repository.AnimeEventRepository
 // する。書き込み UseCase のルールに従い、あるべき行の導出と既存行の取得は applyPlan が
 // トランザクションを開くより前に行い、トランザクション内は永続化のみを行う。
 func (uc *SyncAnimeEventsUsecase) Reconcile(ctx context.Context, works []*model.Work) (satelliteReconcileCounts, error) {
-	desired := desiredAnimeEvents(works)
-
 	existing, err := uc.repo.ListByAnimeIDs(ctx, collectMappedAnimeIDs(works))
 	if err != nil {
 		return satelliteReconcileCounts{}, fmt.Errorf("既存 anime_events の取得に失敗: %w", err)
 	}
 
-	plan := reconcileSatellite(
-		desired,
+	return uc.applyPlan(ctx, planAnimeEvents(works, existing))
+}
+
+// planAnimeEvents builds the anime_events reconcile plan for the given anime-resolved
+// works against their existing rows. It is shared by the phase 2 batch reconciler
+// (Reconcile) and the phase 3 work create / update dual-write (planWorkSatellites), so
+// the desired-row derivation, natural key, delete limit and change detection stay
+// single-sourced across both write paths.
+//
+// [Ja] planAnimeEvents は指定された anime 解決済み works の anime_events 行について、
+// 既存行に対するリコンサイル計画を組み立てる。フェーズ 2 のバッチリコンサイラ (Reconcile) と
+// フェーズ 3 の作品 作成 / 更新 の両書き (planWorkSatellites) で共有し、あるべき行の導出・
+// 自然キー・削除限定・変更検出を両経路で単一の正本に保つ。
+func planAnimeEvents(works []*model.Work, existing []*model.AnimeEvent) satelliteReconcilePlan[repository.CreateAnimeEventParams, *model.AnimeEvent] {
+	return reconcileSatellite(
+		desiredAnimeEvents(works),
 		existing,
 		func(d repository.CreateAnimeEventParams) animeEventKey {
 			return animeEventKey{animeID: d.AnimeID, kind: d.Kind}
@@ -109,8 +121,6 @@ func (uc *SyncAnimeEventsUsecase) Reconcile(ctx context.Context, works []*model.
 			return !sameDate(e.StartedOn, d.StartedOn) || !sameNullableDate(e.EndedOn, d.EndedOn)
 		},
 	)
-
-	return uc.applyPlan(ctx, plan)
 }
 
 // desiredAnimeEvents derives the event rows a batch of works should have:

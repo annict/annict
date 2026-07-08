@@ -72,15 +72,28 @@ func NewSyncAnimeOfficialAccountsUsecase(db *sql.DB, repo *repository.AnimeOffic
 // リコンサイルする。書き込み UseCase のルールに従い、あるべき行の導出と既存行の取得は
 // applyPlan がトランザクションを開くより前に行い、トランザクション内は永続化のみを行う。
 func (uc *SyncAnimeOfficialAccountsUsecase) Reconcile(ctx context.Context, works []*model.Work) (satelliteReconcileCounts, error) {
-	desired := desiredAnimeOfficialAccounts(works)
-
 	existing, err := uc.repo.ListByAnimeIDs(ctx, collectMappedAnimeIDs(works))
 	if err != nil {
 		return satelliteReconcileCounts{}, fmt.Errorf("既存 anime_official_accounts の取得に失敗: %w", err)
 	}
 
-	plan := reconcileSatellite(
-		desired,
+	return uc.applyPlan(ctx, planAnimeOfficialAccounts(works, existing))
+}
+
+// planAnimeOfficialAccounts builds the anime_official_accounts reconcile plan for the
+// given anime-resolved works against their existing rows. It is shared by the phase 2
+// batch reconciler (Reconcile) and the phase 3 work create / update dual-write
+// (planWorkSatellites), so the desired-row derivation, natural key, delete limit and
+// change detection stay single-sourced across both write paths.
+//
+// [Ja] planAnimeOfficialAccounts は指定された anime 解決済み works の
+// anime_official_accounts 行について、既存行に対するリコンサイル計画を組み立てる。
+// フェーズ 2 のバッチリコンサイラ (Reconcile) とフェーズ 3 の作品 作成 / 更新 の両書き
+// (planWorkSatellites) で共有し、あるべき行の導出・自然キー・削除限定・変更検出を両経路で
+// 単一の正本に保つ。
+func planAnimeOfficialAccounts(works []*model.Work, existing []*model.AnimeOfficialAccount) satelliteReconcilePlan[repository.CreateAnimeOfficialAccountParams, *model.AnimeOfficialAccount] {
+	return reconcileSatellite(
+		desiredAnimeOfficialAccounts(works),
 		existing,
 		func(d repository.CreateAnimeOfficialAccountParams) animeOfficialAccountKey {
 			return animeOfficialAccountKey{animeID: d.AnimeID, service: d.Service}
@@ -99,8 +112,6 @@ func (uc *SyncAnimeOfficialAccountsUsecase) Reconcile(ctx context.Context, works
 			return e.Account != d.Account
 		},
 	)
-
-	return uc.applyPlan(ctx, plan)
 }
 
 // desiredAnimeOfficialAccounts derives the official-account rows a batch of works

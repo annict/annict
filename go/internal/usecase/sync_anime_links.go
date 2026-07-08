@@ -80,15 +80,27 @@ func NewSyncAnimeLinksUsecase(db *sql.DB, repo *repository.AnimeLinkRepository) 
 // 書き込み UseCase のルールに従い、あるべき行の導出と既存行の取得は applyPlan が
 // トランザクションを開くより前に行い、トランザクション内は永続化のみを行う。
 func (uc *SyncAnimeLinksUsecase) Reconcile(ctx context.Context, works []*model.Work) (satelliteReconcileCounts, error) {
-	desired := desiredAnimeLinks(works)
-
 	existing, err := uc.repo.ListByAnimeIDs(ctx, collectMappedAnimeIDs(works))
 	if err != nil {
 		return satelliteReconcileCounts{}, fmt.Errorf("既存 anime_links の取得に失敗: %w", err)
 	}
 
-	plan := reconcileSatellite(
-		desired,
+	return uc.applyPlan(ctx, planAnimeLinks(works, existing))
+}
+
+// planAnimeLinks builds the anime_links reconcile plan for the given anime-resolved
+// works against their existing rows. It is shared by the phase 2 batch reconciler
+// (Reconcile) and the phase 3 work create / update dual-write (planWorkSatellites), so
+// the desired-row derivation, natural key, delete limit and change detection stay
+// single-sourced across both write paths.
+//
+// [Ja] planAnimeLinks は指定された anime 解決済み works の anime_links 行について、
+// 既存行に対するリコンサイル計画を組み立てる。フェーズ 2 のバッチリコンサイラ (Reconcile) と
+// フェーズ 3 の作品 作成 / 更新 の両書き (planWorkSatellites) で共有し、あるべき行の導出・
+// 自然キー・削除限定・変更検出を両経路で単一の正本に保つ。
+func planAnimeLinks(works []*model.Work, existing []*model.AnimeLink) satelliteReconcilePlan[repository.CreateAnimeLinkParams, *model.AnimeLink] {
+	return reconcileSatellite(
+		desiredAnimeLinks(works),
 		existing,
 		func(d repository.CreateAnimeLinkParams) animeLinkKey {
 			return animeLinkKey{animeID: d.AnimeID, kind: d.Kind, language: d.Language}
@@ -115,8 +127,6 @@ func (uc *SyncAnimeLinksUsecase) Reconcile(ctx context.Context, works []*model.W
 			return e.URL != d.URL
 		},
 	)
-
-	return uc.applyPlan(ctx, plan)
 }
 
 // desiredAnimeLinks derives the link rows a batch of works should have, one per
