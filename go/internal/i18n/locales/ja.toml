@@ -979,6 +979,10 @@ other = "チャンネル"
 description = "DB サイドバー - Annictに戻る"
 other = "Annictに戻る"
 
+[db_sidebar_toggle_label]
+description = "DB サイドバー - 開閉トグルボタンの aria-label"
+other = "サイドバーの開閉"
+
 # ページネーション関連
 [pagination_label]
 description = "ページネーション - aria-label"

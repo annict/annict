@@ -11,10 +11,10 @@ import (
 	"github.com/annict/annict/go/internal/templates"
 )
 
-// DbSidebar renders the sidebar component for the Annict DB admin UI.
+// DBSidebar renders the sidebar component for the Annict DB admin UI.
 //
-// [Ja] DbSidebar は Annict DB 管理画面用のサイドバーコンポーネントを描画する。
-func DbSidebar() templ.Component {
+// [Ja] DBSidebar は Annict DB 管理画面用のサイドバーコンポーネントを描画する。
+func DBSidebar() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -35,7 +35,7 @@ func DbSidebar() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<aside class=\"sidebar\" data-side=\"left\" aria-hidden=\"false\"><nav aria-label=\"Annict DB navigation\"><section class=\"scrollbar gap-4\"><div><a href=\"/db\" class=\"flex items-center justify-center gap-2 bg-primary h-[52px] relative\"><img height=\"30\" loading=\"lazy\" src=\"/static/images/logo-white.png\" width=\"25\" alt=\"Annict\"> <span class=\"text-white font-bold text-lg absolute right-[90px]\">DB</span></a></div><div class=\"px-4\"><form method=\"get\" action=\"/db/search\" autocomplete=\"off\"><input type=\"text\" name=\"q\" class=\"input w-full rounded-full text-sm\" placeholder=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<aside id=\"db-sidebar\" class=\"sidebar\" data-side=\"left\" aria-hidden=\"false\"><nav aria-label=\"Annict DB navigation\"><section class=\"scrollbar gap-4\"><div><a href=\"/db\" class=\"flex items-center justify-center gap-2 bg-primary h-[52px] relative\"><img height=\"30\" loading=\"lazy\" src=\"/static/images/logo-white.png\" width=\"25\" alt=\"Annict\"> <span class=\"text-white font-bold text-lg absolute right-[90px]\">DB</span></a></div><div class=\"px-4\"><form method=\"get\" action=\"/db/search\" autocomplete=\"off\"><input type=\"text\" name=\"q\" class=\"input w-full rounded-full text-sm\" placeholder=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

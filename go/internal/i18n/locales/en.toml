@@ -980,6 +980,10 @@ other = "Channels"
 description = "DB Sidebar - Back to Annict"
 other = "Back to Annict"
 
+[db_sidebar_toggle_label]
+description = "DB Sidebar - toggle button aria-label"
+other = "Toggle sidebar"
+
 # Pagination related
 [pagination_label]
 description = "Pagination - aria-label"
