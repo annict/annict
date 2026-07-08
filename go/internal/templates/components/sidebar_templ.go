@@ -52,7 +52,7 @@ func Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Season
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<aside class=\"sidebar\" data-side=\"left\" aria-hidden=\"false\"><nav aria-label=\"Sidebar navigation\"><section class=\"scrollbar gap-4\"><div><a href=\"/\" class=\"flex items-center justify-center bg-(--color-mizuho-600) h-[52px]\"><img height=\"30\" loading=\"lazy\" src=\"/static/images/logo-white.png\" width=\"25\" alt=\"Annict\"></a></div><div role=\"group\" class=\"py-0\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<aside id=\"sidebar\" class=\"sidebar\" data-side=\"left\" aria-hidden=\"false\"><nav aria-label=\"Sidebar navigation\"><section class=\"scrollbar gap-4\"><div><a href=\"/\" class=\"flex items-center justify-center bg-(--color-mizuho-600) h-[52px]\"><img height=\"30\" loading=\"lazy\" src=\"/static/images/logo-white.png\" width=\"25\" alt=\"Annict\"></a></div><div role=\"group\" class=\"py-0\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -550,7 +550,7 @@ func sidebarNotificationMenuItem(ctx context.Context, user *viewmodel.User) temp
 			return templ_7745c5c3_Err
 		}
 		if user != nil && user.NotificationsCount > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<span class=\"badge-destructive font-bold\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<span class=\"badge font-bold\" data-variant=\"destructive\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

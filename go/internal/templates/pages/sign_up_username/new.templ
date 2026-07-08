@@ -42,7 +42,7 @@ templ New(data NewPageData) {
 
 		<form
 			action="/sign_up/username"
-			class="form grid gap-6"
+			class="grid gap-6"
 			hx-on:submit="disableSubmitButtons(this)"
 			method="POST"
 		>
@@ -51,7 +51,7 @@ templ New(data NewPageData) {
 
 			if data.Email != "" {
 				<div class="grid gap-2">
-					<label for="email">
+					<label class="label" for="email">
 						{ templates.T(ctx, "sign_up_username_email_label") }
 					</label>
 
@@ -62,7 +62,7 @@ templ New(data NewPageData) {
 			}
 
 			<div class="grid gap-2">
-				<label for="username">
+				<label class="label" for="username">
 					{ templates.T(ctx, "sign_up_username_username_label") }
 				</label>
 
@@ -78,7 +78,7 @@ templ New(data NewPageData) {
 							aria-invalid="false"
 						}
 						autofocus
-						class="grow-0"
+						class="input grow-0"
 						id="username"
 						name="username"
 						required

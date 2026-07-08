@@ -35,7 +35,7 @@ func FormErrors(formErrors *model.ValidationError) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		if formErrors != nil && len(formErrors.Global) > 0 {
 			for _, errorMsg := range formErrors.Global {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"alert-destructive\"><h2>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"alert\" data-variant=\"destructive\"><h2>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

@@ -60,12 +60,12 @@ func TestMainTitle(t *testing.T) {
 			name: "TitleとActionsを指定",
 			data: MainTitleData{
 				Title:   "作品一覧",
-				Actions: rawComponent(`<button class="btn-primary">新規作成</button>`),
+				Actions: rawComponent(`<button class="btn">新規作成</button>`),
 			},
 			wantContains: []string{
 				`作品一覧`,
 				`<div class="flex w-full flex-none items-center justify-end gap-2 md:w-auto">`,
-				`<button class="btn-primary">新規作成</button>`,
+				`<button class="btn">新規作成</button>`,
 			},
 		},
 		{

@@ -61,7 +61,7 @@ func TestDefault_Rendering(t *testing.T) {
 		"<html lang=\"ja\">",
 		"<head>",
 		"<body>",
-		`<aside class="sidebar"`,
+		`<aside id="sidebar" class="sidebar"`,
 		"<main>",
 		"<footer",
 		"Test Content",
