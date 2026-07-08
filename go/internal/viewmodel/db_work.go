@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/annict/annict/go/internal/i18n"
+	"github.com/annict/annict/go/internal/image"
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/usecase"
 )
@@ -33,32 +34,118 @@ func (s WorkStatus) String() string { return string(s) }
 type DBWorkListItem struct {
 	ID    WorkID
 	Title string
+	// Alternate titles shown below the main title. Empty when unset; the
+	// template renders a "-" placeholder in that case.
+	//
+	// [Ja] メインタイトルの下に並べる別タイトル。未設定なら空文字列で、
+	// テンプレート側で "-" のプレースホルダーを表示する。
+	TitleKana string
+	TitleEn   string
+	// Pre-translated media label (e.g. "TV", "OVA") shown in the media column.
+	//
+	// [Ja] メディア列に表示する翻訳済みのメディア名 (例: "TV", "OVA")。
+	Media string
 	// Pre-formatted season display string.
 	//
 	// [Ja] フォーマット済みのシーズン表示文字列。
-	Season        string
+	Season string
+	// External-service links (Syoboi Calendar / MyAnimeList) shown in the external
+	// services column. Each is the zero value when the work has no id for that
+	// service, and the template renders a "-" placeholder in that case.
+	//
+	// [Ja] 外部サービス列に表示するしょぼかる / MyAnimeList のリンク。作品にその外部 ID が
+	// 無い場合はゼロ値になり、テンプレートは "-" のプレースホルダーを表示する。
+	Syobocal      ExternalServiceLink
+	MalAnime      ExternalServiceLink
 	WatchersCount int32
 	Status        WorkStatus
-	HasImage      bool
+	// Pre-generated 70px-wide jpg thumbnail URL. Empty when the work has no
+	// image, in which case the template renders a placeholder box.
+	//
+	// [Ja] 生成済みの 70px 幅の jpg サムネイル URL。作品に画像が無ければ空文字列に
+	// なり、その場合テンプレートはプレースホルダーの箱を描画する。
+	ImageURL string
+	// Raw work_images.image_data JSON, retained so GetSrcSet can build the srcset.
+	//
+	// [Ja] work_images.image_data の生 JSON。GetSrcSet が srcset を生成するために保持する。
+	ImageDataJSON string
+	imageHelper   *image.Helper
 }
 
-func NewDBWorkListItems(ctx context.Context, works []*model.Work) []DBWorkListItem {
+// GetSrcSet returns the 1x/2x srcset for the work thumbnail, or "" when the work
+// has no image or no image helper is wired.
+//
+// [Ja] GetSrcSet は作品サムネイルの 1x/2x srcset を返す。作品に画像が無い、または
+// 画像ヘルパーが未配線のときは "" を返す。
+func (item *DBWorkListItem) GetSrcSet(width int, format string) string {
+	if item.imageHelper == nil {
+		return ""
+	}
+	originalURL := item.imageHelper.ExtractImageURL(item.ImageDataJSON)
+	return item.imageHelper.GetSrcSet(originalURL, width, format)
+}
+
+func NewDBWorkListItems(ctx context.Context, works []*model.Work, helper *image.Helper) []DBWorkListItem {
 	result := make([]DBWorkListItem, len(works))
 	for i, work := range works {
-		result[i] = NewDBWorkListItem(ctx, work)
+		result[i] = NewDBWorkListItem(ctx, work, helper)
 	}
 	return result
 }
 
-func NewDBWorkListItem(ctx context.Context, work *model.Work) DBWorkListItem {
+func NewDBWorkListItem(ctx context.Context, work *model.Work, helper *image.Helper) DBWorkListItem {
+	// Generate a 70px-wide jpg thumbnail URL for the list (imgproxy derives the height at 4:3).
+	//
+	// [Ja] 一覧用に 70px 幅の jpg サムネイル URL を生成する (高さは imgproxy が 4:3 で算出)。
+	imageURL := ""
+	if helper != nil {
+		imageURL = helper.GetWorkImageURL(work.ImageData, 70, "jpg")
+	}
+
 	return DBWorkListItem{
 		ID:            WorkID(work.ID),
 		Title:         work.Title,
+		TitleKana:     derefString(work.TitleKana),
+		TitleEn:       work.TitleEn,
+		Media:         formatMedia(ctx, work.Media),
 		Season:        formatSeason(ctx, work.SeasonYear, work.SeasonName),
+		Syobocal:      newExternalServiceLink(work.ScTid, SyobocalURL),
+		MalAnime:      newExternalServiceLink(work.MalAnimeID, MalAnimeURL),
 		WatchersCount: work.WatchersCount,
 		Status:        WorkStatus(work.Status),
-		HasImage:      work.ImageData != "",
+		ImageURL:      imageURL,
+		ImageDataJSON: work.ImageData,
+		imageHelper:   helper,
 	}
+}
+
+// formatMedia returns the translated media label for a works.media enum value,
+// mirroring the media_* option keys used by the work form. It returns "" for
+// unknown values so the template can decide how to render the gap.
+//
+// [Ja] formatMedia は works.media の enum 値に対応する翻訳済みのメディア名を返す。
+// 作品フォームで使う media_* のオプションキーと対応させている。未知の値では ""
+// を返し、テンプレート側で欠落の描画方法を決められるようにする。
+func formatMedia(ctx context.Context, media int32) string {
+	key := ""
+	switch media {
+	case 1:
+		key = "media_tv"
+	case 2:
+		key = "media_ova"
+	case 3:
+		key = "media_movie"
+	case 4:
+		key = "media_web"
+	case 0:
+		key = "media_other"
+	}
+
+	if key == "" {
+		return ""
+	}
+
+	return i18n.T(ctx, key)
 }
 
 func formatSeason(ctx context.Context, year *int32, name *int32) string {
@@ -66,18 +153,7 @@ func formatSeason(ctx context.Context, year *int32, name *int32) string {
 		return ""
 	}
 
-	seasonKey := ""
-	switch *name {
-	case 1:
-		seasonKey = "season_winter"
-	case 2:
-		seasonKey = "season_spring"
-	case 3:
-		seasonKey = "season_summer"
-	case 4:
-		seasonKey = "season_autumn"
-	}
-
+	seasonKey := seasonLabelKey(*name)
 	if seasonKey == "" {
 		return fmt.Sprintf("%d", *year)
 	}
@@ -117,10 +193,9 @@ func buildMediaOptions(ctx context.Context) []SelectOption {
 }
 
 func buildSeasonYearOptions() []SelectOption {
-	currentYear := time.Now().Year() + 5
-	startYear := 1890
-	options := make([]SelectOption, 0, currentYear-startYear+1)
-	for y := currentYear; y >= startYear; y-- {
+	maxYear := seasonMaxYear()
+	options := make([]SelectOption, 0, maxYear-seasonStartYear+1)
+	for y := maxYear; y >= seasonStartYear; y-- {
 		options = append(options, SelectOption{
 			Value: fmt.Sprintf("%d", y),
 			Label: fmt.Sprintf("%d", y),
@@ -130,12 +205,14 @@ func buildSeasonYearOptions() []SelectOption {
 }
 
 func buildSeasonNameOptions(ctx context.Context) []SelectOption {
-	return []SelectOption{
-		{Value: "1", Label: i18n.T(ctx, "season_winter")},
-		{Value: "2", Label: i18n.T(ctx, "season_spring")},
-		{Value: "3", Label: i18n.T(ctx, "season_summer")},
-		{Value: "4", Label: i18n.T(ctx, "season_autumn")},
+	options := make([]SelectOption, len(seasons))
+	for i, s := range seasons {
+		options[i] = SelectOption{
+			Value: strconv.FormatInt(int64(s.value), 10),
+			Label: i18n.T(ctx, s.key),
+		}
 	}
+	return options
 }
 
 func buildNumberFormatOptions(formats []model.NumberFormat) []SelectOption {
@@ -181,7 +258,14 @@ type DBWorkFormInput struct {
 	NoEpisodes            string
 }
 
-func NewDBWorkFormInput(input usecase.CreateWorkInput) *DBWorkFormInput {
+// NewDBWorkFormInput preserves the submitted work form values so the create or edit form
+// can be re-rendered with the user's input when validation fails. It takes the shared
+// usecase.WorkFormInput, so the create and update handlers feed the same converter.
+//
+// [Ja] NewDBWorkFormInput は送信された作品フォームの入力値を保持し、バリデーション失敗時に
+// 作成・編集フォームをユーザーの入力のまま再描画できるようにする。共有の usecase.WorkFormInput
+// を受け取るため、作成・更新ハンドラーが同じ変換を通す。
+func NewDBWorkFormInput(input usecase.WorkFormInput) *DBWorkFormInput {
 	return &DBWorkFormInput{
 		Title:                 input.Title,
 		TitleKana:             input.TitleKana,
@@ -213,12 +297,12 @@ func NewDBWorkFormInput(input usecase.CreateWorkInput) *DBWorkFormInput {
 }
 
 // NewDBWorkFormInputFromWork projects an existing work onto the string form values
-// the work edit form renders. It is the inverse of buildCreateWorkParams's
+// the work edit form renders. It is the inverse of buildWorkFormParams's
 // string->typed conversion: pointers and sql-nullable values become "" when unset,
 // dates use the YYYY-MM-DD input format, and the no_episodes checkbox uses "1".
 //
 // [Ja] NewDBWorkFormInputFromWork は既存の work を、作品編集フォームが描画する
-// 文字列のフォーム値に射影する。buildCreateWorkParams の文字列→型変換の逆向きで、
+// 文字列のフォーム値に射影する。buildWorkFormParams の文字列→型変換の逆向きで、
 // ポインタや NULL 許容値は未設定なら "" に、日付は YYYY-MM-DD 形式に、no_episodes
 // チェックボックスは "1" にする。
 func NewDBWorkFormInputFromWork(work *model.Work) *DBWorkFormInput {
@@ -347,6 +431,42 @@ func (d *DBWorkFormInput) Val(field string) string {
 		return d.NumberFormatID
 	case "no_episodes":
 		return d.NoEpisodes
+	default:
+		return ""
+	}
+}
+
+// LabelLinkURL returns the external link target shown next to a field's label, or ""
+// when the field is not linkable or has no value. It mirrors the Rails work form, which
+// renders an external-link icon beside the URL / Twitter / Syoboi Calendar / MyAnimeList
+// labels once the value is filled in. URL fields link to the submitted value itself,
+// while the id/username fields derive their service URL via the shared helpers.
+//
+// [Ja] LabelLinkURL はフィールドのラベル横に表示する外部リンク先を返す。フィールドがリンク
+// 対象でない、または値が無いときは "" を返す。Rails の作品フォーム (URL / Twitter / しょぼかる /
+// MyAnimeList のラベル横に、値が入っていれば外部リンクアイコンを出す) に対応させている。URL 系の
+// フィールドは送信された値自体をリンク先にし、ID / ユーザー名系は共有ヘルパーでサービス URL を導出する。
+func (d *DBWorkFormInput) LabelLinkURL(field string) string {
+	if d == nil {
+		return ""
+	}
+	switch field {
+	case "official_site_url":
+		return d.OfficialSiteURL
+	case "official_site_url_en":
+		return d.OfficialSiteURLEn
+	case "wikipedia_url":
+		return d.WikipediaURL
+	case "wikipedia_url_en":
+		return d.WikipediaURLEn
+	case "twitter_username":
+		return TwitterUsernameURL(d.TwitterUsername)
+	case "twitter_hashtag":
+		return TwitterHashtagURL(d.TwitterHashtag)
+	case "sc_tid":
+		return externalIDURL(d.ScTid, SyobocalURL)
+	case "mal_anime_id":
+		return externalIDURL(d.MalAnimeID, MalAnimeURL)
 	default:
 		return ""
 	}

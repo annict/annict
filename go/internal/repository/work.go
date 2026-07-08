@@ -200,10 +200,21 @@ type DBWorkListParams struct {
 	FilterNoEpisodes bool
 	FilterNoImage    bool
 	FilterNoSeason   bool
+	FilterNoSlots    bool
 	SeasonYear       *int32
 	SeasonName       *int32
-	Page             int32
-	PerPage          int32
+	// SeasonYears / SeasonNames are parallel arrays describing the (year, name)
+	// pairs to match for the release-season multi-select filter. An empty slice
+	// disables the filter. Both slices must have the same length; element i of
+	// SeasonYears pairs with element i of SeasonNames.
+	//
+	// [Ja] SeasonYears / SeasonNames はリリース時期の複数選択フィルタで照合する
+	// (年, 季節) ペアを表す並列配列。空スライスならフィルタは無効。両スライスは同じ
+	// 長さで、SeasonYears の i 番目が SeasonNames の i 番目と対になる。
+	SeasonYears []int32
+	SeasonNames []int32
+	Page        int32
+	PerPage     int32
 }
 
 func (r *WorkRepository) ListForDB(ctx context.Context, params DBWorkListParams) ([]*model.Work, error) {
@@ -213,8 +224,11 @@ func (r *WorkRepository) ListForDB(ctx context.Context, params DBWorkListParams)
 		FilterNoEpisodes: sql.NullBool{Bool: params.FilterNoEpisodes, Valid: params.FilterNoEpisodes},
 		FilterNoImage:    sql.NullBool{Bool: params.FilterNoImage, Valid: params.FilterNoImage},
 		FilterNoSeason:   sql.NullBool{Bool: params.FilterNoSeason, Valid: params.FilterNoSeason},
+		FilterNoSlots:    sql.NullBool{Bool: params.FilterNoSlots, Valid: params.FilterNoSlots},
 		SeasonYear:       nullInt32FromPtr(params.SeasonYear),
 		SeasonName:       nullInt32FromPtr(params.SeasonName),
+		SeasonYears:      params.SeasonYears,
+		SeasonNames:      params.SeasonNames,
 		PerPage:          params.PerPage,
 		PageOffset:       offset,
 	})
@@ -227,8 +241,22 @@ func (r *WorkRepository) ListForDB(ctx context.Context, params DBWorkListParams)
 		work := &model.Work{
 			ID:            model.WorkID(row.ID),
 			Title:         row.Title,
+			TitleEn:       row.TitleEn,
+			Media:         row.Media,
 			WatchersCount: row.WatchersCount,
 			Status:        model.WorkStatus(row.Status),
+		}
+		if row.TitleKana != "" {
+			titleKana := row.TitleKana
+			work.TitleKana = &titleKana
+		}
+		if row.ScTid.Valid {
+			scTid := row.ScTid.Int32
+			work.ScTid = &scTid
+		}
+		if row.MalAnimeID.Valid {
+			malAnimeID := row.MalAnimeID.Int32
+			work.MalAnimeID = &malAnimeID
 		}
 		applyImageData(work, row.ImageData)
 		applyNullableWorkFields(work, row.SeasonYear, row.SeasonName, sql.NullTime{})
@@ -242,8 +270,11 @@ func (r *WorkRepository) CountForDB(ctx context.Context, params DBWorkListParams
 		FilterNoEpisodes: sql.NullBool{Bool: params.FilterNoEpisodes, Valid: params.FilterNoEpisodes},
 		FilterNoImage:    sql.NullBool{Bool: params.FilterNoImage, Valid: params.FilterNoImage},
 		FilterNoSeason:   sql.NullBool{Bool: params.FilterNoSeason, Valid: params.FilterNoSeason},
+		FilterNoSlots:    sql.NullBool{Bool: params.FilterNoSlots, Valid: params.FilterNoSlots},
 		SeasonYear:       nullInt32FromPtr(params.SeasonYear),
 		SeasonName:       nullInt32FromPtr(params.SeasonName),
+		SeasonYears:      params.SeasonYears,
+		SeasonNames:      params.SeasonNames,
 	})
 }
 
@@ -309,6 +340,59 @@ func (r *WorkRepository) Create(ctx context.Context, params CreateWorkParams) (m
 		return 0, err
 	}
 	return model.WorkID(id), nil
+}
+
+// UpdateWorkParams holds the editable works columns for the Annict DB admin work
+// edit form, identified by ID. It embeds CreateWorkParams (exactly the columns the
+// create form writes) and adds the target ID, so the two write paths share one field
+// set. status / anime_id and the derived counters are intentionally left untouched
+// (status changes belong to the archive/delete flow, and anime_id is a mapping column
+// the sync owns).
+//
+// [Ja] UpdateWorkParams は Annict DB 管理画面の作品編集フォームで編集可能な works
+// カラムを ID で特定して保持する。CreateWorkParams (作成フォームが書くカラムそのもの) を
+// 埋め込み、対象 ID を足すことで、作成と更新の両書き込み経路が 1 つのフィールド集合を
+// 共有する。status / anime_id と派生カウンターは意図的に触れない (status 変更はアーカイブ/
+// 削除フローの管轄で、anime_id は同期が持つマッピングカラム)。
+type UpdateWorkParams struct {
+	ID model.WorkID
+	CreateWorkParams
+}
+
+// Update overwrites the editable columns of the work with the given ID and bumps
+// updated_at.
+//
+// [Ja] Update は指定 ID の work の編集可能カラムを上書きし、updated_at を更新する。
+func (r *WorkRepository) Update(ctx context.Context, params UpdateWorkParams) error {
+	return r.queries.UpdateWork(ctx, query.UpdateWorkParams{
+		ID:                    int64(params.ID),
+		Title:                 params.Title,
+		TitleKana:             params.TitleKana,
+		TitleAlter:            params.TitleAlter,
+		TitleEn:               params.TitleEn,
+		TitleAlterEn:          params.TitleAlterEn,
+		Media:                 params.Media,
+		SeasonYear:            params.SeasonYear,
+		SeasonName:            params.SeasonName,
+		StartedOn:             params.StartedOn,
+		EndedOn:               params.EndedOn,
+		OfficialSiteUrl:       params.OfficialSiteURL,
+		OfficialSiteUrlEn:     params.OfficialSiteURLEn,
+		WikipediaUrl:          params.WikipediaURL,
+		WikipediaUrlEn:        params.WikipediaURLEn,
+		TwitterUsername:       params.TwitterUsername,
+		TwitterHashtag:        params.TwitterHashtag,
+		ScTid:                 params.ScTid,
+		MalAnimeID:            params.MalAnimeID,
+		Synopsis:              params.Synopsis,
+		SynopsisSource:        params.SynopsisSource,
+		SynopsisEn:            params.SynopsisEn,
+		SynopsisSourceEn:      params.SynopsisSourceEn,
+		ManualEpisodesCount:   params.ManualEpisodesCount,
+		StartEpisodeRawNumber: params.StartEpisodeRawNumber,
+		NumberFormatID:        params.NumberFormatID,
+		NoEpisodes:            params.NoEpisodes,
+	})
 }
 
 // ListForAnimeSyncByIDs loads the works with the given IDs, projecting the columns

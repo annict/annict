@@ -10,20 +10,20 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// TestGetDbWorkEditUsecase_Execute_ReturnsWork verifies the usecase returns the
+// TestGetDBWorkEditUsecase_Execute_ReturnsWork verifies the usecase returns the
 // target work and the form options. It is a read-only usecase that opens no
 // transaction, so the test uses SetupTx.
 //
-// [Ja] TestGetDbWorkEditUsecase_Execute_ReturnsWork は対象 work とフォーム選択肢を返すことを
+// [Ja] TestGetDBWorkEditUsecase_Execute_ReturnsWork は対象 work とフォーム選択肢を返すことを
 // 検証する。本 UseCase は読み取りのみでトランザクションを開かないため SetupTx を使う。
-func TestGetDbWorkEditUsecase_Execute_ReturnsWork(t *testing.T) {
+func TestGetDBWorkEditUsecase_Execute_ReturnsWork(t *testing.T) {
 	t.Parallel()
 
 	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	workRepo := repository.NewWorkRepository(queries)
 	numberFormatRepo := repository.NewNumberFormatRepository(queries)
-	uc := NewGetDbWorkEditUsecase(workRepo, numberFormatRepo)
+	uc := NewGetDBWorkEditUsecase(workRepo, numberFormatRepo)
 
 	workID := testutil.NewWorkBuilder(t, tx).
 		WithTitle("編集UseCaseテスト").
@@ -40,7 +40,7 @@ func TestGetDbWorkEditUsecase_Execute_ReturnsWork(t *testing.T) {
 		t.Fatalf("works のフィールド設定に失敗: %v", err)
 	}
 
-	output, err := uc.Execute(context.Background(), GetDbWorkEditInput{WorkID: workID})
+	output, err := uc.Execute(context.Background(), GetDBWorkEditInput{WorkID: workID})
 	if err != nil {
 		t.Fatalf("Execute() error = %v", err)
 	}
@@ -74,21 +74,21 @@ func TestGetDbWorkEditUsecase_Execute_ReturnsWork(t *testing.T) {
 	}
 }
 
-// TestGetDbWorkEditUsecase_Execute_NotFound verifies a nonexistent work returns
+// TestGetDBWorkEditUsecase_Execute_NotFound verifies a nonexistent work returns
 // AppErrCodeResourceNotFound.
 //
-// [Ja] TestGetDbWorkEditUsecase_Execute_NotFound は存在しない work で
+// [Ja] TestGetDBWorkEditUsecase_Execute_NotFound は存在しない work で
 // AppErrCodeResourceNotFound を返すことを検証する。
-func TestGetDbWorkEditUsecase_Execute_NotFound(t *testing.T) {
+func TestGetDBWorkEditUsecase_Execute_NotFound(t *testing.T) {
 	t.Parallel()
 
 	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	workRepo := repository.NewWorkRepository(queries)
 	numberFormatRepo := repository.NewNumberFormatRepository(queries)
-	uc := NewGetDbWorkEditUsecase(workRepo, numberFormatRepo)
+	uc := NewGetDBWorkEditUsecase(workRepo, numberFormatRepo)
 
-	_, err := uc.Execute(context.Background(), GetDbWorkEditInput{WorkID: model.WorkID(999999999)})
+	_, err := uc.Execute(context.Background(), GetDBWorkEditInput{WorkID: model.WorkID(999999999)})
 	if err == nil {
 		t.Fatal("expected error, got nil")
 	}

@@ -1,0 +1,60 @@
+package db_works
+
+import (
+	"github.com/annict/annict/go/internal/templates"
+	"github.com/annict/annict/go/internal/viewmodel"
+)
+
+// subnav renders the vertical navigation shown between the global DB sidebar and the
+// work edit form, linking to the work's sub-resources (episodes, programs, casts, and
+// so on). It is laid out vertically rather than as horizontal pills because the list of
+// sub-resources will keep growing as the anime-reference model migrates more of them.
+// The episode-derived items (episodes, broadcast slots) are omitted when the work is
+// marked as having no episodes, mirroring the Rails work subnav. Every destination
+// except the work edit page itself is still served by Rails, so the flag-gated fallback
+// (task 1-1) routes those links to the Rails screens until they are migrated.
+//
+// [Ja] subnav はグローバル DB サイドバーと作品編集フォームの間に表示する縦型ナビゲーションを
+// 描画し、作品のサブリソース (エピソード・番組情報・キャストなど) へのリンクを並べる。横並びの
+// ピルではなく縦並びにしているのは、anime 参照モデルの移行が進むにつれサブリソースの項目が
+// 増えていくため。エピソード由来の項目 (エピソード・放送予定) は作品が「エピソード無し」の
+// ときに省く (Rails の作品サブナビに合わせている)。作品編集ページ自身を除くリンク先はまだ
+// Rails が配信するため、フラグ配下のフォールバック (タスク 1-1) が移行までそれらを Rails
+// 画面へ流す。
+templ subnav(workID viewmodel.WorkID, noEpisodes bool) {
+	<nav aria-label={ templates.T(ctx, "db_work_subnav_label") } class="w-44 shrink-0">
+		<ul class="space-y-1">
+			@subnavItem(templates.DBWorkEditPath(workID), "db_work_subnav_work")
+			if !noEpisodes {
+				@subnavItem(templates.DBWorkEpisodesPath(workID), "db_work_subnav_episodes")
+			}
+			@subnavItem(templates.DBWorkProgramsPath(workID), "db_work_subnav_programs")
+			if !noEpisodes {
+				@subnavItem(templates.DBWorkSlotsPath(workID), "db_work_subnav_slots")
+			}
+			@subnavItem(templates.DBWorkCastsPath(workID), "db_work_subnav_casts")
+			@subnavItem(templates.DBWorkStaffsPath(workID), "db_work_subnav_staffs")
+			@subnavItem(templates.DBWorkImagePath(workID), "db_work_subnav_work_image")
+			@subnavItem(templates.DBWorkTrailersPath(workID), "db_work_subnav_pv")
+		</ul>
+	</nav>
+}
+
+// subnavItem renders a single vertical-subnav link, marking the entry as the current
+// page (via aria-current) when its path matches the request path.
+//
+// [Ja] subnavItem は縦型サブナビの 1 リンクを描画し、リンク先がリクエストパスと一致する
+// とき現在ページとして印を付ける (aria-current)。
+templ subnavItem(path templates.Path, labelKey string) {
+	<li>
+		<a
+			href={ path.SafeURL() }
+			class="block rounded-md px-3 py-2 text-sm hover:bg-sidebar-accent transition-colors aria-[current=page]:bg-sidebar-accent aria-[current=page]:font-medium"
+			if templates.IsCurrentPath(ctx, path.String()) {
+				aria-current="page"
+			}
+		>
+			{ templates.T(ctx, labelKey) }
+		</a>
+	</li>
+}

@@ -591,15 +591,42 @@ func runServe() {
 	numberFormatRepo := repository.NewNumberFormatRepository(queries)
 	animeRepo := repository.NewAnimeRepository(queries)
 	animeClassificationRepo := repository.NewAnimeClassificationRepository(queries)
-	listDbWorksUC := usecase.NewListDbWorksUsecase(workRepo)
-	getDbWorkFormOptionsUC := usecase.NewGetDbWorkFormOptionsUsecase(numberFormatRepo)
-	getDbWorkEditUC := usecase.NewGetDbWorkEditUsecase(workRepo, numberFormatRepo)
-	createWorkUC := usecase.NewCreateWorkUsecase(db, workRepo, animeRepo, animeClassificationRepo, validator.NewDbWorkCreateValidator())
-	dbWorkHandler := db_work.NewHandler(cfg, sessionManager, flashMgr, listDbWorksUC, getDbWorkFormOptionsUC, getDbWorkEditUC, createWorkUC)
+	getDBWorksUC := usecase.NewGetDBWorksUsecase(workRepo)
+	getDBWorkFormOptionsUC := usecase.NewGetDBWorkFormOptionsUsecase(numberFormatRepo)
+	getDBWorkEditUC := usecase.NewGetDBWorkEditUsecase(workRepo, numberFormatRepo)
+	// The work create / update usecases dual-write the six satellite tables the work
+	// sources, so they take the same bundle of satellite repositories the phase 2 sync
+	// batch uses.
+	//
+	// [Ja] 作品 作成 / 更新 UseCase は work が source とする 6 つの別表を両書きするため、
+	// フェーズ 2 の同期バッチと同じ別表リポジトリの束を受け取る。
+	satelliteRepos := usecase.WorkSatelliteRepos{
+		ExternalID:      repository.NewAnimeExternalIDRepository(queries),
+		Link:            repository.NewAnimeLinkRepository(queries),
+		OfficialAccount: repository.NewAnimeOfficialAccountRepository(queries),
+		Hashtag:         repository.NewAnimeHashtagRepository(queries),
+		Season:          repository.NewAnimeSeasonRepository(queries),
+		Event:           repository.NewAnimeEventRepository(queries),
+	}
+	createWorkUC := usecase.NewCreateWorkUsecase(db, workRepo, animeRepo, animeClassificationRepo, satelliteRepos, validator.NewDBWorkCreateValidator())
+	updateWorkUC := usecase.NewUpdateWorkUsecase(db, workRepo, animeRepo, animeClassificationRepo, satelliteRepos, validator.NewDBWorkCreateValidator())
+	dbWorkHandler := db_work.NewHandler(cfg, sessionManager, flashMgr, imageHelper, getDBWorksUC, getDBWorkFormOptionsUC, getDBWorkEditUC, createWorkUC, updateWorkUC)
+	// The work index is public (anyone, including signed-out visitors, may browse it;
+	// the template hides committer-only action buttons). Creating and editing works
+	// require the committer role, so New / Create / Edit / Update are grouped behind
+	// RequireCommitter.
+	//
+	// [Ja] 作品一覧は公開 (未ログインを含め誰でも閲覧可。committer 限定の操作ボタンは
+	// テンプレートで出し分ける)。作品の作成・編集は committer ロールを要するため、
+	// New / Create / Edit / Update を RequireCommitter でまとめてゲートする。
 	r.Get("/db/works", dbWorkHandler.Index)
-	r.Get("/db/works/new", dbWorkHandler.New)
-	r.Post("/db/works", dbWorkHandler.Create)
-	r.With(authMiddleware.RequireCommitter).Get("/db/works/{id}/edit", dbWorkHandler.Edit)
+	r.Group(func(r chi.Router) {
+		r.Use(authMiddleware.RequireCommitter)
+		r.Get("/db/works/new", dbWorkHandler.New)
+		r.Post("/db/works", dbWorkHandler.Create)
+		r.Get("/db/works/{id}/edit", dbWorkHandler.Edit)
+		r.Patch("/db/works/{id}", dbWorkHandler.Update)
+	})
 
 	// iCalendar配信
 	r.Get("/@{username}/ics", icsHandler.Show) // メインのエンドポイント

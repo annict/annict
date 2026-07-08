@@ -9,31 +9,31 @@ import (
 	"github.com/annict/annict/go/internal/repository"
 )
 
-// GetDbWorkEditUsecase loads the data the Annict DB admin work edit form needs:
+// GetDBWorkEditUsecase loads the data the Annict DB admin work edit form needs:
 // the target work and the number-format options for its select box.
 //
-// [Ja] GetDbWorkEditUsecase は Annict DB 管理画面の作品編集フォームに必要なデータ
+// [Ja] GetDBWorkEditUsecase は Annict DB 管理画面の作品編集フォームに必要なデータ
 // (対象の work と、その選択肢となる number format) を取得するユースケース。
-type GetDbWorkEditUsecase struct {
+type GetDBWorkEditUsecase struct {
 	workRepo         *repository.WorkRepository
 	numberFormatRepo *repository.NumberFormatRepository
 }
 
-func NewGetDbWorkEditUsecase(
+func NewGetDBWorkEditUsecase(
 	workRepo *repository.WorkRepository,
 	numberFormatRepo *repository.NumberFormatRepository,
-) *GetDbWorkEditUsecase {
-	return &GetDbWorkEditUsecase{
+) *GetDBWorkEditUsecase {
+	return &GetDBWorkEditUsecase{
 		workRepo:         workRepo,
 		numberFormatRepo: numberFormatRepo,
 	}
 }
 
-type GetDbWorkEditInput struct {
+type GetDBWorkEditInput struct {
 	WorkID model.WorkID
 }
 
-type GetDbWorkEditOutput struct {
+type GetDBWorkEditOutput struct {
 	Work          *model.Work
 	NumberFormats []model.NumberFormat
 }
@@ -44,7 +44,7 @@ type GetDbWorkEditOutput struct {
 //
 // [Ja] Execute は編集対象の work とフォームの選択肢を返す。work が存在しない場合は
 // AppErrCodeResourceNotFound の *model.AppError を返し、Handler 側で 404 に変換する。
-func (uc *GetDbWorkEditUsecase) Execute(ctx context.Context, input GetDbWorkEditInput) (*GetDbWorkEditOutput, error) {
+func (uc *GetDBWorkEditUsecase) Execute(ctx context.Context, input GetDBWorkEditInput) (*GetDBWorkEditOutput, error) {
 	work, err := uc.workRepo.GetForEditByID(ctx, input.WorkID)
 	if err != nil {
 		return nil, fmt.Errorf("作品の取得に失敗: %w", err)
@@ -62,7 +62,7 @@ func (uc *GetDbWorkEditUsecase) Execute(ctx context.Context, input GetDbWorkEdit
 		return nil, fmt.Errorf("NumberFormatの取得に失敗: %w", err)
 	}
 
-	return &GetDbWorkEditOutput{
+	return &GetDBWorkEditOutput{
 		Work:          work,
 		NumberFormats: numberFormats,
 	}, nil

@@ -24,16 +24,16 @@ var allowedMediaValues = map[string]bool{
 	"4": true,
 }
 
-// DbWorkCreateValidator validates the create-work form on the Annict DB admin screen.
+// DBWorkCreateValidator validates the create-work form on the Annict DB admin screen.
 //
-// [Ja] DbWorkCreateValidator は Annict DB 管理画面の作品作成フォームを検証する。
-type DbWorkCreateValidator struct{}
+// [Ja] DBWorkCreateValidator は Annict DB 管理画面の作品作成フォームを検証する。
+type DBWorkCreateValidator struct{}
 
-func NewDbWorkCreateValidator() *DbWorkCreateValidator {
-	return &DbWorkCreateValidator{}
+func NewDBWorkCreateValidator() *DBWorkCreateValidator {
+	return &DBWorkCreateValidator{}
 }
 
-type DbWorkCreateValidatorInput struct {
+type DBWorkCreateValidatorInput struct {
 	Title                 string
 	TitleKana             string
 	TitleAlter            string
@@ -62,7 +62,7 @@ type DbWorkCreateValidatorInput struct {
 	NoEpisodes            string
 }
 
-func (v *DbWorkCreateValidator) Validate(ctx context.Context, input DbWorkCreateValidatorInput) error {
+func (v *DBWorkCreateValidator) Validate(ctx context.Context, input DBWorkCreateValidatorInput) error {
 	ve := model.NewValidationError()
 
 	if strings.TrimSpace(input.Title) == "" {

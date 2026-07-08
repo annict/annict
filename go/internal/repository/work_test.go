@@ -219,6 +219,125 @@ func TestWorkRepository_ListForDB(t *testing.T) {
 		}
 	})
 
+	t.Run("正常系: タイトル 3 種とメディアがマッピングされる", func(t *testing.T) {
+		t.Parallel()
+		db, tx := testutil.SetupTx(t)
+		ctx := context.Background()
+
+		workID := testutil.NewWorkBuilder(t, tx).
+			WithTitle("メディア確認作品").
+			WithTitleKana("めでぃあかくにんさくひん").
+			WithTitleEn("Media Check Work").
+			WithMedia(2).
+			Build()
+
+		repo := repository.NewWorkRepository(query.New(db)).WithTx(tx)
+		items, err := repo.ListForDB(ctx, repository.DBWorkListParams{
+			Page:    1,
+			PerPage: 100,
+		})
+		if err != nil {
+			t.Fatalf("ListForDB() error = %v", err)
+		}
+
+		var target *model.Work
+		for _, item := range items {
+			if item.ID == workID {
+				target = item
+				break
+			}
+		}
+		if target == nil {
+			t.Fatalf("ListForDB() did not return the built work (id=%d)", int64(workID))
+		}
+		if target.TitleKana == nil || *target.TitleKana != "めでぃあかくにんさくひん" {
+			t.Errorf("TitleKana = %v, want %q", target.TitleKana, "めでぃあかくにんさくひん")
+		}
+		if target.TitleEn != "Media Check Work" {
+			t.Errorf("TitleEn = %q, want %q", target.TitleEn, "Media Check Work")
+		}
+		if target.Media != 2 {
+			t.Errorf("Media = %d, want 2", target.Media)
+		}
+	})
+
+	t.Run("正常系: sc_tid / mal_anime_id がマッピングされる", func(t *testing.T) {
+		t.Parallel()
+		db, tx := testutil.SetupTx(t)
+		ctx := context.Background()
+
+		withIDs := testutil.NewWorkBuilder(t, tx).
+			WithTitle("外部サービスあり").
+			WithScTid(3524).
+			WithMalAnimeID(20).
+			Build()
+		withoutIDs := testutil.NewWorkBuilder(t, tx).WithTitle("外部サービスなし").Build()
+
+		repo := repository.NewWorkRepository(query.New(db)).WithTx(tx)
+		items, err := repo.ListForDB(ctx, repository.DBWorkListParams{
+			Page:    1,
+			PerPage: 100,
+		})
+		if err != nil {
+			t.Fatalf("ListForDB() error = %v", err)
+		}
+
+		byID := make(map[model.WorkID]*model.Work, len(items))
+		for _, item := range items {
+			byID[item.ID] = item
+		}
+
+		got := byID[withIDs]
+		if got == nil {
+			t.Fatalf("ListForDB() did not return the built work (id=%d)", int64(withIDs))
+		}
+		if got.ScTid == nil || *got.ScTid != 3524 {
+			t.Errorf("ScTid = %v, want 3524", got.ScTid)
+		}
+		if got.MalAnimeID == nil || *got.MalAnimeID != 20 {
+			t.Errorf("MalAnimeID = %v, want 20", got.MalAnimeID)
+		}
+
+		empty := byID[withoutIDs]
+		if empty == nil {
+			t.Fatalf("ListForDB() did not return the built work (id=%d)", int64(withoutIDs))
+		}
+		if empty.ScTid != nil || empty.MalAnimeID != nil {
+			t.Errorf("ScTid / MalAnimeID = %v / %v, want nil / nil", empty.ScTid, empty.MalAnimeID)
+		}
+	})
+
+	t.Run("正常系: title_kana が空文字列なら TitleKana は nil になる", func(t *testing.T) {
+		t.Parallel()
+		db, tx := testutil.SetupTx(t)
+		ctx := context.Background()
+
+		workID := testutil.NewWorkBuilder(t, tx).WithTitle("ふりがななし作品").Build()
+
+		repo := repository.NewWorkRepository(query.New(db)).WithTx(tx)
+		items, err := repo.ListForDB(ctx, repository.DBWorkListParams{
+			Page:    1,
+			PerPage: 100,
+		})
+		if err != nil {
+			t.Fatalf("ListForDB() error = %v", err)
+		}
+
+		var target *model.Work
+		for _, item := range items {
+			if item.ID == workID {
+				target = item
+				break
+			}
+		}
+		if target == nil {
+			t.Fatalf("ListForDB() did not return the built work (id=%d)", int64(workID))
+		}
+		if target.TitleKana != nil {
+			t.Errorf("TitleKana = %v, want nil", *target.TitleKana)
+		}
+	})
+
 	t.Run("正常系: 削除済み作品は除外される", func(t *testing.T) {
 		t.Parallel()
 		db, tx := testutil.SetupTx(t)
@@ -383,6 +502,118 @@ func TestWorkRepository_ListForDB(t *testing.T) {
 		}
 	})
 
+	t.Run("正常系: 放送予定未登録フィルタ", func(t *testing.T) {
+		t.Parallel()
+		db, tx := testutil.SetupTx(t)
+		ctx := context.Background()
+
+		channelID := testutil.NewChannelBuilder(t, tx).Build()
+
+		// A work with an active slot (deleted_at / unpublished_at NULL) is excluded by the filter.
+		//
+		// [Ja] 有効な放送枠 (deleted_at / unpublished_at が NULL) を持つ作品はフィルタで除外される。
+		workWithSlot := testutil.NewWorkBuilder(t, tx).WithTitle("放送予定あり").Build()
+		if _, err := tx.Exec(
+			`INSERT INTO slots (work_id, channel_id, started_at, created_at, updated_at) VALUES ($1, $2, NOW(), NOW(), NOW())`,
+			int64(workWithSlot), channelID,
+		); err != nil {
+			t.Fatalf("放送枠の投入に失敗: %v", err)
+		}
+
+		// A work whose only slot is soft-deleted counts as having no slots.
+		//
+		// [Ja] 唯一の放送枠がソフト削除済みの作品は「放送予定なし」とみなされる。
+		workWithDeletedSlot := testutil.NewWorkBuilder(t, tx).WithTitle("放送予定削除済み").Build()
+		if _, err := tx.Exec(
+			`INSERT INTO slots (work_id, channel_id, started_at, deleted_at, created_at, updated_at) VALUES ($1, $2, NOW(), NOW(), NOW(), NOW())`,
+			int64(workWithDeletedSlot), channelID,
+		); err != nil {
+			t.Fatalf("削除済み放送枠の投入に失敗: %v", err)
+		}
+
+		// A work whose only slot is unpublished (unpublished_at set) also counts as having no slots.
+		//
+		// [Ja] 唯一の放送枠が非公開 (unpublished_at がセット) の作品も「放送予定なし」とみなされる。
+		workWithUnpublishedSlot := testutil.NewWorkBuilder(t, tx).WithTitle("放送予定非公開").Build()
+		if _, err := tx.Exec(
+			`INSERT INTO slots (work_id, channel_id, started_at, unpublished_at, created_at, updated_at) VALUES ($1, $2, NOW(), NOW(), NOW(), NOW())`,
+			int64(workWithUnpublishedSlot), channelID,
+		); err != nil {
+			t.Fatalf("非公開放送枠の投入に失敗: %v", err)
+		}
+
+		workWithoutSlot := testutil.NewWorkBuilder(t, tx).WithTitle("放送予定なし").Build()
+
+		repo := repository.NewWorkRepository(query.New(db)).WithTx(tx)
+		items, err := repo.ListForDB(ctx, repository.DBWorkListParams{
+			FilterNoSlots: true,
+			Page:          1,
+			PerPage:       100,
+		})
+		if err != nil {
+			t.Fatalf("ListForDB() error = %v", err)
+		}
+
+		byID := make(map[model.WorkID]bool, len(items))
+		for _, item := range items {
+			byID[item.ID] = true
+		}
+		if byID[workWithSlot] {
+			t.Error("放送予定ありの作品は除外されるべき")
+		}
+		if !byID[workWithDeletedSlot] {
+			t.Error("削除済み放送枠しか持たない作品は含まれるべき")
+		}
+		if !byID[workWithUnpublishedSlot] {
+			t.Error("非公開放送枠しか持たない作品は含まれるべき")
+		}
+		if !byID[workWithoutSlot] {
+			t.Error("放送予定なしの作品は含まれるべき")
+		}
+	})
+
+	t.Run("正常系: リリース時期の複数選択フィルタ", func(t *testing.T) {
+		t.Parallel()
+		db, tx := testutil.SetupTx(t)
+		ctx := context.Background()
+
+		spring2024 := testutil.NewWorkBuilder(t, tx).WithTitle("2024春").WithSeason(2024, testutil.SeasonSpring).Build()
+		summer2024 := testutil.NewWorkBuilder(t, tx).WithTitle("2024夏").WithSeason(2024, testutil.SeasonSummer).Build()
+		winter2023 := testutil.NewWorkBuilder(t, tx).WithTitle("2023冬").WithSeason(2023, testutil.SeasonWinter).Build()
+		noSeason := testutil.NewWorkBuilder(t, tx).WithTitle("シーズンなし").WithNoSeason().Build()
+
+		repo := repository.NewWorkRepository(query.New(db)).WithTx(tx)
+		// Select two disjoint (year, season) pairs; only works matching one of them stay.
+		//
+		// [Ja] 交わらない 2 つの (年, 季節) ペアを選択し、いずれかに一致する作品だけが残る。
+		items, err := repo.ListForDB(ctx, repository.DBWorkListParams{
+			SeasonYears: []int32{2024, 2023},
+			SeasonNames: []int32{testutil.SeasonSpring, testutil.SeasonWinter},
+			Page:        1,
+			PerPage:     100,
+		})
+		if err != nil {
+			t.Fatalf("ListForDB() error = %v", err)
+		}
+
+		byID := make(map[model.WorkID]bool, len(items))
+		for _, item := range items {
+			byID[item.ID] = true
+		}
+		if !byID[spring2024] {
+			t.Error("2024春は選択したペアに一致するので含まれるべき")
+		}
+		if !byID[winter2023] {
+			t.Error("2023冬は選択したペアに一致するので含まれるべき")
+		}
+		if byID[summer2024] {
+			t.Error("2024夏は選択したペアに一致しないので除外されるべき")
+		}
+		if byID[noSeason] {
+			t.Error("シーズンなしの作品は除外されるべき")
+		}
+	})
+
 	t.Run("正常系: ページネーション", func(t *testing.T) {
 		t.Parallel()
 		db, tx := testutil.SetupTx(t)
@@ -454,6 +685,28 @@ func TestWorkRepository_CountForDB(t *testing.T) {
 		repo := repository.NewWorkRepository(query.New(db)).WithTx(tx)
 		count, err := repo.CountForDB(ctx, repository.DBWorkListParams{
 			FilterNoSeason: true,
+		})
+		if err != nil {
+			t.Fatalf("CountForDB() error = %v", err)
+		}
+
+		if count != 1 {
+			t.Errorf("CountForDB() = %d, want 1", count)
+		}
+	})
+
+	t.Run("正常系: リリース時期の複数選択がカウントにも適用される", func(t *testing.T) {
+		t.Parallel()
+		db, tx := testutil.SetupTx(t)
+		ctx := context.Background()
+
+		testutil.NewWorkBuilder(t, tx).WithTitle("2024春").WithSeason(2024, testutil.SeasonSpring).Build()
+		testutil.NewWorkBuilder(t, tx).WithTitle("2024夏").WithSeason(2024, testutil.SeasonSummer).Build()
+
+		repo := repository.NewWorkRepository(query.New(db)).WithTx(tx)
+		count, err := repo.CountForDB(ctx, repository.DBWorkListParams{
+			SeasonYears: []int32{2024},
+			SeasonNames: []int32{testutil.SeasonSpring},
 		})
 		if err != nil {
 			t.Fatalf("CountForDB() error = %v", err)

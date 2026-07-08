@@ -984,6 +984,43 @@ other = "Back to Annict"
 description = "DB Sidebar - toggle button aria-label"
 other = "Toggle sidebar"
 
+# DB work subnav related
+[db_work_subnav_label]
+description = "DB work subnav - navigation aria-label"
+other = "Work navigation"
+
+[db_work_subnav_work]
+description = "DB work subnav - work"
+other = "Work"
+
+[db_work_subnav_episodes]
+description = "DB work subnav - episodes"
+other = "Episodes"
+
+[db_work_subnav_programs]
+description = "DB work subnav - programs"
+other = "Programs"
+
+[db_work_subnav_slots]
+description = "DB work subnav - slots"
+other = "Slots"
+
+[db_work_subnav_casts]
+description = "DB work subnav - casts"
+other = "Casts"
+
+[db_work_subnav_staffs]
+description = "DB work subnav - staffs"
+other = "Staffs"
+
+[db_work_subnav_work_image]
+description = "DB work subnav - work image"
+other = "Work image"
+
+[db_work_subnav_pv]
+description = "DB work subnav - PV"
+other = "PV"
+
 # Pagination related
 [pagination_label]
 description = "Pagination - aria-label"
@@ -1019,17 +1056,25 @@ other = "Works"
 description = "Link from works index to new work page"
 other = "New"
 
+[db_works_index_season_slugs_label]
+description = "Label for the release-season multi-select filter"
+other = "Release Season"
+
 [db_works_index_filter_no_episodes_label]
 description = "Label for the no-episodes filter"
-other = "No episodes"
+other = "No Episodes"
 
 [db_works_index_filter_no_image_label]
 description = "Label for the no-image filter"
-other = "No image"
+other = "No Image"
 
 [db_works_index_filter_no_season_label]
 description = "Label for the no-season filter"
-other = "No season"
+other = "No Season"
+
+[db_works_index_filter_no_slots_label]
+description = "Label for the no-slots filter"
+other = "No Slots"
 
 [db_works_index_submit]
 description = "Submit button on the DB works index page (filter search)"
@@ -1043,9 +1088,25 @@ other = "ID"
 description = "Table header - Title"
 other = "Title"
 
+[db_works_index_table_media_label]
+description = "Table header - Media"
+other = "Media"
+
 [db_works_index_table_season_label]
 description = "Table header - Season"
 other = "Season"
+
+[db_works_index_table_external_services_label]
+description = "Table header - External services"
+other = "External services"
+
+[db_works_index_syobocal_label]
+description = "External services column - Syoboi Calendar label"
+other = "Syoboi Calendar"
+
+[db_works_index_mal_label]
+description = "External services column - MyAnimeList label"
+other = "MyAnimeList"
 
 [db_works_index_table_watchers_label]
 description = "Table header - Watchers"
@@ -1063,6 +1124,10 @@ other = "Image"
 description = "Table header - Actions"
 other = "Actions"
 
+[db_works_index_id_link_aria_label]
+description = "Aria label for the work ID link that opens the public page in a new tab"
+other = "Open work {{.ID}} in a new tab"
+
 [db_works_index_edit_link]
 description = "Link from work list to edit form"
 other = "Edit"
@@ -1070,6 +1135,11 @@ other = "Edit"
 [db_works_index_empty]
 description = "No works message"
 other = "No works found"
+
+# DB works form shared (used by new and edit)
+[db_works_form_external_link_label]
+description = "Accessible name for the external-link icon shown beside a form label (shared by new and edit). Field is the field name"
+other = "Open {{.Field}} in a new tab"
 
 # DB works new page
 [db_works_new_title]
@@ -1137,19 +1207,19 @@ description = "Form label - Wikipedia URL (English)"
 other = "Wikipedia URL (English)"
 
 [db_works_new_twitter_username_label]
-description = "Form label - Twitter Username"
-other = "Twitter Username"
+description = "Form label - X Username"
+other = "X Username"
 
 [db_works_new_twitter_username_placeholder]
-description = "Form placeholder - Twitter Username (without @)"
+description = "Form placeholder - X Username (without @)"
 other = "without @"
 
 [db_works_new_twitter_hashtag_label]
-description = "Form label - Twitter Hashtag"
-other = "Twitter Hashtag"
+description = "Form label - X Hashtag"
+other = "X Hashtag"
 
 [db_works_new_twitter_hashtag_placeholder]
-description = "Form placeholder - Twitter Hashtag (without #)"
+description = "Form placeholder - X Hashtag (without #)"
 other = "without #"
 
 [db_works_new_sc_tid_label]
@@ -1261,19 +1331,19 @@ description = "Form label - Wikipedia URL (English)"
 other = "Wikipedia URL (English)"
 
 [db_works_edit_twitter_username_label]
-description = "Form label - Twitter Username"
-other = "Twitter Username"
+description = "Form label - X Username"
+other = "X Username"
 
 [db_works_edit_twitter_username_placeholder]
-description = "Form placeholder - Twitter Username (without @)"
+description = "Form placeholder - X Username (without @)"
 other = "without @"
 
 [db_works_edit_twitter_hashtag_label]
-description = "Form label - Twitter Hashtag"
-other = "Twitter Hashtag"
+description = "Form label - X Hashtag"
+other = "X Hashtag"
 
 [db_works_edit_twitter_hashtag_placeholder]
-description = "Form placeholder - Twitter Hashtag (without #)"
+description = "Form placeholder - X Hashtag (without #)"
 other = "without #"
 
 [db_works_edit_sc_tid_label]
@@ -1324,6 +1394,10 @@ other = "Update Work"
 [flash_db_work_created]
 description = "Work creation success message"
 other = "Work has been created successfully"
+
+[flash_db_work_updated]
+description = "Work update success message"
+other = "Work has been updated successfully"
 
 # Validation common messages
 [validation_required]
