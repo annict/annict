@@ -18,6 +18,21 @@ type IndexPageData struct {
 	FilterNoSeason      bool
 	FilterNoSlots       bool
 	SeasonFilterOptions []viewmodel.SeasonFilterOption
+	// IsCommitter and IsAdmin gate the action column: committers (admins or editors) see the
+	// edit and unpublish / publish actions, and admins additionally see the delete action.
+	// The work list itself is public, so both are false for signed-out or regular visitors.
+	//
+	// [Ja] IsCommitter と IsAdmin は操作列の出し分けに使う。committer (管理者または編集者) は
+	// 編集・非公開 / 公開の操作を、管理者はさらに削除の操作を見る。作品一覧自体は公開のため、
+	// 未ログインや一般ユーザーではどちらも false になる。
+	IsCommitter bool
+	IsAdmin     bool
+	// CSRFToken is sent via the X-CSRF-Token header on the htmx-issued DELETE requests
+	// (publish / delete), so those requests pass the CSRF middleware.
+	//
+	// [Ja] CSRFToken は htmx が発行する DELETE リクエスト (公開 / 削除) の X-CSRF-Token
+	// ヘッダーで送られ、それらのリクエストが CSRF ミドルウェアを通るようにする。
+	CSRFToken string
 }
 
 templ Index(data IndexPageData) {
@@ -196,9 +211,7 @@ templ Index(data IndexPageData) {
 									@components.StatusLabel(work.Status)
 								</td>
 								<td class="text-center">
-									<a href={ templates.DBWorkEditPath(work.ID).SafeURL() } class="text-primary hover:underline">
-										{ templates.T(ctx, "db_works_index_edit_link") }
-									</a>
+									@actionButtons(data, work)
 								</td>
 							</tr>
 						}
@@ -233,6 +246,69 @@ templ externalServiceLink(link viewmodel.ExternalServiceLink) {
 	} else {
 		{ "-" }
 	}
+}
+
+// actionButtons renders the per-row action column of the work list: the edit link and the
+// unpublish (published rows) or publish (archived rows) action for committers, plus the
+// delete action for admins. Publish and delete are htmx DELETE buttons guarded by a
+// confirmation dialog, with the CSRF token carried in the X-CSRF-Token header; the delete
+// and publish handlers respond with HX-Redirect so htmx navigates back to the list. Unpublish
+// is a plain link to the confirmation screen. Signed-out or regular visitors see an empty cell.
+//
+// [Ja] actionButtons は作品一覧の行ごとの操作列を描画する。committer には編集リンクと
+// 非公開 (公開中の行) または公開 (非公開の行) の操作を、管理者にはさらに削除の操作を出す。
+// 公開・削除は確認ダイアログ付きの htmx DELETE ボタンで、CSRF トークンは X-CSRF-Token
+// ヘッダーで送り、削除・公開ハンドラーが HX-Redirect を返して htmx が一覧へ遷移する。
+// 非公開は確認画面への素のリンク。未ログインや一般ユーザーには空のセルを表示する。
+templ actionButtons(data IndexPageData, work viewmodel.DBWorkListItem) {
+	<div class="flex items-center justify-center gap-2">
+		if data.IsCommitter {
+			<a
+				href={ templates.DBWorkEditPath(work.ID).SafeURL() }
+				class="btn"
+				data-variant="outline"
+				data-size="sm"
+			>
+				{ templates.T(ctx, "db_works_index_edit_link") }
+			</a>
+			switch work.Status {
+				case viewmodel.WorkStatusPublished:
+					<a
+						href={ templates.DBWorkArchiveNewPath(work.ID).SafeURL() }
+						class="btn"
+						data-variant="warning"
+						data-size="sm"
+					>
+						{ templates.T(ctx, "db_works_index_archive_link") }
+					</a>
+				case viewmodel.WorkStatusArchived:
+					<button
+						type="button"
+						class="btn"
+						data-variant="success"
+						data-size="sm"
+						hx-delete={ templates.DBWorkArchivePath(work.ID).String() }
+						hx-headers={ templates.HXCSRFHeaders(data.CSRFToken) }
+						hx-confirm={ templates.T(ctx, "db_works_index_publish_confirm") }
+					>
+						{ templates.T(ctx, "db_works_index_publish_button") }
+					</button>
+			}
+		}
+		if data.IsAdmin {
+			<button
+				type="button"
+				class="btn"
+				data-variant="destructive"
+				data-size="sm"
+				hx-delete={ templates.DBWorkPath(work.ID).String() }
+				hx-headers={ templates.HXCSRFHeaders(data.CSRFToken) }
+				hx-confirm={ templates.T(ctx, "db_works_index_delete_confirm") }
+			>
+				{ templates.T(ctx, "db_works_index_delete_button") }
+			</button>
+		}
+	</div>
 }
 
 templ indexNewButton() {

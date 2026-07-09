@@ -16,7 +16,7 @@ const countDBWorks = `-- name: CountDBWorks :one
 SELECT COUNT(*)
 FROM works w
 LEFT JOIN work_images wi ON w.id = wi.work_id
-WHERE w.status != 'deleted'
+WHERE w.deleted_at IS NULL
     AND ($1::boolean IS NOT TRUE OR (
         w.no_episodes = false AND NOT EXISTS (
             SELECT 1 FROM episodes e WHERE e.work_id = w.id AND e.status = 'published'
@@ -307,6 +307,35 @@ func (q *Queries) GetWorkByID(ctx context.Context, id int64) (GetWorkByIDRow, er
 	return i, err
 }
 
+const getWorkForArchiveByID = `-- name: GetWorkForArchiveByID :one
+SELECT
+    id,
+    title,
+    unpublished_at,
+    deleted_at
+FROM works
+WHERE id = $1
+`
+
+type GetWorkForArchiveByIDRow struct {
+	ID            int64        `db:"id"`
+	Title         string       `db:"title"`
+	UnpublishedAt sql.NullTime `db:"unpublished_at"`
+	DeletedAt     sql.NullTime `db:"deleted_at"`
+}
+
+func (q *Queries) GetWorkForArchiveByID(ctx context.Context, id int64) (GetWorkForArchiveByIDRow, error) {
+	row := q.db.QueryRowContext(ctx, getWorkForArchiveByID, id)
+	var i GetWorkForArchiveByIDRow
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.UnpublishedAt,
+		&i.DeletedAt,
+	)
+	return i, err
+}
+
 const getWorkForEditByID = `-- name: GetWorkForEditByID :one
 SELECT
     id,
@@ -417,11 +446,12 @@ SELECT
     w.season_year,
     w.season_name,
     w.watchers_count,
-    w.status,
+    w.unpublished_at,
+    w.deleted_at,
     wi.image_data
 FROM works w
 LEFT JOIN work_images wi ON w.id = wi.work_id
-WHERE w.status != 'deleted'
+WHERE w.deleted_at IS NULL
     AND ($1::boolean IS NOT TRUE OR (
         w.no_episodes = false AND NOT EXISTS (
             SELECT 1 FROM episodes e WHERE e.work_id = w.id AND e.status = 'published'
@@ -473,7 +503,8 @@ type ListDBWorksRow struct {
 	SeasonYear    sql.NullInt32  `db:"season_year"`
 	SeasonName    sql.NullInt32  `db:"season_name"`
 	WatchersCount int32          `db:"watchers_count"`
-	Status        WorkStatus     `db:"status"`
+	UnpublishedAt sql.NullTime   `db:"unpublished_at"`
+	DeletedAt     sql.NullTime   `db:"deleted_at"`
 	ImageData     sql.NullString `db:"image_data"`
 }
 
@@ -508,7 +539,8 @@ func (q *Queries) ListDBWorks(ctx context.Context, arg ListDBWorksParams) ([]Lis
 			&i.SeasonYear,
 			&i.SeasonName,
 			&i.WatchersCount,
-			&i.Status,
+			&i.UnpublishedAt,
+			&i.DeletedAt,
 			&i.ImageData,
 		); err != nil {
 			return nil, err
@@ -574,8 +606,8 @@ SELECT
     synopsis_en,
     synopsis_source,
     synopsis_source_en,
-    status,
-    archive_message,
+    unpublished_at,
+    deleted_at,
     no_episodes,
     manual_episodes_count,
     start_episode_raw_number,
@@ -587,25 +619,25 @@ ORDER BY id
 `
 
 type ListWorksForAnimeSyncByIDsRow struct {
-	ID                    int64          `db:"id"`
-	Title                 string         `db:"title"`
-	TitleKana             string         `db:"title_kana"`
-	TitleRo               string         `db:"title_ro"`
-	TitleEn               string         `db:"title_en"`
-	TitleAlter            string         `db:"title_alter"`
-	TitleAlterEn          string         `db:"title_alter_en"`
-	Media                 int32          `db:"media"`
-	Synopsis              string         `db:"synopsis"`
-	SynopsisEn            string         `db:"synopsis_en"`
-	SynopsisSource        string         `db:"synopsis_source"`
-	SynopsisSourceEn      string         `db:"synopsis_source_en"`
-	Status                WorkStatus     `db:"status"`
-	ArchiveMessage        sql.NullString `db:"archive_message"`
-	NoEpisodes            bool           `db:"no_episodes"`
-	ManualEpisodesCount   sql.NullInt32  `db:"manual_episodes_count"`
-	StartEpisodeRawNumber float64        `db:"start_episode_raw_number"`
-	NumberFormatID        sql.NullInt64  `db:"number_format_id"`
-	AnimeID               sql.NullInt64  `db:"anime_id"`
+	ID                    int64         `db:"id"`
+	Title                 string        `db:"title"`
+	TitleKana             string        `db:"title_kana"`
+	TitleRo               string        `db:"title_ro"`
+	TitleEn               string        `db:"title_en"`
+	TitleAlter            string        `db:"title_alter"`
+	TitleAlterEn          string        `db:"title_alter_en"`
+	Media                 int32         `db:"media"`
+	Synopsis              string        `db:"synopsis"`
+	SynopsisEn            string        `db:"synopsis_en"`
+	SynopsisSource        string        `db:"synopsis_source"`
+	SynopsisSourceEn      string        `db:"synopsis_source_en"`
+	UnpublishedAt         sql.NullTime  `db:"unpublished_at"`
+	DeletedAt             sql.NullTime  `db:"deleted_at"`
+	NoEpisodes            bool          `db:"no_episodes"`
+	ManualEpisodesCount   sql.NullInt32 `db:"manual_episodes_count"`
+	StartEpisodeRawNumber float64       `db:"start_episode_raw_number"`
+	NumberFormatID        sql.NullInt64 `db:"number_format_id"`
+	AnimeID               sql.NullInt64 `db:"anime_id"`
 }
 
 func (q *Queries) ListWorksForAnimeSyncByIDs(ctx context.Context, dollar_1 []int64) ([]ListWorksForAnimeSyncByIDsRow, error) {
@@ -630,8 +662,8 @@ func (q *Queries) ListWorksForAnimeSyncByIDs(ctx context.Context, dollar_1 []int
 			&i.SynopsisEn,
 			&i.SynopsisSource,
 			&i.SynopsisSourceEn,
-			&i.Status,
-			&i.ArchiveMessage,
+			&i.UnpublishedAt,
+			&i.DeletedAt,
 			&i.NoEpisodes,
 			&i.ManualEpisodesCount,
 			&i.StartEpisodeRawNumber,
@@ -836,5 +868,41 @@ type UpdateWorkAnimeIDParams struct {
 
 func (q *Queries) UpdateWorkAnimeID(ctx context.Context, arg UpdateWorkAnimeIDParams) error {
 	_, err := q.db.ExecContext(ctx, updateWorkAnimeID, arg.ID, arg.AnimeID)
+	return err
+}
+
+const updateWorkDeletedAt = `-- name: UpdateWorkDeletedAt :exec
+UPDATE works
+SET
+    deleted_at = $1,
+    updated_at = NOW()
+WHERE id = $2
+`
+
+type UpdateWorkDeletedAtParams struct {
+	DeletedAt sql.NullTime `db:"deleted_at"`
+	ID        int64        `db:"id"`
+}
+
+func (q *Queries) UpdateWorkDeletedAt(ctx context.Context, arg UpdateWorkDeletedAtParams) error {
+	_, err := q.db.ExecContext(ctx, updateWorkDeletedAt, arg.DeletedAt, arg.ID)
+	return err
+}
+
+const updateWorkUnpublishedAt = `-- name: UpdateWorkUnpublishedAt :exec
+UPDATE works
+SET
+    unpublished_at = $1,
+    updated_at = NOW()
+WHERE id = $2
+`
+
+type UpdateWorkUnpublishedAtParams struct {
+	UnpublishedAt sql.NullTime `db:"unpublished_at"`
+	ID            int64        `db:"id"`
+}
+
+func (q *Queries) UpdateWorkUnpublishedAt(ctx context.Context, arg UpdateWorkUnpublishedAtParams) error {
+	_, err := q.db.ExecContext(ctx, updateWorkUnpublishedAt, arg.UnpublishedAt, arg.ID)
 	return err
 }

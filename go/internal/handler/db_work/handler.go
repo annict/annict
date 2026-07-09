@@ -25,6 +25,7 @@ type Handler struct {
 	getDBWorkEditUC        *usecase.GetDBWorkEditUsecase
 	createWorkUC           *usecase.CreateWorkUsecase
 	updateWorkUC           *usecase.UpdateWorkUsecase
+	deleteWorkUC           *usecase.DeleteWorkUsecase
 }
 
 func NewHandler(
@@ -37,6 +38,7 @@ func NewHandler(
 	getDBWorkEditUC *usecase.GetDBWorkEditUsecase,
 	createWorkUC *usecase.CreateWorkUsecase,
 	updateWorkUC *usecase.UpdateWorkUsecase,
+	deleteWorkUC *usecase.DeleteWorkUsecase,
 ) *Handler {
 	return &Handler{
 		cfg:                    cfg,
@@ -48,6 +50,7 @@ func NewHandler(
 		getDBWorkEditUC:        getDBWorkEditUC,
 		createWorkUC:           createWorkUC,
 		updateWorkUC:           updateWorkUC,
+		deleteWorkUC:           deleteWorkUC,
 	}
 }
 

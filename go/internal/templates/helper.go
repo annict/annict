@@ -3,6 +3,7 @@ package templates
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/a-h/templ"
 
@@ -21,6 +22,23 @@ func T(ctx context.Context, messageID string, data ...map[string]any) string {
 // Locale は現在のロケールを取得する
 func Locale(ctx context.Context) string {
 	return i18n.GetLocale(ctx)
+}
+
+// HXCSRFHeaders returns the JSON value for htmx's hx-headers attribute that sends the CSRF
+// token in the X-CSRF-Token header. htmx-issued DELETE/POST requests carry no parseable
+// form body (net/http only parses the body of POST/PUT/PATCH), so the CSRF middleware reads
+// the token from this header instead.
+//
+// [Ja] HXCSRFHeaders は htmx の hx-headers 属性に渡す JSON を返す。CSRF トークンを
+// X-CSRF-Token ヘッダーで送るためのもの。htmx が発行する DELETE/POST リクエストには
+// パース可能なフォーム本体が無い (net/http は POST/PUT/PATCH の本体しかパースしない) ため、
+// CSRF ミドルウェアはこのヘッダーからトークンを読む。
+func HXCSRFHeaders(token string) string {
+	b, err := json.Marshal(map[string]string{"X-CSRF-Token": token})
+	if err != nil {
+		return "{}"
+	}
+	return string(b)
 }
 
 // Deref はポインタを参照外しする（ジェネリック対応）

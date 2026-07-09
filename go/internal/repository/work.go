@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"time"
 
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
@@ -42,6 +43,38 @@ func workFromGetByIDRow(row query.GetWorkByIDRow) *model.Work {
 	}
 	applyNullableWorkFields(work, row.SeasonYear, row.SeasonName, row.CreatedAt)
 	return work
+}
+
+// GetForArchiveByID loads the columns the Annict DB admin archive-confirmation screen
+// needs: the title to display and the work-state source (unpublished_at / deleted_at)
+// so the caller can derive the current status and reject a work that is not archivable.
+// It returns (nil, nil) when no work matches the id.
+//
+// [Ja] GetForArchiveByID は Annict DB 管理画面の非公開確認画面が必要とするカラムを
+// 読み込む: 表示するタイトルと、呼び出し側が現在の状態を導出しアーカイブ不可の作品を
+// 弾けるようにするための作品状態の source (unpublished_at / deleted_at)。該当する work が
+// 無い場合は (nil, nil) を返す。
+func (r *WorkRepository) GetForArchiveByID(ctx context.Context, id model.WorkID) (*model.Work, error) {
+	row, err := r.queries.GetWorkForArchiveByID(ctx, int64(id))
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	work := &model.Work{
+		ID:    model.WorkID(row.ID),
+		Title: row.Title,
+	}
+	if row.UnpublishedAt.Valid {
+		unpublishedAt := row.UnpublishedAt.Time
+		work.UnpublishedAt = &unpublishedAt
+	}
+	if row.DeletedAt.Valid {
+		deletedAt := row.DeletedAt.Time
+		work.DeletedAt = &deletedAt
+	}
+	return work, nil
 }
 
 // GetForEditByID loads every works column the Annict DB admin edit form needs to
@@ -244,7 +277,6 @@ func (r *WorkRepository) ListForDB(ctx context.Context, params DBWorkListParams)
 			TitleEn:       row.TitleEn,
 			Media:         row.Media,
 			WatchersCount: row.WatchersCount,
-			Status:        model.WorkStatus(row.Status),
 		}
 		if row.TitleKana != "" {
 			titleKana := row.TitleKana
@@ -257,6 +289,14 @@ func (r *WorkRepository) ListForDB(ctx context.Context, params DBWorkListParams)
 		if row.MalAnimeID.Valid {
 			malAnimeID := row.MalAnimeID.Int32
 			work.MalAnimeID = &malAnimeID
+		}
+		if row.UnpublishedAt.Valid {
+			unpublishedAt := row.UnpublishedAt.Time
+			work.UnpublishedAt = &unpublishedAt
+		}
+		if row.DeletedAt.Valid {
+			deletedAt := row.DeletedAt.Time
+			work.DeletedAt = &deletedAt
 		}
 		applyImageData(work, row.ImageData)
 		applyNullableWorkFields(work, row.SeasonYear, row.SeasonName, sql.NullTime{})
@@ -505,6 +545,46 @@ func (r *WorkRepository) UpdateAnimeID(ctx context.Context, workID model.WorkID,
 	})
 }
 
+// UpdateUnpublishedAt writes the works.unpublished_at state column and bumps updated_at.
+// Passing a non-nil time archives the work (Unpublishable#unpublish); passing nil clears
+// it, re-publishing the work (Unpublishable#publish). Unlike UpdateAnimeID this bumps
+// updated_at because a publish-state change is a genuine content change, not bookkeeping.
+//
+// [Ja] UpdateUnpublishedAt は works.unpublished_at 状態カラムを書き込み、updated_at を
+// 更新する。非 nil の時刻を渡すと作品を非公開にし (Unpublishable#unpublish)、nil を渡すと
+// クリアして再公開する (Unpublishable#publish)。UpdateAnimeID と異なり updated_at を更新
+// するのは、公開状態の変更が記帳ではなく実質的な内容変更であるため。
+func (r *WorkRepository) UpdateUnpublishedAt(ctx context.Context, id model.WorkID, unpublishedAt *time.Time) error {
+	var nullTime sql.NullTime
+	if unpublishedAt != nil {
+		nullTime = sql.NullTime{Time: *unpublishedAt, Valid: true}
+	}
+	return r.queries.UpdateWorkUnpublishedAt(ctx, query.UpdateWorkUnpublishedAtParams{
+		ID:            int64(id),
+		UnpublishedAt: nullTime,
+	})
+}
+
+// UpdateDeletedAt writes the works.deleted_at state column and bumps updated_at. Passing a
+// non-nil time soft-deletes the work (SoftDeletable#destroy); passing nil restores it. Like
+// UpdateUnpublishedAt this bumps updated_at because a delete-state change is a genuine
+// content change, not bookkeeping.
+//
+// [Ja] UpdateDeletedAt は works.deleted_at 状態カラムを書き込み、updated_at を更新する。
+// 非 nil の時刻を渡すと作品をソフトデリートし (SoftDeletable#destroy)、nil を渡すと復元する。
+// UpdateUnpublishedAt と同じく updated_at を更新するのは、削除状態の変更が記帳ではなく実質的な
+// 内容変更であるため。
+func (r *WorkRepository) UpdateDeletedAt(ctx context.Context, id model.WorkID, deletedAt *time.Time) error {
+	var nullTime sql.NullTime
+	if deletedAt != nil {
+		nullTime = sql.NullTime{Time: *deletedAt, Valid: true}
+	}
+	return r.queries.UpdateWorkDeletedAt(ctx, query.UpdateWorkDeletedAtParams{
+		ID:        int64(id),
+		DeletedAt: nullTime,
+	})
+}
+
 // workFromAnimeSyncRow converts an anime-sync query row into *model.Work. The works
 // text columns are NOT NULL DEFAULT ”, so the empty string is preserved here and
 // mapped to NULL later (in the sync usecase) where animes uses NULL for "absent".
@@ -525,7 +605,6 @@ func workFromAnimeSyncRow(row query.ListWorksForAnimeSyncByIDsRow) *model.Work {
 		SynopsisEn:            row.SynopsisEn,
 		SynopsisSource:        row.SynopsisSource,
 		SynopsisSourceEn:      row.SynopsisSourceEn,
-		Status:                model.WorkStatus(row.Status),
 		NoEpisodes:            row.NoEpisodes,
 		StartEpisodeRawNumber: row.StartEpisodeRawNumber,
 	}
@@ -533,9 +612,13 @@ func workFromAnimeSyncRow(row query.ListWorksForAnimeSyncByIDsRow) *model.Work {
 		titleKana := row.TitleKana
 		work.TitleKana = &titleKana
 	}
-	if row.ArchiveMessage.Valid {
-		archiveMessage := row.ArchiveMessage.String
-		work.ArchiveMessage = &archiveMessage
+	if row.UnpublishedAt.Valid {
+		unpublishedAt := row.UnpublishedAt.Time
+		work.UnpublishedAt = &unpublishedAt
+	}
+	if row.DeletedAt.Valid {
+		deletedAt := row.DeletedAt.Time
+		work.DeletedAt = &deletedAt
 	}
 	if row.ManualEpisodesCount.Valid {
 		manualEpisodesCount := row.ManualEpisodesCount.Int32

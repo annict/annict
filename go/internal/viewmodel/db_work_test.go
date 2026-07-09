@@ -210,6 +210,7 @@ func TestNewDBWorkListItem(t *testing.T) {
 	season := int32(2)
 	unknownSeason := int32(5)
 	titleKana := "がぞうありさくひん"
+	unpublishedAt := time.Date(2024, 5, 1, 0, 0, 0, 0, time.UTC)
 
 	tests := []struct {
 		name            string
@@ -233,7 +234,6 @@ func TestNewDBWorkListItem(t *testing.T) {
 				TitleEn:       "Work With Image",
 				Media:         1,
 				WatchersCount: 100,
-				Status:        model.WorkStatusPublished,
 				ImageData:     `{"master":{"id":"workimage/1/image/master-abc.jpg","storage":"store"}}`,
 				SeasonYear:    &year,
 				SeasonName:    &season,
@@ -249,13 +249,13 @@ func TestNewDBWorkListItem(t *testing.T) {
 			wantSeasonHasJP: "2024 春",
 		},
 		{
-			name: "正常系: title_kana が未設定 (nil) なら空文字列になり、画像なしは ImageURL が空になる",
+			name: "正常系: unpublished_at があれば archived になり、title_kana 未設定は空文字列・画像なしは ImageURL が空になる",
 			work: &model.Work{
 				ID:            2,
 				Title:         "画像なし作品",
 				Media:         2,
 				WatchersCount: 0,
-				Status:        model.WorkStatusArchived,
+				UnpublishedAt: &unpublishedAt,
 				ImageData:     "",
 			},
 			wantID:        WorkID(2),
@@ -270,10 +270,9 @@ func TestNewDBWorkListItem(t *testing.T) {
 		{
 			name: "正常系: シーズン未設定の場合 Season は空文字列になる",
 			work: &model.Work{
-				ID:     3,
-				Title:  "シーズンなし作品",
-				Media:  0,
-				Status: model.WorkStatusPublished,
+				ID:    3,
+				Title: "シーズンなし作品",
+				Media: 0,
 			},
 			wantID:          WorkID(3),
 			wantTitle:       "シーズンなし作品",
@@ -293,7 +292,6 @@ func TestNewDBWorkListItem(t *testing.T) {
 				ID:         6,
 				Title:      "範囲外シーズン作品",
 				Media:      1,
-				Status:     model.WorkStatusPublished,
 				SeasonYear: &year,
 				SeasonName: &unknownSeason,
 			},
@@ -307,10 +305,9 @@ func TestNewDBWorkListItem(t *testing.T) {
 		{
 			name: "正常系: media = 3 は 映画 に変換される",
 			work: &model.Work{
-				ID:     4,
-				Title:  "映画作品",
-				Media:  3,
-				Status: model.WorkStatusPublished,
+				ID:    4,
+				Title: "映画作品",
+				Media: 3,
 			},
 			wantID:     WorkID(4),
 			wantTitle:  "映画作品",
@@ -320,10 +317,9 @@ func TestNewDBWorkListItem(t *testing.T) {
 		{
 			name: "正常系: media = 4 は Web に変換される",
 			work: &model.Work{
-				ID:     5,
-				Title:  "Web作品",
-				Media:  4,
-				Status: model.WorkStatusPublished,
+				ID:    5,
+				Title: "Web作品",
+				Media: 4,
 			},
 			wantID:     WorkID(5),
 			wantTitle:  "Web作品",
@@ -369,6 +365,68 @@ func TestNewDBWorkListItem(t *testing.T) {
 	}
 }
 
+// TestNewDBWorkListItem_StatusFromTimestamps verifies that the display status is
+// derived from the work's unpublished_at / deleted_at timestamps (not the dormant
+// works.status), with deleted_at taking precedence over unpublished_at.
+//
+// [Ja] TestNewDBWorkListItem_StatusFromTimestamps は表示ステータスが work の
+// unpublished_at / deleted_at タイムスタンプ (休眠している works.status ではない) から
+// 導出され、deleted_at が unpublished_at より優先されることを検証する。
+func TestNewDBWorkListItem_StatusFromTimestamps(t *testing.T) {
+	t.Parallel()
+
+	ctx := i18n.SetLocale(context.Background(), "ja")
+	helper := testutil.NewTestImageHelper()
+
+	unpublishedAt := time.Date(2024, 5, 1, 0, 0, 0, 0, time.UTC)
+	deletedAt := time.Date(2024, 6, 1, 0, 0, 0, 0, time.UTC)
+
+	tests := []struct {
+		name          string
+		unpublishedAt *time.Time
+		deletedAt     *time.Time
+		want          WorkStatus
+	}{
+		{
+			name: "両方 nil なら published",
+			want: WorkStatusPublished,
+		},
+		{
+			name:          "unpublished_at のみなら archived",
+			unpublishedAt: &unpublishedAt,
+			want:          WorkStatusArchived,
+		},
+		{
+			name:      "deleted_at のみなら deleted",
+			deletedAt: &deletedAt,
+			want:      WorkStatusDeleted,
+		},
+		{
+			name:          "両方あれば deleted_at が優先される",
+			unpublishedAt: &unpublishedAt,
+			deletedAt:     &deletedAt,
+			want:          WorkStatusDeleted,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			got := NewDBWorkListItem(ctx, &model.Work{
+				ID:            1,
+				Title:         "作品",
+				UnpublishedAt: tt.unpublishedAt,
+				DeletedAt:     tt.deletedAt,
+			}, helper)
+
+			if got.Status != tt.want {
+				t.Errorf("Status = %q, want %q", got.Status, tt.want)
+			}
+		})
+	}
+}
+
 // TestNewDBWorkListItem_ExternalServices verifies that sc_tid / mal_anime_id map to
 // the Syoboi Calendar / MyAnimeList links, and that an unset id yields an empty link.
 //
@@ -389,7 +447,6 @@ func TestNewDBWorkListItem_ExternalServices(t *testing.T) {
 		got := NewDBWorkListItem(ctx, &model.Work{
 			ID:         1,
 			Title:      "外部サービスあり作品",
-			Status:     model.WorkStatusPublished,
 			ScTid:      &scTid,
 			MalAnimeID: &malAnimeID,
 		}, helper)
@@ -406,9 +463,8 @@ func TestNewDBWorkListItem_ExternalServices(t *testing.T) {
 		t.Parallel()
 
 		got := NewDBWorkListItem(ctx, &model.Work{
-			ID:     2,
-			Title:  "外部サービスなし作品",
-			Status: model.WorkStatusPublished,
+			ID:    2,
+			Title: "外部サービスなし作品",
 		}, helper)
 
 		if got.Syobocal != (ExternalServiceLink{}) {
@@ -434,7 +490,6 @@ func TestDBWorkListItem_GetSrcSet(t *testing.T) {
 	withImage := NewDBWorkListItem(ctx, &model.Work{
 		ID:        1,
 		Title:     "画像あり作品",
-		Status:    model.WorkStatusPublished,
 		ImageData: `{"master":{"id":"workimage/1/image/master-abc.jpg","storage":"store"}}`,
 	}, helper)
 	if withImage.GetSrcSet(70, "webp") == "" {
@@ -444,7 +499,6 @@ func TestDBWorkListItem_GetSrcSet(t *testing.T) {
 	withoutImage := NewDBWorkListItem(ctx, &model.Work{
 		ID:        2,
 		Title:     "画像なし作品",
-		Status:    model.WorkStatusPublished,
 		ImageData: "",
 	}, helper)
 	if got := withoutImage.GetSrcSet(70, "webp"); got != "" {
@@ -466,8 +520,8 @@ func TestNewDBWorkListItems(t *testing.T) {
 	ctx := i18n.SetLocale(context.Background(), "ja")
 	helper := testutil.NewTestImageHelper()
 	works := []*model.Work{
-		{ID: 10, Title: "A", Status: model.WorkStatusPublished, ImageData: `{"master":{"id":"workimage/10/image/master-a.jpg","storage":"store"}}`},
-		{ID: 11, Title: "B", Status: model.WorkStatusArchived, ImageData: ""},
+		{ID: 10, Title: "A", ImageData: `{"master":{"id":"workimage/10/image/master-a.jpg","storage":"store"}}`},
+		{ID: 11, Title: "B", ImageData: ""},
 	}
 
 	got := NewDBWorkListItems(ctx, works, helper)

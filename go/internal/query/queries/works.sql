@@ -35,6 +35,15 @@ SELECT
 FROM works
 WHERE id = $1;
 
+-- name: GetWorkForArchiveByID :one
+SELECT
+    id,
+    title,
+    unpublished_at,
+    deleted_at
+FROM works
+WHERE id = $1;
+
 -- name: GetWorkForEditByID :one
 SELECT
     id,
@@ -79,11 +88,12 @@ SELECT
     w.season_year,
     w.season_name,
     w.watchers_count,
-    w.status,
+    w.unpublished_at,
+    w.deleted_at,
     wi.image_data
 FROM works w
 LEFT JOIN work_images wi ON w.id = wi.work_id
-WHERE w.status != 'deleted'
+WHERE w.deleted_at IS NULL
     AND (sqlc.narg('filter_no_episodes')::boolean IS NOT TRUE OR (
         w.no_episodes = false AND NOT EXISTS (
             SELECT 1 FROM episodes e WHERE e.work_id = w.id AND e.status = 'published'
@@ -114,7 +124,7 @@ OFFSET sqlc.arg('page_offset');
 SELECT COUNT(*)
 FROM works w
 LEFT JOIN work_images wi ON w.id = wi.work_id
-WHERE w.status != 'deleted'
+WHERE w.deleted_at IS NULL
     AND (sqlc.narg('filter_no_episodes')::boolean IS NOT TRUE OR (
         w.no_episodes = false AND NOT EXISTS (
             SELECT 1 FROM episodes e WHERE e.work_id = w.id AND e.status = 'published'
@@ -152,8 +162,8 @@ SELECT
     synopsis_en,
     synopsis_source,
     synopsis_source_en,
-    status,
-    archive_message,
+    unpublished_at,
+    deleted_at,
     no_episodes,
     manual_episodes_count,
     start_episode_raw_number,
@@ -194,6 +204,20 @@ LIMIT sqlc.arg('batch_size');
 UPDATE works
 SET anime_id = $2
 WHERE id = $1;
+
+-- name: UpdateWorkUnpublishedAt :exec
+UPDATE works
+SET
+    unpublished_at = sqlc.narg('unpublished_at'),
+    updated_at = NOW()
+WHERE id = sqlc.arg('id');
+
+-- name: UpdateWorkDeletedAt :exec
+UPDATE works
+SET
+    deleted_at = sqlc.narg('deleted_at'),
+    updated_at = NOW()
+WHERE id = sqlc.arg('id');
 
 -- name: UpdateWork :exec
 UPDATE works

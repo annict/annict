@@ -112,7 +112,7 @@ func NewDBWorkListItem(ctx context.Context, work *model.Work, helper *image.Help
 		Syobocal:      newExternalServiceLink(work.ScTid, SyobocalURL),
 		MalAnime:      newExternalServiceLink(work.MalAnimeID, MalAnimeURL),
 		WatchersCount: work.WatchersCount,
-		Status:        WorkStatus(work.Status),
+		Status:        WorkStatus(work.DerivedStatus()),
 		ImageURL:      imageURL,
 		ImageDataJSON: work.ImageData,
 		imageHelper:   helper,

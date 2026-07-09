@@ -3,6 +3,7 @@ package repository_test
 import (
 	"context"
 	"testing"
+	"time"
 
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
@@ -338,13 +339,15 @@ func TestWorkRepository_ListForDB(t *testing.T) {
 		}
 	})
 
-	t.Run("正常系: 削除済み作品は除外される", func(t *testing.T) {
+	t.Run("正常系: 削除済み (deleted_at) 作品は除外され、非公開 (unpublished_at) 作品は残る", func(t *testing.T) {
 		t.Parallel()
 		db, tx := testutil.SetupTx(t)
 		ctx := context.Background()
 
-		testutil.NewWorkBuilder(t, tx).WithTitle("公開作品").WithStatus("published").Build()
-		testutil.NewWorkBuilder(t, tx).WithTitle("削除作品").WithStatus("deleted").Build()
+		archivedAt := time.Now()
+		publishedID := testutil.NewWorkBuilder(t, tx).WithTitle("公開作品").Build()
+		archivedID := testutil.NewWorkBuilder(t, tx).WithTitle("非公開作品").WithUnpublishedAt(archivedAt).Build()
+		testutil.NewWorkBuilder(t, tx).WithTitle("削除作品").WithDeletedAt(time.Now()).Build()
 
 		repo := repository.NewWorkRepository(query.New(db)).WithTx(tx)
 		items, err := repo.ListForDB(ctx, repository.DBWorkListParams{
@@ -355,10 +358,37 @@ func TestWorkRepository_ListForDB(t *testing.T) {
 			t.Fatalf("ListForDB() error = %v", err)
 		}
 
+		byID := make(map[model.WorkID]*model.Work, len(items))
 		for _, item := range items {
 			if item.Title == "削除作品" {
 				t.Error("deleted work should not be returned")
 			}
+			byID[item.ID] = item
+		}
+
+		// The published work is returned with both state timestamps NULL.
+		//
+		// [Ja] 公開作品は両方の状態タイムスタンプが NULL で返る。
+		published := byID[publishedID]
+		if published == nil {
+			t.Fatalf("ListForDB() did not return the published work (id=%d)", int64(publishedID))
+		}
+		if published.UnpublishedAt != nil || published.DeletedAt != nil {
+			t.Errorf("published work state = {UnpublishedAt: %v, DeletedAt: %v}, want both nil", published.UnpublishedAt, published.DeletedAt)
+		}
+
+		// The archived work stays in the list (Rails without_deleted) with unpublished_at mapped.
+		//
+		// [Ja] 非公開作品は一覧に残り (Rails without_deleted)、unpublished_at がマッピングされる。
+		archived := byID[archivedID]
+		if archived == nil {
+			t.Fatalf("ListForDB() did not return the archived work (id=%d)", int64(archivedID))
+		}
+		if archived.UnpublishedAt == nil {
+			t.Error("archived work UnpublishedAt should be populated, got nil")
+		}
+		if archived.DeletedAt != nil {
+			t.Errorf("archived work DeletedAt = %v, want nil", archived.DeletedAt)
 		}
 	})
 
@@ -654,23 +684,36 @@ func TestWorkRepository_ListForDB(t *testing.T) {
 func TestWorkRepository_CountForDB(t *testing.T) {
 	t.Parallel()
 
-	t.Run("正常系: フィルタなしで作品数を取得できる", func(t *testing.T) {
+	t.Run("正常系: 削除済み (deleted_at) 作品はカウントから除外される", func(t *testing.T) {
 		t.Parallel()
 		db, tx := testutil.SetupTx(t)
 		ctx := context.Background()
 
-		testutil.NewWorkBuilder(t, tx).WithTitle("作品A").Build()
-		testutil.NewWorkBuilder(t, tx).WithTitle("作品B").Build()
-		testutil.NewWorkBuilder(t, tx).WithTitle("削除済み").WithStatus("deleted").Build()
+		// A distinctive season isolates the count from works that GetTestDB-based
+		// tests commit to the shared DB, letting us assert an exact count instead of
+		// a loose lower bound.
+		//
+		// [Ja] GetTestDB を使うテストが共有 DB にコミットする作品からカウントを隔離する
+		// ため固有のシーズンを使い、緩い下限ではなく正確な件数をアサートできるようにする。
+		const isolatedYear = 1901
+		testutil.NewWorkBuilder(t, tx).WithTitle("公開作品A").WithSeason(isolatedYear, testutil.SeasonSpring).Build()
+		testutil.NewWorkBuilder(t, tx).WithTitle("公開作品B").WithSeason(isolatedYear, testutil.SeasonSpring).Build()
+		testutil.NewWorkBuilder(t, tx).WithTitle("削除作品").WithSeason(isolatedYear, testutil.SeasonSpring).WithDeletedAt(time.Now()).Build()
 
 		repo := repository.NewWorkRepository(query.New(db)).WithTx(tx)
-		count, err := repo.CountForDB(ctx, repository.DBWorkListParams{})
+		count, err := repo.CountForDB(ctx, repository.DBWorkListParams{
+			SeasonYears: []int32{isolatedYear},
+			SeasonNames: []int32{testutil.SeasonSpring},
+		})
 		if err != nil {
 			t.Fatalf("CountForDB() error = %v", err)
 		}
 
-		if count < 2 {
-			t.Errorf("CountForDB() = %d, want >= 2", count)
+		// Only the two published works count; the deleted (deleted_at) work is excluded.
+		//
+		// [Ja] 公開作品 2 件だけがカウントされ、削除済み (deleted_at) 作品は除外される。
+		if count != 2 {
+			t.Errorf("CountForDB() = %d, want 2", count)
 		}
 	})
 
@@ -1116,6 +1159,133 @@ func TestWorkRepository_GetForEditByID(t *testing.T) {
 		}
 		if work != nil {
 			t.Errorf("work = %v, want nil", work)
+		}
+	})
+}
+
+// TestWorkRepository_GetForArchiveByID はアーカイブ確認画面用の作品取得をテスト
+func TestWorkRepository_GetForArchiveByID(t *testing.T) {
+	t.Parallel()
+
+	t.Run("公開中の作品を取得できる", func(t *testing.T) {
+		t.Parallel()
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewWorkRepository(query.New(db).WithTx(tx))
+
+		workID := testutil.NewWorkBuilder(t, tx).WithTitle("アーカイブ確認作品").Build()
+
+		work, err := repo.GetForArchiveByID(context.Background(), workID)
+		if err != nil {
+			t.Fatalf("GetForArchiveByID() error = %v", err)
+		}
+		if work == nil {
+			t.Fatal("work should not be nil")
+		}
+		if work.ID != workID {
+			t.Errorf("work.ID = %d, want %d", work.ID, workID)
+		}
+		if work.Title != "アーカイブ確認作品" {
+			t.Errorf("work.Title = %q, want %q", work.Title, "アーカイブ確認作品")
+		}
+		if work.UnpublishedAt != nil {
+			t.Errorf("work.UnpublishedAt = %v, want nil", work.UnpublishedAt)
+		}
+		if work.DeletedAt != nil {
+			t.Errorf("work.DeletedAt = %v, want nil", work.DeletedAt)
+		}
+	})
+
+	t.Run("非公開・削除の状態を読み取れる", func(t *testing.T) {
+		t.Parallel()
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewWorkRepository(query.New(db).WithTx(tx))
+
+		now := time.Now()
+		archivedID := testutil.NewWorkBuilder(t, tx).WithTitle("非公開作品").WithUnpublishedAt(now).Build()
+		deletedID := testutil.NewWorkBuilder(t, tx).WithTitle("削除作品").WithDeletedAt(now).Build()
+
+		archived, err := repo.GetForArchiveByID(context.Background(), archivedID)
+		if err != nil {
+			t.Fatalf("GetForArchiveByID() error = %v", err)
+		}
+		if archived == nil || archived.UnpublishedAt == nil {
+			t.Fatalf("archived work should carry UnpublishedAt, got %+v", archived)
+		}
+		if archived.DerivedStatus() != model.WorkStatusArchived {
+			t.Errorf("archived.DerivedStatus() = %q, want archived", archived.DerivedStatus())
+		}
+
+		deleted, err := repo.GetForArchiveByID(context.Background(), deletedID)
+		if err != nil {
+			t.Fatalf("GetForArchiveByID() error = %v", err)
+		}
+		if deleted == nil || deleted.DeletedAt == nil {
+			t.Fatalf("deleted work should carry DeletedAt, got %+v", deleted)
+		}
+		if deleted.DerivedStatus() != model.WorkStatusDeleted {
+			t.Errorf("deleted.DerivedStatus() = %q, want deleted", deleted.DerivedStatus())
+		}
+	})
+
+	t.Run("存在しないIDは (nil, nil)", func(t *testing.T) {
+		t.Parallel()
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewWorkRepository(query.New(db).WithTx(tx))
+
+		work, err := repo.GetForArchiveByID(context.Background(), model.WorkID(999999999))
+		if err != nil {
+			t.Fatalf("GetForArchiveByID() error = %v", err)
+		}
+		if work != nil {
+			t.Errorf("work = %v, want nil", work)
+		}
+	})
+}
+
+// TestWorkRepository_UpdateUnpublishedAt は unpublished_at の設定・クリアをテスト
+func TestWorkRepository_UpdateUnpublishedAt(t *testing.T) {
+	t.Parallel()
+
+	t.Run("時刻を設定すると非公開になる", func(t *testing.T) {
+		t.Parallel()
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewWorkRepository(query.New(db).WithTx(tx))
+		ctx := context.Background()
+
+		workID := testutil.NewWorkBuilder(t, tx).WithTitle("非公開化対象").Build()
+
+		now := time.Now()
+		if err := repo.UpdateUnpublishedAt(ctx, workID, &now); err != nil {
+			t.Fatalf("UpdateUnpublishedAt() error = %v", err)
+		}
+
+		work, err := repo.GetForArchiveByID(ctx, workID)
+		if err != nil || work == nil {
+			t.Fatalf("GetForArchiveByID() work=%v err=%v", work, err)
+		}
+		if work.UnpublishedAt == nil {
+			t.Error("work.UnpublishedAt should be set, got nil")
+		}
+	})
+
+	t.Run("nil を渡すと再公開される", func(t *testing.T) {
+		t.Parallel()
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewWorkRepository(query.New(db).WithTx(tx))
+		ctx := context.Background()
+
+		workID := testutil.NewWorkBuilder(t, tx).WithTitle("再公開対象").WithUnpublishedAt(time.Now()).Build()
+
+		if err := repo.UpdateUnpublishedAt(ctx, workID, nil); err != nil {
+			t.Fatalf("UpdateUnpublishedAt() error = %v", err)
+		}
+
+		work, err := repo.GetForArchiveByID(ctx, workID)
+		if err != nil || work == nil {
+			t.Fatalf("GetForArchiveByID() work=%v err=%v", work, err)
+		}
+		if work.UnpublishedAt != nil {
+			t.Errorf("work.UnpublishedAt = %v, want nil after clearing", work.UnpublishedAt)
 		}
 	})
 }

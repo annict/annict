@@ -2,9 +2,11 @@ package model
 
 import "time"
 
-// WorkStatus represents the lifecycle state of a work and mirrors the work_status PostgreSQL enum.
+// WorkStatus represents the lifecycle state of a work (published / archived / deleted)
+// derived from unpublished_at / deleted_at.
 //
-// [Ja] WorkStatus は作品のライフサイクル状態を表し、PostgreSQL の work_status enum と対応する。
+// [Ja] WorkStatus は unpublished_at / deleted_at から導出した作品のライフサイクル状態
+// (published / archived / deleted) を表す。
 type WorkStatus string
 
 const (
@@ -39,11 +41,7 @@ type Work struct {
 	//
 	// [Ja] シーズン番号 (1=冬、2=春、3=夏、4=秋)
 	SeasonName *int32
-	// Populated only by loaders that select the works.status column (e.g. ListForDB).
-	//
-	// [Ja] works.status カラムを select するロード経路 (例: ListForDB) でのみ値が入る。
-	Status    WorkStatus
-	CreatedAt time.Time
+	CreatedAt  time.Time
 
 	// Fields below are populated only by the anime-sync loader (ListForAnimeSyncByIDs),
 	// which projects the works columns mapped onto animes / anime_classifications during
@@ -63,12 +61,25 @@ type Work struct {
 	SynopsisEn            string
 	SynopsisSource        string
 	SynopsisSourceEn      string
-	ArchiveMessage        *string
 	NoEpisodes            bool
 	ManualEpisodesCount   *int32
 	StartEpisodeRawNumber float64
 	NumberFormatID        *NumberFormatID
 	AnimeID               *AnimeID
+
+	// UnpublishedAt / DeletedAt are the source-of-truth state columns for a work
+	// (Unpublishable / SoftDeletable). The phase 2 reconciliation derives
+	// anime.status from them: deleted_at set -> deleted, else unpublished_at set
+	// -> archived, else published. They supersede the dormant works.status column,
+	// which is never written by production code.
+	//
+	// [Ja] UnpublishedAt / DeletedAt は作品の状態を表す正本カラム (Unpublishable /
+	// SoftDeletable)。フェーズ 2 のリコンシリエーションはこれらから anime.status を
+	// 導出する: deleted_at 有 -> deleted、なければ unpublished_at 有 -> archived、
+	// どちらも無ければ published。本番コードから書き込まれない休眠カラム works.status に
+	// 取って代わる。
+	UnpublishedAt *time.Time
+	DeletedAt     *time.Time
 
 	// Fields below are populated only by the satellite-sync loader
 	// (ListForSatelliteSyncByIDs), which projects the works columns mapped onto the
@@ -104,4 +115,31 @@ type Work struct {
 	// [Ja] 関連エンティティ。明示的にロードした場合のみセットされ、通常は nil。
 	Casts  []*Cast
 	Staffs []*Staff
+}
+
+// DerivedStatus returns the work's lifecycle status derived from its Unpublishable /
+// SoftDeletable timestamps, the source of truth for work state. deleted_at wins over
+// unpublished_at (a deleted work is deleted regardless of publish state), matching the
+// Rails visibility scope only_kept = without_deleted.published (both must be NULL to be
+// published). This is the single place that encodes the timestamp-to-status priority;
+// the dormant works.status column is intentionally not read. Callers map the result onto
+// their own enum (viewmodel.WorkStatus for display, model.AnimeStatus for the anime sync),
+// so the priority never drifts between the list screen and the reconciliation.
+//
+// [Ja] DerivedStatus は work の状態の正本である Unpublishable / SoftDeletable タイムスタンプ
+// から作品のライフサイクル状態を導出する。deleted_at が unpublished_at より優先される
+// (削除済みの作品は公開状態に関わらず deleted)。これは Rails の可視性 scope
+// only_kept = without_deleted.published (公開は両方が NULL のとき) に揃う。timestamps から
+// status への優先順位を定めるのはこの 1 箇所で、休眠している works.status カラムは意図的に
+// 読まない。呼び出し側は結果を各自の enum (表示用の viewmodel.WorkStatus、anime 同期用の
+// model.AnimeStatus) に写像するため、一覧画面とリコンシリエーションの間で優先順位がずれない。
+func (w *Work) DerivedStatus() WorkStatus {
+	switch {
+	case w.DeletedAt != nil:
+		return WorkStatusDeleted
+	case w.UnpublishedAt != nil:
+		return WorkStatusArchived
+	default:
+		return WorkStatusPublished
+	}
 }

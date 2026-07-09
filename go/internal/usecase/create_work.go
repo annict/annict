@@ -157,8 +157,8 @@ func (uc *CreateWorkUsecase) createWork(ctx context.Context, params repository.C
 // (the url columns are mapped to "no row" and the anime text columns to NULL later by the
 // helpers); the nullable source columns (sc_tid / mal_anime_id / twitter_* / season_* /
 // started_on / ended_on) become pointers exactly as the satellite sync loader reads them
-// back. A new work is always status='published' (the works.status column default), matching
-// the value the sync loader reads back.
+// back. A new work leaves unpublished_at / deleted_at at NULL, so DerivedStatus reports
+// published and the anime the sync maps back is published too.
 //
 // [Ja] workFromCreateWorkParams は CreateWorkParams を、animes / anime_classifications の
 // 写像と別表の写像が読む *model.Work フィールドに射影する。これにより create 経路もフェーズ 2
@@ -171,8 +171,8 @@ func (uc *CreateWorkUsecase) createWork(ctx context.Context, params repository.C
 // デフォルトが空文字列のため空文字列のまま保持し (url カラムは後段で「行なし」に、anime の
 // テキストカラムは NULL にヘルパーが写像する)、NULL 許容のソース列 (sc_tid / mal_anime_id /
 // twitter_* / season_* / started_on / ended_on) は別表同期ローダーが読み戻すのと同じくポインタに
-// する。新規 work は常に status='published' (works.status カラムの既定値) とし、同期ローダーが
-// 読み戻す値に一致させる。
+// する。新規 work は unpublished_at / deleted_at を NULL のままにするため DerivedStatus は
+// published を報告し、同期が写し戻す anime も published になる。
 func workFromCreateWorkParams(params repository.CreateWorkParams) *model.Work {
 	work := &model.Work{
 		Title:                 params.Title,
@@ -184,7 +184,6 @@ func workFromCreateWorkParams(params repository.CreateWorkParams) *model.Work {
 		SynopsisEn:            params.SynopsisEn,
 		SynopsisSource:        params.SynopsisSource,
 		SynopsisSourceEn:      params.SynopsisSourceEn,
-		Status:                model.WorkStatusPublished,
 		NoEpisodes:            params.NoEpisodes,
 		StartEpisodeRawNumber: params.StartEpisodeRawNumber,
 		OfficialSiteURL:       params.OfficialSiteURL,

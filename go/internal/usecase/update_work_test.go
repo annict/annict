@@ -308,14 +308,18 @@ func TestUpdateWorkUsecase_Execute_ProducesSyncConsistentSatellites(t *testing.T
 }
 
 // TestUpdateWorkUsecase_Execute_PreservesNonFormAnimeColumns verifies the update does
-// not clobber the anime-mapped columns the edit form does not submit (title_ro / status
-// / archive_message): they are carried over from the works row, so an archived work with
-// a romanized title keeps both after a content edit, and a follow-up sync stays Unchanged.
+// not clobber the anime-mapped columns the edit form does not submit: title_ro,
+// archive_message, and the anime.status derived from the work-state source
+// (unpublished_at / deleted_at). They are carried over from the works row, so an
+// archived work (unpublished_at set) with a romanized title keeps its archived anime
+// status and message after a content edit, and a follow-up sync stays Unchanged.
 //
 // [Ja] TestUpdateWorkUsecase_Execute_PreservesNonFormAnimeColumns は、更新が編集フォーム
-// の送信しない anime 写像カラム (title_ro / status / archive_message) を潰さないことを
-// 検証する。これらは works 行から引き継がれるため、ローマ字タイトルを持つアーカイブ済み
-// work は内容編集後も両方を保ち、後続の同期も Unchanged のままになる。
+// の送信しない anime 写像カラムを潰さないことを検証する: title_ro、archive_message、
+// および作品状態の source (unpublished_at / deleted_at) から導出される anime.status。
+// これらは works 行から引き継がれるため、ローマ字タイトルを持つアーカイブ済み work
+// (unpublished_at あり) は内容編集後もアーカイブ状態とメッセージを保ち、後続の同期も
+// Unchanged のままになる。
 func TestUpdateWorkUsecase_Execute_PreservesNonFormAnimeColumns(t *testing.T) {
 	t.Parallel()
 
@@ -326,13 +330,17 @@ func TestUpdateWorkUsecase_Execute_PreservesNonFormAnimeColumns(t *testing.T) {
 	work := reloadSyncWork(t, db, workID)
 	animeID := *work.AnimeID
 
-	// Simulate an archived work with a Rails-set romanized title, keeping works and the
-	// mapped anime consistent (as the sync would leave them).
+	// Simulate an archived work (unpublished_at set) with a Rails-set romanized title,
+	// keeping works and the mapped anime consistent (as the sync would leave them: works
+	// carries unpublished_at, the anime carries the derived status = archived and the
+	// animes-only archive_message).
 	//
-	// [Ja] Rails が付けたローマ字タイトルを持つアーカイブ済み work を模し、works と
-	// マッピング済み anime を (同期が残すのと同じく) 整合させておく。
+	// [Ja] unpublished_at を立てたアーカイブ済み work に Rails が付けたローマ字タイトルを
+	// 持たせ、works とマッピング済み anime を (同期が残すのと同じく) 整合させておく: works は
+	// unpublished_at を持ち、anime は導出された status = archived と animes 専用の
+	// archive_message を持つ。
 	ctx := context.Background()
-	if _, err := db.ExecContext(ctx, "UPDATE works SET title_ro = $2, status = 'archived', archive_message = $3 WHERE id = $1", int64(workID), "Koushin Anime", "凍結中"); err != nil {
+	if _, err := db.ExecContext(ctx, "UPDATE works SET title_ro = $2, unpublished_at = NOW() WHERE id = $1", int64(workID), "Koushin Anime"); err != nil {
 		t.Fatalf("works の前提更新に失敗: %v", err)
 	}
 	if _, err := db.ExecContext(ctx, "UPDATE animes SET title_ro = $2, status = 'archived', archive_message = $3 WHERE id = $1", int64(animeID), "Koushin Anime", "凍結中"); err != nil {

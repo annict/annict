@@ -155,6 +155,153 @@ func TestIndex_WithWorks(t *testing.T) {
 	}
 }
 
+// actionColumnWorks returns one published and one archived work for the action-column tests.
+//
+// [Ja] actionColumnWorks は操作列テスト用に、公開中と非公開の作品を 1 件ずつ返す。
+func actionColumnWorks() []viewmodel.DBWorkListItem {
+	return []viewmodel.DBWorkListItem{
+		{ID: 1, Title: "公開作品", Media: "TV", Status: viewmodel.WorkStatusPublished},
+		{ID: 2, Title: "非公開作品", Media: "TV", Status: viewmodel.WorkStatusArchived},
+	}
+}
+
+func renderIndex(t *testing.T, data IndexPageData) string {
+	t.Helper()
+	var buf strings.Builder
+	if err := Index(data).Render(context.Background(), &buf); err != nil {
+		t.Fatalf("レンダリングエラー: %v", err)
+	}
+	return buf.String()
+}
+
+// TestIndex_ActionColumn_Committer verifies that a committer (non-admin) sees the edit link on
+// every row, the unpublish link (to the confirmation screen) on published rows, and the publish
+// htmx DELETE button on archived rows, but not the admin-only delete button.
+//
+// [Ja] TestIndex_ActionColumn_Committer は committer (非 admin) が各行に編集リンクを、公開中の
+// 行に非公開リンク (確認画面へ) を、非公開の行に公開の htmx DELETE ボタンを見る一方、admin
+// 専用の削除ボタンは見えないことを検証する。
+func TestIndex_ActionColumn_Committer(t *testing.T) {
+	t.Parallel()
+
+	html := renderIndex(t, IndexPageData{
+		Works:       actionColumnWorks(),
+		Pagination:  viewmodel.NewPagination(1, 2, 30, "/db/works"),
+		IsCommitter: true,
+		IsAdmin:     false,
+		CSRFToken:   "test-csrf-token",
+	})
+
+	wantPresent := []string{
+		// Edit link on both rows.
+		//
+		// [Ja] 両行の編集リンク。
+		`href="/db/works/1/edit"`,
+		`href="/db/works/2/edit"`,
+		// Published row (1): unpublish link to the confirmation screen.
+		//
+		// [Ja] 公開中の行 (1): 確認画面への非公開リンク。
+		`href="/db/works/1/archive/new"`,
+		// Archived row (2): publish is an htmx DELETE against the archive path, with a confirm
+		// dialog and the CSRF token carried in the X-CSRF-Token header.
+		//
+		// [Ja] 非公開の行 (2): 公開は archive パスへの htmx DELETE で、確認ダイアログと
+		// X-CSRF-Token ヘッダーで送る CSRF トークンを伴う。
+		`hx-delete="/db/works/2/archive"`,
+		"この作品を公開しますか",
+		"X-CSRF-Token",
+		"test-csrf-token",
+	}
+	for _, expected := range wantPresent {
+		if !strings.Contains(html, expected) {
+			t.Errorf("期待する文字列が含まれていません: %q", expected)
+		}
+	}
+
+	wantAbsent := []string{
+		// Published row has no publish button, archived row has no unpublish link.
+		//
+		// [Ja] 公開中の行に公開ボタンは無く、非公開の行に非公開リンクは無い。
+		`hx-delete="/db/works/1/archive"`,
+		`href="/db/works/2/archive/new"`,
+		// No admin-only delete buttons for either row.
+		//
+		// [Ja] どちらの行にも admin 専用の削除ボタンは無い。
+		`hx-delete="/db/works/1"`,
+		`hx-delete="/db/works/2"`,
+		"この作品を削除しますか",
+	}
+	for _, unexpected := range wantAbsent {
+		if strings.Contains(html, unexpected) {
+			t.Errorf("含まれてはいけない文字列が含まれています: %q", unexpected)
+		}
+	}
+}
+
+// TestIndex_ActionColumn_Admin verifies that an admin additionally sees the delete htmx DELETE
+// button (against the work path) on every row.
+//
+// [Ja] TestIndex_ActionColumn_Admin は admin がさらに各行に削除の htmx DELETE ボタン
+// (work パスへの DELETE) を見ることを検証する。
+func TestIndex_ActionColumn_Admin(t *testing.T) {
+	t.Parallel()
+
+	html := renderIndex(t, IndexPageData{
+		Works:       actionColumnWorks(),
+		Pagination:  viewmodel.NewPagination(1, 2, 30, "/db/works"),
+		IsCommitter: true,
+		IsAdmin:     true,
+		CSRFToken:   "test-csrf-token",
+	})
+
+	wantPresent := []string{
+		// Delete button on both rows targets the work path (distinct from the archive path).
+		//
+		// [Ja] 両行の削除ボタンは work パス (archive パスとは別) を DELETE 対象にする。
+		`hx-delete="/db/works/1"`,
+		`hx-delete="/db/works/2"`,
+		"この作品を削除しますか",
+		// The committer actions are still present.
+		//
+		// [Ja] committer の操作も引き続き表示される。
+		`href="/db/works/1/archive/new"`,
+		`hx-delete="/db/works/2/archive"`,
+		"X-CSRF-Token",
+	}
+	for _, expected := range wantPresent {
+		if !strings.Contains(html, expected) {
+			t.Errorf("期待する文字列が含まれていません: %q", expected)
+		}
+	}
+}
+
+// TestIndex_ActionColumn_Anonymous verifies that a signed-out or regular visitor sees no action
+// controls (the list itself stays public).
+//
+// [Ja] TestIndex_ActionColumn_Anonymous は未ログインや一般ユーザーが操作コントロールを一切
+// 見ない (一覧自体は公開のまま) ことを検証する。
+func TestIndex_ActionColumn_Anonymous(t *testing.T) {
+	t.Parallel()
+
+	html := renderIndex(t, IndexPageData{
+		Works:       actionColumnWorks(),
+		Pagination:  viewmodel.NewPagination(1, 2, 30, "/db/works"),
+		IsCommitter: false,
+		IsAdmin:     false,
+	})
+
+	wantAbsent := []string{
+		`href="/db/works/1/edit"`,
+		`href="/db/works/1/archive/new"`,
+		"hx-delete=",
+	}
+	for _, unexpected := range wantAbsent {
+		if strings.Contains(html, unexpected) {
+			t.Errorf("含まれてはいけない文字列が含まれています: %q", unexpected)
+		}
+	}
+}
+
 // TestIndex_FilterUI はリリース時期の複数選択と放送予定未登録チェックボックスの描画をテスト
 func TestIndex_FilterUI(t *testing.T) {
 	t.Parallel()

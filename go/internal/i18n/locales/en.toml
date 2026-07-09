@@ -1132,6 +1132,26 @@ other = "Open work {{.ID}} in a new tab"
 description = "Link from work list to edit form"
 other = "Edit"
 
+[db_works_index_archive_link]
+description = "Link from work list to the archive-confirmation screen (shown for published works)"
+other = "Unpublish"
+
+[db_works_index_publish_button]
+description = "Re-publish button on the work list (shown for archived works)"
+other = "Publish"
+
+[db_works_index_publish_confirm]
+description = "Confirmation dialog for the re-publish button on the work list"
+other = "Publish this work?"
+
+[db_works_index_delete_button]
+description = "Delete button on the work list (shown to admins)"
+other = "Delete"
+
+[db_works_index_delete_confirm]
+description = "Confirmation dialog for the delete button on the work list"
+other = "Delete this work?"
+
 [db_works_index_empty]
 description = "No works message"
 other = "No works found"
@@ -1390,6 +1410,26 @@ other = "No Episodes"
 description = "Submit button on the edit work page"
 other = "Update Work"
 
+[db_works_archive_new_title]
+description = "Title of the archive-confirmation page"
+other = "Archive Work"
+
+[db_works_archive_new_back_to_list_link]
+description = "Link from the archive-confirmation page back to the works index"
+other = "Back to List"
+
+[db_works_archive_new_confirm_message]
+description = "Confirmation message on the archive-confirmation page"
+other = "Archive “{{.Title}}”?"
+
+[db_works_archive_new_submit]
+description = "Execute button on the archive-confirmation page"
+other = "Archive"
+
+[db_works_archive_new_cancel_link]
+description = "Cancel link on the archive-confirmation page"
+other = "Cancel"
+
 # Flash messages - DB works related
 [flash_db_work_created]
 description = "Work creation success message"
@@ -1398,6 +1438,18 @@ other = "Work has been created successfully"
 [flash_db_work_updated]
 description = "Work update success message"
 other = "Work has been updated successfully"
+
+[flash_db_work_archived]
+description = "Work archive success message"
+other = "Work has been archived successfully"
+
+[flash_db_work_published]
+description = "Work re-publish success message"
+other = "Work has been published successfully"
+
+[flash_db_work_deleted]
+description = "Work deletion success message"
+other = "Work has been deleted successfully"
 
 # Validation common messages
 [validation_required]
