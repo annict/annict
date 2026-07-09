@@ -1131,6 +1131,26 @@ other = "作品 {{.ID}} を新しいタブで開く"
 description = "作品一覧から編集フォームへのリンク"
 other = "編集"
 
+[db_works_index_archive_link]
+description = "作品一覧から非公開確認画面へのリンク (公開中の作品に表示)"
+other = "非公開"
+
+[db_works_index_publish_button]
+description = "作品一覧の再公開ボタン (非公開の作品に表示)"
+other = "公開"
+
+[db_works_index_publish_confirm]
+description = "作品一覧の再公開ボタンの確認ダイアログ"
+other = "この作品を公開しますか？"
+
+[db_works_index_delete_button]
+description = "作品一覧の削除ボタン (管理者に表示)"
+other = "削除"
+
+[db_works_index_delete_confirm]
+description = "作品一覧の削除ボタンの確認ダイアログ"
+other = "この作品を削除しますか？"
+
 [db_works_index_empty]
 description = "作品なしメッセージ"
 other = "作品が見つかりませんでした"
@@ -1389,6 +1409,26 @@ other = "エピソードなし"
 description = "作品編集ページの送信ボタン"
 other = "作品を更新"
 
+[db_works_archive_new_title]
+description = "作品非公開確認ページのタイトル"
+other = "作品を非公開にする"
+
+[db_works_archive_new_back_to_list_link]
+description = "非公開確認ページから一覧ページへのリンク"
+other = "一覧に戻る"
+
+[db_works_archive_new_confirm_message]
+description = "非公開確認ページの確認メッセージ"
+other = "「{{.Title}}」を非公開にしますか？"
+
+[db_works_archive_new_submit]
+description = "非公開確認ページの実行ボタン"
+other = "非公開にする"
+
+[db_works_archive_new_cancel_link]
+description = "非公開確認ページのキャンセルリンク"
+other = "キャンセル"
+
 # フラッシュメッセージ - DB作品関連
 [flash_db_work_created]
 description = "作品作成成功メッセージ"
@@ -1397,6 +1437,18 @@ other = "作品を作成しました"
 [flash_db_work_updated]
 description = "作品更新成功メッセージ"
 other = "作品を更新しました"
+
+[flash_db_work_archived]
+description = "作品非公開成功メッセージ"
+other = "作品を非公開にしました"
+
+[flash_db_work_published]
+description = "作品再公開成功メッセージ"
+other = "作品を公開しました"
+
+[flash_db_work_deleted]
+description = "作品削除成功メッセージ"
+other = "作品を削除しました"
 
 # バリデーション共通メッセージ
 [validation_required]
