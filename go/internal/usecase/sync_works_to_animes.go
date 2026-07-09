@@ -323,12 +323,16 @@ func (uc *SyncWorksToAnimesUsecase) applyPlan(ctx context.Context, plan workAnim
 }
 
 // animeCreateParamsFromWork maps a work onto the layer-1 anime attributes for a fresh
-// insert. The columns animes does not source from works (title_alter_ro /
-// title_alter_other / release_status) stay at their zero value (NULL).
+// insert. status is derived from the work's unpublished_at / deleted_at timestamps
+// (not the dormant works.status). The columns animes does not source from works
+// (title_alter_ro / title_alter_other / release_status / archive_message) stay at
+// their zero value (NULL); archive_message is animes-only and never sourced here.
 //
 // [Ja] animeCreateParamsFromWork は work を新規挿入用の第 1 層 anime 属性に写像する。
-// animes が works から取り込まないカラム (title_alter_ro / title_alter_other /
-// release_status) はゼロ値 (NULL) のまま残す。
+// status は work の unpublished_at / deleted_at タイムスタンプから導出する (休眠している
+// works.status ではない)。animes が works から取り込まないカラム (title_alter_ro /
+// title_alter_other / release_status / archive_message) はゼロ値 (NULL) のまま残す。
+// archive_message は animes 専用でここでは源泉としない。
 func animeCreateParamsFromWork(w *model.Work) repository.CreateAnimeParams {
 	return repository.CreateAnimeParams{
 		Title:            nullStringFromNonEmpty(w.Title),
@@ -342,18 +346,22 @@ func animeCreateParamsFromWork(w *model.Work) repository.CreateAnimeParams {
 		SynopsisEn:       nullStringFromNonEmpty(w.SynopsisEn),
 		SynopsisSource:   nullStringFromNonEmpty(w.SynopsisSource),
 		SynopsisSourceEn: nullStringFromNonEmpty(w.SynopsisSourceEn),
-		Status:           workStatusToAnimeStatus(w.Status),
-		ArchiveMessage:   nullStringFromStringPtr(w.ArchiveMessage),
+		Status:           animeStatusFromWorkStatus(w.DerivedStatus()),
+		ArchiveMessage:   sql.NullString{},
 	}
 }
 
 // animeUpdateParamsFromWork maps a work onto the layer-1 anime attributes for an
-// update. The columns animes does not source from works are carried over from the
-// existing row so the sync never clobbers editor-set values (release_status etc.).
+// update. status is derived from the work's unpublished_at / deleted_at timestamps
+// (not the dormant works.status). The columns animes does not source from works
+// (release_status / archive_message etc.) are carried over from the existing row so
+// the sync never clobbers editor-set values; archive_message is animes-only.
 //
 // [Ja] animeUpdateParamsFromWork は work を更新用の第 1 層 anime 属性に写像する。
-// animes が works から取り込まないカラムは既存行から引き継ぎ、同期が編集者の設定値
-// (release_status など) を上書きしないようにする。
+// status は work の unpublished_at / deleted_at タイムスタンプから導出する (休眠している
+// works.status ではない)。animes が works から取り込まないカラム (release_status /
+// archive_message など) は既存行から引き継ぎ、同期が編集者の設定値を上書きしないように
+// する。archive_message は animes 専用。
 func animeUpdateParamsFromWork(w *model.Work, existing *model.Anime) repository.UpdateAnimeParams {
 	return repository.UpdateAnimeParams{
 		ID:               existing.ID,
@@ -371,8 +379,8 @@ func animeUpdateParamsFromWork(w *model.Work, existing *model.Anime) repository.
 		SynopsisEn:       nullStringFromNonEmpty(w.SynopsisEn),
 		SynopsisSource:   nullStringFromNonEmpty(w.SynopsisSource),
 		SynopsisSourceEn: nullStringFromNonEmpty(w.SynopsisSourceEn),
-		Status:           workStatusToAnimeStatus(w.Status),
-		ArchiveMessage:   nullStringFromStringPtr(w.ArchiveMessage),
+		Status:           animeStatusFromWorkStatus(w.DerivedStatus()),
+		ArchiveMessage:   existing.ArchiveMessage,
 	}
 }
 
@@ -469,19 +477,23 @@ func mediaToAnimeMedia(media int32) model.AnimeMedia {
 	}
 }
 
-// workStatusToAnimeStatus maps work_status onto anime_status. The three work values
-// are a subset of anime_status; merged is anime-only and never produced here.
+// animeStatusFromWorkStatus maps a work's derived lifecycle status onto the anime
+// status enum. It is a pure enum adapter, like mediaToAnimeMedia: the
+// timestamp-to-status priority lives in model.Work.DerivedStatus, so an animes-first
+// write of status = archived / deleted is not clobbered back to published on the next
+// reconciliation. merged is anime-only and never produced from a work.
 //
-// [Ja] workStatusToAnimeStatus は work_status を anime_status に写像する。work の 3 値は
-// anime_status の部分集合で、merged は anime 専用でありここでは生成されない。
-func workStatusToAnimeStatus(status model.WorkStatus) model.AnimeStatus {
-	switch status {
-	case model.WorkStatusPublished:
-		return model.AnimeStatusPublished
-	case model.WorkStatusArchived:
-		return model.AnimeStatusArchived
+// [Ja] animeStatusFromWorkStatus は work の導出ライフサイクル状態を anime の status
+// enum に写像する。mediaToAnimeMedia と同じ純粋な enum アダプタで、timestamps から
+// status への優先順位は model.Work.DerivedStatus に集約されているため、animes ベースで
+// status = archived / deleted を書いても次回のリコンシリエーションで published に戻され
+// ない。merged は anime 専用で work からは生成されない。
+func animeStatusFromWorkStatus(s model.WorkStatus) model.AnimeStatus {
+	switch s {
 	case model.WorkStatusDeleted:
 		return model.AnimeStatusDeleted
+	case model.WorkStatusArchived:
+		return model.AnimeStatusArchived
 	default:
 		return model.AnimeStatusPublished
 	}

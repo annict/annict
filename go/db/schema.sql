@@ -195,17 +195,6 @@ CREATE TYPE public.season_name AS ENUM (
 
 
 --
--- Name: work_status; Type: TYPE; Schema: public; Owner: -
---
-
-CREATE TYPE public.work_status AS ENUM (
-    'published',
-    'archived',
-    'deleted'
-);
-
-
---
 -- Name: river_job_state_in_bitmask(bit, public.river_job_state); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -3734,8 +3723,6 @@ CREATE TABLE public.works (
     title_alter character varying DEFAULT ''::character varying NOT NULL,
     title_alter_en character varying DEFAULT ''::character varying NOT NULL,
     unpublished_at timestamp without time zone,
-    status public.work_status DEFAULT 'published'::public.work_status NOT NULL,
-    archive_message character varying,
     anime_id bigint
 );
 
@@ -7105,13 +7092,6 @@ CREATE INDEX index_works_on_season_year_and_season_name ON public.works USING bt
 
 
 --
--- Name: index_works_on_status; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_works_on_status ON public.works USING btree (status) WHERE (status = 'published'::public.work_status);
-
-
---
 -- Name: index_works_on_unpublished_at; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -8671,4 +8651,5 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20260627103815'),
     ('20260627190207'),
     ('20260708101249'),
-    ('20260708153526');
+    ('20260708153526'),
+    ('20260709095705');

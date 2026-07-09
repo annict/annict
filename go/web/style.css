@@ -86,6 +86,35 @@
   }
 }
 
+/*
+  Custom success / warning button variants, matching the badge variants above.
+  Basecoat 1.0 has no success / warning button variant, so mirror the built-in
+  destructive button's soft-tinted treatment (10% tint at rest, 20% on hover,
+  a tinted focus ring) using the project's `--success` / `--warning` variables.
+  This keeps the work-list action buttons (unpublish = warning, publish =
+  success) visually consistent with the destructive delete button beside them.
+
+  [Ja] 上のバッジバリアントに対応する success / warning 用の独自ボタンバリアント。
+  Basecoat 1.0 は success / warning のボタンバリアントを持たないため、組み込みの
+  destructive ボタンの淡い塗り (通常時 10%・hover 時 20%・淡いフォーカスリング) を
+  プロジェクトの `--success` / `--warning` 変数で再現する。作品一覧の操作ボタン
+  (非公開 = warning・公開 = success) を、隣の destructive な削除ボタンと視覚的に
+  揃えるためのもの。
+*/
+@layer components {
+  .btn[data-variant="success"] {
+    @apply bg-success/10 text-success hover:bg-success/20;
+    @apply focus-visible:border-success/40 focus-visible:ring-success/20;
+    @apply dark:bg-success/20 dark:hover:bg-success/30 dark:focus-visible:ring-success/40;
+  }
+
+  .btn[data-variant="warning"] {
+    @apply bg-warning/10 text-warning hover:bg-warning/20;
+    @apply focus-visible:border-warning/40 focus-visible:ring-warning/20;
+    @apply dark:bg-warning/20 dark:hover:bg-warning/30 dark:focus-visible:ring-warning/40;
+  }
+}
+
 :root {
   /* Basecoatの変数上書き */
   --background: var(--color-stone-100);

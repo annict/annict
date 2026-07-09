@@ -21,6 +21,7 @@ import (
 	"github.com/annict/annict/go/internal/config"
 	"github.com/annict/annict/go/internal/dispatcher"
 	"github.com/annict/annict/go/internal/handler/db_work"
+	"github.com/annict/annict/go/internal/handler/db_work_archive"
 	"github.com/annict/annict/go/internal/handler/health"
 	"github.com/annict/annict/go/internal/handler/home"
 	"github.com/annict/annict/go/internal/handler/ics"
@@ -610,15 +611,24 @@ func runServe() {
 	}
 	createWorkUC := usecase.NewCreateWorkUsecase(db, workRepo, animeRepo, animeClassificationRepo, satelliteRepos, validator.NewDBWorkCreateValidator())
 	updateWorkUC := usecase.NewUpdateWorkUsecase(db, workRepo, animeRepo, animeClassificationRepo, satelliteRepos, validator.NewDBWorkCreateValidator())
-	dbWorkHandler := db_work.NewHandler(cfg, sessionManager, flashMgr, imageHelper, getDBWorksUC, getDBWorkFormOptionsUC, getDBWorkEditUC, createWorkUC, updateWorkUC)
+	deleteWorkUC := usecase.NewDeleteWorkUsecase(db, workRepo, animeRepo)
+	dbWorkHandler := db_work.NewHandler(cfg, sessionManager, flashMgr, imageHelper, getDBWorksUC, getDBWorkFormOptionsUC, getDBWorkEditUC, createWorkUC, updateWorkUC, deleteWorkUC)
+	getDBWorkArchiveNewUC := usecase.NewGetDBWorkArchiveNewUsecase(workRepo)
+	archiveWorkUC := usecase.NewArchiveWorkUsecase(db, workRepo, animeRepo)
+	unarchiveWorkUC := usecase.NewUnarchiveWorkUsecase(db, workRepo, animeRepo)
+	dbWorkArchiveHandler := db_work_archive.NewHandler(cfg, sessionManager, flashMgr, getDBWorkArchiveNewUC, archiveWorkUC, unarchiveWorkUC)
 	// The work index is public (anyone, including signed-out visitors, may browse it;
-	// the template hides committer-only action buttons). Creating and editing works
-	// require the committer role, so New / Create / Edit / Update are grouped behind
-	// RequireCommitter.
+	// the template hides committer-only action buttons). Creating, editing, archiving and
+	// re-publishing works require the committer role, so New / Create / Edit / Update and
+	// the archive confirmation / archive / un-archive endpoints are grouped behind
+	// RequireCommitter. Deleting a work is admin-only (ADR 0009 splits archived=committer /
+	// deleted=admin), so it is gated separately behind RequireAdmin.
 	//
 	// [Ja] 作品一覧は公開 (未ログインを含め誰でも閲覧可。committer 限定の操作ボタンは
-	// テンプレートで出し分ける)。作品の作成・編集は committer ロールを要するため、
-	// New / Create / Edit / Update を RequireCommitter でまとめてゲートする。
+	// テンプレートで出し分ける)。作品の作成・編集・非公開・再公開は committer ロールを要する
+	// ため、New / Create / Edit / Update と非公開の確認 / 実行 / 再公開エンドポイントを
+	// RequireCommitter でまとめてゲートする。作品の削除は admin 専用のため
+	// (ADR 0009 で archived=committer / deleted=admin に権限分離)、RequireAdmin で別途ゲートする。
 	r.Get("/db/works", dbWorkHandler.Index)
 	r.Group(func(r chi.Router) {
 		r.Use(authMiddleware.RequireCommitter)
@@ -626,6 +636,13 @@ func runServe() {
 		r.Post("/db/works", dbWorkHandler.Create)
 		r.Get("/db/works/{id}/edit", dbWorkHandler.Edit)
 		r.Patch("/db/works/{id}", dbWorkHandler.Update)
+		r.Get("/db/works/{id}/archive/new", dbWorkArchiveHandler.New)
+		r.Post("/db/works/{id}/archive", dbWorkArchiveHandler.Create)
+		r.Delete("/db/works/{id}/archive", dbWorkArchiveHandler.Delete)
+	})
+	r.Group(func(r chi.Router) {
+		r.Use(authMiddleware.RequireAdmin)
+		r.Delete("/db/works/{id}", dbWorkHandler.Delete)
 	})
 
 	// iCalendar配信

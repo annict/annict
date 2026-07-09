@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"testing"
+	"time"
 
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
@@ -30,8 +31,8 @@ type syncWorkInput struct {
 	synopsisEn            string
 	synopsisSource        string
 	synopsisSourceEn      string
-	status                string
-	archiveMessage        sql.NullString
+	unpublishedAt         sql.NullTime
+	deletedAt             sql.NullTime
 	noEpisodes            bool
 	manualEpisodesCount   sql.NullInt32
 	startEpisodeRawNumber float64
@@ -46,7 +47,6 @@ func defaultSyncWorkInput() syncWorkInput {
 	return syncWorkInput{
 		title:                 "テストアニメ",
 		media:                 workMediaTV,
-		status:                "published",
 		startEpisodeRawNumber: 1.0,
 	}
 }
@@ -59,19 +59,19 @@ func insertSyncWork(t *testing.T, db *sql.DB, in syncWorkInput) model.WorkID {
 		INSERT INTO works (
 			title, title_kana, title_ro, title_en, title_alter, title_alter_en,
 			media, synopsis, synopsis_en, synopsis_source, synopsis_source_en,
-			status, archive_message, no_episodes, manual_episodes_count,
-			start_episode_raw_number, anime_id, created_at, updated_at
+			unpublished_at, deleted_at, no_episodes,
+			manual_episodes_count, start_episode_raw_number, anime_id, created_at, updated_at
 		) VALUES (
 			$1, $2, $3, $4, $5, $6,
 			$7, $8, $9, $10, $11,
-			$12, $13, $14, $15,
-			$16, $17, NOW(), NOW()
+			$12, $13, $14,
+			$15, $16, $17, NOW(), NOW()
 		) RETURNING id
 	`,
 		in.title, in.titleKana, in.titleRo, in.titleEn, in.titleAlter, in.titleAlterEn,
 		in.media, in.synopsis, in.synopsisEn, in.synopsisSource, in.synopsisSourceEn,
-		in.status, in.archiveMessage, in.noEpisodes, in.manualEpisodesCount,
-		in.startEpisodeRawNumber, in.animeID,
+		in.unpublishedAt, in.deletedAt, in.noEpisodes,
+		in.manualEpisodesCount, in.startEpisodeRawNumber, in.animeID,
 	).Scan(&id)
 	if err != nil {
 		t.Fatalf("works の挿入に失敗: %v", err)
@@ -403,6 +403,175 @@ func TestSyncWorksToAnimesUsecase_Execute_RecreatesMissingClassification(t *test
 	}
 }
 
+func TestSyncWorksToAnimesUsecase_Execute_CreatesArchivedAnimeForUnpublishedWork(t *testing.T) {
+	t.Parallel()
+
+	db := testutil.GetTestDB()
+	uc := newSyncUsecase(db)
+
+	// works.unpublished_at set (archived at the work level) must map to
+	// anime.status = archived, not published.
+	//
+	// [Ja] works.unpublished_at が立っている (作品レベルで非公開) 場合は
+	// anime.status = archived に写像され、published にはならない。
+	in := defaultSyncWorkInput()
+	in.unpublishedAt = sql.NullTime{Time: time.Now(), Valid: true}
+	workID := insertSyncWork(t, db, in)
+
+	if _, err := uc.Execute(context.Background(), SyncWorksToAnimesInput{WorkIDs: []model.WorkID{workID}}); err != nil {
+		t.Fatalf("Execute() error = %v", err)
+	}
+
+	work := reloadSyncWork(t, db, workID)
+	animeRepo := repository.NewAnimeRepository(query.New(db))
+	anime, err := animeRepo.GetByID(context.Background(), *work.AnimeID)
+	if err != nil || anime == nil {
+		t.Fatalf("GetByID() anime=%v err=%v", anime, err)
+	}
+	if anime.Status != model.AnimeStatusArchived {
+		t.Errorf("anime.Status = %q, want archived (works.unpublished_at set)", anime.Status)
+	}
+}
+
+func TestSyncWorksToAnimesUsecase_Execute_CreatesDeletedAnimeForDeletedWork(t *testing.T) {
+	t.Parallel()
+
+	db := testutil.GetTestDB()
+	uc := newSyncUsecase(db)
+
+	// works.deleted_at set (soft-deleted at the work level) must map to
+	// anime.status = deleted.
+	//
+	// [Ja] works.deleted_at が立っている (作品レベルでソフトデリート) 場合は
+	// anime.status = deleted に写像される。
+	in := defaultSyncWorkInput()
+	in.deletedAt = sql.NullTime{Time: time.Now(), Valid: true}
+	workID := insertSyncWork(t, db, in)
+
+	if _, err := uc.Execute(context.Background(), SyncWorksToAnimesInput{WorkIDs: []model.WorkID{workID}}); err != nil {
+		t.Fatalf("Execute() error = %v", err)
+	}
+
+	work := reloadSyncWork(t, db, workID)
+	animeRepo := repository.NewAnimeRepository(query.New(db))
+	anime, err := animeRepo.GetByID(context.Background(), *work.AnimeID)
+	if err != nil || anime == nil {
+		t.Fatalf("GetByID() anime=%v err=%v", anime, err)
+	}
+	if anime.Status != model.AnimeStatusDeleted {
+		t.Errorf("anime.Status = %q, want deleted (works.deleted_at set)", anime.Status)
+	}
+}
+
+func TestSyncWorksToAnimesUsecase_Execute_ReconcilesWorkStateChangeToAnime(t *testing.T) {
+	t.Parallel()
+
+	db := testutil.GetTestDB()
+	uc := newSyncUsecase(db)
+
+	workID := insertSyncWork(t, db, defaultSyncWorkInput())
+	if _, err := uc.Execute(context.Background(), SyncWorksToAnimesInput{WorkIDs: []model.WorkID{workID}}); err != nil {
+		t.Fatalf("first Execute() error = %v", err)
+	}
+	work := reloadSyncWork(t, db, workID)
+	animeID := *work.AnimeID
+	animeRepo := repository.NewAnimeRepository(query.New(db))
+
+	// Setting works.unpublished_at must drive a reconciliation to anime.status =
+	// archived (the state derivation propagates work-level changes to animes).
+	//
+	// [Ja] works.unpublished_at を立てると anime.status = archived へリコンサイルされる
+	// (状態導出が作品レベルの変更を animes へ伝播する)。
+	if _, err := db.Exec(`UPDATE works SET unpublished_at = NOW() WHERE id = $1`, int64(workID)); err != nil {
+		t.Fatalf("works.unpublished_at の更新に失敗: %v", err)
+	}
+	result, err := uc.Execute(context.Background(), SyncWorksToAnimesInput{WorkIDs: []model.WorkID{workID}})
+	if err != nil {
+		t.Fatalf("Execute() error = %v", err)
+	}
+	if result.Updated != 1 {
+		t.Fatalf("result.Updated = %d, want 1 (unpublished_at reconciled)", result.Updated)
+	}
+	anime, err := animeRepo.GetByID(context.Background(), animeID)
+	if err != nil || anime == nil {
+		t.Fatalf("GetByID() anime=%v err=%v", anime, err)
+	}
+	if anime.Status != model.AnimeStatusArchived {
+		t.Errorf("anime.Status = %q, want archived", anime.Status)
+	}
+
+	// Then setting works.deleted_at must reconcile anime.status = deleted (deleted_at
+	// wins over unpublished_at).
+	//
+	// [Ja] 続けて works.deleted_at を立てると anime.status = deleted へリコンサイルされる
+	// (deleted_at が unpublished_at より優先される)。
+	if _, err := db.Exec(`UPDATE works SET deleted_at = NOW() WHERE id = $1`, int64(workID)); err != nil {
+		t.Fatalf("works.deleted_at の更新に失敗: %v", err)
+	}
+	result, err = uc.Execute(context.Background(), SyncWorksToAnimesInput{WorkIDs: []model.WorkID{workID}})
+	if err != nil {
+		t.Fatalf("Execute() error = %v", err)
+	}
+	if result.Updated != 1 {
+		t.Fatalf("result.Updated = %d, want 1 (deleted_at reconciled)", result.Updated)
+	}
+	anime, err = animeRepo.GetByID(context.Background(), animeID)
+	if err != nil || anime == nil {
+		t.Fatalf("GetByID() anime=%v err=%v", anime, err)
+	}
+	if anime.Status != model.AnimeStatusDeleted {
+		t.Errorf("anime.Status = %q, want deleted", anime.Status)
+	}
+}
+
+func TestSyncWorksToAnimesUsecase_Execute_DoesNotClobberAnimeArchivedState(t *testing.T) {
+	t.Parallel()
+
+	db := testutil.GetTestDB()
+	uc := newSyncUsecase(db)
+
+	workID := insertSyncWork(t, db, defaultSyncWorkInput())
+	if _, err := uc.Execute(context.Background(), SyncWorksToAnimesInput{WorkIDs: []model.WorkID{workID}}); err != nil {
+		t.Fatalf("first Execute() error = %v", err)
+	}
+	work := reloadSyncWork(t, db, workID)
+	animeID := *work.AnimeID
+	animeRepo := repository.NewAnimeRepository(query.New(db))
+
+	// Simulate the animes-first + works two-write archive path: animes.status is set
+	// to archived and works.unpublished_at is set together. This is the invariant the
+	// derivation fix protects: the reconciler must derive archived from
+	// works.unpublished_at (not the dormant works.status, which stays published) and
+	// therefore leave animes.status = archived untouched instead of reverting it.
+	//
+	// [Ja] animes-first + works 両書きによる非公開経路を再現する。animes.status を
+	// archived に、works.unpublished_at を同時に立てる。これは導出の是正が守る不変条件で、
+	// リコンシラーは archived を works.unpublished_at から導出し (published のままの休眠
+	// works.status ではなく)、animes.status = archived を published に戻さず据え置く。
+	if _, err := db.Exec(`UPDATE works SET unpublished_at = NOW() WHERE id = $1`, int64(workID)); err != nil {
+		t.Fatalf("works.unpublished_at の更新に失敗: %v", err)
+	}
+	if _, err := db.Exec(`UPDATE animes SET status = 'archived' WHERE id = $1`, int64(animeID)); err != nil {
+		t.Fatalf("animes.status の更新に失敗: %v", err)
+	}
+
+	result, err := uc.Execute(context.Background(), SyncWorksToAnimesInput{WorkIDs: []model.WorkID{workID}})
+	if err != nil {
+		t.Fatalf("Execute() error = %v", err)
+	}
+	if result.Unchanged != 1 || result.Updated != 0 {
+		t.Fatalf("result = %+v, want {Unchanged:1 Updated:0} (no clobber)", result)
+	}
+
+	anime, err := animeRepo.GetByID(context.Background(), animeID)
+	if err != nil || anime == nil {
+		t.Fatalf("GetByID() anime=%v err=%v", anime, err)
+	}
+	if anime.Status != model.AnimeStatusArchived {
+		t.Errorf("anime.Status = %q, want archived (must not be clobbered to published)", anime.Status)
+	}
+}
+
 func TestPlanWorkAnimeSync_CreatesAnimeWhenMappedRowMissing(t *testing.T) {
 	t.Parallel()
 
@@ -420,7 +589,6 @@ func TestPlanWorkAnimeSync_CreatesAnimeWhenMappedRowMissing(t *testing.T) {
 		ID:                    model.WorkID(1),
 		Title:                 "宙ぶらりん作品",
 		Media:                 workMediaTV,
-		Status:                model.WorkStatusPublished,
 		StartEpisodeRawNumber: 1,
 		AnimeID:               &danglingAnimeID,
 	}
@@ -468,7 +636,14 @@ func TestMediaToAnimeMedia(t *testing.T) {
 	}
 }
 
-func TestWorkStatusToAnimeStatus(t *testing.T) {
+// TestAnimeStatusFromWorkStatus verifies the pure enum adapter that maps a work's
+// derived lifecycle status onto the anime status enum. The timestamp-to-status priority
+// itself is owned by model.Work.DerivedStatus and covered by TestWork_DerivedStatus.
+//
+// [Ja] TestAnimeStatusFromWorkStatus は work の導出ライフサイクル状態を anime の status
+// enum に写像する純粋な enum アダプタを検証する。timestamps から status への優先順位自体は
+// model.Work.DerivedStatus が持ち、TestWork_DerivedStatus で担保する。
+func TestAnimeStatusFromWorkStatus(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
@@ -478,11 +653,12 @@ func TestWorkStatusToAnimeStatus(t *testing.T) {
 		{model.WorkStatusPublished, model.AnimeStatusPublished},
 		{model.WorkStatusArchived, model.AnimeStatusArchived},
 		{model.WorkStatusDeleted, model.AnimeStatusDeleted},
-		{model.WorkStatus(""), model.AnimeStatusPublished},
 	}
 	for _, tt := range tests {
-		if got := workStatusToAnimeStatus(tt.status); got != tt.want {
-			t.Errorf("workStatusToAnimeStatus(%q) = %q, want %q", tt.status, got, tt.want)
-		}
+		t.Run(tt.status.String(), func(t *testing.T) {
+			if got := animeStatusFromWorkStatus(tt.status); got != tt.want {
+				t.Errorf("animeStatusFromWorkStatus(%q) = %q, want %q", tt.status, got, tt.want)
+			}
+		})
 	}
 }

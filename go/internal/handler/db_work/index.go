@@ -6,6 +6,7 @@ import (
 	"net/url"
 	"strconv"
 
+	"github.com/annict/annict/go/internal/middleware"
 	"github.com/annict/annict/go/internal/templates/layouts"
 	"github.com/annict/annict/go/internal/templates/pages/db_works"
 	"github.com/annict/annict/go/internal/usecase"
@@ -55,6 +56,15 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 
 	worksVM := viewmodel.NewDBWorkListItems(ctx, result.Works, h.imageHelper)
 
+	// The work list is public, so resolve the viewer's role to gate the action column: the
+	// edit / unpublish / publish actions require committer, delete requires admin. The CSRF
+	// token rides in the X-CSRF-Token header of the htmx DELETE actions (publish / delete).
+	//
+	// [Ja] 作品一覧は公開のため、閲覧者のロールを解決して操作列を出し分ける。編集・非公開・
+	// 公開の操作は committer、削除は admin を要する。CSRF トークンは htmx の DELETE 操作
+	// (公開 / 削除) の X-CSRF-Token ヘッダーで送る。
+	user := middleware.GetUserFromContext(ctx)
+
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	component := layouts.Db(
 		meta,
@@ -67,6 +77,9 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 			FilterNoSeason:      filterNoSeason,
 			FilterNoSlots:       filterNoSlots,
 			SeasonFilterOptions: viewmodel.NewSeasonFilterOptions(ctx, seasonSlugs),
+			IsCommitter:         middleware.IsCommitter(user),
+			IsAdmin:             middleware.IsAdmin(user),
+			CSRFToken:           middleware.GetCSRFToken(r, h.sessionManager),
 		}),
 	)
 	if err := component.Render(ctx, w); err != nil {

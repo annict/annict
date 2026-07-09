@@ -50,6 +50,24 @@ func DBWorkEditPath(id viewmodel.WorkID) Path {
 	return Path(fmt.Sprintf("/db/works/%s/edit", id))
 }
 
+// DBWorkArchivePath builds the path for archiving a work in the Annict DB admin UI, used
+// as the archive-confirmation form's POST action and as the DELETE target for re-publishing.
+//
+// [Ja] DBWorkArchivePath はDB管理画面で作品を非公開にするパスを生成します。非公開確認
+// フォームの POST 先、および再公開の DELETE 先として使います。
+func DBWorkArchivePath(id viewmodel.WorkID) Path {
+	return Path(fmt.Sprintf("/db/works/%s/archive", id))
+}
+
+// DBWorkArchiveNewPath builds the path for the archive-confirmation screen in the Annict DB
+// admin UI, linked from the work list's unpublish action.
+//
+// [Ja] DBWorkArchiveNewPath はDB管理画面の非公開確認画面のパスを生成します。作品一覧の
+// 非公開操作からリンクします。
+func DBWorkArchiveNewPath(id viewmodel.WorkID) Path {
+	return Path(fmt.Sprintf("/db/works/%s/archive/new", id))
+}
+
 // DBWorkEpisodesPath builds the path for a work's episode list in the Annict DB admin UI.
 //
 // [Ja] DBWorkEpisodesPath はDB管理画面の作品のエピソード一覧のパスを生成します。

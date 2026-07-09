@@ -36,15 +36,21 @@ type WorkBuilder struct {
 	media      int32
 	seasonName int32 // enum値 (1:winter, 2:spring, 3:summer, 4:autumn)
 	seasonYear int32
-	noSeason   bool   // trueの場合、season_year/season_nameをNULLにする
-	noEpisodes bool   // no_episodesカラムの値
-	status     string // work_status enum: published, archived, deleted
+	noSeason   bool // trueの場合、season_year/season_nameをNULLにする
+	noEpisodes bool // no_episodesカラムの値
 	// External-service ids (nullable). nil leaves the column NULL.
 	//
 	// [Ja] 外部サービスの ID (NULL 許容)。nil の場合はカラムを NULL のままにする。
 	scTid         *int32
 	malAnimeID    *int32
 	watchersCount int32
+	// unpublishedAt / deletedAt set the Unpublishable / SoftDeletable state
+	// columns. nil leaves the column NULL (published / not deleted).
+	//
+	// [Ja] unpublishedAt / deletedAt は Unpublishable / SoftDeletable の状態カラムを
+	// 設定します。nil の場合はカラムを NULL のまま (公開 / 未削除) にします。
+	unpublishedAt *time.Time
+	deletedAt     *time.Time
 }
 
 // NewWorkBuilder は新しいWorkBuilderを作成します
@@ -56,7 +62,6 @@ func NewWorkBuilder(t *testing.T, tx *sql.Tx) *WorkBuilder {
 		title:         "テストアニメ",
 		seasonName:    SeasonSpring,
 		seasonYear:    2024,
-		status:        "published",
 		watchersCount: 100,
 	}
 }
@@ -134,9 +139,23 @@ func (b *WorkBuilder) WithNoEpisodes(noEpisodes bool) *WorkBuilder {
 	return b
 }
 
-// WithStatus はステータスを設定します（published, archived, deleted）
-func (b *WorkBuilder) WithStatus(status string) *WorkBuilder {
-	b.status = status
+// WithUnpublishedAt sets works.unpublished_at, marking the work as archived
+// (Unpublishable). The default leaves it NULL (published).
+//
+// [Ja] WithUnpublishedAt は works.unpublished_at を設定し、作品を非公開 (アーカイブ、
+// Unpublishable) とします。既定では NULL (公開) のままにします。
+func (b *WorkBuilder) WithUnpublishedAt(unpublishedAt time.Time) *WorkBuilder {
+	b.unpublishedAt = &unpublishedAt
+	return b
+}
+
+// WithDeletedAt sets works.deleted_at, marking the work as soft-deleted
+// (SoftDeletable). The default leaves it NULL (not deleted).
+//
+// [Ja] WithDeletedAt は works.deleted_at を設定し、作品をソフトデリート
+// (SoftDeletable) とします。既定では NULL (未削除) のままにします。
+func (b *WorkBuilder) WithDeletedAt(deletedAt time.Time) *WorkBuilder {
+	b.deletedAt = &deletedAt
 	return b
 }
 
@@ -155,12 +174,14 @@ func (b *WorkBuilder) Build() model.WorkID {
 			title, title_kana, title_en, media, official_site_url,
 			wikipedia_url, season_year, season_name,
 			watchers_count, episodes_count, no_episodes,
-			status, sc_tid, mal_anime_id, created_at, updated_at
+			sc_tid, mal_anime_id, unpublished_at, deleted_at,
+			created_at, updated_at
 		) VALUES (
 			$1, $2, $3, $4, $5,
 			$6, $7, $8,
 			$9, $10, $11,
-			$12, $13, $14, $15, $16
+			$12, $13, $14, $15,
+			$16, $17
 		) RETURNING id
 	`
 
@@ -181,6 +202,14 @@ func (b *WorkBuilder) Build() model.WorkID {
 		malAnimeID = *b.malAnimeID
 	}
 
+	var unpublishedAt, deletedAt interface{}
+	if b.unpublishedAt != nil {
+		unpublishedAt = *b.unpublishedAt
+	}
+	if b.deletedAt != nil {
+		deletedAt = *b.deletedAt
+	}
+
 	var id int64
 	err := b.tx.QueryRow(
 		q,
@@ -195,11 +224,12 @@ func (b *WorkBuilder) Build() model.WorkID {
 		b.watchersCount, // $9 watchers_count
 		12,              // $10 episodes_count
 		b.noEpisodes,    // $11 no_episodes
-		b.status,        // $12 status
-		scTid,           // $13 sc_tid (nullable)
-		malAnimeID,      // $14 mal_anime_id (nullable)
-		time.Now(),      // $15 created_at
-		time.Now(),      // $16 updated_at
+		scTid,           // $12 sc_tid (nullable)
+		malAnimeID,      // $13 mal_anime_id (nullable)
+		unpublishedAt,   // $14 unpublished_at (nullable)
+		deletedAt,       // $15 deleted_at (nullable)
+		time.Now(),      // $16 created_at
+		time.Now(),      // $17 updated_at
 	).Scan(&id)
 
 	if err != nil {

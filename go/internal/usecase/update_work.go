@@ -71,14 +71,16 @@ func (uc *UpdateWorkUsecase) Execute(ctx context.Context, input UpdateWorkInput)
 
 	// Load the work being edited via the anime-sync projection: it carries the
 	// works.anime_id mapping and the anime-mapped columns the edit form does not touch
-	// (title_ro / status / archive_message), both needed to update the mapped anime
-	// without clobbering those columns. An empty result means the work was deleted
-	// between the edit GET and this PATCH.
+	// (title_ro / archive_message / the work-state source unpublished_at / deleted_at,
+	// from which anime.status is derived), both needed to update the mapped anime without
+	// clobbering those columns. An empty result means the work was deleted between the
+	// edit GET and this PATCH.
 	//
 	// [Ja] 編集対象の work を anime 同期の射影で読み込む。これは works.anime_id の
-	// マッピングと、編集フォームが触れない anime 写像カラム (title_ro / status /
-	// archive_message) を持ち、いずれもマッピング済み anime をそれらのカラムを潰さずに
-	// 更新するために要る。結果が空の場合は編集 GET とこの PATCH の間に work が削除された。
+	// マッピングと、編集フォームが触れない anime 写像カラム (title_ro / archive_message /
+	// anime.status の導出源である作品状態の source unpublished_at / deleted_at) を持ち、
+	// いずれもマッピング済み anime をそれらのカラムを潰さずに更新するために要る。結果が
+	// 空の場合は編集 GET とこの PATCH の間に work が削除された。
 	works, err := uc.workRepo.ListForAnimeSyncByIDs(ctx, []model.WorkID{input.WorkID})
 	if err != nil {
 		return nil, fmt.Errorf("作品の取得に失敗しました: %w", err)
@@ -210,20 +212,25 @@ func (uc *UpdateWorkUsecase) updateWork(ctx context.Context, params repository.U
 
 // workFromUpdateWorkParams projects an UpdateWorkParams onto a *model.Work by reusing
 // workFromCreateWorkParams for the form columns, then carrying over the anime-mapped
-// columns the edit form does not submit (title_ro / status / archive_message) from the
-// current works row. The update never changes those columns, so the updated anime mirrors
-// the post-update works row and the sync right after the update reports Unchanged.
+// columns the edit form does not submit from the current works row: title_ro and the
+// work-state source (unpublished_at / deleted_at), from which animeUpdateParamsFromWork
+// derives anime.status. Carrying the state timestamps over is
+// what keeps a content edit from clobbering an archived / deleted anime back to published.
+// The update never changes those columns, so the updated anime mirrors the post-update
+// works row and the sync right after the update reports Unchanged.
 //
 // [Ja] workFromUpdateWorkParams は UpdateWorkParams を、workFromCreateWorkParams を
 // フォームカラムに再利用して *model.Work に射影し、編集フォームが送信しない anime 写像
-// カラム (title_ro / status / archive_message) を現在の works 行から引き継ぐ。更新は
-// これらのカラムを変えないため、更新後の anime が更新後の works 行を写し、更新直後の同期は
-// Unchanged を報告する。
+// カラムを現在の works 行から引き継ぐ: title_ro、および anime.status を
+// animeUpdateParamsFromWork が導出する作品状態の source (unpublished_at / deleted_at)。
+// 状態タイムスタンプを引き継ぐことが、内容編集でアーカイブ済み / 削除済みの anime を
+// published に戻してしまうのを防ぐ。更新はこれらのカラムを変えないため、更新後の anime が
+// 更新後の works 行を写し、更新直後の同期は Unchanged を報告する。
 func workFromUpdateWorkParams(params repository.UpdateWorkParams, current *model.Work) *model.Work {
 	work := workFromCreateWorkParams(params.CreateWorkParams)
 	work.TitleRo = current.TitleRo
-	work.Status = current.Status
-	work.ArchiveMessage = current.ArchiveMessage
+	work.UnpublishedAt = current.UnpublishedAt
+	work.DeletedAt = current.DeletedAt
 	return work
 }
 

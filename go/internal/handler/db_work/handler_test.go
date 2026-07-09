@@ -48,8 +48,9 @@ func newTestHandler(t *testing.T, db *sql.DB, tx *sql.Tx) *Handler {
 	getDBWorkEditUC := usecase.NewGetDBWorkEditUsecase(workRepo, numberFormatRepo)
 	createWorkUC := usecase.NewCreateWorkUsecase(db, workRepo, animeRepo, animeClassificationRepo, satelliteRepos, validator.NewDBWorkCreateValidator())
 	updateWorkUC := usecase.NewUpdateWorkUsecase(db, workRepo, animeRepo, animeClassificationRepo, satelliteRepos, validator.NewDBWorkCreateValidator())
+	deleteWorkUC := usecase.NewDeleteWorkUsecase(db, workRepo, animeRepo)
 
-	return NewHandler(cfg, sessionManager, testutil.NewTestFlashManager(), testutil.NewTestImageHelper(), getDBWorksUC, getDBWorkFormOptionsUC, getDBWorkEditUC, createWorkUC, updateWorkUC)
+	return NewHandler(cfg, sessionManager, testutil.NewTestFlashManager(), testutil.NewTestImageHelper(), getDBWorksUC, getDBWorkFormOptionsUC, getDBWorkEditUC, createWorkUC, updateWorkUC, deleteWorkUC)
 }
 
 // TestIndex はDB作品一覧ページのテスト
@@ -74,7 +75,13 @@ func TestIndex(t *testing.T) {
 
 	handler := newTestHandler(t, db, tx)
 
+	// The action column (including the edit link) is committer-gated, so drive the request as
+	// a committer to assert it renders.
+	//
+	// [Ja] 操作列 (編集リンクを含む) は committer でゲートされるため、描画を検証できるよう
+	// committer としてリクエストを実行する。
 	req := httptest.NewRequest("GET", "/db/works", nil)
+	req = req.WithContext(context.WithValue(req.Context(), authMiddleware.UserContextKey, &model.User{ID: 1, Role: model.RoleEditor}))
 	rr := httptest.NewRecorder()
 
 	handler.Index(rr, req)
@@ -125,6 +132,91 @@ func TestIndex(t *testing.T) {
 	}
 }
 
+// TestIndex_ActionColumnByRole verifies that the handler resolves the viewer's role from the
+// request context and gates the action column accordingly, end-to-end: an admin sees the
+// delete button, a committer (editor) sees the edit and unpublish links but not the delete
+// button, and a regular user or an anonymous visitor sees no action controls at all. This
+// complements the templ-level tests (which drive IndexPageData directly) by exercising the
+// handler wiring GetUserFromContext -> IsCommitter / IsAdmin.
+//
+// [Ja] TestIndex_ActionColumnByRole はハンドラーがリクエストコンテキストから閲覧者のロールを
+// 解決し、操作列を end-to-end で出し分けることを検証する。admin は削除ボタンを、committer
+// (編集者) は編集・非公開リンクを見るが削除ボタンは見えず、一般ユーザーや未ログインは操作
+// コントロールを一切見ない。IndexPageData を直接与える templ 層テストを補い、
+// GetUserFromContext -> IsCommitter / IsAdmin のハンドラー配線を実際に通す。
+func TestIndex_ActionColumnByRole(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+
+	// A published work: committers get the edit + unpublish links, admins additionally get the
+	// delete button.
+	//
+	// [Ja] 公開中の作品: committer は編集・非公開リンクを、admin はさらに削除ボタンを得る。
+	workID := testutil.NewWorkBuilder(t, tx).WithTitle("操作列ロールテスト").WithMedia(1).Build()
+	handler := newTestHandler(t, db, tx)
+
+	editLink := fmt.Sprintf(`href="/db/works/%d/edit"`, int64(workID))
+	unpublishLink := fmt.Sprintf(`href="/db/works/%d/archive/new"`, int64(workID))
+	deleteButton := fmt.Sprintf(`hx-delete="/db/works/%d"`, int64(workID))
+
+	tests := []struct {
+		name        string
+		user        *model.User
+		wantPresent []string
+		wantAbsent  []string
+	}{
+		{
+			name:        "admin: edit + unpublish + delete",
+			user:        &model.User{ID: 1, Role: model.RoleAdmin},
+			wantPresent: []string{editLink, unpublishLink, deleteButton},
+		},
+		{
+			name:        "committer (editor): edit + unpublish, no delete",
+			user:        &model.User{ID: 1, Role: model.RoleEditor},
+			wantPresent: []string{editLink, unpublishLink},
+			wantAbsent:  []string{deleteButton},
+		},
+		{
+			name:       "regular user: no action controls",
+			user:       &model.User{ID: 1, Role: model.RoleUser},
+			wantAbsent: []string{editLink, unpublishLink, deleteButton},
+		},
+		{
+			name:       "anonymous: no action controls",
+			user:       nil,
+			wantAbsent: []string{editLink, unpublishLink, deleteButton},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			req := httptest.NewRequest("GET", "/db/works", nil)
+			if tt.user != nil {
+				req = req.WithContext(context.WithValue(req.Context(), authMiddleware.UserContextKey, tt.user))
+			}
+			rr := httptest.NewRecorder()
+
+			handler.Index(rr, req)
+
+			if status := rr.Code; status != http.StatusOK {
+				t.Fatalf("status = %d, want %d", status, http.StatusOK)
+			}
+			body := rr.Body.String()
+			for _, want := range tt.wantPresent {
+				if !strings.Contains(body, want) {
+					t.Errorf("期待する文字列が含まれていません: %q", want)
+				}
+			}
+			for _, notWant := range tt.wantAbsent {
+				if strings.Contains(body, notWant) {
+					t.Errorf("含まれてはいけない文字列が含まれています: %q", notWant)
+				}
+			}
+		})
+	}
+}
+
 // TestIndex_WithFilters はフィルタパラメータ付きリクエストのテスト
 func TestIndex_WithFilters(t *testing.T) {
 	t.Parallel()
@@ -167,7 +259,13 @@ func TestIndex_WithSeasonAndSlotFilters(t *testing.T) {
 
 	handler := newTestHandler(t, db, tx)
 
+	// The matched work is pinned via its committer-gated edit link, so drive the request as a
+	// committer.
+	//
+	// [Ja] 一致した作品を committer でゲートされる編集リンクで確認するため、committer として
+	// リクエストを実行する。
 	req := httptest.NewRequest("GET", "/db/works?season_slugs=2024-spring&filter_no_slots=1", nil)
+	req = req.WithContext(context.WithValue(req.Context(), authMiddleware.UserContextKey, &model.User{ID: 1, Role: model.RoleEditor}))
 	rr := httptest.NewRecorder()
 
 	handler.Index(rr, req)

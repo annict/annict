@@ -543,49 +543,6 @@ func (ns NullSeasonName) Value() (driver.Value, error) {
 	return string(ns.SeasonName), nil
 }
 
-type WorkStatus string
-
-const (
-	WorkStatusPublished WorkStatus = "published"
-	WorkStatusArchived  WorkStatus = "archived"
-	WorkStatusDeleted   WorkStatus = "deleted"
-)
-
-func (e *WorkStatus) Scan(src interface{}) error {
-	switch s := src.(type) {
-	case []byte:
-		*e = WorkStatus(s)
-	case string:
-		*e = WorkStatus(s)
-	default:
-		return fmt.Errorf("unsupported scan type for WorkStatus: %T", src)
-	}
-	return nil
-}
-
-type NullWorkStatus struct {
-	WorkStatus WorkStatus
-	Valid      bool // Valid is true if WorkStatus is not NULL
-}
-
-// Scan implements the Scanner interface.
-func (ns *NullWorkStatus) Scan(value interface{}) error {
-	if value == nil {
-		ns.WorkStatus, ns.Valid = "", false
-		return nil
-	}
-	ns.Valid = true
-	return ns.WorkStatus.Scan(value)
-}
-
-// Value implements the driver Valuer interface.
-func (ns NullWorkStatus) Value() (driver.Value, error) {
-	if !ns.Valid {
-		return nil, nil
-	}
-	return string(ns.WorkStatus), nil
-}
-
 type Activity struct {
 	ID                      int64          `db:"id"`
 	UserID                  int64          `db:"user_id"`
@@ -1841,8 +1798,6 @@ type Work struct {
 	TitleAlter               string          `db:"title_alter"`
 	TitleAlterEn             string          `db:"title_alter_en"`
 	UnpublishedAt            sql.NullTime    `db:"unpublished_at"`
-	Status                   WorkStatus      `db:"status"`
-	ArchiveMessage           sql.NullString  `db:"archive_message"`
 	AnimeID                  sql.NullInt64   `db:"anime_id"`
 }
 

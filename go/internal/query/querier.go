@@ -113,6 +113,7 @@ type Querier interface {
 	GetValidSignInCode(ctx context.Context, userID int64) (SignInCode, error)
 	GetValidSignUpCode(ctx context.Context, email string) (SignUpCode, error)
 	GetWorkByID(ctx context.Context, id int64) (GetWorkByIDRow, error)
+	GetWorkForArchiveByID(ctx context.Context, id int64) (GetWorkForArchiveByIDRow, error)
 	GetWorkForEditByID(ctx context.Context, id int64) (GetWorkForEditByIDRow, error)
 	IncrementSignInCodeAttempts(ctx context.Context, id int64) error
 	IncrementSignUpCodeAttempts(ctx context.Context, id int64) error
@@ -156,6 +157,8 @@ type Querier interface {
 	UpdateUserStripeSubscriberID(ctx context.Context, arg UpdateUserStripeSubscriberIDParams) error
 	UpdateWork(ctx context.Context, arg UpdateWorkParams) error
 	UpdateWorkAnimeID(ctx context.Context, arg UpdateWorkAnimeIDParams) error
+	UpdateWorkDeletedAt(ctx context.Context, arg UpdateWorkDeletedAtParams) error
+	UpdateWorkUnpublishedAt(ctx context.Context, arg UpdateWorkUnpublishedAtParams) error
 }
 
 var _ Querier = (*Queries)(nil)
