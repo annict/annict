@@ -8,8 +8,8 @@ require (
 	github.com/lib/pq v1.12.3
 	github.com/nicksnyder/go-i18n/v2 v2.6.1
 	github.com/sqlc-dev/pqtype v0.3.0
-	golang.org/x/crypto v0.53.0
-	golang.org/x/text v0.39.0
+	golang.org/x/crypto v0.54.0
+	golang.org/x/text v0.40.0
 )
 
 require (
@@ -82,10 +82,10 @@ require (
 	go.uber.org/goleak v1.3.0 // indirect
 	golang.org/x/mod v0.37.0 // indirect
 	golang.org/x/net v0.56.0 // indirect
-	golang.org/x/sync v0.21.0 // indirect
-	golang.org/x/sys v0.46.0 // indirect
+	golang.org/x/sync v0.22.0 // indirect
+	golang.org/x/sys v0.47.0 // indirect
 	golang.org/x/telemetry v0.0.0-20260625142307-59b4966ccb57 // indirect
-	golang.org/x/term v0.44.0 // indirect
+	golang.org/x/term v0.45.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
