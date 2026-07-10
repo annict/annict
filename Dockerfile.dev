@@ -228,12 +228,13 @@ USER ${USERNAME}
 RUN mise reshim
 
 # --- 1Password CLI ---
-# [Ja] 1Password CLI
 COPY --from=1password/op:2 /usr/local/bin/op /usr/local/bin/op
 
 # --- Claude Code ---
-# [Ja] Claude Code
 RUN curl -fsSL https://claude.ai/install.sh | bash
+
+# --- Codex ---
+RUN curl -fsSL https://chatgpt.com/codex/install.sh | sh
 
 # --- Playwright CLI ---
 RUN npm install -g @playwright/cli@0.1.15 && \
@@ -241,7 +242,6 @@ RUN npm install -g @playwright/cli@0.1.15 && \
     playwright-cli install-browser chromium
 
 # --- Go tools ---
-# [Ja] Go ツール
 ENV GOCACHE=/go/.cache/go-build
 ENV GOMODCACHE=/go/pkg/mod
 ENV GOPATH=/go
