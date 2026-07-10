@@ -1,9 +1,11 @@
 .DS_Store
 
+/.agents/skills/korylus-*
 /.claude/*.local.json
 /.claude/rules/korylus-*
 /.claude/scheduled_tasks.lock
 /.claude/skills/korylus-*
+/.codex
 /.env.op
 /.playwright-cli
 /.pnpm-store
