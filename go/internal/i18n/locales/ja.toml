@@ -983,6 +983,10 @@ other = "Annictに戻る"
 description = "DB サイドバー - 開閉トグルボタンの aria-label"
 other = "サイドバーの開閉"
 
+[db_sidebar_close_label]
+description = "DB サイドバー - 閉じるボタン"
+other = "閉じる"
+
 # DB 作品サブナビ関連
 [db_work_subnav_label]
 description = "DB 作品サブナビ - ナビゲーションの aria-label"

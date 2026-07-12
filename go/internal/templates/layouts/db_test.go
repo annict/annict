@@ -52,65 +52,30 @@ func renderDbLayout(t *testing.T, acceptLanguage string) string {
 	return buf.String()
 }
 
-// TestDb_SidebarToggle verifies the sidebar toggle button is rendered in the Db layout.
+// TestDb_RendersSidebarWithoutToggle verifies the Db layout renders the sidebar itself but
+// no longer embeds the open/close toggle: the toggle now lives in each page's title row
+// (see components.DBSidebarToggle), so the layout only exposes the sidebar's id for it.
 //
-// [Ja] TestDb_SidebarToggle は Db レイアウトにサイドバー開閉トグルが描画されることを確認する。
-func TestDb_SidebarToggle(t *testing.T) {
+// [Ja] TestDb_RendersSidebarWithoutToggle は Db レイアウトがサイドバー本体を描画する一方、
+// 開閉トグルはもう埋め込まないことを検証する。トグルは各ページのタイトル行に移った
+// (components.DBSidebarToggle を参照) ため、レイアウトはトグルが参照するサイドバーの id を
+// 公開するだけになる。
+func TestDb_RendersSidebarWithoutToggle(t *testing.T) {
 	t.Parallel()
 
 	html := renderDbLayout(t, "ja")
 
-	checks := []string{
-		// The sidebar exposes an id so the toggle can target it.
-		//
-		// [Ja] トグルが参照できるよう、サイドバーは id を公開する。
-		`<aside id="db-sidebar"`,
-		// The toggle is a native button (keyboard operable) with the disclosure
-		// ARIA pattern: aria-controls points at the sidebar and aria-expanded
-		// reflects the open state. data-sidebar-toggle wires it to the sidebar
-		// via the sidebar-toggle.ts module (the behavior lives in JS, not here).
-		//
-		// [Ja] トグルはネイティブ button (キーボード操作可) で、disclosure の ARIA
-		// パターンを持つ。aria-controls がサイドバーを指し、aria-expanded が開閉状態
-		// を表す。data-sidebar-toggle が sidebar-toggle.ts モジュール経由でサイドバー
-		// に結線する (挙動は JS 側にあり、ここには無い)。
-		`type="button"`,
-		`data-sidebar-toggle="db-sidebar"`,
-		`aria-controls="db-sidebar"`,
-		`aria-expanded="true"`,
-		`aria-label="サイドバーの開閉"`,
+	// The sidebar exposes an id so a toggle placed on the page can target it.
+	//
+	// [Ja] ページに置かれたトグルが参照できるよう、サイドバーは id を公開する。
+	if !strings.Contains(html, `<aside id="db-sidebar"`) {
+		t.Error("レイアウトにサイドバー本体が描画されていません")
 	}
 
-	for _, expected := range checks {
-		if !strings.Contains(html, expected) {
-			t.Errorf("HTMLに必要な要素が含まれていません: %q", expected)
-		}
-	}
-}
-
-// TestDb_SidebarToggleI18n verifies the toggle's aria-label switches per locale.
-//
-// [Ja] TestDb_SidebarToggleI18n はトグルの aria-label が言語ごとに切り替わることを確認する。
-func TestDb_SidebarToggleI18n(t *testing.T) {
-	t.Parallel()
-
-	tests := []struct {
-		name           string
-		acceptLanguage string
-		label          string
-	}{
-		{"日本語", "ja", `aria-label="サイドバーの開閉"`},
-		{"英語", "en", `aria-label="Toggle sidebar"`},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
-
-			html := renderDbLayout(t, tt.acceptLanguage)
-			if !strings.Contains(html, tt.label) {
-				t.Errorf("トグルの aria-label が正しくありません: 期待=%s", tt.label)
-			}
-		})
+	// The toggle no longer belongs to the layout; it is rendered per page instead.
+	//
+	// [Ja] トグルはもうレイアウトに属さず、各ページ側で描画される。
+	if strings.Contains(html, `data-sidebar-toggle="db-sidebar"`) {
+		t.Error("レイアウトにサイドバー開閉トグルが含まれてはいけません (ページ側へ移設済み)")
 	}
 }

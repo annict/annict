@@ -2,6 +2,7 @@ package db_works
 
 import (
 	"github.com/annict/annict/go/internal/templates"
+	"github.com/annict/annict/go/internal/templates/components"
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
@@ -19,7 +20,10 @@ type ArchiveNewPageData struct {
 templ ArchiveNew(data ArchiveNewPageData) {
 	<div class="p-6">
 		<div class="flex items-center justify-between mb-6">
-			<h1 class="text-2xl font-bold">{ templates.T(ctx, "db_works_archive_new_title") }</h1>
+			<div class="flex items-center gap-2">
+				@components.DBSidebarToggle()
+				<h1 class="text-2xl font-bold">{ templates.T(ctx, "db_works_archive_new_title") }</h1>
+			</div>
 			<a href={ templates.DBWorksPath().SafeURL() } class="btn" data-variant="outline" data-size="sm">
 				{ templates.T(ctx, "db_works_archive_new_back_to_list_link") }
 			</a>

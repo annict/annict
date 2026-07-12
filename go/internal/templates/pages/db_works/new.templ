@@ -21,7 +21,10 @@ func (d NewPageData) hasFieldError(field string) bool {
 templ New(data NewPageData) {
 	<div class="p-6">
 		<div class="flex items-center justify-between mb-6">
-			<h1 class="text-2xl font-bold">{ templates.T(ctx, "db_works_new_title") }</h1>
+			<div class="flex items-center gap-2">
+				@components.DBSidebarToggle()
+				<h1 class="text-2xl font-bold">{ templates.T(ctx, "db_works_new_title") }</h1>
+			</div>
 			<a href={ templates.DBWorksPath().SafeURL() } class="btn" data-variant="outline" data-size="sm">
 				{ templates.T(ctx, "db_works_new_back_to_list_link") }
 			</a>

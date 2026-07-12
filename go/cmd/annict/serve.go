@@ -399,6 +399,11 @@ func runServe() {
 	// 現在パスミドルウェアを追加（サイドバーの現在ページハイライト用に aria-current を付与）
 	r.Use(templates.CurrentPathMiddleware)
 
+	// Store the Annict DB sidebar Cookie preference for server-rendered initial state.
+	//
+	// [Ja] Annict DB サイドバーの Cookie 設定を SSR の初期状態用に保存する。
+	r.Use(templates.DBSidebarStateMiddleware)
+
 	// CSRF保護ミドルウェアを追加
 	csrfMiddleware := authMiddleware.NewCSRFMiddleware(sessionManager)
 	r.Use(csrfMiddleware.Middleware)

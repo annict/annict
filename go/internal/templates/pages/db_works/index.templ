@@ -38,10 +38,15 @@ type IndexPageData struct {
 templ Index(data IndexPageData) {
 	<div class="flex flex-col gap-4 py-4 max-w-7xl w-full mx-auto">
 		<div class="px-4">
-			@components.MainTitle(components.MainTitleData{
-				Title:   templates.T(ctx, "db_works_index_title"),
-				Actions: indexNewButton(),
-			})
+			<div class="flex items-center gap-2">
+				@components.DBSidebarToggle()
+				<div class="flex-1">
+					@components.MainTitle(components.MainTitleData{
+						Title:   templates.T(ctx, "db_works_index_title"),
+						Actions: indexNewButton(),
+					})
+				</div>
+			</div>
 		</div>
 
 		@components.ContentCard() {

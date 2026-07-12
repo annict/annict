@@ -16,31 +16,24 @@ templ Db(meta viewmodel.PageMeta, assetVersion string, content templ.Component) 
 		<head>
 			@components.Head(meta, assetVersion)
 		</head>
-		<body>
-			<div class="flex bg-background">
+		<body class="bg-background">
+			@components.DBSidebar()
+
+			// The sidebar's immediate next sibling is the whole background region: Basecoat
+			// offsets it on desktop (.sidebar + *) and sidebar-toggle.ts marks it inert while
+			// the mobile overlay is open. Flash lives inside it so its fixed toast (z-50, above
+			// the z-40 overlay) is inert too, instead of staying reachable behind the overlay.
+			//
+			// [Ja] サイドバーの直後の兄弟が背面領域全体になる。Basecoat がデスクトップで余白を
+			// 与え (.sidebar + *)、sidebar-toggle.ts がモバイルオーバーレイ表示中は inert にする。
+			// Flash をこの内側に置くことで、その fixed トースト (z-50、z-40 のオーバーレイより前面)
+			// も inert になり、オーバーレイ背面で操作可能なまま残らない。
+			<div class="flex flex-col min-h-screen">
+				<main>
+					@content
+				</main>
+
 				@components.Flash(ctx, session.FlashFromContext(ctx))
-				@components.DBSidebar()
-				<div class="flex-1 flex flex-col min-h-screen">
-					<div class="px-4 pt-4">
-						<button
-							type="button"
-							class="btn"
-							data-variant="outline"
-							data-size="icon"
-							data-sidebar-toggle="db-sidebar"
-							aria-controls="db-sidebar"
-							aria-expanded="true"
-							aria-label={ templates.T(ctx, "db_sidebar_toggle_label") }
-						>
-							<span aria-hidden="true">
-								@templates.Icon("list-regular")
-							</span>
-						</button>
-					</div>
-					<main>
-						@content
-					</main>
-				</div>
 			</div>
 		</body>
 	</html>

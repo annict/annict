@@ -302,6 +302,28 @@ func TestIndex_ActionColumn_Anonymous(t *testing.T) {
 	}
 }
 
+// TestIndex_SidebarToggle verifies the page renders the sidebar toggle in its title row.
+//
+// [Ja] TestIndex_SidebarToggle はページがタイトル行にサイドバートグルを描画する
+// ことを検証する。
+func TestIndex_SidebarToggle(t *testing.T) {
+	t.Parallel()
+
+	html := renderIndex(t, IndexPageData{
+		Works:      []viewmodel.DBWorkListItem{},
+		Pagination: viewmodel.NewPagination(1, 0, 30, "/db/works"),
+	})
+
+	// The toggle is wired to the sidebar at every viewport size.
+	//
+	// [Ja] トグルはサイドバーに結線され、全画面幅で利用できる。
+	for _, expected := range []string{`data-sidebar-toggle="db-sidebar"`} {
+		if !strings.Contains(html, expected) {
+			t.Errorf("期待する文字列が含まれていません: %q", expected)
+		}
+	}
+}
+
 // TestIndex_FilterUI はリリース時期の複数選択と放送予定未登録チェックボックスの描画をテスト
 func TestIndex_FilterUI(t *testing.T) {
 	t.Parallel()
