@@ -30,6 +30,7 @@ apt dist-upgrade -yq
 
 PACKAGES=$(cat <<'PKGLIST' | sed 's/#.*//'
   build-essential
+  bubblewrap                # Required by Codex for Linux sandboxing [Ja] Codex の Linux sandbox に必要
   ca-certificates           # Required for HTTPS connections [Ja] HTTPS 接続に必要
   curl
   file                      # Required by Shrine for image uploads (Rails) [Ja] Shrine による画像アップロードに必要 (Rails)
