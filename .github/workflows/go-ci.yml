@@ -15,6 +15,7 @@ on:
 
 env:
   GO_VERSION: "1.26.2"
+  NODE_VERSION: "22.20.0"
 
 jobs:
   lint:
@@ -162,3 +163,30 @@ jobs:
             echo "Build failed: binary not found"
             exit 1
           fi
+
+  frontend:
+    name: Frontend
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: go
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+          cache-dependency-path: go/pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run frontend tests
+        run: make test-js
+
+      - name: Type-check frontend
+        run: make typecheck-js
