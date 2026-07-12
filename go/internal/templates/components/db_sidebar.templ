@@ -1,6 +1,8 @@
 package components
 
 import (
+	"strconv"
+
 	"github.com/annict/annict/go/internal/templates"
 )
 
@@ -8,24 +10,48 @@ import (
 //
 // [Ja] DBSidebar は Annict DB 管理画面用のサイドバーコンポーネントを描画する。
 templ DBSidebar() {
-	<aside id="db-sidebar" class="sidebar" data-side="left" aria-hidden="false">
+	<aside
+		id="db-sidebar"
+		class="sidebar"
+		data-side="left"
+		data-desktop-open={ strconv.FormatBool(templates.IsDBSidebarOpen(ctx)) }
+		if templates.IsDBSidebarOpen(ctx) {
+			aria-hidden="false"
+		} else {
+			aria-hidden="true"
+			data-initial-open="false"
+			inert
+		}
+	>
 		<nav aria-label="Annict DB navigation">
-			<section class="scrollbar gap-4">
-				<div>
-					<a href="/db" class="flex items-center justify-center gap-2 bg-primary h-[52px] relative">
-						<img
-							height="30"
-							loading="lazy"
-							src="/static/images/logo-white.png"
-							width="25"
-							alt="Annict"
-						/>
+			<header class="relative bg-primary h-[52px]">
+				<button
+					type="button"
+					class="btn min-h-11 absolute right-1 top-1/2 z-10 -translate-y-1/2 text-white hover:bg-white/10"
+					data-variant="ghost"
+					data-size="sm"
+					data-sidebar-close="db-sidebar"
+					aria-controls="db-sidebar"
+				>
+					{ templates.T(ctx, "db_sidebar_close_label") }
+				</button>
 
-						<span class="text-white font-bold text-lg absolute right-[90px]">
-							DB
-						</span>
-					</a>
-				</div>
+				<a href="/db" class="flex items-center justify-center gap-2 h-full relative">
+					<img
+						height="30"
+						loading="lazy"
+						src="/static/images/logo-white.png"
+						width="25"
+						alt="Annict"
+					/>
+
+					<span class="text-white font-bold text-lg absolute right-[90px]">
+						DB
+					</span>
+				</a>
+			</header>
+
+			<section class="scrollbar gap-4">
 
 				<div class="px-4">
 					<form method="get" action="/db/search" autocomplete="off">

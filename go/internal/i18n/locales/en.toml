@@ -984,6 +984,10 @@ other = "Back to Annict"
 description = "DB Sidebar - toggle button aria-label"
 other = "Toggle sidebar"
 
+[db_sidebar_close_label]
+description = "DB Sidebar - close button"
+other = "Close"
+
 # DB work subnav related
 [db_work_subnav_label]
 description = "DB work subnav - navigation aria-label"

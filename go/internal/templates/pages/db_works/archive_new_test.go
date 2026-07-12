@@ -39,6 +39,11 @@ func TestArchiveNew(t *testing.T) {
 		//
 		// [Ja] タイトルが確認メッセージに埋め込まれる。
 		"確認対象アニメ",
+		// The header renders the sidebar toggle, wired to the sidebar at every viewport size.
+		//
+		// [Ja] ヘッダーはサイドバートグルを描画する。サイドバーに結線され、
+		// 全画面幅で利用できる。
+		`data-sidebar-toggle="db-sidebar"`,
 	}
 	for _, expected := range expectedContents {
 		if !strings.Contains(html, expected) {

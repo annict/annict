@@ -95,6 +95,52 @@ func TestNew_NoLabelExternalLinksWhenEmpty(t *testing.T) {
 	}
 }
 
+// TestNew_SidebarToggle verifies the new form renders the sidebar toggle in its header.
+//
+// [Ja] TestNew_SidebarToggle は新規フォームがヘッダーにサイドバートグルを描画する
+// ことを検証する。
+func TestNew_SidebarToggle(t *testing.T) {
+	t.Parallel()
+
+	var buf strings.Builder
+	if err := New(NewPageData{FormInput: &viewmodel.DBWorkFormInput{}}).Render(context.Background(), &buf); err != nil {
+		t.Fatalf("レンダリングエラー: %v", err)
+	}
+	html := buf.String()
+
+	// The toggle is wired to the sidebar at every viewport size.
+	//
+	// [Ja] トグルはサイドバーに結線され、全画面幅で利用できる。
+	for _, expected := range []string{`data-sidebar-toggle="db-sidebar"`} {
+		if !strings.Contains(html, expected) {
+			t.Errorf("期待する文字列が含まれていません: %q", expected)
+		}
+	}
+}
+
+// TestEdit_SidebarToggle verifies the edit form renders the sidebar toggle in its header.
+//
+// [Ja] TestEdit_SidebarToggle は編集フォームがヘッダーにサイドバートグルを描画する
+// ことを検証する。
+func TestEdit_SidebarToggle(t *testing.T) {
+	t.Parallel()
+
+	var buf strings.Builder
+	if err := Edit(EditPageData{WorkID: 1, FormInput: &viewmodel.DBWorkFormInput{}}).Render(context.Background(), &buf); err != nil {
+		t.Fatalf("レンダリングエラー: %v", err)
+	}
+	html := buf.String()
+
+	// The toggle is wired to the sidebar at every viewport size.
+	//
+	// [Ja] トグルはサイドバーに結線され、全画面幅で利用できる。
+	for _, expected := range []string{`data-sidebar-toggle="db-sidebar"`} {
+		if !strings.Contains(html, expected) {
+			t.Errorf("期待する文字列が含まれていません: %q", expected)
+		}
+	}
+}
+
 // TestEdit_LabelExternalLinks verifies that the edit form renders external links through
 // the shared sub-template too, confirming it is wired the same way as the new form.
 //
