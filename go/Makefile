@@ -96,6 +96,14 @@ test-verbose: db-setup-test ## 詳細ログ付きで全テストを実行（デ�
 	@echo "ローカル環境: 詳細ログ付きで全テストを実行"
 	@bash -c 'set -o pipefail && $(OP_RUN_TEST) go test -json -race -count=1 ./... | tparse -all'
 
+.PHONY: test-js
+test-js: ## Run frontend unit tests (Vitest). [Ja] フロントエンドのユニットテストを実行 (Vitest)
+	pnpm test
+
+.PHONY: typecheck-js
+typecheck-js: ## Type-check frontend TypeScript (tsc --noEmit). [Ja] フロントエンドの TypeScript を型検査 (tsc --noEmit)
+	pnpm typecheck
+
 .PHONY: fmt
 fmt: ## コードをフォーマット
 	go fmt ./...
