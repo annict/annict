@@ -51,10 +51,13 @@ func TestDBSidebarToggle(t *testing.T) {
 	}
 }
 
-// TestDBSidebarCloseButton verifies the sidebar has a clearly labelled native close button.
+// TestDBSidebarCloseButton verifies the sidebar has a mobile-only (md:hidden) icon-only native
+// close button with an accessible name. On desktop the always-visible sidebar toggle already
+// closes the sidebar, so this in-sidebar button is hidden there.
 //
-// [Ja] TestDBSidebarCloseButton はサイドバー内に明確なラベル付きのネイティブな閉じる
-// ボタンがあることを検証する。
+// [Ja] TestDBSidebarCloseButton はサイドバー内に、アクセシブルな名前を持つモバイル専用
+// (md:hidden) のアイコンだけのネイティブな閉じるボタンがあることを検証する。デスクトップでは
+// 常時表示のサイドバートグルで既に閉じられるため、このサイドバー内ボタンは非表示になる。
 func TestDBSidebarCloseButton(t *testing.T) {
 	t.Parallel()
 
@@ -79,9 +82,16 @@ func TestDBSidebarCloseButton(t *testing.T) {
 			html := buf.String()
 			for _, expected := range []string{
 				`type="button"`,
+				`data-variant="ghost"`,
+				`data-size="icon"`,
 				`data-sidebar-close="db-sidebar"`,
 				`aria-controls="db-sidebar"`,
-				tt.label,
+				`aria-label="` + tt.label + `"`,
+				`M205.66,194.34a8,8,0,0,1-11.32,11.32`,
+				// Mobile-only: hidden from md up, where the sidebar toggle handles closing.
+				//
+				// [Ja] モバイル専用: md 以上ではサイドバートグルが閉じるため非表示。
+				`md:hidden`,
 			} {
 				if !strings.Contains(html, expected) {
 					t.Errorf("HTMLに必要な要素が含まれていません: %q", expected)

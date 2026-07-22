@@ -19,7 +19,7 @@ import (
 templ DBSidebarToggle() {
 	<button
 		type="button"
-		class="btn"
+		class="btn rounded-full"
 		data-variant="outline"
 		data-size="icon"
 		data-sidebar-toggle="db-sidebar"
@@ -28,7 +28,7 @@ templ DBSidebarToggle() {
 		aria-label={ templates.T(ctx, "db_sidebar_toggle_label") }
 	>
 		<span aria-hidden="true">
-			@templates.Icon("list-regular")
+			@templates.Icon("sidebar-regular")
 		</span>
 	</button>
 }
