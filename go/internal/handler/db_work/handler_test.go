@@ -297,6 +297,9 @@ func TestIndex_WithSeasonAndSlotFilters(t *testing.T) {
 	if !strings.Contains(body, `<option value="2024-spring" selected>`) {
 		t.Error("選択したシーズンオプションが selected で再描画されるべき")
 	}
+	if !strings.Contains(body, `<div role="option" data-value="2024-spring" aria-selected="true">`) {
+		t.Error("選択したシーズンが combobox でも aria-selected で再描画されるべき")
+	}
 	// The no-slots checkbox itself renders in its checked state.
 	//
 	// [Ja] 放送予定未登録チェックボックス自体が checked 状態で描画される。

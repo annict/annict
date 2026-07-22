@@ -24,19 +24,8 @@ templ DBSidebar() {
 		}
 	>
 		<nav aria-label="Annict DB navigation">
-			<header class="relative bg-primary h-[52px]">
-				<button
-					type="button"
-					class="btn min-h-11 absolute right-1 top-1/2 z-10 -translate-y-1/2 text-white hover:bg-white/10"
-					data-variant="ghost"
-					data-size="sm"
-					data-sidebar-close="db-sidebar"
-					aria-controls="db-sidebar"
-				>
-					{ templates.T(ctx, "db_sidebar_close_label") }
-				</button>
-
-				<a href="/db" class="flex items-center justify-center gap-2 h-full relative">
+			<header class="bg-primary h-[52px] flex items-center justify-center relative">
+				<a href="/db" class="flex items-center gap-2">
 					<img
 						height="30"
 						loading="lazy"
@@ -45,14 +34,25 @@ templ DBSidebar() {
 						alt="Annict"
 					/>
 
-					<span class="text-white font-bold text-lg absolute right-[90px]">
+					<span class="text-white font-bold text-lg leading-none">
 						DB
 					</span>
 				</a>
+
+				<button
+					type="button"
+					class="btn absolute right-0 mr-1 top-1/2 -translate-y-1/2 md:hidden text-white hover:bg-white/15"
+					data-variant="ghost"
+					data-size="icon"
+					data-sidebar-close="db-sidebar"
+					aria-controls="db-sidebar"
+					aria-label={ templates.T(ctx, "db_sidebar_close_label") }
+				>
+					@templates.Icon("x-regular", "size-5")
+				</button>
 			</header>
 
-			<section class="scrollbar gap-4">
-
+			<section class="scrollbar gap-4 py-4">
 				<div class="px-4">
 					<form method="get" action="/db/search" autocomplete="off">
 						<input
@@ -80,9 +80,11 @@ templ DBSidebar() {
 				<div class="px-2 mb-4 border-t border-border pt-4">
 					<a
 						href="/"
-						class="flex items-center justify-center gap-2 p-2 rounded-lg hover:bg-sidebar-accent transition-colors"
+						class="flex items-center justify-center gap-2 p-2 rounded-lg hover:bg-sidebar-accent transition-colors text-muted-foreground"
 					>
-						<span class="text-sm text-muted-foreground">
+						@templates.Icon("arrow-bend-up-left-regular", "size-[16px]")
+
+						<span class="text-sm">
 							{ templates.T(ctx, "db_sidebar_back_to_annict") }
 						</span>
 					</a>

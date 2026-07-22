@@ -28,10 +28,10 @@ func TestStatusLabel(t *testing.T) {
 			wantAttr: `class="badge" data-variant="success"`,
 		},
 		{
-			name:     "アーカイブ状態（日本語）",
+			name:     "非公開状態（日本語）",
 			status:   viewmodel.WorkStatusArchived,
 			locale:   "ja",
-			wantText: "アーカイブ",
+			wantText: "非公開",
 			wantAttr: `class="badge" data-variant="warning"`,
 		},
 		{

@@ -38,8 +38,9 @@ type IndexPageData struct {
 templ Index(data IndexPageData) {
 	<div class="flex flex-col gap-4 py-4 max-w-7xl w-full mx-auto">
 		<div class="px-4">
-			<div class="flex items-center gap-2">
+			<div class="flex gap-4">
 				@components.DBSidebarToggle()
+
 				<div class="flex-1">
 					@components.MainTitle(components.MainTitleData{
 						Title:   templates.T(ctx, "db_works_index_title"),
@@ -49,32 +50,19 @@ templ Index(data IndexPageData) {
 			</div>
 		</div>
 
-		@components.ContentCard() {
+		@components.ContentCard("overflow-visible") {
 			<form
 				action={ templates.DBWorksPath().SafeURL() }
 				class="flex flex-col gap-4"
 				method="get"
 			>
 				<div class="flex flex-col gap-1.5">
-					<label for="season_slugs" class="label">
+					<label id="db-works-season-slugs-label" for="db-works-season-slugs-select" class="label">
 						{ templates.T(ctx, "db_works_index_season_slugs_label") }
 					</label>
-					<select
-						id="season_slugs"
-						name="season_slugs"
-						class="select"
-						multiple
-						size="6"
-					>
-						for _, opt := range data.SeasonFilterOptions {
-							if opt.Selected {
-								<option value={ opt.Slug } selected>{ opt.Label }</option>
-							} else {
-								<option value={ opt.Slug }>{ opt.Label }</option>
-							}
-						}
-					</select>
+					@seasonSlugsFilter(data.SeasonFilterOptions)
 				</div>
+
 				<div class="flex items-center gap-4 flex-wrap">
 					<label class="flex items-center gap-1.5 text-sm">
 						<input
@@ -85,8 +73,10 @@ templ Index(data IndexPageData) {
 								checked
 							}
 						/>
+
 						{ templates.T(ctx, "db_works_index_filter_no_episodes_label") }
 					</label>
+
 					<label class="flex items-center gap-1.5 text-sm">
 						<input
 							type="checkbox"
@@ -96,8 +86,10 @@ templ Index(data IndexPageData) {
 								checked
 							}
 						/>
+
 						{ templates.T(ctx, "db_works_index_filter_no_image_label") }
 					</label>
+
 					<label class="flex items-center gap-1.5 text-sm">
 						<input
 							type="checkbox"
@@ -107,8 +99,10 @@ templ Index(data IndexPageData) {
 								checked
 							}
 						/>
+
 						{ templates.T(ctx, "db_works_index_filter_no_season_label") }
 					</label>
+
 					<label class="flex items-center gap-1.5 text-sm">
 						<input
 							type="checkbox"
@@ -118,32 +112,62 @@ templ Index(data IndexPageData) {
 								checked
 							}
 						/>
+
 						{ templates.T(ctx, "db_works_index_filter_no_slots_label") }
 					</label>
 				</div>
+
 				<div>
-					<button type="submit" class="btn" data-variant="outline" data-size="sm">
+					<button
+						type="submit"
+						class="btn rounded-full"
+						data-variant="outline"
+						data-size="sm"
+					>
+						@templates.Icon("magnifying-glass-regular")
 						{ templates.T(ctx, "db_works_index_submit") }
 					</button>
 				</div>
 			</form>
 		}
 
-		if len(data.Works) == 0 {
-			<p class="text-muted-foreground">{ templates.T(ctx, "db_works_index_empty") }</p>
-		} else {
-			<div class="border rounded-lg overflow-hidden">
-				<table class="table w-full">
+		<div class="px-4">
+			if len(data.Works) == 0 {
+				<p class="text-muted-foreground">
+					{ templates.T(ctx, "db_works_index_empty") }
+				</p>
+			} else {
+				<div
+					class="overflow-x-auto"
+					role="region"
+					aria-label={ templates.T(ctx, "db_works_index_table_caption") }
+					tabindex="0"
+				>
+				<table class="table table-fixed min-w-[640px] [&_th]:px-1 [&_td]:px-1">
+					<caption class="sr-only">{ templates.T(ctx, "db_works_index_table_caption") }</caption>
+					// Fixed column widths keep the table within its container and let the title
+					// column (the only one without a width) absorb the remaining space; auto layout
+					// spreads slack across every column instead, so the title stays narrow there. The
+					// tightened cell padding ([&_th]/[&_td] px-1, overriding the .table px-2 default)
+					// gives the title even more room.
+					//
+					// [Ja] 固定列幅でテーブルをコンテナ内に収め、幅指定の無いタイトル列だけが残り幅を
+					// 吸収するようにする (auto レイアウトでは余白が全列へ分散し、タイトルが狭いまま)。
+					// セル padding を詰める ([&_th]/[&_td] px-1 で .table 既定の px-2 を上書き) ことで
+					// タイトルにさらに幅を回す。
+					<colgroup>
+						<col class="w-20"/>
+						<col class="w-20"/>
+						<col/>
+						<col class="w-72"/>
+						<col class="w-24"/>
+					</colgroup>
 					<thead>
 						<tr>
 							<th scope="col" class="text-left">{ templates.T(ctx, "db_works_index_table_id_label") }</th>
 							<th scope="col" class="text-left">{ templates.T(ctx, "db_works_index_table_image_label") }</th>
 							<th scope="col" class="text-left">{ templates.T(ctx, "db_works_index_table_title_label") }</th>
-							<th scope="col" class="text-left">{ templates.T(ctx, "db_works_index_table_media_label") }</th>
-							<th scope="col" class="text-left">{ templates.T(ctx, "db_works_index_table_season_label") }</th>
-							<th scope="col" class="text-left">{ templates.T(ctx, "db_works_index_table_external_services_label") }</th>
-							<th scope="col" class="text-right">{ templates.T(ctx, "db_works_index_table_watchers_label") }</th>
-							<th scope="col" class="text-left">{ templates.T(ctx, "db_works_index_table_status_label") }</th>
+							<th scope="col" class="text-left">{ templates.T(ctx, "db_works_index_table_info_label") }</th>
 							<th scope="col" class="text-center">{ templates.T(ctx, "db_works_index_table_actions_label") }</th>
 						</tr>
 					</thead>
@@ -165,55 +189,60 @@ templ Index(data IndexPageData) {
 									</a>
 								</td>
 								<td>
-									if work.ImageURL != "" {
-										<picture>
-											<source srcset={ work.GetSrcSet(70, "webp") } type="image/webp"/>
-											<source srcset={ work.GetSrcSet(70, "jpg") } type="image/jpeg"/>
-											<img
-												src={ work.ImageURL }
-												alt={ work.Title }
-												width="70"
-												height="52"
-												loading="lazy"
-												class="rounded border object-cover"
-											/>
-										</picture>
-									} else {
-										<div class="bg-muted rounded border w-[70px] h-[52px]" aria-hidden="true"></div>
-									}
+									@components.WorkPicture(components.WorkPictureData{
+										Image: work.Image,
+										Width: 70,
+										Alt:   work.Title,
+										Class: "rounded border",
+									})
 								</td>
-								<td>
+								<td class="whitespace-normal [overflow-wrap:anywhere]">
 									<div>{ work.Title }</div>
-									<div class="text-muted-foreground">
-										if work.TitleKana != "" {
-											{ work.TitleKana }
-										} else {
-											{ "-" }
-										}
-									</div>
-									<div class="text-muted-foreground">
-										if work.TitleEn != "" {
-											{ work.TitleEn }
-										} else {
-											{ "-" }
-										}
-									</div>
+									<div class="text-muted-foreground">{ valueOrDash(work.TitleKana) }</div>
+									<div class="text-muted-foreground">{ valueOrDash(work.TitleEn) }</div>
 								</td>
-								<td>{ work.Media }</td>
+								// Every per-work attribute other than the title shares one "info" column.
+								// Each value is short, so stacking them as label / value pairs costs far
+								// less width than one column per attribute (each carrying its own header
+								// width and padding), leaving the rest of the table width to the title.
+								//
+								// The pairs are laid out three per line: stacking all six in a single line
+								// makes each row twelve lines tall, which cuts the number of works visible
+								// on screen to two or three.
+								//
+								// [Ja] タイトル以外の作品属性は 1 つの「情報」列にまとめる。いずれも短い値のため、
+								// ラベル / 値の組で縦に積むほうが、属性ごとに列を分ける (各列が見出し幅と padding
+								// を持つ) より必要な幅がずっと小さく、残りの幅をタイトル列に回せる。
+								//
+								// 組は 1 行あたり 3 つずつ並べる。6 組すべてを 1 列に積むと 1 行が 12 行分の
+								// 高さになり、画面に収まる作品が 2〜3 件まで減ってしまうため。
 								<td>
-									{ work.Season }
-								</td>
-								<td>
-									<dl class="grid grid-cols-[auto_1fr] gap-x-2 text-sm">
-										<dt class="text-muted-foreground">{ templates.T(ctx, "db_works_index_syobocal_label") }</dt>
-										<dd>@externalServiceLink(work.Syobocal)</dd>
-										<dt class="text-muted-foreground">{ templates.T(ctx, "db_works_index_mal_label") }</dt>
-										<dd>@externalServiceLink(work.MalAnime)</dd>
+									<dl class="grid grid-cols-3 gap-x-3 gap-y-1 text-sm">
+										<div>
+											<dt class="text-muted-foreground">{ templates.T(ctx, "db_works_index_table_media_label") }</dt>
+											<dd>{ work.Media }</dd>
+										</div>
+										<div>
+											<dt class="text-muted-foreground">{ templates.T(ctx, "db_works_index_table_season_label") }</dt>
+											<dd>{ valueOrDash(work.Season) }</dd>
+										</div>
+										<div>
+											<dt class="text-muted-foreground">{ templates.T(ctx, "db_works_index_table_watchers_label") }</dt>
+											<dd>{ fmt.Sprintf("%d", work.WatchersCount) }</dd>
+										</div>
+										<div>
+											<dt class="text-muted-foreground">{ templates.T(ctx, "db_works_index_syobocal_label") }</dt>
+											<dd>@externalServiceLink(work.Syobocal)</dd>
+										</div>
+										<div>
+											<dt class="text-muted-foreground">{ templates.T(ctx, "db_works_index_mal_label") }</dt>
+											<dd>@externalServiceLink(work.MalAnime)</dd>
+										</div>
+										<div>
+											<dt class="text-muted-foreground">{ templates.T(ctx, "db_works_index_table_status_label") }</dt>
+											<dd>@components.StatusLabel(work.Status)</dd>
+										</div>
 									</dl>
-								</td>
-								<td class="text-right">{ fmt.Sprintf("%d", work.WatchersCount) }</td>
-								<td>
-									@components.StatusLabel(work.Status)
 								</td>
 								<td class="text-center">
 									@actionButtons(data, work)
@@ -222,20 +251,43 @@ templ Index(data IndexPageData) {
 						}
 					</tbody>
 				</table>
-			</div>
+				</div>
 
-			<div class="mt-6">
-				@components.Pagination(data.Pagination)
-			</div>
-		}
+				<div class="mt-6">
+					@components.Pagination(data.Pagination)
+				</div>
+			}
+		</div>
 	</div>
 }
 
-// externalServiceLink renders one external-service cell: a new-tab link to the
+// missingValuePlaceholder is shown wherever a work attribute is unset, so an empty value
+// reads as "nothing recorded" instead of looking like a rendering gap.
+//
+// [Ja] missingValuePlaceholder は作品の属性が未設定のときに表示する。空の値が描画漏れに
+// 見えず「未登録」と読めるようにするため。
+const missingValuePlaceholder = "-"
+
+// valueOrDash returns value, or the placeholder when it is empty. The view models leave
+// unset attributes as "" so the template decides how to render the gap; every attribute in
+// the info column renders it the same way.
+//
+// [Ja] valueOrDash は value を、空のときはプレースホルダーを返す。ビューモデルは未設定の
+// 属性を "" のままにしてテンプレートに欠落の描画方法を委ねており、情報列の各属性は
+// いずれも同じ形で描画する。
+func valueOrDash(value string) string {
+	if value == "" {
+		return missingValuePlaceholder
+	}
+
+	return value
+}
+
+// externalServiceLink renders one external-service value: a new-tab link to the
 // service (with rel="noopener" for tabnabbing protection) when the work has an id
 // for that service, or a "-" placeholder otherwise.
 //
-// [Ja] externalServiceLink は外部サービス列 1 セルを描画する。作品にその外部 ID があれば
+// [Ja] externalServiceLink は情報列内の外部サービス値を描画する。作品にその外部 ID があれば
 // サービスへの新規タブリンク (tabnabbing 対策の rel="noopener" 付き) を、無ければ "-" の
 // プレースホルダーを表示する。
 templ externalServiceLink(link viewmodel.ExternalServiceLink) {
@@ -244,12 +296,16 @@ templ externalServiceLink(link viewmodel.ExternalServiceLink) {
 			href={ templ.URL(link.URL) }
 			target="_blank"
 			rel="noopener"
-			class="text-primary hover:underline"
+			aria-label={ templates.T(ctx, "db_works_index_external_service_link_aria_label", map[string]any{"Label": link.Label}) }
+			class="text-primary hover:underline inline-flex items-center gap-1"
 		>
 			{ link.Label }
+			<span aria-hidden="true">
+				@templates.Icon("arrow-square-out-regular", "w-[18px] h-[18px]")
+			</span>
 		</a>
 	} else {
-		{ "-" }
+		{ missingValuePlaceholder }
 	}
 }
 
@@ -266,11 +322,11 @@ templ externalServiceLink(link viewmodel.ExternalServiceLink) {
 // ヘッダーで送り、削除・公開ハンドラーが HX-Redirect を返して htmx が一覧へ遷移する。
 // 非公開は確認画面への素のリンク。未ログインや一般ユーザーには空のセルを表示する。
 templ actionButtons(data IndexPageData, work viewmodel.DBWorkListItem) {
-	<div class="flex items-center justify-center gap-2">
+	<div class="flex flex-col items-stretch gap-1.5">
 		if data.IsCommitter {
 			<a
 				href={ templates.DBWorkEditPath(work.ID).SafeURL() }
-				class="btn"
+				class="btn rounded-full"
 				data-variant="outline"
 				data-size="sm"
 			>
@@ -280,7 +336,7 @@ templ actionButtons(data IndexPageData, work viewmodel.DBWorkListItem) {
 				case viewmodel.WorkStatusPublished:
 					<a
 						href={ templates.DBWorkArchiveNewPath(work.ID).SafeURL() }
-						class="btn"
+						class="btn rounded-full"
 						data-variant="warning"
 						data-size="sm"
 					>
@@ -289,7 +345,7 @@ templ actionButtons(data IndexPageData, work viewmodel.DBWorkListItem) {
 				case viewmodel.WorkStatusArchived:
 					<button
 						type="button"
-						class="btn"
+						class="btn rounded-full"
 						data-variant="success"
 						data-size="sm"
 						hx-delete={ templates.DBWorkArchivePath(work.ID).String() }
@@ -303,7 +359,7 @@ templ actionButtons(data IndexPageData, work viewmodel.DBWorkListItem) {
 		if data.IsAdmin {
 			<button
 				type="button"
-				class="btn"
+				class="btn rounded-full"
 				data-variant="destructive"
 				data-size="sm"
 				hx-delete={ templates.DBWorkPath(work.ID).String() }
@@ -324,4 +380,77 @@ templ indexNewButton() {
 		@templates.Icon("plus-regular", "fill-primary-foreground")
 		{ templates.T(ctx, "db_works_index_new_link") }
 	</a>
+}
+
+// seasonSlugsFilter renders a native multiple select as the durable release-season filter,
+// plus a hidden Basecoat multiple combobox that progressively enhances it. The select owns
+// the season_slugs name, so it submits repeated query parameters without JavaScript.
+// web/season-filter.ts reveals the combobox only after Basecoat initializes, then mirrors
+// its selection to the select. Both controls receive the server-rendered initial selection.
+//
+// [Ja] seasonSlugsFilter は常に使えるリリース時期フィルタとしてネイティブの複数選択 select を
+// 描画し、プログレッシブエンハンスメント用に非表示の Basecoat 複数選択 combobox も描画する。
+// season_slugs の name は select が持つため、JavaScript 無しでも繰り返しクエリを送信できる。
+// web/season-filter.ts は Basecoat の初期化後にだけ combobox を表示し、その選択を select へ
+// 同期する。サーバー描画時の初期選択は両方のコントロールへ反映する。
+templ seasonSlugsFilter(options []viewmodel.SeasonFilterOption) {
+	<div data-season-slugs-filter>
+		<select
+			id="db-works-season-slugs-select"
+			name="season_slugs"
+			class="select w-full"
+			data-season-slugs-select
+			multiple
+			size="6"
+		>
+			for _, opt := range options {
+				if opt.Selected {
+					<option value={ opt.Slug } selected>{ opt.Label }</option>
+				} else {
+					<option value={ opt.Slug }>{ opt.Label }</option>
+				}
+			}
+		</select>
+		<div
+			id="db-works-season-slugs"
+			class="combobox w-full"
+			data-season-slugs-combobox
+			data-season-slugs-remove-label={ templates.T(ctx, "db_works_index_season_slugs_remove_label", map[string]any{"Label": "{label}"}) }
+			data-auto-highlight="true"
+			hidden
+		>
+			<input
+				id="db-works-season-slugs-input"
+				type="text"
+				role="combobox"
+				placeholder={ templates.T(ctx, "db_works_index_season_slugs_placeholder") }
+				autocomplete="off"
+				autocorrect="off"
+				spellcheck="false"
+				aria-autocomplete="list"
+				aria-expanded="false"
+				aria-controls="db-works-season-slugs-listbox"
+				aria-labelledby="db-works-season-slugs-label"
+			/>
+			<div id="db-works-season-slugs-popover" data-popover aria-hidden="true">
+				<div
+					role="listbox"
+					id="db-works-season-slugs-listbox"
+					aria-orientation="vertical"
+					aria-multiselectable="true"
+					aria-labelledby="db-works-season-slugs-label"
+					data-empty={ templates.T(ctx, "db_works_index_season_slugs_empty") }
+				>
+					for _, opt := range options {
+						if opt.Selected {
+							<div role="option" data-value={ opt.Slug } aria-selected="true">{ opt.Label }</div>
+						} else {
+							<div role="option" data-value={ opt.Slug }>{ opt.Label }</div>
+						}
+					}
+				</div>
+			</div>
+			<input type="hidden"/>
+		</div>
+	</div>
 }
