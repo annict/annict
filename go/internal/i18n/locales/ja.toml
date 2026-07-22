@@ -1044,7 +1044,7 @@ other = "公開"
 
 [status_archived]
 description = "公開状態 - アーカイブ"
-other = "アーカイブ"
+other = "非公開"
 
 [status_deleted]
 description = "公開状態 - 削除"
