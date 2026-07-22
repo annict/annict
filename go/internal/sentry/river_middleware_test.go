@@ -174,13 +174,13 @@ func TestRiverWorkerMiddleware_BindsHubToContext(t *testing.T) {
 	t.Parallel()
 
 	// Workers usually surface intermediate errors via slog.ErrorContext which
-	// routes through sentryslog → the Hub on ctx. Verify the middleware binds a
-	// (cloned) Hub to ctx so an explicit CaptureException inside the inner
-	// function reaches the same transport, and that the job tags set by the
-	// middleware are present on that capture too.
+	// routes through NewSlogHandler → the Hub on ctx. Verify the middleware
+	// binds a (cloned) Hub to ctx so an explicit CaptureException inside the
+	// inner function reaches the same transport, and that the job tags set by
+	// the middleware are present on that capture too.
 	//
 	// [Ja] ワーカーは多くの場合 slog.ErrorContext で中間エラーを Sentry に流す
-	// (sentryslog 経由で ctx の Hub を使う)。本テストでは inner で
+	// (NewSlogHandler 経由で ctx の Hub を使う)。本テストでは inner で
 	// hub.CaptureException を直接呼び、ミドルウェアが ctx に bind した Hub と
 	// 同じ transport にイベントが届くこと・ジョブタグが乗っていることを確認する。
 	parentHub, transport := newRiverTestHub(t)

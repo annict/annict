@@ -46,16 +46,17 @@ var sensitiveQueryKeys = []string{
 	"key",
 }
 
-// sensitiveTagKeys lists tag keys to mask (partial match, lowercase). Sentry
-// tags are populated from slog attributes by sentryslog, so PII logged as a
-// structured attribute (e.g. "email" on email-send failure logs) would reach
-// Sentry unmasked without this filter. The stderr log keeps the original
-// value, so debugging is still possible there.
+// sensitiveTagKeys lists tag keys to mask (partial match, lowercase). The
+// application Sentry event handler populates tags from slog attributes, so PII
+// logged as a structured attribute (e.g. "email" on email-send failure logs)
+// would reach Sentry unmasked without this filter. The stderr log keeps the
+// original value, so debugging is still possible there.
 //
-// [Ja] マスクすべきタグのキー (部分一致、小文字)。Sentry のタグには sentryslog
-// 経由で slog 属性がそのまま乗るため、構造化属性としてログに載せた PII (例:
-// メール送信失敗ログの "email") がマスクされないまま Sentry に届いてしまう。
-// 標準エラー出力側のログには元の値が残るため、デバッグはそちらで行える。
+// [Ja] マスクすべきタグのキー (部分一致、小文字)。アプリケーションの Sentry
+// イベントハンドラーが slog 属性をタグへ載せるため、構造化属性としてログに
+// 載せた PII (例: メール送信失敗ログの "email") がマスクされないまま Sentry
+// に届いてしまう。標準エラー出力側のログには元の値が残るため、デバッグは
+// そちらで行える。
 var sensitiveTagKeys = []string{
 	"email",
 	"password",
@@ -120,12 +121,14 @@ func beforeSend(event *sentry.Event, hint *sentry.EventHint) *sentry.Event {
 	}
 
 	// Drop events tagged as reverse-proxy failures: those failures belong to
-	// the Rails Sentry project, not the Go one. sentryslog stamps the slog
-	// attribute SourceAttrKey onto event.Tags, so a simple tag check suffices.
+	// the Rails Sentry project, not the Go one. The application Sentry event
+	// handler stamps the slog attribute SourceAttrKey onto event.Tags, so a
+	// simple tag check suffices.
 	//
 	// [Ja] リバースプロキシ由来とタグ付けされたイベントは捨てる。Rails 側の
-	// 障害は Rails の Sentry プロジェクトで扱うべきため。sentryslog は slog
-	// 属性 SourceAttrKey を event.Tags にそのまま乗せるので、タグ照合で判別できる。
+	// 障害は Rails の Sentry プロジェクトで扱うべきため。アプリケーションの
+	// Sentry イベントハンドラーは slog 属性 SourceAttrKey を event.Tags に
+	// そのまま乗せるので、タグ照合で判別できる。
 	if event.Tags[SourceAttrKey] == ReverseProxySource {
 		return nil
 	}
@@ -160,11 +163,11 @@ func shouldDropError(err error) bool {
 
 // filterTags masks sensitive tag values such as email addresses. Unlike the
 // request filters below, this also covers events generated from slog records,
-// whose attributes sentryslog stamps onto event.Tags.
+// whose attributes the application event handler stamps onto event.Tags.
 //
 // [Ja] センシティブなタグ (メールアドレス等) をマスクする。下のリクエスト系
-// フィルタと異なり、sentryslog が slog 属性を event.Tags に乗せて生成した
-// イベントもカバーする。
+// フィルタと異なり、アプリケーションのイベントハンドラーが slog 属性を
+// event.Tags に乗せて生成したイベントもカバーする。
 func filterTags(event *sentry.Event) {
 	for key := range event.Tags {
 		lowerKey := strings.ToLower(key)
