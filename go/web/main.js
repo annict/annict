@@ -1,6 +1,7 @@
 import "basecoat-css/all";
 
 import { initializeSidebarToggle } from "./sidebar-toggle";
+import { initializeSeasonFilter } from "./season-filter";
 
 window.disableSubmitButtons = function (form) {
   form.querySelectorAll("button[type=submit]").forEach((b) => (b.disabled = true));
@@ -8,6 +9,7 @@ window.disableSubmitButtons = function (form) {
 
 document.addEventListener("DOMContentLoaded", () => {
   initializeSidebarToggle();
+  initializeSeasonFilter();
 });
 
 console.log("Annict Go initialized");
