@@ -222,11 +222,11 @@ func TestNewDBWorkListItem(t *testing.T) {
 		wantMedia       string
 		wantWatchers    int32
 		wantStatus      WorkStatus
-		wantImageURL    bool
+		wantHasImage    bool
 		wantSeasonHasJP string
 	}{
 		{
-			name: "正常系: 画像がある作品は ImageURL が生成される",
+			name: "正常系: 画像がある作品は Image が実サムネイルを解決する",
 			work: &model.Work{
 				ID:            1,
 				Title:         "画像あり作品",
@@ -245,11 +245,11 @@ func TestNewDBWorkListItem(t *testing.T) {
 			wantMedia:       "TV",
 			wantWatchers:    100,
 			wantStatus:      WorkStatusPublished,
-			wantImageURL:    true,
-			wantSeasonHasJP: "2024 春",
+			wantHasImage:    true,
+			wantSeasonHasJP: "2024年春",
 		},
 		{
-			name: "正常系: unpublished_at があれば archived になり、title_kana 未設定は空文字列・画像なしは ImageURL が空になる",
+			name: "正常系: unpublished_at があれば archived になり、title_kana 未設定は空文字列・画像なしは Image がプレースホルダーになる",
 			work: &model.Work{
 				ID:            2,
 				Title:         "画像なし作品",
@@ -265,7 +265,7 @@ func TestNewDBWorkListItem(t *testing.T) {
 			wantMedia:     "OVA",
 			wantWatchers:  0,
 			wantStatus:    WorkStatusArchived,
-			wantImageURL:  false,
+			wantHasImage:  false,
 		},
 		{
 			name: "正常系: シーズン未設定の場合 Season は空文字列になる",
@@ -278,7 +278,7 @@ func TestNewDBWorkListItem(t *testing.T) {
 			wantTitle:       "シーズンなし作品",
 			wantMedia:       "その他",
 			wantStatus:      WorkStatusPublished,
-			wantImageURL:    false,
+			wantHasImage:    false,
 			wantSeasonHasJP: "",
 		},
 		{
@@ -299,7 +299,7 @@ func TestNewDBWorkListItem(t *testing.T) {
 			wantTitle:       "範囲外シーズン作品",
 			wantMedia:       "TV",
 			wantStatus:      WorkStatusPublished,
-			wantImageURL:    false,
+			wantHasImage:    false,
 			wantSeasonHasJP: "2024",
 		},
 		{
@@ -355,8 +355,8 @@ func TestNewDBWorkListItem(t *testing.T) {
 			if got.Status != tt.wantStatus {
 				t.Errorf("Status = %q, want %q", got.Status, tt.wantStatus)
 			}
-			if (got.ImageURL != "") != tt.wantImageURL {
-				t.Errorf("ImageURL presence = %v (%q), want %v", got.ImageURL != "", got.ImageURL, tt.wantImageURL)
+			if got.Image.Exists() != tt.wantHasImage {
+				t.Errorf("Image.Exists() = %v (URL %q), want %v", got.Image.Exists(), got.Image.URL(70, "jpg"), tt.wantHasImage)
 			}
 			if got.Season != tt.wantSeasonHasJP {
 				t.Errorf("Season = %q, want %q", got.Season, tt.wantSeasonHasJP)
@@ -476,12 +476,13 @@ func TestNewDBWorkListItem_ExternalServices(t *testing.T) {
 	})
 }
 
-// TestDBWorkListItem_GetSrcSet verifies that the thumbnail srcset is produced only
-// when the work has an image and an image helper is wired.
+// TestDBWorkListItem_Image verifies that the list item wires the work's image_data into
+// its WorkImage, so a work with an image resolves to a real thumbnail and one without
+// falls back to the placeholder.
 //
-// [Ja] TestDBWorkListItem_GetSrcSet はサムネイルの srcset が、作品に画像があり
-// 画像ヘルパーが配線されているときにのみ生成されることを検証する。
-func TestDBWorkListItem_GetSrcSet(t *testing.T) {
+// [Ja] TestDBWorkListItem_Image は一覧アイテムが作品の image_data を WorkImage に配線し、
+// 画像がある作品は実サムネイルに、無い作品はプレースホルダーに解決されることを検証する。
+func TestDBWorkListItem_Image(t *testing.T) {
 	t.Parallel()
 
 	ctx := i18n.SetLocale(context.Background(), "ja")
@@ -492,8 +493,11 @@ func TestDBWorkListItem_GetSrcSet(t *testing.T) {
 		Title:     "画像あり作品",
 		ImageData: `{"master":{"id":"workimage/1/image/master-abc.jpg","storage":"store"}}`,
 	}, helper)
-	if withImage.GetSrcSet(70, "webp") == "" {
-		t.Error("画像がある作品では GetSrcSet が非空を返すべきです")
+	if !withImage.Image.Exists() {
+		t.Error("画像がある作品では Image.Exists() が true になるべきです")
+	}
+	if withImage.Image.SrcSet(70, "webp") == "" {
+		t.Error("画像がある作品では SrcSet が非空を返すべきです")
 	}
 
 	withoutImage := NewDBWorkListItem(ctx, &model.Work{
@@ -501,16 +505,11 @@ func TestDBWorkListItem_GetSrcSet(t *testing.T) {
 		Title:     "画像なし作品",
 		ImageData: "",
 	}, helper)
-	if got := withoutImage.GetSrcSet(70, "webp"); got != "" {
-		t.Errorf("画像がない作品では GetSrcSet が空を返すべきです: %q", got)
+	if withoutImage.Image.Exists() {
+		t.Error("画像がない作品では Image.Exists() が false になるべきです")
 	}
-
-	// A nil image helper (e.g. a struct literal) yields an empty srcset.
-	//
-	// [Ja] 画像ヘルパーが nil (例: 構造体リテラル) の場合は空の srcset を返す。
-	noHelper := DBWorkListItem{ImageDataJSON: `{"master":{"id":"x","storage":"store"}}`}
-	if got := noHelper.GetSrcSet(70, "webp"); got != "" {
-		t.Errorf("画像ヘルパーが nil の場合は空を返すべきです: %q", got)
+	if got := withoutImage.Image.URL(70, "jpg"); got != NoWorkImagePath {
+		t.Errorf("画像がない作品の URL = %q, want %q", got, NoWorkImagePath)
 	}
 }
 
@@ -529,11 +528,11 @@ func TestNewDBWorkListItems(t *testing.T) {
 	if len(got) != 2 {
 		t.Fatalf("len(got) = %d, want 2", len(got))
 	}
-	if got[0].ID != WorkID(10) || got[0].ImageURL == "" {
-		t.Errorf("got[0] = %+v, want ID=10 で ImageURL が非空", got[0])
+	if got[0].ID != WorkID(10) || !got[0].Image.Exists() {
+		t.Errorf("got[0] = %+v, want ID=10 で画像あり", got[0])
 	}
-	if got[1].ID != WorkID(11) || got[1].ImageURL != "" {
-		t.Errorf("got[1] = %+v, want ID=11 で ImageURL が空", got[1])
+	if got[1].ID != WorkID(11) || got[1].Image.Exists() {
+		t.Errorf("got[1] = %+v, want ID=11 で画像なし", got[1])
 	}
 }
 

@@ -1056,13 +1056,29 @@ other = "Deleted"
 description = "DB works index page title"
 other = "Works"
 
+[db_works_index_table_caption]
+description = "Caption and scroll-region aria-label for the DB works table"
+other = "DB works list"
+
 [db_works_index_new_link]
 description = "Link from works index to new work page"
 other = "New"
 
 [db_works_index_season_slugs_label]
-description = "Label for the release-season multi-select filter"
-other = "Release Season"
+description = "Label for the release multi-select filter"
+other = "Release"
+
+[db_works_index_season_slugs_placeholder]
+description = "Search placeholder for the release-season combobox"
+other = "Filter by year or season..."
+
+[db_works_index_season_slugs_empty]
+description = "Message shown when the release-season combobox search has no results"
+other = "No release seasons found"
+
+[db_works_index_season_slugs_remove_label]
+description = "Accessible label for removing a selected release-season chip"
+other = "Remove {{.Label}}"
 
 [db_works_index_filter_no_episodes_label]
 description = "Label for the no-episodes filter"
@@ -1092,24 +1108,24 @@ other = "ID"
 description = "Table header - Title"
 other = "Title"
 
+[db_works_index_table_info_label]
+description = "Table header - Info (every work attribute other than the title, combined into one column)"
+other = "Info"
+
 [db_works_index_table_media_label]
 description = "Table header - Media"
 other = "Media"
 
 [db_works_index_table_season_label]
-description = "Table header - Season"
-other = "Season"
-
-[db_works_index_table_external_services_label]
-description = "Table header - External services"
-other = "External services"
+description = "Table header - Release"
+other = "Release"
 
 [db_works_index_syobocal_label]
-description = "External services column - Syoboi Calendar label"
+description = "Info column - Syoboi Calendar label"
 other = "Syoboi Calendar"
 
 [db_works_index_mal_label]
-description = "External services column - MyAnimeList label"
+description = "Info column - MyAnimeList label"
 other = "MyAnimeList"
 
 [db_works_index_table_watchers_label]
@@ -1131,6 +1147,10 @@ other = "Actions"
 [db_works_index_id_link_aria_label]
 description = "Aria label for the work ID link that opens the public page in a new tab"
 other = "Open work {{.ID}} in a new tab"
+
+[db_works_index_external_service_link_aria_label]
+description = "Aria label for an external service link that opens in a new tab"
+other = "Open {{.Label}} in a new tab"
 
 [db_works_index_edit_link]
 description = "Link from work list to edit form"

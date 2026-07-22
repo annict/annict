@@ -1055,13 +1055,29 @@ other = "削除"
 description = "DB作品一覧ページのタイトル"
 other = "作品"
 
+[db_works_index_table_caption]
+description = "DB作品一覧表のキャプションとスクロール領域の aria-label"
+other = "DB作品一覧"
+
 [db_works_index_new_link]
 description = "作品一覧から新規作成ページへのリンク"
-other = "新規作成"
+other = "新規登録"
 
 [db_works_index_season_slugs_label]
 description = "リリース時期の複数選択フィルタのラベル"
 other = "リリース時期"
+
+[db_works_index_season_slugs_placeholder]
+description = "リリース時期 combobox の検索プレースホルダ"
+other = "年・季節で絞り込む..."
+
+[db_works_index_season_slugs_empty]
+description = "リリース時期 combobox の検索結果が空のときのメッセージ"
+other = "一致するリリース時期がありません"
+
+[db_works_index_season_slugs_remove_label]
+description = "選択済みリリース時期チップを解除するボタンのアクセシブルラベル"
+other = "{{.Label}}の選択を解除"
 
 [db_works_index_filter_no_episodes_label]
 description = "エピソード未登録フィルタのラベル"
@@ -1091,24 +1107,24 @@ other = "ID"
 description = "テーブルヘッダー - タイトル"
 other = "タイトル"
 
+[db_works_index_table_info_label]
+description = "テーブルヘッダー - 情報 (タイトル以外の作品属性をまとめた列)"
+other = "情報"
+
 [db_works_index_table_media_label]
 description = "テーブルヘッダー - メディア"
 other = "メディア"
 
 [db_works_index_table_season_label]
-description = "テーブルヘッダー - シーズン"
-other = "シーズン"
-
-[db_works_index_table_external_services_label]
-description = "テーブルヘッダー - 外部サービス"
-other = "外部サービス"
+description = "テーブルヘッダー - リリース時期"
+other = "リリース時期"
 
 [db_works_index_syobocal_label]
-description = "外部サービス列 - しょぼいカレンダーのラベル"
+description = "情報列 - しょぼいカレンダーのラベル"
 other = "しょぼかる"
 
 [db_works_index_mal_label]
-description = "外部サービス列 - MyAnimeList のラベル"
+description = "情報列 - MyAnimeList のラベル"
 other = "MyAnimeList"
 
 [db_works_index_table_watchers_label]
@@ -1130,6 +1146,10 @@ other = "操作"
 [db_works_index_id_link_aria_label]
 description = "作品 ID リンク (公開ページを新しいタブで開く) の aria-label"
 other = "作品 {{.ID}} を新しいタブで開く"
+
+[db_works_index_external_service_link_aria_label]
+description = "外部サービスリンク (新しいタブで開く) の aria-label"
+other = "{{.Label}} を新しいタブで開く"
 
 [db_works_index_edit_link]
 description = "作品一覧から編集フォームへのリンク"

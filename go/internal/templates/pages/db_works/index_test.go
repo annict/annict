@@ -5,8 +5,17 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/annict/annict/go/internal/i18n"
+	"github.com/annict/annict/go/internal/testutil"
 	"github.com/annict/annict/go/internal/viewmodel"
 )
+
+// newTabIconPath is the leading path data of the arrow-square-out icon, used to count how many
+// new-tab link indicators a rendered page carries.
+//
+// [Ja] newTabIconPath は arrow-square-out アイコンの path データ先頭。描画されたページに
+// 新規タブリンクの目印がいくつ出ているかを数えるために使う。
+const newTabIconPath = "M224,104a8,8,0,0,1-16,0V59.32"
 
 // TestIndex_Empty は作品が存在しない場合に表が表示されず空メッセージが表示されることをテスト
 func TestIndex_Empty(t *testing.T) {
@@ -49,12 +58,12 @@ func TestIndex_WithWorks(t *testing.T) {
 				TitleKana:     "てすとあにめいち",
 				TitleEn:       "Test Anime 1",
 				Media:         "TV",
-				Season:        "2024 春",
+				Season:        "2024年春",
 				Syobocal:      viewmodel.ExternalServiceLink{Label: "3524", URL: "http://cal.syoboi.jp/tid/3524"},
 				MalAnime:      viewmodel.ExternalServiceLink{Label: "20", URL: "https://myanimelist.net/anime/20"},
 				WatchersCount: 100,
 				Status:        viewmodel.WorkStatusPublished,
-				ImageURL:      "https://imgproxy.test/thumb1.jpg",
+				Image:         viewmodel.NewWorkImage(`{"master":{"id":"workimage/1/image/master-abc.jpg","storage":"store"}}`, testutil.NewTestImageHelper()),
 			},
 			{
 				ID:            2,
@@ -62,10 +71,10 @@ func TestIndex_WithWorks(t *testing.T) {
 				TitleKana:     "",
 				TitleEn:       "",
 				Media:         "OVA",
-				Season:        "2024 夏",
+				Season:        "",
 				WatchersCount: 50,
 				Status:        viewmodel.WorkStatusPublished,
-				ImageURL:      "",
+				Image:         viewmodel.NewWorkImage("", testutil.NewTestImageHelper()),
 			},
 		},
 		Pagination: viewmodel.NewPagination(1, 2, 30, "/db/works"),
@@ -82,6 +91,8 @@ func TestIndex_WithWorks(t *testing.T) {
 		"<table",
 		"<thead",
 		"<tbody",
+		`<div class="overflow-x-auto" role="region" aria-label="DB作品一覧" tabindex="0">`,
+		`<caption class="sr-only">DB作品一覧</caption>`,
 		"テストアニメ1",
 		"テストアニメ2",
 		// ID column links to the work's public page in a new tab.
@@ -94,37 +105,69 @@ func TestIndex_WithWorks(t *testing.T) {
 		//
 		// [Ja] ID リンクは新しいタブで開くことを知らせる aria-label を持つ。
 		`aria-label="作品 1 を新しいタブで開く"`,
-		// The media column and the extra kana / English titles.
+		// The extra kana / English titles.
 		//
-		// [Ja] メディア列と追加のふりがな・英語タイトル。
+		// [Ja] 追加のふりがな・英語タイトル。
 		"てすとあにめいち",
 		"Test Anime 1",
-		"TV",
-		"OVA",
-		// A work with an image renders a thumbnail <picture> with the imgproxy URL and lazy loading.
+		// Every work attribute other than the title is merged into a single "info" column,
+		// rendered as label / value pairs inside one cell rather than one column each.
 		//
-		// [Ja] 画像がある作品は imgproxy URL と遅延読み込み付きのサムネイル <picture> を描画する。
+		// [Ja] タイトル以外の作品属性は 1 つの「情報」列に統合され、属性ごとの列に分かれず
+		// 1 セル内のラベル / 値の組として描画される。
+		`<th scope="col" class="text-left">情報</th>`,
+		"<dd>TV</dd>",
+		"<dd>OVA</dd>",
+		"<dd>2024年春</dd>",
+		"ウォッチ数",
+		"<dd>100</dd>",
+		// A work with an image renders a thumbnail <picture> with webp / jpeg sources and
+		// lazy loading, sized to the work-image ratio.
+		//
+		// [Ja] 画像がある作品は webp / jpeg のソースと遅延読み込みを備えたサムネイル <picture>
+		// を、作品画像の比率のサイズで描画する。
 		"<picture",
-		`src="https://imgproxy.test/thumb1.jpg"`,
+		`type="image/webp"`,
+		`type="image/jpeg"`,
 		`alt="テストアニメ1"`,
 		`width="70"`,
-		`height="52"`,
+		`height="93"`,
 		`loading="lazy"`,
-		// A work without an image renders a muted placeholder box.
+		// A work without an image falls back to the static placeholder, drawn in the same
+		// box as a real thumbnail.
 		//
-		// [Ja] 画像がない作品はミュートされたプレースホルダーの箱を描画する。
-		"bg-muted",
-		// The external services column shows the しょぼかる / MyAnimeList links for a
-		// work that has ids, each opening in a new tab with rel="noopener".
+		// [Ja] 画像がない作品は静的なプレースホルダーにフォールバックし、実サムネイルと同じ枠で描画される。
+		`src="/static/images/no-work-image.png"`,
+		`style="width:70px;height:93px;"`,
+		// The status badge is one of the info column's pairs, labelled like the others.
 		//
-		// [Ja] 外部サービス列は、ID を持つ作品のしょぼかる / MyAnimeList リンクを表示し、
+		// [Ja] ステータスのバッジも情報列の組の 1 つとして、他と同じくラベル付きで表示される。
+		"ステータス",
+		`<span class="badge" data-variant="success">`,
+		// The info column shows the しょぼかる / MyAnimeList links for a work that has
+		// ids, each opening in a new tab with rel="noopener".
+		//
+		// [Ja] 情報列は、ID を持つ作品のしょぼかる / MyAnimeList リンクを表示し、
 		// それぞれ rel="noopener" 付きで新しいタブで開く。
-		"外部サービス",
 		"しょぼかる",
 		"MyAnimeList",
 		`href="http://cal.syoboi.jp/tid/3524"`,
 		`href="https://myanimelist.net/anime/20"`,
-		">3524</a>",
+		`>3524 <span aria-hidden="true">`,
+		// The title cell opts out of the table's default whitespace-nowrap so long titles wrap
+		// inside the table's dedicated horizontal scroll region.
+		//
+		// [Ja] タイトルセルはテーブル既定の whitespace-nowrap を解除し、表専用の横スクロール
+		// 領域内で長いタイトルが折り返すようにする。
+		`class="whitespace-normal [overflow-wrap:anywhere]"`,
+		// The table uses a fixed layout with a colgroup so the width-less title column absorbs
+		// the remaining space; auto layout would spread the slack across all columns instead.
+		//
+		// [Ja] テーブルは colgroup 付きの固定レイアウトを使い、幅指定の無いタイトル列が残り幅を
+		// 吸収する。auto レイアウトでは余白が全列へ分散してしまう。
+		"table-fixed",
+		"min-w-[640px]",
+		"<colgroup>",
 	}
 
 	for _, expected := range expectedContents {
@@ -152,6 +195,72 @@ func TestIndex_WithWorks(t *testing.T) {
 	// [Ja] 外部サービスの ID を持たない作品は、セルに "-" のプレースホルダーを表示する。
 	if !strings.Contains(html, "<dd>-</dd>") {
 		t.Error("外部サービスの ID が無い作品には '-' のプレースホルダーが表示されるべきです")
+	}
+
+	// A work with no release season renders the same "-" placeholder as the other info
+	// pairs, rather than an empty value that reads as a rendering gap. The label is matched
+	// alongside it so this cannot be satisfied by some other pair's dash.
+	//
+	// [Ja] リリース時期が無い作品は、描画漏れに見える空の値ではなく、情報列の他の組と同じ "-"
+	// のプレースホルダーを表示する。他の組の "-" で条件が満たされないよう、ラベルと併せて検証する。
+	if !strings.Contains(html, `<dt class="text-muted-foreground">リリース時期</dt><dd>-</dd>`) {
+		t.Error("リリース時期が空の作品には '-' のプレースホルダーが表示されるべきです")
+	}
+
+	// External-service links carry the same new-tab icon as the ID link. Work 1 renders
+	// three icons (ID, しょぼかる, MyAnimeList); work 2 has no external ids, so only its
+	// ID link renders one.
+	//
+	// [Ja] 外部サービスのリンクには ID リンクと同じ新規タブアイコンを付ける。作品 1 は 3 つ
+	// (ID・しょぼかる・MyAnimeList)、作品 2 は外部 ID が無いため ID リンクの 1 つだけになる。
+	if got := strings.Count(html, newTabIconPath); got != 4 {
+		t.Errorf("新規タブアイコンの数 = %d, want 4", got)
+	}
+
+	// The external services and status columns are gone: both are now pairs inside the
+	// info column, so neither has a header of its own anymore.
+	//
+	// [Ja] 外部サービス列とステータス列は情報列内の組になったため、専用の見出しはもう無い。
+	if strings.Contains(html, `<th scope="col" class="text-left">外部サービス</th>`) {
+		t.Error("外部サービス列の見出しは情報列への統合で無くなっているべきです")
+	}
+	if strings.Contains(html, `<th scope="col" class="text-left">ステータス</th>`) {
+		t.Error("ステータス列の見出しは情報列への統合で無くなっているべきです")
+	}
+}
+
+// TestExternalServiceLinkI18n verifies that an external-service link announces that it opens
+// in a new tab in each supported locale while retaining its visible identifier in the name.
+//
+// [Ja] TestExternalServiceLinkI18n は外部サービスリンクが可視 ID を名前に残しつつ、新しい
+// タブで開くことを各対応言語で伝えることを検証する。
+func TestExternalServiceLinkI18n(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name   string
+		locale string
+		want   string
+	}{
+		{name: "English", locale: "en", want: `aria-label="Open 3524 in a new tab"`},
+		{name: "Japanese", locale: "ja", want: `aria-label="3524 を新しいタブで開く"`},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			ctx := i18n.SetLocale(context.Background(), tt.locale)
+			var buf strings.Builder
+			link := viewmodel.ExternalServiceLink{Label: "3524", URL: "http://cal.syoboi.jp/tid/3524"}
+			if err := externalServiceLink(link).Render(ctx, &buf); err != nil {
+				t.Fatalf("failed to render external-service link: %v", err)
+			}
+
+			if html := buf.String(); !strings.Contains(html, tt.want) {
+				t.Errorf("localized accessible name is missing: want %q in %q", tt.want, html)
+			}
+		})
 	}
 }
 
@@ -324,7 +433,10 @@ func TestIndex_SidebarToggle(t *testing.T) {
 	}
 }
 
-// TestIndex_FilterUI はリリース時期の複数選択と放送予定未登録チェックボックスの描画をテスト
+// TestIndex_FilterUI verifies the release-season combobox and no-slots checkbox markup.
+//
+// [Ja] TestIndex_FilterUI はリリース時期の combobox と放送予定未登録チェックボックスの
+// マークアップを検証する。
 func TestIndex_FilterUI(t *testing.T) {
 	t.Parallel()
 
@@ -347,13 +459,25 @@ func TestIndex_FilterUI(t *testing.T) {
 	html := buf.String()
 
 	expectedContents := []string{
-		// The release-season multi-select and its selected / unselected options.
+		// The native multiple select remains the durable named form control, including the
+		// server-rendered initial selection.
 		//
-		// [Ja] リリース時期の複数選択とその選択済み / 未選択オプション。
-		`name="season_slugs"`,
-		"multiple",
+		// [Ja] ネイティブの複数選択 select は name 付きの常用可能なフォームコントロールとして残り、
+		// サーバー描画時の初期選択も保持する。
+		`<label id="db-works-season-slugs-label" for="db-works-season-slugs-select" class="label">`,
+		`<select id="db-works-season-slugs-select" name="season_slugs" class="select w-full" data-season-slugs-select multiple size="6">`,
 		`<option value="2024-spring" selected>2024年春</option>`,
 		`<option value="2024-winter">2024年冬</option>`,
+		// The hidden release-season combobox carries the same initial selection. Client code
+		// reveals it only after Basecoat initializes and can synchronize it to the select.
+		//
+		// [Ja] 非表示のリリース時期 combobox にも同じ初期選択を渡す。クライアントコードは
+		// Basecoat 初期化後、select へ同期できる状態になってからだけ表示する。
+		`data-season-slugs-combobox`,
+		"hidden",
+		`aria-multiselectable="true"`,
+		`<div role="option" data-value="2024-spring" aria-selected="true">2024年春</div>`,
+		`<div role="option" data-value="2024-winter">2024年冬</div>`,
 		// The no-slots checkbox renders in its checked state because FilterNoSlots is true.
 		//
 		// [Ja] FilterNoSlots が true なので放送予定未登録チェックボックスが checked 状態で描画される。
@@ -363,5 +487,57 @@ func TestIndex_FilterUI(t *testing.T) {
 		if !strings.Contains(html, expected) {
 			t.Errorf("期待する文字列が含まれていません: %q", expected)
 		}
+	}
+
+	// Basecoat's JSON-array hidden input stays unnamed: the native select is the sole named
+	// season_slugs control and therefore submits repeated query parameters in every mode.
+	//
+	// [Ja] Basecoat の JSON 配列 hidden input には name を付けない。ネイティブ select だけを
+	// season_slugs の name 付きコントロールとし、どのモードでも繰り返しクエリを送信する。
+	if strings.Contains(html, `<input type="hidden" name="season_slugs"`) {
+		t.Errorf("Basecoat の hidden input に season_slugs の name を付けてはいけません")
+	}
+
+	// The filter card opts out of the default overflow-hidden so the combobox popover is not
+	// clipped by the card boundary.
+	//
+	// [Ja] フィルタカードは既定の overflow-hidden を外し、combobox の popover がカード境界で
+	// 切られないようにする。
+	if !strings.Contains(html, "overflow-visible") {
+		t.Errorf("フィルタカードに overflow-visible が付いていません (popover がクリップされます)")
+	}
+}
+
+// TestSeasonSlugsFilter_RemoveLabelLocale verifies that the bridge receives the localized
+// template used for Basecoat-generated chip remove labels.
+//
+// [Ja] TestSeasonSlugsFilter_RemoveLabelLocale は Basecoat が生成するチップの選択解除ラベルに
+// bridge が使うローカライズ済みテンプレートを受け取ることを検証する。
+func TestSeasonSlugsFilter_RemoveLabelLocale(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name   string
+		locale string
+		want   string
+	}{
+		{name: "English", locale: "en", want: `data-season-slugs-remove-label="Remove {label}"`},
+		{name: "Japanese", locale: "ja", want: `data-season-slugs-remove-label="{label}の選択を解除"`},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			ctx := i18n.SetLocale(context.Background(), tt.locale)
+			var buf strings.Builder
+			if err := seasonSlugsFilter(nil).Render(ctx, &buf); err != nil {
+				t.Fatalf("failed to render release-season filter: %v", err)
+			}
+
+			if html := buf.String(); !strings.Contains(html, tt.want) {
+				t.Errorf("localized remove-label template is missing: want %q in %q", tt.want, html)
+			}
+		})
 	}
 }

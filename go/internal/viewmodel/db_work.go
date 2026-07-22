@@ -59,30 +59,12 @@ type DBWorkListItem struct {
 	MalAnime      ExternalServiceLink
 	WatchersCount int32
 	Status        WorkStatus
-	// Pre-generated 70px-wide jpg thumbnail URL. Empty when the work has no
-	// image, in which case the template renders a placeholder box.
+	// Thumbnail resolver, which falls back to the placeholder for works with no image.
+	// The display width is chosen by the template, so no URL is pre-generated here.
 	//
-	// [Ja] 生成済みの 70px 幅の jpg サムネイル URL。作品に画像が無ければ空文字列に
-	// なり、その場合テンプレートはプレースホルダーの箱を描画する。
-	ImageURL string
-	// Raw work_images.image_data JSON, retained so GetSrcSet can build the srcset.
-	//
-	// [Ja] work_images.image_data の生 JSON。GetSrcSet が srcset を生成するために保持する。
-	ImageDataJSON string
-	imageHelper   *image.Helper
-}
-
-// GetSrcSet returns the 1x/2x srcset for the work thumbnail, or "" when the work
-// has no image or no image helper is wired.
-//
-// [Ja] GetSrcSet は作品サムネイルの 1x/2x srcset を返す。作品に画像が無い、または
-// 画像ヘルパーが未配線のときは "" を返す。
-func (item *DBWorkListItem) GetSrcSet(width int, format string) string {
-	if item.imageHelper == nil {
-		return ""
-	}
-	originalURL := item.imageHelper.ExtractImageURL(item.ImageDataJSON)
-	return item.imageHelper.GetSrcSet(originalURL, width, format)
+	// [Ja] サムネイルの解決子。画像が無い作品ではプレースホルダーにフォールバックする。
+	// 表示幅はテンプレートが決めるため、ここでは URL を生成しない。
+	Image WorkImage
 }
 
 func NewDBWorkListItems(ctx context.Context, works []*model.Work, helper *image.Helper) []DBWorkListItem {
@@ -94,14 +76,6 @@ func NewDBWorkListItems(ctx context.Context, works []*model.Work, helper *image.
 }
 
 func NewDBWorkListItem(ctx context.Context, work *model.Work, helper *image.Helper) DBWorkListItem {
-	// Generate a 70px-wide jpg thumbnail URL for the list (imgproxy derives the height at 4:3).
-	//
-	// [Ja] 一覧用に 70px 幅の jpg サムネイル URL を生成する (高さは imgproxy が 4:3 で算出)。
-	imageURL := ""
-	if helper != nil {
-		imageURL = helper.GetWorkImageURL(work.ImageData, 70, "jpg")
-	}
-
 	return DBWorkListItem{
 		ID:            WorkID(work.ID),
 		Title:         work.Title,
@@ -113,9 +87,7 @@ func NewDBWorkListItem(ctx context.Context, work *model.Work, helper *image.Help
 		MalAnime:      newExternalServiceLink(work.MalAnimeID, MalAnimeURL),
 		WatchersCount: work.WatchersCount,
 		Status:        WorkStatus(work.DerivedStatus()),
-		ImageURL:      imageURL,
-		ImageDataJSON: work.ImageData,
-		imageHelper:   helper,
+		Image:         NewWorkImage(work.ImageData, helper),
 	}
 }
 
@@ -158,7 +130,10 @@ func formatSeason(ctx context.Context, year *int32, name *int32) string {
 		return fmt.Sprintf("%d", *year)
 	}
 
-	return fmt.Sprintf("%d %s", *year, i18n.T(ctx, seasonKey))
+	return i18n.T(ctx, "year_season", map[string]any{
+		"Year":   *year,
+		"Season": i18n.T(ctx, seasonKey),
+	})
 }
 
 type SelectOption struct {
