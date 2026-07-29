@@ -264,7 +264,7 @@ func (m *ReverseProxyMiddleware) Middleware(next http.Handler) http.Handler {
 			// Rails へプロキシする (下のフラグ無効時と同じレイヤー)。chi の NotFound
 			// ハンドラー (Rails 行きのリクエストがスキップすべき Sentry / CSRF
 			// ミドルウェアチェーンの内側で走る) へ流さないためにこうする。
-			if m.router == nil || m.router.Match(chi.NewRouteContext(), r.Method, r.URL.Path) {
+			if m.matchesGoRoute(r) {
 				next.ServeHTTP(w, r)
 				return
 			}
@@ -293,6 +293,52 @@ func (m *ReverseProxyMiddleware) Middleware(next http.Handler) http.Handler {
 // 自身で Rails へプロキシする (フラグ無効時と同じレイヤー)。
 func (m *ReverseProxyMiddleware) SetRouter(router chi.Router) {
 	m.router = router
+}
+
+// matchesGoRoute reports whether a Go route handles the request. Without a router every
+// request goes to the Go chain, which is the behaviour before SetRouter is called.
+//
+// An HTML form can only send GET or POST, so routes registered as PUT / PATCH / DELETE are
+// reached through the _method parameter that MethodOverride applies. MethodOverride runs
+// inside this middleware, so the method seen here is still the POST the browser sent, and
+// matching on it alone would miss those routes and proxy an implemented screen to Rails.
+// Reading _method here is not an option: it lives in the body, which a proxied request still
+// needs intact. A POST that matches no route is therefore re-checked against the methods the
+// override can produce. A POST carrying no _method then reaches the Go chain and ends in 405
+// rather than at Rails, which is the honest answer for a path Go owns but does not accept a
+// POST on.
+//
+// [Ja] matchesGoRoute はリクエストを Go のルートが処理するかどうかを返す。ルーターが無い場合は
+// すべて Go チェーンへ渡す (SetRouter 呼び出し前の挙動)。
+//
+// HTML フォームは GET と POST しか送れないため、PUT / PATCH / DELETE で登録したルートには
+// MethodOverride が適用する _method パラメータ経由で到達する。MethodOverride は本ミドルウェアの
+// 内側で動くため、ここで見えるメソッドはブラウザが送った POST のままであり、それだけで判定すると
+// 該当ルートを取りこぼして実装済みの画面を Rails へプロキシしてしまう。ここで _method を読むことは
+// できない。_method はボディにあり、プロキシするリクエストはそのボディを必要とするため。そこで、
+// どのルートにもマッチしない POST は、オーバーライドが生みうるメソッドで再判定する。_method を
+// 持たない POST はこの結果 Go チェーンへ渡り Rails ではなく 405 で終わるが、Go が所有していて
+// POST を受け付けないパスに対する答えとしてはそのほうが正しい。
+func (m *ReverseProxyMiddleware) matchesGoRoute(r *http.Request) bool {
+	if m.router == nil {
+		return true
+	}
+
+	if m.router.Match(chi.NewRouteContext(), r.Method, r.URL.Path) {
+		return true
+	}
+
+	if r.Method != http.MethodPost {
+		return false
+	}
+
+	for _, method := range overridableMethods {
+		if m.router.Match(chi.NewRouteContext(), method, r.URL.Path) {
+			return true
+		}
+	}
+
+	return false
 }
 
 // ensureDeviceToken returns the device_token cookie value from the request, generating and setting a new one on the
