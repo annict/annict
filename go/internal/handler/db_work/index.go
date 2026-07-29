@@ -52,7 +52,7 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 	pagination := viewmodel.NewPagination(int(page), int(result.TotalCount), int(perPage), basePath)
 
 	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)
-	meta.SetTitle(ctx, "db_works_index_title")
+	meta.SetDBTitle(ctx, "db_works_index_title")
 
 	worksVM := viewmodel.NewDBWorkListItems(ctx, result.Works, h.imageHelper)
 

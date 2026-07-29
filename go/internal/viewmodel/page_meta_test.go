@@ -163,6 +163,50 @@ func TestPageMeta_SetTitle(t *testing.T) {
 	}
 }
 
+// TestPageMeta_SetDBTitle verifies that SetDBTitle appends the " | Annict DB" suffix in each locale.
+//
+// [Ja] TestPageMeta_SetDBTitle は SetDBTitle が各ロケールで " | Annict DB" サフィックスを付けることを検証します。
+func TestPageMeta_SetDBTitle(t *testing.T) {
+	t.Parallel()
+
+	cfg := &config.Config{
+		Env:    "test",
+		Domain: "test.annict.com",
+	}
+
+	tests := []struct {
+		name          string
+		locale        string
+		titleKey      string
+		expectedTitle string
+	}{
+		{
+			name:          "日本語環境でのタイトル設定",
+			locale:        i18n.LangJa,
+			titleKey:      "db_works_index_title",
+			expectedTitle: "作品 | Annict DB",
+		},
+		{
+			name:          "英語環境でのタイトル設定",
+			locale:        i18n.LangEn,
+			titleKey:      "db_works_index_title",
+			expectedTitle: "Works | Annict DB",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ctx := i18n.SetLocale(context.Background(), tt.locale)
+			meta := DefaultPageMeta(ctx, cfg)
+			meta.SetDBTitle(ctx, tt.titleKey)
+
+			if meta.Title != tt.expectedTitle {
+				t.Errorf("Title: got %q, want %q", meta.Title, tt.expectedTitle)
+			}
+		})
+	}
+}
+
 // TestPageMeta_SetTitleWithoutSuffix はSetTitleWithoutSuffixメソッドのテスト
 func TestPageMeta_SetTitleWithoutSuffix(t *testing.T) {
 	cfg := &config.Config{

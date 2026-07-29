@@ -70,7 +70,7 @@ func (h *Handler) renderEditWithErrors(w http.ResponseWriter, r *http.Request, i
 	csrfToken := middleware.GetCSRFToken(r, h.sessionManager)
 
 	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)
-	meta.SetTitle(ctx, "db_works_edit_title")
+	meta.SetDBTitle(ctx, "db_works_edit_title")
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusUnprocessableEntity)
