@@ -64,6 +64,8 @@ type Querier interface {
 	DeleteExpiredSignInCodes(ctx context.Context, expiresAt time.Time) error
 	DeleteSession(ctx context.Context, sessionID string) error
 	DeleteUnusedPasswordResetTokensByUserID(ctx context.Context, userID int64) error
+	ExistsKeptWorkByTitle(ctx context.Context, arg ExistsKeptWorkByTitleParams) (bool, error)
+	ExistsNumberFormatByID(ctx context.Context, id int64) (bool, error)
 	// Looks up a user ID by username, excluding soft-deleted users.
 	// Used by features that should return 404 for deleted users (e.g. tracking
 	// heatmap fragment) without exposing other user attributes.

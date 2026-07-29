@@ -43,7 +43,7 @@ func (h *Handler) Edit(w http.ResponseWriter, r *http.Request) {
 	csrfToken := middleware.GetCSRFToken(r, h.sessionManager)
 
 	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)
-	meta.SetTitle(ctx, "db_works_edit_title")
+	meta.SetDBTitle(ctx, "db_works_edit_title")
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	component := layouts.Db(
@@ -52,6 +52,7 @@ func (h *Handler) Edit(w http.ResponseWriter, r *http.Request) {
 		db_works.Edit(db_works.EditPageData{
 			CSRFToken:   csrfToken,
 			WorkID:      viewmodel.WorkID(output.Work.ID),
+			WorkTitle:   output.Work.Title,
 			FormOptions: formOptions,
 			FormInput:   formInput,
 		}),

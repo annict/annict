@@ -46,8 +46,8 @@ func newTestHandler(t *testing.T, db *sql.DB, tx *sql.Tx) *Handler {
 	getDBWorksUC := usecase.NewGetDBWorksUsecase(workRepo)
 	getDBWorkFormOptionsUC := usecase.NewGetDBWorkFormOptionsUsecase(numberFormatRepo)
 	getDBWorkEditUC := usecase.NewGetDBWorkEditUsecase(workRepo, numberFormatRepo)
-	createWorkUC := usecase.NewCreateWorkUsecase(db, workRepo, animeRepo, animeClassificationRepo, satelliteRepos, validator.NewDBWorkCreateValidator())
-	updateWorkUC := usecase.NewUpdateWorkUsecase(db, workRepo, animeRepo, animeClassificationRepo, satelliteRepos, validator.NewDBWorkCreateValidator())
+	createWorkUC := usecase.NewCreateWorkUsecase(db, workRepo, animeRepo, animeClassificationRepo, satelliteRepos, validator.NewDBWorkCreateValidator(workRepo, numberFormatRepo))
+	updateWorkUC := usecase.NewUpdateWorkUsecase(db, workRepo, animeRepo, animeClassificationRepo, satelliteRepos, validator.NewDBWorkCreateValidator(workRepo, numberFormatRepo))
 	deleteWorkUC := usecase.NewDeleteWorkUsecase(db, workRepo, animeRepo)
 
 	return NewHandler(cfg, sessionManager, testutil.NewTestFlashManager(), testutil.NewTestImageHelper(), getDBWorksUC, getDBWorkFormOptionsUC, getDBWorkEditUC, createWorkUC, updateWorkUC, deleteWorkUC)
@@ -93,6 +93,12 @@ func TestIndex(t *testing.T) {
 	body := rr.Body.String()
 
 	expectedContents := []string{
+		// The DB pages carry the " | Annict DB" title suffix so they stay distinguishable from
+		// the public pages in browser tabs.
+		//
+		// [Ja] DB のページはブラウザのタブで公開画面と区別できるよう " | Annict DB" の
+		// タイトルサフィックスを持つ。
+		"<title>作品 | Annict DB</title>",
 		"テストアニメ1",
 		"テストアニメ2",
 		"2024",
@@ -328,6 +334,12 @@ func TestNew(t *testing.T) {
 	body := rr.Body.String()
 
 	expectedContents := []string{
+		// The DB pages carry the " | Annict DB" title suffix so they stay distinguishable from
+		// the public pages in browser tabs.
+		//
+		// [Ja] DB のページはブラウザのタブで公開画面と区別できるよう " | Annict DB" の
+		// タイトルサフィックスを持つ。
+		"<title>作品登録 | Annict DB</title>",
 		"<form",
 		`action="/db/works"`,
 		`method="POST"`,

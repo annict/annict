@@ -1410,3 +1410,158 @@ func TestReverseProxyMiddleware_DeviceTokenCookieSetOnRequest(t *testing.T) {
 		t.Error("device_token Cookieがセットされるべき")
 	}
 }
+
+// TestReverseProxyMiddleware_MethodOverriddenRouteReachesGo verifies that a flag-gated route
+// registered as PATCH or DELETE is handed to the Go chain when a form posts to it with the
+// _method parameter. HTML forms can only send POST, so matching the raw method alone would
+// proxy an implemented Go screen to Rails, where the request fails on Rails' own CSRF check.
+//
+// [Ja] TestReverseProxyMiddleware_MethodOverriddenRouteReachesGo は、PATCH / DELETE で登録した
+// フラグ対象ルートへフォームが _method 付きで POST したとき、Go チェーンへ渡されることを検証する。
+// HTML フォームは POST しか送れないため、生のメソッドだけで判定すると実装済みの Go 画面が Rails へ
+// プロキシされ、Rails 側の CSRF 検証で失敗する。
+func TestReverseProxyMiddleware_MethodOverriddenRouteReachesGo(t *testing.T) {
+	tests := []struct {
+		name          string
+		method        string
+		path          string
+		wantGoHandled bool
+	}{
+		{
+			name:          "PATCHで登録したパスへのPOSTはGoへ渡す",
+			method:        "POST",
+			path:          "/test-feature/1",
+			wantGoHandled: true,
+		},
+		{
+			name:          "DELETEで登録したパスへのPOSTはGoへ渡す",
+			method:        "POST",
+			path:          "/test-feature/1/archive",
+			wantGoHandled: true,
+		},
+		{
+			name:          "GETで登録したパスへのGETはGoへ渡す",
+			method:        "GET",
+			path:          "/test-feature/1/edit",
+			wantGoHandled: true,
+		},
+		{
+			// Only POST can be rewritten, so a GET must not borrow another method's route.
+			//
+			// [Ja] 書き換えられるのは POST だけなので、GET が別メソッドのルートを借りてはいけない。
+			name:          "PATCHで登録したパスへのGETはRailsへプロキシする",
+			method:        "GET",
+			path:          "/test-feature/1",
+			wantGoHandled: false,
+		},
+		{
+			name:          "どのメソッドでも登録が無いパスはRailsへプロキシする",
+			method:        "POST",
+			path:          "/test-feature/1/comments",
+			wantGoHandled: false,
+		},
+	}
+
+	railsServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		_, _ = w.Write([]byte("Rails response"))
+	}))
+	defer railsServer.Close()
+
+	cfg := &config.Config{
+		Domain: "annict-test.page",
+		Env:    "production",
+	}
+
+	proxyMiddleware, err := NewReverseProxyMiddleware(railsServer.URL, cfg, &mockFeatureFlagChecker{enabled: true}, nil)
+	if err != nil {
+		t.Fatalf("ミドルウェアの作成に失敗: %v", err)
+	}
+
+	// The router mirrors how the DB work screens are registered: the form pages are GET and
+	// the writes are PATCH / DELETE, reached from a form through _method.
+	//
+	// [Ja] ルーターは DB 作品画面の登録の仕方を写したもの。フォームのページは GET で、書き込みは
+	// PATCH / DELETE として登録され、フォームからは _method 経由で到達する。
+	router := chi.NewRouter()
+	router.Get("/test-feature/{id}/edit", func(http.ResponseWriter, *http.Request) {})
+	router.Patch("/test-feature/{id}", func(http.ResponseWriter, *http.Request) {})
+	router.Delete("/test-feature/{id}/archive", func(http.ResponseWriter, *http.Request) {})
+	proxyMiddleware.SetRouter(router)
+
+	original := featureFlaggedPatterns
+	featureFlaggedPatterns = []featureFlaggedPattern{
+		{pattern: regexp.MustCompile(`^/test-feature(/.*)?$`), flag: "test_feature"},
+	}
+	defer func() { featureFlaggedPatterns = original }()
+
+	handler := proxyMiddleware.Middleware(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		_, _ = w.Write([]byte("Go response"))
+	}))
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			req := httptest.NewRequest(tt.method, tt.path, strings.NewReader("_method=PATCH"))
+			req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+			rr := httptest.NewRecorder()
+
+			handler.ServeHTTP(rr, req)
+
+			want := "Rails response"
+			if tt.wantGoHandled {
+				want = "Go response"
+			}
+			if got := rr.Body.String(); got != want {
+				t.Errorf("応答が一致しません: got %q, want %q", got, want)
+			}
+		})
+	}
+}
+
+// TestReverseProxyMiddleware_MethodOverrideKeepsBodyForRails verifies that deciding where a
+// request goes leaves its body intact. The _method parameter lives in the body, so reading it
+// at this layer would drain what a proxied request still has to forward to Rails.
+//
+// [Ja] TestReverseProxyMiddleware_MethodOverrideKeepsBodyForRails は、行き先の判定がリクエストの
+// ボディを消費しないことを検証する。_method はボディにあるため、この層でそれを読むと、プロキシ
+// するリクエストが Rails へ転送すべき内容を使い切ってしまう。
+func TestReverseProxyMiddleware_MethodOverrideKeepsBodyForRails(t *testing.T) {
+	received := make(chan string, 1)
+	railsServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		body := make([]byte, r.ContentLength)
+		_, _ = r.Body.Read(body)
+		received <- string(body)
+		_, _ = w.Write([]byte("Rails response"))
+	}))
+	defer railsServer.Close()
+
+	cfg := &config.Config{
+		Domain: "annict-test.page",
+		Env:    "production",
+	}
+
+	proxyMiddleware, err := NewReverseProxyMiddleware(railsServer.URL, cfg, &mockFeatureFlagChecker{enabled: true}, nil)
+	if err != nil {
+		t.Fatalf("ミドルウェアの作成に失敗: %v", err)
+	}
+
+	proxyMiddleware.SetRouter(chi.NewRouter())
+
+	original := featureFlaggedPatterns
+	featureFlaggedPatterns = []featureFlaggedPattern{
+		{pattern: regexp.MustCompile(`^/test-feature(/.*)?$`), flag: "test_feature"},
+	}
+	defer func() { featureFlaggedPatterns = original }()
+
+	handler := proxyMiddleware.Middleware(http.HandlerFunc(func(http.ResponseWriter, *http.Request) {}))
+
+	const body = "_method=PATCH&title=%E3%83%86%E3%82%B9%E3%83%88"
+	req := httptest.NewRequest("POST", "/test-feature/1", strings.NewReader(body))
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	rr := httptest.NewRecorder()
+
+	handler.ServeHTTP(rr, req)
+
+	if got := <-received; got != body {
+		t.Errorf("Railsへ転送されたボディが一致しません: got %q, want %q", got, body)
+	}
+}

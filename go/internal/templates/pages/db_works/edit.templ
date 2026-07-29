@@ -1,6 +1,8 @@
 package db_works
 
 import (
+	"context"
+
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/templates"
 	"github.com/annict/annict/go/internal/templates/components"
@@ -8,8 +10,16 @@ import (
 )
 
 type EditPageData struct {
-	CSRFToken   string
-	WorkID      viewmodel.WorkID
+	CSRFToken string
+	WorkID    viewmodel.WorkID
+	// WorkTitle names the work being edited in the page heading. The update handler
+	// re-renders this form after a validation error without loading the work, so it
+	// passes the submitted title instead of the stored one.
+	//
+	// [Ja] WorkTitle はページ見出しで編集対象の作品を示す。更新ハンドラーはバリデーション
+	// エラー後に work を読み込まずにこのフォームを再描画するため、そこでは保存済みの
+	// タイトルではなく送信されたタイトルを渡す。
+	WorkTitle   string
 	FormOptions viewmodel.DBWorkFormOptions
 	FormErrors  *model.ValidationError
 	FormInput   *viewmodel.DBWorkFormInput
@@ -19,291 +29,826 @@ func (d EditPageData) hasFieldError(field string) bool {
 	return d.FormErrors != nil && d.FormErrors.HasFieldError(field)
 }
 
+// hasErrors reports whether the submit failed. It decides where the page starts out
+// focused: on a form opened for editing the title gets the caret, and after a failed submit
+// the error summary takes it instead, so the two never claim autofocus at the same time.
+//
+// [Ja] hasErrors は送信が失敗したかどうかを返す。ページの初期フォーカス位置の判断に使う。
+// 編集のために開いたフォームではタイトル欄が、送信が失敗した後はエラー要約がフォーカスを
+// 受け取り、両者が同時に autofocus を主張しないようにする。
+func (d EditPageData) hasErrors() bool {
+	return d.FormErrors.HasErrors()
+}
+
+// editSummaryFields lists the fields the error summary can name, in the order this form shows
+// them, paired with the labels it displays. The labels are looked up with literal keys rather
+// than keys assembled from the field name, so every translation key stays greppable from the
+// place that uses it.
+//
+// [Ja] editSummaryFields はエラー要約が名指しできるフィールドを、本フォームが表示する順で、
+// 表示中のラベルと対にして並べる。ラベルはフィールド名から組み立てたキーではなく直書きの
+// キーで引く。翻訳キーを使用箇所から grep で追える状態に保つため。
+func editSummaryFields(ctx context.Context) []components.FormErrorField {
+	return []components.FormErrorField{
+		{Name: "title", Label: templates.T(ctx, "db_works_edit_title_label")},
+		{Name: "media", Label: templates.T(ctx, "db_works_edit_media_label")},
+		{Name: "season_year", Label: templates.T(ctx, "db_works_edit_season_year_label")},
+		{Name: "season_name", Label: templates.T(ctx, "db_works_edit_season_name_label")},
+		{Name: "started_on", Label: templates.T(ctx, "db_works_edit_started_on_label")},
+		{Name: "ended_on", Label: templates.T(ctx, "db_works_edit_ended_on_label")},
+		{Name: "official_site_url", Label: templates.T(ctx, "db_works_edit_official_site_url_label")},
+		{Name: "official_site_url_en", Label: templates.T(ctx, "db_works_edit_official_site_url_en_label")},
+		{Name: "wikipedia_url", Label: templates.T(ctx, "db_works_edit_wikipedia_url_label")},
+		{Name: "wikipedia_url_en", Label: templates.T(ctx, "db_works_edit_wikipedia_url_en_label")},
+		{Name: "twitter_username", Label: templates.T(ctx, "db_works_edit_twitter_username_label")},
+		{Name: "twitter_hashtag", Label: templates.T(ctx, "db_works_edit_twitter_hashtag_label")},
+		{Name: "sc_tid", Label: templates.T(ctx, "db_works_edit_sc_tid_label")},
+		{Name: "mal_anime_id", Label: templates.T(ctx, "db_works_edit_mal_anime_id_label")},
+		{Name: "synopsis_source", Label: templates.T(ctx, "db_works_edit_synopsis_source_label")},
+		{Name: "synopsis_source_en", Label: templates.T(ctx, "db_works_edit_synopsis_source_en_label")},
+		{Name: "manual_episodes_count", Label: templates.T(ctx, "db_works_edit_manual_episodes_count_label")},
+		{Name: "start_episode_raw_number", Label: templates.T(ctx, "db_works_edit_start_episode_raw_number_label")},
+		{Name: "number_format_id", Label: templates.T(ctx, "db_works_edit_number_format_label")},
+	}
+}
+
+// heading returns the text of the page heading: the work title, falling back to the generic
+// page title while the title is blank. Clearing the title field is itself a validation error,
+// and the form re-rendered for it must not carry an empty heading.
+//
+// [Ja] heading はページ見出しのテキストとして作品タイトルを返す。タイトルが空のあいだは
+// 汎用のページタイトルにフォールバックする。タイトル欄を空にすること自体がバリデーション
+// エラーであり、そのために再描画するフォームの見出しを空にしないため。
+func (d EditPageData) heading(ctx context.Context) string {
+	return headingOrFallback(ctx, d.WorkTitle, "db_works_edit_title")
+}
+
 templ Edit(data EditPageData) {
-	<div class="p-6">
-		<div class="flex items-center justify-between mb-6">
-			<div class="flex items-center gap-2">
-				@components.DBSidebarToggle()
-				<h1 class="text-2xl font-bold">{ templates.T(ctx, "db_works_edit_title") }</h1>
+	<div class="flex flex-col gap-4 py-4 max-w-7xl w-full mx-auto">
+		<div class="flex gap-4 px-4">
+			@components.DBSidebarToggle()
+
+			<div class="flex-1">
+				@components.MainTitle(components.MainTitleData{
+					Title:   data.heading(ctx),
+					Actions: editWorkPageLink(data.WorkID),
+				})
 			</div>
-			<a href={ templates.DBWorksPath().SafeURL() } class="btn" data-variant="outline" data-size="sm">
-				{ templates.T(ctx, "db_works_edit_back_to_list_link") }
-			</a>
 		</div>
-		@components.FormErrors(data.FormErrors)
-		<div class="flex items-start gap-6">
-			@subnav(data.WorkID, data.FormInput.Val("no_episodes") == "1")
-			<form method="POST" action={ templates.DBWorkPath(data.WorkID).SafeURL() } class="max-w-2xl flex-1 space-y-4">
-				<input type="hidden" name="_method" value="PATCH"/>
-				<input type="hidden" name="csrf_token" value={ data.CSRFToken }/>
-				<div>
-					<label for="title" class="label">
-						{ templates.T(ctx, "db_works_edit_title_label") }
-						<span class="text-destructive">*</span>
-					</label>
-					<input
-						type="text"
-						id="title"
-						name="title"
-						class="input"
-						required
-						if !data.hasFieldError("title") {
-							autofocus
-						}
-						value={ data.FormInput.Val("title") }
-					/>
-					if data.hasFieldError("title") {
-						for _, errorMsg := range data.FormErrors.Fields["title"] {
-							<p class="text-sm text-red-600">{ errorMsg }</p>
-						}
-					}
-				</div>
-				<div>
-					<label for="title_kana" class="label">
-						{ templates.T(ctx, "db_works_edit_title_kana_label") }
-					</label>
-					<input type="text" id="title_kana" name="title_kana" class="input" value={ data.FormInput.Val("title_kana") }/>
-				</div>
-				<div>
-					<label for="title_alter" class="label">
-						{ templates.T(ctx, "db_works_edit_title_alter_label") }
-					</label>
-					<input type="text" id="title_alter" name="title_alter" class="input" value={ data.FormInput.Val("title_alter") }/>
-				</div>
-				<div>
-					<label for="title_en" class="label">
-						{ templates.T(ctx, "db_works_edit_title_en_label") }
-					</label>
-					<input type="text" id="title_en" name="title_en" class="input" value={ data.FormInput.Val("title_en") }/>
-				</div>
-				<div>
-					<label for="title_alter_en" class="label">
-						{ templates.T(ctx, "db_works_edit_title_alter_en_label") }
-					</label>
-					<input type="text" id="title_alter_en" name="title_alter_en" class="input" value={ data.FormInput.Val("title_alter_en") }/>
-				</div>
-				<div>
-					<label for="media" class="label">
-						{ templates.T(ctx, "db_works_edit_media_label") }
-						<span class="text-destructive">*</span>
-					</label>
-					<select id="media" name="media" class="select" required>
-						<option value=""></option>
-						for _, opt := range data.FormOptions.MediaOptions {
-							if opt.Value == data.FormInput.Val("media") {
-								<option value={ opt.Value } selected>{ opt.Label }</option>
-							} else {
-								<option value={ opt.Value }>{ opt.Label }</option>
-							}
-						}
-					</select>
-					if data.hasFieldError("media") {
-						for _, errorMsg := range data.FormErrors.Fields["media"] {
-							<p class="text-sm text-red-600">{ errorMsg }</p>
-						}
-					}
-				</div>
-				<div>
-					<label for="season_year" class="label">
-						{ templates.T(ctx, "db_works_edit_season_year_label") }
-					</label>
-					<select id="season_year" name="season_year" class="select">
-						<option value=""></option>
-						for _, opt := range data.FormOptions.SeasonYearOptions {
-							if opt.Value == data.FormInput.Val("season_year") {
-								<option value={ opt.Value } selected>{ opt.Label }</option>
-							} else {
-								<option value={ opt.Value }>{ opt.Label }</option>
-							}
-						}
-					</select>
-				</div>
-				<div>
-					<label for="season_name" class="label">
-						{ templates.T(ctx, "db_works_edit_season_name_label") }
-					</label>
-					<select id="season_name" name="season_name" class="select">
-						<option value=""></option>
-						for _, opt := range data.FormOptions.SeasonNameOptions {
-							if opt.Value == data.FormInput.Val("season_name") {
-								<option value={ opt.Value } selected>{ opt.Label }</option>
-							} else {
-								<option value={ opt.Value }>{ opt.Label }</option>
-							}
-						}
-					</select>
-				</div>
-				<div>
-					<label for="started_on" class="label">
-						{ templates.T(ctx, "db_works_edit_started_on_label") }
-					</label>
-					<input type="date" id="started_on" name="started_on" class="input" value={ data.FormInput.Val("started_on") }/>
-				</div>
-				<div>
-					<label for="ended_on" class="label">
-						{ templates.T(ctx, "db_works_edit_ended_on_label") }
-					</label>
-					<input type="date" id="ended_on" name="ended_on" class="input" value={ data.FormInput.Val("ended_on") }/>
-				</div>
-				<div>
-					<div class="flex items-center gap-2">
-						<label for="official_site_url" class="label">
-							{ templates.T(ctx, "db_works_edit_official_site_url_label") }
-						</label>
-						@formLabelExternalLink(templates.T(ctx, "db_works_edit_official_site_url_label"), data.FormInput.LabelLinkURL("official_site_url"))
-					</div>
-					<input type="url" id="official_site_url" name="official_site_url" class="input" value={ data.FormInput.Val("official_site_url") }/>
-					if data.hasFieldError("official_site_url") {
-						for _, errorMsg := range data.FormErrors.Fields["official_site_url"] {
-							<p class="text-sm text-red-600">{ errorMsg }</p>
-						}
-					}
-				</div>
-				<div>
-					<div class="flex items-center gap-2">
-						<label for="official_site_url_en" class="label">
-							{ templates.T(ctx, "db_works_edit_official_site_url_en_label") }
-						</label>
-						@formLabelExternalLink(templates.T(ctx, "db_works_edit_official_site_url_en_label"), data.FormInput.LabelLinkURL("official_site_url_en"))
-					</div>
-					<input type="url" id="official_site_url_en" name="official_site_url_en" class="input" value={ data.FormInput.Val("official_site_url_en") }/>
-					if data.hasFieldError("official_site_url_en") {
-						for _, errorMsg := range data.FormErrors.Fields["official_site_url_en"] {
-							<p class="text-sm text-red-600">{ errorMsg }</p>
-						}
-					}
-				</div>
-				<div>
-					<div class="flex items-center gap-2">
-						<label for="wikipedia_url" class="label">
-							{ templates.T(ctx, "db_works_edit_wikipedia_url_label") }
-						</label>
-						@formLabelExternalLink(templates.T(ctx, "db_works_edit_wikipedia_url_label"), data.FormInput.LabelLinkURL("wikipedia_url"))
-					</div>
-					<input type="url" id="wikipedia_url" name="wikipedia_url" class="input" value={ data.FormInput.Val("wikipedia_url") }/>
-					if data.hasFieldError("wikipedia_url") {
-						for _, errorMsg := range data.FormErrors.Fields["wikipedia_url"] {
-							<p class="text-sm text-red-600">{ errorMsg }</p>
-						}
-					}
-				</div>
-				<div>
-					<div class="flex items-center gap-2">
-						<label for="wikipedia_url_en" class="label">
-							{ templates.T(ctx, "db_works_edit_wikipedia_url_en_label") }
-						</label>
-						@formLabelExternalLink(templates.T(ctx, "db_works_edit_wikipedia_url_en_label"), data.FormInput.LabelLinkURL("wikipedia_url_en"))
-					</div>
-					<input type="url" id="wikipedia_url_en" name="wikipedia_url_en" class="input" value={ data.FormInput.Val("wikipedia_url_en") }/>
-					if data.hasFieldError("wikipedia_url_en") {
-						for _, errorMsg := range data.FormErrors.Fields["wikipedia_url_en"] {
-							<p class="text-sm text-red-600">{ errorMsg }</p>
-						}
-					}
-				</div>
-				<div>
-					<div class="flex items-center gap-2">
-						<label for="twitter_username" class="label">
-							{ templates.T(ctx, "db_works_edit_twitter_username_label") }
-						</label>
-						@formLabelExternalLink(templates.T(ctx, "db_works_edit_twitter_username_label"), data.FormInput.LabelLinkURL("twitter_username"))
-					</div>
-					<input type="text" id="twitter_username" name="twitter_username" class="input" placeholder={ templates.T(ctx, "db_works_edit_twitter_username_placeholder") } value={ data.FormInput.Val("twitter_username") }/>
-				</div>
-				<div>
-					<div class="flex items-center gap-2">
-						<label for="twitter_hashtag" class="label">
-							{ templates.T(ctx, "db_works_edit_twitter_hashtag_label") }
-						</label>
-						@formLabelExternalLink(templates.T(ctx, "db_works_edit_twitter_hashtag_label"), data.FormInput.LabelLinkURL("twitter_hashtag"))
-					</div>
-					<input type="text" id="twitter_hashtag" name="twitter_hashtag" class="input" placeholder={ templates.T(ctx, "db_works_edit_twitter_hashtag_placeholder") } value={ data.FormInput.Val("twitter_hashtag") }/>
-				</div>
-				<div>
-					<div class="flex items-center gap-2">
-						<label for="sc_tid" class="label">
-							{ templates.T(ctx, "db_works_edit_sc_tid_label") }
-						</label>
-						@formLabelExternalLink(templates.T(ctx, "db_works_edit_sc_tid_label"), data.FormInput.LabelLinkURL("sc_tid"))
-					</div>
-					<input type="text" id="sc_tid" name="sc_tid" class="input" value={ data.FormInput.Val("sc_tid") }/>
-				</div>
-				<div>
-					<div class="flex items-center gap-2">
-						<label for="mal_anime_id" class="label">
-							{ templates.T(ctx, "db_works_edit_mal_anime_id_label") }
-						</label>
-						@formLabelExternalLink(templates.T(ctx, "db_works_edit_mal_anime_id_label"), data.FormInput.LabelLinkURL("mal_anime_id"))
-					</div>
-					<input type="text" id="mal_anime_id" name="mal_anime_id" class="input" value={ data.FormInput.Val("mal_anime_id") }/>
-				</div>
-				<div>
-					<label for="synopsis" class="label">
-						{ templates.T(ctx, "db_works_edit_synopsis_label") }
-					</label>
-					<textarea id="synopsis" name="synopsis" class="textarea" rows="10">{ data.FormInput.Val("synopsis") }</textarea>
-				</div>
-				<div>
-					<label for="synopsis_source" class="label">
-						{ templates.T(ctx, "db_works_edit_synopsis_source_label") }
-					</label>
-					<input type="text" id="synopsis_source" name="synopsis_source" class="input" value={ data.FormInput.Val("synopsis_source") }/>
-				</div>
-				<div>
-					<label for="synopsis_en" class="label">
-						{ templates.T(ctx, "db_works_edit_synopsis_en_label") }
-					</label>
-					<textarea id="synopsis_en" name="synopsis_en" class="textarea" rows="10">{ data.FormInput.Val("synopsis_en") }</textarea>
-				</div>
-				<div>
-					<label for="synopsis_source_en" class="label">
-						{ templates.T(ctx, "db_works_edit_synopsis_source_en_label") }
-					</label>
-					<input type="text" id="synopsis_source_en" name="synopsis_source_en" class="input" value={ data.FormInput.Val("synopsis_source_en") }/>
-				</div>
-				<div>
-					<label for="manual_episodes_count" class="label">
-						{ templates.T(ctx, "db_works_edit_manual_episodes_count_label") }
-					</label>
-					<input type="number" id="manual_episodes_count" name="manual_episodes_count" class="input" value={ data.FormInput.Val("manual_episodes_count") }/>
-				</div>
-				<div>
-					<label for="start_episode_raw_number" class="label">
-						{ templates.T(ctx, "db_works_edit_start_episode_raw_number_label") }
-					</label>
-					<input type="text" id="start_episode_raw_number" name="start_episode_raw_number" class="input" value={ data.FormInput.Val("start_episode_raw_number") }/>
-				</div>
-				<div>
-					<label for="number_format_id" class="label">
-						{ templates.T(ctx, "db_works_edit_number_format_label") }
-					</label>
-					<select id="number_format_id" name="number_format_id" class="select">
-						<option value=""></option>
-						for _, opt := range data.FormOptions.NumberFormatOptions {
-							if opt.Value == data.FormInput.Val("number_format_id") {
-								<option value={ opt.Value } selected>{ opt.Label }</option>
-							} else {
-								<option value={ opt.Value }>{ opt.Label }</option>
-							}
-						}
-					</select>
-				</div>
-				<div class="flex items-center gap-2">
-					if data.FormInput.Val("no_episodes") == "1" {
-						<input type="checkbox" id="no_episodes" name="no_episodes" value="1" class="checkbox" checked/>
-					} else {
-						<input type="checkbox" id="no_episodes" name="no_episodes" value="1" class="checkbox"/>
-					}
-					<label for="no_episodes" class="label">
-						{ templates.T(ctx, "db_works_edit_no_episodes_label") }
-					</label>
-				</div>
-				<div class="pt-4">
-					<button type="submit" class="btn">
-						{ templates.T(ctx, "db_works_edit_submit") }
-					</button>
-				</div>
-			</form>
+
+		<div class="px-4">
+			@components.DBWorkSubnav(components.DBWorkSubnavData{
+				WorkID:     data.WorkID,
+				NoEpisodes: data.FormInput.Val("no_episodes") == "1",
+			})
 		</div>
+
+		@components.ContentCard("") {
+			<div class="flex flex-col gap-4">
+				@components.FormErrors(components.FormErrorsData{
+					Errors: data.FormErrors,
+					Fields: editSummaryFields(ctx),
+				})
+
+				<form
+					action={ templates.DBWorkPath(data.WorkID).SafeURL() }
+					class="max-w-2xl flex flex-col gap-6"
+					method="POST"
+				>
+					<input type="hidden" name="_method" value="PATCH"/>
+					<input type="hidden" name="csrf_token" value={ data.CSRFToken }/>
+
+					<div
+						class="field"
+						if data.hasFieldError("title") {
+							data-invalid
+						}
+					>
+						<label for="title" class="label">
+							{ templates.T(ctx, "db_works_edit_title_label") }
+							@components.RequiredBadge()
+						</label>
+						<input
+							type="text"
+							id="title"
+							name="title"
+							class="input"
+							required
+							if !data.hasErrors() {
+								autofocus
+							}
+							if data.hasFieldError("title") {
+								aria-invalid="true"
+								aria-describedby={ fieldErrorIDs(data.FormErrors, "title") }
+							}
+							value={ data.FormInput.Val("title") }
+						/>
+						if data.hasFieldError("title") {
+							for i, errorMsg := range data.FormErrors.Fields["title"] {
+								<p id={ fieldErrorID("title", i) } role="alert">{ errorMsg }</p>
+							}
+						}
+					</div>
+
+					<div class="field">
+						<label for="title_kana" class="label">
+							{ templates.T(ctx, "db_works_edit_title_kana_label") }
+						</label>
+
+						<input type="text" id="title_kana" name="title_kana" class="input" value={ data.FormInput.Val("title_kana") }/>
+					</div>
+
+					<div class="field">
+						<label for="title_alter" class="label">
+							{ templates.T(ctx, "db_works_edit_title_alter_label") }
+						</label>
+
+						<input type="text" id="title_alter" name="title_alter" class="input" value={ data.FormInput.Val("title_alter") }/>
+					</div>
+
+					<div class="field">
+						<label for="title_en" class="label">
+							{ templates.T(ctx, "db_works_edit_title_en_label") }
+						</label>
+
+						<input type="text" id="title_en" name="title_en" class="input" value={ data.FormInput.Val("title_en") }/>
+					</div>
+
+					<div class="field">
+						<label for="title_alter_en" class="label">
+							{ templates.T(ctx, "db_works_edit_title_alter_en_label") }
+						</label>
+
+						<input type="text" id="title_alter_en" name="title_alter_en" class="input" value={ data.FormInput.Val("title_alter_en") }/>
+					</div>
+
+					<div
+						class="field"
+						if data.hasFieldError("media") {
+							data-invalid
+						}
+					>
+						<label for="media" class="label">
+							{ templates.T(ctx, "db_works_edit_media_label") }
+							@components.RequiredBadge()
+						</label>
+
+						<select
+							id="media"
+							name="media"
+							class="select w-full"
+							required
+							if data.hasFieldError("media") {
+								aria-invalid="true"
+								aria-describedby={ fieldErrorIDs(data.FormErrors, "media") }
+							}
+						>
+							<option value=""></option>
+							for _, opt := range data.FormOptions.MediaOptions {
+								if opt.Value == data.FormInput.Val("media") {
+									<option value={ opt.Value } selected>{ opt.Label }</option>
+								} else {
+									<option value={ opt.Value }>{ opt.Label }</option>
+								}
+							}
+						</select>
+
+						if data.hasFieldError("media") {
+							for i, errorMsg := range data.FormErrors.Fields["media"] {
+								<p id={ fieldErrorID("media", i) } role="alert">{ errorMsg }</p>
+							}
+						}
+					</div>
+
+					<div
+						class="field"
+						if data.hasFieldError("season_year") {
+							data-invalid
+						}
+					>
+						<label for="season_year" class="label">
+							{ templates.T(ctx, "db_works_edit_season_year_label") }
+						</label>
+
+						<select
+							id="season_year"
+							name="season_year"
+							class="select w-full"
+							if data.hasFieldError("season_year") {
+								aria-invalid="true"
+								aria-describedby={ fieldErrorIDs(data.FormErrors, "season_year") }
+							}
+						>
+							<option value=""></option>
+							for _, opt := range data.FormOptions.SeasonYearOptions {
+								if opt.Value == data.FormInput.Val("season_year") {
+									<option value={ opt.Value } selected>{ opt.Label }</option>
+								} else {
+									<option value={ opt.Value }>{ opt.Label }</option>
+								}
+							}
+						</select>
+
+						if data.hasFieldError("season_year") {
+							for i, errorMsg := range data.FormErrors.Fields["season_year"] {
+								<p id={ fieldErrorID("season_year", i) } role="alert">{ errorMsg }</p>
+							}
+						}
+					</div>
+
+					<div
+						class="field"
+						if data.hasFieldError("season_name") {
+							data-invalid
+						}
+					>
+						<label for="season_name" class="label">
+							{ templates.T(ctx, "db_works_edit_season_name_label") }
+						</label>
+
+						<select
+							id="season_name"
+							name="season_name"
+							class="select w-full"
+							if data.hasFieldError("season_name") {
+								aria-invalid="true"
+								aria-describedby={ fieldErrorIDs(data.FormErrors, "season_name") }
+							}
+						>
+							<option value=""></option>
+							for _, opt := range data.FormOptions.SeasonNameOptions {
+								if opt.Value == data.FormInput.Val("season_name") {
+									<option value={ opt.Value } selected>{ opt.Label }</option>
+								} else {
+									<option value={ opt.Value }>{ opt.Label }</option>
+								}
+							}
+						</select>
+
+						if data.hasFieldError("season_name") {
+							for i, errorMsg := range data.FormErrors.Fields["season_name"] {
+								<p id={ fieldErrorID("season_name", i) } role="alert">{ errorMsg }</p>
+							}
+						}
+					</div>
+
+					<div
+						class="field"
+						if data.hasFieldError("started_on") {
+							data-invalid
+						}
+					>
+						<label for="started_on" class="label">
+							{ templates.T(ctx, "db_works_edit_started_on_label") }
+						</label>
+
+						<input
+							type="date"
+							id="started_on"
+							name="started_on"
+							class="input"
+							if data.hasFieldError("started_on") {
+								aria-invalid="true"
+								aria-describedby={ fieldErrorIDs(data.FormErrors, "started_on") }
+							}
+							value={ data.FormInput.Val("started_on") }
+						/>
+
+						if data.hasFieldError("started_on") {
+							for i, errorMsg := range data.FormErrors.Fields["started_on"] {
+								<p id={ fieldErrorID("started_on", i) } role="alert">{ errorMsg }</p>
+							}
+						}
+					</div>
+
+					<div
+						class="field"
+						if data.hasFieldError("ended_on") {
+							data-invalid
+						}
+					>
+						<label for="ended_on" class="label">
+							{ templates.T(ctx, "db_works_edit_ended_on_label") }
+						</label>
+
+						<input
+							type="date"
+							id="ended_on"
+							name="ended_on"
+							class="input"
+							if data.hasFieldError("ended_on") {
+								aria-invalid="true"
+								aria-describedby={ fieldErrorIDs(data.FormErrors, "ended_on") }
+							}
+							value={ data.FormInput.Val("ended_on") }
+						/>
+
+						if data.hasFieldError("ended_on") {
+							for i, errorMsg := range data.FormErrors.Fields["ended_on"] {
+								<p id={ fieldErrorID("ended_on", i) } role="alert">{ errorMsg }</p>
+							}
+						}
+					</div>
+
+					<div
+						class="field"
+						if data.hasFieldError("official_site_url") {
+							data-invalid
+						}
+					>
+						<div class="flex items-center gap-2">
+							<label for="official_site_url" class="label">
+								{ templates.T(ctx, "db_works_edit_official_site_url_label") }
+							</label>
+
+							@formLabelExternalLink(templates.T(ctx, "db_works_edit_official_site_url_label"), data.FormInput.LabelLinkURL("official_site_url"))
+						</div>
+
+						<input
+							type="url"
+							id="official_site_url"
+							name="official_site_url"
+							class="input"
+							if data.hasFieldError("official_site_url") {
+								aria-invalid="true"
+								aria-describedby={ fieldErrorIDs(data.FormErrors, "official_site_url") }
+							}
+							value={ data.FormInput.Val("official_site_url") }
+						/>
+						if data.hasFieldError("official_site_url") {
+							for i, errorMsg := range data.FormErrors.Fields["official_site_url"] {
+								<p id={ fieldErrorID("official_site_url", i) } role="alert">{ errorMsg }</p>
+							}
+						}
+					</div>
+
+					<div
+						class="field"
+						if data.hasFieldError("official_site_url_en") {
+							data-invalid
+						}
+					>
+						<div class="flex items-center gap-2">
+							<label for="official_site_url_en" class="label">
+								{ templates.T(ctx, "db_works_edit_official_site_url_en_label") }
+							</label>
+
+							@formLabelExternalLink(templates.T(ctx, "db_works_edit_official_site_url_en_label"), data.FormInput.LabelLinkURL("official_site_url_en"))
+						</div>
+
+						<input
+							type="url"
+							id="official_site_url_en"
+							name="official_site_url_en"
+							class="input"
+							if data.hasFieldError("official_site_url_en") {
+								aria-invalid="true"
+								aria-describedby={ fieldErrorIDs(data.FormErrors, "official_site_url_en") }
+							}
+							value={ data.FormInput.Val("official_site_url_en") }
+						/>
+
+						if data.hasFieldError("official_site_url_en") {
+							for i, errorMsg := range data.FormErrors.Fields["official_site_url_en"] {
+								<p id={ fieldErrorID("official_site_url_en", i) } role="alert">{ errorMsg }</p>
+							}
+						}
+					</div>
+
+					<div
+						class="field"
+						if data.hasFieldError("wikipedia_url") {
+							data-invalid
+						}
+					>
+						<div class="flex items-center gap-2">
+							<label for="wikipedia_url" class="label">
+								{ templates.T(ctx, "db_works_edit_wikipedia_url_label") }
+							</label>
+
+							@formLabelExternalLink(templates.T(ctx, "db_works_edit_wikipedia_url_label"), data.FormInput.LabelLinkURL("wikipedia_url"))
+						</div>
+
+						<input
+							type="url"
+							id="wikipedia_url"
+							name="wikipedia_url"
+							class="input"
+							if data.hasFieldError("wikipedia_url") {
+								aria-invalid="true"
+								aria-describedby={ fieldErrorIDs(data.FormErrors, "wikipedia_url") }
+							}
+							value={ data.FormInput.Val("wikipedia_url") }
+						/>
+
+						if data.hasFieldError("wikipedia_url") {
+							for i, errorMsg := range data.FormErrors.Fields["wikipedia_url"] {
+								<p id={ fieldErrorID("wikipedia_url", i) } role="alert">{ errorMsg }</p>
+							}
+						}
+					</div>
+
+					<div
+						class="field"
+						if data.hasFieldError("wikipedia_url_en") {
+							data-invalid
+						}
+					>
+						<div class="flex items-center gap-2">
+							<label for="wikipedia_url_en" class="label">
+								{ templates.T(ctx, "db_works_edit_wikipedia_url_en_label") }
+							</label>
+
+							@formLabelExternalLink(templates.T(ctx, "db_works_edit_wikipedia_url_en_label"), data.FormInput.LabelLinkURL("wikipedia_url_en"))
+						</div>
+
+						<input
+							type="url"
+							id="wikipedia_url_en"
+							name="wikipedia_url_en"
+							class="input"
+							if data.hasFieldError("wikipedia_url_en") {
+								aria-invalid="true"
+								aria-describedby={ fieldErrorIDs(data.FormErrors, "wikipedia_url_en") }
+							}
+							value={ data.FormInput.Val("wikipedia_url_en") }
+						/>
+
+						if data.hasFieldError("wikipedia_url_en") {
+							for i, errorMsg := range data.FormErrors.Fields["wikipedia_url_en"] {
+								<p id={ fieldErrorID("wikipedia_url_en", i) } role="alert">{ errorMsg }</p>
+							}
+						}
+					</div>
+
+					<div
+						class="field"
+						if data.hasFieldError("twitter_username") {
+							data-invalid
+						}
+					>
+						<div class="flex items-center gap-2">
+							<label for="twitter_username" class="label">
+								{ templates.T(ctx, "db_works_edit_twitter_username_label") }
+							</label>
+
+							@formLabelExternalLink(templates.T(ctx, "db_works_edit_twitter_username_label"), data.FormInput.LabelLinkURL("twitter_username"))
+						</div>
+
+						<div class="input-group">
+							<input
+								type="text"
+								id="twitter_username"
+								name="twitter_username"
+								if data.hasFieldError("twitter_username") {
+									aria-invalid="true"
+								}
+								aria-describedby={ fieldErrorIDsWithPrefix(data.FormErrors, "twitter_username", "twitter_username-prefix") }
+								value={ data.FormInput.Val("twitter_username") }
+							/>
+
+							// templ reads a bare @ as the start of a component call, so the prefix is
+							// written as a string expression.
+							//
+							// [Ja] templ は素の @ をコンポーネント呼び出しの開始として読むため、接頭辞は
+							// 文字列式として書く。
+							<span id="twitter_username-prefix" data-align="start">{ "@" }</span>
+						</div>
+
+						if data.hasFieldError("twitter_username") {
+							for i, errorMsg := range data.FormErrors.Fields["twitter_username"] {
+								<p id={ fieldErrorID("twitter_username", i) } role="alert">{ errorMsg }</p>
+							}
+						}
+					</div>
+
+					<div
+						class="field"
+						if data.hasFieldError("twitter_hashtag") {
+							data-invalid
+						}
+					>
+						<div class="flex items-center gap-2">
+							<label for="twitter_hashtag" class="label">
+								{ templates.T(ctx, "db_works_edit_twitter_hashtag_label") }
+							</label>
+
+							@formLabelExternalLink(templates.T(ctx, "db_works_edit_twitter_hashtag_label"), data.FormInput.LabelLinkURL("twitter_hashtag"))
+						</div>
+
+						<div class="input-group">
+							<input
+								type="text"
+								id="twitter_hashtag"
+								name="twitter_hashtag"
+								if data.hasFieldError("twitter_hashtag") {
+									aria-invalid="true"
+								}
+								aria-describedby={ fieldErrorIDsWithPrefix(data.FormErrors, "twitter_hashtag", "twitter_hashtag-prefix") }
+								value={ data.FormInput.Val("twitter_hashtag") }
+							/>
+
+							<span id="twitter_hashtag-prefix" data-align="start">#</span>
+						</div>
+
+						if data.hasFieldError("twitter_hashtag") {
+							for i, errorMsg := range data.FormErrors.Fields["twitter_hashtag"] {
+								<p id={ fieldErrorID("twitter_hashtag", i) } role="alert">{ errorMsg }</p>
+							}
+						}
+					</div>
+
+					<div
+						class="field"
+						if data.hasFieldError("sc_tid") {
+							data-invalid
+						}
+					>
+						<div class="flex items-center gap-2">
+							<label for="sc_tid" class="label">
+								{ templates.T(ctx, "db_works_edit_sc_tid_label") }
+							</label>
+
+							@formLabelExternalLink(templates.T(ctx, "db_works_edit_sc_tid_label"), data.FormInput.LabelLinkURL("sc_tid"))
+						</div>
+
+						<input
+							type="text"
+							id="sc_tid"
+							name="sc_tid"
+							class="input"
+							if data.hasFieldError("sc_tid") {
+								aria-invalid="true"
+								aria-describedby={ fieldErrorIDs(data.FormErrors, "sc_tid") }
+							}
+							value={ data.FormInput.Val("sc_tid") }
+						/>
+
+						if data.hasFieldError("sc_tid") {
+							for i, errorMsg := range data.FormErrors.Fields["sc_tid"] {
+								<p id={ fieldErrorID("sc_tid", i) } role="alert">{ errorMsg }</p>
+							}
+						}
+					</div>
+
+					<div
+						class="field"
+						if data.hasFieldError("mal_anime_id") {
+							data-invalid
+						}
+					>
+						<div class="flex items-center gap-2">
+							<label for="mal_anime_id" class="label">
+								{ templates.T(ctx, "db_works_edit_mal_anime_id_label") }
+							</label>
+
+							@formLabelExternalLink(templates.T(ctx, "db_works_edit_mal_anime_id_label"), data.FormInput.LabelLinkURL("mal_anime_id"))
+						</div>
+
+						<input
+							type="text"
+							id="mal_anime_id"
+							name="mal_anime_id"
+							class="input"
+							if data.hasFieldError("mal_anime_id") {
+								aria-invalid="true"
+								aria-describedby={ fieldErrorIDs(data.FormErrors, "mal_anime_id") }
+							}
+							value={ data.FormInput.Val("mal_anime_id") }
+						/>
+
+						if data.hasFieldError("mal_anime_id") {
+							for i, errorMsg := range data.FormErrors.Fields["mal_anime_id"] {
+								<p id={ fieldErrorID("mal_anime_id", i) } role="alert">{ errorMsg }</p>
+							}
+						}
+					</div>
+
+					<div class="field">
+						<label for="synopsis" class="label">
+							{ templates.T(ctx, "db_works_edit_synopsis_label") }
+						</label>
+
+						<textarea
+							id="synopsis"
+							name="synopsis"
+							class="textarea"
+						>
+							{ data.FormInput.Val("synopsis") }
+						</textarea>
+					</div>
+
+					<div
+						class="field"
+						if data.hasFieldError("synopsis_source") {
+							data-invalid
+						}
+					>
+						<label for="synopsis_source" class="label">
+							{ templates.T(ctx, "db_works_edit_synopsis_source_label") }
+						</label>
+
+						<input
+							type="text"
+							id="synopsis_source"
+							name="synopsis_source"
+							class="input"
+							if data.hasFieldError("synopsis_source") {
+								aria-invalid="true"
+								aria-describedby={ fieldErrorIDs(data.FormErrors, "synopsis_source") }
+							}
+							value={ data.FormInput.Val("synopsis_source") }
+						/>
+
+						if data.hasFieldError("synopsis_source") {
+							for i, errorMsg := range data.FormErrors.Fields["synopsis_source"] {
+								<p id={ fieldErrorID("synopsis_source", i) } role="alert">{ errorMsg }</p>
+							}
+						}
+					</div>
+
+					<div class="field">
+						<label for="synopsis_en" class="label">
+							{ templates.T(ctx, "db_works_edit_synopsis_en_label") }
+						</label>
+
+						<textarea
+							id="synopsis_en"
+							name="synopsis_en"
+							class="textarea"
+						>
+							{ data.FormInput.Val("synopsis_en") }
+						</textarea>
+					</div>
+
+					<div
+						class="field"
+						if data.hasFieldError("synopsis_source_en") {
+							data-invalid
+						}
+					>
+						<label for="synopsis_source_en" class="label">
+							{ templates.T(ctx, "db_works_edit_synopsis_source_en_label") }
+						</label>
+
+						<input
+							type="text"
+							id="synopsis_source_en"
+							name="synopsis_source_en"
+							class="input"
+							if data.hasFieldError("synopsis_source_en") {
+								aria-invalid="true"
+								aria-describedby={ fieldErrorIDs(data.FormErrors, "synopsis_source_en") }
+							}
+							value={ data.FormInput.Val("synopsis_source_en") }
+						/>
+
+						if data.hasFieldError("synopsis_source_en") {
+							for i, errorMsg := range data.FormErrors.Fields["synopsis_source_en"] {
+								<p id={ fieldErrorID("synopsis_source_en", i) } role="alert">{ errorMsg }</p>
+							}
+						}
+					</div>
+
+					<div
+						class="field"
+						if data.hasFieldError("manual_episodes_count") {
+							data-invalid
+						}
+					>
+						<label for="manual_episodes_count" class="label">
+							{ templates.T(ctx, "db_works_edit_manual_episodes_count_label") }
+						</label>
+
+						<input
+							type="number"
+							id="manual_episodes_count"
+							name="manual_episodes_count"
+							class="input"
+							if data.hasFieldError("manual_episodes_count") {
+								aria-invalid="true"
+								aria-describedby={ fieldErrorIDs(data.FormErrors, "manual_episodes_count") }
+							}
+							value={ data.FormInput.Val("manual_episodes_count") }
+						/>
+
+						if data.hasFieldError("manual_episodes_count") {
+							for i, errorMsg := range data.FormErrors.Fields["manual_episodes_count"] {
+								<p id={ fieldErrorID("manual_episodes_count", i) } role="alert">{ errorMsg }</p>
+							}
+						}
+					</div>
+
+					<div
+						class="field"
+						if data.hasFieldError("start_episode_raw_number") {
+							data-invalid
+						}
+					>
+						<label for="start_episode_raw_number" class="label">
+							{ templates.T(ctx, "db_works_edit_start_episode_raw_number_label") }
+						</label>
+
+						<input
+							type="text"
+							id="start_episode_raw_number"
+							name="start_episode_raw_number"
+							class="input"
+							if data.hasFieldError("start_episode_raw_number") {
+								aria-invalid="true"
+								aria-describedby={ fieldErrorIDs(data.FormErrors, "start_episode_raw_number") }
+							}
+							value={ data.FormInput.Val("start_episode_raw_number") }
+						/>
+
+						if data.hasFieldError("start_episode_raw_number") {
+							for i, errorMsg := range data.FormErrors.Fields["start_episode_raw_number"] {
+								<p id={ fieldErrorID("start_episode_raw_number", i) } role="alert">{ errorMsg }</p>
+							}
+						}
+					</div>
+
+					<div
+						class="field"
+						if data.hasFieldError("number_format_id") {
+							data-invalid
+						}
+					>
+						<label for="number_format_id" class="label">
+							{ templates.T(ctx, "db_works_edit_number_format_label") }
+						</label>
+
+						<select
+							id="number_format_id"
+							name="number_format_id"
+							class="select w-full"
+							if data.hasFieldError("number_format_id") {
+								aria-invalid="true"
+								aria-describedby={ fieldErrorIDs(data.FormErrors, "number_format_id") }
+							}
+						>
+							<option value=""></option>
+							for _, opt := range data.FormOptions.NumberFormatOptions {
+								if opt.Value == data.FormInput.Val("number_format_id") {
+									<option value={ opt.Value } selected>{ opt.Label }</option>
+								} else {
+									<option value={ opt.Value }>{ opt.Label }</option>
+								}
+							}
+						</select>
+
+						if data.hasFieldError("number_format_id") {
+							for i, errorMsg := range data.FormErrors.Fields["number_format_id"] {
+								<p id={ fieldErrorID("number_format_id", i) } role="alert">{ errorMsg }</p>
+							}
+						}
+					</div>
+
+					<div class="field" data-orientation="horizontal">
+						if data.FormInput.Val("no_episodes") == "1" {
+							<input type="checkbox" id="no_episodes" name="no_episodes" value="1" class="input" checked/>
+						} else {
+							<input type="checkbox" id="no_episodes" name="no_episodes" value="1" class="input"/>
+						}
+						<label for="no_episodes" class="label font-normal">
+							{ templates.T(ctx, "db_works_edit_no_episodes_label") }
+						</label>
+					</div>
+
+					<div class="field" data-orientation="horizontal">
+						<button type="submit" class="btn rounded-full">
+							@templates.Icon("floppy-disk-regular")
+							{ templates.T(ctx, "db_works_edit_submit") }
+						</button>
+					</div>
+				</form>
+			</div>
+		}
 	</div>
+}
+
+// editWorkPageLink renders the action shown beside the edit form's heading: a link to the
+// work's page on the public site. It opens in a new tab (with tabnabbing protection) so
+// the edits in progress stay in the form, and says so in its accessible name because the
+// visible label and the icon alone do not announce it.
+//
+// [Ja] editWorkPageLink は編集フォームの見出しの横に表示する操作を描画する。公開サイト側の
+// 作品ページへのリンクで、編集途中の内容をフォームに残したまま開けるよう新しいタブで開く
+// (tabnabbing 対策付き)。可視ラベルとアイコンだけでは新しいタブで開くことが伝わらないため、
+// アクセシブルネームでそれを伝える。
+templ editWorkPageLink(workID viewmodel.WorkID) {
+	<a
+		href={ templates.WorkPath(workID).SafeURL() }
+		target="_blank"
+		rel="noopener"
+		aria-label={ templates.T(ctx, "db_works_edit_work_page_link_aria_label") }
+		class="btn rounded-full"
+		data-variant="outline"
+		data-size="sm"
+	>
+		{ templates.T(ctx, "db_works_edit_work_page_link") }
+		<span aria-hidden="true">
+			@templates.Icon("arrow-square-out-regular", "w-[18px] h-[18px]")
+		</span>
+	</a>
 }

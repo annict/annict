@@ -1,46 +1,62 @@
 package db_works
 
 import (
+	"context"
+
 	"github.com/annict/annict/go/internal/templates"
 	"github.com/annict/annict/go/internal/templates/components"
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
 // ArchiveNewPageData is the data the archive-confirmation page renders: the CSRF token,
-// the target work's id (for the form action) and its title (for the confirmation prompt).
+// the target work's id (for the form action) and its title (for the page heading and the
+// confirmation prompt).
 //
 // [Ja] ArchiveNewPageData は非公開確認ページが描画するデータ (CSRF トークン、フォームの
-// action に使う対象 work の id、確認文に使うタイトル)。
+// action に使う対象 work の id、ページ見出しと確認文に使うタイトル)。
 type ArchiveNewPageData struct {
 	CSRFToken string
 	WorkID    viewmodel.WorkID
 	Title     string
 }
 
+// heading returns the text of the page heading: the work title, falling back to the generic
+// page title while the title is blank. The confirmation prompt names the same value, so both
+// places on the page point at the same target.
+//
+// [Ja] heading はページ見出しのテキストとして作品タイトルを返す。タイトルが空のあいだは
+// 汎用のページタイトルにフォールバックする。確認文も同じ値で対象を名指しするため、ページ上の
+// 2 箇所が同じ対象を指す。
+func (d ArchiveNewPageData) heading(ctx context.Context) string {
+	return headingOrFallback(ctx, d.Title, "db_works_archive_new_title")
+}
+
 templ ArchiveNew(data ArchiveNewPageData) {
-	<div class="p-6">
-		<div class="flex items-center justify-between mb-6">
-			<div class="flex items-center gap-2">
-				@components.DBSidebarToggle()
-				<h1 class="text-2xl font-bold">{ templates.T(ctx, "db_works_archive_new_title") }</h1>
+	<div class="flex flex-col gap-4 py-4 max-w-7xl w-full mx-auto">
+		<div class="flex gap-4 px-4">
+			@components.DBSidebarToggle()
+
+			<div class="flex-1">
+				@components.MainTitle(components.MainTitleData{
+					Title: data.heading(ctx),
+				})
 			</div>
-			<a href={ templates.DBWorksPath().SafeURL() } class="btn" data-variant="outline" data-size="sm">
-				{ templates.T(ctx, "db_works_archive_new_back_to_list_link") }
-			</a>
 		</div>
 
-		<div class="max-w-2xl space-y-4">
-			<p>{ templates.T(ctx, "db_works_archive_new_confirm_message", map[string]any{"Title": data.Title}) }</p>
+		@components.ContentCard("") {
+			<div class="max-w-2xl flex flex-col gap-6">
+				<p>{ templates.T(ctx, "db_works_archive_new_confirm_message", map[string]any{"Title": data.heading(ctx)}) }</p>
 
-			<form method="POST" action={ templates.DBWorkArchivePath(data.WorkID).SafeURL() } class="flex items-center gap-2">
-				<input type="hidden" name="csrf_token" value={ data.CSRFToken }/>
-				<button type="submit" class="btn">
-					{ templates.T(ctx, "db_works_archive_new_submit") }
-				</button>
-				<a href={ templates.DBWorksPath().SafeURL() } class="btn" data-variant="outline">
-					{ templates.T(ctx, "db_works_archive_new_cancel_link") }
-				</a>
-			</form>
-		</div>
+				<form method="POST" action={ templates.DBWorkArchivePath(data.WorkID).SafeURL() } class="flex items-center gap-2">
+					<input type="hidden" name="csrf_token" value={ data.CSRFToken }/>
+					<button type="submit" class="btn rounded-full" data-variant="warning">
+						{ templates.T(ctx, "db_works_archive_new_submit") }
+					</button>
+					<a href={ templates.DBWorksPath().SafeURL() } class="btn rounded-full" data-variant="outline">
+						{ templates.T(ctx, "db_works_archive_new_cancel_link") }
+					</a>
+				</form>
+			</div>
+		}
 	</div>
 }

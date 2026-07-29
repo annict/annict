@@ -52,7 +52,7 @@ type CreateWorkOutput struct {
 }
 
 func (uc *CreateWorkUsecase) Execute(ctx context.Context, input CreateWorkInput) (*CreateWorkOutput, error) {
-	if err := uc.validator.Validate(ctx, input.toValidatorInput()); err != nil {
+	if err := uc.validator.Validate(ctx, input.toValidatorInput(nil)); err != nil {
 		return nil, err
 	}
 

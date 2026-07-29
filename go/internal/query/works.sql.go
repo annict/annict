@@ -182,6 +182,29 @@ func (q *Queries) CreateWork(ctx context.Context, arg CreateWorkParams) (int64, 
 	return id, err
 }
 
+const existsKeptWorkByTitle = `-- name: ExistsKeptWorkByTitle :one
+SELECT EXISTS (
+    SELECT 1
+    FROM works
+    WHERE title = $1
+        AND deleted_at IS NULL
+        AND unpublished_at IS NULL
+        AND ($2::bigint IS NULL OR id <> $2)
+)
+`
+
+type ExistsKeptWorkByTitleParams struct {
+	Title     string        `db:"title"`
+	ExcludeID sql.NullInt64 `db:"exclude_id"`
+}
+
+func (q *Queries) ExistsKeptWorkByTitle(ctx context.Context, arg ExistsKeptWorkByTitleParams) (bool, error) {
+	row := q.db.QueryRowContext(ctx, existsKeptWorkByTitle, arg.Title, arg.ExcludeID)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
 const getPopularWorks = `-- name: GetPopularWorks :many
 SELECT
     w.id,

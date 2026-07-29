@@ -614,8 +614,8 @@ func runServe() {
 		Season:          repository.NewAnimeSeasonRepository(queries),
 		Event:           repository.NewAnimeEventRepository(queries),
 	}
-	createWorkUC := usecase.NewCreateWorkUsecase(db, workRepo, animeRepo, animeClassificationRepo, satelliteRepos, validator.NewDBWorkCreateValidator())
-	updateWorkUC := usecase.NewUpdateWorkUsecase(db, workRepo, animeRepo, animeClassificationRepo, satelliteRepos, validator.NewDBWorkCreateValidator())
+	createWorkUC := usecase.NewCreateWorkUsecase(db, workRepo, animeRepo, animeClassificationRepo, satelliteRepos, validator.NewDBWorkCreateValidator(workRepo, numberFormatRepo))
+	updateWorkUC := usecase.NewUpdateWorkUsecase(db, workRepo, animeRepo, animeClassificationRepo, satelliteRepos, validator.NewDBWorkCreateValidator(workRepo, numberFormatRepo))
 	deleteWorkUC := usecase.NewDeleteWorkUsecase(db, workRepo, animeRepo)
 	dbWorkHandler := db_work.NewHandler(cfg, sessionManager, flashMgr, imageHelper, getDBWorksUC, getDBWorkFormOptionsUC, getDBWorkEditUC, createWorkUC, updateWorkUC, deleteWorkUC)
 	getDBWorkArchiveNewUC := usecase.NewGetDBWorkArchiveNewUsecase(workRepo)

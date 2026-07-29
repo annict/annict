@@ -37,16 +37,14 @@ type IndexPageData struct {
 
 templ Index(data IndexPageData) {
 	<div class="flex flex-col gap-4 py-4 max-w-7xl w-full mx-auto">
-		<div class="px-4">
-			<div class="flex gap-4">
-				@components.DBSidebarToggle()
+		<div class="flex gap-4 px-4">
+			@components.DBSidebarToggle()
 
-				<div class="flex-1">
-					@components.MainTitle(components.MainTitleData{
-						Title:   templates.T(ctx, "db_works_index_title"),
-						Actions: indexNewButton(),
-					})
-				</div>
+			<div class="flex-1">
+				@components.MainTitle(components.MainTitleData{
+					Title:   templates.T(ctx, "db_works_index_title"),
+					Actions: indexNewButton(),
+				})
 			</div>
 		</div>
 
@@ -131,133 +129,135 @@ templ Index(data IndexPageData) {
 			</form>
 		}
 
-		<div class="px-4">
+		@components.ContentCard("") {
 			if len(data.Works) == 0 {
 				<p class="text-muted-foreground">
 					{ templates.T(ctx, "db_works_index_empty") }
 				</p>
 			} else {
-				<div
-					class="overflow-x-auto"
-					role="region"
-					aria-label={ templates.T(ctx, "db_works_index_table_caption") }
-					tabindex="0"
-				>
-				<table class="table table-fixed min-w-[640px] [&_th]:px-1 [&_td]:px-1">
-					<caption class="sr-only">{ templates.T(ctx, "db_works_index_table_caption") }</caption>
-					// Fixed column widths keep the table within its container and let the title
-					// column (the only one without a width) absorb the remaining space; auto layout
-					// spreads slack across every column instead, so the title stays narrow there. The
-					// tightened cell padding ([&_th]/[&_td] px-1, overriding the .table px-2 default)
-					// gives the title even more room.
-					//
-					// [Ja] 固定列幅でテーブルをコンテナ内に収め、幅指定の無いタイトル列だけが残り幅を
-					// 吸収するようにする (auto レイアウトでは余白が全列へ分散し、タイトルが狭いまま)。
-					// セル padding を詰める ([&_th]/[&_td] px-1 で .table 既定の px-2 を上書き) ことで
-					// タイトルにさらに幅を回す。
-					<colgroup>
-						<col class="w-20"/>
-						<col class="w-20"/>
-						<col/>
-						<col class="w-72"/>
-						<col class="w-24"/>
-					</colgroup>
-					<thead>
-						<tr>
-							<th scope="col" class="text-left">{ templates.T(ctx, "db_works_index_table_id_label") }</th>
-							<th scope="col" class="text-left">{ templates.T(ctx, "db_works_index_table_image_label") }</th>
-							<th scope="col" class="text-left">{ templates.T(ctx, "db_works_index_table_title_label") }</th>
-							<th scope="col" class="text-left">{ templates.T(ctx, "db_works_index_table_info_label") }</th>
-							<th scope="col" class="text-center">{ templates.T(ctx, "db_works_index_table_actions_label") }</th>
-						</tr>
-					</thead>
-					<tbody>
-						for _, work := range data.Works {
-							<tr>
-								<td>
-									<a
-										href={ templates.WorkPath(work.ID).SafeURL() }
-										target="_blank"
-										rel="noopener"
-										aria-label={ templates.T(ctx, "db_works_index_id_link_aria_label", map[string]any{"ID": work.ID.String()}) }
-										class="text-primary hover:underline inline-flex items-center gap-1"
-									>
-										{ work.ID.String() }
-										<span aria-hidden="true">
-											@templates.Icon("arrow-square-out-regular", "w-[18px] h-[18px]")
-										</span>
-									</a>
-								</td>
-								<td>
-									@components.WorkPicture(components.WorkPictureData{
-										Image: work.Image,
-										Width: 70,
-										Alt:   work.Title,
-										Class: "rounded border",
-									})
-								</td>
-								<td class="whitespace-normal [overflow-wrap:anywhere]">
-									<div>{ work.Title }</div>
-									<div class="text-muted-foreground">{ valueOrDash(work.TitleKana) }</div>
-									<div class="text-muted-foreground">{ valueOrDash(work.TitleEn) }</div>
-								</td>
-								// Every per-work attribute other than the title shares one "info" column.
-								// Each value is short, so stacking them as label / value pairs costs far
-								// less width than one column per attribute (each carrying its own header
-								// width and padding), leaving the rest of the table width to the title.
-								//
-								// The pairs are laid out three per line: stacking all six in a single line
-								// makes each row twelve lines tall, which cuts the number of works visible
-								// on screen to two or three.
-								//
-								// [Ja] タイトル以外の作品属性は 1 つの「情報」列にまとめる。いずれも短い値のため、
-								// ラベル / 値の組で縦に積むほうが、属性ごとに列を分ける (各列が見出し幅と padding
-								// を持つ) より必要な幅がずっと小さく、残りの幅をタイトル列に回せる。
-								//
-								// 組は 1 行あたり 3 つずつ並べる。6 組すべてを 1 列に積むと 1 行が 12 行分の
-								// 高さになり、画面に収まる作品が 2〜3 件まで減ってしまうため。
-								<td>
-									<dl class="grid grid-cols-3 gap-x-3 gap-y-1 text-sm">
-										<div>
-											<dt class="text-muted-foreground">{ templates.T(ctx, "db_works_index_table_media_label") }</dt>
-											<dd>{ work.Media }</dd>
-										</div>
-										<div>
-											<dt class="text-muted-foreground">{ templates.T(ctx, "db_works_index_table_season_label") }</dt>
-											<dd>{ valueOrDash(work.Season) }</dd>
-										</div>
-										<div>
-											<dt class="text-muted-foreground">{ templates.T(ctx, "db_works_index_table_watchers_label") }</dt>
-											<dd>{ fmt.Sprintf("%d", work.WatchersCount) }</dd>
-										</div>
-										<div>
-											<dt class="text-muted-foreground">{ templates.T(ctx, "db_works_index_syobocal_label") }</dt>
-											<dd>@externalServiceLink(work.Syobocal)</dd>
-										</div>
-										<div>
-											<dt class="text-muted-foreground">{ templates.T(ctx, "db_works_index_mal_label") }</dt>
-											<dd>@externalServiceLink(work.MalAnime)</dd>
-										</div>
-										<div>
-											<dt class="text-muted-foreground">{ templates.T(ctx, "db_works_index_table_status_label") }</dt>
-											<dd>@components.StatusLabel(work.Status)</dd>
-										</div>
-									</dl>
-								</td>
-								<td class="text-center">
-									@actionButtons(data, work)
-								</td>
-							</tr>
-						}
-					</tbody>
-				</table>
-				</div>
+				<div class="flex flex-col gap-4">
+					<div
+						class="overflow-x-auto"
+						role="region"
+						aria-label={ templates.T(ctx, "db_works_index_table_caption") }
+						tabindex="0"
+					>
+						<table class="table table-fixed min-w-[640px] [&_th]:px-1 [&_td]:px-1">
+							<caption class="sr-only">
+								{ templates.T(ctx, "db_works_index_table_caption") }
+							</caption>
+							// Fixed column widths keep the table within its container and let the title
+							// column (the only one without a width) absorb the remaining space; auto layout
+							// spreads slack across every column instead, so the title stays narrow there. The
+							// tightened cell padding ([&_th]/[&_td] px-1, overriding the .table px-2 default)
+							// gives the title even more room.
+							//
+							// [Ja] 固定列幅でテーブルをコンテナ内に収め、幅指定の無いタイトル列だけが残り幅を
+							// 吸収するようにする (auto レイアウトでは余白が全列へ分散し、タイトルが狭いまま)。
+							// セル padding を詰める ([&_th]/[&_td] px-1 で .table 既定の px-2 を上書き) ことで
+							// タイトルにさらに幅を回す。
+							<colgroup>
+								<col class="w-20"/>
+								<col class="w-20"/>
+								<col/>
+								<col class="w-72"/>
+								<col class="w-24"/>
+							</colgroup>
+							<thead>
+								<tr>
+									<th scope="col" class="text-left">{ templates.T(ctx, "db_works_index_table_id_label") }</th>
+									<th scope="col" class="text-left">{ templates.T(ctx, "db_works_index_table_image_label") }</th>
+									<th scope="col" class="text-left">{ templates.T(ctx, "db_works_index_table_title_label") }</th>
+									<th scope="col" class="text-left">{ templates.T(ctx, "db_works_index_table_info_label") }</th>
+									<th scope="col" class="text-center">{ templates.T(ctx, "db_works_index_table_actions_label") }</th>
+								</tr>
+							</thead>
+							<tbody>
+								for _, work := range data.Works {
+									<tr>
+										<td>
+											<a
+												href={ templates.WorkPath(work.ID).SafeURL() }
+												target="_blank"
+												rel="noopener"
+												aria-label={ templates.T(ctx, "db_works_index_id_link_aria_label", map[string]any{"ID": work.ID.String()}) }
+												class="text-primary hover:underline inline-flex items-center gap-1"
+											>
+												{ work.ID.String() }
+												<span aria-hidden="true">
+													@templates.Icon("arrow-square-out-regular", "w-[18px] h-[18px]")
+												</span>
+											</a>
+										</td>
+										<td>
+											@components.WorkPicture(components.WorkPictureData{
+												Image: work.Image,
+												Width: 70,
+												Alt:   work.Title,
+												Class: "rounded border",
+											})
+										</td>
+										<td class="whitespace-normal [overflow-wrap:anywhere]">
+											<div>{ work.Title }</div>
+											<div class="text-muted-foreground">{ valueOrDash(work.TitleKana) }</div>
+											<div class="text-muted-foreground">{ valueOrDash(work.TitleEn) }</div>
+										</td>
+										// Every per-work attribute other than the title shares one "info" column.
+										// Each value is short, so stacking them as label / value pairs costs far
+										// less width than one column per attribute (each carrying its own header
+										// width and padding), leaving the rest of the table width to the title.
+										//
+										// The pairs are laid out three per line: stacking all six in a single line
+										// makes each row twelve lines tall, which cuts the number of works visible
+										// on screen to two or three.
+										//
+										// [Ja] タイトル以外の作品属性は 1 つの「情報」列にまとめる。いずれも短い値のため、
+										// ラベル / 値の組で縦に積むほうが、属性ごとに列を分ける (各列が見出し幅と padding
+										// を持つ) より必要な幅がずっと小さく、残りの幅をタイトル列に回せる。
+										//
+										// 組は 1 行あたり 3 つずつ並べる。6 組すべてを 1 列に積むと 1 行が 12 行分の
+										// 高さになり、画面に収まる作品が 2〜3 件まで減ってしまうため。
+										<td>
+											<dl class="grid grid-cols-3 gap-x-3 gap-y-1 text-sm">
+												<div>
+													<dt class="text-muted-foreground">{ templates.T(ctx, "db_works_index_table_media_label") }</dt>
+													<dd>{ work.Media }</dd>
+												</div>
+												<div>
+													<dt class="text-muted-foreground">{ templates.T(ctx, "db_works_index_table_season_label") }</dt>
+													<dd>{ valueOrDash(work.Season) }</dd>
+												</div>
+												<div>
+													<dt class="text-muted-foreground">{ templates.T(ctx, "db_works_index_table_watchers_label") }</dt>
+													<dd>{ fmt.Sprintf("%d", work.WatchersCount) }</dd>
+												</div>
+												<div>
+													<dt class="text-muted-foreground">{ templates.T(ctx, "db_works_index_syobocal_label") }</dt>
+													<dd>@externalServiceLink(work.Syobocal)</dd>
+												</div>
+												<div>
+													<dt class="text-muted-foreground">{ templates.T(ctx, "db_works_index_mal_label") }</dt>
+													<dd>@externalServiceLink(work.MalAnime)</dd>
+												</div>
+												<div>
+													<dt class="text-muted-foreground">{ templates.T(ctx, "db_works_index_table_status_label") }</dt>
+													<dd>@components.StatusLabel(work.Status)</dd>
+												</div>
+											</dl>
+										</td>
+										<td class="text-center">
+											@actionButtons(data, work)
+										</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
 
-				<div class="mt-6">
 					@components.Pagination(data.Pagination)
 				</div>
 			}
-		</div>
+		}
 	</div>
 }
 

@@ -62,11 +62,12 @@ func TestUpdate_ValidationError(t *testing.T) {
 
 	body := rr.Body.String()
 	expectedContents := []string{
+		"<title>作品を編集 | Annict DB</title>",
 		"<form",
 		`action="/db/works/123"`,
 		`name="_method"`,
 		`value="PATCH"`,
-		"text-red-600",     // エラーメッセージのスタイル
+		`role="alert"`,
 		`value="ほぞんされるかな"`, // 入力値が保持される
 	}
 	for _, expected := range expectedContents {

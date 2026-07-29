@@ -38,6 +38,16 @@ func (p *PageMeta) SetTitle(ctx context.Context, titleKey string) {
 	p.Title = i18n.T(ctx, titleKey) + " | Annict"
 }
 
+// SetDBTitle sets the title with the " | Annict DB" suffix.
+// It is used for the Annict DB admin pages so that they stay distinguishable from
+// the public pages in browser tabs and history.
+//
+// [Ja] SetDBTitle はタイトルを設定します (" | Annict DB" サフィックス付き)。
+// Annict DB 管理画面のページで使い、ブラウザのタブや履歴で公開画面と区別できるようにします。
+func (p *PageMeta) SetDBTitle(ctx context.Context, titleKey string) {
+	p.Title = i18n.T(ctx, titleKey) + " | Annict DB"
+}
+
 // SetTitleWithoutSuffix はタイトルを設定します（サフィックスなし）
 // トップページなど、サフィックスが不要なページで使用します
 func (p *PageMeta) SetTitleWithoutSuffix(ctx context.Context, titleKey string) {

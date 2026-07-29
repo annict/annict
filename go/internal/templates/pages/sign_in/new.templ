@@ -34,7 +34,7 @@ templ New(data NewPageData) {
 			</h1>
 		</div>
 
-		@components.FormErrors(data.FormErrors)
+		@components.FormErrors(components.FormErrorsData{Errors: data.FormErrors})
 
 		<form
 			action="/sign_in"

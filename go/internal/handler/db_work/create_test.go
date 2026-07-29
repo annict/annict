@@ -65,10 +65,11 @@ func TestCreate_ValidationError(t *testing.T) {
 
 	// フォームが再表示されていることを確認
 	expectedContents := []string{
+		"<title>作品登録 | Annict DB</title>",
 		"<form",
 		`action="/db/works"`,
 		`method="POST"`,
-		"text-red-600", // エラーメッセージのスタイル
+		`role="alert"`,
 	}
 
 	for _, expected := range expectedContents {

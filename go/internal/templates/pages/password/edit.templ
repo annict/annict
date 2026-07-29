@@ -33,7 +33,7 @@ templ Edit(data EditPageData) {
 				{ templates.T(ctx, "password_edit_description") }
 			</p>
 		</div>
-		@components.FormErrors(data.FormErrors)
+		@components.FormErrors(components.FormErrorsData{Errors: data.FormErrors})
 		<form
 			action="/password"
 			class="grid gap-6"

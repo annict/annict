@@ -62,7 +62,7 @@ func (h *Handler) renderNewWithErrors(w http.ResponseWriter, r *http.Request, in
 	csrfToken := middleware.GetCSRFToken(r, h.sessionManager)
 
 	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)
-	meta.SetTitle(ctx, "db_works_new_title")
+	meta.SetDBTitle(ctx, "db_works_new_title")
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusUnprocessableEntity)

@@ -23,13 +23,15 @@ import (
 // チェックから見えるようにする。
 func newUpdateWorkUsecase(db *sql.DB) *UpdateWorkUsecase {
 	queries := query.New(db)
+	workRepo := repository.NewWorkRepository(queries)
+	numberFormatRepo := repository.NewNumberFormatRepository(queries)
 	return NewUpdateWorkUsecase(
 		db,
-		repository.NewWorkRepository(queries),
+		workRepo,
 		repository.NewAnimeRepository(queries),
 		repository.NewAnimeClassificationRepository(queries),
 		newTestWorkSatelliteRepos(queries),
-		validator.NewDBWorkCreateValidator(),
+		validator.NewDBWorkCreateValidator(workRepo, numberFormatRepo),
 	)
 }
 
@@ -455,5 +457,59 @@ func TestUpdateWorkUsecase_Execute_ReturnsNotFoundForMissingWork(t *testing.T) {
 	ae := model.AsAppError(err)
 	if ae == nil || ae.Code != model.AppErrCodeResourceNotFound {
 		t.Fatalf("expected AppErrCodeResourceNotFound, got %v", err)
+	}
+}
+
+// TestUpdateWorkUsecase_Execute_TitleUniquenessExcludesItself covers the self-exclusion of
+// the title uniqueness check. Without it, editing any other field of a work would fail on
+// its own title, which is a row the check is bound to find.
+//
+// [Ja] TestUpdateWorkUsecase_Execute_TitleUniquenessExcludesItself はタイトル一意性検査の
+// 自分自身の除外を対象とする。除外が無いと、作品の他のフィールドを編集するだけで自分自身の
+// タイトルで失敗する。検査が必ず見つける行だからである。
+func TestUpdateWorkUsecase_Execute_TitleUniquenessExcludesItself(t *testing.T) {
+	t.Parallel()
+
+	db := testutil.GetTestDB()
+	uc := newUpdateWorkUsecase(db)
+
+	title := "自己重複テストアニメ_" + t.Name()
+	workID := createMappedWork(t, db, title)
+
+	// The title is left as it is while another field changes, which is what an edit of
+	// anything but the title submits.
+	//
+	// [Ja] 他のフィールドを変えつつタイトルはそのまま送る。タイトル以外を編集したときに
+	// 送信される内容そのもの。
+	if _, err := uc.Execute(context.Background(), validUpdateWorkInput(workID, title)); err != nil {
+		t.Fatalf("Execute() error = %v", err)
+	}
+}
+
+// TestUpdateWorkUsecase_Execute_RejectsDuplicateTitle covers renaming a work onto a title
+// another kept work already holds.
+//
+// [Ja] TestUpdateWorkUsecase_Execute_RejectsDuplicateTitle は、生存中の別の作品が既に持つ
+// タイトルへ改名するケースを対象とする。
+func TestUpdateWorkUsecase_Execute_RejectsDuplicateTitle(t *testing.T) {
+	t.Parallel()
+
+	db := testutil.GetTestDB()
+	uc := newUpdateWorkUsecase(db)
+
+	existingTitle := "重複相手アニメ_" + t.Name()
+	createMappedWork(t, db, existingTitle)
+	workID := createMappedWork(t, db, "改名元アニメ_"+t.Name())
+
+	output, err := uc.Execute(context.Background(), validUpdateWorkInput(workID, existingTitle))
+	if output != nil {
+		t.Errorf("output = %+v, want nil on validation error", output)
+	}
+	ve := model.AsValidationError(err)
+	if ve == nil {
+		t.Fatalf("expected *model.ValidationError, got %v", err)
+	}
+	if len(ve.GetFieldErrors("title")) == 0 {
+		t.Error("expected a validation error on the title field")
 	}
 }

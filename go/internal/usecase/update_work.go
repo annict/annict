@@ -65,7 +65,7 @@ type UpdateWorkOutput struct {
 }
 
 func (uc *UpdateWorkUsecase) Execute(ctx context.Context, input UpdateWorkInput) (*UpdateWorkOutput, error) {
-	if err := uc.validator.Validate(ctx, input.toValidatorInput()); err != nil {
+	if err := uc.validator.Validate(ctx, input.toValidatorInput(&input.WorkID)); err != nil {
 		return nil, err
 	}
 

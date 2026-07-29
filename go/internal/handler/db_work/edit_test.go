@@ -55,6 +55,12 @@ func TestEdit(t *testing.T) {
 	body := rr.Body.String()
 
 	expectedContents := []string{
+		// The DB pages carry the " | Annict DB" title suffix so they stay distinguishable from
+		// the public pages in browser tabs.
+		//
+		// [Ja] DB のページはブラウザのタブで公開画面と区別できるよう " | Annict DB" の
+		// タイトルサフィックスを持つ。
+		"<title>作品を編集 | Annict DB</title>",
 		"<form",
 		fmt.Sprintf(`action="/db/works/%d"`, int64(workID)),
 		`name="_method"`,
@@ -65,6 +71,7 @@ func TestEdit(t *testing.T) {
 		"あらすじテキスト",                          // あらすじが textarea に埋まる
 		`value="anime_official"`,            // Twitterユーザー名が埋まる
 		`value="2024" selected`,             // シーズン年が選択済み
+		fmt.Sprintf(`href="/works/%d"`, int64(workID)),
 	}
 
 	for _, expected := range expectedContents {
