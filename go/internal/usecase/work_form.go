@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/validator"
 )
@@ -51,11 +52,18 @@ type WorkFormInput struct {
 
 // toValidatorInput projects the form values onto the validator input. Create and update
 // validate the identical set of fields, so both go through this single mapping.
+// excludeWorkID is the only difference between the two flows: update passes the work being
+// edited so the title uniqueness check does not match it against itself, create passes nil.
+// Taking it as an argument makes both call sites state which flow they are.
 //
 // [Ja] toValidatorInput はフォーム値をバリデーター入力に射影する。作成と更新は同一の
-// フィールド集合を検証するため、双方ともこの単一の写像を通す。
-func (in WorkFormInput) toValidatorInput() validator.DBWorkCreateValidatorInput {
+// フィールド集合を検証するため、双方ともこの単一の写像を通す。両フローの唯一の違いが
+// excludeWorkID で、更新は編集中の work を渡してタイトルの一意性検査が自分自身に一致しない
+// ようにし、作成は nil を渡す。引数で受け取ることで、両方の呼び出し側がどちらのフローかを
+// 明示する。
+func (in WorkFormInput) toValidatorInput(excludeWorkID *model.WorkID) validator.DBWorkCreateValidatorInput {
 	return validator.DBWorkCreateValidatorInput{
+		ExcludeWorkID:         excludeWorkID,
 		Title:                 in.Title,
 		TitleKana:             in.TitleKana,
 		TitleAlter:            in.TitleAlter,
@@ -87,15 +95,19 @@ func (in WorkFormInput) toValidatorInput() validator.DBWorkCreateValidatorInput 
 
 // buildWorkFormParams converts the string form values into the typed works columns
 // shared by create and update. repository.CreateWorkParams is exactly the common shape;
-// the update flow adds the target ID (see buildUpdateWorkParams). Numeric / date fields
-// that fail to parse are left unset, mirroring the create form: the validator rejects
-// malformed required fields upstream, and the optional ones fall back to NULL.
+// the update flow adds the target ID (see buildUpdateWorkParams).
+//
+// Every parse failure is returned as an error. The validator accepts exactly the values
+// converted here, so a failure means the two drifted apart; failing loudly turns that into
+// a logged 500 instead of a save that quietly stores NULL for what the submitter typed.
 //
 // [Ja] buildWorkFormParams は文字列のフォーム値を、作成と更新で共有する works の型付き
 // カラムに変換する。repository.CreateWorkParams が共通の形そのもので、更新フローは対象 ID を
-// 足す (buildUpdateWorkParams を参照)。数値・日付のパースに失敗したフィールドは未設定のまま
-// にする (作成フォームと同じ挙動)。必須項目の不正は上流のバリデーターが弾き、任意項目は
-// NULL に落ちる。
+// 足す (buildUpdateWorkParams を参照)。
+//
+// パースの失敗はすべてエラーとして返す。バリデーターはここで変換する値をそのまま許容するため、
+// 失敗は両者がドリフトしたことを意味する。明示的に失敗させることで、送信者が入力した値を
+// 黙って NULL で保存する代わりに、ログの残る 500 になる。
 func buildWorkFormParams(input WorkFormInput) (repository.CreateWorkParams, error) {
 	media, err := strconv.ParseInt(input.Media, 10, 32)
 	if err != nil {
@@ -121,32 +133,20 @@ func buildWorkFormParams(input WorkFormInput) (repository.CreateWorkParams, erro
 		StartEpisodeRawNumber: 1.0,
 	}
 
-	if input.SeasonYear != "" {
-		v, err := strconv.ParseInt(input.SeasonYear, 10, 32)
-		if err == nil {
-			params.SeasonYear = sql.NullInt32{Int32: int32(v), Valid: true}
-		}
+	if params.SeasonYear, err = parseOptionalInt32(input.SeasonYear); err != nil {
+		return repository.CreateWorkParams{}, fmt.Errorf("リリース時期 (年) の変換に失敗: %w", err)
 	}
 
-	if input.SeasonName != "" {
-		v, err := strconv.ParseInt(input.SeasonName, 10, 32)
-		if err == nil {
-			params.SeasonName = sql.NullInt32{Int32: int32(v), Valid: true}
-		}
+	if params.SeasonName, err = parseOptionalInt32(input.SeasonName); err != nil {
+		return repository.CreateWorkParams{}, fmt.Errorf("リリース時期 (季節) の変換に失敗: %w", err)
 	}
 
-	if input.StartedOn != "" {
-		t, err := time.Parse("2006-01-02", input.StartedOn)
-		if err == nil {
-			params.StartedOn = sql.NullTime{Time: t, Valid: true}
-		}
+	if params.StartedOn, err = parseOptionalDate(input.StartedOn); err != nil {
+		return repository.CreateWorkParams{}, fmt.Errorf("開始日の変換に失敗: %w", err)
 	}
 
-	if input.EndedOn != "" {
-		t, err := time.Parse("2006-01-02", input.EndedOn)
-		if err == nil {
-			params.EndedOn = sql.NullTime{Time: t, Valid: true}
-		}
+	if params.EndedOn, err = parseOptionalDate(input.EndedOn); err != nil {
+		return repository.CreateWorkParams{}, fmt.Errorf("終了日の変換に失敗: %w", err)
 	}
 
 	if input.TwitterUsername != "" {
@@ -157,40 +157,66 @@ func buildWorkFormParams(input WorkFormInput) (repository.CreateWorkParams, erro
 		params.TwitterHashtag = sql.NullString{String: strings.TrimSpace(input.TwitterHashtag), Valid: true}
 	}
 
-	if input.ScTid != "" {
-		v, err := strconv.ParseInt(input.ScTid, 10, 32)
-		if err == nil {
-			params.ScTid = sql.NullInt32{Int32: int32(v), Valid: true}
-		}
+	if params.ScTid, err = parseOptionalInt32(input.ScTid); err != nil {
+		return repository.CreateWorkParams{}, fmt.Errorf("しょぼいカレンダー TID の変換に失敗: %w", err)
 	}
 
-	if input.MalAnimeID != "" {
-		v, err := strconv.ParseInt(input.MalAnimeID, 10, 32)
-		if err == nil {
-			params.MalAnimeID = sql.NullInt32{Int32: int32(v), Valid: true}
-		}
+	if params.MalAnimeID, err = parseOptionalInt32(input.MalAnimeID); err != nil {
+		return repository.CreateWorkParams{}, fmt.Errorf("MyAnimeList ID の変換に失敗: %w", err)
 	}
 
-	if input.ManualEpisodesCount != "" {
-		v, err := strconv.ParseInt(input.ManualEpisodesCount, 10, 32)
-		if err == nil {
-			params.ManualEpisodesCount = sql.NullInt32{Int32: int32(v), Valid: true}
-		}
+	if params.ManualEpisodesCount, err = parseOptionalInt32(input.ManualEpisodesCount); err != nil {
+		return repository.CreateWorkParams{}, fmt.Errorf("エピソード数の変換に失敗: %w", err)
 	}
 
 	if input.StartEpisodeRawNumber != "" {
 		v, err := strconv.ParseFloat(input.StartEpisodeRawNumber, 64)
-		if err == nil {
-			params.StartEpisodeRawNumber = v
+		if err != nil {
+			return repository.CreateWorkParams{}, fmt.Errorf("開始話数の変換に失敗: %w", err)
 		}
+		params.StartEpisodeRawNumber = v
 	}
 
 	if input.NumberFormatID != "" {
 		v, err := strconv.ParseInt(input.NumberFormatID, 10, 64)
-		if err == nil {
-			params.NumberFormatID = sql.NullInt64{Int64: v, Valid: true}
+		if err != nil {
+			return repository.CreateWorkParams{}, fmt.Errorf("話数フォーマットの変換に失敗: %w", err)
 		}
+		params.NumberFormatID = sql.NullInt64{Int64: v, Valid: true}
 	}
 
 	return params, nil
+}
+
+// parseOptionalInt32 converts an optional form value into the works integer columns,
+// mapping an empty value to NULL. The bit size is what the validator checks against, so
+// the two accept the same range.
+//
+// [Ja] parseOptionalInt32 は任意入力のフォーム値を works の integer カラムに変換し、空値を
+// NULL に写像する。ビット幅はバリデーターが検査するものと同じで、両者は同一の範囲を許容する。
+func parseOptionalInt32(value string) (sql.NullInt32, error) {
+	if value == "" {
+		return sql.NullInt32{}, nil
+	}
+	v, err := strconv.ParseInt(value, 10, 32)
+	if err != nil {
+		return sql.NullInt32{}, err
+	}
+	return sql.NullInt32{Int32: int32(v), Valid: true}, nil
+}
+
+// parseOptionalDate converts an optional date form value into a works date column, mapping
+// an empty value to NULL.
+//
+// [Ja] parseOptionalDate は任意入力の日付フォーム値を works の date カラムに変換し、空値を
+// NULL に写像する。
+func parseOptionalDate(value string) (sql.NullTime, error) {
+	if value == "" {
+		return sql.NullTime{}, nil
+	}
+	t, err := time.Parse(validator.WorkFormDateLayout, value)
+	if err != nil {
+		return sql.NullTime{}, err
+	}
+	return sql.NullTime{Time: t, Valid: true}, nil
 }

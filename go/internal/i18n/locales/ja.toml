@@ -1497,7 +1497,31 @@ other = "あらすじを入力した場合は出典も入力してください"
 
 [validation_synopsis_source_en_required]
 description = "英語のあらすじを入力した場合は出典も必須"
-other = "あらすじ（英語）を入力した場合は出典も入力してください"
+other = "あらすじ (英語) を入力した場合は出典も入力してください"
+
+[validation_number_invalid]
+description = "数値ではない"
+other = "数値で入力してください"
+
+[validation_date_invalid]
+description = "日付形式が不正"
+other = "正しい日付を入力してください"
+
+[validation_season_name_invalid]
+description = "リリース時期の季節が許可値の範囲外"
+other = "正しい季節を選択してください"
+
+[validation_number_format_invalid]
+description = "話数フォーマットが登録されていない"
+other = "正しい話数フォーマットを選択してください"
+
+[validation_too_long]
+description = "文字数の上限を超えている"
+other = "{{.MaxLength}}文字以内で入力してください"
+
+[validation_work_title_already_taken]
+description = "同じタイトルの作品が既に登録されている"
+other = "このタイトルの作品は既に登録されています"
 
 [media_tv]
 description = "メディア種別 - TV"

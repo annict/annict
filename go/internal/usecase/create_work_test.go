@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"database/sql"
+	"strings"
 	"testing"
 
 	"github.com/annict/annict/go/internal/model"
@@ -23,13 +24,15 @@ import (
 // 不変条件チェックから見えるようにする。
 func newCreateWorkUsecase(db *sql.DB) *CreateWorkUsecase {
 	queries := query.New(db)
+	workRepo := repository.NewWorkRepository(queries)
+	numberFormatRepo := repository.NewNumberFormatRepository(queries)
 	return NewCreateWorkUsecase(
 		db,
-		repository.NewWorkRepository(queries),
+		workRepo,
 		repository.NewAnimeRepository(queries),
 		repository.NewAnimeClassificationRepository(queries),
 		newTestWorkSatelliteRepos(queries),
-		validator.NewDBWorkCreateValidator(),
+		validator.NewDBWorkCreateValidator(workRepo, numberFormatRepo),
 	)
 }
 
@@ -356,5 +359,123 @@ func TestCreateWorkUsecase_Execute_ReturnsValidationError(t *testing.T) {
 	}
 	if len(ve.GetFieldErrors("title")) == 0 {
 		t.Error("expected a validation error on the title field")
+	}
+}
+
+// TestCreateWorkUsecase_Execute_RejectsDuplicateTitle covers the title uniqueness rule the
+// usecase inherits from the validator. The rule mirrors the Rails Work model, so the two
+// implementations cannot disagree about which titles are free while both write the same
+// database.
+//
+// [Ja] TestCreateWorkUsecase_Execute_RejectsDuplicateTitle は UseCase がバリデーターから
+// 引き継ぐタイトル一意性を対象とする。Rails の Work モデルに対応する規則で、同じ DB に
+// 書き込む両実装が「どのタイトルが空いているか」で食い違わないようにする。
+func TestCreateWorkUsecase_Execute_RejectsDuplicateTitle(t *testing.T) {
+	t.Parallel()
+
+	db := testutil.GetTestDB()
+	uc := newCreateWorkUsecase(db)
+
+	title := "作成テストアニメ_" + t.Name()
+	if _, err := uc.Execute(context.Background(), validCreateWorkInput(title)); err != nil {
+		t.Fatalf("1 件目の Execute() error = %v", err)
+	}
+
+	output, err := uc.Execute(context.Background(), validCreateWorkInput(title))
+	if output != nil {
+		t.Errorf("output = %+v, want nil on validation error", output)
+	}
+	ve := model.AsValidationError(err)
+	if ve == nil {
+		t.Fatalf("expected *model.ValidationError, got %v", err)
+	}
+	if len(ve.GetFieldErrors("title")) == 0 {
+		t.Error("expected a validation error on the title field")
+	}
+}
+
+// TestCreateWorkUsecase_Execute_RejectsUnstorableValues covers the values that used to be
+// accepted and then lost: an over-long title failed at the INSERT with a 500, and a
+// malformed number was dropped on the way to the column so the work saved with the field
+// silently empty. Both now come back as a validation error naming the field.
+//
+// [Ja] TestCreateWorkUsecase_Execute_RejectsUnstorableValues は、以前は受け付けたうえで
+// 失われていた値を対象とする。長すぎるタイトルは INSERT で失敗して 500 になり、数値として
+// 不正な値はカラムへ渡る途中で捨てられ、そのフィールドが黙って空のまま作品が保存されていた。
+// どちらも今はフィールドを名指ししたバリデーションエラーとして返る。
+func TestCreateWorkUsecase_Execute_RejectsUnstorableValues(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name      string
+		mutate    func(input *CreateWorkInput)
+		wantField string
+	}{
+		{
+			name: "タイトルがカラムの上限を超える",
+			mutate: func(input *CreateWorkInput) {
+				input.Title = strings.Repeat("あ", 501)
+			},
+			wantField: "title",
+		},
+		{
+			name: "話数が数値でない",
+			mutate: func(input *CreateWorkInput) {
+				input.ManualEpisodesCount = "十二"
+			},
+			wantField: "manual_episodes_count",
+		},
+		{
+			name: "開始話数が数値でない",
+			mutate: func(input *CreateWorkInput) {
+				input.StartEpisodeRawNumber = "第1話"
+			},
+			wantField: "start_episode_raw_number",
+		},
+		{
+			name: "開始日が日付でない",
+			mutate: func(input *CreateWorkInput) {
+				input.StartedOn = "2024/04/01"
+			},
+			wantField: "started_on",
+		},
+		{
+			// works.number_format_id and anime_classifications.number_format_id are foreign
+			// keys to number_formats, so an id no row carries used to fail the INSERT inside
+			// the transaction. An id beyond what the sequence hands out can never exist.
+			//
+			// [Ja] works.number_format_id と anime_classifications.number_format_id は
+			// number_formats への外部キーで、どの行も持たない id は以前はトランザクション内の
+			// INSERT で失敗していた。シーケンスの採番範囲を超えた id は存在し得ない。
+			name: "話数フォーマットが登録されていない",
+			mutate: func(input *CreateWorkInput) {
+				input.NumberFormatID = "9000000000000000000"
+			},
+			wantField: "number_format_id",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			db := testutil.GetTestDB()
+			uc := newCreateWorkUsecase(db)
+
+			input := validCreateWorkInput("作成テストアニメ_" + t.Name())
+			tt.mutate(&input)
+
+			output, err := uc.Execute(context.Background(), input)
+			if output != nil {
+				t.Errorf("output = %+v, want nil on validation error", output)
+			}
+			ve := model.AsValidationError(err)
+			if ve == nil {
+				t.Fatalf("expected *model.ValidationError, got %v", err)
+			}
+			if len(ve.GetFieldErrors(tt.wantField)) == 0 {
+				t.Errorf("expected a validation error on the %s field, got %+v", tt.wantField, ve)
+			}
+		})
 	}
 }

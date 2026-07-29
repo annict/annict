@@ -318,6 +318,24 @@ func (r *WorkRepository) CountForDB(ctx context.Context, params DBWorkListParams
 	})
 }
 
+// ExistsKeptByTitle reports whether a kept work already uses title. "Kept" is the Rails
+// Work uniqueness scope (only_kept): deleted_at and unpublished_at both NULL, so an
+// archived or deleted work never blocks a title. excludeID names the work being edited so
+// an update that leaves the title untouched does not collide with itself; pass nil when
+// creating.
+//
+// [Ja] ExistsKeptByTitle は title を使っている生存中の work があるかを返す。「生存中」は
+// Rails の Work の一意性スコープ (only_kept) と同じく deleted_at と unpublished_at が
+// ともに NULL の行を指し、非公開・削除済みの作品はタイトルを塞がない。excludeID は編集中の
+// work を指し、タイトルを変えない更新が自分自身と衝突しないようにする。作成時は nil を渡す。
+func (r *WorkRepository) ExistsKeptByTitle(ctx context.Context, title string, excludeID *model.WorkID) (bool, error) {
+	params := query.ExistsKeptWorkByTitleParams{Title: title}
+	if excludeID != nil {
+		params.ExcludeID = sql.NullInt64{Int64: int64(*excludeID), Valid: true}
+	}
+	return r.queries.ExistsKeptWorkByTitle(ctx, params)
+}
+
 type CreateWorkParams struct {
 	Title                 string
 	TitleKana             string

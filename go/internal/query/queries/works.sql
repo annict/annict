@@ -300,3 +300,12 @@ INSERT INTO works (
     NOW(),
     NOW()
 ) RETURNING id;
+-- name: ExistsKeptWorkByTitle :one
+SELECT EXISTS (
+    SELECT 1
+    FROM works
+    WHERE title = sqlc.arg('title')
+        AND deleted_at IS NULL
+        AND unpublished_at IS NULL
+        AND (sqlc.narg('exclude_id')::bigint IS NULL OR id <> sqlc.narg('exclude_id'))
+);

@@ -1500,6 +1500,30 @@ other = "Please enter a source when synopsis is provided"
 description = "English synopsis source is required when English synopsis is provided"
 other = "Please enter a source when English synopsis is provided"
 
+[validation_number_invalid]
+description = "Value is not a valid number"
+other = "Please enter a number"
+
+[validation_date_invalid]
+description = "Date format is invalid"
+other = "Please enter a valid date"
+
+[validation_season_name_invalid]
+description = "Release season is outside the allowed values"
+other = "Please select a valid season"
+
+[validation_number_format_invalid]
+description = "Episode number format is not registered"
+other = "Please select a valid episode number format"
+
+[validation_too_long]
+description = "Value exceeds the maximum length"
+other = "Please enter no more than {{.MaxLength}} characters"
+
+[validation_work_title_already_taken]
+description = "A work with the same title is already registered"
+other = "A work with this title is already registered"
+
 [media_tv]
 description = "Media type - TV"
 other = "TV"
