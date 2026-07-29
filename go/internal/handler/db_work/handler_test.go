@@ -93,6 +93,12 @@ func TestIndex(t *testing.T) {
 	body := rr.Body.String()
 
 	expectedContents := []string{
+		// The DB pages carry the " | Annict DB" title suffix so they stay distinguishable from
+		// the public pages in browser tabs.
+		//
+		// [Ja] DB のページはブラウザのタブで公開画面と区別できるよう " | Annict DB" の
+		// タイトルサフィックスを持つ。
+		"<title>作品 | Annict DB</title>",
 		"テストアニメ1",
 		"テストアニメ2",
 		"2024",
@@ -328,6 +334,12 @@ func TestNew(t *testing.T) {
 	body := rr.Body.String()
 
 	expectedContents := []string{
+		// The DB pages carry the " | Annict DB" title suffix so they stay distinguishable from
+		// the public pages in browser tabs.
+		//
+		// [Ja] DB のページはブラウザのタブで公開画面と区別できるよう " | Annict DB" の
+		// タイトルサフィックスを持つ。
+		"<title>作品登録 | Annict DB</title>",
 		"<form",
 		`action="/db/works"`,
 		`method="POST"`,

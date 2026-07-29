@@ -6,10 +6,64 @@ package db_works
 //lint:file-ignore SA4006 This context is only used if a nested component is present.
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/a-h/templ"
 	templruntime "github.com/a-h/templ/runtime"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/templates"
 )
+
+// fieldErrorID returns the id of the index-th error message element of field. Each message is
+// rendered as its own element so every paragraph stays a direct child of the Basecoat field,
+// which is what carries the error styling.
+//
+// [Ja] fieldErrorID はフィールドの index 番目のエラーメッセージ要素の id を返す。各メッセージを
+// 個別の要素として描画することで、すべての段落が Basecoat の field の直下に残る。エラーの
+// スタイルはその位置に対して当たるため。
+func fieldErrorID(field string, index int) string {
+	return fmt.Sprintf("%s-error-%d", field, index+1)
+}
+
+// fieldErrorIDs returns the ids of every error message element of field, joined for
+// aria-describedby. A field can collect more than one message, and describedby has to name
+// them all: naming only the first would leave the rest unannounced.
+//
+// [Ja] fieldErrorIDs はフィールドのすべてのエラーメッセージ要素の id を aria-describedby 用に
+// 連結して返す。1 つのフィールドが複数のメッセージを持つことがあり、describedby はその全部を
+// 指す必要がある。先頭だけを指すと残りが読み上げられないため。
+func fieldErrorIDs(formErrors *model.ValidationError, field string) string {
+	if formErrors == nil {
+		return ""
+	}
+
+	messages := formErrors.Fields[field]
+	ids := make([]string, len(messages))
+	for i := range messages {
+		ids[i] = fieldErrorID(field, i)
+	}
+
+	return strings.Join(ids, " ")
+}
+
+// fieldErrorIDsWithPrefix returns the aria-describedby value for a field whose input is
+// already described by something else, such as the @ / # prefix shown inside its input
+// group. The existing id comes first so the standing description is read before the error,
+// and the error ids are appended rather than replacing it: dropping the prefix on error
+// would take away the instruction exactly when the value needs correcting.
+//
+// [Ja] fieldErrorIDsWithPrefix は、入力欄が既に別の要素で説明されているフィールド (input
+// group 内に表示する @ / # の接頭辞など) の aria-describedby の値を返す。常設の説明が先に
+// 読まれるよう既存の id を先頭に置き、エラーの id は置き換えではなく後ろに足す。エラー時に
+// 接頭辞を落とすと、値を直すべきそのときに指示が失われるため。
+func fieldErrorIDsWithPrefix(formErrors *model.ValidationError, field string, prefixID string) string {
+	ids := fieldErrorIDs(formErrors, field)
+	if ids == "" {
+		return prefixID
+	}
+	return prefixID + " " + ids
+}
 
 // formLabelExternalLink renders a new-tab external-link icon next to a work-form label
 // when the field has a resolvable URL, mirroring the Rails work form (which shows an
@@ -52,7 +106,7 @@ func formLabelExternalLink(label string, url string) templ.Component {
 			var templ_7745c5c3_Var2 templ.SafeURL
 			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL(url))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_works/form.templ`, Line: 24, Col: 24}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_works/form.templ`, Line: 78, Col: 24}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
@@ -65,7 +119,7 @@ func formLabelExternalLink(label string, url string) templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(templates.T(ctx, "db_works_form_external_link_label", map[string]any{"Field": label}))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_works/form.templ`, Line: 27, Col: 101}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_works/form.templ`, Line: 81, Col: 101}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 			if templ_7745c5c3_Err != nil {

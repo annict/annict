@@ -67,6 +67,7 @@ func TestNew(t *testing.T) {
 		`method="POST"`,
 		"csrf_token",
 		"非公開確認作品",
+		"<title>作品を非公開にする | Annict DB</title>",
 	}
 	for _, expected := range expectedContents {
 		if !strings.Contains(body, expected) {

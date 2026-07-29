@@ -13,9 +13,18 @@ type MainTitleData struct {
 // MainTitle はページのメインタイトルを表示します
 templ MainTitle(data MainTitleData) {
 	<div class="flex flex-col gap-4">
-		<div class="flex flex-wrap md:flex-nowrap items-center justify-between gap-2">
-			<div class="flex flex-col gap-2">
-				<h1 class="flex items-center gap-2 text-2xl font-bold antialiased">
+		<div class="flex flex-wrap md:flex-nowrap justify-between gap-2">
+			// Titles come from the data (a work title, say), so they can be long and hold no
+			// break opportunity. min-w-0 lets the column shrink past that intrinsic width and
+			// [overflow-wrap:anywhere] breaks the title, keeping the row inside the page
+			// instead of widening the document and pushing the actions out of view.
+			//
+			// [Ja] タイトルはデータ由来 (作品タイトルなど) のため、長く改行機会を持たないことが
+			// ある。min-w-0 で列がその固有幅より縮めるようにし、[overflow-wrap:anywhere] で
+			// タイトルを折り返す。これにより行がページ内に収まり、文書が横に広がって操作が
+			// 画面外へ押し出されるのを防ぐ。
+			<div class="flex flex-col gap-2 min-w-0">
+				<h1 class="flex min-w-0 items-center gap-2 text-2xl font-bold antialiased [overflow-wrap:anywhere]">
 					{ data.Title }
 				</h1>
 
@@ -31,7 +40,7 @@ templ MainTitle(data MainTitleData) {
 			</div>
 
 			if data.Actions != nil {
-				<div class="flex w-full flex-none items-center justify-end gap-2 md:w-auto">
+				<div class="flex w-full flex-none justify-end gap-2 md:w-auto">
 					@data.Actions
 				</div>
 			}

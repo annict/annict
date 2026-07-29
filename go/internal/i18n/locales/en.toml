@@ -1038,6 +1038,21 @@ other = "Previous"
 description = "Pagination - Next"
 other = "Next"
 
+# Form common
+#
+# [Ja] フォーム共通
+[form_required_label]
+description = "Marker shown in a form label for a required field"
+other = "Required"
+
+[form_error_summary_heading]
+description = "Heading of the error summary shown at the top of a form"
+other = "There is a problem with your input"
+
+[form_error_summary_item]
+description = "One entry of the error summary (a field label and its message)"
+other = "{{.Label}}: {{.Message}}"
+
 # Status label related
 [status_published]
 description = "Status - Published"
@@ -1219,20 +1234,20 @@ description = "Form label - Media"
 other = "Media"
 
 [db_works_new_season_year_label]
-description = "Form label - Season Year"
-other = "Season Year"
+description = "Form label - Release (Year)"
+other = "Release (Year)"
 
 [db_works_new_season_name_label]
-description = "Form label - Season Name"
-other = "Season Name"
+description = "Form label - Release (Season)"
+other = "Release (Season)"
 
 [db_works_new_started_on_label]
-description = "Form label - Started On"
-other = "Started On"
+description = "Form label - Start Date"
+other = "Start Date"
 
 [db_works_new_ended_on_label]
-description = "Form label - Ended On"
-other = "Ended On"
+description = "Form label - End Date"
+other = "End Date"
 
 [db_works_new_official_site_url_label]
 description = "Form label - Official Site URL"
@@ -1254,17 +1269,9 @@ other = "Wikipedia URL (English)"
 description = "Form label - X Username"
 other = "X Username"
 
-[db_works_new_twitter_username_placeholder]
-description = "Form placeholder - X Username (without @)"
-other = "without @"
-
 [db_works_new_twitter_hashtag_label]
-description = "Form label - X Hashtag"
-other = "X Hashtag"
-
-[db_works_new_twitter_hashtag_placeholder]
-description = "Form placeholder - X Hashtag (without #)"
-other = "without #"
+description = "Form label - Hashtag"
+other = "Hashtag"
 
 [db_works_new_sc_tid_label]
 description = "Form label - Syobocal TID"
@@ -1299,8 +1306,8 @@ description = "Form label - Start Episode Raw Number"
 other = "Start Episode Raw Number"
 
 [db_works_new_number_format_label]
-description = "Form label - Number Format"
-other = "Number Format"
+description = "Form label - Episode Number Format"
+other = "Episode Number Format"
 
 [db_works_new_no_episodes_label]
 description = "Form label - No Episodes"
@@ -1308,15 +1315,19 @@ other = "No Episodes"
 
 [db_works_new_submit]
 description = "Submit button on the new work page"
-other = "Create Work"
+other = "Register"
 
 [db_works_edit_title]
 description = "DB works edit page title"
 other = "Edit Work"
 
-[db_works_edit_back_to_list_link]
-description = "Link from edit work page back to the works index"
-other = "Back to List"
+[db_works_edit_work_page_link]
+description = "Link from the edit work page to the work page on the public site"
+other = "Work page"
+
+[db_works_edit_work_page_link_aria_label]
+description = "Aria label for the link that opens the work page on the public site in a new tab"
+other = "Open the work page in a new tab"
 
 [db_works_edit_title_label]
 description = "Form label - Title"
@@ -1343,20 +1354,20 @@ description = "Form label - Media"
 other = "Media"
 
 [db_works_edit_season_year_label]
-description = "Form label - Season Year"
-other = "Season Year"
+description = "Form label - Release (Year)"
+other = "Release (Year)"
 
 [db_works_edit_season_name_label]
-description = "Form label - Season Name"
-other = "Season Name"
+description = "Form label - Release (Season)"
+other = "Release (Season)"
 
 [db_works_edit_started_on_label]
-description = "Form label - Started On"
-other = "Started On"
+description = "Form label - Start Date"
+other = "Start Date"
 
 [db_works_edit_ended_on_label]
-description = "Form label - Ended On"
-other = "Ended On"
+description = "Form label - End Date"
+other = "End Date"
 
 [db_works_edit_official_site_url_label]
 description = "Form label - Official Site URL"
@@ -1378,17 +1389,9 @@ other = "Wikipedia URL (English)"
 description = "Form label - X Username"
 other = "X Username"
 
-[db_works_edit_twitter_username_placeholder]
-description = "Form placeholder - X Username (without @)"
-other = "without @"
-
 [db_works_edit_twitter_hashtag_label]
-description = "Form label - X Hashtag"
-other = "X Hashtag"
-
-[db_works_edit_twitter_hashtag_placeholder]
-description = "Form placeholder - X Hashtag (without #)"
-other = "without #"
+description = "Form label - Hashtag"
+other = "Hashtag"
 
 [db_works_edit_sc_tid_label]
 description = "Form label - Syobocal TID"
@@ -1423,8 +1426,8 @@ description = "Form label - Start Episode Raw Number"
 other = "Start Episode Raw Number"
 
 [db_works_edit_number_format_label]
-description = "Form label - Number Format"
-other = "Number Format"
+description = "Form label - Episode Number Format"
+other = "Episode Number Format"
 
 [db_works_edit_no_episodes_label]
 description = "Form label - No Episodes"
@@ -1432,15 +1435,11 @@ other = "No Episodes"
 
 [db_works_edit_submit]
 description = "Submit button on the edit work page"
-other = "Update Work"
+other = "Update"
 
 [db_works_archive_new_title]
 description = "Title of the archive-confirmation page"
 other = "Archive Work"
-
-[db_works_archive_new_back_to_list_link]
-description = "Link from the archive-confirmation page back to the works index"
-other = "Back to List"
 
 [db_works_archive_new_confirm_message]
 description = "Confirmation message on the archive-confirmation page"
@@ -1478,7 +1477,7 @@ other = "Work has been deleted successfully"
 # Validation common messages
 [validation_required]
 description = "Required field validation error"
-other = "is required"
+other = "Please enter a value"
 
 [validation_media_invalid]
 description = "Media value is invalid"

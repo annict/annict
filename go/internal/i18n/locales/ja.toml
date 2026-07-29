@@ -1037,6 +1037,21 @@ other = "前へ"
 description = "ページネーション - 次へ"
 other = "次へ"
 
+# Form common
+#
+# [Ja] フォーム共通
+[form_required_label]
+description = "必須フィールドのラベルに表示する印"
+other = "必須"
+
+[form_error_summary_heading]
+description = "フォーム冒頭に表示するエラー要約の見出し"
+other = "入力内容にエラーがあります"
+
+[form_error_summary_item]
+description = "エラー要約の1項目 (フィールドのラベルとメッセージ)"
+other = "{{.Label}}: {{.Message}}"
+
 # 公開状態ラベル関連
 [status_published]
 description = "公開状態 - 公開"
@@ -1187,7 +1202,7 @@ other = "{{.Field}} を新しいタブで開く"
 # DB作品新規作成ページ
 [db_works_new_title]
 description = "作品新規作成ページのタイトル"
-other = "作品を追加"
+other = "作品登録"
 
 [db_works_new_back_to_list_link]
 description = "新規作成ページから一覧ページへのリンク"
@@ -1218,20 +1233,20 @@ description = "フォームラベル - メディア"
 other = "メディア"
 
 [db_works_new_season_year_label]
-description = "フォームラベル - シーズン年"
-other = "シーズン年"
+description = "フォームラベル - リリース時期 (年)"
+other = "リリース時期 (年)"
 
 [db_works_new_season_name_label]
-description = "フォームラベル - シーズン名"
-other = "シーズン名"
+description = "フォームラベル - リリース時期 (季節)"
+other = "リリース時期 (季節)"
 
 [db_works_new_started_on_label]
-description = "フォームラベル - 放送開始日"
-other = "放送開始日"
+description = "フォームラベル - 開始日"
+other = "開始日"
 
 [db_works_new_ended_on_label]
-description = "フォームラベル - 放送終了日"
-other = "放送終了日"
+description = "フォームラベル - 終了日"
+other = "終了日"
 
 [db_works_new_official_site_url_label]
 description = "フォームラベル - 公式サイトURL"
@@ -1253,17 +1268,9 @@ other = "Wikipedia URL (英語)"
 description = "フォームラベル - Xユーザー名"
 other = "Xユーザー名"
 
-[db_works_new_twitter_username_placeholder]
-description = "フォームプレースホルダー - Xユーザー名 (@ は不要)"
-other = "@なし"
-
 [db_works_new_twitter_hashtag_label]
-description = "フォームラベル - Xハッシュタグ"
-other = "Xハッシュタグ"
-
-[db_works_new_twitter_hashtag_placeholder]
-description = "フォームプレースホルダー - Xハッシュタグ (# は不要)"
-other = "#なし"
+description = "フォームラベル - ハッシュタグ"
+other = "ハッシュタグ"
 
 [db_works_new_sc_tid_label]
 description = "フォームラベル - しょぼいカレンダーTID"
@@ -1278,16 +1285,16 @@ description = "フォームラベル - あらすじ"
 other = "あらすじ"
 
 [db_works_new_synopsis_source_label]
-description = "フォームラベル - あらすじ出典"
-other = "あらすじ出典"
+description = "フォームラベル - あらすじの引用元"
+other = "あらすじの引用元"
 
 [db_works_new_synopsis_en_label]
 description = "フォームラベル - あらすじ (英語)"
 other = "あらすじ (英語)"
 
 [db_works_new_synopsis_source_en_label]
-description = "フォームラベル - あらすじ出典 (英語)"
-other = "あらすじ出典 (英語)"
+description = "フォームラベル - あらすじの引用元 (英語)"
+other = "あらすじの引用元 (英語)"
 
 [db_works_new_manual_episodes_count_label]
 description = "フォームラベル - 手動エピソード数"
@@ -1298,8 +1305,8 @@ description = "フォームラベル - 開始エピソード番号"
 other = "開始エピソード番号"
 
 [db_works_new_number_format_label]
-description = "フォームラベル - NumberFormat"
-other = "NumberFormat"
+description = "フォームラベル - 話数フォーマット"
+other = "話数フォーマット"
 
 [db_works_new_no_episodes_label]
 description = "フォームラベル - エピソードなし"
@@ -1307,15 +1314,19 @@ other = "エピソードなし"
 
 [db_works_new_submit]
 description = "作品新規作成ページの送信ボタン"
-other = "作品を作成"
+other = "登録する"
 
 [db_works_edit_title]
 description = "作品編集ページのタイトル"
 other = "作品を編集"
 
-[db_works_edit_back_to_list_link]
-description = "編集ページから一覧ページへのリンク"
-other = "一覧に戻る"
+[db_works_edit_work_page_link]
+description = "編集ページから公開サイトの作品ページへのリンク"
+other = "作品ページ"
+
+[db_works_edit_work_page_link_aria_label]
+description = "編集ページから公開サイトの作品ページへのリンク (新しいタブで開く) の aria-label"
+other = "作品ページを新しいタブで開く"
 
 [db_works_edit_title_label]
 description = "フォームラベル - タイトル"
@@ -1342,20 +1353,20 @@ description = "フォームラベル - メディア"
 other = "メディア"
 
 [db_works_edit_season_year_label]
-description = "フォームラベル - シーズン年"
-other = "シーズン年"
+description = "フォームラベル - リリース時期 (年)"
+other = "リリース時期 (年)"
 
 [db_works_edit_season_name_label]
-description = "フォームラベル - シーズン名"
-other = "シーズン名"
+description = "フォームラベル - リリース時期 (季節)"
+other = "リリース時期 (季節)"
 
 [db_works_edit_started_on_label]
-description = "フォームラベル - 放送開始日"
-other = "放送開始日"
+description = "フォームラベル - 開始日"
+other = "開始日"
 
 [db_works_edit_ended_on_label]
-description = "フォームラベル - 放送終了日"
-other = "放送終了日"
+description = "フォームラベル - 終了日"
+other = "終了日"
 
 [db_works_edit_official_site_url_label]
 description = "フォームラベル - 公式サイトURL"
@@ -1377,17 +1388,9 @@ other = "Wikipedia URL (英語)"
 description = "フォームラベル - Xユーザー名"
 other = "Xユーザー名"
 
-[db_works_edit_twitter_username_placeholder]
-description = "フォームプレースホルダー - Xユーザー名 (@ は不要)"
-other = "@なし"
-
 [db_works_edit_twitter_hashtag_label]
-description = "フォームラベル - Xハッシュタグ"
-other = "Xハッシュタグ"
-
-[db_works_edit_twitter_hashtag_placeholder]
-description = "フォームプレースホルダー - Xハッシュタグ (# は不要)"
-other = "#なし"
+description = "フォームラベル - ハッシュタグ"
+other = "ハッシュタグ"
 
 [db_works_edit_sc_tid_label]
 description = "フォームラベル - しょぼいカレンダーTID"
@@ -1402,16 +1405,16 @@ description = "フォームラベル - あらすじ"
 other = "あらすじ"
 
 [db_works_edit_synopsis_source_label]
-description = "フォームラベル - あらすじ出典"
-other = "あらすじ出典"
+description = "フォームラベル - あらすじの引用元"
+other = "あらすじの引用元"
 
 [db_works_edit_synopsis_en_label]
 description = "フォームラベル - あらすじ (英語)"
 other = "あらすじ (英語)"
 
 [db_works_edit_synopsis_source_en_label]
-description = "フォームラベル - あらすじ出典 (英語)"
-other = "あらすじ出典 (英語)"
+description = "フォームラベル - あらすじの引用元 (英語)"
+other = "あらすじの引用元 (英語)"
 
 [db_works_edit_manual_episodes_count_label]
 description = "フォームラベル - 手動エピソード数"
@@ -1422,8 +1425,8 @@ description = "フォームラベル - 開始エピソード番号"
 other = "開始エピソード番号"
 
 [db_works_edit_number_format_label]
-description = "フォームラベル - NumberFormat"
-other = "NumberFormat"
+description = "フォームラベル - 話数フォーマット"
+other = "話数フォーマット"
 
 [db_works_edit_no_episodes_label]
 description = "フォームラベル - エピソードなし"
@@ -1431,15 +1434,11 @@ other = "エピソードなし"
 
 [db_works_edit_submit]
 description = "作品編集ページの送信ボタン"
-other = "作品を更新"
+other = "更新する"
 
 [db_works_archive_new_title]
 description = "作品非公開確認ページのタイトル"
 other = "作品を非公開にする"
-
-[db_works_archive_new_back_to_list_link]
-description = "非公開確認ページから一覧ページへのリンク"
-other = "一覧に戻る"
 
 [db_works_archive_new_confirm_message]
 description = "非公開確認ページの確認メッセージ"

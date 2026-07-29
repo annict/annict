@@ -78,8 +78,14 @@ func (h *Handler) renderEditWithErrors(w http.ResponseWriter, r *http.Request, i
 		meta,
 		h.cfg.GetAssetVersion(),
 		db_works.Edit(db_works.EditPageData{
-			CSRFToken:   csrfToken,
-			WorkID:      viewmodel.WorkID(input.WorkID),
+			CSRFToken: csrfToken,
+			WorkID:    viewmodel.WorkID(input.WorkID),
+			// Validation runs before the work is loaded, so the stored title is not at hand
+			// here; the submitted title names the work in the heading instead.
+			//
+			// [Ja] バリデーションは work の読み込みより前に走るため、ここでは保存済みの
+			// タイトルを持たない。見出しでは代わりに送信されたタイトルで作品を示す。
+			WorkTitle:   input.Title,
 			FormOptions: formOptions,
 			FormErrors:  formErrors,
 			FormInput:   viewmodel.NewDBWorkFormInput(input.WorkFormInput),

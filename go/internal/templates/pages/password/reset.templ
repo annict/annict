@@ -34,7 +34,7 @@ templ Reset(data ResetPageData) {
 				@templ.Raw(templates.T(ctx, "password_reset_description"))
 			</p>
 		</div>
-		@components.FormErrors(data.FormErrors)
+		@components.FormErrors(components.FormErrorsData{Errors: data.FormErrors})
 		<form
 			action="/password/reset"
 			class="grid gap-6"

@@ -52,6 +52,7 @@ func (h *Handler) Edit(w http.ResponseWriter, r *http.Request) {
 		db_works.Edit(db_works.EditPageData{
 			CSRFToken:   csrfToken,
 			WorkID:      viewmodel.WorkID(output.Work.ID),
+			WorkTitle:   output.Work.Title,
 			FormOptions: formOptions,
 			FormInput:   formInput,
 		}),
