@@ -17,8 +17,10 @@
 
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
+  --color-success-strong: var(--success-strong);
   --color-warning: var(--warning);
   --color-warning-foreground: var(--warning-foreground);
+  --color-warning-strong: var(--warning-strong);
 
   --color-bottom-nav: var(--color-sidebar);
   --color-bottom-nav-foreground: var(--color-sidebar-foreground);
@@ -68,50 +70,57 @@
   so define them here in the 1.0 `data-variant` form using the project's
   `--success` / `--warning` variables. The soft-tinted treatment matches
   Basecoat's built-in destructive variant so the status labels stay visually
-  consistent side by side.
+  consistent side by side. The label itself takes the `-strong` variable, which
+  keeps the badge text readable on the tint (badges render at `text-xs`, so the
+  4.5:1 threshold for regular text applies).
 
   [Ja] success / warning 用の独自バッジバリアント。Basecoat 1.0 は primary /
   secondary / outline / destructive / ghost / link を備えるが success / warning は
   無いため、プロジェクトの `--success` / `--warning` 変数を使って 1.0 の
   `data-variant` 形式でここに定義する。淡い塗りの見た目は Basecoat 組み込みの
   destructive バリアントに揃え、ステータスラベルが並んだときの一貫性を保つ。
+  文字には `-strong` の変数を使い、塗りの上でも読める濃さにする (バッジは
+  `text-xs` で描画されるため、通常サイズの文字と同じ 4.5:1 が必要になる)。
 */
 @layer components {
   .badge[data-variant="success"] {
-    @apply bg-success/10 text-success dark:bg-success/20;
+    @apply bg-success/10 text-success-strong dark:bg-success/20;
   }
 
   .badge[data-variant="warning"] {
-    @apply bg-warning/10 text-warning dark:bg-warning/20;
+    @apply bg-warning/10 text-warning-strong dark:bg-warning/20;
   }
 }
 
 /*
   Custom success / warning button variants, matching the badge variants above.
   Basecoat 1.0 has no success / warning button variant, so mirror the built-in
-  destructive button's soft-tinted treatment (10% tint at rest, 20% on hover,
-  a tinted focus ring) using the project's `--success` / `--warning` variables.
+  destructive button's soft-tinted treatment (10% tint at rest, 20% on hover)
+  using the project's `--success` / `--warning` variables. Label and focus
+  indicator take the `-strong` variable at full opacity: the tint alone is too
+  close to the label and to the surrounding surface to stay distinguishable.
   This keeps the work-list action buttons (unpublish = warning, publish =
   success) visually consistent with the destructive delete button beside them.
 
   [Ja] 上のバッジバリアントに対応する success / warning 用の独自ボタンバリアント。
   Basecoat 1.0 は success / warning のボタンバリアントを持たないため、組み込みの
-  destructive ボタンの淡い塗り (通常時 10%・hover 時 20%・淡いフォーカスリング) を
-  プロジェクトの `--success` / `--warning` 変数で再現する。作品一覧の操作ボタン
-  (非公開 = warning・公開 = success) を、隣の destructive な削除ボタンと視覚的に
-  揃えるためのもの。
+  destructive ボタンの淡い塗り (通常時 10%・hover 時 20%) をプロジェクトの
+  `--success` / `--warning` 変数で再現する。文字とフォーカス表示には `-strong` の
+  変数を不透明で使う。塗りの色そのままでは文字とも周囲の面とも差が小さく、識別
+  できないため。作品一覧の操作ボタン (非公開 = warning・公開 = success) を、隣の
+  destructive な削除ボタンと視覚的に揃えるためのもの。
 */
 @layer components {
   .btn[data-variant="success"] {
-    @apply bg-success/10 text-success hover:bg-success/20;
-    @apply focus-visible:border-success/40 focus-visible:ring-success/20;
-    @apply dark:bg-success/20 dark:hover:bg-success/30 dark:focus-visible:ring-success/40;
+    @apply bg-success/10 text-success-strong hover:bg-success/20;
+    @apply focus-visible:border-success-strong focus-visible:ring-success-strong;
+    @apply dark:bg-success/20 dark:hover:bg-success/30;
   }
 
   .btn[data-variant="warning"] {
-    @apply bg-warning/10 text-warning hover:bg-warning/20;
-    @apply focus-visible:border-warning/40 focus-visible:ring-warning/20;
-    @apply dark:bg-warning/20 dark:hover:bg-warning/30 dark:focus-visible:ring-warning/40;
+    @apply bg-warning/10 text-warning-strong hover:bg-warning/20;
+    @apply focus-visible:border-warning-strong focus-visible:ring-warning-strong;
+    @apply dark:bg-warning/20 dark:hover:bg-warning/30;
   }
 }
 
@@ -129,12 +138,26 @@
   --sidebar-accent: --alpha(var(--color-stone-200) / 50%);
 
   /* 独自の変数 */
+  /*
+    The `-strong` colours are the text / focus-indicator counterparts of the
+    tint colours: each theme takes the shade that stays distinguishable on top
+    of its own tinted fill (see the badge and button variants above). Yellow is
+    light enough that dark mode can reuse the tint shade itself; green is not,
+    so dark mode steps one shade lighter.
+
+    [Ja] `-strong` の色は、塗りの色に対応する文字・フォーカス表示用の色。各テーマ
+    で、その面の塗りの上でも識別できる濃さを選ぶ (上のバッジ・ボタンのバリアントを
+    参照)。yellow は十分に明るいためダークでは塗りと同じ濃さを使えるが、green は
+    足りないためダークでは 1 段明るい濃さにする。
+  */
   --success: var(--color-green-600);
   --success-foreground: var(--color-white);
+  --success-strong: var(--color-green-800);
   --error: var(--color-red-600);
   --error-foreground: var(--color-white);
   --warning: var(--color-yellow-600);
   --warning-foreground: var(--color-black);
+  --warning-strong: var(--color-yellow-800);
   --info: var(--color-blue-600);
   --info-foreground: var(--color-white);
 
@@ -160,10 +183,12 @@
   /* 独自の変数 */
   --success: var(--color-green-400);
   --success-foreground: var(--color-black);
+  --success-strong: var(--color-green-300);
   --error: var(--color-red-400);
   --error-foreground: var(--color-black);
   --warning: var(--color-yellow-400);
   --warning-foreground: var(--color-black);
+  --warning-strong: var(--color-yellow-400);
   --info: var(--color-blue-400);
   --info-foreground: var(--color-black);
 }
