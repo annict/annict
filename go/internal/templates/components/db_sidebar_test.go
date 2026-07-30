@@ -141,3 +141,73 @@ func TestDBSidebar_MarksNoEntryOutsideMenu(t *testing.T) {
 		t.Error("サイドバーに項目を持たない画面で aria-current が付いています")
 	}
 }
+
+// TestDBSidebar_RendersBackLinkInFooter verifies the back link is rendered in the footer
+// instead of the scrolling section, which is what keeps it at the bottom edge of the sidebar
+// when the menu scrolls.
+//
+// [Ja] TestDBSidebar_RendersBackLinkInFooter は、戻るリンクがスクロールする section ではなく
+// footer に描画されることを検証する。これがメニューがスクロールするときに戻るリンクを
+// サイドバーの下端へ残す仕組みである。
+func TestDBSidebar_RendersBackLinkInFooter(t *testing.T) {
+	t.Parallel()
+
+	html := renderDBSidebar(t, "/db/works")
+
+	footerStart := strings.Index(html, "<footer")
+	if footerStart < 0 {
+		t.Fatal("footer が描画されていません")
+	}
+	footerEnd := strings.Index(html[footerStart:], "</footer>")
+	if footerEnd < 0 {
+		t.Fatal("footer が閉じられていません")
+	}
+	footer := html[footerStart : footerStart+footerEnd]
+
+	if !strings.Contains(footer, `<a href="/"`) {
+		t.Error("戻るリンクが footer の内側に描画されていません")
+	}
+	if !strings.Contains(footer, "Annictに戻る") {
+		t.Error("戻るリンクのラベルが footer の内側に描画されていません")
+	}
+	// The link fills the footer's width, so centering is what puts its icon and label in the
+	// middle of the sidebar.
+	//
+	// [Ja] リンクは footer の幅いっぱいに広がるため、アイコンと文言をサイドバーの横中央に
+	// 置くのは中央寄せの指定である。
+	if !strings.Contains(footer, "justify-center") {
+		t.Error("戻るリンクが中央寄せになっていません")
+	}
+
+	sectionEnd := strings.Index(html, "</section>")
+	if sectionEnd < 0 {
+		t.Fatal("section が閉じられていません")
+	}
+	if sectionEnd > footerStart {
+		t.Error("footer が section より前に描画されています")
+	}
+	if strings.Contains(html[:sectionEnd], `<a href="/"`) {
+		t.Error("戻るリンクが section の内側に残っています")
+	}
+}
+
+// TestDBSidebar_AlignsHorizontalPadding verifies the search box takes the same horizontal
+// padding as the menu group and the footer, both of which Basecoat indents by p-2. Aligning
+// it here keeps the left edges of the search field, the menu entries and the back link on one
+// vertical line.
+//
+// [Ja] TestDBSidebar_AlignsHorizontalPadding は、検索欄が Basecoat が p-2 で字下げする
+// メニューのグループと footer と同じ横方向の余白を取ることを検証する。ここを揃えることで、
+// 検索欄・メニュー項目・戻るリンクの左端が縦に一直線に並ぶ。
+func TestDBSidebar_AlignsHorizontalPadding(t *testing.T) {
+	t.Parallel()
+
+	html := renderDBSidebar(t, "/db/works")
+
+	if !strings.Contains(html, `<div class="px-2">`) {
+		t.Error("検索欄のラッパーが px-2 になっていません")
+	}
+	if strings.Contains(html, `class="px-4"`) {
+		t.Error("検索欄のラッパーに px-4 が残っています")
+	}
+}

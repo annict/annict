@@ -53,7 +53,12 @@ templ DBSidebar() {
 			</header>
 
 			<section class="scrollbar gap-4 py-4">
-				<div class="px-4">
+				// Basecoat indents the menu group and the footer by p-2, so the search box takes the
+				// same px-2 and the horizontal padding is uniform across the sidebar.
+				//
+				// [Ja] Basecoat はメニューのグループと footer を p-2 で字下げするため、検索欄も
+				// 同じ px-2 にしてサイドバー内の横方向の余白を揃える。
+				<div class="px-2">
 					<form method="get" action="/db/search" autocomplete="off">
 						<input
 							type="text"
@@ -76,20 +81,27 @@ templ DBSidebar() {
 						@dbSidebarMenuItem("/db/channels", "db_sidebar_channels")
 					</ul>
 				</div>
-
-				<div class="px-2 mb-4 border-t border-border pt-4">
-					<a
-						href="/"
-						class="flex items-center justify-center gap-2 p-2 rounded-lg hover:bg-sidebar-accent transition-colors text-muted-foreground"
-					>
-						@templates.Icon("arrow-bend-up-left-regular", "size-[16px]")
-
-						<span class="text-sm">
-							{ templates.T(ctx, "db_sidebar_back_to_annict") }
-						</span>
-					</a>
-				</div>
 			</section>
+
+			// Basecoat gives only the section its own scrolling area (flex-1 overflow-y-auto), so
+			// the back link placed in the footer stays at the bottom edge of the sidebar even when
+			// the menu grows tall enough to scroll.
+			//
+			// [Ja] Basecoat は section だけを自身でスクロールする領域にする (flex-1
+			// overflow-y-auto) ため、footer に置いた戻るリンクはメニューがスクロールするほど
+			// 伸びてもサイドバーの下端に残る。
+			<footer class="border-t border-sidebar-border">
+				<a
+					href="/"
+					class="flex items-center justify-center gap-2 p-2 rounded-lg hover:bg-sidebar-accent transition-colors text-muted-foreground"
+				>
+					@templates.Icon("arrow-bend-up-left-regular", "size-[16px]")
+
+					<span class="text-sm">
+						{ templates.T(ctx, "db_sidebar_back_to_annict") }
+					</span>
+				</a>
+			</footer>
 		</nav>
 	</aside>
 }
