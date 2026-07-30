@@ -24,18 +24,19 @@ templ Db(meta viewmodel.PageMeta, assetVersion string, content templ.Component) 
 			// immediate next sibling on desktop (.sidebar + *), so an element inserted there
 			// would take that offset instead of the content region.
 			//
+			// Focused, the link is placed above the sidebar's own z-50 nav so it stays visible
+			// wherever it lands, and takes the popover surface with a ring: at the top left it
+			// overlaps the sidebar's primary-filled header, which a primary-filled link would
+			// blend into.
+			//
 			// [Ja] スキップリンクはページ最初のフォーカス可能要素で、キーボード・スクリーン
 			// リーダーの利用者が毎ページ、サイドバーのロゴ・検索欄・メニュー 8 件・戻るリンクを
 			// 通過せずに本文へ到達できるようにする。サイドバーとコンテンツ領域の間ではなく
 			// サイドバーの前に置く。Basecoat はデスクトップでサイドバーの直後の兄弟に余白を
 			// 与える (.sidebar + *) ため、そこへ要素を挟むとコンテンツ領域ではなくその要素が
 			// 余白を受け取ってしまう。
-			// Focused, the link is placed above the sidebar's own z-50 nav so it stays visible
-			// wherever it lands, and takes the popover surface with a ring: at the top left it
-			// overlaps the sidebar's primary-filled header, which a primary-filled link would
-			// blend into.
 			//
-			// [Ja] フォーカス時はサイドバー自身の nav (z-50) より前面に置き、どこに重なっても
+			// フォーカス時はサイドバー自身の nav (z-50) より前面に置き、どこに重なっても
 			// 見えるようにする。面はリング付きのポップオーバー面にする。左上ではサイドバーの
 			// primary 塗りのヘッダーに重なるため、primary 塗りのリンクでは溶けてしまう。
 			<a
