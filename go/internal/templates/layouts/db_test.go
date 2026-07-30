@@ -128,3 +128,76 @@ func TestDb_HeadOmitsPublicPageMetaTags(t *testing.T) {
 		}
 	}
 }
+
+// dbMainID is the id of the layout's main content region and the target of its skip link.
+// Both assertions below derive from it, so the link and its destination cannot drift apart.
+//
+// [Ja] dbMainID はレイアウトの本文領域の id で、スキップリンクの飛び先でもある。下記の
+// 検証はどちらもこの定数から組み立てるため、リンクと飛び先がずれることがない。
+const dbMainID = "db-main"
+
+// TestDb_RendersSkipLink verifies the Db layout offers a skip link that jumps to the main
+// content region, in both locales. The link precedes the sidebar so it is the first thing a
+// keyboard user reaches, and it is visually hidden until focused.
+//
+// [Ja] TestDb_RendersSkipLink は Db レイアウトが本文領域へ飛ぶスキップリンクを両ロケールで
+// 提供することを検証する。リンクはキーボード利用者が最初に到達するようサイドバーより前に
+// あり、フォーカスされるまで視覚的に隠れている。
+func TestDb_RendersSkipLink(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name           string
+		acceptLanguage string
+		label          string
+	}{
+		{name: "日本語", acceptLanguage: "ja", label: "メインコンテンツへスキップ"},
+		{name: "英語", acceptLanguage: "en", label: "Skip to main content"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			html := renderDbLayout(t, tt.acceptLanguage)
+
+			skipLinkIndex := strings.Index(html, `href="#`+dbMainID+`"`)
+			if skipLinkIndex == -1 {
+				t.Fatalf("本文 (#%s) へのスキップリンクが描画されていません", dbMainID)
+			}
+
+			if !strings.Contains(html, tt.label) {
+				t.Errorf("スキップリンクのラベル %q が描画されていません", tt.label)
+			}
+
+			// The link is hidden but focusable (sr-only, not display: none) and becomes
+			// visible once focused.
+			//
+			// [Ja] リンクは隠れているがフォーカス可能で (display: none ではなく sr-only)、
+			// フォーカスされると表示される。
+			if !strings.Contains(html, "sr-only focus:not-sr-only") {
+				t.Error("スキップリンクが「既定では隠れ、フォーカス時に表示される」形になっていません")
+			}
+
+			// The skip link only bypasses the sidebar if it comes before it in the DOM.
+			//
+			// [Ja] スキップリンクは DOM 上でサイドバーより前にあって初めてサイドバーを飛ばせる。
+			sidebarIndex := strings.Index(html, `<aside id="db-sidebar"`)
+			if sidebarIndex == -1 {
+				t.Fatal("レイアウトにサイドバー本体が描画されていません")
+			}
+			if skipLinkIndex > sidebarIndex {
+				t.Error("スキップリンクがサイドバーより後ろに描画されています (サイドバーを飛ばせません)")
+			}
+
+			// The destination carries the id the link points at, and tabindex="-1" so the
+			// jump actually moves focus into the content region.
+			//
+			// [Ja] 飛び先はリンクが指す id を持ち、飛んだときに実際にフォーカスが本文領域へ
+			// 移るよう tabindex="-1" を持つ。
+			if !strings.Contains(html, `<main id="`+dbMainID+`" tabindex="-1">`) {
+				t.Errorf("スキップリンクの飛び先 <main id=%q tabindex=\"-1\"> が描画されていません", dbMainID)
+			}
+		})
+	}
+}

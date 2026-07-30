@@ -825,6 +825,13 @@ other = "登録"
 description = "ボトムナビゲーション - ログイン"
 other = "ログイン"
 
+# Layout common
+#
+# [Ja] レイアウト共通
+[skip_to_main_content]
+description = "レイアウト共通 - 本文へのスキップリンク"
+other = "メインコンテンツへスキップ"
+
 # サイドバー関連
 [sidebar_home]
 description = "サイドバー - ホーム"

@@ -8,8 +8,8 @@
 // per-toggle event and does not manage aria-expanded, focus, Escape-key closing, background
 // inertness, or persisted desktop state for an external trigger. This module observes aria-hidden so
 // every Basecoat close path remains synchronized. It also persists the desktop preference in a
-// Cookie and manages focus, Escape-key closing, and the content sibling's inert state for the
-// mobile overlay.
+// Cookie and manages focus, Escape-key closing, and the inert state of the sidebar's siblings for
+// the mobile overlay.
 //
 // [Ja] Basecoat サイドバーコンポーネント用の汎用トグル結線。data-sidebar-toggle="<id>" を持つ
 // トリガーが、対応する <aside class="sidebar" id="<id>"> をトグルし、同じサイドバーを参照する
@@ -150,27 +150,46 @@ function syncSidebar(sidebar: SidebarElement): void {
     writeDesktopOpenPreference(sidebar, open);
   }
 
-  const content = sidebar.nextElementSibling as HTMLElement | null;
-  if (!content) {
-    return;
-  }
+  const background = getBackgroundElements(sidebar);
 
   if (!isMobileSidebar(sidebar)) {
-    content.inert = false;
+    setInert(background, false);
     restoreFocusAfterClose(open, wasOpen, sidebar);
     return;
   }
 
   if (open) {
-    content.inert = true;
+    setInert(background, true);
     if (!sidebar.contains(document.activeElement)) {
       sidebar.querySelector<HTMLElement>(focusableSelector)?.focus();
     }
     return;
   }
 
-  content.inert = false;
+  setInert(background, false);
   restoreFocusAfterClose(open, wasOpen, sidebar);
+}
+
+// getBackgroundElements returns every sibling of the sidebar. While the mobile overlay is open
+// all of them sit behind it, so they are the region to make inert. Taking every sibling rather
+// than only the next one also covers elements placed before the sidebar in the DOM, such as the
+// skip link, which would otherwise stay reachable behind the overlay.
+//
+// [Ja] getBackgroundElements はサイドバーの兄弟をすべて返す。モバイルオーバーレイ表示中は
+// それらすべてが背面に位置するため、inert にする対象になる。直後の兄弟だけでなく全兄弟を
+// 取ることで、DOM 上でサイドバーより前に置かれた要素 (スキップリンクなど) も対象に含まれ、
+// オーバーレイ背面で操作可能なまま残らない。
+function getBackgroundElements(sidebar: SidebarElement): HTMLElement[] {
+  const siblings = sidebar.parentElement?.children ?? [];
+  return Array.from(siblings).filter(
+    (element): element is HTMLElement => element !== sidebar && element instanceof HTMLElement,
+  );
+}
+
+function setInert(elements: HTMLElement[], inert: boolean): void {
+  for (const element of elements) {
+    element.inert = inert;
+  }
 }
 
 function restoreFocusAfterClose(open: boolean, wasOpen: boolean, sidebar: SidebarElement): void {

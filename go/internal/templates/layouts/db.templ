@@ -17,19 +17,52 @@ templ Db(meta viewmodel.PageMeta, assetVersion string, content templ.Component) 
 			@components.DBHead(meta, assetVersion)
 		</head>
 		<body class="bg-background">
+			// The skip link is the first focusable element on the page, so keyboard and screen
+			// reader users reach the content without passing the sidebar's logo, search box,
+			// eight menu entries and back link on every page. It sits before the sidebar rather
+			// than between the sidebar and the content region: Basecoat offsets the sidebar's
+			// immediate next sibling on desktop (.sidebar + *), so an element inserted there
+			// would take that offset instead of the content region.
+			//
+			// [Ja] スキップリンクはページ最初のフォーカス可能要素で、キーボード・スクリーン
+			// リーダーの利用者が毎ページ、サイドバーのロゴ・検索欄・メニュー 8 件・戻るリンクを
+			// 通過せずに本文へ到達できるようにする。サイドバーとコンテンツ領域の間ではなく
+			// サイドバーの前に置く。Basecoat はデスクトップでサイドバーの直後の兄弟に余白を
+			// 与える (.sidebar + *) ため、そこへ要素を挟むとコンテンツ領域ではなくその要素が
+			// 余白を受け取ってしまう。
+			// Focused, the link is placed above the sidebar's own z-50 nav so it stays visible
+			// wherever it lands, and takes the popover surface with a ring: at the top left it
+			// overlaps the sidebar's primary-filled header, which a primary-filled link would
+			// blend into.
+			//
+			// [Ja] フォーカス時はサイドバー自身の nav (z-50) より前面に置き、どこに重なっても
+			// 見えるようにする。面はリング付きのポップオーバー面にする。左上ではサイドバーの
+			// primary 塗りのヘッダーに重なるため、primary 塗りのリンクでは溶けてしまう。
+			<a
+				href="#db-main"
+				class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-60 focus:rounded-md focus:bg-popover focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-popover-foreground focus:shadow-md focus:ring-2 focus:ring-ring"
+			>
+				{ templates.T(ctx, "skip_to_main_content") }
+			</a>
+
 			@components.DBSidebar()
 
-			// The sidebar's immediate next sibling is the whole background region: Basecoat
-			// offsets it on desktop (.sidebar + *) and sidebar-toggle.ts marks it inert while
-			// the mobile overlay is open. Flash lives inside it so its fixed toast (z-50, above
-			// the z-40 overlay) is inert too, instead of staying reachable behind the overlay.
+			// The sidebar's immediate next sibling is the whole background region, which Basecoat
+			// offsets on desktop (.sidebar + *). Flash lives inside it so its fixed toast (z-50,
+			// above the z-40 overlay) is inert together with the rest of the background while the
+			// mobile overlay is open, instead of staying reachable behind the overlay.
 			//
-			// [Ja] サイドバーの直後の兄弟が背面領域全体になる。Basecoat がデスクトップで余白を
-			// 与え (.sidebar + *)、sidebar-toggle.ts がモバイルオーバーレイ表示中は inert にする。
-			// Flash をこの内側に置くことで、その fixed トースト (z-50、z-40 のオーバーレイより前面)
-			// も inert になり、オーバーレイ背面で操作可能なまま残らない。
-			<div class="flex flex-col min-h-screen">
-				<main>
+			// [Ja] サイドバーの直後の兄弟が背面領域全体になり、Basecoat がデスクトップでそこに
+			// 余白を与える (.sidebar + *)。Flash をこの内側に置くことで、その fixed トースト
+			// (z-50、z-40 のオーバーレイより前面) もモバイルオーバーレイ表示中は背面の他の要素と
+			// 一緒に inert になり、オーバーレイ背面で操作可能なまま残らない。
+			<div class="min-h-screen">
+				// tabindex="-1" makes the skip link's jump land focus on the region itself, so the
+				// next Tab continues from the content instead of the top of the document.
+				//
+				// [Ja] tabindex="-1" によりスキップリンクの飛び先で領域自身がフォーカスを受け、
+				// 次の Tab が文書の先頭ではなく本文から続く。
+				<main id="db-main" tabindex="-1">
 					@content
 				</main>
 
