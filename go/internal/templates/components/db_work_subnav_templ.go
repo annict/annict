@@ -131,13 +131,15 @@ func DBWorkSubnav(data DBWorkSubnavData) templ.Component {
 }
 
 // dbWorkSubnavItem renders a single subnav pill, marking the entry as the current page
-// (via aria-current) when its path matches the request path. The filled treatment of the
+// (via aria-current) while the request path is the entry itself or one of its sub-pages,
+// so adding an episode keeps the episodes entry marked. The filled treatment of the
 // current entry is driven by that same attribute, so the marker assistive technology reads
 // and the one sighted users see cannot drift apart.
 //
-// [Ja] dbWorkSubnavItem はサブナビのピルを 1 つ描画し、リンク先がリクエストパスと一致する
-// とき現在ページとして印を付ける (aria-current)。現在ページの塗りつぶしも同じ属性で切り替える
-// ため、支援技術が読む印と目に見える印がずれることがない。
+// [Ja] dbWorkSubnavItem はサブナビのピルを 1 つ描画し、リクエストパスが項目自身かその配下の
+// ページである間、現在ページとして印を付ける (aria-current)。エピソードを追加している間も
+// エピソードの項目に印が残る。現在ページの塗りつぶしも同じ属性で切り替えるため、支援技術が
+// 読む印と目に見える印がずれることがない。
 func dbWorkSubnavItem(path templates.Path, labelKey string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -166,7 +168,7 @@ func dbWorkSubnavItem(path templates.Path, labelKey string) templ.Component {
 		var templ_7745c5c3_Var4 templ.SafeURL
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinURLErrs(path.SafeURL())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/db_work_subnav.templ`, Line: 81, Col: 24}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/db_work_subnav.templ`, Line: 83, Col: 24}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -176,7 +178,7 @@ func dbWorkSubnavItem(path templates.Path, labelKey string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if templates.IsCurrentPath(ctx, path.String()) {
+		if templates.IsCurrentPathPrefix(ctx, path.String()) {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, " aria-current=\"page\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -189,7 +191,7 @@ func dbWorkSubnavItem(path templates.Path, labelKey string) templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, labelKey))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/db_work_subnav.templ`, Line: 87, Col: 31}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/db_work_subnav.templ`, Line: 89, Col: 31}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {

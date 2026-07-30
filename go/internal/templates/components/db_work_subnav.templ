@@ -68,19 +68,21 @@ templ DBWorkSubnav(data DBWorkSubnavData) {
 }
 
 // dbWorkSubnavItem renders a single subnav pill, marking the entry as the current page
-// (via aria-current) when its path matches the request path. The filled treatment of the
+// (via aria-current) while the request path is the entry itself or one of its sub-pages,
+// so adding an episode keeps the episodes entry marked. The filled treatment of the
 // current entry is driven by that same attribute, so the marker assistive technology reads
 // and the one sighted users see cannot drift apart.
 //
-// [Ja] dbWorkSubnavItem はサブナビのピルを 1 つ描画し、リンク先がリクエストパスと一致する
-// とき現在ページとして印を付ける (aria-current)。現在ページの塗りつぶしも同じ属性で切り替える
-// ため、支援技術が読む印と目に見える印がずれることがない。
+// [Ja] dbWorkSubnavItem はサブナビのピルを 1 つ描画し、リクエストパスが項目自身かその配下の
+// ページである間、現在ページとして印を付ける (aria-current)。エピソードを追加している間も
+// エピソードの項目に印が残る。現在ページの塗りつぶしも同じ属性で切り替えるため、支援技術が
+// 読む印と目に見える印がずれることがない。
 templ dbWorkSubnavItem(path templates.Path, labelKey string) {
 	<li class="shrink-0">
 		<a
 			href={ path.SafeURL() }
 			class="block rounded-full px-3 py-2 text-sm whitespace-nowrap transition-colors hover:bg-accent aria-[current=page]:bg-primary aria-[current=page]:text-primary-foreground aria-[current=page]:hover:bg-primary"
-			if templates.IsCurrentPath(ctx, path.String()) {
+			if templates.IsCurrentPathPrefix(ctx, path.String()) {
 				aria-current="page"
 			}
 		>
