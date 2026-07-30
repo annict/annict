@@ -29,6 +29,15 @@ func TestNew_PageMeta(t *testing.T) {
 	if err != nil {
 		t.Fatalf("設定の読み込みに失敗: %v", err)
 	}
+
+	// The site key is overridden because config.Load can clear it in test and development
+	// when ANNICT_TURNSTILE_DISABLE=true. The positive assertions below must not depend on
+	// the caller's environment.
+	//
+	// [Ja] config.Load は test / dev で ANNICT_TURNSTILE_DISABLE=true のときサイトキーを
+	// 空にしうるため、上書きする。以下の存在検証を実行環境に依存させないため。
+	cfg.TurnstileSiteKey = "1x00000000000000000000AA"
+
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionManager := session.NewManager(sessionRepo, cfg)
 
@@ -72,6 +81,11 @@ func TestNew_PageMeta(t *testing.T) {
 			expectedOGTitle := `<meta property="og:title" content="` + tt.expectedTitle + `">`
 			if !strings.Contains(body, expectedOGTitle) {
 				t.Errorf("期待されるog:titleが見つかりません: %q", expectedOGTitle)
+			}
+
+			expectedPreconnect := `<link rel="preconnect" href="https://challenges.cloudflare.com">`
+			if !strings.Contains(body, expectedPreconnect) {
+				t.Errorf("期待されるpreconnectが見つかりません: %q", expectedPreconnect)
 			}
 		})
 	}

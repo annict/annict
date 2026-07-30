@@ -24,9 +24,19 @@ templ Head(meta viewmodel.PageMeta, assetVersion string) {
 
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
 
+	// The hints come from the page rather than from this component, so an origin is warmed up
+	// only where it is actually requested. They sit near the top of the head so the connection
+	// is set up while the rest of the document is still being parsed.
+	//
+	// [Ja] ヒントは本コンポーネントではなくページ側が宣言するため、実際にリクエストする
+	// ところでだけオリジンを温める。head の先頭付近に置き、文書の残りを解析している間に
+	// 接続を張れるようにする。
+	for _, origin := range meta.PreconnectOrigins {
+		<link rel="preconnect" href={ origin }/>
+	}
+
 	<title>{ meta.Title }</title>
 
-	<link rel="preconnect" href="https://challenges.cloudflare.com"> // Cloudflare Turnstile
 	<link rel="shortcut icon" href="/static/images/favicon.png" type="image/png"/>
 	<link rel="canonical" href={ meta.CanonicalURL }/>
 	<link rel="manifest" href="/manifest.json"/>

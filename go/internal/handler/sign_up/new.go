@@ -37,6 +37,7 @@ func (h *Handler) renderNewForm(w http.ResponseWriter, r *http.Request, status i
 	meta := viewmodel.DefaultPageMeta(ctx, h.cfg, r.URL.Path)
 	meta.SetTitle(ctx, "sign_up_title")
 	meta.Description = i18n.T(ctx, "sign_up_description")
+	meta.AddTurnstilePreconnect(h.cfg.TurnstileSiteKey)
 
 	csrfToken := middleware.GetOrCreateCSRFToken(w, r, h.sessionMgr)
 

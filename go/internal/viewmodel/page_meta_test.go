@@ -277,6 +277,58 @@ func TestPageMeta_SetDBTitle(t *testing.T) {
 	}
 }
 
+// TestPageMeta_AddTurnstilePreconnect verifies the hint follows whether the widget renders:
+// components.Turnstile draws it only for a non-empty site key, so an empty key must leave
+// PreconnectOrigins untouched.
+//
+// [Ja] TestPageMeta_AddTurnstilePreconnect はヒントがウィジェットの描画に追従することを
+// 検証する。components.Turnstile は site key があるときだけ描画するため、空のキーでは
+// PreconnectOrigins を変えてはならない。
+func TestPageMeta_AddTurnstilePreconnect(t *testing.T) {
+	t.Parallel()
+
+	cfg := &config.Config{
+		Env:    "test",
+		Domain: "test.annict.com",
+	}
+
+	tests := []struct {
+		name    string
+		siteKey string
+		want    []string
+	}{
+		{
+			name:    "site key があるときはオリジンを宣言する",
+			siteKey: "1x00000000000000000000AA",
+			want:    []string{"https://challenges.cloudflare.com"},
+		},
+		{
+			name:    "site key が空のときは宣言しない",
+			siteKey: "",
+			want:    nil,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			ctx := i18n.SetLocale(context.Background(), i18n.LangJa)
+			meta := DefaultPageMeta(ctx, cfg, "/sign_in")
+			meta.AddTurnstilePreconnect(tt.siteKey)
+
+			if len(meta.PreconnectOrigins) != len(tt.want) {
+				t.Fatalf("PreconnectOrigins: got %v, want %v", meta.PreconnectOrigins, tt.want)
+			}
+			for i, want := range tt.want {
+				if meta.PreconnectOrigins[i] != want {
+					t.Errorf("PreconnectOrigins[%d]: got %q, want %q", i, meta.PreconnectOrigins[i], want)
+				}
+			}
+		})
+	}
+}
+
 // TestPageMeta_SetTitleWithoutSuffix はSetTitleWithoutSuffixメソッドのテスト
 func TestPageMeta_SetTitleWithoutSuffix(t *testing.T) {
 	cfg := &config.Config{

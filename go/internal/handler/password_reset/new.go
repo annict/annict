@@ -23,6 +23,7 @@ func (h *Handler) renderNewForm(w http.ResponseWriter, r *http.Request, status i
 
 	meta := viewmodel.DefaultPageMeta(ctx, h.cfg, r.URL.Path)
 	meta.SetTitle(ctx, "password_reset_title")
+	meta.AddTurnstilePreconnect(h.cfg.TurnstileSiteKey)
 
 	csrfToken := middleware.GetOrCreateCSRFToken(w, r, h.sessionMgr)
 

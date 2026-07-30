@@ -22,7 +22,23 @@ type PageMeta struct {
 	// 両者が常に一致するようにする。
 	CanonicalURL string
 	OGImage      string // og:imageの値
+	// PreconnectOrigins lists the third-party origins the page is certain to request. Each one
+	// is rendered as a <link rel="preconnect"> so the browser finishes the DNS lookup and the
+	// TCP and TLS handshakes before the request itself is discovered. Only a page that really
+	// requests an origin declares it: a hint for an origin the page never contacts spends a
+	// connection for nothing.
+	//
+	// [Ja] PreconnectOrigins はそのページが確実にリクエストする第三者オリジンの一覧。
+	// それぞれを <link rel="preconnect"> として出力し、リクエスト自体が見つかる前に
+	// ブラウザが DNS 解決と TCP / TLS のハンドシェイクを済ませられるようにする。宣言するのは
+	// 実際にリクエストするページだけ。接触しないオリジンへのヒントは接続を無駄に使うため。
+	PreconnectOrigins []string
 }
+
+// turnstileOrigin is the origin components.Turnstile loads the widget script from.
+//
+// [Ja] turnstileOrigin は components.Turnstile がウィジェットのスクリプトを読み込むオリジン。
+const turnstileOrigin = "https://challenges.cloudflare.com"
 
 // DefaultPageMeta returns the default metadata for the page served at requestPath. The title
 // and the description follow the language detected from the context, and the title carries
@@ -88,6 +104,20 @@ func (p *PageMeta) SetTitle(ctx context.Context, titleKey string) {
 // Annict DB 管理画面のページで使い、ブラウザのタブや履歴で公開画面と区別できるようにします。
 func (p *PageMeta) SetDBTitle(ctx context.Context, titleKey string) {
 	p.Title = i18n.T(ctx, titleKey) + " | Annict DB"
+}
+
+// AddTurnstilePreconnect declares the Turnstile origin as a preconnect target for a page that
+// renders the widget. components.Turnstile renders the widget and its script only when siteKey
+// is set, so an empty siteKey leaves the hint out as well.
+//
+// [Ja] AddTurnstilePreconnect は Turnstile のウィジェットを描画するページで、そのオリジンを
+// preconnect の対象として宣言します。components.Turnstile は siteKey があるときだけ
+// ウィジェットとスクリプトを描画するため、siteKey が空ならヒントも出しません。
+func (p *PageMeta) AddTurnstilePreconnect(siteKey string) {
+	if siteKey == "" {
+		return
+	}
+	p.PreconnectOrigins = append(p.PreconnectOrigins, turnstileOrigin)
 }
 
 // SetTitleWithoutSuffix はタイトルを設定します（サフィックスなし）
