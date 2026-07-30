@@ -1,7 +1,6 @@
 package db_work
 
 import (
-	"fmt"
 	"log/slog"
 	"net/http"
 	"strconv"
@@ -50,7 +49,7 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	h.flashMgr.SetSuccess(w, i18n.T(ctx, "flash_db_work_updated"))
-	http.Redirect(w, r, fmt.Sprintf("/db/works/%d/edit", output.WorkID), http.StatusSeeOther)
+	http.Redirect(w, r, dbWorkEditPath(output.WorkID), http.StatusSeeOther)
 }
 
 // renderEditWithErrors re-renders the work edit form with validation errors and the previously submitted values.
@@ -69,7 +68,7 @@ func (h *Handler) renderEditWithErrors(w http.ResponseWriter, r *http.Request, i
 	formOptions := viewmodel.NewDBWorkFormOptions(ctx, optionsResult.NumberFormats)
 	csrfToken := middleware.GetCSRFToken(r, h.sessionManager)
 
-	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)
+	meta := viewmodel.DefaultPageMeta(ctx, h.cfg, dbWorkEditPath(input.WorkID))
 	meta.SetDBTitle(ctx, "db_works_edit_title")
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")

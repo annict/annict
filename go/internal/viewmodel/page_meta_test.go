@@ -43,7 +43,7 @@ func TestDefaultPageMeta(t *testing.T) {
 			ctx := i18n.SetLocale(context.Background(), tt.locale)
 
 			// DefaultPageMetaを呼び出し
-			meta := DefaultPageMeta(ctx, cfg)
+			meta := DefaultPageMeta(ctx, cfg, "/works/popular")
 
 			// タイトルの確認
 			if meta.Title != tt.expectedTitle {
@@ -75,9 +75,9 @@ func TestDefaultPageMeta(t *testing.T) {
 				t.Errorf("OGType: got %q, want %q", meta.OGType, "website")
 			}
 
-			// OGURLが空であることを確認（デフォルト値）
-			if meta.OGURL != "" {
-				t.Errorf("OGURL: got %q, want empty string", meta.OGURL)
+			expectedCanonicalURL := "https://test.annict.com/works/popular"
+			if meta.CanonicalURL != expectedCanonicalURL {
+				t.Errorf("CanonicalURL: got %q, want %q", meta.CanonicalURL, expectedCanonicalURL)
 			}
 
 			// OGImageが正しく設定されていることを確認
@@ -99,7 +99,7 @@ func TestDefaultPageMetaWithoutLocale(t *testing.T) {
 
 	// ロケールを設定せずに呼び出し（デフォルトは日本語）
 	ctx := context.Background()
-	meta := DefaultPageMeta(ctx, cfg)
+	meta := DefaultPageMeta(ctx, cfg, "/works/popular")
 
 	// タイトルが設定されていることを確認
 	if meta.Title == "" {
@@ -120,6 +120,76 @@ func TestDefaultPageMetaWithoutLocale(t *testing.T) {
 	expectedOGImage := "https://test.annict.com/static/images/og-image.png"
 	if meta.OGImage != expectedOGImage {
 		t.Errorf("OGImage: got %q, want %q", meta.OGImage, expectedOGImage)
+	}
+}
+
+// TestDefaultPageMeta_CanonicalURL verifies that the canonical URL is the page's own absolute
+// URL, built from the configured origin and the request path, for the public pages as well as
+// for the Annict DB admin pages.
+//
+// [Ja] TestDefaultPageMeta_CanonicalURL は canonical URL がそのページ自身の絶対 URL
+// (設定されたオリジン + リクエストパス) になることを、公開ページと Annict DB 管理画面の
+// 双方について検証します。
+func TestDefaultPageMeta_CanonicalURL(t *testing.T) {
+	t.Parallel()
+
+	cfg := &config.Config{
+		Env:    "test",
+		Domain: "test.annict.com",
+	}
+
+	tests := []struct {
+		name string
+		path string
+		want string
+	}{
+		{
+			name: "トップページ",
+			path: "/",
+			want: "https://test.annict.com/",
+		},
+		{
+			name: "公開ページ",
+			path: "/works/popular",
+			want: "https://test.annict.com/works/popular",
+		},
+		{
+			name: "Annict DB の画面",
+			path: "/db/works/1/edit",
+			want: "https://test.annict.com/db/works/1/edit",
+		},
+		{
+			name: "末尾スラッシュを除去",
+			path: "/works/popular/",
+			want: "https://test.annict.com/works/popular",
+		},
+		{
+			name: "重複スラッシュとドットセグメントを正規化",
+			path: "/works//season/../popular/",
+			want: "https://test.annict.com/works/popular",
+		},
+		{
+			name: "ページを分けるパラメータはクエリとして保つ",
+			path: "/db/works?page=3",
+			want: "https://test.annict.com/db/works?page=3",
+		},
+		{
+			name: "クエリを持つ場合もパス部分だけを正規化する",
+			path: "/db/works/?page=3",
+			want: "https://test.annict.com/db/works?page=3",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			meta := DefaultPageMeta(context.Background(), cfg, tt.path)
+
+			if meta.CanonicalURL != tt.want {
+				t.Errorf("CanonicalURL: got %q, want %q", meta.CanonicalURL, tt.want)
+			}
+		})
 	}
 }
 
@@ -153,7 +223,7 @@ func TestPageMeta_SetTitle(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ctx := i18n.SetLocale(context.Background(), tt.locale)
-			meta := DefaultPageMeta(ctx, cfg)
+			meta := DefaultPageMeta(ctx, cfg, "/works/popular")
 			meta.SetTitle(ctx, tt.titleKey)
 
 			if meta.Title != tt.expectedTitle {
@@ -197,7 +267,7 @@ func TestPageMeta_SetDBTitle(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ctx := i18n.SetLocale(context.Background(), tt.locale)
-			meta := DefaultPageMeta(ctx, cfg)
+			meta := DefaultPageMeta(ctx, cfg, "/works/popular")
 			meta.SetDBTitle(ctx, tt.titleKey)
 
 			if meta.Title != tt.expectedTitle {
@@ -237,7 +307,7 @@ func TestPageMeta_SetTitleWithoutSuffix(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ctx := i18n.SetLocale(context.Background(), tt.locale)
-			meta := DefaultPageMeta(ctx, cfg)
+			meta := DefaultPageMeta(ctx, cfg, "/works/popular")
 			meta.SetTitleWithoutSuffix(ctx, tt.titleKey)
 
 			if meta.Title != tt.expectedTitle {

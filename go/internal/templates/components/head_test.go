@@ -20,11 +20,11 @@ func TestHead(t *testing.T) {
 		{
 			name: "基本的なメタタグが正しく出力される",
 			meta: viewmodel.PageMeta{
-				Title:       "テストページ | Annict",
-				Description: "テストページの説明",
-				OGType:      "website",
-				OGURL:       "https://annict.com/test",
-				OGImage:     "https://annict.com/test.png",
+				Title:        "テストページ | Annict",
+				Description:  "テストページの説明",
+				OGType:       "website",
+				CanonicalURL: "https://annict.com/test",
+				OGImage:      "https://annict.com/test.png",
 			},
 			assetVersion: "v1.0.0",
 			wantContains: []string{
@@ -54,11 +54,11 @@ func TestHead(t *testing.T) {
 		{
 			name: "assetVersionが異なる場合",
 			meta: viewmodel.PageMeta{
-				Title:       "テストページ",
-				Description: "説明",
-				OGType:      "article",
-				OGURL:       "https://annict.com",
-				OGImage:     "https://annict.com/image.png",
+				Title:        "テストページ",
+				Description:  "説明",
+				OGType:       "article",
+				CanonicalURL: "https://annict.com",
+				OGImage:      "https://annict.com/image.png",
 			},
 			assetVersion: "v2.0.0",
 			wantContains: []string{
@@ -98,11 +98,11 @@ func TestHead_DarkMode(t *testing.T) {
 	t.Parallel()
 
 	meta := viewmodel.PageMeta{
-		Title:       "テスト",
-		Description: "説明",
-		OGType:      "website",
-		OGURL:       "https://annict.com",
-		OGImage:     "https://annict.com/image.png",
+		Title:        "テスト",
+		Description:  "説明",
+		OGType:       "website",
+		CanonicalURL: "https://annict.com",
+		OGImage:      "https://annict.com/image.png",
 	}
 
 	ctx := context.Background()

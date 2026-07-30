@@ -1,6 +1,7 @@
 package db_work
 
 import (
+	"fmt"
 	"log/slog"
 	"net/http"
 	"strconv"
@@ -14,6 +15,19 @@ import (
 	"github.com/annict/annict/go/internal/usecase"
 	"github.com/annict/annict/go/internal/viewmodel"
 )
+
+// dbWorkEditPath builds the representative GET path of a work's edit form. Edit serves the
+// page at this path and Update re-renders the same page from PATCH /db/works/:id, so both take
+// their canonical URL from here rather than from the request path. Create and Update also
+// redirect here once the work is saved.
+//
+// [Ja] dbWorkEditPath は作品編集フォームの代表 GET パスを生成する。Edit はこのパスでページを
+// 配信し、Update は同じページを PATCH /db/works/:id から再描画するため、双方ともリクエスト
+// パスではなくここから canonical URL を取る。Create と Update の保存後のリダイレクト先でも
+// ある。
+func dbWorkEditPath(id model.WorkID) string {
+	return fmt.Sprintf("/db/works/%d/edit", int64(id))
+}
 
 // Edit renders the work edit form page in the Annict DB admin UI (GET /db/works/:id/edit).
 //
@@ -42,7 +56,7 @@ func (h *Handler) Edit(w http.ResponseWriter, r *http.Request) {
 	formInput := viewmodel.NewDBWorkFormInputFromWork(output.Work)
 	csrfToken := middleware.GetCSRFToken(r, h.sessionManager)
 
-	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)
+	meta := viewmodel.DefaultPageMeta(ctx, h.cfg, dbWorkEditPath(output.Work.ID))
 	meta.SetDBTitle(ctx, "db_works_edit_title")
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")

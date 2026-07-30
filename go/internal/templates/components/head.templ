@@ -10,7 +10,7 @@ templ Head(meta viewmodel.PageMeta, assetVersion string) {
 
 	<meta property="og:title" content={ meta.Title }/>
 	<meta property="og:type" content={ meta.OGType }/>
-	<meta property="og:url" content={ meta.OGURL }/>
+	<meta property="og:url" content={ meta.CanonicalURL }/>
 	<meta property="og:description" content={ meta.Description }/>
 	<meta property="og:site_name" content="Annict (アニクト)"/>
 	<meta property="og:image" content={ meta.OGImage }/>
@@ -28,7 +28,7 @@ templ Head(meta viewmodel.PageMeta, assetVersion string) {
 
 	<link rel="preconnect" href="https://challenges.cloudflare.com"> // Cloudflare Turnstile
 	<link rel="shortcut icon" href="/static/images/favicon.png" type="image/png"/>
-	<link rel="canonical" href={ meta.OGURL }/>
+	<link rel="canonical" href={ meta.CanonicalURL }/>
 	<link rel="manifest" href="/manifest.json"/>
 	<link rel="stylesheet" href={ "/static/css/style.css?v=" + assetVersion }/>
 

@@ -1,6 +1,7 @@
 package db_work_archive
 
 import (
+	"fmt"
 	"log/slog"
 	"net/http"
 	"strconv"
@@ -14,6 +15,17 @@ import (
 	"github.com/annict/annict/go/internal/usecase"
 	"github.com/annict/annict/go/internal/viewmodel"
 )
+
+// dbWorkArchiveNewPath builds the representative GET path of a work's archive confirmation
+// page. It is built from the parsed work ID rather than from the request path so that links
+// spelling the ID differently (a leading zero, say) still resolve to one representative URL.
+//
+// [Ja] dbWorkArchiveNewPath は作品の非公開確認ページの代表 GET パスを生成する。リクエスト
+// パスではなくパース済みの作品 ID から組み立てることで、ID の表記が違うリンク (先頭ゼロなど)
+// でも 1 つの代表 URL に収まるようにする。
+func dbWorkArchiveNewPath(id model.WorkID) string {
+	return fmt.Sprintf("/db/works/%d/archive/new", int64(id))
+}
 
 // New renders the archive-confirmation page in the Annict DB admin UI
 // (GET /db/works/:id/archive/new).
@@ -41,7 +53,7 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 
 	csrfToken := middleware.GetCSRFToken(r, h.sessionManager)
 
-	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)
+	meta := viewmodel.DefaultPageMeta(ctx, h.cfg, dbWorkArchiveNewPath(output.Work.ID))
 	meta.SetDBTitle(ctx, "db_works_archive_new_title")
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")

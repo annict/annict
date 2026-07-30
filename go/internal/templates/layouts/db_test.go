@@ -38,7 +38,7 @@ func renderDbLayout(t *testing.T, acceptLanguage string) string {
 	}))
 	i18nHandler.ServeHTTP(httptest.NewRecorder(), req)
 
-	meta := viewmodel.DefaultPageMeta(ctx, cfg)
+	meta := viewmodel.DefaultPageMeta(ctx, cfg, req.URL.Path)
 
 	content := templ.ComponentFunc(func(ctx context.Context, w io.Writer) error {
 		_, err := w.Write([]byte("<div>Content</div>"))

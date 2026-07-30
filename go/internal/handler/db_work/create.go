@@ -1,7 +1,6 @@
 package db_work
 
 import (
-	"fmt"
 	"log/slog"
 	"net/http"
 
@@ -42,7 +41,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	// [Ja] 作成直後の作品の編集ページへリダイレクトする。Rails の create アクション
 	// (db_edit_work_path) や Update ハンドラーと同じ遷移で、作成した作品で編集者がそのまま
 	// 詳細を入力し続けられるようにする。
-	http.Redirect(w, r, fmt.Sprintf("/db/works/%d/edit", output.WorkID), http.StatusSeeOther)
+	http.Redirect(w, r, dbWorkEditPath(output.WorkID), http.StatusSeeOther)
 }
 
 // renderNewWithErrors re-renders the new-work form with validation errors and the previously submitted values.
@@ -61,7 +60,7 @@ func (h *Handler) renderNewWithErrors(w http.ResponseWriter, r *http.Request, in
 	formOptions := viewmodel.NewDBWorkFormOptions(ctx, optionsResult.NumberFormats)
 	csrfToken := middleware.GetCSRFToken(r, h.sessionManager)
 
-	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)
+	meta := viewmodel.DefaultPageMeta(ctx, h.cfg, dbWorksNewPath)
 	meta.SetDBTitle(ctx, "db_works_new_title")
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
