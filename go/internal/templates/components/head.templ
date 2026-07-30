@@ -2,12 +2,19 @@ package components
 
 import "github.com/annict/annict/go/internal/viewmodel"
 
-// Head はHTMLのheadセクションの共通メタタグを出力します
+// Head renders the <head> contents for the public pages.
+//
+// [Ja] Head は公開ページの <head> の内容を出力する。
 templ Head(meta viewmodel.PageMeta, assetVersion string) {
-	<meta charset="UTF-8"/>
-
+	@headCommon(meta, assetVersion)
+	// The tags below address readers outside the page itself: search result snippets,
+	// social previews and the installed PWA. DBHead emits only the minimal Open Graph
+	// subset of them.
+	//
+	// [Ja] 以下のタグはページ自身の外にいる読み手 (検索結果のスニペット・SNS の
+	// プレビュー・インストール済み PWA) に向けたもので、DBHead ではこのうち最小限の
+	// Open Graph だけを出力する。
 	<meta name="description" content={ meta.Description }/>
-
 	<meta property="og:title" content={ meta.Title }/>
 	<meta property="og:type" content={ meta.OGType }/>
 	<meta property="og:url" content={ meta.CanonicalURL }/>
@@ -15,12 +22,39 @@ templ Head(meta viewmodel.PageMeta, assetVersion string) {
 	<meta property="og:site_name" content="Annict (アニクト)"/>
 	<meta property="og:image" content={ meta.OGImage }/>
 	<meta property="og:locale" content="ja_JP"/>
-
 	<meta name="twitter:card" content="summary"/>
 	<meta name="twitter:site" content="@AnnictJP"/>
 	<meta name="twitter:title" content={ meta.Title }/>
 	<meta name="twitter:description" content={ meta.Description }/>
 	<meta name="twitter:image" content={ meta.OGImage }/>
+	<link rel="canonical" href={ meta.CanonicalURL }/>
+	<link rel="manifest" href="/manifest.json"/>
+}
+
+// DBHead renders the <head> contents for the Annict DB admin pages, which robots.txt
+// disallows for crawlers. It therefore leaves out the tags addressing search engines and
+// the installed PWA, and keeps a minimal Open Graph set: the work list is readable without
+// signing in, so its URL can end up shared and deserves a titled card.
+//
+// [Ja] DBHead は Annict DB 管理画面の <head> の内容を出力する。本画面は robots.txt で
+// クロールを禁止しているため、検索エンジンとインストール済み PWA に向けたタグは出さない。
+// 一方 Open Graph は最小限だけ残す。作品一覧は未ログインでも閲覧でき、URL をどこかに
+// 貼られうるため、タイトル付きのカードを出せるようにしておく。
+templ DBHead(meta viewmodel.PageMeta, assetVersion string) {
+	@headCommon(meta, assetVersion)
+	<meta property="og:title" content={ meta.Title }/>
+	<meta property="og:type" content={ meta.OGType }/>
+	<meta property="og:url" content={ meta.CanonicalURL }/>
+	<meta property="og:site_name" content="Annict (アニクト)"/>
+}
+
+// headCommon renders the <head> tags every page needs regardless of who reads it: the
+// document declarations, the resource hints, the title, the assets and the theme detection.
+//
+// [Ja] headCommon は読み手を問わずどのページにも必要な <head> のタグ (文書の宣言・
+// リソースヒント・タイトル・アセット・テーマ判定) を出力する。
+templ headCommon(meta viewmodel.PageMeta, assetVersion string) {
+	<meta charset="UTF-8"/>
 
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
 
@@ -38,8 +72,6 @@ templ Head(meta viewmodel.PageMeta, assetVersion string) {
 	<title>{ meta.Title }</title>
 
 	<link rel="shortcut icon" href="/static/images/favicon.png" type="image/png"/>
-	<link rel="canonical" href={ meta.CanonicalURL }/>
-	<link rel="manifest" href="/manifest.json"/>
 	<link rel="stylesheet" href={ "/static/css/style.css?v=" + assetVersion }/>
 
 	<script defer src={ "/static/js/vendor/htmx-4.0.0-alpha8.min.js" }></script>

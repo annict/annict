@@ -124,6 +124,76 @@ func TestHead(t *testing.T) {
 	}
 }
 
+// TestDBHead verifies the DB admin <head> renders the tags shared with the public pages
+// plus the minimal Open Graph set, while dropping the rest of the tags addressing readers
+// outside the page. The PageMeta it receives still carries description / OG values, so the
+// assertions show the omission comes from DBHead rather than from empty input.
+//
+// [Ja] TestDBHead は DB 管理画面の <head> が公開ページと共通のタグと最小限の Open Graph を
+// 描画し、それ以外のページ自身の外にいる読み手へ向けたタグを落とすことを検証する。渡す
+// PageMeta は description や OG の値を持たせてあるため、出力されないのが入力の空ではなく
+// DBHead によるものだと分かる。
+func TestDBHead(t *testing.T) {
+	t.Parallel()
+
+	meta := viewmodel.PageMeta{
+		Title:        "作品 | Annict DB",
+		Description:  "テストページの説明",
+		OGType:       "website",
+		CanonicalURL: "https://annict.com/db/works",
+		OGImage:      "https://annict.com/test.png",
+	}
+
+	ctx := context.Background()
+	var buf strings.Builder
+	if err := DBHead(meta, "v1.0.0").Render(ctx, &buf); err != nil {
+		t.Fatalf("レンダリングエラー: %v", err)
+	}
+
+	html := buf.String()
+
+	wantContains := []string{
+		`<meta charset="UTF-8">`,
+		`<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">`,
+		`<title>作品 | Annict DB</title>`,
+		`<link rel="shortcut icon" href="/static/images/favicon.png" type="image/png">`,
+		`<link rel="stylesheet" href="/static/css/style.css?v=v1.0.0">`,
+		`<script type="module" src="/static/js/main.js?v=v1.0.0"></script>`,
+		`if (matchMedia("(prefers-color-scheme: dark)").matches)`,
+		`<meta property="og:title" content="作品 | Annict DB">`,
+		`<meta property="og:type" content="website">`,
+		`<meta property="og:url" content="https://annict.com/db/works">`,
+		`<meta property="og:site_name" content="Annict (アニクト)">`,
+	}
+	for _, want := range wantContains {
+		if !strings.Contains(html, want) {
+			t.Errorf("期待する文字列が含まれていません: %q\nHTML: %s", want, html)
+		}
+	}
+
+	// The Open Graph properties left out are the ones a titled card does not need:
+	// description and image carry the public pages' generic copy and artwork, and locale
+	// only matters for the pages that are actually shared.
+	//
+	// [Ja] 落とす Open Graph はタイトル付きカードに要らないもの。description と image は
+	// 公開ページ向けの汎用の文言と画像であり、locale は実際に共有されるページでしか意味を
+	// 持たない。
+	wantNotContains := []string{
+		`name="description"`,
+		`property="og:description"`,
+		`property="og:image"`,
+		`property="og:locale"`,
+		`name="twitter:`,
+		`rel="canonical"`,
+		`rel="manifest"`,
+	}
+	for _, notWant := range wantNotContains {
+		if strings.Contains(html, notWant) {
+			t.Errorf("公開ページ向けの出力が含まれてはいけません: %q\nHTML: %s", notWant, html)
+		}
+	}
+}
+
 // TestHead_PreconnectPosition verifies a declared origin is hinted before the document
 // starts asking for anything. The hint only buys time while the rest of the head is still
 // being parsed, so it has to precede the title and the assets rather than merely appear.

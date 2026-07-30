@@ -14,7 +14,7 @@ templ Db(meta viewmodel.PageMeta, assetVersion string, content templ.Component) 
 	<!DOCTYPE html>
 	<html lang={ templates.Locale(ctx) }>
 		<head>
-			@components.Head(meta, assetVersion)
+			@components.DBHead(meta, assetVersion)
 		</head>
 		<body class="bg-background">
 			@components.DBSidebar()

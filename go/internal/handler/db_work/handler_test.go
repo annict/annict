@@ -138,6 +138,13 @@ func TestIndex(t *testing.T) {
 		}
 	}
 
+	// robots.txt disallows /db/, so the admin pages declare no canonical URL.
+	//
+	// [Ja] robots.txt が /db/ を Disallow しているため、管理画面は canonical を宣言しない。
+	if strings.Contains(body, `rel="canonical"`) {
+		t.Error("/db の画面に canonical が含まれてはいけません")
+	}
+
 	expectedContentType := "text/html; charset=utf-8"
 	if ct := rr.Header().Get("Content-Type"); ct != expectedContentType {
 		t.Errorf("handler returned wrong content-type: got %v want %v", ct, expectedContentType)

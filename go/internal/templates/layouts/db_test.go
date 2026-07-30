@@ -79,3 +79,52 @@ func TestDb_RendersSidebarWithoutToggle(t *testing.T) {
 		t.Error("レイアウトにサイドバー開閉トグルが含まれてはいけません (ページ側へ移設済み)")
 	}
 }
+
+// TestDb_HeadOmitsPublicPageMetaTags verifies the Db layout builds its <head> from
+// components.DBHead, so the meta tags addressing search engines and the installed PWA stay
+// out of the admin pages while the shared tags and the minimal Open Graph set keep
+// rendering.
+//
+// [Ja] TestDb_HeadOmitsPublicPageMetaTags は Db レイアウトが <head> を components.DBHead で
+// 組み立てることを検証する。これにより検索エンジンとインストール済み PWA に向けたメタタグは
+// 管理画面に出ず、共通のタグと最小限の Open Graph は従来どおり描画される。
+func TestDb_HeadOmitsPublicPageMetaTags(t *testing.T) {
+	t.Parallel()
+
+	html := renderDbLayout(t, "ja")
+
+	// DefaultPageMeta fills in the description and the OG image, so these tags would be
+	// rendered with real values if the layout still used the public <head>.
+	//
+	// [Ja] DefaultPageMeta は description と OG 画像を埋めるため、レイアウトが公開ページ用の
+	// <head> を使い続けていればこれらのタグは実際の値付きで描画される。
+	wantNotContains := []string{
+		`name="description"`,
+		`property="og:description"`,
+		`property="og:image"`,
+		`property="og:locale"`,
+		`name="twitter:`,
+		`rel="canonical"`,
+		`rel="manifest"`,
+	}
+	for _, notWant := range wantNotContains {
+		if strings.Contains(html, notWant) {
+			t.Errorf("/db の <head> に公開ページ向けの出力が含まれてはいけません: %q", notWant)
+		}
+	}
+
+	wantContains := []string{
+		`<meta charset="UTF-8">`,
+		`<title>`,
+		`<link rel="stylesheet" href="/static/css/style.css?v=v1.0.0">`,
+		`<script type="module" src="/static/js/main.js?v=v1.0.0"></script>`,
+		`<meta property="og:title"`,
+		`<meta property="og:type" content="website">`,
+		`<meta property="og:site_name" content="Annict (アニクト)">`,
+	}
+	for _, want := range wantContains {
+		if !strings.Contains(html, want) {
+			t.Errorf("/db の <head> に共通の出力が含まれていません: %q", want)
+		}
+	}
+}
