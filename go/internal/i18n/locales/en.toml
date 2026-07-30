@@ -826,6 +826,13 @@ other = "Sign Up"
 description = "Bottom navigation - Sign In"
 other = "Sign In"
 
+# Layout common
+#
+# [Ja] レイアウト共通
+[skip_to_main_content]
+description = "Layout common - Skip link to the main content"
+other = "Skip to main content"
+
 # Sidebar related
 [sidebar_home]
 description = "Sidebar - Home"

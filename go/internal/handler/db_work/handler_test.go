@@ -26,7 +26,7 @@ func newTestHandler(t *testing.T, db *sql.DB, tx *sql.Tx) *Handler {
 	t.Helper()
 
 	queries := query.New(db).WithTx(tx)
-	cfg := &config.Config{Env: "test"}
+	cfg := &config.Config{Env: "test", Domain: "test.annict.com"}
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionManager := session.NewManager(sessionRepo, cfg)
 	workRepo := repository.NewWorkRepository(queries)
@@ -124,12 +124,25 @@ func TestIndex(t *testing.T) {
 		//
 		// [Ja] 各行が DBWorkEditPath 経由で編集フォームへリンクする。
 		fmt.Sprintf(`href="/db/works/%d/edit"`, int64(workID)),
+		// The work list is readable without signing in, so og:url carries the page's own
+		// absolute URL and a shared URL renders a titled card.
+		//
+		// [Ja] 作品一覧は未ログインでも閲覧できるため、og:url にそのページ自身の絶対 URL が
+		// 入り、URL を貼られたときにタイトル付きのカードが出る。
+		`<meta property="og:url" content="https://test.annict.com/db/works">`,
 	}
 
 	for _, expected := range expectedContents {
 		if !strings.Contains(body, expected) {
 			t.Errorf("response doesn't contain expected string: %q", expected)
 		}
+	}
+
+	// robots.txt disallows /db/, so the admin pages declare no canonical URL.
+	//
+	// [Ja] robots.txt が /db/ を Disallow しているため、管理画面は canonical を宣言しない。
+	if strings.Contains(body, `rel="canonical"`) {
+		t.Error("/db の画面に canonical が含まれてはいけません")
 	}
 
 	expectedContentType := "text/html; charset=utf-8"
@@ -311,6 +324,135 @@ func TestIndex_WithSeasonAndSlotFilters(t *testing.T) {
 	// [Ja] 放送予定未登録チェックボックス自体が checked 状態で描画される。
 	if !strings.Contains(body, `<input type="checkbox" name="filter_no_slots" value="1" checked>`) {
 		t.Error("放送予定未登録フィルタのチェックボックスが checked で描画されるべき")
+	}
+}
+
+// TestIndex_OGURL verifies that og:url reproduces the view being shared: every parameter that
+// changes which works the page lists (the filters and the page number) is part of it, while
+// unknown parameters a shared link happens to carry are dropped. The first page is declared
+// without the parameter so /db/works and /db/works?page=1 share one representative URL.
+//
+// [Ja] TestIndex_OGURL は og:url が共有される表示をそのまま再現することを検証する。ページに
+// 並ぶ作品を変えるパラメータ (フィルタとページ番号) はすべて含み、共有されたリンクがたまたま
+// 持つ未知のパラメータは落とす。1 ページ目はパラメータなしで宣言し、/db/works と
+// /db/works?page=1 が 1 つの代表 URL を共有する。
+func TestIndex_OGURL(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+
+	handler := newTestHandler(t, db, tx)
+
+	tests := []struct {
+		name   string
+		target string
+		want   string
+	}{
+		{
+			name:   "ページ指定なしは代表 URL",
+			target: "/db/works",
+			want:   `<meta property="og:url" content="https://test.annict.com/db/works">`,
+		},
+		{
+			name:   "1 ページ目はパラメータなしへまとめる",
+			target: "/db/works?page=1",
+			want:   `<meta property="og:url" content="https://test.annict.com/db/works">`,
+		},
+		{
+			name:   "2 ページ目以降はページ番号を含む",
+			target: "/db/works?page=3",
+			want:   `<meta property="og:url" content="https://test.annict.com/db/works?page=3">`,
+		},
+		{
+			name:   "フィルタとページ番号を併せて含む",
+			target: "/db/works?filter_no_image=1&page=3",
+			want:   `<meta property="og:url" content="https://test.annict.com/db/works?filter_no_image=1&amp;page=3">`,
+		},
+		{
+			name:   "リリース時期の複数選択をサーバー定義順へ揃える",
+			target: "/db/works?season_slugs=2024-spring&season_slugs=2024-summer",
+			want:   `<meta property="og:url" content="https://test.annict.com/db/works?season_slugs=2024-summer&amp;season_slugs=2024-spring">`,
+		},
+		{
+			name:   "不正・範囲外のリリース時期は含めない",
+			target: "/db/works?season_slugs=not-a-season&season_slugs=1000-winter",
+			want:   `<meta property="og:url" content="https://test.annict.com/db/works">`,
+		},
+		{
+			name:   "リリース時期の重複と入力順を正規化する",
+			target: "/db/works?season_slugs=2024-spring&season_slugs=2024-summer&season_slugs=2024-spring",
+			want:   `<meta property="og:url" content="https://test.annict.com/db/works?season_slugs=2024-summer&amp;season_slugs=2024-spring">`,
+		},
+		{
+			name:   "無効な値のフィルタは適用されないため含めない",
+			target: "/db/works?filter_no_image=true",
+			want:   `<meta property="og:url" content="https://test.annict.com/db/works">`,
+		},
+		{
+			name:   "未知のパラメータは落とす",
+			target: "/db/works?utm_source=newsletter&page=2",
+			want:   `<meta property="og:url" content="https://test.annict.com/db/works?page=2">`,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			req := httptest.NewRequest("GET", tt.target, nil)
+			rr := httptest.NewRecorder()
+
+			handler.Index(rr, req)
+
+			if status := rr.Code; status != http.StatusOK {
+				t.Fatalf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
+			}
+			if body := rr.Body.String(); !strings.Contains(body, tt.want) {
+				t.Errorf("response doesn't contain expected string: %q", tt.want)
+			}
+		})
+	}
+}
+
+// TestIndex_PaginationLinks verifies that the pagination links extend the same representative
+// path as og:url: the filters that select the listed works are carried over, while unknown
+// parameters a shared link happens to carry are dropped instead of following the reader from
+// page to page.
+//
+// [Ja] TestIndex_PaginationLinks はページネーションのリンクが og:url と同じ代表パスを伸ばす
+// ことを検証する。並ぶ作品を選ぶフィルタは引き継ぎ、共有されたリンクがたまたま持つ未知の
+// パラメータはページを送っても付いて回らずに落ちる。
+func TestIndex_PaginationLinks(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+
+	// The list shows perPage works per page, so exceeding it by one is the smallest fixture
+	// that makes the pagination links render at all.
+	//
+	// [Ja] 一覧は 1 ページに perPage 件を並べるため、1 件だけ超えるのがページネーションの
+	// リンクを描画させる最小の前提データになる。
+	for i := range int(perPage) + 1 {
+		testutil.NewWorkBuilder(t, tx).
+			WithTitle(fmt.Sprintf("ページ送り確認作品%d", i)).
+			Build()
+	}
+
+	handler := newTestHandler(t, db, tx)
+
+	req := httptest.NewRequest("GET", "/db/works?filter_no_episodes=1&utm_source=newsletter", nil)
+	rr := httptest.NewRecorder()
+
+	handler.Index(rr, req)
+
+	if status := rr.Code; status != http.StatusOK {
+		t.Fatalf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
+	}
+
+	body := rr.Body.String()
+	if want := `href="/db/works?filter_no_episodes=1&amp;page=2"`; !strings.Contains(body, want) {
+		t.Errorf("response doesn't contain expected string: %q", want)
+	}
+	if strings.Contains(body, "utm_source") {
+		t.Error("ページネーションのリンクに未知のパラメータが残ってはいけません")
 	}
 }
 

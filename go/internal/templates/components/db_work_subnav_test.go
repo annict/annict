@@ -71,6 +71,62 @@ func TestDBWorkSubnav(t *testing.T) {
 	}
 }
 
+// TestDBWorkSubnav_MarksCurrentEntryOnSubPage verifies an entry stays marked while a page
+// below it is open, so adding an episode still shows the episodes entry as current and no
+// other entry is marked.
+//
+// [Ja] TestDBWorkSubnav_MarksCurrentEntryOnSubPage は、項目の配下のページを開いている間も
+// その項目に印が残ることを検証する。エピソードの追加中もエピソードの項目が現在ページとして
+// 表示され、他の項目には印が付かない。
+func TestDBWorkSubnav_MarksCurrentEntryOnSubPage(t *testing.T) {
+	t.Parallel()
+
+	ctx := templates.SetCurrentPath(i18n.SetLocale(context.Background(), "ja"), "/db/works/1/episodes/new")
+
+	var buf strings.Builder
+	if err := DBWorkSubnav(DBWorkSubnavData{WorkID: viewmodel.WorkID(1)}).Render(ctx, &buf); err != nil {
+		t.Fatalf("レンダリングエラー: %v", err)
+	}
+
+	html := buf.String()
+
+	episodes := subnavItemHTML(t, html, "/db/works/1/episodes")
+	if !strings.Contains(episodes, `aria-current="page"`) {
+		t.Error("エピソードの配下のページでエピソードの項目に aria-current が付いていません")
+	}
+
+	for _, path := range []string{
+		"/db/works/1/edit",
+		"/db/works/1/programs",
+		"/db/works/1/slots",
+		"/db/works/1/casts",
+		"/db/works/1/staffs",
+		"/db/works/1/image",
+		"/db/works/1/trailers",
+	} {
+		if strings.Contains(subnavItemHTML(t, html, path), `aria-current="page"`) {
+			t.Errorf("現在ページではない %q の項目に aria-current が付いています", path)
+		}
+	}
+}
+
+// subnavItemHTML returns the markup of the subnav entry linking to the given path.
+//
+// [Ja] subnavItemHTML は指定したパスへリンクするサブナビ項目のマークアップを返す。
+func subnavItemHTML(t *testing.T, html string, path string) string {
+	t.Helper()
+
+	start := strings.Index(html, `<a href="`+path+`"`)
+	if start < 0 {
+		t.Fatalf("%q へのリンクが描画されていません", path)
+	}
+	end := strings.Index(html[start:], "</a>")
+	if end < 0 {
+		t.Fatalf("%q へのリンクが閉じられていません", path)
+	}
+	return html[start : start+end]
+}
+
 // TestDBWorkSubnav_OmitsEpisodeItemsWhenNoEpisodes verifies that the episode-derived
 // entries (episodes, broadcast slots) are hidden when the work has no episodes, mirroring
 // Rails.

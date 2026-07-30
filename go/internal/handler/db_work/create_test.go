@@ -70,6 +70,12 @@ func TestCreate_ValidationError(t *testing.T) {
 		`action="/db/works"`,
 		`method="POST"`,
 		`role="alert"`,
+		// The re-rendered page is the new-work form, so og:url names its own GET path and not
+		// the POST endpoint (which serves the work list on GET).
+		//
+		// [Ja] 再描画するのは新規作成フォームなので、og:url は POST 先ではなくそのページ自身の
+		// GET パスを指す (POST 先は GET では作品一覧を返す)。
+		`<meta property="og:url" content="https://test.annict.com/db/works/new">`,
 	}
 
 	for _, expected := range expectedContents {

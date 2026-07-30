@@ -34,10 +34,10 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) renderNewForm(w http.ResponseWriter, r *http.Request, status int, formErrors *model.ValidationError, email string) {
 	ctx := r.Context()
 
-	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)
+	meta := viewmodel.DefaultPageMeta(ctx, h.cfg, r.URL.Path)
 	meta.SetTitle(ctx, "sign_up_title")
 	meta.Description = i18n.T(ctx, "sign_up_description")
-	meta.OGURL = h.cfg.AppURL() + "/sign_up"
+	meta.AddTurnstilePreconnect(h.cfg.TurnstileSiteKey)
 
 	csrfToken := middleware.GetOrCreateCSRFToken(w, r, h.sessionMgr)
 

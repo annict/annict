@@ -3,6 +3,7 @@ package password
 import (
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
 
@@ -90,6 +91,8 @@ func TestEdit_ValidToken(t *testing.T) {
 	if contentType := rr.Header().Get("Content-Type"); contentType != "text/html; charset=utf-8" {
 		t.Errorf("Content-Typeが正しくありません: got=%s, want=text/html; charset=utf-8", contentType)
 	}
+
+	assertPasswordEditCanonicalURL(t, rr.Body.String())
 }
 
 func TestEdit_InvalidToken(t *testing.T) {
@@ -216,4 +219,17 @@ func createTestToken() (plainToken string, tokenDigest string, err error) {
 
 	tokenDigest = password_reset.HashToken(plainToken)
 	return plainToken, tokenDigest, nil
+}
+
+func assertPasswordEditCanonicalURL(t *testing.T, body string) {
+	t.Helper()
+
+	for _, want := range []string{
+		`<link rel="canonical" href="https://example.com/password/edit">`,
+		`<meta property="og:url" content="https://example.com/password/edit">`,
+	} {
+		if !strings.Contains(body, want) {
+			t.Errorf("ページメタ情報が含まれていません: %q", want)
+		}
+	}
 }

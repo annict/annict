@@ -33,7 +33,7 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 	seasons := viewmodel.NewSeasons(h.cfg)
 
 	// ページメタ情報を準備
-	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)
+	meta := viewmodel.DefaultPageMeta(ctx, h.cfg, r.URL.Path)
 	meta.SetTitle(ctx, "popular_anime") // "人気アニメ | Annict" / "Popular Anime | Annict"
 
 	// 3. テンプレートにViewModelを渡す（templ使用）

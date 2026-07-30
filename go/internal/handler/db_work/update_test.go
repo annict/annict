@@ -69,6 +69,12 @@ func TestUpdate_ValidationError(t *testing.T) {
 		`value="PATCH"`,
 		`role="alert"`,
 		`value="ほぞんされるかな"`, // 入力値が保持される
+		// The re-rendered page is the edit form, so og:url names its own GET path and not the
+		// PATCH endpoint (which has no GET route).
+		//
+		// [Ja] 再描画するのは編集フォームなので、og:url は PATCH 先ではなくそのページ自身の
+		// GET パスを指す (PATCH 先に GET のルートは無い)。
+		`<meta property="og:url" content="https://test.annict.com/db/works/123/edit">`,
 	}
 	for _, expected := range expectedContents {
 		if !strings.Contains(body, expected) {

@@ -86,14 +86,14 @@ func DBSidebar() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</button></header><section class=\"scrollbar gap-4 py-4\"><div class=\"px-4\"><form method=\"get\" action=\"/db/search\" autocomplete=\"off\"><input type=\"text\" name=\"q\" class=\"input w-full rounded-full text-sm\" placeholder=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</button></header><section class=\"scrollbar gap-4 py-4\"><div class=\"px-2\"><form method=\"get\" action=\"/db/search\" autocomplete=\"off\"><input type=\"text\" name=\"q\" class=\"input w-full rounded-full text-sm\" placeholder=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue(templates.T(ctx, "db_sidebar_search_placeholder"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/db_sidebar.templ`, Line: 62, Col: 70}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/db_sidebar.templ`, Line: 67, Col: 70}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4)
 		if templ_7745c5c3_Err != nil {
@@ -135,7 +135,7 @@ func DBSidebar() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</ul></div><div class=\"px-2 mb-4 border-t border-border pt-4\"><a href=\"/\" class=\"flex items-center justify-center gap-2 p-2 rounded-lg hover:bg-sidebar-accent transition-colors text-muted-foreground\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</ul></div></section><footer class=\"border-t border-sidebar-border\"><a href=\"/\" class=\"flex items-center justify-center gap-2 p-2 rounded-lg hover:bg-sidebar-accent transition-colors text-muted-foreground\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -150,13 +150,13 @@ func DBSidebar() templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "db_sidebar_back_to_annict"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/db_sidebar.templ`, Line: 88, Col: 54}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/db_sidebar.templ`, Line: 101, Col: 53}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</span></a></div></section></nav></aside>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</span></a></footer></nav></aside>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -164,6 +164,18 @@ func DBSidebar() templ.Component {
 	})
 }
 
+// dbSidebarMenuItem renders a single sidebar entry, marking it as the current page (via
+// aria-current) while the request path is the entry itself or one of its sub-resources, so
+// editing a work keeps the works entry marked. The filled treatment of the current entry is
+// driven by that same attribute, so the marker assistive technology reads and the one
+// sighted users see cannot drift apart. Hovering another entry tints it with
+// bg-sidebar-accent, which the filled current entry stays distinct from.
+//
+// [Ja] dbSidebarMenuItem はサイドバーの項目を 1 つ描画し、リクエストパスが項目自身かその
+// サブリソースである間、現在ページとして印を付ける (aria-current)。作品を編集している間も
+// 作品の項目に印が残る。現在ページの塗りつぶしも同じ属性で切り替えるため、支援技術が読む印と
+// 目に見える印がずれることがない。他の項目を hover すると bg-sidebar-accent で淡く色が付くが、
+// 塗りつぶされた現在ページとは区別が付く。
 func dbSidebarMenuItem(path string, labelKey string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -192,17 +204,17 @@ func dbSidebarMenuItem(path string, labelKey string) templ.Component {
 		var templ_7745c5c3_Var7 templ.SafeURL
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(path))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/db_sidebar.templ`, Line: 100, Col: 29}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/db_sidebar.templ`, Line: 124, Col: 29}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\" class=\"flex items-center gap-3 p-2 rounded-lg hover:bg-sidebar-accent transition-colors\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\" class=\"flex items-center gap-3 p-2 rounded-lg transition-colors hover:bg-sidebar-accent aria-[current=page]:bg-primary aria-[current=page]:text-primary-foreground aria-[current=page]:hover:bg-primary\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if templates.IsCurrentPath(ctx, path) {
+		if templates.IsCurrentPathPrefix(ctx, path) {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, " aria-current=\"page\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -215,7 +227,7 @@ func dbSidebarMenuItem(path string, labelKey string) templ.Component {
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, labelKey))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/db_sidebar.templ`, Line: 107, Col: 32}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/db_sidebar.templ`, Line: 131, Col: 32}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {

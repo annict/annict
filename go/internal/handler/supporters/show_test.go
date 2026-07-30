@@ -27,7 +27,8 @@ func setupTestHandler(t *testing.T, tx *sql.Tx, db *sql.DB) *Handler {
 
 	queries := query.New(db).WithTx(tx)
 	cfg := &config.Config{
-		Env: "test",
+		Env:    "test",
+		Domain: "test.annict.com",
 	}
 
 	sessionRepo := repository.NewSessionRepository(queries)
@@ -140,6 +141,11 @@ func TestShow_NotLoggedIn(t *testing.T) {
 	expectedContents := []string{
 		"サポーター", // ページタイトル
 		"ログイン",  // ログインボタン
+		// The canonical URL points at the page itself, and og:url declares the same URL.
+		//
+		// [Ja] canonical はページ自身を指し、og:url も同じ URL を宣言する。
+		`<link rel="canonical" href="https://test.annict.com/supporters">`,
+		`<meta property="og:url" content="https://test.annict.com/supporters">`,
 	}
 
 	for _, expected := range expectedContents {

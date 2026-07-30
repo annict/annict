@@ -32,26 +32,28 @@ function setupDom(
   return { trigger, sidebar };
 }
 
-// Build the db.templ layout shape the mobile-overlay logic depends on: a sidebar
-// with a focusable child, the content wrapper as its next sibling (holding the
-// trigger, mirroring how the toggle now lives in each page's title row), and a
-// spy-able toggle(). aria-hidden seeds the open state; width seeds the viewport
-// so isMobileSidebar() resolves against the 768px default breakpoint.
+// Build the db.templ layout shape the mobile-overlay logic depends on: the skip
+// link before the sidebar, a sidebar with a focusable child, the content wrapper
+// as its next sibling (holding the trigger, mirroring how the toggle now lives in
+// each page's title row), and a spy-able toggle(). aria-hidden seeds the open
+// state; width seeds the viewport so isMobileSidebar() resolves against the 768px
+// default breakpoint.
 //
 // [Ja] モバイルオーバーレイのロジックが依存する db.templ のレイアウト構造を組み立てる。
-// フォーカス可能な子を持つ sidebar、その次の兄弟である content ラッパー (トグルが各
-// ページのタイトル行へ移った現状に合わせ、トリガーを内包する)、スパイ可能な toggle()。
-// aria-hidden で開閉状態を、width でビューポートを仕込み、isMobileSidebar() を既定の
-// 768px ブレークポイントに対して解決させる。
+// sidebar より前のスキップリンク、フォーカス可能な子を持つ sidebar、その次の兄弟である
+// content ラッパー (トグルが各ページのタイトル行へ移った現状に合わせ、トリガーを内包する)、
+// スパイ可能な toggle()。aria-hidden で開閉状態を、width でビューポートを仕込み、
+// isMobileSidebar() を既定の 768px ブレークポイントに対して解決させる。
 function setupLayout(options: { ariaHidden: "true" | "false"; desktopOpen?: "true" | "false"; width: number }) {
   setViewportWidth(options.width);
   document.body.innerHTML = `
+    <a href="#db-main" id="db-skip-link">skip</a>
     <aside id="db-sidebar" class="sidebar" data-side="left" data-desktop-open="${options.desktopOpen ?? (options.ariaHidden === "false" ? "true" : "false")}" aria-hidden="${options.ariaHidden}">
       <button data-sidebar-close="db-sidebar" id="db-sidebar-close">close</button>
       <a href="/db" id="db-sidebar-link">nav</a>
     </aside>
     <div id="db-content">
-      <main>
+      <main id="db-main" tabindex="-1">
         <button data-sidebar-toggle="db-sidebar" aria-controls="db-sidebar" aria-expanded="true">toggle</button>
         <input id="db-content-input"/>
       </main>
@@ -64,6 +66,7 @@ function setupLayout(options: { ariaHidden: "true" | "false"; desktopOpen?: "tru
     toggle: () => void;
   };
   const content = sidebar.nextElementSibling as HTMLElement;
+  const skipLink = document.getElementById("db-skip-link") as HTMLAnchorElement;
   const closeButton = document.getElementById("db-sidebar-close") as HTMLButtonElement;
   const sidebarLink = document.getElementById("db-sidebar-link") as HTMLElement;
   const contentInput = document.getElementById("db-content-input") as HTMLInputElement;
@@ -72,7 +75,7 @@ function setupLayout(options: { ariaHidden: "true" | "false"; desktopOpen?: "tru
   sidebar.toggle = vi.fn(() =>
     sidebar.setAttribute("aria-hidden", sidebar.getAttribute("aria-hidden") === "false" ? "true" : "false"),
   );
-  return { trigger, sidebar, content, closeButton, sidebarLink, contentInput };
+  return { trigger, sidebar, content, skipLink, closeButton, sidebarLink, contentInput };
 }
 
 // window.innerWidth is read-only in the DOM lib types, so cast to assign the
@@ -150,6 +153,34 @@ describe("initializeSidebarToggle", () => {
     expect(content.inert).toBe(true);
     expect(document.activeElement).toBe(closeButton);
     expect(trigger.getAttribute("aria-expanded")).toBe("true");
+  });
+
+  it("makes elements before the sidebar inert too while the mobile overlay is open", async () => {
+    const { sidebar, skipLink } = setupLayout({ ariaHidden: "true", width: 500 });
+
+    initializeSidebarToggle();
+    expect(skipLink.inert).toBe(false);
+
+    // The skip link sits before the sidebar in the DOM, so it is not covered by the
+    // content wrapper's inert state; it has to be inerted as part of the background.
+    //
+    // [Ja] スキップリンクは DOM 上でサイドバーより前にあるため content ラッパーの inert
+    // では覆われない。背面の一部として inert にする必要がある。
+    sidebar.setAttribute("aria-hidden", "false");
+    await flushObservers();
+    expect(skipLink.inert).toBe(true);
+
+    sidebar.setAttribute("aria-hidden", "true");
+    await flushObservers();
+    expect(skipLink.inert).toBe(false);
+  });
+
+  it("keeps elements before the sidebar interactive on desktop", () => {
+    const { skipLink } = setupLayout({ ariaHidden: "false", width: 1024 });
+
+    initializeSidebarToggle();
+
+    expect(skipLink.inert).toBe(false);
   });
 
   it("clears inert and returns focus to the toggle when closed on mobile", async () => {

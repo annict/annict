@@ -37,7 +37,7 @@ func TestSimple_Rendering(t *testing.T) {
 	}))
 	i18nHandler.ServeHTTP(httptest.NewRecorder(), req)
 
-	meta := viewmodel.DefaultPageMeta(ctx, cfg)
+	meta := viewmodel.DefaultPageMeta(ctx, cfg, req.URL.Path)
 	meta.SetTitle(ctx, "test_page_title")
 
 	// テストコンテンツ
@@ -103,7 +103,7 @@ func TestSimple_WithFlash(t *testing.T) {
 	}))
 	i18nHandler.ServeHTTP(httptest.NewRecorder(), req)
 
-	meta := viewmodel.DefaultPageMeta(ctx, cfg)
+	meta := viewmodel.DefaultPageMeta(ctx, cfg, req.URL.Path)
 
 	ctx = testutil.ContextWithFlash(ctx, session.FlashError, "エラーが発生しました")
 
@@ -150,7 +150,7 @@ func TestSimple_WithoutFlash(t *testing.T) {
 	}))
 	i18nHandler.ServeHTTP(httptest.NewRecorder(), req)
 
-	meta := viewmodel.DefaultPageMeta(ctx, cfg)
+	meta := viewmodel.DefaultPageMeta(ctx, cfg, req.URL.Path)
 
 	content := templ.ComponentFunc(func(ctx context.Context, w io.Writer) error {
 		_, err := w.Write([]byte("<div>Content</div>"))
@@ -201,7 +201,7 @@ func TestSimple_I18n(t *testing.T) {
 			}))
 			i18nHandler.ServeHTTP(httptest.NewRecorder(), req)
 
-			meta := viewmodel.DefaultPageMeta(ctx, cfg)
+			meta := viewmodel.DefaultPageMeta(ctx, cfg, req.URL.Path)
 
 			content := templ.ComponentFunc(func(ctx context.Context, w io.Writer) error {
 				_, err := w.Write([]byte("<div>Content</div>"))
@@ -243,7 +243,7 @@ func TestSimple_AssetVersion(t *testing.T) {
 	}))
 	i18nHandler.ServeHTTP(httptest.NewRecorder(), req)
 
-	meta := viewmodel.DefaultPageMeta(ctx, cfg)
+	meta := viewmodel.DefaultPageMeta(ctx, cfg, req.URL.Path)
 
 	content := templ.ComponentFunc(func(ctx context.Context, w io.Writer) error {
 		_, err := w.Write([]byte("<div>Content</div>"))

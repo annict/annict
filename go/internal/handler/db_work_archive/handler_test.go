@@ -26,7 +26,7 @@ func newTestHandler(t *testing.T, db *sql.DB, tx *sql.Tx) *Handler {
 	t.Helper()
 
 	queries := query.New(db).WithTx(tx)
-	cfg := &config.Config{Env: "test"}
+	cfg := &config.Config{Env: "test", Domain: "test.annict.com"}
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionManager := session.NewManager(sessionRepo, cfg)
 	workRepo := repository.NewWorkRepository(queries)
@@ -78,6 +78,43 @@ func TestNew(t *testing.T) {
 	expectedContentType := "text/html; charset=utf-8"
 	if ct := rr.Header().Get("Content-Type"); ct != expectedContentType {
 		t.Errorf("handler returned wrong content-type: got %v want %v", ct, expectedContentType)
+	}
+}
+
+// TestNew_OGURL verifies that og:url names the page's own GET path built from the parsed work
+// ID, so that a link spelling the ID with leading zeros still declares the one representative
+// URL of that page.
+//
+// [Ja] TestNew_OGURL は og:url がパース済みの作品 ID から組み立てたページ自身の GET パスに
+// なることを検証する。ID を先頭ゼロ付きで書いたリンクでも、そのページの代表 URL は 1 つに
+// 揃う。
+func TestNew_OGURL(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	workID := testutil.NewWorkBuilder(t, tx).WithTitle("代表 URL 確認作品").WithMedia(1).Build()
+	handler := newTestHandler(t, db, tx)
+
+	r := chi.NewRouter()
+	r.Get("/db/works/{id}/archive/new", handler.New)
+
+	want := fmt.Sprintf(`<meta property="og:url" content="https://test.annict.com/db/works/%d/archive/new">`, int64(workID))
+
+	for _, target := range []string{
+		fmt.Sprintf("/db/works/%d/archive/new", int64(workID)),
+		fmt.Sprintf("/db/works/000%d/archive/new", int64(workID)),
+	} {
+		t.Run(target, func(t *testing.T) {
+			rr := httptest.NewRecorder()
+			r.ServeHTTP(rr, getRequest(t, target))
+
+			if status := rr.Code; status != http.StatusOK {
+				t.Fatalf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
+			}
+			if body := rr.Body.String(); !strings.Contains(body, want) {
+				t.Errorf("response doesn't contain expected string: %q", want)
+			}
+		})
 	}
 }
 
