@@ -333,7 +333,7 @@ templ actionButtons(data IndexPageData, work viewmodel.DBWorkListItem) {
 				{ templates.T(ctx, "db_works_index_edit_link") }
 			</a>
 			switch work.Status {
-				case viewmodel.WorkStatusPublished:
+				case viewmodel.PublishingStatusPublished:
 					<a
 						href={ templates.DBWorkArchiveNewPath(work.ID).SafeURL() }
 						class="btn rounded-full"
@@ -342,7 +342,7 @@ templ actionButtons(data IndexPageData, work viewmodel.DBWorkListItem) {
 					>
 						{ templates.T(ctx, "db_works_index_archive_link") }
 					</a>
-				case viewmodel.WorkStatusArchived:
+				case viewmodel.PublishingStatusArchived:
 					<button
 						type="button"
 						class="btn rounded-full"

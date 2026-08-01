@@ -15,49 +15,49 @@ func TestStatusLabel(t *testing.T) {
 
 	tests := []struct {
 		name     string
-		status   viewmodel.WorkStatus
+		status   viewmodel.PublishingStatus
 		locale   string
 		wantText string
 		wantAttr string
 	}{
 		{
 			name:     "公開状態（日本語）",
-			status:   viewmodel.WorkStatusPublished,
+			status:   viewmodel.PublishingStatusPublished,
 			locale:   "ja",
 			wantText: "公開",
 			wantAttr: `class="badge" data-variant="success"`,
 		},
 		{
 			name:     "非公開状態（日本語）",
-			status:   viewmodel.WorkStatusArchived,
+			status:   viewmodel.PublishingStatusArchived,
 			locale:   "ja",
 			wantText: "非公開",
 			wantAttr: `class="badge" data-variant="warning"`,
 		},
 		{
 			name:     "削除状態（日本語）",
-			status:   viewmodel.WorkStatusDeleted,
+			status:   viewmodel.PublishingStatusDeleted,
 			locale:   "ja",
 			wantText: "削除",
 			wantAttr: `class="badge" data-variant="destructive"`,
 		},
 		{
 			name:     "公開状態（英語）",
-			status:   viewmodel.WorkStatusPublished,
+			status:   viewmodel.PublishingStatusPublished,
 			locale:   "en",
 			wantText: "Published",
 			wantAttr: `class="badge" data-variant="success"`,
 		},
 		{
 			name:     "アーカイブ状態（英語）",
-			status:   viewmodel.WorkStatusArchived,
+			status:   viewmodel.PublishingStatusArchived,
 			locale:   "en",
 			wantText: "Archived",
 			wantAttr: `class="badge" data-variant="warning"`,
 		},
 		{
 			name:     "削除状態（英語）",
-			status:   viewmodel.WorkStatusDeleted,
+			status:   viewmodel.PublishingStatusDeleted,
 			locale:   "en",
 			wantText: "Deleted",
 			wantAttr: `class="badge" data-variant="destructive"`,
@@ -95,7 +95,7 @@ func TestStatusLabel_UnknownStatus(t *testing.T) {
 	ctx = i18n.SetLocale(ctx, "ja")
 
 	var buf bytes.Buffer
-	err := StatusLabel(viewmodel.WorkStatus("unknown")).Render(ctx, &buf)
+	err := StatusLabel(viewmodel.PublishingStatus("unknown")).Render(ctx, &buf)
 	if err != nil {
 		t.Fatalf("Render() error = %v", err)
 	}
