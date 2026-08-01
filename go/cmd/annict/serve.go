@@ -20,6 +20,7 @@ import (
 
 	"github.com/annict/annict/go/internal/config"
 	"github.com/annict/annict/go/internal/dispatcher"
+	"github.com/annict/annict/go/internal/handler/db_episode"
 	"github.com/annict/annict/go/internal/handler/db_work"
 	"github.com/annict/annict/go/internal/handler/db_work_archive"
 	"github.com/annict/annict/go/internal/handler/health"
@@ -649,6 +650,15 @@ func runServe() {
 		r.Use(authMiddleware.RequireAdmin)
 		r.Delete("/db/works/{id}", dbWorkHandler.Delete)
 	})
+
+	// A work's episode list is public, matching the Rails Db::EpisodesController#index,
+	// which is the one action there without authenticate_user!.
+	//
+	// [Ja] 作品のエピソード一覧は公開。Rails の Db::EpisodesController#index が同コントローラ
+	// で唯一 authenticate_user! を持たないアクションであることに合わせている。
+	getDBEpisodesUC := usecase.NewGetDBEpisodesUsecase(workRepo, repository.NewEpisodeRepository(queries))
+	dbEpisodeHandler := db_episode.NewHandler(cfg, getDBEpisodesUC)
+	r.Get("/db/works/{work_id}/episodes", dbEpisodeHandler.Index)
 
 	// iCalendar配信
 	r.Get("/@{username}/ics", icsHandler.Show) // メインのエンドポイント

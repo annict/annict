@@ -40,6 +40,26 @@ type PageMeta struct {
 // [Ja] turnstileOrigin は components.Turnstile がウィジェットのスクリプトを読み込むオリジン。
 const turnstileOrigin = "https://challenges.cloudflare.com"
 
+const (
+	// TitleSuffix is appended to every document title so a browser tab names the site it
+	// belongs to. DBTitleSuffix does the same for the Annict DB admin pages, keeping them
+	// distinguishable from the public ones in tabs and history.
+	//
+	// Both are exported because a few pages build their title outside PageMeta: the shared
+	// HTTP error pages render without one. Keeping the literals here means renaming the site
+	// touches one place.
+	//
+	// [Ja] TitleSuffix はすべての文書タイトルの末尾に付き、ブラウザのタブがどのサイトの
+	// ページかを示せるようにする。DBTitleSuffix は Annict DB 管理画面に対して同じ役割を
+	// 果たし、タブや履歴で公開画面と区別できるようにする。
+	//
+	// いずれも公開しているのは、PageMeta の外でタイトルを組み立てるページがあるため
+	// (共通の HTTP エラーページは PageMeta を持たずに描画する)。リテラルをここに集約して
+	// おくことで、サイト名の変更が 1 箇所で済む。
+	TitleSuffix   = " | Annict"
+	DBTitleSuffix = " | Annict DB"
+)
+
 // DefaultPageMeta returns the default metadata for the page served at requestPath. The title
 // and the description follow the language detected from the context, and the title carries
 // the " | Annict" suffix.
@@ -63,7 +83,7 @@ const turnstileOrigin = "https://challenges.cloudflare.com"
 // 場合 (フィルタやページネーション) で、後者は呼び出し側がパース・正規化した値だけを付ける。
 func DefaultPageMeta(ctx context.Context, cfg *config.Config, requestPath string) PageMeta {
 	ogImageURL := cfg.AppURL() + "/static/images/og-image.png"
-	title := i18n.T(ctx, "default_title") + " | Annict"
+	title := i18n.T(ctx, "default_title") + TitleSuffix
 	return PageMeta{
 		Title:        title,
 		Description:  i18n.T(ctx, "default_description"),
@@ -90,20 +110,26 @@ func canonicalPath(requestPath string) string {
 	return cleaned + "?" + query
 }
 
-// SetTitle はタイトルを設定します（" | Annict" サフィックス付き）
-// 通常のページで使用します
-func (p *PageMeta) SetTitle(ctx context.Context, titleKey string) {
-	p.Title = i18n.T(ctx, titleKey) + " | Annict"
+// SetTitle sets the title of a public page, appending TitleSuffix. templateData is passed
+// through to the translation, so a title that names the resource it describes can hold
+// placeholders instead of being concatenated by the caller.
+//
+// [Ja] SetTitle は公開ページのタイトルを設定し、TitleSuffix を付ける。templateData は翻訳に
+// そのまま渡すため、対象のリソースを名指しするタイトルは、呼び出し側で文字列連結せず
+// プレースホルダーで書ける。
+func (p *PageMeta) SetTitle(ctx context.Context, titleKey string, templateData ...map[string]any) {
+	p.Title = i18n.T(ctx, titleKey, templateData...) + TitleSuffix
 }
 
-// SetDBTitle sets the title with the " | Annict DB" suffix.
-// It is used for the Annict DB admin pages so that they stay distinguishable from
-// the public pages in browser tabs and history.
+// SetDBTitle sets the title of an Annict DB admin page, appending DBTitleSuffix so the page
+// stays distinguishable from the public ones in browser tabs and history. templateData is
+// passed through to the translation as in SetTitle.
 //
-// [Ja] SetDBTitle はタイトルを設定します (" | Annict DB" サフィックス付き)。
-// Annict DB 管理画面のページで使い、ブラウザのタブや履歴で公開画面と区別できるようにします。
-func (p *PageMeta) SetDBTitle(ctx context.Context, titleKey string) {
-	p.Title = i18n.T(ctx, titleKey) + " | Annict DB"
+// [Ja] SetDBTitle は Annict DB 管理画面のページのタイトルを設定し、DBTitleSuffix を付ける。
+// ブラウザのタブや履歴で公開画面と区別できるようにするため。templateData は SetTitle と
+// 同じく翻訳へそのまま渡す。
+func (p *PageMeta) SetDBTitle(ctx context.Context, titleKey string, templateData ...map[string]any) {
+	p.Title = i18n.T(ctx, titleKey, templateData...) + DBTitleSuffix
 }
 
 // AddTurnstilePreconnect declares the Turnstile origin as a preconnect target for a page that

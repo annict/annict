@@ -28,6 +28,13 @@ func WorkPath(id viewmodel.WorkID) Path {
 	return Path(fmt.Sprintf("/works/%s", id))
 }
 
+// EpisodePath builds the path for an episode's public page (outside the Annict DB admin UI).
+//
+// [Ja] EpisodePath はエピソードの公開ページ (Annict DB 管理画面の外) のパスを生成します。
+func EpisodePath(workID viewmodel.WorkID, episodeID viewmodel.EpisodeID) Path {
+	return Path(fmt.Sprintf("/works/%s/episodes/%s", workID, episodeID))
+}
+
 // DBWorksPath はDB管理画面の作品一覧のパスを生成します
 func DBWorksPath() Path {
 	return Path("/db/works")

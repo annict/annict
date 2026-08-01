@@ -1,0 +1,197 @@
+package db_episodes
+
+import (
+	"context"
+	"fmt"
+
+	"github.com/annict/annict/go/internal/templates"
+	"github.com/annict/annict/go/internal/templates/components"
+	"github.com/annict/annict/go/internal/viewmodel"
+)
+
+// IndexPageData is the data a work's episode list page renders: the parent work (its id and
+// name for the heading, subnav and links) and one page of its episodes.
+//
+// [Ja] IndexPageData はある作品のエピソード一覧ページが描画するデータ (見出し・サブナビ・
+// リンクに使う親作品の id と名前、およびエピソード 1 ページ分)。
+type IndexPageData struct {
+	WorkID viewmodel.WorkID
+	// WorkName is the work's display name as viewmodel.DBEpisodeListWorkName resolved it, so
+	// it is empty exactly when the document title falls back to the generic page name too.
+	//
+	// [Ja] WorkName は viewmodel.DBEpisodeListWorkName が解決した作品の表示名。空になるのは
+	// 文書タイトルが汎用のページ名へフォールバックするときと同じ条件。
+	WorkName string
+	// NoEpisodes carries the work's no_episodes flag through to the shared subnav, which
+	// drops its episode-derived entries for such a work.
+	//
+	// [Ja] NoEpisodes は作品の no_episodes フラグを共有サブナビへ渡す。サブナビはその作品では
+	// エピソード由来の項目を落とす。
+	NoEpisodes bool
+	Episodes   []viewmodel.DBEpisodeListItem
+	Pagination viewmodel.Pagination
+}
+
+// heading returns the text of the page heading: the work's name, falling back to the generic
+// page title while the work has none, so the page never renders an empty <h1>.
+//
+// [Ja] heading はページ見出しのテキストとして作品の名前を返す。名前が無いあいだは汎用の
+// ページタイトルにフォールバックし、空の <h1> を描画しないようにする。
+func (d IndexPageData) heading(ctx context.Context) string {
+	if d.WorkName != "" {
+		return d.WorkName
+	}
+
+	return templates.T(ctx, "db_episodes_index_title")
+}
+
+templ Index(data IndexPageData) {
+	<div class="flex flex-col gap-4 py-4 max-w-7xl w-full mx-auto">
+		<div class="flex gap-4 px-4">
+			@components.DBSidebarToggle()
+
+			<div class="flex-1">
+				@components.MainTitle(components.MainTitleData{
+					Title: data.heading(ctx),
+				})
+			</div>
+		</div>
+
+		<div class="px-4">
+			@components.DBWorkSubnav(components.DBWorkSubnavData{
+				WorkID:     data.WorkID,
+				NoEpisodes: data.NoEpisodes,
+			})
+		</div>
+
+		@components.ContentCard("") {
+			if len(data.Episodes) == 0 {
+				<p class="text-muted-foreground">
+					{ templates.T(ctx, "db_episodes_index_empty") }
+				</p>
+			} else {
+				<div class="flex flex-col gap-4">
+					<div
+						class="overflow-x-auto"
+						role="region"
+						aria-label={ templates.T(ctx, "db_episodes_index_table_caption") }
+						tabindex="0"
+					>
+						<table class="table table-fixed min-w-[640px] [&_th]:px-1 [&_td]:px-1">
+							<caption class="sr-only">
+								{ templates.T(ctx, "db_episodes_index_table_caption") }
+							</caption>
+							// Fixed column widths keep the table within its container and let the title
+							// column (the only one without a width) absorb the remaining space; auto
+							// layout spreads slack across every column instead, so the title stays
+							// narrow there.
+							//
+							// [Ja] 固定列幅でテーブルをコンテナ内に収め、幅指定の無いタイトル列だけが
+							// 残り幅を吸収するようにする (auto レイアウトでは余白が全列へ分散し、
+							// タイトルが狭いまま)。
+							<colgroup>
+								<col class="w-20"/>
+								<col class="w-28"/>
+								<col/>
+								<col class="w-24"/>
+								<col class="w-24"/>
+							</colgroup>
+							<thead>
+								<tr>
+									<th scope="col" class="text-left">{ templates.T(ctx, "db_episodes_index_table_id_label") }</th>
+									<th scope="col" class="text-left">{ templates.T(ctx, "db_episodes_index_table_number_label") }</th>
+									<th scope="col" class="text-left">{ templates.T(ctx, "db_episodes_index_table_title_label") }</th>
+									<th scope="col" class="text-left">{ templates.T(ctx, "db_episodes_index_table_sort_number_label") }</th>
+									<th scope="col" class="text-left">{ templates.T(ctx, "db_episodes_index_table_status_label") }</th>
+								</tr>
+							</thead>
+							<tbody>
+								for _, episode := range data.Episodes {
+									<tr>
+										<td>
+											<a
+												href={ templates.EpisodePath(episode.WorkID, episode.ID).SafeURL() }
+												target="_blank"
+												rel="noopener"
+												aria-label={ templates.T(ctx, "db_episodes_index_id_link_aria_label", map[string]any{"ID": episode.ID.String()}) }
+												class="text-primary hover:underline inline-flex items-center gap-1"
+											>
+												{ episode.ID.String() }
+												<span aria-hidden="true">
+													@templates.Icon("arrow-square-out-regular", "w-[18px] h-[18px]")
+												</span>
+											</a>
+										</td>
+										// The display number and the numeric one are stacked in one cell, as
+										// on the Rails screen: both are short, and one column per number
+										// would cost width the title needs.
+										//
+										// [Ja] 表示用の話数と数値の話数は Rails 画面と同じく 1 セルに縦に
+										// 積む。どちらも短く、話数ごとに列を分けるとタイトルに必要な幅を
+										// 削ってしまうため。
+										<td class="whitespace-normal [overflow-wrap:anywhere]">
+											<div>
+												<span class="sr-only">{ templates.T(ctx, "db_episodes_index_number_display_label") }: </span>
+												{ valueOrDash(episode.Number) }
+											</div>
+											<div class="text-muted-foreground">
+												<span class="sr-only">{ templates.T(ctx, "db_episodes_index_number_raw_label") }: </span>
+												{ valueOrDash(episode.RawNumber) }
+											</div>
+										</td>
+										<td class="whitespace-normal [overflow-wrap:anywhere]">
+											<div>
+												<span class="sr-only">{ templates.T(ctx, "db_episodes_index_title_ja_label") }: </span>
+												if episode.Title != "" {
+													<span lang="ja">{ episode.Title }</span>
+												} else {
+													{ missingValuePlaceholder }
+												}
+											</div>
+											<div class="text-muted-foreground">
+												<span class="sr-only">{ templates.T(ctx, "db_episodes_index_title_en_label") }: </span>
+												if episode.TitleEn != "" {
+													<span lang="en">{ episode.TitleEn }</span>
+												} else {
+													{ missingValuePlaceholder }
+												}
+											</div>
+										</td>
+										<td>{ fmt.Sprintf("%d", episode.SortNumber) }</td>
+										<td>
+											@components.StatusLabel(episode.Status)
+										</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+
+					@components.Pagination(data.Pagination)
+				</div>
+			}
+		}
+	</div>
+}
+
+// missingValuePlaceholder is shown wherever an episode attribute is unset, so an empty value
+// reads as "nothing recorded" instead of looking like a rendering gap.
+//
+// [Ja] missingValuePlaceholder はエピソードの属性が未設定のときに表示する。空の値が描画漏れに
+// 見えず「未登録」と読めるようにするため。
+const missingValuePlaceholder = "-"
+
+// valueOrDash returns value, or the placeholder when it is empty. The view models leave unset
+// attributes as "" so the template decides how to render the gap; every attribute in the list
+// renders it the same way.
+//
+// [Ja] valueOrDash は value を、空のときはプレースホルダーを返す。ビューモデルは未設定の属性を
+// "" のままにしてテンプレートに欠落の描画方法を委ねており、一覧の各属性はいずれも同じ形で
+// 描画する。
+func valueOrDash(value string) string {
+	if value == "" {
+		return missingValuePlaceholder
+	}
+
+	return value
+}

@@ -1202,6 +1202,70 @@ other = "Delete this work?"
 description = "No works message"
 other = "No works found"
 
+[db_episodes_index_title]
+description = "Episode list page title for a work"
+other = "Episodes"
+
+[db_episodes_index_title_paginated]
+description = "Generic episode list document title after the first page"
+other = "Episodes (Page {{.Page}})"
+
+[db_episodes_index_document_title]
+description = "Work-specific episode list document title"
+other = "{{.WorkTitle}} | Episodes"
+
+[db_episodes_index_document_title_paginated]
+description = "Work-specific episode list document title after the first page"
+other = "{{.WorkTitle}} | Episodes (Page {{.Page}})"
+
+[db_episodes_index_table_caption]
+description = "Caption and scroll-region aria-label for the DB episodes table"
+other = "DB episodes list"
+
+[db_episodes_index_table_id_label]
+description = "Table header - ID"
+other = "ID"
+
+[db_episodes_index_table_number_label]
+description = "Table header - Number (display and numeric)"
+other = "Number"
+
+[db_episodes_index_number_display_label]
+description = "Screen-reader label for an episode's display number"
+other = "Display number"
+
+[db_episodes_index_number_raw_label]
+description = "Screen-reader label for an episode's numeric number"
+other = "Numeric number"
+
+[db_episodes_index_table_title_label]
+description = "Table header - Title (Japanese and English)"
+other = "Title"
+
+[db_episodes_index_title_ja_label]
+description = "Screen-reader label for an episode's Japanese title"
+other = "Japanese title"
+
+[db_episodes_index_title_en_label]
+description = "Screen-reader label for an episode's English title"
+other = "English title"
+
+[db_episodes_index_table_sort_number_label]
+description = "Table header - Sort number"
+other = "Sort number"
+
+[db_episodes_index_table_status_label]
+description = "Table header - Status"
+other = "Status"
+
+[db_episodes_index_id_link_aria_label]
+description = "Aria label for the episode ID link that opens the public page in a new tab"
+other = "Open episode {{.ID}} in a new tab"
+
+[db_episodes_index_empty]
+description = "No episodes message"
+other = "No episodes found"
+
 # DB works form shared (used by new and edit)
 [db_works_form_external_link_label]
 description = "Accessible name for the external-link icon shown beside a form label (shared by new and edit). Field is the field name"
@@ -1571,3 +1635,23 @@ other = "User not found"
 [error_work_not_found]
 description = "Message shown when a work is not found"
 other = "Work not found"
+
+[error_not_found_title]
+description = "Title of the generic 404 error page"
+other = "Page not found"
+
+[error_not_found_message]
+description = "Explanation on the generic 404 error page"
+other = "The page may have been moved or deleted."
+
+[error_internal_server_title]
+description = "Title of the generic 500 error page"
+other = "Something went wrong"
+
+[error_internal_server_message]
+description = "Explanation on the generic 500 error page"
+other = "Please try again later."
+
+[error_back_to_home]
+description = "Link from a generic error page to the home page"
+other = "Back to Home"

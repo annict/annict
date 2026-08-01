@@ -3,7 +3,10 @@ package repository_test
 import (
 	"context"
 	"database/sql"
+	"math"
+	"strconv"
 	"testing"
+	"time"
 
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
@@ -73,6 +76,409 @@ func insertEpisodeSyncEpisode(t *testing.T, tx *sql.Tx, in episodeSyncRow) model
 		t.Fatalf("episodes の挿入に失敗: %v", err)
 	}
 	return model.EpisodeID(id)
+}
+
+// dbListEpisodeRow holds the episodes columns the Annict DB episode list reads.
+//
+// The status field mirrors the dormant episodes.status column. Test cases
+// deliberately make it disagree with unpublished_at / deleted_at to verify that
+// the list filter and derived status use those timestamps instead.
+//
+// [Ja] dbListEpisodeRow は Annict DB のエピソード一覧が読む episodes カラムを保持する。
+//
+// status フィールドは休眠中の episodes.status カラムを写す。テストケースでは
+// unpublished_at / deleted_at と意図的に食い違わせ、一覧の絞り込みと状態導出が
+// これらのタイムスタンプを使うことを検証する。
+type dbListEpisodeRow struct {
+	workID              model.WorkID
+	number              sql.NullString
+	rawNumber           sql.NullFloat64
+	sortNumber          int32
+	title               sql.NullString
+	titleRo             string
+	titleEn             string
+	episodeRecordsCount int32
+	status              string
+	unpublishedAt       sql.NullTime
+	deletedAt           sql.NullTime
+}
+
+func insertDBListEpisode(t *testing.T, tx *sql.Tx, in dbListEpisodeRow) model.EpisodeID {
+	t.Helper()
+	var id int64
+	if err := tx.QueryRow(`
+		INSERT INTO episodes (
+			work_id, number, raw_number, sort_number, title, title_ro, title_en,
+			episode_records_count, status, unpublished_at, deleted_at
+		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id`,
+		int64(in.workID), in.number, in.rawNumber, in.sortNumber, in.title, in.titleRo, in.titleEn,
+		in.episodeRecordsCount, in.status, in.unpublishedAt, in.deletedAt,
+	).Scan(&id); err != nil {
+		t.Fatalf("episodes の挿入に失敗: %v", err)
+	}
+	return model.EpisodeID(id)
+}
+
+// insertDBListWork inserts a minimal works row to own the listed episodes.
+//
+// [Ja] insertDBListWork は一覧対象のエピソードを持たせる最小の works 行を挿入する。
+func insertDBListWork(t *testing.T, tx *sql.Tx) model.WorkID {
+	t.Helper()
+	var id int64
+	if err := tx.QueryRow(
+		`INSERT INTO works (title, media) VALUES ($1, $2) RETURNING id`,
+		"一覧対象の作品", 1,
+	).Scan(&id); err != nil {
+		t.Fatalf("works の挿入に失敗: %v", err)
+	}
+	return model.WorkID(id)
+}
+
+func TestEpisodeRepository_ListForDB(t *testing.T) {
+	t.Parallel()
+
+	t.Run("正常系: 作品のエピソードを sort_number 降順で取得する", func(t *testing.T) {
+		t.Parallel()
+
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewEpisodeRepository(query.New(db).WithTx(tx))
+
+		workID := insertDBListWork(t, tx)
+		insertDBListEpisode(t, tx, dbListEpisodeRow{
+			workID:              workID,
+			number:              sql.NullString{String: "第1話", Valid: true},
+			rawNumber:           sql.NullFloat64{Float64: 1, Valid: true},
+			sortNumber:          1,
+			title:               sql.NullString{String: "はじまり", Valid: true},
+			titleRo:             "Hajimari",
+			titleEn:             "The Beginning",
+			episodeRecordsCount: 42,
+			status:              "published",
+		})
+		insertDBListEpisode(t, tx, dbListEpisodeRow{
+			workID:     workID,
+			number:     sql.NullString{String: "第2話", Valid: true},
+			sortNumber: 2,
+			status:     "published",
+		})
+
+		// Another work's episode must not leak into the list.
+		//
+		// [Ja] 別作品のエピソードが一覧に混ざらないこと。
+		otherWorkID := insertDBListWork(t, tx)
+		insertDBListEpisode(t, tx, dbListEpisodeRow{
+			workID:     otherWorkID,
+			number:     sql.NullString{String: "別作品の第1話", Valid: true},
+			sortNumber: 1,
+			status:     "published",
+		})
+
+		got, err := repo.ListForDB(context.Background(), repository.DBEpisodeListParams{
+			WorkID:  workID,
+			Page:    1,
+			PerPage: 100,
+		})
+		if err != nil {
+			t.Fatalf("ListForDB() error = %v", err)
+		}
+		if len(got) != 2 {
+			t.Fatalf("len(got) = %d, want 2", len(got))
+		}
+		if got[0].Number == nil || *got[0].Number != "第2話" {
+			t.Errorf("got[0].Number = %v, want 第2話 (sort_number 降順)", got[0].Number)
+		}
+		// The second episode leaves title and raw_number NULL, so they must map to nil
+		// rather than to a pointer holding the zero value.
+		//
+		// [Ja] 第 2 話は title と raw_number を NULL のままにしているため、ゼロ値を指す
+		// ポインタではなく nil に写像されること。
+		if got[0].Title != nil {
+			t.Errorf("got[0].Title = %v, want nil", got[0].Title)
+		}
+		if got[0].RawNumber != nil {
+			t.Errorf("got[0].RawNumber = %v, want nil", got[0].RawNumber)
+		}
+
+		second := got[1]
+		if second.Number == nil || *second.Number != "第1話" {
+			t.Errorf("got[1].Number = %v, want 第1話", second.Number)
+		}
+		if second.WorkID != workID {
+			t.Errorf("got[1].WorkID = %d, want %d", second.WorkID, workID)
+		}
+		if second.Title == nil || *second.Title != "はじまり" {
+			t.Errorf("got[1].Title = %v, want はじまり", second.Title)
+		}
+		if second.TitleRo != "Hajimari" {
+			t.Errorf("got[1].TitleRo = %q, want Hajimari", second.TitleRo)
+		}
+		if second.TitleEn != "The Beginning" {
+			t.Errorf("got[1].TitleEn = %q, want The Beginning", second.TitleEn)
+		}
+		if second.RawNumber == nil || *second.RawNumber != 1 {
+			t.Errorf("got[1].RawNumber = %v, want 1", second.RawNumber)
+		}
+		if second.SortNumber != 1 {
+			t.Errorf("got[1].SortNumber = %d, want 1", second.SortNumber)
+		}
+		if second.EpisodeRecordsCount != 42 {
+			t.Errorf("got[1].EpisodeRecordsCount = %d, want 42", second.EpisodeRecordsCount)
+		}
+		if second.DerivedStatus() != model.EpisodeStatusPublished {
+			t.Errorf("got[1].DerivedStatus() = %q, want published", second.DerivedStatus())
+		}
+	})
+
+	t.Run("正常系: ページ単位で取得する", func(t *testing.T) {
+		t.Parallel()
+
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewEpisodeRepository(query.New(db).WithTx(tx))
+
+		workID := insertDBListWork(t, tx)
+		for i := int32(1); i <= 3; i++ {
+			insertDBListEpisode(t, tx, dbListEpisodeRow{
+				workID:     workID,
+				number:     sql.NullString{String: "第" + strconv.Itoa(int(i)) + "話", Valid: true},
+				sortNumber: i,
+				status:     "published",
+			})
+		}
+
+		firstPage, err := repo.ListForDB(context.Background(), repository.DBEpisodeListParams{
+			WorkID:  workID,
+			Page:    1,
+			PerPage: 2,
+		})
+		if err != nil {
+			t.Fatalf("ListForDB() error = %v", err)
+		}
+		if len(firstPage) != 2 {
+			t.Fatalf("len(firstPage) = %d, want 2", len(firstPage))
+		}
+		if *firstPage[0].Number != "第3話" || *firstPage[1].Number != "第2話" {
+			t.Errorf("firstPage = [%q %q], want [第3話 第2話]", *firstPage[0].Number, *firstPage[1].Number)
+		}
+
+		secondPage, err := repo.ListForDB(context.Background(), repository.DBEpisodeListParams{
+			WorkID:  workID,
+			Page:    2,
+			PerPage: 2,
+		})
+		if err != nil {
+			t.Fatalf("ListForDB() error = %v", err)
+		}
+		if len(secondPage) != 1 {
+			t.Fatalf("len(secondPage) = %d, want 1", len(secondPage))
+		}
+		if *secondPage[0].Number != "第1話" {
+			t.Errorf("secondPage[0].Number = %q, want 第1話", *secondPage[0].Number)
+		}
+	})
+
+	t.Run("正常系: sort_number が同じ行は id 降順でページ境界をまたいで取得する", func(t *testing.T) {
+		t.Parallel()
+
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewEpisodeRepository(query.New(db).WithTx(tx))
+
+		workID := insertDBListWork(t, tx)
+		oldestID := insertDBListEpisode(t, tx, dbListEpisodeRow{
+			workID:     workID,
+			sortNumber: 1,
+			status:     "published",
+		})
+		middleID := insertDBListEpisode(t, tx, dbListEpisodeRow{
+			workID:     workID,
+			sortNumber: 1,
+			status:     "published",
+		})
+		newestID := insertDBListEpisode(t, tx, dbListEpisodeRow{
+			workID:     workID,
+			sortNumber: 1,
+			status:     "published",
+		})
+
+		firstPage, err := repo.ListForDB(context.Background(), repository.DBEpisodeListParams{
+			WorkID:  workID,
+			Page:    1,
+			PerPage: 2,
+		})
+		if err != nil {
+			t.Fatalf("ListForDB() first page error = %v", err)
+		}
+		if len(firstPage) != 2 {
+			t.Fatalf("len(firstPage) = %d, want 2", len(firstPage))
+		}
+		wantFirstPage := []model.EpisodeID{newestID, middleID}
+		for i, wantID := range wantFirstPage {
+			if firstPage[i].ID != wantID {
+				t.Errorf("firstPage[%d].ID = %d, want %d", i, firstPage[i].ID, wantID)
+			}
+		}
+
+		secondPage, err := repo.ListForDB(context.Background(), repository.DBEpisodeListParams{
+			WorkID:  workID,
+			Page:    2,
+			PerPage: 2,
+		})
+		if err != nil {
+			t.Fatalf("ListForDB() second page error = %v", err)
+		}
+		if len(secondPage) != 1 {
+			t.Fatalf("len(secondPage) = %d, want 1", len(secondPage))
+		}
+		if secondPage[0].ID != oldestID {
+			t.Errorf("secondPage[0].ID = %d, want %d", secondPage[0].ID, oldestID)
+		}
+	})
+
+	t.Run("正常系: 除外と状態は deleted_at / unpublished_at で決まり休眠 status は読まない", func(t *testing.T) {
+		t.Parallel()
+
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewEpisodeRepository(query.New(db).WithTx(tx))
+
+		workID := insertDBListWork(t, tx)
+		insertDBListEpisode(t, tx, dbListEpisodeRow{
+			workID:     workID,
+			number:     sql.NullString{String: "公開中の話", Valid: true},
+			sortNumber: 1,
+			status:     "published",
+		})
+		insertDBListEpisode(t, tx, dbListEpisodeRow{
+			workID:        workID,
+			number:        sql.NullString{String: "非公開の話", Valid: true},
+			sortNumber:    2,
+			status:        "published",
+			unpublishedAt: sql.NullTime{Time: time.Now(), Valid: true},
+		})
+		insertDBListEpisode(t, tx, dbListEpisodeRow{
+			workID:     workID,
+			number:     sql.NullString{String: "休眠 status だけが deleted の話", Valid: true},
+			sortNumber: 3,
+			status:     "deleted",
+		})
+		insertDBListEpisode(t, tx, dbListEpisodeRow{
+			workID:     workID,
+			number:     sql.NullString{String: "deleted_at で削除された話", Valid: true},
+			sortNumber: 4,
+			status:     "published",
+			deletedAt:  sql.NullTime{Time: time.Now(), Valid: true},
+		})
+
+		got, err := repo.ListForDB(context.Background(), repository.DBEpisodeListParams{
+			WorkID:  workID,
+			Page:    1,
+			PerPage: 100,
+		})
+		if err != nil {
+			t.Fatalf("ListForDB() error = %v", err)
+		}
+		if len(got) != 3 {
+			t.Fatalf("len(got) = %d, want 3 (deleted_at の行だけを除外)", len(got))
+		}
+
+		wantNumbers := []string{"休眠 status だけが deleted の話", "非公開の話", "公開中の話"}
+		for i, want := range wantNumbers {
+			if *got[i].Number != want {
+				t.Errorf("got[%d].Number = %q, want %q", i, *got[i].Number, want)
+			}
+		}
+
+		wantStatuses := []model.EpisodeStatus{
+			model.EpisodeStatusPublished,
+			model.EpisodeStatusArchived,
+			model.EpisodeStatusPublished,
+		}
+		for i, want := range wantStatuses {
+			if got[i].DerivedStatus() != want {
+				t.Errorf("got[%d].DerivedStatus() = %q, want %q", i, got[i].DerivedStatus(), want)
+			}
+		}
+	})
+
+	t.Run("正常系: エピソードが無い作品では空スライスを返す", func(t *testing.T) {
+		t.Parallel()
+
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewEpisodeRepository(query.New(db).WithTx(tx))
+
+		workID := insertDBListWork(t, tx)
+
+		got, err := repo.ListForDB(context.Background(), repository.DBEpisodeListParams{
+			WorkID:  workID,
+			Page:    1,
+			PerPage: 100,
+		})
+		if err != nil {
+			t.Fatalf("ListForDB() error = %v", err)
+		}
+		if len(got) != 0 {
+			t.Errorf("len(got) = %d, want 0", len(got))
+		}
+	})
+
+	t.Run("境界値: 最大ページ番号でも OFFSET がオーバーフローしない", func(t *testing.T) {
+		t.Parallel()
+
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewEpisodeRepository(query.New(db).WithTx(tx))
+
+		workID := insertDBListWork(t, tx)
+
+		got, err := repo.ListForDB(context.Background(), repository.DBEpisodeListParams{
+			WorkID:  workID,
+			Page:    math.MaxInt32,
+			PerPage: 100,
+		})
+		if err != nil {
+			t.Fatalf("ListForDB() error = %v", err)
+		}
+		if len(got) != 0 {
+			t.Errorf("len(got) = %d, want 0", len(got))
+		}
+	})
+}
+
+func TestEpisodeRepository_CountForDB(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	repo := repository.NewEpisodeRepository(query.New(db).WithTx(tx))
+
+	workID := insertDBListWork(t, tx)
+	insertDBListEpisode(t, tx, dbListEpisodeRow{workID: workID, sortNumber: 1, status: "published"})
+	insertDBListEpisode(t, tx, dbListEpisodeRow{
+		workID:        workID,
+		sortNumber:    2,
+		status:        "published",
+		unpublishedAt: sql.NullTime{Time: time.Now(), Valid: true},
+	})
+
+	// The count must use the same filter as the list: the deleted_at row and another
+	// work's episode are left out, while the row whose dormant status alone says
+	// deleted is still counted.
+	//
+	// [Ja] 件数は一覧と同じ絞り込みを使うため、deleted_at の行と別作品のエピソードは
+	// 数えず、休眠 status だけが deleted の行は数える。
+	insertDBListEpisode(t, tx, dbListEpisodeRow{workID: workID, sortNumber: 3, status: "deleted"})
+	insertDBListEpisode(t, tx, dbListEpisodeRow{
+		workID:     workID,
+		sortNumber: 4,
+		status:     "published",
+		deletedAt:  sql.NullTime{Time: time.Now(), Valid: true},
+	})
+	otherWorkID := insertDBListWork(t, tx)
+	insertDBListEpisode(t, tx, dbListEpisodeRow{workID: otherWorkID, sortNumber: 1, status: "published"})
+
+	got, err := repo.CountForDB(context.Background(), workID)
+	if err != nil {
+		t.Fatalf("CountForDB() error = %v", err)
+	}
+	if got != 3 {
+		t.Errorf("CountForDB() = %d, want 3", got)
+	}
 }
 
 func TestEpisodeRepository_ListForAnimeSyncByIDs(t *testing.T) {

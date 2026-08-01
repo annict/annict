@@ -221,7 +221,7 @@ func TestNewDBWorkListItem(t *testing.T) {
 		wantTitleEn     string
 		wantMedia       string
 		wantWatchers    int32
-		wantStatus      WorkStatus
+		wantStatus      PublishingStatus
 		wantHasImage    bool
 		wantSeasonHasJP string
 	}{
@@ -244,7 +244,7 @@ func TestNewDBWorkListItem(t *testing.T) {
 			wantTitleEn:     "Work With Image",
 			wantMedia:       "TV",
 			wantWatchers:    100,
-			wantStatus:      WorkStatusPublished,
+			wantStatus:      PublishingStatusPublished,
 			wantHasImage:    true,
 			wantSeasonHasJP: "2024年春",
 		},
@@ -264,7 +264,7 @@ func TestNewDBWorkListItem(t *testing.T) {
 			wantTitleEn:   "",
 			wantMedia:     "OVA",
 			wantWatchers:  0,
-			wantStatus:    WorkStatusArchived,
+			wantStatus:    PublishingStatusArchived,
 			wantHasImage:  false,
 		},
 		{
@@ -277,7 +277,7 @@ func TestNewDBWorkListItem(t *testing.T) {
 			wantID:          WorkID(3),
 			wantTitle:       "シーズンなし作品",
 			wantMedia:       "その他",
-			wantStatus:      WorkStatusPublished,
+			wantStatus:      PublishingStatusPublished,
 			wantHasImage:    false,
 			wantSeasonHasJP: "",
 		},
@@ -298,7 +298,7 @@ func TestNewDBWorkListItem(t *testing.T) {
 			wantID:          WorkID(6),
 			wantTitle:       "範囲外シーズン作品",
 			wantMedia:       "TV",
-			wantStatus:      WorkStatusPublished,
+			wantStatus:      PublishingStatusPublished,
 			wantHasImage:    false,
 			wantSeasonHasJP: "2024",
 		},
@@ -312,7 +312,7 @@ func TestNewDBWorkListItem(t *testing.T) {
 			wantID:     WorkID(4),
 			wantTitle:  "映画作品",
 			wantMedia:  "映画",
-			wantStatus: WorkStatusPublished,
+			wantStatus: PublishingStatusPublished,
 		},
 		{
 			name: "正常系: media = 4 は Web に変換される",
@@ -324,7 +324,7 @@ func TestNewDBWorkListItem(t *testing.T) {
 			wantID:     WorkID(5),
 			wantTitle:  "Web作品",
 			wantMedia:  "Web",
-			wantStatus: WorkStatusPublished,
+			wantStatus: PublishingStatusPublished,
 		},
 	}
 
@@ -385,27 +385,27 @@ func TestNewDBWorkListItem_StatusFromTimestamps(t *testing.T) {
 		name          string
 		unpublishedAt *time.Time
 		deletedAt     *time.Time
-		want          WorkStatus
+		want          PublishingStatus
 	}{
 		{
 			name: "両方 nil なら published",
-			want: WorkStatusPublished,
+			want: PublishingStatusPublished,
 		},
 		{
 			name:          "unpublished_at のみなら archived",
 			unpublishedAt: &unpublishedAt,
-			want:          WorkStatusArchived,
+			want:          PublishingStatusArchived,
 		},
 		{
 			name:      "deleted_at のみなら deleted",
 			deletedAt: &deletedAt,
-			want:      WorkStatusDeleted,
+			want:      PublishingStatusDeleted,
 		},
 		{
 			name:          "両方あれば deleted_at が優先される",
 			unpublishedAt: &unpublishedAt,
 			deletedAt:     &deletedAt,
-			want:          WorkStatusDeleted,
+			want:          PublishingStatusDeleted,
 		},
 	}
 

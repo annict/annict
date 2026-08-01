@@ -153,6 +153,32 @@ func workFromGetForEditByIDRow(row query.GetWorkForEditByIDRow) *model.Work {
 	return work
 }
 
+// GetForEpisodeListByID loads the columns the Annict DB episode list needs from the parent
+// work: the title for the page heading and no_episodes for the shared work subnav. Works
+// whose deleted_at is set are excluded by the query, mirroring the Rails
+// Work.without_deleted.find the episode list uses, so (nil, nil) means the id names no
+// listable work.
+//
+// [Ja] GetForEpisodeListByID は Annict DB のエピソード一覧が親作品から必要とするカラム
+// (ページ見出しに使う title と、共有の作品サブナビが使う no_episodes) を読み込む。
+// deleted_at が入った作品はクエリ側で除外する (エピソード一覧が使う Rails の
+// Work.without_deleted.find と同じ)。そのため (nil, nil) は一覧を出せる作品がその id に
+// 無いことを表す。
+func (r *WorkRepository) GetForEpisodeListByID(ctx context.Context, id model.WorkID) (*model.Work, error) {
+	row, err := r.queries.GetWorkForEpisodeListByID(ctx, int64(id))
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &model.Work{
+		ID:         model.WorkID(row.ID),
+		Title:      row.Title,
+		NoEpisodes: row.NoEpisodes,
+	}, nil
+}
+
 // GetPopular returns popular works. Each *model.Work in the returned slice is
 // freshly allocated on every call, so callers (typically UseCase code) are
 // free to attach related entities such as Casts / Staffs to the returned
@@ -251,7 +277,14 @@ type DBWorkListParams struct {
 }
 
 func (r *WorkRepository) ListForDB(ctx context.Context, params DBWorkListParams) ([]*model.Work, error) {
-	offset := (params.Page - 1) * params.PerPage
+	// Widen before multiplying: callers accept any page number that fits in an int32, and at
+	// 100 rows per page the int32 product wraps negative inside that range, which PostgreSQL
+	// rejects as an OFFSET.
+	//
+	// [Ja] 乗算の前に幅を広げる。呼び出し側は int32 に収まるページ番号をすべて受け付けるが、
+	// 1 ページ 100 件では int32 同士の積がその範囲内で負に折り返し、PostgreSQL がその OFFSET
+	// を拒否するため。
+	offset := int64(params.Page-1) * int64(params.PerPage)
 
 	rows, err := r.queries.ListDBWorks(ctx, query.ListDBWorksParams{
 		FilterNoEpisodes: sql.NullBool{Bool: params.FilterNoEpisodes, Valid: params.FilterNoEpisodes},

@@ -19,7 +19,8 @@ LEFT JOIN work_images wi ON w.id = wi.work_id
 WHERE w.deleted_at IS NULL
     AND ($1::boolean IS NOT TRUE OR (
         w.no_episodes = false AND NOT EXISTS (
-            SELECT 1 FROM episodes e WHERE e.work_id = w.id AND e.status = 'published'
+            SELECT 1 FROM episodes e
+            WHERE e.work_id = w.id AND e.deleted_at IS NULL AND e.unpublished_at IS NULL
         )
     ))
     AND ($2::boolean IS NOT TRUE OR wi.id IS NULL)
@@ -457,6 +458,29 @@ func (q *Queries) GetWorkForEditByID(ctx context.Context, id int64) (GetWorkForE
 	return i, err
 }
 
+const getWorkForEpisodeListByID = `-- name: GetWorkForEpisodeListByID :one
+SELECT
+    id,
+    title,
+    no_episodes
+FROM works
+WHERE id = $1
+    AND deleted_at IS NULL
+`
+
+type GetWorkForEpisodeListByIDRow struct {
+	ID         int64  `db:"id"`
+	Title      string `db:"title"`
+	NoEpisodes bool   `db:"no_episodes"`
+}
+
+func (q *Queries) GetWorkForEpisodeListByID(ctx context.Context, id int64) (GetWorkForEpisodeListByIDRow, error) {
+	row := q.db.QueryRowContext(ctx, getWorkForEpisodeListByID, id)
+	var i GetWorkForEpisodeListByIDRow
+	err := row.Scan(&i.ID, &i.Title, &i.NoEpisodes)
+	return i, err
+}
+
 const listDBWorks = `-- name: ListDBWorks :many
 SELECT
     w.id,
@@ -477,7 +501,8 @@ LEFT JOIN work_images wi ON w.id = wi.work_id
 WHERE w.deleted_at IS NULL
     AND ($1::boolean IS NOT TRUE OR (
         w.no_episodes = false AND NOT EXISTS (
-            SELECT 1 FROM episodes e WHERE e.work_id = w.id AND e.status = 'published'
+            SELECT 1 FROM episodes e
+            WHERE e.work_id = w.id AND e.deleted_at IS NULL AND e.unpublished_at IS NULL
         )
     ))
     AND ($2::boolean IS NOT TRUE OR wi.id IS NULL)
@@ -499,7 +524,7 @@ WHERE w.deleted_at IS NULL
     )
 ORDER BY w.id DESC
 LIMIT $10
-OFFSET $9
+OFFSET $9::bigint
 `
 
 type ListDBWorksParams struct {
@@ -511,7 +536,7 @@ type ListDBWorksParams struct {
 	SeasonName       sql.NullInt32 `db:"season_name"`
 	SeasonYears      []int32       `db:"season_years"`
 	SeasonNames      []int32       `db:"season_names"`
-	PageOffset       int32         `db:"page_offset"`
+	PageOffset       int64         `db:"page_offset"`
 	PerPage          int32         `db:"per_page"`
 }
 

@@ -1,3 +1,29 @@
+-- name: ListDBEpisodes :many
+SELECT
+    e.id,
+    e.work_id,
+    e.number,
+    e.raw_number,
+    e.sort_number,
+    e.title,
+    e.title_ro,
+    e.title_en,
+    e.episode_records_count,
+    e.unpublished_at,
+    e.deleted_at
+FROM episodes e
+WHERE e.work_id = sqlc.arg('work_id')
+    AND e.deleted_at IS NULL
+ORDER BY e.sort_number DESC, e.id DESC
+LIMIT sqlc.arg('per_page')
+OFFSET sqlc.arg('page_offset')::bigint;
+
+-- name: CountDBEpisodes :one
+SELECT COUNT(*)
+FROM episodes e
+WHERE e.work_id = sqlc.arg('work_id')
+    AND e.deleted_at IS NULL;
+
 -- name: ListEpisodesForAnimeSyncByIDs :many
 SELECT
     e.id,
@@ -10,6 +36,8 @@ SELECT
     e.raw_number,
     e.status,
     e.archive_message,
+    e.unpublished_at,
+    e.deleted_at,
     e.anime_id,
     w.anime_id AS parent_anime_id
 FROM episodes e

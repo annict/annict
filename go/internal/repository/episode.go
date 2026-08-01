@@ -30,6 +30,112 @@ func (r *EpisodeRepository) WithTx(tx *sql.Tx) *EpisodeRepository {
 	return &EpisodeRepository{queries: r.queries.WithTx(tx)}
 }
 
+// DBEpisodeListParams identifies one page of a work's episode list on the Annict
+// DB screen. Page is 1-based.
+//
+// [Ja] DBEpisodeListParams は Annict DB 画面の、ある作品のエピソード一覧 1 ページ分を
+// 指定する。Page は 1 始まり。
+type DBEpisodeListParams struct {
+	WorkID  model.WorkID
+	Page    int32
+	PerPage int32
+}
+
+// ListForDB loads one page of a work's episodes for the Annict DB screen, newest
+// episode first (sort_number descending, matching the Rails screen) with the id as
+// a tiebreaker so equal sort_numbers still paginate deterministically.
+//
+// Episodes remain the source of truth during the migration, so the screen reads
+// them rather than the derived animes / anime_classifications rows, which only
+// catch up with Rails-side changes after the hourly sync batch. Deleted episodes
+// are excluded by deleted_at alone (the Rails `without_deleted` scope), and the
+// remaining rows carry unpublished_at / deleted_at so callers can derive the
+// display status through model.Episode.DerivedStatus.
+//
+// [Ja] ListForDB は Annict DB 画面向けに、ある作品のエピソードを 1 ページ分、新しい
+// エピソードから順に (Rails 画面に合わせて sort_number 降順で) ロードする。sort_number が
+// 同値でもページングが決定的になるよう id をタイブレーカにする。
+//
+// 移行期間中の正本は episodes 側であるため、画面も派生である animes /
+// anime_classifications ではなく episodes を読む (派生側は Rails 経由の変更が毎時の
+// 同期バッチ後にしか反映されない)。削除済みエピソードの除外は deleted_at のみで行い
+// (Rails の `without_deleted` スコープと同じ)、残った行は unpublished_at / deleted_at を
+// 持つため、呼び出し側は model.Episode.DerivedStatus で表示用の状態を導出できる。
+func (r *EpisodeRepository) ListForDB(ctx context.Context, params DBEpisodeListParams) ([]*model.Episode, error) {
+	// Widen before multiplying: callers accept any page number that fits in an int32, and at
+	// 100 rows per page the int32 product wraps negative inside that range, which PostgreSQL
+	// rejects as an OFFSET.
+	//
+	// [Ja] 乗算の前に幅を広げる。呼び出し側は int32 に収まるページ番号をすべて受け付けるが、
+	// 1 ページ 100 件では int32 同士の積がその範囲内で負に折り返し、PostgreSQL がその OFFSET
+	// を拒否するため。
+	offset := int64(params.Page-1) * int64(params.PerPage)
+
+	rows, err := r.queries.ListDBEpisodes(ctx, query.ListDBEpisodesParams{
+		WorkID:     int64(params.WorkID),
+		PerPage:    params.PerPage,
+		PageOffset: offset,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	episodes := make([]*model.Episode, len(rows))
+	for i, row := range rows {
+		episodes[i] = episodeFromDBListRow(row)
+	}
+	return episodes, nil
+}
+
+// CountForDB returns the total number of episodes the DB screen lists for the work,
+// using the same filter as ListForDB so the pagination total matches the listed
+// rows.
+//
+// [Ja] CountForDB は DB 画面がその作品について一覧するエピソードの総件数を返す。
+// ページネーションの総数が一覧の行と一致するよう、ListForDB と同じ絞り込みを使う。
+func (r *EpisodeRepository) CountForDB(ctx context.Context, workID model.WorkID) (int64, error) {
+	return r.queries.CountDBEpisodes(ctx, int64(workID))
+}
+
+// episodeFromDBListRow converts an Annict DB list row into *model.Episode. The row
+// is a partial load: the anime mapping columns, the dormant status column and
+// archive_message are not selected and stay at their zero value.
+//
+// [Ja] episodeFromDBListRow は Annict DB 一覧の行を *model.Episode に変換する。行は
+// 部分ロードで、anime マッピングカラム・休眠カラム status・archive_message は選択せず
+// ゼロ値のまま残る。
+func episodeFromDBListRow(row query.ListDBEpisodesRow) *model.Episode {
+	episode := &model.Episode{
+		ID:                  model.EpisodeID(row.ID),
+		WorkID:              model.WorkID(row.WorkID),
+		TitleRo:             row.TitleRo,
+		TitleEn:             row.TitleEn,
+		SortNumber:          row.SortNumber,
+		EpisodeRecordsCount: row.EpisodeRecordsCount,
+	}
+	if row.Title.Valid {
+		title := row.Title.String
+		episode.Title = &title
+	}
+	if row.Number.Valid {
+		number := row.Number.String
+		episode.Number = &number
+	}
+	if row.RawNumber.Valid {
+		rawNumber := row.RawNumber.Float64
+		episode.RawNumber = &rawNumber
+	}
+	if row.UnpublishedAt.Valid {
+		unpublishedAt := row.UnpublishedAt.Time
+		episode.UnpublishedAt = &unpublishedAt
+	}
+	if row.DeletedAt.Valid {
+		deletedAt := row.DeletedAt.Time
+		episode.DeletedAt = &deletedAt
+	}
+	return episode
+}
+
 // ListForAnimeSyncByIDs loads the episodes with the given IDs, projecting the
 // columns the phase 2 reconciliation maps onto animes / anime_classifications
 // (including the episodes.anime_id mapping column). The parent work's anime_id is
@@ -114,14 +220,15 @@ func (r *EpisodeRepository) UpdateAnimeID(ctx context.Context, episodeID model.E
 }
 
 // episodeFromAnimeSyncRow converts an anime-sync query row into *model.Episode.
-// The nullable columns (title / number / raw_number / archive_message / anime_id /
-// parent_anime_id) are carried as pointers so the sync usecase can distinguish
-// "absent" from a zero value, mirroring how workFromAnimeSyncRow handles works.
+// The nullable columns (title / number / raw_number / archive_message /
+// unpublished_at / deleted_at / anime_id / parent_anime_id) are carried as pointers
+// so the sync usecase can distinguish "absent" from a zero value, mirroring how
+// workFromAnimeSyncRow handles works.
 //
 // [Ja] episodeFromAnimeSyncRow は anime 同期の query 行を *model.Episode に変換する。
-// NULL 許容カラム (title / number / raw_number / archive_message / anime_id /
-// parent_anime_id) はポインタで持ち、同期 UseCase が「未設定」とゼロ値を区別できる
-// ようにする。workFromAnimeSyncRow が works を扱うのと同じ方針。
+// NULL 許容カラム (title / number / raw_number / archive_message / unpublished_at /
+// deleted_at / anime_id / parent_anime_id) はポインタで持ち、同期 UseCase が「未設定」と
+// ゼロ値を区別できるようにする。workFromAnimeSyncRow が works を扱うのと同じ方針。
 func episodeFromAnimeSyncRow(row query.ListEpisodesForAnimeSyncByIDsRow) *model.Episode {
 	episode := &model.Episode{
 		ID:         model.EpisodeID(row.ID),
@@ -146,6 +253,14 @@ func episodeFromAnimeSyncRow(row query.ListEpisodesForAnimeSyncByIDsRow) *model.
 	if row.ArchiveMessage.Valid {
 		archiveMessage := row.ArchiveMessage.String
 		episode.ArchiveMessage = &archiveMessage
+	}
+	if row.UnpublishedAt.Valid {
+		unpublishedAt := row.UnpublishedAt.Time
+		episode.UnpublishedAt = &unpublishedAt
+	}
+	if row.DeletedAt.Valid {
+		deletedAt := row.DeletedAt.Time
+		episode.DeletedAt = &deletedAt
 	}
 	if row.AnimeID.Valid {
 		animeID := model.AnimeID(row.AnimeID.Int64)

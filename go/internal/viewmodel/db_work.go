@@ -12,22 +12,6 @@ import (
 	"github.com/annict/annict/go/internal/usecase"
 )
 
-// WorkStatus wraps model.WorkStatus for use in the Presentation layer, since templates may not depend on the model package.
-//
-// [Ja] WorkStatus は Presentation 層から扱える形に model.WorkStatus をラップした型 (templates は model に直接依存できないため)。
-type WorkStatus model.WorkStatus
-
-const (
-	WorkStatusPublished WorkStatus = WorkStatus(model.WorkStatusPublished)
-	WorkStatusArchived  WorkStatus = WorkStatus(model.WorkStatusArchived)
-	WorkStatusDeleted   WorkStatus = WorkStatus(model.WorkStatusDeleted)
-)
-
-// String returns the textual representation of the status.
-//
-// [Ja] ステータスの文字列表現を返す。
-func (s WorkStatus) String() string { return string(s) }
-
 // DBWorkListItem is the per-row display data for the work list on the Annict DB admin screen.
 //
 // [Ja] DBWorkListItem は Annict DB 管理画面の作品一覧で 1 行ごとに表示する整形済みデータ。
@@ -58,7 +42,7 @@ type DBWorkListItem struct {
 	Syobocal      ExternalServiceLink
 	MalAnime      ExternalServiceLink
 	WatchersCount int32
-	Status        WorkStatus
+	Status        PublishingStatus
 	// Thumbnail resolver, which falls back to the placeholder for works with no image.
 	// The display width is chosen by the template, so no URL is pre-generated here.
 	//
@@ -86,7 +70,7 @@ func NewDBWorkListItem(ctx context.Context, work *model.Work, helper *image.Help
 		Syobocal:      newExternalServiceLink(work.ScTid, SyobocalURL),
 		MalAnime:      newExternalServiceLink(work.MalAnimeID, MalAnimeURL),
 		WatchersCount: work.WatchersCount,
-		Status:        WorkStatus(work.DerivedStatus()),
+		Status:        PublishingStatus(work.DerivedStatus()),
 		Image:         NewWorkImage(work.ImageData, helper),
 	}
 }

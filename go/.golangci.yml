@@ -151,6 +151,30 @@ linters:
             - pkg: github.com/annict/annict/go/internal/validator
               desc: "HandlerはApplication層のValidatorに直接依存できません。UseCase経由でアクセスしてください。"
 
+        # HTTP error helper layer: render shared responses without depending on other layers.
+        #
+        # [Ja] HTTP エラーヘルパー層: 他の層へ依存せず、共通レスポンスを描画する。
+        httperror-layer:
+          files:
+            - "**/internal/httperror/**"
+          deny:
+            - pkg: github.com/annict/annict/go/internal/query
+              desc: "httperrorはQueryに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/repository
+              desc: "httperrorはRepositoryに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/model
+              desc: "httperrorはDomain層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/usecase
+              desc: "httperrorはApplication層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/validator
+              desc: "httperrorはApplication層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/handler
+              desc: "httperrorはHandlerに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/middleware
+              desc: "httperrorはMiddlewareに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/worker
+              desc: "httperrorはWorkerに依存できません。"
+
         # Validator層のルール（Application層）: UseCase から呼び出されるバリデーション
         # Presentation層とQuery、UseCaseへの依存を禁止
         validator-layer:

@@ -29,6 +29,7 @@ type Querier interface {
 	// に変換する。
 	AggregateDailyRecordCountsByUserID(ctx context.Context, arg AggregateDailyRecordCountsByUserIDParams) ([]AggregateDailyRecordCountsByUserIDRow, error)
 	CountActivitiesByUserID(ctx context.Context, userID int64) (int64, error)
+	CountDBEpisodes(ctx context.Context, workID int64) (int64, error)
 	CountDBWorks(ctx context.Context, arg CountDBWorksParams) (int64, error)
 	CountEpisodeRecordsByUserID(ctx context.Context, userID int64) (int64, error)
 	CountRecordsByUserID(ctx context.Context, userID int64) (int64, error)
@@ -117,6 +118,7 @@ type Querier interface {
 	GetWorkByID(ctx context.Context, id int64) (GetWorkByIDRow, error)
 	GetWorkForArchiveByID(ctx context.Context, id int64) (GetWorkForArchiveByIDRow, error)
 	GetWorkForEditByID(ctx context.Context, id int64) (GetWorkForEditByIDRow, error)
+	GetWorkForEpisodeListByID(ctx context.Context, id int64) (GetWorkForEpisodeListByIDRow, error)
 	IncrementSignInCodeAttempts(ctx context.Context, id int64) error
 	IncrementSignUpCodeAttempts(ctx context.Context, id int64) error
 	InvalidateSignUpCodesByEmail(ctx context.Context, email string) error
@@ -132,6 +134,7 @@ type Querier interface {
 	ListAnimeOfficialAccountsByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]AnimeOfficialAccount, error)
 	ListAnimeSeasonsByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]AnimeSeason, error)
 	ListAnimesByIDs(ctx context.Context, dollar_1 []int64) ([]Anime, error)
+	ListDBEpisodes(ctx context.Context, arg ListDBEpisodesParams) ([]ListDBEpisodesRow, error)
 	ListDBWorks(ctx context.Context, arg ListDBWorksParams) ([]ListDBWorksRow, error)
 	ListEpisodeIDsAfter(ctx context.Context, arg ListEpisodeIDsAfterParams) ([]int64, error)
 	ListEpisodesForAnimeSyncByIDs(ctx context.Context, dollar_1 []int64) ([]ListEpisodesForAnimeSyncByIDsRow, error)

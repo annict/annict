@@ -842,7 +842,7 @@ func actionButtons(data IndexPageData, work viewmodel.DBWorkListItem) templ.Comp
 				return templ_7745c5c3_Err
 			}
 			switch work.Status {
-			case viewmodel.WorkStatusPublished:
+			case viewmodel.PublishingStatusPublished:
 				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 65, "<a href=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -873,7 +873,7 @@ func actionButtons(data IndexPageData, work viewmodel.DBWorkListItem) templ.Comp
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-			case viewmodel.WorkStatusArchived:
+			case viewmodel.PublishingStatusArchived:
 				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 68, "<button type=\"button\" class=\"btn rounded-full\" data-variant=\"success\" data-size=\"sm\" hx-delete=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err

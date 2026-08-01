@@ -75,14 +75,6 @@ templ headCommon(meta viewmodel.PageMeta, assetVersion string) {
 	<link rel="stylesheet" href={ "/static/css/style.css?v=" + assetVersion }/>
 
 	<script defer src={ "/static/js/vendor/htmx-4.0.0-alpha8.min.js" }></script>
-	<script>
-		(() => {
-			try {
-				if (matchMedia("(prefers-color-scheme: dark)").matches) {
-					document.documentElement.classList.add("dark");
-				}
-			} catch (_) {}
-		})();
-	</script>
+	@ThemeScript()
 	<script type="module" src={ "/static/js/main.js?v=" + assetVersion }></script>
 }

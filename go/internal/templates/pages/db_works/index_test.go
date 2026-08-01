@@ -62,7 +62,7 @@ func TestIndex_WithWorks(t *testing.T) {
 				Syobocal:      viewmodel.ExternalServiceLink{Label: "3524", URL: "http://cal.syoboi.jp/tid/3524"},
 				MalAnime:      viewmodel.ExternalServiceLink{Label: "20", URL: "https://myanimelist.net/anime/20"},
 				WatchersCount: 100,
-				Status:        viewmodel.WorkStatusPublished,
+				Status:        viewmodel.PublishingStatusPublished,
 				Image:         viewmodel.NewWorkImage(`{"master":{"id":"workimage/1/image/master-abc.jpg","storage":"store"}}`, testutil.NewTestImageHelper()),
 			},
 			{
@@ -73,7 +73,7 @@ func TestIndex_WithWorks(t *testing.T) {
 				Media:         "OVA",
 				Season:        "",
 				WatchersCount: 50,
-				Status:        viewmodel.WorkStatusPublished,
+				Status:        viewmodel.PublishingStatusPublished,
 				Image:         viewmodel.NewWorkImage("", testutil.NewTestImageHelper()),
 			},
 		},
@@ -269,8 +269,8 @@ func TestExternalServiceLinkI18n(t *testing.T) {
 // [Ja] actionColumnWorks は操作列テスト用に、公開中と非公開の作品を 1 件ずつ返す。
 func actionColumnWorks() []viewmodel.DBWorkListItem {
 	return []viewmodel.DBWorkListItem{
-		{ID: 1, Title: "公開作品", Media: "TV", Status: viewmodel.WorkStatusPublished},
-		{ID: 2, Title: "非公開作品", Media: "TV", Status: viewmodel.WorkStatusArchived},
+		{ID: 1, Title: "公開作品", Media: "TV", Status: viewmodel.PublishingStatusPublished},
+		{ID: 2, Title: "非公開作品", Media: "TV", Status: viewmodel.PublishingStatusArchived},
 	}
 }
 

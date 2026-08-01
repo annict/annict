@@ -76,6 +76,15 @@ SELECT
 FROM works
 WHERE id = $1;
 
+-- name: GetWorkForEpisodeListByID :one
+SELECT
+    id,
+    title,
+    no_episodes
+FROM works
+WHERE id = $1
+    AND deleted_at IS NULL;
+
 -- name: ListDBWorks :many
 SELECT
     w.id,
@@ -96,7 +105,8 @@ LEFT JOIN work_images wi ON w.id = wi.work_id
 WHERE w.deleted_at IS NULL
     AND (sqlc.narg('filter_no_episodes')::boolean IS NOT TRUE OR (
         w.no_episodes = false AND NOT EXISTS (
-            SELECT 1 FROM episodes e WHERE e.work_id = w.id AND e.status = 'published'
+            SELECT 1 FROM episodes e
+            WHERE e.work_id = w.id AND e.deleted_at IS NULL AND e.unpublished_at IS NULL
         )
     ))
     AND (sqlc.narg('filter_no_image')::boolean IS NOT TRUE OR wi.id IS NULL)
@@ -118,7 +128,7 @@ WHERE w.deleted_at IS NULL
     )
 ORDER BY w.id DESC
 LIMIT sqlc.arg('per_page')
-OFFSET sqlc.arg('page_offset');
+OFFSET sqlc.arg('page_offset')::bigint;
 
 -- name: CountDBWorks :one
 SELECT COUNT(*)
@@ -127,7 +137,8 @@ LEFT JOIN work_images wi ON w.id = wi.work_id
 WHERE w.deleted_at IS NULL
     AND (sqlc.narg('filter_no_episodes')::boolean IS NOT TRUE OR (
         w.no_episodes = false AND NOT EXISTS (
-            SELECT 1 FROM episodes e WHERE e.work_id = w.id AND e.status = 'published'
+            SELECT 1 FROM episodes e
+            WHERE e.work_id = w.id AND e.deleted_at IS NULL AND e.unpublished_at IS NULL
         )
     ))
     AND (sqlc.narg('filter_no_image')::boolean IS NOT TRUE OR wi.id IS NULL)

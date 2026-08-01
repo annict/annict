@@ -2,6 +2,7 @@ package repository_test
 
 import (
 	"context"
+	"math"
 	"testing"
 	"time"
 
@@ -407,6 +408,34 @@ func TestWorkRepository_ListForDB(t *testing.T) {
 		// no_episodes=trueの作品（エピソード不要とマーク済み）
 		testutil.NewWorkBuilder(t, tx).WithTitle("エピソード不要").WithNoEpisodes(true).Build()
 
+		// A work whose only episode is archived (unpublished_at) counts as having no
+		// episodes, matching the Rails scope Work.with_no_episodes. The dormant
+		// episodes.status of such a row stays 'published', so reading it would hide
+		// the work from this filter.
+		//
+		// [Ja] 唯一のエピソードが非公開 (unpublished_at) の作品は、Rails の
+		// Work.with_no_episodes と同じくエピソードが無い作品として扱う。この行の休眠
+		// episodes.status は 'published' のままなので、それを読むと本フィルタから漏れる。
+		workUnpublishedEp := testutil.NewWorkBuilder(t, tx).WithTitle("非公開エピソードのみ").Build()
+		testutil.NewEpisodeBuilder(t, tx, workUnpublishedEp).WithUnpublishedAt(time.Now()).Build()
+
+		// A work whose only episode is soft-deleted (deleted_at) also counts as having no episodes.
+		//
+		// [Ja] 唯一のエピソードが削除済み (deleted_at) の作品も、エピソードが無い作品として扱う。
+		workDeletedEp := testutil.NewWorkBuilder(t, tx).WithTitle("削除エピソードのみ").Build()
+		testutil.NewEpisodeBuilder(t, tx, workDeletedEp).WithDeletedAt(time.Now()).Build()
+
+		// A live episode whose dormant status alone says 'deleted' still counts as an
+		// episode here, since the filter reads the timestamps and not episodes.status.
+		//
+		// [Ja] 休眠 status だけが 'deleted' の生きたエピソードも、ここではエピソードとして
+		// 数える (絞り込みが読むのは timestamps であり episodes.status ではないため)。
+		workDormantStatusEp := testutil.NewWorkBuilder(t, tx).WithTitle("休眠 status だけ削除").Build()
+		dormantStatusEpID := testutil.NewEpisodeBuilder(t, tx, workDormantStatusEp).Build()
+		if _, err := tx.Exec(`UPDATE episodes SET status = 'deleted' WHERE id = $1`, int64(dormantStatusEpID)); err != nil {
+			t.Fatalf("休眠 status の更新に失敗: %v", err)
+		}
+
 		repo := repository.NewWorkRepository(query.New(db)).WithTx(tx)
 		items, err := repo.ListForDB(ctx, repository.DBWorkListParams{
 			FilterNoEpisodes: true,
@@ -417,20 +446,20 @@ func TestWorkRepository_ListForDB(t *testing.T) {
 			t.Fatalf("ListForDB() error = %v", err)
 		}
 
-		found := false
+		titles := make(map[string]bool, len(items))
 		for _, item := range items {
-			if item.Title == "エピソードあり" {
-				t.Error("work with episodes should not be returned")
-			}
-			if item.Title == "エピソード不要" {
-				t.Error("work with no_episodes=true should not be returned")
-			}
-			if item.Title == "エピソードなし" {
-				found = true
+			titles[item.Title] = true
+		}
+
+		for _, title := range []string{"エピソードなし", "非公開エピソードのみ", "削除エピソードのみ"} {
+			if !titles[title] {
+				t.Errorf("work %q should be returned", title)
 			}
 		}
-		if !found {
-			t.Error("work without episodes should be returned")
+		for _, title := range []string{"エピソードあり", "エピソード不要", "休眠 status だけ削除"} {
+			if titles[title] {
+				t.Errorf("work %q should not be returned", title)
+			}
 		}
 	})
 
@@ -678,6 +707,24 @@ func TestWorkRepository_ListForDB(t *testing.T) {
 			t.Error("pages should not have overlapping items")
 		}
 	})
+
+	t.Run("境界値: 最大ページ番号でも OFFSET がオーバーフローしない", func(t *testing.T) {
+		t.Parallel()
+		db, tx := testutil.SetupTx(t)
+		ctx := context.Background()
+
+		repo := repository.NewWorkRepository(query.New(db)).WithTx(tx)
+		got, err := repo.ListForDB(ctx, repository.DBWorkListParams{
+			Page:    math.MaxInt32,
+			PerPage: 100,
+		})
+		if err != nil {
+			t.Fatalf("ListForDB() error = %v", err)
+		}
+		if len(got) != 0 {
+			t.Errorf("len(got) = %d, want 0", len(got))
+		}
+	})
 }
 
 // TestWorkRepository_CountForDB はDB管理画面用の作品数取得をテスト
@@ -735,6 +782,41 @@ func TestWorkRepository_CountForDB(t *testing.T) {
 
 		if count != 1 {
 			t.Errorf("CountForDB() = %d, want 1", count)
+		}
+	})
+
+	t.Run("正常系: エピソード未登録フィルタのカウントも旧層の timestamps で決まる", func(t *testing.T) {
+		t.Parallel()
+		db, tx := testutil.SetupTx(t)
+		ctx := context.Background()
+
+		// The count must use the same filter as the list. A distinctive season isolates
+		// it from works that GetTestDB-based tests commit to the shared DB.
+		//
+		// [Ja] 件数は一覧と同じ絞り込みを使う。GetTestDB を使うテストが共有 DB にコミット
+		// する作品から隔離するため固有のシーズンを使う。
+		const isolatedYear = 1902
+		newWork := func(title string) model.WorkID {
+			return testutil.NewWorkBuilder(t, tx).WithTitle(title).WithSeason(isolatedYear, testutil.SeasonSpring).Build()
+		}
+
+		newWork("エピソードなし")
+		testutil.NewEpisodeBuilder(t, tx, newWork("非公開エピソードのみ")).WithUnpublishedAt(time.Now()).Build()
+		testutil.NewEpisodeBuilder(t, tx, newWork("削除エピソードのみ")).WithDeletedAt(time.Now()).Build()
+		testutil.NewEpisodeBuilder(t, tx, newWork("エピソードあり")).Build()
+
+		repo := repository.NewWorkRepository(query.New(db)).WithTx(tx)
+		count, err := repo.CountForDB(ctx, repository.DBWorkListParams{
+			FilterNoEpisodes: true,
+			SeasonYears:      []int32{isolatedYear},
+			SeasonNames:      []int32{testutil.SeasonSpring},
+		})
+		if err != nil {
+			t.Fatalf("CountForDB() error = %v", err)
+		}
+
+		if count != 3 {
+			t.Errorf("CountForDB() = %d, want 3 (公開エピソードを持つ作品だけを除外)", count)
 		}
 	})
 
@@ -1235,6 +1317,71 @@ func TestWorkRepository_GetForArchiveByID(t *testing.T) {
 		work, err := repo.GetForArchiveByID(context.Background(), model.WorkID(999999999))
 		if err != nil {
 			t.Fatalf("GetForArchiveByID() error = %v", err)
+		}
+		if work != nil {
+			t.Errorf("work = %v, want nil", work)
+		}
+	})
+}
+
+func TestWorkRepository_GetForEpisodeListByID(t *testing.T) {
+	t.Parallel()
+
+	t.Run("見出しとサブナビに必要なカラムを取得できる", func(t *testing.T) {
+		t.Parallel()
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewWorkRepository(query.New(db).WithTx(tx))
+
+		workID := testutil.NewWorkBuilder(t, tx).
+			WithTitle("エピソード一覧の親作品").
+			WithNoEpisodes(true).
+			Build()
+
+		work, err := repo.GetForEpisodeListByID(context.Background(), workID)
+		if err != nil {
+			t.Fatalf("GetForEpisodeListByID() error = %v", err)
+		}
+		if work == nil {
+			t.Fatal("work should not be nil")
+		}
+		if work.ID != workID {
+			t.Errorf("work.ID = %d, want %d", work.ID, workID)
+		}
+		if work.Title != "エピソード一覧の親作品" {
+			t.Errorf("work.Title = %q, want %q", work.Title, "エピソード一覧の親作品")
+		}
+		if !work.NoEpisodes {
+			t.Error("work.NoEpisodes = false, want true")
+		}
+	})
+
+	t.Run("削除済みの作品は (nil, nil)", func(t *testing.T) {
+		t.Parallel()
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewWorkRepository(query.New(db).WithTx(tx))
+
+		workID := testutil.NewWorkBuilder(t, tx).
+			WithTitle("削除済みの親作品").
+			WithDeletedAt(time.Now()).
+			Build()
+
+		work, err := repo.GetForEpisodeListByID(context.Background(), workID)
+		if err != nil {
+			t.Fatalf("GetForEpisodeListByID() error = %v", err)
+		}
+		if work != nil {
+			t.Errorf("work = %v, want nil", work)
+		}
+	})
+
+	t.Run("存在しないIDは (nil, nil)", func(t *testing.T) {
+		t.Parallel()
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewWorkRepository(query.New(db).WithTx(tx))
+
+		work, err := repo.GetForEpisodeListByID(context.Background(), model.WorkID(999999999))
+		if err != nil {
+			t.Fatalf("GetForEpisodeListByID() error = %v", err)
 		}
 		if work != nil {
 			t.Errorf("work = %v, want nil", work)
