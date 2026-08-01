@@ -326,31 +326,40 @@ func (uc *SyncEpisodesToAnimesUsecase) applyPlan(ctx context.Context, plan episo
 }
 
 // animeCreateParamsFromEpisode maps an episode onto the layer-1 anime attributes
-// for a fresh insert. Episodes only source title / title_ro / title_en / status /
-// archive_message; every other column (title_kana, the title_alter family, media,
-// release_status, synopsis family) stays at its zero value (NULL).
+// for a fresh insert. Episodes only source title / title_ro / title_en / status,
+// with status derived from the episode's unpublished_at / deleted_at timestamps (not
+// the dormant episodes.status). Every other column (title_kana, the title_alter
+// family, media, release_status, synopsis family, archive_message) stays at its zero
+// value (NULL); archive_message is animes-only and not sourced from episodes.
 //
 // [Ja] animeCreateParamsFromEpisode は episode を新規挿入用の第 1 層 anime 属性に写像する。
-// episode が源泉とするのは title / title_ro / title_en / status / archive_message のみで、
-// 他のカラム (title_kana、title_alter 系、media、release_status、synopsis 系) はゼロ値
-// (NULL) のまま残す。
+// episode が源泉とするのは title / title_ro / title_en / status のみで、status は episode の
+// unpublished_at / deleted_at タイムスタンプから導出する (休眠している episodes.status では
+// ない)。他のカラム (title_kana、title_alter 系、media、release_status、synopsis 系、
+// archive_message) はゼロ値 (NULL) のまま残す。archive_message は animes 専用で episode
+// からは源泉としない。
 func animeCreateParamsFromEpisode(e *model.Episode) repository.CreateAnimeParams {
 	return repository.CreateAnimeParams{
 		Title:          nullStringFromStringPtr(e.Title),
 		TitleRo:        nullStringFromNonEmpty(e.TitleRo),
 		TitleEn:        nullStringFromNonEmpty(e.TitleEn),
-		Status:         episodeStatusToAnimeStatus(e.Status),
-		ArchiveMessage: nullStringFromStringPtr(e.ArchiveMessage),
+		Status:         animeStatusFromEpisodeStatus(e.DerivedStatus()),
+		ArchiveMessage: sql.NullString{},
 	}
 }
 
 // animeUpdateParamsFromEpisode maps an episode onto the layer-1 anime attributes for
-// an update. The columns episodes do not source are carried over from the existing
-// row so the sync never clobbers values set elsewhere (an editor, or another loader).
+// an update. status is derived from the episode's unpublished_at / deleted_at
+// timestamps (not the dormant episodes.status). The columns episodes do not source
+// (archive_message etc.) are carried over from the existing row so the sync never
+// clobbers values set elsewhere (an editor, or another loader); archive_message is
+// animes-only.
 //
 // [Ja] animeUpdateParamsFromEpisode は episode を更新用の第 1 層 anime 属性に写像する。
-// episode が源泉としないカラムは既存行から引き継ぎ、同期が他所 (編集者や別ローダー) で
-// 設定された値を上書きしないようにする。
+// status は episode の unpublished_at / deleted_at タイムスタンプから導出する (休眠して
+// いる episodes.status ではない)。episode が源泉としないカラム (archive_message など) は
+// 既存行から引き継ぎ、同期が他所 (編集者や別ローダー) で設定された値を上書きしないように
+// する。archive_message は animes 専用。
 func animeUpdateParamsFromEpisode(e *model.Episode, existing *model.Anime) repository.UpdateAnimeParams {
 	return repository.UpdateAnimeParams{
 		ID:               existing.ID,
@@ -368,8 +377,8 @@ func animeUpdateParamsFromEpisode(e *model.Episode, existing *model.Anime) repos
 		SynopsisEn:       existing.SynopsisEn,
 		SynopsisSource:   existing.SynopsisSource,
 		SynopsisSourceEn: existing.SynopsisSourceEn,
-		Status:           episodeStatusToAnimeStatus(e.Status),
-		ArchiveMessage:   nullStringFromStringPtr(e.ArchiveMessage),
+		Status:           animeStatusFromEpisodeStatus(e.DerivedStatus()),
+		ArchiveMessage:   existing.ArchiveMessage,
 	}
 }
 
@@ -422,20 +431,23 @@ func episodeClassificationChanged(existing *model.AnimeClassification, desired r
 	return !equal
 }
 
-// episodeStatusToAnimeStatus maps episode_status onto anime_status. The three
-// episode values are a subset of anime_status; merged is anime-only and never
-// produced here.
+// animeStatusFromEpisodeStatus maps an episode's derived lifecycle status onto the
+// anime status enum. It is a pure enum adapter, like animeStatusFromWorkStatus: the
+// timestamp-to-status priority lives in model.Episode.DerivedStatus, so an animes-first
+// write of status = archived / deleted is not clobbered back to published on the next
+// reconciliation. merged is anime-only and never produced from an episode.
 //
-// [Ja] episodeStatusToAnimeStatus は episode_status を anime_status に写像する。
-// episode の 3 値は anime_status の部分集合で、merged は anime 専用でありここでは生成されない。
-func episodeStatusToAnimeStatus(status model.EpisodeStatus) model.AnimeStatus {
-	switch status {
-	case model.EpisodeStatusPublished:
-		return model.AnimeStatusPublished
-	case model.EpisodeStatusArchived:
-		return model.AnimeStatusArchived
+// [Ja] animeStatusFromEpisodeStatus は episode の導出ライフサイクル状態を anime の status
+// enum に写像する。animeStatusFromWorkStatus と同じ純粋な enum アダプタで、timestamps から
+// status への優先順位は model.Episode.DerivedStatus に集約されているため、animes ベースで
+// status = archived / deleted を書いても次回のリコンシリエーションで published に戻され
+// ない。merged は anime 専用で episode からは生成されない。
+func animeStatusFromEpisodeStatus(s model.EpisodeStatus) model.AnimeStatus {
+	switch s {
 	case model.EpisodeStatusDeleted:
 		return model.AnimeStatusDeleted
+	case model.EpisodeStatusArchived:
+		return model.AnimeStatusArchived
 	default:
 		return model.AnimeStatusPublished
 	}

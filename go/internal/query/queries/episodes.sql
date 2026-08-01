@@ -10,6 +10,8 @@ SELECT
     e.raw_number,
     e.status,
     e.archive_message,
+    e.unpublished_at,
+    e.deleted_at,
     e.anime_id,
     w.anime_id AS parent_anime_id
 FROM episodes e

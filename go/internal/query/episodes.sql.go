@@ -60,6 +60,8 @@ SELECT
     e.raw_number,
     e.status,
     e.archive_message,
+    e.unpublished_at,
+    e.deleted_at,
     e.anime_id,
     w.anime_id AS parent_anime_id
 FROM episodes e
@@ -79,6 +81,8 @@ type ListEpisodesForAnimeSyncByIDsRow struct {
 	RawNumber      sql.NullFloat64 `db:"raw_number"`
 	Status         EpisodeStatus   `db:"status"`
 	ArchiveMessage sql.NullString  `db:"archive_message"`
+	UnpublishedAt  sql.NullTime    `db:"unpublished_at"`
+	DeletedAt      sql.NullTime    `db:"deleted_at"`
 	AnimeID        sql.NullInt64   `db:"anime_id"`
 	ParentAnimeID  sql.NullInt64   `db:"parent_anime_id"`
 }
@@ -103,6 +107,8 @@ func (q *Queries) ListEpisodesForAnimeSyncByIDs(ctx context.Context, dollar_1 []
 			&i.RawNumber,
 			&i.Status,
 			&i.ArchiveMessage,
+			&i.UnpublishedAt,
+			&i.DeletedAt,
 			&i.AnimeID,
 			&i.ParentAnimeID,
 		); err != nil {

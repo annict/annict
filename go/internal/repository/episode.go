@@ -114,14 +114,15 @@ func (r *EpisodeRepository) UpdateAnimeID(ctx context.Context, episodeID model.E
 }
 
 // episodeFromAnimeSyncRow converts an anime-sync query row into *model.Episode.
-// The nullable columns (title / number / raw_number / archive_message / anime_id /
-// parent_anime_id) are carried as pointers so the sync usecase can distinguish
-// "absent" from a zero value, mirroring how workFromAnimeSyncRow handles works.
+// The nullable columns (title / number / raw_number / archive_message /
+// unpublished_at / deleted_at / anime_id / parent_anime_id) are carried as pointers
+// so the sync usecase can distinguish "absent" from a zero value, mirroring how
+// workFromAnimeSyncRow handles works.
 //
 // [Ja] episodeFromAnimeSyncRow は anime 同期の query 行を *model.Episode に変換する。
-// NULL 許容カラム (title / number / raw_number / archive_message / anime_id /
-// parent_anime_id) はポインタで持ち、同期 UseCase が「未設定」とゼロ値を区別できる
-// ようにする。workFromAnimeSyncRow が works を扱うのと同じ方針。
+// NULL 許容カラム (title / number / raw_number / archive_message / unpublished_at /
+// deleted_at / anime_id / parent_anime_id) はポインタで持ち、同期 UseCase が「未設定」と
+// ゼロ値を区別できるようにする。workFromAnimeSyncRow が works を扱うのと同じ方針。
 func episodeFromAnimeSyncRow(row query.ListEpisodesForAnimeSyncByIDsRow) *model.Episode {
 	episode := &model.Episode{
 		ID:         model.EpisodeID(row.ID),
@@ -146,6 +147,14 @@ func episodeFromAnimeSyncRow(row query.ListEpisodesForAnimeSyncByIDsRow) *model.
 	if row.ArchiveMessage.Valid {
 		archiveMessage := row.ArchiveMessage.String
 		episode.ArchiveMessage = &archiveMessage
+	}
+	if row.UnpublishedAt.Valid {
+		unpublishedAt := row.UnpublishedAt.Time
+		episode.UnpublishedAt = &unpublishedAt
+	}
+	if row.DeletedAt.Valid {
+		deletedAt := row.DeletedAt.Time
+		episode.DeletedAt = &deletedAt
 	}
 	if row.AnimeID.Valid {
 		animeID := model.AnimeID(row.AnimeID.Int64)

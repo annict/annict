@@ -241,11 +241,13 @@ func (b *WorkBuilder) Build() model.WorkID {
 
 // EpisodeBuilder はエピソードテストデータのビルダー
 type EpisodeBuilder struct {
-	tx     *sql.Tx
-	t      *testing.T
-	workID model.WorkID
-	number string
-	title  string
+	tx            *sql.Tx
+	t             *testing.T
+	workID        model.WorkID
+	number        string
+	title         string
+	unpublishedAt *time.Time
+	deletedAt     *time.Time
 }
 
 // NewEpisodeBuilder は新しいEpisodeBuilderを作成します
@@ -271,6 +273,26 @@ func (b *EpisodeBuilder) WithTitle(title string) *EpisodeBuilder {
 	return b
 }
 
+// WithUnpublishedAt sets episodes.unpublished_at, marking the episode as archived
+// (Unpublishable). The default leaves it NULL (published).
+//
+// [Ja] WithUnpublishedAt は episodes.unpublished_at を設定し、エピソードを非公開
+// (アーカイブ、Unpublishable) とします。既定では NULL (公開) のままにします。
+func (b *EpisodeBuilder) WithUnpublishedAt(unpublishedAt time.Time) *EpisodeBuilder {
+	b.unpublishedAt = &unpublishedAt
+	return b
+}
+
+// WithDeletedAt sets episodes.deleted_at, marking the episode as soft-deleted
+// (SoftDeletable). The default leaves it NULL (not deleted).
+//
+// [Ja] WithDeletedAt は episodes.deleted_at を設定し、エピソードをソフトデリート
+// (SoftDeletable) とします。既定では NULL (未削除) のままにします。
+func (b *EpisodeBuilder) WithDeletedAt(deletedAt time.Time) *EpisodeBuilder {
+	b.deletedAt = &deletedAt
+	return b
+}
+
 // Build はテスト用のエピソードデータをデータベースに作成します
 func (b *EpisodeBuilder) Build() model.EpisodeID {
 	b.t.Helper()
@@ -278,12 +300,22 @@ func (b *EpisodeBuilder) Build() model.EpisodeID {
 	query := `
 		INSERT INTO episodes (
 			work_id, number, sort_number, title,
+			unpublished_at, deleted_at,
 			created_at, updated_at
 		) VALUES (
 			$1, $2, $3, $4,
-			$5, $6
+			$5, $6,
+			$7, $8
 		) RETURNING id
 	`
+
+	var unpublishedAt, deletedAt interface{}
+	if b.unpublishedAt != nil {
+		unpublishedAt = *b.unpublishedAt
+	}
+	if b.deletedAt != nil {
+		deletedAt = *b.deletedAt
+	}
 
 	var id int64
 	sortNumber := 10 // デフォルトのソート番号
@@ -293,6 +325,8 @@ func (b *EpisodeBuilder) Build() model.EpisodeID {
 		b.number,
 		sortNumber,
 		b.title,
+		unpublishedAt,
+		deletedAt,
 		time.Now(),
 		time.Now(),
 	).Scan(&id)
