@@ -12,6 +12,96 @@ import (
 	"github.com/lib/pq"
 )
 
+const countDBEpisodes = `-- name: CountDBEpisodes :one
+SELECT COUNT(*)
+FROM episodes e
+WHERE e.work_id = $1
+    AND e.deleted_at IS NULL
+`
+
+func (q *Queries) CountDBEpisodes(ctx context.Context, workID int64) (int64, error) {
+	row := q.db.QueryRowContext(ctx, countDBEpisodes, workID)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
+const listDBEpisodes = `-- name: ListDBEpisodes :many
+SELECT
+    e.id,
+    e.work_id,
+    e.number,
+    e.raw_number,
+    e.sort_number,
+    e.title,
+    e.title_ro,
+    e.title_en,
+    e.episode_records_count,
+    e.unpublished_at,
+    e.deleted_at
+FROM episodes e
+WHERE e.work_id = $1
+    AND e.deleted_at IS NULL
+ORDER BY e.sort_number DESC, e.id DESC
+LIMIT $3
+OFFSET $2::bigint
+`
+
+type ListDBEpisodesParams struct {
+	WorkID     int64 `db:"work_id"`
+	PageOffset int64 `db:"page_offset"`
+	PerPage    int32 `db:"per_page"`
+}
+
+type ListDBEpisodesRow struct {
+	ID                  int64           `db:"id"`
+	WorkID              int64           `db:"work_id"`
+	Number              sql.NullString  `db:"number"`
+	RawNumber           sql.NullFloat64 `db:"raw_number"`
+	SortNumber          int32           `db:"sort_number"`
+	Title               sql.NullString  `db:"title"`
+	TitleRo             string          `db:"title_ro"`
+	TitleEn             string          `db:"title_en"`
+	EpisodeRecordsCount int32           `db:"episode_records_count"`
+	UnpublishedAt       sql.NullTime    `db:"unpublished_at"`
+	DeletedAt           sql.NullTime    `db:"deleted_at"`
+}
+
+func (q *Queries) ListDBEpisodes(ctx context.Context, arg ListDBEpisodesParams) ([]ListDBEpisodesRow, error) {
+	rows, err := q.db.QueryContext(ctx, listDBEpisodes, arg.WorkID, arg.PageOffset, arg.PerPage)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []ListDBEpisodesRow{}
+	for rows.Next() {
+		var i ListDBEpisodesRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.WorkID,
+			&i.Number,
+			&i.RawNumber,
+			&i.SortNumber,
+			&i.Title,
+			&i.TitleRo,
+			&i.TitleEn,
+			&i.EpisodeRecordsCount,
+			&i.UnpublishedAt,
+			&i.DeletedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listEpisodeIDsAfter = `-- name: ListEpisodeIDsAfter :many
 SELECT id
 FROM episodes

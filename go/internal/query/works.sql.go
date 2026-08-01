@@ -458,6 +458,29 @@ func (q *Queries) GetWorkForEditByID(ctx context.Context, id int64) (GetWorkForE
 	return i, err
 }
 
+const getWorkForEpisodeListByID = `-- name: GetWorkForEpisodeListByID :one
+SELECT
+    id,
+    title,
+    no_episodes
+FROM works
+WHERE id = $1
+    AND deleted_at IS NULL
+`
+
+type GetWorkForEpisodeListByIDRow struct {
+	ID         int64  `db:"id"`
+	Title      string `db:"title"`
+	NoEpisodes bool   `db:"no_episodes"`
+}
+
+func (q *Queries) GetWorkForEpisodeListByID(ctx context.Context, id int64) (GetWorkForEpisodeListByIDRow, error) {
+	row := q.db.QueryRowContext(ctx, getWorkForEpisodeListByID, id)
+	var i GetWorkForEpisodeListByIDRow
+	err := row.Scan(&i.ID, &i.Title, &i.NoEpisodes)
+	return i, err
+}
+
 const listDBWorks = `-- name: ListDBWorks :many
 SELECT
     w.id,

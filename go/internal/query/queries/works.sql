@@ -76,6 +76,15 @@ SELECT
 FROM works
 WHERE id = $1;
 
+-- name: GetWorkForEpisodeListByID :one
+SELECT
+    id,
+    title,
+    no_episodes
+FROM works
+WHERE id = $1
+    AND deleted_at IS NULL;
+
 -- name: ListDBWorks :many
 SELECT
     w.id,

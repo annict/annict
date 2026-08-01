@@ -1324,6 +1324,71 @@ func TestWorkRepository_GetForArchiveByID(t *testing.T) {
 	})
 }
 
+func TestWorkRepository_GetForEpisodeListByID(t *testing.T) {
+	t.Parallel()
+
+	t.Run("見出しとサブナビに必要なカラムを取得できる", func(t *testing.T) {
+		t.Parallel()
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewWorkRepository(query.New(db).WithTx(tx))
+
+		workID := testutil.NewWorkBuilder(t, tx).
+			WithTitle("エピソード一覧の親作品").
+			WithNoEpisodes(true).
+			Build()
+
+		work, err := repo.GetForEpisodeListByID(context.Background(), workID)
+		if err != nil {
+			t.Fatalf("GetForEpisodeListByID() error = %v", err)
+		}
+		if work == nil {
+			t.Fatal("work should not be nil")
+		}
+		if work.ID != workID {
+			t.Errorf("work.ID = %d, want %d", work.ID, workID)
+		}
+		if work.Title != "エピソード一覧の親作品" {
+			t.Errorf("work.Title = %q, want %q", work.Title, "エピソード一覧の親作品")
+		}
+		if !work.NoEpisodes {
+			t.Error("work.NoEpisodes = false, want true")
+		}
+	})
+
+	t.Run("削除済みの作品は (nil, nil)", func(t *testing.T) {
+		t.Parallel()
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewWorkRepository(query.New(db).WithTx(tx))
+
+		workID := testutil.NewWorkBuilder(t, tx).
+			WithTitle("削除済みの親作品").
+			WithDeletedAt(time.Now()).
+			Build()
+
+		work, err := repo.GetForEpisodeListByID(context.Background(), workID)
+		if err != nil {
+			t.Fatalf("GetForEpisodeListByID() error = %v", err)
+		}
+		if work != nil {
+			t.Errorf("work = %v, want nil", work)
+		}
+	})
+
+	t.Run("存在しないIDは (nil, nil)", func(t *testing.T) {
+		t.Parallel()
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewWorkRepository(query.New(db).WithTx(tx))
+
+		work, err := repo.GetForEpisodeListByID(context.Background(), model.WorkID(999999999))
+		if err != nil {
+			t.Fatalf("GetForEpisodeListByID() error = %v", err)
+		}
+		if work != nil {
+			t.Errorf("work = %v, want nil", work)
+		}
+	})
+}
+
 // TestWorkRepository_UpdateUnpublishedAt は unpublished_at の設定・クリアをテスト
 func TestWorkRepository_UpdateUnpublishedAt(t *testing.T) {
 	t.Parallel()
