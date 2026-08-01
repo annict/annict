@@ -118,7 +118,7 @@ WHERE w.deleted_at IS NULL
     )
 ORDER BY w.id DESC
 LIMIT sqlc.arg('per_page')
-OFFSET sqlc.arg('page_offset');
+OFFSET sqlc.arg('page_offset')::bigint;
 
 -- name: CountDBWorks :one
 SELECT COUNT(*)

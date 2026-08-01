@@ -499,7 +499,7 @@ WHERE w.deleted_at IS NULL
     )
 ORDER BY w.id DESC
 LIMIT $10
-OFFSET $9
+OFFSET $9::bigint
 `
 
 type ListDBWorksParams struct {
@@ -511,7 +511,7 @@ type ListDBWorksParams struct {
 	SeasonName       sql.NullInt32 `db:"season_name"`
 	SeasonYears      []int32       `db:"season_years"`
 	SeasonNames      []int32       `db:"season_names"`
-	PageOffset       int32         `db:"page_offset"`
+	PageOffset       int64         `db:"page_offset"`
 	PerPage          int32         `db:"per_page"`
 }
 

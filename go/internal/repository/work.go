@@ -251,7 +251,14 @@ type DBWorkListParams struct {
 }
 
 func (r *WorkRepository) ListForDB(ctx context.Context, params DBWorkListParams) ([]*model.Work, error) {
-	offset := (params.Page - 1) * params.PerPage
+	// Widen before multiplying: callers accept any page number that fits in an int32, and at
+	// 100 rows per page the int32 product wraps negative inside that range, which PostgreSQL
+	// rejects as an OFFSET.
+	//
+	// [Ja] 乗算の前に幅を広げる。呼び出し側は int32 に収まるページ番号をすべて受け付けるが、
+	// 1 ページ 100 件では int32 同士の積がその範囲内で負に折り返し、PostgreSQL がその OFFSET
+	// を拒否するため。
+	offset := int64(params.Page-1) * int64(params.PerPage)
 
 	rows, err := r.queries.ListDBWorks(ctx, query.ListDBWorksParams{
 		FilterNoEpisodes: sql.NullBool{Bool: params.FilterNoEpisodes, Valid: params.FilterNoEpisodes},

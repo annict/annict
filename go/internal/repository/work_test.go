@@ -2,6 +2,7 @@ package repository_test
 
 import (
 	"context"
+	"math"
 	"testing"
 	"time"
 
@@ -676,6 +677,24 @@ func TestWorkRepository_ListForDB(t *testing.T) {
 		// ページ1とページ2で重複がないことを確認
 		if page1[0].ID == page2[0].ID || page1[1].ID == page2[0].ID {
 			t.Error("pages should not have overlapping items")
+		}
+	})
+
+	t.Run("境界値: 最大ページ番号でも OFFSET がオーバーフローしない", func(t *testing.T) {
+		t.Parallel()
+		db, tx := testutil.SetupTx(t)
+		ctx := context.Background()
+
+		repo := repository.NewWorkRepository(query.New(db)).WithTx(tx)
+		got, err := repo.ListForDB(ctx, repository.DBWorkListParams{
+			Page:    math.MaxInt32,
+			PerPage: 100,
+		})
+		if err != nil {
+			t.Fatalf("ListForDB() error = %v", err)
+		}
+		if len(got) != 0 {
+			t.Errorf("len(got) = %d, want 0", len(got))
 		}
 	})
 }
