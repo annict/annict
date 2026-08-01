@@ -1570,3 +1570,23 @@ other = "ユーザーが見つかりませんでした"
 [error_work_not_found]
 description = "作品が見つからない場合のエラーメッセージ"
 other = "作品が見つかりませんでした"
+
+[error_not_found_title]
+description = "汎用404エラーページのタイトル"
+other = "ページが見つかりません"
+
+[error_not_found_message]
+description = "汎用404エラーページの説明"
+other = "ページが移動または削除された可能性があります。"
+
+[error_internal_server_title]
+description = "汎用500エラーページのタイトル"
+other = "問題が発生しました"
+
+[error_internal_server_message]
+description = "汎用500エラーページの説明"
+other = "しばらくしてから、もう一度お試しください。"
+
+[error_back_to_home]
+description = "汎用エラーページからホームへ戻るリンク"
+other = "ホームに戻る"

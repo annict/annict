@@ -1,0 +1,28 @@
+package errors
+
+// HTTPError renders the body of a shared HTTP error page (404, 500 and the like).
+//
+// It styles itself with the classes layouts.Error defines inline rather than with the
+// application's utility and component classes, so the page stands on its own without the
+// application stylesheet. Error, in the same package, keeps using those application classes
+// because it renders inside the regular layouts.
+//
+// [Ja] HTTPError は共通の HTTP エラーページ (404・500 など) の本文を描画する。
+//
+// スタイルにはアプリケーションのユーティリティ・コンポーネントのクラスではなく、
+// layouts.Error がインラインで定義するクラスを使う。アプリケーションのスタイルシートなしで
+// ページが成立するようにするため。同じパッケージの Error は通常のレイアウトの内側で描画する
+// ため、引き続きアプリケーションのクラスを使う。
+templ HTTPError(errorTitle string, errorMessage string, backLink *BackLink) {
+	<div class="error-card">
+		<h1 class="error-title">{ errorTitle }</h1>
+		if errorMessage != "" {
+			<p class="error-message">{ errorMessage }</p>
+		}
+		if backLink != nil {
+			<a href={ templ.URL(backLink.URL) } class="error-link">
+				{ backLink.Text }
+			</a>
+		}
+	</div>
+}

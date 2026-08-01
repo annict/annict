@@ -1571,3 +1571,23 @@ other = "User not found"
 [error_work_not_found]
 description = "Message shown when a work is not found"
 other = "Work not found"
+
+[error_not_found_title]
+description = "Title of the generic 404 error page"
+other = "Page not found"
+
+[error_not_found_message]
+description = "Explanation on the generic 404 error page"
+other = "The page may have been moved or deleted."
+
+[error_internal_server_title]
+description = "Title of the generic 500 error page"
+other = "Something went wrong"
+
+[error_internal_server_message]
+description = "Explanation on the generic 500 error page"
+other = "Please try again later."
+
+[error_back_to_home]
+description = "Link from a generic error page to the home page"
+other = "Back to Home"

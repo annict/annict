@@ -1,0 +1,144 @@
+package layouts
+
+import (
+	"github.com/annict/annict/go/internal/templates"
+	"github.com/annict/annict/go/internal/templates/components"
+	"github.com/annict/annict/go/internal/viewmodel"
+)
+
+// Error renders the standalone document used by HTTP error responses. title is the page name
+// without the site suffix, which this layout appends.
+//
+// The page is deliberately self-contained: its styles are inlined rather than loaded from the
+// application stylesheet, and it pulls in no application JavaScript or external metadata. An
+// error page is what a reader sees when something has already gone wrong, so it is kept free
+// of dependencies that could fail or be served stale alongside the failure.
+//
+// [Ja] Error は HTTP エラーレスポンスで使う単独の文書を描画する。title はサイトのサフィックス
+// を含まないページ名で、サフィックスは本レイアウトが付ける。
+//
+// このページは意図的に自己完結させている。スタイルはアプリケーションのスタイルシートから
+// 読み込まずインラインに持ち、アプリケーションの JavaScript や外部向けメタデータも含めない。
+// エラーページは既に何かが失敗した状態で読み手が目にする画面のため、その失敗と一緒に壊れたり
+// 古いまま配信されたりしうる依存を持たせない。
+templ Error(title string, content templ.Component) {
+	<!DOCTYPE html>
+	<html lang={ templates.Locale(ctx) }>
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+			<meta name="color-scheme" content="light dark"/>
+			<title>{ title + viewmodel.TitleSuffix }</title>
+			<link rel="shortcut icon" href="/static/images/favicon.png" type="image/png"/>
+			// The palette mirrors the application theme tokens (web/style.css) closely enough
+			// that the page does not read as a different site. The values are literals because
+			// the point of this layout is to depend on nothing that is built or deployed
+			// separately.
+			//
+			// [Ja] 配色はアプリケーションのテーマトークン (web/style.css) に、別サイトに見えない
+			// 程度に寄せている。値をリテラルで書いているのは、別途ビルド・デプロイされるものに
+			// 一切依存しないことが本レイアウトの主旨のため。
+			<style>
+				:root {
+					color-scheme: light dark;
+					--error-bg: #f5f5f4;
+					--error-card-bg: #fafafa;
+					--error-fg: #0c0a09;
+					--error-muted-fg: #57534e;
+					--error-border: #e7e5e4;
+					--error-accent: #de204c;
+					--error-accent-hover: #bc143e;
+					--error-accent-fg: #ffffff;
+				}
+
+				.dark {
+					--error-bg: #1c1917;
+					--error-card-bg: #292524;
+					--error-fg: #e7e5e4;
+					--error-muted-fg: #a8a29e;
+					--error-border: #44403c;
+					--error-accent: #de204c;
+					--error-accent-hover: #de204c;
+					--error-accent-fg: #ffffff;
+				}
+
+				*, *::before, *::after {
+					box-sizing: border-box;
+				}
+
+				body {
+					margin: 0;
+					background-color: var(--error-bg);
+					color: var(--error-fg);
+					font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+					line-height: 1.6;
+				}
+
+				.error-page {
+					/*
+					 * The dvh value follows the visible height as a mobile toolbar
+					 * expands and collapses; the vh value above it is the fallback for
+					 * engines that do not know dvh, which would otherwise drop the
+					 * declaration and leave the card at the top of the page.
+					 *
+					 * [Ja] dvh の値はモバイルのツールバーの伸縮に合わせて可視領域の高さに
+					 * 追随する。その上の vh は dvh を解さないエンジン向けのフォールバック
+					 * (無いと宣言ごと捨てられ、カードがページ上端に寄ってしまう)。
+					 */
+					min-height: 100vh;
+					min-height: 100dvh;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					padding: 1rem;
+				}
+
+				.error-card {
+					width: 100%;
+					max-width: 28rem;
+					padding: 1.5rem;
+					border: 1px solid var(--error-border);
+					border-radius: 0.625rem;
+					background-color: var(--error-card-bg);
+				}
+
+				.error-title {
+					margin: 0;
+					font-size: 1.5rem;
+					line-height: 1.3;
+				}
+
+				.error-message {
+					margin: 0.75rem 0 0;
+					color: var(--error-muted-fg);
+				}
+
+				.error-link {
+					display: inline-block;
+					margin-top: 1.5rem;
+					padding: 0.5rem 1rem;
+					border-radius: 0.5rem;
+					background-color: var(--error-accent);
+					color: var(--error-accent-fg);
+					font-weight: 500;
+					text-decoration: none;
+				}
+
+				.error-link:hover {
+					background-color: var(--error-accent-hover);
+				}
+
+				.error-link:focus-visible {
+					outline: 2px solid var(--error-accent);
+					outline-offset: 2px;
+				}
+			</style>
+			@components.ThemeScript()
+		</head>
+		<body>
+			<main class="error-page">
+				@content
+			</main>
+		</body>
+	</html>
+}

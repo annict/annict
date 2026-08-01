@@ -40,6 +40,26 @@ type PageMeta struct {
 // [Ja] turnstileOrigin は components.Turnstile がウィジェットのスクリプトを読み込むオリジン。
 const turnstileOrigin = "https://challenges.cloudflare.com"
 
+const (
+	// TitleSuffix is appended to every document title so a browser tab names the site it
+	// belongs to. DBTitleSuffix does the same for the Annict DB admin pages, keeping them
+	// distinguishable from the public ones in tabs and history.
+	//
+	// Both are exported because a few pages build their title outside PageMeta: the shared
+	// HTTP error pages render without one. Keeping the literals here means renaming the site
+	// touches one place.
+	//
+	// [Ja] TitleSuffix はすべての文書タイトルの末尾に付き、ブラウザのタブがどのサイトの
+	// ページかを示せるようにする。DBTitleSuffix は Annict DB 管理画面に対して同じ役割を
+	// 果たし、タブや履歴で公開画面と区別できるようにする。
+	//
+	// いずれも公開しているのは、PageMeta の外でタイトルを組み立てるページがあるため
+	// (共通の HTTP エラーページは PageMeta を持たずに描画する)。リテラルをここに集約して
+	// おくことで、サイト名の変更が 1 箇所で済む。
+	TitleSuffix   = " | Annict"
+	DBTitleSuffix = " | Annict DB"
+)
+
 // DefaultPageMeta returns the default metadata for the page served at requestPath. The title
 // and the description follow the language detected from the context, and the title carries
 // the " | Annict" suffix.
@@ -63,7 +83,7 @@ const turnstileOrigin = "https://challenges.cloudflare.com"
 // 場合 (フィルタやページネーション) で、後者は呼び出し側がパース・正規化した値だけを付ける。
 func DefaultPageMeta(ctx context.Context, cfg *config.Config, requestPath string) PageMeta {
 	ogImageURL := cfg.AppURL() + "/static/images/og-image.png"
-	title := i18n.T(ctx, "default_title") + " | Annict"
+	title := i18n.T(ctx, "default_title") + TitleSuffix
 	return PageMeta{
 		Title:        title,
 		Description:  i18n.T(ctx, "default_description"),
