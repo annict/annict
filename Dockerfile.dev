@@ -211,6 +211,17 @@ RUN mkdir -p /go/.cache/go-build /go/pkg && \
 # [Ja] mise のデータディレクトリの権限設定
 RUN chown -R ${USER_ID}:${GROUP_ID} /mise
 
+# --- 1Password CLI config directory ---
+# The op-config named volume is mounted here. Docker copies ownership from the
+# image only when the volume is created empty, so the directory has to exist
+# with the developer user's ownership beforehand for `op` to write its config.
+#
+# [Ja] 名前付きボリューム op-config をここにマウントする。Docker がイメージ側の
+# 所有権を引き継ぐのはボリュームが空で新規作成されたときだけのため、`op` が設定を
+# 書き込めるよう開発者ユーザー所有のディレクトリを事前に用意しておく。
+RUN install -d -o ${USER_ID} -g ${GROUP_ID} /home/${USERNAME}/.config && \
+    install -d -o ${USER_ID} -g ${GROUP_ID} -m 0700 /home/${USERNAME}/.config/op
+
 WORKDIR /workspace
 USER ${USERNAME}
 
