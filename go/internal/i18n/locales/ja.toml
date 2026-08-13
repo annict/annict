@@ -1249,9 +1249,17 @@ other = "日本語タイトル"
 description = "エピソードの英語タイトルに付けるスクリーンリーダー向けラベル"
 other = "英語タイトル"
 
+[db_episodes_index_table_prev_episode_label]
+description = "テーブルヘッダー - 前のエピソード"
+other = "前のエピソード"
+
 [db_episodes_index_table_sort_number_label]
 description = "テーブルヘッダー - 並び順"
 other = "並び順"
+
+[db_episodes_index_table_records_count_label]
+description = "テーブルヘッダー - 記録数"
+other = "記録数"
 
 [db_episodes_index_table_status_label]
 description = "テーブルヘッダー - 状態"
@@ -1264,6 +1272,144 @@ other = "エピソード {{.ID}} を新しいタブで開く"
 [db_episodes_index_empty]
 description = "エピソードなしメッセージ"
 other = "エピソードが見つかりませんでした"
+
+[db_episodes_index_generation_heading]
+description = "エピソードの自動生成の案内の見出し"
+other = "エピソードの自動生成"
+
+[db_episodes_index_generation_planned_label]
+description = "自動生成の案内 - 作品の予定総話数のラベル"
+other = "予定総話数"
+
+[db_episodes_index_generation_published_label]
+description = "自動生成の案内 - 公開中のエピソード数のラベル"
+other = "公開中のエピソード数"
+
+[db_episodes_index_generation_generatable_label]
+description = "自動生成の案内 - 自動生成で到達できる最大話数のラベル"
+other = "生成可能な最大話数"
+
+[db_episodes_index_generation_unknown]
+description = "自動生成の案内 - 予定総話数が未登録のときに表示する値"
+other = "不明"
+
+[db_episodes_index_new_link]
+description = "エピソード一覧から一括作成フォームへのリンク"
+other = "新規登録"
+
+[db_episodes_new_title]
+description = "エピソード一括作成ページのタイトル"
+other = "エピソード登録"
+
+[db_episodes_new_document_title]
+description = "作品を識別できるエピソード一括作成の文書タイトル"
+other = "{{.WorkTitle}} | エピソード登録"
+
+[db_episodes_new_back_to_list_link]
+description = "一括作成ページからエピソード一覧へのリンク"
+other = "一覧に戻る"
+
+[db_episodes_new_rows_label]
+description = "一括作成ページの入力欄 (1 行 1 エピソード) のラベル"
+other = "エピソード"
+
+[db_episodes_new_submit]
+description = "エピソード一括作成ページの送信ボタン"
+other = "登録する"
+
+[db_episodes_new_restriction_title]
+description = "エピソードを手動登録できないときに表示する警告の見出し"
+other = "手動登録できません"
+
+[db_episodes_new_restricted_episodes_filled]
+description = "作品の予定話数までエピソードが登録済みのときに表示する警告"
+other = "話数分のエピソードがすでに登録されているため、新規登録はできません。"
+
+[db_episodes_new_restricted_slots_exist]
+description = "放送予定からエピソードが自動生成されるときに表示する警告"
+other = "放送予定が登録されているため、手動によるエピソード登録はできません。エピソードは放送予定の情報を使って自動的に生成されます。"
+
+[db_episodes_new_format_heading]
+description = "一括作成ページの入力形式の案内の見出し"
+other = "入力の形式"
+
+[db_episodes_new_format_description]
+description = "一括作成ページの入力形式の説明 (列の順序と複数行の入力)"
+other = "1 行につき 1 エピソードを、表示用話数・数値話数・タイトルの順にカンマ (,) で区切って入力します。数値話数には話数から文字や記号を取り除いた数字を入力します (総集編などには 5.5 のような小数も使えます)。行を改行で並べると、複数のエピソードをまとめて登録できます。"
+
+[db_episodes_new_format_example]
+description = "一括作成ページの入力形式の例 (3 列すべてを入力した行)"
+other = """#1,1,教えてティーチャー
+#2,2,もう、お婿にいけません"""
+
+[db_episodes_new_format_partial_description]
+description = "一括作成ページの入力形式の説明 (一部の列だけを入力する場合)"
+other = "一部の列だけを登録することもできます。タイトルの無いエピソードは話数のあとにカンマだけを入力し、話数の無いエピソードはタイトルの前にカンマだけを入力します。"
+
+[db_episodes_new_format_partial_example]
+description = "一括作成ページの入力形式の例 (話数のみの行とタイトルのみの行)"
+other = """#1,1,
+,,双子が3人?"""
+
+[db_episodes_edit_title]
+description = "エピソード編集ページのタイトル"
+other = "エピソードを編集"
+
+[db_episodes_edit_document_title]
+description = "表示名のある作品に属するエピソードを識別できる編集ページの文書タイトル"
+other = "{{.EpisodeIdentifier}} | {{.WorkTitle}} | エピソードを編集"
+
+[db_episodes_edit_document_title_without_work]
+description = "作品に表示名が無くてもエピソードを識別できる編集ページの文書タイトル"
+other = "{{.EpisodeIdentifier}} | エピソードを編集"
+
+[db_episodes_edit_identifier]
+description = "表示用話数のあるエピソードを編集ページの文書タイトルで識別するラベル"
+other = "{{.Number}} (ID: {{.EpisodeID}})"
+
+[db_episodes_edit_identifier_without_number]
+description = "表示用話数が無いエピソードを編集ページの文書タイトルで識別するラベル"
+other = "ID: {{.EpisodeID}}"
+
+[db_episodes_edit_back_to_list_link]
+description = "エピソード編集ページからエピソード一覧へのリンク"
+other = "一覧に戻る"
+
+[db_episodes_edit_number_label]
+description = "フォームラベル - 表示用話数"
+other = "表示用話数"
+
+[db_episodes_edit_number_hint]
+description = "エピソード編集ページの表示用話数の書き方の案内"
+other = "「第1話」「Lesson 1」など、その作品で使われている表記に合わせて入力します。表記がわからないときは「第1話」の形で入力します。"
+
+[db_episodes_edit_raw_number_label]
+description = "フォームラベル - 数値話数"
+other = "数値話数"
+
+[db_episodes_edit_raw_number_hint]
+description = "エピソード編集ページの数値話数の書き方の案内"
+other = "話数から文字や記号を取り除いた数字を入力します。総集編などが間に挟まる場合は 5.5 のような小数も使えます。"
+
+[db_episodes_edit_sort_number_label]
+description = "フォームラベル - 並び順"
+other = "並び順"
+
+[db_episodes_edit_sort_number_hint]
+description = "エピソード編集ページの並び順の書き方の案内"
+other = "この番号の小さい順にエピソードを並べます。あとから「12.5 話」が追加されても間に入れられるよう、「話数 × 100」 (第12話なら 1200) のように間隔を空けて入力します。"
+
+[db_episodes_edit_title_label]
+description = "フォームラベル - タイトル"
+other = "タイトル"
+
+[db_episodes_edit_title_en_label]
+description = "フォームラベル - タイトル (英語)"
+other = "タイトル (英語)"
+
+[db_episodes_edit_submit]
+description = "エピソード編集ページの送信ボタン"
+other = "更新する"
 
 # DB作品フォーム共通 (新規・編集で共有)
 [db_works_form_external_link_label]
@@ -1544,6 +1690,10 @@ other = "作品を公開しました"
 description = "作品削除成功メッセージ"
 other = "作品を削除しました"
 
+[flash_db_episodes_created]
+description = "エピソード一括作成成功メッセージ"
+other = "エピソードを作成しました"
+
 # バリデーション共通メッセージ
 [validation_required]
 description = "必須フィールドのバリデーションエラー"
@@ -1593,6 +1743,38 @@ other = "{{.MaxLength}}文字以内で入力してください"
 description = "同じタイトルの作品が既に登録されている"
 other = "このタイトルの作品は既に登録されています"
 
+[validation_episode_row_error]
+description = "エピソードの行入力のエラーに行番号を添える書式"
+other = "{{.Line}} 行目: {{.Message}}"
+
+[validation_episode_rows_too_many]
+description = "エピソード一括作成フォームの行数が1回の上限を超えている"
+other = "一度に登録するエピソードは{{.MaxRows}}件以内にしてください"
+
+[validation_episode_manual_creation_episodes_filled]
+description = "予定話数までエピソードが登録済みの作品にエピソードを登録しようとした"
+other = "話数分のエピソードがすでに登録されているため、エピソードを登録できません"
+
+[validation_episode_manual_creation_slots_exist]
+description = "放送予定からエピソードが自動生成される作品にエピソードを手動で登録しようとした"
+other = "放送予定が登録されているため、エピソードを手動で登録できません"
+
+[validation_episode_row_number_or_title_required]
+description = "エピソードの行に表示用話数もタイトルも入力されていない"
+other = "表示用話数かタイトルのいずれかを入力してください"
+
+[validation_episode_row_number_too_long]
+description = "エピソードの行の表示用話数が文字数の上限を超えている"
+other = "表示用話数は{{.MaxLength}}文字以内で入力してください"
+
+[validation_episode_row_title_too_long]
+description = "エピソードの行のタイトルが文字数の上限を超えている"
+other = "タイトルは{{.MaxLength}}文字以内で入力してください"
+
+[validation_episode_row_raw_number_invalid]
+description = "エピソードの行の数値話数が数値ではない"
+other = "数値話数は数値で入力してください"
+
 [media_tv]
 description = "メディア種別 - TV"
 other = "TV"
@@ -1627,6 +1809,10 @@ description = "フッター - 特商法表記"
 other = "特商法表記"
 
 # エラー共通メッセージ
+[error_forbidden]
+description = "操作する権限が無い場合のエラーメッセージ"
+other = "この操作を行う権限がありません"
+
 [error_user_not_found]
 description = "ユーザーが見つからない場合のエラーメッセージ"
 other = "ユーザーが見つかりませんでした"
@@ -1635,6 +1821,10 @@ other = "ユーザーが見つかりませんでした"
 description = "作品が見つからない場合のエラーメッセージ"
 other = "作品が見つかりませんでした"
 
+[error_episode_not_found]
+description = "エピソードが見つからない場合のエラーメッセージ"
+other = "エピソードが見つかりませんでした"
+
 [error_not_found_title]
 description = "汎用404エラーページのタイトル"
 other = "ページが見つかりません"
@@ -1642,6 +1832,14 @@ other = "ページが見つかりません"
 [error_not_found_message]
 description = "汎用404エラーページの説明"
 other = "ページが移動または削除された可能性があります。"
+
+[error_forbidden_title]
+description = "汎用403エラーページのタイトル"
+other = "アクセスできません"
+
+[error_forbidden_message]
+description = "汎用403エラーページの説明"
+other = "この操作を行う権限がありません。"
 
 [error_internal_server_title]
 description = "汎用500エラーページのタイトル"
