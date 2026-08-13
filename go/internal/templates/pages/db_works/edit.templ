@@ -139,13 +139,13 @@ templ Edit(data EditPageData) {
 							}
 							if data.hasFieldError("title") {
 								aria-invalid="true"
-								aria-describedby={ fieldErrorIDs(data.FormErrors, "title") }
+								aria-describedby={ components.FieldErrorIDs(data.FormErrors, "title") }
 							}
 							value={ data.FormInput.Val("title") }
 						/>
 						if data.hasFieldError("title") {
 							for i, errorMsg := range data.FormErrors.Fields["title"] {
-								<p id={ fieldErrorID("title", i) } role="alert">{ errorMsg }</p>
+								<p id={ components.FieldErrorID("title", i) } role="alert">{ errorMsg }</p>
 							}
 						}
 					</div>
@@ -200,7 +200,7 @@ templ Edit(data EditPageData) {
 							required
 							if data.hasFieldError("media") {
 								aria-invalid="true"
-								aria-describedby={ fieldErrorIDs(data.FormErrors, "media") }
+								aria-describedby={ components.FieldErrorIDs(data.FormErrors, "media") }
 							}
 						>
 							<option value=""></option>
@@ -215,7 +215,7 @@ templ Edit(data EditPageData) {
 
 						if data.hasFieldError("media") {
 							for i, errorMsg := range data.FormErrors.Fields["media"] {
-								<p id={ fieldErrorID("media", i) } role="alert">{ errorMsg }</p>
+								<p id={ components.FieldErrorID("media", i) } role="alert">{ errorMsg }</p>
 							}
 						}
 					</div>
@@ -236,7 +236,7 @@ templ Edit(data EditPageData) {
 							class="select w-full"
 							if data.hasFieldError("season_year") {
 								aria-invalid="true"
-								aria-describedby={ fieldErrorIDs(data.FormErrors, "season_year") }
+								aria-describedby={ components.FieldErrorIDs(data.FormErrors, "season_year") }
 							}
 						>
 							<option value=""></option>
@@ -251,7 +251,7 @@ templ Edit(data EditPageData) {
 
 						if data.hasFieldError("season_year") {
 							for i, errorMsg := range data.FormErrors.Fields["season_year"] {
-								<p id={ fieldErrorID("season_year", i) } role="alert">{ errorMsg }</p>
+								<p id={ components.FieldErrorID("season_year", i) } role="alert">{ errorMsg }</p>
 							}
 						}
 					</div>
@@ -272,7 +272,7 @@ templ Edit(data EditPageData) {
 							class="select w-full"
 							if data.hasFieldError("season_name") {
 								aria-invalid="true"
-								aria-describedby={ fieldErrorIDs(data.FormErrors, "season_name") }
+								aria-describedby={ components.FieldErrorIDs(data.FormErrors, "season_name") }
 							}
 						>
 							<option value=""></option>
@@ -287,7 +287,7 @@ templ Edit(data EditPageData) {
 
 						if data.hasFieldError("season_name") {
 							for i, errorMsg := range data.FormErrors.Fields["season_name"] {
-								<p id={ fieldErrorID("season_name", i) } role="alert">{ errorMsg }</p>
+								<p id={ components.FieldErrorID("season_name", i) } role="alert">{ errorMsg }</p>
 							}
 						}
 					</div>
@@ -309,14 +309,14 @@ templ Edit(data EditPageData) {
 							class="input"
 							if data.hasFieldError("started_on") {
 								aria-invalid="true"
-								aria-describedby={ fieldErrorIDs(data.FormErrors, "started_on") }
+								aria-describedby={ components.FieldErrorIDs(data.FormErrors, "started_on") }
 							}
 							value={ data.FormInput.Val("started_on") }
 						/>
 
 						if data.hasFieldError("started_on") {
 							for i, errorMsg := range data.FormErrors.Fields["started_on"] {
-								<p id={ fieldErrorID("started_on", i) } role="alert">{ errorMsg }</p>
+								<p id={ components.FieldErrorID("started_on", i) } role="alert">{ errorMsg }</p>
 							}
 						}
 					</div>
@@ -338,14 +338,14 @@ templ Edit(data EditPageData) {
 							class="input"
 							if data.hasFieldError("ended_on") {
 								aria-invalid="true"
-								aria-describedby={ fieldErrorIDs(data.FormErrors, "ended_on") }
+								aria-describedby={ components.FieldErrorIDs(data.FormErrors, "ended_on") }
 							}
 							value={ data.FormInput.Val("ended_on") }
 						/>
 
 						if data.hasFieldError("ended_on") {
 							for i, errorMsg := range data.FormErrors.Fields["ended_on"] {
-								<p id={ fieldErrorID("ended_on", i) } role="alert">{ errorMsg }</p>
+								<p id={ components.FieldErrorID("ended_on", i) } role="alert">{ errorMsg }</p>
 							}
 						}
 					</div>
@@ -371,13 +371,13 @@ templ Edit(data EditPageData) {
 							class="input"
 							if data.hasFieldError("official_site_url") {
 								aria-invalid="true"
-								aria-describedby={ fieldErrorIDs(data.FormErrors, "official_site_url") }
+								aria-describedby={ components.FieldErrorIDs(data.FormErrors, "official_site_url") }
 							}
 							value={ data.FormInput.Val("official_site_url") }
 						/>
 						if data.hasFieldError("official_site_url") {
 							for i, errorMsg := range data.FormErrors.Fields["official_site_url"] {
-								<p id={ fieldErrorID("official_site_url", i) } role="alert">{ errorMsg }</p>
+								<p id={ components.FieldErrorID("official_site_url", i) } role="alert">{ errorMsg }</p>
 							}
 						}
 					</div>
@@ -403,14 +403,14 @@ templ Edit(data EditPageData) {
 							class="input"
 							if data.hasFieldError("official_site_url_en") {
 								aria-invalid="true"
-								aria-describedby={ fieldErrorIDs(data.FormErrors, "official_site_url_en") }
+								aria-describedby={ components.FieldErrorIDs(data.FormErrors, "official_site_url_en") }
 							}
 							value={ data.FormInput.Val("official_site_url_en") }
 						/>
 
 						if data.hasFieldError("official_site_url_en") {
 							for i, errorMsg := range data.FormErrors.Fields["official_site_url_en"] {
-								<p id={ fieldErrorID("official_site_url_en", i) } role="alert">{ errorMsg }</p>
+								<p id={ components.FieldErrorID("official_site_url_en", i) } role="alert">{ errorMsg }</p>
 							}
 						}
 					</div>
@@ -436,14 +436,14 @@ templ Edit(data EditPageData) {
 							class="input"
 							if data.hasFieldError("wikipedia_url") {
 								aria-invalid="true"
-								aria-describedby={ fieldErrorIDs(data.FormErrors, "wikipedia_url") }
+								aria-describedby={ components.FieldErrorIDs(data.FormErrors, "wikipedia_url") }
 							}
 							value={ data.FormInput.Val("wikipedia_url") }
 						/>
 
 						if data.hasFieldError("wikipedia_url") {
 							for i, errorMsg := range data.FormErrors.Fields["wikipedia_url"] {
-								<p id={ fieldErrorID("wikipedia_url", i) } role="alert">{ errorMsg }</p>
+								<p id={ components.FieldErrorID("wikipedia_url", i) } role="alert">{ errorMsg }</p>
 							}
 						}
 					</div>
@@ -469,14 +469,14 @@ templ Edit(data EditPageData) {
 							class="input"
 							if data.hasFieldError("wikipedia_url_en") {
 								aria-invalid="true"
-								aria-describedby={ fieldErrorIDs(data.FormErrors, "wikipedia_url_en") }
+								aria-describedby={ components.FieldErrorIDs(data.FormErrors, "wikipedia_url_en") }
 							}
 							value={ data.FormInput.Val("wikipedia_url_en") }
 						/>
 
 						if data.hasFieldError("wikipedia_url_en") {
 							for i, errorMsg := range data.FormErrors.Fields["wikipedia_url_en"] {
-								<p id={ fieldErrorID("wikipedia_url_en", i) } role="alert">{ errorMsg }</p>
+								<p id={ components.FieldErrorID("wikipedia_url_en", i) } role="alert">{ errorMsg }</p>
 							}
 						}
 					</div>
@@ -503,7 +503,7 @@ templ Edit(data EditPageData) {
 								if data.hasFieldError("twitter_username") {
 									aria-invalid="true"
 								}
-								aria-describedby={ fieldErrorIDsWithPrefix(data.FormErrors, "twitter_username", "twitter_username-prefix") }
+								aria-describedby={ components.FieldDescribedBy(data.FormErrors, "twitter_username", "twitter_username-prefix") }
 								value={ data.FormInput.Val("twitter_username") }
 							/>
 
@@ -517,7 +517,7 @@ templ Edit(data EditPageData) {
 
 						if data.hasFieldError("twitter_username") {
 							for i, errorMsg := range data.FormErrors.Fields["twitter_username"] {
-								<p id={ fieldErrorID("twitter_username", i) } role="alert">{ errorMsg }</p>
+								<p id={ components.FieldErrorID("twitter_username", i) } role="alert">{ errorMsg }</p>
 							}
 						}
 					</div>
@@ -544,7 +544,7 @@ templ Edit(data EditPageData) {
 								if data.hasFieldError("twitter_hashtag") {
 									aria-invalid="true"
 								}
-								aria-describedby={ fieldErrorIDsWithPrefix(data.FormErrors, "twitter_hashtag", "twitter_hashtag-prefix") }
+								aria-describedby={ components.FieldDescribedBy(data.FormErrors, "twitter_hashtag", "twitter_hashtag-prefix") }
 								value={ data.FormInput.Val("twitter_hashtag") }
 							/>
 
@@ -553,7 +553,7 @@ templ Edit(data EditPageData) {
 
 						if data.hasFieldError("twitter_hashtag") {
 							for i, errorMsg := range data.FormErrors.Fields["twitter_hashtag"] {
-								<p id={ fieldErrorID("twitter_hashtag", i) } role="alert">{ errorMsg }</p>
+								<p id={ components.FieldErrorID("twitter_hashtag", i) } role="alert">{ errorMsg }</p>
 							}
 						}
 					</div>
@@ -579,14 +579,14 @@ templ Edit(data EditPageData) {
 							class="input"
 							if data.hasFieldError("sc_tid") {
 								aria-invalid="true"
-								aria-describedby={ fieldErrorIDs(data.FormErrors, "sc_tid") }
+								aria-describedby={ components.FieldErrorIDs(data.FormErrors, "sc_tid") }
 							}
 							value={ data.FormInput.Val("sc_tid") }
 						/>
 
 						if data.hasFieldError("sc_tid") {
 							for i, errorMsg := range data.FormErrors.Fields["sc_tid"] {
-								<p id={ fieldErrorID("sc_tid", i) } role="alert">{ errorMsg }</p>
+								<p id={ components.FieldErrorID("sc_tid", i) } role="alert">{ errorMsg }</p>
 							}
 						}
 					</div>
@@ -612,14 +612,14 @@ templ Edit(data EditPageData) {
 							class="input"
 							if data.hasFieldError("mal_anime_id") {
 								aria-invalid="true"
-								aria-describedby={ fieldErrorIDs(data.FormErrors, "mal_anime_id") }
+								aria-describedby={ components.FieldErrorIDs(data.FormErrors, "mal_anime_id") }
 							}
 							value={ data.FormInput.Val("mal_anime_id") }
 						/>
 
 						if data.hasFieldError("mal_anime_id") {
 							for i, errorMsg := range data.FormErrors.Fields["mal_anime_id"] {
-								<p id={ fieldErrorID("mal_anime_id", i) } role="alert">{ errorMsg }</p>
+								<p id={ components.FieldErrorID("mal_anime_id", i) } role="alert">{ errorMsg }</p>
 							}
 						}
 					</div>
@@ -655,14 +655,14 @@ templ Edit(data EditPageData) {
 							class="input"
 							if data.hasFieldError("synopsis_source") {
 								aria-invalid="true"
-								aria-describedby={ fieldErrorIDs(data.FormErrors, "synopsis_source") }
+								aria-describedby={ components.FieldErrorIDs(data.FormErrors, "synopsis_source") }
 							}
 							value={ data.FormInput.Val("synopsis_source") }
 						/>
 
 						if data.hasFieldError("synopsis_source") {
 							for i, errorMsg := range data.FormErrors.Fields["synopsis_source"] {
-								<p id={ fieldErrorID("synopsis_source", i) } role="alert">{ errorMsg }</p>
+								<p id={ components.FieldErrorID("synopsis_source", i) } role="alert">{ errorMsg }</p>
 							}
 						}
 					</div>
@@ -698,14 +698,14 @@ templ Edit(data EditPageData) {
 							class="input"
 							if data.hasFieldError("synopsis_source_en") {
 								aria-invalid="true"
-								aria-describedby={ fieldErrorIDs(data.FormErrors, "synopsis_source_en") }
+								aria-describedby={ components.FieldErrorIDs(data.FormErrors, "synopsis_source_en") }
 							}
 							value={ data.FormInput.Val("synopsis_source_en") }
 						/>
 
 						if data.hasFieldError("synopsis_source_en") {
 							for i, errorMsg := range data.FormErrors.Fields["synopsis_source_en"] {
-								<p id={ fieldErrorID("synopsis_source_en", i) } role="alert">{ errorMsg }</p>
+								<p id={ components.FieldErrorID("synopsis_source_en", i) } role="alert">{ errorMsg }</p>
 							}
 						}
 					</div>
@@ -727,14 +727,14 @@ templ Edit(data EditPageData) {
 							class="input"
 							if data.hasFieldError("manual_episodes_count") {
 								aria-invalid="true"
-								aria-describedby={ fieldErrorIDs(data.FormErrors, "manual_episodes_count") }
+								aria-describedby={ components.FieldErrorIDs(data.FormErrors, "manual_episodes_count") }
 							}
 							value={ data.FormInput.Val("manual_episodes_count") }
 						/>
 
 						if data.hasFieldError("manual_episodes_count") {
 							for i, errorMsg := range data.FormErrors.Fields["manual_episodes_count"] {
-								<p id={ fieldErrorID("manual_episodes_count", i) } role="alert">{ errorMsg }</p>
+								<p id={ components.FieldErrorID("manual_episodes_count", i) } role="alert">{ errorMsg }</p>
 							}
 						}
 					</div>
@@ -756,14 +756,14 @@ templ Edit(data EditPageData) {
 							class="input"
 							if data.hasFieldError("start_episode_raw_number") {
 								aria-invalid="true"
-								aria-describedby={ fieldErrorIDs(data.FormErrors, "start_episode_raw_number") }
+								aria-describedby={ components.FieldErrorIDs(data.FormErrors, "start_episode_raw_number") }
 							}
 							value={ data.FormInput.Val("start_episode_raw_number") }
 						/>
 
 						if data.hasFieldError("start_episode_raw_number") {
 							for i, errorMsg := range data.FormErrors.Fields["start_episode_raw_number"] {
-								<p id={ fieldErrorID("start_episode_raw_number", i) } role="alert">{ errorMsg }</p>
+								<p id={ components.FieldErrorID("start_episode_raw_number", i) } role="alert">{ errorMsg }</p>
 							}
 						}
 					</div>
@@ -784,7 +784,7 @@ templ Edit(data EditPageData) {
 							class="select w-full"
 							if data.hasFieldError("number_format_id") {
 								aria-invalid="true"
-								aria-describedby={ fieldErrorIDs(data.FormErrors, "number_format_id") }
+								aria-describedby={ components.FieldErrorIDs(data.FormErrors, "number_format_id") }
 							}
 						>
 							<option value=""></option>
@@ -799,7 +799,7 @@ templ Edit(data EditPageData) {
 
 						if data.hasFieldError("number_format_id") {
 							for i, errorMsg := range data.FormErrors.Fields["number_format_id"] {
-								<p id={ fieldErrorID("number_format_id", i) } role="alert">{ errorMsg }</p>
+								<p id={ components.FieldErrorID("number_format_id", i) } role="alert">{ errorMsg }</p>
 							}
 						}
 					</div>
