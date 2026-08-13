@@ -6,11 +6,72 @@ package components
 //lint:file-ignore SA4006 This context is only used if a nested component is present.
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/a-h/templ"
 	templruntime "github.com/a-h/templ/runtime"
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/templates"
 )
+
+// FieldErrorID returns the id of the index-th error message element of field. Each message is
+// rendered as its own element so every paragraph stays a direct child of the Basecoat field,
+// which is what carries the error styling.
+//
+// It lives beside FormErrors because the summary and the per-field messages describe the same
+// errors: one id format shared by every form keeps the ids a form emits from drifting apart.
+//
+// [Ja] FieldErrorID はフィールドの index 番目のエラーメッセージ要素の id を返す。各メッセージを
+// 個別の要素として描画することで、すべての段落が Basecoat の field の直下に残る。エラーの
+// スタイルはその位置に対して当たるため。
+//
+// FormErrors と同居させているのは、要約とフィールドごとのメッセージが同じエラーを説明する
+// ためである。id の書式を全フォームで 1 つに保つことで、フォームが出す id がばらけない。
+func FieldErrorID(field string, index int) string {
+	return fmt.Sprintf("%s-error-%d", field, index+1)
+}
+
+// FieldErrorIDs returns the ids of every error message element of field, joined for
+// aria-describedby. A field can collect more than one message, and describedby has to name
+// them all: naming only the first would leave the rest unannounced.
+//
+// [Ja] FieldErrorIDs はフィールドのすべてのエラーメッセージ要素の id を aria-describedby 用に
+// 連結して返す。1 つのフィールドが複数のメッセージを持つことがあり、describedby はその全部を
+// 指す必要がある。先頭だけを指すと残りが読み上げられないため。
+func FieldErrorIDs(formErrors *model.ValidationError, field string) string {
+	if formErrors == nil {
+		return ""
+	}
+
+	messages := formErrors.Fields[field]
+	ids := make([]string, len(messages))
+	for i := range messages {
+		ids[i] = FieldErrorID(field, i)
+	}
+
+	return strings.Join(ids, " ")
+}
+
+// FieldDescribedBy returns the aria-describedby value for a field whose input carries a
+// standing description of its own, such as a hint paragraph stating how the value is written
+// or the @ / # prefix shown inside its input group. The description comes first so it is read
+// before the errors, and the error ids are appended rather than replacing it: dropping the
+// description on error would take away the instruction exactly when the value needs
+// correcting.
+//
+// [Ja] FieldDescribedBy は、入力欄が常設の説明 (値の書き方を述べるヒントの段落や、input group
+// の内側に表示する @ / # の接頭辞など) を持つフィールドの aria-describedby の値を返す。説明が
+// エラーより先に読まれるよう先頭に置き、エラーの id は置き換えではなく後ろに足す。エラー時に
+// 説明を落とすと、値を直すべきそのときに指示が失われるため。
+func FieldDescribedBy(formErrors *model.ValidationError, field string, descriptionID string) string {
+	ids := FieldErrorIDs(formErrors, field)
+	if ids == "" {
+		return descriptionID
+	}
+
+	return descriptionID + " " + ids
+}
 
 // FormErrorField names one field the error summary can list. Name has to match the id of the
 // field's input so the summary entry links straight to it, and Label is the field's visible
@@ -139,7 +200,7 @@ func FormErrors(data FormErrorsData) templ.Component {
 			var templ_7745c5c3_Var2 string
 			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "form_error_summary_heading"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/form_errors.templ`, Line: 117, Col: 55}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/form_errors.templ`, Line: 178, Col: 55}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
@@ -162,7 +223,7 @@ func FormErrors(data FormErrorsData) templ.Component {
 					var templ_7745c5c3_Var3 templ.SafeURL
 					templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("#" + item.Anchor))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/form_errors.templ`, Line: 139, Col: 46}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/form_errors.templ`, Line: 200, Col: 46}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 					if templ_7745c5c3_Err != nil {
@@ -175,7 +236,7 @@ func FormErrors(data FormErrorsData) templ.Component {
 					var templ_7745c5c3_Var4 string
 					templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "form_error_summary_item", map[string]any{"Label": item.Label, "Message": item.Message}))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/form_errors.templ`, Line: 140, Col: 116}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/form_errors.templ`, Line: 201, Col: 116}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 					if templ_7745c5c3_Err != nil {
@@ -189,7 +250,7 @@ func FormErrors(data FormErrorsData) templ.Component {
 					var templ_7745c5c3_Var5 string
 					templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(item.Message)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/form_errors.templ`, Line: 143, Col: 22}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/form_errors.templ`, Line: 204, Col: 22}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 					if templ_7745c5c3_Err != nil {
@@ -214,7 +275,7 @@ func FormErrors(data FormErrorsData) templ.Component {
 				var templ_7745c5c3_Var6 string
 				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(errorMsg)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/form_errors.templ`, Line: 153, Col: 18}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/form_errors.templ`, Line: 214, Col: 18}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 				if templ_7745c5c3_Err != nil {

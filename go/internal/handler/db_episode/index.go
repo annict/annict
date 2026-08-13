@@ -8,9 +8,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/go-chi/chi/v5"
-
 	"github.com/annict/annict/go/internal/httperror"
+	"github.com/annict/annict/go/internal/middleware"
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/templates/layouts"
 	"github.com/annict/annict/go/internal/templates/pages/db_episodes"
@@ -31,8 +30,8 @@ const perPage int32 = 100
 func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	workID, err := strconv.ParseInt(chi.URLParam(r, "work_id"), 10, 64)
-	if err != nil {
+	workID, ok := parseWorkIDParam(r)
+	if !ok {
 		httperror.NotFound(w, r)
 		return
 	}
@@ -40,7 +39,7 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 	page := parsePageParam(r)
 
 	output, err := h.getDBEpisodesUC.Execute(ctx, usecase.GetDBEpisodesInput{
-		WorkID:  model.WorkID(workID),
+		WorkID:  workID,
 		Page:    page,
 		PerPage: perPage,
 	})
@@ -92,8 +91,19 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 			WorkID:     viewmodel.WorkID(output.Work.ID),
 			WorkName:   workName,
 			NoEpisodes: output.Work.NoEpisodes,
+			Generation: viewmodel.NewDBEpisodeGenerationSummary(
+				output.Work.ManualEpisodesCount,
+				output.PublishedEpisodeCount,
+				output.MaxGeneratableEpisodeNumber,
+			),
 			Episodes:   viewmodel.NewDBEpisodeListItems(output.Episodes),
 			Pagination: pagination,
+			// The list is public, so the viewer's role is resolved to decide whether the
+			// link into the bulk-create form is shown.
+			//
+			// [Ja] 一覧は公開のため、閲覧者のロールを解決して一括作成フォームへの導線を
+			// 出し分ける。
+			IsCommitter: middleware.IsCommitter(middleware.GetUserFromContext(ctx)),
 		}),
 	)
 	var body bytes.Buffer

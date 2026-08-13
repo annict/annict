@@ -20,6 +20,17 @@ func NotFound(w http.ResponseWriter, r *http.Request) {
 	render(w, r, http.StatusNotFound, "error_not_found_title", "error_not_found_message")
 }
 
+// Forbidden renders the shared 403 page. It states that the request was understood and
+// refused, which 404 would not: hiding the resource only makes sense where its existence is
+// itself private, and the pages this serves are reached from links the viewer can see.
+//
+// [Ja] Forbidden は共通の 403 ページを描画する。要求は理解されたうえで拒否されたことを述べる
+// (404 では表せない)。リソースの存在自体を隠す意味があるのは存在が秘密である場合だけで、
+// ここが応じる画面は閲覧者から見えるリンクから辿り着くものであるため。
+func Forbidden(w http.ResponseWriter, r *http.Request) {
+	render(w, r, http.StatusForbidden, "error_forbidden_title", "error_forbidden_message")
+}
+
 // InternalServerError renders the shared 500 page without exposing the underlying error.
 //
 // [Ja] InternalServerError は内部エラーを公開せず、共通の 500 ページを描画する。

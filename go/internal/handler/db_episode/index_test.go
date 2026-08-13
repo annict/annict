@@ -15,11 +15,14 @@ import (
 
 	"github.com/annict/annict/go/internal/config"
 	"github.com/annict/annict/go/internal/i18n"
+	authMiddleware "github.com/annict/annict/go/internal/middleware"
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/repository"
+	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/testutil"
 	"github.com/annict/annict/go/internal/usecase"
+	"github.com/annict/annict/go/internal/validator"
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
@@ -28,10 +31,33 @@ func newTestHandler(t *testing.T, db *sql.DB, tx *sql.Tx) *Handler {
 
 	queries := query.New(db).WithTx(tx)
 	cfg := &config.Config{Env: "test", Domain: "test.annict.com"}
+	sessionManager := session.NewManager(repository.NewSessionRepository(queries), cfg)
 	workRepo := repository.NewWorkRepository(queries)
 	episodeRepo := repository.NewEpisodeRepository(queries)
 
-	return NewHandler(cfg, usecase.NewGetDBEpisodesUsecase(workRepo, episodeRepo))
+	// The create usecase opens its own transaction, so it is wired against the pool rather
+	// than the test transaction. Its tests clean the committed rows up themselves.
+	//
+	// [Ja] 作成 UseCase は自前のトランザクションを開くため、テスト用トランザクションではなく
+	// プールに対して組み立てる。コミットされた行はそのテスト側で後始末する。
+	createEpisodesUC := usecase.NewCreateEpisodesUsecase(
+		db,
+		repository.NewWorkRepository(query.New(db)),
+		repository.NewEpisodeRepository(query.New(db)),
+		repository.NewAnimeRepository(query.New(db)),
+		repository.NewAnimeClassificationRepository(query.New(db)),
+		validator.NewDBEpisodeCreateValidator(),
+	)
+
+	return NewHandler(
+		cfg,
+		sessionManager,
+		testutil.NewTestFlashManager(),
+		usecase.NewGetDBEpisodesUsecase(workRepo, episodeRepo),
+		usecase.NewGetDBEpisodeNewUsecase(workRepo),
+		createEpisodesUC,
+		usecase.NewGetDBEpisodeEditUsecase(episodeRepo),
+	)
 }
 
 // newIndexRequest builds a GET request for a work's episode list with the work_id URL
@@ -104,6 +130,142 @@ func TestIndex(t *testing.T) {
 		if !strings.Contains(body, expected) {
 			t.Errorf("レスポンスに %q が含まれていません", expected)
 		}
+	}
+}
+
+// TestIndex_NewEpisodesLinkIsCommitterOnly covers the way into the bulk-create form. The list
+// is public, so the link is shown to committers and withheld from everyone else rather than
+// offering a link that answers with a 403.
+//
+// [Ja] TestIndex_NewEpisodesLinkIsCommitterOnly は一括作成フォームへの導線を検証する。一覧は
+// 公開のため、リンクは committer にだけ出し、それ以外には出さない。403 が返るだけのリンクを
+// 出さないようにするため。
+func TestIndex_NewEpisodesLinkIsCommitterOnly(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+
+	workID := testutil.NewWorkBuilder(t, tx).WithTitle("テストアニメ").Build()
+	handler := newTestHandler(t, db, tx)
+
+	newLink := fmt.Sprintf(`href="/db/works/%d/episodes/new"`, int64(workID))
+	// actionsContainer is the wrapper the heading renders around its actions. A viewer with no
+	// action must not get it either: an empty wrapper is a full-width flex row of its own at
+	// mobile widths, so it would add a gap under the heading of the public list.
+	//
+	// [Ja] actionsContainer は見出しが操作の周りに描画するラッパー。操作の無い閲覧者にはこれも
+	// 出さない。空のラッパーはモバイル幅では単独で全幅の flex 行になり、公開されている一覧の
+	// 見出しの下に余白を足してしまうため。
+	actionsContainer := `<div class="flex w-full flex-none justify-end gap-2 md:w-auto">`
+
+	tests := []struct {
+		name     string
+		user     *model.User
+		wantLink bool
+	}{
+		{name: "未ログインには出さない", user: nil, wantLink: false},
+		{name: "一般ユーザーには出さない", user: &model.User{ID: 1, Role: model.RoleUser}, wantLink: false},
+		{name: "編集者には出す", user: &model.User{ID: 1, Role: model.RoleEditor}, wantLink: true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			req := newIndexRequest(workID, "")
+			if tt.user != nil {
+				req = req.WithContext(context.WithValue(req.Context(), authMiddleware.UserContextKey, tt.user))
+			}
+			rr := httptest.NewRecorder()
+			handler.Index(rr, req)
+
+			if status := rr.Code; status != http.StatusOK {
+				t.Fatalf("status code: got %v want %v", status, http.StatusOK)
+			}
+			body := rr.Body.String()
+			if got := strings.Contains(body, newLink); got != tt.wantLink {
+				t.Errorf("一括作成フォームへのリンクの有無 = %v, want %v", got, tt.wantLink)
+			}
+			if got := strings.Contains(body, actionsContainer); got != tt.wantLink {
+				t.Errorf("見出しの操作コンテナの有無 = %v, want %v", got, tt.wantLink)
+			}
+		})
+	}
+}
+
+// TestIndex_ShowsGenerationNoticeAndDerivedColumns covers the information the page carries
+// beyond the episodes themselves: the auto-generation notice the editor plans by, and the
+// two per-row columns the list derives (the preceding episode and the records count).
+//
+// [Ja] TestIndex_ShowsGenerationNoticeAndDerivedColumns は、エピソードそのもの以外にページが
+// 運ぶ情報を検証する。編集者が計画に使う自動生成の案内と、一覧が行ごとに導出する 2 つの列
+// (直前のエピソードと記録数)。
+func TestIndex_ShowsGenerationNoticeAndDerivedColumns(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+
+	workID := testutil.NewWorkBuilder(t, tx).
+		WithTitle("テストアニメ").
+		WithManualEpisodesCount(12).
+		Build()
+	insertEpisodeForIndex(t, tx, workID, "第1話", 100, 0)
+	insertEpisodeForIndex(t, tx, workID, "第2話", 200, 42)
+
+	channelID := testutil.NewChannelBuilder(t, tx).Build()
+	testutil.NewSlotBuilder(t, tx).WithWorkID(workID).WithChannelID(channelID).WithNumber(9).Build()
+
+	handler := newTestHandler(t, db, tx)
+
+	rr := httptest.NewRecorder()
+	handler.Index(rr, newIndexRequest(workID, ""))
+
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
+	}
+
+	body := rr.Body.String()
+
+	expectedContents := []string{
+		// The notice reports the work's expected total, its published episodes and how far
+		// the auto-generation could number them.
+		//
+		// [Ja] 案内は作品の予定総話数・公開中のエピソード数・自動生成が到達する話数を報告する。
+		"<dt>予定総話数</dt>",
+		`<dd class="text-card-foreground">12</dd>`,
+		"<dt>公開中のエピソード数</dt>",
+		`<dd class="text-card-foreground">2</dd>`,
+		"<dt>生成可能な最大話数</dt>",
+		`<dd class="text-card-foreground">9</dd>`,
+		// The second episode names the first one as its preceding episode, and carries
+		// its records count.
+		//
+		// [Ja] 第2話は直前のエピソードとして第1話を名指しし、記録数を持つ。
+		"前のエピソード",
+		`<td class="whitespace-normal [overflow-wrap:anywhere]">第1話</td>`,
+		"<td>42</td>",
+	}
+
+	for _, expected := range expectedContents {
+		if !strings.Contains(body, expected) {
+			t.Errorf("レスポンスに %q が含まれていません", expected)
+		}
+	}
+}
+
+// insertEpisodeForIndex creates an episode with an explicit sort_number and records count.
+// The shared EpisodeBuilder fixes both, and the list derives the preceding episode from
+// sort_number order, so the rows this test orders are inserted directly.
+//
+// [Ja] insertEpisodeForIndex は sort_number と記録数を明示してエピソードを作成する。共有の
+// EpisodeBuilder はどちらも固定しており、一覧は直前のエピソードを sort_number 順から導出する
+// ため、順序を問うこのテストの行は直接挿入する。
+func insertEpisodeForIndex(t *testing.T, tx *sql.Tx, workID model.WorkID, number string, sortNumber, episodeRecordsCount int32) {
+	t.Helper()
+
+	if _, err := tx.Exec(`
+		INSERT INTO episodes (work_id, number, sort_number, episode_records_count, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, NOW(), NOW())
+	`, int64(workID), number, sortNumber, episodeRecordsCount); err != nil {
+		t.Fatalf("エピソードの作成に失敗: %v", err)
 	}
 }
 

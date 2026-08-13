@@ -1,0 +1,354 @@
+package db_episodes
+
+import (
+	"context"
+
+	"github.com/annict/annict/go/internal/model"
+	"github.com/annict/annict/go/internal/templates"
+	"github.com/annict/annict/go/internal/templates/components"
+	"github.com/annict/annict/go/internal/viewmodel"
+)
+
+// EditPageData is the data the episode edit page renders: the episode being edited, the
+// parent work its heading and subnav describe, and the state of the submitted form.
+//
+// [Ja] EditPageData はエピソード編集ページが描画するデータ (編集対象のエピソード、見出しと
+// サブナビが示す親作品、および送信されたフォームの状態)。
+type EditPageData struct {
+	EpisodeID viewmodel.EpisodeID
+	WorkID    viewmodel.WorkID
+	// WorkName is the work's display name as viewmodel.DBEpisodeListWorkName resolved it. An
+	// empty value makes the heading fall back to the generic page name and the document title
+	// omit the work while retaining the episode identifier.
+	//
+	// [Ja] WorkName は viewmodel.DBEpisodeListWorkName が解決した作品の表示名。空の場合、
+	// 見出しは汎用のページ名へフォールバックし、文書タイトルはエピソード識別子を残して作品を
+	// 省く。
+	WorkName string
+	// NoEpisodes carries the work's no_episodes flag through to the shared subnav.
+	//
+	// [Ja] NoEpisodes は作品の no_episodes フラグを共有サブナビへ渡す。
+	NoEpisodes bool
+	CSRFToken  string
+	FormErrors *model.ValidationError
+	FormInput  viewmodel.DBEpisodeFormInput
+}
+
+// heading returns the text of the page heading: the work's name, falling back to the generic
+// page title while the work has none, so the page never renders an empty <h1>.
+//
+// [Ja] heading はページ見出しのテキストとして作品の名前を返す。名前が無いあいだは汎用の
+// ページタイトルにフォールバックし、空の <h1> を描画しないようにする。
+func (d EditPageData) heading(ctx context.Context) string {
+	if d.WorkName != "" {
+		return d.WorkName
+	}
+
+	return templates.T(ctx, "db_episodes_edit_title")
+}
+
+func (d EditPageData) hasFieldError(field string) bool {
+	return d.FormErrors != nil && d.FormErrors.HasFieldError(field)
+}
+
+// hasErrors reports whether the submit failed. It decides where the page starts out focused:
+// a form opened for editing gives the caret to the first field, and after a failed submit the
+// error summary takes it instead, so the two never claim autofocus at the same time.
+//
+// [Ja] hasErrors は送信が失敗したかどうかを返す。ページの初期フォーカス位置の判断に使う。
+// 編集のために開いたフォームでは先頭の欄が、送信が失敗した後はエラー要約がフォーカスを
+// 受け取り、両者が同時に autofocus を主張しないようにする。
+func (d EditPageData) hasErrors() bool {
+	return d.FormErrors.HasErrors()
+}
+
+// The ids of the paragraphs stating how each number is written. The inputs point at them
+// through aria-describedby, so the conventions reach whoever lands on a field rather than only
+// whoever reads the page top to bottom. The three numbers each follow a convention that the
+// value alone does not reveal and that validation cannot check: the display number follows the
+// work's own wording, the numeric one is digits only, and the sort number is spaced out in
+// steps of 100 so a later "12.5" still fits between two episodes.
+//
+// [Ja] 各話数の書き方を述べる段落の id。入力欄は aria-describedby でこれらを指すため、作法は
+// ページを上から読む人だけでなく、欄に降り立った人にも届く。3 つの話数はいずれも、値そのものからは
+// 読み取れず、バリデーションでも検査できない作法を持つ。表示用話数は作品ごとの表記に合わせ、
+// 数値話数は数字だけを入れ、並び順は後から「12.5 話」が挟まっても間に入れられるよう 100 刻みで
+// 間隔を空ける。
+const (
+	editNumberHintID     = "number-hint"
+	editRawNumberHintID  = "raw_number-hint"
+	editSortNumberHintID = "sort_number-hint"
+)
+
+// editSummaryFields lists the fields the error summary can name, in the order this form shows
+// them, paired with the labels it displays. The labels are looked up with literal keys rather
+// than keys assembled from the field name, so every translation key stays greppable from the
+// place that uses it.
+//
+// [Ja] editSummaryFields はエラー要約が名指しできるフィールドを、本フォームが表示する順で、
+// 表示中のラベルと対にして並べる。ラベルはフィールド名から組み立てたキーではなく直書きの
+// キーで引く。翻訳キーを使用箇所から grep で追える状態に保つため。
+func editSummaryFields(ctx context.Context) []components.FormErrorField {
+	return []components.FormErrorField{
+		{Name: "number", Label: templates.T(ctx, "db_episodes_edit_number_label")},
+		{Name: "raw_number", Label: templates.T(ctx, "db_episodes_edit_raw_number_label")},
+		{Name: "sort_number", Label: templates.T(ctx, "db_episodes_edit_sort_number_label")},
+		{Name: "title", Label: templates.T(ctx, "db_episodes_edit_title_label")},
+		{Name: "title_en", Label: templates.T(ctx, "db_episodes_edit_title_en_label")},
+	}
+}
+
+templ Edit(data EditPageData) {
+	<div class="flex flex-col gap-4 py-4 max-w-7xl w-full mx-auto">
+		<div class="flex gap-4 px-4">
+			@components.DBSidebarToggle()
+
+			<div class="flex-1">
+				@components.MainTitle(components.MainTitleData{
+					Title:   data.heading(ctx),
+					Actions: editBackToListLink(data.WorkID),
+				})
+			</div>
+		</div>
+
+		<div class="px-4">
+			// The page is keyed by the episode rather than by the work, so it names the
+			// subnav entry it belongs to instead of letting the request path decide.
+			//
+			// [Ja] 本ページの URL は作品ではなくエピソード基点のため、リクエストパスに
+			// 判断を委ねず、所属するサブナビの項目を自ら名指しする。
+			@components.DBWorkSubnav(components.DBWorkSubnavData{
+				WorkID:             data.WorkID,
+				NoEpisodes:         data.NoEpisodes,
+				CurrentSectionPath: templates.DBWorkEpisodesPath(data.WorkID),
+			})
+		</div>
+
+		@components.ContentCard("") {
+			<div class="flex flex-col gap-4">
+				@components.FormErrors(components.FormErrorsData{
+					Errors: data.FormErrors,
+					Fields: editSummaryFields(ctx),
+				})
+
+				<form
+					action={ templates.DBEpisodePath(data.EpisodeID).SafeURL() }
+					class="max-w-2xl flex flex-col gap-6"
+					method="POST"
+				>
+					<input type="hidden" name="_method" value="PATCH"/>
+					<input type="hidden" name="csrf_token" value={ data.CSRFToken }/>
+					// The version the form was opened against travels with the submit, so an
+					// update made from a stale read is rejected instead of silently overwriting
+					// whoever wrote in between.
+					//
+					// [Ja] フォームを開いた時点の版を送信と一緒に運ぶ。古い読み取りからの更新を、
+					// 間に書いた人の変更を黙って上書きせずに却下できるようにするため。
+					<input type="hidden" name="updated_at" value={ data.FormInput.UpdatedAt }/>
+
+					<div
+						role="group"
+						class="field"
+						if data.hasFieldError("number") {
+							data-invalid
+						}
+					>
+						<label for="number" class="label">
+							{ templates.T(ctx, "db_episodes_edit_number_label") }
+						</label>
+						<p id={ editNumberHintID } class="text-sm text-muted-foreground">
+							{ templates.T(ctx, "db_episodes_edit_number_hint") }
+						</p>
+						<input
+							type="text"
+							enterkeyhint="next"
+							id="number"
+							name="number"
+							class="input"
+							aria-describedby={ components.FieldDescribedBy(data.FormErrors, "number", editNumberHintID) }
+							if !data.hasErrors() {
+								autofocus
+							}
+							if data.hasFieldError("number") {
+								aria-invalid="true"
+							}
+							value={ data.FormInput.Number }
+						/>
+						if data.hasFieldError("number") {
+							for i, errorMsg := range data.FormErrors.Fields["number"] {
+								<p id={ components.FieldErrorID("number", i) } role="alert">{ errorMsg }</p>
+							}
+						}
+					</div>
+
+					<div
+						role="group"
+						class="field"
+						if data.hasFieldError("raw_number") {
+							data-invalid
+						}
+					>
+						<label for="raw_number" class="label">
+							{ templates.T(ctx, "db_episodes_edit_raw_number_label") }
+						</label>
+						<p id={ editRawNumberHintID } class="text-sm text-muted-foreground">
+							{ templates.T(ctx, "db_episodes_edit_raw_number_hint") }
+						</p>
+						// The numeric number takes half episodes ("2.5"), so the field stays
+						// text and asks for the decimal keypad instead of using type="number",
+						// whose stepper and locale-dependent parsing buy nothing here.
+						//
+						// [Ja] 数値話数は 0.5 話 ("2.5") を取るため、欄は text のままとし、
+						// type="number" ではなく小数キーパッドを要求する。type="number" の
+						// スピナーやロケール依存のパースはここでは利点にならない。
+						<input
+							type="text"
+							inputmode="decimal"
+							enterkeyhint="next"
+							id="raw_number"
+							name="raw_number"
+							class="input"
+							aria-describedby={ components.FieldDescribedBy(data.FormErrors, "raw_number", editRawNumberHintID) }
+							if data.hasFieldError("raw_number") {
+								aria-invalid="true"
+							}
+							value={ data.FormInput.RawNumber }
+						/>
+						if data.hasFieldError("raw_number") {
+							for i, errorMsg := range data.FormErrors.Fields["raw_number"] {
+								<p id={ components.FieldErrorID("raw_number", i) } role="alert">{ errorMsg }</p>
+							}
+						}
+					</div>
+
+					<div
+						role="group"
+						class="field"
+						if data.hasFieldError("sort_number") {
+							data-invalid
+						}
+					>
+						<label for="sort_number" class="label">
+							{ templates.T(ctx, "db_episodes_edit_sort_number_label") }
+							@components.RequiredBadge()
+						</label>
+						<p id={ editSortNumberHintID } class="text-sm text-muted-foreground">
+							{ templates.T(ctx, "db_episodes_edit_sort_number_hint") }
+						</p>
+						// The sort number is an integer, so the field asks for the numeric
+						// keypad while staying text: a rejected submit is re-rendered with
+						// whatever was typed, and type="number" would show that value as an
+						// empty field whenever the browser cannot parse it, taking away the
+						// input the editor has to correct.
+						//
+						// [Ja] 並び順は整数のため、欄は text のまま数字キーパッドを要求する。
+						// 却下された送信は入力された内容のまま再描画するが、type="number" は
+						// ブラウザーがパースできない値を空の欄として表示するため、編集者が
+						// 直すべき入力が失われてしまう。
+						<input
+							type="text"
+							inputmode="numeric"
+							enterkeyhint="next"
+							id="sort_number"
+							name="sort_number"
+							class="input"
+							required
+							aria-describedby={ components.FieldDescribedBy(data.FormErrors, "sort_number", editSortNumberHintID) }
+							if data.hasFieldError("sort_number") {
+								aria-invalid="true"
+							}
+							value={ data.FormInput.SortNumber }
+						/>
+						if data.hasFieldError("sort_number") {
+							for i, errorMsg := range data.FormErrors.Fields["sort_number"] {
+								<p id={ components.FieldErrorID("sort_number", i) } role="alert">{ errorMsg }</p>
+							}
+						}
+					</div>
+
+					<div
+						role="group"
+						class="field"
+						if data.hasFieldError("title") {
+							data-invalid
+						}
+					>
+						<label for="title" class="label">
+							{ templates.T(ctx, "db_episodes_edit_title_label") }
+						</label>
+						<input
+							type="text"
+							enterkeyhint="next"
+							id="title"
+							name="title"
+							class="input"
+							if data.hasFieldError("title") {
+								aria-invalid="true"
+								aria-describedby={ components.FieldErrorIDs(data.FormErrors, "title") }
+							}
+							value={ data.FormInput.Title }
+						/>
+						if data.hasFieldError("title") {
+							for i, errorMsg := range data.FormErrors.Fields["title"] {
+								<p id={ components.FieldErrorID("title", i) } role="alert">{ errorMsg }</p>
+							}
+						}
+					</div>
+
+					<div
+						role="group"
+						class="field"
+						if data.hasFieldError("title_en") {
+							data-invalid
+						}
+					>
+						<label for="title_en" class="label">
+							{ templates.T(ctx, "db_episodes_edit_title_en_label") }
+						</label>
+						<input
+							type="text"
+							enterkeyhint="done"
+							id="title_en"
+							name="title_en"
+							class="input"
+							if data.hasFieldError("title_en") {
+								aria-invalid="true"
+								aria-describedby={ components.FieldErrorIDs(data.FormErrors, "title_en") }
+							}
+							value={ data.FormInput.TitleEn }
+						/>
+						if data.hasFieldError("title_en") {
+							for i, errorMsg := range data.FormErrors.Fields["title_en"] {
+								<p id={ components.FieldErrorID("title_en", i) } role="alert">{ errorMsg }</p>
+							}
+						}
+					</div>
+
+					<div role="group" class="field" data-orientation="horizontal">
+						<button type="submit" class="btn rounded-full">
+							@templates.DecorativeInlineIcon("floppy-disk-regular", templates.InlineIconStart)
+							{ templates.T(ctx, "db_episodes_edit_submit") }
+						</button>
+					</div>
+				</form>
+			</div>
+		}
+	</div>
+}
+
+// editBackToListLink renders the action shown beside the heading: a link back to the work's
+// episode list, which is also where a successful submit lands.
+//
+// [Ja] editBackToListLink は見出しの横に表示する操作を描画する。作品のエピソード一覧へ戻る
+// リンクで、送信が成功したときの着地点でもある。
+templ editBackToListLink(workID viewmodel.WorkID) {
+	<a
+		href={ templates.DBWorkEpisodesPath(workID).SafeURL() }
+		class="btn rounded-full"
+		data-variant="outline"
+		data-size="sm"
+	>
+		@templates.DecorativeInlineIcon("arrow-bend-up-left-regular", templates.InlineIconStart)
+		{ templates.T(ctx, "db_episodes_edit_back_to_list_link") }
+	</a>
+}

@@ -1250,9 +1250,17 @@ other = "Japanese title"
 description = "Screen-reader label for an episode's English title"
 other = "English title"
 
+[db_episodes_index_table_prev_episode_label]
+description = "Table header - Previous episode"
+other = "Previous episode"
+
 [db_episodes_index_table_sort_number_label]
 description = "Table header - Sort number"
 other = "Sort number"
+
+[db_episodes_index_table_records_count_label]
+description = "Table header - Record count"
+other = "Record count"
 
 [db_episodes_index_table_status_label]
 description = "Table header - Status"
@@ -1265,6 +1273,144 @@ other = "Open episode {{.ID}} in a new tab"
 [db_episodes_index_empty]
 description = "No episodes message"
 other = "No episodes found"
+
+[db_episodes_index_generation_heading]
+description = "Heading of the episode auto-generation notice"
+other = "Episode auto-generation"
+
+[db_episodes_index_generation_planned_label]
+description = "Auto-generation notice - label for the work's expected total episode count"
+other = "Expected episodes"
+
+[db_episodes_index_generation_published_label]
+description = "Auto-generation notice - label for the number of published episodes"
+other = "Published episodes"
+
+[db_episodes_index_generation_generatable_label]
+description = "Auto-generation notice - label for the highest episode number auto-generation can reach"
+other = "Highest episode number available for auto-generation"
+
+[db_episodes_index_generation_unknown]
+description = "Auto-generation notice - value shown when the work records no expected episode count"
+other = "Unknown"
+
+[db_episodes_index_new_link]
+description = "Link from the episode list to the bulk-create form"
+other = "New"
+
+[db_episodes_new_title]
+description = "Episode bulk-create page title"
+other = "Add Episodes"
+
+[db_episodes_new_document_title]
+description = "Work-specific episode bulk-create document title"
+other = "{{.WorkTitle}} | Add Episodes"
+
+[db_episodes_new_back_to_list_link]
+description = "Link from the bulk-create page back to the episode list"
+other = "Back to List"
+
+[db_episodes_new_rows_label]
+description = "Label of the bulk-create input, which takes one episode per line"
+other = "Episodes"
+
+[db_episodes_new_submit]
+description = "Submit button on the episode bulk-create page"
+other = "Register"
+
+[db_episodes_new_restriction_title]
+description = "Heading of the warning shown when episodes should not be registered manually"
+other = "Manual registration unavailable"
+
+[db_episodes_new_restricted_episodes_filled]
+description = "Warning shown when the work already has its expected number of episodes"
+other = "Episodes cannot be registered because the expected number of episodes has already been reached."
+
+[db_episodes_new_restricted_slots_exist]
+description = "Warning shown when broadcast slots will generate episodes automatically"
+other = "Episodes cannot be registered manually because broadcast schedules exist. Episodes are generated automatically from the schedule information."
+
+[db_episodes_new_format_heading]
+description = "Heading of the input format guide on the bulk-create page"
+other = "Input format"
+
+[db_episodes_new_format_description]
+description = "Input format guide on the bulk-create page (column order and multiple lines)"
+other = "Enter one episode per line as the display number, the numeric number and the title, separated by commas (,). The numeric number is the number with letters and symbols removed, and takes decimals such as 5.5 for a recap. Separate lines with line breaks to register several episodes at once."
+
+[db_episodes_new_format_example]
+description = "Input format example on the bulk-create page (lines with all three columns)"
+other = """#1,1,Teach Me Teacher
+#2,2,I Can No Longer Marry"""
+
+[db_episodes_new_format_partial_description]
+description = "Input format guide on the bulk-create page (lines with only some columns)"
+other = "Only some of the columns are required. For an episode with no title, end the line with a comma after the numbers; for an episode with no number, start the line with commas before the title."
+
+[db_episodes_new_format_partial_example]
+description = "Input format example on the bulk-create page (a number-only line and a title-only line)"
+other = """#1,1,
+,,Three Twins?"""
+
+[db_episodes_edit_title]
+description = "Episode edit page title"
+other = "Edit Episode"
+
+[db_episodes_edit_document_title]
+description = "Episode-specific edit document title for a named work"
+other = "{{.EpisodeIdentifier}} | {{.WorkTitle}} | Edit Episode"
+
+[db_episodes_edit_document_title_without_work]
+description = "Episode-specific edit document title for a work without a display name"
+other = "{{.EpisodeIdentifier}} | Edit Episode"
+
+[db_episodes_edit_identifier]
+description = "Label identifying an episode with a display number in the edit document title"
+other = "{{.Number}} (ID: {{.EpisodeID}})"
+
+[db_episodes_edit_identifier_without_number]
+description = "Label identifying an episode without a display number in the edit document title"
+other = "ID: {{.EpisodeID}}"
+
+[db_episodes_edit_back_to_list_link]
+description = "Link from the episode edit page back to the episode list"
+other = "Back to List"
+
+[db_episodes_edit_number_label]
+description = "Form label - Display number"
+other = "Display number"
+
+[db_episodes_edit_number_hint]
+description = "How to write the display number, shown on the episode edit page"
+other = "Follow the wording the work itself uses, such as \"Episode 1\" or \"Lesson 1\". When the wording is unknown, write it as \"Episode 1\"."
+
+[db_episodes_edit_raw_number_label]
+description = "Form label - Numeric number"
+other = "Numeric number"
+
+[db_episodes_edit_raw_number_hint]
+description = "How to write the numeric number, shown on the episode edit page"
+other = "Enter the display number with its letters and symbols removed. A decimal such as 5.5 can be used for a recap that falls between two episodes."
+
+[db_episodes_edit_sort_number_label]
+description = "Form label - Sort number"
+other = "Sort number"
+
+[db_episodes_edit_sort_number_hint]
+description = "How to write the sort number, shown on the episode edit page"
+other = "Episodes are listed from the smallest of these numbers. Space them out as \"episode number × 100\" (1200 for episode 12) so a later \"12.5\" still fits between two episodes."
+
+[db_episodes_edit_title_label]
+description = "Form label - Title"
+other = "Title"
+
+[db_episodes_edit_title_en_label]
+description = "Form label - Title (English)"
+other = "Title (English)"
+
+[db_episodes_edit_submit]
+description = "Submit button on the episode edit page"
+other = "Update"
 
 # DB works form shared (used by new and edit)
 [db_works_form_external_link_label]
@@ -1545,6 +1691,10 @@ other = "Work has been published successfully"
 description = "Work deletion success message"
 other = "Work has been deleted successfully"
 
+[flash_db_episodes_created]
+description = "Episode bulk creation success message"
+other = "Episodes have been created successfully"
+
 # Validation common messages
 [validation_required]
 description = "Required field validation error"
@@ -1594,6 +1744,38 @@ other = "Please enter no more than {{.MaxLength}} characters"
 description = "A work with the same title is already registered"
 other = "A work with this title is already registered"
 
+[validation_episode_row_error]
+description = "Format that prefixes an episode row error with its line number"
+other = "Line {{.Line}}: {{.Message}}"
+
+[validation_episode_rows_too_many]
+description = "The episode bulk-create form contains more rows than one submit accepts"
+other = "Please enter no more than {{.MaxRows}} episodes at a time"
+
+[validation_episode_manual_creation_episodes_filled]
+description = "A submit targets a work that already has its expected number of episodes"
+other = "Episodes cannot be registered because the expected number of episodes has already been reached"
+
+[validation_episode_manual_creation_slots_exist]
+description = "A submit targets a work whose episodes are generated from its broadcast schedules"
+other = "Episodes cannot be registered manually because broadcast schedules exist"
+
+[validation_episode_row_number_or_title_required]
+description = "An episode row carries neither a display number nor a title"
+other = "Please enter a display number or a title"
+
+[validation_episode_row_number_too_long]
+description = "The display number of an episode row exceeds the maximum length"
+other = "Please enter a display number of no more than {{.MaxLength}} characters"
+
+[validation_episode_row_title_too_long]
+description = "The title of an episode row exceeds the maximum length"
+other = "Please enter a title of no more than {{.MaxLength}} characters"
+
+[validation_episode_row_raw_number_invalid]
+description = "The numeric number of an episode row is not a number"
+other = "Please enter a number for the numeric number"
+
 [media_tv]
 description = "Media type - TV"
 other = "TV"
@@ -1628,6 +1810,10 @@ description = "Footer - Legal"
 other = "Legal Notice"
 
 # Common error messages
+[error_forbidden]
+description = "Message shown when the user may not perform the operation"
+other = "You do not have permission to perform this operation"
+
 [error_user_not_found]
 description = "Message shown when a user is not found"
 other = "User not found"
@@ -1636,6 +1822,10 @@ other = "User not found"
 description = "Message shown when a work is not found"
 other = "Work not found"
 
+[error_episode_not_found]
+description = "Message shown when an episode is not found"
+other = "Episode not found"
+
 [error_not_found_title]
 description = "Title of the generic 404 error page"
 other = "Page not found"
@@ -1643,6 +1833,14 @@ other = "Page not found"
 [error_not_found_message]
 description = "Explanation on the generic 404 error page"
 other = "The page may have been moved or deleted."
+
+[error_forbidden_title]
+description = "Title of the generic 403 error page"
+other = "Access denied"
+
+[error_forbidden_message]
+description = "Explanation on the generic 403 error page"
+other = "You do not have permission to perform this operation."
 
 [error_internal_server_title]
 description = "Title of the generic 500 error page"

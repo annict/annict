@@ -41,9 +41,15 @@ type WorkBuilder struct {
 	// External-service ids (nullable). nil leaves the column NULL.
 	//
 	// [Ja] 外部サービスの ID (NULL 許容)。nil の場合はカラムを NULL のままにする。
-	scTid         *int32
-	malAnimeID    *int32
-	watchersCount int32
+	scTid      *int32
+	malAnimeID *int32
+	// manualEpisodesCount is the work's expected total episode count
+	// (works.manual_episodes_count). nil leaves the column NULL.
+	//
+	// [Ja] manualEpisodesCount は作品の予定総話数 (works.manual_episodes_count)。
+	// nil の場合はカラムを NULL のままにします。
+	manualEpisodesCount *int32
+	watchersCount       int32
 	// unpublishedAt / deletedAt set the Unpublishable / SoftDeletable state
 	// columns. nil leaves the column NULL (published / not deleted).
 	//
@@ -159,6 +165,16 @@ func (b *WorkBuilder) WithDeletedAt(deletedAt time.Time) *WorkBuilder {
 	return b
 }
 
+// WithManualEpisodesCount sets works.manual_episodes_count, the total number of episodes
+// the work is expected to have. The default leaves it NULL (unknown).
+//
+// [Ja] WithManualEpisodesCount は作品が最終的に持つ予定の話数
+// (works.manual_episodes_count) を設定します。既定では NULL (不明) のままにします。
+func (b *WorkBuilder) WithManualEpisodesCount(manualEpisodesCount int32) *WorkBuilder {
+	b.manualEpisodesCount = &manualEpisodesCount
+	return b
+}
+
 // WithWatchersCount はウォッチャー数を設定します
 func (b *WorkBuilder) WithWatchersCount(count int32) *WorkBuilder {
 	b.watchersCount = count
@@ -174,14 +190,14 @@ func (b *WorkBuilder) Build() model.WorkID {
 			title, title_kana, title_en, media, official_site_url,
 			wikipedia_url, season_year, season_name,
 			watchers_count, episodes_count, no_episodes,
-			sc_tid, mal_anime_id, unpublished_at, deleted_at,
+			sc_tid, mal_anime_id, manual_episodes_count, unpublished_at, deleted_at,
 			created_at, updated_at
 		) VALUES (
 			$1, $2, $3, $4, $5,
 			$6, $7, $8,
 			$9, $10, $11,
-			$12, $13, $14, $15,
-			$16, $17
+			$12, $13, $14, $15, $16,
+			$17, $18
 		) RETURNING id
 	`
 
@@ -194,12 +210,15 @@ func (b *WorkBuilder) Build() model.WorkID {
 		seasonName = b.seasonName
 	}
 
-	var scTid, malAnimeID interface{}
+	var scTid, malAnimeID, manualEpisodesCount interface{}
 	if b.scTid != nil {
 		scTid = *b.scTid
 	}
 	if b.malAnimeID != nil {
 		malAnimeID = *b.malAnimeID
+	}
+	if b.manualEpisodesCount != nil {
+		manualEpisodesCount = *b.manualEpisodesCount
 	}
 
 	var unpublishedAt, deletedAt interface{}
@@ -213,23 +232,24 @@ func (b *WorkBuilder) Build() model.WorkID {
 	var id int64
 	err := b.tx.QueryRow(
 		q,
-		b.title,         // $1
-		b.titleKana,     // $2 title_kana (NOT NULL制約あり)
-		b.titleEn,       // $3 title_en (NOT NULL制約あり)
-		b.media,         // $4 media (Rails: tv=1, ova=2, movie=3, web=4, other=0)
-		"",              // $5 official_site_url
-		"",              // $6 wikipedia_url
-		seasonYear,      // $7 season_year
-		seasonName,      // $8 season_name
-		b.watchersCount, // $9 watchers_count
-		12,              // $10 episodes_count
-		b.noEpisodes,    // $11 no_episodes
-		scTid,           // $12 sc_tid (nullable)
-		malAnimeID,      // $13 mal_anime_id (nullable)
-		unpublishedAt,   // $14 unpublished_at (nullable)
-		deletedAt,       // $15 deleted_at (nullable)
-		time.Now(),      // $16 created_at
-		time.Now(),      // $17 updated_at
+		b.title,
+		b.titleKana,
+		b.titleEn,
+		b.media,
+		"",
+		"",
+		seasonYear,
+		seasonName,
+		b.watchersCount,
+		12,
+		b.noEpisodes,
+		scTid,
+		malAnimeID,
+		manualEpisodesCount,
+		unpublishedAt,
+		deletedAt,
+		time.Now(),
+		time.Now(),
 	).Scan(&id)
 
 	if err != nil {
@@ -508,6 +528,39 @@ func (b *UserBuilder) Build() model.UserID {
 	}
 
 	return model.UserID(id)
+}
+
+// DeleteUser removes a user built by NewUserBuilder together with the rows the builder inserts
+// alongside it (profile / settings / email notifications). Tests that commit a user to the
+// shared pool instead of building it inside a rolled-back transaction call this to clean up:
+// those tables reference users without ON DELETE CASCADE, so deleting the user row on its own
+// fails and leaves every row behind for the rest of the run.
+//
+// It lives next to the builder so the two stay in step: a table the builder starts inserting
+// into is one this function has to start deleting from.
+//
+// [Ja] DeleteUser は NewUserBuilder が作ったユーザーを、builder が併せて挿入する行
+// (プロフィール / 設定 / メール通知設定) と一緒に削除する。ロールバックされる
+// トランザクションではなく共有プールにユーザーをコミットしたテストが、後始末に使う。これらの
+// テーブルは ON DELETE CASCADE 無しで users を参照しているため、ユーザー行だけを消そうとすると
+// 失敗し、実行中ずっとすべての行が残ってしまう。
+//
+// builder の隣に置くのは両者を揃えて保つため。builder が挿入し始めたテーブルは、本関数が削除し
+// 始めるべきテーブルでもある。
+func DeleteUser(t *testing.T, db *sql.DB, userID model.UserID) {
+	t.Helper()
+
+	statements := []string{
+		`DELETE FROM email_notifications WHERE user_id = $1`,
+		`DELETE FROM settings WHERE user_id = $1`,
+		`DELETE FROM profiles WHERE user_id = $1`,
+		`DELETE FROM users WHERE id = $1`,
+	}
+	for _, statement := range statements {
+		if _, err := db.Exec(statement, int64(userID)); err != nil {
+			t.Errorf("ユーザーの後始末に失敗 (%s): %v", statement, err)
+		}
+	}
 }
 
 // UserResult はテスト用のユーザー結果
@@ -1267,10 +1320,30 @@ type SlotBuilder struct {
 	tx        *sql.Tx
 	t         *testing.T
 	workID    model.WorkID
-	episodeID model.EpisodeID
 	channelID int64
-	programID int64
 	startedAt time.Time
+	// episodeID / programID are the rows the slot points at (slots.episode_id /
+	// slots.program_id). Both are nullable and carry a foreign key, so nil leaves the
+	// column NULL rather than writing an id no row has.
+	//
+	// [Ja] episodeID / programID はスロットが指す行 (slots.episode_id / slots.program_id)。
+	// どちらも NULL 許容で外部キーを持つため、nil の場合は存在しない ID を書かず
+	// カラムを NULL のままにします。
+	episodeID *model.EpisodeID
+	programID *int64
+	// number is the episode number the slot carries (slots.number). nil leaves the column
+	// NULL, as it is for a slot whose episode number is not known yet.
+	//
+	// [Ja] number はスロットが持つ話数 (slots.number)。nil の場合はカラムを NULL のままに
+	// します (話数がまだ分からないスロットの状態)。
+	number *int32
+	// unpublishedAt / deletedAt set the Unpublishable / SoftDeletable state columns.
+	// nil leaves the column NULL (published / not deleted).
+	//
+	// [Ja] unpublishedAt / deletedAt は Unpublishable / SoftDeletable の状態カラムを
+	// 設定します。nil の場合はカラムを NULL (公開中 / 未削除) のままにします。
+	unpublishedAt *time.Time
+	deletedAt     *time.Time
 }
 
 // NewSlotBuilder は新しいSlotBuilderを作成します
@@ -1290,7 +1363,7 @@ func (b *SlotBuilder) WithWorkID(workID model.WorkID) *SlotBuilder {
 
 // WithEpisodeID はエピソードIDを設定します
 func (b *SlotBuilder) WithEpisodeID(episodeID model.EpisodeID) *SlotBuilder {
-	b.episodeID = episodeID
+	b.episodeID = &episodeID
 	return b
 }
 
@@ -1302,7 +1375,7 @@ func (b *SlotBuilder) WithChannelID(channelID int64) *SlotBuilder {
 
 // WithProgramID はプログラムIDを設定します
 func (b *SlotBuilder) WithProgramID(programID int64) *SlotBuilder {
-	b.programID = programID
+	b.programID = &programID
 	return b
 }
 
@@ -1312,26 +1385,80 @@ func (b *SlotBuilder) WithStartedAt(startedAt time.Time) *SlotBuilder {
 	return b
 }
 
+// WithNumber sets slots.number, the episode number the auto-generation would reach through
+// this slot. The default leaves it NULL (no episode number assigned).
+//
+// [Ja] WithNumber は slots.number を設定します。自動生成がこのスロットを通じて到達する
+// 話数を表します。既定では NULL (話数未割り当て) のままにします。
+func (b *SlotBuilder) WithNumber(number int32) *SlotBuilder {
+	b.number = &number
+	return b
+}
+
+// WithUnpublishedAt sets slots.unpublished_at, marking the slot as unpublished
+// (Unpublishable). The default leaves it NULL (published).
+//
+// [Ja] WithUnpublishedAt は slots.unpublished_at を設定し、スロットを非公開
+// (Unpublishable) とします。既定では NULL (公開) のままにします。
+func (b *SlotBuilder) WithUnpublishedAt(unpublishedAt time.Time) *SlotBuilder {
+	b.unpublishedAt = &unpublishedAt
+	return b
+}
+
+// WithDeletedAt sets slots.deleted_at, marking the slot as soft-deleted (SoftDeletable).
+// The default leaves it NULL (not deleted).
+//
+// [Ja] WithDeletedAt は slots.deleted_at を設定し、スロットをソフトデリート
+// (SoftDeletable) とします。既定では NULL (未削除) のままにします。
+func (b *SlotBuilder) WithDeletedAt(deletedAt time.Time) *SlotBuilder {
+	b.deletedAt = &deletedAt
+	return b
+}
+
 // Build はテスト用の放送枠データをデータベースに作成します
 func (b *SlotBuilder) Build() model.SlotID {
 	b.t.Helper()
 
 	query := `
 		INSERT INTO slots (
-			work_id, episode_id, channel_id, program_id, started_at, created_at, updated_at
+			work_id, episode_id, channel_id, program_id, started_at,
+			number, unpublished_at, deleted_at,
+			created_at, updated_at
 		) VALUES (
-			$1, $2, $3, $4, $5, $6, $7
+			$1, $2, $3, $4, $5,
+			$6, $7, $8,
+			$9, $10
 		) RETURNING id
 	`
+
+	var episodeID, programID, number, unpublishedAt, deletedAt interface{}
+	if b.episodeID != nil {
+		episodeID = int64(*b.episodeID)
+	}
+	if b.programID != nil {
+		programID = *b.programID
+	}
+	if b.number != nil {
+		number = *b.number
+	}
+	if b.unpublishedAt != nil {
+		unpublishedAt = *b.unpublishedAt
+	}
+	if b.deletedAt != nil {
+		deletedAt = *b.deletedAt
+	}
 
 	var id int64
 	err := b.tx.QueryRow(
 		query,
 		int64(b.workID),
-		int64(b.episodeID),
+		episodeID,
 		b.channelID,
-		b.programID,
+		programID,
 		b.startedAt,
+		number,
+		unpublishedAt,
+		deletedAt,
 		time.Now(),
 		time.Now(),
 	).Scan(&id)

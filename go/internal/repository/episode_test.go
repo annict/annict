@@ -78,16 +78,16 @@ func insertEpisodeSyncEpisode(t *testing.T, tx *sql.Tx, in episodeSyncRow) model
 	return model.EpisodeID(id)
 }
 
-// dbListEpisodeRow holds the episodes columns the Annict DB episode list reads.
+// dbListEpisodeRow holds the episodes columns the Annict DB screens read.
 //
 // The status field mirrors the dormant episodes.status column. Test cases
 // deliberately make it disagree with unpublished_at / deleted_at to verify that
-// the list filter and derived status use those timestamps instead.
+// the filters and the derived status use those timestamps instead.
 //
-// [Ja] dbListEpisodeRow は Annict DB のエピソード一覧が読む episodes カラムを保持する。
+// [Ja] dbListEpisodeRow は Annict DB の画面が読む episodes カラムを保持する。
 //
 // status フィールドは休眠中の episodes.status カラムを写す。テストケースでは
-// unpublished_at / deleted_at と意図的に食い違わせ、一覧の絞り込みと状態導出が
+// unpublished_at / deleted_at と意図的に食い違わせ、各絞り込みと状態導出が
 // これらのタイムスタンプを使うことを検証する。
 type dbListEpisodeRow struct {
 	workID              model.WorkID
@@ -106,11 +106,17 @@ type dbListEpisodeRow struct {
 func insertDBListEpisode(t *testing.T, tx *sql.Tx, in dbListEpisodeRow) model.EpisodeID {
 	t.Helper()
 	var id int64
+	// created_at / updated_at are written the way Rails writes them, so a fixture row
+	// carries the version the edit form reads.
+	//
+	// [Ja] created_at / updated_at は Rails が書くのと同じように入れる。フィクスチャの行が
+	// 編集フォームの読む版を持つようにするため。
 	if err := tx.QueryRow(`
 		INSERT INTO episodes (
 			work_id, number, raw_number, sort_number, title, title_ro, title_en,
-			episode_records_count, status, unpublished_at, deleted_at
-		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id`,
+			episode_records_count, status, unpublished_at, deleted_at,
+			created_at, updated_at
+		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, NOW(), NOW()) RETURNING id`,
 		int64(in.workID), in.number, in.rawNumber, in.sortNumber, in.title, in.titleRo, in.titleEn,
 		in.episodeRecordsCount, in.status, in.unpublishedAt, in.deletedAt,
 	).Scan(&id); err != nil {
@@ -398,6 +404,116 @@ func TestEpisodeRepository_ListForDB(t *testing.T) {
 		}
 	})
 
+	t.Run("正常系: 直前のエピソードを sort_number 順の隣接行から導出する", func(t *testing.T) {
+		t.Parallel()
+
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewEpisodeRepository(query.New(db).WithTx(tx))
+
+		workID := insertDBListWork(t, tx)
+		insertDBListEpisode(t, tx, dbListEpisodeRow{
+			workID:     workID,
+			number:     sql.NullString{String: "第1話", Valid: true},
+			rawNumber:  sql.NullFloat64{Float64: 1, Valid: true},
+			sortNumber: 100,
+			status:     "published",
+		})
+		// The deleted episode sits between the other two in sort_number order. The list
+		// drops it, so the derivation must skip it too instead of naming a row the page
+		// does not show.
+		//
+		// [Ja] 削除済みのエピソードは sort_number 順で他 2 話の間に位置する。一覧はこれを
+		// 落とすため、導出も飛ばし、ページに出ない行を名指ししないこと。
+		insertDBListEpisode(t, tx, dbListEpisodeRow{
+			workID:     workID,
+			number:     sql.NullString{String: "削除済みの話", Valid: true},
+			sortNumber: 150,
+			status:     "published",
+			deletedAt:  sql.NullTime{Time: time.Now(), Valid: true},
+		})
+		insertDBListEpisode(t, tx, dbListEpisodeRow{
+			workID:     workID,
+			number:     sql.NullString{String: "第2話", Valid: true},
+			sortNumber: 200,
+			status:     "published",
+		})
+		// Another work's episode must not become anyone's preceding episode.
+		//
+		// [Ja] 別作品のエピソードが直前のエピソードになってはならない。
+		otherWorkID := insertDBListWork(t, tx)
+		insertDBListEpisode(t, tx, dbListEpisodeRow{
+			workID:     otherWorkID,
+			number:     sql.NullString{String: "別作品の話", Valid: true},
+			sortNumber: 50,
+			status:     "published",
+		})
+
+		got, err := repo.ListForDB(context.Background(), repository.DBEpisodeListParams{
+			WorkID:  workID,
+			Page:    1,
+			PerPage: 100,
+		})
+		if err != nil {
+			t.Fatalf("ListForDB() error = %v", err)
+		}
+		if len(got) != 2 {
+			t.Fatalf("len(got) = %d, want 2", len(got))
+		}
+		if got[0].PrevNumber == nil || *got[0].PrevNumber != "第1話" {
+			t.Errorf("got[0].PrevNumber = %v, want 第1話", got[0].PrevNumber)
+		}
+		if got[0].PrevRawNumber == nil || *got[0].PrevRawNumber != 1 {
+			t.Errorf("got[0].PrevRawNumber = %v, want 1", got[0].PrevRawNumber)
+		}
+		if got[1].PrevNumber != nil {
+			t.Errorf("got[1].PrevNumber = %v, want nil (作品の最初のエピソード)", got[1].PrevNumber)
+		}
+		if got[1].PrevRawNumber != nil {
+			t.Errorf("got[1].PrevRawNumber = %v, want nil (作品の最初のエピソード)", got[1].PrevRawNumber)
+		}
+	})
+
+	// The derivation runs over the work's whole list before the page is cut out, so the last
+	// row of a page still names the episode that lands on the next page.
+	//
+	// [Ja] 導出はページを切り出す前に作品の一覧全体に対して行われるため、ページ末尾の行も
+	// 次ページに載るエピソードを名指しできる。
+	t.Run("正常系: ページ境界でも直前のエピソードを導出する", func(t *testing.T) {
+		t.Parallel()
+
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewEpisodeRepository(query.New(db).WithTx(tx))
+
+		workID := insertDBListWork(t, tx)
+		for i := int32(1); i <= 3; i++ {
+			insertDBListEpisode(t, tx, dbListEpisodeRow{
+				workID:     workID,
+				number:     sql.NullString{String: "第" + strconv.Itoa(int(i)) + "話", Valid: true},
+				sortNumber: i * 100,
+				status:     "published",
+			})
+		}
+
+		firstPage, err := repo.ListForDB(context.Background(), repository.DBEpisodeListParams{
+			WorkID:  workID,
+			Page:    1,
+			PerPage: 2,
+		})
+		if err != nil {
+			t.Fatalf("ListForDB() error = %v", err)
+		}
+		if len(firstPage) != 2 {
+			t.Fatalf("len(firstPage) = %d, want 2", len(firstPage))
+		}
+		// The second episode closes the first page while its predecessor, the first
+		// episode, opens the second page.
+		//
+		// [Ja] 第2話は 1 ページ目の末尾で、その直前の第1話は 2 ページ目の先頭に載る。
+		if firstPage[1].PrevNumber == nil || *firstPage[1].PrevNumber != "第1話" {
+			t.Errorf("firstPage[1].PrevNumber = %v, want 第1話", firstPage[1].PrevNumber)
+		}
+	})
+
 	t.Run("正常系: エピソードが無い作品では空スライスを返す", func(t *testing.T) {
 		t.Parallel()
 
@@ -479,6 +595,159 @@ func TestEpisodeRepository_CountForDB(t *testing.T) {
 	if got != 3 {
 		t.Errorf("CountForDB() = %d, want 3", got)
 	}
+}
+
+func TestEpisodeRepository_GetForEditByID(t *testing.T) {
+	t.Parallel()
+
+	t.Run("正常系: 編集対象のカラムと親作品を射影する", func(t *testing.T) {
+		t.Parallel()
+
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewEpisodeRepository(query.New(db).WithTx(tx))
+
+		workID := testutil.NewWorkBuilder(t, tx).WithTitle("編集対象の作品").WithNoEpisodes(true).Build()
+		episodeID := insertDBListEpisode(t, tx, dbListEpisodeRow{
+			workID:     workID,
+			number:     sql.NullString{String: "第2話", Valid: true},
+			rawNumber:  sql.NullFloat64{Float64: 2.5, Valid: true},
+			sortNumber: 200,
+			title:      sql.NullString{String: "もう、お婿にいけません", Valid: true},
+			titleEn:    "No Longer Marriageable",
+			status:     "published",
+		})
+
+		got, err := repo.GetForEditByID(context.Background(), episodeID)
+		if err != nil {
+			t.Fatalf("GetForEditByID() error = %v", err)
+		}
+		if got == nil {
+			t.Fatal("GetForEditByID() = nil, want エピソード")
+		}
+		if got.Episode.ID != episodeID {
+			t.Errorf("Episode.ID = %d, want %d", int64(got.Episode.ID), int64(episodeID))
+		}
+		if got.Episode.Number == nil || *got.Episode.Number != "第2話" {
+			t.Errorf("Episode.Number = %v, want %q", got.Episode.Number, "第2話")
+		}
+		if got.Episode.RawNumber == nil || *got.Episode.RawNumber != 2.5 {
+			t.Errorf("Episode.RawNumber = %v, want 2.5", got.Episode.RawNumber)
+		}
+		if got.Episode.SortNumber != 200 {
+			t.Errorf("Episode.SortNumber = %d, want 200", got.Episode.SortNumber)
+		}
+		if got.Episode.Title == nil || *got.Episode.Title != "もう、お婿にいけません" {
+			t.Errorf("Episode.Title = %v, want %q", got.Episode.Title, "もう、お婿にいけません")
+		}
+		if got.Episode.TitleEn != "No Longer Marriageable" {
+			t.Errorf("Episode.TitleEn = %q, want %q", got.Episode.TitleEn, "No Longer Marriageable")
+		}
+		// The form carries updated_at as the version its submit is made against, so the
+		// loader has to populate it.
+		//
+		// [Ja] フォームは updated_at を送信が前提とする版として運ぶため、ローダーが値を
+		// 入れる必要がある。
+		if got.Episode.UpdatedAt == nil {
+			t.Error("Episode.UpdatedAt = nil, want 更新時刻")
+		}
+		// The page reads the work's title for its heading and no_episodes for the shared
+		// subnav, so both ride along with the episode.
+		//
+		// [Ja] ページは見出しに作品の title を、共有サブナビに no_episodes を読むため、
+		// どちらもエピソードと一緒に返る。
+		if got.Work.ID != workID {
+			t.Errorf("Work.ID = %d, want %d", int64(got.Work.ID), int64(workID))
+		}
+		if got.Work.Title != "編集対象の作品" {
+			t.Errorf("Work.Title = %q, want %q", got.Work.Title, "編集対象の作品")
+		}
+		if !got.Work.NoEpisodes {
+			t.Error("Work.NoEpisodes = false, want true")
+		}
+	})
+
+	t.Run("正常系: 未設定の任意カラムは nil になる", func(t *testing.T) {
+		t.Parallel()
+
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewEpisodeRepository(query.New(db).WithTx(tx))
+
+		workID := testutil.NewWorkBuilder(t, tx).WithTitle("未設定カラムの作品").Build()
+		episodeID := insertDBListEpisode(t, tx, dbListEpisodeRow{workID: workID, sortNumber: 100, status: "published"})
+
+		got, err := repo.GetForEditByID(context.Background(), episodeID)
+		if err != nil {
+			t.Fatalf("GetForEditByID() error = %v", err)
+		}
+		if got == nil {
+			t.Fatal("GetForEditByID() = nil, want エピソード")
+		}
+		if got.Episode.Number != nil {
+			t.Errorf("Episode.Number = %v, want nil", got.Episode.Number)
+		}
+		if got.Episode.RawNumber != nil {
+			t.Errorf("Episode.RawNumber = %v, want nil", got.Episode.RawNumber)
+		}
+		if got.Episode.Title != nil {
+			t.Errorf("Episode.Title = %v, want nil", got.Episode.Title)
+		}
+	})
+
+	t.Run("異常系: 編集できないエピソードは (nil, nil) を返す", func(t *testing.T) {
+		t.Parallel()
+
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewEpisodeRepository(query.New(db).WithTx(tx))
+
+		workID := testutil.NewWorkBuilder(t, tx).WithTitle("除外テストの作品").Build()
+		deletedEpisodeID := insertDBListEpisode(t, tx, dbListEpisodeRow{
+			workID:     workID,
+			sortNumber: 100,
+			status:     "published",
+			deletedAt:  sql.NullTime{Time: time.Now(), Valid: true},
+		})
+		// The dormant status column is deliberately made to disagree with the timestamps:
+		// a row it alone calls deleted is still editable.
+		//
+		// [Ja] 休眠 status カラムは意図的にタイムスタンプと食い違わせる。status だけが
+		// deleted の行は編集できる。
+		dormantDeletedEpisodeID := insertDBListEpisode(t, tx, dbListEpisodeRow{
+			workID:     workID,
+			sortNumber: 200,
+			status:     "deleted",
+		})
+
+		deletedWorkID := testutil.NewWorkBuilder(t, tx).WithTitle("削除済みの作品").WithDeletedAt(time.Now()).Build()
+		episodeOfDeletedWorkID := insertDBListEpisode(t, tx, dbListEpisodeRow{
+			workID:     deletedWorkID,
+			sortNumber: 100,
+			status:     "published",
+		})
+
+		for _, tt := range []struct {
+			name      string
+			episodeID model.EpisodeID
+			wantNil   bool
+		}{
+			{name: "存在しないエピソード", episodeID: model.EpisodeID(999999999), wantNil: true},
+			{name: "削除済みのエピソード", episodeID: deletedEpisodeID, wantNil: true},
+			{name: "削除済み作品のエピソード", episodeID: episodeOfDeletedWorkID, wantNil: true},
+			{name: "休眠 status だけが deleted のエピソード", episodeID: dormantDeletedEpisodeID, wantNil: false},
+		} {
+			t.Run(tt.name, func(t *testing.T) {
+				got, err := repo.GetForEditByID(context.Background(), tt.episodeID)
+				if err != nil {
+					t.Fatalf("GetForEditByID() error = %v", err)
+				}
+				if tt.wantNil && got != nil {
+					t.Errorf("GetForEditByID() = %+v, want nil", got)
+				}
+				if !tt.wantNil && got == nil {
+					t.Error("GetForEditByID() = nil, want エピソード")
+				}
+			})
+		}
+	})
 }
 
 func TestEpisodeRepository_ListForAnimeSyncByIDs(t *testing.T) {
@@ -606,6 +875,151 @@ func TestEpisodeRepository_ListForAnimeSyncByIDs(t *testing.T) {
 			t.Errorf("len(episodes) = %d, want 0", len(episodes))
 		}
 	})
+}
+
+// TestEpisodeRepository_Create covers the insert the bulk create writes each row with: the
+// optional columns of a partly filled row become NULL rather than empty values, and the two
+// columns the create fills in itself (the anime mapping and the preceding episode) are stored
+// with the row.
+//
+// [Ja] TestEpisodeRepository_Create は一括作成が行ごとに書く INSERT を検証する。一部だけ入力
+// された行の任意カラムは空の値ではなく NULL になり、作成が自ら埋める 2 つのカラム (anime の
+// マッピングと直前のエピソード) が行と一緒に保存される。
+func TestEpisodeRepository_Create(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	repo := repository.NewEpisodeRepository(query.New(db).WithTx(tx))
+	ctx := context.Background()
+
+	userID := testutil.NewUserBuilder(t, tx).WithRole(model.RoleEditor).Build()
+	animeID := insertEpisodeSyncParentAnime(t, tx)
+	workID := insertEpisodeSyncWork(t, tx, sql.NullInt64{Int64: int64(animeID), Valid: true})
+
+	number := "#1"
+	rawNumber := 1.5
+	title := "はじまり"
+	firstID, err := repo.Create(ctx, repository.CreateEpisodeParams{
+		UserID:     userID,
+		WorkID:     workID,
+		Number:     &number,
+		RawNumber:  &rawNumber,
+		Title:      &title,
+		SortNumber: 100,
+		AnimeID:    &animeID,
+	})
+	if err != nil {
+		t.Fatalf("Create() error = %v", err)
+	}
+
+	secondID, err := repo.Create(ctx, repository.CreateEpisodeParams{
+		UserID:        userID,
+		WorkID:        workID,
+		Title:         &title,
+		SortNumber:    200,
+		PrevEpisodeID: &firstID,
+	})
+	if err != nil {
+		t.Fatalf("Create() error = %v", err)
+	}
+
+	var (
+		gotNumber        sql.NullString
+		gotRawNumber     sql.NullFloat64
+		gotTitle         sql.NullString
+		gotSortNumber    int32
+		gotPrevEpisodeID sql.NullInt64
+		gotAnimeID       sql.NullInt64
+	)
+	if err := tx.QueryRow(`
+		SELECT number, raw_number, title, sort_number, prev_episode_id, anime_id
+		FROM episodes
+		WHERE id = $1
+	`, int64(firstID)).Scan(&gotNumber, &gotRawNumber, &gotTitle, &gotSortNumber, &gotPrevEpisodeID, &gotAnimeID); err != nil {
+		t.Fatalf("作成されたエピソードの読み込みに失敗: %v", err)
+	}
+
+	if gotNumber.String != number || gotTitle.String != title {
+		t.Errorf("(number, title) = (%q, %q), want (%q, %q)", gotNumber.String, gotTitle.String, number, title)
+	}
+	if gotRawNumber.Float64 != rawNumber {
+		t.Errorf("raw_number = %v, want %v", gotRawNumber, rawNumber)
+	}
+	if gotSortNumber != 100 {
+		t.Errorf("sort_number = %d, want 100", gotSortNumber)
+	}
+	if gotAnimeID.Int64 != int64(animeID) {
+		t.Errorf("anime_id = %+v, want %d", gotAnimeID, int64(animeID))
+	}
+	// The first row of a work has no preceding episode.
+	//
+	// [Ja] 作品の最初の行には直前のエピソードが無い。
+	if gotPrevEpisodeID.Valid {
+		t.Errorf("prev_episode_id = %+v, want NULL", gotPrevEpisodeID)
+	}
+
+	if err := tx.QueryRow(`
+		SELECT number, raw_number, prev_episode_id, anime_id
+		FROM episodes
+		WHERE id = $1
+	`, int64(secondID)).Scan(&gotNumber, &gotRawNumber, &gotPrevEpisodeID, &gotAnimeID); err != nil {
+		t.Fatalf("作成されたエピソードの読み込みに失敗: %v", err)
+	}
+
+	// The columns the row left empty are stored as NULL: no existing episode carries an
+	// empty string in them.
+	//
+	// [Ja] 行が空のままにしたカラムは NULL として保存される。既存のどのエピソードもそれらに
+	// 空文字列を持たないため。
+	if gotNumber.Valid {
+		t.Errorf("number = %+v, want NULL", gotNumber)
+	}
+	if gotRawNumber.Valid {
+		t.Errorf("raw_number = %+v, want NULL", gotRawNumber)
+	}
+	// An episode under a work that is not mapped yet carries no anime.
+	//
+	// [Ja] 未マッピングの作品配下のエピソードは anime を持たない。
+	if gotAnimeID.Valid {
+		t.Errorf("anime_id = %+v, want NULL", gotAnimeID)
+	}
+	if gotPrevEpisodeID.Int64 != int64(firstID) {
+		t.Errorf("prev_episode_id = %+v, want %d", gotPrevEpisodeID, int64(firstID))
+	}
+
+	var (
+		activityUserID           int64
+		activityTrackableID      int64
+		activityTrackableType    string
+		activityAction           string
+		activityRootResourceID   int64
+		activityRootResourceType string
+		activityNewID            string
+	)
+	if err := tx.QueryRow(`
+		SELECT
+			user_id,
+			trackable_id,
+			trackable_type,
+			action,
+			root_resource_id,
+			root_resource_type,
+			parameters->'new'->>'id'
+		FROM db_activities
+		WHERE trackable_id = $1
+			AND trackable_type = 'Episode'
+	`, int64(secondID)).Scan(
+		&activityUserID, &activityTrackableID, &activityTrackableType, &activityAction,
+		&activityRootResourceID, &activityRootResourceType, &activityNewID,
+	); err != nil {
+		t.Fatalf("DB 活動履歴の読み込みに失敗: %v", err)
+	}
+	if activityUserID != int64(userID) || activityTrackableID != int64(secondID) ||
+		activityTrackableType != "Episode" || activityAction != "episodes.create" ||
+		activityRootResourceID != int64(workID) || activityRootResourceType != "Work" ||
+		activityNewID != secondID.String() {
+		t.Errorf("DB 活動履歴が作成内容と一致しません")
+	}
 }
 
 func TestEpisodeRepository_UpdateAnimeID(t *testing.T) {

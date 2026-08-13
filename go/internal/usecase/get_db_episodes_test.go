@@ -70,6 +70,51 @@ func TestGetDBEpisodesUsecase_Execute_ReturnsWorkAndEpisodes(t *testing.T) {
 	}
 }
 
+// TestGetDBEpisodesUsecase_Execute_ReturnsGenerationValues verifies that the use case
+// carries the values the page's auto-generation notice reports, keeping them distinct
+// from the list's own total: the notice counts only published episodes while the list keeps
+// unpublished ones it shows.
+//
+// [Ja] TestGetDBEpisodesUsecase_Execute_ReturnsGenerationValues は、ページの自動生成の
+// 案内が報告する 3 つの値を UseCase が運ぶこと、およびそれが一覧自体の総件数とは別物で
+// あることを検証する。
+// 案内は公開中のエピソードだけを数え、一覧は表示する非公開のエピソードも総件数に含める。
+func TestGetDBEpisodesUsecase_Execute_ReturnsGenerationValues(t *testing.T) {
+	t.Parallel()
+
+	uc, tx := newGetDBEpisodesUsecase(t)
+
+	workID := testutil.NewWorkBuilder(t, tx).
+		WithTitle("自動生成の案内テスト").
+		WithManualEpisodesCount(12).
+		Build()
+	insertEpisodeWithSortNumber(t, tx, workID, "第1話", 100)
+	testutil.NewEpisodeBuilder(t, tx, workID).
+		WithNumber("第2話").
+		WithUnpublishedAt(time.Now()).
+		Build()
+
+	channelID := testutil.NewChannelBuilder(t, tx).Build()
+	testutil.NewSlotBuilder(t, tx).WithWorkID(workID).WithChannelID(channelID).WithNumber(9).Build()
+
+	output, err := uc.Execute(context.Background(), GetDBEpisodesInput{WorkID: workID, Page: 1, PerPage: 100})
+	if err != nil {
+		t.Fatalf("Execute() error = %v", err)
+	}
+	if output.Work.ManualEpisodesCount == nil || *output.Work.ManualEpisodesCount != 12 {
+		t.Errorf("Work.ManualEpisodesCount = %v, want 12", output.Work.ManualEpisodesCount)
+	}
+	if output.PublishedEpisodeCount != 1 {
+		t.Errorf("PublishedEpisodeCount = %d, want 1", output.PublishedEpisodeCount)
+	}
+	if output.MaxGeneratableEpisodeNumber != 9 {
+		t.Errorf("MaxGeneratableEpisodeNumber = %d, want 9", output.MaxGeneratableEpisodeNumber)
+	}
+	if output.TotalCount != 2 {
+		t.Errorf("TotalCount = %d, want 2 (一覧は非公開のエピソードも含む)", output.TotalCount)
+	}
+}
+
 // TestGetDBEpisodesUsecase_Execute_PaginatesEpisodes verifies that PerPage / Page select one
 // page of episodes while TotalCount keeps reporting every listed episode, so the pagination
 // can render the remaining pages.

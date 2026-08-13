@@ -2,6 +2,7 @@ package repository_test
 
 import (
 	"context"
+	"database/sql"
 	"math"
 	"testing"
 	"time"
@@ -1335,23 +1336,130 @@ func TestWorkRepository_GetForEpisodeListByID(t *testing.T) {
 		workID := testutil.NewWorkBuilder(t, tx).
 			WithTitle("エピソード一覧の親作品").
 			WithNoEpisodes(true).
+			WithManualEpisodesCount(12).
 			Build()
 
-		work, err := repo.GetForEpisodeListByID(context.Background(), workID)
+		listWork, err := repo.GetForEpisodeListByID(context.Background(), workID)
 		if err != nil {
 			t.Fatalf("GetForEpisodeListByID() error = %v", err)
 		}
-		if work == nil {
-			t.Fatal("work should not be nil")
+		if listWork == nil {
+			t.Fatal("listWork should not be nil")
 		}
-		if work.ID != workID {
-			t.Errorf("work.ID = %d, want %d", work.ID, workID)
+		if listWork.Work.ID != workID {
+			t.Errorf("Work.ID = %d, want %d", listWork.Work.ID, workID)
 		}
-		if work.Title != "エピソード一覧の親作品" {
-			t.Errorf("work.Title = %q, want %q", work.Title, "エピソード一覧の親作品")
+		if listWork.Work.Title != "エピソード一覧の親作品" {
+			t.Errorf("Work.Title = %q, want %q", listWork.Work.Title, "エピソード一覧の親作品")
 		}
-		if !work.NoEpisodes {
-			t.Error("work.NoEpisodes = false, want true")
+		if !listWork.Work.NoEpisodes {
+			t.Error("Work.NoEpisodes = false, want true")
+		}
+		if listWork.Work.ManualEpisodesCount == nil || *listWork.Work.ManualEpisodesCount != 12 {
+			t.Errorf("Work.ManualEpisodesCount = %v, want 12", listWork.Work.ManualEpisodesCount)
+		}
+	})
+
+	// The auto-generation notice reports the published episode count and how far the
+	// auto-generation could number them, so both values must exclude the episodes and slots
+	// the Rails only_kept scope drops and must ignore other works' rows.
+	//
+	// [Ja] 自動生成の案内は公開中のエピソード数と自動生成が到達する話数を報告するため、
+	// 両方の値は Rails の only_kept スコープが落とすエピソード・スロットを除外し、
+	// 他作品の行を数えないこと。
+	t.Run("自動生成の案内は有効なエピソードとスロットだけを集計する", func(t *testing.T) {
+		t.Parallel()
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewWorkRepository(query.New(db).WithTx(tx))
+
+		workID := testutil.NewWorkBuilder(t, tx).WithTitle("件数集計の親作品").Build()
+		testutil.NewEpisodeBuilder(t, tx, workID).WithNumber("第1話").Build()
+		testutil.NewEpisodeBuilder(t, tx, workID).WithNumber("第2話").Build()
+		testutil.NewEpisodeBuilder(t, tx, workID).WithNumber("第3話").WithUnpublishedAt(time.Now()).Build()
+		testutil.NewEpisodeBuilder(t, tx, workID).WithNumber("第4話").WithDeletedAt(time.Now()).Build()
+
+		channelID := testutil.NewChannelBuilder(t, tx).Build()
+		newSlot := func() *testutil.SlotBuilder {
+			return testutil.NewSlotBuilder(t, tx).WithWorkID(workID).WithChannelID(channelID)
+		}
+		newSlot().WithNumber(5).Build()
+		newSlot().WithNumber(9).WithUnpublishedAt(time.Now()).Build()
+		newSlot().WithNumber(12).WithDeletedAt(time.Now()).Build()
+
+		otherWorkID := testutil.NewWorkBuilder(t, tx).WithTitle("別の作品").Build()
+		testutil.NewEpisodeBuilder(t, tx, otherWorkID).WithNumber("第1話").Build()
+		testutil.NewSlotBuilder(t, tx).WithWorkID(otherWorkID).WithChannelID(channelID).WithNumber(24).Build()
+
+		listWork, err := repo.GetForEpisodeListByID(context.Background(), workID)
+		if err != nil {
+			t.Fatalf("GetForEpisodeListByID() error = %v", err)
+		}
+		if listWork == nil {
+			t.Fatal("listWork should not be nil")
+		}
+		if listWork.PublishedEpisodeCount != 2 {
+			t.Errorf("PublishedEpisodeCount = %d, want 2", listWork.PublishedEpisodeCount)
+		}
+		if listWork.MaxGeneratableEpisodeNumber != 5 {
+			t.Errorf("MaxGeneratableEpisodeNumber = %d, want 5", listWork.MaxGeneratableEpisodeNumber)
+		}
+	})
+
+	// slots.number is nullable, and MAX skips those rows. The Rails notice instead reads the
+	// first slot ordered by number descending, which PostgreSQL sorts NULLs first for, so it
+	// reports 0 for the same work. Keeping the highest reachable number is the deliberate
+	// divergence the query documents, so pin it here.
+	//
+	// [Ja] slots.number は NULL を許容し、MAX はその行を飛ばす。一方 Rails の案内は number
+	// 降順の先頭スロットを読むため、PostgreSQL の NULLS FIRST により同じ作品で 0 を報告する。
+	// 到達できる最大話数を保つのはクエリのコメントに記した意図的な差異なので、ここで固定する。
+	t.Run("話数未設定のスロットは生成可能話数を 0 に落とさない", func(t *testing.T) {
+		t.Parallel()
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewWorkRepository(query.New(db).WithTx(tx))
+
+		workID := testutil.NewWorkBuilder(t, tx).WithTitle("話数未設定スロットを持つ作品").Build()
+
+		channelID := testutil.NewChannelBuilder(t, tx).Build()
+		testutil.NewSlotBuilder(t, tx).WithWorkID(workID).WithChannelID(channelID).WithNumber(5).Build()
+		testutil.NewSlotBuilder(t, tx).WithWorkID(workID).WithChannelID(channelID).Build()
+
+		listWork, err := repo.GetForEpisodeListByID(context.Background(), workID)
+		if err != nil {
+			t.Fatalf("GetForEpisodeListByID() error = %v", err)
+		}
+		if listWork == nil {
+			t.Fatal("listWork should not be nil")
+		}
+		if listWork.MaxGeneratableEpisodeNumber != 5 {
+			t.Errorf("MaxGeneratableEpisodeNumber = %d, want 5", listWork.MaxGeneratableEpisodeNumber)
+		}
+	})
+
+	// A work with no slot at all has nothing to auto-generate from, which the notice reports
+	// as zero rather than leaving the maximum episode number absent.
+	//
+	// [Ja] スロットを 1 つも持たない作品には自動生成の元が無い。案内は最大話数を
+	// 欠落させず 0 として報告する。
+	t.Run("スロットが無い作品の生成可能話数は 0", func(t *testing.T) {
+		t.Parallel()
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewWorkRepository(query.New(db).WithTx(tx))
+
+		workID := testutil.NewWorkBuilder(t, tx).WithTitle("スロットなしの作品").Build()
+
+		listWork, err := repo.GetForEpisodeListByID(context.Background(), workID)
+		if err != nil {
+			t.Fatalf("GetForEpisodeListByID() error = %v", err)
+		}
+		if listWork == nil {
+			t.Fatal("listWork should not be nil")
+		}
+		if listWork.MaxGeneratableEpisodeNumber != 0 {
+			t.Errorf("MaxGeneratableEpisodeNumber = %d, want 0", listWork.MaxGeneratableEpisodeNumber)
+		}
+		if listWork.Work.ManualEpisodesCount != nil {
+			t.Errorf("Work.ManualEpisodesCount = %v, want nil", listWork.Work.ManualEpisodesCount)
 		}
 	})
 
@@ -1365,12 +1473,12 @@ func TestWorkRepository_GetForEpisodeListByID(t *testing.T) {
 			WithDeletedAt(time.Now()).
 			Build()
 
-		work, err := repo.GetForEpisodeListByID(context.Background(), workID)
+		listWork, err := repo.GetForEpisodeListByID(context.Background(), workID)
 		if err != nil {
 			t.Fatalf("GetForEpisodeListByID() error = %v", err)
 		}
-		if work != nil {
-			t.Errorf("work = %v, want nil", work)
+		if listWork != nil {
+			t.Errorf("listWork = %v, want nil", listWork)
 		}
 	})
 
@@ -1379,14 +1487,291 @@ func TestWorkRepository_GetForEpisodeListByID(t *testing.T) {
 		db, tx := testutil.SetupTx(t)
 		repo := repository.NewWorkRepository(query.New(db).WithTx(tx))
 
-		work, err := repo.GetForEpisodeListByID(context.Background(), model.WorkID(999999999))
+		listWork, err := repo.GetForEpisodeListByID(context.Background(), model.WorkID(999999999))
 		if err != nil {
 			t.Fatalf("GetForEpisodeListByID() error = %v", err)
 		}
-		if work != nil {
-			t.Errorf("work = %v, want nil", work)
+		if listWork != nil {
+			t.Errorf("listWork = %v, want nil", listWork)
 		}
 	})
+}
+
+func TestWorkRepository_GetForEpisodeFormByID_ManualCreationState(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	repo := repository.NewWorkRepository(query.New(db).WithTx(tx))
+	ctx := context.Background()
+
+	filledWorkID := testutil.NewWorkBuilder(t, tx).
+		WithTitle("予定話数到達").
+		WithManualEpisodesCount(2).
+		Build()
+	testutil.NewEpisodeBuilder(t, tx, filledWorkID).WithNumber("第1話").Build()
+	testutil.NewEpisodeBuilder(t, tx, filledWorkID).WithNumber("第2話").Build()
+	testutil.NewEpisodeBuilder(t, tx, filledWorkID).WithNumber("非公開").WithUnpublishedAt(time.Now()).Build()
+	testutil.NewEpisodeBuilder(t, tx, filledWorkID).WithNumber("削除済み").WithDeletedAt(time.Now()).Build()
+
+	filledWork, err := repo.GetForEpisodeFormByID(ctx, filledWorkID)
+	if err != nil {
+		t.Fatalf("予定話数到達 GetForEpisodeFormByID() error = %v", err)
+	}
+	if filledWork == nil || !filledWork.ManualCreationState.EpisodesFilled {
+		t.Fatalf("予定話数到達の ManualCreationState = %+v, want EpisodesFilled", filledWork)
+	}
+	if filledWork.ManualCreationState.Allowed() {
+		t.Error("予定話数到達作品の手動作成が許可されています")
+	}
+
+	slotWorkID := testutil.NewWorkBuilder(t, tx).WithTitle("放送枠あり").Build()
+	channelID := testutil.NewChannelBuilder(t, tx).Build()
+	testutil.NewSlotBuilder(t, tx).
+		WithWorkID(slotWorkID).
+		WithChannelID(channelID).
+		WithStartedAt(time.Now()).
+		Build()
+
+	slotWork, err := repo.GetForEpisodeFormByID(ctx, slotWorkID)
+	if err != nil {
+		t.Fatalf("放送枠あり GetForEpisodeFormByID() error = %v", err)
+	}
+	if slotWork == nil || !slotWork.ManualCreationState.SlotsExist {
+		t.Fatalf("放送枠ありの ManualCreationState = %+v, want SlotsExist", slotWork)
+	}
+	if slotWork.ManualCreationState.Allowed() {
+		t.Error("放送枠あり作品の手動作成が許可されています")
+	}
+
+	plainWorkID := testutil.NewWorkBuilder(t, tx).WithTitle("制限なし").Build()
+	plainWork, err := repo.GetForEpisodeFormByID(ctx, plainWorkID)
+	if err != nil {
+		t.Fatalf("制限なし GetForEpisodeFormByID() error = %v", err)
+	}
+	if plainWork == nil || !plainWork.ManualCreationState.Allowed() {
+		t.Fatalf("制限なしの ManualCreationState = %+v, want Allowed", plainWork)
+	}
+}
+
+// TestWorkRepository_GetForEpisodeCreateByID covers what an episode bulk create reads about
+// its parent work: the anchors the new rows are numbered from, and the state that refuses the
+// submit. The anchors aggregate every episode of the work, including the unpublished and the
+// deleted ones, so a work whose episodes were archived does not hand out sort_numbers that
+// are already taken.
+//
+// The manual-creation state is asserted here as well as on the form query because the two
+// queries carry the same predicates separately. This is the copy that refuses a POST, so a
+// drift on this side alone would disable the form while letting a direct submit through.
+//
+// [Ja] TestWorkRepository_GetForEpisodeCreateByID はエピソード一括作成が親作品から読み取る
+// もの (新規行の採番の起点と、送信を却下する状態) を検証する。起点は非公開・削除済みを含む
+// 作品のすべてのエピソードを集計するため、エピソードを非公開にした作品で既に使われている
+// sort_number を振り直さない。
+//
+// 手動作成の状態をフォーム用クエリと併せてここでも検証するのは、2 つのクエリが同じ述語を
+// 別々に持っているため。POST を却下するのはこちらの写しであり、この側だけがずれると、
+// フォームは無効化されるのに直接の送信は通ってしまう。
+func TestWorkRepository_GetForEpisodeCreateByID(t *testing.T) {
+	t.Parallel()
+
+	t.Run("採番の起点に非公開・削除済みのエピソードも数える", func(t *testing.T) {
+		t.Parallel()
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewWorkRepository(query.New(db).WithTx(tx))
+
+		workID := testutil.NewWorkBuilder(t, tx).WithTitle("一括作成の親作品").Build()
+		insertEpisodeWithSortNumber(t, tx, workID, "第1話", 100)
+		latestID := insertEpisodeWithSortNumber(t, tx, workID, "第2話", 200)
+		testutil.NewEpisodeBuilder(t, tx, workID).WithNumber("第3話").WithUnpublishedAt(time.Now()).Build()
+		testutil.NewEpisodeBuilder(t, tx, workID).WithNumber("第4話").WithDeletedAt(time.Now()).Build()
+
+		otherWorkID := testutil.NewWorkBuilder(t, tx).WithTitle("別の作品").Build()
+		insertEpisodeWithSortNumber(t, tx, otherWorkID, "第1話", 9999)
+
+		createWork, err := repo.GetForEpisodeCreateByID(context.Background(), workID)
+		if err != nil {
+			t.Fatalf("GetForEpisodeCreateByID() error = %v", err)
+		}
+		if createWork == nil {
+			t.Fatal("createWork should not be nil")
+		}
+		if createWork.Work.ID != workID {
+			t.Errorf("Work.ID = %d, want %d", createWork.Work.ID, workID)
+		}
+		if createWork.EpisodeCount != 4 {
+			t.Errorf("EpisodeCount = %d, want 4", createWork.EpisodeCount)
+		}
+		// The builder fixes sort_number at 0, so the two rows inserted with explicit values
+		// are the ones that decide the latest episode.
+		//
+		// [Ja] ビルダーは sort_number を 0 で固定するため、最新のエピソードを決めるのは
+		// 明示的な値で挿入した 2 行になる。
+		if createWork.LatestEpisode == nil {
+			t.Fatal("LatestEpisode should not be nil")
+		}
+		if createWork.LatestEpisode.ID != latestID {
+			t.Errorf("LatestEpisode.ID = %d, want %d", createWork.LatestEpisode.ID, latestID)
+		}
+		if createWork.LatestEpisode.SortNumber != 200 {
+			t.Errorf("LatestEpisode.SortNumber = %d, want 200", createWork.LatestEpisode.SortNumber)
+		}
+	})
+
+	t.Run("エピソードが無い作品には起点が無い", func(t *testing.T) {
+		t.Parallel()
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewWorkRepository(query.New(db).WithTx(tx))
+
+		workID := testutil.NewWorkBuilder(t, tx).WithTitle("エピソードなしの親作品").Build()
+
+		createWork, err := repo.GetForEpisodeCreateByID(context.Background(), workID)
+		if err != nil {
+			t.Fatalf("GetForEpisodeCreateByID() error = %v", err)
+		}
+		if createWork == nil {
+			t.Fatal("createWork should not be nil")
+		}
+		if createWork.EpisodeCount != 0 {
+			t.Errorf("EpisodeCount = %d, want 0", createWork.EpisodeCount)
+		}
+		if createWork.LatestEpisode != nil {
+			t.Errorf("LatestEpisode = %+v, want nil", createWork.LatestEpisode)
+		}
+		// An unmapped work reports no anime, which is what makes the create skip the
+		// reference-model writes.
+		//
+		// [Ja] 未マッピングの作品は anime を持たないと報告する。作成が参照モデルへの書き込みを
+		// 飛ばすのはこの値による。
+		if createWork.Work.AnimeID != nil {
+			t.Errorf("Work.AnimeID = %v, want nil", createWork.Work.AnimeID)
+		}
+	})
+
+	t.Run("マッピング済みの作品は anime_id を返す", func(t *testing.T) {
+		t.Parallel()
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewWorkRepository(query.New(db).WithTx(tx))
+
+		animeID := insertEpisodeSyncParentAnime(t, tx)
+		workID := insertEpisodeSyncWork(t, tx, sql.NullInt64{Int64: int64(animeID), Valid: true})
+
+		createWork, err := repo.GetForEpisodeCreateByID(context.Background(), workID)
+		if err != nil {
+			t.Fatalf("GetForEpisodeCreateByID() error = %v", err)
+		}
+		if createWork == nil {
+			t.Fatal("createWork should not be nil")
+		}
+		if createWork.Work.AnimeID == nil || *createWork.Work.AnimeID != animeID {
+			t.Errorf("Work.AnimeID = %v, want %d", createWork.Work.AnimeID, int64(animeID))
+		}
+	})
+
+	t.Run("手動作成の制限を判定する", func(t *testing.T) {
+		t.Parallel()
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewWorkRepository(query.New(db).WithTx(tx))
+		ctx := context.Background()
+
+		filledWorkID := testutil.NewWorkBuilder(t, tx).
+			WithTitle("作成側: 予定話数到達").
+			WithManualEpisodesCount(2).
+			Build()
+		testutil.NewEpisodeBuilder(t, tx, filledWorkID).WithNumber("第1話").Build()
+		testutil.NewEpisodeBuilder(t, tx, filledWorkID).WithNumber("第2話").Build()
+
+		// The predicate counts kept episodes only, so a work stays creatable while its
+		// unpublished and deleted rows are what would fill the expected count.
+		//
+		// [Ja] 述語は公開中のエピソードだけを数えるため、予定話数を満たすのが非公開・削除済み
+		// の行である作品は作成可能なままになる。
+		keptOnlyWorkID := testutil.NewWorkBuilder(t, tx).
+			WithTitle("作成側: 公開中だけでは予定話数に届かない").
+			WithManualEpisodesCount(3).
+			Build()
+		testutil.NewEpisodeBuilder(t, tx, keptOnlyWorkID).WithNumber("第1話").Build()
+		testutil.NewEpisodeBuilder(t, tx, keptOnlyWorkID).WithNumber("第2話").Build()
+		testutil.NewEpisodeBuilder(t, tx, keptOnlyWorkID).WithNumber("第3話").WithUnpublishedAt(time.Now()).Build()
+		testutil.NewEpisodeBuilder(t, tx, keptOnlyWorkID).WithNumber("第4話").WithDeletedAt(time.Now()).Build()
+
+		slotWorkID := testutil.NewWorkBuilder(t, tx).WithTitle("作成側: 放送枠あり").Build()
+		channelID := testutil.NewChannelBuilder(t, tx).Build()
+		testutil.NewSlotBuilder(t, tx).
+			WithWorkID(slotWorkID).
+			WithChannelID(channelID).
+			WithStartedAt(time.Now()).
+			Build()
+
+		plainWorkID := testutil.NewWorkBuilder(t, tx).WithTitle("作成側: 制限なし").Build()
+
+		tests := []struct {
+			name            string
+			workID          model.WorkID
+			wantRestriction model.ManualEpisodeCreationRestriction
+		}{
+			{name: "予定話数到達", workID: filledWorkID, wantRestriction: model.ManualEpisodeCreationEpisodesFilled},
+			{name: "公開中だけでは予定話数に届かない", workID: keptOnlyWorkID, wantRestriction: model.ManualEpisodeCreationAllowed},
+			{name: "放送枠あり", workID: slotWorkID, wantRestriction: model.ManualEpisodeCreationSlotsExist},
+			{name: "制限なし", workID: plainWorkID, wantRestriction: model.ManualEpisodeCreationAllowed},
+		}
+
+		// The cases share one transaction, so they run in sequence rather than in parallel.
+		//
+		// [Ja] 各ケースは 1 つのトランザクションを共有するため、並行ではなく順に実行する。
+		for _, tt := range tests {
+			t.Run(tt.name, func(t *testing.T) {
+				createWork, err := repo.GetForEpisodeCreateByID(ctx, tt.workID)
+				if err != nil {
+					t.Fatalf("GetForEpisodeCreateByID() error = %v", err)
+				}
+				if createWork == nil {
+					t.Fatal("createWork should not be nil")
+				}
+				if got := createWork.ManualCreationState.Restriction(); got != tt.wantRestriction {
+					t.Errorf("Restriction() = %q, want %q", got, tt.wantRestriction)
+				}
+			})
+		}
+	})
+
+	t.Run("削除済みの作品は (nil, nil)", func(t *testing.T) {
+		t.Parallel()
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewWorkRepository(query.New(db).WithTx(tx))
+
+		workID := testutil.NewWorkBuilder(t, tx).
+			WithTitle("削除済みの一括作成対象").
+			WithDeletedAt(time.Now()).
+			Build()
+
+		createWork, err := repo.GetForEpisodeCreateByID(context.Background(), workID)
+		if err != nil {
+			t.Fatalf("GetForEpisodeCreateByID() error = %v", err)
+		}
+		if createWork != nil {
+			t.Errorf("createWork = %v, want nil", createWork)
+		}
+	})
+}
+
+// insertEpisodeWithSortNumber creates an episode with an explicit sort_number. The shared
+// EpisodeBuilder fixes it at 0, and the create anchors depend on the ordering it defines.
+//
+// [Ja] insertEpisodeWithSortNumber は sort_number を明示してエピソードを作成する。共有の
+// EpisodeBuilder はこれを 0 で固定するが、作成の起点は sort_number が定める順序に依存する
+// ため。
+func insertEpisodeWithSortNumber(t *testing.T, tx *sql.Tx, workID model.WorkID, number string, sortNumber int32) model.EpisodeID {
+	t.Helper()
+
+	var id int64
+	if err := tx.QueryRow(`
+		INSERT INTO episodes (work_id, number, sort_number, created_at, updated_at)
+		VALUES ($1, $2, $3, NOW(), NOW())
+		RETURNING id
+	`, int64(workID), number, sortNumber).Scan(&id); err != nil {
+		t.Fatalf("エピソードの作成に失敗: %v", err)
+	}
+	return model.EpisodeID(id)
 }
 
 // TestWorkRepository_UpdateUnpublishedAt は unpublished_at の設定・クリアをテスト

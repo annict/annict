@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/a-h/templ"
+
 	"github.com/annict/annict/go/internal/templates"
 	"github.com/annict/annict/go/internal/templates/components"
 	"github.com/annict/annict/go/internal/viewmodel"
@@ -28,8 +30,23 @@ type IndexPageData struct {
 	// [Ja] NoEpisodes は作品の no_episodes フラグを共有サブナビへ渡す。サブナビはその作品では
 	// エピソード由来の項目を落とす。
 	NoEpisodes bool
+	// Generation is the auto-generation notice, shown whether or not the work has episodes
+	// yet: a work with none is exactly where the notice's three values tell the editor what
+	// to expect.
+	//
+	// [Ja] Generation は自動生成の案内。作品がまだエピソードを持たなくても表示する。
+	// エピソードが無い作品でこそ、案内の 3 つの値が編集者に見通しを与えるため。
+	Generation viewmodel.DBEpisodeGenerationSummary
 	Episodes   []viewmodel.DBEpisodeListItem
 	Pagination viewmodel.Pagination
+	// IsCommitter gates the link to the bulk-create form: the list is public, but only
+	// committers (admins or editors) may create episodes, so a visitor who cannot is not
+	// offered the way in.
+	//
+	// [Ja] IsCommitter は一括作成フォームへのリンクの出し分けに使う。一覧は公開だが
+	// エピソードを作成できるのは committer (管理者または編集者) だけのため、作成できない
+	// 閲覧者には導線を出さない。
+	IsCommitter bool
 }
 
 // heading returns the text of the page heading: the work's name, falling back to the generic
@@ -45,6 +62,23 @@ func (d IndexPageData) heading(ctx context.Context) string {
 	return templates.T(ctx, "db_episodes_index_title")
 }
 
+// newEpisodesAction returns the action shown beside the heading, and nil for a viewer who is
+// not offered one. The nil is what keeps MainTitle from rendering its actions container: a
+// component that renders nothing is still a component, so returning one would leave an empty
+// container on the page for every visitor who cannot create episodes.
+//
+// [Ja] newEpisodesAction は見出しの横に表示する操作を返し、操作を出さない閲覧者には nil を
+// 返す。MainTitle が操作のコンテナを描画しないのはこの nil による。何も描画しない
+// コンポーネントもコンポーネントであるため、それを返すとエピソードを作成できない訪問者すべてに
+// 空のコンテナが残る。
+func (d IndexPageData) newEpisodesAction() templ.Component {
+	if !d.IsCommitter {
+		return nil
+	}
+
+	return indexNewEpisodesLink(d)
+}
+
 templ Index(data IndexPageData) {
 	<div class="flex flex-col gap-4 py-4 max-w-7xl w-full mx-auto">
 		<div class="flex gap-4 px-4">
@@ -52,7 +86,8 @@ templ Index(data IndexPageData) {
 
 			<div class="flex-1">
 				@components.MainTitle(components.MainTitleData{
-					Title: data.heading(ctx),
+					Title:   data.heading(ctx),
+					Actions: data.newEpisodesAction(),
 				})
 			</div>
 		</div>
@@ -62,6 +97,28 @@ templ Index(data IndexPageData) {
 				WorkID:     data.WorkID,
 				NoEpisodes: data.NoEpisodes,
 			})
+		</div>
+
+		<div class="px-4">
+			<div class="alert">
+				<h2>{ templates.T(ctx, "db_episodes_index_generation_heading") }</h2>
+				<section>
+					<dl class="grid gap-1">
+						<div class="flex flex-wrap gap-x-2">
+							<dt>{ templates.T(ctx, "db_episodes_index_generation_planned_label") }</dt>
+							<dd class="text-card-foreground">{ plannedCountText(ctx, data.Generation.PlannedCount) }</dd>
+						</div>
+						<div class="flex flex-wrap gap-x-2">
+							<dt>{ templates.T(ctx, "db_episodes_index_generation_published_label") }</dt>
+							<dd class="text-card-foreground">{ fmt.Sprintf("%d", data.Generation.PublishedEpisodeCount) }</dd>
+						</div>
+						<div class="flex flex-wrap gap-x-2">
+							<dt>{ templates.T(ctx, "db_episodes_index_generation_generatable_label") }</dt>
+							<dd class="text-card-foreground">{ fmt.Sprintf("%d", data.Generation.MaxGeneratableEpisodeNumber) }</dd>
+						</div>
+					</dl>
+				</section>
+			</div>
 		</div>
 
 		@components.ContentCard("") {
@@ -77,7 +134,7 @@ templ Index(data IndexPageData) {
 						aria-label={ templates.T(ctx, "db_episodes_index_table_caption") }
 						tabindex="0"
 					>
-						<table class="table table-fixed min-w-[640px] [&_th]:px-1 [&_td]:px-1">
+						<table class="table table-fixed min-w-[860px] [&_th]:px-1 [&_td]:px-1">
 							<caption class="sr-only">
 								{ templates.T(ctx, "db_episodes_index_table_caption") }
 							</caption>
@@ -93,6 +150,8 @@ templ Index(data IndexPageData) {
 								<col class="w-20"/>
 								<col class="w-28"/>
 								<col/>
+								<col class="w-28"/>
+								<col class="w-24"/>
 								<col class="w-24"/>
 								<col class="w-24"/>
 							</colgroup>
@@ -101,7 +160,9 @@ templ Index(data IndexPageData) {
 									<th scope="col" class="text-left">{ templates.T(ctx, "db_episodes_index_table_id_label") }</th>
 									<th scope="col" class="text-left">{ templates.T(ctx, "db_episodes_index_table_number_label") }</th>
 									<th scope="col" class="text-left">{ templates.T(ctx, "db_episodes_index_table_title_label") }</th>
+									<th scope="col" class="text-left">{ templates.T(ctx, "db_episodes_index_table_prev_episode_label") }</th>
 									<th scope="col" class="text-left">{ templates.T(ctx, "db_episodes_index_table_sort_number_label") }</th>
+									<th scope="col" class="text-left">{ templates.T(ctx, "db_episodes_index_table_records_count_label") }</th>
 									<th scope="col" class="text-left">{ templates.T(ctx, "db_episodes_index_table_status_label") }</th>
 								</tr>
 							</thead>
@@ -157,7 +218,9 @@ templ Index(data IndexPageData) {
 												}
 											</div>
 										</td>
+										<td class="whitespace-normal [overflow-wrap:anywhere]">{ valueOrDash(episode.PrevNumber) }</td>
 										<td>{ fmt.Sprintf("%d", episode.SortNumber) }</td>
+										<td>{ fmt.Sprintf("%d", episode.EpisodeRecordsCount) }</td>
 										<td>
 											@components.StatusLabel(episode.Status)
 										</td>
@@ -172,6 +235,26 @@ templ Index(data IndexPageData) {
 			}
 		}
 	</div>
+}
+
+// indexNewEpisodesLink renders the action shown beside the list heading: the way into the
+// bulk-create form, as on the Rails episode list. Whether it is rendered at all is decided by
+// newEpisodesAction, so that a visitor who may not create episodes is offered neither the link
+// nor the container around it.
+//
+// [Ja] indexNewEpisodesLink は一覧の見出しの横に表示する操作を描画する。Rails のエピソード
+// 一覧と同じく一括作成フォームへの導線。そもそも描画するかどうかは newEpisodesAction が決める。
+// エピソードを作成できない閲覧者には、リンクもそれを囲むコンテナも出さないようにするため。
+templ indexNewEpisodesLink(data IndexPageData) {
+	<a
+		href={ templates.DBWorkEpisodesNewPath(data.WorkID).SafeURL() }
+		class="btn rounded-full"
+		data-variant="outline"
+		data-size="sm"
+	>
+		@templates.DecorativeInlineIcon("plus-regular", templates.InlineIconStart)
+		{ templates.T(ctx, "db_episodes_index_new_link") }
+	</a>
 }
 
 // missingValuePlaceholder is shown wherever an episode attribute is unset, so an empty value
@@ -194,4 +277,19 @@ func valueOrDash(value string) string {
 	}
 
 	return value
+}
+
+// plannedCountText renders the work's expected total episode count, reading the empty view
+// model value as "the work records none" and saying so in words. The notice states three
+// values side by side, so a placeholder here would read as a count of its own.
+//
+// [Ja] plannedCountText は作品の予定総話数を描画する。ビューモデルの空の値は「作品が記録して
+// いない」ことを表すため、その旨を言葉で示す。案内は 3 つの値を並べて述べるので、ここに
+// プレースホルダーを置くとそれ自体が件数のように読めてしまう。
+func plannedCountText(ctx context.Context, plannedCount string) string {
+	if plannedCount == "" {
+		return templates.T(ctx, "db_episodes_index_generation_unknown")
+	}
+
+	return plannedCount
 }

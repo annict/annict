@@ -50,6 +50,48 @@ func TestNotFound(t *testing.T) {
 	}
 }
 
+func TestForbidden(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name        string
+		locale      string
+		wantTitle   string
+		wantMessage string
+	}{
+		{
+			name:        "日本語",
+			locale:      "ja",
+			wantTitle:   "アクセスできません",
+			wantMessage: "この操作を行う権限がありません。",
+		},
+		{
+			name:        "英語",
+			locale:      "en",
+			wantTitle:   "Access denied",
+			wantMessage: "You do not have permission to perform this operation.",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			req := httptest.NewRequest(http.MethodPost, "/db/works/1/episodes", nil)
+			req = req.WithContext(i18n.SetLocale(req.Context(), tt.locale))
+			rr := httptest.NewRecorder()
+
+			Forbidden(rr, req)
+
+			wantBackLabel := "ホームに戻る"
+			if tt.locale == "en" {
+				wantBackLabel = "Back to Home"
+			}
+			assertErrorResponse(t, rr, http.StatusForbidden, tt.locale, tt.wantTitle, tt.wantMessage, wantBackLabel)
+		})
+	}
+}
+
 func TestInternalServerError(t *testing.T) {
 	t.Parallel()
 
