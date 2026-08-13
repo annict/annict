@@ -1,0 +1,330 @@
+package db_episodes
+
+import (
+	"context"
+	"fmt"
+	"strings"
+
+	"github.com/annict/annict/go/internal/model"
+	"github.com/annict/annict/go/internal/templates"
+	"github.com/annict/annict/go/internal/templates/components"
+	"github.com/annict/annict/go/internal/viewmodel"
+)
+
+// rowsFieldName is the name of the textarea holding the submitted lines. The form field, the
+// error summary entry and the ids of the error messages all key off it, so they stay in step.
+//
+// [Ja] rowsFieldName は送信された行を保持する textarea の名前。フォームのフィールド、エラー
+// 要約の項目、エラーメッセージの id がいずれもこの名前から決まるため、三者がずれない。
+const rowsFieldName = "rows"
+
+// NewPageData is the data the bulk-create page renders: the parent work (its id and name for
+// the heading, subnav and form action) and the state of the submitted form.
+//
+// [Ja] NewPageData は一括作成ページが描画するデータ (見出し・サブナビ・フォームの action に
+// 使う親作品の id と名前、および送信されたフォームの状態)。
+type NewPageData struct {
+	WorkID viewmodel.WorkID
+	// WorkName is the work's display name as viewmodel.DBEpisodeListWorkName resolved it, so
+	// it is empty exactly when the document title falls back to the generic page name too.
+	//
+	// [Ja] WorkName は viewmodel.DBEpisodeListWorkName が解決した作品の表示名。空になるのは
+	// 文書タイトルが汎用のページ名へフォールバックするときと同じ条件。
+	WorkName string
+	// NoEpisodes carries the work's no_episodes flag through to the shared subnav.
+	//
+	// [Ja] NoEpisodes は作品の no_episodes フラグを共有サブナビへ渡す。
+	NoEpisodes bool
+	CSRFToken  string
+	FormErrors *model.ValidationError
+	IsAdmin    bool
+	// ManualCreation is the reason the work's episodes may not be created by hand, resolved
+	// once so the warning and the disabled form agree on it.
+	//
+	// [Ja] ManualCreation は作品のエピソードを手動作成できない理由。1 度だけ解決することで、
+	// 警告とフォームの無効化が同じ理由を見る。
+	ManualCreation viewmodel.DBEpisodeManualCreationRestriction
+	// Rows echoes back what was submitted, so a failed submit is corrected rather than
+	// retyped.
+	//
+	// [Ja] Rows は送信された内容をそのまま返す。送信が失敗しても入力し直しではなく手直しで
+	// 済むようにするため。
+	Rows string
+}
+
+// heading returns the text of the page heading: the work's name, falling back to the generic
+// page title while the work has none, so the page never renders an empty <h1>.
+//
+// [Ja] heading はページ見出しのテキストとして作品の名前を返す。名前が無いあいだは汎用の
+// ページタイトルにフォールバックし、空の <h1> を描画しないようにする。
+func (d NewPageData) heading(ctx context.Context) string {
+	if d.WorkName != "" {
+		return d.WorkName
+	}
+
+	return templates.T(ctx, "db_episodes_new_title")
+}
+
+// hasRowsError reports whether the submitted lines were rejected.
+//
+// [Ja] hasRowsError は送信された行が受け付けられなかったかどうかを返す。
+func (d NewPageData) hasRowsError() bool {
+	return d.FormErrors != nil && d.FormErrors.HasFieldError(rowsFieldName)
+}
+
+// hasFormErrors reports whether the submitted form has any field or global error. A rendered
+// error summary takes focus on load, so the textarea may only autofocus when this is false.
+//
+// [Ja] hasFormErrors は送信されたフォームにフィールドエラーまたはグローバルエラーがあるかを
+// 返す。描画されたエラー要約が読み込み時にフォーカスを受け取るため、これが false の場合にだけ
+// textarea が autofocus できる。
+func (d NewPageData) hasFormErrors() bool {
+	return d.FormErrors != nil && d.FormErrors.HasErrors()
+}
+
+func (d NewPageData) formDisabled() bool {
+	return !d.IsAdmin && d.ManualCreation.Restricted()
+}
+
+// autofocusRows reports whether the textarea takes focus on load. Focus on load points at the
+// field the page expects to be filled in next, so it is given up both when a rendered error
+// summary states why the submit failed and when the form is disabled: landing in a field that
+// cannot be typed into skips past the warning that says why.
+//
+// [Ja] autofocusRows は読み込み時に textarea がフォーカスを受け取るかを返す。読み込み時の
+// フォーカスは「ページが次に入力されると考えている欄」を指すものであるため、描画されたエラー
+// 要約が送信の失敗理由を述べているときと、フォームが無効化されているときの双方で手放す。
+// 入力できない欄に降りると、理由を述べている警告を飛び越えてしまうため。
+func (d NewPageData) autofocusRows() bool {
+	return !d.hasFormErrors() && !d.formDisabled()
+}
+
+// showRestrictionWarning reports whether the standing warning is rendered. A rejected submit
+// reports the same reason through the error summary, which takes focus on load, so the warning
+// steps aside there rather than stating it a second time.
+//
+// [Ja] showRestrictionWarning は常設の警告を描画するかを返す。却下された送信は同じ理由を
+// エラー要約 (読み込み時にフォーカスを受け取る) で伝えるため、その場合は警告を出さず二重に
+// 述べないようにする。
+func (d NewPageData) showRestrictionWarning() bool {
+	return d.ManualCreation.Restricted() && !d.hasGlobalError()
+}
+
+// hasGlobalError reports whether the submit was rejected for a reason that belongs to the form
+// as a whole rather than to one of its fields.
+//
+// [Ja] hasGlobalError は、送信が個々のフィールドではなくフォーム全体に属する理由で却下された
+// かどうかを返す。
+func (d NewPageData) hasGlobalError() bool {
+	return d.FormErrors != nil && len(d.FormErrors.Global) > 0
+}
+
+// restrictionMessageKey names the warning that states the reason. The keys are written as
+// literals here so each one stays greppable from the page that renders it; which reason wins
+// is decided once in the domain and arrives resolved.
+//
+// [Ja] restrictionMessageKey は理由を述べる警告を名指しする。キーは直書きし、描画するページ
+// から grep で追える状態に保つ。どの理由が優先されるかはドメイン側で 1 度だけ決まり、解決済み
+// の値として届く。
+func (d NewPageData) restrictionMessageKey() string {
+	if d.ManualCreation == viewmodel.DBEpisodeManualCreationEpisodesFilled {
+		return "db_episodes_new_restricted_episodes_filled"
+	}
+
+	return "db_episodes_new_restricted_slots_exist"
+}
+
+// rowsErrors returns the messages the submitted lines collected, one per rejected line.
+//
+// [Ja] rowsErrors は送信された行が集めたメッセージを返す (却下された行につき 1 件)。
+func (d NewPageData) rowsErrors() []string {
+	if d.FormErrors == nil {
+		return nil
+	}
+
+	return d.FormErrors.GetFieldErrors(rowsFieldName)
+}
+
+// rowsFormatGuideID is the id of the section stating the line format. The input points at it
+// through aria-describedby, so the instructions reach whoever lands on the field rather than
+// only whoever reads the page top to bottom.
+//
+// [Ja] rowsFormatGuideID は行の形式を述べる節の id。入力欄は aria-describedby でこれを指す
+// ため、案内はページを上から読む人だけでなく、入力欄に降り立った人にも届く。
+const rowsFormatGuideID = "rows-format-guide"
+
+// rowsDescribedBy returns what describes the input: the format guide, followed by every error
+// message element. The standing description comes first so it is read before the errors, and
+// the error ids are appended rather than replacing it: dropping the format guide on error
+// would take away the instructions exactly when the lines need correcting. A submit can fail
+// on several lines at once, and describedby has to name them all, since naming only the first
+// would leave the rest unannounced.
+//
+// [Ja] rowsDescribedBy は入力欄を説明するものを返す (形式の案内と、続く各エラーメッセージ
+// 要素)。常設の説明がエラーより先に読まれるよう先頭に置き、エラーの id は置き換えではなく
+// 後ろに足す。エラー時に形式の案内を落とすと、行を直すべきそのときに案内が失われるため。
+// 1 回の送信が複数行で失敗することがあり、describedby はその全部を指す必要がある (先頭だけを
+// 指すと残りが読み上げられない)。
+func (d NewPageData) rowsDescribedBy() string {
+	ids := []string{rowsFormatGuideID}
+	for i := range d.rowsErrors() {
+		ids = append(ids, rowsErrorID(i))
+	}
+
+	return strings.Join(ids, " ")
+}
+
+// rowsErrorID builds the id of one error message element.
+//
+// [Ja] rowsErrorID はエラーメッセージ要素 1 つの id を組み立てる。
+func rowsErrorID(index int) string {
+	return fmt.Sprintf("%s-error-%d", rowsFieldName, index+1)
+}
+
+// newSummaryFields names the one field the error summary can list. The summary is rendered
+// even for a single field: it takes focus on load, which is what announces a failed submit on
+// a server-rendered page.
+//
+// [Ja] newSummaryFields はエラー要約が名指しできる唯一のフィールドを並べる。フィールドが
+// 1 つでも要約を描画するのは、要約が読み込み時にフォーカスを受け取り、サーバー描画のページで
+// 送信の失敗を通知する役割を担うため。
+func newSummaryFields(ctx context.Context) []components.FormErrorField {
+	return []components.FormErrorField{
+		{Name: rowsFieldName, Label: templates.T(ctx, "db_episodes_new_rows_label")},
+	}
+}
+
+templ New(data NewPageData) {
+	<div class="flex flex-col gap-4 py-4 max-w-7xl w-full mx-auto">
+		<div class="flex gap-4 px-4">
+			@components.DBSidebarToggle()
+
+			<div class="flex-1">
+				@components.MainTitle(components.MainTitleData{
+					Title:   data.heading(ctx),
+					Actions: newBackToListLink(data.WorkID),
+				})
+			</div>
+		</div>
+
+		<div class="px-4">
+			@components.DBWorkSubnav(components.DBWorkSubnavData{
+				WorkID:     data.WorkID,
+				NoEpisodes: data.NoEpisodes,
+			})
+		</div>
+
+		@components.ContentCard("") {
+			<div class="flex flex-col gap-4">
+				@components.FormErrors(components.FormErrorsData{
+					Errors: data.FormErrors,
+					Fields: newSummaryFields(ctx),
+				})
+
+				if data.showRestrictionWarning() {
+					<div class="alert bg-warning text-warning-foreground max-w-2xl">
+						@templates.DecorativeIcon("warning")
+						<h2>{ templates.T(ctx, "db_episodes_new_restriction_title") }</h2>
+						<section>
+							<p>{ templates.T(ctx, data.restrictionMessageKey()) }</p>
+						</section>
+					</div>
+				}
+
+				@newFormatGuide()
+
+				<form
+					action={ templates.DBWorkEpisodesPath(data.WorkID).SafeURL() }
+					class="max-w-2xl flex flex-col gap-6"
+					method="POST"
+				>
+					<input type="hidden" name="csrf_token" value={ data.CSRFToken }/>
+
+					<div
+						class="field"
+						if data.hasRowsError() {
+							data-invalid
+						}
+					>
+						<label for="rows" class="label">
+							{ templates.T(ctx, "db_episodes_new_rows_label") }
+							@components.RequiredBadge()
+						</label>
+						<textarea
+							id="rows"
+							name="rows"
+							class="textarea font-mono"
+							rows="20"
+							required
+							aria-describedby={ data.rowsDescribedBy() }
+							if data.autofocusRows() {
+								autofocus
+							}
+							if data.hasRowsError() {
+								aria-invalid="true"
+							}
+							if data.formDisabled() {
+								readonly
+							}
+						>{ data.Rows }</textarea>
+						if data.hasRowsError() {
+							for i, errorMsg := range data.rowsErrors() {
+								<p id={ rowsErrorID(i) } role="alert">{ errorMsg }</p>
+							}
+						}
+					</div>
+
+					<div class="field" data-orientation="horizontal">
+						<button
+							type="submit"
+							class="btn rounded-full"
+							if data.formDisabled() {
+								disabled
+							}
+						>
+							@templates.DecorativeInlineIcon("floppy-disk-regular", templates.InlineIconStart)
+							{ templates.T(ctx, "db_episodes_new_submit") }
+						</button>
+					</div>
+				</form>
+			</div>
+		}
+	</div>
+}
+
+// newFormatGuide explains the line format the textarea expects. The field takes free text
+// whose columns are positional, so the page states the order and shows the shapes a partly
+// filled line takes; without it the only way to learn the format is to submit and read the
+// errors. It sits above the form and is named by the input's aria-describedby, so the
+// instructions are reached both by reading the page and by landing on the field.
+//
+// [Ja] newFormatGuide は textarea が期待する行の形式を説明する。フィールドは列が位置で決まる
+// 自由入力のため、ページ側で順序を述べ、一部だけ入力した行の形も示す。これが無いと形式を知る
+// 手段が「送信してエラーを読む」ことしか無くなる。フォームの上に置き、入力欄の
+// aria-describedby から名指しすることで、ページを読んでも入力欄に降り立っても案内に届く。
+templ newFormatGuide() {
+	<section id={ rowsFormatGuideID } class="flex flex-col gap-2 text-sm text-muted-foreground max-w-2xl">
+		<h2 class="font-semibold text-foreground">{ templates.T(ctx, "db_episodes_new_format_heading") }</h2>
+		<p>{ templates.T(ctx, "db_episodes_new_format_description") }</p>
+		<pre class="bg-muted rounded-md p-3 overflow-x-auto"><code>{ templates.T(ctx, "db_episodes_new_format_example") }</code></pre>
+		<p>{ templates.T(ctx, "db_episodes_new_format_partial_description") }</p>
+		<pre class="bg-muted rounded-md p-3 overflow-x-auto"><code>{ templates.T(ctx, "db_episodes_new_format_partial_example") }</code></pre>
+	</section>
+}
+
+// newBackToListLink renders the action shown beside the heading: a link back to the work's
+// episode list, which is also where a successful submit lands.
+//
+// [Ja] newBackToListLink は見出しの横に表示する操作を描画する。作品のエピソード一覧へ戻る
+// リンクで、送信が成功したときの着地点でもある。
+templ newBackToListLink(workID viewmodel.WorkID) {
+	<a
+		href={ templates.DBWorkEpisodesPath(workID).SafeURL() }
+		class="btn rounded-full"
+		data-variant="outline"
+		data-size="sm"
+	>
+		@templates.DecorativeInlineIcon("arrow-bend-up-left-regular", templates.InlineIconStart)
+		{ templates.T(ctx, "db_episodes_new_back_to_list_link") }
+	</a>
+}

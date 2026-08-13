@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"errors"
 
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
@@ -99,11 +100,14 @@ func (r *EpisodeRepository) CountForDB(ctx context.Context, workID model.WorkID)
 
 // episodeFromDBListRow converts an Annict DB list row into *model.Episode. The row
 // is a partial load: the anime mapping columns, the dormant status column and
-// archive_message are not selected and stay at their zero value.
+// archive_message are not selected and stay at their zero value. The preceding
+// episode's two numbers come from the query's neighbour derivation, so they are nil
+// for the work's first episode.
 //
 // [Ja] episodeFromDBListRow は Annict DB 一覧の行を *model.Episode に変換する。行は
 // 部分ロードで、anime マッピングカラム・休眠カラム status・archive_message は選択せず
-// ゼロ値のまま残る。
+// ゼロ値のまま残る。直前のエピソードの 2 系統の話数はクエリ側の隣接行の導出に由来し、
+// 作品の最初のエピソードでは nil になる。
 func episodeFromDBListRow(row query.ListDBEpisodesRow) *model.Episode {
 	episode := &model.Episode{
 		ID:                  model.EpisodeID(row.ID),
@@ -133,7 +137,157 @@ func episodeFromDBListRow(row query.ListDBEpisodesRow) *model.Episode {
 		deletedAt := row.DeletedAt.Time
 		episode.DeletedAt = &deletedAt
 	}
+	if row.PrevNumber.Valid {
+		prevNumber := row.PrevNumber.String
+		episode.PrevNumber = &prevNumber
+	}
+	if row.PrevRawNumber.Valid {
+		prevRawNumber := row.PrevRawNumber.Float64
+		episode.PrevRawNumber = &prevRawNumber
+	}
 	return episode
+}
+
+// DBEpisodeEditTarget is what the Annict DB episode edit form loads: the episode being
+// edited and its parent work. The work is a partial load carrying only what the page needs
+// from it (the heading's title and the subnav's no_episodes), so it is kept beside the
+// episode rather than folded into model.Episode, which holds only the episode's own columns.
+//
+// [Ja] DBEpisodeEditTarget は Annict DB のエピソード編集フォームが読み込むもの (編集対象の
+// エピソードとその親作品) を表す。作品はページが必要とするカラム (見出しの title と
+// サブナビの no_episodes) だけの部分ロードのため、エピソード自身のカラムだけを持つ
+// model.Episode に畳み込まず、エピソードと並べて持つ。
+type DBEpisodeEditTarget struct {
+	Episode *model.Episode
+	Work    *model.Work
+}
+
+// GetForEditByID loads the episode the Annict DB edit form edits, together with its parent
+// work. Deleted episodes and episodes of deleted works are excluded by the query, so
+// (nil, nil) means the id names no editable episode.
+//
+// [Ja] GetForEditByID は Annict DB の編集フォームが編集するエピソードを、その親作品と一緒に
+// 読み込む。削除済みのエピソードと、削除済み作品のエピソードはクエリ側で除外するため、
+// (nil, nil) は編集できるエピソードがその id に無いことを表す。
+func (r *EpisodeRepository) GetForEditByID(ctx context.Context, id model.EpisodeID) (*DBEpisodeEditTarget, error) {
+	row, err := r.queries.GetEpisodeForEditByID(ctx, int64(id))
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	episode := &model.Episode{
+		ID:         model.EpisodeID(row.ID),
+		WorkID:     model.WorkID(row.WorkID),
+		SortNumber: row.SortNumber,
+		TitleEn:    row.TitleEn,
+	}
+	if row.Number.Valid {
+		number := row.Number.String
+		episode.Number = &number
+	}
+	if row.RawNumber.Valid {
+		rawNumber := row.RawNumber.Float64
+		episode.RawNumber = &rawNumber
+	}
+	if row.Title.Valid {
+		title := row.Title.String
+		episode.Title = &title
+	}
+	if row.UpdatedAt.Valid {
+		updatedAt := row.UpdatedAt.Time
+		episode.UpdatedAt = &updatedAt
+	}
+
+	return &DBEpisodeEditTarget{
+		Episode: episode,
+		Work: &model.Work{
+			ID:         model.WorkID(row.WorkID),
+			Title:      row.WorkTitle,
+			NoEpisodes: row.WorkNoEpisodes,
+		},
+	}, nil
+}
+
+// CreateEpisodeParams holds the attributes for creating an episode. The columns an editor
+// does not fill in (title_ro / title_en / the counter caches / the state timestamps) keep
+// their column defaults, so a created episode starts out published.
+//
+// AnimeID is the episodes.anime_id mapping column, set when the episode's anime was created
+// alongside it and left nil while the parent work is not mapped yet (the sync creates the
+// anime later). PrevEpisodeID names the episode that precedes this one at insert time.
+//
+// [Ja] CreateEpisodeParams はエピソード作成時の属性を保持する。編集者が入力しないカラム
+// (title_ro / title_en / カウンターキャッシュ / 状態のタイムスタンプ) はカラムの既定値のまま
+// にするため、作成されたエピソードは公開状態で始まる。
+//
+// AnimeID は episodes.anime_id のマッピングカラムで、エピソードの anime を併せて作成した
+// ときに入り、親作品が未マッピングのあいだは nil のままになる (anime は後続の同期が作る)。
+// PrevEpisodeID は挿入時点でこのエピソードの直前に来るエピソードを指す。
+type CreateEpisodeParams struct {
+	WorkID        model.WorkID
+	Number        *string
+	RawNumber     *float64
+	Title         *string
+	SortNumber    int32
+	PrevEpisodeID *model.EpisodeID
+	AnimeID       *model.AnimeID
+	UserID        model.UserID
+}
+
+// Create inserts a new episode and returns its ID.
+//
+// [Ja] Create は新しいエピソードを挿入し、その ID を返す。
+func (r *EpisodeRepository) Create(ctx context.Context, params CreateEpisodeParams) (model.EpisodeID, error) {
+	id, err := r.queries.CreateEpisode(ctx, query.CreateEpisodeParams{
+		WorkID:        int64(params.WorkID),
+		Number:        nullStringFromPtr(params.Number),
+		RawNumber:     nullFloat64FromPtr(params.RawNumber),
+		Title:         nullStringFromPtr(params.Title),
+		SortNumber:    params.SortNumber,
+		PrevEpisodeID: nullInt64FromEpisodeID(params.PrevEpisodeID),
+		AnimeID:       nullInt64FromAnimeID(params.AnimeID),
+		UserID:        int64(params.UserID),
+	})
+	if err != nil {
+		return 0, err
+	}
+
+	return model.EpisodeID(id), nil
+}
+
+// nullStringFromPtr maps an optional string onto the driver's nullable string, so a column
+// an editor left empty is written as NULL instead of as an empty string.
+//
+// [Ja] nullStringFromPtr は任意の文字列をドライバの NULL 許容文字列に写像する。編集者が空の
+// まま送ったカラムを、空文字列ではなく NULL として書くため。
+func nullStringFromPtr(value *string) sql.NullString {
+	if value == nil {
+		return sql.NullString{}
+	}
+	return sql.NullString{String: *value, Valid: true}
+}
+
+// nullFloat64FromPtr maps an optional float onto the driver's nullable float.
+//
+// [Ja] nullFloat64FromPtr は任意の float をドライバの NULL 許容 float に写像する。
+func nullFloat64FromPtr(value *float64) sql.NullFloat64 {
+	if value == nil {
+		return sql.NullFloat64{}
+	}
+	return sql.NullFloat64{Float64: *value, Valid: true}
+}
+
+// nullInt64FromEpisodeID maps an optional episode ID onto the driver's nullable integer.
+//
+// [Ja] nullInt64FromEpisodeID は任意のエピソード ID をドライバの NULL 許容整数に写像する。
+func nullInt64FromEpisodeID(id *model.EpisodeID) sql.NullInt64 {
+	if id == nil {
+		return sql.NullInt64{}
+	}
+	return sql.NullInt64{Int64: int64(*id), Valid: true}
 }
 
 // ListForAnimeSyncByIDs loads the episodes with the given IDs, projecting the

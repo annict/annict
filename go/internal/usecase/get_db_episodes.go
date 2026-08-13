@@ -42,9 +42,21 @@ type GetDBEpisodesInput struct {
 //
 // [Ja] ユースケースの出力。
 type GetDBEpisodesOutput struct {
-	Work       *model.Work
-	Episodes   []*model.Episode
-	TotalCount int64
+	Work *model.Work
+	// PublishedEpisodeCount and MaxGeneratableEpisodeNumber back the page's auto-generation
+	// notice: how many of the work's episodes are published now, and how far the Syobocal
+	// auto-generation could number them. TotalCount is the list's own total instead, which
+	// keeps unpublished episodes because the list shows them.
+	//
+	// [Ja] PublishedEpisodeCount と MaxGeneratableEpisodeNumber はページの
+	// 自動生成の案内に使う。
+	// 作品のエピソードのうち現在公開中の件数と、しょぼいカレンダー由来の自動生成がどこまで
+	// 話数を振れるかを表す。一方 TotalCount は一覧自体の総件数で、一覧が表示する非公開の
+	// エピソードも含む。
+	PublishedEpisodeCount       int64
+	MaxGeneratableEpisodeNumber int64
+	Episodes                    []*model.Episode
+	TotalCount                  int64
 }
 
 // Execute returns the parent work and one page of its episodes. It returns a *model.AppError
@@ -54,11 +66,11 @@ type GetDBEpisodesOutput struct {
 // [Ja] Execute は親作品と、そのエピソード 1 ページ分を返す。作品が存在しない、または削除済み
 // の場合は AppErrCodeResourceNotFound の *model.AppError を返し、Handler 側で 404 に変換する。
 func (uc *GetDBEpisodesUsecase) Execute(ctx context.Context, input GetDBEpisodesInput) (*GetDBEpisodesOutput, error) {
-	work, err := uc.workRepo.GetForEpisodeListByID(ctx, input.WorkID)
+	listWork, err := uc.workRepo.GetForEpisodeListByID(ctx, input.WorkID)
 	if err != nil {
 		return nil, fmt.Errorf("作品の取得に失敗: %w", err)
 	}
-	if work == nil {
+	if listWork == nil {
 		return nil, &model.AppError{
 			Code:     model.AppErrCodeResourceNotFound,
 			UserMsg:  i18n.T(ctx, "error_work_not_found"),
@@ -83,8 +95,10 @@ func (uc *GetDBEpisodesUsecase) Execute(ctx context.Context, input GetDBEpisodes
 	}
 
 	return &GetDBEpisodesOutput{
-		Work:       work,
-		Episodes:   episodes,
-		TotalCount: totalCount,
+		Work:                        listWork.Work,
+		PublishedEpisodeCount:       listWork.PublishedEpisodeCount,
+		MaxGeneratableEpisodeNumber: listWork.MaxGeneratableEpisodeNumber,
+		Episodes:                    episodes,
+		TotalCount:                  totalCount,
 	}, nil
 }

@@ -1,6 +1,8 @@
 package components
 
 import (
+	"context"
+
 	"github.com/annict/annict/go/internal/templates"
 	"github.com/annict/annict/go/internal/viewmodel"
 )
@@ -19,6 +21,33 @@ type DBWorkSubnavData struct {
 	// [Ja] NoEpisodes はエピソード由来の項目 (エピソード・放送予定) を落とす (Rails の
 	// 作品サブナビに合わせている)。
 	NoEpisodes bool
+	// CurrentSectionPath names the entry to mark as the current page on a page whose own
+	// URL sits outside the entry it belongs to, such as the episode edit form: it is keyed
+	// by the episode (/db/episodes/{id}/edit) yet is reached from, and belongs to, the
+	// work's episodes. Leave it empty to derive the marker from the request path, which is
+	// what the pages living under their entry do.
+	//
+	// [Ja] CurrentSectionPath は、ページ自身の URL が所属する項目の外にある場合に、現在
+	// ページとして印を付ける項目を名指しする。エピソード編集フォームがその例で、URL は
+	// エピソード基点 (/db/episodes/{id}/edit) だが、到達元も所属先も作品のエピソードで
+	// ある。空のままにすると印はリクエストパスから導出され、これは項目配下にあるページの
+	// 挙動になる。
+	CurrentSectionPath templates.Path
+}
+
+// isCurrent reports whether the entry at path is the one to mark as the current page. A page
+// that names its section takes that answer, and every other page falls back to the request
+// path, so the two ways of deciding never both apply to one entry.
+//
+// [Ja] isCurrent は path の項目を現在ページとして印付けるかを返す。所属する項目を名指しする
+// ページはその答えを使い、それ以外のページはリクエストパスにフォールバックする。1 つの項目に
+// 2 つの決め方が同時に効くことはない。
+func (d DBWorkSubnavData) isCurrent(ctx context.Context, path templates.Path) bool {
+	if d.CurrentSectionPath != "" {
+		return d.CurrentSectionPath == path
+	}
+
+	return templates.IsCurrentPathPrefix(ctx, path.String())
 }
 
 // DBWorkSubnav renders the navigation shown above a work's DB form, linking to the work's
@@ -51,38 +80,40 @@ templ DBWorkSubnav(data DBWorkSubnavData) {
 		// ためのもの (スクロール領域は上下左右とも内容を切る)。対になる負のマージンで打ち消し、
 		// ピルは上下のコンテンツと揃ったままにする。
 		<ul class="flex flex-nowrap gap-2 overflow-x-auto p-1 -m-1">
-			@dbWorkSubnavItem(templates.DBWorkEditPath(data.WorkID), "db_work_subnav_work")
+			@dbWorkSubnavItem(data, templates.DBWorkEditPath(data.WorkID), "db_work_subnav_work")
 			if !data.NoEpisodes {
-				@dbWorkSubnavItem(templates.DBWorkEpisodesPath(data.WorkID), "db_work_subnav_episodes")
+				@dbWorkSubnavItem(data, templates.DBWorkEpisodesPath(data.WorkID), "db_work_subnav_episodes")
 			}
-			@dbWorkSubnavItem(templates.DBWorkProgramsPath(data.WorkID), "db_work_subnav_programs")
+			@dbWorkSubnavItem(data, templates.DBWorkProgramsPath(data.WorkID), "db_work_subnav_programs")
 			if !data.NoEpisodes {
-				@dbWorkSubnavItem(templates.DBWorkSlotsPath(data.WorkID), "db_work_subnav_slots")
+				@dbWorkSubnavItem(data, templates.DBWorkSlotsPath(data.WorkID), "db_work_subnav_slots")
 			}
-			@dbWorkSubnavItem(templates.DBWorkCastsPath(data.WorkID), "db_work_subnav_casts")
-			@dbWorkSubnavItem(templates.DBWorkStaffsPath(data.WorkID), "db_work_subnav_staffs")
-			@dbWorkSubnavItem(templates.DBWorkImagePath(data.WorkID), "db_work_subnav_work_image")
-			@dbWorkSubnavItem(templates.DBWorkTrailersPath(data.WorkID), "db_work_subnav_pv")
+			@dbWorkSubnavItem(data, templates.DBWorkCastsPath(data.WorkID), "db_work_subnav_casts")
+			@dbWorkSubnavItem(data, templates.DBWorkStaffsPath(data.WorkID), "db_work_subnav_staffs")
+			@dbWorkSubnavItem(data, templates.DBWorkImagePath(data.WorkID), "db_work_subnav_work_image")
+			@dbWorkSubnavItem(data, templates.DBWorkTrailersPath(data.WorkID), "db_work_subnav_pv")
 		</ul>
 	</nav>
 }
 
 // dbWorkSubnavItem renders a single subnav pill, marking the entry as the current page
-// (via aria-current) while the request path is the entry itself or one of its sub-pages,
-// so adding an episode keeps the episodes entry marked. The filled treatment of the
-// current entry is driven by that same attribute, so the marker assistive technology reads
-// and the one sighted users see cannot drift apart.
+// (via aria-current) while the reader is inside it: by default while the request path is
+// the entry itself or one of its sub-pages, so adding an episode keeps the episodes entry
+// marked, and otherwise as the page's CurrentSectionPath names it. The filled treatment of
+// the current entry is driven by that same attribute, so the marker assistive technology
+// reads and the one sighted users see cannot drift apart.
 //
-// [Ja] dbWorkSubnavItem はサブナビのピルを 1 つ描画し、リクエストパスが項目自身かその配下の
-// ページである間、現在ページとして印を付ける (aria-current)。エピソードを追加している間も
-// エピソードの項目に印が残る。現在ページの塗りつぶしも同じ属性で切り替えるため、支援技術が
-// 読む印と目に見える印がずれることがない。
-templ dbWorkSubnavItem(path templates.Path, labelKey string) {
+// [Ja] dbWorkSubnavItem はサブナビのピルを 1 つ描画し、読み手がその項目の中にいる間、現在
+// ページとして印を付ける (aria-current)。既定ではリクエストパスが項目自身かその配下のページ
+// である間で、エピソードを追加している間もエピソードの項目に印が残る。それ以外はページの
+// CurrentSectionPath が名指しした項目に付く。現在ページの塗りつぶしも同じ属性で切り替える
+// ため、支援技術が読む印と目に見える印がずれることがない。
+templ dbWorkSubnavItem(data DBWorkSubnavData, path templates.Path, labelKey string) {
 	<li class="shrink-0">
 		<a
 			href={ path.SafeURL() }
 			class="block rounded-full px-3 py-2 text-sm whitespace-nowrap transition-colors hover:bg-accent aria-[current=page]:bg-primary aria-[current=page]:text-primary-foreground aria-[current=page]:hover:bg-primary"
-			if templates.IsCurrentPathPrefix(ctx, path.String()) {
+			if data.isCurrent(ctx, path) {
 				aria-current="page"
 			}
 		>

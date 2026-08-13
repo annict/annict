@@ -110,6 +110,48 @@ func TestDBWorkSubnav_MarksCurrentEntryOnSubPage(t *testing.T) {
 	}
 }
 
+// TestDBWorkSubnav_MarksNamedSectionOutsideItsPath verifies that a page whose own URL sits
+// outside the entry it belongs to (the episode edit form, keyed by the episode) marks that
+// entry through CurrentSectionPath rather than through the request path.
+//
+// [Ja] TestDBWorkSubnav_MarksNamedSectionOutsideItsPath は、ページ自身の URL が所属する項目の
+// 外にある場合 (エピソード基点のエピソード編集フォーム) に、リクエストパスではなく
+// CurrentSectionPath でその項目に印が付くことを検証する。
+func TestDBWorkSubnav_MarksNamedSectionOutsideItsPath(t *testing.T) {
+	t.Parallel()
+
+	ctx := templates.SetCurrentPath(i18n.SetLocale(context.Background(), "ja"), "/db/episodes/5/edit")
+
+	var buf strings.Builder
+	if err := DBWorkSubnav(DBWorkSubnavData{
+		WorkID:             viewmodel.WorkID(1),
+		CurrentSectionPath: templates.DBWorkEpisodesPath(viewmodel.WorkID(1)),
+	}).Render(ctx, &buf); err != nil {
+		t.Fatalf("レンダリングエラー: %v", err)
+	}
+
+	html := buf.String()
+
+	episodes := subnavItemHTML(t, html, "/db/works/1/episodes")
+	if !strings.Contains(episodes, `aria-current="page"`) {
+		t.Error("名指しされたエピソードの項目に aria-current が付いていません")
+	}
+
+	for _, path := range []string{
+		"/db/works/1/edit",
+		"/db/works/1/programs",
+		"/db/works/1/slots",
+		"/db/works/1/casts",
+		"/db/works/1/staffs",
+		"/db/works/1/image",
+		"/db/works/1/trailers",
+	} {
+		if strings.Contains(subnavItemHTML(t, html, path), `aria-current="page"`) {
+			t.Errorf("名指しされていない %q の項目に aria-current が付いています", path)
+		}
+	}
+}
+
 // subnavItemHTML returns the markup of the subnav entry linking to the given path.
 //
 // [Ja] subnavItemHTML は指定したパスへリンクするサブナビ項目のマークアップを返す。

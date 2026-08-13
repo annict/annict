@@ -42,6 +42,22 @@ type Querier interface {
 	CreateAnimeOfficialAccount(ctx context.Context, arg CreateAnimeOfficialAccountParams) (AnimeOfficialAccount, error)
 	CreateAnimeSeason(ctx context.Context, arg CreateAnimeSeasonParams) (AnimeSeason, error)
 	CreateEmailNotification(ctx context.Context, arg CreateEmailNotificationParams) (CreateEmailNotificationRow, error)
+	// anime_id is written with the row rather than patched afterwards: the bulk create inserts
+	// the episode's anime before the episode itself, so the mapping column is already known.
+	// prev_episode_id names the episode with the greatest sort_number at insert time, the value
+	// the Rails after_create callback assigns; the Annict DB list derives the preceding episode
+	// from sort_number order instead, but the public episode page and the GraphQL API still read
+	// the column. The data-modifying CTE also records the same episodes.create DB activity as
+	// Rails save_and_create_activity!, using the inserted row as parameters.new.
+	//
+	// [Ja] anime_id は後から書き戻さず行と一緒に書く。一括作成はエピソード本体より先にその
+	// anime を挿入するため、マッピングカラムの値が既に分かっているため。prev_episode_id には
+	// 挿入時点で sort_number が最大のエピソードを入れる (Rails の after_create コールバックが
+	// 入れるのと同じ値)。Annict DB の一覧は直前のエピソードを sort_number 順から導出するが、
+	// 公開側のエピソードページと GraphQL API は今もこのカラムを読む。データ変更 CTE はさらに、
+	// Rails の save_and_create_activity! と同じ episodes.create の DB 活動を、挿入行を
+	// parameters.new として記録する。
+	CreateEpisode(ctx context.Context, arg CreateEpisodeParams) (int64, error)
 	CreateOAuthAccessToken(ctx context.Context, arg CreateOAuthAccessTokenParams) (int64, error)
 	CreateOAuthApplication(ctx context.Context, arg CreateOAuthApplicationParams) (int64, error)
 	CreatePasswordResetToken(ctx context.Context, arg CreatePasswordResetTokenParams) (PasswordResetToken, error)
@@ -67,6 +83,14 @@ type Querier interface {
 	DeleteUnusedPasswordResetTokensByUserID(ctx context.Context, userID int64) error
 	ExistsKeptWorkByTitle(ctx context.Context, arg ExistsKeptWorkByTitleParams) (bool, error)
 	ExistsNumberFormatByID(ctx context.Context, id int64) (bool, error)
+	// Check the parent before parsing the submitted rows, matching the Rails action's
+	// Work.without_deleted.find ordering. The authoritative row is locked and reloaded after
+	// validation, so this preliminary check is not used for creation decisions.
+	//
+	// [Ja] Rails アクションの Work.without_deleted.find と同じ順序で、送信行をパースする前に親作品を
+	// 確認する。バリデーション後に正本の行をロックして再取得するため、この予備確認の結果は作成時の
+	// 判断には使わない。
+	ExistsWorkForEpisodeCreateByID(ctx context.Context, id int64) (bool, error)
 	// Looks up a user ID by username, excluding soft-deleted users.
 	// Used by features that should return 404 for deleted users (e.g. tracking
 	// heatmap fragment) without exposing other user attributes.
@@ -87,6 +111,29 @@ type Querier interface {
 	GetCalendarWorks(ctx context.Context, userID int64) ([]GetCalendarWorksRow, error)
 	GetCastsByWorkIDs(ctx context.Context, dollar_1 []int64) ([]GetCastsByWorkIDsRow, error)
 	GetEmailNotificationByUserID(ctx context.Context, userID int64) (GetEmailNotificationByUserIDRow, error)
+	// The edit form reads the episode's editable columns together with the two the page needs
+	// from its parent work: the title for the heading and no_episodes for the shared work
+	// subnav. One row covers both, so opening the form costs a single round trip.
+	//
+	// Deleted episodes are excluded by deleted_at (the Rails Episode.without_deleted.find the
+	// edit action uses), and works are filtered the same way as on the episode list, so an
+	// episode whose work is gone is not editable through a page whose heading and subnav point
+	// at that work.
+	//
+	// updated_at is the version the form carries in a hidden field so the update can reject a
+	// submit made against a stale read.
+	//
+	// [Ja] 編集フォームは、エピソードの編集対象カラムと、ページが親作品から必要とする 2 つの
+	// カラム (見出しに使う title と、共有の作品サブナビが使う no_episodes) を一緒に読む。
+	// 1 行で両方を賄うため、フォームを開くのに往復は 1 回で済む。
+	//
+	// 削除済みエピソードは deleted_at で除外し (編集アクションが使う Rails の
+	// Episode.without_deleted.find と同じ)、作品もエピソード一覧と同じ条件で絞る。作品が
+	// 失われたエピソードを、その作品を見出しとサブナビで指すページから編集させないため。
+	//
+	// updated_at はフォームが hidden で持ち回る版。古い読み取りに対する送信を更新側で
+	// 却下できるようにする。
+	GetEpisodeForEditByID(ctx context.Context, id int64) (GetEpisodeForEditByIDRow, error)
 	GetEpisodeRecordByID(ctx context.Context, id int64) (GetEpisodeRecordByIDRow, error)
 	GetGumroadSubscriberByID(ctx context.Context, id int64) (GumroadSubscriber, error)
 	// ユーザーの視聴リスト（見たい・見てる）からprogram_idを取得します
@@ -118,9 +165,72 @@ type Querier interface {
 	GetWorkByID(ctx context.Context, id int64) (GetWorkByIDRow, error)
 	GetWorkForArchiveByID(ctx context.Context, id int64) (GetWorkForArchiveByIDRow, error)
 	GetWorkForEditByID(ctx context.Context, id int64) (GetWorkForEditByIDRow, error)
+	// episode_count and the latest_* columns anchor the sort_number the bulk create assigns: the
+	// first new episode starts one step past episode_count * 100, and the episode holding the
+	// greatest sort_number becomes the prev_episode_id of the first created row. Both aggregate
+	// the work's episodes without filtering unpublished or deleted ones, matching the Rails form
+	// (work.episodes.count), so a work whose episodes were archived does not hand out
+	// sort_numbers that are already taken. anime_id decides whether the create dual-writes the
+	// reference model: an episode's classification requires the parent work's anime.
+	//
+	// latest_episode_id / latest_sort_number are 0 when the work has no episode yet. Ids are
+	// positive, so the caller reads 0 as "no preceding episode" (the same shape
+	// max_generatable_episode_number above uses for a work with no slot).
+	//
+	// [Ja] episode_count と latest_* のカラムは、一括作成が振る sort_number の起点になる。最初の
+	// 新規エピソードは episode_count * 100 の 1 ステップ先から始まり、sort_number が最大の
+	// エピソードが最初に作る行の prev_episode_id になる。どちらも非公開・削除済みを除外せずに
+	// 作品のエピソードを集計する (Rails のフォームの work.episodes.count と同じ)。エピソードを
+	// 非公開にした作品で、既に使われている sort_number を振り直さないため。anime_id は作成が
+	// 参照モデルへ両書きするかどうかを決める (エピソードの分類は親作品の anime を必要とする)。
+	//
+	// latest_episode_id / latest_sort_number は、作品がまだエピソードを持たないとき 0 に
+	// なる。id は正の値のため、呼び出し側は 0 を「直前のエピソードなし」と読む (上の
+	// max_generatable_episode_number がスロットの無い作品に対して採るのと同じ形)。
+	GetWorkForEpisodeCreateByID(ctx context.Context, id int64) (GetWorkForEpisodeCreateByIDRow, error)
+	// The episode form needs the work to name it in the heading, drive the shared work subnav
+	// and preserve the Rails manual-create guard. An editor cannot create more episodes once
+	// the published count reaches manual_episodes_count, or while the work owns a slot with a
+	// start time; admins still see the warning but may override it in the presentation layer.
+	//
+	// [Ja] エピソードフォームは、見出しでの名指し、共有サブナビの出し分け、および Rails の
+	// 手動作成ガードを保つために作品を取得する。公開中のエピソード数が manual_episodes_count に
+	// 達した作品、または開始時刻を持つ放送枠がある作品には編集者が追加できない。管理者も警告は
+	// 見るが、表示層で上書きして作成できる。
+	GetWorkForEpisodeFormByID(ctx context.Context, id int64) (GetWorkForEpisodeFormByIDRow, error)
+	// published_episode_count and max_generatable_episode_number feed the episode list's
+	// auto-generation notice. The first is how many episodes are currently published. The
+	// second is the highest number the Syobocal auto-generation could assign from the work's
+	// kept slots. Both aggregate other tables for one work, so they ride along with the work
+	// row instead of costing the page extra round trips.
+	//
+	// max_generatable_episode_number takes MAX, which skips NULLs, where the Rails notice reads
+	// the first of the work's kept slots ordered by number descending. PostgreSQL sorts NULLs
+	// first for DESC, so Rails lands on a NULL number and reports 0 as soon as the work has one
+	// kept slot without a number. The label names the highest number the auto-generation can
+	// reach, so keeping MAX here is deliberate rather than a gap in the port.
+	//
+	// [Ja] published_episode_count と max_generatable_episode_number はエピソード一覧の自動生成の
+	// 案内に使う。前者は作品のエピソードのうち現在公開中の件数、後者はしょぼいカレンダー由来の
+	// 自動生成が作品の有効なスロットから振れる最大話数を表す。どちらも 1 作品について別テーブルを
+	// 集計する値のため、作品の行と一緒に引いてページの往復を増やさない。
+	//
+	// max_generatable_episode_number が使う MAX は NULL を飛ばすが、Rails の案内は作品の有効な
+	// スロットを number 降順に並べた先頭行を読む。PostgreSQL の DESC は NULLS FIRST のため、
+	// number 未設定の有効スロットが 1 件でもあれば Rails はその行に当たって 0 を報告する。
+	// ラベルが名指しするのは自動生成が到達できる最大話数であり、ここで MAX を使い続けるのは
+	// 移植漏れではなく意図的な選択。
 	GetWorkForEpisodeListByID(ctx context.Context, id int64) (GetWorkForEpisodeListByIDRow, error)
 	IncrementSignInCodeAttempts(ctx context.Context, id int64) error
 	IncrementSignUpCodeAttempts(ctx context.Context, id int64) error
+	// Episode.create in Rails increments the published counter cache and touches its work.
+	// The bulk create holds the work row lock already; add the number of newly published rows
+	// atomically so the shared Rails API observes the same counter and timestamp side effects.
+	//
+	// [Ja] Rails の Episode.create は公開話数のカウンターキャッシュを加算し、親作品を touch する。
+	// 一括作成は既に作品行をロックしているため、新しく公開した行数を原子的に加算し、共有する Rails
+	// API から同じカウンターとタイムスタンプの副作用が見えるようにする。
+	IncrementWorkEpisodesCount(ctx context.Context, arg IncrementWorkEpisodesCountParams) (int64, error)
 	InvalidateSignUpCodesByEmail(ctx context.Context, email string) error
 	InvalidateUserPasswordResetTokens(ctx context.Context, userID int64) error
 	InvalidateUserSignInCodes(ctx context.Context, userID int64) error
@@ -134,6 +244,14 @@ type Querier interface {
 	ListAnimeOfficialAccountsByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]AnimeOfficialAccount, error)
 	ListAnimeSeasonsByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]AnimeSeason, error)
 	ListAnimesByIDs(ctx context.Context, dollar_1 []int64) ([]Anime, error)
+	// The preceding episode is derived from the neighbouring row in ascending sort_number
+	// order rather than read from episodes.prev_episode_id. The window runs over the work's
+	// whole list inside the CTE, before LIMIT / OFFSET narrow it to one page, so the last row
+	// of a page still names the episode that lands on the next page.
+	//
+	// [Ja] 直前のエピソードは episodes.prev_episode_id を読まず、sort_number 昇順の隣接行から
+	// 導出する。ウィンドウは CTE の中で作品の一覧全体に対して評価され、LIMIT / OFFSET が
+	// 1 ページに絞り込む前に確定するため、ページ末尾の行も次ページに載るエピソードを指せる。
 	ListDBEpisodes(ctx context.Context, arg ListDBEpisodesParams) ([]ListDBEpisodesRow, error)
 	ListDBWorks(ctx context.Context, arg ListDBWorksParams) ([]ListDBWorksRow, error)
 	ListEpisodeIDsAfter(ctx context.Context, arg ListEpisodeIDsAfterParams) ([]int64, error)
@@ -142,6 +260,14 @@ type Querier interface {
 	ListWorkIDsAfter(ctx context.Context, arg ListWorkIDsAfterParams) ([]int64, error)
 	ListWorksForAnimeSyncByIDs(ctx context.Context, dollar_1 []int64) ([]ListWorksForAnimeSyncByIDsRow, error)
 	ListWorksForSatelliteSyncByIDs(ctx context.Context, dollar_1 []int64) ([]ListWorksForSatelliteSyncByIDsRow, error)
+	// Serialize bulk creates for one work before reading their numbering anchors. Keeping the
+	// lock query separate from the aggregate query makes the latter run after a waiter acquires
+	// the lock and therefore observe the preceding transaction's committed episodes.
+	//
+	// [Ja] 採番の起点を読む前に、1 作品への一括作成を直列化する。ロッククエリと集計クエリを分ける
+	// ことで、待機側がロックを得た後に集計を実行し、先行トランザクションがコミットしたエピソードを
+	// 参照できるようにする。
+	LockWorkForEpisodeCreateByID(ctx context.Context, id int64) (int64, error)
 	MarkPasswordResetTokenAsUsed(ctx context.Context, id int64) error
 	MarkSignInCodeAsUsed(ctx context.Context, id int64) error
 	MarkSignUpCodeAsUsed(ctx context.Context, id int64) error

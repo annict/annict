@@ -153,18 +153,45 @@ func workFromGetForEditByIDRow(row query.GetWorkForEditByIDRow) *model.Work {
 	return work
 }
 
-// GetForEpisodeListByID loads the columns the Annict DB episode list needs from the parent
-// work: the title for the page heading and no_episodes for the shared work subnav. Works
-// whose deleted_at is set are excluded by the query, mirroring the Rails
-// Work.without_deleted.find the episode list uses, so (nil, nil) means the id names no
-// listable work.
+// DBEpisodeListWork is the parent work of an Annict DB episode list page: the work itself,
+// plus the two values the page's auto-generation notice reports. Those values aggregate the
+// work's episodes and slots rather than naming columns of works, so they ride alongside the
+// work instead of being folded into model.Work.
 //
-// [Ja] GetForEpisodeListByID は Annict DB のエピソード一覧が親作品から必要とするカラム
-// (ページ見出しに使う title と、共有の作品サブナビが使う no_episodes) を読み込む。
-// deleted_at が入った作品はクエリ側で除外する (エピソード一覧が使う Rails の
-// Work.without_deleted.find と同じ)。そのため (nil, nil) は一覧を出せる作品がその id に
+// [Ja] DBEpisodeListWork は Annict DB のエピソード一覧ページの親作品を表す。作品そのものと、
+// ページの自動生成の案内が報告する 2 つの値を持つ。これらの値は works のカラムではなく
+// 作品のエピソード・スロットの集計であるため、model.Work に畳み込まず作品と並べて持つ。
+type DBEpisodeListWork struct {
+	Work *model.Work
+	// PublishedEpisodeCount counts the work's episodes that are neither unpublished nor
+	// deleted (the Rails only_kept scope). It differs from the list's own total, which
+	// keeps unpublished episodes because the list shows them.
+	//
+	// [Ja] PublishedEpisodeCount は作品のエピソードのうち、非公開でも削除済みでもないもの
+	// (Rails の only_kept スコープ) の件数。一覧自体の総件数とは異なる (一覧は非公開の
+	// エピソードも表示するため総件数に含める)。
+	PublishedEpisodeCount int64
+	// MaxGeneratableEpisodeNumber is the highest number among the work's kept slots: the
+	// episode number the Syobocal auto-generation would reach. It is 0 while the work has
+	// no such slot.
+	//
+	// [Ja] MaxGeneratableEpisodeNumber は作品が持つ有効なスロットの最大 number で、しょぼい
+	// カレンダー由来の自動生成が到達する話数を表す。そのようなスロットが無い作品では 0。
+	MaxGeneratableEpisodeNumber int64
+}
+
+// GetForEpisodeListByID loads what the Annict DB episode list needs from the parent work:
+// the title for the page heading, no_episodes for the shared work subnav, and the derived
+// values its auto-generation notice reports. Works whose deleted_at is set are excluded
+// by the query, mirroring the Rails Work.without_deleted.find the episode list uses, so (nil, nil)
+// means the id names no listable work.
+//
+// [Ja] GetForEpisodeListByID は Annict DB のエピソード一覧が親作品から必要とするもの
+// (ページ見出しに使う title、共有の作品サブナビが使う no_episodes、自動生成の案内が報告する
+// 集計値) を読み込む。deleted_at が入った作品はクエリ側で除外する (エピソード一覧が使う Rails
+// の Work.without_deleted.find と同じ)。そのため (nil, nil) は一覧を出せる作品がその id に
 // 無いことを表す。
-func (r *WorkRepository) GetForEpisodeListByID(ctx context.Context, id model.WorkID) (*model.Work, error) {
+func (r *WorkRepository) GetForEpisodeListByID(ctx context.Context, id model.WorkID) (*DBEpisodeListWork, error) {
 	row, err := r.queries.GetWorkForEpisodeListByID(ctx, int64(id))
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -172,11 +199,189 @@ func (r *WorkRepository) GetForEpisodeListByID(ctx context.Context, id model.Wor
 		}
 		return nil, err
 	}
-	return &model.Work{
+
+	work := &model.Work{
 		ID:         model.WorkID(row.ID),
 		Title:      row.Title,
 		NoEpisodes: row.NoEpisodes,
+	}
+	if row.ManualEpisodesCount.Valid {
+		manualEpisodesCount := row.ManualEpisodesCount.Int32
+		work.ManualEpisodesCount = &manualEpisodesCount
+	}
+
+	return &DBEpisodeListWork{
+		Work:                        work,
+		PublishedEpisodeCount:       row.PublishedEpisodeCount,
+		MaxGeneratableEpisodeNumber: row.MaxGeneratableEpisodeNumber,
 	}, nil
+}
+
+// DBEpisodeFormWork carries the parent work and the Rails-compatible manual-creation state
+// rendered by the Annict DB episode form.
+//
+// [Ja] DBEpisodeFormWork は Annict DB エピソードフォームが描画する親作品と、Rails 互換の
+// 手動作成状態を保持する。
+type DBEpisodeFormWork struct {
+	Work                *model.Work
+	ManualCreationState model.ManualEpisodeCreationState
+}
+
+// GetForEpisodeFormByID loads what the Annict DB episode form needs from the parent work:
+// the title for the page heading, no_episodes for the shared work subnav and the reasons
+// manual creation may be restricted. Deleted works are excluded by the query, so (nil, nil)
+// means the id names no work the form can be shown for.
+//
+// [Ja] GetForEpisodeFormByID は Annict DB のエピソードフォームが親作品から必要とするもの
+// (ページ見出しに使う title、共有の作品サブナビが使う no_episodes、手動作成を制限する理由)
+// を読み込む。削除済みの作品はクエリ側で除外するため、(nil, nil) はフォームを出せる作品が
+// その id に無いことを表す。
+func (r *WorkRepository) GetForEpisodeFormByID(ctx context.Context, id model.WorkID) (*DBEpisodeFormWork, error) {
+	row, err := r.queries.GetWorkForEpisodeFormByID(ctx, int64(id))
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	return &DBEpisodeFormWork{
+		Work: &model.Work{
+			ID:         model.WorkID(row.ID),
+			Title:      row.Title,
+			NoEpisodes: row.NoEpisodes,
+		},
+		ManualCreationState: model.ManualEpisodeCreationState{
+			EpisodesFilled: row.EpisodesFilled.Valid && row.EpisodesFilled.Bool,
+			SlotsExist:     row.SlotsExist,
+		},
+	}, nil
+}
+
+// DBEpisodeCreateWork is the parent work of an Annict DB episode bulk create: the work
+// itself (its id and the anime it is mapped to) plus the anchors the new rows are numbered
+// from. The anchors aggregate the work's existing episodes rather than naming columns of
+// works, so they ride alongside the work instead of being folded into model.Work.
+//
+// [Ja] DBEpisodeCreateWork は Annict DB のエピソード一括作成の親作品を表す。作品そのもの
+// (id とマッピング先の anime) と、新規行の採番の起点になる値を持つ。起点の値は works の
+// カラムではなく作品の既存エピソードの集計であるため、model.Work に畳み込まず作品と並べて
+// 持つ。
+type DBEpisodeCreateWork struct {
+	Work                *model.Work
+	ManualCreationState model.ManualEpisodeCreationState
+	// EpisodeCount counts every episode of the work, including the unpublished and the
+	// deleted ones, matching the Rails form the numbering is taken from.
+	//
+	// [Ja] EpisodeCount は作品のエピソードを、非公開のものも削除済みのものも含めて数える
+	// (採番の元にした Rails のフォームと同じ)。
+	EpisodeCount int64
+	// LatestEpisode is the episode holding the greatest sort_number, which the first
+	// created row names as its preceding episode. It is nil while the work has no episode.
+	//
+	// [Ja] LatestEpisode は sort_number が最大のエピソードで、最初に作る行が直前の
+	// エピソードとして名指しする。作品がエピソードを持たないあいだは nil。
+	LatestEpisode *DBEpisodeSortAnchor
+}
+
+// ExistsForEpisodeCreateByID reports whether the requested, non-deleted work exists. The
+// create use case uses this inexpensive check before parsing the submitted rows, then locks
+// and rechecks the same work inside its write transaction.
+//
+// [Ja] ExistsForEpisodeCreateByID は指定された未削除作品が存在するかを返す。作成ユースケースは
+// 入力行をパースする前にこの軽量な確認を行い、書き込みトランザクション内で同じ作品をロック
+// して再確認する。
+func (r *WorkRepository) ExistsForEpisodeCreateByID(ctx context.Context, id model.WorkID) (bool, error) {
+	return r.queries.ExistsWorkForEpisodeCreateByID(ctx, int64(id))
+}
+
+// LockForEpisodeCreateByID locks the requested work for the current transaction. The lock
+// serializes bulk creates for one work; false means it is missing or was deleted.
+//
+// [Ja] LockForEpisodeCreateByID は現在のトランザクションで対象作品をロックする。このロックで
+// 同じ作品への一括作成を直列化する。false は作品が存在しないか削除済みであることを表す。
+func (r *WorkRepository) LockForEpisodeCreateByID(ctx context.Context, id model.WorkID) (bool, error) {
+	_, err := r.queries.LockWorkForEpisodeCreateByID(ctx, int64(id))
+	if errors.Is(err, sql.ErrNoRows) {
+		return false, nil
+	}
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
+// DBEpisodeSortAnchor is an episode reduced to what the bulk create's numbering needs: its
+// id (to be stored as the next episode's prev_episode_id) and its sort_number (to tell
+// whether a newly created episode takes its place as the greatest).
+//
+// [Ja] DBEpisodeSortAnchor は一括作成の採番が必要とする分だけに絞ったエピソード。id (次の
+// エピソードの prev_episode_id として保存する) と sort_number (新規作成したエピソードが最大
+// の座を引き継ぐかの判定に使う) を持つ。
+type DBEpisodeSortAnchor struct {
+	ID         model.EpisodeID
+	SortNumber int32
+}
+
+// GetForEpisodeCreateByID loads the parent work of an episode bulk create together with the
+// numbering anchors. Deleted works are excluded by the query, mirroring the Rails
+// Work.without_deleted.find the create action uses, so (nil, nil) means the id names no work
+// episodes can be created under.
+//
+// [Ja] GetForEpisodeCreateByID はエピソード一括作成の親作品を、採番の起点と併せて読み込む。
+// 削除済みの作品はクエリ側で除外する (create アクションが使う Rails の
+// Work.without_deleted.find と同じ)。そのため (nil, nil) はエピソードを作成できる作品がその
+// id に無いことを表す。
+func (r *WorkRepository) GetForEpisodeCreateByID(ctx context.Context, id model.WorkID) (*DBEpisodeCreateWork, error) {
+	row, err := r.queries.GetWorkForEpisodeCreateByID(ctx, int64(id))
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	work := &model.Work{ID: model.WorkID(row.ID)}
+	if row.AnimeID.Valid {
+		animeID := model.AnimeID(row.AnimeID.Int64)
+		work.AnimeID = &animeID
+	}
+
+	result := &DBEpisodeCreateWork{
+		Work:         work,
+		EpisodeCount: row.EpisodeCount,
+		ManualCreationState: model.ManualEpisodeCreationState{
+			EpisodesFilled: row.EpisodesFilled.Valid && row.EpisodesFilled.Bool,
+			SlotsExist:     row.SlotsExist,
+		},
+	}
+	if row.LatestEpisodeID != 0 {
+		result.LatestEpisode = &DBEpisodeSortAnchor{
+			ID:         model.EpisodeID(row.LatestEpisodeID),
+			SortNumber: row.LatestSortNumber,
+		}
+	}
+
+	return result, nil
+}
+
+// IncrementEpisodesCount applies the Rails counter-cache and touch side effects after the
+// transaction has created its published episodes. The caller already holds the work lock.
+//
+// [Ja] IncrementEpisodesCount は公開エピソードを作成した後、Rails のカウンターキャッシュと
+// touch の副作用を適用する。呼び出し元は既に作品をロックしている。
+func (r *WorkRepository) IncrementEpisodesCount(ctx context.Context, workID model.WorkID, createdCount int32) error {
+	affected, err := r.queries.IncrementWorkEpisodesCount(ctx, query.IncrementWorkEpisodesCountParams{
+		CreatedCount: createdCount,
+		WorkID:       int64(workID),
+	})
+	if err != nil {
+		return err
+	}
+	if affected != 1 {
+		return errors.New("作品のエピソード件数を更新できませんでした")
+	}
+	return nil
 }
 
 // GetPopular returns popular works. Each *model.Work in the returned slice is

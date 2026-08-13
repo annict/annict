@@ -82,6 +82,23 @@ func DBWorkEpisodesPath(id viewmodel.WorkID) Path {
 	return Path(fmt.Sprintf("/db/works/%s/episodes", id))
 }
 
+// DBWorkEpisodesNewPath builds the path for the episode bulk-create form of a work in the
+// Annict DB admin UI.
+//
+// [Ja] DBWorkEpisodesNewPath はDB管理画面の作品のエピソード一括作成フォームのパスを生成します。
+func DBWorkEpisodesNewPath(id viewmodel.WorkID) Path {
+	return Path(fmt.Sprintf("/db/works/%s/episodes/new", id))
+}
+
+// DBEpisodePath builds the path of a single episode in the Annict DB admin UI. It is the
+// target of the edit form's PATCH.
+//
+// [Ja] DBEpisodePath はDB管理画面の単一エピソードのパスを生成します。編集フォームの PATCH
+// 先です。
+func DBEpisodePath(id viewmodel.EpisodeID) Path {
+	return Path(fmt.Sprintf("/db/episodes/%s", id))
+}
+
 // DBWorkProgramsPath builds the path for a work's program list in the Annict DB admin UI.
 //
 // [Ja] DBWorkProgramsPath はDB管理画面の作品の番組情報一覧のパスを生成します。

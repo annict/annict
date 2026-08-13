@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/annict/annict/go/internal/i18n"
+	"github.com/annict/annict/go/internal/templates"
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
@@ -52,14 +53,16 @@ func TestIndex_WithEpisodes(t *testing.T) {
 		WorkName: "テストアニメ",
 		Episodes: []viewmodel.DBEpisodeListItem{
 			{
-				ID:         10,
-				WorkID:     3,
-				Number:     "第2話",
-				RawNumber:  "2",
-				Title:      "エピソードタイトル",
-				TitleEn:    "Episode Title",
-				SortNumber: 200,
-				Status:     viewmodel.PublishingStatusPublished,
+				ID:                  10,
+				WorkID:              3,
+				Number:              "第2話",
+				RawNumber:           "2",
+				Title:               "エピソードタイトル",
+				TitleEn:             "Episode Title",
+				PrevNumber:          "第1話",
+				SortNumber:          200,
+				EpisodeRecordsCount: 42,
+				Status:              viewmodel.PublishingStatusPublished,
 			},
 			{
 				ID:         11,
@@ -115,11 +118,17 @@ func TestIndex_WithEpisodes(t *testing.T) {
 		"英語タイトル:",
 		`lang="ja">エピソードタイトル</span>`,
 		`lang="en">Episode Title</span>`,
-		// The sort number column.
+		// The preceding episode column names the neighbour the query derived.
 		//
-		// [Ja] 並び順の列。
+		// [Ja] 前のエピソードの列は、クエリが導出した隣接エピソードを名指しする。
+		"前のエピソード",
+		"第1話",
+		// The sort number and the records count columns.
+		//
+		// [Ja] 並び順と記録数の列。
 		"<td>200</td>",
 		"<td>100</td>",
+		"<td>42</td>",
 		// The status badge comes from the shared status label component.
 		//
 		// [Ja] 状態のバッジは共有のステータスラベルコンポーネントが描画する。
@@ -164,6 +173,94 @@ func TestIndex_MissingValuesRenderPlaceholder(t *testing.T) {
 	}
 	if strings.Contains(html, `lang="ja">-`) || strings.Contains(html, `lang="en">-`) {
 		t.Error("プレースホルダーには言語指定を付けてはいけません")
+	}
+
+	// The work's first episode has no preceding one, and its column reads as the same gap.
+	//
+	// [Ja] 作品の最初のエピソードには直前のエピソードが無く、その列も同じ欠落として読める。
+	if !strings.Contains(html, `<td class="whitespace-normal [overflow-wrap:anywhere]">-</td>`) {
+		t.Error("直前のエピソードが無い行はプレースホルダーを表示すべきです")
+	}
+}
+
+// TestIndex_GenerationNotice covers the auto-generation notice: it states the three values
+// the editor plans episodes by, and it renders on an empty list too, where those values are
+// all the page has to show.
+//
+// [Ja] TestIndex_GenerationNotice は自動生成の案内を検証する。編集者がエピソードを計画する
+// ための 3 つの値を述べ、一覧が空でも描画される (空の一覧ではこれらの値だけがページの
+// 情報になるため)。
+func TestIndex_GenerationNotice(t *testing.T) {
+	t.Parallel()
+
+	ctx := i18n.SetLocale(context.Background(), "ja")
+	data := IndexPageData{
+		WorkID:   1,
+		WorkName: "テストアニメ",
+		Generation: viewmodel.DBEpisodeGenerationSummary{
+			PlannedCount:                "12",
+			PublishedEpisodeCount:       5,
+			MaxGeneratableEpisodeNumber: 9,
+		},
+		Episodes:   []viewmodel.DBEpisodeListItem{},
+		Pagination: viewmodel.NewPagination(1, 0, 100, "/db/works/1/episodes"),
+	}
+
+	var buf strings.Builder
+	if err := Index(data).Render(ctx, &buf); err != nil {
+		t.Fatalf("レンダリングエラー: %v", err)
+	}
+
+	html := buf.String()
+
+	expectedContents := []string{
+		`<div class="alert">`,
+		"エピソードの自動生成",
+		"<dt>予定総話数</dt>",
+		`<dd class="text-card-foreground">12</dd>`,
+		"<dt>公開中のエピソード数</dt>",
+		`<dd class="text-card-foreground">5</dd>`,
+		"<dt>生成可能な最大話数</dt>",
+		`<dd class="text-card-foreground">9</dd>`,
+	}
+
+	for _, expected := range expectedContents {
+		if !strings.Contains(html, expected) {
+			t.Errorf("出力に %q が含まれていません", expected)
+		}
+	}
+}
+
+// TestIndex_GenerationNoticeUnknownPlannedCount verifies that a work with no expected
+// episode count recorded says so in words. The notice states three values side by side, so
+// the gap must not read as a count of its own.
+//
+// [Ja] TestIndex_GenerationNoticeUnknownPlannedCount は、予定総話数が未登録の作品でその旨を
+// 言葉で示すことを検証する。案内は 3 つの値を並べて述べるため、欠落がそれ自体で件数のように
+// 読めてはならない。
+func TestIndex_GenerationNoticeUnknownPlannedCount(t *testing.T) {
+	t.Parallel()
+
+	ctx := i18n.SetLocale(context.Background(), "ja")
+	data := IndexPageData{
+		WorkID:   1,
+		WorkName: "テストアニメ",
+		Generation: viewmodel.DBEpisodeGenerationSummary{
+			PlannedCount:                "",
+			PublishedEpisodeCount:       0,
+			MaxGeneratableEpisodeNumber: 0,
+		},
+		Episodes:   []viewmodel.DBEpisodeListItem{},
+		Pagination: viewmodel.NewPagination(1, 0, 100, "/db/works/1/episodes"),
+	}
+
+	var buf strings.Builder
+	if err := Index(data).Render(ctx, &buf); err != nil {
+		t.Fatalf("レンダリングエラー: %v", err)
+	}
+
+	if !strings.Contains(buf.String(), `<dd class="text-card-foreground">不明</dd>`) {
+		t.Error("予定総話数が未登録なら「不明」と表示すべきです")
 	}
 }
 
@@ -214,5 +311,29 @@ func TestIndex_NoEpisodesWorkDropsSubnavEpisodeEntry(t *testing.T) {
 
 	if strings.Contains(buf.String(), `href="/db/works/1/episodes"`) {
 		t.Error("no_episodes の作品ではサブナビのエピソード項目が落ちるべきです")
+	}
+}
+
+// TestIndex_DecorativeIconsAreHidden covers the icon of the create link, which repeats the
+// text beside it. The link already carries its meaning in text, so the SVG stays out of the
+// accessibility tree instead of adding a second, browser-dependent representation. Its
+// inline-start position also lets Basecoat apply the button's icon-aware spacing.
+//
+// [Ja] TestIndex_DecorativeIconsAreHidden は作成リンクのアイコンを検証する。このアイコンは隣接
+// するテキストと意味が重複する。リンクはテキストですでに意味を伝えるため、SVG はアクセシビリ
+// ティツリーから除外し、ブラウザー依存の別表現を重ねないようにする。inline-start の位置により、
+// Basecoat がボタンのアイコン用間隔を適用できることも固定する。
+func TestIndex_DecorativeIconsAreHidden(t *testing.T) {
+	t.Parallel()
+
+	ctx := i18n.SetLocale(context.Background(), "ja")
+
+	var buf strings.Builder
+	if err := indexNewEpisodesLink(IndexPageData{WorkID: 1}).Render(ctx, &buf); err != nil {
+		t.Fatalf("一覧アクションのレンダリングエラー: %v", err)
+	}
+
+	if !strings.Contains(buf.String(), decorativeIconMarkup(t, ctx, "plus-regular", templates.InlineIconStart)) {
+		t.Error(`装飾アイコン "plus-regular" が aria-hidden の要素内にありません`)
 	}
 }

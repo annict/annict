@@ -74,6 +74,18 @@ type Episode struct {
 	UnpublishedAt *time.Time
 	DeletedAt     *time.Time
 
+	// UpdatedAt is when the row was last written. The Annict DB edit form loader
+	// (GetForEditByID) populates it and the form carries it back as the version its
+	// submit was made against, so an update can reject a submit that would silently
+	// overwrite someone else's change. Loaders that do not select the column leave it
+	// nil, as do rows whose persisted updated_at is NULL.
+	//
+	// [Ja] UpdatedAt は行が最後に書かれた時刻。値を入れるのは Annict DB 編集フォームの
+	// ローダー (GetForEditByID) で、フォームは送信が前提とする版としてこれを持ち帰る。
+	// 他者の変更を黙って上書きする送信を、更新側で却下できるようにするため。カラムを
+	// 選択しないローダーと、保存済みの updated_at が NULL の行では nil のまま残る。
+	UpdatedAt *time.Time
+
 	// EpisodeRecordsCount is the episodes.episode_records_count counter cache. Only
 	// the Annict DB list loader (ListForDB) populates it; other loaders leave it at
 	// zero.
@@ -82,6 +94,17 @@ type Episode struct {
 	// 値が入るのは Annict DB 一覧のローダー (ListForDB) のみで、他のロード経路では 0 の
 	// まま残る。
 	EpisodeRecordsCount int32
+
+	// PrevNumber and PrevRawNumber are the display and numeric numbers of the episode
+	// that comes just before this one in sort_number order. The Annict DB list loader
+	// (ListForDB) derives them from the neighbouring row; both stay nil for the work's
+	// first episode and for loaders that do not derive them.
+	//
+	// [Ja] PrevNumber と PrevRawNumber は、sort_number 順でこのエピソードの直前に来る
+	// エピソードの表示用話数と数値話数。Annict DB 一覧のローダー (ListForDB) が隣接行から
+	// 導出する。作品の最初のエピソードと、導出しないローダーではいずれも nil のまま残る。
+	PrevNumber    *string
+	PrevRawNumber *float64
 }
 
 // DerivedStatus returns the episode's lifecycle status derived from its Unpublishable /
@@ -107,4 +130,57 @@ func (e *Episode) DerivedStatus() EpisodeStatus {
 	default:
 		return EpisodeStatusPublished
 	}
+}
+
+// ManualEpisodeCreationRestriction names the reason an editor may not create a work's episodes
+// by hand.
+//
+// [Ja] ManualEpisodeCreationRestriction は編集者が作品のエピソードを手動作成できない理由を
+// 表す。
+type ManualEpisodeCreationRestriction string
+
+const (
+	ManualEpisodeCreationAllowed        ManualEpisodeCreationRestriction = ""
+	ManualEpisodeCreationEpisodesFilled ManualEpisodeCreationRestriction = "episodes_filled"
+	ManualEpisodeCreationSlotsExist     ManualEpisodeCreationRestriction = "slots_exist"
+)
+
+// ManualEpisodeCreationState holds the conditions under which Rails stops a non-admin from
+// creating episodes by hand: the work already has its expected number of episodes
+// (Work#episodes_filled?), or it owns a slot with a start time and therefore generates its
+// episodes automatically (Work#slots_exists?).
+//
+// [Ja] ManualEpisodeCreationState は Rails が管理者以外の手動エピソード作成を止める条件を
+// 保持する。作品が予定話数までエピソードを持っている (Work#episodes_filled?) か、開始時刻を
+// 持つ放送枠があってエピソードが自動生成される (Work#slots_exists?) かのいずれか。
+type ManualEpisodeCreationState struct {
+	EpisodesFilled bool
+	SlotsExist     bool
+}
+
+// Restriction reports which reason applies, and ManualEpisodeCreationAllowed when none does.
+// A work that satisfies both reasons reports the filled count, which is the order the Rails
+// form states them in. Deciding that order here keeps the rejected submit and the page's
+// warning naming the same reason.
+//
+// [Ja] Restriction はどの理由が当てはまるかを返し、いずれも当てはまらない場合は
+// ManualEpisodeCreationAllowed を返す。両方に当てはまる作品は予定話数到達を報告する
+// (Rails のフォームが理由を述べる順序と同じ)。順序をここで決めることで、送信の却下と
+// ページの警告が同じ理由を名指しする。
+func (s ManualEpisodeCreationState) Restriction() ManualEpisodeCreationRestriction {
+	switch {
+	case s.EpisodesFilled:
+		return ManualEpisodeCreationEpisodesFilled
+	case s.SlotsExist:
+		return ManualEpisodeCreationSlotsExist
+	default:
+		return ManualEpisodeCreationAllowed
+	}
+}
+
+// Allowed reports whether ordinary committers may create episodes manually.
+//
+// [Ja] Allowed は通常のコミッターがエピソードを手動作成できるかを返す。
+func (s ManualEpisodeCreationState) Allowed() bool {
+	return s.Restriction() == ManualEpisodeCreationAllowed
 }
