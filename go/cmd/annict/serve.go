@@ -654,24 +654,26 @@ func runServe() {
 	// A work's episode list is public, matching the Rails Db::EpisodesController#index,
 	// which is the one action there without authenticate_user!. Creating and editing
 	// episodes requires the committer role, so the bulk-create form, its submit and the
-	// edit form are grouped behind RequireCommitter.
+	// edit form with its submit are grouped behind RequireCommitter.
 	//
 	// [Ja] 作品のエピソード一覧は公開。Rails の Db::EpisodesController#index が同コントローラ
 	// で唯一 authenticate_user! を持たないアクションであることに合わせている。エピソードの作成と
-	// 編集は committer ロールを要するため、一括作成フォームとその送信、および編集フォームは
-	// RequireCommitter でまとめてゲートする。
+	// 編集は committer ロールを要するため、一括作成フォームとその送信、および編集フォームとその
+	// 送信は RequireCommitter でまとめてゲートする。
 	episodeRepo := repository.NewEpisodeRepository(queries)
 	getDBEpisodesUC := usecase.NewGetDBEpisodesUsecase(workRepo, episodeRepo)
 	getDBEpisodeNewUC := usecase.NewGetDBEpisodeNewUsecase(workRepo)
 	createEpisodesUC := usecase.NewCreateEpisodesUsecase(db, workRepo, episodeRepo, animeRepo, animeClassificationRepo, validator.NewDBEpisodeCreateValidator())
 	getDBEpisodeEditUC := usecase.NewGetDBEpisodeEditUsecase(episodeRepo)
-	dbEpisodeHandler := db_episode.NewHandler(cfg, sessionManager, flashMgr, getDBEpisodesUC, getDBEpisodeNewUC, createEpisodesUC, getDBEpisodeEditUC)
+	updateEpisodeUC := usecase.NewUpdateEpisodeUsecase(db, episodeRepo, animeRepo, animeClassificationRepo, validator.NewDBEpisodeUpdateValidator())
+	dbEpisodeHandler := db_episode.NewHandler(cfg, sessionManager, flashMgr, getDBEpisodesUC, getDBEpisodeNewUC, createEpisodesUC, getDBEpisodeEditUC, updateEpisodeUC)
 	r.Get("/db/works/{work_id}/episodes", dbEpisodeHandler.Index)
 	r.Group(func(r chi.Router) {
 		r.Use(authMiddleware.RequireCommitter)
 		r.Get("/db/works/{work_id}/episodes/new", dbEpisodeHandler.New)
 		r.Post("/db/works/{work_id}/episodes", dbEpisodeHandler.Create)
 		r.Get("/db/episodes/{id}/edit", dbEpisodeHandler.Edit)
+		r.Patch("/db/episodes/{id}", dbEpisodeHandler.Update)
 	})
 
 	// iCalendar配信

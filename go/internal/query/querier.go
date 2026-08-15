@@ -134,6 +134,23 @@ type Querier interface {
 	// updated_at はフォームが hidden で持ち回る版。古い読み取りに対する送信を更新側で
 	// 却下できるようにする。
 	GetEpisodeForEditByID(ctx context.Context, id int64) (GetEpisodeForEditByIDRow, error)
+	// The update reads only what the submitted values do not carry: title_ro and the state
+	// timestamps, which the animes dual-write maps but the form does not edit, plus the two
+	// mapping columns (the episode's own anime and its parent work's) that decide whether the
+	// dual-write happens at all. The editable columns are left out because the submit replaces
+	// them.
+	//
+	// The filters match GetEpisodeForEditByID, so the submit accepts exactly the episodes whose
+	// edit form is reachable.
+	//
+	// [Ja] 更新が読むのは、送信された値が運ばないものだけ。title_ro と状態のタイムスタンプ
+	// (animes への両書きが写像するがフォームでは編集しない) と、両書きを行うか自体を決める 2 つの
+	// マッピングカラム (エピソード自身の anime と親作品の anime)。編集対象のカラムは送信された値が
+	// 置き換えるため読まない。
+	//
+	// 絞り込みは GetEpisodeForEditByID と揃える。編集フォームに到達できるエピソードと、送信を
+	// 受け付けるエピソードを一致させるため。
+	GetEpisodeForUpdateByID(ctx context.Context, id int64) (GetEpisodeForUpdateByIDRow, error)
 	GetEpisodeRecordByID(ctx context.Context, id int64) (GetEpisodeRecordByIDRow, error)
 	GetGumroadSubscriberByID(ctx context.Context, id int64) (GumroadSubscriber, error)
 	// ユーザーの視聴リスト（見たい・見てる）からprogram_idを取得します
@@ -255,11 +272,55 @@ type Querier interface {
 	ListDBEpisodes(ctx context.Context, arg ListDBEpisodesParams) ([]ListDBEpisodesRow, error)
 	ListDBWorks(ctx context.Context, arg ListDBWorksParams) ([]ListDBWorksRow, error)
 	ListEpisodeIDsAfter(ctx context.Context, arg ListEpisodeIDsAfterParams) ([]int64, error)
+	// List, in ascending id order, the rows UpdateDBEpisode goes on to write or reference as a
+	// neighbour: the target itself, the rows that precede and follow it before the move, and the
+	// rows that precede and follow it after the move. The caller locks exactly these, so the lock
+	// footprint of one edit stays bounded instead of growing with the number of episodes the work
+	// has.
+	//
+	// The derivation is valid because LockWorkForEpisodeUpdateByID already holds the parent work,
+	// which no reordering write can bypass. The one exception is
+	// Annict::DataCare::MoveEpisode, which writes episodes.work_id with update_column and so takes
+	// no work lock; a row it moves into this work after this statement is neither listed nor
+	// locked. That is a manual data-care operation and the window is the same one UpdateDBEpisode
+	// opens by re-deriving under its own snapshot.
+	//
+	// [Ja] UpdateDBEpisode がこの後に書く行と、隣接行として参照する行を id 昇順で列挙する。編集対象
+	// 自身・移動前の直前行・移動前の直後行・移動後の直前行・移動後の直後行の 5 行である。呼び出し側
+	// はこれだけをロックするため、1 回の編集のロック範囲が作品のエピソード数に比例して増えない。
+	//
+	// この導出が有効なのは、LockWorkForEpisodeUpdateByID が既に親作品を保持しており、並び順を
+	// 変える書き込みがそれを迂回できないため。唯一の例外は Annict::DataCare::MoveEpisode で、
+	// episodes.work_id を update_column で書くため作品ロックを取らない。本ステートメントの後に
+	// この作品へ移されてきた行は列挙もロックもされない。これは手動のデータ整備操作であり、また
+	// UpdateDBEpisode が自身のスナップショットで導出し直すことで開く窓と同じものである。
+	ListEpisodeIDsForEpisodeUpdateByID(ctx context.Context, arg ListEpisodeIDsForEpisodeUpdateByIDParams) ([]int64, error)
 	ListEpisodesForAnimeSyncByIDs(ctx context.Context, dollar_1 []int64) ([]ListEpisodesForAnimeSyncByIDsRow, error)
 	ListNumberFormats(ctx context.Context) ([]ListNumberFormatsRow, error)
 	ListWorkIDsAfter(ctx context.Context, arg ListWorkIDsAfterParams) ([]int64, error)
 	ListWorksForAnimeSyncByIDs(ctx context.Context, dollar_1 []int64) ([]ListWorksForAnimeSyncByIDsRow, error)
 	ListWorksForSatelliteSyncByIDs(ctx context.Context, dollar_1 []int64) ([]ListWorksForSatelliteSyncByIDsRow, error)
+	// Lock the listed episodes in ascending id order before neighbour links are derived or written.
+	// Rails locks an episode before touching its work, the inverse of the Go update order; NOWAIT
+	// therefore aborts this transaction instead of completing that cycle. The use case rolls the
+	// whole transaction back and retries after a short delay, once Rails can acquire the released
+	// work lock and finish. The rows UpdateDBEpisode updates and the destination predecessor it
+	// references through prev_episode_id can make it wait on locks Rails holds, so pre-empting the
+	// listed neighbours is enough; the ids are already sorted by ListEpisodeIDsForEpisodeUpdateByID
+	// and ORDER BY keeps them locked in that order.
+	//
+	// The rows are not read back: the statement exists for its locking clause alone.
+	//
+	// [Ja] 隣接リンクの導出・書き込み前に、列挙されたエピソードを id 昇順でロックする。Rails は
+	// エピソードをロックしてから作品を touch し、Go の更新順序と逆になるため、NOWAIT により循環を
+	// 完成させず本トランザクションを中断する。UseCase はトランザクション全体を rollback して短時間
+	// 後に再試行し、その間に Rails は解放された作品ロックを取得して完了できる。UpdateDBEpisode が
+	// 更新する行と、prev_episode_id から参照する移動先の直前行は、Rails が保持するロックで待たされ
+	// 得るため、列挙された隣接行を先取りすれば足りる。id は
+	// ListEpisodeIDsForEpisodeUpdateByID が既に整列済みで、ORDER BY がその順序でのロック取得を保つ。
+	//
+	// 行は読み戻さない。本ステートメントはロック句のためだけに存在する。
+	LockEpisodesForEpisodeUpdateByIDs(ctx context.Context, ids []int64) error
 	// Serialize bulk creates for one work before reading their numbering anchors. Keeping the
 	// lock query separate from the aggregate query makes the latter run after a waiter acquires
 	// the lock and therefore observe the preceding transaction's committed episodes.
@@ -268,6 +329,38 @@ type Querier interface {
 	// ことで、待機側がロックを得た後に集計を実行し、先行トランザクションがコミットしたエピソードを
 	// 参照できるようにする。
 	LockWorkForEpisodeCreateByID(ctx context.Context, id int64) (int64, error)
+	// Lock the kept parent work before reading any neighbouring episode. This is a separate
+	// statement from UpdateDBEpisode so a transaction that waited here gets a fresh READ COMMITTED
+	// snapshot when it later derives the old and new neighbours. The returned id also lets the
+	// caller reject a target that moved to a different work after its edit-form pre-read.
+	//
+	// The lock is taken at the strength touched_work needs rather than as FOR SHARE: a shared lock
+	// upgraded to an exclusive one later in the same transaction lets two submits for the same work
+	// each hold the share and then wait for the other's, which PostgreSQL resolves by aborting one
+	// with a deadlock error.
+	//
+	// Holding it also pins the ordering of this work for the rest of the transaction. Every Rails
+	// path that can reorder the list writes the works row too and therefore waits here: an edit
+	// through the Rails DB admin, a create and a destroy all go through belongs_to :work, touch:
+	// true or counter_culture :work. The Go bulk create takes this same lock through
+	// LockWorkForEpisodeCreateByID. The neighbours can therefore be derived after this statement
+	// and stay valid until commit.
+	//
+	// [Ja] 隣接エピソードを読む前に、削除されていない親作品をロックする。UpdateDBEpisode とは
+	// 別の文にすることで、ここで待機したトランザクションが、後で移動前後の隣接行を導出するときに
+	// READ COMMITTED の新しいスナップショットを得られるようにする。返した id は、編集フォーム用の
+	// 事前読み取り後に対象が別作品へ移った場合の却下にも使う。
+	//
+	// FOR SHARE ではなく touched_work が必要とする強さで最初から取るのは、同一トランザクションの
+	// 後段で共有ロックを排他ロックへ昇格させると、同じ作品への 2 つの送信が互いの共有ロックを
+	// 待ち合い、PostgreSQL が片方をデッドロックで中断するためである。
+	//
+	// また、このロックの保持中はこの作品の並び順が固定される。Rails で一覧を並べ替え得る経路は
+	// いずれも works 行も書くためここで待たされる (DB 管理画面の編集・作成・削除はすべて
+	// belongs_to :work, touch: true か counter_culture :work を通る)。Go の一括作成も
+	// LockWorkForEpisodeCreateByID で同じロックを取る。したがって隣接行は本ステートメントの後に
+	// 導出でき、commit まで有効なままである。
+	LockWorkForEpisodeUpdateByID(ctx context.Context, id int64) (int64, error)
 	MarkPasswordResetTokenAsUsed(ctx context.Context, id int64) error
 	MarkSignInCodeAsUsed(ctx context.Context, id int64) error
 	MarkSignUpCodeAsUsed(ctx context.Context, id int64) error
@@ -278,6 +371,92 @@ type Querier interface {
 	UpdateAnimeExternalID(ctx context.Context, arg UpdateAnimeExternalIDParams) error
 	UpdateAnimeLink(ctx context.Context, arg UpdateAnimeLinkParams) error
 	UpdateAnimeOfficialAccount(ctx context.Context, arg UpdateAnimeOfficialAccountParams) error
+	// The version stated by the submit is matched inside the UPDATE rather than compared against
+	// a preceding read, so no other write can slip between the comparison and the write. NULL is
+	// an explicit version (the shared column is nullable), which IS NOT DISTINCT FROM matches
+	// without a second statement; the write then advances updated_at, so a second submit from the
+	// same NULL version no longer matches. No row returned therefore means the row was written by
+	// someone else in the meantime, and the caller reports a conflict instead of overwriting it.
+	//
+	// prev_episode_id is recomputed from the submitted sort_number by the same rule the episode
+	// list derives the preceding episode with (ascending sort_number, id as the tiebreaker).
+	// Rails only ever assigns the column on create and expected a human to fix it from the edit
+	// form's select, which the Go form does not have; the public episode navigation, the GraphQL
+	// API and the REST API still read it.
+	//
+	// The parent work is touched and the episodes.update DB activity recorded only when the
+	// content actually changed, as Rails save_and_create_activity! skips both for a no-op save.
+	// The comparison covers the five submitted columns and leaves prev_episode_id out: that one is
+	// derived from the ordering rather than typed, so a recomputation triggered by another
+	// episode moving would otherwise show up in the shared change history as an edit its author
+	// never made. The two data-modifying CTEs run whether or not the final SELECT reads them, so
+	// neither is joined into it: joining created_activity would drop the returned id for a submit
+	// that changed nothing.
+	//
+	// [Ja] 送信が名乗る版の照合は、直前の読み取りとの比較ではなく UPDATE の中で行う。比較と書き込み
+	// の間に他の書き込みが挟まらないようにするため。共有カラムは NULL 許容のため NULL も明示的な
+	// 版であり、IS NOT DISTINCT FROM なら 2 文に分けずに照合できる。書き込みは updated_at を進める
+	// ので、同じ NULL 版からの 2 件目はもう一致しない。したがって 1 行も返らないことは、その間に
+	// 他者が行を書いたことを意味し、呼び出し側は上書きせず競合として報告する。
+	//
+	// prev_episode_id は、エピソード一覧が直前のエピソードを導出するのと同じ規則 (sort_number
+	// 昇順、同値なら id) で、送信された sort_number から再計算する。Rails はこのカラムを作成時に
+	// しか入れず、ずれの修正は編集フォームの選択欄で人が行う前提だったが、Go のフォームにその欄は
+	// 無い。公開側のエピソードの前後導線・GraphQL API・REST API は今もこのカラムを読む。
+	//
+	// 親作品の touch と episodes.update の DB 活動の記録は、内容が実際に変わったときにだけ行う。
+	// Rails の save_and_create_activity! も、変更の無い保存では双方を行わないため。比較の対象は
+	// 送信された 5 カラムで、prev_episode_id は含めない。同カラムは入力ではなく並び順から導出される
+	// ため、別のエピソードが動いたことによる再計算まで拾うと、共有 DB の変更履歴に「その編集者が
+	// 行っていない編集」として現れてしまう。データ変更 CTE は最後の SELECT が読むかどうかに関わらず
+	// 実行されるため、どちらも SELECT に join しない。created_activity を join すると、何も変わら
+	// なかった送信で返すべき id が落ちてしまう。
+	//
+	// The move also leaves the two rows around the episode naming the wrong neighbour, so both are
+	// relinked in the same statement: the row the episode used to precede comes to name the episode
+	// that used to precede it, and the row it comes to precede comes to name the episode itself.
+	// When those two are the same row the episode has crossed nothing and neither is written, which
+	// covers every submit that leaves sort_number where it was. The work as a whole is deliberately
+	// not recomputed: the bulk create assigns prev_episode_id the way the Rails after_create
+	// callback does, which is on purpose different from the neighbour the list derives, and a sweep
+	// would overwrite that on an unrelated edit.
+	//
+	// The relink records no db_activity, does not touch the parent work, and leaves the neighbours'
+	// updated_at alone. It maintains a value the ordering derives rather than applying an edit
+	// someone made (Rails writes the column with update_column for the same reason), and advancing
+	// a neighbour's version would turn another editor's open form into a conflict over a column no
+	// form submits.
+	//
+	// [Ja] 移動は、エピソードの前後にある 2 行が別の行を隣接として名乗ったままにするため、その 2 行も
+	// 同一文で張り替える。移動前にエピソードの直後だった行は移動前の直前のエピソードを名乗るように
+	// し、移動後に直後になる行はエピソード自身を名乗るようにする。2 行が同一の場合、エピソードはどの
+	// 行も跨いでおらず、どちらも書かない (sort_number が変わらない送信はすべてこれに該当する)。作品
+	// 全体の再計算は意図的に行わない。一括作成は Rails の after_create コールバックと同じ規則で
+	// prev_episode_id を入れており、その値は一覧が導出する隣接行と意図的に異なるため、一括再計算は
+	// 無関係な編集でその判断を上書きしてしまう。
+	//
+	// 張り替えは db_activity を作らず、親作品も touch せず、隣接行の updated_at も進めない。並び順
+	// から導出される値の維持であって、誰かが行った編集の適用ではないため (Rails が同カラムを
+	// update_column で書くのも同じ理由)。また隣接行の版を進めると、どのフォームも送信しないカラムを
+	// 理由に、他の編集者が開いているフォームを競合にしてしまう。
+	//
+	// The caller has already locked the kept parent work and the neighbours listed by
+	// ListEpisodeIDsForEpisodeUpdateByID in preceding statements. Keeping that protocol outside
+	// this statement matters: after waiting for the work, this statement starts with a fresh READ
+	// COMMITTED snapshot, so its old and new neighbour reads include the update that just
+	// committed. The neighbour CTEs below repeat that derivation rather than taking the ids from
+	// the caller, so the rows this statement writes are the ones its own snapshot says are
+	// adjacent. The work id is repeated here to bind the write to the parent that was locked and
+	// pre-read.
+	//
+	// [Ja] 呼び出し側は、先行する別ステートメントで削除されていない親作品と、
+	// ListEpisodeIDsForEpisodeUpdateByID が列挙した隣接行を既にロックしている。このプロトコルを
+	// 本ステートメントの外に置くことが重要で、作品ロックを待った後に READ COMMITTED の新しい
+	// スナップショットで本ステートメントを開始し、直前に commit した更新を移動前後の隣接行の
+	// 読み取りへ反映できる。以下の隣接 CTE が呼び出し側から id を受け取らずに導出をやり直すのは、
+	// 本ステートメントが書く行を、自身のスナップショットが隣接と判断した行に一致させるため。
+	// ここでも作品 id を条件にすることで、ロック・事前読み取りした親に書き込みを束縛する。
+	UpdateDBEpisode(ctx context.Context, arg UpdateDBEpisodeParams) (int64, error)
 	UpdateEpisodeAnimeID(ctx context.Context, arg UpdateEpisodeAnimeIDParams) error
 	UpdateProfileImageData(ctx context.Context, arg UpdateProfileImageDataParams) error
 	UpdateSession(ctx context.Context, arg UpdateSessionParams) error
@@ -290,6 +469,14 @@ type Querier interface {
 	UpdateWorkAnimeID(ctx context.Context, arg UpdateWorkAnimeIDParams) error
 	UpdateWorkDeletedAt(ctx context.Context, arg UpdateWorkDeletedAtParams) error
 	UpdateWorkUnpublishedAt(ctx context.Context, arg UpdateWorkUnpublishedAtParams) error
+	// Recreate a missing classification or update the existing row atomically. Episode editing
+	// uses this instead of a preceding existence check so a concurrent delete cannot leave the
+	// dual-written anime without its classification.
+	//
+	// [Ja] 欠損した分類の再作成と既存行の更新をアトミックに行う。エピソード編集では事前の
+	// 存在確認をせずこのクエリを使い、並行削除によって両書き先の anime だけが分類なしで残るのを
+	// 防ぐ。
+	UpsertAnimeClassification(ctx context.Context, arg UpsertAnimeClassificationParams) error
 }
 
 var _ Querier = (*Queries)(nil)

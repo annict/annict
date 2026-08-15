@@ -4,10 +4,11 @@ import (
 	"context"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/model"
+	"github.com/annict/annict/go/internal/usecase"
+	"github.com/annict/annict/go/internal/validator"
 )
 
 // DBEpisodeListWorkName returns the parent work's display name for the Annict DB episode
@@ -24,21 +25,21 @@ func DBEpisodeListWorkName(workTitle string) string {
 	return strings.TrimSpace(workTitle)
 }
 
-// DBEpisodeEditIdentifier returns the page-specific label used at the start of an episode edit
-// document title. The immutable id always remains in the label so two episodes of one work have
+// DBEpisodeIdentifier returns the label used at the start of a document title that names one
+// episode. The immutable id always remains in the label so two episodes of one work have
 // different titles; a display number, when present, makes the label recognisable before the id.
 //
-// [Ja] DBEpisodeEditIdentifier はエピソード編集ページの文書タイトル先頭で使う、ページ固有の
-// ラベルを返す。同じ作品の 2 エピソードが異なるタイトルになるよう不変の ID を必ず残し、
-// 表示用話数があれば ID より先に置いて識別しやすくする。
-func DBEpisodeEditIdentifier(ctx context.Context, episode *model.Episode) string {
+// [Ja] DBEpisodeIdentifier は 1 件のエピソードを名指しする文書タイトルの先頭で使うラベルを返す。
+// 同じ作品の 2 エピソードが異なるタイトルになるよう不変の ID を必ず残し、表示用話数があれば
+// ID より先に置いて識別しやすくする。
+func DBEpisodeIdentifier(ctx context.Context, episode *model.Episode) string {
 	templateData := map[string]any{"EpisodeID": episode.ID.String()}
 	if number := strings.TrimSpace(derefString(episode.Number)); number != "" {
 		templateData["Number"] = number
-		return i18n.T(ctx, "db_episodes_edit_identifier", templateData)
+		return i18n.T(ctx, "db_episodes_identifier", templateData)
 	}
 
-	return i18n.T(ctx, "db_episodes_edit_identifier_without_number", templateData)
+	return i18n.T(ctx, "db_episodes_identifier_without_number", templateData)
 }
 
 // DBEpisodeListItem is the per-row display data for a work's episode list on the Annict DB
@@ -174,20 +175,21 @@ type DBEpisodeFormInput struct {
 // write advances the column to a timestamp, so another submit from the same NULL version
 // conflicts. An empty value remains reserved for a request that stated no version.
 //
+// Both this and the layout below are the validator's constants: it reads the submitted version
+// back and decides whether to accept it, so the round-trip format is single-sourced there and
+// named here for the form that writes it.
+//
 // [Ja] DBEpisodeFormNullVersion は保存済み updated_at が NULL のとき、編集フォームが運ぶ
 // 明示的な版。更新側は updated_at IS NULL で照合し、最初に成功した書き込みがカラムを
 // timestamp へ進めるため、同じ NULL 版からの次の送信は競合する。空文字列は版を指定して
 // いない要求のために残す。
-const DBEpisodeFormNullVersion = "null"
-
-// dbEpisodeFormVersionLayout is the format the edit form's version travels in. It keeps the
-// sub-second digits that separate two writes made within the same second, and parses back to
-// the instant it came from so the update can compare it against the stored column.
 //
-// [Ja] dbEpisodeFormVersionLayout は編集フォームの版を往復させる書式。同一秒内の 2 つの
-// 書き込みを区別する秒未満の桁を保ち、元の時刻へパースし直せるため、更新側は保存済みの
-// カラムと比較できる。
-const dbEpisodeFormVersionLayout = time.RFC3339Nano
+// 本定数と下の書式はいずれも validator 側の定数である。送信された版を読み戻して受理するかを
+// 判断するのは validator のため、往復の書式の正本をそちらに 1 つ置き、ここでは書き出す
+// フォームのために名前を与える。
+const DBEpisodeFormNullVersion = validator.DBEpisodeNullVersion
+
+const dbEpisodeFormVersionLayout = validator.DBEpisodeVersionLayout
 
 // NewDBEpisodeFormInputFromEpisode projects a stored episode onto the form values the edit
 // form renders. Columns the episode leaves unset become "", so an episode with no display
@@ -211,6 +213,25 @@ func NewDBEpisodeFormInputFromEpisode(episode *model.Episode) DBEpisodeFormInput
 	}
 
 	return input
+}
+
+// NewDBEpisodeFormInputFromSubmit keeps a rejected submit's values in the re-rendered form,
+// exactly as they were typed. The version rides back unchanged too: echoing the server's
+// current one instead would make the corrected submit overwrite the write the rejection was
+// guarding against.
+//
+// [Ja] NewDBEpisodeFormInputFromSubmit は却下された送信の値を、入力されたまま再描画する
+// フォームに残す。版もそのまま返す。代わりにサーバーの現在値を返すと、手直し後の送信が、却下に
+// よって守られたはずの書き込みを上書きしてしまう。
+func NewDBEpisodeFormInputFromSubmit(input usecase.UpdateEpisodeInput) DBEpisodeFormInput {
+	return DBEpisodeFormInput{
+		Number:     input.Number,
+		RawNumber:  input.RawNumber,
+		SortNumber: input.SortNumber,
+		Title:      input.Title,
+		TitleEn:    input.TitleEn,
+		UpdatedAt:  input.UpdatedAt,
+	}
 }
 
 // DBEpisodeGenerationSummary is the notice a work's episode list shows above the table: how

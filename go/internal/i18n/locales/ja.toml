@@ -1363,12 +1363,12 @@ other = "{{.EpisodeIdentifier}} | {{.WorkTitle}} | エピソードを編集"
 description = "作品に表示名が無くてもエピソードを識別できる編集ページの文書タイトル"
 other = "{{.EpisodeIdentifier}} | エピソードを編集"
 
-[db_episodes_edit_identifier]
-description = "表示用話数のあるエピソードを編集ページの文書タイトルで識別するラベル"
+[db_episodes_identifier]
+description = "表示用話数のあるエピソードを文書タイトルで識別するラベル"
 other = "{{.Number}} (ID: {{.EpisodeID}})"
 
-[db_episodes_edit_identifier_without_number]
-description = "表示用話数が無いエピソードを編集ページの文書タイトルで識別するラベル"
+[db_episodes_identifier_without_number]
+description = "表示用話数が無いエピソードを文書タイトルで識別するラベル"
 other = "ID: {{.EpisodeID}}"
 
 [db_episodes_name]

@@ -41,14 +41,15 @@ func TestDBEpisodeListWorkName(t *testing.T) {
 	}
 }
 
-// TestDBEpisodeEditIdentifier verifies the label that opens an episode's edit document title.
-// Both locales are covered because the two formats live in the translation files: a key that
-// went missing from one of them would come back as its own message id rather than as a label.
+// TestDBEpisodeIdentifier verifies the label that opens the document title of a page naming one
+// episode. Both locales are covered because the two formats live in the translation files: a key
+// that went missing from one of them would come back as its own message id rather than as a
+// label.
 //
-// [Ja] TestDBEpisodeEditIdentifier はエピソード編集ページの文書タイトル先頭に来るラベルを
-// 検証する。2 つの書式は翻訳ファイルにあるため両ロケールを対象にする。片方から翻訳キーが
+// [Ja] TestDBEpisodeIdentifier は 1 件のエピソードを名指しするページの文書タイトル先頭に来る
+// ラベルを検証する。2 つの書式は翻訳ファイルにあるため両ロケールを対象にする。片方から翻訳キーが
 // 抜けた場合、ラベルではなくメッセージ ID がそのまま返るため。
-func TestDBEpisodeEditIdentifier(t *testing.T) {
+func TestDBEpisodeIdentifier(t *testing.T) {
 	t.Parallel()
 
 	number := "  第2話  "
@@ -90,8 +91,8 @@ func TestDBEpisodeEditIdentifier(t *testing.T) {
 
 			ctx := i18n.SetLocale(context.Background(), tt.locale)
 
-			if got := DBEpisodeEditIdentifier(ctx, tt.episode); got != tt.want {
-				t.Errorf("DBEpisodeEditIdentifier() = %q, want %q", got, tt.want)
+			if got := DBEpisodeIdentifier(ctx, tt.episode); got != tt.want {
+				t.Errorf("DBEpisodeIdentifier() = %q, want %q", got, tt.want)
 			}
 		})
 	}

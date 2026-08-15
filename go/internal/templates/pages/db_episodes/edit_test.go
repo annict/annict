@@ -388,3 +388,83 @@ func TestEdit_DecorativeIconsAreHidden(t *testing.T) {
 		}
 	}
 }
+
+// TestEdit_ConflictShowsStoredValues covers a submit refused because someone else wrote the
+// episode first: the stored values are shown beside the submitted ones so the editor can see
+// what they would replace, and the options are stated in words rather than left to be guessed.
+//
+// [Ja] TestEdit_ConflictShowsStoredValues は、他者が先にエピソードを書いたために却下された送信を
+// 検証する。保存済みの値が送信された値と並んで表示され、編集者が何を置き換えることになるのかを
+// 見られる。取りうる対処も、推測に委ねず言葉で述べる。
+func TestEdit_ConflictShowsStoredValues(t *testing.T) {
+	t.Parallel()
+
+	ctx := i18n.SetLocale(context.Background(), "ja")
+
+	data := editTestData()
+	data.FormInput.Title = "後から届いたタイトル"
+	data.FormErrors = model.NewValidationError()
+	data.FormErrors.AddGlobal("このデータは他の編集者によって更新されました")
+	data.ConflictCurrent = &viewmodel.DBEpisodeFormInput{
+		Number:     "第3話",
+		SortNumber: "300",
+		Title:      "先に保存したタイトル",
+		UpdatedAt:  "2026-08-12T10:00:00Z",
+	}
+
+	var buf strings.Builder
+	if err := Edit(data).Render(ctx, &buf); err != nil {
+		t.Fatalf("レンダリングエラー: %v", err)
+	}
+
+	html := buf.String()
+	expectedContents := []string{
+		"このデータは他の編集者によって更新されました",
+		templates.T(ctx, "db_episodes_edit_conflict_heading"),
+		templates.T(ctx, "db_episodes_edit_conflict_help"),
+		"先に保存したタイトル",
+		"第3話",
+		// The submitted values stay in the form: the editor decides which of the two to keep,
+		// and losing their input would leave only one of them to choose from.
+		//
+		// [Ja] 送信された値はフォームに残る。どちらを残すかを決めるのは編集者であり、入力が
+		// 失われると選べる側が片方しか残らないため。
+		"後から届いたタイトル",
+	}
+	for _, expected := range expectedContents {
+		if !strings.Contains(html, expected) {
+			t.Errorf("レスポンスに %q が含まれていません", expected)
+		}
+	}
+
+	// The stored values the notice lists include columns the episode leaves unset, which read
+	// as "nothing recorded" rather than as a rendering gap.
+	//
+	// [Ja] 案内が並べる保存済みの値には、そのエピソードが未設定にしているカラムも含まれる。
+	// これらは描画漏れではなく「未登録」と読める形にする。
+	if !strings.Contains(html, missingValuePlaceholder) {
+		t.Error("未設定の保存済みの値がプレースホルダーで描画されていません")
+	}
+}
+
+// TestEdit_WithoutConflictOmitsStoredValues keeps the notice out of the ordinary edit page: a
+// form opened for editing already shows the stored values in its own inputs, and repeating them
+// would read as a second, competing set.
+//
+// [Ja] TestEdit_WithoutConflictOmitsStoredValues は通常の編集ページから案内を外していることを
+// 検証する。編集のために開いたフォームは保存済みの値を各欄に既に表示しており、それを繰り返すと
+// 対立するもう 1 組の値のように読めてしまうため。
+func TestEdit_WithoutConflictOmitsStoredValues(t *testing.T) {
+	t.Parallel()
+
+	ctx := i18n.SetLocale(context.Background(), "ja")
+
+	var buf strings.Builder
+	if err := Edit(editTestData()).Render(ctx, &buf); err != nil {
+		t.Fatalf("レンダリングエラー: %v", err)
+	}
+
+	if strings.Contains(buf.String(), templates.T(ctx, "db_episodes_edit_conflict_heading")) {
+		t.Error("競合していないのに保存済みの内容の案内が描画されています")
+	}
+}

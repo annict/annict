@@ -4,10 +4,38 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
+	"time"
+
+	"github.com/lib/pq"
 
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
 )
+
+// pgErrCodeLockNotAvailable is the SQLSTATE PostgreSQL raises when a NOWAIT locking clause finds
+// the row already locked (55P03, lock_not_available).
+//
+// [Ja] pgErrCodeLockNotAvailable は、NOWAIT のロック句が既にロック済みの行に当たったときに
+// PostgreSQL が返す SQLSTATE (55P03, lock_not_available)。
+const pgErrCodeLockNotAvailable = "55P03"
+
+// ErrEpisodeLockUnavailable reports that an episode row the update needs was held by another
+// transaction, so the attempt was abandoned instead of waiting for it. The NOWAIT clause it
+// comes from is what keeps Rails' episode -> work save order from deadlocking against the Go
+// work -> episodes update order, and PostgreSQL aborts the transaction when it fires. Callers
+// therefore retry the whole transaction rather than the failed statement. Translating the
+// driver error here keeps the SQLSTATE inside the infrastructure layer, as Update already does
+// for sql.ErrNoRows.
+//
+// [Ja] ErrEpisodeLockUnavailable は、更新に必要なエピソード行を他のトランザクションが保持して
+// いたため、待たずに試行を中断したことを表す。由来する NOWAIT 句は、Rails の episode -> work の
+// 保存順序が Go の work -> episodes の更新順序とデッドロックするのを防ぐためのものであり、
+// 発火時に PostgreSQL はトランザクションを中断する。したがって呼び出し側は、失敗した
+// ステートメントではなくトランザクション全体を再試行する。ここでドライバのエラーを翻訳するのは、
+// Update が sql.ErrNoRows について既にそうしているのと同じく、SQLSTATE を Infrastructure 層に
+// 閉じ込めるため。
+var ErrEpisodeLockUnavailable = errors.New("エピソード行のロックを取得できませんでした")
 
 // EpisodeRepository handles data access for the episodes table and related
 // joins.
@@ -209,6 +237,160 @@ func (r *EpisodeRepository) GetForEditByID(ctx context.Context, id model.Episode
 			NoEpisodes: row.WorkNoEpisodes,
 		},
 	}, nil
+}
+
+// GetForUpdateByID loads the columns the Annict DB episode update needs on top of the
+// submitted values: title_ro and the state timestamps the animes dual-write maps but the form
+// does not edit, plus the episode's own anime and its parent work's. Deleted episodes and
+// episodes of deleted works are excluded by the query, as they are for the edit form, so
+// (nil, nil) means the id names no updatable episode.
+//
+// [Ja] GetForUpdateByID は、Annict DB のエピソード更新が送信された値に加えて必要とするカラムを
+// 読み込む。animes への両書きが写像するがフォームでは編集しない title_ro と状態のタイムスタンプ、
+// およびエピソード自身の anime と親作品の anime。削除済みのエピソードと削除済み作品のエピソード
+// は、編集フォームと同じくクエリ側で除外するため、(nil, nil) は更新できるエピソードがその id に
+// 無いことを表す。
+func (r *EpisodeRepository) GetForUpdateByID(ctx context.Context, id model.EpisodeID) (*model.Episode, error) {
+	row, err := r.queries.GetEpisodeForUpdateByID(ctx, int64(id))
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	episode := &model.Episode{
+		ID:      model.EpisodeID(row.ID),
+		WorkID:  model.WorkID(row.WorkID),
+		TitleRo: row.TitleRo,
+	}
+	if row.UnpublishedAt.Valid {
+		unpublishedAt := row.UnpublishedAt.Time
+		episode.UnpublishedAt = &unpublishedAt
+	}
+	if row.DeletedAt.Valid {
+		deletedAt := row.DeletedAt.Time
+		episode.DeletedAt = &deletedAt
+	}
+	if row.AnimeID.Valid {
+		animeID := model.AnimeID(row.AnimeID.Int64)
+		episode.AnimeID = &animeID
+	}
+	if row.ParentAnimeID.Valid {
+		parentAnimeID := model.AnimeID(row.ParentAnimeID.Int64)
+		episode.ParentAnimeID = &parentAnimeID
+	}
+
+	return episode, nil
+}
+
+// UpdateEpisodeParams holds the attributes of one episode edit submit. UserID attributes the
+// recorded change to its author, as it does on create.
+//
+// WorkID is the parent observed by the edit pre-read. Update locks the episode's current parent
+// and requires it to match, so a row moved to another work in between is not written under the
+// old ordering assumptions.
+//
+// Version is the updated_at the submit was made against: nil states that the row carried no
+// updated_at when the form was opened, which is a version in its own right because the shared
+// column is nullable.
+//
+// [Ja] UpdateEpisodeParams はエピソード編集の 1 回の送信の属性を保持する。UserID は作成時と同じく
+// 記録される変更を作成者に帰属させる。
+//
+// WorkID は編集用の事前読み取りで観測した親作品。Update はエピソードの現在の親をロックして
+// 一致を要求するため、その間に別作品へ移された行を古い並び順の前提で書かない。
+//
+// Version は送信が前提とする updated_at。nil は、フォームを開いた時点で行が updated_at を持って
+// いなかったことを表す。共有カラムが NULL 許容であるため、これも 1 つの版として扱う。
+type UpdateEpisodeParams struct {
+	ID         model.EpisodeID
+	WorkID     model.WorkID
+	Number     *string
+	RawNumber  *float64
+	Title      *string
+	TitleEn    string
+	SortNumber int32
+	Version    *time.Time
+	UserID     model.UserID
+}
+
+// Update applies one episode edit submit, reporting false when no row matched: either the
+// episode is gone or its updated_at has moved on since the form was opened. The caller turns
+// that into a conflict rather than retrying, so a submit made against a stale read never
+// overwrites the write that happened in between.
+//
+// The parent work is locked in a statement of its own before UpdateDBEpisode, giving that later
+// statement a fresh READ COMMITTED snapshot after any wait. The neighbours UpdateDBEpisode goes
+// on to write or reference are then listed and locked in ascending id order with NOWAIT, which bounds the
+// rows one edit locks instead of letting them grow with the work's episode count. A lock miss
+// comes back as ErrEpisodeLockUnavailable, and the use case rolls the aborted transaction back
+// and retries it whole.
+//
+// [Ja] Update はエピソード編集の 1 回の送信を適用し、どの行も一致しなかった場合に false を返す
+// (エピソードが失われたか、フォームを開いてから updated_at が進んだか)。呼び出し側はこれを再試行
+// せず競合として扱うため、古い読み取りに対する送信が、その間に入った書き込みを上書きすることは
+// ない。
+//
+// 親作品は UpdateDBEpisode より前の独立した文でロックし、待機があった場合も後段の文が READ
+// COMMITTED の新しいスナップショットを得るようにする。続いて UpdateDBEpisode が書くか参照する
+// 隣接行を列挙し、id 昇順で NOWAIT ロックする。これにより 1 回の編集がロックする行数が、作品の
+// エピソード数に比例して増えずに抑えられる。ロック取得失敗は ErrEpisodeLockUnavailable として
+// 返り、UseCase が中断されたトランザクション全体を rollback して再試行する。
+func (r *EpisodeRepository) Update(ctx context.Context, params UpdateEpisodeParams) (bool, error) {
+	lockedWorkID, err := r.queries.LockWorkForEpisodeUpdateByID(ctx, int64(params.ID))
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return false, nil
+		}
+		return false, err
+	}
+	if model.WorkID(lockedWorkID) != params.WorkID {
+		return false, nil
+	}
+
+	neighbourIDs, err := r.queries.ListEpisodeIDsForEpisodeUpdateByID(ctx, query.ListEpisodeIDsForEpisodeUpdateByIDParams{
+		ID:         int64(params.ID),
+		WorkID:     int64(params.WorkID),
+		SortNumber: params.SortNumber,
+	})
+	if err != nil {
+		return false, err
+	}
+	if err := r.queries.LockEpisodesForEpisodeUpdateByIDs(ctx, neighbourIDs); err != nil {
+		if isLockNotAvailable(err) {
+			return false, fmt.Errorf("%w: %w", ErrEpisodeLockUnavailable, err)
+		}
+		return false, err
+	}
+
+	_, err = r.queries.UpdateDBEpisode(ctx, query.UpdateDBEpisodeParams{
+		ID:         int64(params.ID),
+		WorkID:     int64(params.WorkID),
+		Number:     nullStringFromPtr(params.Number),
+		RawNumber:  nullFloat64FromPtr(params.RawNumber),
+		Title:      nullStringFromPtr(params.Title),
+		TitleEn:    params.TitleEn,
+		SortNumber: params.SortNumber,
+		Version:    nullTimeFromPtr(params.Version),
+		UserID:     int64(params.UserID),
+	})
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return false, nil
+		}
+		return false, err
+	}
+
+	return true, nil
+}
+
+// isLockNotAvailable reports whether err is PostgreSQL's NOWAIT lock miss.
+//
+// [Ja] isLockNotAvailable は err が PostgreSQL の NOWAIT のロック取得失敗かどうかを返す。
+func isLockNotAvailable(err error) bool {
+	var pqErr *pq.Error
+	return errors.As(err, &pqErr) && pqErr.Code == pgErrCodeLockNotAvailable
 }
 
 // CreateEpisodeParams holds the attributes for creating an episode. The columns an editor

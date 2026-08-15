@@ -1364,12 +1364,12 @@ other = "{{.EpisodeIdentifier}} | {{.WorkTitle}} | Edit Episode"
 description = "Episode-specific edit document title for a work without a display name"
 other = "{{.EpisodeIdentifier}} | Edit Episode"
 
-[db_episodes_edit_identifier]
-description = "Label identifying an episode with a display number in the edit document title"
+[db_episodes_identifier]
+description = "Label identifying an episode with a display number in a document title"
 other = "{{.Number}} (ID: {{.EpisodeID}})"
 
-[db_episodes_edit_identifier_without_number]
-description = "Label identifying an episode without a display number in the edit document title"
+[db_episodes_identifier_without_number]
+description = "Label identifying an episode without a display number in a document title"
 other = "ID: {{.EpisodeID}}"
 
 [db_episodes_name]

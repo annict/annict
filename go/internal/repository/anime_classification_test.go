@@ -253,3 +253,59 @@ func TestAnimeClassificationRepository_UpdateByAnimeID(t *testing.T) {
 		t.Errorf("ExpectedEpisodesCount = %d, want 24 after update", got.ExpectedEpisodesCount.Int32)
 	}
 }
+
+// TestAnimeClassificationRepository_Upsert verifies both outcomes needed by episode editing:
+// a missing classification is inserted, and a later call updates that same row in place.
+//
+// [Ja] TestAnimeClassificationRepository_Upsert はエピソード編集に必要な 2 経路を検証する。
+// 欠損した分類を挿入し、後続の呼び出しでは同じ行をその場で更新する。
+func TestAnimeClassificationRepository_Upsert(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	queries := query.New(db).WithTx(tx)
+	animeRepo := repository.NewAnimeRepository(queries)
+	repo := repository.NewAnimeClassificationRepository(queries)
+
+	parentAnimeID := createTestAnime(t, animeRepo, "親アニメ")
+	animeID := createTestAnime(t, animeRepo, "エピソードアニメ")
+	params := repository.CreateAnimeClassificationParams{
+		AnimeID:       animeID,
+		Kind:          model.AnimeClassificationKindEpisode,
+		ParentAnimeID: &parentAnimeID,
+		Number:        nullStr("1"),
+		NumberText:    nullStr("#1"),
+		SortNumber:    sql.NullInt32{Int32: 100, Valid: true},
+	}
+
+	if err := repo.Upsert(context.Background(), params); err != nil {
+		t.Fatalf("1 回目の Upsert() error = %v", err)
+	}
+	created, err := repo.GetByAnimeID(context.Background(), animeID)
+	if err != nil || created == nil {
+		t.Fatalf("1 回目の GetByAnimeID() classification=%v err=%v", created, err)
+	}
+	if created.NumberText.String != "#1" || created.SortNumber.Int32 != 100 {
+		t.Errorf("1 回目の classification = %+v, want number_text=#1 sort_number=100", created)
+	}
+
+	params.Number = nullStr("2.5")
+	params.NumberText = nullStr("第2話")
+	params.SortNumber = sql.NullInt32{Int32: 250, Valid: true}
+	if err := repo.Upsert(context.Background(), params); err != nil {
+		t.Fatalf("2 回目の Upsert() error = %v", err)
+	}
+	updated, err := repo.GetByAnimeID(context.Background(), animeID)
+	if err != nil || updated == nil {
+		t.Fatalf("2 回目の GetByAnimeID() classification=%v err=%v", updated, err)
+	}
+	if updated.ID != created.ID {
+		t.Errorf("2 回目の ID = %d, want %d (同じ行を更新)", int64(updated.ID), int64(created.ID))
+	}
+	if updated.Number.String != "2.5" || updated.NumberText.String != "第2話" {
+		t.Errorf("2 回目の classification = %+v, want submitted numbering", updated)
+	}
+	if !updated.SortNumber.Valid || updated.SortNumber.Int32 != 250 {
+		t.Errorf("2 回目の SortNumber = %+v, want {250 true}", updated.SortNumber)
+	}
+}

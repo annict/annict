@@ -16,6 +16,43 @@ INSERT INTO anime_classifications (
     $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, NOW(), NOW()
 ) RETURNING *;
 
+-- name: UpsertAnimeClassification :exec
+-- Recreate a missing classification or update the existing row atomically. Episode editing
+-- uses this instead of a preceding existence check so a concurrent delete cannot leave the
+-- dual-written anime without its classification.
+--
+-- [Ja] 欠損した分類の再作成と既存行の更新をアトミックに行う。エピソード編集では事前の
+-- 存在確認をせずこのクエリを使い、並行削除によって両書き先の anime だけが分類なしで残るのを
+-- 防ぐ。
+INSERT INTO anime_classifications (
+    anime_id,
+    kind,
+    parent_anime_id,
+    number,
+    number_text,
+    sort_number,
+    standalone,
+    number_format_id,
+    episode_start_number,
+    expected_episodes_count,
+    created_at,
+    updated_at
+) VALUES (
+    $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, NOW(), NOW()
+)
+ON CONFLICT (anime_id) DO UPDATE
+SET
+    kind = EXCLUDED.kind,
+    parent_anime_id = EXCLUDED.parent_anime_id,
+    number = EXCLUDED.number,
+    number_text = EXCLUDED.number_text,
+    sort_number = EXCLUDED.sort_number,
+    standalone = EXCLUDED.standalone,
+    number_format_id = EXCLUDED.number_format_id,
+    episode_start_number = EXCLUDED.episode_start_number,
+    expected_episodes_count = EXCLUDED.expected_episodes_count,
+    updated_at = NOW();
+
 -- name: GetAnimeClassificationByAnimeID :one
 SELECT * FROM anime_classifications
 WHERE anime_id = $1
