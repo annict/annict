@@ -64,13 +64,17 @@ trap cleanup EXIT
 # 適用する。フルパイプラインと再復元専用エントリの両方から使う。
 load_into_dev_db() {
   if [ ! -f "$MASKED_DUMP" ]; then
-    echo "Masked dump not found: ${MASKED_DUMP}. Run 'make load-snapshot-db' first." >&2
+    echo "マスク済みダンプが見つかりません: ${MASKED_DUMP}。先に 'make load-snapshot-db' を実行してください。" >&2
     exit 1
   fi
 
-  echo "==> Rebuilding ${DEV_DB} from the masked dump"
+  echo "==> ${DEV_DB} を削除 (存在しない場合はスキップ)"
   dropdb --if-exists "$DEV_DB"
+
+  echo "==> ${DEV_DB} を作成"
   createdb "$DEV_DB"
+
+  echo "==> マスク済みダンプを ${DEV_DB} に復元"
   # Restore without -C and with --no-owner/--no-acl so the production roles and
   # the CREATE/DROP DATABASE TOC entries in the dump are ignored. pg_restore can
   # report ignorable errors (already-present extensions etc.), so do not abort
@@ -81,7 +85,7 @@ load_into_dev_db() {
   # (既存の拡張など) を報告しうるため、その終了ステータスでスクリプト全体を
   # 止めない。
   pg_restore --no-owner --no-acl -d "$DEV_DB" "$MASKED_DUMP" \
-    || echo "    pg_restore reported errors (often ignorable: roles/extensions); continuing"
+    || echo "    pg_restore がエラーを報告しました (ロールや拡張など、無視できるものが大半)。処理を続行します"
 
   # (6) Apply pending dbmate migrations so the schema matches what the local
   # apps expect. DATABASE_URL is already injected by op run, so call dbmate
@@ -92,7 +96,7 @@ load_into_dev_db() {
   # マイグレーションを適用する。DATABASE_URL は op run が注入済みなので dbmate を
   # 直接呼ぶ ('make db-migrate' だと op run が入れ子になる)。db/schema.sql が本
   # スナップショットの内容で書き換わらないよう、スキーマのダンプは抑止する。
-  echo "==> Applying dbmate migrations"
+  echo "==> dbmate マイグレーションを適用"
   DBMATE_NO_DUMP_SCHEMA=true dbmate up
 }
 
@@ -101,7 +105,7 @@ load_into_dev_db() {
 # [Ja] 再復元モード: tmp/ に保存済みのマスク済みダンプを再利用する。
 if [ "${1:-}" = "restore" ]; then
   load_into_dev_db
-  echo "==> Done (restored ${DEV_DB} from ${MASKED_DUMP})"
+  echo "==> 完了 (${MASKED_DUMP} から ${DEV_DB} を復元しました)"
   exit 0
 fi
 
@@ -110,10 +114,10 @@ fi
 #
 # [Ja] 以下はフルパイプライン。本番 R2 の読み取り専用資格情報とバックアップ
 # バケット名 (いずれも op run 経由で 1Password から注入) を要求する。
-: "${ANNICT_PROD_S3_ENDPOINT:?ANNICT_PROD_S3_ENDPOINT is required}"
-: "${ANNICT_PROD_S3_ACCESS_KEY_ID:?ANNICT_PROD_S3_ACCESS_KEY_ID is required}"
-: "${ANNICT_PROD_S3_SECRET_ACCESS_KEY:?ANNICT_PROD_S3_SECRET_ACCESS_KEY is required}"
-: "${ANNICT_PROD_S3_BACKUP_BUCKET:?ANNICT_PROD_S3_BACKUP_BUCKET is required}"
+: "${ANNICT_PROD_S3_ENDPOINT:?ANNICT_PROD_S3_ENDPOINT が未設定です}"
+: "${ANNICT_PROD_S3_ACCESS_KEY_ID:?ANNICT_PROD_S3_ACCESS_KEY_ID が未設定です}"
+: "${ANNICT_PROD_S3_SECRET_ACCESS_KEY:?ANNICT_PROD_S3_SECRET_ACCESS_KEY が未設定です}"
+: "${ANNICT_PROD_S3_BACKUP_BUCKET:?ANNICT_PROD_S3_BACKUP_BUCKET が未設定です}"
 
 # Point rclone at an empty config file (/dev/null) so it does not emit the
 # "Config file ... not found" notice on startup. The remote is defined entirely
@@ -154,37 +158,41 @@ if [ -z "$backup_key" ]; then
     --include "*.tgz" --files-only | sort | tail -n 1)
 fi
 if [ -z "$backup_key" ]; then
-  echo "No .tgz backup found in bucket ${ANNICT_PROD_S3_BACKUP_BUCKET}" >&2
+  echo "バケット ${ANNICT_PROD_S3_BACKUP_BUCKET} に .tgz のバックアップが見つかりません" >&2
   exit 1
 fi
 
-echo "==> Downloading backup: ${backup_key}"
+echo "==> バックアップをダウンロード: ${backup_key}"
 rm -rf "${SNAPSHOT_DIR:?}/backup"
 rclone copyto "prods3:${ANNICT_PROD_S3_BACKUP_BUCKET}/${backup_key}" \
   "${SNAPSHOT_DIR}/backup.tgz"
 
-echo "==> Extracting backup"
+echo "==> バックアップを展開"
 tar xzf "${SNAPSHOT_DIR}/backup.tgz" -C "$SNAPSHOT_DIR"
 if [ ! -f "$EXPORT_FILE" ]; then
-  echo "Expected dump not found at ${EXPORT_FILE} after extraction" >&2
+  echo "展開後に想定の位置にダンプが見つかりません: ${EXPORT_FILE}" >&2
   exit 1
 fi
 
 # (2) Restore the production dump into a fresh isolated database.
 #
 # [Ja] (2) 本番ダンプを新規の隔離 DB に復元する。
-echo "==> Restoring into isolated ${ANONYMIZE_DB}"
+echo "==> ${ANONYMIZE_DB} を削除 (存在しない場合はスキップ)"
 dropdb --if-exists "$ANONYMIZE_DB"
+
+echo "==> ${ANONYMIZE_DB} を作成"
 createdb "$ANONYMIZE_DB"
+
+echo "==> 隔離 DB ${ANONYMIZE_DB} に復元"
 pg_restore --no-owner --no-acl -d "$ANONYMIZE_DB" "$EXPORT_FILE" \
-  || echo "    pg_restore reported errors (often ignorable: roles/extensions); continuing"
+  || echo "    pg_restore がエラーを報告しました (ロールや拡張など、無視できるものが大半)。処理を続行します"
 
 # (3) Mask PII in the isolated database. ON_ERROR_STOP makes masking failures
 # fatal so we never dump and load a partially-masked database.
 #
 # [Ja] (3) 隔離 DB の PII をマスクする。ON_ERROR_STOP でマスク失敗を致命的に
 # 扱い、マスクが中途半端な DB をダンプ・流し込みしないようにする。
-echo "==> Masking PII (db/anonymize.sql)"
+echo "==> PII をマスク (db/anonymize.sql)"
 psql -v ON_ERROR_STOP=1 -d "$ANONYMIZE_DB" -f db/anonymize.sql
 
 # (4) Dump the masked database to tmp/. The isolated database is dropped by the
@@ -192,7 +200,7 @@ psql -v ON_ERROR_STOP=1 -d "$ANONYMIZE_DB" -f db/anonymize.sql
 #
 # [Ja] (4) マスク済み DB を tmp/ にダンプする。隔離 DB は終了時の cleanup トラップ
 # で破棄される。
-echo "==> Writing masked dump: ${MASKED_DUMP}"
+echo "==> マスク済みダンプを書き出し: ${MASKED_DUMP}"
 pg_dump -Fc --no-owner --no-acl -d "$ANONYMIZE_DB" -f "$MASKED_DUMP"
 
 # (5)-(6) Load the masked dump into the development database and migrate.
@@ -200,4 +208,4 @@ pg_dump -Fc --no-owner --no-acl -d "$ANONYMIZE_DB" -f "$MASKED_DUMP"
 # [Ja] (5)-(6) マスク済みダンプを開発 DB に流し込み、マイグレーションする。
 load_into_dev_db
 
-echo "==> Done (loaded ${DEV_DB} from production snapshot ${backup_key})"
+echo "==> 完了 (本番スナップショット ${backup_key} から ${DEV_DB} を構築しました)"
