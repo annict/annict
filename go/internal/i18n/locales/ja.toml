@@ -1371,6 +1371,18 @@ other = "{{.Number}} (ID: {{.EpisodeID}})"
 description = "表示用話数が無いエピソードを編集ページの文書タイトルで識別するラベル"
 other = "ID: {{.EpisodeID}}"
 
+[db_episodes_name]
+description = "表示用話数とタイトルの両方があるエピソードを文章の中で名指しする表記"
+other = "{{.Number}}「{{.Title}}」"
+
+[db_episodes_name_title_only]
+description = "表示用話数が無くタイトルだけがあるエピソードを文章の中で名指しする表記"
+other = "「{{.Title}}」"
+
+[db_episodes_name_without_number_and_title]
+description = "表示用話数もタイトルも無いエピソードを文章の中で名指しする表記"
+other = "ID: {{.EpisodeID}} のエピソード"
+
 [db_episodes_edit_back_to_list_link]
 description = "エピソード編集ページからエピソード一覧へのリンク"
 other = "一覧に戻る"
@@ -1410,6 +1422,43 @@ other = "タイトル (英語)"
 [db_episodes_edit_submit]
 description = "エピソード編集ページの送信ボタン"
 other = "更新する"
+
+[db_episodes_edit_conflict_heading]
+description = "エピソード編集ページで、競合時に表示する保存済みの内容の見出し"
+other = "現在保存されている内容"
+
+[db_episodes_edit_conflict_help]
+description = "エピソード編集ページで、競合時に取りうる対処を述べる説明"
+other = "入力した内容は下のフォームにそのまま残しています。現在保存されている内容と見比べて、入力した内容で問題なければもう一度更新してください。上の内容をそのまま残す場合は、更新せずに一覧へ戻ってください。"
+
+# DBエピソード非公開確認ページ
+[db_episodes_archive_new_title]
+description = "エピソード非公開確認ページのタイトル"
+other = "エピソードを非公開にする"
+
+[db_episodes_archive_new_document_title]
+description = "表示名のある作品に属するエピソードを識別できる非公開確認ページの文書タイトル"
+other = "{{.EpisodeIdentifier}} | {{.WorkTitle}} | エピソードを非公開にする"
+
+[db_episodes_archive_new_document_title_without_work]
+description = "作品に表示名が無くてもエピソードを識別できる非公開確認ページの文書タイトル"
+other = "{{.EpisodeIdentifier}} | エピソードを非公開にする"
+
+[db_episodes_archive_new_confirm_message]
+description = "エピソード非公開確認ページの確認メッセージ"
+other = "{{.Episode}}を非公開にしますか？"
+
+[db_episodes_archive_new_help]
+description = "エピソード非公開確認ページで、非公開にすると何が起きるかを述べる説明"
+other = "非公開にすると、このエピソードは公開ページに表示されなくなります。あとから一覧の「公開」から元に戻せます。"
+
+[db_episodes_archive_new_submit]
+description = "エピソード非公開確認ページの実行ボタン"
+other = "非公開にする"
+
+[db_episodes_archive_new_cancel_link]
+description = "エピソード非公開確認ページのキャンセルリンク"
+other = "キャンセル"
 
 # DB作品フォーム共通 (新規・編集で共有)
 [db_works_form_external_link_label]
@@ -1694,6 +1743,14 @@ other = "作品を削除しました"
 description = "エピソード一括作成成功メッセージ"
 other = "エピソードを作成しました"
 
+[flash_db_episode_updated]
+description = "エピソード更新成功メッセージ"
+other = "エピソードを更新しました"
+
+[flash_db_episode_archived]
+description = "エピソード非公開成功メッセージ"
+other = "エピソードを非公開にしました"
+
 # バリデーション共通メッセージ
 [validation_required]
 description = "必須フィールドのバリデーションエラー"
@@ -1738,6 +1795,18 @@ other = "正しい話数フォーマットを選択してください"
 [validation_too_long]
 description = "文字数の上限を超えている"
 other = "{{.MaxLength}}文字以内で入力してください"
+
+[validation_version_missing]
+description = "フォームが持ち回る版が送信に含まれていない"
+other = "編集中のデータを特定できませんでした。編集画面を開き直してからやり直してください"
+
+[validation_version_conflict]
+description = "フォームを開いた後に他の編集者が同じデータを更新していた"
+other = "このデータは他の編集者によって更新されたため、入力した内容は保存していません。現在保存されている内容を確認したうえで、どちらを残すか決めてください"
+
+[validation_record_busy]
+description = "他の書き込みと重なって保存できなかった (保存済みの内容は変わっていない)"
+other = "他の更新と重なったため、入力した内容は保存していません。保存されている内容は変わっていないので、そのままもう一度送信してください"
 
 [validation_work_title_already_taken]
 description = "同じタイトルの作品が既に登録されている"

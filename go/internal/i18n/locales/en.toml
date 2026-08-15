@@ -1372,6 +1372,18 @@ other = "{{.Number}} (ID: {{.EpisodeID}})"
 description = "Label identifying an episode without a display number in the edit document title"
 other = "ID: {{.EpisodeID}}"
 
+[db_episodes_name]
+description = "How an episode with both a display number and a title is named in running text"
+other = "{{.Number}} “{{.Title}}”"
+
+[db_episodes_name_title_only]
+description = "How an episode with a title but no display number is named in running text"
+other = "“{{.Title}}”"
+
+[db_episodes_name_without_number_and_title]
+description = "How an episode with neither a display number nor a title is named in running text"
+other = "episode ID: {{.EpisodeID}}"
+
 [db_episodes_edit_back_to_list_link]
 description = "Link from the episode edit page back to the episode list"
 other = "Back to List"
@@ -1411,6 +1423,43 @@ other = "Title (English)"
 [db_episodes_edit_submit]
 description = "Submit button on the episode edit page"
 other = "Update"
+
+[db_episodes_edit_conflict_heading]
+description = "Heading of the stored values shown on a conflict on the episode edit page"
+other = "Currently stored values"
+
+[db_episodes_edit_conflict_help]
+description = "Explanation of the available options on a conflict on the episode edit page"
+other = "Your input is kept in the form below. Compare it with the currently stored values and, if your input is the one to keep, update again. To keep the stored values instead, return to the list without updating."
+
+# DB episode archive-confirmation page
+[db_episodes_archive_new_title]
+description = "Title of the episode archive-confirmation page"
+other = "Archive Episode"
+
+[db_episodes_archive_new_document_title]
+description = "Episode-specific archive-confirmation document title for a named work"
+other = "{{.EpisodeIdentifier}} | {{.WorkTitle}} | Archive Episode"
+
+[db_episodes_archive_new_document_title_without_work]
+description = "Episode-specific archive-confirmation document title for a work without a display name"
+other = "{{.EpisodeIdentifier}} | Archive Episode"
+
+[db_episodes_archive_new_confirm_message]
+description = "Confirmation message on the episode archive-confirmation page"
+other = "Archive {{.Episode}}?"
+
+[db_episodes_archive_new_help]
+description = "Explanation of what archiving an episode does, on the episode archive-confirmation page"
+other = "An archived episode no longer appears on the public pages. You can restore it later with “Publish” on the episode list."
+
+[db_episodes_archive_new_submit]
+description = "Execute button on the episode archive-confirmation page"
+other = "Archive"
+
+[db_episodes_archive_new_cancel_link]
+description = "Cancel link on the episode archive-confirmation page"
+other = "Cancel"
 
 # DB works form shared (used by new and edit)
 [db_works_form_external_link_label]
@@ -1695,6 +1744,14 @@ other = "Work has been deleted successfully"
 description = "Episode bulk creation success message"
 other = "Episodes have been created successfully"
 
+[flash_db_episode_updated]
+description = "Episode update success message"
+other = "Episode has been updated successfully"
+
+[flash_db_episode_archived]
+description = "Episode archive success message"
+other = "Episode has been archived successfully"
+
 # Validation common messages
 [validation_required]
 description = "Required field validation error"
@@ -1739,6 +1796,18 @@ other = "Please select a valid episode number format"
 [validation_too_long]
 description = "Value exceeds the maximum length"
 other = "Please enter no more than {{.MaxLength}} characters"
+
+[validation_version_missing]
+description = "The submit did not carry the version the form holds"
+other = "The record being edited could not be identified. Please open the edit page again and retry"
+
+[validation_version_conflict]
+description = "Another editor updated the same record after the form was opened"
+other = "Another editor has updated this record, so your input was not saved. Review the currently stored values and decide which of the two to keep"
+
+[validation_record_busy]
+description = "The submit overlapped another write and could not be saved (the stored values are unchanged)"
+other = "Your input was not saved because it overlapped with another update. The stored values have not changed, so please submit it again as it is"
 
 [validation_work_title_already_taken]
 description = "A work with the same title is already registered"
