@@ -134,6 +134,18 @@ func (r *AnimeRepository) Update(ctx context.Context, params UpdateAnimeParams) 
 	})
 }
 
+// UpdateStatus updates only an anime's lifecycle status, preserving every content attribute.
+// Archive paths use it to avoid replaying a stale full-row snapshot over a concurrent edit.
+//
+// [Ja] UpdateStatus は anime のライフサイクル状態だけを更新し、内容属性をすべて保持する。
+// 非公開の経路が古い行全体のスナップショットを競合した編集へ上書きしないために使う。
+func (r *AnimeRepository) UpdateStatus(ctx context.Context, id model.AnimeID, status model.AnimeStatus) error {
+	return r.queries.UpdateAnimeStatus(ctx, query.UpdateAnimeStatusParams{
+		ID:     int64(id),
+		Status: toQueryAnimeStatus(status),
+	})
+}
+
 // GetByID looks up an anime by its ID. It returns (nil, nil) when no row
 // matches, keeping sql.ErrNoRows from leaking out of the repository.
 //

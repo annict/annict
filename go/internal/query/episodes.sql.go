@@ -12,6 +12,88 @@ import (
 	"github.com/lib/pq"
 )
 
+const archiveDBEpisode = `-- name: ArchiveDBEpisode :one
+WITH archived_episode AS (
+    UPDATE episodes
+    SET
+        unpublished_at = NOW(),
+        updated_at = NOW()
+    WHERE episodes.id = $1
+        AND episodes.work_id = $2
+        AND episodes.unpublished_at IS NULL
+        AND episodes.deleted_at IS NULL
+    RETURNING episodes.id, episodes.work_id, episodes.anime_id
+), touched_work AS (
+    UPDATE works
+    SET
+        episodes_count = works.episodes_count - 1,
+        updated_at = NOW()
+    WHERE works.id IN (SELECT ae.work_id FROM archived_episode ae)
+)
+SELECT ae.id, ae.anime_id
+FROM archived_episode ae
+`
+
+type ArchiveDBEpisodeParams struct {
+	ID     int64 `db:"id"`
+	WorkID int64 `db:"work_id"`
+}
+
+type ArchiveDBEpisodeRow struct {
+	ID      int64         `db:"id"`
+	AnimeID sql.NullInt64 `db:"anime_id"`
+}
+
+// Archiving is conditional on the episode still being published, so a submit from a stale
+// confirmation page returns no row instead of re-stamping unpublished_at. The work id is
+// required to match the parent the confirmation page was built from, so an episode moved to
+// another work by Annict::DataCare::MoveEpisode in between does not decrement the counter of
+// a work it no longer belongs to.
+//
+// The updated row returns its current anime_id so the dual-write targets the mapping that was
+// actually archived. A mapping changed after the confirmation-page read must not make the
+// submit update the former anime.
+//
+// The Rails unpublish is Episode#update(unpublished_at:), which records no db_activity but
+// does advance updated_at, touch the parent work through belongs_to :work, touch: true and
+// decrement works.episodes_count through counter_culture. All three are reproduced here, in
+// one statement so the counter cannot drift from the state it counts: the decrement runs
+// exactly for the transition the UPDATE above performed.
+//
+// The rows are written episodes-first and works-second, the order Rails saves them in, so the
+// two applications queue behind each other on the same work rather than deadlocking. The Go
+// episode update takes the two in the opposite order (the work first, through
+// LockWorkForEpisodeUpdateByID), and that inversion does not close into a cycle because the
+// update pre-empts the episodes it needs with NOWAIT and abandons its attempt rather than
+// waiting. The bulk create also takes the work first, but it only inserts rows and so never
+// waits on an episode this statement holds.
+//
+// [Ja] 非公開は、エピソードが今も公開中であることを条件とする。古い確認ページからの送信は
+// unpublished_at を再スタンプせず、1 行も返さない。作品 id は確認ページが前提とした親作品との
+// 一致を要求する。その間に Annict::DataCare::MoveEpisode で別作品へ移されたエピソードが、
+// もう所属していない作品のカウンターを減算しないようにするため。
+//
+// 更新した行は現在の anime_id を返す。両書きが、実際に非公開にした時点の写像を対象にするため。
+// 確認ページの読み取り後に写像が変わっても、送信が以前の anime を更新してはならない。
+//
+// Rails の非公開は Episode#update(unpublished_at:) であり、db_activity は作らないが、
+// updated_at を進め、belongs_to :work, touch: true で親作品を touch し、counter_culture で
+// works.episodes_count を減算する。3 つとも本ステートメントで再現する。1 文にまとめるのは、
+// カウンターが数える対象の状態からずれないようにするため (減算は上の UPDATE が実際に行った
+// 遷移に対してだけ走る)。
+//
+// 書き込みは episodes が先、works が後で、Rails が保存する順序と同じ。これにより 2 つの
+// アプリケーションは同じ作品に対してデッドロックせず、順に待ち合う。Go のエピソード更新は
+// 逆順で取る (LockWorkForEpisodeUpdateByID で作品が先) が、この反転が循環にならないのは、
+// 更新側が必要なエピソードを NOWAIT で先取りし、待たずに試行を中断するため。一括作成も作品を
+// 先に取るが、行を挿入するだけのため本ステートメントが保持するエピソードを待つことはない。
+func (q *Queries) ArchiveDBEpisode(ctx context.Context, arg ArchiveDBEpisodeParams) (ArchiveDBEpisodeRow, error) {
+	row := q.db.QueryRowContext(ctx, archiveDBEpisode, arg.ID, arg.WorkID)
+	var i ArchiveDBEpisodeRow
+	err := row.Scan(&i.ID, &i.AnimeID)
+	return i, err
+}
+
 const countDBEpisodes = `-- name: CountDBEpisodes :one
 SELECT COUNT(*)
 FROM episodes e
@@ -120,6 +202,76 @@ func (q *Queries) CreateEpisode(ctx context.Context, arg CreateEpisodeParams) (i
 	var id int64
 	err := row.Scan(&id)
 	return id, err
+}
+
+const getEpisodeForArchiveByID = `-- name: GetEpisodeForArchiveByID :one
+SELECT
+    e.id,
+    e.work_id,
+    e.number,
+    e.title,
+    e.unpublished_at,
+    e.deleted_at,
+    w.title AS work_title,
+    w.no_episodes AS work_no_episodes
+FROM episodes e
+INNER JOIN works w ON w.id = e.work_id
+WHERE e.id = $1
+    AND e.deleted_at IS NULL
+    AND w.deleted_at IS NULL
+`
+
+type GetEpisodeForArchiveByIDRow struct {
+	ID             int64          `db:"id"`
+	WorkID         int64          `db:"work_id"`
+	Number         sql.NullString `db:"number"`
+	Title          sql.NullString `db:"title"`
+	UnpublishedAt  sql.NullTime   `db:"unpublished_at"`
+	DeletedAt      sql.NullTime   `db:"deleted_at"`
+	WorkTitle      string         `db:"work_title"`
+	WorkNoEpisodes bool           `db:"work_no_episodes"`
+}
+
+// The archive confirmation page and the submit that follows it read the same row: the columns
+// naming the episode on screen (number / title), its state timestamps and the two the page
+// needs from its parent work (the title for the heading, no_episodes for the shared work
+// subnav). The submit gets the anime mapping from the row ArchiveDBEpisode actually updates,
+// not from this pre-transaction projection.
+//
+// The state timestamps are selected rather than filtered on, so the caller decides which state
+// the page and the submit accept through model.Episode.DerivedStatus. deleted_at is filtered
+// all the same because a deleted episode is out of reach of both, matching
+// GetEpisodeForEditByID; the column still travels so DerivedStatus reads a complete row.
+//
+// The filters match GetEpisodeForEditByID, so the submit accepts exactly the episodes whose
+// confirmation page is reachable.
+//
+// [Ja] 非公開の確認ページと、それに続く送信は同じ行を読む。画面上でエピソードを名指しする
+// カラム (number / title)、状態のタイムスタンプ、そしてページが親作品から必要とする 2 つの
+// カラム (見出しに使う title と、共有の作品サブナビが使う no_episodes)。送信が使う anime の
+// 写像は、このトランザクション前の射影ではなく、ArchiveDBEpisode が実際に更新した行から得る。
+//
+// 状態のタイムスタンプは絞り込みに使わず選択する。ページと送信がどの状態を受け付けるかは
+// model.Episode.DerivedStatus を通じて呼び出し側が決めるため。deleted_at で絞るのは、削除済み
+// エピソードが双方の対象外であるためで、GetEpisodeForEditByID と揃う。DerivedStatus が欠けの
+// 無い行を読めるよう、カラム自体は併せて運ぶ。
+//
+// 絞り込みは GetEpisodeForEditByID と揃える。確認ページに到達できるエピソードと、送信を
+// 受け付けるエピソードを一致させるため。
+func (q *Queries) GetEpisodeForArchiveByID(ctx context.Context, id int64) (GetEpisodeForArchiveByIDRow, error) {
+	row := q.db.QueryRowContext(ctx, getEpisodeForArchiveByID, id)
+	var i GetEpisodeForArchiveByIDRow
+	err := row.Scan(
+		&i.ID,
+		&i.WorkID,
+		&i.Number,
+		&i.Title,
+		&i.UnpublishedAt,
+		&i.DeletedAt,
+		&i.WorkTitle,
+		&i.WorkNoEpisodes,
+	)
+	return i, err
 }
 
 const getEpisodeForEditByID = `-- name: GetEpisodeForEditByID :one

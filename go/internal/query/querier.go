@@ -28,6 +28,50 @@ type Querier interface {
 	// UTC で保存されているため、いったん UTC として解釈してから指定タイムゾーン
 	// に変換する。
 	AggregateDailyRecordCountsByUserID(ctx context.Context, arg AggregateDailyRecordCountsByUserIDParams) ([]AggregateDailyRecordCountsByUserIDRow, error)
+	// Archiving is conditional on the episode still being published, so a submit from a stale
+	// confirmation page returns no row instead of re-stamping unpublished_at. The work id is
+	// required to match the parent the confirmation page was built from, so an episode moved to
+	// another work by Annict::DataCare::MoveEpisode in between does not decrement the counter of
+	// a work it no longer belongs to.
+	//
+	// The updated row returns its current anime_id so the dual-write targets the mapping that was
+	// actually archived. A mapping changed after the confirmation-page read must not make the
+	// submit update the former anime.
+	//
+	// The Rails unpublish is Episode#update(unpublished_at:), which records no db_activity but
+	// does advance updated_at, touch the parent work through belongs_to :work, touch: true and
+	// decrement works.episodes_count through counter_culture. All three are reproduced here, in
+	// one statement so the counter cannot drift from the state it counts: the decrement runs
+	// exactly for the transition the UPDATE above performed.
+	//
+	// The rows are written episodes-first and works-second, the order Rails saves them in, so the
+	// two applications queue behind each other on the same work rather than deadlocking. The Go
+	// episode update takes the two in the opposite order (the work first, through
+	// LockWorkForEpisodeUpdateByID), and that inversion does not close into a cycle because the
+	// update pre-empts the episodes it needs with NOWAIT and abandons its attempt rather than
+	// waiting. The bulk create also takes the work first, but it only inserts rows and so never
+	// waits on an episode this statement holds.
+	//
+	// [Ja] 非公開は、エピソードが今も公開中であることを条件とする。古い確認ページからの送信は
+	// unpublished_at を再スタンプせず、1 行も返さない。作品 id は確認ページが前提とした親作品との
+	// 一致を要求する。その間に Annict::DataCare::MoveEpisode で別作品へ移されたエピソードが、
+	// もう所属していない作品のカウンターを減算しないようにするため。
+	//
+	// 更新した行は現在の anime_id を返す。両書きが、実際に非公開にした時点の写像を対象にするため。
+	// 確認ページの読み取り後に写像が変わっても、送信が以前の anime を更新してはならない。
+	//
+	// Rails の非公開は Episode#update(unpublished_at:) であり、db_activity は作らないが、
+	// updated_at を進め、belongs_to :work, touch: true で親作品を touch し、counter_culture で
+	// works.episodes_count を減算する。3 つとも本ステートメントで再現する。1 文にまとめるのは、
+	// カウンターが数える対象の状態からずれないようにするため (減算は上の UPDATE が実際に行った
+	// 遷移に対してだけ走る)。
+	//
+	// 書き込みは episodes が先、works が後で、Rails が保存する順序と同じ。これにより 2 つの
+	// アプリケーションは同じ作品に対してデッドロックせず、順に待ち合う。Go のエピソード更新は
+	// 逆順で取る (LockWorkForEpisodeUpdateByID で作品が先) が、この反転が循環にならないのは、
+	// 更新側が必要なエピソードを NOWAIT で先取りし、待たずに試行を中断するため。一括作成も作品を
+	// 先に取るが、行を挿入するだけのため本ステートメントが保持するエピソードを待つことはない。
+	ArchiveDBEpisode(ctx context.Context, arg ArchiveDBEpisodeParams) (ArchiveDBEpisodeRow, error)
 	CountActivitiesByUserID(ctx context.Context, userID int64) (int64, error)
 	CountDBEpisodes(ctx context.Context, workID int64) (int64, error)
 	CountDBWorks(ctx context.Context, arg CountDBWorksParams) (int64, error)
@@ -111,6 +155,33 @@ type Querier interface {
 	GetCalendarWorks(ctx context.Context, userID int64) ([]GetCalendarWorksRow, error)
 	GetCastsByWorkIDs(ctx context.Context, dollar_1 []int64) ([]GetCastsByWorkIDsRow, error)
 	GetEmailNotificationByUserID(ctx context.Context, userID int64) (GetEmailNotificationByUserIDRow, error)
+	// The archive confirmation page and the submit that follows it read the same row: the columns
+	// naming the episode on screen (number / title), its state timestamps and the two the page
+	// needs from its parent work (the title for the heading, no_episodes for the shared work
+	// subnav). The submit gets the anime mapping from the row ArchiveDBEpisode actually updates,
+	// not from this pre-transaction projection.
+	//
+	// The state timestamps are selected rather than filtered on, so the caller decides which state
+	// the page and the submit accept through model.Episode.DerivedStatus. deleted_at is filtered
+	// all the same because a deleted episode is out of reach of both, matching
+	// GetEpisodeForEditByID; the column still travels so DerivedStatus reads a complete row.
+	//
+	// The filters match GetEpisodeForEditByID, so the submit accepts exactly the episodes whose
+	// confirmation page is reachable.
+	//
+	// [Ja] 非公開の確認ページと、それに続く送信は同じ行を読む。画面上でエピソードを名指しする
+	// カラム (number / title)、状態のタイムスタンプ、そしてページが親作品から必要とする 2 つの
+	// カラム (見出しに使う title と、共有の作品サブナビが使う no_episodes)。送信が使う anime の
+	// 写像は、このトランザクション前の射影ではなく、ArchiveDBEpisode が実際に更新した行から得る。
+	//
+	// 状態のタイムスタンプは絞り込みに使わず選択する。ページと送信がどの状態を受け付けるかは
+	// model.Episode.DerivedStatus を通じて呼び出し側が決めるため。deleted_at で絞るのは、削除済み
+	// エピソードが双方の対象外であるためで、GetEpisodeForEditByID と揃う。DerivedStatus が欠けの
+	// 無い行を読めるよう、カラム自体は併せて運ぶ。
+	//
+	// 絞り込みは GetEpisodeForEditByID と揃える。確認ページに到達できるエピソードと、送信を
+	// 受け付けるエピソードを一致させるため。
+	GetEpisodeForArchiveByID(ctx context.Context, id int64) (GetEpisodeForArchiveByIDRow, error)
 	// The edit form reads the episode's editable columns together with the two the page needs
 	// from its parent work: the title for the heading and no_episodes for the shared work
 	// subnav. One row covers both, so opening the form costs a single round trip.
@@ -371,6 +442,14 @@ type Querier interface {
 	UpdateAnimeExternalID(ctx context.Context, arg UpdateAnimeExternalIDParams) error
 	UpdateAnimeLink(ctx context.Context, arg UpdateAnimeLinkParams) error
 	UpdateAnimeOfficialAccount(ctx context.Context, arg UpdateAnimeOfficialAccountParams) error
+	// Update only the lifecycle state derived from the source row. Archive paths use this instead
+	// of replaying an entire anime snapshot, so an unrelated content edit committed after their
+	// pre-read is preserved.
+	//
+	// [Ja] 正本の行から導出したライフサイクル状態だけを更新する。非公開の経路は anime 全体の
+	// スナップショットを書き戻さず本クエリを使うことで、事前読み取り後にコミットされた無関係な
+	// 内容編集を保持する。
+	UpdateAnimeStatus(ctx context.Context, arg UpdateAnimeStatusParams) error
 	// The version stated by the submit is matched inside the UPDATE rather than compared against
 	// a preceding read, so no other write can slip between the comparison and the write. NULL is
 	// an explicit version (the shared column is nullable), which IS NOT DISTINCT FROM matches

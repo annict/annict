@@ -21,6 +21,7 @@ import (
 	"github.com/annict/annict/go/internal/config"
 	"github.com/annict/annict/go/internal/dispatcher"
 	"github.com/annict/annict/go/internal/handler/db_episode"
+	"github.com/annict/annict/go/internal/handler/db_episode_archive"
 	"github.com/annict/annict/go/internal/handler/db_work"
 	"github.com/annict/annict/go/internal/handler/db_work_archive"
 	"github.com/annict/annict/go/internal/handler/health"
@@ -652,14 +653,15 @@ func runServe() {
 	})
 
 	// A work's episode list is public, matching the Rails Db::EpisodesController#index,
-	// which is the one action there without authenticate_user!. Creating and editing
-	// episodes requires the committer role, so the bulk-create form, its submit and the
-	// edit form with its submit are grouped behind RequireCommitter.
+	// which is the one action there without authenticate_user!. Creating, editing and
+	// archiving episodes requires the committer role, so the bulk-create form, its submit,
+	// the edit form with its submit and the archive confirmation with its submit are grouped
+	// behind RequireCommitter.
 	//
 	// [Ja] 作品のエピソード一覧は公開。Rails の Db::EpisodesController#index が同コントローラ
-	// で唯一 authenticate_user! を持たないアクションであることに合わせている。エピソードの作成と
-	// 編集は committer ロールを要するため、一括作成フォームとその送信、および編集フォームとその
-	// 送信は RequireCommitter でまとめてゲートする。
+	// で唯一 authenticate_user! を持たないアクションであることに合わせている。エピソードの作成・
+	// 編集・非公開は committer ロールを要するため、一括作成フォームとその送信、編集フォームとその
+	// 送信、および非公開の確認とその送信は RequireCommitter でまとめてゲートする。
 	episodeRepo := repository.NewEpisodeRepository(queries)
 	getDBEpisodesUC := usecase.NewGetDBEpisodesUsecase(workRepo, episodeRepo)
 	getDBEpisodeNewUC := usecase.NewGetDBEpisodeNewUsecase(workRepo)
@@ -667,6 +669,9 @@ func runServe() {
 	getDBEpisodeEditUC := usecase.NewGetDBEpisodeEditUsecase(episodeRepo)
 	updateEpisodeUC := usecase.NewUpdateEpisodeUsecase(db, episodeRepo, animeRepo, animeClassificationRepo, validator.NewDBEpisodeUpdateValidator())
 	dbEpisodeHandler := db_episode.NewHandler(cfg, sessionManager, flashMgr, getDBEpisodesUC, getDBEpisodeNewUC, createEpisodesUC, getDBEpisodeEditUC, updateEpisodeUC)
+	getDBEpisodeArchiveNewUC := usecase.NewGetDBEpisodeArchiveNewUsecase(episodeRepo)
+	archiveEpisodeUC := usecase.NewArchiveEpisodeUsecase(db, episodeRepo, animeRepo)
+	dbEpisodeArchiveHandler := db_episode_archive.NewHandler(cfg, sessionManager, flashMgr, getDBEpisodeArchiveNewUC, archiveEpisodeUC)
 	r.Get("/db/works/{work_id}/episodes", dbEpisodeHandler.Index)
 	r.Group(func(r chi.Router) {
 		r.Use(authMiddleware.RequireCommitter)
@@ -674,6 +679,8 @@ func runServe() {
 		r.Post("/db/works/{work_id}/episodes", dbEpisodeHandler.Create)
 		r.Get("/db/episodes/{id}/edit", dbEpisodeHandler.Edit)
 		r.Patch("/db/episodes/{id}", dbEpisodeHandler.Update)
+		r.Get("/db/episodes/{id}/archive/new", dbEpisodeArchiveHandler.New)
+		r.Post("/db/episodes/{id}/archive", dbEpisodeArchiveHandler.Create)
 	})
 
 	// iCalendar配信

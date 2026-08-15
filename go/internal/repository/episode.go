@@ -393,6 +393,119 @@ func isLockNotAvailable(err error) bool {
 	return errors.As(err, &pqErr) && pqErr.Code == pgErrCodeLockNotAvailable
 }
 
+// DBEpisodeArchiveTarget is the episode whose archiving is being confirmed, together with the
+// parent work its page heading and subnav describe.
+//
+// [Ja] DBEpisodeArchiveTarget は非公開を確認する対象のエピソードと、そのページの見出し・
+// サブナビが示す親作品。
+type DBEpisodeArchiveTarget struct {
+	Episode *model.Episode
+	Work    *model.Work
+}
+
+// GetForArchiveByID loads the episode the Annict DB archive-confirmation page names, together
+// with its parent work. Deleted episodes and episodes of deleted works are excluded by the
+// query, so (nil, nil) means the id names no episode the page can be shown for. The returned
+// episode carries its state timestamps, so the caller decides through
+// model.Episode.DerivedStatus whether the episode is in a state that can be archived.
+//
+// [Ja] GetForArchiveByID は Annict DB の非公開確認ページが名指しするエピソードを、その親作品と
+// 一緒に読み込む。削除済みのエピソードと、削除済み作品のエピソードはクエリ側で除外するため、
+// (nil, nil) はページを出せるエピソードがその id に無いことを表す。返すエピソードは状態の
+// タイムスタンプを持つため、非公開にできる状態かどうかは呼び出し側が
+// model.Episode.DerivedStatus で判断する。
+func (r *EpisodeRepository) GetForArchiveByID(ctx context.Context, id model.EpisodeID) (*DBEpisodeArchiveTarget, error) {
+	row, err := r.queries.GetEpisodeForArchiveByID(ctx, int64(id))
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	episode := &model.Episode{
+		ID:     model.EpisodeID(row.ID),
+		WorkID: model.WorkID(row.WorkID),
+	}
+	if row.Number.Valid {
+		number := row.Number.String
+		episode.Number = &number
+	}
+	if row.Title.Valid {
+		title := row.Title.String
+		episode.Title = &title
+	}
+	if row.UnpublishedAt.Valid {
+		unpublishedAt := row.UnpublishedAt.Time
+		episode.UnpublishedAt = &unpublishedAt
+	}
+	if row.DeletedAt.Valid {
+		deletedAt := row.DeletedAt.Time
+		episode.DeletedAt = &deletedAt
+	}
+	return &DBEpisodeArchiveTarget{
+		Episode: episode,
+		Work: &model.Work{
+			ID:         model.WorkID(row.WorkID),
+			Title:      row.WorkTitle,
+			NoEpisodes: row.WorkNoEpisodes,
+		},
+	}, nil
+}
+
+// ArchiveEpisodeParams identifies the episode one archive submit unpublishes. WorkID is the
+// parent the confirmation page was built from; Archive requires the episode to still belong to
+// it, so the counter decrement lands on the work that was counted.
+//
+// [Ja] ArchiveEpisodeParams は 1 回の非公開の送信が非公開にするエピソードを指定する。WorkID は
+// 確認ページが前提とした親作品で、Archive はエピソードが今もそこに属していることを要求する。
+// カウンターの減算を、数えていた作品に当てるため。
+type ArchiveEpisodeParams struct {
+	ID     model.EpisodeID
+	WorkID model.WorkID
+}
+
+// ArchiveEpisodeResult reports the anime mapping on the episode row that was actually
+// archived. AnimeID is nil for an episode not yet mapped to the reference model.
+//
+// [Ja] ArchiveEpisodeResult は、実際に非公開にしたエピソード行が持つ anime の写像を報告する。
+// 参照モデルへ未マッピングのエピソードでは AnimeID は nil。
+type ArchiveEpisodeResult struct {
+	AnimeID *model.AnimeID
+}
+
+// Archive unpublishes an episode, returning nil when no row matched: the episode is gone, it
+// was archived by someone else since the confirmation page was opened, or it no longer belongs
+// to the work that page named. The caller turns that into the same not-found response the page
+// itself gives, rather than reporting a write that did not happen. A successful result carries
+// the anime mapping returned by the updated row, not the pre-transaction projection.
+//
+// [Ja] Archive はエピソードを非公開にし、どの行も一致しなかった場合に nil を返す (エピソード
+// が失われた、確認ページを開いてから他者が非公開にした、またはそのページが名指しした作品に
+// もう属していない)。呼び出し側はこれを、確認ページ自身が返すのと同じ not found の応答に変換し、
+// 起きなかった書き込みを報告しない。成功時の結果は、トランザクション前の射影ではなく、更新した
+// 行が返した anime の写像を運ぶ。
+func (r *EpisodeRepository) Archive(ctx context.Context, params ArchiveEpisodeParams) (*ArchiveEpisodeResult, error) {
+	row, err := r.queries.ArchiveDBEpisode(ctx, query.ArchiveDBEpisodeParams{
+		ID:     int64(params.ID),
+		WorkID: int64(params.WorkID),
+	})
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	result := &ArchiveEpisodeResult{}
+	if row.AnimeID.Valid {
+		animeID := model.AnimeID(row.AnimeID.Int64)
+		result.AnimeID = &animeID
+	}
+
+	return result, nil
+}
+
 // CreateEpisodeParams holds the attributes for creating an episode. The columns an editor
 // does not fill in (title_ro / title_en / the counter caches / the state timestamps) keep
 // their column defaults, so a created episode starts out published.

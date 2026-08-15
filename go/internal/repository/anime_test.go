@@ -186,3 +186,42 @@ func TestAnimeRepository_Update(t *testing.T) {
 		t.Errorf("ReleaseStatus = %q, want empty (overwritten to NULL)", got.ReleaseStatus)
 	}
 }
+
+// TestAnimeRepository_UpdateStatus verifies a lifecycle transition leaves every content
+// attribute untouched.
+//
+// [Ja] TestAnimeRepository_UpdateStatus はライフサイクル状態の遷移がすべての内容属性をそのまま
+// 保持することを検証する。
+func TestAnimeRepository_UpdateStatus(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	repo := repository.NewAnimeRepository(query.New(db).WithTx(tx))
+	params := fullCreateAnimeParams()
+	params.ArchiveMessage = nullStr("保持するメッセージ")
+
+	created, err := repo.Create(context.Background(), params)
+	if err != nil {
+		t.Fatalf("Create() error = %v", err)
+	}
+	if err := repo.UpdateStatus(context.Background(), created.ID, model.AnimeStatusArchived); err != nil {
+		t.Fatalf("UpdateStatus() error = %v", err)
+	}
+
+	got, err := repo.GetByID(context.Background(), created.ID)
+	if err != nil {
+		t.Fatalf("GetByID() error = %v", err)
+	}
+	if got.Status != model.AnimeStatusArchived {
+		t.Errorf("Status = %q, want archived", got.Status)
+	}
+	if got.Title.String != "テストアニメ" {
+		t.Errorf("Title = %q, want テストアニメ", got.Title.String)
+	}
+	if got.Media != model.AnimeMediaTV {
+		t.Errorf("Media = %q, want tv", got.Media)
+	}
+	if got.ArchiveMessage.String != "保持するメッセージ" {
+		t.Errorf("ArchiveMessage = %q, want 保持するメッセージ", got.ArchiveMessage.String)
+	}
+}

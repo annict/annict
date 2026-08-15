@@ -98,6 +98,90 @@ func TestDBEpisodeIdentifier(t *testing.T) {
 	}
 }
 
+// TestDBEpisodeName verifies how an episode is named in the running text of a page, for each
+// combination of the two columns that can name it. Both locales are covered for the same reason
+// the identifier test covers them: the formats live in the translation files, so a key missing
+// from one of them would come back as its own message id.
+//
+// [Ja] TestDBEpisodeName は、エピソードを名指しできる 2 つのカラムの組み合わせごとに、ページの
+// 文章の中でエピソードがどう名指しされるかを検証する。両ロケールを対象にする理由は識別子の
+// テストと同じで、書式は翻訳ファイルにあるため、片方から翻訳キーが抜けるとメッセージ ID が
+// そのまま返る。
+func TestDBEpisodeName(t *testing.T) {
+	t.Parallel()
+
+	number := "  第2話  "
+	title := "  もう、お婿にいけません  "
+	blank := "   "
+
+	tests := []struct {
+		name    string
+		locale  string
+		episode *model.Episode
+		want    string
+	}{
+		{
+			name:    "日本語: 表示用話数とタイトルを並べる",
+			locale:  "ja",
+			episode: &model.Episode{ID: 123, Number: &number, Title: &title},
+			want:    "第2話「もう、お婿にいけません」",
+		},
+		{
+			name:    "日本語: タイトルが無ければ表示用話数だけを使う",
+			locale:  "ja",
+			episode: &model.Episode{ID: 123, Number: &number, Title: &blank},
+			want:    "第2話",
+		},
+		{
+			name:    "日本語: 表示用話数が無ければタイトルだけを使う",
+			locale:  "ja",
+			episode: &model.Episode{ID: 123, Title: &title},
+			want:    "「もう、お婿にいけません」",
+		},
+		// Neither column names the episode, so the id does: the sentence still points at a
+		// row the editor can find in the list.
+		//
+		// [Ja] どちらのカラムもエピソードを名指ししないため ID が名指しする。文が、編集者が
+		// 一覧で見つけられる行を指し続けるようにするため。
+		{
+			name:    "日本語: どちらも無ければ ID を使う",
+			locale:  "ja",
+			episode: &model.Episode{ID: 456},
+			want:    "ID: 456 のエピソード",
+		},
+		{
+			name:    "英語: 表示用話数とタイトルを並べる",
+			locale:  "en",
+			episode: &model.Episode{ID: 123, Number: &number, Title: &title},
+			want:    "第2話 “もう、お婿にいけません”",
+		},
+		{
+			name:    "英語: 表示用話数が無ければタイトルだけを使う",
+			locale:  "en",
+			episode: &model.Episode{ID: 123, Title: &title},
+			want:    "“もう、お婿にいけません”",
+		},
+		{
+			name:    "英語: どちらも無ければ ID を使う",
+			locale:  "en",
+			episode: &model.Episode{ID: 456},
+			want:    "episode ID: 456",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			ctx := i18n.SetLocale(context.Background(), tt.locale)
+
+			if got := DBEpisodeName(ctx, tt.episode); got != tt.want {
+				t.Errorf("DBEpisodeName() = %q, want %q", got, tt.want)
+			}
+		})
+	}
+}
+
 // TestNewDBEpisodeListItem verifies the projection of an episode onto its display row:
 // the ids and the parent work id the row's link needs, the two number representations,
 // both titles, and the unset attributes left empty for the template to render as gaps.

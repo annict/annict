@@ -42,6 +42,37 @@ func DBEpisodeIdentifier(ctx context.Context, episode *model.Episode) string {
 	return i18n.T(ctx, "db_episodes_identifier_without_number", templateData)
 }
 
+// DBEpisodeName returns how an episode is named in the running text of a page: its display
+// number and title the way Rails Episode#number_title writes them, narrowing to whichever of
+// the two the episode has. An episode with neither falls back to its id, so the sentence still
+// names something the editor can match against the list.
+//
+// It is the recognisable name rather than the unique one: DBEpisodeIdentifier keeps the id for
+// document titles, where telling two pages apart is what matters.
+//
+// [Ja] DBEpisodeName はページの文章の中でエピソードをどう名指しするかを返す。Rails の
+// Episode#number_title と同じ書式で表示用話数とタイトルを並べ、どちらか一方しか無い場合はその
+// 一方に絞る。どちらも無いエピソードは ID にフォールバックし、文が一覧と突き合わせられるものを
+// 名指しし続けるようにする。
+//
+// これは一意な名前ではなく識別しやすい名前である。文書タイトルでは 2 つのページを区別できること
+// が重要なため、そちらは ID を残す DBEpisodeIdentifier が担う。
+func DBEpisodeName(ctx context.Context, episode *model.Episode) string {
+	number := strings.TrimSpace(derefString(episode.Number))
+	title := strings.TrimSpace(derefString(episode.Title))
+
+	switch {
+	case number != "" && title != "":
+		return i18n.T(ctx, "db_episodes_name", map[string]any{"Number": number, "Title": title})
+	case number != "":
+		return number
+	case title != "":
+		return i18n.T(ctx, "db_episodes_name_title_only", map[string]any{"Title": title})
+	default:
+		return i18n.T(ctx, "db_episodes_name_without_number_and_title", map[string]any{"EpisodeID": episode.ID.String()})
+	}
+}
+
 // DBEpisodeListItem is the per-row display data for a work's episode list on the Annict DB
 // admin screen.
 //
