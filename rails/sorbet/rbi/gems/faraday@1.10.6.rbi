@@ -948,7 +948,7 @@ module Faraday::DecodeMethods
 
   protected
 
-  # pkg:gem/faraday#lib/faraday/encoders/nested_params_encoder.rb:138
+  # pkg:gem/faraday#lib/faraday/encoders/nested_params_encoder.rb:140
   def add_to_context(is_array, context, value, subkey); end
 
   # pkg:gem/faraday#lib/faraday/encoders/nested_params_encoder.rb:101
@@ -958,17 +958,20 @@ module Faraday::DecodeMethods
   # FIXME: this is not compatible with Rack::Utils.parse_nested_query
   # @!visibility private
   #
-  # pkg:gem/faraday#lib/faraday/encoders/nested_params_encoder.rb:145
+  # pkg:gem/faraday#lib/faraday/encoders/nested_params_encoder.rb:153
   def dehash(hash, depth); end
 
-  # pkg:gem/faraday#lib/faraday/encoders/nested_params_encoder.rb:133
+  # pkg:gem/faraday#lib/faraday/encoders/nested_params_encoder.rb:135
   def match_context(context, subkey); end
 
-  # pkg:gem/faraday#lib/faraday/encoders/nested_params_encoder.rb:123
+  # pkg:gem/faraday#lib/faraday/encoders/nested_params_encoder.rb:125
   def new_context(subkey, is_array, context); end
 
-  # pkg:gem/faraday#lib/faraday/encoders/nested_params_encoder.rb:113
+  # pkg:gem/faraday#lib/faraday/encoders/nested_params_encoder.rb:115
   def prepare_context(context, subkey, is_array, last_subkey); end
+
+  # pkg:gem/faraday#lib/faraday/encoders/nested_params_encoder.rb:144
+  def validate_params_depth!(depth); end
 end
 
 # pkg:gem/faraday#lib/faraday/encoders/nested_params_encoder.rb:99
@@ -1558,22 +1561,28 @@ end
 # so you can send objects such as Arrays or Hashes as parameters
 # for your requests.
 #
-# pkg:gem/faraday#lib/faraday/encoders/nested_params_encoder.rb:162
+# pkg:gem/faraday#lib/faraday/encoders/nested_params_encoder.rb:170
 module Faraday::NestedParamsEncoder
   extend ::Faraday::EncodeMethods
   extend ::Faraday::DecodeMethods
 
   class << self
-    # pkg:gem/faraday#lib/faraday/encoders/nested_params_encoder.rb:167
+    # pkg:gem/faraday#lib/faraday/encoders/nested_params_encoder.rb:175
     def escape(*args, **_arg1, &block); end
 
-    # pkg:gem/faraday#lib/faraday/encoders/nested_params_encoder.rb:164
+    # pkg:gem/faraday#lib/faraday/encoders/nested_params_encoder.rb:172
+    def param_depth_limit; end
+
+    # pkg:gem/faraday#lib/faraday/encoders/nested_params_encoder.rb:172
+    def param_depth_limit=(_arg0); end
+
+    # pkg:gem/faraday#lib/faraday/encoders/nested_params_encoder.rb:172
     def sort_params; end
 
-    # pkg:gem/faraday#lib/faraday/encoders/nested_params_encoder.rb:164
+    # pkg:gem/faraday#lib/faraday/encoders/nested_params_encoder.rb:172
     def sort_params=(_arg0); end
 
-    # pkg:gem/faraday#lib/faraday/encoders/nested_params_encoder.rb:167
+    # pkg:gem/faraday#lib/faraday/encoders/nested_params_encoder.rb:175
     def unescape(*args, **_arg1, &block); end
   end
 end
