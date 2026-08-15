@@ -20,7 +20,7 @@
 # The file CGI::Session provides session management functionality; see that
 # class for more details.
 #
-# See http://www.w3.org/CGI/ for more information on the CGI protocol.
+# See https://www.w3.org/CGI/ for more information on the CGI protocol.
 #
 # == Introduction
 #
@@ -328,16 +328,18 @@ class CGI
   # With no argument and no block given, returns a new \CGI object with default values:
   #
   #   cgi = CGI.new
-  #   puts cgi.pretty_inspect
-  #   #<CGI:0x000002b0ea237bc8
-  #   @accept_charset=#<Encoding:UTF-8>,
-  #   @accept_charset_error_block=nil,
-  #   @cookies={},
-  #   @max_multipart_length=134217728,
-  #   @multipart=false,
-  #   @output_cookies=nil,
-  #   @output_hidden=nil,
-  #   @params={}>
+  #   cgi
+  #   # =>
+  #   #<CGI:0x00000189917aff00
+  #    @accept_charset=#<Encoding:UTF-8>,
+  #    @accept_charset_error_block=nil,
+  #    @cookies={},
+  #    @max_multipart_length=134217728,
+  #    @multipart=false,
+  #    @options={accept_charset: #<Encoding:UTF-8>, max_multipart_length: 134217728},
+  #    @output_cookies=nil,
+  #    @output_hidden=nil,
+  #    @params={}>
   #
   # With hash argument +options+ given and no block given,
   # returns a new \CGI object with the given options.
@@ -382,22 +384,45 @@ class CGI
   #   There is no public method to retrieve this value after initialization.
   #
   # - <tt>tag_maker: _html_version_</tt>:
-  #   specifies which version of HTML to use in generating tags.
+  #   specifies a version of HTML;
+  #   this determines which tag-generating instance methods
+  #   (such as +html+, +head+, +body+, etc.) are to be loaded.
   #
   #   Value _html_version_ may be one of:
   #
-  #   - <tt>'html3'</tt>: {HTML version 3}[https://en.wikipedia.org/wiki/HTML#HTML_3].
-  #   - <tt>'html4'</tt>: {HTML version 4}[https://en.wikipedia.org/wiki/HTML#HTML_4].
-  #   - <tt>'html4Tr'</tt>: HTML 4.0 Transitional.
-  #   - <tt>'html4Fr'</tt>: HTML 4.0 with Framesets.
-  #   - <tt>'html5'</tt>: {HTML version 5}[https://en.wikipedia.org/wiki/HTML#HTML_5].
+  #   - <tt>'html3'</tt>: {HTML version 3}[https://www.w3.org/MarkUp/html3/Contents.html].
+  #   - <tt>'html4'</tt>: {HTML version 4}[https://www.w3.org/TR/html4].
+  #   - <tt>'html4Tr'</tt>: {HTML 4.0 Transitional}[https://www.w3.org/TR/html4/sgml/loosedtd.html].
+  #   - <tt>'html4Fr'</tt>: {HTML 4.0 with Framesets}[https://www.w3.org/TR/html4/present/frames.html].
+  #   - <tt>'html5'</tt>: {HTML version 5}[https://html.spec.whatwg.org/multipage].
   #
   #   Example:
   #
   #     CGI.new(tag_maker: 'html5')
   #
-  #   If the option is not given,
-  #   no HTML generation methods are loaded.
+  #   If the option is not given (or if an invalid value is given),
+  #   no tag-generating methods are loaded.
+  #
+  #   Examples:
+  #
+  #     CGI.new.respond_to?(:html)                       # => false  # Tag-generating methods not loaded.
+  #     CGI.new(tag_maker: 'html3').respond_to?(:html)   # => true   # Tag-generating methods loaded.
+  #     # Tag 'button' is new in HTML 4.
+  #     CGI.new(tag_maker: 'html3').respond_to?(:button) # => false
+  #     CGI.new(tag_maker: 'html4').respond_to?(:button) # => true
+  #     # Tag 'canvas' is new in HTML 5.
+  #     CGI.new(tag_maker: 'html4').respond_to?(:canvas) # => false
+  #     CGI.new(tag_maker: 'html5').respond_to?(:canvas) # => true
+  #     # Value is case-sensitive.
+  #     CGI.new(tag_maker: 'HTML4').respond_to?(:html)   # => false
+  #
+  #   You can determine exactly which methods have been loaded;
+  #   this example captures the methods loaded by <tt>'html4'</tt>:
+  #
+  #     methods_loaded = CGI.new('html4').methods - CGI.new.methods
+  #     methods_loaded.size # => 98
+  #     methods_loaded.sort.take(10)
+  #     # => [:a, :abbr, :acronym, :address, :area, :b, :base, :bdo, :big, :blockquote]
   #
   # With string argument +tag_maker+ given as _tag_maker_ and no block given,
   # equivalent to <tt>CGI.new(tag_maker: _tag_maker_)</tt>:
@@ -414,6 +439,28 @@ class CGI
   # In this mode, the method reads its parameters
   # from the command line or (failing that) from standard input;
   # returns a new \CGI object.
+  #
+  # Parameters from command line:
+  #
+  #   $ cat t.rb
+  #   require 'cgi'
+  #   cgi = CGI.new
+  #   p cgi.params
+  #   ruby t.rb foo=0 bar=1 foo=2 bar=3
+  #   {"foo" => ["0", "2"], "bar" => ["1", "3"]}
+  #
+  # Parameters from standard input:
+  #
+  #   cgi = CGI.new
+  #   (offline mode: enter name=value pairs on standard input)
+  #   foo=0
+  #   bar=1
+  #   ^D
+  #   cgi.params
+  #   # => {"foo" => ["0"], "bar" => ["1"]}
+  #
+  # The end-of-file character is Ctrl-D on a Unix-like system (as above),
+  # or Ctrl-Z on Windows.
   #
   # Otherwise, cookies and other parameters are parsed automatically from the standard CGI locations,
   # which vary according to the request method.
@@ -436,7 +483,7 @@ class CGI
   #
   # In this example, the proc simply saves the error:
   #
-  #   encoding_errors={}
+  #   encoding_errors = {}
   #   CGI.new(accept_charset: 'EUC-JP') do |name,value|
   #     encoding_errors[name] = value
   #   end
@@ -452,12 +499,12 @@ class CGI
   #    @output_hidden=nil,
   #    @params={}>
   #
-  # pkg:gem/cgi#lib/cgi/core.rb:930
+  # pkg:gem/cgi#lib/cgi/core.rb:1223
   def initialize(options = T.unsafe(nil), &block); end
 
   # Return the accept character set for this CGI instance.
   #
-  # pkg:gem/cgi#lib/cgi/core.rb:772
+  # pkg:gem/cgi#lib/cgi/core.rb:1018
   def accept_charset; end
 
   # This method is an alias for #http_header, when HTML5 tag maker is inactive.
@@ -467,99 +514,274 @@ class CGI
   #
   # Using #header with the HTML5 tag maker will create a <header> element.
   #
-  # pkg:gem/cgi#lib/cgi/core.rb:189
+  # pkg:gem/cgi#lib/cgi/core.rb:365
   def header(options = T.unsafe(nil)); end
 
-  # Create an HTTP header block as a string.
-  #
   # :call-seq:
-  #   http_header(content_type_string="text/html")
-  #   http_header(headers_hash)
+  #    http_header(content_type = 'text/html') -> string
+  #    http_header(headers) -> string
   #
-  # Includes the empty line that ends the header block.
+  # Creates and returns an HTTP header section as a multi-line string.
   #
-  # +content_type_string+::
-  #   If this form is used, this string is the <tt>Content-Type</tt>
-  # +headers_hash+::
-  #   A Hash of header values. The following header keys are recognized:
+  # The string always includes:
   #
-  #   type:: The Content-Type header.  Defaults to "text/html"
-  #   charset:: The charset of the body, appended to the Content-Type header.
-  #   nph:: A boolean value.  If true, prepend protocol string and status
-  #         code, and date; and sets default values for "server" and
-  #         "connection" if not explicitly set.
-  #   status::
-  #     The HTTP status code as a String, returned as the Status header.  The
-  #     values are:
+  # - Header +Content-Type+ (with a default value if none given).
+  # - A trailing newline, which delimits the header block;
+  #   that last line is omitted from the examples below.
   #
-  #     OK:: 200 OK
-  #     PARTIAL_CONTENT:: 206 Partial Content
-  #     MULTIPLE_CHOICES:: 300 Multiple Choices
-  #     MOVED:: 301 Moved Permanently
-  #     REDIRECT:: 302 Found
-  #     NOT_MODIFIED:: 304 Not Modified
-  #     BAD_REQUEST:: 400 Bad Request
-  #     AUTH_REQUIRED:: 401 Authorization Required
-  #     FORBIDDEN:: 403 Forbidden
-  #     NOT_FOUND:: 404 Not Found
-  #     METHOD_NOT_ALLOWED:: 405 Method Not Allowed
-  #     NOT_ACCEPTABLE:: 406 Not Acceptable
-  #     LENGTH_REQUIRED:: 411 Length Required
-  #     PRECONDITION_FAILED:: 412 Precondition Failed
-  #     SERVER_ERROR:: 500 Internal Server Error
-  #     NOT_IMPLEMENTED:: 501 Method Not Implemented
-  #     BAD_GATEWAY:: 502 Bad Gateway
-  #     VARIANT_ALSO_VARIES:: 506 Variant Also Negotiates
+  # <b>In Brief</b>
   #
-  #   server:: The server software, returned as the Server header.
-  #   connection:: The connection type, returned as the Connection header (for
-  #                instance, "close".
-  #   length:: The length of the content that will be sent, returned as the
-  #            Content-Length header.
-  #   language:: The language of the content, returned as the Content-Language
-  #              header.
-  #   expires:: The time on which the current content expires, as a +Time+
-  #             object, returned as the Expires header.
-  #   cookie::
-  #     A cookie or cookies, returned as one or more Set-Cookie headers.  The
-  #     value can be the literal string of the cookie; a CGI::Cookie object;
-  #     an Array of literal cookie strings or Cookie objects; or a hash all of
-  #     whose values are literal cookie strings or Cookie objects.
+  #   headers = {
+  #     'charset' => 'iso-2022-jp',
+  #     'connection' => 'keep-alive',
+  #     'cookie' => 'foo=0',
+  #     'expires' => Time.now + (60 * 60 * 24 * 365),
+  #     'language' => 'en-US, en-CA',
+  #     'length' =>  4096,
+  #     'nph' => true,
+  #     'server' => 'Apache/2.4.1 (Unix)',
+  #     'status' => 'OK',
+  #     'type' => 'text/xml',
+  #     MyHeader: true
+  #   }
   #
-  #     These cookies are in addition to the cookies held in the
-  #     @output_cookies field.
+  #   puts cgi.http_header(headers)
+  #   HTTP/1.0 200 OK
+  #   Date: Mon, 01 Dec 2025 22:08:22 GMT
+  #   Server: Apache/2.4.1 (Unix)
+  #   Connection: keep-alive
+  #   Content-Type: text/xml; charset=iso-2022-jp
+  #   Content-Length: 4096
+  #   Content-Language: en-US, en-CA
+  #   Expires: Tue, 01 Dec 2026 22:05:30 GMT
+  #   Set-Cookie: foo=0
+  #   MyHeader: true
   #
-  #   Other headers can also be set; they are appended as key: value.
+  #   headers.delete('nph')
   #
-  # Examples:
+  #   puts cgi.http_header(headers)
+  #   Status: 200 OK
+  #   Server: Apache/2.4.1 (Unix)
+  #   Connection: keep-alive
+  #   Content-Type: text/xml; charset=iso-2022-jp
+  #   Content-Length: 4096
+  #   Content-Language: en-US, en-CA
+  #   Expires: Tue, 01 Dec 2026 22:05:30 GMT
+  #   Set-Cookie: foo=0
+  #   MyHeader: true
   #
-  #   http_header
-  #     # Content-Type: text/html
+  # <b>Arguments</b>
   #
-  #   http_header("text/plain")
-  #     # Content-Type: text/plain
+  # With no argument given,
+  # includes only header +Content-Type+ with its default value <tt>'text/html'</tt>:
   #
-  #   http_header("nph"        => true,
-  #               "status"     => "OK",  # == "200 OK"
-  #                 # "status"     => "200 GOOD",
-  #               "server"     => ENV['SERVER_SOFTWARE'],
-  #               "connection" => "close",
-  #               "type"       => "text/html",
-  #               "charset"    => "iso-2022-jp",
-  #                 # Content-Type: text/html; charset=iso-2022-jp
-  #               "length"     => 103,
-  #               "language"   => "ja",
-  #               "expires"    => Time.now + 30,
-  #               "cookie"     => [cookie1, cookie2],
-  #               "my_header1" => "my_value",
-  #               "my_header2" => "my_value")
+  #   puts cgi.http_header
+  #   Content-Type: text/html
+  #
+  # With string argument +content_type+ given,
+  # includes header +Content-Type+ with the given value:
+  #
+  #   puts cgi.http_header('text/xml')
+  #   Content-Type: text/xml
+  #
+  # With hash argument +headers+ given,
+  # includes a header for hash entry, whose name is based on the entry's key,
+  # and whose value is the entry's value.
+  #
+  # <i>Recognized Keys</i>
+  #
+  # The following keys are recognized;
+  # each is a lowercase string:
+  #
+  # <tt>'charset'</tt>::
+  #   The character set of the body; appended to the +Content-Type+ header:
+  #
+  #     puts cgi.http_header('charset' => 'iso-2022-jp')
+  #     Content-Type: text/html; charset=iso-2022-jp
+  #
+  # <tt>'connection'</tt>::
+  #   Sets header +Connection+ to the given string:
+  #
+  #     puts cgi.http_header('connection' => 'keep-alive')
+  #     Connection: keep-alive
+  #     Content-Type: text/html
+  #
+  # <tt>'cookie'</tt>::
+  #   Sets one or more +Set-Cookie+ headers to the given value, which may be:
+  #
+  #   - String cookie.
+  #   - CGI::Cookie object.
+  #   - Array of string cookies and CGI::Cookie objects.
+  #   - A hash whose values are string cookies and CGI::Cookie objects
+  #     (the keys are not used).
+  #
+  #   Examples:
+  #
+  #     foo_string = 'foo=0'
+  #     bar_string = 'bar=1'
+  #     foo_cookie = CGI::Cookie.new('foo', '0')
+  #     bar_cookie = CGI::Cookie.new('bar', '1')
+  #
+  #     puts cgi.http_header('cookie' => foo_string)
+  #     Content-Type: text/html
+  #     Set-Cookie: foo=0
+  #
+  #     puts cgi.http_header('cookie' => foo_cookie)
+  #     Content-Type: text/html
+  #     Set-Cookie: foo=0; path=
+  #
+  #     puts cgi.http_header('cookie' => [foo_cookie, bar_string])
+  #     Content-Type: text/html
+  #     Set-Cookie: foo=0; path=
+  #     Set-Cookie: bar=1
+  #
+  #     puts cgi.http_header('cookie' => {foo: foo_cookie, bar: bar_string})
+  #     Content-Type: text/html
+  #     Set-Cookie: foo=0; path=
+  #     Set-Cookie: bar=1
+  #
+  #   These cookies are in addition to the cookies held
+  #   in the <tt>@output_cookies</tt> variable.
+  #
+  # <tt>'expires'</tt>::
+  #   Sets header +Expires+ to the given time,
+  #   which must be a {Time}[https://docs.ruby-lang.org/en/master/Time.html] object:
+  #
+  #     puts cgi.http_header('expires' => Time.now + (60 * 60 * 24 * 365))
+  #     Content-Type: text/html
+  #     Expires: Tue, 01 Dec 2026 23:42:37 GMT
+  #
+  # <tt>'language'</tt>::
+  #   Sets header +Content-Language+ to the given string:
+  #
+  #     puts cgi.http_header('language' => 'en-US, en-CA')
+  #     Content-Type: text/html
+  #     Content-Language: en-US, en-CA
+  #
+  # <tt>'length'</tt>::
+  #   Sets header +Content-Length+ to the given value,
+  #   which may be an integer or a string:
+  #
+  #     puts cgi.http_header('length' =>  4096)
+  #     Content-Type: text/html
+  #     Content-Length: 4096
+  #
+  #     puts cgi.http_header('length' =>  '4096')
+  #     Content-Type: text/html
+  #     Content-Length: 4096
+  #
+  # <tt>'nph'</tt>::
+  #   If +true+:
+  #
+  #   - Adds protocol string and status code as first line.
+  #   - Adds date as second line.
+  #   - Adds headers +Server+ with no value,
+  #     and +Connection+ with default value <tt>'close'</tt>;
+  #     either or both values may be overridden with explicit values.
+  #
+  #   Examples:
+  #
+  #     puts cgi.http_header('nph' => true)
+  #     HTTP/1.0 200 OK
+  #     Date: Mon, 01 Dec 2025 19:42:22 GMT
+  #     Server:
+  #     Connection: close
+  #     Content-Type: text/html
+  #
+  #     puts cgi.http_header('nph' => true, 'server' => 'Apache/2.4.1 (Unix)', 'connection' => 'keep-alive')
+  #     HTTP/1.0 200 OK
+  #     Date: Mon, 01 Dec 2025 20:00:41 GMT
+  #     Server: Apache/2.4.1 (Unix)
+  #     Connection: keep-alive
+  #     Content-Type: text/html
+  #
+  # <tt>'server'</tt>::
+  #   Sets header +Server+ to the given string:
+  #
+  #     puts cgi.http_header('server' => 'Apache/2.4.1 (Unix)')
+  #     Server: Apache/2.4.1 (Unix)
+  #     Content-Type: text/html
+  #
+  # <tt>'status'</tt>::
+  #   Sets header +Status+ to the given string:
+  #
+  #     puts cgi.http_header('status' => '666 MyVeryOwnStatus')
+  #     Status: 666 MyVeryOwnStatus
+  #     Content-Type: text/html
+  #
+  #   If the given string is a key in the hash constant +CGI::HTTP_STATUS+,
+  #   the status becomes the value for that key:
+  #
+  #     CGI::HTTP_STATUS
+  #     # =>
+  #     {"OK" => "200 OK",
+  #      "PARTIAL_CONTENT" => "206 Partial Content",
+  #      "MULTIPLE_CHOICES" => "300 Multiple Choices",
+  #      "MOVED" => "301 Moved Permanently",
+  #      "REDIRECT" => "302 Found",
+  #      "NOT_MODIFIED" => "304 Not Modified",
+  #      "BAD_REQUEST" => "400 Bad Request",
+  #      "AUTH_REQUIRED" => "401 Authorization Required",
+  #      "FORBIDDEN" => "403 Forbidden",
+  #      "NOT_FOUND" => "404 Not Found",
+  #      "METHOD_NOT_ALLOWED" => "405 Method Not Allowed",
+  #      "NOT_ACCEPTABLE" => "406 Not Acceptable",
+  #      "LENGTH_REQUIRED" => "411 Length Required",
+  #      "PRECONDITION_FAILED" => "412 Precondition Failed",
+  #      "SERVER_ERROR" => "500 Internal Server Error",
+  #      "NOT_IMPLEMENTED" => "501 Method Not Implemented",
+  #      "BAD_GATEWAY" => "502 Bad Gateway",
+  #      "VARIANT_ALSO_VARIES" => "506 Variant Also Negotiates"}
+  #
+  #     puts cgi.http_header('status' => 'OK')
+  #     Status: 200 OK
+  #     Content-Type: text/html
+  #
+  #     puts cgi.http_header('status' => 'NOT_FOUND')
+  #     Status: 404 Not Found
+  #     Content-Type: text/html
+  #
+  # <tt>'type'</tt>::
+  #   Sets +Content-Type+, overriding the default value <tt>'text/html'</tt>:
+  #
+  #     puts cgi.http_header('type' => 'text/xml')
+  #     Content-Type: text/xml
+  #
+  # <i>Unrecognized Keys</i>
+  #
+  # Headers may also be set for unrecognized keys;
+  # an unrecognized key becomes a header name with the given value:
+  #
+  #   puts cgi.http_header('length' => 0)  # Recognized key (lowercase string).
+  #   Content-Type: text/html
+  #   Content-Length: 0
+  #
+  #   puts cgi.http_header('Length' => 0)  # Unrecognized key (string key not lowercase).
+  #   Content-Type: text/html
+  #   Length: 0
+  #
+  #   puts cgi.http_header(length: 0)      # Unrecognized key (symbol key not string)
+  #   Content-Type: text/html
+  #   length: 0
   #
   # This method does not perform charset conversion.
   #
-  # pkg:gem/cgi#lib/cgi/core.rb:160
+  # It's best to use this method (CGI#http_header), not its aliased method +header+,
+  # which is provided only for backward compatibility.
+  #
+  # Method CGI#http_header is preferred because when +tag_maker+ is <tt>'html5'</tt>,
+  # calling method +header+ generates an HTML +header+ element:
+  #
+  #   cgi = CGI.new(tag_maker: 'html5')
+  #   puts cgi.http_header  # Works as expected.
+  #   Content-Type: text/html
+  #   puts cgi.header       # Maybe a surprise.
+  #   <HEADER></HEADER>
+  #
+  # pkg:gem/cgi#lib/cgi/core.rb:336
   def http_header(options = T.unsafe(nil)); end
 
-  # pkg:gem/cgi#lib/cgi/core.rb:274
+  # pkg:gem/cgi#lib/cgi/core.rb:450
   def nph?; end
 
   # Print an HTTP header and body to $DEFAULT_OUTPUT ($>)
@@ -626,7 +848,7 @@ class CGI
   #      #
   #      # string
   #
-  # pkg:gem/cgi#lib/cgi/core.rb:367
+  # pkg:gem/cgi#lib/cgi/core.rb:543
   def out(options = T.unsafe(nil)); end
 
   # Print an argument or list of arguments to the default output stream
@@ -634,21 +856,21 @@ class CGI
   #   cgi = CGI.new
   #   cgi.print    # default:  cgi.print == $DEFAULT_OUTPUT.print
   #
-  # pkg:gem/cgi#lib/cgi/core.rb:383
+  # pkg:gem/cgi#lib/cgi/core.rb:559
   def print(*options); end
 
   private
 
-  # pkg:gem/cgi#lib/cgi/core.rb:218
+  # pkg:gem/cgi#lib/cgi/core.rb:394
   def _header_for_hash(options); end
 
-  # pkg:gem/cgi#lib/cgi/core.rb:278
+  # pkg:gem/cgi#lib/cgi/core.rb:454
   def _header_for_modruby(buf); end
 
-  # pkg:gem/cgi#lib/cgi/core.rb:202
+  # pkg:gem/cgi#lib/cgi/core.rb:378
   def _header_for_string(content_type); end
 
-  # pkg:gem/cgi#lib/cgi/core.rb:191
+  # pkg:gem/cgi#lib/cgi/core.rb:367
   def _no_crlf_check(str); end
 
   # Synonym for ENV.
@@ -667,14 +889,76 @@ class CGI
   def stdoutput; end
 
   class << self
-    # Return the accept character set for all new CGI instances.
+    # :call-seq:
+    #   CGI.accept_charset -> encoding
     #
-    # pkg:gem/cgi#lib/cgi/core.rb:762
+    # Returns the default accept character set to be used for new \CGI instances;
+    # see CGI.accept_charset=.
+    #
+    # pkg:gem/cgi#lib/cgi/core.rb:949
     def accept_charset; end
 
-    # Set the accept character set for all new CGI instances.
+    # :call-seq:
+    #    CGI.accept_charset = encoding
     #
-    # pkg:gem/cgi#lib/cgi/core.rb:767
+    # Sets the default accept character set to be used for new \CGI instances;
+    # returns the argument.
+    #
+    # The argument may be an Encoding object or an Encoding name;
+    # see {Encodings}[https://docs.ruby-lang.org/en/master/language/encodings_rdoc.html]:
+    #
+    #   # The initial value.
+    #   CGI.accept_charset # => #<Encoding:UTF-8>
+    #   CGI.new
+    #   # =>
+    #   #<CGI:0x0000018991db6ae8
+    #    @accept_charset=#<Encoding:UTF-8>,
+    #    @accept_charset_error_block=nil,
+    #    @cookies={},
+    #    @max_multipart_length=134217728,
+    #    @multipart=false,
+    #    @options={accept_charset: #<Encoding:UTF-8>, max_multipart_length: 134217728},
+    #    @output_cookies=nil,
+    #    @output_hidden=nil,
+    #    @params={}>
+    #
+    #   # Set by Encoding name.
+    #   CGI.accept_charset = 'US-ASCII' # => "US-ASCII"
+    #   CGI.new
+    #   # =>
+    #   #<CGI:0x0000018991cf4100
+    #    @accept_charset="US-ASCII",
+    #    @accept_charset_error_block=nil,
+    #    @cookies={},
+    #    @max_multipart_length=134217728,
+    #    @multipart=false,
+    #    @options={accept_charset: "US-ASCII", max_multipart_length: 134217728},
+    #    @output_cookies=nil,
+    #    @output_hidden=nil,
+    #    @params={}>
+    #
+    #   # Set by Encoding object.
+    #   CGI.accept_charset = Encoding::ASCII_8BIT # => #<Encoding:BINARY (ASCII-8BIT)>
+    #   CGI.new
+    #   # =>
+    #   #<CGI:0x0000018991cfc800
+    #    @accept_charset=#<Encoding:BINARY (ASCII-8BIT)>,
+    #    @accept_charset_error_block=nil,
+    #    @cookies={},
+    #    @max_multipart_length=134217728,
+    #    @multipart=false,
+    #    @options={accept_charset: #<Encoding:BINARY (ASCII-8BIT)>, max_multipart_length: 134217728},
+    #    @output_cookies=nil,
+    #    @output_hidden=nil,
+    #    @params={}>
+    #
+    # The given encoding is not checked in this method,
+    # but if it is invalid, a call to CGI.new will fail:
+    #
+    #   CGI.accept_charset = 'foo'
+    #   CGI.new  # Raises ArgumentError: unknown encoding name - foo
+    #
+    # pkg:gem/cgi#lib/cgi/core.rb:1013
     def accept_charset=(accept_charset); end
 
     # :call-seq:
@@ -686,7 +970,7 @@ class CGI
     #   CGI.parse(query)
     #   # => {"foo" => ["0", "2"], "bar" => ["1", "3"]}
     #
-    # pkg:gem/cgi#lib/cgi/core.rb:396
+    # pkg:gem/cgi#lib/cgi/core.rb:572
     def parse(query); end
   end
 end
@@ -897,7 +1181,7 @@ module CGI::Escape
   #   print CGI.escapeElement('<BR><A HREF="url"></A>', ["A", "IMG"])
   #     # "<BR>&lt;A HREF=&quot;url&quot;&gt;&lt;/A&gt"
   #
-  # pkg:gem/cgi#lib/cgi/escape.rb:191
+  # pkg:gem/cgi#lib/cgi/escape.rb:190
   def escapeElement(string, *elements); end
 
   # Escape special characters in HTML, namely '&\"<>
@@ -917,19 +1201,11 @@ module CGI::Escape
 
   # Synonym for CGI.escapeElement(str)
   #
-  # pkg:gem/cgi#lib/cgi/escape.rb:223
+  # pkg:gem/cgi#lib/cgi/escape.rb:222
   def escape_element(string, *elements); end
-
-  # Synonym for CGI.escapeHTML(str)
-  #
-  # pkg:gem/cgi#lib/cgi/escape.rb:164
-  def escape_html(string); end
 
   # pkg:gem/cgi#lib/cgi/escape.rb:55
   def escape_uri_component(_arg0); end
-
-  # pkg:gem/cgi#lib/cgi/escape.rb:165
-  def h(string); end
 
   # URL-decode an application/x-www-form-urlencoded string with encoding(optional).
   #   string = CGI.unescape("%27Stop%21%27+said+Fred")
@@ -948,7 +1224,7 @@ module CGI::Escape
   #           CGI.escapeHTML('<BR><A HREF="url"></A>'), ["A", "IMG"])
   #     # "&lt;BR&gt;<A HREF="url"></A>"
   #
-  # pkg:gem/cgi#lib/cgi/escape.rb:211
+  # pkg:gem/cgi#lib/cgi/escape.rb:210
   def unescapeElement(string, *elements); end
 
   # Unescape a string that has been HTML-escaped
@@ -967,13 +1243,8 @@ module CGI::Escape
 
   # Synonym for CGI.unescapeElement(str)
   #
-  # pkg:gem/cgi#lib/cgi/escape.rb:226
+  # pkg:gem/cgi#lib/cgi/escape.rb:225
   def unescape_element(string, *elements); end
-
-  # Synonym for CGI.unescapeHTML(str)
-  #
-  # pkg:gem/cgi#lib/cgi/escape.rb:168
-  def unescape_html(string); end
 
   # pkg:gem/cgi#lib/cgi/escape.rb:69
   def unescape_uri_component(*_arg0); end
@@ -989,10 +1260,22 @@ module CGI::EscapeExt
   def escape(_arg0); end
   def escapeHTML(_arg0); end
   def escapeURIComponent(_arg0); end
+
+  # pkg:gem/cgi#lib/cgi/escape.rb:172
+  def escape_html(_arg0); end
+
   def escape_uri_component(_arg0); end
+
+  # pkg:gem/cgi#lib/cgi/escape.rb:173
+  def h(_arg0); end
+
   def unescape(*_arg0); end
   def unescapeHTML(_arg0); end
   def unescapeURIComponent(*_arg0); end
+
+  # pkg:gem/cgi#lib/cgi/escape.rb:174
+  def unescape_html(_arg0); end
+
   def unescape_uri_component(*_arg0); end
 end
 
@@ -2679,161 +2962,161 @@ end
 #    mechanisms, handling multipart forms, and allowing the
 #    class to be used in "offline" mode.
 #
-# pkg:gem/cgi#lib/cgi/core.rb:435
+# pkg:gem/cgi#lib/cgi/core.rb:611
 module CGI::QueryExtension
   # Get the value for the parameter with a given key.
   #
   # If the parameter has multiple values, only the first will be
   # retrieved; use #params to get the array of values.
   #
-  # pkg:gem/cgi#lib/cgi/core.rb:717
+  # pkg:gem/cgi#lib/cgi/core.rb:900
   def [](key); end
 
-  # pkg:gem/cgi#lib/cgi/core.rb:451
+  # pkg:gem/cgi#lib/cgi/core.rb:627
   def accept; end
 
-  # pkg:gem/cgi#lib/cgi/core.rb:451
+  # pkg:gem/cgi#lib/cgi/core.rb:627
   def accept_charset; end
 
-  # pkg:gem/cgi#lib/cgi/core.rb:451
+  # pkg:gem/cgi#lib/cgi/core.rb:627
   def accept_encoding; end
 
-  # pkg:gem/cgi#lib/cgi/core.rb:451
+  # pkg:gem/cgi#lib/cgi/core.rb:627
   def accept_language; end
 
-  # pkg:gem/cgi#lib/cgi/core.rb:451
+  # pkg:gem/cgi#lib/cgi/core.rb:627
   def auth_type; end
 
-  # pkg:gem/cgi#lib/cgi/core.rb:451
+  # pkg:gem/cgi#lib/cgi/core.rb:627
   def cache_control; end
 
-  # pkg:gem/cgi#lib/cgi/core.rb:438
+  # pkg:gem/cgi#lib/cgi/core.rb:614
   def content_length; end
 
-  # pkg:gem/cgi#lib/cgi/core.rb:451
+  # pkg:gem/cgi#lib/cgi/core.rb:627
   def content_type; end
 
   # Get the cookies as a hash of cookie-name=>Cookie pairs.
   #
-  # pkg:gem/cgi#lib/cgi/core.rb:467
+  # pkg:gem/cgi#lib/cgi/core.rb:643
   def cookies; end
 
   # Get the cookies as a hash of cookie-name=>Cookie pairs.
   #
-  # pkg:gem/cgi#lib/cgi/core.rb:467
+  # pkg:gem/cgi#lib/cgi/core.rb:643
   def cookies=(_arg0); end
 
-  # pkg:gem/cgi#lib/cgi/core.rb:606
+  # pkg:gem/cgi#lib/cgi/core.rb:782
   def create_body(is_large); end
 
   # Get the uploaded files as a hash of name=>values pairs
   #
-  # pkg:gem/cgi#lib/cgi/core.rb:474
+  # pkg:gem/cgi#lib/cgi/core.rb:650
   def files; end
 
-  # pkg:gem/cgi#lib/cgi/core.rb:451
+  # pkg:gem/cgi#lib/cgi/core.rb:627
   def from; end
 
-  # pkg:gem/cgi#lib/cgi/core.rb:451
+  # pkg:gem/cgi#lib/cgi/core.rb:627
   def gateway_interface; end
 
   # Returns true if a given query string parameter exists.
   #
-  # pkg:gem/cgi#lib/cgi/core.rb:741
+  # pkg:gem/cgi#lib/cgi/core.rb:924
   def has_key?(*args); end
 
-  # pkg:gem/cgi#lib/cgi/core.rb:451
+  # pkg:gem/cgi#lib/cgi/core.rb:627
   def host; end
 
-  # pkg:gem/cgi#lib/cgi/core.rb:745
+  # pkg:gem/cgi#lib/cgi/core.rb:928
   def include?(*args); end
 
-  # pkg:gem/cgi#lib/cgi/core.rb:744
+  # pkg:gem/cgi#lib/cgi/core.rb:927
   def key?(*args); end
 
   # Return all query parameter names as an array of String.
   #
-  # pkg:gem/cgi#lib/cgi/core.rb:736
+  # pkg:gem/cgi#lib/cgi/core.rb:919
   def keys(*args); end
 
   # Returns whether the form contained multipart/form-data
   #
-  # pkg:gem/cgi#lib/cgi/core.rb:709
+  # pkg:gem/cgi#lib/cgi/core.rb:892
   def multipart?; end
 
-  # pkg:gem/cgi#lib/cgi/core.rb:451
+  # pkg:gem/cgi#lib/cgi/core.rb:627
   def negotiate; end
 
   # Get the parameters as a hash of name=>values pairs, where
   # values is an Array.
   #
-  # pkg:gem/cgi#lib/cgi/core.rb:471
+  # pkg:gem/cgi#lib/cgi/core.rb:647
   def params; end
 
   # Set all the parameters.
   #
-  # pkg:gem/cgi#lib/cgi/core.rb:477
+  # pkg:gem/cgi#lib/cgi/core.rb:653
   def params=(hash); end
 
-  # pkg:gem/cgi#lib/cgi/core.rb:451
+  # pkg:gem/cgi#lib/cgi/core.rb:627
   def path_info; end
 
-  # pkg:gem/cgi#lib/cgi/core.rb:451
+  # pkg:gem/cgi#lib/cgi/core.rb:627
   def path_translated; end
 
-  # pkg:gem/cgi#lib/cgi/core.rb:451
+  # pkg:gem/cgi#lib/cgi/core.rb:627
   def pragma; end
 
-  # pkg:gem/cgi#lib/cgi/core.rb:451
+  # pkg:gem/cgi#lib/cgi/core.rb:627
   def query_string; end
 
   # Get the raw cookies as a string.
   #
-  # pkg:gem/cgi#lib/cgi/core.rb:457
+  # pkg:gem/cgi#lib/cgi/core.rb:633
   def raw_cookie; end
 
   # Get the raw RFC2965 cookies as a string.
   #
-  # pkg:gem/cgi#lib/cgi/core.rb:462
+  # pkg:gem/cgi#lib/cgi/core.rb:638
   def raw_cookie2; end
 
-  # pkg:gem/cgi#lib/cgi/core.rb:451
+  # pkg:gem/cgi#lib/cgi/core.rb:627
   def referer; end
 
-  # pkg:gem/cgi#lib/cgi/core.rb:451
+  # pkg:gem/cgi#lib/cgi/core.rb:627
   def remote_addr; end
 
-  # pkg:gem/cgi#lib/cgi/core.rb:451
+  # pkg:gem/cgi#lib/cgi/core.rb:627
   def remote_host; end
 
-  # pkg:gem/cgi#lib/cgi/core.rb:451
+  # pkg:gem/cgi#lib/cgi/core.rb:627
   def remote_ident; end
 
-  # pkg:gem/cgi#lib/cgi/core.rb:451
+  # pkg:gem/cgi#lib/cgi/core.rb:627
   def remote_user; end
 
-  # pkg:gem/cgi#lib/cgi/core.rb:451
+  # pkg:gem/cgi#lib/cgi/core.rb:627
   def request_method; end
 
-  # pkg:gem/cgi#lib/cgi/core.rb:451
+  # pkg:gem/cgi#lib/cgi/core.rb:627
   def script_name; end
 
-  # pkg:gem/cgi#lib/cgi/core.rb:451
+  # pkg:gem/cgi#lib/cgi/core.rb:627
   def server_name; end
 
-  # pkg:gem/cgi#lib/cgi/core.rb:438
+  # pkg:gem/cgi#lib/cgi/core.rb:614
   def server_port; end
 
-  # pkg:gem/cgi#lib/cgi/core.rb:451
+  # pkg:gem/cgi#lib/cgi/core.rb:627
   def server_protocol; end
 
-  # pkg:gem/cgi#lib/cgi/core.rb:451
+  # pkg:gem/cgi#lib/cgi/core.rb:627
   def server_software; end
 
-  # pkg:gem/cgi#lib/cgi/core.rb:622
+  # pkg:gem/cgi#lib/cgi/core.rb:798
   def unescape_filename?; end
 
-  # pkg:gem/cgi#lib/cgi/core.rb:451
+  # pkg:gem/cgi#lib/cgi/core.rb:627
   def user_agent; end
 
   private
@@ -2845,23 +3128,23 @@ module CGI::QueryExtension
   # Handles multipart forms (in particular, forms that involve file uploads).
   # Reads query parameters in the @params field, and cookies into @cookies.
   #
-  # pkg:gem/cgi#lib/cgi/core.rb:664
+  # pkg:gem/cgi#lib/cgi/core.rb:840
   def initialize_query; end
 
   # offline mode. read name=value pairs on standard input.
   #
-  # pkg:gem/cgi#lib/cgi/core.rb:629
+  # pkg:gem/cgi#lib/cgi/core.rb:805
   def read_from_cmdline; end
 
   # Parses multipart form elements according to
-  #   http://www.w3.org/TR/html401/interact/forms.html#h-17.13.4.2
+  #   https://www.w3.org/TR/html401/interact/forms.html#h-17.13.4.2
   #
   # Returns a hash of multipart form parameters with bodies of type StringIO or
   # Tempfile depending on whether the multipart form element exceeds 10 KB
   #
   #   params[name => body]
   #
-  # pkg:gem/cgi#lib/cgi/core.rb:491
+  # pkg:gem/cgi#lib/cgi/core.rb:667
   def read_multipart(boundary, content_length); end
 end
 
