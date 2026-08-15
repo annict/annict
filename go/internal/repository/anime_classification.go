@@ -77,6 +77,27 @@ func (r *AnimeClassificationRepository) Create(ctx context.Context, params Creat
 	return &classification, nil
 }
 
+// Upsert creates a missing classification or overwrites the existing row identified by
+// anime_id. The single statement keeps a concurrent delete from opening a gap between an
+// existence check and the write.
+//
+// [Ja] Upsert は欠損した分類を作成し、anime_id で特定される既存行があれば上書きする。
+// 1 文で行うことで、存在確認と書き込みの間に並行削除が入り込む隙間を作らない。
+func (r *AnimeClassificationRepository) Upsert(ctx context.Context, params CreateAnimeClassificationParams) error {
+	return r.queries.UpsertAnimeClassification(ctx, query.UpsertAnimeClassificationParams{
+		AnimeID:               int64(params.AnimeID),
+		Kind:                  query.AnimeClassificationKind(params.Kind),
+		ParentAnimeID:         nullInt64FromAnimeID(params.ParentAnimeID),
+		Number:                params.Number,
+		NumberText:            params.NumberText,
+		SortNumber:            params.SortNumber,
+		Standalone:            params.Standalone,
+		NumberFormatID:        nullInt64FromNumberFormatID(params.NumberFormatID),
+		EpisodeStartNumber:    params.EpisodeStartNumber,
+		ExpectedEpisodesCount: params.ExpectedEpisodesCount,
+	})
+}
+
 // UpdateAnimeClassificationParams holds the attributes for updating a
 // classification, identified by its anime_id (UNIQUE).
 //

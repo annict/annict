@@ -247,3 +247,28 @@ func (q *Queries) UpdateAnime(ctx context.Context, arg UpdateAnimeParams) error 
 	)
 	return err
 }
+
+const updateAnimeStatus = `-- name: UpdateAnimeStatus :exec
+UPDATE animes
+SET
+    status = $2,
+    updated_at = NOW()
+WHERE id = $1
+`
+
+type UpdateAnimeStatusParams struct {
+	ID     int64       `db:"id"`
+	Status AnimeStatus `db:"status"`
+}
+
+// Update only the lifecycle state derived from the source row. Archive paths use this instead
+// of replaying an entire anime snapshot, so an unrelated content edit committed after their
+// pre-read is preserved.
+//
+// [Ja] 正本の行から導出したライフサイクル状態だけを更新する。非公開の経路は anime 全体の
+// スナップショットを書き戻さず本クエリを使うことで、事前読み取り後にコミットされた無関係な
+// 内容編集を保持する。
+func (q *Queries) UpdateAnimeStatus(ctx context.Context, arg UpdateAnimeStatusParams) error {
+	_, err := q.db.ExecContext(ctx, updateAnimeStatus, arg.ID, arg.Status)
+	return err
+}

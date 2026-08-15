@@ -34,14 +34,14 @@ set -euo pipefail
 #
 # [Ja] 取得元の本番 R2 読み取り専用資格情報と、宛先の開発用 R2 資格情報の両方を
 # 要求する (いずれも op run 経由で 1Password から注入)。
-: "${ANNICT_PROD_S3_ENDPOINT:?ANNICT_PROD_S3_ENDPOINT is required}"
-: "${ANNICT_PROD_S3_ACCESS_KEY_ID:?ANNICT_PROD_S3_ACCESS_KEY_ID is required}"
-: "${ANNICT_PROD_S3_SECRET_ACCESS_KEY:?ANNICT_PROD_S3_SECRET_ACCESS_KEY is required}"
-: "${ANNICT_PROD_S3_CONTENTS_BUCKET:?ANNICT_PROD_S3_CONTENTS_BUCKET is required}"
-: "${ANNICT_S3_ENDPOINT:?ANNICT_S3_ENDPOINT is required}"
-: "${ANNICT_S3_ACCESS_KEY_ID:?ANNICT_S3_ACCESS_KEY_ID is required}"
-: "${ANNICT_S3_SECRET_ACCESS_KEY:?ANNICT_S3_SECRET_ACCESS_KEY is required}"
-: "${ANNICT_S3_BUCKET_NAME:?ANNICT_S3_BUCKET_NAME is required}"
+: "${ANNICT_PROD_S3_ENDPOINT:?ANNICT_PROD_S3_ENDPOINT が未設定です}"
+: "${ANNICT_PROD_S3_ACCESS_KEY_ID:?ANNICT_PROD_S3_ACCESS_KEY_ID が未設定です}"
+: "${ANNICT_PROD_S3_SECRET_ACCESS_KEY:?ANNICT_PROD_S3_SECRET_ACCESS_KEY が未設定です}"
+: "${ANNICT_PROD_S3_CONTENTS_BUCKET:?ANNICT_PROD_S3_CONTENTS_BUCKET が未設定です}"
+: "${ANNICT_S3_ENDPOINT:?ANNICT_S3_ENDPOINT が未設定です}"
+: "${ANNICT_S3_ACCESS_KEY_ID:?ANNICT_S3_ACCESS_KEY_ID が未設定です}"
+: "${ANNICT_S3_SECRET_ACCESS_KEY:?ANNICT_S3_SECRET_ACCESS_KEY が未設定です}"
+: "${ANNICT_S3_BUCKET_NAME:?ANNICT_S3_BUCKET_NAME が未設定です}"
 
 # Point rclone at an empty config file (/dev/null) so it does not emit the
 # "Config file ... not found" notice on startup. The remotes are defined entirely
@@ -83,7 +83,7 @@ export RCLONE_CONFIG_DEVS3_SECRET_ACCESS_KEY="$ANNICT_S3_SECRET_ACCESS_KEY"
 # 大量転送向けの調整で、--transfers/--checkers は rclone の保守的な既定値 (4/8) より
 # 並列度を上げ、--fast-list は再帰リストで R2 のリスト操作を減らし、--progress は
 # 長時間の sync に進捗を表示する。
-echo "==> Syncing images: ${ANNICT_PROD_S3_CONTENTS_BUCKET}/shrine/ -> ${ANNICT_S3_BUCKET_NAME}/shrine/"
+echo "==> 画像を同期: ${ANNICT_PROD_S3_CONTENTS_BUCKET}/shrine/ -> ${ANNICT_S3_BUCKET_NAME}/shrine/"
 rclone sync \
   "prods3:${ANNICT_PROD_S3_CONTENTS_BUCKET}/shrine/" \
   "devs3:${ANNICT_S3_BUCKET_NAME}/shrine/" \
@@ -92,4 +92,4 @@ rclone sync \
   --fast-list \
   --progress
 
-echo "==> Done (synced production images into ${ANNICT_S3_BUCKET_NAME}/shrine/)"
+echo "==> 完了 (本番の画像を ${ANNICT_S3_BUCKET_NAME}/shrine/ へ同期しました)"

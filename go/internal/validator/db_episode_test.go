@@ -358,3 +358,216 @@ func TestDBEpisodeCreateValidatorValidateLocalizesMessages(t *testing.T) {
 		})
 	}
 }
+
+// dbEpisodeUpdateInput returns a submit that passes every check, so each case below states only
+// the field it is about.
+//
+// [Ja] dbEpisodeUpdateInput はすべての検査を通る送信を返す。以降の各ケースが、対象のフィールド
+// だけを述べられるようにするため。
+func dbEpisodeUpdateInput() DBEpisodeUpdateValidatorInput {
+	return DBEpisodeUpdateValidatorInput{
+		Number:     "第2話",
+		RawNumber:  "2.5",
+		SortNumber: "200",
+		Title:      "もう、お婿にいけません",
+		TitleEn:    "No Longer Marriageable",
+		UpdatedAt:  "2026-08-14T12:34:56.123456789Z",
+	}
+}
+
+func TestDBEpisodeUpdateValidatorValidateSuccess(t *testing.T) {
+	t.Parallel()
+
+	v := NewDBEpisodeUpdateValidator()
+	ctx := i18n.SetLocale(context.Background(), "ja")
+
+	t.Run("正常系: 送信された値を保存先のカラムの型へ変換する", func(t *testing.T) {
+		t.Parallel()
+
+		got, err := v.Validate(ctx, dbEpisodeUpdateInput())
+		if err != nil {
+			t.Fatalf("Validate() error = %v", err)
+		}
+		if got.Number == nil || *got.Number != "第2話" {
+			t.Errorf("Number = %v, want %q", got.Number, "第2話")
+		}
+		if got.RawNumber == nil || *got.RawNumber != 2.5 {
+			t.Errorf("RawNumber = %v, want 2.5", got.RawNumber)
+		}
+		if got.Title == nil || *got.Title != "もう、お婿にいけません" {
+			t.Errorf("Title = %v, want %q", got.Title, "もう、お婿にいけません")
+		}
+		if got.TitleEn != "No Longer Marriageable" {
+			t.Errorf("TitleEn = %q, want %q", got.TitleEn, "No Longer Marriageable")
+		}
+		if got.SortNumber != 200 {
+			t.Errorf("SortNumber = %d, want 200", got.SortNumber)
+		}
+		if got.UpdatedAt == nil {
+			t.Fatal("UpdatedAt = nil, want 送信された版")
+		}
+		if formatted := got.UpdatedAt.UTC().Format(DBEpisodeVersionLayout); formatted != "2026-08-14T12:34:56.123456789Z" {
+			t.Errorf("UpdatedAt = %q, want %q", formatted, "2026-08-14T12:34:56.123456789Z")
+		}
+	})
+
+	// A field the editor cleared has to reach the column as NULL: an empty string is a value no
+	// existing row carries, and the list would render it as a filled-in but blank number.
+	//
+	// [Ja] 編集者が消したフィールドは NULL としてカラムに届く必要がある。空文字列は既存のどの行も
+	// 持たない値で、一覧では「入力されているが空」の話数として描画されてしまう。
+	t.Run("正常系: 空にした任意入力は nil になる", func(t *testing.T) {
+		t.Parallel()
+
+		input := dbEpisodeUpdateInput()
+		input.Number = "  "
+		input.RawNumber = ""
+		input.Title = ""
+
+		got, err := v.Validate(ctx, input)
+		if err != nil {
+			t.Fatalf("Validate() error = %v", err)
+		}
+		if got.Number != nil || got.RawNumber != nil || got.Title != nil {
+			t.Errorf("(Number, RawNumber, Title) = (%v, %v, %v), want (nil, nil, nil)", got.Number, got.RawNumber, got.Title)
+		}
+	})
+
+	// The NULL sentinel is an explicit version, so it has to be accepted and reach the update as
+	// "match a row whose updated_at is NULL".
+	//
+	// [Ja] NULL のセンチネルは明示的な版のため、受理して「updated_at が NULL の行に一致させる」と
+	// して更新側へ届く必要がある。
+	t.Run("正常系: null のセンチネルは版なしとして受理される", func(t *testing.T) {
+		t.Parallel()
+
+		input := dbEpisodeUpdateInput()
+		input.UpdatedAt = DBEpisodeNullVersion
+
+		got, err := v.Validate(ctx, input)
+		if err != nil {
+			t.Fatalf("Validate() error = %v", err)
+		}
+		if got.UpdatedAt != nil {
+			t.Errorf("UpdatedAt = %v, want nil", got.UpdatedAt)
+		}
+	})
+}
+
+func TestDBEpisodeUpdateValidatorValidateErrors(t *testing.T) {
+	t.Parallel()
+
+	v := NewDBEpisodeUpdateValidator()
+	ctx := i18n.SetLocale(context.Background(), "ja")
+
+	tests := []struct {
+		name       string
+		mutate     func(*DBEpisodeUpdateValidatorInput)
+		wantField  string
+		wantGlobal bool
+	}{
+		{
+			name:      "異常系: 並び順が空",
+			mutate:    func(in *DBEpisodeUpdateValidatorInput) { in.SortNumber = " " },
+			wantField: "sort_number",
+		},
+		{
+			name:      "異常系: 並び順が整数でない",
+			mutate:    func(in *DBEpisodeUpdateValidatorInput) { in.SortNumber = "200.5" },
+			wantField: "sort_number",
+		},
+		{
+			name:      "異常系: 並び順が int32 を超える",
+			mutate:    func(in *DBEpisodeUpdateValidatorInput) { in.SortNumber = "2147483648" },
+			wantField: "sort_number",
+		},
+		{
+			name:      "異常系: 数値話数が数値でない",
+			mutate:    func(in *DBEpisodeUpdateValidatorInput) { in.RawNumber = "いち" },
+			wantField: "raw_number",
+		},
+		{
+			name:      "異常系: 数値話数が NaN",
+			mutate:    func(in *DBEpisodeUpdateValidatorInput) { in.RawNumber = "NaN" },
+			wantField: "raw_number",
+		},
+		{
+			name:      "異常系: 表示用話数が長すぎる",
+			mutate:    func(in *DBEpisodeUpdateValidatorInput) { in.Number = strings.Repeat("あ", 501) },
+			wantField: "number",
+		},
+		{
+			name:      "異常系: タイトルが長すぎる",
+			mutate:    func(in *DBEpisodeUpdateValidatorInput) { in.Title = strings.Repeat("あ", 501) },
+			wantField: "title",
+		},
+		{
+			// An empty version means the submit stated none at all, which is not the same as
+			// the NULL sentinel: accepting it would let a crafted request skip the check that
+			// stops one editor from overwriting another.
+			//
+			// [Ja] 空の版は、送信が版をまったく示していないことを意味し、NULL のセンチネルとは
+			// 別物である。受理すると、ある編集者が別の編集者を上書きするのを止める検査を、
+			// 改変されたリクエストが素通りできてしまう。
+			name:       "異常系: 版が空",
+			mutate:     func(in *DBEpisodeUpdateValidatorInput) { in.UpdatedAt = "" },
+			wantGlobal: true,
+		},
+		{
+			name:       "異常系: 版が往復書式でない",
+			mutate:     func(in *DBEpisodeUpdateValidatorInput) { in.UpdatedAt = "2026-08-14 12:34:56" },
+			wantGlobal: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			input := dbEpisodeUpdateInput()
+			tt.mutate(&input)
+
+			got, err := v.Validate(ctx, input)
+			if got != nil {
+				t.Errorf("Validate() = %+v, want nil", got)
+			}
+			ve := model.AsValidationError(err)
+			if ve == nil {
+				t.Fatalf("Validate() error = %v, want *model.ValidationError", err)
+			}
+			if tt.wantField != "" && !ve.HasFieldError(tt.wantField) {
+				t.Errorf("フィールド %q のエラーがありません: %+v", tt.wantField, ve)
+			}
+			if tt.wantGlobal && len(ve.Global) == 0 {
+				t.Errorf("グローバルエラーがありません: %+v", ve)
+			}
+		})
+	}
+}
+
+// TestDBEpisodeUpdateValidatorValidateReportsEveryProblem covers a submit with several problems
+// at once: every one is reported so the editor fixes them in a single pass instead of
+// discovering them one submit at a time.
+//
+// [Ja] TestDBEpisodeUpdateValidatorValidateReportsEveryProblem は複数の問題を同時に含む送信を
+// 検証する。すべてが報告されるため、編集者は送信するたびに 1 つずつ気付くのではなく一度に直せる。
+func TestDBEpisodeUpdateValidatorValidateReportsEveryProblem(t *testing.T) {
+	t.Parallel()
+
+	v := NewDBEpisodeUpdateValidator()
+	ctx := i18n.SetLocale(context.Background(), "ja")
+
+	input := dbEpisodeUpdateInput()
+	input.SortNumber = ""
+	input.RawNumber = "いち"
+	input.UpdatedAt = ""
+
+	_, err := v.Validate(ctx, input)
+	ve := model.AsValidationError(err)
+	if ve == nil {
+		t.Fatalf("Validate() error = %v, want *model.ValidationError", err)
+	}
+	if !ve.HasFieldError("sort_number") || !ve.HasFieldError("raw_number") || len(ve.Global) == 0 {
+		t.Errorf("報告されたエラーが不足しています: %+v", ve)
+	}
+}

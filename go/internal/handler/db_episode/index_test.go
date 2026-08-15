@@ -35,11 +35,12 @@ func newTestHandler(t *testing.T, db *sql.DB, tx *sql.Tx) *Handler {
 	workRepo := repository.NewWorkRepository(queries)
 	episodeRepo := repository.NewEpisodeRepository(queries)
 
-	// The create usecase opens its own transaction, so it is wired against the pool rather
-	// than the test transaction. Its tests clean the committed rows up themselves.
+	// The create and update usecases open their own transactions, so they are wired against
+	// the pool rather than the test transaction. Their tests clean the committed rows up
+	// themselves.
 	//
-	// [Ja] 作成 UseCase は自前のトランザクションを開くため、テスト用トランザクションではなく
-	// プールに対して組み立てる。コミットされた行はそのテスト側で後始末する。
+	// [Ja] 作成・更新 UseCase は自前のトランザクションを開くため、テスト用トランザクションでは
+	// なくプールに対して組み立てる。コミットされた行はそのテスト側で後始末する。
 	createEpisodesUC := usecase.NewCreateEpisodesUsecase(
 		db,
 		repository.NewWorkRepository(query.New(db)),
@@ -47,6 +48,13 @@ func newTestHandler(t *testing.T, db *sql.DB, tx *sql.Tx) *Handler {
 		repository.NewAnimeRepository(query.New(db)),
 		repository.NewAnimeClassificationRepository(query.New(db)),
 		validator.NewDBEpisodeCreateValidator(),
+	)
+	updateEpisodeUC := usecase.NewUpdateEpisodeUsecase(
+		db,
+		repository.NewEpisodeRepository(query.New(db)),
+		repository.NewAnimeRepository(query.New(db)),
+		repository.NewAnimeClassificationRepository(query.New(db)),
+		validator.NewDBEpisodeUpdateValidator(),
 	)
 
 	return NewHandler(
@@ -57,6 +65,7 @@ func newTestHandler(t *testing.T, db *sql.DB, tx *sql.Tx) *Handler {
 		usecase.NewGetDBEpisodeNewUsecase(workRepo),
 		createEpisodesUC,
 		usecase.NewGetDBEpisodeEditUsecase(episodeRepo),
+		updateEpisodeUC,
 	)
 }
 

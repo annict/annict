@@ -190,3 +190,70 @@ func (q *Queries) UpdateAnimeClassificationByAnimeID(ctx context.Context, arg Up
 	)
 	return err
 }
+
+const upsertAnimeClassification = `-- name: UpsertAnimeClassification :exec
+INSERT INTO anime_classifications (
+    anime_id,
+    kind,
+    parent_anime_id,
+    number,
+    number_text,
+    sort_number,
+    standalone,
+    number_format_id,
+    episode_start_number,
+    expected_episodes_count,
+    created_at,
+    updated_at
+) VALUES (
+    $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, NOW(), NOW()
+)
+ON CONFLICT (anime_id) DO UPDATE
+SET
+    kind = EXCLUDED.kind,
+    parent_anime_id = EXCLUDED.parent_anime_id,
+    number = EXCLUDED.number,
+    number_text = EXCLUDED.number_text,
+    sort_number = EXCLUDED.sort_number,
+    standalone = EXCLUDED.standalone,
+    number_format_id = EXCLUDED.number_format_id,
+    episode_start_number = EXCLUDED.episode_start_number,
+    expected_episodes_count = EXCLUDED.expected_episodes_count,
+    updated_at = NOW()
+`
+
+type UpsertAnimeClassificationParams struct {
+	AnimeID               int64                   `db:"anime_id"`
+	Kind                  AnimeClassificationKind `db:"kind"`
+	ParentAnimeID         sql.NullInt64           `db:"parent_anime_id"`
+	Number                sql.NullString          `db:"number"`
+	NumberText            sql.NullString          `db:"number_text"`
+	SortNumber            sql.NullInt32           `db:"sort_number"`
+	Standalone            bool                    `db:"standalone"`
+	NumberFormatID        sql.NullInt64           `db:"number_format_id"`
+	EpisodeStartNumber    sql.NullString          `db:"episode_start_number"`
+	ExpectedEpisodesCount sql.NullInt32           `db:"expected_episodes_count"`
+}
+
+// Recreate a missing classification or update the existing row atomically. Episode editing
+// uses this instead of a preceding existence check so a concurrent delete cannot leave the
+// dual-written anime without its classification.
+//
+// [Ja] 欠損した分類の再作成と既存行の更新をアトミックに行う。エピソード編集では事前の
+// 存在確認をせずこのクエリを使い、並行削除によって両書き先の anime だけが分類なしで残るのを
+// 防ぐ。
+func (q *Queries) UpsertAnimeClassification(ctx context.Context, arg UpsertAnimeClassificationParams) error {
+	_, err := q.db.ExecContext(ctx, upsertAnimeClassification,
+		arg.AnimeID,
+		arg.Kind,
+		arg.ParentAnimeID,
+		arg.Number,
+		arg.NumberText,
+		arg.SortNumber,
+		arg.Standalone,
+		arg.NumberFormatID,
+		arg.EpisodeStartNumber,
+		arg.ExpectedEpisodesCount,
+	)
+	return err
+}

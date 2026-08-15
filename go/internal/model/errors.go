@@ -92,6 +92,14 @@ const (
 	AppErrCodeForbidden
 	AppErrCodeConflict
 	AppErrCodeInternal
+	// AppErrCodeBusy states that another write held what the request needed, so it was not
+	// applied. Unlike AppErrCodeConflict it does not mean the request disagreed with the stored
+	// state: nothing was written, and repeating the same request can succeed.
+	//
+	// [Ja] AppErrCodeBusy は、リクエストが必要としたものを他の書き込みが保持していたため適用
+	// されなかったことを表す。AppErrCodeConflict と違い、保存済みの状態と食い違ったことを意味
+	// しない。何も書かれておらず、同じリクエストをやり直せば成功しうる。
+	AppErrCodeBusy
 )
 
 // AppError はアプリケーションエラーを表す（SafeError パターン）。

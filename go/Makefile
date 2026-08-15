@@ -119,6 +119,23 @@ lint-comments: ## Check [Ja]-marker misuse in code comments (koryluslint). [Ja] 
 	@echo "🔍 コメントの英日併記をチェック中..."
 	@go tool koryluslint comment
 
+# The tree-wide run above only checks the rules with near-zero false positives.
+# The rules that would flag untouched legacy comments (a missing English block,
+# the inline form, duplicate markers, a missing blank separator) are checked
+# against a base ref instead, limited to the lines added since that ref. CI runs
+# this on pull requests; run it locally with the same base to see what CI sees.
+#
+# [Ja] 上のツリー全体の実行は誤検出がほぼ無い規則だけを検査する。
+# 触っていない既存コメントを指摘してしまう規則 (英語ブロックの欠落・インライン形式・
+# マーカー重複・区切り空行の欠落) は、基準 ref との差分で追加された行に限定して検査する。
+# CI は pull request でこれを実行するため、ローカルでも同じ基準を指定すれば CI と
+# 同じ結果を確認できる。
+.PHONY: lint-comments-base
+lint-comments-base: ## Check comment markers against BASE ref, added lines only (e.g. BASE=origin/develop). [Ja] BASE ref との差分の追加行でコメントのマーカーをチェック (例: BASE=origin/develop)
+	@test -n "$(BASE)" || { echo "BASE is required. Example: make lint-comments-base BASE=origin/develop"; exit 1; }
+	@echo "🔍 コメントの英日併記をチェック中 (追加行のみ)..."
+	@go tool koryluslint comment -base=$(BASE)
+
 .PHONY: lint
 lint: lint-golangci lint-comments ## リントを実行（golangci-lint + コメント併記チェック）
 

@@ -32,6 +32,19 @@ type EditPageData struct {
 	CSRFToken  string
 	FormErrors *model.ValidationError
 	FormInput  viewmodel.DBEpisodeFormInput
+	// ConflictCurrent holds the stored values of an episode someone else wrote between this
+	// form being opened and its submit, and is nil in every other case. The page shows them
+	// beside the submitted values that were refused: the editor is the one who decides which
+	// to keep, and cannot decide without seeing both. The hidden version the form carries is
+	// the one these values belong to, so submitting again overwrites exactly what is shown
+	// here and nothing that arrives afterwards.
+	//
+	// [Ja] ConflictCurrent は、本フォームを開いてから送信するまでの間に他者が書いたエピソードの
+	// 保存済みの値を持ち、それ以外の場合は nil になる。却下された送信の値と並べて表示するのは、
+	// どちらを残すかを決めるのが編集者であり、両方を見なければ決められないため。フォームが運ぶ
+	// hidden の版はこれらの値の版のため、もう一度送信するとここに表示された内容だけを上書きし、
+	// その後に届いた変更は上書きしない。
+	ConflictCurrent *viewmodel.DBEpisodeFormInput
 }
 
 // heading returns the text of the page heading: the work's name, falling back to the generic
@@ -98,6 +111,33 @@ func editSummaryFields(ctx context.Context) []components.FormErrorField {
 	}
 }
 
+// editConflictField is one stored value the conflict notice states, paired with the label the
+// form shows for the same field.
+//
+// [Ja] editConflictField は競合の案内が述べる保存済みの値 1 つと、同じフィールドについてフォーム
+// が表示するラベルの組。
+type editConflictField struct {
+	Label string
+	Value string
+}
+
+// editConflictFields lists the stored values in the order the form shows their fields, so the
+// notice and the inputs below it can be read side by side. The labels are the form's own, which
+// is what lets the two be matched up without naming the fields twice in different words.
+//
+// [Ja] editConflictFields は保存済みの値を、フォームが各フィールドを表示する順で並べる。案内と
+// その下の入力欄を見比べられるようにするため。ラベルはフォーム自身のものを使う。これにより、
+// 同じフィールドを異なる言葉で二度名指しせずに両者を対応付けられる。
+func editConflictFields(ctx context.Context, current viewmodel.DBEpisodeFormInput) []editConflictField {
+	return []editConflictField{
+		{Label: templates.T(ctx, "db_episodes_edit_number_label"), Value: current.Number},
+		{Label: templates.T(ctx, "db_episodes_edit_raw_number_label"), Value: current.RawNumber},
+		{Label: templates.T(ctx, "db_episodes_edit_sort_number_label"), Value: current.SortNumber},
+		{Label: templates.T(ctx, "db_episodes_edit_title_label"), Value: current.Title},
+		{Label: templates.T(ctx, "db_episodes_edit_title_en_label"), Value: current.TitleEn},
+	}
+}
+
 templ Edit(data EditPageData) {
 	<div class="flex flex-col gap-4 py-4 max-w-7xl w-full mx-auto">
 		<div class="flex gap-4 px-4">
@@ -130,6 +170,23 @@ templ Edit(data EditPageData) {
 					Errors: data.FormErrors,
 					Fields: editSummaryFields(ctx),
 				})
+
+				if data.ConflictCurrent != nil {
+					<div class="alert">
+						<h2>{ templates.T(ctx, "db_episodes_edit_conflict_heading") }</h2>
+						<section class="grid gap-2">
+							<dl class="grid gap-1">
+								for _, field := range editConflictFields(ctx, *data.ConflictCurrent) {
+									<div class="flex flex-wrap gap-x-2">
+										<dt>{ field.Label }</dt>
+										<dd class="text-card-foreground [overflow-wrap:anywhere]">{ valueOrDash(field.Value) }</dd>
+									</div>
+								}
+							</dl>
+							<p>{ templates.T(ctx, "db_episodes_edit_conflict_help") }</p>
+						</section>
+					</div>
+				}
 
 				<form
 					action={ templates.DBEpisodePath(data.EpisodeID).SafeURL() }

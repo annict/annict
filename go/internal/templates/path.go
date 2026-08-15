@@ -99,6 +99,15 @@ func DBEpisodePath(id viewmodel.EpisodeID) Path {
 	return Path(fmt.Sprintf("/db/episodes/%s", id))
 }
 
+// DBEpisodeArchivePath builds the path for archiving an episode in the Annict DB admin UI,
+// used as the archive-confirmation form's POST action.
+//
+// [Ja] DBEpisodeArchivePath はDB管理画面でエピソードを非公開にするパスを生成します。非公開
+// 確認フォームの POST 先として使います。
+func DBEpisodeArchivePath(id viewmodel.EpisodeID) Path {
+	return Path(fmt.Sprintf("/db/episodes/%s/archive", id))
+}
+
 // DBWorkProgramsPath builds the path for a work's program list in the Annict DB admin UI.
 //
 // [Ja] DBWorkProgramsPath はDB管理画面の作品の番組情報一覧のパスを生成します。
