@@ -9,6 +9,9 @@
 # Raw PII only ever lives in the isolated annict_anonymize database; the
 # development database (annict_development) only ever receives the masked dump.
 #
+# The rows of the tables listed in SKIPPED_DATA_TABLES are left behind, so those
+# tables exist locally but are empty.
+#
 # Usage (always via the Makefile so 1Password injects the secrets):
 #   make load-snapshot-db       # full pipeline: download -> mask -> load
 #   make restore-snapshot-db    # reload only, from the masked dump in tmp/
@@ -20,6 +23,9 @@
 #
 # 生 PII は隔離 DB (annict_anonymize) にしか存在せず、開発 DB (annict_development)
 # にはマスク済みダンプしか入らない。
+#
+# SKIPPED_DATA_TABLES に挙げたテーブルの行は取り込まないため、これらのテーブルは
+# ローカルには存在するが中身は空になる。
 #
 # 使い方 (秘密注入のため必ず Makefile 経由で実行する):
 #   make load-snapshot-db       # フルパイプライン: 取得 -> マスク -> 流し込み
@@ -37,11 +43,28 @@ export PGUSER="${PGUSER:-postgres}"
 ANONYMIZE_DB="annict_anonymize"
 DEV_DB="annict_development"
 
-# Working directory for downloads and the masked dump (gitignored tmp/).
+# Tables whose rows are skipped when the production dump is restored. All three
+# are large and worthless locally (the Rails session store, the Delayed::Job
+# queue, and the River queue), and dropping their rows keeps the peak disk usage
+# of this pipeline down. Only the data is skipped: the table definitions are
+# still restored, so the tables end up present and empty.
+#
+# [Ja] 本番ダンプの復元時に行を取り込まないテーブル。いずれも巨大でローカルには
+# 不要 (Rails のセッションストア・Delayed::Job のキュー・River のキュー) であり、
+# 行を落とすことで本パイプラインのピーク時ディスク使用量を抑えられる。スキップ
+# するのはデータのみで、テーブル定義は復元されるため空の状態で存在する。
+SKIPPED_DATA_TABLES=(sessions delayed_jobs river_job)
+
+# Working directory for downloads and the masked dump (gitignored tmp/). The
+# cleanup trap removes backup/ wholesale, so anything that must not outlive the
+# run belongs under it.
 #
 # [Ja] ダウンロードとマスク済みダンプの作業ディレクトリ (gitignore 済みの tmp/)。
+# cleanup トラップは backup/ をまるごと削除するため、実行後に残したくないものは
+# その配下に置く。
 SNAPSHOT_DIR="tmp/snapshot"
 EXPORT_FILE="${SNAPSHOT_DIR}/backup/export"
+RESTORE_LIST="${SNAPSHOT_DIR}/backup/restore.list"
 MASKED_DUMP="${SNAPSHOT_DIR}/masked.dump"
 
 # On exit, drop the isolated database and remove the downloaded raw dump so raw
@@ -174,6 +197,13 @@ if [ ! -f "$EXPORT_FILE" ]; then
   exit 1
 fi
 
+# Drop the archive now that it is unpacked. The restore below is the peak of the
+# pipeline's disk usage and only needs the extracted dump.
+#
+# [Ja] 展開が済んだ時点で書庫を削除する。直後の復元がパイプラインのディスク使用量
+# のピークであり、そこで必要なのは展開後のダンプだけであるため。
+rm -f "${SNAPSHOT_DIR}/backup.tgz"
+
 # (2) Restore the production dump into a fresh isolated database.
 #
 # [Ja] (2) 本番ダンプを新規の隔離 DB に復元する。
@@ -183,8 +213,20 @@ dropdb --if-exists "$ANONYMIZE_DB"
 echo "==> ${ANONYMIZE_DB} を作成"
 createdb "$ANONYMIZE_DB"
 
-echo "==> 隔離 DB ${ANONYMIZE_DB} に復元"
-pg_restore --no-owner --no-acl -d "$ANONYMIZE_DB" "$EXPORT_FILE" \
+# Build a restore list from the archive's table of contents with the TABLE DATA
+# entries of SKIPPED_DATA_TABLES filtered out. pg_restore takes no
+# --exclude-table-data option, so editing the -l listing and feeding it back
+# with -L is how a table's definition is kept while its rows are dropped.
+#
+# [Ja] 書庫の目次から SKIPPED_DATA_TABLES の TABLE DATA エントリを除いた復元
+# リストを組み立てる。pg_restore には --exclude-table-data が無いため、-l の一覧を
+# 加工して -L で渡すのが、テーブル定義を残したまま行だけを落とす方法になる。
+skipped_data_pattern=$(IFS='|'; echo "${SKIPPED_DATA_TABLES[*]}")
+pg_restore -l "$EXPORT_FILE" \
+  | grep -Ev "TABLE DATA public (${skipped_data_pattern})( |$)" > "$RESTORE_LIST"
+
+echo "==> 隔離 DB ${ANONYMIZE_DB} に復元 (データを取り込まないテーブル: ${SKIPPED_DATA_TABLES[*]})"
+pg_restore --no-owner --no-acl -L "$RESTORE_LIST" -d "$ANONYMIZE_DB" "$EXPORT_FILE" \
   || echo "    pg_restore がエラーを報告しました (ロールや拡張など、無視できるものが大半)。処理を続行します"
 
 # (3) Mask PII in the isolated database. ON_ERROR_STOP makes masking failures
@@ -195,13 +237,19 @@ pg_restore --no-owner --no-acl -d "$ANONYMIZE_DB" "$EXPORT_FILE" \
 echo "==> PII をマスク (db/anonymize.sql)"
 psql -v ON_ERROR_STOP=1 -d "$ANONYMIZE_DB" -f db/anonymize.sql
 
-# (4) Dump the masked database to tmp/. The isolated database is dropped by the
-# cleanup trap on exit.
+# (4) Dump the masked database to tmp/, then drop the isolated database right
+# away. The cleanup trap would drop it on exit anyway, but step (5) restores a
+# second database of the same size, and holding both at once is what makes the
+# pipeline run out of disk.
 #
-# [Ja] (4) マスク済み DB を tmp/ にダンプする。隔離 DB は終了時の cleanup トラップ
-# で破棄される。
+# [Ja] (4) マスク済み DB を tmp/ にダンプし、隔離 DB を直後に破棄する。終了時の
+# cleanup トラップでも破棄されるが、(5) で同じ規模の DB をもう 1 つ復元するため、
+# 両方を同時に抱えることがディスク不足の原因になる。
 echo "==> マスク済みダンプを書き出し: ${MASKED_DUMP}"
 pg_dump -Fc --no-owner --no-acl -d "$ANONYMIZE_DB" -f "$MASKED_DUMP"
+
+echo "==> ${ANONYMIZE_DB} を削除"
+dropdb "$ANONYMIZE_DB"
 
 # (5)-(6) Load the masked dump into the development database and migrate.
 #
