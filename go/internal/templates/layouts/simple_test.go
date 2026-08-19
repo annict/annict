@@ -54,7 +54,7 @@ func TestSimple_Rendering(t *testing.T) {
 		"<!doctype html>",
 		"<html lang=\"ja\">",
 		"<head>",
-		"<body class=\"min-h-screen flex items-center justify-center\">",
+		"<body class=\"min-h-dvh flex items-center justify-center\">",
 		"Test Content",
 	}
 
@@ -152,6 +152,48 @@ func TestSimple_WithoutFlash(t *testing.T) {
 	// フラッシュのtoaster要素は含まれないはず
 	if strings.Contains(html, "toaster") {
 		t.Error("フラッシュメッセージがnilの場合、toaster要素は表示されないはず")
+	}
+}
+
+// TestSimple_FullHeightFollowsVisibleViewport verifies the body is sized by the visible
+// viewport height, so a mobile toolbar cannot make it taller than the screen and push the
+// centered content off-centre.
+//
+// [Ja] TestSimple_FullHeightFollowsVisibleViewport は body の高さが可視ビューポートに
+// 追随することを検証する。モバイルのツールバー表示時に body が画面より高くなり、中央寄せの
+// コンテンツがずれることを防ぐ。
+func TestSimple_FullHeightFollowsVisibleViewport(t *testing.T) {
+	t.Parallel()
+
+	cfg := &config.Config{
+		Env:    "test",
+		Domain: "annict.test",
+	}
+
+	req := httptest.NewRequest("GET", "/", nil)
+	req.Header.Set("Accept-Language", "ja")
+
+	ctx := i18n.SetLocale(req.Context(), i18n.DetectLanguage(req))
+
+	meta := viewmodel.DefaultPageMeta(ctx, cfg, req.URL.Path)
+
+	content := templ.ComponentFunc(func(ctx context.Context, w io.Writer) error {
+		_, err := w.Write([]byte("<div>Content</div>"))
+		return err
+	})
+
+	var buf bytes.Buffer
+	if err := Simple(ctx, meta, "v1.0.0", content).Render(ctx, &buf); err != nil {
+		t.Fatalf("レンダリングエラー: %v", err)
+	}
+
+	html := buf.String()
+
+	// The whole class attribute is pinned, so a switch back to the static unit fails here.
+	//
+	// [Ja] class 属性全体を固定するため、静的な単位へ戻せばここで落ちる。
+	if !strings.Contains(html, `<body class="min-h-dvh flex items-center justify-center">`) {
+		t.Error("body のフルハイト指定が min-h-dvh になっていません")
 	}
 }
 
