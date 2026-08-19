@@ -226,6 +226,15 @@ func NewReverseProxyMiddleware(railsURL string, cfg *config.Config, featureFlagR
 			"remote_addr", r.RemoteAddr,
 		)
 
+		// The page below is rendered by Go, not relayed from Rails, so it carries the same
+		// headers as the rest of the Go responses. The SecurityHeaders middleware cannot
+		// supply them: it sits inside this middleware and the request never got that far.
+		//
+		// [Ja] 以下のページは Rails から中継したものではなく Go が描画するため、他の Go の
+		// レスポンスと同じヘッダーを付ける。SecurityHeaders ミドルウェアは本ミドルウェアの
+		// 内側にあり、リクエストはそこまで到達していないため、付与を任せられない。
+		setSecurityHeaders(w)
+
 		// This handler runs at the proxy layer, outside the Go middleware chain, so no
 		// locale has been resolved onto the context yet. Resolve it here so the shared
 		// error page speaks the reader's language like the pages served from the chain.

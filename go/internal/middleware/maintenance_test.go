@@ -99,6 +99,13 @@ func TestMaintenanceMiddleware_EnabledMode_NonAdminIP(t *testing.T) {
 		t.Errorf("Retry-After = %q, want %q", retryAfter, "3600")
 	}
 
+	// The maintenance page is served ahead of the reverse proxy, out of the SecurityHeaders
+	// middleware's reach, so it sets the headers itself.
+	//
+	// [Ja] メンテナンスページはリバースプロキシより前で配信され、SecurityHeaders ミドルウェアの
+	// 及ばない位置にあるため、自身でヘッダーを設定する。
+	assertSecurityHeaders(t, rr.Header())
+
 	// メンテナンスページの内容を確認
 	body := rr.Body.String()
 	if !strings.Contains(body, "メンテナンス") {

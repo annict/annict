@@ -356,6 +356,17 @@ func runServe() {
 	// チェーンをリバースプロキシの内側に置くことで、Rails 版へプロキシされる
 	// リクエストが Go 版の Sentry トランザクションに乗らないようにする。
 
+	// SecurityHeaders comes first in this section so that it covers every response the Go app
+	// renders, including the static files and the responses the middleware below produce
+	// (Recoverer's 500, the CSRF 403). It cannot move outside the reverse proxy: Rails already
+	// sends the same headers, and httputil.ReverseProxy would append rather than replace them.
+	//
+	// [Ja] SecurityHeaders は本セクションの先頭に置き、Go が描画する全レスポンス (静的ファイルの
+	// 配信と、以下のミドルウェアが返す Recoverer の 500 や CSRF の 403 を含む) を覆う。
+	// リバースプロキシの外側へは動かせない。Rails は同じヘッダーを既に送っており、
+	// httputil.ReverseProxy はそれを上書きではなく追記するため。
+	r.Use(authMiddleware.SecurityHeaders)
+
 	// Recoverer must be registered before sentryhttp (= outer in the chain) so
 	// that the re-panic from sentryhttp (Repanic: true) is caught here and a
 	// 500 response is returned. The official sentryhttp README also says to

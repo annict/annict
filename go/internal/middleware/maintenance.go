@@ -36,6 +36,13 @@ func (m *MaintenanceMiddleware) Middleware(next http.Handler) http.Handler {
 			return
 		}
 
+		// This middleware answers ahead of the reverse proxy, so the SecurityHeaders
+		// middleware registered inside it never runs for this response.
+		//
+		// [Ja] 本ミドルウェアはリバースプロキシより前で応答するため、その内側に登録した
+		// SecurityHeaders ミドルウェアは本レスポンスに対して走らない。
+		setSecurityHeaders(w)
+
 		// htmx swaps every response except 204 and 304, and an hx-delete without hx-target
 		// swaps into the element that issued it, so without this the maintenance document
 		// would be placed inside the button that was clicked. Every path answers with this

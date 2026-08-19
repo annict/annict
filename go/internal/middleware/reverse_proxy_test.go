@@ -328,6 +328,13 @@ func assertBadGatewayPage(t *testing.T, rr *httptest.ResponseRecorder, wantTitle
 		t.Errorf("Content-Type = %q, want text/html; charset=utf-8", contentType)
 	}
 
+	// The page is rendered by Go rather than relayed from Rails, and the error handler runs
+	// outside the chain that holds the SecurityHeaders middleware, so it sets the headers itself.
+	//
+	// [Ja] 本ページは Rails から中継したものではなく Go が描画し、かつエラーハンドラーは
+	// SecurityHeaders ミドルウェアを含むチェーンの外側で動くため、自身でヘッダーを設定する。
+	assertSecurityHeaders(t, rr.Header())
+
 	body := rr.Body.String()
 	for _, expected := range []string{
 		"<title>" + wantTitle + " | Annict</title>",
