@@ -19,6 +19,10 @@ run: ## サーバーを起動
 browse-login: ## dev サイトへブラウザでログイン (別ユーザーは make browse-login BROWSE_USER=2)
 	$(OP_RUN_DEV) bash scripts/browse.sh login $(BROWSE_USER)
 
+.PHONY: browse-check
+browse-check: ## Validate the dev browser environment (use BROWSE_USER=2 for another user). [Ja] dev サイトのブラウザ確認に必要な環境を検証 (別ユーザーは BROWSE_USER=2)
+	$(OP_RUN_DEV) bash scripts/browse.sh check $(BROWSE_USER)
+
 .PHONY: browse-shot
 browse-shot: ## ログイン済みセッションでページを開きスクショ (例: make browse-shot URL=/db)
 	bash scripts/browse.sh shot "$(URL)"
