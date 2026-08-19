@@ -847,8 +847,6 @@ templ editWorkPageLink(workID viewmodel.WorkID) {
 		data-size="sm"
 	>
 		{ templates.T(ctx, "db_works_edit_work_page_link") }
-		<span aria-hidden="true">
-			@templates.Icon("arrow-square-out-regular", "w-[18px] h-[18px]")
-		</span>
+		@templates.DecorativeInlineIcon("arrow-square-out-regular", templates.InlineIconEnd, "w-[18px] h-[18px]")
 	</a>
 }

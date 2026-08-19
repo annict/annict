@@ -382,7 +382,7 @@ func TestEdit_DecorativeIconsAreHidden(t *testing.T) {
 	html := buf.String()
 
 	for _, iconName := range []string{"floppy-disk-regular", "arrow-bend-up-left-regular"} {
-		want := decorativeIconMarkup(t, ctx, iconName, templates.InlineIconStart)
+		want := decorativeIconMarkup(t, ctx, iconName, "", templates.InlineIconStart)
 		if !strings.Contains(html, want) {
 			t.Errorf("装飾アイコン %q が aria-hidden の要素内にありません", iconName)
 		}

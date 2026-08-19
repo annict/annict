@@ -153,7 +153,7 @@ func TestIndex_WithWorks(t *testing.T) {
 		"MyAnimeList",
 		`href="http://cal.syoboi.jp/tid/3524"`,
 		`href="https://myanimelist.net/anime/20"`,
-		`>3524 <span aria-hidden="true">`,
+		`>3524<svg aria-hidden="true"`,
 		// The title cell opts out of the table's default whitespace-nowrap so long titles wrap
 		// inside the table's dedicated horizontal scroll region.
 		//
@@ -261,6 +261,55 @@ func TestExternalServiceLinkI18n(t *testing.T) {
 				t.Errorf("localized accessible name is missing: want %q in %q", tt.want, html)
 			}
 		})
+	}
+}
+
+// TestIndex_DecorativeIconsAreHidden covers the new-tab icons of the work list: the one in the
+// ID link and the one in each external-service link. Every link already announces where it goes
+// in its accessible name, so none of the icons reaches the accessibility tree or the focus
+// order. Counting them against the icon's own path data holds the whole column rather than the
+// first row: an icon added later without the helper would leave the two counts apart.
+//
+// [Ja] TestIndex_DecorativeIconsAreHidden は作品一覧の新規タブアイコン (ID リンクと外部サービス
+// リンクのそれぞれ) を検証する。どのリンクもアクセシブルネームで行き先を既に伝えるため、
+// アイコンはアクセシビリティツリーにもフォーカス順序にも出ない。アイコン自身の path データと
+// 個数を突き合わせることで、先頭行だけでなく列全体を固定する (後からヘルパーを通さずに足された
+// アイコンがあれば、2 つの個数がずれる)。
+func TestIndex_DecorativeIconsAreHidden(t *testing.T) {
+	t.Parallel()
+
+	ctx := i18n.SetLocale(context.Background(), "ja")
+	data := IndexPageData{
+		Works: []viewmodel.DBWorkListItem{
+			{
+				ID:       1,
+				Title:    "テストアニメ1",
+				Media:    "TV",
+				Status:   viewmodel.PublishingStatusPublished,
+				Syobocal: viewmodel.ExternalServiceLink{Label: "3524", URL: "http://cal.syoboi.jp/tid/3524"},
+				MalAnime: viewmodel.ExternalServiceLink{Label: "20", URL: "https://myanimelist.net/anime/20"},
+				Image:    viewmodel.NewWorkImage("", testutil.NewTestImageHelper()),
+			},
+		},
+		Pagination: viewmodel.NewPagination(1, 1, 30, "/db/works"),
+	}
+
+	var buf strings.Builder
+	if err := Index(data).Render(ctx, &buf); err != nil {
+		t.Fatalf("レンダリングエラー: %v", err)
+	}
+
+	html := buf.String()
+
+	icons := strings.Count(html, newTabIconPath)
+	if icons == 0 {
+		t.Fatal("新規タブアイコンが描画されていません")
+	}
+	if got := strings.Count(html, decorativeIconMarkup(t, ctx, "arrow-square-out-regular", "w-[18px] h-[18px]")); got != icons {
+		t.Errorf("装飾アイコンとして描画された数が一致しません: got %d, want %d", got, icons)
+	}
+	if strings.Contains(html, iconWrapperMarkup) {
+		t.Error("装飾アイコンはラッパー要素ではなく SVG 自体で隠すべきです")
 	}
 }
 

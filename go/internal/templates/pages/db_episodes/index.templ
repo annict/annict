@@ -223,9 +223,7 @@ templ Index(data IndexPageData) {
 												class="text-primary hover:underline inline-flex items-center gap-1"
 											>
 												{ episode.ID.String() }
-												<span aria-hidden="true">
-													@templates.Icon("arrow-square-out-regular", "w-[18px] h-[18px]")
-												</span>
+												@templates.DecorativeIcon("arrow-square-out-regular", "w-[18px] h-[18px]")
 											</a>
 										</td>
 										// The display number and the numeric one are stacked in one cell, as

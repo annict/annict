@@ -11,17 +11,27 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
+// iconWrapperMarkup is wrapper markup these pages reject. An aria-hidden ancestor removes the
+// icon from the accessibility tree but can leave the SVG in the focus order on implementations
+// that treat SVG elements as focusable by default.
+//
+// [Ja] iconWrapperMarkup は、これらのページで許容しないラッパーのマークアップを表す。
+// aria-hidden の祖先はアイコンをアクセシビリティツリーから外すが、SVG 要素を既定で
+// フォーカス可能とする実装では SVG がフォーカス順序に残りうるため。
+const iconWrapperMarkup = `<span aria-hidden="true">`
+
 func decorativeIconMarkup(
 	t *testing.T,
 	ctx context.Context,
 	name string,
+	class string,
 	position ...templates.InlineIconPosition,
 ) string {
 	t.Helper()
 
-	component := templates.DecorativeIcon(name)
+	component := templates.DecorativeIcon(name, class)
 	if len(position) > 0 {
-		component = templates.DecorativeInlineIcon(name, position[0])
+		component = templates.DecorativeInlineIcon(name, position[0], class)
 	}
 
 	var buf strings.Builder
@@ -116,9 +126,9 @@ func TestNew_DecorativeIconsAreHidden(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			want := decorativeIconMarkup(t, ctx, tt.iconName)
+			want := decorativeIconMarkup(t, ctx, tt.iconName, "")
 			if tt.inline {
-				want = decorativeIconMarkup(t, ctx, tt.iconName, templates.InlineIconStart)
+				want = decorativeIconMarkup(t, ctx, tt.iconName, "", templates.InlineIconStart)
 			}
 			if !strings.Contains(tt.html, want) {
 				t.Errorf("装飾アイコン %q が aria-hidden の要素内にありません", tt.iconName)

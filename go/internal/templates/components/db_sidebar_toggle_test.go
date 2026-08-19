@@ -51,6 +51,42 @@ func TestDBSidebarToggle(t *testing.T) {
 	}
 }
 
+// TestDBSidebarToggle_DecorativeIconIsHidden verifies the toggle's icon stays out of the
+// accessibility tree and out of the focus order. The button already carries its meaning in
+// aria-label, so the SVG would only add a second, browser-dependent representation. It is
+// hidden on the SVG itself rather than by a wrapper element: a wrapper leaves the SVG
+// focusable on implementations that treat SVG elements as focusable by default. The icon takes
+// no Basecoat inline position because the button has no text for it to sit beside.
+//
+// [Ja] TestDBSidebarToggle_DecorativeIconIsHidden はトグルのアイコンがアクセシビリティツリー
+// とフォーカス順序から外れることを検証する。ボタンは aria-label で既に意味を伝えるため、SVG は
+// ブラウザー依存の別表現を重ねるだけになる。隠すのはラッパー要素ではなく SVG 自体で行う。
+// ラッパーでは、SVG 要素を既定でフォーカス可能とする実装で SVG がフォーカス可能なまま残るため。
+// ボタンにテキストが無く添える相手がいないので、Basecoat の inline 位置は指定しない。
+func TestDBSidebarToggle_DecorativeIconIsHidden(t *testing.T) {
+	t.Parallel()
+
+	ctx := i18n.SetLocale(context.Background(), "ja")
+
+	var iconBuf strings.Builder
+	if err := templates.DecorativeIcon("sidebar-regular").Render(ctx, &iconBuf); err != nil {
+		t.Fatalf("アイコンのレンダリングエラー: %v", err)
+	}
+
+	var buf strings.Builder
+	if err := DBSidebarToggle().Render(ctx, &buf); err != nil {
+		t.Fatalf("レンダリングエラー: %v", err)
+	}
+	html := buf.String()
+
+	if !strings.Contains(html, iconBuf.String()) {
+		t.Error(`装飾アイコン "sidebar-regular" が aria-hidden かつ focusable="false" ではありません`)
+	}
+	if strings.Contains(html, `<span aria-hidden="true">`) {
+		t.Error("装飾アイコンはラッパー要素ではなく SVG 自体で隠すべきです")
+	}
+}
+
 // TestDBSidebarCloseButton verifies the sidebar has a mobile-only (md:hidden) icon-only native
 // close button with an accessible name. On desktop the always-visible sidebar toggle already
 // closes the sidebar, so this in-sidebar button is hidden there.

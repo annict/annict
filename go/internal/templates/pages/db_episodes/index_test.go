@@ -517,26 +517,47 @@ func TestIndex_ActionColumn_Anonymous(t *testing.T) {
 	}
 }
 
-// TestIndex_DecorativeIconsAreHidden covers the icon of the create link, which repeats the
-// text beside it. The link already carries its meaning in text, so the SVG stays out of the
-// accessibility tree instead of adding a second, browser-dependent representation. Its
-// inline-start position also lets Basecoat apply the button's icon-aware spacing.
+// TestIndex_DecorativeIconsAreHidden covers the icons of the create link and of each row's ID
+// link, both of which repeat what the link around them already announces. The SVGs stay out of
+// the accessibility tree and out of the focus order instead of adding a second,
+// browser-dependent representation. The create link is a Basecoat text button, so its icon also
+// declares the inline-start position that lets Basecoat apply the button's icon-aware spacing;
+// the ID link is a plain link and takes no position.
 //
-// [Ja] TestIndex_DecorativeIconsAreHidden は作成リンクのアイコンを検証する。このアイコンは隣接
-// するテキストと意味が重複する。リンクはテキストですでに意味を伝えるため、SVG はアクセシビリ
-// ティツリーから除外し、ブラウザー依存の別表現を重ねないようにする。inline-start の位置により、
-// Basecoat がボタンのアイコン用間隔を適用できることも固定する。
+// [Ja] TestIndex_DecorativeIconsAreHidden は作成リンクと各行の ID リンクのアイコンを検証する。
+// どちらも囲むリンクが既に伝えている内容を繰り返す。SVG はアクセシビリティツリーとフォーカス
+// 順序から除外し、ブラウザー依存の別表現を重ねないようにする。作成リンクは Basecoat のテキスト
+// 付きボタンのため、そのアイコンは Basecoat がボタンのアイコン用間隔を適用できる inline-start
+// の位置も宣言する。ID リンクは通常のリンクのため位置を持たない。
 func TestIndex_DecorativeIconsAreHidden(t *testing.T) {
 	t.Parallel()
 
 	ctx := i18n.SetLocale(context.Background(), "ja")
 
-	var buf strings.Builder
-	if err := indexNewEpisodesLink(IndexPageData{WorkID: 1}).Render(ctx, &buf); err != nil {
+	var linkBuf strings.Builder
+	if err := indexNewEpisodesLink(IndexPageData{WorkID: 1}).Render(ctx, &linkBuf); err != nil {
 		t.Fatalf("一覧アクションのレンダリングエラー: %v", err)
 	}
 
-	if !strings.Contains(buf.String(), decorativeIconMarkup(t, ctx, "plus-regular", templates.InlineIconStart)) {
+	if !strings.Contains(linkBuf.String(), decorativeIconMarkup(t, ctx, "plus-regular", "", templates.InlineIconStart)) {
 		t.Error(`装飾アイコン "plus-regular" が aria-hidden の要素内にありません`)
+	}
+
+	var pageBuf strings.Builder
+	if err := Index(IndexPageData{
+		WorkID:     3,
+		WorkName:   "テストアニメ",
+		Episodes:   []viewmodel.DBEpisodeListItem{{ID: 10, WorkID: 3, Status: viewmodel.PublishingStatusPublished}},
+		Pagination: viewmodel.NewPagination(1, 1, 100, "/db/works/3/episodes"),
+	}).Render(ctx, &pageBuf); err != nil {
+		t.Fatalf("レンダリングエラー: %v", err)
+	}
+	html := pageBuf.String()
+
+	if !strings.Contains(html, decorativeIconMarkup(t, ctx, "arrow-square-out-regular", "w-[18px] h-[18px]")) {
+		t.Error(`装飾アイコン "arrow-square-out-regular" が aria-hidden かつ focusable="false" ではありません`)
+	}
+	if strings.Contains(html, iconWrapperMarkup) {
+		t.Error("装飾アイコンはラッパー要素ではなく SVG 自体で隠すべきです")
 	}
 }

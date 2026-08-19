@@ -14,6 +14,44 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
+// iconWrapperMarkup is wrapper markup these pages reject. An aria-hidden ancestor removes the
+// icon from the accessibility tree but can leave the SVG in the focus order on implementations
+// that treat SVG elements as focusable by default.
+//
+// [Ja] iconWrapperMarkup は、これらのページで許容しないラッパーのマークアップを表す。
+// aria-hidden の祖先はアイコンをアクセシビリティツリーから外すが、SVG 要素を既定で
+// フォーカス可能とする実装では SVG がフォーカス順序に残りうるため。
+const iconWrapperMarkup = `<span aria-hidden="true">`
+
+// decorativeIconMarkup renders one icon the way the pages of this package are expected to
+// emit it, so a test states which helper an icon goes through rather than repeating the SVG
+// attributes. Passing a position asks for the Basecoat inline form used inside text buttons.
+//
+// [Ja] decorativeIconMarkup は本パッケージのページが出力するはずの形で 1 つのアイコンを描画
+// する。SVG の属性を書き写すのではなく、アイコンがどのヘルパーを通るかをテストが表明できる
+// ようにするため。position を渡すとテキスト付きボタン内で使う Basecoat の inline 形式になる。
+func decorativeIconMarkup(
+	t *testing.T,
+	ctx context.Context,
+	name string,
+	class string,
+	position ...templates.InlineIconPosition,
+) string {
+	t.Helper()
+
+	component := templates.DecorativeIcon(name, class)
+	if len(position) > 0 {
+		component = templates.DecorativeInlineIcon(name, position[0], class)
+	}
+
+	var buf strings.Builder
+	if err := component.Render(ctx, &buf); err != nil {
+		t.Fatalf("アイコンのレンダリングエラー: %v", err)
+	}
+
+	return buf.String()
+}
+
 // TestNew_LabelExternalLinks verifies that an external-link icon is rendered next to a label
 // whose field has a value.
 //
@@ -94,6 +132,37 @@ func TestNew_NoLabelExternalLinksWhenEmpty(t *testing.T) {
 	}
 	if strings.Contains(html, "を新しいタブで開く") {
 		t.Error("値が空のとき外部リンクは描画されてはいけません")
+	}
+}
+
+// TestNew_DecorativeIconsAreHidden covers the new-tab icon beside a form label: the link
+// around it already announces where it goes, so the SVG stays out of the accessibility tree
+// and out of the focus order instead of adding a second, browser-dependent representation.
+//
+// [Ja] TestNew_DecorativeIconsAreHidden はフォームのラベル横にある新規タブアイコンを検証する。
+// アイコンを囲むリンクが行き先を既に伝えるため、SVG はアクセシビリティツリーとフォーカス順序
+// から除外し、ブラウザー依存の別表現を重ねないようにする。
+func TestNew_DecorativeIconsAreHidden(t *testing.T) {
+	t.Parallel()
+
+	ctx := i18n.SetLocale(context.Background(), "ja")
+	data := NewPageData{
+		FormInput: &viewmodel.DBWorkFormInput{OfficialSiteURL: "https://example.com"},
+	}
+
+	var buf strings.Builder
+	if err := New(data).Render(ctx, &buf); err != nil {
+		t.Fatalf("レンダリングエラー: %v", err)
+	}
+
+	html := buf.String()
+
+	want := decorativeIconMarkup(t, ctx, "arrow-square-out-regular", "w-[18px] h-[18px]")
+	if !strings.Contains(html, want) {
+		t.Error(`装飾アイコン "arrow-square-out-regular" が aria-hidden かつ focusable="false" ではありません`)
+	}
+	if strings.Contains(html, iconWrapperMarkup) {
+		t.Error("装飾アイコンはラッパー要素ではなく SVG 自体で隠すべきです")
 	}
 }
 
@@ -787,5 +856,60 @@ func TestEdit_LabelExternalLinks(t *testing.T) {
 		if !strings.Contains(html, expected) {
 			t.Errorf("期待する文字列が含まれていません: %q", expected)
 		}
+	}
+}
+
+// TestEdit_DecorativeIconsAreHidden covers the two new-tab icons of the edit page. Both repeat
+// what the link around them already announces, so neither reaches the accessibility tree or the
+// focus order. The work-page link is a Basecoat text button, so its icon also declares the
+// inline-end position that lets Basecoat apply the button's icon-aware spacing; the icon beside
+// a form label sits in a plain link and takes no position.
+//
+// [Ja] TestEdit_DecorativeIconsAreHidden は編集ページの 2 つの新規タブアイコンを検証する。
+// どちらも囲むリンクが既に伝えている内容を繰り返すため、アクセシビリティツリーにもフォーカス
+// 順序にも出ない。作品ページへのリンクは Basecoat のテキスト付きボタンのため、そのアイコンは
+// Basecoat がボタンのアイコン用間隔を適用できる inline-end の位置も宣言する。フォームのラベル
+// 横のアイコンは通常のリンク内にあるため位置を持たない。
+func TestEdit_DecorativeIconsAreHidden(t *testing.T) {
+	t.Parallel()
+
+	ctx := i18n.SetLocale(context.Background(), "ja")
+	data := EditPageData{
+		WorkID:    1,
+		WorkTitle: "編集対象アニメ",
+		FormInput: &viewmodel.DBWorkFormInput{OfficialSiteURL: "https://example.com"},
+	}
+
+	var buf strings.Builder
+	if err := Edit(data).Render(ctx, &buf); err != nil {
+		t.Fatalf("レンダリングエラー: %v", err)
+	}
+
+	html := buf.String()
+
+	tests := []struct {
+		name     string
+		want     string
+		wantHint string
+	}{
+		{
+			name:     "作品ページへのリンク",
+			want:     decorativeIconMarkup(t, ctx, "arrow-square-out-regular", "w-[18px] h-[18px]", templates.InlineIconEnd),
+			wantHint: `inline-end の装飾アイコン`,
+		},
+		{
+			name:     "フォームのラベル横のリンク",
+			want:     decorativeIconMarkup(t, ctx, "arrow-square-out-regular", "w-[18px] h-[18px]"),
+			wantHint: `位置を持たない装飾アイコン`,
+		},
+	}
+	for _, tt := range tests {
+		if !strings.Contains(html, tt.want) {
+			t.Errorf("%s: %s が含まれていません", tt.name, tt.wantHint)
+		}
+	}
+
+	if strings.Contains(html, iconWrapperMarkup) {
+		t.Error("装飾アイコンはラッパー要素ではなく SVG 自体で隠すべきです")
 	}
 }
