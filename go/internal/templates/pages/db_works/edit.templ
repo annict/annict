@@ -130,6 +130,7 @@ templ Edit(data EditPageData) {
 						</label>
 						<input
 							type="text"
+							enterkeyhint="next"
 							id="title"
 							name="title"
 							class="input"
@@ -150,39 +151,40 @@ templ Edit(data EditPageData) {
 						}
 					</div>
 
-					<div class="field">
+					<div role="group" class="field">
 						<label for="title_kana" class="label">
 							{ templates.T(ctx, "db_works_edit_title_kana_label") }
 						</label>
 
-						<input type="text" id="title_kana" name="title_kana" class="input" value={ data.FormInput.Val("title_kana") }/>
+						<input type="text" enterkeyhint="next" id="title_kana" name="title_kana" class="input" value={ data.FormInput.Val("title_kana") }/>
 					</div>
 
-					<div class="field">
+					<div role="group" class="field">
 						<label for="title_alter" class="label">
 							{ templates.T(ctx, "db_works_edit_title_alter_label") }
 						</label>
 
-						<input type="text" id="title_alter" name="title_alter" class="input" value={ data.FormInput.Val("title_alter") }/>
+						<input type="text" enterkeyhint="next" id="title_alter" name="title_alter" class="input" value={ data.FormInput.Val("title_alter") }/>
 					</div>
 
-					<div class="field">
+					<div role="group" class="field">
 						<label for="title_en" class="label">
 							{ templates.T(ctx, "db_works_edit_title_en_label") }
 						</label>
 
-						<input type="text" id="title_en" name="title_en" class="input" value={ data.FormInput.Val("title_en") }/>
+						<input type="text" enterkeyhint="next" id="title_en" name="title_en" class="input" value={ data.FormInput.Val("title_en") }/>
 					</div>
 
-					<div class="field">
+					<div role="group" class="field">
 						<label for="title_alter_en" class="label">
 							{ templates.T(ctx, "db_works_edit_title_alter_en_label") }
 						</label>
 
-						<input type="text" id="title_alter_en" name="title_alter_en" class="input" value={ data.FormInput.Val("title_alter_en") }/>
+						<input type="text" enterkeyhint="next" id="title_alter_en" name="title_alter_en" class="input" value={ data.FormInput.Val("title_alter_en") }/>
 					</div>
 
 					<div
+						role="group"
 						class="field"
 						if data.hasFieldError("media") {
 							data-invalid
@@ -221,6 +223,7 @@ templ Edit(data EditPageData) {
 					</div>
 
 					<div
+						role="group"
 						class="field"
 						if data.hasFieldError("season_year") {
 							data-invalid
@@ -257,6 +260,7 @@ templ Edit(data EditPageData) {
 					</div>
 
 					<div
+						role="group"
 						class="field"
 						if data.hasFieldError("season_name") {
 							data-invalid
@@ -293,6 +297,7 @@ templ Edit(data EditPageData) {
 					</div>
 
 					<div
+						role="group"
 						class="field"
 						if data.hasFieldError("started_on") {
 							data-invalid
@@ -322,6 +327,7 @@ templ Edit(data EditPageData) {
 					</div>
 
 					<div
+						role="group"
 						class="field"
 						if data.hasFieldError("ended_on") {
 							data-invalid
@@ -351,6 +357,7 @@ templ Edit(data EditPageData) {
 					</div>
 
 					<div
+						role="group"
 						class="field"
 						if data.hasFieldError("official_site_url") {
 							data-invalid
@@ -366,6 +373,7 @@ templ Edit(data EditPageData) {
 
 						<input
 							type="url"
+							enterkeyhint="next"
 							id="official_site_url"
 							name="official_site_url"
 							class="input"
@@ -383,6 +391,7 @@ templ Edit(data EditPageData) {
 					</div>
 
 					<div
+						role="group"
 						class="field"
 						if data.hasFieldError("official_site_url_en") {
 							data-invalid
@@ -398,6 +407,7 @@ templ Edit(data EditPageData) {
 
 						<input
 							type="url"
+							enterkeyhint="next"
 							id="official_site_url_en"
 							name="official_site_url_en"
 							class="input"
@@ -416,6 +426,7 @@ templ Edit(data EditPageData) {
 					</div>
 
 					<div
+						role="group"
 						class="field"
 						if data.hasFieldError("wikipedia_url") {
 							data-invalid
@@ -431,6 +442,7 @@ templ Edit(data EditPageData) {
 
 						<input
 							type="url"
+							enterkeyhint="next"
 							id="wikipedia_url"
 							name="wikipedia_url"
 							class="input"
@@ -449,6 +461,7 @@ templ Edit(data EditPageData) {
 					</div>
 
 					<div
+						role="group"
 						class="field"
 						if data.hasFieldError("wikipedia_url_en") {
 							data-invalid
@@ -464,6 +477,7 @@ templ Edit(data EditPageData) {
 
 						<input
 							type="url"
+							enterkeyhint="next"
 							id="wikipedia_url_en"
 							name="wikipedia_url_en"
 							class="input"
@@ -482,6 +496,7 @@ templ Edit(data EditPageData) {
 					</div>
 
 					<div
+						role="group"
 						class="field"
 						if data.hasFieldError("twitter_username") {
 							data-invalid
@@ -498,6 +513,7 @@ templ Edit(data EditPageData) {
 						<div class="input-group">
 							<input
 								type="text"
+								enterkeyhint="next"
 								id="twitter_username"
 								name="twitter_username"
 								if data.hasFieldError("twitter_username") {
@@ -523,6 +539,7 @@ templ Edit(data EditPageData) {
 					</div>
 
 					<div
+						role="group"
 						class="field"
 						if data.hasFieldError("twitter_hashtag") {
 							data-invalid
@@ -539,6 +556,7 @@ templ Edit(data EditPageData) {
 						<div class="input-group">
 							<input
 								type="text"
+								enterkeyhint="next"
 								id="twitter_hashtag"
 								name="twitter_hashtag"
 								if data.hasFieldError("twitter_hashtag") {
@@ -559,6 +577,7 @@ templ Edit(data EditPageData) {
 					</div>
 
 					<div
+						role="group"
 						class="field"
 						if data.hasFieldError("sc_tid") {
 							data-invalid
@@ -572,8 +591,19 @@ templ Edit(data EditPageData) {
 							@formLabelExternalLink(templates.T(ctx, "db_works_edit_sc_tid_label"), data.FormInput.LabelLinkURL("sc_tid"))
 						</div>
 
+						// The numeric fields of this form stay text and ask the touch keyboard for a
+						// keypad. A rejected submit is re-rendered with whatever was typed, and
+						// type="number" would show that value as an empty field whenever the browser
+						// cannot parse it, taking away the input the editor has to correct.
+						//
+						// [Ja] 本フォームの数値の欄は text の入力欄のままタッチキーボードにキーパッドを
+						// 要求する。却下された送信は入力された内容のまま再描画するが、type="number" は
+						// ブラウザーがパースできない値を空の欄として表示するため、編集者が直すべき入力が
+						// 失われてしまう。
 						<input
 							type="text"
+							inputmode="numeric"
+							enterkeyhint="next"
 							id="sc_tid"
 							name="sc_tid"
 							class="input"
@@ -592,6 +622,7 @@ templ Edit(data EditPageData) {
 					</div>
 
 					<div
+						role="group"
 						class="field"
 						if data.hasFieldError("mal_anime_id") {
 							data-invalid
@@ -607,6 +638,8 @@ templ Edit(data EditPageData) {
 
 						<input
 							type="text"
+							inputmode="numeric"
+							enterkeyhint="next"
 							id="mal_anime_id"
 							name="mal_anime_id"
 							class="input"
@@ -624,7 +657,7 @@ templ Edit(data EditPageData) {
 						}
 					</div>
 
-					<div class="field">
+					<div role="group" class="field">
 						<label for="synopsis" class="label">
 							{ templates.T(ctx, "db_works_edit_synopsis_label") }
 						</label>
@@ -639,6 +672,7 @@ templ Edit(data EditPageData) {
 					</div>
 
 					<div
+						role="group"
 						class="field"
 						if data.hasFieldError("synopsis_source") {
 							data-invalid
@@ -650,6 +684,7 @@ templ Edit(data EditPageData) {
 
 						<input
 							type="text"
+							enterkeyhint="next"
 							id="synopsis_source"
 							name="synopsis_source"
 							class="input"
@@ -667,7 +702,7 @@ templ Edit(data EditPageData) {
 						}
 					</div>
 
-					<div class="field">
+					<div role="group" class="field">
 						<label for="synopsis_en" class="label">
 							{ templates.T(ctx, "db_works_edit_synopsis_en_label") }
 						</label>
@@ -682,6 +717,7 @@ templ Edit(data EditPageData) {
 					</div>
 
 					<div
+						role="group"
 						class="field"
 						if data.hasFieldError("synopsis_source_en") {
 							data-invalid
@@ -693,6 +729,7 @@ templ Edit(data EditPageData) {
 
 						<input
 							type="text"
+							enterkeyhint="next"
 							id="synopsis_source_en"
 							name="synopsis_source_en"
 							class="input"
@@ -711,6 +748,7 @@ templ Edit(data EditPageData) {
 					</div>
 
 					<div
+						role="group"
 						class="field"
 						if data.hasFieldError("manual_episodes_count") {
 							data-invalid
@@ -721,7 +759,9 @@ templ Edit(data EditPageData) {
 						</label>
 
 						<input
-							type="number"
+							type="text"
+							inputmode="numeric"
+							enterkeyhint="next"
 							id="manual_episodes_count"
 							name="manual_episodes_count"
 							class="input"
@@ -740,6 +780,7 @@ templ Edit(data EditPageData) {
 					</div>
 
 					<div
+						role="group"
 						class="field"
 						if data.hasFieldError("start_episode_raw_number") {
 							data-invalid
@@ -751,6 +792,8 @@ templ Edit(data EditPageData) {
 
 						<input
 							type="text"
+							inputmode="decimal"
+							enterkeyhint="done"
 							id="start_episode_raw_number"
 							name="start_episode_raw_number"
 							class="input"
@@ -769,6 +812,7 @@ templ Edit(data EditPageData) {
 					</div>
 
 					<div
+						role="group"
 						class="field"
 						if data.hasFieldError("number_format_id") {
 							data-invalid
@@ -804,7 +848,7 @@ templ Edit(data EditPageData) {
 						}
 					</div>
 
-					<div class="field" data-orientation="horizontal">
+					<div role="group" class="field" data-orientation="horizontal">
 						if data.FormInput.Val("no_episodes") == "1" {
 							<input type="checkbox" id="no_episodes" name="no_episodes" value="1" class="input" checked/>
 						} else {
@@ -815,7 +859,7 @@ templ Edit(data EditPageData) {
 						</label>
 					</div>
 
-					<div class="field" data-orientation="horizontal">
+					<div role="group" class="field" data-orientation="horizontal">
 						<button type="submit" class="btn rounded-full">
 							@templates.Icon("floppy-disk-regular")
 							{ templates.T(ctx, "db_works_edit_submit") }

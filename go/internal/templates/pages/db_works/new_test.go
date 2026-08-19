@@ -913,3 +913,158 @@ func TestEdit_DecorativeIconsAreHidden(t *testing.T) {
 		t.Error("装飾アイコンはラッパー要素ではなく SVG 自体で隠すべきです")
 	}
 }
+
+// workFormFieldGroups is the number of Field wrappers each work form renders. Counting them
+// keeps a field added later from being written without the group, which the class alone does
+// not reveal.
+//
+// [Ja] workFormFieldGroups は各作品フォームが描画する Field ラッパーの数。数を固定すること
+// で、後から追加した欄がグループ無しで書かれることを防ぐ (クラスだけでは気付けないため)。
+const workFormFieldGroups = 27
+
+// workKeyboardHints lists the attributes every typed field of the work forms carries, in the
+// order the forms show them. The last typed field asks for "done" because nothing after it is
+// typed into: the remaining controls are a select and a checkbox, so the touch keyboard can
+// close rather than offer to move on.
+//
+// The fields backed by a numeric column ask for a keypad while staying text inputs, which is
+// what lets a rejected submit come back with whatever was typed (see the comment on the form).
+//
+// [Ja] workKeyboardHints は作品フォームの入力する欄が持つ属性を、フォームが表示する順で並べ
+// る。最後の欄が "done" を求めるのは、その後ろに入力する欄が無いため (残るのはセレクトと
+// チェックボックスで、タッチキーボードは次へ進むのではなく閉じてよい)。
+//
+// 数値カラムに対応する欄は text の入力欄のままキーパッドを要求する。これにより却下された送信
+// が入力された内容のまま戻る (理由はフォーム側のコメントを参照)。
+var workKeyboardHints = []struct {
+	field string
+	attrs []string
+}{
+	{field: "title", attrs: []string{`enterkeyhint="next"`}},
+	{field: "title_kana", attrs: []string{`enterkeyhint="next"`}},
+	{field: "title_alter", attrs: []string{`enterkeyhint="next"`}},
+	{field: "title_en", attrs: []string{`enterkeyhint="next"`}},
+	{field: "title_alter_en", attrs: []string{`enterkeyhint="next"`}},
+	{field: "official_site_url", attrs: []string{`enterkeyhint="next"`}},
+	{field: "official_site_url_en", attrs: []string{`enterkeyhint="next"`}},
+	{field: "wikipedia_url", attrs: []string{`enterkeyhint="next"`}},
+	{field: "wikipedia_url_en", attrs: []string{`enterkeyhint="next"`}},
+	{field: "twitter_username", attrs: []string{`enterkeyhint="next"`}},
+	{field: "twitter_hashtag", attrs: []string{`enterkeyhint="next"`}},
+	{field: "sc_tid", attrs: []string{`type="text"`, `inputmode="numeric"`, `enterkeyhint="next"`}},
+	{field: "mal_anime_id", attrs: []string{`type="text"`, `inputmode="numeric"`, `enterkeyhint="next"`}},
+	{field: "synopsis_source", attrs: []string{`enterkeyhint="next"`}},
+	{field: "synopsis_source_en", attrs: []string{`enterkeyhint="next"`}},
+	{field: "manual_episodes_count", attrs: []string{`type="text"`, `inputmode="numeric"`, `enterkeyhint="next"`}},
+	{field: "start_episode_raw_number", attrs: []string{`type="text"`, `inputmode="decimal"`, `enterkeyhint="done"`}},
+}
+
+// workUntypedControls lists the controls of the work forms that take no typing. A keyboard
+// hint on them would label a key the reader never reaches: a select and a checkbox open no
+// keyboard, a date field opens a picker, and Enter in a textarea inserts a line break.
+//
+// [Ja] workUntypedControls は作品フォームのうち文字を入力しないコントロールを並べる。これらに
+// キーボードヒントを付けても、読み手が触れないキーに札を付けることになる (セレクトと
+// チェックボックスはキーボードを開かず、日付欄はピッカーを開き、textarea の Enter は改行を
+// 入れるため)。
+var workUntypedControls = []string{
+	"media",
+	"season_year",
+	"season_name",
+	"started_on",
+	"ended_on",
+	"synopsis",
+	"synopsis_en",
+	"number_format_id",
+	"no_episodes",
+}
+
+// workControlHTML returns the markup of the opening tag of the form control carrying the given
+// id, whichever element it is.
+//
+// [Ja] workControlHTML は指定した id を持つフォームコントロールの開始タグのマークアップを返す
+// (要素の種類を問わない)。
+func workControlHTML(t *testing.T, html string, id string) string {
+	t.Helper()
+
+	at := strings.Index(html, `id="`+id+`"`)
+	if at < 0 {
+		t.Fatalf("%q のコントロールが描画されていません", id)
+	}
+	start := strings.LastIndex(html[:at], "<")
+	if start < 0 {
+		t.Fatalf("%q のコントロールの開始タグが見つかりません", id)
+	}
+	end := strings.Index(html[at:], ">")
+	if end < 0 {
+		t.Fatalf("%q のコントロールが閉じられていません", id)
+	}
+
+	return html[start : at+end+1]
+}
+
+// assertWorkFormFields checks the field structure and the keyboard hints of one work form.
+// Both forms show the same fields, so the expectations live in one place and each page states
+// that it meets them.
+//
+// [Ja] assertWorkFormFields は作品フォーム 1 つの欄の構造とキーボードヒントを検証する。
+// 両フォームは同じ欄を表示するため、期待値は 1 箇所に置き、各ページはそれを満たすことを表明
+// する。
+func assertWorkFormFields(t *testing.T, html string) {
+	t.Helper()
+
+	if got := strings.Count(html, `role="group" class="field"`); got != workFormFieldGroups {
+		t.Errorf("Basecoat の field group = %d 個, want %d 個", got, workFormFieldGroups)
+	}
+
+	for _, hint := range workKeyboardHints {
+		control := workControlHTML(t, html, hint.field)
+		for _, attr := range hint.attrs {
+			if !strings.Contains(control, attr) {
+				t.Errorf("%q の入力欄に %s がありません: %s", hint.field, attr, control)
+			}
+		}
+	}
+
+	for _, id := range workUntypedControls {
+		if control := workControlHTML(t, html, id); strings.Contains(control, "enterkeyhint") {
+			t.Errorf("%q は文字を入力しないため enterkeyhint を持つべきではありません: %s", id, control)
+		}
+	}
+}
+
+// TestNew_FieldsCarryGroupsAndKeyboardHints covers the create form's field wrappers and the
+// keyboard hints of its inputs.
+//
+// [Ja] TestNew_FieldsCarryGroupsAndKeyboardHints は新規作成フォームの欄のラッパーと入力欄の
+// キーボードヒントを検証する。
+func TestNew_FieldsCarryGroupsAndKeyboardHints(t *testing.T) {
+	t.Parallel()
+
+	ctx := i18n.SetLocale(context.Background(), "ja")
+
+	var buf strings.Builder
+	if err := New(NewPageData{FormInput: &viewmodel.DBWorkFormInput{}}).Render(ctx, &buf); err != nil {
+		t.Fatalf("レンダリングエラー: %v", err)
+	}
+
+	assertWorkFormFields(t, buf.String())
+}
+
+// TestEdit_FieldsCarryGroupsAndKeyboardHints covers the edit form's field wrappers and the
+// keyboard hints of its inputs.
+//
+// [Ja] TestEdit_FieldsCarryGroupsAndKeyboardHints は編集フォームの欄のラッパーと入力欄の
+// キーボードヒントを検証する。
+func TestEdit_FieldsCarryGroupsAndKeyboardHints(t *testing.T) {
+	t.Parallel()
+
+	ctx := i18n.SetLocale(context.Background(), "ja")
+
+	var buf strings.Builder
+	if err := Edit(EditPageData{WorkID: 1, WorkTitle: "編集対象アニメ", FormInput: &viewmodel.DBWorkFormInput{}}).Render(ctx, &buf); err != nil {
+		t.Fatalf("レンダリングエラー: %v", err)
+	}
+
+	assertWorkFormFields(t, buf.String())
+}

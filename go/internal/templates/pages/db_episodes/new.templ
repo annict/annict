@@ -241,6 +241,7 @@ templ New(data NewPageData) {
 					<input type="hidden" name="csrf_token" value={ data.CSRFToken }/>
 
 					<div
+						role="group"
 						class="field"
 						if data.hasRowsError() {
 							data-invalid
@@ -274,7 +275,7 @@ templ New(data NewPageData) {
 						}
 					</div>
 
-					<div class="field" data-orientation="horizontal">
+					<div role="group" class="field" data-orientation="horizontal">
 						<button
 							type="submit"
 							class="btn rounded-full"

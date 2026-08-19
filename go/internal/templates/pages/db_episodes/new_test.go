@@ -338,3 +338,40 @@ func TestNew_HeadingFallsBackToPageTitle(t *testing.T) {
 		t.Error("名前の無い作品では汎用のページタイトルが見出しになるべきです")
 	}
 }
+
+// TestNew_FieldsUseBasecoatGroups covers the wrappers of the bulk-create form. The Basecoat
+// Field component is a role="group" element, and the class on its own leaves the grouping out
+// of the accessibility tree, so the label, the format guide and the error messages stop being
+// announced as parts of the same control.
+//
+// The textarea takes no keyboard hint: one line is one episode, so its Enter key inserts a
+// line break, and labelling that key "next" or "done" would promise a move the key never
+// makes.
+//
+// [Ja] TestNew_FieldsUseBasecoatGroups は一括作成フォームのラッパーを検証する。Basecoat の
+// Field コンポーネントは role="group" の要素であり、クラスだけではグループがアクセシビリティ
+// ツリーに出ないため、ラベル・形式の案内・エラーメッセージが同じコントロールの一部として
+// 読み上げられなくなる。
+//
+// textarea はキーボードヒントを持たない。1 行が 1 エピソードのため Enter は改行を入れる
+// キーであり、そこに "next" や "done" の札を付けるとキーが行わない移動を約束することになる。
+func TestNew_FieldsUseBasecoatGroups(t *testing.T) {
+	t.Parallel()
+
+	ctx := i18n.SetLocale(context.Background(), "ja")
+
+	var buf strings.Builder
+	if err := New(NewPageData{WorkID: 1, WorkName: "テストアニメ", CSRFToken: "test-csrf-token"}).Render(ctx, &buf); err != nil {
+		t.Fatalf("レンダリングエラー: %v", err)
+	}
+
+	html := buf.String()
+
+	if got := strings.Count(html, `role="group" class="field"`); got != 2 {
+		t.Errorf("Basecoat の field group = %d 個, want 2 個", got)
+	}
+
+	if strings.Contains(html, "enterkeyhint") {
+		t.Error("行入力の textarea は Enter で改行を入れるため enterkeyhint を持つべきではありません")
+	}
+}
