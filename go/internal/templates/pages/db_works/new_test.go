@@ -9,7 +9,6 @@ import (
 	"github.com/a-h/templ"
 
 	"github.com/annict/annict/go/internal/i18n"
-	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/templates"
 	"github.com/annict/annict/go/internal/viewmodel"
 )
@@ -286,9 +285,9 @@ var fieldsWithStandingDescription = map[string]string{
 func TestFieldErrorsAreAssociatedWithInputs(t *testing.T) {
 	t.Parallel()
 
-	formErrors := model.NewValidationError()
+	formErrors := &viewmodel.FormErrors{Fields: map[string][]string{}}
 	for _, field := range validatedFields {
-		formErrors.AddField(field, field+" のエラーメッセージ")
+		formErrors.Fields[field] = []string{field + " のエラーメッセージ"}
 	}
 
 	tests := []struct {
@@ -366,9 +365,9 @@ func TestFieldErrorsAreAssociatedWithInputs(t *testing.T) {
 func TestFieldErrorsAreSummarisedAtTheTopOfTheForm(t *testing.T) {
 	t.Parallel()
 
-	formErrors := model.NewValidationError()
+	formErrors := &viewmodel.FormErrors{Fields: map[string][]string{}}
 	for _, field := range validatedFields {
-		formErrors.AddField(field, field+" のエラーメッセージ")
+		formErrors.Fields[field] = []string{field + " のエラーメッセージ"}
 	}
 
 	tests := []struct {

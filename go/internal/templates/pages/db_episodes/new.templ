@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/templates"
 	"github.com/annict/annict/go/internal/templates/components"
 	"github.com/annict/annict/go/internal/viewmodel"
@@ -36,7 +35,7 @@ type NewPageData struct {
 	// [Ja] NoEpisodes は作品の no_episodes フラグを共有サブナビへ渡す。
 	NoEpisodes bool
 	CSRFToken  string
-	FormErrors *model.ValidationError
+	FormErrors *viewmodel.FormErrors
 	IsAdmin    bool
 	// ManualCreation is the reason the work's episodes may not be created by hand, resolved
 	// once so the warning and the disabled form agree on it.

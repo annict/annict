@@ -8,16 +8,16 @@ package password
 import (
 	"github.com/a-h/templ"
 	templruntime "github.com/a-h/templ/runtime"
-	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/templates"
 	"github.com/annict/annict/go/internal/templates/components"
+	"github.com/annict/annict/go/internal/viewmodel"
 )
 
 // ResetPageData はパスワードリセット申請ページに渡すデータ構造体です
 type ResetPageData struct {
 	CSRFToken        string
 	TurnstileSiteKey string
-	FormErrors       *model.ValidationError
+	FormErrors       *viewmodel.FormErrors
 	Email            string
 }
 

@@ -3,7 +3,6 @@ package db_works
 import (
 	"context"
 
-	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/templates"
 	"github.com/annict/annict/go/internal/templates/components"
 	"github.com/annict/annict/go/internal/viewmodel"
@@ -21,7 +20,7 @@ type EditPageData struct {
 	// タイトルではなく送信されたタイトルを渡す。
 	WorkTitle   string
 	FormOptions viewmodel.DBWorkFormOptions
-	FormErrors  *model.ValidationError
+	FormErrors  *viewmodel.FormErrors
 	FormInput   *viewmodel.DBWorkFormInput
 }
 

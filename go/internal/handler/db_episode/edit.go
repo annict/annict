@@ -108,7 +108,7 @@ func (h *Handler) renderEdit(w http.ResponseWriter, r *http.Request, episodeID m
 			WorkName:        workName,
 			NoEpisodes:      output.Work.NoEpisodes,
 			CSRFToken:       middleware.GetCSRFToken(r, h.sessionManager),
-			FormErrors:      state.FormErrors,
+			FormErrors:      viewmodel.NewFormErrors(state.FormErrors),
 			FormInput:       formInput,
 			ConflictCurrent: conflictCurrent,
 		}),

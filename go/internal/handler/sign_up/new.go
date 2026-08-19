@@ -44,7 +44,7 @@ func (h *Handler) renderNewForm(w http.ResponseWriter, r *http.Request, status i
 	data := sign_up.NewPageData{
 		CSRFToken:        csrfToken,
 		TurnstileSiteKey: h.cfg.TurnstileSiteKey,
-		FormErrors:       formErrors,
+		FormErrors:       viewmodel.NewFormErrors(formErrors),
 		Email:            email,
 	}
 

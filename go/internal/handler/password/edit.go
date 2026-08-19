@@ -86,7 +86,7 @@ func (h *Handler) renderEditForm(w http.ResponseWriter, r *http.Request, status 
 	data := passwordpages.EditPageData{
 		CSRFToken:  csrfToken,
 		Token:      token,
-		FormErrors: formErrors,
+		FormErrors: viewmodel.NewFormErrors(formErrors),
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")

@@ -76,7 +76,7 @@ func (h *Handler) renderNew(w http.ResponseWriter, r *http.Request, workID model
 			WorkName:       workName,
 			NoEpisodes:     output.Work.NoEpisodes,
 			CSRFToken:      middleware.GetCSRFToken(r, h.sessionManager),
-			FormErrors:     state.FormErrors,
+			FormErrors:     viewmodel.NewFormErrors(state.FormErrors),
 			Rows:           state.Rows,
 			IsAdmin:        middleware.IsAdmin(user),
 			ManualCreation: viewmodel.NewDBEpisodeManualCreationRestriction(output.ManualCreationState),

@@ -58,7 +58,7 @@ func (h *Handler) renderNewForm(w http.ResponseWriter, r *http.Request, status i
 
 	data := sign_up_username.NewPageData{
 		CSRFToken:  csrfToken,
-		FormErrors: formErrors,
+		FormErrors: viewmodel.NewFormErrors(formErrors),
 		Token:      token,
 		Email:      email,
 		Username:   username,

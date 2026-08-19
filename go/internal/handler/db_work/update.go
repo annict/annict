@@ -86,7 +86,7 @@ func (h *Handler) renderEditWithErrors(w http.ResponseWriter, r *http.Request, i
 			// タイトルを持たない。見出しでは代わりに送信されたタイトルで作品を示す。
 			WorkTitle:   input.Title,
 			FormOptions: formOptions,
-			FormErrors:  formErrors,
+			FormErrors:  viewmodel.NewFormErrors(formErrors),
 			FormInput:   viewmodel.NewDBWorkFormInput(input.WorkFormInput),
 		}),
 	)

@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/annict/annict/go/internal/i18n"
-	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/templates"
 	"github.com/annict/annict/go/internal/viewmodel"
 )
@@ -148,9 +147,12 @@ func TestNew_WithErrors(t *testing.T) {
 
 	ctx := i18n.SetLocale(context.Background(), "ja")
 
-	formErrors := model.NewValidationError()
-	formErrors.AddField("rows", "1 行目: 数値話数には数値を入力してください")
-	formErrors.AddField("rows", "2 行目: 表示用話数かタイトルを入力してください")
+	formErrors := &viewmodel.FormErrors{
+		Fields: map[string][]string{"rows": {
+			"1 行目: 数値話数には数値を入力してください",
+			"2 行目: 表示用話数かタイトルを入力してください",
+		}},
+	}
 
 	data := NewPageData{
 		WorkID:     1,
@@ -278,8 +280,9 @@ func TestNew_RestrictionReportedOnceAfterRejectedSubmit(t *testing.T) {
 
 	ctx := i18n.SetLocale(context.Background(), "ja")
 
-	formErrors := model.NewValidationError()
-	formErrors.AddGlobal("話数分のエピソードがすでに登録されているため、エピソードを登録できません")
+	formErrors := &viewmodel.FormErrors{
+		Global: []string{"話数分のエピソードがすでに登録されているため、エピソードを登録できません"},
+	}
 
 	var buf strings.Builder
 	data := NewPageData{

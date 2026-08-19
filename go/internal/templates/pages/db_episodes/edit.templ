@@ -3,7 +3,6 @@ package db_episodes
 import (
 	"context"
 
-	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/templates"
 	"github.com/annict/annict/go/internal/templates/components"
 	"github.com/annict/annict/go/internal/viewmodel"
@@ -30,7 +29,7 @@ type EditPageData struct {
 	// [Ja] NoEpisodes は作品の no_episodes フラグを共有サブナビへ渡す。
 	NoEpisodes bool
 	CSRFToken  string
-	FormErrors *model.ValidationError
+	FormErrors *viewmodel.FormErrors
 	FormInput  viewmodel.DBEpisodeFormInput
 	// ConflictCurrent holds the stored values of an episode someone else wrote between this
 	// form being opened and its submit, and is nil in every other case. The page shows them

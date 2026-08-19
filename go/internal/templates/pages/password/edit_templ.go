@@ -8,16 +8,16 @@ package password
 import (
 	"github.com/a-h/templ"
 	templruntime "github.com/a-h/templ/runtime"
-	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/templates"
 	"github.com/annict/annict/go/internal/templates/components"
+	"github.com/annict/annict/go/internal/viewmodel"
 )
 
 // EditPageData は新しいパスワード入力ページに渡すデータ構造体です
 type EditPageData struct {
 	CSRFToken  string
 	Token      string
-	FormErrors *model.ValidationError
+	FormErrors *viewmodel.FormErrors
 }
 
 // Edit は新しいパスワード入力フォームを表示します

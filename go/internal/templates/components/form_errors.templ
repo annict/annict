@@ -6,8 +6,8 @@ import (
 
 	"github.com/a-h/templ"
 
-	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/templates"
+	"github.com/annict/annict/go/internal/viewmodel"
 )
 
 // FieldErrorID returns the id of the index-th error message element of field. Each message is
@@ -34,7 +34,7 @@ func FieldErrorID(field string, index int) string {
 // [Ja] FieldErrorIDs はフィールドのすべてのエラーメッセージ要素の id を aria-describedby 用に
 // 連結して返す。1 つのフィールドが複数のメッセージを持つことがあり、describedby はその全部を
 // 指す必要がある。先頭だけを指すと残りが読み上げられないため。
-func FieldErrorIDs(formErrors *model.ValidationError, field string) string {
+func FieldErrorIDs(formErrors *viewmodel.FormErrors, field string) string {
 	if formErrors == nil {
 		return ""
 	}
@@ -59,7 +59,7 @@ func FieldErrorIDs(formErrors *model.ValidationError, field string) string {
 // の内側に表示する @ / # の接頭辞など) を持つフィールドの aria-describedby の値を返す。説明が
 // エラーより先に読まれるよう先頭に置き、エラーの id は置き換えではなく後ろに足す。エラー時に
 // 説明を落とすと、値を直すべきそのときに指示が失われるため。
-func FieldDescribedBy(formErrors *model.ValidationError, field string, descriptionID string) string {
+func FieldDescribedBy(formErrors *viewmodel.FormErrors, field string, descriptionID string) string {
 	ids := FieldErrorIDs(formErrors, field)
 	if ids == "" {
 		return descriptionID
@@ -83,16 +83,16 @@ type FormErrorField struct {
 //
 // Fields is optional and holds the fields to summarise in the order the form displays them.
 // Passing it turns on the summary; leaving it empty renders the global messages alone. The
-// order has to come from the caller because ValidationError keeps its field errors in a map,
-// whose iteration order changes between renders.
+// order has to come from the caller because FormErrors keeps its field errors in a map, whose
+// iteration order changes between renders.
 //
 // [Ja] FormErrorsData は FormErrors が描画する内容。
 //
 // Fields は任意で、要約に並べるフィールドをフォームの表示順で持つ。渡すと要約が有効になり、
 // 空のままならグローバルメッセージだけを描画する。順序を呼び出し側から受け取るのは、
-// ValidationError がフィールドエラーを map で保持しており、描画のたびに走査順が変わるため。
+// FormErrors がフィールドエラーを map で保持しており、描画のたびに走査順が変わるため。
 type FormErrorsData struct {
-	Errors *model.ValidationError
+	Errors *viewmodel.FormErrors
 	Fields []FormErrorField
 }
 

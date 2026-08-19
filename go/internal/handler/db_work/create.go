@@ -71,7 +71,7 @@ func (h *Handler) renderNewWithErrors(w http.ResponseWriter, r *http.Request, in
 		db_works.New(db_works.NewPageData{
 			CSRFToken:   csrfToken,
 			FormOptions: formOptions,
-			FormErrors:  formErrors,
+			FormErrors:  viewmodel.NewFormErrors(formErrors),
 			FormInput:   viewmodel.NewDBWorkFormInput(input.WorkFormInput),
 		}),
 	)
