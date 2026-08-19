@@ -81,6 +81,14 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 
 	workName := viewmodel.DBEpisodeListWorkName(output.Work.Title)
 
+	// The list is public, so the viewer's role decides which of the links and actions the page
+	// offers. It is resolved once here because the heading's create link and the per-row action
+	// column read the same answer.
+	//
+	// [Ja] 一覧は公開のため、閲覧者のロールがページの出すリンク・操作を決める。見出しの作成
+	// リンクと行ごとの操作列が同じ答えを読むため、ここで 1 度だけ解決する。
+	user := middleware.GetUserFromContext(ctx)
+
 	meta := viewmodel.DefaultPageMeta(ctx, h.cfg, indexPath(output.Work.ID, int64(page)))
 	setIndexTitle(ctx, &meta, workName, page)
 
@@ -96,14 +104,11 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 				output.PublishedEpisodeCount,
 				output.MaxGeneratableEpisodeNumber,
 			),
-			Episodes:   viewmodel.NewDBEpisodeListItems(output.Episodes),
-			Pagination: pagination,
-			// The list is public, so the viewer's role is resolved to decide whether the
-			// link into the bulk-create form is shown.
-			//
-			// [Ja] 一覧は公開のため、閲覧者のロールを解決して一括作成フォームへの導線を
-			// 出し分ける。
-			IsCommitter: middleware.IsCommitter(middleware.GetUserFromContext(ctx)),
+			Episodes:    viewmodel.NewDBEpisodeListItems(output.Episodes),
+			Pagination:  pagination,
+			IsCommitter: middleware.IsCommitter(user),
+			IsAdmin:     middleware.IsAdmin(user),
+			CSRFToken:   middleware.GetCSRFToken(r, h.sessionManager),
 		}),
 	)
 	var body bytes.Buffer
