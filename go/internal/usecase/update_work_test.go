@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"testing"
 
 	"github.com/annict/annict/go/internal/model"
@@ -35,16 +36,48 @@ func newUpdateWorkUsecase(db *sql.DB) *UpdateWorkUsecase {
 	)
 }
 
+// readWorkVersion returns the version a work's edit form would carry, which a submit has to
+// state to be accepted. A work that does not exist has no version to read; the null sentinel
+// stands in so a submit for one still passes validation and is refused for the missing work
+// rather than for a missing version.
+//
+// [Ja] readWorkVersion は作品の編集フォームが運ぶ版を返す。送信が受理されるには、この版を名乗る
+// 必要がある。存在しない作品には読むべき版が無いため、null のセンチネルで代用する。そのような
+// 作品への送信もバリデーションを通り、版の欠落ではなく作品の不在で却下されるようにするため。
+func readWorkVersion(t *testing.T, db *sql.DB, workID model.WorkID) string {
+	t.Helper()
+
+	var updatedAt sql.NullTime
+	err := db.QueryRow(`SELECT updated_at FROM works WHERE id = $1`, int64(workID)).Scan(&updatedAt)
+	if errors.Is(err, sql.ErrNoRows) {
+		return validator.FormNullVersion
+	}
+	if err != nil {
+		t.Fatalf("作品の版の読み込みに失敗: %v", err)
+	}
+	if !updatedAt.Valid {
+		return validator.FormNullVersion
+	}
+
+	return updatedAt.Time.UTC().Format(validator.FormVersionLayout)
+}
+
 // validUpdateWorkInput returns a form input that passes DBWorkCreateValidator with
 // values that differ from validCreateWorkInput, so a test can observe the update taking
-// effect (media TV instead of OVA, standalone flipped off, a different episode count).
+// effect (media TV instead of OVA, standalone flipped off, a different episode count). It
+// carries the version the work holds now, which is what an editor's form would have been
+// opened on.
 //
 // [Ja] validUpdateWorkInput は DBWorkCreateValidator を通過し、validCreateWorkInput とは
 // 異なる値のフォーム入力を返す。更新が反映されたことをテストで観測できるようにする
-// (メディアが OVA でなく TV、standalone を off に反転、話数も別の値)。
-func validUpdateWorkInput(workID model.WorkID, title string) UpdateWorkInput {
+// (メディアが OVA でなく TV、standalone を off に反転、話数も別の値)。版は作品が現在持つもの
+// を運ぶ。編集者のフォームが開かれていたであろう版である。
+func validUpdateWorkInput(t *testing.T, db *sql.DB, workID model.WorkID, title string) UpdateWorkInput {
+	t.Helper()
+
 	return UpdateWorkInput{
-		WorkID: workID,
+		WorkID:    workID,
+		UpdatedAt: readWorkVersion(t, db, workID),
 		WorkFormInput: WorkFormInput{
 			Title:                 title,
 			TitleKana:             "こうしんてすとあにめ",
@@ -101,7 +134,7 @@ func TestUpdateWorkUsecase_Execute_UpdatesWorkAnimeAndClassification(t *testing.
 	workID := createMappedWork(t, db, "更新前アニメ_"+t.Name())
 
 	newTitle := "更新後アニメ_" + t.Name()
-	if _, err := uc.Execute(context.Background(), validUpdateWorkInput(workID, newTitle)); err != nil {
+	if _, err := uc.Execute(context.Background(), validUpdateWorkInput(t, db, workID, newTitle)); err != nil {
 		t.Fatalf("Execute() error = %v", err)
 	}
 
@@ -175,7 +208,7 @@ func TestUpdateWorkUsecase_Execute_ProducesSyncConsistentMapping(t *testing.T) {
 	uc := newUpdateWorkUsecase(db)
 
 	workID := createMappedWork(t, db, "更新前アニメ_"+t.Name())
-	if _, err := uc.Execute(context.Background(), validUpdateWorkInput(workID, "更新後アニメ_"+t.Name())); err != nil {
+	if _, err := uc.Execute(context.Background(), validUpdateWorkInput(t, db, workID, "更新後アニメ_"+t.Name())); err != nil {
 		t.Fatalf("Execute() error = %v", err)
 	}
 
@@ -206,7 +239,7 @@ func TestUpdateWorkUsecase_Execute_ReconcilesSatelliteRows(t *testing.T) {
 	ctx := context.Background()
 
 	workID := createMappedWork(t, db, "別表更新前_"+t.Name())
-	if _, err := uc.Execute(ctx, validUpdateWorkInput(workID, "別表更新後_"+t.Name())); err != nil {
+	if _, err := uc.Execute(ctx, validUpdateWorkInput(t, db, workID, "別表更新後_"+t.Name())); err != nil {
 		t.Fatalf("Execute() error = %v", err)
 	}
 
@@ -293,7 +326,7 @@ func TestUpdateWorkUsecase_Execute_ProducesSyncConsistentSatellites(t *testing.T
 	uc := newUpdateWorkUsecase(db)
 
 	workID := createMappedWork(t, db, "別表整合更新前_"+t.Name())
-	if _, err := uc.Execute(context.Background(), validUpdateWorkInput(workID, "別表整合更新後_"+t.Name())); err != nil {
+	if _, err := uc.Execute(context.Background(), validUpdateWorkInput(t, db, workID, "別表整合更新後_"+t.Name())); err != nil {
 		t.Fatalf("Execute() error = %v", err)
 	}
 
@@ -349,7 +382,7 @@ func TestUpdateWorkUsecase_Execute_PreservesNonFormAnimeColumns(t *testing.T) {
 		t.Fatalf("animes の前提更新に失敗: %v", err)
 	}
 
-	if _, err := uc.Execute(ctx, validUpdateWorkInput(workID, "更新後アニメ_"+t.Name())); err != nil {
+	if _, err := uc.Execute(ctx, validUpdateWorkInput(t, db, workID, "更新後アニメ_"+t.Name())); err != nil {
 		t.Fatalf("Execute() error = %v", err)
 	}
 
@@ -401,7 +434,7 @@ func TestUpdateWorkUsecase_Execute_SkipsAnimeWriteForUnmappedWork(t *testing.T) 
 	}
 
 	newTitle := "未マッピング更新後_" + t.Name()
-	if _, err := uc.Execute(ctx, validUpdateWorkInput(workID, newTitle)); err != nil {
+	if _, err := uc.Execute(ctx, validUpdateWorkInput(t, db, workID, newTitle)); err != nil {
 		t.Fatalf("Execute() error = %v", err)
 	}
 
@@ -425,7 +458,7 @@ func TestUpdateWorkUsecase_Execute_ReturnsValidationError(t *testing.T) {
 
 	workID := createMappedWork(t, db, "更新前アニメ_"+t.Name())
 
-	input := validUpdateWorkInput(workID, "更新後アニメ_"+t.Name())
+	input := validUpdateWorkInput(t, db, workID, "更新後アニメ_"+t.Name())
 	input.Title = "" // required
 
 	output, err := uc.Execute(context.Background(), input)
@@ -450,7 +483,7 @@ func TestUpdateWorkUsecase_Execute_ReturnsNotFoundForMissingWork(t *testing.T) {
 	// An id far above any real works.id never matches a row.
 	//
 	// [Ja] 実在する works.id より遥かに大きい id はどの行にも一致しない。
-	output, err := uc.Execute(context.Background(), validUpdateWorkInput(model.WorkID(1<<62), "存在しない_"+t.Name()))
+	output, err := uc.Execute(context.Background(), validUpdateWorkInput(t, db, model.WorkID(1<<62), "存在しない_"+t.Name()))
 	if output != nil {
 		t.Errorf("output = %+v, want nil for a missing work", output)
 	}
@@ -458,6 +491,132 @@ func TestUpdateWorkUsecase_Execute_ReturnsNotFoundForMissingWork(t *testing.T) {
 	if ae == nil || ae.Code != model.AppErrCodeResourceNotFound {
 		t.Fatalf("expected AppErrCodeResourceNotFound, got %v", err)
 	}
+}
+
+// TestUpdateWorkUsecase_Execute_RejectsStaleVersion covers two editors submitting from the same
+// form: the second submit states a version the row has moved past, and is refused as a conflict
+// rather than overwriting the first editor's values.
+//
+// [Ja] TestUpdateWorkUsecase_Execute_RejectsStaleVersion は 2 人の編集者が同じフォームから送信
+// する場合を検証する。2 件目は行が既に進んだ版を名乗るため、1 人目の値を上書きせず競合として
+// 却下される。
+func TestUpdateWorkUsecase_Execute_RejectsStaleVersion(t *testing.T) {
+	t.Parallel()
+
+	db := testutil.GetTestDB()
+	uc := newUpdateWorkUsecase(db)
+
+	workID := createMappedWork(t, db, "版競合前アニメ_"+t.Name())
+
+	// Both editors open the form on the same version, and the first submit advances it.
+	//
+	// [Ja] 2 人の編集者は同じ版でフォームを開き、1 件目の送信がその版を進める。
+	shared := validUpdateWorkInput(t, db, workID, "先に保存したタイトル_"+t.Name())
+	if _, err := uc.Execute(context.Background(), shared); err != nil {
+		t.Fatalf("1 件目の Execute() error = %v", err)
+	}
+
+	second := shared
+	second.Title = "後から届いたタイトル_" + t.Name()
+	output, err := uc.Execute(context.Background(), second)
+	if output != nil {
+		t.Errorf("output = %+v, want nil on a version conflict", output)
+	}
+	ae := model.AsAppError(err)
+	if ae == nil || ae.Code != model.AppErrCodeConflict {
+		t.Fatalf("expected AppErrCodeConflict, got %v", err)
+	}
+
+	if work := reloadSyncWork(t, db, workID); work.Title != shared.Title {
+		t.Errorf("work.Title = %q, want %q (後の送信は上書きしない)", work.Title, shared.Title)
+	}
+}
+
+// TestUpdateWorkUsecase_Execute_RejectsMissingVersion covers a submit that states no version at
+// all. It is refused before anything is written, so a request assembled without the hidden
+// field cannot apply itself to whatever the row holds at that moment.
+//
+// [Ja] TestUpdateWorkUsecase_Execute_RejectsMissingVersion は版をまったく示さない送信を検証する。
+// 何も書かれる前に却下されるため、hidden フィールド無しで組み立てられた要求が、その時点の行の
+// 内容に対して適用されることはない。
+func TestUpdateWorkUsecase_Execute_RejectsMissingVersion(t *testing.T) {
+	t.Parallel()
+
+	db := testutil.GetTestDB()
+	uc := newUpdateWorkUsecase(db)
+
+	title := "版なし送信アニメ_" + t.Name()
+	workID := createMappedWork(t, db, title)
+
+	input := validUpdateWorkInput(t, db, workID, "版なし更新後_"+t.Name())
+	input.UpdatedAt = ""
+	output, err := uc.Execute(context.Background(), input)
+	if output != nil {
+		t.Errorf("output = %+v, want nil on a missing version", output)
+	}
+	ve := model.AsValidationError(err)
+	if ve == nil {
+		t.Fatalf("expected *model.ValidationError, got %v", err)
+	}
+	if len(ve.Global) == 0 {
+		t.Error("expected a global error stating the version could not be read")
+	}
+
+	if work := reloadSyncWork(t, db, workID); work.Title != title {
+		t.Errorf("work.Title = %q, want %q (版を示さない送信は適用されない)", work.Title, title)
+	}
+}
+
+// TestUpdateWorkUsecase_Execute_MatchesNullVersion covers a work whose updated_at is NULL, which
+// the shared column allows. The null sentinel is a version of its own: the first submit stating
+// it is applied and advances the column, so a second submit stating the same sentinel conflicts
+// instead of overwriting the first.
+//
+// [Ja] TestUpdateWorkUsecase_Execute_MatchesNullVersion は updated_at が NULL の作品を検証する
+// (共有カラムはこれを許す)。null のセンチネルはそれ自体が 1 つの版であり、これを名乗る最初の送信は
+// 適用されてカラムを進める。したがって同じセンチネルを名乗る 2 件目は、1 件目を上書きせず競合する。
+func TestUpdateWorkUsecase_Execute_MatchesNullVersion(t *testing.T) {
+	t.Parallel()
+
+	db := testutil.GetTestDB()
+	uc := newUpdateWorkUsecase(db)
+
+	workID := createMappedWork(t, db, "版NULLアニメ_"+t.Name())
+	if _, err := db.Exec(`UPDATE works SET updated_at = NULL WHERE id = $1`, int64(workID)); err != nil {
+		t.Fatalf("updated_at の NULL 化に失敗: %v", err)
+	}
+
+	input := validUpdateWorkInput(t, db, workID, "版NULL更新後_"+t.Name())
+	if input.UpdatedAt != validator.FormNullVersion {
+		t.Fatalf("UpdatedAt = %q, want %q", input.UpdatedAt, validator.FormNullVersion)
+	}
+	if _, err := uc.Execute(context.Background(), input); err != nil {
+		t.Fatalf("Execute() error = %v", err)
+	}
+	if work := reloadSyncWork(t, db, workID); work.Title != input.Title {
+		t.Errorf("work.Title = %q, want %q", work.Title, input.Title)
+	}
+
+	second := input
+	second.Title = "版NULL二件目_" + t.Name()
+	ae := model.AsAppError(mustExecuteError(t, uc, second))
+	if ae == nil || ae.Code != model.AppErrCodeConflict {
+		t.Fatalf("expected AppErrCodeConflict for the second submit from the NULL version")
+	}
+}
+
+// mustExecuteError runs a submit expected to fail and returns its error.
+//
+// [Ja] mustExecuteError は失敗が期待される送信を実行し、そのエラーを返す。
+func mustExecuteError(t *testing.T, uc *UpdateWorkUsecase, input UpdateWorkInput) error {
+	t.Helper()
+
+	output, err := uc.Execute(context.Background(), input)
+	if err == nil {
+		t.Fatalf("Execute() = %+v, want an error", output)
+	}
+
+	return err
 }
 
 // TestUpdateWorkUsecase_Execute_TitleUniquenessExcludesItself covers the self-exclusion of
@@ -481,7 +640,7 @@ func TestUpdateWorkUsecase_Execute_TitleUniquenessExcludesItself(t *testing.T) {
 	//
 	// [Ja] 他のフィールドを変えつつタイトルはそのまま送る。タイトル以外を編集したときに
 	// 送信される内容そのもの。
-	if _, err := uc.Execute(context.Background(), validUpdateWorkInput(workID, title)); err != nil {
+	if _, err := uc.Execute(context.Background(), validUpdateWorkInput(t, db, workID, title)); err != nil {
 		t.Fatalf("Execute() error = %v", err)
 	}
 }
@@ -501,7 +660,7 @@ func TestUpdateWorkUsecase_Execute_RejectsDuplicateTitle(t *testing.T) {
 	createMappedWork(t, db, existingTitle)
 	workID := createMappedWork(t, db, "改名元アニメ_"+t.Name())
 
-	output, err := uc.Execute(context.Background(), validUpdateWorkInput(workID, existingTitle))
+	output, err := uc.Execute(context.Background(), validUpdateWorkInput(t, db, workID, existingTitle))
 	if output != nil {
 		t.Errorf("output = %+v, want nil on validation error", output)
 	}

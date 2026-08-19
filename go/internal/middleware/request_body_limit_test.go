@@ -104,6 +104,13 @@ func TestRequestBodyLimitMiddleware_ExceedsLimit_ContentLength(t *testing.T) {
 	if rr.Code != http.StatusRequestEntityTooLarge {
 		t.Errorf("Content-Length超過: ステータスコード = %d, want %d", rr.Code, http.StatusRequestEntityTooLarge)
 	}
+
+	// The rejection is written ahead of the reverse proxy, out of the SecurityHeaders
+	// middleware's reach, so this middleware sets the headers itself.
+	//
+	// [Ja] 本拒否はリバースプロキシより前で書き出され、SecurityHeaders ミドルウェアの及ばない
+	// 位置にあるため、本ミドルウェアが自身でヘッダーを設定する。
+	assertSecurityHeaders(t, rr.Header())
 }
 
 func TestRequestBodyLimitMiddleware_ExceedsLimit_ReadBody(t *testing.T) {

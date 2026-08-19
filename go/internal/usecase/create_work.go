@@ -52,7 +52,12 @@ type CreateWorkOutput struct {
 }
 
 func (uc *CreateWorkUsecase) Execute(ctx context.Context, input CreateWorkInput) (*CreateWorkOutput, error) {
-	if err := uc.validator.Validate(ctx, input.toValidatorInput(nil)); err != nil {
+	// The create flow states no version: there is no stored row a submit could be stale
+	// against, so the validator returns none and the discarded value is not a dropped result.
+	//
+	// [Ja] 作成フローは版を示さない。送信が古くなり得る保存済みの行が無いため、バリデーターは
+	// 版を返さず、捨てている戻り値は取りこぼしではない。
+	if _, err := uc.validator.Validate(ctx, input.toValidatorInput(nil, nil)); err != nil {
 		return nil, err
 	}
 

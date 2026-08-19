@@ -410,13 +410,10 @@ func TestWorkRepository_ListForDB(t *testing.T) {
 		testutil.NewWorkBuilder(t, tx).WithTitle("エピソード不要").WithNoEpisodes(true).Build()
 
 		// A work whose only episode is archived (unpublished_at) counts as having no
-		// episodes, matching the Rails scope Work.with_no_episodes. The dormant
-		// episodes.status of such a row stays 'published', so reading it would hide
-		// the work from this filter.
+		// episodes, matching the Rails scope Work.with_no_episodes.
 		//
 		// [Ja] 唯一のエピソードが非公開 (unpublished_at) の作品は、Rails の
-		// Work.with_no_episodes と同じくエピソードが無い作品として扱う。この行の休眠
-		// episodes.status は 'published' のままなので、それを読むと本フィルタから漏れる。
+		// Work.with_no_episodes と同じくエピソードが無い作品として扱う。
 		workUnpublishedEp := testutil.NewWorkBuilder(t, tx).WithTitle("非公開エピソードのみ").Build()
 		testutil.NewEpisodeBuilder(t, tx, workUnpublishedEp).WithUnpublishedAt(time.Now()).Build()
 
@@ -425,17 +422,6 @@ func TestWorkRepository_ListForDB(t *testing.T) {
 		// [Ja] 唯一のエピソードが削除済み (deleted_at) の作品も、エピソードが無い作品として扱う。
 		workDeletedEp := testutil.NewWorkBuilder(t, tx).WithTitle("削除エピソードのみ").Build()
 		testutil.NewEpisodeBuilder(t, tx, workDeletedEp).WithDeletedAt(time.Now()).Build()
-
-		// A live episode whose dormant status alone says 'deleted' still counts as an
-		// episode here, since the filter reads the timestamps and not episodes.status.
-		//
-		// [Ja] 休眠 status だけが 'deleted' の生きたエピソードも、ここではエピソードとして
-		// 数える (絞り込みが読むのは timestamps であり episodes.status ではないため)。
-		workDormantStatusEp := testutil.NewWorkBuilder(t, tx).WithTitle("休眠 status だけ削除").Build()
-		dormantStatusEpID := testutil.NewEpisodeBuilder(t, tx, workDormantStatusEp).Build()
-		if _, err := tx.Exec(`UPDATE episodes SET status = 'deleted' WHERE id = $1`, int64(dormantStatusEpID)); err != nil {
-			t.Fatalf("休眠 status の更新に失敗: %v", err)
-		}
 
 		repo := repository.NewWorkRepository(query.New(db)).WithTx(tx)
 		items, err := repo.ListForDB(ctx, repository.DBWorkListParams{
@@ -457,7 +443,7 @@ func TestWorkRepository_ListForDB(t *testing.T) {
 				t.Errorf("work %q should be returned", title)
 			}
 		}
-		for _, title := range []string{"エピソードあり", "エピソード不要", "休眠 status だけ削除"} {
+		for _, title := range []string{"エピソードあり", "エピソード不要"} {
 			if titles[title] {
 				t.Errorf("work %q should not be returned", title)
 			}
@@ -1232,6 +1218,32 @@ func TestWorkRepository_GetForEditByID(t *testing.T) {
 		}
 		if work.NumberFormatID != nil {
 			t.Errorf("NumberFormatID = %v, want nil", work.NumberFormatID)
+		}
+		// The edit form carries updated_at back as the version its submit is made against,
+		// so the loader has to supply it.
+		//
+		// [Ja] 編集フォームは updated_at を、送信が前提とする版として持ち帰る。そのため
+		// ローダーはこれを供給する必要がある。
+		if work.UpdatedAt == nil {
+			t.Error("UpdatedAt = nil, want the stored timestamp")
+		}
+	})
+
+	t.Run("updated_at が NULL の作品は版を持たない", func(t *testing.T) {
+		nullVersionID := testutil.NewWorkBuilder(t, tx).WithTitle("版NULLロードテスト").Build()
+		if _, err := tx.Exec(`UPDATE works SET updated_at = NULL WHERE id = $1`, int64(nullVersionID)); err != nil {
+			t.Fatalf("updated_at の NULL 化に失敗: %v", err)
+		}
+
+		work, err := repo.GetForEditByID(ctx, nullVersionID)
+		if err != nil {
+			t.Fatalf("GetForEditByID() error = %v", err)
+		}
+		if work == nil {
+			t.Fatal("work should not be nil")
+		}
+		if work.UpdatedAt != nil {
+			t.Errorf("UpdatedAt = %v, want nil", work.UpdatedAt)
 		}
 	})
 

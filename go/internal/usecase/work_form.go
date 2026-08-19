@@ -52,18 +52,20 @@ type WorkFormInput struct {
 
 // toValidatorInput projects the form values onto the validator input. Create and update
 // validate the identical set of fields, so both go through this single mapping.
-// excludeWorkID is the only difference between the two flows: update passes the work being
-// edited so the title uniqueness check does not match it against itself, create passes nil.
-// Taking it as an argument makes both call sites state which flow they are.
+// excludeWorkID and updatedAt are what differ between the two flows: update passes the work
+// being edited so the title uniqueness check does not match it against itself, along with the
+// version its form carries, and create passes nil for both. Taking them as arguments makes
+// both call sites state which flow they are.
 //
 // [Ja] toValidatorInput はフォーム値をバリデーター入力に射影する。作成と更新は同一の
-// フィールド集合を検証するため、双方ともこの単一の写像を通す。両フローの唯一の違いが
-// excludeWorkID で、更新は編集中の work を渡してタイトルの一意性検査が自分自身に一致しない
-// ようにし、作成は nil を渡す。引数で受け取ることで、両方の呼び出し側がどちらのフローかを
-// 明示する。
-func (in WorkFormInput) toValidatorInput(excludeWorkID *model.WorkID) validator.DBWorkCreateValidatorInput {
+// フィールド集合を検証するため、双方ともこの単一の写像を通す。両フローで異なるのは
+// excludeWorkID と updatedAt で、更新は編集中の work を渡してタイトルの一意性検査が自分自身に
+// 一致しないようにし、併せてそのフォームが運ぶ版も渡す。作成はどちらにも nil を渡す。引数で
+// 受け取ることで、両方の呼び出し側がどちらのフローかを明示する。
+func (in WorkFormInput) toValidatorInput(excludeWorkID *model.WorkID, updatedAt *string) validator.DBWorkCreateValidatorInput {
 	return validator.DBWorkCreateValidatorInput{
 		ExcludeWorkID:         excludeWorkID,
+		UpdatedAt:             updatedAt,
 		Title:                 in.Title,
 		TitleKana:             in.TitleKana,
 		TitleAlter:            in.TitleAlter,

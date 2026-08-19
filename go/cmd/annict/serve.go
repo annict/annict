@@ -43,7 +43,7 @@ import (
 	"github.com/annict/annict/go/internal/handler/supporters_portal"
 	"github.com/annict/annict/go/internal/handler/tracking_heatmap"
 	stripewebhook "github.com/annict/annict/go/internal/handler/webhooks/stripe"
-	"github.com/annict/annict/go/internal/i18n"
+	"github.com/annict/annict/go/internal/httperror"
 	"github.com/annict/annict/go/internal/image"
 	authMiddleware "github.com/annict/annict/go/internal/middleware"
 	"github.com/annict/annict/go/internal/query"
@@ -356,6 +356,17 @@ func runServe() {
 	// チェーンをリバースプロキシの内側に置くことで、Rails 版へプロキシされる
 	// リクエストが Go 版の Sentry トランザクションに乗らないようにする。
 
+	// SecurityHeaders comes first in this section so that it covers every response the Go app
+	// renders, including the static files and the responses the middleware below produce
+	// (Recoverer's 500, the CSRF 403). It cannot move outside the reverse proxy: Rails already
+	// sends the same headers, and httputil.ReverseProxy would append rather than replace them.
+	//
+	// [Ja] SecurityHeaders は本セクションの先頭に置き、Go が描画する全レスポンス (静的ファイルの
+	// 配信と、以下のミドルウェアが返す Recoverer の 500 や CSRF の 403 を含む) を覆う。
+	// リバースプロキシの外側へは動かせない。Rails は同じヘッダーを既に送っており、
+	// httputil.ReverseProxy はそれを上書きではなく追記するため。
+	r.Use(authMiddleware.SecurityHeaders)
+
 	// Recoverer must be registered before sentryhttp (= outer in the chain) so
 	// that the re-panic from sentryhttp (Repanic: true) is caught here and a
 	// 500 response is returned. The official sentryhttp README also says to
@@ -396,7 +407,7 @@ func runServe() {
 	sentryUserContextMW := authMiddleware.NewSentryUserContextMiddleware()
 	r.Use(sentryUserContextMW.Middleware)
 
-	r.Use(i18n.Middleware) // I18nミドルウェアを追加（ユーザーのlocaleを考慮）
+	r.Use(authMiddleware.I18n) // I18nミドルウェアを追加（ユーザーのlocaleを考慮）
 
 	// 現在パスミドルウェアを追加（サイドバーの現在ページハイライト用に aria-current を付与）
 	r.Use(templates.CurrentPathMiddleware)
@@ -559,6 +570,10 @@ func runServe() {
 
 	// ルート設定
 	r.Get("/", homeHandler.Show)
+	r.Get(httperror.NotFoundPath, httperror.NotFound)
+	r.Get(httperror.ForbiddenPath, httperror.Forbidden)
+	r.Get(httperror.InvalidCSRFTokenPath, httperror.InvalidCSRFToken)
+	r.Get(httperror.InternalServerErrorPath, httperror.InternalServerError)
 	r.Get("/health", healthHandler.Show)
 	r.Get("/manifest.json", manifestHandler.Show)
 	r.Get("/works/popular", popularWorkHandler.Index)
@@ -653,25 +668,32 @@ func runServe() {
 	})
 
 	// A work's episode list is public, matching the Rails Db::EpisodesController#index,
-	// which is the one action there without authenticate_user!. Creating, editing and
-	// archiving episodes requires the committer role, so the bulk-create form, its submit,
-	// the edit form with its submit and the archive confirmation with its submit are grouped
-	// behind RequireCommitter.
+	// which is the one action there without authenticate_user!. Creating, editing, archiving
+	// and re-publishing episodes requires the committer role, so the bulk-create form, its
+	// submit, the edit form with its submit and the archive confirmation with its submit and
+	// the re-publish are grouped behind RequireCommitter. Deleting an episode is admin-only
+	// (ADR 0009 splits archived=committer / deleted=admin, which is also the split the Rails
+	// EpisodePolicy makes), so it is gated separately behind RequireAdmin.
 	//
 	// [Ja] 作品のエピソード一覧は公開。Rails の Db::EpisodesController#index が同コントローラ
 	// で唯一 authenticate_user! を持たないアクションであることに合わせている。エピソードの作成・
-	// 編集・非公開は committer ロールを要するため、一括作成フォームとその送信、編集フォームとその
-	// 送信、および非公開の確認とその送信は RequireCommitter でまとめてゲートする。
+	// 編集・非公開・再公開は committer ロールを要するため、一括作成フォームとその送信、編集
+	// フォームとその送信、および非公開の確認とその送信・再公開は RequireCommitter でまとめて
+	// ゲートする。エピソードの削除は admin 専用のため (ADR 0009 で archived=committer /
+	// deleted=admin に権限分離。Rails の EpisodePolicy が行う分割とも同じ)、RequireAdmin で
+	// 別途ゲートする。
 	episodeRepo := repository.NewEpisodeRepository(queries)
 	getDBEpisodesUC := usecase.NewGetDBEpisodesUsecase(workRepo, episodeRepo)
 	getDBEpisodeNewUC := usecase.NewGetDBEpisodeNewUsecase(workRepo)
 	createEpisodesUC := usecase.NewCreateEpisodesUsecase(db, workRepo, episodeRepo, animeRepo, animeClassificationRepo, validator.NewDBEpisodeCreateValidator())
 	getDBEpisodeEditUC := usecase.NewGetDBEpisodeEditUsecase(episodeRepo)
 	updateEpisodeUC := usecase.NewUpdateEpisodeUsecase(db, episodeRepo, animeRepo, animeClassificationRepo, validator.NewDBEpisodeUpdateValidator())
-	dbEpisodeHandler := db_episode.NewHandler(cfg, sessionManager, flashMgr, getDBEpisodesUC, getDBEpisodeNewUC, createEpisodesUC, getDBEpisodeEditUC, updateEpisodeUC)
+	deleteEpisodeUC := usecase.NewDeleteEpisodeUsecase(db, episodeRepo, animeRepo)
+	dbEpisodeHandler := db_episode.NewHandler(cfg, sessionManager, flashMgr, getDBEpisodesUC, getDBEpisodeNewUC, createEpisodesUC, getDBEpisodeEditUC, updateEpisodeUC, deleteEpisodeUC)
 	getDBEpisodeArchiveNewUC := usecase.NewGetDBEpisodeArchiveNewUsecase(episodeRepo)
 	archiveEpisodeUC := usecase.NewArchiveEpisodeUsecase(db, episodeRepo, animeRepo)
-	dbEpisodeArchiveHandler := db_episode_archive.NewHandler(cfg, sessionManager, flashMgr, getDBEpisodeArchiveNewUC, archiveEpisodeUC)
+	unarchiveEpisodeUC := usecase.NewUnarchiveEpisodeUsecase(db, episodeRepo, animeRepo)
+	dbEpisodeArchiveHandler := db_episode_archive.NewHandler(cfg, sessionManager, flashMgr, getDBEpisodeArchiveNewUC, archiveEpisodeUC, unarchiveEpisodeUC)
 	r.Get("/db/works/{work_id}/episodes", dbEpisodeHandler.Index)
 	r.Group(func(r chi.Router) {
 		r.Use(authMiddleware.RequireCommitter)
@@ -681,6 +703,11 @@ func runServe() {
 		r.Patch("/db/episodes/{id}", dbEpisodeHandler.Update)
 		r.Get("/db/episodes/{id}/archive/new", dbEpisodeArchiveHandler.New)
 		r.Post("/db/episodes/{id}/archive", dbEpisodeArchiveHandler.Create)
+		r.Delete("/db/episodes/{id}/archive", dbEpisodeArchiveHandler.Delete)
+	})
+	r.Group(func(r chi.Router) {
+		r.Use(authMiddleware.RequireAdmin)
+		r.Delete("/db/episodes/{id}", dbEpisodeHandler.Delete)
 	})
 
 	// iCalendar配信

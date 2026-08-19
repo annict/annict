@@ -16,6 +16,8 @@ import (
 	"github.com/annict/annict/go/internal/auth"
 	"github.com/annict/annict/go/internal/clientip"
 	"github.com/annict/annict/go/internal/config"
+	"github.com/annict/annict/go/internal/httperror"
+	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/model"
 	annictSentry "github.com/annict/annict/go/internal/sentry"
 	"github.com/annict/annict/go/internal/session"
@@ -84,6 +86,19 @@ var goHandledPaths = []string{
 	"/supporters",       // サポーターページ
 	"/webhooks/stripe",  // Stripe Webhook受信
 	"/ics",              // iCalendar配信（Apple カレンダー互換パス）
+}
+
+// Standalone error pages Go serves, matched exactly by isGoHandledPath. Registered as routes in
+// cmd/annict/serve.go, and reached when a rejected HTMX request is told to navigate to one.
+//
+// [Ja] Go が配信する全画面エラーページ。isGoHandledPath が完全一致で判定する。
+// cmd/annict/serve.go でルートとして登録し、拒否された HTMX リクエストに遷移を指示したときに
+// 到達する。
+var goHandledErrorPaths = []string{
+	httperror.NotFoundPath,
+	httperror.ForbiddenPath,
+	httperror.InvalidCSRFTokenPath,
+	httperror.InternalServerErrorPath,
 }
 
 // NewReverseProxyMiddleware は新しいReverseProxyMiddlewareを作成
@@ -211,17 +226,23 @@ func NewReverseProxyMiddleware(railsURL string, cfg *config.Config, featureFlagR
 			"remote_addr", r.RemoteAddr,
 		)
 
-		// 502エラーテンプレートをレンダリング
-		if err := render502Error(w, r, cfg); err != nil {
-			// テンプレートのレンダリングに失敗した場合は、シンプルなテキストを返す
-			slog.ErrorContext(ctx, "502エラーテンプレートのレンダリングに失敗",
-				"error", err,
-			)
-			w.Header().Set("Content-Type", "text/html; charset=utf-8")
-			w.WriteHeader(http.StatusBadGateway)
-			// フォールバックエラーレスポンスなので、書き込みエラーは無視
-			_, _ = w.Write([]byte("<html><body><h1>502 Bad Gateway</h1><p>Service Unavailable</p></body></html>"))
-		}
+		// The page below is rendered by Go, not relayed from Rails, so it carries the same
+		// headers as the rest of the Go responses. The SecurityHeaders middleware cannot
+		// supply them: it sits inside this middleware and the request never got that far.
+		//
+		// [Ja] 以下のページは Rails から中継したものではなく Go が描画するため、他の Go の
+		// レスポンスと同じヘッダーを付ける。SecurityHeaders ミドルウェアは本ミドルウェアの
+		// 内側にあり、リクエストはそこまで到達していないため、付与を任せられない。
+		setSecurityHeaders(w)
+
+		// This handler runs at the proxy layer, outside the Go middleware chain, so no
+		// locale has been resolved onto the context yet. Resolve it here so the shared
+		// error page speaks the reader's language like the pages served from the chain.
+		//
+		// [Ja] 本ハンドラーは Go のミドルウェアチェーンの外側であるプロキシ層で動くため、
+		// コンテキストにはまだロケールが載っていない。ここで解決し、共通エラーページが
+		// チェーンの内側で配信されるページと同じく読み手の言語で表示されるようにする。
+		httperror.BadGateway(w, r.WithContext(i18n.SetLocale(ctx, resolveLocale(r))))
 	}
 
 	return &ReverseProxyMiddleware{
@@ -423,6 +444,17 @@ func (m *ReverseProxyMiddleware) isFeatureFlagEnabled(r *http.Request, deviceTok
 
 // isGoHandledPath はGo版で処理するパスかどうかを判定
 func (m *ReverseProxyMiddleware) isGoHandledPath(path string) bool {
+	// goHandledPaths matches by prefix, which would hand every /errors/... path to Go.
+	// Go owns only the error pages listed below, so they are matched exactly.
+	//
+	// [Ja] goHandledPaths は前方一致で判定するため、一覧に入れると /errors 配下すべてを
+	// Go 側が引き取ることになる。Go が持つエラーページは下記の一覧だけなので完全一致で判定する。
+	for _, p := range goHandledErrorPaths {
+		if path == p {
+			return true
+		}
+	}
+
 	for _, p := range goHandledPaths {
 		if strings.HasPrefix(path, p) {
 			return true
@@ -469,75 +501,4 @@ func (m *ReverseProxyMiddleware) isAPISubdomain(host string) bool {
 	}
 
 	return false
-}
-
-// render502Error は502エラーページをレンダリング
-// 注: リバースプロキシのエラーハンドラーはi18nミドルウェアより前に実行されるため、
-// シンプルなHTMLを返す。
-func render502Error(w http.ResponseWriter, r *http.Request, cfg *config.Config) error {
-	// シンプルな502エラーページ（日本語）
-	html := `<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>サービス接続エラー - Annict</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            background-color: #f5f5f5;
-        }
-        .container {
-            max-width: 600px;
-            padding: 2rem;
-            text-align: center;
-        }
-        h1 {
-            font-size: 2rem;
-            color: #333;
-            margin-bottom: 1rem;
-        }
-        p {
-            color: #666;
-            line-height: 1.6;
-            margin-bottom: 2rem;
-        }
-        a {
-            display: inline-block;
-            padding: 0.75rem 1.5rem;
-            background-color: #3b82f6;
-            color: white;
-            text-decoration: none;
-            border-radius: 0.375rem;
-            transition: background-color 0.2s;
-        }
-        a:hover {
-            background-color: #2563eb;
-        }
-        .icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="icon">⚠️</div>
-        <h1>サービス接続エラー</h1>
-        <p>申し訳ございません。現在サービスに接続できません。<br>しばらくしてから再度お試しください。</p>
-        <a href="/">トップページに戻る</a>
-    </div>
-</body>
-</html>`
-
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	w.WriteHeader(http.StatusBadGateway)
-	_, err := w.Write([]byte(html))
-	return err
 }

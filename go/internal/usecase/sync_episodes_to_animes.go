@@ -327,17 +327,16 @@ func (uc *SyncEpisodesToAnimesUsecase) applyPlan(ctx context.Context, plan episo
 
 // animeCreateParamsFromEpisode maps an episode onto the layer-1 anime attributes
 // for a fresh insert. Episodes only source title / title_ro / title_en / status,
-// with status derived from the episode's unpublished_at / deleted_at timestamps (not
-// the dormant episodes.status). Every other column (title_kana, the title_alter
-// family, media, release_status, synopsis family, archive_message) stays at its zero
-// value (NULL); archive_message is animes-only and not sourced from episodes.
+// with status derived from the episode's unpublished_at / deleted_at timestamps.
+// Every other column (title_kana, the title_alter family, media, release_status,
+// synopsis family, archive_message) stays at its zero value (NULL); archive_message
+// is animes-only and not sourced from episodes.
 //
 // [Ja] animeCreateParamsFromEpisode は episode を新規挿入用の第 1 層 anime 属性に写像する。
 // episode が源泉とするのは title / title_ro / title_en / status のみで、status は episode の
-// unpublished_at / deleted_at タイムスタンプから導出する (休眠している episodes.status では
-// ない)。他のカラム (title_kana、title_alter 系、media、release_status、synopsis 系、
-// archive_message) はゼロ値 (NULL) のまま残す。archive_message は animes 専用で episode
-// からは源泉としない。
+// unpublished_at / deleted_at タイムスタンプから導出する。他のカラム (title_kana、
+// title_alter 系、media、release_status、synopsis 系、archive_message) はゼロ値 (NULL) の
+// まま残す。archive_message は animes 専用で episode からは源泉としない。
 func animeCreateParamsFromEpisode(e *model.Episode) repository.CreateAnimeParams {
 	return repository.CreateAnimeParams{
 		Title:          nullStringFromStringPtr(e.Title),
@@ -350,16 +349,14 @@ func animeCreateParamsFromEpisode(e *model.Episode) repository.CreateAnimeParams
 
 // animeUpdateParamsFromEpisode maps an episode onto the layer-1 anime attributes for
 // an update. status is derived from the episode's unpublished_at / deleted_at
-// timestamps (not the dormant episodes.status). The columns episodes do not source
-// (archive_message etc.) are carried over from the existing row so the sync never
-// clobbers values set elsewhere (an editor, or another loader); archive_message is
-// animes-only.
+// timestamps. The columns episodes do not source (archive_message etc.) are carried
+// over from the existing row so the sync never clobbers values set elsewhere (an
+// editor, or another loader); archive_message is animes-only.
 //
 // [Ja] animeUpdateParamsFromEpisode は episode を更新用の第 1 層 anime 属性に写像する。
-// status は episode の unpublished_at / deleted_at タイムスタンプから導出する (休眠して
-// いる episodes.status ではない)。episode が源泉としないカラム (archive_message など) は
-// 既存行から引き継ぎ、同期が他所 (編集者や別ローダー) で設定された値を上書きしないように
-// する。archive_message は animes 専用。
+// status は episode の unpublished_at / deleted_at タイムスタンプから導出する。episode が
+// 源泉としないカラム (archive_message など) は既存行から引き継ぎ、同期が他所 (編集者や別
+// ローダー) で設定された値を上書きしないようにする。archive_message は animes 専用。
 func animeUpdateParamsFromEpisode(e *model.Episode, existing *model.Anime) repository.UpdateAnimeParams {
 	return repository.UpdateAnimeParams{
 		ID:               existing.ID,

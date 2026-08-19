@@ -9,10 +9,47 @@ import (
 	"github.com/a-h/templ"
 
 	"github.com/annict/annict/go/internal/i18n"
-	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/templates"
 	"github.com/annict/annict/go/internal/viewmodel"
 )
+
+// iconWrapperMarkup is wrapper markup these pages reject. An aria-hidden ancestor removes the
+// icon from the accessibility tree but can leave the SVG in the focus order on implementations
+// that treat SVG elements as focusable by default.
+//
+// [Ja] iconWrapperMarkup は、これらのページで許容しないラッパーのマークアップを表す。
+// aria-hidden の祖先はアイコンをアクセシビリティツリーから外すが、SVG 要素を既定で
+// フォーカス可能とする実装では SVG がフォーカス順序に残りうるため。
+const iconWrapperMarkup = `<span aria-hidden="true">`
+
+// decorativeIconMarkup renders one icon the way the pages of this package are expected to
+// emit it, so a test states which helper an icon goes through rather than repeating the SVG
+// attributes. Passing a position asks for the Basecoat inline form used inside text buttons.
+//
+// [Ja] decorativeIconMarkup は本パッケージのページが出力するはずの形で 1 つのアイコンを描画
+// する。SVG の属性を書き写すのではなく、アイコンがどのヘルパーを通るかをテストが表明できる
+// ようにするため。position を渡すとテキスト付きボタン内で使う Basecoat の inline 形式になる。
+func decorativeIconMarkup(
+	t *testing.T,
+	ctx context.Context,
+	name string,
+	class string,
+	position ...templates.InlineIconPosition,
+) string {
+	t.Helper()
+
+	component := templates.DecorativeIcon(name, class)
+	if len(position) > 0 {
+		component = templates.DecorativeInlineIcon(name, position[0], class)
+	}
+
+	var buf strings.Builder
+	if err := component.Render(ctx, &buf); err != nil {
+		t.Fatalf("アイコンのレンダリングエラー: %v", err)
+	}
+
+	return buf.String()
+}
 
 // TestNew_LabelExternalLinks verifies that an external-link icon is rendered next to a label
 // whose field has a value.
@@ -94,6 +131,37 @@ func TestNew_NoLabelExternalLinksWhenEmpty(t *testing.T) {
 	}
 	if strings.Contains(html, "を新しいタブで開く") {
 		t.Error("値が空のとき外部リンクは描画されてはいけません")
+	}
+}
+
+// TestNew_DecorativeIconsAreHidden covers the new-tab icon beside a form label: the link
+// around it already announces where it goes, so the SVG stays out of the accessibility tree
+// and out of the focus order instead of adding a second, browser-dependent representation.
+//
+// [Ja] TestNew_DecorativeIconsAreHidden はフォームのラベル横にある新規タブアイコンを検証する。
+// アイコンを囲むリンクが行き先を既に伝えるため、SVG はアクセシビリティツリーとフォーカス順序
+// から除外し、ブラウザー依存の別表現を重ねないようにする。
+func TestNew_DecorativeIconsAreHidden(t *testing.T) {
+	t.Parallel()
+
+	ctx := i18n.SetLocale(context.Background(), "ja")
+	data := NewPageData{
+		FormInput: &viewmodel.DBWorkFormInput{OfficialSiteURL: "https://example.com"},
+	}
+
+	var buf strings.Builder
+	if err := New(data).Render(ctx, &buf); err != nil {
+		t.Fatalf("レンダリングエラー: %v", err)
+	}
+
+	html := buf.String()
+
+	want := decorativeIconMarkup(t, ctx, "arrow-square-out-regular", "w-[18px] h-[18px]")
+	if !strings.Contains(html, want) {
+		t.Error(`装飾アイコン "arrow-square-out-regular" が aria-hidden かつ focusable="false" ではありません`)
+	}
+	if strings.Contains(html, iconWrapperMarkup) {
+		t.Error("装飾アイコンはラッパー要素ではなく SVG 自体で隠すべきです")
 	}
 }
 
@@ -217,9 +285,9 @@ var fieldsWithStandingDescription = map[string]string{
 func TestFieldErrorsAreAssociatedWithInputs(t *testing.T) {
 	t.Parallel()
 
-	formErrors := model.NewValidationError()
+	formErrors := &viewmodel.FormErrors{Fields: map[string][]string{}}
 	for _, field := range validatedFields {
-		formErrors.AddField(field, field+" のエラーメッセージ")
+		formErrors.Fields[field] = []string{field + " のエラーメッセージ"}
 	}
 
 	tests := []struct {
@@ -297,9 +365,9 @@ func TestFieldErrorsAreAssociatedWithInputs(t *testing.T) {
 func TestFieldErrorsAreSummarisedAtTheTopOfTheForm(t *testing.T) {
 	t.Parallel()
 
-	formErrors := model.NewValidationError()
+	formErrors := &viewmodel.FormErrors{Fields: map[string][]string{}}
 	for _, field := range validatedFields {
-		formErrors.AddField(field, field+" のエラーメッセージ")
+		formErrors.Fields[field] = []string{field + " のエラーメッセージ"}
 	}
 
 	tests := []struct {
@@ -787,5 +855,362 @@ func TestEdit_LabelExternalLinks(t *testing.T) {
 		if !strings.Contains(html, expected) {
 			t.Errorf("期待する文字列が含まれていません: %q", expected)
 		}
+	}
+}
+
+// TestEdit_DecorativeIconsAreHidden covers the two new-tab icons of the edit page. Both repeat
+// what the link around them already announces, so neither reaches the accessibility tree or the
+// focus order. The work-page link is a Basecoat text button, so its icon also declares the
+// inline-end position that lets Basecoat apply the button's icon-aware spacing; the icon beside
+// a form label sits in a plain link and takes no position.
+//
+// [Ja] TestEdit_DecorativeIconsAreHidden は編集ページの 2 つの新規タブアイコンを検証する。
+// どちらも囲むリンクが既に伝えている内容を繰り返すため、アクセシビリティツリーにもフォーカス
+// 順序にも出ない。作品ページへのリンクは Basecoat のテキスト付きボタンのため、そのアイコンは
+// Basecoat がボタンのアイコン用間隔を適用できる inline-end の位置も宣言する。フォームのラベル
+// 横のアイコンは通常のリンク内にあるため位置を持たない。
+func TestEdit_DecorativeIconsAreHidden(t *testing.T) {
+	t.Parallel()
+
+	ctx := i18n.SetLocale(context.Background(), "ja")
+	data := EditPageData{
+		WorkID:    1,
+		WorkTitle: "編集対象アニメ",
+		FormInput: &viewmodel.DBWorkFormInput{OfficialSiteURL: "https://example.com"},
+	}
+
+	var buf strings.Builder
+	if err := Edit(data).Render(ctx, &buf); err != nil {
+		t.Fatalf("レンダリングエラー: %v", err)
+	}
+
+	html := buf.String()
+
+	tests := []struct {
+		name     string
+		want     string
+		wantHint string
+	}{
+		{
+			name:     "作品ページへのリンク",
+			want:     decorativeIconMarkup(t, ctx, "arrow-square-out-regular", "w-[18px] h-[18px]", templates.InlineIconEnd),
+			wantHint: `inline-end の装飾アイコン`,
+		},
+		{
+			name:     "フォームのラベル横のリンク",
+			want:     decorativeIconMarkup(t, ctx, "arrow-square-out-regular", "w-[18px] h-[18px]"),
+			wantHint: `位置を持たない装飾アイコン`,
+		},
+	}
+	for _, tt := range tests {
+		if !strings.Contains(html, tt.want) {
+			t.Errorf("%s: %s が含まれていません", tt.name, tt.wantHint)
+		}
+	}
+
+	if strings.Contains(html, iconWrapperMarkup) {
+		t.Error("装飾アイコンはラッパー要素ではなく SVG 自体で隠すべきです")
+	}
+}
+
+// workFormFieldGroups is the number of Field wrappers each work form renders. Counting them
+// keeps a field added later from being written without the group, which the class alone does
+// not reveal.
+//
+// [Ja] workFormFieldGroups は各作品フォームが描画する Field ラッパーの数。数を固定すること
+// で、後から追加した欄がグループ無しで書かれることを防ぐ (クラスだけでは気付けないため)。
+const workFormFieldGroups = 27
+
+// workKeyboardHints lists the attributes every typed field of the work forms carries, in the
+// order the forms show them. The last typed field asks for "done" because nothing after it is
+// typed into: the remaining controls are a select and a checkbox, so the touch keyboard can
+// close rather than offer to move on.
+//
+// The fields backed by a numeric column ask for a keypad while staying text inputs, which is
+// what lets a rejected submit come back with whatever was typed (see the comment on the form).
+//
+// [Ja] workKeyboardHints は作品フォームの入力する欄が持つ属性を、フォームが表示する順で並べ
+// る。最後の欄が "done" を求めるのは、その後ろに入力する欄が無いため (残るのはセレクトと
+// チェックボックスで、タッチキーボードは次へ進むのではなく閉じてよい)。
+//
+// 数値カラムに対応する欄は text の入力欄のままキーパッドを要求する。これにより却下された送信
+// が入力された内容のまま戻る (理由はフォーム側のコメントを参照)。
+var workKeyboardHints = []struct {
+	field string
+	attrs []string
+}{
+	{field: "title", attrs: []string{`enterkeyhint="next"`}},
+	{field: "title_kana", attrs: []string{`enterkeyhint="next"`}},
+	{field: "title_alter", attrs: []string{`enterkeyhint="next"`}},
+	{field: "title_en", attrs: []string{`enterkeyhint="next"`}},
+	{field: "title_alter_en", attrs: []string{`enterkeyhint="next"`}},
+	{field: "official_site_url", attrs: []string{`enterkeyhint="next"`}},
+	{field: "official_site_url_en", attrs: []string{`enterkeyhint="next"`}},
+	{field: "wikipedia_url", attrs: []string{`enterkeyhint="next"`}},
+	{field: "wikipedia_url_en", attrs: []string{`enterkeyhint="next"`}},
+	{field: "twitter_username", attrs: []string{`enterkeyhint="next"`}},
+	{field: "twitter_hashtag", attrs: []string{`enterkeyhint="next"`}},
+	{field: "sc_tid", attrs: []string{`type="text"`, `inputmode="numeric"`, `enterkeyhint="next"`}},
+	{field: "mal_anime_id", attrs: []string{`type="text"`, `inputmode="numeric"`, `enterkeyhint="next"`}},
+	{field: "synopsis_source", attrs: []string{`enterkeyhint="next"`}},
+	{field: "synopsis_source_en", attrs: []string{`enterkeyhint="next"`}},
+	{field: "manual_episodes_count", attrs: []string{`type="text"`, `inputmode="numeric"`, `enterkeyhint="next"`}},
+	{field: "start_episode_raw_number", attrs: []string{`type="text"`, `inputmode="decimal"`, `enterkeyhint="done"`}},
+}
+
+// workUntypedControls lists the controls of the work forms that take no typing. A keyboard
+// hint on them would label a key the reader never reaches: a select and a checkbox open no
+// keyboard, a date field opens a picker, and Enter in a textarea inserts a line break.
+//
+// [Ja] workUntypedControls は作品フォームのうち文字を入力しないコントロールを並べる。これらに
+// キーボードヒントを付けても、読み手が触れないキーに札を付けることになる (セレクトと
+// チェックボックスはキーボードを開かず、日付欄はピッカーを開き、textarea の Enter は改行を
+// 入れるため)。
+var workUntypedControls = []string{
+	"media",
+	"season_year",
+	"season_name",
+	"started_on",
+	"ended_on",
+	"synopsis",
+	"synopsis_en",
+	"number_format_id",
+	"no_episodes",
+}
+
+// workControlHTML returns the markup of the opening tag of the form control carrying the given
+// id, whichever element it is.
+//
+// [Ja] workControlHTML は指定した id を持つフォームコントロールの開始タグのマークアップを返す
+// (要素の種類を問わない)。
+func workControlHTML(t *testing.T, html string, id string) string {
+	t.Helper()
+
+	at := strings.Index(html, `id="`+id+`"`)
+	if at < 0 {
+		t.Fatalf("%q のコントロールが描画されていません", id)
+	}
+	start := strings.LastIndex(html[:at], "<")
+	if start < 0 {
+		t.Fatalf("%q のコントロールの開始タグが見つかりません", id)
+	}
+	end := strings.Index(html[at:], ">")
+	if end < 0 {
+		t.Fatalf("%q のコントロールが閉じられていません", id)
+	}
+
+	return html[start : at+end+1]
+}
+
+// assertWorkFormFields checks the field structure and the keyboard hints of one work form.
+// Both forms show the same fields, so the expectations live in one place and each page states
+// that it meets them.
+//
+// [Ja] assertWorkFormFields は作品フォーム 1 つの欄の構造とキーボードヒントを検証する。
+// 両フォームは同じ欄を表示するため、期待値は 1 箇所に置き、各ページはそれを満たすことを表明
+// する。
+func assertWorkFormFields(t *testing.T, html string) {
+	t.Helper()
+
+	if got := strings.Count(html, `role="group" class="field"`); got != workFormFieldGroups {
+		t.Errorf("Basecoat の field group = %d 個, want %d 個", got, workFormFieldGroups)
+	}
+
+	for _, hint := range workKeyboardHints {
+		control := workControlHTML(t, html, hint.field)
+		for _, attr := range hint.attrs {
+			if !strings.Contains(control, attr) {
+				t.Errorf("%q の入力欄に %s がありません: %s", hint.field, attr, control)
+			}
+		}
+	}
+
+	for _, id := range workUntypedControls {
+		if control := workControlHTML(t, html, id); strings.Contains(control, "enterkeyhint") {
+			t.Errorf("%q は文字を入力しないため enterkeyhint を持つべきではありません: %s", id, control)
+		}
+	}
+}
+
+// TestNew_FieldsCarryGroupsAndKeyboardHints covers the create form's field wrappers and the
+// keyboard hints of its inputs.
+//
+// [Ja] TestNew_FieldsCarryGroupsAndKeyboardHints は新規作成フォームの欄のラッパーと入力欄の
+// キーボードヒントを検証する。
+func TestNew_FieldsCarryGroupsAndKeyboardHints(t *testing.T) {
+	t.Parallel()
+
+	ctx := i18n.SetLocale(context.Background(), "ja")
+
+	var buf strings.Builder
+	if err := New(NewPageData{FormInput: &viewmodel.DBWorkFormInput{}}).Render(ctx, &buf); err != nil {
+		t.Fatalf("レンダリングエラー: %v", err)
+	}
+
+	assertWorkFormFields(t, buf.String())
+}
+
+// TestEdit_FieldsCarryGroupsAndKeyboardHints covers the edit form's field wrappers and the
+// keyboard hints of its inputs.
+//
+// [Ja] TestEdit_FieldsCarryGroupsAndKeyboardHints は編集フォームの欄のラッパーと入力欄の
+// キーボードヒントを検証する。
+func TestEdit_FieldsCarryGroupsAndKeyboardHints(t *testing.T) {
+	t.Parallel()
+
+	ctx := i18n.SetLocale(context.Background(), "ja")
+
+	var buf strings.Builder
+	if err := Edit(EditPageData{WorkID: 1, WorkTitle: "編集対象アニメ", FormInput: &viewmodel.DBWorkFormInput{}}).Render(ctx, &buf); err != nil {
+		t.Fatalf("レンダリングエラー: %v", err)
+	}
+
+	assertWorkFormFields(t, buf.String())
+}
+
+// TestEdit_CarriesVersion verifies the edit form ships the version it was opened against, which
+// the update matches so a submit made from a stale read is refused instead of overwriting
+// whoever wrote in between.
+//
+// [Ja] TestEdit_CarriesVersion は、編集フォームが開いた時点の版を送り出すことを検証する。更新側は
+// これを照合し、古い読み取りからの送信を、間に書いた人の変更を上書きせずに却下する。
+func TestEdit_CarriesVersion(t *testing.T) {
+	t.Parallel()
+
+	data := EditPageData{
+		WorkID:    1,
+		FormInput: &viewmodel.DBWorkFormInput{UpdatedAt: "2026-08-17T01:02:03.456789Z"},
+	}
+
+	var buf strings.Builder
+	if err := Edit(data).Render(context.Background(), &buf); err != nil {
+		t.Fatalf("レンダリングエラー: %v", err)
+	}
+
+	if html := buf.String(); !strings.Contains(html, `<input type="hidden" name="updated_at" value="2026-08-17T01:02:03.456789Z">`) {
+		t.Error("フォームが hidden の版を運んでいません")
+	}
+}
+
+// TestEdit_ConflictNoticeListsChangedStoredValues verifies the conflict notice states the stored
+// values a second submit would overwrite. Only the fields that differ are listed, and the values
+// are the ones the form displays rather than the codes the selects and the checkbox store.
+//
+// [Ja] TestEdit_ConflictNoticeListsChangedStoredValues は、競合の案内が、2 回目の送信で上書き
+// される保存済みの値を述べることを検証する。並ぶのは異なるフィールドだけで、値は選択欄や
+// チェックボックスが保持するコードではなく、フォームが表示する形にする。
+func TestEdit_ConflictNoticeListsChangedStoredValues(t *testing.T) {
+	t.Parallel()
+
+	data := EditPageData{
+		WorkID: 1,
+		FormOptions: viewmodel.DBWorkFormOptions{
+			MediaOptions: []viewmodel.SelectOption{
+				{Value: "1", Label: "TV"},
+				{Value: "3", Label: "映画"},
+			},
+		},
+		FormInput: &viewmodel.DBWorkFormInput{
+			Title:      "送信されたタイトル",
+			TitleEn:    "同じ英語タイトル",
+			Media:      "1",
+			NoEpisodes: "",
+			UpdatedAt:  "2026-08-17T01:02:03.456789Z",
+		},
+		ConflictCurrent: &viewmodel.DBWorkFormInput{
+			Title:      "保存済みのタイトル",
+			TitleEn:    "同じ英語タイトル",
+			Media:      "3",
+			NoEpisodes: "1",
+			UpdatedAt:  "2026-08-17T01:02:03.456789Z",
+		},
+	}
+
+	var buf strings.Builder
+	if err := Edit(data).Render(context.Background(), &buf); err != nil {
+		t.Fatalf("レンダリングエラー: %v", err)
+	}
+	html := buf.String()
+
+	for _, expected := range []string{
+		"現在保存されている内容",
+		"<dt>タイトル</dt>",
+		"保存済みのタイトル",
+		// The stored media is named by the label the select shows, not by its enum code.
+		//
+		// [Ja] 保存済みのメディアは enum のコードではなく、選択欄が表示するラベルで名指しする。
+		"<dt>メディア</dt>",
+		"映画",
+		// The checkbox states whether it is on rather than showing the "1" it stores.
+		//
+		// [Ja] チェックボックスは保持する "1" ではなく、入っているかどうかを述べる。
+		"<dt>エピソードなし</dt>",
+		"オン",
+	} {
+		if !strings.Contains(html, expected) {
+			t.Errorf("期待する文字列が含まれていません: %q", expected)
+		}
+	}
+
+	// A field both sides agree on is not listed: the notice names what a second submit would
+	// overwrite, and nothing about that field would change.
+	//
+	// [Ja] 両者が一致するフィールドは並べない。案内は 2 回目の送信が上書きするものを名指しする
+	// ものであり、そのフィールドは何も変わらないため。
+	if strings.Contains(html, "<dt>英語タイトル</dt>") {
+		t.Error("一致するフィールドが競合の案内に並んでいます")
+	}
+}
+
+// TestEdit_ConflictNoticeWithoutFieldChanges verifies the notice says so when the stored row
+// differs from the submit in nothing this form writes, rather than presenting an empty list.
+//
+// [Ja] TestEdit_ConflictNoticeWithoutFieldChanges は、保存済みの行が本フォームの書き込む
+// どのフィールドでも送信と異ならないとき、案内が空の一覧ではなくそのことを述べるのを検証する。
+func TestEdit_ConflictNoticeWithoutFieldChanges(t *testing.T) {
+	t.Parallel()
+
+	submitted := viewmodel.DBWorkFormInput{Title: "同じタイトル", Media: "1"}
+	stored := submitted
+	data := EditPageData{
+		WorkID:          1,
+		FormInput:       &submitted,
+		ConflictCurrent: &stored,
+	}
+
+	var buf strings.Builder
+	if err := Edit(data).Render(context.Background(), &buf); err != nil {
+		t.Fatalf("レンダリングエラー: %v", err)
+	}
+	html := buf.String()
+
+	if !strings.Contains(html, "このフォームで編集できる項目に違いはありません") {
+		t.Error("違いが無いことを述べる案内が含まれていません")
+	}
+	if strings.Contains(html, "<dl") {
+		t.Error("違いが無いのに保存済みの値の一覧が描画されています")
+	}
+}
+
+// TestEdit_OmitsConflictNoticeWithoutConflict verifies a form opened for editing, and one
+// re-rendered for a submit refused for any other reason, carries no conflict notice.
+//
+// [Ja] TestEdit_OmitsConflictNoticeWithoutConflict は、編集のために開いたフォームと、他の理由で
+// 却下された送信の再描画のいずれにも競合の案内が出ないことを検証する。
+func TestEdit_OmitsConflictNoticeWithoutConflict(t *testing.T) {
+	t.Parallel()
+
+	data := EditPageData{
+		WorkID:    1,
+		FormInput: &viewmodel.DBWorkFormInput{Title: "編集中のタイトル"},
+	}
+
+	var buf strings.Builder
+	if err := Edit(data).Render(context.Background(), &buf); err != nil {
+		t.Fatalf("レンダリングエラー: %v", err)
+	}
+
+	if html := buf.String(); strings.Contains(html, "現在保存されている内容") {
+		t.Error("競合していないのに競合の案内が描画されています")
 	}
 }

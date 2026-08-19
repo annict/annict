@@ -35,12 +35,12 @@ func newTestHandler(t *testing.T, db *sql.DB, tx *sql.Tx) *Handler {
 	workRepo := repository.NewWorkRepository(queries)
 	episodeRepo := repository.NewEpisodeRepository(queries)
 
-	// The create and update usecases open their own transactions, so they are wired against
-	// the pool rather than the test transaction. Their tests clean the committed rows up
-	// themselves.
+	// The create, update and delete usecases open their own transactions, so they are wired
+	// against the pool rather than the test transaction. Their tests clean the committed rows
+	// up themselves.
 	//
-	// [Ja] 作成・更新 UseCase は自前のトランザクションを開くため、テスト用トランザクションでは
-	// なくプールに対して組み立てる。コミットされた行はそのテスト側で後始末する。
+	// [Ja] 作成・更新・削除 UseCase は自前のトランザクションを開くため、テスト用トランザクション
+	// ではなくプールに対して組み立てる。コミットされた行はそのテスト側で後始末する。
 	createEpisodesUC := usecase.NewCreateEpisodesUsecase(
 		db,
 		repository.NewWorkRepository(query.New(db)),
@@ -56,6 +56,11 @@ func newTestHandler(t *testing.T, db *sql.DB, tx *sql.Tx) *Handler {
 		repository.NewAnimeClassificationRepository(query.New(db)),
 		validator.NewDBEpisodeUpdateValidator(),
 	)
+	deleteEpisodeUC := usecase.NewDeleteEpisodeUsecase(
+		db,
+		repository.NewEpisodeRepository(query.New(db)),
+		repository.NewAnimeRepository(query.New(db)),
+	)
 
 	return NewHandler(
 		cfg,
@@ -66,6 +71,7 @@ func newTestHandler(t *testing.T, db *sql.DB, tx *sql.Tx) *Handler {
 		createEpisodesUC,
 		usecase.NewGetDBEpisodeEditUsecase(episodeRepo),
 		updateEpisodeUC,
+		deleteEpisodeUC,
 	)
 }
 
@@ -195,6 +201,121 @@ func TestIndex_NewEpisodesLinkIsCommitterOnly(t *testing.T) {
 			}
 			if got := strings.Contains(body, actionsContainer); got != tt.wantLink {
 				t.Errorf("見出しの操作コンテナの有無 = %v, want %v", got, tt.wantLink)
+			}
+		})
+	}
+}
+
+// TestIndex_ActionColumnFollowsViewerRole covers the per-row action column end to end: the
+// list is public, so the viewer's role decides which controls the page renders. The edit,
+// unpublish and publish actions are for committers and the delete action for admins, matching
+// the middleware guarding each endpoint, so the page never offers a control that answers 403.
+//
+// [Ja] TestIndex_ActionColumnFollowsViewerRole は行ごとの操作列を通しで検証する。一覧は公開の
+// ため、閲覧者のロールがどのコントロールを描画するかを決める。編集・非公開・公開は committer、
+// 削除は admin の操作で、各エンドポイントを守る middleware と揃う。これにより 403 が返るだけの
+// コントロールを出さない。
+func TestIndex_ActionColumnFollowsViewerRole(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+
+	workID := testutil.NewWorkBuilder(t, tx).WithTitle("テストアニメ").Build()
+	publishedID := testutil.NewEpisodeBuilder(t, tx, workID).WithNumber("第1話").Build()
+	archivedID := testutil.NewEpisodeBuilder(t, tx, workID).
+		WithNumber("第2話").
+		WithUnpublishedAt(time.Now()).
+		Build()
+
+	handler := newTestHandler(t, db, tx)
+	sessionManager := session.NewManager(
+		repository.NewSessionRepository(query.New(db).WithTx(tx)),
+		&config.Config{Env: "test", Domain: "test.annict.com"},
+	)
+
+	editLink := fmt.Sprintf(`href="/db/episodes/%d/edit"`, int64(publishedID))
+	archiveLink := fmt.Sprintf(`href="/db/episodes/%d/archive/new"`, int64(publishedID))
+	publishButton := fmt.Sprintf(`hx-delete="/db/episodes/%d/archive"`, int64(archivedID))
+	deleteButton := fmt.Sprintf(`hx-delete="/db/episodes/%d"`, int64(publishedID))
+
+	tests := []struct {
+		name              string
+		user              *model.User
+		wantCommitterOnly bool
+		wantAdminOnly     bool
+	}{
+		{name: "未ログイン", user: nil},
+		{name: "一般ユーザー", user: &model.User{ID: 1, Role: model.RoleUser}},
+		{name: "編集者", user: &model.User{ID: 1, Role: model.RoleEditor}, wantCommitterOnly: true},
+		{name: "管理者", user: &model.User{ID: 1, Role: model.RoleAdmin}, wantCommitterOnly: true, wantAdminOnly: true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			req := newIndexRequest(workID, "")
+			var csrfToken string
+			if tt.user != nil {
+				req = req.WithContext(context.WithValue(req.Context(), authMiddleware.UserContextKey, tt.user))
+
+				// The role in context drives visibility, while the persisted login session supplies
+				// the CSRF token used by the rendered htmx requests. Keep both parts of the real
+				// request wiring in this handler-level test.
+				//
+				// [Ja] コンテキスト内のロールが表示を決め、永続化したログインセッションが描画後の
+				// htmx リクエスト用 CSRF トークンを供給する。実リクエストの両方の配線をこの
+				// ハンドラーレベルのテストで通す。
+				sessionRecorder := httptest.NewRecorder()
+				if err := sessionManager.CreateSession(req.Context(), sessionRecorder, req, tt.user.ID); err != nil {
+					t.Fatalf("セッションの作成に失敗しました: %v", err)
+				}
+
+				var sessionCookie *http.Cookie
+				for _, cookie := range sessionRecorder.Result().Cookies() {
+					if cookie.Name == session.SessionKey {
+						sessionCookie = cookie
+						break
+					}
+				}
+				if sessionCookie == nil {
+					t.Fatal("セッション Cookie が設定されていません")
+				}
+				req.AddCookie(sessionCookie)
+
+				csrfToken = authMiddleware.GetCSRFToken(req, sessionManager)
+				if csrfToken == "" {
+					t.Fatal("セッションから空でない CSRF トークンを取得できませんでした")
+				}
+			}
+			rr := httptest.NewRecorder()
+			handler.Index(rr, req)
+
+			if status := rr.Code; status != http.StatusOK {
+				t.Fatalf("status code: got %v want %v", status, http.StatusOK)
+			}
+			body := rr.Body.String()
+
+			for _, control := range []string{editLink, archiveLink, publishButton} {
+				if got := strings.Contains(body, control); got != tt.wantCommitterOnly {
+					t.Errorf("%q の有無 = %v, want %v", control, got, tt.wantCommitterOnly)
+				}
+			}
+			if got := strings.Contains(body, deleteButton); got != tt.wantAdminOnly {
+				t.Errorf("%q の有無 = %v, want %v", deleteButton, got, tt.wantAdminOnly)
+			}
+			// The column header rides with the controls: a viewer with no action gets no
+			// column at all rather than a column of empty cells.
+			//
+			// [Ja] 列の見出しはコントロールと同じ条件で出る。操作の無い閲覧者には、空の
+			// セルが並ぶ列ではなく列そのものを出さない。
+			wantHeader := tt.wantCommitterOnly || tt.wantAdminOnly
+			if got := strings.Contains(body, `<th scope="col" class="text-center">操作</th>`); got != wantHeader {
+				t.Errorf("操作列の見出しの有無 = %v, want %v", got, wantHeader)
+			}
+			if wantHeader {
+				wantCSRFHeader := fmt.Sprintf(`hx-headers="{&#34;X-CSRF-Token&#34;:&#34;%s&#34;}"`, csrfToken)
+				if !strings.Contains(body, wantCSRFHeader) {
+					t.Errorf("操作ボタンにセッションの CSRF トークンが含まれていません: %q", wantCSRFHeader)
+				}
 			}
 		})
 	}

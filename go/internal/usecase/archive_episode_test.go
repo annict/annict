@@ -30,11 +30,11 @@ func newArchiveEpisodeUsecase(db *sql.DB) *ArchiveEpisodeUsecase {
 	)
 }
 
-// readArchivedEpisodeState returns the state column the archive writes, so a test can tell an
-// archived episode from one the submit left alone.
+// readArchivedEpisodeState returns the state column the archive and the re-publish write, so a
+// test can tell an episode either of them changed from one the submit left alone.
 //
-// [Ja] readArchivedEpisodeState は非公開が書く状態カラムを返す。非公開になったエピソードと、
-// 送信が手を触れなかったエピソードをテストが区別できるようにするため。
+// [Ja] readArchivedEpisodeState は非公開と再公開が書く状態カラムを返す。どちらかが変更した
+// エピソードと、送信が手を触れなかったエピソードをテストが区別できるようにするため。
 func readArchivedEpisodeState(t *testing.T, db *sql.DB, episodeID model.EpisodeID) sql.NullTime {
 	t.Helper()
 
@@ -44,6 +44,53 @@ func readArchivedEpisodeState(t *testing.T, db *sql.DB, episodeID model.EpisodeI
 	}
 
 	return unpublishedAt
+}
+
+// awaitBlockedByBackend waits until some backend is blocked on a lock the backend with
+// blockerPID holds, so an interleaving test can commit the conflicting change knowing the write
+// under test already started and is waiting. pg_blocking_pids makes the order deterministic
+// without a sleep or access to the usecase's private transaction. resultCh is watched only to
+// fail fast: a usecase that finished before blocking never reached the interleaving the test
+// means to fix, so asserting on its result would fix nothing.
+//
+// [Ja] awaitBlockedByBackend は、blockerPID のバックエンドが保持するロックを待っている
+// バックエンドが現れるまで待機する。検証対象の書き込みが既に開始して待機していることを確かめて
+// から、インターリーブさせたい変更をコミットできるようにするため。pg_blocking_pids により、
+// UseCase 内部の transaction へ触れたり sleep に依存したりせず実行順を固定する。resultCh は
+// 早期失敗のためだけに監視する。待機に入る前に終わった UseCase はテストが固定したいインター
+// リーブに到達していないため、その結果に対するアサーションは何も固定しない。
+func awaitBlockedByBackend[T any](t *testing.T, ctx context.Context, db *sql.DB, blockerPID int, resultCh <-chan T) {
+	t.Helper()
+
+	deadline := time.NewTimer(5 * time.Second)
+	defer deadline.Stop()
+	ticker := time.NewTicker(10 * time.Millisecond)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case result := <-resultCh:
+			t.Fatalf("Execute() completed before blocker committed: %+v", result)
+		case <-ticker.C:
+			var blocked bool
+			if err := db.QueryRowContext(ctx, `
+				SELECT EXISTS (
+					SELECT 1
+					FROM pg_stat_activity activity
+					WHERE $1 = ANY(pg_blocking_pids(activity.pid))
+						AND activity.wait_event_type = 'Lock'
+				)`,
+				blockerPID,
+			).Scan(&blocked); err != nil {
+				t.Fatalf("待機状態の取得に失敗: %v", err)
+			}
+			if blocked {
+				return
+			}
+		case <-deadline.C:
+			t.Fatal("Execute() did not wait for the episode row lock")
+		}
+	}
 }
 
 // TestArchiveEpisodeUsecase_Execute_ArchivesEpisodeAndAnime verifies archiving a mapped,
@@ -280,38 +327,10 @@ func TestArchiveEpisodeUsecase_Execute_UsesMappingFromArchivedRowAndPreservesCon
 		resultCh <- archiveResult{output: output, err: err}
 	}()
 
-	// Observe the archive waiting on blockerTx before changing the mapping. pg_blocking_pids
-	// makes the order deterministic without a sleep or access to the usecase's private
-	// transaction.
+	// Observe the archive waiting on blockerTx before changing the mapping.
 	//
 	// [Ja] 写像を変更する前に、非公開が blockerTx を待っていることを観測する。
-	// pg_blocking_pids により、UseCase 内部の transaction へ触れたり sleep に依存したりせず
-	// 実行順を固定する。
-	lockDeadline := time.NewTimer(5 * time.Second)
-	defer lockDeadline.Stop()
-	lockTicker := time.NewTicker(10 * time.Millisecond)
-	defer lockTicker.Stop()
-	waitingForLock := false
-	for !waitingForLock {
-		select {
-		case result := <-resultCh:
-			t.Fatalf("Execute() completed before blocker committed: %+v", result)
-		case <-lockTicker.C:
-			if err := db.QueryRowContext(ctx, `
-				SELECT EXISTS (
-					SELECT 1
-					FROM pg_stat_activity activity
-					WHERE $1 = ANY(pg_blocking_pids(activity.pid))
-						AND activity.wait_event_type = 'Lock'
-				)`,
-				blockerPID,
-			).Scan(&waitingForLock); err != nil {
-				t.Fatalf("非公開側の待機状態の取得に失敗: %v", err)
-			}
-		case <-lockDeadline.C:
-			t.Fatal("Execute() did not wait for the episode row lock")
-		}
-	}
+	awaitBlockedByBackend(t, ctx, db, blockerPID, resultCh)
 
 	if _, err := blockerTx.ExecContext(
 		ctx,
@@ -367,6 +386,125 @@ func TestArchiveEpisodeUsecase_Execute_UsesMappingFromArchivedRowAndPreservesCon
 			currentAnime.ArchiveMessage.String,
 			"同時編集後のメッセージ",
 		)
+	}
+}
+
+// TestArchiveEpisodeUsecase_Execute_RollsBackWhenParentIsDeletedWhileEpisodeWriteWaits fixes the
+// interleaving between the confirmation projection and the archive write. The archive waits on a
+// locked episode after its pre-read, while the locking transaction deletes the parent work. The
+// work guard must make the write report not found, and the usecase rollback must preserve the
+// published episode, counter, and anime status. It is the mirror of the re-publish test of the
+// same name: the two statements carry the guard separately, so each direction needs its own
+// interleaving to detect a regression in its own SQL.
+//
+// [Ja] このテストは確認用の射影と非公開の書き込みの間の実行順を固定する。事前読み取り後の非公開
+// がロック済みの episode を待つ間に、ロック元のトランザクションが親作品を削除する。作品のガード
+// により not found を返し、UseCase のロールバックにより公開中の episode、カウンター、anime の
+// 状態を保持しなければならない。同名の再公開テストと対になる。ガードは 2 つのステートメントが
+// それぞれ持つため、各方向が自分の SQL の退行を検出するインターリーブを必要とする。
+func TestArchiveEpisodeUsecase_Execute_RollsBackWhenParentIsDeletedWhileEpisodeWriteWaits(t *testing.T) {
+	t.Parallel()
+
+	db := testutil.GetTestDB()
+	uc := newArchiveEpisodeUsecase(db)
+	workID, parentAnimeID := insertMappedCreateTargetWork(t, db)
+	episodeID, episodeAnimeID := insertMappedUpdateTargetEpisode(t, db, workID, parentAnimeID, 100)
+
+	var episodesCountBefore int32
+	if err := db.QueryRow(
+		`SELECT episodes_count FROM works WHERE id = $1`,
+		int64(workID),
+	).Scan(&episodesCountBefore); err != nil {
+		t.Fatalf("作品のカウンターの読み込みに失敗: %v", err)
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	blockerTx, err := db.BeginTx(ctx, nil)
+	if err != nil {
+		t.Fatalf("blocker transaction BeginTx() error = %v", err)
+	}
+	defer func() { _ = blockerTx.Rollback() }()
+
+	var blockerPID int
+	if err := blockerTx.QueryRowContext(ctx, `SELECT pg_backend_pid()`).Scan(&blockerPID); err != nil {
+		t.Fatalf("blocker backend PID の取得に失敗: %v", err)
+	}
+	if _, err := blockerTx.ExecContext(
+		ctx,
+		`SELECT id FROM episodes WHERE id = $1 FOR UPDATE`,
+		int64(episodeID),
+	); err != nil {
+		t.Fatalf("episode のロック取得に失敗: %v", err)
+	}
+
+	type archiveResult struct {
+		output *ArchiveEpisodeOutput
+		err    error
+	}
+	resultCh := make(chan archiveResult, 1)
+	go func() {
+		output, err := uc.Execute(ctx, ArchiveEpisodeInput{
+			EpisodeID: episodeID,
+			User:      unsavedCreateActor(),
+		})
+		resultCh <- archiveResult{output: output, err: err}
+	}()
+
+	// Observe the archive waiting on blockerTx before deleting the work. This proves the
+	// pre-read completed and the guarded write started.
+	//
+	// [Ja] 作品を削除する前に、非公開が blockerTx を待っていることを観測する。事前読み取りが完了
+	// してガード付きの書き込みが始まったことを証明する。
+	awaitBlockedByBackend(t, ctx, db, blockerPID, resultCh)
+
+	if _, err := blockerTx.ExecContext(
+		ctx,
+		`UPDATE works SET deleted_at = NOW() WHERE id = $1`,
+		int64(workID),
+	); err != nil {
+		t.Fatalf("親作品の削除に失敗: %v", err)
+	}
+	if err := blockerTx.Commit(); err != nil {
+		t.Fatalf("blocker transaction Commit() error = %v", err)
+	}
+
+	var result archiveResult
+	select {
+	case result = <-resultCh:
+	case <-ctx.Done():
+		t.Fatalf("Execute() did not finish after blocker committed: %v", ctx.Err())
+	}
+	if result.output != nil {
+		t.Fatalf("Execute() output = %+v, want nil", result.output)
+	}
+	appErr := model.AsAppError(result.err)
+	if appErr == nil || appErr.Code != model.AppErrCodeResourceNotFound {
+		t.Fatalf("Execute() error = %v, want AppErrCodeResourceNotFound", result.err)
+	}
+
+	if unpublishedAt := readArchivedEpisodeState(t, db, episodeID); unpublishedAt.Valid {
+		t.Errorf("episodes.unpublished_at = %v, want NULL のまま", unpublishedAt.Time)
+	}
+	var episodesCountAfter int32
+	if err := db.QueryRow(
+		`SELECT episodes_count FROM works WHERE id = $1`,
+		int64(workID),
+	).Scan(&episodesCountAfter); err != nil {
+		t.Fatalf("作品のカウンターの読み込みに失敗: %v", err)
+	}
+	if episodesCountAfter != episodesCountBefore {
+		t.Errorf("works.episodes_count = %d, want %d", episodesCountAfter, episodesCountBefore)
+	}
+
+	animeRepo := repository.NewAnimeRepository(query.New(db))
+	anime, err := animeRepo.GetByID(ctx, episodeAnimeID)
+	if err != nil || anime == nil {
+		t.Fatalf("GetByID() anime=%v err=%v", anime, err)
+	}
+	if anime.Status != model.AnimeStatusPublished {
+		t.Errorf("anime.Status = %q, want %q", anime.Status, model.AnimeStatusPublished)
 	}
 }
 

@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"io"
-	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
@@ -32,11 +31,7 @@ func renderDbLayout(t *testing.T, acceptLanguage string) string {
 	req := httptest.NewRequest("GET", "/db/works", nil)
 	req.Header.Set("Accept-Language", acceptLanguage)
 
-	var ctx context.Context
-	i18nHandler := i18n.Middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx = r.Context()
-	}))
-	i18nHandler.ServeHTTP(httptest.NewRecorder(), req)
+	ctx := i18n.SetLocale(req.Context(), i18n.DetectLanguage(req))
 
 	meta := viewmodel.DefaultPageMeta(ctx, cfg, req.URL.Path)
 
@@ -126,6 +121,26 @@ func TestDb_HeadOmitsPublicPageMetaTags(t *testing.T) {
 		if !strings.Contains(html, want) {
 			t.Errorf("/db の <head> に共通の出力が含まれていません: %q", want)
 		}
+	}
+}
+
+// TestDb_FullHeightFollowsVisibleViewport verifies the background region is sized by the
+// visible viewport height, so a mobile toolbar cannot leave it taller than the screen and
+// add a scrollbar to pages that otherwise fit.
+//
+// [Ja] TestDb_FullHeightFollowsVisibleViewport は背面領域の高さが可視ビューポートに追随する
+// ことを検証する。モバイルのツールバー表示時に領域が画面より高くなり、本来 1 画面に収まる
+// ページにスクロールバーが出ることを防ぐ。
+func TestDb_FullHeightFollowsVisibleViewport(t *testing.T) {
+	t.Parallel()
+
+	html := renderDbLayout(t, "ja")
+
+	// The whole class attribute is pinned, so a switch back to the static unit fails here.
+	//
+	// [Ja] class 属性全体を固定するため、静的な単位へ戻せばここで落ちる。
+	if !strings.Contains(html, `<div class="min-h-dvh">`) {
+		t.Error("背面領域のフルハイト指定が min-h-dvh になっていません")
 	}
 }
 

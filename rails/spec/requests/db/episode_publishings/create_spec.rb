@@ -3,7 +3,6 @@
 
 RSpec.describe "POST /db/episodes/:id/publishing", type: :request do
   it "ログインしていないとき、ログインページにリダイレクトすること" do
-    pending "published?がstatus enumベースに変更されたため、unpublished_atベースのpublish/unpublish処理との整合が必要"
     episode = FactoryBot.create(:episode, :unpublished)
 
     post "/db/episodes/#{episode.id}/publishing"
@@ -15,7 +14,6 @@ RSpec.describe "POST /db/episodes/:id/publishing", type: :request do
   end
 
   it "編集者権限を持たないユーザーがログインしているとき、アクセスできないこと" do
-    pending "published?がstatus enumベースに変更されたため、unpublished_atベースのpublish/unpublish処理との整合が必要"
     user = FactoryBot.create(:registered_user)
     episode = FactoryBot.create(:episode, :unpublished)
     login_as(user, scope: :user)
@@ -29,7 +27,6 @@ RSpec.describe "POST /db/episodes/:id/publishing", type: :request do
   end
 
   it "編集者権限を持つユーザーがログインしているとき、エピソードを公開できること" do
-    pending "published?がstatus enumベースに変更されたため、unpublished_atベースのpublish/unpublish処理との整合が必要"
     user = FactoryBot.create(:registered_user, :with_editor_role)
     episode = FactoryBot.create(:episode, :unpublished)
     login_as(user, scope: :user)

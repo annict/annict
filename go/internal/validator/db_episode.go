@@ -239,30 +239,6 @@ func parseEpisodeRowRawNumber(value string) (*float64, bool) {
 	return &parsed, true
 }
 
-// DBEpisodeNullVersion is the explicit version an edit form carries when the stored
-// updated_at is NULL. The column is nullable on the shared database, so "no timestamp" is a
-// state the form has to be able to state; an empty request field means instead that no version
-// was stated at all and is refused.
-//
-// The form renders the value and this package reads it back, so the literal lives here, on the
-// side that decides whether a submitted version is acceptable.
-//
-// [Ja] DBEpisodeNullVersion は、保存済みの updated_at が NULL のとき編集フォームが運ぶ明示的な
-// 版。共有 DB では同カラムが NULL 許容のため、「タイムスタンプが無い」ことをフォームが表明できる
-// 必要がある。リクエストの値が空であることは、そもそも版が示されていないことを意味し、拒否する。
-//
-// フォームが値を描画し、本パッケージが読み戻すため、リテラルは、送信された版を受け入れるかを
-// 判断する側であるここに置く。
-const DBEpisodeNullVersion = "null"
-
-// DBEpisodeVersionLayout is the format the version travels in. It keeps the sub-second digits
-// that separate two writes made within the same second, and parses back to the instant it came
-// from so the update can match it against the stored column.
-//
-// [Ja] DBEpisodeVersionLayout は版を往復させる書式。同一秒内の 2 つの書き込みを区別する秒未満の
-// 桁を保ち、元の時刻へパースし直せるため、更新側は保存済みのカラムと照合できる。
-const DBEpisodeVersionLayout = time.RFC3339Nano
-
 // DBEpisodeUpdateValidator validates one submit of the episode edit form on the Annict DB
 // admin screen.
 //
@@ -292,14 +268,14 @@ type DBEpisodeUpdateValidatorInput struct {
 // hold. The optional text and number columns travel as pointers so a field the editor cleared
 // is written as NULL rather than as an empty string no existing row carries.
 //
-// UpdatedAt is the version the submit was made against; nil is the DBEpisodeNullVersion
-// sentinel, which the update matches with updated_at IS NULL.
+// UpdatedAt is the version the submit was made against; nil is the FormNullVersion sentinel,
+// which the update matches with updated_at IS NULL.
 //
 // [Ja] DBEpisodeUpdateValidateOutput は受理された送信を、episodes の各カラムが保持する形へ
 // 変換したもの。任意入力のテキストと数値のカラムはポインタで運び、編集者が消したフィールドを、
 // 既存のどの行も持たない空文字列ではなく NULL として書けるようにする。
 //
-// UpdatedAt は送信が前提とする版。nil は DBEpisodeNullVersion のセンチネルで、更新側は
+// UpdatedAt は送信が前提とする版。nil は FormNullVersion のセンチネルで、更新側は
 // updated_at IS NULL で照合する。
 type DBEpisodeUpdateValidateOutput struct {
 	Number     *string
@@ -350,7 +326,7 @@ func (v *DBEpisodeUpdateValidator) Validate(ctx context.Context, input DBEpisode
 	//
 	// [Ja] 版は編集できるフィールドではないため、欠落や形式不正はフォーム全体に対して述べる。
 	// 編集者が直せる入力は無く、ページを開き直すしかないため。
-	version, versionOK := parseDBEpisodeVersion(input.UpdatedAt)
+	version, versionOK := parseFormVersion(input.UpdatedAt)
 	if !versionOK {
 		ve.AddGlobal(i18n.T(ctx, "validation_version_missing"))
 	}
@@ -372,29 +348,6 @@ func (v *DBEpisodeUpdateValidator) Validate(ctx context.Context, input DBEpisode
 		SortNumber: int32(parsedSortNumber),
 		UpdatedAt:  version,
 	}, nil
-}
-
-// parseDBEpisodeVersion reads the version a submit states, reporting false when the field is
-// empty or holds neither the null sentinel nor a timestamp in the round-trip format. A nil
-// time with true is the sentinel, which stands for a stored updated_at of NULL.
-//
-// [Ja] parseDBEpisodeVersion は送信が示す版を読み取り、フィールドが空か、null のセンチネルでも
-// 往復書式のタイムスタンプでもない場合に false を返す。nil の時刻と true の組はセンチネルで、
-// 保存済みの updated_at が NULL であることを表す。
-func parseDBEpisodeVersion(value string) (*time.Time, bool) {
-	switch value {
-	case "":
-		return nil, false
-	case DBEpisodeNullVersion:
-		return nil, true
-	}
-
-	parsed, err := time.Parse(DBEpisodeVersionLayout, value)
-	if err != nil {
-		return nil, false
-	}
-
-	return &parsed, true
 }
 
 // validateEpisodeMaxLength rejects a value longer than the episodes varchar(510) columns

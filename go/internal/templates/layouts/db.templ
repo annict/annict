@@ -53,11 +53,20 @@ templ Db(meta viewmodel.PageMeta, assetVersion string, content templ.Component) 
 			// above the z-40 overlay) is inert together with the rest of the background while the
 			// mobile overlay is open, instead of staying reachable behind the overlay.
 			//
+			// The region is sized by the dynamic viewport unit, the height that is actually
+			// visible. The static unit (100vh) means the height with a mobile toolbar hidden, so
+			// the background would stay taller than the screen while the toolbar is shown and add
+			// a scrollbar to pages that otherwise fit.
+			//
 			// [Ja] サイドバーの直後の兄弟が背面領域全体になり、Basecoat がデスクトップでそこに
 			// 余白を与える (.sidebar + *)。Flash をこの内側に置くことで、その fixed トースト
 			// (z-50、z-40 のオーバーレイより前面) もモバイルオーバーレイ表示中は背面の他の要素と
 			// 一緒に inert になり、オーバーレイ背面で操作可能なまま残らない。
-			<div class="min-h-screen">
+			//
+			// 高さは動的ビューポート単位 (実際に見えている高さ) で決める。静的な単位 (100vh) は
+			// モバイルのツールバーが隠れた状態の高さを指すため、ツールバー表示中は背面領域が
+			// 画面より高いままになり、本来 1 画面に収まるページにもスクロールバーが出る。
+			<div class="min-h-dvh">
 				// tabindex="-1" makes the skip link's jump land focus on the region itself, so the
 				// next Tab continues from the content instead of the top of the document.
 				//

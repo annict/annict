@@ -215,6 +215,25 @@ type DBWorkFormInput struct {
 	StartEpisodeRawNumber string
 	NumberFormatID        string
 	NoEpisodes            string
+	// UpdatedAt is the version the edit form was opened against, carried in a hidden field so
+	// the update can reject a submit made against a stale read instead of silently
+	// overwriting whoever wrote in between. It travels with the form values because a
+	// non-conflict rejection has to echo back the version the editor submitted. On a conflict,
+	// the handler instead presents the current stored state and replaces UpdatedAt with that
+	// state's version, so the next submit knowingly overwrites exactly the state that was shown.
+	//
+	// It is FormNullVersion for a work whose updated_at is unset, and empty on the create
+	// form, which has no stored row to state a version for.
+	//
+	// [Ja] UpdatedAt は編集フォームを開いた時点の版で、hidden で持ち回る。古い読み取りに対する
+	// 送信を、間に書いた人の変更を黙って上書きせずに更新側で却下できるようにするため。入力値と
+	// 一緒に持つのは、非競合の却下では編集者が送った版をそのまま返す必要があるから。競合時は
+	// ハンドラーが現在の保存状態を示し、UpdatedAt をその状態の版へ載せ替える。これにより次の送信は、
+	// 示された状態を確認したうえで上書きする意味になる。
+	//
+	// updated_at を持たない作品では FormNullVersion になり、版を示すべき保存済みの行が無い
+	// 作成フォームでは空になる。
+	UpdatedAt string
 }
 
 // NewDBWorkFormInput preserves the submitted work form values so the create or edit form
@@ -255,6 +274,21 @@ func NewDBWorkFormInput(input usecase.WorkFormInput) *DBWorkFormInput {
 	}
 }
 
+// NewDBWorkFormInputFromSubmit copies a rejected edit submit's values and version into the
+// re-rendered form exactly as submitted. Keeping the submitted version is correct for a
+// non-conflict rejection. When rendering a conflict, the caller presents the current stored
+// state and then replaces UpdatedAt with that state's version.
+//
+// [Ja] NewDBWorkFormInputFromSubmit は却下された編集の送信の値と版を、送信されたまま再描画する
+// フォームへコピーする。送信された版を保つのは非競合の却下では正しい。競合を描画する呼び出し元は、
+// 現在の保存状態を示してから UpdatedAt をその状態の版へ載せ替える。
+func NewDBWorkFormInputFromSubmit(input usecase.UpdateWorkInput) *DBWorkFormInput {
+	formInput := NewDBWorkFormInput(input.WorkFormInput)
+	formInput.UpdatedAt = input.UpdatedAt
+
+	return formInput
+}
+
 // NewDBWorkFormInputFromWork projects an existing work onto the string form values
 // the work edit form renders. It is the inverse of buildWorkFormParams's
 // string->typed conversion: pointers and sql-nullable values become "" when unset,
@@ -292,6 +326,7 @@ func NewDBWorkFormInputFromWork(work *model.Work) *DBWorkFormInput {
 		StartEpisodeRawNumber: strconv.FormatFloat(work.StartEpisodeRawNumber, 'f', -1, 64),
 		NumberFormatID:        formatNumberFormatID(work.NumberFormatID),
 		NoEpisodes:            formatCheckbox(work.NoEpisodes),
+		UpdatedAt:             formatFormVersion(work.UpdatedAt),
 	}
 }
 
@@ -330,9 +365,13 @@ func formatCheckbox(checked bool) string {
 	return ""
 }
 
-// Val returns the form value for the given field, or "" when the receiver is nil.
+// Val returns the form value for the given field, or "" when the receiver is nil. The hidden
+// version is reachable under "updated_at" alongside the editable fields, so the template reads
+// every input's value the same nil-safe way.
 //
-// [Ja] Val は指定フィールドのフォーム値を返す。レシーバが nil のときは "" を返す。
+// [Ja] Val は指定フィールドのフォーム値を返す。レシーバが nil のときは "" を返す。hidden の版も
+// 編集可能なフィールドと並んで "updated_at" で引ける。テンプレートがどの入力欄の値も同じく
+// nil 安全な方法で読めるようにするため。
 func (d *DBWorkFormInput) Val(field string) string {
 	if d == nil {
 		return ""
@@ -390,6 +429,8 @@ func (d *DBWorkFormInput) Val(field string) string {
 		return d.NumberFormatID
 	case "no_episodes":
 		return d.NoEpisodes
+	case "updated_at":
+		return d.UpdatedAt
 	default:
 		return ""
 	}

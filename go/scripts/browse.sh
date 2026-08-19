@@ -27,6 +27,72 @@ SHOT_DIR="$TMP_DIR/browse"
 
 pw() { playwright-cli -s="$SESSION" "$@"; }
 
+# check_environment validates the environment used by browser verification without printing
+# any credential values. Keeping this check in browse.sh makes diagnostics and login use the
+# same op-run wrapper and the same requirements.
+#
+# [Ja] check_environment は資格情報の値を表示せず、ブラウザ確認に使う環境を検証する。
+# 診断とログインを browse.sh に集約し、同じ op run ラッパーと要件を通すため。
+check_environment() {
+  local n="${1:-1}"
+  local email_var="KORYLUS_BROWSING_USER${n}_EMAIL"
+  local pass_var="KORYLUS_BROWSING_USER${n}_PASSWORD"
+  local failed=0
+
+  if [ "${APP_ENV:-}" != "dev" ]; then
+    echo "APP_ENV must be dev (run through the Makefile browse target)" >&2
+    failed=1
+  fi
+
+  local name
+  for name in KORYLUS_BROWSING_BASE_URL "$email_var" "$pass_var"; do
+    if [ -z "${!name:-}" ]; then
+      echo "$name is not set" >&2
+      failed=1
+    fi
+  done
+
+  if [ "${ANNICT_TURNSTILE_DISABLE:-}" != "true" ]; then
+    echo "ANNICT_TURNSTILE_DISABLE must be true for dev browser login" >&2
+    failed=1
+  fi
+
+  local command_name
+  for command_name in node playwright-cli; do
+    if ! command -v "$command_name" >/dev/null 2>&1; then
+      echo "$command_name is not available" >&2
+      failed=1
+    fi
+  done
+
+  if [ -n "${KORYLUS_BROWSING_BASE_URL:-}" ] && command -v node >/dev/null 2>&1; then
+    if ! node -e '
+      const raw = process.env.KORYLUS_BROWSING_BASE_URL || "";
+      let url;
+      try {
+        url = new URL(raw);
+      } catch {
+        console.error("KORYLUS_BROWSING_BASE_URL must be a valid URL");
+        process.exit(1);
+      }
+      if (url.protocol !== "http:" && url.protocol !== "https:") {
+        console.error("KORYLUS_BROWSING_BASE_URL must use http or https");
+        process.exit(1);
+      }
+      if (!url.username || !url.password) {
+        console.error("KORYLUS_BROWSING_BASE_URL must include Basic-auth credentials");
+        process.exit(1);
+      }
+    '; then
+      failed=1
+    fi
+  fi
+
+  if [ "$failed" -ne 0 ]; then
+    return 1
+  fi
+}
+
 # build_config writes the Basic-auth config (httpCredentials) parsed from
 # KORYLUS_BROWSING_BASE_URL, plus a credential-free origin file for later
 # navigation. The config carries the credentials, so it is written 0600 under
@@ -58,12 +124,10 @@ cmd_login() {
   local n="${1:-1}"
   local email_var="KORYLUS_BROWSING_USER${n}_EMAIL"
   local pass_var="KORYLUS_BROWSING_USER${n}_PASSWORD"
+  check_environment "$n"
+
   local email="${!email_var:-}"
   local pass="${!pass_var:-}"
-  if [ -z "$email" ] || [ -z "$pass" ]; then
-    echo "USER${n} credentials are not set (${email_var} / ${pass_var})" >&2
-    exit 1
-  fi
 
   # Remove the credential-bearing config on any exit, so a mid-login failure
   # (a set -e abort before the explicit rm below) never leaves credentials at
@@ -108,6 +172,12 @@ cmd_login() {
   echo "logged in as USER${n}: $state"
 }
 
+cmd_check() {
+  local n="${1:-1}"
+  check_environment "$n"
+  echo "browser environment ready for USER${n}"
+}
+
 cmd_shot() {
   local path="${1:-/}"
   if [ ! -f "$ORIGIN_FILE" ]; then
@@ -136,6 +206,10 @@ cmd_close() {
 }
 
 case "${1:-}" in
+  check)
+    shift
+    cmd_check "${1:-1}"
+    ;;
   login)
     shift
     cmd_login "${1:-1}"
@@ -148,7 +222,7 @@ case "${1:-}" in
     cmd_close
     ;;
   *)
-    echo "usage: browse.sh {login [user_number] | shot <path> | close}" >&2
+    echo "usage: browse.sh {check [user_number] | login [user_number] | shot <path> | close}" >&2
     exit 2
     ;;
 esac

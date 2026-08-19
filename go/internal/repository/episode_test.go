@@ -49,19 +49,23 @@ func insertEpisodeSyncParentAnime(t *testing.T, tx *sql.Tx) model.AnimeID {
 }
 
 // episodeSyncRow holds the episodes columns relevant to the episodes -> animes sync.
+// unpublishedAt / deletedAt are the state columns the sync turns into anime.status
+// through DerivedStatus, so a fixture can put the row in any of the three states.
 //
 // [Ja] episodeSyncRow は episodes -> animes 同期に関係する episodes カラムを保持する。
+// unpublishedAt / deletedAt は同期が DerivedStatus 経由で anime.status に写像する状態
+// カラムで、フィクスチャは 3 つの状態のいずれにも行を置ける。
 type episodeSyncRow struct {
-	workID         model.WorkID
-	title          sql.NullString
-	titleRo        string
-	titleEn        string
-	number         sql.NullString
-	sortNumber     int32
-	rawNumber      sql.NullFloat64
-	status         string
-	archiveMessage sql.NullString
-	animeID        sql.NullInt64
+	workID        model.WorkID
+	title         sql.NullString
+	titleRo       string
+	titleEn       string
+	number        sql.NullString
+	sortNumber    int32
+	rawNumber     sql.NullFloat64
+	unpublishedAt sql.NullTime
+	deletedAt     sql.NullTime
+	animeID       sql.NullInt64
 }
 
 func insertEpisodeSyncEpisode(t *testing.T, tx *sql.Tx, in episodeSyncRow) model.EpisodeID {
@@ -70,10 +74,10 @@ func insertEpisodeSyncEpisode(t *testing.T, tx *sql.Tx, in episodeSyncRow) model
 	if err := tx.QueryRow(`
 		INSERT INTO episodes (
 			work_id, title, title_ro, title_en, number, sort_number,
-			raw_number, status, archive_message, anime_id
+			raw_number, unpublished_at, deleted_at, anime_id
 		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id`,
 		int64(in.workID), in.title, in.titleRo, in.titleEn, in.number, in.sortNumber,
-		in.rawNumber, in.status, in.archiveMessage, in.animeID,
+		in.rawNumber, in.unpublishedAt, in.deletedAt, in.animeID,
 	).Scan(&id); err != nil {
 		t.Fatalf("episodes の挿入に失敗: %v", err)
 	}
@@ -82,15 +86,7 @@ func insertEpisodeSyncEpisode(t *testing.T, tx *sql.Tx, in episodeSyncRow) model
 
 // dbListEpisodeRow holds the episodes columns the Annict DB screens read.
 //
-// The status field mirrors the dormant episodes.status column. Test cases
-// deliberately make it disagree with unpublished_at / deleted_at to verify that
-// the filters and the derived status use those timestamps instead.
-//
 // [Ja] dbListEpisodeRow は Annict DB の画面が読む episodes カラムを保持する。
-//
-// status フィールドは休眠中の episodes.status カラムを写す。テストケースでは
-// unpublished_at / deleted_at と意図的に食い違わせ、各絞り込みと状態導出が
-// これらのタイムスタンプを使うことを検証する。
 type dbListEpisodeRow struct {
 	workID              model.WorkID
 	number              sql.NullString
@@ -100,7 +96,6 @@ type dbListEpisodeRow struct {
 	titleRo             string
 	titleEn             string
 	episodeRecordsCount int32
-	status              string
 	unpublishedAt       sql.NullTime
 	deletedAt           sql.NullTime
 }
@@ -116,11 +111,11 @@ func insertDBListEpisode(t *testing.T, tx *sql.Tx, in dbListEpisodeRow) model.Ep
 	if err := tx.QueryRow(`
 		INSERT INTO episodes (
 			work_id, number, raw_number, sort_number, title, title_ro, title_en,
-			episode_records_count, status, unpublished_at, deleted_at,
+			episode_records_count, unpublished_at, deleted_at,
 			created_at, updated_at
-		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, NOW(), NOW()) RETURNING id`,
+		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, NOW(), NOW()) RETURNING id`,
 		int64(in.workID), in.number, in.rawNumber, in.sortNumber, in.title, in.titleRo, in.titleEn,
-		in.episodeRecordsCount, in.status, in.unpublishedAt, in.deletedAt,
+		in.episodeRecordsCount, in.unpublishedAt, in.deletedAt,
 	).Scan(&id); err != nil {
 		t.Fatalf("episodes の挿入に失敗: %v", err)
 	}
@@ -161,13 +156,11 @@ func TestEpisodeRepository_ListForDB(t *testing.T) {
 			titleRo:             "Hajimari",
 			titleEn:             "The Beginning",
 			episodeRecordsCount: 42,
-			status:              "published",
 		})
 		insertDBListEpisode(t, tx, dbListEpisodeRow{
 			workID:     workID,
 			number:     sql.NullString{String: "第2話", Valid: true},
 			sortNumber: 2,
-			status:     "published",
 		})
 
 		// Another work's episode must not leak into the list.
@@ -178,7 +171,6 @@ func TestEpisodeRepository_ListForDB(t *testing.T) {
 			workID:     otherWorkID,
 			number:     sql.NullString{String: "別作品の第1話", Valid: true},
 			sortNumber: 1,
-			status:     "published",
 		})
 
 		got, err := repo.ListForDB(context.Background(), repository.DBEpisodeListParams{
@@ -249,7 +241,6 @@ func TestEpisodeRepository_ListForDB(t *testing.T) {
 				workID:     workID,
 				number:     sql.NullString{String: "第" + strconv.Itoa(int(i)) + "話", Valid: true},
 				sortNumber: i,
-				status:     "published",
 			})
 		}
 
@@ -294,17 +285,14 @@ func TestEpisodeRepository_ListForDB(t *testing.T) {
 		oldestID := insertDBListEpisode(t, tx, dbListEpisodeRow{
 			workID:     workID,
 			sortNumber: 1,
-			status:     "published",
 		})
 		middleID := insertDBListEpisode(t, tx, dbListEpisodeRow{
 			workID:     workID,
 			sortNumber: 1,
-			status:     "published",
 		})
 		newestID := insertDBListEpisode(t, tx, dbListEpisodeRow{
 			workID:     workID,
 			sortNumber: 1,
-			status:     "published",
 		})
 
 		firstPage, err := repo.ListForDB(context.Background(), repository.DBEpisodeListParams{
@@ -341,7 +329,7 @@ func TestEpisodeRepository_ListForDB(t *testing.T) {
 		}
 	})
 
-	t.Run("正常系: 除外と状態は deleted_at / unpublished_at で決まり休眠 status は読まない", func(t *testing.T) {
+	t.Run("正常系: 除外と状態は deleted_at / unpublished_at で決まる", func(t *testing.T) {
 		t.Parallel()
 
 		db, tx := testutil.SetupTx(t)
@@ -352,26 +340,17 @@ func TestEpisodeRepository_ListForDB(t *testing.T) {
 			workID:     workID,
 			number:     sql.NullString{String: "公開中の話", Valid: true},
 			sortNumber: 1,
-			status:     "published",
 		})
 		insertDBListEpisode(t, tx, dbListEpisodeRow{
 			workID:        workID,
 			number:        sql.NullString{String: "非公開の話", Valid: true},
 			sortNumber:    2,
-			status:        "published",
 			unpublishedAt: sql.NullTime{Time: time.Now(), Valid: true},
 		})
 		insertDBListEpisode(t, tx, dbListEpisodeRow{
 			workID:     workID,
-			number:     sql.NullString{String: "休眠 status だけが deleted の話", Valid: true},
-			sortNumber: 3,
-			status:     "deleted",
-		})
-		insertDBListEpisode(t, tx, dbListEpisodeRow{
-			workID:     workID,
 			number:     sql.NullString{String: "deleted_at で削除された話", Valid: true},
-			sortNumber: 4,
-			status:     "published",
+			sortNumber: 3,
 			deletedAt:  sql.NullTime{Time: time.Now(), Valid: true},
 		})
 
@@ -383,11 +362,11 @@ func TestEpisodeRepository_ListForDB(t *testing.T) {
 		if err != nil {
 			t.Fatalf("ListForDB() error = %v", err)
 		}
-		if len(got) != 3 {
-			t.Fatalf("len(got) = %d, want 3 (deleted_at の行だけを除外)", len(got))
+		if len(got) != 2 {
+			t.Fatalf("len(got) = %d, want 2 (deleted_at の行だけを除外)", len(got))
 		}
 
-		wantNumbers := []string{"休眠 status だけが deleted の話", "非公開の話", "公開中の話"}
+		wantNumbers := []string{"非公開の話", "公開中の話"}
 		for i, want := range wantNumbers {
 			if *got[i].Number != want {
 				t.Errorf("got[%d].Number = %q, want %q", i, *got[i].Number, want)
@@ -395,7 +374,6 @@ func TestEpisodeRepository_ListForDB(t *testing.T) {
 		}
 
 		wantStatuses := []model.EpisodeStatus{
-			model.EpisodeStatusPublished,
 			model.EpisodeStatusArchived,
 			model.EpisodeStatusPublished,
 		}
@@ -418,7 +396,6 @@ func TestEpisodeRepository_ListForDB(t *testing.T) {
 			number:     sql.NullString{String: "第1話", Valid: true},
 			rawNumber:  sql.NullFloat64{Float64: 1, Valid: true},
 			sortNumber: 100,
-			status:     "published",
 		})
 		// The deleted episode sits between the other two in sort_number order. The list
 		// drops it, so the derivation must skip it too instead of naming a row the page
@@ -430,14 +407,12 @@ func TestEpisodeRepository_ListForDB(t *testing.T) {
 			workID:     workID,
 			number:     sql.NullString{String: "削除済みの話", Valid: true},
 			sortNumber: 150,
-			status:     "published",
 			deletedAt:  sql.NullTime{Time: time.Now(), Valid: true},
 		})
 		insertDBListEpisode(t, tx, dbListEpisodeRow{
 			workID:     workID,
 			number:     sql.NullString{String: "第2話", Valid: true},
 			sortNumber: 200,
-			status:     "published",
 		})
 		// Another work's episode must not become anyone's preceding episode.
 		//
@@ -447,7 +422,6 @@ func TestEpisodeRepository_ListForDB(t *testing.T) {
 			workID:     otherWorkID,
 			number:     sql.NullString{String: "別作品の話", Valid: true},
 			sortNumber: 50,
-			status:     "published",
 		})
 
 		got, err := repo.ListForDB(context.Background(), repository.DBEpisodeListParams{
@@ -492,7 +466,6 @@ func TestEpisodeRepository_ListForDB(t *testing.T) {
 				workID:     workID,
 				number:     sql.NullString{String: "第" + strconv.Itoa(int(i)) + "話", Valid: true},
 				sortNumber: i * 100,
-				status:     "published",
 			})
 		}
 
@@ -566,36 +539,32 @@ func TestEpisodeRepository_CountForDB(t *testing.T) {
 	repo := repository.NewEpisodeRepository(query.New(db).WithTx(tx))
 
 	workID := insertDBListWork(t, tx)
-	insertDBListEpisode(t, tx, dbListEpisodeRow{workID: workID, sortNumber: 1, status: "published"})
+	insertDBListEpisode(t, tx, dbListEpisodeRow{workID: workID, sortNumber: 1})
 	insertDBListEpisode(t, tx, dbListEpisodeRow{
 		workID:        workID,
 		sortNumber:    2,
-		status:        "published",
 		unpublishedAt: sql.NullTime{Time: time.Now(), Valid: true},
 	})
 
 	// The count must use the same filter as the list: the deleted_at row and another
-	// work's episode are left out, while the row whose dormant status alone says
-	// deleted is still counted.
+	// work's episode are left out.
 	//
 	// [Ja] 件数は一覧と同じ絞り込みを使うため、deleted_at の行と別作品のエピソードは
-	// 数えず、休眠 status だけが deleted の行は数える。
-	insertDBListEpisode(t, tx, dbListEpisodeRow{workID: workID, sortNumber: 3, status: "deleted"})
+	// 数えない。
 	insertDBListEpisode(t, tx, dbListEpisodeRow{
 		workID:     workID,
-		sortNumber: 4,
-		status:     "published",
+		sortNumber: 3,
 		deletedAt:  sql.NullTime{Time: time.Now(), Valid: true},
 	})
 	otherWorkID := insertDBListWork(t, tx)
-	insertDBListEpisode(t, tx, dbListEpisodeRow{workID: otherWorkID, sortNumber: 1, status: "published"})
+	insertDBListEpisode(t, tx, dbListEpisodeRow{workID: otherWorkID, sortNumber: 1})
 
 	got, err := repo.CountForDB(context.Background(), workID)
 	if err != nil {
 		t.Fatalf("CountForDB() error = %v", err)
 	}
-	if got != 3 {
-		t.Errorf("CountForDB() = %d, want 3", got)
+	if got != 2 {
+		t.Errorf("CountForDB() = %d, want 2", got)
 	}
 }
 
@@ -616,7 +585,6 @@ func TestEpisodeRepository_GetForEditByID(t *testing.T) {
 			sortNumber: 200,
 			title:      sql.NullString{String: "もう、お婿にいけません", Valid: true},
 			titleEn:    "No Longer Marriageable",
-			status:     "published",
 		})
 
 		got, err := repo.GetForEditByID(context.Background(), episodeID)
@@ -675,7 +643,7 @@ func TestEpisodeRepository_GetForEditByID(t *testing.T) {
 		repo := repository.NewEpisodeRepository(query.New(db).WithTx(tx))
 
 		workID := testutil.NewWorkBuilder(t, tx).WithTitle("未設定カラムの作品").Build()
-		episodeID := insertDBListEpisode(t, tx, dbListEpisodeRow{workID: workID, sortNumber: 100, status: "published"})
+		episodeID := insertDBListEpisode(t, tx, dbListEpisodeRow{workID: workID, sortNumber: 100})
 
 		got, err := repo.GetForEditByID(context.Background(), episodeID)
 		if err != nil {
@@ -705,25 +673,17 @@ func TestEpisodeRepository_GetForEditByID(t *testing.T) {
 		deletedEpisodeID := insertDBListEpisode(t, tx, dbListEpisodeRow{
 			workID:     workID,
 			sortNumber: 100,
-			status:     "published",
 			deletedAt:  sql.NullTime{Time: time.Now(), Valid: true},
 		})
-		// The dormant status column is deliberately made to disagree with the timestamps:
-		// a row it alone calls deleted is still editable.
-		//
-		// [Ja] 休眠 status カラムは意図的にタイムスタンプと食い違わせる。status だけが
-		// deleted の行は編集できる。
-		dormantDeletedEpisodeID := insertDBListEpisode(t, tx, dbListEpisodeRow{
+		editableEpisodeID := insertDBListEpisode(t, tx, dbListEpisodeRow{
 			workID:     workID,
 			sortNumber: 200,
-			status:     "deleted",
 		})
 
 		deletedWorkID := testutil.NewWorkBuilder(t, tx).WithTitle("削除済みの作品").WithDeletedAt(time.Now()).Build()
 		episodeOfDeletedWorkID := insertDBListEpisode(t, tx, dbListEpisodeRow{
 			workID:     deletedWorkID,
 			sortNumber: 100,
-			status:     "published",
 		})
 
 		for _, tt := range []struct {
@@ -734,7 +694,7 @@ func TestEpisodeRepository_GetForEditByID(t *testing.T) {
 			{name: "存在しないエピソード", episodeID: model.EpisodeID(999999999), wantNil: true},
 			{name: "削除済みのエピソード", episodeID: deletedEpisodeID, wantNil: true},
 			{name: "削除済み作品のエピソード", episodeID: episodeOfDeletedWorkID, wantNil: true},
-			{name: "休眠 status だけが deleted のエピソード", episodeID: dormantDeletedEpisodeID, wantNil: false},
+			{name: "生きているエピソード", episodeID: editableEpisodeID, wantNil: false},
 		} {
 			t.Run(tt.name, func(t *testing.T) {
 				got, err := repo.GetForEditByID(context.Background(), tt.episodeID)
@@ -764,15 +724,23 @@ func TestEpisodeRepository_ListForAnimeSyncByIDs(t *testing.T) {
 		parentAnimeID := insertEpisodeSyncParentAnime(t, tx)
 		workID := insertEpisodeSyncWork(t, tx, sql.NullInt64{Int64: int64(parentAnimeID), Valid: true})
 
+		// The episode was archived and then deleted, the shape a delete leaves behind: the
+		// delete stamps deleted_at and leaves the unpublish's timestamp in place. Setting
+		// both makes the row exercise each state column's projection at once.
+		//
+		// [Ja] エピソードは非公開にされた後に削除された状態にする。削除は deleted_at を打ち、
+		// 非公開が打ったタイムスタンプはそのまま残すため、これが削除後の行の形になる。両方を
+		// 立てることで、状態カラム 2 つの射影を 1 行で通す。
 		episodeID := insertEpisodeSyncEpisode(t, tx, episodeSyncRow{
-			workID:     workID,
-			title:      sql.NullString{String: "第3話タイトル", Valid: true},
-			titleRo:    "Episode 3",
-			titleEn:    "Episode Three",
-			number:     sql.NullString{String: "第3話", Valid: true},
-			sortNumber: 3,
-			rawNumber:  sql.NullFloat64{Float64: 3.5, Valid: true},
-			status:     "published",
+			workID:        workID,
+			title:         sql.NullString{String: "第3話タイトル", Valid: true},
+			titleRo:       "Episode 3",
+			titleEn:       "Episode Three",
+			number:        sql.NullString{String: "第3話", Valid: true},
+			sortNumber:    3,
+			rawNumber:     sql.NullFloat64{Float64: 3.5, Valid: true},
+			unpublishedAt: sql.NullTime{Time: time.Now(), Valid: true},
+			deletedAt:     sql.NullTime{Time: time.Now(), Valid: true},
 		})
 
 		episodes, err := repo.ListForAnimeSyncByIDs(context.Background(), []model.EpisodeID{episodeID})
@@ -808,8 +776,19 @@ func TestEpisodeRepository_ListForAnimeSyncByIDs(t *testing.T) {
 		if e.RawNumber == nil || *e.RawNumber != 3.5 {
 			t.Errorf("RawNumber = %v, want 3.5", e.RawNumber)
 		}
-		if e.Status != model.EpisodeStatusPublished {
-			t.Errorf("Status = %q, want published", e.Status)
+		// The state timestamps ride along because the sync derives anime.status from them;
+		// a projection that drops them would reconcile every episode back to published.
+		//
+		// [Ja] 状態のタイムスタンプが一緒に返るのは、同期がこれらから anime.status を導出する
+		// ため。射影から落ちると、すべてのエピソードが published にリコンサイルされてしまう。
+		if e.UnpublishedAt == nil {
+			t.Error("UnpublishedAt = nil, want 非公開時刻")
+		}
+		if e.DeletedAt == nil {
+			t.Error("DeletedAt = nil, want 削除時刻")
+		}
+		if e.DerivedStatus() != model.EpisodeStatusDeleted {
+			t.Errorf("DerivedStatus() = %q, want %q", e.DerivedStatus(), model.EpisodeStatusDeleted)
 		}
 		if e.ParentAnimeID == nil || *e.ParentAnimeID != parentAnimeID {
 			t.Errorf("ParentAnimeID = %v, want %d", e.ParentAnimeID, parentAnimeID)
@@ -828,16 +807,15 @@ func TestEpisodeRepository_ListForAnimeSyncByIDs(t *testing.T) {
 		db, tx := testutil.SetupTx(t)
 		repo := repository.NewEpisodeRepository(query.New(db).WithTx(tx))
 
-		// Parent work has no anime_id (unsynced), and the episode leaves the
-		// nullable title / number / raw_number columns NULL.
+		// Parent work has no anime_id (unsynced), and the episode leaves the nullable
+		// title / number / raw_number columns and both state timestamps NULL.
 		//
 		// [Ja] 親作品は anime_id を持たず (未同期)、episode は NULL 許容の
-		// title / number / raw_number カラムを NULL のままにする。
+		// title / number / raw_number カラムと状態のタイムスタンプ 2 つを NULL のままにする。
 		workID := insertEpisodeSyncWork(t, tx, sql.NullInt64{})
 		episodeID := insertEpisodeSyncEpisode(t, tx, episodeSyncRow{
 			workID:     workID,
 			sortNumber: 1,
-			status:     "published",
 		})
 
 		episodes, err := repo.ListForAnimeSyncByIDs(context.Background(), []model.EpisodeID{episodeID})
@@ -857,6 +835,15 @@ func TestEpisodeRepository_ListForAnimeSyncByIDs(t *testing.T) {
 		}
 		if e.RawNumber != nil {
 			t.Errorf("RawNumber = %v, want nil", e.RawNumber)
+		}
+		if e.UnpublishedAt != nil {
+			t.Errorf("UnpublishedAt = %v, want nil", e.UnpublishedAt)
+		}
+		if e.DeletedAt != nil {
+			t.Errorf("DeletedAt = %v, want nil", e.DeletedAt)
+		}
+		if e.DerivedStatus() != model.EpisodeStatusPublished {
+			t.Errorf("DerivedStatus() = %q, want %q", e.DerivedStatus(), model.EpisodeStatusPublished)
 		}
 		if e.ParentAnimeID != nil {
 			t.Errorf("ParentAnimeID = %v, want nil (unsynced parent)", e.ParentAnimeID)
@@ -1035,7 +1022,6 @@ func TestEpisodeRepository_UpdateAnimeID(t *testing.T) {
 	episodeID := insertEpisodeSyncEpisode(t, tx, episodeSyncRow{
 		workID:     workID,
 		sortNumber: 1,
-		status:     "published",
 	})
 
 	// The anime the episode gets mapped to (its own identity row).
@@ -1082,9 +1068,9 @@ func TestEpisodeRepository_ListIDsAfter(t *testing.T) {
 	//
 	// [Ja] id 昇順の 3 件。中間の 1 件は、最初のページ (limit 2) が満杯になり id3 が
 	// 2 ページ目のカーソルより先に残るために存在させるだけ。
-	id1 := insertEpisodeSyncEpisode(t, tx, episodeSyncRow{workID: workID, sortNumber: 1, status: "published"})
-	insertEpisodeSyncEpisode(t, tx, episodeSyncRow{workID: workID, sortNumber: 2, status: "published"})
-	id3 := insertEpisodeSyncEpisode(t, tx, episodeSyncRow{workID: workID, sortNumber: 3, status: "published"})
+	id1 := insertEpisodeSyncEpisode(t, tx, episodeSyncRow{workID: workID, sortNumber: 1})
+	insertEpisodeSyncEpisode(t, tx, episodeSyncRow{workID: workID, sortNumber: 2})
+	id3 := insertEpisodeSyncEpisode(t, tx, episodeSyncRow{workID: workID, sortNumber: 3})
 
 	t.Run("カーソル直後の id を LIMIT どおり 1 件返す", func(t *testing.T) {
 		got, err := repo.ListIDsAfter(ctx, id1-1, 1)
@@ -1361,15 +1347,7 @@ func TestEpisodeRepository_GetForUpdateByID(t *testing.T) {
 			sortNumber: 100,
 			deletedAt:  sql.NullTime{Time: time.Now(), Valid: true},
 		})
-		// The dormant status column is deliberately made to disagree with the timestamps: a
-		// row it alone calls deleted is still updatable.
-		//
-		// [Ja] 休眠 status カラムは意図的にタイムスタンプと食い違わせる。status だけが deleted の
-		// 行は更新できる。
-		dormantDeletedEpisodeID := insertDBUpdateEpisode(t, tx, dbUpdateEpisodeRow{workID: workID, sortNumber: 200})
-		if _, err := tx.Exec(`UPDATE episodes SET status = 'deleted' WHERE id = $1`, int64(dormantDeletedEpisodeID)); err != nil {
-			t.Fatalf("休眠 status の更新に失敗: %v", err)
-		}
+		updatableEpisodeID := insertDBUpdateEpisode(t, tx, dbUpdateEpisodeRow{workID: workID, sortNumber: 200})
 
 		deletedWorkID := insertDBUpdateWork(t, tx, sql.NullInt64{})
 		if _, err := tx.Exec(`UPDATE works SET deleted_at = NOW() WHERE id = $1`, int64(deletedWorkID)); err != nil {
@@ -1385,7 +1363,7 @@ func TestEpisodeRepository_GetForUpdateByID(t *testing.T) {
 			{name: "存在しないエピソード", episodeID: model.EpisodeID(999999999), wantNil: true},
 			{name: "削除済みのエピソード", episodeID: deletedEpisodeID, wantNil: true},
 			{name: "削除済み作品のエピソード", episodeID: episodeOfDeletedWorkID, wantNil: true},
-			{name: "休眠 status だけが deleted のエピソード", episodeID: dormantDeletedEpisodeID, wantNil: false},
+			{name: "生きているエピソード", episodeID: updatableEpisodeID, wantNil: false},
 		} {
 			t.Run(tt.name, func(t *testing.T) {
 				got, err := repo.GetForUpdateByID(context.Background(), tt.episodeID)
@@ -2981,11 +2959,13 @@ func TestEpisodeRepository_UpdateRejectsMovedParent(t *testing.T) {
 	}
 }
 
-// dbArchiveEpisodeRow holds the mapping and state timestamps an archive test starts an episode
-// from. AnimeID lets the success case verify Archive returns the mapping from the updated row.
+// dbArchiveEpisodeRow holds the mapping and state timestamps an archive or re-publish test
+// starts an episode from. AnimeID lets the success cases verify Archive / Unarchive return the
+// mapping from the updated row.
 //
-// [Ja] dbArchiveEpisodeRow は非公開テストがエピソードの初期値として与える写像と状態タイムスタンプを
-// 保持する。AnimeID により、正常系は Archive が更新した行の写像を返すことを検証できる。
+// [Ja] dbArchiveEpisodeRow は非公開・再公開テストがエピソードの初期値として与える写像と状態
+// タイムスタンプを保持する。AnimeID により、正常系は Archive / Unarchive が更新した行の写像を
+// 返すことを検証できる。
 type dbArchiveEpisodeRow struct {
 	workID        model.WorkID
 	animeID       sql.NullInt64
@@ -2993,12 +2973,13 @@ type dbArchiveEpisodeRow struct {
 	deletedAt     sql.NullTime
 }
 
-// insertDBArchiveWork inserts the parent work of an archive test with the counter cache the
-// archive decrements and an updated_at set back a day, so the touch the archive performs is
+// insertDBArchiveWork inserts the parent work of an archive, re-publish or delete test with the
+// counter cache those writes move and an updated_at set back a day, so the touch they perform is
 // observable.
 //
-// [Ja] insertDBArchiveWork は非公開テストの親作品を、非公開が減算するカウンターキャッシュ付きで、
-// updated_at を 1 日前にして挿入する。非公開が行う touch を観測できるようにするため。
+// [Ja] insertDBArchiveWork は非公開・再公開・削除テストの親作品を、3 者が動かすカウンター
+// キャッシュ付きで、updated_at を 1 日前にして挿入する。3 者が行う touch を観測できるように
+// するため。
 func insertDBArchiveWork(t *testing.T, tx *sql.Tx, episodesCount int32) model.WorkID {
 	t.Helper()
 	var id int64
@@ -3012,24 +2993,24 @@ func insertDBArchiveWork(t *testing.T, tx *sql.Tx, episodesCount int32) model.Wo
 	return model.WorkID(id)
 }
 
-// insertDBArchiveEpisode inserts the episode an archive test unpublishes. Its timestamps come
-// from the database an hour back rather than from the Go clock, for the reason
-// insertDBUpdateEpisode states: NOW() is the transaction's start time, so a fixture stamped by
-// the test process could sit after the value the archive writes.
+// insertDBArchiveEpisode inserts the episode an archive test unpublishes or a re-publish test
+// publishes again. Its timestamps come from the database an hour back rather than from the Go
+// clock, for the reason insertDBUpdateEpisode states: NOW() is the transaction's start time, so
+// a fixture stamped by the test process could sit after the value the write produces.
 //
-// [Ja] insertDBArchiveEpisode は非公開テストが非公開にするエピソードを挿入する。タイムスタンプは
-// insertDBUpdateEpisode が述べる理由により、Go の時計ではなく DB の 1 時間前を使う。NOW() は
-// トランザクション開始時刻のため、テストプロセスが打刻したフィクスチャは非公開が書く値より後に
-// なりうる。
+// [Ja] insertDBArchiveEpisode は非公開テストが非公開にする、または再公開テストが公開に戻す
+// エピソードを挿入する。タイムスタンプは insertDBUpdateEpisode が述べる理由により、Go の時計では
+// なく DB の 1 時間前を使う。NOW() はトランザクション開始時刻のため、テストプロセスが打刻した
+// フィクスチャは書き込みが打つ値より後になりうる。
 func insertDBArchiveEpisode(t *testing.T, tx *sql.Tx, in dbArchiveEpisodeRow) model.EpisodeID {
 	t.Helper()
 	var id int64
 	if err := tx.QueryRow(`
 		INSERT INTO episodes (
-			work_id, number, sort_number, title, status, anime_id, unpublished_at, deleted_at,
+			work_id, number, sort_number, title, anime_id, unpublished_at, deleted_at,
 			created_at, updated_at
 		) VALUES (
-			$1, '第1話', 100, '教えてティーチャー', 'published', $2, $3, $4,
+			$1, '第1話', 100, '教えてティーチャー', $2, $3, $4,
 			NOW() - INTERVAL '1 hour', NOW() - INTERVAL '1 hour'
 		) RETURNING id`,
 		int64(in.workID), in.animeID, in.unpublishedAt, in.deletedAt,
@@ -3039,11 +3020,11 @@ func insertDBArchiveEpisode(t *testing.T, tx *sql.Tx, in dbArchiveEpisodeRow) mo
 	return model.EpisodeID(id)
 }
 
-// storedDBArchiveEpisode is the episode state an archive test reads back: the state column the
-// archive writes and the version it advances alongside it.
+// storedDBArchiveEpisode is the episode state an archive or re-publish test reads back: the
+// state column both directions write and the version they advance alongside it.
 //
-// [Ja] storedDBArchiveEpisode は非公開テストが読み戻すエピソードの状態。非公開が書く状態カラムと、
-// それと併せて進める版。
+// [Ja] storedDBArchiveEpisode は非公開・再公開テストが読み戻すエピソードの状態。両方向が書く
+// 状態カラムと、それと併せて進める版。
 type storedDBArchiveEpisode struct {
 	unpublishedAt sql.NullTime
 	updatedAt     sql.NullTime
@@ -3060,11 +3041,13 @@ func readDBArchiveEpisode(t *testing.T, tx *sql.Tx, id model.EpisodeID) storedDB
 	return row
 }
 
-// storedDBArchiveWork is the parent-work state an archive test reads back: the counter cache
-// the Rails API serves and the timestamp Rails advances through belongs_to :work, touch: true.
+// storedDBArchiveWork is the parent-work state an archive, re-publish or delete test reads back:
+// the counter cache the Rails API serves and the timestamp Rails advances through
+// belongs_to :work, touch: true.
 //
-// [Ja] storedDBArchiveWork は非公開テストが読み戻す親作品の状態。Rails API が配信する
-// カウンターキャッシュと、Rails が belongs_to :work, touch: true で進めるタイムスタンプ。
+// [Ja] storedDBArchiveWork は非公開・再公開・削除テストが読み戻す親作品の状態。Rails API が
+// 配信するカウンターキャッシュと、Rails が belongs_to :work, touch: true で進めるタイム
+// スタンプ。
 type storedDBArchiveWork struct {
 	episodesCount int32
 	updatedAt     time.Time
@@ -3082,12 +3065,12 @@ func readDBArchiveWork(t *testing.T, tx *sql.Tx, id model.WorkID) storedDBArchiv
 }
 
 // countDBEpisodeActivities counts every change-history row the Rails admin reads for an
-// episode, whatever the action. The Rails unpublish is a plain update(unpublished_at:) and
-// records none, so the archive must leave the count where it was.
+// episode, whatever the action. The Rails unpublish and publish are both a plain
+// update(unpublished_at:) and record none, so neither direction may change the count.
 //
 // [Ja] countDBEpisodeActivities は、あるエピソードについて Rails 側の管理画面が変更履歴として
-// 読む行を、action を問わず数える。Rails の非公開は素の update(unpublished_at:) で 1 件も記録
-// しないため、非公開は件数を変えてはならない。
+// 読む行を、action を問わず数える。Rails の非公開・再公開はいずれも素の
+// update(unpublished_at:) で 1 件も記録しないため、どちらの方向も件数を変えてはならない。
 func countDBEpisodeActivities(t *testing.T, tx *sql.Tx, id model.EpisodeID) int {
 	t.Helper()
 	var count int
@@ -3226,6 +3209,42 @@ func TestEpisodeRepository_Archive(t *testing.T) {
 		}
 	})
 
+	// A soft-deleted parent is outside the admin list scope even when the published episode row
+	// still exists. Refusing it before the episode update keeps both the state and counter
+	// unchanged, as the re-publish direction does.
+	//
+	// [Ja] 論理削除済みの親作品は、公開中の episode 行が残っていても管理画面の一覧対象外。
+	// 再公開方向と同じく、episode の更新前に拒否し、状態とカウンターの両方を変えないことを検証する。
+	t.Run("削除済み作品のエピソードは nil を返し、非公開にしない", func(t *testing.T) {
+		t.Parallel()
+
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewEpisodeRepository(query.New(db).WithTx(tx))
+
+		workID := insertDBArchiveWork(t, tx, 3)
+		episodeID := insertDBArchiveEpisode(t, tx, dbArchiveEpisodeRow{workID: workID})
+		if _, err := tx.Exec(`UPDATE works SET deleted_at = NOW() WHERE id = $1`, int64(workID)); err != nil {
+			t.Fatalf("親作品の削除に失敗: %v", err)
+		}
+
+		result, err := repo.Archive(context.Background(), repository.ArchiveEpisodeParams{
+			ID:     episodeID,
+			WorkID: workID,
+		})
+		if err != nil {
+			t.Fatalf("Archive() error = %v", err)
+		}
+		if result != nil {
+			t.Fatal("削除済み作品のエピソードへの Archive() returned a result, want nil")
+		}
+		if stored := readDBArchiveEpisode(t, tx, episodeID); stored.unpublishedAt.Valid {
+			t.Error("episodes.unpublished_at に値が入った, want NULL のまま")
+		}
+		if work := readDBArchiveWork(t, tx, workID); work.episodesCount != 3 {
+			t.Errorf("works.episodes_count = %d, want 3", work.episodesCount)
+		}
+	})
+
 	// An episode moved to another work between the confirmation page and its submit no longer
 	// belongs to the work the page counted, so neither the episode nor either work is written.
 	//
@@ -3263,6 +3282,213 @@ func TestEpisodeRepository_Archive(t *testing.T) {
 	})
 }
 
+func TestEpisodeRepository_Unarchive(t *testing.T) {
+	t.Parallel()
+
+	// The archived episode is published again, its version advances with it, and the parent work
+	// sees the two side effects the Rails publish has: the counter cache regains the row it
+	// counts once more and the work is touched. No change history is recorded, matching
+	// update(unpublished_at: nil), which does not go through save_and_create_activity!.
+	//
+	// [Ja] 非公開のエピソードが再び公開になり、版もそれと併せて進む。親作品には Rails の再公開が
+	// 持つ 2 つの副作用が現れる。カウンターキャッシュは再び数える行を取り戻し、作品は touch
+	// される。変更履歴は記録されない。save_and_create_activity! を通らない
+	// update(unpublished_at: nil) と揃えるため。
+	t.Run("正常系: 非公開のエピソードを公開に戻し、作品のカウンターと更新時刻を動かす", func(t *testing.T) {
+		t.Parallel()
+
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewEpisodeRepository(query.New(db).WithTx(tx))
+
+		workID := insertDBArchiveWork(t, tx, 2)
+		var animeID int64
+		if err := tx.QueryRow(`INSERT INTO animes (status) VALUES ('archived') RETURNING id`).Scan(&animeID); err != nil {
+			t.Fatalf("anime の挿入に失敗: %v", err)
+		}
+		episodeID := insertDBArchiveEpisode(t, tx, dbArchiveEpisodeRow{
+			workID:        workID,
+			animeID:       sql.NullInt64{Int64: animeID, Valid: true},
+			unpublishedAt: sql.NullTime{Time: time.Now().Add(-time.Hour), Valid: true},
+		})
+		before := readDBArchiveEpisode(t, tx, episodeID)
+		workBefore := readDBArchiveWork(t, tx, workID)
+
+		result, err := repo.Unarchive(context.Background(), repository.UnarchiveEpisodeParams{
+			ID:     episodeID,
+			WorkID: workID,
+		})
+		if err != nil {
+			t.Fatalf("Unarchive() error = %v", err)
+		}
+		if result == nil {
+			t.Fatal("Unarchive() = nil, want result")
+		}
+		if result.AnimeID == nil || *result.AnimeID != model.AnimeID(animeID) {
+			t.Errorf("Unarchive().AnimeID = %v, want %d", result.AnimeID, animeID)
+		}
+
+		stored := readDBArchiveEpisode(t, tx, episodeID)
+		if stored.unpublishedAt.Valid {
+			t.Errorf("episodes.unpublished_at = %v, want NULL", stored.unpublishedAt.Time)
+		}
+		if !stored.updatedAt.Valid || !stored.updatedAt.Time.After(before.updatedAt.Time) {
+			t.Errorf("episodes.updated_at = %v, want %v より後", stored.updatedAt, before.updatedAt.Time)
+		}
+
+		work := readDBArchiveWork(t, tx, workID)
+		if work.episodesCount != 3 {
+			t.Errorf("works.episodes_count = %d, want 3", work.episodesCount)
+		}
+		if !work.updatedAt.After(workBefore.updatedAt) {
+			t.Errorf("works.updated_at = %v, want %v より後", work.updatedAt, workBefore.updatedAt)
+		}
+		if count := countDBEpisodeActivities(t, tx, episodeID); count != 0 {
+			t.Errorf("DB 活動履歴 = %d 件, want 0 件", count)
+		}
+	})
+
+	// A submit from a list opened before someone else re-published the episode finds no archived
+	// row. Reporting that instead of writing keeps the counter from being incremented twice for
+	// one transition.
+	//
+	// [Ja] 他者が先に再公開した後の一覧からの送信は、非公開の行を見つけない。書き込まずそれを
+	// 報告することで、1 回の遷移に対してカウンターが 2 度加算されるのを防ぐ。
+	t.Run("公開中のエピソードは nil を返し、カウンターを動かさない", func(t *testing.T) {
+		t.Parallel()
+
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewEpisodeRepository(query.New(db).WithTx(tx))
+
+		workID := insertDBArchiveWork(t, tx, 3)
+		episodeID := insertDBArchiveEpisode(t, tx, dbArchiveEpisodeRow{workID: workID})
+
+		result, err := repo.Unarchive(context.Background(), repository.UnarchiveEpisodeParams{
+			ID:     episodeID,
+			WorkID: workID,
+		})
+		if err != nil {
+			t.Fatalf("Unarchive() error = %v", err)
+		}
+		if result != nil {
+			t.Fatal("公開中のエピソードへの Unarchive() returned a result, want nil")
+		}
+		if work := readDBArchiveWork(t, tx, workID); work.episodesCount != 3 {
+			t.Errorf("works.episodes_count = %d, want 3", work.episodesCount)
+		}
+	})
+
+	// A deleted episode is out of reach of the list the re-publish is submitted from, so its
+	// submit is refused too rather than publishing a row nothing displays.
+	//
+	// [Ja] 削除済みのエピソードは再公開の送信元である一覧の対象外のため、その送信も拒否する。
+	// 何も表示しない行を公開しないようにするため。
+	t.Run("削除済みのエピソードは nil を返す", func(t *testing.T) {
+		t.Parallel()
+
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewEpisodeRepository(query.New(db).WithTx(tx))
+
+		workID := insertDBArchiveWork(t, tx, 3)
+		episodeID := insertDBArchiveEpisode(t, tx, dbArchiveEpisodeRow{
+			workID:        workID,
+			unpublishedAt: sql.NullTime{Time: time.Now().Add(-time.Hour), Valid: true},
+			deletedAt:     sql.NullTime{Time: time.Now(), Valid: true},
+		})
+
+		result, err := repo.Unarchive(context.Background(), repository.UnarchiveEpisodeParams{
+			ID:     episodeID,
+			WorkID: workID,
+		})
+		if err != nil {
+			t.Fatalf("Unarchive() error = %v", err)
+		}
+		if result != nil {
+			t.Fatal("削除済みのエピソードへの Unarchive() returned a result, want nil")
+		}
+		if stored := readDBArchiveEpisode(t, tx, episodeID); !stored.unpublishedAt.Valid {
+			t.Error("episodes.unpublished_at = NULL, want 非公開の時刻のまま")
+		}
+	})
+
+	// A soft-deleted parent is outside the admin list scope even when the archived episode row
+	// still exists. Refusing it before the episode update keeps both the state and counter
+	// unchanged.
+	//
+	// [Ja] 論理削除済みの親作品は、非公開の episode 行が残っていても管理画面の一覧対象外。
+	// episode の更新前に拒否し、状態とカウンターの両方を変えないことを検証する。
+	t.Run("削除済み作品のエピソードは nil を返し、再公開しない", func(t *testing.T) {
+		t.Parallel()
+
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewEpisodeRepository(query.New(db).WithTx(tx))
+
+		workID := insertDBArchiveWork(t, tx, 3)
+		episodeID := insertDBArchiveEpisode(t, tx, dbArchiveEpisodeRow{
+			workID:        workID,
+			unpublishedAt: sql.NullTime{Time: time.Now().Add(-time.Hour), Valid: true},
+		})
+		if _, err := tx.Exec(`UPDATE works SET deleted_at = NOW() WHERE id = $1`, int64(workID)); err != nil {
+			t.Fatalf("親作品の削除に失敗: %v", err)
+		}
+
+		result, err := repo.Unarchive(context.Background(), repository.UnarchiveEpisodeParams{
+			ID:     episodeID,
+			WorkID: workID,
+		})
+		if err != nil {
+			t.Fatalf("Unarchive() error = %v", err)
+		}
+		if result != nil {
+			t.Fatal("削除済み作品のエピソードへの Unarchive() returned a result, want nil")
+		}
+		if stored := readDBArchiveEpisode(t, tx, episodeID); !stored.unpublishedAt.Valid {
+			t.Error("episodes.unpublished_at = NULL, want 非公開の時刻のまま")
+		}
+		if work := readDBArchiveWork(t, tx, workID); work.episodesCount != 3 {
+			t.Errorf("works.episodes_count = %d, want 3", work.episodesCount)
+		}
+	})
+
+	// An episode moved to another work between the list and its submit no longer belongs to the
+	// work that list counted, so neither the episode nor either work is written.
+	//
+	// [Ja] 一覧と送信の間に別作品へ移されたエピソードは、その一覧が数えていた作品にもう属して
+	// いない。したがってエピソードもどちらの作品も書かない。
+	t.Run("別作品へ移されたエピソードは nil を返し、元の作品のカウンターを動かさない", func(t *testing.T) {
+		t.Parallel()
+
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewEpisodeRepository(query.New(db).WithTx(tx))
+
+		originalWorkID := insertDBArchiveWork(t, tx, 3)
+		movedWorkID := insertDBArchiveWork(t, tx, 1)
+		episodeID := insertDBArchiveEpisode(t, tx, dbArchiveEpisodeRow{
+			workID:        movedWorkID,
+			unpublishedAt: sql.NullTime{Time: time.Now().Add(-time.Hour), Valid: true},
+		})
+
+		result, err := repo.Unarchive(context.Background(), repository.UnarchiveEpisodeParams{
+			ID:     episodeID,
+			WorkID: originalWorkID,
+		})
+		if err != nil {
+			t.Fatalf("Unarchive() error = %v", err)
+		}
+		if result != nil {
+			t.Fatal("別作品へ移された行への Unarchive() returned a result, want nil")
+		}
+		if work := readDBArchiveWork(t, tx, originalWorkID); work.episodesCount != 3 {
+			t.Errorf("移動元の works.episodes_count = %d, want 3", work.episodesCount)
+		}
+		if work := readDBArchiveWork(t, tx, movedWorkID); work.episodesCount != 1 {
+			t.Errorf("移動先の works.episodes_count = %d, want 1", work.episodesCount)
+		}
+		if stored := readDBArchiveEpisode(t, tx, episodeID); !stored.unpublishedAt.Valid {
+			t.Error("episodes.unpublished_at が NULL になった, want 非公開の時刻のまま")
+		}
+	})
+}
+
 func TestEpisodeRepository_GetForArchiveByID(t *testing.T) {
 	t.Parallel()
 
@@ -3287,7 +3513,6 @@ func TestEpisodeRepository_GetForArchiveByID(t *testing.T) {
 			title:      sql.NullString{String: "もう、お婿にいけません", Valid: true},
 			titleRo:    "Mou, Oyome ni Ikemasen",
 			titleEn:    "No Longer Marriageable",
-			status:     "published",
 		})
 
 		got, err := repo.GetForArchiveByID(context.Background(), episodeID)
@@ -3339,7 +3564,6 @@ func TestEpisodeRepository_GetForArchiveByID(t *testing.T) {
 		episodeID := insertDBListEpisode(t, tx, dbListEpisodeRow{
 			workID:        workID,
 			sortNumber:    100,
-			status:        "published",
 			unpublishedAt: sql.NullTime{Time: time.Now(), Valid: true},
 		})
 
@@ -3370,7 +3594,6 @@ func TestEpisodeRepository_GetForArchiveByID(t *testing.T) {
 		deletedEpisodeID := insertDBListEpisode(t, tx, dbListEpisodeRow{
 			workID:     keptWorkID,
 			sortNumber: 100,
-			status:     "published",
 			deletedAt:  sql.NullTime{Time: time.Now(), Valid: true},
 		})
 
@@ -3378,7 +3601,6 @@ func TestEpisodeRepository_GetForArchiveByID(t *testing.T) {
 		orphanEpisodeID := insertDBListEpisode(t, tx, dbListEpisodeRow{
 			workID:     deletedWorkID,
 			sortNumber: 100,
-			status:     "published",
 		})
 
 		for name, id := range map[string]model.EpisodeID{
@@ -3392,6 +3614,469 @@ func TestEpisodeRepository_GetForArchiveByID(t *testing.T) {
 			}
 			if got != nil {
 				t.Errorf("%s: GetForArchiveByID() = %+v, want nil", name, got)
+			}
+		}
+	})
+}
+
+// dbDeleteEpisodeRow holds the mapping, state timestamps and predecessor pointer a delete test
+// starts an episode from. AnimeID lets the success case verify Delete returns the mapping from
+// the updated row; PrevEpisodeID makes a row a follower of another one, which is what the
+// statement clears.
+//
+// [Ja] dbDeleteEpisodeRow は削除テストがエピソードの初期値として与える写像・状態タイムスタンプ・
+// 直前エピソードのポインタを保持する。AnimeID により、正常系は Delete が更新した行の写像を返す
+// ことを検証できる。PrevEpisodeID は、ある行を別の行の後続行にする (ステートメントがクリアする
+// 対象)。
+type dbDeleteEpisodeRow struct {
+	workID        model.WorkID
+	animeID       sql.NullInt64
+	unpublishedAt sql.NullTime
+	deletedAt     sql.NullTime
+	prevEpisodeID sql.NullInt64
+}
+
+// insertDBDeleteEpisode inserts the episode a delete test removes, or one of the rows around it.
+// Its timestamps come from the database an hour back rather than from the Go clock, for the
+// reason insertDBUpdateEpisode states.
+//
+// [Ja] insertDBDeleteEpisode は削除テストが削除するエピソード、またはその周辺の行を挿入する。
+// タイムスタンプは insertDBUpdateEpisode が述べる理由により、Go の時計ではなく DB の 1 時間前を
+// 使う。
+func insertDBDeleteEpisode(t *testing.T, tx *sql.Tx, in dbDeleteEpisodeRow) model.EpisodeID {
+	t.Helper()
+	var id int64
+	if err := tx.QueryRow(`
+		INSERT INTO episodes (
+			work_id, number, sort_number, title, anime_id, unpublished_at, deleted_at,
+			prev_episode_id, created_at, updated_at
+		) VALUES (
+			$1, '第1話', 100, '教えてティーチャー', $2, $3, $4,
+			$5, NOW() - INTERVAL '1 hour', NOW() - INTERVAL '1 hour'
+		) RETURNING id`,
+		int64(in.workID), in.animeID, in.unpublishedAt, in.deletedAt, in.prevEpisodeID,
+	).Scan(&id); err != nil {
+		t.Fatalf("episodes の挿入に失敗: %v", err)
+	}
+	return model.EpisodeID(id)
+}
+
+// storedDBDeleteEpisode is the episode state a delete test reads back: the state column the
+// delete writes, the version it advances alongside it and the predecessor pointer it clears on
+// the rows naming the deleted episode.
+//
+// [Ja] storedDBDeleteEpisode は削除テストが読み戻すエピソードの状態。削除が書く状態カラム、
+// それと併せて進める版、そして削除するエピソードを名乗る行に対してクリアする直前エピソードの
+// ポインタ。
+type storedDBDeleteEpisode struct {
+	deletedAt     sql.NullTime
+	updatedAt     sql.NullTime
+	prevEpisodeID sql.NullInt64
+}
+
+func readDBDeleteEpisode(t *testing.T, tx *sql.Tx, id model.EpisodeID) storedDBDeleteEpisode {
+	t.Helper()
+	var row storedDBDeleteEpisode
+	if err := tx.QueryRow(
+		`SELECT deleted_at, updated_at, prev_episode_id FROM episodes WHERE id = $1`, int64(id),
+	).Scan(&row.deletedAt, &row.updatedAt, &row.prevEpisodeID); err != nil {
+		t.Fatalf("削除後のエピソードの読み込みに失敗: %v", err)
+	}
+	return row
+}
+
+func TestEpisodeRepository_Delete(t *testing.T) {
+	t.Parallel()
+
+	// The published episode is soft-deleted, its version advances with it, and the parent work
+	// sees the two side effects the Rails destroy has: the counter cache loses the row it no
+	// longer counts and the work is touched. No change history is recorded: destroy_in_batches
+	// does not go through save_and_create_activity! either.
+	//
+	// [Ja] 公開中のエピソードがソフトデリートされ、版もそれと併せて進む。親作品には Rails の削除
+	// が持つ 2 つの副作用が現れる。カウンターキャッシュはもう数えない行を失い、作品は touch され
+	// る。変更履歴は記録されない。destroy_in_batches も save_and_create_activity! を通らないため。
+	t.Run("正常系: 公開中のエピソードを削除し、作品のカウンターと更新時刻を動かす", func(t *testing.T) {
+		t.Parallel()
+
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewEpisodeRepository(query.New(db).WithTx(tx))
+
+		workID := insertDBArchiveWork(t, tx, 3)
+		var animeID int64
+		if err := tx.QueryRow(`INSERT INTO animes (status) VALUES ('published') RETURNING id`).Scan(&animeID); err != nil {
+			t.Fatalf("anime の挿入に失敗: %v", err)
+		}
+		episodeID := insertDBDeleteEpisode(t, tx, dbDeleteEpisodeRow{
+			workID:  workID,
+			animeID: sql.NullInt64{Int64: animeID, Valid: true},
+		})
+		before := readDBDeleteEpisode(t, tx, episodeID)
+		workBefore := readDBArchiveWork(t, tx, workID)
+
+		result, err := repo.Delete(context.Background(), repository.DeleteEpisodeParams{
+			ID:     episodeID,
+			WorkID: workID,
+		})
+		if err != nil {
+			t.Fatalf("Delete() error = %v", err)
+		}
+		if result == nil {
+			t.Fatal("Delete() = nil, want result")
+		}
+		if result.AnimeID == nil || *result.AnimeID != model.AnimeID(animeID) {
+			t.Errorf("Delete().AnimeID = %v, want %d", result.AnimeID, animeID)
+		}
+
+		stored := readDBDeleteEpisode(t, tx, episodeID)
+		if !stored.deletedAt.Valid {
+			t.Error("episodes.deleted_at = NULL, want 削除の時刻")
+		}
+		if !stored.updatedAt.Valid || !stored.updatedAt.Time.After(before.updatedAt.Time) {
+			t.Errorf("episodes.updated_at = %v, want %v より後", stored.updatedAt, before.updatedAt.Time)
+		}
+
+		work := readDBArchiveWork(t, tx, workID)
+		if work.episodesCount != 2 {
+			t.Errorf("works.episodes_count = %d, want 2", work.episodesCount)
+		}
+		if !work.updatedAt.After(workBefore.updatedAt) {
+			t.Errorf("works.updated_at = %v, want %v より後", work.updatedAt, workBefore.updatedAt)
+		}
+		if count := countDBEpisodeActivities(t, tx, episodeID); count != 0 {
+			t.Errorf("DB 活動履歴 = %d 件, want 0 件", count)
+		}
+	})
+
+	// An archived episode has already been taken out of the counter by the archive, so deleting
+	// it must not decrement a second time. The work is still touched, as the Rails destroy
+	// touches it whatever the episode's publication state was.
+	//
+	// [Ja] 非公開のエピソードは非公開の時点で既にカウンターから外れているため、削除で 2 度目の
+	// 減算をしてはならない。作品の touch は行う。Rails の削除は、エピソードの公開状態に関わらず
+	// 作品を touch するため。
+	t.Run("非公開のエピソードの削除ではカウンターを減らさず、作品は touch する", func(t *testing.T) {
+		t.Parallel()
+
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewEpisodeRepository(query.New(db).WithTx(tx))
+
+		workID := insertDBArchiveWork(t, tx, 3)
+		episodeID := insertDBDeleteEpisode(t, tx, dbDeleteEpisodeRow{
+			workID:        workID,
+			unpublishedAt: sql.NullTime{Time: time.Now(), Valid: true},
+		})
+		workBefore := readDBArchiveWork(t, tx, workID)
+
+		result, err := repo.Delete(context.Background(), repository.DeleteEpisodeParams{
+			ID:     episodeID,
+			WorkID: workID,
+		})
+		if err != nil {
+			t.Fatalf("Delete() error = %v", err)
+		}
+		if result == nil {
+			t.Fatal("Delete() = nil, want result")
+		}
+		if stored := readDBDeleteEpisode(t, tx, episodeID); !stored.deletedAt.Valid {
+			t.Error("episodes.deleted_at = NULL, want 削除の時刻")
+		}
+
+		work := readDBArchiveWork(t, tx, workID)
+		if work.episodesCount != 3 {
+			t.Errorf("works.episodes_count = %d, want 3", work.episodesCount)
+		}
+		if !work.updatedAt.After(workBefore.updatedAt) {
+			t.Errorf("works.updated_at = %v, want %v より後", work.updatedAt, workBefore.updatedAt)
+		}
+	})
+
+	// The Go delete leaves the row in place, so every undeleted row naming it as its predecessor
+	// would keep pointing at something the public side must not show. All of them are cleared,
+	// including an archived one that would carry the pointer back into view when re-published,
+	// while a deleted follower and a row naming someone else are left alone. The followers are
+	// not relinked to the deleted episode's own predecessor, which the Rails destroy does not do
+	// either, and their versions do not move.
+	//
+	// [Ja] Go の削除は行を残すため、削除するエピソードを直前として名乗る未削除の行は、公開側が
+	// 見せてはならないものを指し続けることになる。それらをすべてクリアする。再公開されるとポインタ
+	// を表に戻してしまう非公開の行も含む。一方、削除済みの後続行と、別の行を名乗る行には触れない。
+	// 後続行を削除するエピソード自身の直前行へ張り替えることはしない (Rails の削除も行わない)。
+	// 後続行の版も動かさない。
+	t.Run("自分を指す未削除の行のポインタをクリアし、削除済みの行と他を指す行は触らない", func(t *testing.T) {
+		t.Parallel()
+
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewEpisodeRepository(query.New(db).WithTx(tx))
+
+		workID := insertDBArchiveWork(t, tx, 5)
+		predecessorID := insertDBDeleteEpisode(t, tx, dbDeleteEpisodeRow{workID: workID})
+		targetID := insertDBDeleteEpisode(t, tx, dbDeleteEpisodeRow{
+			workID:        workID,
+			prevEpisodeID: sql.NullInt64{Int64: int64(predecessorID), Valid: true},
+		})
+		targetPointer := sql.NullInt64{Int64: int64(targetID), Valid: true}
+		publishedFollowerID := insertDBDeleteEpisode(t, tx, dbDeleteEpisodeRow{
+			workID:        workID,
+			prevEpisodeID: targetPointer,
+		})
+		archivedFollowerID := insertDBDeleteEpisode(t, tx, dbDeleteEpisodeRow{
+			workID:        workID,
+			unpublishedAt: sql.NullTime{Time: time.Now(), Valid: true},
+			prevEpisodeID: targetPointer,
+		})
+		deletedFollowerID := insertDBDeleteEpisode(t, tx, dbDeleteEpisodeRow{
+			workID:        workID,
+			deletedAt:     sql.NullTime{Time: time.Now(), Valid: true},
+			prevEpisodeID: targetPointer,
+		})
+		otherFollowerID := insertDBDeleteEpisode(t, tx, dbDeleteEpisodeRow{
+			workID:        workID,
+			prevEpisodeID: sql.NullInt64{Int64: int64(predecessorID), Valid: true},
+		})
+		otherFollowerBefore := readDBDeleteEpisode(t, tx, otherFollowerID)
+		publishedFollowerBefore := readDBDeleteEpisode(t, tx, publishedFollowerID)
+
+		if _, err := repo.Delete(context.Background(), repository.DeleteEpisodeParams{
+			ID:     targetID,
+			WorkID: workID,
+		}); err != nil {
+			t.Fatalf("Delete() error = %v", err)
+		}
+
+		for name, id := range map[string]model.EpisodeID{
+			"公開中の後続行": publishedFollowerID,
+			"非公開の後続行": archivedFollowerID,
+		} {
+			if stored := readDBDeleteEpisode(t, tx, id); stored.prevEpisodeID.Valid {
+				t.Errorf("%s の prev_episode_id = %d, want NULL", name, stored.prevEpisodeID.Int64)
+			}
+		}
+		if stored := readDBDeleteEpisode(t, tx, deletedFollowerID); stored.prevEpisodeID.Int64 != int64(targetID) {
+			t.Errorf("削除済みの後続行の prev_episode_id = %v, want %d のまま", stored.prevEpisodeID, int64(targetID))
+		}
+		if stored := readDBDeleteEpisode(t, tx, otherFollowerID); stored.prevEpisodeID.Int64 != int64(predecessorID) {
+			t.Errorf("他を指す行の prev_episode_id = %v, want %d のまま", stored.prevEpisodeID, int64(predecessorID))
+		}
+		if stored := readDBDeleteEpisode(t, tx, otherFollowerID); !stored.updatedAt.Time.Equal(otherFollowerBefore.updatedAt.Time) {
+			t.Errorf("他を指す行の updated_at = %v, want %v のまま", stored.updatedAt, otherFollowerBefore.updatedAt)
+		}
+		if stored := readDBDeleteEpisode(t, tx, publishedFollowerID); !stored.updatedAt.Time.Equal(publishedFollowerBefore.updatedAt.Time) {
+			t.Errorf("クリアされた後続行の updated_at = %v, want %v のまま", stored.updatedAt, publishedFollowerBefore.updatedAt)
+		}
+		// The deleted episode keeps its own pointer: nothing displays a deleted row, and
+		// clearing it would lose the ordering it was in.
+		//
+		// [Ja] 削除したエピソード自身のポインタは残す。削除済みの行は何も表示せず、クリアすると
+		// それが置かれていた並びが失われるため。
+		if stored := readDBDeleteEpisode(t, tx, targetID); stored.prevEpisodeID.Int64 != int64(predecessorID) {
+			t.Errorf("削除した行の prev_episode_id = %v, want %d のまま", stored.prevEpisodeID, int64(predecessorID))
+		}
+	})
+
+	// A submit from a list opened before someone else deleted the episode finds no undeleted row.
+	// Reporting that instead of writing keeps the counter from being decremented twice for one
+	// transition.
+	//
+	// [Ja] 他者が先に削除した後の一覧からの送信は、未削除の行を見つけない。書き込まずそれを報告
+	// することで、1 回の遷移に対してカウンターが 2 度減算されるのを防ぐ。
+	t.Run("削除済みのエピソードは nil を返し、カウンターを動かさない", func(t *testing.T) {
+		t.Parallel()
+
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewEpisodeRepository(query.New(db).WithTx(tx))
+
+		workID := insertDBArchiveWork(t, tx, 3)
+		episodeID := insertDBDeleteEpisode(t, tx, dbDeleteEpisodeRow{
+			workID:    workID,
+			deletedAt: sql.NullTime{Time: time.Now(), Valid: true},
+		})
+
+		result, err := repo.Delete(context.Background(), repository.DeleteEpisodeParams{
+			ID:     episodeID,
+			WorkID: workID,
+		})
+		if err != nil {
+			t.Fatalf("Delete() error = %v", err)
+		}
+		if result != nil {
+			t.Fatal("削除済みのエピソードへの Delete() returned a result, want nil")
+		}
+		if work := readDBArchiveWork(t, tx, workID); work.episodesCount != 3 {
+			t.Errorf("works.episodes_count = %d, want 3", work.episodesCount)
+		}
+	})
+
+	// A soft-deleted parent is outside the admin list scope even when the episode row still
+	// exists. Refusing it keeps both the state and counter unchanged, as the archive and
+	// re-publish directions do.
+	//
+	// [Ja] 論理削除済みの親作品は、episode 行が残っていても管理画面の一覧対象外。非公開・再公開の
+	// 方向と同じく拒否し、状態とカウンターの両方を変えないことを検証する。
+	t.Run("削除済み作品のエピソードは nil を返し、削除しない", func(t *testing.T) {
+		t.Parallel()
+
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewEpisodeRepository(query.New(db).WithTx(tx))
+
+		workID := insertDBArchiveWork(t, tx, 3)
+		episodeID := insertDBDeleteEpisode(t, tx, dbDeleteEpisodeRow{workID: workID})
+		if _, err := tx.Exec(`UPDATE works SET deleted_at = NOW() WHERE id = $1`, int64(workID)); err != nil {
+			t.Fatalf("親作品の削除に失敗: %v", err)
+		}
+
+		result, err := repo.Delete(context.Background(), repository.DeleteEpisodeParams{
+			ID:     episodeID,
+			WorkID: workID,
+		})
+		if err != nil {
+			t.Fatalf("Delete() error = %v", err)
+		}
+		if result != nil {
+			t.Fatal("削除済み作品のエピソードへの Delete() returned a result, want nil")
+		}
+		if stored := readDBDeleteEpisode(t, tx, episodeID); stored.deletedAt.Valid {
+			t.Error("episodes.deleted_at に値が入った, want NULL のまま")
+		}
+		if work := readDBArchiveWork(t, tx, workID); work.episodesCount != 3 {
+			t.Errorf("works.episodes_count = %d, want 3", work.episodesCount)
+		}
+	})
+
+	// An episode moved to another work between the list and its submit no longer belongs to the
+	// work the list counted, so neither the episode nor either work is written.
+	//
+	// [Ja] 一覧と送信の間に別作品へ移されたエピソードは、その一覧が数えていた作品にもう属して
+	// いない。したがってエピソードもどちらの作品も書かない。
+	t.Run("別作品へ移されたエピソードは nil を返し、元の作品のカウンターを動かさない", func(t *testing.T) {
+		t.Parallel()
+
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewEpisodeRepository(query.New(db).WithTx(tx))
+
+		originalWorkID := insertDBArchiveWork(t, tx, 3)
+		movedWorkID := insertDBArchiveWork(t, tx, 1)
+		episodeID := insertDBDeleteEpisode(t, tx, dbDeleteEpisodeRow{workID: movedWorkID})
+
+		result, err := repo.Delete(context.Background(), repository.DeleteEpisodeParams{
+			ID:     episodeID,
+			WorkID: originalWorkID,
+		})
+		if err != nil {
+			t.Fatalf("Delete() error = %v", err)
+		}
+		if result != nil {
+			t.Fatal("別作品へ移された行への Delete() returned a result, want nil")
+		}
+		if work := readDBArchiveWork(t, tx, originalWorkID); work.episodesCount != 3 {
+			t.Errorf("移動元の works.episodes_count = %d, want 3", work.episodesCount)
+		}
+		if work := readDBArchiveWork(t, tx, movedWorkID); work.episodesCount != 1 {
+			t.Errorf("移動先の works.episodes_count = %d, want 1", work.episodesCount)
+		}
+		if stored := readDBDeleteEpisode(t, tx, episodeID); stored.deletedAt.Valid {
+			t.Error("episodes.deleted_at に値が入った, want NULL のまま")
+		}
+	})
+}
+
+func TestEpisodeRepository_GetForDeleteByID(t *testing.T) {
+	t.Parallel()
+
+	// The loader projects only what the write needs: the id it addresses and the parent it binds
+	// the delete to. The anime mapping comes from DeleteDBEpisode's updated row instead.
+	//
+	// [Ja] ローダーが射影するのは書き込みが必要とするものだけ。対象の id と、削除を束縛する親作品。
+	// anime の写像は代わりに DeleteDBEpisode が更新した行から得る。
+	t.Run("正常系: id と所属作品を射影する", func(t *testing.T) {
+		t.Parallel()
+
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewEpisodeRepository(query.New(db).WithTx(tx))
+
+		workID := insertDBListWork(t, tx)
+		episodeID := insertDBListEpisode(t, tx, dbListEpisodeRow{
+			workID:     workID,
+			sortNumber: 100,
+		})
+
+		got, err := repo.GetForDeleteByID(context.Background(), episodeID)
+		if err != nil {
+			t.Fatalf("GetForDeleteByID() error = %v", err)
+		}
+		if got == nil {
+			t.Fatal("GetForDeleteByID() = nil, want エピソード")
+		}
+		if got.ID != episodeID {
+			t.Errorf("Episode.ID = %d, want %d", int64(got.ID), int64(episodeID))
+		}
+		if got.WorkID != workID {
+			t.Errorf("Episode.WorkID = %d, want %d", int64(got.WorkID), int64(workID))
+		}
+	})
+
+	// An archived episode is deletable too, so the loader returns it rather than reserving the
+	// delete for published rows the way the archive endpoints reserve their submit.
+	//
+	// [Ja] 非公開のエピソードも削除できるため、ローダーはそれも返す。非公開エンドポイントが送信を
+	// 公開中の行に限るのとは異なる。
+	t.Run("非公開のエピソードも返す", func(t *testing.T) {
+		t.Parallel()
+
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewEpisodeRepository(query.New(db).WithTx(tx))
+
+		workID := insertDBListWork(t, tx)
+		episodeID := insertDBListEpisode(t, tx, dbListEpisodeRow{
+			workID:        workID,
+			sortNumber:    100,
+			unpublishedAt: sql.NullTime{Time: time.Now(), Valid: true},
+		})
+
+		got, err := repo.GetForDeleteByID(context.Background(), episodeID)
+		if err != nil {
+			t.Fatalf("GetForDeleteByID() error = %v", err)
+		}
+		if got == nil {
+			t.Fatal("GetForDeleteByID() = nil, want エピソード")
+		}
+	})
+
+	// The exclusions match the archive loader, so the delete reaches exactly the episodes the
+	// list can offer it for.
+	//
+	// [Ja] 除外条件は非公開のローダーと揃える。削除が届くエピソードを、一覧が削除の操作を出せる
+	// エピソードと一致させるため。
+	t.Run("削除済みのエピソードと削除済み作品のエピソードは nil を返す", func(t *testing.T) {
+		t.Parallel()
+
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewEpisodeRepository(query.New(db).WithTx(tx))
+
+		keptWorkID := insertDBListWork(t, tx)
+		deletedEpisodeID := insertDBListEpisode(t, tx, dbListEpisodeRow{
+			workID:     keptWorkID,
+			sortNumber: 100,
+			deletedAt:  sql.NullTime{Time: time.Now(), Valid: true},
+		})
+
+		deletedWorkID := testutil.NewWorkBuilder(t, tx).WithDeletedAt(time.Now()).Build()
+		orphanEpisodeID := insertDBListEpisode(t, tx, dbListEpisodeRow{
+			workID:     deletedWorkID,
+			sortNumber: 100,
+		})
+
+		for name, id := range map[string]model.EpisodeID{
+			"削除済みのエピソード":   deletedEpisodeID,
+			"削除済み作品のエピソード": orphanEpisodeID,
+			"存在しないエピソード":   model.EpisodeID(-1),
+		} {
+			got, err := repo.GetForDeleteByID(context.Background(), id)
+			if err != nil {
+				t.Fatalf("%s: GetForDeleteByID() error = %v", name, err)
+			}
+			if got != nil {
+				t.Errorf("%s: GetForDeleteByID() = %+v, want nil", name, got)
 			}
 		}
 	})

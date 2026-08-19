@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/annict/annict/go/internal/i18n"
-	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/templates"
 	"github.com/annict/annict/go/internal/viewmodel"
 )
@@ -230,7 +229,7 @@ func TestEdit_EmptyValues(t *testing.T) {
 	data := editTestData()
 	data.FormInput = viewmodel.DBEpisodeFormInput{
 		SortNumber: "100",
-		UpdatedAt:  viewmodel.DBEpisodeFormNullVersion,
+		UpdatedAt:  viewmodel.FormNullVersion,
 	}
 
 	var buf strings.Builder
@@ -283,8 +282,9 @@ func TestEdit_WithErrors(t *testing.T) {
 
 	ctx := i18n.SetLocale(context.Background(), "ja")
 
-	formErrors := model.NewValidationError()
-	formErrors.AddField("sort_number", "整数を入力してください")
+	formErrors := &viewmodel.FormErrors{
+		Fields: map[string][]string{"sort_number": {"整数を入力してください"}},
+	}
 
 	data := editTestData()
 	data.FormErrors = formErrors
@@ -382,7 +382,7 @@ func TestEdit_DecorativeIconsAreHidden(t *testing.T) {
 	html := buf.String()
 
 	for _, iconName := range []string{"floppy-disk-regular", "arrow-bend-up-left-regular"} {
-		want := decorativeIconMarkup(t, ctx, iconName, templates.InlineIconStart)
+		want := decorativeIconMarkup(t, ctx, iconName, "", templates.InlineIconStart)
 		if !strings.Contains(html, want) {
 			t.Errorf("装飾アイコン %q が aria-hidden の要素内にありません", iconName)
 		}
@@ -403,8 +403,9 @@ func TestEdit_ConflictShowsStoredValues(t *testing.T) {
 
 	data := editTestData()
 	data.FormInput.Title = "後から届いたタイトル"
-	data.FormErrors = model.NewValidationError()
-	data.FormErrors.AddGlobal("このデータは他の編集者によって更新されました")
+	data.FormErrors = &viewmodel.FormErrors{
+		Global: []string{"このデータは他の編集者によって更新されました"},
+	}
 	data.ConflictCurrent = &viewmodel.DBEpisodeFormInput{
 		Number:     "第3話",
 		SortNumber: "300",

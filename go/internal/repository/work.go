@@ -150,6 +150,10 @@ func workFromGetForEditByIDRow(row query.GetWorkForEditByIDRow) *model.Work {
 		numberFormatID := model.NumberFormatID(row.NumberFormatID.Int64)
 		work.NumberFormatID = &numberFormatID
 	}
+	if row.UpdatedAt.Valid {
+		updatedAt := row.UpdatedAt.Time
+		work.UpdatedAt = &updatedAt
+	}
 	return work
 }
 
@@ -652,16 +656,30 @@ func (r *WorkRepository) Create(ctx context.Context, params CreateWorkParams) (m
 // 削除フローの管轄で、anime_id は同期が持つマッピングカラム)。
 type UpdateWorkParams struct {
 	ID model.WorkID
+	// Version is the updated_at the submit was made against. nil means the row carried no
+	// updated_at when the form was opened, which the shared nullable column allows and which
+	// the update matches as a version of its own.
+	//
+	// [Ja] Version は送信が前提とする updated_at。nil は、フォームを開いた時点で行が
+	// updated_at を持っていなかったことを表す。共有カラムが NULL 許容であるため、これも 1 つの
+	// 版として照合する。
+	Version *time.Time
 	CreateWorkParams
 }
 
-// Update overwrites the editable columns of the work with the given ID and bumps
-// updated_at.
+// Update overwrites the editable columns of the work with the given ID and bumps updated_at,
+// reporting false when no row matched: either the work is gone or its updated_at has moved on
+// since the edit form was opened. The caller turns that into a conflict rather than retrying, so
+// a submit made against a stale read never overwrites the write that happened in between.
 //
-// [Ja] Update は指定 ID の work の編集可能カラムを上書きし、updated_at を更新する。
-func (r *WorkRepository) Update(ctx context.Context, params UpdateWorkParams) error {
-	return r.queries.UpdateWork(ctx, query.UpdateWorkParams{
+// [Ja] Update は指定 ID の work の編集可能カラムを上書きして updated_at を更新し、どの行も
+// 一致しなかった場合に false を返す (work が失われたか、編集フォームを開いてから updated_at が
+// 進んだか)。呼び出し側はこれを再試行せず競合として扱うため、古い読み取りに対する送信が、その間に
+// 入った書き込みを上書きすることはない。
+func (r *WorkRepository) Update(ctx context.Context, params UpdateWorkParams) (bool, error) {
+	rows, err := r.queries.UpdateWork(ctx, query.UpdateWorkParams{
 		ID:                    int64(params.ID),
+		Version:               nullTimeFromPtr(params.Version),
 		Title:                 params.Title,
 		TitleKana:             params.TitleKana,
 		TitleAlter:            params.TitleAlter,
@@ -689,6 +707,11 @@ func (r *WorkRepository) Update(ctx context.Context, params UpdateWorkParams) er
 		NumberFormatID:        params.NumberFormatID,
 		NoEpisodes:            params.NoEpisodes,
 	})
+	if err != nil {
+		return false, err
+	}
+
+	return rows > 0, nil
 }
 
 // ListForAnimeSyncByIDs loads the works with the given IDs, projecting the columns

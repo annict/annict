@@ -323,15 +323,15 @@ func (uc *SyncWorksToAnimesUsecase) applyPlan(ctx context.Context, plan workAnim
 }
 
 // animeCreateParamsFromWork maps a work onto the layer-1 anime attributes for a fresh
-// insert. status is derived from the work's unpublished_at / deleted_at timestamps
-// (not the dormant works.status). The columns animes does not source from works
-// (title_alter_ro / title_alter_other / release_status / archive_message) stay at
-// their zero value (NULL); archive_message is animes-only and never sourced here.
+// insert. status is derived from the work's unpublished_at / deleted_at timestamps.
+// The columns animes does not source from works (title_alter_ro / title_alter_other /
+// release_status / archive_message) stay at their zero value (NULL); archive_message
+// is animes-only and never sourced here.
 //
 // [Ja] animeCreateParamsFromWork は work を新規挿入用の第 1 層 anime 属性に写像する。
-// status は work の unpublished_at / deleted_at タイムスタンプから導出する (休眠している
-// works.status ではない)。animes が works から取り込まないカラム (title_alter_ro /
-// title_alter_other / release_status / archive_message) はゼロ値 (NULL) のまま残す。
+// status は work の unpublished_at / deleted_at タイムスタンプから導出する。animes が
+// works から取り込まないカラム (title_alter_ro / title_alter_other / release_status /
+// archive_message) はゼロ値 (NULL) のまま残す。
 // archive_message は animes 専用でここでは源泉としない。
 func animeCreateParamsFromWork(w *model.Work) repository.CreateAnimeParams {
 	return repository.CreateAnimeParams{
@@ -352,16 +352,15 @@ func animeCreateParamsFromWork(w *model.Work) repository.CreateAnimeParams {
 }
 
 // animeUpdateParamsFromWork maps a work onto the layer-1 anime attributes for an
-// update. status is derived from the work's unpublished_at / deleted_at timestamps
-// (not the dormant works.status). The columns animes does not source from works
-// (release_status / archive_message etc.) are carried over from the existing row so
-// the sync never clobbers editor-set values; archive_message is animes-only.
+// update. status is derived from the work's unpublished_at / deleted_at timestamps.
+// The columns animes does not source from works (release_status / archive_message etc.)
+// are carried over from the existing row so the sync never clobbers editor-set values;
+// archive_message is animes-only.
 //
 // [Ja] animeUpdateParamsFromWork は work を更新用の第 1 層 anime 属性に写像する。
-// status は work の unpublished_at / deleted_at タイムスタンプから導出する (休眠している
-// works.status ではない)。animes が works から取り込まないカラム (release_status /
-// archive_message など) は既存行から引き継ぎ、同期が編集者の設定値を上書きしないように
-// する。archive_message は animes 専用。
+// status は work の unpublished_at / deleted_at タイムスタンプから導出する。animes が
+// works から取り込まないカラム (release_status / archive_message など) は既存行から
+// 引き継ぎ、同期が編集者の設定値を上書きしないようにする。archive_message は animes 専用。
 func animeUpdateParamsFromWork(w *model.Work, existing *model.Anime) repository.UpdateAnimeParams {
 	return repository.UpdateAnimeParams{
 		ID:               existing.ID,

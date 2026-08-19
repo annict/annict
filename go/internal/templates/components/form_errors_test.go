@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/annict/annict/go/internal/i18n"
-	"github.com/annict/annict/go/internal/model"
+	"github.com/annict/annict/go/internal/viewmodel"
 )
 
 // summaryFields is the field list a caller passes to turn the summary on. Its order is what
@@ -32,7 +32,7 @@ func TestFormErrors(t *testing.T) {
 		{
 			name: "グローバルエラーが1つ",
 			data: FormErrorsData{
-				Errors: &model.ValidationError{
+				Errors: &viewmodel.FormErrors{
 					Global: []string{"ログインに失敗しました"},
 				},
 			},
@@ -44,7 +44,7 @@ func TestFormErrors(t *testing.T) {
 		{
 			name: "グローバルエラーが複数",
 			data: FormErrorsData{
-				Errors: &model.ValidationError{
+				Errors: &viewmodel.FormErrors{
 					Global: []string{
 						"エラー1",
 						"エラー2",
@@ -61,7 +61,7 @@ func TestFormErrors(t *testing.T) {
 		{
 			name: "フィールドを渡さなければフィールドエラーは表示しない",
 			data: FormErrorsData{
-				Errors: &model.ValidationError{
+				Errors: &viewmodel.FormErrors{
 					Fields: map[string][]string{
 						"email": {"メールアドレスが不正です"},
 					},
@@ -77,7 +77,7 @@ func TestFormErrors(t *testing.T) {
 		{
 			name: "formErrorsが空の場合は何も表示しない",
 			data: FormErrorsData{
-				Errors: &model.ValidationError{
+				Errors: &viewmodel.FormErrors{
 					Global: []string{},
 				},
 			},
@@ -86,7 +86,7 @@ func TestFormErrors(t *testing.T) {
 		{
 			name: "フィールドを渡してもエラーが無ければ何も表示しない",
 			data: FormErrorsData{
-				Errors: model.NewValidationError(),
+				Errors: &viewmodel.FormErrors{},
 				Fields: summaryFields,
 			},
 			wantNotRender: true,
@@ -100,7 +100,7 @@ func TestFormErrors(t *testing.T) {
 			// 名指しできない。グローバルのみの描画に落ちることで、空の要約を出さずに済む。
 			name: "一覧に無いフィールドのエラーだけなら要約を出さない",
 			data: FormErrorsData{
-				Errors: &model.ValidationError{
+				Errors: &viewmodel.FormErrors{
 					Fields: map[string][]string{
 						"season_year": {"整数で入力してください"},
 					},
@@ -150,9 +150,12 @@ func TestFormErrors(t *testing.T) {
 func TestFormErrors_Summary(t *testing.T) {
 	t.Parallel()
 
-	formErrors := model.NewValidationError()
-	formErrors.AddField("sc_tid", "整数で入力してください")
-	formErrors.AddField("title", "入力してください")
+	formErrors := &viewmodel.FormErrors{
+		Fields: map[string][]string{
+			"sc_tid": {"整数で入力してください"},
+			"title":  {"入力してください"},
+		},
+	}
 
 	ctx := i18n.SetLocale(context.Background(), "ja")
 
@@ -204,10 +207,10 @@ func TestFormErrors_Summary(t *testing.T) {
 		}
 	}
 
-	// ValidationError keeps its field errors in a map, so the order has to come from the
+	// FormErrors keeps its field errors in a map, so the order has to come from the
 	// caller's field list rather than from iteration.
 	//
-	// [Ja] ValidationError はフィールドエラーを map で保持するため、順序は走査ではなく
+	// [Ja] FormErrors はフィールドエラーを map で保持するため、順序は走査ではなく
 	// 呼び出し側のフィールド一覧から決まる必要がある。
 	if strings.Index(html, "#title") > strings.Index(html, "#sc_tid") {
 		t.Errorf("要約はフォームの表示順に並べる必要があります\nHTML: %s", html)
@@ -222,9 +225,10 @@ func TestFormErrors_Summary(t *testing.T) {
 func TestFormErrors_SummaryWithGlobal(t *testing.T) {
 	t.Parallel()
 
-	formErrors := model.NewValidationError()
-	formErrors.AddGlobal("保存に失敗しました")
-	formErrors.AddField("title", "入力してください")
+	formErrors := &viewmodel.FormErrors{
+		Global: []string{"保存に失敗しました"},
+		Fields: map[string][]string{"title": {"入力してください"}},
+	}
 
 	ctx := i18n.SetLocale(context.Background(), "ja")
 
@@ -275,8 +279,9 @@ func TestFormErrors_SummaryLocales(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			formErrors := model.NewValidationError()
-			formErrors.AddField("title", "入力してください")
+			formErrors := &viewmodel.FormErrors{
+				Fields: map[string][]string{"title": {"入力してください"}},
+			}
 
 			ctx := i18n.SetLocale(context.Background(), tt.locale)
 
@@ -305,7 +310,7 @@ func TestFormErrors_HTMLStructure(t *testing.T) {
 	t.Parallel()
 
 	data := FormErrorsData{
-		Errors: &model.ValidationError{
+		Errors: &viewmodel.FormErrors{
 			Global: []string{"エラーメッセージ"},
 		},
 	}

@@ -95,10 +95,10 @@ func readUpdateTargetVersion(t *testing.T, db *sql.DB, episodeID model.EpisodeID
 		t.Fatalf("エピソードの版の読み込みに失敗: %v", err)
 	}
 	if !updatedAt.Valid {
-		return validator.DBEpisodeNullVersion
+		return validator.FormNullVersion
 	}
 
-	return updatedAt.Time.UTC().Format(validator.DBEpisodeVersionLayout)
+	return updatedAt.Time.UTC().Format(validator.FormVersionLayout)
 }
 
 // updateEpisodeSubmit returns a submit that changes every editable field, with the version the
@@ -457,8 +457,8 @@ func TestUpdateEpisodeUsecase_Execute_NullVersion(t *testing.T) {
 	user := insertCreateActor(t, db, model.RoleEditor)
 
 	submit := updateEpisodeSubmit(t, db, episodeID, user)
-	if submit.UpdatedAt != validator.DBEpisodeNullVersion {
-		t.Fatalf("フォームが運ぶ版 = %q, want %q", submit.UpdatedAt, validator.DBEpisodeNullVersion)
+	if submit.UpdatedAt != validator.FormNullVersion {
+		t.Fatalf("フォームが運ぶ版 = %q, want %q", submit.UpdatedAt, validator.FormNullVersion)
 	}
 
 	if _, err := uc.Execute(context.Background(), submit); err != nil {

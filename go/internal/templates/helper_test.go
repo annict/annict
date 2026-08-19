@@ -46,8 +46,6 @@ func TestT(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ctx := i18n.SetLocale(context.Background(), tt.locale)
-			localizer := i18n.GetLocalizer(ctx)
-			ctx = i18n.SetLocalizer(ctx, localizer)
 
 			result := T(ctx, tt.messageID, tt.data...)
 

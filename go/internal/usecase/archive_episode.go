@@ -18,9 +18,11 @@ import (
 // in addition to the HTTP route's RequireCommitter middleware. The Rails unpublish records no
 // db_activity, so the editor is used for authorization but no activity is attributed to them.
 //
-// The episode update is conditional on the row still being published and still belonging to
-// the work observed by the confirmation-page projection. It returns the anime_id from the row
-// it actually archived, so a concurrent mapping change cannot send the status write to the
+// The episode update is conditional on the row still being published, still belonging to the
+// work observed by the confirmation-page projection, and that work still being undeleted. A
+// result is returned only when the parent touch and counter update also succeeds, so a
+// concurrent parent deletion makes the transaction roll back. It returns the anime_id from the
+// row it actually archived, so a concurrent mapping change cannot send the status write to the
 // former anime. Updating only status also preserves anime content committed after the pre-read.
 //
 // [Ja] ArchiveEpisodeUsecase は Annict DB 管理画面からエピソードを非公開 (アーカイブ) にする。
@@ -31,10 +33,11 @@ import (
 // よう UseCase 自身も committer 認可を強制する。Rails の非公開は db_activity を記録しないため、
 // 編集者は認可に使うが活動履歴の作成者としては記録しない。
 //
-// episodes の更新は、行が今も公開中であり、確認ページ用の射影が観測した作品に今も属する場合だけ
-// 行う。実際に非公開にした行から anime_id を返すため、写像が同時に変わっても以前の anime へ
-// status を書かない。status だけを更新することで、事前読み取り後にコミットされた anime の内容も
-// 保持する。
+// episodes の更新は、行が今も公開中であり、確認ページ用の射影が観測した作品に今も属し、その作品
+// も未削除の場合だけ行う。親作品の touch とカウンター更新にも成功した場合だけ結果を返し、親作品が
+// 同時に削除された場合はトランザクションをロールバックする。実際に非公開にした行から anime_id を
+// 返すため、写像が同時に変わっても以前の anime へ status を書かない。status だけを更新することで、
+// 事前読み取り後にコミットされた anime の内容も保持する。
 type ArchiveEpisodeUsecase struct {
 	db          *sql.DB
 	episodeRepo *repository.EpisodeRepository
@@ -94,13 +97,14 @@ func (uc *ArchiveEpisodeUsecase) Execute(ctx context.Context, input ArchiveEpiso
 
 	// The same loader the confirmation page uses supplies the parent observed by that page and
 	// the current lifecycle timestamps. An empty result, or an episode that is no longer
-	// published, means the confirmation the editor is acting on is stale. Archive repeats both
-	// state and parent conditions in SQL because this read is outside its transaction.
+	// published, means the confirmation the editor is acting on is stale. Archive repeats the
+	// state, parent identity, and parent lifecycle conditions in SQL because this read is
+	// outside its transaction.
 	//
 	// [Ja] 確認ページと同じローダーから、そのページが観測した親作品と現在のライフサイクルの
 	// タイムスタンプを得る。結果が空の場合、または公開中でなくなっている場合、編集者が操作して
-	// いる確認は古い。この読み取りはトランザクション外のため、Archive は状態と親作品の条件を
-	// SQL でも繰り返す。
+	// いる確認は古い。この読み取りはトランザクション外のため、Archive は状態、親作品の同一性、
+	// 親作品のライフサイクル条件を SQL でも繰り返す。
 	target, err := uc.episodeRepo.GetForArchiveByID(ctx, input.EpisodeID)
 	if err != nil {
 		return nil, fmt.Errorf("エピソードの取得に失敗しました: %w", err)

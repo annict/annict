@@ -192,7 +192,7 @@ func TestDBWorkCreateValidatorValidate(t *testing.T) {
 			}
 
 			ctx := context.Background()
-			err := v.Validate(ctx, input)
+			_, err := v.Validate(ctx, input)
 			ve := model.AsValidationError(err)
 
 			if tt.wantErrors {
@@ -303,7 +303,7 @@ func TestDBWorkCreateValidatorValidate_URL(t *testing.T) {
 			v, _ := newTestDBWorkValidator(t)
 
 			ctx := context.Background()
-			err := v.Validate(ctx, tt.input)
+			_, err := v.Validate(ctx, tt.input)
 			ve := model.AsValidationError(err)
 
 			if tt.wantErrors {
@@ -564,7 +564,7 @@ func TestDBWorkCreateValidatorValidate_NumericFields(t *testing.T) {
 			v, _ := newTestDBWorkValidator(t)
 
 			ctx := context.Background()
-			err := v.Validate(ctx, tt.input)
+			_, err := v.Validate(ctx, tt.input)
 			ve := model.AsValidationError(err)
 
 			if tt.wantErrors {
@@ -677,7 +677,7 @@ func TestDBWorkCreateValidatorValidate_PresencePair(t *testing.T) {
 			v, _ := newTestDBWorkValidator(t)
 
 			ctx := context.Background()
-			err := v.Validate(ctx, tt.input)
+			_, err := v.Validate(ctx, tt.input)
 			ve := model.AsValidationError(err)
 
 			if tt.wantErrors {
@@ -810,7 +810,7 @@ func TestDBWorkCreateValidatorValidate_MaxLength(t *testing.T) {
 
 			v, _ := newTestDBWorkValidator(t)
 
-			err := v.Validate(context.Background(), tt.input)
+			_, err := v.Validate(context.Background(), tt.input)
 			ve := model.AsValidationError(err)
 
 			if tt.wantErrors {
@@ -892,7 +892,7 @@ func TestDBWorkCreateValidatorValidate_DateFields(t *testing.T) {
 
 			v, _ := newTestDBWorkValidator(t)
 
-			err := v.Validate(context.Background(), tt.input)
+			_, err := v.Validate(context.Background(), tt.input)
 			ve := model.AsValidationError(err)
 
 			if tt.wantErrors {
@@ -929,7 +929,7 @@ func TestDBWorkCreateValidatorValidate_NumberFormatExistence(t *testing.T) {
 
 		v, _ := newTestDBWorkValidator(t)
 
-		err := v.Validate(context.Background(), DBWorkCreateValidatorInput{
+		_, err := v.Validate(context.Background(), DBWorkCreateValidatorInput{
 			Title:          dbWorkTestTitle,
 			Media:          "1",
 			NumberFormatID: "",
@@ -944,7 +944,7 @@ func TestDBWorkCreateValidatorValidate_NumberFormatExistence(t *testing.T) {
 
 		v, tx := newTestDBWorkValidator(t)
 
-		err := v.Validate(context.Background(), DBWorkCreateValidatorInput{
+		_, err := v.Validate(context.Background(), DBWorkCreateValidatorInput{
 			Title:          dbWorkTestTitle,
 			Media:          "1",
 			NumberFormatID: seedNumberFormat(t, tx).String(),
@@ -966,7 +966,7 @@ func TestDBWorkCreateValidatorValidate_NumberFormatExistence(t *testing.T) {
 		// いくつフォーマットを登録しても、この id の行は存在し得ない。
 		const missingNumberFormatID = "9000000000000000000"
 
-		err := v.Validate(context.Background(), DBWorkCreateValidatorInput{
+		_, err := v.Validate(context.Background(), DBWorkCreateValidatorInput{
 			Title:          dbWorkTestTitle,
 			Media:          "1",
 			NumberFormatID: missingNumberFormatID,
@@ -1068,7 +1068,7 @@ func TestDBWorkCreateValidatorValidate_TitleUniqueness(t *testing.T) {
 				input.ExcludeWorkID = &seededID
 			}
 
-			err := v.Validate(context.Background(), input)
+			_, err := v.Validate(context.Background(), input)
 			ve := model.AsValidationError(err)
 
 			if tt.wantErrors {
@@ -1083,4 +1083,104 @@ func TestDBWorkCreateValidatorValidate_TitleUniqueness(t *testing.T) {
 			}
 		})
 	}
+}
+
+// TestDBWorkCreateValidatorValidate_Version covers the version the edit form carries: the create
+// flow states none, the edit flow has to state one, and what it states decides which stored row
+// the update is allowed to write.
+//
+// [Ja] TestDBWorkCreateValidatorValidate_Version は編集フォームが運ぶ版を対象とする。作成フローは
+// 版を示さず、編集フローは示す必要がある。何を示すかが、更新がどの保存済みの行に書けるかを決める。
+func TestDBWorkCreateValidatorValidate_Version(t *testing.T) {
+	t.Parallel()
+
+	stored := time.Date(2026, 8, 17, 1, 2, 3, 456789000, time.UTC)
+
+	tests := []struct {
+		name string
+		// updatedAt is the hidden field as it arrives. A nil pointer is the create flow,
+		// which has no stored row to state a version for.
+		//
+		// [Ja] updatedAt は届いたままの hidden フィールド。nil のポインタは作成フローで、版を
+		// 示すべき保存済みの行が無い。
+		updatedAt   *string
+		wantErr     bool
+		wantVersion *time.Time
+	}{
+		{
+			name:      "正常系: 作成フローは版を示さない",
+			updatedAt: nil,
+		},
+		{
+			name:        "正常系: 保存済みの版をそのまま往復させる",
+			updatedAt:   ptrString(stored.Format(FormVersionLayout)),
+			wantVersion: &stored,
+		},
+		{
+			name:      "正常系: updated_at が NULL の行はセンチネルで表す",
+			updatedAt: ptrString(FormNullVersion),
+		},
+		{
+			name:      "異常系: 版が空 (hidden フィールドを伴わない送信)",
+			updatedAt: ptrString(""),
+			wantErr:   true,
+		},
+		{
+			name:      "異常系: 版が往復書式でない",
+			updatedAt: ptrString("2026-08-17 01:02:03"),
+			wantErr:   true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			v, _ := newTestDBWorkValidator(t)
+
+			version, err := v.Validate(context.Background(), DBWorkCreateValidatorInput{
+				Title:     "版テスト作品_" + t.Name(),
+				Media:     "1",
+				UpdatedAt: tt.updatedAt,
+			})
+
+			if tt.wantErr {
+				ve := model.AsValidationError(err)
+				if ve == nil {
+					t.Fatalf("エラーが期待されましたが、エラーがありませんでした (err=%v)", err)
+				}
+				// The version is not an editable field, so it is reported for the form as a
+				// whole rather than against an input the editor could correct.
+				//
+				// [Ja] 版は編集できるフィールドではないため、編集者が直せる入力欄に対してでは
+				// なくフォーム全体に対して報告する。
+				if len(ve.Global) == 0 {
+					t.Error("フォーム全体のエラーが期待されましたが、見つかりませんでした")
+				}
+				if version != nil {
+					t.Errorf("version = %v, want nil", version)
+				}
+				return
+			}
+
+			if err != nil {
+				t.Fatalf("エラーは期待されていませんでしたが、返されました: %v", err)
+			}
+			switch {
+			case tt.wantVersion == nil && version != nil:
+				t.Errorf("version = %v, want nil", version)
+			case tt.wantVersion != nil && version == nil:
+				t.Errorf("version = nil, want %v", tt.wantVersion)
+			case tt.wantVersion != nil && !version.Equal(*tt.wantVersion):
+				t.Errorf("version = %v, want %v", version, tt.wantVersion)
+			}
+		})
+	}
+}
+
+// ptrString returns a pointer to value, for the optional fields whose absence is meaningful.
+//
+// [Ja] ptrString は value へのポインタを返す。不在に意味がある任意フィールド用。
+func ptrString(value string) *string {
+	return &value
 }

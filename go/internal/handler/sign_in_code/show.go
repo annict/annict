@@ -59,7 +59,7 @@ func (h *Handler) renderShowForm(w http.ResponseWriter, r *http.Request, status 
 
 	data := signInCodePage.ShowPageData{
 		CSRFToken:  csrfToken,
-		FormErrors: formErrors,
+		FormErrors: viewmodel.NewFormErrors(formErrors),
 		Email:      email,
 		BackURL:    backURL,
 	}

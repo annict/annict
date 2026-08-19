@@ -20,36 +20,32 @@ import (
 // ヘルパーが実際の episodes 行を挿入し、(自前でトランザクションを開く) 同期 UseCase が
 // GetTestDB 経由でその行を見られるようにする。
 type syncEpisodeInput struct {
-	workID         model.WorkID
-	title          sql.NullString
-	titleRo        string
-	titleEn        string
-	number         sql.NullString
-	sortNumber     int32
-	rawNumber      sql.NullFloat64
-	status         string
-	archiveMessage sql.NullString
-	unpublishedAt  sql.NullTime
-	deletedAt      sql.NullTime
-	animeID        sql.NullInt64
+	workID        model.WorkID
+	title         sql.NullString
+	titleRo       string
+	titleEn       string
+	number        sql.NullString
+	sortNumber    int32
+	rawNumber     sql.NullFloat64
+	unpublishedAt sql.NullTime
+	deletedAt     sql.NullTime
+	animeID       sql.NullInt64
 }
 
 // defaultSyncEpisodeInput returns a minimal published episode with a numeric
-// number (raw_number=1, number="1") under the given parent work. status intentionally
-// remains 'published' so tests that change only unpublished_at / deleted_at prove the
-// derivation ignores the dormant episodes.status column.
+// number (raw_number=1, number="1") under the given parent work. Tests that exercise
+// the archived / deleted derivation set unpublished_at / deleted_at on the returned
+// value.
 //
 // [Ja] defaultSyncEpisodeInput は指定の親作品配下に、数値の話数 (raw_number=1,
-// number="1") を持つ最小の公開エピソードを返す。導出が休眠カラム episodes.status を
-// 参照しないことを検証するため、status は意図的に 'published' のままとし、テストでは
-// unpublished_at / deleted_at だけを変更する。
+// number="1") を持つ最小の公開エピソードを返す。archived / deleted の導出を検証する
+// テストは、返った値に unpublished_at / deleted_at を立てて使う。
 func defaultSyncEpisodeInput(workID model.WorkID) syncEpisodeInput {
 	return syncEpisodeInput{
 		workID:     workID,
 		number:     sql.NullString{String: "1", Valid: true},
 		sortNumber: 1,
 		rawNumber:  sql.NullFloat64{Float64: 1, Valid: true},
-		status:     "published",
 	}
 }
 
@@ -60,16 +56,16 @@ func insertSyncEpisode(t *testing.T, db *sql.DB, in syncEpisodeInput) model.Epis
 	err := db.QueryRow(`
 		INSERT INTO episodes (
 			work_id, title, title_ro, title_en, number, sort_number,
-			raw_number, status, archive_message, unpublished_at, deleted_at,
+			raw_number, unpublished_at, deleted_at,
 			anime_id, created_at, updated_at
 		) VALUES (
 			$1, $2, $3, $4, $5, $6,
-			$7, $8, $9, $10, $11,
-			$12, NOW(), NOW()
+			$7, $8, $9,
+			$10, NOW(), NOW()
 		) RETURNING id
 	`,
 		int64(in.workID), in.title, in.titleRo, in.titleEn, in.number, in.sortNumber,
-		in.rawNumber, in.status, in.archiveMessage, in.unpublishedAt, in.deletedAt,
+		in.rawNumber, in.unpublishedAt, in.deletedAt,
 		in.animeID,
 	).Scan(&id)
 	if err != nil {
@@ -562,11 +558,10 @@ func TestSyncEpisodesToAnimesUsecase_Execute_CreatesArchivedAnimeForUnpublishedE
 	workID, _ := insertSyncedParentWork(t, db)
 
 	// episodes.unpublished_at set (archived at the episode level) must map to
-	// anime.status = archived even though the dormant episodes.status still says
-	// published.
+	// anime.status = archived.
 	//
-	// [Ja] episodes.unpublished_at が立っている (エピソードレベルで非公開) 場合は、休眠して
-	// いる episodes.status が published のままでも anime.status = archived に写像される。
+	// [Ja] episodes.unpublished_at が立っている (エピソードレベルで非公開) 場合は
+	// anime.status = archived に写像される。
 	in := defaultSyncEpisodeInput(workID)
 	in.unpublishedAt = sql.NullTime{Time: time.Now(), Valid: true}
 	episodeID := insertSyncEpisode(t, db, in)
@@ -698,17 +693,17 @@ func TestSyncEpisodesToAnimesUsecase_Execute_DoesNotClobberAnimeArchivedState(t 
 	// Simulate the animes-first + episodes two-write archive path: animes.status is set
 	// to archived with an editor-supplied archive_message, and episodes.unpublished_at is
 	// set together. This is the invariant the derivation fix protects: the reconciler must
-	// derive archived from episodes.unpublished_at (not the dormant episodes.status, which
-	// stays published) and therefore leave animes.status = archived untouched instead of
-	// reverting it. archive_message is animes-only, so the reconciler carries the existing
-	// value over instead of overwriting it from the episode.
+	// derive archived from episodes.unpublished_at and therefore leave animes.status =
+	// archived untouched instead of reverting it. archive_message is animes-only, so the
+	// reconciler carries the existing value over instead of overwriting it from the
+	// episode.
 	//
 	// [Ja] animes-first + episodes 両書きによる非公開経路を再現する。animes.status を
 	// archived に (編集者が入力した archive_message 付きで)、episodes.unpublished_at を
 	// 同時に立てる。これは導出の是正が守る不変条件で、リコンシラーは archived を
-	// episodes.unpublished_at から導出し (published のままの休眠 episodes.status では
-	// なく)、animes.status = archived を published に戻さず据え置く。archive_message は
-	// animes 専用のため、リコンシラーは episode から上書きせず既存の値を引き継ぐ。
+	// episodes.unpublished_at から導出し、animes.status = archived を published に戻さず
+	// 据え置く。archive_message は animes 専用のため、リコンシラーは episode から上書きせず
+	// 既存の値を引き継ぐ。
 	const archiveMessage = "編集者が入力したアーカイブメッセージ"
 	if _, err := db.Exec(`UPDATE episodes SET unpublished_at = NOW() WHERE id = $1`, int64(episodeID)); err != nil {
 		t.Fatalf("episodes.unpublished_at の更新に失敗: %v", err)
@@ -768,7 +763,6 @@ func TestPlanEpisodeAnimeSync_SkipsWhenParentUnresolved(t *testing.T) {
 		ID:         model.EpisodeID(1),
 		WorkID:     model.WorkID(1),
 		SortNumber: 1,
-		Status:     model.EpisodeStatusPublished,
 	}
 
 	plan := planEpisodeAnimeSync(
@@ -801,7 +795,6 @@ func TestPlanEpisodeAnimeSync_CreatesAnimeWhenMappedRowMissing(t *testing.T) {
 		ID:            model.EpisodeID(1),
 		WorkID:        model.WorkID(1),
 		SortNumber:    1,
-		Status:        model.EpisodeStatusPublished,
 		AnimeID:       &danglingAnimeID,
 		ParentAnimeID: &parentAnimeID,
 	}

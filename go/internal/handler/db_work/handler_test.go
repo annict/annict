@@ -53,6 +53,33 @@ func newTestHandler(t *testing.T, db *sql.DB, tx *sql.Tx) *Handler {
 	return NewHandler(cfg, sessionManager, testutil.NewTestFlashManager(), testutil.NewTestImageHelper(), getDBWorksUC, getDBWorkFormOptionsUC, getDBWorkEditUC, createWorkUC, updateWorkUC, deleteWorkUC)
 }
 
+// assertNotFoundPage asserts that a 404 is served as the shared error page rather than as the
+// one-line plain text http.Error used to return, so a reader who follows a stale link lands on
+// a page that says what happened and offers a way back.
+//
+// [Ja] assertNotFoundPage は 404 が、以前 http.Error が返していた 1 行のプレーンテキストでは
+// なく共通のエラーページとして配信されることを検証する。古いリンクを辿った読み手が、何が
+// 起きたかを述べ戻る導線を持つページに着地するようにするため。
+func assertNotFoundPage(t *testing.T, rr *httptest.ResponseRecorder) {
+	t.Helper()
+
+	if contentType := rr.Header().Get("Content-Type"); contentType != "text/html; charset=utf-8" {
+		t.Errorf("Content-Type = %q, want text/html; charset=utf-8", contentType)
+	}
+
+	body := rr.Body.String()
+	for _, expected := range []string{
+		"<title>ページが見つかりません | Annict</title>",
+		"ページが見つかりません",
+		`href="/"`,
+		"ホームに戻る",
+	} {
+		if !strings.Contains(body, expected) {
+			t.Errorf("404 レスポンスに %q が含まれていません", expected)
+		}
+	}
+}
+
 // TestIndex はDB作品一覧ページのテスト
 func TestIndex(t *testing.T) {
 	t.Parallel()

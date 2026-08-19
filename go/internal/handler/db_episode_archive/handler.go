@@ -1,10 +1,10 @@
 // Package db_episode_archive provides HTTP handlers for archiving (unpublishing) an episode in
-// the Annict DB admin UI. The endpoints are keyed by the episode's own id
-// (/db/episodes/{id}/archive), as the work counterpart is keyed by the work's.
+// the Annict DB admin UI and for re-publishing it. The endpoints are keyed by the episode's own
+// id (/db/episodes/{id}/archive), as the work counterpart is keyed by the work's.
 //
 // [Ja] db_episode_archive パッケージは Annict DB 管理画面でエピソードを非公開 (アーカイブ) に
-// する HTTP ハンドラーを定義する。エンドポイントは作品側が作品の id に紐づくのと同じく、
-// エピソード自身の id (/db/episodes/{id}/archive) に紐づく。
+// し、また再公開する HTTP ハンドラーを定義する。エンドポイントは作品側が作品の id に紐づくのと
+// 同じく、エピソード自身の id (/db/episodes/{id}/archive) に紐づく。
 package db_episode_archive
 
 import (
@@ -29,6 +29,7 @@ type Handler struct {
 	flashMgr                 *session.FlashManager
 	getDBEpisodeArchiveNewUC *usecase.GetDBEpisodeArchiveNewUsecase
 	archiveEpisodeUC         *usecase.ArchiveEpisodeUsecase
+	unarchiveEpisodeUC       *usecase.UnarchiveEpisodeUsecase
 }
 
 func NewHandler(
@@ -37,6 +38,7 @@ func NewHandler(
 	flashMgr *session.FlashManager,
 	getDBEpisodeArchiveNewUC *usecase.GetDBEpisodeArchiveNewUsecase,
 	archiveEpisodeUC *usecase.ArchiveEpisodeUsecase,
+	unarchiveEpisodeUC *usecase.UnarchiveEpisodeUsecase,
 ) *Handler {
 	return &Handler{
 		cfg:                      cfg,
@@ -44,16 +46,17 @@ func NewHandler(
 		flashMgr:                 flashMgr,
 		getDBEpisodeArchiveNewUC: getDBEpisodeArchiveNewUC,
 		archiveEpisodeUC:         archiveEpisodeUC,
+		unarchiveEpisodeUC:       unarchiveEpisodeUC,
 	}
 }
 
 // parseEpisodeIDParam reads the episode the request addresses from the {id} route parameter,
-// reporting false when it is not a number. Both endpoints go through it, so a malformed id is
-// turned away the same way on the confirmation page and on the submit.
+// reporting false when it is not a number. Every endpoint goes through it, so a malformed id is
+// turned away the same way on the confirmation page and on both submits.
 //
 // [Ja] parseEpisodeIDParam はリクエストが対象とするエピソードを {id} のルートパラメータから
-// 読み取り、数値でない場合は false を返す。両エンドポイントがここを通るため、不正な id の扱いが
-// 確認ページと送信で揃う。
+// 読み取り、数値でない場合は false を返す。すべてのエンドポイントがここを通るため、不正な id の
+// 扱いが確認ページと両方の送信で揃う。
 func parseEpisodeIDParam(r *http.Request) (model.EpisodeID, bool) {
 	id, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
 	if err != nil {
@@ -64,13 +67,14 @@ func parseEpisodeIDParam(r *http.Request) (model.EpisodeID, bool) {
 }
 
 // episodesPath builds the path of a work's episode list, which the confirmation page cancels
-// back to and a successful archive lands on. It matches the Rails after_destroyed_path
-// (db_episode_list_path): the archived row among the others is what the editor checks next.
+// back to and a successful archive or re-publish lands on. It matches the Rails
+// after_destroyed_path / after_created_path (both db_episode_list_path): the changed row among
+// the others is what the editor checks next.
 //
 // [Ja] episodesPath はある作品のエピソード一覧のパスを生成する。確認ページのキャンセル先で
-// あり、非公開が成功したときの着地点でもある。Rails の after_destroyed_path
-// (db_episode_list_path) と同じで、編集者が次に確認するのは他の行と並んだ非公開後の行である
-// ため。
+// あり、非公開や再公開が成功したときの着地点でもある。Rails の after_destroyed_path /
+// after_created_path (いずれも db_episode_list_path) と同じで、編集者が次に確認するのは他の行と
+// 並んだ変更後の行であるため。
 func episodesPath(workID model.WorkID) string {
 	return "/db/works/" + strconv.FormatInt(int64(workID), 10) + "/episodes"
 }

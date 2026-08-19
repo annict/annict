@@ -16,18 +16,32 @@ import (
 // Error renders the standalone document used by HTTP error responses. title is the page name
 // without the site suffix, which this layout appends.
 //
-// The page is deliberately self-contained: its styles are inlined rather than loaded from the
-// application stylesheet, and it pulls in no application JavaScript or external metadata. An
-// error page is what a reader sees when something has already gone wrong, so it is kept free
-// of dependencies that could fail or be served stale alongside the failure.
+// The page is deliberately self-contained for the content a reader needs: its styles are inlined
+// rather than loaded from the application stylesheet, and it requests no application JavaScript.
+// Everything required to render the message and navigation is kept in the document; the favicon
+// is optional. An error page is what a reader sees when something has already gone wrong, so its
+// visible content does not depend on anything fetched separately, which could fail or be served
+// stale alongside the failure.
+//
+// The noindex declaration is not such a dependency: it is a statement the document makes about
+// itself. It is here because the /errors/* routes answer GET requests at URLs that robots.txt
+// leaves crawlable, while carrying none of the site's content. The 4xx and 5xx statuses keep
+// these responses out of a search index already, and this says the same thing in the page.
 //
 // [Ja] Error は HTTP エラーレスポンスで使う単独の文書を描画する。title はサイトのサフィックス
 // を含まないページ名で、サフィックスは本レイアウトが付ける。
 //
-// このページは意図的に自己完結させている。スタイルはアプリケーションのスタイルシートから
-// 読み込まずインラインに持ち、アプリケーションの JavaScript や外部向けメタデータも含めない。
-// エラーページは既に何かが失敗した状態で読み手が目にする画面のため、その失敗と一緒に壊れたり
-// 古いまま配信されたりしうる依存を持たせない。
+// このページは読み手に必要な内容を表示するうえで意図的に自己完結させている。スタイルは
+// アプリケーションのスタイルシートから読み込まずインラインに持ち、アプリケーションの
+// JavaScript も要求しない。メッセージと導線の表示に必要なものはすべて文書内に持ち、favicon は
+// 任意の付加物として扱う。エラーページは既に何かが失敗した状態で読み手が目にする画面のため、
+// 目に見える内容は別途取得するもの (その失敗と一緒に壊れたり古いまま配信されたりしうるもの)
+// に依存させない。
+//
+// noindex の宣言はそうした依存には当たらず、文書が自分自身について述べるもの。ここに置いて
+// いるのは、/errors/* のルートがサイトの中身を持たないまま、robots.txt がクロールを許している
+// URL で GET に応じるため。これらの応答が索引から外れること自体は 4xx / 5xx のステータスで
+// 既に満たされており、本宣言はそれをページ側でも述べる。
 func Error(title string, content templ.Component) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -56,20 +70,20 @@ func Error(title string, content templ.Component) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.ResolveAttributeValue(templates.Locale(ctx))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/layouts/error.templ`, Line: 26, Col: 35}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/layouts/error.templ`, Line: 40, Col: 35}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var2)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, viewport-fit=cover\"><meta name=\"color-scheme\" content=\"light dark\"><title>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, viewport-fit=cover\"><meta name=\"color-scheme\" content=\"light dark\"><meta name=\"robots\" content=\"noindex\"><title>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(title + viewmodel.TitleSuffix)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/layouts/error.templ`, Line: 31, Col: 41}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/layouts/error.templ`, Line: 46, Col: 41}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {

@@ -72,7 +72,8 @@ SELECT
     manual_episodes_count,
     start_episode_raw_number,
     number_format_id,
-    no_episodes
+    no_episodes,
+    updated_at
 FROM works
 WHERE id = $1;
 
@@ -399,7 +400,19 @@ SET
     updated_at = NOW()
 WHERE id = sqlc.arg('id');
 
--- name: UpdateWork :exec
+-- name: UpdateWork :execrows
+-- The version stated by the submit is matched inside the UPDATE rather than compared against a
+-- preceding read, so no other write can slip between the comparison and the write. NULL is an
+-- explicit version (the shared column is nullable), which IS NOT DISTINCT FROM matches without a
+-- second statement; the write then advances updated_at, so a second submit from the same NULL
+-- version no longer matches. No row updated therefore means the row was written by someone else
+-- in the meantime, and the caller reports a conflict instead of overwriting it.
+--
+-- [Ja] 送信が名乗る版の照合は、直前の読み取りとの比較ではなく UPDATE の中で行う。比較と書き込み
+-- の間に他の書き込みが挟まらないようにするため。共有カラムは NULL 許容のため NULL も明示的な版
+-- であり、IS NOT DISTINCT FROM なら 2 文に分けずに照合できる。書き込みは updated_at を進めるので、
+-- 同じ NULL 版からの 2 件目はもう一致しない。したがって 1 行も更新されないことは、その間に他者が
+-- 行を書いたことを意味し、呼び出し側は上書きせず競合として報告する。
 UPDATE works
 SET
     title = sqlc.arg('title'),
@@ -429,7 +442,8 @@ SET
     number_format_id = sqlc.narg('number_format_id'),
     no_episodes = sqlc.arg('no_episodes'),
     updated_at = NOW()
-WHERE id = sqlc.arg('id');
+WHERE id = sqlc.arg('id')
+    AND updated_at IS NOT DISTINCT FROM sqlc.narg('version')::timestamptz;
 
 -- name: CreateWork :one
 INSERT INTO works (

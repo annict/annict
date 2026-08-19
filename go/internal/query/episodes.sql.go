@@ -22,6 +22,12 @@ WITH archived_episode AS (
         AND episodes.work_id = $2
         AND episodes.unpublished_at IS NULL
         AND episodes.deleted_at IS NULL
+        AND EXISTS (
+            SELECT 1
+            FROM works
+            WHERE works.id = episodes.work_id
+                AND works.deleted_at IS NULL
+        )
     RETURNING episodes.id, episodes.work_id, episodes.anime_id
 ), touched_work AS (
     UPDATE works
@@ -29,9 +35,12 @@ WITH archived_episode AS (
         episodes_count = works.episodes_count - 1,
         updated_at = NOW()
     WHERE works.id IN (SELECT ae.work_id FROM archived_episode ae)
+        AND works.deleted_at IS NULL
+    RETURNING works.id
 )
 SELECT ae.id, ae.anime_id
 FROM archived_episode ae
+INNER JOIN touched_work tw ON tw.id = ae.work_id
 `
 
 type ArchiveDBEpisodeParams struct {
@@ -48,7 +57,9 @@ type ArchiveDBEpisodeRow struct {
 // confirmation page returns no row instead of re-stamping unpublished_at. The work id is
 // required to match the parent the confirmation page was built from, so an episode moved to
 // another work by Annict::DataCare::MoveEpisode in between does not decrement the counter of
-// a work it no longer belongs to.
+// a work it no longer belongs to. The parent work must also remain undeleted: the
+// confirmation-page projection excludes deleted works, but its lifecycle can change before this
+// statement starts or while the episode row is locked by another transaction.
 //
 // The updated row returns its current anime_id so the dual-write targets the mapping that was
 // actually archived. A mapping changed after the confirmation-page read must not make the
@@ -56,9 +67,12 @@ type ArchiveDBEpisodeRow struct {
 //
 // The Rails unpublish is Episode#update(unpublished_at:), which records no db_activity but
 // does advance updated_at, touch the parent work through belongs_to :work, touch: true and
-// decrement works.episodes_count through counter_culture. All three are reproduced here, in
-// one statement so the counter cannot drift from the state it counts: the decrement runs
-// exactly for the transition the UPDATE above performed.
+// decrement works.episodes_count through counter_culture (its column_name lambda counts an
+// episode only while it is published). All three are reproduced here, in one statement so the
+// counter cannot drift from the state it counts: the decrement runs exactly for the transition
+// the UPDATE above performed. The final result depends on the work update succeeding. If a
+// concurrent soft-delete makes that update skip the parent, :one returns no row and the caller
+// rolls its transaction back, including the episode update performed by the first CTE.
 //
 // The rows are written episodes-first and works-second, the order Rails saves them in, so the
 // two applications queue behind each other on the same work rather than deadlocking. The Go
@@ -71,16 +85,21 @@ type ArchiveDBEpisodeRow struct {
 // [Ja] 非公開は、エピソードが今も公開中であることを条件とする。古い確認ページからの送信は
 // unpublished_at を再スタンプせず、1 行も返さない。作品 id は確認ページが前提とした親作品との
 // 一致を要求する。その間に Annict::DataCare::MoveEpisode で別作品へ移されたエピソードが、
-// もう所属していない作品のカウンターを減算しないようにするため。
+// もう所属していない作品のカウンターを減算しないようにするため。親作品も未削除のままであること
+// を要求する。確認ページ用の射影は削除済み作品を除外するが、作品のライフサイクルは本ステート
+// メントの開始前や、別のトランザクションが episode 行をロックしている間にも変わり得るため。
 //
 // 更新した行は現在の anime_id を返す。両書きが、実際に非公開にした時点の写像を対象にするため。
 // 確認ページの読み取り後に写像が変わっても、送信が以前の anime を更新してはならない。
 //
 // Rails の非公開は Episode#update(unpublished_at:) であり、db_activity は作らないが、
 // updated_at を進め、belongs_to :work, touch: true で親作品を touch し、counter_culture で
-// works.episodes_count を減算する。3 つとも本ステートメントで再現する。1 文にまとめるのは、
-// カウンターが数える対象の状態からずれないようにするため (減算は上の UPDATE が実際に行った
-// 遷移に対してだけ走る)。
+// works.episodes_count を減算する (column_name のラムダは公開中のエピソードだけを数える)。
+// 3 つとも本ステートメントで再現する。1 文にまとめるのは、カウンターが数える対象の状態から
+// ずれないようにするため (減算は上の UPDATE が実際に行った遷移に対してだけ走る)。最終結果は
+// 作品の更新成功にも依存させる。同時の論理削除によって作品の更新がスキップされた場合、:one は
+// 行を返さず、呼び出し元が最初の CTE による episode の更新も含めてトランザクションをロール
+// バックする。
 //
 // 書き込みは episodes が先、works が後で、Rails が保存する順序と同じ。これにより 2 つの
 // アプリケーションは同じ作品に対してデッドロックせず、順に待ち合う。Go のエピソード更新は
@@ -131,7 +150,7 @@ WITH created_episode AS (
         NOW(),
         NOW()
     )
-    RETURNING id, work_id, number, sort_number, sc_count, title, episode_records_count, created_at, updated_at, prev_episode_id, aasm_state, fetch_syobocal, raw_number, title_ro, title_en, episode_record_bodies_count, score, ratings_count, satisfaction_rate, number_en, deleted_at, unpublished_at, status, archive_message, anime_id
+    RETURNING id, work_id, number, sort_number, sc_count, title, episode_records_count, created_at, updated_at, prev_episode_id, aasm_state, fetch_syobocal, raw_number, title_ro, title_en, episode_record_bodies_count, score, ratings_count, satisfaction_rate, number_en, deleted_at, unpublished_at, anime_id
 ), created_activity AS (
     INSERT INTO db_activities (
         user_id,
@@ -204,6 +223,146 @@ func (q *Queries) CreateEpisode(ctx context.Context, arg CreateEpisodeParams) (i
 	return id, err
 }
 
+const deleteDBEpisode = `-- name: DeleteDBEpisode :one
+WITH deleted_episode AS (
+    UPDATE episodes
+    SET
+        deleted_at = NOW(),
+        updated_at = NOW()
+    WHERE episodes.id = $1
+        AND episodes.work_id = $2
+        AND episodes.deleted_at IS NULL
+        AND EXISTS (
+            SELECT 1
+            FROM works
+            WHERE works.id = episodes.work_id
+                AND works.deleted_at IS NULL
+        )
+    RETURNING episodes.id, episodes.work_id, episodes.anime_id, episodes.unpublished_at
+), unlinked_followers AS (
+    UPDATE episodes
+    SET prev_episode_id = NULL
+    FROM deleted_episode de
+    WHERE episodes.prev_episode_id = de.id
+        AND episodes.id <> de.id
+        AND episodes.deleted_at IS NULL
+), touched_work AS (
+    UPDATE works
+    SET
+        episodes_count = works.episodes_count - (
+            CASE WHEN de.unpublished_at IS NULL THEN 1 ELSE 0 END
+        ),
+        updated_at = NOW()
+    FROM deleted_episode de
+    WHERE works.id = de.work_id
+        AND works.deleted_at IS NULL
+    RETURNING works.id
+)
+SELECT de.id, de.anime_id
+FROM deleted_episode de
+INNER JOIN touched_work tw ON tw.id = de.work_id
+`
+
+type DeleteDBEpisodeParams struct {
+	ID     int64 `db:"id"`
+	WorkID int64 `db:"work_id"`
+}
+
+type DeleteDBEpisodeRow struct {
+	ID      int64         `db:"id"`
+	AnimeID sql.NullInt64 `db:"anime_id"`
+}
+
+// Deleting is conditional on the episode not being deleted already, so a submit from a list
+// opened before someone else deleted it returns no row instead of re-stamping deleted_at and
+// decrementing the counter a second time. The work id is required to match the parent the list
+// named, so an episode moved to another work by Annict::DataCare::MoveEpisode in between does
+// not decrement the counter of a work it no longer belongs to. The parent work must also remain
+// undeleted: the pre-transaction projection excludes deleted works, but its lifecycle can change
+// before this statement starts or while the episode row is locked by another transaction.
+//
+// The updated row returns its current anime_id so the dual-write targets the mapping that was
+// actually deleted, not the one the pre-transaction projection observed.
+//
+// [Ja] 削除は、エピソードがまだ削除されていないことを条件とする。他者が先に削除した後の一覧から
+// の送信は、deleted_at を再スタンプせず、カウンターを 2 度目に減算せず、1 行も返さない。作品 id
+// は一覧が名指しした親作品との一致を要求する。その間に Annict::DataCare::MoveEpisode で別作品へ
+// 移されたエピソードが、もう所属していない作品のカウンターを減算しないようにするため。親作品も
+// 未削除のままであることを要求する。トランザクション前の射影は削除済み作品を除外するが、作品の
+// ライフサイクルは本ステートメントの開始前や、別のトランザクションが episode 行をロックしている
+// 間にも変わり得るため。
+//
+// 更新した行は現在の anime_id を返す。両書きが、トランザクション前の射影が観測した写像ではなく、
+// 実際に削除した時点の写像を対象にするため。
+//
+// The Rails delete is destroy_in_batches, which removes the row: counter_culture decrements
+// works.episodes_count (its column_name lambda counts an episode only while it is published, so
+// deleting an already archived episode decrements nothing) and belongs_to :work, touch: true
+// advances works.updated_at. The Go delete is a soft delete, so the row stays and neither side
+// effect follows from it; both are reproduced here, in one statement so the counter cannot
+// drift from the state it counts: the decrement runs exactly for the transition the UPDATE
+// above performed, and only for a row that was still being counted. The final result
+// depends on the work update succeeding. If a concurrent soft-delete makes that update skip the
+// parent, :one returns no row and the caller rolls its transaction back, including the episode
+// update performed by the first CTE.
+//
+// The rows are written episodes-first and works-second for the reason ArchiveDBEpisode states.
+// Unlike the archive, the lock set also holds the rows naming the deleted episode, which the CTE
+// below writes between the episode and the work. Two deletes in the same work take their rows in
+// prev_episode_id order, which is a chain rather than a cycle, and the work comes last for both.
+// The Go episode update again takes the work first and then pre-empts the episodes it needs with
+// NOWAIT, abandoning its attempt rather than waiting, so that inversion does not close either.
+//
+// [Ja] Rails の削除は destroy_in_batches で行を消すため、counter_culture が
+// works.episodes_count を減算し (column_name のラムダは公開中のエピソードだけを数えるため、
+// すでに非公開のエピソードの削除では何も減らない)、belongs_to :work, touch: true が
+// works.updated_at を進める。Go の削除はソフトデリートで行が残り、どちらの副作用も自動的には
+// 従わないため、2 つとも本ステートメントで再現する。1 文にまとめるのは、カウンターが数える対象の
+// 状態からずれないようにするため (減算は上の UPDATE が実際に行った遷移に対してだけ、かつまだ
+// 数えられていた行に対してだけ走る)。最終結果は作品の更新成功にも依存させる。同時の論理削除に
+// よって作品の更新がスキップされた場合、:one は行を返さず、呼び出し元が最初の CTE による
+// episode の更新も含めてトランザクションをロールバックする。
+//
+// 書き込みが episodes 先・works 後なのは ArchiveDBEpisode が述べる理由による。非公開と違い、
+// ロックする範囲には削除するエピソードを名乗る行も含まれ、下の CTE がそれをエピソードと作品の
+// 間で書く。同一作品に対する 2 つの削除は prev_episode_id の順に行を取るが、これは循環ではなく
+// 連鎖であり、作品はどちらも最後に取る。Go のエピソード更新はここでも作品を先に取り、必要な
+// エピソードを NOWAIT で先取りして、待たずに試行を中断するため、こちらの反転も循環にならない。
+//
+// The rows naming the deleted episode as their predecessor have that pointer cleared, which is
+// what the Rails before_destroy :unset_prev_episode_id does before the row disappears. The Go
+// row stays, and prev_episode_id has no scope of its own: the public episode navigation, the
+// GraphQL EpisodeType.prev_episode and the REST API read whatever it names, so a pointer left
+// behind would show a deleted episode. Every undeleted row naming it is cleared rather than the
+// single kept one the Rails callback finds, because an archived follower would otherwise carry
+// the stale pointer back into view the moment it is re-published. The follower is not relinked
+// to the deleted episode's own predecessor: that would put the Go delete's aftermath at odds
+// with the Rails one, which leaves the follower without a predecessor.
+//
+// The clearing writes prev_episode_id alone: no change history, no parent touch and no version
+// bump on the followers, for the reason the relink in UpdateDBEpisode states. The episode's own
+// prev_episode_id is left as it is, since nothing displays a deleted row.
+//
+// [Ja] 削除するエピソードを直前として名乗る行は、そのポインタをクリアする。Rails の
+// before_destroy :unset_prev_episode_id が行が消える前に行うことと同じ。Go では行が残り、
+// prev_episode_id 自体にスコープは無い。公開側のエピソードの前後導線・GraphQL の
+// EpisodeType.prev_episode・REST API はこのカラムが名指しするものをそのまま読むため、残した
+// ポインタは削除済みエピソードを見せてしまう。Rails のコールバックが見つける「公開中の 1 行」で
+// はなく、名乗っている未削除の行すべてをクリアするのは、非公開の後続行が古いポインタを持ったまま
+// 再公開された瞬間に、それが表に戻るのを防ぐため。後続行を削除するエピソード自身の直前行へ張り
+// 替えることはしない。それは Go の削除後の状態を、後続行に直前を持たせない Rails の削除後の状態
+// と食い違わせるため。
+//
+// クリアが書くのは prev_episode_id だけで、変更履歴も親の touch も後続行の版の更新も行わない。
+// 理由は UpdateDBEpisode の張り替えが述べるものと同じ。削除するエピソード自身の
+// prev_episode_id はそのままにする。削除済みの行は何も表示しないため。
+func (q *Queries) DeleteDBEpisode(ctx context.Context, arg DeleteDBEpisodeParams) (DeleteDBEpisodeRow, error) {
+	row := q.db.QueryRowContext(ctx, deleteDBEpisode, arg.ID, arg.WorkID)
+	var i DeleteDBEpisodeRow
+	err := row.Scan(&i.ID, &i.AnimeID)
+	return i, err
+}
+
 const getEpisodeForArchiveByID = `-- name: GetEpisodeForArchiveByID :one
 SELECT
     e.id,
@@ -244,7 +403,8 @@ type GetEpisodeForArchiveByIDRow struct {
 // GetEpisodeForEditByID; the column still travels so DerivedStatus reads a complete row.
 //
 // The filters match GetEpisodeForEditByID, so the submit accepts exactly the episodes whose
-// confirmation page is reachable.
+// confirmation page is reachable. The re-publish submit (UnarchiveDBEpisode) reads the same row
+// and applies the opposite state condition, so both directions reach the same episodes.
 //
 // [Ja] 非公開の確認ページと、それに続く送信は同じ行を読む。画面上でエピソードを名指しする
 // カラム (number / title)、状態のタイムスタンプ、そしてページが親作品から必要とする 2 つの
@@ -257,7 +417,8 @@ type GetEpisodeForArchiveByIDRow struct {
 // 無い行を読めるよう、カラム自体は併せて運ぶ。
 //
 // 絞り込みは GetEpisodeForEditByID と揃える。確認ページに到達できるエピソードと、送信を
-// 受け付けるエピソードを一致させるため。
+// 受け付けるエピソードを一致させるため。再公開の送信 (UnarchiveDBEpisode) も同じ行を読み、
+// 逆向きの状態条件を当てるため、両方向が同じエピソードに届く。
 func (q *Queries) GetEpisodeForArchiveByID(ctx context.Context, id int64) (GetEpisodeForArchiveByIDRow, error) {
 	row := q.db.QueryRowContext(ctx, getEpisodeForArchiveByID, id)
 	var i GetEpisodeForArchiveByIDRow
@@ -271,6 +432,49 @@ func (q *Queries) GetEpisodeForArchiveByID(ctx context.Context, id int64) (GetEp
 		&i.WorkTitle,
 		&i.WorkNoEpisodes,
 	)
+	return i, err
+}
+
+const getEpisodeForDeleteByID = `-- name: GetEpisodeForDeleteByID :one
+SELECT
+    e.id,
+    e.work_id
+FROM episodes e
+INNER JOIN works w ON w.id = e.work_id
+WHERE e.id = $1
+    AND e.deleted_at IS NULL
+    AND w.deleted_at IS NULL
+`
+
+type GetEpisodeForDeleteByIDRow struct {
+	ID     int64 `db:"id"`
+	WorkID int64 `db:"work_id"`
+}
+
+// The delete submit comes from a confirmation alert rather than a page, so this projection
+// carries only what the write needs: the id it addresses and the parent it is taken to name,
+// which binds DeleteDBEpisode to that work and is where a successful delete lands. Nothing is
+// read for display, so none of the columns naming the episode travel.
+//
+// Deleted episodes and episodes of deleted works are excluded, matching the Rails
+// Episode.without_deleted.find in Db::EpisodesController#destroy and the reach of the archive
+// endpoints. The state is not filtered any further: both a published and an archived episode
+// can be deleted, so unlike the archive endpoints the caller has no state condition to apply
+// and the timestamps do not need to travel either.
+//
+// [Ja] 削除の送信はページではなく確認アラートから来るため、この射影は書き込みが必要とするもの
+// だけを運ぶ。対象の id と、送信が名指しするとみなす親作品 (DeleteDBEpisode をその作品に束縛し、
+// 削除の成功時に着地する先でもある)。表示のための読み取りは無いため、エピソードを名指しする
+// カラムは運ばない。
+//
+// 削除済みエピソードと、削除済み作品のエピソードは除外する。Db::EpisodesController#destroy の
+// Rails の Episode.without_deleted.find と、非公開エンドポイント群が届く範囲に揃えるため。
+// 状態はそれ以上絞らない。公開中のエピソードも非公開のエピソードも削除できるため、非公開
+// エンドポイントと違い呼び出し側が当てる状態条件が無く、タイムスタンプを運ぶ必要も無い。
+func (q *Queries) GetEpisodeForDeleteByID(ctx context.Context, id int64) (GetEpisodeForDeleteByIDRow, error) {
+	row := q.db.QueryRowContext(ctx, getEpisodeForDeleteByID, id)
+	var i GetEpisodeForDeleteByIDRow
+	err := row.Scan(&i.ID, &i.WorkID)
 	return i, err
 }
 
@@ -675,8 +879,6 @@ SELECT
     e.number,
     e.sort_number,
     e.raw_number,
-    e.status,
-    e.archive_message,
     e.unpublished_at,
     e.deleted_at,
     e.anime_id,
@@ -688,20 +890,18 @@ ORDER BY e.id
 `
 
 type ListEpisodesForAnimeSyncByIDsRow struct {
-	ID             int64           `db:"id"`
-	WorkID         int64           `db:"work_id"`
-	Title          sql.NullString  `db:"title"`
-	TitleRo        string          `db:"title_ro"`
-	TitleEn        string          `db:"title_en"`
-	Number         sql.NullString  `db:"number"`
-	SortNumber     int32           `db:"sort_number"`
-	RawNumber      sql.NullFloat64 `db:"raw_number"`
-	Status         EpisodeStatus   `db:"status"`
-	ArchiveMessage sql.NullString  `db:"archive_message"`
-	UnpublishedAt  sql.NullTime    `db:"unpublished_at"`
-	DeletedAt      sql.NullTime    `db:"deleted_at"`
-	AnimeID        sql.NullInt64   `db:"anime_id"`
-	ParentAnimeID  sql.NullInt64   `db:"parent_anime_id"`
+	ID            int64           `db:"id"`
+	WorkID        int64           `db:"work_id"`
+	Title         sql.NullString  `db:"title"`
+	TitleRo       string          `db:"title_ro"`
+	TitleEn       string          `db:"title_en"`
+	Number        sql.NullString  `db:"number"`
+	SortNumber    int32           `db:"sort_number"`
+	RawNumber     sql.NullFloat64 `db:"raw_number"`
+	UnpublishedAt sql.NullTime    `db:"unpublished_at"`
+	DeletedAt     sql.NullTime    `db:"deleted_at"`
+	AnimeID       sql.NullInt64   `db:"anime_id"`
+	ParentAnimeID sql.NullInt64   `db:"parent_anime_id"`
 }
 
 func (q *Queries) ListEpisodesForAnimeSyncByIDs(ctx context.Context, dollar_1 []int64) ([]ListEpisodesForAnimeSyncByIDsRow, error) {
@@ -722,8 +922,6 @@ func (q *Queries) ListEpisodesForAnimeSyncByIDs(ctx context.Context, dollar_1 []
 			&i.Number,
 			&i.SortNumber,
 			&i.RawNumber,
-			&i.Status,
-			&i.ArchiveMessage,
 			&i.UnpublishedAt,
 			&i.DeletedAt,
 			&i.AnimeID,
@@ -822,9 +1020,104 @@ func (q *Queries) LockWorkForEpisodeUpdateByID(ctx context.Context, id int64) (i
 	return id, err
 }
 
+const unarchiveDBEpisode = `-- name: UnarchiveDBEpisode :one
+WITH published_episode AS (
+    UPDATE episodes
+    SET
+        unpublished_at = NULL,
+        updated_at = NOW()
+    WHERE episodes.id = $1
+        AND episodes.work_id = $2
+        AND episodes.unpublished_at IS NOT NULL
+        AND episodes.deleted_at IS NULL
+        AND EXISTS (
+            SELECT 1
+            FROM works
+            WHERE works.id = episodes.work_id
+                AND works.deleted_at IS NULL
+        )
+    RETURNING episodes.id, episodes.work_id, episodes.anime_id
+), touched_work AS (
+    UPDATE works
+    SET
+        episodes_count = works.episodes_count + 1,
+        updated_at = NOW()
+    WHERE works.id IN (SELECT pe.work_id FROM published_episode pe)
+        AND works.deleted_at IS NULL
+    RETURNING works.id
+)
+SELECT pe.id, pe.anime_id
+FROM published_episode pe
+INNER JOIN touched_work tw ON tw.id = pe.work_id
+`
+
+type UnarchiveDBEpisodeParams struct {
+	ID     int64 `db:"id"`
+	WorkID int64 `db:"work_id"`
+}
+
+type UnarchiveDBEpisodeRow struct {
+	ID      int64         `db:"id"`
+	AnimeID sql.NullInt64 `db:"anime_id"`
+}
+
+// Re-publishing is the inverse of ArchiveDBEpisode: it clears the timestamp that one stamps and
+// gives back the counter that one takes away. Every guard is the same, with the state condition
+// read the other way round. It is conditional on the episode still being archived, so a submit
+// from a list opened before someone else re-published it returns no row instead of clearing an
+// already NULL unpublished_at. The work id is required to match the parent the list named, so an
+// episode moved to another work by Annict::DataCare::MoveEpisode in between does not increment
+// the counter of a work it no longer belongs to. The parent work must also remain undeleted: the
+// pre-transaction projection excludes deleted works, but its lifecycle can change before this
+// statement starts or while the episode row is locked by another transaction.
+//
+// The updated row returns its current anime_id so the dual-write targets the mapping that was
+// actually re-published, not the one the pre-transaction projection observed.
+//
+// The Rails re-publish is Episode#update(unpublished_at: nil), which records no db_activity but
+// does advance updated_at, touch the parent work through belongs_to :work, touch: true and
+// increment works.episodes_count through counter_culture (its column_name lambda counts an
+// episode only while it is published, so clearing unpublished_at adds the row back). All three
+// are reproduced here, in one statement so the counter cannot drift from the state it counts:
+// the increment runs exactly for the transition the UPDATE above performed. The final result
+// depends on the work update succeeding. If a concurrent soft-delete makes that update skip the
+// parent, :one returns no row and the caller rolls its transaction back, including the episode
+// update performed by the first CTE.
+//
+// The rows are written episodes-first and works-second for the reason ArchiveDBEpisode states.
+//
+// [Ja] 再公開は ArchiveDBEpisode の逆で、あちらが打つタイムスタンプをクリアし、あちらが引く
+// カウンターを戻す。ガードはすべて同じで、状態の条件だけを逆向きに読む。エピソードが今も非公開
+// であることを条件とし、他者が先に再公開した後の一覧からの送信は、すでに NULL の unpublished_at
+// をクリアせず 1 行も返さない。作品 id は一覧が名指しした親作品との一致を要求する。その間に
+// Annict::DataCare::MoveEpisode で別作品へ移されたエピソードが、もう所属していない作品の
+// カウンターを加算しないようにするため。親作品も未削除のままであることを要求する。トランザクション
+// 前の射影は削除済み作品を除外するが、作品のライフサイクルは本ステートメントの開始前や、別の
+// トランザクションが episode 行をロックしている間にも変わり得るため。
+//
+// 更新した行は現在の anime_id を返す。両書きが、トランザクション前の射影が観測した写像では
+// なく、実際に再公開した時点の写像を対象にするため。
+//
+// Rails の再公開は Episode#update(unpublished_at: nil) であり、db_activity は作らないが、
+// updated_at を進め、belongs_to :work, touch: true で親作品を touch し、counter_culture で
+// works.episodes_count を加算する (column_name のラムダは公開中のエピソードだけを数えるため、
+// unpublished_at のクリアで行が数え直される)。3 つとも本ステートメントで再現する。1 文に
+// まとめるのは、カウンターが数える対象の状態からずれないようにするため (加算は上の UPDATE が
+// 実際に行った遷移に対してだけ走る)。最終結果は作品の更新成功にも依存させる。同時の論理削除に
+// よって作品の更新がスキップされた場合、:one は行を返さず、呼び出し元が最初の CTE による
+// episode の更新も含めてトランザクションをロールバックする。
+//
+// 書き込みが episodes 先・works 後なのは ArchiveDBEpisode が述べる理由による。
+func (q *Queries) UnarchiveDBEpisode(ctx context.Context, arg UnarchiveDBEpisodeParams) (UnarchiveDBEpisodeRow, error) {
+	row := q.db.QueryRowContext(ctx, unarchiveDBEpisode, arg.ID, arg.WorkID)
+	var i UnarchiveDBEpisodeRow
+	err := row.Scan(&i.ID, &i.AnimeID)
+	return i, err
+}
+
 const updateDBEpisode = `-- name: UpdateDBEpisode :one
 WITH current_episode AS (
-    SELECT e.id, e.work_id, e.number, e.sort_number, e.sc_count, e.title, e.episode_records_count, e.created_at, e.updated_at, e.prev_episode_id, e.aasm_state, e.fetch_syobocal, e.raw_number, e.title_ro, e.title_en, e.episode_record_bodies_count, e.score, e.ratings_count, e.satisfaction_rate, e.number_en, e.deleted_at, e.unpublished_at, e.status, e.archive_message, e.anime_id
+    SELECT e.id, e.work_id, e.number, e.sort_number, e.sc_count, e.title, e.episode_records_count, e.created_at, e.updated_at, e.prev_episode_id, e.aasm_state, e.fetch_syobocal, e.raw_number, e.title_ro, e.title_en, e.episode_record_bodies_count, e.score, e.ratings_count, e.satisfaction_rate, e.number_en, e.deleted_at, e.unpublished_at, e.anime_id
     FROM episodes e
     WHERE e.id = $1
         AND e.work_id = $2
@@ -891,7 +1184,7 @@ WITH current_episode AS (
     WHERE episodes.id = ce.id
         AND episodes.deleted_at IS NULL
         AND episodes.updated_at IS NOT DISTINCT FROM $8::timestamptz
-    RETURNING episodes.id, episodes.work_id, episodes.number, episodes.sort_number, episodes.sc_count, episodes.title, episodes.episode_records_count, episodes.created_at, episodes.updated_at, episodes.prev_episode_id, episodes.aasm_state, episodes.fetch_syobocal, episodes.raw_number, episodes.title_ro, episodes.title_en, episodes.episode_record_bodies_count, episodes.score, episodes.ratings_count, episodes.satisfaction_rate, episodes.number_en, episodes.deleted_at, episodes.unpublished_at, episodes.status, episodes.archive_message, episodes.anime_id
+    RETURNING episodes.id, episodes.work_id, episodes.number, episodes.sort_number, episodes.sc_count, episodes.title, episodes.episode_records_count, episodes.created_at, episodes.updated_at, episodes.prev_episode_id, episodes.aasm_state, episodes.fetch_syobocal, episodes.raw_number, episodes.title_ro, episodes.title_en, episodes.episode_record_bodies_count, episodes.score, episodes.ratings_count, episodes.satisfaction_rate, episodes.number_en, episodes.deleted_at, episodes.unpublished_at, episodes.anime_id
 ), crossed_neighbours AS (
     SELECT
         ue.id AS episode_id,

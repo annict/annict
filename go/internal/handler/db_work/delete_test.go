@@ -57,6 +57,7 @@ func TestDelete_NotFound(t *testing.T) {
 	if status := rr.Code; status != http.StatusNotFound {
 		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusNotFound)
 	}
+	assertNotFoundPage(t, rr)
 }
 
 // TestDelete_NotFoundForDeletedWork verifies deleting an already soft-deleted work returns
@@ -80,6 +81,7 @@ func TestDelete_NotFoundForDeletedWork(t *testing.T) {
 	if status := rr.Code; status != http.StatusNotFound {
 		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusNotFound)
 	}
+	assertNotFoundPage(t, rr)
 }
 
 // TestDelete_InvalidID verifies a non-numeric id returns 404.
@@ -100,6 +102,7 @@ func TestDelete_InvalidID(t *testing.T) {
 	if status := rr.Code; status != http.StatusNotFound {
 		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusNotFound)
 	}
+	assertNotFoundPage(t, rr)
 }
 
 // TestDelete_HTMXRedirect verifies that an htmx-issued delete (HX-Request) responds with 204

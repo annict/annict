@@ -127,15 +127,13 @@ func (r *EpisodeRepository) CountForDB(ctx context.Context, workID model.WorkID)
 }
 
 // episodeFromDBListRow converts an Annict DB list row into *model.Episode. The row
-// is a partial load: the anime mapping columns, the dormant status column and
-// archive_message are not selected and stay at their zero value. The preceding
-// episode's two numbers come from the query's neighbour derivation, so they are nil
-// for the work's first episode.
+// is a partial load: the anime mapping columns are not selected and stay at their
+// zero value. The preceding episode's two numbers come from the query's neighbour
+// derivation, so they are nil for the work's first episode.
 //
 // [Ja] episodeFromDBListRow は Annict DB 一覧の行を *model.Episode に変換する。行は
-// 部分ロードで、anime マッピングカラム・休眠カラム status・archive_message は選択せず
-// ゼロ値のまま残る。直前のエピソードの 2 系統の話数はクエリ側の隣接行の導出に由来し、
-// 作品の最初のエピソードでは nil になる。
+// 部分ロードで、anime マッピングカラムは選択せずゼロ値のまま残る。直前のエピソードの
+// 2 系統の話数はクエリ側の隣接行の導出に由来し、作品の最初のエピソードでは nil になる。
 func episodeFromDBListRow(row query.ListDBEpisodesRow) *model.Episode {
 	episode := &model.Episode{
 		ID:                  model.EpisodeID(row.ID),
@@ -403,17 +401,19 @@ type DBEpisodeArchiveTarget struct {
 	Work    *model.Work
 }
 
-// GetForArchiveByID loads the episode the Annict DB archive-confirmation page names, together
-// with its parent work. Deleted episodes and episodes of deleted works are excluded by the
-// query, so (nil, nil) means the id names no episode the page can be shown for. The returned
-// episode carries its state timestamps, so the caller decides through
-// model.Episode.DerivedStatus whether the episode is in a state that can be archived.
+// GetForArchiveByID loads the episode the Annict DB archive endpoints address, together with its
+// parent work. Deleted episodes and episodes of deleted works are excluded by the query, so
+// (nil, nil) means the id names no episode those endpoints can act on. The returned episode
+// carries its state timestamps rather than a state filter, so the caller decides through
+// model.Episode.DerivedStatus which state it accepts: the confirmation page and the archive
+// submit take a published episode, the re-publish submit an archived one.
 //
-// [Ja] GetForArchiveByID は Annict DB の非公開確認ページが名指しするエピソードを、その親作品と
-// 一緒に読み込む。削除済みのエピソードと、削除済み作品のエピソードはクエリ側で除外するため、
-// (nil, nil) はページを出せるエピソードがその id に無いことを表す。返すエピソードは状態の
-// タイムスタンプを持つため、非公開にできる状態かどうかは呼び出し側が
-// model.Episode.DerivedStatus で判断する。
+// [Ja] GetForArchiveByID は Annict DB の非公開エンドポイント群が対象とするエピソードを、その
+// 親作品と一緒に読み込む。削除済みのエピソードと、削除済み作品のエピソードはクエリ側で除外する
+// ため、(nil, nil) はそれらのエンドポイントが操作できるエピソードがその id に無いことを表す。
+// 返すエピソードは状態で絞らずタイムスタンプを持つため、どの状態を受け付けるかは呼び出し側が
+// model.Episode.DerivedStatus で判断する (確認ページと非公開の送信は公開中のエピソード、
+// 再公開の送信は非公開のエピソード)。
 func (r *EpisodeRepository) GetForArchiveByID(ctx context.Context, id model.EpisodeID) (*DBEpisodeArchiveTarget, error) {
 	row, err := r.queries.GetEpisodeForArchiveByID(ctx, int64(id))
 	if err != nil {
@@ -474,17 +474,18 @@ type ArchiveEpisodeResult struct {
 	AnimeID *model.AnimeID
 }
 
-// Archive unpublishes an episode, returning nil when no row matched: the episode is gone, it
-// was archived by someone else since the confirmation page was opened, or it no longer belongs
-// to the work that page named. The caller turns that into the same not-found response the page
-// itself gives, rather than reporting a write that did not happen. A successful result carries
-// the anime mapping returned by the updated row, not the pre-transaction projection.
+// Archive unpublishes an episode, returning nil when no row matched: the episode is gone, its
+// parent was deleted, it was archived by someone else since the confirmation page was opened, or
+// it no longer belongs to the work that page named. The caller turns that into the same
+// not-found response the page itself gives, rather than reporting a write that did not happen.
+// A successful result carries the anime mapping returned by the updated row, not the
+// pre-transaction projection.
 //
 // [Ja] Archive はエピソードを非公開にし、どの行も一致しなかった場合に nil を返す (エピソード
-// が失われた、確認ページを開いてから他者が非公開にした、またはそのページが名指しした作品に
-// もう属していない)。呼び出し側はこれを、確認ページ自身が返すのと同じ not found の応答に変換し、
-// 起きなかった書き込みを報告しない。成功時の結果は、トランザクション前の射影ではなく、更新した
-// 行が返した anime の写像を運ぶ。
+// が失われた、親作品が削除された、確認ページを開いてから他者が非公開にした、またはそのページが
+// 名指しした作品にもう属していない)。呼び出し側はこれを、確認ページ自身が返すのと同じ not found
+// の応答に変換し、起きなかった書き込みを報告しない。成功時の結果は、トランザクション前の射影では
+// なく、更新した行が返した anime の写像を運ぶ。
 func (r *EpisodeRepository) Archive(ctx context.Context, params ArchiveEpisodeParams) (*ArchiveEpisodeResult, error) {
 	row, err := r.queries.ArchiveDBEpisode(ctx, query.ArchiveDBEpisodeParams{
 		ID:     int64(params.ID),
@@ -498,6 +499,141 @@ func (r *EpisodeRepository) Archive(ctx context.Context, params ArchiveEpisodePa
 	}
 
 	result := &ArchiveEpisodeResult{}
+	if row.AnimeID.Valid {
+		animeID := model.AnimeID(row.AnimeID.Int64)
+		result.AnimeID = &animeID
+	}
+
+	return result, nil
+}
+
+// UnarchiveEpisodeParams identifies the episode one re-publish submit publishes again. WorkID is
+// the parent the list the submit came from named; Unarchive requires the episode to still belong
+// to it, so the counter increment lands on the work that was counting without it.
+//
+// [Ja] UnarchiveEpisodeParams は 1 回の再公開の送信が公開に戻すエピソードを指定する。WorkID は
+// 送信元の一覧が名指しした親作品で、Unarchive はエピソードが今もそこに属していることを要求する。
+// カウンターの加算を、その行を数えていなかった作品に当てるため。
+type UnarchiveEpisodeParams struct {
+	ID     model.EpisodeID
+	WorkID model.WorkID
+}
+
+// UnarchiveEpisodeResult reports the anime mapping on the episode row that was actually
+// re-published. AnimeID is nil for an episode not yet mapped to the reference model.
+//
+// [Ja] UnarchiveEpisodeResult は、実際に再公開したエピソード行が持つ anime の写像を報告する。
+// 参照モデルへ未マッピングのエピソードでは AnimeID は nil。
+type UnarchiveEpisodeResult struct {
+	AnimeID *model.AnimeID
+}
+
+// Unarchive re-publishes an archived episode, returning nil when no row matched: the episode is
+// gone, its parent was deleted, it was re-published by someone else since the list was opened,
+// or it no longer belongs to the work that list named. The caller turns that into the same
+// not-found response the list itself gives for an episode it cannot show, rather than reporting
+// a write that did not happen. A successful result carries the anime mapping returned by the
+// updated row, not the pre-transaction projection.
+//
+// [Ja] Unarchive は非公開のエピソードを再公開し、どの行も一致しなかった場合に nil を返す
+// (エピソードが失われた、親作品が削除された、一覧を開いてから他者が再公開した、またはその一覧が
+// 名指しした作品にもう属していない)。呼び出し側はこれを、一覧が表示できないエピソードに対して
+// 返すのと同じ not found の応答に変換し、起きなかった書き込みを報告しない。成功時の結果は、
+// トランザクション前の射影ではなく、更新した行が返した anime の写像を運ぶ。
+func (r *EpisodeRepository) Unarchive(ctx context.Context, params UnarchiveEpisodeParams) (*UnarchiveEpisodeResult, error) {
+	row, err := r.queries.UnarchiveDBEpisode(ctx, query.UnarchiveDBEpisodeParams{
+		ID:     int64(params.ID),
+		WorkID: int64(params.WorkID),
+	})
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	result := &UnarchiveEpisodeResult{}
+	if row.AnimeID.Valid {
+		animeID := model.AnimeID(row.AnimeID.Int64)
+		result.AnimeID = &animeID
+	}
+
+	return result, nil
+}
+
+// GetForDeleteByID loads the episode the Annict DB delete endpoint addresses. Deleted episodes
+// and episodes of deleted works are excluded by the query, so (nil, nil) means the id names no
+// episode that endpoint can act on. Both a published and an archived episode are returned: a
+// delete accepts either, so unlike GetForArchiveByID this loader carries no state timestamps for
+// the caller to judge. The returned episode carries the parent the delete is bound to and lands
+// on.
+//
+// [Ja] GetForDeleteByID は Annict DB の削除エンドポイントが対象とするエピソードを読み込む。
+// 削除済みのエピソードと、削除済み作品のエピソードはクエリ側で除外するため、(nil, nil) はその
+// エンドポイントが操作できるエピソードがその id に無いことを表す。公開中のエピソードも非公開の
+// エピソードも返す。削除はどちらも受け付けるため、GetForArchiveByID と違い呼び出し側が判断する
+// 状態のタイムスタンプは運ばない。返すエピソードは、削除を束縛し、成功時に着地する親作品を持つ。
+func (r *EpisodeRepository) GetForDeleteByID(ctx context.Context, id model.EpisodeID) (*model.Episode, error) {
+	row, err := r.queries.GetEpisodeForDeleteByID(ctx, int64(id))
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	return &model.Episode{
+		ID:     model.EpisodeID(row.ID),
+		WorkID: model.WorkID(row.WorkID),
+	}, nil
+}
+
+// DeleteEpisodeParams identifies the episode one delete submit soft-deletes. WorkID is the
+// parent the list the submit came from named; Delete requires the episode to still belong to it,
+// so the counter decrement lands on the work that was counting it.
+//
+// [Ja] DeleteEpisodeParams は 1 回の削除の送信がソフトデリートするエピソードを指定する。WorkID
+// は送信元の一覧が名指しした親作品で、Delete はエピソードが今もそこに属していることを要求する。
+// カウンターの減算を、その行を数えていた作品に当てるため。
+type DeleteEpisodeParams struct {
+	ID     model.EpisodeID
+	WorkID model.WorkID
+}
+
+// DeleteEpisodeResult reports the anime mapping on the episode row that was actually deleted.
+// AnimeID is nil for an episode not yet mapped to the reference model.
+//
+// [Ja] DeleteEpisodeResult は、実際に削除したエピソード行が持つ anime の写像を報告する。
+// 参照モデルへ未マッピングのエピソードでは AnimeID は nil。
+type DeleteEpisodeResult struct {
+	AnimeID *model.AnimeID
+}
+
+// Delete soft-deletes an episode, returning nil when no row matched: the episode is gone, its
+// parent was deleted, it was deleted by someone else since the list was opened, or it no longer
+// belongs to the work that list named. The caller turns that into the same not-found response
+// the list itself gives for an episode it cannot show, rather than reporting a write that did not
+// happen. A successful result carries the anime mapping returned by the updated row, not the
+// pre-transaction projection.
+//
+// [Ja] Delete はエピソードをソフトデリートし、どの行も一致しなかった場合に nil を返す
+// (エピソードが失われた、親作品が削除された、一覧を開いてから他者が削除した、またはその一覧が
+// 名指しした作品にもう属していない)。呼び出し側はこれを、一覧が表示できないエピソードに対して
+// 返すのと同じ not found の応答に変換し、起きなかった書き込みを報告しない。成功時の結果は、
+// トランザクション前の射影ではなく、更新した行が返した anime の写像を運ぶ。
+func (r *EpisodeRepository) Delete(ctx context.Context, params DeleteEpisodeParams) (*DeleteEpisodeResult, error) {
+	row, err := r.queries.DeleteDBEpisode(ctx, query.DeleteDBEpisodeParams{
+		ID:     int64(params.ID),
+		WorkID: int64(params.WorkID),
+	})
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	result := &DeleteEpisodeResult{}
 	if row.AnimeID.Valid {
 		animeID := model.AnimeID(row.AnimeID.Int64)
 		result.AnimeID = &animeID
@@ -669,15 +805,15 @@ func (r *EpisodeRepository) UpdateAnimeID(ctx context.Context, episodeID model.E
 }
 
 // episodeFromAnimeSyncRow converts an anime-sync query row into *model.Episode.
-// The nullable columns (title / number / raw_number / archive_message /
-// unpublished_at / deleted_at / anime_id / parent_anime_id) are carried as pointers
-// so the sync usecase can distinguish "absent" from a zero value, mirroring how
-// workFromAnimeSyncRow handles works.
+// The nullable columns (title / number / raw_number / unpublished_at / deleted_at /
+// anime_id / parent_anime_id) are carried as pointers so the sync usecase can
+// distinguish "absent" from a zero value, mirroring how workFromAnimeSyncRow handles
+// works.
 //
 // [Ja] episodeFromAnimeSyncRow は anime 同期の query 行を *model.Episode に変換する。
-// NULL 許容カラム (title / number / raw_number / archive_message / unpublished_at /
-// deleted_at / anime_id / parent_anime_id) はポインタで持ち、同期 UseCase が「未設定」と
-// ゼロ値を区別できるようにする。workFromAnimeSyncRow が works を扱うのと同じ方針。
+// NULL 許容カラム (title / number / raw_number / unpublished_at / deleted_at /
+// anime_id / parent_anime_id) はポインタで持ち、同期 UseCase が「未設定」とゼロ値を
+// 区別できるようにする。workFromAnimeSyncRow が works を扱うのと同じ方針。
 func episodeFromAnimeSyncRow(row query.ListEpisodesForAnimeSyncByIDsRow) *model.Episode {
 	episode := &model.Episode{
 		ID:         model.EpisodeID(row.ID),
@@ -685,7 +821,6 @@ func episodeFromAnimeSyncRow(row query.ListEpisodesForAnimeSyncByIDsRow) *model.
 		TitleRo:    row.TitleRo,
 		TitleEn:    row.TitleEn,
 		SortNumber: row.SortNumber,
-		Status:     model.EpisodeStatus(row.Status),
 	}
 	if row.Title.Valid {
 		title := row.Title.String
@@ -698,10 +833,6 @@ func episodeFromAnimeSyncRow(row query.ListEpisodesForAnimeSyncByIDsRow) *model.
 	if row.RawNumber.Valid {
 		rawNumber := row.RawNumber.Float64
 		episode.RawNumber = &rawNumber
-	}
-	if row.ArchiveMessage.Valid {
-		archiveMessage := row.ArchiveMessage.String
-		episode.ArchiveMessage = &archiveMessage
 	}
 	if row.UnpublishedAt.Valid {
 		unpublishedAt := row.UnpublishedAt.Time

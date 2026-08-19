@@ -27,8 +27,6 @@ templ DBSidebarToggle() {
 		aria-expanded={ strconv.FormatBool(templates.IsDBSidebarOpen(ctx)) }
 		aria-label={ templates.T(ctx, "db_sidebar_toggle_label") }
 	>
-		<span aria-hidden="true">
-			@templates.Icon("sidebar-regular")
-		</span>
+		@templates.DecorativeIcon("sidebar-regular")
 	</button>
 }

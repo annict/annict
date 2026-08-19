@@ -59,7 +59,7 @@ func (h *Handler) renderNewForm(w http.ResponseWriter, r *http.Request, status i
 
 	data := signInPasswordPage.NewPageData{
 		CSRFToken:  csrfToken,
-		FormErrors: formErrors,
+		FormErrors: viewmodel.NewFormErrors(formErrors),
 		Email:      email,
 		BackURL:    backURL,
 	}

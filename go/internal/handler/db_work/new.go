@@ -1,9 +1,11 @@
 package db_work
 
 import (
+	"bytes"
 	"log/slog"
 	"net/http"
 
+	"github.com/annict/annict/go/internal/httperror"
 	"github.com/annict/annict/go/internal/middleware"
 	"github.com/annict/annict/go/internal/templates/layouts"
 	"github.com/annict/annict/go/internal/templates/pages/db_works"
@@ -28,7 +30,7 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 	optionsResult, err := h.getDBWorkFormOptionsUC.Execute(ctx)
 	if err != nil {
 		slog.ErrorContext(ctx, "NumberFormatの取得エラー", "error", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		httperror.InternalServerError(w, r)
 		return
 	}
 
@@ -39,7 +41,6 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 	meta := viewmodel.DefaultPageMeta(ctx, h.cfg, dbWorksNewPath)
 	meta.SetDBTitle(ctx, "db_works_new_title")
 
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	component := layouts.Db(
 		meta,
 		h.cfg.GetAssetVersion(),
@@ -48,9 +49,15 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 			FormOptions: formOptions,
 		}),
 	)
-	if err := component.Render(ctx, w); err != nil {
+	var body bytes.Buffer
+	if err := component.Render(ctx, &body); err != nil {
 		slog.ErrorContext(ctx, "テンプレートのレンダリングエラー", "error", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		httperror.InternalServerError(w, r)
 		return
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	if _, err := w.Write(body.Bytes()); err != nil {
+		slog.ErrorContext(ctx, "DB作品新規作成フォームのレスポンスの書き込みに失敗", "error", err)
 	}
 }

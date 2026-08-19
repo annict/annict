@@ -30,7 +30,7 @@ func (h *Handler) renderNewForm(w http.ResponseWriter, r *http.Request, status i
 	data := passwordpages.ResetPageData{
 		CSRFToken:        csrfToken,
 		TurnstileSiteKey: h.cfg.TurnstileSiteKey,
-		FormErrors:       formErrors,
+		FormErrors:       viewmodel.NewFormErrors(formErrors),
 		Email:            email,
 	}
 

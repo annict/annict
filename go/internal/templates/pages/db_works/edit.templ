@@ -3,7 +3,6 @@ package db_works
 import (
 	"context"
 
-	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/templates"
 	"github.com/annict/annict/go/internal/templates/components"
 	"github.com/annict/annict/go/internal/viewmodel"
@@ -21,8 +20,21 @@ type EditPageData struct {
 	// タイトルではなく送信されたタイトルを渡す。
 	WorkTitle   string
 	FormOptions viewmodel.DBWorkFormOptions
-	FormErrors  *model.ValidationError
+	FormErrors  *viewmodel.FormErrors
 	FormInput   *viewmodel.DBWorkFormInput
+	// ConflictCurrent holds the stored values of a work someone else wrote between this form
+	// being opened and its submit, and is nil in every other case. The page shows the ones
+	// that differ from the submitted values that were refused: the editor is the one who
+	// decides which to keep, and cannot decide without seeing what would be overwritten. The
+	// hidden version the form carries is the one these values belong to, so submitting again
+	// overwrites exactly what is shown here and nothing that arrives afterwards.
+	//
+	// [Ja] ConflictCurrent は、本フォームを開いてから送信するまでの間に他者が書いた作品の
+	// 保存済みの値を持ち、それ以外の場合は nil になる。ページは、却下された送信の値と異なる
+	// ものを表示する。どちらを残すかを決めるのは編集者であり、何を上書きするのかを見なければ
+	// 決められないため。フォームが運ぶ hidden の版はこれらの値の版のため、もう一度送信すると
+	// ここに表示された内容だけを上書きし、その後に届いた変更は上書きしない。
+	ConflictCurrent *viewmodel.DBWorkFormInput
 }
 
 func (d EditPageData) hasFieldError(field string) bool {
@@ -40,17 +52,23 @@ func (d EditPageData) hasErrors() bool {
 	return d.FormErrors.HasErrors()
 }
 
-// editSummaryFields lists the fields the error summary can name, in the order this form shows
-// them, paired with the labels it displays. The labels are looked up with literal keys rather
-// than keys assembled from the field name, so every translation key stays greppable from the
-// place that uses it.
+// editFields lists every field this form writes, in the order it shows them, paired with the
+// labels it displays. The error summary names its entries from here, and so does the conflict
+// notice, so a field cannot be listed in one order by the first and another by the second. The
+// labels are looked up with literal keys rather than keys assembled from the field name, so
+// every translation key stays greppable from the place that uses it.
 //
-// [Ja] editSummaryFields はエラー要約が名指しできるフィールドを、本フォームが表示する順で、
-// 表示中のラベルと対にして並べる。ラベルはフィールド名から組み立てたキーではなく直書きの
-// キーで引く。翻訳キーを使用箇所から grep で追える状態に保つため。
-func editSummaryFields(ctx context.Context) []components.FormErrorField {
+// [Ja] editFields は本フォームが書き込むフィールドを、表示する順で、表示中のラベルと対にして
+// すべて並べる。エラー要約も競合の案内もここから項目を名指しするため、同じフィールドが両者で
+// 異なる順に並ぶことがない。ラベルはフィールド名から組み立てたキーではなく直書きのキーで引く。
+// 翻訳キーを使用箇所から grep で追える状態に保つため。
+func editFields(ctx context.Context) []components.FormErrorField {
 	return []components.FormErrorField{
 		{Name: "title", Label: templates.T(ctx, "db_works_edit_title_label")},
+		{Name: "title_kana", Label: templates.T(ctx, "db_works_edit_title_kana_label")},
+		{Name: "title_alter", Label: templates.T(ctx, "db_works_edit_title_alter_label")},
+		{Name: "title_en", Label: templates.T(ctx, "db_works_edit_title_en_label")},
+		{Name: "title_alter_en", Label: templates.T(ctx, "db_works_edit_title_alter_en_label")},
 		{Name: "media", Label: templates.T(ctx, "db_works_edit_media_label")},
 		{Name: "season_year", Label: templates.T(ctx, "db_works_edit_season_year_label")},
 		{Name: "season_name", Label: templates.T(ctx, "db_works_edit_season_name_label")},
@@ -64,12 +82,95 @@ func editSummaryFields(ctx context.Context) []components.FormErrorField {
 		{Name: "twitter_hashtag", Label: templates.T(ctx, "db_works_edit_twitter_hashtag_label")},
 		{Name: "sc_tid", Label: templates.T(ctx, "db_works_edit_sc_tid_label")},
 		{Name: "mal_anime_id", Label: templates.T(ctx, "db_works_edit_mal_anime_id_label")},
+		{Name: "synopsis", Label: templates.T(ctx, "db_works_edit_synopsis_label")},
 		{Name: "synopsis_source", Label: templates.T(ctx, "db_works_edit_synopsis_source_label")},
+		{Name: "synopsis_en", Label: templates.T(ctx, "db_works_edit_synopsis_en_label")},
 		{Name: "synopsis_source_en", Label: templates.T(ctx, "db_works_edit_synopsis_source_en_label")},
 		{Name: "manual_episodes_count", Label: templates.T(ctx, "db_works_edit_manual_episodes_count_label")},
 		{Name: "start_episode_raw_number", Label: templates.T(ctx, "db_works_edit_start_episode_raw_number_label")},
 		{Name: "number_format_id", Label: templates.T(ctx, "db_works_edit_number_format_label")},
+		{Name: "no_episodes", Label: templates.T(ctx, "db_works_edit_no_episodes_label")},
 	}
+}
+
+// editConflictField is one stored value the conflict notice states, paired with the label the
+// form shows for the same field.
+//
+// [Ja] editConflictField は競合の案内が述べる保存済みの値 1 つと、同じフィールドについてフォーム
+// が表示するラベルの組。
+type editConflictField struct {
+	Label string
+	Value string
+}
+
+// conflictFields lists the stored values that differ from what the refused submit carried, in
+// the order the form shows their fields. Only the differing ones are listed because they are
+// what a second submit would overwrite; naming all twenty-six would bury them among the values
+// the two sides already agree on.
+//
+// [Ja] conflictFields は、却下された送信が運んだ値と異なる保存済みの値を、フォームが各フィールド
+// を表示する順で並べる。異なるものだけを並べるのは、それが再送信で上書きされる対象であるため。
+// 26 件すべてを名指しすると、両者で既に一致している値の中にそれらが埋もれてしまう。
+func (d EditPageData) conflictFields(ctx context.Context) []editConflictField {
+	if d.ConflictCurrent == nil {
+		return nil
+	}
+
+	var fields []editConflictField
+	for _, field := range editFields(ctx) {
+		stored := d.ConflictCurrent.Val(field.Name)
+		if stored == d.FormInput.Val(field.Name) {
+			continue
+		}
+		fields = append(fields, editConflictField{
+			Label: field.Label,
+			Value: editConflictValue(ctx, d.FormOptions, field.Name, stored),
+		})
+	}
+
+	return fields
+}
+
+// editConflictValue renders a stored value the way its field shows it. The selects and the
+// checkbox hold codes their inputs never display, so the notice resolves them to the option
+// label the editor sees; every other field displays the value it stores.
+//
+// [Ja] editConflictValue は保存済みの値を、そのフィールドが表示する形で描画する。選択欄と
+// チェックボックスは入力欄が表示することのないコードを保持するため、案内では編集者が目にする
+// 選択肢のラベルに解決する。それ以外のフィールドは保持している値をそのまま表示する。
+func editConflictValue(ctx context.Context, options viewmodel.DBWorkFormOptions, field, value string) string {
+	switch field {
+	case "media":
+		return selectOptionLabel(options.MediaOptions, value)
+	case "season_name":
+		return selectOptionLabel(options.SeasonNameOptions, value)
+	case "number_format_id":
+		return selectOptionLabel(options.NumberFormatOptions, value)
+	case "no_episodes":
+		if value == "1" {
+			return templates.T(ctx, "db_works_edit_conflict_checked")
+		}
+		return templates.T(ctx, "db_works_edit_conflict_unchecked")
+	default:
+		return value
+	}
+}
+
+// selectOptionLabel returns the label a select shows for a value, falling back to the value
+// itself when no option carries it. The fallback keeps a stored value the select can no longer
+// offer visible, rather than reporting it as absent.
+//
+// [Ja] selectOptionLabel は選択欄がある値に対して表示するラベルを返し、その値を持つ選択肢が
+// 無い場合は値そのものを返す。このフォールバックにより、選択欄がもはや提示できない保存済みの
+// 値も、未設定として報告せずそのまま見せられる。
+func selectOptionLabel(options []viewmodel.SelectOption, value string) string {
+	for _, option := range options {
+		if option.Value == value {
+			return option.Label
+		}
+	}
+
+	return value
 }
 
 // heading returns the text of the page heading: the work title, falling back to the generic
@@ -107,8 +208,29 @@ templ Edit(data EditPageData) {
 			<div class="flex flex-col gap-4">
 				@components.FormErrors(components.FormErrorsData{
 					Errors: data.FormErrors,
-					Fields: editSummaryFields(ctx),
+					Fields: editFields(ctx),
 				})
+
+				if data.ConflictCurrent != nil {
+					<div class="alert">
+						<h2>{ templates.T(ctx, "db_works_edit_conflict_heading") }</h2>
+						<section class="grid gap-2">
+							if len(data.conflictFields(ctx)) > 0 {
+								<dl class="grid gap-1">
+									for _, field := range data.conflictFields(ctx) {
+										<div class="flex flex-wrap gap-x-2">
+											<dt>{ field.Label }</dt>
+											<dd class="text-card-foreground [overflow-wrap:anywhere]">{ valueOrDash(field.Value) }</dd>
+										</div>
+									}
+								</dl>
+							} else {
+								<p>{ templates.T(ctx, "db_works_edit_conflict_no_field_changes") }</p>
+							}
+							<p>{ templates.T(ctx, "db_works_edit_conflict_help") }</p>
+						</section>
+					</div>
+				}
 
 				<form
 					action={ templates.DBWorkPath(data.WorkID).SafeURL() }
@@ -117,8 +239,16 @@ templ Edit(data EditPageData) {
 				>
 					<input type="hidden" name="_method" value="PATCH"/>
 					<input type="hidden" name="csrf_token" value={ data.CSRFToken }/>
+					// The version the form was opened against travels with the submit, so an
+					// update made from a stale read is rejected instead of silently overwriting
+					// whoever wrote in between.
+					//
+					// [Ja] フォームを開いた時点の版を送信と一緒に運ぶ。古い読み取りからの更新を、
+					// 間に書いた人の変更を黙って上書きせずに却下できるようにするため。
+					<input type="hidden" name="updated_at" value={ data.FormInput.Val("updated_at") }/>
 
 					<div
+						role="group"
 						class="field"
 						if data.hasFieldError("title") {
 							data-invalid
@@ -130,6 +260,7 @@ templ Edit(data EditPageData) {
 						</label>
 						<input
 							type="text"
+							enterkeyhint="next"
 							id="title"
 							name="title"
 							class="input"
@@ -150,39 +281,40 @@ templ Edit(data EditPageData) {
 						}
 					</div>
 
-					<div class="field">
+					<div role="group" class="field">
 						<label for="title_kana" class="label">
 							{ templates.T(ctx, "db_works_edit_title_kana_label") }
 						</label>
 
-						<input type="text" id="title_kana" name="title_kana" class="input" value={ data.FormInput.Val("title_kana") }/>
+						<input type="text" enterkeyhint="next" id="title_kana" name="title_kana" class="input" value={ data.FormInput.Val("title_kana") }/>
 					</div>
 
-					<div class="field">
+					<div role="group" class="field">
 						<label for="title_alter" class="label">
 							{ templates.T(ctx, "db_works_edit_title_alter_label") }
 						</label>
 
-						<input type="text" id="title_alter" name="title_alter" class="input" value={ data.FormInput.Val("title_alter") }/>
+						<input type="text" enterkeyhint="next" id="title_alter" name="title_alter" class="input" value={ data.FormInput.Val("title_alter") }/>
 					</div>
 
-					<div class="field">
+					<div role="group" class="field">
 						<label for="title_en" class="label">
 							{ templates.T(ctx, "db_works_edit_title_en_label") }
 						</label>
 
-						<input type="text" id="title_en" name="title_en" class="input" value={ data.FormInput.Val("title_en") }/>
+						<input type="text" enterkeyhint="next" id="title_en" name="title_en" class="input" value={ data.FormInput.Val("title_en") }/>
 					</div>
 
-					<div class="field">
+					<div role="group" class="field">
 						<label for="title_alter_en" class="label">
 							{ templates.T(ctx, "db_works_edit_title_alter_en_label") }
 						</label>
 
-						<input type="text" id="title_alter_en" name="title_alter_en" class="input" value={ data.FormInput.Val("title_alter_en") }/>
+						<input type="text" enterkeyhint="next" id="title_alter_en" name="title_alter_en" class="input" value={ data.FormInput.Val("title_alter_en") }/>
 					</div>
 
 					<div
+						role="group"
 						class="field"
 						if data.hasFieldError("media") {
 							data-invalid
@@ -221,6 +353,7 @@ templ Edit(data EditPageData) {
 					</div>
 
 					<div
+						role="group"
 						class="field"
 						if data.hasFieldError("season_year") {
 							data-invalid
@@ -257,6 +390,7 @@ templ Edit(data EditPageData) {
 					</div>
 
 					<div
+						role="group"
 						class="field"
 						if data.hasFieldError("season_name") {
 							data-invalid
@@ -293,6 +427,7 @@ templ Edit(data EditPageData) {
 					</div>
 
 					<div
+						role="group"
 						class="field"
 						if data.hasFieldError("started_on") {
 							data-invalid
@@ -322,6 +457,7 @@ templ Edit(data EditPageData) {
 					</div>
 
 					<div
+						role="group"
 						class="field"
 						if data.hasFieldError("ended_on") {
 							data-invalid
@@ -351,6 +487,7 @@ templ Edit(data EditPageData) {
 					</div>
 
 					<div
+						role="group"
 						class="field"
 						if data.hasFieldError("official_site_url") {
 							data-invalid
@@ -366,6 +503,7 @@ templ Edit(data EditPageData) {
 
 						<input
 							type="url"
+							enterkeyhint="next"
 							id="official_site_url"
 							name="official_site_url"
 							class="input"
@@ -383,6 +521,7 @@ templ Edit(data EditPageData) {
 					</div>
 
 					<div
+						role="group"
 						class="field"
 						if data.hasFieldError("official_site_url_en") {
 							data-invalid
@@ -398,6 +537,7 @@ templ Edit(data EditPageData) {
 
 						<input
 							type="url"
+							enterkeyhint="next"
 							id="official_site_url_en"
 							name="official_site_url_en"
 							class="input"
@@ -416,6 +556,7 @@ templ Edit(data EditPageData) {
 					</div>
 
 					<div
+						role="group"
 						class="field"
 						if data.hasFieldError("wikipedia_url") {
 							data-invalid
@@ -431,6 +572,7 @@ templ Edit(data EditPageData) {
 
 						<input
 							type="url"
+							enterkeyhint="next"
 							id="wikipedia_url"
 							name="wikipedia_url"
 							class="input"
@@ -449,6 +591,7 @@ templ Edit(data EditPageData) {
 					</div>
 
 					<div
+						role="group"
 						class="field"
 						if data.hasFieldError("wikipedia_url_en") {
 							data-invalid
@@ -464,6 +607,7 @@ templ Edit(data EditPageData) {
 
 						<input
 							type="url"
+							enterkeyhint="next"
 							id="wikipedia_url_en"
 							name="wikipedia_url_en"
 							class="input"
@@ -482,6 +626,7 @@ templ Edit(data EditPageData) {
 					</div>
 
 					<div
+						role="group"
 						class="field"
 						if data.hasFieldError("twitter_username") {
 							data-invalid
@@ -498,6 +643,7 @@ templ Edit(data EditPageData) {
 						<div class="input-group">
 							<input
 								type="text"
+								enterkeyhint="next"
 								id="twitter_username"
 								name="twitter_username"
 								if data.hasFieldError("twitter_username") {
@@ -523,6 +669,7 @@ templ Edit(data EditPageData) {
 					</div>
 
 					<div
+						role="group"
 						class="field"
 						if data.hasFieldError("twitter_hashtag") {
 							data-invalid
@@ -539,6 +686,7 @@ templ Edit(data EditPageData) {
 						<div class="input-group">
 							<input
 								type="text"
+								enterkeyhint="next"
 								id="twitter_hashtag"
 								name="twitter_hashtag"
 								if data.hasFieldError("twitter_hashtag") {
@@ -559,6 +707,7 @@ templ Edit(data EditPageData) {
 					</div>
 
 					<div
+						role="group"
 						class="field"
 						if data.hasFieldError("sc_tid") {
 							data-invalid
@@ -572,8 +721,19 @@ templ Edit(data EditPageData) {
 							@formLabelExternalLink(templates.T(ctx, "db_works_edit_sc_tid_label"), data.FormInput.LabelLinkURL("sc_tid"))
 						</div>
 
+						// The numeric fields of this form stay text and ask the touch keyboard for a
+						// keypad. A rejected submit is re-rendered with whatever was typed, and
+						// type="number" would show that value as an empty field whenever the browser
+						// cannot parse it, taking away the input the editor has to correct.
+						//
+						// [Ja] 本フォームの数値の欄は text の入力欄のままタッチキーボードにキーパッドを
+						// 要求する。却下された送信は入力された内容のまま再描画するが、type="number" は
+						// ブラウザーがパースできない値を空の欄として表示するため、編集者が直すべき入力が
+						// 失われてしまう。
 						<input
 							type="text"
+							inputmode="numeric"
+							enterkeyhint="next"
 							id="sc_tid"
 							name="sc_tid"
 							class="input"
@@ -592,6 +752,7 @@ templ Edit(data EditPageData) {
 					</div>
 
 					<div
+						role="group"
 						class="field"
 						if data.hasFieldError("mal_anime_id") {
 							data-invalid
@@ -607,6 +768,8 @@ templ Edit(data EditPageData) {
 
 						<input
 							type="text"
+							inputmode="numeric"
+							enterkeyhint="next"
 							id="mal_anime_id"
 							name="mal_anime_id"
 							class="input"
@@ -624,7 +787,7 @@ templ Edit(data EditPageData) {
 						}
 					</div>
 
-					<div class="field">
+					<div role="group" class="field">
 						<label for="synopsis" class="label">
 							{ templates.T(ctx, "db_works_edit_synopsis_label") }
 						</label>
@@ -639,6 +802,7 @@ templ Edit(data EditPageData) {
 					</div>
 
 					<div
+						role="group"
 						class="field"
 						if data.hasFieldError("synopsis_source") {
 							data-invalid
@@ -650,6 +814,7 @@ templ Edit(data EditPageData) {
 
 						<input
 							type="text"
+							enterkeyhint="next"
 							id="synopsis_source"
 							name="synopsis_source"
 							class="input"
@@ -667,7 +832,7 @@ templ Edit(data EditPageData) {
 						}
 					</div>
 
-					<div class="field">
+					<div role="group" class="field">
 						<label for="synopsis_en" class="label">
 							{ templates.T(ctx, "db_works_edit_synopsis_en_label") }
 						</label>
@@ -682,6 +847,7 @@ templ Edit(data EditPageData) {
 					</div>
 
 					<div
+						role="group"
 						class="field"
 						if data.hasFieldError("synopsis_source_en") {
 							data-invalid
@@ -693,6 +859,7 @@ templ Edit(data EditPageData) {
 
 						<input
 							type="text"
+							enterkeyhint="next"
 							id="synopsis_source_en"
 							name="synopsis_source_en"
 							class="input"
@@ -711,6 +878,7 @@ templ Edit(data EditPageData) {
 					</div>
 
 					<div
+						role="group"
 						class="field"
 						if data.hasFieldError("manual_episodes_count") {
 							data-invalid
@@ -721,7 +889,9 @@ templ Edit(data EditPageData) {
 						</label>
 
 						<input
-							type="number"
+							type="text"
+							inputmode="numeric"
+							enterkeyhint="next"
 							id="manual_episodes_count"
 							name="manual_episodes_count"
 							class="input"
@@ -740,6 +910,7 @@ templ Edit(data EditPageData) {
 					</div>
 
 					<div
+						role="group"
 						class="field"
 						if data.hasFieldError("start_episode_raw_number") {
 							data-invalid
@@ -751,6 +922,8 @@ templ Edit(data EditPageData) {
 
 						<input
 							type="text"
+							inputmode="decimal"
+							enterkeyhint="done"
 							id="start_episode_raw_number"
 							name="start_episode_raw_number"
 							class="input"
@@ -769,6 +942,7 @@ templ Edit(data EditPageData) {
 					</div>
 
 					<div
+						role="group"
 						class="field"
 						if data.hasFieldError("number_format_id") {
 							data-invalid
@@ -804,7 +978,7 @@ templ Edit(data EditPageData) {
 						}
 					</div>
 
-					<div class="field" data-orientation="horizontal">
+					<div role="group" class="field" data-orientation="horizontal">
 						if data.FormInput.Val("no_episodes") == "1" {
 							<input type="checkbox" id="no_episodes" name="no_episodes" value="1" class="input" checked/>
 						} else {
@@ -815,7 +989,7 @@ templ Edit(data EditPageData) {
 						</label>
 					</div>
 
-					<div class="field" data-orientation="horizontal">
+					<div role="group" class="field" data-orientation="horizontal">
 						<button type="submit" class="btn rounded-full">
 							@templates.Icon("floppy-disk-regular")
 							{ templates.T(ctx, "db_works_edit_submit") }
@@ -847,8 +1021,6 @@ templ editWorkPageLink(workID viewmodel.WorkID) {
 		data-size="sm"
 	>
 		{ templates.T(ctx, "db_works_edit_work_page_link") }
-		<span aria-hidden="true">
-			@templates.Icon("arrow-square-out-regular", "w-[18px] h-[18px]")
-		</span>
+		@templates.DecorativeInlineIcon("arrow-square-out-regular", templates.InlineIconEnd, "w-[18px] h-[18px]")
 	</a>
 }

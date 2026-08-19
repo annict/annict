@@ -134,17 +134,6 @@ CREATE TYPE public.anime_status AS ENUM (
 
 
 --
--- Name: episode_status; Type: TYPE; Schema: public; Owner: -
---
-
-CREATE TYPE public.episode_status AS ENUM (
-    'published',
-    'archived',
-    'deleted'
-);
-
-
---
 -- Name: language; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -1273,8 +1262,6 @@ CREATE TABLE public.episodes (
     number_en character varying DEFAULT ''::character varying NOT NULL,
     deleted_at timestamp without time zone,
     unpublished_at timestamp without time zone,
-    status public.episode_status DEFAULT 'published'::public.episode_status NOT NULL,
-    archive_message character varying,
     anime_id bigint
 );
 
@@ -5930,13 +5917,6 @@ CREATE INDEX index_episodes_on_score ON public.episodes USING btree (score);
 
 
 --
--- Name: index_episodes_on_status; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_episodes_on_status ON public.episodes USING btree (status) WHERE (status = 'published'::public.episode_status);
-
-
---
 -- Name: index_episodes_on_unpublished_at; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -8652,4 +8632,5 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20260627190207'),
     ('20260708101249'),
     ('20260708153526'),
-    ('20260709095705');
+    ('20260709095705'),
+    ('20260816095359');

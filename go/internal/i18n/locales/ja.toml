@@ -1173,6 +1173,10 @@ other = "作品 {{.ID}} を新しいタブで開く"
 description = "外部サービスリンク (新しいタブで開く) の aria-label"
 other = "{{.Label}} を新しいタブで開く"
 
+[db_works_index_action_target_label]
+description = "作品一覧の操作リンク・ボタンのアクセシブルネームに足す対象作品 (画面には表示しない)"
+other = "作品 {{.ID}}"
+
 [db_works_index_edit_link]
 description = "作品一覧から編集フォームへのリンク"
 other = "編集"
@@ -1187,7 +1191,7 @@ other = "公開"
 
 [db_works_index_publish_confirm]
 description = "作品一覧の再公開ボタンの確認ダイアログ"
-other = "この作品を公開しますか？"
+other = "作品 {{.ID}} を公開しますか？"
 
 [db_works_index_delete_button]
 description = "作品一覧の削除ボタン (管理者に表示)"
@@ -1195,7 +1199,7 @@ other = "削除"
 
 [db_works_index_delete_confirm]
 description = "作品一覧の削除ボタンの確認ダイアログ"
-other = "この作品を削除しますか？"
+other = "作品 {{.ID}} を削除しますか？"
 
 [db_works_index_empty]
 description = "作品なしメッセージ"
@@ -1296,6 +1300,38 @@ other = "不明"
 [db_episodes_index_new_link]
 description = "エピソード一覧から一括作成フォームへのリンク"
 other = "新規登録"
+
+[db_episodes_index_table_actions_label]
+description = "テーブルヘッダー - 操作"
+other = "操作"
+
+[db_episodes_index_action_target_label]
+description = "エピソード一覧の操作リンク・ボタンのアクセシブルネームに足す対象エピソード (画面には表示しない)"
+other = "エピソード {{.ID}}"
+
+[db_episodes_index_edit_link]
+description = "エピソード一覧から編集フォームへのリンク"
+other = "編集"
+
+[db_episodes_index_archive_link]
+description = "エピソード一覧から非公開確認画面へのリンク (公開中のエピソードに表示)"
+other = "非公開"
+
+[db_episodes_index_publish_button]
+description = "エピソード一覧の再公開ボタン (非公開のエピソードに表示)"
+other = "公開"
+
+[db_episodes_index_publish_confirm]
+description = "エピソード一覧の再公開ボタンの確認ダイアログ"
+other = "エピソード {{.ID}} を公開しますか？"
+
+[db_episodes_index_delete_button]
+description = "エピソード一覧の削除ボタン (管理者に表示)"
+other = "削除"
+
+[db_episodes_index_delete_confirm]
+description = "エピソード一覧の削除ボタンの確認ダイアログ"
+other = "エピソード {{.ID}} を削除しますか？"
 
 [db_episodes_new_title]
 description = "エピソード一括作成ページのタイトル"
@@ -1698,6 +1734,26 @@ other = "話数フォーマット"
 description = "フォームラベル - エピソードなし"
 other = "エピソードなし"
 
+[db_works_edit_conflict_heading]
+description = "作品編集ページで、競合時に表示する保存済みの内容の見出し"
+other = "現在保存されている内容"
+
+[db_works_edit_conflict_no_field_changes]
+description = "作品編集ページで、競合したが本フォームの項目には違いが無かったときの説明"
+other = "このフォームで編集できる項目に違いはありません。公開状態など、フォームの外で変更された可能性があります。"
+
+[db_works_edit_conflict_help]
+description = "作品編集ページで、競合時に取りうる対処を述べる説明"
+other = "入力した内容は下のフォームにそのまま残しています。現在保存されている内容と見比べて、入力した内容で問題なければもう一度更新してください。上の内容をそのまま残す場合は、更新せずにページを離れてください。"
+
+[db_works_edit_conflict_checked]
+description = "作品編集ページの競合の案内で、チェックボックスが入っている状態を表す値"
+other = "オン"
+
+[db_works_edit_conflict_unchecked]
+description = "作品編集ページの競合の案内で、チェックボックスが入っていない状態を表す値"
+other = "オフ"
+
 [db_works_edit_submit]
 description = "作品編集ページの送信ボタン"
 other = "更新する"
@@ -1750,6 +1806,14 @@ other = "エピソードを更新しました"
 [flash_db_episode_archived]
 description = "エピソード非公開成功メッセージ"
 other = "エピソードを非公開にしました"
+
+[flash_db_episode_published]
+description = "エピソード再公開成功メッセージ"
+other = "エピソードを公開しました"
+
+[flash_db_episode_deleted]
+description = "エピソード削除成功メッセージ"
+other = "エピソードを削除しました"
 
 # バリデーション共通メッセージ
 [validation_required]
@@ -1910,6 +1974,14 @@ other = "アクセスできません"
 description = "汎用403エラーページの説明"
 other = "この操作を行う権限がありません。"
 
+[error_bad_gateway_title]
+description = "汎用502エラーページのタイトル"
+other = "サービスに接続できません"
+
+[error_bad_gateway_message]
+description = "汎用502エラーページの説明"
+other = "しばらくしてから、もう一度お試しください。"
+
 [error_internal_server_title]
 description = "汎用500エラーページのタイトル"
 other = "問題が発生しました"
@@ -1917,6 +1989,14 @@ other = "問題が発生しました"
 [error_internal_server_message]
 description = "汎用500エラーページの説明"
 other = "しばらくしてから、もう一度お試しください。"
+
+[error_invalid_csrf_token_title]
+description = "CSRF検証に失敗したときのエラーページのタイトル"
+other = "フォームを送信できませんでした"
+
+[error_invalid_csrf_token_message]
+description = "CSRF検証に失敗したときのエラーページの説明"
+other = "ページを開いたまま時間が経ったか、別のタブでログインし直した可能性があります。ページを開き直してから、もう一度送信してください。"
 
 [error_back_to_home]
 description = "汎用エラーページからホームへ戻るリンク"

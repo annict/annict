@@ -123,6 +123,7 @@ func TestDBWorkFormInput_Val(t *testing.T) {
 			"twitter_username", "twitter_hashtag", "sc_tid", "mal_anime_id",
 			"synopsis", "synopsis_source", "synopsis_en", "synopsis_source_en",
 			"manual_episodes_count", "start_episode_raw_number", "number_format_id", "no_episodes",
+			"updated_at",
 		}
 		for _, f := range fields {
 			if v := d.Val(f); v != "" {
@@ -366,12 +367,12 @@ func TestNewDBWorkListItem(t *testing.T) {
 }
 
 // TestNewDBWorkListItem_StatusFromTimestamps verifies that the display status is
-// derived from the work's unpublished_at / deleted_at timestamps (not the dormant
-// works.status), with deleted_at taking precedence over unpublished_at.
+// derived from the work's unpublished_at / deleted_at timestamps, with deleted_at
+// taking precedence over unpublished_at.
 //
 // [Ja] TestNewDBWorkListItem_StatusFromTimestamps は表示ステータスが work の
-// unpublished_at / deleted_at タイムスタンプ (休眠している works.status ではない) から
-// 導出され、deleted_at が unpublished_at より優先されることを検証する。
+// unpublished_at / deleted_at タイムスタンプから導出され、deleted_at が unpublished_at
+// より優先されることを検証する。
 func TestNewDBWorkListItem_StatusFromTimestamps(t *testing.T) {
 	t.Parallel()
 
@@ -654,6 +655,73 @@ func TestNewDBWorkFormInputFromWork(t *testing.T) {
 		}
 		if v := got.Val("title"); v != "最小作品" {
 			t.Errorf("Val(title) = %q, want 最小作品", v)
+		}
+	})
+}
+
+// TestDBWorkFormInput_Version covers the version the work edit form round-trips: opening the
+// form takes it from the stored row, and a rejected submit hands back the one the editor sent
+// rather than whatever the server holds by then.
+//
+// [Ja] TestDBWorkFormInput_Version は作品編集フォームが往復させる版を対象とする。フォームを開く
+// ときは保存済みの行から取り、却下された送信では、その時点でサーバーが持つ値ではなく編集者が
+// 送った版を返す。
+func TestDBWorkFormInput_Version(t *testing.T) {
+	t.Parallel()
+
+	t.Run("保存済みの updated_at をフォームの版に射影する", func(t *testing.T) {
+		t.Parallel()
+
+		updatedAt := time.Date(2026, 8, 17, 1, 2, 3, 456789000, time.UTC)
+		got := NewDBWorkFormInputFromWork(&model.Work{Title: "版あり作品", UpdatedAt: &updatedAt})
+
+		// The form's value has to parse back to the instant it came from, since the update
+		// matches it against the stored column.
+		//
+		// [Ja] フォームの値は元の時刻へパースし直せる必要がある。更新側が保存済みのカラムと
+		// 照合するため。
+		parsed, err := time.Parse(formVersionLayout, got.Val("updated_at"))
+		if err != nil {
+			t.Fatalf("版のパースに失敗: %v (value=%q)", err, got.UpdatedAt)
+		}
+		if !parsed.Equal(updatedAt) {
+			t.Errorf("version = %v, want %v", parsed, updatedAt)
+		}
+	})
+
+	t.Run("updated_at を持たない work はセンチネルを運ぶ", func(t *testing.T) {
+		t.Parallel()
+
+		got := NewDBWorkFormInputFromWork(&model.Work{Title: "版なし作品"})
+		if got.UpdatedAt != FormNullVersion {
+			t.Errorf("UpdatedAt = %q, want %q", got.UpdatedAt, FormNullVersion)
+		}
+	})
+
+	t.Run("却下された送信は送られた版をそのまま返す", func(t *testing.T) {
+		t.Parallel()
+
+		submitted := "2026-08-17T01:02:03.456789Z"
+		got := NewDBWorkFormInputFromSubmit(usecase.UpdateWorkInput{
+			WorkID:        model.WorkID(1),
+			UpdatedAt:     submitted,
+			WorkFormInput: usecase.WorkFormInput{Title: "送信されたタイトル"},
+		})
+
+		if got.UpdatedAt != submitted {
+			t.Errorf("UpdatedAt = %q, want %q", got.UpdatedAt, submitted)
+		}
+		if got.Title != "送信されたタイトル" {
+			t.Errorf("Title = %q, want 送信されたタイトル", got.Title)
+		}
+	})
+
+	t.Run("作成フォームは版を運ばない", func(t *testing.T) {
+		t.Parallel()
+
+		got := NewDBWorkFormInput(usecase.WorkFormInput{Title: "作成中の作品"})
+		if got.UpdatedAt != "" {
+			t.Errorf("UpdatedAt = %q, want empty", got.UpdatedAt)
 		}
 	})
 }

@@ -6,22 +6,31 @@ import (
 	"testing"
 
 	"github.com/annict/annict/go/internal/i18n"
-	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/templates"
 	"github.com/annict/annict/go/internal/viewmodel"
 )
+
+// iconWrapperMarkup is wrapper markup these pages reject. An aria-hidden ancestor removes the
+// icon from the accessibility tree but can leave the SVG in the focus order on implementations
+// that treat SVG elements as focusable by default.
+//
+// [Ja] iconWrapperMarkup は、これらのページで許容しないラッパーのマークアップを表す。
+// aria-hidden の祖先はアイコンをアクセシビリティツリーから外すが、SVG 要素を既定で
+// フォーカス可能とする実装では SVG がフォーカス順序に残りうるため。
+const iconWrapperMarkup = `<span aria-hidden="true">`
 
 func decorativeIconMarkup(
 	t *testing.T,
 	ctx context.Context,
 	name string,
+	class string,
 	position ...templates.InlineIconPosition,
 ) string {
 	t.Helper()
 
-	component := templates.DecorativeIcon(name)
+	component := templates.DecorativeIcon(name, class)
 	if len(position) > 0 {
-		component = templates.DecorativeInlineIcon(name, position[0])
+		component = templates.DecorativeInlineIcon(name, position[0], class)
 	}
 
 	var buf strings.Builder
@@ -116,9 +125,9 @@ func TestNew_DecorativeIconsAreHidden(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			want := decorativeIconMarkup(t, ctx, tt.iconName)
+			want := decorativeIconMarkup(t, ctx, tt.iconName, "")
 			if tt.inline {
-				want = decorativeIconMarkup(t, ctx, tt.iconName, templates.InlineIconStart)
+				want = decorativeIconMarkup(t, ctx, tt.iconName, "", templates.InlineIconStart)
 			}
 			if !strings.Contains(tt.html, want) {
 				t.Errorf("装飾アイコン %q が aria-hidden の要素内にありません", tt.iconName)
@@ -138,9 +147,12 @@ func TestNew_WithErrors(t *testing.T) {
 
 	ctx := i18n.SetLocale(context.Background(), "ja")
 
-	formErrors := model.NewValidationError()
-	formErrors.AddField("rows", "1 行目: 数値話数には数値を入力してください")
-	formErrors.AddField("rows", "2 行目: 表示用話数かタイトルを入力してください")
+	formErrors := &viewmodel.FormErrors{
+		Fields: map[string][]string{"rows": {
+			"1 行目: 数値話数には数値を入力してください",
+			"2 行目: 表示用話数かタイトルを入力してください",
+		}},
+	}
 
 	data := NewPageData{
 		WorkID:     1,
@@ -268,8 +280,9 @@ func TestNew_RestrictionReportedOnceAfterRejectedSubmit(t *testing.T) {
 
 	ctx := i18n.SetLocale(context.Background(), "ja")
 
-	formErrors := model.NewValidationError()
-	formErrors.AddGlobal("話数分のエピソードがすでに登録されているため、エピソードを登録できません")
+	formErrors := &viewmodel.FormErrors{
+		Global: []string{"話数分のエピソードがすでに登録されているため、エピソードを登録できません"},
+	}
 
 	var buf strings.Builder
 	data := NewPageData{
@@ -326,5 +339,42 @@ func TestNew_HeadingFallsBackToPageTitle(t *testing.T) {
 
 	if !strings.Contains(buf.String(), "エピソード登録") {
 		t.Error("名前の無い作品では汎用のページタイトルが見出しになるべきです")
+	}
+}
+
+// TestNew_FieldsUseBasecoatGroups covers the wrappers of the bulk-create form. The Basecoat
+// Field component is a role="group" element, and the class on its own leaves the grouping out
+// of the accessibility tree, so the label, the format guide and the error messages stop being
+// announced as parts of the same control.
+//
+// The textarea takes no keyboard hint: one line is one episode, so its Enter key inserts a
+// line break, and labelling that key "next" or "done" would promise a move the key never
+// makes.
+//
+// [Ja] TestNew_FieldsUseBasecoatGroups は一括作成フォームのラッパーを検証する。Basecoat の
+// Field コンポーネントは role="group" の要素であり、クラスだけではグループがアクセシビリティ
+// ツリーに出ないため、ラベル・形式の案内・エラーメッセージが同じコントロールの一部として
+// 読み上げられなくなる。
+//
+// textarea はキーボードヒントを持たない。1 行が 1 エピソードのため Enter は改行を入れる
+// キーであり、そこに "next" や "done" の札を付けるとキーが行わない移動を約束することになる。
+func TestNew_FieldsUseBasecoatGroups(t *testing.T) {
+	t.Parallel()
+
+	ctx := i18n.SetLocale(context.Background(), "ja")
+
+	var buf strings.Builder
+	if err := New(NewPageData{WorkID: 1, WorkName: "テストアニメ", CSRFToken: "test-csrf-token"}).Render(ctx, &buf); err != nil {
+		t.Fatalf("レンダリングエラー: %v", err)
+	}
+
+	html := buf.String()
+
+	if got := strings.Count(html, `role="group" class="field"`); got != 2 {
+		t.Errorf("Basecoat の field group = %d 個, want 2 個", got)
+	}
+
+	if strings.Contains(html, "enterkeyhint") {
+		t.Error("行入力の textarea は Enter で改行を入れるため enterkeyhint を持つべきではありません")
 	}
 }

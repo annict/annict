@@ -118,27 +118,51 @@ type DBWorkCreateValidatorInput struct {
 	// 変えない更新が自分自身と衝突しないようにするため。除外する work が無い作成フローでは
 	// nil になる。
 	ExcludeWorkID *model.WorkID
+
+	// UpdatedAt is the version the edit form was opened against, as the hidden field carries
+	// it. It is nil on the create flow, where there is no stored row a submit could be stale
+	// against, and a non-nil empty string is a submit that stated no version at all, which is
+	// refused. Each flow-dependent field states its own absence rather than being inferred
+	// from ExcludeWorkID, so neither is read as a proxy for the other.
+	//
+	// [Ja] UpdatedAt は編集フォームを開いた時点の版で、hidden フィールドが運ぶ形のまま。
+	// 送信が古くなり得る保存済みの行が無い作成フローでは nil になり、nil でない空文字列は版を
+	// まったく示さなかった送信を意味し、拒否する。フローに依存する各フィールドは、
+	// ExcludeWorkID から推論させず自らの不在を表明する。一方を他方の代理として読まないため。
+	UpdatedAt *string
 }
 
-// Validate checks the submitted work form. The numeric and date fields are checked against
-// the exact ranges buildWorkFormParams converts them with, so a value that gets here can be
-// stored: a value this method accepts but the conversion drops would be saved as NULL with
-// no error shown, and one the column cannot hold would fail the INSERT with a 500.
+// Validate checks the submitted work form and returns the version the submit was made against.
+// The numeric and date fields are checked against the exact ranges buildWorkFormParams converts
+// them with, so a value that gets here can be stored: a value this method accepts but the
+// conversion drops would be saved as NULL with no error shown, and one the column cannot hold
+// would fail the INSERT with a 500.
+//
+// The returned version is nil on the create flow, which states none, and for the edit flow's
+// FormNullVersion sentinel, which the update matches with updated_at IS NULL. The version is
+// checked with the rest of the fields rather than before them, so a missing or malformed
+// hidden version and other invalid form values are reported together. Whether a well-formed
+// version is stale is checked atomically by the update after validation succeeds.
 //
 // The format checks run first and, when they all pass, the checks that need the database
 // run: the title uniqueness and the existence of the number format. Skipping the queries
 // while a format check has already failed keeps the message on the problem the submitter
 // can act on.
 //
-// [Ja] Validate は送信された作品フォームを検証する。数値・日付のフィールドは
-// buildWorkFormParams が変換する範囲そのもので検査するため、ここを通った値は保存できる。
-// 本メソッドが通して変換が落とす値は、エラーも出ないまま NULL で保存され、カラムに収まらない
-// 値は INSERT が失敗して 500 になるため。
+// [Ja] Validate は送信された作品フォームを検証し、送信が前提とする版を返す。数値・日付の
+// フィールドは buildWorkFormParams が変換する範囲そのもので検査するため、ここを通った値は
+// 保存できる。本メソッドが通して変換が落とす値は、エラーも出ないまま NULL で保存され、カラムに
+// 収まらない値は INSERT が失敗して 500 になるため。
+//
+// 返す版は、版を示さない作成フローと、編集フローの FormNullVersion のセンチネル (更新側は
+// updated_at IS NULL で照合する) では nil になる。hidden の版の欠落・形式不正は先出しせず、
+// 他の不正なフォーム値と一緒に報告する。正しい形式の版が古いかどうかは、バリデーション成功後の
+// 更新条件で原子的に検査する。
 //
 // 形式チェックを先に行い、すべて通ったときだけ DB を要するチェック (タイトルの一意性と
 // 話数フォーマットの存在) を実行する。形式チェックが既に落ちている間はクエリを飛ばし、
 // 送信者が対処できる問題だけを伝える。
-func (v *DBWorkCreateValidator) Validate(ctx context.Context, input DBWorkCreateValidatorInput) error {
+func (v *DBWorkCreateValidator) Validate(ctx context.Context, input DBWorkCreateValidatorInput) (*time.Time, error) {
 	ve := model.NewValidationError()
 
 	title := strings.TrimSpace(input.Title)
@@ -177,27 +201,41 @@ func (v *DBWorkCreateValidator) Validate(ctx context.Context, input DBWorkCreate
 	validateOptionalFloat(ctx, ve, "start_episode_raw_number", input.StartEpisodeRawNumber)
 	validateOptionalInt64(ctx, ve, "number_format_id", input.NumberFormatID)
 
+	// The version is not an editable field, so a missing or malformed one is stated for the
+	// form as a whole: there is no input for the editor to correct, only the page to reopen.
+	//
+	// [Ja] 版は編集できるフィールドではないため、欠落や形式不正はフォーム全体に対して述べる。
+	// 編集者が直せる入力は無く、ページを開き直すしかないため。
+	var version *time.Time
+	if input.UpdatedAt != nil {
+		parsed, ok := parseFormVersion(*input.UpdatedAt)
+		if !ok {
+			ve.AddGlobal(i18n.T(ctx, "validation_version_missing"))
+		}
+		version = parsed
+	}
+
 	if ve.HasErrors() {
-		return ve
+		return nil, ve
 	}
 
 	taken, err := v.workRepo.ExistsKeptByTitle(ctx, title, input.ExcludeWorkID)
 	if err != nil {
-		return fmt.Errorf("作品タイトルの重複確認に失敗: %w", err)
+		return nil, fmt.Errorf("作品タイトルの重複確認に失敗: %w", err)
 	}
 	if taken {
 		ve.AddField("title", i18n.T(ctx, "validation_work_title_already_taken"))
 	}
 
 	if err := v.validateNumberFormatExists(ctx, ve, input.NumberFormatID); err != nil {
-		return err
+		return nil, err
 	}
 
 	if ve.HasErrors() {
-		return ve
+		return nil, ve
 	}
 
-	return nil
+	return version, nil
 }
 
 // validateNumberFormatExists rejects a number_format_id that names no row in

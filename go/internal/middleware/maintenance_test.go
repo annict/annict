@@ -99,10 +99,96 @@ func TestMaintenanceMiddleware_EnabledMode_NonAdminIP(t *testing.T) {
 		t.Errorf("Retry-After = %q, want %q", retryAfter, "3600")
 	}
 
+	// The maintenance page is served ahead of the reverse proxy, out of the SecurityHeaders
+	// middleware's reach, so it sets the headers itself.
+	//
+	// [Ja] メンテナンスページはリバースプロキシより前で配信され、SecurityHeaders ミドルウェアの
+	// 及ばない位置にあるため、自身でヘッダーを設定する。
+	assertSecurityHeaders(t, rr.Header())
+
 	// メンテナンスページの内容を確認
 	body := rr.Body.String()
 	if !strings.Contains(body, "メンテナンス") {
 		t.Error("レスポンスボディにメンテナンスページの内容が含まれていません")
+	}
+}
+
+// TestMaintenanceMiddleware_HTMXRequest fixes that an HTMX request is told to reload while
+// maintenance is on. The DB lists issue hx-delete without hx-target and htmx swaps every
+// response except 204 and 304, so the maintenance document would otherwise be placed inside the
+// button that was pressed. Reloading is enough because every path answers with this page during
+// maintenance; a plain request receives what it did before.
+//
+// [Ja] TestMaintenanceMiddleware_HTMXRequest は、メンテナンス中の HTMX リクエストにリロードが
+// 指示されることを固定する。DB 一覧は hx-target を指定していない hx-delete を発行し、htmx は
+// 204 と 304 以外のレスポンスをスワップするため、そのままではメンテナンスの文書が押したボタンの
+// 中へ挿入される。メンテナンス中はどのパスもこのページを返すためリロードで足り、通常の
+// リクエストが受け取るものは変わらない。
+func TestMaintenanceMiddleware_HTMXRequest(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name          string
+		htmxRequest   bool
+		wantHXRefresh string
+	}{
+		{name: "htmxリクエスト", htmxRequest: true, wantHXRefresh: "true"},
+		{name: "通常のリクエスト", htmxRequest: false, wantHXRefresh: ""},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			cfg := &config.Config{MaintenanceMode: true}
+			mw := NewMaintenanceMiddleware(cfg)
+			handler := mw.Middleware(testHandler())
+
+			req := httptest.NewRequest(http.MethodDelete, "/db/episodes/1", nil)
+			if tt.htmxRequest {
+				req.Header.Set("HX-Request", "true")
+			}
+			rr := httptest.NewRecorder()
+
+			handler.ServeHTTP(rr, req)
+
+			if rr.Code != http.StatusServiceUnavailable {
+				t.Errorf("ステータスコード = %d, want %d", rr.Code, http.StatusServiceUnavailable)
+			}
+			if got := rr.Header().Get("HX-Refresh"); got != tt.wantHXRefresh {
+				t.Errorf("HX-Refresh = %q, want %q", got, tt.wantHXRefresh)
+			}
+			if !strings.Contains(rr.Body.String(), "メンテナンス") {
+				t.Error("レスポンスボディにメンテナンスページの内容が含まれていません")
+			}
+		})
+	}
+}
+
+// TestMaintenanceMiddleware_Noindex fixes that the maintenance page tells crawlers not to index
+// it. While maintenance is on, every path answers with this page, including URLs a crawler
+// already knows, so a crawl that lands mid-maintenance receives a document with none of the
+// site's content. The 503 status keeps it out of a search index already, and this is the
+// declaration in the page that says the same.
+//
+// [Ja] TestMaintenanceMiddleware_Noindex は、メンテナンスページがクローラーに索引しないよう
+// 伝えることを固定する。メンテナンス中はクローラーが既に知っている URL を含むすべてのパスが
+// このページを返すため、その最中のクロールはサイトの中身を持たない文書を受け取る。索引から
+// 外れること自体は 503 のステータスで既に満たされており、本宣言はそれをページ側でも述べるもの。
+func TestMaintenanceMiddleware_Noindex(t *testing.T) {
+	t.Parallel()
+
+	cfg := &config.Config{MaintenanceMode: true}
+	mw := NewMaintenanceMiddleware(cfg)
+	handler := mw.Middleware(testHandler())
+
+	req := httptest.NewRequest(http.MethodGet, "/works", nil)
+	rr := httptest.NewRecorder()
+
+	handler.ServeHTTP(rr, req)
+
+	if !strings.Contains(rr.Body.String(), `<meta content="noindex" name="robots">`) {
+		t.Error("noindex の宣言が含まれていません")
 	}
 }
 
