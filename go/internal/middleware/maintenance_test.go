@@ -106,6 +106,58 @@ func TestMaintenanceMiddleware_EnabledMode_NonAdminIP(t *testing.T) {
 	}
 }
 
+// TestMaintenanceMiddleware_HTMXRequest fixes that an HTMX request is told to reload while
+// maintenance is on. The DB lists issue hx-delete without hx-target and htmx swaps every
+// response except 204 and 304, so the maintenance document would otherwise be placed inside the
+// button that was pressed. Reloading is enough because every path answers with this page during
+// maintenance; a plain request receives what it did before.
+//
+// [Ja] TestMaintenanceMiddleware_HTMXRequest は、メンテナンス中の HTMX リクエストにリロードが
+// 指示されることを固定する。DB 一覧は hx-target を指定していない hx-delete を発行し、htmx は
+// 204 と 304 以外のレスポンスをスワップするため、そのままではメンテナンスの文書が押したボタンの
+// 中へ挿入される。メンテナンス中はどのパスもこのページを返すためリロードで足り、通常の
+// リクエストが受け取るものは変わらない。
+func TestMaintenanceMiddleware_HTMXRequest(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name          string
+		htmxRequest   bool
+		wantHXRefresh string
+	}{
+		{name: "htmxリクエスト", htmxRequest: true, wantHXRefresh: "true"},
+		{name: "通常のリクエスト", htmxRequest: false, wantHXRefresh: ""},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			cfg := &config.Config{MaintenanceMode: true}
+			mw := NewMaintenanceMiddleware(cfg)
+			handler := mw.Middleware(testHandler())
+
+			req := httptest.NewRequest(http.MethodDelete, "/db/episodes/1", nil)
+			if tt.htmxRequest {
+				req.Header.Set("HX-Request", "true")
+			}
+			rr := httptest.NewRecorder()
+
+			handler.ServeHTTP(rr, req)
+
+			if rr.Code != http.StatusServiceUnavailable {
+				t.Errorf("ステータスコード = %d, want %d", rr.Code, http.StatusServiceUnavailable)
+			}
+			if got := rr.Header().Get("HX-Refresh"); got != tt.wantHXRefresh {
+				t.Errorf("HX-Refresh = %q, want %q", got, tt.wantHXRefresh)
+			}
+			if !strings.Contains(rr.Body.String(), "メンテナンス") {
+				t.Error("レスポンスボディにメンテナンスページの内容が含まれていません")
+			}
+		})
+	}
+}
+
 func TestMaintenanceMiddleware_MultipleAdminIPs(t *testing.T) {
 	t.Parallel()
 

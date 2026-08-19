@@ -12,6 +12,8 @@ import (
 	"testing"
 
 	"github.com/annict/annict/go/internal/config"
+	"github.com/annict/annict/go/internal/httperror"
+	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/middleware"
 	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/repository"
@@ -24,6 +26,37 @@ import (
 func generatePrivateSessionID(publicID string) string {
 	hash := sha256.Sum256([]byte(publicID))
 	return hex.EncodeToString(hash[:])
+}
+
+// assertInvalidCSRFTokenPage asserts that a rejected form submission is served as the shared
+// error page rather than as the one-line plain text http.Error used to return. The copy is the
+// CSRF-specific one, not the permission wording the role middleware serves for its own 403.
+//
+// [Ja] assertInvalidCSRFTokenPage は、拒否されたフォーム送信が、以前 http.Error が返していた
+// 1 行のプレーンテキストではなく共通のエラーページとして配信されることを検証する。文言は
+// CSRF 専用のもので、ロールのミドルウェアが自身の 403 で出す権限不足の文言ではない。
+func assertInvalidCSRFTokenPage(t *testing.T, rr *httptest.ResponseRecorder) {
+	t.Helper()
+
+	if contentType := rr.Header().Get("Content-Type"); contentType != "text/html; charset=utf-8" {
+		t.Errorf("Content-Type = %q, want text/html; charset=utf-8", contentType)
+	}
+
+	body := rr.Body.String()
+	for _, expected := range []string{
+		"<title>フォームを送信できませんでした | Annict</title>",
+		"ページを開き直してから、もう一度送信してください。",
+		`href="/"`,
+		"ホームに戻る",
+	} {
+		if !strings.Contains(body, expected) {
+			t.Errorf("CSRF 検証失敗のレスポンスに %q が含まれていません", expected)
+		}
+	}
+	forbiddenMessage := i18n.T(i18n.SetLocale(context.Background(), "ja"), "error_forbidden_message")
+	if strings.Contains(body, forbiddenMessage) {
+		t.Error("CSRF 検証失敗のレスポンスに権限不足の文言が使われています")
+	}
 }
 
 func TestCSRFMiddleware_GET(t *testing.T) {
@@ -198,6 +231,7 @@ func TestCSRFMiddleware_POST_InvalidToken(t *testing.T) {
 	if rr.Code != http.StatusForbidden {
 		t.Errorf("不正なCSRFトークンで403エラーが返されませんでした: got %v want %v", rr.Code, http.StatusForbidden)
 	}
+	assertInvalidCSRFTokenPage(t, rr)
 }
 
 func TestCSRFMiddleware_POST_NoSession(t *testing.T) {
@@ -236,6 +270,7 @@ func TestCSRFMiddleware_POST_NoSession(t *testing.T) {
 	if rr.Code != http.StatusForbidden {
 		t.Errorf("セッションなしで403エラーが返されませんでした: got %v want %v", rr.Code, http.StatusForbidden)
 	}
+	assertInvalidCSRFTokenPage(t, rr)
 }
 
 func TestCSRFMiddleware_POST_HeaderToken(t *testing.T) {
@@ -713,6 +748,7 @@ func TestCSRFIntegration_EmptyTokenReturns403(t *testing.T) {
 	if rr.Code != http.StatusForbidden {
 		t.Errorf("空のCSRFトークンで403エラーが返されませんでした: got %d, want %d", rr.Code, http.StatusForbidden)
 	}
+	assertInvalidCSRFTokenPage(t, rr)
 
 	t.Logf("空のCSRFトークンで403エラーが正しく返されました（ステータス: %d）", rr.Code)
 }
@@ -758,6 +794,114 @@ func TestCSRFIntegration_NoSessionCookieReturns403(t *testing.T) {
 	if rr.Code != http.StatusForbidden {
 		t.Errorf("セッションCookieがない場合に403エラーが返されませんでした: got %d, want %d", rr.Code, http.StatusForbidden)
 	}
+	assertInvalidCSRFTokenPage(t, rr)
 
 	t.Logf("セッションCookieがない場合に403エラーが正しく返されました（ステータス: %d）", rr.Code)
+}
+
+// TestCSRFMiddleware_POST_HTMXFailureBranchesAreIndistinguishable drives all three rejection branches
+// (no session ID, no session data, token mismatch) and fixes that their responses are identical.
+// Answering differently would let a caller learn from the response whether a session cookie is
+// still live, and the reader has the same thing to do in every case.
+//
+// [Ja] TestCSRFMiddleware_POST_HTMXFailureBranchesAreIndistinguishable は拒否の 3 分岐
+// (セッション ID 無し / セッションデータ無し / トークン不一致) をすべて通し、応答が同一である
+// ことを固定する。分岐ごとに応答を変えると、呼び出し側がセッション Cookie がまだ生きているかを
+// 応答から知れてしまい、読み手がすべきことはどの場合も同じであるため。
+func TestCSRFMiddleware_POST_HTMXFailureBranchesAreIndistinguishable(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	queries := query.New(db).WithTx(tx)
+
+	cfg := &config.Config{
+		CookieDomain:    ".example.com",
+		SessionSecure:   "false",
+		SessionHTTPOnly: "true",
+	}
+
+	sessionRepo := repository.NewSessionRepository(queries)
+	sessionManager := session.NewManager(sessionRepo, cfg)
+	csrfMiddleware := middleware.NewCSRFMiddleware(sessionManager)
+
+	csrfToken := "test_csrf_token_branches"
+	publicSessionID := "test_session_branches"
+
+	sessionData := map[string]any{
+		"_csrf_token":          csrfToken,
+		"warden.user.user.key": []any{[]any{float64(1)}, "salt"},
+	}
+	sessionDataJSON, _ := json.Marshal(sessionData)
+
+	hash := "2::" + generatePrivateSessionID(publicSessionID)
+
+	_, err := tx.Exec(`
+		INSERT INTO sessions (session_id, data, created_at, updated_at)
+		VALUES ($1, $2::jsonb, NOW(), NOW())
+	`, hash, string(sessionDataJSON))
+	if err != nil {
+		t.Fatalf("セッションデータの作成に失敗しました: %v", err)
+	}
+
+	testHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("OK"))
+	})
+
+	newRequest := func(sessionID, formToken string) *http.Request {
+		form := url.Values{}
+		form.Set("csrf_token", formToken)
+
+		req := httptest.NewRequest("POST", "/test", strings.NewReader(form.Encode()))
+		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+		req.Header.Set("HX-Request", "true")
+		if sessionID != "" {
+			req.AddCookie(&http.Cookie{
+				Name:  session.SessionKey,
+				Value: sessionID,
+			})
+		}
+		return req
+	}
+
+	tests := []struct {
+		name string
+		req  *http.Request
+	}{
+		{
+			name: "セッションIDなし",
+			req:  newRequest("", "some_token"),
+		},
+		{
+			name: "セッションデータなし",
+			req:  newRequest("test_session_branches_unknown", "some_token"),
+		},
+		{
+			name: "トークン不一致",
+			req:  newRequest(publicSessionID, "invalid_token"),
+		},
+	}
+
+	var wantBody string
+	for i, tt := range tests {
+		rr := httptest.NewRecorder()
+
+		csrfMiddleware.Middleware(testHandler).ServeHTTP(rr, tt.req)
+
+		if rr.Code != http.StatusForbidden {
+			t.Errorf("%s: status = %d, want %d", tt.name, rr.Code, http.StatusForbidden)
+		}
+		if got := rr.Header().Get("HX-Redirect"); got != httperror.InvalidCSRFTokenPath {
+			t.Errorf("%s: HX-Redirect = %q, want %q", tt.name, got, httperror.InvalidCSRFTokenPath)
+		}
+		assertInvalidCSRFTokenPage(t, rr)
+
+		if i == 0 {
+			wantBody = rr.Body.String()
+			continue
+		}
+		if rr.Body.String() != wantBody {
+			t.Errorf("%s: 応答が他の分岐と異なります（分岐を区別してはいけません）", tt.name)
+		}
+	}
 }

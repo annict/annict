@@ -43,6 +43,7 @@ import (
 	"github.com/annict/annict/go/internal/handler/supporters_portal"
 	"github.com/annict/annict/go/internal/handler/tracking_heatmap"
 	stripewebhook "github.com/annict/annict/go/internal/handler/webhooks/stripe"
+	"github.com/annict/annict/go/internal/httperror"
 	"github.com/annict/annict/go/internal/image"
 	authMiddleware "github.com/annict/annict/go/internal/middleware"
 	"github.com/annict/annict/go/internal/query"
@@ -558,6 +559,10 @@ func runServe() {
 
 	// ルート設定
 	r.Get("/", homeHandler.Show)
+	r.Get(httperror.NotFoundPath, httperror.NotFound)
+	r.Get(httperror.ForbiddenPath, httperror.Forbidden)
+	r.Get(httperror.InvalidCSRFTokenPath, httperror.InvalidCSRFToken)
+	r.Get(httperror.InternalServerErrorPath, httperror.InternalServerError)
 	r.Get("/health", healthHandler.Show)
 	r.Get("/manifest.json", manifestHandler.Show)
 	r.Get("/works/popular", popularWorkHandler.Index)

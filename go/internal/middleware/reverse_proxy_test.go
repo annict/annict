@@ -55,6 +55,10 @@ func TestReverseProxyMiddleware_GoHandledPaths(t *testing.T) {
 		{"静的ファイル", "/static/css/style.css", "Go response"},
 		{"ヘルスチェック", "/health", "Go response"},
 		{"Web App Manifest", "/manifest.json", "Go response"},
+		{"404エラーページ", "/errors/not-found", "Go response"},
+		{"認可エラーページ", "/errors/forbidden", "Go response"},
+		{"CSRFエラーページ", "/errors/invalid-csrf-token", "Go response"},
+		{"500エラーページ", "/errors/internal-server-error", "Go response"},
 		{"パスワードログインページ", "/sign_in/password", "Go response"},
 		{"パスワードリセット申請", "/password/reset", "Go response"},
 		{"パスワードリセット実行", "/password/edit", "Go response"},
@@ -260,6 +264,82 @@ func TestReverseProxyMiddleware_ErrorHandling(t *testing.T) {
 	if rr.Code != http.StatusBadGateway {
 		t.Errorf("ステータスコードが期待と異なる: got %v want %v", rr.Code, http.StatusBadGateway)
 	}
+
+	assertBadGatewayPage(t, rr, "サービスに接続できません", "ホームに戻る")
+}
+
+// TestReverseProxyMiddleware_ErrorHandlingLocale verifies that the 502 page follows the
+// reader's Accept-Language. The proxy's error handler runs outside the Go middleware chain, so
+// nothing has resolved a locale onto the context by the time it renders.
+//
+// [Ja] TestReverseProxyMiddleware_ErrorHandlingLocale は 502 ページが読み手の Accept-Language
+// に追随することを検証する。プロキシのエラーハンドラーは Go のミドルウェアチェーンの外側で
+// 動くため、描画する時点ではコンテキストにロケールを載せた者がいない。
+func TestReverseProxyMiddleware_ErrorHandlingLocale(t *testing.T) {
+	t.Parallel()
+
+	railsServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		hj, ok := w.(http.Hijacker)
+		if !ok {
+			t.Fatal("Hijackerをサポートしていない")
+		}
+		conn, _, err := hj.Hijack()
+		if err != nil {
+			t.Fatalf("Hijackに失敗: %v", err)
+		}
+		_ = conn.Close()
+	}))
+	defer railsServer.Close()
+
+	cfg := &config.Config{Domain: "annict-test.page"}
+
+	proxyMiddleware, err := NewReverseProxyMiddleware(railsServer.URL, cfg, nil, nil)
+	if err != nil {
+		t.Fatalf("ミドルウェアの作成に失敗: %v", err)
+	}
+
+	handler := proxyMiddleware.Middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+
+	req := httptest.NewRequest("GET", "/works", nil)
+	req.Header.Set("Accept-Language", "en-US,en;q=0.9")
+	rr := httptest.NewRecorder()
+
+	handler.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusBadGateway {
+		t.Errorf("ステータスコードが期待と異なる: got %v want %v", rr.Code, http.StatusBadGateway)
+	}
+
+	assertBadGatewayPage(t, rr, "Cannot connect to the service", "Back to Home")
+}
+
+// assertBadGatewayPage asserts that a 502 is served as the shared error page, the same page the
+// 404 and 500 responses use, rather than as the hand-written HTML the error handler used to
+// build inline.
+//
+// [Ja] assertBadGatewayPage は 502 が、エラーハンドラーがかつてインラインで組み立てていた
+// 手書きの HTML ではなく、404 / 500 と同じ共通のエラーページとして配信されることを検証する。
+func assertBadGatewayPage(t *testing.T, rr *httptest.ResponseRecorder, wantTitle string, wantBackLabel string) {
+	t.Helper()
+
+	if contentType := rr.Header().Get("Content-Type"); contentType != "text/html; charset=utf-8" {
+		t.Errorf("Content-Type = %q, want text/html; charset=utf-8", contentType)
+	}
+
+	body := rr.Body.String()
+	for _, expected := range []string{
+		"<title>" + wantTitle + " | Annict</title>",
+		wantTitle,
+		`href="/"`,
+		wantBackLabel,
+		`class="error-link"`,
+	} {
+		if !strings.Contains(body, expected) {
+			t.Errorf("502 レスポンスに %q が含まれていません", expected)
+		}
+	}
 }
 
 func TestIsGoHandledPath(t *testing.T) {
@@ -273,6 +353,14 @@ func TestIsGoHandledPath(t *testing.T) {
 		{"/static/css/style.css", true},
 		{"/health", true},
 		{"/manifest.json", true},
+		{"/errors/not-found", true},
+		{"/errors/not-found/extra", false},
+		{"/errors/forbidden", true},
+		{"/errors/forbidden/extra", false},
+		{"/errors/invalid-csrf-token", true},
+		{"/errors/invalid-csrf-token/extra", false},
+		{"/errors/internal-server-error", true},
+		{"/errors/internal-server-error/extra", false},
 		{"/sign_in/password", true},
 		{"/password/reset", true},
 		{"/password/edit", true},
@@ -603,6 +691,8 @@ func TestReverseProxyMiddleware_ResponseHeaderTimeout(t *testing.T) {
 	if rr.Code != http.StatusBadGateway {
 		t.Errorf("ステータスコードが期待と異なる: got %v want %v", rr.Code, http.StatusBadGateway)
 	}
+
+	assertBadGatewayPage(t, rr, "サービスに接続できません", "ホームに戻る")
 }
 
 func TestReverseProxyMiddleware_HTTPMethods(t *testing.T) {
