@@ -55,10 +55,10 @@ func readUpdateTargetForm(t *testing.T, db *sql.DB, episodeID model.EpisodeID) (
 		t.Fatalf("エピソードの読み込みに失敗: %v", err)
 	}
 	if !updatedAt.Valid {
-		return storedTitle.String, validator.DBEpisodeNullVersion
+		return storedTitle.String, validator.FormNullVersion
 	}
 
-	return storedTitle.String, updatedAt.Time.UTC().Format(validator.DBEpisodeVersionLayout)
+	return storedTitle.String, updatedAt.Time.UTC().Format(validator.FormVersionLayout)
 }
 
 // updateFormValues returns a submit that passes every check, so each test states only the field
@@ -347,7 +347,7 @@ func TestUpdate_NotFound(t *testing.T) {
 	user := &model.User{ID: 1, Role: model.RoleEditor}
 
 	rr := httptest.NewRecorder()
-	form := updateFormValues(validator.DBEpisodeNullVersion)
+	form := updateFormValues(validator.FormNullVersion)
 	handler.Update(rr, withCreateTestUser(newUpdateRequest(model.EpisodeID(999999999), form), user))
 
 	if status := rr.Code; status != http.StatusNotFound {

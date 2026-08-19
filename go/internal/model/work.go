@@ -79,6 +79,18 @@ type Work struct {
 	UnpublishedAt *time.Time
 	DeletedAt     *time.Time
 
+	// UpdatedAt is when the row was last written. The Annict DB edit form loader
+	// (GetForEditByID) populates it and the form carries it back as the version its submit
+	// was made against, so an update can reject a submit that would silently overwrite
+	// someone else's change. Loaders that do not select the column leave it nil, as do rows
+	// whose persisted updated_at is NULL.
+	//
+	// [Ja] UpdatedAt は行が最後に書かれた時刻。値を入れるのは Annict DB 編集フォームの
+	// ローダー (GetForEditByID) で、フォームは送信が前提とする版としてこれを持ち帰る。
+	// 他者の変更を黙って上書きする送信を、更新側で却下できるようにするため。カラムを選択
+	// しないローダーと、保存済みの updated_at が NULL の行では nil のまま残る。
+	UpdatedAt *time.Time
+
 	// Fields below are populated only by the satellite-sync loader
 	// (ListForSatelliteSyncByIDs), which projects the works columns mapped onto the
 	// satellite tables (anime_external_ids / anime_links / anime_official_accounts /

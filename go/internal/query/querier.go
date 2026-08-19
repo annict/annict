@@ -709,7 +709,19 @@ type Querier interface {
 	UpdateStripeWebhookEventStatus(ctx context.Context, arg UpdateStripeWebhookEventStatusParams) error
 	UpdateUserPassword(ctx context.Context, arg UpdateUserPasswordParams) error
 	UpdateUserStripeSubscriberID(ctx context.Context, arg UpdateUserStripeSubscriberIDParams) error
-	UpdateWork(ctx context.Context, arg UpdateWorkParams) error
+	// The version stated by the submit is matched inside the UPDATE rather than compared against a
+	// preceding read, so no other write can slip between the comparison and the write. NULL is an
+	// explicit version (the shared column is nullable), which IS NOT DISTINCT FROM matches without a
+	// second statement; the write then advances updated_at, so a second submit from the same NULL
+	// version no longer matches. No row updated therefore means the row was written by someone else
+	// in the meantime, and the caller reports a conflict instead of overwriting it.
+	//
+	// [Ja] 送信が名乗る版の照合は、直前の読み取りとの比較ではなく UPDATE の中で行う。比較と書き込み
+	// の間に他の書き込みが挟まらないようにするため。共有カラムは NULL 許容のため NULL も明示的な版
+	// であり、IS NOT DISTINCT FROM なら 2 文に分けずに照合できる。書き込みは updated_at を進めるので、
+	// 同じ NULL 版からの 2 件目はもう一致しない。したがって 1 行も更新されないことは、その間に他者が
+	// 行を書いたことを意味し、呼び出し側は上書きせず競合として報告する。
+	UpdateWork(ctx context.Context, arg UpdateWorkParams) (int64, error)
 	UpdateWorkAnimeID(ctx context.Context, arg UpdateWorkAnimeIDParams) error
 	UpdateWorkDeletedAt(ctx context.Context, arg UpdateWorkDeletedAtParams) error
 	UpdateWorkUnpublishedAt(ctx context.Context, arg UpdateWorkUnpublishedAtParams) error

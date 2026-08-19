@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"time"
 
 	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/model"
@@ -57,6 +58,15 @@ func NewUpdateWorkUsecase(
 // を埋め込み、フィールド集合・バリデーター入力・文字列→型変換を作成と共有する。
 type UpdateWorkInput struct {
 	WorkID model.WorkID
+	// UpdatedAt is the version the form was opened against, as the hidden field carries it.
+	// It sits beside the form values rather than inside WorkFormInput because the create
+	// flow has no version to state. A non-conflict rejection keeps the submitted version;
+	// after a conflict, the handler shows the stored contents and replaces it with their version.
+	//
+	// [Ja] UpdatedAt はフォームを開いた時点の版で、hidden フィールドが運ぶ形のまま。
+	// WorkFormInput の中ではなく外に置くのは、作成フローには示すべき版が無いため。非競合の
+	// 却下では送信された版を保ち、競合時は保存済みの内容を示してからその版へ載せ替える。
+	UpdatedAt string
 	WorkFormInput
 }
 
@@ -65,7 +75,8 @@ type UpdateWorkOutput struct {
 }
 
 func (uc *UpdateWorkUsecase) Execute(ctx context.Context, input UpdateWorkInput) (*UpdateWorkOutput, error) {
-	if err := uc.validator.Validate(ctx, input.toValidatorInput(&input.WorkID)); err != nil {
+	version, err := uc.validator.Validate(ctx, input.toValidatorInput(&input.WorkID, &input.UpdatedAt))
+	if err != nil {
 		return nil, err
 	}
 
@@ -127,7 +138,7 @@ func (uc *UpdateWorkUsecase) Execute(ctx context.Context, input UpdateWorkInput)
 		}
 	}
 
-	params, err := buildUpdateWorkParams(input)
+	params, err := buildUpdateWorkParams(input, version)
 	if err != nil {
 		return nil, fmt.Errorf("入力値の変換に失敗: %w", err)
 	}
@@ -139,6 +150,9 @@ func (uc *UpdateWorkUsecase) Execute(ctx context.Context, input UpdateWorkInput)
 // its anime / anime_classification and the six satellite tables in a single transaction.
 // works stays the source of truth during the migration, so the anime and satellite writes
 // are kept in one block that the cutover (phase 17) can remove wholesale.
+//
+// The works write comes first because it carries the version match: a submit made against a
+// stale read stops there and neither the anime nor the satellite tables are touched.
 //
 // When the work is not yet mapped (existingAnime == nil), only works is updated and the
 // anime is left for the phase 2 sync batch to create. The sync is the arbiter and the
@@ -187,8 +201,23 @@ func (uc *UpdateWorkUsecase) updateWork(ctx context.Context, params repository.U
 	}
 	defer func() { _ = tx.Rollback() }()
 
-	if err := uc.workRepo.WithTx(tx).Update(ctx, params); err != nil {
+	updated, err := uc.workRepo.WithTx(tx).Update(ctx, params)
+	if err != nil {
 		return nil, fmt.Errorf("作品の更新に失敗しました: %w", err)
+	}
+	// No row matched the version the submit stated, so someone else wrote the work between the
+	// edit form being opened and this submit. The submit is refused rather than applied: the
+	// editor is the one who decides whose values to keep, and the caller shows them both.
+	//
+	// [Ja] 送信が名乗った版にどの行も一致しなかった。編集フォームを開いてから本送信までの間に、
+	// 他者がその作品を書いたということ。送信は適用せず却下する。どちらの値を残すかを決めるのは
+	// 編集者であり、呼び出し側が両方を示すため。
+	if !updated {
+		return nil, &model.AppError{
+			Code:     model.AppErrCodeConflict,
+			UserMsg:  i18n.T(ctx, "validation_version_conflict"),
+			Metadata: map[string]string{"work_id": params.ID.String()},
+		}
 	}
 
 	if existingAnime != nil {
@@ -235,17 +264,23 @@ func workFromUpdateWorkParams(params repository.UpdateWorkParams, current *model
 }
 
 // buildUpdateWorkParams converts the edit form input into UpdateWorkParams: the shared
-// buildWorkFormParams produces the common works columns and this adds the target ID.
+// buildWorkFormParams produces the common works columns and this adds the target ID and the
+// version the update matches against. The version arrives already parsed from the validator
+// rather than being read from the input again, so the value that was checked is the one that
+// reaches the UPDATE.
 //
 // [Ja] buildUpdateWorkParams は編集フォーム入力を UpdateWorkParams に変換する。共有の
-// buildWorkFormParams が共通の works カラムを生成し、本関数が対象 ID を足す。
-func buildUpdateWorkParams(input UpdateWorkInput) (repository.UpdateWorkParams, error) {
+// buildWorkFormParams が共通の works カラムを生成し、本関数が対象 ID と、更新が照合する版を
+// 足す。版は入力から読み直さずバリデーターがパースしたものを受け取る。検査された値がそのまま
+// UPDATE に届くようにするため。
+func buildUpdateWorkParams(input UpdateWorkInput, version *time.Time) (repository.UpdateWorkParams, error) {
 	common, err := buildWorkFormParams(input.WorkFormInput)
 	if err != nil {
 		return repository.UpdateWorkParams{}, err
 	}
 	return repository.UpdateWorkParams{
 		ID:               input.WorkID,
+		Version:          version,
 		CreateWorkParams: common,
 	}, nil
 }

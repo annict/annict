@@ -229,7 +229,7 @@ func TestEdit_EmptyValues(t *testing.T) {
 	data := editTestData()
 	data.FormInput = viewmodel.DBEpisodeFormInput{
 		SortNumber: "100",
-		UpdatedAt:  viewmodel.DBEpisodeFormNullVersion,
+		UpdatedAt:  viewmodel.FormNullVersion,
 	}
 
 	var buf strings.Builder

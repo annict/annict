@@ -1067,3 +1067,150 @@ func TestEdit_FieldsCarryGroupsAndKeyboardHints(t *testing.T) {
 
 	assertWorkFormFields(t, buf.String())
 }
+
+// TestEdit_CarriesVersion verifies the edit form ships the version it was opened against, which
+// the update matches so a submit made from a stale read is refused instead of overwriting
+// whoever wrote in between.
+//
+// [Ja] TestEdit_CarriesVersion は、編集フォームが開いた時点の版を送り出すことを検証する。更新側は
+// これを照合し、古い読み取りからの送信を、間に書いた人の変更を上書きせずに却下する。
+func TestEdit_CarriesVersion(t *testing.T) {
+	t.Parallel()
+
+	data := EditPageData{
+		WorkID:    1,
+		FormInput: &viewmodel.DBWorkFormInput{UpdatedAt: "2026-08-17T01:02:03.456789Z"},
+	}
+
+	var buf strings.Builder
+	if err := Edit(data).Render(context.Background(), &buf); err != nil {
+		t.Fatalf("レンダリングエラー: %v", err)
+	}
+
+	if html := buf.String(); !strings.Contains(html, `<input type="hidden" name="updated_at" value="2026-08-17T01:02:03.456789Z">`) {
+		t.Error("フォームが hidden の版を運んでいません")
+	}
+}
+
+// TestEdit_ConflictNoticeListsChangedStoredValues verifies the conflict notice states the stored
+// values a second submit would overwrite. Only the fields that differ are listed, and the values
+// are the ones the form displays rather than the codes the selects and the checkbox store.
+//
+// [Ja] TestEdit_ConflictNoticeListsChangedStoredValues は、競合の案内が、2 回目の送信で上書き
+// される保存済みの値を述べることを検証する。並ぶのは異なるフィールドだけで、値は選択欄や
+// チェックボックスが保持するコードではなく、フォームが表示する形にする。
+func TestEdit_ConflictNoticeListsChangedStoredValues(t *testing.T) {
+	t.Parallel()
+
+	data := EditPageData{
+		WorkID: 1,
+		FormOptions: viewmodel.DBWorkFormOptions{
+			MediaOptions: []viewmodel.SelectOption{
+				{Value: "1", Label: "TV"},
+				{Value: "3", Label: "映画"},
+			},
+		},
+		FormInput: &viewmodel.DBWorkFormInput{
+			Title:      "送信されたタイトル",
+			TitleEn:    "同じ英語タイトル",
+			Media:      "1",
+			NoEpisodes: "",
+			UpdatedAt:  "2026-08-17T01:02:03.456789Z",
+		},
+		ConflictCurrent: &viewmodel.DBWorkFormInput{
+			Title:      "保存済みのタイトル",
+			TitleEn:    "同じ英語タイトル",
+			Media:      "3",
+			NoEpisodes: "1",
+			UpdatedAt:  "2026-08-17T01:02:03.456789Z",
+		},
+	}
+
+	var buf strings.Builder
+	if err := Edit(data).Render(context.Background(), &buf); err != nil {
+		t.Fatalf("レンダリングエラー: %v", err)
+	}
+	html := buf.String()
+
+	for _, expected := range []string{
+		"現在保存されている内容",
+		"<dt>タイトル</dt>",
+		"保存済みのタイトル",
+		// The stored media is named by the label the select shows, not by its enum code.
+		//
+		// [Ja] 保存済みのメディアは enum のコードではなく、選択欄が表示するラベルで名指しする。
+		"<dt>メディア</dt>",
+		"映画",
+		// The checkbox states whether it is on rather than showing the "1" it stores.
+		//
+		// [Ja] チェックボックスは保持する "1" ではなく、入っているかどうかを述べる。
+		"<dt>エピソードなし</dt>",
+		"オン",
+	} {
+		if !strings.Contains(html, expected) {
+			t.Errorf("期待する文字列が含まれていません: %q", expected)
+		}
+	}
+
+	// A field both sides agree on is not listed: the notice names what a second submit would
+	// overwrite, and nothing about that field would change.
+	//
+	// [Ja] 両者が一致するフィールドは並べない。案内は 2 回目の送信が上書きするものを名指しする
+	// ものであり、そのフィールドは何も変わらないため。
+	if strings.Contains(html, "<dt>英語タイトル</dt>") {
+		t.Error("一致するフィールドが競合の案内に並んでいます")
+	}
+}
+
+// TestEdit_ConflictNoticeWithoutFieldChanges verifies the notice says so when the stored row
+// differs from the submit in nothing this form writes, rather than presenting an empty list.
+//
+// [Ja] TestEdit_ConflictNoticeWithoutFieldChanges は、保存済みの行が本フォームの書き込む
+// どのフィールドでも送信と異ならないとき、案内が空の一覧ではなくそのことを述べるのを検証する。
+func TestEdit_ConflictNoticeWithoutFieldChanges(t *testing.T) {
+	t.Parallel()
+
+	submitted := viewmodel.DBWorkFormInput{Title: "同じタイトル", Media: "1"}
+	stored := submitted
+	data := EditPageData{
+		WorkID:          1,
+		FormInput:       &submitted,
+		ConflictCurrent: &stored,
+	}
+
+	var buf strings.Builder
+	if err := Edit(data).Render(context.Background(), &buf); err != nil {
+		t.Fatalf("レンダリングエラー: %v", err)
+	}
+	html := buf.String()
+
+	if !strings.Contains(html, "このフォームで編集できる項目に違いはありません") {
+		t.Error("違いが無いことを述べる案内が含まれていません")
+	}
+	if strings.Contains(html, "<dl") {
+		t.Error("違いが無いのに保存済みの値の一覧が描画されています")
+	}
+}
+
+// TestEdit_OmitsConflictNoticeWithoutConflict verifies a form opened for editing, and one
+// re-rendered for a submit refused for any other reason, carries no conflict notice.
+//
+// [Ja] TestEdit_OmitsConflictNoticeWithoutConflict は、編集のために開いたフォームと、他の理由で
+// 却下された送信の再描画のいずれにも競合の案内が出ないことを検証する。
+func TestEdit_OmitsConflictNoticeWithoutConflict(t *testing.T) {
+	t.Parallel()
+
+	data := EditPageData{
+		WorkID:    1,
+		FormInput: &viewmodel.DBWorkFormInput{Title: "編集中のタイトル"},
+	}
+
+	var buf strings.Builder
+	if err := Edit(data).Render(context.Background(), &buf); err != nil {
+		t.Fatalf("レンダリングエラー: %v", err)
+	}
+
+	if html := buf.String(); strings.Contains(html, "現在保存されている内容") {
+		t.Error("競合していないのに競合の案内が描画されています")
+	}
+}

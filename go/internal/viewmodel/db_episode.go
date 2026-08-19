@@ -8,7 +8,6 @@ import (
 	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/usecase"
-	"github.com/annict/annict/go/internal/validator"
 )
 
 // DBEpisodeListWorkName returns the parent work's display name for the Annict DB episode
@@ -187,8 +186,8 @@ type DBEpisodeFormInput struct {
 	// submitted, not the one the server holds now: re-reading it would make the next
 	// submit overwrite the very change that is being guarded against.
 	//
-	// It is DBEpisodeFormNullVersion for an episode whose updated_at is unset. That explicit
-	// value is distinct from an empty request, which means no version was stated.
+	// It is FormNullVersion for an episode whose updated_at is unset. That explicit value is
+	// distinct from an empty request, which means no version was stated.
 	//
 	// [Ja] UpdatedAt はフォームを開いた時点の版で、hidden で持ち回る。古い読み取りに対する
 	// 送信を、間に書いた人の変更を黙って上書きせずに更新側で却下できるようにするため。
@@ -196,31 +195,10 @@ type DBEpisodeFormInput struct {
 	// あるからで、サーバーの現在値を読み直すと、次の送信が守るべき変更をかえって上書きして
 	// しまう。
 	//
-	// updated_at を持たないエピソードでは DBEpisodeFormNullVersion になる。この明示値は、
-	// 版を指定していない空の要求とは区別する。
+	// updated_at を持たないエピソードでは FormNullVersion になる。この明示値は、版を指定して
+	// いない空の要求とは区別する。
 	UpdatedAt string
 }
-
-// DBEpisodeFormNullVersion is the explicit version the edit form carries when the stored
-// updated_at is NULL. The update side matches it with updated_at IS NULL; the first successful
-// write advances the column to a timestamp, so another submit from the same NULL version
-// conflicts. An empty value remains reserved for a request that stated no version.
-//
-// Both this and the layout below are the validator's constants: it reads the submitted version
-// back and decides whether to accept it, so the round-trip format is single-sourced there and
-// named here for the form that writes it.
-//
-// [Ja] DBEpisodeFormNullVersion は保存済み updated_at が NULL のとき、編集フォームが運ぶ
-// 明示的な版。更新側は updated_at IS NULL で照合し、最初に成功した書き込みがカラムを
-// timestamp へ進めるため、同じ NULL 版からの次の送信は競合する。空文字列は版を指定して
-// いない要求のために残す。
-//
-// 本定数と下の書式はいずれも validator 側の定数である。送信された版を読み戻して受理するかを
-// 判断するのは validator のため、往復の書式の正本をそちらに 1 つ置き、ここでは書き出す
-// フォームのために名前を与える。
-const DBEpisodeFormNullVersion = validator.DBEpisodeNullVersion
-
-const dbEpisodeFormVersionLayout = validator.DBEpisodeVersionLayout
 
 // NewDBEpisodeFormInputFromEpisode projects a stored episode onto the form values the edit
 // form renders. Columns the episode leaves unset become "", so an episode with no display
@@ -231,19 +209,14 @@ const dbEpisodeFormVersionLayout = validator.DBEpisodeVersionLayout
 // フォーム値に射影する。未設定のカラムは "" になるため、表示用話数を持たないエピソードは
 // 編集者が消す必要のあるプレースホルダーではなく空の欄で開く。
 func NewDBEpisodeFormInputFromEpisode(episode *model.Episode) DBEpisodeFormInput {
-	input := DBEpisodeFormInput{
+	return DBEpisodeFormInput{
 		Number:     derefString(episode.Number),
 		RawNumber:  formatRawNumber(episode.RawNumber),
 		SortNumber: strconv.FormatInt(int64(episode.SortNumber), 10),
 		Title:      derefString(episode.Title),
 		TitleEn:    episode.TitleEn,
-		UpdatedAt:  DBEpisodeFormNullVersion,
+		UpdatedAt:  formatFormVersion(episode.UpdatedAt),
 	}
-	if episode.UpdatedAt != nil {
-		input.UpdatedAt = episode.UpdatedAt.UTC().Format(dbEpisodeFormVersionLayout)
-	}
-
-	return input
 }
 
 // NewDBEpisodeFormInputFromSubmit keeps a rejected submit's values in the re-rendered form,

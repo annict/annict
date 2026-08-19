@@ -1219,6 +1219,32 @@ func TestWorkRepository_GetForEditByID(t *testing.T) {
 		if work.NumberFormatID != nil {
 			t.Errorf("NumberFormatID = %v, want nil", work.NumberFormatID)
 		}
+		// The edit form carries updated_at back as the version its submit is made against,
+		// so the loader has to supply it.
+		//
+		// [Ja] 編集フォームは updated_at を、送信が前提とする版として持ち帰る。そのため
+		// ローダーはこれを供給する必要がある。
+		if work.UpdatedAt == nil {
+			t.Error("UpdatedAt = nil, want the stored timestamp")
+		}
+	})
+
+	t.Run("updated_at が NULL の作品は版を持たない", func(t *testing.T) {
+		nullVersionID := testutil.NewWorkBuilder(t, tx).WithTitle("版NULLロードテスト").Build()
+		if _, err := tx.Exec(`UPDATE works SET updated_at = NULL WHERE id = $1`, int64(nullVersionID)); err != nil {
+			t.Fatalf("updated_at の NULL 化に失敗: %v", err)
+		}
+
+		work, err := repo.GetForEditByID(ctx, nullVersionID)
+		if err != nil {
+			t.Fatalf("GetForEditByID() error = %v", err)
+		}
+		if work == nil {
+			t.Fatal("work should not be nil")
+		}
+		if work.UpdatedAt != nil {
+			t.Errorf("UpdatedAt = %v, want nil", work.UpdatedAt)
+		}
 	})
 
 	t.Run("存在しないIDは (nil, nil)", func(t *testing.T) {

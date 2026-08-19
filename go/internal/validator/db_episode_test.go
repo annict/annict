@@ -406,7 +406,7 @@ func TestDBEpisodeUpdateValidatorValidateSuccess(t *testing.T) {
 		if got.UpdatedAt == nil {
 			t.Fatal("UpdatedAt = nil, want 送信された版")
 		}
-		if formatted := got.UpdatedAt.UTC().Format(DBEpisodeVersionLayout); formatted != "2026-08-14T12:34:56.123456789Z" {
+		if formatted := got.UpdatedAt.UTC().Format(FormVersionLayout); formatted != "2026-08-14T12:34:56.123456789Z" {
 			t.Errorf("UpdatedAt = %q, want %q", formatted, "2026-08-14T12:34:56.123456789Z")
 		}
 	})
@@ -442,7 +442,7 @@ func TestDBEpisodeUpdateValidatorValidateSuccess(t *testing.T) {
 		t.Parallel()
 
 		input := dbEpisodeUpdateInput()
-		input.UpdatedAt = DBEpisodeNullVersion
+		input.UpdatedAt = FormNullVersion
 
 		got, err := v.Validate(ctx, input)
 		if err != nil {

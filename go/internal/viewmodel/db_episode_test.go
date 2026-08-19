@@ -595,7 +595,7 @@ func TestNewDBEpisodeFormInputFromEpisode(t *testing.T) {
 			episode: &model.Episode{SortNumber: 100},
 			want: DBEpisodeFormInput{
 				SortNumber: "100",
-				UpdatedAt:  DBEpisodeFormNullVersion,
+				UpdatedAt:  FormNullVersion,
 			},
 		},
 	}
@@ -639,7 +639,7 @@ func TestNewDBEpisodeFormInputFromEpisode_VersionRoundTrips(t *testing.T) {
 
 			got := NewDBEpisodeFormInputFromEpisode(&model.Episode{UpdatedAt: &tt.updatedAt})
 
-			parsed, err := time.Parse(dbEpisodeFormVersionLayout, got.UpdatedAt)
+			parsed, err := time.Parse(formVersionLayout, got.UpdatedAt)
 			if err != nil {
 				t.Fatalf("版 %q をパースできません: %v", got.UpdatedAt, err)
 			}
