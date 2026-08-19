@@ -158,6 +158,33 @@ func TestMaintenanceMiddleware_HTMXRequest(t *testing.T) {
 	}
 }
 
+// TestMaintenanceMiddleware_Noindex fixes that the maintenance page tells crawlers not to index
+// it. While maintenance is on, every path answers with this page, including URLs a crawler
+// already knows, so a crawl that lands mid-maintenance receives a document with none of the
+// site's content. The 503 status keeps it out of a search index already, and this is the
+// declaration in the page that says the same.
+//
+// [Ja] TestMaintenanceMiddleware_Noindex は、メンテナンスページがクローラーに索引しないよう
+// 伝えることを固定する。メンテナンス中はクローラーが既に知っている URL を含むすべてのパスが
+// このページを返すため、その最中のクロールはサイトの中身を持たない文書を受け取る。索引から
+// 外れること自体は 503 のステータスで既に満たされており、本宣言はそれをページ側でも述べるもの。
+func TestMaintenanceMiddleware_Noindex(t *testing.T) {
+	t.Parallel()
+
+	cfg := &config.Config{MaintenanceMode: true}
+	mw := NewMaintenanceMiddleware(cfg)
+	handler := mw.Middleware(testHandler())
+
+	req := httptest.NewRequest(http.MethodGet, "/works", nil)
+	rr := httptest.NewRecorder()
+
+	handler.ServeHTTP(rr, req)
+
+	if !strings.Contains(rr.Body.String(), `<meta content="noindex" name="robots">`) {
+		t.Error("noindex の宣言が含まれていません")
+	}
+}
+
 func TestMaintenanceMiddleware_MultipleAdminIPs(t *testing.T) {
 	t.Parallel()
 
