@@ -7,6 +7,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 
+	"github.com/annict/annict/go/internal/httperror"
 	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/usecase"
@@ -21,17 +22,17 @@ func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 
 	id, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
 	if err != nil {
-		http.Error(w, "Not Found", http.StatusNotFound)
+		httperror.NotFound(w, r)
 		return
 	}
 
 	if _, err := h.unarchiveWorkUC.Execute(ctx, usecase.UnarchiveWorkInput{WorkID: model.WorkID(id)}); err != nil {
 		if ae := model.AsAppError(err); ae != nil && ae.Code == model.AppErrCodeResourceNotFound {
-			http.Error(w, "Not Found", http.StatusNotFound)
+			httperror.NotFound(w, r)
 			return
 		}
 		slog.ErrorContext(ctx, "作品の再公開に失敗しました", "error", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		httperror.InternalServerError(w, r)
 		return
 	}
 

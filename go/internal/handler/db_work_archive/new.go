@@ -1,6 +1,7 @@
 package db_work_archive
 
 import (
+	"bytes"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -8,6 +9,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 
+	"github.com/annict/annict/go/internal/httperror"
 	"github.com/annict/annict/go/internal/middleware"
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/templates/layouts"
@@ -36,18 +38,18 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 
 	id, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
 	if err != nil {
-		http.Error(w, "Not Found", http.StatusNotFound)
+		httperror.NotFound(w, r)
 		return
 	}
 
 	output, err := h.getDBWorkArchiveNewUC.Execute(ctx, usecase.GetDBWorkArchiveNewInput{WorkID: model.WorkID(id)})
 	if err != nil {
 		if ae := model.AsAppError(err); ae != nil && ae.Code == model.AppErrCodeResourceNotFound {
-			http.Error(w, "Not Found", http.StatusNotFound)
+			httperror.NotFound(w, r)
 			return
 		}
 		slog.ErrorContext(ctx, "非公開確認画面の取得に失敗", "error", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		httperror.InternalServerError(w, r)
 		return
 	}
 
@@ -56,7 +58,6 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 	meta := viewmodel.DefaultPageMeta(ctx, h.cfg, dbWorkArchiveNewPath(output.Work.ID))
 	meta.SetDBTitle(ctx, "db_works_archive_new_title")
 
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	component := layouts.Db(
 		meta,
 		h.cfg.GetAssetVersion(),
@@ -66,9 +67,15 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 			Title:     output.Work.Title,
 		}),
 	)
-	if err := component.Render(ctx, w); err != nil {
+	var body bytes.Buffer
+	if err := component.Render(ctx, &body); err != nil {
 		slog.ErrorContext(ctx, "テンプレートのレンダリングエラー", "error", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		httperror.InternalServerError(w, r)
 		return
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	if _, err := w.Write(body.Bytes()); err != nil {
+		slog.ErrorContext(ctx, "DB作品非公開確認ページのレスポンスの書き込みに失敗", "error", err)
 	}
 }

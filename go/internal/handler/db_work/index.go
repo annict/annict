@@ -1,11 +1,13 @@
 package db_work
 
 import (
+	"bytes"
 	"log/slog"
 	"net/http"
 	"net/url"
 	"strconv"
 
+	"github.com/annict/annict/go/internal/httperror"
 	"github.com/annict/annict/go/internal/middleware"
 	"github.com/annict/annict/go/internal/templates/layouts"
 	"github.com/annict/annict/go/internal/templates/pages/db_works"
@@ -44,7 +46,7 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 	})
 	if err != nil {
 		slog.ErrorContext(ctx, "DB作品一覧の取得エラー", "error", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		httperror.InternalServerError(w, r)
 		return
 	}
 
@@ -87,7 +89,6 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 	// (公開 / 削除) の X-CSRF-Token ヘッダーで送る。
 	user := middleware.GetUserFromContext(ctx)
 
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	component := layouts.Db(
 		meta,
 		h.cfg.GetAssetVersion(),
@@ -104,10 +105,16 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 			CSRFToken:           middleware.GetCSRFToken(r, h.sessionManager),
 		}),
 	)
-	if err := component.Render(ctx, w); err != nil {
+	var body bytes.Buffer
+	if err := component.Render(ctx, &body); err != nil {
 		slog.ErrorContext(ctx, "テンプレートのレンダリングエラー", "error", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		httperror.InternalServerError(w, r)
 		return
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	if _, err := w.Write(body.Bytes()); err != nil {
+		slog.ErrorContext(ctx, "DB作品一覧レスポンスの書き込みに失敗", "error", err)
 	}
 }
 

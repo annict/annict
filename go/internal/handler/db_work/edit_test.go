@@ -105,6 +105,7 @@ func TestEdit_NotFound(t *testing.T) {
 	if status := rr.Code; status != http.StatusNotFound {
 		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusNotFound)
 	}
+	assertNotFoundPage(t, rr)
 }
 
 // TestEdit_InvalidID verifies a non-numeric ID returns 404.
@@ -126,6 +127,7 @@ func TestEdit_InvalidID(t *testing.T) {
 	if status := rr.Code; status != http.StatusNotFound {
 		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusNotFound)
 	}
+	assertNotFoundPage(t, rr)
 }
 
 // TestEdit_RequiresCommitter verifies the edit form route is protected by the

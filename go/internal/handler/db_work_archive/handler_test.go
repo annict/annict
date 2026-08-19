@@ -39,6 +39,33 @@ func newTestHandler(t *testing.T, db *sql.DB, tx *sql.Tx) *Handler {
 	return NewHandler(cfg, sessionManager, testutil.NewTestFlashManager(), getDBWorkArchiveNewUC, archiveWorkUC, unarchiveWorkUC)
 }
 
+// assertNotFoundPage asserts that a 404 is served as the shared error page rather than as the
+// one-line plain text http.Error used to return, so a reader who follows a stale link lands on
+// a page that says what happened and offers a way back.
+//
+// [Ja] assertNotFoundPage は 404 が、以前 http.Error が返していた 1 行のプレーンテキストでは
+// なく共通のエラーページとして配信されることを検証する。古いリンクを辿った読み手が、何が
+// 起きたかを述べ戻る導線を持つページに着地するようにするため。
+func assertNotFoundPage(t *testing.T, rr *httptest.ResponseRecorder) {
+	t.Helper()
+
+	if contentType := rr.Header().Get("Content-Type"); contentType != "text/html; charset=utf-8" {
+		t.Errorf("Content-Type = %q, want text/html; charset=utf-8", contentType)
+	}
+
+	body := rr.Body.String()
+	for _, expected := range []string{
+		"<title>ページが見つかりません | Annict</title>",
+		"ページが見つかりません",
+		`href="/"`,
+		"ホームに戻る",
+	} {
+		if !strings.Contains(body, expected) {
+			t.Errorf("404 レスポンスに %q が含まれていません", expected)
+		}
+	}
+}
+
 // TestNew verifies the archive-confirmation page renders the confirm form for a published
 // work.
 //
@@ -139,6 +166,7 @@ func TestNew_NotFoundForArchivedWork(t *testing.T) {
 	if status := rr.Code; status != http.StatusNotFound {
 		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusNotFound)
 	}
+	assertNotFoundPage(t, rr)
 }
 
 // TestNew_InvalidID verifies a non-numeric id returns 404.
@@ -159,6 +187,7 @@ func TestNew_InvalidID(t *testing.T) {
 	if status := rr.Code; status != http.StatusNotFound {
 		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusNotFound)
 	}
+	assertNotFoundPage(t, rr)
 }
 
 // TestNew_RequiresCommitter verifies the confirmation route is protected by the committer
@@ -221,6 +250,7 @@ func TestCreate_NotFound(t *testing.T) {
 	if status := rr.Code; status != http.StatusNotFound {
 		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusNotFound)
 	}
+	assertNotFoundPage(t, rr)
 }
 
 // TestCreate_RequiresCommitter verifies the archive route is protected by the committer
@@ -346,6 +376,7 @@ func TestDelete_NotFound(t *testing.T) {
 	if status := rr.Code; status != http.StatusNotFound {
 		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusNotFound)
 	}
+	assertNotFoundPage(t, rr)
 }
 
 // TestDelete_RequiresCommitter verifies the un-archive route is protected by the committer

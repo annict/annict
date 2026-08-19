@@ -1,12 +1,14 @@
 package db_work
 
 import (
+	"bytes"
 	"log/slog"
 	"net/http"
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
 
+	"github.com/annict/annict/go/internal/httperror"
 	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/middleware"
 	"github.com/annict/annict/go/internal/model"
@@ -24,7 +26,7 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 
 	id, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
 	if err != nil {
-		http.Error(w, "Not Found", http.StatusNotFound)
+		httperror.NotFound(w, r)
 		return
 	}
 
@@ -40,11 +42,11 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		if ae := model.AsAppError(err); ae != nil && ae.Code == model.AppErrCodeResourceNotFound {
-			http.Error(w, "Not Found", http.StatusNotFound)
+			httperror.NotFound(w, r)
 			return
 		}
 		slog.ErrorContext(ctx, "作品の更新に失敗しました", "error", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		httperror.InternalServerError(w, r)
 		return
 	}
 
@@ -61,7 +63,7 @@ func (h *Handler) renderEditWithErrors(w http.ResponseWriter, r *http.Request, i
 	optionsResult, err := h.getDBWorkFormOptionsUC.Execute(ctx)
 	if err != nil {
 		slog.ErrorContext(ctx, "NumberFormatの取得エラー", "error", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		httperror.InternalServerError(w, r)
 		return
 	}
 
@@ -71,8 +73,6 @@ func (h *Handler) renderEditWithErrors(w http.ResponseWriter, r *http.Request, i
 	meta := viewmodel.DefaultPageMeta(ctx, h.cfg, dbWorkEditPath(input.WorkID))
 	meta.SetDBTitle(ctx, "db_works_edit_title")
 
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	w.WriteHeader(http.StatusUnprocessableEntity)
 	component := layouts.Db(
 		meta,
 		h.cfg.GetAssetVersion(),
@@ -90,7 +90,16 @@ func (h *Handler) renderEditWithErrors(w http.ResponseWriter, r *http.Request, i
 			FormInput:   viewmodel.NewDBWorkFormInput(input.WorkFormInput),
 		}),
 	)
-	if err := component.Render(ctx, w); err != nil {
+	var body bytes.Buffer
+	if err := component.Render(ctx, &body); err != nil {
 		slog.ErrorContext(ctx, "テンプレートのレンダリングエラー", "error", err)
+		httperror.InternalServerError(w, r)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.WriteHeader(http.StatusUnprocessableEntity)
+	if _, err := w.Write(body.Bytes()); err != nil {
+		slog.ErrorContext(ctx, "DB作品編集フォームのレスポンスの書き込みに失敗", "error", err)
 	}
 }

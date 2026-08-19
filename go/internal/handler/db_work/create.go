@@ -1,9 +1,11 @@
 package db_work
 
 import (
+	"bytes"
 	"log/slog"
 	"net/http"
 
+	"github.com/annict/annict/go/internal/httperror"
 	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/middleware"
 	"github.com/annict/annict/go/internal/model"
@@ -28,7 +30,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		slog.ErrorContext(ctx, "作品の作成に失敗しました", "error", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		httperror.InternalServerError(w, r)
 		return
 	}
 
@@ -53,7 +55,7 @@ func (h *Handler) renderNewWithErrors(w http.ResponseWriter, r *http.Request, in
 	optionsResult, err := h.getDBWorkFormOptionsUC.Execute(ctx)
 	if err != nil {
 		slog.ErrorContext(ctx, "NumberFormatの取得エラー", "error", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		httperror.InternalServerError(w, r)
 		return
 	}
 
@@ -63,8 +65,6 @@ func (h *Handler) renderNewWithErrors(w http.ResponseWriter, r *http.Request, in
 	meta := viewmodel.DefaultPageMeta(ctx, h.cfg, dbWorksNewPath)
 	meta.SetDBTitle(ctx, "db_works_new_title")
 
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	w.WriteHeader(http.StatusUnprocessableEntity)
 	component := layouts.Db(
 		meta,
 		h.cfg.GetAssetVersion(),
@@ -75,7 +75,16 @@ func (h *Handler) renderNewWithErrors(w http.ResponseWriter, r *http.Request, in
 			FormInput:   viewmodel.NewDBWorkFormInput(input.WorkFormInput),
 		}),
 	)
-	if err := component.Render(ctx, w); err != nil {
+	var body bytes.Buffer
+	if err := component.Render(ctx, &body); err != nil {
 		slog.ErrorContext(ctx, "テンプレートのレンダリングエラー", "error", err)
+		httperror.InternalServerError(w, r)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.WriteHeader(http.StatusUnprocessableEntity)
+	if _, err := w.Write(body.Bytes()); err != nil {
+		slog.ErrorContext(ctx, "DB作品新規作成フォームのレスポンスの書き込みに失敗", "error", err)
 	}
 }
