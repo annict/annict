@@ -43,7 +43,6 @@ import (
 	"github.com/annict/annict/go/internal/handler/supporters_portal"
 	"github.com/annict/annict/go/internal/handler/tracking_heatmap"
 	stripewebhook "github.com/annict/annict/go/internal/handler/webhooks/stripe"
-	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/image"
 	authMiddleware "github.com/annict/annict/go/internal/middleware"
 	"github.com/annict/annict/go/internal/query"
@@ -396,7 +395,7 @@ func runServe() {
 	sentryUserContextMW := authMiddleware.NewSentryUserContextMiddleware()
 	r.Use(sentryUserContextMW.Middleware)
 
-	r.Use(i18n.Middleware) // I18nミドルウェアを追加（ユーザーのlocaleを考慮）
+	r.Use(authMiddleware.I18n) // I18nミドルウェアを追加（ユーザーのlocaleを考慮）
 
 	// 現在パスミドルウェアを追加（サイドバーの現在ページハイライト用に aria-current を付与）
 	r.Use(templates.CurrentPathMiddleware)

@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"io"
-	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
@@ -27,15 +26,10 @@ func TestSimple_Rendering(t *testing.T) {
 		Domain: "annict.test",
 	}
 
-	// i18nミドルウェアを経由してコンテキストを取得
 	req := httptest.NewRequest("GET", "/", nil)
 	req.Header.Set("Accept-Language", "ja")
 
-	var ctx context.Context
-	i18nHandler := i18n.Middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx = r.Context()
-	}))
-	i18nHandler.ServeHTTP(httptest.NewRecorder(), req)
+	ctx := i18n.SetLocale(req.Context(), i18n.DetectLanguage(req))
 
 	meta := viewmodel.DefaultPageMeta(ctx, cfg, req.URL.Path)
 	meta.SetTitle(ctx, "test_page_title")
@@ -93,15 +87,10 @@ func TestSimple_WithFlash(t *testing.T) {
 		Domain: "annict.test",
 	}
 
-	// i18nミドルウェアを経由してコンテキストを取得
 	req := httptest.NewRequest("GET", "/", nil)
 	req.Header.Set("Accept-Language", "ja")
 
-	var ctx context.Context
-	i18nHandler := i18n.Middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx = r.Context()
-	}))
-	i18nHandler.ServeHTTP(httptest.NewRecorder(), req)
+	ctx := i18n.SetLocale(req.Context(), i18n.DetectLanguage(req))
 
 	meta := viewmodel.DefaultPageMeta(ctx, cfg, req.URL.Path)
 
@@ -140,15 +129,10 @@ func TestSimple_WithoutFlash(t *testing.T) {
 		Domain: "annict.test",
 	}
 
-	// i18nミドルウェアを経由してコンテキストを取得
 	req := httptest.NewRequest("GET", "/", nil)
 	req.Header.Set("Accept-Language", "ja")
 
-	var ctx context.Context
-	i18nHandler := i18n.Middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx = r.Context()
-	}))
-	i18nHandler.ServeHTTP(httptest.NewRecorder(), req)
+	ctx := i18n.SetLocale(req.Context(), i18n.DetectLanguage(req))
 
 	meta := viewmodel.DefaultPageMeta(ctx, cfg, req.URL.Path)
 
@@ -191,15 +175,10 @@ func TestSimple_I18n(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// i18nミドルウェアを経由してコンテキストを取得
 			req := httptest.NewRequest("GET", "/", nil)
 			req.Header.Set("Accept-Language", tt.acceptLanguage)
 
-			var ctx context.Context
-			i18nHandler := i18n.Middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				ctx = r.Context()
-			}))
-			i18nHandler.ServeHTTP(httptest.NewRecorder(), req)
+			ctx := i18n.SetLocale(req.Context(), i18n.DetectLanguage(req))
 
 			meta := viewmodel.DefaultPageMeta(ctx, cfg, req.URL.Path)
 
@@ -233,15 +212,10 @@ func TestSimple_AssetVersion(t *testing.T) {
 		Domain: "annict.test",
 	}
 
-	// i18nミドルウェアを経由してコンテキストを取得
 	req := httptest.NewRequest("GET", "/", nil)
 	req.Header.Set("Accept-Language", "ja")
 
-	var ctx context.Context
-	i18nHandler := i18n.Middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx = r.Context()
-	}))
-	i18nHandler.ServeHTTP(httptest.NewRecorder(), req)
+	ctx := i18n.SetLocale(req.Context(), i18n.DetectLanguage(req))
 
 	meta := viewmodel.DefaultPageMeta(ctx, cfg, req.URL.Path)
 

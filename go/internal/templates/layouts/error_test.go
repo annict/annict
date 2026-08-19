@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"io"
-	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
@@ -16,21 +15,18 @@ import (
 )
 
 // errorTestContext returns a context carrying the locale the i18n middleware would have
-// resolved from acceptLanguage.
+// resolved from acceptLanguage. The middleware itself lives in internal/middleware, which
+// depends on this package through internal/httperror, so the resolution is reproduced here
+// rather than imported.
 //
 // [Ja] errorTestContext は i18n ミドルウェアが acceptLanguage から解決したはずのロケールを
-// 持つコンテキストを返す。
+// 持つコンテキストを返す。ミドルウェア自体は internal/middleware にあり、同パッケージは
+// internal/httperror 経由で本パッケージに依存するため、import せずに解決処理を再現している。
 func errorTestContext(acceptLanguage string) context.Context {
 	req := httptest.NewRequest("GET", "/missing", nil)
 	req.Header.Set("Accept-Language", acceptLanguage)
 
-	var ctx context.Context
-	i18nHandler := i18n.Middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx = r.Context()
-	}))
-	i18nHandler.ServeHTTP(httptest.NewRecorder(), req)
-
-	return ctx
+	return i18n.SetLocale(req.Context(), i18n.DetectLanguage(req))
 }
 
 func errorTestContent() templ.Component {

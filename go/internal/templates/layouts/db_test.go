@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"io"
-	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
@@ -32,11 +31,7 @@ func renderDbLayout(t *testing.T, acceptLanguage string) string {
 	req := httptest.NewRequest("GET", "/db/works", nil)
 	req.Header.Set("Accept-Language", acceptLanguage)
 
-	var ctx context.Context
-	i18nHandler := i18n.Middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx = r.Context()
-	}))
-	i18nHandler.ServeHTTP(httptest.NewRecorder(), req)
+	ctx := i18n.SetLocale(req.Context(), i18n.DetectLanguage(req))
 
 	meta := viewmodel.DefaultPageMeta(ctx, cfg, req.URL.Path)
 
