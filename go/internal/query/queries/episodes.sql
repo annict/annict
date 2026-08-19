@@ -511,7 +511,8 @@ FROM updated_episode ue;
 -- GetEpisodeForEditByID; the column still travels so DerivedStatus reads a complete row.
 --
 -- The filters match GetEpisodeForEditByID, so the submit accepts exactly the episodes whose
--- confirmation page is reachable.
+-- confirmation page is reachable. The re-publish submit (UnarchiveDBEpisode) reads the same row
+-- and applies the opposite state condition, so both directions reach the same episodes.
 --
 -- [Ja] 非公開の確認ページと、それに続く送信は同じ行を読む。画面上でエピソードを名指しする
 -- カラム (number / title)、状態のタイムスタンプ、そしてページが親作品から必要とする 2 つの
@@ -524,7 +525,8 @@ FROM updated_episode ue;
 -- 無い行を読めるよう、カラム自体は併せて運ぶ。
 --
 -- 絞り込みは GetEpisodeForEditByID と揃える。確認ページに到達できるエピソードと、送信を
--- 受け付けるエピソードを一致させるため。
+-- 受け付けるエピソードを一致させるため。再公開の送信 (UnarchiveDBEpisode) も同じ行を読み、
+-- 逆向きの状態条件を当てるため、両方向が同じエピソードに届く。
 SELECT
     e.id,
     e.work_id,
@@ -545,7 +547,9 @@ WHERE e.id = $1
 -- confirmation page returns no row instead of re-stamping unpublished_at. The work id is
 -- required to match the parent the confirmation page was built from, so an episode moved to
 -- another work by Annict::DataCare::MoveEpisode in between does not decrement the counter of
--- a work it no longer belongs to.
+-- a work it no longer belongs to. The parent work must also remain undeleted: the
+-- confirmation-page projection excludes deleted works, but its lifecycle can change before this
+-- statement starts or while the episode row is locked by another transaction.
 --
 -- The updated row returns its current anime_id so the dual-write targets the mapping that was
 -- actually archived. A mapping changed after the confirmation-page read must not make the
@@ -553,9 +557,12 @@ WHERE e.id = $1
 --
 -- The Rails unpublish is Episode#update(unpublished_at:), which records no db_activity but
 -- does advance updated_at, touch the parent work through belongs_to :work, touch: true and
--- decrement works.episodes_count through counter_culture. All three are reproduced here, in
--- one statement so the counter cannot drift from the state it counts: the decrement runs
--- exactly for the transition the UPDATE above performed.
+-- decrement works.episodes_count through counter_culture (its column_name lambda counts an
+-- episode only while it is published). All three are reproduced here, in one statement so the
+-- counter cannot drift from the state it counts: the decrement runs exactly for the transition
+-- the UPDATE above performed. The final result depends on the work update succeeding. If a
+-- concurrent soft-delete makes that update skip the parent, :one returns no row and the caller
+-- rolls its transaction back, including the episode update performed by the first CTE.
 --
 -- The rows are written episodes-first and works-second, the order Rails saves them in, so the
 -- two applications queue behind each other on the same work rather than deadlocking. The Go
@@ -568,16 +575,21 @@ WHERE e.id = $1
 -- [Ja] 非公開は、エピソードが今も公開中であることを条件とする。古い確認ページからの送信は
 -- unpublished_at を再スタンプせず、1 行も返さない。作品 id は確認ページが前提とした親作品との
 -- 一致を要求する。その間に Annict::DataCare::MoveEpisode で別作品へ移されたエピソードが、
--- もう所属していない作品のカウンターを減算しないようにするため。
+-- もう所属していない作品のカウンターを減算しないようにするため。親作品も未削除のままであること
+-- を要求する。確認ページ用の射影は削除済み作品を除外するが、作品のライフサイクルは本ステート
+-- メントの開始前や、別のトランザクションが episode 行をロックしている間にも変わり得るため。
 --
 -- 更新した行は現在の anime_id を返す。両書きが、実際に非公開にした時点の写像を対象にするため。
 -- 確認ページの読み取り後に写像が変わっても、送信が以前の anime を更新してはならない。
 --
 -- Rails の非公開は Episode#update(unpublished_at:) であり、db_activity は作らないが、
 -- updated_at を進め、belongs_to :work, touch: true で親作品を touch し、counter_culture で
--- works.episodes_count を減算する。3 つとも本ステートメントで再現する。1 文にまとめるのは、
--- カウンターが数える対象の状態からずれないようにするため (減算は上の UPDATE が実際に行った
--- 遷移に対してだけ走る)。
+-- works.episodes_count を減算する (column_name のラムダは公開中のエピソードだけを数える)。
+-- 3 つとも本ステートメントで再現する。1 文にまとめるのは、カウンターが数える対象の状態から
+-- ずれないようにするため (減算は上の UPDATE が実際に行った遷移に対してだけ走る)。最終結果は
+-- 作品の更新成功にも依存させる。同時の論理削除によって作品の更新がスキップされた場合、:one は
+-- 行を返さず、呼び出し元が最初の CTE による episode の更新も含めてトランザクションをロール
+-- バックする。
 --
 -- 書き込みは episodes が先、works が後で、Rails が保存する順序と同じ。これにより 2 つの
 -- アプリケーションは同じ作品に対してデッドロックせず、順に待ち合う。Go のエピソード更新は
@@ -593,6 +605,12 @@ WITH archived_episode AS (
         AND episodes.work_id = sqlc.arg('work_id')
         AND episodes.unpublished_at IS NULL
         AND episodes.deleted_at IS NULL
+        AND EXISTS (
+            SELECT 1
+            FROM works
+            WHERE works.id = episodes.work_id
+                AND works.deleted_at IS NULL
+        )
     RETURNING episodes.id, episodes.work_id, episodes.anime_id
 ), touched_work AS (
     UPDATE works
@@ -600,9 +618,89 @@ WITH archived_episode AS (
         episodes_count = works.episodes_count - 1,
         updated_at = NOW()
     WHERE works.id IN (SELECT ae.work_id FROM archived_episode ae)
+        AND works.deleted_at IS NULL
+    RETURNING works.id
 )
 SELECT ae.id, ae.anime_id
-FROM archived_episode ae;
+FROM archived_episode ae
+INNER JOIN touched_work tw ON tw.id = ae.work_id;
+
+-- name: UnarchiveDBEpisode :one
+-- Re-publishing is the inverse of ArchiveDBEpisode: it clears the timestamp that one stamps and
+-- gives back the counter that one takes away. Every guard is the same, with the state condition
+-- read the other way round. It is conditional on the episode still being archived, so a submit
+-- from a list opened before someone else re-published it returns no row instead of clearing an
+-- already NULL unpublished_at. The work id is required to match the parent the list named, so an
+-- episode moved to another work by Annict::DataCare::MoveEpisode in between does not increment
+-- the counter of a work it no longer belongs to. The parent work must also remain undeleted: the
+-- pre-transaction projection excludes deleted works, but its lifecycle can change before this
+-- statement starts or while the episode row is locked by another transaction.
+--
+-- The updated row returns its current anime_id so the dual-write targets the mapping that was
+-- actually re-published, not the one the pre-transaction projection observed.
+--
+-- The Rails re-publish is Episode#update(unpublished_at: nil), which records no db_activity but
+-- does advance updated_at, touch the parent work through belongs_to :work, touch: true and
+-- increment works.episodes_count through counter_culture (its column_name lambda counts an
+-- episode only while it is published, so clearing unpublished_at adds the row back). All three
+-- are reproduced here, in one statement so the counter cannot drift from the state it counts:
+-- the increment runs exactly for the transition the UPDATE above performed. The final result
+-- depends on the work update succeeding. If a concurrent soft-delete makes that update skip the
+-- parent, :one returns no row and the caller rolls its transaction back, including the episode
+-- update performed by the first CTE.
+--
+-- The rows are written episodes-first and works-second for the reason ArchiveDBEpisode states.
+--
+-- [Ja] 再公開は ArchiveDBEpisode の逆で、あちらが打つタイムスタンプをクリアし、あちらが引く
+-- カウンターを戻す。ガードはすべて同じで、状態の条件だけを逆向きに読む。エピソードが今も非公開
+-- であることを条件とし、他者が先に再公開した後の一覧からの送信は、すでに NULL の unpublished_at
+-- をクリアせず 1 行も返さない。作品 id は一覧が名指しした親作品との一致を要求する。その間に
+-- Annict::DataCare::MoveEpisode で別作品へ移されたエピソードが、もう所属していない作品の
+-- カウンターを加算しないようにするため。親作品も未削除のままであることを要求する。トランザクション
+-- 前の射影は削除済み作品を除外するが、作品のライフサイクルは本ステートメントの開始前や、別の
+-- トランザクションが episode 行をロックしている間にも変わり得るため。
+--
+-- 更新した行は現在の anime_id を返す。両書きが、トランザクション前の射影が観測した写像では
+-- なく、実際に再公開した時点の写像を対象にするため。
+--
+-- Rails の再公開は Episode#update(unpublished_at: nil) であり、db_activity は作らないが、
+-- updated_at を進め、belongs_to :work, touch: true で親作品を touch し、counter_culture で
+-- works.episodes_count を加算する (column_name のラムダは公開中のエピソードだけを数えるため、
+-- unpublished_at のクリアで行が数え直される)。3 つとも本ステートメントで再現する。1 文に
+-- まとめるのは、カウンターが数える対象の状態からずれないようにするため (加算は上の UPDATE が
+-- 実際に行った遷移に対してだけ走る)。最終結果は作品の更新成功にも依存させる。同時の論理削除に
+-- よって作品の更新がスキップされた場合、:one は行を返さず、呼び出し元が最初の CTE による
+-- episode の更新も含めてトランザクションをロールバックする。
+--
+-- 書き込みが episodes 先・works 後なのは ArchiveDBEpisode が述べる理由による。
+WITH published_episode AS (
+    UPDATE episodes
+    SET
+        unpublished_at = NULL,
+        updated_at = NOW()
+    WHERE episodes.id = sqlc.arg('id')
+        AND episodes.work_id = sqlc.arg('work_id')
+        AND episodes.unpublished_at IS NOT NULL
+        AND episodes.deleted_at IS NULL
+        AND EXISTS (
+            SELECT 1
+            FROM works
+            WHERE works.id = episodes.work_id
+                AND works.deleted_at IS NULL
+        )
+    RETURNING episodes.id, episodes.work_id, episodes.anime_id
+), touched_work AS (
+    UPDATE works
+    SET
+        episodes_count = works.episodes_count + 1,
+        updated_at = NOW()
+    WHERE works.id IN (SELECT pe.work_id FROM published_episode pe)
+        AND works.deleted_at IS NULL
+    RETURNING works.id
+)
+SELECT pe.id, pe.anime_id
+FROM published_episode pe
+INNER JOIN touched_work tw ON tw.id = pe.work_id;
 
 -- name: ListEpisodesForAnimeSyncByIDs :many
 SELECT

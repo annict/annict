@@ -53,6 +53,7 @@ func newTestHandler(t *testing.T, db *sql.DB, tx *sql.Tx) *Handler {
 		testutil.NewTestFlashManager(),
 		usecase.NewGetDBEpisodeArchiveNewUsecase(episodeRepo),
 		usecase.NewArchiveEpisodeUsecase(db, episodeRepo, repository.NewAnimeRepository(poolQueries)),
+		usecase.NewUnarchiveEpisodeUsecase(db, episodeRepo, repository.NewAnimeRepository(poolQueries)),
 	)
 }
 
@@ -112,11 +113,24 @@ func insertArchiveTargetEpisode(t *testing.T, db *sql.DB, workID model.WorkID) m
 	return model.EpisodeID(id)
 }
 
-// readEpisodeUnpublishedAt returns the state column the archive writes, so a test can tell an
-// archived episode from one the submit left alone.
+// archiveTargetEpisode puts an inserted episode into the state the re-publish endpoint starts
+// from, which is also the state the archive endpoints refuse.
 //
-// [Ja] readEpisodeUnpublishedAt は非公開が書く状態カラムを返す。非公開になったエピソードと、
-// 送信が手を触れなかったエピソードをテストが区別できるようにするため。
+// [Ja] archiveTargetEpisode は挿入したエピソードを、再公開エンドポイントが起点とする状態にする。
+// これは非公開エンドポイントが拒否する状態でもある。
+func archiveTargetEpisode(t *testing.T, db *sql.DB, episodeID model.EpisodeID) {
+	t.Helper()
+
+	if _, err := db.Exec(`UPDATE episodes SET unpublished_at = NOW() WHERE id = $1`, int64(episodeID)); err != nil {
+		t.Fatalf("エピソードの非公開化に失敗: %v", err)
+	}
+}
+
+// readEpisodeUnpublishedAt returns the state column the archive and the re-publish write, so a
+// test can tell an episode either of them changed from one the submit left alone.
+//
+// [Ja] readEpisodeUnpublishedAt は非公開と再公開が書く状態カラムを返す。どちらかが変更した
+// エピソードと、送信が手を触れなかったエピソードをテストが区別できるようにするため。
 func readEpisodeUnpublishedAt(t *testing.T, db *sql.DB, episodeID model.EpisodeID) sql.NullTime {
 	t.Helper()
 
@@ -134,6 +148,12 @@ func getRequest(target string) *http.Request {
 
 func postRequest(target string) *http.Request {
 	req := httptest.NewRequest("POST", target, nil)
+	editor := &model.User{ID: 1, Role: model.RoleEditor}
+	return req.WithContext(context.WithValue(req.Context(), authMiddleware.UserContextKey, editor))
+}
+
+func deleteRequest(target string) *http.Request {
+	req := httptest.NewRequest("DELETE", target, nil)
 	editor := &model.User{ID: 1, Role: model.RoleEditor}
 	return req.WithContext(context.WithValue(req.Context(), authMiddleware.UserContextKey, editor))
 }
@@ -294,9 +314,7 @@ func TestNew_NotFound(t *testing.T) {
 	db, tx := testutil.SetupTx(t)
 	workID := insertArchiveTargetWork(t, db)
 	archivedID := insertArchiveTargetEpisode(t, db, workID)
-	if _, err := db.Exec(`UPDATE episodes SET unpublished_at = NOW() WHERE id = $1`, int64(archivedID)); err != nil {
-		t.Fatalf("エピソードの非公開化に失敗: %v", err)
-	}
+	archiveTargetEpisode(t, db, archivedID)
 	handler := newTestHandler(t, db, tx)
 
 	r := chi.NewRouter()
@@ -401,12 +419,136 @@ func TestCreate_Forbidden(t *testing.T) {
 	}
 }
 
-// TestRequiresCommitter verifies both endpoints are gated by the committer role at the HTTP
-// boundary. The archive write usecase repeats the role check for non-HTTP entry points.
+// TestDelete_Success verifies a re-publish submit clears the archived state and lands on the
+// work's episode list, where the editor sees the published row among the others.
 //
-// [Ja] TestRequiresCommitter は HTTP 境界で両エンドポイントが committer ロールによりゲート
-// されていることを検証する。非公開の書き込み UseCase は HTTP 以外の entry point に対しても
-// ロール検査を繰り返す。
+// [Ja] TestDelete_Success は再公開の送信が非公開の状態を解除し、作品のエピソード一覧に着地する
+// ことを検証する。編集者はそこで他の行と並んだ公開後の行を見る。
+func TestDelete_Success(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	workID := insertArchiveTargetWork(t, db)
+	episodeID := insertArchiveTargetEpisode(t, db, workID)
+	archiveTargetEpisode(t, db, episodeID)
+	handler := newTestHandler(t, db, tx)
+
+	r := chi.NewRouter()
+	r.Delete("/db/episodes/{id}/archive", handler.Delete)
+
+	rr := httptest.NewRecorder()
+	r.ServeHTTP(rr, deleteRequest(fmt.Sprintf("/db/episodes/%d/archive", int64(episodeID))))
+
+	if status := rr.Code; status != http.StatusSeeOther {
+		t.Fatalf("status = %d, want %d", status, http.StatusSeeOther)
+	}
+	want := fmt.Sprintf("/db/works/%d/episodes", int64(workID))
+	if location := rr.Header().Get("Location"); location != want {
+		t.Errorf("Location = %q, want %q", location, want)
+	}
+	if unpublishedAt := readEpisodeUnpublishedAt(t, db, episodeID); unpublishedAt.Valid {
+		t.Errorf("episodes.unpublished_at = %v, want NULL", unpublishedAt.Time)
+	}
+}
+
+// TestDelete_HTMX verifies the submit the episode list's publish button makes gets HX-Redirect
+// instead of a redirect htmx would follow and swap into the button.
+//
+// [Ja] TestDelete_HTMX は、エピソード一覧の公開ボタンが行う送信に対し、htmx が追ってボタンに
+// スワップしてしまうリダイレクトではなく HX-Redirect を返すことを検証する。
+func TestDelete_HTMX(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	workID := insertArchiveTargetWork(t, db)
+	episodeID := insertArchiveTargetEpisode(t, db, workID)
+	archiveTargetEpisode(t, db, episodeID)
+	handler := newTestHandler(t, db, tx)
+
+	r := chi.NewRouter()
+	r.Delete("/db/episodes/{id}/archive", handler.Delete)
+
+	req := deleteRequest(fmt.Sprintf("/db/episodes/%d/archive", int64(episodeID)))
+	req.Header.Set("HX-Request", "true")
+	rr := httptest.NewRecorder()
+	r.ServeHTTP(rr, req)
+
+	if status := rr.Code; status != http.StatusNoContent {
+		t.Fatalf("status = %d, want %d", status, http.StatusNoContent)
+	}
+	want := fmt.Sprintf("/db/works/%d/episodes", int64(workID))
+	if redirect := rr.Header().Get("HX-Redirect"); redirect != want {
+		t.Errorf("HX-Redirect = %q, want %q", redirect, want)
+	}
+	if location := rr.Header().Get("Location"); location != "" {
+		t.Errorf("Location = %q, want 空 (htmx は HX-Redirect で遷移する)", location)
+	}
+	if unpublishedAt := readEpisodeUnpublishedAt(t, db, episodeID); unpublishedAt.Valid {
+		t.Errorf("episodes.unpublished_at = %v, want NULL", unpublishedAt.Time)
+	}
+}
+
+// TestDelete_NotFound verifies a submit for an episode that cannot be re-published returns 404
+// rather than reporting a write that did not happen.
+//
+// [Ja] TestDelete_NotFound は、再公開できないエピソードへの送信が、起きなかった書き込みを報告
+// せず 404 を返すことを検証する。
+func TestDelete_NotFound(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	workID := insertArchiveTargetWork(t, db)
+	publishedID := insertArchiveTargetEpisode(t, db, workID)
+	handler := newTestHandler(t, db, tx)
+
+	r := chi.NewRouter()
+	r.Delete("/db/episodes/{id}/archive", handler.Delete)
+
+	for name, target := range map[string]string{
+		"公開中のエピソード":  fmt.Sprintf("/db/episodes/%d/archive", int64(publishedID)),
+		"存在しないエピソード": "/db/episodes/999999999/archive",
+		"数値でない id":   "/db/episodes/abc/archive",
+	} {
+		t.Run(name, func(t *testing.T) {
+			rr := httptest.NewRecorder()
+			r.ServeHTTP(rr, deleteRequest(target))
+
+			if status := rr.Code; status != http.StatusNotFound {
+				t.Errorf("status = %d, want %d", status, http.StatusNotFound)
+			}
+		})
+	}
+}
+
+// TestDelete_Forbidden verifies a direct Handler invocation maps the UseCase authorization
+// failure to 403 instead of exposing it as an internal error.
+//
+// [Ja] TestDelete_Forbidden は Handler の直接呼び出しで UseCase の認可失敗を内部エラーとして
+// 公開せず、403 に変換することを検証する。
+func TestDelete_Forbidden(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	handler := newTestHandler(t, db, tx)
+
+	r := chi.NewRouter()
+	r.Delete("/db/episodes/{id}/archive", handler.Delete)
+
+	rr := httptest.NewRecorder()
+	r.ServeHTTP(rr, httptest.NewRequest("DELETE", "/db/episodes/1/archive", nil))
+
+	if status := rr.Code; status != http.StatusForbidden {
+		t.Errorf("status = %d, want %d", status, http.StatusForbidden)
+	}
+}
+
+// TestRequiresCommitter verifies every endpoint is gated by the committer role at the HTTP
+// boundary. The archive and re-publish write usecases repeat the role check for non-HTTP entry
+// points.
+//
+// [Ja] TestRequiresCommitter は HTTP 境界ですべてのエンドポイントが committer ロールによりゲート
+// されていることを検証する。非公開・再公開の書き込み UseCase は HTTP 以外の entry point に対して
+// もロール検査を繰り返す。
 func TestRequiresCommitter(t *testing.T) {
 	t.Parallel()
 
@@ -420,6 +562,7 @@ func TestRequiresCommitter(t *testing.T) {
 		r.Use(authMiddleware.RequireCommitter)
 		r.Get("/db/episodes/{id}/archive/new", handler.New)
 		r.Post("/db/episodes/{id}/archive", handler.Create)
+		r.Delete("/db/episodes/{id}/archive", handler.Delete)
 	})
 
 	routes := map[string]struct {
@@ -428,6 +571,7 @@ func TestRequiresCommitter(t *testing.T) {
 	}{
 		"確認ページ":  {method: "GET", target: fmt.Sprintf("/db/episodes/%d/archive/new", int64(episodeID))},
 		"非公開の送信": {method: "POST", target: fmt.Sprintf("/db/episodes/%d/archive", int64(episodeID))},
+		"再公開の送信": {method: "DELETE", target: fmt.Sprintf("/db/episodes/%d/archive", int64(episodeID))},
 	}
 	users := []struct {
 		name       string
