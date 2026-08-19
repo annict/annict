@@ -37,6 +37,7 @@ type Handler struct {
 	createEpisodesUC   *usecase.CreateEpisodesUsecase
 	getDBEpisodeEditUC *usecase.GetDBEpisodeEditUsecase
 	updateEpisodeUC    *usecase.UpdateEpisodeUsecase
+	deleteEpisodeUC    *usecase.DeleteEpisodeUsecase
 }
 
 func NewHandler(
@@ -48,6 +49,7 @@ func NewHandler(
 	createEpisodesUC *usecase.CreateEpisodesUsecase,
 	getDBEpisodeEditUC *usecase.GetDBEpisodeEditUsecase,
 	updateEpisodeUC *usecase.UpdateEpisodeUsecase,
+	deleteEpisodeUC *usecase.DeleteEpisodeUsecase,
 ) *Handler {
 	return &Handler{
 		cfg:                cfg,
@@ -58,6 +60,7 @@ func NewHandler(
 		createEpisodesUC:   createEpisodesUC,
 		getDBEpisodeEditUC: getDBEpisodeEditUC,
 		updateEpisodeUC:    updateEpisodeUC,
+		deleteEpisodeUC:    deleteEpisodeUC,
 	}
 }
 

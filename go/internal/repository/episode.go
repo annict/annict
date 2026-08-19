@@ -563,6 +563,87 @@ func (r *EpisodeRepository) Unarchive(ctx context.Context, params UnarchiveEpiso
 	return result, nil
 }
 
+// GetForDeleteByID loads the episode the Annict DB delete endpoint addresses. Deleted episodes
+// and episodes of deleted works are excluded by the query, so (nil, nil) means the id names no
+// episode that endpoint can act on. Both a published and an archived episode are returned: a
+// delete accepts either, so unlike GetForArchiveByID this loader carries no state timestamps for
+// the caller to judge. The returned episode carries the parent the delete is bound to and lands
+// on.
+//
+// [Ja] GetForDeleteByID は Annict DB の削除エンドポイントが対象とするエピソードを読み込む。
+// 削除済みのエピソードと、削除済み作品のエピソードはクエリ側で除外するため、(nil, nil) はその
+// エンドポイントが操作できるエピソードがその id に無いことを表す。公開中のエピソードも非公開の
+// エピソードも返す。削除はどちらも受け付けるため、GetForArchiveByID と違い呼び出し側が判断する
+// 状態のタイムスタンプは運ばない。返すエピソードは、削除を束縛し、成功時に着地する親作品を持つ。
+func (r *EpisodeRepository) GetForDeleteByID(ctx context.Context, id model.EpisodeID) (*model.Episode, error) {
+	row, err := r.queries.GetEpisodeForDeleteByID(ctx, int64(id))
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	return &model.Episode{
+		ID:     model.EpisodeID(row.ID),
+		WorkID: model.WorkID(row.WorkID),
+	}, nil
+}
+
+// DeleteEpisodeParams identifies the episode one delete submit soft-deletes. WorkID is the
+// parent the list the submit came from named; Delete requires the episode to still belong to it,
+// so the counter decrement lands on the work that was counting it.
+//
+// [Ja] DeleteEpisodeParams は 1 回の削除の送信がソフトデリートするエピソードを指定する。WorkID
+// は送信元の一覧が名指しした親作品で、Delete はエピソードが今もそこに属していることを要求する。
+// カウンターの減算を、その行を数えていた作品に当てるため。
+type DeleteEpisodeParams struct {
+	ID     model.EpisodeID
+	WorkID model.WorkID
+}
+
+// DeleteEpisodeResult reports the anime mapping on the episode row that was actually deleted.
+// AnimeID is nil for an episode not yet mapped to the reference model.
+//
+// [Ja] DeleteEpisodeResult は、実際に削除したエピソード行が持つ anime の写像を報告する。
+// 参照モデルへ未マッピングのエピソードでは AnimeID は nil。
+type DeleteEpisodeResult struct {
+	AnimeID *model.AnimeID
+}
+
+// Delete soft-deletes an episode, returning nil when no row matched: the episode is gone, its
+// parent was deleted, it was deleted by someone else since the list was opened, or it no longer
+// belongs to the work that list named. The caller turns that into the same not-found response
+// the list itself gives for an episode it cannot show, rather than reporting a write that did not
+// happen. A successful result carries the anime mapping returned by the updated row, not the
+// pre-transaction projection.
+//
+// [Ja] Delete はエピソードをソフトデリートし、どの行も一致しなかった場合に nil を返す
+// (エピソードが失われた、親作品が削除された、一覧を開いてから他者が削除した、またはその一覧が
+// 名指しした作品にもう属していない)。呼び出し側はこれを、一覧が表示できないエピソードに対して
+// 返すのと同じ not found の応答に変換し、起きなかった書き込みを報告しない。成功時の結果は、
+// トランザクション前の射影ではなく、更新した行が返した anime の写像を運ぶ。
+func (r *EpisodeRepository) Delete(ctx context.Context, params DeleteEpisodeParams) (*DeleteEpisodeResult, error) {
+	row, err := r.queries.DeleteDBEpisode(ctx, query.DeleteDBEpisodeParams{
+		ID:     int64(params.ID),
+		WorkID: int64(params.WorkID),
+	})
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	result := &DeleteEpisodeResult{}
+	if row.AnimeID.Valid {
+		animeID := model.AnimeID(row.AnimeID.Int64)
+		result.AnimeID = &animeID
+	}
+
+	return result, nil
+}
+
 // CreateEpisodeParams holds the attributes for creating an episode. The columns an editor
 // does not fill in (title_ro / title_en / the counter caches / the state timestamps) keep
 // their column defaults, so a created episode starts out published.

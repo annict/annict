@@ -656,20 +656,25 @@ func runServe() {
 	// which is the one action there without authenticate_user!. Creating, editing, archiving
 	// and re-publishing episodes requires the committer role, so the bulk-create form, its
 	// submit, the edit form with its submit and the archive confirmation with its submit and
-	// the re-publish are grouped behind RequireCommitter.
+	// the re-publish are grouped behind RequireCommitter. Deleting an episode is admin-only
+	// (ADR 0009 splits archived=committer / deleted=admin, which is also the split the Rails
+	// EpisodePolicy makes), so it is gated separately behind RequireAdmin.
 	//
 	// [Ja] 作品のエピソード一覧は公開。Rails の Db::EpisodesController#index が同コントローラ
 	// で唯一 authenticate_user! を持たないアクションであることに合わせている。エピソードの作成・
 	// 編集・非公開・再公開は committer ロールを要するため、一括作成フォームとその送信、編集
 	// フォームとその送信、および非公開の確認とその送信・再公開は RequireCommitter でまとめて
-	// ゲートする。
+	// ゲートする。エピソードの削除は admin 専用のため (ADR 0009 で archived=committer /
+	// deleted=admin に権限分離。Rails の EpisodePolicy が行う分割とも同じ)、RequireAdmin で
+	// 別途ゲートする。
 	episodeRepo := repository.NewEpisodeRepository(queries)
 	getDBEpisodesUC := usecase.NewGetDBEpisodesUsecase(workRepo, episodeRepo)
 	getDBEpisodeNewUC := usecase.NewGetDBEpisodeNewUsecase(workRepo)
 	createEpisodesUC := usecase.NewCreateEpisodesUsecase(db, workRepo, episodeRepo, animeRepo, animeClassificationRepo, validator.NewDBEpisodeCreateValidator())
 	getDBEpisodeEditUC := usecase.NewGetDBEpisodeEditUsecase(episodeRepo)
 	updateEpisodeUC := usecase.NewUpdateEpisodeUsecase(db, episodeRepo, animeRepo, animeClassificationRepo, validator.NewDBEpisodeUpdateValidator())
-	dbEpisodeHandler := db_episode.NewHandler(cfg, sessionManager, flashMgr, getDBEpisodesUC, getDBEpisodeNewUC, createEpisodesUC, getDBEpisodeEditUC, updateEpisodeUC)
+	deleteEpisodeUC := usecase.NewDeleteEpisodeUsecase(db, episodeRepo, animeRepo)
+	dbEpisodeHandler := db_episode.NewHandler(cfg, sessionManager, flashMgr, getDBEpisodesUC, getDBEpisodeNewUC, createEpisodesUC, getDBEpisodeEditUC, updateEpisodeUC, deleteEpisodeUC)
 	getDBEpisodeArchiveNewUC := usecase.NewGetDBEpisodeArchiveNewUsecase(episodeRepo)
 	archiveEpisodeUC := usecase.NewArchiveEpisodeUsecase(db, episodeRepo, animeRepo)
 	unarchiveEpisodeUC := usecase.NewUnarchiveEpisodeUsecase(db, episodeRepo, animeRepo)
@@ -684,6 +689,10 @@ func runServe() {
 		r.Get("/db/episodes/{id}/archive/new", dbEpisodeArchiveHandler.New)
 		r.Post("/db/episodes/{id}/archive", dbEpisodeArchiveHandler.Create)
 		r.Delete("/db/episodes/{id}/archive", dbEpisodeArchiveHandler.Delete)
+	})
+	r.Group(func(r chi.Router) {
+		r.Use(authMiddleware.RequireAdmin)
+		r.Delete("/db/episodes/{id}", dbEpisodeHandler.Delete)
 	})
 
 	// iCalendar配信
