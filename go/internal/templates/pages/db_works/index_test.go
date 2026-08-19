@@ -166,7 +166,12 @@ func TestIndex_WithWorks(t *testing.T) {
 		// [Ja] テーブルは colgroup 付きの固定レイアウトを使い、幅指定の無いタイトル列が残り幅を
 		// 吸収する。auto レイアウトでは余白が全列へ分散してしまう。
 		"table-fixed",
-		"min-w-[640px]",
+		// This viewer takes no row action, so the table keeps the narrower of the two floors
+		// (the action column's width is not reserved).
+		//
+		// [Ja] この閲覧者は行の操作を持たないため、テーブルは 2 つの下限のうち狭いほうを保つ
+		// (操作列の幅を確保しない)。
+		"min-w-[544px]",
 		"<colgroup>",
 	}
 
@@ -332,6 +337,41 @@ func renderIndex(t *testing.T, data IndexPageData) string {
 	return buf.String()
 }
 
+func assertActionColumnStructure(t *testing.T, html string, wantActions bool) {
+	t.Helper()
+
+	wantColumns := 4
+	wantMinWidth := "min-w-[544px]"
+	wantAbsentMinWidth := "min-w-[640px]"
+	if wantActions {
+		wantColumns = 5
+		wantMinWidth = "min-w-[640px]"
+		wantAbsentMinWidth = "min-w-[544px]"
+	}
+
+	// Count all three parts of the table structure together. A conditional column must add or
+	// remove its col, header and one data cell per row as a unit so assistive technology sees the
+	// same relationships as the visual layout.
+	//
+	// [Ja] テーブル構造の 3 部分をまとめて数える。条件付きの列は col・見出し・各行のデータ
+	// セルを一体として増減させ、支援技術にも視覚的な配置と同じ関係を伝える必要がある。
+	if got := strings.Count(html, "<col ") + strings.Count(html, "<col>"); got != wantColumns {
+		t.Errorf("列要素数 = %d, want %d", got, wantColumns)
+	}
+	if got := strings.Count(html, "<th "); got != wantColumns {
+		t.Errorf("列見出し数 = %d, want %d", got, wantColumns)
+	}
+	if got, want := strings.Count(html, "<td"), wantColumns*len(actionColumnWorks()); got != want {
+		t.Errorf("データセル数 = %d, want %d", got, want)
+	}
+	if !strings.Contains(html, wantMinWidth) {
+		t.Errorf("テーブルに最小幅 %q がありません", wantMinWidth)
+	}
+	if strings.Contains(html, wantAbsentMinWidth) {
+		t.Errorf("テーブルに不要な最小幅 %q が残っています", wantAbsentMinWidth)
+	}
+}
+
 // TestIndex_ActionColumn_Committer verifies that a committer (non-admin) sees the edit link on
 // every row, the unpublish link (to the confirmation screen) on published rows, and the publish
 // htmx DELETE button on archived rows, but not the admin-only delete button.
@@ -349,8 +389,13 @@ func TestIndex_ActionColumn_Committer(t *testing.T) {
 		IsAdmin:     false,
 		CSRFToken:   "test-csrf-token",
 	})
+	assertActionColumnStructure(t, html, true)
 
 	wantPresent := []string{
+		// The column is announced by its own header.
+		//
+		// [Ja] 列は専用の見出しで示される。
+		`<th scope="col" class="text-center">操作</th>`,
 		// Edit link on both rows.
 		//
 		// [Ja] 両行の編集リンク。
@@ -361,14 +406,24 @@ func TestIndex_ActionColumn_Committer(t *testing.T) {
 		// [Ja] 公開中の行 (1): 確認画面への非公開リンク。
 		`href="/db/works/1/archive/new"`,
 		// Archived row (2): publish is an htmx DELETE against the archive path, with a confirm
-		// dialog and the CSRF token carried in the X-CSRF-Token header.
+		// dialog naming the work and the CSRF token carried in the X-CSRF-Token header.
 		//
-		// [Ja] 非公開の行 (2): 公開は archive パスへの htmx DELETE で、確認ダイアログと
-		// X-CSRF-Token ヘッダーで送る CSRF トークンを伴う。
+		// [Ja] 非公開の行 (2): 公開は archive パスへの htmx DELETE で、対象作品を名指しする
+		// 確認ダイアログと X-CSRF-Token ヘッダーで送る CSRF トークンを伴う。
 		`hx-delete="/db/works/2/archive"`,
-		"この作品を公開しますか",
+		"作品 2 を公開しますか",
 		"X-CSRF-Token",
 		"test-csrf-token",
+		// Every control extends its accessible name with the work it acts on, so a page of rows
+		// does not present controls that all read the same. The visible label stays at the start
+		// of the name.
+		//
+		// [Ja] 各コントロールはアクセシブルネームに対象の作品を足し、行が並ぶページで同じ名前の
+		// コントロールばかりにならないようにする。可視ラベルは名前の先頭に残る。
+		`編集<span class="sr-only"> 作品 1</span>`,
+		`編集<span class="sr-only"> 作品 2</span>`,
+		`非公開<span class="sr-only"> 作品 1</span>`,
+		`公開<span class="sr-only"> 作品 2</span>`,
 	}
 	for _, expected := range wantPresent {
 		if !strings.Contains(html, expected) {
@@ -387,7 +442,7 @@ func TestIndex_ActionColumn_Committer(t *testing.T) {
 		// [Ja] どちらの行にも admin 専用の削除ボタンは無い。
 		`hx-delete="/db/works/1"`,
 		`hx-delete="/db/works/2"`,
-		"この作品を削除しますか",
+		"を削除しますか",
 	}
 	for _, unexpected := range wantAbsent {
 		if strings.Contains(html, unexpected) {
@@ -418,7 +473,9 @@ func TestIndex_ActionColumn_Admin(t *testing.T) {
 		// [Ja] 両行の削除ボタンは work パス (archive パスとは別) を DELETE 対象にする。
 		`hx-delete="/db/works/1"`,
 		`hx-delete="/db/works/2"`,
-		"この作品を削除しますか",
+		"作品 1 を削除しますか",
+		"作品 2 を削除しますか",
+		`削除<span class="sr-only"> 作品 1</span>`,
 		// The committer actions are still present.
 		//
 		// [Ja] committer の操作も引き続き表示される。
@@ -433,11 +490,15 @@ func TestIndex_ActionColumn_Admin(t *testing.T) {
 	}
 }
 
-// TestIndex_ActionColumn_Anonymous verifies that a signed-out or regular visitor sees no action
-// controls (the list itself stays public).
+// TestIndex_ActionColumn_Anonymous verifies that a signed-out or regular visitor gets no action
+// column at all (the list itself stays public). The column is dropped rather than left empty:
+// a header announcing a column that holds nothing is read out on every row, and the table
+// already needs horizontal scrolling at mobile widths.
 //
-// [Ja] TestIndex_ActionColumn_Anonymous は未ログインや一般ユーザーが操作コントロールを一切
-// 見ない (一覧自体は公開のまま) ことを検証する。
+// [Ja] TestIndex_ActionColumn_Anonymous は未ログインや一般ユーザーに操作列そのものが
+// 出ない (一覧自体は公開のまま) ことを検証する。列を空のまま残さず落とすのは、何も入らない列の
+// 見出しが行ごとに読み上げられるうえ、このテーブルがモバイル幅では既に横スクロールを
+// 要するため。
 func TestIndex_ActionColumn_Anonymous(t *testing.T) {
 	t.Parallel()
 
@@ -447,8 +508,10 @@ func TestIndex_ActionColumn_Anonymous(t *testing.T) {
 		IsCommitter: false,
 		IsAdmin:     false,
 	})
+	assertActionColumnStructure(t, html, false)
 
 	wantAbsent := []string{
+		`<th scope="col" class="text-center">操作</th>`,
 		`href="/db/works/1/edit"`,
 		`href="/db/works/1/archive/new"`,
 		"hx-delete=",

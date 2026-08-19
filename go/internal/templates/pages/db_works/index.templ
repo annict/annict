@@ -1,6 +1,7 @@
 package db_works
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/a-h/templ"
@@ -20,11 +21,13 @@ type IndexPageData struct {
 	SeasonFilterOptions []viewmodel.SeasonFilterOption
 	// IsCommitter and IsAdmin gate the action column: committers (admins or editors) see the
 	// edit and unpublish / publish actions, and admins additionally see the delete action.
-	// The work list itself is public, so both are false for signed-out or regular visitors.
+	// The work list itself is public, so both are false for signed-out or regular visitors,
+	// and the column is then left out of the table entirely.
 	//
 	// [Ja] IsCommitter と IsAdmin は操作列の出し分けに使う。committer (管理者または編集者) は
 	// 編集・非公開 / 公開の操作を、管理者はさらに削除の操作を見る。作品一覧自体は公開のため、
-	// 未ログインや一般ユーザーではどちらも false になる。
+	// 未ログインや一般ユーザーではどちらも false になり、そのときは操作列自体をテーブルから
+	// 落とす。
 	IsCommitter bool
 	IsAdmin     bool
 	// CSRFToken is sent via the X-CSRF-Token header on the htmx-issued DELETE requests
@@ -33,6 +36,35 @@ type IndexPageData struct {
 	// [Ja] CSRFToken は htmx が発行する DELETE リクエスト (公開 / 削除) の X-CSRF-Token
 	// ヘッダーで送られ、それらのリクエストが CSRF ミドルウェアを通るようにする。
 	CSRFToken string
+}
+
+// hasRowActions reports whether the viewer may take any per-row action, deciding whether the
+// action column is rendered at all. A viewer with none is not given a column of empty cells:
+// the table already needs horizontal scrolling at mobile widths, and a header announcing a
+// column that holds nothing is read out on every row.
+//
+// [Ja] hasRowActions は閲覧者が行ごとの操作を 1 つでも行えるかを返し、操作列そのものを
+// 描画するかを決める。操作を持たない閲覧者に空のセルだけの列は出さない。このテーブルは
+// モバイル幅では既に横スクロールを要し、何も入らない列の見出しが行ごとに読み上げられて
+// しまうため。
+func (d IndexPageData) hasRowActions() bool {
+	return d.IsCommitter || d.IsAdmin
+}
+
+// tableMinWidthClass returns the width the table keeps before its container starts scrolling
+// horizontally. The action column adds its fixed width (w-24) to that floor, so the title
+// column — the only one without a width, and therefore the one that absorbs the slack — keeps
+// the same room for a viewer who sees the actions as for one who does not.
+//
+// [Ja] tableMinWidthClass はコンテナが横スクロールを始めるまでテーブルが保つ幅を返す。
+// 操作列はその下限に自身の固定幅 (w-24) を上乗せする。これにより、幅指定の無い唯一の列で
+// あり余白を吸収するタイトル列が、操作を見る閲覧者にも見ない閲覧者にも同じ幅を保てる。
+func (d IndexPageData) tableMinWidthClass() string {
+	if d.hasRowActions() {
+		return "min-w-[640px]"
+	}
+
+	return "min-w-[544px]"
 }
 
 templ Index(data IndexPageData) {
@@ -142,7 +174,7 @@ templ Index(data IndexPageData) {
 						aria-label={ templates.T(ctx, "db_works_index_table_caption") }
 						tabindex="0"
 					>
-						<table class="table table-fixed min-w-[640px] [&_th]:px-1 [&_td]:px-1">
+						<table class={ "table table-fixed [&_th]:px-1 [&_td]:px-1", data.tableMinWidthClass() }>
 							<caption class="sr-only">
 								{ templates.T(ctx, "db_works_index_table_caption") }
 							</caption>
@@ -161,7 +193,9 @@ templ Index(data IndexPageData) {
 								<col class="w-20"/>
 								<col/>
 								<col class="w-72"/>
-								<col class="w-24"/>
+								if data.hasRowActions() {
+									<col class="w-24"/>
+								}
 							</colgroup>
 							<thead>
 								<tr>
@@ -169,7 +203,9 @@ templ Index(data IndexPageData) {
 									<th scope="col" class="text-left">{ templates.T(ctx, "db_works_index_table_image_label") }</th>
 									<th scope="col" class="text-left">{ templates.T(ctx, "db_works_index_table_title_label") }</th>
 									<th scope="col" class="text-left">{ templates.T(ctx, "db_works_index_table_info_label") }</th>
-									<th scope="col" class="text-center">{ templates.T(ctx, "db_works_index_table_actions_label") }</th>
+									if data.hasRowActions() {
+										<th scope="col" class="text-center">{ templates.T(ctx, "db_works_index_table_actions_label") }</th>
+									}
 								</tr>
 							</thead>
 							<tbody>
@@ -243,9 +279,11 @@ templ Index(data IndexPageData) {
 												</div>
 											</dl>
 										</td>
-										<td class="text-center">
-											@actionButtons(data, work)
-										</td>
+										if data.hasRowActions() {
+											<td class="text-center">
+												@actionButtons(data, work)
+											</td>
+										}
 									</tr>
 								}
 							</tbody>
@@ -310,13 +348,28 @@ templ externalServiceLink(link viewmodel.ExternalServiceLink) {
 // delete action for admins. Publish and delete are htmx DELETE buttons guarded by a
 // confirmation dialog, with the CSRF token carried in the X-CSRF-Token header; the delete
 // and publish handlers respond with HX-Redirect so htmx navigates back to the list. Unpublish
-// is a plain link to the confirmation screen. Signed-out or regular visitors see an empty cell.
+// is a plain link to the confirmation screen.
+//
+// Every control names the work it acts on in its accessible name; publish and delete also name
+// it in their confirmation. A page of rows therefore does not present controls that all read
+// "Edit" when a screen reader lists them out of their row, and the dialog states which row the
+// press came from. The name is extended with visually hidden text rather than replaced by an
+// aria-label, keeping the visible label at the start of the accessible name (what voice control
+// matches on). The id is what names the work, as in the row's id link: titles are always set but
+// not unique across works.
 //
 // [Ja] actionButtons は作品一覧の行ごとの操作列を描画する。committer には編集リンクと
 // 非公開 (公開中の行) または公開 (非公開の行) の操作を、管理者にはさらに削除の操作を出す。
 // 公開・削除は確認ダイアログ付きの htmx DELETE ボタンで、CSRF トークンは X-CSRF-Token
 // ヘッダーで送り、削除・公開ハンドラーが HX-Redirect を返して htmx が一覧へ遷移する。
-// 非公開は確認画面への素のリンク。未ログインや一般ユーザーには空のセルを表示する。
+// 非公開は確認画面への素のリンク。
+//
+// 各コントロールはアクセシブルネームで対象の作品を名指しし、公開・削除では確認文でも名指しする。
+// スクリーンリーダーが行から切り離してコントロールを列挙したときに「編集」とだけ読める
+// コントロールが並ばず、確認ダイアログもどの行から押されたかを述べるようにするため。
+// aria-label で置き換えず視覚的に隠したテキストで補うのは、可視ラベルをアクセシブルネームの
+// 先頭に残すため (音声操作が照合するのはこの可視ラベル)。名指しに ID を使うのは行の ID リンクと
+// 同じで、タイトルは必ず設定されるが作品間で一意である保証が無いため。
 templ actionButtons(data IndexPageData, work viewmodel.DBWorkListItem) {
 	<div class="flex flex-col items-stretch gap-1.5">
 		if data.IsCommitter {
@@ -327,6 +380,7 @@ templ actionButtons(data IndexPageData, work viewmodel.DBWorkListItem) {
 				data-size="sm"
 			>
 				{ templates.T(ctx, "db_works_index_edit_link") }
+				@actionTarget(work)
 			</a>
 			switch work.Status {
 				case viewmodel.PublishingStatusPublished:
@@ -337,6 +391,7 @@ templ actionButtons(data IndexPageData, work viewmodel.DBWorkListItem) {
 						data-size="sm"
 					>
 						{ templates.T(ctx, "db_works_index_archive_link") }
+						@actionTarget(work)
 					</a>
 				case viewmodel.PublishingStatusArchived:
 					<button
@@ -346,9 +401,10 @@ templ actionButtons(data IndexPageData, work viewmodel.DBWorkListItem) {
 						data-size="sm"
 						hx-delete={ templates.DBWorkArchivePath(work.ID).String() }
 						hx-headers={ templates.HXCSRFHeaders(data.CSRFToken) }
-						hx-confirm={ templates.T(ctx, "db_works_index_publish_confirm") }
+						hx-confirm={ templates.T(ctx, "db_works_index_publish_confirm", map[string]any{"ID": work.ID.String()}) }
 					>
 						{ templates.T(ctx, "db_works_index_publish_button") }
+						@actionTarget(work)
 					</button>
 			}
 		}
@@ -360,12 +416,41 @@ templ actionButtons(data IndexPageData, work viewmodel.DBWorkListItem) {
 				data-size="sm"
 				hx-delete={ templates.DBWorkPath(work.ID).String() }
 				hx-headers={ templates.HXCSRFHeaders(data.CSRFToken) }
-				hx-confirm={ templates.T(ctx, "db_works_index_delete_confirm") }
+				hx-confirm={ templates.T(ctx, "db_works_index_delete_confirm", map[string]any{"ID": work.ID.String()}) }
 			>
 				{ templates.T(ctx, "db_works_index_delete_button") }
+				@actionTarget(work)
 			</button>
 		}
 	</div>
+}
+
+// actionTarget renders the work an action control acts on, for assistive technology only: the
+// column is read in the context of its row on screen, so the id would be repeated noise if
+// shown. Being positioned out of flow, it adds nothing to the control's box either, so the
+// buttons stay the size the column is laid out for.
+//
+// [Ja] actionTarget は操作コントロールの対象作品を、支援技術にのみ向けて描画する。画面上では
+// 列は行の文脈の中で読めるため、ID を表示すると繰り返しのノイズになる。この要素は通常フローから
+// 外れて配置されるため、コントロールの箱にも何も足さず、ボタンは列の想定どおりの大きさのままに
+// なる。
+templ actionTarget(work viewmodel.DBWorkListItem) {
+	<span class="sr-only">{ actionTargetLabel(ctx, work) }</span>
+}
+
+// actionTargetLabel returns the hidden half of an action control's accessible name, led by a
+// space. templ writes the control's visible label and this span with nothing between them, and
+// whether a browser inserts a word boundary there depends on the span being taken out of flow
+// by CSS. The space belongs to the text so the two halves stay separate words even when the
+// stylesheet does not arrive.
+//
+// [Ja] actionTargetLabel は操作コントロールのアクセシブルネームのうち隠された側を、先頭に
+// スペースを付けて返す。templ はコントロールの可視ラベルとこの span を隙間なく書き出すため、
+// ブラウザがそこに語の区切りを入れるかどうかは、この span が CSS によって通常フローから
+// 外れていることに依存する。スペースをテキスト側に持たせることで、スタイルシートが届かない
+// ときも 2 つの半分が別の語として保たれる。
+func actionTargetLabel(ctx context.Context, work viewmodel.DBWorkListItem) string {
+	return " " + templates.T(ctx, "db_works_index_action_target_label", map[string]any{"ID": work.ID.String()})
 }
 
 templ indexNewButton() {
