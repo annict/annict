@@ -1174,6 +1174,10 @@ other = "Open work {{.ID}} in a new tab"
 description = "Aria label for an external service link that opens in a new tab"
 other = "Open {{.Label}} in a new tab"
 
+[db_works_index_action_target_label]
+description = "Work an action link or button on the work list acts on, added to its accessible name and not shown on screen"
+other = "work {{.ID}}"
+
 [db_works_index_edit_link]
 description = "Link from work list to edit form"
 other = "Edit"
@@ -1188,7 +1192,7 @@ other = "Publish"
 
 [db_works_index_publish_confirm]
 description = "Confirmation dialog for the re-publish button on the work list"
-other = "Publish this work?"
+other = "Publish work {{.ID}}?"
 
 [db_works_index_delete_button]
 description = "Delete button on the work list (shown to admins)"
@@ -1196,7 +1200,7 @@ other = "Delete"
 
 [db_works_index_delete_confirm]
 description = "Confirmation dialog for the delete button on the work list"
-other = "Delete this work?"
+other = "Delete work {{.ID}}?"
 
 [db_works_index_empty]
 description = "No works message"
@@ -1297,6 +1301,38 @@ other = "Unknown"
 [db_episodes_index_new_link]
 description = "Link from the episode list to the bulk-create form"
 other = "New"
+
+[db_episodes_index_table_actions_label]
+description = "Table header - Actions"
+other = "Actions"
+
+[db_episodes_index_action_target_label]
+description = "Episode an action link or button on the episode list acts on, added to its accessible name and not shown on screen"
+other = "episode {{.ID}}"
+
+[db_episodes_index_edit_link]
+description = "Link from the episode list to the edit form"
+other = "Edit"
+
+[db_episodes_index_archive_link]
+description = "Link from the episode list to the archive-confirmation screen (shown for published episodes)"
+other = "Unpublish"
+
+[db_episodes_index_publish_button]
+description = "Re-publish button on the episode list (shown for archived episodes)"
+other = "Publish"
+
+[db_episodes_index_publish_confirm]
+description = "Confirmation dialog for the re-publish button on the episode list"
+other = "Publish episode {{.ID}}?"
+
+[db_episodes_index_delete_button]
+description = "Delete button on the episode list (shown to admins)"
+other = "Delete"
+
+[db_episodes_index_delete_confirm]
+description = "Confirmation dialog for the delete button on the episode list"
+other = "Delete episode {{.ID}}?"
 
 [db_episodes_new_title]
 description = "Episode bulk-create page title"
@@ -1699,6 +1735,26 @@ other = "Episode Number Format"
 description = "Form label - No Episodes"
 other = "No Episodes"
 
+[db_works_edit_conflict_heading]
+description = "Heading of the stored values shown on a conflict on the work edit page"
+other = "Currently stored values"
+
+[db_works_edit_conflict_no_field_changes]
+description = "Explanation shown on a conflict where no field of this form differs"
+other = "No field of this form differs. Something outside the form, such as the publishing state, may have been changed."
+
+[db_works_edit_conflict_help]
+description = "Explanation of the available options on a conflict on the work edit page"
+other = "Your input is kept in the form below. Compare it with the currently stored values and, if your input is the one to keep, update again. To keep the stored values instead, leave the page without updating."
+
+[db_works_edit_conflict_checked]
+description = "Value shown for a checked checkbox in the conflict notice on the work edit page"
+other = "On"
+
+[db_works_edit_conflict_unchecked]
+description = "Value shown for an unchecked checkbox in the conflict notice on the work edit page"
+other = "Off"
+
 [db_works_edit_submit]
 description = "Submit button on the edit work page"
 other = "Update"
@@ -1751,6 +1807,14 @@ other = "Episode has been updated successfully"
 [flash_db_episode_archived]
 description = "Episode archive success message"
 other = "Episode has been archived successfully"
+
+[flash_db_episode_published]
+description = "Episode re-publish success message"
+other = "Episode has been published successfully"
+
+[flash_db_episode_deleted]
+description = "Episode deletion success message"
+other = "Episode has been deleted successfully"
 
 # Validation common messages
 [validation_required]
@@ -1911,6 +1975,14 @@ other = "Access denied"
 description = "Explanation on the generic 403 error page"
 other = "You do not have permission to perform this operation."
 
+[error_bad_gateway_title]
+description = "Title of the generic 502 error page"
+other = "Cannot connect to the service"
+
+[error_bad_gateway_message]
+description = "Explanation on the generic 502 error page"
+other = "Please try again later."
+
 [error_internal_server_title]
 description = "Title of the generic 500 error page"
 other = "Something went wrong"
@@ -1918,6 +1990,14 @@ other = "Something went wrong"
 [error_internal_server_message]
 description = "Explanation on the generic 500 error page"
 other = "Please try again later."
+
+[error_invalid_csrf_token_title]
+description = "Title of the error page shown when CSRF verification fails"
+other = "Could not submit the form"
+
+[error_invalid_csrf_token_message]
+description = "Explanation on the error page shown when CSRF verification fails"
+other = "The page may have been left open too long, or you may have signed in again in another tab. Please reopen the page and submit again."
 
 [error_back_to_home]
 description = "Link from a generic error page to the home page"
