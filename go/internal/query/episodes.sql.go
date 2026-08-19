@@ -150,7 +150,7 @@ WITH created_episode AS (
         NOW(),
         NOW()
     )
-    RETURNING id, work_id, number, sort_number, sc_count, title, episode_records_count, created_at, updated_at, prev_episode_id, aasm_state, fetch_syobocal, raw_number, title_ro, title_en, episode_record_bodies_count, score, ratings_count, satisfaction_rate, number_en, deleted_at, unpublished_at, status, archive_message, anime_id
+    RETURNING id, work_id, number, sort_number, sc_count, title, episode_records_count, created_at, updated_at, prev_episode_id, aasm_state, fetch_syobocal, raw_number, title_ro, title_en, episode_record_bodies_count, score, ratings_count, satisfaction_rate, number_en, deleted_at, unpublished_at, anime_id
 ), created_activity AS (
     INSERT INTO db_activities (
         user_id,
@@ -879,8 +879,6 @@ SELECT
     e.number,
     e.sort_number,
     e.raw_number,
-    e.status,
-    e.archive_message,
     e.unpublished_at,
     e.deleted_at,
     e.anime_id,
@@ -892,20 +890,18 @@ ORDER BY e.id
 `
 
 type ListEpisodesForAnimeSyncByIDsRow struct {
-	ID             int64           `db:"id"`
-	WorkID         int64           `db:"work_id"`
-	Title          sql.NullString  `db:"title"`
-	TitleRo        string          `db:"title_ro"`
-	TitleEn        string          `db:"title_en"`
-	Number         sql.NullString  `db:"number"`
-	SortNumber     int32           `db:"sort_number"`
-	RawNumber      sql.NullFloat64 `db:"raw_number"`
-	Status         EpisodeStatus   `db:"status"`
-	ArchiveMessage sql.NullString  `db:"archive_message"`
-	UnpublishedAt  sql.NullTime    `db:"unpublished_at"`
-	DeletedAt      sql.NullTime    `db:"deleted_at"`
-	AnimeID        sql.NullInt64   `db:"anime_id"`
-	ParentAnimeID  sql.NullInt64   `db:"parent_anime_id"`
+	ID            int64           `db:"id"`
+	WorkID        int64           `db:"work_id"`
+	Title         sql.NullString  `db:"title"`
+	TitleRo       string          `db:"title_ro"`
+	TitleEn       string          `db:"title_en"`
+	Number        sql.NullString  `db:"number"`
+	SortNumber    int32           `db:"sort_number"`
+	RawNumber     sql.NullFloat64 `db:"raw_number"`
+	UnpublishedAt sql.NullTime    `db:"unpublished_at"`
+	DeletedAt     sql.NullTime    `db:"deleted_at"`
+	AnimeID       sql.NullInt64   `db:"anime_id"`
+	ParentAnimeID sql.NullInt64   `db:"parent_anime_id"`
 }
 
 func (q *Queries) ListEpisodesForAnimeSyncByIDs(ctx context.Context, dollar_1 []int64) ([]ListEpisodesForAnimeSyncByIDsRow, error) {
@@ -926,8 +922,6 @@ func (q *Queries) ListEpisodesForAnimeSyncByIDs(ctx context.Context, dollar_1 []
 			&i.Number,
 			&i.SortNumber,
 			&i.RawNumber,
-			&i.Status,
-			&i.ArchiveMessage,
 			&i.UnpublishedAt,
 			&i.DeletedAt,
 			&i.AnimeID,
@@ -1123,7 +1117,7 @@ func (q *Queries) UnarchiveDBEpisode(ctx context.Context, arg UnarchiveDBEpisode
 
 const updateDBEpisode = `-- name: UpdateDBEpisode :one
 WITH current_episode AS (
-    SELECT e.id, e.work_id, e.number, e.sort_number, e.sc_count, e.title, e.episode_records_count, e.created_at, e.updated_at, e.prev_episode_id, e.aasm_state, e.fetch_syobocal, e.raw_number, e.title_ro, e.title_en, e.episode_record_bodies_count, e.score, e.ratings_count, e.satisfaction_rate, e.number_en, e.deleted_at, e.unpublished_at, e.status, e.archive_message, e.anime_id
+    SELECT e.id, e.work_id, e.number, e.sort_number, e.sc_count, e.title, e.episode_records_count, e.created_at, e.updated_at, e.prev_episode_id, e.aasm_state, e.fetch_syobocal, e.raw_number, e.title_ro, e.title_en, e.episode_record_bodies_count, e.score, e.ratings_count, e.satisfaction_rate, e.number_en, e.deleted_at, e.unpublished_at, e.anime_id
     FROM episodes e
     WHERE e.id = $1
         AND e.work_id = $2
@@ -1190,7 +1184,7 @@ WITH current_episode AS (
     WHERE episodes.id = ce.id
         AND episodes.deleted_at IS NULL
         AND episodes.updated_at IS NOT DISTINCT FROM $8::timestamptz
-    RETURNING episodes.id, episodes.work_id, episodes.number, episodes.sort_number, episodes.sc_count, episodes.title, episodes.episode_records_count, episodes.created_at, episodes.updated_at, episodes.prev_episode_id, episodes.aasm_state, episodes.fetch_syobocal, episodes.raw_number, episodes.title_ro, episodes.title_en, episodes.episode_record_bodies_count, episodes.score, episodes.ratings_count, episodes.satisfaction_rate, episodes.number_en, episodes.deleted_at, episodes.unpublished_at, episodes.status, episodes.archive_message, episodes.anime_id
+    RETURNING episodes.id, episodes.work_id, episodes.number, episodes.sort_number, episodes.sc_count, episodes.title, episodes.episode_records_count, episodes.created_at, episodes.updated_at, episodes.prev_episode_id, episodes.aasm_state, episodes.fetch_syobocal, episodes.raw_number, episodes.title_ro, episodes.title_en, episodes.episode_record_bodies_count, episodes.score, episodes.ratings_count, episodes.satisfaction_rate, episodes.number_en, episodes.deleted_at, episodes.unpublished_at, episodes.anime_id
 ), crossed_neighbours AS (
     SELECT
         ue.id AS episode_id,

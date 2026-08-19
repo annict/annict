@@ -541,13 +541,13 @@ func TestSyncWorksToAnimesUsecase_Execute_DoesNotClobberAnimeArchivedState(t *te
 	// Simulate the animes-first + works two-write archive path: animes.status is set
 	// to archived and works.unpublished_at is set together. This is the invariant the
 	// derivation fix protects: the reconciler must derive archived from
-	// works.unpublished_at (not the dormant works.status, which stays published) and
-	// therefore leave animes.status = archived untouched instead of reverting it.
+	// works.unpublished_at and therefore leave animes.status = archived untouched
+	// instead of reverting it.
 	//
 	// [Ja] animes-first + works 両書きによる非公開経路を再現する。animes.status を
 	// archived に、works.unpublished_at を同時に立てる。これは導出の是正が守る不変条件で、
-	// リコンシラーは archived を works.unpublished_at から導出し (published のままの休眠
-	// works.status ではなく)、animes.status = archived を published に戻さず据え置く。
+	// リコンシラーは archived を works.unpublished_at から導出し、animes.status = archived
+	// を published に戻さず据え置く。
 	if _, err := db.Exec(`UPDATE works SET unpublished_at = NOW() WHERE id = $1`, int64(workID)); err != nil {
 		t.Fatalf("works.unpublished_at の更新に失敗: %v", err)
 	}

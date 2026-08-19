@@ -70,14 +70,12 @@ type Work struct {
 	// UnpublishedAt / DeletedAt are the source-of-truth state columns for a work
 	// (Unpublishable / SoftDeletable). The phase 2 reconciliation derives
 	// anime.status from them: deleted_at set -> deleted, else unpublished_at set
-	// -> archived, else published. They supersede the dormant works.status column,
-	// which is never written by production code.
+	// -> archived, else published.
 	//
 	// [Ja] UnpublishedAt / DeletedAt は作品の状態を表す正本カラム (Unpublishable /
 	// SoftDeletable)。フェーズ 2 のリコンシリエーションはこれらから anime.status を
 	// 導出する: deleted_at 有 -> deleted、なければ unpublished_at 有 -> archived、
-	// どちらも無ければ published。本番コードから書き込まれない休眠カラム works.status に
-	// 取って代わる。
+	// どちらも無ければ published。
 	UnpublishedAt *time.Time
 	DeletedAt     *time.Time
 
@@ -121,18 +119,18 @@ type Work struct {
 // SoftDeletable timestamps, the source of truth for work state. deleted_at wins over
 // unpublished_at (a deleted work is deleted regardless of publish state), matching the
 // Rails visibility scope only_kept = without_deleted.published (both must be NULL to be
-// published). This is the single place that encodes the timestamp-to-status priority;
-// the dormant works.status column is intentionally not read. Callers map the result onto
-// their own enum (viewmodel.WorkStatus for display, model.AnimeStatus for the anime sync),
-// so the priority never drifts between the list screen and the reconciliation.
+// published). This is the single place that encodes the timestamp-to-status priority.
+// Callers map the result onto their own enum (viewmodel.PublishingStatus for display,
+// model.AnimeStatus for the anime sync), so the priority never drifts between the list
+// screen and the reconciliation.
 //
 // [Ja] DerivedStatus は work の状態の正本である Unpublishable / SoftDeletable タイムスタンプ
 // から作品のライフサイクル状態を導出する。deleted_at が unpublished_at より優先される
 // (削除済みの作品は公開状態に関わらず deleted)。これは Rails の可視性 scope
 // only_kept = without_deleted.published (公開は両方が NULL のとき) に揃う。timestamps から
-// status への優先順位を定めるのはこの 1 箇所で、休眠している works.status カラムは意図的に
-// 読まない。呼び出し側は結果を各自の enum (表示用の viewmodel.WorkStatus、anime 同期用の
-// model.AnimeStatus) に写像するため、一覧画面とリコンシリエーションの間で優先順位がずれない。
+// status への優先順位を定めるのはこの 1 箇所。呼び出し側は結果を各自の enum (表示用の
+// viewmodel.PublishingStatus、anime 同期用の model.AnimeStatus) に写像するため、一覧画面と
+// リコンシリエーションの間で優先順位がずれない。
 func (w *Work) DerivedStatus() WorkStatus {
 	switch {
 	case w.DeletedAt != nil:

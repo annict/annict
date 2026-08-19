@@ -127,15 +127,13 @@ func (r *EpisodeRepository) CountForDB(ctx context.Context, workID model.WorkID)
 }
 
 // episodeFromDBListRow converts an Annict DB list row into *model.Episode. The row
-// is a partial load: the anime mapping columns, the dormant status column and
-// archive_message are not selected and stay at their zero value. The preceding
-// episode's two numbers come from the query's neighbour derivation, so they are nil
-// for the work's first episode.
+// is a partial load: the anime mapping columns are not selected and stay at their
+// zero value. The preceding episode's two numbers come from the query's neighbour
+// derivation, so they are nil for the work's first episode.
 //
 // [Ja] episodeFromDBListRow は Annict DB 一覧の行を *model.Episode に変換する。行は
-// 部分ロードで、anime マッピングカラム・休眠カラム status・archive_message は選択せず
-// ゼロ値のまま残る。直前のエピソードの 2 系統の話数はクエリ側の隣接行の導出に由来し、
-// 作品の最初のエピソードでは nil になる。
+// 部分ロードで、anime マッピングカラムは選択せずゼロ値のまま残る。直前のエピソードの
+// 2 系統の話数はクエリ側の隣接行の導出に由来し、作品の最初のエピソードでは nil になる。
 func episodeFromDBListRow(row query.ListDBEpisodesRow) *model.Episode {
 	episode := &model.Episode{
 		ID:                  model.EpisodeID(row.ID),
@@ -807,15 +805,15 @@ func (r *EpisodeRepository) UpdateAnimeID(ctx context.Context, episodeID model.E
 }
 
 // episodeFromAnimeSyncRow converts an anime-sync query row into *model.Episode.
-// The nullable columns (title / number / raw_number / archive_message /
-// unpublished_at / deleted_at / anime_id / parent_anime_id) are carried as pointers
-// so the sync usecase can distinguish "absent" from a zero value, mirroring how
-// workFromAnimeSyncRow handles works.
+// The nullable columns (title / number / raw_number / unpublished_at / deleted_at /
+// anime_id / parent_anime_id) are carried as pointers so the sync usecase can
+// distinguish "absent" from a zero value, mirroring how workFromAnimeSyncRow handles
+// works.
 //
 // [Ja] episodeFromAnimeSyncRow は anime 同期の query 行を *model.Episode に変換する。
-// NULL 許容カラム (title / number / raw_number / archive_message / unpublished_at /
-// deleted_at / anime_id / parent_anime_id) はポインタで持ち、同期 UseCase が「未設定」と
-// ゼロ値を区別できるようにする。workFromAnimeSyncRow が works を扱うのと同じ方針。
+// NULL 許容カラム (title / number / raw_number / unpublished_at / deleted_at /
+// anime_id / parent_anime_id) はポインタで持ち、同期 UseCase が「未設定」とゼロ値を
+// 区別できるようにする。workFromAnimeSyncRow が works を扱うのと同じ方針。
 func episodeFromAnimeSyncRow(row query.ListEpisodesForAnimeSyncByIDsRow) *model.Episode {
 	episode := &model.Episode{
 		ID:         model.EpisodeID(row.ID),
@@ -823,7 +821,6 @@ func episodeFromAnimeSyncRow(row query.ListEpisodesForAnimeSyncByIDsRow) *model.
 		TitleRo:    row.TitleRo,
 		TitleEn:    row.TitleEn,
 		SortNumber: row.SortNumber,
-		Status:     model.EpisodeStatus(row.Status),
 	}
 	if row.Title.Valid {
 		title := row.Title.String
@@ -836,10 +833,6 @@ func episodeFromAnimeSyncRow(row query.ListEpisodesForAnimeSyncByIDsRow) *model.
 	if row.RawNumber.Valid {
 		rawNumber := row.RawNumber.Float64
 		episode.RawNumber = &rawNumber
-	}
-	if row.ArchiveMessage.Valid {
-		archiveMessage := row.ArchiveMessage.String
-		episode.ArchiveMessage = &archiveMessage
 	}
 	if row.UnpublishedAt.Valid {
 		unpublishedAt := row.UnpublishedAt.Time

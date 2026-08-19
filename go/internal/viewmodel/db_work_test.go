@@ -366,12 +366,12 @@ func TestNewDBWorkListItem(t *testing.T) {
 }
 
 // TestNewDBWorkListItem_StatusFromTimestamps verifies that the display status is
-// derived from the work's unpublished_at / deleted_at timestamps (not the dormant
-// works.status), with deleted_at taking precedence over unpublished_at.
+// derived from the work's unpublished_at / deleted_at timestamps, with deleted_at
+// taking precedence over unpublished_at.
 //
 // [Ja] TestNewDBWorkListItem_StatusFromTimestamps は表示ステータスが work の
-// unpublished_at / deleted_at タイムスタンプ (休眠している works.status ではない) から
-// 導出され、deleted_at が unpublished_at より優先されることを検証する。
+// unpublished_at / deleted_at タイムスタンプから導出され、deleted_at が unpublished_at
+// より優先されることを検証する。
 func TestNewDBWorkListItem_StatusFromTimestamps(t *testing.T) {
 	t.Parallel()
 

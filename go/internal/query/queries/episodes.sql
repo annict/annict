@@ -864,8 +864,6 @@ SELECT
     e.number,
     e.sort_number,
     e.raw_number,
-    e.status,
-    e.archive_message,
     e.unpublished_at,
     e.deleted_at,
     e.anime_id,

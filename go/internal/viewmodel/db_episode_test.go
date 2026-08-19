@@ -409,12 +409,12 @@ func TestNewDBEpisodeListItem_RawNumberFormat(t *testing.T) {
 }
 
 // TestNewDBEpisodeListItem_StatusFromTimestamps verifies that the display status is derived
-// from the episode's unpublished_at / deleted_at timestamps (not the dormant
-// episodes.status), with deleted_at taking precedence over unpublished_at.
+// from the episode's unpublished_at / deleted_at timestamps, with deleted_at taking
+// precedence over unpublished_at.
 //
 // [Ja] TestNewDBEpisodeListItem_StatusFromTimestamps は表示ステータスがエピソードの
-// unpublished_at / deleted_at タイムスタンプ (休眠している episodes.status ではない) から
-// 導出され、deleted_at が unpublished_at より優先されることを検証する。
+// unpublished_at / deleted_at タイムスタンプから導出され、deleted_at が unpublished_at より
+// 優先されることを検証する。
 func TestNewDBEpisodeListItem_StatusFromTimestamps(t *testing.T) {
 	t.Parallel()
 

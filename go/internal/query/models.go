@@ -322,49 +322,6 @@ func (ns NullAnimeStatus) Value() (driver.Value, error) {
 	return string(ns.AnimeStatus), nil
 }
 
-type EpisodeStatus string
-
-const (
-	EpisodeStatusPublished EpisodeStatus = "published"
-	EpisodeStatusArchived  EpisodeStatus = "archived"
-	EpisodeStatusDeleted   EpisodeStatus = "deleted"
-)
-
-func (e *EpisodeStatus) Scan(src interface{}) error {
-	switch s := src.(type) {
-	case []byte:
-		*e = EpisodeStatus(s)
-	case string:
-		*e = EpisodeStatus(s)
-	default:
-		return fmt.Errorf("unsupported scan type for EpisodeStatus: %T", src)
-	}
-	return nil
-}
-
-type NullEpisodeStatus struct {
-	EpisodeStatus EpisodeStatus
-	Valid         bool // Valid is true if EpisodeStatus is not NULL
-}
-
-// Scan implements the Scanner interface.
-func (ns *NullEpisodeStatus) Scan(value interface{}) error {
-	if value == nil {
-		ns.EpisodeStatus, ns.Valid = "", false
-		return nil
-	}
-	ns.Valid = true
-	return ns.EpisodeStatus.Scan(value)
-}
-
-// Value implements the driver Valuer interface.
-func (ns NullEpisodeStatus) Value() (driver.Value, error) {
-	if !ns.Valid {
-		return nil, nil
-	}
-	return string(ns.EpisodeStatus), nil
-}
-
 type Language string
 
 const (
@@ -926,8 +883,6 @@ type Episode struct {
 	NumberEn                 string          `db:"number_en"`
 	DeletedAt                sql.NullTime    `db:"deleted_at"`
 	UnpublishedAt            sql.NullTime    `db:"unpublished_at"`
-	Status                   EpisodeStatus   `db:"status"`
-	ArchiveMessage           sql.NullString  `db:"archive_message"`
 	AnimeID                  sql.NullInt64   `db:"anime_id"`
 }
 
