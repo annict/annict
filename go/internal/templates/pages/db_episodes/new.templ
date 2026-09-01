@@ -116,16 +116,42 @@ func (d NewPageData) hasGlobalError() bool {
 	return d.FormErrors != nil && len(d.FormErrors.Global) > 0
 }
 
+// restrictionTitleKey names the heading of the warning. An administrator is exempt from the
+// disabled form and the rejected submit alike, so the heading says the restriction is the
+// normal state rather than stating a bar the reader does not meet.
+//
+// [Ja] restrictionTitleKey は警告の見出しを名指しする。管理者はフォームの無効化と送信の却下
+// のどちらからも除かれるため、見出しは読み手に当たらない制限を述べるのではなく、制限が通常の
+// 状態であることを述べる形にする。
+func (d NewPageData) restrictionTitleKey() string {
+	if d.IsAdmin {
+		return "db_episodes_new_restriction_admin_title"
+	}
+
+	return "db_episodes_new_restriction_title"
+}
+
 // restrictionMessageKey names the warning that states the reason. The keys are written as
 // literals here so each one stays greppable from the page that renders it; which reason wins
-// is decided once in the domain and arrives resolved.
+// is decided once in the domain and arrives resolved. An administrator gets the wording that
+// states the reason and what registering by hand anyway would mean, since the form stays
+// usable for them.
 //
 // [Ja] restrictionMessageKey は理由を述べる警告を名指しする。キーは直書きし、描画するページ
 // から grep で追える状態に保つ。どの理由が優先されるかはドメイン側で 1 度だけ決まり、解決済み
-// の値として届く。
+// の値として届く。管理者にはフォームが使えるままであるため、理由と、それでも手動で登録した
+// 場合に何が起きるかを述べる文言を渡す。
 func (d NewPageData) restrictionMessageKey() string {
 	if d.ManualCreation == viewmodel.DBEpisodeManualCreationEpisodesFilled {
+		if d.IsAdmin {
+			return "db_episodes_new_restricted_admin_episodes_filled"
+		}
+
 		return "db_episodes_new_restricted_episodes_filled"
+	}
+
+	if d.IsAdmin {
+		return "db_episodes_new_restricted_admin_slots_exist"
 	}
 
 	return "db_episodes_new_restricted_slots_exist"
@@ -186,7 +212,7 @@ templ New(data NewPageData) {
 				if data.showRestrictionWarning() {
 					<div class="alert max-w-2xl" data-variant="warning">
 						@templates.DecorativeIcon("warning")
-						<h2>{ templates.T(ctx, "db_episodes_new_restriction_title") }</h2>
+						<h2>{ templates.T(ctx, data.restrictionTitleKey()) }</h2>
 						<section>
 							<p>{ templates.T(ctx, data.restrictionMessageKey()) }</p>
 						</section>

@@ -1368,13 +1368,25 @@ other = "登録する"
 description = "エピソードを手動登録できないときに表示する警告の見出し"
 other = "手動登録できません"
 
+[db_episodes_new_restriction_admin_title]
+description = "管理者にエピソードの手動登録を勧めないときに表示する警告の見出し"
+other = "通常は手動登録できません"
+
 [db_episodes_new_restricted_episodes_filled]
 description = "作品の予定話数までエピソードが登録済みのときに表示する警告"
 other = "話数分のエピソードがすでに登録されているため、新規登録はできません。"
 
+[db_episodes_new_restricted_admin_episodes_filled]
+description = "作品の予定話数までエピソードが登録済みのときに管理者へ表示する警告"
+other = "話数分のエピソードがすでに登録されています。管理者は手動でも登録できますが、予定総話数を超えることになります。"
+
 [db_episodes_new_restricted_slots_exist]
 description = "放送予定からエピソードが自動生成されるときに表示する警告"
 other = "放送予定が登録されているため、手動によるエピソード登録はできません。エピソードは放送予定の情報を使って自動的に生成されます。"
+
+[db_episodes_new_restricted_admin_slots_exist]
+description = "放送予定からエピソードが自動生成されるときに管理者へ表示する警告"
+other = "放送予定が登録されているため、エピソードは放送予定の情報を使って自動的に生成されます。管理者は手動でも登録できますが、自動生成されるエピソードと重複しないか確認してください。"
 
 [db_episodes_edit_title]
 description = "エピソード編集ページのタイトル"

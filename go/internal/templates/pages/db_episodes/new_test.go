@@ -212,6 +212,7 @@ func TestNew_ManualCreationRestriction(t *testing.T) {
 	tests := []struct {
 		name         string
 		data         NewPageData
+		wantTitle    string
 		wantMessage  string
 		wantDisabled bool
 	}{
@@ -221,7 +222,29 @@ func TestNew_ManualCreationRestriction(t *testing.T) {
 				WorkID:         1,
 				ManualCreation: viewmodel.DBEpisodeManualCreationEpisodesFilled,
 			},
-			wantMessage:  "話数分のエピソードがすでに登録",
+			wantTitle:    "手動登録できません",
+			wantMessage:  "新規登録はできません",
+			wantDisabled: true,
+		},
+		{
+			name: "予定話数到達の管理者",
+			data: NewPageData{
+				WorkID:         1,
+				IsAdmin:        true,
+				ManualCreation: viewmodel.DBEpisodeManualCreationEpisodesFilled,
+			},
+			wantTitle:    "通常は手動登録できません",
+			wantMessage:  "管理者は手動でも登録できますが、予定総話数を超える",
+			wantDisabled: false,
+		},
+		{
+			name: "放送枠がある編集者",
+			data: NewPageData{
+				WorkID:         1,
+				ManualCreation: viewmodel.DBEpisodeManualCreationSlotsExist,
+			},
+			wantTitle:    "手動登録できません",
+			wantMessage:  "手動によるエピソード登録はできません",
 			wantDisabled: true,
 		},
 		{
@@ -231,7 +254,8 @@ func TestNew_ManualCreationRestriction(t *testing.T) {
 				IsAdmin:        true,
 				ManualCreation: viewmodel.DBEpisodeManualCreationSlotsExist,
 			},
-			wantMessage:  "放送予定の情報を使って自動的に生成",
+			wantTitle:    "通常は手動登録できません",
+			wantMessage:  "管理者は手動でも登録できますが、自動生成されるエピソードと重複",
 			wantDisabled: false,
 		},
 	}
@@ -245,8 +269,16 @@ func TestNew_ManualCreationRestriction(t *testing.T) {
 				t.Fatalf("レンダリングエラー: %v", err)
 			}
 			html := buf.String()
-			if !strings.Contains(html, "手動登録できません") || !strings.Contains(html, tt.wantMessage) {
-				t.Errorf("制限理由の警告が表示されていません")
+			// The editor heading is a suffix of the admin one, so the whole element is matched:
+			// substring alone would let the admin wording satisfy the editor case.
+			//
+			// [Ja] 編集者向けの見出しは管理者向けの見出しの後方一致になるため、要素全体で
+			// 照合する。部分一致だけでは管理者向けの文言でも編集者のケースが通ってしまう。
+			if !strings.Contains(html, "<h2>"+tt.wantTitle+"</h2>") {
+				t.Errorf("制限の警告の見出しが %q ではありません", tt.wantTitle)
+			}
+			if !strings.Contains(html, tt.wantMessage) {
+				t.Errorf("制限理由の警告に %q が含まれていません", tt.wantMessage)
 			}
 			// Checking the whole opening tag ties the warning variant to the alert element instead of
 			// accepting the same variant on an unrelated element.

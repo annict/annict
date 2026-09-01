@@ -86,16 +86,22 @@ func TestNew_ManualCreationRestriction(t *testing.T) {
 	tests := []struct {
 		name         string
 		user         *model.User
+		wantTitle    string
+		wantMessage  string
 		wantReadonly bool
 	}{
 		{
 			name:         "編集者には警告してフォームを無効化する",
 			user:         &model.User{ID: 1, Role: model.RoleEditor},
+			wantTitle:    "手動登録できません",
+			wantMessage:  "新規登録はできません",
 			wantReadonly: true,
 		},
 		{
 			name:         "管理者には警告するがフォームを有効に保つ",
 			user:         &model.User{ID: 1, Role: model.RoleAdmin},
+			wantTitle:    "通常は手動登録できません",
+			wantMessage:  "管理者は手動でも登録できますが",
 			wantReadonly: false,
 		},
 	}
@@ -108,8 +114,16 @@ func TestNew_ManualCreationRestriction(t *testing.T) {
 				t.Fatalf("status = %d, want 200", rr.Code)
 			}
 			body := rr.Body.String()
-			if !strings.Contains(body, "手動登録できません") || !strings.Contains(body, "話数分のエピソード") {
-				t.Error("手動作成制限の警告が表示されていません")
+			// The editor heading is a suffix of the admin one, so the whole element is matched:
+			// substring alone would let the admin wording satisfy the editor case.
+			//
+			// [Ja] 編集者向けの見出しは管理者向けの見出しの後方一致になるため、要素全体で
+			// 照合する。部分一致だけでは管理者向けの文言でも編集者のケースが通ってしまう。
+			if !strings.Contains(body, "<h2>"+tt.wantTitle+"</h2>") {
+				t.Errorf("手動作成制限の警告の見出しが %q ではありません", tt.wantTitle)
+			}
+			if !strings.Contains(body, "話数分のエピソード") || !strings.Contains(body, tt.wantMessage) {
+				t.Errorf("手動作成制限の警告に %q が含まれていません", tt.wantMessage)
 			}
 			if got := strings.Contains(body, "readonly"); got != tt.wantReadonly {
 				t.Errorf("readonly = %v, want %v", got, tt.wantReadonly)

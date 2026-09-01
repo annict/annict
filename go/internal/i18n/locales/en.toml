@@ -1369,13 +1369,25 @@ other = "Register"
 description = "Heading of the warning shown when episodes should not be registered manually"
 other = "Manual registration unavailable"
 
+[db_episodes_new_restriction_admin_title]
+description = "Heading of the warning shown to administrators when episodes should not be registered manually"
+other = "Manual registration is normally unavailable"
+
 [db_episodes_new_restricted_episodes_filled]
 description = "Warning shown when the work already has its expected number of episodes"
 other = "Episodes cannot be registered because the expected number of episodes has already been reached."
 
+[db_episodes_new_restricted_admin_episodes_filled]
+description = "Warning shown to administrators when the work already has its expected number of episodes"
+other = "The expected number of episodes has already been registered. Administrators can register more by hand, but doing so goes beyond the expected episode count."
+
 [db_episodes_new_restricted_slots_exist]
 description = "Warning shown when broadcast slots will generate episodes automatically"
 other = "Episodes cannot be registered manually because broadcast schedules exist. Episodes are generated automatically from the schedule information."
+
+[db_episodes_new_restricted_admin_slots_exist]
+description = "Warning shown to administrators when broadcast slots will generate episodes automatically"
+other = "Broadcast schedules exist, so episodes are generated automatically from the schedule information. Administrators can register episodes by hand, but check that they do not duplicate the generated ones."
 
 [db_episodes_edit_title]
 description = "Episode edit page title"
