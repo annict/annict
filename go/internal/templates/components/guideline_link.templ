@@ -1,0 +1,29 @@
+package components
+
+import (
+	"github.com/a-h/templ"
+
+	"github.com/annict/annict/go/internal/templates"
+)
+
+// GuidelineLink renders the link to an editing guideline shown under a page heading, taking
+// the text to display and the URL of the help page it points at. The help pages live outside
+// the app, so the link opens in a new tab with tabnabbing protection and announces that in
+// its accessible name; the icon only repeats it and stays decorative.
+//
+// [Ja] GuidelineLink はページ見出しの下に表示する編集ガイドラインへのリンクを描画する。表示する
+// テキストと、リンク先ヘルプページの URL を受け取る。ヘルプページはアプリの外にあるため、リンクは
+// tabnabbing 対策付きで新しいタブに開き、そのことをアクセシブルネームで伝える。アイコンはそれを
+// 繰り返すだけなので装飾のままとする。
+templ GuidelineLink(label string, url string) {
+	<a
+		href={ templ.URL(url) }
+		target="_blank"
+		rel="noopener"
+		aria-label={ templates.T(ctx, "guideline_link_aria_label", map[string]any{"Label": label}) }
+		class="inline-flex w-fit items-center gap-1 text-sm text-primary hover:underline"
+	>
+		{ label }
+		@templates.DecorativeIcon("arrow-square-out-regular", "w-[18px] h-[18px]")
+	</a>
+}

@@ -1258,8 +1258,13 @@ func TestWorkRepository_GetForEditByID(t *testing.T) {
 	})
 }
 
-// TestWorkRepository_GetForArchiveByID はアーカイブ確認画面用の作品取得をテスト
-func TestWorkRepository_GetForArchiveByID(t *testing.T) {
+// TestWorkRepository_GetForStateChangeByID covers the loader the work state-change
+// confirmation screens share: the title they display and the state source they derive the
+// current status from.
+//
+// [Ja] TestWorkRepository_GetForStateChangeByID は作品の状態変更の確認画面が共有する
+// 取得処理をテストする (画面が表示するタイトルと、現在の状態を導出する状態の source)。
+func TestWorkRepository_GetForStateChangeByID(t *testing.T) {
 	t.Parallel()
 
 	t.Run("公開中の作品を取得できる", func(t *testing.T) {
@@ -1269,9 +1274,9 @@ func TestWorkRepository_GetForArchiveByID(t *testing.T) {
 
 		workID := testutil.NewWorkBuilder(t, tx).WithTitle("アーカイブ確認作品").Build()
 
-		work, err := repo.GetForArchiveByID(context.Background(), workID)
+		work, err := repo.GetForStateChangeByID(context.Background(), workID)
 		if err != nil {
-			t.Fatalf("GetForArchiveByID() error = %v", err)
+			t.Fatalf("GetForStateChangeByID() error = %v", err)
 		}
 		if work == nil {
 			t.Fatal("work should not be nil")
@@ -1299,9 +1304,9 @@ func TestWorkRepository_GetForArchiveByID(t *testing.T) {
 		archivedID := testutil.NewWorkBuilder(t, tx).WithTitle("非公開作品").WithUnpublishedAt(now).Build()
 		deletedID := testutil.NewWorkBuilder(t, tx).WithTitle("削除作品").WithDeletedAt(now).Build()
 
-		archived, err := repo.GetForArchiveByID(context.Background(), archivedID)
+		archived, err := repo.GetForStateChangeByID(context.Background(), archivedID)
 		if err != nil {
-			t.Fatalf("GetForArchiveByID() error = %v", err)
+			t.Fatalf("GetForStateChangeByID() error = %v", err)
 		}
 		if archived == nil || archived.UnpublishedAt == nil {
 			t.Fatalf("archived work should carry UnpublishedAt, got %+v", archived)
@@ -1310,9 +1315,9 @@ func TestWorkRepository_GetForArchiveByID(t *testing.T) {
 			t.Errorf("archived.DerivedStatus() = %q, want archived", archived.DerivedStatus())
 		}
 
-		deleted, err := repo.GetForArchiveByID(context.Background(), deletedID)
+		deleted, err := repo.GetForStateChangeByID(context.Background(), deletedID)
 		if err != nil {
-			t.Fatalf("GetForArchiveByID() error = %v", err)
+			t.Fatalf("GetForStateChangeByID() error = %v", err)
 		}
 		if deleted == nil || deleted.DeletedAt == nil {
 			t.Fatalf("deleted work should carry DeletedAt, got %+v", deleted)
@@ -1327,9 +1332,9 @@ func TestWorkRepository_GetForArchiveByID(t *testing.T) {
 		db, tx := testutil.SetupTx(t)
 		repo := repository.NewWorkRepository(query.New(db).WithTx(tx))
 
-		work, err := repo.GetForArchiveByID(context.Background(), model.WorkID(999999999))
+		work, err := repo.GetForStateChangeByID(context.Background(), model.WorkID(999999999))
 		if err != nil {
-			t.Fatalf("GetForArchiveByID() error = %v", err)
+			t.Fatalf("GetForStateChangeByID() error = %v", err)
 		}
 		if work != nil {
 			t.Errorf("work = %v, want nil", work)
@@ -1803,9 +1808,9 @@ func TestWorkRepository_UpdateUnpublishedAt(t *testing.T) {
 			t.Fatalf("UpdateUnpublishedAt() error = %v", err)
 		}
 
-		work, err := repo.GetForArchiveByID(ctx, workID)
+		work, err := repo.GetForStateChangeByID(ctx, workID)
 		if err != nil || work == nil {
-			t.Fatalf("GetForArchiveByID() work=%v err=%v", work, err)
+			t.Fatalf("GetForStateChangeByID() work=%v err=%v", work, err)
 		}
 		if work.UnpublishedAt == nil {
 			t.Error("work.UnpublishedAt should be set, got nil")
@@ -1824,9 +1829,9 @@ func TestWorkRepository_UpdateUnpublishedAt(t *testing.T) {
 			t.Fatalf("UpdateUnpublishedAt() error = %v", err)
 		}
 
-		work, err := repo.GetForArchiveByID(ctx, workID)
+		work, err := repo.GetForStateChangeByID(ctx, workID)
 		if err != nil || work == nil {
-			t.Fatalf("GetForArchiveByID() work=%v err=%v", work, err)
+			t.Fatalf("GetForStateChangeByID() work=%v err=%v", work, err)
 		}
 		if work.UnpublishedAt != nil {
 			t.Errorf("work.UnpublishedAt = %v, want nil after clearing", work.UnpublishedAt)

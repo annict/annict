@@ -60,7 +60,7 @@ func TestEdit(t *testing.T) {
 		//
 		// [Ja] DB のページはブラウザのタブで公開画面と区別できるよう " | Annict DB" の
 		// タイトルサフィックスを持つ。
-		"<title>作品を編集 | Annict DB</title>",
+		"<title>作品編集 | 編集対象アニメ | Annict DB</title>",
 		"<form",
 		fmt.Sprintf(`action="/db/works/%d"`, int64(workID)),
 		`name="_method"`,
@@ -186,5 +186,39 @@ func TestEdit_RequiresCommitter(t *testing.T) {
 				t.Errorf("status = %d, want %d", rr.Code, tt.wantStatus)
 			}
 		})
+	}
+}
+
+// TestEdit_DocumentTitleWithoutWorkName verifies that a work whose title is only whitespace
+// leaves the document title as the page name alone, the same name the heading falls back to.
+//
+// [Ja] TestEdit_DocumentTitleWithoutWorkName は、タイトルが空白文字だけの作品では文書タイトルが
+// 画面名だけになることを検証する。見出しがフォールバックする名前と同じものになる。
+func TestEdit_DocumentTitleWithoutWorkName(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	workID := testutil.NewWorkBuilder(t, tx).WithTitle(" \t ").Build()
+	handler := newTestHandler(t, db, tx)
+
+	r := chi.NewRouter()
+	r.Get("/db/works/{id}/edit", handler.Edit)
+
+	req := httptest.NewRequest("GET", fmt.Sprintf("/db/works/%d/edit", int64(workID)), nil)
+	rr := httptest.NewRecorder()
+	r.ServeHTTP(rr, req)
+
+	if status := rr.Code; status != http.StatusOK {
+		t.Fatalf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
+	}
+
+	body := rr.Body.String()
+	for _, expected := range []string{
+		"<title>作品編集 | Annict DB</title>",
+		">作品編集</h1>",
+	} {
+		if !strings.Contains(body, expected) {
+			t.Errorf("response doesn't contain expected string: %q", expected)
+		}
 	}
 }

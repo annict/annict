@@ -118,7 +118,7 @@ func TestIndex(t *testing.T) {
 		//
 		// [Ja] DB のページはブラウザのタブで公開画面と区別できるよう " | Annict DB" の
 		// タイトルサフィックスを持つ。
-		"<title>テストアニメ | エピソード | Annict DB</title>",
+		"<title>エピソード | テストアニメ | Annict DB</title>",
 		// The heading names the parent work, and the subnav links back to its form.
 		//
 		// [Ja] 見出しは親作品を名指しし、サブナビはそのフォームへ戻るリンクを持つ。
@@ -355,15 +355,15 @@ func TestIndex_ShowsGenerationNoticeAndDerivedColumns(t *testing.T) {
 	body := rr.Body.String()
 
 	expectedContents := []string{
-		// The notice reports the work's expected total, its published episodes and how far
-		// the auto-generation could number them.
+		// The notice reports the work's expected total, its published episodes and how many
+		// episodes auto-generation produces.
 		//
-		// [Ja] 案内は作品の予定総話数・公開中のエピソード数・自動生成が到達する話数を報告する。
+		// [Ja] 案内は作品の予定総話数・公開中のエピソード数・自動生成されるエピソード数を報告する。
 		"<dt>予定総話数</dt>",
 		`<dd class="text-card-foreground">12</dd>`,
 		"<dt>公開中のエピソード数</dt>",
 		`<dd class="text-card-foreground">2</dd>`,
-		"<dt>生成可能な最大話数</dt>",
+		"<dt>自動生成されるエピソード数</dt>",
 		`<dd class="text-card-foreground">9</dd>`,
 		// The second episode names the first one as its preceding episode, and carries
 		// its records count.
@@ -521,21 +521,21 @@ func TestSetIndexTitle(t *testing.T) {
 			locale:    "ja",
 			workTitle: "テストアニメ",
 			page:      1,
-			want:      "テストアニメ | エピソード | Annict DB",
+			want:      "エピソード | テストアニメ | Annict DB",
 		},
 		{
 			name:      "日本語の2ページ目",
 			locale:    "ja",
 			workTitle: "テストアニメ",
 			page:      2,
-			want:      "テストアニメ | エピソード (2ページ目) | Annict DB",
+			want:      "エピソード (2ページ目) | テストアニメ | Annict DB",
 		},
 		{
 			name:      "英語の2ページ目",
 			locale:    "en",
 			workTitle: "Test Anime",
 			page:      2,
-			want:      "Test Anime | Episodes (Page 2) | Annict DB",
+			want:      "Episodes (Page 2) | Test Anime | Annict DB",
 		},
 		{
 			name:      "空の作品タイトル",
@@ -591,12 +591,12 @@ func TestIndex_Pagination(t *testing.T) {
 		// The first page and its ?page=1 form share one representative URL.
 		//
 		// [Ja] 1 ページ目と ?page=1 の形は 1 つの代表 URL を共有する。
-		{name: "ページ指定なし", query: "", wantCanonical: canonicalTag(workID, ""), wantTitle: "テストアニメ | エピソード | Annict DB"},
-		{name: "page=1", query: "?page=1", wantCanonical: canonicalTag(workID, ""), wantTitle: "テストアニメ | エピソード | Annict DB"},
+		{name: "ページ指定なし", query: "", wantCanonical: canonicalTag(workID, ""), wantTitle: "エピソード | テストアニメ | Annict DB"},
+		{name: "page=1", query: "?page=1", wantCanonical: canonicalTag(workID, ""), wantTitle: "エピソード | テストアニメ | Annict DB"},
 		// A page number that is not a positive integer falls back to the first page.
 		//
 		// [Ja] 正の整数でないページ番号は 1 ページ目にフォールバックする。
-		{name: "不正なページ番号", query: "?page=abc", wantCanonical: canonicalTag(workID, ""), wantTitle: "テストアニメ | エピソード | Annict DB"},
+		{name: "不正なページ番号", query: "?page=abc", wantCanonical: canonicalTag(workID, ""), wantTitle: "エピソード | テストアニメ | Annict DB"},
 	}
 
 	for _, tt := range tests {
@@ -659,7 +659,7 @@ func TestIndex_SecondPage(t *testing.T) {
 
 	for _, expected := range []string{
 		canonicalTag(workID, "?page=2"),
-		"<title>テストアニメ | エピソード (2ページ目) | Annict DB</title>",
+		"<title>エピソード (2ページ目) | テストアニメ | Annict DB</title>",
 		// sort_number ascends with the episode number and the list is sorted descending, so
 		// the second page holds the first episode alone.
 		//

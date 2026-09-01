@@ -69,13 +69,6 @@ func TestNew_FreshForm(t *testing.T) {
 		// 無いため。
 		"autofocus",
 		"一覧に戻る",
-		// The input is described by the format guide, so the instructions reach whoever lands
-		// on the field rather than only whoever reads the page top to bottom.
-		//
-		// [Ja] 入力欄は形式の案内を説明として指すため、案内はページを上から読む人だけでなく、
-		// 入力欄に降り立った人にも届く。
-		`aria-describedby="rows-format-guide"`,
-		`id="rows-format-guide"`,
 	}
 	for _, expected := range expectedContents {
 		if !strings.Contains(html, expected) {
@@ -85,6 +78,17 @@ func TestNew_FreshForm(t *testing.T) {
 
 	if strings.Contains(html, `aria-invalid="true"`) {
 		t.Error("エラーの無いフォームで aria-invalid が付いてはいけません")
+	}
+
+	// The input describes the error messages alone, so a form that collected none names
+	// nothing: an aria-describedby pointing at no element would leave the field with a
+	// description that never resolves.
+	//
+	// [Ja] 入力欄が説明として指すのはエラーメッセージだけであるため、エラーを集めていない
+	// フォームは何も名指ししない。指す先の要素が無い aria-describedby を出すと、解決しない
+	// 説明を欄に持たせることになる。
+	if strings.Contains(html, `aria-describedby="rows-`) {
+		t.Error("エラーの無いフォームで rows 欄に aria-describedby が付いてはいけません")
 	}
 }
 
@@ -174,12 +178,10 @@ func TestNew_WithErrors(t *testing.T) {
 		"1 行目: 数値話数には数値を入力してください",
 		"2 行目: 表示用話数かタイトルを入力してください",
 		`aria-invalid="true"`,
-		// The standing description keeps its place ahead of the errors, and every message
-		// element is named so none of them goes unannounced.
+		// Every message element is named, so none of them goes unannounced.
 		//
-		// [Ja] 常設の説明はエラーの前に残り、メッセージ要素はすべて名指しされて読み上げから
-		// 漏れるものが出ないようにする。
-		`aria-describedby="rows-format-guide rows-error-1 rows-error-2"`,
+		// [Ja] メッセージ要素はすべて名指しされ、読み上げから漏れるものが出ないようにする。
+		`aria-describedby="rows-error-1 rows-error-2"`,
 		`id="rows-error-1"`,
 		`id="rows-error-2"`,
 		// The submitted lines come back so the editor corrects them instead of retyping.
@@ -210,6 +212,7 @@ func TestNew_ManualCreationRestriction(t *testing.T) {
 	tests := []struct {
 		name         string
 		data         NewPageData
+		wantTitle    string
 		wantMessage  string
 		wantDisabled bool
 	}{
@@ -219,7 +222,29 @@ func TestNew_ManualCreationRestriction(t *testing.T) {
 				WorkID:         1,
 				ManualCreation: viewmodel.DBEpisodeManualCreationEpisodesFilled,
 			},
-			wantMessage:  "話数分のエピソードがすでに登録",
+			wantTitle:    "手動登録できません",
+			wantMessage:  "新規登録はできません",
+			wantDisabled: true,
+		},
+		{
+			name: "予定話数到達の管理者",
+			data: NewPageData{
+				WorkID:         1,
+				IsAdmin:        true,
+				ManualCreation: viewmodel.DBEpisodeManualCreationEpisodesFilled,
+			},
+			wantTitle:    "通常は手動登録できません",
+			wantMessage:  "管理者は手動でも登録できますが、予定総話数を超える",
+			wantDisabled: false,
+		},
+		{
+			name: "放送枠がある編集者",
+			data: NewPageData{
+				WorkID:         1,
+				ManualCreation: viewmodel.DBEpisodeManualCreationSlotsExist,
+			},
+			wantTitle:    "手動登録できません",
+			wantMessage:  "手動によるエピソード登録はできません",
 			wantDisabled: true,
 		},
 		{
@@ -229,7 +254,8 @@ func TestNew_ManualCreationRestriction(t *testing.T) {
 				IsAdmin:        true,
 				ManualCreation: viewmodel.DBEpisodeManualCreationSlotsExist,
 			},
-			wantMessage:  "放送予定の情報を使って自動的に生成",
+			wantTitle:    "通常は手動登録できません",
+			wantMessage:  "管理者は手動でも登録できますが、自動生成されるエピソードと重複",
 			wantDisabled: false,
 		},
 	}
@@ -243,8 +269,24 @@ func TestNew_ManualCreationRestriction(t *testing.T) {
 				t.Fatalf("レンダリングエラー: %v", err)
 			}
 			html := buf.String()
-			if !strings.Contains(html, "手動登録できません") || !strings.Contains(html, tt.wantMessage) {
-				t.Errorf("制限理由の警告が表示されていません")
+			// The editor heading is a suffix of the admin one, so the whole element is matched:
+			// substring alone would let the admin wording satisfy the editor case.
+			//
+			// [Ja] 編集者向けの見出しは管理者向けの見出しの後方一致になるため、要素全体で
+			// 照合する。部分一致だけでは管理者向けの文言でも編集者のケースが通ってしまう。
+			if !strings.Contains(html, "<h2>"+tt.wantTitle+"</h2>") {
+				t.Errorf("制限の警告の見出しが %q ではありません", tt.wantTitle)
+			}
+			if !strings.Contains(html, tt.wantMessage) {
+				t.Errorf("制限理由の警告に %q が含まれていません", tt.wantMessage)
+			}
+			// Checking the whole opening tag ties the warning variant to the alert element instead of
+			// accepting the same variant on an unrelated element.
+			//
+			// [Ja] 開始タグ全体を確認し、無関係な要素に同じバリアントがあるだけで
+			// テストが通ることを防ぐ。
+			if !strings.Contains(html, `<div class="alert max-w-2xl" data-variant="warning">`) {
+				t.Error("警告が warning バリアントのアラートとして描画されていません")
 			}
 			if got := strings.Contains(html, "readonly"); got != tt.wantDisabled {
 				t.Errorf("readonly = %v, want %v", got, tt.wantDisabled)
@@ -343,18 +385,16 @@ func TestNew_HeadingFallsBackToPageTitle(t *testing.T) {
 }
 
 // TestNew_FieldsUseBasecoatGroups covers the wrappers of the bulk-create form. The Basecoat
-// Field component is a role="group" element, and the class on its own leaves the grouping out
-// of the accessibility tree, so the label, the format guide and the error messages stop being
-// announced as parts of the same control.
+// Field component is a role="group" element. The class provides styling but no grouping
+// semantics, so each wrapper keeps the role alongside the class.
 //
 // The textarea takes no keyboard hint: one line is one episode, so its Enter key inserts a
 // line break, and labelling that key "next" or "done" would promise a move the key never
 // makes.
 //
 // [Ja] TestNew_FieldsUseBasecoatGroups は一括作成フォームのラッパーを検証する。Basecoat の
-// Field コンポーネントは role="group" の要素であり、クラスだけではグループがアクセシビリティ
-// ツリーに出ないため、ラベル・形式の案内・エラーメッセージが同じコントロールの一部として
-// 読み上げられなくなる。
+// Field コンポーネントは role="group" の要素である。class はスタイルだけを与え、グループの
+// セマンティクスを持たないため、各ラッパーで role を class と合わせて保持する。
 //
 // textarea はキーボードヒントを持たない。1 行が 1 エピソードのため Enter は改行を入れる
 // キーであり、そこに "next" や "done" の札を付けるとキーが行わない移動を約束することになる。
@@ -376,5 +416,69 @@ func TestNew_FieldsUseBasecoatGroups(t *testing.T) {
 
 	if strings.Contains(html, "enterkeyhint") {
 		t.Error("行入力の textarea は Enter で改行を入れるため enterkeyhint を持つべきではありません")
+	}
+}
+
+// TestNew_GuidelineLink verifies that the bulk-create page offers the bulk registration
+// guideline below its heading. The page states the line format nowhere itself, so this link is
+// what an editor follows to learn the column order and the shapes a partly filled line takes.
+//
+// [Ja] TestNew_GuidelineLink は、一括作成ページが見出しの下にエピソードの一括登録ガイドライン
+// への導線を持つことを検証する。ページ自身は行の形式をどこにも述べないため、列の順序や一部
+// だけ入力した行の形を編集者が知るには、このリンクを辿ることになる。
+func TestNew_GuidelineLink(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name      string
+		locale    string
+		label     string
+		ariaLabel string
+	}{
+		{
+			name:      "日本語",
+			locale:    "ja",
+			label:     "エピソードの一括登録ガイドライン",
+			ariaLabel: "エピソードの一括登録ガイドライン を新しいタブで開く",
+		},
+		{
+			name:      "英語",
+			locale:    "en",
+			label:     "Bulk episode registration guidelines",
+			ariaLabel: "Open Bulk episode registration guidelines in a new tab",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			ctx := i18n.SetLocale(context.Background(), tt.locale)
+
+			var buf strings.Builder
+			if err := New(NewPageData{WorkID: 1, WorkName: "テストアニメ"}).Render(ctx, &buf); err != nil {
+				t.Fatalf("レンダリングエラー: %v", err)
+			}
+
+			html := buf.String()
+
+			for _, expected := range []string{
+				// The link names where it goes and points at the bulk registration guideline,
+				// opening it in a new tab with tabnabbing protection so the lines the editor is
+				// entering stay in the form.
+				//
+				// [Ja] リンクは行き先を名乗り、エピソードの一括登録ガイドラインを指す。編集者が
+				// 入力中の行をフォームに残せるよう、tabnabbing 対策付きで新しいタブに開く。
+				">" + tt.label + "<",
+				`href="` + viewmodel.HelpEpisodeBulkCreateURL() + `"`,
+				`aria-label="` + tt.ariaLabel + `"`,
+				`target="_blank"`,
+				`rel="noopener"`,
+			} {
+				if !strings.Contains(html, expected) {
+					t.Errorf("期待する文字列が含まれていません: %q", expected)
+				}
+			}
+		})
 	}
 }

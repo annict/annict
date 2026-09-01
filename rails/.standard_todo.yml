@@ -191,8 +191,6 @@ ignore:
       - Rails/OrderById
   - app/controllers/db/work_images_controller.rb:
       - Rails/SaveBang
-  - app/controllers/db/works_controller.rb:
-      - Rails/OrderById
   - app/controllers/favorite_characters_controller.rb:
       - Rails/OrderById
   - app/controllers/forum/comments_controller.rb:
@@ -708,8 +706,6 @@ ignore:
   - spec/requests/character_fans/index_spec.rb:
       - RSpec/LetSetup
   - spec/requests/db/casts/update_spec.rb:
-      - RSpec/LetSetup
-  - spec/requests/db/episodes/update_spec.rb:
       - RSpec/LetSetup
   - spec/requests/db/programs/update_spec.rb:
       - RSpec/LetSetup

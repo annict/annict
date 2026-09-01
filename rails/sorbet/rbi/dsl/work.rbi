@@ -946,16 +946,7 @@ class Work
     def with(*args, &blk); end
 
     sig { params(args: T.untyped, blk: T.untyped).returns(PrivateAssociationRelation) }
-    def with_no_episodes(*args, &blk); end
-
-    sig { params(args: T.untyped, blk: T.untyped).returns(PrivateAssociationRelation) }
-    def with_no_image(*args, &blk); end
-
-    sig { params(args: T.untyped, blk: T.untyped).returns(PrivateAssociationRelation) }
     def with_no_season(*args, &blk); end
-
-    sig { params(args: T.untyped, blk: T.untyped).returns(PrivateAssociationRelation) }
-    def with_no_slots(*args, &blk); end
 
     sig { params(args: T.untyped, blk: T.untyped).returns(PrivateAssociationRelation) }
     def with_recursive(*args, &blk); end
@@ -3998,16 +3989,7 @@ class Work
     def with(*args, &blk); end
 
     sig { params(args: T.untyped, blk: T.untyped).returns(PrivateRelation) }
-    def with_no_episodes(*args, &blk); end
-
-    sig { params(args: T.untyped, blk: T.untyped).returns(PrivateRelation) }
-    def with_no_image(*args, &blk); end
-
-    sig { params(args: T.untyped, blk: T.untyped).returns(PrivateRelation) }
     def with_no_season(*args, &blk); end
-
-    sig { params(args: T.untyped, blk: T.untyped).returns(PrivateRelation) }
-    def with_no_slots(*args, &blk); end
 
     sig { params(args: T.untyped, blk: T.untyped).returns(PrivateRelation) }
     def with_recursive(*args, &blk); end

@@ -337,7 +337,7 @@ func (v *DBEpisodeUpdateValidator) Validate(ctx context.Context, input DBEpisode
 
 	parsedSortNumber, err := strconv.ParseInt(sortNumber, 10, 32)
 	if err != nil {
-		return nil, fmt.Errorf("並び順の変換に失敗: %w", err)
+		return nil, fmt.Errorf("ソート番号の変換に失敗: %w", err)
 	}
 
 	return &DBEpisodeUpdateValidateOutput{

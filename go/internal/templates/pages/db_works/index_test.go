@@ -17,31 +17,53 @@ import (
 // 新規タブリンクの目印がいくつ出ているかを数えるために使う。
 const newTabIconPath = "M224,104a8,8,0,0,1-16,0V59.32"
 
-// TestIndex_Empty は作品が存在しない場合に表が表示されず空メッセージが表示されることをテスト
+// TestIndex_Empty verifies that an empty work list renders no table and puts the empty state
+// in its place, in each locale the site serves.
+//
+// [Ja] TestIndex_Empty は、作品が無いときに表が描画されず、その位置に空表示が出ることを、
+// サイトが提供する各ロケールで検証する。
 func TestIndex_Empty(t *testing.T) {
 	t.Parallel()
 
-	ctx := context.Background()
-	data := IndexPageData{
-		Works:      []viewmodel.DBWorkListItem{},
-		Pagination: viewmodel.NewPagination(1, 0, 30, "/db/works"),
+	tests := []struct {
+		name    string
+		locale  string
+		heading string
+	}{
+		{name: "日本語", locale: "ja", heading: "作品が見つかりませんでした"},
+		{name: "英語", locale: "en", heading: "No works found"},
 	}
 
-	var buf strings.Builder
-	if err := Index(data).Render(ctx, &buf); err != nil {
-		t.Fatalf("レンダリングエラー: %v", err)
-	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 
-	html := buf.String()
+			ctx := i18n.SetLocale(context.Background(), tt.locale)
+			data := IndexPageData{
+				Works:      []viewmodel.DBWorkListItem{},
+				Pagination: viewmodel.NewPagination(1, 0, 30, "/db/works"),
+			}
 
-	// テーブルが表示されないことを確認
-	if strings.Contains(html, "<table") {
-		t.Error("作品が空の場合は <table> が含まれてはいけません")
-	}
+			var buf strings.Builder
+			if err := Index(data).Render(ctx, &buf); err != nil {
+				t.Fatalf("レンダリングエラー: %v", err)
+			}
 
-	// 空メッセージが表示されることを確認
-	if !strings.Contains(html, "作品が見つかりませんでした") {
-		t.Error("作品が空の場合は空メッセージが表示されるべきです")
+			html := buf.String()
+
+			// テーブルが表示されないことを確認
+			if strings.Contains(html, "<table") {
+				t.Error("作品が空の場合は <table> が含まれてはいけません")
+			}
+
+			if !strings.Contains(html, `<section class="empty">`) {
+				t.Error("作品が空の場合は空表示コンポーネントが表示されるべきです")
+			}
+
+			if want := "<h2>" + tt.heading + "</h2>"; !strings.Contains(html, want) {
+				t.Errorf("作品が空の場合は空表示の見出し %q が表示されるべきです", want)
+			}
+		})
 	}
 }
 

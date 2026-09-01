@@ -192,6 +192,7 @@ templ Edit(data EditPageData) {
 			<div class="flex-1">
 				@components.MainTitle(components.MainTitleData{
 					Title:   data.heading(ctx),
+					Content: components.GuidelineLink(templates.T(ctx, "db_works_edit_guideline_link"), viewmodel.HelpWorkEditingURL()),
 					Actions: editWorkPageLink(data.WorkID),
 				})
 			</div>

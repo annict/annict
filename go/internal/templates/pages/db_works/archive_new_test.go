@@ -24,6 +24,7 @@ func TestArchiveNew(t *testing.T) {
 		CSRFToken: "test-csrf",
 		WorkID:    viewmodel.WorkID(42),
 		Title:     "確認対象アニメ",
+		ReturnTo:  "/db/search?q=test",
 	}
 
 	var buf strings.Builder
@@ -53,6 +54,13 @@ func TestArchiveNew(t *testing.T) {
 		// のバリアントを持つ。
 		`class="btn rounded-full" data-variant="warning"`,
 		`class="btn rounded-full" data-variant="outline"`,
+		// The cancel link and the form both carry the listing the reader came from, so
+		// leaving the confirmation and completing it land on the same page.
+		//
+		// [Ja] キャンセルリンクとフォームの双方が読み手の来た一覧を持ち回るため、確認を
+		// やめた場合も完了した場合も同じページに着地する。
+		`<a href="/db/search?q=test"`,
+		`name="return_to" value="/db/search?q=test"`,
 		// The header renders the sidebar toggle, wired to the sidebar at every viewport size.
 		//
 		// [Ja] ヘッダーはサイドバートグルを描画する。サイドバーに結線され、
@@ -87,7 +95,7 @@ func TestArchiveNew_BlankTitleFallsBackToPageTitle(t *testing.T) {
 	data := ArchiveNewPageData{
 		CSRFToken: "test-csrf",
 		WorkID:    viewmodel.WorkID(42),
-		Title:     "   ",
+		Title:     "",
 	}
 
 	var buf strings.Builder
@@ -97,11 +105,11 @@ func TestArchiveNew_BlankTitleFallsBackToPageTitle(t *testing.T) {
 
 	html := buf.String()
 
-	if !strings.Contains(html, ">作品を非公開にする</h1>") {
+	if !strings.Contains(html, ">作品非公開</h1>") {
 		t.Error("response doesn't fall back to the page title in the heading")
 	}
 
-	if !strings.Contains(html, "「作品を非公開にする」を非公開にしますか？") {
+	if !strings.Contains(html, "「作品非公開」を非公開にしますか？") {
 		t.Error("response doesn't fall back to the page title in the confirmation message")
 	}
 }

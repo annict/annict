@@ -104,14 +104,31 @@ func formatMedia(ctx context.Context, media int32) string {
 	return i18n.T(ctx, key)
 }
 
+// formatSeason returns the release-season display for a work's season_year /
+// season_name pair. A work may carry a year without a season, so the year alone is
+// shown with a note that the season is unregistered, matching the Rails version,
+// which falls back to the yearly label when season_name is blank. An unknown
+// season_name enum value takes the same path. It returns "" when season_year is
+// unset, and the template renders a "-" placeholder in that case.
+//
+// [Ja] formatSeason は work の season_year / season_name の組に対するリリース時期の
+// 表示を返す。年だけが登録された作品があるため、季節が未登録である旨を添えて年のみを
+// 表示する。season_name が空のとき年のラベルにフォールバックする Rails 版に合わせて
+// いる。未知の season_name の enum 値も同じ経路を通る。season_year が未設定のときは
+// "" を返し、テンプレート側で "-" のプレースホルダーを表示する。
 func formatSeason(ctx context.Context, year *int32, name *int32) string {
-	if year == nil || name == nil {
+	if year == nil {
 		return ""
 	}
 
-	seasonKey := seasonLabelKey(*name)
+	seasonKey := ""
+	if name != nil {
+		seasonKey = seasonLabelKey(*name)
+	}
 	if seasonKey == "" {
-		return fmt.Sprintf("%d", *year)
+		return i18n.T(ctx, "year_no_season", map[string]any{
+			"Year": *year,
+		})
 	}
 
 	return i18n.T(ctx, "year_season", map[string]any{

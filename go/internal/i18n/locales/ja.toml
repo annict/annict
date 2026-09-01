@@ -55,6 +55,10 @@ other = "秋"
 description = "年とシーズンの表示形式"
 other = "{{.Year}}年{{.Season}}"
 
+[year_no_season]
+description = "季節が未登録のときの年のみの表示形式"
+other = "{{.Year}}年 (季節未登録)"
+
 # ログイン関連
 [sign_in_title]
 description = "ログインページのタイトル"
@@ -1059,6 +1063,13 @@ other = "入力内容にエラーがあります"
 description = "エラー要約の1項目 (フィールドのラベルとメッセージ)"
 other = "{{.Label}}: {{.Message}}"
 
+# Guideline link
+#
+# [Ja] ガイドラインリンク
+[guideline_link_aria_label]
+description = "ガイドラインのヘルプページへのリンク (新しいタブで開く) の aria-label"
+other = "{{.Label}} を新しいタブで開く"
+
 # 公開状態ラベル関連
 [status_published]
 description = "公開状態 - 公開"
@@ -1202,7 +1213,7 @@ description = "作品一覧の削除ボタンの確認ダイアログ"
 other = "作品 {{.ID}} を削除しますか？"
 
 [db_works_index_empty]
-description = "作品なしメッセージ"
+description = "作品一覧の空表示の見出し"
 other = "作品が見つかりませんでした"
 
 [db_episodes_index_title]
@@ -1215,11 +1226,11 @@ other = "エピソード ({{.Page}}ページ目)"
 
 [db_episodes_index_document_title]
 description = "作品を識別できるエピソード一覧文書タイトル"
-other = "{{.WorkTitle}} | エピソード"
+other = "エピソード | {{.WorkTitle}}"
 
 [db_episodes_index_document_title_paginated]
 description = "2ページ目以降の作品を識別できるエピソード一覧文書タイトル"
-other = "{{.WorkTitle}} | エピソード ({{.Page}}ページ目)"
+other = "エピソード ({{.Page}}ページ目) | {{.WorkTitle}}"
 
 [db_episodes_index_table_caption]
 description = "DB エピソード一覧テーブルの caption とスクロール領域の aria-label"
@@ -1258,8 +1269,8 @@ description = "テーブルヘッダー - 前のエピソード"
 other = "前のエピソード"
 
 [db_episodes_index_table_sort_number_label]
-description = "テーブルヘッダー - 並び順"
-other = "並び順"
+description = "テーブルヘッダー - ソート番号"
+other = "ソート番号"
 
 [db_episodes_index_table_records_count_label]
 description = "テーブルヘッダー - 記録数"
@@ -1274,12 +1285,8 @@ description = "エピソード ID リンク (公開ページを新しいタブ�
 other = "エピソード {{.ID}} を新しいタブで開く"
 
 [db_episodes_index_empty]
-description = "エピソードなしメッセージ"
-other = "エピソードが見つかりませんでした"
-
-[db_episodes_index_generation_heading]
-description = "エピソードの自動生成の案内の見出し"
-other = "エピソードの自動生成"
+description = "エピソード一覧の空表示の見出し"
+other = "エピソードはありません"
 
 [db_episodes_index_generation_planned_label]
 description = "自動生成の案内 - 作品の予定総話数のラベル"
@@ -1290,8 +1297,8 @@ description = "自動生成の案内 - 公開中のエピソード数のラベ�
 other = "公開中のエピソード数"
 
 [db_episodes_index_generation_generatable_label]
-description = "自動生成の案内 - 自動生成で到達できる最大話数のラベル"
-other = "生成可能な最大話数"
+description = "自動生成の案内 - 自動生成されるエピソード数のラベル"
+other = "自動生成されるエピソード数"
 
 [db_episodes_index_generation_unknown]
 description = "自動生成の案内 - 予定総話数が未登録のときに表示する値"
@@ -1339,11 +1346,15 @@ other = "エピソード登録"
 
 [db_episodes_new_document_title]
 description = "作品を識別できるエピソード一括作成の文書タイトル"
-other = "{{.WorkTitle}} | エピソード登録"
+other = "エピソード登録 | {{.WorkTitle}}"
 
 [db_episodes_new_back_to_list_link]
 description = "一括作成ページからエピソード一覧へのリンク"
 other = "一覧に戻る"
+
+[db_episodes_new_guideline_link]
+description = "エピソード一括作成ページからエピソードの一括登録のヘルプページへのリンク"
+other = "エピソードの一括登録ガイドライン"
 
 [db_episodes_new_rows_label]
 description = "一括作成ページの入力欄 (1 行 1 エピソード) のラベル"
@@ -1357,51 +1368,37 @@ other = "登録する"
 description = "エピソードを手動登録できないときに表示する警告の見出し"
 other = "手動登録できません"
 
+[db_episodes_new_restriction_admin_title]
+description = "管理者にエピソードの手動登録を勧めないときに表示する警告の見出し"
+other = "通常は手動登録できません"
+
 [db_episodes_new_restricted_episodes_filled]
 description = "作品の予定話数までエピソードが登録済みのときに表示する警告"
 other = "話数分のエピソードがすでに登録されているため、新規登録はできません。"
+
+[db_episodes_new_restricted_admin_episodes_filled]
+description = "作品の予定話数までエピソードが登録済みのときに管理者へ表示する警告"
+other = "話数分のエピソードがすでに登録されています。管理者は手動でも登録できますが、予定総話数を超えることになります。"
 
 [db_episodes_new_restricted_slots_exist]
 description = "放送予定からエピソードが自動生成されるときに表示する警告"
 other = "放送予定が登録されているため、手動によるエピソード登録はできません。エピソードは放送予定の情報を使って自動的に生成されます。"
 
-[db_episodes_new_format_heading]
-description = "一括作成ページの入力形式の案内の見出し"
-other = "入力の形式"
-
-[db_episodes_new_format_description]
-description = "一括作成ページの入力形式の説明 (列の順序と複数行の入力)"
-other = "1 行につき 1 エピソードを、表示用話数・数値話数・タイトルの順にカンマ (,) で区切って入力します。数値話数には話数から文字や記号を取り除いた数字を入力します (総集編などには 5.5 のような小数も使えます)。行を改行で並べると、複数のエピソードをまとめて登録できます。"
-
-[db_episodes_new_format_example]
-description = "一括作成ページの入力形式の例 (3 列すべてを入力した行)"
-other = """#1,1,教えてティーチャー
-#2,2,もう、お婿にいけません"""
-
-[db_episodes_new_format_partial_description]
-description = "一括作成ページの入力形式の説明 (一部の列だけを入力する場合)"
-other = "一部の列だけを登録することもできます。タイトルの無いエピソードは話数のあとにカンマだけを入力し、話数の無いエピソードはタイトルの前にカンマだけを入力します。"
-
-[db_episodes_new_format_partial_example]
-description = "一括作成ページの入力形式の例 (話数のみの行とタイトルのみの行)"
-other = """#1,1,
-,,双子が3人?"""
+[db_episodes_new_restricted_admin_slots_exist]
+description = "放送予定からエピソードが自動生成されるときに管理者へ表示する警告"
+other = "放送予定が登録されているため、エピソードは放送予定の情報を使って自動的に生成されます。管理者は手動でも登録できますが、自動生成されるエピソードと重複しないか確認してください。"
 
 [db_episodes_edit_title]
 description = "エピソード編集ページのタイトル"
-other = "エピソードを編集"
+other = "エピソード編集"
 
 [db_episodes_edit_document_title]
 description = "表示名のある作品に属するエピソードを識別できる編集ページの文書タイトル"
-other = "{{.EpisodeIdentifier}} | {{.WorkTitle}} | エピソードを編集"
+other = "エピソード編集 | {{.EpisodeIdentifier}} | {{.WorkTitle}}"
 
 [db_episodes_edit_document_title_without_work]
 description = "作品に表示名が無くてもエピソードを識別できる編集ページの文書タイトル"
-other = "{{.EpisodeIdentifier}} | エピソードを編集"
-
-[db_episodes_identifier]
-description = "表示用話数のあるエピソードを文書タイトルで識別するラベル"
-other = "{{.Number}} (ID: {{.EpisodeID}})"
+other = "エピソード編集 | {{.EpisodeIdentifier}}"
 
 [db_episodes_identifier_without_number]
 description = "表示用話数が無いエピソードを文書タイトルで識別するラベル"
@@ -1423,29 +1420,21 @@ other = "ID: {{.EpisodeID}} のエピソード"
 description = "エピソード編集ページからエピソード一覧へのリンク"
 other = "一覧に戻る"
 
+[db_episodes_edit_guideline_link]
+description = "エピソード編集ページからエピソードの編集ガイドラインのヘルプページへのリンク"
+other = "エピソードの編集ガイドライン"
+
 [db_episodes_edit_number_label]
 description = "フォームラベル - 表示用話数"
 other = "表示用話数"
-
-[db_episodes_edit_number_hint]
-description = "エピソード編集ページの表示用話数の書き方の案内"
-other = "「第1話」「Lesson 1」など、その作品で使われている表記に合わせて入力します。表記がわからないときは「第1話」の形で入力します。"
 
 [db_episodes_edit_raw_number_label]
 description = "フォームラベル - 数値話数"
 other = "数値話数"
 
-[db_episodes_edit_raw_number_hint]
-description = "エピソード編集ページの数値話数の書き方の案内"
-other = "話数から文字や記号を取り除いた数字を入力します。総集編などが間に挟まる場合は 5.5 のような小数も使えます。"
-
 [db_episodes_edit_sort_number_label]
-description = "フォームラベル - 並び順"
-other = "並び順"
-
-[db_episodes_edit_sort_number_hint]
-description = "エピソード編集ページの並び順の書き方の案内"
-other = "この番号の小さい順にエピソードを並べます。あとから「12.5 話」が追加されても間に入れられるよう、「話数 × 100」 (第12話なら 1200) のように間隔を空けて入力します。"
+description = "フォームラベル - ソート番号"
+other = "ソート番号"
 
 [db_episodes_edit_title_label]
 description = "フォームラベル - タイトル"
@@ -1470,15 +1459,15 @@ other = "入力した内容は下のフォームにそのまま残していま�
 # DBエピソード非公開確認ページ
 [db_episodes_archive_new_title]
 description = "エピソード非公開確認ページのタイトル"
-other = "エピソードを非公開にする"
+other = "エピソード非公開"
 
 [db_episodes_archive_new_document_title]
 description = "表示名のある作品に属するエピソードを識別できる非公開確認ページの文書タイトル"
-other = "{{.EpisodeIdentifier}} | {{.WorkTitle}} | エピソードを非公開にする"
+other = "エピソード非公開 | {{.EpisodeIdentifier}} | {{.WorkTitle}}"
 
 [db_episodes_archive_new_document_title_without_work]
 description = "作品に表示名が無くてもエピソードを識別できる非公開確認ページの文書タイトル"
-other = "{{.EpisodeIdentifier}} | エピソードを非公開にする"
+other = "エピソード非公開 | {{.EpisodeIdentifier}}"
 
 [db_episodes_archive_new_confirm_message]
 description = "エピソード非公開確認ページの確認メッセージ"
@@ -1509,6 +1498,10 @@ other = "作品登録"
 [db_works_new_back_to_list_link]
 description = "新規作成ページから一覧ページへのリンク"
 other = "一覧に戻る"
+
+[db_works_new_guideline_link]
+description = "作品新規作成ページから作品の編集ガイドラインのヘルプページへのリンク"
+other = "作品の編集ガイドライン"
 
 [db_works_new_title_label]
 description = "フォームラベル - タイトル"
@@ -1599,8 +1592,8 @@ description = "フォームラベル - あらすじの引用元 (英語)"
 other = "あらすじの引用元 (英語)"
 
 [db_works_new_manual_episodes_count_label]
-description = "フォームラベル - 手動エピソード数"
-other = "手動エピソード数"
+description = "フォームラベル - 予定総話数"
+other = "予定総話数"
 
 [db_works_new_start_episode_raw_number_label]
 description = "フォームラベル - 開始エピソード番号"
@@ -1620,7 +1613,11 @@ other = "登録する"
 
 [db_works_edit_title]
 description = "作品編集ページのタイトル"
-other = "作品を編集"
+other = "作品編集"
+
+[db_works_edit_document_title]
+description = "作品を識別できる編集ページの文書タイトル"
+other = "作品編集 | {{.WorkTitle}}"
 
 [db_works_edit_work_page_link]
 description = "編集ページから公開サイトの作品ページへのリンク"
@@ -1629,6 +1626,10 @@ other = "作品ページ"
 [db_works_edit_work_page_link_aria_label]
 description = "編集ページから公開サイトの作品ページへのリンク (新しいタブで開く) の aria-label"
 other = "作品ページを新しいタブで開く"
+
+[db_works_edit_guideline_link]
+description = "作品編集ページから作品の編集ガイドラインのヘルプページへのリンク"
+other = "作品の編集ガイドライン"
 
 [db_works_edit_title_label]
 description = "フォームラベル - タイトル"
@@ -1719,8 +1720,8 @@ description = "フォームラベル - あらすじの引用元 (英語)"
 other = "あらすじの引用元 (英語)"
 
 [db_works_edit_manual_episodes_count_label]
-description = "フォームラベル - 手動エピソード数"
-other = "手動エピソード数"
+description = "フォームラベル - 予定総話数"
+other = "予定総話数"
 
 [db_works_edit_start_episode_raw_number_label]
 description = "フォームラベル - 開始エピソード番号"
@@ -1760,7 +1761,11 @@ other = "更新する"
 
 [db_works_archive_new_title]
 description = "作品非公開確認ページのタイトル"
-other = "作品を非公開にする"
+other = "作品非公開"
+
+[db_works_archive_new_document_title]
+description = "作品を識別できる非公開確認ページの文書タイトル"
+other = "作品非公開 | {{.WorkTitle}}"
 
 [db_works_archive_new_confirm_message]
 description = "非公開確認ページの確認メッセージ"
@@ -1772,6 +1777,46 @@ other = "非公開にする"
 
 [db_works_archive_new_cancel_link]
 description = "非公開確認ページのキャンセルリンク"
+other = "キャンセル"
+
+[db_works_unarchive_new_title]
+description = "作品公開確認ページのタイトル"
+other = "作品公開"
+
+[db_works_unarchive_new_document_title]
+description = "作品を識別できる公開確認ページの文書タイトル"
+other = "作品公開 | {{.WorkTitle}}"
+
+[db_works_unarchive_new_confirm_message]
+description = "公開確認ページの確認メッセージ"
+other = "「{{.Title}}」を公開しますか？"
+
+[db_works_unarchive_new_submit]
+description = "公開確認ページの実行ボタン"
+other = "公開する"
+
+[db_works_unarchive_new_cancel_link]
+description = "公開確認ページのキャンセルリンク"
+other = "キャンセル"
+
+[db_works_deletion_new_title]
+description = "作品削除確認ページのタイトル"
+other = "作品削除"
+
+[db_works_deletion_new_document_title]
+description = "作品を識別できる削除確認ページの文書タイトル"
+other = "作品削除 | {{.WorkTitle}}"
+
+[db_works_deletion_new_confirm_message]
+description = "削除確認ページの確認メッセージ"
+other = "「{{.Title}}」を削除しますか？"
+
+[db_works_deletion_new_submit]
+description = "削除確認ページの実行ボタン"
+other = "削除する"
+
+[db_works_deletion_new_cancel_link]
+description = "削除確認ページのキャンセルリンク"
 other = "キャンセル"
 
 # フラッシュメッセージ - DB作品関連

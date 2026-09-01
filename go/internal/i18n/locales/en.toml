@@ -56,6 +56,10 @@ other = "Fall"
 description = "Year and season format"
 other = "{{.Season}} {{.Year}}"
 
+[year_no_season]
+description = "Year-only format used when the season is unregistered"
+other = "{{.Year}} (No Season)"
+
 # Sign in related
 [sign_in_title]
 description = "Sign in page title"
@@ -1060,6 +1064,13 @@ other = "There is a problem with your input"
 description = "One entry of the error summary (a field label and its message)"
 other = "{{.Label}}: {{.Message}}"
 
+# Guideline link
+#
+# [Ja] ガイドラインリンク
+[guideline_link_aria_label]
+description = "Aria label for a link to a guideline help page that opens in a new tab"
+other = "Open {{.Label}} in a new tab"
+
 # Status label related
 [status_published]
 description = "Status - Published"
@@ -1203,7 +1214,7 @@ description = "Confirmation dialog for the delete button on the work list"
 other = "Delete work {{.ID}}?"
 
 [db_works_index_empty]
-description = "No works message"
+description = "Works list empty-state heading"
 other = "No works found"
 
 [db_episodes_index_title]
@@ -1216,11 +1227,11 @@ other = "Episodes (Page {{.Page}})"
 
 [db_episodes_index_document_title]
 description = "Work-specific episode list document title"
-other = "{{.WorkTitle}} | Episodes"
+other = "Episodes | {{.WorkTitle}}"
 
 [db_episodes_index_document_title_paginated]
 description = "Work-specific episode list document title after the first page"
-other = "{{.WorkTitle}} | Episodes (Page {{.Page}})"
+other = "Episodes (Page {{.Page}}) | {{.WorkTitle}}"
 
 [db_episodes_index_table_caption]
 description = "Caption and scroll-region aria-label for the DB episodes table"
@@ -1275,12 +1286,8 @@ description = "Aria label for the episode ID link that opens the public page in 
 other = "Open episode {{.ID}} in a new tab"
 
 [db_episodes_index_empty]
-description = "No episodes message"
-other = "No episodes found"
-
-[db_episodes_index_generation_heading]
-description = "Heading of the episode auto-generation notice"
-other = "Episode auto-generation"
+description = "Episodes list empty-state heading"
+other = "No episodes"
 
 [db_episodes_index_generation_planned_label]
 description = "Auto-generation notice - label for the work's expected total episode count"
@@ -1291,8 +1298,8 @@ description = "Auto-generation notice - label for the number of published episod
 other = "Published episodes"
 
 [db_episodes_index_generation_generatable_label]
-description = "Auto-generation notice - label for the highest episode number auto-generation can reach"
-other = "Highest episode number available for auto-generation"
+description = "Auto-generation notice - label for the number of episodes auto-generation produces"
+other = "Auto-generated episodes"
 
 [db_episodes_index_generation_unknown]
 description = "Auto-generation notice - value shown when the work records no expected episode count"
@@ -1340,11 +1347,15 @@ other = "Add Episodes"
 
 [db_episodes_new_document_title]
 description = "Work-specific episode bulk-create document title"
-other = "{{.WorkTitle}} | Add Episodes"
+other = "Add Episodes | {{.WorkTitle}}"
 
 [db_episodes_new_back_to_list_link]
 description = "Link from the bulk-create page back to the episode list"
 other = "Back to List"
+
+[db_episodes_new_guideline_link]
+description = "Link from the episode bulk-create page to the bulk episode registration help page"
+other = "Bulk episode registration guidelines"
 
 [db_episodes_new_rows_label]
 description = "Label of the bulk-create input, which takes one episode per line"
@@ -1358,35 +1369,25 @@ other = "Register"
 description = "Heading of the warning shown when episodes should not be registered manually"
 other = "Manual registration unavailable"
 
+[db_episodes_new_restriction_admin_title]
+description = "Heading of the warning shown to administrators when episodes should not be registered manually"
+other = "Manual registration is normally unavailable"
+
 [db_episodes_new_restricted_episodes_filled]
 description = "Warning shown when the work already has its expected number of episodes"
 other = "Episodes cannot be registered because the expected number of episodes has already been reached."
+
+[db_episodes_new_restricted_admin_episodes_filled]
+description = "Warning shown to administrators when the work already has its expected number of episodes"
+other = "The expected number of episodes has already been registered. Administrators can register more by hand, but doing so goes beyond the expected episode count."
 
 [db_episodes_new_restricted_slots_exist]
 description = "Warning shown when broadcast slots will generate episodes automatically"
 other = "Episodes cannot be registered manually because broadcast schedules exist. Episodes are generated automatically from the schedule information."
 
-[db_episodes_new_format_heading]
-description = "Heading of the input format guide on the bulk-create page"
-other = "Input format"
-
-[db_episodes_new_format_description]
-description = "Input format guide on the bulk-create page (column order and multiple lines)"
-other = "Enter one episode per line as the display number, the numeric number and the title, separated by commas (,). The numeric number is the number with letters and symbols removed, and takes decimals such as 5.5 for a recap. Separate lines with line breaks to register several episodes at once."
-
-[db_episodes_new_format_example]
-description = "Input format example on the bulk-create page (lines with all three columns)"
-other = """#1,1,Teach Me Teacher
-#2,2,I Can No Longer Marry"""
-
-[db_episodes_new_format_partial_description]
-description = "Input format guide on the bulk-create page (lines with only some columns)"
-other = "Only some of the columns are required. For an episode with no title, end the line with a comma after the numbers; for an episode with no number, start the line with commas before the title."
-
-[db_episodes_new_format_partial_example]
-description = "Input format example on the bulk-create page (a number-only line and a title-only line)"
-other = """#1,1,
-,,Three Twins?"""
+[db_episodes_new_restricted_admin_slots_exist]
+description = "Warning shown to administrators when broadcast slots will generate episodes automatically"
+other = "Broadcast schedules exist, so episodes are generated automatically from the schedule information. Administrators can register episodes by hand, but check that they do not duplicate the generated ones."
 
 [db_episodes_edit_title]
 description = "Episode edit page title"
@@ -1394,15 +1395,11 @@ other = "Edit Episode"
 
 [db_episodes_edit_document_title]
 description = "Episode-specific edit document title for a named work"
-other = "{{.EpisodeIdentifier}} | {{.WorkTitle}} | Edit Episode"
+other = "Edit Episode | {{.EpisodeIdentifier}} | {{.WorkTitle}}"
 
 [db_episodes_edit_document_title_without_work]
 description = "Episode-specific edit document title for a work without a display name"
-other = "{{.EpisodeIdentifier}} | Edit Episode"
-
-[db_episodes_identifier]
-description = "Label identifying an episode with a display number in a document title"
-other = "{{.Number}} (ID: {{.EpisodeID}})"
+other = "Edit Episode | {{.EpisodeIdentifier}}"
 
 [db_episodes_identifier_without_number]
 description = "Label identifying an episode without a display number in a document title"
@@ -1424,29 +1421,21 @@ other = "episode ID: {{.EpisodeID}}"
 description = "Link from the episode edit page back to the episode list"
 other = "Back to List"
 
+[db_episodes_edit_guideline_link]
+description = "Link from the episode edit page to the episode editing guideline help page"
+other = "Episode editing guidelines"
+
 [db_episodes_edit_number_label]
 description = "Form label - Display number"
 other = "Display number"
-
-[db_episodes_edit_number_hint]
-description = "How to write the display number, shown on the episode edit page"
-other = "Follow the wording the work itself uses, such as \"Episode 1\" or \"Lesson 1\". When the wording is unknown, write it as \"Episode 1\"."
 
 [db_episodes_edit_raw_number_label]
 description = "Form label - Numeric number"
 other = "Numeric number"
 
-[db_episodes_edit_raw_number_hint]
-description = "How to write the numeric number, shown on the episode edit page"
-other = "Enter the display number with its letters and symbols removed. A decimal such as 5.5 can be used for a recap that falls between two episodes."
-
 [db_episodes_edit_sort_number_label]
 description = "Form label - Sort number"
 other = "Sort number"
-
-[db_episodes_edit_sort_number_hint]
-description = "How to write the sort number, shown on the episode edit page"
-other = "Episodes are listed from the smallest of these numbers. Space them out as \"episode number × 100\" (1200 for episode 12) so a later \"12.5\" still fits between two episodes."
 
 [db_episodes_edit_title_label]
 description = "Form label - Title"
@@ -1475,11 +1464,11 @@ other = "Archive Episode"
 
 [db_episodes_archive_new_document_title]
 description = "Episode-specific archive-confirmation document title for a named work"
-other = "{{.EpisodeIdentifier}} | {{.WorkTitle}} | Archive Episode"
+other = "Archive Episode | {{.EpisodeIdentifier}} | {{.WorkTitle}}"
 
 [db_episodes_archive_new_document_title_without_work]
 description = "Episode-specific archive-confirmation document title for a work without a display name"
-other = "{{.EpisodeIdentifier}} | Archive Episode"
+other = "Archive Episode | {{.EpisodeIdentifier}}"
 
 [db_episodes_archive_new_confirm_message]
 description = "Confirmation message on the episode archive-confirmation page"
@@ -1510,6 +1499,10 @@ other = "Add Work"
 [db_works_new_back_to_list_link]
 description = "Link from new work page back to the works index"
 other = "Back to List"
+
+[db_works_new_guideline_link]
+description = "Link from the new work page to the work editing guideline help page"
+other = "Work editing guidelines"
 
 [db_works_new_title_label]
 description = "Form label - Title"
@@ -1600,8 +1593,8 @@ description = "Form label - Synopsis Source (English)"
 other = "Synopsis Source (English)"
 
 [db_works_new_manual_episodes_count_label]
-description = "Form label - Manual Episodes Count"
-other = "Manual Episodes Count"
+description = "Form label - Expected Episodes"
+other = "Expected Episodes"
 
 [db_works_new_start_episode_raw_number_label]
 description = "Form label - Start Episode Raw Number"
@@ -1623,6 +1616,10 @@ other = "Register"
 description = "DB works edit page title"
 other = "Edit Work"
 
+[db_works_edit_document_title]
+description = "Work-specific edit document title"
+other = "Edit Work | {{.WorkTitle}}"
+
 [db_works_edit_work_page_link]
 description = "Link from the edit work page to the work page on the public site"
 other = "Work page"
@@ -1630,6 +1627,10 @@ other = "Work page"
 [db_works_edit_work_page_link_aria_label]
 description = "Aria label for the link that opens the work page on the public site in a new tab"
 other = "Open the work page in a new tab"
+
+[db_works_edit_guideline_link]
+description = "Link from the edit work page to the work editing guideline help page"
+other = "Work editing guidelines"
 
 [db_works_edit_title_label]
 description = "Form label - Title"
@@ -1720,8 +1721,8 @@ description = "Form label - Synopsis Source (English)"
 other = "Synopsis Source (English)"
 
 [db_works_edit_manual_episodes_count_label]
-description = "Form label - Manual Episodes Count"
-other = "Manual Episodes Count"
+description = "Form label - Expected Episodes"
+other = "Expected Episodes"
 
 [db_works_edit_start_episode_raw_number_label]
 description = "Form label - Start Episode Raw Number"
@@ -1763,6 +1764,10 @@ other = "Update"
 description = "Title of the archive-confirmation page"
 other = "Archive Work"
 
+[db_works_archive_new_document_title]
+description = "Work-specific archive-confirmation document title"
+other = "Archive Work | {{.WorkTitle}}"
+
 [db_works_archive_new_confirm_message]
 description = "Confirmation message on the archive-confirmation page"
 other = "Archive “{{.Title}}”?"
@@ -1773,6 +1778,46 @@ other = "Archive"
 
 [db_works_archive_new_cancel_link]
 description = "Cancel link on the archive-confirmation page"
+other = "Cancel"
+
+[db_works_unarchive_new_title]
+description = "Title of the publish-confirmation page"
+other = "Publish Work"
+
+[db_works_unarchive_new_document_title]
+description = "Work-specific publish-confirmation document title"
+other = "Publish Work | {{.WorkTitle}}"
+
+[db_works_unarchive_new_confirm_message]
+description = "Confirmation message on the publish-confirmation page"
+other = "Publish “{{.Title}}”?"
+
+[db_works_unarchive_new_submit]
+description = "Execute button on the publish-confirmation page"
+other = "Publish"
+
+[db_works_unarchive_new_cancel_link]
+description = "Cancel link on the publish-confirmation page"
+other = "Cancel"
+
+[db_works_deletion_new_title]
+description = "Title of the delete-confirmation page"
+other = "Delete Work"
+
+[db_works_deletion_new_document_title]
+description = "Work-specific delete-confirmation document title"
+other = "Delete Work | {{.WorkTitle}}"
+
+[db_works_deletion_new_confirm_message]
+description = "Confirmation message on the delete-confirmation page"
+other = "Delete “{{.Title}}”?"
+
+[db_works_deletion_new_submit]
+description = "Execute button on the delete-confirmation page"
+other = "Delete"
+
+[db_works_deletion_new_cancel_link]
+description = "Cancel link on the delete-confirmation page"
 other = "Cancel"
 
 # Flash messages - DB works related

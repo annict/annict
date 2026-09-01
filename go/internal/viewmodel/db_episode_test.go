@@ -41,14 +41,15 @@ func TestDBEpisodeListWorkName(t *testing.T) {
 	}
 }
 
-// TestDBEpisodeIdentifier verifies the label that opens the document title of a page naming one
-// episode. Both locales are covered because the two formats live in the translation files: a key
-// that went missing from one of them would come back as its own message id rather than as a
-// label.
+// TestDBEpisodeIdentifier verifies the label naming one episode in a document title. The display
+// number is returned as the editor entered it, so it reads the same in both locales; the fallback
+// for an episode without one is a translation, and both locales are covered because a key that
+// went missing from one of them would come back as its own message id rather than as a label.
 //
-// [Ja] TestDBEpisodeIdentifier は 1 件のエピソードを名指しするページの文書タイトル先頭に来る
-// ラベルを検証する。2 つの書式は翻訳ファイルにあるため両ロケールを対象にする。片方から翻訳キーが
-// 抜けた場合、ラベルではなくメッセージ ID がそのまま返るため。
+// [Ja] TestDBEpisodeIdentifier は文書タイトルの中で 1 件のエピソードを名指しするラベルを検証する。
+// 表示用話数は編集者が入力したまま返すため、どちらのロケールでも同じに読める。表示用話数が無い
+// ときのフォールバックは翻訳であり、片方から翻訳キーが抜けるとラベルではなくメッセージ ID が
+// そのまま返るため、両ロケールを対象にする。
 func TestDBEpisodeIdentifier(t *testing.T) {
 	t.Parallel()
 
@@ -60,10 +61,10 @@ func TestDBEpisodeIdentifier(t *testing.T) {
 		want    string
 	}{
 		{
-			name:    "日本語: 表示用話数と ID を含める",
+			name:    "日本語: 表示用話数があればその話数を使う",
 			locale:  "ja",
 			episode: &model.Episode{ID: 123, Number: &number},
-			want:    "第2話 (ID: 123)",
+			want:    "第2話",
 		},
 		{
 			name:    "日本語: 表示用話数が無ければ ID を使う",
@@ -72,10 +73,10 @@ func TestDBEpisodeIdentifier(t *testing.T) {
 			want:    "ID: 456",
 		},
 		{
-			name:    "英語: 表示用話数と ID を含める",
+			name:    "英語: 表示用話数があればその話数を使う",
 			locale:  "en",
 			episode: &model.Episode{ID: 123, Number: &number},
-			want:    "第2話 (ID: 123)",
+			want:    "第2話",
 		},
 		{
 			name:    "英語: 表示用話数が無ければ ID を使う",

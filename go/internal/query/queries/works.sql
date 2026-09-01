@@ -35,7 +35,16 @@ SELECT
 FROM works
 WHERE id = $1;
 
--- name: GetWorkForArchiveByID :one
+-- name: GetWorkForStateChangeByID :one
+-- The projection the Annict DB confirmation screens for a work's state changes (archive,
+-- publish, delete) share: the title each screen names its target with, and the work-state
+-- source the caller derives the current status from to reject a work its action cannot act
+-- on. No state is filtered here, since the three screens each accept a different one.
+--
+-- [Ja] Annict DB の作品の状態変更 (非公開・公開・削除) の確認画面が共有する射影。各画面が対象を
+-- 名指しするタイトルと、呼び出し側が現在の状態を導出してその操作を適用できない作品を弾くための
+-- 作品状態の source を運ぶ。3 つの画面が受け付ける状態はそれぞれ異なるため、ここでは状態を
+-- 絞り込まない。
 SELECT
     id,
     title,
@@ -87,8 +96,8 @@ WHERE id = $1;
 -- max_generatable_episode_number takes MAX, which skips NULLs, where the Rails notice reads
 -- the first of the work's kept slots ordered by number descending. PostgreSQL sorts NULLs
 -- first for DESC, so Rails lands on a NULL number and reports 0 as soon as the work has one
--- kept slot without a number. The label names the highest number the auto-generation can
--- reach, so keeping MAX here is deliberate rather than a gap in the port.
+-- kept slot without a number. MAX reports the number the auto-generation actually reaches,
+-- so the divergence from Rails is deliberate rather than a gap in the port.
 --
 -- [Ja] published_episode_count と max_generatable_episode_number はエピソード一覧の自動生成の
 -- 案内に使う。前者は作品のエピソードのうち現在公開中の件数、後者はしょぼいカレンダー由来の
@@ -98,7 +107,7 @@ WHERE id = $1;
 -- max_generatable_episode_number が使う MAX は NULL を飛ばすが、Rails の案内は作品の有効な
 -- スロットを number 降順に並べた先頭行を読む。PostgreSQL の DESC は NULLS FIRST のため、
 -- number 未設定の有効スロットが 1 件でもあれば Rails はその行に当たって 0 を報告する。
--- ラベルが名指しするのは自動生成が到達できる最大話数であり、ここで MAX を使い続けるのは
+-- MAX が報告するのは自動生成が実際に到達する話数であり、Rails と結果が分かれるのは
 -- 移植漏れではなく意図的な選択。
 SELECT
     w.id,

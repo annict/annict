@@ -43,9 +43,12 @@ type featureFlaggedPattern struct {
 	flag    model.FeatureFlagName
 }
 
-var featureFlaggedPatterns = []featureFlaggedPattern{
-	{pattern: regexp.MustCompile(`^/db/`), flag: model.FeatureFlagGoAnnictDB},
-}
+// No path is gated by a flag at the moment. The list stays rather than being removed
+// because the next screen moved from Rails to Go is rolled out through it (ADR 0002).
+//
+// [Ja] 現在フラグでゲートされているパスは無い。次に Rails 版から Go 版へ移す画面は
+// この仕組みで段階的に公開するため、リストは削除せず空のまま残す (ADR 0002)。
+var featureFlaggedPatterns []featureFlaggedPattern
 
 // ReverseProxyMiddleware はRails版へのリバースプロキシミドルウェア
 type ReverseProxyMiddleware struct {
@@ -60,12 +63,12 @@ type ReverseProxyMiddleware struct {
 	//
 	// [Ja] nil 許容。テスト時やセッション不要時は nil
 	sessionMgr *session.Manager
-	// optional; set via SetRouter. Lets the middleware tell whether a flag-gated
-	// path matches a registered Go route. nil leaves flag-gated paths to the Go chain.
+	// optional; set via SetRouter. Lets the middleware tell whether a path that Go and
+	// Rails share matches a registered Go route. nil leaves those paths to the Go chain.
 	//
-	// [Ja] nil 許容。SetRouter で設定する。フラグでゲートされたパスが登録済みの
-	// Go ルートにマッチするかをミドルウェアが判定できるようにする。nil のときは
-	// フラグ対象パスを Go チェーンに委ねる。
+	// [Ja] nil 許容。SetRouter で設定する。Go 版と Rails 版で分け合っているパスが
+	// 登録済みの Go ルートにマッチするかをミドルウェアが判定できるようにする。
+	// nil のときはそれらのパスを Go チェーンに委ねる。
 	router chi.Router
 }
 
@@ -99,6 +102,25 @@ var goHandledErrorPaths = []string{
 	httperror.ForbiddenPath,
 	httperror.InvalidCSRFTokenPath,
 	httperror.InternalServerErrorPath,
+}
+
+// Path prefixes Go and Rails share: Go serves the screens it has routes for and Rails serves
+// the rest. isGoSharedPath matches the prefix and matchesGoRoute then asks the router, so a
+// path with no Go route reaches Rails instead of the Go 404. This is what separates the list
+// from goHandledPaths, whose prefixes hand everything below them to Go.
+//
+// /db/ is such a prefix: the work and episode CRUD screens live in Go while casts, staffs,
+// slots, images, series and the rest of Annict DB are still only in Rails.
+//
+// [Ja] Go 版と Rails 版が分け合っているパスの接頭辞。Go 版はルートを持つ画面だけを処理し、
+// 残りは Rails 版が処理する。isGoSharedPath が接頭辞で判定したうえで matchesGoRoute が
+// ルーターに問い合わせるため、Go 版にルートが無いパスは Go の 404 ではなく Rails 版に届く。
+// 接頭辞の配下すべてを Go 版に渡す goHandledPaths との違いはここにある。
+//
+// /db/ がこの接頭辞にあたる。作品とエピソードの CRUD 画面は Go 版にあるが、キャスト・
+// スタッフ・放送枠・作品画像・シリーズなど Annict DB の残りは Rails 版にしかない。
+var goSharedPaths = []string{
+	"/db/",
 }
 
 // NewReverseProxyMiddleware は新しいReverseProxyMiddlewareを作成
@@ -293,25 +315,36 @@ func (m *ReverseProxyMiddleware) Middleware(next http.Handler) http.Handler {
 			return
 		}
 
+		// The path is one Go and Rails share. Hand it to the Go chain only when a Go
+		// route matches; otherwise the screen is Rails-only, so fall through to the
+		// proxy below.
+		//
+		// [Ja] パスは Go 版と Rails 版が分け合っているもの。Go ルートにマッチするときだけ
+		// Go チェーンに渡し、マッチしない場合はその画面が Rails 版にしかないため、
+		// 下のプロキシに流す。
+		if m.isGoSharedPath(r.URL.Path) && m.matchesGoRoute(r) {
+			next.ServeHTTP(w, r)
+			return
+		}
+
 		// Rails版にプロキシ
 		m.proxy.ServeHTTP(w, r)
 	})
 }
 
-// SetRouter injects the chi router so the middleware can tell whether a flag-gated
-// path (e.g. /db/*) matches a registered Go route. Call it once during setup, after
-// the router is created and before it serves. When a flagged path matches no Go route
-// the screen is not implemented in Go yet, so Middleware proxies to Rails itself — at
-// the same layer as the flag-disabled path — rather than deferring to chi's NotFound
-// handler, which runs inside the Sentry / CSRF middleware chain that Rails-bound
-// requests must skip.
+// SetRouter injects the chi router so the middleware can tell whether a path Go and
+// Rails share (e.g. /db/*) matches a registered Go route. Call it once during setup,
+// after the router is created and before it serves. When such a path matches no Go
+// route the screen belongs to Rails, so Middleware proxies to Rails itself rather than
+// deferring to chi's NotFound handler, which runs inside the Sentry / CSRF middleware
+// chain that Rails-bound requests must skip.
 //
-// [Ja] SetRouter は chi ルーターを注入し、フラグでゲートされたパス (例: /db/*) が
-// 登録済みの Go ルートにマッチするかをミドルウェアが判定できるようにする。ルーター生成後・
-// 配信開始前にセットアップで 1 回呼ぶ。フラグ対象パスがどの Go ルートにもマッチしない場合、
-// その画面は Go 未実装のため、Middleware は chi の NotFound ハンドラー (Rails 行きの
-// リクエストがスキップすべき Sentry / CSRF ミドルウェアチェーンの内側で走る) に委ねず、
-// 自身で Rails へプロキシする (フラグ無効時と同じレイヤー)。
+// [Ja] SetRouter は chi ルーターを注入し、Go 版と Rails 版が分け合っているパス
+// (例: /db/*) が登録済みの Go ルートにマッチするかをミドルウェアが判定できるようにする。
+// ルーター生成後・配信開始前にセットアップで 1 回呼ぶ。そうしたパスがどの Go ルートにも
+// マッチしない場合、その画面は Rails 版のものなので、Middleware は chi の NotFound
+// ハンドラー (Rails 行きのリクエストがスキップすべき Sentry / CSRF ミドルウェアチェーンの
+// 内側で走る) に委ねず、自身で Rails へプロキシする。
 func (m *ReverseProxyMiddleware) SetRouter(router chi.Router) {
 	m.router = router
 }
@@ -475,6 +508,21 @@ func (m *ReverseProxyMiddleware) isGoHandledPath(path string) bool {
 	// 他の /fragment/... は Go 版実装が揃うまで Rails 版が処理する。
 	if strings.HasPrefix(path, "/fragment/@") && strings.HasSuffix(path, "/tracking_heatmap") {
 		return true
+	}
+
+	return false
+}
+
+// isGoSharedPath reports whether the path falls under a prefix Go and Rails share. The
+// caller pairs it with matchesGoRoute to decide which side handles the request.
+//
+// [Ja] isGoSharedPath はパスが Go 版と Rails 版で分け合っている接頭辞の配下かどうかを返す。
+// 呼び出し側は matchesGoRoute と組み合わせ、どちらが処理するかを判定する。
+func (m *ReverseProxyMiddleware) isGoSharedPath(path string) bool {
+	for _, p := range goSharedPaths {
+		if strings.HasPrefix(path, p) {
+			return true
+		}
 	}
 
 	return false

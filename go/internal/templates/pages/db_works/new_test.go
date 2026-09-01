@@ -105,11 +105,11 @@ func TestNew_LabelExternalLinks(t *testing.T) {
 	}
 }
 
-// TestNew_NoLabelExternalLinksWhenEmpty verifies that no external link is rendered when
-// the linkable fields are empty.
+// TestNew_NoLabelExternalLinksWhenEmpty verifies that no form label renders an external
+// link while the linkable fields are empty.
 //
-// [Ja] TestNew_NoLabelExternalLinksWhenEmpty は、値が空のとき外部リンクが描画されないことを
-// テストする。
+// [Ja] TestNew_NoLabelExternalLinksWhenEmpty は、値が空のあいだフォームのラベルが外部リンクを
+// 描画しないことをテストする。
 func TestNew_NoLabelExternalLinksWhenEmpty(t *testing.T) {
 	t.Parallel()
 
@@ -129,8 +129,13 @@ func TestNew_NoLabelExternalLinksWhenEmpty(t *testing.T) {
 	if !strings.Contains(html, "<form") {
 		t.Error("フォームは描画されるべきです")
 	}
-	if strings.Contains(html, "を新しいタブで開く") {
-		t.Error("値が空のとき外部リンクは描画されてはいけません")
+	// The guideline link under the heading belongs to the page itself and always renders,
+	// so the count states that no field label added one of its own.
+	//
+	// [Ja] 見出しの下のガイドラインリンクはページ自身のもので常に描画されるため、件数で
+	// 「フィールドのラベルは自分のリンクを足していない」ことを表明する。
+	if got := strings.Count(html, "を新しいタブで開く"); got != 1 {
+		t.Errorf("新しいタブで開くリンクの数 = %d, want 1 (見出し下のガイドラインリンクのみ)", got)
 	}
 }
 
@@ -225,6 +230,65 @@ func TestNew_RendersTitleRowAndCard(t *testing.T) {
 	} {
 		if !strings.Contains(html, expected) {
 			t.Errorf("期待する文字列が含まれていません: %q", expected)
+		}
+	}
+}
+
+// TestManualEpisodesCountLabel verifies that the create and edit forms name their shared
+// manual_episodes_count field as the work's expected total in both supported locales.
+//
+// [Ja] TestManualEpisodesCountLabel は、登録・編集フォームで共通の manual_episodes_count 欄を、
+// 対応する両ロケールで作品の予定総話数として名付けることを検証する。
+func TestManualEpisodesCountLabel(t *testing.T) {
+	t.Parallel()
+
+	pages := []struct {
+		name      string
+		component func() templ.Component
+	}{
+		{
+			name: "新規",
+			component: func() templ.Component {
+				return New(NewPageData{
+					FormInput: &viewmodel.DBWorkFormInput{},
+				})
+			},
+		},
+		{
+			name: "編集",
+			component: func() templ.Component {
+				return Edit(EditPageData{
+					WorkID:    1,
+					WorkTitle: "編集対象アニメ",
+					FormInput: &viewmodel.DBWorkFormInput{},
+				})
+			},
+		},
+	}
+	locales := []struct {
+		code string
+		want string
+	}{
+		{code: "ja", want: "予定総話数"},
+		{code: "en", want: "Expected Episodes"},
+	}
+
+	for _, page := range pages {
+		for _, locale := range locales {
+			t.Run(page.name+"/"+locale.code, func(t *testing.T) {
+				t.Parallel()
+
+				ctx := i18n.SetLocale(context.Background(), locale.code)
+				var buf strings.Builder
+				if err := page.component().Render(ctx, &buf); err != nil {
+					t.Fatalf("レンダリングエラー: %v", err)
+				}
+
+				want := `<label for="manual_episodes_count" class="label">` + locale.want + "</label>"
+				if !strings.Contains(buf.String(), want) {
+					t.Errorf("出力に %q が含まれていません", want)
+				}
+			})
 		}
 	}
 }
@@ -684,48 +748,28 @@ func TestEdit_HeadingAndWorkPageLink(t *testing.T) {
 }
 
 // TestEdit_HeadingFallsBackToPageTitle verifies that the heading falls back to the generic
-// page title when the work title is blank, which is what the form re-rendered for a blank
-// title receives.
+// page title when the work has no display name, which is what the handler passes for a work
+// with a blank title and for a submit that cleared the title field.
 //
-// [Ja] TestEdit_HeadingFallsBackToPageTitle は、作品タイトルが空のとき見出しが汎用の
-// ページタイトルにフォールバックすることを検証する (タイトルを空にして再描画されたフォームが
-// 受け取る値がこれにあたる)。
+// [Ja] TestEdit_HeadingFallsBackToPageTitle は、作品に表示名が無いとき見出しが汎用の
+// ページタイトルにフォールバックすることを検証する (タイトルが空の作品と、タイトル欄を空に
+// した送信で、ハンドラーが渡す値がこれにあたる)。
 func TestEdit_HeadingFallsBackToPageTitle(t *testing.T) {
 	t.Parallel()
 
-	tests := []struct {
-		name      string
-		workTitle string
-	}{
-		{
-			name:      "空文字",
-			workTitle: "",
-		},
-		{
-			name:      "空白文字のみ",
-			workTitle: " \t\n ",
-		},
+	data := EditPageData{
+		WorkID:    1,
+		WorkTitle: "",
+		FormInput: &viewmodel.DBWorkFormInput{},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
+	var buf strings.Builder
+	if err := Edit(data).Render(context.Background(), &buf); err != nil {
+		t.Fatalf("レンダリングエラー: %v", err)
+	}
 
-			data := EditPageData{
-				WorkID:    1,
-				WorkTitle: tt.workTitle,
-				FormInput: &viewmodel.DBWorkFormInput{},
-			}
-
-			var buf strings.Builder
-			if err := Edit(data).Render(context.Background(), &buf); err != nil {
-				t.Fatalf("レンダリングエラー: %v", err)
-			}
-
-			if !strings.Contains(buf.String(), "作品を編集") {
-				t.Error("作品タイトルが空のとき見出しはページタイトルを表示するべきです")
-			}
-		})
+	if !strings.Contains(buf.String(), "作品編集") {
+		t.Error("作品に表示名が無いとき見出しはページタイトルを表示するべきです")
 	}
 }
 
@@ -1212,5 +1256,61 @@ func TestEdit_OmitsConflictNoticeWithoutConflict(t *testing.T) {
 
 	if html := buf.String(); strings.Contains(html, "現在保存されている内容") {
 		t.Error("競合していないのに競合の案内が描画されています")
+	}
+}
+
+// TestGuidelineLinkBelowHeading verifies that both work forms offer the work editing
+// guideline below their heading: an editor who opens a form reaches the guideline from the
+// screen itself instead of having to find the help pages on their own.
+//
+// [Ja] TestGuidelineLinkBelowHeading は、両方の作品フォームが見出しの下に作品の編集ガイド
+// ラインへの導線を持つことを検証する。フォームを開いた編集者が、自力でヘルプページを探さずに
+// 画面からガイドラインへ辿れるようにするため。
+func TestGuidelineLinkBelowHeading(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name      string
+		component templ.Component
+	}{
+		{
+			name:      "新規",
+			component: New(NewPageData{FormInput: &viewmodel.DBWorkFormInput{}}),
+		},
+		{
+			name:      "編集",
+			component: Edit(EditPageData{WorkID: 1, FormInput: &viewmodel.DBWorkFormInput{}}),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			var buf strings.Builder
+			if err := tt.component.Render(context.Background(), &buf); err != nil {
+				t.Fatalf("レンダリングエラー: %v", err)
+			}
+
+			html := buf.String()
+
+			for _, expected := range []string{
+				// The link names where it goes and points at the work editing guideline,
+				// opening it in a new tab with tabnabbing protection so the form the editor
+				// is filling in stays open.
+				//
+				// [Ja] リンクは行き先を名乗り、作品の編集ガイドラインを指す。編集者が入力中の
+				// フォームを開いたままにできるよう、tabnabbing 対策付きで新しいタブに開く。
+				"作品の編集ガイドライン",
+				`href="` + viewmodel.HelpWorkEditingURL() + `"`,
+				`aria-label="作品の編集ガイドライン を新しいタブで開く"`,
+				`target="_blank"`,
+				`rel="noopener"`,
+			} {
+				if !strings.Contains(html, expected) {
+					t.Errorf("期待する文字列が含まれていません: %q", expected)
+				}
+			}
+		})
 	}
 }

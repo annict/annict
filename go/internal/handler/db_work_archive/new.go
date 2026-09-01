@@ -2,10 +2,12 @@ package db_work_archive
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"log/slog"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/go-chi/chi/v5"
 
@@ -42,11 +44,20 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	output, err := h.getDBWorkArchiveNewUC.Execute(ctx, usecase.GetDBWorkArchiveNewInput{WorkID: model.WorkID(id)})
+	output, err := h.getDBWorkArchiveNewUC.Execute(ctx, usecase.GetDBWorkArchiveNewInput{
+		User:   middleware.GetUserFromContext(ctx),
+		WorkID: model.WorkID(id),
+	})
 	if err != nil {
-		if ae := model.AsAppError(err); ae != nil && ae.Code == model.AppErrCodeResourceNotFound {
-			httperror.NotFound(w, r)
-			return
+		if ae := model.AsAppError(err); ae != nil {
+			switch ae.Code {
+			case model.AppErrCodeResourceNotFound:
+				httperror.NotFound(w, r)
+				return
+			case model.AppErrCodeForbidden:
+				httperror.Forbidden(w, r)
+				return
+			}
 		}
 		slog.ErrorContext(ctx, "非公開確認画面の取得に失敗", "error", err)
 		httperror.InternalServerError(w, r)
@@ -54,9 +65,10 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 	}
 
 	csrfToken := middleware.GetCSRFToken(r, h.sessionManager)
+	workName := strings.TrimSpace(output.Work.Title)
 
 	meta := viewmodel.DefaultPageMeta(ctx, h.cfg, dbWorkArchiveNewPath(output.Work.ID))
-	meta.SetDBTitle(ctx, "db_works_archive_new_title")
+	setNewTitle(ctx, &meta, workName)
 
 	component := layouts.Db(
 		meta,
@@ -64,7 +76,8 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 		db_works.ArchiveNew(db_works.ArchiveNewPageData{
 			CSRFToken: csrfToken,
 			WorkID:    viewmodel.WorkID(output.Work.ID),
-			Title:     output.Work.Title,
+			Title:     workName,
+			ReturnTo:  returnPath(r),
 		}),
 	)
 	var body bytes.Buffer
@@ -78,4 +91,20 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 	if _, err := w.Write(body.Bytes()); err != nil {
 		slog.ErrorContext(ctx, "DB作品非公開確認ページのレスポンスの書き込みに失敗", "error", err)
 	}
+}
+
+// setNewTitle gives meta a document title that starts with the page name, followed by the work
+// once it has a display name. A work without one leaves the page name standing alone, which is
+// also what the heading shows, so the two never disagree on whether the target can be named.
+//
+// [Ja] setNewTitle は meta に、画面名から始まり、表示名があれば作品が続く文書タイトルを
+// 設定する。表示名が無い作品では画面名だけになり、見出しの表示とも揃う。対象を名指しできる
+// かどうかの判断が両者で食い違わないようにするため。
+func setNewTitle(ctx context.Context, meta *viewmodel.PageMeta, workName string) {
+	if workName == "" {
+		meta.SetDBTitle(ctx, "db_works_archive_new_title")
+		return
+	}
+
+	meta.SetDBTitle(ctx, "db_works_archive_new_document_title", map[string]any{"WorkTitle": workName})
 }

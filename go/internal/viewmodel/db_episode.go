@@ -24,21 +24,21 @@ func DBEpisodeListWorkName(workTitle string) string {
 	return strings.TrimSpace(workTitle)
 }
 
-// DBEpisodeIdentifier returns the label used at the start of a document title that names one
-// episode. The immutable id always remains in the label so two episodes of one work have
-// different titles; a display number, when present, makes the label recognisable before the id.
+// DBEpisodeIdentifier returns the label naming the episode in a document title. It is the
+// display number, which is how the list, the row links and the editor's own vocabulary refer
+// to an episode. An episode with no display number falls back to its id, so the label always
+// names something the editor can match against the list.
 //
-// [Ja] DBEpisodeIdentifier は 1 件のエピソードを名指しする文書タイトルの先頭で使うラベルを返す。
-// 同じ作品の 2 エピソードが異なるタイトルになるよう不変の ID を必ず残し、表示用話数があれば
-// ID より先に置いて識別しやすくする。
+// [Ja] DBEpisodeIdentifier は文書タイトルの中でエピソードを名指しするラベルを返す。ラベルは
+// 表示用話数で、一覧・行のリンク・編集者自身の語彙がエピソードを指すときの呼び方に揃える。
+// 表示用話数が無いエピソードは ID にフォールバックし、ラベルが常に一覧と突き合わせられる
+// ものを名指しするようにする。
 func DBEpisodeIdentifier(ctx context.Context, episode *model.Episode) string {
-	templateData := map[string]any{"EpisodeID": episode.ID.String()}
 	if number := strings.TrimSpace(derefString(episode.Number)); number != "" {
-		templateData["Number"] = number
-		return i18n.T(ctx, "db_episodes_identifier", templateData)
+		return number
 	}
 
-	return i18n.T(ctx, "db_episodes_identifier_without_number", templateData)
+	return i18n.T(ctx, "db_episodes_identifier_without_number", map[string]any{"EpisodeID": episode.ID.String()})
 }
 
 // DBEpisodeName returns how an episode is named in the running text of a page: its display
@@ -46,16 +46,16 @@ func DBEpisodeIdentifier(ctx context.Context, episode *model.Episode) string {
 // the two the episode has. An episode with neither falls back to its id, so the sentence still
 // names something the editor can match against the list.
 //
-// It is the recognisable name rather than the unique one: DBEpisodeIdentifier keeps the id for
-// document titles, where telling two pages apart is what matters.
+// It is the name used inside a sentence rather than in a document title: DBEpisodeIdentifier
+// gives the shorter label the latter needs.
 //
 // [Ja] DBEpisodeName はページの文章の中でエピソードをどう名指しするかを返す。Rails の
 // Episode#number_title と同じ書式で表示用話数とタイトルを並べ、どちらか一方しか無い場合はその
 // 一方に絞る。どちらも無いエピソードは ID にフォールバックし、文が一覧と突き合わせられるものを
 // 名指しし続けるようにする。
 //
-// これは一意な名前ではなく識別しやすい名前である。文書タイトルでは 2 つのページを区別できること
-// が重要なため、そちらは ID を残す DBEpisodeIdentifier が担う。
+// これは文書タイトルではなく文章の中で使う名前である。文書タイトルに必要な、より短いラベルは
+// DBEpisodeIdentifier が担う。
 func DBEpisodeName(ctx context.Context, episode *model.Episode) string {
 	number := strings.TrimSpace(derefString(episode.Number))
 	title := strings.TrimSpace(derefString(episode.Title))

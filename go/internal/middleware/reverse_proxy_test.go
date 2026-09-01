@@ -1249,115 +1249,99 @@ func TestReverseProxyMiddleware_FeatureFlagRouting(t *testing.T) {
 	})
 }
 
-func TestReverseProxyMiddleware_AnnictDBFeatureFlag(t *testing.T) {
-	// モックRailsサーバー
-	railsServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
+// TestReverseProxyMiddleware_AnnictDBRouting fixes how /db/ is split now that no feature
+// flag gates it: Go serves the Annict DB screens it registers routes for and Rails serves
+// the rest. The middleware is built without a feature flag repository so the split cannot
+// depend on a flag.
+//
+// [Ja] TestReverseProxyMiddleware_AnnictDBRouting は、フラグでゲートされなくなった /db/ の
+// 振り分けを固定する。Go 版はルートを登録した Annict DB の画面を処理し、残りは Rails 版が
+// 処理する。フラグに依存しないことを示すため、フィーチャーフラグのリポジトリ無しで
+// ミドルウェアを組み立てる。
+func TestReverseProxyMiddleware_AnnictDBRouting(t *testing.T) {
+	t.Parallel()
+
+	railsServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		_, _ = w.Write([]byte("Rails response"))
 	}))
 	defer railsServer.Close()
 
-	cfg := &config.Config{
-		Domain: "annict-test.page",
-	}
-
-	// Go版のハンドラー
-	goHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		_, _ = w.Write([]byte("Go response"))
-	})
-
-	t.Run("フラグ有効: /db/配下のパスはGo版で処理される", func(t *testing.T) {
-		checker := &mockFeatureFlagChecker{enabled: true}
-		proxyMiddleware, err := NewReverseProxyMiddleware(railsServer.URL, cfg, checker, nil)
-		if err != nil {
-			t.Fatalf("ミドルウェアの作成に失敗: %v", err)
-		}
-
-		handler := proxyMiddleware.Middleware(goHandler)
-
-		paths := []string{
-			"/db/works",
-			"/db/works/123/edit",
-			"/db/works/123/episodes",
-			"/db/works/new",
-		}
-
-		for _, path := range paths {
-			t.Run(path, func(t *testing.T) {
-				req := httptest.NewRequest("GET", path, nil)
-				rr := httptest.NewRecorder()
-				handler.ServeHTTP(rr, req)
-
-				if !strings.Contains(rr.Body.String(), "Go response") {
-					t.Errorf("フラグ有効時、%s はGo版で処理されるべき: got %q", path, rr.Body.String())
-				}
-			})
-		}
-	})
-
-	t.Run("フラグ無効: /db/配下のパスはRails版にプロキシされる", func(t *testing.T) {
-		checker := &mockFeatureFlagChecker{enabled: false}
-		proxyMiddleware, err := NewReverseProxyMiddleware(railsServer.URL, cfg, checker, nil)
-		if err != nil {
-			t.Fatalf("ミドルウェアの作成に失敗: %v", err)
-		}
-
-		handler := proxyMiddleware.Middleware(goHandler)
-
-		paths := []string{
-			"/db/works",
-			"/db/works/123/edit",
-			"/db/works/123/episodes",
-			"/db/works/new",
-		}
-
-		for _, path := range paths {
-			t.Run(path, func(t *testing.T) {
-				req := httptest.NewRequest("GET", path, nil)
-				rr := httptest.NewRecorder()
-				handler.ServeHTTP(rr, req)
-
-				if !strings.Contains(rr.Body.String(), "Rails response") {
-					t.Errorf("フラグ無効時、%s はRails版にプロキシされるべき: got %q", path, rr.Body.String())
-				}
-			})
-		}
-	})
-}
-
-// buildDBFallbackRouter wires the reverse proxy middleware the way serve.go does:
-// SetRouter + Use(Middleware) in front of an inner middleware chain (here the real
-// CSRF middleware, standing in for the Sentry / CSRF / ... chain that the flag-disabled
-// proxy path skips), then the /db/works routes the Go app registers. It lets the tests
-// verify that a flag-enabled /db/* request matching no Go route falls back to Rails from
-// the Middleware layer — before the inner chain — so a non-GET request is not rejected
-// by CSRF, matching the flag-disabled behavior.
-//
-// [Ja] buildDBFallbackRouter は serve.go と同じ順序でリバースプロキシミドルウェアを配線
-// する: SetRouter + Use(Middleware) を内側のミドルウェアチェーン (ここでは実 CSRF
-// ミドルウェア。フラグ無効時のプロキシ経路がスキップする Sentry / CSRF / ... のチェーンを
-// 代表する) の前に置き、その後に Go 版が登録する /db/works 系ルートを並べる。フラグ有効な
-// /db/* のうち Go ルートにマッチしないリクエストが、内側チェーンより前の Middleware
-// レイヤーで Rails へフォールバックすること (=非 GET が CSRF に弾かれず、フラグ無効時と
-// 同じ挙動になること) を検証するために用いる。
-func buildDBFallbackRouter(t *testing.T, railsURL string) *chi.Mux {
-	t.Helper()
-
 	cfg := &config.Config{Domain: "annict-test.page"}
-	checker := &mockFeatureFlagChecker{enabled: true}
-	mw, err := NewReverseProxyMiddleware(railsURL, cfg, checker, nil)
+
+	proxyMiddleware, err := NewReverseProxyMiddleware(railsServer.URL, cfg, nil, nil)
 	if err != nil {
 		t.Fatalf("ミドルウェアの作成に失敗: %v", err)
 	}
 
-	// The real CSRF middleware stands in for the inner chain the flag-disabled proxy
-	// path skips. Its session manager is never queried here: fallback requests bypass
+	goResponse := func(w http.ResponseWriter, _ *http.Request) {
+		_, _ = w.Write([]byte("Go response"))
+	}
+
+	// The routes mirror the Annict DB screens serve.go registers in Go.
+	//
+	// [Ja] ルートは serve.go が Go 版に登録している Annict DB の画面を写したもの。
+	router := chi.NewRouter()
+	router.Get("/db/works", goResponse)
+	router.Get("/db/works/{work_id}/episodes", goResponse)
+	router.Get("/db/episodes/{id}/edit", goResponse)
+	proxyMiddleware.SetRouter(router)
+
+	handler := proxyMiddleware.Middleware(http.HandlerFunc(goResponse))
+
+	tests := []struct {
+		name string
+		path string
+		want string
+	}{
+		{"作品一覧はGo版が処理する", "/db/works", "Go response"},
+		{"エピソード編集はGo版が処理する", "/db/episodes/1/edit", "Go response"},
+		{"Annict DBのトップはRails版へプロキシする", "/db", "Rails response"},
+		{"Go版に無いキャスト一覧はRails版へプロキシする", "/db/works/1/casts", "Rails response"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			req := httptest.NewRequest("GET", tt.path, nil)
+			rr := httptest.NewRecorder()
+
+			handler.ServeHTTP(rr, req)
+
+			if got := rr.Body.String(); got != tt.want {
+				t.Errorf("%s: 応答が一致しません: got %q, want %q", tt.path, got, tt.want)
+			}
+		})
+	}
+}
+
+// buildDBFallbackRouter wires the reverse proxy middleware the way serve.go does:
+// SetRouter + Use(Middleware) in front of an inner middleware chain (here the real
+// CSRF middleware, standing in for the Sentry / CSRF / ... chain that the proxy path
+// skips), then the /db/works routes the Go app registers. It lets the tests verify that
+// a /db/* request matching no Go route falls back to Rails from the Middleware layer —
+// before the inner chain — so a non-GET request is not rejected by CSRF.
+//
+// [Ja] buildDBFallbackRouter は serve.go と同じ順序でリバースプロキシミドルウェアを配線
+// する: SetRouter + Use(Middleware) を内側のミドルウェアチェーン (ここでは実 CSRF
+// ミドルウェア。プロキシ経路がスキップする Sentry / CSRF / ... のチェーンを代表する) の
+// 前に置き、その後に Go 版が登録する /db/works 系ルートを並べる。/db/* のうち Go ルートに
+// マッチしないリクエストが、内側チェーンより前の Middleware レイヤーで Rails へ
+// フォールバックすること (=非 GET が CSRF に弾かれないこと) を検証するために用いる。
+func buildDBFallbackRouter(t *testing.T, railsURL string) *chi.Mux {
+	t.Helper()
+
+	cfg := &config.Config{Domain: "annict-test.page"}
+	mw, err := NewReverseProxyMiddleware(railsURL, cfg, nil, nil)
+	if err != nil {
+		t.Fatalf("ミドルウェアの作成に失敗: %v", err)
+	}
+
+	// The real CSRF middleware stands in for the inner chain the proxy path skips.
+	// Its session manager is never queried here: fallback requests bypass
 	// it, and a matched non-GET Go route is rejected at the missing-session-cookie
 	// check before any DB access, so a nil session repository is safe.
 	//
-	// [Ja] 実 CSRF ミドルウェアは、フラグ無効時のプロキシ経路がスキップする内側チェーンを
-	// 代表する。ここでは session manager は参照されない: フォールバックはこれをバイパスし、
+	// [Ja] 実 CSRF ミドルウェアは、プロキシ経路がスキップする内側チェーンを代表する。
+	// ここでは session manager は参照されない: フォールバックはこれをバイパスし、
 	// マッチした非 GET の Go ルートは DB アクセス前にセッションクッキー不在のチェックで
 	// 弾かれるため、nil の session repository で問題ない。
 	csrfMW := NewCSRFMiddleware(session.NewManager(nil, cfg))

@@ -2,8 +2,6 @@ package db_episodes
 
 import (
 	"context"
-	"fmt"
-	"strings"
 
 	"github.com/annict/annict/go/internal/templates"
 	"github.com/annict/annict/go/internal/templates/components"
@@ -118,16 +116,42 @@ func (d NewPageData) hasGlobalError() bool {
 	return d.FormErrors != nil && len(d.FormErrors.Global) > 0
 }
 
+// restrictionTitleKey names the heading of the warning. An administrator is exempt from the
+// disabled form and the rejected submit alike, so the heading says the restriction is the
+// normal state rather than stating a bar the reader does not meet.
+//
+// [Ja] restrictionTitleKey は警告の見出しを名指しする。管理者はフォームの無効化と送信の却下
+// のどちらからも除かれるため、見出しは読み手に当たらない制限を述べるのではなく、制限が通常の
+// 状態であることを述べる形にする。
+func (d NewPageData) restrictionTitleKey() string {
+	if d.IsAdmin {
+		return "db_episodes_new_restriction_admin_title"
+	}
+
+	return "db_episodes_new_restriction_title"
+}
+
 // restrictionMessageKey names the warning that states the reason. The keys are written as
 // literals here so each one stays greppable from the page that renders it; which reason wins
-// is decided once in the domain and arrives resolved.
+// is decided once in the domain and arrives resolved. An administrator gets the wording that
+// states the reason and what registering by hand anyway would mean, since the form stays
+// usable for them.
 //
 // [Ja] restrictionMessageKey は理由を述べる警告を名指しする。キーは直書きし、描画するページ
 // から grep で追える状態に保つ。どの理由が優先されるかはドメイン側で 1 度だけ決まり、解決済み
-// の値として届く。
+// の値として届く。管理者にはフォームが使えるままであるため、理由と、それでも手動で登録した
+// 場合に何が起きるかを述べる文言を渡す。
 func (d NewPageData) restrictionMessageKey() string {
 	if d.ManualCreation == viewmodel.DBEpisodeManualCreationEpisodesFilled {
+		if d.IsAdmin {
+			return "db_episodes_new_restricted_admin_episodes_filled"
+		}
+
 		return "db_episodes_new_restricted_episodes_filled"
+	}
+
+	if d.IsAdmin {
+		return "db_episodes_new_restricted_admin_slots_exist"
 	}
 
 	return "db_episodes_new_restricted_slots_exist"
@@ -142,42 +166,6 @@ func (d NewPageData) rowsErrors() []string {
 	}
 
 	return d.FormErrors.GetFieldErrors(rowsFieldName)
-}
-
-// rowsFormatGuideID is the id of the section stating the line format. The input points at it
-// through aria-describedby, so the instructions reach whoever lands on the field rather than
-// only whoever reads the page top to bottom.
-//
-// [Ja] rowsFormatGuideID は行の形式を述べる節の id。入力欄は aria-describedby でこれを指す
-// ため、案内はページを上から読む人だけでなく、入力欄に降り立った人にも届く。
-const rowsFormatGuideID = "rows-format-guide"
-
-// rowsDescribedBy returns what describes the input: the format guide, followed by every error
-// message element. The standing description comes first so it is read before the errors, and
-// the error ids are appended rather than replacing it: dropping the format guide on error
-// would take away the instructions exactly when the lines need correcting. A submit can fail
-// on several lines at once, and describedby has to name them all, since naming only the first
-// would leave the rest unannounced.
-//
-// [Ja] rowsDescribedBy は入力欄を説明するものを返す (形式の案内と、続く各エラーメッセージ
-// 要素)。常設の説明がエラーより先に読まれるよう先頭に置き、エラーの id は置き換えではなく
-// 後ろに足す。エラー時に形式の案内を落とすと、行を直すべきそのときに案内が失われるため。
-// 1 回の送信が複数行で失敗することがあり、describedby はその全部を指す必要がある (先頭だけを
-// 指すと残りが読み上げられない)。
-func (d NewPageData) rowsDescribedBy() string {
-	ids := []string{rowsFormatGuideID}
-	for i := range d.rowsErrors() {
-		ids = append(ids, rowsErrorID(i))
-	}
-
-	return strings.Join(ids, " ")
-}
-
-// rowsErrorID builds the id of one error message element.
-//
-// [Ja] rowsErrorID はエラーメッセージ要素 1 つの id を組み立てる。
-func rowsErrorID(index int) string {
-	return fmt.Sprintf("%s-error-%d", rowsFieldName, index+1)
 }
 
 // newSummaryFields names the one field the error summary can list. The summary is rendered
@@ -201,6 +189,7 @@ templ New(data NewPageData) {
 			<div class="flex-1">
 				@components.MainTitle(components.MainTitleData{
 					Title:   data.heading(ctx),
+					Content: components.GuidelineLink(templates.T(ctx, "db_episodes_new_guideline_link"), viewmodel.HelpEpisodeBulkCreateURL()),
 					Actions: newBackToListLink(data.WorkID),
 				})
 			</div>
@@ -221,16 +210,14 @@ templ New(data NewPageData) {
 				})
 
 				if data.showRestrictionWarning() {
-					<div class="alert bg-warning text-warning-foreground max-w-2xl">
+					<div class="alert max-w-2xl" data-variant="warning">
 						@templates.DecorativeIcon("warning")
-						<h2>{ templates.T(ctx, "db_episodes_new_restriction_title") }</h2>
+						<h2>{ templates.T(ctx, data.restrictionTitleKey()) }</h2>
 						<section>
 							<p>{ templates.T(ctx, data.restrictionMessageKey()) }</p>
 						</section>
 					</div>
 				}
-
-				@newFormatGuide()
 
 				<form
 					action={ templates.DBWorkEpisodesPath(data.WorkID).SafeURL() }
@@ -256,12 +243,12 @@ templ New(data NewPageData) {
 							class="textarea font-mono"
 							rows="20"
 							required
-							aria-describedby={ data.rowsDescribedBy() }
 							if data.autofocusRows() {
 								autofocus
 							}
 							if data.hasRowsError() {
 								aria-invalid="true"
+								aria-describedby={ components.FieldErrorIDs(data.FormErrors, rowsFieldName) }
 							}
 							if data.formDisabled() {
 								readonly
@@ -269,7 +256,7 @@ templ New(data NewPageData) {
 						>{ data.Rows }</textarea>
 						if data.hasRowsError() {
 							for i, errorMsg := range data.rowsErrors() {
-								<p id={ rowsErrorID(i) } role="alert">{ errorMsg }</p>
+								<p id={ components.FieldErrorID(rowsFieldName, i) } role="alert">{ errorMsg }</p>
 							}
 						}
 					</div>
@@ -290,26 +277,6 @@ templ New(data NewPageData) {
 			</div>
 		}
 	</div>
-}
-
-// newFormatGuide explains the line format the textarea expects. The field takes free text
-// whose columns are positional, so the page states the order and shows the shapes a partly
-// filled line takes; without it the only way to learn the format is to submit and read the
-// errors. It sits above the form and is named by the input's aria-describedby, so the
-// instructions are reached both by reading the page and by landing on the field.
-//
-// [Ja] newFormatGuide は textarea が期待する行の形式を説明する。フィールドは列が位置で決まる
-// 自由入力のため、ページ側で順序を述べ、一部だけ入力した行の形も示す。これが無いと形式を知る
-// 手段が「送信してエラーを読む」ことしか無くなる。フォームの上に置き、入力欄の
-// aria-describedby から名指しすることで、ページを読んでも入力欄に降り立っても案内に届く。
-templ newFormatGuide() {
-	<section id={ rowsFormatGuideID } class="flex flex-col gap-2 text-sm text-muted-foreground max-w-2xl">
-		<h2 class="font-semibold text-foreground">{ templates.T(ctx, "db_episodes_new_format_heading") }</h2>
-		<p>{ templates.T(ctx, "db_episodes_new_format_description") }</p>
-		<pre class="bg-muted rounded-md p-3 overflow-x-auto"><code>{ templates.T(ctx, "db_episodes_new_format_example") }</code></pre>
-		<p>{ templates.T(ctx, "db_episodes_new_format_partial_description") }</p>
-		<pre class="bg-muted rounded-md p-3 overflow-x-auto"><code>{ templates.T(ctx, "db_episodes_new_format_partial_example") }</code></pre>
-	</section>
 }
 
 // newBackToListLink renders the action shown beside the heading: a link back to the work's

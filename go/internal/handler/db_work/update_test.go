@@ -132,7 +132,12 @@ func TestUpdate_ValidationError(t *testing.T) {
 
 	body := rr.Body.String()
 	expectedContents := []string{
-		"<title>作品を編集 | Annict DB</title>",
+		// A submit that clears the title leaves the document title as the page name alone,
+		// the same name the heading falls back to.
+		//
+		// [Ja] タイトルを空にした送信では、文書タイトルは画面名だけになる。見出しが
+		// フォールバックする名前と同じものになる。
+		"<title>作品編集 | Annict DB</title>",
 		"<form",
 		`action="/db/works/123"`,
 		`name="_method"`,
@@ -213,6 +218,12 @@ func TestUpdate_VersionConflict(t *testing.T) {
 
 	body := rr.Body.String()
 	for _, expected := range []string{
+		// The document title names the submitted title, as the heading does, so two rejected
+		// submits for different works stay distinguishable in tabs and history.
+		//
+		// [Ja] 文書タイトルは見出しと同じく送信されたタイトルで作品を示す。別々の作品に対する
+		// 却下された送信が、タブと履歴で区別できるようにするため。
+		"<title>作品編集 | 衝突後タイトル | Annict DB</title>",
 		"現在保存されている内容",
 		"このデータは他の編集者によって更新されたため",
 		// The stored title is listed as a value the next submit would overwrite, while the

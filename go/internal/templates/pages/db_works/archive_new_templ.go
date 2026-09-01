@@ -15,16 +15,18 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// ArchiveNewPageData is the data the archive-confirmation page renders: the CSRF token,
-// the target work's id (for the form action) and its title (for the page heading and the
-// confirmation prompt).
+// ArchiveNewPageData is the data the archive-confirmation page renders: the CSRF token, the
+// target work id (for the form action), its title (for the page heading and the confirmation
+// prompt) and the listing to return to (for the cancel link and the submit).
 //
 // [Ja] ArchiveNewPageData は非公開確認ページが描画するデータ (CSRF トークン、フォームの
-// action に使う対象 work の id、ページ見出しと確認文に使うタイトル)。
+// action に使う対象 work の id、ページ見出しと確認文に使うタイトル、キャンセルリンクと送信の
+// 戻り先にする一覧)。
 type ArchiveNewPageData struct {
 	CSRFToken string
 	WorkID    viewmodel.WorkID
 	Title     string
+	ReturnTo  string
 }
 
 // heading returns the text of the page heading: the work title, falling back to the generic
@@ -100,7 +102,7 @@ func ArchiveNew(data ArchiveNewPageData) templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "db_works_archive_new_confirm_message", map[string]any{"Title": data.heading(ctx)}))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_works/archive_new.templ`, Line: 48, Col: 109}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_works/archive_new.templ`, Line: 50, Col: 109}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -113,7 +115,7 @@ func ArchiveNew(data ArchiveNewPageData) templ.Component {
 			var templ_7745c5c3_Var4 templ.SafeURL
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinURLErrs(templates.DBWorkArchivePath(data.WorkID).SafeURL())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_works/archive_new.templ`, Line: 50, Col: 83}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_works/archive_new.templ`, Line: 52, Col: 83}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -126,52 +128,65 @@ func ArchiveNew(data ArchiveNewPageData) templ.Component {
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.ResolveAttributeValue(data.CSRFToken)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_works/archive_new.templ`, Line: 51, Col: 66}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_works/archive_new.templ`, Line: 53, Col: 66}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\"> <button type=\"submit\" class=\"btn rounded-full\" data-variant=\"warning\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\"> <input type=\"hidden\" name=\"return_to\" value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var6 string
-			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "db_works_archive_new_submit"))
+			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.ResolveAttributeValue(data.ReturnTo)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_works/archive_new.templ`, Line: 53, Col: 55}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_works/archive_new.templ`, Line: 54, Col: 64}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</button> <a href=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\"> <button type=\"submit\" class=\"btn rounded-full\" data-variant=\"warning\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var7 templ.SafeURL
-			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinURLErrs(templates.DBWorksPath().SafeURL())
+			var templ_7745c5c3_Var7 string
+			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "db_works_archive_new_submit"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_works/archive_new.templ`, Line: 55, Col: 48}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_works/archive_new.templ`, Line: 56, Col: 55}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" class=\"btn rounded-full\" data-variant=\"outline\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</button> <a href=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var8 string
-			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "db_works_archive_new_cancel_link"))
+			var templ_7745c5c3_Var8 templ.SafeURL
+			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinURLErrs(data.ReturnTo)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_works/archive_new.templ`, Line: 56, Col: 60}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_works/archive_new.templ`, Line: 58, Col: 28}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</a></form></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" class=\"btn rounded-full\" data-variant=\"outline\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var9 string
+			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "db_works_archive_new_cancel_link"))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_works/archive_new.templ`, Line: 59, Col: 60}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</a></form></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -181,7 +196,7 @@ func ArchiveNew(data ArchiveNewPageData) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

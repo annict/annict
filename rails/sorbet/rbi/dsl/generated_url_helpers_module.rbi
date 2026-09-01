@@ -109,9 +109,6 @@ module GeneratedUrlHelpersModule
   def db_edit_character_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }
-  def db_edit_episode_url(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
   def db_edit_organization_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }
@@ -136,18 +133,6 @@ module GeneratedUrlHelpersModule
   def db_edit_trailer_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }
-  def db_edit_work_url(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
-  def db_episode_detail_url(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
-  def db_episode_list_url(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
-  def db_episode_publishing_url(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
   def db_new_cast_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }
@@ -158,9 +143,6 @@ module GeneratedUrlHelpersModule
 
   sig { params(args: T.untyped).returns(String) }
   def db_new_character_url(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
-  def db_new_episode_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }
   def db_new_organization_url(*args); end
@@ -185,9 +167,6 @@ module GeneratedUrlHelpersModule
 
   sig { params(args: T.untyped).returns(String) }
   def db_new_trailer_url(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
-  def db_new_work_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }
   def db_organization_detail_url(*args); end
@@ -277,19 +256,7 @@ module GeneratedUrlHelpersModule
   def db_trailer_publishing_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }
-  def db_work_detail_url(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
   def db_work_image_detail_url(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
-  def db_work_list_url(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
-  def db_work_publishing_url(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
-  def db_works_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }
   def edit_collection_item_url(*args); end

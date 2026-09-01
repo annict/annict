@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/go-chi/chi/v5"
 
@@ -120,8 +121,10 @@ func (h *Handler) renderRejectedUpdate(w http.ResponseWriter, r *http.Request, i
 
 	csrfToken := middleware.GetCSRFToken(r, h.sessionManager)
 
+	workName := strings.TrimSpace(input.Title)
+
 	meta := viewmodel.DefaultPageMeta(ctx, h.cfg, dbWorkEditPath(input.WorkID))
-	meta.SetDBTitle(ctx, "db_works_edit_title")
+	setEditTitle(ctx, &meta, workName)
 
 	component := layouts.Db(
 		meta,
@@ -130,11 +133,13 @@ func (h *Handler) renderRejectedUpdate(w http.ResponseWriter, r *http.Request, i
 			CSRFToken: csrfToken,
 			WorkID:    viewmodel.WorkID(input.WorkID),
 			// Validation runs before the work is loaded, so the stored title is not at hand
-			// here; the submitted title names the work in the heading instead.
+			// here; the submitted title names the work in the heading and in the document
+			// title instead.
 			//
 			// [Ja] バリデーションは work の読み込みより前に走るため、ここでは保存済みの
-			// タイトルを持たない。見出しでは代わりに送信されたタイトルで作品を示す。
-			WorkTitle:       input.Title,
+			// タイトルを持たない。見出しと文書タイトルでは代わりに送信されたタイトルで作品を
+			// 示す。
+			WorkTitle:       workName,
 			FormOptions:     formOptions,
 			FormErrors:      viewmodel.NewFormErrors(state.FormErrors),
 			FormInput:       formInput,

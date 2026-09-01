@@ -8,16 +8,18 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// ArchiveNewPageData is the data the archive-confirmation page renders: the CSRF token,
-// the target work's id (for the form action) and its title (for the page heading and the
-// confirmation prompt).
+// ArchiveNewPageData is the data the archive-confirmation page renders: the CSRF token, the
+// target work id (for the form action), its title (for the page heading and the confirmation
+// prompt) and the listing to return to (for the cancel link and the submit).
 //
 // [Ja] ArchiveNewPageData は非公開確認ページが描画するデータ (CSRF トークン、フォームの
-// action に使う対象 work の id、ページ見出しと確認文に使うタイトル)。
+// action に使う対象 work の id、ページ見出しと確認文に使うタイトル、キャンセルリンクと送信の
+// 戻り先にする一覧)。
 type ArchiveNewPageData struct {
 	CSRFToken string
 	WorkID    viewmodel.WorkID
 	Title     string
+	ReturnTo  string
 }
 
 // heading returns the text of the page heading: the work title, falling back to the generic
@@ -49,10 +51,11 @@ templ ArchiveNew(data ArchiveNewPageData) {
 
 				<form method="POST" action={ templates.DBWorkArchivePath(data.WorkID).SafeURL() } class="flex items-center gap-2">
 					<input type="hidden" name="csrf_token" value={ data.CSRFToken }/>
+					<input type="hidden" name="return_to" value={ data.ReturnTo }/>
 					<button type="submit" class="btn rounded-full" data-variant="warning">
 						{ templates.T(ctx, "db_works_archive_new_submit") }
 					</button>
-					<a href={ templates.DBWorksPath().SafeURL() } class="btn rounded-full" data-variant="outline">
+					<a href={ data.ReturnTo } class="btn rounded-full" data-variant="outline">
 						{ templates.T(ctx, "db_works_archive_new_cancel_link") }
 					</a>
 				</form>
