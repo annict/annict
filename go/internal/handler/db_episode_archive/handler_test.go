@@ -189,12 +189,12 @@ func TestNew(t *testing.T) {
 		"csrf_token",
 		"第2話「もう、お婿にいけません」を非公開にしますか？",
 		fmt.Sprintf(`href="/db/works/%d/episodes"`, int64(workID)),
-		// The document title identifies the episode, so two confirmation pages open side by
-		// side can be told apart in tabs, history and assistive technology.
+		// The document title includes the episode label, so confirmation pages with different
+		// labels can be told apart in tabs, history and assistive technology.
 		//
-		// [Ja] 文書タイトルはエピソードを識別する。2 つの確認ページを並べて開いても、タブ・
-		// 履歴・支援技術で区別できるようにするため。
-		fmt.Sprintf("<title>第2話 (ID: %d) | 非公開テストアニメ_%s | エピソードを非公開にする | Annict DB</title>", int64(episodeID), t.Name()),
+		// [Ja] 文書タイトルはエピソードのラベルを含む。ラベルが異なる確認ページを並べて
+		// 開いたときに、タブ・履歴・支援技術で区別できるようにするため。
+		fmt.Sprintf("<title>エピソード非公開 | 第2話 | 非公開テストアニメ_%s | Annict DB</title>", t.Name()),
 	}
 	for _, expected := range expectedContents {
 		if !strings.Contains(body, expected) {
@@ -225,28 +225,28 @@ func TestSetNewTitle(t *testing.T) {
 		{
 			name:              "日本語・作品名あり",
 			locale:            "ja",
-			episodeIdentifier: "第2話 (ID: 42)",
+			episodeIdentifier: "第2話",
 			workName:          "テストアニメ",
-			want:              "第2話 (ID: 42) | テストアニメ | エピソードを非公開にする | Annict DB",
+			want:              "エピソード非公開 | 第2話 | テストアニメ | Annict DB",
 		},
 		{
 			name:              "日本語・作品名なし",
 			locale:            "ja",
-			episodeIdentifier: "第2話 (ID: 42)",
-			want:              "第2話 (ID: 42) | エピソードを非公開にする | Annict DB",
+			episodeIdentifier: "第2話",
+			want:              "エピソード非公開 | 第2話 | Annict DB",
 		},
 		{
 			name:              "英語・作品名あり",
 			locale:            "en",
-			episodeIdentifier: "Episode 2 (ID: 42)",
+			episodeIdentifier: "Episode 2",
 			workName:          "Test Anime",
-			want:              "Episode 2 (ID: 42) | Test Anime | Archive Episode | Annict DB",
+			want:              "Archive Episode | Episode 2 | Test Anime | Annict DB",
 		},
 		{
 			name:              "英語・作品名なし",
 			locale:            "en",
-			episodeIdentifier: "Episode 2 (ID: 42)",
-			want:              "Episode 2 (ID: 42) | Archive Episode | Annict DB",
+			episodeIdentifier: "Episode 2",
+			want:              "Archive Episode | Episode 2 | Annict DB",
 		},
 	}
 

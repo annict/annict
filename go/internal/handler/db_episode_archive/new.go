@@ -71,14 +71,14 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// setNewTitle gives meta a document title that starts with the episode's unique identifier,
-// followed by the work when it has a name, as the episode edit page does. The identifier
-// remains when the work has no name, so every episode's confirmation page can still be
-// distinguished in tabs, history, and assistive technology.
+// setNewTitle gives meta a document title that starts with the page name, followed by the
+// episode and then the work when it has a name, as the episode edit page does. The episode
+// remains when the work has no name, so confirmation pages whose episode labels differ stay
+// distinguishable in tabs, history, and assistive technology.
 //
-// [Ja] setNewTitle は meta に、エピソード固有の識別子から始まり、名前があれば作品が続く文書
-// タイトルを設定する (エピソード編集ページと同じ形)。作品に表示名が無くても識別子を残し、
-// タブ、履歴、支援技術で各エピソードの確認ページを区別できるようにする。
+// [Ja] setNewTitle は meta に、画面名から始まり、エピソード、名前があれば作品が続く文書
+// タイトルを設定する (エピソード編集ページと同じ形)。作品に表示名が無くてもエピソードを残し、
+// エピソードのラベルが異なる確認ページをタブ・履歴・支援技術で区別できるようにする。
 func setNewTitle(ctx context.Context, meta *viewmodel.PageMeta, episodeIdentifier string, workName string) {
 	templateData := map[string]any{"EpisodeIdentifier": episodeIdentifier}
 	if workName == "" {

@@ -1227,11 +1227,11 @@ other = "Episodes (Page {{.Page}})"
 
 [db_episodes_index_document_title]
 description = "Work-specific episode list document title"
-other = "{{.WorkTitle}} | Episodes"
+other = "Episodes | {{.WorkTitle}}"
 
 [db_episodes_index_document_title_paginated]
 description = "Work-specific episode list document title after the first page"
-other = "{{.WorkTitle}} | Episodes (Page {{.Page}})"
+other = "Episodes (Page {{.Page}}) | {{.WorkTitle}}"
 
 [db_episodes_index_table_caption]
 description = "Caption and scroll-region aria-label for the DB episodes table"
@@ -1347,7 +1347,7 @@ other = "Add Episodes"
 
 [db_episodes_new_document_title]
 description = "Work-specific episode bulk-create document title"
-other = "{{.WorkTitle}} | Add Episodes"
+other = "Add Episodes | {{.WorkTitle}}"
 
 [db_episodes_new_back_to_list_link]
 description = "Link from the bulk-create page back to the episode list"
@@ -1383,15 +1383,11 @@ other = "Edit Episode"
 
 [db_episodes_edit_document_title]
 description = "Episode-specific edit document title for a named work"
-other = "{{.EpisodeIdentifier}} | {{.WorkTitle}} | Edit Episode"
+other = "Edit Episode | {{.EpisodeIdentifier}} | {{.WorkTitle}}"
 
 [db_episodes_edit_document_title_without_work]
 description = "Episode-specific edit document title for a work without a display name"
-other = "{{.EpisodeIdentifier}} | Edit Episode"
-
-[db_episodes_identifier]
-description = "Label identifying an episode with a display number in a document title"
-other = "{{.Number}} (ID: {{.EpisodeID}})"
+other = "Edit Episode | {{.EpisodeIdentifier}}"
 
 [db_episodes_identifier_without_number]
 description = "Label identifying an episode without a display number in a document title"
@@ -1456,11 +1452,11 @@ other = "Archive Episode"
 
 [db_episodes_archive_new_document_title]
 description = "Episode-specific archive-confirmation document title for a named work"
-other = "{{.EpisodeIdentifier}} | {{.WorkTitle}} | Archive Episode"
+other = "Archive Episode | {{.EpisodeIdentifier}} | {{.WorkTitle}}"
 
 [db_episodes_archive_new_document_title_without_work]
 description = "Episode-specific archive-confirmation document title for a work without a display name"
-other = "{{.EpisodeIdentifier}} | Archive Episode"
+other = "Archive Episode | {{.EpisodeIdentifier}}"
 
 [db_episodes_archive_new_confirm_message]
 description = "Confirmation message on the episode archive-confirmation page"

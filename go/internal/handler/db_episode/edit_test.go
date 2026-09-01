@@ -54,7 +54,7 @@ func TestEdit(t *testing.T) {
 	body := rr.Body.String()
 
 	expectedContents := []string{
-		fmt.Sprintf("<title>第2話 (ID: %d) | テストアニメ | エピソードを編集 | Annict DB</title>", int64(episodeID)),
+		"<title>エピソード編集 | 第2話 | テストアニメ | Annict DB</title>",
 		fmt.Sprintf(`<meta property="og:url" content="https://test.annict.com/db/episodes/%d/edit">`, int64(episodeID)),
 		// The heading names the parent work, and the shared subnav links back to its form.
 		//
@@ -74,7 +74,7 @@ func TestEdit(t *testing.T) {
 		// [Ja] 保存済みの値が各欄に開く。
 		`value="第2話"`,
 		"もう、お婿にいけません",
-		"エピソードを編集",
+		"エピソード編集",
 	}
 
 	for _, expected := range expectedContents {
@@ -96,6 +96,14 @@ func TestEdit(t *testing.T) {
 	}
 }
 
+// TestEdit_DocumentTitleIsLocalizedAndUniquePerEpisode covers the two episodes of one work whose
+// edit pages an editor is most likely to keep open side by side. The page name opens the title and
+// the episode follows it, so a tab too narrow for the whole title still shows which page it is and
+// which episode it belongs to.
+//
+// [Ja] TestEdit_DocumentTitleIsLocalizedAndUniquePerEpisode は、編集者が並べて開きやすい同じ作品の
+// 2 エピソードの編集ページを検証する。タイトルは画面名で始まりエピソードが続くため、タイトル全体が
+// 収まらない幅のタブでも、どの画面でどのエピソードのものかが読める。
 func TestEdit_DocumentTitleIsLocalizedAndUniquePerEpisode(t *testing.T) {
 	t.Parallel()
 
@@ -109,12 +117,12 @@ func TestEdit_DocumentTitleIsLocalizedAndUniquePerEpisode(t *testing.T) {
 	handler := newTestHandler(t, db, tx)
 
 	tests := []struct {
-		name   string
-		locale string
-		suffix string
+		name     string
+		locale   string
+		pageName string
 	}{
-		{name: "日本語", locale: "ja", suffix: "エピソードを編集"},
-		{name: "英語", locale: "en", suffix: "Edit Episode"},
+		{name: "日本語", locale: "ja", pageName: "エピソード編集"},
+		{name: "英語", locale: "en", pageName: "Edit Episode"},
 	}
 
 	for _, tt := range tests {
@@ -139,10 +147,9 @@ func TestEdit_DocumentTitleIsLocalizedAndUniquePerEpisode(t *testing.T) {
 				titles[i] = body[start : end+len("</title>")]
 
 				want := fmt.Sprintf(
-					"<title>#%d (ID: %d) | Test Anime | %s | Annict DB</title>",
+					"<title>%s | #%d | Test Anime | Annict DB</title>",
+					tt.pageName,
 					i+1,
-					int64(episodeID),
-					tt.suffix,
 				)
 				if titles[i] != want {
 					t.Errorf("title = %q, want %q", titles[i], want)
@@ -185,7 +192,7 @@ func TestEdit_DocumentTitleOmitsWorkWithoutName(t *testing.T) {
 		t.Fatalf("status code: got %v want %v", status, http.StatusOK)
 	}
 
-	want := fmt.Sprintf("<title>第2話 (ID: %d) | エピソードを編集 | Annict DB</title>", int64(episodeID))
+	want := "<title>エピソード編集 | 第2話 | Annict DB</title>"
 	if !strings.Contains(rr.Body.String(), want) {
 		t.Errorf("レスポンスに %q が含まれていません", want)
 	}

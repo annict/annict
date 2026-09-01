@@ -1226,11 +1226,11 @@ other = "エピソード ({{.Page}}ページ目)"
 
 [db_episodes_index_document_title]
 description = "作品を識別できるエピソード一覧文書タイトル"
-other = "{{.WorkTitle}} | エピソード"
+other = "エピソード | {{.WorkTitle}}"
 
 [db_episodes_index_document_title_paginated]
 description = "2ページ目以降の作品を識別できるエピソード一覧文書タイトル"
-other = "{{.WorkTitle}} | エピソード ({{.Page}}ページ目)"
+other = "エピソード ({{.Page}}ページ目) | {{.WorkTitle}}"
 
 [db_episodes_index_table_caption]
 description = "DB エピソード一覧テーブルの caption とスクロール領域の aria-label"
@@ -1346,7 +1346,7 @@ other = "エピソード登録"
 
 [db_episodes_new_document_title]
 description = "作品を識別できるエピソード一括作成の文書タイトル"
-other = "{{.WorkTitle}} | エピソード登録"
+other = "エピソード登録 | {{.WorkTitle}}"
 
 [db_episodes_new_back_to_list_link]
 description = "一括作成ページからエピソード一覧へのリンク"
@@ -1378,19 +1378,15 @@ other = "放送予定が登録されているため、手動によるエピソ�
 
 [db_episodes_edit_title]
 description = "エピソード編集ページのタイトル"
-other = "エピソードを編集"
+other = "エピソード編集"
 
 [db_episodes_edit_document_title]
 description = "表示名のある作品に属するエピソードを識別できる編集ページの文書タイトル"
-other = "{{.EpisodeIdentifier}} | {{.WorkTitle}} | エピソードを編集"
+other = "エピソード編集 | {{.EpisodeIdentifier}} | {{.WorkTitle}}"
 
 [db_episodes_edit_document_title_without_work]
 description = "作品に表示名が無くてもエピソードを識別できる編集ページの文書タイトル"
-other = "{{.EpisodeIdentifier}} | エピソードを編集"
-
-[db_episodes_identifier]
-description = "表示用話数のあるエピソードを文書タイトルで識別するラベル"
-other = "{{.Number}} (ID: {{.EpisodeID}})"
+other = "エピソード編集 | {{.EpisodeIdentifier}}"
 
 [db_episodes_identifier_without_number]
 description = "表示用話数が無いエピソードを文書タイトルで識別するラベル"
@@ -1451,15 +1447,15 @@ other = "入力した内容は下のフォームにそのまま残していま�
 # DBエピソード非公開確認ページ
 [db_episodes_archive_new_title]
 description = "エピソード非公開確認ページのタイトル"
-other = "エピソードを非公開にする"
+other = "エピソード非公開"
 
 [db_episodes_archive_new_document_title]
 description = "表示名のある作品に属するエピソードを識別できる非公開確認ページの文書タイトル"
-other = "{{.EpisodeIdentifier}} | {{.WorkTitle}} | エピソードを非公開にする"
+other = "エピソード非公開 | {{.EpisodeIdentifier}} | {{.WorkTitle}}"
 
 [db_episodes_archive_new_document_title_without_work]
 description = "作品に表示名が無くてもエピソードを識別できる非公開確認ページの文書タイトル"
-other = "{{.EpisodeIdentifier}} | エピソードを非公開にする"
+other = "エピソード非公開 | {{.EpisodeIdentifier}}"
 
 [db_episodes_archive_new_confirm_message]
 description = "エピソード非公開確認ページの確認メッセージ"

@@ -48,7 +48,7 @@ func TestNew(t *testing.T) {
 	body := rr.Body.String()
 
 	expectedContents := []string{
-		"<title>テストアニメ | エピソード登録 | Annict DB</title>",
+		"<title>エピソード登録 | テストアニメ | Annict DB</title>",
 		fmt.Sprintf(`<meta property="og:url" content="https://test.annict.com/db/works/%d/episodes/new">`, int64(workID)),
 		// The heading names the parent work, and the shared subnav links back to its form.
 		//

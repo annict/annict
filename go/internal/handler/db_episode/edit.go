@@ -127,13 +127,14 @@ func (h *Handler) renderEdit(w http.ResponseWriter, r *http.Request, episodeID m
 	}
 }
 
-// setEditTitle gives meta a document title that starts with the episode's unique identifier,
-// followed by the work when it has a name. The identifier remains when the work has no name, so
-// every episode edit page can still be distinguished in tabs, history, and assistive technology.
+// setEditTitle gives meta a document title that starts with the page name, followed by the
+// episode and then the work when it has a name. The episode remains when the work has no name,
+// so edit pages whose episode labels differ stay distinguishable in tabs, history, and
+// assistive technology even where a tab is too narrow to show the whole title.
 //
-// [Ja] setEditTitle は meta に、エピソード固有の識別子から始まり、名前があれば作品が続く文書
-// タイトルを設定する。作品に表示名が無くても識別子を残し、タブ、履歴、支援技術で各エピソード
-// 編集ページを区別できるようにする。
+// [Ja] setEditTitle は meta に、画面名から始まり、エピソード、名前があれば作品が続く文書
+// タイトルを設定する。作品に表示名が無くてもエピソードを残し、タイトル全体が収まらない幅の
+// タブでも、エピソードのラベルが異なる編集ページをタブ・履歴・支援技術で区別できるようにする。
 func setEditTitle(ctx context.Context, meta *viewmodel.PageMeta, episodeIdentifier string, workName string) {
 	templateData := map[string]any{"EpisodeIdentifier": episodeIdentifier}
 	if workName == "" {

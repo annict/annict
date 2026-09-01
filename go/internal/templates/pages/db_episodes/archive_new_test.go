@@ -103,7 +103,7 @@ func TestArchiveNew_HeadingFallsBackWithoutWorkName(t *testing.T) {
 	}
 	html := buf.String()
 
-	if !strings.Contains(html, ">エピソードを非公開にする</h1>") {
+	if !strings.Contains(html, ">エピソード非公開</h1>") {
 		t.Error("表示名の無い作品で汎用の見出しが描画されていません")
 	}
 	if !strings.Contains(html, "第2話「もう、お婿にいけません」を非公開にしますか？") {

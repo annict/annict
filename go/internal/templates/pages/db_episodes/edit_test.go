@@ -324,7 +324,7 @@ func TestEdit_FallsBackToGenericHeading(t *testing.T) {
 		t.Fatalf("レンダリングエラー: %v", err)
 	}
 
-	if !strings.Contains(buf.String(), "エピソードを編集") {
+	if !strings.Contains(buf.String(), "エピソード編集") {
 		t.Error("見出しが汎用のページタイトルへフォールバックしていません")
 	}
 }
