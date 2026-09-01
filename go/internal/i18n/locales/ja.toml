@@ -1288,10 +1288,6 @@ other = "エピソード {{.ID}} を新しいタブで開く"
 description = "エピソードなしメッセージ"
 other = "エピソードが見つかりませんでした"
 
-[db_episodes_index_generation_heading]
-description = "エピソードの自動生成の案内の見出し"
-other = "エピソードの自動生成"
-
 [db_episodes_index_generation_planned_label]
 description = "自動生成の案内 - 作品の予定総話数のラベル"
 other = "予定総話数"
@@ -1301,8 +1297,8 @@ description = "自動生成の案内 - 公開中のエピソード数のラベ�
 other = "公開中のエピソード数"
 
 [db_episodes_index_generation_generatable_label]
-description = "自動生成の案内 - 自動生成で到達できる最大話数のラベル"
-other = "生成可能な最大話数"
+description = "自動生成の案内 - 自動生成されるエピソード数のラベル"
+other = "自動生成されるエピソード数"
 
 [db_episodes_index_generation_unknown]
 description = "自動生成の案内 - 予定総話数が未登録のときに表示する値"
@@ -1622,8 +1618,8 @@ description = "フォームラベル - あらすじの引用元 (英語)"
 other = "あらすじの引用元 (英語)"
 
 [db_works_new_manual_episodes_count_label]
-description = "フォームラベル - 手動エピソード数"
-other = "手動エピソード数"
+description = "フォームラベル - 予定総話数"
+other = "予定総話数"
 
 [db_works_new_start_episode_raw_number_label]
 description = "フォームラベル - 開始エピソード番号"
@@ -1746,8 +1742,8 @@ description = "フォームラベル - あらすじの引用元 (英語)"
 other = "あらすじの引用元 (英語)"
 
 [db_works_edit_manual_episodes_count_label]
-description = "フォームラベル - 手動エピソード数"
-other = "手動エピソード数"
+description = "フォームラベル - 予定総話数"
+other = "予定総話数"
 
 [db_works_edit_start_episode_raw_number_label]
 description = "フォームラベル - 開始エピソード番号"

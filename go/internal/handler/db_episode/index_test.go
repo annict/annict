@@ -355,15 +355,15 @@ func TestIndex_ShowsGenerationNoticeAndDerivedColumns(t *testing.T) {
 	body := rr.Body.String()
 
 	expectedContents := []string{
-		// The notice reports the work's expected total, its published episodes and how far
-		// the auto-generation could number them.
+		// The notice reports the work's expected total, its published episodes and how many
+		// episodes auto-generation produces.
 		//
-		// [Ja] 案内は作品の予定総話数・公開中のエピソード数・自動生成が到達する話数を報告する。
+		// [Ja] 案内は作品の予定総話数・公開中のエピソード数・自動生成されるエピソード数を報告する。
 		"<dt>予定総話数</dt>",
 		`<dd class="text-card-foreground">12</dd>`,
 		"<dt>公開中のエピソード数</dt>",
 		`<dd class="text-card-foreground">2</dd>`,
-		"<dt>生成可能な最大話数</dt>",
+		"<dt>自動生成されるエピソード数</dt>",
 		`<dd class="text-card-foreground">9</dd>`,
 		// The second episode names the first one as its preceding episode, and carries
 		// its records count.

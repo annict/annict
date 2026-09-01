@@ -183,51 +183,76 @@ func TestIndex_MissingValuesRenderPlaceholder(t *testing.T) {
 	}
 }
 
-// TestIndex_GenerationNotice covers the auto-generation notice: it states the three values
-// the editor plans episodes by, and it renders on an empty list too, where those values are
-// all the page has to show.
+// TestIndex_GenerationNotice covers the episode-planning notice in both supported locales.
+// It states the three values the editor plans episodes by, and it renders on an empty list
+// too, where those values are all the page has to show. The notice sits in a plain container
+// rather than a Basecoat alert because that component requires a title element, and the
+// notice deliberately carries no heading.
 //
-// [Ja] TestIndex_GenerationNotice は自動生成の案内を検証する。編集者がエピソードを計画する
-// ための 3 つの値を述べ、一覧が空でも描画される (空の一覧ではこれらの値だけがページの
-// 情報になるため)。
+// [Ja] TestIndex_GenerationNotice は、対応する両ロケールでエピソード計画の案内を検証する。
+// 編集者がエピソードを計画するための 3 つの値を述べ、一覧が空でも描画される (空の一覧では
+// これらの値だけがページの情報になるため)。案内が Basecoat の alert ではなく素のコンテナに
+// 載るのは、alert がタイトル要素を必須とする一方、この案内は意図的に見出しを持たないため。
 func TestIndex_GenerationNotice(t *testing.T) {
 	t.Parallel()
 
-	ctx := i18n.SetLocale(context.Background(), "ja")
-	data := IndexPageData{
-		WorkID:   1,
-		WorkName: "テストアニメ",
-		Generation: viewmodel.DBEpisodeGenerationSummary{
-			PlannedCount:                "12",
-			PublishedEpisodeCount:       5,
-			MaxGeneratableEpisodeNumber: 9,
+	tests := []struct {
+		name       string
+		locale     string
+		wantLabels []string
+	}{
+		{
+			name:       "日本語",
+			locale:     "ja",
+			wantLabels: []string{"予定総話数", "公開中のエピソード数", "自動生成されるエピソード数"},
 		},
-		Episodes:   []viewmodel.DBEpisodeListItem{},
-		Pagination: viewmodel.NewPagination(1, 0, 100, "/db/works/1/episodes"),
+		{
+			name:       "英語",
+			locale:     "en",
+			wantLabels: []string{"Expected episodes", "Published episodes", "Auto-generated episodes"},
+		},
 	}
 
-	var buf strings.Builder
-	if err := Index(data).Render(ctx, &buf); err != nil {
-		t.Fatalf("レンダリングエラー: %v", err)
-	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 
-	html := buf.String()
+			ctx := i18n.SetLocale(context.Background(), tt.locale)
+			data := IndexPageData{
+				WorkID:   1,
+				WorkName: "テストアニメ",
+				Generation: viewmodel.DBEpisodeGenerationSummary{
+					PlannedCount:                "12",
+					PublishedEpisodeCount:       5,
+					MaxGeneratableEpisodeNumber: 9,
+				},
+				Episodes:   []viewmodel.DBEpisodeListItem{},
+				Pagination: viewmodel.NewPagination(1, 0, 100, "/db/works/1/episodes"),
+			}
 
-	expectedContents := []string{
-		`<div class="alert">`,
-		"エピソードの自動生成",
-		"<dt>予定総話数</dt>",
-		`<dd class="text-card-foreground">12</dd>`,
-		"<dt>公開中のエピソード数</dt>",
-		`<dd class="text-card-foreground">5</dd>`,
-		"<dt>生成可能な最大話数</dt>",
-		`<dd class="text-card-foreground">9</dd>`,
-	}
+			var buf strings.Builder
+			if err := Index(data).Render(ctx, &buf); err != nil {
+				t.Fatalf("レンダリングエラー: %v", err)
+			}
 
-	for _, expected := range expectedContents {
-		if !strings.Contains(html, expected) {
-			t.Errorf("出力に %q が含まれていません", expected)
-		}
+			html := buf.String()
+			if strings.Contains(html, `class="alert"`) {
+				t.Error("案内は Basecoat の alert を使うべきではありません (タイトル要素が必須のため)")
+			}
+			if !strings.Contains(html, "<dl") {
+				t.Error("案内は定義リストで描画されるべきです")
+			}
+			for _, value := range []string{"12", "5", "9"} {
+				if !strings.Contains(html, `<dd class="text-card-foreground">`+value+"</dd>") {
+					t.Errorf("出力に値 %q が含まれていません", value)
+				}
+			}
+			for _, label := range tt.wantLabels {
+				if !strings.Contains(html, "<dt>"+label+"</dt>") {
+					t.Errorf("出力にラベル %q が含まれていません", label)
+				}
+			}
+		})
 	}
 }
 

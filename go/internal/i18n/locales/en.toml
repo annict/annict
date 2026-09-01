@@ -1289,10 +1289,6 @@ other = "Open episode {{.ID}} in a new tab"
 description = "No episodes message"
 other = "No episodes found"
 
-[db_episodes_index_generation_heading]
-description = "Heading of the episode auto-generation notice"
-other = "Episode auto-generation"
-
 [db_episodes_index_generation_planned_label]
 description = "Auto-generation notice - label for the work's expected total episode count"
 other = "Expected episodes"
@@ -1302,8 +1298,8 @@ description = "Auto-generation notice - label for the number of published episod
 other = "Published episodes"
 
 [db_episodes_index_generation_generatable_label]
-description = "Auto-generation notice - label for the highest episode number auto-generation can reach"
-other = "Highest episode number available for auto-generation"
+description = "Auto-generation notice - label for the number of episodes auto-generation produces"
+other = "Auto-generated episodes"
 
 [db_episodes_index_generation_unknown]
 description = "Auto-generation notice - value shown when the work records no expected episode count"
@@ -1623,8 +1619,8 @@ description = "Form label - Synopsis Source (English)"
 other = "Synopsis Source (English)"
 
 [db_works_new_manual_episodes_count_label]
-description = "Form label - Manual Episodes Count"
-other = "Manual Episodes Count"
+description = "Form label - Expected Episodes"
+other = "Expected Episodes"
 
 [db_works_new_start_episode_raw_number_label]
 description = "Form label - Start Episode Raw Number"
@@ -1747,8 +1743,8 @@ description = "Form label - Synopsis Source (English)"
 other = "Synopsis Source (English)"
 
 [db_works_edit_manual_episodes_count_label]
-description = "Form label - Manual Episodes Count"
-other = "Manual Episodes Count"
+description = "Form label - Expected Episodes"
+other = "Expected Episodes"
 
 [db_works_edit_start_episode_raw_number_label]
 description = "Form label - Start Episode Raw Number"

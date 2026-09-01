@@ -234,6 +234,65 @@ func TestNew_RendersTitleRowAndCard(t *testing.T) {
 	}
 }
 
+// TestManualEpisodesCountLabel verifies that the create and edit forms name their shared
+// manual_episodes_count field as the work's expected total in both supported locales.
+//
+// [Ja] TestManualEpisodesCountLabel は、登録・編集フォームで共通の manual_episodes_count 欄を、
+// 対応する両ロケールで作品の予定総話数として名付けることを検証する。
+func TestManualEpisodesCountLabel(t *testing.T) {
+	t.Parallel()
+
+	pages := []struct {
+		name      string
+		component func() templ.Component
+	}{
+		{
+			name: "新規",
+			component: func() templ.Component {
+				return New(NewPageData{
+					FormInput: &viewmodel.DBWorkFormInput{},
+				})
+			},
+		},
+		{
+			name: "編集",
+			component: func() templ.Component {
+				return Edit(EditPageData{
+					WorkID:    1,
+					WorkTitle: "編集対象アニメ",
+					FormInput: &viewmodel.DBWorkFormInput{},
+				})
+			},
+		},
+	}
+	locales := []struct {
+		code string
+		want string
+	}{
+		{code: "ja", want: "予定総話数"},
+		{code: "en", want: "Expected Episodes"},
+	}
+
+	for _, page := range pages {
+		for _, locale := range locales {
+			t.Run(page.name+"/"+locale.code, func(t *testing.T) {
+				t.Parallel()
+
+				ctx := i18n.SetLocale(context.Background(), locale.code)
+				var buf strings.Builder
+				if err := page.component().Render(ctx, &buf); err != nil {
+					t.Fatalf("レンダリングエラー: %v", err)
+				}
+
+				want := `<label for="manual_episodes_count" class="label">` + locale.want + "</label>"
+				if !strings.Contains(buf.String(), want) {
+					t.Errorf("出力に %q が含まれていません", want)
+				}
+			})
+		}
+	}
+}
+
 // validatedFields lists every field that validator.DBWorkCreateValidator can attach an
 // error to. Both forms have to render a message for each of them: an error with nowhere
 // to go leaves the submit failing at 422 with no visible reason. The validator names its
