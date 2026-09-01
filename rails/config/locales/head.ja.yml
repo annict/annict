@@ -145,11 +145,6 @@ ja:
           new: 放送情報登録
         work_images:
           show: 作品画像
-        works:
-          activities: アクティビティ
-          edit: "%{title}"
-          index: 作品一覧
-          new: 作品登録
       episodes:
         index: アニメ「%{title}」のエピソード
         show: アニメ「%{work_title}」%{episode_title_with_number}

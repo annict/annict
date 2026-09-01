@@ -149,11 +149,6 @@ en:
           new: New Slot Detail
         work_images:
           show: Work Image
-        works:
-          activities: Activities
-          edit: "%{title}"
-          index: Works
-          new: New Work
       episodes:
         index: Episodes of %{title} (Anime)
         show: Anime "%{work_title}" - %{episode_title_with_number}

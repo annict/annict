@@ -1,3 +1,4 @@
+<% return_to_query = {return_to: request.fullpath}.to_query %>
 <table class="table table-sm">
   <thead>
     <tr>
@@ -67,13 +68,45 @@
           <%= render Db::PublishingStateLabelComponent.new(resource: work) %>
         </td>
         <td>
-          <%= render Db::ActionButtonsComponent.new(
-              user: current_user,
-              resource: work,
-              detail_path: db_work_detail_path(work),
-              edit_path: db_edit_work_path(work),
-              publishing_path: db_work_publishing_path(work)
-          ) %>
+          <%# Every action links to a screen on the Go version rather than submitting from here:
+              the write endpoints verify a CSRF token this page cannot produce, so the Go
+              confirmation screens carry the form that performs the change. Each link repeats the
+              same words on every row, so the target work is added to the accessible name and
+              hidden visually. The confirmation links also carry this page as return_to, so
+              cancelling or completing the change comes back to these search results.
+
+              [Ja] どの操作もこの画面から送信せず Go 版の画面へのリンクにする。書き込みの
+              エンドポイントはこの画面が用意できない CSRF トークンを検証するため、変更を実行する
+              フォームは Go 版の確認画面が持つ。各リンクは行ごとに同じ文言を繰り返すため、対象の
+              作品をアクセシブルネームに足し、表示上は隠す。確認画面へのリンクはこの画面を
+              return_to として渡し、変更をやめた場合も完了した場合もこの検索結果に戻るようにする。 %>
+          <% if policy(work).edit? %>
+            <%= link_to "/db/works/#{work.id}/edit", class: "btn btn-primary btn-sm" do %>
+              <%= t("noun.edit") %>
+              <span class="visually-hidden"><%= t("messages.db.works.action_target_label", id: work.id) %></span>
+            <% end %>
+          <% end %>
+
+          <% if policy(work).unpublish? %>
+            <% if work.published? %>
+              <%= link_to "/db/works/#{work.id}/archive/new?#{return_to_query}", class: "btn btn-warning btn-sm" do %>
+                <%= t("noun.unpublish") %>
+                <span class="visually-hidden"><%= t("messages.db.works.action_target_label", id: work.id) %></span>
+              <% end %>
+            <% else %>
+              <%= link_to "/db/works/#{work.id}/unarchive/new?#{return_to_query}", class: "btn btn-success btn-sm" do %>
+                <%= t("noun.publish") %>
+                <span class="visually-hidden"><%= t("messages.db.works.action_target_label", id: work.id) %></span>
+              <% end %>
+            <% end %>
+          <% end %>
+
+          <% if policy(work).destroy? %>
+            <%= link_to "/db/works/#{work.id}/deletion/new?#{return_to_query}", class: "btn btn-danger btn-sm" do %>
+              <%= t("noun.delete") %>
+              <span class="visually-hidden"><%= t("messages.db.works.action_target_label", id: work.id) %></span>
+            <% end %>
+          <% end %>
         </td>
       </tr>
     <% end %>

@@ -133,9 +133,6 @@ module GeneratedPathHelpersModule
   def db_edit_trailer_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }
-  def db_edit_work_path(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
   def db_new_cast_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }
@@ -170,9 +167,6 @@ module GeneratedPathHelpersModule
 
   sig { params(args: T.untyped).returns(String) }
   def db_new_trailer_path(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
-  def db_new_work_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }
   def db_organization_detail_path(*args); end
@@ -262,19 +256,7 @@ module GeneratedPathHelpersModule
   def db_trailer_publishing_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }
-  def db_work_detail_path(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
   def db_work_image_detail_path(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
-  def db_work_list_path(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
-  def db_work_publishing_path(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
-  def db_works_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }
   def edit_collection_item_path(*args); end
