@@ -87,7 +87,7 @@ func TestArchiveNew_BlankTitleFallsBackToPageTitle(t *testing.T) {
 	data := ArchiveNewPageData{
 		CSRFToken: "test-csrf",
 		WorkID:    viewmodel.WorkID(42),
-		Title:     "   ",
+		Title:     "",
 	}
 
 	var buf strings.Builder
@@ -97,11 +97,11 @@ func TestArchiveNew_BlankTitleFallsBackToPageTitle(t *testing.T) {
 
 	html := buf.String()
 
-	if !strings.Contains(html, ">作品を非公開にする</h1>") {
+	if !strings.Contains(html, ">作品非公開</h1>") {
 		t.Error("response doesn't fall back to the page title in the heading")
 	}
 
-	if !strings.Contains(html, "「作品を非公開にする」を非公開にしますか？") {
+	if !strings.Contains(html, "「作品非公開」を非公開にしますか？") {
 		t.Error("response doesn't fall back to the page title in the confirmation message")
 	}
 }

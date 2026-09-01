@@ -2,10 +2,12 @@ package db_work
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"log/slog"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/go-chi/chi/v5"
 
@@ -29,6 +31,22 @@ import (
 // ある。
 func dbWorkEditPath(id model.WorkID) string {
 	return fmt.Sprintf("/db/works/%d/edit", int64(id))
+}
+
+// setEditTitle gives meta a document title that starts with the page name, followed by the work
+// once it has a display name. A work without one leaves the page name standing alone, which is
+// also what the heading shows, so the two never disagree on whether the target can be named.
+//
+// [Ja] setEditTitle は meta に、画面名から始まり、表示名があれば作品が続く文書タイトルを
+// 設定する。表示名が無い作品では画面名だけになり、見出しの表示とも揃う。対象を名指しできる
+// かどうかの判断が両者で食い違わないようにするため。
+func setEditTitle(ctx context.Context, meta *viewmodel.PageMeta, workName string) {
+	if workName == "" {
+		meta.SetDBTitle(ctx, "db_works_edit_title")
+		return
+	}
+
+	meta.SetDBTitle(ctx, "db_works_edit_document_title", map[string]any{"WorkTitle": workName})
 }
 
 // Edit renders the work edit form page in the Annict DB admin UI (GET /db/works/:id/edit).
@@ -58,8 +76,10 @@ func (h *Handler) Edit(w http.ResponseWriter, r *http.Request) {
 	formInput := viewmodel.NewDBWorkFormInputFromWork(output.Work)
 	csrfToken := middleware.GetCSRFToken(r, h.sessionManager)
 
+	workName := strings.TrimSpace(output.Work.Title)
+
 	meta := viewmodel.DefaultPageMeta(ctx, h.cfg, dbWorkEditPath(output.Work.ID))
-	meta.SetDBTitle(ctx, "db_works_edit_title")
+	setEditTitle(ctx, &meta, workName)
 
 	component := layouts.Db(
 		meta,
@@ -67,7 +87,7 @@ func (h *Handler) Edit(w http.ResponseWriter, r *http.Request) {
 		db_works.Edit(db_works.EditPageData{
 			CSRFToken:   csrfToken,
 			WorkID:      viewmodel.WorkID(output.Work.ID),
-			WorkTitle:   output.Work.Title,
+			WorkTitle:   workName,
 			FormOptions: formOptions,
 			FormInput:   formInput,
 		}),

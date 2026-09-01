@@ -1605,7 +1605,11 @@ other = "登録する"
 
 [db_works_edit_title]
 description = "作品編集ページのタイトル"
-other = "作品を編集"
+other = "作品編集"
+
+[db_works_edit_document_title]
+description = "作品を識別できる編集ページの文書タイトル"
+other = "作品編集 | {{.WorkTitle}}"
 
 [db_works_edit_work_page_link]
 description = "編集ページから公開サイトの作品ページへのリンク"
@@ -1749,7 +1753,11 @@ other = "更新する"
 
 [db_works_archive_new_title]
 description = "作品非公開確認ページのタイトル"
-other = "作品を非公開にする"
+other = "作品非公開"
+
+[db_works_archive_new_document_title]
+description = "作品を識別できる非公開確認ページの文書タイトル"
+other = "作品非公開 | {{.WorkTitle}}"
 
 [db_works_archive_new_confirm_message]
 description = "非公開確認ページの確認メッセージ"

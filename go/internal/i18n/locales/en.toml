@@ -1608,6 +1608,10 @@ other = "Register"
 description = "DB works edit page title"
 other = "Edit Work"
 
+[db_works_edit_document_title]
+description = "Work-specific edit document title"
+other = "Edit Work | {{.WorkTitle}}"
+
 [db_works_edit_work_page_link]
 description = "Link from the edit work page to the work page on the public site"
 other = "Work page"
@@ -1751,6 +1755,10 @@ other = "Update"
 [db_works_archive_new_title]
 description = "Title of the archive-confirmation page"
 other = "Archive Work"
+
+[db_works_archive_new_document_title]
+description = "Work-specific archive-confirmation document title"
+other = "Archive Work | {{.WorkTitle}}"
 
 [db_works_archive_new_confirm_message]
 description = "Confirmation message on the archive-confirmation page"

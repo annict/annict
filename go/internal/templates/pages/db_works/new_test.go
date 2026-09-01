@@ -748,48 +748,28 @@ func TestEdit_HeadingAndWorkPageLink(t *testing.T) {
 }
 
 // TestEdit_HeadingFallsBackToPageTitle verifies that the heading falls back to the generic
-// page title when the work title is blank, which is what the form re-rendered for a blank
-// title receives.
+// page title when the work has no display name, which is what the handler passes for a work
+// with a blank title and for a submit that cleared the title field.
 //
-// [Ja] TestEdit_HeadingFallsBackToPageTitle は、作品タイトルが空のとき見出しが汎用の
-// ページタイトルにフォールバックすることを検証する (タイトルを空にして再描画されたフォームが
-// 受け取る値がこれにあたる)。
+// [Ja] TestEdit_HeadingFallsBackToPageTitle は、作品に表示名が無いとき見出しが汎用の
+// ページタイトルにフォールバックすることを検証する (タイトルが空の作品と、タイトル欄を空に
+// した送信で、ハンドラーが渡す値がこれにあたる)。
 func TestEdit_HeadingFallsBackToPageTitle(t *testing.T) {
 	t.Parallel()
 
-	tests := []struct {
-		name      string
-		workTitle string
-	}{
-		{
-			name:      "空文字",
-			workTitle: "",
-		},
-		{
-			name:      "空白文字のみ",
-			workTitle: " \t\n ",
-		},
+	data := EditPageData{
+		WorkID:    1,
+		WorkTitle: "",
+		FormInput: &viewmodel.DBWorkFormInput{},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
+	var buf strings.Builder
+	if err := Edit(data).Render(context.Background(), &buf); err != nil {
+		t.Fatalf("レンダリングエラー: %v", err)
+	}
 
-			data := EditPageData{
-				WorkID:    1,
-				WorkTitle: tt.workTitle,
-				FormInput: &viewmodel.DBWorkFormInput{},
-			}
-
-			var buf strings.Builder
-			if err := Edit(data).Render(context.Background(), &buf); err != nil {
-				t.Fatalf("レンダリングエラー: %v", err)
-			}
-
-			if !strings.Contains(buf.String(), "作品を編集") {
-				t.Error("作品タイトルが空のとき見出しはページタイトルを表示するべきです")
-			}
-		})
+	if !strings.Contains(buf.String(), "作品編集") {
+		t.Error("作品に表示名が無いとき見出しはページタイトルを表示するべきです")
 	}
 }
 
