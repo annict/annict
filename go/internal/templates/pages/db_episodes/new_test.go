@@ -378,3 +378,67 @@ func TestNew_FieldsUseBasecoatGroups(t *testing.T) {
 		t.Error("行入力の textarea は Enter で改行を入れるため enterkeyhint を持つべきではありません")
 	}
 }
+
+// TestNew_GuidelineLink verifies that the bulk-create page offers the bulk registration
+// guideline below its heading. The page states the line format nowhere itself, so this link is
+// what an editor follows to learn the column order and the shapes a partly filled line takes.
+//
+// [Ja] TestNew_GuidelineLink は、一括作成ページが見出しの下にエピソードの一括登録ガイドライン
+// への導線を持つことを検証する。ページ自身は行の形式をどこにも述べないため、列の順序や一部
+// だけ入力した行の形を編集者が知るには、このリンクを辿ることになる。
+func TestNew_GuidelineLink(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name      string
+		locale    string
+		label     string
+		ariaLabel string
+	}{
+		{
+			name:      "日本語",
+			locale:    "ja",
+			label:     "エピソードの一括登録ガイドライン",
+			ariaLabel: "エピソードの一括登録ガイドライン を新しいタブで開く",
+		},
+		{
+			name:      "英語",
+			locale:    "en",
+			label:     "Bulk episode registration guidelines",
+			ariaLabel: "Open Bulk episode registration guidelines in a new tab",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			ctx := i18n.SetLocale(context.Background(), tt.locale)
+
+			var buf strings.Builder
+			if err := New(NewPageData{WorkID: 1, WorkName: "テストアニメ"}).Render(ctx, &buf); err != nil {
+				t.Fatalf("レンダリングエラー: %v", err)
+			}
+
+			html := buf.String()
+
+			for _, expected := range []string{
+				// The link names where it goes and points at the bulk registration guideline,
+				// opening it in a new tab with tabnabbing protection so the lines the editor is
+				// entering stay in the form.
+				//
+				// [Ja] リンクは行き先を名乗り、エピソードの一括登録ガイドラインを指す。編集者が
+				// 入力中の行をフォームに残せるよう、tabnabbing 対策付きで新しいタブに開く。
+				">" + tt.label + "<",
+				`href="` + viewmodel.HelpEpisodeBulkCreateURL() + `"`,
+				`aria-label="` + tt.ariaLabel + `"`,
+				`target="_blank"`,
+				`rel="noopener"`,
+			} {
+				if !strings.Contains(html, expected) {
+					t.Errorf("期待する文字列が含まれていません: %q", expected)
+				}
+			}
+		})
+	}
+}

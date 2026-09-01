@@ -70,6 +70,7 @@ templ New(data NewPageData) {
 			<div class="flex-1">
 				@components.MainTitle(components.MainTitleData{
 					Title:   templates.T(ctx, "db_works_new_title"),
+					Content: components.GuidelineLink(templates.T(ctx, "db_works_new_guideline_link"), viewmodel.HelpWorkEditingURL()),
 					Actions: newBackToListLink(),
 				})
 			</div>

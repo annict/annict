@@ -469,3 +469,41 @@ func TestEdit_WithoutConflictOmitsStoredValues(t *testing.T) {
 		t.Error("競合していないのに保存済みの内容の案内が描画されています")
 	}
 }
+
+// TestEdit_GuidelineLink verifies that the episode edit page offers the episode editing
+// guideline below its heading: an editor who opens the form reaches the guideline from the
+// screen itself instead of having to find the help pages on their own.
+//
+// [Ja] TestEdit_GuidelineLink は、エピソード編集ページが見出しの下にエピソードの編集ガイド
+// ラインへの導線を持つことを検証する。フォームを開いた編集者が、自力でヘルプページを探さずに
+// 画面からガイドラインへ辿れるようにするため。
+func TestEdit_GuidelineLink(t *testing.T) {
+	t.Parallel()
+
+	ctx := i18n.SetLocale(context.Background(), "ja")
+
+	var buf strings.Builder
+	if err := Edit(editTestData()).Render(ctx, &buf); err != nil {
+		t.Fatalf("レンダリングエラー: %v", err)
+	}
+
+	html := buf.String()
+
+	for _, expected := range []string{
+		// The link names where it goes and points at the episode editing guideline, opening
+		// it in a new tab with tabnabbing protection so the edits in progress stay in the
+		// form.
+		//
+		// [Ja] リンクは行き先を名乗り、エピソードの編集ガイドラインを指す。編集途中の内容を
+		// フォームに残せるよう、tabnabbing 対策付きで新しいタブに開く。
+		"エピソードの編集ガイドライン",
+		`href="` + viewmodel.HelpEpisodeEditingURL() + `"`,
+		`aria-label="エピソードの編集ガイドライン を新しいタブで開く"`,
+		`target="_blank"`,
+		`rel="noopener"`,
+	} {
+		if !strings.Contains(html, expected) {
+			t.Errorf("期待する文字列が含まれていません: %q", expected)
+		}
+	}
+}

@@ -1064,6 +1064,13 @@ other = "There is a problem with your input"
 description = "One entry of the error summary (a field label and its message)"
 other = "{{.Label}}: {{.Message}}"
 
+# Guideline link
+#
+# [Ja] ガイドラインリンク
+[guideline_link_aria_label]
+description = "Aria label for a link to a guideline help page that opens in a new tab"
+other = "Open {{.Label}} in a new tab"
+
 # Status label related
 [status_published]
 description = "Status - Published"
@@ -1350,6 +1357,10 @@ other = "{{.WorkTitle}} | Add Episodes"
 description = "Link from the bulk-create page back to the episode list"
 other = "Back to List"
 
+[db_episodes_new_guideline_link]
+description = "Link from the episode bulk-create page to the bulk episode registration help page"
+other = "Bulk episode registration guidelines"
+
 [db_episodes_new_rows_label]
 description = "Label of the bulk-create input, which takes one episode per line"
 other = "Episodes"
@@ -1427,6 +1438,10 @@ other = "episode ID: {{.EpisodeID}}"
 [db_episodes_edit_back_to_list_link]
 description = "Link from the episode edit page back to the episode list"
 other = "Back to List"
+
+[db_episodes_edit_guideline_link]
+description = "Link from the episode edit page to the episode editing guideline help page"
+other = "Episode editing guidelines"
 
 [db_episodes_edit_number_label]
 description = "Form label - Display number"
@@ -1514,6 +1529,10 @@ other = "Add Work"
 [db_works_new_back_to_list_link]
 description = "Link from new work page back to the works index"
 other = "Back to List"
+
+[db_works_new_guideline_link]
+description = "Link from the new work page to the work editing guideline help page"
+other = "Work editing guidelines"
 
 [db_works_new_title_label]
 description = "Form label - Title"
@@ -1634,6 +1653,10 @@ other = "Work page"
 [db_works_edit_work_page_link_aria_label]
 description = "Aria label for the link that opens the work page on the public site in a new tab"
 other = "Open the work page in a new tab"
+
+[db_works_edit_guideline_link]
+description = "Link from the edit work page to the work editing guideline help page"
+other = "Work editing guidelines"
 
 [db_works_edit_title_label]
 description = "Form label - Title"

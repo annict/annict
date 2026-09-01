@@ -201,6 +201,7 @@ templ New(data NewPageData) {
 			<div class="flex-1">
 				@components.MainTitle(components.MainTitleData{
 					Title:   data.heading(ctx),
+					Content: components.GuidelineLink(templates.T(ctx, "db_episodes_new_guideline_link"), viewmodel.HelpEpisodeBulkCreateURL()),
 					Actions: newBackToListLink(data.WorkID),
 				})
 			</div>

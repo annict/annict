@@ -1063,6 +1063,13 @@ other = "入力内容にエラーがあります"
 description = "エラー要約の1項目 (フィールドのラベルとメッセージ)"
 other = "{{.Label}}: {{.Message}}"
 
+# Guideline link
+#
+# [Ja] ガイドラインリンク
+[guideline_link_aria_label]
+description = "ガイドラインのヘルプページへのリンク (新しいタブで開く) の aria-label"
+other = "{{.Label}} を新しいタブで開く"
+
 # 公開状態ラベル関連
 [status_published]
 description = "公開状態 - 公開"
@@ -1349,6 +1356,10 @@ other = "{{.WorkTitle}} | エピソード登録"
 description = "一括作成ページからエピソード一覧へのリンク"
 other = "一覧に戻る"
 
+[db_episodes_new_guideline_link]
+description = "エピソード一括作成ページからエピソードの一括登録のヘルプページへのリンク"
+other = "エピソードの一括登録ガイドライン"
+
 [db_episodes_new_rows_label]
 description = "一括作成ページの入力欄 (1 行 1 エピソード) のラベル"
 other = "エピソード"
@@ -1426,6 +1437,10 @@ other = "ID: {{.EpisodeID}} のエピソード"
 [db_episodes_edit_back_to_list_link]
 description = "エピソード編集ページからエピソード一覧へのリンク"
 other = "一覧に戻る"
+
+[db_episodes_edit_guideline_link]
+description = "エピソード編集ページからエピソードの編集ガイドラインのヘルプページへのリンク"
+other = "エピソードの編集ガイドライン"
 
 [db_episodes_edit_number_label]
 description = "フォームラベル - 表示用話数"
@@ -1513,6 +1528,10 @@ other = "作品登録"
 [db_works_new_back_to_list_link]
 description = "新規作成ページから一覧ページへのリンク"
 other = "一覧に戻る"
+
+[db_works_new_guideline_link]
+description = "作品新規作成ページから作品の編集ガイドラインのヘルプページへのリンク"
+other = "作品の編集ガイドライン"
 
 [db_works_new_title_label]
 description = "フォームラベル - タイトル"
@@ -1633,6 +1652,10 @@ other = "作品ページ"
 [db_works_edit_work_page_link_aria_label]
 description = "編集ページから公開サイトの作品ページへのリンク (新しいタブで開く) の aria-label"
 other = "作品ページを新しいタブで開く"
+
+[db_works_edit_guideline_link]
+description = "作品編集ページから作品の編集ガイドラインのヘルプページへのリンク"
+other = "作品の編集ガイドライン"
 
 [db_works_edit_title_label]
 description = "フォームラベル - タイトル"
