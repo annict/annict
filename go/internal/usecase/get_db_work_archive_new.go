@@ -27,6 +27,7 @@ func NewGetDBWorkArchiveNewUsecase(workRepo *repository.WorkRepository) *GetDBWo
 }
 
 type GetDBWorkArchiveNewInput struct {
+	User   *model.User
 	WorkID model.WorkID
 }
 
@@ -34,15 +35,23 @@ type GetDBWorkArchiveNewOutput struct {
 	Work *model.Work
 }
 
-// Execute returns the work to confirm archiving for. It returns a *model.AppError with
-// AppErrCodeResourceNotFound when the work does not exist or is not currently published;
-// the handler converts that to 404.
+// Execute first authorizes a committer before looking up the work. It returns a
+// *model.AppError with AppErrCodeResourceNotFound when the work does not exist or is not
+// currently published; the handler converts that to 404.
 //
-// [Ja] Execute は非公開を確認する対象の work を返す。work が存在しない、または現在公開中で
-// ない場合は AppErrCodeResourceNotFound の *model.AppError を返し、Handler 側で 404 に
+// [Ja] Execute は work を取得する前にコミッターを認可する。work が存在しない、または現在
+// 公開中でない場合は AppErrCodeResourceNotFound の *model.AppError を返し、Handler 側で 404 に
 // 変換する。
 func (uc *GetDBWorkArchiveNewUsecase) Execute(ctx context.Context, input GetDBWorkArchiveNewInput) (*GetDBWorkArchiveNewOutput, error) {
-	work, err := uc.workRepo.GetForArchiveByID(ctx, input.WorkID)
+	if input.User == nil || !input.User.IsCommitter() {
+		return nil, &model.AppError{
+			Code:     model.AppErrCodeForbidden,
+			UserMsg:  i18n.T(ctx, "error_forbidden"),
+			Metadata: map[string]string{"work_id": input.WorkID.String()},
+		}
+	}
+
+	work, err := uc.workRepo.GetForStateChangeByID(ctx, input.WorkID)
 	if err != nil {
 		return nil, fmt.Errorf("作品の取得に失敗: %w", err)
 	}

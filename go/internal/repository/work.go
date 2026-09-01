@@ -45,17 +45,18 @@ func workFromGetByIDRow(row query.GetWorkByIDRow) *model.Work {
 	return work
 }
 
-// GetForArchiveByID loads the columns the Annict DB admin archive-confirmation screen
-// needs: the title to display and the work-state source (unpublished_at / deleted_at)
-// so the caller can derive the current status and reject a work that is not archivable.
-// It returns (nil, nil) when no work matches the id.
+// GetForStateChangeByID loads the columns the Annict DB admin confirmation screens for a
+// work's state change (archive, publish, delete) need: the title to display and the
+// work-state source (unpublished_at / deleted_at) so the caller can derive the current
+// status and reject a work its screen cannot act on. It returns (nil, nil) when no work
+// matches the id.
 //
-// [Ja] GetForArchiveByID は Annict DB 管理画面の非公開確認画面が必要とするカラムを
-// 読み込む: 表示するタイトルと、呼び出し側が現在の状態を導出しアーカイブ不可の作品を
-// 弾けるようにするための作品状態の source (unpublished_at / deleted_at)。該当する work が
-// 無い場合は (nil, nil) を返す。
-func (r *WorkRepository) GetForArchiveByID(ctx context.Context, id model.WorkID) (*model.Work, error) {
-	row, err := r.queries.GetWorkForArchiveByID(ctx, int64(id))
+// [Ja] GetForStateChangeByID は Annict DB 管理画面の作品の状態変更 (非公開・公開・削除) の
+// 確認画面が必要とするカラムを読み込む: 表示するタイトルと、呼び出し側が現在の状態を導出し、
+// その画面が操作できない作品を弾けるようにするための作品状態の source (unpublished_at /
+// deleted_at)。該当する work が無い場合は (nil, nil) を返す。
+func (r *WorkRepository) GetForStateChangeByID(ctx context.Context, id model.WorkID) (*model.Work, error) {
+	row, err := r.queries.GetWorkForStateChangeByID(ctx, int64(id))
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil

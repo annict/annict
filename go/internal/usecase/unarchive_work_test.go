@@ -53,11 +53,11 @@ func TestUnarchiveWorkUsecase_Execute_UnarchivesWorkAndAnime(t *testing.T) {
 	// アーカイブ済みでマッピング済みの work を用意する。
 	workID := createMappedWork(t, db, "再公開前アニメ_"+t.Name())
 	animeID := *reloadSyncWork(t, db, workID).AnimeID
-	if _, err := newArchiveWorkUsecase(db).Execute(ctx, ArchiveWorkInput{WorkID: workID}); err != nil {
+	if _, err := newArchiveWorkUsecase(db).Execute(ctx, ArchiveWorkInput{User: &model.User{ID: 1, Role: model.RoleEditor}, WorkID: workID}); err != nil {
 		t.Fatalf("前提のアーカイブに失敗: %v", err)
 	}
 
-	if _, err := newUnarchiveWorkUsecase(db).Execute(ctx, UnarchiveWorkInput{WorkID: workID}); err != nil {
+	if _, err := newUnarchiveWorkUsecase(db).Execute(ctx, UnarchiveWorkInput{User: &model.User{ID: 1, Role: model.RoleEditor}, WorkID: workID}); err != nil {
 		t.Fatalf("Execute() error = %v", err)
 	}
 
@@ -116,7 +116,7 @@ func TestUnarchiveWorkUsecase_Execute_SkipsAnimeWriteForUnmappedWork(t *testing.
 		t.Fatalf("非公開・未マッピング状態の設定に失敗: %v", err)
 	}
 
-	if _, err := newUnarchiveWorkUsecase(db).Execute(ctx, UnarchiveWorkInput{WorkID: workID}); err != nil {
+	if _, err := newUnarchiveWorkUsecase(db).Execute(ctx, UnarchiveWorkInput{User: &model.User{ID: 1, Role: model.RoleEditor}, WorkID: workID}); err != nil {
 		t.Fatalf("Execute() error = %v", err)
 	}
 
@@ -144,7 +144,7 @@ func TestUnarchiveWorkUsecase_Execute_ReturnsNotFoundForPublishedWork(t *testing
 
 	workID := createMappedWork(t, db, "公開中再公開_"+t.Name())
 
-	output, err := uc.Execute(context.Background(), UnarchiveWorkInput{WorkID: workID})
+	output, err := uc.Execute(context.Background(), UnarchiveWorkInput{User: &model.User{ID: 1, Role: model.RoleEditor}, WorkID: workID})
 	if output != nil {
 		t.Errorf("output = %+v, want nil for an already-published work", output)
 	}
@@ -173,7 +173,7 @@ func TestUnarchiveWorkUsecase_Execute_ReturnsNotFoundForDeletedWork(t *testing.T
 		t.Fatalf("非公開・削除済み状態の設定に失敗: %v", err)
 	}
 
-	output, err := uc.Execute(ctx, UnarchiveWorkInput{WorkID: workID})
+	output, err := uc.Execute(ctx, UnarchiveWorkInput{User: &model.User{ID: 1, Role: model.RoleEditor}, WorkID: workID})
 	if output != nil {
 		t.Errorf("output = %+v, want nil for a deleted work", output)
 	}
@@ -194,12 +194,63 @@ func TestUnarchiveWorkUsecase_Execute_ReturnsNotFoundForMissingWork(t *testing.T
 	db := testutil.GetTestDB()
 	uc := newUnarchiveWorkUsecase(db)
 
-	output, err := uc.Execute(context.Background(), UnarchiveWorkInput{WorkID: model.WorkID(1 << 62)})
+	output, err := uc.Execute(context.Background(), UnarchiveWorkInput{User: &model.User{ID: 1, Role: model.RoleEditor}, WorkID: model.WorkID(1 << 62)})
 	if output != nil {
 		t.Errorf("output = %+v, want nil for a missing work", output)
 	}
 	ae := model.AsAppError(err)
 	if ae == nil || ae.Code != model.AppErrCodeResourceNotFound {
 		t.Fatalf("expected AppErrCodeResourceNotFound, got %v", err)
+	}
+}
+
+// TestUnarchiveWorkUsecase_Execute_RejectsUnauthorizedUserBeforeWrite verifies the authorization
+// boundary rejects an unauthenticated and a regular user before the work is read or written, so
+// a caller reaching the usecase outside the committer-gated route cannot re-publish a work.
+//
+// [Ja] TestUnarchiveWorkUsecase_Execute_RejectsUnauthorizedUserBeforeWrite は、認可境界が work の
+// 読み書きより前に未認証と一般ユーザーを拒否することを検証する。committer でゲートされた
+// ルート以外から UseCase に到達した呼び出し元が作品を再公開できないようにするため。
+func TestUnarchiveWorkUsecase_Execute_RejectsUnauthorizedUserBeforeWrite(t *testing.T) {
+	t.Parallel()
+
+	db := testutil.GetTestDB()
+	ctx := context.Background()
+
+	workID := createMappedWork(t, db, "公開認可テストアニメ_"+t.Name())
+	if _, err := newArchiveWorkUsecase(db).Execute(ctx, ArchiveWorkInput{
+		User:   &model.User{ID: 1, Role: model.RoleEditor},
+		WorkID: workID,
+	}); err != nil {
+		t.Fatalf("前提の非公開に失敗: %v", err)
+	}
+
+	uc := newUnarchiveWorkUsecase(db)
+	tests := []struct {
+		name string
+		user *model.User
+	}{
+		{name: "未認証", user: nil},
+		{name: "一般ユーザー", user: &model.User{ID: 1, Role: model.RoleUser}},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			output, err := uc.Execute(ctx, UnarchiveWorkInput{User: tt.user, WorkID: workID})
+			if output != nil {
+				t.Errorf("output = %+v, want nil for an unauthorized user", output)
+			}
+			ae := model.AsAppError(err)
+			if ae == nil || ae.Code != model.AppErrCodeForbidden {
+				t.Fatalf("expected AppErrCodeForbidden, got %v", err)
+			}
+		})
+	}
+
+	// The work is still archived: the rejection lands before the re-publish is written.
+	//
+	// [Ja] work はアーカイブ済みのまま。拒否は再公開の書き込みより前に起きる。
+	if got := reloadSyncWork(t, db, workID).DerivedStatus(); got != model.WorkStatusArchived {
+		t.Errorf("DerivedStatus() = %q, want %q", got, model.WorkStatusArchived)
 	}
 }

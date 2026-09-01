@@ -4,8 +4,10 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"html"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"strings"
 	"testing"
 	"time"
@@ -430,17 +432,284 @@ func TestDelete_HTMXRedirect(t *testing.T) {
 	}
 }
 
+// committerRequest builds a request from an editor, a committer role: the route requires it and
+// the usecases repeat the check, so the tests that exercise the screens themselves have to carry
+// a user the way the middleware does.
+//
+// [Ja] committerRequest は committer ロールである編集者からのリクエストを組み立てる。ルートが
+// 要求し UseCase でも検査を繰り返すため、画面そのものを確かめるテストはミドルウェアと同じように
+// ユーザーを載せる必要がある。
+func committerRequest(t *testing.T, method string, target string) *http.Request {
+	t.Helper()
+	req := httptest.NewRequest(method, target, nil)
+	user := &model.User{ID: 1, Role: model.RoleEditor}
+	return req.WithContext(context.WithValue(req.Context(), authMiddleware.UserContextKey, user))
+}
+
 func getRequest(t *testing.T, target string) *http.Request {
 	t.Helper()
-	return httptest.NewRequest("GET", target, nil)
+	return committerRequest(t, "GET", target)
 }
 
 func postRequest(t *testing.T, target string) *http.Request {
 	t.Helper()
-	return httptest.NewRequest("POST", target, nil)
+	return committerRequest(t, "POST", target)
 }
 
 func deleteRequest(t *testing.T, target string) *http.Request {
 	t.Helper()
-	return httptest.NewRequest("DELETE", target, nil)
+	return committerRequest(t, "DELETE", target)
+}
+
+// TestNew_DocumentTitleWithoutWorkName verifies that a work whose title is only whitespace
+// leaves the document title as the page name alone, the same name the heading falls back to.
+//
+// [Ja] TestNew_DocumentTitleWithoutWorkName は、タイトルが空白文字だけの作品では文書タイトルが
+// 画面名だけになることを検証する。見出しがフォールバックする名前と同じものになる。
+func TestNew_DocumentTitleWithoutWorkName(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	workID := testutil.NewWorkBuilder(t, tx).WithTitle(" \t ").WithMedia(1).Build()
+	handler := newTestHandler(t, db, tx)
+
+	r := chi.NewRouter()
+	r.Get("/db/works/{id}/archive/new", handler.New)
+
+	rr := httptest.NewRecorder()
+	r.ServeHTTP(rr, getRequest(t, fmt.Sprintf("/db/works/%d/archive/new", int64(workID))))
+
+	if status := rr.Code; status != http.StatusOK {
+		t.Fatalf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
+	}
+
+	body := rr.Body.String()
+	for _, expected := range []string{
+		"<title>作品非公開 | Annict DB</title>",
+		">作品非公開</h1>",
+	} {
+		if !strings.Contains(body, expected) {
+			t.Errorf("response doesn't contain expected string: %q", expected)
+		}
+	}
+}
+
+// TestNew_ForbiddenWithoutMiddleware verifies the confirmation page preserves the authorization
+// boundary even when the handler is invoked without the route middleware.
+//
+// [Ja] TestNew_ForbiddenWithoutMiddleware はルートミドルウェアを通さず Handler を呼んでも、
+// 確認ページの認可境界が維持され 403 を返すことを検証する。
+func TestNew_ForbiddenWithoutMiddleware(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	handler := newTestHandler(t, db, tx)
+
+	r := chi.NewRouter()
+	r.Get("/db/works/{id}/archive/new", handler.New)
+
+	rr := httptest.NewRecorder()
+	r.ServeHTTP(rr, httptest.NewRequest("GET", "/db/works/1/archive/new", nil))
+
+	if status := rr.Code; status != http.StatusForbidden {
+		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusForbidden)
+	}
+}
+
+// TestCreate_ForbiddenWithoutMiddleware verifies the archive preserves the authorization
+// boundary even when the handler is invoked without the route middleware.
+//
+// [Ja] TestCreate_ForbiddenWithoutMiddleware はルートミドルウェアを通さず Handler を呼んでも、
+// 非公開の認可境界が維持され 403 を返すことを検証する。
+func TestCreate_ForbiddenWithoutMiddleware(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	workID := testutil.NewWorkBuilder(t, tx).WithTitle("非公開認可境界テスト").WithMedia(1).Build()
+	handler := newTestHandler(t, db, tx)
+
+	r := chi.NewRouter()
+	r.Post("/db/works/{id}/archive", handler.Create)
+
+	rr := httptest.NewRecorder()
+	r.ServeHTTP(rr, httptest.NewRequest("POST", fmt.Sprintf("/db/works/%d/archive", int64(workID)), nil))
+
+	if status := rr.Code; status != http.StatusForbidden {
+		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusForbidden)
+	}
+}
+
+// TestDelete_ForbiddenWithoutMiddleware verifies the re-publish preserves the authorization
+// boundary even when the handler is invoked without the route middleware.
+//
+// [Ja] TestDelete_ForbiddenWithoutMiddleware はルートミドルウェアを通さず Handler を呼んでも、
+// 再公開の認可境界が維持され 403 を返すことを検証する。
+func TestDelete_ForbiddenWithoutMiddleware(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	workID := testutil.NewWorkBuilder(t, tx).WithTitle("再公開認可境界テスト").WithMedia(1).WithUnpublishedAt(time.Now()).Build()
+	handler := newTestHandler(t, db, tx)
+
+	r := chi.NewRouter()
+	r.Delete("/db/works/{id}/archive", handler.Delete)
+
+	rr := httptest.NewRecorder()
+	r.ServeHTTP(rr, httptest.NewRequest("DELETE", fmt.Sprintf("/db/works/%d/archive", int64(workID)), nil))
+
+	if status := rr.Code; status != http.StatusForbidden {
+		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusForbidden)
+	}
+}
+
+// TestNew_CarriesReturnToThroughTheConfirmation verifies the confirmation page hands the listing
+// the link named to both its cancel link and its form, and falls back to the work list when the
+// value names something outside the Annict DB admin UI.
+//
+// [Ja] TestNew_CarriesReturnToThroughTheConfirmation は、確認ページがリンクの名指した一覧を
+// キャンセルリンクとフォームの双方へ渡すこと、および Annict DB 管理画面の外を指す値では作品一覧に
+// フォールバックすることを検証する。
+func TestNew_CarriesReturnToThroughTheConfirmation(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	workID := testutil.NewWorkBuilder(t, tx).WithTitle("戻り先確認作品").WithMedia(1).Build()
+	handler := newTestHandler(t, db, tx)
+
+	r := chi.NewRouter()
+	r.Get("/db/works/{id}/archive/new", handler.New)
+
+	tests := []struct {
+		name     string
+		query    string
+		wantHref string
+	}{
+		{name: "検索結果を持ち回る", query: "?return_to=%2Fdb%2Fsearch%3Fq%3Dtest", wantHref: "/db/search?q=test"},
+		{name: "指定なしは作品一覧", query: "", wantHref: "/db/works"},
+		{name: "Annict DB の外は作品一覧", query: "?return_to=%2Fsettings", wantHref: "/db/works"},
+		{name: "外部 URL は作品一覧", query: "?return_to=https%3A%2F%2Fexample.com%2F", wantHref: "/db/works"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			rr := httptest.NewRecorder()
+			target := fmt.Sprintf("/db/works/%d/archive/new%s", int64(workID), tt.query)
+			r.ServeHTTP(rr, getRequest(t, target))
+
+			if rr.Code != http.StatusOK {
+				t.Fatalf("status = %d, want %d", rr.Code, http.StatusOK)
+			}
+
+			body := rr.Body.String()
+			for _, expected := range []string{
+				fmt.Sprintf(`<a href="%s"`, html.EscapeString(tt.wantHref)),
+				fmt.Sprintf(`name="return_to" value="%s"`, html.EscapeString(tt.wantHref)),
+			} {
+				if !strings.Contains(body, expected) {
+					t.Errorf("response doesn't contain expected string: %q", expected)
+				}
+			}
+		})
+	}
+}
+
+// TestCreate_ReturnsToSubmittedListing verifies the archive lands on the listing the
+// confirmation screen submitted, and falls back to the work list when the value names something
+// outside the Annict DB admin UI, so a crafted return_to cannot send the reader off-site.
+//
+// [Ja] TestCreate_ReturnsToSubmittedListing は、非公開が確認画面の送信した一覧に着地し、
+// Annict DB 管理画面の外を指す値では作品一覧にフォールバックすることを検証する。細工した
+// return_to で読み手をサイト外へ送れないようにするため。
+func TestCreate_ReturnsToSubmittedListing(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	handler := newTestHandler(t, db, tx)
+
+	r := chi.NewRouter()
+	r.Use(authMiddleware.MethodOverride)
+	r.Post("/db/works/{id}/archive", handler.Create)
+
+	for _, tt := range returnToCases() {
+		t.Run(tt.name, func(t *testing.T) {
+			workID := testutil.NewWorkBuilder(t, tx).WithTitle("非公開戻り先テスト").WithMedia(1).Build()
+			form := url.Values{"return_to": {tt.returnTo}}
+			req := httptest.NewRequest("POST", fmt.Sprintf("/db/works/%d/archive", int64(workID)), strings.NewReader(form.Encode()))
+			req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+			req = req.WithContext(context.WithValue(req.Context(), authMiddleware.UserContextKey, &model.User{ID: 1, Role: model.RoleEditor}))
+
+			rr := httptest.NewRecorder()
+			r.ServeHTTP(rr, req)
+
+			if rr.Code != http.StatusSeeOther {
+				t.Fatalf("status = %d, want %d", rr.Code, http.StatusSeeOther)
+			}
+			if got := rr.Header().Get("Location"); got != tt.wantLocation {
+				t.Errorf("Location = %q, want %q", got, tt.wantLocation)
+			}
+		})
+	}
+}
+
+// TestDelete_ReturnsToSubmittedListing verifies the re-publish lands on the listing the
+// confirmation screen submitted, with the same fallback as the archive.
+//
+// [Ja] TestDelete_ReturnsToSubmittedListing は、再公開が確認画面の送信した一覧に着地すること、
+// フォールバックが非公開と同じであることを検証する。
+func TestDelete_ReturnsToSubmittedListing(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	handler := newTestHandler(t, db, tx)
+
+	r := chi.NewRouter()
+	r.Use(authMiddleware.MethodOverride)
+	r.Delete("/db/works/{id}/archive", handler.Delete)
+
+	for _, tt := range returnToCases() {
+		t.Run(tt.name, func(t *testing.T) {
+			workID := testutil.NewWorkBuilder(t, tx).
+				WithTitle("再公開戻り先テスト").
+				WithMedia(1).
+				WithUnpublishedAt(time.Now()).
+				Build()
+			form := url.Values{"_method": {"DELETE"}, "return_to": {tt.returnTo}}
+			req := httptest.NewRequest("POST", fmt.Sprintf("/db/works/%d/archive", int64(workID)), strings.NewReader(form.Encode()))
+			req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+			req = req.WithContext(context.WithValue(req.Context(), authMiddleware.UserContextKey, &model.User{ID: 1, Role: model.RoleEditor}))
+
+			rr := httptest.NewRecorder()
+			r.ServeHTTP(rr, req)
+
+			if rr.Code != http.StatusSeeOther {
+				t.Fatalf("status = %d, want %d", rr.Code, http.StatusSeeOther)
+			}
+			if got := rr.Header().Get("Location"); got != tt.wantLocation {
+				t.Errorf("Location = %q, want %q", got, tt.wantLocation)
+			}
+		})
+	}
+}
+
+// returnToCases is the set of return_to values the two write endpoints of this package answer
+// the same way: an Annict DB listing is honoured and everything else falls back to the work list.
+//
+// [Ja] returnToCases は本パッケージの 2 つの書き込みエンドポイントが同じ結果を返す return_to の
+// 集合。Annict DB の一覧は尊重し、それ以外は作品一覧にフォールバックする。
+func returnToCases() []struct {
+	name         string
+	returnTo     string
+	wantLocation string
+} {
+	return []struct {
+		name         string
+		returnTo     string
+		wantLocation string
+	}{
+		{name: "検索結果に戻る", returnTo: "/db/search?q=test", wantLocation: "/db/search?q=test"},
+		{name: "空のときは作品一覧", returnTo: "", wantLocation: "/db/works"},
+		{name: "Annict DB の外は作品一覧", returnTo: "/settings", wantLocation: "/db/works"},
+		{name: "外部 URL は作品一覧", returnTo: "https://example.com/", wantLocation: "/db/works"},
+		{name: "プロトコル相対 URL は作品一覧", returnTo: "//example.com/db/works", wantLocation: "/db/works"},
+	}
 }

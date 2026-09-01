@@ -20,9 +20,9 @@ import (
 // timestamp we set, so a phase 2 reconciliation right after this delete reads the same
 // deleted_at and reports Unchanged (no clobber back to published).
 //
-// Authorization (admin) is enforced by the RequireAdmin middleware on the route, consistent
-// with how the other db_work write endpoints gate roles at the middleware, so this usecase
-// does not re-check it.
+// Authorization (admin) runs in this usecase before any read, and the RequireAdmin middleware
+// on the route rejects the same request earlier. Keeping the check here means a caller reaching
+// the usecase outside that route needs the same permission.
 //
 // [Ja] DeleteWorkUsecase は Annict DB 管理画面から作品をソフトデリートする。アーカイブ /
 // 更新 UseCase と同じく animes を基点とし、works.deleted_at (作品状態の正本) を立て、同一
@@ -33,9 +33,9 @@ import (
 // 直後にフェーズ 2 のリコンシリエーションが走っても同じ deleted_at を読んで Unchanged を
 // 報告する (published への差し戻し = クロッバーが起きない)。
 //
-// 認可 (admin) はルートの RequireAdmin middleware で強制する。他の db_work 書き込み
-// エンドポイントが middleware でロールをゲートするのと揃えており、本 UseCase では再チェック
-// しない。
+// 認可 (admin) は読み取りより先に本 UseCase で行い、ルートの RequireAdmin middleware も同じ
+// リクエストを手前で拒否する。UseCase 側に検査を残すことで、そのルート以外から到達した
+// 呼び出し元にも同じ権限を要求する。
 type DeleteWorkUsecase struct {
 	db        *sql.DB
 	workRepo  *repository.WorkRepository
@@ -54,7 +54,11 @@ func NewDeleteWorkUsecase(
 	}
 }
 
+// DeleteWorkInput identifies the work to delete and the user authorizing the write.
+//
+// [Ja] DeleteWorkInput は削除する作品と、書き込みを認可するユーザーを指定する。
 type DeleteWorkInput struct {
+	User   *model.User
 	WorkID model.WorkID
 }
 
@@ -63,6 +67,10 @@ type DeleteWorkOutput struct {
 }
 
 func (uc *DeleteWorkUsecase) Execute(ctx context.Context, input DeleteWorkInput) (*DeleteWorkOutput, error) {
+	if input.User == nil || !input.User.IsAdmin() {
+		return nil, uc.forbidden(ctx, input.WorkID)
+	}
+
 	// Load the work via the anime-sync projection: it carries works.anime_id and the
 	// anime-mapped columns animeUpdateParamsFromWork needs (title_ro / archive_message /
 	// the work-state source), so the derived anime write mirrors the works row. An empty
@@ -166,6 +174,17 @@ func (uc *DeleteWorkUsecase) notFound(ctx context.Context, workID model.WorkID) 
 	return &model.AppError{
 		Code:     model.AppErrCodeResourceNotFound,
 		UserMsg:  i18n.T(ctx, "error_work_not_found"),
+		Metadata: map[string]string{"work_id": workID.String()},
+	}
+}
+
+// forbidden builds the permission error the handler maps to a 403.
+//
+// [Ja] forbidden は Handler が 403 に写像する権限エラーを組み立てる。
+func (uc *DeleteWorkUsecase) forbidden(ctx context.Context, workID model.WorkID) error {
+	return &model.AppError{
+		Code:     model.AppErrCodeForbidden,
+		UserMsg:  i18n.T(ctx, "error_forbidden"),
 		Metadata: map[string]string{"work_id": workID.String()},
 	}
 }

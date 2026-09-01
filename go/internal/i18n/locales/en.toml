@@ -1780,6 +1780,46 @@ other = "Archive"
 description = "Cancel link on the archive-confirmation page"
 other = "Cancel"
 
+[db_works_unarchive_new_title]
+description = "Title of the publish-confirmation page"
+other = "Publish Work"
+
+[db_works_unarchive_new_document_title]
+description = "Work-specific publish-confirmation document title"
+other = "Publish Work | {{.WorkTitle}}"
+
+[db_works_unarchive_new_confirm_message]
+description = "Confirmation message on the publish-confirmation page"
+other = "Publish “{{.Title}}”?"
+
+[db_works_unarchive_new_submit]
+description = "Execute button on the publish-confirmation page"
+other = "Publish"
+
+[db_works_unarchive_new_cancel_link]
+description = "Cancel link on the publish-confirmation page"
+other = "Cancel"
+
+[db_works_deletion_new_title]
+description = "Title of the delete-confirmation page"
+other = "Delete Work"
+
+[db_works_deletion_new_document_title]
+description = "Work-specific delete-confirmation document title"
+other = "Delete Work | {{.WorkTitle}}"
+
+[db_works_deletion_new_confirm_message]
+description = "Confirmation message on the delete-confirmation page"
+other = "Delete “{{.Title}}”?"
+
+[db_works_deletion_new_submit]
+description = "Execute button on the delete-confirmation page"
+other = "Delete"
+
+[db_works_deletion_new_cancel_link]
+description = "Cancel link on the delete-confirmation page"
+other = "Cancel"
+
 # Flash messages - DB works related
 [flash_db_work_created]
 description = "Work creation success message"

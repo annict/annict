@@ -28,7 +28,7 @@ func TestGetDBWorkArchiveNewUsecase_Execute_ReturnsPublishedWork(t *testing.T) {
 		WithTitle("非公開確認テスト").
 		Build()
 
-	output, err := uc.Execute(context.Background(), GetDBWorkArchiveNewInput{WorkID: workID})
+	output, err := uc.Execute(context.Background(), GetDBWorkArchiveNewInput{User: &model.User{ID: 1, Role: model.RoleEditor}, WorkID: workID})
 	if err != nil {
 		t.Fatalf("Execute() error = %v", err)
 	}
@@ -82,7 +82,7 @@ func TestGetDBWorkArchiveNewUsecase_Execute_RejectsNonArchivableWork(t *testing.
 
 			workID := tt.prepare(testutil.NewWorkBuilder(t, tx).WithTitle("非公開不可テスト")).Build()
 
-			output, err := uc.Execute(context.Background(), GetDBWorkArchiveNewInput{WorkID: workID})
+			output, err := uc.Execute(context.Background(), GetDBWorkArchiveNewInput{User: &model.User{ID: 1, Role: model.RoleEditor}, WorkID: workID})
 			if output != nil {
 				t.Errorf("output = %+v, want nil for a non-archivable work", output)
 			}
@@ -105,12 +105,55 @@ func TestGetDBWorkArchiveNewUsecase_Execute_ReturnsNotFoundForMissingWork(t *tes
 	db, tx := testutil.SetupTx(t)
 	uc := NewGetDBWorkArchiveNewUsecase(repository.NewWorkRepository(query.New(db).WithTx(tx)))
 
-	output, err := uc.Execute(context.Background(), GetDBWorkArchiveNewInput{WorkID: model.WorkID(1 << 62)})
+	output, err := uc.Execute(context.Background(), GetDBWorkArchiveNewInput{User: &model.User{ID: 1, Role: model.RoleEditor}, WorkID: model.WorkID(1 << 62)})
 	if output != nil {
 		t.Errorf("output = %+v, want nil for a missing work", output)
 	}
 	ae := model.AsAppError(err)
 	if ae == nil || ae.Code != model.AppErrCodeResourceNotFound {
 		t.Fatalf("expected AppErrCodeResourceNotFound, got %v", err)
+	}
+}
+
+// TestGetDBWorkArchiveNewUsecase_Execute_RejectsUnauthorizedUserBeforeLookup verifies the
+// authorization boundary rejects unauthenticated and regular users before looking up either an
+// existing or a missing work.
+//
+// [Ja] TestGetDBWorkArchiveNewUsecase_Execute_RejectsUnauthorizedUserBeforeLookup は、
+// 認可境界が既存・未存在どちらの work を取得するより前に、未認証と一般ユーザーを拒否する
+// ことを検証する。
+func TestGetDBWorkArchiveNewUsecase_Execute_RejectsUnauthorizedUserBeforeLookup(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	uc := NewGetDBWorkArchiveNewUsecase(repository.NewWorkRepository(query.New(db).WithTx(tx)))
+	existingWorkID := testutil.NewWorkBuilder(t, tx).WithTitle("認可テスト").Build()
+	missingWorkID := model.WorkID(1 << 62)
+
+	tests := []struct {
+		name   string
+		user   *model.User
+		workID model.WorkID
+	}{
+		{name: "未認証・既存作品", user: nil, workID: existingWorkID},
+		{name: "未認証・未存在作品", user: nil, workID: missingWorkID},
+		{name: "一般ユーザー・既存作品", user: &model.User{ID: 1, Role: model.RoleUser}, workID: existingWorkID},
+		{name: "一般ユーザー・未存在作品", user: &model.User{ID: 1, Role: model.RoleUser}, workID: missingWorkID},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			output, err := uc.Execute(context.Background(), GetDBWorkArchiveNewInput{
+				User:   tt.user,
+				WorkID: tt.workID,
+			})
+			if output != nil {
+				t.Errorf("output = %+v, want nil for an unauthorized user", output)
+			}
+			ae := model.AsAppError(err)
+			if ae == nil || ae.Code != model.AppErrCodeForbidden {
+				t.Fatalf("expected AppErrCodeForbidden, got %v", err)
+			}
+		})
 	}
 }

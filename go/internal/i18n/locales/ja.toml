@@ -1779,6 +1779,46 @@ other = "非公開にする"
 description = "非公開確認ページのキャンセルリンク"
 other = "キャンセル"
 
+[db_works_unarchive_new_title]
+description = "作品公開確認ページのタイトル"
+other = "作品公開"
+
+[db_works_unarchive_new_document_title]
+description = "作品を識別できる公開確認ページの文書タイトル"
+other = "作品公開 | {{.WorkTitle}}"
+
+[db_works_unarchive_new_confirm_message]
+description = "公開確認ページの確認メッセージ"
+other = "「{{.Title}}」を公開しますか？"
+
+[db_works_unarchive_new_submit]
+description = "公開確認ページの実行ボタン"
+other = "公開する"
+
+[db_works_unarchive_new_cancel_link]
+description = "公開確認ページのキャンセルリンク"
+other = "キャンセル"
+
+[db_works_deletion_new_title]
+description = "作品削除確認ページのタイトル"
+other = "作品削除"
+
+[db_works_deletion_new_document_title]
+description = "作品を識別できる削除確認ページの文書タイトル"
+other = "作品削除 | {{.WorkTitle}}"
+
+[db_works_deletion_new_confirm_message]
+description = "削除確認ページの確認メッセージ"
+other = "「{{.Title}}」を削除しますか？"
+
+[db_works_deletion_new_submit]
+description = "削除確認ページの実行ボタン"
+other = "削除する"
+
+[db_works_deletion_new_cancel_link]
+description = "削除確認ページのキャンセルリンク"
+other = "キャンセル"
+
 # フラッシュメッセージ - DB作品関連
 [flash_db_work_created]
 description = "作品作成成功メッセージ"

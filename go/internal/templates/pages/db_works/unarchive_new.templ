@@ -8,14 +8,14 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// ArchiveNewPageData is the data the archive-confirmation page renders: the CSRF token, the
+// UnarchiveNewPageData is the data the publish-confirmation page renders: the CSRF token, the
 // target work id (for the form action), its title (for the page heading and the confirmation
 // prompt) and the listing to return to (for the cancel link and the submit).
 //
-// [Ja] ArchiveNewPageData は非公開確認ページが描画するデータ (CSRF トークン、フォームの
+// [Ja] UnarchiveNewPageData は公開確認ページが描画するデータ (CSRF トークン、フォームの
 // action に使う対象 work の id、ページ見出しと確認文に使うタイトル、キャンセルリンクと送信の
 // 戻り先にする一覧)。
-type ArchiveNewPageData struct {
+type UnarchiveNewPageData struct {
 	CSRFToken string
 	WorkID    viewmodel.WorkID
 	Title     string
@@ -29,11 +29,18 @@ type ArchiveNewPageData struct {
 // [Ja] heading はページ見出しのテキストとして作品タイトルを返す。タイトルが空のあいだは
 // 汎用のページタイトルにフォールバックする。確認文も同じ値で対象を名指しするため、ページ上の
 // 2 箇所が同じ対象を指す。
-func (d ArchiveNewPageData) heading(ctx context.Context) string {
-	return headingOrFallback(ctx, d.Title, "db_works_archive_new_title")
+func (d UnarchiveNewPageData) heading(ctx context.Context) string {
+	return headingOrFallback(ctx, d.Title, "db_works_unarchive_new_title")
 }
 
-templ ArchiveNew(data ArchiveNewPageData) {
+// The form submits to the work's archive endpoint, since publishing a work is deleting its
+// archive. An HTML form can only send GET or POST, so the method override the other /db forms
+// use carries the DELETE through.
+//
+// [Ja] 作品の公開はそのアーカイブの削除であるため、フォームは作品の非公開エンドポイントへ
+// 送信する。HTML のフォームは GET と POST しか送れないため、他の /db のフォームと同じ
+// メソッドオーバーライドで DELETE を運ぶ。
+templ UnarchiveNew(data UnarchiveNewPageData) {
 	<div class="flex flex-col gap-4 py-4 max-w-7xl w-full mx-auto">
 		<div class="flex gap-4 px-4">
 			@components.DBSidebarToggle()
@@ -47,16 +54,17 @@ templ ArchiveNew(data ArchiveNewPageData) {
 
 		@components.ContentCard("") {
 			<div class="max-w-2xl flex flex-col gap-6">
-				<p>{ templates.T(ctx, "db_works_archive_new_confirm_message", map[string]any{"Title": data.heading(ctx)}) }</p>
+				<p>{ templates.T(ctx, "db_works_unarchive_new_confirm_message", map[string]any{"Title": data.heading(ctx)}) }</p>
 
 				<form method="POST" action={ templates.DBWorkArchivePath(data.WorkID).SafeURL() } class="flex items-center gap-2">
+					<input type="hidden" name="_method" value="DELETE"/>
 					<input type="hidden" name="csrf_token" value={ data.CSRFToken }/>
 					<input type="hidden" name="return_to" value={ data.ReturnTo }/>
-					<button type="submit" class="btn rounded-full" data-variant="warning">
-						{ templates.T(ctx, "db_works_archive_new_submit") }
+					<button type="submit" class="btn rounded-full" data-variant="success">
+						{ templates.T(ctx, "db_works_unarchive_new_submit") }
 					</button>
 					<a href={ data.ReturnTo } class="btn rounded-full" data-variant="outline">
-						{ templates.T(ctx, "db_works_archive_new_cancel_link") }
+						{ templates.T(ctx, "db_works_unarchive_new_cancel_link") }
 					</a>
 				</form>
 			</div>

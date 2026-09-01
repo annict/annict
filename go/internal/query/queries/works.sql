@@ -35,7 +35,16 @@ SELECT
 FROM works
 WHERE id = $1;
 
--- name: GetWorkForArchiveByID :one
+-- name: GetWorkForStateChangeByID :one
+-- The projection the Annict DB confirmation screens for a work's state changes (archive,
+-- publish, delete) share: the title each screen names its target with, and the work-state
+-- source the caller derives the current status from to reject a work its action cannot act
+-- on. No state is filtered here, since the three screens each accept a different one.
+--
+-- [Ja] Annict DB の作品の状態変更 (非公開・公開・削除) の確認画面が共有する射影。各画面が対象を
+-- 名指しするタイトルと、呼び出し側が現在の状態を導出してその操作を適用できない作品を弾くための
+-- 作品状態の source を運ぶ。3 つの画面が受け付ける状態はそれぞれ異なるため、ここでは状態を
+-- 絞り込まない。
 SELECT
     id,
     title,

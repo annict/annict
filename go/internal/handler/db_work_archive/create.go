@@ -9,6 +9,7 @@ import (
 
 	"github.com/annict/annict/go/internal/httperror"
 	"github.com/annict/annict/go/internal/i18n"
+	"github.com/annict/annict/go/internal/middleware"
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/usecase"
 )
@@ -26,10 +27,19 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if _, err := h.archiveWorkUC.Execute(ctx, usecase.ArchiveWorkInput{WorkID: model.WorkID(id)}); err != nil {
-		if ae := model.AsAppError(err); ae != nil && ae.Code == model.AppErrCodeResourceNotFound {
-			httperror.NotFound(w, r)
-			return
+	if _, err := h.archiveWorkUC.Execute(ctx, usecase.ArchiveWorkInput{
+		User:   middleware.GetUserFromContext(ctx),
+		WorkID: model.WorkID(id),
+	}); err != nil {
+		if ae := model.AsAppError(err); ae != nil {
+			switch ae.Code {
+			case model.AppErrCodeResourceNotFound:
+				httperror.NotFound(w, r)
+				return
+			case model.AppErrCodeForbidden:
+				httperror.Forbidden(w, r)
+				return
+			}
 		}
 		slog.ErrorContext(ctx, "作品の非公開に失敗しました", "error", err)
 		httperror.InternalServerError(w, r)
@@ -37,5 +47,5 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	h.flashMgr.SetSuccess(w, i18n.T(ctx, "flash_db_work_archived"))
-	http.Redirect(w, r, "/db/works", http.StatusSeeOther)
+	http.Redirect(w, r, returnPath(r), http.StatusSeeOther)
 }

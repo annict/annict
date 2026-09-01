@@ -50,7 +50,7 @@ func TestDeleteWorkUsecase_Execute_DeletesWorkAndAnime(t *testing.T) {
 	workID := createMappedWork(t, db, "削除前アニメ_"+t.Name())
 	animeID := *reloadSyncWork(t, db, workID).AnimeID
 
-	if _, err := uc.Execute(ctx, DeleteWorkInput{WorkID: workID}); err != nil {
+	if _, err := uc.Execute(ctx, DeleteWorkInput{User: &model.User{ID: 1, Role: model.RoleAdmin}, WorkID: workID}); err != nil {
 		t.Fatalf("Execute() error = %v", err)
 	}
 
@@ -109,7 +109,7 @@ func TestDeleteWorkUsecase_Execute_DeletesArchivedWork(t *testing.T) {
 	}
 	animeID := *reloadSyncWork(t, db, workID).AnimeID
 
-	if _, err := uc.Execute(ctx, DeleteWorkInput{WorkID: workID}); err != nil {
+	if _, err := uc.Execute(ctx, DeleteWorkInput{User: &model.User{ID: 1, Role: model.RoleAdmin}, WorkID: workID}); err != nil {
 		t.Fatalf("Execute() error = %v", err)
 	}
 
@@ -149,7 +149,7 @@ func TestDeleteWorkUsecase_Execute_SkipsAnimeWriteForUnmappedWork(t *testing.T) 
 		t.Fatalf("anime_id のクリアに失敗: %v", err)
 	}
 
-	if _, err := uc.Execute(ctx, DeleteWorkInput{WorkID: workID}); err != nil {
+	if _, err := uc.Execute(ctx, DeleteWorkInput{User: &model.User{ID: 1, Role: model.RoleAdmin}, WorkID: workID}); err != nil {
 		t.Fatalf("Execute() error = %v", err)
 	}
 
@@ -177,11 +177,11 @@ func TestDeleteWorkUsecase_Execute_ReturnsNotFoundForDeletedWork(t *testing.T) {
 	ctx := context.Background()
 
 	workID := createMappedWork(t, db, "二重削除_"+t.Name())
-	if _, err := uc.Execute(ctx, DeleteWorkInput{WorkID: workID}); err != nil {
+	if _, err := uc.Execute(ctx, DeleteWorkInput{User: &model.User{ID: 1, Role: model.RoleAdmin}, WorkID: workID}); err != nil {
 		t.Fatalf("最初の Execute() error = %v", err)
 	}
 
-	output, err := uc.Execute(ctx, DeleteWorkInput{WorkID: workID})
+	output, err := uc.Execute(ctx, DeleteWorkInput{User: &model.User{ID: 1, Role: model.RoleAdmin}, WorkID: workID})
 	if output != nil {
 		t.Errorf("output = %+v, want nil for an already-deleted work", output)
 	}
@@ -202,12 +202,59 @@ func TestDeleteWorkUsecase_Execute_ReturnsNotFoundForMissingWork(t *testing.T) {
 	db := testutil.GetTestDB()
 	uc := newDeleteWorkUsecase(db)
 
-	output, err := uc.Execute(context.Background(), DeleteWorkInput{WorkID: model.WorkID(1 << 62)})
+	output, err := uc.Execute(context.Background(), DeleteWorkInput{User: &model.User{ID: 1, Role: model.RoleAdmin}, WorkID: model.WorkID(1 << 62)})
 	if output != nil {
 		t.Errorf("output = %+v, want nil for a missing work", output)
 	}
 	ae := model.AsAppError(err)
 	if ae == nil || ae.Code != model.AppErrCodeResourceNotFound {
 		t.Fatalf("expected AppErrCodeResourceNotFound, got %v", err)
+	}
+}
+
+// TestDeleteWorkUsecase_Execute_RejectsUnauthorizedUserBeforeWrite verifies the authorization
+// boundary rejects every non-admin role before the work is read or written. An editor is
+// included because deletion is admin-only (ADR 0009) while the other work state changes accept
+// a committer.
+//
+// [Ja] TestDeleteWorkUsecase_Execute_RejectsUnauthorizedUserBeforeWrite は、認可境界が work の
+// 読み書きより前に admin 以外の全ロールを拒否することを検証する。他の作品の状態変更が committer
+// を受け付けるのに対し削除は admin 専用 (ADR 0009) であるため、編集者も対象に含める。
+func TestDeleteWorkUsecase_Execute_RejectsUnauthorizedUserBeforeWrite(t *testing.T) {
+	t.Parallel()
+
+	db := testutil.GetTestDB()
+	uc := newDeleteWorkUsecase(db)
+	ctx := context.Background()
+
+	workID := createMappedWork(t, db, "削除認可テストアニメ_"+t.Name())
+
+	tests := []struct {
+		name string
+		user *model.User
+	}{
+		{name: "未認証", user: nil},
+		{name: "一般ユーザー", user: &model.User{ID: 1, Role: model.RoleUser}},
+		{name: "編集者", user: &model.User{ID: 1, Role: model.RoleEditor}},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			output, err := uc.Execute(ctx, DeleteWorkInput{User: tt.user, WorkID: workID})
+			if output != nil {
+				t.Errorf("output = %+v, want nil for an unauthorized user", output)
+			}
+			ae := model.AsAppError(err)
+			if ae == nil || ae.Code != model.AppErrCodeForbidden {
+				t.Fatalf("expected AppErrCodeForbidden, got %v", err)
+			}
+		})
+	}
+
+	// The work is still published: the rejection lands before the delete is written.
+	//
+	// [Ja] work は公開中のまま。拒否は削除の書き込みより前に起きる。
+	if got := reloadSyncWork(t, db, workID).DerivedStatus(); got != model.WorkStatusPublished {
+		t.Errorf("DerivedStatus() = %q, want %q", got, model.WorkStatusPublished)
 	}
 }
