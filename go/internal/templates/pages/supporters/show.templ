@@ -20,7 +20,7 @@ templ Show(ctx context.Context, data viewmodel.SupporterPageData) {
 		<div class="max-w-3xl w-full mx-auto flex flex-col gap-4 px-2 md:px-0">
 			// Checkout完了時のメッセージ
 			if data.ShowSuccessMessage {
-				<div class="alert bg-success text-success-foreground">
+				<div class="alert" data-variant="success">
 					<h2>
 						{ templates.T(ctx, "supporters_success_message") }
 					</h2>
@@ -29,7 +29,7 @@ templ Show(ctx context.Context, data viewmodel.SupporterPageData) {
 
 			// Checkoutキャンセル時のメッセージ
 			if data.ShowCanceledMessage {
-				<div class="alert bg-warning text-warning-foreground">
+				<div class="alert" data-variant="warning">
 					<h2>
 						{ templates.T(ctx, "supporters_canceled_message") }
 					</h2>

@@ -242,7 +242,7 @@ func New(data NewPageData) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			if data.showRestrictionWarning() {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div class=\"alert bg-warning text-warning-foreground max-w-2xl\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div class=\"alert max-w-2xl\" data-variant=\"warning\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

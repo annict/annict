@@ -124,6 +124,41 @@
   }
 }
 
+/*
+  Custom success / warning alert variants, matching the badge and button
+  variants above. Basecoat 1.0 ships only a destructive alert variant, so mirror
+  its shape with the project's `--success` / `--warning` variables: a soft tint
+  carrying the `-strong` variable on the heading and 90% of it on the body, the
+  same ratio the destructive variant uses. The body needs a rule of its own
+  because the style pack gives `.alert > section` `text-muted-foreground`, which
+  would otherwise leave the body a pale grey sitting on the tint.
+
+  [Ja] 上のバッジ・ボタンのバリアントに対応する success / warning 用の独自アラート
+  バリアント。Basecoat 1.0 のアラートは destructive しかバリアントを持たないため、
+  その形をプロジェクトの `--success` / `--warning` 変数で再現する。淡い塗りの上に
+  見出しは `-strong` の変数、本文はその 90% を載せる (destructive バリアントと同じ
+  比率)。本文に個別の規則が要るのは、スタイルパックが `.alert > section` に
+  `text-muted-foreground` を当てており、そのままでは塗りの上に薄い灰色の本文が
+  載ってしまうため。
+*/
+@layer components {
+  .alert[data-variant="success"] {
+    @apply bg-success/10 text-success-strong dark:bg-success/20;
+  }
+
+  .alert[data-variant="success"] > section {
+    @apply text-success-strong/90;
+  }
+
+  .alert[data-variant="warning"] {
+    @apply bg-warning/10 text-warning-strong dark:bg-warning/20;
+  }
+
+  .alert[data-variant="warning"] > section {
+    @apply text-warning-strong/90;
+  }
+}
+
 :root {
   /* Basecoatの変数上書き */
   --background: var(--color-stone-100);

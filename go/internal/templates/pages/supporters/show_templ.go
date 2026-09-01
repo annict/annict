@@ -55,7 +55,7 @@ func Show(ctx context.Context, data viewmodel.SupporterPageData) templ.Component
 			return templ_7745c5c3_Err
 		}
 		if data.ShowSuccessMessage {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"alert bg-success text-success-foreground\"><h2>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"alert\" data-variant=\"success\"><h2>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -74,7 +74,7 @@ func Show(ctx context.Context, data viewmodel.SupporterPageData) templ.Component
 			}
 		}
 		if data.ShowCanceledMessage {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div class=\"alert bg-warning text-warning-foreground\"><h2>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div class=\"alert\" data-variant=\"warning\"><h2>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

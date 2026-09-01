@@ -184,7 +184,7 @@ templ New(data NewPageData) {
 				})
 
 				if data.showRestrictionWarning() {
-					<div class="alert bg-warning text-warning-foreground max-w-2xl">
+					<div class="alert max-w-2xl" data-variant="warning">
 						@templates.DecorativeIcon("warning")
 						<h2>{ templates.T(ctx, "db_episodes_new_restriction_title") }</h2>
 						<section>

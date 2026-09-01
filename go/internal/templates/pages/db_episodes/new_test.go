@@ -248,6 +248,14 @@ func TestNew_ManualCreationRestriction(t *testing.T) {
 			if !strings.Contains(html, "手動登録できません") || !strings.Contains(html, tt.wantMessage) {
 				t.Errorf("制限理由の警告が表示されていません")
 			}
+			// Checking the whole opening tag ties the warning variant to the alert element instead of
+			// accepting the same variant on an unrelated element.
+			//
+			// [Ja] 開始タグ全体を確認し、無関係な要素に同じバリアントがあるだけで
+			// テストが通ることを防ぐ。
+			if !strings.Contains(html, `<div class="alert max-w-2xl" data-variant="warning">`) {
+				t.Error("警告が warning バリアントのアラートとして描画されていません")
+			}
 			if got := strings.Contains(html, "readonly"); got != tt.wantDisabled {
 				t.Errorf("readonly = %v, want %v", got, tt.wantDisabled)
 			}

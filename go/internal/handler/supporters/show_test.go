@@ -345,8 +345,8 @@ func TestShow_SuccessQueryParam(t *testing.T) {
 	body := rr.Body.String()
 
 	// 成功メッセージが表示されることを確認
-	if !strings.Contains(body, "bg-success") {
-		t.Error("response doesn't contain success message (success background)")
+	if !strings.Contains(body, `<div class="alert" data-variant="success">`) {
+		t.Error("response doesn't contain success message (success alert variant)")
 	}
 }
 
@@ -369,8 +369,8 @@ func TestShow_CanceledQueryParam(t *testing.T) {
 	body := rr.Body.String()
 
 	// キャンセルメッセージが表示されることを確認
-	if !strings.Contains(body, "bg-warning") {
-		t.Error("response doesn't contain canceled message (warning background)")
+	if !strings.Contains(body, `<div class="alert" data-variant="warning">`) {
+		t.Error("response doesn't contain canceled message (warning alert variant)")
 	}
 }
 
