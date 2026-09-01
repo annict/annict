@@ -1420,25 +1420,13 @@ other = "エピソードの編集ガイドライン"
 description = "フォームラベル - 表示用話数"
 other = "表示用話数"
 
-[db_episodes_edit_number_hint]
-description = "エピソード編集ページの表示用話数の書き方の案内"
-other = "「第1話」「Lesson 1」など、その作品で使われている表記に合わせて入力します。表記がわからないときは「第1話」の形で入力します。"
-
 [db_episodes_edit_raw_number_label]
 description = "フォームラベル - 数値話数"
 other = "数値話数"
 
-[db_episodes_edit_raw_number_hint]
-description = "エピソード編集ページの数値話数の書き方の案内"
-other = "話数から文字や記号を取り除いた数字を入力します。総集編などが間に挟まる場合は 5.5 のような小数も使えます。"
-
 [db_episodes_edit_sort_number_label]
 description = "フォームラベル - ソート番号"
 other = "ソート番号"
-
-[db_episodes_edit_sort_number_hint]
-description = "エピソード編集ページの並び順の書き方の案内"
-other = "この番号の小さい順にエピソードを並べます。あとから「12.5 話」が追加されても間に入れられるよう、「話数 × 100」 (第12話なら 1200) のように間隔を空けて入力します。"
 
 [db_episodes_edit_title_label]
 description = "フォームラベル - タイトル"

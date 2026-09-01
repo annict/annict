@@ -104,6 +104,17 @@ func TestEdit_StoredValues(t *testing.T) {
 		t.Error("エラーの無いフォームで aria-invalid が付いてはいけません")
 	}
 
+	// Each input describes the error messages alone, so a form that collected none names
+	// nothing: an aria-describedby pointing at no element would leave the field with a
+	// description that never resolves.
+	//
+	// [Ja] 各入力欄が説明として指すのはエラーメッセージだけであるため、エラーを集めていない
+	// フォームは何も名指ししない。指す先の要素が無い aria-describedby を出すと、解決しない
+	// 説明を欄に持たせることになる。
+	if strings.Contains(html, "aria-describedby") {
+		t.Error("エラーの無いフォームで aria-describedby が付いてはいけません")
+	}
+
 	if got := strings.Count(html, `role="group" class="field"`); got != 6 {
 		t.Errorf("Basecoat の field group = %d 個, want 6 個", got)
 	}
@@ -121,51 +132,6 @@ func TestEdit_StoredValues(t *testing.T) {
 	for _, hint := range keyboardHints {
 		if input := editInputHTML(t, html, hint.field); !strings.Contains(input, hint.want) {
 			t.Errorf("%q の入力欄に %s がありません: %s", hint.field, hint.want, input)
-		}
-	}
-}
-
-// TestEdit_NumberFieldsStateTheirConventions covers the hints of the three number fields. Each
-// follows a convention the value alone does not reveal and validation cannot check (the work's
-// own wording, digits only, steps of 100), and the Rails page states all three in its sidebar,
-// so the fields have to carry them here and name them from aria-describedby.
-//
-// [Ja] TestEdit_NumberFieldsStateTheirConventions は 3 つの話数の欄のヒントを検証する。いずれも
-// 値そのものからは読み取れず、バリデーションでも検査できない作法 (作品ごとの表記・数字のみ・
-// 100 刻み) を持ち、Rails のページはその 3 つをサイドバーで述べている。本ページでは欄が作法を
-// 携え、aria-describedby から名指しする必要がある。
-func TestEdit_NumberFieldsStateTheirConventions(t *testing.T) {
-	t.Parallel()
-
-	ctx := i18n.SetLocale(context.Background(), "ja")
-
-	var buf strings.Builder
-	if err := Edit(editTestData()).Render(ctx, &buf); err != nil {
-		t.Fatalf("レンダリングエラー: %v", err)
-	}
-
-	html := buf.String()
-
-	hints := []struct {
-		field  string
-		hintID string
-		text   string
-	}{
-		{field: "number", hintID: editNumberHintID, text: "その作品で使われている表記"},
-		{field: "raw_number", hintID: editRawNumberHintID, text: "文字や記号を取り除いた数字"},
-		{field: "sort_number", hintID: editSortNumberHintID, text: "話数 × 100"},
-	}
-	for _, hint := range hints {
-		if !strings.Contains(html, `id="`+hint.hintID+`"`) {
-			t.Errorf("%q のヒントが描画されていません", hint.field)
-		}
-		if !strings.Contains(html, hint.text) {
-			t.Errorf("%q のヒントに %q が含まれていません", hint.field, hint.text)
-		}
-
-		want := `aria-describedby="` + hint.hintID + `"`
-		if input := editInputHTML(t, html, hint.field); !strings.Contains(input, want) {
-			t.Errorf("%q の入力欄が自身のヒントを指していません: %s", hint.field, input)
 		}
 	}
 }
@@ -305,12 +271,12 @@ func TestEdit_WithErrors(t *testing.T) {
 		"ソート番号",
 		`href="#sort_number"`,
 		`aria-invalid="true"`,
-		// The standing hint stays in describedby and comes before the error, so the
-		// convention the value has to follow is not taken away while it is corrected.
+		// The input describes its own error message, so the reason the value was refused
+		// reaches whoever lands on the field rather than only whoever reads the summary.
 		//
-		// [Ja] 常設のヒントは describedby に残り、エラーより先に来る。値が従うべき作法を、
-		// 直している最中に取り上げないため。
-		`aria-describedby="sort_number-hint sort_number-error-1"`,
+		// [Ja] 入力欄は自身のエラーメッセージを説明として指す。値が却下された理由を、要約を
+		// 読む人だけでなく、欄に降り立った人にも届けるため。
+		`aria-describedby="sort_number-error-1"`,
 		`id="sort_number-error-1"`,
 		// The rejected value is echoed back so the submit is corrected rather than retyped.
 		//

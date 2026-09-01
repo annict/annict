@@ -74,24 +74,6 @@ func (d EditPageData) hasErrors() bool {
 	return d.FormErrors.HasErrors()
 }
 
-// The ids of the paragraphs stating how each number is written. The inputs point at them
-// through aria-describedby, so the conventions reach whoever lands on a field rather than only
-// whoever reads the page top to bottom. The three numbers each follow a convention that the
-// value alone does not reveal and that validation cannot check: the display number follows the
-// work's own wording, the numeric one is digits only, and the sort number is spaced out in
-// steps of 100 so a later "12.5" still fits between two episodes.
-//
-// [Ja] 各話数の書き方を述べる段落の id。入力欄は aria-describedby でこれらを指すため、作法は
-// ページを上から読む人だけでなく、欄に降り立った人にも届く。3 つの話数はいずれも、値そのものからは
-// 読み取れず、バリデーションでも検査できない作法を持つ。表示用話数は作品ごとの表記に合わせ、
-// 数値話数は数字だけを入れ、並び順は後から「12.5 話」が挟まっても間に入れられるよう 100 刻みで
-// 間隔を空ける。
-const (
-	editNumberHintID     = "number-hint"
-	editRawNumberHintID  = "raw_number-hint"
-	editSortNumberHintID = "sort_number-hint"
-)
-
 // editSummaryFields lists the fields the error summary can name, in the order this form shows
 // them, paired with the labels it displays. The labels are looked up with literal keys rather
 // than keys assembled from the field name, so every translation key stays greppable from the
@@ -213,21 +195,18 @@ templ Edit(data EditPageData) {
 						<label for="number" class="label">
 							{ templates.T(ctx, "db_episodes_edit_number_label") }
 						</label>
-						<p id={ editNumberHintID } class="text-sm text-muted-foreground">
-							{ templates.T(ctx, "db_episodes_edit_number_hint") }
-						</p>
 						<input
 							type="text"
 							enterkeyhint="next"
 							id="number"
 							name="number"
 							class="input"
-							aria-describedby={ components.FieldDescribedBy(data.FormErrors, "number", editNumberHintID) }
 							if !data.hasErrors() {
 								autofocus
 							}
 							if data.hasFieldError("number") {
 								aria-invalid="true"
+								aria-describedby={ components.FieldErrorIDs(data.FormErrors, "number") }
 							}
 							value={ data.FormInput.Number }
 						/>
@@ -248,9 +227,6 @@ templ Edit(data EditPageData) {
 						<label for="raw_number" class="label">
 							{ templates.T(ctx, "db_episodes_edit_raw_number_label") }
 						</label>
-						<p id={ editRawNumberHintID } class="text-sm text-muted-foreground">
-							{ templates.T(ctx, "db_episodes_edit_raw_number_hint") }
-						</p>
 						// The numeric number takes half episodes ("2.5"), so the field stays
 						// text and asks for the decimal keypad instead of using type="number",
 						// whose stepper and locale-dependent parsing buy nothing here.
@@ -265,9 +241,9 @@ templ Edit(data EditPageData) {
 							id="raw_number"
 							name="raw_number"
 							class="input"
-							aria-describedby={ components.FieldDescribedBy(data.FormErrors, "raw_number", editRawNumberHintID) }
 							if data.hasFieldError("raw_number") {
 								aria-invalid="true"
+								aria-describedby={ components.FieldErrorIDs(data.FormErrors, "raw_number") }
 							}
 							value={ data.FormInput.RawNumber }
 						/>
@@ -289,9 +265,6 @@ templ Edit(data EditPageData) {
 							{ templates.T(ctx, "db_episodes_edit_sort_number_label") }
 							@components.RequiredBadge()
 						</label>
-						<p id={ editSortNumberHintID } class="text-sm text-muted-foreground">
-							{ templates.T(ctx, "db_episodes_edit_sort_number_hint") }
-						</p>
 						// The sort number is an integer, so the field asks for the numeric
 						// keypad while staying text: a rejected submit is re-rendered with
 						// whatever was typed, and type="number" would show that value as an
@@ -310,9 +283,9 @@ templ Edit(data EditPageData) {
 							name="sort_number"
 							class="input"
 							required
-							aria-describedby={ components.FieldDescribedBy(data.FormErrors, "sort_number", editSortNumberHintID) }
 							if data.hasFieldError("sort_number") {
 								aria-invalid="true"
+								aria-describedby={ components.FieldErrorIDs(data.FormErrors, "sort_number") }
 							}
 							value={ data.FormInput.SortNumber }
 						/>

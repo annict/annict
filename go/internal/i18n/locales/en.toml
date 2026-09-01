@@ -1421,25 +1421,13 @@ other = "Episode editing guidelines"
 description = "Form label - Display number"
 other = "Display number"
 
-[db_episodes_edit_number_hint]
-description = "How to write the display number, shown on the episode edit page"
-other = "Follow the wording the work itself uses, such as \"Episode 1\" or \"Lesson 1\". When the wording is unknown, write it as \"Episode 1\"."
-
 [db_episodes_edit_raw_number_label]
 description = "Form label - Numeric number"
 other = "Numeric number"
 
-[db_episodes_edit_raw_number_hint]
-description = "How to write the numeric number, shown on the episode edit page"
-other = "Enter the display number with its letters and symbols removed. A decimal such as 5.5 can be used for a recap that falls between two episodes."
-
 [db_episodes_edit_sort_number_label]
 description = "Form label - Sort number"
 other = "Sort number"
-
-[db_episodes_edit_sort_number_hint]
-description = "How to write the sort number, shown on the episode edit page"
-other = "Episodes are listed from the smallest of these numbers. Space them out as \"episode number × 100\" (1200 for episode 12) so a later \"12.5\" still fits between two episodes."
 
 [db_episodes_edit_title_label]
 description = "Form label - Title"
