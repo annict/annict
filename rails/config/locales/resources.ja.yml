@@ -30,12 +30,9 @@ ja:
     comment:
       no_comments: コメントはありません
     episode:
-      created: 登録しました
       edit_episodes: エピソード編集
       episodes_list: エピソード一覧
       new_episodes: エピソード登録
-      previous_episode: 前のエピソード
-      updated: 更新しました
     forum_category:
       site_news: お知らせ
       general: 一般

@@ -709,8 +709,6 @@ ignore:
       - RSpec/LetSetup
   - spec/requests/db/casts/update_spec.rb:
       - RSpec/LetSetup
-  - spec/requests/db/episodes/update_spec.rb:
-      - RSpec/LetSetup
   - spec/requests/db/programs/update_spec.rb:
       - RSpec/LetSetup
   - spec/requests/db/slots/update_spec.rb:

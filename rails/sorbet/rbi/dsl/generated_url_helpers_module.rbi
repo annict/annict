@@ -109,9 +109,6 @@ module GeneratedUrlHelpersModule
   def db_edit_character_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }
-  def db_edit_episode_url(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
   def db_edit_organization_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }
@@ -139,15 +136,6 @@ module GeneratedUrlHelpersModule
   def db_edit_work_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }
-  def db_episode_detail_url(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
-  def db_episode_list_url(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
-  def db_episode_publishing_url(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
   def db_new_cast_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }
@@ -158,9 +146,6 @@ module GeneratedUrlHelpersModule
 
   sig { params(args: T.untyped).returns(String) }
   def db_new_character_url(*args); end
-
-  sig { params(args: T.untyped).returns(String) }
-  def db_new_episode_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }
   def db_new_organization_url(*args); end

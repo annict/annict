@@ -104,9 +104,6 @@ ja:
           new: キャラクター登録
         episodes:
           activities: アクティビティ
-          edit: エピソード編集
-          index: エピソード一覧
-          new: エピソード登録
         organizations:
           edit: "%{name}"
           index: 団体一覧

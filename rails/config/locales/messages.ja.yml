@@ -104,8 +104,6 @@ ja:
     db:
       comments:
         created: 投稿しました
-      episodes:
-        auto_generate_info_html: "エピソード数: %{manual_episodes_count}<br>公開中のエピソード数: %{episodes_count}<br>自動生成されるエピソード数: %{max_generate_episodes_count}"
       works:
         no_episodes: エピソード未登録
         no_image: 画像未登録
@@ -257,5 +255,3 @@ ja:
       view_all_n_episodes: "%{n}エピソードを全て見る"
       view_all_n_record_body_list: "%{n}件の感想を全て見る"
       view_all_n_staffs: "%{n}人のスタッフを全て見る"
-      creating_episodes_restricted_episodes_filled: "話数分のエピソードがすでに登録されているため、新規登録はできません。"
-      creating_episodes_restricted_slots_exists: "放送予定が登録されているため、手動によるエピソード登録はできません。エピソードは放送予定の情報を使って自動的に生成されます。"

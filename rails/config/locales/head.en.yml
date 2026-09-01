@@ -106,9 +106,6 @@ en:
           new: New Characters
         episodes:
           activities: Activities
-          edit: Edit Episode
-          index: Episodes
-          new: New Episode
         organizations:
           edit: "%{name}"
           index: Organizations

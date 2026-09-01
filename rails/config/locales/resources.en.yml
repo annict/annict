@@ -30,12 +30,9 @@ en:
     comment:
       no_comments: No comments
     episode:
-      created: Episode created
       edit_episodes: Edit episodes
       episodes_list: Episode list
       new_episodes: New episodes
-      previous_episode: Previous episode
-      updated: Episode updated
     forum_category:
       site_news: Site News
       general: General
