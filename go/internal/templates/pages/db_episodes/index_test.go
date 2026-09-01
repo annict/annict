@@ -13,34 +13,58 @@ import (
 func TestIndex_Empty(t *testing.T) {
 	t.Parallel()
 
-	ctx := i18n.SetLocale(context.Background(), "ja")
-	data := IndexPageData{
-		WorkID:     1,
-		WorkName:   "テストアニメ",
-		Episodes:   []viewmodel.DBEpisodeListItem{},
-		Pagination: viewmodel.NewPagination(1, 0, 100, "/db/works/1/episodes"),
+	tests := []struct {
+		name    string
+		locale  string
+		heading string
+	}{
+		{name: "日本語", locale: "ja", heading: "エピソードはありません"},
+		{name: "英語", locale: "en", heading: "No episodes"},
 	}
 
-	var buf strings.Builder
-	if err := Index(data).Render(ctx, &buf); err != nil {
-		t.Fatalf("レンダリングエラー: %v", err)
-	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 
-	html := buf.String()
+			ctx := i18n.SetLocale(context.Background(), tt.locale)
+			data := IndexPageData{
+				WorkID:     1,
+				WorkName:   "テストアニメ",
+				Episodes:   []viewmodel.DBEpisodeListItem{},
+				Pagination: viewmodel.NewPagination(1, 0, 100, "/db/works/1/episodes"),
+			}
 
-	if strings.Contains(html, "<table") {
-		t.Error("エピソードが空の場合は <table> が含まれてはいけません")
-	}
+			var buf strings.Builder
+			if err := Index(data).Render(ctx, &buf); err != nil {
+				t.Fatalf("レンダリングエラー: %v", err)
+			}
 
-	if !strings.Contains(html, "エピソードが見つかりませんでした") {
-		t.Error("エピソードが空の場合は空メッセージが表示されるべきです")
-	}
+			html := buf.String()
 
-	// The subnav still renders on an empty list, so the visitor can move back to the work.
-	//
-	// [Ja] 一覧が空でもサブナビは描画され、閲覧者は作品へ戻れる。
-	if !strings.Contains(html, `href="/db/works/1/edit"`) {
-		t.Error("エピソードが空でも作品へ戻るサブナビが表示されるべきです")
+			if strings.Contains(html, "<table") {
+				t.Error("エピソードが空の場合は <table> が含まれてはいけません")
+			}
+
+			// The empty state names the missing content in the page's only <h2>, so the outline stays
+			// h1 -> h2 with the list gone.
+			//
+			// [Ja] 空表示はページで唯一の <h2> で何が無いのかを述べるため、一覧が無い状態でもアウト
+			// ラインは h1 → h2 のままになる。
+			if !strings.Contains(html, `<section class="empty">`) {
+				t.Error("エピソードが空の場合は空表示コンポーネントが表示されるべきです")
+			}
+
+			if want := "<h2>" + tt.heading + "</h2>"; !strings.Contains(html, want) {
+				t.Errorf("エピソードが空の場合は空表示の見出し %q が表示されるべきです", want)
+			}
+
+			// The subnav still renders on an empty list, so the visitor can move back to the work.
+			//
+			// [Ja] 一覧が空でもサブナビは描画され、閲覧者は作品へ戻れる。
+			if !strings.Contains(html, `href="/db/works/1/edit"`) {
+				t.Error("エピソードが空でも作品へ戻るサブナビが表示されるべきです")
+			}
+		})
 	}
 }
 

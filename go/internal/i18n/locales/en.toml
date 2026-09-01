@@ -1214,7 +1214,7 @@ description = "Confirmation dialog for the delete button on the work list"
 other = "Delete work {{.ID}}?"
 
 [db_works_index_empty]
-description = "No works message"
+description = "Works list empty-state heading"
 other = "No works found"
 
 [db_episodes_index_title]
@@ -1286,8 +1286,8 @@ description = "Aria label for the episode ID link that opens the public page in 
 other = "Open episode {{.ID}} in a new tab"
 
 [db_episodes_index_empty]
-description = "No episodes message"
-other = "No episodes found"
+description = "Episodes list empty-state heading"
+other = "No episodes"
 
 [db_episodes_index_generation_planned_label]
 description = "Auto-generation notice - label for the work's expected total episode count"

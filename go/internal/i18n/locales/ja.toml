@@ -1213,7 +1213,7 @@ description = "作品一覧の削除ボタンの確認ダイアログ"
 other = "作品 {{.ID}} を削除しますか？"
 
 [db_works_index_empty]
-description = "作品なしメッセージ"
+description = "作品一覧の空表示の見出し"
 other = "作品が見つかりませんでした"
 
 [db_episodes_index_title]
@@ -1285,8 +1285,8 @@ description = "エピソード ID リンク (公開ページを新しいタブ�
 other = "エピソード {{.ID}} を新しいタブで開く"
 
 [db_episodes_index_empty]
-description = "エピソードなしメッセージ"
-other = "エピソードが見つかりませんでした"
+description = "エピソード一覧の空表示の見出し"
+other = "エピソードはありません"
 
 [db_episodes_index_generation_planned_label]
 description = "自動生成の案内 - 作品の予定総話数のラベル"
