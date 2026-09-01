@@ -284,11 +284,12 @@ func TestNewDBWorkListItem(t *testing.T) {
 		},
 		{
 			// season_name that falls outside the known enum (1..4) has no label key, so
-			// the season display falls back to the year alone.
+			// the season display falls back to the same year-only display as a work with
+			// no season at all.
 			//
 			// [Ja] season_name が既知の enum (1..4) の範囲外だとラベルキーが無いため、
-			// シーズン表示は年のみにフォールバックする。
-			name: "正常系: season_name が範囲外 enum のとき Season は年のみになる",
+			// 季節が未登録の作品と同じ年のみの表示にフォールバックする。
+			name: "正常系: season_name が範囲外 enum のとき Season は年のみの表示になる",
 			work: &model.Work{
 				ID:         6,
 				Title:      "範囲外シーズン作品",
@@ -301,7 +302,22 @@ func TestNewDBWorkListItem(t *testing.T) {
 			wantMedia:       "TV",
 			wantStatus:      PublishingStatusPublished,
 			wantHasImage:    false,
-			wantSeasonHasJP: "2024",
+			wantSeasonHasJP: "2024年 (季節未登録)",
+		},
+		{
+			name: "正常系: 年だけが登録された作品は Season が年のみの表示になる",
+			work: &model.Work{
+				ID:         7,
+				Title:      "年のみ登録作品",
+				Media:      1,
+				SeasonYear: &year,
+			},
+			wantID:          WorkID(7),
+			wantTitle:       "年のみ登録作品",
+			wantMedia:       "TV",
+			wantStatus:      PublishingStatusPublished,
+			wantHasImage:    false,
+			wantSeasonHasJP: "2024年 (季節未登録)",
 		},
 		{
 			name: "正常系: media = 3 は 映画 に変換される",
@@ -361,6 +377,48 @@ func TestNewDBWorkListItem(t *testing.T) {
 			}
 			if got.Season != tt.wantSeasonHasJP {
 				t.Errorf("Season = %q, want %q", got.Season, tt.wantSeasonHasJP)
+			}
+		})
+	}
+}
+
+// TestFormatSeason pins the release-season display for every season_year / season_name
+// combination in both locales, including the year-only display a work gets when the
+// season is unregistered and the empty string that makes the list render a "-".
+//
+// [Ja] TestFormatSeason は season_year / season_name の全ての組み合わせに対するリリース
+// 時期の表示を、両ロケールで固定する。季節が未登録の作品が受け取る年のみの表示と、一覧に
+// "-" を描かせる空文字列も含む。
+func TestFormatSeason(t *testing.T) {
+	t.Parallel()
+
+	year := int32(2024)
+	spring := int32(2)
+	unknownSeason := int32(5)
+
+	tests := []struct {
+		name   string
+		locale string
+		year   *int32
+		season *int32
+		want   string
+	}{
+		{name: "正常系: ja で年と季節が揃っていれば両方を表示する", locale: "ja", year: &year, season: &spring, want: "2024年春"},
+		{name: "正常系: en で年と季節が揃っていれば両方を表示する", locale: "en", year: &year, season: &spring, want: "Spring 2024"},
+		{name: "正常系: ja で季節が未登録なら年のみを表示する", locale: "ja", year: &year, season: nil, want: "2024年 (季節未登録)"},
+		{name: "正常系: en で季節が未登録なら年のみを表示する", locale: "en", year: &year, season: nil, want: "2024 (No Season)"},
+		{name: "正常系: 範囲外 enum の季節は未登録と同じ表示になる", locale: "ja", year: &year, season: &unknownSeason, want: "2024年 (季節未登録)"},
+		{name: "正常系: 年が未登録なら空文字列を返す", locale: "ja", year: nil, season: nil, want: ""},
+		{name: "正常系: 季節だけが登録されていても年が無ければ空文字列を返す", locale: "ja", year: nil, season: &spring, want: ""},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			ctx := i18n.SetLocale(context.Background(), tt.locale)
+
+			if got := formatSeason(ctx, tt.year, tt.season); got != tt.want {
+				t.Errorf("formatSeason() = %q, want %q", got, tt.want)
 			}
 		})
 	}

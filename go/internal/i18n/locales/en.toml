@@ -56,6 +56,10 @@ other = "Fall"
 description = "Year and season format"
 other = "{{.Season}} {{.Year}}"
 
+[year_no_season]
+description = "Year-only format used when the season is unregistered"
+other = "{{.Year}} (No Season)"
+
 # Sign in related
 [sign_in_title]
 description = "Sign in page title"

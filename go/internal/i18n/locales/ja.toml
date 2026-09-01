@@ -55,6 +55,10 @@ other = "秋"
 description = "年とシーズンの表示形式"
 other = "{{.Year}}年{{.Season}}"
 
+[year_no_season]
+description = "季節が未登録のときの年のみの表示形式"
+other = "{{.Year}}年 (季節未登録)"
+
 # ログイン関連
 [sign_in_title]
 description = "ログインページのタイトル"
