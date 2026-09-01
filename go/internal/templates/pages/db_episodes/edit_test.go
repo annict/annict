@@ -302,7 +302,7 @@ func TestEdit_WithErrors(t *testing.T) {
 		// The summary names the field by its visible label and links to its input.
 		//
 		// [Ja] 要約はフィールドを可視ラベルで名指しし、その入力欄へリンクする。
-		"並び順",
+		"ソート番号",
 		`href="#sort_number"`,
 		`aria-invalid="true"`,
 		// The standing hint stays in describedby and comes before the error, so the

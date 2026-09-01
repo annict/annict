@@ -63,12 +63,6 @@ func TestNew(t *testing.T) {
 		`name="csrf_token"`,
 		`<textarea id="rows" name="rows"`,
 		"エピソード登録",
-		// The page states the line format, which is the only place the column order is
-		// documented for the editor.
-		//
-		// [Ja] ページは行の形式を述べる。列の順序が編集者に示されるのはここだけであるため。
-		"入力の形式",
-		"#1,1,教えてティーチャー",
 	}
 
 	for _, expected := range expectedContents {

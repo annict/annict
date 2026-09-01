@@ -1377,28 +1377,6 @@ other = "Episodes cannot be registered because the expected number of episodes h
 description = "Warning shown when broadcast slots will generate episodes automatically"
 other = "Episodes cannot be registered manually because broadcast schedules exist. Episodes are generated automatically from the schedule information."
 
-[db_episodes_new_format_heading]
-description = "Heading of the input format guide on the bulk-create page"
-other = "Input format"
-
-[db_episodes_new_format_description]
-description = "Input format guide on the bulk-create page (column order and multiple lines)"
-other = "Enter one episode per line as the display number, the numeric number and the title, separated by commas (,). The numeric number is the number with letters and symbols removed, and takes decimals such as 5.5 for a recap. Separate lines with line breaks to register several episodes at once."
-
-[db_episodes_new_format_example]
-description = "Input format example on the bulk-create page (lines with all three columns)"
-other = """#1,1,Teach Me Teacher
-#2,2,I Can No Longer Marry"""
-
-[db_episodes_new_format_partial_description]
-description = "Input format guide on the bulk-create page (lines with only some columns)"
-other = "Only some of the columns are required. For an episode with no title, end the line with a comma after the numbers; for an episode with no number, start the line with commas before the title."
-
-[db_episodes_new_format_partial_example]
-description = "Input format example on the bulk-create page (a number-only line and a title-only line)"
-other = """#1,1,
-,,Three Twins?"""
-
 [db_episodes_edit_title]
 description = "Episode edit page title"
 other = "Edit Episode"

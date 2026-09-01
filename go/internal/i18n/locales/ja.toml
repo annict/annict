@@ -1269,8 +1269,8 @@ description = "テーブルヘッダー - 前のエピソード"
 other = "前のエピソード"
 
 [db_episodes_index_table_sort_number_label]
-description = "テーブルヘッダー - 並び順"
-other = "並び順"
+description = "テーブルヘッダー - ソート番号"
+other = "ソート番号"
 
 [db_episodes_index_table_records_count_label]
 description = "テーブルヘッダー - 記録数"
@@ -1376,28 +1376,6 @@ other = "話数分のエピソードがすでに登録されているため、�
 description = "放送予定からエピソードが自動生成されるときに表示する警告"
 other = "放送予定が登録されているため、手動によるエピソード登録はできません。エピソードは放送予定の情報を使って自動的に生成されます。"
 
-[db_episodes_new_format_heading]
-description = "一括作成ページの入力形式の案内の見出し"
-other = "入力の形式"
-
-[db_episodes_new_format_description]
-description = "一括作成ページの入力形式の説明 (列の順序と複数行の入力)"
-other = "1 行につき 1 エピソードを、表示用話数・数値話数・タイトルの順にカンマ (,) で区切って入力します。数値話数には話数から文字や記号を取り除いた数字を入力します (総集編などには 5.5 のような小数も使えます)。行を改行で並べると、複数のエピソードをまとめて登録できます。"
-
-[db_episodes_new_format_example]
-description = "一括作成ページの入力形式の例 (3 列すべてを入力した行)"
-other = """#1,1,教えてティーチャー
-#2,2,もう、お婿にいけません"""
-
-[db_episodes_new_format_partial_description]
-description = "一括作成ページの入力形式の説明 (一部の列だけを入力する場合)"
-other = "一部の列だけを登録することもできます。タイトルの無いエピソードは話数のあとにカンマだけを入力し、話数の無いエピソードはタイトルの前にカンマだけを入力します。"
-
-[db_episodes_new_format_partial_example]
-description = "一括作成ページの入力形式の例 (話数のみの行とタイトルのみの行)"
-other = """#1,1,
-,,双子が3人?"""
-
 [db_episodes_edit_title]
 description = "エピソード編集ページのタイトル"
 other = "エピソードを編集"
@@ -1455,8 +1433,8 @@ description = "エピソード編集ページの数値話数の書き方の案�
 other = "話数から文字や記号を取り除いた数字を入力します。総集編などが間に挟まる場合は 5.5 のような小数も使えます。"
 
 [db_episodes_edit_sort_number_label]
-description = "フォームラベル - 並び順"
-other = "並び順"
+description = "フォームラベル - ソート番号"
+other = "ソート番号"
 
 [db_episodes_edit_sort_number_hint]
 description = "エピソード編集ページの並び順の書き方の案内"

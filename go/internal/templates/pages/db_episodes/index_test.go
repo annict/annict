@@ -149,7 +149,8 @@ func TestIndex_WithEpisodes(t *testing.T) {
 		"第1話",
 		// The sort number and the records count columns.
 		//
-		// [Ja] 並び順と記録数の列。
+		// [Ja] ソート番号と記録数の列。
+		`<th scope="col" class="text-left">ソート番号</th>`,
 		"<td>200</td>",
 		"<td>100</td>",
 		"<td>42</td>",

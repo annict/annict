@@ -69,13 +69,6 @@ func TestNew_FreshForm(t *testing.T) {
 		// 無いため。
 		"autofocus",
 		"一覧に戻る",
-		// The input is described by the format guide, so the instructions reach whoever lands
-		// on the field rather than only whoever reads the page top to bottom.
-		//
-		// [Ja] 入力欄は形式の案内を説明として指すため、案内はページを上から読む人だけでなく、
-		// 入力欄に降り立った人にも届く。
-		`aria-describedby="rows-format-guide"`,
-		`id="rows-format-guide"`,
 	}
 	for _, expected := range expectedContents {
 		if !strings.Contains(html, expected) {
@@ -85,6 +78,17 @@ func TestNew_FreshForm(t *testing.T) {
 
 	if strings.Contains(html, `aria-invalid="true"`) {
 		t.Error("エラーの無いフォームで aria-invalid が付いてはいけません")
+	}
+
+	// The input describes the error messages alone, so a form that collected none names
+	// nothing: an aria-describedby pointing at no element would leave the field with a
+	// description that never resolves.
+	//
+	// [Ja] 入力欄が説明として指すのはエラーメッセージだけであるため、エラーを集めていない
+	// フォームは何も名指ししない。指す先の要素が無い aria-describedby を出すと、解決しない
+	// 説明を欄に持たせることになる。
+	if strings.Contains(html, `aria-describedby="rows-`) {
+		t.Error("エラーの無いフォームで rows 欄に aria-describedby が付いてはいけません")
 	}
 }
 
@@ -174,12 +178,10 @@ func TestNew_WithErrors(t *testing.T) {
 		"1 行目: 数値話数には数値を入力してください",
 		"2 行目: 表示用話数かタイトルを入力してください",
 		`aria-invalid="true"`,
-		// The standing description keeps its place ahead of the errors, and every message
-		// element is named so none of them goes unannounced.
+		// Every message element is named, so none of them goes unannounced.
 		//
-		// [Ja] 常設の説明はエラーの前に残り、メッセージ要素はすべて名指しされて読み上げから
-		// 漏れるものが出ないようにする。
-		`aria-describedby="rows-format-guide rows-error-1 rows-error-2"`,
+		// [Ja] メッセージ要素はすべて名指しされ、読み上げから漏れるものが出ないようにする。
+		`aria-describedby="rows-error-1 rows-error-2"`,
 		`id="rows-error-1"`,
 		`id="rows-error-2"`,
 		// The submitted lines come back so the editor corrects them instead of retyping.
@@ -343,18 +345,16 @@ func TestNew_HeadingFallsBackToPageTitle(t *testing.T) {
 }
 
 // TestNew_FieldsUseBasecoatGroups covers the wrappers of the bulk-create form. The Basecoat
-// Field component is a role="group" element, and the class on its own leaves the grouping out
-// of the accessibility tree, so the label, the format guide and the error messages stop being
-// announced as parts of the same control.
+// Field component is a role="group" element. The class provides styling but no grouping
+// semantics, so each wrapper keeps the role alongside the class.
 //
 // The textarea takes no keyboard hint: one line is one episode, so its Enter key inserts a
 // line break, and labelling that key "next" or "done" would promise a move the key never
 // makes.
 //
 // [Ja] TestNew_FieldsUseBasecoatGroups は一括作成フォームのラッパーを検証する。Basecoat の
-// Field コンポーネントは role="group" の要素であり、クラスだけではグループがアクセシビリティ
-// ツリーに出ないため、ラベル・形式の案内・エラーメッセージが同じコントロールの一部として
-// 読み上げられなくなる。
+// Field コンポーネントは role="group" の要素である。class はスタイルだけを与え、グループの
+// セマンティクスを持たないため、各ラッパーで role を class と合わせて保持する。
 //
 // textarea はキーボードヒントを持たない。1 行が 1 エピソードのため Enter は改行を入れる
 // キーであり、そこに "next" や "done" の札を付けるとキーが行わない移動を約束することになる。

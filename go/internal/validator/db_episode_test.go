@@ -467,17 +467,17 @@ func TestDBEpisodeUpdateValidatorValidateErrors(t *testing.T) {
 		wantGlobal bool
 	}{
 		{
-			name:      "異常系: 並び順が空",
+			name:      "異常系: ソート番号が空",
 			mutate:    func(in *DBEpisodeUpdateValidatorInput) { in.SortNumber = " " },
 			wantField: "sort_number",
 		},
 		{
-			name:      "異常系: 並び順が整数でない",
+			name:      "異常系: ソート番号が整数でない",
 			mutate:    func(in *DBEpisodeUpdateValidatorInput) { in.SortNumber = "200.5" },
 			wantField: "sort_number",
 		},
 		{
-			name:      "異常系: 並び順が int32 を超える",
+			name:      "異常系: ソート番号が int32 を超える",
 			mutate:    func(in *DBEpisodeUpdateValidatorInput) { in.SortNumber = "2147483648" },
 			wantField: "sort_number",
 		},
