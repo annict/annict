@@ -25,9 +25,9 @@ require (
 	github.com/mfridman/tparse v0.18.0
 	github.com/redis/go-redis/v9 v9.22.0
 	github.com/resend/resend-go/v2 v2.28.0
-	github.com/riverqueue/river v0.45.0
-	github.com/riverqueue/river/riverdriver/riverpgxv5 v0.45.0
-	github.com/riverqueue/river/rivertype v0.45.0
+	github.com/riverqueue/river v0.46.0
+	github.com/riverqueue/river/riverdriver/riverpgxv5 v0.46.0
+	github.com/riverqueue/river/rivertype v0.46.0
 	github.com/schollz/progressbar/v3 v3.19.1
 	github.com/stripe/stripe-go/v84 v84.4.1
 	golang.org/x/tools v0.49.0
@@ -67,8 +67,8 @@ require (
 	github.com/mitchellh/colorstring v0.0.0-20190213212951-d06e56a500db // indirect
 	github.com/muesli/termenv v0.16.0 // indirect
 	github.com/natefinch/atomic v1.0.1 // indirect
-	github.com/riverqueue/river/riverdriver v0.45.0 // indirect
-	github.com/riverqueue/river/rivershared v0.45.0 // indirect
+	github.com/riverqueue/river/riverdriver v0.46.0 // indirect
+	github.com/riverqueue/river/rivershared v0.46.0 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/tidwall/gjson v1.19.0 // indirect
 	github.com/tidwall/match v1.2.0 // indirect
