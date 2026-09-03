@@ -80,33 +80,35 @@
               フォームは Go 版の確認画面が持つ。各リンクは行ごとに同じ文言を繰り返すため、対象の
               作品をアクセシブルネームに足し、表示上は隠す。確認画面へのリンクはこの画面を
               return_to として渡し、変更をやめた場合も完了した場合もこの検索結果に戻るようにする。 %>
-          <% if policy(work).edit? %>
-            <%= link_to "/db/works/#{work.id}/edit", class: "btn btn-primary btn-sm" do %>
-              <%= t("noun.edit") %>
-              <span class="visually-hidden"><%= t("messages.db.works.action_target_label", id: work.id) %></span>
-            <% end %>
-          <% end %>
-
-          <% if policy(work).unpublish? %>
-            <% if work.published? %>
-              <%= link_to "/db/works/#{work.id}/archive/new?#{return_to_query}", class: "btn btn-warning btn-sm" do %>
-                <%= t("noun.unpublish") %>
-                <span class="visually-hidden"><%= t("messages.db.works.action_target_label", id: work.id) %></span>
-              <% end %>
-            <% else %>
-              <%= link_to "/db/works/#{work.id}/unarchive/new?#{return_to_query}", class: "btn btn-success btn-sm" do %>
-                <%= t("noun.publish") %>
+          <div class="btn-group btn-group-sm">
+            <% if policy(work).edit? %>
+              <%= link_to "/db/works/#{work.id}/edit", class: "btn btn-primary btn-sm" do %>
+                <%= t("noun.edit") %>
                 <span class="visually-hidden"><%= t("messages.db.works.action_target_label", id: work.id) %></span>
               <% end %>
             <% end %>
-          <% end %>
 
-          <% if policy(work).destroy? %>
-            <%= link_to "/db/works/#{work.id}/deletion/new?#{return_to_query}", class: "btn btn-danger btn-sm" do %>
-              <%= t("noun.delete") %>
-              <span class="visually-hidden"><%= t("messages.db.works.action_target_label", id: work.id) %></span>
+            <% if policy(work).unpublish? %>
+              <% if work.published? %>
+                <%= link_to "/db/works/#{work.id}/archive/new?#{return_to_query}", class: "btn btn-warning btn-sm" do %>
+                  <%= t("noun.unpublish") %>
+                  <span class="visually-hidden"><%= t("messages.db.works.action_target_label", id: work.id) %></span>
+                <% end %>
+              <% else %>
+                <%= link_to "/db/works/#{work.id}/unarchive/new?#{return_to_query}", class: "btn btn-success btn-sm" do %>
+                  <%= t("noun.publish") %>
+                  <span class="visually-hidden"><%= t("messages.db.works.action_target_label", id: work.id) %></span>
+                <% end %>
+              <% end %>
             <% end %>
-          <% end %>
+
+            <% if policy(work).destroy? %>
+              <%= link_to "/db/works/#{work.id}/deletion/new?#{return_to_query}", class: "btn btn-danger btn-sm" do %>
+                <%= t("noun.delete") %>
+                <span class="visually-hidden"><%= t("messages.db.works.action_target_label", id: work.id) %></span>
+              <% end %>
+            <% end %>
+          </div>
         </td>
       </tr>
     <% end %>

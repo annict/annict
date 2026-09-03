@@ -31,9 +31,9 @@ browse-shot: ## ログイン済みセッションでページを開きスクシ�
 browse-close: ## ブラウザセッションを閉じ一時ファイルを削除
 	bash scripts/browse.sh close
 
-.PHONY: sync-animes
-sync-animes: ## animes 同期バッチを 1 回実行 (works/episodes → animes)
-	$(OP_RUN_DEV) go run ./cmd/annict sync-animes
+.PHONY: task
+task: ## Run an operational task once (e.g. make task NAME=sync-animes, make task NAME=list). [Ja] 運用タスクを 1 回実行 (例: make task NAME=sync-animes / make task NAME=list)
+	$(OP_RUN_DEV) go run ./cmd/annict task $(NAME)
 
 .PHONY: templ-generate
 templ-generate: ## templファイルからGoコードを生成し、import文を整理
@@ -202,7 +202,7 @@ sqlc-generate: ## SQLクエリからGoコードを生成
 .PHONY: seed
 seed: ## 開発環境用のシードデータを生成
 	@echo "シードデータを生成しています..."
-	$(OP_RUN_DEV) go run cmd/seed/main.go
+	$(OP_RUN_DEV) go run ./cmd/annict task seed
 
 # Production snapshot for local verification: download the production backup,
 # mask PII in an isolated database, and load the masked result locally; and copy

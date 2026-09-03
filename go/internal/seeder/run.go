@@ -1,4 +1,11 @@
-package main
+// Package seeder generates the development seed data by driving the seed usecases in
+// order. It sits above internal/usecase/seed, so it cannot live in internal/seed:
+// those usecases import internal/seed for their random titles and images.
+//
+// [Ja] seeder パッケージはシードの UseCase を順に駆動して開発用のシードデータを生成する。
+// internal/usecase/seed の上に位置するため internal/seed には置けない。それらの UseCase が
+// ランダムなタイトル・画像の生成のために internal/seed を import しているためである。
+package seeder
 
 import (
 	"context"
@@ -6,11 +13,11 @@ import (
 	"fmt"
 	"log/slog"
 	"math/rand"
-	"os"
+	"slices"
+	"strings"
 	"time"
 
 	"github.com/brianvoe/gofakeit/v6"
-	_ "github.com/lib/pq"
 	"github.com/schollz/progressbar/v3"
 
 	"github.com/annict/annict/go/internal/config"
@@ -20,48 +27,44 @@ import (
 	seedusecase "github.com/annict/annict/go/internal/usecase/seed"
 )
 
-func main() {
-	// 設定を読み込む
-	cfg, err := config.Load()
-	if err != nil {
-		slog.Error("設定の読み込みに失敗しました", "error", err)
-		os.Exit(1)
+// seedableEnvs lists the environments seed data generation is allowed to run in. The
+// check is an allow list rather than a denial of "prod": generation empties every table
+// it then fills, so an APP_ENV value nobody anticipated has to be rejected instead of
+// falling through as "not production".
+//
+// [Ja] seedableEnvs はシードデータ生成の実行を許可する環境の一覧。判定は「prod を拒否する」
+// 否定リストではなく許可リストとする。生成は対象のテーブルをすべて空にしてから詰め直すため、
+// 想定していない APP_ENV の値は「本番ではない」として通さず拒否する必要がある。
+var seedableEnvs = []string{"dev", "test"}
+
+// Run empties the tables it seeds and regenerates the development data in phase order.
+//
+// The environment guard runs before anything reaches db, so a rejected environment
+// leaves the database unchanged: Run issues no statement of its own until the guard
+// has passed.
+//
+// [Ja] Run はシード対象のテーブルを空にし、開発用データをフェーズ順に生成し直す。
+//
+// 環境ガードは db に触れるどの処理よりも先に実行されるため、環境が拒否された場合にデータ
+// ベースの中身は変わらない。ガードを通過するまで Run 自身の文は 1 つも発行されない。
+func Run(ctx context.Context, cfg *config.Config, db *sql.DB) error {
+	if err := EnsureSeedableEnv(cfg); err != nil {
+		return err
 	}
+
 	slog.Info("シードデータを生成します", "env", cfg.Env)
-
-	// データベース接続
-	db, err := sql.Open("postgres", cfg.DatabaseDSN())
-	if err != nil {
-		slog.Error("データベースへの接続に失敗しました", "error", err)
-		os.Exit(1)
-	}
-	defer func() {
-		if err := db.Close(); err != nil {
-			slog.Warn("データベース接続のクローズに失敗しました", "error", err)
-		}
-	}()
-
-	// データベース接続確認
-	if err := db.Ping(); err != nil {
-		slog.Error("データベースへの疎通確認に失敗しました", "error", err)
-		os.Exit(1)
-	}
 
 	// 接続先データベースの確認
 	var dbName string
-	if err := db.QueryRow("SELECT current_database()").Scan(&dbName); err != nil {
-		slog.Error("データベースクエリに失敗しました", "error", err)
-		os.Exit(1)
+	if err := db.QueryRowContext(ctx, "SELECT current_database()").Scan(&dbName); err != nil {
+		return fmt.Errorf("データベースクエリに失敗しました: %w", err)
 	}
 	slog.Info("接続先データベース", "database", dbName)
-
-	ctx := context.Background()
 
 	// 既存データのクリーンアップ
 	slog.Info("既存データをクリーンアップしています...")
 	if err := cleanupExistingData(ctx, db); err != nil {
-		slog.Error("既存データのクリーンアップに失敗しました", "error", err)
-		os.Exit(1)
+		return fmt.Errorf("既存データのクリーンアップに失敗しました: %w", err)
 	}
 	slog.Info("既存データのクリーンアップが完了しました")
 
@@ -79,70 +82,59 @@ func main() {
 	// フェーズ1: ユーザー生成
 	userIDs, err := generateUsers(ctx, db, rnd, 30000)
 	if err != nil {
-		slog.Error("ユーザー生成に失敗しました", "error", err)
-		os.Exit(1)
+		return err
 	}
 
 	// フェーズ1-1: プロフィール画像クリーンアップ（S3バケット内の孤立した画像を削除）
 	if err := cleanupProfileImages(ctx, cfg); err != nil {
-		slog.Error("プロフィール画像クリーンアップに失敗しました", "error", err)
-		os.Exit(1)
+		return err
 	}
 
 	// フェーズ1-2: プロフィール画像生成
 	if err := generateProfileImages(ctx, db, cfg, userIDs); err != nil {
-		slog.Error("プロフィール画像生成に失敗しました", "error", err)
-		os.Exit(1)
+		return err
 	}
 
 	// フェーズ2: 作品生成
 	workIDs, err := generateWorks(ctx, db, rnd, 10000)
 	if err != nil {
-		slog.Error("作品生成に失敗しました", "error", err)
-		os.Exit(1)
+		return err
 	}
 
 	// フェーズ3: エピソード生成
 	episodeIDs, err := generateEpisodes(ctx, db, rnd, workIDs)
 	if err != nil {
-		slog.Error("エピソード生成に失敗しました", "error", err)
-		os.Exit(1)
+		return err
 	}
 
 	// フェーズ4: 視聴記録生成
 	if err := generateEpisodeRecords(ctx, db, rnd, userIDs, episodeIDs, workIDs, 1000000); err != nil {
-		slog.Error("視聴記録生成に失敗しました", "error", err)
-		os.Exit(1)
+		return err
 	}
 
 	// フェーズ5-1: 作品画像クリーンアップ（S3バケット内の孤立した画像を削除）
 	if err := cleanupWorkImages(ctx, cfg); err != nil {
-		slog.Error("作品画像クリーンアップに失敗しました", "error", err)
-		os.Exit(1)
+		return err
 	}
 
 	// フェーズ5-2: 作品画像生成
 	if err := generateWorkImages(ctx, db, cfg, workIDs, userIDs, rnd); err != nil {
-		slog.Error("作品画像生成に失敗しました", "error", err)
-		os.Exit(1)
+		return err
 	}
 
 	// フェーズ6: フォロー関係生成
 	if err := generateFollows(ctx, db, rnd, userIDs, 100000); err != nil {
-		slog.Error("フォロー関係生成に失敗しました", "error", err)
-		os.Exit(1)
+		return err
 	}
 
 	// フェーズ7: OAuthトークン生成
 	if err := generateOAuthTokens(ctx, db, userIDs, 100); err != nil {
-		slog.Error("OAuthトークン生成に失敗しました", "error", err)
-		os.Exit(1)
+		return err
 	}
 
 	// フェーズ8: ヘビーユーザー生成
 	if err := generateHeavyUser(ctx, db); err != nil {
-		slog.Error("ヘビーユーザー生成に失敗しました", "error", err)
-		os.Exit(1)
+		return err
 	}
 
 	// 完了
@@ -151,6 +143,19 @@ func main() {
 	slog.Info("=== シードデータ生成が完了しました ===")
 	slog.Info("実行時間", "elapsed", elapsed)
 	fmt.Println()
+
+	return nil
+}
+
+// EnsureSeedableEnv reports whether the configured environment may be seeded.
+//
+// [Ja] EnsureSeedableEnv は設定された環境でシードデータを生成してよいかを判定する。
+func EnsureSeedableEnv(cfg *config.Config) error {
+	if slices.Contains(seedableEnvs, cfg.Env) {
+		return nil
+	}
+
+	return fmt.Errorf("シードデータの生成は %s 環境でのみ実行できます: APP_ENV=%q", strings.Join(seedableEnvs, " / "), cfg.Env)
 }
 
 // cleanupExistingData は既存データを削除します
