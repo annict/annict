@@ -28,11 +28,90 @@ type Querier interface {
 	// UTC で保存されているため、いったん UTC として解釈してから指定タイムゾーン
 	// に変換する。
 	AggregateDailyRecordCountsByUserID(ctx context.Context, arg AggregateDailyRecordCountsByUserIDParams) ([]AggregateDailyRecordCountsByUserIDRow, error)
+	// Archiving is conditional on the episode still being published, so a submit from a stale
+	// confirmation page returns no row instead of re-stamping unpublished_at. The work id is
+	// required to match the parent the confirmation page was built from, so an episode moved to
+	// another work by Annict::DataCare::MoveEpisode in between does not decrement the counter of
+	// a work it no longer belongs to. The parent work must also remain undeleted: the
+	// confirmation-page projection excludes deleted works, but its lifecycle can change before this
+	// statement starts or while the episode row is locked by another transaction.
+	//
+	// The updated row returns its current anime_id so the dual-write targets the mapping that was
+	// actually archived. A mapping changed after the confirmation-page read must not make the
+	// submit update the former anime.
+	//
+	// The Rails unpublish is Episode#update(unpublished_at:), which records no db_activity but
+	// does advance updated_at, touch the parent work through belongs_to :work, touch: true and
+	// decrement works.episodes_count through counter_culture (its column_name lambda counts an
+	// episode only while it is published). All three are reproduced here, in one statement so the
+	// counter cannot drift from the state it counts: the decrement runs exactly for the transition
+	// the UPDATE above performed. The final result depends on the work update succeeding. If a
+	// concurrent soft-delete makes that update skip the parent, :one returns no row and the caller
+	// rolls its transaction back, including the episode update performed by the first CTE.
+	//
+	// The rows are written episodes-first and works-second, the order Rails saves them in, so the
+	// two applications queue behind each other on the same work rather than deadlocking. The Go
+	// episode update takes the two in the opposite order (the work first, through
+	// LockWorkForEpisodeUpdateByID), and that inversion does not close into a cycle because the
+	// update pre-empts the episodes it needs with NOWAIT and abandons its attempt rather than
+	// waiting. The bulk create also takes the work first, but it only inserts rows and so never
+	// waits on an episode this statement holds.
+	//
+	// [Ja] 非公開は、エピソードが今も公開中であることを条件とする。古い確認ページからの送信は
+	// unpublished_at を再スタンプせず、1 行も返さない。作品 id は確認ページが前提とした親作品との
+	// 一致を要求する。その間に Annict::DataCare::MoveEpisode で別作品へ移されたエピソードが、
+	// もう所属していない作品のカウンターを減算しないようにするため。親作品も未削除のままであること
+	// を要求する。確認ページ用の射影は削除済み作品を除外するが、作品のライフサイクルは本ステート
+	// メントの開始前や、別のトランザクションが episode 行をロックしている間にも変わり得るため。
+	//
+	// 更新した行は現在の anime_id を返す。両書きが、実際に非公開にした時点の写像を対象にするため。
+	// 確認ページの読み取り後に写像が変わっても、送信が以前の anime を更新してはならない。
+	//
+	// Rails の非公開は Episode#update(unpublished_at:) であり、db_activity は作らないが、
+	// updated_at を進め、belongs_to :work, touch: true で親作品を touch し、counter_culture で
+	// works.episodes_count を減算する (column_name のラムダは公開中のエピソードだけを数える)。
+	// 3 つとも本ステートメントで再現する。1 文にまとめるのは、カウンターが数える対象の状態から
+	// ずれないようにするため (減算は上の UPDATE が実際に行った遷移に対してだけ走る)。最終結果は
+	// 作品の更新成功にも依存させる。同時の論理削除によって作品の更新がスキップされた場合、:one は
+	// 行を返さず、呼び出し元が最初の CTE による episode の更新も含めてトランザクションをロール
+	// バックする。
+	//
+	// 書き込みは episodes が先、works が後で、Rails が保存する順序と同じ。これにより 2 つの
+	// アプリケーションは同じ作品に対してデッドロックせず、順に待ち合う。Go のエピソード更新は
+	// 逆順で取る (LockWorkForEpisodeUpdateByID で作品が先) が、この反転が循環にならないのは、
+	// 更新側が必要なエピソードを NOWAIT で先取りし、待たずに試行を中断するため。一括作成も作品を
+	// 先に取るが、行を挿入するだけのため本ステートメントが保持するエピソードを待つことはない。
+	ArchiveDBEpisode(ctx context.Context, arg ArchiveDBEpisodeParams) (ArchiveDBEpisodeRow, error)
 	CountActivitiesByUserID(ctx context.Context, userID int64) (int64, error)
+	CountDBEpisodes(ctx context.Context, workID int64) (int64, error)
 	CountDBWorks(ctx context.Context, arg CountDBWorksParams) (int64, error)
 	CountEpisodeRecordsByUserID(ctx context.Context, userID int64) (int64, error)
 	CountRecordsByUserID(ctx context.Context, userID int64) (int64, error)
+	CreateAnime(ctx context.Context, arg CreateAnimeParams) (Anime, error)
+	CreateAnimeClassification(ctx context.Context, arg CreateAnimeClassificationParams) (AnimeClassification, error)
+	CreateAnimeEvent(ctx context.Context, arg CreateAnimeEventParams) (AnimeEvent, error)
+	CreateAnimeExternalID(ctx context.Context, arg CreateAnimeExternalIDParams) (AnimeExternalID, error)
+	CreateAnimeHashtag(ctx context.Context, arg CreateAnimeHashtagParams) (AnimeHashtag, error)
+	CreateAnimeLink(ctx context.Context, arg CreateAnimeLinkParams) (AnimeLink, error)
+	CreateAnimeOfficialAccount(ctx context.Context, arg CreateAnimeOfficialAccountParams) (AnimeOfficialAccount, error)
+	CreateAnimeSeason(ctx context.Context, arg CreateAnimeSeasonParams) (AnimeSeason, error)
 	CreateEmailNotification(ctx context.Context, arg CreateEmailNotificationParams) (CreateEmailNotificationRow, error)
+	// anime_id is written with the row rather than patched afterwards: the bulk create inserts
+	// the episode's anime before the episode itself, so the mapping column is already known.
+	// prev_episode_id names the episode with the greatest sort_number at insert time, the value
+	// the Rails after_create callback assigns; the Annict DB list derives the preceding episode
+	// from sort_number order instead, but the public episode page and the GraphQL API still read
+	// the column. The data-modifying CTE also records the same episodes.create DB activity as
+	// Rails save_and_create_activity!, using the inserted row as parameters.new.
+	//
+	// [Ja] anime_id は後から書き戻さず行と一緒に書く。一括作成はエピソード本体より先にその
+	// anime を挿入するため、マッピングカラムの値が既に分かっているため。prev_episode_id には
+	// 挿入時点で sort_number が最大のエピソードを入れる (Rails の after_create コールバックが
+	// 入れるのと同じ値)。Annict DB の一覧は直前のエピソードを sort_number 順から導出するが、
+	// 公開側のエピソードページと GraphQL API は今もこのカラムを読む。データ変更 CTE はさらに、
+	// Rails の save_and_create_activity! と同じ episodes.create の DB 活動を、挿入行を
+	// parameters.new として記録する。
+	CreateEpisode(ctx context.Context, arg CreateEpisodeParams) (int64, error)
 	CreateOAuthAccessToken(ctx context.Context, arg CreateOAuthAccessTokenParams) (int64, error)
 	CreateOAuthApplication(ctx context.Context, arg CreateOAuthApplicationParams) (int64, error)
 	CreatePasswordResetToken(ctx context.Context, arg CreatePasswordResetTokenParams) (PasswordResetToken, error)
@@ -46,10 +125,122 @@ type Querier interface {
 	CreateUser(ctx context.Context, arg CreateUserParams) (CreateUserRow, error)
 	CreateWork(ctx context.Context, arg CreateWorkParams) (int64, error)
 	CreateWorkImage(ctx context.Context, arg CreateWorkImageParams) (int64, error)
+	DeleteAnimeEvent(ctx context.Context, id int64) error
+	DeleteAnimeExternalID(ctx context.Context, id int64) error
+	DeleteAnimeHashtag(ctx context.Context, id int64) error
+	DeleteAnimeLink(ctx context.Context, id int64) error
+	DeleteAnimeOfficialAccount(ctx context.Context, id int64) error
+	DeleteAnimeSeason(ctx context.Context, id int64) error
+	// Deleting is conditional on the episode not being deleted already, so a submit from a list
+	// opened before someone else deleted it returns no row instead of re-stamping deleted_at and
+	// decrementing the counter a second time. The work id is required to match the parent the list
+	// named, so an episode moved to another work by Annict::DataCare::MoveEpisode in between does
+	// not decrement the counter of a work it no longer belongs to. The parent work must also remain
+	// undeleted: the pre-transaction projection excludes deleted works, but its lifecycle can change
+	// before this statement starts or while the episode row is locked by another transaction.
+	//
+	// The updated row returns its current anime_id so the dual-write targets the mapping that was
+	// actually deleted, not the one the pre-transaction projection observed.
+	//
+	// [Ja] 削除は、エピソードがまだ削除されていないことを条件とする。他者が先に削除した後の一覧から
+	// の送信は、deleted_at を再スタンプせず、カウンターを 2 度目に減算せず、1 行も返さない。作品 id
+	// は一覧が名指しした親作品との一致を要求する。その間に Annict::DataCare::MoveEpisode で別作品へ
+	// 移されたエピソードが、もう所属していない作品のカウンターを減算しないようにするため。親作品も
+	// 未削除のままであることを要求する。トランザクション前の射影は削除済み作品を除外するが、作品の
+	// ライフサイクルは本ステートメントの開始前や、別のトランザクションが episode 行をロックしている
+	// 間にも変わり得るため。
+	//
+	// 更新した行は現在の anime_id を返す。両書きが、トランザクション前の射影が観測した写像ではなく、
+	// 実際に削除した時点の写像を対象にするため。
+	//
+	// The Rails delete is destroy_in_batches, which removes the row: counter_culture decrements
+	// works.episodes_count (its column_name lambda counts an episode only while it is published, so
+	// deleting an already archived episode decrements nothing) and belongs_to :work, touch: true
+	// advances works.updated_at. The Go delete is a soft delete, so the row stays and neither side
+	// effect follows from it; both are reproduced here, in one statement so the counter cannot
+	// drift from the state it counts: the decrement runs exactly for the transition the UPDATE
+	// above performed, and only for a row that was still being counted. The final result
+	// depends on the work update succeeding. If a concurrent soft-delete makes that update skip the
+	// parent, :one returns no row and the caller rolls its transaction back, including the episode
+	// update performed by the first CTE.
+	//
+	// The rows are written episodes-first and works-second for the reason ArchiveDBEpisode states.
+	// Unlike the archive, the lock set also holds the rows naming the deleted episode, which the CTE
+	// below writes between the episode and the work. Two deletes in the same work take their rows in
+	// prev_episode_id order, which is a chain rather than a cycle, and the work comes last for both.
+	// The Go episode update again takes the work first and then pre-empts the episodes it needs with
+	// NOWAIT, abandoning its attempt rather than waiting, so that inversion does not close either.
+	//
+	// [Ja] Rails の削除は destroy_in_batches で行を消すため、counter_culture が
+	// works.episodes_count を減算し (column_name のラムダは公開中のエピソードだけを数えるため、
+	// すでに非公開のエピソードの削除では何も減らない)、belongs_to :work, touch: true が
+	// works.updated_at を進める。Go の削除はソフトデリートで行が残り、どちらの副作用も自動的には
+	// 従わないため、2 つとも本ステートメントで再現する。1 文にまとめるのは、カウンターが数える対象の
+	// 状態からずれないようにするため (減算は上の UPDATE が実際に行った遷移に対してだけ、かつまだ
+	// 数えられていた行に対してだけ走る)。最終結果は作品の更新成功にも依存させる。同時の論理削除に
+	// よって作品の更新がスキップされた場合、:one は行を返さず、呼び出し元が最初の CTE による
+	// episode の更新も含めてトランザクションをロールバックする。
+	//
+	// 書き込みが episodes 先・works 後なのは ArchiveDBEpisode が述べる理由による。非公開と違い、
+	// ロックする範囲には削除するエピソードを名乗る行も含まれ、下の CTE がそれをエピソードと作品の
+	// 間で書く。同一作品に対する 2 つの削除は prev_episode_id の順に行を取るが、これは循環ではなく
+	// 連鎖であり、作品はどちらも最後に取る。Go のエピソード更新はここでも作品を先に取り、必要な
+	// エピソードを NOWAIT で先取りして、待たずに試行を中断するため、こちらの反転も循環にならない。
+	//
+	// The rows naming the deleted episode as their predecessor have that pointer cleared, which is
+	// what the Rails before_destroy :unset_prev_episode_id does before the row disappears. The Go
+	// row stays, and prev_episode_id has no scope of its own: the public episode navigation, the
+	// GraphQL EpisodeType.prev_episode and the REST API read whatever it names, so a pointer left
+	// behind would show a deleted episode. Every undeleted row naming it is cleared rather than the
+	// single kept one the Rails callback finds, because an archived follower would otherwise carry
+	// the stale pointer back into view the moment it is re-published. The follower is not relinked
+	// to the deleted episode's own predecessor: that would put the Go delete's aftermath at odds
+	// with the Rails one, which leaves the follower without a predecessor.
+	//
+	// The clearing writes prev_episode_id alone: no change history, no parent touch and no version
+	// bump on the followers, for the reason the relink in UpdateDBEpisode states. The episode's own
+	// prev_episode_id is left as it is, since nothing displays a deleted row.
+	//
+	// [Ja] 削除するエピソードを直前として名乗る行は、そのポインタをクリアする。Rails の
+	// before_destroy :unset_prev_episode_id が行が消える前に行うことと同じ。Go では行が残り、
+	// prev_episode_id 自体にスコープは無い。公開側のエピソードの前後導線・GraphQL の
+	// EpisodeType.prev_episode・REST API はこのカラムが名指しするものをそのまま読むため、残した
+	// ポインタは削除済みエピソードを見せてしまう。Rails のコールバックが見つける「公開中の 1 行」で
+	// はなく、名乗っている未削除の行すべてをクリアするのは、非公開の後続行が古いポインタを持ったまま
+	// 再公開された瞬間に、それが表に戻るのを防ぐため。後続行を削除するエピソード自身の直前行へ張り
+	// 替えることはしない。それは Go の削除後の状態を、後続行に直前を持たせない Rails の削除後の状態
+	// と食い違わせるため。
+	//
+	// クリアが書くのは prev_episode_id だけで、変更履歴も親の touch も後続行の版の更新も行わない。
+	// 理由は UpdateDBEpisode の張り替えが述べるものと同じ。削除するエピソード自身の
+	// prev_episode_id はそのままにする。削除済みの行は何も表示しないため。
+	DeleteDBEpisode(ctx context.Context, arg DeleteDBEpisodeParams) (DeleteDBEpisodeRow, error)
 	DeleteExpiredPasswordResetTokens(ctx context.Context, expiresAt time.Time) error
+	// Deletes at most batch_size sessions whose updated_at is older than cutoff. PostgreSQL
+	// does not accept LIMIT on DELETE, so the rows are picked by a subquery ordered by
+	// updated_at, which reads the oldest ones off index_sessions_on_updated_at. SKIP LOCKED
+	// lets a concurrent run step over the rows another run already holds: without it the
+	// second run would wait, then delete zero rows and stop while a backlog remains.
+	//
+	// [Ja] updated_at が cutoff より古いセッションを最大 batch_size 件削除する。PostgreSQL の
+	// DELETE は LIMIT を取れないため、対象は updated_at で並べたサブクエリで選び、
+	// index_sessions_on_updated_at から古い順に読む。SKIP LOCKED により、並行実行時は他方が
+	// ロック中の行を飛ばして次へ進める。付けない場合、後発は待たされた末に 0 件を削除すること
+	// になり、滞留が残っていてもそこで消化が止まる。
+	DeleteExpiredSessions(ctx context.Context, arg DeleteExpiredSessionsParams) (int64, error)
 	DeleteExpiredSignInCodes(ctx context.Context, expiresAt time.Time) error
 	DeleteSession(ctx context.Context, sessionID string) error
 	DeleteUnusedPasswordResetTokensByUserID(ctx context.Context, userID int64) error
+	ExistsKeptWorkByTitle(ctx context.Context, arg ExistsKeptWorkByTitleParams) (bool, error)
+	ExistsNumberFormatByID(ctx context.Context, id int64) (bool, error)
+	// Check the parent before parsing the submitted rows, matching the Rails action's
+	// Work.without_deleted.find ordering. The authoritative row is locked and reloaded after
+	// validation, so this preliminary check is not used for creation decisions.
+	//
+	// [Ja] Rails アクションの Work.without_deleted.find と同じ順序で、送信行をパースする前に親作品を
+	// 確認する。バリデーション後に正本の行をロックして再取得するため、この予備確認の結果は作成時の
+	// 判断には使わない。
+	ExistsWorkForEpisodeCreateByID(ctx context.Context, id int64) (bool, error)
 	// Looks up a user ID by username, excluding soft-deleted users.
 	// Used by features that should return 404 for deleted users (e.g. tracking
 	// heatmap fragment) without exposing other user attributes.
@@ -61,6 +252,8 @@ type Querier interface {
 	GetActivityByID(ctx context.Context, id int64) (GetActivityByIDRow, error)
 	GetActivityGroupByID(ctx context.Context, id int64) (ActivityGroup, error)
 	GetActivityGroupByUserAndType(ctx context.Context, arg GetActivityGroupByUserAndTypeParams) (ActivityGroup, error)
+	GetAnimeByID(ctx context.Context, id int64) (Anime, error)
+	GetAnimeClassificationByAnimeID(ctx context.Context, animeID int64) (AnimeClassification, error)
 	// カレンダー用の放送枠を取得します
 	// 現在時刻から7日後までの未視聴エピソードを対象とします
 	GetCalendarSlots(ctx context.Context, arg GetCalendarSlotsParams) ([]GetCalendarSlotsRow, error)
@@ -68,6 +261,96 @@ type Querier interface {
 	GetCalendarWorks(ctx context.Context, userID int64) ([]GetCalendarWorksRow, error)
 	GetCastsByWorkIDs(ctx context.Context, dollar_1 []int64) ([]GetCastsByWorkIDsRow, error)
 	GetEmailNotificationByUserID(ctx context.Context, userID int64) (GetEmailNotificationByUserIDRow, error)
+	// The archive confirmation page and the submit that follows it read the same row: the columns
+	// naming the episode on screen (number / title), its state timestamps and the two the page
+	// needs from its parent work (the title for the heading, no_episodes for the shared work
+	// subnav). The submit gets the anime mapping from the row ArchiveDBEpisode actually updates,
+	// not from this pre-transaction projection.
+	//
+	// The state timestamps are selected rather than filtered on, so the caller decides which state
+	// the page and the submit accept through model.Episode.DerivedStatus. deleted_at is filtered
+	// all the same because a deleted episode is out of reach of both, matching
+	// GetEpisodeForEditByID; the column still travels so DerivedStatus reads a complete row.
+	//
+	// The filters match GetEpisodeForEditByID, so the submit accepts exactly the episodes whose
+	// confirmation page is reachable. The re-publish submit (UnarchiveDBEpisode) reads the same row
+	// and applies the opposite state condition, so both directions reach the same episodes.
+	//
+	// [Ja] 非公開の確認ページと、それに続く送信は同じ行を読む。画面上でエピソードを名指しする
+	// カラム (number / title)、状態のタイムスタンプ、そしてページが親作品から必要とする 2 つの
+	// カラム (見出しに使う title と、共有の作品サブナビが使う no_episodes)。送信が使う anime の
+	// 写像は、このトランザクション前の射影ではなく、ArchiveDBEpisode が実際に更新した行から得る。
+	//
+	// 状態のタイムスタンプは絞り込みに使わず選択する。ページと送信がどの状態を受け付けるかは
+	// model.Episode.DerivedStatus を通じて呼び出し側が決めるため。deleted_at で絞るのは、削除済み
+	// エピソードが双方の対象外であるためで、GetEpisodeForEditByID と揃う。DerivedStatus が欠けの
+	// 無い行を読めるよう、カラム自体は併せて運ぶ。
+	//
+	// 絞り込みは GetEpisodeForEditByID と揃える。確認ページに到達できるエピソードと、送信を
+	// 受け付けるエピソードを一致させるため。再公開の送信 (UnarchiveDBEpisode) も同じ行を読み、
+	// 逆向きの状態条件を当てるため、両方向が同じエピソードに届く。
+	GetEpisodeForArchiveByID(ctx context.Context, id int64) (GetEpisodeForArchiveByIDRow, error)
+	// The delete submit comes from a confirmation alert rather than a page, so this projection
+	// carries only what the write needs: the id it addresses and the parent it is taken to name,
+	// which binds DeleteDBEpisode to that work and is where a successful delete lands. Nothing is
+	// read for display, so none of the columns naming the episode travel.
+	//
+	// Deleted episodes and episodes of deleted works are excluded, matching the Rails
+	// Episode.without_deleted.find in Db::EpisodesController#destroy and the reach of the archive
+	// endpoints. The state is not filtered any further: both a published and an archived episode
+	// can be deleted, so unlike the archive endpoints the caller has no state condition to apply
+	// and the timestamps do not need to travel either.
+	//
+	// [Ja] 削除の送信はページではなく確認アラートから来るため、この射影は書き込みが必要とするもの
+	// だけを運ぶ。対象の id と、送信が名指しするとみなす親作品 (DeleteDBEpisode をその作品に束縛し、
+	// 削除の成功時に着地する先でもある)。表示のための読み取りは無いため、エピソードを名指しする
+	// カラムは運ばない。
+	//
+	// 削除済みエピソードと、削除済み作品のエピソードは除外する。Db::EpisodesController#destroy の
+	// Rails の Episode.without_deleted.find と、非公開エンドポイント群が届く範囲に揃えるため。
+	// 状態はそれ以上絞らない。公開中のエピソードも非公開のエピソードも削除できるため、非公開
+	// エンドポイントと違い呼び出し側が当てる状態条件が無く、タイムスタンプを運ぶ必要も無い。
+	GetEpisodeForDeleteByID(ctx context.Context, id int64) (GetEpisodeForDeleteByIDRow, error)
+	// The edit form reads the episode's editable columns together with the two the page needs
+	// from its parent work: the title for the heading and no_episodes for the shared work
+	// subnav. One row covers both, so opening the form costs a single round trip.
+	//
+	// Deleted episodes are excluded by deleted_at (the Rails Episode.without_deleted.find the
+	// edit action uses), and works are filtered the same way as on the episode list, so an
+	// episode whose work is gone is not editable through a page whose heading and subnav point
+	// at that work.
+	//
+	// updated_at is the version the form carries in a hidden field so the update can reject a
+	// submit made against a stale read.
+	//
+	// [Ja] 編集フォームは、エピソードの編集対象カラムと、ページが親作品から必要とする 2 つの
+	// カラム (見出しに使う title と、共有の作品サブナビが使う no_episodes) を一緒に読む。
+	// 1 行で両方を賄うため、フォームを開くのに往復は 1 回で済む。
+	//
+	// 削除済みエピソードは deleted_at で除外し (編集アクションが使う Rails の
+	// Episode.without_deleted.find と同じ)、作品もエピソード一覧と同じ条件で絞る。作品が
+	// 失われたエピソードを、その作品を見出しとサブナビで指すページから編集させないため。
+	//
+	// updated_at はフォームが hidden で持ち回る版。古い読み取りに対する送信を更新側で
+	// 却下できるようにする。
+	GetEpisodeForEditByID(ctx context.Context, id int64) (GetEpisodeForEditByIDRow, error)
+	// The update reads only what the submitted values do not carry: title_ro and the state
+	// timestamps, which the animes dual-write maps but the form does not edit, plus the two
+	// mapping columns (the episode's own anime and its parent work's) that decide whether the
+	// dual-write happens at all. The editable columns are left out because the submit replaces
+	// them.
+	//
+	// The filters match GetEpisodeForEditByID, so the submit accepts exactly the episodes whose
+	// edit form is reachable.
+	//
+	// [Ja] 更新が読むのは、送信された値が運ばないものだけ。title_ro と状態のタイムスタンプ
+	// (animes への両書きが写像するがフォームでは編集しない) と、両書きを行うか自体を決める 2 つの
+	// マッピングカラム (エピソード自身の anime と親作品の anime)。編集対象のカラムは送信された値が
+	// 置き換えるため読まない。
+	//
+	// 絞り込みは GetEpisodeForEditByID と揃える。編集フォームに到達できるエピソードと、送信を
+	// 受け付けるエピソードを一致させるため。
+	GetEpisodeForUpdateByID(ctx context.Context, id int64) (GetEpisodeForUpdateByIDRow, error)
 	GetEpisodeRecordByID(ctx context.Context, id int64) (GetEpisodeRecordByIDRow, error)
 	GetGumroadSubscriberByID(ctx context.Context, id int64) (GumroadSubscriber, error)
 	// ユーザーの視聴リスト（見たい・見てる）からprogram_idを取得します
@@ -97,19 +380,349 @@ type Querier interface {
 	GetValidSignInCode(ctx context.Context, userID int64) (SignInCode, error)
 	GetValidSignUpCode(ctx context.Context, email string) (SignUpCode, error)
 	GetWorkByID(ctx context.Context, id int64) (GetWorkByIDRow, error)
+	GetWorkForEditByID(ctx context.Context, id int64) (GetWorkForEditByIDRow, error)
+	// episode_count and the latest_* columns anchor the sort_number the bulk create assigns: the
+	// first new episode starts one step past episode_count * 100, and the episode holding the
+	// greatest sort_number becomes the prev_episode_id of the first created row. Both aggregate
+	// the work's episodes without filtering unpublished or deleted ones, matching the Rails form
+	// (work.episodes.count), so a work whose episodes were archived does not hand out
+	// sort_numbers that are already taken. anime_id decides whether the create dual-writes the
+	// reference model: an episode's classification requires the parent work's anime.
+	//
+	// latest_episode_id / latest_sort_number are 0 when the work has no episode yet. Ids are
+	// positive, so the caller reads 0 as "no preceding episode" (the same shape
+	// max_generatable_episode_number above uses for a work with no slot).
+	//
+	// [Ja] episode_count と latest_* のカラムは、一括作成が振る sort_number の起点になる。最初の
+	// 新規エピソードは episode_count * 100 の 1 ステップ先から始まり、sort_number が最大の
+	// エピソードが最初に作る行の prev_episode_id になる。どちらも非公開・削除済みを除外せずに
+	// 作品のエピソードを集計する (Rails のフォームの work.episodes.count と同じ)。エピソードを
+	// 非公開にした作品で、既に使われている sort_number を振り直さないため。anime_id は作成が
+	// 参照モデルへ両書きするかどうかを決める (エピソードの分類は親作品の anime を必要とする)。
+	//
+	// latest_episode_id / latest_sort_number は、作品がまだエピソードを持たないとき 0 に
+	// なる。id は正の値のため、呼び出し側は 0 を「直前のエピソードなし」と読む (上の
+	// max_generatable_episode_number がスロットの無い作品に対して採るのと同じ形)。
+	GetWorkForEpisodeCreateByID(ctx context.Context, id int64) (GetWorkForEpisodeCreateByIDRow, error)
+	// The episode form needs the work to name it in the heading, drive the shared work subnav
+	// and preserve the Rails manual-create guard. An editor cannot create more episodes once
+	// the published count reaches manual_episodes_count, or while the work owns a slot with a
+	// start time; admins still see the warning but may override it in the presentation layer.
+	//
+	// [Ja] エピソードフォームは、見出しでの名指し、共有サブナビの出し分け、および Rails の
+	// 手動作成ガードを保つために作品を取得する。公開中のエピソード数が manual_episodes_count に
+	// 達した作品、または開始時刻を持つ放送枠がある作品には編集者が追加できない。管理者も警告は
+	// 見るが、表示層で上書きして作成できる。
+	GetWorkForEpisodeFormByID(ctx context.Context, id int64) (GetWorkForEpisodeFormByIDRow, error)
+	// published_episode_count and max_generatable_episode_number feed the episode list's
+	// auto-generation notice. The first is how many episodes are currently published. The
+	// second is the highest number the Syobocal auto-generation could assign from the work's
+	// kept slots. Both aggregate other tables for one work, so they ride along with the work
+	// row instead of costing the page extra round trips.
+	//
+	// max_generatable_episode_number takes MAX, which skips NULLs, where the Rails notice reads
+	// the first of the work's kept slots ordered by number descending. PostgreSQL sorts NULLs
+	// first for DESC, so Rails lands on a NULL number and reports 0 as soon as the work has one
+	// kept slot without a number. MAX reports the number the auto-generation actually reaches,
+	// so the divergence from Rails is deliberate rather than a gap in the port.
+	//
+	// [Ja] published_episode_count と max_generatable_episode_number はエピソード一覧の自動生成の
+	// 案内に使う。前者は作品のエピソードのうち現在公開中の件数、後者はしょぼいカレンダー由来の
+	// 自動生成が作品の有効なスロットから振れる最大話数を表す。どちらも 1 作品について別テーブルを
+	// 集計する値のため、作品の行と一緒に引いてページの往復を増やさない。
+	//
+	// max_generatable_episode_number が使う MAX は NULL を飛ばすが、Rails の案内は作品の有効な
+	// スロットを number 降順に並べた先頭行を読む。PostgreSQL の DESC は NULLS FIRST のため、
+	// number 未設定の有効スロットが 1 件でもあれば Rails はその行に当たって 0 を報告する。
+	// MAX が報告するのは自動生成が実際に到達する話数であり、Rails と結果が分かれるのは
+	// 移植漏れではなく意図的な選択。
+	GetWorkForEpisodeListByID(ctx context.Context, id int64) (GetWorkForEpisodeListByIDRow, error)
+	// The projection the Annict DB confirmation screens for a work's state changes (archive,
+	// publish, delete) share: the title each screen names its target with, and the work-state
+	// source the caller derives the current status from to reject a work its action cannot act
+	// on. No state is filtered here, since the three screens each accept a different one.
+	//
+	// [Ja] Annict DB の作品の状態変更 (非公開・公開・削除) の確認画面が共有する射影。各画面が対象を
+	// 名指しするタイトルと、呼び出し側が現在の状態を導出してその操作を適用できない作品を弾くための
+	// 作品状態の source を運ぶ。3 つの画面が受け付ける状態はそれぞれ異なるため、ここでは状態を
+	// 絞り込まない。
+	GetWorkForStateChangeByID(ctx context.Context, id int64) (GetWorkForStateChangeByIDRow, error)
 	IncrementSignInCodeAttempts(ctx context.Context, id int64) error
 	IncrementSignUpCodeAttempts(ctx context.Context, id int64) error
+	// Episode.create in Rails increments the published counter cache and touches its work.
+	// The bulk create holds the work row lock already; add the number of newly published rows
+	// atomically so the shared Rails API observes the same counter and timestamp side effects.
+	//
+	// [Ja] Rails の Episode.create は公開話数のカウンターキャッシュを加算し、親作品を touch する。
+	// 一括作成は既に作品行をロックしているため、新しく公開した行数を原子的に加算し、共有する Rails
+	// API から同じカウンターとタイムスタンプの副作用が見えるようにする。
+	IncrementWorkEpisodesCount(ctx context.Context, arg IncrementWorkEpisodesCountParams) (int64, error)
 	InvalidateSignUpCodesByEmail(ctx context.Context, email string) error
 	InvalidateUserPasswordResetTokens(ctx context.Context, userID int64) error
 	InvalidateUserSignInCodes(ctx context.Context, userID int64) error
 	IsFeatureFlagEnabled(ctx context.Context, arg IsFeatureFlagEnabledParams) (bool, error)
 	ListAllProfiles(ctx context.Context) ([]ListAllProfilesRow, error)
+	ListAnimeClassificationsByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]AnimeClassification, error)
+	ListAnimeEventsByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]AnimeEvent, error)
+	ListAnimeExternalIDsByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]AnimeExternalID, error)
+	ListAnimeHashtagsByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]AnimeHashtag, error)
+	ListAnimeLinksByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]AnimeLink, error)
+	ListAnimeOfficialAccountsByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]AnimeOfficialAccount, error)
+	ListAnimeSeasonsByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]AnimeSeason, error)
+	ListAnimesByIDs(ctx context.Context, dollar_1 []int64) ([]Anime, error)
+	// The preceding episode is derived from the neighbouring row in ascending sort_number
+	// order rather than read from episodes.prev_episode_id. The window runs over the work's
+	// whole list inside the CTE, before LIMIT / OFFSET narrow it to one page, so the last row
+	// of a page still names the episode that lands on the next page.
+	//
+	// [Ja] 直前のエピソードは episodes.prev_episode_id を読まず、sort_number 昇順の隣接行から
+	// 導出する。ウィンドウは CTE の中で作品の一覧全体に対して評価され、LIMIT / OFFSET が
+	// 1 ページに絞り込む前に確定するため、ページ末尾の行も次ページに載るエピソードを指せる。
+	ListDBEpisodes(ctx context.Context, arg ListDBEpisodesParams) ([]ListDBEpisodesRow, error)
 	ListDBWorks(ctx context.Context, arg ListDBWorksParams) ([]ListDBWorksRow, error)
+	ListEpisodeIDsAfter(ctx context.Context, arg ListEpisodeIDsAfterParams) ([]int64, error)
+	// List, in ascending id order, the rows UpdateDBEpisode goes on to write or reference as a
+	// neighbour: the target itself, the rows that precede and follow it before the move, and the
+	// rows that precede and follow it after the move. The caller locks exactly these, so the lock
+	// footprint of one edit stays bounded instead of growing with the number of episodes the work
+	// has.
+	//
+	// The derivation is valid because LockWorkForEpisodeUpdateByID already holds the parent work,
+	// which no reordering write can bypass. The one exception is
+	// Annict::DataCare::MoveEpisode, which writes episodes.work_id with update_column and so takes
+	// no work lock; a row it moves into this work after this statement is neither listed nor
+	// locked. That is a manual data-care operation and the window is the same one UpdateDBEpisode
+	// opens by re-deriving under its own snapshot.
+	//
+	// [Ja] UpdateDBEpisode がこの後に書く行と、隣接行として参照する行を id 昇順で列挙する。編集対象
+	// 自身・移動前の直前行・移動前の直後行・移動後の直前行・移動後の直後行の 5 行である。呼び出し側
+	// はこれだけをロックするため、1 回の編集のロック範囲が作品のエピソード数に比例して増えない。
+	//
+	// この導出が有効なのは、LockWorkForEpisodeUpdateByID が既に親作品を保持しており、並び順を
+	// 変える書き込みがそれを迂回できないため。唯一の例外は Annict::DataCare::MoveEpisode で、
+	// episodes.work_id を update_column で書くため作品ロックを取らない。本ステートメントの後に
+	// この作品へ移されてきた行は列挙もロックもされない。これは手動のデータ整備操作であり、また
+	// UpdateDBEpisode が自身のスナップショットで導出し直すことで開く窓と同じものである。
+	ListEpisodeIDsForEpisodeUpdateByID(ctx context.Context, arg ListEpisodeIDsForEpisodeUpdateByIDParams) ([]int64, error)
+	ListEpisodesForAnimeSyncByIDs(ctx context.Context, dollar_1 []int64) ([]ListEpisodesForAnimeSyncByIDsRow, error)
 	ListNumberFormats(ctx context.Context) ([]ListNumberFormatsRow, error)
+	ListWorkIDsAfter(ctx context.Context, arg ListWorkIDsAfterParams) ([]int64, error)
+	ListWorksForAnimeSyncByIDs(ctx context.Context, dollar_1 []int64) ([]ListWorksForAnimeSyncByIDsRow, error)
+	ListWorksForSatelliteSyncByIDs(ctx context.Context, dollar_1 []int64) ([]ListWorksForSatelliteSyncByIDsRow, error)
+	// Lock the listed episodes in ascending id order before neighbour links are derived or written.
+	// Rails locks an episode before touching its work, the inverse of the Go update order; NOWAIT
+	// therefore aborts this transaction instead of completing that cycle. The use case rolls the
+	// whole transaction back and retries after a short delay, once Rails can acquire the released
+	// work lock and finish. The rows UpdateDBEpisode updates and the destination predecessor it
+	// references through prev_episode_id can make it wait on locks Rails holds, so pre-empting the
+	// listed neighbours is enough; the ids are already sorted by ListEpisodeIDsForEpisodeUpdateByID
+	// and ORDER BY keeps them locked in that order.
+	//
+	// The rows are not read back: the statement exists for its locking clause alone.
+	//
+	// [Ja] 隣接リンクの導出・書き込み前に、列挙されたエピソードを id 昇順でロックする。Rails は
+	// エピソードをロックしてから作品を touch し、Go の更新順序と逆になるため、NOWAIT により循環を
+	// 完成させず本トランザクションを中断する。UseCase はトランザクション全体を rollback して短時間
+	// 後に再試行し、その間に Rails は解放された作品ロックを取得して完了できる。UpdateDBEpisode が
+	// 更新する行と、prev_episode_id から参照する移動先の直前行は、Rails が保持するロックで待たされ
+	// 得るため、列挙された隣接行を先取りすれば足りる。id は
+	// ListEpisodeIDsForEpisodeUpdateByID が既に整列済みで、ORDER BY がその順序でのロック取得を保つ。
+	//
+	// 行は読み戻さない。本ステートメントはロック句のためだけに存在する。
+	LockEpisodesForEpisodeUpdateByIDs(ctx context.Context, ids []int64) error
+	// Serialize bulk creates for one work before reading their numbering anchors. Keeping the
+	// lock query separate from the aggregate query makes the latter run after a waiter acquires
+	// the lock and therefore observe the preceding transaction's committed episodes.
+	//
+	// [Ja] 採番の起点を読む前に、1 作品への一括作成を直列化する。ロッククエリと集計クエリを分ける
+	// ことで、待機側がロックを得た後に集計を実行し、先行トランザクションがコミットしたエピソードを
+	// 参照できるようにする。
+	LockWorkForEpisodeCreateByID(ctx context.Context, id int64) (int64, error)
+	// Lock the kept parent work before reading any neighbouring episode. This is a separate
+	// statement from UpdateDBEpisode so a transaction that waited here gets a fresh READ COMMITTED
+	// snapshot when it later derives the old and new neighbours. The returned id also lets the
+	// caller reject a target that moved to a different work after its edit-form pre-read.
+	//
+	// The lock is taken at the strength touched_work needs rather than as FOR SHARE: a shared lock
+	// upgraded to an exclusive one later in the same transaction lets two submits for the same work
+	// each hold the share and then wait for the other's, which PostgreSQL resolves by aborting one
+	// with a deadlock error.
+	//
+	// Holding it also pins the ordering of this work for the rest of the transaction. Every Rails
+	// path that can reorder the list writes the works row too and therefore waits here: an edit
+	// through the Rails DB admin, a create and a destroy all go through belongs_to :work, touch:
+	// true or counter_culture :work. The Go bulk create takes this same lock through
+	// LockWorkForEpisodeCreateByID. The neighbours can therefore be derived after this statement
+	// and stay valid until commit.
+	//
+	// [Ja] 隣接エピソードを読む前に、削除されていない親作品をロックする。UpdateDBEpisode とは
+	// 別の文にすることで、ここで待機したトランザクションが、後で移動前後の隣接行を導出するときに
+	// READ COMMITTED の新しいスナップショットを得られるようにする。返した id は、編集フォーム用の
+	// 事前読み取り後に対象が別作品へ移った場合の却下にも使う。
+	//
+	// FOR SHARE ではなく touched_work が必要とする強さで最初から取るのは、同一トランザクションの
+	// 後段で共有ロックを排他ロックへ昇格させると、同じ作品への 2 つの送信が互いの共有ロックを
+	// 待ち合い、PostgreSQL が片方をデッドロックで中断するためである。
+	//
+	// また、このロックの保持中はこの作品の並び順が固定される。Rails で一覧を並べ替え得る経路は
+	// いずれも works 行も書くためここで待たされる (DB 管理画面の編集・作成・削除はすべて
+	// belongs_to :work, touch: true か counter_culture :work を通る)。Go の一括作成も
+	// LockWorkForEpisodeCreateByID で同じロックを取る。したがって隣接行は本ステートメントの後に
+	// 導出でき、commit まで有効なままである。
+	LockWorkForEpisodeUpdateByID(ctx context.Context, id int64) (int64, error)
 	MarkPasswordResetTokenAsUsed(ctx context.Context, id int64) error
 	MarkSignInCodeAsUsed(ctx context.Context, id int64) error
 	MarkSignUpCodeAsUsed(ctx context.Context, id int64) error
 	TouchSession(ctx context.Context, sessionID string) error
+	// Re-publishing is the inverse of ArchiveDBEpisode: it clears the timestamp that one stamps and
+	// gives back the counter that one takes away. Every guard is the same, with the state condition
+	// read the other way round. It is conditional on the episode still being archived, so a submit
+	// from a list opened before someone else re-published it returns no row instead of clearing an
+	// already NULL unpublished_at. The work id is required to match the parent the list named, so an
+	// episode moved to another work by Annict::DataCare::MoveEpisode in between does not increment
+	// the counter of a work it no longer belongs to. The parent work must also remain undeleted: the
+	// pre-transaction projection excludes deleted works, but its lifecycle can change before this
+	// statement starts or while the episode row is locked by another transaction.
+	//
+	// The updated row returns its current anime_id so the dual-write targets the mapping that was
+	// actually re-published, not the one the pre-transaction projection observed.
+	//
+	// The Rails re-publish is Episode#update(unpublished_at: nil), which records no db_activity but
+	// does advance updated_at, touch the parent work through belongs_to :work, touch: true and
+	// increment works.episodes_count through counter_culture (its column_name lambda counts an
+	// episode only while it is published, so clearing unpublished_at adds the row back). All three
+	// are reproduced here, in one statement so the counter cannot drift from the state it counts:
+	// the increment runs exactly for the transition the UPDATE above performed. The final result
+	// depends on the work update succeeding. If a concurrent soft-delete makes that update skip the
+	// parent, :one returns no row and the caller rolls its transaction back, including the episode
+	// update performed by the first CTE.
+	//
+	// The rows are written episodes-first and works-second for the reason ArchiveDBEpisode states.
+	//
+	// [Ja] 再公開は ArchiveDBEpisode の逆で、あちらが打つタイムスタンプをクリアし、あちらが引く
+	// カウンターを戻す。ガードはすべて同じで、状態の条件だけを逆向きに読む。エピソードが今も非公開
+	// であることを条件とし、他者が先に再公開した後の一覧からの送信は、すでに NULL の unpublished_at
+	// をクリアせず 1 行も返さない。作品 id は一覧が名指しした親作品との一致を要求する。その間に
+	// Annict::DataCare::MoveEpisode で別作品へ移されたエピソードが、もう所属していない作品の
+	// カウンターを加算しないようにするため。親作品も未削除のままであることを要求する。トランザクション
+	// 前の射影は削除済み作品を除外するが、作品のライフサイクルは本ステートメントの開始前や、別の
+	// トランザクションが episode 行をロックしている間にも変わり得るため。
+	//
+	// 更新した行は現在の anime_id を返す。両書きが、トランザクション前の射影が観測した写像では
+	// なく、実際に再公開した時点の写像を対象にするため。
+	//
+	// Rails の再公開は Episode#update(unpublished_at: nil) であり、db_activity は作らないが、
+	// updated_at を進め、belongs_to :work, touch: true で親作品を touch し、counter_culture で
+	// works.episodes_count を加算する (column_name のラムダは公開中のエピソードだけを数えるため、
+	// unpublished_at のクリアで行が数え直される)。3 つとも本ステートメントで再現する。1 文に
+	// まとめるのは、カウンターが数える対象の状態からずれないようにするため (加算は上の UPDATE が
+	// 実際に行った遷移に対してだけ走る)。最終結果は作品の更新成功にも依存させる。同時の論理削除に
+	// よって作品の更新がスキップされた場合、:one は行を返さず、呼び出し元が最初の CTE による
+	// episode の更新も含めてトランザクションをロールバックする。
+	//
+	// 書き込みが episodes 先・works 後なのは ArchiveDBEpisode が述べる理由による。
+	UnarchiveDBEpisode(ctx context.Context, arg UnarchiveDBEpisodeParams) (UnarchiveDBEpisodeRow, error)
+	UpdateAnime(ctx context.Context, arg UpdateAnimeParams) error
+	UpdateAnimeClassificationByAnimeID(ctx context.Context, arg UpdateAnimeClassificationByAnimeIDParams) error
+	UpdateAnimeEvent(ctx context.Context, arg UpdateAnimeEventParams) error
+	UpdateAnimeExternalID(ctx context.Context, arg UpdateAnimeExternalIDParams) error
+	UpdateAnimeLink(ctx context.Context, arg UpdateAnimeLinkParams) error
+	UpdateAnimeOfficialAccount(ctx context.Context, arg UpdateAnimeOfficialAccountParams) error
+	// Update only the lifecycle state derived from the source row. Archive paths use this instead
+	// of replaying an entire anime snapshot, so an unrelated content edit committed after their
+	// pre-read is preserved.
+	//
+	// [Ja] 正本の行から導出したライフサイクル状態だけを更新する。非公開の経路は anime 全体の
+	// スナップショットを書き戻さず本クエリを使うことで、事前読み取り後にコミットされた無関係な
+	// 内容編集を保持する。
+	UpdateAnimeStatus(ctx context.Context, arg UpdateAnimeStatusParams) error
+	// The version stated by the submit is matched inside the UPDATE rather than compared against
+	// a preceding read, so no other write can slip between the comparison and the write. NULL is
+	// an explicit version (the shared column is nullable), which IS NOT DISTINCT FROM matches
+	// without a second statement; the write then advances updated_at, so a second submit from the
+	// same NULL version no longer matches. No row returned therefore means the row was written by
+	// someone else in the meantime, and the caller reports a conflict instead of overwriting it.
+	//
+	// prev_episode_id is recomputed from the submitted sort_number by the same rule the episode
+	// list derives the preceding episode with (ascending sort_number, id as the tiebreaker).
+	// Rails only ever assigns the column on create and expected a human to fix it from the edit
+	// form's select, which the Go form does not have; the public episode navigation, the GraphQL
+	// API and the REST API still read it.
+	//
+	// The parent work is touched and the episodes.update DB activity recorded only when the
+	// content actually changed, as Rails save_and_create_activity! skips both for a no-op save.
+	// The comparison covers the five submitted columns and leaves prev_episode_id out: that one is
+	// derived from the ordering rather than typed, so a recomputation triggered by another
+	// episode moving would otherwise show up in the shared change history as an edit its author
+	// never made. The two data-modifying CTEs run whether or not the final SELECT reads them, so
+	// neither is joined into it: joining created_activity would drop the returned id for a submit
+	// that changed nothing.
+	//
+	// [Ja] 送信が名乗る版の照合は、直前の読み取りとの比較ではなく UPDATE の中で行う。比較と書き込み
+	// の間に他の書き込みが挟まらないようにするため。共有カラムは NULL 許容のため NULL も明示的な
+	// 版であり、IS NOT DISTINCT FROM なら 2 文に分けずに照合できる。書き込みは updated_at を進める
+	// ので、同じ NULL 版からの 2 件目はもう一致しない。したがって 1 行も返らないことは、その間に
+	// 他者が行を書いたことを意味し、呼び出し側は上書きせず競合として報告する。
+	//
+	// prev_episode_id は、エピソード一覧が直前のエピソードを導出するのと同じ規則 (sort_number
+	// 昇順、同値なら id) で、送信された sort_number から再計算する。Rails はこのカラムを作成時に
+	// しか入れず、ずれの修正は編集フォームの選択欄で人が行う前提だったが、Go のフォームにその欄は
+	// 無い。公開側のエピソードの前後導線・GraphQL API・REST API は今もこのカラムを読む。
+	//
+	// 親作品の touch と episodes.update の DB 活動の記録は、内容が実際に変わったときにだけ行う。
+	// Rails の save_and_create_activity! も、変更の無い保存では双方を行わないため。比較の対象は
+	// 送信された 5 カラムで、prev_episode_id は含めない。同カラムは入力ではなく並び順から導出される
+	// ため、別のエピソードが動いたことによる再計算まで拾うと、共有 DB の変更履歴に「その編集者が
+	// 行っていない編集」として現れてしまう。データ変更 CTE は最後の SELECT が読むかどうかに関わらず
+	// 実行されるため、どちらも SELECT に join しない。created_activity を join すると、何も変わら
+	// なかった送信で返すべき id が落ちてしまう。
+	//
+	// The move also leaves the two rows around the episode naming the wrong neighbour, so both are
+	// relinked in the same statement: the row the episode used to precede comes to name the episode
+	// that used to precede it, and the row it comes to precede comes to name the episode itself.
+	// When those two are the same row the episode has crossed nothing and neither is written, which
+	// covers every submit that leaves sort_number where it was. The work as a whole is deliberately
+	// not recomputed: the bulk create assigns prev_episode_id the way the Rails after_create
+	// callback does, which is on purpose different from the neighbour the list derives, and a sweep
+	// would overwrite that on an unrelated edit.
+	//
+	// The relink records no db_activity, does not touch the parent work, and leaves the neighbours'
+	// updated_at alone. It maintains a value the ordering derives rather than applying an edit
+	// someone made (Rails writes the column with update_column for the same reason), and advancing
+	// a neighbour's version would turn another editor's open form into a conflict over a column no
+	// form submits.
+	//
+	// [Ja] 移動は、エピソードの前後にある 2 行が別の行を隣接として名乗ったままにするため、その 2 行も
+	// 同一文で張り替える。移動前にエピソードの直後だった行は移動前の直前のエピソードを名乗るように
+	// し、移動後に直後になる行はエピソード自身を名乗るようにする。2 行が同一の場合、エピソードはどの
+	// 行も跨いでおらず、どちらも書かない (sort_number が変わらない送信はすべてこれに該当する)。作品
+	// 全体の再計算は意図的に行わない。一括作成は Rails の after_create コールバックと同じ規則で
+	// prev_episode_id を入れており、その値は一覧が導出する隣接行と意図的に異なるため、一括再計算は
+	// 無関係な編集でその判断を上書きしてしまう。
+	//
+	// 張り替えは db_activity を作らず、親作品も touch せず、隣接行の updated_at も進めない。並び順
+	// から導出される値の維持であって、誰かが行った編集の適用ではないため (Rails が同カラムを
+	// update_column で書くのも同じ理由)。また隣接行の版を進めると、どのフォームも送信しないカラムを
+	// 理由に、他の編集者が開いているフォームを競合にしてしまう。
+	//
+	// The caller has already locked the kept parent work and the neighbours listed by
+	// ListEpisodeIDsForEpisodeUpdateByID in preceding statements. Keeping that protocol outside
+	// this statement matters: after waiting for the work, this statement starts with a fresh READ
+	// COMMITTED snapshot, so its old and new neighbour reads include the update that just
+	// committed. The neighbour CTEs below repeat that derivation rather than taking the ids from
+	// the caller, so the rows this statement writes are the ones its own snapshot says are
+	// adjacent. The work id is repeated here to bind the write to the parent that was locked and
+	// pre-read.
+	//
+	// [Ja] 呼び出し側は、先行する別ステートメントで削除されていない親作品と、
+	// ListEpisodeIDsForEpisodeUpdateByID が列挙した隣接行を既にロックしている。このプロトコルを
+	// 本ステートメントの外に置くことが重要で、作品ロックを待った後に READ COMMITTED の新しい
+	// スナップショットで本ステートメントを開始し、直前に commit した更新を移動前後の隣接行の
+	// 読み取りへ反映できる。以下の隣接 CTE が呼び出し側から id を受け取らずに導出をやり直すのは、
+	// 本ステートメントが書く行を、自身のスナップショットが隣接と判断した行に一致させるため。
+	// ここでも作品 id を条件にすることで、ロック・事前読み取りした親に書き込みを束縛する。
+	UpdateDBEpisode(ctx context.Context, arg UpdateDBEpisodeParams) (int64, error)
+	UpdateEpisodeAnimeID(ctx context.Context, arg UpdateEpisodeAnimeIDParams) error
 	UpdateProfileImageData(ctx context.Context, arg UpdateProfileImageDataParams) error
 	UpdateSession(ctx context.Context, arg UpdateSessionParams) error
 	UpdateStripeSubscriber(ctx context.Context, arg UpdateStripeSubscriberParams) error
@@ -117,6 +730,30 @@ type Querier interface {
 	UpdateStripeWebhookEventStatus(ctx context.Context, arg UpdateStripeWebhookEventStatusParams) error
 	UpdateUserPassword(ctx context.Context, arg UpdateUserPasswordParams) error
 	UpdateUserStripeSubscriberID(ctx context.Context, arg UpdateUserStripeSubscriberIDParams) error
+	// The version stated by the submit is matched inside the UPDATE rather than compared against a
+	// preceding read, so no other write can slip between the comparison and the write. NULL is an
+	// explicit version (the shared column is nullable), which IS NOT DISTINCT FROM matches without a
+	// second statement; the write then advances updated_at, so a second submit from the same NULL
+	// version no longer matches. No row updated therefore means the row was written by someone else
+	// in the meantime, and the caller reports a conflict instead of overwriting it.
+	//
+	// [Ja] 送信が名乗る版の照合は、直前の読み取りとの比較ではなく UPDATE の中で行う。比較と書き込み
+	// の間に他の書き込みが挟まらないようにするため。共有カラムは NULL 許容のため NULL も明示的な版
+	// であり、IS NOT DISTINCT FROM なら 2 文に分けずに照合できる。書き込みは updated_at を進めるので、
+	// 同じ NULL 版からの 2 件目はもう一致しない。したがって 1 行も更新されないことは、その間に他者が
+	// 行を書いたことを意味し、呼び出し側は上書きせず競合として報告する。
+	UpdateWork(ctx context.Context, arg UpdateWorkParams) (int64, error)
+	UpdateWorkAnimeID(ctx context.Context, arg UpdateWorkAnimeIDParams) error
+	UpdateWorkDeletedAt(ctx context.Context, arg UpdateWorkDeletedAtParams) error
+	UpdateWorkUnpublishedAt(ctx context.Context, arg UpdateWorkUnpublishedAtParams) error
+	// Recreate a missing classification or update the existing row atomically. Episode editing
+	// uses this instead of a preceding existence check so a concurrent delete cannot leave the
+	// dual-written anime without its classification.
+	//
+	// [Ja] 欠損した分類の再作成と既存行の更新をアトミックに行う。エピソード編集では事前の
+	// 存在確認をせずこのクエリを使い、並行削除によって両書き先の anime だけが分類なしで残るのを
+	// 防ぐ。
+	UpsertAnimeClassification(ctx context.Context, arg UpsertAnimeClassificationParams) error
 }
 
 var _ Querier = (*Queries)(nil)

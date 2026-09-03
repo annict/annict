@@ -56,6 +56,10 @@ other = "Fall"
 description = "Year and season format"
 other = "{{.Season}} {{.Year}}"
 
+[year_no_season]
+description = "Year-only format used when the season is unregistered"
+other = "{{.Year}} (No Season)"
+
 # Sign in related
 [sign_in_title]
 description = "Sign in page title"
@@ -826,6 +830,13 @@ other = "Sign Up"
 description = "Bottom navigation - Sign In"
 other = "Sign In"
 
+# Layout common
+#
+# [Ja] レイアウト共通
+[skip_to_main_content]
+description = "Layout common - Skip link to the main content"
+other = "Skip to main content"
+
 # Sidebar related
 [sidebar_home]
 description = "Sidebar - Home"
@@ -980,6 +991,51 @@ other = "Channels"
 description = "DB Sidebar - Back to Annict"
 other = "Back to Annict"
 
+[db_sidebar_toggle_label]
+description = "DB Sidebar - toggle button aria-label"
+other = "Toggle sidebar"
+
+[db_sidebar_close_label]
+description = "DB Sidebar - close button"
+other = "Close"
+
+# DB work subnav related
+[db_work_subnav_label]
+description = "DB work subnav - navigation aria-label"
+other = "Work navigation"
+
+[db_work_subnav_work]
+description = "DB work subnav - work"
+other = "Work"
+
+[db_work_subnav_episodes]
+description = "DB work subnav - episodes"
+other = "Episodes"
+
+[db_work_subnav_programs]
+description = "DB work subnav - programs"
+other = "Programs"
+
+[db_work_subnav_slots]
+description = "DB work subnav - slots"
+other = "Slots"
+
+[db_work_subnav_casts]
+description = "DB work subnav - casts"
+other = "Casts"
+
+[db_work_subnav_staffs]
+description = "DB work subnav - staffs"
+other = "Staffs"
+
+[db_work_subnav_work_image]
+description = "DB work subnav - work image"
+other = "Work image"
+
+[db_work_subnav_pv]
+description = "DB work subnav - PV"
+other = "PV"
+
 # Pagination related
 [pagination_label]
 description = "Pagination - aria-label"
@@ -992,6 +1048,28 @@ other = "Previous"
 [pagination_next]
 description = "Pagination - Next"
 other = "Next"
+
+# Form common
+#
+# [Ja] フォーム共通
+[form_required_label]
+description = "Marker shown in a form label for a required field"
+other = "Required"
+
+[form_error_summary_heading]
+description = "Heading of the error summary shown at the top of a form"
+other = "There is a problem with your input"
+
+[form_error_summary_item]
+description = "One entry of the error summary (a field label and its message)"
+other = "{{.Label}}: {{.Message}}"
+
+# Guideline link
+#
+# [Ja] ガイドラインリンク
+[guideline_link_aria_label]
+description = "Aria label for a link to a guideline help page that opens in a new tab"
+other = "Open {{.Label}} in a new tab"
 
 # Status label related
 [status_published]
@@ -1011,21 +1089,45 @@ other = "Deleted"
 description = "DB works index page title"
 other = "Works"
 
+[db_works_index_table_caption]
+description = "Caption and scroll-region aria-label for the DB works table"
+other = "DB works list"
+
 [db_works_index_new_link]
 description = "Link from works index to new work page"
 other = "New"
 
+[db_works_index_season_slugs_label]
+description = "Label for the release multi-select filter"
+other = "Release"
+
+[db_works_index_season_slugs_placeholder]
+description = "Search placeholder for the release-season combobox"
+other = "Filter by year or season..."
+
+[db_works_index_season_slugs_empty]
+description = "Message shown when the release-season combobox search has no results"
+other = "No release seasons found"
+
+[db_works_index_season_slugs_remove_label]
+description = "Accessible label for removing a selected release-season chip"
+other = "Remove {{.Label}}"
+
 [db_works_index_filter_no_episodes_label]
 description = "Label for the no-episodes filter"
-other = "No episodes"
+other = "No Episodes"
 
 [db_works_index_filter_no_image_label]
 description = "Label for the no-image filter"
-other = "No image"
+other = "No Image"
 
 [db_works_index_filter_no_season_label]
 description = "Label for the no-season filter"
-other = "No season"
+other = "No Season"
+
+[db_works_index_filter_no_slots_label]
+description = "Label for the no-slots filter"
+other = "No Slots"
 
 [db_works_index_submit]
 description = "Submit button on the DB works index page (filter search)"
@@ -1039,9 +1141,25 @@ other = "ID"
 description = "Table header - Title"
 other = "Title"
 
+[db_works_index_table_info_label]
+description = "Table header - Info (every work attribute other than the title, combined into one column)"
+other = "Info"
+
+[db_works_index_table_media_label]
+description = "Table header - Media"
+other = "Media"
+
 [db_works_index_table_season_label]
-description = "Table header - Season"
-other = "Season"
+description = "Table header - Release"
+other = "Release"
+
+[db_works_index_syobocal_label]
+description = "Info column - Syoboi Calendar label"
+other = "Syoboi Calendar"
+
+[db_works_index_mal_label]
+description = "Info column - MyAnimeList label"
+other = "MyAnimeList"
 
 [db_works_index_table_watchers_label]
 description = "Table header - Watchers"
@@ -1055,9 +1173,323 @@ other = "Status"
 description = "Table header - Image"
 other = "Image"
 
+[db_works_index_table_actions_label]
+description = "Table header - Actions"
+other = "Actions"
+
+[db_works_index_id_link_aria_label]
+description = "Aria label for the work ID link that opens the public page in a new tab"
+other = "Open work {{.ID}} in a new tab"
+
+[db_works_index_external_service_link_aria_label]
+description = "Aria label for an external service link that opens in a new tab"
+other = "Open {{.Label}} in a new tab"
+
+[db_works_index_action_target_label]
+description = "Work an action link or button on the work list acts on, added to its accessible name and not shown on screen"
+other = "work {{.ID}}"
+
+[db_works_index_edit_link]
+description = "Link from work list to edit form"
+other = "Edit"
+
+[db_works_index_archive_link]
+description = "Link from work list to the archive-confirmation screen (shown for published works)"
+other = "Unpublish"
+
+[db_works_index_publish_button]
+description = "Re-publish button on the work list (shown for archived works)"
+other = "Publish"
+
+[db_works_index_publish_confirm]
+description = "Confirmation dialog for the re-publish button on the work list"
+other = "Publish work {{.ID}}?"
+
+[db_works_index_delete_button]
+description = "Delete button on the work list (shown to admins)"
+other = "Delete"
+
+[db_works_index_delete_confirm]
+description = "Confirmation dialog for the delete button on the work list"
+other = "Delete work {{.ID}}?"
+
 [db_works_index_empty]
-description = "No works message"
+description = "Works list empty-state heading"
 other = "No works found"
+
+[db_episodes_index_title]
+description = "Episode list page title for a work"
+other = "Episodes"
+
+[db_episodes_index_title_paginated]
+description = "Generic episode list document title after the first page"
+other = "Episodes (Page {{.Page}})"
+
+[db_episodes_index_document_title]
+description = "Work-specific episode list document title"
+other = "Episodes | {{.WorkTitle}}"
+
+[db_episodes_index_document_title_paginated]
+description = "Work-specific episode list document title after the first page"
+other = "Episodes (Page {{.Page}}) | {{.WorkTitle}}"
+
+[db_episodes_index_table_caption]
+description = "Caption and scroll-region aria-label for the DB episodes table"
+other = "DB episodes list"
+
+[db_episodes_index_table_id_label]
+description = "Table header - ID"
+other = "ID"
+
+[db_episodes_index_table_number_label]
+description = "Table header - Number (display and numeric)"
+other = "Number"
+
+[db_episodes_index_number_display_label]
+description = "Screen-reader label for an episode's display number"
+other = "Display number"
+
+[db_episodes_index_number_raw_label]
+description = "Screen-reader label for an episode's numeric number"
+other = "Numeric number"
+
+[db_episodes_index_table_title_label]
+description = "Table header - Title (Japanese and English)"
+other = "Title"
+
+[db_episodes_index_title_ja_label]
+description = "Screen-reader label for an episode's Japanese title"
+other = "Japanese title"
+
+[db_episodes_index_title_en_label]
+description = "Screen-reader label for an episode's English title"
+other = "English title"
+
+[db_episodes_index_table_prev_episode_label]
+description = "Table header - Previous episode"
+other = "Previous episode"
+
+[db_episodes_index_table_sort_number_label]
+description = "Table header - Sort number"
+other = "Sort number"
+
+[db_episodes_index_table_records_count_label]
+description = "Table header - Record count"
+other = "Record count"
+
+[db_episodes_index_table_status_label]
+description = "Table header - Status"
+other = "Status"
+
+[db_episodes_index_id_link_aria_label]
+description = "Aria label for the episode ID link that opens the public page in a new tab"
+other = "Open episode {{.ID}} in a new tab"
+
+[db_episodes_index_empty]
+description = "Episodes list empty-state heading"
+other = "No episodes"
+
+[db_episodes_index_generation_planned_label]
+description = "Auto-generation notice - label for the work's expected total episode count"
+other = "Expected episodes"
+
+[db_episodes_index_generation_published_label]
+description = "Auto-generation notice - label for the number of published episodes"
+other = "Published episodes"
+
+[db_episodes_index_generation_generatable_label]
+description = "Auto-generation notice - label for the number of episodes auto-generation produces"
+other = "Auto-generated episodes"
+
+[db_episodes_index_generation_unknown]
+description = "Auto-generation notice - value shown when the work records no expected episode count"
+other = "Unknown"
+
+[db_episodes_index_new_link]
+description = "Link from the episode list to the bulk-create form"
+other = "New"
+
+[db_episodes_index_table_actions_label]
+description = "Table header - Actions"
+other = "Actions"
+
+[db_episodes_index_action_target_label]
+description = "Episode an action link or button on the episode list acts on, added to its accessible name and not shown on screen"
+other = "episode {{.ID}}"
+
+[db_episodes_index_edit_link]
+description = "Link from the episode list to the edit form"
+other = "Edit"
+
+[db_episodes_index_archive_link]
+description = "Link from the episode list to the archive-confirmation screen (shown for published episodes)"
+other = "Unpublish"
+
+[db_episodes_index_publish_button]
+description = "Re-publish button on the episode list (shown for archived episodes)"
+other = "Publish"
+
+[db_episodes_index_publish_confirm]
+description = "Confirmation dialog for the re-publish button on the episode list"
+other = "Publish episode {{.ID}}?"
+
+[db_episodes_index_delete_button]
+description = "Delete button on the episode list (shown to admins)"
+other = "Delete"
+
+[db_episodes_index_delete_confirm]
+description = "Confirmation dialog for the delete button on the episode list"
+other = "Delete episode {{.ID}}?"
+
+[db_episodes_new_title]
+description = "Episode bulk-create page title"
+other = "Add Episodes"
+
+[db_episodes_new_document_title]
+description = "Work-specific episode bulk-create document title"
+other = "Add Episodes | {{.WorkTitle}}"
+
+[db_episodes_new_back_to_list_link]
+description = "Link from the bulk-create page back to the episode list"
+other = "Back to List"
+
+[db_episodes_new_guideline_link]
+description = "Link from the episode bulk-create page to the bulk episode registration help page"
+other = "Bulk episode registration guidelines"
+
+[db_episodes_new_rows_label]
+description = "Label of the bulk-create input, which takes one episode per line"
+other = "Episodes"
+
+[db_episodes_new_submit]
+description = "Submit button on the episode bulk-create page"
+other = "Register"
+
+[db_episodes_new_restriction_title]
+description = "Heading of the warning shown when episodes should not be registered manually"
+other = "Manual registration unavailable"
+
+[db_episodes_new_restriction_admin_title]
+description = "Heading of the warning shown to administrators when episodes should not be registered manually"
+other = "Manual registration is normally unavailable"
+
+[db_episodes_new_restricted_episodes_filled]
+description = "Warning shown when the work already has its expected number of episodes"
+other = "Episodes cannot be registered because the expected number of episodes has already been reached."
+
+[db_episodes_new_restricted_admin_episodes_filled]
+description = "Warning shown to administrators when the work already has its expected number of episodes"
+other = "The expected number of episodes has already been registered. Administrators can register more by hand, but doing so goes beyond the expected episode count."
+
+[db_episodes_new_restricted_slots_exist]
+description = "Warning shown when broadcast slots will generate episodes automatically"
+other = "Episodes cannot be registered manually because broadcast schedules exist. Episodes are generated automatically from the schedule information."
+
+[db_episodes_new_restricted_admin_slots_exist]
+description = "Warning shown to administrators when broadcast slots will generate episodes automatically"
+other = "Broadcast schedules exist, so episodes are generated automatically from the schedule information. Administrators can register episodes by hand, but check that they do not duplicate the generated ones."
+
+[db_episodes_edit_title]
+description = "Episode edit page title"
+other = "Edit Episode"
+
+[db_episodes_edit_document_title]
+description = "Episode-specific edit document title for a named work"
+other = "Edit Episode | {{.EpisodeIdentifier}} | {{.WorkTitle}}"
+
+[db_episodes_edit_document_title_without_work]
+description = "Episode-specific edit document title for a work without a display name"
+other = "Edit Episode | {{.EpisodeIdentifier}}"
+
+[db_episodes_identifier_without_number]
+description = "Label identifying an episode without a display number in a document title"
+other = "ID: {{.EpisodeID}}"
+
+[db_episodes_name]
+description = "How an episode with both a display number and a title is named in running text"
+other = "{{.Number}} “{{.Title}}”"
+
+[db_episodes_name_title_only]
+description = "How an episode with a title but no display number is named in running text"
+other = "“{{.Title}}”"
+
+[db_episodes_name_without_number_and_title]
+description = "How an episode with neither a display number nor a title is named in running text"
+other = "episode ID: {{.EpisodeID}}"
+
+[db_episodes_edit_back_to_list_link]
+description = "Link from the episode edit page back to the episode list"
+other = "Back to List"
+
+[db_episodes_edit_guideline_link]
+description = "Link from the episode edit page to the episode editing guideline help page"
+other = "Episode editing guidelines"
+
+[db_episodes_edit_number_label]
+description = "Form label - Display number"
+other = "Display number"
+
+[db_episodes_edit_raw_number_label]
+description = "Form label - Numeric number"
+other = "Numeric number"
+
+[db_episodes_edit_sort_number_label]
+description = "Form label - Sort number"
+other = "Sort number"
+
+[db_episodes_edit_title_label]
+description = "Form label - Title"
+other = "Title"
+
+[db_episodes_edit_title_en_label]
+description = "Form label - Title (English)"
+other = "Title (English)"
+
+[db_episodes_edit_submit]
+description = "Submit button on the episode edit page"
+other = "Update"
+
+[db_episodes_edit_conflict_heading]
+description = "Heading of the stored values shown on a conflict on the episode edit page"
+other = "Currently stored values"
+
+[db_episodes_edit_conflict_help]
+description = "Explanation of the available options on a conflict on the episode edit page"
+other = "Your input is kept in the form below. Compare it with the currently stored values and, if your input is the one to keep, update again. To keep the stored values instead, return to the list without updating."
+
+# DB episode archive-confirmation page
+[db_episodes_archive_new_title]
+description = "Title of the episode archive-confirmation page"
+other = "Archive Episode"
+
+[db_episodes_archive_new_document_title]
+description = "Episode-specific archive-confirmation document title for a named work"
+other = "Archive Episode | {{.EpisodeIdentifier}} | {{.WorkTitle}}"
+
+[db_episodes_archive_new_document_title_without_work]
+description = "Episode-specific archive-confirmation document title for a work without a display name"
+other = "Archive Episode | {{.EpisodeIdentifier}}"
+
+[db_episodes_archive_new_confirm_message]
+description = "Confirmation message on the episode archive-confirmation page"
+other = "Archive {{.Episode}}?"
+
+[db_episodes_archive_new_help]
+description = "Explanation of what archiving an episode does, on the episode archive-confirmation page"
+other = "An archived episode no longer appears on the public pages. You can restore it later with “Publish” on the episode list."
+
+[db_episodes_archive_new_submit]
+description = "Execute button on the episode archive-confirmation page"
+other = "Archive"
+
+[db_episodes_archive_new_cancel_link]
+description = "Cancel link on the episode archive-confirmation page"
+other = "Cancel"
+
+# DB works form shared (used by new and edit)
+[db_works_form_external_link_label]
+description = "Accessible name for the external-link icon shown beside a form label (shared by new and edit). Field is the field name"
+other = "Open {{.Field}} in a new tab"
 
 # DB works new page
 [db_works_new_title]
@@ -1067,6 +1499,10 @@ other = "Add Work"
 [db_works_new_back_to_list_link]
 description = "Link from new work page back to the works index"
 other = "Back to List"
+
+[db_works_new_guideline_link]
+description = "Link from the new work page to the work editing guideline help page"
+other = "Work editing guidelines"
 
 [db_works_new_title_label]
 description = "Form label - Title"
@@ -1093,20 +1529,20 @@ description = "Form label - Media"
 other = "Media"
 
 [db_works_new_season_year_label]
-description = "Form label - Season Year"
-other = "Season Year"
+description = "Form label - Release (Year)"
+other = "Release (Year)"
 
 [db_works_new_season_name_label]
-description = "Form label - Season Name"
-other = "Season Name"
+description = "Form label - Release (Season)"
+other = "Release (Season)"
 
 [db_works_new_started_on_label]
-description = "Form label - Started On"
-other = "Started On"
+description = "Form label - Start Date"
+other = "Start Date"
 
 [db_works_new_ended_on_label]
-description = "Form label - Ended On"
-other = "Ended On"
+description = "Form label - End Date"
+other = "End Date"
 
 [db_works_new_official_site_url_label]
 description = "Form label - Official Site URL"
@@ -1125,12 +1561,12 @@ description = "Form label - Wikipedia URL (English)"
 other = "Wikipedia URL (English)"
 
 [db_works_new_twitter_username_label]
-description = "Form label - Twitter Username"
-other = "Twitter Username"
+description = "Form label - X Username"
+other = "X Username"
 
 [db_works_new_twitter_hashtag_label]
-description = "Form label - Twitter Hashtag"
-other = "Twitter Hashtag"
+description = "Form label - Hashtag"
+other = "Hashtag"
 
 [db_works_new_sc_tid_label]
 description = "Form label - Syobocal TID"
@@ -1157,16 +1593,16 @@ description = "Form label - Synopsis Source (English)"
 other = "Synopsis Source (English)"
 
 [db_works_new_manual_episodes_count_label]
-description = "Form label - Manual Episodes Count"
-other = "Manual Episodes Count"
+description = "Form label - Expected Episodes"
+other = "Expected Episodes"
 
 [db_works_new_start_episode_raw_number_label]
 description = "Form label - Start Episode Raw Number"
 other = "Start Episode Raw Number"
 
 [db_works_new_number_format_label]
-description = "Form label - Number Format"
-other = "Number Format"
+description = "Form label - Episode Number Format"
+other = "Episode Number Format"
 
 [db_works_new_no_episodes_label]
 description = "Form label - No Episodes"
@@ -1174,17 +1610,265 @@ other = "No Episodes"
 
 [db_works_new_submit]
 description = "Submit button on the new work page"
-other = "Create Work"
+other = "Register"
+
+[db_works_edit_title]
+description = "DB works edit page title"
+other = "Edit Work"
+
+[db_works_edit_document_title]
+description = "Work-specific edit document title"
+other = "Edit Work | {{.WorkTitle}}"
+
+[db_works_edit_work_page_link]
+description = "Link from the edit work page to the work page on the public site"
+other = "Work page"
+
+[db_works_edit_work_page_link_aria_label]
+description = "Aria label for the link that opens the work page on the public site in a new tab"
+other = "Open the work page in a new tab"
+
+[db_works_edit_guideline_link]
+description = "Link from the edit work page to the work editing guideline help page"
+other = "Work editing guidelines"
+
+[db_works_edit_title_label]
+description = "Form label - Title"
+other = "Title"
+
+[db_works_edit_title_kana_label]
+description = "Form label - Title (Kana)"
+other = "Title (Kana)"
+
+[db_works_edit_title_alter_label]
+description = "Form label - Title (Alternate)"
+other = "Title (Alternate)"
+
+[db_works_edit_title_en_label]
+description = "Form label - Title (English)"
+other = "Title (English)"
+
+[db_works_edit_title_alter_en_label]
+description = "Form label - Title (English Alternate)"
+other = "Title (English Alternate)"
+
+[db_works_edit_media_label]
+description = "Form label - Media"
+other = "Media"
+
+[db_works_edit_season_year_label]
+description = "Form label - Release (Year)"
+other = "Release (Year)"
+
+[db_works_edit_season_name_label]
+description = "Form label - Release (Season)"
+other = "Release (Season)"
+
+[db_works_edit_started_on_label]
+description = "Form label - Start Date"
+other = "Start Date"
+
+[db_works_edit_ended_on_label]
+description = "Form label - End Date"
+other = "End Date"
+
+[db_works_edit_official_site_url_label]
+description = "Form label - Official Site URL"
+other = "Official Site URL"
+
+[db_works_edit_official_site_url_en_label]
+description = "Form label - Official Site URL (English)"
+other = "Official Site URL (English)"
+
+[db_works_edit_wikipedia_url_label]
+description = "Form label - Wikipedia URL"
+other = "Wikipedia URL"
+
+[db_works_edit_wikipedia_url_en_label]
+description = "Form label - Wikipedia URL (English)"
+other = "Wikipedia URL (English)"
+
+[db_works_edit_twitter_username_label]
+description = "Form label - X Username"
+other = "X Username"
+
+[db_works_edit_twitter_hashtag_label]
+description = "Form label - Hashtag"
+other = "Hashtag"
+
+[db_works_edit_sc_tid_label]
+description = "Form label - Syobocal TID"
+other = "Syobocal TID"
+
+[db_works_edit_mal_anime_id_label]
+description = "Form label - MAL Anime ID"
+other = "MAL Anime ID"
+
+[db_works_edit_synopsis_label]
+description = "Form label - Synopsis"
+other = "Synopsis"
+
+[db_works_edit_synopsis_source_label]
+description = "Form label - Synopsis Source"
+other = "Synopsis Source"
+
+[db_works_edit_synopsis_en_label]
+description = "Form label - Synopsis (English)"
+other = "Synopsis (English)"
+
+[db_works_edit_synopsis_source_en_label]
+description = "Form label - Synopsis Source (English)"
+other = "Synopsis Source (English)"
+
+[db_works_edit_manual_episodes_count_label]
+description = "Form label - Expected Episodes"
+other = "Expected Episodes"
+
+[db_works_edit_start_episode_raw_number_label]
+description = "Form label - Start Episode Raw Number"
+other = "Start Episode Raw Number"
+
+[db_works_edit_number_format_label]
+description = "Form label - Episode Number Format"
+other = "Episode Number Format"
+
+[db_works_edit_no_episodes_label]
+description = "Form label - No Episodes"
+other = "No Episodes"
+
+[db_works_edit_conflict_heading]
+description = "Heading of the stored values shown on a conflict on the work edit page"
+other = "Currently stored values"
+
+[db_works_edit_conflict_no_field_changes]
+description = "Explanation shown on a conflict where no field of this form differs"
+other = "No field of this form differs. Something outside the form, such as the publishing state, may have been changed."
+
+[db_works_edit_conflict_help]
+description = "Explanation of the available options on a conflict on the work edit page"
+other = "Your input is kept in the form below. Compare it with the currently stored values and, if your input is the one to keep, update again. To keep the stored values instead, leave the page without updating."
+
+[db_works_edit_conflict_checked]
+description = "Value shown for a checked checkbox in the conflict notice on the work edit page"
+other = "On"
+
+[db_works_edit_conflict_unchecked]
+description = "Value shown for an unchecked checkbox in the conflict notice on the work edit page"
+other = "Off"
+
+[db_works_edit_submit]
+description = "Submit button on the edit work page"
+other = "Update"
+
+[db_works_archive_new_title]
+description = "Title of the archive-confirmation page"
+other = "Archive Work"
+
+[db_works_archive_new_document_title]
+description = "Work-specific archive-confirmation document title"
+other = "Archive Work | {{.WorkTitle}}"
+
+[db_works_archive_new_confirm_message]
+description = "Confirmation message on the archive-confirmation page"
+other = "Archive “{{.Title}}”?"
+
+[db_works_archive_new_help]
+description = "Explanation of what archiving a work does, on the archive-confirmation page"
+other = "An archived work no longer appears on the public pages. You can restore it later with “Publish” on the work list."
+
+[db_works_archive_new_submit]
+description = "Execute button on the archive-confirmation page"
+other = "Archive"
+
+[db_works_archive_new_cancel_link]
+description = "Cancel link on the archive-confirmation page"
+other = "Cancel"
+
+[db_works_unarchive_new_title]
+description = "Title of the publish-confirmation page"
+other = "Publish Work"
+
+[db_works_unarchive_new_document_title]
+description = "Work-specific publish-confirmation document title"
+other = "Publish Work | {{.WorkTitle}}"
+
+[db_works_unarchive_new_confirm_message]
+description = "Confirmation message on the publish-confirmation page"
+other = "Publish “{{.Title}}”?"
+
+[db_works_unarchive_new_submit]
+description = "Execute button on the publish-confirmation page"
+other = "Publish"
+
+[db_works_unarchive_new_cancel_link]
+description = "Cancel link on the publish-confirmation page"
+other = "Cancel"
+
+[db_works_deletion_new_title]
+description = "Title of the delete-confirmation page"
+other = "Delete Work"
+
+[db_works_deletion_new_document_title]
+description = "Work-specific delete-confirmation document title"
+other = "Delete Work | {{.WorkTitle}}"
+
+[db_works_deletion_new_confirm_message]
+description = "Confirmation message on the delete-confirmation page"
+other = "Delete “{{.Title}}”?"
+
+[db_works_deletion_new_submit]
+description = "Execute button on the delete-confirmation page"
+other = "Delete"
+
+[db_works_deletion_new_cancel_link]
+description = "Cancel link on the delete-confirmation page"
+other = "Cancel"
 
 # Flash messages - DB works related
 [flash_db_work_created]
 description = "Work creation success message"
 other = "Work has been created successfully"
 
+[flash_db_work_updated]
+description = "Work update success message"
+other = "Work has been updated successfully"
+
+[flash_db_work_archived]
+description = "Work archive success message"
+other = "Work has been archived successfully"
+
+[flash_db_work_published]
+description = "Work re-publish success message"
+other = "Work has been published successfully"
+
+[flash_db_work_deleted]
+description = "Work deletion success message"
+other = "Work has been deleted successfully"
+
+[flash_db_episodes_created]
+description = "Episode bulk creation success message"
+other = "Episodes have been created successfully"
+
+[flash_db_episode_updated]
+description = "Episode update success message"
+other = "Episode has been updated successfully"
+
+[flash_db_episode_archived]
+description = "Episode archive success message"
+other = "Episode has been archived successfully"
+
+[flash_db_episode_published]
+description = "Episode re-publish success message"
+other = "Episode has been published successfully"
+
+[flash_db_episode_deleted]
+description = "Episode deletion success message"
+other = "Episode has been deleted successfully"
+
 # Validation common messages
 [validation_required]
 description = "Required field validation error"
-other = "is required"
+other = "Please enter a value"
 
 [validation_media_invalid]
 description = "Media value is invalid"
@@ -1205,6 +1889,74 @@ other = "Please enter a source when synopsis is provided"
 [validation_synopsis_source_en_required]
 description = "English synopsis source is required when English synopsis is provided"
 other = "Please enter a source when English synopsis is provided"
+
+[validation_number_invalid]
+description = "Value is not a valid number"
+other = "Please enter a number"
+
+[validation_date_invalid]
+description = "Date format is invalid"
+other = "Please enter a valid date"
+
+[validation_season_name_invalid]
+description = "Release season is outside the allowed values"
+other = "Please select a valid season"
+
+[validation_number_format_invalid]
+description = "Episode number format is not registered"
+other = "Please select a valid episode number format"
+
+[validation_too_long]
+description = "Value exceeds the maximum length"
+other = "Please enter no more than {{.MaxLength}} characters"
+
+[validation_version_missing]
+description = "The submit did not carry the version the form holds"
+other = "The record being edited could not be identified. Please open the edit page again and retry"
+
+[validation_version_conflict]
+description = "Another editor updated the same record after the form was opened"
+other = "Another editor has updated this record, so your input was not saved. Review the currently stored values and decide which of the two to keep"
+
+[validation_record_busy]
+description = "The submit overlapped another write and could not be saved (the stored values are unchanged)"
+other = "Your input was not saved because it overlapped with another update. The stored values have not changed, so please submit it again as it is"
+
+[validation_work_title_already_taken]
+description = "A work with the same title is already registered"
+other = "A work with this title is already registered"
+
+[validation_episode_row_error]
+description = "Format that prefixes an episode row error with its line number"
+other = "Line {{.Line}}: {{.Message}}"
+
+[validation_episode_rows_too_many]
+description = "The episode bulk-create form contains more rows than one submit accepts"
+other = "Please enter no more than {{.MaxRows}} episodes at a time"
+
+[validation_episode_manual_creation_episodes_filled]
+description = "A submit targets a work that already has its expected number of episodes"
+other = "Episodes cannot be registered because the expected number of episodes has already been reached"
+
+[validation_episode_manual_creation_slots_exist]
+description = "A submit targets a work whose episodes are generated from its broadcast schedules"
+other = "Episodes cannot be registered manually because broadcast schedules exist"
+
+[validation_episode_row_number_or_title_required]
+description = "An episode row carries neither a display number nor a title"
+other = "Please enter a display number or a title"
+
+[validation_episode_row_number_too_long]
+description = "The display number of an episode row exceeds the maximum length"
+other = "Please enter a display number of no more than {{.MaxLength}} characters"
+
+[validation_episode_row_title_too_long]
+description = "The title of an episode row exceeds the maximum length"
+other = "Please enter a title of no more than {{.MaxLength}} characters"
+
+[validation_episode_row_raw_number_invalid]
+description = "The numeric number of an episode row is not a number"
+other = "Please enter a number for the numeric number"
 
 [media_tv]
 description = "Media type - TV"
@@ -1240,6 +1992,62 @@ description = "Footer - Legal"
 other = "Legal Notice"
 
 # Common error messages
+[error_forbidden]
+description = "Message shown when the user may not perform the operation"
+other = "You do not have permission to perform this operation"
+
 [error_user_not_found]
 description = "Message shown when a user is not found"
 other = "User not found"
+
+[error_work_not_found]
+description = "Message shown when a work is not found"
+other = "Work not found"
+
+[error_episode_not_found]
+description = "Message shown when an episode is not found"
+other = "Episode not found"
+
+[error_not_found_title]
+description = "Title of the generic 404 error page"
+other = "Page not found"
+
+[error_not_found_message]
+description = "Explanation on the generic 404 error page"
+other = "The page may have been moved or deleted."
+
+[error_forbidden_title]
+description = "Title of the generic 403 error page"
+other = "Access denied"
+
+[error_forbidden_message]
+description = "Explanation on the generic 403 error page"
+other = "You do not have permission to perform this operation."
+
+[error_bad_gateway_title]
+description = "Title of the generic 502 error page"
+other = "Cannot connect to the service"
+
+[error_bad_gateway_message]
+description = "Explanation on the generic 502 error page"
+other = "Please try again later."
+
+[error_internal_server_title]
+description = "Title of the generic 500 error page"
+other = "Something went wrong"
+
+[error_internal_server_message]
+description = "Explanation on the generic 500 error page"
+other = "Please try again later."
+
+[error_invalid_csrf_token_title]
+description = "Title of the error page shown when CSRF verification fails"
+other = "Could not submit the form"
+
+[error_invalid_csrf_token_message]
+description = "Explanation on the error page shown when CSRF verification fails"
+other = "The page may have been left open too long, or you may have signed in again in another tab. Please reopen the page and submit again."
+
+[error_back_to_home]
+description = "Link from a generic error page to the home page"
+other = "Back to Home"

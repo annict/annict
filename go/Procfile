@@ -1,2 +1,2 @@
-web: bin/server
+web: bin/annict serve
 release: dbmate --no-dump-schema up

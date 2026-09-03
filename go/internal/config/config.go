@@ -3,6 +3,7 @@ package config
 
 import (
 	"fmt"
+	"log/slog"
 	"os"
 	"os/exec"
 	"strconv"
@@ -182,6 +183,33 @@ func Load() (*Config, error) {
 	// テスト環境では空文字列でも動作する（モック設定として使用）
 	cfg.TurnstileSiteKey = os.Getenv("ANNICT_TURNSTILE_SITE_KEY")
 	cfg.TurnstileSecretKey = os.Getenv("ANNICT_TURNSTILE_SECRET_KEY")
+
+	// ANNICT_TURNSTILE_DISABLE lets non-production environments switch Turnstile
+	// off with a single flag instead of unsetting both the site and secret keys.
+	// When enabled, both keys are cleared so the existing "empty key" path takes
+	// over: turnstile.Verify always succeeds and the widget is not rendered.
+	//
+	// In production the flag is deliberately ignored (fail-closed) and only
+	// logged as a warning. Turnstile is bot protection, so a stray
+	// ANNICT_TURNSTILE_DISABLE=true leaking into production must never silently
+	// disable it.
+	//
+	// [Ja] ANNICT_TURNSTILE_DISABLE は、非本番環境で site/secret の 2 キーを
+	// 未設定にする代わりに 1 フラグで Turnstile を無効化するためのもの。有効時は
+	// 両キーを空に落とし、既存の「キー空」経路 (turnstile.Verify は常に成功し、
+	// ウィジェットは描画されない) に委ねる。
+	//
+	// 本番ではフラグを意図的に無視し (fail-closed)、warn ログを出すだけにする。
+	// Turnstile は Bot 対策なので、ANNICT_TURNSTILE_DISABLE=true が誤って本番に
+	// 漏れても、黙って無効化されてはならない。
+	if os.Getenv("ANNICT_TURNSTILE_DISABLE") == "true" {
+		if cfg.IsProduction() {
+			slog.Warn("ANNICT_TURNSTILE_DISABLE は本番環境では無視されます（Bot 対策を維持するため fail-closed）")
+		} else {
+			cfg.TurnstileSiteKey = ""
+			cfg.TurnstileSecretKey = ""
+		}
+	}
 
 	// メンテナンスモード（オプショナル - "on"のときメンテナンスモードを有効化）
 	cfg.MaintenanceMode = os.Getenv("ANNICT_MAINTENANCE_MODE") == "on"

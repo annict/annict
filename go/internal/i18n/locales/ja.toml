@@ -55,6 +55,10 @@ other = "秋"
 description = "年とシーズンの表示形式"
 other = "{{.Year}}年{{.Season}}"
 
+[year_no_season]
+description = "季節が未登録のときの年のみの表示形式"
+other = "{{.Year}}年 (季節未登録)"
+
 # ログイン関連
 [sign_in_title]
 description = "ログインページのタイトル"
@@ -825,6 +829,13 @@ other = "登録"
 description = "ボトムナビゲーション - ログイン"
 other = "ログイン"
 
+# Layout common
+#
+# [Ja] レイアウト共通
+[skip_to_main_content]
+description = "レイアウト共通 - 本文へのスキップリンク"
+other = "メインコンテンツへスキップ"
+
 # サイドバー関連
 [sidebar_home]
 description = "サイドバー - ホーム"
@@ -979,6 +990,51 @@ other = "チャンネル"
 description = "DB サイドバー - Annictに戻る"
 other = "Annictに戻る"
 
+[db_sidebar_toggle_label]
+description = "DB サイドバー - 開閉トグルボタンの aria-label"
+other = "サイドバーの開閉"
+
+[db_sidebar_close_label]
+description = "DB サイドバー - 閉じるボタン"
+other = "閉じる"
+
+# DB 作品サブナビ関連
+[db_work_subnav_label]
+description = "DB 作品サブナビ - ナビゲーションの aria-label"
+other = "作品ナビゲーション"
+
+[db_work_subnav_work]
+description = "DB 作品サブナビ - 作品"
+other = "作品"
+
+[db_work_subnav_episodes]
+description = "DB 作品サブナビ - エピソード"
+other = "エピソード"
+
+[db_work_subnav_programs]
+description = "DB 作品サブナビ - 番組情報"
+other = "番組情報"
+
+[db_work_subnav_slots]
+description = "DB 作品サブナビ - 放送予定"
+other = "放送予定"
+
+[db_work_subnav_casts]
+description = "DB 作品サブナビ - キャスト"
+other = "キャスト"
+
+[db_work_subnav_staffs]
+description = "DB 作品サブナビ - スタッフ"
+other = "スタッフ"
+
+[db_work_subnav_work_image]
+description = "DB 作品サブナビ - 作品画像"
+other = "作品画像"
+
+[db_work_subnav_pv]
+description = "DB 作品サブナビ - PV"
+other = "PV"
+
 # ページネーション関連
 [pagination_label]
 description = "ページネーション - aria-label"
@@ -992,6 +1048,28 @@ other = "前へ"
 description = "ページネーション - 次へ"
 other = "次へ"
 
+# Form common
+#
+# [Ja] フォーム共通
+[form_required_label]
+description = "必須フィールドのラベルに表示する印"
+other = "必須"
+
+[form_error_summary_heading]
+description = "フォーム冒頭に表示するエラー要約の見出し"
+other = "入力内容にエラーがあります"
+
+[form_error_summary_item]
+description = "エラー要約の1項目 (フィールドのラベルとメッセージ)"
+other = "{{.Label}}: {{.Message}}"
+
+# Guideline link
+#
+# [Ja] ガイドラインリンク
+[guideline_link_aria_label]
+description = "ガイドラインのヘルプページへのリンク (新しいタブで開く) の aria-label"
+other = "{{.Label}} を新しいタブで開く"
+
 # 公開状態ラベル関連
 [status_published]
 description = "公開状態 - 公開"
@@ -999,7 +1077,7 @@ other = "公開"
 
 [status_archived]
 description = "公開状態 - アーカイブ"
-other = "アーカイブ"
+other = "非公開"
 
 [status_deleted]
 description = "公開状態 - 削除"
@@ -1010,21 +1088,45 @@ other = "削除"
 description = "DB作品一覧ページのタイトル"
 other = "作品"
 
+[db_works_index_table_caption]
+description = "DB作品一覧表のキャプションとスクロール領域の aria-label"
+other = "DB作品一覧"
+
 [db_works_index_new_link]
 description = "作品一覧から新規作成ページへのリンク"
-other = "新規作成"
+other = "新規登録"
+
+[db_works_index_season_slugs_label]
+description = "リリース時期の複数選択フィルタのラベル"
+other = "リリース時期"
+
+[db_works_index_season_slugs_placeholder]
+description = "リリース時期 combobox の検索プレースホルダ"
+other = "年・季節で絞り込む..."
+
+[db_works_index_season_slugs_empty]
+description = "リリース時期 combobox の検索結果が空のときのメッセージ"
+other = "一致するリリース時期がありません"
+
+[db_works_index_season_slugs_remove_label]
+description = "選択済みリリース時期チップを解除するボタンのアクセシブルラベル"
+other = "{{.Label}}の選択を解除"
 
 [db_works_index_filter_no_episodes_label]
 description = "エピソード未登録フィルタのラベル"
 other = "エピソード未登録"
 
 [db_works_index_filter_no_image_label]
-description = "画像未設定フィルタのラベル"
-other = "画像未設定"
+description = "画像未登録フィルタのラベル"
+other = "画像未登録"
 
 [db_works_index_filter_no_season_label]
-description = "シーズン未設定フィルタのラベル"
-other = "シーズン未設定"
+description = "リリース時期未登録フィルタのラベル"
+other = "リリース時期未登録"
+
+[db_works_index_filter_no_slots_label]
+description = "放送予定未登録フィルタのラベル"
+other = "放送予定未登録"
 
 [db_works_index_submit]
 description = "DB作品一覧ページの送信ボタン (フィルタ検索)"
@@ -1038,9 +1140,25 @@ other = "ID"
 description = "テーブルヘッダー - タイトル"
 other = "タイトル"
 
+[db_works_index_table_info_label]
+description = "テーブルヘッダー - 情報 (タイトル以外の作品属性をまとめた列)"
+other = "情報"
+
+[db_works_index_table_media_label]
+description = "テーブルヘッダー - メディア"
+other = "メディア"
+
 [db_works_index_table_season_label]
-description = "テーブルヘッダー - シーズン"
-other = "シーズン"
+description = "テーブルヘッダー - リリース時期"
+other = "リリース時期"
+
+[db_works_index_syobocal_label]
+description = "情報列 - しょぼいカレンダーのラベル"
+other = "しょぼかる"
+
+[db_works_index_mal_label]
+description = "情報列 - MyAnimeList のラベル"
+other = "MyAnimeList"
 
 [db_works_index_table_watchers_label]
 description = "テーブルヘッダー - ウォッチ数"
@@ -1054,82 +1172,400 @@ other = "ステータス"
 description = "テーブルヘッダー - 画像"
 other = "画像"
 
+[db_works_index_table_actions_label]
+description = "テーブルヘッダー - 操作"
+other = "操作"
+
+[db_works_index_id_link_aria_label]
+description = "作品 ID リンク (公開ページを新しいタブで開く) の aria-label"
+other = "作品 {{.ID}} を新しいタブで開く"
+
+[db_works_index_external_service_link_aria_label]
+description = "外部サービスリンク (新しいタブで開く) の aria-label"
+other = "{{.Label}} を新しいタブで開く"
+
+[db_works_index_action_target_label]
+description = "作品一覧の操作リンク・ボタンのアクセシブルネームに足す対象作品 (画面には表示しない)"
+other = "作品 {{.ID}}"
+
+[db_works_index_edit_link]
+description = "作品一覧から編集フォームへのリンク"
+other = "編集"
+
+[db_works_index_archive_link]
+description = "作品一覧から非公開確認画面へのリンク (公開中の作品に表示)"
+other = "非公開"
+
+[db_works_index_publish_button]
+description = "作品一覧の再公開ボタン (非公開の作品に表示)"
+other = "公開"
+
+[db_works_index_publish_confirm]
+description = "作品一覧の再公開ボタンの確認ダイアログ"
+other = "作品 {{.ID}} を公開しますか？"
+
+[db_works_index_delete_button]
+description = "作品一覧の削除ボタン (管理者に表示)"
+other = "削除"
+
+[db_works_index_delete_confirm]
+description = "作品一覧の削除ボタンの確認ダイアログ"
+other = "作品 {{.ID}} を削除しますか？"
+
 [db_works_index_empty]
-description = "作品なしメッセージ"
+description = "作品一覧の空表示の見出し"
 other = "作品が見つかりませんでした"
+
+[db_episodes_index_title]
+description = "作品のエピソード一覧ページのタイトル"
+other = "エピソード"
+
+[db_episodes_index_title_paginated]
+description = "2ページ目以降の汎用エピソード一覧文書タイトル"
+other = "エピソード ({{.Page}}ページ目)"
+
+[db_episodes_index_document_title]
+description = "作品を識別できるエピソード一覧文書タイトル"
+other = "エピソード | {{.WorkTitle}}"
+
+[db_episodes_index_document_title_paginated]
+description = "2ページ目以降の作品を識別できるエピソード一覧文書タイトル"
+other = "エピソード ({{.Page}}ページ目) | {{.WorkTitle}}"
+
+[db_episodes_index_table_caption]
+description = "DB エピソード一覧テーブルの caption とスクロール領域の aria-label"
+other = "DBエピソード一覧"
+
+[db_episodes_index_table_id_label]
+description = "テーブルヘッダー - ID"
+other = "ID"
+
+[db_episodes_index_table_number_label]
+description = "テーブルヘッダー - 話数 (表示用と数値)"
+other = "話数"
+
+[db_episodes_index_number_display_label]
+description = "エピソードの表示用話数に付けるスクリーンリーダー向けラベル"
+other = "表示用話数"
+
+[db_episodes_index_number_raw_label]
+description = "エピソードの数値話数に付けるスクリーンリーダー向けラベル"
+other = "数値話数"
+
+[db_episodes_index_table_title_label]
+description = "テーブルヘッダー - タイトル (日本語と英語)"
+other = "タイトル"
+
+[db_episodes_index_title_ja_label]
+description = "エピソードの日本語タイトルに付けるスクリーンリーダー向けラベル"
+other = "日本語タイトル"
+
+[db_episodes_index_title_en_label]
+description = "エピソードの英語タイトルに付けるスクリーンリーダー向けラベル"
+other = "英語タイトル"
+
+[db_episodes_index_table_prev_episode_label]
+description = "テーブルヘッダー - 前のエピソード"
+other = "前のエピソード"
+
+[db_episodes_index_table_sort_number_label]
+description = "テーブルヘッダー - ソート番号"
+other = "ソート番号"
+
+[db_episodes_index_table_records_count_label]
+description = "テーブルヘッダー - 記録数"
+other = "記録数"
+
+[db_episodes_index_table_status_label]
+description = "テーブルヘッダー - 状態"
+other = "状態"
+
+[db_episodes_index_id_link_aria_label]
+description = "エピソード ID リンク (公開ページを新しいタブで開く) の aria-label"
+other = "エピソード {{.ID}} を新しいタブで開く"
+
+[db_episodes_index_empty]
+description = "エピソード一覧の空表示の見出し"
+other = "エピソードはありません"
+
+[db_episodes_index_generation_planned_label]
+description = "自動生成の案内 - 作品の予定総話数のラベル"
+other = "予定総話数"
+
+[db_episodes_index_generation_published_label]
+description = "自動生成の案内 - 公開中のエピソード数のラベル"
+other = "公開中のエピソード数"
+
+[db_episodes_index_generation_generatable_label]
+description = "自動生成の案内 - 自動生成されるエピソード数のラベル"
+other = "自動生成されるエピソード数"
+
+[db_episodes_index_generation_unknown]
+description = "自動生成の案内 - 予定総話数が未登録のときに表示する値"
+other = "不明"
+
+[db_episodes_index_new_link]
+description = "エピソード一覧から一括作成フォームへのリンク"
+other = "新規登録"
+
+[db_episodes_index_table_actions_label]
+description = "テーブルヘッダー - 操作"
+other = "操作"
+
+[db_episodes_index_action_target_label]
+description = "エピソード一覧の操作リンク・ボタンのアクセシブルネームに足す対象エピソード (画面には表示しない)"
+other = "エピソード {{.ID}}"
+
+[db_episodes_index_edit_link]
+description = "エピソード一覧から編集フォームへのリンク"
+other = "編集"
+
+[db_episodes_index_archive_link]
+description = "エピソード一覧から非公開確認画面へのリンク (公開中のエピソードに表示)"
+other = "非公開"
+
+[db_episodes_index_publish_button]
+description = "エピソード一覧の再公開ボタン (非公開のエピソードに表示)"
+other = "公開"
+
+[db_episodes_index_publish_confirm]
+description = "エピソード一覧の再公開ボタンの確認ダイアログ"
+other = "エピソード {{.ID}} を公開しますか？"
+
+[db_episodes_index_delete_button]
+description = "エピソード一覧の削除ボタン (管理者に表示)"
+other = "削除"
+
+[db_episodes_index_delete_confirm]
+description = "エピソード一覧の削除ボタンの確認ダイアログ"
+other = "エピソード {{.ID}} を削除しますか？"
+
+[db_episodes_new_title]
+description = "エピソード一括作成ページのタイトル"
+other = "エピソード登録"
+
+[db_episodes_new_document_title]
+description = "作品を識別できるエピソード一括作成の文書タイトル"
+other = "エピソード登録 | {{.WorkTitle}}"
+
+[db_episodes_new_back_to_list_link]
+description = "一括作成ページからエピソード一覧へのリンク"
+other = "一覧に戻る"
+
+[db_episodes_new_guideline_link]
+description = "エピソード一括作成ページからエピソードの一括登録のヘルプページへのリンク"
+other = "エピソードの一括登録ガイドライン"
+
+[db_episodes_new_rows_label]
+description = "一括作成ページの入力欄 (1 行 1 エピソード) のラベル"
+other = "エピソード"
+
+[db_episodes_new_submit]
+description = "エピソード一括作成ページの送信ボタン"
+other = "登録する"
+
+[db_episodes_new_restriction_title]
+description = "エピソードを手動登録できないときに表示する警告の見出し"
+other = "手動登録できません"
+
+[db_episodes_new_restriction_admin_title]
+description = "管理者にエピソードの手動登録を勧めないときに表示する警告の見出し"
+other = "通常は手動登録できません"
+
+[db_episodes_new_restricted_episodes_filled]
+description = "作品の予定話数までエピソードが登録済みのときに表示する警告"
+other = "話数分のエピソードがすでに登録されているため、新規登録はできません。"
+
+[db_episodes_new_restricted_admin_episodes_filled]
+description = "作品の予定話数までエピソードが登録済みのときに管理者へ表示する警告"
+other = "話数分のエピソードがすでに登録されています。管理者は手動でも登録できますが、予定総話数を超えることになります。"
+
+[db_episodes_new_restricted_slots_exist]
+description = "放送予定からエピソードが自動生成されるときに表示する警告"
+other = "放送予定が登録されているため、手動によるエピソード登録はできません。エピソードは放送予定の情報を使って自動的に生成されます。"
+
+[db_episodes_new_restricted_admin_slots_exist]
+description = "放送予定からエピソードが自動生成されるときに管理者へ表示する警告"
+other = "放送予定が登録されているため、エピソードは放送予定の情報を使って自動的に生成されます。管理者は手動でも登録できますが、自動生成されるエピソードと重複しないか確認してください。"
+
+[db_episodes_edit_title]
+description = "エピソード編集ページのタイトル"
+other = "エピソード編集"
+
+[db_episodes_edit_document_title]
+description = "表示名のある作品に属するエピソードを識別できる編集ページの文書タイトル"
+other = "エピソード編集 | {{.EpisodeIdentifier}} | {{.WorkTitle}}"
+
+[db_episodes_edit_document_title_without_work]
+description = "作品に表示名が無くてもエピソードを識別できる編集ページの文書タイトル"
+other = "エピソード編集 | {{.EpisodeIdentifier}}"
+
+[db_episodes_identifier_without_number]
+description = "表示用話数が無いエピソードを文書タイトルで識別するラベル"
+other = "ID: {{.EpisodeID}}"
+
+[db_episodes_name]
+description = "表示用話数とタイトルの両方があるエピソードを文章の中で名指しする表記"
+other = "{{.Number}}「{{.Title}}」"
+
+[db_episodes_name_title_only]
+description = "表示用話数が無くタイトルだけがあるエピソードを文章の中で名指しする表記"
+other = "「{{.Title}}」"
+
+[db_episodes_name_without_number_and_title]
+description = "表示用話数もタイトルも無いエピソードを文章の中で名指しする表記"
+other = "ID: {{.EpisodeID}} のエピソード"
+
+[db_episodes_edit_back_to_list_link]
+description = "エピソード編集ページからエピソード一覧へのリンク"
+other = "一覧に戻る"
+
+[db_episodes_edit_guideline_link]
+description = "エピソード編集ページからエピソードの編集ガイドラインのヘルプページへのリンク"
+other = "エピソードの編集ガイドライン"
+
+[db_episodes_edit_number_label]
+description = "フォームラベル - 表示用話数"
+other = "表示用話数"
+
+[db_episodes_edit_raw_number_label]
+description = "フォームラベル - 数値話数"
+other = "数値話数"
+
+[db_episodes_edit_sort_number_label]
+description = "フォームラベル - ソート番号"
+other = "ソート番号"
+
+[db_episodes_edit_title_label]
+description = "フォームラベル - タイトル"
+other = "タイトル"
+
+[db_episodes_edit_title_en_label]
+description = "フォームラベル - タイトル (英語)"
+other = "タイトル (英語)"
+
+[db_episodes_edit_submit]
+description = "エピソード編集ページの送信ボタン"
+other = "更新する"
+
+[db_episodes_edit_conflict_heading]
+description = "エピソード編集ページで、競合時に表示する保存済みの内容の見出し"
+other = "現在保存されている内容"
+
+[db_episodes_edit_conflict_help]
+description = "エピソード編集ページで、競合時に取りうる対処を述べる説明"
+other = "入力した内容は下のフォームにそのまま残しています。現在保存されている内容と見比べて、入力した内容で問題なければもう一度更新してください。上の内容をそのまま残す場合は、更新せずに一覧へ戻ってください。"
+
+# DBエピソード非公開確認ページ
+[db_episodes_archive_new_title]
+description = "エピソード非公開確認ページのタイトル"
+other = "エピソード非公開"
+
+[db_episodes_archive_new_document_title]
+description = "表示名のある作品に属するエピソードを識別できる非公開確認ページの文書タイトル"
+other = "エピソード非公開 | {{.EpisodeIdentifier}} | {{.WorkTitle}}"
+
+[db_episodes_archive_new_document_title_without_work]
+description = "作品に表示名が無くてもエピソードを識別できる非公開確認ページの文書タイトル"
+other = "エピソード非公開 | {{.EpisodeIdentifier}}"
+
+[db_episodes_archive_new_confirm_message]
+description = "エピソード非公開確認ページの確認メッセージ"
+other = "{{.Episode}}を非公開にしますか？"
+
+[db_episodes_archive_new_help]
+description = "エピソード非公開確認ページで、非公開にすると何が起きるかを述べる説明"
+other = "非公開にすると、このエピソードは公開ページに表示されなくなります。あとから一覧の「公開」から元に戻せます。"
+
+[db_episodes_archive_new_submit]
+description = "エピソード非公開確認ページの実行ボタン"
+other = "非公開にする"
+
+[db_episodes_archive_new_cancel_link]
+description = "エピソード非公開確認ページのキャンセルリンク"
+other = "キャンセル"
+
+# DB作品フォーム共通 (新規・編集で共有)
+[db_works_form_external_link_label]
+description = "フォームのラベル横に表示する外部リンクアイコンのアクセシブルネーム (新規・編集共通)。Field はフィールド名"
+other = "{{.Field}} を新しいタブで開く"
 
 # DB作品新規作成ページ
 [db_works_new_title]
 description = "作品新規作成ページのタイトル"
-other = "作品を追加"
+other = "作品登録"
 
 [db_works_new_back_to_list_link]
 description = "新規作成ページから一覧ページへのリンク"
 other = "一覧に戻る"
+
+[db_works_new_guideline_link]
+description = "作品新規作成ページから作品の編集ガイドラインのヘルプページへのリンク"
+other = "作品の編集ガイドライン"
 
 [db_works_new_title_label]
 description = "フォームラベル - タイトル"
 other = "タイトル"
 
 [db_works_new_title_kana_label]
-description = "フォームラベル - タイトル（かな）"
-other = "タイトル（かな）"
+description = "フォームラベル - タイトル (かな)"
+other = "タイトル (かな)"
 
 [db_works_new_title_alter_label]
-description = "フォームラベル - タイトル（別名）"
-other = "タイトル（別名）"
+description = "フォームラベル - タイトル (別名)"
+other = "タイトル (別名)"
 
 [db_works_new_title_en_label]
-description = "フォームラベル - タイトル（英語）"
-other = "タイトル（英語）"
+description = "フォームラベル - タイトル (英語)"
+other = "タイトル (英語)"
 
 [db_works_new_title_alter_en_label]
-description = "フォームラベル - タイトル（英語別名）"
-other = "タイトル（英語別名）"
+description = "フォームラベル - タイトル (英語別名)"
+other = "タイトル (英語別名)"
 
 [db_works_new_media_label]
 description = "フォームラベル - メディア"
 other = "メディア"
 
 [db_works_new_season_year_label]
-description = "フォームラベル - シーズン年"
-other = "シーズン年"
+description = "フォームラベル - リリース時期 (年)"
+other = "リリース時期 (年)"
 
 [db_works_new_season_name_label]
-description = "フォームラベル - シーズン名"
-other = "シーズン名"
+description = "フォームラベル - リリース時期 (季節)"
+other = "リリース時期 (季節)"
 
 [db_works_new_started_on_label]
-description = "フォームラベル - 放送開始日"
-other = "放送開始日"
+description = "フォームラベル - 開始日"
+other = "開始日"
 
 [db_works_new_ended_on_label]
-description = "フォームラベル - 放送終了日"
-other = "放送終了日"
+description = "フォームラベル - 終了日"
+other = "終了日"
 
 [db_works_new_official_site_url_label]
 description = "フォームラベル - 公式サイトURL"
 other = "公式サイトURL"
 
 [db_works_new_official_site_url_en_label]
-description = "フォームラベル - 公式サイトURL（英語）"
-other = "公式サイトURL（英語）"
+description = "フォームラベル - 公式サイトURL (英語)"
+other = "公式サイトURL (英語)"
 
 [db_works_new_wikipedia_url_label]
 description = "フォームラベル - Wikipedia URL"
 other = "Wikipedia URL"
 
 [db_works_new_wikipedia_url_en_label]
-description = "フォームラベル - Wikipedia URL（英語）"
-other = "Wikipedia URL（英語）"
+description = "フォームラベル - Wikipedia URL (英語)"
+other = "Wikipedia URL (英語)"
 
 [db_works_new_twitter_username_label]
-description = "フォームラベル - Twitterユーザー名"
-other = "Twitterユーザー名"
+description = "フォームラベル - Xユーザー名"
+other = "Xユーザー名"
 
 [db_works_new_twitter_hashtag_label]
-description = "フォームラベル - Twitterハッシュタグ"
-other = "Twitterハッシュタグ"
+description = "フォームラベル - ハッシュタグ"
+other = "ハッシュタグ"
 
 [db_works_new_sc_tid_label]
 description = "フォームラベル - しょぼいカレンダーTID"
@@ -1144,28 +1580,28 @@ description = "フォームラベル - あらすじ"
 other = "あらすじ"
 
 [db_works_new_synopsis_source_label]
-description = "フォームラベル - あらすじ出典"
-other = "あらすじ出典"
+description = "フォームラベル - あらすじの引用元"
+other = "あらすじの引用元"
 
 [db_works_new_synopsis_en_label]
-description = "フォームラベル - あらすじ（英語）"
-other = "あらすじ（英語）"
+description = "フォームラベル - あらすじ (英語)"
+other = "あらすじ (英語)"
 
 [db_works_new_synopsis_source_en_label]
-description = "フォームラベル - あらすじ出典（英語）"
-other = "あらすじ出典（英語）"
+description = "フォームラベル - あらすじの引用元 (英語)"
+other = "あらすじの引用元 (英語)"
 
 [db_works_new_manual_episodes_count_label]
-description = "フォームラベル - 手動エピソード数"
-other = "手動エピソード数"
+description = "フォームラベル - 予定総話数"
+other = "予定総話数"
 
 [db_works_new_start_episode_raw_number_label]
 description = "フォームラベル - 開始エピソード番号"
 other = "開始エピソード番号"
 
 [db_works_new_number_format_label]
-description = "フォームラベル - NumberFormat"
-other = "NumberFormat"
+description = "フォームラベル - 話数フォーマット"
+other = "話数フォーマット"
 
 [db_works_new_no_episodes_label]
 description = "フォームラベル - エピソードなし"
@@ -1173,12 +1609,260 @@ other = "エピソードなし"
 
 [db_works_new_submit]
 description = "作品新規作成ページの送信ボタン"
-other = "作品を作成"
+other = "登録する"
+
+[db_works_edit_title]
+description = "作品編集ページのタイトル"
+other = "作品編集"
+
+[db_works_edit_document_title]
+description = "作品を識別できる編集ページの文書タイトル"
+other = "作品編集 | {{.WorkTitle}}"
+
+[db_works_edit_work_page_link]
+description = "編集ページから公開サイトの作品ページへのリンク"
+other = "作品ページ"
+
+[db_works_edit_work_page_link_aria_label]
+description = "編集ページから公開サイトの作品ページへのリンク (新しいタブで開く) の aria-label"
+other = "作品ページを新しいタブで開く"
+
+[db_works_edit_guideline_link]
+description = "作品編集ページから作品の編集ガイドラインのヘルプページへのリンク"
+other = "作品の編集ガイドライン"
+
+[db_works_edit_title_label]
+description = "フォームラベル - タイトル"
+other = "タイトル"
+
+[db_works_edit_title_kana_label]
+description = "フォームラベル - タイトル (かな)"
+other = "タイトル (かな)"
+
+[db_works_edit_title_alter_label]
+description = "フォームラベル - タイトル (別名)"
+other = "タイトル (別名)"
+
+[db_works_edit_title_en_label]
+description = "フォームラベル - タイトル (英語)"
+other = "タイトル (英語)"
+
+[db_works_edit_title_alter_en_label]
+description = "フォームラベル - タイトル (英語別名)"
+other = "タイトル (英語別名)"
+
+[db_works_edit_media_label]
+description = "フォームラベル - メディア"
+other = "メディア"
+
+[db_works_edit_season_year_label]
+description = "フォームラベル - リリース時期 (年)"
+other = "リリース時期 (年)"
+
+[db_works_edit_season_name_label]
+description = "フォームラベル - リリース時期 (季節)"
+other = "リリース時期 (季節)"
+
+[db_works_edit_started_on_label]
+description = "フォームラベル - 開始日"
+other = "開始日"
+
+[db_works_edit_ended_on_label]
+description = "フォームラベル - 終了日"
+other = "終了日"
+
+[db_works_edit_official_site_url_label]
+description = "フォームラベル - 公式サイトURL"
+other = "公式サイトURL"
+
+[db_works_edit_official_site_url_en_label]
+description = "フォームラベル - 公式サイトURL (英語)"
+other = "公式サイトURL (英語)"
+
+[db_works_edit_wikipedia_url_label]
+description = "フォームラベル - Wikipedia URL"
+other = "Wikipedia URL"
+
+[db_works_edit_wikipedia_url_en_label]
+description = "フォームラベル - Wikipedia URL (英語)"
+other = "Wikipedia URL (英語)"
+
+[db_works_edit_twitter_username_label]
+description = "フォームラベル - Xユーザー名"
+other = "Xユーザー名"
+
+[db_works_edit_twitter_hashtag_label]
+description = "フォームラベル - ハッシュタグ"
+other = "ハッシュタグ"
+
+[db_works_edit_sc_tid_label]
+description = "フォームラベル - しょぼいカレンダーTID"
+other = "しょぼいカレンダーTID"
+
+[db_works_edit_mal_anime_id_label]
+description = "フォームラベル - MAL Anime ID"
+other = "MAL Anime ID"
+
+[db_works_edit_synopsis_label]
+description = "フォームラベル - あらすじ"
+other = "あらすじ"
+
+[db_works_edit_synopsis_source_label]
+description = "フォームラベル - あらすじの引用元"
+other = "あらすじの引用元"
+
+[db_works_edit_synopsis_en_label]
+description = "フォームラベル - あらすじ (英語)"
+other = "あらすじ (英語)"
+
+[db_works_edit_synopsis_source_en_label]
+description = "フォームラベル - あらすじの引用元 (英語)"
+other = "あらすじの引用元 (英語)"
+
+[db_works_edit_manual_episodes_count_label]
+description = "フォームラベル - 予定総話数"
+other = "予定総話数"
+
+[db_works_edit_start_episode_raw_number_label]
+description = "フォームラベル - 開始エピソード番号"
+other = "開始エピソード番号"
+
+[db_works_edit_number_format_label]
+description = "フォームラベル - 話数フォーマット"
+other = "話数フォーマット"
+
+[db_works_edit_no_episodes_label]
+description = "フォームラベル - エピソードなし"
+other = "エピソードなし"
+
+[db_works_edit_conflict_heading]
+description = "作品編集ページで、競合時に表示する保存済みの内容の見出し"
+other = "現在保存されている内容"
+
+[db_works_edit_conflict_no_field_changes]
+description = "作品編集ページで、競合したが本フォームの項目には違いが無かったときの説明"
+other = "このフォームで編集できる項目に違いはありません。公開状態など、フォームの外で変更された可能性があります。"
+
+[db_works_edit_conflict_help]
+description = "作品編集ページで、競合時に取りうる対処を述べる説明"
+other = "入力した内容は下のフォームにそのまま残しています。現在保存されている内容と見比べて、入力した内容で問題なければもう一度更新してください。上の内容をそのまま残す場合は、更新せずにページを離れてください。"
+
+[db_works_edit_conflict_checked]
+description = "作品編集ページの競合の案内で、チェックボックスが入っている状態を表す値"
+other = "オン"
+
+[db_works_edit_conflict_unchecked]
+description = "作品編集ページの競合の案内で、チェックボックスが入っていない状態を表す値"
+other = "オフ"
+
+[db_works_edit_submit]
+description = "作品編集ページの送信ボタン"
+other = "更新する"
+
+[db_works_archive_new_title]
+description = "作品非公開確認ページのタイトル"
+other = "作品非公開"
+
+[db_works_archive_new_document_title]
+description = "作品を識別できる非公開確認ページの文書タイトル"
+other = "作品非公開 | {{.WorkTitle}}"
+
+[db_works_archive_new_confirm_message]
+description = "非公開確認ページの確認メッセージ"
+other = "「{{.Title}}」を非公開にしますか？"
+
+[db_works_archive_new_help]
+description = "作品非公開確認ページで、非公開にすると何が起きるかを述べる説明"
+other = "非公開にすると、この作品は公開ページに表示されなくなります。あとから一覧の「公開」から元に戻せます。"
+
+[db_works_archive_new_submit]
+description = "非公開確認ページの実行ボタン"
+other = "非公開にする"
+
+[db_works_archive_new_cancel_link]
+description = "非公開確認ページのキャンセルリンク"
+other = "キャンセル"
+
+[db_works_unarchive_new_title]
+description = "作品公開確認ページのタイトル"
+other = "作品公開"
+
+[db_works_unarchive_new_document_title]
+description = "作品を識別できる公開確認ページの文書タイトル"
+other = "作品公開 | {{.WorkTitle}}"
+
+[db_works_unarchive_new_confirm_message]
+description = "公開確認ページの確認メッセージ"
+other = "「{{.Title}}」を公開しますか？"
+
+[db_works_unarchive_new_submit]
+description = "公開確認ページの実行ボタン"
+other = "公開する"
+
+[db_works_unarchive_new_cancel_link]
+description = "公開確認ページのキャンセルリンク"
+other = "キャンセル"
+
+[db_works_deletion_new_title]
+description = "作品削除確認ページのタイトル"
+other = "作品削除"
+
+[db_works_deletion_new_document_title]
+description = "作品を識別できる削除確認ページの文書タイトル"
+other = "作品削除 | {{.WorkTitle}}"
+
+[db_works_deletion_new_confirm_message]
+description = "削除確認ページの確認メッセージ"
+other = "「{{.Title}}」を削除しますか？"
+
+[db_works_deletion_new_submit]
+description = "削除確認ページの実行ボタン"
+other = "削除する"
+
+[db_works_deletion_new_cancel_link]
+description = "削除確認ページのキャンセルリンク"
+other = "キャンセル"
 
 # フラッシュメッセージ - DB作品関連
 [flash_db_work_created]
 description = "作品作成成功メッセージ"
 other = "作品を作成しました"
+
+[flash_db_work_updated]
+description = "作品更新成功メッセージ"
+other = "作品を更新しました"
+
+[flash_db_work_archived]
+description = "作品非公開成功メッセージ"
+other = "作品を非公開にしました"
+
+[flash_db_work_published]
+description = "作品再公開成功メッセージ"
+other = "作品を公開しました"
+
+[flash_db_work_deleted]
+description = "作品削除成功メッセージ"
+other = "作品を削除しました"
+
+[flash_db_episodes_created]
+description = "エピソード一括作成成功メッセージ"
+other = "エピソードを作成しました"
+
+[flash_db_episode_updated]
+description = "エピソード更新成功メッセージ"
+other = "エピソードを更新しました"
+
+[flash_db_episode_archived]
+description = "エピソード非公開成功メッセージ"
+other = "エピソードを非公開にしました"
+
+[flash_db_episode_published]
+description = "エピソード再公開成功メッセージ"
+other = "エピソードを公開しました"
+
+[flash_db_episode_deleted]
+description = "エピソード削除成功メッセージ"
+other = "エピソードを削除しました"
 
 # バリデーション共通メッセージ
 [validation_required]
@@ -1203,7 +1887,75 @@ other = "あらすじを入力した場合は出典も入力してください"
 
 [validation_synopsis_source_en_required]
 description = "英語のあらすじを入力した場合は出典も必須"
-other = "あらすじ（英語）を入力した場合は出典も入力してください"
+other = "あらすじ (英語) を入力した場合は出典も入力してください"
+
+[validation_number_invalid]
+description = "数値ではない"
+other = "数値で入力してください"
+
+[validation_date_invalid]
+description = "日付形式が不正"
+other = "正しい日付を入力してください"
+
+[validation_season_name_invalid]
+description = "リリース時期の季節が許可値の範囲外"
+other = "正しい季節を選択してください"
+
+[validation_number_format_invalid]
+description = "話数フォーマットが登録されていない"
+other = "正しい話数フォーマットを選択してください"
+
+[validation_too_long]
+description = "文字数の上限を超えている"
+other = "{{.MaxLength}}文字以内で入力してください"
+
+[validation_version_missing]
+description = "フォームが持ち回る版が送信に含まれていない"
+other = "編集中のデータを特定できませんでした。編集画面を開き直してからやり直してください"
+
+[validation_version_conflict]
+description = "フォームを開いた後に他の編集者が同じデータを更新していた"
+other = "このデータは他の編集者によって更新されたため、入力した内容は保存していません。現在保存されている内容を確認したうえで、どちらを残すか決めてください"
+
+[validation_record_busy]
+description = "他の書き込みと重なって保存できなかった (保存済みの内容は変わっていない)"
+other = "他の更新と重なったため、入力した内容は保存していません。保存されている内容は変わっていないので、そのままもう一度送信してください"
+
+[validation_work_title_already_taken]
+description = "同じタイトルの作品が既に登録されている"
+other = "このタイトルの作品は既に登録されています"
+
+[validation_episode_row_error]
+description = "エピソードの行入力のエラーに行番号を添える書式"
+other = "{{.Line}} 行目: {{.Message}}"
+
+[validation_episode_rows_too_many]
+description = "エピソード一括作成フォームの行数が1回の上限を超えている"
+other = "一度に登録するエピソードは{{.MaxRows}}件以内にしてください"
+
+[validation_episode_manual_creation_episodes_filled]
+description = "予定話数までエピソードが登録済みの作品にエピソードを登録しようとした"
+other = "話数分のエピソードがすでに登録されているため、エピソードを登録できません"
+
+[validation_episode_manual_creation_slots_exist]
+description = "放送予定からエピソードが自動生成される作品にエピソードを手動で登録しようとした"
+other = "放送予定が登録されているため、エピソードを手動で登録できません"
+
+[validation_episode_row_number_or_title_required]
+description = "エピソードの行に表示用話数もタイトルも入力されていない"
+other = "表示用話数かタイトルのいずれかを入力してください"
+
+[validation_episode_row_number_too_long]
+description = "エピソードの行の表示用話数が文字数の上限を超えている"
+other = "表示用話数は{{.MaxLength}}文字以内で入力してください"
+
+[validation_episode_row_title_too_long]
+description = "エピソードの行のタイトルが文字数の上限を超えている"
+other = "タイトルは{{.MaxLength}}文字以内で入力してください"
+
+[validation_episode_row_raw_number_invalid]
+description = "エピソードの行の数値話数が数値ではない"
+other = "数値話数は数値で入力してください"
 
 [media_tv]
 description = "メディア種別 - TV"
@@ -1239,6 +1991,62 @@ description = "フッター - 特商法表記"
 other = "特商法表記"
 
 # エラー共通メッセージ
+[error_forbidden]
+description = "操作する権限が無い場合のエラーメッセージ"
+other = "この操作を行う権限がありません"
+
 [error_user_not_found]
 description = "ユーザーが見つからない場合のエラーメッセージ"
 other = "ユーザーが見つかりませんでした"
+
+[error_work_not_found]
+description = "作品が見つからない場合のエラーメッセージ"
+other = "作品が見つかりませんでした"
+
+[error_episode_not_found]
+description = "エピソードが見つからない場合のエラーメッセージ"
+other = "エピソードが見つかりませんでした"
+
+[error_not_found_title]
+description = "汎用404エラーページのタイトル"
+other = "ページが見つかりません"
+
+[error_not_found_message]
+description = "汎用404エラーページの説明"
+other = "ページが移動または削除された可能性があります。"
+
+[error_forbidden_title]
+description = "汎用403エラーページのタイトル"
+other = "アクセスできません"
+
+[error_forbidden_message]
+description = "汎用403エラーページの説明"
+other = "この操作を行う権限がありません。"
+
+[error_bad_gateway_title]
+description = "汎用502エラーページのタイトル"
+other = "サービスに接続できません"
+
+[error_bad_gateway_message]
+description = "汎用502エラーページの説明"
+other = "しばらくしてから、もう一度お試しください。"
+
+[error_internal_server_title]
+description = "汎用500エラーページのタイトル"
+other = "問題が発生しました"
+
+[error_internal_server_message]
+description = "汎用500エラーページの説明"
+other = "しばらくしてから、もう一度お試しください。"
+
+[error_invalid_csrf_token_title]
+description = "CSRF検証に失敗したときのエラーページのタイトル"
+other = "フォームを送信できませんでした"
+
+[error_invalid_csrf_token_message]
+description = "CSRF検証に失敗したときのエラーページの説明"
+other = "ページを開いたまま時間が経ったか、別のタブでログインし直した可能性があります。ページを開き直してから、もう一度送信してください。"
+
+[error_back_to_home]
+description = "汎用エラーページからホームへ戻るリンク"
+other = "ホームに戻る"

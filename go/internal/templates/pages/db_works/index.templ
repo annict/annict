@@ -1,7 +1,10 @@
 package db_works
 
 import (
+	"context"
 	"fmt"
+
+	"github.com/a-h/templ"
 
 	"github.com/annict/annict/go/internal/templates"
 	"github.com/annict/annict/go/internal/templates/components"
@@ -9,122 +12,524 @@ import (
 )
 
 type IndexPageData struct {
-	Works            []viewmodel.DBWorkListItem
-	Pagination       viewmodel.Pagination
-	FilterNoEpisodes bool
-	FilterNoImage    bool
-	FilterNoSeason   bool
+	Works               []viewmodel.DBWorkListItem
+	Pagination          viewmodel.Pagination
+	FilterNoEpisodes    bool
+	FilterNoImage       bool
+	FilterNoSeason      bool
+	FilterNoSlots       bool
+	SeasonFilterOptions []viewmodel.SeasonFilterOption
+	// IsCommitter and IsAdmin gate the action column: committers (admins or editors) see the
+	// edit and unpublish / publish actions, and admins additionally see the delete action.
+	// The work list itself is public, so both are false for signed-out or regular visitors,
+	// and the column is then left out of the table entirely.
+	//
+	// [Ja] IsCommitter と IsAdmin は操作列の出し分けに使う。committer (管理者または編集者) は
+	// 編集・非公開 / 公開の操作を、管理者はさらに削除の操作を見る。作品一覧自体は公開のため、
+	// 未ログインや一般ユーザーではどちらも false になり、そのときは操作列自体をテーブルから
+	// 落とす。
+	IsCommitter bool
+	IsAdmin     bool
+	// CSRFToken is sent via the X-CSRF-Token header on the htmx-issued DELETE requests
+	// (publish / delete), so those requests pass the CSRF middleware.
+	//
+	// [Ja] CSRFToken は htmx が発行する DELETE リクエスト (公開 / 削除) の X-CSRF-Token
+	// ヘッダーで送られ、それらのリクエストが CSRF ミドルウェアを通るようにする。
+	CSRFToken string
+}
+
+// hasRowActions reports whether the viewer may take any per-row action, deciding whether the
+// action column is rendered at all. A viewer with none is not given a column of empty cells:
+// the table already needs horizontal scrolling at mobile widths, and a header announcing a
+// column that holds nothing is read out on every row.
+//
+// [Ja] hasRowActions は閲覧者が行ごとの操作を 1 つでも行えるかを返し、操作列そのものを
+// 描画するかを決める。操作を持たない閲覧者に空のセルだけの列は出さない。このテーブルは
+// モバイル幅では既に横スクロールを要し、何も入らない列の見出しが行ごとに読み上げられて
+// しまうため。
+func (d IndexPageData) hasRowActions() bool {
+	return d.IsCommitter || d.IsAdmin
+}
+
+// tableMinWidthClass returns the width the table keeps before its container starts scrolling
+// horizontally. The action column adds its fixed width (w-24) to that floor, so the title
+// column — the only one without a width, and therefore the one that absorbs the slack — keeps
+// the same room for a viewer who sees the actions as for one who does not.
+//
+// [Ja] tableMinWidthClass はコンテナが横スクロールを始めるまでテーブルが保つ幅を返す。
+// 操作列はその下限に自身の固定幅 (w-24) を上乗せする。これにより、幅指定の無い唯一の列で
+// あり余白を吸収するタイトル列が、操作を見る閲覧者にも見ない閲覧者にも同じ幅を保てる。
+func (d IndexPageData) tableMinWidthClass() string {
+	if d.hasRowActions() {
+		return "min-w-[640px]"
+	}
+
+	return "min-w-[544px]"
 }
 
 templ Index(data IndexPageData) {
 	<div class="flex flex-col gap-4 py-4 max-w-7xl w-full mx-auto">
-		<div class="px-4">
-			@components.MainTitle(components.MainTitleData{
-				Title:   templates.T(ctx, "db_works_index_title"),
-				Actions: indexNewButton(),
-			})
+		<div class="flex gap-4 px-4">
+			@components.DBSidebarToggle()
+
+			<div class="flex-1">
+				@components.MainTitle(components.MainTitleData{
+					Title:   templates.T(ctx, "db_works_index_title"),
+					Actions: indexNewButton(),
+				})
+			</div>
 		</div>
 
-		@components.ContentCard() {
+		@components.ContentCard("overflow-visible") {
 			<form
 				action={ templates.DBWorksPath().SafeURL() }
-				class="flex items-center gap-4 flex-wrap"
+				class="flex flex-col gap-4"
 				method="get"
 			>
-				<label class="flex items-center gap-1.5 text-sm">
-					<input
-						type="checkbox"
-						name="filter_no_episodes"
-						value="1"
-						if data.FilterNoEpisodes {
-							checked
-						}
-					/>
-					{ templates.T(ctx, "db_works_index_filter_no_episodes_label") }
-				</label>
-				<label class="flex items-center gap-1.5 text-sm">
-					<input
-						type="checkbox"
-						name="filter_no_image"
-						value="1"
-						if data.FilterNoImage {
-							checked
-						}
-					/>
-					{ templates.T(ctx, "db_works_index_filter_no_image_label") }
-				</label>
-				<label class="flex items-center gap-1.5 text-sm">
-					<input
-						type="checkbox"
-						name="filter_no_season"
-						value="1"
-						if data.FilterNoSeason {
-							checked
-						}
-					/>
-					{ templates.T(ctx, "db_works_index_filter_no_season_label") }
-				</label>
-				<button type="submit" class="btn btn-outline btn-sm">
-					{ templates.T(ctx, "db_works_index_submit") }
-				</button>
+				<div class="flex flex-col gap-1.5">
+					<label id="db-works-season-slugs-label" for="db-works-season-slugs-select" class="label">
+						{ templates.T(ctx, "db_works_index_season_slugs_label") }
+					</label>
+					@seasonSlugsFilter(data.SeasonFilterOptions)
+				</div>
+
+				<div class="flex items-center gap-4 flex-wrap">
+					<label class="flex items-center gap-1.5 text-sm">
+						<input
+							type="checkbox"
+							name="filter_no_episodes"
+							value="1"
+							if data.FilterNoEpisodes {
+								checked
+							}
+						/>
+
+						{ templates.T(ctx, "db_works_index_filter_no_episodes_label") }
+					</label>
+
+					<label class="flex items-center gap-1.5 text-sm">
+						<input
+							type="checkbox"
+							name="filter_no_image"
+							value="1"
+							if data.FilterNoImage {
+								checked
+							}
+						/>
+
+						{ templates.T(ctx, "db_works_index_filter_no_image_label") }
+					</label>
+
+					<label class="flex items-center gap-1.5 text-sm">
+						<input
+							type="checkbox"
+							name="filter_no_season"
+							value="1"
+							if data.FilterNoSeason {
+								checked
+							}
+						/>
+
+						{ templates.T(ctx, "db_works_index_filter_no_season_label") }
+					</label>
+
+					<label class="flex items-center gap-1.5 text-sm">
+						<input
+							type="checkbox"
+							name="filter_no_slots"
+							value="1"
+							if data.FilterNoSlots {
+								checked
+							}
+						/>
+
+						{ templates.T(ctx, "db_works_index_filter_no_slots_label") }
+					</label>
+				</div>
+
+				<div>
+					<button
+						type="submit"
+						class="btn rounded-full"
+						data-variant="outline"
+						data-size="sm"
+					>
+						@templates.Icon("magnifying-glass-regular")
+						{ templates.T(ctx, "db_works_index_submit") }
+					</button>
+				</div>
 			</form>
 		}
 
-		if len(data.Works) == 0 {
-			<p class="text-muted-foreground">{ templates.T(ctx, "db_works_index_empty") }</p>
-		} else {
-			<div class="border rounded-lg overflow-hidden">
-				<table class="table w-full">
-					<thead>
-						<tr>
-							<th class="text-left">{ templates.T(ctx, "db_works_index_table_id_label") }</th>
-							<th class="text-left">{ templates.T(ctx, "db_works_index_table_title_label") }</th>
-							<th class="text-left">{ templates.T(ctx, "db_works_index_table_season_label") }</th>
-							<th class="text-right">{ templates.T(ctx, "db_works_index_table_watchers_label") }</th>
-							<th class="text-left">{ templates.T(ctx, "db_works_index_table_status_label") }</th>
-							<th class="text-center">{ templates.T(ctx, "db_works_index_table_image_label") }</th>
-						</tr>
-					</thead>
-					<tbody>
-						for _, work := range data.Works {
-							<tr>
-								<td>{ work.ID.String() }</td>
-								<td>
-									<a href={ templates.DBWorkPath(work.ID).SafeURL() } class="text-primary hover:underline">
-										{ work.Title }
-									</a>
-								</td>
-								<td>
-									{ work.Season }
-								</td>
-								<td class="text-right">{ fmt.Sprintf("%d", work.WatchersCount) }</td>
-								<td>
-									@components.StatusLabel(work.Status)
-								</td>
-								<td class="text-center">
-									if work.HasImage {
-										<span>✓</span>
+		@components.ContentCard("") {
+			if len(data.Works) == 0 {
+				@components.Empty(templates.T(ctx, "db_works_index_empty"), "")
+			} else {
+				<div class="flex flex-col gap-4">
+					<div
+						class="overflow-x-auto"
+						role="region"
+						aria-label={ templates.T(ctx, "db_works_index_table_caption") }
+						tabindex="0"
+					>
+						<table class={ "table table-fixed [&_th]:px-1 [&_td]:px-1", data.tableMinWidthClass() }>
+							<caption class="sr-only">
+								{ templates.T(ctx, "db_works_index_table_caption") }
+							</caption>
+							// Fixed column widths keep the table within its container and let the title
+							// column (the only one without a width) absorb the remaining space; auto layout
+							// spreads slack across every column instead, so the title stays narrow there. The
+							// tightened cell padding ([&_th]/[&_td] px-1, overriding the .table px-2 default)
+							// gives the title even more room.
+							//
+							// [Ja] 固定列幅でテーブルをコンテナ内に収め、幅指定の無いタイトル列だけが残り幅を
+							// 吸収するようにする (auto レイアウトでは余白が全列へ分散し、タイトルが狭いまま)。
+							// セル padding を詰める ([&_th]/[&_td] px-1 で .table 既定の px-2 を上書き) ことで
+							// タイトルにさらに幅を回す。
+							<colgroup>
+								<col class="w-20"/>
+								<col class="w-20"/>
+								<col/>
+								<col class="w-72"/>
+								if data.hasRowActions() {
+									<col class="w-24"/>
+								}
+							</colgroup>
+							<thead>
+								<tr>
+									<th scope="col" class="text-left">{ templates.T(ctx, "db_works_index_table_id_label") }</th>
+									<th scope="col" class="text-left">{ templates.T(ctx, "db_works_index_table_image_label") }</th>
+									<th scope="col" class="text-left">{ templates.T(ctx, "db_works_index_table_title_label") }</th>
+									<th scope="col" class="text-left">{ templates.T(ctx, "db_works_index_table_info_label") }</th>
+									if data.hasRowActions() {
+										<th scope="col" class="text-center">{ templates.T(ctx, "db_works_index_table_actions_label") }</th>
 									}
-								</td>
-							</tr>
-						}
-					</tbody>
-				</table>
-			</div>
+								</tr>
+							</thead>
+							<tbody>
+								for _, work := range data.Works {
+									<tr>
+										<td>
+											<a
+												href={ templates.WorkPath(work.ID).SafeURL() }
+												target="_blank"
+												rel="noopener"
+												aria-label={ templates.T(ctx, "db_works_index_id_link_aria_label", map[string]any{"ID": work.ID.String()}) }
+												class="text-primary hover:underline inline-flex items-center gap-1"
+											>
+												{ work.ID.String() }
+												@templates.DecorativeIcon("arrow-square-out-regular", "w-[18px] h-[18px]")
+											</a>
+										</td>
+										<td>
+											@components.WorkPicture(components.WorkPictureData{
+												Image: work.Image,
+												Width: 70,
+												Alt:   work.Title,
+												Class: "rounded border",
+											})
+										</td>
+										<td class="whitespace-normal [overflow-wrap:anywhere]">
+											<div>{ work.Title }</div>
+											<div class="text-muted-foreground">{ valueOrDash(work.TitleKana) }</div>
+											<div class="text-muted-foreground">{ valueOrDash(work.TitleEn) }</div>
+										</td>
+										// Every per-work attribute other than the title shares one "info" column.
+										// Each value is short, so stacking them as label / value pairs costs far
+										// less width than one column per attribute (each carrying its own header
+										// width and padding), leaving the rest of the table width to the title.
+										//
+										// The pairs are laid out three per line: stacking all six in a single line
+										// makes each row twelve lines tall, which cuts the number of works visible
+										// on screen to two or three.
+										//
+										// [Ja] タイトル以外の作品属性は 1 つの「情報」列にまとめる。いずれも短い値のため、
+										// ラベル / 値の組で縦に積むほうが、属性ごとに列を分ける (各列が見出し幅と padding
+										// を持つ) より必要な幅がずっと小さく、残りの幅をタイトル列に回せる。
+										//
+										// 組は 1 行あたり 3 つずつ並べる。6 組すべてを 1 列に積むと 1 行が 12 行分の
+										// 高さになり、画面に収まる作品が 2〜3 件まで減ってしまうため。
+										<td>
+											<dl class="grid grid-cols-3 gap-x-3 gap-y-1 text-sm">
+												<div>
+													<dt class="text-muted-foreground">{ templates.T(ctx, "db_works_index_table_media_label") }</dt>
+													<dd>{ work.Media }</dd>
+												</div>
+												<div>
+													<dt class="text-muted-foreground">{ templates.T(ctx, "db_works_index_table_season_label") }</dt>
+													<dd>{ valueOrDash(work.Season) }</dd>
+												</div>
+												<div>
+													<dt class="text-muted-foreground">{ templates.T(ctx, "db_works_index_table_watchers_label") }</dt>
+													<dd>{ fmt.Sprintf("%d", work.WatchersCount) }</dd>
+												</div>
+												<div>
+													<dt class="text-muted-foreground">{ templates.T(ctx, "db_works_index_syobocal_label") }</dt>
+													<dd>@externalServiceLink(work.Syobocal)</dd>
+												</div>
+												<div>
+													<dt class="text-muted-foreground">{ templates.T(ctx, "db_works_index_mal_label") }</dt>
+													<dd>@externalServiceLink(work.MalAnime)</dd>
+												</div>
+												<div>
+													<dt class="text-muted-foreground">{ templates.T(ctx, "db_works_index_table_status_label") }</dt>
+													<dd>@components.StatusLabel(work.Status)</dd>
+												</div>
+											</dl>
+										</td>
+										if data.hasRowActions() {
+											<td class="text-center">
+												@actionButtons(data, work)
+											</td>
+										}
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
 
-			<div class="mt-6">
-				@components.Pagination(data.Pagination)
-			</div>
+					@components.Pagination(data.Pagination)
+				</div>
+			}
 		}
 	</div>
 }
 
+// missingValuePlaceholder is shown wherever a work attribute is unset, so an empty value
+// reads as "nothing recorded" instead of looking like a rendering gap.
+//
+// [Ja] missingValuePlaceholder は作品の属性が未設定のときに表示する。空の値が描画漏れに
+// 見えず「未登録」と読めるようにするため。
+const missingValuePlaceholder = "-"
+
+// valueOrDash returns value, or the placeholder when it is empty. The view models leave
+// unset attributes as "" so the template decides how to render the gap; every attribute in
+// the info column renders it the same way.
+//
+// [Ja] valueOrDash は value を、空のときはプレースホルダーを返す。ビューモデルは未設定の
+// 属性を "" のままにしてテンプレートに欠落の描画方法を委ねており、情報列の各属性は
+// いずれも同じ形で描画する。
+func valueOrDash(value string) string {
+	if value == "" {
+		return missingValuePlaceholder
+	}
+
+	return value
+}
+
+// externalServiceLink renders one external-service value: a new-tab link to the
+// service (with rel="noopener" for tabnabbing protection) when the work has an id
+// for that service, or a "-" placeholder otherwise.
+//
+// [Ja] externalServiceLink は情報列内の外部サービス値を描画する。作品にその外部 ID があれば
+// サービスへの新規タブリンク (tabnabbing 対策の rel="noopener" 付き) を、無ければ "-" の
+// プレースホルダーを表示する。
+templ externalServiceLink(link viewmodel.ExternalServiceLink) {
+	if link.URL != "" {
+		<a
+			href={ templ.URL(link.URL) }
+			target="_blank"
+			rel="noopener"
+			aria-label={ templates.T(ctx, "db_works_index_external_service_link_aria_label", map[string]any{"Label": link.Label}) }
+			class="text-primary hover:underline inline-flex items-center gap-1"
+		>
+			{ link.Label }
+			@templates.DecorativeIcon("arrow-square-out-regular", "w-[18px] h-[18px]")
+		</a>
+	} else {
+		{ missingValuePlaceholder }
+	}
+}
+
+// actionButtons renders the per-row action column of the work list: the edit link and the
+// unpublish (published rows) or publish (archived rows) action for committers, plus the
+// delete action for admins. Publish and delete are htmx DELETE buttons guarded by a
+// confirmation dialog, with the CSRF token carried in the X-CSRF-Token header; the delete
+// and publish handlers respond with HX-Redirect so htmx navigates back to the list. Unpublish
+// is a plain link to the confirmation screen.
+//
+// Every control names the work it acts on in its accessible name; publish and delete also name
+// it in their confirmation. A page of rows therefore does not present controls that all read
+// "Edit" when a screen reader lists them out of their row, and the dialog states which row the
+// press came from. The name is extended with visually hidden text rather than replaced by an
+// aria-label, keeping the visible label at the start of the accessible name (what voice control
+// matches on). The id is what names the work, as in the row's id link: titles are always set but
+// not unique across works.
+//
+// [Ja] actionButtons は作品一覧の行ごとの操作列を描画する。committer には編集リンクと
+// 非公開 (公開中の行) または公開 (非公開の行) の操作を、管理者にはさらに削除の操作を出す。
+// 公開・削除は確認ダイアログ付きの htmx DELETE ボタンで、CSRF トークンは X-CSRF-Token
+// ヘッダーで送り、削除・公開ハンドラーが HX-Redirect を返して htmx が一覧へ遷移する。
+// 非公開は確認画面への素のリンク。
+//
+// 各コントロールはアクセシブルネームで対象の作品を名指しし、公開・削除では確認文でも名指しする。
+// スクリーンリーダーが行から切り離してコントロールを列挙したときに「編集」とだけ読める
+// コントロールが並ばず、確認ダイアログもどの行から押されたかを述べるようにするため。
+// aria-label で置き換えず視覚的に隠したテキストで補うのは、可視ラベルをアクセシブルネームの
+// 先頭に残すため (音声操作が照合するのはこの可視ラベル)。名指しに ID を使うのは行の ID リンクと
+// 同じで、タイトルは必ず設定されるが作品間で一意である保証が無いため。
+templ actionButtons(data IndexPageData, work viewmodel.DBWorkListItem) {
+	<div class="flex flex-col items-stretch gap-1.5">
+		if data.IsCommitter {
+			<a
+				href={ templates.DBWorkEditPath(work.ID).SafeURL() }
+				class="btn rounded-full"
+				data-variant="outline"
+				data-size="sm"
+			>
+				{ templates.T(ctx, "db_works_index_edit_link") }
+				@actionTarget(work)
+			</a>
+			switch work.Status {
+				case viewmodel.PublishingStatusPublished:
+					<a
+						href={ templates.DBWorkArchiveNewPath(work.ID).SafeURL() }
+						class="btn rounded-full"
+						data-variant="warning"
+						data-size="sm"
+					>
+						{ templates.T(ctx, "db_works_index_archive_link") }
+						@actionTarget(work)
+					</a>
+				case viewmodel.PublishingStatusArchived:
+					<button
+						type="button"
+						class="btn rounded-full"
+						data-variant="success"
+						data-size="sm"
+						hx-delete={ templates.DBWorkArchivePath(work.ID).String() }
+						hx-headers={ templates.HXCSRFHeaders(data.CSRFToken) }
+						hx-confirm={ templates.T(ctx, "db_works_index_publish_confirm", map[string]any{"ID": work.ID.String()}) }
+					>
+						{ templates.T(ctx, "db_works_index_publish_button") }
+						@actionTarget(work)
+					</button>
+			}
+		}
+		if data.IsAdmin {
+			<button
+				type="button"
+				class="btn rounded-full"
+				data-variant="destructive"
+				data-size="sm"
+				hx-delete={ templates.DBWorkPath(work.ID).String() }
+				hx-headers={ templates.HXCSRFHeaders(data.CSRFToken) }
+				hx-confirm={ templates.T(ctx, "db_works_index_delete_confirm", map[string]any{"ID": work.ID.String()}) }
+			>
+				{ templates.T(ctx, "db_works_index_delete_button") }
+				@actionTarget(work)
+			</button>
+		}
+	</div>
+}
+
+// actionTarget renders the work an action control acts on, for assistive technology only: the
+// column is read in the context of its row on screen, so the id would be repeated noise if
+// shown. Being positioned out of flow, it adds nothing to the control's box either, so the
+// buttons stay the size the column is laid out for.
+//
+// [Ja] actionTarget は操作コントロールの対象作品を、支援技術にのみ向けて描画する。画面上では
+// 列は行の文脈の中で読めるため、ID を表示すると繰り返しのノイズになる。この要素は通常フローから
+// 外れて配置されるため、コントロールの箱にも何も足さず、ボタンは列の想定どおりの大きさのままに
+// なる。
+templ actionTarget(work viewmodel.DBWorkListItem) {
+	<span class="sr-only">{ actionTargetLabel(ctx, work) }</span>
+}
+
+// actionTargetLabel returns the hidden half of an action control's accessible name, led by a
+// space. templ writes the control's visible label and this span with nothing between them, and
+// whether a browser inserts a word boundary there depends on the span being taken out of flow
+// by CSS. The space belongs to the text so the two halves stay separate words even when the
+// stylesheet does not arrive.
+//
+// [Ja] actionTargetLabel は操作コントロールのアクセシブルネームのうち隠された側を、先頭に
+// スペースを付けて返す。templ はコントロールの可視ラベルとこの span を隙間なく書き出すため、
+// ブラウザがそこに語の区切りを入れるかどうかは、この span が CSS によって通常フローから
+// 外れていることに依存する。スペースをテキスト側に持たせることで、スタイルシートが届かない
+// ときも 2 つの半分が別の語として保たれる。
+func actionTargetLabel(ctx context.Context, work viewmodel.DBWorkListItem) string {
+	return " " + templates.T(ctx, "db_works_index_action_target_label", map[string]any{"ID": work.ID.String()})
+}
+
 templ indexNewButton() {
 	<a
-		class="btn-primary rounded-full"
+		class="btn rounded-full"
 		href={ templates.DBWorksNewPath().SafeURL() }
 	>
 		@templates.Icon("plus-regular", "fill-primary-foreground")
 		{ templates.T(ctx, "db_works_index_new_link") }
 	</a>
+}
+
+// seasonSlugsFilter renders a native multiple select as the durable release-season filter,
+// plus a hidden Basecoat multiple combobox that progressively enhances it. The select owns
+// the season_slugs name, so it submits repeated query parameters without JavaScript.
+// web/season-filter.ts reveals the combobox only after Basecoat initializes, then mirrors
+// its selection to the select. Both controls receive the server-rendered initial selection.
+//
+// [Ja] seasonSlugsFilter は常に使えるリリース時期フィルタとしてネイティブの複数選択 select を
+// 描画し、プログレッシブエンハンスメント用に非表示の Basecoat 複数選択 combobox も描画する。
+// season_slugs の name は select が持つため、JavaScript 無しでも繰り返しクエリを送信できる。
+// web/season-filter.ts は Basecoat の初期化後にだけ combobox を表示し、その選択を select へ
+// 同期する。サーバー描画時の初期選択は両方のコントロールへ反映する。
+templ seasonSlugsFilter(options []viewmodel.SeasonFilterOption) {
+	<div data-season-slugs-filter>
+		<select
+			id="db-works-season-slugs-select"
+			name="season_slugs"
+			class="select w-full"
+			data-season-slugs-select
+			multiple
+			size="6"
+		>
+			for _, opt := range options {
+				if opt.Selected {
+					<option value={ opt.Slug } selected>{ opt.Label }</option>
+				} else {
+					<option value={ opt.Slug }>{ opt.Label }</option>
+				}
+			}
+		</select>
+		<div
+			id="db-works-season-slugs"
+			class="combobox w-full"
+			data-season-slugs-combobox
+			data-season-slugs-remove-label={ templates.T(ctx, "db_works_index_season_slugs_remove_label", map[string]any{"Label": "{label}"}) }
+			data-auto-highlight="true"
+			hidden
+		>
+			<input
+				id="db-works-season-slugs-input"
+				type="text"
+				role="combobox"
+				placeholder={ templates.T(ctx, "db_works_index_season_slugs_placeholder") }
+				autocomplete="off"
+				autocorrect="off"
+				spellcheck="false"
+				aria-autocomplete="list"
+				aria-expanded="false"
+				aria-controls="db-works-season-slugs-listbox"
+				aria-labelledby="db-works-season-slugs-label"
+			/>
+			<div id="db-works-season-slugs-popover" data-popover aria-hidden="true">
+				<div
+					role="listbox"
+					id="db-works-season-slugs-listbox"
+					aria-orientation="vertical"
+					aria-multiselectable="true"
+					aria-labelledby="db-works-season-slugs-label"
+					data-empty={ templates.T(ctx, "db_works_index_season_slugs_empty") }
+				>
+					for _, opt := range options {
+						if opt.Selected {
+							<div role="option" data-value={ opt.Slug } aria-selected="true">{ opt.Label }</div>
+						} else {
+							<div role="option" data-value={ opt.Slug }>{ opt.Label }</div>
+						}
+					}
+				</div>
+			</div>
+			<input type="hidden"/>
+		</div>
+	</div>
 }

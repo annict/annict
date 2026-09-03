@@ -1,0 +1,20 @@
+package components
+
+// Empty renders the empty state of a list, taking the title that names the missing content
+// and an optional description. The title is an <h2> because the empty state replaces the
+// list under the page heading, so callers must place it inside a page whose heading is the
+// <h1>.
+//
+// [Ja] Empty は一覧の空表示を描画する。何が無いのかを述べる見出しと、任意の説明を受け取る。
+// 空表示はページ見出しの下で一覧を置き換える位置に立つため、見出しは <h2> とする。呼び出し側は
+// ページ見出しが <h1> である画面の中に置くこと。
+templ Empty(title string, description string) {
+	<section class="empty">
+		<header>
+			<h2>{ title }</h2>
+			if description != "" {
+				<p>{ description }</p>
+			}
+		</header>
+	</section>
+}

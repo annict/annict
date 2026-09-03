@@ -125,6 +125,15 @@ func TestLoad_TurnstileConfig(t *testing.T) {
 	// 既存の環境変数を保存（テスト後に復元）
 	originalSiteKey := os.Getenv("ANNICT_TURNSTILE_SITE_KEY")
 	originalSecretKey := os.Getenv("ANNICT_TURNSTILE_SECRET_KEY")
+	// ANNICT_TURNSTILE_DISABLE is also saved and restored. When the dev .env
+	// sets this flag to true, the Turnstile keys are cleared in non-production,
+	// which would break this test's key assertions, so it is explicitly unset
+	// during this test.
+	//
+	// [Ja] ANNICT_TURNSTILE_DISABLE も保存・復元する。dev の実 .env でこのフラグが
+	// true に設定されていると、非 prod で Turnstile キーが空に落とされ、本テストの
+	// キー設定検証が壊れるため、本テスト中は明示的に未設定にする。
+	originalDisableTurnstile := os.Getenv("ANNICT_TURNSTILE_DISABLE")
 	defer func() {
 		if originalSiteKey != "" {
 			_ = os.Setenv("ANNICT_TURNSTILE_SITE_KEY", originalSiteKey)
@@ -135,6 +144,11 @@ func TestLoad_TurnstileConfig(t *testing.T) {
 			_ = os.Setenv("ANNICT_TURNSTILE_SECRET_KEY", originalSecretKey)
 		} else {
 			_ = os.Unsetenv("ANNICT_TURNSTILE_SECRET_KEY")
+		}
+		if originalDisableTurnstile != "" {
+			_ = os.Setenv("ANNICT_TURNSTILE_DISABLE", originalDisableTurnstile)
+		} else {
+			_ = os.Unsetenv("ANNICT_TURNSTILE_DISABLE")
 		}
 	}()
 
@@ -190,6 +204,15 @@ func TestLoad_TurnstileConfig(t *testing.T) {
 			_ = os.Setenv("ANNICT_IMGPROXY_KEY", "test-key")
 			_ = os.Setenv("ANNICT_IMGPROXY_SALT", "test-salt")
 
+			// Unset ANNICT_TURNSTILE_DISABLE so the key assertions are not
+			// affected by the disable flag; this test only checks that the
+			// site/secret keys are reflected as-is.
+			//
+			// [Ja] ANNICT_TURNSTILE_DISABLE を未設定にして、キー設定の検証が
+			// 無効化フラグの影響を受けないようにする。本テストは site/secret
+			// キーがそのまま反映されることだけを検証する。
+			_ = os.Unsetenv("ANNICT_TURNSTILE_DISABLE")
+
 			// Turnstile環境変数を設定
 			if tt.shouldSetSiteKey {
 				_ = os.Setenv("ANNICT_TURNSTILE_SITE_KEY", tt.siteKey)
@@ -209,6 +232,133 @@ func TestLoad_TurnstileConfig(t *testing.T) {
 			}
 
 			// Turnstile設定を検証
+			if cfg.TurnstileSiteKey != tt.wantSiteKey {
+				t.Errorf("TurnstileSiteKey = %q, want %q", cfg.TurnstileSiteKey, tt.wantSiteKey)
+			}
+			if cfg.TurnstileSecretKey != tt.wantSecretKey {
+				t.Errorf("TurnstileSecretKey = %q, want %q", cfg.TurnstileSecretKey, tt.wantSecretKey)
+			}
+		})
+	}
+}
+
+// TestLoad_DisableTurnstile verifies the ANNICT_TURNSTILE_DISABLE dev override.
+// In non-production it clears both Turnstile keys (so the existing "empty key"
+// path disables Turnstile); in production it is ignored (fail-closed) so bot
+// protection can never be silently switched off by a stray env var.
+//
+// [Ja] ANNICT_TURNSTILE_DISABLE の dev 用オーバーライドを検証する。非本番では
+// Turnstile の 2 キーを空に落とし (既存の「キー空」経路で Turnstile が無効化される)、
+// 本番では無視する (fail-closed) ため、環境変数の漏れで Bot 対策が黙って無効化される
+// ことはない。
+func TestLoad_DisableTurnstile(t *testing.T) {
+	// 元のワーキングディレクトリを保存
+	originalWd, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("failed to get current directory: %v", err)
+	}
+	defer func() { _ = os.Chdir(originalWd) }() // テスト終了後に元のディレクトリに戻す
+
+	// テストの前にワーキングディレクトリをプロジェクトルート（go/）に変更
+	if err := os.Chdir("../.."); err != nil {
+		t.Fatalf("failed to change directory: %v", err)
+	}
+
+	// Restore ANNICT_TURNSTILE_DISABLE after the test. The unset subtest below
+	// clears it without an automatic restore, and the dev .env sets it to true,
+	// so restore it here to avoid leaking into later tests.
+	//
+	// [Ja] テスト後に ANNICT_TURNSTILE_DISABLE を復元する。下の未設定ケースは自動
+	// 復元なしでこの変数を消し、dev の実 .env では true が入っているため、後続の
+	// テストへ漏れないようここで復元する。
+	originalDisableTurnstile := os.Getenv("ANNICT_TURNSTILE_DISABLE")
+	defer func() {
+		if originalDisableTurnstile != "" {
+			_ = os.Setenv("ANNICT_TURNSTILE_DISABLE", originalDisableTurnstile)
+		} else {
+			_ = os.Unsetenv("ANNICT_TURNSTILE_DISABLE")
+		}
+	}()
+
+	// Turnstile キーがセットされている前提を作るためのサンプル値
+	const (
+		sampleSiteKey   = "1x00000000000000000000AA"
+		sampleSecretKey = "1x0000000000000000000000000000000AA"
+	)
+
+	tests := []struct {
+		name          string
+		env           string
+		disableFlag   string // 空文字列は「未設定」を表す
+		wantSiteKey   string
+		wantSecretKey string
+	}{
+		{
+			name:          "dev + フラグ true で両キーが空に落ちる",
+			env:           "dev",
+			disableFlag:   "true",
+			wantSiteKey:   "",
+			wantSecretKey: "",
+		},
+		{
+			name:          "test + フラグ true で両キーが空に落ちる",
+			env:           "test",
+			disableFlag:   "true",
+			wantSiteKey:   "",
+			wantSecretKey: "",
+		},
+		{
+			name:          "prod + フラグ true でもキーは維持される（fail-closed）",
+			env:           "prod",
+			disableFlag:   "true",
+			wantSiteKey:   sampleSiteKey,
+			wantSecretKey: sampleSecretKey,
+		},
+		{
+			name:          "dev + フラグ未設定ならキーは維持される",
+			env:           "dev",
+			disableFlag:   "",
+			wantSiteKey:   sampleSiteKey,
+			wantSecretKey: sampleSecretKey,
+		},
+		{
+			name:          "dev + フラグ false ならキーは維持される",
+			env:           "dev",
+			disableFlag:   "false",
+			wantSiteKey:   sampleSiteKey,
+			wantSecretKey: sampleSecretKey,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// 必須の環境変数を設定
+			t.Setenv("APP_ENV", tt.env)
+			t.Setenv("DATABASE_URL", "postgres://test:test@localhost:5432/test")
+			t.Setenv("ANNICT_PORT", "4004")
+			t.Setenv("ANNICT_DOMAIN", "test.example.com")
+			t.Setenv("ANNICT_COOKIE_DOMAIN", ".test.example.com")
+			t.Setenv("ANNICT_SESSION_SECURE", "false")
+			t.Setenv("ANNICT_SESSION_HTTPONLY", "true")
+			t.Setenv("ANNICT_IMGPROXY_ENDPOINT", "http://test:8080")
+			t.Setenv("ANNICT_IMGPROXY_KEY", "test-key")
+			t.Setenv("ANNICT_IMGPROXY_SALT", "test-salt")
+
+			// Turnstile キーは常にセットしておき、無効化フラグの効果だけを見る
+			t.Setenv("ANNICT_TURNSTILE_SITE_KEY", sampleSiteKey)
+			t.Setenv("ANNICT_TURNSTILE_SECRET_KEY", sampleSecretKey)
+
+			if tt.disableFlag != "" {
+				t.Setenv("ANNICT_TURNSTILE_DISABLE", tt.disableFlag)
+			} else {
+				_ = os.Unsetenv("ANNICT_TURNSTILE_DISABLE")
+			}
+
+			cfg, err := Load()
+			if err != nil {
+				t.Fatalf("Load() failed: %v", err)
+			}
+
 			if cfg.TurnstileSiteKey != tt.wantSiteKey {
 				t.Errorf("TurnstileSiteKey = %q, want %q", cfg.TurnstileSiteKey, tt.wantSiteKey)
 			}

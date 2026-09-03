@@ -7,6 +7,7 @@ import (
 	"database/sql"
 	"encoding/hex"
 	"fmt"
+	"time"
 
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
@@ -105,6 +106,20 @@ func (r *SessionRepository) CreateSession(ctx context.Context, sessionID string,
 func (r *SessionRepository) DeleteSession(ctx context.Context, sessionID string) error {
 	privateID := r.generatePrivateID(sessionID)
 	return r.queries.DeleteSession(ctx, privateID)
+}
+
+// DeleteExpired deletes at most limit sessions whose updated_at is older than cutoff
+// and reports how many rows were deleted. The limit lets the caller drain a large
+// backlog in bounded steps instead of holding one long transaction over the table.
+//
+// [Ja] DeleteExpired は updated_at が cutoff より古いセッションを最大 limit 件削除し、
+// 削除した件数を返す。limit があることで、呼び出し元は大量の滞留をテーブル全体に対する
+// 長いトランザクションを保持せずに、区切られたステップで消化できる。
+func (r *SessionRepository) DeleteExpired(ctx context.Context, cutoff time.Time, limit int32) (int64, error) {
+	return r.queries.DeleteExpiredSessions(ctx, query.DeleteExpiredSessionsParams{
+		Cutoff:    cutoff,
+		BatchSize: limit,
+	})
 }
 
 // generatePrivateID はpublic IDからprivate IDを生成

@@ -13,7 +13,27 @@ help: ## ヘルプを表示
 
 .PHONY: run
 run: ## サーバーを起動
-	$(OP_RUN_DEV) go run cmd/server/main.go
+	$(OP_RUN_DEV) go run ./cmd/annict serve
+
+.PHONY: browse-login
+browse-login: ## dev サイトへブラウザでログイン (別ユーザーは make browse-login BROWSE_USER=2)
+	$(OP_RUN_DEV) bash scripts/browse.sh login $(BROWSE_USER)
+
+.PHONY: browse-check
+browse-check: ## Validate the dev browser environment (use BROWSE_USER=2 for another user). [Ja] dev サイトのブラウザ確認に必要な環境を検証 (別ユーザーは BROWSE_USER=2)
+	$(OP_RUN_DEV) bash scripts/browse.sh check $(BROWSE_USER)
+
+.PHONY: browse-shot
+browse-shot: ## ログイン済みセッションでページを開きスクショ (例: make browse-shot URL=/db)
+	bash scripts/browse.sh shot "$(URL)"
+
+.PHONY: browse-close
+browse-close: ## ブラウザセッションを閉じ一時ファイルを削除
+	bash scripts/browse.sh close
+
+.PHONY: task
+task: ## Run an operational task once (e.g. make task NAME=sync-animes, make task NAME=list). [Ja] 運用タスクを 1 回実行 (例: make task NAME=sync-animes / make task NAME=list)
+	$(OP_RUN_DEV) go run ./cmd/annict task $(NAME)
 
 .PHONY: templ-generate
 templ-generate: ## templファイルからGoコードを生成し、import文を整理
@@ -40,7 +60,7 @@ goimports-check: ## goimportsでimport文をチェック（差分があればエ
 
 .PHONY: build
 build: templ-generate ## バイナリをビルド（templ-generateがgoimportsも実行）
-	go build -o bin/server cmd/server/main.go
+	go build -o bin/annict ./cmd/annict
 
 .PHONY: test
 test: db-setup-test ## テストを実行
@@ -80,6 +100,14 @@ test-verbose: db-setup-test ## 詳細ログ付きで全テストを実行（デ�
 	@echo "ローカル環境: 詳細ログ付きで全テストを実行"
 	@bash -c 'set -o pipefail && $(OP_RUN_TEST) go test -json -race -count=1 ./... | tparse -all'
 
+.PHONY: test-js
+test-js: ## Run frontend unit tests (Vitest). [Ja] フロントエンドのユニットテストを実行 (Vitest)
+	pnpm test
+
+.PHONY: typecheck-js
+typecheck-js: ## Type-check frontend TypeScript (tsc --noEmit). [Ja] フロントエンドの TypeScript を型検査 (tsc --noEmit)
+	pnpm typecheck
+
 .PHONY: fmt
 fmt: ## コードをフォーマット
 	go fmt ./...
@@ -94,6 +122,23 @@ lint-golangci: ## golangci-lintを実行
 lint-comments: ## Check [Ja]-marker misuse in code comments (koryluslint). [Ja] コードコメントの [Ja] マーカー誤用をチェック (koryluslint)
 	@echo "🔍 コメントの英日併記をチェック中..."
 	@go tool koryluslint comment
+
+# The tree-wide run above only checks the rules with near-zero false positives.
+# The rules that would flag untouched legacy comments (a missing English block,
+# the inline form, duplicate markers, a missing blank separator) are checked
+# against a base ref instead, limited to the lines added since that ref. CI runs
+# this on pull requests; run it locally with the same base to see what CI sees.
+#
+# [Ja] 上のツリー全体の実行は誤検出がほぼ無い規則だけを検査する。
+# 触っていない既存コメントを指摘してしまう規則 (英語ブロックの欠落・インライン形式・
+# マーカー重複・区切り空行の欠落) は、基準 ref との差分で追加された行に限定して検査する。
+# CI は pull request でこれを実行するため、ローカルでも同じ基準を指定すれば CI と
+# 同じ結果を確認できる。
+.PHONY: lint-comments-base
+lint-comments-base: ## Check comment markers against BASE ref, added lines only (e.g. BASE=origin/develop). [Ja] BASE ref との差分の追加行でコメントのマーカーをチェック (例: BASE=origin/develop)
+	@test -n "$(BASE)" || { echo "BASE is required. Example: make lint-comments-base BASE=origin/develop"; exit 1; }
+	@echo "🔍 コメントの英日併記をチェック中 (追加行のみ)..."
+	@go tool koryluslint comment -base=$(BASE)
 
 .PHONY: lint
 lint: lint-golangci lint-comments ## リントを実行（golangci-lint + コメント併記チェック）
@@ -157,4 +202,27 @@ sqlc-generate: ## SQLクエリからGoコードを生成
 .PHONY: seed
 seed: ## 開発環境用のシードデータを生成
 	@echo "シードデータを生成しています..."
-	$(OP_RUN_DEV) go run cmd/seed/main.go
+	$(OP_RUN_DEV) go run ./cmd/annict task seed
+
+# Production snapshot for local verification: download the production backup,
+# mask PII in an isolated database, and load the masked result locally; and copy
+# the production images into the development R2 bucket. load-snapshot runs both.
+#
+# [Ja] ローカル検証用の本番スナップショット: 本番バックアップを取得し、隔離 DB で
+# PII をマスクしてマスク結果をローカルに取り込み、本番画像を開発用 R2 バケットへ
+# コピーする。load-snapshot は両方を実行する。
+
+.PHONY: load-snapshot
+load-snapshot: load-snapshot-db load-snapshot-images ## Load the masked DB snapshot and copy production images in one shot. [Ja] マスク済み DB スナップショットの取り込みと本番画像のコピーを一括実行する
+
+.PHONY: load-snapshot-db
+load-snapshot-db: ## Load a masked production snapshot into the local DB. [Ja] マスク済み本番スナップショットをローカル DB に取り込む
+	$(OP_RUN_DEV) bash scripts/load_snapshot_db.sh
+
+.PHONY: restore-snapshot-db
+restore-snapshot-db: ## Re-restore the local DB from the masked dump in tmp/. [Ja] tmp/ のマスク済みダンプからローカル DB を再復元する
+	$(OP_RUN_DEV) bash scripts/load_snapshot_db.sh restore
+
+.PHONY: load-snapshot-images
+load-snapshot-images: ## Sync production work/profile images into the development R2 bucket. [Ja] 本番の作品・プロフィール画像を開発用 R2 バケットへ同期する
+	$(OP_RUN_DEV) bash scripts/load_snapshot_images.sh

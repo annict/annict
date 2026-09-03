@@ -5,13 +5,22 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-templ StatusLabel(status viewmodel.WorkStatus) {
+// StatusLabel renders the publishing state of an Annict DB resource as a badge. It takes the
+// shared viewmodel.PublishingStatus, so every resource whose lifecycle is published /
+// archived / deleted (works, episodes, and so on) shows the same badge for the same state.
+// An unknown value renders nothing rather than an empty badge.
+//
+// [Ja] StatusLabel は Annict DB のリソースの公開状態をバッジとして描画する。共有の
+// viewmodel.PublishingStatus を受け取るため、ライフサイクルが published / archived /
+// deleted のリソース (作品・エピソードなど) はいずれも同じ状態に同じバッジを表示する。
+// 未知の値では空のバッジではなく何も描画しない。
+templ StatusLabel(status viewmodel.PublishingStatus) {
 	switch status {
-		case viewmodel.WorkStatusPublished:
-			<span class="badge badge-success">{ templates.T(ctx, "status_published") }</span>
-		case viewmodel.WorkStatusArchived:
-			<span class="badge badge-warning">{ templates.T(ctx, "status_archived") }</span>
-		case viewmodel.WorkStatusDeleted:
-			<span class="badge badge-destructive">{ templates.T(ctx, "status_deleted") }</span>
+		case viewmodel.PublishingStatusPublished:
+			<span class="badge" data-variant="success">{ templates.T(ctx, "status_published") }</span>
+		case viewmodel.PublishingStatusArchived:
+			<span class="badge" data-variant="warning">{ templates.T(ctx, "status_archived") }</span>
+		case viewmodel.PublishingStatusDeleted:
+			<span class="badge" data-variant="destructive">{ templates.T(ctx, "status_deleted") }</span>
 	}
 }

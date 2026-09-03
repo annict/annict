@@ -41,8 +41,16 @@ func NewCleanupProfileImagesUsecase(
 	}
 }
 
-// Execute Cloudflare R2上の shrine/profile/ プレフィックス配下のすべての画像を削除します
-// データベース上の profiles テーブルのimage_dataカラムは既に cmd/seed/main.go の cleanupExistingData で削除済みです
+// Execute deletes all images under the shrine/profile/ prefix in Cloudflare R2.
+//
+// In the seed generation flow, seeder.Run deletes the corresponding database rows
+// before this usecase removes the objects from storage.
+//
+// [Ja] Execute は Cloudflare R2 上の shrine/profile/ プレフィックス配下にある画像を
+// すべて削除する。
+//
+// シード生成フローでは、この UseCase がストレージ上のオブジェクトを削除する前に、
+// seeder.Run が対応するデータベース行を削除する。
 func (uc *CleanupProfileImagesUsecase) Execute(ctx context.Context) error {
 	// S3設定がない場合はスキップ
 	if uc.endpoint == "" || uc.accessKeyID == "" || uc.secretAccessKey == "" || uc.bucketName == "" {

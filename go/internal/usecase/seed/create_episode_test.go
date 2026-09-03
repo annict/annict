@@ -63,9 +63,19 @@ func TestCreateEpisodeUsecase_ExecuteBatchWithTx(t *testing.T) {
 		}
 	}
 
-	// データベースからエピソードを取得して検証
-	query := `SELECT id, work_id, number, title, sort_number, prev_episode_id FROM episodes ORDER BY work_id, sort_number`
-	rows, err := tx.QueryContext(ctx, query)
+	// Fetch the created episodes back and verify them. The query is scoped to the
+	// two work ids created here because `make test` runs `go test ./...` without
+	// resetting the shared DB between packages: other packages' usecase tests commit
+	// real rows via GetTestDB, so the episodes table may hold their rows too — some
+	// with a NULL title that this non-nullable string scan cannot accept.
+	//
+	// [Ja] 作成したエピソードを取得して検証する。クエリはここで作成した 2 つの work id に
+	// 限定する。`make test` は `go test ./...` をパッケージ間で共有 DB をリセットせずに
+	// 実行するため、他パッケージの usecase テストが GetTestDB で実行をコミットし、episodes
+	// テーブルにそれらの行 (この非 NULL の string スキャンが受け付けられない NULL タイトルを
+	// 含む) が残りうる。
+	query := `SELECT id, work_id, number, title, sort_number, prev_episode_id FROM episodes WHERE work_id IN ($1, $2) ORDER BY work_id, sort_number`
+	rows, err := tx.QueryContext(ctx, query, int64(workID1), int64(workID2))
 	if err != nil {
 		t.Fatalf("エピソード取得エラー: %v", err)
 	}

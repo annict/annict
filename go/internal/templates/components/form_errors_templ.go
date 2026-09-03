@@ -6,13 +6,171 @@ package components
 //lint:file-ignore SA4006 This context is only used if a nested component is present.
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/a-h/templ"
 	templruntime "github.com/a-h/templ/runtime"
-	"github.com/annict/annict/go/internal/model"
+	"github.com/annict/annict/go/internal/templates"
+	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// FormErrors はフォームのグローバルエラーを表示します
-func FormErrors(formErrors *model.ValidationError) templ.Component {
+// FieldErrorID returns the id of the index-th error message element of field. Each message is
+// rendered as its own element so every paragraph stays a direct child of the Basecoat field,
+// which is what carries the error styling.
+//
+// It lives beside FormErrors because the summary and the per-field messages describe the same
+// errors: one id format shared by every form keeps the ids a form emits from drifting apart.
+//
+// [Ja] FieldErrorID はフィールドの index 番目のエラーメッセージ要素の id を返す。各メッセージを
+// 個別の要素として描画することで、すべての段落が Basecoat の field の直下に残る。エラーの
+// スタイルはその位置に対して当たるため。
+//
+// FormErrors と同居させているのは、要約とフィールドごとのメッセージが同じエラーを説明する
+// ためである。id の書式を全フォームで 1 つに保つことで、フォームが出す id がばらけない。
+func FieldErrorID(field string, index int) string {
+	return fmt.Sprintf("%s-error-%d", field, index+1)
+}
+
+// FieldErrorIDs returns the ids of every error message element of field, joined for
+// aria-describedby. A field can collect more than one message, and describedby has to name
+// them all: naming only the first would leave the rest unannounced.
+//
+// [Ja] FieldErrorIDs はフィールドのすべてのエラーメッセージ要素の id を aria-describedby 用に
+// 連結して返す。1 つのフィールドが複数のメッセージを持つことがあり、describedby はその全部を
+// 指す必要がある。先頭だけを指すと残りが読み上げられないため。
+func FieldErrorIDs(formErrors *viewmodel.FormErrors, field string) string {
+	if formErrors == nil {
+		return ""
+	}
+
+	messages := formErrors.Fields[field]
+	ids := make([]string, len(messages))
+	for i := range messages {
+		ids[i] = FieldErrorID(field, i)
+	}
+
+	return strings.Join(ids, " ")
+}
+
+// FieldDescribedBy returns the aria-describedby value for a field whose input carries a
+// standing description of its own, such as the @ / # prefix shown inside its input group. The
+// description comes first so it is read before the errors, and the error ids are appended
+// rather than replacing it: dropping the description on error would take away the instruction
+// exactly when the value needs correcting.
+//
+// [Ja] FieldDescribedBy は、入力欄が常設の説明 (input group の内側に表示する @ / # の接頭辞
+// など) を持つフィールドの aria-describedby の値を返す。説明がエラーより先に読まれるよう先頭に
+// 置き、エラーの id は置き換えではなく後ろに足す。エラー時に説明を落とすと、値を直すべきその
+// ときに指示が失われるため。
+func FieldDescribedBy(formErrors *viewmodel.FormErrors, field string, descriptionID string) string {
+	ids := FieldErrorIDs(formErrors, field)
+	if ids == "" {
+		return descriptionID
+	}
+
+	return descriptionID + " " + ids
+}
+
+// FormErrorField names one field the error summary can list. Name has to match the id of the
+// field's input so the summary entry links straight to it, and Label is the field's visible
+// label.
+//
+// [Ja] FormErrorField はエラー要約に載せうるフィールドを表す。Name は要約の項目からそのまま
+// リンクできるよう入力欄の id と一致させる。Label はそのフィールドの可視ラベル。
+type FormErrorField struct {
+	Name  string
+	Label string
+}
+
+// FormErrorsData is what FormErrors renders.
+//
+// Fields is optional and holds the fields to summarise in the order the form displays them.
+// Passing it turns on the summary; leaving it empty renders the global messages alone. The
+// order has to come from the caller because FormErrors keeps its field errors in a map, whose
+// iteration order changes between renders.
+//
+// [Ja] FormErrorsData は FormErrors が描画する内容。
+//
+// Fields は任意で、要約に並べるフィールドをフォームの表示順で持つ。渡すと要約が有効になり、
+// 空のままならグローバルメッセージだけを描画する。順序を呼び出し側から受け取るのは、
+// FormErrors がフィールドエラーを map で保持しており、描画のたびに走査順が変わるため。
+type FormErrorsData struct {
+	Errors *viewmodel.FormErrors
+	Fields []FormErrorField
+}
+
+// formErrorSummaryItem is one line of the error summary. Anchor is empty for messages that
+// belong to the form as a whole, which have no field to link to.
+//
+// [Ja] formErrorSummaryItem はエラー要約の 1 項目。フォーム全体に紐づくメッセージはリンク先の
+// フィールドを持たないため Anchor が空になる。
+type formErrorSummaryItem struct {
+	Anchor  string
+	Label   string
+	Message string
+}
+
+// summaryItems returns the summary lines in the order the form displays the fields. Field
+// errors whose name is absent from Fields are left out, so the caller decides what the
+// summary can name.
+//
+// [Ja] summaryItems は要約の各項目を、フォームがフィールドを表示する順で返す。Fields に無い
+// フィールドのエラーは除かれるため、要約が名指しできる対象は呼び出し側が決める。
+func (d FormErrorsData) summaryItems() []formErrorSummaryItem {
+	if len(d.Fields) == 0 || !d.Errors.HasErrors() {
+		return nil
+	}
+
+	items := make([]formErrorSummaryItem, 0, len(d.Errors.Global)+len(d.Fields))
+
+	for _, message := range d.Errors.Global {
+		items = append(items, formErrorSummaryItem{Message: message})
+	}
+
+	for _, field := range d.Fields {
+		for _, message := range d.Errors.GetFieldErrors(field.Name) {
+			items = append(items, formErrorSummaryItem{
+				Anchor:  field.Name,
+				Label:   field.Label,
+				Message: message,
+			})
+		}
+	}
+
+	return items
+}
+
+// hasSummary reports whether there is anything to summarise.
+//
+// [Ja] hasSummary は要約に出す項目があるかどうかを返す。
+func (d FormErrorsData) hasSummary() bool {
+	return len(d.summaryItems()) > 0
+}
+
+// FormErrors renders the errors of a submitted form at the top of that form.
+//
+// With Fields set it renders a summary: every error the form collected, in the order the
+// fields appear, each linking to the input it belongs to. A form long enough to scroll would
+// otherwise leave people hunting for the one field that failed. The summary takes focus on
+// load (tabindex="-1" + autofocus) so the reason the submit failed is the first thing
+// reached, whether or not the failing field is on screen. The page is server-rendered, so
+// that focus move is what announces the errors; role="alert" states the purpose of the
+// element people land on.
+//
+// Without Fields it renders the global messages alone, one alert each.
+//
+// [Ja] FormErrors は送信したフォームのエラーを、そのフォームの冒頭に描画する。
+//
+// Fields を渡すと要約を描画する。フォームが集めたエラーをフィールドの並び順に列挙し、各項目を
+// 対象の入力欄へリンクする。スクロールを要する長さのフォームでは、そうしないと落ちた 1 つの
+// フィールドを利用者が自力で探すことになる。要約は読み込み時にフォーカスを受け取り
+// (tabindex="-1" + autofocus)、対象のフィールドが画面内にあるかによらず、送信が失敗した理由へ
+// 最初に到達できるようにする。ページはサーバー描画のため、エラーを通知するのはこのフォーカス
+// 移動である。role="alert" は利用者が降り立つ要素の用途を示す。
+//
+// Fields が空のときはグローバルメッセージだけを 1 件ずつ alert として描画する。
+func FormErrors(data FormErrorsData) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -33,22 +191,96 @@ func FormErrors(formErrors *model.ValidationError) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		if formErrors != nil && len(formErrors.Global) > 0 {
-			for _, errorMsg := range formErrors.Global {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"alert-destructive\"><h2>")
+		if data.hasSummary() {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"alert gap-2\" data-variant=\"destructive\" role=\"alert\" tabindex=\"-1\" autofocus><h2>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var2 string
+			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "form_error_summary_heading"))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/form_errors.templ`, Line: 177, Col: 55}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</h2><section><ul class=\"list-outside space-y-1 ps-5\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			for _, item := range data.summaryItems() {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var2 string
-				templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(errorMsg)
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/form_errors.templ`, Line: 10, Col: 18}
+				if item.Anchor != "" {
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<a href=\"")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var3 templ.SafeURL
+					templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("#" + item.Anchor))
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/form_errors.templ`, Line: 199, Col: 46}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" class=\"inline-block align-top leading-6 underline\">")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var4 string
+					templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "form_error_summary_item", map[string]any{"Label": item.Label, "Message": item.Message}))
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/form_errors.templ`, Line: 200, Col: 116}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</a>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+				} else {
+					var templ_7745c5c3_Var5 string
+					templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(item.Message)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/form_errors.templ`, Line: 203, Col: 22}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</h2></div>")
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</ul></section></div>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else if data.Errors != nil {
+			for _, errorMsg := range data.Errors.Global {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div class=\"alert\" data-variant=\"destructive\"><h2>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var6 string
+				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(errorMsg)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/form_errors.templ`, Line: 213, Col: 18}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</h2></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

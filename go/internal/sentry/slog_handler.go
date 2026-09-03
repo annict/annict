@@ -2,9 +2,12 @@ package sentry
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"os"
+	"strings"
 
+	"github.com/getsentry/sentry-go"
 	sentryslog "github.com/getsentry/sentry-go/slog"
 )
 
@@ -64,28 +67,143 @@ func NewBaseHandler() slog.Handler {
 
 // NewSlogHandler wraps base in a fan-out handler that also forwards
 // slog.LevelError (and LevelFatal) records to Sentry as events. Other levels
-// reach only the base handler. The Sentry Logs API is intentionally disabled
-// so this integration captures errors only.
+// reach only the base handler. Sentry Go 0.48 removed event creation from its
+// slog integration, so the application owns this small event-only handler and
+// does not opt in to the Sentry Logs API.
 //
-// [Ja] base ハンドラーを sentryslog ハンドラーと合成して返す。slog.LevelError
-// と LevelFatal のレコードを Sentry にイベントとして送信し、それ以外のレベルは
-// base にだけ流す。Sentry Logs API への送信は明示的に無効化している (本連携は
-// エラー検出のみを担うため)。
+// [Ja] base ハンドラーをアプリケーション固有の Sentry イベントハンドラーと
+// 合成して返す。slog.LevelError と LevelFatal のレコードを Sentry にイベント
+// として送信し、それ以外のレベルは base にだけ流す。Sentry Go 0.48 で slog
+// 連携からイベント作成機能が削除されたため、イベント専用の小さなハンドラーを
+// アプリケーション側で持ち、Sentry Logs API には opt in しない。
 func NewSlogHandler(base slog.Handler) slog.Handler {
-	sentryHandler := sentryslog.Option{
-		// Capture exactly Error and Fatal as Sentry events.
-		//
-		// [Ja] Error と Fatal だけを Sentry イベント化する。
-		EventLevel: []slog.Level{slog.LevelError, sentryslog.LevelFatal},
-		// Disable the Sentry Logs API by passing an empty (non-nil) slice.
-		// A nil slice falls back to the package default of all levels.
-		//
-		// [Ja] 空 (非 nil) のスライスを渡すことで Sentry Logs API への送信を
-		// 無効化する。nil にするとパッケージ既定値 (全レベル送信) に
-		// フォールバックしてしまう。
-		LogLevel: []slog.Level{},
-	}.NewSentryHandler(context.Background())
-	return newMultiHandler(base, sentryHandler)
+	return newMultiHandler(base, &sentryEventHandler{})
+}
+
+const defaultMaxErrorDepth = 100
+
+type sentryEventAttr struct {
+	groups []string
+	attr   slog.Attr
+}
+
+// sentryEventHandler converts only Error and Fatal slog records into Sentry
+// events. It intentionally implements the narrow contract Annict relied on
+// before sentry-go/slog removed event creation in 0.48.
+//
+// [Ja] Error と Fatal の slog レコードだけを Sentry イベントへ変換する。
+// sentry-go/slog 0.48 でイベント作成機能が削除される前に Annict が依存していた
+// 契約だけを意図的に実装する。
+type sentryEventHandler struct {
+	attrs  []sentryEventAttr
+	groups []string
+}
+
+func (h *sentryEventHandler) Enabled(_ context.Context, level slog.Level) bool {
+	return level == slog.LevelError || level == sentryslog.LevelFatal
+}
+
+func (h *sentryEventHandler) Handle(ctx context.Context, record slog.Record) error {
+	hub := sentry.GetHubFromContext(ctx)
+	if hub == nil {
+		hub = sentry.CurrentHub()
+	}
+
+	event := sentry.NewEvent()
+	event.Timestamp = record.Time.UTC()
+	event.Level = sentry.LevelError
+	if record.Level == sentryslog.LevelFatal {
+		event.Level = sentry.LevelFatal
+	}
+	event.Message = record.Message
+	event.Logger = "slog"
+
+	var originalErr error
+	for _, a := range h.attrs {
+		if err := addSlogAttrToEvent(event, strings.Join(a.groups, "."), a.attr); err != nil && originalErr == nil {
+			originalErr = err
+		}
+	}
+	record.Attrs(func(a slog.Attr) bool {
+		if err := addSlogAttrToEvent(event, strings.Join(h.groups, "."), a); err != nil && originalErr == nil {
+			originalErr = err
+		}
+		return true
+	})
+
+	errorDepth := defaultMaxErrorDepth
+	if client := hub.Client(); client != nil {
+		errorDepth = client.Options().MaxErrorDepth
+	}
+	event.SetException(originalErr, errorDepth)
+	hub.CaptureEventWithHint(event, &sentry.EventHint{Context: ctx})
+	return nil
+}
+
+func (h *sentryEventHandler) WithAttrs(attrs []slog.Attr) slog.Handler {
+	out := &sentryEventHandler{
+		attrs:  make([]sentryEventAttr, 0, len(h.attrs)+len(attrs)),
+		groups: append([]string(nil), h.groups...),
+	}
+	out.attrs = append(out.attrs, h.attrs...)
+	for _, a := range attrs {
+		out.attrs = append(out.attrs, sentryEventAttr{
+			groups: append([]string(nil), h.groups...),
+			attr:   a,
+		})
+	}
+	return out
+}
+
+func (h *sentryEventHandler) WithGroup(name string) slog.Handler {
+	if name == "" {
+		return h
+	}
+	return &sentryEventHandler{
+		attrs:  append([]sentryEventAttr(nil), h.attrs...),
+		groups: append(append([]string(nil), h.groups...), name),
+	}
+}
+
+// addSlogAttrToEvent adds one slog attribute to an event and returns an error
+// attribute separately so the caller can populate event.Exception.
+//
+// [Ja] 1 つの slog 属性をイベントへ追加する。error 属性は event.Exception に
+// 設定できるよう、タグには追加せず呼び出し元へ返す。
+func addSlogAttrToEvent(event *sentry.Event, group string, attr slog.Attr) error {
+	attr.Value = attr.Value.Resolve()
+	if attr.Equal(slog.Attr{}) {
+		return nil
+	}
+
+	key := attr.Key
+	if group != "" {
+		if key != "" {
+			key = group + "." + key
+		} else {
+			key = group
+		}
+	}
+
+	if attr.Value.Kind() == slog.KindGroup {
+		var firstErr error
+		for _, child := range attr.Value.Group() {
+			if err := addSlogAttrToEvent(event, key, child); err != nil && firstErr == nil {
+				firstErr = err
+			}
+		}
+		return firstErr
+	}
+
+	if (attr.Key == "error" || attr.Key == "err") && attr.Value.Kind() == slog.KindAny {
+		if err, ok := attr.Value.Any().(error); ok {
+			return err
+		}
+	}
+	if key != "" {
+		event.Tags[key] = fmt.Sprint(attr.Value.Any())
+	}
+	return nil
 }
 
 // multiHandler fans out one slog.Record to multiple slog.Handlers. It keeps

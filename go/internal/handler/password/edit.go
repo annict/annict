@@ -17,6 +17,15 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
+// passwordEditPath is the representative GET path of the new-password form. Edit serves the
+// page at this path and Update re-renders it from PATCH /password, so both take their
+// canonical URL from here rather than from the request path.
+//
+// [Ja] passwordEditPath は新しいパスワード入力フォームの代表 GET パス。Edit はこのパスで
+// ページを配信し、Update は同じページを PATCH /password から再描画するため、双方とも
+// リクエストパスではなくここから canonical URL を取る。
+const passwordEditPath = "/password/edit"
+
 // Edit は新しいパスワード入力フォームを表示します (GET /password/edit)
 func (h *Handler) Edit(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -69,16 +78,15 @@ func (h *Handler) Edit(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) renderEditForm(w http.ResponseWriter, r *http.Request, status int, formErrors *model.ValidationError, token string) {
 	ctx := r.Context()
 
-	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)
+	meta := viewmodel.DefaultPageMeta(ctx, h.cfg, passwordEditPath)
 	meta.SetTitle(ctx, "password_edit_title")
-	meta.OGURL = h.cfg.AppURL() + "/password/edit"
 
 	csrfToken := middleware.GetCSRFToken(r, h.sessionMgr)
 
 	data := passwordpages.EditPageData{
 		CSRFToken:  csrfToken,
 		Token:      token,
-		FormErrors: formErrors,
+		FormErrors: viewmodel.NewFormErrors(formErrors),
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
@@ -94,9 +102,8 @@ func (h *Handler) renderEditForm(w http.ResponseWriter, r *http.Request, status 
 func (h *Handler) renderInvalidTokenError(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)
+	meta := viewmodel.DefaultPageMeta(ctx, h.cfg, passwordEditPath)
 	meta.Title = i18n.T(ctx, "password_reset_token_invalid")
-	meta.OGURL = h.cfg.AppURL() + "/password/reset"
 
 	backLink := &errorpages.BackLink{
 		URL:  "/password/reset",

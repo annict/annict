@@ -1,0 +1,104 @@
+package db_episodes
+
+import (
+	"context"
+
+	"github.com/annict/annict/go/internal/templates"
+	"github.com/annict/annict/go/internal/templates/components"
+	"github.com/annict/annict/go/internal/viewmodel"
+)
+
+// ArchiveNewPageData is the data the episode archive-confirmation page renders: the episode
+// whose archiving is being confirmed, and the parent work its heading, subnav and cancel link
+// describe.
+//
+// [Ja] ArchiveNewPageData はエピソード非公開確認ページが描画するデータ (非公開を確認する対象の
+// エピソードと、その見出し・サブナビ・キャンセルリンクが示す親作品)。
+type ArchiveNewPageData struct {
+	EpisodeID viewmodel.EpisodeID
+	// EpisodeName names the episode in the confirmation message, as
+	// viewmodel.DBEpisodeName resolved it. It is never empty: an episode with neither a
+	// display number nor a title falls back to its id, so the message always names its
+	// target.
+	//
+	// [Ja] EpisodeName は viewmodel.DBEpisodeName が解決した、確認メッセージがエピソードを
+	// 名指しする表記。空にはならない。表示用話数もタイトルも無いエピソードは ID に
+	// フォールバックするため、メッセージは常に対象を名指しする。
+	EpisodeName string
+	WorkID      viewmodel.WorkID
+	// WorkName is the work's display name as viewmodel.DBEpisodeListWorkName resolved it. An
+	// empty value makes the heading fall back to the generic page name and the document title
+	// omit the work while retaining the episode identifier.
+	//
+	// [Ja] WorkName は viewmodel.DBEpisodeListWorkName が解決した作品の表示名。空の場合、
+	// 見出しは汎用のページ名へフォールバックし、文書タイトルはエピソード識別子を残して作品を
+	// 省く。
+	WorkName string
+	// NoEpisodes carries the work's no_episodes flag through to the shared subnav.
+	//
+	// [Ja] NoEpisodes は作品の no_episodes フラグを共有サブナビへ渡す。
+	NoEpisodes bool
+	CSRFToken  string
+}
+
+// heading returns the text of the page heading: the work's name, falling back to the generic
+// page title while the work has none, so the page never renders an empty <h1>. The episode
+// itself is named by the confirmation message rather than by the heading, matching the other
+// episode pages, whose heading is the work they belong to.
+//
+// [Ja] heading はページ見出しのテキストとして作品の名前を返す。名前が無いあいだは汎用の
+// ページタイトルにフォールバックし、空の <h1> を描画しないようにする。エピソード自身は見出しでは
+// なく確認メッセージが名指しする。見出しが所属作品になっている他のエピソードページと揃えるため。
+func (d ArchiveNewPageData) heading(ctx context.Context) string {
+	if d.WorkName != "" {
+		return d.WorkName
+	}
+
+	return templates.T(ctx, "db_episodes_archive_new_title")
+}
+
+templ ArchiveNew(data ArchiveNewPageData) {
+	<div class="flex flex-col gap-4 py-4 max-w-7xl w-full mx-auto">
+		<div class="flex gap-4 px-4">
+			@components.DBSidebarToggle()
+
+			<div class="flex-1">
+				@components.MainTitle(components.MainTitleData{
+					Title: data.heading(ctx),
+				})
+			</div>
+		</div>
+
+		<div class="px-4">
+			// The page is keyed by the episode rather than by the work, so it names the
+			// subnav entry it belongs to instead of letting the request path decide.
+			//
+			// [Ja] 本ページの URL は作品ではなくエピソード基点のため、リクエストパスに
+			// 判断を委ねず、所属するサブナビの項目を自ら名指しする。
+			@components.DBWorkSubnav(components.DBWorkSubnavData{
+				WorkID:             data.WorkID,
+				NoEpisodes:         data.NoEpisodes,
+				CurrentSectionPath: templates.DBWorkEpisodesPath(data.WorkID),
+			})
+		</div>
+
+		@components.ContentCard("") {
+			<div class="max-w-2xl flex flex-col gap-6">
+				<div class="flex flex-col gap-2">
+					<p>{ templates.T(ctx, "db_episodes_archive_new_confirm_message", map[string]any{"Episode": data.EpisodeName}) }</p>
+					<p class="text-sm text-muted-foreground">{ templates.T(ctx, "db_episodes_archive_new_help") }</p>
+				</div>
+
+				<form method="POST" action={ templates.DBEpisodeArchivePath(data.EpisodeID).SafeURL() } class="flex items-center gap-2">
+					<input type="hidden" name="csrf_token" value={ data.CSRFToken }/>
+					<button type="submit" class="btn rounded-full" data-variant="warning">
+						{ templates.T(ctx, "db_episodes_archive_new_submit") }
+					</button>
+					<a href={ templates.DBWorkEpisodesPath(data.WorkID).SafeURL() } class="btn rounded-full" data-variant="outline">
+						{ templates.T(ctx, "db_episodes_archive_new_cancel_link") }
+					</a>
+				</form>
+			</div>
+		}
+	</div>
+}

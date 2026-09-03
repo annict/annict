@@ -1,4 +1,5 @@
 /.env
+/.playwright-cli
 /.playwright-mcp
 /.pnpm-store
 /bin

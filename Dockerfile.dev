@@ -30,9 +30,11 @@ apt dist-upgrade -yq
 
 PACKAGES=$(cat <<'PKGLIST' | sed 's/#.*//'
   build-essential
+  bubblewrap                # Required by Codex for Linux sandboxing [Ja] Codex の Linux sandbox に必要
   ca-certificates           # Required for HTTPS connections [Ja] HTTPS 接続に必要
   curl
   file                      # Required by Shrine for image uploads (Rails) [Ja] Shrine による画像アップロードに必要 (Rails)
+  fonts-noto-cjk            # Japanese (CJK) font for headless chromium screenshots [Ja] headless chromium のスクショ用の日本語 (CJK) フォント
   fzf                       # Used by Claude Code [Ja] Claude Code で使用
   git
   gnupg                     # Required to dearmor the PostgreSQL/Redis/Stripe GPG keys [Ja] PostgreSQL/Redis/Stripe の GPG キーの dearmor に必要
@@ -62,6 +64,7 @@ PACKAGES=$(cat <<'PKGLIST' | sed 's/#.*//'
   lsb-release               # Required to configure the PostgreSQL/Redis apt repositories [Ja] PostgreSQL/Redis の apt リポジトリ設定に必要
   nano                      # Used by Claude Code [Ja] Claude Code で使用
   net-tools                 # Used by Claude Code for netstat (network debugging) [Ja] Claude Code で使用 netstat (ネットワークデバッグ用)
+  procps                    # Provides ps for playwright-cli kill-all [Ja] playwright-cli kill-all 用の ps を提供
   psmisc                    # Used by Claude Code for fuser (process identification) [Ja] Claude Code で使用 fuser (プロセス特定用)
   ripgrep                   # Used by Claude Code [Ja] Claude Code で使用
   sudo
@@ -77,20 +80,6 @@ apt install -y --no-install-recommends $PACKAGES
 EOF
 
 # --- PostgreSQL client ---
-# [Ja] PostgreSQL クライアント
-#
-# Place the apt repository key under /etc/apt/keyrings and reference it
-# via [signed-by=...]. The trusted.gpg.d/ approach is deprecated on
-# modern Debian releases.
-#
-# [Ja] apt リポジトリの鍵は /etc/apt/keyrings/ に置き、[signed-by=...] で参照する。
-# trusted.gpg.d/ 方式は現代の Debian では非推奨。
-#
-# Pin to postgresql-client-17 to match the shared Rails production
-# database (PostgreSQL 17); do not bump to 18.
-#
-# [Ja] 共有している Rails 本番 DB (PostgreSQL 17) に合わせて postgresql-client-17 に固定する。
-# 18 系には上げない。
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     install -d -m 0755 /etc/apt/keyrings && \
@@ -103,13 +92,6 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     apt install -y --no-install-recommends libpq-dev postgresql-client-17
 
 # --- Redis Tools ---
-# [Ja] Redis Tools
-#
-# Apt repository key is placed under /etc/apt/keyrings and referenced
-# via [signed-by=...] to match the other repositories above.
-#
-# [Ja] apt リポジトリの鍵は上記の他リポジトリに揃えて /etc/apt/keyrings/ に置き、
-# [signed-by=...] で参照する。
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     install -d -m 0755 /etc/apt/keyrings && \
@@ -122,13 +104,6 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     apt install -y --no-install-recommends redis-tools=6:7.4.*
 
 # --- Stripe CLI ---
-# [Ja] Stripe CLI
-#
-# Apt repository key is placed under /etc/apt/keyrings and referenced
-# via [signed-by=...] to match the other repositories above.
-#
-# [Ja] apt リポジトリの鍵は上記の他リポジトリに揃えて /etc/apt/keyrings/ に置き、
-# [signed-by=...] で参照する。
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     install -d -m 0755 /etc/apt/keyrings && \
@@ -171,17 +146,6 @@ RUN mise use --global go@1.26.2 && \
     mise use --global pnpm@10.17.1
 
 # --- dbmate ---
-# [Ja] dbmate
-#
-# Install dbmate with SHA256 verification. Never use `releases/latest`
-# (a floating pointer) - pin both the version and the digest. DBMATE_VERSION
-# / DBMATE_SHA256 are intentionally duplicated in go/Dockerfile to keep each
-# Dockerfile self-contained; bump them together when upgrading dbmate.
-#
-# [Ja] dbmate を SHA256 検証付きでインストールする。浮動参照である
-# `releases/latest` は使わず、バージョンとハッシュを必ず固定する。
-# DBMATE_VERSION / DBMATE_SHA256 は go/Dockerfile と意図的に二重定義しており
-# (各 Dockerfile を自己完結に保つため)、更新時は両ファイルを揃えて変更する。
 ARG DBMATE_VERSION=v2.33.0
 ARG DBMATE_SHA256=dfd4027141b6e4357158099bdfe6c02b286af70f8e49057937744cf80b38ea1c
 RUN curl -fsSL -o /tmp/dbmate "https://github.com/amacneil/dbmate/releases/download/${DBMATE_VERSION}/dbmate-linux-amd64" && \
@@ -190,7 +154,6 @@ RUN curl -fsSL -o /tmp/dbmate "https://github.com/amacneil/dbmate/releases/downl
     chmod +x /usr/local/bin/dbmate
 
 # --- hivemind ---
-# [Ja] hivemind
 ARG HIVEMIND_VERSION=v1.1.0
 ARG HIVEMIND_SHA256=809ca1c5fedbbfca8fdfb3a4b9bb9c41868b046f35f85a3e893ccf2583a3921a
 RUN curl -fsSL -L -o /tmp/hivemind.gz "https://github.com/DarthSim/hivemind/releases/download/${HIVEMIND_VERSION}/hivemind-${HIVEMIND_VERSION}-linux-amd64.gz" && \
@@ -200,14 +163,6 @@ RUN curl -fsSL -L -o /tmp/hivemind.gz "https://github.com/DarthSim/hivemind/rele
     chmod +x /usr/local/bin/hivemind
 
 # --- golangci-lint ---
-# [Ja] golangci-lint
-#
-# Fetch the release tarball directly and verify its SHA256 instead of
-# piping the upstream install.sh from HEAD (the script itself is not
-# pinned).
-#
-# [Ja] 公式 install.sh は HEAD の浮動 URL から取得され、スクリプト自体が固定されないため、
-# リリース tarball を直接取得して SHA256 検証する。
 ARG GOLANGCI_LINT_VERSION=v2.11.4
 ARG GOLANGCI_LINT_SHA256=200c5b7503f67b59a6743ccf32133026c174e272b930ee79aa2aa6f37aca7ef1
 RUN GOLANGCI_LINT_DIR="golangci-lint-${GOLANGCI_LINT_VERSION#v}-linux-amd64" && \
@@ -218,15 +173,18 @@ RUN GOLANGCI_LINT_DIR="golangci-lint-${GOLANGCI_LINT_VERSION#v}-linux-amd64" && 
     chmod +x /usr/local/bin/golangci-lint && \
     rm -rf "/tmp/golangci-lint.tar.gz" "/tmp/${GOLANGCI_LINT_DIR}"
 
+# --- rclone ---
+ARG RCLONE_VERSION=v1.74.3
+ARG RCLONE_SHA256=dbee7ccd7a5d617e4ed4cd4555c16669b511abfe8d31164f61be35ac9e999bd2
+RUN RCLONE_DIR="rclone-${RCLONE_VERSION}-linux-amd64" && \
+    curl -fsSL -o /tmp/rclone.zip "https://github.com/rclone/rclone/releases/download/${RCLONE_VERSION}/${RCLONE_DIR}.zip" && \
+    echo "${RCLONE_SHA256}  /tmp/rclone.zip" | sha256sum -c - && \
+    unzip -q /tmp/rclone.zip -d /tmp && \
+    mv "/tmp/${RCLONE_DIR}/rclone" /usr/local/bin/rclone && \
+    chmod +x /usr/local/bin/rclone && \
+    rm -rf "/tmp/rclone.zip" "/tmp/${RCLONE_DIR}"
+
 # --- GitHub CLI ---
-# [Ja] GitHub CLI
-#
-# Apt repository key is placed under /etc/apt/keyrings and referenced
-# via [signed-by=...]. The whole RUN block executes as root, so sudo is
-# unnecessary.
-#
-# [Ja] apt リポジトリの鍵は /etc/apt/keyrings/ に置き、[signed-by=...] で参照する。
-# RUN ブロック全体は root で実行されるため sudo は不要。
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     install -d -m 0755 /etc/apt/keyrings && \
@@ -253,6 +211,17 @@ RUN mkdir -p /go/.cache/go-build /go/pkg && \
 # [Ja] mise のデータディレクトリの権限設定
 RUN chown -R ${USER_ID}:${GROUP_ID} /mise
 
+# --- 1Password CLI config directory ---
+# The op-config named volume is mounted here. Docker copies ownership from the
+# image only when the volume is created empty, so the directory has to exist
+# with the developer user's ownership beforehand for `op` to write its config.
+#
+# [Ja] 名前付きボリューム op-config をここにマウントする。Docker がイメージ側の
+# 所有権を引き継ぐのはボリュームが空で新規作成されたときだけのため、`op` が設定を
+# 書き込めるよう開発者ユーザー所有のディレクトリを事前に用意しておく。
+RUN install -d -o ${USER_ID} -g ${GROUP_ID} /home/${USERNAME}/.config && \
+    install -d -o ${USER_ID} -g ${GROUP_ID} -m 0700 /home/${USERNAME}/.config/op
+
 WORKDIR /workspace
 USER ${USERNAME}
 
@@ -271,15 +240,20 @@ USER ${USERNAME}
 RUN mise reshim
 
 # --- 1Password CLI ---
-# [Ja] 1Password CLI
 COPY --from=1password/op:2 /usr/local/bin/op /usr/local/bin/op
 
 # --- Claude Code ---
-# [Ja] Claude Code
 RUN curl -fsSL https://claude.ai/install.sh | bash
 
+# --- Codex ---
+RUN curl -fsSL https://chatgpt.com/codex/install.sh | sh
+
+# --- Playwright CLI ---
+RUN npm install -g @playwright/cli@0.1.15 && \
+    mise reshim && \
+    playwright-cli install-browser chromium
+
 # --- Go tools ---
-# [Ja] Go ツール
 ENV GOCACHE=/go/.cache/go-build
 ENV GOMODCACHE=/go/pkg/mod
 ENV GOPATH=/go

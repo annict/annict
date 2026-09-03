@@ -47,8 +47,23 @@ func (uc *CreateEpisodeRecordUsecase) ExecuteBatch(ctx context.Context, records 
 	return uc.executeBatchWithTx(ctx, nil, records, progressBar)
 }
 
-// ExecuteBatchWithTx 複数の視聴記録をバッチで作成します（テスト用：既存トランザクションを使用）
-// txがnilの場合は内部でトランザクションを作成します
+// ExecuteBatchWithTx creates episode records in batch inside the caller's transaction, or
+// opens its own when tx is nil. Callers pass a transaction when the records have to be
+// committed together with whatever else that transaction did: the heavy-user seed selects the
+// episodes its records point at in the same transaction, so no other process can delete one of
+// them between the selection and the insert.
+//
+// A passed-in transaction is neither committed nor split into several commits here: the caller
+// owns the boundary and decides how much one commit carries.
+//
+// [Ja] ExecuteBatchWithTx は呼び出し元のトランザクションで視聴記録をバッチ作成する。tx が nil
+// の場合は内部でトランザクションを開く。呼び出し元がトランザクションを渡すのは、記録をその
+// トランザクションの他の処理と一緒にコミットする必要があるとき。ヘビーユーザーのシードは記録が
+// 指すエピソードを同じトランザクションで抽選するため、抽選から INSERT までの間に他のプロセスが
+// そのエピソードを削除できない。
+//
+// 渡されたトランザクションを本メソッドはコミットせず、複数のコミットにも分割しない。境界は
+// 呼び出し元が持ち、1 コミットが運ぶ量も呼び出し元が決める。
 func (uc *CreateEpisodeRecordUsecase) ExecuteBatchWithTx(ctx context.Context, tx *sql.Tx, records []CreateEpisodeRecordParams, progressBar *progressbar.ProgressBar) ([]CreateEpisodeRecordResult, error) {
 	return uc.executeBatchWithTx(ctx, tx, records, progressBar)
 }

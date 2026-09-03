@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/annict/annict/go/internal/httperror"
 	"github.com/annict/annict/go/internal/session"
 )
 
@@ -44,17 +45,25 @@ func (m *CSRFMiddleware) Middleware(next http.Handler) http.Handler {
 			}
 		}
 
+		// The three checks below (no session ID, no session data, token mismatch) all answer with
+		// the same response. Distinguishing them would tell the sender whether a session exists,
+		// and the reader's next action is the same in every case: reopen the page and submit again.
+		//
+		// [Ja] 以下の 3 つの判定 (セッション ID 無し / セッションデータ無し / トークン不一致) は
+		// いずれも同じ応答を返す。区別すると送信側にセッションの有無を伝えることになり、
+		// 読み手に求める次の行動もどの場合も同じ (ページを開き直して再送信する) であるため。
+
 		// セッションIDを取得
 		sessionID, err := m.sessionManager.GetSessionID(r)
 		if err != nil || sessionID == "" {
-			http.Error(w, "Forbidden", http.StatusForbidden)
+			httperror.InvalidCSRFToken(w, r)
 			return
 		}
 
 		// セッションデータを取得
 		sessionData, err := m.sessionManager.GetSession(ctx, sessionID)
 		if err != nil || sessionData == nil {
-			http.Error(w, "Forbidden", http.StatusForbidden)
+			httperror.InvalidCSRFToken(w, r)
 			return
 		}
 
@@ -64,9 +73,8 @@ func (m *CSRFMiddleware) Middleware(next http.Handler) http.Handler {
 			formToken = r.Header.Get("X-CSRF-Token")
 		}
 
-		// トークンが一致しない場合は403エラー
 		if formToken != sessionData.CSRFToken {
-			http.Error(w, "Forbidden", http.StatusForbidden)
+			httperror.InvalidCSRFToken(w, r)
 			return
 		}
 

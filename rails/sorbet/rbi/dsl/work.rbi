@@ -946,16 +946,7 @@ class Work
     def with(*args, &blk); end
 
     sig { params(args: T.untyped, blk: T.untyped).returns(PrivateAssociationRelation) }
-    def with_no_episodes(*args, &blk); end
-
-    sig { params(args: T.untyped, blk: T.untyped).returns(PrivateAssociationRelation) }
-    def with_no_image(*args, &blk); end
-
-    sig { params(args: T.untyped, blk: T.untyped).returns(PrivateAssociationRelation) }
     def with_no_season(*args, &blk); end
-
-    sig { params(args: T.untyped, blk: T.untyped).returns(PrivateAssociationRelation) }
-    def with_no_slots(*args, &blk); end
 
     sig { params(args: T.untyped, blk: T.untyped).returns(PrivateAssociationRelation) }
     def with_recursive(*args, &blk); end
@@ -1013,50 +1004,50 @@ class Work
     sig { void }
     def aasm_state_will_change!; end
 
-    sig { returns(T.nilable(::String)) }
-    def archive_message; end
+    sig { returns(T.nilable(::Integer)) }
+    def anime_id; end
 
-    sig { params(value: T.nilable(::String)).returns(T.nilable(::String)) }
-    def archive_message=(value); end
+    sig { params(value: T.nilable(::Integer)).returns(T.nilable(::Integer)) }
+    def anime_id=(value); end
 
     sig { returns(T::Boolean) }
-    def archive_message?; end
+    def anime_id?; end
 
-    sig { returns(T.nilable(::String)) }
-    def archive_message_before_last_save; end
+    sig { returns(T.nilable(::Integer)) }
+    def anime_id_before_last_save; end
 
     sig { returns(T.untyped) }
-    def archive_message_before_type_cast; end
+    def anime_id_before_type_cast; end
 
     sig { returns(T::Boolean) }
-    def archive_message_came_from_user?; end
+    def anime_id_came_from_user?; end
 
-    sig { returns(T.nilable([T.nilable(::String), T.nilable(::String)])) }
-    def archive_message_change; end
+    sig { returns(T.nilable([T.nilable(::Integer), T.nilable(::Integer)])) }
+    def anime_id_change; end
 
-    sig { returns(T.nilable([T.nilable(::String), T.nilable(::String)])) }
-    def archive_message_change_to_be_saved; end
-
-    sig { params(from: T.untyped, to: T.untyped).returns(T::Boolean) }
-    def archive_message_changed?(from: T.unsafe(nil), to: T.unsafe(nil)); end
-
-    sig { returns(T.nilable(::String)) }
-    def archive_message_in_database; end
-
-    sig { returns(T.nilable([T.nilable(::String), T.nilable(::String)])) }
-    def archive_message_previous_change; end
+    sig { returns(T.nilable([T.nilable(::Integer), T.nilable(::Integer)])) }
+    def anime_id_change_to_be_saved; end
 
     sig { params(from: T.untyped, to: T.untyped).returns(T::Boolean) }
-    def archive_message_previously_changed?(from: T.unsafe(nil), to: T.unsafe(nil)); end
+    def anime_id_changed?(from: T.unsafe(nil), to: T.unsafe(nil)); end
 
-    sig { returns(T.nilable(::String)) }
-    def archive_message_previously_was; end
+    sig { returns(T.nilable(::Integer)) }
+    def anime_id_in_database; end
 
-    sig { returns(T.nilable(::String)) }
-    def archive_message_was; end
+    sig { returns(T.nilable([T.nilable(::Integer), T.nilable(::Integer)])) }
+    def anime_id_previous_change; end
+
+    sig { params(from: T.untyped, to: T.untyped).returns(T::Boolean) }
+    def anime_id_previously_changed?(from: T.unsafe(nil), to: T.unsafe(nil)); end
+
+    sig { returns(T.nilable(::Integer)) }
+    def anime_id_previously_was; end
+
+    sig { returns(T.nilable(::Integer)) }
+    def anime_id_was; end
 
     sig { void }
-    def archive_message_will_change!; end
+    def anime_id_will_change!; end
 
     sig { returns(T.nilable(::ActiveSupport::TimeWithZone)) }
     def created_at; end
@@ -1962,7 +1953,7 @@ class Work
     def restore_aasm_state!; end
 
     sig { void }
-    def restore_archive_message!; end
+    def restore_anime_id!; end
 
     sig { void }
     def restore_created_at!; end
@@ -2047,9 +2038,6 @@ class Work
 
     sig { void }
     def restore_started_on!; end
-
-    sig { void }
-    def restore_status!; end
 
     sig { void }
     def restore_synopsis!; end
@@ -2162,11 +2150,11 @@ class Work
     sig { params(from: T.untyped, to: T.untyped).returns(T::Boolean) }
     def saved_change_to_aasm_state?(from: T.unsafe(nil), to: T.unsafe(nil)); end
 
-    sig { returns(T.nilable([T.nilable(::String), T.nilable(::String)])) }
-    def saved_change_to_archive_message; end
+    sig { returns(T.nilable([T.nilable(::Integer), T.nilable(::Integer)])) }
+    def saved_change_to_anime_id; end
 
     sig { params(from: T.untyped, to: T.untyped).returns(T::Boolean) }
-    def saved_change_to_archive_message?(from: T.unsafe(nil), to: T.unsafe(nil)); end
+    def saved_change_to_anime_id?(from: T.unsafe(nil), to: T.unsafe(nil)); end
 
     sig { returns(T.nilable([T.nilable(::ActiveSupport::TimeWithZone), T.nilable(::ActiveSupport::TimeWithZone)])) }
     def saved_change_to_created_at; end
@@ -2335,12 +2323,6 @@ class Work
 
     sig { params(from: T.untyped, to: T.untyped).returns(T::Boolean) }
     def saved_change_to_started_on?(from: T.unsafe(nil), to: T.unsafe(nil)); end
-
-    sig { returns(T.nilable([::String, ::String])) }
-    def saved_change_to_status; end
-
-    sig { params(from: T.untyped, to: T.untyped).returns(T::Boolean) }
-    def saved_change_to_status?(from: T.unsafe(nil), to: T.unsafe(nil)); end
 
     sig { returns(T.nilable([::String, ::String])) }
     def saved_change_to_synopsis; end
@@ -2776,51 +2758,6 @@ class Work
 
     sig { void }
     def started_on_will_change!; end
-
-    sig { returns(::String) }
-    def status; end
-
-    sig { params(value: ::String).returns(::String) }
-    def status=(value); end
-
-    sig { returns(T::Boolean) }
-    def status?; end
-
-    sig { returns(T.nilable(::String)) }
-    def status_before_last_save; end
-
-    sig { returns(T.untyped) }
-    def status_before_type_cast; end
-
-    sig { returns(T::Boolean) }
-    def status_came_from_user?; end
-
-    sig { returns(T.nilable([::String, ::String])) }
-    def status_change; end
-
-    sig { returns(T.nilable([::String, ::String])) }
-    def status_change_to_be_saved; end
-
-    sig { params(from: T.untyped, to: T.untyped).returns(T::Boolean) }
-    def status_changed?(from: T.unsafe(nil), to: T.unsafe(nil)); end
-
-    sig { returns(T.nilable(::String)) }
-    def status_in_database; end
-
-    sig { returns(T.nilable([::String, ::String])) }
-    def status_previous_change; end
-
-    sig { params(from: T.untyped, to: T.untyped).returns(T::Boolean) }
-    def status_previously_changed?(from: T.unsafe(nil), to: T.unsafe(nil)); end
-
-    sig { returns(T.nilable(::String)) }
-    def status_previously_was; end
-
-    sig { returns(T.nilable(::String)) }
-    def status_was; end
-
-    sig { void }
-    def status_will_change!; end
 
     sig { returns(::String) }
     def synopsis; end
@@ -3636,7 +3573,7 @@ class Work
     def will_save_change_to_aasm_state?(from: T.unsafe(nil), to: T.unsafe(nil)); end
 
     sig { params(from: T.untyped, to: T.untyped).returns(T::Boolean) }
-    def will_save_change_to_archive_message?(from: T.unsafe(nil), to: T.unsafe(nil)); end
+    def will_save_change_to_anime_id?(from: T.unsafe(nil), to: T.unsafe(nil)); end
 
     sig { params(from: T.untyped, to: T.untyped).returns(T::Boolean) }
     def will_save_change_to_created_at?(from: T.unsafe(nil), to: T.unsafe(nil)); end
@@ -3721,9 +3658,6 @@ class Work
 
     sig { params(from: T.untyped, to: T.untyped).returns(T::Boolean) }
     def will_save_change_to_started_on?(from: T.unsafe(nil), to: T.unsafe(nil)); end
-
-    sig { params(from: T.untyped, to: T.untyped).returns(T::Boolean) }
-    def will_save_change_to_status?(from: T.unsafe(nil), to: T.unsafe(nil)); end
 
     sig { params(from: T.untyped, to: T.untyped).returns(T::Boolean) }
     def will_save_change_to_synopsis?(from: T.unsafe(nil), to: T.unsafe(nil)); end
@@ -4055,16 +3989,7 @@ class Work
     def with(*args, &blk); end
 
     sig { params(args: T.untyped, blk: T.untyped).returns(PrivateRelation) }
-    def with_no_episodes(*args, &blk); end
-
-    sig { params(args: T.untyped, blk: T.untyped).returns(PrivateRelation) }
-    def with_no_image(*args, &blk); end
-
-    sig { params(args: T.untyped, blk: T.untyped).returns(PrivateRelation) }
     def with_no_season(*args, &blk); end
-
-    sig { params(args: T.untyped, blk: T.untyped).returns(PrivateRelation) }
-    def with_no_slots(*args, &blk); end
 
     sig { params(args: T.untyped, blk: T.untyped).returns(PrivateRelation) }
     def with_recursive(*args, &blk); end

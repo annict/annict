@@ -306,6 +306,7 @@ func TestAppErrorCode_Constants(t *testing.T) {
 		model.AppErrCodeForbidden,
 		model.AppErrCodeConflict,
 		model.AppErrCodeInternal,
+		model.AppErrCodeBusy,
 	}
 	seen := map[model.AppErrorCode]bool{}
 	for _, code := range codes {

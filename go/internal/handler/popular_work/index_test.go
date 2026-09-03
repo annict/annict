@@ -44,7 +44,8 @@ func TestIndex(t *testing.T) {
 	queries := query.New(db).WithTx(tx)
 
 	cfg := &config.Config{
-		Env: "test",
+		Env:    "test",
+		Domain: "test.annict.com",
 	}
 
 	// WorkRepository, CastRepository, StaffRepository とUseCaseを作成
@@ -88,6 +89,11 @@ func TestIndex(t *testing.T) {
 		`href="/works/` + workID1.String() + `"`,
 		`href="/works/` + workID2.String() + `"`,
 		`href="/works/` + workID3.String() + `"`,
+		// The canonical URL points at the page itself, and og:url declares the same URL.
+		//
+		// [Ja] canonical はページ自身を指し、og:url も同じ URL を宣言する。
+		`<link rel="canonical" href="https://test.annict.com/works/popular">`,
+		`<meta property="og:url" content="https://test.annict.com/works/popular">`,
 	}
 
 	for _, expected := range expectedContents {
@@ -117,7 +123,8 @@ func TestIndexEmptyResult(t *testing.T) {
 	queries := query.New(db).WithTx(tx)
 
 	cfg := &config.Config{
-		Env: "test",
+		Env:    "test",
+		Domain: "test.annict.com",
 	}
 
 	// WorkRepository, CastRepository, StaffRepository とUseCaseを作成
@@ -188,7 +195,8 @@ func BenchmarkIndex(b *testing.B) {
 	queries := query.New(db).WithTx(tx)
 
 	cfg := &config.Config{
-		Env: "test",
+		Env:    "test",
+		Domain: "test.annict.com",
 	}
 
 	// WorkRepository, CastRepository, StaffRepository とUseCaseを作成

@@ -27,7 +27,8 @@ func setupTestHandler(t *testing.T, tx *sql.Tx, db *sql.DB) *Handler {
 
 	queries := query.New(db).WithTx(tx)
 	cfg := &config.Config{
-		Env: "test",
+		Env:    "test",
+		Domain: "test.annict.com",
 	}
 
 	sessionRepo := repository.NewSessionRepository(queries)
@@ -140,6 +141,11 @@ func TestShow_NotLoggedIn(t *testing.T) {
 	expectedContents := []string{
 		"サポーター", // ページタイトル
 		"ログイン",  // ログインボタン
+		// The canonical URL points at the page itself, and og:url declares the same URL.
+		//
+		// [Ja] canonical はページ自身を指し、og:url も同じ URL を宣言する。
+		`<link rel="canonical" href="https://test.annict.com/supporters">`,
+		`<meta property="og:url" content="https://test.annict.com/supporters">`,
 	}
 
 	for _, expected := range expectedContents {
@@ -339,8 +345,8 @@ func TestShow_SuccessQueryParam(t *testing.T) {
 	body := rr.Body.String()
 
 	// 成功メッセージが表示されることを確認
-	if !strings.Contains(body, "bg-success") {
-		t.Error("response doesn't contain success message (success background)")
+	if !strings.Contains(body, `<div class="alert" data-variant="success">`) {
+		t.Error("response doesn't contain success message (success alert variant)")
 	}
 }
 
@@ -363,8 +369,8 @@ func TestShow_CanceledQueryParam(t *testing.T) {
 	body := rr.Body.String()
 
 	// キャンセルメッセージが表示されることを確認
-	if !strings.Contains(body, "bg-warning") {
-		t.Error("response doesn't contain canceled message (warning background)")
+	if !strings.Contains(body, `<div class="alert" data-variant="warning">`) {
+		t.Error("response doesn't contain canceled message (warning alert variant)")
 	}
 }
 

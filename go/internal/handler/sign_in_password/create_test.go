@@ -389,7 +389,7 @@ func TestCreate_GlobalError(t *testing.T) {
 
 	// レスポンスボディを確認（form_errorsパーシャルが正しくレンダリングされているか）
 	body := rrPost.Body.String()
-	if !strings.Contains(body, "alert-destructive") {
+	if !strings.Contains(body, `class="alert" data-variant="destructive"`) {
 		t.Error("エラーメッセージのスタイルクラスが見つかりません（form_errorsパーシャルが読み込まれていない可能性があります）")
 	}
 

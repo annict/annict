@@ -8,30 +8,49 @@ package query
 import (
 	"context"
 	"database/sql"
+
+	"github.com/lib/pq"
 )
 
 const countDBWorks = `-- name: CountDBWorks :one
 SELECT COUNT(*)
 FROM works w
 LEFT JOIN work_images wi ON w.id = wi.work_id
-WHERE w.status != 'deleted'
+WHERE w.deleted_at IS NULL
     AND ($1::boolean IS NOT TRUE OR (
         w.no_episodes = false AND NOT EXISTS (
-            SELECT 1 FROM episodes e WHERE e.work_id = w.id AND e.status = 'published'
+            SELECT 1 FROM episodes e
+            WHERE e.work_id = w.id AND e.deleted_at IS NULL AND e.unpublished_at IS NULL
         )
     ))
     AND ($2::boolean IS NOT TRUE OR wi.id IS NULL)
     AND ($3::boolean IS NOT TRUE OR (w.season_year IS NULL AND w.season_name IS NULL))
-    AND ($4::int IS NULL OR w.season_year = $4)
-    AND ($5::int IS NULL OR w.season_name = $5)
+    AND ($4::boolean IS NOT TRUE OR NOT EXISTS (
+        SELECT 1 FROM slots s
+        WHERE s.work_id = w.id AND s.deleted_at IS NULL AND s.unpublished_at IS NULL
+    ))
+    AND ($5::int IS NULL OR w.season_year = $5)
+    AND ($6::int IS NULL OR w.season_name = $6)
+    AND (
+        coalesce(cardinality($7::int[]), 0) = 0
+        OR EXISTS (
+            SELECT 1
+            FROM generate_subscripts($7::int[], 1) AS i
+            WHERE w.season_year = ($7::int[])[i]
+                AND w.season_name = ($8::int[])[i]
+        )
+    )
 `
 
 type CountDBWorksParams struct {
 	FilterNoEpisodes sql.NullBool  `db:"filter_no_episodes"`
 	FilterNoImage    sql.NullBool  `db:"filter_no_image"`
 	FilterNoSeason   sql.NullBool  `db:"filter_no_season"`
+	FilterNoSlots    sql.NullBool  `db:"filter_no_slots"`
 	SeasonYear       sql.NullInt32 `db:"season_year"`
 	SeasonName       sql.NullInt32 `db:"season_name"`
+	SeasonYears      []int32       `db:"season_years"`
+	SeasonNames      []int32       `db:"season_names"`
 }
 
 func (q *Queries) CountDBWorks(ctx context.Context, arg CountDBWorksParams) (int64, error) {
@@ -39,8 +58,11 @@ func (q *Queries) CountDBWorks(ctx context.Context, arg CountDBWorksParams) (int
 		arg.FilterNoEpisodes,
 		arg.FilterNoImage,
 		arg.FilterNoSeason,
+		arg.FilterNoSlots,
 		arg.SeasonYear,
 		arg.SeasonName,
+		pq.Array(arg.SeasonYears),
+		pq.Array(arg.SeasonNames),
 	)
 	var count int64
 	err := row.Scan(&count)
@@ -159,6 +181,52 @@ func (q *Queries) CreateWork(ctx context.Context, arg CreateWorkParams) (int64, 
 	var id int64
 	err := row.Scan(&id)
 	return id, err
+}
+
+const existsKeptWorkByTitle = `-- name: ExistsKeptWorkByTitle :one
+SELECT EXISTS (
+    SELECT 1
+    FROM works
+    WHERE title = $1
+        AND deleted_at IS NULL
+        AND unpublished_at IS NULL
+        AND ($2::bigint IS NULL OR id <> $2)
+)
+`
+
+type ExistsKeptWorkByTitleParams struct {
+	Title     string        `db:"title"`
+	ExcludeID sql.NullInt64 `db:"exclude_id"`
+}
+
+func (q *Queries) ExistsKeptWorkByTitle(ctx context.Context, arg ExistsKeptWorkByTitleParams) (bool, error) {
+	row := q.db.QueryRowContext(ctx, existsKeptWorkByTitle, arg.Title, arg.ExcludeID)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
+const existsWorkForEpisodeCreateByID = `-- name: ExistsWorkForEpisodeCreateByID :one
+SELECT EXISTS (
+    SELECT 1
+    FROM works w
+    WHERE w.id = $1
+        AND w.deleted_at IS NULL
+)
+`
+
+// Check the parent before parsing the submitted rows, matching the Rails action's
+// Work.without_deleted.find ordering. The authoritative row is locked and reloaded after
+// validation, so this preliminary check is not used for creation decisions.
+//
+// [Ja] Rails アクションの Work.without_deleted.find と同じ順序で、送信行をパースする前に親作品を
+// 確認する。バリデーション後に正本の行をロックして再取得するため、この予備確認の結果は作成時の
+// 判断には使わない。
+func (q *Queries) ExistsWorkForEpisodeCreateByID(ctx context.Context, id int64) (bool, error) {
+	row := q.db.QueryRowContext(ctx, existsWorkForEpisodeCreateByID, id)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
 }
 
 const getPopularWorks = `-- name: GetPopularWorks :many
@@ -286,49 +354,452 @@ func (q *Queries) GetWorkByID(ctx context.Context, id int64) (GetWorkByIDRow, er
 	return i, err
 }
 
+const getWorkForEditByID = `-- name: GetWorkForEditByID :one
+SELECT
+    id,
+    title,
+    title_kana,
+    title_alter,
+    title_en,
+    title_alter_en,
+    media,
+    season_year,
+    season_name,
+    started_on,
+    ended_on,
+    official_site_url,
+    official_site_url_en,
+    wikipedia_url,
+    wikipedia_url_en,
+    twitter_username,
+    twitter_hashtag,
+    sc_tid,
+    mal_anime_id,
+    synopsis,
+    synopsis_source,
+    synopsis_en,
+    synopsis_source_en,
+    manual_episodes_count,
+    start_episode_raw_number,
+    number_format_id,
+    no_episodes,
+    updated_at
+FROM works
+WHERE id = $1
+`
+
+type GetWorkForEditByIDRow struct {
+	ID                    int64          `db:"id"`
+	Title                 string         `db:"title"`
+	TitleKana             string         `db:"title_kana"`
+	TitleAlter            string         `db:"title_alter"`
+	TitleEn               string         `db:"title_en"`
+	TitleAlterEn          string         `db:"title_alter_en"`
+	Media                 int32          `db:"media"`
+	SeasonYear            sql.NullInt32  `db:"season_year"`
+	SeasonName            sql.NullInt32  `db:"season_name"`
+	StartedOn             sql.NullTime   `db:"started_on"`
+	EndedOn               sql.NullTime   `db:"ended_on"`
+	OfficialSiteUrl       string         `db:"official_site_url"`
+	OfficialSiteUrlEn     string         `db:"official_site_url_en"`
+	WikipediaUrl          string         `db:"wikipedia_url"`
+	WikipediaUrlEn        string         `db:"wikipedia_url_en"`
+	TwitterUsername       sql.NullString `db:"twitter_username"`
+	TwitterHashtag        sql.NullString `db:"twitter_hashtag"`
+	ScTid                 sql.NullInt32  `db:"sc_tid"`
+	MalAnimeID            sql.NullInt32  `db:"mal_anime_id"`
+	Synopsis              string         `db:"synopsis"`
+	SynopsisSource        string         `db:"synopsis_source"`
+	SynopsisEn            string         `db:"synopsis_en"`
+	SynopsisSourceEn      string         `db:"synopsis_source_en"`
+	ManualEpisodesCount   sql.NullInt32  `db:"manual_episodes_count"`
+	StartEpisodeRawNumber float64        `db:"start_episode_raw_number"`
+	NumberFormatID        sql.NullInt64  `db:"number_format_id"`
+	NoEpisodes            bool           `db:"no_episodes"`
+	UpdatedAt             sql.NullTime   `db:"updated_at"`
+}
+
+func (q *Queries) GetWorkForEditByID(ctx context.Context, id int64) (GetWorkForEditByIDRow, error) {
+	row := q.db.QueryRowContext(ctx, getWorkForEditByID, id)
+	var i GetWorkForEditByIDRow
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.TitleKana,
+		&i.TitleAlter,
+		&i.TitleEn,
+		&i.TitleAlterEn,
+		&i.Media,
+		&i.SeasonYear,
+		&i.SeasonName,
+		&i.StartedOn,
+		&i.EndedOn,
+		&i.OfficialSiteUrl,
+		&i.OfficialSiteUrlEn,
+		&i.WikipediaUrl,
+		&i.WikipediaUrlEn,
+		&i.TwitterUsername,
+		&i.TwitterHashtag,
+		&i.ScTid,
+		&i.MalAnimeID,
+		&i.Synopsis,
+		&i.SynopsisSource,
+		&i.SynopsisEn,
+		&i.SynopsisSourceEn,
+		&i.ManualEpisodesCount,
+		&i.StartEpisodeRawNumber,
+		&i.NumberFormatID,
+		&i.NoEpisodes,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const getWorkForEpisodeCreateByID = `-- name: GetWorkForEpisodeCreateByID :one
+SELECT
+    w.id,
+    w.anime_id,
+    (
+        SELECT COUNT(*)
+        FROM episodes e
+        WHERE e.work_id = w.id
+    )::bigint AS episode_count,
+    COALESCE(latest.id, 0)::bigint AS latest_episode_id,
+    COALESCE(latest.sort_number, 0)::integer AS latest_sort_number,
+    w.manual_episodes_count IS NOT NULL AND (
+        SELECT COUNT(*)
+        FROM episodes kept
+        WHERE kept.work_id = w.id
+            AND kept.unpublished_at IS NULL
+            AND kept.deleted_at IS NULL
+    ) >= w.manual_episodes_count AS episodes_filled,
+    EXISTS (
+        SELECT 1
+        FROM slots s
+        WHERE s.work_id = w.id
+            AND s.started_at IS NOT NULL
+    ) AS slots_exist
+FROM works w
+LEFT JOIN LATERAL (
+    SELECT e.id, e.sort_number
+    FROM episodes e
+    WHERE e.work_id = w.id
+    ORDER BY e.sort_number DESC, e.id DESC
+    LIMIT 1
+) latest ON TRUE
+WHERE w.id = $1
+    AND w.deleted_at IS NULL
+`
+
+type GetWorkForEpisodeCreateByIDRow struct {
+	ID               int64         `db:"id"`
+	AnimeID          sql.NullInt64 `db:"anime_id"`
+	EpisodeCount     int64         `db:"episode_count"`
+	LatestEpisodeID  int64         `db:"latest_episode_id"`
+	LatestSortNumber int32         `db:"latest_sort_number"`
+	EpisodesFilled   sql.NullBool  `db:"episodes_filled"`
+	SlotsExist       bool          `db:"slots_exist"`
+}
+
+// episode_count and the latest_* columns anchor the sort_number the bulk create assigns: the
+// first new episode starts one step past episode_count * 100, and the episode holding the
+// greatest sort_number becomes the prev_episode_id of the first created row. Both aggregate
+// the work's episodes without filtering unpublished or deleted ones, matching the Rails form
+// (work.episodes.count), so a work whose episodes were archived does not hand out
+// sort_numbers that are already taken. anime_id decides whether the create dual-writes the
+// reference model: an episode's classification requires the parent work's anime.
+//
+// latest_episode_id / latest_sort_number are 0 when the work has no episode yet. Ids are
+// positive, so the caller reads 0 as "no preceding episode" (the same shape
+// max_generatable_episode_number above uses for a work with no slot).
+//
+// [Ja] episode_count と latest_* のカラムは、一括作成が振る sort_number の起点になる。最初の
+// 新規エピソードは episode_count * 100 の 1 ステップ先から始まり、sort_number が最大の
+// エピソードが最初に作る行の prev_episode_id になる。どちらも非公開・削除済みを除外せずに
+// 作品のエピソードを集計する (Rails のフォームの work.episodes.count と同じ)。エピソードを
+// 非公開にした作品で、既に使われている sort_number を振り直さないため。anime_id は作成が
+// 参照モデルへ両書きするかどうかを決める (エピソードの分類は親作品の anime を必要とする)。
+//
+// latest_episode_id / latest_sort_number は、作品がまだエピソードを持たないとき 0 に
+// なる。id は正の値のため、呼び出し側は 0 を「直前のエピソードなし」と読む (上の
+// max_generatable_episode_number がスロットの無い作品に対して採るのと同じ形)。
+func (q *Queries) GetWorkForEpisodeCreateByID(ctx context.Context, id int64) (GetWorkForEpisodeCreateByIDRow, error) {
+	row := q.db.QueryRowContext(ctx, getWorkForEpisodeCreateByID, id)
+	var i GetWorkForEpisodeCreateByIDRow
+	err := row.Scan(
+		&i.ID,
+		&i.AnimeID,
+		&i.EpisodeCount,
+		&i.LatestEpisodeID,
+		&i.LatestSortNumber,
+		&i.EpisodesFilled,
+		&i.SlotsExist,
+	)
+	return i, err
+}
+
+const getWorkForEpisodeFormByID = `-- name: GetWorkForEpisodeFormByID :one
+SELECT
+    w.id,
+    w.title,
+    w.no_episodes,
+    w.manual_episodes_count IS NOT NULL AND (
+        SELECT COUNT(*)
+        FROM episodes e
+        WHERE e.work_id = w.id
+            AND e.unpublished_at IS NULL
+            AND e.deleted_at IS NULL
+    ) >= w.manual_episodes_count AS episodes_filled,
+    EXISTS (
+        SELECT 1
+        FROM slots s
+        WHERE s.work_id = w.id
+            AND s.started_at IS NOT NULL
+    ) AS slots_exist
+FROM works w
+WHERE w.id = $1
+    AND w.deleted_at IS NULL
+`
+
+type GetWorkForEpisodeFormByIDRow struct {
+	ID             int64        `db:"id"`
+	Title          string       `db:"title"`
+	NoEpisodes     bool         `db:"no_episodes"`
+	EpisodesFilled sql.NullBool `db:"episodes_filled"`
+	SlotsExist     bool         `db:"slots_exist"`
+}
+
+// The episode form needs the work to name it in the heading, drive the shared work subnav
+// and preserve the Rails manual-create guard. An editor cannot create more episodes once
+// the published count reaches manual_episodes_count, or while the work owns a slot with a
+// start time; admins still see the warning but may override it in the presentation layer.
+//
+// [Ja] エピソードフォームは、見出しでの名指し、共有サブナビの出し分け、および Rails の
+// 手動作成ガードを保つために作品を取得する。公開中のエピソード数が manual_episodes_count に
+// 達した作品、または開始時刻を持つ放送枠がある作品には編集者が追加できない。管理者も警告は
+// 見るが、表示層で上書きして作成できる。
+func (q *Queries) GetWorkForEpisodeFormByID(ctx context.Context, id int64) (GetWorkForEpisodeFormByIDRow, error) {
+	row := q.db.QueryRowContext(ctx, getWorkForEpisodeFormByID, id)
+	var i GetWorkForEpisodeFormByIDRow
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.NoEpisodes,
+		&i.EpisodesFilled,
+		&i.SlotsExist,
+	)
+	return i, err
+}
+
+const getWorkForEpisodeListByID = `-- name: GetWorkForEpisodeListByID :one
+SELECT
+    w.id,
+    w.title,
+    w.no_episodes,
+    w.manual_episodes_count,
+    (
+        SELECT COUNT(*)
+        FROM episodes e
+        WHERE e.work_id = w.id
+            AND e.deleted_at IS NULL
+            AND e.unpublished_at IS NULL
+    )::bigint AS published_episode_count,
+    COALESCE((
+        SELECT MAX(s.number)
+        FROM slots s
+        WHERE s.work_id = w.id
+            AND s.deleted_at IS NULL
+            AND s.unpublished_at IS NULL
+    ), 0)::bigint AS max_generatable_episode_number
+FROM works w
+WHERE w.id = $1
+    AND w.deleted_at IS NULL
+`
+
+type GetWorkForEpisodeListByIDRow struct {
+	ID                          int64         `db:"id"`
+	Title                       string        `db:"title"`
+	NoEpisodes                  bool          `db:"no_episodes"`
+	ManualEpisodesCount         sql.NullInt32 `db:"manual_episodes_count"`
+	PublishedEpisodeCount       int64         `db:"published_episode_count"`
+	MaxGeneratableEpisodeNumber int64         `db:"max_generatable_episode_number"`
+}
+
+// published_episode_count and max_generatable_episode_number feed the episode list's
+// auto-generation notice. The first is how many episodes are currently published. The
+// second is the highest number the Syobocal auto-generation could assign from the work's
+// kept slots. Both aggregate other tables for one work, so they ride along with the work
+// row instead of costing the page extra round trips.
+//
+// max_generatable_episode_number takes MAX, which skips NULLs, where the Rails notice reads
+// the first of the work's kept slots ordered by number descending. PostgreSQL sorts NULLs
+// first for DESC, so Rails lands on a NULL number and reports 0 as soon as the work has one
+// kept slot without a number. MAX reports the number the auto-generation actually reaches,
+// so the divergence from Rails is deliberate rather than a gap in the port.
+//
+// [Ja] published_episode_count と max_generatable_episode_number はエピソード一覧の自動生成の
+// 案内に使う。前者は作品のエピソードのうち現在公開中の件数、後者はしょぼいカレンダー由来の
+// 自動生成が作品の有効なスロットから振れる最大話数を表す。どちらも 1 作品について別テーブルを
+// 集計する値のため、作品の行と一緒に引いてページの往復を増やさない。
+//
+// max_generatable_episode_number が使う MAX は NULL を飛ばすが、Rails の案内は作品の有効な
+// スロットを number 降順に並べた先頭行を読む。PostgreSQL の DESC は NULLS FIRST のため、
+// number 未設定の有効スロットが 1 件でもあれば Rails はその行に当たって 0 を報告する。
+// MAX が報告するのは自動生成が実際に到達する話数であり、Rails と結果が分かれるのは
+// 移植漏れではなく意図的な選択。
+func (q *Queries) GetWorkForEpisodeListByID(ctx context.Context, id int64) (GetWorkForEpisodeListByIDRow, error) {
+	row := q.db.QueryRowContext(ctx, getWorkForEpisodeListByID, id)
+	var i GetWorkForEpisodeListByIDRow
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.NoEpisodes,
+		&i.ManualEpisodesCount,
+		&i.PublishedEpisodeCount,
+		&i.MaxGeneratableEpisodeNumber,
+	)
+	return i, err
+}
+
+const getWorkForStateChangeByID = `-- name: GetWorkForStateChangeByID :one
+SELECT
+    id,
+    title,
+    unpublished_at,
+    deleted_at
+FROM works
+WHERE id = $1
+`
+
+type GetWorkForStateChangeByIDRow struct {
+	ID            int64        `db:"id"`
+	Title         string       `db:"title"`
+	UnpublishedAt sql.NullTime `db:"unpublished_at"`
+	DeletedAt     sql.NullTime `db:"deleted_at"`
+}
+
+// The projection the Annict DB confirmation screens for a work's state changes (archive,
+// publish, delete) share: the title each screen names its target with, and the work-state
+// source the caller derives the current status from to reject a work its action cannot act
+// on. No state is filtered here, since the three screens each accept a different one.
+//
+// [Ja] Annict DB の作品の状態変更 (非公開・公開・削除) の確認画面が共有する射影。各画面が対象を
+// 名指しするタイトルと、呼び出し側が現在の状態を導出してその操作を適用できない作品を弾くための
+// 作品状態の source を運ぶ。3 つの画面が受け付ける状態はそれぞれ異なるため、ここでは状態を
+// 絞り込まない。
+func (q *Queries) GetWorkForStateChangeByID(ctx context.Context, id int64) (GetWorkForStateChangeByIDRow, error) {
+	row := q.db.QueryRowContext(ctx, getWorkForStateChangeByID, id)
+	var i GetWorkForStateChangeByIDRow
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.UnpublishedAt,
+		&i.DeletedAt,
+	)
+	return i, err
+}
+
+const incrementWorkEpisodesCount = `-- name: IncrementWorkEpisodesCount :execrows
+UPDATE works
+SET
+    episodes_count = episodes_count + $1,
+    updated_at = NOW()
+WHERE id = $2
+    AND deleted_at IS NULL
+`
+
+type IncrementWorkEpisodesCountParams struct {
+	CreatedCount int32 `db:"created_count"`
+	WorkID       int64 `db:"work_id"`
+}
+
+// Episode.create in Rails increments the published counter cache and touches its work.
+// The bulk create holds the work row lock already; add the number of newly published rows
+// atomically so the shared Rails API observes the same counter and timestamp side effects.
+//
+// [Ja] Rails の Episode.create は公開話数のカウンターキャッシュを加算し、親作品を touch する。
+// 一括作成は既に作品行をロックしているため、新しく公開した行数を原子的に加算し、共有する Rails
+// API から同じカウンターとタイムスタンプの副作用が見えるようにする。
+func (q *Queries) IncrementWorkEpisodesCount(ctx context.Context, arg IncrementWorkEpisodesCountParams) (int64, error) {
+	result, err := q.db.ExecContext(ctx, incrementWorkEpisodesCount, arg.CreatedCount, arg.WorkID)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected()
+}
+
 const listDBWorks = `-- name: ListDBWorks :many
 SELECT
     w.id,
     w.title,
+    w.title_kana,
+    w.title_en,
+    w.media,
+    w.sc_tid,
+    w.mal_anime_id,
     w.season_year,
     w.season_name,
     w.watchers_count,
-    w.status,
+    w.unpublished_at,
+    w.deleted_at,
     wi.image_data
 FROM works w
 LEFT JOIN work_images wi ON w.id = wi.work_id
-WHERE w.status != 'deleted'
+WHERE w.deleted_at IS NULL
     AND ($1::boolean IS NOT TRUE OR (
         w.no_episodes = false AND NOT EXISTS (
-            SELECT 1 FROM episodes e WHERE e.work_id = w.id AND e.status = 'published'
+            SELECT 1 FROM episodes e
+            WHERE e.work_id = w.id AND e.deleted_at IS NULL AND e.unpublished_at IS NULL
         )
     ))
     AND ($2::boolean IS NOT TRUE OR wi.id IS NULL)
     AND ($3::boolean IS NOT TRUE OR (w.season_year IS NULL AND w.season_name IS NULL))
-    AND ($4::int IS NULL OR w.season_year = $4)
-    AND ($5::int IS NULL OR w.season_name = $5)
+    AND ($4::boolean IS NOT TRUE OR NOT EXISTS (
+        SELECT 1 FROM slots s
+        WHERE s.work_id = w.id AND s.deleted_at IS NULL AND s.unpublished_at IS NULL
+    ))
+    AND ($5::int IS NULL OR w.season_year = $5)
+    AND ($6::int IS NULL OR w.season_name = $6)
+    AND (
+        coalesce(cardinality($7::int[]), 0) = 0
+        OR EXISTS (
+            SELECT 1
+            FROM generate_subscripts($7::int[], 1) AS i
+            WHERE w.season_year = ($7::int[])[i]
+                AND w.season_name = ($8::int[])[i]
+        )
+    )
 ORDER BY w.id DESC
-LIMIT $7
-OFFSET $6
+LIMIT $10
+OFFSET $9::bigint
 `
 
 type ListDBWorksParams struct {
 	FilterNoEpisodes sql.NullBool  `db:"filter_no_episodes"`
 	FilterNoImage    sql.NullBool  `db:"filter_no_image"`
 	FilterNoSeason   sql.NullBool  `db:"filter_no_season"`
+	FilterNoSlots    sql.NullBool  `db:"filter_no_slots"`
 	SeasonYear       sql.NullInt32 `db:"season_year"`
 	SeasonName       sql.NullInt32 `db:"season_name"`
-	PageOffset       int32         `db:"page_offset"`
+	SeasonYears      []int32       `db:"season_years"`
+	SeasonNames      []int32       `db:"season_names"`
+	PageOffset       int64         `db:"page_offset"`
 	PerPage          int32         `db:"per_page"`
 }
 
 type ListDBWorksRow struct {
 	ID            int64          `db:"id"`
 	Title         string         `db:"title"`
+	TitleKana     string         `db:"title_kana"`
+	TitleEn       string         `db:"title_en"`
+	Media         int32          `db:"media"`
+	ScTid         sql.NullInt32  `db:"sc_tid"`
+	MalAnimeID    sql.NullInt32  `db:"mal_anime_id"`
 	SeasonYear    sql.NullInt32  `db:"season_year"`
 	SeasonName    sql.NullInt32  `db:"season_name"`
 	WatchersCount int32          `db:"watchers_count"`
-	Status        WorkStatus     `db:"status"`
+	UnpublishedAt sql.NullTime   `db:"unpublished_at"`
+	DeletedAt     sql.NullTime   `db:"deleted_at"`
 	ImageData     sql.NullString `db:"image_data"`
 }
 
@@ -337,8 +808,11 @@ func (q *Queries) ListDBWorks(ctx context.Context, arg ListDBWorksParams) ([]Lis
 		arg.FilterNoEpisodes,
 		arg.FilterNoImage,
 		arg.FilterNoSeason,
+		arg.FilterNoSlots,
 		arg.SeasonYear,
 		arg.SeasonName,
+		pq.Array(arg.SeasonYears),
+		pq.Array(arg.SeasonNames),
 		arg.PageOffset,
 		arg.PerPage,
 	)
@@ -352,10 +826,16 @@ func (q *Queries) ListDBWorks(ctx context.Context, arg ListDBWorksParams) ([]Lis
 		if err := rows.Scan(
 			&i.ID,
 			&i.Title,
+			&i.TitleKana,
+			&i.TitleEn,
+			&i.Media,
+			&i.ScTid,
+			&i.MalAnimeID,
 			&i.SeasonYear,
 			&i.SeasonName,
 			&i.WatchersCount,
-			&i.Status,
+			&i.UnpublishedAt,
+			&i.DeletedAt,
 			&i.ImageData,
 		); err != nil {
 			return nil, err
@@ -369,4 +849,394 @@ func (q *Queries) ListDBWorks(ctx context.Context, arg ListDBWorksParams) ([]Lis
 		return nil, err
 	}
 	return items, nil
+}
+
+const listWorkIDsAfter = `-- name: ListWorkIDsAfter :many
+SELECT id
+FROM works
+WHERE id > $1
+ORDER BY id
+LIMIT $2
+`
+
+type ListWorkIDsAfterParams struct {
+	AfterID   int64 `db:"after_id"`
+	BatchSize int32 `db:"batch_size"`
+}
+
+func (q *Queries) ListWorkIDsAfter(ctx context.Context, arg ListWorkIDsAfterParams) ([]int64, error) {
+	rows, err := q.db.QueryContext(ctx, listWorkIDsAfter, arg.AfterID, arg.BatchSize)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []int64{}
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		items = append(items, id)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listWorksForAnimeSyncByIDs = `-- name: ListWorksForAnimeSyncByIDs :many
+SELECT
+    id,
+    title,
+    title_kana,
+    title_ro,
+    title_en,
+    title_alter,
+    title_alter_en,
+    media,
+    synopsis,
+    synopsis_en,
+    synopsis_source,
+    synopsis_source_en,
+    unpublished_at,
+    deleted_at,
+    no_episodes,
+    manual_episodes_count,
+    start_episode_raw_number,
+    number_format_id,
+    anime_id
+FROM works
+WHERE id = ANY($1::bigint[])
+ORDER BY id
+`
+
+type ListWorksForAnimeSyncByIDsRow struct {
+	ID                    int64         `db:"id"`
+	Title                 string        `db:"title"`
+	TitleKana             string        `db:"title_kana"`
+	TitleRo               string        `db:"title_ro"`
+	TitleEn               string        `db:"title_en"`
+	TitleAlter            string        `db:"title_alter"`
+	TitleAlterEn          string        `db:"title_alter_en"`
+	Media                 int32         `db:"media"`
+	Synopsis              string        `db:"synopsis"`
+	SynopsisEn            string        `db:"synopsis_en"`
+	SynopsisSource        string        `db:"synopsis_source"`
+	SynopsisSourceEn      string        `db:"synopsis_source_en"`
+	UnpublishedAt         sql.NullTime  `db:"unpublished_at"`
+	DeletedAt             sql.NullTime  `db:"deleted_at"`
+	NoEpisodes            bool          `db:"no_episodes"`
+	ManualEpisodesCount   sql.NullInt32 `db:"manual_episodes_count"`
+	StartEpisodeRawNumber float64       `db:"start_episode_raw_number"`
+	NumberFormatID        sql.NullInt64 `db:"number_format_id"`
+	AnimeID               sql.NullInt64 `db:"anime_id"`
+}
+
+func (q *Queries) ListWorksForAnimeSyncByIDs(ctx context.Context, dollar_1 []int64) ([]ListWorksForAnimeSyncByIDsRow, error) {
+	rows, err := q.db.QueryContext(ctx, listWorksForAnimeSyncByIDs, pq.Array(dollar_1))
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []ListWorksForAnimeSyncByIDsRow{}
+	for rows.Next() {
+		var i ListWorksForAnimeSyncByIDsRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Title,
+			&i.TitleKana,
+			&i.TitleRo,
+			&i.TitleEn,
+			&i.TitleAlter,
+			&i.TitleAlterEn,
+			&i.Media,
+			&i.Synopsis,
+			&i.SynopsisEn,
+			&i.SynopsisSource,
+			&i.SynopsisSourceEn,
+			&i.UnpublishedAt,
+			&i.DeletedAt,
+			&i.NoEpisodes,
+			&i.ManualEpisodesCount,
+			&i.StartEpisodeRawNumber,
+			&i.NumberFormatID,
+			&i.AnimeID,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listWorksForSatelliteSyncByIDs = `-- name: ListWorksForSatelliteSyncByIDs :many
+SELECT
+    id,
+    anime_id,
+    sc_tid,
+    mal_anime_id,
+    official_site_url,
+    official_site_url_en,
+    wikipedia_url,
+    wikipedia_url_en,
+    twitter_username,
+    twitter_hashtag,
+    season_year,
+    season_name,
+    started_on,
+    ended_on
+FROM works
+WHERE id = ANY($1::bigint[])
+ORDER BY id
+`
+
+type ListWorksForSatelliteSyncByIDsRow struct {
+	ID                int64          `db:"id"`
+	AnimeID           sql.NullInt64  `db:"anime_id"`
+	ScTid             sql.NullInt32  `db:"sc_tid"`
+	MalAnimeID        sql.NullInt32  `db:"mal_anime_id"`
+	OfficialSiteUrl   string         `db:"official_site_url"`
+	OfficialSiteUrlEn string         `db:"official_site_url_en"`
+	WikipediaUrl      string         `db:"wikipedia_url"`
+	WikipediaUrlEn    string         `db:"wikipedia_url_en"`
+	TwitterUsername   sql.NullString `db:"twitter_username"`
+	TwitterHashtag    sql.NullString `db:"twitter_hashtag"`
+	SeasonYear        sql.NullInt32  `db:"season_year"`
+	SeasonName        sql.NullInt32  `db:"season_name"`
+	StartedOn         sql.NullTime   `db:"started_on"`
+	EndedOn           sql.NullTime   `db:"ended_on"`
+}
+
+func (q *Queries) ListWorksForSatelliteSyncByIDs(ctx context.Context, dollar_1 []int64) ([]ListWorksForSatelliteSyncByIDsRow, error) {
+	rows, err := q.db.QueryContext(ctx, listWorksForSatelliteSyncByIDs, pq.Array(dollar_1))
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []ListWorksForSatelliteSyncByIDsRow{}
+	for rows.Next() {
+		var i ListWorksForSatelliteSyncByIDsRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.AnimeID,
+			&i.ScTid,
+			&i.MalAnimeID,
+			&i.OfficialSiteUrl,
+			&i.OfficialSiteUrlEn,
+			&i.WikipediaUrl,
+			&i.WikipediaUrlEn,
+			&i.TwitterUsername,
+			&i.TwitterHashtag,
+			&i.SeasonYear,
+			&i.SeasonName,
+			&i.StartedOn,
+			&i.EndedOn,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const lockWorkForEpisodeCreateByID = `-- name: LockWorkForEpisodeCreateByID :one
+SELECT w.id
+FROM works w
+WHERE w.id = $1
+    AND w.deleted_at IS NULL
+FOR UPDATE
+`
+
+// Serialize bulk creates for one work before reading their numbering anchors. Keeping the
+// lock query separate from the aggregate query makes the latter run after a waiter acquires
+// the lock and therefore observe the preceding transaction's committed episodes.
+//
+// [Ja] 採番の起点を読む前に、1 作品への一括作成を直列化する。ロッククエリと集計クエリを分ける
+// ことで、待機側がロックを得た後に集計を実行し、先行トランザクションがコミットしたエピソードを
+// 参照できるようにする。
+func (q *Queries) LockWorkForEpisodeCreateByID(ctx context.Context, id int64) (int64, error) {
+	row := q.db.QueryRowContext(ctx, lockWorkForEpisodeCreateByID, id)
+	err := row.Scan(&id)
+	return id, err
+}
+
+const updateWork = `-- name: UpdateWork :execrows
+UPDATE works
+SET
+    title = $1,
+    title_kana = $2,
+    title_alter = $3,
+    title_en = $4,
+    title_alter_en = $5,
+    media = $6,
+    season_year = $7,
+    season_name = $8,
+    started_on = $9,
+    ended_on = $10,
+    official_site_url = $11,
+    official_site_url_en = $12,
+    wikipedia_url = $13,
+    wikipedia_url_en = $14,
+    twitter_username = $15,
+    twitter_hashtag = $16,
+    sc_tid = $17,
+    mal_anime_id = $18,
+    synopsis = $19,
+    synopsis_source = $20,
+    synopsis_en = $21,
+    synopsis_source_en = $22,
+    manual_episodes_count = $23,
+    start_episode_raw_number = $24,
+    number_format_id = $25,
+    no_episodes = $26,
+    updated_at = NOW()
+WHERE id = $27
+    AND updated_at IS NOT DISTINCT FROM $28::timestamptz
+`
+
+type UpdateWorkParams struct {
+	Title                 string         `db:"title"`
+	TitleKana             string         `db:"title_kana"`
+	TitleAlter            string         `db:"title_alter"`
+	TitleEn               string         `db:"title_en"`
+	TitleAlterEn          string         `db:"title_alter_en"`
+	Media                 int32          `db:"media"`
+	SeasonYear            sql.NullInt32  `db:"season_year"`
+	SeasonName            sql.NullInt32  `db:"season_name"`
+	StartedOn             sql.NullTime   `db:"started_on"`
+	EndedOn               sql.NullTime   `db:"ended_on"`
+	OfficialSiteUrl       string         `db:"official_site_url"`
+	OfficialSiteUrlEn     string         `db:"official_site_url_en"`
+	WikipediaUrl          string         `db:"wikipedia_url"`
+	WikipediaUrlEn        string         `db:"wikipedia_url_en"`
+	TwitterUsername       sql.NullString `db:"twitter_username"`
+	TwitterHashtag        sql.NullString `db:"twitter_hashtag"`
+	ScTid                 sql.NullInt32  `db:"sc_tid"`
+	MalAnimeID            sql.NullInt32  `db:"mal_anime_id"`
+	Synopsis              string         `db:"synopsis"`
+	SynopsisSource        string         `db:"synopsis_source"`
+	SynopsisEn            string         `db:"synopsis_en"`
+	SynopsisSourceEn      string         `db:"synopsis_source_en"`
+	ManualEpisodesCount   sql.NullInt32  `db:"manual_episodes_count"`
+	StartEpisodeRawNumber float64        `db:"start_episode_raw_number"`
+	NumberFormatID        sql.NullInt64  `db:"number_format_id"`
+	NoEpisodes            bool           `db:"no_episodes"`
+	ID                    int64          `db:"id"`
+	Version               sql.NullTime   `db:"version"`
+}
+
+// The version stated by the submit is matched inside the UPDATE rather than compared against a
+// preceding read, so no other write can slip between the comparison and the write. NULL is an
+// explicit version (the shared column is nullable), which IS NOT DISTINCT FROM matches without a
+// second statement; the write then advances updated_at, so a second submit from the same NULL
+// version no longer matches. No row updated therefore means the row was written by someone else
+// in the meantime, and the caller reports a conflict instead of overwriting it.
+//
+// [Ja] 送信が名乗る版の照合は、直前の読み取りとの比較ではなく UPDATE の中で行う。比較と書き込み
+// の間に他の書き込みが挟まらないようにするため。共有カラムは NULL 許容のため NULL も明示的な版
+// であり、IS NOT DISTINCT FROM なら 2 文に分けずに照合できる。書き込みは updated_at を進めるので、
+// 同じ NULL 版からの 2 件目はもう一致しない。したがって 1 行も更新されないことは、その間に他者が
+// 行を書いたことを意味し、呼び出し側は上書きせず競合として報告する。
+func (q *Queries) UpdateWork(ctx context.Context, arg UpdateWorkParams) (int64, error) {
+	result, err := q.db.ExecContext(ctx, updateWork,
+		arg.Title,
+		arg.TitleKana,
+		arg.TitleAlter,
+		arg.TitleEn,
+		arg.TitleAlterEn,
+		arg.Media,
+		arg.SeasonYear,
+		arg.SeasonName,
+		arg.StartedOn,
+		arg.EndedOn,
+		arg.OfficialSiteUrl,
+		arg.OfficialSiteUrlEn,
+		arg.WikipediaUrl,
+		arg.WikipediaUrlEn,
+		arg.TwitterUsername,
+		arg.TwitterHashtag,
+		arg.ScTid,
+		arg.MalAnimeID,
+		arg.Synopsis,
+		arg.SynopsisSource,
+		arg.SynopsisEn,
+		arg.SynopsisSourceEn,
+		arg.ManualEpisodesCount,
+		arg.StartEpisodeRawNumber,
+		arg.NumberFormatID,
+		arg.NoEpisodes,
+		arg.ID,
+		arg.Version,
+	)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected()
+}
+
+const updateWorkAnimeID = `-- name: UpdateWorkAnimeID :exec
+UPDATE works
+SET anime_id = $2
+WHERE id = $1
+`
+
+type UpdateWorkAnimeIDParams struct {
+	ID      int64         `db:"id"`
+	AnimeID sql.NullInt64 `db:"anime_id"`
+}
+
+func (q *Queries) UpdateWorkAnimeID(ctx context.Context, arg UpdateWorkAnimeIDParams) error {
+	_, err := q.db.ExecContext(ctx, updateWorkAnimeID, arg.ID, arg.AnimeID)
+	return err
+}
+
+const updateWorkDeletedAt = `-- name: UpdateWorkDeletedAt :exec
+UPDATE works
+SET
+    deleted_at = $1,
+    updated_at = NOW()
+WHERE id = $2
+`
+
+type UpdateWorkDeletedAtParams struct {
+	DeletedAt sql.NullTime `db:"deleted_at"`
+	ID        int64        `db:"id"`
+}
+
+func (q *Queries) UpdateWorkDeletedAt(ctx context.Context, arg UpdateWorkDeletedAtParams) error {
+	_, err := q.db.ExecContext(ctx, updateWorkDeletedAt, arg.DeletedAt, arg.ID)
+	return err
+}
+
+const updateWorkUnpublishedAt = `-- name: UpdateWorkUnpublishedAt :exec
+UPDATE works
+SET
+    unpublished_at = $1,
+    updated_at = NOW()
+WHERE id = $2
+`
+
+type UpdateWorkUnpublishedAtParams struct {
+	UnpublishedAt sql.NullTime `db:"unpublished_at"`
+	ID            int64        `db:"id"`
+}
+
+func (q *Queries) UpdateWorkUnpublishedAt(ctx context.Context, arg UpdateWorkUnpublishedAtParams) error {
+	_, err := q.db.ExecContext(ctx, updateWorkUnpublishedAt, arg.UnpublishedAt, arg.ID)
+	return err
 }

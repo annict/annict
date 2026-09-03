@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"testing"
+
+	"github.com/lib/pq"
 )
 
 func TestBatchBuildWorks(t *testing.T) {
@@ -39,9 +41,21 @@ func TestBatchBuildWorks(t *testing.T) {
 		t.Errorf("callback not called correctly: got %d, want %d", callbackCalled, count)
 	}
 
-	// データベースに正しく作成されたことを確認
+	// Verify they were persisted. Count only the ids created here: `make test` runs
+	// `go test ./...` without resetting the shared DB between packages, so other
+	// packages' usecase tests commit real works via GetTestDB and an unscoped
+	// COUNT(*) would no longer equal count.
+	//
+	// [Ja] 永続化されたことを確認する。ここで作成した id のみを数える。`make test` は
+	// パッケージ間で共有 DB をリセットせずに `go test ./...` を実行するため、他パッケージの
+	// usecase テストが GetTestDB で works をコミットし、限定しない COUNT(*) はもはや count と
+	// 一致しなくなる。
+	workIDs := make([]int64, len(ids))
+	for i, id := range ids {
+		workIDs[i] = int64(id)
+	}
 	var actualCount int
-	err = tx.QueryRowContext(ctx, "SELECT COUNT(*) FROM works").Scan(&actualCount)
+	err = tx.QueryRowContext(ctx, "SELECT COUNT(*) FROM works WHERE id = ANY($1::bigint[])", pq.Array(workIDs)).Scan(&actualCount)
 	if err != nil {
 		t.Fatalf("failed to count works: %v", err)
 	}
