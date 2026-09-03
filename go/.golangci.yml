@@ -83,15 +83,6 @@ linters:
           - errcheck
           - ineffassign
           - unused
-      - path: "cmd/seed/.+\\.go"
-        linters:
-          - govet
-          - staticcheck
-          - gosec
-          - depguard
-          - errcheck
-          - ineffassign
-          - unused
       - path: "internal/seed/.+\\.go"
         linters:
           - govet

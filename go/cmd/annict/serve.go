@@ -61,15 +61,21 @@ import (
 	"github.com/annict/annict/go/internal/worker"
 )
 
-// dailyAt2AMSchedule は毎日深夜2時に実行するスケジュール
+// dailyAt2AMSchedule runs a job once a day at 2 AM local time.
+//
+// [Ja] dailyAt2AMSchedule は毎日深夜 2 時にジョブを実行するスケジュール。
 type dailyAt2AMSchedule struct{}
 
-// Next は次の実行時刻を返します
+// Next returns the next scheduled 2 AM, rolling over to the following day from 1:59 onward.
+//
+// [Ja] Next は次の実行対象となる深夜 2 時を返し、1 時 59 分以降は翌日に繰り越す。
 func (s dailyAt2AMSchedule) Next(current time.Time) time.Time {
-	// 毎日深夜2時に実行
 	next := time.Date(current.Year(), current.Month(), current.Day(), 2, 0, 0, 0, current.Location())
 
-	// 今日の2時を過ぎている場合は明日の2時に設定
+	// Roll over to the next day once the current time is within a minute of, or
+	// past, today's 2 AM.
+	//
+	// [Ja] 現在時刻が今日の 2 時の 1 分前以降になっていれば、翌日の 2 時にする。
 	if current.Hour() >= 2 || (current.Hour() == 1 && current.Minute() >= 59) {
 		next = next.Add(24 * time.Hour)
 	}
@@ -201,20 +207,24 @@ func runServe() {
 		slog.Warn("Redis URL が設定されていません（Rate Limiting は無効化されます）")
 	}
 
-	// クリーンアップ UseCase の作成（Worker 用）
-	cleanupTokenRepo := repository.NewPasswordResetTokenRepository(queries)
-	cleanupCodeRepo := repository.NewSignInCodeRepository(queries)
-	cleanupExpiredTokensUC := usecase.NewCleanupExpiredTokensUsecase(cleanupTokenRepo)
-	cleanupExpiredSignInCodesUC := usecase.NewCleanupExpiredSignInCodesUsecase(cleanupCodeRepo)
+	// Wire the cleanup usecases used by the periodic jobs registered below. Each one is
+	// built through the helper its `task cleanup-*` subcommand also uses, so the scheduled
+	// run and the manual run share the same wiring.
+	//
+	// [Ja] 下で登録する定期ジョブが使うクリーンアップ UseCase を組み立てる。いずれも対応する
+	// `task cleanup-*` サブコマンドと同じヘルパー経由で組み立てるため、定期実行と手動実行で
+	// 配線を共有できる。
+	cleanupExpiredTokensUC := newCleanupExpiredTokensUsecase(queries)
+	cleanupExpiredSignInCodesUC := newCleanupExpiredSignInCodesUsecase(queries)
 
 	// Wire the phase 2 full-reconciliation batch usecase (for the Worker). It is
 	// invoked by the periodic job below to sync works / episodes into animes /
-	// anime_classifications. The wiring is shared with the `sync-animes` subcommand
+	// anime_classifications. The wiring is shared with the `task sync-animes` subcommand
 	// via newSyncAnimesUsecase.
 	//
 	// [Ja] フェーズ 2 のフル・リコンシリエーションバッチ UseCase を組み立てる (Worker 用)。
 	// works / episodes を animes / anime_classifications へ同期する下の定期ジョブから
-	// 呼ばれる。配線は newSyncAnimesUsecase 経由で `sync-animes` サブコマンドと共有する。
+	// 呼ばれる。配線は newSyncAnimesUsecase 経由で `task sync-animes` サブコマンドと共有する。
 	syncAnimesUC := newSyncAnimesUsecase(db, queries)
 
 	// River クライアントの初期化
@@ -242,7 +252,9 @@ func runServe() {
 		os.Exit(1)
 	}
 
-	// 定期実行ジョブの登録: トークンクリーンアップ（毎日深夜2時）
+	// Register the token cleanup as a periodic job running daily at 2 AM.
+	//
+	// [Ja] トークンクリーンアップを毎日深夜 2 時の定期実行ジョブとして登録する。
 	periodicJobTokenCleanup := river.NewPeriodicJob(
 		dailyAt2AMSchedule{},
 		func() (river.JobArgs, *river.InsertOpts) {
@@ -254,7 +266,9 @@ func runServe() {
 	riverClient.Client().PeriodicJobs().Add(periodicJobTokenCleanup)
 	slog.Info("定期実行ジョブを登録しました", "job", "トークンクリーンアップ", "schedule", "毎日深夜2時")
 
-	// 定期実行ジョブの登録: ログインコードクリーンアップ（毎日深夜2時）
+	// Register the sign-in code cleanup as a periodic job running daily at 2 AM.
+	//
+	// [Ja] ログインコードクリーンアップを毎日深夜 2 時の定期実行ジョブとして登録する。
 	periodicJobSignInCodeCleanup := river.NewPeriodicJob(
 		dailyAt2AMSchedule{},
 		func() (river.JobArgs, *river.InsertOpts) {
@@ -285,10 +299,8 @@ func runServe() {
 	riverClient.Client().PeriodicJobs().Add(periodicJobSyncAnimes)
 	slog.Info("定期実行ジョブを登録しました", "job", "animes 同期バッチ", "schedule", "毎時")
 
-	// セッションリポジトリの初期化
-	sessionRepo := repository.NewSessionRepository(queries)
-
 	// セッションマネージャーの初期化
+	sessionRepo := repository.NewSessionRepository(queries)
 	sessionManager := session.NewManager(sessionRepo, cfg)
 
 	// フラッシュマネージャーの初期化
