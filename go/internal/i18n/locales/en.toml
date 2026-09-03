@@ -1772,6 +1772,10 @@ other = "Archive Work | {{.WorkTitle}}"
 description = "Confirmation message on the archive-confirmation page"
 other = "Archive “{{.Title}}”?"
 
+[db_works_archive_new_help]
+description = "Explanation of what archiving a work does, on the archive-confirmation page"
+other = "An archived work no longer appears on the public pages. You can restore it later with “Publish” on the work list."
+
 [db_works_archive_new_submit]
 description = "Execute button on the archive-confirmation page"
 other = "Archive"

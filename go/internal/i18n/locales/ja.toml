@@ -1771,6 +1771,10 @@ other = "作品非公開 | {{.WorkTitle}}"
 description = "非公開確認ページの確認メッセージ"
 other = "「{{.Title}}」を非公開にしますか？"
 
+[db_works_archive_new_help]
+description = "作品非公開確認ページで、非公開にすると何が起きるかを述べる説明"
+other = "非公開にすると、この作品は公開ページに表示されなくなります。あとから一覧の「公開」から元に戻せます。"
+
 [db_works_archive_new_submit]
 description = "非公開確認ページの実行ボタン"
 other = "非公開にする"

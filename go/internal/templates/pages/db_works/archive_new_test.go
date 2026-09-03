@@ -43,6 +43,12 @@ func TestArchiveNew(t *testing.T) {
 		//
 		// [Ja] 作品タイトルがページ見出しになり、確認メッセージにも埋め込まれる。
 		">確認対象アニメ</h1>",
+		// The confirmation is followed by the explanation of what archiving does and how to
+		// undo it, matching the episode archive confirmation.
+		//
+		// [Ja] 確認メッセージの後ろに、非公開にすると何が起きるか、どう戻せるかの説明が続く。
+		// エピソードの非公開確認と揃える。
+		"非公開にすると、この作品は公開ページに表示されなくなります。あとから一覧の「公開」から元に戻せます。",
 		// The confirmation sits in the same card container as the other /db pages.
 		//
 		// [Ja] 確認内容は他の /db 画面と同じカードコンテナに載る。
