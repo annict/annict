@@ -216,6 +216,7 @@ func runServe() {
 	// 配線を共有できる。
 	cleanupExpiredTokensUC := newCleanupExpiredTokensUsecase(queries)
 	cleanupExpiredSignInCodesUC := newCleanupExpiredSignInCodesUsecase(queries)
+	cleanupExpiredSessionsUC := newCleanupExpiredSessionsUsecase(queries)
 
 	// Wire the phase 2 full-reconciliation batch usecase (for the Worker). It is
 	// invoked by the periodic job below to sync works / episodes into animes /
@@ -232,6 +233,7 @@ func runServe() {
 	riverClient, err := worker.NewClient(ctx, cfg.DatabaseDSN(), worker.NewClientParams{
 		CleanupExpiredTokens:      cleanupExpiredTokensUC,
 		CleanupExpiredSignInCodes: cleanupExpiredSignInCodesUC,
+		CleanupExpiredSessions:    cleanupExpiredSessionsUC,
 		SyncAnimes:                syncAnimesUC,
 	}, cfg)
 	if err != nil {
@@ -279,6 +281,20 @@ func runServe() {
 
 	riverClient.Client().PeriodicJobs().Add(periodicJobSignInCodeCleanup)
 	slog.Info("定期実行ジョブを登録しました", "job", "ログインコードクリーンアップ", "schedule", "毎日深夜2時")
+
+	// Register the session cleanup as a periodic job running daily at 2 AM.
+	//
+	// [Ja] セッションクリーンアップを毎日深夜 2 時の定期実行ジョブとして登録する。
+	periodicJobSessionCleanup := river.NewPeriodicJob(
+		dailyAt2AMSchedule{},
+		func() (river.JobArgs, *river.InsertOpts) {
+			return worker.CleanupExpiredSessionsArgs{}, nil
+		},
+		nil,
+	)
+
+	riverClient.Client().PeriodicJobs().Add(periodicJobSessionCleanup)
+	slog.Info("定期実行ジョブを登録しました", "job", "セッションクリーンアップ", "schedule", "毎日深夜2時")
 
 	// Register the hourly animes reconciliation. During phase 2 there is no
 	// dual-write yet, so this batch is the only path that updates animes; running

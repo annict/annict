@@ -60,6 +60,10 @@ type taskDef struct {
 // 一覧も usage も本 map から生成するため、タスクの追加は本レジストリへの登録 1 箇所で
 // 済み、ヘルプ文言を別途書き足す必要は無い。
 var tasks = newTasks(map[string]taskDef{
+	"cleanup-expired-sessions": {
+		desc: "最終アクセスから 30 日を過ぎたセッションを削除する",
+		body: cleanupExpiredSessions,
+	},
 	"cleanup-expired-sign-in-codes": {
 		desc: "24 時間以上前に期限切れ・使用済みになったログインコードを削除する",
 		body: cleanupExpiredSignInCodes,

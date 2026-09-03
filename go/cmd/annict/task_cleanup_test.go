@@ -18,6 +18,7 @@ import (
 var cleanupTaskBodies = map[string]taskBody{
 	"cleanup-expired-tokens":        cleanupExpiredTokens,
 	"cleanup-expired-sign-in-codes": cleanupExpiredSignInCodes,
+	"cleanup-expired-sessions":      cleanupExpiredSessions,
 }
 
 // TestCleanupTaskBodies_Registered checks that each task name resolves to its own body.
