@@ -921,6 +921,10 @@ other = "よくある質問"
 description = "サイドバー - コミュニティ"
 other = "コミュニティ"
 
+[sidebar_developer_help]
+description = "サイドバー - 開発者向けヘルプ"
+other = "開発者向けヘルプ"
+
 [sidebar_services]
 description = "サイドバー - サービス"
 other = "サービス"
@@ -940,10 +944,6 @@ other = "Annict DB"
 [sidebar_supporters]
 description = "サイドバー - Supporters"
 other = "Annict Supporters"
-
-[sidebar_developers]
-description = "サイドバー - Developers"
-other = "Annict Developers"
 
 [sidebar_search_placeholder]
 description = "サイドバー - 検索プレースホルダー"

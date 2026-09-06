@@ -316,6 +316,10 @@ func Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Season
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
+		templ_7745c5c3_Err = sidebarMenuItem(ctx, viewmodel.DeveloperHelpTopicURL(), "sidebar_developer_help", "code-regular").Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "</ul></div><!--\n\t\t\t\tServices\n\n\t\t\t\t[Ja] サービス\n\t\t\t\t--><div role=\"group\" aria-labelledby=\"sidebar-services\" class=\"py-0\"><h3 id=\"sidebar-services\" class=\"font-bold tracking-wider\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -323,7 +327,7 @@ func Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Season
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "sidebar_services"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/sidebar.templ`, Line: 183, Col: 44}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/sidebar.templ`, Line: 184, Col: 44}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
@@ -346,10 +350,6 @@ func Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Season
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = sidebarMenuItem(ctx, "/supporters", "sidebar_supporters", "sparkle-regular").Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = sidebarMenuItem(ctx, "https://developers.annict.com/", "sidebar_developers", "code-regular").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

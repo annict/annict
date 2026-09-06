@@ -167,6 +167,7 @@ templ Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Seaso
 	          @sidebarMenuItem(ctx, "/settings/profile", "sidebar_settings", "gear-regular")
 			      @sidebarMenuItem(ctx, "/faq", "sidebar_faq", "question-regular")
 		        @sidebarMenuItem(ctx, "/community", "sidebar_community", "users-three-regular")
+		        @sidebarMenuItem(ctx, viewmodel.DeveloperHelpTopicURL(), "sidebar_developer_help", "code-regular")
 					</ul>
 				</div>
 
@@ -188,7 +189,6 @@ templ Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Seaso
 	          @sidebarMenuItem(ctx, "/forum", "sidebar_forum", "chats-circle-regular")
 			      @sidebarMenuItem(ctx, "/db", "sidebar_db", "database-regular")
 			      @sidebarMenuItem(ctx, "/supporters", "sidebar_supporters", "sparkle-regular")
-			      @sidebarMenuItem(ctx, "https://developers.annict.com/", "sidebar_developers", "code-regular")
 					</ul>
 				</div>
 
