@@ -26,23 +26,6 @@ func renderDBSidebar(t *testing.T, currentPath string) string {
 	return buf.String()
 }
 
-// menuItemHTML returns the markup of the sidebar entry linking to the given path.
-//
-// [Ja] menuItemHTML は指定したパスへリンクするサイドバー項目のマークアップを返す。
-func menuItemHTML(t *testing.T, html string, path string) string {
-	t.Helper()
-
-	start := strings.Index(html, `<a href="`+path+`"`)
-	if start < 0 {
-		t.Fatalf("%q へのリンクが描画されていません", path)
-	}
-	end := strings.Index(html[start:], "</a>")
-	if end < 0 {
-		t.Fatalf("%q へのリンクが閉じられていません", path)
-	}
-	return html[start : start+end]
-}
-
 // TestDBSidebar_MarksCurrentPage verifies the entry of the screen being viewed is marked
 // with aria-current and filled, both on the index path and on a path below it, and that no
 // other entry is marked. A work edit page keeps the works entry marked, and the entry with

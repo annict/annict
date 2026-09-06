@@ -56,7 +56,7 @@ func TestIsCurrentPath(t *testing.T) {
 		{
 			name:        "外部リンクは内部パスと一致しない",
 			currentPath: "/faq",
-			linkPath:    "https://developers.annict.com/",
+			linkPath:    "https://wikino.app/s/annict/topics/5",
 			want:        false,
 		},
 		{
@@ -165,7 +165,7 @@ func TestIsCurrentPathPrefix(t *testing.T) {
 		{
 			name:        "外部リンクは内部パスと一致しない",
 			currentPath: "/db/works",
-			linkPath:    "https://developers.annict.com/",
+			linkPath:    "https://wikino.app/s/annict/topics/5",
 			want:        false,
 		},
 	}

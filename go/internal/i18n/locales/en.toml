@@ -922,6 +922,10 @@ other = "FAQ"
 description = "Sidebar - Community"
 other = "Community"
 
+[sidebar_developer_help]
+description = "Sidebar - Developer Help"
+other = "Developer Help"
+
 [sidebar_services]
 description = "Sidebar - Services"
 other = "Services"
@@ -941,10 +945,6 @@ other = "Annict DB"
 [sidebar_supporters]
 description = "Sidebar - Supporters"
 other = "Annict Supporters"
-
-[sidebar_developers]
-description = "Sidebar - Developers"
-other = "Annict Developers"
 
 [sidebar_search_placeholder]
 description = "Sidebar - Search placeholder"

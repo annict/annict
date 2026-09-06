@@ -187,6 +187,18 @@ module Deprecated::Sidebars
                   end
                 end
               end
+
+              h.tag :li do
+                h.tag :a, href: "https://wikino.app/s/annict/topics/5", class: "d-flex justify-content-between py-2", rel: "noopener", target: "_blank" do
+                  h.tag :div, class: "c-main-sidebar__icon me-1 text-center text-muted" do
+                    h.tag :i, class: "fa-solid fa-code"
+                  end
+
+                  h.tag :div, class: "flex-grow-1" do
+                    h.text t("noun.developer_help")
+                  end
+                end
+              end
             end
 
             h.tag :div, class: "fw-bold mb-3 px-3 small text-secondary" do
@@ -209,18 +221,6 @@ module Deprecated::Sidebars
                     h.tag :div, class: "flex-grow-1" do
                       h.text link_text
                     end
-                  end
-                end
-              end
-
-              h.tag :li do
-                h.tag :a, href: "https://developers.annict.com", class: "d-flex justify-content-between py-2", rel: "noopener", target: "_blank" do
-                  h.tag :div, class: "c-main-sidebar__icon me-1 text-center text-muted" do
-                    h.tag :i, class: "fa-solid fa-code"
-                  end
-
-                  h.tag :div, class: "flex-grow-1" do
-                    h.text t("noun.annict_developers")
                   end
                 end
               end

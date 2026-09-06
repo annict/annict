@@ -16,7 +16,6 @@ ja:
     work_page: アニメページ
     annict_api: Annict API
     annict_db: Annict DB
-    annict_developers: Annict Developers
     annict_forum: Annict Forum
     annict_supporters: Annict Supporters
     annict_userland: Annict Userland
@@ -56,6 +55,7 @@ ja:
     current_season_shoten: 今期アニメ
     delete: 削除
     detail: 詳細
+    developer_help: 開発者向けヘルプ
     development_members: 開発メンバー
     dropped: 視聴中止したアニメ
     edit: 編集
