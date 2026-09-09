@@ -228,6 +228,7 @@ func TestUpdate_PasswordMismatch(t *testing.T) {
 	if !strings.Contains(body, `action="/password"`) {
 		t.Errorf("再描画フォームの action が正しくありません")
 	}
+	assertPasswordEditCanonicalURL(t, body)
 }
 
 func TestUpdate_InvalidToken(t *testing.T) {
@@ -278,4 +279,6 @@ func TestUpdate_InvalidToken(t *testing.T) {
 	if rr.Code != http.StatusBadRequest {
 		t.Errorf("ステータスコードが正しくありません: got=%d, want=%d", rr.Code, http.StatusBadRequest)
 	}
+
+	assertPasswordEditCanonicalURL(t, rr.Body.String())
 }

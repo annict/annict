@@ -24,13 +24,18 @@ func TestMainTitle(t *testing.T) {
 				Title: "作品一覧",
 			},
 			wantContains: []string{
-				`<h1 class="flex items-center gap-2 text-2xl font-bold antialiased">`,
+				// min-w-0 and [overflow-wrap:anywhere] keep a long, unbreakable title from
+				// widening the row, so they are part of the rendered contract.
+				//
+				// [Ja] min-w-0 と [overflow-wrap:anywhere] は、改行機会の無い長いタイトルで
+				// 行が横に広がるのを防ぐためのもので、描画結果の契約に含める。
+				`<h1 class="flex min-w-0 items-center gap-2 text-2xl font-bold antialiased [overflow-wrap:anywhere]">`,
 				`作品一覧`,
 				`</h1>`,
 			},
 			wantNotContains: []string{
 				`text-sm text-gray-600`,
-				`flex w-full flex-none items-center justify-end gap-2 md:w-auto`,
+				`flex w-full flex-none justify-end gap-2 md:w-auto`,
 			},
 		},
 		{
@@ -60,12 +65,12 @@ func TestMainTitle(t *testing.T) {
 			name: "TitleとActionsを指定",
 			data: MainTitleData{
 				Title:   "作品一覧",
-				Actions: rawComponent(`<button class="btn-primary">新規作成</button>`),
+				Actions: rawComponent(`<button class="btn">新規作成</button>`),
 			},
 			wantContains: []string{
 				`作品一覧`,
-				`<div class="flex w-full flex-none items-center justify-end gap-2 md:w-auto">`,
-				`<button class="btn-primary">新規作成</button>`,
+				`<div class="flex w-full flex-none justify-end gap-2 md:w-auto">`,
+				`<button class="btn">新規作成</button>`,
 			},
 		},
 		{

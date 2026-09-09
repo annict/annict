@@ -131,7 +131,7 @@ RUN pnpm build
 # - CGO_ENABLED=0: glibc 不要の静的バイナリを生成し alpine で動かす
 RUN --mount=type=cache,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/go-build \
-    CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags="-s -w" -o bin/server cmd/server/main.go
+    CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags="-s -w" -o bin/annict ./cmd/annict
 
 # ========================================
 # Runtime stage
@@ -170,7 +170,7 @@ RUN apk add --no-cache ca-certificates tzdata bash
 # db/schema.sql は開発時スナップショットのため意図的にコピーしない (Procfile 側で
 # `dbmate --no-dump-schema up` を指定しており、本番では書き戻しが発生しない)。
 COPY --from=builder /usr/local/bin/dbmate /usr/local/bin/dbmate
-COPY --from=builder /app/bin/server /app/bin/server
+COPY --from=builder /app/bin/annict /app/bin/annict
 COPY --from=builder /app/static /app/static
 COPY --from=builder /app/db/migrations /app/db/migrations
 COPY --from=builder /app/internal/i18n/locales /app/internal/i18n/locales
@@ -186,12 +186,14 @@ ENV TZ=UTC
 # マッピングする)。
 EXPOSE 8080
 
-# Dokku itself runs the Procfile `web:` line, so this CMD is not used in
-# production. We declare it anyway (with an absolute path so it works regardless
-# of WORKDIR) so that `docker run <image>` can be used for local / CI sanity
-# checks of the built image.
+# Dokku itself runs the Procfile `web:` line (`bin/annict serve`), so this CMD is
+# not used in production. We declare it anyway (with an absolute path so it works
+# regardless of WORKDIR, and with the `serve` subcommand since the bare binary
+# prints usage and exits non-zero) so that `docker run <image>` can be used for
+# local / CI sanity checks of the built image.
 #
-# [Ja] Dokku は Procfile の `web:` 行を実行するため、この CMD は本番では使われない。
-# それでも `docker run <image>` でビルド済みイメージのローカル / CI スモークテスト
-# ができるように、WORKDIR に依存しない絶対パスで宣言しておく。
-CMD ["/app/bin/server"]
+# [Ja] Dokku は Procfile の `web:` 行 (`bin/annict serve`) を実行するため、この CMD は
+# 本番では使われない。それでも `docker run <image>` でビルド済みイメージのローカル /
+# CI スモークテストができるように宣言しておく (WORKDIR に依存しない絶対パスで、かつ
+# 引数なしのバイナリは usage を表示して非ゼロ終了するため `serve` サブコマンドを付ける)。
+CMD ["/app/bin/annict", "serve"]

@@ -112,7 +112,7 @@ func Popular(ctx context.Context, works []viewmodel.Work) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" width=\"280\" height=\"210\" loading=\"lazy\" class=\"w-full h-full object-cover\"></picture></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" width=\"280\" height=\"373\" loading=\"lazy\" class=\"w-full h-full object-contain\"></picture></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

@@ -317,11 +317,13 @@ func TestBeforeSend_FiltersQueryString(t *testing.T) {
 func TestBeforeSend_FiltersTags(t *testing.T) {
 	t.Parallel()
 
-	// Tags are populated from slog attributes via sentryslog, so PII logged as
-	// a structured attribute (e.g. "email") must be masked here.
+	// Tags are populated from slog attributes by the application event handler,
+	// so PII logged as a structured attribute (e.g. "email") must be masked
+	// here.
 	//
-	// [Ja] タグには sentryslog 経由で slog 属性が乗るため、構造化属性として
-	// ログに載った PII (例: "email") がここでマスクされることを検証する。
+	// [Ja] アプリケーションのイベントハンドラーが slog 属性をタグへ載せるため、
+	// 構造化属性としてログに載った PII (例: "email") がここでマスクされることを
+	// 検証する。
 	tests := []struct {
 		name     string
 		tags     map[string]string

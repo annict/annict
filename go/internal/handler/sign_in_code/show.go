@@ -51,16 +51,15 @@ func (h *Handler) Show(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) renderShowForm(w http.ResponseWriter, r *http.Request, status int, formErrors *model.ValidationError, email string, backURL string) {
 	ctx := r.Context()
 
-	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)
+	meta := viewmodel.DefaultPageMeta(ctx, h.cfg, r.URL.Path)
 	meta.SetTitle(ctx, "sign_in_code_title")
 	meta.Description = i18n.T(ctx, "sign_in_code_description")
-	meta.OGURL = h.cfg.AppURL() + "/sign_in/code"
 
 	csrfToken := middleware.GetOrCreateCSRFToken(w, r, h.sessionMgr)
 
 	data := signInCodePage.ShowPageData{
 		CSRFToken:  csrfToken,
-		FormErrors: formErrors,
+		FormErrors: viewmodel.NewFormErrors(formErrors),
 		Email:      email,
 		BackURL:    backURL,
 	}

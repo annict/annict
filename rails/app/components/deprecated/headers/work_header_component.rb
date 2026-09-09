@@ -133,7 +133,7 @@ module Deprecated::Headers
 
                 if current_user&.committer?
                   h.tag :div, class: "mt-3" do
-                    h.tag :a, href: view_context.db_edit_work_path(@work) do
+                    h.tag :a, href: "/db/works/#{@work.id}/edit" do
                       h.text t("messages._common.edit_on_annict_db")
                     end
                   end

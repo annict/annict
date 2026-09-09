@@ -1,0 +1,954 @@
+-- name: ListDBEpisodes :many
+-- The preceding episode is derived from the neighbouring row in ascending sort_number
+-- order rather than read from episodes.prev_episode_id. The window runs over the work's
+-- whole list inside the CTE, before LIMIT / OFFSET narrow it to one page, so the last row
+-- of a page still names the episode that lands on the next page.
+--
+-- [Ja] 直前のエピソードは episodes.prev_episode_id を読まず、sort_number 昇順の隣接行から
+-- 導出する。ウィンドウは CTE の中で作品の一覧全体に対して評価され、LIMIT / OFFSET が
+-- 1 ページに絞り込む前に確定するため、ページ末尾の行も次ページに載るエピソードを指せる。
+WITH work_episodes AS (
+    SELECT
+        e.id,
+        e.work_id,
+        e.number,
+        e.raw_number,
+        e.sort_number,
+        e.title,
+        e.title_ro,
+        e.title_en,
+        e.episode_records_count,
+        e.unpublished_at,
+        e.deleted_at,
+        LAG(e.id) OVER (ORDER BY e.sort_number, e.id) AS prev_episode_id
+    FROM episodes e
+    WHERE e.work_id = sqlc.arg('work_id')
+        AND e.deleted_at IS NULL
+)
+SELECT
+    we.id,
+    we.work_id,
+    we.number,
+    we.raw_number,
+    we.sort_number,
+    we.title,
+    we.title_ro,
+    we.title_en,
+    we.episode_records_count,
+    we.unpublished_at,
+    we.deleted_at,
+    prev.number AS prev_number,
+    prev.raw_number AS prev_raw_number
+FROM work_episodes we
+LEFT JOIN episodes prev ON prev.id = we.prev_episode_id
+ORDER BY we.sort_number DESC, we.id DESC
+LIMIT sqlc.arg('per_page')
+OFFSET sqlc.arg('page_offset')::bigint;
+
+-- name: CountDBEpisodes :one
+SELECT COUNT(*)
+FROM episodes e
+WHERE e.work_id = sqlc.arg('work_id')
+    AND e.deleted_at IS NULL;
+
+-- name: GetEpisodeForEditByID :one
+-- The edit form reads the episode's editable columns together with the two the page needs
+-- from its parent work: the title for the heading and no_episodes for the shared work
+-- subnav. One row covers both, so opening the form costs a single round trip.
+--
+-- Deleted episodes are excluded by deleted_at (the Rails Episode.without_deleted.find the
+-- edit action uses), and works are filtered the same way as on the episode list, so an
+-- episode whose work is gone is not editable through a page whose heading and subnav point
+-- at that work.
+--
+-- updated_at is the version the form carries in a hidden field so the update can reject a
+-- submit made against a stale read.
+--
+-- [Ja] 編集フォームは、エピソードの編集対象カラムと、ページが親作品から必要とする 2 つの
+-- カラム (見出しに使う title と、共有の作品サブナビが使う no_episodes) を一緒に読む。
+-- 1 行で両方を賄うため、フォームを開くのに往復は 1 回で済む。
+--
+-- 削除済みエピソードは deleted_at で除外し (編集アクションが使う Rails の
+-- Episode.without_deleted.find と同じ)、作品もエピソード一覧と同じ条件で絞る。作品が
+-- 失われたエピソードを、その作品を見出しとサブナビで指すページから編集させないため。
+--
+-- updated_at はフォームが hidden で持ち回る版。古い読み取りに対する送信を更新側で
+-- 却下できるようにする。
+SELECT
+    e.id,
+    e.work_id,
+    e.number,
+    e.raw_number,
+    e.sort_number,
+    e.title,
+    e.title_en,
+    e.updated_at,
+    w.title AS work_title,
+    w.no_episodes AS work_no_episodes
+FROM episodes e
+INNER JOIN works w ON w.id = e.work_id
+WHERE e.id = $1
+    AND e.deleted_at IS NULL
+    AND w.deleted_at IS NULL;
+
+-- name: GetEpisodeForUpdateByID :one
+-- The update reads only what the submitted values do not carry: title_ro and the state
+-- timestamps, which the animes dual-write maps but the form does not edit, plus the two
+-- mapping columns (the episode's own anime and its parent work's) that decide whether the
+-- dual-write happens at all. The editable columns are left out because the submit replaces
+-- them.
+--
+-- The filters match GetEpisodeForEditByID, so the submit accepts exactly the episodes whose
+-- edit form is reachable.
+--
+-- [Ja] 更新が読むのは、送信された値が運ばないものだけ。title_ro と状態のタイムスタンプ
+-- (animes への両書きが写像するがフォームでは編集しない) と、両書きを行うか自体を決める 2 つの
+-- マッピングカラム (エピソード自身の anime と親作品の anime)。編集対象のカラムは送信された値が
+-- 置き換えるため読まない。
+--
+-- 絞り込みは GetEpisodeForEditByID と揃える。編集フォームに到達できるエピソードと、送信を
+-- 受け付けるエピソードを一致させるため。
+SELECT
+    e.id,
+    e.work_id,
+    e.title_ro,
+    e.unpublished_at,
+    e.deleted_at,
+    e.anime_id,
+    w.anime_id AS parent_anime_id
+FROM episodes e
+INNER JOIN works w ON w.id = e.work_id
+WHERE e.id = $1
+    AND e.deleted_at IS NULL
+    AND w.deleted_at IS NULL;
+
+-- name: LockWorkForEpisodeUpdateByID :one
+-- Lock the kept parent work before reading any neighbouring episode. This is a separate
+-- statement from UpdateDBEpisode so a transaction that waited here gets a fresh READ COMMITTED
+-- snapshot when it later derives the old and new neighbours. The returned id also lets the
+-- caller reject a target that moved to a different work after its edit-form pre-read.
+--
+-- The lock is taken at the strength touched_work needs rather than as FOR SHARE: a shared lock
+-- upgraded to an exclusive one later in the same transaction lets two submits for the same work
+-- each hold the share and then wait for the other's, which PostgreSQL resolves by aborting one
+-- with a deadlock error.
+--
+-- Holding it also pins the ordering of this work for the rest of the transaction. Every Rails
+-- path that can reorder the list writes the works row too and therefore waits here: an edit
+-- through the Rails DB admin, a create and a destroy all go through belongs_to :work, touch:
+-- true or counter_culture :work. The Go bulk create takes this same lock through
+-- LockWorkForEpisodeCreateByID. The neighbours can therefore be derived after this statement
+-- and stay valid until commit.
+--
+-- [Ja] 隣接エピソードを読む前に、削除されていない親作品をロックする。UpdateDBEpisode とは
+-- 別の文にすることで、ここで待機したトランザクションが、後で移動前後の隣接行を導出するときに
+-- READ COMMITTED の新しいスナップショットを得られるようにする。返した id は、編集フォーム用の
+-- 事前読み取り後に対象が別作品へ移った場合の却下にも使う。
+--
+-- FOR SHARE ではなく touched_work が必要とする強さで最初から取るのは、同一トランザクションの
+-- 後段で共有ロックを排他ロックへ昇格させると、同じ作品への 2 つの送信が互いの共有ロックを
+-- 待ち合い、PostgreSQL が片方をデッドロックで中断するためである。
+--
+-- また、このロックの保持中はこの作品の並び順が固定される。Rails で一覧を並べ替え得る経路は
+-- いずれも works 行も書くためここで待たされる (DB 管理画面の編集・作成・削除はすべて
+-- belongs_to :work, touch: true か counter_culture :work を通る)。Go の一括作成も
+-- LockWorkForEpisodeCreateByID で同じロックを取る。したがって隣接行は本ステートメントの後に
+-- 導出でき、commit まで有効なままである。
+SELECT w.id
+FROM episodes e
+JOIN works w ON w.id = e.work_id
+WHERE e.id = sqlc.arg('id')
+    AND e.deleted_at IS NULL
+    AND w.deleted_at IS NULL
+FOR NO KEY UPDATE OF w;
+
+-- name: ListEpisodeIDsForEpisodeUpdateByID :many
+-- List, in ascending id order, the rows UpdateDBEpisode goes on to write or reference as a
+-- neighbour: the target itself, the rows that precede and follow it before the move, and the
+-- rows that precede and follow it after the move. The caller locks exactly these, so the lock
+-- footprint of one edit stays bounded instead of growing with the number of episodes the work
+-- has.
+--
+-- The derivation is valid because LockWorkForEpisodeUpdateByID already holds the parent work,
+-- which no reordering write can bypass. The one exception is
+-- Annict::DataCare::MoveEpisode, which writes episodes.work_id with update_column and so takes
+-- no work lock; a row it moves into this work after this statement is neither listed nor
+-- locked. That is a manual data-care operation and the window is the same one UpdateDBEpisode
+-- opens by re-deriving under its own snapshot.
+--
+-- [Ja] UpdateDBEpisode がこの後に書く行と、隣接行として参照する行を id 昇順で列挙する。編集対象
+-- 自身・移動前の直前行・移動前の直後行・移動後の直前行・移動後の直後行の 5 行である。呼び出し側
+-- はこれだけをロックするため、1 回の編集のロック範囲が作品のエピソード数に比例して増えない。
+--
+-- この導出が有効なのは、LockWorkForEpisodeUpdateByID が既に親作品を保持しており、並び順を
+-- 変える書き込みがそれを迂回できないため。唯一の例外は Annict::DataCare::MoveEpisode で、
+-- episodes.work_id を update_column で書くため作品ロックを取らない。本ステートメントの後に
+-- この作品へ移されてきた行は列挙もロックもされない。これは手動のデータ整備操作であり、また
+-- UpdateDBEpisode が自身のスナップショットで導出し直すことで開く窓と同じものである。
+WITH current_episode AS (
+    SELECT e.id, e.work_id, e.sort_number
+    FROM episodes e
+    WHERE e.id = sqlc.arg('id')
+        AND e.work_id = sqlc.arg('work_id')
+        AND e.deleted_at IS NULL
+), former_preceding_episode AS (
+    SELECT p.id
+    FROM episodes p
+    JOIN current_episode ce ON ce.work_id = p.work_id
+    WHERE p.deleted_at IS NULL
+        AND p.id <> ce.id
+        AND (
+            p.sort_number < ce.sort_number
+            OR (p.sort_number = ce.sort_number AND p.id < ce.id)
+        )
+    ORDER BY p.sort_number DESC, p.id DESC
+    LIMIT 1
+), former_following_episode AS (
+    SELECT f.id
+    FROM episodes f
+    JOIN current_episode ce ON ce.work_id = f.work_id
+    WHERE f.deleted_at IS NULL
+        AND f.id <> ce.id
+        AND (
+            f.sort_number > ce.sort_number
+            OR (f.sort_number = ce.sort_number AND f.id > ce.id)
+        )
+    ORDER BY f.sort_number, f.id
+    LIMIT 1
+), preceding_episode AS (
+    SELECT p.id
+    FROM episodes p
+    JOIN current_episode ce ON ce.work_id = p.work_id
+    WHERE p.deleted_at IS NULL
+        AND p.id <> ce.id
+        AND (
+            p.sort_number < sqlc.arg('sort_number')
+            OR (p.sort_number = sqlc.arg('sort_number') AND p.id < ce.id)
+        )
+    ORDER BY p.sort_number DESC, p.id DESC
+    LIMIT 1
+), following_episode AS (
+    SELECT f.id
+    FROM episodes f
+    JOIN current_episode ce ON ce.work_id = f.work_id
+    WHERE f.deleted_at IS NULL
+        AND f.id <> ce.id
+        AND (
+            f.sort_number > sqlc.arg('sort_number')
+            OR (f.sort_number = sqlc.arg('sort_number') AND f.id > ce.id)
+        )
+    ORDER BY f.sort_number, f.id
+    LIMIT 1
+)
+SELECT id FROM current_episode
+UNION
+SELECT id FROM former_preceding_episode
+UNION
+SELECT id FROM former_following_episode
+UNION
+SELECT id FROM preceding_episode
+UNION
+SELECT id FROM following_episode
+ORDER BY id;
+
+-- name: LockEpisodesForEpisodeUpdateByIDs :exec
+-- Lock the listed episodes in ascending id order before neighbour links are derived or written.
+-- Rails locks an episode before touching its work, the inverse of the Go update order; NOWAIT
+-- therefore aborts this transaction instead of completing that cycle. The use case rolls the
+-- whole transaction back and retries after a short delay, once Rails can acquire the released
+-- work lock and finish. The rows UpdateDBEpisode updates and the destination predecessor it
+-- references through prev_episode_id can make it wait on locks Rails holds, so pre-empting the
+-- listed neighbours is enough; the ids are already sorted by ListEpisodeIDsForEpisodeUpdateByID
+-- and ORDER BY keeps them locked in that order.
+--
+-- The rows are not read back: the statement exists for its locking clause alone.
+--
+-- [Ja] 隣接リンクの導出・書き込み前に、列挙されたエピソードを id 昇順でロックする。Rails は
+-- エピソードをロックしてから作品を touch し、Go の更新順序と逆になるため、NOWAIT により循環を
+-- 完成させず本トランザクションを中断する。UseCase はトランザクション全体を rollback して短時間
+-- 後に再試行し、その間に Rails は解放された作品ロックを取得して完了できる。UpdateDBEpisode が
+-- 更新する行と、prev_episode_id から参照する移動先の直前行は、Rails が保持するロックで待たされ
+-- 得るため、列挙された隣接行を先取りすれば足りる。id は
+-- ListEpisodeIDsForEpisodeUpdateByID が既に整列済みで、ORDER BY がその順序でのロック取得を保つ。
+--
+-- 行は読み戻さない。本ステートメントはロック句のためだけに存在する。
+SELECT e.id
+FROM episodes e
+WHERE e.id = ANY(sqlc.arg('ids')::bigint[])
+ORDER BY e.id
+FOR NO KEY UPDATE OF e NOWAIT;
+
+-- name: UpdateDBEpisode :one
+-- The version stated by the submit is matched inside the UPDATE rather than compared against
+-- a preceding read, so no other write can slip between the comparison and the write. NULL is
+-- an explicit version (the shared column is nullable), which IS NOT DISTINCT FROM matches
+-- without a second statement; the write then advances updated_at, so a second submit from the
+-- same NULL version no longer matches. No row returned therefore means the row was written by
+-- someone else in the meantime, and the caller reports a conflict instead of overwriting it.
+--
+-- prev_episode_id is recomputed from the submitted sort_number by the same rule the episode
+-- list derives the preceding episode with (ascending sort_number, id as the tiebreaker).
+-- Rails only ever assigns the column on create and expected a human to fix it from the edit
+-- form's select, which the Go form does not have; the public episode navigation, the GraphQL
+-- API and the REST API still read it.
+--
+-- The parent work is touched and the episodes.update DB activity recorded only when the
+-- content actually changed, as Rails save_and_create_activity! skips both for a no-op save.
+-- The comparison covers the five submitted columns and leaves prev_episode_id out: that one is
+-- derived from the ordering rather than typed, so a recomputation triggered by another
+-- episode moving would otherwise show up in the shared change history as an edit its author
+-- never made. The two data-modifying CTEs run whether or not the final SELECT reads them, so
+-- neither is joined into it: joining created_activity would drop the returned id for a submit
+-- that changed nothing.
+--
+-- [Ja] 送信が名乗る版の照合は、直前の読み取りとの比較ではなく UPDATE の中で行う。比較と書き込み
+-- の間に他の書き込みが挟まらないようにするため。共有カラムは NULL 許容のため NULL も明示的な
+-- 版であり、IS NOT DISTINCT FROM なら 2 文に分けずに照合できる。書き込みは updated_at を進める
+-- ので、同じ NULL 版からの 2 件目はもう一致しない。したがって 1 行も返らないことは、その間に
+-- 他者が行を書いたことを意味し、呼び出し側は上書きせず競合として報告する。
+--
+-- prev_episode_id は、エピソード一覧が直前のエピソードを導出するのと同じ規則 (sort_number
+-- 昇順、同値なら id) で、送信された sort_number から再計算する。Rails はこのカラムを作成時に
+-- しか入れず、ずれの修正は編集フォームの選択欄で人が行う前提だったが、Go のフォームにその欄は
+-- 無い。公開側のエピソードの前後導線・GraphQL API・REST API は今もこのカラムを読む。
+--
+-- 親作品の touch と episodes.update の DB 活動の記録は、内容が実際に変わったときにだけ行う。
+-- Rails の save_and_create_activity! も、変更の無い保存では双方を行わないため。比較の対象は
+-- 送信された 5 カラムで、prev_episode_id は含めない。同カラムは入力ではなく並び順から導出される
+-- ため、別のエピソードが動いたことによる再計算まで拾うと、共有 DB の変更履歴に「その編集者が
+-- 行っていない編集」として現れてしまう。データ変更 CTE は最後の SELECT が読むかどうかに関わらず
+-- 実行されるため、どちらも SELECT に join しない。created_activity を join すると、何も変わら
+-- なかった送信で返すべき id が落ちてしまう。
+--
+-- The move also leaves the two rows around the episode naming the wrong neighbour, so both are
+-- relinked in the same statement: the row the episode used to precede comes to name the episode
+-- that used to precede it, and the row it comes to precede comes to name the episode itself.
+-- When those two are the same row the episode has crossed nothing and neither is written, which
+-- covers every submit that leaves sort_number where it was. The work as a whole is deliberately
+-- not recomputed: the bulk create assigns prev_episode_id the way the Rails after_create
+-- callback does, which is on purpose different from the neighbour the list derives, and a sweep
+-- would overwrite that on an unrelated edit.
+--
+-- The relink records no db_activity, does not touch the parent work, and leaves the neighbours'
+-- updated_at alone. It maintains a value the ordering derives rather than applying an edit
+-- someone made (Rails writes the column with update_column for the same reason), and advancing
+-- a neighbour's version would turn another editor's open form into a conflict over a column no
+-- form submits.
+--
+-- [Ja] 移動は、エピソードの前後にある 2 行が別の行を隣接として名乗ったままにするため、その 2 行も
+-- 同一文で張り替える。移動前にエピソードの直後だった行は移動前の直前のエピソードを名乗るように
+-- し、移動後に直後になる行はエピソード自身を名乗るようにする。2 行が同一の場合、エピソードはどの
+-- 行も跨いでおらず、どちらも書かない (sort_number が変わらない送信はすべてこれに該当する)。作品
+-- 全体の再計算は意図的に行わない。一括作成は Rails の after_create コールバックと同じ規則で
+-- prev_episode_id を入れており、その値は一覧が導出する隣接行と意図的に異なるため、一括再計算は
+-- 無関係な編集でその判断を上書きしてしまう。
+--
+-- 張り替えは db_activity を作らず、親作品も touch せず、隣接行の updated_at も進めない。並び順
+-- から導出される値の維持であって、誰かが行った編集の適用ではないため (Rails が同カラムを
+-- update_column で書くのも同じ理由)。また隣接行の版を進めると、どのフォームも送信しないカラムを
+-- 理由に、他の編集者が開いているフォームを競合にしてしまう。
+--
+-- The caller has already locked the kept parent work and the neighbours listed by
+-- ListEpisodeIDsForEpisodeUpdateByID in preceding statements. Keeping that protocol outside
+-- this statement matters: after waiting for the work, this statement starts with a fresh READ
+-- COMMITTED snapshot, so its old and new neighbour reads include the update that just
+-- committed. The neighbour CTEs below repeat that derivation rather than taking the ids from
+-- the caller, so the rows this statement writes are the ones its own snapshot says are
+-- adjacent. The work id is repeated here to bind the write to the parent that was locked and
+-- pre-read.
+--
+-- [Ja] 呼び出し側は、先行する別ステートメントで削除されていない親作品と、
+-- ListEpisodeIDsForEpisodeUpdateByID が列挙した隣接行を既にロックしている。このプロトコルを
+-- 本ステートメントの外に置くことが重要で、作品ロックを待った後に READ COMMITTED の新しい
+-- スナップショットで本ステートメントを開始し、直前に commit した更新を移動前後の隣接行の
+-- 読み取りへ反映できる。以下の隣接 CTE が呼び出し側から id を受け取らずに導出をやり直すのは、
+-- 本ステートメントが書く行を、自身のスナップショットが隣接と判断した行に一致させるため。
+-- ここでも作品 id を条件にすることで、ロック・事前読み取りした親に書き込みを束縛する。
+WITH current_episode AS (
+    SELECT e.*
+    FROM episodes e
+    WHERE e.id = sqlc.arg('id')
+        AND e.work_id = sqlc.arg('work_id')
+        AND e.deleted_at IS NULL
+), preceding_episode AS (
+    SELECT p.id
+    FROM episodes p
+    JOIN current_episode ce ON ce.work_id = p.work_id
+    WHERE p.deleted_at IS NULL
+        AND p.id <> ce.id
+        AND (
+            p.sort_number < sqlc.arg('sort_number')
+            OR (p.sort_number = sqlc.arg('sort_number') AND p.id < ce.id)
+        )
+    ORDER BY p.sort_number DESC, p.id DESC
+    LIMIT 1
+), following_episode AS (
+    SELECT f.id
+    FROM episodes f
+    JOIN current_episode ce ON ce.work_id = f.work_id
+    WHERE f.deleted_at IS NULL
+        AND f.id <> ce.id
+        AND (
+            f.sort_number > sqlc.arg('sort_number')
+            OR (f.sort_number = sqlc.arg('sort_number') AND f.id > ce.id)
+        )
+    ORDER BY f.sort_number, f.id
+    LIMIT 1
+), former_preceding_episode AS (
+    SELECT p.id
+    FROM episodes p
+    JOIN current_episode ce ON ce.work_id = p.work_id
+    WHERE p.deleted_at IS NULL
+        AND p.id <> ce.id
+        AND (
+            p.sort_number < ce.sort_number
+            OR (p.sort_number = ce.sort_number AND p.id < ce.id)
+        )
+    ORDER BY p.sort_number DESC, p.id DESC
+    LIMIT 1
+), former_following_episode AS (
+    SELECT f.id
+    FROM episodes f
+    JOIN current_episode ce ON ce.work_id = f.work_id
+    WHERE f.deleted_at IS NULL
+        AND f.id <> ce.id
+        AND (
+            f.sort_number > ce.sort_number
+            OR (f.sort_number = ce.sort_number AND f.id > ce.id)
+        )
+    ORDER BY f.sort_number, f.id
+    LIMIT 1
+), updated_episode AS (
+    UPDATE episodes
+    SET
+        number = sqlc.narg('number'),
+        raw_number = sqlc.narg('raw_number'),
+        title = sqlc.narg('title'),
+        title_en = sqlc.arg('title_en'),
+        sort_number = sqlc.arg('sort_number'),
+        prev_episode_id = (SELECT pe.id FROM preceding_episode pe),
+        updated_at = NOW()
+    FROM current_episode ce
+    WHERE episodes.id = ce.id
+        AND episodes.deleted_at IS NULL
+        AND episodes.updated_at IS NOT DISTINCT FROM sqlc.narg('version')::timestamptz
+    RETURNING episodes.*
+), crossed_neighbours AS (
+    SELECT
+        ue.id AS episode_id,
+        ff.id AS former_following_id,
+        fp.id AS former_preceding_id,
+        f.id AS following_id
+    FROM updated_episode ue
+    LEFT JOIN former_following_episode ff ON TRUE
+    LEFT JOIN former_preceding_episode fp ON TRUE
+    LEFT JOIN following_episode f ON TRUE
+    WHERE ff.id IS DISTINCT FROM f.id
+), neighbour_relink AS (
+    SELECT cn.former_following_id AS id, cn.former_preceding_id AS prev_episode_id
+    FROM crossed_neighbours cn
+    WHERE cn.former_following_id IS NOT NULL
+    UNION ALL
+    SELECT cn.following_id AS id, cn.episode_id AS prev_episode_id
+    FROM crossed_neighbours cn
+    WHERE cn.following_id IS NOT NULL
+), relinked_neighbours AS (
+    UPDATE episodes
+    SET prev_episode_id = nr.prev_episode_id
+    FROM neighbour_relink nr
+    WHERE episodes.id = nr.id
+), episode_change AS (
+    SELECT
+        ue.id,
+        ue.work_id,
+        json_build_object('old', row_to_json(ce), 'new', row_to_json(ue)) AS parameters
+    FROM updated_episode ue
+    JOIN current_episode ce ON ce.id = ue.id
+    WHERE (ce.number, ce.raw_number, ce.title, ce.title_en, ce.sort_number)
+        IS DISTINCT FROM
+        (ue.number, ue.raw_number, ue.title, ue.title_en, ue.sort_number)
+), touched_work AS (
+    UPDATE works
+    SET updated_at = NOW()
+    WHERE works.id IN (SELECT ec.work_id FROM episode_change ec)
+), created_activity AS (
+    INSERT INTO db_activities (
+        user_id,
+        trackable_id,
+        trackable_type,
+        action,
+        parameters,
+        created_at,
+        updated_at,
+        root_resource_id,
+        root_resource_type
+    )
+    SELECT
+        sqlc.arg('user_id'),
+        ec.id,
+        'Episode',
+        'episodes.update',
+        ec.parameters,
+        NOW(),
+        NOW(),
+        ec.work_id,
+        'Work'
+    FROM episode_change ec
+)
+SELECT ue.id
+FROM updated_episode ue;
+
+-- name: GetEpisodeForArchiveByID :one
+-- The archive confirmation page and the submit that follows it read the same row: the columns
+-- naming the episode on screen (number / title), its state timestamps and the two the page
+-- needs from its parent work (the title for the heading, no_episodes for the shared work
+-- subnav). The submit gets the anime mapping from the row ArchiveDBEpisode actually updates,
+-- not from this pre-transaction projection.
+--
+-- The state timestamps are selected rather than filtered on, so the caller decides which state
+-- the page and the submit accept through model.Episode.DerivedStatus. deleted_at is filtered
+-- all the same because a deleted episode is out of reach of both, matching
+-- GetEpisodeForEditByID; the column still travels so DerivedStatus reads a complete row.
+--
+-- The filters match GetEpisodeForEditByID, so the submit accepts exactly the episodes whose
+-- confirmation page is reachable. The re-publish submit (UnarchiveDBEpisode) reads the same row
+-- and applies the opposite state condition, so both directions reach the same episodes.
+--
+-- [Ja] 非公開の確認ページと、それに続く送信は同じ行を読む。画面上でエピソードを名指しする
+-- カラム (number / title)、状態のタイムスタンプ、そしてページが親作品から必要とする 2 つの
+-- カラム (見出しに使う title と、共有の作品サブナビが使う no_episodes)。送信が使う anime の
+-- 写像は、このトランザクション前の射影ではなく、ArchiveDBEpisode が実際に更新した行から得る。
+--
+-- 状態のタイムスタンプは絞り込みに使わず選択する。ページと送信がどの状態を受け付けるかは
+-- model.Episode.DerivedStatus を通じて呼び出し側が決めるため。deleted_at で絞るのは、削除済み
+-- エピソードが双方の対象外であるためで、GetEpisodeForEditByID と揃う。DerivedStatus が欠けの
+-- 無い行を読めるよう、カラム自体は併せて運ぶ。
+--
+-- 絞り込みは GetEpisodeForEditByID と揃える。確認ページに到達できるエピソードと、送信を
+-- 受け付けるエピソードを一致させるため。再公開の送信 (UnarchiveDBEpisode) も同じ行を読み、
+-- 逆向きの状態条件を当てるため、両方向が同じエピソードに届く。
+SELECT
+    e.id,
+    e.work_id,
+    e.number,
+    e.title,
+    e.unpublished_at,
+    e.deleted_at,
+    w.title AS work_title,
+    w.no_episodes AS work_no_episodes
+FROM episodes e
+INNER JOIN works w ON w.id = e.work_id
+WHERE e.id = $1
+    AND e.deleted_at IS NULL
+    AND w.deleted_at IS NULL;
+
+-- name: ArchiveDBEpisode :one
+-- Archiving is conditional on the episode still being published, so a submit from a stale
+-- confirmation page returns no row instead of re-stamping unpublished_at. The work id is
+-- required to match the parent the confirmation page was built from, so an episode moved to
+-- another work by Annict::DataCare::MoveEpisode in between does not decrement the counter of
+-- a work it no longer belongs to. The parent work must also remain undeleted: the
+-- confirmation-page projection excludes deleted works, but its lifecycle can change before this
+-- statement starts or while the episode row is locked by another transaction.
+--
+-- The updated row returns its current anime_id so the dual-write targets the mapping that was
+-- actually archived. A mapping changed after the confirmation-page read must not make the
+-- submit update the former anime.
+--
+-- The Rails unpublish is Episode#update(unpublished_at:), which records no db_activity but
+-- does advance updated_at, touch the parent work through belongs_to :work, touch: true and
+-- decrement works.episodes_count through counter_culture (its column_name lambda counts an
+-- episode only while it is published). All three are reproduced here, in one statement so the
+-- counter cannot drift from the state it counts: the decrement runs exactly for the transition
+-- the UPDATE above performed. The final result depends on the work update succeeding. If a
+-- concurrent soft-delete makes that update skip the parent, :one returns no row and the caller
+-- rolls its transaction back, including the episode update performed by the first CTE.
+--
+-- The rows are written episodes-first and works-second, the order Rails saves them in, so the
+-- two applications queue behind each other on the same work rather than deadlocking. The Go
+-- episode update takes the two in the opposite order (the work first, through
+-- LockWorkForEpisodeUpdateByID), and that inversion does not close into a cycle because the
+-- update pre-empts the episodes it needs with NOWAIT and abandons its attempt rather than
+-- waiting. The bulk create also takes the work first, but it only inserts rows and so never
+-- waits on an episode this statement holds.
+--
+-- [Ja] 非公開は、エピソードが今も公開中であることを条件とする。古い確認ページからの送信は
+-- unpublished_at を再スタンプせず、1 行も返さない。作品 id は確認ページが前提とした親作品との
+-- 一致を要求する。その間に Annict::DataCare::MoveEpisode で別作品へ移されたエピソードが、
+-- もう所属していない作品のカウンターを減算しないようにするため。親作品も未削除のままであること
+-- を要求する。確認ページ用の射影は削除済み作品を除外するが、作品のライフサイクルは本ステート
+-- メントの開始前や、別のトランザクションが episode 行をロックしている間にも変わり得るため。
+--
+-- 更新した行は現在の anime_id を返す。両書きが、実際に非公開にした時点の写像を対象にするため。
+-- 確認ページの読み取り後に写像が変わっても、送信が以前の anime を更新してはならない。
+--
+-- Rails の非公開は Episode#update(unpublished_at:) であり、db_activity は作らないが、
+-- updated_at を進め、belongs_to :work, touch: true で親作品を touch し、counter_culture で
+-- works.episodes_count を減算する (column_name のラムダは公開中のエピソードだけを数える)。
+-- 3 つとも本ステートメントで再現する。1 文にまとめるのは、カウンターが数える対象の状態から
+-- ずれないようにするため (減算は上の UPDATE が実際に行った遷移に対してだけ走る)。最終結果は
+-- 作品の更新成功にも依存させる。同時の論理削除によって作品の更新がスキップされた場合、:one は
+-- 行を返さず、呼び出し元が最初の CTE による episode の更新も含めてトランザクションをロール
+-- バックする。
+--
+-- 書き込みは episodes が先、works が後で、Rails が保存する順序と同じ。これにより 2 つの
+-- アプリケーションは同じ作品に対してデッドロックせず、順に待ち合う。Go のエピソード更新は
+-- 逆順で取る (LockWorkForEpisodeUpdateByID で作品が先) が、この反転が循環にならないのは、
+-- 更新側が必要なエピソードを NOWAIT で先取りし、待たずに試行を中断するため。一括作成も作品を
+-- 先に取るが、行を挿入するだけのため本ステートメントが保持するエピソードを待つことはない。
+WITH archived_episode AS (
+    UPDATE episodes
+    SET
+        unpublished_at = NOW(),
+        updated_at = NOW()
+    WHERE episodes.id = sqlc.arg('id')
+        AND episodes.work_id = sqlc.arg('work_id')
+        AND episodes.unpublished_at IS NULL
+        AND episodes.deleted_at IS NULL
+        AND EXISTS (
+            SELECT 1
+            FROM works
+            WHERE works.id = episodes.work_id
+                AND works.deleted_at IS NULL
+        )
+    RETURNING episodes.id, episodes.work_id, episodes.anime_id
+), touched_work AS (
+    UPDATE works
+    SET
+        episodes_count = works.episodes_count - 1,
+        updated_at = NOW()
+    WHERE works.id IN (SELECT ae.work_id FROM archived_episode ae)
+        AND works.deleted_at IS NULL
+    RETURNING works.id
+)
+SELECT ae.id, ae.anime_id
+FROM archived_episode ae
+INNER JOIN touched_work tw ON tw.id = ae.work_id;
+
+-- name: UnarchiveDBEpisode :one
+-- Re-publishing is the inverse of ArchiveDBEpisode: it clears the timestamp that one stamps and
+-- gives back the counter that one takes away. Every guard is the same, with the state condition
+-- read the other way round. It is conditional on the episode still being archived, so a submit
+-- from a list opened before someone else re-published it returns no row instead of clearing an
+-- already NULL unpublished_at. The work id is required to match the parent the list named, so an
+-- episode moved to another work by Annict::DataCare::MoveEpisode in between does not increment
+-- the counter of a work it no longer belongs to. The parent work must also remain undeleted: the
+-- pre-transaction projection excludes deleted works, but its lifecycle can change before this
+-- statement starts or while the episode row is locked by another transaction.
+--
+-- The updated row returns its current anime_id so the dual-write targets the mapping that was
+-- actually re-published, not the one the pre-transaction projection observed.
+--
+-- The Rails re-publish is Episode#update(unpublished_at: nil), which records no db_activity but
+-- does advance updated_at, touch the parent work through belongs_to :work, touch: true and
+-- increment works.episodes_count through counter_culture (its column_name lambda counts an
+-- episode only while it is published, so clearing unpublished_at adds the row back). All three
+-- are reproduced here, in one statement so the counter cannot drift from the state it counts:
+-- the increment runs exactly for the transition the UPDATE above performed. The final result
+-- depends on the work update succeeding. If a concurrent soft-delete makes that update skip the
+-- parent, :one returns no row and the caller rolls its transaction back, including the episode
+-- update performed by the first CTE.
+--
+-- The rows are written episodes-first and works-second for the reason ArchiveDBEpisode states.
+--
+-- [Ja] 再公開は ArchiveDBEpisode の逆で、あちらが打つタイムスタンプをクリアし、あちらが引く
+-- カウンターを戻す。ガードはすべて同じで、状態の条件だけを逆向きに読む。エピソードが今も非公開
+-- であることを条件とし、他者が先に再公開した後の一覧からの送信は、すでに NULL の unpublished_at
+-- をクリアせず 1 行も返さない。作品 id は一覧が名指しした親作品との一致を要求する。その間に
+-- Annict::DataCare::MoveEpisode で別作品へ移されたエピソードが、もう所属していない作品の
+-- カウンターを加算しないようにするため。親作品も未削除のままであることを要求する。トランザクション
+-- 前の射影は削除済み作品を除外するが、作品のライフサイクルは本ステートメントの開始前や、別の
+-- トランザクションが episode 行をロックしている間にも変わり得るため。
+--
+-- 更新した行は現在の anime_id を返す。両書きが、トランザクション前の射影が観測した写像では
+-- なく、実際に再公開した時点の写像を対象にするため。
+--
+-- Rails の再公開は Episode#update(unpublished_at: nil) であり、db_activity は作らないが、
+-- updated_at を進め、belongs_to :work, touch: true で親作品を touch し、counter_culture で
+-- works.episodes_count を加算する (column_name のラムダは公開中のエピソードだけを数えるため、
+-- unpublished_at のクリアで行が数え直される)。3 つとも本ステートメントで再現する。1 文に
+-- まとめるのは、カウンターが数える対象の状態からずれないようにするため (加算は上の UPDATE が
+-- 実際に行った遷移に対してだけ走る)。最終結果は作品の更新成功にも依存させる。同時の論理削除に
+-- よって作品の更新がスキップされた場合、:one は行を返さず、呼び出し元が最初の CTE による
+-- episode の更新も含めてトランザクションをロールバックする。
+--
+-- 書き込みが episodes 先・works 後なのは ArchiveDBEpisode が述べる理由による。
+WITH published_episode AS (
+    UPDATE episodes
+    SET
+        unpublished_at = NULL,
+        updated_at = NOW()
+    WHERE episodes.id = sqlc.arg('id')
+        AND episodes.work_id = sqlc.arg('work_id')
+        AND episodes.unpublished_at IS NOT NULL
+        AND episodes.deleted_at IS NULL
+        AND EXISTS (
+            SELECT 1
+            FROM works
+            WHERE works.id = episodes.work_id
+                AND works.deleted_at IS NULL
+        )
+    RETURNING episodes.id, episodes.work_id, episodes.anime_id
+), touched_work AS (
+    UPDATE works
+    SET
+        episodes_count = works.episodes_count + 1,
+        updated_at = NOW()
+    WHERE works.id IN (SELECT pe.work_id FROM published_episode pe)
+        AND works.deleted_at IS NULL
+    RETURNING works.id
+)
+SELECT pe.id, pe.anime_id
+FROM published_episode pe
+INNER JOIN touched_work tw ON tw.id = pe.work_id;
+
+-- name: GetEpisodeForDeleteByID :one
+-- The delete submit comes from a confirmation alert rather than a page, so this projection
+-- carries only what the write needs: the id it addresses and the parent it is taken to name,
+-- which binds DeleteDBEpisode to that work and is where a successful delete lands. Nothing is
+-- read for display, so none of the columns naming the episode travel.
+--
+-- Deleted episodes and episodes of deleted works are excluded, matching the Rails
+-- Episode.without_deleted.find in Db::EpisodesController#destroy and the reach of the archive
+-- endpoints. The state is not filtered any further: both a published and an archived episode
+-- can be deleted, so unlike the archive endpoints the caller has no state condition to apply
+-- and the timestamps do not need to travel either.
+--
+-- [Ja] 削除の送信はページではなく確認アラートから来るため、この射影は書き込みが必要とするもの
+-- だけを運ぶ。対象の id と、送信が名指しするとみなす親作品 (DeleteDBEpisode をその作品に束縛し、
+-- 削除の成功時に着地する先でもある)。表示のための読み取りは無いため、エピソードを名指しする
+-- カラムは運ばない。
+--
+-- 削除済みエピソードと、削除済み作品のエピソードは除外する。Db::EpisodesController#destroy の
+-- Rails の Episode.without_deleted.find と、非公開エンドポイント群が届く範囲に揃えるため。
+-- 状態はそれ以上絞らない。公開中のエピソードも非公開のエピソードも削除できるため、非公開
+-- エンドポイントと違い呼び出し側が当てる状態条件が無く、タイムスタンプを運ぶ必要も無い。
+SELECT
+    e.id,
+    e.work_id
+FROM episodes e
+INNER JOIN works w ON w.id = e.work_id
+WHERE e.id = $1
+    AND e.deleted_at IS NULL
+    AND w.deleted_at IS NULL;
+
+-- name: DeleteDBEpisode :one
+-- Deleting is conditional on the episode not being deleted already, so a submit from a list
+-- opened before someone else deleted it returns no row instead of re-stamping deleted_at and
+-- decrementing the counter a second time. The work id is required to match the parent the list
+-- named, so an episode moved to another work by Annict::DataCare::MoveEpisode in between does
+-- not decrement the counter of a work it no longer belongs to. The parent work must also remain
+-- undeleted: the pre-transaction projection excludes deleted works, but its lifecycle can change
+-- before this statement starts or while the episode row is locked by another transaction.
+--
+-- The updated row returns its current anime_id so the dual-write targets the mapping that was
+-- actually deleted, not the one the pre-transaction projection observed.
+--
+-- [Ja] 削除は、エピソードがまだ削除されていないことを条件とする。他者が先に削除した後の一覧から
+-- の送信は、deleted_at を再スタンプせず、カウンターを 2 度目に減算せず、1 行も返さない。作品 id
+-- は一覧が名指しした親作品との一致を要求する。その間に Annict::DataCare::MoveEpisode で別作品へ
+-- 移されたエピソードが、もう所属していない作品のカウンターを減算しないようにするため。親作品も
+-- 未削除のままであることを要求する。トランザクション前の射影は削除済み作品を除外するが、作品の
+-- ライフサイクルは本ステートメントの開始前や、別のトランザクションが episode 行をロックしている
+-- 間にも変わり得るため。
+--
+-- 更新した行は現在の anime_id を返す。両書きが、トランザクション前の射影が観測した写像ではなく、
+-- 実際に削除した時点の写像を対象にするため。
+--
+-- The Rails delete is destroy_in_batches, which removes the row: counter_culture decrements
+-- works.episodes_count (its column_name lambda counts an episode only while it is published, so
+-- deleting an already archived episode decrements nothing) and belongs_to :work, touch: true
+-- advances works.updated_at. The Go delete is a soft delete, so the row stays and neither side
+-- effect follows from it; both are reproduced here, in one statement so the counter cannot
+-- drift from the state it counts: the decrement runs exactly for the transition the UPDATE
+-- above performed, and only for a row that was still being counted. The final result
+-- depends on the work update succeeding. If a concurrent soft-delete makes that update skip the
+-- parent, :one returns no row and the caller rolls its transaction back, including the episode
+-- update performed by the first CTE.
+--
+-- The rows are written episodes-first and works-second for the reason ArchiveDBEpisode states.
+-- Unlike the archive, the lock set also holds the rows naming the deleted episode, which the CTE
+-- below writes between the episode and the work. Two deletes in the same work take their rows in
+-- prev_episode_id order, which is a chain rather than a cycle, and the work comes last for both.
+-- The Go episode update again takes the work first and then pre-empts the episodes it needs with
+-- NOWAIT, abandoning its attempt rather than waiting, so that inversion does not close either.
+--
+-- [Ja] Rails の削除は destroy_in_batches で行を消すため、counter_culture が
+-- works.episodes_count を減算し (column_name のラムダは公開中のエピソードだけを数えるため、
+-- すでに非公開のエピソードの削除では何も減らない)、belongs_to :work, touch: true が
+-- works.updated_at を進める。Go の削除はソフトデリートで行が残り、どちらの副作用も自動的には
+-- 従わないため、2 つとも本ステートメントで再現する。1 文にまとめるのは、カウンターが数える対象の
+-- 状態からずれないようにするため (減算は上の UPDATE が実際に行った遷移に対してだけ、かつまだ
+-- 数えられていた行に対してだけ走る)。最終結果は作品の更新成功にも依存させる。同時の論理削除に
+-- よって作品の更新がスキップされた場合、:one は行を返さず、呼び出し元が最初の CTE による
+-- episode の更新も含めてトランザクションをロールバックする。
+--
+-- 書き込みが episodes 先・works 後なのは ArchiveDBEpisode が述べる理由による。非公開と違い、
+-- ロックする範囲には削除するエピソードを名乗る行も含まれ、下の CTE がそれをエピソードと作品の
+-- 間で書く。同一作品に対する 2 つの削除は prev_episode_id の順に行を取るが、これは循環ではなく
+-- 連鎖であり、作品はどちらも最後に取る。Go のエピソード更新はここでも作品を先に取り、必要な
+-- エピソードを NOWAIT で先取りして、待たずに試行を中断するため、こちらの反転も循環にならない。
+--
+-- The rows naming the deleted episode as their predecessor have that pointer cleared, which is
+-- what the Rails before_destroy :unset_prev_episode_id does before the row disappears. The Go
+-- row stays, and prev_episode_id has no scope of its own: the public episode navigation, the
+-- GraphQL EpisodeType.prev_episode and the REST API read whatever it names, so a pointer left
+-- behind would show a deleted episode. Every undeleted row naming it is cleared rather than the
+-- single kept one the Rails callback finds, because an archived follower would otherwise carry
+-- the stale pointer back into view the moment it is re-published. The follower is not relinked
+-- to the deleted episode's own predecessor: that would put the Go delete's aftermath at odds
+-- with the Rails one, which leaves the follower without a predecessor.
+--
+-- The clearing writes prev_episode_id alone: no change history, no parent touch and no version
+-- bump on the followers, for the reason the relink in UpdateDBEpisode states. The episode's own
+-- prev_episode_id is left as it is, since nothing displays a deleted row.
+--
+-- [Ja] 削除するエピソードを直前として名乗る行は、そのポインタをクリアする。Rails の
+-- before_destroy :unset_prev_episode_id が行が消える前に行うことと同じ。Go では行が残り、
+-- prev_episode_id 自体にスコープは無い。公開側のエピソードの前後導線・GraphQL の
+-- EpisodeType.prev_episode・REST API はこのカラムが名指しするものをそのまま読むため、残した
+-- ポインタは削除済みエピソードを見せてしまう。Rails のコールバックが見つける「公開中の 1 行」で
+-- はなく、名乗っている未削除の行すべてをクリアするのは、非公開の後続行が古いポインタを持ったまま
+-- 再公開された瞬間に、それが表に戻るのを防ぐため。後続行を削除するエピソード自身の直前行へ張り
+-- 替えることはしない。それは Go の削除後の状態を、後続行に直前を持たせない Rails の削除後の状態
+-- と食い違わせるため。
+--
+-- クリアが書くのは prev_episode_id だけで、変更履歴も親の touch も後続行の版の更新も行わない。
+-- 理由は UpdateDBEpisode の張り替えが述べるものと同じ。削除するエピソード自身の
+-- prev_episode_id はそのままにする。削除済みの行は何も表示しないため。
+WITH deleted_episode AS (
+    UPDATE episodes
+    SET
+        deleted_at = NOW(),
+        updated_at = NOW()
+    WHERE episodes.id = sqlc.arg('id')
+        AND episodes.work_id = sqlc.arg('work_id')
+        AND episodes.deleted_at IS NULL
+        AND EXISTS (
+            SELECT 1
+            FROM works
+            WHERE works.id = episodes.work_id
+                AND works.deleted_at IS NULL
+        )
+    RETURNING episodes.id, episodes.work_id, episodes.anime_id, episodes.unpublished_at
+), unlinked_followers AS (
+    UPDATE episodes
+    SET prev_episode_id = NULL
+    FROM deleted_episode de
+    WHERE episodes.prev_episode_id = de.id
+        AND episodes.id <> de.id
+        AND episodes.deleted_at IS NULL
+), touched_work AS (
+    UPDATE works
+    SET
+        episodes_count = works.episodes_count - (
+            CASE WHEN de.unpublished_at IS NULL THEN 1 ELSE 0 END
+        ),
+        updated_at = NOW()
+    FROM deleted_episode de
+    WHERE works.id = de.work_id
+        AND works.deleted_at IS NULL
+    RETURNING works.id
+)
+SELECT de.id, de.anime_id
+FROM deleted_episode de
+INNER JOIN touched_work tw ON tw.id = de.work_id;
+
+-- name: ListEpisodesForAnimeSyncByIDs :many
+SELECT
+    e.id,
+    e.work_id,
+    e.title,
+    e.title_ro,
+    e.title_en,
+    e.number,
+    e.sort_number,
+    e.raw_number,
+    e.unpublished_at,
+    e.deleted_at,
+    e.anime_id,
+    w.anime_id AS parent_anime_id
+FROM episodes e
+JOIN works w ON e.work_id = w.id
+WHERE e.id = ANY($1::bigint[])
+ORDER BY e.id;
+
+-- name: ListEpisodeIDsAfter :many
+SELECT id
+FROM episodes
+WHERE id > sqlc.arg('after_id')
+ORDER BY id
+LIMIT sqlc.arg('batch_size');
+
+-- name: UpdateEpisodeAnimeID :exec
+UPDATE episodes
+SET anime_id = $2
+WHERE id = $1;
+
+-- name: CreateEpisode :one
+-- anime_id is written with the row rather than patched afterwards: the bulk create inserts
+-- the episode's anime before the episode itself, so the mapping column is already known.
+-- prev_episode_id names the episode with the greatest sort_number at insert time, the value
+-- the Rails after_create callback assigns; the Annict DB list derives the preceding episode
+-- from sort_number order instead, but the public episode page and the GraphQL API still read
+-- the column. The data-modifying CTE also records the same episodes.create DB activity as
+-- Rails save_and_create_activity!, using the inserted row as parameters.new.
+--
+-- [Ja] anime_id は後から書き戻さず行と一緒に書く。一括作成はエピソード本体より先にその
+-- anime を挿入するため、マッピングカラムの値が既に分かっているため。prev_episode_id には
+-- 挿入時点で sort_number が最大のエピソードを入れる (Rails の after_create コールバックが
+-- 入れるのと同じ値)。Annict DB の一覧は直前のエピソードを sort_number 順から導出するが、
+-- 公開側のエピソードページと GraphQL API は今もこのカラムを読む。データ変更 CTE はさらに、
+-- Rails の save_and_create_activity! と同じ episodes.create の DB 活動を、挿入行を
+-- parameters.new として記録する。
+WITH created_episode AS (
+    INSERT INTO episodes (
+        work_id,
+        number,
+        raw_number,
+        title,
+        sort_number,
+        prev_episode_id,
+        anime_id,
+        created_at,
+        updated_at
+    ) VALUES (
+        sqlc.arg('work_id'),
+        sqlc.narg('number'),
+        sqlc.narg('raw_number'),
+        sqlc.narg('title'),
+        sqlc.arg('sort_number'),
+        sqlc.narg('prev_episode_id'),
+        sqlc.narg('anime_id'),
+        NOW(),
+        NOW()
+    )
+    RETURNING *
+), created_activity AS (
+    INSERT INTO db_activities (
+        user_id,
+        trackable_id,
+        trackable_type,
+        action,
+        parameters,
+        created_at,
+        updated_at,
+        root_resource_id,
+        root_resource_type
+    )
+    SELECT
+        sqlc.arg('user_id'),
+        ce.id,
+        'Episode',
+        'episodes.create',
+        json_build_object('new', row_to_json(ce)),
+        NOW(),
+        NOW(),
+        ce.work_id,
+        'Work'
+    FROM created_episode ce
+    RETURNING id
+)
+SELECT ce.id
+FROM created_episode ce
+CROSS JOIN created_activity ca;

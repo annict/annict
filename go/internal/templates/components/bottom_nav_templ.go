@@ -14,11 +14,17 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// BottomNav はモバイル用のボトムナビゲーションコンポーネントです
-// md以上の画面サイズでは非表示になります
-// ctx: コンテキスト（I18n用）
-// user: ログインユーザー情報（nilの場合は未ログイン状態）
-// seasons: シーズン情報（前・現在・次）
+// BottomNav renders the bottom navigation component for mobile. It is hidden
+// on screens md and larger.
+//
+// user is the signed-in user; nil means the user is not signed in. seasons
+// holds the previous, current, and next season info.
+//
+// [Ja] BottomNav はモバイル用のボトムナビゲーションコンポーネントを描画する。
+// md 以上の画面サイズでは非表示になる。
+//
+// user はログインユーザー情報 ( nil の場合は未ログイン状態 )。seasons は
+// シーズン情報 ( 前・現在・次 )。
 func BottomNav(ctx context.Context, user *viewmodel.User, seasons viewmodel.Seasons) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -40,7 +46,7 @@ func BottomNav(ctx context.Context, user *viewmodel.User, seasons viewmodel.Seas
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"md:hidden fixed bottom-0 left-1/2 w-full translate-x-[-50%] pb-safe z-(--z-index-button-nav) bg-bottom-nav text-bottom-nav-foreground max-h-(--bottom-nav-max-height) border-bottom-nav-border border-t-1\"><ul class=\"flex items-center justify-between gap-2 p-2\"><li class=\"basis-1/5\"><button class=\"flex flex-col items-center justify-center gap-1 cursor-pointer w-full\" type=\"button\" onclick=\"document.dispatchEvent(new CustomEvent('basecoat:sidebar'));\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"md:hidden fixed bottom-0 left-1/2 w-full translate-x-[-50%] pb-safe z-(--z-index-button-nav) bg-bottom-nav text-bottom-nav-foreground max-h-(--bottom-nav-max-height) border-bottom-nav-border border-t-1\"><ul class=\"flex items-center justify-between gap-2 p-2\"><li class=\"basis-1/5\"><button class=\"flex flex-col items-center justify-center gap-1 cursor-pointer w-full\" type=\"button\" onclick=\"document.getElementById('sidebar')?.toggle?.();\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -55,7 +61,7 @@ func BottomNav(ctx context.Context, user *viewmodel.User, seasons viewmodel.Seas
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "bottom_nav_menu"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/bottom_nav.templ`, Line: 31, Col: 43}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/bottom_nav.templ`, Line: 37, Col: 43}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -120,7 +126,9 @@ func BottomNav(ctx context.Context, user *viewmodel.User, seasons viewmodel.Seas
 	})
 }
 
-// bottomNavLink はボトムナビゲーションのリンクアイテムを生成します
+// bottomNavLink renders a link item for the bottom navigation.
+//
+// [Ja] bottomNavLink はボトムナビゲーションのリンクアイテムを描画する。
 func bottomNavLink(ctx context.Context, href string, labelKey string, iconName string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -149,7 +157,7 @@ func bottomNavLink(ctx context.Context, href string, labelKey string, iconName s
 		var templ_7745c5c3_Var4 templ.SafeURL
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(href))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/bottom_nav.templ`, Line: 55, Col: 29}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/bottom_nav.templ`, Line: 63, Col: 29}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -170,7 +178,7 @@ func bottomNavLink(ctx context.Context, href string, labelKey string, iconName s
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, labelKey))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/bottom_nav.templ`, Line: 61, Col: 32}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/bottom_nav.templ`, Line: 69, Col: 32}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {

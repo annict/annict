@@ -152,13 +152,13 @@ func TestCreateWorkUsecase_ExecuteBatch(t *testing.T) {
 				var expectedMedia int32
 				switch tt.works[i].Media {
 				case seed.MediaTV:
-					expectedMedia = 0
-				case seed.MediaOVA:
 					expectedMedia = 1
-				case seed.MediaMovie:
+				case seed.MediaOVA:
 					expectedMedia = 2
-				case seed.MediaWeb:
+				case seed.MediaMovie:
 					expectedMedia = 3
+				case seed.MediaWeb:
+					expectedMedia = 4
 				}
 				if media.Valid && media.Int32 != expectedMedia {
 					t.Errorf("media = %v, want %v", media.Int32, expectedMedia)
@@ -230,10 +230,10 @@ func TestCreateWorkUsecase_MediaTypeConversion(t *testing.T) {
 		mediaType seed.MediaType
 		expected  int32
 	}{
-		{seed.MediaTV, 0},
-		{seed.MediaOVA, 1},
-		{seed.MediaMovie, 2},
-		{seed.MediaWeb, 3},
+		{seed.MediaTV, 1},
+		{seed.MediaOVA, 2},
+		{seed.MediaMovie, 3},
+		{seed.MediaWeb, 4},
 	}
 
 	for _, mt := range mediaTypes {

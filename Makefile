@@ -48,6 +48,7 @@ lint-md: koryluslint-build ## Check semantic line breaks in Markdown (changed li
 
 .PHONY: lint-md-base
 lint-md-base: koryluslint-build ## Check Markdown semantic line breaks against BASE ref (e.g. BASE=origin/main). [Ja] BASE ref との差分行で Markdown の句点改行をチェック (例: BASE=origin/main)
+	@test -n "$(BASE)" || { echo "BASE is required. Example: make lint-md-base BASE=origin/develop"; exit 1; }
 	@$(KORYLUSLINT) md -base=$(BASE)
 
 .PHONY: lint-md-fix

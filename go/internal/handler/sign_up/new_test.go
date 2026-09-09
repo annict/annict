@@ -3,6 +3,7 @@ package sign_up_test
 import (
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/annict/annict/go/internal/config"
@@ -27,6 +28,14 @@ func TestNew(t *testing.T) {
 	if err != nil {
 		t.Fatalf("設定の読み込みに失敗しました: %v", err)
 	}
+
+	// The site key is overridden because config.Load can clear it in test and development
+	// when ANNICT_TURNSTILE_DISABLE=true. The positive assertions below must not depend on
+	// the caller's environment.
+	//
+	// [Ja] config.Load は test / dev で ANNICT_TURNSTILE_DISABLE=true のときサイトキーを
+	// 空にしうるため、上書きする。以下の存在検証を実行環境に依存させないため。
+	cfg.TurnstileSiteKey = "1x00000000000000000000AA"
 
 	// usecaseの初期化
 	queries := testutil.NewQueriesWithTx(db, tx)
@@ -60,5 +69,17 @@ func TestNew(t *testing.T) {
 	// Content-Typeがtext/htmlであることを確認
 	if contentType := rr.Header().Get("Content-Type"); contentType != "text/html; charset=utf-8" {
 		t.Errorf("予期しないContent-Type: got %v want %v", contentType, "text/html; charset=utf-8")
+	}
+
+	body := rr.Body.String()
+	expectedStrings := []string{
+		`class="cf-turnstile"`,
+		`<link rel="preconnect" href="https://challenges.cloudflare.com">`,
+	}
+
+	for _, expected := range expectedStrings {
+		if !strings.Contains(body, expected) {
+			t.Errorf("レスポンスボディに期待される文字列が含まれていない: %s", expected)
+		}
 	}
 }

@@ -3,6 +3,7 @@ package middleware
 import (
 	"net/http"
 
+	"github.com/annict/annict/go/internal/httperror"
 	"github.com/annict/annict/go/internal/model"
 )
 
@@ -44,7 +45,7 @@ func RequireCommitter(next http.Handler) http.Handler {
 		}
 
 		if !IsCommitter(user) {
-			http.Error(w, "Forbidden", http.StatusForbidden)
+			httperror.Forbidden(w, r)
 			return
 		}
 
@@ -66,7 +67,7 @@ func RequireAdmin(next http.Handler) http.Handler {
 		}
 
 		if !IsAdmin(user) {
-			http.Error(w, "Forbidden", http.StatusForbidden)
+			httperror.Forbidden(w, r)
 			return
 		}
 

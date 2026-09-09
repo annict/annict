@@ -21,7 +21,16 @@ templ Default(ctx context.Context, meta viewmodel.PageMeta, user *viewmodel.User
 			<div class="flex bg-background">
 				@components.Flash(ctx, session.FlashFromContext(ctx))
 				@components.Sidebar(ctx, user, seasons)
-				<div class="flex-1 flex flex-col min-h-screen">
+				// The dynamic viewport unit sizes the column by the height that is actually visible,
+				// so the footer sits at the bottom of the screen on short pages. The static unit
+				// (100vh) means the height with a mobile toolbar hidden, which pushes the footer
+				// below the visible area while the toolbar is shown.
+				//
+				// [Ja] 動的ビューポート単位は実際に見えている高さで段組みの高さを決めるため、内容が
+				// 短いページでもフッターが画面下端に収まる。静的な単位 (100vh) はモバイルの
+				// ツールバーが隠れた状態の高さを指すため、ツールバー表示中はフッターが可視領域の
+				// 下へ押し出される。
+				<div class="flex-1 flex flex-col min-h-dvh">
 					<main>
 						@content
 					</main>

@@ -30,12 +30,9 @@ ja:
     comment:
       no_comments: コメントはありません
     episode:
-      created: 登録しました
       edit_episodes: エピソード編集
       episodes_list: エピソード一覧
       new_episodes: エピソード登録
-      previous_episode: 前のエピソード
-      updated: 更新しました
     forum_category:
       site_news: お知らせ
       general: 一般
@@ -111,11 +108,5 @@ ja:
       state:
         published: 公開
         hidden: 非公開
-      created: 登録しました
-      go_to_work: 作品詳細
       new_work: 作品登録
       no_images: 作品画像無し
-      started_on_eg: e.g. 2017-09-01
-      twitter_hashtag_placeholder: e.g. なのん
-      twitter_username_placeholder: e.g. nonnontv
-      updated: 更新しました

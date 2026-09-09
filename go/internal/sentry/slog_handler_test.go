@@ -62,13 +62,13 @@ func newSlogTestHub(t *testing.T) (*sentry.Hub, *slogCaptureTransport) {
 }
 
 // newSlogTestHubWithBeforeSend wires the production beforeSend hook into the
-// test Sentry Client. This lets the slog → sentryslog → beforeSend pipeline be
-// exercised end-to-end so the suite catches drift in sentryslog's Tag-mapping
-// behavior on future upgrades.
+// test Sentry Client. This lets the slog → application event handler →
+// beforeSend pipeline be exercised end-to-end so the suite catches drift in
+// the handler's tag-mapping behavior.
 //
 // [Ja] 本番と同じ beforeSend フックをテスト用 Sentry Client に組み込む。
-// slog → sentryslog → beforeSend のパイプラインを End-to-End で検証できるため、
-// sentryslog の Tag マッピング挙動が将来のバージョンアップで変わった場合に
+// slog → アプリケーションのイベントハンドラー → beforeSend のパイプラインを
+// End-to-End で検証できるため、ハンドラーのタグマッピング挙動が変わった場合に
 // テストで検知できる。
 func newSlogTestHubWithBeforeSend(t *testing.T) (*sentry.Hub, *slogCaptureTransport) {
 	t.Helper()
@@ -268,13 +268,13 @@ func TestSlogHandler_DropsReverseProxySourceEventsEndToEnd(t *testing.T) {
 
 	// End-to-end check: a slog.Error tagged with SourceAttrKey=ReverseProxySource
 	// must be filtered out by beforeSend before reaching the transport. This
-	// catches drift in sentryslog's behavior of stamping slog attributes onto
-	// event.Tags (which beforeSend relies on).
+	// catches drift in the application event handler's behavior of stamping
+	// slog attributes onto event.Tags (which beforeSend relies on).
 	//
 	// [Ja] End-to-End の確認: SourceAttrKey=ReverseProxySource を付けた
 	// slog.Error は beforeSend で破棄され、transport に到達しないこと。
-	// sentryslog が slog 属性を event.Tags に乗せる挙動 (本判定の前提) が
-	// 将来変わった場合に本テストで検知できる。
+	// アプリケーションのイベントハンドラーが slog 属性を event.Tags に乗せる
+	// 挙動 (本判定の前提) が将来変わった場合に本テストで検知できる。
 	hub, transport := newSlogTestHubWithBeforeSend(t)
 	base := newRecordingHandler()
 	logger := slog.New(NewSlogHandler(base))

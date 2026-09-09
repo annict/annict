@@ -64,28 +64,60 @@ func (h *Helper) GetWorkImageURL(imageDataJSON string, width int, format string)
 	return ""
 }
 
-// GenerateImgproxyURL はimgproxyのURLを生成します
+// WorkImageHeight returns the height of a 3:4 work-image display box at the given width.
+// Callers use it for width and height attributes and placeholder boxes so every thumbnail
+// reserves the same space. GenerateImgproxyURL fits the source inside this box without cropping.
+//
+// [Ja] WorkImageHeight は指定幅に対する 3:4 の作品画像表示枠の高さを返す。呼び出し側は
+// width / height 属性やプレースホルダーの枠に使い、すべてのサムネイル領域を同じ大きさで
+// 確保する。GenerateImgproxyURL は切り抜かずに元画像をこの枠へ収める。
+func WorkImageHeight(width int) int {
+	return width * 4 / 3
+}
+
+// GenerateImgproxyURL generates a signed imgproxy URL that fits a work image in a 3:4 box.
+//
+// [Ja] GenerateImgproxyURL は作品画像を 3:4 の枠へ収める署名付き imgproxy URL を生成する。
 func (h *Helper) GenerateImgproxyURL(originalURL string, width int, format string) string {
 	if originalURL == "" {
 		return ""
 	}
 
-	// 画像の高さを4:3の比率で計算
-	height := width * 3 / 4
+	// Calculate the height of the fixed 3:4 display box.
+	//
+	// [Ja] 固定 3:4 表示枠の高さを計算する。
+	height := WorkImageHeight(width)
 
-	// Processing options
-	processingOptions := fmt.Sprintf("resize:fill:%d:%d:0/gravity:ce", width, height)
+	// Resize with "fit" so the source aspect ratio is preserved and nothing is cropped:
+	// registered work images are not all 3:4, and a landscape one would lose its top and
+	// bottom under "fill". imgproxy then returns an image smaller than the box in one
+	// dimension, which the caller centres inside the fixed 3:4 slot. This matches the Rails
+	// version, where ann_work_image_url passes no resizing_type and so takes imgproxy's
+	// "fit" default (it only forces fill-down for 1:1 avatars).
+	//
+	// [Ja] 元画像のアスペクト比を保ち切り抜きが起きないよう "fit" でリサイズする。登録される
+	// 作品画像は 3:4 とは限らず、横長の画像は "fill" では上下が切れてしまう。imgproxy は枠より
+	// 片方向が小さい画像を返すので、呼び出し側が固定の 3:4 の枠内で中央寄せする。Rails 版でも
+	// ann_work_image_url は resizing_type を渡さず imgproxy 既定の "fit" になっており
+	// (1:1 のアバターにのみ fill-down を指定)、それに合わせている。
+	processingOptions := fmt.Sprintf("resize:fit:%d:%d:0", width, height)
 	if format != "jpg" {
 		processingOptions = fmt.Sprintf("%s/format:%s", processingOptions, format)
 	}
 
-	// URLをエンコード
+	// Encode the source URL.
+	//
+	// [Ja] 元 URL をエンコードする。
 	encodedURL := base64.RawURLEncoding.EncodeToString([]byte(originalURL))
 
-	// パスを構築
+	// Build the imgproxy path.
+	//
+	// [Ja] imgproxy のパスを組み立てる。
 	path := fmt.Sprintf("/%s/%s.%s", processingOptions, encodedURL, format)
 
-	// 署名を生成
+	// Sign the path.
+	//
+	// [Ja] パスへ署名する。
 	key, _ := hex.DecodeString(h.config.ImgproxyKey)
 	salt, _ := hex.DecodeString(h.config.ImgproxySalt)
 
@@ -94,8 +126,9 @@ func (h *Helper) GenerateImgproxyURL(originalURL string, width int, format strin
 	mac.Write([]byte(path))
 	signature := base64.RawURLEncoding.EncodeToString(mac.Sum(nil))
 
-	// 署名付きURLを構築
-	// フォーマット: /{signature}{path}
+	// Build the signed URL in the "{endpoint}/{signature}{path}" format.
+	//
+	// [Ja] 署名付き URL を "{endpoint}/{signature}{path}" 形式で組み立てる。
 	return fmt.Sprintf("%s/%s%s", h.config.ImgproxyEndpoint, signature, path)
 }
 

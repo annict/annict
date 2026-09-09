@@ -1,16 +1,16 @@
 package sign_up
 
 import (
-	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/templates"
 	"github.com/annict/annict/go/internal/templates/components"
+	"github.com/annict/annict/go/internal/viewmodel"
 )
 
 // NewPageData は新規登録フォームページに渡すデータ構造体です
 type NewPageData struct {
 	CSRFToken        string
 	TurnstileSiteKey string
-	FormErrors       *model.ValidationError
+	FormErrors       *viewmodel.FormErrors
 	Email            string
 }
 
@@ -37,18 +37,18 @@ templ New(data NewPageData) {
 			</p>
 		</div>
 
-		@components.FormErrors(data.FormErrors)
+		@components.FormErrors(components.FormErrorsData{Errors: data.FormErrors})
 
 		<form
 			action="/sign_up"
-			class="form grid gap-6"
+			class="grid gap-6"
 			hx-on:submit="disableSubmitButtons(this)"
 			method="POST"
 		>
 			<input type="hidden" name="csrf_token" value={ data.CSRFToken }/>
 
 			<div class="grid gap-2">
-				<label for="email">
+				<label class="label" for="email">
 					{ templates.T(ctx, "sign_up_email_label") }
 				</label>
 
@@ -60,6 +60,7 @@ templ New(data NewPageData) {
 					}
 					autocomplete="email"
 					autofocus
+					class="input"
 					id="email"
 					name="email"
 					required

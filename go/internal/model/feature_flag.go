@@ -22,6 +22,5 @@ type FeatureFlag struct {
 // 実際のフラグをすべて削除した後もファイルがコンパイルできるよう、
 // FeatureFlagExample を const ブロックに常に 1 つ以上残しておく。
 const (
-	FeatureFlagExample    FeatureFlagName = "go_example"
-	FeatureFlagGoAnnictDB FeatureFlagName = "go_annict_db"
+	FeatureFlagExample FeatureFlagName = "go_example"
 )

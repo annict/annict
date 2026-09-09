@@ -3,6 +3,7 @@ package seed
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"math/rand"
 	"time"
@@ -231,39 +232,22 @@ func (uc *CreateHeavyUserUsecase) createFollowingUsers(ctx context.Context, coun
 
 // createHeavyUserRecords heavy_userの視聴記録を作成します
 func (uc *CreateHeavyUserUsecase) createHeavyUserRecords(ctx context.Context, userID model.UserID, count int, ratingProbability, bodyProbability float64) (int, error) {
-	// 既存のエピソードをランダムに取得
-	episodes, err := uc.getRandomEpisodes(ctx, count)
-	if err != nil {
-		return 0, fmt.Errorf("エピソード取得エラー: %w", err)
-	}
-
-	// 視聴記録パラメータを作成
-	recordParams := make([]CreateEpisodeRecordParams, len(episodes))
-	for i, episode := range episodes {
-		recordParams[i] = CreateEpisodeRecordParams{
-			UserID:    userID,
-			EpisodeID: episode.ID,
-			WorkID:    episode.WorkID,
-			Rating:    uc.generateRating(ratingProbability),
-			Body:      uc.generateBody(bodyProbability),
-			WatchedAt: uc.generateWatchedAt(),
-		}
+	// Build one owner entry per record, then pass the ordered list to the chunked writer.
+	//
+	// [Ja] 記録 1 件につき 1 エントリを持つ受け手の一覧にして、チャンク処理に渡す。
+	recordOwners := make([]model.UserID, count)
+	for i := range recordOwners {
+		recordOwners[i] = userID
 	}
 
 	// 進捗表示
-	bar := progressbar.NewOptions(len(recordParams),
+	bar := progressbar.NewOptions(len(recordOwners),
 		progressbar.OptionSetDescription("ヘビーユーザー視聴記録作成"),
 		progressbar.OptionSetWidth(50),
 		progressbar.OptionShowCount(),
 	)
 
-	createRecordUC := NewCreateEpisodeRecordUsecase(uc.db)
-	_, err = createRecordUC.ExecuteBatch(ctx, recordParams, bar)
-	if err != nil {
-		return 0, err
-	}
-
-	return len(recordParams), nil
+	return uc.createEpisodeRecordsForOwners(ctx, recordOwners, ratingProbability, bodyProbability, bar)
 }
 
 // createFollowRelationships フォロー関係を作成します
@@ -308,47 +292,109 @@ func (uc *CreateHeavyUserUsecase) createFollowRelationships(ctx context.Context,
 
 // createFolloweeRecords フォロイー（フォロワー）の視聴記録を作成します
 func (uc *CreateHeavyUserUsecase) createFolloweeRecords(ctx context.Context, followerUserIDs []model.UserID, recordsPerUser int, ratingProbability, bodyProbability float64) error {
-	createRecordUC := NewCreateEpisodeRecordUsecase(uc.db)
-
-	// 全フォロイーの視聴記録を一括で作成
-	totalRecords := len(followerUserIDs) * recordsPerUser
-	episodes, err := uc.getRandomEpisodes(ctx, totalRecords)
-	if err != nil {
-		return fmt.Errorf("エピソード取得エラー: %w", err)
-	}
-
-	// 各フォロイーに視聴記録を割り当て
-	recordParams := make([]CreateEpisodeRecordParams, 0, totalRecords)
-	episodeIndex := 0
-
+	// Build one owner entry per record, assigning recordsPerUser entries to each followee.
+	//
+	// [Ja] 各フォロイーに recordsPerUser 件ずつ割り当てた、記録 1 件につき 1 エントリの
+	// 受け手の一覧を作る。
+	recordOwners := make([]model.UserID, 0, len(followerUserIDs)*recordsPerUser)
 	for _, userID := range followerUserIDs {
-		for i := 0; i < recordsPerUser && episodeIndex < len(episodes); i++ {
-			episode := episodes[episodeIndex]
-			recordParams = append(recordParams, CreateEpisodeRecordParams{
-				UserID:    userID,
-				EpisodeID: episode.ID,
-				WorkID:    episode.WorkID,
-				Rating:    uc.generateRating(ratingProbability),
-				Body:      uc.generateBody(bodyProbability),
-				WatchedAt: uc.generateWatchedAt(),
-			})
-			episodeIndex++
+		for range recordsPerUser {
+			recordOwners = append(recordOwners, userID)
 		}
 	}
 
 	// 進捗表示
-	bar := progressbar.NewOptions(len(recordParams),
+	bar := progressbar.NewOptions(len(recordOwners),
 		progressbar.OptionSetDescription("フォロイー視聴記録作成"),
 		progressbar.OptionSetWidth(50),
 		progressbar.OptionShowCount(),
 	)
 
-	_, err = createRecordUC.ExecuteBatch(ctx, recordParams, bar)
-	if err != nil {
-		return err
+	_, err := uc.createEpisodeRecordsForOwners(ctx, recordOwners, ratingProbability, bodyProbability, bar)
+
+	return err
+}
+
+// episodeRecordCommitChunkSize is the number of episode records written per commit. Each
+// chunk uses one transaction that selects its episodes and inserts the records.
+//
+// [Ja] episodeRecordCommitChunkSize は視聴記録を何件ごとにコミットするかを決める。
+// 1 チャンクが 1 トランザクションになり、その中でエピソードの抽選と記録の INSERT を行う。
+const episodeRecordCommitChunkSize = 5000
+
+// createEpisodeRecordsForOwners creates one episode record for each entry in recordOwners.
+// Selecting the referenced episodes and inserting the records share a transaction. If they
+// used separate transactions, another test or process could delete a selected episode before
+// the insert and make the activities foreign key fail.
+//
+// [Ja] createEpisodeRecordsForOwners は recordOwners の 1 エントリにつき 1 件の視聴記録を
+// 作成する。記録が参照するエピソードの抽選と INSERT は同じトランザクションで行う。別々の
+// トランザクションで行うと、抽選から INSERT までの間に他のテストや処理がそのエピソードを
+// 削除でき、activities の外部キー違反になる。
+func (uc *CreateHeavyUserUsecase) createEpisodeRecordsForOwners(
+	ctx context.Context,
+	recordOwners []model.UserID,
+	ratingProbability, bodyProbability float64,
+	bar *progressbar.ProgressBar,
+) (int, error) {
+	created := 0
+	for start := 0; start < len(recordOwners); start += episodeRecordCommitChunkSize {
+		end := min(start+episodeRecordCommitChunkSize, len(recordOwners))
+
+		count, err := uc.createEpisodeRecordChunk(ctx, recordOwners[start:end], ratingProbability, bodyProbability, bar)
+		if err != nil {
+			return created, err
+		}
+		created += count
 	}
 
-	return nil
+	return created, nil
+}
+
+// createEpisodeRecordChunk selects episodes and creates one chunk of records in a single
+// transaction.
+//
+// [Ja] createEpisodeRecordChunk は 1 トランザクションで、チャンク分のエピソードを抽選し、
+// そのエピソードに対する視聴記録を作成する。
+func (uc *CreateHeavyUserUsecase) createEpisodeRecordChunk(
+	ctx context.Context,
+	recordOwners []model.UserID,
+	ratingProbability, bodyProbability float64,
+	bar *progressbar.ProgressBar,
+) (int, error) {
+	tx, err := uc.db.BeginTx(ctx, nil)
+	if err != nil {
+		return 0, fmt.Errorf("トランザクション開始エラー: %w", err)
+	}
+	defer func() { _ = tx.Rollback() }()
+
+	episodes, err := uc.getRandomEpisodes(ctx, tx, len(recordOwners))
+	if err != nil {
+		return 0, fmt.Errorf("エピソード取得エラー: %w", err)
+	}
+
+	recordParams := make([]CreateEpisodeRecordParams, len(recordOwners))
+	for i, userID := range recordOwners {
+		recordParams[i] = CreateEpisodeRecordParams{
+			UserID:    userID,
+			EpisodeID: episodes[i].ID,
+			WorkID:    episodes[i].WorkID,
+			Rating:    uc.generateRating(ratingProbability),
+			Body:      uc.generateBody(bodyProbability),
+			WatchedAt: uc.generateWatchedAt(),
+		}
+	}
+
+	createRecordUC := NewCreateEpisodeRecordUsecase(uc.db)
+	if _, err := createRecordUC.ExecuteBatchWithTx(ctx, tx, recordParams, bar); err != nil {
+		return 0, err
+	}
+
+	if err := tx.Commit(); err != nil {
+		return 0, fmt.Errorf("トランザクションコミットエラー: %w", err)
+	}
+
+	return len(recordParams), nil
 }
 
 // episodeData エピソードデータの簡易構造体
@@ -357,34 +403,65 @@ type episodeData struct {
 	WorkID model.WorkID
 }
 
-// getRandomEpisodes ランダムなエピソードを取得します（重複あり）
-// ORDER BY RANDOM()を使って1〜2回のクエリで大量のランダムエピソードを効率的に取得します
-func (uc *CreateHeavyUserUsecase) getRandomEpisodes(ctx context.Context, count int) ([]episodeData, error) {
+var errNoEpisodesAvailable = errors.New("エピソードが存在しません。先に作品とエピソードを生成してください")
+
+// getRandomEpisodes returns the requested number of random episodes, allowing repeats when
+// the request exceeds the number of available rows. It runs inside the caller's transaction
+// and locks every selected row with FOR KEY SHARE, so another transaction cannot delete a
+// returned episode before the caller inserts its references and commits.
+//
+// [Ja] getRandomEpisodes は指定件数のエピソードをランダムに返し、利用可能な行数を超える場合は
+// 重複を許可する。呼び出し元のトランザクションで実行し、取得した行を FOR KEY SHARE でロック
+// する。これにより、返したエピソードは呼び出し元が参照行を INSERT してコミットするまで、他の
+// トランザクションから削除されない。
+func (uc *CreateHeavyUserUsecase) getRandomEpisodes(ctx context.Context, tx *sql.Tx, count int) ([]episodeData, error) {
 	// 全エピソード数を取得
 	var totalEpisodes int64
-	err := uc.db.QueryRowContext(ctx, "SELECT COUNT(*) FROM episodes").Scan(&totalEpisodes)
+	err := tx.QueryRowContext(ctx, "SELECT COUNT(*) FROM episodes").Scan(&totalEpisodes)
 	if err != nil {
 		return nil, fmt.Errorf("エピソード数取得エラー: %w", err)
 	}
 
 	if totalEpisodes == 0 {
-		return nil, fmt.Errorf("エピソードが存在しません。先に作品とエピソードを生成してください")
+		return nil, errNoEpisodesAvailable
 	}
 
-	// 必要な数のエピソードをランダムに取得（ORDER BY RANDOM()を使用）
-	// 重複を許容する仕様なので、totalEpisodesより多い場合は複数回に分けて取得
+	return getRandomEpisodesForKnownTotal(ctx, tx, count, totalEpisodes)
+}
+
+// getRandomEpisodesForKnownTotal selects rows after the caller has counted the available
+// episodes. The observed total can become stale before this query under READ COMMITTED, so a
+// batch that returns no rows is an error rather than another iteration of the same loop.
+//
+// [Ja] getRandomEpisodesForKnownTotal は、呼び出し元が利用可能なエピソード数を数えた後で行を
+// 抽選する。READ COMMITTED では観測した件数がこのクエリまでに古くなる可能性があるため、1 件も
+// 返さないバッチは同じループの再試行ではなくエラーとして扱う。
+func getRandomEpisodesForKnownTotal(
+	ctx context.Context,
+	tx *sql.Tx,
+	count int,
+	totalEpisodes int64,
+) ([]episodeData, error) {
+	// Fetch the requested episodes in random batches. When count exceeds totalEpisodes,
+	// repeated batches provide the allowed duplicate entries.
+	//
+	// [Ja] 必要な数のエピソードをランダムなバッチで取得する。count が totalEpisodes を超える
+	// 場合は複数のバッチから、許可されている重複エントリを得る。
 	episodes := make([]episodeData, 0, count)
 
 	for len(episodes) < count {
-		remaining := count - len(episodes)
+		selectedBefore := len(episodes)
+		remaining := count - selectedBefore
 		batchSize := remaining
 		if batchSize > int(totalEpisodes) {
 			batchSize = int(totalEpisodes)
 		}
 
-		// ORDER BY RANDOM()で一度に取得（大幅に高速化）
-		rows, err := uc.db.QueryContext(ctx, `
-			SELECT id, work_id FROM episodes ORDER BY RANDOM() LIMIT $1
+		// Fetch one batch with ORDER BY RANDOM().
+		//
+		// [Ja] ORDER BY RANDOM() で 1 バッチを取得する。
+		rows, err := tx.QueryContext(ctx, `
+			SELECT id, work_id FROM episodes ORDER BY RANDOM() LIMIT $1 FOR KEY SHARE
 		`, batchSize)
 		if err != nil {
 			return nil, fmt.Errorf("エピソード取得エラー: %w", err)
@@ -402,6 +479,10 @@ func (uc *CreateHeavyUserUsecase) getRandomEpisodes(ctx context.Context, count i
 
 		if err := rows.Err(); err != nil {
 			return nil, fmt.Errorf("行取得エラー: %w", err)
+		}
+
+		if len(episodes) == selectedBefore {
+			return nil, errNoEpisodesAvailable
 		}
 	}
 

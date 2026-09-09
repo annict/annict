@@ -70,7 +70,7 @@ module Db
       @slot.destroy_in_batches
 
       redirect_back(
-        fallback_location: db_work_list_path,
+        fallback_location: "/db/works",
         notice: t("messages._common.deleted")
       )
     end

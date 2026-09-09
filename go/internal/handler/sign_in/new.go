@@ -36,17 +36,17 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) renderNewForm(w http.ResponseWriter, r *http.Request, status int, formErrors *model.ValidationError, email string, backURL string) {
 	ctx := r.Context()
 
-	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)
+	meta := viewmodel.DefaultPageMeta(ctx, h.cfg, r.URL.Path)
 	meta.SetTitle(ctx, "sign_in_title")
 	meta.Description = i18n.T(ctx, "sign_in_description")
-	meta.OGURL = h.cfg.AppURL() + "/sign_in"
+	meta.AddTurnstilePreconnect(h.cfg.TurnstileSiteKey)
 
 	csrfToken := middleware.GetOrCreateCSRFToken(w, r, h.sessionMgr)
 
 	data := sign_in.NewPageData{
 		CSRFToken:        csrfToken,
 		TurnstileSiteKey: h.cfg.TurnstileSiteKey,
-		FormErrors:       formErrors,
+		FormErrors:       viewmodel.NewFormErrors(formErrors),
 		Email:            email,
 		BackURL:          backURL,
 	}

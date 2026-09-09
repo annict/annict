@@ -81,9 +81,8 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 常に成功ページを表示（ユーザーの存在を明かさない）
-	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)
+	meta := viewmodel.DefaultPageMeta(ctx, h.cfg, r.URL.Path)
 	meta.SetTitle(ctx, "password_reset_sent_title")
-	meta.OGURL = h.cfg.AppURL() + "/password/reset"
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	component := layouts.Simple(ctx, meta, h.cfg.GetAssetVersion(), passwordpages.ResetSent(ctx))

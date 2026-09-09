@@ -1,10 +1,11 @@
 package db_work
 
 import (
-	"fmt"
+	"bytes"
 	"log/slog"
 	"net/http"
 
+	"github.com/annict/annict/go/internal/httperror"
 	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/middleware"
 	"github.com/annict/annict/go/internal/model"
@@ -20,34 +21,7 @@ import (
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	input := usecase.CreateWorkInput{
-		Title:                 r.FormValue("title"),
-		TitleKana:             r.FormValue("title_kana"),
-		TitleAlter:            r.FormValue("title_alter"),
-		TitleEn:               r.FormValue("title_en"),
-		TitleAlterEn:          r.FormValue("title_alter_en"),
-		Media:                 r.FormValue("media"),
-		SeasonYear:            r.FormValue("season_year"),
-		SeasonName:            r.FormValue("season_name"),
-		StartedOn:             r.FormValue("started_on"),
-		EndedOn:               r.FormValue("ended_on"),
-		OfficialSiteURL:       r.FormValue("official_site_url"),
-		OfficialSiteURLEn:     r.FormValue("official_site_url_en"),
-		WikipediaURL:          r.FormValue("wikipedia_url"),
-		WikipediaURLEn:        r.FormValue("wikipedia_url_en"),
-		TwitterUsername:       r.FormValue("twitter_username"),
-		TwitterHashtag:        r.FormValue("twitter_hashtag"),
-		ScTid:                 r.FormValue("sc_tid"),
-		MalAnimeID:            r.FormValue("mal_anime_id"),
-		Synopsis:              r.FormValue("synopsis"),
-		SynopsisSource:        r.FormValue("synopsis_source"),
-		SynopsisEn:            r.FormValue("synopsis_en"),
-		SynopsisSourceEn:      r.FormValue("synopsis_source_en"),
-		ManualEpisodesCount:   r.FormValue("manual_episodes_count"),
-		StartEpisodeRawNumber: r.FormValue("start_episode_raw_number"),
-		NumberFormatID:        r.FormValue("number_format_id"),
-		NoEpisodes:            r.FormValue("no_episodes"),
-	}
+	input := usecase.CreateWorkInput{WorkFormInput: parseWorkForm(r)}
 
 	output, err := h.createWorkUC.Execute(ctx, input)
 	if err != nil {
@@ -56,16 +30,20 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		slog.ErrorContext(ctx, "作品の作成に失敗しました", "error", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		httperror.InternalServerError(w, r)
 		return
 	}
 
 	h.flashMgr.SetSuccess(w, i18n.T(ctx, "flash_db_work_created"))
 
-	// TODO: redirect to the edit page once it is implemented; for now redirect back to the index.
+	// Redirect to the just-created work's edit page, matching the Rails create action
+	// (db_edit_work_path) and the Update handler, so the editor lands on the new work to
+	// keep filling in its details.
 	//
-	// [Ja] TODO: 編集ページ実装後は編集ページへリダイレクトする。現状は一覧ページへリダイレクトする。
-	http.Redirect(w, r, fmt.Sprintf("/db/works?highlight=%d", output.WorkID), http.StatusSeeOther)
+	// [Ja] 作成直後の作品の編集ページへリダイレクトする。Rails の create アクション
+	// (db_edit_work_path) や Update ハンドラーと同じ遷移で、作成した作品で編集者がそのまま
+	// 詳細を入力し続けられるようにする。
+	http.Redirect(w, r, dbWorkEditPath(output.WorkID), http.StatusSeeOther)
 }
 
 // renderNewWithErrors re-renders the new-work form with validation errors and the previously submitted values.
@@ -74,32 +52,39 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) renderNewWithErrors(w http.ResponseWriter, r *http.Request, input usecase.CreateWorkInput, formErrors *model.ValidationError) {
 	ctx := r.Context()
 
-	optionsResult, err := h.getDbWorkFormOptionsUC.Execute(ctx)
+	optionsResult, err := h.getDBWorkFormOptionsUC.Execute(ctx)
 	if err != nil {
 		slog.ErrorContext(ctx, "NumberFormatの取得エラー", "error", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		httperror.InternalServerError(w, r)
 		return
 	}
 
 	formOptions := viewmodel.NewDBWorkFormOptions(ctx, optionsResult.NumberFormats)
 	csrfToken := middleware.GetCSRFToken(r, h.sessionManager)
 
-	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)
-	meta.SetTitle(ctx, "db_works_new_title")
+	meta := viewmodel.DefaultPageMeta(ctx, h.cfg, dbWorksNewPath)
+	meta.SetDBTitle(ctx, "db_works_new_title")
 
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	w.WriteHeader(http.StatusUnprocessableEntity)
 	component := layouts.Db(
 		meta,
 		h.cfg.GetAssetVersion(),
 		db_works.New(db_works.NewPageData{
 			CSRFToken:   csrfToken,
 			FormOptions: formOptions,
-			FormErrors:  formErrors,
-			FormInput:   viewmodel.NewDBWorkFormInput(input),
+			FormErrors:  viewmodel.NewFormErrors(formErrors),
+			FormInput:   viewmodel.NewDBWorkFormInput(input.WorkFormInput),
 		}),
 	)
-	if err := component.Render(ctx, w); err != nil {
+	var body bytes.Buffer
+	if err := component.Render(ctx, &body); err != nil {
 		slog.ErrorContext(ctx, "テンプレートのレンダリングエラー", "error", err)
+		httperror.InternalServerError(w, r)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.WriteHeader(http.StatusUnprocessableEntity)
+	if _, err := w.Write(body.Bytes()); err != nil {
+		slog.ErrorContext(ctx, "DB作品新規作成フォームのレスポンスの書き込みに失敗", "error", err)
 	}
 }

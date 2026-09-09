@@ -5,7 +5,7 @@
   <div class="align-items-center row">
     <div class="col">
       <div class="mb-1">
-        <%= link_to @work.local_title, db_edit_work_path(@work) %>
+        <%= link_to @work.local_title, "/db/works/#{@work.id}/edit" %>
       </div>
       <h1>
         <%= title %>

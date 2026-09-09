@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"io"
-	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
@@ -27,17 +26,12 @@ func TestDefault_Rendering(t *testing.T) {
 		Domain: "annict.test",
 	}
 
-	// i18nミドルウェアを経由してコンテキストを取得
 	req := httptest.NewRequest("GET", "/", nil)
 	req.Header.Set("Accept-Language", "ja")
 
-	var ctx context.Context
-	i18nHandler := i18n.Middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx = r.Context()
-	}))
-	i18nHandler.ServeHTTP(httptest.NewRecorder(), req)
+	ctx := i18n.SetLocale(req.Context(), i18n.DetectLanguage(req))
 
-	meta := viewmodel.DefaultPageMeta(ctx, cfg)
+	meta := viewmodel.DefaultPageMeta(ctx, cfg, req.URL.Path)
 	meta.SetTitle(ctx, "test_page_title")
 
 	// テストコンテンツ
@@ -61,7 +55,7 @@ func TestDefault_Rendering(t *testing.T) {
 		"<html lang=\"ja\">",
 		"<head>",
 		"<body>",
-		`<aside class="sidebar"`,
+		`<aside id="sidebar" class="sidebar"`,
 		"<main>",
 		"<footer",
 		"Test Content",
@@ -75,6 +69,48 @@ func TestDefault_Rendering(t *testing.T) {
 	}
 }
 
+// TestDefault_FullHeightFollowsVisibleViewport verifies the content column is sized by the
+// visible viewport height, so a mobile toolbar cannot push the footer below the visible area
+// on short pages.
+//
+// [Ja] TestDefault_FullHeightFollowsVisibleViewport は本文の段組みの高さが可視ビューポートに
+// 追随することを検証する。内容が短いページで、モバイルのツールバー表示時にフッターが可視領域の
+// 下へ押し出されることを防ぐ。
+func TestDefault_FullHeightFollowsVisibleViewport(t *testing.T) {
+	t.Parallel()
+
+	cfg := &config.Config{
+		Env:    "test",
+		Domain: "annict.test",
+	}
+
+	req := httptest.NewRequest("GET", "/", nil)
+	req.Header.Set("Accept-Language", "ja")
+
+	ctx := i18n.SetLocale(req.Context(), i18n.DetectLanguage(req))
+
+	meta := viewmodel.DefaultPageMeta(ctx, cfg, req.URL.Path)
+
+	content := templ.ComponentFunc(func(ctx context.Context, w io.Writer) error {
+		_, err := w.Write([]byte("<div>Content</div>"))
+		return err
+	})
+
+	var buf bytes.Buffer
+	if err := Default(ctx, meta, nil, viewmodel.Seasons{}, "v1.0.0", content).Render(ctx, &buf); err != nil {
+		t.Fatalf("レンダリングエラー: %v", err)
+	}
+
+	html := buf.String()
+
+	// The whole class attribute is pinned, so a switch back to the static unit fails here.
+	//
+	// [Ja] class 属性全体を固定するため、静的な単位へ戻せばここで落ちる。
+	if !strings.Contains(html, `<div class="flex-1 flex flex-col min-h-dvh">`) {
+		t.Error("本文の段組みのフルハイト指定が min-h-dvh になっていません")
+	}
+}
+
 // TestDefault_WithUser ユーザー情報が正しく表示されることを確認
 func TestDefault_WithUser(t *testing.T) {
 	t.Parallel()
@@ -84,17 +120,12 @@ func TestDefault_WithUser(t *testing.T) {
 		Domain: "annict.test",
 	}
 
-	// i18nミドルウェアを経由してコンテキストを取得
 	req := httptest.NewRequest("GET", "/", nil)
 	req.Header.Set("Accept-Language", "ja")
 
-	var ctx context.Context
-	i18nHandler := i18n.Middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx = r.Context()
-	}))
-	i18nHandler.ServeHTTP(httptest.NewRecorder(), req)
+	ctx := i18n.SetLocale(req.Context(), i18n.DetectLanguage(req))
 
-	meta := viewmodel.DefaultPageMeta(ctx, cfg)
+	meta := viewmodel.DefaultPageMeta(ctx, cfg, req.URL.Path)
 
 	// テストユーザー（viewmodel.User）
 	user := &viewmodel.User{
@@ -140,17 +171,12 @@ func TestDefault_WithoutUser(t *testing.T) {
 		Domain: "annict.test",
 	}
 
-	// i18nミドルウェアを経由してコンテキストを取得
 	req := httptest.NewRequest("GET", "/", nil)
 	req.Header.Set("Accept-Language", "ja")
 
-	var ctx context.Context
-	i18nHandler := i18n.Middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx = r.Context()
-	}))
-	i18nHandler.ServeHTTP(httptest.NewRecorder(), req)
+	ctx := i18n.SetLocale(req.Context(), i18n.DetectLanguage(req))
 
-	meta := viewmodel.DefaultPageMeta(ctx, cfg)
+	meta := viewmodel.DefaultPageMeta(ctx, cfg, req.URL.Path)
 
 	content := templ.ComponentFunc(func(ctx context.Context, w io.Writer) error {
 		_, err := w.Write([]byte("<div>Content</div>"))
@@ -185,17 +211,12 @@ func TestDefault_WithFlash(t *testing.T) {
 		Domain: "annict.test",
 	}
 
-	// i18nミドルウェアを経由してコンテキストを取得
 	req := httptest.NewRequest("GET", "/", nil)
 	req.Header.Set("Accept-Language", "ja")
 
-	var ctx context.Context
-	i18nHandler := i18n.Middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx = r.Context()
-	}))
-	i18nHandler.ServeHTTP(httptest.NewRecorder(), req)
+	ctx := i18n.SetLocale(req.Context(), i18n.DetectLanguage(req))
 
-	meta := viewmodel.DefaultPageMeta(ctx, cfg)
+	meta := viewmodel.DefaultPageMeta(ctx, cfg, req.URL.Path)
 
 	ctx = testutil.ContextWithFlash(ctx, session.FlashSuccess, "操作が成功しました")
 
@@ -238,17 +259,12 @@ func TestDefault_I18n(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// i18nミドルウェアを経由してコンテキストを取得
 			req := httptest.NewRequest("GET", "/", nil)
 			req.Header.Set("Accept-Language", tt.acceptLanguage)
 
-			var ctx context.Context
-			i18nHandler := i18n.Middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				ctx = r.Context()
-			}))
-			i18nHandler.ServeHTTP(httptest.NewRecorder(), req)
+			ctx := i18n.SetLocale(req.Context(), i18n.DetectLanguage(req))
 
-			meta := viewmodel.DefaultPageMeta(ctx, cfg)
+			meta := viewmodel.DefaultPageMeta(ctx, cfg, req.URL.Path)
 
 			content := templ.ComponentFunc(func(ctx context.Context, w io.Writer) error {
 				_, err := w.Write([]byte("<div>Content</div>"))

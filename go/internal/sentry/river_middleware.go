@@ -13,7 +13,7 @@ import (
 // final error returned by a worker as a Sentry event. Each job runs against a
 // cloned Hub so per-job tags (job.kind / job.attempt) do not leak across jobs,
 // and the cloned Hub is bound to ctx so anything captured inside the worker
-// (notably slog.ErrorContext via sentryslog) shares the same scope.
+// (notably slog.ErrorContext via NewSlogHandler) shares the same scope.
 //
 // Errors that match shouldDropError (context.Canceled / http.ErrAbortHandler)
 // are still returned to river so its retry logic stays unchanged, but they are
@@ -23,7 +23,7 @@ import (
 // [Ja] Worker が最終的に返したエラーを Sentry イベントとして捕捉する river の
 // WorkerMiddleware を返す。各ジョブは Clone した Hub の上で動くため、ジョブ単位の
 // タグ (job.kind / job.attempt) が他ジョブに漏れることはない。また、Clone した
-// Hub を ctx に bind するので、ジョブ内の slog.ErrorContext (sentryslog 経由)
+// Hub を ctx に bind するので、ジョブ内の slog.ErrorContext (NewSlogHandler 経由)
 // も同じスコープにイベントを乗せる。
 //
 // shouldDropError に該当するエラー (context.Canceled / http.ErrAbortHandler)

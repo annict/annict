@@ -10,9 +10,12 @@ import (
 	"testing"
 	"time"
 
+	"github.com/go-chi/chi/v5"
+
 	"github.com/annict/annict/go/internal/clientip"
 	"github.com/annict/annict/go/internal/config"
 	"github.com/annict/annict/go/internal/model"
+	"github.com/annict/annict/go/internal/session"
 )
 
 func TestReverseProxyMiddleware_GoHandledPaths(t *testing.T) {
@@ -52,6 +55,10 @@ func TestReverseProxyMiddleware_GoHandledPaths(t *testing.T) {
 		{"静的ファイル", "/static/css/style.css", "Go response"},
 		{"ヘルスチェック", "/health", "Go response"},
 		{"Web App Manifest", "/manifest.json", "Go response"},
+		{"404エラーページ", "/errors/not-found", "Go response"},
+		{"認可エラーページ", "/errors/forbidden", "Go response"},
+		{"CSRFエラーページ", "/errors/invalid-csrf-token", "Go response"},
+		{"500エラーページ", "/errors/internal-server-error", "Go response"},
 		{"パスワードログインページ", "/sign_in/password", "Go response"},
 		{"パスワードリセット申請", "/password/reset", "Go response"},
 		{"パスワードリセット実行", "/password/edit", "Go response"},
@@ -257,6 +264,89 @@ func TestReverseProxyMiddleware_ErrorHandling(t *testing.T) {
 	if rr.Code != http.StatusBadGateway {
 		t.Errorf("ステータスコードが期待と異なる: got %v want %v", rr.Code, http.StatusBadGateway)
 	}
+
+	assertBadGatewayPage(t, rr, "サービスに接続できません", "ホームに戻る")
+}
+
+// TestReverseProxyMiddleware_ErrorHandlingLocale verifies that the 502 page follows the
+// reader's Accept-Language. The proxy's error handler runs outside the Go middleware chain, so
+// nothing has resolved a locale onto the context by the time it renders.
+//
+// [Ja] TestReverseProxyMiddleware_ErrorHandlingLocale は 502 ページが読み手の Accept-Language
+// に追随することを検証する。プロキシのエラーハンドラーは Go のミドルウェアチェーンの外側で
+// 動くため、描画する時点ではコンテキストにロケールを載せた者がいない。
+func TestReverseProxyMiddleware_ErrorHandlingLocale(t *testing.T) {
+	t.Parallel()
+
+	railsServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		hj, ok := w.(http.Hijacker)
+		if !ok {
+			t.Fatal("Hijackerをサポートしていない")
+		}
+		conn, _, err := hj.Hijack()
+		if err != nil {
+			t.Fatalf("Hijackに失敗: %v", err)
+		}
+		_ = conn.Close()
+	}))
+	defer railsServer.Close()
+
+	cfg := &config.Config{Domain: "annict-test.page"}
+
+	proxyMiddleware, err := NewReverseProxyMiddleware(railsServer.URL, cfg, nil, nil)
+	if err != nil {
+		t.Fatalf("ミドルウェアの作成に失敗: %v", err)
+	}
+
+	handler := proxyMiddleware.Middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+
+	req := httptest.NewRequest("GET", "/works", nil)
+	req.Header.Set("Accept-Language", "en-US,en;q=0.9")
+	rr := httptest.NewRecorder()
+
+	handler.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusBadGateway {
+		t.Errorf("ステータスコードが期待と異なる: got %v want %v", rr.Code, http.StatusBadGateway)
+	}
+
+	assertBadGatewayPage(t, rr, "Cannot connect to the service", "Back to Home")
+}
+
+// assertBadGatewayPage asserts that a 502 is served as the shared error page, the same page the
+// 404 and 500 responses use, rather than as the hand-written HTML the error handler used to
+// build inline.
+//
+// [Ja] assertBadGatewayPage は 502 が、エラーハンドラーがかつてインラインで組み立てていた
+// 手書きの HTML ではなく、404 / 500 と同じ共通のエラーページとして配信されることを検証する。
+func assertBadGatewayPage(t *testing.T, rr *httptest.ResponseRecorder, wantTitle string, wantBackLabel string) {
+	t.Helper()
+
+	if contentType := rr.Header().Get("Content-Type"); contentType != "text/html; charset=utf-8" {
+		t.Errorf("Content-Type = %q, want text/html; charset=utf-8", contentType)
+	}
+
+	// The page is rendered by Go rather than relayed from Rails, and the error handler runs
+	// outside the chain that holds the SecurityHeaders middleware, so it sets the headers itself.
+	//
+	// [Ja] 本ページは Rails から中継したものではなく Go が描画し、かつエラーハンドラーは
+	// SecurityHeaders ミドルウェアを含むチェーンの外側で動くため、自身でヘッダーを設定する。
+	assertSecurityHeaders(t, rr.Header())
+
+	body := rr.Body.String()
+	for _, expected := range []string{
+		"<title>" + wantTitle + " | Annict</title>",
+		wantTitle,
+		`href="/"`,
+		wantBackLabel,
+		`class="error-link"`,
+	} {
+		if !strings.Contains(body, expected) {
+			t.Errorf("502 レスポンスに %q が含まれていません", expected)
+		}
+	}
 }
 
 func TestIsGoHandledPath(t *testing.T) {
@@ -270,6 +360,14 @@ func TestIsGoHandledPath(t *testing.T) {
 		{"/static/css/style.css", true},
 		{"/health", true},
 		{"/manifest.json", true},
+		{"/errors/not-found", true},
+		{"/errors/not-found/extra", false},
+		{"/errors/forbidden", true},
+		{"/errors/forbidden/extra", false},
+		{"/errors/invalid-csrf-token", true},
+		{"/errors/invalid-csrf-token/extra", false},
+		{"/errors/internal-server-error", true},
+		{"/errors/internal-server-error/extra", false},
 		{"/sign_in/password", true},
 		{"/password/reset", true},
 		{"/password/edit", true},
@@ -600,6 +698,8 @@ func TestReverseProxyMiddleware_ResponseHeaderTimeout(t *testing.T) {
 	if rr.Code != http.StatusBadGateway {
 		t.Errorf("ステータスコードが期待と異なる: got %v want %v", rr.Code, http.StatusBadGateway)
 	}
+
+	assertBadGatewayPage(t, rr, "サービスに接続できません", "ホームに戻る")
 }
 
 func TestReverseProxyMiddleware_HTTPMethods(t *testing.T) {
@@ -1149,81 +1249,201 @@ func TestReverseProxyMiddleware_FeatureFlagRouting(t *testing.T) {
 	})
 }
 
-func TestReverseProxyMiddleware_AnnictDBFeatureFlag(t *testing.T) {
-	// モックRailsサーバー
-	railsServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+// TestReverseProxyMiddleware_AnnictDBRouting fixes how /db/ is split now that no feature
+// flag gates it: Go serves the Annict DB screens it registers routes for and Rails serves
+// the rest. The middleware is built without a feature flag repository so the split cannot
+// depend on a flag.
+//
+// [Ja] TestReverseProxyMiddleware_AnnictDBRouting は、フラグでゲートされなくなった /db/ の
+// 振り分けを固定する。Go 版はルートを登録した Annict DB の画面を処理し、残りは Rails 版が
+// 処理する。フラグに依存しないことを示すため、フィーチャーフラグのリポジトリ無しで
+// ミドルウェアを組み立てる。
+func TestReverseProxyMiddleware_AnnictDBRouting(t *testing.T) {
+	t.Parallel()
+
+	railsServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		_, _ = w.Write([]byte("Rails response"))
+	}))
+	defer railsServer.Close()
+
+	cfg := &config.Config{Domain: "annict-test.page"}
+
+	proxyMiddleware, err := NewReverseProxyMiddleware(railsServer.URL, cfg, nil, nil)
+	if err != nil {
+		t.Fatalf("ミドルウェアの作成に失敗: %v", err)
+	}
+
+	goResponse := func(w http.ResponseWriter, _ *http.Request) {
+		_, _ = w.Write([]byte("Go response"))
+	}
+
+	// The routes mirror the Annict DB screens serve.go registers in Go.
+	//
+	// [Ja] ルートは serve.go が Go 版に登録している Annict DB の画面を写したもの。
+	router := chi.NewRouter()
+	router.Get("/db/works", goResponse)
+	router.Get("/db/works/{work_id}/episodes", goResponse)
+	router.Get("/db/episodes/{id}/edit", goResponse)
+	proxyMiddleware.SetRouter(router)
+
+	handler := proxyMiddleware.Middleware(http.HandlerFunc(goResponse))
+
+	tests := []struct {
+		name string
+		path string
+		want string
+	}{
+		{"作品一覧はGo版が処理する", "/db/works", "Go response"},
+		{"エピソード編集はGo版が処理する", "/db/episodes/1/edit", "Go response"},
+		{"Annict DBのトップはRails版へプロキシする", "/db", "Rails response"},
+		{"Go版に無いキャスト一覧はRails版へプロキシする", "/db/works/1/casts", "Rails response"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			req := httptest.NewRequest("GET", tt.path, nil)
+			rr := httptest.NewRecorder()
+
+			handler.ServeHTTP(rr, req)
+
+			if got := rr.Body.String(); got != tt.want {
+				t.Errorf("%s: 応答が一致しません: got %q, want %q", tt.path, got, tt.want)
+			}
+		})
+	}
+}
+
+// buildDBFallbackRouter wires the reverse proxy middleware the way serve.go does:
+// SetRouter + Use(Middleware) in front of an inner middleware chain (here the real
+// CSRF middleware, standing in for the Sentry / CSRF / ... chain that the proxy path
+// skips), then the /db/works routes the Go app registers. It lets the tests verify that
+// a /db/* request matching no Go route falls back to Rails from the Middleware layer —
+// before the inner chain — so a non-GET request is not rejected by CSRF.
+//
+// [Ja] buildDBFallbackRouter は serve.go と同じ順序でリバースプロキシミドルウェアを配線
+// する: SetRouter + Use(Middleware) を内側のミドルウェアチェーン (ここでは実 CSRF
+// ミドルウェア。プロキシ経路がスキップする Sentry / CSRF / ... のチェーンを代表する) の
+// 前に置き、その後に Go 版が登録する /db/works 系ルートを並べる。/db/* のうち Go ルートに
+// マッチしないリクエストが、内側チェーンより前の Middleware レイヤーで Rails へ
+// フォールバックすること (=非 GET が CSRF に弾かれないこと) を検証するために用いる。
+func buildDBFallbackRouter(t *testing.T, railsURL string) *chi.Mux {
+	t.Helper()
+
+	cfg := &config.Config{Domain: "annict-test.page"}
+	mw, err := NewReverseProxyMiddleware(railsURL, cfg, nil, nil)
+	if err != nil {
+		t.Fatalf("ミドルウェアの作成に失敗: %v", err)
+	}
+
+	// The real CSRF middleware stands in for the inner chain the proxy path skips.
+	// Its session manager is never queried here: fallback requests bypass
+	// it, and a matched non-GET Go route is rejected at the missing-session-cookie
+	// check before any DB access, so a nil session repository is safe.
+	//
+	// [Ja] 実 CSRF ミドルウェアは、プロキシ経路がスキップする内側チェーンを代表する。
+	// ここでは session manager は参照されない: フォールバックはこれをバイパスし、
+	// マッチした非 GET の Go ルートは DB アクセス前にセッションクッキー不在のチェックで
+	// 弾かれるため、nil の session repository で問題ない。
+	csrfMW := NewCSRFMiddleware(session.NewManager(nil, cfg))
+
+	goResponse := func(w http.ResponseWriter, _ *http.Request) {
+		_, _ = w.Write([]byte("Go response"))
+	}
+
+	r := chi.NewRouter()
+	mw.SetRouter(r)
+	r.Use(mw.Middleware)
+	r.Use(csrfMW.Middleware)
+	r.Get("/db/works", goResponse)
+	r.Get("/db/works/new", goResponse)
+	r.Get("/db/works/{id}/edit", goResponse)
+	r.Post("/db/works", goResponse)
+
+	return r
+}
+
+func TestReverseProxyMiddleware_DBFallback_ThroughMiddlewareChain(t *testing.T) {
+	t.Parallel()
+
+	railsServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write([]byte("Rails response"))
 	}))
 	defer railsServer.Close()
 
-	cfg := &config.Config{
-		Domain: "annict-test.page",
+	r := buildDBFallbackRouter(t, railsServer.URL)
+
+	testCases := []struct {
+		name       string
+		method     string
+		path       string
+		wantStatus int
+		wantBody   string
+	}{
+		// Go 実装済みルートの挙動は変えない (GET)。
+		{"実装済み一覧はGo版が処理する", "GET", "/db/works", http.StatusOK, "Go response"},
+		{"実装済み新規フォームはGo版が処理する", "GET", "/db/works/new", http.StatusOK, "Go response"},
+		{"実装済み編集フォームはGo版が処理する", "GET", "/db/works/42/edit", http.StatusOK, "Go response"},
+
+		// Go 未実装の /db/* の GET は Rails 版へフォールバックする (ステータスも Rails 側を透過)。
+		{"未実装の/db直下はRails版へフォールバック", "GET", "/db/people", http.StatusOK, "Rails response"},
+		{"未実装のネストパスもRails版へフォールバック", "GET", "/db/works/123/episodes", http.StatusOK, "Rails response"},
+		{"未実装の作品詳細もRails版へフォールバック", "GET", "/db/works/123", http.StatusOK, "Rails response"},
+
+		// Go 未実装の /db/* の非 GET も、内側の CSRF に 403 で弾かれず Rails へフォールバックする。
+		// フォールバックが CSRF より前の Middleware レイヤーで起きること (影響 B の回帰防止) を担保する。
+		{"未実装POSTはCSRF403にならずRailsへフォールバック", "POST", "/db/people", http.StatusOK, "Rails response"},
+		{"未実装PATCH(作品詳細)もRailsへフォールバック", "PATCH", "/db/works/123", http.StatusOK, "Rails response"},
+
+		// 登録済みの /db/works へのメソッド不一致 (GET/POST は登録済みだが PATCH は未登録) も、
+		// 405 ではなく Rails へフォールバックする。no-route パスとは chi 内部の通過ブランチ
+		// (methodNotAllowed) が異なるため、実装判断ログが例示するこのケースを別途担保する。
+		{"実装済みパスへのメソッド不一致はRailsへフォールバック", "PATCH", "/db/works", http.StatusOK, "Rails response"},
 	}
 
-	// Go版のハンドラー
-	goHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			req := httptest.NewRequest(tc.method, tc.path, nil)
+			rr := httptest.NewRecorder()
+
+			r.ServeHTTP(rr, req)
+
+			if rr.Code != tc.wantStatus {
+				t.Errorf("%s %s: ステータスコードが期待と異なる: got %d want %d", tc.method, tc.path, rr.Code, tc.wantStatus)
+			}
+			if rr.Body.String() != tc.wantBody {
+				t.Errorf("%s %s: レスポンスボディが期待と異なる: got %q want %q", tc.method, tc.path, rr.Body.String(), tc.wantBody)
+			}
+		})
+	}
+}
+
+func TestReverseProxyMiddleware_DBFallback_MatchedGoRouteStillHitsInnerChain(t *testing.T) {
+	t.Parallel()
+
+	railsServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		_, _ = w.Write([]byte("Go response"))
-	})
+		_, _ = w.Write([]byte("Rails response"))
+	}))
+	defer railsServer.Close()
 
-	t.Run("フラグ有効: /db/配下のパスはGo版で処理される", func(t *testing.T) {
-		checker := &mockFeatureFlagChecker{enabled: true}
-		proxyMiddleware, err := NewReverseProxyMiddleware(railsServer.URL, cfg, checker, nil)
-		if err != nil {
-			t.Fatalf("ミドルウェアの作成に失敗: %v", err)
-		}
+	r := buildDBFallbackRouter(t, railsServer.URL)
 
-		handler := proxyMiddleware.Middleware(goHandler)
+	// POST /db/works は実装済みの Go ルートなのでフォールバックせず Go チェーンへ入り、
+	// 内側の CSRF ミドルウェアがトークン無しの POST を 403 で弾く。フォールバックが
+	// 「Go 未実装の /db/*」だけに限定され、実装済みルートの内側チェーン (CSRF) を
+	// 素通しにしていないことを確認する。
+	req := httptest.NewRequest("POST", "/db/works", nil)
+	rr := httptest.NewRecorder()
 
-		paths := []string{
-			"/db/works",
-			"/db/works/123/edit",
-			"/db/works/123/episodes",
-			"/db/works/new",
-		}
+	r.ServeHTTP(rr, req)
 
-		for _, path := range paths {
-			t.Run(path, func(t *testing.T) {
-				req := httptest.NewRequest("GET", path, nil)
-				rr := httptest.NewRecorder()
-				handler.ServeHTTP(rr, req)
-
-				if !strings.Contains(rr.Body.String(), "Go response") {
-					t.Errorf("フラグ有効時、%s はGo版で処理されるべき: got %q", path, rr.Body.String())
-				}
-			})
-		}
-	})
-
-	t.Run("フラグ無効: /db/配下のパスはRails版にプロキシされる", func(t *testing.T) {
-		checker := &mockFeatureFlagChecker{enabled: false}
-		proxyMiddleware, err := NewReverseProxyMiddleware(railsServer.URL, cfg, checker, nil)
-		if err != nil {
-			t.Fatalf("ミドルウェアの作成に失敗: %v", err)
-		}
-
-		handler := proxyMiddleware.Middleware(goHandler)
-
-		paths := []string{
-			"/db/works",
-			"/db/works/123/edit",
-			"/db/works/123/episodes",
-			"/db/works/new",
-		}
-
-		for _, path := range paths {
-			t.Run(path, func(t *testing.T) {
-				req := httptest.NewRequest("GET", path, nil)
-				rr := httptest.NewRecorder()
-				handler.ServeHTTP(rr, req)
-
-				if !strings.Contains(rr.Body.String(), "Rails response") {
-					t.Errorf("フラグ無効時、%s はRails版にプロキシされるべき: got %q", path, rr.Body.String())
-				}
-			})
-		}
-	})
+	if rr.Code != http.StatusForbidden {
+		t.Errorf("実装済み POST /db/works は CSRF で 403 になるべき (Rails へ流さない): got %d body=%q", rr.Code, rr.Body.String())
+	}
+	if strings.Contains(rr.Body.String(), "Rails response") {
+		t.Errorf("実装済み POST /db/works を Rails へフォールバックしてはいけない: got %q", rr.Body.String())
+	}
 }
 
 func TestReverseProxyMiddleware_DeviceTokenCookieSetOnRequest(t *testing.T) {
@@ -1269,5 +1489,160 @@ func TestReverseProxyMiddleware_DeviceTokenCookieSetOnRequest(t *testing.T) {
 	}
 	if !found {
 		t.Error("device_token Cookieがセットされるべき")
+	}
+}
+
+// TestReverseProxyMiddleware_MethodOverriddenRouteReachesGo verifies that a flag-gated route
+// registered as PATCH or DELETE is handed to the Go chain when a form posts to it with the
+// _method parameter. HTML forms can only send POST, so matching the raw method alone would
+// proxy an implemented Go screen to Rails, where the request fails on Rails' own CSRF check.
+//
+// [Ja] TestReverseProxyMiddleware_MethodOverriddenRouteReachesGo は、PATCH / DELETE で登録した
+// フラグ対象ルートへフォームが _method 付きで POST したとき、Go チェーンへ渡されることを検証する。
+// HTML フォームは POST しか送れないため、生のメソッドだけで判定すると実装済みの Go 画面が Rails へ
+// プロキシされ、Rails 側の CSRF 検証で失敗する。
+func TestReverseProxyMiddleware_MethodOverriddenRouteReachesGo(t *testing.T) {
+	tests := []struct {
+		name          string
+		method        string
+		path          string
+		wantGoHandled bool
+	}{
+		{
+			name:          "PATCHで登録したパスへのPOSTはGoへ渡す",
+			method:        "POST",
+			path:          "/test-feature/1",
+			wantGoHandled: true,
+		},
+		{
+			name:          "DELETEで登録したパスへのPOSTはGoへ渡す",
+			method:        "POST",
+			path:          "/test-feature/1/archive",
+			wantGoHandled: true,
+		},
+		{
+			name:          "GETで登録したパスへのGETはGoへ渡す",
+			method:        "GET",
+			path:          "/test-feature/1/edit",
+			wantGoHandled: true,
+		},
+		{
+			// Only POST can be rewritten, so a GET must not borrow another method's route.
+			//
+			// [Ja] 書き換えられるのは POST だけなので、GET が別メソッドのルートを借りてはいけない。
+			name:          "PATCHで登録したパスへのGETはRailsへプロキシする",
+			method:        "GET",
+			path:          "/test-feature/1",
+			wantGoHandled: false,
+		},
+		{
+			name:          "どのメソッドでも登録が無いパスはRailsへプロキシする",
+			method:        "POST",
+			path:          "/test-feature/1/comments",
+			wantGoHandled: false,
+		},
+	}
+
+	railsServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		_, _ = w.Write([]byte("Rails response"))
+	}))
+	defer railsServer.Close()
+
+	cfg := &config.Config{
+		Domain: "annict-test.page",
+		Env:    "production",
+	}
+
+	proxyMiddleware, err := NewReverseProxyMiddleware(railsServer.URL, cfg, &mockFeatureFlagChecker{enabled: true}, nil)
+	if err != nil {
+		t.Fatalf("ミドルウェアの作成に失敗: %v", err)
+	}
+
+	// The router mirrors how the DB work screens are registered: the form pages are GET and
+	// the writes are PATCH / DELETE, reached from a form through _method.
+	//
+	// [Ja] ルーターは DB 作品画面の登録の仕方を写したもの。フォームのページは GET で、書き込みは
+	// PATCH / DELETE として登録され、フォームからは _method 経由で到達する。
+	router := chi.NewRouter()
+	router.Get("/test-feature/{id}/edit", func(http.ResponseWriter, *http.Request) {})
+	router.Patch("/test-feature/{id}", func(http.ResponseWriter, *http.Request) {})
+	router.Delete("/test-feature/{id}/archive", func(http.ResponseWriter, *http.Request) {})
+	proxyMiddleware.SetRouter(router)
+
+	original := featureFlaggedPatterns
+	featureFlaggedPatterns = []featureFlaggedPattern{
+		{pattern: regexp.MustCompile(`^/test-feature(/.*)?$`), flag: "test_feature"},
+	}
+	defer func() { featureFlaggedPatterns = original }()
+
+	handler := proxyMiddleware.Middleware(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		_, _ = w.Write([]byte("Go response"))
+	}))
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			req := httptest.NewRequest(tt.method, tt.path, strings.NewReader("_method=PATCH"))
+			req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+			rr := httptest.NewRecorder()
+
+			handler.ServeHTTP(rr, req)
+
+			want := "Rails response"
+			if tt.wantGoHandled {
+				want = "Go response"
+			}
+			if got := rr.Body.String(); got != want {
+				t.Errorf("応答が一致しません: got %q, want %q", got, want)
+			}
+		})
+	}
+}
+
+// TestReverseProxyMiddleware_MethodOverrideKeepsBodyForRails verifies that deciding where a
+// request goes leaves its body intact. The _method parameter lives in the body, so reading it
+// at this layer would drain what a proxied request still has to forward to Rails.
+//
+// [Ja] TestReverseProxyMiddleware_MethodOverrideKeepsBodyForRails は、行き先の判定がリクエストの
+// ボディを消費しないことを検証する。_method はボディにあるため、この層でそれを読むと、プロキシ
+// するリクエストが Rails へ転送すべき内容を使い切ってしまう。
+func TestReverseProxyMiddleware_MethodOverrideKeepsBodyForRails(t *testing.T) {
+	received := make(chan string, 1)
+	railsServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		body := make([]byte, r.ContentLength)
+		_, _ = r.Body.Read(body)
+		received <- string(body)
+		_, _ = w.Write([]byte("Rails response"))
+	}))
+	defer railsServer.Close()
+
+	cfg := &config.Config{
+		Domain: "annict-test.page",
+		Env:    "production",
+	}
+
+	proxyMiddleware, err := NewReverseProxyMiddleware(railsServer.URL, cfg, &mockFeatureFlagChecker{enabled: true}, nil)
+	if err != nil {
+		t.Fatalf("ミドルウェアの作成に失敗: %v", err)
+	}
+
+	proxyMiddleware.SetRouter(chi.NewRouter())
+
+	original := featureFlaggedPatterns
+	featureFlaggedPatterns = []featureFlaggedPattern{
+		{pattern: regexp.MustCompile(`^/test-feature(/.*)?$`), flag: "test_feature"},
+	}
+	defer func() { featureFlaggedPatterns = original }()
+
+	handler := proxyMiddleware.Middleware(http.HandlerFunc(func(http.ResponseWriter, *http.Request) {}))
+
+	const body = "_method=PATCH&title=%E3%83%86%E3%82%B9%E3%83%88"
+	req := httptest.NewRequest("POST", "/test-feature/1", strings.NewReader(body))
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	rr := httptest.NewRecorder()
+
+	handler.ServeHTTP(rr, req)
+
+	if got := <-received; got != body {
+		t.Errorf("Railsへ転送されたボディが一致しません: got %q, want %q", got, body)
 	}
 }

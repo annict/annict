@@ -65,6 +65,24 @@ func IsCurrentPath(ctx context.Context, path string) bool {
 	return normalizePath(GetCurrentPath(ctx)) == normalizePath(path)
 }
 
+// IsCurrentPathPrefix reports whether the current page is the given link path itself or a
+// page below it, so a navigation entry stays marked while the reader is anywhere inside
+// its screens (for example "/db/works" while "/db/works/1/edit" is open). The comparison
+// only accepts a segment boundary, so "/db/series_works/1" does not match "/db/series".
+// Use IsCurrentPath where only the page itself should be marked.
+//
+// [Ja] IsCurrentPathPrefix は現在ページが与えられたリンク先そのものか、その配下のページかを
+// 返す。ナビゲーションの項目が、その画面群のどこにいる間も印を保てるようにするためのもの
+// (例: "/db/works/1/edit" を開いている間の "/db/works")。比較はセグメント境界でのみ一致と
+// みなすため、"/db/series_works/1" は "/db/series" に一致しない。そのページ自身にだけ印を
+// 付けたい場合は IsCurrentPath を使う。
+func IsCurrentPathPrefix(ctx context.Context, path string) bool {
+	current := normalizePath(GetCurrentPath(ctx))
+	link := normalizePath(path)
+
+	return current == link || strings.HasPrefix(current, link+"/")
+}
+
 // normalizePath strips any query/fragment and the trailing slash (except for
 // the root path) so that equivalent paths compare equal.
 //

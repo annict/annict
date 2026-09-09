@@ -16,7 +16,15 @@ templ Simple(ctx context.Context, meta viewmodel.PageMeta, assetVersion string, 
 		<head>
 			@components.Head(meta, assetVersion)
 		</head>
-		<body class="min-h-screen flex items-center justify-center">
+		// The dynamic viewport unit follows the height that is actually visible, so the centered
+		// content stays centered while a mobile toolbar expands and collapses. The static unit
+		// (100vh) means the height with the toolbar hidden, which leaves the body taller than the
+		// screen and pushes the content off-centre whenever the toolbar is shown.
+		//
+		// [Ja] 動的ビューポート単位は実際に見えている高さに追随するため、モバイルのツールバーが
+		// 伸縮しても中央寄せのコンテンツが中央に留まる。静的な単位 (100vh) はツールバーが隠れた
+		// 状態の高さを指すため、ツールバー表示時は body が画面より高くなり中央寄せがずれる。
+		<body class="min-h-dvh flex items-center justify-center">
 			@components.Flash(ctx, session.FlashFromContext(ctx))
 			@content
 		</body>

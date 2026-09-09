@@ -199,3 +199,69 @@ func TestGetSafeRedirectURL(t *testing.T) {
 		})
 	}
 }
+
+// TestValidateDBReturnURL covers the allowlist the Annict DB confirmation screens apply to a
+// return-to value: an Annict DB path is accepted and everything else, including a path elsewhere
+// on the site, is rejected.
+//
+// [Ja] TestValidateDBReturnURL は Annict DB の確認画面が戻り先の値に適用する許可リストを
+// 検証する。Annict DB のパスは受け入れ、サイト内の別のパスを含めそれ以外は拒否する。
+func TestValidateDBReturnURL(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name     string
+		returnTo string
+		expected bool
+	}{
+		{name: "Annict DB のトップ", returnTo: "/db", expected: true},
+		{name: "Annict DB の一覧", returnTo: "/db/works", expected: true},
+		{name: "クエリパラメータ付きの検索結果", returnTo: "/db/search?q=%E6%A4%9C%E7%B4%A2", expected: true},
+		{name: "フラグメント付きのパス", returnTo: "/db/works#row-1", expected: true},
+		{name: "空文字", returnTo: "", expected: false},
+		{name: "Annict DB の外", returnTo: "/settings", expected: false},
+		{name: "接頭辞だけ一致する別のパス", returnTo: "/dbx/works", expected: false},
+		{name: "相対パス", returnTo: "db/works", expected: false},
+		{name: "外部 URL", returnTo: "https://example.com/db/works", expected: false},
+		{name: "プロトコル相対 URL", returnTo: "//example.com/db/works", expected: false},
+		{name: "バックスラッシュ始まり", returnTo: "/\\example.com", expected: false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := ValidateDBReturnURL(tt.returnTo); got != tt.expected {
+				t.Errorf("ValidateDBReturnURL(%q) = %v, want %v", tt.returnTo, got, tt.expected)
+			}
+		})
+	}
+}
+
+// TestGetSafeDBReturnURL verifies an accepted value is returned as-is and a rejected one is
+// replaced by the caller's fallback.
+//
+// [Ja] TestGetSafeDBReturnURL は、受け入れた値はそのまま返し、拒否した値は呼び出し元の
+// フォールバックに差し替えることを検証する。
+func TestGetSafeDBReturnURL(t *testing.T) {
+	t.Parallel()
+
+	const fallback = "/db/works"
+
+	tests := []struct {
+		name     string
+		returnTo string
+		expected string
+	}{
+		{name: "Annict DB のパスはそのまま", returnTo: "/db/search?q=test", expected: "/db/search?q=test"},
+		{name: "空文字はフォールバック", returnTo: "", expected: fallback},
+		{name: "Annict DB の外はフォールバック", returnTo: "/settings", expected: fallback},
+		{name: "外部 URL はフォールバック", returnTo: "https://example.com/", expected: fallback},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := GetSafeDBReturnURL(tt.returnTo, fallback); got != tt.expected {
+				t.Errorf("GetSafeDBReturnURL(%q, %q) = %q, want %q", tt.returnTo, fallback, got, tt.expected)
+			}
+		})
+	}
+}

@@ -71,6 +71,7 @@ func TestNew(t *testing.T) {
 		"https://challenges.cloudflare.com/turnstile/v0/api.js", // Turnstile JavaScript
 		`class="cf-turnstile"`,                    // Turnstile ウィジェット
 		`data-sitekey="1x00000000000000000000AA"`, // Turnstile Site Key
+		`<link rel="preconnect" href="https://challenges.cloudflare.com">`,
 	}
 
 	for _, expected := range expectedStrings {

@@ -95,10 +95,10 @@ func attachHub(hub *sentry.Hub) func(http.Handler) http.Handler {
 }
 
 // buildRouter constructs a router whose middleware chain mirrors the production
-// setup in cmd/server/main.go around Sentry (Recoverer → sentryhttp →
+// setup in cmd/annict/serve.go around Sentry (Recoverer → sentryhttp →
 // SentryTransaction) plus an attachHub shim used only by tests.
 //
-// [Ja] 本番の cmd/server/main.go と同じ Sentry 周りのチェーン
+// [Ja] 本番の cmd/annict/serve.go と同じ Sentry 周りのチェーン
 // (Recoverer → sentryhttp → SentryTransaction) を組んだルーターを作る。
 // テスト用の Hub 差し込み (attachHub) のみ追加で噛ませる。
 func buildRouter(hub *sentry.Hub, register func(chi.Router)) *chi.Mux {

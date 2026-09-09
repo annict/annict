@@ -28,6 +28,12 @@ func (m *RequestBodyLimitMiddleware) Middleware(next http.Handler) http.Handler 
 
 		// Content-Lengthヘッダーが上限を超えている場合は早期にエラーを返す
 		if r.ContentLength > m.maxBytes {
+			// This runs ahead of the reverse proxy, so the SecurityHeaders middleware
+			// registered inside it never sees this response.
+			//
+			// [Ja] 本処理はリバースプロキシより前で走るため、その内側に登録した
+			// SecurityHeaders ミドルウェアは本レスポンスを見ない。
+			setSecurityHeaders(w)
 			http.Error(w, "Request body too large", http.StatusRequestEntityTooLarge)
 			return
 		}

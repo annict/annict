@@ -4,32 +4,40 @@ import (
 	"context"
 )
 
-// BackLink はエラーページの戻るリンク情報
+// BackLink is the destination offered from an error page.
+//
+// [Ja] BackLink はエラーページから提示する移動先。
 type BackLink struct {
 	URL  string
 	Text string
 }
 
-// Error は汎用エラーページを表示します
+// Error renders an error message inside one of the regular layouts, which supply the document
+// shell and the application stylesheet. It carries its own horizontal gutter because the
+// layouts it renders in do not all provide one.
+//
+// The self-contained HTTP error pages use HTTPError instead.
+//
+// [Ja] Error は通常のレイアウトの内側にエラーメッセージを描画する。文書の枠とアプリケーション
+// のスタイルシートはレイアウト側が用意する。描画先のレイアウトが必ずしも横余白を持たないため、
+// 横余白は本コンポーネント自身が持つ。
+//
+// 自己完結する HTTP エラーページには代わりに HTTPError を使う。
 templ Error(ctx context.Context, errorTitle string, errorMessage string, backLink *BackLink) {
-	<div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-		<div class="max-w-md w-full space-y-8">
-			<div>
-				<h2 class="mt-6 text-center text-3xl font-bold text-gray-900">
-					{ errorTitle }
-				</h2>
+	<div class="w-full max-w-md px-4">
+		<div class="card">
+			<header>
+				<h1 class="card-title text-2xl">{ errorTitle }</h1>
 				if errorMessage != "" {
-					<p class="mt-2 text-center text-sm text-gray-600">
-						{ errorMessage }
-					</p>
+					<p>{ errorMessage }</p>
 				}
-			</div>
+			</header>
 			if backLink != nil {
-				<div class="text-center">
-					<a href={ templ.URL(backLink.URL) } class="font-medium text-blue-600 hover:text-blue-500">
+				<footer>
+					<a href={ templ.URL(backLink.URL) } class="btn">
 						{ backLink.Text }
 					</a>
-				</div>
+				</footer>
 			}
 		</div>
 	</div>

@@ -52,7 +52,7 @@ func Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Season
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<aside class=\"sidebar\" data-side=\"left\" aria-hidden=\"false\"><nav aria-label=\"Sidebar navigation\"><section class=\"scrollbar gap-4\"><div><a href=\"/\" class=\"flex items-center justify-center bg-(--color-mizuho-600) h-[52px]\"><img height=\"30\" loading=\"lazy\" src=\"/static/images/logo-white.png\" width=\"25\" alt=\"Annict\"></a></div><div role=\"group\" class=\"py-0\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<aside id=\"sidebar\" class=\"sidebar\" data-side=\"left\" aria-hidden=\"false\"><nav aria-label=\"Sidebar navigation\"><section class=\"scrollbar gap-4\"><div><a href=\"/\" class=\"flex items-center justify-center bg-(--color-mizuho-600) h-[52px]\"><img height=\"30\" loading=\"lazy\" src=\"/static/images/logo-white.png\" width=\"25\" alt=\"Annict\"></a></div><div role=\"group\" class=\"py-0\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -316,6 +316,10 @@ func Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Season
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
+		templ_7745c5c3_Err = sidebarMenuItem(ctx, viewmodel.DeveloperHelpTopicURL(), "sidebar_developer_help", "code-regular").Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "</ul></div><!--\n\t\t\t\tServices\n\n\t\t\t\t[Ja] サービス\n\t\t\t\t--><div role=\"group\" aria-labelledby=\"sidebar-services\" class=\"py-0\"><h3 id=\"sidebar-services\" class=\"font-bold tracking-wider\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -323,7 +327,7 @@ func Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Season
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "sidebar_services"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/sidebar.templ`, Line: 183, Col: 44}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/sidebar.templ`, Line: 184, Col: 44}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
@@ -346,10 +350,6 @@ func Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Season
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = sidebarMenuItem(ctx, "/supporters", "sidebar_supporters", "sparkle-regular").Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = sidebarMenuItem(ctx, "https://developers.annict.com/", "sidebar_developers", "code-regular").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -409,13 +409,17 @@ func libraryPath(user *viewmodel.User, statusKind string) string {
 
 // sidebarMenuItem renders a sidebar menu item.
 //
-// A link matching the current page is given aria-current="page" so that it
-// is highlighted (the style is defined by [aria-current=page] in style.css).
+// A link matching the current page is given aria-current="page", which tells assistive
+// technology which entry is the current page. Basecoat's own sidebar styles tint that entry
+// with bg-sidebar-accent and give it a medium font weight. Hovering any entry applies the
+// same tint, so its weight is what tells the current entry apart from a hovered one.
 //
 // [Ja] サイドバーのメニュー項目をレンダリングする。
 //
-// 現在ページと一致するリンクには aria-current="page" を付与してハイライト
-// する ( スタイルは style.css の [aria-current=page] で定義 )。
+// 現在ページと一致するリンクには aria-current="page" を付与し、支援技術へどの項目が現在
+// ページかを伝える。Basecoat のサイドバーのスタイルがその項目を bg-sidebar-accent で淡く
+// 塗り、太字を medium にする。hover でも同じ塗りが当たるため、現在ページと hover 中の項目を
+// 見分けるのは太字だけになる。
 func sidebarMenuItem(ctx context.Context, path string, labelKey string, iconName string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -444,7 +448,7 @@ func sidebarMenuItem(ctx context.Context, path string, labelKey string, iconName
 		var templ_7745c5c3_Var12 templ.SafeURL
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(path))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/sidebar.templ`, Line: 242, Col: 29}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/sidebar.templ`, Line: 246, Col: 29}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
@@ -475,7 +479,7 @@ func sidebarMenuItem(ctx context.Context, path string, labelKey string, iconName
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, labelKey))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/sidebar.templ`, Line: 251, Col: 32}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/sidebar.templ`, Line: 255, Col: 32}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 		if templ_7745c5c3_Err != nil {
@@ -539,7 +543,7 @@ func sidebarNotificationMenuItem(ctx context.Context, user *viewmodel.User) temp
 		var templ_7745c5c3_Var15 string
 		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "sidebar_notifications"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/sidebar.templ`, Line: 274, Col: 48}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/sidebar.templ`, Line: 278, Col: 48}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 		if templ_7745c5c3_Err != nil {
@@ -550,14 +554,14 @@ func sidebarNotificationMenuItem(ctx context.Context, user *viewmodel.User) temp
 			return templ_7745c5c3_Err
 		}
 		if user != nil && user.NotificationsCount > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<span class=\"badge-destructive font-bold\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<span class=\"badge font-bold\" data-variant=\"destructive\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var16 string
 			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(formatNotificationCount(user.NotificationsCount))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/sidebar.templ`, Line: 280, Col: 55}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/sidebar.templ`, Line: 284, Col: 55}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 			if templ_7745c5c3_Err != nil {

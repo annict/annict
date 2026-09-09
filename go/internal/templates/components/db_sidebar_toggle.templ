@@ -1,0 +1,32 @@
+package components
+
+import (
+	"strconv"
+
+	"github.com/annict/annict/go/internal/templates"
+)
+
+// DBSidebarToggle renders the button that toggles the Annict DB sidebar at every viewport size.
+// It follows the disclosure ARIA pattern: aria-controls points at the sidebar's id and
+// aria-expanded reflects its open state. data-sidebar-toggle wires it to the sidebar via the
+// sidebar-toggle.ts module, so callers only need to drop this component in a title row.
+//
+// [Ja] DBSidebarToggle は全画面幅で Annict DB サイドバーを開閉するボタンを描画する。
+// disclosure の ARIA パターンに従い、aria-controls がサイドバーの id を指し、
+// aria-expanded が開閉状態を表す。
+// data-sidebar-toggle が sidebar-toggle.ts モジュール経由でサイドバーに結線するため、呼び出し側は
+// タイトル行に本コンポーネントを置くだけでよい。
+templ DBSidebarToggle() {
+	<button
+		type="button"
+		class="btn rounded-full"
+		data-variant="outline"
+		data-size="icon"
+		data-sidebar-toggle="db-sidebar"
+		aria-controls="db-sidebar"
+		aria-expanded={ strconv.FormatBool(templates.IsDBSidebarOpen(ctx)) }
+		aria-label={ templates.T(ctx, "db_sidebar_toggle_label") }
+	>
+		@templates.DecorativeIcon("sidebar-regular")
+	</button>
+}

@@ -361,7 +361,7 @@ func (m *Manager) setSessionCookie(w http.ResponseWriter, r *http.Request, publi
 		Secure:   secure,
 		HttpOnly: m.cfg.SessionHTTPOnly == "true",
 		SameSite: http.SameSiteLaxMode,
-		MaxAge:   30 * 24 * 60 * 60, // 30日
+		MaxAge:   int(model.SessionMaxAge.Seconds()),
 	}
 	http.SetCookie(w, cookie)
 }

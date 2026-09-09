@@ -14,7 +14,7 @@
     "verbatimModuleSyntax": true,
     "noUncheckedIndexedAccess": true,
     "noImplicitReturns": true,
-    "types": ["vite/client"]
+    "types": []
   },
   "include": ["web/**/*"],
   "exclude": ["node_modules", "web/dist"]

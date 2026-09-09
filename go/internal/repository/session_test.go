@@ -3,6 +3,7 @@ package repository_test
 import (
 	"context"
 	"crypto/sha256"
+	"database/sql"
 	"encoding/hex"
 	"fmt"
 	"testing"
@@ -422,5 +423,128 @@ func TestDeleteSession_NonExistent(t *testing.T) {
 	// エラーが発生しないことを確認（DELETEは0行削除でもエラーにならない）
 	if err != nil {
 		t.Errorf("存在しないセッションIDでエラーが発生しました: %v", err)
+	}
+}
+
+// insertSessionWithUpdatedAt inserts one session row with the given private ID and an
+// explicit updated_at. DeleteExpired selects rows by updated_at, so the tests need to
+// place rows on either side of a cutoff, which the session builder cannot express.
+//
+// [Ja] insertSessionWithUpdatedAt は private ID と updated_at を明示したセッション行を
+// 1 件挿入する。DeleteExpired は updated_at で行を選ぶため、テストではカットオフの前後に
+// 行を配置する必要があるが、セッションビルダーではそれを表現できない。
+func insertSessionWithUpdatedAt(t *testing.T, tx *sql.Tx, sessionID string, updatedAt time.Time) {
+	t.Helper()
+
+	_, err := tx.Exec(
+		`INSERT INTO sessions (session_id, data, created_at, updated_at) VALUES ($1, $2, $3, $4)`,
+		sessionID, `{}`, updatedAt, updatedAt,
+	)
+	if err != nil {
+		t.Fatalf("セッションの作成に失敗: %v", err)
+	}
+}
+
+// sessionExists reports whether a session row with the given private ID is present.
+//
+// [Ja] sessionExists は指定した private ID のセッション行が存在するかを返す。
+func sessionExists(t *testing.T, tx *sql.Tx, sessionID string) bool {
+	t.Helper()
+
+	var exists bool
+	if err := tx.QueryRow(`SELECT EXISTS (SELECT 1 FROM sessions WHERE session_id = $1)`, sessionID).Scan(&exists); err != nil {
+		t.Fatalf("セッションの存在確認に失敗: %v", err)
+	}
+
+	return exists
+}
+
+// TestDeleteExpired_OnlyOlderThanCutoff はカットオフより古いセッションだけが削除されることをテスト
+func TestDeleteExpired_OnlyOlderThanCutoff(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	queries := query.New(db).WithTx(tx)
+	repo := repository.NewSessionRepository(queries)
+
+	const (
+		oldID   = "delete-expired-old"
+		freshID = "delete-expired-fresh"
+	)
+
+	cutoff := time.Now().Add(-30 * 24 * time.Hour)
+	insertSessionWithUpdatedAt(t, tx, oldID, cutoff.Add(-time.Hour))
+	insertSessionWithUpdatedAt(t, tx, freshID, cutoff.Add(time.Hour))
+
+	deleted, err := repo.DeleteExpired(context.Background(), cutoff, 100)
+	if err != nil {
+		t.Fatalf("DeleteExpiredに失敗: %v", err)
+	}
+
+	if deleted != 1 {
+		t.Errorf("削除件数が一致しません: got %d, want 1", deleted)
+	}
+	if sessionExists(t, tx, oldID) {
+		t.Error("カットオフより古いセッションが削除されていません")
+	}
+	if !sessionExists(t, tx, freshID) {
+		t.Error("カットオフより新しいセッションが削除されています")
+	}
+}
+
+// TestDeleteExpired_RespectsLimit は削除件数が limit で頭打ちになることをテスト
+func TestDeleteExpired_RespectsLimit(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	queries := query.New(db).WithTx(tx)
+	repo := repository.NewSessionRepository(queries)
+
+	cutoff := time.Now().Add(-30 * 24 * time.Hour)
+	for i := 0; i < 3; i++ {
+		insertSessionWithUpdatedAt(t, tx, fmt.Sprintf("delete-expired-limit-%d", i), cutoff.Add(-time.Hour))
+	}
+
+	deleted, err := repo.DeleteExpired(context.Background(), cutoff, 2)
+	if err != nil {
+		t.Fatalf("DeleteExpiredに失敗: %v", err)
+	}
+
+	if deleted != 2 {
+		t.Errorf("削除件数が limit を超えています: got %d, want 2", deleted)
+	}
+
+	remaining, err := repo.DeleteExpired(context.Background(), cutoff, 2)
+	if err != nil {
+		t.Fatalf("2 回目の DeleteExpiredに失敗: %v", err)
+	}
+	if remaining != 1 {
+		t.Errorf("残りの削除件数が一致しません: got %d, want 1", remaining)
+	}
+}
+
+// TestDeleteExpired_NoTarget は対象が無い場合に0件を返すことをテスト
+func TestDeleteExpired_NoTarget(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	queries := query.New(db).WithTx(tx)
+	repo := repository.NewSessionRepository(queries)
+
+	const freshID = "delete-expired-none"
+
+	cutoff := time.Now().Add(-30 * 24 * time.Hour)
+	insertSessionWithUpdatedAt(t, tx, freshID, cutoff.Add(time.Hour))
+
+	deleted, err := repo.DeleteExpired(context.Background(), cutoff, 100)
+	if err != nil {
+		t.Fatalf("DeleteExpiredに失敗: %v", err)
+	}
+
+	if deleted != 0 {
+		t.Errorf("削除件数が一致しません: got %d, want 0", deleted)
+	}
+	if !sessionExists(t, tx, freshID) {
+		t.Error("対象外のセッションが削除されています")
 	}
 }

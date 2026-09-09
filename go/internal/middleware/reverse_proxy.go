@@ -11,9 +11,13 @@ import (
 	"strings"
 	"time"
 
+	"github.com/go-chi/chi/v5"
+
 	"github.com/annict/annict/go/internal/auth"
 	"github.com/annict/annict/go/internal/clientip"
 	"github.com/annict/annict/go/internal/config"
+	"github.com/annict/annict/go/internal/httperror"
+	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/model"
 	annictSentry "github.com/annict/annict/go/internal/sentry"
 	"github.com/annict/annict/go/internal/session"
@@ -39,9 +43,12 @@ type featureFlaggedPattern struct {
 	flag    model.FeatureFlagName
 }
 
-var featureFlaggedPatterns = []featureFlaggedPattern{
-	{pattern: regexp.MustCompile(`^/db/`), flag: model.FeatureFlagGoAnnictDB},
-}
+// No path is gated by a flag at the moment. The list stays rather than being removed
+// because the next screen moved from Rails to Go is rolled out through it (ADR 0002).
+//
+// [Ja] 現在フラグでゲートされているパスは無い。次に Rails 版から Go 版へ移す画面は
+// この仕組みで段階的に公開するため、リストは削除せず空のまま残す (ADR 0002)。
+var featureFlaggedPatterns []featureFlaggedPattern
 
 // ReverseProxyMiddleware はRails版へのリバースプロキシミドルウェア
 type ReverseProxyMiddleware struct {
@@ -56,6 +63,13 @@ type ReverseProxyMiddleware struct {
 	//
 	// [Ja] nil 許容。テスト時やセッション不要時は nil
 	sessionMgr *session.Manager
+	// optional; set via SetRouter. Lets the middleware tell whether a path that Go and
+	// Rails share matches a registered Go route. nil leaves those paths to the Go chain.
+	//
+	// [Ja] nil 許容。SetRouter で設定する。Go 版と Rails 版で分け合っているパスが
+	// 登録済みの Go ルートにマッチするかをミドルウェアが判定できるようにする。
+	// nil のときはそれらのパスを Go チェーンに委ねる。
+	router chi.Router
 }
 
 // Go版で処理するパス（ホワイトリスト）
@@ -75,6 +89,38 @@ var goHandledPaths = []string{
 	"/supporters",       // サポーターページ
 	"/webhooks/stripe",  // Stripe Webhook受信
 	"/ics",              // iCalendar配信（Apple カレンダー互換パス）
+}
+
+// Standalone error pages Go serves, matched exactly by isGoHandledPath. Registered as routes in
+// cmd/annict/serve.go, and reached when a rejected HTMX request is told to navigate to one.
+//
+// [Ja] Go が配信する全画面エラーページ。isGoHandledPath が完全一致で判定する。
+// cmd/annict/serve.go でルートとして登録し、拒否された HTMX リクエストに遷移を指示したときに
+// 到達する。
+var goHandledErrorPaths = []string{
+	httperror.NotFoundPath,
+	httperror.ForbiddenPath,
+	httperror.InvalidCSRFTokenPath,
+	httperror.InternalServerErrorPath,
+}
+
+// Path prefixes Go and Rails share: Go serves the screens it has routes for and Rails serves
+// the rest. isGoSharedPath matches the prefix and matchesGoRoute then asks the router, so a
+// path with no Go route reaches Rails instead of the Go 404. This is what separates the list
+// from goHandledPaths, whose prefixes hand everything below them to Go.
+//
+// /db/ is such a prefix: the work and episode CRUD screens live in Go while casts, staffs,
+// slots, images, series and the rest of Annict DB are still only in Rails.
+//
+// [Ja] Go 版と Rails 版が分け合っているパスの接頭辞。Go 版はルートを持つ画面だけを処理し、
+// 残りは Rails 版が処理する。isGoSharedPath が接頭辞で判定したうえで matchesGoRoute が
+// ルーターに問い合わせるため、Go 版にルートが無いパスは Go の 404 ではなく Rails 版に届く。
+// 接頭辞の配下すべてを Go 版に渡す goHandledPaths との違いはここにある。
+//
+// /db/ がこの接頭辞にあたる。作品とエピソードの CRUD 画面は Go 版にあるが、キャスト・
+// スタッフ・放送枠・作品画像・シリーズなど Annict DB の残りは Rails 版にしかない。
+var goSharedPaths = []string{
+	"/db/",
 }
 
 // NewReverseProxyMiddleware は新しいReverseProxyMiddlewareを作成
@@ -202,17 +248,23 @@ func NewReverseProxyMiddleware(railsURL string, cfg *config.Config, featureFlagR
 			"remote_addr", r.RemoteAddr,
 		)
 
-		// 502エラーテンプレートをレンダリング
-		if err := render502Error(w, r, cfg); err != nil {
-			// テンプレートのレンダリングに失敗した場合は、シンプルなテキストを返す
-			slog.ErrorContext(ctx, "502エラーテンプレートのレンダリングに失敗",
-				"error", err,
-			)
-			w.Header().Set("Content-Type", "text/html; charset=utf-8")
-			w.WriteHeader(http.StatusBadGateway)
-			// フォールバックエラーレスポンスなので、書き込みエラーは無視
-			_, _ = w.Write([]byte("<html><body><h1>502 Bad Gateway</h1><p>Service Unavailable</p></body></html>"))
-		}
+		// The page below is rendered by Go, not relayed from Rails, so it carries the same
+		// headers as the rest of the Go responses. The SecurityHeaders middleware cannot
+		// supply them: it sits inside this middleware and the request never got that far.
+		//
+		// [Ja] 以下のページは Rails から中継したものではなく Go が描画するため、他の Go の
+		// レスポンスと同じヘッダーを付ける。SecurityHeaders ミドルウェアは本ミドルウェアの
+		// 内側にあり、リクエストはそこまで到達していないため、付与を任せられない。
+		setSecurityHeaders(w)
+
+		// This handler runs at the proxy layer, outside the Go middleware chain, so no
+		// locale has been resolved onto the context yet. Resolve it here so the shared
+		// error page speaks the reader's language like the pages served from the chain.
+		//
+		// [Ja] 本ハンドラーは Go のミドルウェアチェーンの外側であるプロキシ層で動くため、
+		// コンテキストにはまだロケールが載っていない。ここで解決し、共通エラーページが
+		// チェーンの内側で配信されるページと同じく読み手の言語で表示されるようにする。
+		httperror.BadGateway(w, r.WithContext(i18n.SetLocale(ctx, resolveLocale(r))))
 	}
 
 	return &ReverseProxyMiddleware{
@@ -243,6 +295,34 @@ func (m *ReverseProxyMiddleware) Middleware(next http.Handler) http.Handler {
 		}
 
 		if m.isFeatureFlagEnabled(r, deviceToken) {
+			// The path is gated by an enabled migration flag. Hand it to the Go
+			// chain only when a Go route matches; otherwise the screen is not
+			// implemented in Go yet, so proxy to Rails here — the same layer as the
+			// flag-disabled path below — instead of letting it fall through to chi's
+			// NotFound handler, which runs inside the Sentry / CSRF middleware chain
+			// that Rails-bound requests must skip.
+			//
+			// [Ja] パスは有効な移行フラグでゲートされている。Go ルートにマッチするときだけ
+			// Go チェーンに渡し、マッチしない場合はその画面が Go 未実装のため、ここで
+			// Rails へプロキシする (下のフラグ無効時と同じレイヤー)。chi の NotFound
+			// ハンドラー (Rails 行きのリクエストがスキップすべき Sentry / CSRF
+			// ミドルウェアチェーンの内側で走る) へ流さないためにこうする。
+			if m.matchesGoRoute(r) {
+				next.ServeHTTP(w, r)
+				return
+			}
+			m.proxy.ServeHTTP(w, r)
+			return
+		}
+
+		// The path is one Go and Rails share. Hand it to the Go chain only when a Go
+		// route matches; otherwise the screen is Rails-only, so fall through to the
+		// proxy below.
+		//
+		// [Ja] パスは Go 版と Rails 版が分け合っているもの。Go ルートにマッチするときだけ
+		// Go チェーンに渡し、マッチしない場合はその画面が Rails 版にしかないため、
+		// 下のプロキシに流す。
+		if m.isGoSharedPath(r.URL.Path) && m.matchesGoRoute(r) {
 			next.ServeHTTP(w, r)
 			return
 		}
@@ -250,6 +330,69 @@ func (m *ReverseProxyMiddleware) Middleware(next http.Handler) http.Handler {
 		// Rails版にプロキシ
 		m.proxy.ServeHTTP(w, r)
 	})
+}
+
+// SetRouter injects the chi router so the middleware can tell whether a path Go and
+// Rails share (e.g. /db/*) matches a registered Go route. Call it once during setup,
+// after the router is created and before it serves. When such a path matches no Go
+// route the screen belongs to Rails, so Middleware proxies to Rails itself rather than
+// deferring to chi's NotFound handler, which runs inside the Sentry / CSRF middleware
+// chain that Rails-bound requests must skip.
+//
+// [Ja] SetRouter は chi ルーターを注入し、Go 版と Rails 版が分け合っているパス
+// (例: /db/*) が登録済みの Go ルートにマッチするかをミドルウェアが判定できるようにする。
+// ルーター生成後・配信開始前にセットアップで 1 回呼ぶ。そうしたパスがどの Go ルートにも
+// マッチしない場合、その画面は Rails 版のものなので、Middleware は chi の NotFound
+// ハンドラー (Rails 行きのリクエストがスキップすべき Sentry / CSRF ミドルウェアチェーンの
+// 内側で走る) に委ねず、自身で Rails へプロキシする。
+func (m *ReverseProxyMiddleware) SetRouter(router chi.Router) {
+	m.router = router
+}
+
+// matchesGoRoute reports whether a Go route handles the request. Without a router every
+// request goes to the Go chain, which is the behaviour before SetRouter is called.
+//
+// An HTML form can only send GET or POST, so routes registered as PUT / PATCH / DELETE are
+// reached through the _method parameter that MethodOverride applies. MethodOverride runs
+// inside this middleware, so the method seen here is still the POST the browser sent, and
+// matching on it alone would miss those routes and proxy an implemented screen to Rails.
+// Reading _method here is not an option: it lives in the body, which a proxied request still
+// needs intact. A POST that matches no route is therefore re-checked against the methods the
+// override can produce. A POST carrying no _method then reaches the Go chain and ends in 405
+// rather than at Rails, which is the honest answer for a path Go owns but does not accept a
+// POST on.
+//
+// [Ja] matchesGoRoute はリクエストを Go のルートが処理するかどうかを返す。ルーターが無い場合は
+// すべて Go チェーンへ渡す (SetRouter 呼び出し前の挙動)。
+//
+// HTML フォームは GET と POST しか送れないため、PUT / PATCH / DELETE で登録したルートには
+// MethodOverride が適用する _method パラメータ経由で到達する。MethodOverride は本ミドルウェアの
+// 内側で動くため、ここで見えるメソッドはブラウザが送った POST のままであり、それだけで判定すると
+// 該当ルートを取りこぼして実装済みの画面を Rails へプロキシしてしまう。ここで _method を読むことは
+// できない。_method はボディにあり、プロキシするリクエストはそのボディを必要とするため。そこで、
+// どのルートにもマッチしない POST は、オーバーライドが生みうるメソッドで再判定する。_method を
+// 持たない POST はこの結果 Go チェーンへ渡り Rails ではなく 405 で終わるが、Go が所有していて
+// POST を受け付けないパスに対する答えとしてはそのほうが正しい。
+func (m *ReverseProxyMiddleware) matchesGoRoute(r *http.Request) bool {
+	if m.router == nil {
+		return true
+	}
+
+	if m.router.Match(chi.NewRouteContext(), r.Method, r.URL.Path) {
+		return true
+	}
+
+	if r.Method != http.MethodPost {
+		return false
+	}
+
+	for _, method := range overridableMethods {
+		if m.router.Match(chi.NewRouteContext(), method, r.URL.Path) {
+			return true
+		}
+	}
+
+	return false
 }
 
 // ensureDeviceToken returns the device_token cookie value from the request, generating and setting a new one on the
@@ -334,6 +477,17 @@ func (m *ReverseProxyMiddleware) isFeatureFlagEnabled(r *http.Request, deviceTok
 
 // isGoHandledPath はGo版で処理するパスかどうかを判定
 func (m *ReverseProxyMiddleware) isGoHandledPath(path string) bool {
+	// goHandledPaths matches by prefix, which would hand every /errors/... path to Go.
+	// Go owns only the error pages listed below, so they are matched exactly.
+	//
+	// [Ja] goHandledPaths は前方一致で判定するため、一覧に入れると /errors 配下すべてを
+	// Go 側が引き取ることになる。Go が持つエラーページは下記の一覧だけなので完全一致で判定する。
+	for _, p := range goHandledErrorPaths {
+		if path == p {
+			return true
+		}
+	}
+
 	for _, p := range goHandledPaths {
 		if strings.HasPrefix(path, p) {
 			return true
@@ -354,6 +508,21 @@ func (m *ReverseProxyMiddleware) isGoHandledPath(path string) bool {
 	// 他の /fragment/... は Go 版実装が揃うまで Rails 版が処理する。
 	if strings.HasPrefix(path, "/fragment/@") && strings.HasSuffix(path, "/tracking_heatmap") {
 		return true
+	}
+
+	return false
+}
+
+// isGoSharedPath reports whether the path falls under a prefix Go and Rails share. The
+// caller pairs it with matchesGoRoute to decide which side handles the request.
+//
+// [Ja] isGoSharedPath はパスが Go 版と Rails 版で分け合っている接頭辞の配下かどうかを返す。
+// 呼び出し側は matchesGoRoute と組み合わせ、どちらが処理するかを判定する。
+func (m *ReverseProxyMiddleware) isGoSharedPath(path string) bool {
+	for _, p := range goSharedPaths {
+		if strings.HasPrefix(path, p) {
+			return true
+		}
 	}
 
 	return false
@@ -380,75 +549,4 @@ func (m *ReverseProxyMiddleware) isAPISubdomain(host string) bool {
 	}
 
 	return false
-}
-
-// render502Error は502エラーページをレンダリング
-// 注: リバースプロキシのエラーハンドラーはi18nミドルウェアより前に実行されるため、
-// シンプルなHTMLを返す。
-func render502Error(w http.ResponseWriter, r *http.Request, cfg *config.Config) error {
-	// シンプルな502エラーページ（日本語）
-	html := `<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>サービス接続エラー - Annict</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            background-color: #f5f5f5;
-        }
-        .container {
-            max-width: 600px;
-            padding: 2rem;
-            text-align: center;
-        }
-        h1 {
-            font-size: 2rem;
-            color: #333;
-            margin-bottom: 1rem;
-        }
-        p {
-            color: #666;
-            line-height: 1.6;
-            margin-bottom: 2rem;
-        }
-        a {
-            display: inline-block;
-            padding: 0.75rem 1.5rem;
-            background-color: #3b82f6;
-            color: white;
-            text-decoration: none;
-            border-radius: 0.375rem;
-            transition: background-color 0.2s;
-        }
-        a:hover {
-            background-color: #2563eb;
-        }
-        .icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="icon">⚠️</div>
-        <h1>サービス接続エラー</h1>
-        <p>申し訳ございません。現在サービスに接続できません。<br>しばらくしてから再度お試しください。</p>
-        <a href="/">トップページに戻る</a>
-    </div>
-</body>
-</html>`
-
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	w.WriteHeader(http.StatusBadGateway)
-	_, err := w.Write([]byte(html))
-	return err
 }
