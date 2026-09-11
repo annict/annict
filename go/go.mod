@@ -21,7 +21,7 @@ require (
 	github.com/getsentry/sentry-go v0.49.0
 	github.com/getsentry/sentry-go/slog v0.49.0
 	github.com/google/uuid v1.6.0
-	github.com/jackc/pgx/v5 v5.10.0
+	github.com/jackc/pgx/v5 v5.11.0
 	github.com/mfridman/tparse v0.18.0
 	github.com/redis/go-redis/v9 v9.22.0
 	github.com/resend/resend-go/v2 v2.28.0
